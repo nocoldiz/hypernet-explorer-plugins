@@ -151,6 +151,108 @@
       "noun": ["Salt Works", "Salt Mine", "Galleries", "Pans", "Workings", "Chambers", "Salt Halls", "Diggings", "Levels", "Deposit"],
       "adj": ["White", "Royal", "Blinding", "Dry", "Deep", "Preserved", "Company", "Bitter", "Crystalline", "Worked"],
       "of": ["the Salt Road", "the Preserved", "the Bitter Tax", "the White Year", "Saint Kinga", "the Long Drought", "the Sealed Level", "the Salt Cathedral", "the Dry Sea", "the Old Monopoly"]
+    },
+    "hardware": {
+      "pattern": ["{of}'s {noun}", "The {adj} {noun}", "{noun} of {of}", "The {adj} {noun} of {of}"],
+      "noun": ["Hardware", "Tool Store", "Ironmonger", "Supply Depot", "Lumber Yard", "Fix-It Shop", "Builders' Store", "Nail Barn", "Workshop Store", "Trade Counter"],
+      "adj": ["Shuttered", "Rusted", "Dusty", "Looted", "Bolted", "Creaking", "Cheap", "Sawdust", "Old", "Hollow"],
+      "of": ["Old Brannigan", "the Hammer Brothers", "a Bankrupt Plumber", "the Night Watchman", "the Nail King", "Uncle Rudi", "the Union Men", "a Missing Carpenter", "the Rivet Sisters", "the Last Foreman"]
+    },
+    "grocery": {
+      "pattern": ["{of}'s {noun}", "The {adj} {noun}", "{noun} of {of}", "The {adj} {noun} of {of}"],
+      "noun": ["Grocery", "Market", "Corner Shop", "Food Hall", "Provisions", "Supermarket", "Greengrocer", "Pantry Store", "Deli", "Cash and Carry"],
+      "adj": ["Spoiled", "Flickering", "Sticky", "Empty", "Cold", "Bargain", "Late Night", "Rotten", "Silent", "Bright"],
+      "of": ["Mama Lucia", "the Brothers Okafor", "the Price Cutters", "a Vanished Cashier", "the Fresh Fields Company", "Mr Patel", "the Night Shift", "the Old Cooperative", "a Failed Franchise", "the Milk Round"]
+    },
+    "shop": {
+      "pattern": ["{of}'s {noun}", "The {adj} {noun}", "{noun} of {of}", "The {adj} {noun} of {of}"],
+      "noun": ["Shop", "Emporium", "Bazaar", "Trading Post", "Boutique", "Variety Store", "Bric-a-Brac", "Curio Shop", "Outlet", "General Store"],
+      "adj": ["Closed", "Faded", "Peculiar", "Abandoned", "Cluttered", "Shabby", "Glittering", "Forgotten", "Discount", "Locked"],
+      "of": ["Madame Orsolya", "the Two Brothers", "a Lost Heir", "the Pawnbroker", "Wonders", "Second Chances", "the Old Owner", "Odds and Ends", "the Travelling Salesman", "Lucky Finds"]
+    },
+    "hospital": {
+      "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
+      "noun": ["Hospital", "Infirmary", "Sanatorium", "Asylum", "Clinic", "Care Home", "Isolation Ward", "Medical Centre", "Hospice", "Teaching Hospital"],
+      "adj": ["Condemned", "Silent", "Flickering", "Quarantined", "Sterile", "Weeping", "Forgotten", "Mercy", "Grey", "Last"],
+      "of": ["Saint Agatha", "the Unwell", "Mercy", "the Night Nurse", "Doctor Halloran", "the Fever Year", "Quiet Recovery", "the Closed Wing", "the Good Samaritan", "the Long Sleep"]
+    },
+    "clinic": {
+      "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
+      "noun": ["Clinic", "Surgery", "Practice", "Dispensary", "Health Centre", "Consulting Rooms", "Pharmacy", "Treatment Rooms", "Walk-In Clinic", "Day Clinic"],
+      "adj": ["Shuttered", "Tiny", "Free", "Back Street", "Spotless", "Rundown", "Night", "Private", "Cramped", "Forgotten"],
+      "of": ["Doctor Vos", "the Kind Hands", "the Neighbourhood", "Saint Luke", "the Old Chemist", "Doctor Amara", "the Charity Board", "Small Mercies", "the Late Doctor", "the Quiet Street"]
+    },
+    "tavern": {
+      "pattern": ["{of}'s {noun}", "The {adj} {noun}", "{noun} of {of}", "The {adj} {noun} of {of}"],
+      "noun": ["Tavern", "Inn", "Alehouse", "Taproom", "Public House", "Roadhouse", "Hostelry", "Saloon", "Wine Bar", "Coaching Inn"],
+      "adj": ["Drunken", "Crooked", "Smoky", "Sleeping", "Golden", "Rowdy", "Leaky", "Prancing", "Last", "Thirsty"],
+      "of": ["the Green Man", "the Three Barrels", "Old Hask", "the Broken Wheel", "the Jolly Drover", "the Red Lion", "the Hanged Fiddler", "the Wandering Pig", "the Seven Stars", "the Weary Traveller"]
+    },
+    "restaurant": {
+      "pattern": ["{of}'s {noun}", "The {adj} {noun}", "{noun} of {of}", "The {adj} {noun} of {of}"],
+      "noun": ["Restaurant", "Bistro", "Trattoria", "Diner", "Brasserie", "Grill", "Eatery", "Canteen", "Steakhouse", "Supper Club"],
+      "adj": ["Closed", "Fine", "Greasy", "Elegant", "Candlelit", "Late Night", "Famous", "Burnt", "Empty", "Golden"],
+      "of": ["Chef Moreau", "Nonna Rita", "the Silver Spoon", "the Blue Plate", "Mister Wong", "the Hungry Hound", "Bella Vista", "the Old Kitchen", "the Lost Recipe", "Le Petit Coin"]
+    },
+    "farmhouse": {
+      "pattern": ["{of}'s {noun}", "The {adj} {noun}", "{noun} of {of}", "The {adj} {noun} of {of}"],
+      "noun": ["Farmhouse", "Homestead", "Croft", "Steading", "Grange", "Cottage", "Barnhouse", "Manor Farm", "Smallholding", "Mill House"],
+      "adj": ["Lonely", "Sagging", "Old", "Weathered", "Empty", "Overgrown", "Quiet", "Thatched", "Muddy", "Forgotten"],
+      "of": ["the Hollis Family", "Old Margit", "a Dead Shepherd", "the Long Field", "the Widow Cray", "Three Acres", "the Hay Barn", "the Lost Harvest", "the Miller", "Hunger Hill"]
+    },
+    "house": {
+      "pattern": ["{of}'s {noun}", "The {adj} {noun}", "{noun} of {of}", "The {adj} {noun} of {of}"],
+      "noun": ["House", "Home", "Residence", "Villa", "Townhouse", "Cottage", "Lodgings", "Flat", "Bungalow", "Manor"],
+      "adj": ["Empty", "Quiet", "Narrow", "Shuttered", "Tall", "Cosy", "Peeling", "Locked", "Silent", "Old"],
+      "of": ["the Marlowe Family", "a Retired Teacher", "Number Nine", "the Absent Tenant", "Grandma Elsa", "the Lodgers", "the Watchmaker", "a Forgotten Aunt", "the Sad Clown", "the Night Owl"]
+    },
+    "abandoned": {
+      "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
+      "noun": ["Ruin", "Wreck", "Husk", "Shell", "Squat", "Derelict", "Rotting House", "Burnt Block", "Condemned Building", "Hollow"],
+      "adj": ["Collapsed", "Gutted", "Rotten", "Haunted", "Fallen", "Mouldering", "Burnt", "Vandalised", "Silent", "Crumbling"],
+      "of": ["the Last Tenant", "Broken Windows", "the Fire Night", "the Squatters", "the Bad Landlord", "Damp and Rot", "the Evicted", "the Flood Year", "Forgotten Rent", "the Demolition Men"]
+    },
+    "basement": {
+      "pattern": ["{of}'s {noun}", "The {adj} {noun}", "{noun} of {of}", "The {adj} {noun} of {of}"],
+      "noun": ["Basement", "Boiler Room", "Cellar", "Storeroom", "Laundry Room", "Workshop", "Bunker Room", "Coal Hole", "Crawlspace", "Utility Room"],
+      "adj": ["Damp", "Flooded", "Dark", "Musty", "Locked", "Humming", "Cobwebbed", "Low", "Cold", "Secret"],
+      "of": ["the Caretaker", "the Old Boiler", "a Hoarder", "the Landlord", "Doctor Feld", "the Night Janitor", "a Missing Child", "the Building", "the Plumber", "the Collector"]
+    },
+    "laboratory": {
+      "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
+      "noun": ["Laboratory", "Research Wing", "Test Facility", "Institute", "Annex", "Proving Ground", "Clean Room", "Bioworks", "Testing Station", "Research Centre"],
+      "adj": ["Sealed", "Contaminated", "Secret", "Humming", "Abandoned", "Sterile", "Classified", "Burnt Out", "Restricted", "Silent"],
+      "of": ["Doctor Kessler", "Project Lantern", "the Ministry", "Applied Futures", "the Night Shift", "the Failed Trial", "Unit Nine", "the Black Budget", "the Grey Coats", "the Last Experiment"]
+    },
+    "factory": {
+      "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
+      "noun": ["Factory", "Works", "Mill", "Plant", "Foundry", "Assembly Hall", "Refinery", "Cannery", "Workshop", "Warehouse"],
+      "adj": ["Rusted", "Idle", "Roaring", "Shuttered", "Smoking", "Condemned", "Iron", "Greasy", "Endless", "Silent"],
+      "of": ["Henley and Sons", "the Union", "the Iron Wheel", "the Last Shift", "Consolidated Steel", "the Strike", "the Night Whistle", "the Old Boss", "Progress", "the Broken Belt"]
+    },
+    "castle": {
+      "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
+      "noun": ["Keep", "Castle", "Citadel", "Stronghold", "Fortress", "Donjon", "Hall", "Bastion", "Palace", "Tower"],
+      "adj": ["Grim", "Royal", "Crumbling", "Iron", "Black", "Ancient", "Proud", "Fallen", "High", "Lonely"],
+      "of": ["King Aldric", "the Usurper", "the Red Queen", "the Last Siege", "the Silver Banner", "Lord Mortane", "the Boy King", "the Broken Crown", "the Winter Court", "the Seven Knights"]
+    },
+    "church": {
+      "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
+      "noun": ["Church", "Chapel", "Abbey", "Cathedral", "Priory", "Basilica", "Kirk", "Oratory", "Minster", "Parish Church"],
+      "adj": ["Silent", "Holy", "Desecrated", "Hollow", "Candlelit", "Forgotten", "Grey", "Lonely", "Ruined", "Little"],
+      "of": ["Saint Columba", "the Weeping Virgin", "the Holy Name", "the Martyrs", "Our Lady", "the Last Mass", "the Bell Ringer", "Saint Ivo", "the Pilgrims", "the Good Shepherd"]
+    },
+    "mines": {
+      "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
+      "noun": ["Mines", "Diggings", "Pit", "Colliery", "Shafts", "Workings", "Quarry", "Seam", "Lode", "Delvings"],
+      "adj": ["Deep", "Black", "Flooded", "Collapsed", "Endless", "Glittering", "Abandoned", "Rich", "Hungry", "Cold"],
+      "of": ["the Iron Hill", "Old Grub", "the Silver Vein", "the Lost Crew", "Copper Gulch", "the Company", "the Canary", "the Long Dark", "the Gnome Kings", "Black Rock"]
+    },
+    "lair": {
+      "pattern": ["The {adj} {noun}", "{noun} of {of}", "The {noun} of {of}", "{adj} {noun} of {of}"],
+      "noun": ["Lair", "Den", "Nest", "Hollow", "Roost", "Burrow", "Warren", "Pit", "Hoard", "Kennel"],
+      "adj": ["Reeking", "Bone-Strewn", "Dread", "Hungry", "Smouldering", "Dark", "Ancient", "Gnawed", "Savage", "Deep"],
+      "of": ["the Wyrm", "the Many Teeth", "the Beast", "Old Scald", "the Pale Hunter", "the Brood Mother", "the Glutton", "the Silent Claw", "the Red Maw", "the Sleeper"]
     }
   }
 }

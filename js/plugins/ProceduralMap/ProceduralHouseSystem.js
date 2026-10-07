@@ -1611,7 +1611,7 @@
   //   DoorInn        -> an inn
   //   DoorShop       -> a shop
   //   DoorSkyscraper -> a 4-to-10-floor building  (seeded from the tile)
-  //   DoorDungeon    -> a coordinate-seeded dungeon (Dungeon/Crypt/Sewer/... by biome)
+  //   DoorDungeon    -> a seeded building interior (Biomes.json access: DoorDungeon)
   //   SignPark       -> recalls (summons) the last vehicle driven to the player
   //   SignBus        -> the fast-travel map, boarding as a Bus
   const PROC_MAP_ID = 636;
@@ -1755,12 +1755,14 @@
   }
 
   // Descend through a DoorDungeon tile into a procedural, coordinate-seeded
-  // dungeon. WorldMapReturn resolves the dungeon type from the surface biome's
-  // lowerLayer (Cave-family/none -> Dungeon, else Crypt / Sewer / ...).
+  // dungeon. WorldMapReturn rolls which one out of the structures whose
+  // Biomes.json access lists DoorDungeon (a dungeon, a shop, a hospital...).
   function enterSeededDungeon() {
     const key = "WorldMapReturn:enterDungeonDoor";
     if (PluginManager._commands && PluginManager._commands[key]) {
-      PluginManager.callCommand($gameMap._interpreter || {}, "WorldMapReturn", "enterDungeonDoor", {});
+      const door = _procDoorTile;
+      PluginManager.callCommand($gameMap._interpreter || {}, "WorldMapReturn", "enterDungeonDoor",
+        door ? { DoorX: door.x, DoorY: door.y } : {});
     } else {
       console.warn("WorldMapReturn not available for DoorDungeon.");
     }

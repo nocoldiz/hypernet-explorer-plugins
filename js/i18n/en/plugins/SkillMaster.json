@@ -722,7 +722,8 @@
       "rules": "Condition",
       "branch": "Branch",
       "effects": "Then",
-      "elseEffects": "Else"
+      "elseEffects": "Else",
+      "limits": "Limitation"
     },
     "empty": "Empty",
     "fitted": "Fitted",
@@ -752,8 +753,18 @@
       "locked": "This character's stats do not reach that piece.",
       "needsBranch": "Set a branch first.",
       "needsArg": "Choose what to bind it to.",
-      "missing": "That piece cannot go there."
-    }
+      "missing": "That piece cannot go there.",
+      "neverFires": "These limitations rule each other out, or rule out the trigger: the power could never be used."
+    },
+    "limitations": "Limitations",
+    "limitNone": "No limitations: the power costs its full price and asks its full requirements.",
+    "limitSummary": "Bound by {n} vow points: it costs {pct}% less KP and every stat requirement is {leeway} lower.",
+    "limitWeight": "Weight {n}",
+    "limitGives": "-{pct}% KP",
+    "limitWeightLabel": "Weight",
+    "limitGivesLabel": "Gives back",
+    "limitGivesValue": "{pct}% off the KP, every requirement {leeway} lower",
+    "reqLowered": "{stat} {have}/{req} (was {base})"
   },
   "hexorcize": {
     "button": "Hexorcize",
@@ -772,7 +783,24 @@
     "nothing": "Nothing magical is being carried.",
     "unmade": "{item} is unmade for {kp} KP."
   },
+  "lobotomagic": {
+    "button": "Lobotomagic",
+    "title": "Lobotomagic",
+    "detailTitle": "{name}'s Mind",
+    "blurb": "Cut a learned skill or spell out of a party member's mind and get back {pct}% of what teaching it would cost in Knowledge (KP). Skills granted by traits or gear cannot be cut.",
+    "back": "Back",
+    "forget": "Forget",
+    "confirm": "Sure?",
+    "refund": "Gives back",
+    "relearn": "To relearn",
+    "school": "School",
+    "pickSkill": "Choose a skill on the left.",
+    "nothing": "Nothing learned can be cut from this mind.",
+    "warning": "{name} will forget it for good. Learning it again costs the full price.",
+    "cut": "{name} forgets {skill} for {kp} KP."
+  },
   "tips": {
+    "member": "Member",
     "pick": "Pick",
     "walk": "Walk",
     "back": "Back",
@@ -799,7 +827,7 @@
         },
         "rail": {
           "name": "Workbenches",
-          "text": "On the right page: fuse spells, create a spell or a skill, view the magical systems, enchant weapons, equipment and books, write skill books and grimories, and hexorcize magical gear."
+          "text": "On the right page: fuse spells, create a spell or a skill, view the magical systems, enchant weapons, equipment and books, write skill books and grimories, hexorcize magical gear, and lobotomagic a learned skill away."
         },
         "help": {
           "name": "? Help",
@@ -966,6 +994,31 @@
         }
       }
     },
+    "lobotomagic": {
+      "title": "Lobotomagic",
+      "items": {
+        "skills": {
+          "name": "Learned skills",
+          "text": "Skills and spells the chosen party member has learned. Skills granted by traits or gear are not listed."
+        },
+        "refund": {
+          "name": "Gives back",
+          "text": "The KP each skill gives back when forgotten, part of what teaching it would cost."
+        },
+        "forget": {
+          "name": "Forget",
+          "text": "Press once to choose, again to confirm. This cannot be undone: learning it again costs the full price."
+        },
+        "member": {
+          "name": "Member",
+          "text": "Use the tabs, or left and right, to change party member."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
     "magicSystems": {
       "title": "Magical systems",
       "items": {
@@ -984,6 +1037,31 @@
         "lore": {
           "name": "Lore",
           "text": "What the system is and how rigorous it is."
+        },
+        "help": {
+          "name": "? Help",
+          "text": "Opens this sheet. On a controller, press Select; press it again, Back or Confirm to close."
+        }
+      }
+    },
+    "expression": {
+      "title": "Expression",
+      "items": {
+        "pieces": {
+          "name": "Pieces",
+          "text": "Each tab holds one kind of piece: the trigger that sets the power off, the conditions it waits for, what it does, the shape it takes and the limitations it is bound by. Confirm a card to fit it."
+        },
+        "limits": {
+          "name": "Limitations",
+          "text": "Vows the power must keep: a day it cannot be used, the only kind of creature it works on, a price paid each time. The more it is bound, the less it costs, and the further it can reach beyond this character's stats."
+        },
+        "blueprint": {
+          "name": "Blueprint",
+          "text": "The power as it stands. Take a piece off, turn a condition around with NOT, or switch the conditions between ALL and ANY."
+        },
+        "finalize": {
+          "name": "Finalize",
+          "text": "Spends knowledge on every new piece and makes the power real. A finalized power keeps working even if the stats it asked for are lost."
         },
         "help": {
           "name": "? Help",

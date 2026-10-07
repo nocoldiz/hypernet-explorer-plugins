@@ -401,7 +401,7 @@
             // hometown is her number, so the count belongs to the world rather
             // than to one savegame (CharacterCreationPresets.js).
             _emIncarnations: "emIncarnations",
-            // Eris was beaten in her own court (Economy/ErisTrial.js). She is
+            // Eris was beaten in her own court (Economy/TrialSystem.js). She is
             // gone from this WORLD, not from one savegame of it: the bounty
             // stops growing for everybody who plays here, and she stops turning
             // up on the world map asking anyone out
@@ -511,7 +511,7 @@
             // world seed, but the strike-off list (a lawyer recruited into some
             // party, and so replaced) has to outlive the savegame that recruited
             // them so every playthrough of this world briefs the same bar
-            // (ErisTrial.js, window.ErisLawyers).
+            // (TrialSystem.js, window.ErisLawyers).
             _erisLawyers: "erisLawyers",
             // Who stands which of the three 8-hour shifts behind each <Shop>
             // counter in the world, keyed "mapId_eventId" (ShopShiftManager,
@@ -615,7 +615,11 @@
             _furnitureBuilt: { prop: "placed", merge: mergeMapOf(mergeRecordList("id")) },
             _furnitureBuiltTiles: { prop: "tiles", merge: mergeMapOf(mergeRecordList("id")) },
             _furnitureBuiltId: { prop: "placedId", merge: mergeMax },
-            _furnitureBuiltTileId: { prop: "placedTileId", merge: mergeMax }
+            _furnitureBuiltTileId: { prop: "placedTileId", merge: mergeMax },
+            // Which ProceduralInteriors have been furnished, and with which plan,
+            // per square (FurnitureSystem.furnishInterior): furnished once for the
+            // world, so what one savegame carried off is not back for the next.
+            _furnitureFurnished: { prop: "furnished", merge: mergeByKey }
         },
         // Crops on the hand-made maps, keyed mapId_eventId. The procedural
         // fields next to them were already world-shared (plants.json -> plots),

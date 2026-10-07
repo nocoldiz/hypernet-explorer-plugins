@@ -165,7 +165,7 @@
     },
     "progressExpressionSeeds": {
       "title": "Expression Seeds",
-      "description": "An [Expression Seed] is used on one character from the backpack and unlocks their Expression. It is refused on a character who already has it.\n\nThe Expressions button on the right page of the skills benches lists everyone in the party with Expression unlocked, and stays greyed out while nobody has it."
+      "description": "An [Expression Seed] is used on one character from the backpack and unlocks their Expression. It is refused on a character who already has it.\n\nThe Expressions button on the right page of the skills benches lists everyone in the party with Expression unlocked, and stays greyed out while nobody has it.\n\nA power can be bound by limitations: never on a chosen day, only against one kind of creature, only by night, only at a price in blood or gold. The more a power is bound, the less it costs, and the further it can reach beyond the character's stats."
     },
     "gearSlots": {
       "title": "Equipment: Hands and Slots",

@@ -165,7 +165,7 @@
     },
     "progressExpressionSeeds": {
       "title": "Semi dell'Espressione",
-      "description": "Un [Seme dell'Espressione] si usa su un personaggio dallo zaino e ne sblocca l'Espressione. Non funziona su chi la possiede già.\n\nIl pulsante Espressioni nella pagina destra dei banchi delle abilità elenca chi nel gruppo ha l'Espressione sbloccata, e resta grigio finché nessuno la possiede."
+      "description": "Un [Seme dell'Espressione] si usa su un personaggio dallo zaino e ne sblocca l'Espressione. Non funziona su chi la possiede già.\n\nIl pulsante Espressioni nella pagina destra dei banchi delle abilità elenca chi nel gruppo ha l'Espressione sbloccata, e resta grigio finché nessuno la possiede.\n\nUn potere può essere legato da limitazioni: mai in un certo giorno, solo contro una specie di creatura, solo di notte, solo pagando un prezzo in sangue o in oro. Più un potere è legato, meno costa, e più può spingersi oltre le statistiche del personaggio."
     },
     "gearSlots": {
       "title": "Equipaggiamento: mani e slot",

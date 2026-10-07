@@ -150,14 +150,20 @@
   //   ornaments   deliberate dressing (pit props down a drift, graves in the
   //               wall niches, a pentagram at the centre) laid before the old
   //               random scatter, which stays on top at a lower rate
-  //   entrances   which terrain feature may open onto it. An empty list means
-  //               the place is never rolled: the Sewer belongs to the towns
-  //               that carry it (Grate) and a patron's Vault to their Hatch.
+  //   walls       how its walls came to be (WALL STYLES) and what of
+  //   ecology     the surface families whose creatures it shelters, for the
+  //               quest system's "is this creature native to the site" only.
+  //               It does NOT tilt where the structure opens: that roll is by
+  //               weight alone, under any surface at all.
   //   enemy       who lives there, and how dangerous it is
   //
-  // `affinity` is the surface families whose stairways favour this structure
-  // (ice country keeps frozen caves under it, a graveyard catacombs); see
-  // ProceduralTerrainInteractions, which owns the roll.
+  // Which terrain feature opens onto a structure is NOT written here: it is
+  // the `access` key of the structure's own biome in Biomes.json (DoorDungeon,
+  // StairsDown, StairsUp, or Cave: a natural cave only at a cave mouth), read through
+  // entrancesOf. A building is behind a dungeon door, a crypt down a stairway,
+  // a temple up one. Every structure can turn up under any surface at all,
+  // field or desert alike, by its catalogue weight; an empty list means the
+  // place is never rolled (the Sewer is the Grate's alone).
   const DANGER = { SAFE: "safe", ORDINARY: "ordinary", HOSTILE: "hostile", DEADLY: "deadly" };
 
   // i18n-ignore-start  biome ids, layout/rule/feature names and enemy tags: every
@@ -168,10 +174,11 @@
     // --- the five that already existed, reworked ---------------------------
     {
       key: "Dungeon", layout: "bsp", weight: 24, name: "dungeon",
-      entrances: ["stairsDown"], affinity: ["dead", "urban", "mountain", "rural"],
+      ecology: ["dead", "urban", "mountain", "rural"],
       danger: DANGER.ORDINARY,
       palette: { main: ["DungeonFloor"], accents: ["Pavement", "DungeonFloor", "Dirt"],
                  rim: ["DungeonWall", "CaveWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["stone"] },
       patterns: ["border", "checker", "runner", "none", "none"],
       ornaments: ["braziers", "stoneRims", "statuePairs"],
       dressing: { floor: 0.05, wall: 0.1 },
@@ -181,10 +188,11 @@
     },
     {
       key: "Crypt", layout: "tombs", weight: 20, name: "crypt",
-      entrances: ["stairsDown"], affinity: ["dead", "rural", "desert"],
+      ecology: ["dead", "rural", "desert"],
       danger: DANGER.ORDINARY,
       palette: { main: ["DungeonFloor"], accents: ["Dirt", "Pavement"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["stone", "sandstone"] },
       patterns: ["border", "medallion", "none"],
       ornaments: ["nicheGraves", "bonePiles", "candleRing"],
       dressing: { floor: 0.06, wall: 0.1 },
@@ -194,10 +202,11 @@
     },
     {
       key: "LootCellar", layout: "cellar", weight: 26, name: "cellar",
-      entrances: ["stairsDown"], affinity: ["rural", "urban", "dead"],
+      ecology: ["rural", "urban", "dead"],
       danger: DANGER.SAFE,
       palette: { main: ["DungeonFloor"], accents: ["WoodenFloor", "Dirt"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["wood", "stone"] },
       patterns: ["border", "none", "none"],
       ornaments: ["cratePiles", "braziers"],
       dressing: { floor: 0.08, wall: 0.07 },
@@ -206,10 +215,11 @@
     },
     {
       key: "CaveDen", layout: "cavern", weight: 20, name: "den",
-      entrances: ["stairsDown", "cave"], affinity: ["mountain", "wood", "rural"],
+      ecology: ["mountain", "wood", "rural"],
       danger: DANGER.ORDINARY,
       palette: { main: ["CaveFloor"], accents: ["Dirt"],
                  rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "natural", materials: ["rock", "redrock"] },
       patterns: ["none"],
       ornaments: ["bonePiles", "rockFall"],
       dressing: { floor: 0.12, wall: 0.1 },
@@ -218,10 +228,11 @@
     },
     {
       key: "TempleInside", layout: "temple", weight: 8, name: "temple",
-      entrances: ["stairsDown", "stairsUp"], affinity: ["dead", "weird", "wood"],
+      ecology: ["dead", "weird", "wood"],
       danger: DANGER.DEADLY,
       palette: { main: ["DungeonFloor"], accents: ["Pavement", "Carpet"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["sandstone", "stone"] },
       patterns: ["runner", "border", "medallion"],
       ornaments: ["columnRows", "statuePairs", "candleRing"],
       dressing: { floor: 0.05, wall: 0.1 },
@@ -233,9 +244,11 @@
     // --- entrance-exclusive: only reached through one feature ---------------
     {
       key: "Sewer", layout: "canals", weight: 0, name: "sewer",
-      entrances: [], affinity: [], danger: DANGER.ORDINARY,
+      ecology: [],
+      danger: DANGER.ORDINARY,
       palette: { main: ["DungeonFloor"], accents: ["Pavement", "CaveFloor"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["brick"] },
       patterns: ["border", "none"],
       ornaments: ["waterLanes", "railLine"],
       dressing: { floor: 0.05, wall: 0.14 },
@@ -249,9 +262,11 @@
     // hundred descents.
     {
       key: "PatronVault", layout: "vault", weight: 1, name: "vault",
-      entrances: ["stairsDown"], affinity: [], danger: DANGER.HOSTILE,
+      ecology: [],
+      danger: DANGER.HOSTILE,
       palette: { main: ["DungeonFloor"], accents: ["Carpet", "Parquet"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["stone", "brick"] },
       patterns: ["border", "medallion", "checker"],
       ornaments: ["columnRows", "braziers", "stoneRims"],
       dressing: { floor: 0.44, wall: 0.2 },
@@ -263,10 +278,11 @@
     // --- the new catalogue --------------------------------------------------
     {
       key: "Catacombs", layout: "warren", weight: 16, name: "catacombs",
-      entrances: ["stairsDown"], affinity: ["dead", "urban", "desert"],
+      ecology: ["dead", "urban", "desert"],
       danger: DANGER.ORDINARY,
       palette: { main: ["Dirt"], accents: ["DungeonFloor", "CaveFloor"],
                  rim: ["CaveWall", "DungeonWall"], wall: "dungeon" },
+      walls: { style: "hewn", materials: ["rock", "stone"] },
       patterns: ["none", "speckle"],
       ornaments: ["nicheGraves", "bonePiles", "candleRing"],
       dressing: { floor: 0.09, wall: 0.12 },
@@ -276,10 +292,11 @@
     },
     {
       key: "Mineshaft", layout: "drifts", weight: 16, name: "mine",
-      entrances: ["stairsDown"], affinity: ["mountain", "desert", "rural"],
+      ecology: ["mountain", "desert", "rural"],
       danger: DANGER.ORDINARY,
       palette: { main: ["Dirt"], accents: ["CaveFloor", "WoodenFloor"],
                  rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "hewn", materials: ["rock", "redrock"] },
       patterns: ["runner", "none"],
       ornaments: ["pitProps", "oreVeins", "railLine", "cratePiles"],
       dressing: { floor: 0.07, wall: 0.1 },
@@ -289,10 +306,11 @@
     },
     {
       key: "CaveFrozen", layout: "cavern", weight: 12, name: "frozenCave",
-      entrances: ["stairsDown", "cave"], affinity: ["ice"],
+      ecology: ["ice"],
       danger: DANGER.HOSTILE,
       palette: { main: ["CaveFloor"], accents: ["Salt", "Pavement"],
                  rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "natural", materials: ["rock"] },
       patterns: ["speckle", "none"],
       ornaments: ["iceSpikes", "rockFall", "crystalClusters"],
       dressing: { floor: 0.1, wall: 0.08 },
@@ -301,10 +319,11 @@
     },
     {
       key: "Cistern", layout: "piers", weight: 12, name: "cistern",
-      entrances: ["stairsDown"], affinity: ["wet", "urban", "rural"],
+      ecology: ["wet", "urban", "rural"],
       danger: DANGER.ORDINARY,
       palette: { main: ["Pavement"], accents: ["DungeonFloor", "CaveFloor"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["stone", "brick"] },
       patterns: ["border", "checker", "none"],
       ornaments: ["waterLanes", "columnRows", "puddles"],
       dressing: { floor: 0.05, wall: 0.13 },
@@ -314,10 +333,11 @@
     },
     {
       key: "FungalWarren", layout: "warren", weight: 14, name: "fungal",
-      entrances: ["stairsDown", "cave"], affinity: ["wood", "wet", "mountain"],
+      ecology: ["wood", "wet", "mountain"],
       danger: DANGER.ORDINARY,
       palette: { main: ["Dirt"], accents: ["CaveFloor", "Grass"],
                  rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "natural", materials: ["moss"] },
       patterns: ["speckle", "none"],
       ornaments: ["mushroomBeds", "vineCurtains", "puddles"],
       dressing: { floor: 0.14, wall: 0.1 },
@@ -326,10 +346,11 @@
     },
     {
       key: "CrystalCavern", layout: "chambers", weight: 10, name: "crystal",
-      entrances: ["stairsDown", "cave"], affinity: ["mountain", "ice", "weird"],
+      ecology: ["mountain", "ice", "weird"],
       danger: DANGER.HOSTILE,
       palette: { main: ["CaveFloor"], accents: ["Salt", "Pavement"],
                  rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "natural", materials: ["rock"] },
       patterns: ["speckle", "none"],
       ornaments: ["crystalClusters", "oreVeins"],
       dressing: { floor: 0.1, wall: 0.09 },
@@ -338,10 +359,11 @@
     },
     {
       key: "Oubliette", layout: "cells", weight: 11, name: "oubliette",
-      entrances: ["stairsDown"], affinity: ["dead", "urban", "mountain"],
+      ecology: ["dead", "urban", "mountain"],
       danger: DANGER.HOSTILE,
       palette: { main: ["DungeonFloor"], accents: ["Pavement", "Dirt"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["stone"] },
       patterns: ["border", "none"],
       ornaments: ["cellDoors", "chains", "bonePiles"],
       dressing: { floor: 0.07, wall: 0.14 },
@@ -351,10 +373,11 @@
     },
     {
       key: "SunkenLibrary", layout: "halls", weight: 7, name: "library",
-      entrances: ["stairsDown", "stairsUp"], affinity: ["weird", "dead", "urban"],
+      ecology: ["weird", "dead", "urban"],
       danger: DANGER.DEADLY,
       palette: { main: ["Parquet"], accents: ["Carpet", "WoodenFloor"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["brick", "wood"] },
       patterns: ["runner", "border", "medallion"],
       ornaments: ["shelfStacks", "readingDesks", "candleRing"],
       dressing: { floor: 0.06, wall: 0.1 },
@@ -364,10 +387,11 @@
     },
     {
       key: "UnderForge", layout: "grid", weight: 9, name: "forge",
-      entrances: ["stairsDown"], affinity: ["volcanic", "mountain", "urban"],
+      ecology: ["volcanic", "mountain", "urban"],
       danger: DANGER.HOSTILE,
       palette: { main: ["Metal"], accents: ["DungeonFloor", "Dirt"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["brick", "stone"] },
       patterns: ["checker", "border", "none"],
       ornaments: ["lavaFlow", "forgeGear", "chains"],
       dressing: { floor: 0.08, wall: 0.12 },
@@ -377,10 +401,11 @@
     },
     {
       key: "ColdWarBunker", layout: "grid", weight: 10, name: "bunker",
-      entrances: ["stairsDown"], affinity: ["urban", "rural", "ice"],
+      ecology: ["urban", "rural", "ice"],
       danger: DANGER.HOSTILE,
       palette: { main: ["Metal"], accents: ["TechnoFloor", "Pavement"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster"] },
       patterns: ["checker", "border", "none"],
       ornaments: ["techPanels", "cratePiles", "railLine"],
       dressing: { floor: 0.07, wall: 0.12 },
@@ -390,10 +415,11 @@
     },
     {
       key: "BuriedLab", layout: "grid", weight: 8, name: "lab",
-      entrances: ["stairsDown"], affinity: ["urban", "weird"],
+      ecology: ["urban", "weird"],
       danger: DANGER.HOSTILE,
       palette: { main: ["TechnoFloor"], accents: ["Metal", "Techno"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster"] },
       patterns: ["checker", "border"],
       ornaments: ["glassWalls", "techPanels", "readingDesks"],
       dressing: { floor: 0.07, wall: 0.11 },
@@ -403,10 +429,11 @@
     },
     {
       key: "ProfaneShrine", layout: "rings", weight: 6, name: "shrine",
-      entrances: ["stairsDown", "stairsUp"], affinity: ["weird", "dead", "volcanic"],
+      ecology: ["weird", "dead", "volcanic"],
       danger: DANGER.DEADLY,
       palette: { main: ["DungeonFloor"], accents: ["Carpet", "Pavement"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["brick", "stone"] },
       patterns: ["medallion", "border"],
       ornaments: ["pentagramCentre", "candleRing", "bloodStains", "statuePairs"],
       dressing: { floor: 0.07, wall: 0.12 },
@@ -416,10 +443,11 @@
     },
     {
       key: "SmugglerTunnel", layout: "tube", weight: 14, name: "smuggler",
-      entrances: ["stairsDown"], affinity: ["rural", "urban", "wet"],
+      ecology: ["rural", "urban", "wet"],
       danger: DANGER.SAFE,
       palette: { main: ["Dirt"], accents: ["WoodenFloor", "CaveFloor"],
                  rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "hewn", materials: ["redrock", "rock"] },
       patterns: ["none", "runner"],
       ornaments: ["cratePiles", "pitProps"],
       dressing: { floor: 0.09, wall: 0.08 },
@@ -428,10 +456,11 @@
     },
     {
       key: "SeaGrotto", layout: "cavern", weight: 11, name: "grotto",
-      entrances: ["stairsDown", "cave"], affinity: ["wet"],
+      ecology: ["wet"],
       danger: DANGER.ORDINARY,
       palette: { main: ["CaveFloor"], accents: ["Sand", "Dirt"],
                  rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "natural", materials: ["rock"] },
       patterns: ["speckle", "none"],
       ornaments: ["tidePool", "shellBeds", "rockFall"],
       dressing: { floor: 0.11, wall: 0.08 },
@@ -440,10 +469,11 @@
     },
     {
       key: "LavaTube", layout: "tube", weight: 7, name: "lavaTube",
-      entrances: ["stairsDown", "cave"], affinity: ["volcanic", "mountain"],
+      ecology: ["volcanic", "mountain"],
       danger: DANGER.DEADLY,
       palette: { main: ["CaveFloor"], accents: ["Dirt", "Metal"],
                  rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "natural", materials: ["redrock"] },
       patterns: ["speckle", "none"],
       ornaments: ["lavaFlow", "rockFall", "crystalClusters"],
       dressing: { floor: 0.08, wall: 0.08 },
@@ -452,10 +482,11 @@
     },
     {
       key: "Barrow", layout: "mound", weight: 10, name: "barrow",
-      entrances: ["stairsDown", "stairsUp"], affinity: ["rural", "dead", "ice", "mountain"],
+      ecology: ["rural", "dead", "ice", "mountain"],
       danger: DANGER.HOSTILE,
       palette: { main: ["Dirt"], accents: ["DungeonFloor", "Grass"],
                  rim: ["CaveWall", "DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["stone"] },
       patterns: ["border", "medallion", "none"],
       ornaments: ["nicheGraves", "statuePairs", "hoard", "bonePiles"],
       dressing: { floor: 0.08, wall: 0.1 },
@@ -465,10 +496,11 @@
     },
     {
       key: "MetroStation", layout: "platform", weight: 9, name: "metro",
-      entrances: ["stairsDown"], affinity: ["urban"],
+      ecology: ["urban"],
       danger: DANGER.ORDINARY,
       palette: { main: ["Pavement"], accents: ["Metal", "DungeonFloor"],
                  rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster", "stone"] },
       patterns: ["border", "checker", "none"],
       ornaments: ["railLine", "platformFittings", "techPanels"],
       dressing: { floor: 0.07, wall: 0.12 },
@@ -478,16 +510,252 @@
     },
     {
       key: "SaltWorks", layout: "drifts", weight: 9, name: "salt",
-      entrances: ["stairsDown"], affinity: ["desert", "wet", "ice"],
+      ecology: ["desert", "wet", "ice"],
       danger: DANGER.ORDINARY,
       palette: { main: ["Salt"], accents: ["Dirt", "CaveFloor"],
                  rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "hewn", materials: ["rock"] },
       patterns: ["border", "runner", "none"],
       ornaments: ["pitProps", "oreVeins", "cratePiles", "puddles"],
       dressing: { floor: 0.07, wall: 0.09 },
       enemy: { biomes: ["Mines", "Desert", "SaltFlats", "Underdark"], archetypes: ["Golem", "Crustacean", "Elemental", "Insectoid"], cap: 5, boss: true },
       chests: [2, 4],
       hazards: true,
+    },
+    // --- the interior biomes, generated as structures ------------------------
+    // These were already biomes (an authored map wears them as its <Biome:>
+    // tag, which is what their enemy rosters were written for). Down here they
+    // are places the party finds behind a dungeon door, down a stairway or up
+    // one (Biomes.json `access`). `ownRoster` keeps an authored map tagged
+    // with one of them on its own encounters: the catalogue's numbers are for
+    // the generated version only.
+    {
+      key: "HardwareStore", layout: "shopfloor", weight: 9, name: "hardware",
+      ecology: ["urban", "rural"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["Pavement"], accents: ["Metal", "DungeonFloor"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster", "brick"] },
+      patterns: ["checker", "border", "none"],
+      ornaments: ["cratePiles", "techPanels"],
+      dressing: { floor: 0.03, wall: 0.06 },
+      enemy: { biomes: ["HardwareStore", "City"], cap: 3, boss: false },
+      chests: [1, 3],
+    },
+    {
+      key: "GroceryStore", layout: "shopfloor", weight: 8, name: "grocery",
+      ecology: ["urban"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["Pavement"], accents: ["TechnoFloor", "Metal"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster"] },
+      patterns: ["checker", "none"],
+      ornaments: ["cratePiles", "puddles"],
+      dressing: { floor: 0.03, wall: 0.05 },
+      enemy: { biomes: ["GroceryStore", "City"], cap: 3, boss: false },
+      chests: [1, 2],
+    },
+    {
+      key: "Store", layout: "shopfloor", weight: 8, name: "shop",
+      ecology: ["urban", "rural"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["Parquet"], accents: ["Carpet", "Pavement"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster", "brick", "wood"] },
+      patterns: ["border", "runner", "none"],
+      ornaments: ["cratePiles"],
+      dressing: { floor: 0.03, wall: 0.05 },
+      enemy: { biomes: ["Store", "City"], cap: 3, boss: false },
+      chests: [1, 3],
+    },
+    {
+      key: "Hospital", layout: "ward", weight: 8, name: "hospital",
+      ecology: ["urban"],
+      danger: DANGER.HOSTILE, ownRoster: true,
+      palette: { main: ["TechnoFloor"], accents: ["Pavement", "Metal"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster"] },
+      patterns: ["border", "checker", "none"],
+      ornaments: ["techPanels", "bloodStains"],
+      dressing: { floor: 0.04, wall: 0.08 },
+      enemy: { biomes: ["Hospital", "Laboratory"], archetypes: ["Mutant", "Undead", "Ghost", "Robot"], cap: 4, boss: true },
+      chests: [2, 4],
+      hazards: true,
+    },
+    {
+      key: "Clinic", layout: "ward", weight: 7, name: "clinic",
+      ecology: ["urban", "rural"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["TechnoFloor"], accents: ["Pavement"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster"] },
+      patterns: ["border", "none"],
+      ornaments: ["techPanels"],
+      dressing: { floor: 0.03, wall: 0.06 },
+      enemy: { biomes: ["Clinic", "Hospital"], cap: 3, boss: false },
+      chests: [1, 3],
+    },
+    {
+      key: "Tavern", layout: "taproom", weight: 9, name: "tavern",
+      ecology: ["rural", "urban"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["WoodenFloor"], accents: ["Parquet", "Carpet"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["wood", "stone"] },
+      patterns: ["runner", "border", "none"],
+      ornaments: ["cratePiles", "braziers"],
+      dressing: { floor: 0.04, wall: 0.07 },
+      enemy: { biomes: ["Tavern", "Village"], archetypes: ["Humanoid", "Beast"], cap: 3, boss: false },
+      chests: [1, 3],
+    },
+    {
+      key: "Restaurant", layout: "taproom", weight: 7, name: "restaurant",
+      ecology: ["urban"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["Parquet"], accents: ["Carpet", "Pavement"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster", "brick"] },
+      patterns: ["checker", "border", "none"],
+      ornaments: ["cratePiles"],
+      dressing: { floor: 0.03, wall: 0.05 },
+      enemy: { biomes: ["Restaurant", "City"], cap: 3, boss: false },
+      chests: [1, 2],
+    },
+    {
+      key: "Farmhouse", layout: "house", weight: 8, name: "farmhouse",
+      ecology: ["rural"],
+      danger: DANGER.SAFE, ownRoster: true,
+      palette: { main: ["WoodenFloor"], accents: ["Dirt", "Carpet"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["wood", "stone"] },
+      patterns: ["runner", "none"],
+      ornaments: ["cratePiles"],
+      dressing: { floor: 0.05, wall: 0.06 },
+      enemy: { biomes: ["Farmhouse", "Farm"], cap: [1, 3], boss: false },
+      chests: [1, 3],
+    },
+    {
+      key: "HousesInside", layout: "house", weight: 9, name: "house",
+      ecology: ["urban", "rural"],
+      danger: DANGER.SAFE, ownRoster: true,
+      palette: { main: ["WoodenFloor"], accents: ["Carpet", "Parquet"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster", "wood"] },
+      patterns: ["border", "runner", "none"],
+      ornaments: ["cratePiles"],
+      dressing: { floor: 0.03, wall: 0.05 },
+      enemy: { biomes: ["HousesInside", "Houses"], cap: [1, 3], boss: false },
+      chests: [1, 3],
+    },
+    {
+      key: "AbandonedInside", layout: "house", weight: 10, name: "abandoned",
+      ecology: ["dead", "urban"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["DungeonFloor"], accents: ["Dirt", "WoodenFloor"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "ruined", materials: ["brick", "plaster", "stone"] },
+      patterns: ["speckle", "none"],
+      ornaments: ["rockFall", "vineCurtains", "puddles"],
+      dressing: { floor: 0.08, wall: 0.1 },
+      enemy: { biomes: ["AbandonedInside", "Abandoned", "Ruins"], cap: 4, boss: true },
+      chests: [1, 3],
+      hazards: true,
+    },
+    {
+      key: "Basement", layout: "house", weight: 9, name: "basement",
+      ecology: ["urban", "rural"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["Pavement"], accents: ["DungeonFloor", "Dirt"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["brick", "plaster"] },
+      patterns: ["border", "none"],
+      ornaments: ["cratePiles", "puddles"],
+      dressing: { floor: 0.05, wall: 0.08 },
+      enemy: { biomes: ["Basement", "Sewer"], cap: 3, boss: false },
+      chests: [1, 3],
+    },
+    {
+      key: "Laboratory", layout: "grid", weight: 7, name: "laboratory",
+      ecology: ["urban", "weird"],
+      danger: DANGER.HOSTILE, ownRoster: true,
+      palette: { main: ["TechnoFloor"], accents: ["Metal", "Techno"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["plaster"] },
+      patterns: ["checker", "border"],
+      ornaments: ["glassWalls", "techPanels"],
+      dressing: { floor: 0.05, wall: 0.1 },
+      enemy: { biomes: ["Laboratory", "Spacecenter"], archetypes: ["Robot", "Mutant", "Slime", "Drone"], cap: 5, boss: true },
+      chests: [2, 5],
+      hazards: true,
+    },
+    {
+      key: "FactoryInside", layout: "factory", weight: 8, name: "factory",
+      ecology: ["urban"],
+      danger: DANGER.HOSTILE, ownRoster: true,
+      palette: { main: ["Metal"], accents: ["Pavement", "DungeonFloor"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["brick", "plaster"] },
+      patterns: ["checker", "none"],
+      ornaments: ["forgeGear", "chains", "techPanels"],
+      dressing: { floor: 0.05, wall: 0.1 },
+      enemy: { biomes: ["FactoryInside", "Factory"], archetypes: ["Robot", "Golem", "Drone", "Humanoid"], cap: 5, boss: true },
+      chests: [2, 4],
+      hazards: true,
+    },
+    {
+      key: "CastleInside", layout: "keep", weight: 8, name: "castle",
+      ecology: ["dead", "mountain"],
+      danger: DANGER.HOSTILE, ownRoster: true,
+      palette: { main: ["DungeonFloor"], accents: ["Carpet", "Pavement"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["stone"] },
+      patterns: ["runner", "border", "medallion"],
+      ornaments: ["braziers", "statuePairs", "columnRows"],
+      dressing: { floor: 0.04, wall: 0.1 },
+      enemy: { biomes: ["CastleInside", "Castle"], archetypes: ["ArmoredKnight", "Humanoid", "Undead", "Ghost"], cap: 5, boss: true },
+      chests: [3, 6],
+      hazards: true,
+    },
+    {
+      key: "ChurchInside", layout: "temple", weight: 7, name: "church",
+      ecology: ["dead", "rural"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["DungeonFloor"], accents: ["Carpet", "Parquet"],
+                 rim: ["DungeonWall"], wall: "dungeon" },
+      walls: { style: "built", materials: ["stone", "sandstone"] },
+      patterns: ["runner", "medallion", "border"],
+      ornaments: ["candleRing", "statuePairs"],
+      dressing: { floor: 0.04, wall: 0.08 },
+      enemy: { biomes: ["ChurchInside", "Graveyard"], archetypes: ["Undead", "Ghost", "Skeleton"], cap: 4, boss: true },
+      chests: [2, 4],
+      hazards: true,
+    },
+    {
+      key: "Mines", layout: "shaft", weight: 12, name: "mines",
+      ecology: ["mountain", "desert"],
+      danger: DANGER.ORDINARY, ownRoster: true,
+      palette: { main: ["Dirt"], accents: ["CaveFloor", "WoodenFloor"],
+                 rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "hewn", materials: ["rock", "redrock"] },
+      patterns: ["runner", "none"],
+      ornaments: ["pitProps", "oreVeins", "railLine"],
+      dressing: { floor: 0.07, wall: 0.1 },
+      enemy: { biomes: ["Underdark", "Cave", "Petro cave"], archetypes: ["Gnome", "Golem", "Insectoid", "CrystalEntity", "Bat"], cap: 5, boss: true },
+      chests: [2, 4],
+      hazards: true,
+    },
+    {
+      key: "Lair", layout: "cavern", weight: 8, name: "lair",
+      ecology: ["mountain", "volcanic", "wood"],
+      danger: DANGER.DEADLY, ownRoster: true,
+      palette: { main: ["CaveFloor"], accents: ["Dirt"],
+                 rim: ["CaveWall"], wall: "cave" },
+      walls: { style: "natural", materials: ["redrock", "rock"] },
+      patterns: ["speckle", "none"],
+      ornaments: ["bonePiles", "hoard", "rockFall"],
+      dressing: { floor: 0.1, wall: 0.08 },
+      enemy: { biomes: ["Lair", "Cave", "Underdark"], cap: 4, boss: true },
+      chests: [2, 4],
     },
   ];
 
@@ -496,8 +764,28 @@
   const STRUCTURE_INDEX = {};
   for (const s of STRUCTURES) STRUCTURE_INDEX[s.key.toLowerCase()] = s;
 
+  // Biomes.json `access` names, to the entrance ids the entrance roll speaks.
+  const ACCESS_IDS = { StairsDown: "stairsDown", StairsUp: "stairsUp", Cave: "cave", DoorDungeon: "doorDungeon" };
+  // The terrain features that open onto a structure, off its biome's own
+  // `access` key. Read on first use (the biomes are registered lazily) and
+  // kept; [] until the biomes are there to be read.
+  function entrancesOf(S) {
+    if (!S) return [];
+    if (S._entrances) return S._entrances;
+    const list = (window.WorldGen && window.WorldGen.Biomes) || null;
+    if (!list || !list.length) return [];
+    const b = list.find((x) => x && x.name === S.key);
+    S._entrances = ((b && b.access) || []).map((a) => ACCESS_IDS[a] || a);
+    return S._entrances;
+  }
+  for (const s of STRUCTURES) {
+    Object.defineProperty(s, "entrances", { get() { return entrancesOf(this); }, enumerable: false });
+  }
+
   // The carve of the most recent structure generated (see generateDungeonBiome).
   let _lastCarved = null;
+  // The same pass's rooms, wall faces and furniture plan (publishInterior).
+  let _lastInterior = null;
 
   // The entry behind a biome name, or null. Dungeon / Crypt / Sewer are matched
   // on their PREFIX as they always have been (a "DungeonIce" or "Sewer2" in a
@@ -711,10 +999,18 @@
     304: [80, 81, 82, 83, 84, 85, 86, 87, 96, 97, 98, 99, 100, 101, 102, 103, 112, 113, 114, 115, 116, 117, 118, 119],
   };
 
-  function pickA4WallMaterial(tilesetId, rng) {
+  // The structure's own wall materials (S.walls.materials, see WALL STYLES),
+  // never the whole sheet: the sheet also holds a hedge and a blank slot.
+  function pickA4WallMaterial(tilesetId, rng, S) {
     const tops = A4_WALL_TOP_KINDS[tilesetId];
     if (!tops || !tops.length) return null;
-    const top = tops[Math.floor(rng() * tops.length)];
+    const wanted = (S && S.walls && S.walls.materials) || ["stone"];
+    let pool = [];
+    for (const m of wanted)
+      for (const k of A4_WALL_MATERIALS[m] || []) if (tops.indexOf(k) >= 0 && pool.indexOf(k) < 0) pool.push(k);
+    if (!pool.length) pool = A4_WALL_MATERIALS.stone.filter((k) => tops.indexOf(k) >= 0);
+    if (!pool.length) return null;
+    const top = pool[Math.floor(rng() * pool.length)];
     return { top, side: top + 8 };
   }
 
@@ -876,7 +1172,7 @@
       wall,
       // A real A4 wall/ceiling autotile pair, when this tileset's A4 sheet is
       // registered (see A4_WALL_TOP_KINDS); null falls back to `wall`/`rim`.
-      wallA4: pickA4WallMaterial(tilesetId, rng),
+      wallA4: pickA4WallMaterial(tilesetId, rng, S),
       water: waterList && waterList.length ? waterList[0] : 0,
       lava: lavaList && lavaList.length ? lavaList[Math.floor(rng() * lavaList.length)] : 0,
       patterns: (S && S.patterns && S.patterns.length) ? S.patterns : ["none"],
@@ -1002,522 +1298,951 @@
 
   // i18n-ignore-end
 
-  /**
-   * Rewritten dungeon/crypt/sewer generator.
-   *   - DungeonFloor  -> room / corridor pavement (only passable variants used)
-   *   - Ceiling       -> a thin rock rim hugging the rooms and corridors and the
-   *                      area above the wall faces. The dead mass further out is
-   *                      left as empty tiles (black), so the plan reads as rooms
-   *                      drawn on a void instead of drowning in tiled rubble.
-   *   - DungeonWall   -> a single random 3-tall vertical strip drawn on the north
-   *                      face of every room and corridor only; south, east and
-   *                      west stay open onto the passable Ceiling rim
-   *   - Biome features -> decorations placed pathing-safely: floor props on
-   *                      fully-enclosed interior tiles, wall fixtures (torches,
-   *                      chains, drains, ...) hung on the impassable wall faces.
-   *                      Sewers always drip Drain fixtures from their walls.
-   * Dungeon / Crypt / Sewer use different layouts, floor palettes and canals so
-   * they read very differently. Always carves ONE entrance to the top border and
-   * returns the interior spawn tile (mapData.spawnX/spawnY/spawnDir) plus the room
-   * rectangles (mapData.rooms) so prefabs can be fitted inside rooms.
-   */
+  // ===========================================================================
+  // WALL STYLES AND MATERIALS
+  // ===========================================================================
+  // A structure's walls came to be in one of three ways, and the catalogue
+  // entry says which (`walls.style`):
+  //   built    masonry laid by hand: straight faces, square corners, every face
+  //            the full WALL_HEIGHT, and the carve normalised so no face ever
+  //            stands shorter than the one beside it
+  //   ruined   built once and fallen in since (an abandoned building): the
+  //            ruled plan is still there, but the walls are broken through in
+  //            places, the corners crumbled and the faces two or three tiles
+  //   hewn     cut through rock with tools (a mine, a smuggler's run, the
+  //            catacombs): the plan is still deliberate, but its edges are
+  //            chipped back into the rock and the faces come out two or three
+  //            tiles tall
+  //   natural  never built at all (a cave, a grotto, a lava tube): the outline
+  //            is eroded by noise, bitten into by alcoves and left jagged where
+  //            a built wall would be levelled, rock pillars are kept standing,
+  //            and the faces rise and fall along the rock between one and three
+  //            tiles
+  // `walls.materials` names families of A4 wall autotiles on the Dungeon
+  // tileset's MightyPack Int-A4 sheet (see A4_WALL_TOP_KINDS for how a top
+  // kind pairs with its side). The hedge (114), the wooden palisade (98) and
+  // the unpainted slot (119) are on no list: they used to be dealt out like any
+  // other wall, which is how a crypt came to be walled with a privet hedge.
+  const WALL_STYLES = ["built", "ruined", "hewn", "natural"];
+  const A4_WALL_MATERIALS = {
+    stone:     [80, 81, 82, 85, 99],
+    brick:     [83, 84, 86, 87, 100, 101],
+    sandstone: [102, 103],
+    plaster:   [112, 113],
+    wood:      [96, 97],
+    rock:      [117],
+    redrock:   [115, 118],
+    moss:      [116],
+  };
+
+  function wallStyleOf(S) {
+    const st = S && S.walls && S.walls.style;
+    return WALL_STYLES.indexOf(st) >= 0 ? st : "built";
+  }
+
+  // Smooth value noise on a lattice of `cell` tiles, seeded, in [0, 1). The
+  // natural wall pass reads it to decide where the rock bulges in and where it
+  // has been worn back, so neighbouring tiles agree and the outline wanders
+  // instead of fraying tile by tile.
+  function valueNoise2D(seed, cell) {
+    const hash = (ix, iy) => {
+      let h = (Math.imul(ix, 374761393) + Math.imul(iy, 668265263) + Math.imul(seed | 0, 1442695041)) | 0;
+      h = Math.imul(h ^ (h >>> 13), 1274126177);
+      return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+    };
+    const smooth = (t) => t * t * (3 - 2 * t);
+    return (x, y) => {
+      const gx = x / cell, gy = y / cell;
+      const ix = Math.floor(gx), iy = Math.floor(gy);
+      const fx = smooth(gx - ix), fy = smooth(gy - iy);
+      const a = hash(ix, iy), b = hash(ix + 1, iy), c = hash(ix, iy + 1), d = hash(ix + 1, iy + 1);
+      const top = a + (b - a) * fx, bot = c + (d - c) * fx;
+      return top + (bot - top) * fy;
+    };
+  }
+
+  // ===========================================================================
+  // INTERIOR FURNISHING
+  // ===========================================================================
+  // Every piece in js/db/Items/Furniture.json carries `interiors`: the list of
+  // ProceduralInteriors it belongs in, empty for most of the catalogue. A piece
+  // with a non-empty list also carries `interiorKind`, what it IS to a room (a
+  // tomb, a shelf, a light, bones...). Both are written by
+  // tools/build-biome-furniture.js, which reads the two tables between the
+  // markers below to learn which kinds each structure's rooms ask for and which
+  // eras of art each structure accepts. Keep them pure literals: the tool
+  // evaluates their text.
+  //
+  // A ROOM is furnished from a kit, a list of lines, each one kind of thing:
+  //   k     the interiorKind
+  //   at    where it goes (KIND_PLACE[k] when left out)
+  //   n     [min, max] pieces
+  //   d     pieces per floor tile of the room, instead of n
+  //   fill  for `wall`, `rows` and `colonnade`: the share of the slots used
+  // A STRUCTURE names the kits its rooms take:
+  //   eras     the art it accepts: old (wood, stone, iron), modern (plastic,
+  //            screens, steel), occult (bones, sigils, ritual) and any (art
+  //            with no period to it)
+  //   main     the kit of its largest room, or of the room the layout marked
+  //   deep     the kit of the room farthest from the way in
+  //   passage  the kit of anything narrower than four tiles
+  //   rooms    [kit, weight] for every other room
+  // i18n-ignore-start  kit, kind and structure ids, never shown
+  // interior-furnishing-start
+  const INTERIOR_ROOMS = {
+    hall:       [{ k: "light", n: [2, 4] }, { k: "banner", n: [1, 3] }, { k: "statue", n: [0, 2] }, { k: "rug", n: [0, 1] }, { k: "column", fill: 1 }, { k: "debris", d: 0.008 }],
+    passage:    [{ k: "walllight", n: [0, 2] }, { k: "debris", d: 0.006 }, { k: "bones", d: 0.004 }],
+    guard:      [{ k: "table", n: [1, 1] }, { k: "weapon", n: [1, 2] }, { k: "crate", n: [1, 2] }, { k: "barrel", n: [0, 2] }, { k: "bed", n: [0, 2] }, { k: "light", n: [1, 2] }],
+    store:      [{ k: "crate", d: 0.08 }, { k: "barrel", n: [1, 3] }, { k: "sack", n: [1, 3] }, { k: "shelf", n: [0, 2] }, { k: "vase", n: [0, 2] }, { k: "light", n: [0, 1] }],
+    cell:       [{ k: "bed", n: [0, 1] }, { k: "chain", n: [1, 2] }, { k: "bones", d: 0.03 }, { k: "debris", d: 0.02 }, { k: "bin", n: [0, 1] }],
+    ossuary:    [{ k: "bones", d: 0.07 }, { k: "tomb", at: "edge", n: [1, 3] }, { k: "candle", n: [1, 2] }, { k: "headstone", at: "edge", n: [0, 2] }],
+    tombs:      [{ k: "tomb", fill: 0.85 }, { k: "candle", n: [1, 4] }, { k: "vase", n: [0, 2] }, { k: "statue", n: [0, 2] }, { k: "bones", d: 0.015 }],
+    shrine:     [{ k: "rug", n: [0, 1] }, { k: "altar", n: [1, 1] }, { k: "statue", n: [2, 2] }, { k: "candle", n: [2, 4] }, { k: "pew", fill: 0.8 }, { k: "banner", n: [1, 3] }, { k: "light", n: [0, 2] }],
+    nave:       [{ k: "rug", n: [1, 1] }, { k: "column", fill: 1 }, { k: "pew", fill: 0.9 }, { k: "banner", n: [2, 4] }, { k: "light", n: [2, 4] }],
+    sanctum:    [{ k: "altar", n: [1, 1] }, { k: "statue", n: [2, 4] }, { k: "candle", n: [2, 6] }, { k: "banner", n: [1, 2] }, { k: "relic", at: "corner", n: [0, 1] }],
+    lair:       [{ k: "throne", n: [0, 1] }, { k: "bones", d: 0.05 }, { k: "treasure", n: [1, 3] }, { k: "splatter", d: 0.015 }, { k: "light", n: [1, 2] }, { k: "cage", n: [0, 1] }],
+    library:    [{ k: "shelf", fill: 0.9 }, { k: "shelf", at: "stacks", fill: 0.85 }, { k: "table", n: [0, 1] }, { k: "book", d: 0.015 }, { k: "candle", n: [1, 3] }, { k: "light", n: [0, 2] }],
+    study:      [{ k: "rug", n: [0, 1] }, { k: "table", n: [1, 1] }, { k: "shelf", fill: 0.5 }, { k: "book", d: 0.025 }, { k: "potion", n: [1, 3] }, { k: "candle", n: [1, 2] }, { k: "relic", at: "corner", n: [0, 1] }],
+    barracks:   [{ k: "bed", n: [2, 6] }, { k: "crate", n: [1, 3] }, { k: "table", n: [0, 1] }, { k: "weapon", n: [0, 2] }, { k: "light", n: [1, 2] }],
+    machine:    [{ k: "machine", fill: 0.6 }, { k: "panel", n: [1, 4] }, { k: "pipe", n: [0, 2] }, { k: "crate", n: [0, 2] }, { k: "light", n: [1, 2] }],
+    control:    [{ k: "machine", fill: 0.5 }, { k: "table", n: [1, 1] }, { k: "panel", n: [2, 4] }, { k: "sign", n: [0, 1] }, { k: "light", n: [1, 2] }],
+    lab:        [{ k: "specimen", fill: 0.6 }, { k: "table", at: "rows", fill: 0.6 }, { k: "machine", n: [1, 2] }, { k: "potion", d: 0.015 }, { k: "medical", n: [0, 2] }, { k: "panel", n: [1, 2] }],
+    infirmary:  [{ k: "medical", n: [2, 4] }, { k: "specimen", n: [0, 2] }, { k: "table", n: [0, 1] }, { k: "panel", n: [0, 2] }, { k: "light", n: [1, 2] }],
+    forge:      [{ k: "forge", n: [1, 2] }, { k: "cauldron", n: [0, 1] }, { k: "tool", n: [1, 3] }, { k: "weapon", n: [0, 2] }, { k: "barrel", n: [0, 2] }, { k: "crate", n: [0, 2] }, { k: "chain", n: [0, 2] }],
+    mine:       [{ k: "ore", d: 0.04 }, { k: "timber", n: [0, 2] }, { k: "tool", n: [0, 2] }, { k: "cart", n: [0, 1] }, { k: "light", n: [1, 2] }, { k: "crate", n: [0, 2] }],
+    stope:      [{ k: "prop", fill: 1 }, { k: "ore", d: 0.06 }, { k: "rock", d: 0.015 }, { k: "cart", n: [0, 2] }, { k: "tool", n: [1, 2] }, { k: "light", n: [1, 3] }, { k: "ladder", n: [0, 1] }],
+    cavern:     [{ k: "stalagmite", d: 0.03 }, { k: "rock", d: 0.02 }, { k: "rock", at: "scatter", d: 0.006 }, { k: "bones", d: 0.006 }, { k: "splatter", d: 0.006 }],
+    den:        [{ k: "bones", d: 0.05 }, { k: "rock", d: 0.025 }, { k: "stalagmite", d: 0.015 }, { k: "splatter", d: 0.01 }],
+    grove:      [{ k: "mushroom", n: [3, 6] }, { k: "vine", n: [1, 4] }, { k: "rock", d: 0.015 }, { k: "splatter", d: 0.008 }],
+    geode:      [{ k: "crystal", n: [3, 6] }, { k: "ore", d: 0.025 }, { k: "stalagmite", d: 0.015 }],
+    ice:        [{ k: "ice", n: [3, 6] }, { k: "stalagmite", d: 0.02 }, { k: "bones", d: 0.006 }, { k: "crystal", n: [0, 2] }],
+    grotto:     [{ k: "reef", n: [2, 4] }, { k: "shell", d: 0.025 }, { k: "rock", d: 0.025 }, { k: "splatter", d: 0.006 }],
+    magma:      [{ k: "lava", n: [1, 3] }, { k: "rock", d: 0.03 }, { k: "stalagmite", d: 0.015 }, { k: "bones", n: [0, 2] }],
+    camp:       [{ k: "campfire", n: [1, 1] }, { k: "bed", n: [1, 3] }, { k: "crate", n: [1, 3] }, { k: "sack", n: [1, 2] }, { k: "barrel", n: [0, 2] }, { k: "light", n: [0, 1] }],
+    smuggle:    [{ k: "crate", d: 0.1 }, { k: "barrel", n: [2, 4] }, { k: "sack", n: [2, 4] }, { k: "table", n: [0, 1] }, { k: "light", n: [1, 2] }],
+    hoard:      [{ k: "treasure", d: 0.04 }, { k: "crate", n: [1, 3] }, { k: "vase", n: [1, 3] }, { k: "statue", n: [0, 2] }, { k: "relic", n: [0, 1] }],
+    vault:      [{ k: "rug", n: [1, 1] }, { k: "column", fill: 1 }, { k: "statue", n: [2, 2] }, { k: "banner", n: [1, 3] }, { k: "light", n: [2, 4] }, { k: "treasure", d: 0.02 }, { k: "shelf", n: [0, 2] }],
+    platform:   [{ k: "pew", at: "edge", n: [2, 5] }, { k: "sign", n: [1, 3] }, { k: "vending", n: [1, 2] }, { k: "bin", n: [1, 3] }, { k: "light", n: [1, 3] }, { k: "debris", d: 0.008 }],
+    ritual:     [{ k: "circle", n: [1, 1] }, { k: "candle", at: "ring", n: [4, 8] }, { k: "statue", n: [0, 2] }, { k: "splatter", d: 0.015 }, { k: "cage", n: [0, 2] }, { k: "flesh", d: 0.006 }, { k: "relic", at: "corner", n: [0, 1] }],
+    pump:       [{ k: "pipe", n: [2, 5] }, { k: "machine", n: [0, 2] }, { k: "grate", n: [1, 3] }, { k: "panel", n: [0, 2] }, { k: "ladder", n: [0, 1] }, { k: "debris", d: 0.01 }],
+    cistern:    [{ k: "fountain", n: [0, 1] }, { k: "vase", n: [1, 3] }, { k: "splatter", d: 0.008 }, { k: "light", n: [1, 3] }],
+    // --- the shops, the houses and the working buildings ---------------------
+    salesfloor: [{ k: "goods", fill: 0.9 }, { k: "shelf", fill: 0.7 }, { k: "counter", n: [1, 2] }, { k: "sign", n: [1, 3] }, { k: "bin", n: [0, 2] }, { k: "vending", n: [0, 1] }, { k: "crate", n: [1, 3] }, { k: "debris", d: 0.008 }, { k: "light", n: [1, 2] }],
+    hardwarefloor: [{ k: "shelf", at: "stacks", fill: 0.9 }, { k: "shelf", fill: 0.7 }, { k: "tool", n: [2, 5] }, { k: "counter", n: [1, 2] }, { k: "crate", n: [2, 4] }, { k: "barrel", n: [1, 3] }, { k: "pipe", n: [0, 2] }, { k: "sign", n: [1, 2] }, { k: "light", n: [1, 2] }],
+    office:     [{ k: "table", n: [1, 2] }, { k: "shelf", fill: 0.6 }, { k: "machine", n: [0, 1] }, { k: "panel", n: [0, 2] }, { k: "painting", n: [0, 2] }, { k: "bin", n: [0, 1] }, { k: "rug", n: [0, 1] }],
+    ward:       [{ k: "medical", fill: 0.7 }, { k: "bed", at: "rows", fill: 0.7 }, { k: "panel", n: [1, 2] }, { k: "bin", n: [0, 1] }, { k: "splatter", d: 0.008 }],
+    surgery:    [{ k: "medical", at: "centre", n: [1, 1] }, { k: "specimen", n: [1, 3] }, { k: "machine", n: [1, 2] }, { k: "panel", n: [1, 3] }, { k: "potion", n: [1, 3] }, { k: "splatter", d: 0.02 }],
+    reception:  [{ k: "counter", n: [1, 2] }, { k: "pew", at: "edge", n: [1, 3] }, { k: "sign", n: [1, 2] }, { k: "painting", n: [0, 2] }, { k: "vase", n: [0, 2] }, { k: "bin", n: [0, 1] }],
+    taproom:    [{ k: "counter", n: [1, 2] }, { k: "table", at: "rows", fill: 0.7 }, { k: "barrel", n: [2, 4] }, { k: "light", n: [2, 4] }, { k: "banner", n: [0, 2] }, { k: "painting", n: [1, 3] }, { k: "debris", d: 0.006 }],
+    kitchen:    [{ k: "appliance", fill: 0.7 }, { k: "forge", n: [0, 1] }, { k: "cauldron", n: [0, 1] }, { k: "table", n: [1, 1] }, { k: "barrel", n: [1, 3] }, { k: "sack", n: [1, 3] }, { k: "vase", n: [1, 3] }],
+    bedroom:    [{ k: "rug", n: [0, 1] }, { k: "bed", n: [1, 2] }, { k: "shelf", n: [1, 2] }, { k: "table", n: [0, 1] }, { k: "crate", n: [0, 2] }, { k: "candle", n: [0, 2] }, { k: "painting", n: [0, 2] }],
+    parlour:    [{ k: "rug", n: [1, 1] }, { k: "table", n: [1, 1] }, { k: "shelf", fill: 0.5 }, { k: "painting", n: [1, 2] }, { k: "vase", n: [1, 2] }, { k: "light", n: [1, 2] }],
+    factory:    [{ k: "machine", at: "stacks", fill: 0.8 }, { k: "machine", fill: 0.6 }, { k: "pipe", n: [2, 5] }, { k: "crate", d: 0.03 }, { k: "barrel", n: [1, 3] }, { k: "panel", n: [1, 3] }, { k: "debris", d: 0.01 }],
+    workshop:   [{ k: "table", n: [1, 2] }, { k: "tool", n: [2, 4] }, { k: "shelf", fill: 0.6 }, { k: "crate", n: [1, 3] }, { k: "barrel", n: [0, 2] }, { k: "light", n: [1, 2] }],
+    ruin:       [{ k: "debris", d: 0.05 }, { k: "splatter", d: 0.015 }, { k: "crate", n: [0, 2] }, { k: "shelf", n: [0, 1] }, { k: "vine", n: [0, 2] }, { k: "bones", d: 0.01 }],
+    throneroom: [{ k: "rug", n: [1, 1] }, { k: "throne", n: [1, 1] }, { k: "statue", n: [2, 4] }, { k: "column", fill: 1 }, { k: "banner", n: [2, 4] }, { k: "light", n: [2, 4] }],
+    armory:     [{ k: "weapon", fill: 0.7 }, { k: "weapon", at: "edge", n: [1, 3] }, { k: "crate", n: [1, 2] }, { k: "table", n: [0, 1] }, { k: "banner", n: [0, 2] }],
+    landing:    [{ k: "crate", n: [1, 3] }, { k: "timber", n: [0, 2] }, { k: "tool", n: [0, 2] }, { k: "ladder", n: [0, 1] }, { k: "light", n: [1, 2] }, { k: "cart", n: [0, 1] }],
+    brood:      [{ k: "bones", d: 0.05 }, { k: "splatter", d: 0.02 }, { k: "rock", d: 0.02 }, { k: "stalagmite", d: 0.01 }],
+    dock:       [{ k: "crate", d: 0.08 }, { k: "barrel", n: [2, 4] }, { k: "sack", n: [1, 3] }, { k: "weapon", n: [0, 2] }, { k: "light", n: [1, 2] }, { k: "debris", d: 0.01 }],
+    hold:       [{ k: "crate", d: 0.1 }, { k: "barrel", n: [2, 5] }, { k: "chain", n: [0, 2] }, { k: "sack", n: [1, 3] }, { k: "debris", d: 0.015 }, { k: "shell", d: 0.01 }],
+    pit:        [{ k: "splatter", d: 0.02 }, { k: "bones", d: 0.02 }, { k: "weapon", at: "edge", n: [1, 3] }, { k: "cage", n: [0, 2] }, { k: "banner", n: [1, 3] }, { k: "light", n: [2, 4] }],
+    winery:     [{ k: "barrel", at: "stacks", fill: 0.9 }, { k: "barrel", n: [2, 4] }, { k: "vase", n: [1, 3] }, { k: "table", n: [0, 1] }, { k: "light", n: [1, 2] }],
+  };
+  // `layouts` lists the plans a structure is drawn from, [layout, weight]: the
+  // variant is rolled per entrance, so one stairway always opens onto the same
+  // shape and the next one down the road onto another.
+  const INTERIOR_PLANS = {
+    Dungeon:        { eras: ["old", "occult", "any"], main: "hall", deep: "lair", rooms: [["store", 3], ["guard", 2], ["cell", 2], ["ossuary", 1], ["study", 1], ["armory", 1]], layouts: [["bsp", 4], ["maze", 1], ["keep", 1]] },
+    Crypt:          { eras: ["old", "occult", "any"], main: "shrine", deep: "lair", rooms: [["tombs", 5], ["ossuary", 3]], layouts: [["tombs", 3], ["undercroft", 2], ["pyramid", 1]] },
+    LootCellar:     { eras: ["old", "any"], main: "store", rooms: [["store", 1]], layouts: [["cellar", 1]] },
+    CaveDen:        { eras: ["old", "occult", "any"], main: "den", passage: "cavern", rooms: [["cavern", 2], ["brood", 1]], layouts: [["cavern", 3], ["burrow", 2], ["sinkhole", 1]] },
+    TempleInside:   { eras: ["old", "occult", "any"], main: "nave", rooms: [["shrine", 2], ["tombs", 1], ["study", 1], ["hall", 2]], layouts: [["temple", 3], ["pyramid", 1], ["undercroft", 1]] },
+    Sewer:          { eras: ["modern", "old", "any"], main: "pump", rooms: [["pump", 3], ["store", 1], ["camp", 1]], layouts: [["canals", 3], ["undercroft", 1]] },
+    PatronVault:    { eras: ["old", "any"], main: "vault", rooms: [["hoard", 3], ["vault", 1]], layouts: [["vault", 1]] },
+    Catacombs:      { eras: ["old", "occult", "any"], main: "shrine", deep: "ossuary", rooms: [["tombs", 3], ["ossuary", 3]], layouts: [["warren", 3], ["maze", 1], ["galleries", 1]] },
+    Mineshaft:      { eras: ["old", "any"], main: "stope", rooms: [["mine", 4], ["camp", 1], ["store", 1]], layouts: [["drifts", 3], ["shaft", 2], ["strata", 1]] },
+    CaveFrozen:     { eras: ["old", "any"], main: "ice", passage: "cavern", rooms: [["ice", 3], ["cavern", 2], ["den", 1]], layouts: [["cavern", 2], ["fissure", 3]] },
+    Cistern:        { eras: ["old", "any"], main: "cistern", rooms: [["cistern", 2], ["pump", 1]], layouts: [["piers", 3], ["undercroft", 2]] },
+    FungalWarren:   { eras: ["old", "occult", "any"], main: "grove", passage: "cavern", rooms: [["grove", 4], ["cavern", 1], ["den", 1]], layouts: [["warren", 2], ["roots", 2], ["sinkhole", 1]] },
+    CrystalCavern:  { eras: ["old", "occult", "any"], main: "geode", passage: "cavern", rooms: [["geode", 3], ["cavern", 2]], layouts: [["chambers", 3], ["shards", 1], ["fissure", 1]] },
+    Oubliette:      { eras: ["old", "occult", "any"], main: "guard", deep: "lair", rooms: [["cell", 6], ["store", 1], ["armory", 1]], layouts: [["cells", 3], ["arena", 1], ["keep", 1]] },
+    SunkenLibrary:  { eras: ["old", "occult", "any"], main: "study", rooms: [["library", 4], ["study", 1]], layouts: [["halls", 3], ["galleries", 2]] },
+    UnderForge:     { eras: ["old", "any"], main: "forge", rooms: [["forge", 3], ["store", 2], ["workshop", 1], ["machine", 1]], layouts: [["grid", 2], ["greathall", 2], ["factory", 1]] },
+    ColdWarBunker:  { eras: ["modern", "any"], main: "control", rooms: [["barracks", 2], ["machine", 2], ["store", 2], ["infirmary", 1], ["office", 1]], layouts: [["grid", 3], ["maze", 1], ["ward", 1]] },
+    BuriedLab:      { eras: ["modern", "occult", "any"], main: "lab", rooms: [["lab", 3], ["infirmary", 2], ["machine", 1], ["store", 1]], layouts: [["grid", 3], ["ward", 1], ["factory", 1]] },
+    ProfaneShrine:  { eras: ["occult", "old", "any"], main: "ritual", rooms: [["shrine", 2], ["ossuary", 1], ["cell", 1]], layouts: [["rings", 3], ["shards", 1], ["pyramid", 1]] },
+    SmugglerTunnel: { eras: ["old", "modern", "any"], main: "camp", rooms: [["smuggle", 3], ["camp", 1], ["hold", 1]], layouts: [["tube", 3], ["cove", 2], ["hull", 1], ["maze", 1]] },
+    SeaGrotto:      { eras: ["old", "any"], main: "grotto", passage: "cavern", rooms: [["grotto", 3], ["cavern", 1], ["hold", 1]], layouts: [["cavern", 2], ["cove", 2], ["sinkhole", 1], ["river", 1], ["hull", 1]] },
+    LavaTube:       { eras: ["old", "occult", "any"], main: "magma", passage: "cavern", rooms: [["magma", 3], ["cavern", 1]], layouts: [["tube", 3], ["caldera", 2], ["fissure", 1]] },
+    Barrow:         { eras: ["old", "occult", "any"], main: "tombs", deep: "hoard", rooms: [["tombs", 3], ["ossuary", 1], ["hoard", 1]], layouts: [["mound", 3], ["pyramid", 1], ["galleries", 1]] },
+    MetroStation:   { eras: ["modern", "any"], main: "platform", rooms: [["platform", 2], ["machine", 1], ["store", 1], ["office", 1]], layouts: [["platform", 3], ["maze", 1]] },
+    SaltWorks:      { eras: ["old", "any"], main: "stope", rooms: [["mine", 3], ["store", 1], ["camp", 1]], layouts: [["drifts", 2], ["strata", 2], ["shaft", 1]] },
+    // --- the interior biomes the catalogue took in ---------------------------
+    HardwareStore:  { eras: ["modern", "old", "any"], main: "hardwarefloor", rooms: [["store", 3], ["workshop", 2], ["office", 1]], layouts: [["shopfloor", 4], ["house", 1]] },
+    GroceryStore:   { eras: ["modern", "any"], main: "salesfloor", rooms: [["store", 3], ["kitchen", 1], ["office", 1]], layouts: [["shopfloor", 4], ["house", 1]] },
+    Store:          { eras: ["modern", "any", "old"], main: "salesfloor", rooms: [["store", 3], ["office", 1]], layouts: [["shopfloor", 3], ["house", 1]] },
+    Hospital:       { eras: ["modern", "any"], main: "reception", rooms: [["ward", 3], ["surgery", 1], ["infirmary", 1], ["office", 1], ["store", 1]], layouts: [["ward", 4], ["grid", 1]] },
+    Clinic:         { eras: ["modern", "any"], main: "reception", rooms: [["infirmary", 2], ["surgery", 1], ["office", 1]], layouts: [["ward", 2], ["house", 2]] },
+    Tavern:         { eras: ["old", "any"], main: "taproom", rooms: [["bedroom", 3], ["kitchen", 1], ["store", 1]], layouts: [["taproom", 4], ["house", 1]] },
+    Restaurant:     { eras: ["modern", "any", "old"], main: "taproom", rooms: [["kitchen", 2], ["store", 1], ["office", 1]], layouts: [["taproom", 3], ["house", 1]] },
+    Farmhouse:      { eras: ["old", "any"], main: "parlour", rooms: [["bedroom", 2], ["kitchen", 1], ["store", 2], ["workshop", 1]], layouts: [["house", 4], ["galleries", 1]] },
+    HousesInside:   { eras: ["any", "modern", "old"], main: "parlour", rooms: [["bedroom", 3], ["kitchen", 1], ["study", 1], ["store", 1]], layouts: [["house", 1]] },
+    AbandonedInside:{ eras: ["any", "modern", "old"], main: "ruin", rooms: [["ruin", 3], ["store", 1], ["bedroom", 1], ["office", 1]], layouts: [["house", 2], ["grid", 2], ["maze", 1]] },
+    Basement:       { eras: ["any", "modern", "old"], main: "store", rooms: [["store", 3], ["workshop", 1], ["machine", 1], ["ruin", 1]], layouts: [["house", 2], ["cellar", 1], ["galleries", 1], ["maze", 1]] },
+    Laboratory:     { eras: ["modern", "any"], main: "lab", rooms: [["lab", 3], ["infirmary", 1], ["machine", 1], ["office", 1], ["store", 1]], layouts: [["grid", 3], ["ward", 1], ["factory", 1]] },
+    FactoryInside:  { eras: ["modern", "any"], main: "factory", rooms: [["office", 1], ["store", 2], ["machine", 2], ["workshop", 1]], layouts: [["factory", 4], ["grid", 1]] },
+    CastleInside:   { eras: ["old", "occult", "any"], main: "throneroom", rooms: [["armory", 2], ["barracks", 2], ["store", 1], ["guard", 1], ["hall", 1], ["cell", 1], ["kitchen", 1]], layouts: [["keep", 4], ["greathall", 2], ["arena", 1]] },
+    ChurchInside:   { eras: ["old", "occult", "any"], main: "nave", rooms: [["shrine", 2], ["tombs", 1], ["study", 1], ["ossuary", 1]], layouts: [["temple", 3], ["undercroft", 2]] },
+    Mines:          { eras: ["old", "any"], main: "stope", rooms: [["mine", 3], ["landing", 2], ["camp", 1], ["store", 1]], layouts: [["shaft", 3], ["drifts", 2], ["strata", 2]] },
+    Lair:           { eras: ["old", "occult", "any"], main: "lair", passage: "cavern", rooms: [["den", 2], ["hoard", 1], ["cavern", 1], ["brood", 1]], layouts: [["cavern", 3], ["burrow", 2], ["roots", 1], ["caldera", 1]] },
+  };
+  // The rooms each layout names itself, whatever the plan says (the nave of a
+  // temple, the wards of a hospital, the pit of an arena). The tagging tool
+  // folds these into what each structure asks for, so a variant's own rooms
+  // never stand empty for want of pieces.
+  const LAYOUT_HINTS = {
+    vault: ["vault", "hoard"], cellar: ["store"], temple: ["nave", "sanctum", "passage"],
+    cells: ["passage", "cell", "guard"], rings: ["ritual", "passage"], piers: ["cistern"],
+    halls: ["library", "study"], platform: ["platform", "passage"], drifts: ["passage"],
+    shopfloor: [], ward: ["ward", "surgery", "reception", "passage"],
+    taproom: ["taproom", "kitchen", "store", "bedroom"], factory: ["factory"],
+    keep: ["throneroom"], greathall: ["throneroom"], shaft: ["landing", "passage"],
+    burrow: ["brood"], pyramid: ["sanctum", "passage"], cove: ["dock"], arena: ["pit", "passage"],
+    galleries: ["passage"], maze: ["passage"], hull: ["hold"],
+  };
+  // interior-furnishing-end
+
+  // Where each kind of thing stands when a kit line does not say:
+  //   dais       centred against the room's north wall (an altar, a throne)
+  //   centre     the middle of the room
+  //   flank      a matched pair either side of the room's axis, by the wall
+  //   wall       side by side along the north wall, backs to the rock
+  //   stacks     unbroken lines down a hall's long axis, aisles between them
+  //   rows       a grid of one piece with an aisle kept down the middle
+  //   colonnade  two lines of one piece down a big room's long sides
+  //   corner     the room's inner corners
+  //   edge       anywhere against the rock, in little clusters
+  //   cluster    a clump round one spot
+  //   scatter    loose about the open floor
+  //   hung       on the wall faces themselves
+  //   ring       round the room's centre piece
+  //   flat       laid on the floor and walked over (rugs, sigils, stains)
+  //   seat       drawn up to a table (never placed on its own)
+  const KIND_PLACE = {
+    tomb: "rows", headstone: "rows", bones: "scatter", altar: "dais", throne: "dais",
+    circle: "flat", statue: "flank", column: "colonnade", light: "corner", walllight: "hung",
+    candle: "corner", banner: "hung", painting: "hung", mask: "hung", sign: "hung", shelf: "wall",
+    book: "scatter", table: "centre", seat: "seat", pew: "rows", bed: "edge", crate: "edge",
+    barrel: "corner", sack: "edge", vase: "corner", cage: "edge", chain: "hung", machine: "wall",
+    panel: "hung", pipe: "edge", grate: "flat", debris: "scatter", rug: "flat", splatter: "flat",
+    ore: "edge", crystal: "cluster", rock: "edge", stalagmite: "edge", ice: "cluster",
+    mushroom: "cluster", vine: "hung", reef: "cluster", shell: "scatter", flesh: "scatter",
+    tool: "edge", cart: "edge", timber: "edge", prop: "colonnade", ladder: "hung",
+    cauldron: "centre", forge: "wall", weapon: "edge", treasure: "scatter", relic: "centre",
+    trap: "scatter", medical: "edge", specimen: "wall", fountain: "centre", campfire: "centre",
+    vending: "wall", bin: "edge", potion: "scatter", lava: "flat",
+    counter: "edge", goods: "stacks", appliance: "wall",
+  };
+  // The order a room's kit is laid in: what is under everything first, then
+  // the pieces a room is arranged AROUND (the altar, the table, the statues
+  // flanking them), then the furniture lining the walls, and the loose clutter
+  // last, into whatever floor is left.
+  const PLACE_ORDER = ["flat", "dais", "centre", "flank", "ring", "wall", "stacks", "colonnade", "rows",
+    "corner", "edge", "cluster", "scatter", "hung"];
+  // i18n-ignore-end
+
+  // Pieces bigger than this are never dealt into a room: a lighthouse is in the
+  // furniture catalogue, and a 7x16 sprite in an 8x6 store-room is not dressing.
+  const INTERIOR_MAX_W = 5, INTERIOR_MAX_H = 5;
+
+  // structure key -> kind -> [furniture id], built once from the catalogue the
+  // first time a structure is furnished. Nothing here is per-map, so a cache
+  // for the session is right. `null` until asked; an empty object when the
+  // catalogue is not loaded (an offline harness without it), which simply
+  // leaves every interior unfurnished.
+  let _interiorIndex = null;
+  function interiorFurnitureIndex() {
+    if (_interiorIndex) return _interiorIndex;
+    const out = {};
+    const cat = (window.Items && window.Items.Furniture) || null;
+    if (cat) {
+      for (const id of Object.keys(cat)) {
+        const f = cat[id];
+        if (!f || !Array.isArray(f.interiors) || !f.interiors.length || !f.interiorKind) continue;
+        if ((f.width || 1) > INTERIOR_MAX_W || (f.height || 1) > INTERIOR_MAX_H) continue;
+        for (const key of f.interiors) {
+          const byKind = out[key] || (out[key] = {});
+          (byKind[f.interiorKind] || (byKind[f.interiorKind] = [])).push(id);
+        }
+      }
+    }
+    _interiorIndex = out;
+    return out;
+  }
+
+  // What a piece occupies: its size, the cells that block a step (the same
+  // answer FurnitureSystem gives the engine at runtime, so the connectivity
+  // guarantee made here is the one the party will actually walk), whether it
+  // is hung on a wall, and whether it is flat on the floor.
+  const _footprints = new Map();
+  function pieceFootprint(id) {
+    if (_footprints.has(id)) return _footprints.get(id);
+    let fp = null;
+    const FS = window.FurnitureSystem;
+    if (FS && typeof FS.pieceFootprint === "function") fp = FS.pieceFootprint(id);
+    if (!fp) {
+      // FurnitureSystem is not loaded (an offline harness): read the stored
+      // collision grid with the same tall-piece rule the plugin applies, where
+      // a solid piece more than one tile tall blocks only its bottom row.
+      const cat = (window.Items && window.Items.Furniture) || {};
+      const f = cat[id];
+      if (f) {
+        const w = f.width || 1, h = f.height || 1;
+        const solid = Array.isArray(f.collision) && f.collision.some((row) => row.some((c) => c));
+        const hung = !!f.wall;
+        const blocks = [];
+        if (solid && !hung) {
+          for (let dy = h > 1 ? h - 1 : 0; dy < h; dy++)
+            for (let dx = 0; dx < w; dx++) blocks.push([dx, dy]);
+        }
+        const BELOW = ["Carpets", "Liquids", "Magic", "Terrain", "Pavement", "Water", "Underwater", "Grass"];
+        fp = { w, h, blocks, hung, flat: !solid && !hung && BELOW.indexOf(f.category) >= 0 };
+      }
+    }
+    _footprints.set(id, fp);
+    return fp;
+  }
+
+  // A short, stable fingerprint of a furniture plan. FurnitureSystem stores
+  // it with what it seeds, so a square is furnished once, and furnished afresh
+  // only if the plan for it is ever a different one.
+  function furnitureSignature(list) {
+    let h = 2166136261 >>> 0;
+    const feed = (s) => {
+      for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    };
+    for (const p of list) feed(p.id + "@" + p.x + "," + p.y + ";");
+    return list.length + ":" + h.toString(36);
+  }
+
+  // ===========================================================================
+  // THE PROCEDURAL INTERIORS GENERATOR
+  // ===========================================================================
+  // Every structure in the catalogue is drawn by this one pipeline, a pass at a
+  // time over a shared context:
+  //
+  //   layout      LAYOUTS[S.layout] carves the plan and names its rooms
+  //   clip        the border margin is made solid; rooms the clip erased go
+  //   entrance    one corridor to the south border (none on a sealed floor)
+  //   join        every carved tile is made reachable from the way in
+  //   walls       the carve is shaped by the structure's wall style
+  //   shell       floor, A4 wall faces and the solid rock ceiling are drawn
+  //   floors      each room lays one accent in one pattern
+  //   ground      water lanes, tide pools and lava, which replace the floor
+  //   rooms       doorways are found and every room is given a role
+  //   furnish     the catalogue's furniture is set out by each room's kit
+  //   dress       the tile ornaments and the biome's own prop scatter
+  //   unseal      nothing put down may cut the plan in two
+  //   keep-out    the dead mass is painted with the no-go region
+  //
+  // What comes out is the map data plus, as plain properties on it, what the
+  // passes after generation need: the room rectangles, the spawn and entrance,
+  // door and boss hints, and `furniture`, the pieces FurnitureSystem seeds onto
+  // the square when the party arrives (see FurnitureSystem.furnishInterior).
+  //
+  // The Ceiling / rim / wall tile model and its one hard rule still stand: the
+  // floor is always enclosed by impassable wall or rock, and nothing walkable
+  // may ever touch it from outside. See [[dungeon-generation-rework]].
   // See RESUMABLE GENERATION in ProceduralMapUtils.js.
   const { runSteps } = window.ProcGenUtils;
 
+  const WALL_HEIGHT = 3;
+  const ROCK_DEPTH = WALL_HEIGHT + 1;
+  const DIRS4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
   function generateDungeonBiome(biome, seed, allFeatures, adjacentBiomes, allOtherData = {}) {
+    const ctx = interiorContext(biome, seed, allFeatures, allOtherData);
+    (LAYOUTS[ctx.layout] || LAYOUTS.bsp)(ctx);
+    clipToMargin(ctx);
+    carveEntrance(ctx);
+    joinOrphans(ctx);
+    shapeWalls(ctx);
+    if (ctx.afterCarve) ctx.afterCarve();
+    renderShell(ctx);
+    paintRoomFloors(ctx);
+    layGroundOrnaments(ctx);
+    findDoorways(ctx);
+    assignRoomRoles(ctx);
+    furnishRooms(ctx);
+    dressWithFeatures(ctx);
+    unsealPlan(ctx);
+    paintKeepOut(ctx);
+    return publishInterior(ctx);
+  }
+
+  function interiorContext(biome, seed, allFeatures, allOtherData) {
     const width = PROC_MAP_WIDTH;
     const height = PROC_MAP_HEIGHT;
     const rng = createSeededRandom(seed);
-    const tilesetId = biome.tilesetId;
-    // Which structure is being drawn. Everything that used to be a chain of
-    // name tests is one catalogue entry now; an unknown name falls back to the
-    // plain dungeon rather than rendering as an unpaved void.
+    // Which structure is being drawn. An unknown name falls back to the plain
+    // dungeon rather than rendering as an unpaved void.
     const S = structureFor(biome && biome.name) || STRUCTURE_INDEX["dungeon"];
-    const layout = S.layout;
-    const isCrypt = layout === "tombs";
-    const isSewer = layout === "canals";
-    const isCellar = layout === "cellar";
-    const isTemple = layout === "temple";
-    const isCaveDen = layout === "cavern";
-    // A patron's vault: the loot cellar's tiles and dressing on a far bigger
-    // plan (PatreonRewards, entered through that patron's own Hatch).
-    const isVault = layout === "vault";
-    // The lower tower (DungeonFloorSystem): a floor with no way off but its
-    // own staircase events, so the south-border entrance every other
-    // structure is carved with is left out entirely rather than carved and
-    // then merely blocked - a doorway leading off the map edge to nothing
-    // reads as broken even when a player can never actually step through it.
-    const sealEntrance = !!(allOtherData && allOtherData.worldCoords && allOtherData.worldCoords.sealEntrance);
-    const MARGIN = 3;
-    const ornaments = S.ornaments || [];
-    const hasOrnament = (nm) => ornaments.indexOf(nm) >= 0;
+    const ctx = {
+      biome, seed, allFeatures, width, height, rng, S,
+      layout: rollLayout(S, rng),
+      style: wallStyleOf(S),
+      tilesetId: biome.tilesetId,
+      MARGIN: 3,
+      // The lower tower (DungeonFloorSystem): a floor with no way off but its
+      // own staircase events, so the south-border entrance is left out
+      // entirely rather than carved and then merely blocked.
+      sealEntrance: !!(allOtherData && allOtherData.worldCoords && allOtherData.worldCoords.sealEntrance),
+      carved: Array.from({ length: height }, () => new Array(width).fill(false)),
+      rooms: [],
+      canalRows: [],
+      sewerWaterWidth: 1,
+      narrow: [],
+      // A loot cellar that came out roomy and well stocked instead of the
+      // cramped hole most of them are (see the cellar layout).
+      cellarGrand: false,
+      furniture: [],
+      // Rock painted as a lake of molten rock (the caldera), and carved cells
+      // standing under water (a river, a pool, a lagoon).
+      lakeMask: new Uint8Array(width * height),
+      waterCells: new Set(),
+      afterCarve: null,
+    };
+    ctx.pal = buildPalette(S, allFeatures, ctx.tilesetId, rng);
+    ctx.hasOrnament = (nm) => (S.ornaments || []).indexOf(nm) >= 0;
+    ctx.isFloor = (x, y) => x >= 0 && x < width && y >= 0 && y < height && ctx.carved[y][x];
+    return ctx;
+  }
 
-    // --- Tiles --------------------------------------------------------------
-    // One main ground texture for the whole structure, two or three accents for
-    // its rooms, a rock rim and a wall family: see buildPalette.
-    const pal = buildPalette(S, allFeatures, tilesetId, rng);
-    const floorTiles = [pal.main];
-    // The rock rim hugging the plan. It used to be whatever the tileset's
-    // Ceiling feature held, which on tileset 300 is nothing at all, so every
-    // interior in the game was rooms drawn on a black void with no rock around
-    // them. Each structure names its own rim now (mined stone, ice, masonry),
-    // and it stays unreachable: the impassable wall ring stands between the rim
-    // and the floor. What must NOT happen is paving the whole map with it -
-    // that buries the plan in rubble - so it is still only the 2-tile band
-    // `nearFloor` marks out.
-    const ceilingTile = pal.rim;
-    const wall = pal.wall;
-    const wallA4 = pal.wallA4;
-    const waterTile = pal.water;
+  // Which of its plans this structure is drawn as, rolled off the map seed so
+  // a stairway always opens onto the same shape (INTERIOR_PLANS.layouts).
+  let _forcedLayout = null;
+  function rollLayout(S, rng) {
+    // The offline harnesses draw every variant of every structure through
+    // forceLayout; the roll still happens, so the rest of the seed is the same.
+    const forced = _forcedLayout;
+    const plan = INTERIOR_PLANS[S.key];
+    const list = (plan && plan.layouts || []).filter(([nm]) => LAYOUTS[nm]);
+    if (!list.length) return forced && LAYOUTS[forced] ? forced : S.layout;
+    const total = list.reduce((a, l) => a + l[1], 0);
+    let r = rng() * total;
+    let pick = list[list.length - 1][0];
+    for (const [nm, w] of list) { r -= w; if (r <= 0) { pick = nm; break; } }
+    return forced && LAYOUTS[forced] ? forced : pick;
+  }
 
-    // --- 1. Layout: carved[y][x] = walkable floor ---------------------------
-    const carved = Array.from({ length: height }, () => new Array(width).fill(false));
-    const rooms = [];
-    const canalRows = [];
-    let sewerWaterWidth = 1;
-    const dungeonNarrowCorridors = [];
-    // A loot cellar that came out roomy and well stocked instead of the cramped
-    // hole most of them are. Rolled in the cellar branch below, read again by
-    // the dressing pass and published on the map data so the chest pass knows.
-    let cellarGrand = false;
-
-    const carveRect = (rx, ry, rw, rh) => {
-      for (let y = ry; y < ry + rh; y++)
-        for (let x = rx; x < rx + rw; x++)
-          if (x >= 0 && x < width && y >= 0 && y < height) carved[y][x] = true;
-    };
-    const carveH = (x1, x2, y, thick = 1) => {
-      const a = Math.min(x1, x2), b = Math.max(x1, x2);
-      for (let x = a; x <= b; x++)
-        for (let t = 0; t < thick; t++)
-          if (y + t >= 0 && y + t < height && x >= 0 && x < width) carved[y + t][x] = true;
-    };
-    const carveV = (y1, y2, x, thick = 1) => {
-      const a = Math.min(y1, y2), b = Math.max(y1, y2);
-      for (let y = a; y <= b; y++)
-        for (let t = 0; t < thick; t++)
-          if (y >= 0 && y < height && x + t >= 0 && x + t < width) carved[y][x + t] = true;
-    };
-    const clampTo = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-    const addRoom = (rx, ry, rw, rh) => {
-      const x = clampTo(rx, MARGIN, width - MARGIN - rw);
-      const y = clampTo(ry, MARGIN, height - MARGIN - rh);
-      carveRect(x, y, rw, rh);
-      const r = { x, y, width: rw, height: rh };
-      rooms.push(r);
-      return r;
-    };
-    // Cut an L-shaped passage from a point to the nearest tile already carved,
-    // so a chamber placed with a free hand can never end up walled off from the
-    // rest of the plan. Called a couple of dozen times at most, so the linear
-    // scan for the nearest carved tile is not worth indexing.
-    const connectToPlan = (cx, cy, thick = 1) => {
-      let best = null, bestD = Infinity;
-      for (let y = MARGIN; y < height - MARGIN; y++) {
-        for (let x = MARGIN; x < width - MARGIN; x++) {
-          if (!carved[y][x]) continue;
-          const d = Math.abs(x - cx) + Math.abs(y - cy);
-          if (d < bestD) { bestD = d; best = { x, y }; }
-        }
+  // --- carving helpers -------------------------------------------------------
+  function carveRect(ctx, rx, ry, rw, rh) {
+    for (let y = ry; y < ry + rh; y++)
+      for (let x = rx; x < rx + rw; x++)
+        if (x >= 0 && x < ctx.width && y >= 0 && y < ctx.height) ctx.carved[y][x] = true;
+  }
+  function carveH(ctx, x1, x2, y, thick = 1) {
+    const a = Math.min(x1, x2), b = Math.max(x1, x2);
+    for (let x = a; x <= b; x++)
+      for (let t = 0; t < thick; t++)
+        if (y + t >= 0 && y + t < ctx.height && x >= 0 && x < ctx.width) ctx.carved[y + t][x] = true;
+  }
+  function carveV(ctx, y1, y2, x, thick = 1) {
+    const a = Math.min(y1, y2), b = Math.max(y1, y2);
+    for (let y = a; y <= b; y++)
+      for (let t = 0; t < thick; t++)
+        if (y >= 0 && y < ctx.height && x + t >= 0 && x + t < ctx.width) ctx.carved[y][x + t] = true;
+  }
+  const clampTo = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  // A room is a rectangle the dressing passes aim at. `hint` names the kit a
+  // layout already knows the room wants (a nave, a cell, a guard room); every
+  // room without one is dealt a kit by assignRoomRoles.
+  function addRoom(ctx, rx, ry, rw, rh, hint) {
+    const M = ctx.MARGIN;
+    const x = clampTo(rx, M, ctx.width - M - rw);
+    const y = clampTo(ry, M, ctx.height - M - rh);
+    carveRect(ctx, x, y, rw, rh);
+    const r = { x, y, width: rw, height: rh };
+    if (hint) r.hint = hint;
+    ctx.rooms.push(r);
+    return r;
+  }
+  function pushRoom(ctx, x, y, w, h, hint) {
+    const r = { x, y, width: w, height: h };
+    if (hint) r.hint = hint;
+    ctx.rooms.push(r);
+    return r;
+  }
+  // Cut an L-shaped passage from a point to the nearest tile already carved,
+  // so a chamber placed with a free hand can never end up walled off.
+  // `own` is the room the point sits in: its own floor is not "the plan", or
+  // the nearest carved tile is the one under the point and nothing is cut.
+  function connectToPlan(ctx, cx, cy, thick = 1, own = null) {
+    const M = ctx.MARGIN;
+    const inOwn = (x, y) => own && x >= own.x && x < own.x + own.width && y >= own.y && y < own.y + own.height;
+    let best = null, bestD = Infinity;
+    for (let y = M; y < ctx.height - M; y++)
+      for (let x = M; x < ctx.width - M; x++) {
+        if (!ctx.carved[y][x] || inOwn(x, y)) continue;
+        const d = Math.abs(x - cx) + Math.abs(y - cy);
+        if (d < bestD) { bestD = d; best = { x, y }; }
       }
-      if (!best || bestD === 0) return;
-      carveH(cx, best.x, cy, thick);
-      carveV(cy, best.y, best.x, thick);
-    };
-    // Reduce a carve to its largest connected pocket. What makes an organic
-    // carve read as ONE place rather than a handful of sealed bubbles.
-    const keepLargestPocket = () => {
-      const compOf = Array.from({ length: height }, () => new Array(width).fill(0));
-      let bestComp = 0, bestSize = 0, compId = 0;
-      for (let sy = 0; sy < height; sy++) {
-        for (let sx = 0; sx < width; sx++) {
-          if (!carved[sy][sx] || compOf[sy][sx]) continue;
-          compId++;
-          let size = 0;
-          const stack = [[sx, sy]];
-          compOf[sy][sx] = compId;
-          while (stack.length) {
-            const [px, py] = stack.pop();
-            size++;
-            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-              const nx = px + dx, ny = py + dy;
-              if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
-              if (!carved[ny][nx] || compOf[ny][nx]) continue;
-              compOf[ny][nx] = compId;
-              stack.push([nx, ny]);
-            }
+    if (!best || bestD === 0) return;
+    carveH(ctx, cx, best.x, cy, thick);
+    carveV(ctx, cy, best.y, best.x, thick);
+  }
+  // Reduce a carve to its largest connected pocket: what makes an organic
+  // carve read as ONE place rather than a handful of sealed bubbles.
+  function keepLargestPocket(ctx) {
+    const { width, height, carved } = ctx;
+    const compOf = new Int32Array(width * height);
+    let bestComp = 0, bestSize = 0, compId = 0;
+    for (let sy = 0; sy < height; sy++)
+      for (let sx = 0; sx < width; sx++) {
+        if (!carved[sy][sx] || compOf[sx + sy * width]) continue;
+        compId++;
+        let size = 0;
+        const stack = [sx + sy * width];
+        compOf[sx + sy * width] = compId;
+        while (stack.length) {
+          const k = stack.pop();
+          size++;
+          const px = k % width, py = (k / width) | 0;
+          for (const [dx, dy] of DIRS4) {
+            const nx = px + dx, ny = py + dy;
+            if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+            const nk = nx + ny * width;
+            if (!carved[ny][nx] || compOf[nk]) continue;
+            compOf[nk] = compId;
+            stack.push(nk);
           }
-          if (size > bestSize) { bestSize = size; bestComp = compId; }
         }
+        if (size > bestSize) { bestSize = size; bestComp = compId; }
       }
-      for (let y = 0; y < height; y++)
-        for (let x = 0; x < width; x++)
-          if (carved[y][x] && compOf[y][x] !== bestComp) carved[y][x] = false;
-      return bestSize;
-    };
+    for (let y = 0; y < height; y++)
+      for (let x = 0; x < width; x++)
+        if (carved[y][x] && compOf[x + y * width] !== bestComp) carved[y][x] = false;
+    return bestSize;
+  }
+  // Copy a sub-grid produced by one of the shared cave algorithms into the
+  // carve at (ox, oy).
+  function stampCave(ctx, sub, w, h, ox, oy, FLOOR) {
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++)
+        if (sub[y * w + x] === FLOOR) ctx.carved[oy + y][ox + x] = true;
+  }
+  function floodFrom(ctx, sx, sy, open) {
+    const { width, height } = ctx;
+    const seen = new Uint8Array(width * height);
+    if (sx < 0 || sy < 0 || sx >= width || sy >= height || !open(sx, sy)) return seen;
+    const stack = [sx + sy * width];
+    seen[sx + sy * width] = 1;
+    while (stack.length) {
+      const k = stack.pop();
+      const x = k % width, y = (k / width) | 0;
+      for (const [dx, dy] of DIRS4) {
+        const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+        const nk = nx + ny * width;
+        if (seen[nk] || !open(nx, ny)) continue;
+        seen[nk] = 1;
+        stack.push(nk);
+      }
+    }
+    return seen;
+  }
 
-    if (isVault) {
-      // Patron's vault: the loot cellar written large. One great hall filling
-      // most of the map, with strongrooms hung off its west, east and north
-      // faces and a deep back chamber behind it, every one of them joined to
-      // the hall by a 3-wide spoke corridor drawn from the room's centre to the
-      // hall's, so nothing can ever end up walled off from the rest.
-      const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-      // The hall is as wide as it can be and still leave room for a strongroom
-      // (up to 12 tiles) plus its gap on either flank inside the margins.
-      const hallW = 25 + Math.floor(rng() * 4);   // 25-28
-      const hallH = 17 + Math.floor(rng() * 5);   // 17-21
+  // ===========================================================================
+  // LAYOUTS
+  // ===========================================================================
+  // One function per `layout` in the catalogue. Each carves its plan into
+  // ctx.carved and pushes the rooms it wants dressed, marking with a `hint`
+  // the ones whose purpose the plan itself already decides.
+  const LAYOUTS = {
+    // Patron's vault: one great hall, strongrooms hung off its flanks and a
+    // deep back chamber behind it, every one joined to the hall by a 3-wide
+    // spoke so nothing is ever walled off.
+    vault(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const hallW = 25 + Math.floor(rng() * 4);
+      const hallH = 17 + Math.floor(rng() * 5);
       const hx = Math.max(MARGIN + 1, Math.floor((width - hallW) / 2));
-      const hy = clamp(height - MARGIN - hallH - 4 - Math.floor(rng() * 4),
-        MARGIN + 16, height - MARGIN - hallH - 1);
-      carveRect(hx, hy, hallW, hallH);
-      rooms.push({ x: hx, y: hy, width: hallW, height: hallH });
+      const hy = clampTo(height - MARGIN - hallH - 4 - Math.floor(rng() * 4), MARGIN + 16, height - MARGIN - hallH - 1);
+      carveRect(ctx, hx, hy, hallW, hallH);
+      pushRoom(ctx, hx, hy, hallW, hallH, "vault");
       const hcx = hx + (hallW >> 1), hcy = hy + (hallH >> 1);
-      // An L-shaped 3-wide corridor between two interior points: it starts
-      // inside one room and ends inside the other, so both are reachable.
       const spoke = (ax, ay, bx, by) => {
-        const ty = clamp(ay, MARGIN, height - MARGIN - 3);
-        carveH(ax, bx, ty, 3);
-        carveV(ty, by, clamp(bx, MARGIN, width - MARGIN - 3), 3);
+        const ty = clampTo(ay, MARGIN, height - MARGIN - 3);
+        carveH(ctx, ax, bx, ty, 3);
+        carveV(ctx, ty, by, clampTo(bx, MARGIN, width - MARGIN - 3), 3);
       };
-
-      // Deep back chamber: the far end of the vault, straight behind the hall.
-      const bw = 17 + Math.floor(rng() * 5);      // 17-21
-      const bh = 10 + Math.floor(rng() * 4);      // 10-13
-      const bx0 = clamp(hcx - (bw >> 1), MARGIN + 1, width - MARGIN - bw - 1);
-      const by0 = clamp(hy - bh - 4 - Math.floor(rng() * 3), MARGIN + 1, hy - bh - 2);
-      carveRect(bx0, by0, bw, bh);
-      rooms.push({ x: bx0, y: by0, width: bw, height: bh });
+      const bw = 17 + Math.floor(rng() * 5), bh = 10 + Math.floor(rng() * 4);
+      const bx0 = clampTo(hcx - (bw >> 1), MARGIN + 1, width - MARGIN - bw - 1);
+      const by0 = clampTo(hy - bh - 4 - Math.floor(rng() * 3), MARGIN + 1, hy - bh - 2);
+      carveRect(ctx, bx0, by0, bw, bh);
+      pushRoom(ctx, bx0, by0, bw, bh, "hoard");
       spoke(bx0 + (bw >> 1), by0 + (bh >> 1), hcx, hcy);
-
-      // Strongrooms: a stack of them flanking the hall on each side and more in
-      // the top corners flanking the back chamber, dealt in that rotation so a
-      // vault comes out symmetric however many it rolls. They are placed with a
-      // free hand and are allowed to run into one another: a patron's vault is
-      // meant to sprawl, and merged cells read as one long strongroom.
       const SIDES = ["W", "E", "NW", "NE"];
-      const strongrooms = 10 + Math.floor(rng() * 4); // 10-13
+      const strongrooms = 10 + Math.floor(rng() * 4);
       for (let i = 0; i < strongrooms; i++) {
         const side = SIDES[i % SIDES.length];
-        const cw = 9 + Math.floor(rng() * 4);     // 9-12
-        const ch = 7 + Math.floor(rng() * 4);     // 7-10
+        const cw = 9 + Math.floor(rng() * 4), ch = 7 + Math.floor(rng() * 4);
         const gap = 2 + Math.floor(rng() * 3);
         let cx0, cy0;
         if (side === "W" || side === "E") {
           cx0 = side === "W" ? hx - cw - gap : hx + hallW + gap;
           cy0 = hy - 3 + Math.floor(rng() * Math.max(1, hallH - ch + 6));
         } else {
-          cx0 = side === "NW"
-            ? MARGIN + 1 + Math.floor(rng() * 3)
-            : width - MARGIN - cw - 1 - Math.floor(rng() * 3);
+          cx0 = side === "NW" ? MARGIN + 1 + Math.floor(rng() * 3) : width - MARGIN - cw - 1 - Math.floor(rng() * 3);
           cy0 = by0 - 1 + Math.floor(rng() * Math.max(1, bh - ch + 3));
         }
-        cx0 = clamp(cx0, MARGIN + 1, width - MARGIN - cw - 1);
-        cy0 = clamp(cy0, MARGIN + 1, height - MARGIN - ch - 1);
-        carveRect(cx0, cy0, cw, ch);
-        rooms.push({ x: cx0, y: cy0, width: cw, height: ch });
+        cx0 = clampTo(cx0, MARGIN + 1, width - MARGIN - cw - 1);
+        cy0 = clampTo(cy0, MARGIN + 1, height - MARGIN - ch - 1);
+        carveRect(ctx, cx0, cy0, cw, ch);
+        pushRoom(ctx, cx0, cy0, cw, ch);
         spoke(cx0 + (cw >> 1), cy0 + (ch >> 1), hcx, hcy);
       }
-    } else if (isCellar) {
-      // Loot cellar: one small vaulted store-room (plus an occasional side
-      // alcove) sitting just behind the stairs, near the south border so the
-      // entrance corridor stays short. Most of them are a cramped hole with a
-      // couple of things worth taking in it; the roomy, well-stocked kind (the
-      // sizing and the dressing EVERY cellar used to get) is a rare find, and
-      // the whole cellar is built and dressed off this one roll.
-      cellarGrand = rng() < 0.12;
-      // The small kind never drops below 6x5: the Bunker origin scatters six
-      // gold hoards over the cellar's open floor and has to fit them all.
-      const rw = cellarGrand ? 9 + Math.floor(rng() * 8)  // 9-16
-        : 6 + Math.floor(rng() * 4);                      // 6-9
-      const rh = cellarGrand ? 7 + Math.floor(rng() * 6)  // 7-12
-        : 5 + Math.floor(rng() * 3);                      // 5-7
+    },
+
+    // Loot cellar: one small vaulted store-room behind the stairs, near the
+    // south border. The roomy kind is a rare find (cellarGrand). The small
+    // kind never drops below 6x5: the Bunker origin scatters six gold hoards
+    // over the cellar's open floor and has to fit them all.
+    cellar(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      ctx.cellarGrand = rng() < 0.12;
+      const grand = ctx.cellarGrand;
+      const rw = grand ? 9 + Math.floor(rng() * 8) : 6 + Math.floor(rng() * 4);
+      const rh = grand ? 7 + Math.floor(rng() * 6) : 5 + Math.floor(rng() * 3);
       const rx = Math.max(MARGIN + 1, Math.floor((width - rw) / 2) + Math.floor(rng() * 7) - 3);
       const ry = Math.max(MARGIN + 1, height - MARGIN - rh - 2 - Math.floor(rng() * 4));
-      carveRect(rx, ry, rw, rh);
-      rooms.push({ x: rx, y: ry, width: rw, height: rh });
-      if (rng() < (cellarGrand ? 0.55 : 0.18)) {
-        const aw = (cellarGrand ? 4 : 3) + Math.floor(rng() * 3);
-        const ah = (cellarGrand ? 4 : 3) + Math.floor(rng() * 3);
+      carveRect(ctx, rx, ry, rw, rh);
+      pushRoom(ctx, rx, ry, rw, rh, "store");
+      if (rng() < (grand ? 0.55 : 0.18)) {
+        const aw = (grand ? 4 : 3) + Math.floor(rng() * 3);
+        const ah = (grand ? 4 : 3) + Math.floor(rng() * 3);
         const left = rng() < 0.5;
         const ax = left ? rx - aw : rx + rw;
         const ay = ry + 1 + Math.floor(rng() * Math.max(1, rh - ah - 1));
-        carveRect(ax, ay, aw, ah);
-        rooms.push({ x: ax, y: ay, width: aw, height: ah });
+        carveRect(ctx, ax, ay, aw, ah);
+        pushRoom(ctx, ax, ay, aw, ah, "store");
       }
-    } else if (isTemple) {
-      // Temple: long connected halls in a complex, roughly symmetric plan - a
-      // central nave capped by a wide sanctum, crossed by full-width transept
-      // halls whose ends are linked by long flanking galleries, with side
-      // chapels hanging off the galleries.
+    },
+
+    // Temple: a central nave capped by a wide sanctum, crossed by full-width
+    // transepts whose ends are tied together by flanking galleries, with side
+    // chapels hung off them. The nave is laid with pews facing the sanctum.
+    temple(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
       const cx = Math.floor(width / 2);
-      const naveW = 6 + Math.floor(rng() * 3);                    // 6-8 wide
+      const naveW = 7 + Math.floor(rng() * 3);
       const naveTop = MARGIN + 8 + Math.floor(rng() * 6);
       const naveBot = height - MARGIN - 3;
-      const nave = { x: cx - (naveW >> 1), y: naveTop, width: naveW, height: naveBot - naveTop };
-      carveRect(nave.x, nave.y, nave.width, nave.height);
-      rooms.push(nave);
-
-      // Sanctum: a wide chamber capping the nave's north end (contiguous).
+      carveRect(ctx, cx - (naveW >> 1), naveTop, naveW, naveBot - naveTop);
+      pushRoom(ctx, cx - (naveW >> 1), naveTop, naveW, naveBot - naveTop, "nave");
       const sw = naveW + 10 + Math.floor(rng() * 8);
       const sh = 8 + Math.floor(rng() * 5);
       const sy = Math.max(MARGIN + 1, naveTop - sh);
-      const sanctum = { x: cx - (sw >> 1), y: sy, width: sw, height: naveTop - sy };
-      if (sanctum.height > 0) { carveRect(sanctum.x, sanctum.y, sanctum.width, sanctum.height); rooms.push(sanctum); }
-
-      // Transepts: 2-3 long horizontal halls crossing the nave, all spanning
-      // the same width so the flanking galleries can tie their ends together.
+      if (naveTop - sy > 0) {
+        carveRect(ctx, cx - (sw >> 1), sy, sw, naveTop - sy);
+        pushRoom(ctx, cx - (sw >> 1), sy, sw, naveTop - sy, "sanctum");
+      }
       const tx1 = MARGIN + 4 + Math.floor(rng() * 5);
       const tx2 = width - MARGIN - 4 - Math.floor(rng() * 5);
       const nTransepts = 2 + Math.floor(rng() * 2);
       const transepts = [];
       for (let t = 0; t < nTransepts; t++) {
-        const th = 4 + Math.floor(rng() * 3); // 4-6 tall
+        const th = 4 + Math.floor(rng() * 3);
         const span = naveBot - naveTop - 10;
         const ty = naveTop + 3 + Math.floor((span * (t + 0.2 + rng() * 0.6)) / nTransepts);
-        const hall = { x: tx1, y: ty, width: tx2 - tx1, height: th };
-        carveRect(hall.x, hall.y, hall.width, hall.height);
-        rooms.push(hall);
-        transepts.push(hall);
+        carveRect(ctx, tx1, ty, tx2 - tx1, th);
+        transepts.push(pushRoom(ctx, tx1, ty, tx2 - tx1, th, "passage"));
       }
-
-      // Flanking galleries: long vertical halls joining every transept end.
       if (transepts.length > 1) {
         const first = transepts[0], last = transepts[transepts.length - 1];
         const gw = 3 + Math.floor(rng() * 2);
         for (const gx of [tx1, tx2 - gw]) {
-          const gal = { x: gx, y: first.y, width: gw, height: last.y + last.height - first.y };
-          carveRect(gal.x, gal.y, gal.width, gal.height);
-          rooms.push(gal);
+          carveRect(ctx, gx, first.y, gw, last.y + last.height - first.y);
+          pushRoom(ctx, gx, first.y, gw, last.y + last.height - first.y, "passage");
         }
       }
-
-      // Side chapels: rooms hung off the outer face of each gallery/transept
-      // end, joined by a short 2-wide passage.
       const nChapels = 2 + Math.floor(rng() * 3);
       for (let c = 0; c < nChapels; c++) {
         const west = rng() < 0.5;
         const hall = transepts[Math.floor(rng() * transepts.length)];
         const cw = 6 + Math.floor(rng() * 5), chh = 5 + Math.floor(rng() * 4);
         const chx = west ? Math.max(MARGIN, tx1 - cw - 3) : Math.min(width - MARGIN - cw, tx2 + 3);
-        const chy = Math.max(MARGIN + 1, Math.min(height - MARGIN - chh - 1,
-          hall.y + Math.floor(rng() * 5) - 2));
-        carveRect(chx, chy, cw, chh);
-        rooms.push({ x: chx, y: chy, width: cw, height: chh });
-        // Passage from the chapel to the transept edge it hangs off.
-        const py = Math.max(hall.y, Math.min(hall.y + hall.height - 2, chy + (chh >> 1)));
-        if (west) carveH(chx + cw - 1, tx1, py, 2);
-        else carveH(tx2 - 1, chx, py, 2);
+        // Level with the transept's own top edge, joined along it: a passage
+        // meeting the chapel part way down leaves a step the wall levelling
+        // would carry right across the chapel (see the cell mouths).
+        const chy = Math.max(MARGIN + 1, Math.min(height - MARGIN - chh - 1, hall.y));
+        carveRect(ctx, chx, chy, cw, chh);
+        pushRoom(ctx, chx, chy, cw, chh);
+        const py = Math.max(hall.y, chy);
+        if (west) carveH(ctx, chx + cw - 1, tx1, py, 2);
+        else carveH(ctx, tx2 - 1, chx, py, 2);
       }
-    } else if (isCaveDen) {
-      // Cave den: a single organic chamber carved with the shared cave
-      // algorithms - anywhere from a cramped hollow to a cavern filling the
-      // whole map - reduced to its largest connected pocket so it always reads
-      // as one enclosed room.
+    },
+
+    // Cavern (den, frozen cave, grotto): one organic chamber, anywhere from a
+    // cramped hollow to a cave filling the map, reduced to its largest pocket.
+    cavern(ctx) {
+      const { rng, width, height, MARGIN, seed } = ctx;
       const innerW = width - MARGIN * 2, innerH = height - MARGIN * 2;
-      const dw = Math.min(innerW, 16 + Math.floor(rng() * (innerW - 16 + 1)));
-      const dh = Math.min(innerH, 12 + Math.floor(rng() * (innerH - 12 + 1)));
+      const dw = Math.min(innerW, 18 + Math.floor(rng() * (innerW - 18 + 1)));
+      const dh = Math.min(innerH, 14 + Math.floor(rng() * (innerH - 14 + 1)));
       const ox = MARGIN + Math.floor(rng() * (innerW - dw + 1));
-      const oy = MARGIN + Math.max(0, innerH - dh - Math.floor(rng() * 8)); // hug the south side
+      const oy = MARGIN + Math.max(0, innerH - dh - Math.floor(rng() * 8));
       const FLOOR = 1, CEIL = 2;
-      const sub = (rng() < 0.5)
+      const sub = rng() < 0.5
         ? Utils2.generateCaveWithDrunkenWalk(dw, dh, dw, 0.45, seed ^ 0xdE11, FLOOR, CEIL)
         : Utils2.generateCaveWithCellularAutomata(dw, dh, dw, seed ^ 0xdE11, FLOOR, CEIL);
-      for (let y = 0; y < dh; y++)
-        for (let x = 0; x < dw; x++)
-          if (sub[y * dw + x] === FLOOR) carved[oy + y][ox + x] = true;
-
-      // Keep only the largest connected floor pocket ("single room" cave).
-      const bestSize = keepLargestPocket();
-
-      // Degenerate carve (tiny disconnected pockets): fall back to an ellipse.
-      if (bestSize < 40) {
+      stampCave(ctx, sub, dw, dh, ox, oy, FLOOR);
+      if (keepLargestPocket(ctx) < 60) {
         const ecx = ox + (dw >> 1), ecy = oy + (dh >> 1);
-        const erx = Math.max(5, dw >> 1), ery = Math.max(4, dh >> 1);
+        const erx = Math.max(6, dw >> 1), ery = Math.max(5, dh >> 1);
         for (let y = 0; y < height; y++)
           for (let x = 0; x < width; x++) {
             const nx = (x - ecx) / erx, ny = (y - ecy) / ery;
-            carved[y][x] = nx * nx + ny * ny <= 1;
+            ctx.carved[y][x] = nx * nx + ny * ny <= 1;
           }
       }
-    } else if (isSewer) {
-      // A grid of tunnels reading as a canal network. The water itself runs
-      // 2-4 tiles wide down the middle (one width per sewer), with a dry lane
-      // to walk on each side of it.
-      sewerWaterWidth = 2 + Math.floor(rng() * 3); // 2-4
-      const tunnelThick = sewerWaterWidth + 2;
-      const pitch = 10;
+      organicRoomGrid(ctx, 10, 30);
+    },
+
+    // Canals (sewer): a grid of tunnels, the water 2-4 tiles wide down the
+    // middle of each with a dry lane to walk either side. The junctions are
+    // the rooms; the pump chambers sit between them.
+    canals(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      ctx.sewerWaterWidth = 2 + Math.floor(rng() * 3);
+      const thick = ctx.sewerWaterWidth + 2;
+      const pitch = 11;
       const colsX = [];
-      for (let y = MARGIN + 4; y < height - MARGIN - 4; y += pitch) { carveH(MARGIN, width - MARGIN - 1, y, tunnelThick); canalRows.push(y + 1); }
-      for (let x = MARGIN + 4; x < width - MARGIN - 4; x += pitch) { carveV(MARGIN, height - MARGIN - 1, x, tunnelThick); colsX.push(x); }
-      for (const cy of canalRows) for (const cx of colsX) rooms.push({ x: cx - 1, y: cy - 1, width: tunnelThick + 2, height: tunnelThick + 2 });
-    } else if (isCrypt) {
-      // A regular grid of small tomb chambers joined by straight corridors.
-      const pitch = 9, chamber = 5;
+      for (let y = MARGIN + 4; y < height - MARGIN - 4; y += pitch) { carveH(ctx, MARGIN, width - MARGIN - 1, y, thick); ctx.canalRows.push(y + 1); }
+      for (let x = MARGIN + 4; x < width - MARGIN - 4; x += pitch) { carveV(ctx, MARGIN, height - MARGIN - 1, x, thick); colsX.push(x); }
+      // Pump chambers: dry rooms cut into the blocks between the tunnels,
+      // each opening onto the tunnel north of it. They are where a sewer's
+      // furniture lives; the tunnels themselves are water and walkway.
+      for (let i = 0; i + 1 < ctx.canalRows.length; i++) {
+        for (let j = 0; j + 1 < colsX.length; j++) {
+          if (rng() < 0.45) continue;
+          const bx0 = colsX[j] + thick + 1, bx1 = colsX[j + 1] - 2;
+          const by0 = ctx.canalRows[i] - 1 + thick + 1, by1 = ctx.canalRows[i + 1] - 3;
+          const rw = bx1 - bx0, rh = by1 - by0;
+          if (rw < 4 || rh < 4) continue;
+          const r = addRoom(ctx, bx0, by0, rw, rh);
+          carveV(ctx, ctx.canalRows[i] - 1 + thick - 1, r.y, r.x + (rw >> 1));
+        }
+      }
+    },
+
+    // Tombs (crypt): a grid of burial chambers joined by straight corridors.
+    // The chambers vary in size so a crypt has its great vaults as well as
+    // its niches, and the rows of the grid are where the tombs are laid.
+    tombs(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const pitch = 11;
       const grid = [];
-      for (let gy = MARGIN + 1; gy + chamber < height - MARGIN; gy += pitch) {
+      for (let gy = MARGIN + 1; gy + 5 < height - MARGIN; gy += pitch) {
         const row = [];
-        for (let gx = MARGIN + 1; gx + chamber < width - MARGIN; gx += pitch) {
-          const r = { x: gx, y: gy, width: chamber, height: chamber };
-          carveRect(r.x, r.y, r.width, r.height);
-          rooms.push(r); row.push(r);
+        for (let gx = MARGIN + 1; gx + 5 < width - MARGIN; gx += pitch) {
+          const w = 5 + Math.floor(rng() * 4), h = 5 + Math.floor(rng() * 4);
+          const r = addRoom(ctx, gx, gy, Math.min(w, width - MARGIN - gx - 1), Math.min(h, height - MARGIN - gy - 1));
+          row.push(r);
         }
         grid.push(row);
       }
-      for (let i = 0; i < grid.length; i++) {
+      for (let i = 0; i < grid.length; i++)
         for (let j = 0; j < grid[i].length; j++) {
           const r = grid[i][j];
-          const cx = r.x + (chamber >> 1), cy = r.y + (chamber >> 1);
-          if (j + 1 < grid[i].length) carveH(cx, grid[i][j + 1].x + (chamber >> 1), cy);
-          if (i + 1 < grid.length && grid[i + 1][j]) carveV(cy, grid[i + 1][j].y + (chamber >> 1), cx);
+          const cx = r.x + (r.width >> 1), cy = r.y + (r.height >> 1);
+          if (j + 1 < grid[i].length) { const o = grid[i][j + 1]; carveH(ctx, cx, o.x + (o.width >> 1), cy); }
+          if (i + 1 < grid.length && grid[i + 1][j]) { const o = grid[i + 1][j]; carveV(ctx, cy, o.y + (o.height >> 1), cx); }
         }
-      }
-    } else if (layout === "warren") {
-      // Warren (catacombs, fungal warren): an organic carve threaded through
-      // the rock, with rectangular alcoves cut into its flanks. The alcoves are
-      // what make it read as dug rather than found.
+    },
+
+    // Warren (catacombs, fungal warren): an organic carve threaded through
+    // the rock with rectangular alcoves cut into its flanks.
+    warren(ctx) {
+      const { rng, width, height, MARGIN, seed } = ctx;
       const innerW = width - MARGIN * 2, innerH = height - MARGIN * 2;
       const FLOOR = 1, CEIL = 2;
       const sub = Utils2.generateCaveWithCellularAutomata(innerW, innerH, innerW, seed ^ 0x7A55, FLOOR, CEIL);
-      for (let y = 0; y < innerH; y++)
-        for (let x = 0; x < innerW; x++)
-          if (sub[y * innerW + x] === FLOOR) carved[MARGIN + y][MARGIN + x] = true;
-      if (keepLargestPocket() < 200) {
-        // A carve that came out as dust: fall back to a plain hall so the
-        // structure is always enterable.
-        addRoom(Math.floor(width / 2) - 9, Math.floor(height / 2) - 6, 18, 12);
-      }
+      stampCave(ctx, sub, innerW, innerH, MARGIN, MARGIN, FLOOR);
+      if (keepLargestPocket(ctx) < 200) addRoom(ctx, Math.floor(width / 2) - 9, Math.floor(height / 2) - 6, 18, 12);
       const nAlcoves = 9 + Math.floor(rng() * 9);
       for (let i = 0; i < nAlcoves; i++) {
-        const aw = 3 + Math.floor(rng() * 4), ah = 3 + Math.floor(rng() * 3);
+        const aw = 4 + Math.floor(rng() * 4), ah = 4 + Math.floor(rng() * 3);
         const ax = MARGIN + 1 + Math.floor(rng() * (width - MARGIN * 2 - aw - 2));
         const ay = MARGIN + 1 + Math.floor(rng() * (height - MARGIN * 2 - ah - 2));
-        const r = addRoom(ax, ay, aw, ah);
-        connectToPlan(r.x + (aw >> 1), r.y + (ah >> 1));
+        const r = addRoom(ctx, ax, ay, aw, ah);
+        connectToPlan(ctx, r.x + (aw >> 1), r.y + (ah >> 1), 1, r);
       }
-    } else if (layout === "drifts") {
-      // Drifts (mine, salt works): parallel galleries driven the length of the
-      // map, cross-cuts joining them, and one worked-out stope where the seam
-      // was richest.
+      organicRoomGrid(ctx, 12, 50);
+    },
+
+    // Drifts (mine, salt works): parallel galleries driven the length of the
+    // map, cross-cuts joining them, and one worked-out stope.
+    drifts(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
       const top = MARGIN + 2, bot = height - MARGIN - 3;
       const nDrifts = 3 + Math.floor(rng() * 3);
       const span = width - MARGIN * 2 - 8;
       const xs = [];
       for (let i = 0; i < nDrifts; i++) {
-        const dx = clampTo(MARGIN + 4 + Math.floor((span * (i + 0.5)) / nDrifts) + Math.floor(rng() * 5) - 2,
-          MARGIN + 1, width - MARGIN - 4);
+        const dx = clampTo(MARGIN + 4 + Math.floor((span * (i + 0.5)) / nDrifts) + Math.floor(rng() * 5) - 2, MARGIN + 1, width - MARGIN - 4);
         const dw = 2 + Math.floor(rng() * 2);
-        carveV(top, bot, dx, dw);
-        rooms.push({ x: dx, y: top, width: dw, height: bot - top });
+        carveV(ctx, top, bot, dx, dw);
+        pushRoom(ctx, dx, top, dw, bot - top, "passage");
         xs.push(dx);
       }
       const nCuts = 3 + Math.floor(rng() * 3);
       for (let i = 0; i < nCuts; i++) {
-        const cy = clampTo(top + 4 + Math.floor(((bot - top - 8) * (i + rng() * 0.7)) / nCuts),
-          MARGIN + 1, height - MARGIN - 3);
-        carveH(xs[0], xs[xs.length - 1] + 2, cy, 2);
+        const cy = clampTo(top + 4 + Math.floor(((bot - top - 8) * (i + rng() * 0.7)) / nCuts), MARGIN + 1, height - MARGIN - 3);
+        carveH(ctx, xs[0], xs[xs.length - 1] + 2, cy, 2);
       }
-      const sw = 12 + Math.floor(rng() * 10), sh = 8 + Math.floor(rng() * 7);
-      const stope = addRoom(xs[Math.floor(rng() * xs.length)] - (sw >> 1),
-        top + 2 + Math.floor(rng() * Math.max(1, (bot - top) - sh - 4)), sw, sh);
-      connectToPlan(stope.x + (sw >> 1), stope.y + (sh >> 1), 2);
-    } else if (layout === "cells") {
-      // Cell block (oubliette): a spine corridor with a row of identical cells
-      // down each side, and one guard room at the head of it.
+      // Side workings: short headings off the drifts, each a room of its own.
+      const nWork = 3 + Math.floor(rng() * 3);
+      for (let i = 0; i < nWork; i++) {
+        const ww = 5 + Math.floor(rng() * 4), wh = 4 + Math.floor(rng() * 3);
+        const x0 = xs[Math.floor(rng() * xs.length)];
+        const r = addRoom(ctx, x0 + (rng() < 0.5 ? -ww - 1 : 3), top + 3 + Math.floor(rng() * (bot - top - wh - 6)), ww, wh);
+        connectToPlan(ctx, r.x + (ww >> 1), r.y + (wh >> 1), 2, r);
+      }
+      const sw = 12 + Math.floor(rng() * 8), sh = 9 + Math.floor(rng() * 6);
+      const stope = addRoom(ctx, xs[Math.floor(rng() * xs.length)] - (sw >> 1),
+        top + 2 + Math.floor(rng() * Math.max(1, (bot - top) - sh - 4)), sw, sh, null);
+      connectToPlan(ctx, stope.x + (sw >> 1), stope.y + (sh >> 1), 2, stope);
+    },
+
+    // Cell block (oubliette): a spine corridor with a row of cells down each
+    // side and a guard room at the head of it.
+    cells(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
       const cx = Math.floor(width / 2);
       const top = MARGIN + 6, bot = height - MARGIN - 4;
       const spineW = 3;
-      carveV(top, bot, cx - 1, spineW);
-      rooms.push({ x: cx - 1, y: top, width: spineW, height: bot - top });
+      carveV(ctx, top, bot, cx - 1, spineW);
+      pushRoom(ctx, cx - 1, top, spineW, bot - top, "passage");
       const cellW = 5 + Math.floor(rng() * 3), cellH = 4 + Math.floor(rng() * 2);
-      const pitch = cellH + 2;
-      for (let y = top + 1; y + cellH < bot; y += pitch) {
+      const gw = 11 + Math.floor(rng() * 6), gh = 7 + Math.floor(rng() * 4);
+      // A full wall's depth between one cell and the next (and between the
+      // guard room and the first cells), two tiles of rock between a cell and
+      // the spine: anything thinner is opened by the depth pass and the block
+      // comes out as one long gallery.
+      for (let y = Math.max(top + 1, MARGIN + 1 + gh + ROCK_DEPTH); y + cellH < bot; y += cellH + ROCK_DEPTH) {
         for (const side of [-1, 1]) {
-          if (rng() < 0.12) continue;   // the odd cell was never cut, or caved in
-          const rx = side < 0 ? cx - 2 - cellW : cx + spineW - 1;
-          const r = addRoom(rx, y, cellW, cellH);
-          // The cell mouth: one tile joining it to the spine, which is where
-          // the ornament pass hangs the bars.
-          const my = r.y + (cellH >> 1);
-          if (side < 0) carveH(r.x + cellW - 1, cx - 1, my);
-          else carveH(cx + spineW - 1, r.x, my);
+          if (rng() < 0.12) continue;
+          const rx = side < 0 ? cx - 3 - cellW : cx + spineW + 1;
+          const r = addRoom(ctx, rx, y, cellW, cellH, "cell");
+          // The mouth is cut along the cell's top row. Cut lower, it puts a
+          // short step in the north edge, and levelling that step to a full
+          // wall's height raises the rock beside it too, column after column,
+          // until the cell has merged into the spine.
+          const my = r.y;
+          if (side < 0) carveH(ctx, r.x + cellW - 1, cx - 1, my);
+          else carveH(ctx, cx + spineW - 1, r.x, my);
         }
       }
-      const gw = 11 + Math.floor(rng() * 6), gh = 7 + Math.floor(rng() * 4);
-      const guard = addRoom(cx - (gw >> 1), MARGIN + 1, gw, gh);
-      carveV(guard.y + gh - 1, top, cx, 2);
-    } else if (layout === "rings") {
-      // Rings (profane shrine): concentric galleries around a sanctum, joined
-      // by four radial spokes. Everything faces the middle, which is where the
-      // ornament pass puts the sigil.
+      const guard = addRoom(ctx, cx - (gw >> 1), MARGIN + 1, gw, gh, "guard");
+      carveV(ctx, guard.y + gh - 1, top, cx, 2);
+    },
+
+    // Rings (profane shrine): concentric galleries round a sanctum, joined by
+    // four radial spokes; everything faces the middle, where the sigil is.
+    rings(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
       const cx = Math.floor(width / 2), cy = Math.floor(height / 2) + 2;
       const nRings = 2 + Math.floor(rng() * 2);
       const step = 7 + Math.floor(rng() * 3);
       const maxR = Math.min(cx - MARGIN - 2, cy - MARGIN - 2, height - MARGIN - cy - 2);
       const inner = 5 + Math.floor(rng() * 2);
-      addRoom(cx - inner, cy - inner, inner * 2 + 1, inner * 2 + 1);
+      addRoom(ctx, cx - inner, cy - inner, inner * 2 + 1, inner * 2 + 1, "ritual");
       for (let i = 1; i <= nRings; i++) {
         const r = Math.min(maxR - 1, inner + i * step);
         if (r <= inner + 1) break;
         const band = 2 + Math.floor(rng() * 2);
-        carveH(cx - r, cx + r, cy - r, band);
-        carveH(cx - r, cx + r, cy + r, band);
-        carveV(cy - r, cy + r, cx - r, band);
-        carveV(cy - r, cy + r, cx + r, band);
-        rooms.push({ x: cx - r, y: cy - r, width: r * 2, height: band });
-        rooms.push({ x: cx - r, y: cy + r, width: r * 2, height: band });
+        carveH(ctx, cx - r, cx + r, cy - r, band);
+        carveH(ctx, cx - r, cx + r, cy + r, band);
+        carveV(ctx, cy - r, cy + r, cx - r, band);
+        carveV(ctx, cy - r, cy + r, cx + r, band);
+        pushRoom(ctx, cx - r, cy - r, r * 2, band, "passage");
+        pushRoom(ctx, cx - r, cy + r, r * 2, band, "passage");
       }
-      // Spokes: one per compass point, offset a little so the plan is not a
-      // perfect cross.
       const rOut = Math.min(maxR - 1, inner + nRings * step);
-      carveV(cy - rOut, cy - inner, cx, 2);
-      carveV(cy + inner, cy + rOut, cx, 2);
-      carveH(cx - rOut, cx - inner, cy, 2);
-      carveH(cx + inner, cx + rOut, cy, 2);
-    } else if (layout === "piers") {
-      // Piers (cistern): a vaulted hall whose roof is carried on a grid of
-      // square piers, so the space is one room and a maze at the same time.
+      carveV(ctx, cy - rOut, cy - inner, cx, 2);
+      carveV(ctx, cy + inner, cy + rOut, cx, 2);
+      carveH(ctx, cx - rOut, cx - inner, cy, 2);
+      carveH(ctx, cx + inner, cx + rOut, cy, 2);
+      // Side shrines in the corners of the outer ring.
+      const nSide = 2 + Math.floor(rng() * 3);
+      for (let i = 0; i < nSide; i++) {
+        const sw = 6 + Math.floor(rng() * 3), sh = 5 + Math.floor(rng() * 3);
+        const left = i % 2 === 0, up = i < 2;
+        const sx = left ? cx - rOut - sw - 2 : cx + rOut + 3;
+        const sy = up ? cy - rOut + 1 : cy + rOut - sh;
+        if (sx < MARGIN + 1 || sx + sw > width - MARGIN - 1 || sy < MARGIN + 1 || sy + sh > height - MARGIN - 1) continue;
+        const r = addRoom(ctx, sx, sy, sw, sh);
+        connectToPlan(ctx, r.x + (sw >> 1), r.y + (sh >> 1), 2, r);
+      }
+    },
+
+    // Piers (cistern): a vaulted hall whose roof stands on a grid of square
+    // piers, so the space is one room and a maze at the same time.
+    piers(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
       const x0 = MARGIN + 2, y0 = MARGIN + 2;
       const x1 = width - MARGIN - 3, y1 = height - MARGIN - 3;
-      carveRect(x0, y0, x1 - x0, y1 - y0);
-      rooms.push({ x: x0, y: y0, width: x1 - x0, height: y1 - y0 });
+      carveRect(ctx, x0, y0, x1 - x0, y1 - y0);
+      pushRoom(ctx, x0, y0, x1 - x0, y1 - y0, "cistern");
       const pier = 2 + Math.floor(rng() * 2);
-      const bay = pier + 3 + Math.floor(rng() * 2);
+      const bay = pier + 4 + Math.floor(rng() * 2);
       for (let y = y0 + 3; y + pier < y1 - 2; y += bay)
         for (let x = x0 + 3; x + pier < x1 - 2; x += bay)
           for (let dy = 0; dy < pier; dy++)
-            for (let dx = 0; dx < pier; dx++)
-              carved[y + dy][x + dx] = false;
-    } else if (layout === "halls") {
-      // Stack halls (sunken library): long parallel halls tied together at both
-      // ends, with a rotunda cut through the middle of them.
+            for (let dx = 0; dx < pier; dx++) ctx.carved[y + dy][x + dx] = false;
+      // The bays between the piers are what get dressed.
+      for (let y = y0 + 3 + pier; y + bay - pier < y1 - 2; y += bay)
+        for (let x = x0 + 3 + pier; x + bay - pier < x1 - 2; x += bay)
+          if (rng() < 0.4) pushRoom(ctx, x, y, bay - pier, bay - pier);
+    },
+
+    // Stack halls (sunken library): long parallel halls of shelving tied
+    // together at both ends, with a rotunda reading room through the middle.
+    halls(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
       const top = MARGIN + 3, bot = height - MARGIN - 4;
       const nHalls = 3 + Math.floor(rng() * 3);
-      const hw = 5 + Math.floor(rng() * 3);
+      const hw = 6 + Math.floor(rng() * 3);
       const gap = 3 + Math.floor(rng() * 2);
       const totalW = nHalls * hw + (nHalls - 1) * gap;
       const startX = Math.max(MARGIN + 2, Math.floor((width - totalW) / 2));
       for (let i = 0; i < nHalls; i++) {
         const hx = startX + i * (hw + gap);
         if (hx + hw >= width - MARGIN) break;
-        carveRect(hx, top, hw, bot - top);
-        rooms.push({ x: hx, y: top, width: hw, height: bot - top });
+        carveRect(ctx, hx, top, hw, bot - top);
+        pushRoom(ctx, hx, top, hw, bot - top, "library");
       }
-      carveH(startX, startX + totalW, top, 3);
-      carveH(startX, startX + totalW, bot - 3, 3);
+      carveH(ctx, startX, startX + totalW, top, 3);
+      carveH(ctx, startX, startX + totalW, bot - 3, 3);
       const rr = 6 + Math.floor(rng() * 3);
       const rcx = startX + (totalW >> 1), rcy = Math.floor((top + bot) / 2);
       for (let dy = -rr; dy <= rr; dy++)
         for (let dx = -rr; dx <= rr; dx++)
           if (dx * dx + dy * dy <= rr * rr) {
             const gx = rcx + dx, gy = rcy + dy;
-            if (gx > MARGIN && gy > MARGIN && gx < width - MARGIN && gy < height - MARGIN) carved[gy][gx] = true;
+            if (gx > MARGIN && gy > MARGIN && gx < width - MARGIN && gy < height - MARGIN) ctx.carved[gy][gx] = true;
           }
-      rooms.push({ x: rcx - rr + 2, y: rcy - rr + 2, width: rr * 2 - 3, height: rr * 2 - 3 });
-    } else if (layout === "tube") {
-      // Tube (smuggler's run, lava tube): ONE winding passage with bulges along
-      // it and a chamber at the far end. A random walk with momentum, so it
-      // wanders without doubling back into a knot.
+      pushRoom(ctx, rcx - rr + 2, rcy - rr + 2, rr * 2 - 3, rr * 2 - 3, "study");
+    },
+
+    // Tube (smuggler's run, lava tube): ONE winding passage with bulges along
+    // it and a chamber at the far end, walked with momentum so it wanders
+    // without knotting.
+    tube(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
       let px = Math.floor(width / 2) + Math.floor(rng() * 9) - 4;
       let py = height - MARGIN - 4;
       let dir = 8;
@@ -1526,139 +2251,130 @@
       for (let i = 0; i < steps; i++) {
         const w2 = 2 + Math.floor(rng() * 3);
         for (let dy = 0; dy < w2; dy++)
-          for (let dx = 0; dx < w2; dx++) {
-            const gx = clampTo(px + dx, MARGIN, width - MARGIN - 1);
-            const gy = clampTo(py + dy, MARGIN, height - MARGIN - 1);
-            carved[gy][gx] = true;
-          }
+          for (let dx = 0; dx < w2; dx++)
+            ctx.carved[clampTo(py + dy, MARGIN, height - MARGIN - 1)][clampTo(px + dx, MARGIN, width - MARGIN - 1)] = true;
         if (rng() < 0.08) bulges.push({ x: px, y: py });
-        // Keep going the way we were most of the time; turn now and then.
         if (rng() < 0.28) dir = [2, 4, 6, 8][Math.floor(rng() * 4)];
-        // The step must be shorter than the passage is wide, or successive
-        // stamps leave a gap and the "one tunnel" comes out as a dotted line.
         const run = 1 + Math.floor(rng() * 2);
         if (dir === 8) py -= run; else if (dir === 2) py += run;
         else if (dir === 4) px -= run; else px += run;
-        // Bounce off the margins rather than clamping into a corner.
         if (px < MARGIN + 2) { px = MARGIN + 2; dir = 6; }
         if (px > width - MARGIN - 4) { px = width - MARGIN - 4; dir = 4; }
         if (py < MARGIN + 2) { py = MARGIN + 2; dir = 2; }
         if (py > height - MARGIN - 4) { py = height - MARGIN - 4; dir = 8; }
       }
       for (const b of bulges.slice(0, 8)) {
-        const bw = 5 + Math.floor(rng() * 5), bh = 4 + Math.floor(rng() * 4);
-        addRoom(b.x - (bw >> 1), b.y - (bh >> 1), bw, bh);
+        const bw = 6 + Math.floor(rng() * 5), bh = 5 + Math.floor(rng() * 4);
+        addRoom(ctx, b.x - (bw >> 1), b.y - (bh >> 1), bw, bh);
       }
       const ew = 12 + Math.floor(rng() * 8), eh = 9 + Math.floor(rng() * 6);
-      const end = addRoom(px - (ew >> 1), py - (eh >> 1), ew, eh);
-      connectToPlan(end.x + (ew >> 1), end.y + (eh >> 1), 2);
-    } else if (layout === "chambers") {
-      // Chambers (crystal cavern): Voronoi pockets joined by the tunnels the
-      // algorithm draws between their seeds.
+      const end = addRoom(ctx, px - (ew >> 1), py - (eh >> 1), ew, eh, null);
+      connectToPlan(ctx, end.x + (ew >> 1), end.y + (eh >> 1), 2, end);
+    },
+
+    // Chambers (crystal cavern): Voronoi pockets joined by the tunnels drawn
+    // between their seeds.
+    chambers(ctx) {
+      const { width, height, MARGIN, seed } = ctx;
       const innerW = width - MARGIN * 2, innerH = height - MARGIN * 2;
       const FLOOR = 1, CEIL = 2;
       const sub = Utils2.generateCaveWithVoronoi(innerW, innerH, innerW, seed ^ 0xC0FFEE, FLOOR, CEIL);
-      for (let y = 0; y < innerH; y++)
-        for (let x = 0; x < innerW; x++)
-          if (sub[y * innerW + x] === FLOOR) carved[MARGIN + y][MARGIN + x] = true;
-      if (keepLargestPocket() < 200) {
-        addRoom(Math.floor(width / 2) - 10, Math.floor(height / 2) - 7, 20, 14);
-      }
-      // The pockets are not rectangles, so publish a coarse room grid over the
-      // carve for the prefab / chest / ornament passes to aim at.
-      for (let gy = MARGIN + 4; gy < height - MARGIN - 8; gy += 12) {
-        for (let gx = MARGIN + 4; gx < width - MARGIN - 8; gx += 12) {
-          let n = 0;
-          for (let y = gy; y < gy + 8; y++) for (let x = gx; x < gx + 8; x++) if (carved[y][x]) n++;
-          if (n > 40) rooms.push({ x: gx, y: gy, width: 8, height: 8 });
-        }
-      }
-    } else if (layout === "platform") {
-      // Platform (metro station): one long concourse with a raised island
-      // platform down the middle and running tunnels leaving both ends.
-      const hh = 15 + Math.floor(rng() * 7);
-      const hy = clampTo(Math.floor(height / 2) - (hh >> 1) + Math.floor(rng() * 7) - 3,
-        MARGIN + 3, height - MARGIN - hh - 6);
+      stampCave(ctx, sub, innerW, innerH, MARGIN, MARGIN, FLOOR);
+      if (keepLargestPocket(ctx) < 200) addRoom(ctx, Math.floor(width / 2) - 10, Math.floor(height / 2) - 7, 20, 14);
+      organicRoomGrid(ctx, 10, 40);
+    },
+
+    // Platform (metro station): one long concourse, running tunnels leaving
+    // both ends, a stair down from the south border, and the service rooms
+    // the station staff kept behind it.
+    platform(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const hh = 13 + Math.floor(rng() * 5);
+      const hy = clampTo(Math.floor(height / 2) - (hh >> 1) + Math.floor(rng() * 7) - 3, MARGIN + 13, height - MARGIN - hh - 6);
       const hx = MARGIN + 4, hw = width - MARGIN * 2 - 8;
-      carveRect(hx, hy, hw, hh);
-      rooms.push({ x: hx, y: hy, width: hw, height: hh });
-      // Two running tunnels leaving the ends, and the stairs down from the
-      // south border meeting the concourse.
+      carveRect(ctx, hx, hy, hw, hh);
+      pushRoom(ctx, hx, hy, hw, hh, "platform");
       const ty = hy + (hh >> 1);
-      carveH(MARGIN, hx, ty, 3);
-      carveH(hx + hw - 1, width - MARGIN - 1, ty, 3);
+      carveH(ctx, MARGIN, hx, ty, 3);
+      carveH(ctx, hx + hw - 1, width - MARGIN - 1, ty, 3);
       const cx = hx + (hw >> 1);
-      carveV(hy + hh - 1, height - MARGIN - 2, cx, 3);
-      rooms.push({ x: cx - 1, y: hy + hh, width: 3, height: height - MARGIN - hy - hh - 2 });
-    } else if (layout === "mound") {
-      // Mound (barrow): a central burial hall with a ring of chambers around
-      // it, each on its own short spoke. Symmetric on purpose - it was built,
-      // not dug out.
+      carveV(ctx, hy + hh - 1, height - MARGIN - 2, cx, 3);
+      pushRoom(ctx, cx - 1, hy + hh, 3, height - MARGIN - hy - hh - 2, "passage");
+      const nService = 2 + Math.floor(rng() * 3);
+      for (let i = 0; i < nService; i++) {
+        const sw = 7 + Math.floor(rng() * 4), sh = 5 + Math.floor(rng() * 3);
+        const sx = hx + 2 + Math.floor((hw - sw - 4) * (i + 0.5) / nService);
+        const r = addRoom(ctx, sx, hy - sh - ROCK_DEPTH, sw, sh);
+        carveV(ctx, r.y + sh - 1, hy, r.x + (sw >> 1), 2);
+      }
+    },
+
+    // Mound (barrow): a central burial hall with a ring of chambers round
+    // it, each on its own short spoke. Symmetric on purpose: it was built.
+    mound(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
       const cx = Math.floor(width / 2), cy = Math.floor(height / 2) + 3;
       const hw = 13 + Math.floor(rng() * 7), hh = 9 + Math.floor(rng() * 5);
-      const hall = addRoom(cx - (hw >> 1), cy - (hh >> 1), hw, hh);
+      addRoom(ctx, cx - (hw >> 1), cy - (hh >> 1), hw, hh, null);
       const nCh = 5 + Math.floor(rng() * 4);
       const radius = Math.min(cx - MARGIN - 10, cy - MARGIN - 10, height - MARGIN - cy - 10);
       for (let i = 0; i < nCh; i++) {
         const ang = (Math.PI * 2 * i) / nCh + rng() * 0.4;
         const rr = radius - 2 + Math.floor(rng() * 4);
         const chw = 6 + Math.floor(rng() * 5), chh = 5 + Math.floor(rng() * 4);
-        const chx = Math.round(cx + Math.cos(ang) * rr) - (chw >> 1);
-        const chy = Math.round(cy + Math.sin(ang) * rr) - (chh >> 1);
-        const r = addRoom(chx, chy, chw, chh);
+        const r = addRoom(ctx, Math.round(cx + Math.cos(ang) * rr) - (chw >> 1), Math.round(cy + Math.sin(ang) * rr) - (chh >> 1), chw, chh);
         const rcx = r.x + (chw >> 1), rcy = r.y + (chh >> 1);
-        carveH(rcx, cx, rcy, 2);
-        carveV(rcy, cy, cx, 2);
+        carveH(ctx, rcx, cx, rcy, 2);
+        carveV(ctx, rcy, cy, cx, 2);
       }
-      hall.width = hw; // (kept for readability: the hall is the boss room hint)
-    } else if (layout === "grid") {
-      // Grid (forge, bunker, buried lab): orthogonal service corridors with
-      // sealed rooms hung off them. Built by people with a ruler.
+    },
+
+    // Grid (forge, bunker, buried lab): orthogonal service corridors with
+    // rooms hung off them, one doorway each. Built by people with a ruler.
+    // A room stands a full ROCK_DEPTH off the corridors above and below it,
+    // or the rock between them is too thin to carry a wall face and the depth
+    // pass opens it, merging the room into the corridor; and two tiles off
+    // the corridors beside it, since one tile is a fin and goes the same way.
+    grid(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
       const cols = 3 + Math.floor(rng() * 2);
-      const rowsN = 3 + Math.floor(rng() * 2);
+      const rowsN = 2 + Math.floor(rng() * 2);
       const cw = Math.floor((width - MARGIN * 2 - 6) / cols);
       const ch = Math.floor((height - MARGIN * 2 - 6) / rowsN);
       const corr = 2 + Math.floor(rng() * 2);
       const xs = [], ys = [];
       for (let i = 0; i <= cols; i++) xs.push(MARGIN + 3 + i * cw);
       for (let i = 0; i <= rowsN; i++) ys.push(MARGIN + 3 + i * ch);
-      for (const y of ys) carveH(xs[0], xs[xs.length - 1], clampTo(y, MARGIN, height - MARGIN - corr), corr);
-      for (const x of xs) carveV(ys[0], ys[ys.length - 1], clampTo(x, MARGIN, width - MARGIN - corr), corr);
-      for (let i = 0; i < cols; i++) {
+      for (const y of ys) carveH(ctx, xs[0], xs[xs.length - 1], clampTo(y, MARGIN, height - MARGIN - corr), corr);
+      for (const x of xs) carveV(ctx, ys[0], ys[ys.length - 1], clampTo(x, MARGIN, width - MARGIN - corr), corr);
+      for (let i = 0; i < cols; i++)
         for (let j = 0; j < rowsN; j++) {
-          if (rng() < 0.15) continue;   // a sealed cell nobody ever opened
-          const inset = 2;
-          const rx = xs[i] + corr + inset - 1;
-          const ry = ys[j] + corr + inset - 1;
-          const rw = cw - corr - inset * 2, rh = ch - corr - inset * 2;
+          if (rng() < 0.15) continue;
+          const rw = cw - corr - 4, rh = ch - corr - ROCK_DEPTH * 2;
           if (rw < 4 || rh < 4) continue;
-          const r = addRoom(rx, ry, rw, rh);
-          // One doorway per room onto the corridor that runs past it.
-          const dx = r.x + Math.floor(rng() * rw);
-          carveV(r.y - 1, ys[j] + corr - 1, clampTo(dx, MARGIN, width - MARGIN - 1));
+          const r = addRoom(ctx, xs[i] + corr + 2, ys[j] + corr + ROCK_DEPTH, rw, rh);
+          const dx = r.x + 1 + Math.floor(rng() * Math.max(1, rw - 2));
+          carveV(ctx, r.y - 1, ys[j] + corr - 1, clampTo(dx, MARGIN, width - MARGIN - 1));
         }
-      }
-    } else {
-      // Dungeon: BSP irregular rooms + winding corridors, chamfered corners and
-      // variable corridor width. The room band is rolled per dungeon (some are
-      // warrens of closets, some are halls), then one to three leaves are
-      // knocked together into a great hall and the deepest room is opened out
-      // into a chamber worth walking to, so a dungeon is not a grid of rooms
-      // that are all the same size.
-      const minRoom = 4 + Math.floor(rng() * 3);          // 4-6
-      const maxRoom = 13 + Math.floor(rng() * 10);        // 13-22
+    },
+
+    // Dungeon: BSP rooms and winding corridors, the room band rolled per
+    // dungeon, one to three neighbours knocked through into great halls.
+    bsp(ctx) {
+      const { rng, width, height, seed } = ctx;
+      const minRoom = 4 + Math.floor(rng() * 3);
+      const maxRoom = 13 + Math.floor(rng() * 10);
       const bsp = Utils2.generateDungeonBSP(width, height, seed, minRoom, maxRoom);
       for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++)
-          if (bsp.carved[y][x]) carved[y][x] = true;
-      if (bsp.rooms) rooms.push(...bsp.rooms);
-      if (bsp.narrowCorridors) dungeonNarrowCorridors.push(...bsp.narrowCorridors);
-
+          if (bsp.carved[y][x]) ctx.carved[y][x] = true;
+      if (bsp.rooms) ctx.rooms.push(...bsp.rooms.map((r) => ({ x: r.x, y: r.y, width: r.width, height: r.height })));
+      if (bsp.narrowCorridors) ctx.narrow.push(...bsp.narrowCorridors);
+      const rooms = ctx.rooms;
       if (rooms.length > 4) {
         const nHalls = 1 + Math.floor(rng() * 3);
         for (let i = 0; i < nHalls; i++) {
           const a = rooms[Math.floor(rng() * rooms.length)];
-          // The nearest other room, knocked through into one hall.
           let b = null, bestD = Infinity;
           for (const r of rooms) {
             if (r === a) continue;
@@ -1670,20 +2386,646 @@
           const nw = Math.max(a.x + a.width, b.x + b.width) - nx;
           const nh = Math.max(a.y + a.height, b.y + b.height) - ny;
           if (nw > 34 || nh > 26) continue;
-          addRoom(nx, ny, nw, nh);
+          addRoom(ctx, nx, ny, nw, nh);
         }
       }
-    }
+    },
+  };
 
-    // Solid border margin so the ONLY way off-map is the carved entrance.
+  // ===========================================================================
+  // MORE LAYOUTS
+  // ===========================================================================
+  // The variants a structure can be drawn as (INTERIOR_PLANS.layouts). Every
+  // built one keeps to the two spacing rules the wall model needs: a full
+  // ROCK_DEPTH of rock north of any room that has floor beyond it, two tiles
+  // of rock between rooms side by side, and doorways cut along a room's top
+  // row (see the grid and cell layouts for why).
+
+  // A block of rooms on a grid inside a rectangle, each joined to its
+  // neighbour on the right along their shared top row and to the room below
+  // through the rock band, so the block is one connected suite. `hint(i, j)`
+  // may name a room's kit. Returns the rooms as rows[j][i].
+  function roomGrid(ctx, x0, y0, w, h, cols, rows, hint) {
+    const HG = 2, VG = ROCK_DEPTH;
+    const cw = Math.floor((w - (cols - 1) * HG) / cols);
+    const ch = Math.floor((h - (rows - 1) * VG) / rows);
+    if (cw < 4 || ch < 4) return [];
+    const grid = [];
+    for (let j = 0; j < rows; j++) {
+      const row = [];
+      for (let i = 0; i < cols; i++) {
+        const rx = x0 + i * (cw + HG), ry = y0 + j * (ch + VG);
+        carveRect(ctx, rx, ry, cw, ch);
+        row.push(pushRoom(ctx, rx, ry, cw, ch, hint ? hint(i, j) : null));
+      }
+      grid.push(row);
+    }
+    for (let j = 0; j < rows; j++)
+      for (let i = 0; i < cols; i++) {
+        const r = grid[j][i];
+        if (i + 1 < cols) carveH(ctx, r.x + r.width - 1, grid[j][i + 1].x, r.y);
+        if (j + 1 < rows && (i === 0 || ctx.rng() < 0.5)) {
+          const dx = r.x + 1 + Math.floor(ctx.rng() * Math.max(1, r.width - 2));
+          carveV(ctx, r.y + r.height - 1, grid[j + 1][i].y, dx);
+        }
+      }
+    return grid;
+  }
+  // Join every room of a grid's bottom row to a hall below it.
+  function dropDoors(ctx, rooms, hallTop) {
+    for (const r of rooms) carveV(ctx, r.y + r.height - 1, hallTop, r.x + (r.width >> 1));
+  }
+  // A filled noisy blob: the organic layouts' building block.
+  function carveBlob(ctx, cx, cy, rx, ry, rough) {
+    const { width, height, MARGIN } = ctx;
+    const n = valueNoise2D((ctx.seed ^ (cx * 7919 + cy * 104729)) | 0, 3);
+    for (let y = cy - ry - 2; y <= cy + ry + 2; y++)
+      for (let x = cx - rx - 2; x <= cx + rx + 2; x++) {
+        if (x <= MARGIN || y <= MARGIN || x >= width - MARGIN - 1 || y >= height - MARGIN - 1) continue;
+        const dx = (x - cx) / Math.max(1, rx), dy = (y - cy) / Math.max(1, ry);
+        if (dx * dx + dy * dy <= 1 + (n(x, y) - 0.5) * (rough || 0.5)) ctx.carved[y][x] = true;
+      }
+  }
+  // A wandering tunnel: momentum walk, `w` tiles wide, from (x, y) heading
+  // roughly along (hx, hy). Returns the end point.
+  function carveWalk(ctx, x, y, hx, hy, steps, w) {
+    const { width, height, MARGIN, rng } = ctx;
+    let ang = Math.atan2(hy, hx);
+    for (let i = 0; i < steps; i++) {
+      for (let dy = 0; dy < w; dy++)
+        for (let dx = 0; dx < w; dx++) {
+          const gx = clampTo(Math.round(x) + dx, MARGIN + 1, width - MARGIN - 2);
+          const gy = clampTo(Math.round(y) + dy, MARGIN + 1, height - MARGIN - 2);
+          ctx.carved[gy][gx] = true;
+        }
+      ang += (rng() - 0.5) * 0.7;
+      // Drift back toward the heading so a tunnel goes somewhere.
+      const want = Math.atan2(hy, hx);
+      ang += Math.atan2(Math.sin(want - ang), Math.cos(want - ang)) * 0.15;
+      x = clampTo(x + Math.cos(ang), MARGIN + 2, width - MARGIN - 3 - w);
+      y = clampTo(y + Math.sin(ang), MARGIN + 2, height - MARGIN - 3 - w);
+    }
+    return { x: Math.round(x), y: Math.round(y) };
+  }
+  // Mark carved cells as standing water, keeping a dry rim: a cell is only
+  // flooded when all four of its neighbours are floor.
+  function floodCells(ctx, test) {
+    for (let y = ctx.MARGIN + 1; y < ctx.height - ctx.MARGIN - 1; y++)
+      for (let x = ctx.MARGIN + 1; x < ctx.width - ctx.MARGIN - 1; x++) {
+        if (!ctx.carved[y][x] || !test(x, y)) continue;
+        if (!ctx.isFloor(x - 1, y) || !ctx.isFloor(x + 1, y) || !ctx.isFloor(x, y - 1) || !ctx.isFloor(x, y + 1)) continue;
+        ctx.waterCells.add(x + y * ctx.width);
+      }
+  }
+
+  Object.assign(LAYOUTS, {
+    // Shop floor (hardware store, grocery, general store): one long sales
+    // floor behind the door, and the stockrooms and the office behind that.
+    shopfloor(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const fw = width - MARGIN * 2 - 4 - Math.floor(rng() * 10);
+      const fh = 16 + Math.floor(rng() * 8);
+      const fx = MARGIN + 2 + Math.floor(rng() * Math.max(1, width - MARGIN * 2 - 4 - fw));
+      const fy = height - MARGIN - 2 - fh;
+      carveRect(ctx, fx, fy, fw, fh);
+      // The floor takes the shop's own kit: a hardware store's is tools and
+      // timber, a grocer's tins and crates (INTERIOR_PLANS main).
+      const plan = INTERIOR_PLANS[ctx.S.key];
+      pushRoom(ctx, fx, fy, fw, fh, (plan && plan.main) || "salesfloor");
+      const backTop = MARGIN + 2, backH = fy - ROCK_DEPTH - backTop;
+      const cols = 2 + Math.floor(rng() * 3), rows = backH >= 22 ? 2 : 1;
+      const grid = roomGrid(ctx, fx, backTop, fw, backH, cols, rows, null);
+      if (grid.length) dropDoors(ctx, grid[grid.length - 1], fy);
+    },
+
+    // Wards (hospital, clinic): a long corridor with wards either side, the
+    // operating theatre at its head and reception where the party walks in.
+    ward(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const cx = Math.floor(width / 2);
+      const recH = 7 + Math.floor(rng() * 3), recW = 16 + Math.floor(rng() * 8);
+      const recY = height - MARGIN - 2 - recH;
+      carveRect(ctx, cx - (recW >> 1), recY, recW, recH);
+      pushRoom(ctx, cx - (recW >> 1), recY, recW, recH, "reception");
+      const top = MARGIN + 12;
+      carveV(ctx, top, recY, cx - 1, 3);
+      pushRoom(ctx, cx - 1, top, 3, recY - top, "passage");
+      const sw = 14 + Math.floor(rng() * 6), sh = 7 + Math.floor(rng() * 2);
+      const theatre = addRoom(ctx, cx - (sw >> 1), MARGIN + 1, sw, sh, "surgery");
+      carveV(ctx, theatre.y + sh - 1, top, cx, 2);
+      const wardW = 9 + Math.floor(rng() * 4), wardH = 6 + Math.floor(rng() * 2);
+      for (let y = Math.max(top + 1, theatre.y + sh + ROCK_DEPTH); y + wardH < recY - ROCK_DEPTH; y += wardH + ROCK_DEPTH) {
+        for (const side of [-1, 1]) {
+          if (rng() < 0.1) continue;
+          const rx = side < 0 ? cx - 4 - wardW : cx + 4;
+          const r = addRoom(ctx, rx, y, wardW, wardH, rng() < 0.75 ? "ward" : null);
+          if (side < 0) carveH(ctx, r.x + wardW - 1, cx - 1, r.y);
+          else carveH(ctx, cx + 1, r.x, r.y);
+        }
+      }
+    },
+
+    // Taproom (tavern, restaurant): the common room behind the door, the
+    // kitchen and the cellar store behind the bar, the guest rooms beyond.
+    taproom(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const tw = 26 + Math.floor(rng() * 14), th = 12 + Math.floor(rng() * 6);
+      const tx = Math.floor((width - tw) / 2) + Math.floor(rng() * 7) - 3;
+      const ty = height - MARGIN - 2 - th;
+      carveRect(ctx, tx, ty, tw, th);
+      pushRoom(ctx, tx, ty, tw, th, "taproom");
+      const backTop = MARGIN + 2, backH = ty - ROCK_DEPTH - backTop;
+      const gx = MARGIN + 2, gw = width - MARGIN * 2 - 4;
+      const cols = 4 + Math.floor(rng() * 2), rows = backH >= 34 ? 3 : (backH >= 22 ? 2 : 1);
+      let n = 0;
+      const grid = roomGrid(ctx, gx, backTop, gw, backH, cols, rows, (i, j) => {
+        const k = n++;
+        if (j === rows - 1 && i === 0) return "kitchen";
+        if (j === rows - 1 && i === 1) return "store";
+        return k % 5 === 4 ? null : "bedroom";
+      });
+      if (grid.length) {
+        const bottom = grid[grid.length - 1].filter((r) => r.x + r.width > tx && r.x < tx + tw);
+        dropDoors(ctx, bottom.length ? bottom : [grid[grid.length - 1][0]], ty);
+      }
+    },
+
+    // Factory floor: one great production hall (sometimes two, side by side)
+    // with the offices and stores along its back wall.
+    factory(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const hy = MARGIN + 14 + Math.floor(rng() * 4);
+      const hh = height - MARGIN - 2 - hy;
+      const x0 = MARGIN + 2, wAll = width - MARGIN * 2 - 4;
+      if (rng() < 0.35) {
+        const w1 = Math.floor((wAll - 2) / 2);
+        carveRect(ctx, x0, hy, w1, hh); pushRoom(ctx, x0, hy, w1, hh, "factory");
+        carveRect(ctx, x0 + w1 + 2, hy, wAll - w1 - 2, hh); pushRoom(ctx, x0 + w1 + 2, hy, wAll - w1 - 2, hh, "factory");
+        carveH(ctx, x0 + w1 - 1, x0 + w1 + 2, hy, 2);
+      } else {
+        carveRect(ctx, x0, hy, wAll, hh); pushRoom(ctx, x0, hy, wAll, hh, "factory");
+      }
+      const grid = roomGrid(ctx, x0, MARGIN + 2, wAll, hy - ROCK_DEPTH - MARGIN - 2, 3 + Math.floor(rng() * 2), 1, null);
+      if (grid.length) dropDoors(ctx, grid[0], hy);
+    },
+
+    // House (farmhouse, a house, an abandoned one, a basement): a block of
+    // rooms of a few sizes, a door through every wall between neighbours.
+    house(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const hw = 30 + Math.floor(rng() * (width - MARGIN * 2 - 34));
+      const hh = 26 + Math.floor(rng() * (height - MARGIN * 2 - 30));
+      const hx = Math.floor((width - hw) / 2), hy = height - MARGIN - 2 - hh;
+      roomGrid(ctx, hx, hy, hw, hh, 2 + Math.floor(rng() * 2), 2 + Math.floor(rng() * 2), null);
+    },
+
+    // Keep (castle interior, a dungeon under one): a three by three block of
+    // rooms around a great hall at its heart.
+    keep(ctx) {
+      const { width, height, MARGIN } = ctx;
+      const grid = roomGrid(ctx, MARGIN + 2, MARGIN + 2, width - MARGIN * 2 - 4, height - MARGIN * 2 - 4, 3, 3, null);
+      if (grid.length === 3) {
+        // The heart of the keep. It is not widened: the bands either side of
+        // it are only two tiles, and opening it into them merged the whole
+        // middle row into one hall.
+        grid[1][1].hint = "throneroom";
+      }
+    },
+
+    // Great hall (a dwarven hold, a forge, a castle): one colossal pillared
+    // hall with workshops and stores above and below it.
+    greathall(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const hw = width - MARGIN * 2 - 8 - Math.floor(rng() * 8);
+      const hh = 14 + Math.floor(rng() * 6);
+      const hx = Math.floor((width - hw) / 2), hy = MARGIN + 14;
+      carveRect(ctx, hx, hy, hw, hh);
+      pushRoom(ctx, hx, hy, hw, hh, "throneroom");
+      const above = roomGrid(ctx, hx, MARGIN + 2, hw, hy - ROCK_DEPTH - MARGIN - 2, 3 + Math.floor(rng() * 2), 1, null);
+      if (above.length) dropDoors(ctx, above[0], hy);
+      const belowTop = hy + hh + ROCK_DEPTH;
+      const below = roomGrid(ctx, hx, belowTop, hw, height - MARGIN - 2 - belowTop, 2 + Math.floor(rng() * 3), 1, null);
+      if (below.length) for (const r of below[0]) carveV(ctx, hy + hh - 1, r.y, r.x + (r.width >> 1));
+    },
+
+    // Shaft (a deep mine): one vertical shaft from top to bottom with landings
+    // cut off it on alternating sides, each a gallery ending in a working.
+    shaft(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const sw = 4 + Math.floor(rng() * 2);
+      const sx = Math.floor(width / 2) - (sw >> 1) + Math.floor(rng() * 9) - 4;
+      carveV(ctx, MARGIN + 1, height - MARGIN - 2, sx, sw);
+      pushRoom(ctx, sx, MARGIN + 1, sw, height - MARGIN * 2 - 3, "landing");
+      let side = rng() < 0.5 ? -1 : 1;
+      for (let y = MARGIN + 3; y < height - MARGIN - 9; y += 7 + Math.floor(rng() * 4)) {
+        const len = 6 + Math.floor(rng() * 10);
+        const gx0 = side < 0 ? Math.max(MARGIN + 2, sx - len) : sx + sw;
+        const gx1 = side < 0 ? sx : Math.min(width - MARGIN - 3, sx + sw + len);
+        carveRect(ctx, gx0, y, gx1 - gx0, 3);
+        pushRoom(ctx, gx0, y, gx1 - gx0, 3, "passage");
+        const cw = 7 + Math.floor(rng() * 5), ch = 5 + Math.floor(rng() * 3);
+        const cx = side < 0 ? gx0 - cw + 2 : gx1 - 2;
+        addRoom(ctx, cx, y, cw, ch, null);
+        side = rng() < 0.75 ? -side : side;
+      }
+    },
+
+    // Caldera (a magma chamber, a lair over the fire): one huge vault round a
+    // lake of molten rock, side hollows off its rim.
+    caldera(ctx) {
+      const { rng, width, height } = ctx;
+      const cx = Math.floor(width / 2), cy = Math.floor(height / 2);
+      const rx = 22 + Math.floor(rng() * 4), ry = 20 + Math.floor(rng() * 3);
+      carveBlob(ctx, cx, cy, rx, ry, 0.35);
+      const lx = Math.round(rx * (0.35 + rng() * 0.15)), ly = Math.round(ry * (0.3 + rng() * 0.15));
+      for (let y = cy - ly; y <= cy + ly; y++)
+        for (let x = cx - lx; x <= cx + lx; x++) {
+          const dx = (x - cx) / lx, dy = (y - cy) / ly;
+          if (dx * dx + dy * dy <= 1) { ctx.carved[y][x] = false; ctx.lakeMask[x + y * width] = 1; }
+        }
+      const nSide = 3 + Math.floor(rng() * 3);
+      for (let i = 0; i < nSide; i++) {
+        const a = rng() * Math.PI * 2;
+        carveBlob(ctx, Math.round(cx + Math.cos(a) * rx), Math.round(cy + Math.sin(a) * ry), 4 + Math.floor(rng() * 3), 3 + Math.floor(rng() * 3), 0.6);
+      }
+      organicRoomGrid(ctx, 10, 30);
+    },
+
+    // Fissure (a glacier crevasse, a cracked cavern): long jagged cracks that
+    // branch and meet, opening here and there into a wider hall.
+    fissure(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const n = 3 + Math.floor(rng() * 3);
+      const ends = [];
+      for (let i = 0; i < n; i++) {
+        const sx = MARGIN + 3 + Math.floor(rng() * (width - MARGIN * 2 - 6));
+        const e = carveWalk(ctx, sx, MARGIN + 3, (rng() - 0.5) * 0.8, 1, 50 + Math.floor(rng() * 40), 2 + Math.floor(rng() * 2));
+        ends.push(e);
+        if (rng() < 0.7) carveWalk(ctx, e.x, e.y, rng() < 0.5 ? -1 : 1, 0.2, 20 + Math.floor(rng() * 20), 2);
+      }
+      for (let i = 0; i + 1 < ends.length; i++) carveWalk(ctx, ends[i].x, ends[i].y, ends[i + 1].x - ends[i].x, ends[i + 1].y - ends[i].y + 0.01, 40, 2);
+      const halls = 2 + Math.floor(rng() * 3);
+      for (let i = 0; i < halls; i++) {
+        const e = ends[Math.floor(rng() * ends.length)];
+        carveBlob(ctx, e.x, e.y, 6 + Math.floor(rng() * 4), 5 + Math.floor(rng() * 3), 0.6);
+      }
+      organicRoomGrid(ctx, 10, 22);
+    },
+
+    // Burrow (an ant or termite nest, a creature's den): narrow winding
+    // tunnels branching from the way in, a brood chamber at every end.
+    burrow(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const stack = [{ x: Math.floor(width / 2), y: height - MARGIN - 6, a: -Math.PI / 2, depth: 0 }];
+      let chambers = 0;
+      while (stack.length && chambers < 16) {
+        const b = stack.pop();
+        const e = carveWalk(ctx, b.x, b.y, Math.cos(b.a), Math.sin(b.a), 8 + Math.floor(rng() * 8), 2);
+        const r = 3 + Math.floor(rng() * 2);
+        carveBlob(ctx, e.x, e.y, r + 1, r, 0.5);
+        pushRoom(ctx, clampTo(e.x - r, MARGIN, width - MARGIN - 1), clampTo(e.y - r, MARGIN, height - MARGIN - 1), r * 2 + 1, r * 2, "brood");
+        chambers++;
+        if (b.depth < 3) {
+          const kids = 2 + (rng() < 0.4 ? 1 : 0);
+          for (let k = 0; k < kids; k++) stack.push({ x: e.x, y: e.y, a: b.a + (k - (kids - 1) / 2) * 0.9 + (rng() - 0.5) * 0.4, depth: b.depth + 1 });
+        }
+      }
+    },
+
+    // Roots (a root hollow, a fungal warren under a wood): tunnels groping
+    // down from the surface like roots, hollows at their tips.
+    roots(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const n = 3 + Math.floor(rng() * 3);
+      for (let i = 0; i < n; i++) {
+        let p = { x: MARGIN + 4 + Math.floor(((width - MARGIN * 2 - 8) * (i + 0.5)) / n), y: MARGIN + 2 };
+        for (let seg = 0; seg < 4; seg++) {
+          p = carveWalk(ctx, p.x, p.y, (rng() - 0.5) * 1.2, 1, 8 + Math.floor(rng() * 8), 3 - Math.min(2, seg >> 1));
+          if (rng() < 0.5) {
+            const tip = carveWalk(ctx, p.x, p.y, rng() < 0.5 ? -1 : 1, 0.6, 8 + Math.floor(rng() * 6), 2);
+            carveBlob(ctx, tip.x, tip.y, 4, 3, 0.6);
+          }
+        }
+        carveBlob(ctx, p.x, p.y, 5 + Math.floor(rng() * 3), 4 + Math.floor(rng() * 2), 0.5);
+      }
+      // Whatever the roots never reached is joined to them along the bottom.
+      carveWalk(ctx, MARGIN + 4, height - MARGIN - 8, 1, 0, width - MARGIN * 2 - 10, 3);
+      organicRoomGrid(ctx, 10, 25);
+    },
+
+    // River (karst caves, a sewer outfall, a grotto): an underground river
+    // crossing the map, dry banks either side, fords to cross it by and
+    // caverns opening off the banks.
+    river(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const cy = Math.floor(height / 2) + Math.floor(rng() * 9) - 4;
+      const amp = 4 + rng() * 6, f = 0.08 + rng() * 0.08, ph = rng() * 6.28;
+      const ww = 3 + Math.floor(rng() * 2), bank = 2 + Math.floor(rng() * 2);
+      const fordEvery = 10 + Math.floor(rng() * 5), fordAt = Math.floor(rng() * fordEvery);
+      const centre = [];
+      for (let x = MARGIN; x < width - MARGIN; x++) {
+        const y = Math.round(cy + Math.sin(x * f + ph) * amp);
+        centre[x] = y;
+        for (let dy = -bank - (ww >> 1); dy <= bank + ww - (ww >> 1); dy++) {
+          const gy = clampTo(y + dy, MARGIN + 1, height - MARGIN - 2);
+          ctx.carved[gy][x] = true;
+        }
+      }
+      const isFord = (x) => (x - fordAt) % fordEvery < 2;
+      ctx.afterCarve = () => floodCells(ctx, (x, y) => {
+        if (centre[x] == null || isFord(x)) return false;
+        const dy = y - centre[x];
+        return dy >= -(ww >> 1) && dy < ww - (ww >> 1);
+      });
+      const nCav = 4 + Math.floor(rng() * 4);
+      for (let i = 0; i < nCav; i++) {
+        const x = MARGIN + 6 + Math.floor(rng() * (width - MARGIN * 2 - 12));
+        const up = rng() < 0.5;
+        const by = centre[x] + (up ? -(10 + Math.floor(rng() * 8)) : 10 + Math.floor(rng() * 8));
+        carveBlob(ctx, x, clampTo(by, MARGIN + 6, height - MARGIN - 7), 5 + Math.floor(rng() * 4), 4 + Math.floor(rng() * 3), 0.6);
+        carveV(ctx, centre[x], clampTo(by, MARGIN + 6, height - MARGIN - 7), x, 2);
+      }
+      organicRoomGrid(ctx, 10, 26);
+    },
+
+    // Sinkhole (a cenote, a collapsed cavern): one great round drop with a
+    // pool at its foot, ledges round it and caves off its rim.
+    sinkhole(ctx) {
+      const { rng, width, height } = ctx;
+      const cx = Math.floor(width / 2) + Math.floor(rng() * 7) - 3, cy = Math.floor(height / 2) - 2;
+      const r = 17 + Math.floor(rng() * 4);
+      carveBlob(ctx, cx, cy, r + 2, r, 0.4);
+      const pr = 6 + Math.floor(rng() * 4);
+      ctx.afterCarve = () => floodCells(ctx, (x, y) => (x - cx) * (x - cx) + (y - cy) * (y - cy) <= pr * pr);
+      const nCave = 4 + Math.floor(rng() * 3);
+      for (let i = 0; i < nCave; i++) {
+        const a = (Math.PI * 2 * i) / nCave + rng() * 0.6;
+        carveBlob(ctx, Math.round(cx + Math.cos(a) * (r + 4)), Math.round(cy + Math.sin(a) * (r + 3)), 4 + Math.floor(rng() * 3), 3 + Math.floor(rng() * 2), 0.6);
+      }
+      organicRoomGrid(ctx, 10, 26);
+    },
+
+    // Pyramid (a sand tomb, a barrow, a profane temple): concentric corridors
+    // each opening onto the next at one side only, so the way to the burial
+    // chamber at the heart winds all the way round.
+    pyramid(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      let x0 = MARGIN + 2, y0 = MARGIN + 2, x1 = width - MARGIN - 3, y1 = height - MARGIN - 3;
+      const rings = [];
+      for (let i = 0; i < 4; i++) {
+        const cw = 2 + (i === 1 ? 2 : 0);
+        if (x1 - x0 < 20 || y1 - y0 < 18) break;
+        carveH(ctx, x0, x1, y0, cw); carveH(ctx, x0, x1, y1 - cw + 1, cw);
+        carveV(ctx, y0, y1, x0, cw); carveV(ctx, y0, y1, x1 - cw + 1, cw);
+        pushRoom(ctx, x0, y0, x1 - x0 + 1, cw, cw >= 4 ? "tombs" : "passage");
+        rings.push({ x0, y0, x1, y1, cw });
+        x0 += cw + 2; x1 -= cw + 2; y0 += cw + ROCK_DEPTH; y1 -= cw + ROCK_DEPTH;
+      }
+      if (x1 - x0 >= 6 && y1 - y0 >= 5) {
+        carveRect(ctx, x0, y0, x1 - x0 + 1, y1 - y0 + 1);
+        pushRoom(ctx, x0, y0, x1 - x0 + 1, y1 - y0 + 1, "sanctum");
+      }
+      // One opening between each ring and the next, never on the same side:
+      // the sides turn by one ring to ring, from a rolled start.
+      const turn = Math.floor(rng() * 4);
+      for (let i = 0; i < rings.length; i++) {
+        const o = rings[i];
+        const inner = rings[i + 1] || { x0, y0, x1, y1, cw: 1 };
+        const side = (i + turn) % 4;
+        const mx = (o.x0 + o.x1) >> 1;
+        if (side === 0) carveV(ctx, o.y0, inner.y0, mx, 2);
+        else if (side === 1) carveV(ctx, inner.y1, o.y1, mx, 2);
+        else if (side === 2) carveH(ctx, o.x0, inner.x0, inner.y0, 1);
+        else carveH(ctx, inner.x1, o.x1, inner.y0, 1);
+      }
+    },
+
+    // Cove (a smugglers' cove, a sea cave): a cavern round a lagoon, rough
+    // timber docks along its edge and storerooms dug off the back.
+    cove(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const cx = MARGIN + 18 + Math.floor(rng() * 8), cy = Math.floor(height / 2) + 4;
+      const rx = 15 + Math.floor(rng() * 4), ry = 13 + Math.floor(rng() * 4);
+      carveBlob(ctx, cx, cy, rx, ry, 0.5);
+      const lx = Math.round(rx * 0.55), ly = Math.round(ry * 0.5);
+      ctx.afterCarve = () => floodCells(ctx, (x, y) => ((x - cx) / lx) ** 2 + ((y - cy) / ly) ** 2 <= 1);
+      const nDock = 2 + Math.floor(rng() * 2);
+      for (let i = 0; i < nDock; i++) {
+        const dx = cx - lx + Math.floor(rng() * lx * 2) - 3, dy = i % 2 ? cy + ly - 1 : cy - ly - 3;
+        pushRoom(ctx, clampTo(dx, MARGIN + 1, width - MARGIN - 8), clampTo(dy, MARGIN + 1, height - MARGIN - 5), 7, 4, "dock");
+      }
+      const sx = cx + rx + 3;
+      const grid = roomGrid(ctx, sx, MARGIN + 4, width - MARGIN - 2 - sx, height - MARGIN * 2 - 8, 1 + Math.floor(rng() * 2), 2, null);
+      for (const row of grid) for (const r of row) connectToPlan(ctx, r.x, r.y, 2, r);
+    },
+
+    // Maze (maintenance tunnels, a catacomb, a bunker's ducts): a true maze of
+    // two-wide passages, with a few rooms opened out of its blocks.
+    maze(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const PX = 4, PY = 2 + ROCK_DEPTH;
+      const gx = Math.floor((width - MARGIN * 2 - 4) / PX), gy = Math.floor((height - MARGIN * 2 - 4) / PY);
+      const ox = MARGIN + 2, oy = MARGIN + 2;
+      const cell = (i, j) => ({ x: ox + i * PX, y: oy + j * PY });
+      const seen = new Uint8Array(gx * gy);
+      const stack = [[Math.floor(gx / 2), gy - 1]];
+      seen[stack[0][0] + stack[0][1] * gx] = 1;
+      const join = (a, b) => {
+        const A = cell(a[0], a[1]), B = cell(b[0], b[1]);
+        if (A.y === B.y) carveRect(ctx, Math.min(A.x, B.x), A.y, Math.abs(A.x - B.x) + 2, 2);
+        else carveRect(ctx, A.x, Math.min(A.y, B.y), 2, Math.abs(A.y - B.y) + 2);
+      };
+      carveRect(ctx, cell(stack[0][0], stack[0][1]).x, cell(stack[0][0], stack[0][1]).y, 2, 2);
+      while (stack.length) {
+        const [i, j] = stack[stack.length - 1];
+        const next = shuffled(ctx, [[1, 0], [-1, 0], [0, 1], [0, -1]])
+          .map(([dx, dy]) => [i + dx, j + dy])
+          .filter(([a, b]) => a >= 0 && b >= 0 && a < gx && b < gy && !seen[a + b * gx]);
+        if (!next.length) { stack.pop(); continue; }
+        const n = next[0];
+        seen[n[0] + n[1] * gx] = 1;
+        join([i, j], n);
+        stack.push(n);
+      }
+      // Loops, so it is a maze one can be chased round.
+      for (let k = 0; k < gx * gy * 0.08; k++) {
+        const i = Math.floor(rng() * (gx - 1)), j = Math.floor(rng() * gy);
+        join([i, j], [i + 1, j]);
+      }
+      const nRooms = 3 + Math.floor(rng() * 4);
+      for (let k = 0; k < nRooms; k++) {
+        const i = Math.floor(rng() * (gx - 2)), j = Math.floor(rng() * (gy - 1));
+        const A = cell(i, j), B = cell(i + 2, j + 1);
+        carveRect(ctx, A.x, A.y, B.x - A.x + 2, B.y - A.y + 2);
+        pushRoom(ctx, A.x, A.y, B.x - A.x + 2, B.y - A.y + 2, null);
+      }
+    },
+
+    // Undercroft (a church's, a crypt's, a cistern's): a low vaulted hall on
+    // rows of piers, with chapels opening off its north side.
+    undercroft(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const hw = width - MARGIN * 2 - 6 - Math.floor(rng() * 8), hh = 18 + Math.floor(rng() * 6);
+      const hx = Math.floor((width - hw) / 2), hy = height - MARGIN - 2 - hh;
+      carveRect(ctx, hx, hy, hw, hh);
+      pushRoom(ctx, hx, hy, hw, hh, null);
+      const bay = 5 + Math.floor(rng() * 2);
+      for (let y = hy + 3; y + 2 < hy + hh - 2; y += bay)
+        for (let x = hx + 3; x + 2 < hx + hw - 2; x += bay) {
+          ctx.carved[y][x] = false; ctx.carved[y][x + 1] = false;
+          ctx.carved[y + 1][x] = false; ctx.carved[y + 1][x + 1] = false;
+        }
+      const grid = roomGrid(ctx, hx, MARGIN + 2, hw, hy - ROCK_DEPTH - MARGIN - 2, 3 + Math.floor(rng() * 2), hy - MARGIN > 30 ? 2 : 1, null);
+      if (grid.length) dropDoors(ctx, grid[grid.length - 1], hy);
+    },
+
+    // Shards (a void rift, a shattered geode): islands of floor in the dark,
+    // strung together by narrow causeways.
+    shards(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const pts = [];
+      for (let tries = 0; tries < 200 && pts.length < 9; tries++) {
+        const p = { x: MARGIN + 8 + Math.floor(rng() * (width - MARGIN * 2 - 16)), y: MARGIN + 8 + Math.floor(rng() * (height - MARGIN * 2 - 16)) };
+        if (pts.some((q) => Math.abs(q.x - p.x) + Math.abs(q.y - p.y) < 15)) continue;
+        pts.push(p);
+      }
+      for (const p of pts) {
+        const rx = 4 + Math.floor(rng() * 4), ry = 4 + Math.floor(rng() * 3);
+        carveBlob(ctx, p.x, p.y, rx, ry, 0.6);
+        pushRoom(ctx, p.x - rx, p.y - ry, rx * 2 + 1, ry * 2 + 1, null);
+      }
+      // A spanning tree of causeways, nearest first.
+      const inTree = [0];
+      while (inTree.length < pts.length) {
+        let best = null;
+        for (const a of inTree)
+          for (let b = 0; b < pts.length; b++) {
+            if (inTree.includes(b)) continue;
+            const d = Math.abs(pts[a].x - pts[b].x) + Math.abs(pts[a].y - pts[b].y);
+            if (!best || d < best.d) best = { a, b, d };
+          }
+        const A = pts[best.a], B = pts[best.b];
+        carveH(ctx, A.x, B.x, A.y, 2);
+        carveV(ctx, A.y, B.y, B.x, 2);
+        inTree.push(best.b);
+      }
+    },
+
+    // Galleries (a wine cellar, catacomb loculi, library stacks): long
+    // parallel vaulted aisles tied together by a hall at one or both ends.
+    galleries(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const gw = 30 + Math.floor(rng() * (width - MARGIN * 2 - 40));
+      const gx = Math.floor((width - gw) / 2);
+      const gh = 4 + Math.floor(rng() * 2);
+      const tops = [];
+      for (let y = MARGIN + 3; y + gh < height - MARGIN - 4; y += gh + ROCK_DEPTH) {
+        carveRect(ctx, gx, y, gw, gh);
+        pushRoom(ctx, gx, y, gw, gh, null);
+        tops.push(y);
+      }
+      const hw = 4;
+      carveV(ctx, tops[0], height - MARGIN - 3, gx - hw, hw);
+      pushRoom(ctx, gx - hw, tops[0], hw, height - MARGIN - 3 - tops[0], "passage");
+      for (const y of tops) carveH(ctx, gx - 1, gx, y, gh);
+      if (rng() < 0.5) {
+        carveV(ctx, tops[0], tops[tops.length - 1] + gh - 1, gx + gw, hw);
+        for (const y of tops) carveH(ctx, gx + gw - 1, gx + gw, y, gh);
+      }
+    },
+
+    // Strata (salt works, a fossil bed, a mine following a seam): long
+    // horizontal seams worked one above the other, joined by ramps at
+    // alternating ends.
+    strata(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const seams = [];
+      for (let y = MARGIN + 3; y + 5 < height - MARGIN - 3; y += 5 + ROCK_DEPTH + Math.floor(rng() * 3)) {
+        const h = 4 + Math.floor(rng() * 2);
+        const x0 = MARGIN + 2 + Math.floor(rng() * 8), x1 = width - MARGIN - 3 - Math.floor(rng() * 8);
+        carveRect(ctx, x0, y, x1 - x0, h);
+        pushRoom(ctx, x0, y, x1 - x0, h, null);
+        seams.push({ x0, x1, y, h });
+        // Pockets where the seam ran thick.
+        if (rng() < 0.6) carveBlob(ctx, x0 + Math.floor(rng() * (x1 - x0)), y + (h >> 1), 3 + Math.floor(rng() * 3), 2, 0.5);
+      }
+      for (let i = 0; i + 1 < seams.length; i++) {
+        const a = seams[i], b = seams[i + 1];
+        const x = i % 2 ? Math.max(a.x0, b.x0) + 1 : Math.min(a.x1, b.x1) - 3;
+        carveV(ctx, a.y, b.y, x, 2);
+      }
+    },
+
+    // Hull (a buried wreck): a ship's hull lying on its side in the rock,
+    // its length divided by bulkheads into holds, a brig and a cabin.
+    hull(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const L = width - MARGIN * 2 - 8, beam = 20 + Math.floor(rng() * 6);
+      const x0 = MARGIN + 4, cy = Math.floor(height / 2);
+      const bulk = 9 + Math.floor(rng() * 3);
+      const comps = [];
+      for (let x = x0; x < x0 + L - 4; x += bulk + 2) {
+        const cxr = (x + bulk / 2 - (x0 + L / 2)) / (L / 2);
+        const half = Math.max(4, Math.round((beam / 2) * Math.sqrt(Math.max(0, 1 - Math.pow(Math.abs(cxr), 2.4)))));
+        const w = Math.min(bulk, x0 + L - x);
+        carveRect(ctx, x, cy - half, w, half * 2);
+        comps.push(pushRoom(ctx, x, cy - half, w, half * 2, rng() < 0.7 ? "hold" : null));
+      }
+      for (let i = 0; i + 1 < comps.length; i++) {
+        const a = comps[i], b = comps[i + 1];
+        carveH(ctx, a.x + a.width - 1, b.x, Math.max(a.y, b.y), 2);
+      }
+    },
+
+    // Arena (fighting pits under a castle, an oubliette's games): a sanded pit
+    // ringed by a corridor, the cells and the armoury along the ring.
+    arena(ctx) {
+      const { rng, width, height, MARGIN } = ctx;
+      const cx = Math.floor(width / 2), cy = Math.floor(height / 2) + 2;
+      const pw = 20 + Math.floor(rng() * 8), ph = 12 + Math.floor(rng() * 4);
+      const px = cx - (pw >> 1), py = cy - (ph >> 1);
+      carveRect(ctx, px, py, pw, ph);
+      pushRoom(ctx, px, py, pw, ph, "pit");
+      const rx0 = px - 4, rx1 = px + pw + 2, ry0 = py - ROCK_DEPTH - 2, ry1 = py + ph + ROCK_DEPTH;
+      carveH(ctx, rx0, rx1 + 1, ry0, 2); carveH(ctx, rx0, rx1 + 1, ry1, 2);
+      carveV(ctx, ry0, ry1 + 1, rx0, 2); carveV(ctx, ry0, ry1 + 1, rx1, 2);
+      pushRoom(ctx, rx0, ry0, rx1 - rx0 + 2, 2, "passage");
+      carveV(ctx, ry0 + 1, py, cx - 1, 2);
+      carveV(ctx, py + ph - 1, ry1, cx + 1, 2);
+      const above = roomGrid(ctx, rx0, MARGIN + 2, rx1 - rx0 + 2, ry0 - ROCK_DEPTH - MARGIN - 2, 3 + Math.floor(rng() * 2), 1, null);
+      if (above.length) dropDoors(ctx, above[0], ry0);
+      const belowTop = ry1 + 2 + ROCK_DEPTH;
+      if (height - MARGIN - 2 - belowTop >= 5) {
+        const below = roomGrid(ctx, rx0, belowTop, rx1 - rx0 + 2, height - MARGIN - 2 - belowTop, 3, 1, null);
+        if (below.length) for (const r of below[0]) carveV(ctx, ry1 + 1, r.y, r.x + (r.width >> 1));
+      }
+    },
+  });
+
+  // An organic carve publishes no rectangles of its own, and everything that
+  // dresses a structure works room by room. Lay a coarse grid over the carve
+  // and keep the cells that are mostly floor: those are the "rooms" of a cave,
+  // the places a mushroom bed or a scatter of bones can be aimed at. `size` is
+  // the cell, `minFloor` how many floor tiles one must hold to count.
+  function organicRoomGrid(ctx, size, minFloor) {
+    const { width, height, MARGIN, carved } = ctx;
+    for (let gy = MARGIN; gy + size <= height - MARGIN; gy += size)
+      for (let gx = MARGIN; gx + size <= width - MARGIN; gx += size) {
+        let n = 0;
+        for (let y = gy; y < gy + size; y++) for (let x = gx; x < gx + size; x++) if (carved[y][x]) n++;
+        if (n >= minFloor) pushRoom(ctx, gx, gy, size, size);
+      }
+  }
+
+  // --- 2. Border margin, phantom rooms ---------------------------------------
+  function clipToMargin(ctx) {
+    const { width, height, MARGIN, carved, rooms } = ctx;
     for (let y = 0; y < height; y++)
       for (let x = 0; x < width; x++)
         if (x < MARGIN || x >= width - MARGIN || y < MARGIN || y >= height - MARGIN) carved[y][x] = false;
-
-    // The margin clip can erase a room outright (a BSP leaf that fell against
-    // the border), and a phantom rectangle is worse than no rectangle: the
-    // chest, prefab and ornament passes all aim at rooms, and one aimed at a
-    // room that is not there any more silently places nothing.
+    // The clip can erase a room outright, and a phantom rectangle is worse
+    // than none: every dressing pass aims at rooms, and one aimed at a room
+    // that is not there silently places nothing.
     for (let i = rooms.length - 1; i >= 0; i--) {
       const r = rooms[i];
       r.x = clampTo(r.x, MARGIN, width - MARGIN - 1);
@@ -1696,111 +3038,76 @@
           if (carved[y][x]) any = true;
       if (!any || r.width < 2 || r.height < 2) rooms.splice(i, 1);
     }
-
-    // An organic carve publishes no rectangles of its own, and everything that
-    // dresses a structure works room by room: without one, a cave den got no
-    // patterned floor and none of its ornaments. Give it the bounding box of
-    // what was carved - painting and stamping are both clipped to real floor,
-    // so a box that overlaps rock is harmless.
     if (!rooms.length) {
       let minX = width, minY = height, maxX = 0, maxY = 0;
       for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++)
           if (carved[y][x]) {
-            if (x < minX) minX = x;
-            if (x > maxX) maxX = x;
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
+            if (x < minX) minX = x; if (x > maxX) maxX = x;
+            if (y < minY) minY = y; if (y > maxY) maxY = y;
           }
       if (maxX >= minX) rooms.push({ x: minX, y: minY, width: maxX - minX + 1, height: maxY - minY + 1 });
     }
+  }
 
-    // --- 2. Entrance: carve a corridor from a room down to the south border --
+  // --- 3. Entrance: a corridor from the plan down to the south border -------
+  function carveEntrance(ctx) {
+    const { width, height, MARGIN, carved } = ctx;
     let target = null, best = Infinity;
     const tcx = Math.floor(width / 2);
-    for (let y = MARGIN; y < height - MARGIN; y++) {
+    for (let y = MARGIN; y < height - MARGIN; y++)
       for (let x = MARGIN; x < width - MARGIN; x++) {
         if (!carved[y][x]) continue;
-        // Prefer the carved tile nearest the south border, near the centre column.
         const dist = (height - 1 - y) * 2 + Math.abs(x - tcx);
         if (dist < best) { best = dist; target = { x, y }; }
       }
-    }
     if (!target) {
       const rx = tcx - 3, ry = Math.floor(height / 2) - 3;
-      carveRect(rx, ry, 6, 6); rooms.push({ x: rx, y: ry, width: 6, height: 6 });
+      carveRect(ctx, rx, ry, 6, 6);
+      ctx.rooms.push({ x: rx, y: ry, width: 6, height: 6 });
       target = { x: tcx, y: ry };
     }
     const bx = Math.max(MARGIN, Math.min(width - MARGIN - 1, target.x));
-    let spawnX, spawnY, spawnDir, entranceX, entranceY;
-    if (sealEntrance) {
-      // No corridor punched through the border margin at all: it stays solid
-      // on every side, same as the rest of the wall ring, and the only "way
-      // in" is the room the BFS below starts flooding from. entranceX/Y are
-      // read as "how far from the door should a chest be", not as a real
-      // door, so they point at that same room rather than at nothing.
-      carveH(bx, target.x, target.y);   // still step across to the room if offset
-      spawnX = target.x; spawnY = target.y; spawnDir = 2;
-      entranceX = target.x; entranceY = target.y;
+    if (ctx.sealEntrance) {
+      // No corridor through the margin at all. entranceX/Y are read as "how
+      // far from the door should a chest be", so they point at the room the
+      // flood starts from rather than at nothing.
+      carveH(ctx, bx, target.x, target.y);
+      ctx.spawnX = target.x; ctx.spawnY = target.y; ctx.spawnDir = 2;
+      ctx.entranceX = target.x; ctx.entranceY = target.y;
     } else {
-      carveV(target.y, height - 1, bx);   // punch through the bottom margin into the room
-      carveH(bx, target.x, target.y);     // step across to the room if offset
-      spawnX = bx; spawnY = height - 2; spawnDir = 8;
-      entranceX = bx; entranceY = height - 1;
+      carveV(ctx, target.y, height - 1, bx);
+      carveH(ctx, bx, target.x, target.y);
+      ctx.spawnX = bx; ctx.spawnY = height - 2; ctx.spawnDir = 8;
+      ctx.entranceX = bx; ctx.entranceY = height - 1;
     }
-
-    // The way in is sacred. A prop stamped on the entrance corridor - and the
-    // ornament pass is allowed to stand things against walls, which is exactly
-    // what a 1-wide corridor is made of - walls the party in at the door, and
-    // the tile they arrive on is the one tile in the structure they cannot
-    // walk around. Nothing may be placed on it or on the passage behind it.
+    // The way in is sacred: a prop on the entrance corridor walls the party
+    // in at the door, on the one tile they cannot walk around.
     const protectedTiles = new Set();
-    for (let y = Math.min(target.y, spawnY) - 1; y <= height - 1; y++) {
+    for (let y = Math.min(target.y, ctx.spawnY) - 1; y <= height - 1; y++) {
       if (y < 0) continue;
       for (let dx = -1; dx <= 1; dx++) {
         const px = bx + dx;
         if (px >= 0 && px < width) protectedTiles.add(px + y * width);
       }
     }
-    for (let x = Math.min(bx, target.x); x <= Math.max(bx, target.x); x++)
-      protectedTiles.add(x + target.y * width);
+    for (let x = Math.min(bx, target.x); x <= Math.max(bx, target.x); x++) protectedTiles.add(x + target.y * width);
+    ctx.protectedTiles = protectedTiles;
+    ctx.entranceColumn = bx;
+  }
 
-    // --- 2b. Every carved tile must be reachable from the entrance ----------
-    // A chamber placed with a free hand, a cave carve that came out in two
-    // halves, a doorway punched at the wrong end: any of them leaves floor the
-    // party can see on the minimap and never stand on, and a chest dealt into
-    // one is gone for good. Flood from the entrance and cut a passage to
-    // whatever the flood did not reach, until it reaches everything.
-    const floodFrom = (sx, sy, open) => {
-      const seen = new Uint8Array(width * height);
-      if (!open(sx, sy)) return seen;
-      const stack = [sx + sy * width];
-      seen[sx + sy * width] = 1;
-      while (stack.length) {
-        const k = stack.pop();
-        const x = k % width, y = (k / width) | 0;
-        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-          const nx = x + dx, ny = y + dy;
-          if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
-          const nk = nx + ny * width;
-          if (seen[nk] || !open(nx, ny)) continue;
-          seen[nk] = 1;
-          stack.push(nk);
-        }
-      }
-      return seen;
-    };
-    // One pocket is joined per turn, and a plan can hold a dozen of them (a
-    // tunnel with eight bulges hung off it, a warren of alcoves), so the guard
-    // has to be generous: stopping early is exactly the bug this pass exists
-    // to prevent.
+  // --- 4. Every carved tile reachable from the way in ------------------------
+  // One pocket is joined per turn and a plan can hold a dozen, so the guard is
+  // generous: stopping early is exactly the bug this pass exists to prevent.
+  function joinOrphans(ctx) {
+    const { width, height, MARGIN, carved } = ctx;
     for (let guard = 0; guard < 40; guard++) {
-      const seen = floodFrom(spawnX, spawnY, (x, y) => carved[y][x]);
+      const seen = floodFrom(ctx, ctx.spawnX, ctx.spawnY, (x, y) => carved[y][x]);
       let orphan = null;
       for (let y = MARGIN; y < height - MARGIN && !orphan; y++)
         for (let x = MARGIN; x < width - MARGIN; x++)
           if (carved[y][x] && !seen[x + y * width]) { orphan = { x, y }; break; }
-      if (!orphan) break;
+      if (!orphan) return;
       let near = null, nearD = Infinity;
       for (let y = MARGIN; y < height - MARGIN; y++)
         for (let x = MARGIN; x < width - MARGIN; x++) {
@@ -1808,275 +3115,338 @@
           const d = Math.abs(x - orphan.x) + Math.abs(y - orphan.y);
           if (d < nearD) { nearD = d; near = { x, y }; }
         }
-      if (!near) break;
-      carveH(orphan.x, near.x, orphan.y);
-      carveV(orphan.y, near.y, near.x);
+      if (!near) return;
+      carveH(ctx, orphan.x, near.x, orphan.y);
+      carveV(ctx, orphan.y, near.y, near.x);
     }
+  }
 
-    // --- 2c. Uniform rock depth above every floor tile ----------------------
-    // Two faults come out of the same measurement. A wall face is drawn on the
-    // rock standing north of a floor tile and is capped by one ceiling row, so
-    // a band of rock thinner than WALL_HEIGHT + 1 either draws a SHORTER wall
-    // than the band next to it (walls of two different heights in one room) or,
-    // when the band is a single row, draws no wall at all and leaves a ceiling
-    // tile sitting straight on the floor with nothing under its south edge.
-    // Normalise the geometry first so the renderer never has to choose: every
-    // rock column standing north of floor is made at least ROCK_DEPTH deep.
-    // A thin divider between two carved spaces is opened (connectivity only
-    // ever grows, so this cannot orphan anything); a band the map edge itself
-    // caps has nowhere to grow, so the floor is pushed one row down instead.
-    // Opening a column can expose a new floor edge above it, hence the passes.
-    const WALL_HEIGHT = 3;
-    const ROCK_DEPTH = WALL_HEIGHT + 1;
+  // --- 5. Walls: shape the carve by how its walls came to be -----------------
+  function shapeWalls(ctx) {
+    if (ctx.style === "natural") {
+      erodeOutline(ctx, true);
+      biteAlcoves(ctx, 5 + Math.floor(ctx.rng() * 7));
+      joinOrphans(ctx);
+    } else if (ctx.style === "hewn") {
+      erodeOutline(ctx, false);
+    } else if (ctx.style === "ruined") {
+      // Breaches: the wall worn back in patches and broken through in a few
+      // places, never pushed in, so no room loses its floor.
+      erodeOutline(ctx, false);
+      biteAlcoves(ctx, 3 + Math.floor(ctx.rng() * 5));
+    }
+    // The depth pass pushes floor off the topmost rows the margin allows, and
+    // floor up there can be the only thing joining a pocket to the rest (an
+    // eroded outline puts it there far more often than a ruled one). So the
+    // two alternate until the carve is whole; anything still cut off after
+    // that is filled in rather than left as floor nobody can stand on.
+    for (let i = 0; i < 4; i++) {
+      normaliseRock(ctx);
+      if (!orphanedFloor(ctx)) return;
+      joinOrphans(ctx);
+    }
+    const seen = floodFrom(ctx, ctx.spawnX, ctx.spawnY, (x, y) => ctx.carved[y][x]);
+    for (let y = 0; y < ctx.height; y++)
+      for (let x = 0; x < ctx.width; x++)
+        if (ctx.carved[y][x] && !seen[x + y * ctx.width]) ctx.carved[y][x] = false;
+    normaliseRock(ctx);
+  }
+
+  function orphanedFloor(ctx) {
+    const seen = floodFrom(ctx, ctx.spawnX, ctx.spawnY, (x, y) => ctx.carved[y][x]);
+    for (let y = 0; y < ctx.height; y++)
+      for (let x = 0; x < ctx.width; x++)
+        if (ctx.carved[y][x] && !seen[x + y * ctx.width]) return true;
+    return false;
+  }
+
+  // Wear the outline of the carve. Within two tiles of the rock face, value
+  // noise decides where the rock has been worn back (carved out) and, for a
+  // natural wall, where it bulges in (filled). A hewn wall is only ever cut
+  // back, never pushed in, so a passage dug to a width keeps that width; a
+  // natural one does both and is smoothed after with one cellular pass, which
+  // is what turns noise into rock. The entrance corridor is never touched.
+  function erodeOutline(ctx, natural) {
+    const { width, height, MARGIN, carved, seed } = ctx;
+    const coarse = valueNoise2D(seed ^ 0x51ED, natural ? 5 : 3);
+    const fine = valueNoise2D(seed ^ 0xA11C, 2);
+    const band = new Uint8Array(width * height);
+    for (let y = MARGIN; y < height - MARGIN; y++)
+      for (let x = MARGIN; x < width - MARGIN; x++) {
+        const me = carved[y][x];
+        let edge = false;
+        for (let dy = -2; dy <= 2 && !edge; dy++)
+          for (let dx = -2; dx <= 2; dx++) {
+            const nx = x + dx, ny = y + dy;
+            if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+            if (carved[ny][nx] !== me) { edge = true; break; }
+          }
+        if (edge) band[x + y * width] = 1;
+      }
+    const fillAt = natural ? 0.3 : -1;
+    const cutAt = natural ? 0.68 : 0.72;
+    const next = carved.map((row) => row.slice());
+    for (let y = MARGIN + 1; y < height - MARGIN - 1; y++)
+      for (let x = MARGIN + 1; x < width - MARGIN - 1; x++) {
+        const k = x + y * width;
+        if (!band[k] || ctx.protectedTiles.has(k)) continue;
+        const n = coarse(x, y) * 0.7 + fine(x, y) * 0.3;
+        if (carved[y][x] && n < fillAt) next[y][x] = false;
+        else if (!carved[y][x] && n > cutAt) next[y][x] = true;
+      }
+    if (natural) {
+      // One smoothing pass, banded, so the noise reads as rock and not as
+      // speckle: a tile goes with the majority of its eight neighbours.
+      const src = next.map((row) => row.slice());
+      for (let y = MARGIN + 1; y < height - MARGIN - 1; y++)
+        for (let x = MARGIN + 1; x < width - MARGIN - 1; x++) {
+          const k = x + y * width;
+          if (!band[k] || ctx.protectedTiles.has(k)) continue;
+          let n = 0;
+          for (let dy = -1; dy <= 1; dy++)
+            for (let dx = -1; dx <= 1; dx++) if ((dx || dy) && src[y + dy][x + dx]) n++;
+          if (n >= 6) next[y][x] = true;
+          else if (n <= 2) next[y][x] = false;
+        }
+    }
+    for (let y = 0; y < height; y++)
+      for (let x = 0; x < width; x++) carved[y][x] = next[y][x];
+  }
+
+  // Natural rock is pocked with hollows a built wall never has: small round
+  // bites taken out of the face, each opening off the floor it fronts.
+  function biteAlcoves(ctx, count) {
+    const { width, height, MARGIN, carved, rng } = ctx;
+    const faces = [];
+    for (let y = MARGIN + 3; y < height - MARGIN - 3; y++)
+      for (let x = MARGIN + 3; x < width - MARGIN - 3; x++) {
+        if (carved[y][x]) continue;
+        let floorN = 0;
+        for (const [dx, dy] of DIRS4) if (carved[y + dy][x + dx]) floorN++;
+        if (floorN === 1) faces.push({ x, y });
+      }
+    for (let i = 0; i < count && faces.length; i++) {
+      const f = faces.splice(Math.floor(rng() * faces.length), 1)[0];
+      const rx = 1 + Math.floor(rng() * 2), ry = 1 + Math.floor(rng() * 2);
+      for (let dy = -ry; dy <= ry; dy++)
+        for (let dx = -rx; dx <= rx; dx++) {
+          const gx = f.x + dx, gy = f.y + dy;
+          if (gx <= MARGIN || gy <= MARGIN || gx >= width - MARGIN - 1 || gy >= height - MARGIN - 1) continue;
+          if ((dx * dx) / (rx * rx + 0.5) + (dy * dy) / (ry * ry + 0.5) <= 1) carved[gy][gx] = true;
+        }
+    }
+  }
+
+  // Uniform rock depth above every floor tile. A wall face stands on the rock
+  // north of a floor tile and is capped by one ceiling row, so a band of rock
+  // thinner than WALL_HEIGHT + 1 draws a shorter face than its neighbour, or
+  // (one row thin) no face at all, leaving a ceiling tile sitting straight on
+  // the floor. Thin dividers are opened (connectivity only grows); a band the
+  // map edge caps pushes the floor down instead. A built wall also has every
+  // jog shorter than a face levelled, so each corner is a full wall tall; a
+  // hewn or natural one keeps its jogs, because a rock face that steps is what
+  // rock looks like. Every style loses one-tile fins, the one shape the blob
+  // autotile cannot corner round.
+  function normaliseRock(ctx) {
+    const { width, height, carved } = ctx;
+    const levelNicks = ctx.style === "built";
     for (let pass = 0; pass < 24; pass++) {
       let changed = false;
-      for (let y = 0; y < height; y++) {
+      for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++) {
           if (!carved[y][x] || (y > 0 && carved[y - 1][x])) continue;
           let depth = 0;
           while (y - 1 - depth >= 0 && !carved[y - 1 - depth][x]) depth++;
           if (depth >= ROCK_DEPTH) continue;
-          if (y - 1 - depth < 0) {
-            carved[y][x] = false;
-          } else {
-            for (let k = 1; k <= depth; k++) carved[y - k][x] = true;
-          }
+          if (y - 1 - depth < 0) carved[y][x] = false;
+          else for (let k = 1; k <= depth; k++) carved[y - k][x] = true;
           changed = true;
         }
-      }
-      // A corner has to be worth the name. Where the north edge of the carved
-      // space jogs by one or two rows between neighbouring columns, the taller
-      // column's face stands beside the shorter one's CEILING CAP, so the cap
-      // cuts into the face half way up and the corner tiles cover only part of
-      // the wall's height. A step shorter than the face is not a corner, it is
-      // a nick: level it by pulling the lower edge up to its neighbour, so
-      // every corner is at least a full wall tall and the face runs its whole
-      // height into it. Steps of WALL_HEIGHT or more are left as they are -
-      // those are real terraces, and each one carries its own full face.
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          if (!carved[y][x] || (y > 0 && carved[y - 1][x])) continue;
-          for (const dx of [-1, 1]) {
-            const nx = x + dx;
-            if (nx < 0 || nx >= width) continue;
-            // The neighbouring column's own north edge, searched only as far
-            // up as a nick could reach.
-            for (let k = 1; k < WALL_HEIGHT; k++) {
-              const ny = y - k;
-              if (ny < 1 || !carved[ny][nx] || carved[ny - 1][nx]) continue;
-              for (let j = 1; j <= k; j++) carved[y - j][x] = true;
-              changed = true;
-              break;
+      if (levelNicks) {
+        for (let y = 0; y < height; y++)
+          for (let x = 0; x < width; x++) {
+            if (!carved[y][x] || (y > 0 && carved[y - 1][x])) continue;
+            for (const dx of [-1, 1]) {
+              const nx = x + dx;
+              if (nx < 0 || nx >= width) continue;
+              for (let k = 1; k < WALL_HEIGHT; k++) {
+                const ny = y - k;
+                if (ny < 1 || !carved[ny][nx] || carved[ny - 1][nx]) continue;
+                for (let j = 1; j <= k; j++) carved[y - j][x] = true;
+                changed = true;
+                break;
+              }
             }
           }
-        }
       }
-      // Opening one column at a time is what leaves a one-tile fin of rock
-      // standing between two carved spaces: the columns beside it were deep
-      // enough to keep, so the mass comes out as a staircase and the autotile
-      // has to corner around a strip a single tile wide, which is the ugliest
-      // shape the blend can draw. A fin that thin is never read as structure,
-      // so it goes: rock with carved floor on BOTH flanks is opened too, and
-      // the depth check above runs again over whatever that exposes.
-      for (let y = 0; y < height; y++) {
+      for (let y = 0; y < height; y++)
         for (let x = 1; x < width - 1; x++) {
           if (carved[y][x] || !carved[y][x - 1] || !carved[y][x + 1]) continue;
           carved[y][x] = true;
           changed = true;
         }
-      }
       if (!changed) break;
     }
+  }
 
-    // --- 3. Render layer 0: floor / rock rim / empty space ------------------
-    // The dead mass between the rooms is NOT paved wall to wall with the
-    // Ceiling tile: repeating one rubble tile over five sixths of the map is
-    // pure noise and buries the plan in it. Only a rim of ROCK_RIM tiles around
-    // the carved space keeps the Ceiling, which is exactly what the 3-tall
-    // north faces of step 4 and the wall-mounted fixtures of step 6 ever draw
-    // on; everything deeper is left as an empty tile, so the interior reads as
-    // rooms and corridors on an unlit void. The rim only needs that depth to
-    // the NORTH, where it backs the tall wall face and holds its fixtures:
-    // south, east and west draw no wall at all any more, so a wider band there
-    // was nothing but a visible decorative border. Those three sides get just
-    // enough rim to back the passable Ceiling tile, and fall to void (black)
-    // immediately beyond it.
-    const ROCK_RIM = 2;
-    const ROCK_RIM_SIDE = 1;
-    const nearFloor = Array.from({ length: height }, () => new Array(width).fill(false));
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        if (!carved[y][x]) continue;
-        for (let dy = -ROCK_RIM; dy <= ROCK_RIM_SIDE; dy++) {
-          const ny = y + dy;
-          if (ny < 0 || ny >= height) continue;
-          const rim = dy < 0 ? ROCK_RIM : ROCK_RIM_SIDE;
-          for (let dx = -rim; dx <= rim; dx++) {
-            const nx = x + dx;
-            if (nx >= 0 && nx < width) nearFloor[ny][nx] = true;
-          }
-        }
-      }
-    }
-    const isFloor = (x, y) => x >= 0 && x < width && y >= 0 && y < height && carved[y][x];
+  // --- 6. The shell: floor, wall faces, ceiling ------------------------------
+  // How tall the face standing north of the floor at column x is. A built wall
+  // is always the full WALL_HEIGHT. A hewn face runs two or three tiles in
+  // stretches; a natural one wanders between one and three along the rock.
+  function faceHeightFn(ctx) {
+    if (ctx.style === "built") return () => WALL_HEIGHT;
+    const n = valueNoise2D(ctx.seed ^ 0xFACE, ctx.style === "natural" ? 4 : 6);
+    if (ctx.style === "hewn" || ctx.style === "ruined") return (x, y) => (n(x, y) < 0.35 ? 2 : 3);
+    return (x, y) => {
+      const v = n(x, y);
+      return v < 0.25 ? 1 : (v < 0.6 ? 2 : 3);
+    };
+  }
+
+  function renderShell(ctx) {
+    const { width, height, carved, pal } = ctx;
     const mapData = new Array(width * height * 4).fill(0);
-    const rand = (arr) => arr[Math.floor(rng() * arr.length)];
-    // ceilingMask marks every cell actually painted with the rim tile, real A4
-    // blend or the old flat tile alike, so later passes (lavaFlow) can ask
-    // "is this rock" without caring which of the two rendered it.
+    ctx.mapData = mapData;
+    const idx0 = (x, y) => calculateIndex(x, y, 0, width, height);
+    // ceilingMask marks every cell painted as rock ceiling, real A4 blend or
+    // the flat rim tile alike, so later passes (lavaFlow) can ask "is this
+    // rock" without caring which of the two drew it.
     const ceilingMask = Array.from({ length: height }, () => new Array(width).fill(false));
-
-    if (wallA4) {
-      // Real A4 blob walls: a tall (3-tile) impassable face on the north edge
-      // only, matching the look every structure already shares - south, east
-      // and west stay open onto the ledge/ceiling kind instead of a second
-      // wall line, so a narrow corridor never reads as walled on both flanks.
-      // Both kinds are blended against their own kind's cardinal neighbours,
-      // exactly the way the map editor bakes a hand-painted autotile; the
-      // ceiling kind is flagged impassable on every shape in the Dungeon
-      // tileset (data/Tilesets.json) precisely so it is safe to leave open -
-      // it reads as ambient rock but is never a second, walkable path.
-      const wallCells = Array.from({ length: height }, () => new Array(width).fill(false));
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          if (!carved[y][x] || isFloor(x, y - 1)) continue;
-          // How much solid rock actually stands above this floor tile.
-          let depth = 0;
-          while (y - 1 - depth >= 0 && !carved[y - 1 - depth][x]) depth++;
-          // The topmost rock row is ALWAYS left to the ceiling, so a wall face
-          // is never drawn with open space (or another room's floor) directly
-          // above it - a wall with no ceiling capping it reads as a floating
-          // slab. A 1-tile-thin divider between two rooms therefore carries no
-          // wall at all and is drawn purely as ceiling.
-          // Step 2c guarantees depth >= WALL_HEIGHT + 1, so the face is always
-          // the full height and always keeps its ceiling cap.
-          const wallH = Math.min(WALL_HEIGHT, depth - 1);
-          for (let k = 1; k <= wallH; k++) wallCells[y - k][x] = true;
+    const wallCells = Array.from({ length: height }, () => new Array(width).fill(false));
+    ctx.ceilingMask = ceilingMask;
+    ctx.wallCells = wallCells;
+    const faceH = faceHeightFn(ctx);
+    for (let y = 0; y < height; y++)
+      for (let x = 0; x < width; x++) {
+        if (!carved[y][x] || ctx.isFloor(x, y - 1)) continue;
+        let depth = 0;
+        while (y - 1 - depth >= 0 && !carved[y - 1 - depth][x]) depth++;
+        // The topmost rock row is always left to the ceiling, so a face is
+        // never drawn with open space above it.
+        const wallH = Math.min(faceH(x, y), depth - 1);
+        // A lava lake is open ground, not rock: no face rises out of it.
+        for (let k = 1; k <= wallH; k++) {
+          if (ctx.lakeMask[x + (y - k) * width]) break;
+          wallCells[y - k][x] = true;
         }
       }
-      const isWallCell = (x, y) => x >= 0 && x < width && y >= 0 && y < height && wallCells[y][x];
-      // The ceiling is the SOLID FILL of the whole dead mass, not a rim around
-      // it. A blob autotile only reads as rock when it is a filled region: the
-      // interior renders as flat fill and only the boundary against the floor
-      // draws an edge. Laid as a 1-tile ring instead, every single tile draws
-      // its own rounded outline on BOTH sides and the mass comes out as
-      // scattered pebbles floating in the void, which is what the thin rim did.
-      // (The old flat A5 rim tile had to be kept thin - repeating one detailed
-      // rubble tile over the whole map was pure noise - but that limitation is
-      // exactly what the real autotile removes.)
-      const isCeil = (x, y) =>
-        x >= 0 && x < width && y >= 0 && y < height && !carved[y][x] && !wallCells[y][x];
-      for (let y = 0; y < height; y++) {
+    const isWallCell = (x, y) => x >= 0 && x < width && y >= 0 && y < height && wallCells[y][x];
+    if (pal.wallA4) {
+      // Real A4 blob walls. Both kinds are blended against their own kind's
+      // cardinal neighbours, exactly as the map editor bakes a hand-painted
+      // autotile. The ceiling is the SOLID FILL of the whole dead mass: a blob
+      // autotile only reads as rock when it is a filled region.
+      const isLake = (x, y) => !!ctx.lakeMask[x + y * width] && !carved[y][x];
+      const isCeil = (x, y) => x >= 0 && x < width && y >= 0 && y < height && !carved[y][x] && !wallCells[y][x] && !isLake(x, y);
+      for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++) {
-          if (carved[y][x]) {
-            mapData[calculateIndex(x, y, 0, width, height)] = rand(floorTiles);
-          } else if (wallCells[y][x]) {
-            mapData[calculateIndex(x, y, 0, width, height)] = wallAutotileId(
-              wallA4.side, isWallCell(x - 1, y), isWallCell(x + 1, y), isWallCell(x, y - 1), isWallCell(x, y + 1));
+          if (carved[y][x]) mapData[idx0(x, y)] = pal.main;
+          else if (isLake(x, y) && pal.lava) mapData[idx0(x, y)] = pal.lava;
+          else if (wallCells[y][x]) {
+            mapData[idx0(x, y)] = wallAutotileId(pal.wallA4.side,
+              isWallCell(x - 1, y), isWallCell(x + 1, y), isWallCell(x, y - 1), isWallCell(x, y + 1));
           } else {
             ceilingMask[y][x] = true;
-            mapData[calculateIndex(x, y, 0, width, height)] =
-              ceilingAutotileId(wallA4.top, isCeil(x - 1, y), isCeil(x + 1, y), isCeil(x, y - 1), isCeil(x, y + 1));
+            mapData[idx0(x, y)] = ceilingAutotileId(pal.wallA4.top,
+              isCeil(x - 1, y), isCeil(x + 1, y), isCeil(x, y - 1), isCeil(x, y + 1));
           }
         }
-      }
     } else {
-      for (let y = 0; y < height; y++) {
+      // A tileset with no registered A4 sheet: the flat rim tile in a thin
+      // band round the plan (deeper to the north, where the faces stand), the
+      // void beyond it, and the 3-tile wall column on the faces.
+      const ROCK_RIM = 2, ROCK_RIM_SIDE = 1;
+      const near = Array.from({ length: height }, () => new Array(width).fill(false));
+      for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++) {
-          const ceiling = !carved[y][x] && nearFloor[y][x];
-          if (ceiling) ceilingMask[y][x] = true;
-          mapData[calculateIndex(x, y, 0, width, height)] = carved[y][x] ? rand(floorTiles) : (ceiling ? ceilingTile : 0);
-        }
-      }
-
-      // --- 4. Walls: north faces only ----------------------------------------
-      // Only the north edge of the carved space is ever walled: south, east
-      // and west stay open onto the Ceiling rim (and the void beyond it).
-      // `wall.mid` is the 1-tile ring tile stamped directly above a floor
-      // tile's north edge before the second pass below lays a full 3-tall
-      // north face over it.
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          if (carved[y][x]) continue;
-          if (isFloor(x, y + 1)) {
-            mapData[calculateIndex(x, y, 0, width, height)] = wall.mid;
+          if (!carved[y][x]) continue;
+          for (let dy = -ROCK_RIM; dy <= ROCK_RIM_SIDE; dy++) {
+            const ny = y + dy;
+            if (ny < 0 || ny >= height) continue;
+            const rim = dy < 0 ? ROCK_RIM : ROCK_RIM_SIDE;
+            for (let dx = -rim; dx <= rim; dx++) {
+              const nx = x + dx;
+              if (nx >= 0 && nx < width) near[ny][nx] = true;
+            }
           }
         }
-      }
-      for (let y = 0; y < height; y++) {
+      const wall = pal.wall;
+      for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++) {
-          if (!carved[y][x] || isFloor(x, y - 1)) continue;
-          const face = [[1, wall.bot], [2, wall.mid], [3, wall.top]];
-          for (const [k, tile] of face) {
-            const wy = y - k;
-            if (wy < 0 || carved[wy][x]) break;
-            mapData[calculateIndex(x, wy, 0, width, height)] = tile;
+          if (carved[y][x]) { mapData[idx0(x, y)] = pal.main; continue; }
+          if (wallCells[y][x]) {
+            // Count down from the floor: bottom, middle, top of the column.
+            let k = 1;
+            while (y + k < height && !carved[y + k][x]) k++;
+            mapData[idx0(x, y)] = k === 1 ? wall.bot : (k === 2 ? wall.mid : wall.top);
+          } else if (near[y][x]) {
+            ceilingMask[y][x] = true;
+            mapData[idx0(x, y)] = pal.rim;
           }
         }
-      }
     }
+  }
 
-    // --- 3b. Room floors: one accent and one pattern per room ---------------
-    // Corridors keep the structure's main texture, which is what holds the
-    // place together; a room lays its own accent over it in one of the
-    // patterns the structure allows. Only carved tiles are painted, so a
-    // pattern can never spill onto the rock or through a wall.
+  // --- 7. Room floors: one accent and one pattern per room -------------------
+  // Corridors keep the main texture, which holds the place together; a room
+  // lays its own accent over it. Only carved tiles are painted.
+  function paintRoomFloors(ctx) {
+    const { width, height, carved, pal, rng, mapData } = ctx;
     const setFloorTile = (x, y, tile) => {
       if (x < 0 || y < 0 || x >= width || y >= height) return;
       if (!carved[y][x] || !tile) return;
       mapData[calculateIndex(x, y, 0, width, height)] = tile;
     };
-    for (const r of rooms) {
+    for (const r of ctx.rooms) {
       if (r.width < 3 || r.height < 3) continue;
       let kind = pal.patterns[Math.floor(rng() * pal.patterns.length)];
-      // A pattern is a ROOM's dressing. Laid over a hall that fills the map
-      // (a cistern, a cavern's bounding box) it stops being a pattern and
-      // becomes the floor, and the structure loses its main texture, so a big
-      // space only ever gets an edging.
+      // A pattern laid over a hall that fills the map stops being a pattern
+      // and becomes the floor, so a big space only ever gets an edging.
       if (r.width * r.height > 700 && kind !== "border") kind = rng() < 0.5 ? "border" : "none";
       if (kind === "none") continue;
       const accent = pal.accents[Math.floor(rng() * pal.accents.length)];
       paintPattern(setFloorTile, r, pal.main, accent, kind, rng);
     }
+  }
 
-    // --- 5. Region data + the ornaments that change what the ground IS -------
-    // Water and lava are not props: they replace the floor, so they are laid
-    // here rather than in the decoration pass. Both follow the same rule the
-    // sewer's canals always did - a flooded tile must have floor above AND
-    // below it, so a channel can never cut the plan in two.
+  // --- 8. Water, tide pools, lava: what the ground IS -------------------------
+  // A flooded tile must have floor above AND below it, so a channel can never
+  // cut the plan in two.
+  function layGroundOrnaments(ctx) {
+    const { width, height, MARGIN, carved, pal, rng, mapData } = ctx;
     const regiondata = new Array(width * height).fill(0);
-    // bandWidth floods `cy` and the (bandWidth - 1) rows south of it as one
-    // solid channel - the sewer's 2-4 tile wide water - always requiring dry
-    // floor immediately above and below the whole band, so a channel can
-    // never cut the plan in two.
+    ctx.regiondata = regiondata;
+    const waterTile = pal.water;
     const floodRow = (cy, bandWidth = 1) => {
       for (let x = MARGIN; x < width - MARGIN; x++) {
-        if (!isFloor(x, cy - 1) || !isFloor(x, cy + bandWidth)) continue;
+        if (!ctx.isFloor(x, cy - 1) || !ctx.isFloor(x, cy + bandWidth)) continue;
         let clear = true;
-        for (let dy = 0; dy < bandWidth; dy++) {
-          if (!isFloor(x, cy + dy)) { clear = false; break; }
-        }
+        for (let dy = 0; dy < bandWidth; dy++) if (!ctx.isFloor(x, cy + dy)) { clear = false; break; }
         if (!clear) continue;
         for (let dy = 0; dy < bandWidth; dy++) {
+          if (ctx.protectedTiles.has(x + (cy + dy) * width)) continue;
           mapData[calculateIndex(x, cy + dy, 0, width, height)] = waterTile;
           regiondata[(cy + dy) * width + x] = 99;
         }
       }
     };
-    if (waterTile && hasOrnament("waterLanes")) {
-      if (canalRows.length) {
-        for (const cy of canalRows) floodRow(cy, sewerWaterWidth);
-      } else {
-        // A cistern has no canal rows of its own: flood every third bay so the
-        // hall reads as standing water walked around on the dry lanes.
+    // The layout's own standing water: a river, a cenote's pool, a lagoon.
+    if (waterTile) {
+      for (const k of ctx.waterCells) {
+        const x = k % width, y = (k / width) | 0;
+        if (!carved[y][x] || ctx.protectedTiles.has(k)) continue;
+        mapData[calculateIndex(x, y, 0, width, height)] = waterTile;
+        regiondata[k] = 99;
+      }
+    }
+    if (waterTile && ctx.hasOrnament("waterLanes")) {
+      if (ctx.canalRows.length) for (const cy of ctx.canalRows) floodRow(cy, ctx.sewerWaterWidth);
+      else {
         const pitch = 6 + Math.floor(rng() * 3);
         for (let cy = MARGIN + 5; cy < height - MARGIN - 4; cy += pitch) floodRow(cy);
       }
     }
-    if (waterTile && hasOrnament("tidePool")) {
-      // The deepest pocket of a grotto stands under water. Centred on the
-      // carved tile farthest from the entrance so the party wades in rather
-      // than starting wet.
+    if (waterTile && ctx.hasOrnament("tidePool")) {
       let px = -1, py = -1, far = -1;
       for (let y = MARGIN; y < height - MARGIN; y++)
         for (let x = MARGIN; x < width - MARGIN; x++) {
@@ -2090,53 +3460,675 @@
           for (let dx = -r; dx <= r; dx++) {
             if (dx * dx + dy * dy > r * r) continue;
             const gx = px + dx, gy = py + dy;
-            if (!isFloor(gx, gy) || !isFloor(gx, gy - 1) || !isFloor(gx, gy + 1)) continue;
-            if (!isFloor(gx - 1, gy) || !isFloor(gx + 1, gy)) continue;
+            if (!ctx.isFloor(gx, gy) || !ctx.isFloor(gx, gy - 1) || !ctx.isFloor(gx, gy + 1)) continue;
+            if (!ctx.isFloor(gx - 1, gy) || !ctx.isFloor(gx + 1, gy)) continue;
             mapData[calculateIndex(gx, gy, 0, width, height)] = waterTile;
             regiondata[gy * width + gx] = 99;
           }
       }
     }
-    if (pal.lava && hasOrnament("lavaFlow")) {
+    if (pal.lava && ctx.hasOrnament("lavaFlow")) {
       // Molten rock runs through the mass the plan is cut into, never through
-      // the plan itself: only rim tiles are painted, and the rim sits behind
-      // the impassable wall ring, so it glows without ever being stood on.
-      for (let y = 0; y < height; y++) {
+      // the plan: only ceiling tiles are painted, behind the wall ring.
+      for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++) {
-          if (carved[y][x] || !ceilingMask[y][x]) continue;
-          const idx = calculateIndex(x, y, 0, width, height);
-          // A coarse vein pattern rather than a wash, so it reads as flowing.
+          if (carved[y][x] || !ctx.ceilingMask[y][x]) continue;
           const vein = Math.sin(x * 0.21 + y * 0.13) + Math.sin(y * 0.31 - x * 0.07);
-          if (vein > 1.1 && rng() < 0.75) mapData[idx] = pal.lava;
+          if (vein > 1.1 && rng() < 0.75) mapData[calculateIndex(x, y, 0, width, height)] = pal.lava;
         }
+    }
+    ctx.isWet = (x, y) => regiondata[y * width + x] === 99 ||
+      (waterTile && mapData[calculateIndex(x, y, 0, width, height)] === waterTile);
+  }
+
+  // --- 9. Rooms: doorways and roles ------------------------------------------
+  // A doorway is a floor tile on a room's own edge with floor outside the room
+  // next to it. It and the tile inside it are kept clear of furniture, so no
+  // room is ever furnished shut, however its kit lands.
+  function findDoorways(ctx) {
+    const { width, height } = ctx;
+    const reserved = new Uint8Array(width * height);
+    for (const k of ctx.protectedTiles) reserved[k] = 1;
+    const inRoom = (r, x, y) => x >= r.x && x < r.x + r.width && y >= r.y && y < r.y + r.height;
+    for (const r of ctx.rooms) {
+      for (let y = r.y; y < r.y + r.height; y++)
+        for (let x = r.x; x < r.x + r.width; x++) {
+          if (!ctx.isFloor(x, y)) continue;
+          if (x !== r.x && x !== r.x + r.width - 1 && y !== r.y && y !== r.y + r.height - 1) continue;
+          for (const [dx, dy] of DIRS4) {
+            const ox = x + dx, oy = y + dy;
+            if (inRoom(r, ox, oy) || !ctx.isFloor(ox, oy)) continue;
+            reserved[x + y * width] = 1;
+            const ix = x - dx, iy = y - dy;
+            if (ctx.isFloor(ix, iy)) reserved[ix + iy * width] = 1;
+          }
+        }
+    }
+    ctx.reserved = reserved;
+  }
+
+  function roomFloorCount(ctx, r) {
+    let n = 0;
+    for (let y = r.y; y < r.y + r.height; y++)
+      for (let x = r.x; x < r.x + r.width; x++) if (ctx.isFloor(x, y) && !ctx.isWet(x, y)) n++;
+    return n;
+  }
+
+  function assignRoomRoles(ctx) {
+    const plan = INTERIOR_PLANS[ctx.S.key] || INTERIOR_PLANS.Dungeon;
+    const { rng, rooms } = ctx;
+    for (const r of rooms) {
+      r.floor = roomFloorCount(ctx, r);
+      if (r.hint && INTERIOR_ROOMS[r.hint]) r.role = r.hint;
+    }
+    const free = () => rooms.filter((r) => !r.role && Math.min(r.width, r.height) >= 4);
+    if (plan.main && !rooms.some((r) => r.role === plan.main)) {
+      // The largest room the layout left unnamed; failing that (a burrow is
+      // all brood chambers, a pyramid all corridors round its sanctum) the
+      // largest room of all, so a structure always has its heart.
+      const big = free().sort((a, b) => b.floor - a.floor)[0] ||
+        rooms.filter((r) => Math.min(r.width, r.height) >= 4).sort((a, b) => b.floor - a.floor)[0];
+      if (big) big.role = plan.main;
+    }
+    if (plan.deep && !rooms.some((r) => r.role === plan.deep && r.deep)) {
+      let far = null, farD = -1;
+      for (const r of free()) {
+        const d = Math.abs(r.x + (r.width >> 1) - ctx.entranceX) + Math.abs(r.y + (r.height >> 1) - ctx.entranceY);
+        if (d > farD) { farD = d; far = r; }
+      }
+      if (far) { far.role = plan.deep; far.deep = true; }
+    }
+    const weights = plan.rooms || [];
+    const total = weights.reduce((s, w) => s + w[1], 0);
+    for (const r of rooms) {
+      if (r.role) continue;
+      if (Math.min(r.width, r.height) < 4) { r.role = plan.passage || "passage"; continue; }
+      let pick = rng() * total, role = weights.length ? weights[0][0] : "passage";
+      for (const [nm, w] of weights) { pick -= w; if (pick <= 0) { role = nm; break; } }
+      r.role = role;
+    }
+  }
+
+  // --- 10. Furnish ------------------------------------------------------------
+  function furnishRooms(ctx) {
+    const { width, height, rng } = ctx;
+    ctx.occ = new Uint8Array(width * height);      // a piece's sprite stands here
+    ctx.block = new Uint8Array(width * height);    // a piece blocks a step here
+    ctx.flatOcc = new Uint8Array(width * height);  // a rug or a sigil lies here
+    ctx.hungOcc = new Uint8Array(width * height);  // something hangs on this face
+    const index = interiorFurnitureIndex()[ctx.S.key] || {};
+    ctx.furnitureIndex = index;
+    if (!Object.keys(index).length) return;
+    // How many tiles the party can reach, with nothing placed yet. Every piece
+    // that blocks is checked against it: if it strands even one tile, it goes.
+    ctx.reach = countReach(ctx);
+    // The rooms that matter most are furnished first, so a crowded map
+    // spends its floor on the sanctum, not the corridor.
+    const order = ctx.rooms.slice().sort((a, b) => rolePriority(ctx, b) - rolePriority(ctx, a));
+    for (const r of order) {
+      const kit = INTERIOR_ROOMS[r.role];
+      if (!kit || r.floor < 4) continue;
+      const lines = kit.map((line, i) => ({ line, i, at: line.at || KIND_PLACE[line.k] || "scatter" }))
+        .sort((a, b) => (PLACE_ORDER.indexOf(a.at) - PLACE_ORDER.indexOf(b.at)) || (a.i - b.i));
+      for (const { line, at } of lines) {
+        const ids = index[line.k];
+        if (!ids || !ids.length) continue;
+        const want = line.n
+          ? line.n[0] + Math.floor(rng() * (line.n[1] - line.n[0] + 1))
+          : (line.d ? Math.round(line.d * r.floor * (0.7 + rng() * 0.6)) : 0);
+        const fill = line.fill == null ? null : line.fill;
+        if (!want && fill == null) continue;
+        const fn = PLACERS[at];
+        ctx.placing = at;
+        if (fn) fn(ctx, r, line, ids, want, fill);
       }
     }
+  }
 
-    // --- 6. Decoration: biome terrain features (layer 1) --------------------
-    // Two placement styles, both pathing-safe:
-    //   * Floor props (skulls, bones, graves, debris, ...) drop only onto tiles
-    //     that are floor on all four sides, so an impassable prop can never seal
-    //     a 1-wide corridor or the entrance.
-    //   * Wall-mounted fixtures (torches, chains, drains, grates, ...) are hung
-    //     on the impassable north wall faces that front a room, so they cannot
-    //     affect pathing at all. Sewers always drip Drain fixtures here.
-    // Grid (multi-tile) feature variants are supported too, so props like the
-    // 2x2 Drain and the 2-tall Torch - which have no single-tile variant - are
-    // actually placed instead of being silently skipped.
-    // Ground and wall features are what the place is BUILT of, so they are
-    // never dealt out as props on top of it. The list covers every feature any
-    // structure's palette may pave with, not just the three the dungeon used
-    // to know: a Salt or Parquet listed as a biome feature would otherwise be
-    // scattered over the floor it already is.
+  function rolePriority(ctx, r) {
+    const plan = INTERIOR_PLANS[ctx.S.key] || {};
+    if (r.role === plan.main) return 3;
+    if (r.deep) return 2;
+    if (r.role === "passage" || r.role === plan.passage) return 0;
+    return 1;
+  }
+
+  function countReach(ctx) {
+    const { width, height } = ctx;
+    const seen = floodFrom(ctx, ctx.spawnX, ctx.spawnY, (x, y) => ctx.carved[y][x] && !ctx.block[x + y * width]);
+    let n = 0;
+    for (let i = 0; i < width * height; i++) if (seen[i]) n++;
+    return n;
+  }
+
+  // A deterministic shuffle of a pool, so one room's pick does not depend on
+  // the order the catalogue happened to be read in.
+  function shuffled(ctx, arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(ctx.rng() * (i + 1));
+      const t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  // Can this piece stand with its top-left at (x, y)? Its blocking cells need
+  // clear, dry, unreserved floor; the rest of its sprite (a tall piece's
+  // upper rows) may stand over the wall behind it, but never over another
+  // piece; and its bottom row has to be on the floor, not hanging off rock.
+  function canStand(ctx, fp, x, y) {
+    const { width, height } = ctx;
+    if (x < 0 || y < 0 || x + fp.w > width || y + fp.h > height) return false;
+    const blocked = new Set(fp.blocks.map(([dx, dy]) => dx + "," + dy));
+    for (let dy = 0; dy < fp.h; dy++)
+      for (let dx = 0; dx < fp.w; dx++) {
+        const gx = x + dx, gy = y + dy, k = gx + gy * width;
+        const floor = ctx.carved[gy][gx];
+        const bottom = dy === fp.h - 1;
+        const isBlock = blocked.has(dx + "," + dy);
+        if (isBlock || bottom) {
+          if (!floor || ctx.isWet(gx, gy) || ctx.occ[k] || ctx.block[k]) return false;
+          if (ctx.reserved[k] && (isBlock || !fp.blocks.length)) return false;
+        } else if (floor && ctx.occ[k]) return false;
+      }
+    return true;
+  }
+
+  // Set a piece down. A blocking piece is only kept if the party can still
+  // reach every tile it could reach before, less the tiles the piece covers.
+  function commitPiece(ctx, id, fp, x, y, flipped) {
+    const { width } = ctx;
+    const cells = fp.blocks.map(([dx, dy]) => (x + dx) + (y + dy) * width);
+    if (cells.length) {
+      for (const k of cells) ctx.block[k] = 1;
+      const reach = countReach(ctx);
+      if (reach !== ctx.reach - cells.length) {
+        for (const k of cells) ctx.block[k] = 0;
+        return false;
+      }
+      ctx.reach = reach;
+    }
+    for (let dy = 0; dy < fp.h; dy++)
+      for (let dx = 0; dx < fp.w; dx++) {
+        const gx = x + dx, gy = y + dy;
+        if (ctx.carved[gy][gx]) ctx.occ[gx + gy * width] = 1;
+      }
+    // `at` is how the piece was placed (see KIND_PLACE). FurnitureSystem
+    // copies only the piece, the tile and the mirror into the world store.
+    const rec = { id, x, y, at: ctx.placing || "scatter" };
+    if (flipped) rec.flipped = true;
+    ctx.furniture.push(rec);
+    return true;
+  }
+
+  function tryStand(ctx, id, x, y, flipped) {
+    const fp = pieceFootprint(id);
+    if (!fp || fp.hung) return false;
+    if (!canStand(ctx, fp, x, y)) return false;
+    return commitPiece(ctx, id, fp, x, y, flipped);
+  }
+
+  // Floor tiles of a room whose north neighbour is rock: where things stand
+  // with their backs to the wall, and under which the faces hang.
+  function northWallCells(ctx, r) {
+    const out = [];
+    for (let y = r.y; y < r.y + r.height; y++)
+      for (let x = r.x; x < r.x + r.width; x++)
+        if (ctx.isFloor(x, y) && !ctx.isFloor(x, y - 1)) out.push({ x, y });
+    return out;
+  }
+  function roomCells(ctx, r, test) {
+    const out = [];
+    for (let y = r.y; y < r.y + r.height; y++)
+      for (let x = r.x; x < r.x + r.width; x++)
+        if (ctx.isFloor(x, y) && !ctx.isWet(x, y) && (!test || test(x, y))) out.push({ x, y });
+    return out;
+  }
+  const rockSides = (ctx, x, y) => {
+    let n = 0;
+    for (const [dx, dy] of DIRS4) if (!ctx.isFloor(x + dx, y + dy)) n++;
+    return n;
+  };
+  const roomCentre = (r) => ({ x: r.x + (r.width >> 1), y: r.y + (r.height >> 1) });
+  // The pieces of a pool that fit a room at all, shuffled.
+  function fitting(ctx, ids, maxW, maxH) {
+    return shuffled(ctx, ids).filter((id) => {
+      const fp = pieceFootprint(id);
+      return fp && fp.w <= maxW && fp.h <= maxH;
+    });
+  }
+
+  // Chairs drawn up to a table: either end of it and along its near side.
+  function seatTable(ctx, tx, ty, fp) {
+    const seats = ctx.furnitureIndex.seat;
+    if (!seats || !seats.length) return;
+    const pool = fitting(ctx, seats, 1, 2);
+    if (!pool.length) return;
+    const seatId = pool[0];
+    const sfp = pieceFootprint(seatId);
+    const by = ty + fp.h - 1;
+    const spots = [[tx - 1, by, false], [tx + fp.w, by, true]];
+    for (let i = 0; i < fp.w; i++) spots.push([tx + i, by + 1, false]);
+    let n = 1 + Math.floor(ctx.rng() * Math.min(4, spots.length));
+    for (const [sx, sy, flip] of shuffled(ctx, spots)) {
+      if (n <= 0) break;
+      if (tryStand(ctx, seatId, sx, sy - sfp.h + 1, flip)) n--;
+    }
+  }
+
+  const PLACERS = {
+    // Centred against the north wall: the altar at the head of the shrine.
+    dais(ctx, r, line, ids, want) {
+      const c = roomCentre(r);
+      const wall = northWallCells(ctx, r).sort((a, b) => Math.abs(a.x - c.x) - Math.abs(b.x - c.x) || a.y - b.y);
+      let placed = 0;
+      for (const id of fitting(ctx, ids, r.width - 2, r.height + 2)) {
+        if (placed >= want) break;
+        const fp = pieceFootprint(id);
+        for (const cell of wall.slice(0, 8)) {
+          const x0 = cell.x - (fp.w >> 1), y0 = cell.y - fp.h + 1;
+          let backed = true;
+          for (let dx = 0; dx < fp.w; dx++) if (ctx.isFloor(x0 + dx, cell.y - 1) || !ctx.isFloor(x0 + dx, cell.y)) backed = false;
+          if (!backed) continue;
+          if (tryStand(ctx, id, x0, y0)) { r.daisAt = { x: x0, y: cell.y, w: fp.w }; placed++; break; }
+        }
+      }
+      return placed;
+    },
+    // The middle of the room, spiralling out a little if it is taken.
+    centre(ctx, r, line, ids, want) {
+      const c = roomCentre(r);
+      let placed = 0;
+      for (const id of fitting(ctx, ids, r.width - 2, r.height)) {
+        if (placed >= want) break;
+        const fp = pieceFootprint(id);
+        let done = false;
+        for (let rad = 0; rad <= 3 && !done; rad++)
+          for (let oy = -rad; oy <= rad && !done; oy++)
+            for (let ox = -rad; ox <= rad && !done; ox++) {
+              if (Math.max(Math.abs(ox), Math.abs(oy)) !== rad) continue;
+              const x0 = c.x - (fp.w >> 1) + ox, y0 = c.y - fp.h + 1 + oy;
+              if (tryStand(ctx, id, x0, y0)) {
+                done = true;
+                placed++;
+                if (!r.centreAt) r.centreAt = { x: x0 + (fp.w >> 1), y: y0 + fp.h - 1 };
+                if (line.k === "table") seatTable(ctx, x0, y0, fp);
+              }
+            }
+      }
+      return placed;
+    },
+    // A matched pair either side of whatever the room is arranged round (the
+    // altar), or of its north wall's centre: the same piece twice, the right
+    // one mirrored.
+    flank(ctx, r, line, ids, want) {
+      const pairs = Math.max(1, Math.round(want / 2));
+      let anchor = r.daisAt;
+      if (!anchor) {
+        const c = roomCentre(r);
+        const w = northWallCells(ctx, r).sort((a, b) => Math.abs(a.x - c.x) - Math.abs(b.x - c.x))[0];
+        if (!w) return 0;
+        anchor = { x: w.x, y: w.y, w: 1 };
+      }
+      let placed = 0, reach = 1;
+      for (const id of fitting(ctx, ids, Math.max(1, (r.width >> 1) - 1), r.height + 2)) {
+        if (placed >= pairs) break;
+        const fp = pieceFootprint(id);
+        for (let gap = reach; gap <= reach + 3; gap++) {
+          const lx = anchor.x - gap - fp.w, rx = anchor.x + anchor.w + gap;
+          const y0 = anchor.y - fp.h + 1;
+          if (!canStand(ctx, fp, lx, y0) || !canStand(ctx, fp, rx, y0)) continue;
+          if (!commitPiece(ctx, id, fp, lx, y0, false)) continue;
+          if (!commitPiece(ctx, id, fp, rx, y0, true)) {
+            // The right twin would have stranded something: take the left one
+            // back up too, so the pair stays a pair or is not there at all.
+            ctx.furniture.pop();
+            for (const [dx, dy] of fp.blocks) ctx.block[(lx + dx) + (anchor.y - fp.h + 1 + dy) * ctx.width] = 0;
+            for (let dy = 0; dy < fp.h; dy++)
+              for (let dx = 0; dx < fp.w; dx++) ctx.occ[(lx + dx) + (y0 + dy) * ctx.width] = 0;
+            ctx.reach = countReach(ctx);
+            continue;
+          }
+          placed++;
+          reach = gap + fp.w + 1;
+          break;
+        }
+      }
+      return placed * 2;
+    },
+    // Round the room's centre piece, or its middle: candles about a sigil.
+    ring(ctx, r, line, ids, want) {
+      const c = r.centreAt || roomCentre(r);
+      const pool = fitting(ctx, ids, 1, 2);
+      if (!pool.length) return 0;
+      const id = pool[0];
+      const fp = pieceFootprint(id);
+      const rad = 2 + (Math.min(r.width, r.height) >= 9 ? 1 : 0);
+      let placed = 0;
+      const steps = Math.max(want, 4);
+      for (let i = 0; i < steps && placed < want; i++) {
+        const a = (Math.PI * 2 * i) / steps;
+        const x = Math.round(c.x + Math.cos(a) * rad), y = Math.round(c.y + Math.sin(a) * rad);
+        if (tryStand(ctx, id, x, y - fp.h + 1)) placed++;
+      }
+      return placed;
+    },
+    // Side by side along the north wall, backs to the rock. Shelving runs
+    // shoulder to shoulder; anything else keeps a tile between pieces.
+    wall(ctx, r, line, ids, want, fill) {
+      const wall = northWallCells(ctx, r);
+      if (!wall.length) return 0;
+      const pool = fitting(ctx, ids, Math.max(1, r.width - 1), r.height + 3).slice(0, 2);
+      if (!pool.length) return 0;
+      const gap = line.k === "shelf" ? 0 : 1;
+      const byRow = {};
+      for (const c of wall) (byRow[c.y] || (byRow[c.y] = [])).push(c.x);
+      let placed = 0, turn = 0;
+      const target = fill == null ? want : Infinity;
+      const rows = Object.keys(byRow).map(Number).sort((a, b) => a - b);
+      for (const y of rows) {
+        const xs = byRow[y].sort((a, b) => a - b);
+        for (let i = 0; i < xs.length && placed < target;) {
+          if (fill != null && ctx.rng() > fill) { i++; continue; }
+          const id = pool[turn % pool.length];
+          const fp = pieceFootprint(id);
+          const x0 = xs[i];
+          let backed = true;
+          for (let dx = 0; dx < fp.w; dx++) if (ctx.isFloor(x0 + dx, y - 1) || !ctx.isFloor(x0 + dx, y)) backed = false;
+          if (backed && tryStand(ctx, id, x0, y - fp.h + 1)) {
+            placed++; turn++;
+            i += fp.w + gap;
+          } else i++;
+        }
+      }
+      if (fill == null && placed < want) {
+        // A count rather than a fill: the slots taken in order may all have
+        // been in one corner, so try the rest of the wall at random.
+        for (const c of shuffled(ctx, wall)) {
+          if (placed >= want) break;
+          const id = pool[turn % pool.length];
+          const fp = pieceFootprint(id);
+          let backed = true;
+          for (let dx = 0; dx < fp.w; dx++) if (ctx.isFloor(c.x + dx, c.y - 1) || !ctx.isFloor(c.x + dx, c.y)) backed = false;
+          if (backed && tryStand(ctx, id, c.x, c.y - fp.h + 1)) { placed++; turn++; }
+        }
+      }
+      return placed;
+    },
+    // Shelving in unbroken lines down a hall's long axis with aisles kept
+    // between them: the stacks of a library. A line against each long wall
+    // and one down the middle (back to back on an even width) when the hall
+    // is wide enough, each broken now and then by a cross aisle, and both
+    // ends of the hall left open so the aisles join up.
+    stacks(ctx, r, line, ids, want, fill) {
+      const vertical = r.height >= r.width;
+      const across = vertical ? r.width : r.height;
+      if (across < 5) return 0;
+      const pool = fitting(ctx, ids, vertical ? 1 : 3, vertical ? 3 : 2);
+      if (!pool.length) return 0;
+      const id = pool[0];
+      const fp = pieceFootprint(id);
+      const lanes = [0, across - 1];
+      if (across >= 8 && across % 2 === 0) lanes.push((across >> 1) - 1, across >> 1);
+      else if (across >= 7) lanes.push(across >> 1);
+      const f = fill == null ? 0.85 : fill;
+      let placed = 0;
+      if (vertical) {
+        for (const off of lanes)
+          for (let y = r.y + 1; y + fp.h - 1 <= r.y + r.height - 2; y += fp.h)
+            if (ctx.rng() <= f && tryStand(ctx, id, r.x + off, y)) placed++;
+      } else {
+        for (const off of lanes)
+          for (let x = r.x + 1; x + fp.w - 1 <= r.x + r.width - 2; x += fp.w)
+            if (ctx.rng() <= f && tryStand(ctx, id, x, r.y + off - fp.h + 1)) placed++;
+      }
+      return placed;
+    },
+    // Two lines of one piece down a big room's long sides: the columns of a
+    // nave, the pit props of a stope.
+    colonnade(ctx, r, line, ids, want, fill) {
+      if (r.width < 7 || r.height < 7) return 0;
+      const pool = fitting(ctx, ids, 1, 5);
+      if (!pool.length) return 0;
+      const id = pool[0];
+      const fp = pieceFootprint(id);
+      const vertical = r.height >= r.width;
+      const pitch = 3 + (ctx.rng() < 0.5 ? 1 : 0);
+      const f = fill == null ? 1 : fill;
+      let placed = 0;
+      if (vertical) {
+        const lines = [r.x + 1, r.x + r.width - 2];
+        for (let y = r.y + 2 + fp.h - 1; y < r.y + r.height - 2; y += pitch)
+          for (const x of lines) if (ctx.rng() <= f && tryStand(ctx, id, x, y - fp.h + 1)) placed++;
+      } else {
+        const lines = [r.y + 1 + fp.h - 1, r.y + r.height - 2];
+        for (let x = r.x + 2; x < r.x + r.width - 2; x += pitch)
+          for (const y of lines) if (ctx.rng() <= f && tryStand(ctx, id, x, y - fp.h + 1)) placed++;
+      }
+      return placed;
+    },
+    // A grid of one piece with an aisle down the middle: pews facing the
+    // altar, tombs in their ranks, the shelving of a stack room.
+    rows(ctx, r, line, ids, want, fill) {
+      const x0 = r.x + 1, x1 = r.x + r.width - 2;
+      const yStart = r.daisAt ? r.daisAt.y + 2 : r.y + 1;
+      const y1 = r.y + r.height - 2;
+      const usable = x1 - x0 + 1;
+      if (usable < 3 || y1 - yStart < 1) return 0;
+      const aisle = usable % 2 === 0 ? 2 : 1;
+      const half = (usable - aisle) >> 1;
+      const pool = fitting(ctx, ids, Math.max(1, half), Math.max(1, y1 - yStart + 1));
+      if (!pool.length) return 0;
+      const id = pool[0];
+      const fp = pieceFootprint(id);
+      const gapX = line.k === "pew" ? 0 : 1;
+      const f = fill == null ? 1 : fill;
+      const midL = x0 + half - 1, midR = x0 + half + aisle;
+      let placed = 0;
+      const cap = fill == null && want ? want : Infinity;
+      for (let by = yStart + fp.h - 1; by <= y1 && placed < cap; by += fp.h + 1) {
+        for (let x = midL - fp.w + 1; x >= x0 && placed < cap; x -= fp.w + gapX)
+          if (ctx.rng() <= f && tryStand(ctx, id, x, by - fp.h + 1)) { placed++; if (line.k === "table" && ctx.rng() < 0.6) seatTable(ctx, x, by - fp.h + 1, fp); }
+        for (let x = midR; x + fp.w - 1 <= x1 && placed < cap; x += fp.w + gapX)
+          if (ctx.rng() <= f && tryStand(ctx, id, x, by - fp.h + 1, true)) { placed++; if (line.k === "table" && ctx.rng() < 0.6) seatTable(ctx, x, by - fp.h + 1, fp); }
+      }
+      return placed;
+    },
+    // The room's inner corners, the same piece in each.
+    corner(ctx, r, line, ids, want) {
+      const corners = [[r.x, r.y], [r.x + r.width - 1, r.y], [r.x, r.y + r.height - 1], [r.x + r.width - 1, r.y + r.height - 1]];
+      const cells = roomCells(ctx, r, (x, y) =>
+        (!ctx.isFloor(x, y - 1) || !ctx.isFloor(x, y + 1)) && (!ctx.isFloor(x - 1, y) || !ctx.isFloor(x + 1, y)));
+      cells.sort((a, b) => {
+        const da = Math.min(...corners.map(([cx, cy]) => Math.abs(cx - a.x) + Math.abs(cy - a.y)));
+        const db = Math.min(...corners.map(([cx, cy]) => Math.abs(cx - b.x) + Math.abs(cy - b.y)));
+        return da - db;
+      });
+      const pool = fitting(ctx, ids, 2, 3);
+      if (!pool.length) return 0;
+      const id = pool[0];
+      const fp = pieceFootprint(id);
+      let placed = 0;
+      const used = [];
+      for (const c of cells) {
+        if (placed >= want) break;
+        if (used.some((u) => Math.abs(u.x - c.x) + Math.abs(u.y - c.y) < 3)) continue;
+        const x0 = c.x === r.x + r.width - 1 || ctx.isFloor(c.x - 1, c.y) ? c.x - fp.w + 1 : c.x;
+        if (tryStand(ctx, id, x0, c.y - fp.h + 1, x0 !== c.x)) { placed++; used.push(c); }
+      }
+      return placed;
+    },
+    // Against the rock anywhere round the room, in little clusters: crates
+    // stacked together, a row of beds, rocks fallen from the face.
+    edge(ctx, r, line, ids, want) {
+      const cells = shuffled(ctx, roomCells(ctx, r, (x, y) => rockSides(ctx, x, y) >= 1));
+      const pool = fitting(ctx, ids, 3, 4).slice(0, 3);
+      if (!pool.length) return 0;
+      let placed = 0;
+      const queue = [];
+      let ci = 0;
+      while (placed < want && (queue.length || ci < cells.length)) {
+        const c = queue.length ? queue.shift() : cells[ci++];
+        const id = pool[Math.floor(ctx.rng() * pool.length)];
+        const fp = pieceFootprint(id);
+        const x0 = ctx.isFloor(c.x - 1, c.y) && !ctx.isFloor(c.x + 1, c.y) ? c.x - fp.w + 1 : c.x;
+        if (tryStand(ctx, id, x0, c.y - fp.h + 1, x0 !== c.x)) {
+          placed++;
+          // A cluster grows from what was just put down, along the rock.
+          if (ctx.rng() < 0.55)
+            for (const [dx, dy] of shuffled(ctx, DIRS4)) {
+              const nx = c.x + dx * fp.w, ny = c.y + dy;
+              if (ctx.isFloor(nx, ny) && rockSides(ctx, nx, ny) >= 1) queue.push({ x: nx, y: ny });
+            }
+        }
+      }
+      return placed;
+    },
+    // A clump round one spot: a bed of mushrooms, a crystal cluster.
+    cluster(ctx, r, line, ids, want) {
+      const open = roomCells(ctx, r);
+      if (!open.length) return 0;
+      const pool = fitting(ctx, ids, 2, 3).slice(0, 3);
+      if (!pool.length) return 0;
+      let placed = 0;
+      for (let seeds = 0; seeds < 3 && placed < want; seeds++) {
+        const s = open[Math.floor(ctx.rng() * open.length)];
+        const around = [];
+        for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) around.push({ x: s.x + dx, y: s.y + dy });
+        for (const c of shuffled(ctx, around)) {
+          if (placed >= want) break;
+          const id = pool[Math.floor(ctx.rng() * pool.length)];
+          const fp = pieceFootprint(id);
+          if (tryStand(ctx, id, c.x, c.y - fp.h + 1, ctx.rng() < 0.5)) placed++;
+        }
+      }
+      return placed;
+    },
+    // Loose about the open floor: bones, books, debris.
+    scatter(ctx, r, line, ids, want) {
+      const cells = shuffled(ctx, roomCells(ctx, r, (x, y) => rockSides(ctx, x, y) === 0));
+      const pool = fitting(ctx, ids, 2, 3).slice(0, 4);
+      if (!pool.length) return 0;
+      let placed = 0;
+      for (const c of cells) {
+        if (placed >= want) break;
+        const id = pool[Math.floor(ctx.rng() * pool.length)];
+        const fp = pieceFootprint(id);
+        if (tryStand(ctx, id, c.x, c.y - fp.h + 1, ctx.rng() < 0.5)) placed++;
+      }
+      return placed;
+    },
+    // On the wall faces themselves, spread out along them: banners, wall
+    // torches, panels, chains. A one-tile piece hangs at eye level, the middle
+    // row of the face; a taller one fills down from the top.
+    hung(ctx, r, line, ids, want) {
+      const faces = northWallCells(ctx, r).filter((c) => ctx.wallCells[c.y - 1] && ctx.wallCells[c.y - 1][c.x]);
+      if (!faces.length) return 0;
+      const pool = fitting(ctx, ids, 3, 3).slice(0, 2);
+      if (!pool.length) return 0;
+      faces.sort((a, b) => a.x - b.x || a.y - b.y);
+      const picks = [];
+      const step = faces.length / Math.max(1, want);
+      for (let i = 0; i < want; i++) picks.push(faces[Math.min(faces.length - 1, Math.floor(step * (i + 0.5)))]);
+      let placed = 0;
+      for (const c of picks) {
+        const id = pool[placed % pool.length];
+        const fp = pieceFootprint(id);
+        const x0 = c.x - (fp.w >> 1);
+        const tops = fp.h === 1 ? [c.y - 2, c.y - 1] : [c.y - 3, c.y - fp.h - 1, c.y - fp.h];
+        for (const y0 of tops) {
+          if (canHang(ctx, fp, x0, y0)) {
+            for (let dy = 0; dy < fp.h; dy++)
+              for (let dx = 0; dx < fp.w; dx++) ctx.hungOcc[(x0 + dx) + (y0 + dy) * ctx.width] = 1;
+            // Hung, whatever its folder: a sign or a wall torch whose folder is
+            // not a wall-mounted one still hangs here, on rock nobody walks.
+            ctx.furniture.push({ id, x: x0, y: y0, at: "hung", hung: true });
+            placed++;
+            break;
+          }
+        }
+      }
+      return placed;
+    },
+    // Laid on the floor and walked over. A rug or a sigil goes in the middle
+    // of the room (in front of the altar when there is one); a stain or a
+    // grate anywhere on the open floor.
+    flat(ctx, r, line, ids, want) {
+      const pool = fitting(ctx, ids, Math.max(1, r.width - 2), Math.max(1, r.height - 2));
+      if (!pool.length) return 0;
+      const centred = line.k === "rug" || line.k === "circle";
+      let placed = 0;
+      const tryLay = (id, x0, y0) => {
+        const fp = pieceFootprint(id);
+        if (!fp || x0 < 0 || y0 < 0 || x0 + fp.w > ctx.width || y0 + fp.h > ctx.height) return false;
+        for (let dy = 0; dy < fp.h; dy++)
+          for (let dx = 0; dx < fp.w; dx++) {
+            const gx = x0 + dx, gy = y0 + dy, k = gx + gy * ctx.width;
+            if (!ctx.carved[gy][gx] || ctx.isWet(gx, gy) || ctx.flatOcc[k] || ctx.protectedTiles.has(k)) return false;
+            if (!fp.flat && (ctx.occ[k] || ctx.block[k])) return false;
+          }
+        if (!fp.flat && fp.blocks.length) return tryStand(ctx, id, x0, y0);
+        for (let dy = 0; dy < fp.h; dy++)
+          for (let dx = 0; dx < fp.w; dx++) ctx.flatOcc[(x0 + dx) + (y0 + dy) * ctx.width] = 1;
+        ctx.furniture.push({ id, x: x0, y: y0, at: "flat", flat: true });
+        return true;
+      };
+      if (centred) {
+        const c = r.daisAt ? { x: r.daisAt.x + (r.daisAt.w >> 1), y: r.daisAt.y + 2 } : roomCentre(r);
+        for (const id of pool) {
+          if (placed >= want) break;
+          const fp = pieceFootprint(id);
+          if (tryLay(id, c.x - (fp.w >> 1), c.y - (fp.h >> 1))) { placed++; r.centreAt = r.centreAt || c; }
+        }
+        return placed;
+      }
+      for (const c of shuffled(ctx, roomCells(ctx, r))) {
+        if (placed >= want) break;
+        if (tryLay(pool[Math.floor(ctx.rng() * pool.length)], c.x, c.y)) placed++;
+      }
+      return placed;
+    },
+  };
+
+  function canHang(ctx, fp, x0, y0) {
+    const { width, height } = ctx;
+    if (x0 < 0 || y0 < 0 || x0 + fp.w > width || y0 + fp.h > height) return false;
+    for (let dy = 0; dy < fp.h; dy++)
+      for (let dx = 0; dx < fp.w; dx++) {
+        const gx = x0 + dx, gy = y0 + dy;
+        if (!ctx.wallCells[gy][gx] || ctx.hungOcc[gx + gy * width]) return false;
+      }
+    // Every column must hang over floor, or the piece is on a face that
+    // fronts nothing (the back of a pillar seen from the wrong side).
+    for (let dx = 0; dx < fp.w; dx++) {
+      let y = y0 + fp.h;
+      while (y < height && ctx.wallCells[y][x0 + dx]) y++;
+      if (!ctx.isFloor(x0 + dx, y)) return false;
+    }
+    return true;
+  }
+
+  // --- 11. Tile dressing: ornaments and the biome's own props ---------------
+  // The tile features (skulls, torches, drains...) are still laid on layer 2,
+  // where ProceduralTerrainInteractions can harvest them. They now work round
+  // the furniture: nothing is stamped where a piece stands, lies or hangs, and
+  // a furnished structure scatters them more thinly, since its rooms already
+  // hold their things.
+  function dressWithFeatures(ctx) {
+    const { width, height, MARGIN, carved, rng, mapData, allFeatures, S, rooms, biome, pal } = ctx;
+    const waterTile = pal.water;
+    const furnished = ctx.furniture.length > 0;
+    const taken = (x, y) => {
+      const k = x + y * width;
+      return ctx.occ[k] || ctx.flatOcc[k] || ctx.hungOcc[k] || ctx.block[k];
+    };
     const structural = new Set([
       "DungeonFloor", "DungeonWall", "Ceiling", "Water", "CaveFloor", "CaveWall", "MountainWall",
       "Dirt", "Pavement", "Salt", "Parquet", "TechnoFloor", "Metal", "WoodenFloor",
       "Grass", "Sand", "Techno", "Carpet", "Lava", "Soil", "Path", "Mud", "StoneBlock",
     ]);
     const WALL_MOUNTED = new Set(["Torch", "Chain", "Drain", "Grate", "Banner", "Cobweb", "Sconce", "Lamp", "Pipe"]);
-
-    const floorDecorPool = [];   // { variants, weight }
-    const wallDecorPool = [];
+    const floorDecorPool = [], wallDecorPool = [];
     for (const f of biome.features || []) {
       const nm = typeof f === "string" ? f : f.name;
       if (structural.has(nm)) continue;
@@ -2145,18 +4137,13 @@
       const weight = (typeof f === "object" && Number(f.density) > 0) ? Number(f.density) : 1;
       (WALL_MOUNTED.has(nm) ? wallDecorPool : floorDecorPool).push({ variants: arr, weight });
     }
-    // Sewers always sport wall Drains even when the biome definition omits them.
-    if (isSewer) {
+    if (ctx.layout === "canals") {
       const drainVariants = (allFeatures["Drain"] || []).filter((v) => v.tileId || (v.grid && v.grid.length));
       if (drainVariants.length && !wallDecorPool.some((p) => p.variants === allFeatures["Drain"])) {
         wallDecorPool.push({ variants: drainVariants, weight: 1.5 });
       }
     }
-
-    const variantSize = (v) =>
-      v.type === "grid"
-        ? { w: Math.max(...v.grid.map((r) => r.length)), h: v.grid.length }
-        : { w: 1, h: 1 };
+    const variantSize = (v) => v.type === "grid" ? { w: Math.max(...v.grid.map((r) => r.length)), h: v.grid.length } : { w: 1, h: 1 };
     const pickWeighted = (pool) => {
       let total = 0;
       for (const p of pool) total += p.weight;
@@ -2164,39 +4151,28 @@
       for (const p of pool) { r -= p.weight; if (r <= 0) return p; }
       return pool[pool.length - 1];
     };
-    // Stamp a variant onto layer 2 with its top-left at (ox, oy). Callers below
-    // validate the footprint first, so this only writes. Layer 2 (not 1) so the
-    // decorations are seen by ProceduralTerrainInteractions' action-button scan
-    // (it reads layers 3/2 only): dungeon skulls, cellar gold/wine, den bones
-    // and wall torches are all interactable/harvestable.
+    // Layer 2 so the decorations are seen by ProceduralTerrainInteractions'
+    // action-button scan (it reads layers 3/2 only).
     const stampFeature = (v, ox, oy) => {
-      if (v.type === "single") {
-        mapData[calculateIndex(ox, oy, 2, width, height)] = v.tileId;
-        return;
-      }
+      if (v.type === "single") { mapData[calculateIndex(ox, oy, 2, width, height)] = v.tileId; return; }
       for (let r = 0; r < v.grid.length; r++)
         for (let c = 0; c < v.grid[r].length; c++)
-          if (v.grid[r][c] > 0)
-            mapData[calculateIndex(ox + c, oy + r, 2, width, height)] = v.grid[r][c];
+          if (v.grid[r][c] > 0) mapData[calculateIndex(ox + c, oy + r, 2, width, height)] = v.grid[r][c];
     };
-
-    // Floor footprint must be all interior floor, dry, and layer-2 empty.
     const floorFits = (v, ox, oy) => {
       const { w, h } = variantSize(v);
       for (let r = 0; r < h; r++)
         for (let c = 0; c < w; c++) {
           const gx = ox + c, gy = oy + r;
           if (gx < 0 || gy < 0 || gx >= width || gy >= height) return false;
-          if (protectedTiles.has(gx + gy * width)) return false;
-          if (!(isFloor(gx, gy) && isFloor(gx - 1, gy) && isFloor(gx + 1, gy) &&
-                isFloor(gx, gy - 1) && isFloor(gx, gy + 1))) return false;
+          if (ctx.protectedTiles.has(gx + gy * width) || taken(gx, gy)) return false;
+          if (!(ctx.isFloor(gx, gy) && ctx.isFloor(gx - 1, gy) && ctx.isFloor(gx + 1, gy) &&
+                ctx.isFloor(gx, gy - 1) && ctx.isFloor(gx, gy + 1))) return false;
           if (mapData[calculateIndex(gx, gy, 0, width, height)] === waterTile) return false;
           if (mapData[calculateIndex(gx, gy, 2, width, height)] !== 0) return false;
         }
       return true;
     };
-    // Wall footprint rests its bottom row on the wall face fronting a room and
-    // climbs upward; every cell must be an unoccupied wall tile.
     const wallFits = (v, wx, wy) => {
       const { w, h } = variantSize(v);
       const top = wy - (h - 1);
@@ -2204,34 +4180,25 @@
       for (let c = 0; c < w; c++) {
         const bx = wx + c;
         if (bx < 0 || bx >= width) return false;
-        if (carved[wy][bx] || !isFloor(bx, wy + 1)) return false; // must front floor
+        if (carved[wy][bx] || !ctx.isFloor(bx, wy + 1)) return false;
       }
       for (let r = 0; r < h; r++)
         for (let c = 0; c < w; c++) {
           const gx = wx + c, gy = top + r;
           if (gx < 0 || gx >= width || gy < 0 || gy >= height) return false;
-          if (carved[gy][gx]) return false;
-          // Must hang on drawn rock, never over the empty space past the rim.
+          if (carved[gy][gx] || ctx.hungOcc[gx + gy * width]) return false;
           if (mapData[calculateIndex(gx, gy, 0, width, height)] === 0) return false;
           if (mapData[calculateIndex(gx, gy, 2, width, height)] !== 0) return false;
         }
       return true;
     };
-
-    // --- 6b. Ornaments: deliberate dressing ---------------------------------
-    // Laid BEFORE the random scatter, so the pit props, the graves in the wall
-    // niches, the shelf rows and the sigil at the centre get the tiles they
-    // want and the scatter fills in around them. Placement is loose here (a
-    // thing standing against a wall could not exist under the scatter's
-    // all-four-neighbours-are-floor rule); the unseal pass below is what
-    // guarantees nothing any of this puts down can cut the plan in two.
     const looseFits = (v, ox, oy) => {
       const { w, h } = variantSize(v);
       for (let r = 0; r < h; r++)
         for (let c = 0; c < w; c++) {
           const gx = ox + c, gy = oy + r;
-          if (!isFloor(gx, gy)) return false;
-          if (protectedTiles.has(gx + gy * width)) return false;
+          if (!ctx.isFloor(gx, gy)) return false;
+          if (ctx.protectedTiles.has(gx + gy * width) || taken(gx, gy)) return false;
           if (mapData[calculateIndex(gx, gy, 0, width, height)] === waterTile) return false;
           if (mapData[calculateIndex(gx, gy, 2, width, height)] !== 0) return false;
         }
@@ -2245,32 +4212,29 @@
         for (const v of allFeatures[nm] || []) if (v.tileId || (v.grid && v.grid.length)) variants.push(v);
       if (!variants.length) return;
       const pick = () => variants[Math.floor(rng() * variants.length)];
-      const rate = spec.rate == null ? 0.1 : spec.rate;
+      // A furnished structure already has its things; its ornaments thin out.
+      const rate = (spec.rate == null ? 0.1 : spec.rate) * (furnished && spec.rule !== "rows" ? 0.6 : 1);
       switch (spec.rule) {
         case "edge":
-          // Against the rock: the tile is floor and at least one neighbour is not.
           for (let y = MARGIN; y < height - MARGIN; y++)
             for (let x = MARGIN; x < width - MARGIN; x++) {
               if (!carved[y][x] || rng() >= rate) continue;
-              if (isFloor(x - 1, y) && isFloor(x + 1, y) && isFloor(x, y - 1) && isFloor(x, y + 1)) continue;
+              if (ctx.isFloor(x - 1, y) && ctx.isFloor(x + 1, y) && ctx.isFloor(x, y - 1) && ctx.isFloor(x, y + 1)) continue;
               tryStamp(pick(), x, y);
             }
           break;
         case "corners":
           for (const r of rooms) {
             if (r.width < 4 || r.height < 4) continue;
-            for (const [cx, cy] of [[r.x + 1, r.y + 1], [r.x + r.width - 2, r.y + 1],
-                                    [r.x + 1, r.y + r.height - 2], [r.x + r.width - 2, r.y + r.height - 2]]) {
+            for (const [cx, cy] of [[r.x + 1, r.y + 1], [r.x + r.width - 2, r.y + 1], [r.x + 1, r.y + r.height - 2], [r.x + r.width - 2, r.y + r.height - 2]])
               if (rng() < rate) tryStamp(pick(), cx, cy);
-            }
           }
           break;
         case "axis":
           for (const r of rooms) {
             const horizontal = r.width >= r.height;
             const mid = horizontal ? r.y + (r.height >> 1) : r.x + (r.width >> 1);
-            const from = horizontal ? r.x : r.y;
-            const to = horizontal ? r.x + r.width : r.y + r.height;
+            const from = horizontal ? r.x : r.y, to = horizontal ? r.x + r.width : r.y + r.height;
             for (let k = from; k < to; k++) {
               if (rng() >= rate) continue;
               if (horizontal) tryStamp(pick(), k, mid); else tryStamp(pick(), mid, k);
@@ -2278,27 +4242,25 @@
           }
           break;
         case "centre": {
-          // The middle of the biggest room, once: this is the sigil.
           let big = null, bestA = 0;
-          for (const r of rooms) {
-            const a = r.width * r.height;
-            if (a > bestA) { bestA = a; big = r; }
-          }
+          for (const r of rooms) { const a = r.width * r.height; if (a > bestA) { bestA = a; big = r; } }
           if (!big) break;
-          const v = pick();
-          const sz = variantSize(v);
+          const v = pick(), sz = variantSize(v);
           tryStamp(v, big.x + (big.width >> 1) - (sz.w >> 1), big.y + (big.height >> 1) - (sz.h >> 1));
           break;
         }
         case "rows":
-          // Stacks, colonnades, pit props: rows along the room's long axis,
-          // spaced across the short one, always two tiles clear at each end so
-          // there is an aisle round them.
+          // Rows of a thing the tile art draws better than any sprite (a
+          // colonnade's columns, a stack room's shelving), only where the
+          // furniture pass left the room empty.
           for (const r of rooms) {
             if (r.width < 7 || r.height < 7 || rng() > rate) continue;
+            let busy = false;
+            for (let y = r.y; y < r.y + r.height && !busy; y++)
+              for (let x = r.x; x < r.x + r.width; x++) if (taken(x, y)) { busy = true; break; }
+            if (busy) continue;
             const pitch = spec.pitch || 4;
-            const horizontal = r.width >= r.height;
-            if (horizontal) {
+            if (r.width >= r.height) {
               for (let y = r.y + 2; y < r.y + r.height - 2; y += pitch)
                 for (let x = r.x + 2; x < r.x + r.width - 2; x++) tryStamp(pick(), x, y);
             } else {
@@ -2316,168 +4278,161 @@
         case "wall":
           for (let y = 0; y < height; y++)
             for (let x = 0; x < width; x++) {
-              if (carved[y][x] || !isFloor(x, y + 1) || rng() >= rate) continue;
+              if (carved[y][x] || !ctx.isFloor(x, y + 1) || rng() >= rate) continue;
               const v = pick();
               if (wallFits(v, x, y)) stampFeature(v, x, y - (variantSize(v).h - 1));
             }
           break;
-        default: break;   // "special": laid with the ground, in step 5
+        default: break;   // "special": laid with the ground
       }
     };
-    for (const nm of ornaments) {
+    for (const nm of S.ornaments || []) {
       const spec = ORNAMENTS[nm];
       if (spec && spec.rule !== "special") runOrnament(spec);
     }
 
+    const scale = furnished ? 0.5 : 1;
     if (floorDecorPool.length) {
-      // How thickly a structure is littered is its own business (a patron's
-      // vault is buried in valuables, a cave den in bones, a temple stays
-      // stately), so the rate comes off the catalogue entry. The one exception
-      // is the rare grand loot cellar, which is stocked like a dungeon.
-      const floorRate = (isCellar && cellarGrand) ? 0.18 : (S.dressing && S.dressing.floor) || 0.05;
-      for (let y = 0; y < height; y++) {
+      const base = (ctx.layout === "cellar" && ctx.cellarGrand) ? 0.18 : (S.dressing && S.dressing.floor) || 0.05;
+      const floorRate = base * scale;
+      for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++) {
           if (!carved[y][x] || rng() >= floorRate) continue;
           const feat = pickWeighted(floorDecorPool);
           const v = feat.variants[Math.floor(rng() * feat.variants.length)];
           if (floorFits(v, x, y)) stampFeature(v, x, y);
         }
-      }
     }
     if (wallDecorPool.length) {
-      const wallRate = (isCellar && cellarGrand) ? 0.12 : (S.dressing && S.dressing.wall) || 0.1;
-      for (let y = 0; y < height; y++) {
+      const base = (ctx.layout === "cellar" && ctx.cellarGrand) ? 0.12 : (S.dressing && S.dressing.wall) || 0.1;
+      const wallRate = base * (furnished ? 0.7 : 1);
+      for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++) {
-          if (carved[y][x] || !isFloor(x, y + 1) || rng() >= wallRate) continue;
+          if (carved[y][x] || !ctx.isFloor(x, y + 1) || rng() >= wallRate) continue;
           const feat = pickWeighted(wallDecorPool);
           const v = feat.variants[Math.floor(rng() * feat.variants.length)];
           if (wallFits(v, x, y)) stampFeature(v, x, y - (variantSize(v).h - 1));
         }
-      }
     }
+  }
 
-    // --- 7. Nothing put down may seal the plan ------------------------------
-    // The ornaments are placed by rules about how a room LOOKS (rows of
-    // shelves, props standing against the rock), not about what they block, so
-    // the guarantee is made here instead: flood the map as the party would walk
-    // it and take away whatever is standing between the entrance and the rest.
-    // Water counts as open - region 99 is swum, not walked.
+  // --- 12. Nothing put down may seal the plan --------------------------------
+  // The furniture already proved it strands nothing as each piece went down;
+  // the tile props did not, so flood the map as the party walks it (furniture
+  // included) and take away whatever stands between the entrance and the rest.
+  // If a tile is still stranded after that, the furniture beside it goes too.
+  // Water counts as open: region 99 is swum, not walked.
+  function unsealPlan(ctx) {
+    const { width, height, carved, mapData, tilesetId } = ctx;
     const tilePassable = (t) => !t || isTilePassableInTileset(tilesetId, t);
     const walkable = (x, y) => {
-      if (!carved[y][x]) return false;
-      if (regiondata[y * width + x] === 99) return true;
+      if (!carved[y][x] || ctx.block[x + y * width]) return false;
+      if (ctx.regiondata[y * width + x] === 99) return true;
       return tilePassable(mapData[calculateIndex(x, y, 0, width, height)]) &&
              tilePassable(mapData[calculateIndex(x, y, 2, width, height)]);
     };
-    for (let pass = 0; pass < 5; pass++) {
-      const seen = floodFrom(spawnX, spawnY, walkable);
+    for (let pass = 0; pass < 6; pass++) {
+      const seen = floodFrom(ctx, ctx.spawnX, ctx.spawnY, walkable);
       const stranded = [];
-      // The whole map, not the margins only: the entrance corridor runs
-      // through the border, and a flood that cannot even leave the doorway
-      // must be able to report the doorway as the problem.
       for (let y = 0; y < height; y++)
         for (let x = 0; x < width; x++)
-          if (carved[y][x] && !seen[x + y * width]) stranded.push([x, y]);
-      if (!stranded.length) break;
-      // Clear the prop on every stranded tile AND on the tiles fronting them,
-      // since the thing doing the blocking stands on the reachable side.
+          if (walkable(x, y) && !seen[x + y * width]) stranded.push([x, y]);
+      if (!stranded.length) return;
       for (const [x, y] of stranded) {
         mapData[calculateIndex(x, y, 2, width, height)] = 0;
-        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        for (const [dx, dy] of DIRS4) {
           const nx = x + dx, ny = y + dy;
           if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
           if (carved[ny][nx]) mapData[calculateIndex(nx, ny, 2, width, height)] = 0;
         }
       }
+      if (pass >= 3) {
+        const near = new Set();
+        for (const [x, y] of stranded)
+          for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) near.add((x + dx) + (y + dy) * width);
+        ctx.furniture = ctx.furniture.filter((p) => {
+          const fp = pieceFootprint(p.id);
+          if (!fp || !fp.blocks.length) return true;
+          const hit = fp.blocks.some(([dx, dy]) => near.has((p.x + dx) + (p.y + dy) * width));
+          if (hit) for (const [dx, dy] of fp.blocks) ctx.block[(p.x + dx) + (p.y + dy) * width] = 0;
+          return !hit;
+        });
+      }
     }
+  }
 
-    mapData.regiondata = regiondata;
-
-    // --- 8. The dead mass is painted keep-out -------------------------------
-    // The rock a structure is cut out of is only ever as solid as its tileset
-    // says it is, and a tileset does not have to say much: the ceiling blend
-    // is flagged impassable in the Dungeon sheet and passable in others, and a
-    // wall-mounted fixture stamped on layer 2 hides whatever is under it from
-    // RPG Maker's checkPassage, which stops at the topmost tile that has an
-    // opinion. Between them, most of a Temple's or a Cave's rock reads as open
-    // ground to the engine - which is how a staircase, a lift, a spike trap
-    // and a chest all came to be dealt into the inside of a wall, reachable
-    // only on a broomstick.
-    //
-    // So the plan is stated in the one place nothing can argue with: the
-    // region plane. Every cell that is not carved floor carries the keep-out
-    // region, which RegionRules makes impassable indoors (flight included) and
-    // which every placement pass refuses to spawn on. The generators used to
-    // fill `regiondata` and drop it on the floor - nothing ever copied it into
-    // the array the engine reads - so the layer is emitted here for the first
-    // time, and it carries the keep-out mark alone. Water keeps the terrain
-    // tag it has always been read by, rather than gaining a region 99 that
-    // would suddenly make every shallow pool swim-only.
+  // --- 13. The dead mass is painted keep-out ---------------------------------
+  // The rock is only as solid as the tileset says, and a tileset does not
+  // have to say much: so every cell that is not carved floor carries the
+  // keep-out region, which RegionRules makes impassable indoors (flight
+  // included) and which every placement pass refuses to spawn on. Water keeps
+  // the terrain tag it has always been read by.
+  function paintKeepOut(ctx) {
+    const { width, height, carved, mapData } = ctx;
     const NO_GO_REGION = (window.RegionRules && window.RegionRules.NO_GO_REGION) || 7;
     const regionLayerEnd = width * height * 6;
     for (let i = mapData.length; i < regionLayerEnd; i++) mapData[i] = 0;
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        if (carved[y][x]) continue;
-        mapData[calculateIndex(x, y, 5, width, height)] = NO_GO_REGION;
-      }
-    }
+    for (let y = 0; y < height; y++)
+      for (let x = 0; x < width; x++)
+        if (!carved[y][x]) mapData[calculateIndex(x, y, 5, width, height)] = NO_GO_REGION;
+  }
 
-    // Room rectangles + entrance metadata for the (room-aware) prefab pass and the
-    // caller that positions the player. Prefabs are applied later by the prefab
-    // load-hook using mapData.rooms so they are fitted inside rooms.
-    mapData.rooms = rooms.map((r) => ({ x: r.x, y: r.y, width: r.width, height: r.height }));
-    // A rare well-stocked loot cellar, so the chest pass can be as generous
-    // with it as the dressing pass was.
-    if (isCellar) mapData.cellarGrand = cellarGrand;
-    mapData.spawnX = spawnX;
-    mapData.spawnY = spawnY;
-    mapData.spawnDir = spawnDir;
-    mapData.entranceX = entranceX;
-    mapData.entranceY = entranceY;
+  // --- 14. Publish -------------------------------------------------------------
+  function publishInterior(ctx) {
+    const { mapData, rooms, rng } = ctx;
+    mapData.regiondata = ctx.regiondata;
+    mapData.rooms = rooms.map((r) => ({ x: r.x, y: r.y, width: r.width, height: r.height, role: r.role || "" }));
+    if (ctx.layout === "cellar") mapData.cellarGrand = ctx.cellarGrand;
+    mapData.spawnX = ctx.spawnX;
+    mapData.spawnY = ctx.spawnY;
+    mapData.spawnDir = ctx.spawnDir;
+    mapData.entranceX = ctx.entranceX;
+    mapData.entranceY = ctx.entranceY;
+    // The furniture plan, seeded onto the square by FurnitureSystem when the
+    // party arrives. Like `rooms`, it is only read at entry time, so it does
+    // not matter that it is not carried through a save.
+    mapData.furniture = ctx.furniture.slice();
+    mapData.furnitureSignature = furnitureSignature(ctx.furniture);
 
-    // Door hints: the START of a 1-tile-wide corridor (BSP dungeon layout
-    // only) - the tile where the passage leaves a room - still carved after
-    // the border margin clip and far enough from the entrance, spaced apart so
-    // up to 6 "Dungeon door" events never cluster. The mouth was recorded
-    // while its own corridor was being carved, but a later corridor, an
-    // orphan reconnection or a chamfered room corner can widen what was a
-    // narrow passage by the time the whole plan is finished; a door only
-    // blocks anything if the two tiles flanking it, perpendicular to the
-    // corridor's own run, are still walls on the FINAL carve.
+    // Door hints: the mouth of a 1-wide corridor (BSP layout only), still a
+    // real bottleneck on the FINAL carve, away from the entrance and from
+    // each other, and not where a piece of furniture stands.
     const isDoorBottleneck = (c) => c.horizontal
-      ? !isFloor(c.x, c.y - 1) && !isFloor(c.x, c.y + 1)
-      : !isFloor(c.x - 1, c.y) && !isFloor(c.x + 1, c.y);
-    if (dungeonNarrowCorridors.length) {
-      const shuffled = dungeonNarrowCorridors
-        .filter((c) => isFloor(c.x, c.y) && isDoorBottleneck(c) &&
-          Math.abs(c.x - entranceX) + Math.abs(c.y - entranceY) > 6)
+      ? !ctx.isFloor(c.x, c.y - 1) && !ctx.isFloor(c.x, c.y + 1)
+      : !ctx.isFloor(c.x - 1, c.y) && !ctx.isFloor(c.x + 1, c.y);
+    if (ctx.narrow.length) {
+      const shuffledHints = ctx.narrow
+        .filter((c) => ctx.isFloor(c.x, c.y) && isDoorBottleneck(c) && !ctx.occ[c.x + c.y * ctx.width] &&
+          Math.abs(c.x - ctx.entranceX) + Math.abs(c.y - ctx.entranceY) > 6)
         .sort(() => rng() - 0.5);
       const doorHints = [];
-      for (const c of shuffled) {
+      for (const c of shuffledHints) {
         if (doorHints.length >= 6) break;
         if (doorHints.some((d) => Math.abs(d.x - c.x) + Math.abs(d.y - c.y) < 5)) continue;
         doorHints.push(c);
       }
       mapData.doorHints = doorHints;
     }
-
-    // Boss room hint: the room whose center sits farthest from the entrance,
-    // so a dungeon's toughest fixed encounter can be placed deep inside.
+    // Boss room hint: the room whose centre is farthest from the entrance.
     if (rooms.length) {
       let bestRoom = null, bestDist = -1;
       for (const r of rooms) {
         const cx = r.x + Math.floor(r.width / 2), cy = r.y + Math.floor(r.height / 2);
-        const dist = Math.abs(cx - entranceX) + Math.abs(cy - entranceY);
+        const dist = Math.abs(cx - ctx.entranceX) + Math.abs(cy - ctx.entranceY);
         if (dist > bestDist) { bestDist = dist; bestRoom = { x: cx, y: cy }; }
       }
       mapData.bossRoomHint = bestRoom;
     }
-
-    // The carve of the last structure generated, for the debugger and the
-    // offline verification harness. Held here rather than on mapData because
-    // mapData is what goes into the savegame.
-    _lastCarved = carved;
+    // The carve and the furnishing of the last structure generated, for the
+    // debugger and the offline harnesses. Held here rather than on mapData,
+    // which is what goes into the savegame.
+    _lastCarved = ctx.carved;
+    _lastInterior = {
+      structure: ctx.S.key, layout: ctx.layout, style: ctx.style, wallA4: ctx.pal.wallA4,
+      carved: ctx.carved, wallCells: ctx.wallCells, rooms: mapData.rooms,
+      furniture: mapData.furniture, block: ctx.block,
+      spawnX: ctx.spawnX, spawnY: ctx.spawnY, protectedTiles: ctx.protectedTiles,
+    };
     return mapData;
   }
 
@@ -5243,6 +7198,20 @@ function generateBurgBiome(biome, seed, allFeatures, adjacentBiomes, allOtherDat
     structures: () => STRUCTURES.slice(),
     isStructure: (name) => !!structureFor(name),
     lastCarved: () => _lastCarved,
+    lastInterior: () => _lastInterior,
+    entrancesOf,
+    LAYOUT_HINTS,
+    layouts: () => Object.keys(LAYOUTS),
+    forceLayout: (nm) => { _forcedLayout = nm || null; },
+    // The furnishing tables, for FurnitureSystem, the tools and the tests.
+    INTERIOR_ROOMS,
+    INTERIOR_PLANS,
+    KIND_PLACE,
+    A4_WALL_MATERIALS,
+    WALL_STYLES,
+    wallStyleOf,
+    interiorFurnitureIndex,
+    resetInteriorIndex: () => { _interiorIndex = null; _footprints.clear(); },
     ORNAMENTS,
     DANGER,
     isDungeonBiome,

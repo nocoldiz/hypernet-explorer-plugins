@@ -494,7 +494,37 @@
         'Free States of Midwest': 'Bill Clinton',
         'Eastern Seaboard': 'George W. Bush',
     };
+
+    // The offices the story is waiting on. In a world begun before 2012 (in
+    // any mode but the empty world) these three hold them and nothing moves
+    // them: not age, not illness, not a ballot, a conclave or a coup. Their
+    // Leaders.json records carry the immortality tag. They stay until the
+    // story itself moves them.
+    const PINNED_MORAL_GUIDES = {
+        'Holy Vatican Empire': 'Pope Petrus II',
+        'Mages Guild': 'Aleister Crowley',
+    };
+    const PINNED_POLITICAL_LEADERS = {
+        'Britannia': 'Margaret Thatcher',
+    };
+    // The live head of state NPCPolitics seats for a power: the Pontifex is
+    // the Pope, the Prime Minister of Britannia is Thatcher.
+    const PINNED_HEADS = {
+        'Holy Vatican Empire': 'Pope Petrus II',
+        'Britannia': 'Margaret Thatcher',
+    };
     // i18n-ignore-end
+
+    const PINNED_BEFORE_YEAR = 2012;
+
+    // Whether this world keeps the pinned offices: every mode but the empty
+    // world, at any start year before 2012 (WorldManager.startingYear).
+    function officesPinned() {
+        if (isEmptyWorld()) return false;
+        const WM = window.WorldManager;
+        const year = WM && typeof WM.startingYear === "function" ? Number(WM.startingYear()) : PINNED_BEFORE_YEAR - 1;
+        return (year || PINNED_BEFORE_YEAR - 1) < PINNED_BEFORE_YEAR;
+    }
 
     const ICONS = {
         political: 191,
@@ -1257,9 +1287,14 @@
                     into[power] = chosen;
                 }
             };
-            seat(FINAL_MORAL_GUIDES, this._currentMoralGuides);
-            seat(FINAL_MORAL_GUIDES, this._currentHolyLeaders);   // the old dual-track reader
-            seat(FINAL_POLITICAL_LEADERS, this._currentLeaders);
+            // The empty world ends with nobody in any of the story's offices.
+            const empty = isEmptyWorld();
+            const without = (table) => empty ? Object.fromEntries(Object.entries(table)
+                .filter(([power]) => !PINNED_MORAL_GUIDES[power] && !PINNED_POLITICAL_LEADERS[power])) : table;
+            seat(without(FINAL_MORAL_GUIDES), this._currentMoralGuides);
+            seat(without(FINAL_MORAL_GUIDES), this._currentHolyLeaders);   // the old dual-track reader
+            seat(without(FINAL_POLITICAL_LEADERS), this._currentLeaders);
+            this.reassertPinnedOffices();
             // From here on the live chronicle runs on top of a finished
             // century, and the offices it opens with are not up for grabs.
             this._sealed = true;
@@ -4450,6 +4485,62 @@
         }
         return entry;
     };
+
+    // ── Pinned offices ──────────────────────────────────────────────────
+    // Seats the pinned holders again wherever anything has moved them. Run at
+    // the seal and after every pass that can replace a leader, so an
+    // election, a coup or a death can never stand for longer than the pass
+    // that made it.
+    HistoryManager.prototype.reassertPinnedOffices = function () {
+        if (!officesPinned() || !this._currentHyperpowers) return false;
+        const seatIn = (table, into) => {
+            if (!into) return;
+            for (const [power, name] of Object.entries(table)) {
+                if (!this._currentHyperpowers[power]) continue;
+                if (into[power] && into[power].name === name) {
+                    into[power].protected = true;
+                    into[power].immortal = true;
+                    continue;
+                }
+                const pool = [].concat(this._currentHyperpowers[power].holy_leaders || [],
+                    this.leaderPoolFor(power));
+                const chosen = pool.find(l => l && l.name === name) ||
+                    (this.getLeaderRecord ? this.getLeaderRecord(name) : null);
+                if (!chosen) continue;
+                chosen.protected = true;
+                chosen.immortal = true;
+                if (this._deadLeaders) this._deadLeaders.delete(chosen.name);
+                if (this._leaderDeaths) delete this._leaderDeaths[chosen.name];
+                into[power] = chosen;
+            }
+        };
+        seatIn(PINNED_MORAL_GUIDES, this._currentMoralGuides);
+        seatIn({ 'Holy Vatican Empire': PINNED_MORAL_GUIDES['Holy Vatican Empire'] }, this._currentHolyLeaders);
+        seatIn(PINNED_POLITICAL_LEADERS, this._currentLeaders);
+        return true;
+    };
+
+    /** The live head of state pinned for a power, or null (NPCPolitics). */
+    HistoryManager.prototype.pinnedHeadOf = function (power) {
+        return officesPinned() ? (PINNED_HEADS[power] || null) : null;
+    };
+
+    /** Whether this world keeps the pinned offices at all. */
+    HistoryManager.prototype.officesPinned = function () {
+        return officesPinned();
+    };
+
+    for (const pass of ['updateActiveLeaders', 'handleInternalPolitics', 'handleLeaderMortality',
+        'ensureMoralGuide', '_ensureLiveCast']) {   // i18n-ignore  method names
+        const original = HistoryManager.prototype[pass];
+        if (typeof original !== 'function') continue;
+        HistoryManager.prototype[pass] = function () {
+            const result = original.apply(this, arguments);
+            this.reassertPinnedOffices();
+            return pass === 'ensureMoralGuide' && PINNED_MORAL_GUIDES[arguments[0]] && officesPinned()
+                ? (this._currentMoralGuides[arguments[0]] || result) : result;
+        };
+    }
 
     // Initialize global manager
     const manager = new HistoryManager();

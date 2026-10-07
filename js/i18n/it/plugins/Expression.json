@@ -1,5 +1,6 @@
 {
   "unlocked": "{name} ha sbloccato l'Espressione!",
+  "awakened": "{name} ora può usare l'Espressione!",
   "fired": "Espressione di {name}: {effects}!",
   "firedSummon": "L'Espressione di {name} prende la forma di {form}: {effects}!",
   "bound": "{name}: {arg}",
@@ -8,7 +9,8 @@
     "trigger": "Inneschi",
     "rule": "Condizioni",
     "effect": "Effetti",
-    "form": "Forma"
+    "form": "Forma",
+    "limit": "Limitazioni"
   },
   "where": {
     "battle": "In battaglia",
@@ -118,6 +120,27 @@
     "reviveMember": { "name": "Rianima Compagno", "desc": "Rimette in piedi il membro del gruppo scelto." },
     "rebirth": { "name": "Rinascita", "desc": "Rimette in piedi ogni alleato caduto." },
     "aura": { "name": "Aura", "desc": "Il potere emana da questo personaggio." },
-    "summon": { "name": "Evocazione", "desc": "In battaglia il potere si manifesta come un'evocazione modellata sull'animale scelto." }
+    "summon": { "name": "Evocazione", "desc": "In battaglia il potere si manifesta come un'evocazione modellata sull'animale scelto." },
+    "notOnWeekday": { "name": "Non in Quel Giorno", "desc": "Il potere non si può usare nel giorno della settimana scelto." },
+    "onlyOnWeekday": { "name": "Solo in Quel Giorno", "desc": "Il potere si può usare solo nel giorno della settimana scelto." },
+    "onlyVsKind": { "name": "Solo Contro Quella Specie", "desc": "Il potere si può usare solo in uno scontro contro la specie di creatura scelta." },
+    "notVsBoss": { "name": "Non Contro i Potenti", "desc": "Il potere non si può usare finché nello scontro c'è un boss." },
+    "onlyVsBoss": { "name": "Solo Contro i Potenti", "desc": "Il potere si può usare solo in uno scontro con un boss." },
+    "onlyAtNight": { "name": "Solo di Notte", "desc": "Il potere si può usare solo dal tramonto all'alba." },
+    "onlyByDay": { "name": "Solo di Giorno", "desc": "Il potere si può usare solo dall'alba al tramonto." },
+    "onlyInWeather": { "name": "Solo con Quel Tempo", "desc": "Il potere si può usare solo con il tempo scelto." },
+    "onlyIndoors": { "name": "Solo al Chiuso", "desc": "Il potere si può usare solo sotto un tetto." },
+    "onlyOutdoors": { "name": "Solo Sotto il Cielo", "desc": "Il potere si può usare solo all'aperto." },
+    "onlyHurt": { "name": "Solo da Ferito", "desc": "Il potere si può usare solo mentre il personaggio è sotto metà della salute." },
+    "onlyUnharmed": { "name": "Solo da Illeso", "desc": "Il potere si può usare solo mentre il personaggio è in piena salute." },
+    "onlyAlone": { "name": "Solo da Solo", "desc": "Il potere si può usare solo quando nessun altro del gruppo è ancora in piedi." },
+    "onlyWithMember": { "name": "Solo con Lei o Lui", "desc": "Il potere si può usare solo mentre il compagno scelto è nel gruppo e in piedi." },
+    "onlyUnarmed": { "name": "Solo Disarmato", "desc": "Il potere si può usare solo senza un'arma in mano." },
+    "onlyInBattle": { "name": "Solo in Battaglia", "desc": "Il potere si può usare solo in uno scontro." },
+    "onlyInWorld": { "name": "Solo Fuori dalla Battaglia", "desc": "Il potere si può usare solo nel mondo, mai in uno scontro." },
+    "oncePerWeek": { "name": "Una Volta a Settimana", "desc": "Il potere si può usare al massimo una volta a settimana, in battaglia o fuori." },
+    "bloodPrice": { "name": "Prezzo di Sangue", "desc": "Ogni uso costa un quarto della salute del personaggio. Non lo lascia mai sotto uno." },
+    "spiritPrice": { "name": "Prezzo di Spirito", "desc": "Ogni uso prosciuga tutti i PM del personaggio. Non si può usare senza PM." },
+    "goldPrice": { "name": "Prezzo in Oro", "desc": "Ogni uso costa un ventesimo del denaro del gruppo." }
   }
 }

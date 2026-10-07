@@ -2061,6 +2061,132 @@
     };
 
     //=============================================================================
+    // ProceduralInteriors Furniture
+    //=============================================================================
+    // A dungeon, a crypt, a mine or any other ProceduralInterior is furnished by
+    // its generator (ProceduralMapStructureGenerator, furnishRooms), which lays
+    // the catalogue's pieces out room by room from each piece's `interiors` and
+    // `interiorKind` tags and hands the plan over as mapData.furniture. This
+    // sets that plan down on the square the first time the party arrives, as
+    // ordinary placed furniture in the world's store, so it draws, collides and
+    // can be sat on exactly like anything the party built.
+    //
+    // A square is furnished once. The plan's signature is filed per square in
+    // the world store (_furnitureFurnished), so a piece the party carries off
+    // stays gone and coming back never stacks a second set. Only a different
+    // plan for the same square (the generator itself changed) takes away the
+    // pieces the old one put down and lays the new one. A generated piece
+    // refunds no materials when it is dismantled: nobody paid for it.
+
+    // What a piece occupies, as the generator needs to know it: its size, the
+    // cells that block a step (worked out exactly as furnitureTileFlags does, so
+    // the generator's own connectivity guarantee is the one the engine keeps),
+    // whether it hangs on a wall and whether it lies flat on the floor.
+    function pieceFootprint(id) {
+        const f = Furniture[id];
+        if (!f) return null;
+        const w = f.width || 1, h = f.height || 1;
+        const rules = getFolderRules(id);
+        const collision = getEffectiveCollision(id, f);
+        const blocks = [];
+        for (let ly = 0; ly < h; ly++) {
+            const blocksRow = collision === 'all' ||
+                (collision === 'lower' && ly === h - 1) ||
+                (collision === 'lower2' && ly >= h - 2);
+            if (!blocksRow) continue;
+            for (let lx = 0; lx < w; lx++) blocks.push([lx, ly]);
+        }
+        const hung = !!rules.wall || f.category === CAT_ADS;
+        const flat = !hung && collision === 'none' && getEffectiveLayer(id, f) === 'below';
+        return { w, h, blocks, hung, flat };
+    }
+
+    Game_System.prototype.furnishedInteriors = function () {
+        if (!this._furnitureFurnished) this._furnitureFurnished = {};
+        return this._furnitureFurnished;
+    };
+
+    // Is the square still as the generator left it under this piece? Passes that
+    // run after generation (the Bunker origin's gold hoards, a room-fitted
+    // prefab) can put something down where the plan meant a piece to stand, and
+    // the piece then stays out rather than covering it. Only the floor under the
+    // piece is asked: what its upper rows draw over is the wall behind it.
+    function interiorPieceFits(rec, f) {
+        const fp = pieceFootprint(rec.id);
+        if (!fp) return false;
+        // The plan says what it hung: a wall torch filed in a floor folder still
+        // hangs on the rock, where no floor test applies.
+        if (fp.hung || rec.hung) return $gameMap.isValid(rec.x, rec.y) && $gameMap.isValid(rec.x + fp.w - 1, rec.y + fp.h - 1);
+        const blocked = new Set(fp.blocks.map(([dx, dy]) => dx + ',' + dy));
+        const noGo = (window.RegionRules && window.RegionRules.NO_GO_REGION) || 7;
+        for (let dy = 0; dy < fp.h; dy++) {
+            for (let dx = 0; dx < fp.w; dx++) {
+                const x = rec.x + dx, y = rec.y + dy;
+                if (!$gameMap.isValid(x, y)) return false;
+                if ($gameMap.regionId(x, y) === noGo) {
+                    if (blocked.has(dx + ',' + dy) || dy === fp.h - 1) return false;
+                    continue;
+                }
+                if ($gameMap.tileId(x, y, 2) || $gameMap.tileId(x, y, 3)) return false;
+                // A prefab stamped into the room after generation can bring events
+                // (a staircase, a lever): the piece never stands on one.
+                if ($gameMap.eventsXy(x, y).length) return false;
+                if (blocked.has(dx + ',' + dy) && !$gameMap.isPassable(x, y, 2)) return false;
+            }
+        }
+        return true;
+    }
+
+    function furnishInterior(mapData) {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem || !$gameMap || !mapData) return 0;
+        const plan = mapData.furniture;
+        const signature = mapData.furnitureSignature;
+        if (!Array.isArray(plan) || !signature) return 0;
+        // A stitched window lays more than one square into the map, and the
+        // plan is in the square's own coordinates: an interior never stitches,
+        // so a window standing means this is not one.
+        if (window.ProcStitch && typeof window.ProcStitch.active === 'function' && window.ProcStitch.active()) return 0;
+        const mapKey = furnitureMapKey();
+        const marks = $gameSystem.furnishedInteriors();
+        if (marks[mapKey] === signature) return 0;
+        const scene = SceneManager._scene;
+        const spriteset = (scene instanceof Scene_Map) ? scene._spriteset : null;
+        if (marks[mapKey]) {
+            const list = $gameSystem.getMapFurniture(mapKey);
+            for (const p of list.slice()) {
+                if (!p || !p.generated) continue;
+                // Straight out of the store, not through removePlacedFurniture:
+                // that hands a container's contents to the party, wherever they
+                // are, and a plan being replaced is nobody dismantling anything.
+                const at = list.indexOf(p);
+                if (at >= 0) list.splice(at, 1);
+                invalidateFurnitureMemo();
+                if (spriteset && spriteset.removeFurnitureSprite) spriteset.removeFurnitureSprite(p.id);
+            }
+        }
+        marks[mapKey] = signature;
+        // An ordered piece waiting to be set down is the party's, not the plan's.
+        const pendingStock = _pendingStockPlacement;
+        _pendingStockPlacement = false;
+        let placed = 0;
+        for (const rec of plan) {
+            const f = Furniture[rec.id];
+            if (!f || !interiorPieceFits(rec, f)) continue;
+            const flip = !!rec.flipped && canFlipPlaceable(f);
+            const p = $gameSystem.placeFurniture(mapKey, rec.id, rec.x, rec.y, flip);
+            p.generated = true;
+            if (spriteset && spriteset._furnitureSprites && spriteset.addFurnitureSprite) spriteset.addFurnitureSprite(p);
+            placed++;
+        }
+        _pendingStockPlacement = pendingStock;
+        return placed;
+    }
+
+    window.FurnitureSystem = window.FurnitureSystem || {};
+    window.FurnitureSystem.pieceFootprint = pieceFootprint;
+    window.FurnitureSystem.furnishInterior = furnishInterior;
+
+    //=============================================================================
     // Sprite_Furniture
     //=============================================================================
 
@@ -2363,7 +2489,10 @@
                 if (!fData) continue;
                 const collision = getEffectiveCollision(placed.furnitureId, fData);
                 const rules = getFolderRules(placed.furnitureId);
-                const ladder = !!rules.ladder;
+                // A ladder a ProceduralInterior was furnished with hangs on the
+                // rock face for the look of it: climbing it would walk the party
+                // up into the sealed rock behind the wall.
+                const ladder = !!rules.ladder && !placed.generated;
                 for (let ly = 0; ly < fData.height; ly++) {
                     const blocks = collision === 'all' ||
                         (collision === 'lower' && ly === fData.height - 1) ||
@@ -5800,7 +5929,8 @@
             const f = Furniture[p.furnitureId];
             $gameSystem.removePlacedFurniture(mapKey, p.id);
             if (this._spriteset) this._spriteset.removeFurnitureSprite(p.id);
-            if (f && !p.fromStock) refundFurnitureMaterials(f, pool);
+            // A piece a ProceduralInterior was furnished with cost nothing to build.
+            if (f && !p.fromStock && !p.generated) refundFurnitureMaterials(f, pool);
         }
 
         const tileList = $gameSystem.getMapTiles(mapKey).slice();
@@ -5843,7 +5973,7 @@
             if (tx >= p.x && tx < p.x + f.width && ty >= p.y && ty < p.y + f.height) {
                 $gameSystem.removePlacedFurniture(mapId, p.id);
                 if (this._spriteset) this._spriteset.removeFurnitureSprite(p.id);
-                if (!p.fromStock) refundFurnitureMaterials(f);
+                if (!p.fromStock && !p.generated) refundFurnitureMaterials(f);
                 if (window.Diary) window.Diary.onDismantled(furnitureName(p.furnitureId, f));
                 // Placed set + materials changed: force the validity recompute.
                 this._fbPlaceCacheKey = null;

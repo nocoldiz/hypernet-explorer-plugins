@@ -406,17 +406,16 @@
         this.lastUpdateTime = Date.now();
     }
     
-    // What the roster costs for the hours just worked. An actor from the party
-    // works the counter for nothing - they are the family business - so only
-    // hired names draw a wage.
+    // What the roster costs for the hours just worked. Everybody behind the
+    // counter draws the same wage, the keepers and the party's own alike.
     payStaff(hoursElapsed) {
         if (!(hoursElapsed > 0)) return 0;
-        const hired = staffList(this).filter(entry => entry && entry.kind !== 'actor');
+        const hired = staffRoster(this);
         if (hired.length === 0) return 0;
-        // A shift is SHOP_SHIFT_HOURS long, and nobody is paid for hours the
-        // shop was shut, so the bill follows the same coverage the takings do.
+        // One of them stands in the shop at a time, and nobody is paid for
+        // hours it was shut, so the bill follows the same coverage the takings do.
         const hoursWorked = Math.min(hoursElapsed, hoursElapsed * staffCoverage(this));
-        const wages = Math.floor(hired.length * hoursWorked * SHOP_STAFF_WAGE_PER_HOUR);
+        const wages = Math.floor(hoursWorked * SHOP_STAFF_WAGE_PER_HOUR);
         if (wages <= 0) return 0;
         // The wage comes out of the till, and a till that cannot cover it goes
         // into the red: an unpaid shop is a shop whose owner owes wages.
@@ -1606,128 +1605,269 @@
   // -------------------------------------------------------------------------
   // Who stands behind the counter
   // -------------------------------------------------------------------------
-  // A bought shop has no shopkeeper: the one who was there worked for whoever
-  // owned it before. The party staffs it themselves, out of the people they
-  // travel with and the ones waiting on the bench (the Party Dynamics board's
-  // Inactive list), one to three of them.
+  // A day is three eight-hour shifts, and every business the party owns keeps
+  // the people who already worked it. A bought shop keeps its three keepers
+  // (seeded on the deed, so the same faces in every savegame of the world); a
+  // bought workplace keeps the citizens JobShiftManager and ShopShiftManager
+  // put on its posts (WorkplaceDeeds, Economy/RealEstateMarket.js).
   //
-  // A day is three eight-hour shifts. One name covers the morning, two cover
-  // two thirds of the day, three keep the door open around the clock: the
-  // shop only trades in the hours somebody is standing in it, so the roster is
-  // what decides how much it can possibly sell (Shop.refreshEconomy).
+  // The party can put somebody of its own on any one of those shifts: a member
+  // waiting on the bench (the Party Dynamics board's Inactive list), never one
+  // who travels. They stand in for the keeper of that shift until they are
+  // taken off it again, or called back from the Reserves onto the road, and
+  // then the keeper they stood in for has the shift back.
+  //
+  // The shop only trades in the hours somebody is standing in it, so the
+  // roster is still what decides how much it can possibly sell
+  // (Shop.refreshEconomy).
   const SHOP_SHIFT_HOURS = 8;
-  // What a hired hand behind the counter costs per hour, in gold (so 1000 is
-  // 10.00 euros). Below the 25-to-100 euro band the job board quotes, because a
+  const SHOP_SHIFT_COUNT = 3;
+  // What a hand behind the counter costs per hour, in gold (so 1000 is 10.00
+  // euros). Below the 25-to-100 euro band the job board quotes, because a
   // shop shift is unskilled work, and low enough that a shop with stock on the
   // shelves still turns a profit on the 0.6-in, 1.5-out spread.
   const SHOP_STAFF_WAGE_PER_HOUR = 1000;
-  const SHOP_MAX_STAFF   = 3;
+  // One name per shift: three keep the door open around the clock.
+  const SHOP_MAX_STAFF   = SHOP_SHIFT_COUNT;
+  // The one post a bought shop has.
+  const COUNTER_POST = 'counter'; // i18n-ignore: post id
 
-  // An entry is an actor (somebody travelling) or a preset (somebody benched),
-  // since both are offered and the two are numbered separately.
+  function staffHash(text) {
+    let h = 2166136261;
+    const s = String(text);
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  // Everybody on the bench, or null while the bench cannot be read yet (a
+  // roster is never pruned against a bench that is not there). Bubba never
+  // leaves the party.
+  function benchAll() {
+    const CP = window.CharacterPresets;
+    if (!CP || typeof CP.getAvailableRetiredPresets !== 'function') return null;
+    return (CP.getAvailableRetiredPresets() || []).filter(p => p && p.name && p.name !== 'Bubba');
+  }
+
+  // Who on the bench may be offered a shift: somebody stationed on a claim is
+  // already standing somewhere.
+  function benchPresets() {
+    return (benchAll() || []).filter(p => !p.stationedAt);
+  }
+
+  function benchPreset(id) {
+    return (benchAll() || []).find(p => String(p.id) === String(id)) || null;
+  }
+
+  // The party's own people on a business: { id, post, shift } rows. A row
+  // whose dossier is gone (called back onto the road, sent away for good) is
+  // dropped where it is read, which is what hands the shift back.
+  function liveStaffRows(list) {
+    if (!Array.isArray(list)) return [];
+    const all = benchAll();
+    if (!all) return list;
+    const bench = new Set(all.map(p => String(p.id)));
+    for (let i = list.length - 1; i >= 0; i--) {
+      const row = list[i];
+      if (!row || row.id == null || row.post == null || !bench.has(String(row.id))) list.splice(i, 1);
+    }
+    return list;
+  }
+
   function staffList(shop) {
     if (!shop) return [];
     if (!Array.isArray(shop.staff)) shop.staff = [];
-    return shop.staff;
+    return liveStaffRows(shop.staff);
   }
 
-  function staffKey(entry) {
-    return entry ? `${entry.kind}:${entry.id}` : '';
-  }
-
-  // The hours this entry covers, by its place on the roster.
+  // The hours a shift covers.
   function staffShift(shop, index) {
     const start = (index * SHOP_SHIFT_HOURS) % 24;
     return { start, end: (start + SHOP_SHIFT_HOURS) % 24 };
   }
 
-  // How much of the day is covered, 0 to 1. Three names is the whole clock.
+  // The shift a clock hour falls in.
+  function shiftAtHour(hour) {
+    return Math.floor((Number(hour) || 0) / SHOP_SHIFT_HOURS) % SHOP_SHIFT_COUNT;
+  }
+
+  function currentShiftIndex() {
+    const hour = ($gameVariables && typeof $gameVariables.value === 'function') ? $gameVariables.value(23) : 12;
+    return shiftAtHour(hour);
+  }
+
+  // The three keepers a bought shop came with, seeded on the deed. Drawn the
+  // first time they are asked for and kept on the shop from then on.
+  function shopKeepers(shop) {
+    if (!shop || !shop.owned) return [];
+    if (Array.isArray(shop.keepers) && shop.keepers.length === SHOP_SHIFT_COUNT) return shop.keepers;
+    const gen = window.NPCSystem?.generateSeededPersona;
+    if (typeof gen !== 'function') return [];
+    const worldSeed = window.HistoryManager?.getSeed?.() ?? 19002001;
+    const keepers = [];
+    for (let s = 0; s < SHOP_SHIFT_COUNT; s++) {
+      const persona = gen((staffHash(`${shop.id}_keeper_${s}`) ^ worldSeed) >>> 0);
+      if (!persona || !persona.name) return [];
+      keepers.push({ name: persona.name, spriteName: persona.spriteName || '', charIdx: persona.charIdx || 0 });
+    }
+    shop.keepers = keepers;
+    persistShops();
+    return keepers;
+  }
+
+  // Every shift of a bought shop and who works it: one of the party's own,
+  // else the keeper who always has.
+  function shopSlots(shop) {
+    if (!shop || !shop.owned) return [];
+    const ours = staffList(shop);
+    const keepers = shopKeepers(shop);
+    const out = [];
+    for (let s = 0; s < SHOP_SHIFT_COUNT; s++) {
+      const row = ours.find(r => r.post === COUNTER_POST && Number(r.shift) === s);
+      const preset = row ? benchPreset(row.id) : null;
+      const keeper = keepers[s];
+      out.push({
+        post: COUNTER_POST,
+        postLabel: T('ShopManagement.staff.counterPost'),
+        shift: s,
+        hours: staffShift(shop, s),
+        citizen: keeper ? keeper.name : null,
+        holder: preset
+          ? { kind: 'preset', id: preset.id, name: preset.name }
+          : (keeper ? { kind: 'npc', id: null, name: keeper.name } : null),
+      });
+    }
+    return out;
+  }
+
+  // How much of the day is covered, 0 to 1. Three shifts is the whole clock.
   function staffCoverage(shop) {
-    const staffed = staffList(shop).length;
+    const staffed = shopSlots(shop).filter(slot => slot.holder).length;
     if (staffed <= 0) return 0;
     return Math.min(1, (staffed * SHOP_SHIFT_HOURS) / 24);
   }
 
-  // The name a roster entry answers to, wherever it is filed.
+  // The name a roster entry answers to.
   function staffName(entry) {
     if (!entry) return '';
-    if (entry.kind === 'actor') {
-      const actor = $gameActors ? $gameActors.actor(Number(entry.id)) : null;
-      return actor ? actor.name() : '';
-    }
-    const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
-    const preset = bench.find(p => String(p.id) === String(entry.id));
+    const preset = benchPreset(entry.id);
     return preset ? preset.name : '';
   }
 
-  // Everybody who could take a shift: the party as it travels, and the bench.
-  // Whoever is already on this shop's roster, or on another shop's, is not
-  // offered twice.
-  function staffCandidates(shop) {
-    const taken = new Set();
-    reviveShops();
-    for (const id of Object.keys(shopData.shops)) {
-      const other = shopData.shops[id];
-      if (!other || !other.owned) continue;
-      staffList(other).forEach(entry => taken.add(staffKey(entry)));
-    }
+  // The roster as a page reads it: one row per covered shift, with the name
+  // and the hours.
+  function staffRoster(shopId) {
+    const shop = typeof shopId === 'object' ? shopId : getShop(shopId);
+    if (!shop) return [];
+    return shopSlots(shop).filter(slot => slot.holder).map(slot => ({
+      kind:  slot.holder.kind,
+      id:    slot.holder.id,
+      name:  slot.holder.name,
+      shift: slot.hours,
+      index: slot.shift,
+    }));
+  }
+
+  // -------------------------------------------------------------------------
+  // Any business: a shop deed ('prop:<id>') or a workplace ('wp:<mapId>')
+  // -------------------------------------------------------------------------
+  const WORKPLACE_PREFIX = 'wp:'; // i18n-ignore: business key prefix
+
+  function workplaceMapOf(bizKey) {
+    const s = String(bizKey || '');
+    return s.indexOf(WORKPLACE_PREFIX) === 0 ? Number(s.slice(WORKPLACE_PREFIX.length)) : null;
+  }
+
+  // Every shift of the business, post by post, and who holds it.
+  function businessSlots(bizKey) {
+    const mapId = workplaceMapOf(bizKey);
+    if (mapId != null) return window.WorkplaceDeeds?.slots?.(mapId) ?? [];
+    return shopSlots(getShop(bizKey));
+  }
+
+  // The rows of the party's own people on every business it owns.
+  function allPartyStaff() {
     const out = [];
-    try {
-      $gameParty.members().forEach(actor => {
-        if (!actor || actor.name() === 'Bubba') return;
-        const entry = { kind: 'actor', id: actor.actorId() };
-        if (taken.has(staffKey(entry))) return;
-        out.push(Object.assign({ name: actor.name(), level: actor.level }, entry));
-      });
-    } catch (err) { /* no party */ }
-    const bench = window.CharacterPresets?.getAvailableRetiredPresets?.() ?? [];
-    bench.forEach(preset => {
-      if (!preset || preset.name === 'Bubba') return;
-      const entry = { kind: 'preset', id: preset.id };
-      if (taken.has(staffKey(entry))) return;
-      out.push(Object.assign({ name: preset.name, level: preset.level || 1 }, entry));
-    });
+    ownedShops().forEach(shop => staffList(shop).forEach(row =>
+      out.push({ bizKey: shop.id, id: row.id, post: row.post, shift: Number(row.shift) })));
+    const WD = window.WorkplaceDeeds;
+    if (WD && typeof WD.partyStaff === 'function') {
+      WD.partyStaff().forEach(row => out.push(row));
+    }
     return out;
   }
 
-  // Putting somebody on, and taking them off. Answers { ok } so a picker can
-  // say why it refused.
-  function assignStaff(shopId, kind, id) {
-    const shop = getShop(shopId);
-    if (!shop || !shop.owned) return { ok: false, reason: 'noShop' };
-    const list = staffList(shop);
-    if (list.length >= SHOP_MAX_STAFF) return { ok: false, reason: 'rosterFull' };
-    const entry = { kind: String(kind), id: (kind === 'actor' ? Number(id) : id) };
-    if (list.some(e => staffKey(e) === staffKey(entry))) return { ok: false, reason: 'already' };
-    const name = staffName(entry);
-    if (!name) return { ok: false, reason: 'unknown' };
-    if (name === 'Bubba') return { ok: false, reason: 'restricted' };
-    list.push(entry);
-    persistShops();
-    return { ok: true, entry };
+  // Who on the bench is free to take a shift: nobody already working one, and
+  // nobody stationed on a claim.
+  function staffReserves() {
+    const busy = new Set(allPartyStaff().map(row => String(row.id)));
+    return benchPresets()
+      .filter(p => !busy.has(String(p.id)))
+      .map(p => ({ id: p.id, name: p.name, level: p.level || 1 }));
   }
 
-  function dismissStaff(shopId, kind, id) {
-    const shop = getShop(shopId);
+  // Puts somebody off the bench on one shift. Answers { ok, reason }.
+  function assignReserve(bizKey, post, shift, presetId) {
+    const s = Number(shift);
+    if (!Number.isInteger(s) || s < 0 || s >= SHOP_SHIFT_COUNT) return { ok: false, reason: 'noShift' };
+    const preset = benchPresets().find(p => String(p.id) === String(presetId)) || null;
+    if (!preset) return { ok: false, reason: 'unknown' };
+    if (allPartyStaff().some(row => String(row.id) === String(preset.id))) return { ok: false, reason: 'already' };
+    const mapId = workplaceMapOf(bizKey);
+    if (mapId != null) {
+      const WD = window.WorkplaceDeeds;
+      if (!WD || typeof WD.assignReserve !== 'function') return { ok: false, reason: 'noShop' };
+      return WD.assignReserve(mapId, post, s, preset.id);
+    }
+    const shop = getShop(bizKey);
+    if (!shop || !shop.owned) return { ok: false, reason: 'noShop' };
+    if (post !== COUNTER_POST) return { ok: false, reason: 'noShift' };
+    const list = staffList(shop);
+    const at = list.findIndex(r => r.post === post && Number(r.shift) === s);
+    if (at >= 0) list.splice(at, 1);
+    list.push({ id: preset.id, post, shift: s });
+    persistShops();
+    return { ok: true };
+  }
+
+  // Takes the party's own off a shift: the keeper they stood in for has it back.
+  function releaseReserve(bizKey, post, shift) {
+    const s = Number(shift);
+    const mapId = workplaceMapOf(bizKey);
+    if (mapId != null) {
+      const WD = window.WorkplaceDeeds;
+      if (!WD || typeof WD.releaseReserve !== 'function') return { ok: false, reason: 'noShop' };
+      return WD.releaseReserve(mapId, post, s);
+    }
+    const shop = getShop(bizKey);
     if (!shop) return { ok: false, reason: 'noShop' };
     const list = staffList(shop);
-    const key = staffKey({ kind: String(kind), id: (kind === 'actor' ? Number(id) : id) });
-    const at = list.findIndex(e => staffKey(e) === key);
+    const at = list.findIndex(r => r.post === post && Number(r.shift) === s);
     if (at < 0) return { ok: false, reason: 'notOnRoster' };
     list.splice(at, 1);
     persistShops();
     return { ok: true };
   }
 
-  // The roster as a page reads it: a name, the hours it covers, and whether
-  // the clock is covered at all.
-  function staffRoster(shopId) {
-    const shop = typeof shopId === 'object' ? shopId : getShop(shopId);
-    if (!shop) return [];
-    return staffList(shop).map((entry, index) => Object.assign({}, entry, {
-      name:  staffName(entry),
-      shift: staffShift(shop, index),
-    }));
+  // Whether this name is one of the party's own, working a shift somewhere.
+  // They are on the bench, not on the road, and the only way back onto it is
+  // the Reserves: nobody at a till is talked into joining.
+  function isPartyStaffName(name) {
+    if (!name) return false;
+    const working = new Set(allPartyStaff().map(row => String(row.id)));
+    if (!working.size) return false;
+    return (benchAll() || []).some(p => p.name === name && working.has(String(p.id)));
+  }
+
+  // Whether they are standing in their shift at this hour.
+  function isOnShiftNow(name) {
+    if (!name) return false;
+    const now = currentShiftIndex();
+    const preset = (benchAll() || []).find(p => p.name === name);
+    if (!preset) return false;
+    return allPartyStaff().some(row => String(row.id) === String(preset.id) && row.shift === now);
   }
 
   // -------------------------------------------------------------------------
@@ -2000,10 +2140,10 @@
     shop.propertyId = property.id;
     shop.displayName = property.name;
     shop.location = property.location;
-    // Whoever used to stand behind that counter worked for the last owner and
-    // leaves with them (shopkeeperGone below). The party names their own.
+    // The three who kept the counter for the last owner stay on and keep it
+    // for the party, until somebody off the bench is put on a shift of theirs.
     shop.staff = [];
-    shop.keeperDismissed = true;
+    shopKeepers(shop);
     shop.soldToday   = 0;
     shop.earnedToday = 0;
     shopData.shops[id] = shop;
@@ -2082,14 +2222,26 @@
     FALLBACK_TRADE,
     // Who stands behind the counter, and for which eight hours.
     SHIFT_HOURS:       SHOP_SHIFT_HOURS,
+    SHIFT_COUNT:       SHOP_SHIFT_COUNT,
     MAX_STAFF:         SHOP_MAX_STAFF,
+    SHIFT_WAGE:        SHOP_STAFF_WAGE_PER_HOUR * SHOP_SHIFT_HOURS,
+    COUNTER_POST,
     staffRoster,
-    staffCandidates,
     staffCoverage,
     staffShift,
     staffName,
-    assignStaff,
-    dismissStaff,
+    shopKeepers,
+    shiftAtHour,
+    // The same, for any business the party owns: a shop deed by its id, a
+    // workplace as 'wp:<mapId>' (WorkplaceDeeds).
+    businessSlots,
+    staffReserves,
+    assignReserve,
+    releaseReserve,
+    allPartyStaff,
+    benchPreset,
+    isPartyStaffName,
+    isOnShiftNow,
     // The world's own copy of every shop (save/worlds/<name>/shops.json).
     persist:           persistShops,
     adoptWorldShops,
@@ -2409,7 +2561,7 @@
       const staffRows = staff.length
         ? staff.slice().sort((a, b) => a.shift - b.shift).map(s => `<tr>
             <td style="${TB.td}">${tbEsc(s.name)}</td>
-            <td style="${TB.td}">${tbEsc(jobLabel(s.jobId))}</td>
+            <td style="${TB.td}">${tbEsc(s.label || jobLabel(s.jobId))}</td>
             <td style="${TB.td}">${hours(s.shift)}</td>
           </tr>`).join('')
         : `<tr><td style="${TB.td} ${TB.note}" colspan="3">${T('ShopManagement.till.noStaff')}</td></tr>`;

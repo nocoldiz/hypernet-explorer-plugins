@@ -11,7 +11,9 @@
  * party member from the backpack. It unlocks that character's Expression, and
  * is refused on a character who already has it. Seeds are a rare find in
  * loot (Crafting/RandomLootSystem.js), and the Expressions scenario hands
- * every character one already grown, with a power rolled at random.
+ * every character one already grown, with a power rolled at random. A
+ * character no seed reached awakens on their own: at level 15 if their class
+ * is magical (<Nature: Magical>), at level 25 otherwise, and a toast says so.
  *
  * An Expression is a power the player assembles, the way a Nen ability or a
  * Stand is assembled: out of a moment, the vows it is bound by, what it does
@@ -34,6 +36,16 @@
  *   EFFECTS     up to two THEN effects and up to two ELSE effects.
  *   FORM        Aura (it comes off the character) or Summon (it manifests as
  *               a summon modelled on one of the party's follower pets).
+ *   LIMITATIONS up to four vows the power is bound by: it cannot be used on a
+ *               given weekday, only against one kind of enemy, only by night,
+ *               only unarmed, only once a week, only at a price in blood or
+ *               gold... Unlike a condition a limitation adds no strength. It
+ *               makes the power CHEAPER and EASIER TO REACH: each one weighs
+ *               1 to 3, and every point takes a share off the KP the power
+ *               costs and lowers every stat requirement in it, so a heavily
+ *               bound power can hold pieces the character's stats would not
+ *               otherwise open. Limitations that rule each other out (night
+ *               and day, a battle-only vow on a world trigger) are refused.
  *
  * In a battle it fires at most once per battle; out in the world at most once
  * per day. An effect that only means something in a fight (a buff, a blow
@@ -63,10 +75,10 @@
 
     // i18n-ignore-start  option keys, stat keys, slot ids, parameter kinds and
     // the ids they bind to; every name is read from Expression.* in the i18n
-    const CATEGORIES = ['trigger', 'rule', 'effect', 'form'];
+    const CATEGORIES = ['trigger', 'rule', 'effect', 'form', 'limit'];
     // Where the pieces of each kind can go, and how many each place holds.
-    const SLOTS = { trigger: 1, rules: 3, branch: 1, effects: 2, elseEffects: 2, form: 1 };
-    const SLOT_CATEGORY = { trigger: 'trigger', rules: 'rule', branch: 'rule', effects: 'effect', elseEffects: 'effect', form: 'form' };
+    const SLOTS = { trigger: 1, rules: 3, branch: 1, effects: 2, elseEffects: 2, form: 1, limits: 4 };
+    const SLOT_CATEGORY = { trigger: 'trigger', rules: 'rule', branch: 'rule', effects: 'effect', elseEffects: 'effect', form: 'form', limits: 'limit' };
     const STAT_PARAM = { STR: 2, CON: 3, INT: 4, WIS: 5, DEX: 6, PSI: 7 };
 
     // What some pieces are bound to, beyond the database's own lists.
@@ -76,6 +88,7 @@
     const EMPATHIZE_VERBS = ['freeChat', 'socialize', 'bicker', 'gift', 'bribe', 'treat', 'feed',
         'preach', 'debate', 'teach', 'learn', 'romance', 'cardDuel', 'challenge',
         'accuse', 'attack', 'pickpocket', 'infect'];
+    const WEEKDAYS = [0, 1, 2, 3, 4, 5, 6];                    // Date#getDay: 0 is Sunday
 
     // The catalogue. `where` says where a piece means something: battle,
     // world or any. Triggers ask for no stat. Conditions and effects come in
@@ -157,7 +170,31 @@
         { key: 'rebirth',        cat: 'effect',  where: 'any',    stat: 'WIS', req: 30, cost: 900, icon: 225 },
         // Forms: the shape it takes.
         { key: 'aura',           cat: 'form',    where: 'any',    cost: 0,   icon: 87 },
-        { key: 'summon',         cat: 'form',    where: 'battle', stat: 'PSI', req: 12, cost: 150, icon: 296, param: 'pet' }
+        { key: 'summon',         cat: 'form',    where: 'battle', stat: 'PSI', req: 12, cost: 150, icon: 296, param: 'pet' },
+        // Limitations: vows that bind the power. Never stat-gated and free to
+        // fit; `weight` is how much each one binds, and so how much it gives
+        // back (see LIMIT_DISCOUNT and LIMIT_LEEWAY).
+        { key: 'notOnWeekday',   cat: 'limit',   where: 'any',    weight: 1, icon: 220, param: 'weekday' },
+        { key: 'onlyOnWeekday',  cat: 'limit',   where: 'any',    weight: 3, icon: 220, param: 'weekday' },
+        { key: 'onlyVsKind',     cat: 'limit',   where: 'battle', weight: 3, icon: 119, param: 'archetype' },
+        { key: 'notVsBoss',      cat: 'limit',   where: 'any',    weight: 1, icon: 145 },
+        { key: 'onlyVsBoss',     cat: 'limit',   where: 'battle', weight: 3, icon: 145 },
+        { key: 'onlyAtNight',    cat: 'limit',   where: 'any',    weight: 2, icon: 270 },
+        { key: 'onlyByDay',      cat: 'limit',   where: 'any',    weight: 1, icon: 69 },
+        { key: 'onlyInWeather',  cat: 'limit',   where: 'any',    weight: 2, icon: 69,  param: 'weather' },
+        { key: 'onlyIndoors',    cat: 'limit',   where: 'any',    weight: 2, icon: 205 },
+        { key: 'onlyOutdoors',   cat: 'limit',   where: 'any',    weight: 1, icon: 140 },
+        { key: 'onlyHurt',       cat: 'limit',   where: 'any',    weight: 2, icon: 86 },
+        { key: 'onlyUnharmed',   cat: 'limit',   where: 'any',    weight: 2, icon: 176 },
+        { key: 'onlyAlone',      cat: 'limit',   where: 'any',    weight: 3, icon: 88 },
+        { key: 'onlyWithMember', cat: 'limit',   where: 'any',    weight: 2, icon: 84,  param: 'member' },
+        { key: 'onlyUnarmed',    cat: 'limit',   where: 'any',    weight: 2, icon: 76 },
+        { key: 'onlyInBattle',   cat: 'limit',   where: 'battle', weight: 1, icon: 112 },
+        { key: 'onlyInWorld',    cat: 'limit',   where: 'world',  weight: 1, icon: 190 },
+        { key: 'oncePerWeek',    cat: 'limit',   where: 'any',    weight: 2, icon: 221 },
+        { key: 'bloodPrice',     cat: 'limit',   where: 'any',    weight: 2, icon: 1 },
+        { key: 'spiritPrice',    cat: 'limit',   where: 'any',    weight: 1, icon: 17 },
+        { key: 'goldPrice',      cat: 'limit',   where: 'any',    weight: 1, icon: 191 }
     ];
     // i18n-ignore-end
     const BY_KEY = {};
@@ -188,16 +225,49 @@
     const NIGHT_FROM = 20;
     const NIGHT_TO = 6;
     const WORLD_POLL_FRAMES = 30;
+    // What a point of limitation gives back: a share of the KP and a lowered
+    // stat requirement on every piece, each with a ceiling so no amount of vows
+    // makes a power free or opens everything.
+    const LIMIT_DISCOUNT = 0.06;
+    const MAX_DISCOUNT = 0.6;
+    const LIMIT_LEEWAY = 2;
+    const MAX_LEEWAY = 12;
+    const BLOOD_PRICE = 0.25;        // of maximum HP, never below 1 HP left
+    const GOLD_PRICE = 0.05;         // of the party's gold
+    const WEEK_DAYS = 7;
+    // Limitations that rule each other out: a power bound by both never fires.
+    const LIMIT_CLASHES = [
+        ['onlyAtNight', 'onlyByDay'], ['onlyIndoors', 'onlyOutdoors'], ['onlyHurt', 'onlyUnharmed'],
+        ['onlyInBattle', 'onlyInWorld'], ['notVsBoss', 'onlyVsBoss'], ['onlyAlone', 'onlyWithMember']
+    ];
 
     const isUnlockItem = (item) => !!(item && item.meta && item.meta[UNLOCK_TAG]);
     const isActor = (battler) => !!(battler && typeof battler.isActor === 'function' && battler.isActor());
-    const isUnlocked = (actor) => !!(actor && actor._expressionUnlocked);
+    // A character the seed never reached awakens on their own: a caster's
+    // class (<Nature: Magical>) at level 15, any other class at 25.
+    const AWAKEN_LEVEL_MAGICAL = 15;
+    const AWAKEN_LEVEL_MUNDANE = 25;
+    const awakensAt = (actor) => {
+        const data = actor && typeof actor.currentClass === 'function' ? actor.currentClass() : null;
+        const MN = window.MagicNature;
+        return data && MN && MN.isMagicalData && MN.isMagicalData(data) ? AWAKEN_LEVEL_MAGICAL : AWAKEN_LEVEL_MUNDANE;
+    };
+    const awakened = (actor) => isActor(actor) && Number(actor.level) >= awakensAt(actor);
+    const isUnlocked = (actor) => !!(actor && (actor._expressionUnlocked || awakened(actor)));
     const tx = (s) => (typeof window.translateText === 'function' ? window.translateText(s) : s);
 
     const unlock = (actor) => {
         if (!isActor(actor) || isUnlocked(actor)) return false;
         actor._expressionUnlocked = true;
         return true;
+    };
+
+    const announceAwakening = (actor) => {
+        if (!window.ParchmentToast) return;
+        window.ParchmentToast.show(T('Expression.awakened', { name: actor.name() }), {
+            severity: 'good',
+            key: 'expression:' + actor.actorId()   // i18n-ignore  dedupe key
+        });
     };
 
     const members = () => {
@@ -224,12 +294,29 @@
         return Math.max(0, Math.floor(value));
     };
 
-    // A piece that asks for no stat (every trigger, the aura) is always open.
+    // How much a power's limitations bind it: the sum of their weights.
+    const limitPoints = (power) => ((power && power.limits) || [])
+        .reduce((sum, e) => sum + ((option(e.key) && option(e.key).weight) || 0), 0);
+    const discountOf = (power) => Math.min(MAX_DISCOUNT, limitPoints(power) * LIMIT_DISCOUNT);
+    const leewayOf = (power) => Math.min(MAX_LEEWAY, limitPoints(power) * LIMIT_LEEWAY);
+    // The leeway that applies to this character right now: the draft's, since
+    // the draft is what is being built (and starts as the finalized power).
+    const leewayFor = (actor) => leewayOf(actor && (actor._expressionDraft || actor._expressionFinal));
+    // The requirement a piece asks of this character, after the leeway.
+    const reqFor = (actor, key) => {
+        const o = option(key);
+        if (!o || !o.stat || !o.req) return 0;
+        return Math.max(0, o.req - leewayFor(actor));
+    };
+
+    // A piece that asks for no stat (every trigger, the aura, every
+    // limitation) is always open; the rest are open from their requirement,
+    // lowered by the limitations the power is bound by.
     const meets = (actor, key) => {
         const o = option(key);
         if (!o) return false;
         if (!o.stat || !o.req) return true;
-        return statOf(actor, o.stat) >= o.req;
+        return statOf(actor, o.stat) >= reqFor(actor, key);
     };
 
     // ── What a piece can be bound to ─────────────────────────────────────
@@ -245,6 +332,24 @@
         $dataStates.filter(s => s && s.id > 1 && s.iconIndex > 0 && (s.name || '').trim());
 
     const moneyLabel = (gold) => window.MoneyFormatter ? window.MoneyFormatter.format(gold) : String(gold);
+
+    // The kinds of enemy there are: every archetype the bestiary's creatures
+    // carry, named the way the anatomy books name them.
+    let _archetypes = null;
+    const archetypes = () => {
+        if (_archetypes) return _archetypes;
+        const list = (typeof $dataEnemies !== 'undefined' && $dataEnemies) || [];
+        if (!list.length) return [];
+        const seen = new Set();
+        list.forEach(e => { const a = e && e.meta && e.meta.Archetype; if (typeof a === 'string' && a.trim()) seen.add(a.trim()); });
+        _archetypes = [...seen].sort();
+        return _archetypes;
+    };
+    const archetypeName = (a) => {
+        const key = 'enemyArchetypes.' + String(a).toLowerCase() + '.name';   // i18n-ignore  enemyArchetypes.json key
+        const name = typeof window.getArchetypeText === 'function' ? window.getArchetypeText(key) : '';
+        return name && name !== key ? name : String(a);
+    };
 
     // Every value a piece of this kind can be bound to, as { arg, label, icon }.
     const argChoices = (actor, param) => {
@@ -276,6 +381,10 @@
                 return NEEDS.map(n => ({ arg: n, label: T('Expression.need.' + n), icon: 0 }));
             case 'empathize':
                 return EMPATHIZE_VERBS.map(v => ({ arg: v, label: T('Expression.empathize.' + v), icon: 0 }));
+            case 'weekday':
+                return WEEKDAYS.map(d => ({ arg: d, label: T('HypernetCalendar.weekdayLong.' + d), icon: 0 }));
+            case 'archetype':
+                return archetypes().map(a => ({ arg: a, label: archetypeName(a), icon: 0 }));
             default:
                 return [];
         }
@@ -310,7 +419,8 @@
         rules: [],
         branch: null,
         effects: [],
-        elseEffects: []
+        elseEffects: [],
+        limits: []
     });
 
     const copyEntry = (e) => e ? { key: e.key, arg: e.arg === undefined ? null : e.arg, not: !!e.not } : null;
@@ -321,10 +431,11 @@
         rules: (p.rules || []).map(copyEntry),
         branch: copyEntry(p.branch),
         effects: (p.effects || []).map(copyEntry),
-        elseEffects: (p.elseEffects || []).map(copyEntry)
+        elseEffects: (p.elseEffects || []).map(copyEntry),
+        limits: (p.limits || []).map(copyEntry)
     });
 
-    const entriesOf = (p) => p ? [p.form, p.trigger, p.branch].concat(p.rules || [], p.effects || [], p.elseEffects || [])
+    const entriesOf = (p) => p ? [p.form, p.trigger, p.branch].concat(p.rules || [], p.effects || [], p.elseEffects || [], p.limits || [])
         .filter(Boolean) : [];
     const idOf = (e) => e.key + ':' + (e.arg === null || e.arg === undefined ? '' : e.arg);
 
@@ -335,10 +446,11 @@
     const draft = (actor) => {
         if (!actor) return blank();
         if (!actor._expressionDraft) actor._expressionDraft = actor._expressionFinal ? clone(actor._expressionFinal) : blank();
+        if (!actor._expressionDraft.limits) actor._expressionDraft.limits = [];
         return actor._expressionDraft;
     };
 
-    const isList = (slot) => slot === 'rules' || slot === 'effects' || slot === 'elseEffects';
+    const isList = (slot) => slot === 'rules' || slot === 'effects' || slot === 'elseEffects' || slot === 'limits';
 
     // Puts a piece into a slot. A piece that is already there comes off
     // instead, and a full row pushes out its oldest piece rather than refusing.
@@ -404,13 +516,44 @@
 
     const isLost = (actor, entry) => !!entry && !meets(actor, entry.key);
 
+    // Limitations that leave the power unable to fire at all: two that rule
+    // each other out, two different "only on" days or weathers, or a vow that
+    // only holds in battle on a trigger that only comes in the world (or the
+    // other way round). Refused, so nobody banks the discount on a dead power.
+    const neverFires = (power) => {
+        const limits = (power && power.limits) || [];
+        const keys = limits.map(e => e.key);
+        if (LIMIT_CLASHES.some(([a, b]) => keys.includes(a) && keys.includes(b))) return true;
+        for (const k of ['onlyOnWeekday', 'onlyInWeather']) {
+            const args = new Set(limits.filter(e => e.key === k).map(e => e.arg));
+            if (args.size > 1) return true;
+        }
+        const days = limits.filter(e => e.key === 'onlyOnWeekday').map(e => e.arg);
+        if (days.length && limits.some(e => e.key === 'notOnWeekday' && days.includes(e.arg))) return true;
+        const t = power && power.trigger && option(power.trigger.key);
+        if (t && t.where !== 'any') {
+            const wrong = t.where === 'battle' ? 'world' : 'battle';
+            if (limits.some(e => option(e.key) && option(e.key).where === wrong)) return true;
+        }
+        return false;
+    };
+
+    // What finalizing costs: every piece that is not already part of the
+    // finalized power, less the share the limitations take off.
+    const costOf = (actor) => {
+        const d = draft(actor);
+        const owned = entriesOf(finalized(actor)).map(idOf);
+        const full = entriesOf(d).filter(e => !owned.includes(idOf(e)))
+            .reduce((sum, e) => sum + ((option(e.key) && option(e.key).cost) || 0), 0);
+        return Math.round(full * (1 - discountOf(d)));
+    };
+
     const finalizeCheck = (actor) => {
         const d = draft(actor);
         const fin = finalized(actor);
-        const owned = entriesOf(fin).map(idOf);
-        const cost = entriesOf(d).filter(e => !owned.includes(idOf(e)))
-            .reduce((sum, e) => sum + (option(e.key) ? option(e.key).cost : 0), 0);
+        const cost = costOf(actor);
         if (!d.trigger || !d.effects.length) return { ok: false, reason: 'incomplete', cost };
+        if (neverFires(d)) return { ok: false, reason: 'neverFires', cost };
         if (entriesOf(d).some(e => isLost(actor, e))) return { ok: false, reason: 'beyondStats', cost };
         if (fin && JSON.stringify(clone(fin)) === JSON.stringify(clone(d))) return { ok: false, reason: 'unchanged', cost };
         const kp = $gameSystem && $gameSystem.getKnowledge ? $gameSystem.getKnowledge() : 0;
@@ -537,6 +680,50 @@
         return entry.not ? !value : value;
     };
 
+    const weekdayNow = () => {
+        const tds = window.TimeDateSystem;
+        const d = tds && tds.getCurrentDateObj ? tds.getCurrentDateObj() : null;
+        return d ? d.getDay() : 0;
+    };
+    const isNight = () => { const h = hourNow(); return h >= NIGHT_FROM || h < NIGHT_TO; };
+    const enemyKind = (enemy) => {
+        const a = enemy && enemy.enemy && enemy.enemy() && enemy.enemy().meta && enemy.enemy().meta.Archetype;
+        return typeof a === 'string' ? a.trim().toLowerCase() : '';
+    };
+    const LIMITS = {
+        notOnWeekday: (a, arg) => weekdayNow() !== arg,
+        onlyOnWeekday: (a, arg) => weekdayNow() === arg,
+        onlyVsKind: (a, arg) => $gameTroop.aliveMembers().some(e => enemyKind(e) === String(arg).toLowerCase()),
+        notVsBoss: () => !inBattle() || !$gameTroop.aliveMembers().some(isBoss),
+        onlyVsBoss: () => $gameTroop.aliveMembers().some(isBoss),
+        onlyAtNight: () => isNight(),
+        onlyByDay: () => !isNight(),
+        onlyInWeather: (a, arg) => weatherNow() === arg,
+        onlyIndoors: () => !!(window.$gameWeather && window.$gameWeather.isInterior),
+        onlyOutdoors: () => !(window.$gameWeather && window.$gameWeather.isInterior),
+        onlyHurt: (a) => a.hpRate() < 0.5,
+        onlyUnharmed: (a) => a.hpRate() >= 1,
+        onlyAlone: (a) => $gameParty.aliveMembers().every(m => m === a),
+        onlyWithMember: (a, arg) => { const m = fighting(arg); return !!m && m.isAlive(); },
+        onlyUnarmed: (a) => !(a.weapons && a.weapons().length),
+        onlyInBattle: () => inBattle(),
+        onlyInWorld: () => !inBattle(),
+        // The prices hold as long as they can be paid.
+        bloodPrice: (a) => a.hp > 1,
+        spiritPrice: (a) => a.mmp > 0 && a.mp > 0,
+        goldPrice: () => $gameParty.gold() > 0
+    };
+    // Every limitation must hold, always: they are not joined by ALL or ANY,
+    // and NOT does not turn them around. One that only means something in a
+    // fight never holds outside one.
+    const limitsHold = (actor, power) => ((power && power.limits) || []).every(e => {
+        const o = option(e.key);
+        if (o && o.where === 'battle' && !inBattle()) return false;
+        if (o && o.where === 'world' && inBattle()) return false;
+        return LIMITS[e.key] ? !!LIMITS[e.key](actor, e.arg) : true;
+    });
+    const hasLimit = (power, key) => ((power && power.limits) || []).some(e => e.key === key);
+
     const gateOpen = (actor, power) => {
         const rules = power.rules || [];
         if (!rules.length) return true;
@@ -556,7 +743,13 @@
         return list.filter(fitsHere);
     };
 
-    const isSpent = (actor) => inBattle() ? !!actor._expressionSpent : actor._expressionDay === today();
+    const isSpent = (actor) => {
+        // Once a week, battle or world alike, counted from the last firing.
+        const power = finalized(actor);
+        if (hasLimit(power, 'oncePerWeek') && actor._expressionWeekFired != null &&
+            today() - actor._expressionWeekFired < WEEK_DAYS) return true;
+        return inBattle() ? !!actor._expressionSpent : actor._expressionDay === today();
+    };
 
     // Whether this character's finalized power would fire on this trigger
     // right now. What was finalized fires as finalized: the stats it asked
@@ -567,7 +760,7 @@
         if (!power || !power.trigger || power.trigger.key !== trigger || isSpent(actor)) return null;
         const wanted = power.trigger.arg;
         if (wanted !== null && wanted !== undefined && !argMatches(power.trigger.key, wanted, arg)) return null;
-        if (!gateOpen(actor, power)) return null;
+        if (!limitsHold(actor, power) || !gateOpen(actor, power)) return null;
         return chosenEffects(actor, power).length ? power : null;
     };
 
@@ -661,9 +854,24 @@
         }
     };
 
+    // The prices a power's limitations ask, paid as it fires.
+    const payPrices = (actor, power) => {
+        if (hasLimit(power, 'bloodPrice')) {
+            const price = Math.min(actor.hp - 1, Math.round(actor.mhp * BLOOD_PRICE));
+            if (price > 0) { actor.gainHp(-price); popup(actor); }
+        }
+        if (hasLimit(power, 'spiritPrice') && actor.mp > 0) actor.gainMp(-actor.mp);
+        if (hasLimit(power, 'goldPrice')) {
+            const price = Math.max(1, Math.round($gameParty.gold() * GOLD_PRICE));
+            $gameParty._gold = Math.max(0, $gameParty._gold - price);
+        }
+    };
+
     const activate = (actor, power) => {
         if (inBattle()) actor._expressionSpent = true;
         else actor._expressionDay = today();
+        if (hasLimit(power, 'oncePerWeek')) actor._expressionWeekFired = today();
+        payPrices(actor, power);
         const effects = chosenEffects(actor, power);
         const p = potency(power);
         manifest(power);
@@ -780,7 +988,12 @@
 
     const _Game_Actor_levelUp = Game_Actor.prototype.levelUp;
     Game_Actor.prototype.levelUp = function () {
+        const before = !!this._expressionUnlocked || awakened(this);
         _Game_Actor_levelUp.call(this);
+        if (!before && awakened(this)) {
+            this._expressionUnlocked = true;
+            announceAwakening(this);
+        }
         if (typeof $gameParty !== 'undefined' && $gameParty && $gameParty.allMembers().includes(this)) fire(this, 'levelUp');
     };
 
@@ -905,6 +1118,9 @@
         SLOT_CATEGORY,
         OPTIONS,
         isUnlocked,
+        awakensAt,
+        AWAKEN_LEVEL_MAGICAL,
+        AWAKEN_LEVEL_MUNDANE,
         unlock,
         members,
         anyInParty,
@@ -925,6 +1141,16 @@
         finalizeCheck,
         finalize,
         potency,
+        // Limitations: how much a power is bound, and what that gives back.
+        limitPoints,
+        discountOf,
+        leewayOf,
+        reqFor,
+        neverFires,
+        LIMIT_DISCOUNT,
+        LIMIT_LEEWAY,
+        MAX_DISCOUNT,
+        MAX_LEEWAY,
         randomize,
         isUnlockItem,
         // For the tests and for anything that wants to fire a power by hand.

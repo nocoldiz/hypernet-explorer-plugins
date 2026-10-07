@@ -404,8 +404,10 @@
         return _Game_Enemy_dropItemRate.call(this) * (hasDoubleSpoils(this) ? 2 : 1);
     };
 
-    // Every kill pays half again its database experience: at the raw values
-    // levelling crawled. The world's own multiplier still applies on top.
+    // Every kill pays half again its database experience. The database exp
+    // itself is set by tools/enemies/gen_enemy_rewards.js against the class
+    // curves, counting this buff, so change the two together. The world's own
+    // multiplier still applies on top.
     const MONSTER_EXP_BUFF = 1.5;
     BSE.Helpers.MONSTER_EXP_BUFF = MONSTER_EXP_BUFF;
     const _Game_Enemy_exp = Game_Enemy.prototype.exp;

@@ -3675,6 +3675,8 @@
     // Assign a new array, the WorldManager-backed field is a getter/setter pair.
     $gameSystem._retiredCharacterPresets = getRetiredPresets().map((preset) => {
       if (available.indexOf(preset.id) < 0 || preset.stationedAt === claim.key) return preset;
+      // Somebody working a shift at one of the party's businesses stays at it.
+      if (typeof window !== "undefined" && window.ShopManagement?.isPartyStaffName?.(preset.name)) return preset;
       count++;
       const next = Object.assign({}, preset, {
         stationedAt: claim.key,

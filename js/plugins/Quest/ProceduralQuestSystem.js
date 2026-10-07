@@ -604,7 +604,9 @@
     const structures = (D && typeof D.structures === "function") ? D.structures() : [];
     for (const st of structures) {
       if (!st || !st.key) continue;
-      const isFavoured = (st.affinity || []).some(a => families.has(a));
+      // The catalogue's `ecology`: the surface families whose creatures a
+      // structure shelters. (Where it can OPEN is not limited by the surface.)
+      const isFavoured = (st.ecology || []).some(a => families.has(a));
       const isDirectMatch = st.key.toLowerCase() === defaultDungeon;
       if (isFavoured || isDirectMatch) {
         biomes.add(st.key.toLowerCase());
@@ -3996,6 +3998,41 @@
     ev._bseRarityLevel = b.level || 0;
   }
 
+  // A survey asks only that the party set foot on the square, and there are
+  // three ways to: a transfer onto map 636 (spawnSitesOnProcMap), walking over
+  // a seam of the stitched window (no transfer, so no setup), and stepping onto
+  // the tile on the world map itself. All three end here.
+  function checkSiteArrival(wx, wy) {
+    for (const { q, s, i } of activeSteps()) {
+      if (s.kind !== "goto_site" || !s.site) continue;
+      if (s.site.wx !== wx || s.site.wy !== wy) continue;
+      completeStep(q, i, T('Quests.coordinatesReachedAndSurveyed'));
+      toast(T('Quests.siteSurveyed'));
+    }
+  }
+
+  // The square the party stands on right now, or null off the two maps that
+  // have one (a hand-made town is answered by its own arrival checks).
+  function partySquareNow() {
+    if (!$gameMap || !$gamePlayer) return null;
+    const mapId = $gameMap.mapId();
+    if (mapId === WORLD_MAP_ID) return { wx: $gamePlayer.x, wy: $gamePlayer.y };
+    if (mapId === PROC_MAP_ID) {
+      const here = currentSiteKey();
+      return here.isPlanet ? null : { wx: here.wx, wy: here.wy };
+    }
+    return null;
+  }
+
+  let _lastArrivalKey = null;
+  function trackSiteArrival() {
+    const sq = partySquareNow();
+    const key = sq ? $gameMap.mapId() + ":" + sq.wx + "," + sq.wy : null;
+    if (key === _lastArrivalKey) return;
+    _lastArrivalKey = key;
+    if (sq) checkSiteArrival(sq.wx, sq.wy);
+  }
+
   function spawnSitesOnProcMap() {
     if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID || !$dataMap) return;
     const here = currentSiteKey();
@@ -4083,8 +4120,7 @@
           break;
         }
         case "goto_site": {
-          completeStep(q, i, T('Quests.coordinatesReachedAndSurveyed'));
-          toast(T('Quests.siteSurveyed'));
+          checkSiteArrival(here.wx, here.wy);
           break;
         }
         case "bounty": {
@@ -4591,6 +4627,7 @@
     if (_pendingClears.length) {
       try { processPendingClears(); } catch (e) { }
     }
+    try { if ($gameSystem) trackSiteArrival(); } catch (e) { }
     if (++_pqTick >= 240) {
       _pqTick = 0;
       try { if ($gameSystem) tickDeadlines(); } catch (e) { }

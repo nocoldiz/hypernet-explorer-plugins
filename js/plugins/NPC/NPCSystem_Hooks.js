@@ -694,6 +694,12 @@
           console.error("[NPC System] idle companion spawn failed", e);
         }
         $gameMap.setupNPCControllers();
+        // The party's own working a shift at a workplace it owns are at work.
+        try {
+          window.WorkplaceDeeds?.populateStaffHere?.();
+        } catch (e) {
+          console.error("[NPC System] workplace staff spawn failed", e);
+        }
         // An upper floor of the Omega Tower nobody was drawn on is peopled by
         // its own world (NPCSystem_Procedural.js, populateTowerFloor).
         // The Stairs Hall holds the parties and nobody else: no tower

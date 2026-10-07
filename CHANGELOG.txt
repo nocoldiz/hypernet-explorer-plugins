@@ -1,4 +1,21 @@
 
+0.8.1a
+
+Added
+ - inactive party members can staff owned shops and job maps in shifts
+ - lobotomagic option in skillmaster to delete learned skills for KP
+ - ticket booth for buying train ticket
+Changed:
+ - Andromeda launch: SB charges every second past Pluto, collapsing into black holes
+ - leveling up is faster, enemy exp now varies and follows every curve
+ - reworked eris trial into a generic trial system, Rota judges in the Vatican
+ - added fines for public display of affection in Vatican territory
+ - reworked dungeon generation
+ - expression system can now set limitations
+
+Fixed:
+ - site survey quests now complete when reaching the coordinates
+ - activating the same wishing system event twice is now impossible
 
 0.8.0a
 MAJOR UPDATE

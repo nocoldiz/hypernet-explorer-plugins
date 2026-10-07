@@ -2860,7 +2860,12 @@
         // special cases (loot cellar, patron's vault, cave den, temple) plus an
         // alias table pointing each at ONE existing biome's roster; with two
         // dozen structures in the world it has to be data.
-        const struct = BSE.Helpers.getStructure(currentBiome);
+        // An interior biome the catalogue took in (a store, a tavern, a castle
+        // hall) is also the <Biome:> tag of hand-made maps; `ownRoster` keeps
+        // those maps on their own rules, the catalogue's being for the
+        // generated version on the procedural map only.
+        const structFound = BSE.Helpers.getStructure(currentBiome);
+        const struct = (structFound && structFound.ownRoster && !isProcGenMap) ? null : structFound;
         const structEnemy = (struct && struct.enemy) || null;
         // Structure biomes have no enemies tagged with their own name, so they
         // borrow the rosters of the biomes their inhabitants really live in.

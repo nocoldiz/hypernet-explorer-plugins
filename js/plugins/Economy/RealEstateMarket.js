@@ -3020,6 +3020,10 @@
     const PROC_MAP_ID = 636;        // the procedural template map: its MapJobs keys are not numeric
     const WORLD_MAP_ID = 315;
     const TAKEN_PREFIX = 'workplace:'; // i18n-ignore: world register key
+    const JOB_POST = 'job:';           // i18n-ignore: post id prefix
+    const COUNTER_POST = 'counter:';   // i18n-ignore: post id prefix
+    const STAFF_KEY_PREFIX = 'staff:'; // i18n-ignore: spawned event key
+    const SHIFT_HOURS = 8;
 
     function deeds() {
         if (typeof $gameSystem === 'undefined' || !$gameSystem) return {};
@@ -3067,13 +3071,56 @@
         return own.length ? own : [0, 1, 2];
     }
 
-    // Every (job, shift) post of a workplace, with the wage of one shift.
-    function positions(mapId) {
+    // The <Shop> counters of a workplace that are kept in shifts by a rota
+    // (ShopShiftManager): an authored face, a <Story> or a <Local> keeper is
+    // the same person at every hour and is nobody's post to fill.
+    function countersAt(mapId) {
+        const idx = window.NPCSystem && typeof window.NPCSystem.getShopIndex === 'function'
+            ? (window.NPCSystem.getShopIndex(Number(mapId)) || []) : [];
+        return idx.filter(e => e && e.shopTagged && !e.hasGraphic && !e.story && !e.local);
+    }
+
+    // What one shift at a counter costs: ShopManagement's own counter wage.
+    function counterShiftWage() {
+        const SM = window.ShopManagement;
+        return (SM && Number(SM.SHIFT_WAGE)) || 8000;
+    }
+
+    // Every post of a workplace: one per job it keeps (MapJobs) and one per
+    // counter on a rota. A restaurant with a waiter, a cook and a till has
+    // three, each of them three shifts deep at most.
+    function posts(mapId) {
         const out = [];
         for (const jobId of jobIdsAt(mapId)) {
             const job = jobById(jobId);
-            const wage = Math.max(0, Number(job && job.basePay) || 0);
-            for (const shift of shiftsOf(jobId)) out.push({ jobId, shift, wage });
+            out.push({
+                post: JOB_POST + jobId,
+                jobId,
+                eventId: null,
+                shifts: shiftsOf(jobId),
+                wage: Math.max(0, Number(job && job.basePay) || 0),
+                label: (job && window.WorkSystem && typeof window.WorkSystem.jobName === 'function')
+                    ? window.WorkSystem.jobName(job) : String(jobId),
+            });
+        }
+        for (const counter of countersAt(mapId)) {
+            out.push({
+                post: COUNTER_POST + counter.eventId,
+                jobId: null,
+                eventId: counter.eventId,
+                shifts: [0, 1, 2],
+                wage: counterShiftWage(),
+                label: counter.shopName || WT('Assets.workplace.counterPost'),
+            });
+        }
+        return out;
+    }
+
+    // Every (post, shift) of a workplace, with the wage of one shift.
+    function positions(mapId) {
+        const out = [];
+        for (const p of posts(mapId)) {
+            for (const shift of p.shifts) out.push({ post: p.post, jobId: p.jobId, shift, wage: p.wage });
         }
         return out;
     }
@@ -3256,22 +3303,237 @@
             String(a.name).localeCompare(String(b.name)) || a.mapId - b.mapId);
     }
 
-    // Who works here: JobShiftManager's assignments on this map, less anybody
-    // away on leave.
-    function staffedShifts(mapId) {
-        const id = Number(mapId);
-        const assigns = (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._npcJobAssignments) || {};
+    // ── Who works the posts ─────────────────────────────────────────────────
+    // The citizens who worked here before the deed changed hands keep working
+    // here after it: a job's shift is whoever JobShiftManager dealt it to, a
+    // counter's whoever its rota names. The party can put one of its own off
+    // the bench on any shift (deed.staff, { id, post, shift }); they stand in
+    // for that citizen, who stays home, until they are taken off it or called
+    // back onto the road, and then the citizen has the shift back.
+    function deedStaff(mapId) {
+        const d = deeds()[String(Number(mapId))];
+        if (!d) return [];
+        if (!Array.isArray(d.staff)) d.staff = [];
+        // Never pruned against a bench that cannot be read yet.
+        const all = benchAll();
+        if (!all) return d.staff;
+        const bench = new Set(all.map(p => String(p.id)));
+        for (let i = d.staff.length - 1; i >= 0; i--) {
+            const row = d.staff[i];
+            if (!row || row.post == null || !bench.has(String(row.id))) d.staff.splice(i, 1);
+        }
+        return d.staff;
+    }
+
+    // The bench, or null while it cannot be read. Bubba never leaves the party.
+    function benchAll() {
+        const CP = window.CharacterPresets;
+        if (!CP || typeof CP.getAvailableRetiredPresets !== 'function') return null;
+        return (CP.getAvailableRetiredPresets() || []).filter(p => p && p.name && p.name !== 'Bubba');
+    }
+
+    function benchPreset(id) {
+        return (benchAll() || []).find(p => String(p.id) === String(id)) || null;
+    }
+
+    function onLeave(name) {
         const leave = window.NPCSim && window.NPCSim.Leave;
-        const out = [];
+        return !!(leave && typeof leave.isOnLeave === 'function' && leave.isOnLeave(name));
+    }
+
+    // The job holders of one map, "jobId|shift" -> name, read in one pass.
+    function jobHoldersAt(mapId) {
+        const id = Number(mapId);
+        const out = {};
+        const sys = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem : null;
+        const assigns = (sys && sys._npcJobAssignments) || {};
         for (const name of Object.keys(assigns)) {
             const a = assigns[name];
-            if (!a || Number(a.mapId) !== id) continue;
-            if (leave && typeof leave.isOnLeave === 'function' && leave.isOnLeave(name)) continue;
-            const job = jobById(a.jobId);
-            if (!job) continue;
-            out.push({ name, jobId: a.jobId, shift: a.shift, wage: Math.max(0, Number(job.basePay) || 0) });
+            if (a && Number(a.mapId) === id) out[a.jobId + '|' + Number(a.shift)] = name;
         }
         return out;
+    }
+
+    // The citizen a shift belonged to before the party put anybody on it.
+    function citizenOn(mapId, post, shift, holders) {
+        const id = Number(mapId);
+        if (post.jobId != null) {
+            const name = holders[post.jobId + '|' + shift];
+            return name && !onLeave(name) ? name : null;
+        }
+        const SSM = window.NPCSim && window.NPCSim.ShopShiftManager;
+        const rota = SSM && typeof SSM._getPersonas === 'function' ? SSM._getPersonas(`${id}_${post.eventId}`) : null;
+        const persona = rota && rota[shift];
+        return (persona && persona.name) || null;
+    }
+
+    // Every shift of every post, and who holds it: { post, postLabel, jobId,
+    // eventId, shift, hours, wage, holder } with holder { kind, id, name } or
+    // null for a shift nobody works.
+    function slots(mapId) {
+        const id = Number(mapId);
+        const ours = deedStaff(id);
+        const holders = jobHoldersAt(id);
+        const out = [];
+        for (const p of posts(id)) {
+            for (const shift of p.shifts) {
+                const row = ours.find(r => r.post === p.post && Number(r.shift) === shift);
+                const preset = row ? benchPreset(row.id) : null;
+                const citizen = citizenOn(id, p, shift, holders);
+                const start = shift * SHIFT_HOURS;
+                out.push({
+                    post: p.post,
+                    postLabel: p.label,
+                    jobId: p.jobId,
+                    eventId: p.eventId,
+                    shift,
+                    hours: { start, end: (start + SHIFT_HOURS) % 24 },
+                    wage: p.wage,
+                    citizen,
+                    holder: preset
+                        ? { kind: 'preset', id: preset.id, name: preset.name }
+                        : (citizen ? { kind: 'npc', id: null, name: citizen } : null),
+                });
+            }
+        }
+        return out;
+    }
+
+    // Who works here: every shift somebody holds, citizen or the party's own.
+    function staffedShifts(mapId) {
+        return slots(mapId).filter(s => s.holder).map(s => ({
+            name: s.holder.name,
+            jobId: s.jobId,
+            post: s.post,
+            label: s.postLabel,
+            shift: s.shift,
+            wage: s.wage,
+            party: s.holder.kind === 'preset',
+        }));
+    }
+
+    // The party's own people on every workplace it owns.
+    function partyStaff() {
+        const out = [];
+        for (const d of list()) {
+            for (const row of deedStaff(d.mapId)) {
+                out.push({ bizKey: 'wp:' + d.mapId, mapId: d.mapId, id: row.id, post: row.post, shift: Number(row.shift) }); // i18n-ignore: business key
+            }
+        }
+        return out;
+    }
+
+    // Puts somebody off the bench on one shift of one post.
+    function assignReserve(mapId, post, shift, presetId) {
+        const id = Number(mapId);
+        if (!owns(id)) return { ok: false, reason: 'noShop' };
+        const p = posts(id).find(x => x.post === post);
+        if (!p || p.shifts.indexOf(Number(shift)) < 0) return { ok: false, reason: 'noShift' };
+        // Somebody stationed on a claim is already standing somewhere.
+        const preset = benchPreset(presetId);
+        if (!preset || preset.stationedAt) return { ok: false, reason: 'unknown' };
+        // One shift at a time: somebody already at work somewhere is not free.
+        if (partyStaff().some(r => String(r.id) === String(preset.id))) return { ok: false, reason: 'already' };
+        const staff = deedStaff(id);
+        const at = staff.findIndex(r => r.post === post && Number(r.shift) === Number(shift));
+        if (at >= 0) staff.splice(at, 1);
+        staff.push({ id: preset.id, post, shift: Number(shift) });
+        refreshCounter(id, p.eventId);
+        return { ok: true };
+    }
+
+    // Takes the party's own off a shift: the citizen they stood in for has it back.
+    function releaseReserve(mapId, post, shift) {
+        const id = Number(mapId);
+        const staff = deedStaff(id);
+        const at = staff.findIndex(r => r.post === post && Number(r.shift) === Number(shift));
+        if (at < 0) return { ok: false, reason: 'notOnRoster' };
+        const name = (benchPreset(staff[at].id) || {}).name;
+        staff.splice(at, 1);
+        const p = posts(id).find(x => x.post === post);
+        refreshCounter(id, p ? p.eventId : null);
+        // Off the floor of the map the party is standing on, if they were on it.
+        try {
+            const VP = window.PartyPresence;
+            const ev = name && VP && typeof VP.findEvent === 'function' ? VP.findEvent(STAFF_KEY_PREFIX + name) : null;
+            if (ev && ev.erase) ev.erase();
+        } catch (e) { /* gone on the next transfer either way */ }
+        return { ok: true };
+    }
+
+    // A counter on the map the party stands on is redrawn at once rather than
+    // at the next shift change.
+    function refreshCounter(mapId, eventId) {
+        if (eventId == null) return;
+        const SSM = window.NPCSim && window.NPCSim.ShopShiftManager;
+        if (!SSM) return;
+        if (SSM._applied) delete SSM._applied[`${mapId}_${eventId}`];
+        if (SSM._lastAppliedShift) delete SSM._lastAppliedShift[mapId];
+    }
+
+    function liveRowAt(mapId, post, shift) {
+        if (!owns(mapId)) return null;
+        const row = deedStaff(mapId).find(r => r.post === post && Number(r.shift) === Number(shift));
+        return row ? benchPreset(row.id) : null;
+    }
+
+    // Whether this citizen's shift is being stood in for by one of the party's
+    // own, so they keep it at home (NPCSim_Routine reads this).
+    function isDisplaced(name) {
+        if (!name || typeof $gameSystem === 'undefined' || !$gameSystem) return false;
+        const book = deeds();
+        if (!Object.keys(book).length) return false;
+        const job = $gameSystem._npcJobAssignments && $gameSystem._npcJobAssignments[name];
+        if (job && book[String(Number(job.mapId))] && liveRowAt(job.mapId, JOB_POST + job.jobId, job.shift)) return true;
+        const till = $gameSystem._npcShopAssignments && $gameSystem._npcShopAssignments[name];
+        if (till && book[String(Number(till.mapId))] && liveRowAt(till.mapId, COUNTER_POST + till.eventId, till.shift)) return true;
+        return false;
+    }
+
+    // The party's own standing in at a counter for this shift, as the persona
+    // ShopShiftManager draws on it, or null.
+    function counterPersona(mapId, eventId, shift) {
+        if (!Object.keys(deeds()).length) return null;
+        const preset = liveRowAt(Number(mapId), COUNTER_POST + eventId, shift);
+        if (!preset) return null;
+        return {
+            name: preset.name,
+            spriteName: preset.characterName || '',
+            charIdx: preset.characterIndex || 0,
+            partyStaff: true,
+        };
+    }
+
+    // The party's own on a job here, put on the floor for the shift they are
+    // working when the party walks in. A counter's stand-in is drawn on the
+    // counter itself (counterPersona), so only the jobs are spawned.
+    function populateStaffHere() {
+        const mapId = currentMapId();
+        if (!mapId || !owns(mapId)) return 0;
+        const VP = window.PartyPresence;
+        if (!VP || typeof VP.spawnOne !== 'function') return 0;
+        if (typeof $dataMap === 'undefined' || !$dataMap) return 0;
+        if (!$dataMap.events) $dataMap.events = [null];
+        const hour = (typeof $gameVariables !== 'undefined' && $gameVariables) ? Number($gameVariables.value(23)) || 0 : 12;
+        const now = Math.floor(hour / SHIFT_HOURS) % 3;
+        let spawned = 0;
+        for (const row of deedStaff(mapId)) {
+            if (Number(row.shift) !== now || String(row.post).indexOf(JOB_POST) !== 0) continue;
+            const preset = benchPreset(row.id);
+            if (!preset) continue;
+            const key = STAFF_KEY_PREFIX + preset.name;
+            if (VP.findEvent && VP.findEvent(key)) continue;
+            const ok = VP.spawnOne({
+                key,
+                name: preset.name,
+                characterName: preset.characterName || '',
+                characterIndex: preset.characterIndex || 0,
+                classId: preset.classId,
+                level: preset.level,
+            }, { slot: null, location: null });
+            if (ok) spawned++;
+        }
+        return spawned;
     }
 
     // One day of trade: every staffed shift takes in its wage times the
@@ -3426,7 +3688,9 @@
 
     window.WorkplaceDeeds = {
         PRICE_DAYS, MIN_PRICE, REVENUE_RATE, MAX_SETTLE_DAYS, PAYOUT_DAYS, SALE_RATE,
-        jobIdsAt, positions, staffedShifts, groupOf, wealthFactor, dailyWageBill,
+        JOB_POST, COUNTER_POST,
+        jobIdsAt, posts, countersAt, positions, staffedShifts, slots, partyStaff,
+        assignReserve, releaseReserve, isDisplaced, counterPersona, populateStaffHere, groupOf, wealthFactor, dailyWageBill,
         priceOf, eligibility, canBuyHere, offerHere, offerFor, listing, owns, ownsHere, isTakenByAnother,
         dailyTakings, buy, sell, salePriceOf, daysToPayout, settle, list, report,
         isExteriorNote, isExteriorMap, isAbandoned,

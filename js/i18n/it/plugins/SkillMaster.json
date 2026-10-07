@@ -722,7 +722,8 @@
       "rules": "Condizione",
       "branch": "Bivio",
       "effects": "Allora",
-      "elseEffects": "Altrimenti"
+      "elseEffects": "Altrimenti",
+      "limits": "Limitazione"
     },
     "empty": "Vuoto",
     "fitted": "Montato",
@@ -752,8 +753,18 @@
       "locked": "Le statistiche di questo personaggio non arrivano a quel pezzo.",
       "needsBranch": "Imposta prima un bivio.",
       "needsArg": "Scegli a cosa legarlo.",
-      "missing": "Quel pezzo non può andare lì."
-    }
+      "missing": "Quel pezzo non può andare lì.",
+      "neverFires": "Queste limitazioni si escludono a vicenda, o escludono l'innesco: il potere non si potrebbe mai usare."
+    },
+    "limitations": "Limitazioni",
+    "limitNone": "Nessuna limitazione: il potere costa il prezzo pieno e chiede i requisiti pieni.",
+    "limitSummary": "Legato da {n} punti di voto: costa il {pct}% di KP in meno e ogni requisito di statistica è più basso di {leeway}.",
+    "limitWeight": "Peso {n}",
+    "limitGives": "-{pct}% KP",
+    "limitWeightLabel": "Peso",
+    "limitGivesLabel": "Restituisce",
+    "limitGivesValue": "{pct}% di KP in meno, ogni requisito più basso di {leeway}",
+    "reqLowered": "{stat} {have}/{req} (era {base})"
   },
   "hexorcize": {
     "button": "Esorcizza",
@@ -772,7 +783,24 @@
     "nothing": "Non si trasporta nulla di magico.",
     "unmade": "{item} è disfatto per {kp} KP."
   },
+  "lobotomagic": {
+    "button": "Lobotomagia",
+    "title": "Lobotomagia",
+    "detailTitle": "La Mente di {name}",
+    "blurb": "Recidi un'abilità o un incantesimo appreso dalla mente di un membro del gruppo e riavi il {pct}% di quanto costerebbe insegnarlo in Conoscenza (KP). Le abilità date da tratti o equipaggiamento non si possono recidere.",
+    "back": "Indietro",
+    "forget": "Dimentica",
+    "confirm": "Sicuro?",
+    "refund": "Restituisce",
+    "relearn": "Per riapprenderla",
+    "school": "Scuola",
+    "pickSkill": "Scegli un'abilità a sinistra.",
+    "nothing": "Niente di appreso si può recidere da questa mente.",
+    "warning": "{name} la dimenticherà per sempre. Riapprenderla costa il prezzo pieno.",
+    "cut": "{name} dimentica {skill} per {kp} KP."
+  },
   "tips": {
+    "member": "Membro",
     "pick": "Scegli",
     "walk": "Sposta",
     "back": "Indietro",
@@ -799,7 +827,7 @@
         },
         "rail": {
           "name": "Banchi di lavoro",
-          "text": "Nella pagina destra: fondi incantesimi, crea un incantesimo o un'abilità, consulta i sistemi magici, incanta armi, equipaggiamento e libri, scrivi libri di abilità e grimori ed esorcizza oggetti magici."
+          "text": "Nella pagina destra: fondi incantesimi, crea un incantesimo o un'abilità, consulta i sistemi magici, incanta armi, equipaggiamento e libri, scrivi libri di abilità e grimori, esorcizza oggetti magici e recidi con la lobotomagia un'abilità appresa."
         },
         "help": {
           "name": "? Aiuto",
@@ -966,6 +994,31 @@
         }
       }
     },
+    "lobotomagic": {
+      "title": "Lobotomagia",
+      "items": {
+        "skills": {
+          "name": "Abilità apprese",
+          "text": "Abilità e incantesimi appresi dal membro del gruppo scelto. Le abilità date da tratti o equipaggiamento non sono elencate."
+        },
+        "refund": {
+          "name": "Restituisce",
+          "text": "I KP che ogni abilità restituisce quando viene dimenticata, una parte di quanto costerebbe insegnarla."
+        },
+        "forget": {
+          "name": "Dimentica",
+          "text": "Premi una volta per scegliere, di nuovo per confermare. Non si può annullare: riapprenderla costa il prezzo pieno."
+        },
+        "member": {
+          "name": "Membro",
+          "text": "Usa le schede, o sinistra e destra, per cambiare membro del gruppo."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
     "magicSystems": {
       "title": "Sistemi magici",
       "items": {
@@ -984,6 +1037,31 @@
         "lore": {
           "name": "Tradizione",
           "text": "Cos'è il sistema e quanto è rigoroso."
+        },
+        "help": {
+          "name": "? Aiuto",
+          "text": "Apre questa scheda. Col controller premi Select; premilo di nuovo, Indietro o Conferma per chiuderla."
+        }
+      }
+    },
+    "expression": {
+      "title": "Espressione",
+      "items": {
+        "pieces": {
+          "name": "Pezzi",
+          "text": "Ogni scheda contiene un tipo di pezzo: l'innesco che scatena il potere, le condizioni che aspetta, cosa fa, la forma che prende e le limitazioni che lo legano. Conferma una carta per montarla."
+        },
+        "limits": {
+          "name": "Limitazioni",
+          "text": "Voti che il potere deve rispettare: un giorno in cui non si può usare, l'unica specie di creatura contro cui funziona, un prezzo pagato ogni volta. Più è legato, meno costa, e più può spingersi oltre le statistiche del personaggio."
+        },
+        "blueprint": {
+          "name": "Progetto",
+          "text": "Il potere così com'è. Togli un pezzo, capovolgi una condizione con NON, o passa le condizioni da TUTTE a UNA."
+        },
+        "finalize": {
+          "name": "Finalizza",
+          "text": "Spende conoscenza per ogni pezzo nuovo e rende reale il potere. Un potere finalizzato continua a funzionare anche se le statistiche richieste vanno perse."
         },
         "help": {
           "name": "? Aiuto",

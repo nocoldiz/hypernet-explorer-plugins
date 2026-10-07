@@ -652,6 +652,12 @@
     // shift left vacant today, a replacement drawn and booked for one whose
     // keeper left on an earlier day.
     _slotPersona(key, slot) {
+      // One of the party's own, off the bench, standing in at a counter of a
+      // workplace the party owns: theirs is the shift until they are taken
+      // off it (WorkplaceDeeds, Economy/RealEstateMarket.js).
+      const parts0 = key.split('_');
+      const standIn = window.WorkplaceDeeds?.counterPersona?.(Number(parts0[0]), Number(parts0[1]), slot);
+      if (standIn) return standIn;
       const rota = this._getPersonas(key);
       const p = rota?.[slot] || null;
       if (!p || !this._recruitedKeepers()[p.name]) return p;

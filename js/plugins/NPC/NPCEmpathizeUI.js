@@ -704,7 +704,7 @@
   // an NPC shows as trained. They are stored on the profile and grow with the
   // person's level (NPCSimulationCore.js, NPCSim.Specs): the class and trait
   // head start, the job's trade, a few personal picks and anything another
-  // system pinned (_specOverrides, ErisTrial.js's lawyers). Only levels above
+  // system pinned (_specOverrides, TrialSystem.js's lawyers). Only levels above
   // Untrained are ever returned.
   function _getNpcSpecializations(profile, classId, dl, npcName) {
     if (!window.Specializations || !window.Specializations.ready) return [];
@@ -2034,6 +2034,12 @@
       // savegame this one does not own, so those two go with the rest.
       const VISITOR_KEEP = new Set(['freeChat', 'socialize', 'directions', 'talkAbout', 'rumours']);
       this._chatActions = this._chatActions.filter(a => VISITOR_KEEP.has(a.id));
+    }
+
+    // One of the party's own working a shift at a business it owns: they are
+    // on the bench, and are called back from the Reserves, not asked to join.
+    if (!actorMode && window.ShopManagement?.isPartyStaffName?.(npcName)) {
+      this._chatActions = this._chatActions.filter(a => a.id !== 'join' && a.id !== 'joinFollower');
     }
 
     // A child (NPCLifeSim FAMILY): an ordinary chat and nothing else. No

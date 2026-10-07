@@ -1334,6 +1334,71 @@
       return rec || { name: "Jupiter", type: "gas_giant" };                        // i18n-ignore  body id / type
     },
 
+    // PLUTO, zipped past on the way out. A fifth of the Earth across, so it
+    // is only ever a ball in the window for the second the round is beside it.
+    _buildPluto() {
+      const g = new THREE.Group();
+      this.pluto = g;
+      g.visible = false;
+      this.far.add(g);
+      const R = EARTH_VIS_R * 0.186;
+      const spin = new THREE.Group();
+      g.add(spin);
+      this.plutoBody = spin;
+      const body = new THREE.Mesh(
+        this._geo(new THREE.SphereGeometry(R, 32, 24)),
+        this._phong({ map: this._paintPluto(), shininess: 4, specular: 0x1c1814 })
+      );
+      this._brighten(body, WORLD_TONE.jupiter);
+      spin.add(body);
+      this.plutoFallback = body;
+      const R3D = this._r3d || (window.GalaxySim && window.GalaxySim.Renderer3D);
+      if (R3D && typeof R3D.buildPlanetGroup === "function") {
+        let real = null;
+        try { real = R3D.buildPlanetGroup(this._plutoData(), 4); } catch (e) { real = null; }
+        if (real) {
+          real.scale.setScalar(R);
+          real.visible = false;
+          this._brighten(real, WORLD_TONE.jupiter);
+          spin.add(real);
+          this.plutoReal = real;
+          this._disposeLater(() => { try { R3D.disposeBodyGroup && R3D.disposeBodyGroup(real); } catch (e) { /* not ours */ } });
+        }
+      }
+    },
+
+    // The photograph once it has decoded, the painting until then.
+    _plutoMaps() {
+      if (!this.plutoReal) return;
+      const real = this._realMapsReady();
+      this.plutoReal.visible = real;
+      this.plutoFallback.visible = !real;
+    },
+
+    _plutoData() {
+      const sol = this._solSystem();
+      const rec = sol && (sol.planets || []).find((p) => p.name === "Pluto");   // i18n-ignore  body id
+      return rec || { name: "Pluto", type: "ice" };                             // i18n-ignore  body id / type
+    },
+
+    // Beige and rust, with the pale heart on it everybody knows it by.
+    _paintPluto() {
+      return this._tex(256, 128, (ctx, w, h) => {
+        const r = makeRng(0x9107);
+        ctx.fillStyle = "#b89a7a";
+        ctx.fillRect(0, 0, w, h);
+        for (let i = 0; i < 60; i++) {
+          ctx.fillStyle = r() > 0.5 ? "rgba(120,70,44,0.35)" : "rgba(220,200,176,0.3)";
+          ctx.beginPath();
+          ctx.ellipse(r() * w, r() * h, 6 + r() * 40, 4 + r() * 18, r() * Math.PI, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = "rgba(246,236,222,0.85)";
+        ctx.beginPath(); ctx.arc(w * 0.55, h * 0.52, h * 0.16, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(w * 0.62, h * 0.6, h * 0.13, 0, Math.PI * 2); ctx.fill();
+      });
+    },
+
     // Something to release when the stage goes, that is not a plain geometry,
     // material or texture: a group GalaxySim built and knows how to free.
     _disposeLater(fn) {

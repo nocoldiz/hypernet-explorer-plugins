@@ -5,5 +5,6 @@
     "manifested": "Ciò che ha risposto: {outcome}",
     "spent": "La sfera si spegne. Un desiderio, una volta sola.",
     "close": "Premi un tasto per chiudere"
-  }
+  },
+  "spentSpot": "Ciò che rispondeva qui ha già parlato. Non risponderà più."
 }

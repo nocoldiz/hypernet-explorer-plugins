@@ -1023,6 +1023,12 @@
       if (asset.kind === 'workplace') {
         return [
           {
+            key: 'manageStaff',
+            cls: '',
+            label: T('Assets.workplace.manageStaff'),
+            enabled: !!(window.ShopManagement && window.ShopManagement.openStaffing),
+          },
+          {
             key: 'sellWorkplace',
             cls: ' assets-action--sell',
             label: T('Assets.workplace.sell', { price: euro(asset.salePrice) }),
@@ -1133,6 +1139,10 @@
       }
       if (key === 'sellWorkplace') {
         this.sellWorkplace(a);
+        return;
+      }
+      if (key === 'manageStaff') {
+        this.manageWorkplaceStaff(a);
         return;
       }
       if (key === 'claimMap') {
@@ -1272,6 +1282,18 @@
       this.notify(T('Assets.claim.released', { name: result.name }));
       this._selIndex = 0;
       this.refreshDOM();
+    }
+
+    // Who works the shifts of a workplace: the citizens who always have, or
+    // somebody off the bench standing in for one of them.
+    manageWorkplaceStaff(asset) {
+      const SM = window.ShopManagement;
+      if (!SM || typeof SM.openStaffing !== 'function' || !asset || !asset.mapId) {
+        if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer();
+        return;
+      }
+      if (typeof SoundManager !== 'undefined') SoundManager.playOk();
+      SM.openStaffing('wp:' + asset.mapId, asset.name); // i18n-ignore: business key
     }
 
     manageShop(shop) {

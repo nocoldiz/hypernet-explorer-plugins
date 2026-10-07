@@ -24,7 +24,7 @@
  * map-side. Launch directly:
  *   window.HypernetOS.launchApp('app-neuropolice')
  *
- * Load AFTER HypernetOS.js, CrimeSystem.js and ErisTrial.js.
+ * Load AFTER HypernetOS.js, CrimeSystem.js and TrialSystem.js.
  */
 
 (() => {
@@ -88,7 +88,7 @@
     }
 
     function hasTrialCommand(commandName) {
-        return !!(PluginManager._commands && PluginManager._commands['ErisTrial:' + commandName]);
+        return !!(PluginManager._commands && PluginManager._commands['TrialSystem:' + commandName]);
     }
 
     function runTrialCommand(commandName) {
@@ -96,7 +96,7 @@
             console.warn('nEuroPolice: ErisTrial command "' + commandName + '" is not registered.');
             return;
         }
-        PluginManager.callCommand(null, 'ErisTrial', commandName, {});
+        PluginManager.callCommand(null, 'TrialSystem', commandName, {});
     }
 
     function playPaid() {

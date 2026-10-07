@@ -28,6 +28,9 @@
     "leaveHorde": "You leave Goblin Horde ground. The common law and its record hold again."
   },
   "canon": {
+    "indecencyKiss": "Public indecency - kissing",
+    "indecencyHands": "Public indecency - holding hands",
+    "indecencyDance": "Public indecency - dancing",
     "onPerson": "{charge}: {name}",
     "spell": "{charge}: {spell}",
     "theftFromTheFaithful": "Theft from the Faithful",

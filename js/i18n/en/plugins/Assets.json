@@ -151,7 +151,9 @@
   "sold": "{name} sold for {price}.",
   "saleValue": "Sale Value",
   "nextPayout": "Next Payout",
-  "inDays": "in {days} day(s)"
+  "inDays": "in {days} day(s)",
+  "manageStaff": "Staff",
+  "counterPost": "Counter"
  },
  "claim": {
   "here": "Claimable Here",

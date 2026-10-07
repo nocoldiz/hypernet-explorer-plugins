@@ -2497,7 +2497,7 @@
   // She is not a biome and she is not a place: she is one square a day, and she
   // is wherever the party happens to be. One marker, laid within a morning's
   // walk of where they are standing when the day turns, carrying whatever she
-  // is asking this time. Beat her in her own court (Economy/ErisTrial.js) and
+  // is asking this time. Beat her in her own court (Economy/TrialSystem.js) and
   // the square stops being laid at all - in every savegame of that world.
   const ERIS_SCOPE = "eris";          // i18n-ignore: pack section id
   const ERIS_ENTRY = "Eris";          // i18n-ignore: pack section entry

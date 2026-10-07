@@ -199,8 +199,9 @@
   },
   {
     "name": "AbandonedInside",
+    "access": ["DoorDungeon"],
     "hasNPC": false,
-    "tilesetId": 300,
+    "tilesetId": 304,
     "color": "#4a4a4a",
     "prefabs": [],
     "specialBiomes": [],
@@ -1580,8 +1581,9 @@
   },
   {
     "name": "CastleInside",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["StairsUp"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#8b4513",
     "prefabs": [],
     "specialBiomes": [],
@@ -2012,8 +2014,9 @@
   },
   {
     "name": "ChurchInside",
+    "access": ["StairsUp"],
     "hasNPC": false,
-    "tilesetId": 300,
+    "tilesetId": 304,
     "color": "#daa520",
     "prefabs": [],
     "specialBiomes": [],
@@ -3160,6 +3163,7 @@
   },
   {
     "name": "Crypt",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#2f4f4f",
@@ -4231,6 +4235,7 @@
   },
   {
     "name": "Dungeon",
+    "access": ["DoorDungeon"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#483d8b",
@@ -4328,6 +4333,7 @@
   },
   {
     "name": "LootCellar",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6b5232",
@@ -4443,6 +4449,7 @@
   },
   {
     "name": "PatronVault",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#8a6b2f",
@@ -4582,6 +4589,7 @@
   },
   {
     "name": "TempleInside",
+    "access": ["StairsUp"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#8a7a52",
@@ -4731,6 +4739,7 @@
   },
   {
     "name": "CaveDen",
+    "access": ["Cave"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4a3b2a",
@@ -5129,8 +5138,9 @@
   },
   {
     "name": "FactoryInside",
+    "access": ["DoorDungeon"],
     "hasNPC": false,
-    "tilesetId": 300,
+    "tilesetId": 304,
     "color": "#808080",
     "prefabs": [],
     "specialBiomes": [],
@@ -7462,8 +7472,9 @@
   },
   {
     "name": "HousesInside",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["DoorDungeon"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#e8d3b0",
     "prefabs": [],
     "specialBiomes": [],
@@ -7566,8 +7577,9 @@
   },
   {
     "name": "Hospital",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["DoorDungeon"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#d8e8ec",
     "prefabs": [],
     "specialBiomes": [],
@@ -7666,8 +7678,9 @@
   },
   {
     "name": "Clinic",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["DoorDungeon"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#cfe3dc",
     "prefabs": [],
     "specialBiomes": [],
@@ -7766,8 +7779,9 @@
   },
   {
     "name": "Farmhouse",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["DoorDungeon"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#cdb58c",
     "prefabs": [],
     "specialBiomes": [],
@@ -7870,8 +7884,9 @@
   },
   {
     "name": "GroceryStore",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["DoorDungeon"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#e3d9a6",
     "prefabs": [],
     "specialBiomes": [],
@@ -7966,8 +7981,9 @@
   },
   {
     "name": "HardwareStore",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["DoorDungeon"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#b9b2a4",
     "prefabs": [],
     "specialBiomes": [],
@@ -8066,8 +8082,9 @@
   },
   {
     "name": "Store",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["DoorDungeon"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#e6cfd9",
     "prefabs": [],
     "specialBiomes": [],
@@ -8166,8 +8183,9 @@
   },
   {
     "name": "Restaurant",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["DoorDungeon"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#e9c3a0",
     "prefabs": [],
     "specialBiomes": [],
@@ -8266,8 +8284,9 @@
   },
   {
     "name": "Tavern",
-    "hasNPC": true,
-    "tilesetId": 300,
+    "access": ["DoorDungeon"],
+    "hasNPC": false,
+    "tilesetId": 304,
     "color": "#a8784f",
     "prefabs": [],
     "specialBiomes": [],
@@ -8370,8 +8389,9 @@
   },
   {
     "name": "Basement",
+    "access": ["StairsDown"],
     "hasNPC": false,
-    "tilesetId": 300,
+    "tilesetId": 304,
     "color": "#6e665c",
     "prefabs": [],
     "specialBiomes": [],
@@ -9051,8 +9071,9 @@
   },
   {
     "name": "Laboratory",
+    "access": ["DoorDungeon"],
     "hasNPC": false,
-    "tilesetId": 300,
+    "tilesetId": 304,
     "color": "#e0e0e0",
     "prefabs": [
       [
@@ -9197,8 +9218,9 @@
   },
   {
     "name": "Lair",
+    "access": ["Cave"],
     "hasNPC": false,
-    "tilesetId": 300,
+    "tilesetId": 304,
     "color": "#4b3621",
     "prefabs": [
       [
@@ -10110,8 +10132,9 @@
   },
   {
     "name": "Mines",
+    "access": ["StairsDown"],
     "hasNPC": false,
-    "tilesetId": 300,
+    "tilesetId": 304,
     "color": "#2b1b17",
     "prefabs": [
       [
@@ -13000,6 +13023,7 @@
   },
   {
     "name": "Sewer",
+    "access": [],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#2e3b23",
@@ -17310,6 +17334,7 @@
   },
   {
     "name": "Catacombs",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#3b3128",
@@ -17417,6 +17442,7 @@
   },
   {
     "name": "Mineshaft",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#5a4630",
@@ -17528,6 +17554,7 @@
   },
   {
     "name": "CaveFrozen",
+    "access": ["Cave"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#a9c9d8",
@@ -17643,6 +17670,7 @@
   },
   {
     "name": "Cistern",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#3f5a5e",
@@ -17746,6 +17774,7 @@
   },
   {
     "name": "FungalWarren",
+    "access": ["Cave"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6b5f7a",
@@ -17849,6 +17878,7 @@
   },
   {
     "name": "CrystalCavern",
+    "access": ["Cave"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#7fb6c9",
@@ -17956,6 +17986,7 @@
   },
   {
     "name": "Oubliette",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4a4038",
@@ -18063,6 +18094,7 @@
   },
   {
     "name": "SunkenLibrary",
+    "access": ["StairsUp"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6d5334",
@@ -18166,6 +18198,7 @@
   },
   {
     "name": "UnderForge",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#8a3b22",
@@ -18269,6 +18302,7 @@
   },
   {
     "name": "ColdWarBunker",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#55605a",
@@ -18376,6 +18410,7 @@
   },
   {
     "name": "BuriedLab",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6f7f8c",
@@ -18479,6 +18514,7 @@
   },
   {
     "name": "ProfaneShrine",
+    "access": ["StairsUp"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#5c1f2b",
@@ -18586,6 +18622,7 @@
   },
   {
     "name": "SmugglerTunnel",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6b5a3c",
@@ -18689,6 +18726,7 @@
   },
   {
     "name": "SeaGrotto",
+    "access": ["Cave"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#3d7d86",
@@ -18800,6 +18838,7 @@
   },
   {
     "name": "LavaTube",
+    "access": ["Cave"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#7a2f1c",
@@ -18903,6 +18942,7 @@
   },
   {
     "name": "Barrow",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4e4a33",
@@ -19010,6 +19050,7 @@
   },
   {
     "name": "MetroStation",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4b4f58",
@@ -19117,6 +19158,7 @@
   },
   {
     "name": "SaltWorks",
+    "access": ["StairsDown"],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#c8c2b0",

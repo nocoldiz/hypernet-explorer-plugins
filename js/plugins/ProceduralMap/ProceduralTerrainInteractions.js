@@ -60,19 +60,22 @@
  * steps onto it; an impassable one (a cave mouth, stairs against a wall) opens
  * when the party walks into it and is stopped by it.
  * Which structure an entrance opens onto is ROLLED, per entrance tile, out of
- * the catalogue in ProceduralMapStructureGenerator: an entry declares which
- * features may reach it and which surface country favours it, so ice fields
- * keep frozen caves under them and a graveyard catacombs. The roll is seeded
- * on (world seed, world square, tile), so one stairway always leads to the
- * same place and two stairways on a square rarely to the same kind of place.
- *   - StairsDown -> any structure at all (cellar, dungeon, crypt, catacombs,
- *                  mine, cistern, warren, oubliette, library, forge, bunker,
- *                  lab, shrine, tunnel, grotto, lava tube, barrow, station,
- *                  salt works, cave den, temple...)
- *   - StairsUp   -> the ones built above ground and buried since (temple,
- *                  shrine, library, barrow)
- *   - Cave       -> the cave family (den, frozen, crystal, fungal, lava
- *                  tube, sea grotto)
+ * the catalogue in ProceduralMapStructureGenerator, by weight alone and
+ * whatever the surface above it is. Which feature reaches which structure is
+ * the `access` key of that structure's biome in Biomes.json. The roll is
+ * seeded on (world seed, world square, tile), so one stairway always leads to
+ * the same place and two stairways on a square rarely to the same kind of place.
+ *   - StairsDown -> the dug and built underground ones (cellar, crypt,
+ *                  catacombs, mines, cistern, oubliette, forge, bunker,
+ *                  buried lab, tunnel, barrow, station, salt works, basement)
+ *   - StairsUp   -> the ones built above ground (temple, shrine, library,
+ *                  castle, church)
+ *   - Cave       -> the natural caves, and only through a cave entrance
+ *                  (den, frozen, crystal, fungal, lava tube, sea grotto, lair)
+ *   - DoorDungeon-> the buildings (dungeon, hardware store, grocery, shop,
+ *                  hospital, clinic, tavern, restaurant, farmhouse, house,
+ *                  abandoned building, laboratory, factory), rolled by
+ *                  WorldMapReturn's enterDungeonDoor through pickStructure
  *   - Grate      -> Sewer, and only a Sewer: they belong to the towns and
  *                  burgs that declare them as their own lower layer
  *   - Hatch      -> a patron's own villa (PatreonRewards: one of the eight
@@ -2093,9 +2096,23 @@
   // moveStraight hook at the bottom of this file. Each entry returns true only
   // when the party actually went in, so a refused entrance does not lock out
   // the next step.
+  // An entrance tile in its own square's coordinates. On a stitched window the
+  // map coordinate of a tile depends on the shape of the window around it, so
+  // seeding off it sent one stairway to a different place on different visits;
+  // the square-local coordinate is the same every time.
+  function squareTile(t) {
+    const S = window.ProcStitch;
+    if (S && typeof S.local === "function" && $gameMap && $gameMap.mapId() === PROC_MAP_ID) {
+      const l = S.local(t.x, t.y);
+      if (l && Number.isFinite(l.x) && Number.isFinite(l.y)) return l;
+    }
+    return t;
+  }
+
   function enterStructureBiome(t, biomeName, seSound, saltOverride) {
     const pg = $gameSystem._procGenData;
     if (!pg) return false;
+    t = squareTile(t);
     // The entrance tile is passed as the seed salt. It used to be poked into
     // pg.seed instead, which did nothing at all: procMapSeed builds the seed from
     // the WORLD seed and coordinates and never reads pg.seed, so every grate on a
@@ -2135,52 +2152,15 @@
   // square, tile), so a given stairway always leads to the same place, and two
   // stairways on one square rarely to the same kind of place.
   //
-  // The roll is TILTED BY THE COUNTRY the entrance is cut into: ice fields
-  // keep frozen caves under them, a graveyard catacombs, a city its bunkers
-  // and its dead metro. `affinity` on a catalogue entry names the surface
-  // families that favour it; the tilt is a weight and never a rule, so every
-  // structure stays reachable anywhere. Alien surfaces belong to no family
-  // and simply take the base weights.
-  const SURFACE_FAMILIES = [
-    // Matched against the surface biome's own name first, then against the
-    // `lowerLayer` it declares, which is what a square already says is
-    // underneath it.
-    { key: "ice", test: /^(ice|snow|permafrost|tundra|glacier|taiga|caveice|mountainice|forestice|villageice|cityice|burgice)/i },
-    { key: "volcanic", test: /^(volcano|hell|ember|lava)/i },
-    { key: "desert", test: /^(desert|saltflats|badlands|canyon|steppe|savannah|mountaindesert|citydesert|villagedesert|burgdesert)/i },
-    { key: "wet", test: /^(swamp|mangrove|lake|river|riverbank|beach|ocean|docks|seabed|caveflooded|floodedcave|bridge|villageriver|villagesea)/i },
-    { key: "wood", test: /^(forest|jungle|bamboo|spiritwoods|mushroom|fairy)/i },
-    { key: "dead", test: /^(graveyard|ruins|abandoned|villa|temple|church|crypt|castle|eldritchtomb)/i },
-    { key: "urban", test: /^(city|burg|metro|highway|office|factory|laboratory|spacecenter|omegatower|houses|docks|landfill|park|train|arena|prison)/i },
-    { key: "rural", test: /^(farm|fields|meadows|village|highlands|park|orchard)/i },
-    // No volcano here: it has its own family, and letting it be mountain as
-    // well handed the generic mountain structures a bonus on the one country
-    // whose whole point is the forge and the lava tube.
-    { key: "mountain", test: /^(mountain|highlands|mines|underdark|crystals|cave|lair)/i },
-    { key: "weird", test: /^(eldritch|limbo|dreamscape|abstract|digital|heaven|space|spiritwoods)/i },
-  ];
-  const AFFINITY_BONUS = 30;
+  // The roll does NOT look at the country above. Every structure can open
+  // under any surface at all - a lava cavern under a field, a sunken library
+  // under a beach - by its catalogue weight alone. Which feature reaches it is
+  // its biome's own `access` key in Biomes.json (read by the catalogue's
+  // entrancesOf): a building is behind a dungeon door, an underground place
+  // down a stairway, a temple up one, a natural cave only at a cave mouth.
 
-  // The country is read from the surface biome's own name and from NOTHING
-  // else. Folding in the `lowerLayer` it declares looked like more signal and
-  // was the opposite: 69 of the 111 biomes declare "Cave" down there, so
-  // almost every square in the world came out favouring the cave-family
-  // structures, and a taiga ended up preferring an ordinary den to the frozen
-  // cave that is the whole point of standing in a taiga.
-  function surfaceFamilies() {
-    const pg = $gameSystem._procGenData;
-    const out = new Set();
-    if (!pg || !pg.currentBiome) return out;
-    const name = String(pg.currentBiome);
-    // A landing on another world is nobody's country: the alien biomes are
-    // out of scope here and leave every structure on its base weight.
-    if (/^alien/i.test(name)) return out;
-    for (const fam of SURFACE_FAMILIES) if (fam.test.test(name)) out.add(fam.key);
-    return out;
-  }
-
-  // `entrance` is the catalogue's name for the feature: stairsDown, cave,
-  // stairsUp. Returns a biome name, or null when the catalogue is not loaded,
+  // `entrance` is the catalogue's name for the feature: stairsDown, stairsUp,
+  // cave or doorDungeon. Returns a biome name, or null when the catalogue is not loaded,
   // in which case the caller falls back to what it always used to open.
   function pickStructure(entrance, t) {
     const D = window.ProcGenDungeon;
@@ -2189,11 +2169,7 @@
       s.entrances && s.entrances.indexOf(entrance) >= 0 && (s.weight || 0) > 0);
     if (!pool.length) return null;
 
-    const families = surfaceFamilies();
-    const weights = pool.map((s) => {
-      const favoured = (s.affinity || []).some((a) => families.has(a));
-      return (s.weight || 1) + (favoured ? AFFINITY_BONUS : 0);
-    });
+    const weights = pool.map((s) => s.weight || 1);
     const total = weights.reduce((a, b) => a + b, 0);
 
     // The world square is mixed into the salt: seededRngForTile hashes the tile
@@ -2205,7 +2181,8 @@
     let salt = 0x57A125;
     for (let i = 0; i < entrance.length; i++) salt = (Math.imul(salt, 31) + entrance.charCodeAt(i)) | 0;
     if (pg) salt = (salt ^ Math.imul(pg.originX | 0, 73856093) ^ Math.imul(pg.originY | 0, 19349663)) | 0;
-    const rng = seededRngForTile(t.x, t.y, salt);
+    const st = squareTile(t);
+    const rng = seededRngForTile(st.x, st.y, salt);
     let roll = rng() * total;
     for (let i = 0; i < pool.length; i++) {
       roll -= weights[i];
@@ -2750,6 +2727,9 @@
 
   window.TerrainInteractions = {
     tryInteract, interactWithFeature, applyDismantledToMap,
+    // The entrance roll, for the doors other plugins own (the dungeon door in
+    // WorldMapReturn): pickStructure(entrance, tile) -> biome name or null.
+    pickStructure,
     // Scenery put down because something needs it to exist (a contract that
     // asks for statues to be scanned on a square that rolled none). Planted
     // tiles are written to the world folder, so every savegame of the world

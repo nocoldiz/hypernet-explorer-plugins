@@ -1,5 +1,6 @@
 {
   "unlocked": "{name} has unlocked Expression!",
+  "awakened": "{name} can now use Expression!",
   "fired": "{name}'s Expression: {effects}!",
   "firedSummon": "{name}'s Expression takes the shape of {form}: {effects}!",
   "bound": "{name}: {arg}",
@@ -8,7 +9,8 @@
     "trigger": "Triggers",
     "rule": "Conditions",
     "effect": "Effects",
-    "form": "Form"
+    "form": "Form",
+    "limit": "Limitations"
   },
   "where": {
     "battle": "In battle",
@@ -118,6 +120,27 @@
     "reviveMember": { "name": "Revive Member", "desc": "Brings the chosen party member back on their feet." },
     "rebirth": { "name": "Rebirth", "desc": "Brings every fallen ally back on their feet." },
     "aura": { "name": "Aura", "desc": "The power comes off this character." },
-    "summon": { "name": "Summon", "desc": "The power manifests in battle as a summon modelled on the chosen pet." }
+    "summon": { "name": "Summon", "desc": "The power manifests in battle as a summon modelled on the chosen pet." },
+    "notOnWeekday": { "name": "Not on That Day", "desc": "The power cannot be used at all on the chosen day of the week." },
+    "onlyOnWeekday": { "name": "Only on That Day", "desc": "The power can only be used on the chosen day of the week." },
+    "onlyVsKind": { "name": "Only Against That Kind", "desc": "The power can only be used in a fight against the chosen kind of creature." },
+    "notVsBoss": { "name": "Not Against the Mighty", "desc": "The power cannot be used while a boss stands in the fight." },
+    "onlyVsBoss": { "name": "Only Against the Mighty", "desc": "The power can only be used in a fight with a boss." },
+    "onlyAtNight": { "name": "Only by Night", "desc": "The power can only be used between dusk and dawn." },
+    "onlyByDay": { "name": "Only by Day", "desc": "The power can only be used between dawn and dusk." },
+    "onlyInWeather": { "name": "Only in That Weather", "desc": "The power can only be used under the chosen weather." },
+    "onlyIndoors": { "name": "Only Indoors", "desc": "The power can only be used under a roof." },
+    "onlyOutdoors": { "name": "Only Under the Sky", "desc": "The power can only be used out in the open." },
+    "onlyHurt": { "name": "Only When Hurt", "desc": "The power can only be used while this character is under half health." },
+    "onlyUnharmed": { "name": "Only When Unharmed", "desc": "The power can only be used while this character is at full health." },
+    "onlyAlone": { "name": "Only Alone", "desc": "The power can only be used when nobody else in the party is still standing." },
+    "onlyWithMember": { "name": "Only With Them", "desc": "The power can only be used while the chosen companion is with the party and standing." },
+    "onlyUnarmed": { "name": "Only Unarmed", "desc": "The power can only be used with no weapon in hand." },
+    "onlyInBattle": { "name": "Only in Battle", "desc": "The power can only be used in a fight." },
+    "onlyInWorld": { "name": "Only Outside Battle", "desc": "The power can only be used out in the world, never in a fight." },
+    "oncePerWeek": { "name": "Once a Week", "desc": "The power can be used once a week at most, in battle or out of it." },
+    "bloodPrice": { "name": "Price in Blood", "desc": "Each use costs a quarter of this character's health. It never leaves them below one." },
+    "spiritPrice": { "name": "Price in Spirit", "desc": "Each use drains all of this character's MP. It cannot be used with none left." },
+    "goldPrice": { "name": "Price in Gold", "desc": "Each use costs a twentieth of the party's money." }
   }
 }

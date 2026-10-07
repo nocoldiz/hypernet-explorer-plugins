@@ -7481,8 +7481,12 @@
       if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return "";
       const data = $gameSystem && $gameSystem._procGenData;
       if (!data) return "";
-      if (data.biomeLayerStack && data.biomeLayerStack.length > 0) return "";
       const name = data.currentBiome || "";
+      // A dungeon door pushes a layer, but what is behind it is a structure all
+      // the same (a hardware store, a hospital, a dungeon); any other layer
+      // below the surface is dug ground, not one.
+      const doorSession = data._dungeonSession && data._dungeonSession.type === "door";
+      if (data.biomeLayerStack && data.biomeLayerStack.length > 0 && !doorSession) return "";
       return isDungeonBiome(name) ? name : "";
     },
     // The biome the player is standing in, or "" off the procedural map.

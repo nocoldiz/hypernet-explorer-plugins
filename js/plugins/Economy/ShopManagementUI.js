@@ -21,12 +21,8 @@
   const SM = window.ShopManagement;
   const _TABS = ['overview', 'staff', 'shelves', 'stock', 'warehouse', 'catalog'];
 
-  // The roster page is the shared two-panel picker (UI/TwoPanelPicker.js): the
-  // people who could take a shift on one side, the ones who have on the other,
-  // dragged across or moved with the button on the row.
-  const _STAFF_PICKER = 'shop-staff';
-  // The shelves page is the same widget again: what can go out for sale on one
-  // side, what is out for sale on the other.
+  // The shelves page is the shared two-panel picker (UI/TwoPanelPicker.js):
+  // what can go out for sale on one side, what is out for sale on the other.
   const _SHELF_PICKER = 'shop-shelves';
 
   // The name an item is listed under. Window text is localized on its way to
@@ -55,6 +51,148 @@
     }
   });
   const _T = new Proxy({}, { get: () => _shopText });
+
+  // ── The staffing board ────────────────────────────────────────────────────
+  // Every business the party owns is a set of posts, each three eight-hour
+  // shifts deep, and every shift is worked by whoever worked it before the
+  // deed changed hands. The board lists those shifts on the left page; the
+  // right page puts somebody off the bench on the chosen one, or takes them
+  // off it again so its keeper has it back. A bought shop has one post, its
+  // counter; a workplace has one per job and one per rota counter
+  // (SM.businessSlots).
+  const _esc = (text) => String(text == null ? '' : text)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  const StaffBoard = {
+    slots(bizKey) {
+      return SM.businessSlots ? (SM.businessSlots(bizKey) || []) : [];
+    },
+
+    hours(slot) {
+      return T('ShopManagement.staff.shift', { start: slot.hours.start, end: slot.hours.end });
+    },
+
+    // Left page: the shifts, post by post.
+    leftHTML(bizKey, sel) {
+      const slots = this.slots(bizKey);
+      if (!slots.length) return `<p class="item-grid-empty">${T('ShopManagement.staff.noPosts')}</p>`;
+      let lastPost = null;
+      const rows = slots.map((slot, i) => {
+        const head = slot.post !== lastPost
+          ? `<div class="inspect-section-title">${_esc(slot.postLabel)}</div>` : '';
+        lastPost = slot.post;
+        const holder = slot.holder;
+        const tag = !holder ? T('ShopManagement.staff.tagVacant')
+          : (holder.kind === 'preset' ? T('ShopManagement.staff.tagOurs') : T('ShopManagement.staff.tagKeeper'));
+        return `${head}
+          <div class="item-slot focusable${i === sel ? ' selected' : ''}" tabindex="0" data-staff-slot="${i}"
+               onclick="SceneManager._scene?._staffSelect?.(${i})">
+            <div class="item-slot-info">
+              <span class="item-slot-name">${_esc(holder ? holder.name : T('ShopManagement.staff.vacant'))}</span>
+              <span class="item-slot-meta">
+                <span class="item-slot-count">${_esc(this.hours(slot))}</span>
+                <span class="item-slot-rarity">${_esc(tag)}</span>
+              </span>
+            </div>
+          </div>`;
+      }).join('');
+      return `<div class="tpp-hint">${T('ShopManagement.staff.hint')}</div>${rows}`;
+    },
+
+    // Right page: the chosen shift, and who could be put on it.
+    rightHTML(bizKey, sel, title) {
+      const slots = this.slots(bizKey);
+      const slot = slots[Math.max(0, Math.min(sel, slots.length - 1))];
+      const covered = slots.filter(x => x.holder).length;
+      const header = `
+        <div class="inspect-header">
+          <div class="inspect-title-box">
+            <div class="inspect-name">${_esc(title)}</div>
+            <div class="inspect-rarity">${T('ShopManagement.staff.shiftsCovered', { covered, total: slots.length })}</div>
+          </div>
+        </div>`;
+      if (!slot) return header;
+      const ours = slot.holder && slot.holder.kind === 'preset';
+      const standing = ours && slot.citizen
+        ? `<div class="inspect-spec-row"><span class="inspect-spec-value">${_esc(T('ShopManagement.staff.standingIn', { name: slot.citizen }))}</span></div>`
+        : '';
+      const release = ours
+        ? `<div class="command-item focusable" tabindex="0"
+               onclick="SceneManager._scene?._staffRelease?.()">${_esc(T('ShopManagement.staff.release', { name: slot.holder.name }))}</div>`
+        : '';
+      const reserves = SM.staffReserves ? SM.staffReserves() : [];
+      const pick = reserves.length
+        ? reserves.map(r => `
+            <div class="item-slot focusable" tabindex="0"
+                 onclick="SceneManager._scene?._staffAssign?.('${_esc(String(r.id))}')">
+              <div class="item-slot-info">
+                <span class="item-slot-name">${_esc(r.name)}</span>
+                <span class="item-slot-meta">
+                  <span class="item-slot-count">${_esc(T('ShopManagement.ui.levelAbbr', { level: r.level }))}</span>
+                  <span class="item-slot-rarity">${_esc(T('ShopManagement.staff.assign'))}</span>
+                </span>
+              </div>
+            </div>`).join('')
+        : `<div class="inspect-spec-row"><span class="inspect-spec-value">${T('ShopManagement.staff.noReserves')}</span></div>`;
+      return `${header}
+        <div class="inspect-lore">
+          <div class="inspect-section-title">${_esc(slot.postLabel)}, ${_esc(this.hours(slot))}</div>
+          <div class="inspect-spec-row">
+            <span class="inspect-spec-label">${T('ShopManagement.staff.onShift')}</span>
+            <span class="inspect-spec-value">${_esc(slot.holder ? slot.holder.name : T('ShopManagement.staff.vacant'))}</span>
+          </div>
+          ${standing}
+          ${release}
+          <div class="inspect-section-title">${T('ShopManagement.staff.candidatesTitle')}</div>
+          ${pick}
+        </div>`;
+    },
+
+    // The scene side, the same for both hosts: they answer _staffBizKey(),
+    // _staffTitle() and _refreshDOM(), and keep the chosen shift in _staffSel.
+    install(proto) {
+      proto._staffSelect = function (i) {
+        if (this._staffSel === i) return;
+        this._staffSel = i;
+        SoundManager.playCursor();
+        this._refreshDOM();
+      };
+      proto._staffAssign = function (presetId) {
+        const slot = StaffBoard.slots(this._staffBizKey())[this._staffSel];
+        if (!slot) return;
+        const result = SM.assignReserve(this._staffBizKey(), slot.post, slot.shift, presetId);
+        if (!result || !result.ok) {
+          SoundManager.playBuzzer();
+          return;
+        }
+        SoundManager.playOk();
+        const now = StaffBoard.slots(this._staffBizKey())[this._staffSel];
+        if (window.ParchmentToast && now && now.holder) {
+          window.ParchmentToast.show(T('ShopManagement.staff.assigned', {
+            name: now.holder.name, start: slot.hours.start, shop: this._staffTitle(),
+          }));
+        }
+        this._refreshDOM();
+      };
+      proto._staffRelease = function () {
+        const slot = StaffBoard.slots(this._staffBizKey())[this._staffSel];
+        if (!slot || !slot.holder || slot.holder.kind !== 'preset') return;
+        const result = SM.releaseReserve(this._staffBizKey(), slot.post, slot.shift);
+        if (!result || !result.ok) {
+          SoundManager.playBuzzer();
+          return;
+        }
+        SoundManager.playOk();
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('ShopManagement.staff.dismissed', {
+            name: slot.holder.name, shop: this._staffTitle(),
+          }));
+        }
+        this._refreshDOM();
+      };
+    },
+  };
+  window.ShopStaffBoard = StaffBoard;
 
   // ── Input Manager ─────────────────────────────────────────────────────────
   const UIShopInputManager = {
@@ -190,6 +328,7 @@
       this._activeTab    = window._shopMgmtInitTab || 'overview';
       window._shopMgmtInitTab = null;
       this._selectedIndex = 0;
+      this._staffSel      = 0;
       this._changingSlot  = null;
       // The shelves page fills from the bags first; the wholesaler is a click away.
       this._shelfSource   = 'bag';
@@ -348,9 +487,8 @@
       });
 
       this._drawIcons();
-      if (window.TwoPanelPicker) {
-        if (this._activeTab === 'staff')   window.TwoPanelPicker.mounted(this._el, _STAFF_PICKER);
-        if (this._activeTab === 'shelves') window.TwoPanelPicker.mounted(this._el, _SHELF_PICKER);
+      if (window.TwoPanelPicker && this._activeTab === 'shelves') {
+        window.TwoPanelPicker.mounted(this._el, _SHELF_PICKER);
       }
     }
 
@@ -423,50 +561,17 @@
     // party does not own has a keeper of its own, so there is nothing to roster.
     _buildStaff(shop, T) {
       if (!shop.owned) return `<p class="item-grid-empty">${T('ShopManagement.staff.notOurs')}</p>`;
-      if (!window.TwoPanelPicker) return `<p class="item-grid-empty">${T('ShopManagement.staff.title')}</p>`;
+      return StaffBoard.leftHTML(shop.id, this._staffSel);
+    }
 
-      const shopId = shop.id;
-      const hours = (entry) => T('ShopManagement.staff.shift', {
-        start: entry.shift.start, end: entry.shift.end,
-      });
-      window.TwoPanelPicker.register({
-        id: _STAFF_PICKER,
-        title: T('ShopManagement.staff.title'),
-        hint:  T('ShopManagement.staff.hint'),
-        left: {
-          key:   'available',
-          title: T('ShopManagement.staff.candidatesTitle'),
-          items: () => SM.staffCandidates(SM.getShop(shopId)).map(c => ({
-            id:   `${c.kind}:${c.id}`,
-            name: c.name,
-            sub:  T('ShopManagement.ui.levelAbbr', { level: c.level }),
-          })),
-        },
-        right: {
-          key:   'roster',
-          title: T('ShopManagement.staff.rosterTitle'),
-          max:   SM.MAX_STAFF,
-          empty: T('ShopManagement.staff.closed'),
-          items: () => SM.staffRoster(shopId).map(entry => ({
-            id:   `${entry.kind}:${entry.id}`,
-            name: entry.name,
-            sub:  hours(entry),
-          })),
-        },
-        move: (rowId, from, to) => {
-          const [kind, id] = String(rowId).split(':');
-          const result = to === 'roster'
-            ? SM.assignStaff(shopId, kind, id)
-            : SM.dismissStaff(shopId, kind, id);
-          if (!result.ok) {
-            return { ok: false, message: result.reason === 'rosterFull'
-              ? T('ShopManagement.staff.full') : T('ShopManagement.staff.notOurs') };
-          }
-          return true;
-        },
-        onChange: () => this._refreshDOM(),
-      });
-      return window.TwoPanelPicker.html(_STAFF_PICKER);
+    _staffBizKey() {
+      const shop = SM.getCurrentShop();
+      return shop ? shop.id : null;
+    }
+
+    _staffTitle() {
+      const shop = SM.getCurrentShop();
+      return shop ? (SM.shopDisplayName ? SM.shopDisplayName(shop) : shop.id) : '';
     }
 
     // Filling the shelves by hand. Nobody restocks a shop the party owns, so
@@ -688,31 +793,8 @@
           </div>`;
       }
       if (this._activeTab === 'staff') {
-        const name  = SM.shopDisplayName ? SM.shopDisplayName(shop) : shop.id;
-        const staff = shop.owned ? SM.staffRoster(shop.id) : [];
-        const hours = staff.length * SM.SHIFT_HOURS;
-        const rows  = staff.length
-          ? staff.map(entry => `
-              <div class="inspect-spec-row">
-                <span class="inspect-spec-label">${entry.name}</span>
-                <span class="inspect-spec-value">${T('ShopManagement.staff.shift', {
-                  start: entry.shift.start, end: entry.shift.end })}</span>
-              </div>`).join('')
-          : `<div class="inspect-spec-row">
-                <span class="inspect-spec-value">${T('ShopManagement.staff.closed')}</span>
-              </div>`;
-        return `
-          <div class="inspect-header">
-            <div class="inspect-title-box">
-              <div class="inspect-name">${name}</div>
-              <div class="inspect-rarity">${T('ShopManagement.staff.coverage', {
-                hours: Math.min(24, hours) })}</div>
-            </div>
-          </div>
-          <div class="inspect-lore">
-            <div class="inspect-section-title">${T('ShopManagement.staff.rosterTitle')}</div>
-            ${rows}
-          </div>`;
+        if (!shop.owned) return '';
+        return StaffBoard.rightHTML(shop.id, this._staffSel, this._staffTitle());
       }
       if (this._activeTab === 'overview') {
         // Overview's right page is where the shop pays out: the balance the
@@ -849,6 +931,93 @@
     }
   }
 
+  StaffBoard.install(Scene_ShopManagement.prototype);
   window.Scene_ShopManagement = Scene_ShopManagement;
+
+  // ── The staff of a workplace ──────────────────────────────────────────────
+  // A workplace deed (WorkplaceDeeds) has no shop book of its own: nothing is
+  // shelved there by hand. What the party decides about it is who works its
+  // shifts, so the deed opens this board and nothing else.
+  class Scene_BusinessStaff extends Scene_MenuBase {
+    create() {
+      super.create();
+      this._bizKey   = window._businessStaffKey || null;
+      this._bizTitle = window._businessStaffTitle || '';
+      window._businessStaffKey = null;
+      window._businessStaffTitle = null;
+      this._staffSel = 0;
+      this._el = document.createElement('div');
+      this._el.id = 'shop-mgmt-container';
+      this._el.style.cssText = 'opacity:0;transition:opacity 0.2s ease-out;';
+      document.body.appendChild(this._el);
+      this._refreshDOM();
+      requestAnimationFrame(() => { if (this._el) this._el.style.opacity = '1'; });
+    }
+
+    _staffBizKey() { return this._bizKey; }
+    _staffTitle()  { return this._bizTitle; }
+
+    _refreshDOM() {
+      if (!this._el) return;
+      this._el.innerHTML = `
+        <div class="book-spread">
+          <div class="left-page">
+            <div class="page-header-bar">
+              <button class="back-button">${T('ShopManagement.back')}</button>
+              <h2 class="title">${_esc(this._bizTitle)}</h2>
+            </div>
+            <div class="shop-mgmt-list">${StaffBoard.leftHTML(this._bizKey, this._staffSel)}</div>
+          </div>
+          <div class="right-page">
+            <div class="item-inspect">${StaffBoard.rightHTML(this._bizKey, this._staffSel, this._bizTitle)}</div>
+          </div>
+        </div>`;
+      this._el.querySelector('.back-button')
+        ?.addEventListener('mousedown', () => { SoundManager.playCancel(); SceneManager.pop(); });
+    }
+
+    update() {
+      Scene_MenuBase.prototype.update.call(this);
+      if (!this._el) return;
+      // Every row and button is .focusable: the shared focus ring walks them,
+      // a direction steps onto the page, OK presses, B steps off and leaves.
+      if (window.CCNav) {
+        if (CCNav._scene !== this) CCNav.attach(this, this._el, { boards: false });
+        if (CCNav.update()) { CCNav.paint(); return; }
+        const enterDir = window.UINav ? UINav.navDir() : null;
+        if (enterDir && CCNav.tryEnterFromBoard(enterDir)) return;
+        CCNav.paint();
+      }
+      if (Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+        SoundManager.playCancel();
+        SceneManager.pop();
+      }
+    }
+
+    terminate() {
+      if (window.CCNav) window.CCNav.detach(this);
+      if (this._el) {
+        const el = this._el;
+        el.style.transition = 'opacity 0.18s ease-out';
+        el.style.opacity    = '0';
+        el.style.pointerEvents = 'none';
+        setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 200);
+        this._el = null;
+      }
+      Scene_MenuBase.prototype.terminate.call(this);
+    }
+  }
+  StaffBoard.install(Scene_BusinessStaff.prototype);
+  window.Scene_BusinessStaff = Scene_BusinessStaff;
+
+  // The one way onto a business's staffing board: 'wp:<mapId>' for a
+  // workplace, a shop deed's id for a bought shop.
+  SM.openStaffing = function (bizKey, title) {
+    if (!bizKey) return false;
+    window._businessStaffKey = bizKey;
+    window._businessStaffTitle = title || '';
+    SceneManager.push(Scene_BusinessStaff);
+    return true;
+  };
 
 })();

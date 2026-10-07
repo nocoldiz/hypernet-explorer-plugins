@@ -456,6 +456,21 @@
   const TAPE_KNEE_M = 2000;
   const TAPE_TOP_M = 1400000;
 
+  // THE CHARGES PAST PLUTO. One dropped every CHARGE_EVERY seconds for
+  // KICK_COUNT of them, each going off KICK_AT of a second after it leaves the
+  // tail and shoving the round over the next KICK_LEN. Every shove weighs more
+  // than the one before it, so the string keeps on accelerating the round.
+  const CHARGE_EVERY = 1.0;
+  const KICK_COUNT = 9;
+  const KICK_AT = 0.35;
+  const KICK_LEN = 0.4;
+  const KICK_W = [];
+  const KICK_SUM = [0];
+  for (let i = 0; i < KICK_COUNT; i++) {
+    KICK_W.push(Math.pow(i + 1, 1.5));
+    KICK_SUM.push(KICK_SUM[i] + KICK_W[i]);
+  }
+
   const EASE = {
     linear: (k) => k,
     accel: (k) => k * k,
@@ -469,6 +484,16 @@
     gun: (k) => k * k * k,
     // And down one, which is the same thing with the coils run in reverse.
     brake: (k) => 1 - Math.pow(1 - k, 3),
+    // Out past Pluto on a Schrodinger-Bohr charge a second. Underneath, the
+    // round is always gaining (the k squared), and on top of that every charge
+    // is a shove that lands as its ball opens, each one heavier than the last.
+    kicks: (k) => {
+      const s = clamp01(k) * KICK_COUNT;
+      const i = Math.min(KICK_COUNT - 1, Math.floor(s));
+      const shove = smooth(clamp01((s - i - KICK_AT) / KICK_LEN));
+      const step = (KICK_SUM[i] + KICK_W[i] * shove) / KICK_SUM[KICK_COUNT];
+      return k * k * 0.45 + step * 0.55;
+    },
   };
 
   // ==========================================================================
@@ -884,8 +909,8 @@
         // The pellet goes in close, against the brightest thing in the sky.
         { key: "charge", dur: 5.0, from: SISTER_CLOSE_M, to: SISTER_CLOSE_M, ease: "linear" },
         { key: "blast", dur: 6.0, from: SISTER_CLOSE_M, to: JUPITER_AWAY_M, ease: "linear", geo: true },
-        // And out past the last of the binary's rubble.
-        { key: "edge", dur: 8.0, from: JUPITER_AWAY_M, to: PLUTO_M, ease: "linear", geo: true },
+        // And out past the last of the binary's rubble, on a charge a second.
+        { key: "edge", dur: KICK_COUNT * CHARGE_EVERY, from: JUPITER_AWAY_M, to: PLUTO_M, ease: "kicks", geo: true },
       ];
     } else {
       run = [
@@ -894,8 +919,9 @@
         // The pellet goes here, at the bottom of the well.
         { key: "charge", dur: 5.0, from: JUPITER_CLOSE_M, to: JUPITER_CLOSE_M, ease: "linear" },
         { key: "blast", dur: 6.0, from: JUPITER_CLOSE_M, to: JUPITER_AWAY_M, ease: "linear", geo: true },
-        // Out past the last thing in the system with a name.
-        { key: "pluto", dur: 9.0, from: JUPITER_AWAY_M, to: PLUTO_M, ease: "linear", geo: true },
+        // Out past the last thing in the system with a name, and the string
+        // never stops: a charge a second, each shove harder than the last.
+        { key: "pluto", dur: KICK_COUNT * CHARGE_EVERY, from: JUPITER_AWAY_M, to: PLUTO_M, ease: "kicks", geo: true },
       ];
     }
     const tail = [
@@ -3036,6 +3062,12 @@
   // Which of the ring the shockwave takes, by blast ring: the pellet string
   // opens five rings and three of them each tear an engine away.
   const ARRAY_HIT_RINGS = [1, 2, 4];
+  // How long a spent charge takes to fall in on itself and go, as a black
+  // hole, and how many past Pluto can be in the sky at once.
+  const HOLE_LIFE = 1.4;
+  const TRAIL_POOL = 5;
+  // The slice of the pluto beat the planet is in the window for.
+  const PLUTO_PASS = [0.3, 0.62];
 
   // i18n-ignore-start  phase keys
   // The beats a drive is at full power for: the range collapsing, and nothing
@@ -3068,9 +3100,8 @@
     cruise: [{ dir: 1, from: 0, to: 1 }],
     sister: [{ dir: 1, from: 0, to: 1 }],
     redmoon: [{ dir: 1, from: 0, to: 0.35 }],
-    // And on out of the system on what the pellet gave it, still burning.
-    pluto: [{ dir: 1, from: 0.1, to: 1 }],
-    edge: [{ dir: 1, from: 0.1, to: 1 }],
+    // Nothing burns out past Pluto: a round riding Schrodinger-Bohr charges
+    // runs neither its motor nor its drive, and the charges do the pushing.
     // Out of a crossing far too fast for anything to catch: the speed is
     // burned off, bell first.
     emerge: [{ dir: -1, from: 0.2, to: 1 }],
@@ -3518,6 +3549,7 @@
         // most, and each of them a minute of flight away when it is wanted.
         // i18n-ignore-start  assist ids
         if (this.profile.assistBody === "jupiter") this._defer("jupiter", () => this._buildJupiter());
+        if (this.profile.assistBody === "jupiter") this._defer("pluto", () => this._buildPluto());
         if (this.profile.assistBody === "sister") this._defer("sister", () => this._buildSister());
         // i18n-ignore-end
         if (this.profile.jump) {
@@ -4723,8 +4755,6 @@
       g.visible = false;
       this.near.add(g);
 
-      this.pellets = [];
-      this.blastRings = [];
       const pelletGeo = this._geo(new THREE.SphereGeometry(0.85, 10, 8));
       const ringGeo = this._geo(new THREE.RingGeometry(0.82, 1, 48, 1));
       // AND THE BALL. A charge that has gone off is a volume of violet with a
@@ -4732,51 +4762,92 @@
       // past the window. The shell is what the round rides, the ring is the
       // edge of it seen side-on, and both are the same event.
       const ballGeo = this._geo(new THREE.SphereGeometry(1, 24, 16));
-      for (let i = 0; i < CHARGE_COUNT; i++) {
+      const add = (m) => { m.visible = false; g.add(m); return m; };
+      const glow = (color, extra) => this._mat(new THREE.MeshBasicMaterial(Object.assign({
+        color, transparent: true, opacity: 0, depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }, extra || {})));
+      // One charge: the pellet, and everything it becomes.
+      const makeCharge = (radius) => {
         // The pellet. Violet, and lit from inside: there is nothing out here
-        // to light it from outside.
-        const p = new THREE.Mesh(pelletGeo, this._mat(new THREE.MeshBasicMaterial({
-          color: 0xb46cff, transparent: true, opacity: 0, depthWrite: false,
-          blending: THREE.AdditiveBlending,
-        })));
-        p.visible = false;
-        g.add(p);
-        this.pellets.push(p);
-
+        // to light it from outside. Schrodingerite, and only just.
+        const p = add(new THREE.Mesh(pelletGeo, glow(0xb46cff)));
         // And the ring it becomes. Flat, because the thing that goes off is a
         // decision rather than a chemical, and a decision has no volume.
-        const r = new THREE.Mesh(ringGeo, this._mat(new THREE.MeshBasicMaterial({
-          color: 0xe6d0ff, transparent: true, opacity: 0, side: THREE.DoubleSide,
-          depthWrite: false, blending: THREE.AdditiveBlending,
-        })));
-        r.visible = false;
-        // No two of them are the same size. That is the whole point of the
-        // string: each one is a different amount of having happened.
-        r.userData.radius = 90 + this.rng() * 260;
-        r.userData.core = new THREE.Mesh(ringGeo, this._mat(new THREE.MeshBasicMaterial({
-          color: 0xffffff, transparent: true, opacity: 0, side: THREE.DoubleSide,
-          depthWrite: false, blending: THREE.AdditiveBlending,
-        })));
-        r.userData.core.visible = false;
+        const r = add(new THREE.Mesh(ringGeo, glow(0xe6d0ff, { side: THREE.DoubleSide })));
+        r.userData.radius = radius;
+        r.userData.core = add(new THREE.Mesh(ringGeo, glow(0xffffff, { side: THREE.DoubleSide })));
         // The violet shell, and the white it is lit from inside by.
-        const ball = new THREE.Mesh(ballGeo, this._mat(new THREE.MeshBasicMaterial({
-          color: 0x9a4cff, transparent: true, opacity: 0, depthWrite: false,
-          blending: THREE.AdditiveBlending,
-        })));
-        ball.visible = false;
-        const heart = new THREE.Mesh(ballGeo, this._mat(new THREE.MeshBasicMaterial({
-          color: 0xf2e4ff, transparent: true, opacity: 0, depthWrite: false,
-          blending: THREE.AdditiveBlending,
-        })));
-        heart.visible = false;
-        r.userData.ball = ball;
-        r.userData.heart = heart;
-        g.add(r, r.userData.core, ball, heart);
+        r.userData.ball = add(new THREE.Mesh(ballGeo, glow(0x9a4cff)));
+        r.userData.heart = add(new THREE.Mesh(ballGeo, glow(0xf2e4ff)));
+        // AND WHAT IT FALLS INTO. A charge that has finished deciding takes
+        // the whole of what it decided back in with it: the ball collapses to
+        // a black hole, rimmed in its own violet, and the hole evaporates.
+        const hole = add(new THREE.Mesh(ballGeo, this._holeMaterial()));
+        hole.renderOrder = 2;
+        r.userData.hole = hole;
+        r.userData.pellet = p;
+        return r;
+      };
+
+      this.pellets = [];
+      this.blastRings = [];
+      for (let i = 0; i < CHARGE_COUNT; i++) {
+        // No two of them are the same size. That is the whole point of the
+        // string: each one is a different amount of having happened. And every
+        // one of them is the size of a town, so the round is a speck beside it.
+        const r = makeCharge(260 + this.rng() * 420);
+        this.pellets.push(r.userData.pellet);
         this.blastRings.push(r);
       }
-      this.chargeLight = new THREE.PointLight(0xd8b4ff, 0, 2600, 2);
+      // The trail out past Pluto: a charge a second, recycled as they go.
+      this.trailRings = [];
+      for (let i = 0; i < TRAIL_POOL; i++) this.trailRings.push(makeCharge(1));
+      this.chargeLight = new THREE.PointLight(0xd8b4ff, 0, 5200, 2);
       this.chargeLight.visible = false;
       g.add(this.chargeLight);
+    }
+
+    // The black hole a spent charge collapses into: a black ball with its
+    // light bent round the edge of it, swirling. A build without shaders gets
+    // a plain black ball.
+    _holeMaterial() {
+      if (typeof THREE.ShaderMaterial !== "function") {
+        return this._mat(new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0 }));
+      }
+      return this._mat(new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        uniforms: {
+          uOpacity: { value: 0 },
+          uTime: { value: 0 },
+          uRim: { value: new THREE.Color(0xb46cff) },
+        },
+        vertexShader: [
+          "varying vec3 vN;",
+          "varying vec3 vV;",
+          "void main() {",
+          "  vec4 mv = modelViewMatrix * vec4(position, 1.0);",
+          "  vN = normalize(normalMatrix * normal);",
+          "  vV = normalize(-mv.xyz);",
+          "  gl_Position = projectionMatrix * mv;",
+          "}",
+        ].join("\n"),
+        fragmentShader: [
+          "uniform float uOpacity;",
+          "uniform float uTime;",
+          "uniform vec3 uRim;",
+          "varying vec3 vN;",
+          "varying vec3 vV;",
+          "void main() {",
+          "  float f = 1.0 - abs(dot(normalize(vN), normalize(vV)));",
+          "  float rim = pow(f, 2.5);",
+          "  float swirl = 0.6 + 0.4 * sin(atan(vN.y, vN.x) * 5.0 + uTime * 6.0 - f * 12.0);",
+          "  vec3 col = mix(uRim, vec3(1.0), pow(f, 10.0)) * rim * swirl * 1.6;",
+          "  gl_FragColor = vec4(col, uOpacity);",
+          "}",
+        ].join("\n"),
+      }));
     }
 
     // THE CORRIDOR, IN THREE DIMENSIONS.
@@ -5434,8 +5505,9 @@
           return { target: T.set(0, -14, this._tailZ() - 30), yaw: 2.3 + k * 0.4, pitch: 0.2, dist: lerp(170, 280, smooth(k)), fov: 70 };
         case "pluto":
         case "edge":
-          // Out past the last of everything, side on and drifting.
-          return { target: T.set(0, 0, 0), yaw: 1.1 + k * 0.6, pitch: 0.08, dist: lerp(60, 80, smooth(k)), fov: 58 };
+          // Pulled right out and looking back down the trail, so the string of
+          // charges going off astern dwarfs the round riding them.
+          return { target: T.set(0, -10, this._tailZ() - 120), yaw: 2.35 + k * 0.35, pitch: 0.16, dist: lerp(300, 420, smooth(k)), fov: 72 };
         case "breach":
         case "crossing":
           // ONE STRAIGHT LINE, from the tail through the nose to the galaxy
@@ -5966,8 +6038,11 @@
       if (breach) torch = lerp(0.55, 1.35, smooth(ph.progress)) * smooth(clamp01(ph.progress / 0.12));
       // Out of the breach at full blaze and settled to a steady torch over
       // the first fifth of the gap, never stepped down in one frame.
+      // And it holds at full blaze across the whole gap, every engine flat
+      // out until it burns itself off the array.
       else if (crossing) {
-        torch = lerp(1.35, 1, smooth(clamp01(ph.progress / 0.2))) - 0.12 * smooth(clamp01((ph.progress - 0.85) / 0.15));
+        torch = 1.35 - 0.12 * smooth(clamp01((ph.progress - 0.85) / 0.15));
+        this._burnArrayPods(ph.progress);
       }
       const push = torch > 0 ? Math.min(1, torch) : (burn ? burn.k : 0);
       const liminal = torch > 0 || (this.speed || 0) > LIGHT_MS;
@@ -5992,7 +6067,8 @@
 
       // THE ONE FLAME. Every engine left feeds it, so it is a little smaller
       // for every one the shockwave took.
-      const alive = this.arrayPods.filter((p) => !p.userData.lost).length / this.arrayPods.length;
+      // An engine the torch burned off still fed it to the last.
+      const alive = this.arrayPods.filter((p) => !p.userData.lost || p.userData.burnt).length / this.arrayPods.length;
       const tk = torch * (0.55 + 0.45 * alive) * flick;
       this.arrayTorch.visible = tk > 0.01;
       this.arrayTorchJets[0].material.opacity = tk * 0.95;
@@ -6027,13 +6103,27 @@
       return { x: 0, y: c, z: s };
     }
 
-    // One engine of the ring, torn off by the shockwave.
-    _loseArrayPod(n) {
+    // THE TORCH EATS THE ARRAY. Across the gap the engines left on the ring
+    // are run past anything they were built for, and one by one they burn
+    // through their mounts and fall away into the dark. Calmly: this is a
+    // CALM_BEATS stretch, so no flash and no jolt.
+    _burnArrayPods(k) {
+      const ring = this.arrayPods.filter((p) => !p.userData.lost && !p.userData.centre);
+      this._podsToBurn = this._podsToBurn || ring.length;
+      const due = Math.floor(clamp01((k - 0.12) / 0.66) * this._podsToBurn + 1e-6);
+      const burnt = this._podsToBurn - ring.length;
+      for (let n = burnt; n < due; n++) this._loseArrayPod(100 + n, true);
+    }
+
+    // One engine of the ring, torn off by the shockwave, or burnt off by the
+    // torch on a calm beat.
+    _loseArrayPod(n, calm) {
       const ring = this.arrayPods.filter((p) => !p.userData.lost && !p.userData.centre);
       if (!ring.length) return;
       const pick = ring[Math.floor(makeRng(hashOf(this.profile.id) + n * 977)() * ring.length)];
       const i = this.arrayPods.indexOf(pick);
       pick.userData.lost = true;
+      if (calm) pick.userData.burnt = true;
       // The two beside it come through, but scorched.
       [i - 1, i + 1].forEach((j) => {
         const nb = this.arrayPods[(j + ARRAY_RING) % ARRAY_RING];
@@ -6052,6 +6142,7 @@
       );
       pick.userData.life = 4.0;
       this.shed.push(pick);
+      if (calm) return;
       this.shake = Math.max(this.shake, 2.6);
       this.impactFlash = 1;
       this._pendingSe = this._pendingSe || [];
@@ -6164,6 +6255,27 @@
             this._placeFar(this.jupiter, swing, el, d);
             this.jupiterBody.rotation.y = this._time * 0.03;
             this._jupiterMaps();
+          }
+        }
+      }
+
+      // ---- PLUTO ---------------------------------------------------------
+      // Zipped past on the pluto beat: a point ahead, a ball beside the round
+      // for a second, and gone astern, the round still gaining all the while.
+      if (prof.assistBody === "jupiter") {   // i18n-ignore  assist id
+        const u = ph.key === "pluto" ? (k - PLUTO_PASS[0]) / (PLUTO_PASS[1] - PLUTO_PASS[0]) : -1;
+        const near = u > 0 && u < 1;
+        if (near) this._ensure("pluto");
+        if (this.pluto) {
+          this.pluto.visible = near;
+          if (near) {
+            // Ahead and to one side, across the frame, and behind: the bearing
+            // swings fastest as it passes, and the range is closest there.
+            const x = u * 2 - 1;
+            this._placeFar(this.pluto, Math.atan2(0.42, -x) - Math.PI / 2 + 0.2,
+              -0.06, lerp(70, 2600, Math.pow(Math.abs(x), 1.4)));
+            this.plutoBody.rotation.y = this._time * 0.05;
+            this._plutoMaps();
           }
         }
       }
@@ -6308,11 +6420,28 @@
     }
 
     _updateCharges(dt, ph) {
+      const prof = this.profile;
       const dropping = ph.key === "charge";
-      const going = ph.key === "blast";
-      const on = dropping || going;
+      // The trail past Pluto: when it started, and how far into it the flight
+      // is now. Charges stop dropping the moment the breach begins; the ones
+      // already out finish going off and falling in behind it.
+      const st = prof.start;
+      const trailKey = st.pluto != null ? "pluto" : st.edge != null ? "edge" : null;   // i18n-ignore  phase keys
+      const tNow = (st[ph.key] || 0) + (ph.local || 0);
+      const life = RING_LIFE + HOLE_LIFE;
+      const trailT = trailKey ? tNow - st[trailKey] : -1;
+      const trailOn = !!trailKey && trailT >= 0 && trailT < KICK_COUNT * CHARGE_EVERY + KICK_AT + life;
+      const blastPh = prof.phases.find((p) => p.key === "blast");   // i18n-ignore  phase key
+      const blastDur = blastPh ? blastPh.dur : 0;
+      const blastT = blastPh ? tNow - st.blast : -1;
+      const stringOn = dropping || (blastT >= 0 && blastT < blastDur + life);
+      const on = stringOn || trailOn;
       if (on) this._ensure("charges");
       const g = this.charges;
+      // Undo last frame's shudder. Only the height: across the track the
+      // round's place is set afresh every frame by the steering.
+      if (this._vibOff && this.vehicle) this.vehicle.position.y -= this._vibOff.y;
+      this._vibOff = null;
       if (!g) return;
       g.visible = on;
       if (!on) {
@@ -6322,89 +6451,152 @@
       }
       this._chargeT = (this._chargeT || 0) + dt;
       const tail = this._tailZ();
+      const calm = CALM_BEATS.indexOf(ph.key) >= 0;
       // Where each blast opens: a clear gap astern of the tail, and each one
       // a step further back than the last.
       const blastZ = (i) => tail - 46 - i * 28;
+      // How far astern a blast has fallen, `a` seconds after it went off: the
+      // round is going away from it faster all the time.
+      const recede = (a) => a * 200 + a * a * 60;
 
-      let lit = 0;
+      let lit = 0, jolt = 0, lightZ = blastZ(1);
+      // One charge, `a` seconds after it went off at `z0`. Every one of them
+      // shoves the round as it opens, `weight` times as hard as the first.
+      const draw = (r, a, z0, y, spin, weight) => {
+        const core = r.userData.core, ball = r.userData.ball, heart = r.userData.heart, hole = r.userData.hole;
+        r.visible = false; core.visible = false; ball.visible = false; heart.visible = false; hole.visible = false;
+        if (!(a > 0 && a < life)) return;
+        lit++;
+        const z = z0 - recede(a);
+        // The shell and its heart never reach back up to the tail: the round
+        // rides the ring, it is not swallowed by the ball.
+        const room = Math.max(8, tail - z - 6);
+        const R = r.userData.radius;
+        if (a < RING_LIFE) {
+          // Out from where the pellet was, to its own radius, thinning as it
+          // goes: a ring of light with nothing inside it.
+          const u = a / RING_LIFE;
+          const open = Math.min(1, u * 1.6);
+          const rad = R * smooth(open);
+          const fade = Math.sin(open * Math.PI * 0.5) * (1 - u * 0.25);
+          r.visible = true; core.visible = true; ball.visible = true; heart.visible = true;
+          r.position.set(0, y, z);
+          core.position.copy(r.position);
+          r.scale.setScalar(Math.max(0.01, rad));
+          core.scale.setScalar(Math.max(0.01, rad * 0.94));
+          // Edge-on to the round, so it is a ring rather than a disc.
+          r.rotation.set(0, 0, this._time * 0.4 + spin);
+          core.rotation.copy(r.rotation);
+          r.material.opacity = fade * 0.85;
+          core.material.opacity = fade * 0.5;
+          // The shell goes out with the ring and thins as it goes, because
+          // what is expanding is the same amount of having happened over a
+          // larger and larger surface. The heart of it stays white.
+          ball.position.copy(r.position);
+          ball.scale.setScalar(Math.max(0.01, Math.min(rad * 0.78, room)));
+          ball.material.opacity = fade * (1 - u * 0.4) * 0.55;
+          heart.position.copy(r.position);
+          heart.scale.setScalar(Math.max(0.01, Math.min(rad * (0.10 + u * 0.18), room * 0.5)));
+          heart.material.opacity = fade * 0.9;
+          jolt = Math.max(jolt, weight * Math.exp(-a * 3.2));
+          if (a < 0.6) lightZ = z;
+        } else {
+          // THE COLLAPSE. The ball falls in on a hole that opens at its heart,
+          // the ring is wound in round the hole as its disc, and then the hole
+          // itself shrinks to nothing and is gone.
+          const c = (a - RING_LIFE) / HOLE_LIFE;
+          const full = Math.min(R * 0.78, room);
+          const fall = 1 - smooth(c / 0.55);
+          ball.visible = fall > 0.01;
+          ball.position.set(0, y, z);
+          ball.scale.setScalar(Math.max(0.01, full * fall));
+          ball.material.opacity = 0.45 * fall;
+          const holeR = full * 0.3 * smooth(c / 0.25) * (1 - smooth((c - 0.4) / 0.6));
+          hole.visible = holeR > 0.5;
+          hole.position.set(0, y, z);
+          hole.scale.setScalar(Math.max(0.01, holeR));
+          const ho = 1 - smooth((c - 0.85) / 0.15);
+          if (hole.material.uniforms) {
+            hole.material.uniforms.uOpacity.value = ho;
+            hole.material.uniforms.uTime.value = this._time;
+          } else {
+            hole.material.opacity = ho;
+          }
+          r.visible = holeR > 0.5;
+          r.position.set(0, y, z);
+          r.scale.setScalar(Math.max(0.01, holeR * 2.4));
+          r.rotation.set(0, 0, this._time * 3 + spin);
+          r.material.opacity = 0.7 * Math.sin(clamp01(c) * Math.PI);
+        }
+      };
+
+      // THE STRING at the assist. The pellets go out on the charge beat, one
+      // every few tenths of a second, and each one sits there being undecided.
+      // On the blast beat they resolve in the order they were dropped, so what
+      // the round rides is a staircase of five shoves rather than one.
       this.pellets.forEach((p, i) => {
-        // One every fifth of the drop, so they leave as a string.
         const out = clamp01((ph.progress - i / (CHARGE_COUNT * 1.25)) * 6);
         if (dropping) {
           p.visible = out > 0.01;
           p.material.opacity = out;
           // Dropped out of the tail and left behind, so the string trails.
-          p.position.set(
-            (this.rng() - 0.5) * 0.4,
-            -14 - i * 2.0,
-            lerp(tail, blastZ(i), out)
-          );
+          p.position.set((this.rng() - 0.5) * 0.4, -14 - i * 2.0, lerp(tail, blastZ(i), out));
           p.scale.setScalar(1 + Math.sin(this._time * 9 + i) * 0.14);
         } else {
           p.visible = false;
         }
       });
-
       this.blastRings.forEach((r, i) => {
-        const core = r.userData.core;
-        const ball = r.userData.ball, heart = r.userData.heart;
-        if (!going) {
-          r.visible = false; core.visible = false;
-          if (ball) ball.visible = false;
-          if (heart) heart.visible = false;
-          return;
-        }
-        // Each one resolves a step behind the last. The stagger spans most of
-        // the beat, so the final ring is still opening as it ends.
-        const start = (i / CHARGE_COUNT) * 0.62;
-        const u = clamp01((ph.progress - start) / (RING_LIFE / 6));
-        const show = u > 0.001 && u < 1;
-        r.visible = show; core.visible = show;
-        if (ball) ball.visible = show;
-        if (heart) heart.visible = show;
-        if (!show) return;
-        lit++;
-        // Out from where the pellet was, to its own radius, thinning as it
-        // goes: a ring of light with nothing inside it.
-        const rad = r.userData.radius * u;
-        const z = blastZ(i);
-        // The shell and its heart never reach back up to the tail: the round
-        // rides the ring, it is not swallowed by the ball.
-        const room = Math.max(8, tail - z - 6);
-        r.position.set(0, -14 - i * 2.0, z);
-        core.position.copy(r.position);
-        r.scale.setScalar(rad);
-        core.scale.setScalar(rad * 0.94);
-        // Edge-on to the round, so it is a ring rather than a disc.
-        r.rotation.set(0, 0, this._time * 0.4 + i);
-        core.rotation.copy(r.rotation);
-        const fade = Math.sin(clamp01(u) * Math.PI);
-        r.material.opacity = fade * 0.85;
-        core.material.opacity = fade * 0.5;
-        // The shell goes out with the ring and thins as it goes, because what
-        // is expanding is the same amount of having happened over a larger and
-        // larger surface. The heart of it stays small and stays white.
-        if (ball) {
-          ball.position.copy(r.position);
-          ball.scale.setScalar(Math.min(rad * 0.78, room));
-          ball.material.opacity = fade * (1 - u * 0.55) * 0.5;
-        }
-        if (heart) {
-          heart.position.copy(r.position);
-          heart.scale.setScalar(Math.min(rad * (0.10 + u * 0.18), room * 0.5));
-          heart.material.opacity = fade * 0.9;
-        }
-        // And the round is shoved by each one as it passes.
-        this.shake = Math.max(this.shake, 2.2 * Math.pow(fade, 3));
-        this.impactFlash = Math.max(this.impactFlash, 0.5 * Math.pow(fade, 6));
+        // Each one resolves a step behind the last, across most of the beat.
+        const a = blastT - (i / CHARGE_COUNT) * 0.62 * blastDur;
+        draw(r, dropping ? -1 : a, blastZ(i), -14 - i * 2.0, i, 1);
       });
 
+      // THE TRAIL past Pluto: a charge out of the tail every second, each one
+      // going off KICK_AT later, bigger than the last and shoving harder.
+      this.trailRings.forEach((r) => {
+        const u = r.userData;
+        r.visible = false; u.core.visible = false; u.ball.visible = false;
+        u.heart.visible = false; u.hole.visible = false; u.pellet.visible = false;
+      });
+      if (trailOn) {
+        for (let i = 0; i < KICK_COUNT; i++) {
+          const age = trailT - i * CHARGE_EVERY;
+          if (age < 0 || age >= KICK_AT + life) continue;
+          const r = this.trailRings[i % TRAIL_POOL];
+          r.userData.radius = (380 + ((i * 0.618) % 1) * 240) * (1 + i * 0.14);
+          const p = r.userData.pellet;
+          const z0 = tail - 60;
+          if (age < KICK_AT) {
+            p.visible = true;
+            p.material.opacity = 1;
+            p.position.set(0, -12, lerp(tail, z0, age / KICK_AT));
+            p.scale.setScalar(2.2 + Math.sin(this._time * 9 + i) * 0.3);
+          } else {
+            draw(r, age - KICK_AT, z0, -12 - (i % 3) * 6, i * 1.7, 0.65 + 0.35 * KICK_W[i] / KICK_W[0]);
+          }
+        }
+      }
+
       if (this.chargeLight) {
-        this.chargeLight.visible = true;
+        this.chargeLight.visible = lit > 0 || dropping;
         this.chargeLight.intensity = dropping ? 0.5 : 1.2 + lit * 1.6;
-        this.chargeLight.position.set(0, -16, blastZ(1));
+        this.chargeLight.position.set(0, -16, lightZ);
       }
       if (dropping) this.shake = Math.max(this.shake, 0.25);
+
+      // EVERY CHARGE SHAKES THE ROUND. Not only the camera: the hull itself
+      // shudders on each shove. Never on the calm beats, where nothing jolts.
+      if (jolt > 0.01 && !calm && this.vehicle) {
+        const j = Math.min(3, jolt);
+        this.shake = Math.max(this.shake, 1.4 * j);
+        this.impactFlash = Math.max(this.impactFlash || 0, 0.35 * Math.pow(Math.min(1, j), 4));
+        const t = this._time;
+        this.vehicle.rotation.z += (Math.sin(t * 61) * 0.6 + Math.sin(t * 97) * 0.4) * 0.03 * j;
+        this.vehicle.rotation.x += Math.cos(t * 53) * 0.022 * j;
+        this._vibOff = { y: Math.cos(t * 71) * 0.5 * j };
+        this.vehicle.position.y += this._vibOff.y;
+      }
     }
 
 

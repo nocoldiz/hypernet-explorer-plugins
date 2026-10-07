@@ -936,7 +936,18 @@
         heresy: 15000,          // an esoteric spell cast on the Empire's soil
         forbiddenArts: 50000,   // a forbidden spell cast on the Empire's soil
         atheism: 10000,         // an atheist in the party
+        indecencyKiss: 5000,    // a kiss in public
+        indecencyHands: 2500,   // hands held in public
+        indecencyDance: 2500,   // a dance in public
     };
+
+    // Public displays of affection are indecent under canon law anywhere but
+    // behind a private front door: the Empathize romance moves that touch,
+    // and the charge each one is filed as.
+    const VATICAN_INDECENCY = { kiss: 'indecencyKiss', holdHands: 'indecencyHands', askDance: 'indecencyDance' };
+    // The Empire outlaws love between two people of the same gender, and
+    // fines a public display of it ten times over.
+    const VATICAN_SAME_GENDER_MULT = 10;
 
     // Classes the Holy Office marks on sight: Witch (2) and Gunmancer (16).
     // The mark is PERMANENT: it is filed on the person, not on a deed, so no
@@ -2128,6 +2139,24 @@
             if (HORDE_THEFT_EXTRA.includes(crimeId)) return true;
             const preset = PresetCrimes[crimeId];
             return !!preset && preset.category === HORDE_THEFT_CATEGORY;
+        }
+
+        // A romance move made in public, inside the Empire. Files the charge
+        // and answers what it cost, or null when no law was broken: outside
+        // canon law, a move that does not touch, or behind the front door of
+        // a private procedural home.
+        static publicAffection(actor, profile, moveId) {
+            const charge = VATICAN_INDECENCY[moveId];
+            if (!charge || !actor || this.syncJurisdiction() !== LAW_VATICAN) return null;
+            const houses = window.ProceduralHouseSystem;
+            if (houses && typeof houses.isCurrentPrivateHome === 'function' && houses.isCurrentPrivateHome()) return null;
+            const actorGender = typeof actor.gender === 'function' ? actor.gender() : 0;
+            const otherGender = profile && profile.gender != null ? Number(profile.gender) : -1;
+            const sameGender = actorGender === otherGender;
+            const asked = VATICAN_SINS[charge] * (sameGender ? VATICAN_SAME_GENDER_MULT : 1);
+            const before = this.getTotalBounty();
+            this.addCrime(this.canonChargeName(charge), asked, charge);
+            return { charge, sameGender, fine: Math.max(0, this.getTotalBounty() - before) };
         }
 
         static canonChargeName(key) {

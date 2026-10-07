@@ -1123,6 +1123,754 @@
         "il Mare Asciutto",
         "il Vecchio Monopolio"
       ]
+    },
+    "hardware": {
+      "pattern": [
+        "{noun} {adj}",
+        "{noun} di {of}",
+        "Il {noun} di {of}",
+        "Il {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Ferramenta",
+        "Magazzino Attrezzi",
+        "Emporio Edile",
+        "Deposito",
+        "Legnaio",
+        "Negozio Fai da Te",
+        "Bazar dei Chiodi",
+        "Spaccio Utensili",
+        "Banco Ricambi",
+        "Fondaco"
+      ],
+      "adj": [
+        "Chiuso",
+        "Arrugginito",
+        "Polveroso",
+        "Saccheggiato",
+        "Sprangato",
+        "Cigolante",
+        "Economico",
+        "Pieno di Segatura",
+        "Vecchio",
+        "Vuoto"
+      ],
+      "of": [
+        "Vecchio Brannigan",
+        "Fratelli Martello",
+        "un Idraulico Fallito",
+        "Guardiano Notturno",
+        "Re dei Chiodi",
+        "Zio Rudi",
+        "Uomini del Sindacato",
+        "un Falegname Scomparso",
+        "Sorelle Rivetti",
+        "Ultimo Caporeparto"
+      ]
+    },
+    "grocery": {
+      "pattern": [
+        "{noun} {adj}",
+        "{noun} di {of}",
+        "Il {noun} di {of}",
+        "Il {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Alimentari",
+        "Mercato",
+        "Negozietto",
+        "Spaccio",
+        "Supermercato",
+        "Fruttivendolo",
+        "Emporio Alimentare",
+        "Banco Salumi",
+        "Discount",
+        "Minimarket"
+      ],
+      "adj": [
+        "Avariato",
+        "Tremolante",
+        "Appiccicoso",
+        "Vuoto",
+        "Freddo",
+        "Conveniente",
+        "Notturno",
+        "Marcio",
+        "Silenzioso",
+        "Luminoso"
+      ],
+      "of": [
+        "Mamma Lucia",
+        "Fratelli Okafor",
+        "Taglia Prezzi",
+        "una Cassiera Sparita",
+        "Campi Freschi",
+        "Signor Patel",
+        "Turno di Notte",
+        "Vecchia Cooperativa",
+        "un Franchising Fallito",
+        "Giro del Latte"
+      ]
+    },
+    "shop": {
+      "pattern": [
+        "{noun} {adj}",
+        "{noun} di {of}",
+        "Il {noun} di {of}",
+        "Il {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Negozio",
+        "Emporio",
+        "Bazar",
+        "Spaccio",
+        "Magazzino",
+        "Bottegone",
+        "Rigattiere",
+        "Negozio di Curiosita",
+        "Outlet",
+        "Emporio Generale"
+      ],
+      "adj": [
+        "Chiuso",
+        "Sbiadito",
+        "Strano",
+        "Abbandonato",
+        "Ingombro",
+        "Malandato",
+        "Scintillante",
+        "Dimenticato",
+        "Scontato",
+        "Sbarrato"
+      ],
+      "of": [
+        "Madama Orsolya",
+        "Due Fratelli",
+        "un Erede Perduto",
+        "Banco dei Pegni",
+        "Meraviglie",
+        "Seconde Occasioni",
+        "Vecchio Padrone",
+        "Cianfrusaglie",
+        "Commesso Viaggiatore",
+        "Trovate Fortunate"
+      ]
+    },
+    "hospital": {
+      "pattern": [
+        "{noun} {adj}",
+        "{noun} di {of}",
+        "Il {noun} di {of}",
+        "Il {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Ospedale",
+        "Sanatorio",
+        "Ospizio",
+        "Manicomio",
+        "Ambulatorio",
+        "Ricovero",
+        "Reparto Isolamento",
+        "Centro Medico",
+        "Lazzaretto",
+        "Policlinico"
+      ],
+      "adj": [
+        "Condannato",
+        "Silenzioso",
+        "Tremolante",
+        "in Quarantena",
+        "Sterile",
+        "Piangente",
+        "Dimenticato",
+        "della Misericordia",
+        "Grigio",
+        "Ultimo"
+      ],
+      "of": [
+        "Sant'Agata",
+        "gli Infermi",
+        "Misericordia",
+        "l'Infermiera di Notte",
+        "Dottor Halloran",
+        "l'Anno della Febbre",
+        "Quieta Guarigione",
+        "l'Ala Chiusa",
+        "Buon Samaritano",
+        "Lungo Sonno"
+      ]
+    },
+    "clinic": {
+      "pattern": [
+        "La {noun} {adj}",
+        "{noun} di {of}",
+        "La {noun} di {of}",
+        "La {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Clinica",
+        "Infermeria",
+        "Farmacia",
+        "Guardia Medica",
+        "Casa di Cura",
+        "Sala Visite",
+        "Condotta Medica",
+        "Stanza di Cura",
+        "Clinica di Quartiere",
+        "Clinica Diurna"
+      ],
+      "adj": [
+        "Chiusa",
+        "Minuscola",
+        "Gratuita",
+        "di Vicolo",
+        "Lindissima",
+        "Malandata",
+        "Notturna",
+        "Privata",
+        "Angusta",
+        "Dimenticata"
+      ],
+      "of": [
+        "Dottor Vos",
+        "Mani Gentili",
+        "Quartiere",
+        "San Luca",
+        "Vecchio Speziale",
+        "Dottoressa Amara",
+        "Opera Pia",
+        "Piccole Grazie",
+        "Defunto Dottore",
+        "Via Quieta"
+      ]
+    },
+    "tavern": {
+      "pattern": [
+        "La {noun} {adj}",
+        "{noun} di {of}",
+        "La {noun} di {of}",
+        "La {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Taverna",
+        "Locanda",
+        "Osteria",
+        "Bettola",
+        "Mescita",
+        "Stazione di Posta",
+        "Fiaschetteria",
+        "Cantina",
+        "Enoteca",
+        "Trattoria"
+      ],
+      "adj": [
+        "Ubriaca",
+        "Storta",
+        "Fumosa",
+        "Addormentata",
+        "Dorata",
+        "Chiassosa",
+        "Gocciolante",
+        "Saltellante",
+        "Ultima",
+        "Assetata"
+      ],
+      "of": [
+        "Uomo Verde",
+        "Tre Botti",
+        "Vecchio Hask",
+        "Ruota Rotta",
+        "Bovaro Allegro",
+        "Leone Rosso",
+        "Violinista Impiccato",
+        "Maiale Errante",
+        "Sette Stelle",
+        "Viandante Stanco"
+      ]
+    },
+    "restaurant": {
+      "pattern": [
+        "{noun} {adj}",
+        "{noun} di {of}",
+        "Il {noun} di {of}",
+        "Il {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Ristorante",
+        "Bistrot",
+        "Locale",
+        "Self Service",
+        "Grill",
+        "Steakhouse",
+        "Circolo",
+        "Refettorio",
+        "Bar Tavola Calda",
+        "Desco"
+      ],
+      "adj": [
+        "Chiuso",
+        "Raffinato",
+        "Unto",
+        "Elegante",
+        "a Lume di Candela",
+        "Notturno",
+        "Famoso",
+        "Bruciato",
+        "Vuoto",
+        "Dorato"
+      ],
+      "of": [
+        "Chef Moreau",
+        "Nonna Rita",
+        "Cucchiaio d'Argento",
+        "Piatto Blu",
+        "Signor Wong",
+        "Segugio Affamato",
+        "Bella Vista",
+        "Vecchia Cucina",
+        "Ricetta Perduta",
+        "Petit Coin"
+      ]
+    },
+    "farmhouse": {
+      "pattern": [
+        "La {noun} {adj}",
+        "{noun} di {of}",
+        "La {noun} di {of}",
+        "La {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Cascina",
+        "Fattoria",
+        "Masseria",
+        "Grangia",
+        "Casa Colonica",
+        "Baita",
+        "Stalla",
+        "Tenuta",
+        "Mezzadria",
+        "Casa del Mugnaio"
+      ],
+      "adj": [
+        "Solitaria",
+        "Cadente",
+        "Vecchia",
+        "Consumata",
+        "Vuota",
+        "Infestata dalle Erbacce",
+        "Quieta",
+        "di Paglia",
+        "Fangosa",
+        "Dimenticata"
+      ],
+      "of": [
+        "Famiglia Hollis",
+        "Vecchia Margit",
+        "un Pastore Morto",
+        "Campo Lungo",
+        "Vedova Cray",
+        "Tre Acri",
+        "Fienile",
+        "Raccolto Perduto",
+        "Mugnaio",
+        "Colle della Fame"
+      ]
+    },
+    "house": {
+      "pattern": [
+        "La {noun} {adj}",
+        "{noun} di {of}",
+        "La {noun} di {of}",
+        "La {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Casa",
+        "Dimora",
+        "Residenza",
+        "Villetta",
+        "Palazzina",
+        "Casetta",
+        "Pensione",
+        "Mansarda",
+        "Abitazione",
+        "Magione"
+      ],
+      "adj": [
+        "Vuota",
+        "Quieta",
+        "Stretta",
+        "Sprangata",
+        "Alta",
+        "Accogliente",
+        "Scrostata",
+        "Chiusa",
+        "Silenziosa",
+        "Vecchia"
+      ],
+      "of": [
+        "Famiglia Marlowe",
+        "una Maestra in Pensione",
+        "Numero Nove",
+        "Inquilino Assente",
+        "Nonna Elsa",
+        "Pensionanti",
+        "Orologiaio",
+        "una Zia Dimenticata",
+        "Clown Triste",
+        "Nottambulo"
+      ]
+    },
+    "abandoned": {
+      "pattern": [
+        "{noun} {adj}",
+        "{noun} di {of}",
+        "Il {noun} di {of}",
+        "Il {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Rudere",
+        "Relitto",
+        "Guscio",
+        "Scheletro",
+        "Tugurio",
+        "Stabile",
+        "Casolare Marcio",
+        "Isolato Bruciato",
+        "Palazzo Condannato",
+        "Vuoto"
+      ],
+      "adj": [
+        "Crollato",
+        "Sventrato",
+        "Marcio",
+        "Infestato",
+        "Caduto",
+        "Ammuffito",
+        "Bruciato",
+        "Vandalizzato",
+        "Silenzioso",
+        "Fatiscente"
+      ],
+      "of": [
+        "Ultimo Inquilino",
+        "Finestre Rotte",
+        "Notte del Fuoco",
+        "Abusivi",
+        "Cattivo Padrone",
+        "Muffa e Marciume",
+        "Sfrattati",
+        "Anno dell'Alluvione",
+        "Affitto Dimenticato",
+        "Demolitori"
+      ]
+    },
+    "basement": {
+      "pattern": [
+        "{noun} {adj}",
+        "{noun} di {of}",
+        "Il {noun} di {of}",
+        "Il {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Seminterrato",
+        "Locale Caldaia",
+        "Scantinato",
+        "Ripostiglio",
+        "Lavatoio",
+        "Laboratorio",
+        "Rifugio",
+        "Carbonile",
+        "Sottotetto Rovescio",
+        "Vano Tecnico"
+      ],
+      "adj": [
+        "Umido",
+        "Allagato",
+        "Buio",
+        "Stantio",
+        "Chiuso",
+        "Ronzante",
+        "Pieno di Ragnatele",
+        "Basso",
+        "Freddo",
+        "Segreto"
+      ],
+      "of": [
+        "Custode",
+        "Vecchia Caldaia",
+        "un Accumulatore",
+        "Padrone di Casa",
+        "Dottor Feld",
+        "Bidello di Notte",
+        "un Bambino Scomparso",
+        "Condominio",
+        "Idraulico",
+        "Collezionista"
+      ]
+    },
+    "laboratory": {
+      "pattern": [
+        "{noun} {adj}",
+        "{noun} di {of}",
+        "Il {noun} di {of}",
+        "Il {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Laboratorio",
+        "Reparto Ricerca",
+        "Centro Prove",
+        "Istituto",
+        "Annesso",
+        "Poligono Sperimentale",
+        "Locale Sterile",
+        "Stabilimento Biologico",
+        "Posto di Prova",
+        "Centro Ricerche"
+      ],
+      "adj": [
+        "Sigillato",
+        "Contaminato",
+        "Segreto",
+        "Ronzante",
+        "Abbandonato",
+        "Sterile",
+        "Riservato",
+        "Bruciato",
+        "Interdetto",
+        "Silenzioso"
+      ],
+      "of": [
+        "Dottor Kessler",
+        "Progetto Lanterna",
+        "Ministero",
+        "Futuri Applicati",
+        "Turno di Notte",
+        "Prova Fallita",
+        "Unita Nove",
+        "Fondi Neri",
+        "Camici Grigi",
+        "Ultimo Esperimento"
+      ]
+    },
+    "factory": {
+      "pattern": [
+        "La {noun} {adj}",
+        "{noun} di {of}",
+        "La {noun} di {of}",
+        "La {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Fabbrica",
+        "Officina",
+        "Filanda",
+        "Fonderia",
+        "Raffineria",
+        "Conserviera",
+        "Acciaieria",
+        "Ferriera",
+        "Cartiera",
+        "Manifattura"
+      ],
+      "adj": [
+        "Arrugginita",
+        "Ferma",
+        "Ruggente",
+        "Chiusa",
+        "Fumante",
+        "Condannata",
+        "di Ferro",
+        "Unta",
+        "Senza Fine",
+        "Silenziosa"
+      ],
+      "of": [
+        "Henley e Figli",
+        "Sindacato",
+        "Ruota di Ferro",
+        "Ultimo Turno",
+        "Acciaierie Riunite",
+        "Sciopero",
+        "Sirena di Notte",
+        "Vecchio Padrone",
+        "Progresso",
+        "Cinghia Rotta"
+      ]
+    },
+    "castle": {
+      "pattern": [
+        "{noun} {adj}",
+        "{noun} di {of}",
+        "Il {noun} di {of}",
+        "Il {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Mastio",
+        "Castello",
+        "Maniero",
+        "Forte",
+        "Torrione",
+        "Palazzo",
+        "Baluardo",
+        "Bastione",
+        "Cassero",
+        "Rocca Alta"
+      ],
+      "adj": [
+        "Cupo",
+        "Reale",
+        "Cadente",
+        "di Ferro",
+        "Nero",
+        "Antico",
+        "Superbo",
+        "Caduto",
+        "Alto",
+        "Solitario"
+      ],
+      "of": [
+        "Re Aldric",
+        "Usurpatore",
+        "Regina Rossa",
+        "Ultimo Assedio",
+        "Stendardo d'Argento",
+        "Lord Mortane",
+        "Re Fanciullo",
+        "Corona Spezzata",
+        "Corte d'Inverno",
+        "Sette Cavalieri"
+      ]
+    },
+    "church": {
+      "pattern": [
+        "La {noun} {adj}",
+        "{noun} di {of}",
+        "La {noun} di {of}",
+        "La {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Chiesa",
+        "Cappella",
+        "Abbazia",
+        "Cattedrale",
+        "Pieve",
+        "Basilica",
+        "Collegiata",
+        "Prioria",
+        "Parrocchia",
+        "Chiesetta"
+      ],
+      "adj": [
+        "Silenziosa",
+        "Santa",
+        "Sconsacrata",
+        "Vuota",
+        "a Lume di Candela",
+        "Dimenticata",
+        "Grigia",
+        "Solitaria",
+        "Diroccata",
+        "Piccola"
+      ],
+      "of": [
+        "San Colombano",
+        "Vergine Piangente",
+        "Santo Nome",
+        "Martiri",
+        "Nostra Signora",
+        "Ultima Messa",
+        "Campanaro",
+        "Sant'Ivo",
+        "Pellegrini",
+        "Buon Pastore"
+      ]
+    },
+    "mines": {
+      "pattern": [
+        "La {noun} {adj}",
+        "{noun} di {of}",
+        "La {noun} di {of}",
+        "La {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Miniera",
+        "Cava",
+        "Galleria",
+        "Solfatara",
+        "Vena",
+        "Escavazione",
+        "Discenderia",
+        "Fossa",
+        "Cava Profonda",
+        "Coltivazione"
+      ],
+      "adj": [
+        "Profonda",
+        "Nera",
+        "Allagata",
+        "Crollata",
+        "Senza Fine",
+        "Scintillante",
+        "Abbandonata",
+        "Ricca",
+        "Affamata",
+        "Fredda"
+      ],
+      "of": [
+        "Colle di Ferro",
+        "Vecchio Grub",
+        "Vena d'Argento",
+        "Squadra Perduta",
+        "Gola del Rame",
+        "Compagnia",
+        "Canarino",
+        "Lungo Buio",
+        "Re Gnomi",
+        "Roccia Nera"
+      ]
+    },
+    "lair": {
+      "pattern": [
+        "La {noun} {adj}",
+        "{noun} di {of}",
+        "La {noun} di {of}",
+        "La {noun} {adj} di {of}"
+      ],
+      "noun": [
+        "Tana",
+        "Spelonca",
+        "Cova",
+        "Caverna",
+        "Grotta",
+        "Buca",
+        "Fossa",
+        "Rimessa",
+        "Tana Profonda",
+        "Gabbia"
+      ],
+      "adj": [
+        "Fetida",
+        "Piena di Ossa",
+        "Tremenda",
+        "Affamata",
+        "Fumante",
+        "Oscura",
+        "Antica",
+        "Rosicchiata",
+        "Selvaggia",
+        "Profonda"
+      ],
+      "of": [
+        "Wyrm",
+        "Molti Denti",
+        "Bestia",
+        "Vecchio Scald",
+        "Cacciatore Pallido",
+        "Madre della Covata",
+        "Ghiottone",
+        "Artiglio Silente",
+        "Fauce Rossa",
+        "Dormiente"
+      ]
     }
   }
 }

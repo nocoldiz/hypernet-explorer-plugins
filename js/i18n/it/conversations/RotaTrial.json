@@ -1,0 +1,160 @@
+{
+  "line": {
+    "title": "Tribunale della Rota Romana",
+    "archmagistrate": "Arcimagistrato",
+    "interpreter": "Interprete assegnato dalla corte",
+    "tariff": "Pena da tariffario",
+    "defenceRoll": "Difesa davanti alla Rota",
+    "absolvo": "ABSOLVO",
+    "condemno": "CONDEMNO",
+    "courtDescription": "Il Tribunale della Rota Romana siede in {venue}. {gallery} Presiede l'Arcimagistrato {judge}. La corte assegna {interpreter} per rendere il latino del banco."
+  },
+  "choice": {
+    "confess": "Confiteor. (Confesso.)",
+    "deny": "Nego. (Nego le accuse.)",
+    "mercy": "Misericordiam peto. (Chiedo pietà.)"
+  },
+  "names": {
+    "judges": [
+      "Ignatius Ferrante",
+      "Bonifacius Orsini",
+      "Clemens Vitelleschi",
+      "Gregorius Massimo",
+      "Innocentius Colonna",
+      "Benedictus Caetani",
+      "Leo Altieri",
+      "Sixtus Barberini"
+    ],
+    "interpreters": [
+      "Fra' Matteo Lanzi",
+      "Suor Agnese Rota",
+      "Fra' Tommaso Vella",
+      "Diacono Piero Arnaldi",
+      "Suor Chiara Benni",
+      "Fra' Luca Sartori"
+    ]
+  },
+  "court": {
+    "venues": [
+      "la Sala della Rota, sotto un affresco del Giudizio Universale",
+      "una sala a volta del Palazzo Apostolico, illuminata da una sola finestra",
+      "un'aula fredda di marmo grigio, con le chiavi dell'Impero scolpite sopra il banco",
+      "la sala capitolare di una cattedrale, sgomberata dei banchi per l'udienza"
+    ],
+    "gallery": [
+      "Chierici in nero riempiono i banchi e non sussurrano.",
+      "Una fila di notai trascrive ogni parola in tre copie.",
+      "La galleria è vuota: la Rota non siede per un pubblico.",
+      "Due alabardieri svizzeri stanno alla porta e non guardano nulla."
+    ]
+  },
+  "noCase": {
+    "la": ["Nulla accusatio in tabula scripta est. Tribunal non sedet. Discede."],
+    "tr": ["Sul foglio non è scritta alcuna accusa. La corte non siede. Puoi andare."]
+  },
+  "opening": {
+    "la": [
+      "Tribunal Rotae Romanae sedet. Adstat reus {name}. Audiatur et altera pars, sed lex non flectitur.",
+      "In nomine Imperii Sancti, causa {name} aperitur. Iustitia aequa est, sed non mitis.",
+      "Sedet Rota. Reus {name}, attende: hic nihil fortuna, omnia lex."
+    ],
+    "tr": [
+      "Il Tribunale della Rota Romana è in seduta. L'imputato, {name}, compare davanti a esso. Si ascolterà anche l'altra parte, ma la legge non si piega.",
+      "Nel nome del Sacro Impero, si apre la causa di {name}. Qui la giustizia è equa, ma non è mite.",
+      "La Rota siede. Imputato {name}, ascolta: qui nulla è lasciato al caso, tutto alla legge."
+    ]
+  },
+  "noAdvocate": {
+    "la": [
+      "Advocatus non admittitur. Interpres tibi datus est; nihil aliud.",
+      "Nemo pro te loquetur. Interpres verba mea reddet, et tua."
+    ],
+    "tr": [
+      "Nessun avvocato è ammesso. Ti è stato dato un interprete, e nient'altro.",
+      "Nessuno parlerà per te. L'interprete renderà le mie parole, e le tue."
+    ]
+  },
+  "charge": {
+    "la": [
+      "Accusaris de crimine: {charge}. Poena in tabula: {amount}.",
+      "Scriptum est in tabula: {charge}. Pretium: {amount}."
+    ],
+    "tr": [
+      "Sei accusato di: {charge}. La pena sul foglio: {amount}.",
+      "Sul foglio è scritto: {charge}. Il suo prezzo: {amount}."
+    ]
+  },
+  "askPlea": {
+    "la": ["Quid respondes? Confiteris, an negas?"],
+    "tr": ["Che cosa rispondi? Confessi, o neghi?"]
+  },
+  "noMercy": {
+    "la": [
+      "Misericordia non est in hoc foro. Responde ad accusationem.",
+      "Misericordiam a Deo pete, non a Rota. Confiteris, an negas?"
+    ],
+    "tr": [
+      "In questa corte non c'è pietà. Rispondi all'accusa.",
+      "Chiedi pietà a Dio, non alla Rota. Confessi, o neghi?"
+    ]
+  },
+  "confession": {
+    "la": ["Confessio accepta est. Poena uno gradu minuitur, nec amplius."],
+    "tr": ["La confessione è accolta. La pena scende di un gradino del tariffario, e non oltre."]
+  },
+  "markNotArguable": {
+    "la": ["Quod es, non quod fecisti, in tabula scriptum est. De hoc non disputatur."],
+    "tr": ["Sul foglio è scritto ciò che sei, non ciò che hai fatto. Su questo non si discute."]
+  },
+  "statesOdds": {
+    "la": ["Interpres tibi dicet quanta sit spes defensionis tuae. Nihil celatur."],
+    "tr": ["La corte dichiara le probabilità apertamente, perché nessuno possa dirla ingiusta: la tua difesa ne ha {chance} su cento. Se fallisce, la negazione è spergiuro, e la pena sale di un gradino."]
+  },
+  "hearDefence": {
+    "la": ["Loquere. Rota audit."],
+    "tr": ["Parla. La Rota ascolta."]
+  },
+  "acquittal": {
+    "la": [
+      "Accusatio non probata est. Absolvo te. Tabula deletur.",
+      "Defensio valet. Absolutus es; discede in pace."
+    ],
+    "tr": [
+      "L'accusa non è provata. Ti assolvo. Il foglio è cancellato.",
+      "La difesa regge. Sei assolto; va' in pace."
+    ]
+  },
+  "perjury": {
+    "la": [
+      "Negasti quod verum est. Periurium addis crimini tuo.",
+      "Defensio cecidit, et mendacium tuum cum ea. Poena augetur."
+    ],
+    "tr": [
+      "Hai negato ciò che è vero. Aggiungi lo spergiuro al tuo crimine.",
+      "La difesa è caduta, e la tua menzogna con essa. La pena aumenta."
+    ]
+  },
+  "conviction": {
+    "la": [
+      "Reus est. Condemno.",
+      "Probatum est. Condemno te secundum legem."
+    ],
+    "tr": [
+      "Colpevole. Ti condanno.",
+      "È provato. Ti condanno secondo la legge."
+    ]
+  },
+  "sentence": {
+    "la": ["Poenam tibi irrogo secundum tariffam Imperii."],
+    "tr": ["Pronuncio la pena secondo il tariffario dell'Impero: {sentence}."]
+  },
+  "confiscation": {
+    "la": ["Bona tua publicantur, usque ad summam poenae."],
+    "tr": ["I tuoi beni sono confiscati, fino all'intera somma della pena: {amount}."]
+  },
+  "release": [
+    "La porta della cella si apre. Un chierico legge la scarcerazione ad alta voce in latino, poi ancora una volta per te. La Rota non ti accompagna fuori.",
+    "Sententia expleta est. La tua pena è scontata. Le guardie ti restituiscono il poco che la corte ti ha lasciato.",
+    "L'interprete aspetta al cancello: \"La Rota considera chiusa la questione. Ma la ricorda.\""
+  ]
+}

@@ -134,7 +134,7 @@
     },
     "expression_seeds": {
       "title": "Expression Seeds",
-      "description": "An expression seed is used on one character and unlocks their Expression. Each character needs a seed of their own.\n\nExpression is opened from the skills benches, picking any party member who has it."
+      "description": "An expression seed is used on one character and unlocks their Expression. Each character needs a seed of their own.\n\nExpression is opened from the skills benches, picking any party member who has it.\n\nA power can be bound by limitations: never on a chosen day, only against one kind of creature, only by night, only at a price in blood or gold. The more a power is bound, the less it costs, and the further it can reach beyond the character's stats."
     },
     "equipment_hands_and_slots": {
       "title": "Equipment: Hands and Slots",

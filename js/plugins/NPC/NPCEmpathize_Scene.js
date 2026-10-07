@@ -2859,6 +2859,11 @@
         SoundManager.playBuzzer();
         return;
       }
+      // One of the party's own working a shift: the Reserves call them back.
+      if (window.ShopManagement?.isPartyStaffName?.(npcName)) {
+        SoundManager.playBuzzer();
+        return;
+      }
       const recruitLevel = _presetFromEvent($gameMap?.event(evId))?.level ?? profile?.level;
       if (!_joinLevelOk(recruitLevel)) {
         _warnJoinLevel(recruitLevel, npcName);
@@ -3025,6 +3030,11 @@
       // stays); a keeper whose event IS the shop cannot.
       const rotaKeeper = !!window.NPCSim?.isShopShiftCovered?.($gameMap?.event(evId));
       if (!rotaKeeper && window.NPCSystem?.isAnyShopEvent?.($gameMap?.event(evId))) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      // One of the party's own working a shift: the Reserves call them back.
+      if (window.ShopManagement?.isPartyStaffName?.(npcName)) {
         SoundManager.playBuzzer();
         return;
       }

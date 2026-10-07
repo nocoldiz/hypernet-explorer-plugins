@@ -131,6 +131,9 @@
       const assign = $gameSystem?._npcShopAssignments?.[profile?._eventName];
       if (!assign) return false;
       if (LeaveManager.active(profile)) return false;
+      // One of the party's own is standing in for them at a counter the party
+      // owns: the shift is theirs, so this one stays home.
+      if (window.WorkplaceDeeds?.isDisplaced?.(profile?._eventName)) return false;
       return Math.floor(hour / SHIFT_HOURS) === assign.shift;
     },
 
@@ -246,6 +249,9 @@
     _inWorkHours(profile, hour, day) {
       if (!profile.currentJobId || profile.workShift == null) return false;
       if (LeaveManager.active(profile)) return false;
+      // One of the party's own is working their shift at a workplace the party
+      // owns (WorkplaceDeeds): they have the day off until that ends.
+      if (window.WorkplaceDeeds?.isDisplaced?.(profile._eventName)) return false;
       if (Math.floor(hour / SHIFT_HOURS) !== profile.workShift) return false;
       if (this.isWeekend(day ?? this._dayIndex()) && JobManager.isWeekdayOnly(JobManager.getJob(profile))) return false;
       if (this.isHolidayOff(profile, day)) return false;
@@ -412,6 +418,9 @@
       const assign = $gameSystem?._npcShopAssignments?.[profile?._eventName];
       if (!assign) return false;
       if (LeaveManager.active(profile)) return false;
+      // One of the party's own is standing in for them at a counter the party
+      // owns: the shift is theirs, so this one stays home.
+      if (window.WorkplaceDeeds?.isDisplaced?.(profile?._eventName)) return false;
       return Math.floor(hour / SHIFT_HOURS) === assign.shift;
     },
 

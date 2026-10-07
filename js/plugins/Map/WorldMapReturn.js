@@ -78,7 +78,7 @@
  *
  * @command enterDungeonDoor
  * @text Enter Dungeon Door
- * @desc Descend through a DoorDungeon tile into a coordinate-seeded dungeon (type from the biome lowerLayer)
+ * @desc Descend through a DoorDungeon tile into a seeded building interior rolled from the structures whose Biomes.json access lists DoorDungeon
  *
  * @command startForcedBiome
  * @text Start Forced Biome
@@ -5180,6 +5180,13 @@
         // relaid under them: leave it exactly as it stands.
         if (!force && key !== null && key === populatedKey) return false;
         populatedKey = key;
+        // A ProceduralInterior's furniture goes down first, so the chests, the
+        // traps and the monsters dealt onto its floor all find it standing.
+        const furniture = window.FurnitureSystem;
+        const pg = procGen();
+        if (pg && furniture && typeof furniture.furnishInterior === 'function') {
+            furniture.furnishInterior(pg.generatedMapData);
+        }
         withSquareLocalView(partyCell(), () => {
             if (placeChestEvents) placeChestEvents();
             if (placeSpikeTrapEvents) placeSpikeTrapEvents();
@@ -6370,24 +6377,31 @@
     });
 
     // ── DoorDungeon feature descent ─────────────────────────────────────────
-    // Resolve the dungeon-type biome a DoorDungeon leads to from the surface
-    // biome's lowerLayer:
-    //   - a Cave-family lower layer (Cave, CaveIce, CaveFlooded, ...) or none
-    //     -> "Dungeon" (a DoorDungeon always opens onto a built dungeon, never a
-    //        natural cave)
-    //   - "Crypt"  -> Crypt,  "Sewer" -> Sewer,  and so on for any other
-    //     dungeon-flavoured lower layer, which is generated as-is.
-    function resolveDungeonBiomeName(surfaceBiome) {
-        let target = (surfaceBiome && surfaceBiome.lowerLayer) || 'Dungeon';
-        if (/cave/i.test(target)) target = 'Dungeon';
-        return target;
+    // Which building a DoorDungeon opens onto is rolled, like a stairway's
+    // destination, out of the structure catalogue: every structure whose biome
+    // lists DoorDungeon in its Biomes.json `access` (a dungeon, a hardware
+    // store, a hospital, a tavern, an abandoned house...), by weight, whatever
+    // the surface is. Seeded on the door tile, so one door always leads to the
+    // same place. "Dungeon" when the catalogue cannot answer.
+    function resolveDungeonBiomeName(doorTile) {
+        const TI = window.TerrainInteractions;
+        if (TI && typeof TI.pickStructure === 'function') {
+            const d = $gamePlayer.direction();
+            const door = doorTile || {
+                x: $gameMap.roundXWithDirection($gamePlayer.x, d),
+                y: $gameMap.roundYWithDirection($gamePlayer.y, d),
+            };
+            const rolled = TI.pickStructure('doorDungeon', door);
+            if (rolled) return rolled;
+        }
+        return 'Dungeon';
     }
 
     // Enter a procedural, coordinate-seeded dungeon through a DoorDungeon tile on
     // the procedural map. Behaves like goDown (pushes a layer so "Go to the
     // surface" returns), but forces the resolved dungeon-type biome instead of
     // the biome's natural cave lower layer, and returns the player to the door.
-    PluginManager.registerCommand(PLUGIN_PMT, 'enterDungeonDoor', () => {
+    PluginManager.registerCommand(PLUGIN_PMT, 'enterDungeonDoor', (args) => {
         const system      = $gameSystem;
         const procGenData = system._procGenData;
         if (!procGenData) { logWarn('DoorDungeon: no procedural map active.'); return; }
@@ -6397,8 +6411,11 @@
         }
         if (!procGenData.currentBiome) procGenData.currentBiome = 'Fields';
 
-        const surfaceBiome  = getBiomeByName(procGenData.currentBiome);
-        const lowerBiomeName = resolveDungeonBiomeName(surfaceBiome);
+        // The door tile ProceduralHouseSystem pinned (the party may stand on a
+        // passable doorway or in front of an impassable one), in map coordinates.
+        const pinned = (args && args.DoorX != null && args.DoorY != null)
+            ? { x: Number(args.DoorX), y: Number(args.DoorY) } : null;
+        const lowerBiomeName = resolveDungeonBiomeName(pinned);
         const lowerBiome     = getBiomeByName(lowerBiomeName);
         if (!lowerBiome) {
             logWarn(`DoorDungeon: Dungeon biome "${lowerBiomeName}" not found`); return;
@@ -6410,11 +6427,18 @@
         // to take the whole prefab -- door included -- away with it.
         stashSurfaceSnapshot(procGenData);
 
+        // Square-local, read BEFORE the window closes: on a stitched window the
+        // party's map coordinate depends on the window's shape, and it seeds the
+        // layout and keys the furniture, so the same door has to give the same
+        // numbers every time. Closing the window does not move the party.
+        const doorLocal = (window.ProcStitch && typeof window.ProcStitch.local === 'function')
+            ? window.ProcStitch.local($gamePlayer.x, $gamePlayer.y)
+            : { x: $gamePlayer.x, y: $gamePlayer.y };
         if (window.ProcStitch) window.ProcStitch.close();
 
         // Return the player to the door on "Go to the surface".
-        procGenData.goDownEventX = $gamePlayer.x;
-        procGenData.goDownEventY = $gamePlayer.y;
+        procGenData.goDownEventX = doorLocal.x;
+        procGenData.goDownEventY = doorLocal.y;
 
         procGenData.biomeLayerStack.push(procGenData.currentBiome);
         procGenData.currentBiome          = lowerBiomeName;

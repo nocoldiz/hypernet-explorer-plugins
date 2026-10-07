@@ -817,7 +817,8 @@
     // The office the world is written around: whoever is named here won every
     // election that was held before the first day, sits at the head of the
     // ruling party, and cannot die in office.
-    const seated = SEATED_ON_DAY_ONE[powerName];
+    const seated = SEATED_ON_DAY_ONE[powerName] ||
+      (window.HistoryManager?.pinnedHeadOf?.(powerName) || null);
     if (seated) {
       const rulingParty = partyById(power, power.rulingPartyId) || power.parties[0];
       const head = makePolitician(power, rng, nowMinute, {
@@ -1314,6 +1315,14 @@
   function canonHeadRecord(power, minute) {
     const HM = window.HistoryManager;
     if (!HM || typeof HM.listLeaderRecords !== "function") return null;
+    // An office the world has pinned (HistoryManager.pinnedHeadOf: the
+    // Supreme Pontifex and the Prime Minister of Britannia in a world begun
+    // before 2012) is held by that person against every ballot and coup.
+    const pinned = typeof HM.pinnedHeadOf === "function" ? HM.pinnedHeadOf(power.name) : null;
+    if (pinned) {
+      const rec = typeof HM.getLeaderRecord === "function" ? HM.getLeaderRecord(pinned) : null;
+      return { name: pinned, id: rec ? rec.id : null };
+    }
     const nations = new Set();
     if (power.kind === "nation") nations.add(power.name);
     else if (power.homeNation) nations.add(power.homeNation);

@@ -943,6 +943,9 @@
         this.createCommandWindow();
         this.createListWindow();
 
+        this._wishSpot = this._isWishMode ? ($gameTemp._sandboxWishSpot || null) : null;
+        $gameTemp._sandboxWishSpot = null;
+
         if (this._isWishMode) {
             this._listWindow.setMode("wish");
             $gameTemp._sandboxStartMode = null;
@@ -1536,6 +1539,8 @@
         if (this._wishGranted) return;
         this._wishGranted = true;
         this._grantedWish = item;
+        // The event that opened the sanctum is spent with the wish.
+        if (this._wishSpot) window.SandboxWishSpots.markSpent(this._wishSpot);
         // The press or click that picked the destiny is still live this frame;
         // hold the card past it or it would dismiss itself instantly.
         this._wishGrantedAt = Date.now();
@@ -3143,8 +3148,39 @@
     // =========================================================================
     window.Scene_SandboxMenu = Scene_SandboxMenu;
 
-    PluginManager.registerCommand("SandboxMode", "openWishingSystem", args => {
+    // A map event (a statue, a fountain) answers one wish ever: the spot is its
+    // map id and the event's own coordinates, filed in the save once a wish is
+    // granted there. An orb runs from a common event with no map event behind
+    // it, so it carries no spot and stays bound only by its own consumption.
+    // Sandbox mode files no spots at all.
+    function wishSpotKey(interpreter) {
+        const eventId = interpreter && interpreter.eventId ? interpreter.eventId() : 0;
+        const ev = eventId > 0 && $gameMap ? $gameMap.event(eventId) : null;
+        if (!ev) return null;
+        return `${$gameMap.mapId()}:${ev.x}:${ev.y}`;
+    }
+
+    function isWishSpotSpent(key) {
+        return !!(key && $gameSystem._wishSpentSpots && $gameSystem._wishSpentSpots[key]);
+    }
+
+    function markWishSpotSpent(key) {
+        if (!key) return;
+        if (!$gameSystem._wishSpentSpots) $gameSystem._wishSpentSpots = {};
+        $gameSystem._wishSpentSpots[key] = true;
+    }
+
+    window.SandboxWishSpots = { key: wishSpotKey, isSpent: isWishSpotSpent, markSpent: markWishSpotSpent };
+
+    PluginManager.registerCommand("SandboxMode", "openWishingSystem", function (args) {
+        // The sandbox is for trying things: its spots never lock.
+        const spot = $gameSystem._isSandboxMode ? null : wishSpotKey(this);
+        if (isWishSpotSpent(spot)) {
+            if (window.ParchmentToast) window.ParchmentToast.show(T("Wish.spentSpot"));
+            return;
+        }
         $gameTemp._sandboxStartMode = "wish";
+        $gameTemp._sandboxWishSpot = spot;
         SceneManager.push(Scene_SandboxMenu);
     });
 

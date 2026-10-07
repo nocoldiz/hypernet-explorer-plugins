@@ -4525,7 +4525,7 @@
     // the same order, so the two can never drift apart.
     const CATEGORY_ACTION_BTNS = ['.fuse-spells-btn', '.craft-spell-btn', '.magic-systems-btn',
         '.craft-skill-btn', '.enchant-weapon-btn', '.enchant-armor-btn', '.enchant-book-btn',
-        '.write-skillbook-btn', '.write-grimorie-btn', '.hexorcize-btn', '.expression-btn'];
+        '.write-skillbook-btn', '.write-grimorie-btn', '.hexorcize-btn', '.lobotomagic-btn', '.expression-btn'];
     const CATEGORY_ACTION_FNS = [
         (sc) => sc.openSpellEditor(),
         (sc) => sc.openCraftBench('spell'),
@@ -4537,6 +4537,7 @@
         (sc) => sc.openWriteBench('skillbook'),
         (sc) => sc.openWriteBench('grimorie'),
         (sc) => sc.openHexorcizeBench(),
+        (sc) => sc.openLobotomagicBench(),
         (sc) => sc.openExpressionPicker(),
     ];
     const SKILL_GRID_COLS = 2;
@@ -5384,6 +5385,11 @@
             return;
         }
 
+        if (this._viewMode === 'lobotomagic') {
+            this.renderLobotomagicBench(knowledge);
+            return;
+        }
+
         if (this._viewMode === 'expression') {
             this.renderExpressionBench(knowledge);
             return;
@@ -5475,6 +5481,7 @@
                     <div class="inspect-btn write-skillbook-btn focusable" onclick="SceneManager._scene.openWriteBench('skillbook')">${writeSkillBookLabel}</div>
                     <div class="inspect-btn write-grimorie-btn focusable" onclick="SceneManager._scene.openWriteBench('grimorie')">${writeGrimorieLabel}</div>
                     <div class="inspect-btn hexorcize-btn focusable" onclick="SceneManager._scene.openHexorcizeBench()">${T('SkillMaster.hexorcize.button')}</div>
+                    <div class="inspect-btn lobotomagic-btn focusable" onclick="SceneManager._scene.openLobotomagicBench()">${T('SkillMaster.lobotomagic.button')}</div>
                     <div class="inspect-btn expression-btn focusable${window.Expression && window.Expression.anyInParty() ? '' : ' inspect-btn--disabled'}" onclick="SceneManager._scene.openExpressionPicker()">${T('SkillMaster.expression.button')}</div>
                 `;
             } else {
@@ -6101,6 +6108,8 @@
             this.updateWriteBenchInput();
         } else if (this._viewMode === 'hexorcize') {
             this.updateHexorcizeBenchInput();
+        } else if (this._viewMode === 'lobotomagic') {
+            this.updateLobotomagicBenchInput();
         } else if (this._viewMode === 'expression') {
             this.updateExpressionBenchInput();
         } else if (this._viewMode === 'magicSystems') {
@@ -9136,7 +9145,7 @@
         if (!window.Controller || !Controller.tips) return;
         if (Controller.textEntryOpen && Controller.textEntryOpen()) return;
         const tip = (face, key) => ({ face: face, label: T('SkillMaster.tips.' + key) });
-        const BENCHES = ['craft', 'enchant', 'writebook', 'hexorcize', 'expression'];
+        const BENCHES = ['craft', 'enchant', 'writebook', 'hexorcize', 'lobotomagic', 'expression'];
         if (BENCHES.indexOf(this._viewMode) < 0 && this._viewMode !== 'spellEditor') { Controller.clearTips(); return; }
         const tips = [
             tip('A', 'pick'),
@@ -9146,6 +9155,7 @@
         if (this._viewMode === 'enchant' || this._viewMode === 'writebook' || this._viewMode === 'craft') {
             tips.push(tip('lr', 'mode'));
         }
+        if (this._viewMode === 'lobotomagic') tips.push(tip('lr', 'member'));
         Controller.tips(tips);
     };
 
@@ -9587,6 +9597,7 @@
     };
 
     Proto.exprSlotFor = function (cat) {
+        if (cat === 'limit') return 'limits';
         if (cat === 'rule') return this._exprDestRule === 'branch' ? 'branch' : 'rules';
         if (cat === 'effect') return this._exprDestEffect === 'elseEffects' ? 'elseEffects' : 'effects';
         return cat;
@@ -9647,7 +9658,7 @@
         const slot = this.exprSlotFor(o.cat);
         if (!E.meets(actor, o.key)) {
             SoundManager.playBuzzer();
-            this.exprToast(exprT('needs', { stat: this.exprStatName(o.stat), req: o.req }), 'warning');
+            this.exprToast(exprT('needs', { stat: this.exprStatName(o.stat), req: E.reqFor(actor, o.key) }), 'warning');
             this.refreshUISkillDOM();
             return;
         }
@@ -9730,14 +9741,19 @@
     Proto.exprCardHTML = function (o, idx, actor) {
         const E = exprApi();
         const d = E.draft(actor);
-        const fitted = [d.form, d.trigger, d.branch].concat(d.rules, d.effects, d.elseEffects)
+        const fitted = [d.form, d.trigger, d.branch].concat(d.rules, d.effects, d.elseEffects, d.limits || [])
             .some(e => e && e.key === o.key);
         const open = E.meets(actor, o.key);
         const cursor = this._exprPane === 0 && idx === this._exprIndex;
-        const meta = o.stat && o.req
-            ? `${this.exprStatName(o.stat)} ${E.statOf(actor, o.stat)}/${o.req}`
-            : T('Expression.where.' + o.where);
-        const chip = fitted ? exprT('fitted') : (o.cost ? `${o.cost} KP` : exprT('free'));
+        // A requirement reads as the draft's limitations have lowered it.
+        const meta = o.cat === 'limit'
+            ? exprT('limitWeight', { n: o.weight })
+            : (o.stat && o.req
+                ? `${this.exprStatName(o.stat)} ${E.statOf(actor, o.stat)}/${E.reqFor(actor, o.key)}`
+                : T('Expression.where.' + o.where));
+        const chip = fitted ? exprT('fitted')
+            : (o.cat === 'limit' ? exprT('limitGives', { pct: Math.round(o.weight * E.LIMIT_DISCOUNT * 100) })
+                : (o.cost ? `${o.cost} KP` : exprT('free')));
         return `
             <div class="item-slot focusable sm-expr-card${cursor ? ' selected' : ''}${fitted ? ' sm-expr-on' : ''}${open ? '' : ' sm-expr-locked'}${o.req >= 30 ? ' sm-expr-tier3' : o.req >= 20 ? ' sm-expr-tier2' : ''}"
                  onclick="SceneManager._scene.exprPick(${idx})">
@@ -9838,10 +9854,17 @@
             detailHTML = `
                 ${K.title(focused.icon, T('Expression.option.' + focused.key + '.name'), T('Expression.where.' + focused.where))}
                 <div class="ui-prose sm-expr-desc">${esc(T('Expression.option.' + focused.key + '.desc'))}</div>
-                ${K.stats([
+                ${focused.cat === 'limit' ? K.stats([
+                    { label: exprT('limitWeightLabel'), value: String(focused.weight) },
+                    { label: exprT('limitGivesLabel'), value: exprT('limitGivesValue', {
+                        pct: Math.round(focused.weight * E.LIMIT_DISCOUNT * 100), leeway: focused.weight * E.LIMIT_LEEWAY }) }
+                ], 2) : K.stats([
                     focused.stat && focused.req ? {
                         label: exprT('requires'),
-                        value: `${this.exprStatName(focused.stat)} ${E.statOf(actor, focused.stat)}/${focused.req}`,
+                        value: E.reqFor(actor, focused.key) < focused.req
+                            ? exprT('reqLowered', { stat: this.exprStatName(focused.stat), have: E.statOf(actor, focused.stat),
+                                req: E.reqFor(actor, focused.key), base: focused.req })
+                            : `${this.exprStatName(focused.stat)} ${E.statOf(actor, focused.stat)}/${focused.req}`,
                         bad: !open
                     } : null,
                     { label: exprT('cost'), value: focused.cost ? `${focused.cost} KP` : exprT('free') }
@@ -9857,6 +9880,14 @@
         rows.push(slotRow('branch', d.branch, 0, d.branch ? notChip('branch', 0) : ''));
         for (let i = 0; i < E.SLOTS.effects; i++) rows.push(slotRow('effects', d.effects[i] || null, i));
         if (d.branch) for (let i = 0; i < E.SLOTS.elseEffects; i++) rows.push(slotRow('elseEffects', d.elseEffects[i] || null, i));
+        // The vows the power is bound by, and what they give back.
+        rows.push(`<div class="sm-expr-subhead"><span class="inspect-section-title">${esc(exprT('limitations'))}</span></div>`);
+        const limits = d.limits || [];
+        for (let i = 0; i < E.SLOTS.limits; i++) rows.push(slotRow('limits', limits[i] || null, i));
+        const points = E.limitPoints(d);
+        rows.push(`<div class="cc-bio-note sm-expr-limits">${esc(points
+            ? exprT('limitSummary', { n: points, pct: Math.round(E.discountOf(d) * 100), leeway: E.leewayOf(d) })
+            : exprT('limitNone'))}</div>`);
 
         const check = E.finalizeCheck(actor);
         const finalizeIdx = act(() => this.exprFinalize());
@@ -10138,6 +10169,274 @@
         }
         if (Input.isTriggered('ok') || Input.isTriggered('enter')) {
             this.hexorcizeRunChip(this._hexIndex);
+        }
+    };
+
+})();
+
+
+
+//=============================================================================
+// Module: SkillMasterLobotomagic.js
+//=============================================================================
+/*:
+ * @target MZ
+ * @plugindesc v1.0.0 SkillMaster - the Lobotomagic bench: cutting a learned skill or spell back out of a mind.
+ * @author Omni-Lex
+ *
+ * @help
+ * Teaching puts knowledge into a party member; this bench takes it back out.
+ * A skill or a spell the member has LEARNED is cut away and part of what it
+ * would cost to teach them today comes back as KP.
+ *
+ * Only what sits in the member's own learned list is offered. A skill a trait
+ * or a piece of gear grants would come straight back, so it is never on the
+ * bench; neither are the battle menu commands nor the Basic kit, which are
+ * the engine's own moves and no school's.
+ *
+ * The cut is armed by the first press and made by the second, because a
+ * skill cut away has to be paid for in full to be learned again.
+ */
+
+(() => {
+    'use strict';
+
+    window.SkillMaster = window.SkillMaster || {};
+    const SkillMaster = window.SkillMaster;
+    SkillMaster.Lobotomagic = SkillMaster.Lobotomagic || {};
+
+    const tr = (key, params) => (typeof T === 'function' ? T('SkillMaster.lobotomagic.' + key, params) : key);
+
+    const esc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
+    const tx = (s) => (typeof window.translateText === 'function' ? window.translateText(s) : s);
+
+    //=========================================================================
+    // What a cut gives back
+    //=========================================================================
+
+    const LOBO_REFUND_RATE = 0.5; // half of what teaching it today would cost
+    const LOBO_MIN = 1;
+
+    function loboRefund(actor, skill) {
+        if (!actor || !skill || !window.$gameSystem) return 0;
+        const cost = $gameSystem.getSkillKnowledgeCost(skill.id, actor.actorId());
+        return Math.max(LOBO_MIN, Math.floor(cost * LOBO_REFUND_RATE));
+    }
+    SkillMaster.Lobotomagic.refund = loboRefund;
+    SkillMaster.Lobotomagic.RATE = LOBO_REFUND_RATE;
+
+    /** True when this learned skill can be cut out of this actor's mind. */
+    function isForgettable(actor, skill) {
+        if (!actor || !skill) return false;
+        if (!actor._skills || !actor._skills.includes(skill.id)) return false;
+        if (window.$dataSystem && skill.id === $dataSystem.attackSkillId) return false;
+        if (SkillMaster.isMenuCommandSkill && SkillMaster.isMenuCommandSkill(skill.id)) return false;
+        if (SkillMaster.isBasicCategory && SkillMaster.getSkillCategory &&
+            SkillMaster.isBasicCategory(SkillMaster.getSkillCategory(skill.id))) return false;
+        if (typeof actor.addedSkills === 'function' && actor.addedSkills().includes(skill.id)) return false;
+        if (/<NoForget>/i.test(skill.note || '')) return false;
+        return true;
+    }
+    SkillMaster.Lobotomagic.isForgettable = isForgettable;
+
+    /** Every learned skill and spell the bench may cut from `actor`. */
+    function forgettableSkills(actor) {
+        const out = [];
+        if (!actor || !actor._skills || !window.$dataSkills) return out;
+        for (const id of actor._skills) {
+            const skill = $dataSkills[id];
+            if (!isForgettable(actor, skill)) continue;
+            out.push({ skill: skill, kp: loboRefund(actor, skill) });
+        }
+        const name = (row) => tx(row.skill.name) || '';
+        out.sort((a, b) => name(a).localeCompare(name(b)));
+        return out;
+    }
+    SkillMaster.Lobotomagic.skills = forgettableSkills;
+
+    /** Cuts `skillId` out of `actor` and pays the knowledge out. Returns the KP. */
+    function lobotomize(actor, skillId) {
+        const skill = window.$dataSkills ? $dataSkills[skillId] : null;
+        if (!isForgettable(actor, skill)) return 0;
+        const gain = loboRefund(actor, skill);
+        actor.forgetSkill(skill.id);
+        $gameSystem.addKnowledge(gain);
+        return gain;
+    }
+    SkillMaster.Lobotomagic.run = lobotomize;
+
+    //=========================================================================
+    // The bench
+    //=========================================================================
+
+    const Proto = window.Scene_SkillEncyclopedia.prototype;
+
+    // The bench works on whoever the switcher tabs on the right page name.
+    Proto.lobotomagicActor = function () {
+        return typeof this.getTeachActor === 'function' ? this.getTeachActor() : null;
+    };
+
+    Proto.openLobotomagicBench = function () {
+        this._viewMode = 'lobotomagic';
+        this._loboIndex = 0;
+        this._loboArmed = -1;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.closeLobotomagicBench = function () {
+        this._viewMode = 'category';
+        this._loboArmed = -1;
+        this._lastLeftMode = null;
+        this._lastLeftCategory = null;
+        this._lastRightMode = null;
+        this._lastRightSkillId = null;
+        this._lastRightKnowledge = null;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.lobotomagicRows = function () {
+        return forgettableSkills(this.lobotomagicActor());
+    };
+
+    Proto.lobotomagicAt = function (idx) {
+        return this.lobotomagicRows()[idx] || null;
+    };
+
+    // The first press arms the row, the second makes the cut.
+    Proto.lobotomagicTake = function (idx) {
+        const row = this.lobotomagicAt(idx);
+        if (!row) { SoundManager.playBuzzer(); return; }
+        if (this._loboArmed !== idx) {
+            this._loboIndex = idx;
+            this._loboArmed = idx;
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            return;
+        }
+        const actor = this.lobotomagicActor();
+        const gain = lobotomize(actor, row.skill.id);
+        this._loboArmed = -1;
+        if (!gain) { SoundManager.playBuzzer(); this.refreshUISkillDOM(); return; }
+        SoundManager.playSave();
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(tr('cut', { skill: tx(row.skill.name), name: actor.name(), kp: gain }), { severity: 'good' });
+        }
+        const rows = this.lobotomagicRows().length;
+        this._loboIndex = Math.max(0, Math.min(this._loboIndex || 0, rows - 1));
+        this._lastRightKnowledge = null;
+        this.refreshUISkillDOM();
+    };
+
+    Proto.renderLobotomagicBench = function (knowledge) {
+        const leftBox = document.getElementById('left-page-content');
+        const rightBox = document.getElementById('right-page-content');
+        if (!leftBox || !rightBox) return;
+        const K = SkillMaster.BenchKit;
+        const actor = this.lobotomagicActor();
+
+        const rows = this.lobotomagicRows();
+        this._loboIndex = Math.max(0, Math.min(this._loboIndex || 0, rows.length - 1));
+
+        let listHTML = '';
+        rows.forEach((row, idx) => {
+            const on = (this._loboIndex || 0) === idx;
+            const armed = this._loboArmed === idx;
+            listHTML += `
+                <div class="sm-skill-row sm-craft-entry ${on ? 'sm-craft-entry--cursor' : ''}">
+                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(row.skill.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(row.skill.name))}</span></span>
+                    <span class="sm-forge-cost">+${row.kp} KP</span>
+                    <span class="ui-chip sm-skill-badge focusable sm-craft-discard${on ? ' focused' : ''}"
+                        onclick="SceneManager._scene.lobotomagicTake(${idx})">${esc(tr(armed ? 'confirm' : 'forget'))}</span>
+                </div>`;
+        });
+        if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothing'))}</div></div>`;
+
+        leftBox.innerHTML = `
+            <div class="page-header-bar sm-bench-header">
+              <div class="back-button focusable" onclick="SceneManager._scene.closeLobotomagicBench()">${esc(tr('back'))}</div>
+              <h2 class="title">${esc(tr('title'))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+            </div>
+            <div class="sm-enchant-blurb cc-bio-note">${esc(tr('blurb', { pct: Math.round(LOBO_REFUND_RATE * 100) }))}</div>
+            <div id="lobotomagic-skill-box" class="ui-list ui-scroll sm-forged-list sm-forged-list--fill">
+                ${listHTML}
+            </div>`;
+
+        const focused = this.lobotomagicAt(this._loboIndex || 0);
+        let detailHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('pickSkill'))}</div></div>`;
+        if (focused && actor) {
+            const skill = focused.skill;
+            const category = SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(skill.id) : null;
+            const teach = $gameSystem.getSkillKnowledgeCost(skill.id, actor.actorId());
+            detailHTML = `
+                ${K.title(skill.iconIndex, tx(skill.name))}
+                ${K.stats([
+                    { label: tr('refund'), value: `${focused.kp} KP` },
+                    { label: tr('relearn'), value: `${teach} KP` },
+                    category ? { label: tr('school'), value: SkillMaster.getCategoryDisplayName(category) } : null
+                ], 3)}
+                ${this._loboArmed === this._loboIndex ? `<div class="sm-craft-block">${esc(tr('warning', { name: actor.name() }))}</div>` : ''}`;
+        }
+
+        rightBox.innerHTML = `
+            <div class="page-header-bar sm-bench-header">
+              <h2 class="title">${esc(tr('detailTitle', { name: actor ? actor.name() : '' }))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+            </div>
+            <div class="sm-bench-scroll">
+                ${detailHTML}
+            </div>`;
+    };
+
+    Proto.updateLobotomagicBenchInput = function () {
+        if (Input.isTriggered('cancel') || Input.isTriggered('escape') || TouchInput.isCancelled()) {
+            if (this._loboArmed >= 0) {
+                this._loboArmed = -1;
+                SoundManager.playCancel();
+                this.refreshUISkillDOM();
+                return;
+            }
+            this.closeLobotomagicBench();
+            return;
+        }
+        // Left and right walk the party, the same as the switcher tabs.
+        if (Input.isTriggered('left') || Input.isTriggered('right') ||
+            Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
+            const dir = (Input.isTriggered('left') || Input.isTriggered('pageup')) ? -1 : 1;
+            this._loboArmed = -1;
+            this._loboIndex = 0;
+            if (typeof this.cycleTeachActor === 'function') this.cycleTeachActor(dir);
+            return;
+        }
+        const rows = this.lobotomagicRows();
+        if (!rows.length) return;
+        this._loboIndex = Math.max(0, Math.min(this._loboIndex || 0, rows.length - 1));
+
+        let moved = false;
+        if (Input.isTriggered('down') || Input.isRepeated('down')) {
+            this._loboIndex = (this._loboIndex + 1) % rows.length;
+            moved = true;
+        } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
+            this._loboIndex = (this._loboIndex - 1 + rows.length) % rows.length;
+            moved = true;
+        }
+        if (moved) {
+            // Walking off an armed row disarms it: the cut is never carried along.
+            this._loboArmed = -1;
+            SoundManager.playCursor();
+            this._lastRightKnowledge = null;
+            this.refreshUISkillDOM();
+            this.scrollToActiveItem('lobotomagic-skill-box',
+                '#lobotomagic-skill-box .focused, #lobotomagic-skill-box .sm-craft-entry--cursor'); // i18n-ignore: CSS selector
+            return;
+        }
+        if (Input.isTriggered('ok') || Input.isTriggered('enter')) {
+            this.lobotomagicTake(this._loboIndex);
         }
     };
 

@@ -395,6 +395,8 @@
   "bickerLabel": "Punzecchia",
   "courtLabel": "Corteggia",
   "courtHarassmentFiled": "{name} ne ha abbastanza di {actor}. Una denuncia per molestie finisce agli atti: {fine}.",
+  "indecencyFiled": "Il Sant'Uffizio ha visto {actor} e {name}: {charge}, multa di {fine}.",
+  "indecencyFiledSameGender": "Il Sant'Uffizio ha visto {actor} e {name}: {charge}. L'Impero vieta l'amore tra persone dello stesso genere, e la multa è decuplicata: {fine}.",
   "courtHarassmentFiledFree": "{name} ne ha abbastanza di {actor}. Una denuncia per molestie finisce agli atti.",
   "hygieneCourtSelf": "Non ti lavi da un po', e {name} sta cercando di non farci caso.",
   "hygieneCourtNpc": "{name} non si lava da un po', e non c'è modo di non farci caso.",

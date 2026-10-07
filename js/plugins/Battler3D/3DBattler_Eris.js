@@ -67,7 +67,7 @@
  *                                  never the same hairstyle twice running)
  *       ErisAppearance.lock()    - stop: she keeps this body but takes her own
  *                                  hair back, and fights in that shape
- *     ErisTrial.js drives it from the troop 1342 turn script: a shift on each
+ *     TrialSystem.js drives it from the troop 1342 turn script: a shift on each
  *     of her first nine turns, then the lock on turn 10 when she stops healing
  *     and the real fight starts.
  *   - A short astral cape hanging BEHIND her from a gold collarbone clasp

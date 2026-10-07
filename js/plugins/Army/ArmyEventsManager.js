@@ -1568,7 +1568,10 @@ Sprite_ArmyLabel.prototype.refresh = function () {
     try {
       const hm = window.HistoryManager;
       const holy = hm && (hm._currentHolyLeaders || (hm._histField && hm._histField("holyLeaders", {})));
-      for (const leader of Object.values(holy || {})) {
+      // Every moral guide, not only the papal track: the Mages Guild's guide
+      // leads no army either.
+      const guides = hm && typeof hm.getMoralGuides === "function" ? hm.getMoralGuides() : {};
+      for (const leader of Object.values(holy || {}).concat(Object.values(guides || {}))) {
         if (leader && leader.name) names.add(String(leader.name));
       }
     } catch (e) { /* the century was never run */ }

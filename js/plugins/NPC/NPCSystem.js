@@ -1233,7 +1233,10 @@
     // traveller: they belong to nobody, so they can be asked along, and that is
     // the only thing on offer here that a visitor is not also offered.
     const LG = window.PartyLodging;
-    const canRecruit = !!(LG?.isResidentName?.(name) && LG.hasRoom());
+    // Somebody working a shift at one of the party's businesses is called back
+    // from the Reserves, never talked off the till.
+    const canRecruit = !!(LG?.isResidentName?.(name) && LG.hasRoom()
+      && !window.ShopManagement?.isPartyStaffName?.(name));
     const choices = [T('NPCSystem.visitor.talk'), T('NPCSystem.visitor.empathize')];
     if (canRecruit) choices.push(T('NPCSystem.visitor.join'));
     choices.push(T('NPCSystem.visitor.cancel'));

@@ -17767,6 +17767,17 @@
     text-align: right;
 }
 
+/* The Rota (TrialSystem.js): the bench speaks Latin, the interpreter renders
+   it straight after, a step in from the margin. */
+.eris-dialogue-entry.rota-latin {
+    font-style: italic;
+}
+
+.eris-dialogue-entry.rota-interpreter {
+    color: var(--text-card-medium);
+    margin-left: var(--sp-4);
+}
+
 /* Stage direction: the room, not a voice in it. */
 .eris-dialogue-entry.narrator {
     align-self: flex-start;

@@ -1914,6 +1914,18 @@
       ? _recordUnwantedCourting(profile, actorId, npcName, actor ? actor.name() : '')
       : null;
 
+    // In the Holy Vatican Empire a touch shared in public is indecency under
+    // canon law (CrimeSystem.publicAffection), and between two people of the
+    // same gender it is fined ten times over. The crime toast is a Scene_Map
+    // one, so the panel says it here.
+    const indecency = landed ? (window.CrimeSystem?.publicAffection?.(actor, profile, id) ?? null) : null;
+    const indecencyLine = indecency
+      ? T(indecency.sameGender ? 'Empathize.indecencyFiledSameGender' : 'Empathize.indecencyFiled', {
+          actor: actor ? actor.name() : '', name: npcName,
+          charge: window.CrimeSystem.canonChargeName(indecency.charge), fine: _euros(indecency.fine),
+        })
+      : null;
+
     if (landed) SoundManager.playOk(); else SoundManager.playBuzzer();
 
     // A suit pressed, and how it landed, in the party's own diary (Diary.js).
@@ -1925,8 +1937,9 @@
     this._activeTab   = 'chat';
     this._pushPlayerLine(playerLine);
     const deltaText   = `${delta >= 0 ? '+' : ''}${delta} ♥ (${actor ? actor.name() : ''})`;
-    this._joinMessage = charge
-      ? { type: 'reject', text: `${charge} ${deltaText}` }
+    const filed = [charge, indecencyLine].filter(Boolean).join(' ');
+    this._joinMessage = filed
+      ? { type: 'reject', text: `${filed} ${deltaText}` }
       : { type: delta >= 0 ? 'accept' : 'reject', text: deltaText };
     // The bank line is what this person says: only free chat goes to the model.
     this._replyNpc(npcLine);

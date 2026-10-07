@@ -12,6 +12,7 @@
     "ship": "the starship",
     "vault": "the bunker",
     "cannotJoin": "{name} cannot take the road again right now.",
+    "onShift": "{name} is working a shift. Call them back from the Reserves.",
     "estate": "{name} in {place}"
   }
 }

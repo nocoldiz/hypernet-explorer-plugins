@@ -12,6 +12,7 @@
     "ship": "l’astronave",
     "vault": "il bunker",
     "cannotJoin": "{name} non può rimettersi in viaggio adesso.",
+    "onShift": "{name} sta lavorando un turno. Richiamalo dalle Riserve.",
     "estate": "{name} a {place}"
   }
 }

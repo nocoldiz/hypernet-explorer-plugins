@@ -151,7 +151,9 @@
     "sold": "{name} venduta per {price}.",
     "saleValue": "Valore di vendita",
     "nextPayout": "Prossimo incasso",
-    "inDays": "tra {days} giorno/i"
+    "inDays": "tra {days} giorno/i",
+    "manageStaff": "Personale",
+    "counterPost": "Banco"
   },
   "claim": {
     "here": "Rivendicabile Qui",

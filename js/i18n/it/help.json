@@ -134,7 +134,7 @@
     },
     "expression_seeds": {
       "title": "Semi dell'Espressione",
-      "description": "Un seme dell'Espressione si usa su un personaggio e ne sblocca l'Espressione. Ogni personaggio ha bisogno del proprio seme.\n\nL'Espressione si apre dai banchi delle abilità, scegliendo un membro del gruppo che la possiede."
+      "description": "Un seme dell'Espressione si usa su un personaggio e ne sblocca l'Espressione. Ogni personaggio ha bisogno del proprio seme.\n\nL'Espressione si apre dai banchi delle abilità, scegliendo un membro del gruppo che la possiede.\n\nUn potere può essere legato da limitazioni: mai in un certo giorno, solo contro una specie di creatura, solo di notte, solo pagando un prezzo in sangue o in oro. Più un potere è legato, meno costa, e più può spingersi oltre le statistiche del personaggio."
     },
     "equipment_hands_and_slots": {
       "title": "Equipaggiamento: mani e slot",

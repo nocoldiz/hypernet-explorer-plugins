@@ -3906,7 +3906,7 @@
         if (pending) {
             $gameTemp._hexphonePendingTrial = null;
             try {
-                PluginManager.callCommand(null, 'ErisTrial', pending, {});
+                PluginManager.callCommand(null, 'TrialSystem', pending, {});
             } catch (e) {
                 console.error('Hexphone: could not hand over to ErisTrial', e);
             }

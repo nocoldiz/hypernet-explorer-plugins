@@ -395,6 +395,8 @@
   "bickerLabel": "Bicker",
   "courtLabel": "Court",
   "courtHarassmentFiled": "{name} has had enough of {actor}. A harassment complaint goes on the record: {fine}.",
+  "indecencyFiled": "The Holy Office saw {actor} and {name}: {charge}, fined {fine}.",
+  "indecencyFiledSameGender": "The Holy Office saw {actor} and {name}: {charge}. The Empire outlaws love between people of the same gender, and the fine is ten times over: {fine}.",
   "courtHarassmentFiledFree": "{name} has had enough of {actor}. A harassment complaint goes on the record.",
   "hygieneCourtSelf": "You have not washed in some time, and {name} is trying not to notice.",
   "hygieneCourtNpc": "{name} has not washed in some time, and there is no way not to notice.",

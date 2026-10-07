@@ -5,5 +5,6 @@
     "manifested": "What answered: {outcome}",
     "spent": "The orb goes dark. One wish, once.",
     "close": "Press any key to close"
-  }
+  },
+  "spentSpot": "Whatever answered here has already spoken. It will not answer again."
 }

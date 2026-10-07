@@ -2446,16 +2446,20 @@
     // The counter the party owns: taking it on, who stands behind it, and the
     // crates that reach its warehouse.
     whenReady(
-        () => window.ShopManagement && window.ShopManagement.assignStaff,
+        () => window.ShopManagement && window.ShopManagement.assignReserve,
         () => {
             const SM = window.ShopManagement;
+            // A shop deed by its id, a workplace as 'wp:<mapId>'.
             const shopName = (id) => {
-                try { return SM.shopDisplayName(SM.getShop(id)) || String(id || ""); }
+                try {
+                    const wp = /^wp:(d+)$/.exec(String(id || ""));
+                    if (wp) {
+                        const rep = window.WorkplaceDeeds?.report?.(Number(wp[1]));
+                        return (rep && rep.deed && rep.deed.name) || String(id);
+                    }
+                    return SM.shopDisplayName(SM.getShop(id)) || String(id || "");
+                }
                 catch (e) { return String(id || ""); }
-            };
-            const names = (id) => {
-                try { return (SM.staffRoster(id) || []).map(e => e.name || ""); }
-                catch (e) { return []; }
             };
 
             after(SM, 'onPropertyBought', function (shop) {
@@ -2466,29 +2470,25 @@
                 });
             });
 
-            // Neither call answers a NAME, and the roster is where the name
-            // lives, so the line is the difference the call made to it.
-            let _rosterBefore = [];
-            const watch = (name) => before(SM, name, function (args) {
-                _rosterBefore = names(args[0]);
+            // Who comes off a shift is only known before the call: read it then.
+            let _leaving = "";
+            before(SM, 'releaseReserve', function (args) {
+                _leaving = "";
+                try {
+                    const slot = (SM.businessSlots(args[0]) || [])
+                        .find(x => x.post === args[1] && Number(x.shift) === Number(args[2]));
+                    _leaving = (slot && slot.holder && slot.holder.kind === 'preset') ? slot.holder.name : "";
+                } catch (e) { _leaving = ""; }
             });
-            const settle = (kind, removed) => function (outcome, args) {
+            after(SM, 'assignReserve', function (outcome, args) {
                 if (!outcome || !outcome.ok) return;
-                const now = names(args[0]);
-                const [from, to] = removed ? [_rosterBefore, now] : [now, _rosterBefore];
-                const gone = to.slice();
-                let who = "";
-                for (const n of from) {
-                    const at = gone.indexOf(n);
-                    if (at < 0) { who = n; break; }
-                    gone.splice(at, 1);
-                }
-                log(kind, { name: who, shop: shopName(args[0]) });
-            };
-            watch('assignStaff');
-            after(SM, 'assignStaff', settle('shop.hired', false));
-            watch('dismissStaff');
-            after(SM, 'dismissStaff', settle('shop.dismissed', true));
+                const preset = SM.benchPreset ? SM.benchPreset(args[3]) : null;
+                log('shop.hired', { name: (preset && preset.name) || "", shop: shopName(args[0]) });
+            });
+            after(SM, 'releaseReserve', function (outcome, args) {
+                if (!outcome || !outcome.ok) return;
+                log('shop.dismissed', { name: _leaving, shop: shopName(args[0]) });
+            });
 
             after(SM, 'deliverProduce', function (result, args) {
                 if (!result || !result.toShop) return;

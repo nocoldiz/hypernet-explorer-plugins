@@ -1053,7 +1053,11 @@
         // which is what makes a hall feel like a place people pass through
         // rather than a row of statues.
         drawFor(placeId) {
-            const living = this.residents().filter(person => person.lodging === placeId);
+            // Somebody working a shift at one of the party's businesses is at
+            // work for those eight hours, not at home.
+            const SM = window.ShopManagement;
+            const living = this.residents().filter(person => person.lodging === placeId
+                && !(SM && typeof SM.isOnShiftNow === "function" && SM.isOnShiftNow(person.name)));
             const room = this.capacityFor(placeId);
             if (!Number.isFinite(room) || living.length <= room) return living;
             const pool = living.slice();
@@ -1178,6 +1182,9 @@
         // so it is turned down rather than half-restored.
         rejoin(name) {
             if (!name) return { ok: false, reason: "notResident" };
+            // Somebody working a shift at one of the party's businesses is not
+            // talked off it: the Reserves are where they are called back from.
+            if (window.ShopManagement?.isPartyStaffName?.(name)) return { ok: false, reason: "onShift" };
             if (!this.hasRoom()) return { ok: false, reason: "partyFull" };
             const person = lodgingResidents().find(entry => entry.name === name);
             if (!person) return { ok: false, reason: "notResident" };
@@ -1602,7 +1609,9 @@
         if (window.ParchmentToast) {
           window.ParchmentToast.show(reason === "partyFull"
             ? T('NPCParty.partyFull')
-            : T('NPCParty.lodging.cannotJoin', { name }), {
+            : (reason === "onShift"
+              ? T('NPCParty.lodging.onShift', { name })
+              : T('NPCParty.lodging.cannotJoin', { name })), {
             severity: 'warning'
           });
         }

@@ -333,7 +333,7 @@ var $plugins =
 {"name":"Weapon/Weapon3DOverlay","status":true,"description":"v2.0.0 The shared three.js overlay every weapon is drawn in","parameters":{}},
 {"name":"ItemSystem/ItemSystemEquipment","status":true,"description":"Character Switch Equip Menu v1.6.0","parameters":{"enableSwitching":"true","switchSound":"true"}},
 {"name":"ItemSystem/ItemSystemEquipmentUI","status":true,"description":"Character Switch Equip Menu UI v1.6.0","parameters":{}},
-{"name":"Economy/ErisTrial","status":true,"description":"Eris Trial System v1.3.0 - With Prison Bounty System","parameters":{"bountyVariable":"66","returnMapVariable":"76","returnXVariable":"74","returnYVariable":"75","prisonMapId":"1102","prisonX":"12","prisonY":"7","bountyReductionRate":"2500"}},
+{"name":"Economy/TrialSystem","status":true,"description":"Trial System v2.0.0 - Eris, or the Tribunal Rotae Romanae in the Holy Vatican Empire, with prison","parameters":{"bountyVariable":"66","returnMapVariable":"76","returnXVariable":"74","returnYVariable":"75","prisonMapId":"1102","prisonX":"12","prisonY":"7","bountyReductionRate":"2500"}},
 {"name":"Hypernet/HypernetNeuroPolice","status":true,"description":"v1.0.0 N€police: self-reporting, bounty settlement, custody and hearings portal for HypernetOS.","parameters":{}},
 {"name":"Hypernet/HypernetObjectIndex","status":true,"description":"v2.1.0 Omni-Lex Object Index: browsable encyclopedia of every catalogued item, for HypernetOS.","parameters":{}},
 {"name":"Hypernet/HypernetEurodemics","status":true,"description":"v1.0.0 Eurodemics: the continental epidemic observatory for HypernetOS.","parameters":{}},

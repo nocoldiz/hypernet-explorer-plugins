@@ -21,7 +21,7 @@
  * @help ErisDateSystem.js
  *
  * Features:
- * - Runs on the same parchment book spread as ErisTrial.js: the conversation
+ * - Runs on the same parchment book spread as TrialSystem.js: the conversation
  *   is logged one line at a time on the left page (confirm to advance) while
  *   the right page keeps Eris's portrait, mood, location and the opinion meter
  * - The date happens in a real biome, not a hand-picked landmark: every biome
@@ -73,10 +73,10 @@
  *   cruel and tender at once, toxic beats where every answer can land sweet or
  *   sour, the secrets docs/Lore.md says Eris has never told anyone (each spent
  *   for good in $gameSystem._erisEmSecrets) and a bond that never reaches the
- *   top ($gameSystem._erisEmBond, capped below 1, read by ErisTrial.js)
+ *   top ($gameSystem._erisEmBond, capped below 1, read by TrialSystem.js)
  * - Bubba leading gets his: she is evasive and flees at first, then shy, then
  *   slowly reconnects across dates ($gameSystem._erisBubbaBond, the field
- *   ErisTrial.js reads). At the top she decides to stop becoming her future
+ *   TrialSystem.js reads). At the top she decides to stop becoming her future
  *   self and turns Nibiru aside (switch 200), then the credits roll and the
  *   adventure carries on
  *
@@ -159,7 +159,7 @@
   const OPINION_ICON = 84;     // Heart
 
   // The full date-only mood pool. The trial keeps its own mood wheel; none of
-  // this leaks into ErisTrial.js. One is rolled fresh for every date, and
+  // this leaks into TrialSystem.js. One is rolled fresh for every date, and
   // moodSwing() can move her to any other mid-evening.
   const DATE_MOODS = Object.keys(MOOD_ICONS);
 
@@ -2044,7 +2044,7 @@
       $gameVariables.setValue(opinionVariableId, this.opinion);
 
       // ...and the bond the courtroom reads, the same channel Em and Bubba have
-      // (ErisTrial.js, window.ErisPlayerBond). Opinion carries most of it; the
+      // (TrialSystem.js, window.ErisPlayerBond). Opinion carries most of it; the
       // number of evenings actually seen through carries the rest, and unlike
       // opinion that count never falls. A goddess who has had dinner with the
       // defendant is measurably worse at pretending she has not: it softens her
@@ -2322,7 +2322,7 @@
     }
 
     //=========================================================================
-    // Book spread UI (same parchment pages as ErisTrial.js)
+    // Book spread UI (same parchment pages as TrialSystem.js)
     //=========================================================================
     _createDateUI() {
       dateActive = true;

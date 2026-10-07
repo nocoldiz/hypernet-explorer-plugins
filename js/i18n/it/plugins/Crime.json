@@ -28,6 +28,9 @@
     "leaveHorde": "Lasci il territorio dell'Orda Goblin. Tornano a valere la legge comune e la sua fedina."
   },
   "canon": {
+    "indecencyKiss": "Atti osceni in luogo pubblico - bacio",
+    "indecencyHands": "Atti osceni in luogo pubblico - mano nella mano",
+    "indecencyDance": "Atti osceni in luogo pubblico - ballo",
     "onPerson": "{charge}: {name}",
     "spell": "{charge}: {spell}",
     "theftFromTheFaithful": "Furto ai Fedeli",
