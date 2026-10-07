@@ -420,6 +420,8 @@
     "manualOn": "Cloche a voi. Stadi in automatico.",
     "manualOff": "Autopilota inserito.",
     "hullLost": "Breccia nello scafo. Vi abbiamo persi.",
+    "padTilt": "Si sta ribaltando. Tenetevi forte!",
+    "padBoom": "Fuoco sulla piazzola! Fuori tutti, ora!",
     "arrayHit": "Onda d'urto sulla schiera. Motore perso.",
     "arrayDrop": "Schiera sganciata. Entriamo a motore."
   },
@@ -566,16 +568,16 @@
       "zetaArrived": "Benvenuti, benvenuti, benvenuti. Volete vedere il Monumento? Dite di sì."
     },
     "dargos": {
-      "andromeda": "Benvenuti in Andromeda. Mantenete la rotta attuale. Non mantenete la rotta attuale.",
-      "theNeighbour": "Quello è il vicino. Non guardatelo. Adora essere guardato.",
-      "capture": "Siete in orbita. Non siete in orbita. Entrambe le letture sono corrette e le sosteniamo entrambe.",
-      "titaniaOrbiting": "Riducete la velocità. Aumentate la velocità. Qualunque cosa abbiate fatto, era l'altra.",
-      "deorbitBurn": "Iniziate subito la discesa. Non iniziate la discesa. Confermate una delle due.",
-      "titaniaSkim": "Siete troppo bassi. E anche troppo alti. Mantenete esattamente la posizione e intanto muovetevi.",
-      "baseSighted": "Vi abbiamo in vista. Non vi abbiamo mai visto. L'ambasciata è lieta di entrambe le cose.",
-      "finalApproach": "Atterrate sulla piazzola. La piazzola è un'esca. L'esca è la piazzola. Procedete.",
-      "contact": "Siete atterrati. Confermate di non essere atterrati.",
-      "titaniaArrived": "Benvenuti su Titania. Il mare non è pericoloso. Non avvicinatevi al mare."
+      "andromeda": "Benvenuti in Andromeda. Mantenete la rotta attuale.",
+      "theNeighbour": "Non mantenete la rotta. Quello è il vicino. Guardatelo, adora essere guardato.",
+      "capture": "Non guardate il vicino. Siete in orbita.",
+      "titaniaOrbiting": "Non siete in orbita. Riducete la velocità.",
+      "deorbitBurn": "Aumentate la velocità. Iniziate subito la discesa.",
+      "titaniaSkim": "Non iniziate la discesa. Siete troppo bassi.",
+      "baseSighted": "Siete troppo alti. Vi abbiamo in vista.",
+      "finalApproach": "Non vi abbiamo mai visto. Atterrate sulla piazzola.",
+      "contact": "La piazzola è un'esca. Siete atterrati.",
+      "titaniaArrived": "Non siete atterrati. Benvenuti su Titania lo stesso."
     }
   },
   "chart": {
@@ -744,6 +746,10 @@
       "ack3": "Confermo. I numeri tornano.",
       "ack4": "Ricevuto. Leggiamo lo stesso valore."
     }
+  },
+  "mishap": {
+    "boom": "Il razzo è esploso sulla piazzola. Ne sono usciti tutti, a malapena.",
+    "tilt": "Il razzo si è ribaltato sulla piazzola. Ne escono piuttosto verdi: {names}."
   },
   "duo": {
     "nausea": "Scesi dal volo un po' verdi in faccia: {names}.",

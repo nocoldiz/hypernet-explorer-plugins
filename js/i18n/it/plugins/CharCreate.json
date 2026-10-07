@@ -38,11 +38,11 @@
   "storyDifficulty": {
     "roguelite": {
       "name": "Roguelike",
-      "desc": "Em e Bubba si riprendono dopo una caduta. Chiunque altro si unisca al gruppo muore per sempre."
+      "desc": "Em e Bubba si rialzano dopo ogni sconfitta.\nGli altri membri del gruppo muoiono per sempre."
     },
     "blood_and_oil": {
       "name": "Sangue e Petrolio",
-      "desc": "Gli arti possono essere mozzati. Em e Bubba non perdono mai una parte vitale e non muoiono mai per sempre. Chiunque altro si unisca al gruppo muore per sempre."
+      "desc": "Gli arti possono essere mozzati.\nEm e Bubba conservano gli organi vitali e si rialzano sempre.\nGli altri membri del gruppo muoiono per sempre."
     }
   },
   "difficulty": "Difficoltà",

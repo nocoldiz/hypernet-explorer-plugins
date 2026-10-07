@@ -2229,7 +2229,7 @@
               <div class="cc-bio-section">
                 <div class="cc-bio-section-title">${this._ccIconHtml(176, 16)} <span>${ccT('CharCreate.difficulty')}</span></div>
                 <div class="cc-bio-chips-row">${difficultyChips}</div>
-                <div class="cc-note-quiet">${ccT('CharCreate.storyDifficulty.' + currentDifficulty + '.desc')}</div>
+                <div class="cc-difficulty-note${currentDifficulty === 'blood_and_oil' ? ' cc-difficulty-warning' : ''}">${ccT('CharCreate.storyDifficulty.' + currentDifficulty + '.desc')}</div>
               </div>
               ${typePillsHtml}
               ${professionSectionHtml}

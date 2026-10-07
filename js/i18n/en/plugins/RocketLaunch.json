@@ -420,6 +420,8 @@
     "manualOn": "Your stick. Staging stays automatic.",
     "manualOff": "Autopilot has her. Holding the hull.",
     "hullLost": "Hull breach. We have lost the round.",
+    "padTilt": "She is going over. Brace, brace!",
+    "padBoom": "Fire on the pad! Everybody out, now!",
     "arrayHit": "Shockwave hit the array. Engine lost.",
     "arrayDrop": "Array away. Inbound on the main drive."
   },
@@ -566,16 +568,16 @@
       "zetaArrived": "Welcome, welcome, welcome. Would you like to see the Monument? Say yes."
     },
     "dargos": {
-      "andromeda": "Welcome to Andromeda. Please maintain your current heading. Do not maintain your current heading.",
-      "theNeighbour": "That is the neighbour. Do not look at it. It likes being looked at.",
-      "capture": "You are in orbit. You are not in orbit. Both readings are correct and we stand by both.",
-      "titaniaOrbiting": "Reduce speed. Increase speed. Whichever you did, that was the other one.",
-      "deorbitBurn": "Begin your descent immediately. Do not begin your descent. Acknowledge one of those.",
-      "titaniaSkim": "You are too low. Also too high. Hold exactly where you are and also move.",
-      "baseSighted": "We have you visually. We have never seen you. The embassy is delighted by both.",
-      "finalApproach": "Land on the pad. The pad is a decoy. The decoy is the pad. Proceed.",
-      "contact": "You have landed. Please confirm you have not landed.",
-      "titaniaArrived": "Welcome to Titania. The sea is not dangerous. Do not go near the sea."
+      "andromeda": "Welcome to Andromeda. Please maintain your current heading.",
+      "theNeighbour": "Do not maintain your heading. That is the neighbour. Look at it, it likes being looked at.",
+      "capture": "Do not look at the neighbour. You are in orbit.",
+      "titaniaOrbiting": "You are not in orbit. Reduce speed.",
+      "deorbitBurn": "Increase speed. Begin your descent immediately.",
+      "titaniaSkim": "Do not begin your descent. You are too low.",
+      "baseSighted": "You are too high. We have you visually.",
+      "finalApproach": "We have never seen you. Land on the pad.",
+      "contact": "The pad is a decoy. You have landed.",
+      "titaniaArrived": "You have not landed. Welcome to Titania all the same."
     }
   },
   "chart": {
@@ -744,6 +746,10 @@
       "ack3": "Acknowledged. Numbers match.",
       "ack4": "Copy. Reading the same."
     }
+  },
+  "mishap": {
+    "boom": "The round blew up on the pad. Everybody crawled out, barely.",
+    "tilt": "The round toppled over on the pad. Out of it rather green: {names}."
   },
   "duo": {
     "nausea": "Off the flight a little green: {names}.",

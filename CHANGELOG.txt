@@ -1,12 +1,25 @@
+0.8.3a
+
+0.8.2a
+ - difficulty warning only in blood and oil story mode, reworded to be more readable
+ - Andromeda launch: SB charges every second past Pluto, collapsing into black holes
+
+Changed:
+ - build zip goes to the dist folder, opened with the upload links
+
+Fixed:
+ - procedural map biome generation bugs found in a code review
+ - invisible NPCs at Titania embassy; natives now 90% Dargos or Greys
+
 
 0.8.1a
 
 Added
+ - expressions unlock at level 15 for magical classes, 25 otherwise
  - inactive party members can staff owned shops and job maps in shifts
  - lobotomagic option in skillmaster to delete learned skills for KP
  - ticket booth for buying train ticket
 Changed:
- - Andromeda launch: SB charges every second past Pluto, collapsing into black holes
  - leveling up is faster, enemy exp now varies and follows every curve
  - reworked eris trial into a generic trial system, Rota judges in the Vatican
  - added fines for public display of affection in Vatican territory
@@ -14,6 +27,7 @@ Changed:
  - expression system can now set limitations
 
 Fixed:
+ - go to previous floor from 1399 now lands at 635 13 25
  - site survey quests now complete when reaching the coordinates
  - activating the same wishing system event twice is now impossible
 

@@ -109,6 +109,11 @@
         // the deepest at the bottom, and the ground itself in between. The
         // cursor opens on it (see initialIndex), so the list is entered at the
         // level the party is used to reading from.
+        // Floor 1 has a name of its own whichever map was dealt to it.
+        upperFloorLabel(floor, mapName) {
+            return floor === 1 ? T('FloorList.firstFloor') : `F${floor} - ${mapName}`;
+        },
+
         buildItemList() {
             const data = [];
             const generated = $gameSystem.isDungeonGenerated();
@@ -124,7 +129,7 @@
                         const info  = $dataMapInfos[actualMapId] || {};
                         // Initially use map name, replaced with display name async
                         const name = info.name || T('FloorList.unknownMap');
-                        data.push({ floor: i, label: `F${i} - ${name}` });
+                        data.push({ floor: i, label: FloorListData.upperFloorLabel(i, name) });
                     } else {
                         data.push({ floor: i, label: this.text("unknown") });
                     }
@@ -186,10 +191,10 @@
                 const item = items.find(it => it.floor === i);
                 getMapDisplayName(mapId, (displayName) => {
                     if (item && displayName) {
-                        item.label = `F${i} - ${displayName}`;
+                        item.label = FloorListData.upperFloorLabel(i, displayName);
                     } else if (item && !displayName) {
                         const info = $dataMapInfos[actualMapId] || {};
-                        item.label = `F${i} - ${info.name || "Unknown"}`;
+                        item.label = FloorListData.upperFloorLabel(i, info.name || T('FloorList.unknownMap'));
                     }
                     loadCount++;
                     if (loadCount >= toLoad.length && onDone) onDone();

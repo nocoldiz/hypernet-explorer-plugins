@@ -30,7 +30,7 @@
  *
  * --- Special Floor Transitions ---
  * - From Town (Floor 0), using "nextFloor" teleports you to Map ID 1399 (X:22, Y:68).
- * - From Floor 1, using "prevFloor" teleports you to the dungeon base Map ID 635 at (X:13, Y:27).
+ * - From Floor 1, using "prevFloor" teleports you to the dungeon base Map ID 635 at (X:13, Y:25).
  *
  * --- The lower tower (floors -1 to -92) ---
  * Everything below ground is generated rather than authored: each lower floor
@@ -1150,10 +1150,11 @@ Game_System.prototype.isPassableTileFromTilesets = function (mapData, x, y) {
     }
 
     let currentFloor = $gameVariables.value(params.currentFloorVariable);
-    // Map 101 is always floor 1 (hardcoded in generateDungeon). Arriving here by
-    // any other route (fast travel, respawn, a stale/negative floor value) would
-    // otherwise make the Exit events dead, so force floor 1 like map 635 forces 0.
-    if ($gameMap.mapId() === 101) {
+    // Maps 101 and 1399 are always floor 1. Arriving here by any other route
+    // (fast travel, respawn, a stale/negative floor value) would otherwise make
+    // the Exit events dead, so force floor 1 like map 635 forces 0.
+    const here = $gameMap.mapId();
+    if (here === TOWER.SECRET_FIRST_FLOOR.mapId || here === TOWER.FIRST_FLOOR.mapId) {
         currentFloor = 1;
         $gameVariables.setValue(params.currentFloorVariable, 1);
     }
@@ -1313,6 +1314,9 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     LOWER_EXIT: { mapId: 314, x: 61, y: 100, dir: 8 },
     // Where the stairs up out of town land on floor 1.
     FIRST_FLOOR: { floor: 1, mapId: 1399, x: 22, y: 68, dir: 8 },
+    // Where Go to Previous Floor out of floor 1 lands in the Stairs Hall: south
+    // of the up staircase (12-14, 24), so the walk back never re-touches it.
+    FIRST_FLOOR_EXIT: { floor: 0, mapId: 635, x: 13, y: 25, dir: 2 },
     // The hidden way onto floor 1, reached through the Secret First Floor command.
     SECRET_FIRST_FLOOR: { floor: 1, mapId: 101, x: 16, y: 38, dir: 8 },
     // Where Return from Secret First Floor lets the party out, off the tower.
@@ -3491,12 +3495,11 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
         direction = first.dir;
     // Hardcoded transition: From Floor 1 to Town
     } else if (floor === 0 && previousFloor === 1) {
-        mapId = 635;
-        x = 13;
-        // Land SOUTH of the stair tiles (12-14, 26), not north of them, so the
-        // walk back into the room never re-touches them and bounces to floor 1.
-        y = 27;
-        direction = 2; // Face down
+        const exit = TOWER.FIRST_FLOOR_EXIT;
+        mapId = exit.mapId;
+        x = exit.x;
+        y = exit.y;
+        direction = exit.dir;
     // Generic "go to town" from any other floor
     } else if (floor === 0) {
         mapId = $gameSwitches.value(params.arenaToggleSwitch) ? params.arenaMapId : params.townMapId;

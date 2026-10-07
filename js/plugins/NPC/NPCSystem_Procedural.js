@@ -715,7 +715,9 @@
       ev.setImage(sheet, sheetIndex);
       ev._spaceportSpawn = true;
       $gameMap._events[eventId] = ev;
-      SpawnManager.snapshotSpawn(ev);
+      // Minted: the event lives in no map file, so a scene rebuild (which
+      // re-reads $dataMap from disk) has to write it back from the snapshot.
+      SpawnManager.snapshotSpawn(ev, { minted: true });
 
       // A traveller keeps the life they already have. Only a spacer minted
       // here needs one, and theirs belongs to the pad rather than to any town
@@ -732,6 +734,13 @@
         }
       }
       SpawnManager.injectBrain(ev, ev.event());
+      // The spriteset is already built by the time the crowd is dealt, so
+      // without a sprite of its own a spacer walks and talks unseen.
+      const spriteset = SceneManager._scene && SceneManager._scene._spriteset;
+      if (spriteset?._characterSprites && !spriteset._characterSprites.some(s => s._character === ev) &&
+          typeof spriteset.addVisitorCharacterSprite === "function") {
+        spriteset.addVisitorCharacterSprite(ev);
+      }
       return true;
     },
 

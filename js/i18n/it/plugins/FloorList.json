@@ -5,7 +5,8 @@
   "omegaCity": "F-22 - Città Omega",
   "tipOfTheSpear": "F-92 - Punta della Lancia",
   "lowerFloor": "F{num} - {name}",
-  "hypernetPoint": "F0 - Punto Hypernet",
+  "firstFloor": "F1 - Il Grande Divario",
+  "hypernetPoint": "F0 - Entrata",
   "unknownMap": "Sconosciuta",
   "floorHud": "Piano: {num}"
 }

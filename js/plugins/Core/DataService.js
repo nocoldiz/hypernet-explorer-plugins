@@ -528,6 +528,17 @@
         const ALIEN_SHARE = 0.01;
         const ALIEN_SHARE_SPACE = 0.20;
         const ALIEN_SHARE_OFFWORLD = 0.90;
+        // Whose world it is. On a landing site in one of these systems the
+        // whole alien share goes to the people who live there rather than
+        // being spread over every alien sheet: the Greys at home round the
+        // Zeta Reticuli pair, the Dargos on Titania. Matched on the site's
+        // system name (js/db/GalaxySim/Systems.json), or its planet's.
+        // i18n-ignore-start: system names and sheet keys, never shown
+        const OFFWORLD_NATIVES = [
+            { match: /^Zeta\b/i, sheet: "Skab/!$AlienGrey" },
+            { match: /^Titania\b/i, sheet: "Skab/!$AlienDargos" },
+        ];
+        // i18n-ignore-end
 
         // The share of a zombie world's crowd that is one of the dead walking
         // (WorldManager.populationMode "zombie"). The `zombie` sheets of
@@ -1451,6 +1462,18 @@
                     /<Biome:\s*Space\s*>/i.test($dataMap.note));
             },
 
+            // The one alien sheet native to the landing site at mapId, or null
+            // where nobody in particular is at home (OFFWORLD_NATIVES).
+            nativeAlienSheet(mapId) {
+                if (!this.isOffworldSite(mapId)) return null;
+                const site = window.GalaxySim.offworldLandingSite();
+                const names = [site && site.system, site && site.planet].filter(Boolean).map(String);
+                for (const n of OFFWORLD_NATIVES) {
+                    if (names.some(name => n.match.test(name))) return n.sheet;
+                }
+                return null;
+            },
+
             // The share of rolled faces that are alien where this pick is made.
             alienShare(options) {
                 const mapId = (options && options.mapId !== undefined)
@@ -1624,6 +1647,8 @@
                 }
                 const share = aliens.length ? (pool.length ? this.alienShare(opts) : 1) : 0;
                 if (draw < share) {
+                    const native = this.nativeAlienSheet(opts.mapId);
+                    if (native && aliens.indexOf(native) >= 0) return native;
                     return aliens[Math.min(aliens.length - 1, Math.floor((draw / share) * aliens.length))];
                 }
                 const rest = (draw - share) / (1 - share);

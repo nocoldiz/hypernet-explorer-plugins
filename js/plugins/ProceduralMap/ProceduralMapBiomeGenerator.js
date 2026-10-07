@@ -247,6 +247,25 @@
     return { w: Math.max(...grid.map((row) => row.length)), h: grid.length, grid };
   }
 
+  // A feature variant is either { type: "single", tileId } or
+  // { type: "grid", grid: [[ids]] } (ProceduralMapUtils getTilesetFeatures).
+  // These two are the only way to read a tile id off one.
+  function variantFirstTileId(v) {
+    if (!v) return 0;
+    if (v.type === "single") return v.tileId || 0;
+    return (v.grid && v.grid[0] && v.grid[0][0]) || 0;
+  }
+
+  function addVariantTileIds(v, out) {
+    if (!v) return out;
+    if (v.type === "single") {
+      if (v.tileId) out.add(v.tileId);
+    } else if (v.grid) {
+      for (const row of v.grid) for (const id of row) if (id) out.add(id);
+    }
+    return out;
+  }
+
   function _collectSingleTileIds(names, allFeatures, out) {
     for (const n of names) {
       const variants = allFeatures[n];
@@ -759,16 +778,8 @@
 
   // Create feature lookup tables once at startup
   const FEATURE_LAYERS = {};
-  const FEATURE_ASCII = {};
-  const FEATURE_LAYER_MAP = {};
-
   for (const feature of Features) {
     FEATURE_LAYERS[feature.name] = feature.layer;
-    FEATURE_ASCII[feature.name] = feature.ascii;
-    if (!FEATURE_LAYER_MAP[feature.layer]) {
-      FEATURE_LAYER_MAP[feature.layer] = [];
-    }
-    FEATURE_LAYER_MAP[feature.layer].push(feature.name);
   }
 
   // ===== HARDCODED OVERRIDES =====
@@ -854,7 +865,8 @@
    */
   function shouldDisplayAsIsland(biomeName, adjacentBiomes) {
     // Don't display as island if underground (check biomeLayerStack)
-    if ($gameSystem._procGenData && $gameSystem._procGenData.biomeLayerStack && $gameSystem._procGenData.biomeLayerStack.length > 0) {
+    const pg = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._procGenData : null;
+    if (pg && pg.biomeLayerStack && pg.biomeLayerStack.length > 0) {
       return false;
     }
 
@@ -1300,6 +1312,19 @@
 
     const influenceField = yield* getInfluenceFieldSteps(width, height, seed, blendScale, worldX, worldY);
 
+    // Which of the four neighbours may lend tiles is fixed for the whole map,
+    // so it is decided once here rather than per tile. A sea floor never bleeds
+    // into land, the same rule blendBiomesTerrainOnlySteps applies.
+    // For road/river biomes the tileset check is skipped: they blend from all neighbours.
+    const sideBiomes = ["north", "south", "east", "west"].map((dir) => {
+      const name = adjacentBiomes[dir];
+      if (!name || excludedBiomes.includes(name) || isSeabedBiomeName(name)) return null;
+      const adjacentBiome = getBiomeByName(name);
+      if (!adjacentBiome) return null;
+      if (!isCurrentBiomeRoad && !isCurrentBiomeRiver && adjacentBiome.tilesetId !== biome.tilesetId) return null;
+      return adjacentBiome;
+    });
+
     // Iterate through entire map
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -1317,27 +1342,15 @@
 
         // Determine which adjacent biome to blend from based on weighted influence
         if (totalInfluence > 0 && rng() < Math.min(totalInfluence, 1)) {
-          const influences = [
-            { direction: "north", value: northInfluence, biomeName: adjacentBiomes.north },
-            { direction: "south", value: southInfluence, biomeName: adjacentBiomes.south },
-            { direction: "east", value: eastInfluence, biomeName: adjacentBiomes.east },
-            { direction: "west", value: westInfluence, biomeName: adjacentBiomes.west },
-          ];
-
-          // Sort by influence to use strongest adjacent biome
-          influences.sort((a, b) => b.value - a.value);
-
-          // Find first valid adjacent biome (not excluded and matching tileset)
-          // For road/river biomes: allow blending from any adjacent biome including Fields (tileset check skipped)
-          for (const inf of influences) {
-            if (inf.value > 0 && inf.biomeName && !excludedBiomes.includes(inf.biomeName)) {
-              const adjacentBiome = getBiomeByName(inf.biomeName);
-              // For road/river biomes, skip tileset check since we want to blend from all neighbors
-              if (adjacentBiome && (isCurrentBiomeRoad || isCurrentBiomeRiver || adjacentBiome.tilesetId === biome.tilesetId)) {
-                blendTileFromAdjacentBiome(mapData, x, y, adjacentBiome, allFeatures, width, height, rng, isCurrentBiomeRoad, waterTiles, roadProtect);
-                break;
-              }
-            }
+          // The strongest eligible neighbour lends the tile (ties go to the
+          // earlier side, as the stable sort this replaces did).
+          const values = [northInfluence, southInfluence, eastInfluence, westInfluence];
+          let best = -1;
+          for (let i = 0; i < 4; i++) {
+            if (sideBiomes[i] && values[i] > 0 && (best < 0 || values[i] > values[best])) best = i;
+          }
+          if (best >= 0) {
+            blendTileFromAdjacentBiome(mapData, x, y, sideBiomes[best], allFeatures, width, height, rng, isCurrentBiomeRoad, waterTiles, roadProtect);
           }
         }
       }
@@ -1566,6 +1579,18 @@
    * Uses road generation utilities from ProceduralMapRoadGenerator
    * Handles water edge drawing and biome blending
    */
+  // The pool the centre of a road or river square is drawn from when no edge
+  // claims the tile: every neighbour's terrain mixed, or the tileset's Grass
+  // when no neighbour has any. Fixed for the whole map, so built once.
+  function centreFallbackTiles(adjacentTerrainTiles, allFeatures) {
+    let tiles = [];
+    for (const t of Object.values(adjacentTerrainTiles)) tiles = tiles.concat(t);
+    if (tiles.length > 0) return tiles;
+    return (allFeatures["Grass"] || [])
+      .filter((v) => v.type === "single")
+      .map((v) => v.tileId);
+  }
+
   function generateRoadBiome(biome, seed, allFeatures, roadDirection, adjacentBiomes, cacheInfo, worldCoords, cache) {
     return runSteps(generateRoadBiomeSteps(
       biome, seed, allFeatures, roadDirection, adjacentBiomes, cacheInfo, worldCoords, cache
@@ -1653,6 +1678,7 @@
     // adjacent-biome mix used to fall back to. Blending from the neighbours
     // still runs afterwards, so borders stay soft.
     const underTerrainPool = underBiome ? collectTerrainTilePool(underBiome, allFeatures) : [];
+    const centreTiles = centreFallbackTiles(adjacentTerrainTiles, allFeatures);
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -1687,25 +1713,7 @@
         }
         // Center: use a mix of all available terrains, or fallback to Grass
         else {
-          let availableTiles = [];
-          for (const tiles of Object.values(adjacentTerrainTiles)) {
-            availableTiles = availableTiles.concat(tiles);
-          }
-
-          if (availableTiles.length > 0) {
-            mapData[idx] = randomChoice(availableTiles, rng);
-          } else {
-            // Fallback to Grass if no terrain features found
-            const grassTiles = [];
-            if (allFeatures["Grass"] && allFeatures["Grass"].length > 0) {
-              for (const variant of allFeatures["Grass"]) {
-                if (variant.type === "single") {
-                  grassTiles.push(variant.tileId);
-                }
-              }
-            }
-            mapData[idx] = grassTiles.length > 0 ? randomChoice(grassTiles, rng) : 2816;
-          }
+          mapData[idx] = centreTiles.length > 0 ? randomChoice(centreTiles, rng) : 2816;
         }
       }
       if (y % STEP_ROWS === STEP_ROWS - 1) yield;
@@ -2047,6 +2055,7 @@
     }
 
     // Fill terrain layer with adjacent biome terrain based on distance from edge
+    const centreTiles = centreFallbackTiles(adjacentTerrainTiles, allFeatures);
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const idx = calculateIndex(x, y, 0, width, height);
@@ -2070,25 +2079,7 @@
         }
         // Center: use a mix of all available terrains, or fallback to Grass
         else {
-          let availableTiles = [];
-          for (const tiles of Object.values(adjacentTerrainTiles)) {
-            availableTiles = availableTiles.concat(tiles);
-          }
-
-          if (availableTiles.length > 0) {
-            mapData[idx] = randomChoice(availableTiles, rng);
-          } else {
-            // Fallback to Grass if no terrain features found
-            const grassTiles = [];
-            if (allFeatures["Grass"] && allFeatures["Grass"].length > 0) {
-              for (const variant of allFeatures["Grass"]) {
-                if (variant.type === "single") {
-                  grassTiles.push(variant.tileId);
-                }
-              }
-            }
-            mapData[idx] = grassTiles.length > 0 ? randomChoice(grassTiles, rng) : 2816;
-          }
+          mapData[idx] = centreTiles.length > 0 ? randomChoice(centreTiles, rng) : 2816;
         }
       }
       if (y % STEP_ROWS === STEP_ROWS - 1) yield;
@@ -2285,13 +2276,13 @@
       null;
 
     const caveFloorTile = selectedFloorVariant ?
-      (selectedFloorVariant.type === "single" ? selectedFloorVariant.tileId : selectedFloorVariant.tiles[0][0]) :
+      (variantFirstTileId(selectedFloorVariant) || 1536) :
       1536;
     const caveCeilingTile = caveCeilingTiles.length > 0 ?
-      (caveCeilingTiles[0].type === "single" ? caveCeilingTiles[0].tileId : caveCeilingTiles[0].tiles[0][0]) :
+      variantFirstTileId(caveCeilingTiles[0]) :
       0;
     const caveWallTile = caveWallFeatureTiles.length > 0 ?
-      (caveWallFeatureTiles[0].type === "single" ? caveWallFeatureTiles[0].tileId : caveWallFeatureTiles[0].tiles[0][0]) :
+      (variantFirstTileId(caveWallFeatureTiles[0]) || caveCeilingTile) :
       caveCeilingTile;
 
     // Select cave generation method based on world coordinates
@@ -2450,33 +2441,9 @@
 
     // Build list of tiles to block (all cave structure tiles)
     // This ensures features only spawn on CaveFloor tiles
-    const blockedTiles = [caveCeilingTile, caveWallTile];
-
-    // Add all Ceiling variants
-    for (const variant of caveCeilingTiles) {
-      if (variant.type === "single") {
-        blockedTiles.push(variant.tileId);
-      } else if (variant.type === "grid") {
-        for (const row of variant.tiles) {
-          for (const tileId of row) {
-            blockedTiles.push(tileId);
-          }
-        }
-      }
-    }
-
-    // Add all CaveWall feature tiles
-    for (const variant of caveWallFeatureTiles) {
-      if (variant.type === "single") {
-        blockedTiles.push(variant.tileId);
-      } else if (variant.type === "grid") {
-        for (const row of variant.tiles) {
-          for (const tileId of row) {
-            blockedTiles.push(tileId);
-          }
-        }
-      }
-    }
+    const blockedTiles = new Set([caveCeilingTile, caveWallTile]);
+    for (const variant of caveCeilingTiles) addVariantTileIds(variant, blockedTiles);
+    for (const variant of caveWallFeatureTiles) addVariantTileIds(variant, blockedTiles);
 
     // Manually place features on CaveFloor tiles only with strict control
     // Find all CaveFloor tile positions
@@ -2536,7 +2503,7 @@
                   1,
                   width,
                   height,
-                  new Set(blockedTiles)
+                  blockedTiles
                 );
               }
             }
@@ -2727,9 +2694,7 @@
     const candidates = [];
     for (const name of ["MountainCeiling", "MountainCenter", "MountainLeft", "MountainWall", "Ceiling"]) {
       for (const variant of allFeatures[name] || []) {
-        const tileId = variant.type === "single"
-          ? variant.tileId
-          : (variant.tiles && variant.tiles[0] && variant.tiles[0][0]);
+        const tileId = variantFirstTileId(variant);
         if (tileId) candidates.push(tileId);
       }
     }
@@ -2808,7 +2773,7 @@
 
     const firstTileId = (variants) =>
       variants && variants.length > 0
-        ? (variants[0].type === "single" ? variants[0].tileId : variants[0].tiles[0][0])
+        ? variantFirstTileId(variants[0])
         : 0;
 
     // Directional rock tiles. Ceiling/MountainWall are only consulted as a last
@@ -3112,10 +3077,7 @@
     const firstTileId = (name) => {
       const list = allFeatures[name];
       if (!list || !list.length) return 0;
-      const variant = list[0];
-      return variant.type === "single"
-        ? variant.tileId
-        : ((variant.tiles && variant.tiles[0] && variant.tiles[0][0]) || 0);
+      return variantFirstTileId(list[0]);
     };
     const waterTile = firstTileId("Water");
     const beachTile = firstTileId("Beach") || waterTile;
@@ -3225,10 +3187,7 @@
     const firstTileId = (name) => {
       const list = allFeatures[name];
       if (!list || !list.length) return 0;
-      const variant = list[0];
-      return variant.type === "single"
-        ? variant.tileId
-        : ((variant.tiles && variant.tiles[0] && variant.tiles[0][0]) || 0);
+      return variantFirstTileId(list[0]);
     };
     // CaveFloor, not MountainWall: the rim has to be walkable ground (a raised
     // lip you can stand on and cross), not a solid cliff wall that would seal
@@ -3857,10 +3816,7 @@
       for (const name of names) {
         const list = allFeatures[name];
         if (!list || !list.length) continue;
-        const variant = list[0];
-        const id = variant.type === "single"
-          ? variant.tileId
-          : ((variant.tiles && variant.tiles[0] && variant.tiles[0][0]) || 0);
+        const id = variantFirstTileId(list[0]);
         if (id) return id;
       }
       return fallback || 0;
@@ -4212,6 +4168,10 @@
     worldCoords,
     cache
   ) {
+    // A straight-through build shares module state (beach coordinates, the
+    // influence field, structure hints) with any sliced SquareJob, so a job
+    // left half-done is abandoned rather than resumed against the wrong square.
+    if (liveJob && !liveJob.running) liveJob.cancel();
     return runSteps(generateProceduralTerrainSteps(
       biome, seed, roadDirection, adjacentBiomes, cacheInfo, worldCoords, cache
     ));
@@ -4593,45 +4553,13 @@
       }
     }
 
-    // For cave biomes, add Ceiling and CaveWall to blocked tiles (don't place features on them)
-    let blockedTiles = [...waterTiles];
-    if (isCaveBiome(biome.name)) {
-      // Get the actual Ceiling and CaveWall tiles used in generation
-      const caveFloorTiles = allFeatures["CaveFloor"] || [];
-      const caveWallTiles = allFeatures["Ceiling"] || [];
-      const caveWallFeatures = allFeatures["CaveWall"] || [];
-
-      // Block Ceiling tiles
-      for (const variant of caveWallTiles) {
-        if (variant.type === "single") {
-          blockedTiles.push(variant.tileId);
-        } else if (variant.type === "multi") {
-          for (const row of variant.tiles) {
-            for (const tileId of row) {
-              blockedTiles.push(tileId);
-            }
-          }
-        }
-      }
-
-      // Block CaveWall tiles
-      for (const variant of caveWallFeatures) {
-        if (variant.type === "single") {
-          blockedTiles.push(variant.tileId);
-        } else if (variant.type === "multi") {
-          for (const row of variant.tiles) {
-            for (const tileId of row) {
-              blockedTiles.push(tileId);
-            }
-          }
-        }
-      }
-    }
+    // Cave biomes never reach this generic path (they return above), so
+    // only water is blocked here.
+    const blockedTiles = [...waterTiles];
 
     yield;
 
-    // Only draw the coastline on non-cave biomes (road biome path)
-    if (!isCaveBiome(biome.name) && waterTiles.length > 0) {
+    if (waterTiles.length > 0) {
       drawWaterEdges(
         mapData,
         waterTiles,
@@ -4708,56 +4636,6 @@
     placeTilledFields(mapData, biome, allFeatures, seed, width, height);
 
     yield;
-
-    // For cave biomes, remove any features that overlap with Ceiling or CaveWall
-    if (isCaveBiome(biome.name)) {
-      const caveWallTiles = allFeatures["Ceiling"] || [];
-      const caveWallFeatures = allFeatures["CaveWall"] || [];
-
-      // Build set of blocked tile IDs
-      const blockedTileSet = new Set();
-
-      // Add Ceiling tiles
-      for (const variant of caveWallTiles) {
-        if (variant.type === "single") {
-          blockedTileSet.add(variant.tileId);
-        } else if (variant.type === "multi") {
-          for (const row of variant.tiles) {
-            for (const tileId of row) {
-              blockedTileSet.add(tileId);
-            }
-          }
-        }
-      }
-
-      // Add CaveWall tiles
-      for (const variant of caveWallFeatures) {
-        if (variant.type === "single") {
-          blockedTileSet.add(variant.tileId);
-        } else if (variant.type === "multi") {
-          for (const row of variant.tiles) {
-            for (const tileId of row) {
-              blockedTileSet.add(tileId);
-            }
-          }
-        }
-      }
-
-      // Second pass: remove features on Ceiling or CaveWall tiles
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          const baseIdx = calculateIndex(x, y, 0, width, height);
-          // If base layer is Ceiling or CaveWall
-          if (blockedTileSet.has(mapData[baseIdx])) {
-            // Clear any features on layers 1-3
-            for (let z = 1; z <= 3; z++) {
-              const idx = calculateIndex(x, y, z, width, height);
-              mapData[idx] = 0;
-            }
-          }
-        }
-      }
-    }
 
     // Blend terrain from adjacent biomes at map borders for seamless transitions
     // Uses global Perlin noise for organic, non-triangular blending
@@ -4857,19 +4735,20 @@
   };
 
   Game_System.prototype.buildBiomeCoordinateCache = function () {
+    // The guard comes first: a Test reset made off the world map used to empty
+    // the cache and set the flag without rebuilding, leaving an empty cache the
+    // rest of the session never replaced.
+    if (!$gameMap || $gameMap.mapId() !== WORLD_MAP_ID || !this._procGenData) {
+      log(`[buildBiomeCoordinateCache] Cannot build: mapId=${$gameMap ? $gameMap.mapId() : 'null'}, WORLD_MAP_ID=${WORLD_MAP_ID}`);
+      return;
+    }
+
     // Test player: force fresh biome cache regeneration
     if (isTestPlayer()) {
-      if (this._procGenData) {
-        this._procGenData.biomeCoordinateCache = {};
-      }
+      this._procGenData.biomeCoordinateCache = {};
       invalidateBiomeIndex();
       _testBiomeCacheRebuilt = true;
       log(`[buildBiomeCoordinateCache] Test player detected: forcing cache regeneration`);
-    }
-
-    if (!$gameMap || $gameMap.mapId() !== WORLD_MAP_ID) {
-      log(`[buildBiomeCoordinateCache] Cannot build: mapId=${$gameMap ? $gameMap.mapId() : 'null'}, WORLD_MAP_ID=${WORLD_MAP_ID}`);
-      return;
     }
 
     const cache = {};
@@ -5329,40 +5208,21 @@
 
       // A cached name can be a special rolled for a DIFFERENT world (the snapshot
       // is shared across worlds), so it is unwrapped to its parent and rolled
-      // again here, exactly as the square resolver does.
-      biomeName = resolveSpecialBiome(unwrapSpecialBiome(lookupBiomeName), originX, originY);
+      // again below, exactly as the square resolver does.
+      biomeName = unwrapSpecialBiome(lookupBiomeName);
     }
 
-    // Ice biome should become Tundra or Permafrost depending on Y coordinate
-    if (biomeName === "Ice") {
-      // Y=0 is north pole, Y=255 is south pole
-      // Tundra: milder cold (mid-latitudes), Permafrost: extreme poles
-      if (originY < 48 || originY >= 208) {
-        biomeName = "Permafrost";
-        log(`[ProceduralMap] Ice -> Permafrost at (${originX}, ${originY})`);
-      } else {
-        biomeName = "Tundra";
-        log(`[ProceduralMap] Ice -> Tundra at (${originX}, ${originY})`);
-      }
-    }
-
-    const biome = getBiomeByName(biomeName);
-
-    if (!biome) {
-      logWarn(`Biome not found: ${biomeName}, using Fields`);
-      const defaultBiome = getBiomeByName("Fields");
-      if (!defaultBiome) {
-        logWarn(`Critical: Fields biome not defined`);
-        return false;
-      }
-      biomeName = "Fields";
-    }
+    // Ice becomes Tundra or Permafrost by latitude BEFORE the special roll, in
+    // the same order as resolveSquareUncached and getBiomeFromCache, so an Ice
+    // square never rolls Ice's own specials here while the HUD reports Tundra.
+    // A planet's landing grid is one biome and is never rolled or normalised.
+    if (!alienGrid) biomeName = normalizeLatitudeBiome(biomeName, originY);
 
     // Apply the shared specialBiomes roll (see ProcGenUtils.resolveSpecialBiome).
     // The same call backs the travel HUD and the debug overlay, so all three
     // agree on which tiles are SpiritWoods/Crystals.
     // A bridge is never rerolled: swapping the biome would drop the crossing.
-    const specialBiomeName = bridgeDirection
+    const specialBiomeName = (bridgeDirection || alienGrid)
       ? biomeName
       : resolveSpecialBiome(biomeName, originX, originY);
     if (specialBiomeName !== biomeName) {
@@ -5378,6 +5238,19 @@
       // square generated after. Squares have to regenerate identically however
       // the party got to them (see scripts/test_originsquare.js).
       biomeName = specialBiomeName;
+    }
+
+    // The biome object is fetched only now, after the roll, so the terrain,
+    // tileset and temperatures come from the same biome as the audio.
+    let biome = getBiomeByName(biomeName);
+    if (!biome) {
+      logWarn(`Biome not found: ${biomeName}, using Fields`);
+      biome = getBiomeByName("Fields"); // i18n-ignore  biome id
+      if (!biome) {
+        logWarn(`Critical: Fields biome not defined`);
+        return false;
+      }
+      biomeName = biome.name;
     }
 
     this._procGenData.currentBiome = biomeName;
@@ -5516,7 +5389,9 @@
       const dateStr = $gameVariables.value(113) || "01 JAN 2001 12:00";
       const parts = dateStr.split(" ").filter(Boolean);
       const timeParts = parts[3] ? parts[3].split(":") : ["12", "00"];
-      const currentHour = parseInt(timeParts[0]) || 12;
+      const parsedHour = parseInt(timeParts[0], 10);
+      // Hour 0 is midnight, not a parse failure.
+      const currentHour = Number.isFinite(parsedHour) ? parsedHour : 12;
 
       // Night is from 20:00 to 6:00
       const isNightTime = currentHour >= 20 || currentHour < 6;
@@ -5925,6 +5800,10 @@
     pg.currentBiome = biome.name;
     pg.currentRoadDirection = null;
     pg.currentUnderBiome = null;
+    // Left over from the previous square, a bridge would turn a road biome
+    // here into a crossing.
+    pg.currentBridgeDirection = null;
+    pg.structureHints = null;
     pg.currentBiomeTileset = biome.tilesetId;
     pg.displayAsBeach = false;
     pg.displayAsIsland = false;
@@ -6107,8 +5986,10 @@
     if ($gameMap.isPassable(startX, startY, 2)) {
       found = true;
     } else {
-      // Search in expanding squares around the initial position
-      const maxRange = 10;
+      // Search in expanding squares around the initial position. The search
+      // runs as far as the map does: stopping short left the stairs (and the
+      // GoUp return point stored below) inside a wall.
+      const maxRange = Math.max(PROC_MAP_WIDTH, PROC_MAP_HEIGHT);
       outerLoop: for (let range = 1; range <= maxRange; range++) {
         for (let dx = -range; dx <= range; dx++) {
           for (let dy = -range; dy <= range; dy++) {
@@ -6849,26 +6730,6 @@
     });
   }
 
-  /**
-   * Hook into Scene_Map update to ensure tilemap is continuously refreshed
-   */
-  const _Scene_Map_updateTilemap = Scene_Map.prototype.updateTilemap;
-  Scene_Map.prototype.updateTilemap = function () {
-    _Scene_Map_updateTilemap.call(this);
-
-    if (
-      $gameMap.mapId() === PROC_MAP_ID &&
-      this._tilemap &&
-      $gameSystem._procGenData &&
-      $gameSystem._procGenData.generatedMapData
-    ) {
-      if (!this._procGenMapRefreshScheduled) {
-        this._tilemap._needsRender = true;
-        this._procGenMapRefreshScheduled = true;
-      }
-    }
-  };
-
   // ==========================================================================
   // ONE WORLD SQUARE, RESOLVED AND BUILT ON ITS OWN
   // --------------------------------------------------------------------------
@@ -6977,8 +6838,7 @@
     const depth = opts.depth != null ? opts.depth : (pg.biomeLayerStack || []).length;
     // A planet's landing grid is planet-local and its (gx, gy) can coincide with
     // a real Earth square, so which world is underfoot is part of the key.
-    const key = squareCacheKey(worldX, worldY, depth) +
-      (pg.alienGrid ? ":a:" + pg.alienGrid.biome : "") +
+    const key = squareCacheKey(worldX, worldY, depth, pg.alienGrid || null) +
       (($gameMap && $gameMap.mapId() === WORLD_MAP_ID) ? ":w" : "");
     const hit = resolveCache.get(key);
     if (hit) return copyResolved(hit);
@@ -7152,11 +7012,31 @@
   const SQUARE_CACHE_LIMIT = 24;
   const squareCache = new Map();
 
-  function squareCacheKey(worldX, worldY, depth) {
-    return getWorldSeed() + ":" + depth + ":" + worldX + "," + worldY;
+  // A planet's landing grid is planet-local and its (gx, gy) can coincide with
+  // a real Earth square, so which world is underfoot is part of the key.
+  // alienGrid undefined means "whatever the party is on now".
+  function squareCacheKey(worldX, worldY, depth, alienGrid) {
+    if (alienGrid === undefined) {
+      const pg = $gameSystem && $gameSystem._procGenData;
+      alienGrid = pg ? pg.alienGrid : null;
+    }
+    return getWorldSeed() + ":" + depth + ":" + worldX + "," + worldY +
+      (alienGrid ? ":a:" + alienGrid.biome : "");
+  }
+
+  // A hit refreshes the square's place, so eviction drops the square least
+  // recently used rather than the one built first (often the one underfoot).
+  function recallSquare(key) {
+    const hit = squareCache.get(key);
+    if (hit) {
+      squareCache.delete(key);
+      squareCache.set(key, hit);
+    }
+    return hit;
   }
 
   function rememberSquare(key, built) {
+    squareCache.delete(key);
     squareCache.set(key, built);
     while (squareCache.size > SQUARE_CACHE_LIMIT) {
       squareCache.delete(squareCache.keys().next().value);
@@ -7177,9 +7057,9 @@
     opts = opts || {};
     const pg = $gameSystem && $gameSystem._procGenData;
     const depth = opts.depth != null ? opts.depth : ((pg && pg.biomeLayerStack) || []).length;
-    const key = squareCacheKey(worldX, worldY, depth);
+    const key = squareCacheKey(worldX, worldY, depth, opts.alienGrid);
     if (!opts.fresh) {
-      const hit = squareCache.get(key);
+      const hit = recallSquare(key);
       if (hit) return hit;
     }
     // A job left half-done on this very square is finished off rather than
@@ -7224,6 +7104,10 @@
     this.cancelled = false;
     // This square's own copy of the scoped fields, held between slices.
     this.mine = null;
+    // The record the job was opened against. A load or a new origin replaces
+    // _procGenData wholesale, and a job resumed against the new one would
+    // write the old square's scope into it, so it is abandoned instead.
+    this.pg = ($gameSystem && $gameSystem._procGenData) || null;
     this.it = buildSquareSteps(this);
     liveJob = this;
   }
@@ -7258,8 +7142,13 @@
   // around half a millisecond over.
   SquareJob.prototype.step = function(budgetMs) {
     if (this.done || this.cancelled) return { done: true, built: this.built };
+    if ((($gameSystem && $gameSystem._procGenData) || null) !== this.pg) {
+      this.cancel();
+      return { done: true, built: null };
+    }
     const until = nowMs() + (budgetMs > 0 ? budgetMs : 0);
     const outer = this._scopeIn();
+    this.running = true;
     try {
       do {
         const r = this.it.next();
@@ -7274,6 +7163,7 @@
       this.done = true;
       this.built = null;
     } finally {
+      this.running = false;
       this._scopeOut(outer);
       if (this.done && liveJob === this) liveJob = null;
     }
@@ -7287,6 +7177,13 @@
   };
 
   SquareJob.prototype.cancel = function() {
+    // Close the generator inside the job's own scope, so any finally blocks in
+    // the nested passes run against this square's fields and not the outer one.
+    if (!this.done && !this.running) {
+      const outer = this._scopeIn();
+      try { this.it.return(); } catch (e) { /* already closed */ }
+      finally { this._scopeOut(outer); }
+    }
     this.cancelled = true;
     this.done = true;
     this.built = null;
@@ -7295,7 +7192,9 @@
 
   function* buildSquareSteps(job) {
     const worldX = job.worldX, worldY = job.worldY, opts = job.opts;
-    const pg = $gameSystem && $gameSystem._procGenData;
+    // step() cancels the job if _procGenData is swapped, so job.pg is always the
+    // live record whenever this body runs.
+    const pg = job.pg;
 
     const resolved = resolveSquare(worldX, worldY, opts);
     if (!resolved.biome) return null;
@@ -7320,7 +7219,9 @@
       resolved.biome, resolved.seed, resolved.roadDirection,
       resolved.adjacentBiomes, resolved.cacheInfo,
       { x: worldX, y: worldY },
-      resolved.alien ? null : (pg && pg.biomeCoordinateCache)
+      // The same cache the square was resolved against.
+      resolved.alien ? null
+        : (opts.cache !== undefined ? opts.cache : (pg && pg.biomeCoordinateCache))
     );
     if (mapData && window.ProceduralMapPrefabs) {
       yield;
@@ -7361,8 +7262,8 @@
     opts = opts || {};
     const pg = $gameSystem && $gameSystem._procGenData;
     const depth = opts.depth != null ? opts.depth : ((pg && pg.biomeLayerStack) || []).length;
-    const key = squareCacheKey(worldX, worldY, depth);
-    const hit = opts.fresh ? null : squareCache.get(key);
+    const key = squareCacheKey(worldX, worldY, depth, opts.alienGrid);
+    const hit = opts.fresh ? null : recallSquare(key);
     if (hit) {
       return { key, done: true, built: hit, step: () => ({ done: true, built: hit }), cancel() {} };
     }
@@ -7374,6 +7275,8 @@
   }
 
   function forgetSquares() {
+    // A job begun before a load would finish into the freshly cleared cache.
+    if (liveJob) liveJob.cancel();
     squareCache.clear();
     forgetResolved();
   }

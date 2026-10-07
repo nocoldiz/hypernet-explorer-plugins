@@ -3206,6 +3206,10 @@
       // The familiar bound to them (SummonSystem.js). It is theirs, so it
       // waits on the bench with them and travels in an exported character.
       familiar: actor._familiar ? JSON.parse(JSON.stringify(actor._familiar)) : null,
+      // Their Expression (Weapon/ExpressionSystem.js), kept beside the sheet
+      // so a QR code too small for the sheet still carries the power.
+      expression: window.Expression && window.Expression.personRecord
+        ? window.Expression.personRecord(actor) : undefined,
     };
   }
 
@@ -3325,6 +3329,9 @@
     actor._familiar = record.familiar ? JSON.parse(JSON.stringify(record.familiar)) : null;
     actor._isPresetActor = !!record.sourcePresetId;
     actor._presetId = record.sourcePresetId || 0;
+    if (record.expression && window.Expression && window.Expression.restorePerson) {
+      window.Expression.restorePerson(actor, record.expression);
+    }
 
     // Condition a record states without a sheet (an NPC walking in off the
     // street arrives as hungry, tired and badly in want as they were).

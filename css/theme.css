@@ -4661,6 +4661,20 @@
     font-style: italic;
 }
 
+/* The story difficulty's summary: one rule per line, red only for Blood and Oil. */
+.cc-difficulty-note {
+    color: var(--text-text-alt-2);
+    line-height: 1.5;
+    margin-top: 6px;
+    white-space: pre-line;
+}
+
+.cc-difficulty-warning {
+    color: var(--text-text-alt-10);
+    border-left: 3px solid var(--text-text-alt-10);
+    padding-left: 8px;
+}
+
 .cc-note-faint {
     opacity: 0.6;
     font-size: var(--fs-label);

@@ -51,9 +51,9 @@
   // the one dim in it.
   const SPEAKER = {
     // i18n-ignore-start  speaker ids
-    control: ["#3ad7ef", "#2a7f8d"],
-    station: ["#e061c8", "#7a3a6c"],
-    crew: ["#4fe07a", "#2f7d46"],
+    control: "#3ad7ef",
+    station: "#e061c8",
+    crew: "#4fe07a",
     // i18n-ignore-end
   };
 
@@ -260,9 +260,9 @@
       const shown = this.lines.slice(Math.max(0, this.lines.length - room));
       const y = bottom - shown.length * LINE;
       shown.forEach((line, i) => {
-        const pal = SPEAKER[line.who] || SPEAKER.control;   // i18n-ignore  speaker id
-        HUD.text(b, line.text, 6, y + i * LINE, this.w - 60, "left",
-          i === shown.length - 1 ? pal[0] : pal[1], 8);
+        // Every line at full strength: the log is read back, not faded out.
+        const col = SPEAKER[line.who] || SPEAKER.control;   // i18n-ignore  speaker id
+        HUD.text(b, line.text, 6, y + i * LINE, this.w - 60, "left", col, 8);
       });
     }
 

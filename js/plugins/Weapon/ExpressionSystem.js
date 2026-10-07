@@ -1112,7 +1112,29 @@
         }
     };
 
+    // What a person carries of their Expression wherever they go: onto the
+    // bench, into an exported file, into another world. The party record
+    // (PartyPerson in CharacterCreationPresets.js) files it beside the sheet,
+    // so a record that travels without its sheet still keeps the power.
+    const personRecord = (actor) => {
+        if (!isActor(actor) || !(actor._expressionUnlocked || actor._expressionFinal || actor._expressionDraft)) return undefined;
+        return {
+            unlocked: !!actor._expressionUnlocked,
+            final: actor._expressionFinal ? clone(actor._expressionFinal) : null,
+            draft: actor._expressionDraft ? clone(actor._expressionDraft) : null
+        };
+    };
+    const restorePerson = (actor, record) => {
+        if (!actor || !record || typeof record !== 'object') return;
+        if (record.unlocked) actor._expressionUnlocked = true;
+        if (record.final) actor._expressionFinal = clone(record.final);
+        if (record.draft) actor._expressionDraft = clone(record.draft);
+        else if (record.final) actor._expressionDraft = clone(record.final);
+    };
+
     window.Expression = {
+        personRecord,
+        restorePerson,
         CATEGORIES,
         SLOTS,
         SLOT_CATEGORY,

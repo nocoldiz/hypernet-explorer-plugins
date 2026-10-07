@@ -38,11 +38,11 @@
   "storyDifficulty": {
     "roguelite": {
       "name": "Roguelike",
-      "desc": "Em and Bubba come round after a fall. Anybody else who joins the party dies for good."
+      "desc": "Em and Bubba get back up after every defeat.\nOther party members die for good."
     },
     "blood_and_oil": {
       "name": "Blood and Oil",
-      "desc": "Limbs can be cut off. Em and Bubba never lose a vital part and never die for good. Anybody else who joins the party dies for good."
+      "desc": "Limbs can be cut off.\nEm and Bubba keep their vital organs and always get back up.\nOther party members die for good."
     }
   },
   "difficulty": "Difficulty",

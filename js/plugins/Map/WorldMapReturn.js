@@ -644,7 +644,9 @@
         const dateStr   = ($gameVariables && $gameVariables.value(113)) || '01 JAN 2001 12:00';
         const parts     = String(dateStr).split(' ').filter(Boolean);
         const timeParts = parts[3] ? parts[3].split(':') : ['12', '00'];
-        const hour      = parseInt(timeParts[0]) || 12;
+        const parsed    = parseInt(timeParts[0], 10);
+        // Hour 0 is midnight, not a parse failure.
+        const hour      = Number.isFinite(parsed) ? parsed : 12;
         return hour >= 20 || hour < 6;
     }
 

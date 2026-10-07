@@ -758,6 +758,11 @@
   // and both are well outside the sphere itself, which is 672 units across.
   const JUPITER_FAR_D = 17500;
   const JUPITER_NEAR_D = 11000;
+  // The range to Jupiter across the cruise, in its own radii: from far enough
+  // out that it is a speck, to the range the end of the cruise draws it at
+  // (672 is the radius Jupiter is drawn at: eleven point two Earths of 60).
+  const JUPITER_CRUISE_FROM_R = 900;
+  const JUPITER_CRUISE_TO_R = JUPITER_NEAR_D / 672;
 
   function startTable(phases) {
     const out = {};
@@ -914,7 +919,9 @@
       ];
     } else {
       run = [
-        { key: "cruise", dur: 9.0, from: top, to: JUPITER_FAR_M, ease: "linear", geo: true },
+        // The transfer out to Jupiter, a long one, flown on the array's
+        // liminal engines: see LIMINAL_ARRAY_BEATS.
+        { key: "cruise", dur: 18.0, from: top, to: JUPITER_FAR_M, ease: "linear", geo: true },
         { key: "jupiter", dur: 13.0, from: JUPITER_FAR_M, to: JUPITER_CLOSE_M, ease: "linear", geo: true },
         // The pellet goes here, at the bottom of the well.
         { key: "charge", dur: 5.0, from: JUPITER_CLOSE_M, to: JUPITER_CLOSE_M, ease: "linear" },
@@ -2333,7 +2340,18 @@
     lightning: "Thunder1", rain: "Water2",
     clamp: "Gate1", airlock: "Autodoor", aboard: "Chime1",
     power: "Powerup", flash: "Flash",
+    // THE BIG ONES. The longest, fullest explosions in the library, played
+    // pitched down so a charge the size of a town sounds the size of a town,
+    // and the long rolls of thunder that hang on after the biggest of them.
+    blast: ["Explosion/explosion_02", "Explosion/explosion_04", "Explosion/explosion_09",
+      "Explosion/explosion_10", "Explosion/explosion_18"],
+    blastTail: ["Thunder11", "Thunder13", "Thunder14"],
   };
+  // The least time between two explosions heard: the charges go off a second
+  // apart and every one of them is felt, but a blast every second on the
+  // speakers is one long noise. Each one is heard, rings out, and only then
+  // is the next one let through.
+  const BLAST_SE_GAP = 2.4;
   // i18n-ignore-end
 
   // The music.
@@ -2875,6 +2893,27 @@
   const NAUSEA_OTHER = 0.25;
   const NAUSEA_STATE = "Nausea";   // i18n-ignore  States.json name, matched not shown
 
+  // THE PAD ON TITANIA IS NOT ALWAYS KIND. Every landing on it rolls once, at
+  // launch: a small chance the round blows up on the pad after it is down
+  // (everybody walks away at a tenth of their health, nobody dies of it), and
+  // a slightly larger one that it simply falls over (everybody comes out
+  // green). Docking in Titania's orbit rolls nothing: there is no pad there.
+  const TITANIA_MISHAP = { boom: 0.04, tilt: 0.08 };
+  // What is left of everybody after the round blows up under them.
+  const BOOM_HP = 0.1;
+  // How far up the round its base is from its middle, near enough, for
+  // toppling it over on its base rather than spinning it round its middle.
+  const MISHAP_PIVOT = 9;
+  Object.assign(MODEL, { rollMishap, TITANIA_MISHAP, BOOM_HP });
+  function rollMishap(profile, roll) {
+    if (!profile || profile.world !== "titania") return null;          // i18n-ignore  world id
+    if (!profile.phases.some((p) => p.key === "touchdown")) return null; // i18n-ignore  phase key
+    const r = (typeof roll === "function" ? roll : Math.random)();
+    if (r < TITANIA_MISHAP.boom) return "boom";                         // i18n-ignore  mishap id
+    if (r < TITANIA_MISHAP.boom + TITANIA_MISHAP.tilt) return "tilt";   // i18n-ignore  mishap id
+    return null;
+  }
+
   const Duo = {
     isEm(actor) {
       const CP = window.CharacterPresets;
@@ -3085,6 +3124,9 @@
   // landing - obeys ordinary physics and is flown on the chemical motor: see
   // SPACE_BURNS. And the SCHRODINGER-BOHR JUMP burns nothing at all: it is a
   // string of pellets that have not decided where they are yet.
+  // The beats the ARRAY burns blue on below the speed of light: the transfer
+  // out to Jupiter is flown on its liminal engines, not on a motor.
+  const LIMINAL_ARRAY_BEATS = ["cruise"];
   const LIMINAL_FLAME = ["liminal", "transit", "solomon", "hexspace", "thewhite"];
   // THE CHEMICAL BURNS IN SPACE, and they are flown the way a real motor has
   // to be: thrust is along the bell, so a burn that speeds the round up is
@@ -4796,7 +4838,7 @@
         // No two of them are the same size. That is the whole point of the
         // string: each one is a different amount of having happened. And every
         // one of them is the size of a town, so the round is a speck beside it.
-        const r = makeCharge(260 + this.rng() * 420);
+        const r = makeCharge(380 + this.rng() * 600);
         this.pellets.push(r.userData.pellet);
         this.blastRings.push(r);
       }
@@ -5877,6 +5919,7 @@
       this._updatePad(dt, ph);
       this._updateVehicle(dt, ph);
       this._updateSteer(dt, ph);
+      this._updateMishap(dt, ph);
       this._updateBelt(dt, ph);
       this._updateLiminal(dt, ph);
       if (this.hasArray) this._updateArray(dt, ph);
@@ -6045,7 +6088,7 @@
         this._burnArrayPods(ph.progress);
       }
       const push = torch > 0 ? Math.min(1, torch) : (burn ? burn.k : 0);
-      const liminal = torch > 0 || (this.speed || 0) > LIGHT_MS;
+      const liminal = torch > 0 || (this.speed || 0) > LIGHT_MS || LIMINAL_ARRAY_BEATS.indexOf(ph.key) >= 0;
       this.arrayMode = push > 0.01 ? (liminal ? "liminal" : "rocket") : null;   // i18n-ignore  mode ids
       // A motor flickers; the torch through the breach only breathes. See
       // CALM_BEATS.
@@ -6145,8 +6188,12 @@
       if (calm) return;
       this.shake = Math.max(this.shake, 2.6);
       this.impactFlash = 1;
-      this._pendingSe = this._pendingSe || [];
-      this._pendingSe.push({ name: SE.hitHeavy, volume: 80, pitch: 70 + n * 8 });
+      // The tearing metal is heard only when no blast is ringing: on top of
+      // one it is lost anyway, and it only crowds the speakers.
+      if (!this._blastRinging()) {
+        this._pendingSe = this._pendingSe || [];
+        this._pendingSe.push({ name: SE.tear, volume: 70, pitch: 70 + n * 8 });
+      }
       if (n === 0) this._say("arrayHit", null, { crew: true });
     }
 
@@ -6253,6 +6300,19 @@
             const el = ph.key === "assist" || ph.key === "blast" ? -0.12 * smooth(k)
               : ph.key === "pluto" ? -0.12 : -0.05;
             this._placeFar(this.jupiter, swing, el, d);
+            // APPROACHED FOR REAL. The far camera cannot see past 20000
+            // units, and at that range Jupiter is still a disc: so on the
+            // cruise it is drawn shrunk to the size it really looks at the
+            // range the round is at. The range closes at a steady speed, and
+            // a thing's size goes as one over its range, so it is a speck for
+            // most of the beat and only swells at the end of it, the way
+            // closing on a planet looks.
+            if (ph.key === "cruise") {   // i18n-ignore  phase key
+              const range = lerp(JUPITER_CRUISE_FROM_R, JUPITER_CRUISE_TO_R, k);
+              this.jupiter.scale.setScalar((JUPITER_CRUISE_TO_R / range) * (d / JUPITER_NEAR_D));
+            } else {
+              this.jupiter.scale.setScalar(1);
+            }
             this.jupiterBody.rotation.y = this._time * 0.03;
             this._jupiterMaps();
           }
@@ -6460,12 +6520,21 @@
       const recede = (a) => a * 200 + a * a * 60;
 
       let lit = 0, jolt = 0, lightZ = blastZ(1);
+      // Which charges have been heard going off. A charge is heard the frame
+      // it opens, if the speakers have rung out since the last one.
+      const heard = (this._heardBlasts = this._heardBlasts || {});
+      const opened = (id, a, weight) => {
+        if (heard[id] || a > 0.5) { heard[id] = true; return; }
+        heard[id] = true;
+        this._blastSe(85 + 15 * Math.min(1, weight - 1), weight);
+      };
       // One charge, `a` seconds after it went off at `z0`. Every one of them
       // shoves the round as it opens, `weight` times as hard as the first.
-      const draw = (r, a, z0, y, spin, weight) => {
+      const draw = (r, a, z0, y, spin, weight, id) => {
         const core = r.userData.core, ball = r.userData.ball, heart = r.userData.heart, hole = r.userData.hole;
         r.visible = false; core.visible = false; ball.visible = false; heart.visible = false; hole.visible = false;
         if (!(a > 0 && a < life)) return;
+        if (id && !calm) opened(id, a, weight);
         lit++;
         const z = z0 - recede(a);
         // The shell and its heart never reach back up to the tail: the round
@@ -6549,7 +6618,7 @@
       this.blastRings.forEach((r, i) => {
         // Each one resolves a step behind the last, across most of the beat.
         const a = blastT - (i / CHARGE_COUNT) * 0.62 * blastDur;
-        draw(r, dropping ? -1 : a, blastZ(i), -14 - i * 2.0, i, 1);
+        draw(r, dropping ? -1 : a, blastZ(i), -14 - i * 2.0, i, 1, "s" + i);
       });
 
       // THE TRAIL past Pluto: a charge out of the tail every second, each one
@@ -6564,7 +6633,7 @@
           const age = trailT - i * CHARGE_EVERY;
           if (age < 0 || age >= KICK_AT + life) continue;
           const r = this.trailRings[i % TRAIL_POOL];
-          r.userData.radius = (380 + ((i * 0.618) % 1) * 240) * (1 + i * 0.14);
+          r.userData.radius = (540 + ((i * 0.618) % 1) * 340) * (1 + i * 0.14);
           const p = r.userData.pellet;
           const z0 = tail - 60;
           if (age < KICK_AT) {
@@ -6573,7 +6642,7 @@
             p.position.set(0, -12, lerp(tail, z0, age / KICK_AT));
             p.scale.setScalar(2.2 + Math.sin(this._time * 9 + i) * 0.3);
           } else {
-            draw(r, age - KICK_AT, z0, -12 - (i % 3) * 6, i * 1.7, 0.65 + 0.35 * KICK_W[i] / KICK_W[0]);
+            draw(r, age - KICK_AT, z0, -12 - (i % 3) * 6, i * 1.7, 0.65 + 0.35 * KICK_W[i] / KICK_W[0], "t" + i);
           }
         }
       }
@@ -8195,6 +8264,105 @@
       flat(e[4], e[6], this._steerUp);
     }
 
+    // ONE EXPLOSION ON THE SPEAKERS. Pitched down for size, the heavier the
+    // lower, with a roll of thunder after the biggest. Held back while the
+    // last one is still ringing (see BLAST_SE_GAP) unless `force`.
+    _blastSe(volume, weight, force) {
+      if (!force && this._blastRinging()) return false;
+      this._lastBlastSe = this._time;
+      const w = Math.max(1, weight || 1);
+      this._pendingSe = this._pendingSe || [];
+      this._pendingSe.push({ name: SE.blast, volume: Math.min(100, volume), pitch: Math.max(50, 78 - w * 8) });
+      if (w >= 1.5) this._pendingSe.push({ name: SE.blastTail, volume: Math.min(100, volume * 0.8), pitch: 60 });
+      return true;
+    }
+
+    _blastRinging() {
+      return this._lastBlastSe != null && this._time - this._lastBlastSe < BLAST_SE_GAP &&
+        this._time >= this._lastBlastSe;
+    }
+
+    // DOWN ON TITANIA, AND THEN NOT QUITE. See TITANIA_MISHAP. On the arrived
+    // beat a round that rolled "tilt" leans, overbalances and goes over on
+    // its side with a bounce; one that rolled "boom" goes up in a fireball.
+    _updateMishap(dt, ph) {
+      // Undo last frame's drop before the next one is laid on.
+      if (this._mishapOff && this.vehicle) this.vehicle.position.y += this._mishapOff;
+      this._mishapOff = 0;
+      if (!this.mishap || !this.vehicle) return;
+      const k = ph.key === "arrived" ? ph.progress : (ph.index >= this.profile.phases.length - 1 ? 1 : -1);   // i18n-ignore  phase key
+      if (k < 0) return;
+      if (this.mishap === "tilt") {                                   // i18n-ignore  mishap id
+        // A lean, a wobble at the point of no return, and over it goes,
+        // landing with a bounce.
+        const lean = 0.18 * smooth(clamp01((k - 0.08) / 0.12));
+        const wob = Math.sin(clamp01((k - 0.2) / 0.12) * Math.PI * 2) * 0.06;
+        const fall = smooth(clamp01((k - 0.32) / 0.2));
+        const g = fall * fall;
+        const bounce = k > 0.52 ? Math.sin(clamp01((k - 0.52) / 0.18) * Math.PI) * 0.12 * (1 - clamp01((k - 0.52) / 0.3)) : 0;
+        const a = lean + (k < 0.32 ? wob : 0) + (Math.PI / 2 - lean) * g - bounce;
+        this.vehicle.rotation.z = a;
+        // Over on its base, not spun about its middle.
+        const drop = Math.sin(a) * MISHAP_PIVOT * 0.5;
+        this.vehicle.position.y -= drop;
+        this._mishapOff = drop;
+        this.vehicle.position.x += (1 - Math.cos(a)) * -MISHAP_PIVOT;
+        if (!this._mishapSaid && k > 0.25) { this._mishapSaid = true; this._lastText = null; this._say("padTilt"); }
+        if (!this._mishapHit && g > 0.98) {
+          this._mishapHit = true;
+          this.shake = Math.max(this.shake, 2.4);
+          this._pendingSe = this._pendingSe || [];
+          this._pendingSe.push({ name: SE.hitHeavy, volume: 85, pitch: 80 });
+        }
+        return;
+      }
+      // BOOM.
+      if (!this._mishapHit && k > 0.3) {
+        this._mishapHit = true;
+        this.vehicle.visible = false;
+        this.shake = 4;
+        this.impactFlash = 1;
+        // The one explosion that is never held back for the gap.
+        this._blastSe(100, 2, true);
+        this._lastText = null;
+        this._say("padBoom");
+        const geo = this._geo(new THREE.SphereGeometry(1, 24, 16));
+        const ball = (color, additive) => {
+          const m = new THREE.Mesh(geo, this._mat(new THREE.MeshBasicMaterial(additive
+            ? { color, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending }
+            : { color, transparent: true, opacity: 0, depthWrite: false })));
+          m.position.copy(this.vehicle.position);
+          this.near.add(m);
+          return m;
+        };
+        // The fire, its white heart, and the smoke it leaves standing.
+        this._boomBalls = [ball(0xff6a12, true), ball(0xfff0c0, true), ball(0x2a2220, false)];
+        this._boomBase = this.vehicle.position.y;
+        this._boomAt = k;
+      }
+      if (this.vehicle) this.vehicle.visible = !this._mishapHit;
+      if (this._boomBalls) {
+        // BIG: the fireball swallows the whole frame, and the smoke goes on
+        // rising and spreading after the fire has gone out.
+        const u = clamp01((k - this._boomAt) / 0.68);
+        const [fire, heart, smoke] = this._boomBalls;
+        const grow = smooth(Math.min(1, u * 2.2));
+        fire.scale.setScalar(120 * grow + 0.01);
+        fire.position.y = this._boomBase + u * 40;
+        fire.material.opacity = 0.9 * (1 - smooth(u));
+        fire.visible = u < 1;
+        heart.scale.setScalar(64 * smooth(Math.min(1, u * 3.5)) * (1 - u * 0.6) + 0.01);
+        heart.position.y = this._boomBase + u * 30;
+        heart.material.opacity = 1 - smooth(Math.min(1, u * 1.6));
+        heart.visible = u < 0.7;
+        smoke.scale.setScalar(150 * smooth(u) + 0.01);
+        smoke.position.y = this._boomBase + 20 + u * 90;
+        smoke.material.opacity = 0.75 * smooth(Math.min(1, u * 2)) * (1 - smooth((u - 0.5) / 0.5) * 0.4);
+        smoke.visible = true;
+        if (u < 0.7) this.shake = Math.max(this.shake, 3 * (1 - u));
+      }
+    }
+
     // OUT OF HULL. Only a round flown by hand gets here: the autopilot's
     // hull is never under the safety minimum.
     _destroy() {
@@ -9228,7 +9396,7 @@
       { at: ["charge", 0.45], key: "chargeOut", se: SE.power, vol: 70 },
       { at: ["charge", 0.85], key: "chargeCrew", se: null, crew: true },
       { at: ["blast", 0.05], key: "blastFirst", se: SE.flash, vol: 100 },
-      { at: ["blast", 0.45], key: "blastRiding", se: SE.burn, vol: 85, crew: true },
+      { at: ["blast", 0.45], key: "blastRiding", se: null, crew: true },
       { at: ["blast", 0.88], key: "blastLast", se: SE.rumble, vol: 85 },
       { at: ["pluto", 0.15], key: "plutoPast", se: SE.computer, vol: 55 },
       { at: ["pluto", 0.7], key: "plutoCrew", se: null, crew: true },
@@ -9443,6 +9611,9 @@
       const h = Math.round(Graphics.height * scale);
       this._stage = new LaunchStage(w, h, site, this._env, this._profile, this._destSite);
       this._stage.severity = hazardSeverity(this._env);
+      // Whether the pad on Titania lets the round stand. Rolled now, so the
+      // arrived beat can show it; a free flight is only ever watched.
+      this._stage.mishap = this._freePlay ? null : rollMishap(this._profile);
 
       const texture = PIXI.Texture.from(this._stage.domElement);
       if (texture.baseTexture) texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
@@ -10010,13 +10181,26 @@
           night: this._env.night,
         };
       } catch (e) { /* no save: the flight still happened */ }
-      // AND THE PRICE OF ARRIVING: see Duo.nausea.
+      // AND THE PRICE OF ARRIVING: see Duo.nausea, and TITANIA_MISHAP.
       if (!this._freePlay && this._stage && !this._stage.destroyed) {
         try {
-          const sick = Duo.nausea();
           const PT = window.ParchmentToast;
-          if (sick.length && PT && typeof PT.show === "function") {
-            PT.show(t("duo.nausea", { names: sick.join(", ") }));
+          const toast = (text) => { if (PT && typeof PT.show === "function") PT.show(text); };
+          const mishap = this._stage.mishap;
+          if (mishap === "boom") {                                   // i18n-ignore  mishap id
+            // Everybody out of the fire at a tenth of themselves, and alive.
+            $gameParty.members().forEach((a) => {
+              if (!a || !a.setHp || (a.isDead && a.isDead())) return;
+              a.setHp(Math.max(1, Math.round(a.mhp * BOOM_HP)));
+            });
+            toast(t("mishap.boom"));
+          } else if (mishap === "tilt") {                            // i18n-ignore  mishap id
+            // Everybody who can be sick is.
+            const sick = Duo.nausea(() => 0);
+            toast(t("mishap.tilt", { names: sick.join(", ") }));
+          } else {
+            const sick = Duo.nausea();
+            if (sick.length) toast(t("duo.nausea", { names: sick.join(", ") }));
           }
         } catch (e) { /* a queasy stomach never stops a landing */ }
       }
