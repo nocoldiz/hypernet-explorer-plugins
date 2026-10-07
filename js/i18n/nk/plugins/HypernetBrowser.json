@@ -3,7 +3,7 @@
   "windowTitle": "HYPERNET EXPLORER",
   "windowTitlePage": "{title} - HYPERNET EXPLORER",
   "version": "6.0 (BUILD 2001.9.3)",
-  "linkLost": "TRANSMISSION LINK LOST. DA REQUESTED HYPERNET PAGE COULD NOT BE LOADED!",
+  "linkLost": "TRANSMISSION LINK LOST. DA REQUESTED HYPERNET PAGE COULD NO BE LOADED!",
   "linkStable": "TRANSMISSION LINK STABLE",
   "secureSsl": "SECURE SSL: MAXIMUM",
   "menu": {
@@ -12,19 +12,19 @@
     "view": "VIEW",
     "favorites": "FAVORITES",
     "tools": "TOOLS",
-    "help": "HELP"
+    "help": "HALP!"
   },
   "file": {
     "newTab": "NEW TAB",
     "duplicateTab": "DUPLICATE TAB",
     "open": "OPEN...",
-    "save": "SAVE",
-    "saveAs": "SAVE AS...",
+    "save": "STASH",
+    "saveAs": "STASH AS...",
     "pageSetup": "PAGE SETUP...",
     "print": "PRINT...",
     "printPreview": "PRINT PREVIEW",
     "closeTab": "CLOSE TAB",
-    "exit": "EXIT"
+    "exit": "RUN AWAY"
   },
   "edit": {
     "cut": "CUT",
@@ -45,7 +45,7 @@
     "favorites": "FAVORITES",
     "history": "HISTORY",
     "goTo": "GO TA",
-    "back": "BACK",
+    "back": "GO BACK",
     "forward": "FORWARD",
     "home": "HOME PAGE",
     "stop": "STOP",
@@ -88,7 +88,7 @@
     "organizeTitle": "ORGANIZE FAVORITES",
     "newFolder": "NEW FOLDER",
     "rename": "RENAME",
-    "delete": "DELETE",
+    "delete": "SMASH",
     "moveUp": "MOVE UP",
     "moveDown": "MOVE DOWN",
     "folderPrompt": "NAME OF DA NEW FOLDER:"
@@ -104,7 +104,7 @@
     "blockerOff": "ALLOW POP-UPS",
     "downloads": "SHOW DOWNLOADS",
     "connection": "CONNECTION STATUS",
-    "options": "HYPERNET OPTIONS..."
+    "options": "HYPERNET FIDDLY BITS..."
   },
   "help": {
     "topics": "HELP TOPICS",
@@ -113,7 +113,7 @@
     "about": "ABOUT HYPERNET EXPLORER"
   },
   "toolbar": {
-    "back": "BACK",
+    "back": "GO BACK",
     "forward": "FORWARD",
     "stop": "STOP",
     "refresh": "REFRESH",
@@ -139,13 +139,13 @@
     "zone": "HYPERNET ZONE",
     "zoneProtected": "HYPERNET ZONE (PROTECTED)",
     "offline": "WORKIN' OFFLINE",
-    "popupBlocked": "A POP-UP WAZ BLOCKED. CLICK HERE TA SEE OPTIONS!",
+    "popupBlocked": "A POP-UP WAZ BLOCKED. CLICK HERE TA SEE FIDDLY BITS!",
     "popupAllowed": "POP-UPS IZ ALLOWED ON DA HYPERNET ZONE!",
     "external": "EXTERNAL ADDRESS. DA HYPERNET GATEWAY HOLDS NO ROUTE TA {address}!",
     "downloadStarted": "DOWNLOADIN' {name}...",
     "downloadDone": "DOWNLOAD COMPLETE: {name}",
-    "saved": "SAVED TA {path}",
-    "saveFailed": "DA DOCUMENT COULD NOT BE SAVED!",
+    "saved": "STASHED TA {path}",
+    "saveFailed": "DA DOCUMENT COULD NO BE STASHED!",
     "copied": "COPIED TA CLIPBOARD.",
     "pasted": "PASTED FROM CLIPBOARD.",
     "cut": "CUT TA CLIPBOARD.",
@@ -171,10 +171,10 @@
     "previous": "PREVIOUS",
     "matchCase": "MATCH CASE",
     "highlight": "HIGHLIGHT ALL",
-    "close": "CLOSE",
+    "close": "SHUT IT",
     "count": "{count} MATCHES",
     "none": "NO MATCHES",
-    "unreadable": "DIS PAGE WILL NOT LET DA FINDER READ IT!"
+    "unreadable": "DIS PAGE WILL NO LET DA FINDER READ IT!"
   },
   "address": {
     "placeholder": "TYPE A HYPERNET ADDRESS, OR A PHRASE TA SEARCH FOR",
@@ -192,7 +192,7 @@
     "luckyButton": "ME IZ FEELIN' LUCKY",
     "footer": "(C) 2001 NOODLE - DA HYPERNET SEARCH ENGINE",
     "stats": "ABOUT {count} RESULTS ({seconds} SECONDS)",
-    "noResults": "YA SEARCH - {query} - DID NOT MATCH ANY DOCUMENTS!",
+    "noResults": "YA SEARCH - {query} - DID NO MATCH ANY DOCUMENTS!",
     "directory": "HYPERNET DIRECTORY",
     "directoryHint": "{count} SITES IZ REACHABLE FROM DIS TERMINAL. PICK A LETTER!",
     "connecting": "CONTACTIN' DA NOODLE INDEX...",
@@ -202,7 +202,7 @@
   "error": {
     "title": "DA PAGE NO CAN BE DISPLAYED",
     "heading": "DA PAGE NO CAN BE DISPLAYED",
-    "body": "DA PAGE YOU IZ LOOKIN' FOR IZ NOT ON DIS GATEWAY, OR DA NAME WAZ MISTYPED!",
+    "body": "DA PAGE YOU IZ LOOKIN' FOR IZ NO ON DIS GATEWAY, OR DA NAME WAZ MISTYPED!",
     "address": "ADDRESS: {address}",
     "tryTitle": "TRY DA FOLLOWIN':",
     "try1": "CHECK DAT DA HYPERNET ADDRESS IZ SPELLED CORRECTLY!",
@@ -212,7 +212,7 @@
     "searchFor": "SEARCH NOODLE FOR \"{query}\"",
     "code": "HYPERNET EXPLORER - GATEWAY RESPONSE 404 (NO ROUTE TA DOCUMENT)",
     "external": "DAT ADDRESS LIVES OUTSIDE DA HYPERNET. DIS TERMINAL HOLDS NO ROUTE TA IT!",
-    "friendlyOff": "GATEWAY 404. NO ROUTE. DOCUMENT NOT HELD LOCALLY!"
+    "friendlyOff": "GATEWAY 404. NO ROUTE. DOCUMENT NO HELD LOCALLY!"
   },
   "history": {
     "title": "HISTORY",
@@ -232,7 +232,7 @@
     "empty": "NO DOWNLOADS YET.",
     "file": "FILE",
     "from": "FROM",
-    "state": "STATUS",
+    "state": "HOW ME DOIN'",
     "inProgress": "DOWNLOADIN'...",
     "complete": "COMPLETE",
     "failed": "FAILED",
@@ -242,7 +242,7 @@
   "mail": {
     "title": "HYPERNET MAIL",
     "heading": "INBOX",
-    "hint": "MAIL HELD FOR DIS TERMINAL. REPLIES IZ NOT POSSIBLE: DA RELAY HAB BEEN ONE-WAY SINCE DA Y2K ROLLOVER!",
+    "hint": "MAIL HELD FOR DIS TERMINAL. REPLIES IZ NO POSSIBLE: DA RELAY HAB BEEN ONE-WAY SINCE DA Y2K ROLLOVER!",
     "from": "FROM",
     "subject": "SUBJECT",
     "received": "RECEIVED",
@@ -261,7 +261,7 @@
       {
         "from": "POSTMASTER@HYPERNET.EU",
         "subject": "WELCOME TA DA HYPERNET",
-        "body": "YA TERMINAL HAB BEEN REGISTERED WIT DA GATEWAY. DO NOT ATTEMPT TA REACH ADDRESSES OUTSIDE DA HYPERNET ZONE. DA GATEWAY HOLDS NO ROUTE TA DEM AN' DA ATTEMPT IZ LOGGED!"
+        "body": "YA TERMINAL HAB BEEN REGISTERED WIT DA GATEWAY. DO NO ATTEMPT TA REACH ADDRESSES OUTSIDE DA HYPERNET ZONE. DA GATEWAY HOLDS NO ROUTE TA DEM AN' DA ATTEMPT IZ LOGGED!"
       },
       {
         "from": "BILLIN'@NOODLE.COM",
@@ -288,7 +288,7 @@
   "source": {
     "title": "SOURCE OF {address}",
     "heading": "DOCUMENT SOURCE",
-    "unavailable": "DA SOURCE OF DIS DOCUMENT COULD NOT BE READ!",
+    "unavailable": "DA SOURCE OF DIS DOCUMENT COULD NO BE READ!",
     "bytes": "{count} BYTES",
     "wrap": "WRAP LINES"
   },
@@ -298,19 +298,19 @@
     "label": "OPEN:",
     "filter": "FILTER:",
     "ok": "OK",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "browse": "DIRECTORY",
     "count": "{count} DOCUMENTS"
   },
   "save": {
-    "title": "SAVE WEB PAGE",
+    "title": "STASH WEB PAGE",
     "label": "FILE NAME:",
-    "folder": "SAVE IN:",
-    "type": "SAVE AS TYPE:",
+    "folder": "STASH IN:",
+    "type": "STASH AS TYPE:",
     "typeHtml": "WEB PAGE, COMPLETE (*.HTML)",
     "typeText": "TEXT FILE (*.TXT)",
-    "ok": "SAVE",
-    "cancel": "CANCEL"
+    "ok": "STASH",
+    "cancel": "FORGET IT"
   },
   "pageSetup": {
     "title": "PAGE SETUP",
@@ -322,7 +322,7 @@
     "header": "HEADER:",
     "footer": "FOOTER:",
     "ok": "OK",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "saved": "PAGE SETUP STORED."
   },
   "print": {
@@ -333,11 +333,11 @@
     "range": "PAGES:",
     "all": "ALL",
     "ok": "PRINT",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "pageOf": "PAGE {page} OF {total}"
   },
   "options": {
-    "title": "HYPERNET OPTIONS",
+    "title": "HYPERNET FIDDLY BITS",
     "tabGeneral": "GENERAL",
     "tabSecurity": "SECURITY",
     "tabAdvanced": "ADVANCED",
@@ -359,7 +359,7 @@
     "zoneMedium": "MEDIUM: PROMPT BEFORE RUNNIN' UNSIGNED RITES",
     "zoneHigh": "HIGH: NOTHIN' ON DA PAGE IZ TRUSTED",
     "blocker": "BLOCK POP-UP WINDOWS",
-    "advanced": "ADVANCED SETTINGS",
+    "advanced": "ADVANCED FIDDLY BITS",
     "showImages": "SHOW PICTURES",
     "playSounds": "PLAY SOUNDS IN WEB PAGES",
     "smoothScroll": "USE SMOOTH SCROLLIN'",
@@ -367,15 +367,15 @@
     "underlineLinks": "UNDERLINE LINKS",
     "openInNewTab": "OPEN LINKS IN A NEW TAB",
     "ok": "OK",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "apply": "APPLY",
-    "saved": "SETTINGS APPLIED."
+    "saved": "FIDDLY BITS APPLIED."
   },
   "sync": {
     "title": "SYNCHRONIZE",
     "hint": "OFFLINE PAGES IZ COPIED INTO DA GATEWAY CACHE SO DEY CAN BE READ WIT DA LINK DOWN!",
     "start": "SYNCHRONIZE",
-    "close": "CLOSE",
+    "close": "SHUT IT",
     "working": "SYNCHRONIZIN' {name}...",
     "done": "SYNCHRONIZATION COMPLETE."
   },
@@ -392,7 +392,7 @@
     "cipher": "CIPHER",
     "cipherValue": "HEXAGRAM-128",
     "uptime": "SESSION",
-    "close": "CLOSE"
+    "close": "SHUT IT"
   },
   "about": {
     "title": "ABOUT HYPERNET EXPLORER",
@@ -402,7 +402,7 @@
     "cipher": "128-BIT (HEXAGRAM)",
     "gatewayLabel": "GATEWAY:",
     "documentsLabel": "DOCUMENTS ON DIS GATEWAY:",
-    "notice": "DIS PRODUCT IZ LICENSED TA DA BEARER OF DA TERMINAL. DA LICENCE IZ NOT TRANSFERABLE, AN' NEITHER, PAST A CERTAIN POINT, IZ DA BEARER!",
+    "notice": "DIS PRODUCT IZ LICENSED TA DA BEARER OF DA TERMINAL. DA LICENCE IZ NO TRANSFERABLE, AN' NEITHER, PAST A CERTAIN POINT, IZ DA BEARER!",
     "close": "OK"
   },
   "helpPage": {
@@ -410,7 +410,7 @@
     "heading": "HYPERNET EXPLORER HELP",
     "intro": "EVERYTHIN' DIS BROWSER CAN DO, AN' DA KEY DAT DOES IT!",
     "navHeading": "GETTIN' AROUND",
-    "navBody": "TYPE AN ADDRESS IN DA ADDRESS BAR AN' PRESS ENTER. AN ADDRESS WIT NO DOT IN IT IZ SEARCHED FOR INSTEAD. A PAGE DAT IZ NOT ON DIS GATEWAY SHOWS DA GATEWAY'S OWN 404 NOTICE WIT DA NEAREST MATCHIN' ADDRESSES UNDER IT!",
+    "navBody": "TYPE AN ADDRESS IN DA ADDRESS BAR AN' PRESS ENTER. AN ADDRESS WIT NO DOT IN IT IZ SEARCHED FOR INSTEAD. A PAGE DAT IZ NO ON DIS GATEWAY SHOWS DA GATEWAY'S OWN 404 NOTICE WIT DA NEAREST MATCHIN' ADDRESSES UNDER IT!",
     "keysHeading": "KEYBOARD",
     "keys": [
       "CTRL+T - NEW TAB",
@@ -427,16 +427,16 @@
       "ESCAPE - STOP LOADIN'"
     ],
     "favHeading": "FAVORITES",
-    "favBody": "FAVORITES IZ KEPT IN DA TERMINAL'S REGISTRY, SO DEY SURVIVE DA MACHINE BEING SWITCHED OFF AN' TRAVEL WIT DA SAVE!",
+    "favBody": "FAVORITES IZ KEPT IN DA TERMINAL'S REGISTRY, SO DEY SURVIVE DA MACHINE BEING SWITCHED OFF AN' TRAVEL WIT DA STASH!",
     "offlineHeading": "WHEN DA LINK IZ DOWN",
     "offlineBody": "DA GATEWAY HOLDS A LOCAL COPY OF EVERY DOCUMENT IN DA HYPERNET ZONE, SO PAGES OPEN WIT DA LINE DOWN. ONLY ADDRESSES OUTSIDE DA ZONE NEED DA LINE, AN' DERE IZ NONE!",
-    "close": "CLOSE"
+    "close": "SHUT IT"
   },
   "popup": {
     "blockedBar": "POP-UP BLOCKED. TA SEE DIS POP-UP, CLICK HERE!",
     "showIt": "SHOW POP-UP",
     "always": "ALWAYS ALLOW",
-    "close": "CLOSE",
+    "close": "SHUT IT",
     "ads": [
       {
         "title": "CONGRATULATIONS",
@@ -450,11 +450,11 @@
       },
       {
         "title": "YA TERMINAL MAY BE INFECTED",
-        "body": "A SCAN YOU DID NOT RUN HAB FOUND 41 PROBLEMS ON A DRIVE YOU DO NOT HAB. DOWNLOAD DA CURE AT ONCE!",
+        "body": "A SCAN YOU DID NO RUN HAB FOUND 41 PROBLEMS ON A DRIVE YOU DO NO HAB. DOWNLOAD DA CURE AT ONCE!",
         "button": "CLEAN ME TERMINAL"
       },
       {
-        "title": "FREE OIL OPTIONS",
+        "title": "FREE OIL FIDDLY BITS",
         "body": "PETROLEUM FUTURES IZ MOVIN'. MOVE WIT DEM. NO PRIOR EXPERIENCE, NO CAPITAL, NO SOUL REQUIRED UP FRONT!",
         "button": "START TRADIN'"
       },
@@ -468,7 +468,7 @@
   "tip": {
     "title": "TIP OF DA DAY",
     "next": "NEXT TIP",
-    "close": "CLOSE",
+    "close": "SHUT IT",
     "tips": [
       "AN ADDRESS WIT NO DOT IN IT IZ TREATED AS A SEARCH. TYPE A PHRASE AN' PRESS ENTER!",
       "MIDDLE OF A LONG PAGE? CTRL+F FINDS A WORD WITHOUT SCROLLIN' FOR IT!",
@@ -476,14 +476,14 @@
       "CTRL+T OPENS A TAB. EACH TAB KEEPS ITS OWN BACK AN' FORWARD!",
       "SOURCE (CTRL+U) SHOWS A PAGE EXACTLY AS DA GATEWAY SENT IT!",
       "DA HYPERNET DIRECTORY ON DA HOME PAGE LISTS EVERY SITE DA GATEWAY HOLDS!",
-      "A PAGE DAT WILL NOT DISPLAY SHOWS DA NEAREST ADDRESSES IT COULD HAB MEANT!",
+      "A PAGE DAT WILL NO DISPLAY SHOWS DA NEAREST ADDRESSES IT COULD HAB MEANT!",
       "ZOOM LIVES ON DA STATUS BAR. CLICK DA PERCENTAGE TA CYCLE IT!",
       "POP-UPS IZ BLOCKED BY DEFAULT. TOOLS, POP-UP BLOCKER CHANGES DAT, AT YA OWN RISK!",
-      "ANYTHIN' SAVED OFF A PAGE LANDS IN C:\\Documents AN' SHOWS UP IN ME COMPUTER!"
+      "ANYTHIN' STASHED OFF A PAGE LANDS IN C:\\Documents AN' SHOWS UP IN ME COMPUTER!"
     ]
   },
   "context": {
-    "back": "BACK",
+    "back": "GO BACK",
     "forward": "FORWARD",
     "refresh": "REFRESH",
     "selectAll": "SELECT ALL",
@@ -504,6 +504,9 @@
     "size": "SIZE:",
     "zone": "ZONE:",
     "close": "OK"
+  },
+  "study": {
+    "toastTitle": "HYPERNET BROWSIN'"
   },
   "hexapedia": {
     "appName": "HEXAPEDIA",

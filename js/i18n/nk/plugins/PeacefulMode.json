@@ -14,7 +14,7 @@
     ],
     "frog": [
       "{name} RIBBITS CONTENTEDLY.",
-      "{name} HOPS IN A LITTLE CIRCLE."
+      "{name} HOPS IN A LIL' CIRCLE."
     ],
     "octopus": [
       "{name} CURLS ITS TENTACLES AN' WATCHES YOU!",
@@ -62,7 +62,7 @@
     ],
     "segmentworm": [
       "{name} RIPPLES SLOWLY THROUGH DA DIRT!",
-      "{name} BURROWS A LITTLE AN' WAITS!"
+      "{name} BURROWS A LIL' AN' WAITS!"
     ],
     "bird": [
       "{name} PREENS ITS FEATHERS.",
@@ -257,7 +257,7 @@
       "{name} FLICKS ITS TAIL, UNINTERESTED!"
     ],
     "minotaur": [
-      "{name} PAWS DA GROUND BUT DOES NOT CHARGE!",
+      "{name} PAWS DA GROUND BUT DOES NO CHARGE!",
       "{name} SNORTS AN' STAYS PUT."
     ],
     "centaur": [
@@ -273,7 +273,7 @@
       "{name} POKES AT DA GROUND, BORED!"
     ],
     "gnome": [
-      "{name} TINKERS WIT A LITTLE GADGET!",
+      "{name} TINKERS WIT A LIL' GADGET!",
       "{name} HUMS A WORKIN' TUNE."
     ],
     "elven": [

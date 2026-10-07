@@ -49,7 +49,7 @@
   "destCost": "{place} ({cost}€, {km} KM)",
   "destLevel": "LV. {level}",
   "ui": {
-    "back": "BACK",
+    "back": "GO BACK",
     "edit": "EDIT",
     "print": "PRINT",
     "stations": "HYPERMETRO STATIONS",
@@ -61,16 +61,16 @@
     "cost": "COST:",
     "travelTime": "TRAVEL TIME:",
     "transportPlaceholder": "TRAIN",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "travel": "TRAVEL",
     "free": "FREE",
     "startHere": "START HERE",
     "travelNoTicket": "TRAVEL WIT NO TICKET",
-    "enemyLevel": "ENEMY LEVEL:"
+    "enemyLevel": "BAD 'UN LEVEL:"
   },
   "refused": {
     "title": "TURNED AWAY AT DA COUNTER",
-    "wanted": "DA CLERK LOOKS UP YA NAME, LOOKS AT DA QUEUE BEHIND YOU, AN' DOES NOT PRINT DA TICKET. FIND YA OWN WAY DERE!"
+    "wanted": "DA CLERK LOOKS UP YA NAME, LOOKS AT DA QUEUE BEHIND YOU, AN' DOES NO PRINT DA TICKET. FIND YA OWN WAY DERE!"
   },
   "custom": {
     "add": "WRITE DOWN A PLACE OF YA OWN",
@@ -103,7 +103,7 @@
   "book": {
     "appName": "WAYFARE",
     "subtitle": "LISTS DA PRICE AN' TRAVEL TIME OF EVERY TRANSPORT MODE TA EACH DESTINATION!",
-    "quotesOnly": "PRICES ONLY. TICKETS IZ BOUGHT AT DA STOP, NOT FROM DIS PAGE!",
+    "quotesOnly": "PRICES ONLY. TICKETS IZ BOUGHT AT DA STOP, NO FROM DIS PAGE!",
     "search": "FIND A PLACE",
     "noMatch": "NO PLACE BY DAT NAME.",
     "noDestinations": "DA BOOK HAB NO PAGES YET.",
@@ -127,11 +127,31 @@
     "noteOwn": "COSTS TIME AN' FUEL INSTEAD OF A FARE!",
     "noteScheduled": "BOARD IT WHERE DA LINE RUNS. TICKETS IZ SOLD AT DA COUNTER!",
     "noteHired": "AVAILABLE AT A TAXI RANK, WHERE DERE IZ ONE!",
-    "noteQuoted": "NOT OPERATED FROM HERE. DA PRICE IZ LISTED FOR REFERENCE!",
-    "noteRefused": "DA COUNTER WILL NOT SELL TA A WANTED PARTY!",
+    "noteQuoted": "NO OPERATED FROM HERE. DA PRICE IZ LISTED FOR REFERENCE!",
+    "noteRefused": "DA COUNTER WILL NO SELL TA A WANTED PARTY!",
     "noteOffline": "NOTHIN' RUNS DERE.",
     "offlineBlurb": "NO TRANSPORT LINE REACHES DIS TOWN!",
     "wantedBlurb": "DA PARTY IZ WANTED, SO TICKET COUNTERS REFUSE SERVICE. PRIVATE AN' EXOTIC TRANSPORT STILL WORKS!",
     "footer": "PRICES IZ CALCULATED FROM DA PARTY'S CURRENT POSITION AN' CHANGE AS IT MOVES. DIS PAGE NO CAN BOOK OR REFUND ANYTHIN'!"
+  },
+  "taxi": {
+    "appName": "HAIL",
+    "subtitle": "CALLS A CAB TA ANY CATALOGUED STOP. DA FARE IZ PAID ON BOOKIN' AN' DA RIDE LEAVES AT ONCE!",
+    "status": "CABS IZ CALLED FROM DA STREET: OPEN GROUND OR DA WORLD MAP, EARTH ONLY!",
+    "search": "FIND A PLACE",
+    "noMatch": "NO PLACE BY DAT NAME.",
+    "noDestinations": "NO STOP IZ LISTED YET.",
+    "pickupAt": "PICKUP AT {place}",
+    "headline": "{type}, GROUND PITCHED AT {level}.",
+    "levelUnknown": "NO STATED LEVEL",
+    "fare": "FARE",
+    "journey": "JOURNEY",
+    "wallet": "IN DA WALLET",
+    "hail": "HAIL A CAB",
+    "cannotPay": "DA PARTY NO CAN COVER DIS FARE!",
+    "offlineBlurb": "NO CAB REACHES DIS TOWN.",
+    "footer": "DA FARE IZ QUOTED FROM DA PARTY'S CURRENT POSITION. BOOKIN' CHARGES IT AN' SHUTS DA DECK: DA CAB IZ WAITIN' OUTSIDE!",
+    "refuseIndoors": "NO CAB CAN REACH YOU IN HERE. STEP OUT ONTO OPEN GROUND OR DA WORLD MAP AN' CALL AGAIN!",
+    "refuseOffEarth": "NO CAB COMPANY OPERATES DIS FAR FROM EARTH!"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "back": "BACK",
+  "back": "GO BACK",
   "forbiddenDraw": "{percent}% FORBIDDEN DRAW",
   "forbiddenTitle": "FORBIDDEN GRIMOIRE",
   "skillBookTitle": "{school} SKILL BOOK",
@@ -27,8 +27,8 @@
     "learned": "{actor} COPIED {skill} OUT OF DA {book}."
   },
   "custom": {
-    "title": "A WRITTEN VOLUME",
-    "blurb": "EVERY PAGE HAB TA BE READ OUT BEFORE DIS VOLUME CLOSES. {left} OF {total} IZ STILL UNREAD. LEAVE NOW AN' IT GOES BACK IN DA PACK, WHOLE!",
+    "title": "A WRITTEN LOUDNESS",
+    "blurb": "EVERY PAGE HAB TA BE READ OUT BEFORE DIS LOUDNESS CLOSES. {left} OF {total} IZ STILL UNREAD. LEAVE NOW AN' IT GOES BACK IN DA PACK, WHOLE!",
     "takenBy": "READ OUT TA {actor}"
   }
 }

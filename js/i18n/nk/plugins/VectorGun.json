@@ -1,7 +1,7 @@
 {
   "menu": "VECTOR GUN",
   "title": "VECTOR GUN",
-  "back": "BACK",
+  "back": "GO BACK",
   "subtitle": "OPERATIN' MODES",
   "tab": {
     "modes": "OPERATIN' MODES",
@@ -15,10 +15,10 @@
     "off": "IDLE"
   },
   "full": "MAXIMUM 3 MODES AT ONCE.",
-  "noGun": "DA PARTY DOES NOT HAB DA GUN!",
+  "noGun": "DA PARTY DOES NO HAB DA GUN!",
   "detail": {
     "damageType": "DAMAGE TYPE",
-    "status": "STATUS",
+    "status": "HOW ME DOIN'",
     "effect": "EFFECT",
     "modesTitle": "ACTIVE MODES",
     "fitted": "FITTED",
@@ -50,7 +50,7 @@
     "card": {
       "name": "CARD",
       "desc": "KILLS DROP MONSTER CARDS.",
-      "effect": "A KILLIN' BLOW ADDS DAT ENEMY'S MONSTER CARD TA DA COLLECTION!"
+      "effect": "A KILLIN' BLOW ADDS DAT BAD 'UN'S MONSTER CARD TA DA COLLECTION!"
     },
     "wide": {
       "name": "WIDE SHOTS",
@@ -150,7 +150,7 @@
     "hollowPoint": {
       "name": "HOLLOW POINT",
       "desc": "+75% CRITICAL DAMAGE.",
-      "effect": "CRITICAL HITS DEAL 75% MORE DAMAGE. DOES NOT CHANGE CRITICAL RATE!"
+      "effect": "CRITICAL HITS DEAL 75% MORE DAMAGE. DOES NO CHANGE CRITICAL RATE!"
     },
     "deepMagazine": {
       "name": "DEEP MAGAZINE",
@@ -182,7 +182,7 @@
     "switched": "{name} SWITCHES TA {form}."
   },
   "lock": {
-    "title": "NOT YET EARNED",
+    "title": "NO YET EARNED",
     "level": "LEVEL {n}",
     "unlocksAt": "OPENS AT LEVEL",
     "current": "EM'S LEVEL",
@@ -239,7 +239,7 @@
     "dice": {
       "name": "DICE OF YALDABAOTH",
       "desc": "ROLLS A D20 FOR DA FORM.",
-      "effect": "SWITCH ROLLS A D20 AN' TURNS INTO DAT FACE'S FORM, LOCKED OR NOT. 1: FISTS OF EM. 20: GRIMOIRE OF SOLOMON, NO HP COST. SWITCH AGAIN RETURNS TA DA PISTOL!"
+      "effect": "SWITCH ROLLS A D20 AN' TURNS INTO DAT FACE'S FORM, LOCKED OR NO. 1: FISTS OF EM. 20: GRIMOIRE OF SOLOMON, NO HP COST. SWITCH AGAIN RETURNS TA DA PISTOL!"
     },
     "gun": {
       "name": "COILGUN OF TESLA",
@@ -254,7 +254,7 @@
     "thelema": {
       "name": "BLADE OF THELEMA",
       "desc": "CASTS A SWORD SKILL.",
-      "effect": "NORMAL ATTACKS CAN BECOME DA CHOSEN SWORD SKILL, PAYIN' ITS AP. DA SKILL DOES NOT NEED TA BE LEARNED!"
+      "effect": "NORMAL ATTACKS CAN BECOME DA CHOSEN SWORD SKILL, PAYIN' ITS AP. DA SKILL DOES NO NEED TA BE LEARNED!"
     },
     "choronzon": {
       "name": "MAUL OF CHORONZON",
@@ -498,7 +498,7 @@
     "bargain": {
       "patron": {
         "name": "PATRON",
-        "desc": "20% CHANCE TA REAP AN ENEMY ON A CRITICAL HIT. NORMAL DAMAGE!"
+        "desc": "20% CHANCE TA REAP AN BAD 'UN ON A CRITICAL HIT. NORMAL DAMAGE!"
       },
       "tithe": {
         "name": "TITHE",
@@ -591,7 +591,7 @@
         "hint": "APPLIES ONE AFFLICTION. HARSHER AFFLICTIONS HAB LOWER ODDS OF LANDIN', AN' PSI RAISES DA ODDS!"
       },
       "thelema": {
-        "hint": "A NORMAL ATTACK SOMETIMES BECOMES DIS SWORD SKILL INSTEAD, PAYIN' ITS AP COST. DA SKILL DOES NOT NEED TA BE LEARNED!"
+        "hint": "A NORMAL ATTACK SOMETIMES BECOMES DIS SWORD SKILL INSTEAD, PAYIN' ITS AP COST. DA SKILL DOES NO NEED TA BE LEARNED!"
       },
       "freud": {
         "hint": "DAMAGE IZ BASED ON PSI. A NORMAL ATTACK SOMETIMES BECOMES DIS SKILL INSTEAD, PAYIN' ITS AP COST!"
@@ -603,7 +603,7 @@
         "hint": "DA STANCE IZ ACTIVE WHILE DA GAUNTLET IZ EQUIPPED, AN' LOWERS DA DAMAGE YOU DEAL WHILE IT IZ UP!"
       },
       "hadit": {
-        "hint": "SWITCHIN' TA DA STAFF CHANGES DA WEATHER TA DIS ONE. WEATHER AFFECTS ENEMIES TOO, AN' HAB NO EFFECT INDOORS!"
+        "hint": "SWITCHIN' TA DA STAFF CHANGES DA WEATHER TA DIS ONE. WEATHER AFFECTS BAD 'UNS TOO, AN' HAB NO EFFECT INDOORS!"
       },
       "solomon": {
         "hint": "DA PACT IZ DRAWN FROM DA SELECTED SCHOOLS. WIT NOTHIN' SELECTED IT DRAWS FROM EVERY SCHOOL. A REAL NARROW SELECTION MAY HAB NOTHIN' TA DRAW!"

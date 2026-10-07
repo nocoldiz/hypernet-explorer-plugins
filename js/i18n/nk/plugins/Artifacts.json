@@ -417,7 +417,7 @@
         "BARRIER",
         "BLOCKADE",
         "WARD",
-        "GUARD",
+        "DUCK",
         "DEFENDER"
       ],
       "4": [
@@ -531,7 +531,7 @@
   },
   "immunity": {
     "1": "REGEN",
-    "2": "GUARD",
+    "2": "DUCK",
     "3": "IMMORTAL",
     "4": "POISON",
     "5": "BLIND",
@@ -541,7 +541,7 @@
   "effect": {
     "grantsRegen": "GRANTS REGEN",
     "preventsPoison": "PREVENTS POISON",
-    "weakensEnemies": "WEAKENS ENEMIES",
+    "weakensEnemies": "WEAKENS BAD 'UNS",
     "providesResistance": "PROVIDES RESISTANCE"
   },
   "desc": {
@@ -573,7 +573,7 @@
     "blockedInBattle": "DA RITUAL NO CAN BE PERFORMED IN DA HEAT OF BATTLE!",
     "noEligible": "DERE IZ NO ONE WHO CAN BE SPARED FOR DA RITUAL!",
     "prompt": "CHOOSE WHO WILL BE SACRIFICED TA FORGE DA WEAPON. DIS NO CAN BE UNDONE!",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "noSlots": "DA RITUAL FAILS: NO VESSEL REMAINS FOR DA WEAPON!",
     "namePattern": "{name}'S {weapon}",
     "descLine": "FORGED FROM DA SACRIFICED BODY OF {name}, ONCE LEVEL {level}!",

@@ -47,17 +47,45 @@
     "ore_arcane": "ARCANE SEAM",
     "ore_ethereal": "ETHEREAL SEAM",
     "ore_quantum": "QUANTUM SEAM",
-    "ore_meteor": "METEORIC SEAM"
+    "ore_meteor": "METEORIC SEAM",
+    "red_sand": "RED SAND",
+    "pale_sand": "PALE SAND",
+    "flower_bed": "FLOWER BED",
+    "jungle_turf": "JUNGLE TURF",
+    "lime_moss": "LIME MOSS",
+    "snow_sparkle": "POWDER SNOW",
+    "reeds": "REEDS",
+    "fieldstone": "FIELDSTONE",
+    "amber_cobble": "AMBER COBBLE",
+    "blue_cobble": "BLUE COBBLE",
+    "dark_cobble": "DARK COBBLE",
+    "moss_brick": "MOSSY BRICK",
+    "violet_rock": "VIOLET ROCK",
+    "shadow_rock": "SHADOW ROCK",
+    "pale_slate": "PALE SLATE",
+    "icefall": "ICEFALL",
+    "scoria": "SCORIA",
+    "lava_cobble": "LAVA COBBLE",
+    "ember_thorns": "EMBER THORNS",
+    "red_brick": "RED BRICK",
+    "slate_brick": "SLATE BRICK",
+    "cedar": "CEDAR PLANKIN'",
+    "steel_rib": "RIBBED STEEL",
+    "blue_steel": "BLUE STEEL",
+    "window_pane": "WINDOW PANE",
+    "ornate_tile": "ORNATE TILE",
+    "eye_wall": "WATCHIN' WALL"
   },
   "tool": {
     "target": "{name}",
     "holding": "HOLDIN' {name}",
-    "bedrock": "DA BEDROCK DOES NOT GIVE.",
+    "bedrock": "DA BEDROCK DOES NO GIVE.",
     "noRoom": "NOTHIN' TA BUILD AGAINST DERE!",
     "struck": "STRUCK A SEAM OF {name}.",
     "pouchFull": "NO ROOM LEFT FOR WHAT CAME OUT OF DA ROCK!",
     "barFull": "DA QUICK BAR IZ FULL. BUILD SOMETHIN' WIT WHAT IZ ON IT FIRST!",
     "noBlock": "NOTHIN' IN HAND TA BUILD WIT!",
+    "noDigFight": "NO IN A FIGHT. DA GROUND STAYS WHERE IT IZ!",
     "bareHands": "BARE HANDS"
   },
   "hud": {
@@ -65,11 +93,46 @@
     "cmdPlace": "PLACE BLOCK",
     "cmdBlock": "CHANGE BLOCK",
     "cmdBar": "CHANGE QUICK BAR",
-    "cmdCast": "CAST DA SPELL IN HAND"
+    "cmdCast": "CAST DA SPELL IN HAND",
+    "cmdReady": "RELOAD, FOLD DA GUN, OR GUARD",
+    "cmdFightHit": "ATTACK WIT DA WEAPON",
+    "cmdFightUse": "USE DA SPELL, ITEM OR BLOCK IN HAND"
   },
   "bar": {
     "blocks": "BLOCKS",
-    "items": "ITEMS",
-    "spells": "SPELLS"
+    "items": "STUFF",
+    "spells": "SPELLS",
+    "vehicles": "VEHICLES"
+  },
+  "vehicle": {
+    "camper": "CAMPER",
+    "car": "CAR",
+    "bike": "BIKE",
+    "boat": "BOAT",
+    "broom": "BROOMSTICK",
+    "starship": "STARSHIP",
+    "none": "NO VEHICLES OWNED",
+    "called": "{name} BROUGHT ROUND."
+  },
+  "combat": {
+    "begin": "FIGHT!",
+    "miss": "MISS",
+    "down": "{name} IZ DOWN!",
+    "lead": "{name} TAKES DA LEAD.",
+    "escaped": "YOU GOT AWAY.",
+    "empty": "EMPTY! PRESS R TA RELOAD.",
+    "reloaded": "RELOADED.",
+    "guard": "GUARDIN'",
+    "noMenu": "NO MENUS IN A FIGHT."
+  },
+  "vr": {
+    "enter": "ENTER VR",
+    "exit": "EXIT VR",
+    "failed": "DA VR HEADSET COULD NO BE STARTED!"
+  },
+  "site": {
+    "warren": "A GOBLIN WARREN. KEEP YA VOICE DOWN!",
+    "dungeon": "CUT STONE UNDERFOOT: A DUNGEON!",
+    "grotto": "A CRYSTAL GROTTO GLITTERS IN DA DARK!"
   }
 }

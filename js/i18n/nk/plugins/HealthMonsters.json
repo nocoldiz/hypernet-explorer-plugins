@@ -23,7 +23,7 @@
   "paramNames": [
     "MAX HP",
     "MAX MP",
-    "ATTACK",
+    "WHACK",
     "MAGIC",
     "DEFENSE",
     "M.DEFENSE",
@@ -52,7 +52,7 @@
       "partRow": "{part} {percent}% HIT {chance}%",
       "partRowCurrent": "{part} {percent}% HIT {chance}% (AIMED)",
       "clear": "AIM NOWHERE",
-      "back": "BACK",
+      "back": "GO BACK",
       "noParts": "NOTHIN' LEFT TA AIM AT",
       "wholeName": "DA WHOLE BODY",
       "wholeRow": "DA WHOLE BODY (WHEREVER IT LANDS)",
@@ -71,7 +71,7 @@
       "limbRowCurrent": "{part} {percent}% (CHOSEN)",
       "noLimb": "NO LIMB FREE",
       "noTarget": "NOTHIN' TA TAKE HOLD OF",
-      "back": "BACK",
+      "back": "GO BACK",
       "holdRow": "{name} {chance}%",
       "holdBlocked": "{name} ({reason})",
       "blocked": {
@@ -89,7 +89,7 @@
       "helpTheirs": "{part}: {note}",
       "note": {
         "vital": "A VITAL PART, AN' IT FIGHTS TA STAY OUT OF YA HANDS!",
-        "awkward": "SMALL AN' AWKWARD, AN' HARD TA KEEP A GRIP ON!",
+        "awkward": "LIL' AN' AWKWARD, AN' HARD TA KEEP A GRIP ON!",
         "plain": "SOLID ENOUGH TA GET BOTH HANDS AROUND!"
       }
     },
@@ -112,7 +112,7 @@
       "wrench": {
         "name": "WRENCH",
         "hit": "{actor} WRENCHES {enemy}'S {part} UNTIL SOMETHIN' GIVES!",
-        "miss": "{actor} HAULS AT {enemy}'S {part}, BUT IT WILL NOT TURN!"
+        "miss": "{actor} HAULS AT {enemy}'S {part}, BUT IT WILL NO TURN!"
       },
       "slam": {
         "name": "SLAM",
@@ -132,7 +132,7 @@
       "shove": {
         "name": "SHOVE BACK",
         "hit": "{actor} DRIVES {enemy} BACK A SQUARE BY ITS {part}!",
-        "miss": "{actor} SHOVES AT {enemy} AN' IT DOES NOT BUDGE!"
+        "miss": "{actor} SHOVES AT {enemy} AN' IT DOES NO BUDGE!"
       },
       "throw": {
         "name": "THROW",
@@ -151,7 +151,7 @@
       "reversal": "{enemy} TURNS DA HOLD AROUND AN' WRINGS {actor}'S {part}!",
       "noLimb": "{actor} HAB NOTHIN' LEFT TA WRESTLE WIT!",
       "finisherHit": "{actor} SETS UP AN' LANDS {skill} ON DA {part}!",
-      "finisherMiss": "{actor} GOES FOR {skill}, BUT {enemy} IZ NOT WHERE IT SHOULD BE!"
+      "finisherMiss": "{actor} GOES FOR {skill}, BUT {enemy} IZ NO WHERE IT SHOULD BE!"
     }
   }
 }

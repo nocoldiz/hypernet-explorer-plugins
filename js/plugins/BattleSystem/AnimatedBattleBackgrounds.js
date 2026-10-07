@@ -1274,6 +1274,26 @@
         return this.getBiomeBackgroundForPlayer(biomeName);
     };
 
+    // The engine's own fallbacks ask for battlebacks1/Grassland and
+    // battlebacks1/Ship, flat files that no longer exist since every backdrop
+    // moved into a biome folder. The stock Sprite_Battleback loads them before
+    // createBattleback below gets to pick, so a map with no battleback of its
+    // own died on "Failed to load". The Fields biome stands in instead, picked
+    // the same way the biome code picks it so the bitmap is already cached.
+    function fieldsFallbackBattleback() {
+        let name = null;
+        try {
+            if (typeof $dataMap !== 'undefined' && $dataMap &&
+                typeof $gamePlayer !== 'undefined' && $gamePlayer) {
+                name = ImageManager.getBiomeBackgroundForPlayer('Fields');
+            }
+        } catch (e) { name = null; }
+        return name || pickRandomBiomeBackgroundFile('Fields') || '';
+    }
+
+    Sprite_Battleback.prototype.defaultBattleback1Name = fieldsFallbackBattleback;
+    Sprite_Battleback.prototype.shipBattleback1Name = fieldsFallbackBattleback;
+
     // =============================================================================
     // Spriteset_Battle Extensions
     // =============================================================================

@@ -1,6 +1,6 @@
 {
   "ui": {
-    "back": "BACK",
+    "back": "GO BACK",
     "title": "AUGMENTS",
     "tab": {
       "fitted": "FITTED ({count})",
@@ -27,7 +27,7 @@
     "capacity": "CAPACITY",
     "capacityValue": "{fitted} OF {max} SOCKETS",
     "fittedTo": "FITTED TA",
-    "damagedWarning": "DA PART IT SITS IN IZ RUINED. DA AUGMENT STILL WORKS, BUT DA LIMB DOES NOT!",
+    "damagedWarning": "DA PART IT SITS IN IZ RUINED. DA AUGMENT STILL WORKS, BUT DA LIMB DOES NO!",
     "severWarning": "SEVERIN' DA PART TAKES DA AUGMENT WIT IT!",
     "need": {
       "halted": "NEVER DEPLETES",

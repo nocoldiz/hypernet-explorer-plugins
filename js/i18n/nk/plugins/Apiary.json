@@ -2,7 +2,7 @@
   "action": {
     "harvest": "HARVEST HONEY",
     "simulate": "SIMULATE DAY",
-    "exit": "EXIT"
+    "exit": "RUN AWAY"
   },
   "caste": {
     "eggs": "EGGS",
@@ -30,7 +30,7 @@
   "threats": "THREATS: {list}",
   "secure": "COLONY SECURE",
   "harvested": "HARVESTED {amount} HONEY.",
-  "notEnoughHoney": "NOT ENOUGH HONEY TA HARVEST YET!",
+  "notEnoughHoney": "NO ENOUGH HONEY TA HARVEST YET!",
   "simulatedDay": "SIMULATED 24 HOURS OF COLONY ACTIVITY!",
   "simulatedHours": "SIMULATED {hours} HOURS",
   "honeyProduced": "HONEY PRODUCED: {amount}",
@@ -40,7 +40,7 @@
     "empty": "BARE WAX"
   },
   "ui": {
-    "back": "BACK",
+    "back": "GO BACK",
     "apiary": "APIARY",
     "crossSection": "CROSS SECTION",
     "colony": "COLONY",
@@ -60,7 +60,7 @@
     "births": "BIRTHS",
     "deaths": "DEATHS",
     "honeyProduced": "HONEY PRODUCED",
-    "enemiesRepelled": "ENEMIES REPELLED",
+    "enemiesRepelled": "BAD 'UNS REPELLED",
     "swarms": "SWARMS"
   },
   "toast": {

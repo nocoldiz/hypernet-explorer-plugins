@@ -1,5 +1,5 @@
 {
-  "credits": "CREDITS",
+  "credits": "WHO DUN IT",
   "newMessages": "NEW MESSAGES!",
   "pressMenu": "PRESS MENU",
   "menu": "MENU",
@@ -7,7 +7,7 @@
   "dialNumber": "DIAL NUMBER",
   "enterNumberAnd": "ENTER NUMBER AN'",
   "pressCallButton": "PRESS CALL BUTTON",
-  "deleteAndSave": "*: DELETE MENU: SAVE",
+  "deleteAndSave": "*: DELETE MENU: STASH",
   "contacts": "CONTACTS",
   "noContacts": "NO CONTACTS",
   "callAndDelete": "MENU: CALL *: DELETE",
@@ -19,7 +19,7 @@
   "addContact": "ADD CONTACT",
   "enterNumber": "ENTER NUMBER:",
   "thenPressMenu": "DEN PRESS MENU",
-  "toSaveContact": "TA SAVE CONTACT",
+  "toSaveContact": "TA STASH CONTACT",
   "deleteAndCancel": "*: DELETE END: CANCEL",
   "callHistory": "CALL HISTORY",
   "noCallHistory": "NO CALL HISTORY",
@@ -28,7 +28,7 @@
   "messages": "MESSAGES",
   "noMessages": "NO MESSAGES",
   "readAndDelete": "MENU: READ *: DELETE",
-  "settings": "SETTINGS",
+  "settings": "FIDDLY BITS",
   "changeSetting": "4/6 OR LEFT/RIGHT TA CHANGE",
   "games": "GAMES",
   "zoom": {
@@ -47,7 +47,7 @@
   "missed": "MISSED",
   "noCredits": "NO CREDITS!",
   "connecting": "CONNECTIN'...",
-  "contactSaved": "CONTACT SAVED",
+  "contactSaved": "CONTACT STASHED",
   "score": "SCORE",
   "rows": "ROWS",
   "tier": "TIER",
@@ -59,17 +59,17 @@
   "notify": {
     "added": " ADDED TA CONTACTS",
     "removed": " REMOVED FROM CONTACTS",
-    "notFound": " NOT FOUND IN DATABASE",
+    "notFound": " NO FOUND IN DATABASE",
     "contactPrefix": "CONTACT ",
     "newMessage": "NEW MESSAGE FROM ",
     "messageSent": "MESSAGE SENT TA ",
-    "noCredits": "NOT ENOUGH CREDITS TA SEND MESSAGE",
+    "noCredits": "NO ENOUGH CREDITS TA SEND MESSAGE",
     "creditsUp": "HEXPHONE: +€{amount} CREDITS",
     "creditsDown": "HEXPHONE: -€{amount} CREDITS"
   },
   "menuCommand": "HEXPHONE",
   "deadLine": "DA NUMBER YOU HAB DIALLED",
-  "deadLineBody": "IZ NOT IN SERVICE.",
+  "deadLineBody": "IZ NO IN SERVICE.",
   "services": {
     "title": "SERVICES",
     "callHint": "CALL: DIAL 2/8: SELECT"
@@ -126,7 +126,7 @@
     "prankReply": "DIS LINE IZ FOR EMERGENCIES!",
     "prankCharge": "TIME WASTED. IT IZ ON RECORD!",
     "falseCallCharge": "WASTIN' EMERGENCY SERVICES' TIME",
-    "wrongCountry": "NOT A WORKIN' NUMBER HERE!",
+    "wrongCountry": "NO A WORKIN' NUMBER HERE.",
     "wrongCountryBody": "FOR EMERGENCIES DIAL %1."
   },
   "serviceLines": {
@@ -147,10 +147,10 @@
     "horoscopeIntro": "YA STARS FOR TODAY:",
     "horoscopeLines": [
       "A STRANGER OWES YOU MONEY!",
-      "AVOID STAIRS AN' SMALL DOGS!",
+      "AVOID STAIRS AN' LIL' DOGS!",
       "SAY YES TA DA SECOND OFFER!",
       "SOMETHIN' BURIED WANTS FINDIN'!",
-      "DO NOT SIGN ANYTHIN' TONIGHT!",
+      "DO NO SIGN ANYTHIN' TONIGHT!",
       "AN OLD DEBT COMES BACK AROUND!",
       "TRAVEL EAST. TAKE A COAT."
     ],

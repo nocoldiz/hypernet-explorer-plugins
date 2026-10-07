@@ -3,23 +3,23 @@
   "materialFallback": "MATERIAL",
   "materialsRecovered": "MATERIALS RECOVERED:",
   "dismantle": "DISMANTLE",
-  "cancel": "CANCEL",
+  "cancel": "FORGET IT",
   "buildable": "BUILDABLE",
   "categoryLabel": "CATEGORY",
   "searchPlaceholder": "SEARCH…",
   "noMaterials": "NO MATERIALS STORED.",
   "freeBuild": "FREE BUILD",
   "illegal": {
-    "warning": "DIS LAND IZ NOT YA. ANYTHIN' YOU PUT DOWN HERE IZ ILLEGAL CONSTRUCTION, AN' DA N€POLICE WILL BILL YOU FOR IT!",
+    "warning": "DIS LAND IZ NO YA. ANYTHIN' YOU PUT DOWN HERE IZ ILLEGAL CONSTRUCTION, AN' DA N€POLICE WILL BILL YOU FOR IT!",
     "charge": "ILLEGAL CONSTRUCTION"
   },
   "cannotAfford": {
-    "gold": "NOT ENOUGH MONEY: DIS COSTS %1!",
-    "materials": "NOT ENOUGH MATERIALS TA BUILD DIS!"
+    "gold": "NO ENOUGH MONEY: DIS COSTS %1!",
+    "materials": "NO ENOUGH MATERIALS TA BUILD DIS!"
   },
   "placing": "PLACIN'",
   "materials": "MATERIALS",
-  "materialsUnused": "MATERIALS (NOT USED IN PURCHASE MODE)",
+  "materialsUnused": "MATERIALS (NO USED IN PURCHASE MODE)",
   "confirmQ": "CONFIRM?",
   "piecesShown": "PIECES SHOWN",
   "closeEsc": "CLOSE (ESC)",
@@ -65,8 +65,8 @@
     "clearAllConfirm": "CLICK AGAIN TA CONFIRM",
     "cycleVariants": "OTHER COLOURWAYS AVAILABLE",
     "backToCategories": "BACK TA DA FOLDER LIST",
-    "stock": "ALREADY ORDERED AN' PAID FOR. SETTIN' IT DOWN SPENDS ONE!",
-    "mirror": "FLIP DA PIECE LEFT TA RIGHT (NOT FOR DOORS, WALLS, ROOFS OR TERRAIN)"
+    "stock": "ALREADY ORDERED AN' PAID FOR. FIDDLY BIT IT DOWN SPENDS ONE!",
+    "mirror": "FLIP DA PIECE LEFT TA RIGHT (NO FOR DOORS, WALLS, ROOFS OR TERRAIN)"
   },
   "category": {
     "Ads": "ADS",
@@ -147,9 +147,10 @@
     "Mirrors": "MIRRORS",
     "Misc": "MISC",
     "Mushrooms": "MUSHROOMS",
-    "Music": "MUSIC",
+    "Music": "NOISE BOX",
     "Outside": "OUTSIDE",
     "Paintings": "PAINTINGS",
+    "Wallpapers": "WALLPAPERS",
     "Pavement": "PAVEMENT",
     "Peluches": "PELUCHES",
     "Pipes": "PIPES",
@@ -209,8 +210,8 @@
   "status": {
     "ready": "READY TA PLACE",
     "cannotAfford": "NO CAN AFFORD IT YET",
-    "noMoney": "NOT ENOUGH MONEY",
-    "noMaterials": "NOT ENOUGH MATERIALS",
+    "noMoney": "NO ENOUGH MONEY",
+    "noMaterials": "NO ENOUGH MATERIALS",
     "idle": "NOTHIN' IN HAND."
   },
   "selection": "SELECTION",
@@ -224,10 +225,10 @@
     "stockBlurb": "EACH ORDERED PIECE CAN BE PLACED {n} TIMES. ONCE BROKEN IT IZ GONE AN' MUST BE REORDERED!",
     "stockEmpty": "NOTHIN' ON ORDER. PICK A DEPARTMENT AN' BUY SOMETHIN'!",
     "delivered": "DELIVERED",
-    "leftInStock": "{n} SETTINGS-DOWN LEFT",
+    "leftInStock": "{n} FIDDLY BITS-DOWN LEFT",
     "order": "ORDER ONE",
-    "ordered": "{item} ORDERED FOR {price}. {n} SETTINGS-DOWN WAITIN' IN STOCK!",
-    "cannotAfford": "DA PURSE WILL NOT COVER IT, DELIVERY INCLUDED!",
+    "ordered": "{item} ORDERED FOR {price}. {n} FIDDLY BITS-DOWN WAITIN' IN STOCK!",
+    "cannotAfford": "DA PURSE WILL NO COVER IT, DELIVERY INCLUDED!",
     "unknownPiece": "DA CATALOGUE HAB NO SUCH PIECE!",
     "searchResults": "ANYTHIN' CALLED \"{q}\"",
     "nothingHere": "NOTHIN' IN DIS DEPARTMENT!",
@@ -236,5 +237,14 @@
     "next": "ON A PAGE"
   },
   "stockLeft": "{n} LEFT",
-  "mirror": "MIRROR"
+  "mirror": "MIRROR",
+  "painting": {
+    "pickTitle": "WHICH PICTURE DOES IT HOLD?",
+    "none": "AS IT IZ"
+  },
+  "use": {
+    "rest": "REST BY DA FIRE",
+    "cook": "COOK",
+    "contentsReturned": "{n} STORED ITEMS BACK IN DA PACK"
+  }
 }

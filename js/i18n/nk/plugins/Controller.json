@@ -5,7 +5,7 @@
   },
   "verbs": {
     "confirm": [
-      "CONFIRM",
+      "YAH, DO IT",
       "OK",
       "ACCEPT",
       "APPLY",
@@ -24,19 +24,19 @@
       "READ IT"
     ],
     "buy": [
-      "BUY",
+      "GIMME",
       "PURCHASE",
       "ORDER",
       "HIRE",
       "RENT"
     ],
     "sell": [
-      "SELL",
+      "FLOG",
       "TRADE",
       "DELIVER"
     ],
     "equip": [
-      "EQUIP",
+      "GEAR",
       "WIELD",
       "FIT",
       "INSTALL"
@@ -51,7 +51,7 @@
       "RESEARCH"
     ],
     "continue": [
-      "CONTINUE",
+      "KEEP GOIN'",
       "PROCEED",
       "GO",
       "TRAVEL",
@@ -61,24 +61,24 @@
       "ROLL"
     ],
     "cancel": [
-      "CANCEL",
+      "FORGET IT",
       "NAH!",
       "STOP"
     ],
     "back": [
-      "BACK",
+      "GO BACK",
       "RETURN",
       "GO BACK"
     ],
     "close": [
-      "CLOSE",
+      "SHUT IT",
       "DISMISS",
       "OK, CLOSE"
     ],
     "exit": [
-      "EXIT",
+      "RUN AWAY",
       "LEAVE",
-      "QUIT",
+      "RUN AWAY",
       "LOG OFF",
       "HANG UP"
     ],
@@ -93,7 +93,7 @@
       "RELEASE"
     ],
     "delete": [
-      "DELETE",
+      "SMASH",
       "ERASE",
       "WIPE",
       "CLEAR"
@@ -144,10 +144,10 @@
   "text": {
     "shift": "SHIFT",
     "space": "SPACE",
-    "back": "BACK",
+    "back": "GO BACK",
     "clear": "CLEAR",
     "done": "DONE",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "tipKey": "KEY"
   }
 }

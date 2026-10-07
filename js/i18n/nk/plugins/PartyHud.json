@@ -15,7 +15,9 @@
     "leisureCritical": "MISERABLE",
     "craving": "CRAVIN' {substance}",
     "ill": "{disease}",
-    "illUntreated": "{disease} (UNTREATED)"
+    "illUntreated": "{disease} (UNTREATED)",
+    "bladder": "NEEDS DA TOILET",
+    "bladderCritical": "BURSTIN'"
   },
   "gear": {
     "held": "[{list}]",

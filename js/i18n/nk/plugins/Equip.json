@@ -9,7 +9,7 @@
   "damage": "DAMAGE",
   "random": "RANDOM",
   "clear": "CLEAR",
-  "equip": "EQUIP",
+  "equip": "GEAR",
   "optimize": "OPTIMIZE",
   "hp": "HP",
   "mp": "MP",
@@ -28,7 +28,7 @@
   "emptySlot": "EMPTY",
   "selectSlot": "SELECT AN EQUIP SLOT...",
   "untrained": "UNTRAINED",
-  "back": "BACK",
+  "back": "GO BACK",
   "slotHand": "HAND",
   "slotMainHand": "MAIN HAND",
   "slotOffHand": "OFF HAND",
@@ -38,7 +38,7 @@
   "slotMouth": "MOUTH",
   "slotTwoHandedHeld": "BOTH HANDS ON IT",
   "dualPenaltyWarning": "DUAL WIELDIN' UNTRAINED: {name} DEALS {n}% LESS DAMAGE WIT BOTH WEAPONS. UNEQUIP ONE TA REMOVE DA PENALTY!",
-  "dualPenaltyHint": "YA CLASS DOES NOT DUAL WIELD, SO BOTH WEAPONS IZ WEAKENED!",
+  "dualPenaltyHint": "YA CLASS DOES NO DUAL WIELD, SO BOTH WEAPONS IZ WEAKENED!",
   "short": {
     "hp": "HP",
     "mp": "MP",
@@ -55,7 +55,7 @@
   },
   "otherGroup": "OTHER",
   "paperdoll": "PAPERDOLL",
-  "backToPaperdoll": "BACK",
+  "backToPaperdoll": "GO BACK",
   "slotHead": "HEAD",
   "slotBody": "BODY",
   "slotClothes": "CLOTHES",
@@ -92,8 +92,11 @@
     "2": "ROBE",
     "3": "LIGHT ARMOR",
     "4": "HEAVY ARMOR",
-    "5": "EQUIPMENT",
+    "5": "GEAR",
     "6": "SHIELD"
   },
-  "slotGearN": "GEAR {n}"
+  "slotGearN": "GEAR {n}",
+  "statBoost": {
+    "applied": "{name} USES DA {item}: {stat} {amount} FOR {hours} H."
+  }
 }

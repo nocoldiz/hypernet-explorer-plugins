@@ -5896,22 +5896,44 @@
   // wherever they are standing and the party pulls away: nobody is left behind on
   // the map (a party member is not a body that can be), they are simply not
   // watched walking over any more.
+  //
+  // Getting off is the same wait the other way round. The engine keeps the
+  // player frozen until every follower has walked from the hull to the leader,
+  // and a member who cannot path off it (the camper parked against a wall, a
+  // shoreline, a crowd) used to hold the whole party there for ever. After
+  // BOARD_WAIT the stragglers are simply put out beside the leader and shown.
   const BOARD_WAIT = 120;   // 2 seconds at 60fps
+
+  function settleFollowersOnLeader(player) {
+    const followers = player.followers && player.followers();
+    // Put on the leader's own tile: the gather ends on its own the moment the
+    // engine sees them all standing there.
+    if (followers && followers.synchronize) {
+      followers.synchronize(player.x, player.y, player.direction());
+    }
+    return followers;
+  }
 
   const _Game_Player_updateVehicle_wait = Game_Player.prototype.updateVehicle;
   Game_Player.prototype.updateVehicle = function () {
     if (this._vehicleGettingOn) {
       if (this._boardWaitFrom === undefined) this._boardWaitFrom = Graphics.frameCount;
       if (Graphics.frameCount - this._boardWaitFrom >= BOARD_WAIT) {
-        const followers = this.followers && this.followers();
-        // Put on the leader's own tile, which is the vehicle's: the gather ends
-        // on its own the moment the engine sees them all standing there.
-        if (followers && followers.synchronize) {
-          followers.synchronize(this.x, this.y, this.direction());
-        }
+        settleFollowersOnLeader(this);
       }
     } else if (this._boardWaitFrom !== undefined) {
       this._boardWaitFrom = undefined;
+    }
+    if (this._vehicleGettingOff) {
+      if (this._alightWaitFrom === undefined) this._alightWaitFrom = Graphics.frameCount;
+      // The leader's own step off the hull is not a straggler: only once they
+      // are standing on land are the others brought out to them.
+      if (Graphics.frameCount - this._alightWaitFrom >= BOARD_WAIT && !this.isMoving()) {
+        const followers = settleFollowersOnLeader(this);
+        if (followers && followers.show) followers.show();
+      }
+    } else if (this._alightWaitFrom !== undefined) {
+      this._alightWaitFrom = undefined;
     }
     _Game_Player_updateVehicle_wait.call(this);
   };

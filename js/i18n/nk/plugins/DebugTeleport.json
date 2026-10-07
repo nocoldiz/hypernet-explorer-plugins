@@ -2,7 +2,7 @@
   "mapSceneOnlyMenu": "DA DEBUG MAP MENU CAN ONLY BE OPENED FROM DA MAP!",
   "mapSceneOnlyTeleport": "TELEPORTIN' CAN ONLY BE USED FROM DA MAP!",
   "foundMaps": "FOUND {count} MAPS. DA CONSOLE HAB DA DETAILS!",
-  "popupBlocked": "COULD NOT OPEN DA DEBUG WINDOW. ALLOW POPUPS AN' TRY AGAIN!",
-  "loadFailed": "COULD NOT LOAD DA MAP DATA FOR MAP {map}!",
-  "teleportError": "COULD NOT TELEPORT TA MAP {map}: {message}"
+  "popupBlocked": "COULD NO OPEN DA DEBUG WINDOW. ALLOW POPUPS AN' TRY AGAIN!",
+  "loadFailed": "COULD NO LOAD DA MAP DATA FOR MAP {map}!",
+  "teleportError": "COULD NO TELEPORT TA MAP {map}: {message}"
 }

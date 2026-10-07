@@ -11,7 +11,7 @@
     "choiceParlay": "ASK FOR A PARLAY",
     "choiceAttack": "ATTACK DA ARMY",
     "choiceLeave": "WALK AWAY",
-    "parlayWelcome": "{leader} RECEIVES YOU AS A FRIEND, AN' DA ROAD AHEAD IZ OPENED!",
+    "parlayWelcome": "{leader} RECEIVES YOU AS A MATE, AN' DA ROAD AHEAD IZ OPENED!",
     "parlayPassage": "{leader} GRANTS PASSAGE, AN' NOTHIN' MORE!",
     "parlayDemand": "{leader} HEARS YOU OUT, DEN NAMES A PRICE FOR DA COURTESY!",
     "parlayRefused": "{leader} REFUSES DA PARLAY AN' ORDERS DA COLUMN ON!",

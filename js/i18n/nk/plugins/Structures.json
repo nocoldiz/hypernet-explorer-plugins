@@ -114,7 +114,7 @@
         "DAMP",
         "PADLOCKED",
         "FORGOTTEN",
-        "LITTLE",
+        "LIL'",
         "LOW",
         "MOULDERED",
         "SNUG"
@@ -161,7 +161,7 @@
         "RANK",
         "TORN",
         "MATTED",
-        "CLOSE"
+        "SHUT IT"
       ],
       "of": [
         "SOMETHIN' LARGE",
@@ -655,7 +655,7 @@
         "DA UNREAD",
         "DA LONG LOAN",
         "DA COPYIST",
-        "DA MISSIN' VOLUME",
+        "DA MISSIN' LOUDNESS",
         "DA MARGINALIA",
         "DA LAST READER"
       ]
@@ -1122,6 +1122,754 @@
         "DA SALT CATHEDRAL",
         "DA DRY SEA",
         "DA OLD MONOPOLY"
+      ]
+    },
+    "hardware": {
+      "pattern": [
+        "{of}'S {noun}",
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "HARDWARE",
+        "TOOL STORE",
+        "IRONMONGER",
+        "SUPPLY DEPOT",
+        "LUMBER YARD",
+        "FIX-IT SHOP",
+        "BUILDERS' STORE",
+        "NAIL BARN",
+        "WORKSHOP STORE",
+        "TRADE COUNTER"
+      ],
+      "adj": [
+        "SHUTTERED",
+        "RUSTED",
+        "DUSTY",
+        "LOOTED",
+        "BOLTED",
+        "CREAKIN'",
+        "CHEAP",
+        "SAWDUST",
+        "OLD",
+        "HOLLOW"
+      ],
+      "of": [
+        "OLD BRANNIGAN",
+        "DA HAMMER BROTHERS",
+        "A BANKRUPT PLUMBER",
+        "DA NIGHT WATCHMAN",
+        "DA NAIL KING",
+        "UNCLE RUDI",
+        "DA UNION MEN",
+        "A MISSIN' CARPENTER",
+        "DA RIVET SISTERS",
+        "DA LAST FOREMAN"
+      ]
+    },
+    "grocery": {
+      "pattern": [
+        "{of}'S {noun}",
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "GROCERY",
+        "MARKET",
+        "CORNER SHOP",
+        "FOOD HALL",
+        "PROVISIONS",
+        "SUPERMARKET",
+        "GREENGROCER",
+        "PANTRY STORE",
+        "DELI",
+        "CASH AN' CARRY"
+      ],
+      "adj": [
+        "SPOILED",
+        "FLICKERIN'",
+        "STICKY",
+        "EMPTY",
+        "COLD",
+        "BARGAIN",
+        "LATE NIGHT",
+        "ROTTEN",
+        "SILENT",
+        "BRIGHT"
+      ],
+      "of": [
+        "MAMA LUCIA",
+        "DA BROTHERS OKAFOR",
+        "DA PRICE CUTTERS",
+        "A VANISHED CASHIER",
+        "DA FRESH FIELDS COMPANY",
+        "MR PATEL",
+        "DA NIGHT SHIFT",
+        "DA OLD COOPERATIVE",
+        "A FAILED FRANCHISE",
+        "DA MILK ROUND"
+      ]
+    },
+    "shop": {
+      "pattern": [
+        "{of}'S {noun}",
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "SHOP",
+        "EMPORIUM",
+        "BAZAAR",
+        "TRADIN' POST",
+        "BOUTIQUE",
+        "VARIETY STORE",
+        "BRIC-A-BRAC",
+        "CURIO SHOP",
+        "OUTLET",
+        "GENERAL STORE"
+      ],
+      "adj": [
+        "CLOSED",
+        "FADED",
+        "PECULIAR",
+        "ABANDONED",
+        "CLUTTERED",
+        "SHABBY",
+        "GLITTERIN'",
+        "FORGOTTEN",
+        "DISCOUNT",
+        "LOCKED"
+      ],
+      "of": [
+        "MADAME ORSOLYA",
+        "DA TWO BROTHERS",
+        "A LOST HEIR",
+        "DA PAWNBROKER",
+        "WONDERS",
+        "SECOND CHANCES",
+        "DA OLD OWNER",
+        "ODDS AN' ENDS",
+        "DA TRAVELLIN' SALESMAN",
+        "LUCKY FINDS"
+      ]
+    },
+    "hospital": {
+      "pattern": [
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {noun} OF {of}",
+        "{adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "HOSPITAL",
+        "INFIRMARY",
+        "SANATORIUM",
+        "ASYLUM",
+        "CLINIC",
+        "CARE HOME",
+        "ISOLATION WARD",
+        "MEDICAL CENTRE",
+        "HOSPICE",
+        "TEACHIN' HOSPITAL"
+      ],
+      "adj": [
+        "CONDEMNED",
+        "SILENT",
+        "FLICKERIN'",
+        "QUARANTINED",
+        "STERILE",
+        "WEEPIN'",
+        "FORGOTTEN",
+        "MERCY",
+        "GREY",
+        "LAST"
+      ],
+      "of": [
+        "SAINT AGATHA",
+        "DA UNWELL",
+        "MERCY",
+        "DA NIGHT NURSE",
+        "DOCTOR HALLORAN",
+        "DA FEVER YEAR",
+        "QUIET RECOVERY",
+        "DA CLOSED WING",
+        "DA GOOD SAMARITAN",
+        "DA LONG SLEEP"
+      ]
+    },
+    "clinic": {
+      "pattern": [
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {noun} OF {of}",
+        "{adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "CLINIC",
+        "SURGERY",
+        "PRACTICE",
+        "DISPENSARY",
+        "HEALTH CENTRE",
+        "CONSULTIN' ROOMS",
+        "PHARMACY",
+        "TREATMENT ROOMS",
+        "WALK-IN CLINIC",
+        "DAY CLINIC"
+      ],
+      "adj": [
+        "SHUTTERED",
+        "TINY",
+        "FREE",
+        "BACK STREET",
+        "SPOTLESS",
+        "RUNDOWN",
+        "NIGHT",
+        "PRIVATE",
+        "CRAMPED",
+        "FORGOTTEN"
+      ],
+      "of": [
+        "DOCTOR VOS",
+        "DA KIND HANDS",
+        "DA NEIGHBOURHOOD",
+        "SAINT LUKE",
+        "DA OLD CHEMIST",
+        "DOCTOR AMARA",
+        "DA CHARITY BOARD",
+        "LIL' MERCIES",
+        "DA LATE DOCTOR",
+        "DA QUIET STREET"
+      ]
+    },
+    "tavern": {
+      "pattern": [
+        "{of}'S {noun}",
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "TAVERN",
+        "INN",
+        "ALEHOUSE",
+        "TAPROOM",
+        "PUBLIC HOUSE",
+        "ROADHOUSE",
+        "HOSTELRY",
+        "SALOON",
+        "WINE BAR",
+        "COACHIN' INN"
+      ],
+      "adj": [
+        "DRUNKEN",
+        "CROOKED",
+        "SMOKY",
+        "SLEEPIN'",
+        "GOLDEN",
+        "ROWDY",
+        "LEAKY",
+        "PRANCIN'",
+        "LAST",
+        "THIRSTY"
+      ],
+      "of": [
+        "DA GREEN MAN",
+        "DA THREE BARRELS",
+        "OLD HASK",
+        "DA BROKEN WHEEL",
+        "DA JOLLY DROVER",
+        "DA RED LION",
+        "DA HANGED FIDDLER",
+        "DA WANDERIN' PIG",
+        "DA SEVEN STARS",
+        "DA WEARY TRAVELLER"
+      ]
+    },
+    "restaurant": {
+      "pattern": [
+        "{of}'S {noun}",
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "RESTAURANT",
+        "BISTRO",
+        "TRATTORIA",
+        "DINER",
+        "BRASSERIE",
+        "GRILL",
+        "EATERY",
+        "CANTEEN",
+        "STEAKHOUSE",
+        "SUPPER CLUB"
+      ],
+      "adj": [
+        "CLOSED",
+        "FINE",
+        "GREASY",
+        "ELEGANT",
+        "CANDLELIT",
+        "LATE NIGHT",
+        "FAMOUS",
+        "BURNT",
+        "EMPTY",
+        "GOLDEN"
+      ],
+      "of": [
+        "CHEF MOREAU",
+        "NONNA RITA",
+        "DA SILVER SPOON",
+        "DA BLUE PLATE",
+        "MISTER WONG",
+        "DA HUNGRY HOUND",
+        "BELLA VISTA",
+        "DA OLD KITCHEN",
+        "DA LOST RECIPE",
+        "LE PETIT COIN"
+      ]
+    },
+    "farmhouse": {
+      "pattern": [
+        "{of}'S {noun}",
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "FARMHOUSE",
+        "HOMESTEAD",
+        "CROFT",
+        "STEADIN'",
+        "GRANGE",
+        "COTTAGE",
+        "BARNHOUSE",
+        "MANOR FARM",
+        "SMALLHOLDIN'",
+        "MILL HOUSE"
+      ],
+      "adj": [
+        "LONELY",
+        "SAGGIN'",
+        "OLD",
+        "WEATHERED",
+        "EMPTY",
+        "OVERGROWN",
+        "QUIET",
+        "THATCHED",
+        "MUDDY",
+        "FORGOTTEN"
+      ],
+      "of": [
+        "DA HOLLIS FAMILY",
+        "OLD MARGIT",
+        "A DEAD SHEPHERD",
+        "DA LONG FIELD",
+        "DA WIDOW CRAY",
+        "THREE ACRES",
+        "DA HAY BARN",
+        "DA LOST HARVEST",
+        "DA MILLER",
+        "HUNGER HILL"
+      ]
+    },
+    "house": {
+      "pattern": [
+        "{of}'S {noun}",
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "HOUSE",
+        "HOME",
+        "RESIDENCE",
+        "VILLA",
+        "TOWNHOUSE",
+        "COTTAGE",
+        "LODGINGS",
+        "FLAT",
+        "BUNGALOW",
+        "MANOR"
+      ],
+      "adj": [
+        "EMPTY",
+        "QUIET",
+        "NARROW",
+        "SHUTTERED",
+        "TALL",
+        "COSY",
+        "PEELIN'",
+        "LOCKED",
+        "SILENT",
+        "OLD"
+      ],
+      "of": [
+        "DA MARLOWE FAMILY",
+        "A RETIRED TEACHER",
+        "NUMBER NINE",
+        "DA ABSENT TENANT",
+        "GRANDMA ELSA",
+        "DA LODGERS",
+        "DA WATCHMAKER",
+        "A FORGOTTEN AUNT",
+        "DA SAD CLOWN",
+        "DA NIGHT OWL"
+      ]
+    },
+    "abandoned": {
+      "pattern": [
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {noun} OF {of}",
+        "{adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "RUIN",
+        "WRECK",
+        "HUSK",
+        "SHELL",
+        "SQUAT",
+        "DERELICT",
+        "ROTTIN' HOUSE",
+        "BURNT BLOCK",
+        "CONDEMNED BUILDIN'",
+        "HOLLOW"
+      ],
+      "adj": [
+        "COLLAPSED",
+        "GUTTED",
+        "ROTTEN",
+        "HAUNTED",
+        "FALLEN",
+        "MOULDERIN'",
+        "BURNT",
+        "VANDALISED",
+        "SILENT",
+        "CRUMBLIN'"
+      ],
+      "of": [
+        "DA LAST TENANT",
+        "BROKEN WINDOWS",
+        "DA FIRE NIGHT",
+        "DA SQUATTERS",
+        "DA BAD LANDLORD",
+        "DAMP AN' ROT",
+        "DA EVICTED",
+        "DA FLOOD YEAR",
+        "FORGOTTEN RENT",
+        "DA DEMOLITION MEN"
+      ]
+    },
+    "basement": {
+      "pattern": [
+        "{of}'S {noun}",
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "BASEMENT",
+        "BOILER ROOM",
+        "CELLAR",
+        "STOREROOM",
+        "LAUNDRY ROOM",
+        "WORKSHOP",
+        "BUNKER ROOM",
+        "COAL HOLE",
+        "CRAWLSPACE",
+        "UTILITY ROOM"
+      ],
+      "adj": [
+        "DAMP",
+        "FLOODED",
+        "DARK",
+        "MUSTY",
+        "LOCKED",
+        "HUMMIN'",
+        "COBWEBBED",
+        "LOW",
+        "COLD",
+        "SECRET"
+      ],
+      "of": [
+        "DA CARETAKER",
+        "DA OLD BOILER",
+        "A HOARDER",
+        "DA LANDLORD",
+        "DOCTOR FELD",
+        "DA NIGHT JANITOR",
+        "A MISSIN' CHILD",
+        "DA BUILDIN'",
+        "DA PLUMBER",
+        "DA COLLECTOR"
+      ]
+    },
+    "laboratory": {
+      "pattern": [
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {noun} OF {of}",
+        "{adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "LABORATORY",
+        "RESEARCH WING",
+        "TEST FACILITY",
+        "INSTITUTE",
+        "ANNEX",
+        "PROVIN' GROUND",
+        "CLEAN ROOM",
+        "BIOWORKS",
+        "TESTIN' STATION",
+        "RESEARCH CENTRE"
+      ],
+      "adj": [
+        "SEALED",
+        "CONTAMINATED",
+        "SECRET",
+        "HUMMIN'",
+        "ABANDONED",
+        "STERILE",
+        "CLASSIFIED",
+        "BURNT OUT",
+        "RESTRICTED",
+        "SILENT"
+      ],
+      "of": [
+        "DOCTOR KESSLER",
+        "PROJECT LANTERN",
+        "DA MINISTRY",
+        "APPLIED FUTURES",
+        "DA NIGHT SHIFT",
+        "DA FAILED TRIAL",
+        "UNIT NINE",
+        "DA BLACK BUDGET",
+        "DA GREY COATS",
+        "DA LAST EXPERIMENT"
+      ]
+    },
+    "factory": {
+      "pattern": [
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {noun} OF {of}",
+        "{adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "FACTORY",
+        "WORKS",
+        "MILL",
+        "PLANT",
+        "FOUNDRY",
+        "ASSEMBLY HALL",
+        "REFINERY",
+        "CANNERY",
+        "WORKSHOP",
+        "WAREHOUSE"
+      ],
+      "adj": [
+        "RUSTED",
+        "IDLE",
+        "ROARIN'",
+        "SHUTTERED",
+        "SMOKIN'",
+        "CONDEMNED",
+        "IRON",
+        "GREASY",
+        "ENDLESS",
+        "SILENT"
+      ],
+      "of": [
+        "HENLEY AN' SONS",
+        "DA UNION",
+        "DA IRON WHEEL",
+        "DA LAST SHIFT",
+        "CONSOLIDATED STEEL",
+        "DA STRIKE",
+        "DA NIGHT WHISTLE",
+        "DA OLD BOSS",
+        "PROGRESS",
+        "DA BROKEN BELT"
+      ]
+    },
+    "castle": {
+      "pattern": [
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {noun} OF {of}",
+        "{adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "KEEP",
+        "CASTLE",
+        "CITADEL",
+        "STRONGHOLD",
+        "FORTRESS",
+        "DONJON",
+        "HALL",
+        "BASTION",
+        "PALACE",
+        "TOWER"
+      ],
+      "adj": [
+        "GRIM",
+        "ROYAL",
+        "CRUMBLIN'",
+        "IRON",
+        "BLACK",
+        "ANCIENT",
+        "PROUD",
+        "FALLEN",
+        "HIGH",
+        "LONELY"
+      ],
+      "of": [
+        "KING ALDRIC",
+        "DA USURPER",
+        "DA RED QUEEN",
+        "DA LAST SIEGE",
+        "DA SILVER BANNER",
+        "LORD MORTANE",
+        "DA BOY KING",
+        "DA BROKEN CROWN",
+        "DA WINTER COURT",
+        "DA SEVEN KNIGHTS"
+      ]
+    },
+    "church": {
+      "pattern": [
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {noun} OF {of}",
+        "{adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "CHURCH",
+        "CHAPEL",
+        "ABBEY",
+        "CATHEDRAL",
+        "PRIORY",
+        "BASILICA",
+        "KIRK",
+        "ORATORY",
+        "MINSTER",
+        "PARISH CHURCH"
+      ],
+      "adj": [
+        "SILENT",
+        "HOLY",
+        "DESECRATED",
+        "HOLLOW",
+        "CANDLELIT",
+        "FORGOTTEN",
+        "GREY",
+        "LONELY",
+        "RUINED",
+        "LIL'"
+      ],
+      "of": [
+        "SAINT COLUMBA",
+        "DA WEEPIN' VIRGIN",
+        "DA HOLY NAME",
+        "DA MARTYRS",
+        "OUR LADY",
+        "DA LAST MASS",
+        "DA BELL RINGER",
+        "SAINT IVO",
+        "DA PILGRIMS",
+        "DA GOOD SHEPHERD"
+      ]
+    },
+    "mines": {
+      "pattern": [
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {noun} OF {of}",
+        "{adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "MINES",
+        "DIGGINGS",
+        "PIT",
+        "COLLIERY",
+        "SHAFTS",
+        "WORKINGS",
+        "QUARRY",
+        "SEAM",
+        "LODE",
+        "DELVINGS"
+      ],
+      "adj": [
+        "DEEP",
+        "BLACK",
+        "FLOODED",
+        "COLLAPSED",
+        "ENDLESS",
+        "GLITTERIN'",
+        "ABANDONED",
+        "RICH",
+        "HUNGRY",
+        "COLD"
+      ],
+      "of": [
+        "DA IRON HILL",
+        "OLD GRUB",
+        "DA SILVER VEIN",
+        "DA LOST CREW",
+        "COPPER GULCH",
+        "DA COMPANY",
+        "DA CANARY",
+        "DA LONG DARK",
+        "DA GNOME KINGS",
+        "BLACK ROCK"
+      ]
+    },
+    "lair": {
+      "pattern": [
+        "DA {adj} {noun}",
+        "{noun} OF {of}",
+        "DA {noun} OF {of}",
+        "{adj} {noun} OF {of}"
+      ],
+      "noun": [
+        "LAIR",
+        "DEN",
+        "NEST",
+        "HOLLOW",
+        "ROOST",
+        "BURROW",
+        "WARREN",
+        "PIT",
+        "HOARD",
+        "KENNEL"
+      ],
+      "adj": [
+        "REEKIN'",
+        "BONE-STREWN",
+        "DREAD",
+        "HUNGRY",
+        "SMOULDERIN'",
+        "DARK",
+        "ANCIENT",
+        "GNAWED",
+        "SAVAGE",
+        "DEEP"
+      ],
+      "of": [
+        "DA WYRM",
+        "DA MANY TEETH",
+        "DA BEAST",
+        "OLD SCALD",
+        "DA PALE HUNTER",
+        "DA BROOD MOTHER",
+        "DA GLUTTON",
+        "DA SILENT CLAW",
+        "DA RED MAW",
+        "DA SLEEPER"
       ]
     }
   }

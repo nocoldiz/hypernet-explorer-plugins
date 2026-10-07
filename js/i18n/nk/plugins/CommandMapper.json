@@ -11,7 +11,7 @@
   "gamepadReset": "GAMEPAD MAPPINGS HAB BEEN RESET TA DEFAULT!",
   "commandNames": {
     "ok": "OK/CONFIRM",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "shift": "DASH/SPECIAL",
     "menu": "MENU",
     "pageup": "PAGE UP",

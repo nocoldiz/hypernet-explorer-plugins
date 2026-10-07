@@ -2,7 +2,7 @@
   "untitledWindow": "WINDOW",
   "minimize": "MINIMIZE",
   "maximize": "MAXIMIZE",
-  "close": "CLOSE",
+  "close": "SHUT IT",
   "defaultUser": "EXPLORER",
   "myComputer": "ME COMPUTER",
   "myDocuments": "ME DOCUMENTS",
@@ -45,14 +45,14 @@
   "noConnectionTitle": "NO CONNECTION",
   "noConnectionMessage": "{name} NO CAN REACH DA HYPERNET. DERE IZ NO LINE OUT FROM HERE!",
   "noConnectionTray": "NO CONNECTION",
-  "oomMessage": "DERE IZ NOT ENOUGH MEMORY TA START {name}. CLOSE A PROGRAM AN' TRY AGAIN!",
+  "oomMessage": "DERE IZ NO ENOUGH MEMORY TA START {name}. CLOSE A PROGRAM AN' TRY AGAIN!",
   "systemLoad": "SYSTEM LOAD:",
   "memory": "MEMORY:",
   "colPid": "PID",
   "colImageName": "IMAGE NAME",
   "colMemUsage": "MEM USAGE",
   "colCpu": "CPU",
-  "colStatus": "STATUS",
+  "colStatus": "HOW ME DOIN'",
   "commandPrompt": "COMMAND PROMPT",
   "terminalHelp": [
     "FILE SYSTEM: DIR CD TREE TYPE FIND MD RD DEL COPY MOVE REN EDIT",
@@ -65,8 +65,8 @@
   "emptyDir": "  0 FILE(S), 0 DIR(S)",
   "runUsage": "USAGE: RUN <appId>",
   "launching": "LAUNCHIN' {app}...",
-  "appNotFound": "APP NOT FOUND: {app}",
-  "notRecognized": "'{cmd}' IZ NOT RECOGNIZED AS AN INTERNAL OR EXTERNAL COMMAND, OPERABLE PROGRAM OR BATCH FILE!",
+  "appNotFound": "APP NO FOUND: {app}",
+  "notRecognized": "'{cmd}' IZ NO RECOGNIZED AS AN INTERNAL OR EXTERNAL COMMAND, OPERABLE PROGRAM OR BATCH FILE!",
   "colosseum": "HYPER COLOSSEUM",
   "colosseumBanner": "HYPER COLOSSEUM",
   "colosseumTagline": "RANDOM PARTY GAUNTLET. SELECT A LEVEL BRACKET!",
@@ -94,7 +94,7 @@
   "biosCase": "CHASSIS",
   "biosProcessor": "PROCESSOR",
   "biosMemory": "MEMORY",
-  "biosStorage": "PRIMARY VOLUME",
+  "biosStorage": "PRIMARY LOUDNESS",
   "biosCell": "POWER CELL",
   "biosDraw": "DRAW / SUPPLY",
   "biosBoard": "BOARD OCCUPANCY",
@@ -108,7 +108,7 @@
   "termCopyright": "(C) COPYRIGHT 1985-2001 E-CORP!",
   "termDate": "DA CURRENT DATE IZ: {date}",
   "termTime": "DA CURRENT TIME IZ: {time}",
-  "termVolume": "VOLUME IN DRIVE {drive} IZ ESOTERIC",
+  "termVolume": "LOUDNESS IN DRIVE {drive} IZ ESOTERIC",
   "termDirOf": " DIRECTORY OF {path}",
   "termDirSummary": "  {files} FILE(S), {dirs} DIR(S)",
   "termBadPath": "DA SYSTEM NO CAN FIND DA PATH SPECIFIED!",
@@ -116,7 +116,7 @@
   "termNotDir": "DA DIRECTORY NAME IZ INVALID!",
   "termIsDir": "ACCESS IZ DENIED: DAT IZ A DIRECTORY!",
   "termExists": "A FILE OR DIRECTORY WIT DAT NAME ALREADY EXISTS!",
-  "termDirNotEmpty": "DA DIRECTORY IZ NOT EMPTY. USE /S TA REMOVE IT ANYWAY!",
+  "termDirNotEmpty": "DA DIRECTORY IZ NO EMPTY. USE /S TA REMOVE IT ANYWAY!",
   "termSyntax": "DA SYNTAX OF DA COMMAND IZ INCORRECT!",
   "termCreated": "CREATED {path}",
   "termDeleted": "DELETED {path}",
@@ -143,8 +143,8 @@
   "termPingHeader": "PINGIN' {host} WIT 32 BYTES OF DATA:",
   "termPingReply": "REPLY FROM {host}: BYTES=32 TIME={ms}MS",
   "termPingLost": "REQUEST TIMED OUT. DA HOST IZ UNREACHABLE!",
-  "termEnvUnset": "ENVIRONMENT VARIABLE {name} IZ NOT DEFINED!",
-  "termRegMissing": "DA REGISTRY KEY {key} DOES NOT EXIST!",
+  "termEnvUnset": "ENVIRONMENT VARIABLE {name} IZ NO DEFINED!",
+  "termRegMissing": "DA REGISTRY KEY {key} DOES NO EXIST!",
   "termRegSet": "DA REGISTRY KEY {key} WAZ WRITTEN!",
   "termHistoryEmpty": "NO COMMANDS IN HISTORY.",
   "category": {
@@ -177,7 +177,7 @@
     "goAway": "GO AWAY",
     "hello": [
       "HI! ME IZ BOBNZI. ME LIVE IN YA MACHINE NOW!",
-      "A GOBLIN AT YA SERVICE. DO NOT ASK ABOUT DA TOOLBAR!",
+      "A GOBLIN AT YA SERVICE. DO NO ASK ABOUT DA TOOLBAR!",
       "BOBNZI IZ HERE! YA MACHINE HAB NEVER BEEN DIS GREEN!"
     ],
     "back": [
@@ -278,7 +278,7 @@
   "xp": {
     "dialog": {
       "ok": "OK",
-      "cancel": "CANCEL",
+      "cancel": "FORGET IT",
       "yes": "YAH!",
       "no": "NAH!",
       "defaultTitle": "ARCHWAYS",
@@ -289,15 +289,15 @@
     },
     "filebox": {
       "openTitle": "OPEN",
-      "saveTitle": "SAVE AS",
+      "saveTitle": "STASH AS",
       "lookIn": "LOOK IN:",
-      "saveIn": "SAVE IN:",
+      "saveIn": "STASH IN:",
       "fileName": "FILE NAME:",
       "filesOfType": "FILES OF TYPE:",
-      "saveAsType": "SAVE AS TYPE:",
+      "saveAsType": "STASH AS TYPE:",
       "open": "OPEN",
-      "save": "SAVE",
-      "cancel": "CANCEL",
+      "save": "STASH",
+      "cancel": "FORGET IT",
       "upOneLevel": "UP ONE LEVEL",
       "newFolder": "CREATE NEW FOLDER",
       "newFolderName": "NEW FOLDER",
@@ -315,8 +315,8 @@
       "imageFiles": "PICTURES (*.PNG)",
       "emptyFolder": "DIS FOLDER IZ EMPTY.",
       "noName": "YOU MUST TYPE A FILE NAME!",
-      "notFound": "{file}\nFILE NOT FOUND. CHECK DA FILE NAME AN' TRY AGAIN!",
-      "overwriteTitle": "SAVE AS",
+      "notFound": "{file}\nFILE NO FOUND. CHECK DA FILE NAME AN' TRY AGAIN!",
+      "overwriteTitle": "STASH AS",
       "overwriteBody": "{file} ALREADY EXISTS.\nDO YOU WANT TA REPLACE IT?"
     },
     "taskbar": {
@@ -336,7 +336,7 @@
       "size": "SIZE",
       "minimize": "MINIMIZE",
       "maximize": "MAXIMIZE",
-      "close": "CLOSE",
+      "close": "SHUT IT",
       "closeGroup": "CLOSE GROUP",
       "groupOf": "{name} ({count})",
       "showHidden": "SHOW HIDDEN ICONS",
@@ -364,7 +364,7 @@
     },
     "balloon": {
       "riskTitle": "YA COMPUTER MIGHT BE AT RISK",
-      "riskText": "ANTIVIRUS SOFTWARE MIGHT NOT BE INSTALLED. CLICK DIS BALLOON TA FIX DIS PROBLEM!",
+      "riskText": "ANTIVIRUS SOFTWARE MIGHT NO BE INSTALLED. CLICK DIS BALLOON TA FIX DIS PROBLEM!",
       "unusedTitle": "DERE IZ UNUSED ICONS ON YA DESKTOP",
       "unusedText": "DA DESKTOP CLEANUP WIZARD CAN HELP YOU CLEAN UP YA DESKTOP. CLICK DIS BALLOON TA START DA WIZARD!",
       "newHardwareTitle": "FOUND NEW HARDWARE",
@@ -396,7 +396,7 @@
       "eventOff": "DA PROCESS USER32 HAB INITIATED DA POWER OFF OF DA COMPUTER!",
       "eventRestart": "DA PROCESS USER32 HAB INITIATED DA RESTART OF DA COMPUTER!",
       "eventLogoff": "DA USER LOGGED OFF.",
-      "savingSettings": "SAVIN' YA SETTINGS...",
+      "savingSettings": "STASHIN' YA FIDDLY BITS...",
       "shuttingDown": "ARCHWAYS IZ SHUTTIN' DOWN...",
       "safeToTurnOff": "IT IZ NOW SAFE TA TURN OFF YA COMPUTER!"
     },
@@ -482,11 +482,11 @@
       "type": "TYPE",
       "data": "DATA",
       "default": "(DEFAULT)",
-      "valueNotSet": "(VALUE NOT SET)",
+      "valueNotSet": "(VALUE NO SET)",
       "newValue": "NEW STRIN' VALUE",
       "newValueName": "VALUE NAME:",
       "modify": "MODIFY...",
-      "delete": "DELETE",
+      "delete": "SMASH",
       "editTitle": "EDIT STRIN'",
       "editValue": "VALUE DATA FOR {name}:",
       "confirmDelete": "IZ YOU SURE YOU WANT TA DELETE DA VALUE {name}?"
@@ -506,7 +506,7 @@
       "modeSelective": "SELECTIVE STARTUP",
       "launchRestore": "LAUNCH SYSTEM RESTORE",
       "expandFile": "EXPAND FILE...",
-      "expandBody": "EXPANDS A FILE FROM DA ARCHWAYS XP INSTALLATION CD. INSERT DA CD INTO DA DRIVE DIS MACHINE DOES NOT HAB!",
+      "expandBody": "EXPANDS A FILE FROM DA ARCHWAYS XP INSTALLATION CD. INSERT DA CD INTO DA DRIVE DIS MACHINE DOES NO HAB!",
       "timeout": "TIMEOUT:",
       "seconds": "SEC.",
       "running": "RUNNIN'",
@@ -581,7 +581,7 @@
       "scanning": "DISK CLEANUP IZ CALCULATIN' HOW MUCH SPACE YOU WILL BE ABLE TA FREE ON {drive}. DIS MAY TAKE A FEW MINUTES TA COMPLETE!",
       "tab": {
         "cleanup": "DISK CLEANUP",
-        "more": "MORE OPTIONS"
+        "more": "MORE FIDDLY BITS"
       },
       "intro": "YOU CAN USE DISK CLEANUP TA FREE UP TA {size} OF DISK SPACE ON {drive}!",
       "totalGain": "TOTAL AMOUNT OF DISK SPACE YOU GAIN:",
@@ -596,12 +596,12 @@
       "desc": {
         "temp": "PROGRAMS SOMETIMES STORE TEMPORARY INFORMATION IN A TEMP FOLDER. BEFORE A PROGRAM CLOSES, IT USUALLY DELETES DIS INFORMATION!",
         "inet": "DA TEMPORARY HYPERNET FILES FOLDER CONTAINS PAGES STORED ON YA HARD DISK FOR QUICK VIEWIN'!",
-        "recycle": "DA RECYCLE BIN CONTAINS FILES YOU HAB DELETED FROM YA COMPUTER. DEZE FILES IZ NOT PERMANENTLY REMOVED UNTIL YOU EMPTY DA RECYCLE BIN!",
+        "recycle": "DA RECYCLE BIN CONTAINS FILES YOU HAB DELETED FROM YA COMPUTER. DEZE FILES IZ NO PERMANENTLY REMOVED UNTIL YOU EMPTY DA RECYCLE BIN!",
         "downloaded": "DOWNLOADED PROGRAM FILES IZ CONTROLS AN' APPLETS DOWNLOADED AUTOMATICALLY FROM DA HYPERNET WHEN YOU VIEW CERTAIN PAGES!",
         "logs": "FILES CREATED BY ARCHWAYS DURIN' SETUP!"
       },
       "moreComponents": "ARCHWAYS COMPONENTS",
-      "moreComponentsText": "YOU CAN FREE MORE DISK SPACE BY REMOVIN' OPTIONAL ARCHWAYS COMPONENTS DAT YOU DO NOT USE!",
+      "moreComponentsText": "YOU CAN FREE MORE DISK SPACE BY REMOVIN' OPTIONAL ARCHWAYS COMPONENTS DAT YOU DO NO USE!",
       "moreRestore": "SYSTEM RESTORE",
       "moreRestoreText": "YOU CAN FREE MORE DISK SPACE BY REMOVIN' ALL BUT DA MOST RECENT RESTORE POINT!",
       "restoreConfirm": "IZ YOU SURE YOU WANT TA DELETE ALL BUT DA MOST RECENT RESTORE POINT?",
@@ -611,7 +611,7 @@
     },
     "defrag": {
       "appName": "DISK DEFRAGMENTER",
-      "volume": "VOLUME",
+      "volume": "LOUDNESS",
       "status": "SESSION STATUS",
       "fileSystem": "FILE SYSTEM",
       "capacity": "CAPACITY",
@@ -624,7 +624,7 @@
       "pause": "PAUSE",
       "stop": "STOP",
       "viewReport": "VIEW REPORT",
-      "close": "CLOSE",
+      "close": "SHUT IT",
       "legendFrag": "FRAGMENTED FILES",
       "legendContig": "CONTIGUOUS FILES",
       "legendUnmov": "UNMOVABLE FILES",
@@ -635,11 +635,11 @@
       "defragmented": "DEFRAGMENTED",
       "paused": "PAUSED",
       "progress": "DEFRAGMENTIN'... {pct}%",
-      "shouldDefrag": "ANALYSIS IZ COMPLETE FOR: (C:)\nYOU SHOULD DEFRAGMENT DIS VOLUME!",
-      "noNeed": "ANALYSIS IZ COMPLETE FOR: (C:)\nYOU DO NOT NEED TA DEFRAGMENT DIS VOLUME!",
+      "shouldDefrag": "ANALYSIS IZ COMPLETE FOR: (C:)\nYOU SHOULD DEFRAGMENT DIS LOUDNESS!",
+      "noNeed": "ANALYSIS IZ COMPLETE FOR: (C:)\nYOU DO NO NEED TA DEFRAGMENT DIS LOUDNESS!",
       "complete": "DEFRAGMENTATION IZ COMPLETE FOR: (C:)",
       "reportTitle": "ANALYSIS REPORT",
-      "report": "VOLUME (C:)\n VOLUME SIZE = {size}\n USED SPACE = {used}\n TOTAL FILES = {files}\n TOTAL FRAGMENTATION = {frag} %\n LAST DEFRAGMENTATION = {last}",
+      "report": "LOUDNESS (C:)\n LOUDNESS SIZE = {size}\n USED SPACE = {used}\n TOTAL FILES = {files}\n TOTAL FRAGMENTATION = {frag} %\n LAST DEFRAGMENTATION = {last}",
       "never": "NEVER",
       "event": "DISK DEFRAGMENTER COMPLETED ON C:!"
     },
@@ -651,7 +651,7 @@
         "inet": "HYPERNET TIME"
       },
       "currentZone": "CURRENT TIME ZONE: {zone}",
-      "dst": "AUTOMATICALLY ADJUST CLOCK FOR DAYLIGHT SAVIN' CHANGES",
+      "dst": "AUTOMATICALLY ADJUST CLOCK FOR DAYLIGHT STASHIN' CHANGES",
       "syncAuto": "AUTOMATICALLY SYNCHRONIZE WIT A HYPERNET TIME SERVER",
       "server": "SERVER:",
       "defaultServer": "TIME.ARCHWAYS.COM",
@@ -678,9 +678,9 @@
       ]
     },
     "intl": {
-      "appName": "REGIONAL AN' LANGUAGE OPTIONS",
+      "appName": "REGIONAL AN' LANGUAGE FIDDLY BITS",
       "tab": {
-        "regional": "REGIONAL OPTIONS",
+        "regional": "REGIONAL FIDDLY BITS",
         "languages": "LANGUAGES",
         "advanced": "ADVANCED"
       },
@@ -702,12 +702,12 @@
       "inputLangsText": "TA VIEW OR CHANGE DA LANGUAGES AN' METHODS YOU CAN USE TA ENTER TEXT, CLICK DETAILS!",
       "defaultInput": "DEFAULT",
       "details": "DETAILS...",
-      "detailsBody": "INSTALLED SERVICES:\n\n KEYBOARD: DA ONE IN FRONT OF YOU.\n HANDWRITIN': NOT RECOGNIZED, EVER.\n SPEECH: DA MACHINE HEARS YOU, IT JUST DOES NOT LISTEN!",
+      "detailsBody": "INSTALLED SERVICES:\n\n KEYBOARD: DA ONE IN FRONT OF YOU.\n HANDWRITIN': NO RECOGNIZED, EVER.\n SPEECH: DA MACHINE HEARS YOU, IT JUST DOES NO LISTEN!",
       "supplemental": "SUPPLEMENTAL LANGUAGE SUPPORT",
       "complexScripts": "INSTALL FILES FOR COMPLEX SCRIPT AN' RIGHT-TA-LEFT LANGUAGES (INCLUDIN' THAI)",
       "eastAsian": "INSTALL FILES FOR EAST ASIAN LANGUAGES",
       "nonUnicode": "LANGUAGE FOR NON-UNICODE PROGRAMS",
-      "nonUnicodeText": "DIS SYSTEM SETTIN' ENABLES NON-UNICODE PROGRAMS TA DISPLAY MENUS AN' DIALOGS IN DEY NATIVE LANGUAGE!",
+      "nonUnicodeText": "DIS SYSTEM FIDDLY BIT ENABLES NON-UNICODE PROGRAMS TA DISPLAY MENUS AN' DIALOGS IN DEY NATIVE LANGUAGE!",
       "codePages": "CODE PAGE CONVERSION TABLES",
       "codePagesList": [
         "1252 (ANSI - LATIN ME)",
@@ -742,22 +742,22 @@
     },
     "mmsys": {
       "appName": "SOUNDS AN' AUDIO DEVICES",
-      "trayTitle": "VOLUME",
+      "trayTitle": "LOUDNESS",
       "tab": {
-        "volume": "VOLUME",
+        "volume": "LOUDNESS",
         "sounds": "SOUNDS",
-        "audio": "AUDIO",
+        "audio": "NOISES",
         "voice": "VOICE",
         "hardware": "HARDWARE"
       },
-      "deviceVolume": "DEVICE VOLUME",
+      "deviceVolume": "DEVICE LOUDNESS",
       "low": "LOW",
       "high": "HIGH",
       "mute": "MUTE",
-      "trayIcon": "PLACE VOLUME ICON IN DA TASKBAR",
+      "trayIcon": "PLACE LOUDNESS ICON IN DA TASKBAR",
       "advanced": "ADVANCED...",
       "advancedBody": "EVERY SLIDER IN DA MIXER IZ DA SAME SLIDER. MOVIN' ONE MOVES ALL OF DEM. DIS IZ BY DESIGN!",
-      "speakerSettings": "SPEAKER SETTINGS",
+      "speakerSettings": "SPEAKER FIDDLY BITS",
       "speakers": [
         "DESKTOP STEREO SPEAKERS",
         "HEADPHONES",
@@ -853,9 +853,9 @@
       "drivers": "DRIVERS",
       "driversText": "DRIVER SIGNIN' LETS YOU MAKE SURE DAT INSTALLED DRIVERS IZ COMPATIBLE WIT ARCHWAYS!",
       "driverSigning": "DRIVER SIGNIN'",
-      "signingBody": "DRIVERS NOT DIGITALLY SIGNED BY OMNI-LEX: ALL OF DEM. ACTION: WARN, DEN INSTALL ANYWAY!",
+      "signingBody": "DRIVERS NO DIGITALLY SIGNED BY OMNI-LEX: ALL OF DEM. ACTION: WARN, DEN INSTALL ANYWAY!",
       "windowsUpdate": "ARCHWAYS UPDATE",
-      "wupdateBody": "ARCHWAYS UPDATE COULD NOT CONNECT TA DA UPDATE SITE. DA LAST UPDATE WAZ PUBLISHED ON 1 JANUARY 2000 AN' DA SITE HAB NOT BEEN TOUCHED SINCE!",
+      "wupdateBody": "ARCHWAYS UPDATE COULD NO CONNECT TA DA UPDATE SITE. DA LAST UPDATE WAZ PUBLISHED ON 1 JANUARY 2000 AN' DA SITE HAB NO BEEN TOUCHED SINCE!",
       "profiles": "HARDWARE PROFILES",
       "profilesText": "HARDWARE PROFILES PROVIDE A WAY FOR YOU TA SET UP AN' STORE DIFFERENT HARDWARE CONFIGURATIONS!",
       "profilesBody": "PROFILE 1 (CURRENT) ON {name}\n\nDERE IZ ONE PROFILE. DERE WILL ALWAYS BE ONE PROFILE!",
@@ -875,7 +875,7 @@
       "errrepBody": "YOU CAN CHOOSE TA HAB SOFTWARE ERRORS REPORTED TA OMNI-LEX TA HELP IMPROVE FUTURE PRODUCTS!",
       "errrepDisable": "DISABLE ERROR REPORTIN'",
       "restoreOff": "TURN OFF SYSTEM RESTORE ON ALL DRIVES",
-      "restoreDrives": "DRIVE SETTINGS",
+      "restoreDrives": "DRIVE FIDDLY BITS",
       "monitoring": "MONITORIN'",
       "turnedOff": "TURNED OFF",
       "diskUsage": "DISK SPACE TA USE:",
@@ -998,7 +998,7 @@
     "recycle": {
       "appName": "RECYCLE BIN",
       "restore": "RESTORE",
-      "delete": "DELETE",
+      "delete": "SMASH",
       "empty": "EMPTY RECYCLE BIN",
       "properties": "PROPERTIES",
       "name": "NAME",
@@ -1033,11 +1033,11 @@
       "add": "ADD SCHEDULED TASK",
       "runNow": "RUN",
       "toggle": "ENABLE / DISABLE",
-      "delete": "DELETE",
+      "delete": "SMASH",
       "name": "NAME",
       "schedule": "SCHEDULE",
       "lastRun": "LAST RUN TIME",
-      "status": "STATUS",
+      "status": "HOW ME DOIN'",
       "daily": "EVERY DAY AT {time}",
       "never": "NEVER",
       "ready": "READY",
@@ -1051,7 +1051,7 @@
     },
     "wscui": {
       "appName": "SECURITY CENTER",
-      "intro": "SECURITY CENTER HELPS YOU MANAGE YA ARCHWAYS SECURITY SETTINGS. TA HELP PROTECT YA COMPUTER, MAKE SURE DA THREE SECURITY ESSENTIALS IZ MARKED ON!",
+      "intro": "SECURITY CENTER HELPS YOU MANAGE YA ARCHWAYS SECURITY FIDDLY BITS. TA HELP PROTECT YA COMPUTER, MAKE SURE DA THREE SECURITY ESSENTIALS IZ MARKED ON!",
       "item": {
         "firewall": "FIREWALL",
         "updates": "AUTOMATIC UPDATES",
@@ -1067,7 +1067,7 @@
         "updatesOn": "AUTOMATIC UPDATES IZ ON. IT WILL FIND NO UPDATES, BUT IT WILL LOOK!",
         "updatesOff": "AUTOMATIC UPDATES IZ TURNED OFF. YA COMPUTER IZ MORE VULNERABLE TA VIRUSES AN' OTHER SECURITY THREATS!",
         "antivirusOn": "NORTON ANTIVENOM 2001 IZ INSTALLED AN' UP TA DATE. ITS LAST DEFINITION FILE IZ DATED 1 JANUARY 2000!",
-        "antivirusOff": "ARCHWAYS DID NOT FIND ANTIVIRUS SOFTWARE ON DIS COMPUTER. ANTIVIRUS SOFTWARE HELPS PROTECT YA COMPUTER AGAINST VIRUSES AN' OTHER SECURITY THREATS!"
+        "antivirusOff": "ARCHWAYS DID NO FIND ANTIVIRUS SOFTWARE ON DIS COMPUTER. ANTIVIRUS SOFTWARE HELPS PROTECT YA COMPUTER AGAINST VIRUSES AN' OTHER SECURITY THREATS!"
       },
       "noAntivirus": "NO ANTIVIRUS PRODUCT IZ INSTALLED. ARCHWAYS WILL PRETEND ONE IZ, WHICH IZ WHAT MOST OF DEM DID ANYWAY!",
       "alertSettings": "CHANGE DA WAY SECURITY CENTER ALERTS ME",
@@ -1082,7 +1082,7 @@
         "desktop": "DESKTOP",
         "saver": "SCREEN SAVER",
         "appearance": "APPEARANCE",
-        "settings": "SETTINGS"
+        "settings": "FIDDLY BITS"
       },
       "themesIntro": "A THEME IZ A BACKGROUND PLUS A SET OF SOUNDS, ICONS, AN' OTHER ELEMENTS TA HELP YOU PERSONALIZE YA COMPUTER WIT ONE CLICK!",
       "previewTitle": "ACTIVE WINDOW",
@@ -1117,7 +1117,7 @@
       "marqueeText": "MARQUEE TEXT:",
       "resumeLock": "ON RESUME, DISPLAY WELCOME SCREEN",
       "power": "MONITOR POWER",
-      "powerText": "TA ADJUST MONITOR POWER SETTINGS AN' SAVE ENERGY, CLICK POWER!",
+      "powerText": "TA ADJUST MONITOR POWER FIDDLY BITS AN' STASH ENERGY, CLICK POWER!",
       "powerBtn": "POWER...",
       "powerDeck": "POWER SCHEME: PORTABLE/HYPERDECK. REMAININ' ON DA CELL: {hours}!",
       "powerDesktop": "POWER SCHEME: HOME/OFFICE DESK. TURN OFF MONITOR: AFTER 20 MINUTES. TURN OFF HARD DISKS: NEVER. SYSTEM STANDBY: NEVER!",
@@ -1260,8 +1260,8 @@
       "count": "{n} EVENT(S)",
       "clear": "CLEAR ALL EVENTS",
       "clearConfirm": "IZ YOU SURE YOU WANT TA CLEAR DA LOG?",
-      "saveAs": "SAVE LOG FILE AS...",
-      "saved": "DA LOG WAZ SAVED TA {path}.",
+      "saveAs": "STASH LOG FILE AS...",
+      "saved": "DA LOG WAZ STASHED TA {path}.",
       "eventProps": "EVENT PROPERTIES",
       "detail": "TYPE: {level}\nDATE: {date}\nSOURCE: {source}\n\nDESCRIPTION:\n{text}"
     },
@@ -1328,10 +1328,10 @@
       "moves": "MOVES: {n}",
       "won": "ALL FOUR PILES IZ HOME.",
       "wonTitle": "PATIENCE",
-      "noMove": "DAT CARD WILL NOT GO DERE!"
+      "noMove": "DAT CARD WILL NO GO DERE."
     },
     "folderopt": {
-      "appName": "FOLDER OPTIONS",
+      "appName": "FOLDER FIDDLY BITS",
       "tab": {
         "general": "GENERAL",
         "viewTab": "VIEW"
@@ -1342,7 +1342,7 @@
       "clickItems": "CLICK ITEMS AS FOLLOWS",
       "doubleClick": "DOUBLE-CLICK TA OPEN AN ITEM",
       "singleClick": "SINGLE-CLICK TA OPEN AN ITEM",
-      "advanced": "ADVANCED SETTINGS",
+      "advanced": "ADVANCED FIDDLY BITS",
       "showHidden": "SHOW HIDDEN FILES AN' FOLDERS",
       "hideExtensions": "HIDE EXTENSIONS FOR KNOWN FILE TYPES",
       "fullPath": "DISPLAY DA FULL PATH IN DA ADDRESS BAR",
@@ -1352,7 +1352,7 @@
       "appName": "MOUSE",
       "tab": {
         "buttons": "BUTTONS",
-        "pointers": "POINTER OPTIONS"
+        "pointers": "POINTER FIDDLY BITS"
       },
       "buttonConfig": "BUTTON CONFIGURATION",
       "swap": "SWITCH PRIMARY AN' SECONDARY BUTTONS",
@@ -1409,7 +1409,7 @@
       "detailsBody": "STATUS: {status}\nDURATION: {duration}\nSPEED: {speed}\n\nPACKETS SENT: {sent}\nPACKETS RECEIVED: {received}"
     },
     "access": {
-      "appName": "ACCESSIBILITY OPTIONS",
+      "appName": "ACCESSIBILITY FIDDLY BITS",
       "tab": {
         "keyboardTab": "KEYBOARD",
         "displayTab": "DISPLAY"
@@ -1434,36 +1434,36 @@
       "appName": "GAME CONTROLLERS",
       "installed": "INSTALLED GAME CONTROLLERS",
       "controller": "CONTROLLER",
-      "status": "STATUS",
+      "status": "HOW ME DOIN'",
       "ok": "OK",
-      "notConnected": "NOT CONNECTED",
+      "notConnected": "NO CONNECTED",
       "none": "NO GAME CONTROLLERS IZ ATTACHED!",
       "attached": "{name} IZ ATTACHED."
     },
     "allprograms": {
       "appName": "ALL PROGRAMS",
-      "hint": "EVERY PROGRAM DAT IZ NOT ON DA DESKTOP. DRAG ONE ONTO DA DESKTOP TA KEEP IT DERE; DRAG A DESKTOP SHORTCUT BACK HERE, OR ONTO DA RECYCLE BIN, TA PUT IT AWAY!",
+      "hint": "EVERY PROGRAM DAT IZ NO ON DA DESKTOP. DRAG ONE ONTO DA DESKTOP TA KEEP IT DERE; DRAG A DESKTOP SHORTCUT BACK HERE, OR ONTO DA RECYCLE BIN, TA PUT IT AWAY!",
       "empty": "EVERY PROGRAM IZ ALREADY ON DA DESKTOP!",
       "open": "OPEN",
       "addToDesktop": "ADD TA DESKTOP"
     },
     "programs": {
       "appName": "PROGRAMS",
-      "hint": "INSTALLED PROGRAMS DAT IZ NOT ON DA DESKTOP. DRAG ONE ONTO DA DESKTOP TA KEEP IT DERE; DRAG A DESKTOP SHORTCUT BACK HERE, OR ONTO DA RECYCLE BIN, TA PUT IT AWAY!",
+      "hint": "INSTALLED PROGRAMS DAT IZ NO ON DA DESKTOP. DRAG ONE ONTO DA DESKTOP TA KEEP IT DERE; DRAG A DESKTOP SHORTCUT BACK HERE, OR ONTO DA RECYCLE BIN, TA PUT IT AWAY!",
       "empty": "EVERY PROGRAM IZ ALREADY ON DA DESKTOP!",
       "open": "OPEN",
       "addToDesktop": "ADD TA DESKTOP"
     },
     "games": {
       "appName": "GAMES",
-      "hint": "INSTALLED GAMES DAT IZ NOT ON DA DESKTOP. DRAG ONE ONTO DA DESKTOP TA KEEP IT DERE; DRAG A DESKTOP SHORTCUT BACK HERE, OR ONTO DA RECYCLE BIN, TA PUT IT AWAY!",
+      "hint": "INSTALLED GAMES DAT IZ NO ON DA DESKTOP. DRAG ONE ONTO DA DESKTOP TA KEEP IT DERE; DRAG A DESKTOP SHORTCUT BACK HERE, OR ONTO DA RECYCLE BIN, TA PUT IT AWAY!",
       "empty": "EVERY GAME IZ ALREADY ON DA DESKTOP!",
       "open": "OPEN",
       "addToDesktop": "ADD TA DESKTOP"
     },
     "utilities": {
       "appName": "UTILITIES",
-      "hint": "INSTALLED UTILITIES DAT IZ NOT ON DA DESKTOP. DRAG ONE ONTO DA DESKTOP TA KEEP IT DERE; DRAG A DESKTOP SHORTCUT BACK HERE, OR ONTO DA RECYCLE BIN, TA PUT IT AWAY!",
+      "hint": "INSTALLED UTILITIES DAT IZ NO ON DA DESKTOP. DRAG ONE ONTO DA DESKTOP TA KEEP IT DERE; DRAG A DESKTOP SHORTCUT BACK HERE, OR ONTO DA RECYCLE BIN, TA PUT IT AWAY!",
       "empty": "EVERY UTILITY IZ ALREADY ON DA DESKTOP!",
       "open": "OPEN",
       "addToDesktop": "ADD TA DESKTOP"

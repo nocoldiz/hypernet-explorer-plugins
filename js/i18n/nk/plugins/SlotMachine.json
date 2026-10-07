@@ -1,7 +1,7 @@
 {
-  "noThree": "THREE.JS IZ NOT LOADED - SLOT MACHINE UNAVAILABLE",
+  "noThree": "THREE.JS IZ NO LOADED - SLOT MACHINE UNAVAILABLE",
   "noTokens": "YOU NO HAB ANY TOKENS.",
-  "notEnoughTokens": "NOT ENOUGH TOKENS! HAB {have}, NEED {need}!",
+  "notEnoughTokens": "NO ENOUGH TOKENS! HAB {have}, NEED {need}!",
   "spinning": "DA REELS IZ TURNIN'...",
   "jackpot": "JACKPOT! THREE OF A KIND, WON {amount} TOKENS! (X{mult})",
   "pair": "TWO MATCHIN' SYMBOLS, WON {amount} TOKENS!",

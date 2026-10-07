@@ -1,0 +1,416 @@
+{
+  "unlocked": "{name} HAB UNLOCKED EXPRESSION!",
+  "awakened": "{name} CAN NOW USE EXPRESSION!",
+  "fired": "{name}'S EXPRESSION: {effects}!",
+  "firedSummon": "{name}'S EXPRESSION TAKES DA SHAPE OF {form}: {effects}!",
+  "bound": "{name}: {arg}",
+  "negated": "NO {name}",
+  "category": {
+    "trigger": "TRIGGERS",
+    "rule": "CONDITIONS",
+    "effect": "EFFECTS",
+    "form": "FORM",
+    "limit": "LIMITATIONS"
+  },
+  "where": {
+    "battle": "IN BATTLE",
+    "world": "IN DA WORLD",
+    "any": "ANYWHERE"
+  },
+  "weather": {
+    "none": "CLEAR",
+    "rain": "RAIN",
+    "storm": "STORM",
+    "snow": "SNOW"
+  },
+  "need": {
+    "hunger": "HUNGER",
+    "sleep": "SLEEP",
+    "hygiene": "HYGIENE",
+    "social": "SOCIAL",
+    "leisure": "FUN",
+    "bladder": "BLADDER"
+  },
+  "empathize": {
+    "freeChat": "CHAT",
+    "socialize": "SOCIALIZE",
+    "bicker": "BICKER",
+    "gift": "GIFT",
+    "bribe": "BRIBE",
+    "treat": "TREAT",
+    "feed": "FEED",
+    "preach": "PREACH",
+    "debate": "DEBATE",
+    "teach": "TEACH",
+    "learn": "LEARN",
+    "romance": "ROMANCE",
+    "cardDuel": "CARD DUEL",
+    "challenge": "CHALLENGE",
+    "accuse": "ACCUSE",
+    "attack": "WHACK",
+    "pickpocket": "PICKPOCKET",
+    "infect": "INFECT"
+  },
+  "option": {
+    "opening": {
+      "name": "OPENIN'",
+      "desc": "FIRES AS A BATTLE BEGINS."
+    },
+    "eachRound": {
+      "name": "EACH ROUND",
+      "desc": "FIRES AT DA START OF DA FIRST ROUND IN WHICH DA CONDITIONS HOLD!"
+    },
+    "bloodied": {
+      "name": "BLOODIED",
+      "desc": "FIRES WHEN A BLOW TAKES DIS CHARACTER UNDER HALF HEALTH!"
+    },
+    "mpDry": {
+      "name": "RUNNIN' DRY",
+      "desc": "FIRES WHEN A SKILL SPENDS DIS CHARACTER'S LAST MP!"
+    },
+    "fallenAlly": {
+      "name": "FALLEN ALLY",
+      "desc": "FIRES WHEN ANY ALLY FALLS IN BATTLE!"
+    },
+    "memberFalls": {
+      "name": "MEMBER FALLS",
+      "desc": "FIRES WHEN DA CHOSEN PARTY MEMBER IZ KNOCKED OUT!"
+    },
+    "takedown": {
+      "name": "TAKEDOWN",
+      "desc": "FIRES WHEN DIS CHARACTER DEFEATS AN BAD 'UN!"
+    },
+    "hitByElement": {
+      "name": "STRUCK BY ELEMENT",
+      "desc": "FIRES WHEN DIS CHARACTER IZ HIT BY DA CHOSEN ELEMENT!"
+    },
+    "dealtElement": {
+      "name": "STRIKE WIT ELEMENT",
+      "desc": "FIRES WHEN DIS CHARACTER LANDS A BLOW OF DA CHOSEN ELEMENT!"
+    },
+    "stateOnEnemy": {
+      "name": "BAD 'UN STATE",
+      "desc": "FIRES WHEN DA CHOSEN STATE TAKES HOLD OF AN BAD 'UN!"
+    },
+    "struckTrue": {
+      "name": "STRUCK TRUE",
+      "desc": "FIRES WHEN DIS CHARACTER TAKES A CRITICAL HIT!"
+    },
+    "deathsDoor": {
+      "name": "DEATH'S DOOR",
+      "desc": "FIRES ON DA BLOW DAT WOULD KNOCK DIS CHARACTER OUT: DEY HOLD ON AT 1 HP INSTEAD!"
+    },
+    "stateOnSelf": {
+      "name": "STATE TAKEN",
+      "desc": "FIRES WHEN DA CHOSEN STATE TAKES HOLD OF DIS CHARACTER!"
+    },
+    "afflicted": {
+      "name": "AFFLICTED",
+      "desc": "FIRES WHEN ANY HARMFUL STATE TAKES HOLD OF DIS CHARACTER!"
+    },
+    "levelUp": {
+      "name": "GROWTH",
+      "desc": "FIRES WHEN DIS CHARACTER GAINS A LEVEL!"
+    },
+    "spend": {
+      "name": "BIG SPENDER",
+      "desc": "FIRES WHEN DA PARTY SPENDS AT LEAST DA CHOSEN SUM AT ONCE!"
+    },
+    "mapHurt": {
+      "name": "HURT ON DA ROAD",
+      "desc": "FIRES WHEN DIS CHARACTER IZ HURT OUTSIDE A BATTLE!"
+    },
+    "weatherTurns": {
+      "name": "WEATHER TURNS",
+      "desc": "FIRES WHEN DA WEATHER TURNS TA DA CHOSEN ONE!"
+    },
+    "heatRises": {
+      "name": "HEAT RISES",
+      "desc": "FIRES WHEN DA POLICE'S ATTENTION ON DA PARTY GROWS!"
+    },
+    "crime": {
+      "name": "CRIME",
+      "desc": "FIRES WHEN DA PARTY IZ CHARGED WIT A CRIME!"
+    },
+    "needLow": {
+      "name": "RUNNIN' LOW",
+      "desc": "FIRES WHEN DA CHOSEN NEED FALLS UNDER A QUARTER!"
+    },
+    "eat": {
+      "name": "MEAL",
+      "desc": "FIRES WHEN DIS CHARACTER EATS!"
+    },
+    "diseased": {
+      "name": "INFECTION",
+      "desc": "FIRES WHEN DIS CHARACTER CATCHES A DISEASE!"
+    },
+    "allergic": {
+      "name": "ALLERGY",
+      "desc": "FIRES WHEN DIS CHARACTER HAB AN ALLERGIC REACTION!"
+    },
+    "empathize": {
+      "name": "CONVERSATION",
+      "desc": "FIRES WHEN DA CHOSEN EMPATHIZE ACTION IZ TAKEN WIT SOMEBODY!"
+    },
+    "admired": {
+      "name": "ADMIRED",
+      "desc": "FIRES WHEN SOMEBODY'S OPINION OF DIS CHARACTER RISES!"
+    },
+    "scorned": {
+      "name": "SCORNED",
+      "desc": "FIRES WHEN SOMEBODY'S OPINION OF DIS CHARACTER FALLS!"
+    },
+    "rested": {
+      "name": "RESTED",
+      "desc": "FIRES WHEN DA PARTY WAKES FROM SLEEP!"
+    },
+    "questDone": {
+      "name": "QUEST DONE",
+      "desc": "FIRES WHEN A QUEST IZ COMPLETED!"
+    },
+    "arrive": {
+      "name": "ARRIVAL",
+      "desc": "FIRES WHEN DA PARTY ARRIVES SOMEWHERE NEW!"
+    },
+    "outnumbered": {
+      "name": "OUTNUMBERED",
+      "desc": "HOLDS WHILE DA BAD 'UNS STANDIN' OUTNUMBER DA PARTY!"
+    },
+    "wounded": {
+      "name": "WOUNDED",
+      "desc": "HOLDS WHILE DIS CHARACTER IZ UNDER HALF HEALTH!"
+    },
+    "night": {
+      "name": "NIGHT",
+      "desc": "HOLDS BETWEEN EIGHT IN DA EVENIN' AN' SIX IN DA MORNIN'!"
+    },
+    "brimming": {
+      "name": "BRIMMIN'",
+      "desc": "HOLDS WHILE DIS CHARACTER HAB AT LEAST THREE QUARTERS OF DEY MP!"
+    },
+    "weatherIs": {
+      "name": "WEATHER",
+      "desc": "HOLDS WHILE DA WEATHER IZ DA CHOSEN ONE!"
+    },
+    "indoors": {
+      "name": "INDOORS",
+      "desc": "HOLDS WHILE DA PARTY IZ UNDER A ROOF!"
+    },
+    "earlyRounds": {
+      "name": "EARLY ROUNDS",
+      "desc": "HOLDS DURIN' DA FIRST THREE ROUNDS OF A BATTLE!"
+    },
+    "wealthy": {
+      "name": "WEALTHY",
+      "desc": "HOLDS WHILE DA PARTY CARRIES AT LEAST DA CHOSEN SUM!"
+    },
+    "wanted": {
+      "name": "WANTED",
+      "desc": "HOLDS WHILE DA POLICE IZ AFTER DA PARTY!"
+    },
+    "needLowNow": {
+      "name": "IN NEED",
+      "desc": "HOLDS WHILE DA CHOSEN NEED IZ UNDER A QUARTER!"
+    },
+    "memberStanding": {
+      "name": "MEMBER STANDIN'",
+      "desc": "HOLDS WHILE DA CHOSEN PARTY MEMBER IZ ON DEY FEET!"
+    },
+    "memberDown": {
+      "name": "MEMBER DOWN",
+      "desc": "HOLDS WHILE DA CHOSEN PARTY MEMBER IZ KNOCKED OUT!"
+    },
+    "alone": {
+      "name": "ALONE",
+      "desc": "HOLDS WHILE NOBODY ELSE IN DA PARTY IZ STANDIN'!"
+    },
+    "sick": {
+      "name": "SICK",
+      "desc": "HOLDS WHILE DIS CHARACTER CARRIES A DISEASE!"
+    },
+    "selfHasState": {
+      "name": "UNDER A STATE",
+      "desc": "HOLDS WHILE DIS CHARACTER HAB DA CHOSEN STATE!"
+    },
+    "enemyHasState": {
+      "name": "BAD 'UN UNDER A STATE",
+      "desc": "HOLDS WHILE AN BAD 'UN HAB DA CHOSEN STATE!"
+    },
+    "bossFight": {
+      "name": "BOSS FIGHT",
+      "desc": "HOLDS WHILE A BOSS STANDS AMONG DA BAD 'UNS!"
+    },
+    "duel": {
+      "name": "DUEL",
+      "desc": "HOLDS WHILE A SINGLE BAD 'UN IZ LEFT STANDIN'!"
+    },
+    "lastStand": {
+      "name": "LAST STAND",
+      "desc": "HOLDS WHILE DIS CHARACTER IZ AT A QUARTER OF DEY HEALTH OR LESS. COUNTS AS FOUR VOWS!"
+    },
+    "mend": {
+      "name": "MEND",
+      "desc": "RESTORES PART OF DIS CHARACTER'S HEALTH!"
+    },
+    "focus": {
+      "name": "FOCUS",
+      "desc": "RESTORES PART OF DIS CHARACTER'S MP!"
+    },
+    "restoreNeed": {
+      "name": "REPLENISH",
+      "desc": "RESTORES A GOOD PART OF DA CHOSEN NEED!"
+    },
+    "bulwark": {
+      "name": "BULWARK",
+      "desc": "RAISES DIS CHARACTER'S CON AN' WIS FOR THREE TURNS!"
+    },
+    "fury": {
+      "name": "FURY",
+      "desc": "RAISES DIS CHARACTER'S STR FOR THREE TURNS!"
+    },
+    "quicken": {
+      "name": "QUICKEN",
+      "desc": "RAISES DIS CHARACTER'S DEX FOR THREE TURNS!"
+    },
+    "purge": {
+      "name": "PURGE",
+      "desc": "CLEARS EVERY HARMFUL STATE FROM DIS CHARACTER!"
+    },
+    "mendMember": {
+      "name": "MEND MEMBER",
+      "desc": "RESTORES PART OF DA CHOSEN PARTY MEMBER'S HEALTH!"
+    },
+    "windfall": {
+      "name": "WINDFALL",
+      "desc": "A LIL' MONEY TURNS UP IN DA PARTY'S POCKETS!"
+    },
+    "grant": {
+      "name": "GRANT",
+      "desc": "GIVES DIS CHARACTER DA CHOSEN STATE!"
+    },
+    "inflict": {
+      "name": "INFLICT",
+      "desc": "TRIES TA PUT DA CHOSEN STATE ON EVERY BAD 'UN!"
+    },
+    "coolHeat": {
+      "name": "LIE LOW",
+      "desc": "DA POLICE LOSE SOME INTEREST IN DA PARTY!"
+    },
+    "cure": {
+      "name": "CURE",
+      "desc": "CURES DIS CHARACTER'S DISEASES AN' ALLERGIC REACTIONS!"
+    },
+    "elementBurst": {
+      "name": "ELEMENTAL BURST",
+      "desc": "STRIKES EVERY BAD 'UN WIT DA CHOSEN ELEMENT. A BOSS TAKES HALF!"
+    },
+    "shockwave": {
+      "name": "SHOCKWAVE",
+      "desc": "STRIKES EVERY BAD 'UN FOR PART OF DEY HEALTH. A BOSS TAKES HALF!"
+    },
+    "rally": {
+      "name": "RALLY",
+      "desc": "RESTORES PART OF DA HEALTH OF EVERYONE IN DA PARTY STILL STANDIN'!"
+    },
+    "reviveMember": {
+      "name": "REVIVE MEMBER",
+      "desc": "BRINGS DA CHOSEN PARTY MEMBER BACK ON DEY FEET!"
+    },
+    "rebirth": {
+      "name": "REBIRTH",
+      "desc": "BRINGS EVERY FALLEN ALLY BACK ON DEY FEET!"
+    },
+    "aura": {
+      "name": "AURA",
+      "desc": "DA POWER COMES OFF DIS CHARACTER!"
+    },
+    "summon": {
+      "name": "SUMMON",
+      "desc": "DA POWER MANIFESTS IN BATTLE AS A SUMMON MODELLED ON DA CHOSEN PET!"
+    },
+    "notOnWeekday": {
+      "name": "NO ON DAT DAY",
+      "desc": "DA POWER NO CAN BE USED AT ALL ON DA CHOSEN DAY OF DA WEEK!"
+    },
+    "onlyOnWeekday": {
+      "name": "ONLY ON DAT DAY",
+      "desc": "DA POWER CAN ONLY BE USED ON DA CHOSEN DAY OF DA WEEK!"
+    },
+    "onlyVsKind": {
+      "name": "ONLY AGAINST DAT KIND",
+      "desc": "DA POWER CAN ONLY BE USED IN A FIGHT AGAINST DA CHOSEN KIND OF CREATURE!"
+    },
+    "notVsBoss": {
+      "name": "NO AGAINST DA MIGHTY",
+      "desc": "DA POWER NO CAN BE USED WHILE A BOSS STANDS IN DA FIGHT!"
+    },
+    "onlyVsBoss": {
+      "name": "ONLY AGAINST DA MIGHTY",
+      "desc": "DA POWER CAN ONLY BE USED IN A FIGHT WIT A BOSS!"
+    },
+    "onlyAtNight": {
+      "name": "ONLY BY NIGHT",
+      "desc": "DA POWER CAN ONLY BE USED BETWEEN DUSK AN' DAWN!"
+    },
+    "onlyByDay": {
+      "name": "ONLY BY DAY",
+      "desc": "DA POWER CAN ONLY BE USED BETWEEN DAWN AN' DUSK!"
+    },
+    "onlyInWeather": {
+      "name": "ONLY IN DAT WEATHER",
+      "desc": "DA POWER CAN ONLY BE USED UNDER DA CHOSEN WEATHER!"
+    },
+    "onlyIndoors": {
+      "name": "ONLY INDOORS",
+      "desc": "DA POWER CAN ONLY BE USED UNDER A ROOF!"
+    },
+    "onlyOutdoors": {
+      "name": "ONLY UNDER DA SKY",
+      "desc": "DA POWER CAN ONLY BE USED OUT IN DA OPEN!"
+    },
+    "onlyHurt": {
+      "name": "ONLY WHEN HURT",
+      "desc": "DA POWER CAN ONLY BE USED WHILE DIS CHARACTER IZ UNDER HALF HEALTH!"
+    },
+    "onlyUnharmed": {
+      "name": "ONLY WHEN UNHARMED",
+      "desc": "DA POWER CAN ONLY BE USED WHILE DIS CHARACTER IZ AT FULL HEALTH!"
+    },
+    "onlyAlone": {
+      "name": "ONLY ALONE",
+      "desc": "DA POWER CAN ONLY BE USED WHEN NOBODY ELSE IN DA PARTY IZ STILL STANDIN'!"
+    },
+    "onlyWithMember": {
+      "name": "ONLY WIT DEM",
+      "desc": "DA POWER CAN ONLY BE USED WHILE DA CHOSEN COMPANION IZ WIT DA PARTY AN' STANDIN'!"
+    },
+    "onlyUnarmed": {
+      "name": "ONLY UNARMED",
+      "desc": "DA POWER CAN ONLY BE USED WIT NO WEAPON IN HAND!"
+    },
+    "onlyInBattle": {
+      "name": "ONLY IN BATTLE",
+      "desc": "DA POWER CAN ONLY BE USED IN A FIGHT!"
+    },
+    "onlyInWorld": {
+      "name": "ONLY OUTSIDE BATTLE",
+      "desc": "DA POWER CAN ONLY BE USED OUT IN DA WORLD, NEVER IN A FIGHT!"
+    },
+    "oncePerWeek": {
+      "name": "ONCE A WEEK",
+      "desc": "DA POWER CAN BE USED ONCE A WEEK AT MOST, IN BATTLE OR OUT OF IT!"
+    },
+    "bloodPrice": {
+      "name": "PRICE IN BLOOD",
+      "desc": "EACH USE COSTS A QUARTER OF DIS CHARACTER'S HEALTH. IT NEVER LEAVES DEM BELOW ONE!"
+    },
+    "spiritPrice": {
+      "name": "PRICE IN SPIRIT",
+      "desc": "EACH USE DRAINS ALL OF DIS CHARACTER'S MP. IT NO CAN BE USED WIT NONE LEFT!"
+    },
+    "goldPrice": {
+      "name": "PRICE IN GOLD",
+      "desc": "EACH USE COSTS A TWENTIETH OF DA PARTY'S MONEY!"
+    }
+  }
+}

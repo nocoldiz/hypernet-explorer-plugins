@@ -5,7 +5,7 @@
   "skillCategories": "SKILL CATEGORIES",
   "prestige": "PRESTIGE",
   "confirmClass": "CONFIRM CLASS",
-  "cancel": "CANCEL",
+  "cancel": "FORGET IT",
   "noLevelUpSkills": "NO LEVEL-UP SKILLS FOR DIS CLASS!",
   "noSkillCategories": "NO SKILL CATEGORIES DEFINED!",
   "primary": "PRIMARY:",
@@ -36,7 +36,7 @@
   "natureBoth": "BOTH",
   "dualWield": "DUAL WIELD",
   "bonuses": "BONUSES",
-  "learnset": "SKILLS",
+  "learnset": "TRICKS",
   "levelShort": "LV",
   "xparam": {
     "hit": "HIT RATE",

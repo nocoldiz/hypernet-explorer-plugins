@@ -7,7 +7,7 @@
     "requirement": "HOUSES STANDIN' HERE: {have} OF {need}",
     "here": "DIS SQUARE: {place}",
     "reason": {
-      "notHere": "A TOWN IZ FOUNDED ON OPEN GROUND, NOT FROM INSIDE A BUILDIN'!",
+      "notHere": "A TOWN IZ FOUNDED ON OPEN GROUND, NO FROM INSIDE A BUILDIN'!",
       "claimed": "{place} ALREADY STANDS ON DIS SQUARE!",
       "exists": "A TOWN OF YA ALREADY STANDS ON DIS SQUARE!",
       "houses": "THREE HOUSES HAB TA STAND HERE BEFORE ANYONE WILL CALL IT A TOWN!",
@@ -19,7 +19,7 @@
   },
   "deeds": {
     "title": "DEEDS",
-    "back": "BACK",
+    "back": "GO BACK",
     "empty": "YOU HAB FOUNDED NO TOWNS.",
     "colTown": "TOWN",
     "colWhere": "WHERE",

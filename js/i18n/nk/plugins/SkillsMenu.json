@@ -1,6 +1,6 @@
 {
-  "title": "SKILLS",
-  "back": "BACK",
+  "title": "TRICKS",
+  "back": "GO BACK",
   "unit": {
     "ap": "AP",
     "mp": "MP"
@@ -15,16 +15,18 @@
     "both": "{ap} AP + {mp} MP"
   },
   "battle": {
-    "back": "BACK",
+    "back": "GO BACK",
     "none": "NOTHIN' TA CAST",
     "elementNone": "NON-ELEMENTAL"
   },
   "weapon": {
     "melee": "NEEDS A MELEE WEAPON",
     "ranged": "NEEDS A RANGED WEAPON",
+    "unarmed": "NEEDS 2 FREE HAND SLOTS",
     "chip": {
       "melee": "NEEDS MELEE",
-      "ranged": "NEEDS RANGED"
+      "ranged": "NEEDS RANGED",
+      "unarmed": "2 FREE HANDS"
     }
   },
   "discipline": {
@@ -56,7 +58,7 @@
     "levelUp": "LEVEL UP",
     "allSkills": "ALL SKILLS",
     "use": "USE",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "carry": "SYNC",
     "bench": "DESYNC",
     "basic": "BASIC",
@@ -98,7 +100,7 @@
   "spec": {
     "statMet": "{value} OF {points} BASE (MET)",
     "statShort": "{value} OF {points} BASE ({percent}% TA FUMBLE)",
-    "statBaseNote": "BASE STAT ONLY: GEAR, BUFFS AN' STATES DO NOT COUNT!",
+    "statBaseNote": "BASE STAT ONLY: GEAR, BUFFS AN' STATES DO NO COUNT!",
     "trains": "TRAINS",
     "bonus": "SKILL BONUS",
     "label": {
@@ -119,7 +121,7 @@
     }
   },
   "loadout": {
-    "skills": "SKILLS",
+    "skills": "TRICKS",
     "magic": "MAGIC",
     "count": "{group} {n}/{max}",
     "carried": "SYNCED",
@@ -152,10 +154,10 @@
   "searchPlaceholder": "SEARCH SKILLS…",
   "help": {
     "menu": {
-      "title": "SKILLS",
+      "title": "TRICKS",
       "items": {
         "back": {
-          "name": "BACK",
+          "name": "GO BACK",
           "text": "LEAVES DA SKILLS PAGE."
         },
         "types": {
@@ -167,7 +169,7 @@
           "text": "FILTERS DA LIST BY NAME AN' CHANGES ITS ORDER!"
         },
         "grid": {
-          "name": "SKILLS",
+          "name": "TRICKS",
           "text": "EVERY SKILL IN DA OPEN TAB. PICK ONE TA SEE ITS CARD ON DA RIGHT PAGE!"
         },
         "loadout": {
@@ -196,7 +198,7 @@
       "title": "CASTIN' IN BATTLE",
       "items": {
         "list": {
-          "name": "SKILLS",
+          "name": "TRICKS",
           "text": "DA SKILLS DIS CHARACTER CARRIES INTO BATTLE. PICK ONE TA CAST IT!"
         },
         "cost": {

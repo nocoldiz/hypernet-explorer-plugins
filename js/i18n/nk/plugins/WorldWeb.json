@@ -72,7 +72,7 @@
     "gift": "{actor} GAVE {target} AWAY IN {place}.",
     "drop": "{actor} LEFT {target} LYING IN {place}.",
     "trespass": "{actor} WAZ FOUND WHERE DEY HAB NO BUSINESS BEING IN {place}!",
-    "vandalism": "{actor} BROKE SOMETHIN' DAT WAZ NOT DEY IN {place}!",
+    "vandalism": "{actor} BROKE SOMETHIN' DAT WAZ NO DEY IN {place}!",
     "bribery": "{actor} PUT MONEY IN DA WRONG HAND IN {place}!",
     "pickpocket": "{actor} LIGHTENED A POCKET IN {place}.",
     "theft": "{actor} STOLE {target} IN {place}.",

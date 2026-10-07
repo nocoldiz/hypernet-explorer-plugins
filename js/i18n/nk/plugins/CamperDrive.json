@@ -4,7 +4,7 @@
   "climbBackIn": "CLIMB BACK IN",
   "stepOutside": "STEP OUTSIDE (ON FOOT)",
   "refuelAtStation": "REFUEL AT STATION",
-  "continue": "CONTINUE",
+  "continue": "KEEP GOIN'",
   "splashdown": "DA CAMPER SPLASHES DOWN AN' WASHES ASHORE!",
   "shipTouchedDown": "DA SHIP SETS DOWN.",
   "shipRammedTerrain": "DA HULL GRINDS AGAINST ROCK!",
@@ -67,10 +67,10 @@
     "cmdMenu": "PARTY MENU",
     "cmdExitWalk": "END WALK",
     "cmdTurbo": "TURBO (ON FOOT: SPRINT)",
-    "cmdDoor": "STEP OUT OF THE VEHICLE",
+    "cmdDoor": "STEP OUT OF DA VEHICLE",
     "cmdView": "FIRST / THIRD PERSON",
     "cmdExit": "EXIT DRIVE",
-    "cmdVehicle": "VEHICLE OPTIONS",
+    "cmdVehicle": "VEHICLE FIDDLY BITS",
     "cmdHelp": "CONTROLS",
     "cmdHandbrake": "HANDBRAKE (WHILE ROLLIN')",
     "cmdRespawn": "RECALL DA CAMPER",
@@ -115,8 +115,8 @@
     "underwater": "SUBMERGED"
   },
   "driverSave": {
-    "avoided": "[DRIVER DEX SAVE: \\DIE[{roll}] {mod} = {total}] EXPERTLY COUNTERSTEERED, CRASH AVOIDED!",
-    "failed": "[DRIVER DEX SAVE: \\DIE[{roll}] {mod} = {total} VS DC {dc}] REFLEX SAVE FAILED, DA VEHICLE HITS!"
+    "avoided": "[DRIVER DEX STASH: \\DIE[{roll}] {mod} = {total}] EXPERTLY COUNTERSTEERED, CRASH AVOIDED!",
+    "failed": "[DRIVER DEX STASH: \\DIE[{roll}] {mod} = {total} VS DC {dc}] REFLEX STASH FAILED, DA VEHICLE HITS!"
   },
   "maintenance": "VEHICLE MAINTENANCE",
   "refuel": "REFUEL FROM DA CANS",
@@ -124,5 +124,27 @@
     "noGround": "DERE IZ NOTHIN' HERE TA SET DOWN ON!",
     "tooDeep": "DA PRESSURE IZ CRUSHIN' DA HULL. CLIMB, NOW!",
     "crushed": "DA HULL GIVES WAY."
+  },
+  "perf": {
+    "title": "VOXEL PERFORMANCE",
+    "fps": "FPS",
+    "frame": "FRAME MS",
+    "worst": "WORST MS",
+    "terrain": "TERRAIN",
+    "entities": "ENTITIES",
+    "hud": "HUD",
+    "render": "RENDER",
+    "calls": "DRAW CALLS",
+    "triangles": "TRIANGLES",
+    "geometries": "GEOMETRIES",
+    "textures": "TEXTURES",
+    "programs": "SHADERS",
+    "workers": "MESH WORKERS",
+    "inflight": "PATCHES OUT",
+    "pool_off": "OFF",
+    "pool_snapshot": "READIN' DA MAP",
+    "pool_booting": "STARTIN'",
+    "pool_ready": "RUNNIN'",
+    "pool_failed": "OFF, MESHIN' HERE"
   }
 }

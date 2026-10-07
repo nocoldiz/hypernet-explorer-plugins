@@ -15,7 +15,7 @@
   "Robe": "ROBE",
   "Light Armor": "LIGHT ARMOR",
   "Heavy Armor": "HEAVY ARMOR",
-  "Equipment": "EQUIPMENT",
+  "Equipment": "GEAR",
   "Shield": "SHIELD",
   "Weapon": "WEAPON",
   "Off-hand": "OFF-HAND",
@@ -23,5 +23,5 @@
   "Body": "BODY",
   "Gear": "GEAR",
   "Magic": "MAGIC",
-  "Skills": "SKILLS"
+  "Skills": "TRICKS"
 }

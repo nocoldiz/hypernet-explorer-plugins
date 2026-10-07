@@ -1,5 +1,15 @@
 0.8.3a
 
+Changed:
+ - title menu and UI translated into Naguka goblin language
+ - joined all build scripts into build_encrypted.bat and build_encrypted.sh
+
+Fixed:
+ - battleback failed to load Grassland.png; Fields biome is the fallback
+ - dicesystem no longer adds modifiers when hitting D1
+ - party no longer stuck forever when dismounting the camper
+
+
 0.8.2a
  - difficulty warning only in blood and oil story mode, reworded to be more readable
  - Andromeda launch: SB charges every second past Pluto, collapsing into black holes

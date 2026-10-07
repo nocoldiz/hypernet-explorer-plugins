@@ -35,7 +35,7 @@
     "placeholder": "WRITE SOMETHIN' ABOUT DIS SQUARE",
     "save": "KEEP",
     "delete": "RUB OUT",
-    "cancel": "BACK",
+    "cancel": "GO BACK",
     "write": "WRITE A NOTE"
   },
   "preview": {
@@ -43,7 +43,7 @@
     "title": "{place}",
     "building": "LAYIN' DA GROUND OUT...",
     "notKept": "DRAWN FOR DIS LOOK ONLY, AN' KEPT NOWHERE!",
-    "close": "CLOSE",
+    "close": "SHUT IT",
     "unbuildable": "DERE IZ NO GROUND TA LAY OUT ON DAT SQUARE!"
   },
   "view": {
@@ -57,5 +57,12 @@
   "coords": {
     "title": "COORDINATES",
     "value": "{x}, {y}"
+  },
+  "bologna": {
+    "title": "BOLOGNA",
+    "cell": "CELL",
+    "tile": "TILE",
+    "teleport": "TELEPORT HERE",
+    "hint": "CLICK A TILE TA PICK IT, DEN TELEPORT ONTO IT. RIGHT-CLICK TA PUT DA CHART AWAY!"
   }
 }

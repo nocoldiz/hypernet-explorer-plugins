@@ -55,7 +55,7 @@
   },
   "surgery": {
     "success": "AN' IT HELD",
-    "failure": "AN' IT DID NOT HOLD"
+    "failure": "AN' IT DID NO HOLD"
   },
   "worlds": {
     "tab": "DIARIES",
@@ -124,7 +124,7 @@
       "mitosis": "{name} DIVIDED. DERE IZ TWO OF DEM NOW: {copy}!"
     },
     "npc": {
-      "friend": "{name} AN' {npc} IZ FRIENDS NOW.",
+      "friend": "{name} AN' {npc} IZ MATES NOW.",
       "enemy": "{npc} HAB NO MORE TIME FOR {name}.",
       "romance": "{name} AN' {npc}: {stage}."
     },
@@ -275,9 +275,6 @@
     "onu": {
       "vote": "SPOKE FOR {power} AN' VOTED {stance} ON {motion}; IT {outcome}!"
     },
-    "blade": {
-      "evolved": "{name} TURNED, AN' IZ A {stage} BLADE NOW!"
-    },
     "bet": {
       "won": "WON {amount} ON {pick}.",
       "lost": "LOST {amount} BETTIN' ON {pick}."
@@ -315,7 +312,7 @@
     "dream": "A DREAM"
   },
   "romance": {
-    "flirt": "A LITTLE FLIRTIN'",
+    "flirt": "A LIL' FLIRTIN'",
     "admire": "AN ADMIRIN' WORD",
     "loveLetter": "A LOVE LETTER",
     "serenade": "A SERENADE",

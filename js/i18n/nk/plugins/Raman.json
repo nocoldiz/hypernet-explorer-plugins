@@ -20,7 +20,7 @@
   "choices": [
     "LOOK",
     "ANALYZE",
-    "CANCEL"
+    "FORGET IT"
   ],
   "objectType": {
     "tagged": "TAGGED",

@@ -20,7 +20,7 @@
     "disdain": {
       "named": [
         "{name}... TCH.",
-        "NOT YOU AGAIN, {name}.",
+        "NO YOU AGAIN, {name}.",
         "{name}'S NOTHIN' BUT TROUBLE."
       ],
       "anon": [
@@ -31,14 +31,14 @@
     },
     "distrust": {
       "named": [
-        "ME NO TRUST {name}. NOT DEZE DAYS!",
+        "ME NO TRUST {name}. NO DEZE DAYS!",
         "WHAT DOES {name} REALLY WANT?",
         "EVEN {name} COULD BE DANGEROUS NOW..."
       ],
       "anon": [
         "NO CAN TRUST ANYONE DEZE DAYS!",
         "WHAT DO DEY WANT FROM ME?",
-        "BEST KEEP ME DISTANCE... IT IZ NOT SAFE ANYMORE!",
+        "BEST KEEP ME DISTANCE... IT IZ NO SAFE ANYMORE!",
         "DARK TIMES. STAY WARY OF STRANGERS!"
       ]
     },
@@ -75,7 +75,7 @@
   "visitor": {
     "talk": "TALK",
     "empathize": "EMPATHIZE",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "silent": "DEY LOOK THROUGH YOU, SOMEWHERE ELSE ENTIRELY!",
     "otherParty": "TRAVELLIN' WIT {leader}'S PARTY",
     "readOnly": "DEY BELONG TA ANOTHER JOURNEY. YOU CAN TALK, AN' NOTHIN' MORE!",

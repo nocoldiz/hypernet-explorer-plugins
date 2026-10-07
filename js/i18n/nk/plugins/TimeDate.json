@@ -17,7 +17,9 @@
     "mpRestored": "RECOVERED ALL MP",
     "vomited": "{name} VOMITED!",
     "collapsed": "{name} COLLAPSED FROM STARVATION!",
-    "outOfMp": "{name} RAN OUT OF MP!"
+    "outOfMp": "{name} RAN OUT OF MP!",
+    "bladderLow": "NEEDS TA FIND A TOILET",
+    "bladderCritical": "IZ ABOUT TA BURST!"
   },
   "sleepMenu": {
     "titleMain": "REST",
@@ -39,9 +41,9 @@
     "alienDay": "DAY",
     "alienNight": "NIGHT",
     "cryo": "CRYOGENIC SLEEP",
-    "save": "SAVE",
+    "save": "STASH",
     "respawn": "SET RESPAWN POINT",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "hours": "%1 HOURS",
     "wakeup": "WAKE UP",
     "dream": "DREAM",
@@ -61,8 +63,8 @@
     "cryoCost": "FARE",
     "cryoPurse": "PURSE",
     "cryoNights": "%1 NIGHTS IN DA POD",
-    "cryoNoFunds": "DA POD WILL NOT RUN FOR LESS DEN %1 A DAY!",
-    "cryoUnaffordable": "DA PURSE WILL NOT COVER DIS FARE!",
+    "cryoNoFunds": "DA POD WILL NO RUN FOR LESS DEN %1 A DAY!",
+    "cryoUnaffordable": "DA PURSE WILL NO COVER DIS FARE!",
     "cryoEraOver": "DA POD IZ DEAD. NOTHIN' WAZ BUILT TA SLEEP THROUGH DA END OF 2012!",
     "cryoTravelTitle": "CRYOGENIC SUSPENSION",
     "cryoWakeSub": "DA LID OPENS.",
@@ -88,7 +90,7 @@
     "noFood": "NONE",
     "weatherClear": "CLEAR",
     "awake": "AWAKE",
-    "enemies": "ENEMIES",
+    "enemies": "BAD 'UNS",
     "level": "LV. {level}"
   },
   "needLabel": {
@@ -96,7 +98,8 @@
     "sleep": "SLEEP",
     "hygiene": "HYGIENE",
     "social": "SOCIAL",
-    "leisure": "MOOD"
+    "leisure": "MOOD",
+    "bladder": "BLADDER"
   },
   "addictionLabel": {
     "nicotine": "NICOTINE",
@@ -186,13 +189,14 @@
   "partyLife": {
     "talk": "{name} IZ TALKIN' TA {other}",
     "wash": "{name} IZ GOING TA DA BATHROOM",
-    "idle": "{name} IZ STRETCHIN' DEY LEGS"
+    "idle": "{name} IZ STRETCHIN' DEY LEGS",
+    "relieve": "{name} SLIPS AWAY FOR A MOMENT TA RELIEVE THEMSELVES"
   },
   "forage": {
     "found": "DA PARTY COMES BACK WIT {items}.",
     "nothing": "HOURS OF SEARCHIN', AN' DA COUNTRY GIVES UP NOTHIN'!",
     "scavenged": "HOURS GOING OVER DA SEATS AN' DA FOOTWELLS TURN UP {items}!",
-    "nothingAboard": "HOURS GOING OVER DA SEATS, AN' NOT SO MUCH AS A DROPPED TICKET!",
+    "nothingAboard": "HOURS GOING OVER DA SEATS, AN' NO SO MUCH AS A DROPPED TICKET!",
     "learned": "DA GROUND IZ BETTER KNOWN NOW: {points} KP!"
   },
   "holiday": {
@@ -321,5 +325,17 @@
       "cyrusDay": "CYRUS DAY",
       "musterDay": "MUSTER DAY"
     }
+  },
+  "bladder": {
+    "relieved": {
+      "wc": "USED DA WC.",
+      "shower": "RELIEVED IN DA SHOWER.",
+      "bath": "RELIEVED BEFORE DA BATH.",
+      "roadside": "STOPPED BY DA SIDE OF DA ROAD FOR A PISS!"
+    },
+    "nothingToDo": "NOBODY NEEDS DA WC RIGHT NOW!",
+    "accident": "{name} COULD NO HOLD IT ANY LONGER AN' WET THEMSELVES!",
+    "accidentBeast": "{name} RELIEVES ITSELF ON DA SPOT!",
+    "swim": "SOMEBODY IN DA WATER LOOKS A LIL' RELIEVED!"
   }
 }

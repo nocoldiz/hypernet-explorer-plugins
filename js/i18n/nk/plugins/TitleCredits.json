@@ -1,6 +1,6 @@
 {
-  "credits": "CREDITS",
-  "exit": "EXIT",
+  "credits": "WHO DUN IT",
+  "exit": "RUN AWAY",
   "title": "GAME CREDITS",
   "by": "BY",
   "hint": "UP/DOWN OR WHEEL: SCROLL OK: PAUSE CANCEL: BACK",
@@ -12,7 +12,7 @@
     "plugins": "PLUGINS AN' SCRIPTS",
     "ui": "UI AN' ANIMATIONS",
     "maps": "MAPS",
-    "music": "MUSIC",
+    "music": "NOISE BOX",
     "sound": "SOUND EFFECTS",
     "data": "REFERENCE DATA"
   }

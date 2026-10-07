@@ -49,12 +49,12 @@
       "one": "IN {count} DAY",
       "other": "IN {count} DAYS"
     },
-    "notYetAdult": "NOT YET GROWN"
+    "notYetAdult": "NO YET GROWN"
   },
   "actionCollect": "COLLECT",
   "actionPet": "PET",
   "actionEmpathize": "EMPATHIZE",
-  "actionCancel": "CANCEL",
+  "actionCancel": "FORGET IT",
   "petting": [
     "YOU CROUCH DOWN AN' SCRATCH DA {animal} BEHIND DA EARS!",
     "YOU RUN A HAND ALONG DA {animal}'S BACK AN' LET IT LEAN INTO YOU!",

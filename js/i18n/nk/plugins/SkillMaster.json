@@ -10,8 +10,8 @@
   "debuff": "DEBUFF",
   "state": "STATE",
   "none": "NONE",
-  "back": "BACK",
-  "skills": "SKILLS",
+  "back": "GO BACK",
+  "skills": "TRICKS",
   "mastered": "MASTERED",
   "magic": "MAGIC",
   "fuseSpells": "FUSE SPELLS",
@@ -25,11 +25,11 @@
   "no3dAnimationForThis": "NO 3D ANIMATION FOR DIS SPELL!",
   "dragToRotateScrollTo": "DRAG TA ROTATE · SCROLL TA ZOOM",
   "replay": "↺ REPLAY",
-  "close": "CLOSE",
+  "close": "SHUT IT",
   "dominantSpell": "DOMINANT SPELL",
-  "magicOnlyDefinesTheEffect": "MAGIC ONLY · DEFINES DA EFFECT",
+  "magicOnlyDefinesTheEffect": "A SPELL; DECIDES WHAT DA RESULT DOES",
   "recessiveSpellOrSkill": "RECESSIVE (SPELL OR SKILL)",
-  "spellOrSkillSetsThe": "SPELL OR SKILL · SETS DA RESULT TYPE",
+  "spellOrSkillSetsThe": "A SPELL OR A SKILL; DECIDES WHETHER DA RESULT IZ A SPELL OR A SKILL",
   "skill": "SKILL",
   "emptySlot": "EMPTY",
   "emptyPressToChoose": "EMPTY · PRESS TA CHOOSE",
@@ -37,7 +37,7 @@
   "animation": "ANIMATION",
   "fuseSpells2": "FUSE SPELLS",
   "knowledge": "KNOWLEDGE",
-  "notEnough": " · NOT ENOUGH",
+  "notEnough": " · NO ENOUGH",
   "split": "SPLIT",
   "noFusedSpellsYet": "NO FUSED SPELLS YET.",
   "fuseSpells3": "FUSE SPELLS",
@@ -47,14 +47,14 @@
   "chooseRecessive": "CHOOSE RECESSIVE",
   "chooseAnimation": "CHOOSE ANIMATION",
   "use": "✓ USE",
-  "cancel": "CANCEL",
+  "cancel": "FORGET IT",
   "preview2": "PREVIEW",
   "becomesA": "BECOMES A",
   "fusionCost": "FUSION COST:",
   "youHold": "YOU HOLD",
   "dominant": "DOMINANT:",
   "recessive": "RECESSIVE:",
-  "theDominantDefinesDamageAnd": "DA DOMINANT DEFINES DAMAGE AN' TARGETIN'; DA RECESSIVE SETS DA RESULT TYPE. COMPONENTS IZ FORGOTTEN; YOU CAN SPLIT DA SPELL BACK APART LATER!",
+  "theDominantDefinesDamageAnd": "DA DOMINANT SPELL DECIDES DA DAMAGE AN' DA TARGETS. DA RECESSIVE PART DECIDES WHETHER YOU GET A SPELL OR A SKILL. BOTH PARTS IZ FORGOTTEN, BUT YOU CAN SPLIT DA RESULT BACK INTO DEM LATER!",
   "training": "TRAININ'",
   "fusedSkillDesc": "A PROCEDURAL SKILL FUSED FROM {parts} (DOMINANT: {dominant})!",
   "fusedSpellDesc": "A PROCEDURAL SPELL FUSED FROM {parts} (DOMINANT: {dominant})!",
@@ -77,14 +77,14 @@
   "category": {
     "All": "ALL"
   },
-  "forgeBlurb": "FUSE A DOMINANT SPELL WIT A RECESSIVE SPELL OR SKILL FROM {actor}. A RECESSIVE SKILL PRODUCES A SKILL. COSTS DA COMPONENTS' MP AN' AP COMBINED PLUS KNOWLEDGE, AN' BOTH COMPONENTS IZ FORGOTTEN. YOU HAB {knowledge} KP!",
+  "forgeBlurb": "COMBINE TWO OF {actor}'S ABILITIES INTO A NEW ONE. DA DOMINANT SPELL DECIDES WHAT IT DOES; DA RECESSIVE SPELL OR SKILL DECIDES WHETHER DA RESULT IZ A SPELL OR A SKILL. BOTH PARTS IZ FORGOTTEN. YOU HAB {knowledge} KP!",
   "kpMultiplier3x": "3.0X KP",
   "kpMultiplier15x": "1.5X KP",
   "foreignSchool": "SELF-TAUGHT",
   "magicSystem": {
     "tabLabel": "MAGICAL SYSTEMS",
     "title": "MAGICAL SYSTEMS",
-    "hint": "SELECT A SYSTEM TA SEE WHICH CLASSES DRAW ON IT",
+    "hint": "SELECT A SYSTEM TA SEE ITS SPELLS AN' DA CLASSES DAT USE IT",
     "empty": "CHOOSE A SYSTEM FROM DA WHEEL",
     "classesHeading": "CLASSES",
     "noClasses": "NO KNOWN CLASS DRAWS ON DIS SYSTEM YET!",
@@ -101,7 +101,7 @@
       "Sacred": {
         "name": "SACRED",
         "desc": "POWER DRAWN DOWN FROM HIGHER ORDERS!",
-        "lore": "SACRED POWER IZ ASKED FOR, NEVER TAKEN. DA RITE IZ FIXED BUT DA ANSWER IZ NOT: DA SAME PRAYER SAID WIT DA SAME VOICE ON DA SAME MORNIN' MAY RAISE DA DEAD, HEAL A STRANGER THREE TOWNS AWAY, OR DO NOTHIN' AT ALL FOR A YEAR. DA DEVOUT DO NOT SPEAK OF COSTS OR LIMITS, ONLY OF WORTHINESS, AN' NO TWO SAINTS HAB EVER AGREED ON WHAT MAKES A PETITION HEARD!"
+        "lore": "SACRED POWER IZ ASKED FOR, NEVER TAKEN. DA RITE IZ FIXED BUT DA ANSWER IZ NO: DA SAME PRAYER SAID WIT DA SAME VOICE ON DA SAME MORNIN' MAY RAISE DA DEAD, HEAL A STRANGER THREE TOWNS AWAY, OR DO NOTHIN' AT ALL FOR A YEAR. DA DEVOUT DO NO SPEAK OF COSTS OR LIMITS, ONLY OF WORTHINESS, AN' NO TWO SAINTS HAB EVER AGREED ON WHAT MAKES A PETITION HEARD!"
       },
       "Sympathetic": {
         "name": "SYMPATHETIC",
@@ -111,7 +111,7 @@
       "Dimensional": {
         "name": "DIMENSIONAL",
         "desc": "MAGIC DAT BENDS SPACE, TIME AN' PROBABILITY!",
-        "lore": "SPACE, TIME AN' PROBABILITY IZ TREATED AS MATERIALS WIT A GRAIN AN' A TOLERANCE. A FOLD HAB A MEASURED SPAN, A DEBT IN DURATION AN' A FAILURE MODE: OVERREACH IT AN' DA PRACTITIONER ARRIVES SOMEWHERE REAL, JUST NOT WHERE DEY MEANT. DA MATHEMATICS IZ UGLY AN' UNFORGIVIN', WHICH IZ EXACTLY WHY DA SURVIVORS OF DIS SCHOOL IZ SO PRECISE ABOUT DEY NUMBERS!"
+        "lore": "SPACE, TIME AN' PROBABILITY IZ TREATED AS MATERIALS WIT A GRAIN AN' A TOLERANCE. A FOLD HAB A MEASURED SPAN, A DEBT IN DURATION AN' A FAILURE MODE: OVERREACH IT AN' DA PRACTITIONER ARRIVES SOMEWHERE REAL, JUST NO WHERE DEY MEANT. DA MATHEMATICS IZ UGLY AN' UNFORGIVIN', WHICH IZ EXACTLY WHY DA SURVIVORS OF DIS SCHOOL IZ SO PRECISE ABOUT DEY NUMBERS!"
       },
       "Psionics": {
         "name": "PSIONICS",
@@ -131,7 +131,7 @@
       "Natural": {
         "name": "NATURAL",
         "desc": "POWER DRAWN FROM PLANT, BEAST AN' EARTH!",
-        "lore": "GREEN POWER COMES ON ITS OWN TERMS. A GROVE GIVES WHAT IT IZ MINDED TA GIVE, IN A SEASON IT CHOOSES, TA A SUPPLICANT IT HAB DECIDED ABOUT FOR REASONS NO HERBALIST HAB MANAGED TA WRITE DOWN. BARGAINS HOLD UNTIL DEY DO NOT. EVERY PRACTITIONER HAB A STORY ABOUT DA YEAR DA RIVER SIMPLY STOPPED ANSWERIN', AN' NONE HAB AN EXPLANATION WORTH REPEATIN'!"
+        "lore": "GREEN POWER COMES ON ITS OWN TERMS. A GROVE GIVES WHAT IT IZ MINDED TA GIVE, IN A SEASON IT CHOOSES, TA A SUPPLICANT IT HAB DECIDED ABOUT FOR REASONS NO HERBALIST HAB MANAGED TA WRITE DOWN. BARGAINS HOLD UNTIL DEY DO NO. EVERY PRACTITIONER HAB A STORY ABOUT DA YEAR DA RIVER SIMPLY STOPPED ANSWERIN', AN' NONE HAB AN EXPLANATION WORTH REPEATIN'!"
       },
       "Thermodynamics": {
         "name": "THERMODYNAMICS",
@@ -147,8 +147,8 @@
     "rigor": {
       "hard": "HARD MAGIC",
       "soft": "SOFT MAGIC",
-      "hardHint": "FIXED LAWS, STATED COSTS",
-      "softHint": "UNBOUND, UNEXPLAINED"
+      "hardHint": "FIXED RULES AN' KNOWN COSTS",
+      "softHint": "NO FIXED RULES; RESULTS VARY"
     },
     "loreHeading": "LORE"
   },
@@ -159,8 +159,8 @@
     "locked": "LOCKED",
     "lockedBy": "UNLOCKED BY: {skills}",
     "lockedByCount": "NEEDS {need} MORE OF: {skills}",
-    "lockedHint": "NO SKILL YOU KNOW BORDERS DIS ONE YET!",
-    "lockedToast": "{skill} DOES NOT BORDER ANYTHIN' DIS PUPIL KNOWS!",
+    "lockedHint": "LEARN A CONNECTED SKILL FIRST TA UNLOCK DIS ONE!",
+    "lockedToast": "{skill} DOES NO BORDER ANYTHIN' DIS PUPIL KNOWS!",
     "lockedEsotericLevel": "ESOTERIC KNOWLEDGE: LEVEL {level} OR ABOVE!",
     "lockedForbiddenLevel": "FORBIDDEN KNOWLEDGE: LEVEL {level} OR ABOVE!",
     "lockedCultist": "A CULTIST LEARNS NOTHIN' HERE: ONLY GRIMOIRES AN' SKILL BOOKS WILL TEACH DEM!"
@@ -189,7 +189,7 @@
   "fusion": {
     "rename": "RENAME",
     "delete": "UNMAKE",
-    "confirm": "SAVE",
+    "confirm": "STASH",
     "confirmDelete": "UNMAKE {skill}? ITS COMPONENTS IZ ALREADY SPENT. PRESS AGAIN TA CONFIRM!",
     "deleted": "{skill} IZ UNMADE."
   },
@@ -208,10 +208,10 @@
     "buttonSkill": "CRAFT SKILL",
     "titleSpell": "SPELL WORKBENCH",
     "titleSkill": "SKILL WORKBENCH",
-    "back": "BACK",
-    "cancel": "CANCEL",
+    "back": "GO BACK",
+    "cancel": "FORGET IT",
     "use": "USE",
-    "save": "SAVE",
+    "save": "STASH",
     "edit": "EDIT",
     "discard": "UNMAKE",
     "write": {
@@ -219,7 +219,7 @@
       "description": "WRITE ITS DESCRIPTION",
       "lore": "WRITE ITS LORE",
       "incantation": "WRITE ITS INCANTATION",
-      "hint": "ENTER SAVES A NAME, ESCAPE CLOSES. SHIFT AN' ENTER BREAK A LINE!"
+      "hint": "ENTER STASHES A NAME, ESCAPE CLOSES. SHIFT AN' ENTER BREAK A LINE!"
     },
     "rewriteDesc": "REWRITE DESCRIPTION",
     "rewriteLore": "REWRITE LORE",
@@ -256,7 +256,7 @@
     "anywhere": "ANYWHERE",
     "battleOnly": "BATTLE ONLY",
     "riderCount": "RIDERS",
-    "benchBlurb": "EACH PART IZ BOUGHT ONCE. COMPLEXITY IZ A PERMANENT COST: IT SETS DA MP OF EVERY CAST AN' DA {stat} DA WRITER MUST HAB!",
+    "benchBlurb": "BUY EACH PART ONCE WIT KP, DEN REUSE IT IN EVERYTHIN' YOU WRITE HERE. COMPLEXITY RAISES DA MP OF EVERY CAST AN' DA {stat} NEEDED TA USE IT!",
     "writtenResult": "\\C[3]{name}\\C[0] IZ WRITTEN. {cost} KP SPENT, {left} KP LEFT!",
     "rewrittenResult": "\\C[3]{name}\\C[0] IZ REWRITTEN. {cost} KP SPENT, {left} KP LEFT!",
     "row": {
@@ -284,9 +284,9 @@
       "animation": "CHOOSE AN ANIMATION"
     },
     "blocked": {
-      "incomplete": "DA BUILD IZ NOT FINISHED.",
+      "incomplete": "DA BUILD IZ NO FINISHED.",
       "mismatch": "DAT CORE NO CAN BE AIMED DAT WAY!",
-      "knowledge": "NOT ENOUGH KNOWLEDGE.",
+      "knowledge": "NO ENOUGH KNOWLEDGE.",
       "stat": "NEEDS {stat} {need}, YOU HOLD {have}.",
       "full": "DA BENCH HOLDS {max} ALREADY. UNMAKE ONE FIRST!"
     },
@@ -414,7 +414,7 @@
       },
       "scope": {
         "oneEnemy": {
-          "name": "ONE ENEMY",
+          "name": "ONE BAD 'UN",
           "desc": "A SINGLE TARGET ACROSS DA FIELD!"
         },
         "twoRandom": {
@@ -426,7 +426,7 @@
           "desc": "THREE TIMES, WHEREVER IT LANDS!"
         },
         "allEnemies": {
-          "name": "ALL ENEMIES",
+          "name": "ALL BAD 'UNS",
           "desc": "DA WHOLE OPPOSIN' LINE AT ONCE!"
         },
         "oneAlly": {
@@ -443,7 +443,7 @@
         },
         "everyone": {
           "name": "EVERYONE",
-          "desc": "BOTH LINES, FRIEND AN' ENEMY ALIKE!"
+          "desc": "BOTH LINES, MATE AN' BAD 'UN ALIKE!"
         }
       },
       "riders": {
@@ -632,9 +632,12 @@
       }
     },
     "randomize": "ROLL IT",
+    "identity": "IDENTITY",
+    "chipInfo": "{name}: {desc} ({kp} KP, COMPLEXITY {cx})",
+    "pickUpTo": "PICK UP TA {max}. HOVER OR MOVE ONTO A CHIP TA READ IT!",
     "camel": {
-      "title": "DAT IZ NOT A SPELL NAME",
-      "body": "A SPELL IZ NAMED AS ONE WORD IN CAMELCASE, WIT NO SPACES: FIREBOLT, NOT FIRE BOLT. {name} IZ KEPT AS WRITTEN IF YOU WANT IT!",
+      "title": "DAT IZ NO A SPELL NAME",
+      "body": "A SPELL IZ NAMED AS ONE WORD IN CAMELCASE, WIT NO SPACES: FIREBOLT, NO FIRE BOLT. {name} IZ KEPT AS WRITTEN IF YOU WANT IT!",
       "rename": "NAME IT AGAIN",
       "keep": "KEEP IT"
     }
@@ -645,9 +648,9 @@
     "buttonArmor": "ENCHANT EQUIPMENT",
     "titleWeapon": "WEAPON ENCHANTIN'",
     "titleArmor": "EQUIPMENT ENCHANTIN'",
-    "blurbWeapon": "A BOUND WEAPON CASTS ITS SPELL FREE OF MP ON EVERY CRITICAL HIT IT LANDS. OFFENSIVE AN' STATUS SPELLS ONLY!",
-    "blurbArmor": "A BOUND PIECE ANSWERS DA FIRST CRITICAL HIT ITS WEARER TAKES EACH BATTLE, FREE OF MP. PROTECTIVE SPELLS ONLY!",
-    "back": "BACK",
+    "blurbWeapon": "DA WEAPON CASTS DA BOUND SPELL FOR FREE EVERY TIME IT LANDS A CRITICAL HIT. ONLY ATTACK AN' STATUS SPELLS CAN BE BOUND!",
+    "blurbArmor": "ONCE PER BATTLE, WHEN DA WEARER TAKES A CRITICAL HIT, DIS PIECE CASTS DA BOUND SPELL FOR FREE. ONLY PROTECTIVE SPELLS CAN BE BOUND!",
+    "back": "GO BACK",
     "chooseGear": "CHOOSE A PIECE",
     "boundSoFar": "BOUND SO FAR",
     "spellsTitle": "SPELLS DA PARTY KNOWS",
@@ -670,7 +673,7 @@
     },
     "buttonBook": "ENCHANT BOOK",
     "titleBook": "BOOK ENCHANTIN'",
-    "blurbBook": "A BOUND BOOK CASTS ITS SPELL FREE WHENEVER IT IZ READ OUT, IN BATTLE OR ON DA MAP. ANY SPELL BINDS, AN' EVERY READIN' MAY BURN IT!",
+    "blurbBook": "READIN' DA BOOK ALOUD CASTS DA BOUND SPELL FOR FREE, IN BATTLE OR ON DA MAP. ANY SPELL CAN BE BOUND, BUT EVERY READIN' MAY BURN DA BOOK!",
     "bookDesc": "A UNIQUE ARTIFACT. READ IT OUT TA CAST {spell} FOR NOTHIN'. EVERY READIN' MAY BURN IT!",
     "bookFallbackName": "BOUND GRIMORIE OF {spell}",
     "rename": "RENAME",
@@ -681,11 +684,11 @@
     "buttonGrimorie": "WRITE GRIMORIE",
     "titleSkillBook": "WRITIN' A SKILL BOOK",
     "titleGrimorie": "WRITIN' A GRIMORIE",
-    "blurbSkillBook": "COPY OUT ABILITIES DA PARTY ALREADY KNOWS. DA VOLUME STAYS OPEN UNTIL EVERY PAGE HAB BEEN READ TA SOMEBODY!",
-    "blurbGrimorie": "COPY OUT SPELLS DA PARTY ALREADY KNOWS. DA VOLUME STAYS OPEN UNTIL EVERY PAGE HAB BEEN READ TA SOMEBODY!",
+    "blurbSkillBook": "COPY SKILLS DA PARTY KNOWS INTO A BOOK. EACH PAGE TEACHES ONE SKILL TA WHOEVER IT IZ READ TA; DA BOOK LASTS UNTIL EVERY PAGE HAB BEEN READ!",
+    "blurbGrimorie": "COPY SPELLS DA PARTY KNOWS INTO A GRIMORIE. EACH PAGE TEACHES ONE SPELL TA WHOEVER IT IZ READ TA; DA BOOK LASTS UNTIL EVERY PAGE HAB BEEN READ!",
     "sourceSkillBook": "ABILITIES DA PARTY KNOWS",
     "sourceGrimorie": "SPELLS DA PARTY KNOWS",
-    "back": "BACK",
+    "back": "GO BACK",
     "knowledge": "KNOWLEDGE",
     "chosenPages": "PAGES CHOSEN ({count}/{max})",
     "nothingChosen": "NO PAGES CHOSEN YET",
@@ -698,17 +701,77 @@
     "recover": "COVER",
     "unmake": "UNMAKE",
     "written": "{book} IZ WRITTEN.",
-    "skillBookDesc": "A VOLUME WRITTEN BY HAND, HOLDIN' {count} ABILITIES. EVERY ONE OF DEM MUST BE READ OUT BEFORE IT CLOSES!",
-    "grimorieDesc": "A VOLUME WRITTEN BY HAND, HOLDIN' {count} SPELLS. EVERY ONE OF DEM MUST BE READ OUT BEFORE IT CLOSES!",
+    "skillBookDesc": "A LOUDNESS WRITTEN BY HAND, HOLDIN' {count} ABILITIES. EVERY ONE OF DEM MUST BE READ OUT BEFORE IT CLOSES!",
+    "grimorieDesc": "A LOUDNESS WRITTEN BY HAND, HOLDIN' {count} SPELLS. EVERY ONE OF DEM MUST BE READ OUT BEFORE IT CLOSES!",
     "skillBookFallbackName": "NOTEBOOK OF {first}",
-    "grimorieFallbackName": "GRIMORIE OF {first}"
+    "grimorieFallbackName": "GRIMORIE OF {first}",
+    "statPages": "PAGES",
+    "statCost": "COST"
+  },
+  "expression": {
+    "button": "EXPRESSIONS",
+    "title": "EXPRESSION",
+    "pickBlurb": "CHOOSE A CHARACTER WHOSE EXPRESSION IZ UNLOCKED!",
+    "benchTitle": "{name}'S EXPRESSION",
+    "blueprint": "BLUEPRINT",
+    "placeIn": "PLACE IN",
+    "conditions": "CONDITIONS",
+    "slot": {
+      "form": "FORM",
+      "trigger": "TRIGGER",
+      "rules": "CONDITION",
+      "branch": "BRANCH",
+      "effects": "DEN",
+      "elseEffects": "ELSE",
+      "limits": "LIMITATION"
+    },
+    "empty": "EMPTY",
+    "fitted": "FITTED",
+    "free": "FREE",
+    "requires": "REQUIRES",
+    "cost": "COST",
+    "logicAll": "ALL",
+    "logicAny": "ANY",
+    "not": "NO",
+    "remove": "REMOVE",
+    "potency": "POWER {pct}%.",
+    "once": "FIRES ONCE PER BATTLE, OR ONCE A DAY OUT IN DA WORLD!",
+    "finalize": "FINALIZE ({kp} KP)",
+    "finalized": "FINALIZED: {power}",
+    "noneFinalized": "NOTHIN' FINALIZED YET.",
+    "alwaysFires": "A FINALIZED EXPRESSION ALWAYS FIRES AS FINALIZED, EVEN IF DA STATS IT ASKED FOR IZ LOST!",
+    "finalizedToast": "{name}'S EXPRESSION IZ FINALIZED!",
+    "needs": "NEEDS {stat} {req}.",
+    "needsBranch": "SET A BRANCH FIRST.",
+    "noChoices": "DERE IZ NOTHIN' TA BIND DIS TA YET!",
+    "bindTo": "BIND {name} TA:",
+    "refusal": {
+      "incomplete": "PICK A TRIGGER AN' AT LEAST ONE DEN EFFECT!",
+      "beyondStats": "A PIECE OF DA DRAFT IZ BEYOND DIS CHARACTER'S STATS NOW: TAKE IT OFF!",
+      "unchanged": "DIS IZ ALREADY DA FINALIZED POWER!",
+      "kp": "NO ENOUGH KNOWLEDGE: {kp} KP NEEDED!",
+      "locked": "DIS CHARACTER'S STATS DO NO REACH DAT PIECE!",
+      "needsBranch": "SET A BRANCH FIRST.",
+      "needsArg": "CHOOSE WHAT TA BIND IT TA!",
+      "missing": "DAT PIECE NO CAN GO DERE.",
+      "neverFires": "DEZE LIMITATIONS RULE EACH OTHER OUT, OR RULE OUT DA TRIGGER: DA POWER COULD NEVER BE USED!"
+    },
+    "limitations": "LIMITATIONS",
+    "limitNone": "NO LIMITATIONS: DA POWER COSTS ITS FULL PRICE AN' ASKS ITS FULL REQUIREMENTS!",
+    "limitSummary": "BOUND BY {n} VOW POINTS: IT COSTS {pct}% LESS KP AN' EVERY STAT REQUIREMENT IZ {leeway} LOWER!",
+    "limitWeight": "WEIGHT {n}",
+    "limitGives": "-{pct}% KP",
+    "limitWeightLabel": "WEIGHT",
+    "limitGivesLabel": "GIVES BACK",
+    "limitGivesValue": "{pct}% OFF DA KP, EVERY REQUIREMENT {leeway} LOWER",
+    "reqLowered": "{stat} {have}/{req} (WAZ {base})"
   },
   "hexorcize": {
     "button": "HEXORCIZE",
     "title": "HEXORCIZIN'",
     "detailTitle": "DA PIECE",
-    "blurb": "A MAGICAL WEAPON OR PIECE OF EQUIPMENT IZ TAKEN APART AN' WHAT WAZ WORKED INTO IT COMES BACK AS KNOWLEDGE. ONLY WHAT DA PARTY IZ CARRYIN': TAKE A PIECE OFF BEFORE UNMAKIN' IT!",
-    "back": "BACK",
+    "blurb": "BREAK DOWN A MAGICAL WEAPON OR PIECE OF EQUIPMENT TA GET KNOWLEDGE (KP) BACK. EQUIPPED PIECES MUST BE TAKEN OFF FIRST!",
+    "back": "GO BACK",
     "one": "UNMAKE",
     "all": "UNMAKE ALL",
     "worth": "WORTH",
@@ -720,10 +783,27 @@
     "nothing": "NOTHIN' MAGICAL IZ BEING CARRIED!",
     "unmade": "{item} IZ UNMADE FOR {kp} KP."
   },
+  "lobotomagic": {
+    "button": "LOBOTOMAGIC",
+    "title": "LOBOTOMAGIC",
+    "detailTitle": "{name}'S MIND",
+    "blurb": "CUT A LEARNED SKILL OR SPELL OUT OF A PARTY MEMBER'S MIND AN' GET BACK {pct}% OF WHAT TEACHIN' IT WOULD COST IN KNOWLEDGE (KP). SKILLS GRANTED BY TRAITS OR GEAR NO CAN BE CUT!",
+    "back": "GO BACK",
+    "forget": "FORGET",
+    "confirm": "SURE?",
+    "refund": "GIVES BACK",
+    "relearn": "TA RELEARN",
+    "school": "SCHOOL",
+    "pickSkill": "CHOOSE A SKILL ON DA LEFT!",
+    "nothing": "NOTHIN' LEARNED CAN BE CUT FROM DIS MIND!",
+    "warning": "{name} WILL FORGET IT FOR GOOD. LEARNIN' IT AGAIN COSTS DA FULL PRICE!",
+    "cut": "{name} FORGETS {skill} FOR {kp} KP."
+  },
   "tips": {
+    "member": "MEMBER",
     "pick": "PICK",
     "walk": "WALK",
-    "back": "BACK",
+    "back": "GO BACK",
     "mode": "MODE"
   },
   "lent": "LENT",
@@ -731,23 +811,23 @@
   "help": {
     "category": {
       "title": "SKILL SCHOOLS",
-      "intro": "EVERY SCHOOL OF SKILLS AN' MAGIC DA PARTY CAN LEARN FROM!",
+      "intro": "PICK A SCHOOL TA BROWSE AN' LEARN ITS SKILLS OR SPELLS, OR USE A WORKBENCH ON DA RIGHT PAGE!",
       "items": {
         "member": {
           "name": "COMPANION TABS",
           "text": "DA PUPIL. SCHOOLS, PROGRESS AN' COSTS IZ SHOWN FOR DIS MEMBER!"
         },
         "skills": {
-          "name": "SKILLS",
-          "text": "SCHOOLS OF PHYSICAL SKILLS, PAID FOR IN AP. A PRIMARY OR SECONDARY BADGE MARKS DA PUPIL'S OWN SCHOOLS, WHICH COST LESS KNOWLEDGE TA LEARN FROM!"
+          "name": "TRICKS",
+          "text": "SCHOOLS OF PHYSICAL SKILLS, WHICH COST AP TA USE. PRIMARY AN' SECONDARY SCHOOLS IZ DA PUPIL'S OWN AN' COST LESS KP TA LEARN FROM!"
         },
         "magic": {
           "name": "MAGIC",
-          "text": "SCHOOLS OF SPELLS, PAID FOR IN MP. OPEN A SCHOOL TA SEE ITS ATLAS OF SPELLS!"
+          "text": "SCHOOLS OF SPELLS, WHICH COST MP TA CAST. OPEN ONE TA SEE ITS SPELLS LAID OUT AS A MAP!"
         },
         "rail": {
-          "name": "BENCH BUTTONS",
-          "text": "DA COLUMN ON DA RIGHT EDGE: FUSE SPELLS, CRAFT A SPELL OR A SKILL, BROWSE DA MAGICAL SYSTEMS, ENCHANT WEAPONS, EQUIPMENT AN' BOOKS, WRITE SKILL BOOKS AN' GRIMORIES, AN' HEXORCIZE MAGICAL GEAR!"
+          "name": "WORKBENCHES",
+          "text": "ON DA RIGHT PAGE: FUSE SPELLS, CREATE A SPELL OR A SKILL, VIEW DA MAGICAL SYSTEMS, ENCHANT WEAPONS, EQUIPMENT AN' BOOKS, WRITE SKILL BOOKS AN' GRIMORIES, HEXORCIZE MAGICAL GEAR, AN' LOBOTOMAGIC A LEARNED SKILL AWAY!"
         },
         "help": {
           "name": "? HELP",
@@ -761,11 +841,11 @@
       "items": {
         "map": {
           "name": "ATLAS",
-          "text": "EACH CIRCLE IZ A SKILL. A SKILL OPENS ONCE DA PUPIL KNOWS ONE DAT BORDERS IT; LOCKED ONES SAY WHAT DEY IZ WAITIN' FOR!"
+          "text": "EACH CIRCLE IZ A SKILL. YOU CAN LEARN A SKILL ONCE YOU KNOW ONE CONNECTED TA IT; A LOCKED SKILL TELLS YOU WHAT IT NEEDS!"
         },
         "legend": {
           "name": "LEARNED, OPEN, LOCKED",
-          "text": "LEARNED SKILLS IZ KNOWN, OPEN ONES CAN BE TAUGHT NOW FOR KNOWLEDGE, LOCKED ONES IZ STILL OUT OF REACH!"
+          "text": "LEARNED: ALREADY KNOWN. OPEN: CAN BE LEARNED NOW WIT KP. LOCKED: NO AVAILABLE YET!"
         },
         "progress": {
           "name": "PROGRESS",
@@ -773,7 +853,7 @@
         },
         "detail": {
           "name": "SKILL CARD",
-          "text": "COST, EFFECT AN' DESCRIPTION OF DA SKILL UNDER DA CURSOR. FROM HERE IT CAN BE TAUGHT, PREVIEWED, OR CARRIED INTO BATTLE AN' LEFT ON DA BENCH!"
+          "text": "DA SELECTED SKILL'S COST, EFFECT AN' DESCRIPTION. FROM HERE YOU CAN LEARN IT, PREVIEW IT, OR CHOOSE WHETHER IT IZ CARRIED INTO BATTLE!"
         },
         "member": {
           "name": "COMPANION TABS",
@@ -790,11 +870,11 @@
       "items": {
         "dominant": {
           "name": "DOMINANT SPELL",
-          "text": "DEFINES DA DAMAGE AN' DA TARGETIN' OF DA RESULT. MAGIC ONLY!"
+          "text": "DECIDES DA DAMAGE AN' DA TARGETS OF DA RESULT. MUST BE A SPELL!"
         },
         "recessive": {
           "name": "RECESSIVE",
-          "text": "A SPELL OR A SKILL: IT SETS WHETHER DA RESULT IZ A SPELL OR A SKILL!"
+          "text": "A SPELL OR A SKILL. IF IT IZ A SKILL DA RESULT IZ A SKILL, OTHERWISE IT IZ A SPELL!"
         },
         "animation": {
           "name": "ANIMATION",
@@ -802,7 +882,7 @@
         },
         "cost": {
           "name": "FUSION COST",
-          "text": "MP AN' AP OF BOTH PARTS COMBINED, PLUS KNOWLEDGE. BOTH PARTS IZ FORGOTTEN, AN' A FUSED SPELL CAN BE SPLIT BACK APART LATER!"
+          "text": "COSTS KP. DA RESULT'S MP AN' AP IZ DA TWO PARTS' ADDED TOGETHER. BOTH PARTS IZ FORGOTTEN; YOU CAN SPLIT DA RESULT BACK APART LATER!"
         },
         "fused": {
           "name": "FUSED SPELLS",
@@ -819,11 +899,11 @@
       "items": {
         "parts": {
           "name": "PARTS",
-          "text": "EFFECTS, ELEMENTS AN' FORMULAS BOUGHT ONCE EACH WIT KNOWLEDGE, DEN REUSED IN EVERY SPELL OR SKILL WRITTEN HERE!"
+          "text": "EFFECTS, ELEMENTS AN' FORMULAS. EACH IZ BOUGHT ONCE WIT KP AN' CAN DEN BE USED IN EVERY SPELL OR SKILL YOU WRITE!"
         },
         "complexity": {
           "name": "COMPLEXITY",
-          "text": "A PERMANENT COST: IT SETS DA MP OR AP OF EVERY CAST AN' DA STAT DA WRITER MUST HAB!"
+          "text": "RAISES DA MP OR AP EVERY CAST COSTS, AN' DA STAT NEEDED TA USE IT!"
         },
         "preview": {
           "name": "PREVIEW",
@@ -848,19 +928,19 @@
       "items": {
         "gear": {
           "name": "GEAR",
-          "text": "DA WEAPON, EQUIPMENT OR BOOK TA BIND A SPELL INTO. ONLY PIECES DA PARTY CARRIES IZ SHOWN!"
+          "text": "DA WEAPON, EQUIPMENT OR BOOK TA PUT A SPELL INTO. ONLY ITEMS DA PARTY IZ CARRYIN' APPEAR!"
         },
         "spells": {
           "name": "SPELLS",
-          "text": "DA SPELLS DAT CAN BE BOUND. A WEAPON TAKES OFFENSIVE AN' STATUS SPELLS, EQUIPMENT PROTECTIVE ONES, A BOOK ANY SPELL!"
+          "text": "SPELLS YOU CAN PUT IN. WEAPONS TAKE ATTACK AN' STATUS SPELLS, EQUIPMENT TAKES PROTECTIVE SPELLS, BOOKS TAKE ANY SPELL!"
         },
         "effect": {
           "name": "WHAT IT DOES",
-          "text": "A WEAPON CASTS ON EVERY CRITICAL HIT, EQUIPMENT ANSWERS DA FIRST CRITICAL HIT TAKEN IN A BATTLE, A BOOK CASTS WHEN READ OUT. NONE OF DEM SPEND MP!"
+          "text": "WEAPON: CASTS ON EVERY CRITICAL HIT IT LANDS. EQUIPMENT: CASTS ONCE PER BATTLE WHEN DA WEARER TAKES A CRITICAL HIT. BOOK: CASTS WHEN READ ALOUD. NONE OF DEM COST MP!"
         },
         "bound": {
           "name": "BOUND SO FAR",
-          "text": "DA PIECES ALREADY ENCHANTED. RENAME, UNMAKE OR RECOVER A SPELL FROM DEM!"
+          "text": "ITEMS ALREADY ENCHANTED. RENAME DEM, UNMAKE DEM, OR GET DA SPELL BACK!"
         },
         "help": {
           "name": "? HELP",
@@ -877,11 +957,11 @@
         },
         "chosen": {
           "name": "CHOSEN PAGES",
-          "text": "WHAT DA VOLUME WILL HOLD, AN' DA KNOWLEDGE IT COSTS TA WRITE!"
+          "text": "WHAT DA LOUDNESS WILL HOLD, AN' DA KNOWLEDGE IT COSTS TA WRITE!"
         },
         "write": {
           "name": "WRITE IT",
-          "text": "BINDS DA PAGES INTO A BOOK. IT STAYS READABLE UNTIL EVERY PAGE HAB BEEN READ TA SOMEBODY!"
+          "text": "WRITES DA BOOK. IT CAN BE READ UNTIL EVERY PAGE HAB BEEN READ ONCE!"
         },
         "written": {
           "name": "WRITTEN SO FAR",
@@ -898,15 +978,40 @@
       "items": {
         "pieces": {
           "name": "MAGICAL PIECES",
-          "text": "MAGICAL WEAPONS AN' EQUIPMENT DA PARTY CARRIES. TAKE A PIECE OFF BEFORE UNMAKIN' IT!"
+          "text": "MAGICAL WEAPONS AN' EQUIPMENT DA PARTY IZ CARRYIN'. EQUIPPED PIECES MUST BE TAKEN OFF FIRST!"
         },
         "worth": {
           "name": "WORTH",
-          "text": "DA KNOWLEDGE EACH PIECE GIVES BACK ONCE UNMADE!"
+          "text": "DA KP EACH PIECE GIVES BACK WHEN BROKEN DOWN!"
         },
         "unmake": {
           "name": "ONE OR ALL",
-          "text": "UNMAKES DA PIECE UNDER DA CURSOR, OR EVERY COPY HELD. DA PIECE IZ GONE FOR GOOD!"
+          "text": "BREAKS DOWN DA SELECTED PIECE, OR EVERY COPY YOU HOLD. DIS NO CAN BE UNDONE!"
+        },
+        "help": {
+          "name": "? HELP",
+          "text": "OPENS DIS SHEET. ON A CONTROLLER, PRESS SELECT; PRESS IT AGAIN, BACK OR CONFIRM TA CLOSE!"
+        }
+      }
+    },
+    "lobotomagic": {
+      "title": "LOBOTOMAGIC",
+      "items": {
+        "skills": {
+          "name": "LEARNED SKILLS",
+          "text": "SKILLS AN' SPELLS DA CHOSEN PARTY MEMBER HAB LEARNED. SKILLS GRANTED BY TRAITS OR GEAR IZ NO LISTED!"
+        },
+        "refund": {
+          "name": "GIVES BACK",
+          "text": "DA KP EACH SKILL GIVES BACK WHEN FORGOTTEN, PART OF WHAT TEACHIN' IT WOULD COST!"
+        },
+        "forget": {
+          "name": "FORGET",
+          "text": "PRESS ONCE TA CHOOSE, AGAIN TA CONFIRM. DIS NO CAN BE UNDONE: LEARNIN' IT AGAIN COSTS DA FULL PRICE!"
+        },
+        "member": {
+          "name": "MEMBER",
+          "text": "USE DA TABS, OR LEFT AN' RIGHT, TA CHANGE PARTY MEMBER!"
         },
         "help": {
           "name": "? HELP",
@@ -919,7 +1024,7 @@
       "items": {
         "map": {
           "name": "SYSTEMS",
-          "text": "DA TEN SYSTEMS MAGIC IZ DRAWN FROM. DA ONE MARKED AS YA IZ DA PUPIL'S OWN!"
+          "text": "DA TEN SYSTEMS ALL MAGIC COMES FROM. DA ONE MARKED AS YA IZ DA PUPIL'S OWN!"
         },
         "classes": {
           "name": "CLASSES",
@@ -938,6 +1043,34 @@
           "text": "OPENS DIS SHEET. ON A CONTROLLER, PRESS SELECT; PRESS IT AGAIN, BACK OR CONFIRM TA CLOSE!"
         }
       }
+    },
+    "expression": {
+      "title": "EXPRESSION",
+      "items": {
+        "pieces": {
+          "name": "PIECES",
+          "text": "EACH TAB HOLDS ONE KIND OF PIECE: DA TRIGGER DAT SETS DA POWER OFF, DA CONDITIONS IT WAITS FOR, WHAT IT DOES, DA SHAPE IT TAKES AN' DA LIMITATIONS IT IZ BOUND BY. CONFIRM A CARD TA FIT IT!"
+        },
+        "limits": {
+          "name": "LIMITATIONS",
+          "text": "VOWS DA POWER MUST KEEP: A DAY IT NO CAN BE USED, DA ONLY KIND OF CREATURE IT WORKS ON, A PRICE PAID EACH TIME. DA MORE IT IZ BOUND, DA LESS IT COSTS, AN' DA FURTHER IT CAN REACH BEYOND DIS CHARACTER'S STATS!"
+        },
+        "blueprint": {
+          "name": "BLUEPRINT",
+          "text": "DA POWER AS IT STANDS. TAKE A PIECE OFF, TURN A CONDITION AROUND WIT NO, OR SWITCH DA CONDITIONS BETWEEN ALL AN' ANY!"
+        },
+        "finalize": {
+          "name": "FINALIZE",
+          "text": "SPENDS KNOWLEDGE ON EVERY NEW PIECE AN' MAKES DA POWER REAL. A FINALIZED POWER KEEPS WORKIN' EVEN IF DA STATS IT ASKED FOR IZ LOST!"
+        },
+        "help": {
+          "name": "? HELP",
+          "text": "OPENS DIS SHEET. ON A CONTROLLER, PRESS SELECT; PRESS IT AGAIN, BACK OR CONFIRM TA CLOSE!"
+        }
+      }
     }
-  }
+  },
+  "schools": "SCHOOLS",
+  "benches": "WORKBENCHES",
+  "benchesBlurb": "SPEND KNOWLEDGE (KP) TA FUSE, CREATE, ENCHANT, COPY OR BREAK DOWN SPELLS AN' SKILLS!"
 }

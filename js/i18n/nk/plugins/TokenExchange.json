@@ -30,8 +30,8 @@
   },
   "statusBuying": "BUYIN': EUROS LEAVE DA WALLET, TOKENS ARRIVE IN DA BAG!",
   "statusSelling": "SELLIN': TOKENS LEAVE DA BAG, EUROS RETURN TA DA WALLET!",
-  "notEnoughEuros": "NOT ENOUGH EUROS FOR DAT.",
-  "notEnoughTokens": "YOU DO NOT HOLD DAT MANY TOKENS!",
+  "notEnoughEuros": "NO ENOUGH EUROS FOR DAT.",
+  "notEnoughTokens": "YOU DO NO HOLD DAT MANY TOKENS!",
   "bought": {
     "one": "BOUGHT {count} TOKEN FOR €{total}.",
     "other": "BOUGHT {count} TOKENS FOR €{total}."

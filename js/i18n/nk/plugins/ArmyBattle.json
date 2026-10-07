@@ -2,7 +2,7 @@
   "zoom": "ZOOM: {pct}%",
   "controls": "ZOOM: WHEEL | PAN: DRAG/ARROWS | Q/W/E: ABILITIES | TAB: HIDE/SHOW SIDEBAR",
   "playerArmy": "PLAYER ARMY: {count}",
-  "enemyArmy": "ENEMY ARMY: {count}",
+  "enemyArmy": "BAD 'UN ARMY: {count}",
   "rallyBanner": "RALLY! +20 MORALE ({count} TROOPS RALLIED)",
   "healBanner": "HEAL! +25% HP TA {count} TROOPS",
   "inspireBanner": "INSPIRE! +50% ATTACK & MAX MORALE!",
@@ -14,8 +14,8 @@
   },
   "command": {
     "hold": "HOLD",
-    "attack": "ATTACK",
-    "defend": "DEFEND",
+    "attack": "WHACK",
+    "defend": "DUCK",
     "retreat": "RETREAT"
   }
 }

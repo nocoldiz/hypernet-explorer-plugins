@@ -5,7 +5,8 @@
   "omegaCity": "F-22 - OMEGA CITY",
   "tipOfTheSpear": "F-92 - TIP OF DA SPEAR",
   "lowerFloor": "F{num} - {name}",
-  "hypernetPoint": "F0 - HYPERNET POINT",
+  "firstFloor": "F1 - DA GREAT DIVIDE",
+  "hypernetPoint": "F0 - ENTRANCE",
   "unknownMap": "UNKNOWN",
   "floorHud": "FLOOR: {num}"
 }

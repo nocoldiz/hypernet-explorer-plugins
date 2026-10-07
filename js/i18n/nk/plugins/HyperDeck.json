@@ -16,7 +16,7 @@
     "battery": "CELL",
     "modem": "UPLINK",
     "cooling": "COOLIN'",
-    "sound": "AUDIO",
+    "sound": "NOISES",
     "sensor": "SENSOR"
   },
   "specs": {
@@ -41,7 +41,7 @@
     "grid": "{cols} X {rows} BOARD"
   },
   "value": {
-    "none": "NOT FITTED",
+    "none": "NO FITTED",
     "infinite": "UNBOUNDED",
     "integrated": "INTEGRATED, {n} MB SHARED",
     "index": "{n} POINTS",
@@ -70,7 +70,7 @@
     "memory": "MEMORY TEST : {size} OK",
     "memoryInfinite": "MEMORY TEST : COUNTIN'... COUNTIN'... OK",
     "quantum": "QUANTUM BUFFER : {size} OK",
-    "storage": "PRIMARY VOLUME : {size} OK",
+    "storage": "PRIMARY LOUDNESS : {size} OK",
     "cell": "POWER CELL : {size} OK",
     "detectMaster": "DETECTIN' PRIMARY MASTER... OK",
     "detectBioslave": "DETECTIN' PRIMARY BIOSLAVE... OK",
@@ -115,16 +115,16 @@
   },
   "caseWarning": "CHANGIN' DA CASE EMPTIES DA BOARD. EVERY PART GOES BACK IN DA BAG!",
   "fault": {
-    "missing": "NO {kind} IZ FITTED. DA MACHINE WILL NOT START WITHOUT ONE!",
+    "missing": "NO {kind} IZ FITTED. DA MACHINE WILL NO START WITHOUT ONE!",
     "power": "DA CELL IZ {n} W SHORT OF WHAT DA FITTED PARTS DRAW!",
     "heat": "NOTHIN' IZ COOLIN' A {n} W BOARD. EXPECT IT TA THROTTLE!",
-    "uplink": "NO UPLINK FITTED. DA HYPERNET WILL NOT ANSWER!",
+    "uplink": "NO UPLINK FITTED. DA HYPERNET WILL NO ANSWER!",
     "memory": "ONLY {n} MB OF MEMORY. ARCHWAYS XP WILL CRAWL!",
     "integrated": "NO GRAPHICS ADAPTER. DA PROCESSOR DRIVES DA PANEL ITSELF, ON {n} MB BORROWED FROM MAIN MEMORY!"
   },
   "chip": {
     "heading": "CHIP LAB",
-    "hint": "LEFT BUTTON DRAWS, RIGHT BUTTON RUBS OUT, MIDDLE BUTTON PANS, WHEEL ZOOMS. PICK A TILE TWICE TA STEP THROUGH ITS SETTINGS!",
+    "hint": "LEFT BUTTON DRAWS, RIGHT BUTTON RUBS OUT, MIDDLE BUTTON PANS, WHEEL ZOOMS. PICK A TILE TWICE TA STEP THROUGH ITS FIDDLY BITS!",
     "tile": {
       "wire": "WIRE",
       "source": "SOURCE",
@@ -145,7 +145,7 @@
       "nand": "NAND",
       "nor": "NOR",
       "xnor": "XNOR",
-      "not": "NOT"
+      "not": "NO"
     },
     "dir": {
       "0": "NORTH",
@@ -157,7 +157,7 @@
     "period": "EVERY {n} TICKS",
     "pin": "PIN {n}",
     "facing": "FACIN' {d}",
-    "variant": "SETTIN'",
+    "variant": "FIDDLY BIT",
     "rotate": "TURN",
     "run": "RUN",
     "pause": "PAUSE",
@@ -165,7 +165,7 @@
     "speed": "SPEED X{n}",
     "wipe": "WIPE",
     "fabricate": "ETCH DIE",
-    "done": "BACK",
+    "done": "GO BACK",
     "gates": "LOGIC",
     "tiles": "TILES",
     "rating": "RATED",
@@ -175,11 +175,11 @@
     "dieName": "HOME-ETCHED DIE MK{serial}",
     "dieDesc": "A LOGIC DIE CUT FROM SCRAP. {gates} GATES, RATED {mhz} MHZ!",
     "made": "{name} ETCHED, {n} SCRAP SPENT.",
-    "needScrap": "NOT ENOUGH SALVAGED STEEL: {n} NEEDED!",
+    "needScrap": "NO ENOUGH SALVAGED STEEL: {n} NEEDED!",
     "fail": {
       "noGates": "NOTHIN' TA ETCH. DRAW SOME LOGIC FIRST!",
       "noSlot": "NO BLANK DIE LEFT. USE OR SELL AN OLD ONE!",
-      "noLab": "DA BENCH IZ NOT READY."
+      "noLab": "DA BENCH IZ NO READY."
     },
     "gateGroup": "GATES",
     "preset": {
@@ -221,8 +221,8 @@
     "tabHealth": "HEALTH",
     "noFaults": "NO FAULTS REPORTED. EVERY FITTED PART ANSWERED!",
     "willBoot": "DIS MACHINE WILL POST.",
-    "willNotBoot": "DIS MACHINE WILL NOT POST!",
+    "willNotBoot": "DIS MACHINE WILL NO POST.",
     "boot": "POWER ON",
-    "exit": "EXIT"
+    "exit": "RUN AWAY"
   }
 }

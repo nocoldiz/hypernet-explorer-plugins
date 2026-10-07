@@ -16,11 +16,11 @@
     "soulCurrent": "SOULS: {value}"
   },
   "commands": {
-    "buy": "BUY",
-    "sell": "SELL",
+    "buy": "GIMME",
+    "sell": "FLOG",
     "oil": "OIL",
     "souls": "SOULS",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "sellAll": "SELL ALL",
     "share": "SHARE",
     "shares": "SHARES"
@@ -71,8 +71,8 @@
   },
   "errors": {
     "noFloat": "NO UNISSUED SHARES LEFT",
-    "noGold": "NOT ENOUGH MONEY FOR DAT ORDER",
-    "noShares": "YOU DO NOT HOLD DAT MANY SHARES"
+    "noGold": "NO ENOUGH MONEY FOR DAT ORDER",
+    "noShares": "YOU DO NO HOLD DAT MANY SHARES"
   },
   "headlines": {
     "oil": [
@@ -84,7 +84,7 @@
     "souls": [
       "RIFT DETECTORS REGISTER A BRIEF ANOMALOUS HARMONIC FLUCTUATION!",
       "DA CATHEDRAL GUILD CERTIFIES ANOTHER BATCH OF PURIFIED CANISTERS!",
-      "DA ARCANE COUNCIL CONVENES OVER RESERVE BENCHMARKS AN' SAYS LITTLE!",
+      "DA ARCANE COUNCIL CONVENES OVER RESERVE BENCHMARKS AN' SAYS LIL'!",
       "A THIN VEIL WEEK HAB ASSAYERS WORKIN' DOUBLE SHIFTS!"
     ],
     "company": {
@@ -106,7 +106,7 @@
       ],
       "soulforge": [
         "{company} ASSAYERS REPORT A PURER YIELD FROM DA LAST CONSIGNMENT!",
-        "AN ETHICS COMMITTEE ASKS {company} QUESTIONS IT WILL NOT ANSWER!",
+        "AN ETHICS COMMITTEE ASKS {company} QUESTIONS IT WILL NO ANSWER!",
         "{company} CORNERS DA MARKET ON CANISTER GLASS, BRIEFLY!"
       ]
     },

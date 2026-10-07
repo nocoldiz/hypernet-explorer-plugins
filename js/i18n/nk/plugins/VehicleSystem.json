@@ -38,16 +38,16 @@
   "returnToWorldMap": "RETURN TA WORLD MAP",
   "continueDriving": "CONTINUE DRIVIN'",
   "leave": "LEAVE",
-  "cancel": "CANCEL",
+  "cancel": "FORGET IT",
   "listRow": "{vehicle} - {location}",
   "listRowHere": "{vehicle} - HERE",
   "listRowUnknown": "{vehicle}",
   "cannotFit": "DA {vehicle} NO CAN FIT DERE!",
-  "notInsideVehicle": "YOU IZ NOT INSIDE A VEHICLE",
+  "notInsideVehicle": "YOU IZ NO INSIDE A VEHICLE",
   "noVehiclesOwned": "YOU NO HAB VEHICLES",
   "noVehicleHere": "DERE IZ NO VEHICLE HERE",
   "cannotFindVehicle": "NO CAN FIND DAT VEHICLE",
-  "vehicleNotHere": "DA {vehicle} IZ NOT HERE",
+  "vehicleNotHere": "DA {vehicle} IZ NO HERE",
   "cannotFindLocation": "NO CAN FIND {vehicle} LOCATION",
   "pickedUpVehicle": "YOU PICKED UP DA {vehicle}.",
   "cannotLandHere": "DERE IZ NOWHERE TA SET DOWN HERE",
@@ -55,5 +55,6 @@
     "fuel": "FUEL",
     "condition": "CONDITION",
     "broken": "OUT OF ORDER - NEEDS REPAIRS"
-  }
+  },
+  "stopRiding": "STOP RIDIN'"
 }

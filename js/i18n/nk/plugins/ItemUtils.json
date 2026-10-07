@@ -4,7 +4,8 @@
     "sleep": "SLEEP",
     "hygiene": "HYGIENE",
     "social": "SOCIAL",
-    "leisure": "MOOD"
+    "leisure": "MOOD",
+    "bladder": "BLADDER"
   },
   "category": {
     "materials": "MATERIALS",
@@ -41,7 +42,7 @@
       "music": "{name} IZ LISTENIN' TA DA {item}",
       "instrument": "{name} IZ PLAYIN' DA {item}",
       "videogame": "{name} IZ PLAYIN' VIDEOGAMES ON DA {item}",
-      "boardgame": "{name} IZ SETTIN' UP DA {item}",
+      "boardgame": "{name} IZ FIDDLY BIT UP DA {item}",
       "cards": "{name} IZ DEALIN' OUT DA {item}",
       "toy": "{name} IZ FIDDLIN' WIT DA {item}",
       "album": "{name} IZ LEAFIN' THROUGH DA {item}",
@@ -71,7 +72,7 @@
     "ap": "AP"
   },
   "help": {
-    "button": "HELP",
-    "close": "CLOSE"
+    "button": "HALP!",
+    "close": "SHUT IT"
   }
 }

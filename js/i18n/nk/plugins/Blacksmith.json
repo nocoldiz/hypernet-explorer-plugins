@@ -9,10 +9,10 @@
   "materials": "MATERIALS",
   "forge": "FORGE",
   "forged": "FORGED!",
-  "noMaterials": "NOT ENOUGH MATERIALS",
+  "noMaterials": "NO ENOUGH MATERIALS",
   "noRecipes": "NOTHIN' HERE...",
-  "back": "BACK",
-  "close": "CLOSE",
+  "back": "GO BACK",
+  "close": "SHUT IT",
   "needs": "{trade}, {level}",
   "have": "{who}: {level}",
   "weaponType": "WEAPON TYPE",
@@ -234,7 +234,8 @@
     "short": "NO MATERIALS",
     "locked": "UNTRAINED",
     "owned": "CARRIED",
-    "forged": "FORGED"
+    "forged": "FORGED",
+    "salvage": "DISASSEMBLE"
   },
   "allTrades": "ALL TRADES",
   "shortBy": "MISSIN' {n}",
@@ -290,7 +291,7 @@
   "appearanceHeader": "HOW IT COMES OUT",
   "detailsHeader": "WHAT IT IZ",
   "carrying": "CARRYIN' {n}",
-  "fixedPattern": "MADE TA ONE PATTERN: DIS FRAME IZ NOT A SMITH’S TA RE-CUT!",
+  "fixedPattern": "MADE TA ONE PATTERN: DIS FRAME IZ NO A SMITH’S TA RE-CUT!",
   "nameEdit": "WRITE DA NAME",
   "tips": {
     "pick": "PICK",
@@ -369,7 +370,7 @@
       "intro": "PICK A TRADE ON DA LEFT, DEN A PIECE ON DA RIGHT TA SEE WHAT IT TAKES TA MAKE!",
       "items": {
         "back": {
-          "name": "BACK",
+          "name": "GO BACK",
           "text": "LEAVES DA WORKSHOP."
         },
         "trades": {
@@ -435,5 +436,13 @@
         }
       }
     }
-  }
+  },
+  "finishMine": "YA PICTURES",
+  "finishMineTitle": "ONE OF YA PICTURES AS DA FINISH",
+  "salvageAll": "DISASSEMBLE ALL ({n})",
+  "salvageAllTitle": "DISASSEMBLE EVERYTHIN'",
+  "salvageAllBody": "TAKE APART ALL {n} UNEQUIPPED PIECES ON DIS SHELF?",
+  "salvageAllConfirm": "DISASSEMBLE",
+  "salvageWorker": "{name}: {n}",
+  "salvageMore": "...AN' {n} MORE"
 }

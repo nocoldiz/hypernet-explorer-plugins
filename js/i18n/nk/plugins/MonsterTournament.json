@@ -14,7 +14,7 @@
   "youLost": "YOU LOST {tokens} TOKENS",
   "champion": "CHAMPION: {name}!",
   "youWon": "YOU WON {tokens} TOKENS!",
-  "skillAttack": "ATTACK",
+  "skillAttack": "WHACK",
   "skillFinish": "FINISH",
   "ui": {
     "bet": "BET:",

@@ -3,7 +3,7 @@
   "availableTokens": "AVAILABLE TOKENS:",
   "buyTokens": "BUY TOKENS",
   "sellTokens": "SELL TOKENS",
-  "exit": "EXIT",
+  "exit": "RUN AWAY",
   "amount": "AMOUNT:",
   "cost": "COST:",
   "earnings": "EARNINGS:",
@@ -12,7 +12,7 @@
   "insufficientGold": "INSUFFICIENT GOLD!",
   "insufficientTokens": "INSUFFICIENT TOKENS!",
   "msg": {
-    "notConfigured": "TOKEN CONVERTER IZ NOT CONFIGURED CORRECTLY!",
+    "notConfigured": "TOKEN CONVERTER IZ NO CONFIGURED CORRECTLY!",
     "error": "TOKEN CONVERTER ERROR. CHECK CONSOLE!",
     "rate": "PRICE: 1 TOKEN = €{price}",
     "max": "(MAX: {max})",

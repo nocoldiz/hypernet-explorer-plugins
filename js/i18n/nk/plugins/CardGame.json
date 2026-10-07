@@ -44,11 +44,12 @@
     "pickSecondTile": "NOW PICK DA TILE IT MOVES TA!",
     "forfeitAsk": "LEAVE DA TABLE? DA STAKE IZ FORFEIT!",
     "forfeitYes": "FORFEIT",
-    "forfeitNo": "STAY"
+    "forfeitNo": "STAY",
+    "forfeitBracketAsk": "LEAVE DA TABLE? DA BRACKET ENDS HERE, AN' DA ENTRY FEE STAYS PAID!"
   },
   "col": {
     "title": "CARD COLLECTION",
-    "owned": "{cards} CARDS, {distinct} KINDZ ({pct}%)",
+    "owned": "{cards} CARDS HELD, {distinct} KINDS ({pct}%)",
     "tab": {
       "all": "ALL",
       "monsters": "MONSTERS",
@@ -58,13 +59,13 @@
     },
     "empty": "NOTHIN' ON DA SHELF YET. OPEN A BOOSTER PACK!",
     "pickACard": "PICK A CARD TA READ IT.",
-    "saveDeck": "SAVE DECK",
+    "saveDeck": "STASH DECK",
     "newDeck": "NEW DECK",
     "autoDeck": "BEST DECK",
     "shuffleDeck": "SHUFFLE A DECK",
     "reroll": "RE-ROLL LOOK",
     "practice": "PRACTICE DUEL",
-    "close": "CLOSE",
+    "close": "SHUT IT",
     "deckName": "DECK {n}",
     "unsavedDeck": "UNSAVED DECK",
     "deckLegal": "LEGAL DECK.",
@@ -100,8 +101,10 @@
     "copies": "{n} IN DA COLLECTION",
     "notOwned": "NEVER HELD",
     "valueLabel": "MARKET VALUE",
-    "inDeckOf": "{n}/{of} IN DA DECK",
-    "removeFromDeck": "TAKE OUT"
+    "inDeckOf": "{n}/{of} IN DECK",
+    "removeFromDeck": "REMOVE FROM DECK",
+    "edited": "EDITED",
+    "autoSaved": "{name} STASHED."
   },
   "pack": {
     "title": "BOOSTER PACK",
@@ -135,7 +138,7 @@
     "bound": "{name} IZ BOUND INTO A CARD AN' FALLS!",
     "boundNew": "{name} IZ BOUND INTO A CARD, DA FIRST OF ITS KIND, AN' FALLS!",
     "failed": "{name} SLIPS DA BINDIN'. ({chance}% NEEDED)",
-    "tooStrong": "{name} IZ LEVEL {level} AN' WILL NOT BE HELD BY A PARTY OF {median}!",
+    "tooStrong": "{name} IZ LEVEL {level} AN' WILL NO BE HELD BY A PARTY OF {median}!",
     "noCard": "DERE IZ NO CARD {name} COULD EVER BE!"
   },
   "trader": {
@@ -145,19 +148,19 @@
     "wallet": "YA WALLET",
     "tabBuy": "TODAY'S LOTS",
     "tabSell": "SELL YA CARDS",
-    "buy": "BUY",
-    "sell": "SELL",
+    "buy": "GIMME",
+    "sell": "FLOG",
     "left": "{n} LEFT",
     "soldOut": "SOLD OUT",
     "owned": "YOU HOLD {n}",
-    "hint": "NEW LOTS IZ LISTED EVERY DAY. SOLD LOTS IZ NOT RESTOCKED!",
+    "hint": "NEW LOTS IZ LISTED EVERY DAY. SOLD LOTS IZ NO RESTOCKED!",
     "hintSell": "DA SITE PAYS LESS DEN IT ASKS. DAT DIFFERENCE IZ ITS LIVIN'!",
     "emptyStock": "NOTHIN' LISTED TODAY.",
     "emptyShelf": "YOU HAB NO CARDS TA SELL.",
     "bought": "BOUGHT {name} FOR {price}.",
     "sold": "SOLD {name} FOR {price}.",
     "tooDear": "YOU NO CAN COVER {price}.",
-    "cannotSell": "DAT CARD IZ NOT MERCHANDISE!"
+    "cannotSell": "DAT CARD IZ NO MERCHANDISE!"
   },
   "arena": {
     "title": "HYPER CARD ARENA",
@@ -185,7 +188,7 @@
     "summaryMatch": "ONE MATCH AGAINST A {level} MACHINE. NOTHIN' STAKED!",
     "summaryBracket": "{entrants} ENTRANTS, {rounds} ROUNDS, STRAIGHT KNOCK-OUT. ENTRY {fee}, AN' DA WHOLE RUN PAYS {purse} AN' A PRIZE!",
     "start": "SIT DOWN",
-    "cannotAfford": "DA ENTRY IZ {amount}, AN' YOU DO NOT HAB IT!",
+    "cannotAfford": "DA ENTRY IZ {amount}, AN' YOU DO NO HAB IT!",
     "rounds": [
       "DA QUARTER-FINAL",
       "DA SEMI-FINAL",

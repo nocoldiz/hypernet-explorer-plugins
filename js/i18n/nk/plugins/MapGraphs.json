@@ -12,9 +12,9 @@
   "cluster": "CLUSTER",
   "mapInfo": "MAP INFO",
   "name": "NAME",
-  "status": "STATUS",
+  "status": "HOW ME DOIN'",
   "visited": "VISITED",
-  "notVisited": "NOT VISITED",
+  "notVisited": "NO VISITED",
   "connections": "CONNECTIONS",
   "mapStats": "MAP STATS: {maps} MAPS, {links} CONNECTIONS"
 }

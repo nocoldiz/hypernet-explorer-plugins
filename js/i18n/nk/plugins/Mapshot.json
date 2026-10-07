@@ -1,6 +1,6 @@
 {
   "alreadyExist": "EVERY SCREENSHOT ALREADY EXISTS IN {path}",
-  "debugSaved": "FULL DEBUG SCREENSHOTS SAVED TA {path}",
-  "saved": "MAPSHOT SAVED TA {path}",
+  "debugSaved": "FULL DEBUG SCREENSHOTS STASHED TA {path}",
+  "saved": "MAPSHOT STASHED TA {path}",
   "starting": "GENERATIN' DA FULL SET OF DEBUG SCREENSHOTS!"
 }

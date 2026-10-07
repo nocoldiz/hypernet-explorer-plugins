@@ -22,7 +22,7 @@
   "discoveredCount": "DISCOVERED: {found} / {total}",
   "searchRelics": "SEARCH RELICS...",
   "filterAll": "ALL",
-  "filterItems": "ITEMS",
+  "filterItems": "STUFF",
   "filterWeapons": "WEAPONS",
   "filterArmors": "ARMORS",
   "scannerActive": "SCANNER ONLINE & ACTIVE",
@@ -46,7 +46,7 @@
     "PSI"
   ],
   "statFallback": "STAT",
-  "inInventory": "IN INVENTORY ({count})",
+  "inInventory": "IN LOOT SACK ({count})",
   "existentInWorld": "EXISTENT IN WORLD",
   "structuralScan": "STRUCTURAL SCAN"
 }

@@ -3,15 +3,15 @@
   "exitStation": "EXIT STATION",
   "liters": "{liters} LITERS",
   "fillTank": "FILL TANK ({liters}L)",
-  "back": "BACK",
+  "back": "GO BACK",
   "selectVehicle": "SELECT VEHICLE",
   "vehicleTitle": "{vehicle} · REFUEL",
   "genericVehicle": "VEHICLE",
   "genericVehicleLower": "VEHICLE",
   "confirmHeader": "\\C[17]REFUEL CONFIRMATION\\C[0]",
   "confirmBody": "PURCHASE {liters}L FOR DA {vehicle} FOR €{cost}?",
-  "confirm": "CONFIRM",
-  "cancel": "CANCEL",
+  "confirm": "YAH, DO IT",
+  "cancel": "FORGET IT",
   "completeHeader": "\\C[17]REFUELIN' COMPLETE!\\C[0]",
   "added": "ADDED {liters}L TA DA {vehicle}.",
   "insufficientFunds": "\\C[18]INSUFFICIENT FUNDS!\\C[0]",
@@ -30,10 +30,10 @@
     "items": {
       "vehicles": {
         "name": "VEHICLES",
-        "text": "EVERY VEHICLE DA PARTY OWNS DAT TAKES FUEL. PICK ONE TA SEE ITS REFUELLIN' OPTIONS!"
+        "text": "EVERY VEHICLE DA PARTY OWNS DAT TAKES FUEL. PICK ONE TA SEE ITS REFUELLIN' FIDDLY BITS!"
       },
       "options": {
-        "name": "REFUEL OPTIONS",
+        "name": "REFUEL FIDDLY BITS",
         "text": "BUY A SET NUMBER OF LITRES OR FILL DA TANK. DA PRICE OF EACH OPTION IZ SHOWN BESIDE IT!"
       },
       "overview": {

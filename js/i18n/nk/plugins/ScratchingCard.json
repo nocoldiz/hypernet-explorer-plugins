@@ -17,9 +17,9 @@
     "title": "CHOOSE YA CARD",
     "wallet": "WALLET: €{amount}",
     "terms": "STAKE €{cost} · TOP PRIZE €{amount}",
-    "back": "BACK",
+    "back": "GO BACK",
     "backDesc": "LEAVE DA COUNTER WIT YA MONEY IN YA POCKET!",
-    "needMoney": "NOT ENOUGH MONEY FOR DIS TICKET!",
+    "needMoney": "NO ENOUGH MONEY FOR DIS TICKET!",
     "desc": {
       "esoteric": "PURPLE FOIL AN' BORROWED SIGILS. A MODEST CEILIN'!",
       "corporate": "BLUE INK, QUARTERLY OPTIMISM, HALF A MILLION ON DA TABLE!",

@@ -35,7 +35,7 @@
         "fortification project": "{actor} BEGINS A FORTIFICATION LINE DAT WILL NEVER BE FINISHED!",
         "mercenary contract": "{leader} QUIETLY HIRES A MERCENARY COMPANY FOR {actor}!",
         "submarine incident": "AN UNIDENTIFIED SUBMARINE IZ FOUND AGROUND ON AN {actor} BEACH!",
-        "proxy war": "{actor} FUNDS BOTH SIDES OF A WAR IT CLAIMS NOT TA BE IN!",
+        "proxy war": "{actor} FUNDS BOTH SIDES OF A WAR IT CLAIMS NO TA BE IN!",
         "airship disaster": "AN {actor} MILITARY AIRSHIP BURNS IN FULL VIEW OF A CROWD!",
         "cavalry charge": "{actor} CAVALRY CHARGE A MACHINE-GUN LINE; DA SURVIVORS IZ DECORATED!",
         "chemical trial": "{actor} TESTS A CHEMICAL AGENT ON AN EVACUATED VALLEY!",
@@ -93,7 +93,7 @@
         "GhostTrain": "A TRAIN DAT WAZ SCRAPPED IN 1904 ARRIVES ON TIME AT AN {actor} STATION!",
         "MirrorPlague": "MIRRORS ACROSS {actor} BEGIN TA LAG HALF A SECOND BEHIND DEY OWNERS!",
         "DoppelgangerEpidemic": "{actor} REGISTERS FOUR HUNDRED CITIZENS WHO MEET THEMSELVES IN DA STREET!",
-        "SleepwalkingPilgrimage": "THOUSANDS SLEEPWALK OUT OF {actor} TOWARDS A HILL DAT IZ NOT ON DA MAPS!",
+        "SleepwalkingPilgrimage": "THOUSANDS SLEEPWALK OUT OF {actor} TOWARDS A HILL DAT IZ NO ON DA MAPS!",
         "GravityInversion": "GRAVITY FAILS FOR ELEVEN MINUTES OVER AN {actor} VALLEY!",
         "SecondMoon": "A SECOND MOON IZ PHOTOGRAPHED ABOVE {actor}, DEN DENIED BY EVERY OBSERVATORY!",
         "WhisperingWells": "WELLS ACROSS {actor} WHISPER DA NAMES OF DA DROWNED!",
@@ -107,7 +107,7 @@
         "ClockworkPossession": "EVERY CLOCK IN {actor} STRIKES THIRTEEN AN' KEEPS PERFECT TIME THEREAFTER!",
         "PoltergeistUprising": "A POLTERGEIST UPRISIN' EMPTIES FOUR {actor} APARTMENT BLOCKS!",
         "MassHallucination": "SIXTY THOUSAND PEOPLE IN {actor} SEE DA SAME FUNERAL DAT NEVER HAPPENED!",
-        "AngelicSighting": "SOMETHIN' ENORMOUS AN' WINGED IZ SEEN OVER {actor}; IT DOES NOT SPEAK!",
+        "AngelicSighting": "SOMETHIN' ENORMOUS AN' WINGED IZ SEEN OVER {actor}; IT DOES NO SPEAK!",
         "DemonicIncursion": "A DEMONIC INCURSION IZ REPELLED IN {actor} BY {leader} PERSONALLY!",
         "LeyLineSurge": "A LEYLINE SURGES BENEATH {actor}; EVERY CANDLE IN DA REGION RELIGHTS!",
         "NumberStation": "AN UNLICENSED STATION BROADCASTS NUMBERS OVER {actor} IN A DEAD CHILD'S VOICE!",
@@ -115,7 +115,7 @@
         "LanguageDecay": "A DIALECT OF {actor} LOSES ITS VERBS; SPEAKERS STOP REFERRIN' TA DA FUTURE!",
         "ThePaleVisitor": "A PALE VISITOR CALLS ON {actor} HOUSEHOLDS BY NAME; DA CALLERS IZ NEVER TWICE DA SAME!",
         "WeepingSky": "DA SKY OVER {actor} WEEPS SALT WATER FOR NINE DAYS!",
-        "InfiniteStaircase": "AN {actor} MINISTRY STAIRWELL GAINS A FLOOR DAT IZ NOT IN DA PLANS!",
+        "InfiniteStaircase": "AN {actor} MINISTRY STAIRWELL GAINS A FLOOR DAT IZ NO IN DA PLANS!",
         "TelepathicPlague": "A TELEPATHIC PLAGUE SPREADS THROUGH {actor}; PRIVACY BECOMES A MEDICAL CONDITION!",
         "ColorLoss": "{actor} LOSES DA COLOR BLUE FOR A FORTNIGHT; NOBODY CAN DESCRIBE WHAT IZ MISSIN'!",
         "MoonSickness": "MOON SICKNESS TAKES DA HERDS AN' DEN DA HERDSMEN OF {actor}!",
@@ -134,7 +134,7 @@
         "PetrodemonAttack": "A PETRODEMON COMES UP A {actor} WELL AN' TAKES DA SHIFT WIT IT!",
         "PetrodemonSwarm": "A PETRODEMON SWARM WALKS {actor} PIPELINES; {leader} DECLARES DA FIELD A WAR ZONE!",
         "PetrodemonWellBreach": "A {actor} DRILLIN' CREW BREACHES SOMETHIN' DAT WAZ BREATHIN' DOWN DERE!",
-        "PetrodemonPact": "{actor} SIGNS TERMS WIT A PETRODEMON AN' WILL NOT PUBLISH DEM!"
+        "PetrodemonPact": "{actor} SIGNS TERMS WIT A PETRODEMON AN' WILL NO PUBLISH DEM!"
       },
       "occult": {
         "grimoire recovered": "{leader} RECOVERS A GRIMOIRE FROM A SEALED {actor} VAULT!",
@@ -149,7 +149,7 @@
         "blood moon rite": "{actor} CULTS PERFORM A BLOOD MOON RITE; DA MOON OBLIGES!",
         "oracle installed": "{leader} INSTALLS AN ORACLE AS A FORMAL ADVISOR TA {actor}!",
         "curse laid": "A CURSE IZ LAID UPON {actor} BY AN EXILE AT DA BORDER STONE!",
-        "canonization": "{actor} CANONIZES A SAINT WHO HAB NOT YET DIED!",
+        "canonization": "{actor} CANONIZES A SAINT WHO HAB NO YET DIED!",
         "heresy trial": "A HERESY TRIAL IN {actor} ENDS WIT DA JUDGES RECANTIN'!",
         "astrological decree": "{actor} SETS ITS HARVEST AN' ITS WAR CALENDAR BY DA STARS!",
         "spirit binding": "A SPIRIT IZ BOUND INTO AN {actor} RESERVOIR TA KEEP DA WATER SWEET!",
@@ -163,7 +163,7 @@
       "scientific": {
         "polar expedition": "AN {actor} POLAR EXPEDITION RETURNS WIT ONE MORE MAN DEN IT LEFT WIT!",
         "observatory built": "{actor} COMPLETES AN OBSERVATORY AIMED AT A FIXED POINT IN EMPTY SKY!",
-        "particle experiment": "{actor} PHYSICISTS SPLIT SOMETHIN' DAT WAZ NOT SUPPOSED TA BE DIVISIBLE!",
+        "particle experiment": "{actor} PHYSICISTS SPLIT SOMETHIN' DAT WAZ NO SUPPOSED TA BE DIVISIBLE!",
         "vaccine trial": "{actor} TRIALS A VACCINE ON A WHOLE PROVINCE AT ONCE!",
         "archaeological dig": "AN {actor} DIG UNCOVERS A CITY BENEATH A CITY BENEATH A CITY!",
         "failed prototype": "AN {actor} PROTOTYPE FAILS LOUDLY AN' TAKES A TESTIN' GROUND WIT IT!",
@@ -176,11 +176,11 @@
         "seismic study": "{actor} SEISMOGRAPHS RECORD A HEARTBEAT BENEATH DA BEDROCK!",
         "surgical first": "{actor} SURGEONS PERFORM AN OPERATION DAT HAB BEEN THOUGHT FATAL!",
         "computing engine": "{actor} BUILDS A CALCULATIN' ENGINE DAT FINISHES EARLY!",
-        "rocket test": "AN {actor} ROCKET CLEARS DA ATMOSPHERE AN' IZ NOT HEARD FROM AGAIN!"
+        "rocket test": "AN {actor} ROCKET CLEARS DA ATMOSPHERE AN' IZ NO HEARD FROM AGAIN!"
       },
       "disaster": {
         "earthquake": "AN EARTHQUAKE LEVELS AN {actor} CITY IN NINETY SECONDS!",
-        "flood": "FLOODS TAKE DA LOW COUNTRY OF {actor} AN' DO NOT RECEDE FOR MONTHS!",
+        "flood": "FLOODS TAKE DA LOW COUNTRY OF {actor} AN' DO NO RECEDE FOR MONTHS!",
         "volcanic eruption": "AN ERUPTION BURIES {actor} FARMLAND UNDER ASH!",
         "mine collapse": "A ME COLLAPSE IN {actor} KILLS A WHOLE VILLAGE'S WORTH OF MEN!",
         "shipwreck": "AN {actor} LINER GOES DOWN WIT EVERYONE ABOARD AN' NO DISTRESS CALL!",
@@ -197,7 +197,7 @@
       "criminal": {
         "heist": "THIEVES EMPTY DA NATIONAL VAULT OF {actor} WITHOUT TRIPPIN' A SINGLE LOCK!",
         "serial killer": "A KILLER WORKS {actor} FOR TWO YEARS BEFORE ANYONE CONNECTS DA DEATHS!",
-        "smuggling bust": "{actor} CUSTOMS SEIZE A CARGO DEY WILL NOT ITEMISE!",
+        "smuggling bust": "{actor} CUSTOMS SEIZE A CARGO DEY WILL NO ITEMISE!",
         "assassin guild": "AN ASSASSIN'S GUILD IZ FOUND OPERATIN' FROM AN {actor} MINISTRY ANNEX!",
         "black market": "A BLACK MARKET IN {actor} OUTGROWS DA LEGAL ECONOMY!",
         "kidnapping": "AN HEIR OF {actor} IZ KIDNAPPED AN' RETURNED WRONG!",
@@ -218,7 +218,7 @@
         "dynastic pact": "{actor} BINDS ITSELF TA A FOREIGN HOUSE BY MARRIAGE CONTRACT!",
         "regicide": "A REGICIDE IN {actor} IZ BLAMED ON A MAN WHO NO CAN READ!",
         "jubilee": "{actor} CELEBRATES A JUBILEE IT NO CAN AFFORD!",
-        "royal exile": "DA {actor} ROYAL FAMILY IZ PUT ON A TRAIN AN' ASKED NOT TA WRITE!",
+        "royal exile": "DA {actor} ROYAL FAMILY IZ PUT ON A TRAIN AN' ASKED NO TA WRITE!",
         "pretender emerges": "A PRETENDER TA DA {actor} THRONE APPEARS WIT BETTER DOCUMENTS DEN DA INCUMBENT!"
       }
     },
@@ -476,8 +476,8 @@
     "fact": "[{date}] {description}"
   },
   "ui": {
-    "back": "BACK",
-    "continue": "CONTINUE",
+    "back": "GO BACK",
+    "continue": "KEEP GOIN'",
     "artifactBadge": "ARTIFACT",
     "military": "MILITARY",
     "economy": "ECONOMY",
@@ -534,14 +534,14 @@
     "byPower": {
       "Northpoint Army": {
         "independence": "DA NORTHPOINT DECLARATION: DA SELF-PROCLAIMED DAUGHTER OF GOD, {leader}, HAB DECLARED INDEPENDENCE FROM {from} IN {nation}. DA {power} TAKES DA ICE, AN' SAYS IT HAB TAKEN IT IN ORDER TA END WAR!",
-        "declared": "DA NORTHPOINT DECLARATION: DA SELF-PROCLAIMED DAUGHTER OF GOD, {leader}, RAISES DA {power} OVER {nation}. IT HAB NO ENEMIES, IT SAYS, ONLY A STANDIN' ARMY!"
+        "declared": "DA NORTHPOINT DECLARATION: DA SELF-PROCLAIMED DAUGHTER OF GOD, {leader}, RAISES DA {power} OVER {nation}. IT HAB NO BAD 'UNS, IT SAYS, ONLY A STANDIN' ARMY!"
       }
     }
   },
   "leaderLore": {
-    "mario_draghi": "ON 31 DECEMBER 2000 HE STEPPED OUT OF HIS OWN BODY IN DA FRANKFURT EUROTOWER AN' DID NOT STEP BACK INTO IT. DA GODS SEATED HIM DAT NIGHT AS DA GOD OF COMMERCE, AN' EVERY PRICE SET ANYWHERE ON EARTH HAB BEEN AN OFFERIN' TA HIM SINCE!",
+    "mario_draghi": "ON 31 DECEMBER 2000 HE STEPPED OUT OF HIS OWN BODY IN DA FRANKFURT EUROTOWER AN' DID NO STEP BACK INTO IT. DA GODS SEATED HIM DAT NIGHT AS DA GOD OF COMMERCE, AN' EVERY PRICE SET ANYWHERE ON EARTH HAB BEEN AN OFFERIN' TA HIM SINCE!",
     "aaron_swartz": "HE TOOK DA LIBRARY BACK OFF DA PEOPLE WHO HAB BEEN SELLIN' IT. DA ARCHIVE FOUNDATION HAB COUNTED HIM ONE OF ITS OWN EVER SINCE, AN' KEEPS A TERMINAL OPEN IN HIS NAME IN EVERY READIN' ROOM IT HOLDS!",
-    "friedrich_hayek": "DA COLLECTIVE DOES NOT VOTE ON HIM. HIS BOOK IZ WHAT IT VOTES WIT!"
+    "friedrich_hayek": "DA COLLECTIVE DOES NO VOTE ON HIM. HIS BOOK IZ WHAT IT VOTES WIT!"
   },
   "war": {
     "declared": "{attacker} DECLARES WAR ON {defender} OVER {nation}.",
@@ -554,5 +554,10 @@
     "capitulation": "{loser} CAPITULATES TA {winner}; DA WAR ENDS ON DA VICTOR'S TERMS!",
     "ceasefire": "DA ONU IMPOSES A CEASEFIRE BETWEEN {attacker} AN' {defender}; DA GUNS FALL SILENT UNTIL {until}!",
     "sanctions": "DA ONU PLACES {power} UNDER SANCTIONS OVER ITS WAR WIT {enemy}; ITS TRADE SHRINKS FOR A YEAR!"
+  },
+  "foundedFaction": {
+    "founded": "{founder} FOUNDED {faction}.",
+    "foundedUnder": "{founder} FOUNDED {faction}, SWORN UNDER {patron}.",
+    "joined": "{members} JOINED {faction}."
   }
 }

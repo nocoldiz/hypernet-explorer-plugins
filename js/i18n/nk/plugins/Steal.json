@@ -4,5 +4,6 @@
   "stealSuccess": "YOU SUCCESSFULLY STOLE",
   "stealFailed": "YOU FAILED TA STEAL",
   "stealTitle": "STEAL",
-  "nothingNearby": "NOTHIN' TA STEAL NEARBY."
+  "nothingNearby": "NOTHIN' TA STEAL NEARBY.",
+  "recruitSawTheft": "{name} WATCHED YOU TAKE DA {item} OFF DEY OLD COUNTER!"
 }

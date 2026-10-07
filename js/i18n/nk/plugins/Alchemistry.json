@@ -1,6 +1,6 @@
 {
   "title": "ALCHEMISTRY",
-  "back": "BACK",
+  "back": "GO BACK",
   "managing": "MANAGIN'",
   "tabReady": "READY",
   "tabMissing": "MISSIN' REAGENTS",
@@ -26,7 +26,7 @@
   "selectAction": "SELECT AN ACTION",
   "selectReagent": "SELECT A REAGENT",
   "selectBench": "COPY ONTO WHICH BENCH?",
-  "cancel": "CANCEL",
+  "cancel": "FORGET IT",
   "processing": "WORKIN'",
   "remaining": "REMAININ'",
   "notEnough": "YOU NO HAB DA REAGENTS FOR DIS BATCH!",

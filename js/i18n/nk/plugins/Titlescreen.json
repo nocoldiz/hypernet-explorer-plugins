@@ -1,37 +1,37 @@
 {
   "menu": {
-    "defaultStart": "DEFAULT START",
-    "explore": "NEW PARTY",
-    "reconnect": "SELECT PARTY",
-    "storyMode": "NEW STORY",
-    "continueStory": "CONTINUE STORY",
-    "minigames": "MINIGAMES",
-    "sandbox": "SANDBOX",
-    "worlds": "WORLDS",
-    "wiki": "WORLD HISTORY",
-    "preferences": "PREFERENCES",
-    "mods": "MODS",
-    "music": "MUSIC",
-    "exit": "EXIT",
-    "continue": "CONTINUE",
-    "quickContinue": "CONTINUE"
+    "defaultStart": "NORMAL START",
+    "explore": "NEW GANG",
+    "reconnect": "PICK GANG",
+    "storyMode": "NEW TALE",
+    "continueStory": "MORE TALE",
+    "minigames": "LIL' GAMES",
+    "sandbox": "MUD PIT",
+    "worlds": "WORLDZ",
+    "wiki": "OLD WORLD STUFF",
+    "preferences": "FIDDLY BITS",
+    "mods": "BOLT-ONS",
+    "music": "NOISE BOX",
+    "exit": "RUN AWAY",
+    "continue": "KEEP GOIN'",
+    "quickContinue": "KEEP GOIN'"
   },
   "menuOverlay": {
-    "defaultStart": "DEFAULT START",
-    "explore": "NEW PARTY",
-    "reconnect": "SELECT PARTY",
-    "storyMode": "NEW STORY",
-    "continueStory": "CONTINUE STORY",
-    "minigames": "MINIGAMES",
-    "sandbox": "SANDBOX",
-    "worlds": "WORLDS",
-    "wiki": "WORLD HISTORY",
-    "preferences": "PREFERENCES",
-    "mods": "MODS",
-    "music": "MUSIC",
-    "exit": "EXIT",
+    "defaultStart": "NORMAL START",
+    "explore": "NEW GANG",
+    "reconnect": "PICK GANG",
+    "storyMode": "NEW TALE",
+    "continueStory": "MORE TALE",
+    "minigames": "LIL' GAMES",
+    "sandbox": "MUD PIT",
+    "worlds": "WORLDZ",
+    "wiki": "OLD WORLD STUFF",
+    "preferences": "FIDDLY BITS",
+    "mods": "BOLT-ONS",
+    "music": "NOISE BOX",
+    "exit": "RUN AWAY",
     "noWorld": "NO WORLD",
-    "quickContinue": "CONTINUE"
+    "quickContinue": "KEEP GOIN'"
   },
   "minigame": {
     "arena": "ARENA",
@@ -71,6 +71,7 @@
   },
   "minigameSetup": {
     "venueTitle": "WHERE",
+    "biomeTitle": "BIOME",
     "timeTitle": "WHEN",
     "exterior": "OUTDOORS",
     "interior": "INDOORS",
@@ -86,7 +87,7 @@
     "bike": "BIKE",
     "boat": "BOAT",
     "broom": "BROOMSTICK",
-    "back": "BACK"
+    "back": "GO BACK"
   },
   "disclaimer": {
     "text": "",
@@ -141,7 +142,7 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.8.3a"
+    "text": "0.8.3A"
   },
   "language": {
     "label": "✦ LANG"
@@ -219,7 +220,7 @@
       "armor": "ARMOR",
       "item": "ITEM",
       "skill": "SKILL",
-      "enemy": "ENEMY"
+      "enemy": "BAD 'UN"
     },
     "levelAbbr": "LV",
     "price": "PRICE",

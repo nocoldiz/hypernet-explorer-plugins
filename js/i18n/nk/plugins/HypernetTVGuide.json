@@ -1,7 +1,7 @@
 {
   "title": "TV GUIDE",
   "status": "{channels} CHANNELS | STUDIO MAP {map} | {slots} DAILY SLOTS",
-  "noSignal": "NO TRANSMISSION SIGNAL. (RANDOMTVTRANSMISSIONGENERATOR NOT LOADED?)",
+  "noSignal": "NO TRANSMISSION SIGNAL. (RANDOMTVTRANSMISSIONGENERATOR NO LOADED?)",
   "endOfTransmission": "- END OF TRANSMISSION -",
   "narrator": "NARRATOR",
   "format": "FORMAT:",
@@ -322,7 +322,7 @@
         "title": "YA REAL FIRST SPELL"
       },
       "goblin_friends": {
-        "title": "IZ GOBLINS OUR FRIENDS? (NO)"
+        "title": "IZ GOBLINS OUR MATES? (NO)"
       },
       "leyline_lessons": {
         "title": "LEYLINE LESSONS"
@@ -343,7 +343,7 @@
         "title": "RANGER CADETS PHONE-IN"
       },
       "very_small_news": {
-        "title": "DA REAL SMALL NEWS"
+        "title": "DA REAL LIL' NEWS"
       },
       "songs_from_the_road": {
         "title": "SONGS FROM DA ROAD"
@@ -384,7 +384,7 @@
         "title": "DA ESTATE AT MARROW HOLLOW"
       },
       "small_hours_music": {
-        "title": "SMALL HOURS, LOUD GODS"
+        "title": "LIL' HOURS, LOUD GODS"
       },
       "sign_off": {
         "title": "SIGN OFF"
@@ -396,7 +396,7 @@
         "title": "NOBODY SLEEPS IN MARROW HOLLOW"
       },
       "small_hours_desk": {
-        "title": "DA SMALL HOURS DESK"
+        "title": "DA LIL' HOURS DESK"
       },
       "nightschool": {
         "title": "NIGHTSCHOOL"

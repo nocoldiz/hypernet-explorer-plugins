@@ -242,7 +242,7 @@
     "biggestWins": "BIGGEST AN' LOUDEST WINS.",
     "ascension": "DECIDED BY ASCENSION TOURNAMENT BEFORE DA CELESTIAL COURT!",
     "successionWar": "DA SUCCESSION DESCENDED INTO OPEN WARFARE BETWEEN DA HEIRS!",
-    "successionCasualty": "{name} DID NOT SURVIVE DA WAR OF SUCCESSION!",
+    "successionCasualty": "{name} DID NO SURVIVE DA WAR OF SUCCESSION!",
     "palaceIntrigue": "SETTLED BY PALACE INTRIGUE IN DA DIVAN!",
     "examinationScore": "SCORED {score}/160 ON DA GREAT EXAMINATION!"
   },
@@ -259,11 +259,14 @@
     "smearedOut": "WALKED OUT OF DA {party}, DISGUSTED BY WHAT DA PAPERS SAID!",
     "driftedTo": "DRIFTED FROM DA {from} TA DA {to}.",
     "driftedOut": "DRIFTED AWAY FROM DA {from} AN' NOW BELONGS TA NO PARTY!",
-    "joinedBy": "JOINED DA {party}, TALKED ROUND BY {by} (WAZ WIT {from})!"
+    "joinedBy": "JOINED DA {party}, TALKED ROUND BY {by} (WAZ WIT {from})!",
+    "resignedMayor": "RESIGNED AS MAYOR OF {group} IN FAVOUR OF {successor}!",
+    "succeededMayor": "BECAME MAYOR OF {group}."
   },
   "story": {
     "electedMayor": "ELECTED MAYOR OF {group}",
-    "appointed": "APPOINTED {office} OF {group}"
+    "appointed": "APPOINTED {office} OF {group}",
+    "resignedMayor": "RESIGNED AS MAYOR OF {group}"
   },
   "death": {
     "diedInWorld": "DIED",
@@ -333,7 +336,7 @@
   },
   "menu": {
     "title": "POLITICS",
-    "back": "BACK",
+    "back": "GO BACK",
     "searchPlaceholder": "SEARCH OFFICE HOLDERS",
     "tab": {
       "here": "HERE",
@@ -350,11 +353,11 @@
       "members": "MEMBERS AN' WARS",
       "filter": "FILTER",
       "found": "FOUND DA PARTY",
-      "save": "SAVE CHANGES",
+      "save": "STASH CHANGES",
       "discard": "DISCARD CHANGES",
       "edit": "EDIT PARTY",
-      "confirm": "CONFIRM",
-      "cancel": "CANCEL"
+      "confirm": "YAH, DO IT",
+      "cancel": "FORGET IT"
     },
     "level": {
       "local": "TOWN",
@@ -448,7 +451,7 @@
       "vacant": "VACANT",
       "none": "NONE",
       "independent": "INDEPENDENT",
-      "notScheduled": "NOT SCHEDULED",
+      "notScheduled": "NO SCHEDULED",
       "curfewOn": "IN FORCE",
       "curfewOff": "NONE",
       "snap": "SNAP",
@@ -495,7 +498,7 @@
       "needCreed": "CHOOSE AN IDEOLOGY FIRST.",
       "alreadyFounded": "DIS WORLD ALREADY HAB A PARTY OF YA!",
       "founded": "{party} IZ FOUNDED. {n} FOUNDIN' MEMBERS JOINED!",
-      "noParty": "YOU HAB NOT FOUNDED A PARTY YET!",
+      "noParty": "YOU HAB NO FOUNDED A PARTY YET!",
       "saved": "{party} HAB ITS NEW PLATFORM.",
       "tooManyTenets": "A PARTY CAN HOLD AT MOST {n} TENETS!"
     },
@@ -597,11 +600,11 @@
     },
     "welfare": {
       "name": "WELFARE",
-      "desc": "A SAFETY NET FOR EVERYBODY, RUN BY A CARIN' STATE. A LITTLE LEFT AN' A LITTLE MORE AUTHORITY!"
+      "desc": "A SAFETY NET FOR EVERYBODY, RUN BY A CARIN' STATE. A LIL' LEFT AN' A LIL' MORE AUTHORITY!"
     },
     "localRule": {
       "name": "LOCAL RULE",
-      "desc": "TOWNS AN' VILLAGES DECIDE FOR THEMSELVES. LESS AUTHORITY, A LITTLE MORE TRADITION!"
+      "desc": "TOWNS AN' VILLAGES DECIDE FOR THEMSELVES. LESS AUTHORITY, A LIL' MORE TRADITION!"
     }
   },
   "app": {
@@ -685,7 +688,7 @@
     "standing": "STANDIN': {names}",
     "closed": {
       "conclave": "CONCLAVE, NO OUTSIDERS",
-      "other": "NOT OPEN"
+      "other": "NO OPEN"
     },
     "noElections": "NO ELECTION IZ COMIN' HERE!",
     "candidacies": "CANDIDACIES",
@@ -703,11 +706,15 @@
       "noWorld": "NO WORLD TA CAMPAIGN IN.",
       "noTarget": "CHOOSE A PARTY FIRST.",
       "nobody": "NOBODY DERE CAN BE REACHED!",
-      "funds": "NOT ENOUGH MONEY.",
+      "funds": "NO ENOUGH MONEY.",
       "notInTeam": "CHOOSE A CANDIDATE FROM DA TEAM!",
-      "noElection": "DAT ELECTION IZ NOT OPEN.",
+      "noElection": "DAT ELECTION IZ NO OPEN.",
       "conclave": "A CONCLAVE TAKES NO OUTSIDE CANDIDATES!",
       "alreadyStanding": "DAT CANDIDATE IZ ALREADY STANDIN' IN AN ELECTION!"
     }
+  },
+  "history": {
+    "mayorResigned": "{mayor} RESIGNED AS MAYOR OF {group}, HANDIN' DA TOWN HALL TA {successor}!",
+    "mayorSeated": "{successor} TOOK OFFICE AS MAYOR OF {group}!"
   }
 }

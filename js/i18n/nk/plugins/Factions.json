@@ -1,7 +1,7 @@
 {
   "menuCommand": "FACTIONS",
   "title": "FACTIONS",
-  "back": "BACK",
+  "back": "GO BACK",
   "repLevel": {
     "exalted": "EXALTED",
     "revered": "REVERED",
@@ -103,11 +103,11 @@
     "nameLbl": "NAME",
     "reroll": "ROLL ANOTHER",
     "confirm": "RAISE DA BANNER",
-    "cancel": "CANCEL",
+    "cancel": "FORGET IT",
     "rename": "RENAME",
     "fallbackName": "DA UNNAMED COMPACT",
     "foundedToast": "{name} FLIES ITS OWN BANNER.",
-    "dossier": "{name} IZ YA OWN BANNER, RAISED BY DIS PARTY AN' ANSWERIN' TA NOBODY IT HAB NOT SWORN ITSELF TA. IT SIGNS NOTHIN' ON ITS OWN: WHERE IT STANDS WIT A POWER IZ WHERE ITS OWN PEOPLE STAND, TAKEN TOGETHER!",
+    "dossier": "{name} IZ YA OWN BANNER, RAISED BY DIS PARTY AN' ANSWERIN' TA NOBODY IT HAB NO SWORN ITSELF TA. IT SIGNS NOTHIN' ON ITS OWN: WHERE IT STANDS WIT A POWER IZ WHERE ITS OWN PEOPLE STAND, TAKEN TOGETHER!",
     "membersLbl": "SWORN TA IT:",
     "membersLine": "{total} ({party} COMPANIONS, {army} SOLDIERS)",
     "allegianceLbl": "ALLEGIANCE:",

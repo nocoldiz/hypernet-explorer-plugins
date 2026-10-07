@@ -2,7 +2,7 @@
   "selectFood": "SELECT FOOD FOR PARTY MEMBERS ({selected}/{total})",
   "current": "CURRENT: {who}",
   "allSelected": "ALL SELECTED",
-  "confirm": "CONFIRM",
-  "cancel": "CANCEL",
+  "confirm": "YAH, DO IT",
+  "cancel": "FORGET IT",
   "served": "SERVED"
 }

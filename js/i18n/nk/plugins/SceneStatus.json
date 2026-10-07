@@ -16,7 +16,7 @@
     "archer": "AN EXPERT MARKSMAN\nWIT KEEN EYES!",
     "default": "A BRAVE"
   },
-  "back": "BACK",
+  "back": "GO BACK",
   "descriptionSet": "DESCRIPTION SET FOR {name}.",
   "invalidIndex": "INVALID PARTY MEMBER INDEX!",
   "actorLine": "{name}, {klass} LV.{level}",
@@ -25,7 +25,8 @@
     "sleep": "SLEEP",
     "hygiene": "HYGIENE",
     "social": "SOCIAL",
-    "leisure": "MOOD"
+    "leisure": "MOOD",
+    "bladder": "BLADDER"
   },
   "classAbility": "CLASS ABILITY",
   "ui": {

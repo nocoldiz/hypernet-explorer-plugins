@@ -2,7 +2,7 @@
   "player1": "PLAYER 1",
   "player2": "PLAYER 2",
   "player2Cpu": "CPU",
-  "noThree": "THREE.JS IZ NOT LOADED - POOL UNAVAILABLE",
+  "noThree": "THREE.JS IZ NO LOADED - POOL UNAVAILABLE",
   "aimPrompt": "{player}: LINE UP DA SHOT",
   "powerPrompt": "{player}: SET DA POWER",
   "englishPrompt": "{player}: SET DA ENGLISH",

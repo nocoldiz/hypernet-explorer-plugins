@@ -12,6 +12,7 @@
     "ship": "DA STARSHIP",
     "vault": "DA BUNKER",
     "cannotJoin": "{name} NO CAN TAKE DA ROAD AGAIN RIGHT NOW!",
+    "onShift": "{name} IZ WORKIN' A SHIFT. CALL DEM BACK FROM DA RESERVES!",
     "estate": "{name} IN {place}"
   }
 }

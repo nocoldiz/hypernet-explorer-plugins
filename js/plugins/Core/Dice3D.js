@@ -548,7 +548,7 @@
         rollD20(options = {}) {
             const {
                 dc = null,
-                modifier = 0,
+                modifier: askedModifier = 0,
                 statName = '',
                 actionName = DT('check.default'),
                 actor = null,
@@ -558,6 +558,8 @@
             const rawRoll = forcedRoll !== null ? forcedRoll : Math.floor(Math.random() * 20) + 1;
             const nat1 = (rawRoll === 1);
             const nat20 = (rawRoll === 20);
+            // A natural 1 is read bare: no modifier is added to it.
+            const modifier = nat1 ? 0 : askedModifier;
             const total = rawRoll + modifier;
             
             let success = false;

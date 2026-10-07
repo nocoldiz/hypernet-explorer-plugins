@@ -1,6 +1,6 @@
 {
   "title": "WORLD ATLAS",
-  "back": "CLOSE",
+  "back": "SHUT IT",
   "noData": "DA ATLAS SHEETS IZ MISSIN'!",
   "selectPrompt": "PICK A NATION OFF DA MAP.",
   "countLabel": "{n} NATIONS CHARTED",
@@ -31,7 +31,7 @@
   "field": {
     "region": "REGION",
     "faction": "ALLEGIANCE",
-    "enemyLevel": "ENEMY LEVEL",
+    "enemyLevel": "BAD 'UN LEVEL",
     "controller": "HELD BY",
     "climate": "CLIMATE THROUGH DA YEAR",
     "heldIn": "HELD IN {year}",

@@ -7,26 +7,26 @@
   },
   "size": "{size}PX",
   "clear": "CLEAR",
-  "save": "SAVE",
-  "exit": "EXIT",
+  "save": "STASH",
+  "exit": "RUN AWAY",
   "paint": {
     "appName": "PAIN",
     "untitledTitle": "UNTITLED - PAIN",
     "title": "{file} - PAIN",
     "new": "NEW",
     "open": "OPEN",
-    "save": "SAVE",
+    "save": "STASH",
     "export": "EXPORT TA GAME FOLDER",
     "setWallpaper": "SET AS WALLPAPER",
     "undo": "UNDO",
     "redo": "REDO",
     "custom": "CUSTOM COLOUR",
     "textPrompt": "TEXT TA WRITE:",
-    "savePrompt": "SAVE PICTURE AS (IN C:/PICTURES):",
-    "saved": "SAVED {file}",
-    "saveError": "COULD NOT SAVE DA PICTURE!",
+    "savePrompt": "STASH PICTURE AS (IN C:/PICTURES):",
+    "saved": "STASHED {file}",
+    "saveError": "COULD NO STASH DA PICTURE!",
     "openPrompt": "OPEN WHICH PICTURE? ({list})",
-    "openError": "COULD NOT OPEN DAT PICTURE!",
+    "openError": "COULD NO OPEN DAT PICTURE!",
     "nothingToOpen": "DERE IZ NO PICTURES IN C:/PICTURES YET!",
     "opened": "OPENED {file}",
     "wallpaperSet": "WALLPAPER SET.",
@@ -41,7 +41,15 @@
       "picker": "PICK COLOUR",
       "text": "TEXT"
     },
-    "exported": "SAVED TA {file}",
-    "exportError": "COULD NOT WRITE DA PICTURE TA DA GAME FOLDER!"
+    "exported": "STASHED TA {file}",
+    "exportError": "COULD NO WRITE DA PICTURE TA DA GAME FOLDER!"
+  },
+  "pictures": {
+    "pickTitle": "CHOOSE A PICTURE",
+    "mine": "YA PICTURES",
+    "stock": "TEXTURES",
+    "empty": "NOTHIN' IN {dir} YET. DRAW SOMETHIN' IN PAIN OR DA PIXEL ART MAKER FIRST!",
+    "close": "SHUT IT",
+    "saved": "STASHED TA {file}"
   }
 }

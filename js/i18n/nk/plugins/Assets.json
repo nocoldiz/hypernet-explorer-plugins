@@ -18,8 +18,8 @@
     "rentals": "RENTALS",
     "monthlyRent": "MONTHLY RENT",
     "monthlyRent2": "MONTHLY RENT",
-    "status": "STATUS",
-    "rentedNotOwnedChargedEvery": "RENTED (NOT OWNED): CHARGED EVERY MONTH, EVICTED IF UNAFFORDABLE",
+    "status": "HOW ME DOIN'",
+    "rentedNotOwnedChargedEvery": "RENTED (NO OWNED): CHARGED EVERY MONTH, EVICTED IF UNAFFORDABLE",
     "floor": "FLOOR",
     "properties": "PROPERTIES",
     "entrance": "ENTRANCE",
@@ -66,11 +66,11 @@
     "allCategories": "ALL",
     "noAssetsOwnedYetAcquire": "NO ASSETS OWNED YET. ACQUIRE SECURITIES, ESTATES OR PROPERTIES!",
     "paid": "PAID",
-    "back": "BACK",
+    "back": "GO BACK",
     "selectAnAssetFromThe": "SELECT AN ASSET FROM DA POCKETS TA INSPECT ITS DETAILS!",
     "pocketsDetail": "POCKETS DETAIL",
     "collect": "COLLECT",
-    "sell": "SELL",
+    "sell": "FLOG",
     "makePet": "MAKE PET",
     "collected": "COLLECTED",
     "sold": "SOLD",
@@ -98,7 +98,7 @@
     "fewerDays": "-1 DAY",
     "moreDays": "+1 DAY",
     "extendStay": "EXTEND {days}D ({cost})",
-    "stayNotAfforded": "NOT ENOUGH EURO TA EXTEND DA STAY",
+    "stayNotAfforded": "NO ENOUGH EURO TA EXTEND DA STAY",
     "stayExtended": "STAY EXTENDED BY {days}D, {time} LEFT",
     "titleCombined": "ASSETS & DEEDS",
     "towns": "TOWNS",
@@ -140,8 +140,8 @@
     "lastPayout": "LAST PAYOUT ({days}D)",
     "totalProfit": "TOTAL PROFIT ({days}D)",
     "buy": "BUY BUSINESS ({price})",
-    "cannotAfford": "NOT ENOUGH MONEY TA BUY DIS BUSINESS!",
-    "notForSale": "DIS PLACE IZ NOT FOR SALE!",
+    "cannotAfford": "NO ENOUGH MONEY TA BUY DIS BUSINESS!",
+    "notForSale": "DIS PLACE IZ NO FOR SALE.",
     "bought": "{name} IZ NOW YA, FOR {price}.",
     "dailyTitle": "WORKPLACES",
     "dailyProfitToast": "YA {count} WORKPLACE(S) MADE {amount} AFTER WAGES!",
@@ -151,7 +151,9 @@
     "sold": "{name} SOLD FOR {price}.",
     "saleValue": "SALE VALUE",
     "nextPayout": "NEXT PAYOUT",
-    "inDays": "IN {days} DAY(S)"
+    "inDays": "IN {days} DAY(S)",
+    "manageStaff": "STAFF",
+    "counterPost": "COUNTER"
   },
   "claim": {
     "here": "CLAIMABLE HERE",
@@ -160,7 +162,7 @@
     "offerSub": "NOBODY HOLDS DIS GROUND: CLAIM IT FOR FREE",
     "offerSubTaken": "DIS GROUND ALREADY BELONGS TA SOMEBODY",
     "biome": "LAND",
-    "status": "STATUS",
+    "status": "HOW ME DOIN'",
     "statusFree": "UNCLAIMED",
     "statusTaken": "ALREADY CLAIMED BY SOMEBODY ELSE",
     "statusClaimed": "CLAIMED",
@@ -180,5 +182,12 @@
     "release": "REMOVE CLAIM",
     "released": "YOU GAVE UP YA CLAIM ON {name}.",
     "charge": "SQUATTIN'"
+  },
+  "hologram": {
+    "check": "CHECK",
+    "projected": "HOLOGRAM PROJECTED TA {name}.",
+    "outOfRange": "HOLOGRAM OUT OF RANGE",
+    "terminate": "TERMINATE HOLOGRAM",
+    "cancel": "FORGET IT"
   }
 }

@@ -1,12 +1,12 @@
 {
   "titleTraits": "TRAITS",
-  "confirm": "CONFIRM",
+  "confirm": "YAH, DO IT",
   "resetTraits": "RESET",
   "noBonusesYet": "NO BONUSES YET",
   "confirmTraits": "CONFIRM DEZE TRAITS?",
   "confirmSplice": "SPLICE DEZE GENES?",
   "spliceCost": "TOTAL: {cost} €",
-  "spliceTooExpensive": "NOT ENOUGH MONEY FOR DA SPLICE!",
+  "spliceTooExpensive": "NO ENOUGH MONEY FOR DA SPLICE!",
   "yes": "YAH!",
   "no": "NAH!",
   "headerText": "SPEND YA {budget} TRAIT POINTS. DRAWBACKS PAY POINTS BACK!",
@@ -31,7 +31,7 @@
   "selectedDiseasesLabel": "ILLNESSES CARRIED",
   "searchPlaceholder": "SEARCH TRAITS…",
   "incompatibleNote": "CLASHES WIT A TRAIT YOU HAB ALREADY TAKEN!",
-  "unaffordableNote": "NOT ENOUGH TRAIT POINTS LEFT FOR DIS ONE!",
+  "unaffordableNote": "NO ENOUGH TRAIT POINTS LEFT FOR DIS ONE!",
   "noneInCategory": "NOTHIN' HERE",
   "purseSpent": "SPENT",
   "purseRefunds": "REFUNDS",
@@ -73,7 +73,7 @@
     },
     "gunslinger": {
       "name": "GUNSLINGER",
-      "description": "A STEADY EYE, A FAST HAND AN' REAL LITTLE HESITATION!"
+      "description": "A STEADY EYE, A FAST HAND AN' REAL LIL' HESITATION!"
     },
     "pilgrim": {
       "name": "PILGRIM",
@@ -109,7 +109,7 @@
     },
     "oracle": {
       "name": "ORACLE",
-      "description": "SEES WHAT HAB NOT HAPPENED, HEARS COLOUR, AN' IZ BELIEVED TOO LATE!"
+      "description": "SEES WHAT HAB NO HAPPENED, HEARS COLOUR, AN' IZ BELIEVED TOO LATE!"
     },
     "firebug": {
       "name": "FIREBUG",
@@ -121,11 +121,11 @@
     },
     "giant": {
       "name": "GIANT",
-      "description": "TOO BIG FOR DA DOOR, STRONG ENOUGH NOT TA MIND, AN' HEARD FROM DA NEXT STREET!"
+      "description": "TOO BIG FOR DA DOOR, STRONG ENOUGH NO TA MIND, AN' HEARD FROM DA NEXT STREET!"
     },
     "smallfolk": {
       "name": "SMALLFOLK",
-      "description": "SMALL, FOLDED IN WAYS A BODY SHOULD NOT FOLD, AN' HANDY WIT EITHER HAND!"
+      "description": "LIL', FOLDED IN WAYS A BODY SHOULD NO FOLD, AN' HANDY WIT EITHER HAND!"
     },
     "shadow": {
       "name": "SHADOW",
@@ -137,7 +137,7 @@
     },
     "silent": {
       "name": "SILENT ONE",
-      "description": "HAB NOT SPOKEN IN YEARS, SEES FACES WRONG, AN' WEARS DA REASON!"
+      "description": "HAB NO SPOKEN IN YEARS, SEES FACES WRONG, AN' WEARS DA REASON!"
     },
     "doomsayer": {
       "name": "DOOMSAYER",
@@ -153,7 +153,7 @@
     },
     "predator": {
       "name": "LONE PREDATOR",
-      "description": "IT HUNTS ALONE, MARKS A RANGE AN' DOES NOT SHARE IT!"
+      "description": "IT HUNTS ALONE, MARKS A RANGE AN' DOES NO SHARE IT!"
     },
     "packbeast": {
       "name": "PACK BEAST",

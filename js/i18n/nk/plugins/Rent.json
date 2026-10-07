@@ -7,7 +7,7 @@
   },
   "toast": {
     "rented": "{name} RENTED FOR 24H!",
-    "notEnough": "NOT ENOUGH EURO!",
+    "notEnough": "NO ENOUGH EURO!",
     "room": "ROOM"
   }
 }

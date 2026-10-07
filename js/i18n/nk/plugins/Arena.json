@@ -1,5 +1,5 @@
 {
-  "back": "BACK",
+  "back": "GO BACK",
   "nothingAvailable": "NOTHIN' AVAILABLE.",
   "chooseAParty": "CHOOSE A PARTY",
   "dismiss": "DISMISS",
@@ -8,11 +8,11 @@
   "3GeneratedCombatants": "3 GENERATED COMBATANTS",
   "members": " MEMBERS",
   "slot": "SLOT ",
-  "continue": "CONTINUE",
+  "continue": "KEEP GOIN'",
   "randomParty2": "RANDOM PARTY",
   "threeRandomCombatantsWithGear": "THREE RANDOM COMBATANTS WIT GEAR AN' ITEMS SCALED TA YA CHOSEN MODE. DA ROSTER IZ RESTORED WHEN DA RUN ENDS!",
   "unknown": "UNKNOWN",
-  "saveSlot": "SAVE SLOT ",
+  "saveSlot": "STASH SLOT ",
   "chooseAMode": "CHOOSE A MODE",
   "gauntlet": "GAUNTLET",
   "consecutiveLevelBrackets": "CONSECUTIVE LEVEL BRACKETS",
@@ -61,6 +61,6 @@
   "beginTheRush": "BEGIN DA RUSH",
   "bossRushHasEnded": "BOSS RUSH HAB ENDED.",
   "msg": {
-    "noEnemiesInBracket": "NO SUITABLE ENEMIES FOUND IN DIS LEVEL BRACKET!"
+    "noEnemiesInBracket": "NO SUITABLE BAD 'UNS FOUND IN DIS LEVEL BRACKET!"
   }
 }

@@ -230,7 +230,7 @@
   "randomize": "RANDOMIZE",
   "worldSeed": "WORLD SEED",
   "apply": "APPLY",
-  "cancel": "CANCEL",
+  "cancel": "FORGET IT",
   "editorHint": "UP/DOWN: ROW - LEFT/RIGHT: VARIANT - R: RANDOMIZE - CONFIRM: ENTER - BACK: ESC",
   "editorHintPad": "D-PAD/LS: ROW AN' VARIANT - X: RANDOMIZE - A: CONFIRM - B: BACK",
   "rotateHintPad": "RIGHT STICK TA ROTATE"

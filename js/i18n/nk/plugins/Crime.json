@@ -18,16 +18,19 @@
     "taken": "{name} POCKETS {cost} AN' LOOKS DA OTHER WAY!",
     "rejected": "{name} REFUSES DA MONEY AN' ADDS BRIBERY TA YA CHARGES!",
     "incorruptible": "{name} IZ INCORRUPTIBLE AN' WILL NEVER TAKE YA MONEY. BRIBERY IZ ADDED TA YA CHARGES!",
-    "cannotAfford": "{name} WANTS {cost}, AN' YOU DO NOT HAB IT!"
+    "cannotAfford": "{name} WANTS {cost}, AN' YOU DO NO HAB IT!"
   },
   "law": {
-    "notRecognised": "YA CRIME IZ NOT RECOGNIZED IN DIS TERRITORY",
-    "enterCanon": "YOU CROSS INTO DA HOLY VATICAN EMPIRE. CANON LAW HOLDS HERE, AN' YA RECORD BEYOND ITS BORDERS DOES NOT!",
+    "notRecognised": "YA CRIME IZ NO RECOGNIZED IN DIS TERRITORY",
+    "enterCanon": "YOU CROSS INTO DA HOLY VATICAN EMPIRE. CANON LAW HOLDS HERE, AN' YA RECORD BEYOND ITS BORDERS DOES NO!",
     "leaveCanon": "YOU LEAVE DA HOLY VATICAN EMPIRE. ITS CANON LAW AN' ITS RECORD STAY BEHIND!",
     "enterHorde": "YOU CROSS INTO GOBLIN HORDE GROUND. ANYTHIN' GOES HERE, EXCEPT STEALIN'!",
     "leaveHorde": "YOU LEAVE GOBLIN HORDE GROUND. DA COMMON LAW AN' ITS RECORD HOLD AGAIN!"
   },
   "canon": {
+    "indecencyKiss": "PUBLIC INDECENCY - KISSIN'",
+    "indecencyHands": "PUBLIC INDECENCY - HOLDIN' HANDS",
+    "indecencyDance": "PUBLIC INDECENCY - DANCIN'",
     "onPerson": "{charge}: {name}",
     "spell": "{charge}: {spell}",
     "theftFromTheFaithful": "THEFT FROM DA FAITHFUL",
@@ -60,5 +63,5 @@
   "nobodySaw": "NOBODY SAW A THING.",
   "theShopkeeper": "DA SHOPKEEPER",
   "vendorRefusesForever": "{keeper} WILL NEVER SELL TA YOU AGAIN!",
-  "vendorRefusesEntry": "{keeper} TURNS AWAY. YOU IZ NOT WELCOME AT DIS COUNTER!"
+  "vendorRefusesEntry": "{keeper} TURNS AWAY. YOU IZ NO WELCOME AT DIS COUNTER!"
 }

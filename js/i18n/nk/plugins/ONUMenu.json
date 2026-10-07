@@ -27,7 +27,7 @@
     "observer": "OBSERVER",
     "observerNote": "HAB A SEAT BUT NO CAN VOTE!",
     "sessionHeadline": "WEEK {week} OF DA STANDIN' SESSION",
-    "lobbyHeadline": "{DA REGISTER IZ OPEN|DA CHAMBER IZ NOT YET SITTIN'|TWENTY ONE SEATS, AN' A GRIMORIE}",
+    "lobbyHeadline": "{DA REGISTER IZ OPEN|DA CHAMBER IZ NO YET SITTIN'|TWENTY ONE SEATS, AN' A GRIMORIE}",
     "credentialsHeadline": "ACCREDITATION OF {name}",
     "ledBy": "LED BY {leader}",
     "yourStanding": "YA STANDIN'",
@@ -36,7 +36,7 @@
     "weeksServed": "WEEKS SERVED",
     "sessionsHeld": "SESSIONS HELD",
     "enterSession": "ENTER DIS WEEK'S SESSION",
-    "sessionClosedFor": "DA CHAMBER IZ NOT SITTIN' FOR ANOTHER {weeks} WEEK(S)",
+    "sessionClosedFor": "DA CHAMBER IZ NO SITTIN' FOR ANOTHER {weeks} WEEK(S)",
     "takeTheChair": "TAKE DA CHAIR AS SECRETARY GENERAL",
     "resignSeat": "RESIGN DA SEAT",
     "standDown": "STAND DOWN FROM DA CHAIR",
@@ -50,7 +50,7 @@
     "unaccreditedHint": "DIS CHARACTER HOLDS NO SEAT. DA CREDENTIALS DESK DECIDES WHO GETS ONE!",
     "noSeatsTitle": "NO POWER WILL VOUCH FOR YOU",
     "noSeatsHint": "ACCREDITATION NEEDS A POWER DAT IZ NEUTRAL OR POSITIVE TOWARD YOU. IMPROVE A REPUTATION AN' COME BACK!",
-    "sgBlurb": "DA SECRETARY GENERAL DOES NOT VOTE, BUT IZ DA ONLY ONE WHO CAN BREAK A TIE ON DA SECURITY COUNCIL!",
+    "sgBlurb": "DA SECRETARY GENERAL DOES NO VOTE, BUT IZ DA ONLY ONE WHO CAN BREAK A TIE ON DA SECURITY COUNCIL!",
     "holdsSeat": "{name} HOLDS DIS DELEGATION'S SEAT AT DA ASSEMBLY!",
     "holdsSeatParent": "{name} SITS FOR {faction}, WHICH DIS ANSWERS TA!",
     "you": "YOU"
@@ -72,7 +72,7 @@
     "joined": "{name} IZ ACCREDITED TA {faction}.",
     "resigned": "{name} HAB RESIGNED DA SEAT OF {faction}!",
     "sessionClosed": "SESSION CLOSED. {carried} OF {total} MOTIONS CARRIED!",
-    "notThisWeek": "DA CHAMBER IZ NOT SITTIN' FOR ANOTHER {weeks} WEEK(S)!"
+    "notThisWeek": "DA CHAMBER IZ NO SITTIN' FOR ANOTHER {weeks} WEEK(S)!"
   },
   "stance": {
     "for": "IN FAVOUR",
@@ -103,7 +103,7 @@
     "powersSeated": "{n} POWERS HOLD A SEAT.",
     "weHold": "DA PARTY HOLDS {n} SEATS, PAYIN' {pay} A WEEK!",
     "weHoldNothing": "DA PARTY HOLDS NO SEAT. ANYTHIN' DECIDED IZ DECIDED WITHOUT US!",
-    "floorNote": "DA CHAMBER MEETS EVERY MONDAY AT 13:00. SITTINGS YOU DO NOT ATTEND IZ RESOLVED WITHOUT YOU!",
+    "floorNote": "DA CHAMBER MEETS EVERY MONDAY AT 13:00. SITTINGS YOU DO NO ATTEND IZ RESOLVED WITHOUT YOU!",
     "noChamber": "NO ASSEMBLY HAB BEEN CONVENED IN DIS WORLD!",
     "powersBlurb": "STANDIN' IZ TRACKED PER CHARACTER. DIS COLUMN SHOWS {who}!",
     "colDelegate": "DELEGATE",
@@ -121,7 +121,7 @@
     "unseated": "NO SEAT",
     "alreadySeated": "ALREADY SEATED.",
     "wouldTakeNobody": "NO POWER WOULD HAB DEM.",
-    "seatsBlurb": "ANY POWER DAT DOES NOT DISLIKE YOU CAN OFFER A SEAT. SEATS IZ TAKEN IN DA CHAMBER!",
+    "seatsBlurb": "ANY POWER DAT DOES NO DISLIKE YOU CAN OFFER A SEAT. SEATS IZ TAKEN IN DA CHAMBER!",
     "businessBlurb": "EVERY MOTION DA ASSEMBLY CAN VOTE ON. DA WEEKLY AGENDA IZ ROLLED EACH DAY!",
     "grave": "GRAVE",
     "ordinary": "ORDINARY",

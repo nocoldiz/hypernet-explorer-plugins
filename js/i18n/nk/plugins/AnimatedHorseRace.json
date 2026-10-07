@@ -2,7 +2,7 @@
   "title": "HORSE RACE",
   "subtitle": "TURF CLUB",
   "noTokens": "YOU NO HAB ANY TOKENS.",
-  "notEnoughTokens": "NOT ENOUGH {tokenName}! YOU HAB {current}, NEED {needed}",
+  "notEnoughTokens": "NO ENOUGH {tokenName}! YOU HAB {current}, NEED {needed}",
   "tokens": "TOKENS",
   "bet": "BET",
   "selected": "SELECTED",

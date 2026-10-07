@@ -1,6 +1,6 @@
 {
   "ui": {
-    "back": "BACK",
+    "back": "GO BACK",
     "specializations": "SPECIALIZATIONS",
     "searchPlaceholder": "SEARCH SPECIALIZATIONS…",
     "trained": "TRAINED",
@@ -16,7 +16,7 @@
     "statLabel": "GOVERNIN' STAT",
     "category": "CATEGORY",
     "tier": "TIER {n}",
-    "notImplemented": "NOT IMPLEMENTED",
+    "notImplemented": "NO IMPLEMENTED",
     "purse": "UNSPENT POINTS",
     "spendPoint": "SPEND A POINT: {level}",
     "spendBlocked": "NOTHIN' LEFT TA BUY HERE"

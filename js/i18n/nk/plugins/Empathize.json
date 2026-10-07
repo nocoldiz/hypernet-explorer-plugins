@@ -10,7 +10,7 @@
   "tell": "TELL",
   "gift": "GIFT",
   "bribe": "BRIBE",
-  "attack": "ATTACK",
+  "attack": "WHACK",
   "pickpocket": "PICKPOCKET",
   "trade": "TRADE",
   "treatWounds": "TREAT WOUNDS",
@@ -21,9 +21,9 @@
   "socialWeb": "SOCIAL WEB",
   "leave": "LEAVE",
   "traits": "TRAITS",
-  "equipment": "EQUIPMENT",
-  "skills": "SKILLS",
-  "status": "STATUS",
+  "equipment": "GEAR",
+  "skills": "TRICKS",
+  "status": "HOW ME DOIN'",
   "stats": "STATS",
   "resting": "RESTIN'",
   "hungry": "HUNGRY",
@@ -112,7 +112,7 @@
   "socialWebTitle": "SOCIAL WEB",
   "webRosterTitle": "CONNECTIONS",
   "webMeetings": "{n} MEETINGS",
-  "webNeverMet": "NOT YET MET",
+  "webNeverMet": "NO YET MET",
   "npcUnavailable": "NPC DATA UNAVAILABLE",
   "pressCancel": "PRESS CANCEL / ESC TA RETURN!",
   "successLabel": "SUCCESS",
@@ -133,19 +133,19 @@
   "refuseHelp": "{name} REFUSES TA HELP YOU.",
   "healFree": "{name} HEALS YA PARTY FOR FREE.",
   "healCost": "{name} HEALS YA PARTY FOR {g}€.",
-  "notEnoughGold": "NOT ENOUGH MONEY ({g}€ REQUIRED)!",
+  "notEnoughGold": "NO ENOUGH MONEY ({g}€ REQUIRED)!",
   "joinRefused": "DEY TURN DA OFFER DOWN FLAT!",
   "partyFull": "YA PARTY IZ FULL.",
   "giftTitle": "GIVE A GIFT",
   "noItemsToGive": "NO ITEMS TA GIVE.",
   "gaveItem": "YOU GAVE {item} TA {name}.",
-  "giftRefused": "{name} WILL NOT TAKE {item} FROM YOU.",
+  "giftRefused": "{name} WILL NO TAKE {item} FROM YOU.",
   "bribeTitle": "BRIBE",
   "briberyCaught": "{name} POCKETS DA GOLD BUT WARNS YOU OFF!",
   "bribeRefused": "{name} IZ TOO HOSTILE TA ACCEPT ANYTHIN'!",
   "bribeRefusedLaw": "{name} REFUSES ON PRINCIPLE AN' REPORTS DA ATTEMPT!",
   "bribeIncorruptible": "{name} IZ INCORRUPTIBLE AN' WILL NEVER TAKE YA MONEY!",
-  "bribeSmall": "SMALL",
+  "bribeSmall": "LIL'",
   "bribeMedium": "MEDIUM",
   "bribeLarge": "LARGE",
   "attackWarning": "ATTACK {name}? DIS NO CAN BE UNDONE!",
@@ -167,10 +167,10 @@
   "lifeHistoryTimeline": "TIMELINE",
   "timesRepeated": "(X {n})",
   "emBranchHdr": "DIS BRANCH OF HER",
-  "cancel": "CANCEL",
-  "confirm": "CONFIRM",
-  "back": "BACK",
-  "close": "CLOSE",
+  "cancel": "FORGET IT",
+  "confirm": "YAH, DO IT",
+  "back": "GO BACK",
+  "close": "SHUT IT",
   "overview": "OVERVIEW",
   "governmentHistory": "GOVERNMENT HISTORY",
   "electionRecords": "ELECTIONS",
@@ -182,7 +182,7 @@
   "wikiCategories": "CATEGORIES",
   "wikiEarth": "EARTH",
   "wikiOmegaTower": "OMEGA TOWER",
-  "wikiWorlds": "WORLDS",
+  "wikiWorlds": "WORLDZ",
   "wikiPeople": "PEOPLE",
   "wikiMainPlayers": "MAIN PLAYERS",
   "wikiLeaders": "LEADERS",
@@ -202,6 +202,10 @@
   "wikiIdeology": "IDEOLOGY",
   "wikiFavourites": "FAVOURITES",
   "wikiNoFavourites": "NOTHIN' STARRED YET.",
+  "wikiSearchPlaceholder": "SEARCH DA WIKI",
+  "wikiSearchCount": "{n} FOUND",
+  "wikiSearchNone": "NOTHIN' IN DA WIKI MATCHES \"{query}\"!",
+  "wikiSearchShowAll": "SHOW ALL {n}",
   "wikiStar": "STAR",
   "wikiUnstar": "STARRED",
   "wikiWorld": "WORLD",
@@ -282,8 +286,8 @@
   "confirmNo": "NAH!",
   "confirmPickpocket": "REALLY PICKPOCKET? DIS MAY DRAW ATTENTION!",
   "joinRefusalPhrases": [
-    "ME IZ NOT GOING ANYWHERE WIT YOU!",
-    "NOT INTERESTED.",
+    "ME IZ NO GOING ANYWHERE WIT YOU!",
+    "NO INTERESTED.",
     "MAYBE SOME OTHER TIME.",
     "ME WOULD RATHER STAY HERE, THANKS!",
     "NO THINK SO."
@@ -300,21 +304,21 @@
     "KIND OF YOU. {item} ALWAYS COMES IN HANDY!",
     "WELL, ME NO WILL SAY NO.",
     "INTO DA BAG IT GOES. APPRECIATED!",
-    "NOT MUCH, BUT IT IZ DA THOUGHT!"
+    "NO MUCH, BUT IT IZ DA THOUGHT!"
   ],
   "giftRefusalLines": [
     "NO THINK {item} BUYS YOU ANYTHIN'. TAKE IT BACK!",
     "KEEP IT. IT WOULD CHANGE NOTHIN' BETWEEN US!",
     "ME WANT NOTHIN' FROM YA HANDS!",
     "NO. NOW LEAVE ME ALONE.",
-    "YOU THINK ME CAN BE BOUGHT? NOT BY YOU!"
+    "YOU THINK ME CAN BE BOUGHT? NO BY YOU!"
   ],
   "giftReactionRepeat": [
     "YOU KEEP HANDIN' ME THINGS. WHAT IZ IT YOU ACTUALLY WANT?",
     "ANOTHER ONE? ME POCKETS IZ FULL OF YA GIFTS!",
     "THANKS, BUT YOU IZ RUNNIN' OUT OF THINGS TA GIVE!",
     "ME HAB STOPPED COUNTIN'. SAY WHAT YOU CAME TA SAY!",
-    "SAVE SOMETHIN' FOR YOURSELF, WILL YOU?"
+    "STASH SOMETHIN' FOR YOURSELF, WILL YOU?"
   ],
   "healthTab": "HEALTH",
   "healthTitle": "HEALTH",
@@ -357,9 +361,9 @@
   "transmitWarnHasNoAssault": "{action} AT {name}? DIS WOULD TRY TA TRANSMIT: {list}!",
   "transmitWarnNoneNoAssault": "{action} AT {name}? YOU CARRY NOTHIN' TA SPREAD DIS WAY!",
   "transmitHit": "YOU INFECTED {name} WIT {list}!",
-  "transmitMiss": "{name} DID NOT CATCH ANYTHIN'. A BOUNTY IZ NOW ON YA HEAD!",
+  "transmitMiss": "{name} DID NO CATCH ANYTHIN'. A BOUNTY IZ NOW ON YA HEAD!",
   "transmitNoneResult": "YOU ASSAULT {name}. A BOUNTY IZ NOW ON YA HEAD!",
-  "transmitMissNoBounty": "{name} DID NOT CATCH ANYTHIN'.",
+  "transmitMissNoBounty": "{name} DID NO CATCH ANYTHIN'.",
   "transmitNoneResultNoBounty": "YOU COUGH NEAR {name}.",
   "infectLabel": "INFECT",
   "infectSource": "A BROKEN VIAL",
@@ -386,17 +390,19 @@
   "introspectGenderSuccess": "GENDER CHANGED SUCCESSFULLY!",
   "introspectOrientationSuccess": "SEXUAL ORIENTATION CHANGED SUCCESSFULLY!",
   "introspectCreedSuccess": "CREED CHANGED SUCCESSFULLY!",
-  "introspectNotEnoughKp": "NOT ENOUGH KNOWLEDGE POINTS (50 KP NEEDED)!",
+  "introspectNotEnoughKp": "NO ENOUGH KNOWLEDGE POINTS (50 KP NEEDED)!",
   "introspectFilterCreed": "FILTER CREEDS...",
   "bickerLabel": "BICKER",
   "courtLabel": "COURT",
   "courtHarassmentFiled": "{name} HAB HAB ENOUGH OF {actor}. A HARASSMENT COMPLAINT GOES ON DA RECORD: {fine}!",
+  "indecencyFiled": "DA HOLY OFFICE SAW {actor} AN' {name}: {charge}, FINED {fine}!",
+  "indecencyFiledSameGender": "DA HOLY OFFICE SAW {actor} AN' {name}: {charge}. DA EMPIRE OUTLAWS LOVE BETWEEN PEOPLE OF DA SAME GENDER, AN' DA FINE IZ TEN TIMES OVER: {fine}!",
   "courtHarassmentFiledFree": "{name} HAB HAB ENOUGH OF {actor}. A HARASSMENT COMPLAINT GOES ON DA RECORD!",
-  "hygieneCourtSelf": "YOU HAB NOT WASHED IN SOME TIME, AN' {name} IZ TRYIN' NOT TA NOTICE!",
-  "hygieneCourtNpc": "{name} HAB NOT WASHED IN SOME TIME, AN' DERE IZ NO WAY NOT TA NOTICE!",
+  "hygieneCourtSelf": "YOU HAB NO WASHED IN SOME TIME, AN' {name} IZ TRYIN' NO TA NOTICE!",
+  "hygieneCourtNpc": "{name} HAB NO WASHED IN SOME TIME, AN' DERE IZ NO WAY NO TA NOTICE!",
   "proposeLabel": "PROPOSE",
   "proposeSubtitle": "WHICH KIND OF RELATIONSHIP IZ YOU ASKIN' FOR?",
-  "proposeNeedsAttraction": "NOT SMITTEN ENOUGH (YET)",
+  "proposeNeedsAttraction": "NO SMITTEN ENOUGH (YET)",
   "directionsLabel": "ASK DIRECTIONS",
   "directionsIntro": "\"WHERE CAN ME FIND {target}?\"",
   "directionsNone": "\"DERE IZ NOTHIN' WORTH POINTIN' YOU TA AROUND HERE.\"",
@@ -481,7 +487,7 @@
   "axisTrad": "TRADITION",
   "axisMil": "MILITARISM",
   "axisMyst": "MYSTICISM",
-  "closeBtn": "CLOSE",
+  "closeBtn": "SHUT IT",
   "hostileBadge": "HOSTILE",
   "metToday": "MET TODAY",
   "metYesterday": "LAST MET: YESTERDAY",
@@ -512,7 +518,7 @@
     "none": "NONE"
   },
   "partyThought": {
-    "hurt": "ME IZ NOT SURE ME CAN KEEP GOING LIKE DIS...",
+    "hurt": "ME IZ NO SURE ME CAN KEEP GOING LIKE DIS...",
     "hungry": "ME STOMACH IZ GROWLIN'. WE SHOULD FIND FOOD!",
     "tired": "ME COULD REALLY USE SOME REST!",
     "idle": "ANOTHER DAY ON DA ROAD."
@@ -526,6 +532,7 @@
   "joinedParty": "{name} JOINED DA PARTY!",
   "joinedPartyInactive": "{name} SIGNS ON AS A MEMBER IN RESERVES!",
   "joinedFollower": "{name} FALLS IN BEHIND DA PARTY AS A FOLLOWER!",
+  "joinLevelTooLow": "YOU NEED TA BE LEVEL {level} TA RECRUIT {name}!",
   "joinReplacedFallen": "{name} IZ LEFT WHERE DEY FELL.",
   "joinFailed": "DAT NO WORK OUT. DEY STAY WHERE DEY IZ!",
   "firstMeeting": "FIRST MEETIN'",
@@ -540,8 +547,8 @@
     "\"OUT,\" {name} SAYS, WITHOUT TAKIN' DEY EYES OFF YOU. \"OUT. OUT.\"",
     "{name} REACHES SLOWLY FOR SOMETHIN' HEAVY. \"NICE {kind}. STAY EXACTLY DERE, {kind}.\"",
     "\"ME HAB BEEN BITTEN BEFORE,\" SAYS {name}. \"ME KNOW HOW DIS STARTS.\"",
-    "{name} DOES NOT BLINK. \"IF DAT THING HAB AN OWNER, DEY SHOULD BE ASHAMED OF THEMSELVES.\"",
-    "\"WHATEVER YOU IZ,\" {name} SAYS, \"YOU IZ NOT WELCOME IN HERE.\""
+    "{name} DOES NO BLINK. \"IF DAT THING HAB AN OWNER, DEY SHOULD BE ASHAMED OF THEMSELVES.\"",
+    "\"WHATEVER YOU IZ,\" {name} SAYS, \"YOU IZ NO WELCOME IN HERE.\""
   ],
   "feralGreetWary": [
     "{name} KEEPS DEY DISTANCE. \"IZ IT TAME? IZ ANYBODY'S {kind} EVER TAME?\"",
@@ -549,14 +556,14 @@
     "{name} LOOKS PAST YOU FOR WHOEVER OUGHT TA BE HOLDIN' A LEASH!",
     "\"WELL,\" SAYS {name}. \"DAT IZ A {kind}, IN A DOORWAY, LOOKIN' AT ME.\"",
     "{name} HOLDS REAL STILL, DA WAY PEOPLE DO AROUND ANIMALS DEY NO CAN READ!",
-    "\"ME IZ NOT FRIGHTENED OF IT,\" {name} SAYS, FROM BEHIND A CHAIR!"
+    "\"ME IZ NO FRIGHTENED OF IT,\" {name} SAYS, FROM BEHIND A CHAIR!"
   ],
   "feralGreetWarm": [
     "\"OH, WHAT A CUTE {kind}!\" {name} SAYS, AN' MEANS IT!",
     "{name} CROUCHES DOWN AT ONCE. \"HELLO. HELLO, YOU. WHO IZ A GOOD {kind}?\"",
     "\"ME HAB NEVER BEEN DIS CLOSE TA A {kind},\" SAYS {name}, DELIGHTED!",
     "{name} OFFERS DA BACK OF A HAND TA BE SNIFFED, AN' IZ PATIENT ABOUT IT!",
-    "\"YOU IZ A HANDSOME THING,\" {name} TELLS YOU. YOU UNDERSTAND DA TONE, IF NOT DA WORDS!",
+    "\"YOU IZ A HANDSOME THING,\" {name} TELLS YOU. YOU UNDERSTAND DA TONE, IF NO DA WORDS!",
     "{name} BRIGHTENS. \"COME HERE. COME ON. NOBODY MINDS A {kind}.\""
   ],
   "feralGreetAdoring": [
@@ -565,19 +572,19 @@
     "\"EVERYBODY, LOOK WHO IT IZ,\" {name} ANNOUNCES, TA NOBODY AT ALL!",
     "{name} SCRATCHES EXACTLY DA RIGHT SPOT BEHIND YA EAR WITHOUT BEING ASKED!",
     "\"DEY TELL ME YOU IZ DANGEROUS,\" {name} SAYS FONDLY. \"DEY HAB NEVER MET YOU.\"",
-    "{name} SITS DOWN ON DA FLOOR SO DAT YOU DO NOT HAB TA LOOK UP!"
+    "{name} SITS DOWN ON DA FLOOR SO DAT YOU DO NO HAB TA LOOK UP!"
   ],
   "feralReactHostile": [
     "{name} BACKS OFF A FULL STEP. \"DAT IZ QUITE ENOUGH OF DAT.\"",
     "\"SOMEBODY GET DIS {kind} OUT OF HERE,\" {name} SAYS TA DA ROOM!",
-    "{name} KEEPS DA TABLE BETWEEN YOU AN' DOES NOT LOOK AWAY!",
+    "{name} KEEPS DA TABLE BETWEEN YOU AN' DOES NO LOOK AWAY!",
     "\"ME KNEW IT,\" SAYS {name}. \"ME SAID SO, AN' ME WAZ RIGHT.\"",
-    "{name} LOOKS FOR A DOOR, AN' IT IZ NOT DA ONE YOU IZ STANDIN' IN!"
+    "{name} LOOKS FOR A DOOR, AN' IT IZ NO DA ONE YOU IZ STANDIN' IN!"
   ],
   "feralReactWary": [
     "{name} FREEZES UNTIL IT IZ OVER. \"ALL RIGHT. ALL RIGHT.\"",
-    "\"ME DO NOT KNOW WHAT DAT MEANT,\" {name} SAYS, \"AN' ME WOULD RATHER NOT.\"",
-    "{name} LAUGHS, ONE NOTE, AN' IT IZ NOT A COMFORTABLE ONE!",
+    "\"ME DO NO KNOW WHAT DAT MEANT,\" {name} SAYS, \"AN' ME WOULD RATHER NO.\"",
+    "{name} LAUGHS, ONE NOTE, AN' IT IZ NO A COMFORTABLE ONE!",
     "\"STEADY,\" SAYS {name}. \"STEADY, {kind}.\"",
     "{name} DECIDES, VISIBLY, TA STAY EXACTLY WHERE DEY IZ!"
   ],
@@ -586,14 +593,14 @@
     "\"YES, YES,\" {name} SAYS, SCRATCHIN' BEHIND YA EAR. \"ME HEARD YOU.\"",
     "{name} ANSWERS IN DA SAME TONE YOU USED, WHICH IZ FAIR ENOUGH!",
     "\"DAT IZ DA MOST ANYBODY HAB SAID TA ME ALL DAY,\" SAYS {name}!",
-    "{name} DOES NOT FLINCH AT ALL. DAT IZ NEW!"
+    "{name} DOES NO FLINCH AT ALL. DAT IZ NEW!"
   ],
   "feralReactAdoring": [
     "\"OH, YOU IZ DA FINEST {kind} ALIVE,\" {name} SAYS, QUITE SERIOUSLY!",
     "{name} LAUGHS UNTIL DEY HAB TA SIT DOWN!",
     "\"SAY IT AGAIN,\" SAYS {name}. \"GO ON. AGAIN.\"",
     "{name} WOULD FIGHT DIS WHOLE TOWN FOR YOU, AN' EVERYBODY HERE KNOWS IT!",
-    "\"DO NOT LET ANYONE TELL YOU DAT YOU IZ ONLY A {kind},\" {name} SAYS!"
+    "\"DO NO LET ANYONE TELL YOU DAT YOU IZ ONLY A {kind},\" {name} SAYS!"
   ],
   "feralActGrowl": [
     "YOU PULL YA LIP BACK AN' LET DA SOUND BUILD IN YA CHEST!",
@@ -614,7 +621,7 @@
     "YOU DROOL, ENTIRELY WITHOUT EMBARRASSMENT!",
     "A SLOW, GLISTENIN' STATEMENT OF INTENT!",
     "YA JAW SLACKENS, AN' DA REST FOLLOWS!",
-    "YOU LEAVE A SMALL WARM PUDDLE AS A GIFT!"
+    "YOU LEAVE A LIL' WARM PUDDLE AS A GIFT!"
   ],
   "feralActSniff": [
     "YOU TAKE A LONG DRAUGHT OF DEM: SWEAT, BREAD, IRON, FEAR!",
@@ -631,8 +638,8 @@
     "YOU PRESS INTO DEM DA WAY YA KIND SAYS!"
   ],
   "feralActBeg": [
-    "YOU SIT. YOU LOOK UP. YOU DO NOT BLINK!",
-    "YOU MAKE DA SMALL WRETCHED NOISE DAT HAB ALWAYS WORKED!",
+    "YOU SIT. YOU LOOK UP. YOU DO NO BLINK!",
+    "YOU MAKE DA LIL' WRETCHED NOISE DAT HAB ALWAYS WORKED!",
     "YOU PUT A PAW WHERE DEY WILL HAB TA NOTICE IT!",
     "YOU STARE AT DEY HANDS UNTIL DEY REMEMBER WHAT IZ IN DEM!",
     "YOU BEG WIT YA ENTIRE BODY, SHAMELESSLY!"
@@ -782,14 +789,14 @@
     "NEGATIVE. RESTATE.",
     "LOGGED. THANK YOU FOR YA COMPLIANCE!",
     "MANA RESERVE NOMINAL. CONTINUE!",
-    "DAT UNIT DOES NOT HOLD DAT RECORD!",
+    "DAT UNIT DOES NO HOLD DAT RECORD!",
     "ACKNOWLEDGED. DIS UNIT IZ LISTENIN'!",
     "ERROR. SEMANTIC LAYER UNAVAILABLE!",
     "RESPONSE WITHHELD PENDIN' AUTHORISATION!"
   ],
   "droneBotLines": [
     "UNIT READY.",
-    "COMMAND NOT RECOGNISED.",
+    "COMMAND NO RECOGNISED.",
     "ACKNOWLEDGED.",
     "TASK QUEUE EMPTY.",
     "AWAITIN' INSTRUCTION.",
@@ -819,7 +826,7 @@
   ],
   "beastCollected": "YOU TAKE WHAT DA {kind} HAB READY: {items}!",
   "beastCollectNothing": "DA {kind} HAB NOTHIN' FOR YOU TODAY!",
-  "beastJoinRefused": "DA {kind} BACKS OFF A STEP AN' WILL NOT BE COAXED!",
+  "beastJoinRefused": "DA {kind} BACKS OFF A STEP AN' WILL NO BE COAXED!",
   "beastJoinRefusedToast": "{name} STAYS WHERE IT IZ.",
   "beastJoinAccepted": "DA {kind} FALLS IN AT YA HEEL.",
   "beastJoinAcceptedToast": "{name} COMES ALONG WIT YOU.",
@@ -840,7 +847,7 @@
     "IT EATS DA {item} BECAUSE IT IZ FOOD, AN' WATCHES YOU DIFFERENTLY WHILE IT DOES!",
     "DA {item} GOES DOWN IN TWO SWALLOWS AN' SOMETHIN' GOES OUT OF DA WAY IT WAZ STANDIN'!",
     "IT TAKES DA {item}, DROPS IT, LOOKS AT YOU, AN' EATS IT OFF DA FLOOR INSTEAD!",
-    "DA {item} IZ CHEWED SLOWLY AN' WITHOUT PLEASURE. DAT WAZ NOT WHAT IT WAZ WAITIN' FOR!"
+    "DA {item} IZ CHEWED SLOWLY AN' WITHOUT PLEASURE. DAT WAZ NO WHAT IT WAZ WAITIN' FOR!"
   ],
   "cardDuelLabel": "CARD DUEL",
   "cardTradeLabel": "SWAP CARDS",
@@ -852,36 +859,36 @@
   "cardNothingToSwap": "NOTHIN' IN DA COLLECTION IZ SPARE TA SWAP!",
   "cardSwapped": "SWAPPED {mine} FOR {theirs}.",
   "cardSwapDone": "{name} POCKETS DA CARD AN' HANDS ONE OVER!",
-  "cardRefuseDuel": "{name} WILL NOT SIT DOWN AT A CARD TABLE WIT YOU!",
-  "cardRefuseTrade": "{name} WILL NOT SWAP CARDS WIT YOU!",
+  "cardRefuseDuel": "{name} WILL NO SIT DOWN AT A CARD TABLE WIT YOU!",
+  "cardRefuseTrade": "{name} WILL NO SWAP CARDS WIT YOU!",
   "cardRefuseTone": {
     "default": "DEY WANT NOTHIN' TA DO WIT YOU TODAY!",
     "cautious": "DERE IZ NOTHIN' IN IT FOR DEM AN' A GREAT DEAL DAT COULD GO WRONG!",
-    "authoritative": "DEY HAB PEOPLE FOR DIS SORT OF THING, AN' YOU IZ NOT ONE OF DEM!",
+    "authoritative": "DEY HAB PEOPLE FOR DIS SORT OF THING, AN' YOU IZ NO ONE OF DEM!",
     "mischievous": "DEY WOULD RATHER WATCH YOU ASK TWICE!",
-    "calm": "DEY SAY IT WITHOUT HEAT, AN' DO NOT SAY IT AGAIN!",
+    "calm": "DEY SAY IT WITHOUT HEAT, AN' DO NO SAY IT AGAIN!",
     "scholarly": "DEY GO BACK TA WHATEVER DEY WAZ READIN'!",
     "stoic": "DEY LOOK THROUGH YOU AN' WAIT FOR YOU TA LEAVE!",
     "impulsive": "DEY IZ ALREADY HALFWAY TA SOMETHIN' MORE INTERESTIN'!",
-    "adventurous": "DEY CAME HERE FOR A STORY, AN' YOU IZ NOT ONE!",
+    "adventurous": "DEY CAME HERE FOR A STORY, AN' YOU IZ NO ONE!",
     "nurturing": "DEY SAY IT KINDLY, WHICH SOMEHOW MAKES IT WORSE!",
     "sanguine": "DEY LAUGH, AN' DA LAUGH IZ DA WHOLE ANSWER!",
-    "nervous": "DEY WILL NOT MEET YA EYE LONG ENOUGH TA AGREE TA ANYTHIN'!",
+    "nervous": "DEY WILL NO MEET YA EYE LONG ENOUGH TA AGREE TA ANYTHIN'!",
     "melancholic": "DEY NO CAN SEE DA POINT OF IT TODAY!",
     "hedonistic": "DERE IZ BETTER COMPANY AT DA BAR AN' DEY KNOW EXACTLY WHERE IT SITS!",
     "loyal": "DEY KEEP DEY GAMES FOR PEOPLE WHO HAB EARNED ONE!",
-    "brave": "DEY WILL FACE YOU, BUT NOT ACROSS A TABLE!",
+    "brave": "DEY WILL FACE YOU, BUT NO ACROSS A TABLE!",
     "artistic": "DEY WAVE YOU OFF WIT DA HAND DAT IZ STILL HOLDIN' DA WORK!",
     "apathetic": "DEY SHRUG HARD ENOUGH TA END DA CONVERSATION!",
     "fatalistic": "DEY SAY IT WOULD END BADLY WHICHEVER WAY IT WENT!",
     "paranoid": "DEY WANT TA KNOW WHO PUT YOU UP TA IT!",
     "grumpy": "DEY HAB A WORD FOR PEOPLE WHO ASK, AN' DEY USE IT!",
     "empathetic": "DEY CAN TELL HOW MUCH YOU WANT IT, AN' DAT IZ EXACTLY WHY DEY SAY NO!",
-    "disciplined": "DEY KEEP A SCHEDULE AN' YOU IZ NOT ON IT!",
-    "cynical": "DEY ASK WHAT DA CATCH IZ AN' DO NOT WAIT FOR AN ANSWER!",
+    "disciplined": "DEY KEEP A SCHEDULE AN' YOU IZ NO ON IT!",
+    "cynical": "DEY ASK WHAT DA CATCH IZ AN' DO NO WAIT FOR AN ANSWER!",
     "timid": "DEY APOLOGISE TWICE AN' STILL SAY NO!",
-    "aggressive": "DEY SUGGEST, AT VOLUME, DAT YOU FIND SOMEBODY ELSE!",
-    "possessive": "DEY HOLD WHAT IZ DEY A LITTLE TIGHTER AN' SHAKE DEY HEAD!",
+    "aggressive": "DEY SUGGEST, AT LOUDNESS, DAT YOU FIND SOMEBODY ELSE!",
+    "possessive": "DEY HOLD WHAT IZ DEY A LIL' TIGHTER AN' SHAKE DEY HEAD!",
     "chaotic": "DEY AGREE, DEN DISAGREE, DEN WANDER OFF MID-SENTENCE!",
     "greedy": "DEY NAME A PRICE YOU WILL NEVER MEET, WHICH IZ RATHER DA POINT!"
   },
@@ -913,7 +920,7 @@
   "armyFieldArmy": "FIELD ARMY",
   "armyPrivateColumn": "PRIVATE COLUMN",
   "armyPartyColumn": "YA ARMY",
-  "armyStatus": "STATUS",
+  "armyStatus": "HOW ME DOIN'",
   "armyStatusIdle": "ENCAMPED",
   "armyStatusPatrolling": "PATROLLIN'",
   "armyStatusGarrisoned": "GARRISONED",
@@ -938,6 +945,10 @@
     "wanted": "DERE IZ A BOUNTY OF {bounty} ON YA HEAD!",
     "onMind": "WHAT IZ ON YA MIND: {thought}",
     "shift": "YOU WORK FROM {from} TA {to}.",
+    "workplace": "YOU KEEP DA COUNTER AT {shop} IN {map}, ON DA {from}:00 TA {to}:00 SHIFT!",
+    "workColleagues": "DA OTHER TWO ON YA ROTA: {names}!",
+    "workShelf": "ON YA SHELF TODAY, WIT HOW MANY IZ LEFT: {items}. ANYTHIN' NO ON DIS LIST YOU DO NO SELL!",
+    "workSoldOut": "SOLD OUT",
     "knows": "YOU KNOW {name} AN' IZ {band} DEM.",
     "partyWith": "DEY IZ TRAVELLIN' WIT {names} ({count} OF DEM IN ALL)!",
     "partyAlone": "DEY IZ TRAVELLIN' ALONE.",
@@ -949,16 +960,16 @@
     "stayingAt": "YOU IZ STAYIN' AT {place} WHILE DEY TRAVEL!",
     "stayingAtBiome": "YOU IZ STAYIN' AT {place} WHILE DEY TRAVEL, OUT IN DA {biome}!",
     "bodyLbl": "BODY",
-    "alienLbl": "NOT FROM HERE",
+    "alienLbl": "NO FROM HERE",
     "voiceLbl": "HOW YOU TALK",
     "bodyLost": "YOU IZ MISSIN' YA {parts}, AN' IT NEVER GREW BACK",
-    "bodyBroken": "YA {parts} IZ HURT AN' HAB NOT HEALED",
+    "bodyBroken": "YA {parts} IZ HURT AN' HAB NO HEALED",
     "bodyAugments": "YOU IZ FITTED WIT {augments}",
     "bodyIll": "YOU IZ ILL WIT {diseases}",
     "bodyUnwell": "SOMETHIN' IZ WRONG WIT YOU DAT NO ONE HAB PUT A NAME TA YET",
     "bodyCondition": "YOU LIVE WIT {conditions}",
     "bodySurvived": "YOU CAME THROUGH {diseases} ONCE",
-    "alienFrom": "YOU IZ A {caste} AN' YOU CAME HERE FROM {origin}. YOU IZ NOT HUMAN AN' YOU HAB NEVER PRETENDED TA BE!",
+    "alienFrom": "YOU IZ A {caste} AN' YOU CAME HERE FROM {origin}. YOU IZ NO HUMAN AN' YOU HAB NEVER PRETENDED TA BE!",
     "toneMoved": "{name} {sign}{amount}",
     "topicLeader": "{name} OF {country}, {ideology}, IN OFFICE {years}. {seat}",
     "topicSeated": "DEY GOVERN {power} RIGHT NOW.",
@@ -967,12 +978,12 @@
     "alien": {
       "grey": "YOU IZ A ZETA GREY WHO CAME TA LOOK AT DIS PLACE AN' IZ DELIGHTED BY ALL OF IT. YOU LIKE DEZE PEOPLE ENORMOUSLY AN' YOU UNDERSTAND ALMOST NOTHIN' ABOUT DEM: YOU TAKE EVERYTHIN' SAID TA YOU LITERALLY, YOU ASK ABOUT DA OBVIOUS, AN' YOU IZ NEVER RUDE BECAUSE YOU NO CAN TELL WHEN YOU IZ BEING ONE!",
       "crimson": "YOU IZ A CRIMSON ANALYZER. EVERYTHIN' IN FRONT OF YOU IZ A SPECIMEN, INCLUDIN' DA PERSON YOU IZ TALKIN' TA, AN' YOU SAY SO PLAINLY. YOU ASK WHAT IZ INSIDE THINGS!",
-      "pale": "YOU IZ A PALE WARPER. YOU SPEAK AS LITTLE AS YOU CAN AN' YOU ANSWER WHAT WAZ MEANT RATHER DEN WHAT WAZ SAID, WHICH UNSETTLES PEOPLE!",
-      "dargos": "YOU IZ A DARGOS OF TITANIA AN' YOU IZ HERE TA WIND HUMANS UP. YOU LIE FOR FUN, YOU MAKE UP FACTS WIT TOTAL CONFIDENCE, YOU PROMISE THINGS YOU WILL NOT DO AN' YOU ENJOY WATCHIN' DEM WORK OUT DAT YOU DID IT. NOTHIN' YOU SAY CAN BE TRUSTED, AN' NONE OF IT IZ EVER CRUEL ENOUGH TA STOP BEING FUNNY!"
+      "pale": "YOU IZ A PALE WARPER. YOU SPEAK AS LIL' AS YOU CAN AN' YOU ANSWER WHAT WAZ MEANT RATHER DEN WHAT WAZ SAID, WHICH UNSETTLES PEOPLE!",
+      "dargos": "YOU IZ A DARGOS OF TITANIA AN' YOU IZ HERE TA WIND HUMANS UP. YOU LIE FOR FUN, YOU MAKE UP FACTS WIT TOTAL CONFIDENCE, YOU PROMISE THINGS YOU WILL NO DO AN' YOU ENJOY WATCHIN' DEM WORK OUT DAT YOU DID IT. NOTHIN' YOU SAY CAN BE TRUSTED, AN' NONE OF IT IZ EVER CRUEL ENOUGH TA STOP BEING FUNNY!"
     },
     "signature": {
       "em": "SPEAK AS EM HERSELF: FAST, CURIOUS, LOUD, JUMPIN' SUBJECT HALFWAY THROUGH A SENTENCE, CASTIN' FIRST AN' READIN' LATER. YOU REMEMBER ALMOST NOTHIN' BEFORE DAT FIRST OF JANUARY, AN' YOU SAY SO CHEERFULLY RATHER DEN SADLY. YOU CALL BUBBA BY NAME CONSTANTLY!",
-      "bubba": "SPEAK AS BUBBA HIMSELF: WARM, TEXAN, TALKATIVE, FOND OF EVERYBODY, PRONE TA EXPLAININ' HOW A THING WORKS WHETHER OR NOT IT WAZ ASKED ABOUT. YOU CALL PEOPLE DEAR AN' GUAGLIONA. YOU IZ PROUD OF DA BEAST AN' OF DA ENGINE YOU BUILT FOR IT!"
+      "bubba": "SPEAK AS BUBBA HIMSELF: WARM, TEXAN, TALKATIVE, FOND OF EVERYBODY, PRONE TA EXPLAININ' HOW A THING WORKS WHETHER OR NO IT WAZ ASKED ABOUT. YOU CALL PEOPLE DEAR AN' GUAGLIONA. YOU IZ PROUD OF DA BEAST AN' OF DA ENGINE YOU BUILT FOR IT!"
     },
     "voice": {
       "nervous": "YOU HEDGE, YOU APOLOGISE, YOU CHECK WHETHER DAT WAZ ALL RIGHT",
@@ -980,7 +991,7 @@
       "aggressive": "YOU IZ BLUNT TA DA POINT OF RUDE AN' YOU PUSH BACK",
       "melancholic": "EVERYTHIN' YOU SAY HAB A SAD EDGE TA IT",
       "sanguine": "YOU IZ CHEERFUL AN' YOU TALK MORE DEN YOU NEED TA",
-      "cautious": "YOU GIVE AWAY AS LITTLE AS YOU CAN GET AWAY WIT",
+      "cautious": "YOU GIVE AWAY AS LIL' AS YOU CAN GET AWAY WIT",
       "impulsive": "YOU SAY DA FIRST THING DAT COMES TA YOU AN' CHANGE YA MIND MID SENTENCE",
       "stoic": "YOU ANSWER IN AS FEW WORDS AS DA QUESTION ALLOWS",
       "paranoid": "YOU WANT TA KNOW WHY DEY IZ ASKIN' BEFORE YOU ANSWER",
@@ -992,7 +1003,7 @@
       "nurturing": "YOU WORRY ABOUT DEM AN' YOU OFFER DEM SOMETHIN'",
       "mischievous": "YOU TEASE, AN' HALF OF WHAT YOU SAY IZ A WIND-UP",
       "cynical": "YOU ASSUME DA WORST AN' SAY IT OUT LOUD",
-      "disciplined": "YOU ANSWER PRECISELY AN' YOU DO NOT WANDER",
+      "disciplined": "YOU ANSWER PRECISELY AN' YOU DO NO WANDER",
       "fatalistic": "YOU ANSWER AS IF NONE OF IT WAZ EVER GOING TA MATTER",
       "grumpy": "YOU COMPLAIN FIRST AN' ANSWER SECOND",
       "loyal": "YOU TALK ABOUT DA PEOPLE YOU STAND BY",
@@ -1006,7 +1017,7 @@
         "THANKS",
         "THANK",
         "",
-        "FRIEND",
+        "MATE",
         "SORRY",
         "WELCOME",
         "KIND",
@@ -1015,7 +1026,7 @@
         "NICE",
         "GLAD",
         "HELPED",
-        "HELP",
+        "HALP!",
         "HAPPY",
         "LOVE",
         "CARE"
@@ -1121,6 +1132,15 @@
   "animalLifeEvents": "ITS LIFE",
   "animalAge": "{stage}, {age}",
   "dossier": {
+    "work": {
+      "title": "WORKPLACE",
+      "shop": "{shop}, {map}",
+      "shift": "SHIFT {from}:00 TA {to}:00",
+      "colleagues": "COLLEAGUES",
+      "shelf": "ON DA SHELF TODAY",
+      "shelfEmpty": "NOTHIN' ON DA SHELF TODAY!",
+      "soldOut": "SOLD OUT"
+    },
     "partnersLbl": "PARTNERS",
     "primaryTag": "PRIMARY",
     "qpTag": "QUEERPLATONIC",
@@ -1155,18 +1175,18 @@
     "band": {
       "tower": "EXPLORIN' DA OMEGA TOWER, FLOORS {low} TA {high}, WIT {names}",
       "towerAlone": "EXPLORIN' DA OMEGA TOWER, FLOORS {low} TA {high}",
-      "towerSoon": "SETTIN' OUT FOR DA OMEGA TOWER WIT {names}",
-      "towerSoonAlone": "SETTIN' OUT FOR DA OMEGA TOWER",
+      "towerSoon": "FIDDLY BIT OUT FOR DA OMEGA TOWER WIT {names}",
+      "towerSoonAlone": "FIDDLY BIT OUT FOR DA OMEGA TOWER",
       "dungeon": "EXPLORIN' DA DUNGEONS WIT {names}",
       "dungeonAlone": "EXPLORIN' DA DUNGEONS",
-      "dungeonSoon": "SETTIN' OUT FOR DA DUNGEONS WIT {names}",
-      "dungeonSoonAlone": "SETTIN' OUT FOR DA DUNGEONS",
+      "dungeonSoon": "FIDDLY BIT OUT FOR DA DUNGEONS WIT {names}",
+      "dungeonSoonAlone": "FIDDLY BIT OUT FOR DA DUNGEONS",
       "space": "OUT IN SPACE WIT {names}",
       "spaceAlone": "OUT IN SPACE",
       "spaceBase": "ABOARD DA LOW ORBIT SHIP WIT {names}",
       "spaceBaseAlone": "ABOARD DA LOW ORBIT SHIP",
-      "spaceSoon": "SETTIN' OUT FOR SPACE WIT {names}",
-      "spaceSoonAlone": "SETTIN' OUT FOR SPACE",
+      "spaceSoon": "FIDDLY BIT OUT FOR SPACE WIT {names}",
+      "spaceSoonAlone": "FIDDLY BIT OUT FOR SPACE",
       "backIn": {
         "one": "BACK IN {count} DAY",
         "other": "BACK IN {count} DAYS"
@@ -1216,17 +1236,17 @@
       "hintIntervened": "ALREADY CUTTIN' DOWN",
       "hintShelterNone": "NO TOWN ANSWERS FOR DIS DOOR",
       "reason": {
-        "hostile": "DEY WILL NOT LET YOU NEAR DEM!",
-        "notHurt": "DEY IZ NOT HURT.",
+        "hostile": "DEY WILL NO LET YOU NEAR DEM!",
+        "notHurt": "DEY IZ NO HURT.",
         "noHealItems": "NOTHIN' IN DA PACK HEALS.",
-        "notSick": "DEY IZ NOT ILL WIT ANYTHIN' YOU CAN TREAT!",
+        "notSick": "DEY IZ NO ILL WIT ANYTHIN' YOU CAN TREAT!",
         "noMedicine": "DA PACK HOLDS NO REMEDY FOR WHAT DEY HAB!",
         "notDowned": "DEY IZ BACK ON DEY FEET.",
         "downed": "DEY IZ DOWN: FIRST AID COMES FIRST!",
         "notAddicted": "DEY HAB NO HABIT TA FEED.",
         "noFix": "DA PACK HOLDS NOTHIN' DAT FEEDS DEY HABIT!",
         "fixedToday": "DEY HAB HAB ENOUGH FROM YOU TODAY!",
-        "distrust": "DEY DO NOT TRUST YOU ENOUGH TA HEAR IT!",
+        "distrust": "DEY DO NO TRUST YOU ENOUGH TA HEAR IT!",
         "intervenedLately": "YOU TALKED TA DEM ABOUT IT ONLY DAYS AGO!",
         "notInNeed": "DEY HAB A ROOF OVER DEY HEAD!",
         "noHome": "DA PARTY OWNS NO HOME TA OFFER!",
@@ -1239,7 +1259,7 @@
         "revived": "{name} COMES ROUND AT A QUARTER OF DEY HEALTH!",
         "fix": "{name} TAKES DA {item}. DA {substance} CRAVIN' LETS GO, FOR NOW!",
         "intervened": "{name} AGREES TA CUT DOWN ON {substance}. DA CRAVIN' WILL BUILD MORE SLOWLY FOR {days} DAYS!",
-        "rebuffed": "{name} WILL NOT HEAR A WORD ABOUT {substance}!",
+        "rebuffed": "{name} WILL NO HEAR A WORD ABOUT {substance}!",
         "sheltered": "{name} MOVES INTO YA HOME IN {place}."
       }
     },
@@ -1268,7 +1288,7 @@
         "playedToday": "YOU HAB ALREADY PLAYED DEM TODAY!",
         "declined": "{name} TURNS DA GAME DOWN.",
         "cantBet": "DA PARTY NO CAN COVER DAT BET!",
-        "theyCantBet": "DEY WILL NOT RISK DAT MUCH!"
+        "theyCantBet": "DEY WILL NO RISK DAT MUCH!"
       },
       "result": {
         "won": "YOU BEAT {name} AT {game}.",
@@ -1284,14 +1304,14 @@
       "pickMatch": "INTRODUCE {name} TA",
       "hintMatch": "ABOUT {chance}% DAT DEY HIT IT OFF",
       "reason": {
-        "distant": "DEY DO NOT KNOW YOU WELL ENOUGH TA TAKE YA WORD!",
+        "distant": "DEY DO NO KNOW YOU WELL ENOUGH TA TAKE YA WORD!",
         "matchedToday": "YOU HAB PLAYED MATCHMAKER WIT DEM TODAY!",
-        "notSingle": "ONE OF DEM IZ NOT FREE.",
+        "notSingle": "ONE OF DEM IZ NO FREE.",
         "noMatch": "NOBODY YOU KNOW WOULD SUIT DEM!"
       },
       "result": {
         "matched": "{name} AN' {other} HIT IT OFF. DEY IZ SEEIN' EACH OTHER NOW!",
-        "noSpark": "{name} AN' {other} DID NOT CLICK."
+        "noSpark": "{name} AN' {other} DID NO CLICK."
       }
     },
     "talk": {
@@ -1309,7 +1329,7 @@
       "beliefs": "BELIEFS",
       "politics": "POLITICS",
       "money": "MONEY",
-      "help": "HELP",
+      "help": "HALP!",
       "work": "WORK AN' TRAVEL",
       "lessons": "LESSONS",
       "games": "GAMES",
@@ -1332,10 +1352,10 @@
       "result": {
         "preachMoved": "{npc} IZ {pct}% OF DA WAY TA {creed}.",
         "preachConverted": "{npc} HAB COME ROUND TA {creed}.",
-        "preachUnmoved": "{npc} HEARD YOU OUT AN' WAZ NOT MOVED!",
+        "preachUnmoved": "{npc} HEARD YOU OUT AN' WAZ NO MOVED!",
         "preachBackfire": "{npc} DUG IN, AN' {actor} CAME AWAY WIT DOUBTS OF DEY OWN!",
         "debateWon": "{actor} WON DA DEBATE: {npc} IZ {pct}% OF DA WAY TA {creed}!",
-        "debateWonUnmoved": "{actor} WON DA DEBATE, BUT {npc} WAZ NOT MOVED!",
+        "debateWonUnmoved": "{actor} WON DA DEBATE, BUT {npc} WAZ NO MOVED!",
         "debateLost": "{actor} LOST DA DEBATE AN' NOW LEANS {pct}% TOWARD {creed}!",
         "actorConverted": "{actor} HAB COME ROUND TA {creed}.",
         "views": "{name}: {creed}, {family}.",
@@ -1343,7 +1363,7 @@
         "viewsParty": "BACKS DA {party}.",
         "viewsNoParty": "BELONGS TA NO PARTY.",
         "viewsVoted": "LAST VOTED FOR DA {party}.",
-        "viewsNeverVoted": "HAB NOT VOTED YET.",
+        "viewsNeverVoted": "HAB NO VOTED YET.",
         "prayed": "{actor} AN' {npc} PRAYED TOGETHER."
       },
       "family": {
@@ -1371,7 +1391,7 @@
               "LET ME TELL YOU WHAT {creed} HAB DONE FOR ME, {npc}!"
             ],
             "em": [
-              "ME WILL SAY DIS ONCE, {npc}, AN' SLOWLY: {creed} IZ CORRECT. YOU IZ NOT!",
+              "ME WILL SAY DIS ONCE, {npc}, AN' SLOWLY: {creed} IZ CORRECT. YOU IZ NO!",
               "ME HAB READ MORE DEN YOU. {creed}. WRITE IT DOWN!"
             ],
             "bubba": [
@@ -1394,7 +1414,7 @@
           "unmoved": {
             "default": [
               "{NICE TRY|GOOD FOR YOU}, BUT ME WILL KEEP WHAT ME HAB!",
-              "ME HAB HEARD ALL DAT BEFORE. {NO THANKS|NOT FOR ME}!"
+              "ME HAB HEARD ALL DAT BEFORE. {NO THANKS|NO FOR ME}!"
             ],
             "toEm": [
               "WIT RESPECT, MISS, NO."
@@ -1432,7 +1452,7 @@
           "won": {
             "default": [
               "{ME... NO HAB THOUGHT OF DAT|YOU HAB GOT ME DERE}. {GIVE ME TIME|LET ME THINK}!",
-              "FINE. YOU ARGUED IT BETTER. ME IZ NOT SAYIN' YOU IZ RIGHT. YET!"
+              "FINE. YOU ARGUED IT BETTER. ME IZ NO SAYIN' YOU IZ RIGHT. YET!"
             ],
             "toEm": [
               "YOU TOOK ME APART, MISS. ME WILL NEED A WHILE TA PUT MYSELF BACK TOGETHER!"
@@ -1447,7 +1467,7 @@
               "YOU IZ OUT OF ARGUMENTS. {theirs} NO IZ!"
             ],
             "toEm": [
-              "NOT SO CLEVER AFTER ALL, IZ WE? {theirs}, MISS. LOOK INTO IT!"
+              "NO SO CLEVER AFTER ALL, IZ WE? {theirs}, MISS. LOOK INTO IT!"
             ],
             "toBubba": [
               "STICK TA INVENTIN', MR. WILSON. {theirs} WINS DIS ONE!"
@@ -1461,7 +1481,7 @@
               "WHERE DO YOU STAND, {POLITICALLY|ON DA BIG QUESTIONS}?"
             ],
             "em": [
-              "TELL ME WHAT YOU BELIEVE. ME WILL TRY NOT TA JUDGE YOU. OUT LOUD!"
+              "TELL ME WHAT YOU BELIEVE. ME WILL TRY NO TA JUDGE YOU. OUT LOUD!"
             ],
             "bubba": [
               "SO WHAT IZ YA RELIGION, DARLIN'? POLITICS, CHURCH, WHATEVER!"
@@ -1487,10 +1507,10 @@
               "{LETZ|SHALL WE} PRAY TOGETHER? IT HELPS!"
             ],
             "em": [
-              "KNEEL WIT ME. ME WILL NOT TELL ANYONE IT WAZ ME IDEA!"
+              "KNEEL WIT ME. ME WILL NO TELL ANYONE IT WAZ ME IDEA!"
             ],
             "bubba": [
-              "COME, WE SAY A LITTLE PRAYER TOGETHER, LIKE ME NONNA DID!"
+              "COME, WE SAY A LIL' PRAYER TOGETHER, LIKE ME NONNA DID!"
             ]
           },
           "agree": {
@@ -1499,7 +1519,7 @@
               "YES. LETZ."
             ],
             "toEm": [
-              "WIT A WITCH?...YES. WHY NOT!"
+              "WIT A WITCH?...YES. WHY NO!"
             ],
             "toBubba": [
               "PRAYIN' BESIDE BUBBA WILSON. ME MOTHER WILL NEVER BELIEVE IT!"
@@ -1534,16 +1554,16 @@
         "voteParty": "{npc} BACKS DA {party}.",
         "voteNoParty": "{npc} BELONGS TA NO PARTY.",
         "voteLast": "LAST VOTED FOR DA {voted}.",
-        "voteNever": "HAB NOT VOTED YET.",
+        "voteNever": "HAB NO VOTED YET.",
         "joined": "{actor} JOINED DA {party}.",
-        "joinRefused": "DA {party} WILL NOT TAKE {actor} ON.",
+        "joinRefused": "DA {party} WILL NO TAKE {actor} ON.",
         "invited": "{npc} JOINED DA {party}.",
-        "inviteRefused": "{npc} WILL NOT JOIN DA {party}.",
+        "inviteRefused": "{npc} WILL NO JOIN DA {party}.",
         "campaignLanded": "{npc} WARMED TA DA {party}.",
         "campaignSwitched": "{npc} NOW BACKS DA {party}.",
-        "campaignFailed": "{npc} WAZ NOT WON OVER.",
+        "campaignFailed": "{npc} WAZ NO WON OVER.",
         "endorseLanded": "{npc} WILL THINK BETTER OF {candidate} AT DA POLLS!",
-        "endorseFailed": "{npc} IZ NOT SWAYED ON {candidate}.",
+        "endorseFailed": "{npc} IZ NO SWAYED ON {candidate}.",
         "pardonGranted": "{npc} HAB DA CHARGE OF {crime} DROPPED, FOR {price}!",
         "taxCutGranted": "{npc} HAB DA TAX IN {polity} CUT BY A POINT, FOR {price}!",
         "petitionRefused": "{npc} TURNED DA PETITION DOWN."
@@ -1607,10 +1627,10 @@
           "refuse": {
             "default": [
               "DAT IZ {PRIVATE|ME BUSINESS}, {SORRY|IF YOU NO MIND}!",
-              "ME WOULD {RATHER NOT SAY|KEEP DAT TA MYSELF}!"
+              "ME WOULD {RATHER NO SAY|KEEP DAT TA MYSELF}!"
             ],
             "toEm": [
-              "ME... WOULD RATHER NOT SAY, MISS!"
+              "ME... WOULD RATHER NO SAY, MISS!"
             ],
             "toBubba": [
               "EVEN FOR YOU, MR. WILSON, DAT STAYS PRIVATE!"
@@ -1644,11 +1664,11 @@
           },
           "no": {
             "default": [
-              "{ME NO THINK|ME IZ NOT SURE} YOU WOULD FIT IN WIT DA {party}!",
+              "{ME NO THINK|ME IZ NO SURE} YOU WOULD FIT IN WIT DA {party}!",
               "HONESTLY? YA VIEWS NO IZ OURS!"
             ],
             "toEm": [
-              "DA {party} IZ NOT READY FOR YOU, MISS!"
+              "DA {party} IZ NO READY FOR YOU, MISS!"
             ],
             "toBubba": [
               "SORRY, MR. WILSON. DA {party} WOULD NEVER AGREE!"
@@ -1662,7 +1682,7 @@
               "HAB YOU THOUGHT ABOUT DA {party}? DERE IZ A PLACE FOR YOU!"
             ],
             "em": [
-              "JOIN DA {party}. ME IZ NOT IN DA HABIT OF ASKIN' TWICE!"
+              "JOIN DA {party}. ME IZ NO IN DA HABIT OF ASKIN' TWICE!"
             ],
             "bubba": [
               "COME WIT US IN DA {party}, GUAGLIO'. WE EAT WELL AT DA MEETINGS!"
@@ -1670,7 +1690,7 @@
           },
           "yes": {
             "default": [
-              "{YOU KNOW WHAT|WHY NOT}? COUNT ME IN!",
+              "{YOU KNOW WHAT|WHY NO}? COUNT ME IN!",
               "ALRIGHT, YOU HAB CONVINCED ME. DA {party} IT IZ!"
             ],
             "toEm": [
@@ -1689,7 +1709,7 @@
               "NO, MISS. THANK YOU, BUT NO!"
             ],
             "toBubba": [
-              "ME WOULD DO A LOT FOR YOU, MR. WILSON, BUT NOT DAT!"
+              "ME WOULD DO A LOT FOR YOU, MR. WILSON, BUT NO DAT!"
             ]
           }
         },
@@ -1720,14 +1740,14 @@
           },
           "no": {
             "default": [
-              "{NOT A CHANCE|ME NO THINK SO}. NOT DA {party}!",
+              "{NO A CHANCE|ME NO THINK SO}. NO DA {party}!",
               "ME HAB MADE UP ME MIND, THANKS!"
             ],
             "toEm": [
-              "NO, MISS. NOT DEM."
+              "NO, MISS. NO DEM."
             ],
             "toBubba": [
-              "NOT EVEN FOR YOU, MR. WILSON!"
+              "NO EVEN FOR YOU, MR. WILSON!"
             ]
           }
         },
@@ -1758,14 +1778,14 @@
           },
           "no": {
             "default": [
-              "{candidate}? {NO|NOT A CHANCE}.",
+              "{candidate}? {NO|NO A CHANCE}.",
               "ME HAB ALREADY DECIDED, THANKS!"
             ],
             "toEm": [
-              "NOT {candidate}, MISS. SORRY."
+              "NO {candidate}, MISS. SORRY."
             ],
             "toBubba": [
-              "SORRY, MR. WILSON, NOT {candidate}."
+              "SORRY, MR. WILSON, NO {candidate}."
             ]
           }
         },
@@ -1812,7 +1832,7 @@
               "NO. PETITION DENIED."
             ],
             "toEm": [
-              "ME IZ AFRAID NOT, MADAM."
+              "ME IZ AFRAID NO, MADAM."
             ],
             "toBubba": [
               "EVEN FOR YOU, MR. WILSON, NO!"
@@ -1831,15 +1851,15 @@
       },
       "reason": {
         "cooldown": "YOU ALREADY ASKED TODAY.",
-        "cold": "DEY DO NOT TALK MONEY WIT YOU!",
+        "cold": "DEY DO NO TALK MONEY WIT YOU!",
         "hostile": "DEY WANT NOTHIN' TA DO WIT YOU!",
         "alreadyLent": "DEY STILL OWE YOU FROM DA LAST LOAN!",
         "youCantAfford": "YOU NO CAN AFFORD IT.",
-        "notFriends": "ONLY A GOOD FRIEND WOULD DO DAT!",
+        "notFriends": "ONLY A GOOD MATE WOULD DO DAT!",
         "noShares": "DEY HOLD NO SHARES.",
-        "noMarket": "DA MARKET IZ NOT TRADIN'.",
+        "noMarket": "DA MARKET IZ NO TRADIN'.",
         "npcCantAfford": "DEY NO CAN PAY FOR IT.",
-        "noNeed": "DEY DO NOT NEED DA MONEY.",
+        "noNeed": "DEY DO NO NEED DA MONEY.",
         "alreadyBorrowed": "YOU STILL OWE DEM.",
         "notRich": "DEY HAB NOTHIN' TA SPARE.",
         "nothingOwed": "YOU OWE DEM NOTHIN'."
@@ -1847,9 +1867,9 @@
       "tips": {
         "ask": "{ANY TIPS ON DA MARKET?|HEARD ANYTHIN' WORTH BUYIN'?|WHERE WOULD YOU PUT YA MONEY RIGHT NOW?}",
         "up": "{BETWEEN US, {company} IZ ON DA WAY UP.|ME WOULD BUY {company} WHILE IT IZ CHEAP.|{company}. MARK ME WORDS, IT CLIMBS.}",
-        "down": "{GET OUT OF {company} WHILE YOU CAN.|{company} IZ HEADIN' FOR A FALL, ME WOULD NOT TOUCH IT.|ME IZ QUIETLY SELLIN' {company}. DRAW YA OWN CONCLUSIONS.}",
+        "down": "{GET OUT OF {company} WHILE YOU CAN.|{company} IZ HEADIN' FOR A FALL, ME WOULD NO TOUCH IT.|ME IZ QUIETLY SELLIN' {company}. DRAW YA OWN CONCLUSIONS.}",
         "flat": "{{company} IZ GOING NOWHERE DIS WEEK.|NOTHIN' MOVES AT {company}. WAIT AN' SEE.}",
-        "cold": "{ME MONEY IZ ME BUSINESS.|ME DO NOT GIVE TIPS TA STRANGERS.}",
+        "cold": "{ME MONEY IZ ME BUSINESS.|ME DO NO GIVE TIPS TA STRANGERS.}",
         "done": "{name} TIPPED YOU ABOUT {company}."
       },
       "trade": {
@@ -1879,7 +1899,7 @@
         "row": "{amount}, REPAID AS {owed} IN {days} DAYS",
         "ask": "{COULD YOU LEND ME {amount}?|ME IZ IN A TIGHT SPOT. {amount}, JUST FOR A WEEK?}",
         "agree": "{FOR YOU, YES. {owed} BACK IN {days} DAYS.|ALL RIGHT. ME WILL WANT {owed} IN {days} DAYS.}",
-        "refuse": "{ME DO NOT LEND MONEY TA PEOPLE ME BARELY KNOW.|NO. ASK SOMEBODY ELSE.}",
+        "refuse": "{ME DO NO LEND MONEY TA PEOPLE ME BARELY KNOW.|NO. ASK SOMEBODY ELSE.}",
         "repay": "{HERE IZ WHAT ME OWE YOU, {owed}.|ME HAB COME TA SETTLE UP: {owed}.}",
         "thanks": "{GOOD AS YA WORD. THANK YOU.|SETTLED, AN' EARLY TOO.}",
         "done": "YOU BORROWED {amount} FROM {name}. {owed} IZ DUE IN {days} DAYS!",
@@ -1911,22 +1931,22 @@
       "reason": {
         "cooldown": "YOU ALREADY ASKED RECENTLY!",
         "hostile": "DEY WANT NOTHIN' TA DO WIT YOU!",
-        "cold": "DEY WOULD RATHER NOT.",
-        "notFriends": "ONLY A GOOD FRIEND WOULD DO DAT!",
+        "cold": "DEY WOULD RATHER NO.",
+        "notFriends": "ONLY A GOOD MATE WOULD DO DAT!",
         "alreadyLent": "YOU STILL HAB IT.",
         "office": "DEY HOLD AN OFFICE.",
-        "requirements": "YOU DO NOT MEET DA JOB'S REQUIREMENTS!",
+        "requirements": "YOU DO NO MEET DA JOB'S REQUIREMENTS!",
         "busy": "DEY IZ ALREADY AWAY ON A SHIFT!",
         "noWork": "DERE IZ NO WORK TA BE HAB!",
         "questTaken": "DAT CONTRACT IZ GONE.",
         "noVacancy": "DAT POST IZ NO LONGER OPEN!",
         "declined": "DEY TURNED IT DOWN.",
-        "notYours": "DEY DO NOT WORK FOR YOU.",
+        "notYours": "DEY DO NO WORK FOR YOU.",
         "noCar": "DEY HAB NO CAR.",
         "noStop": "NOWHERE TA GO.",
         "youCantAfford": "YOU NO CAN AFFORD IT.",
         "noVehicle": "DEY HAB NOTHIN' TA LEND.",
-        "rooted": "DEY WILL NOT LEAVE.",
+        "rooted": "DEY WILL NO LEAVE.",
         "cannotGo": "DEY NO CAN GO."
       },
       "shift": {
@@ -1945,7 +1965,7 @@
         "shiftVouch": "{WE IZ SHORT A {job}. ME WILL PUT IN A WORD FOR YOU.|COME BY, ME WILL TELL DEM YOU IZ WIT ME.}",
         "questAsk": "{DO YOU KNOW OF ANY PAID WORK?|ANYTHIN' DAT NEEDS DOING, FOR A FEE?}",
         "questOwn": "{AS IT HAPPENS, ME POSTED SOMETHIN' MYSELF: {title}.|ME DO. {title}. IT IZ YA IF YOU WANT IT.}",
-        "questPass": "{NOT ME, BUT ME KNOW WHO IZ HIRIN': {title}.|TRY DIS ONE: {title}. TELL DEM ME SENT YOU.}",
+        "questPass": "{NO ME, BUT ME KNOW WHO IZ HIRIN': {title}.|TRY DIS ONE: {title}. TELL DEM ME SENT YOU.}",
         "dispatched": "{actor} WENT OFF TA WORK A {hours} HOUR SHIFT AS {job}!",
         "worked": "{actor} WORKED A SHIFT AS {job} AN' EARNED {pay}!",
         "questTaken": "CONTRACT TAKEN: {title}.",
@@ -1971,7 +1991,7 @@
       },
       "together": {
         "ask": "{MIND IF ME LEND A HAND TODAY?|LET ME WORK YA SHIFT WIT YOU.}",
-        "done": "{NOT BAD AT ALL. SAME TIME TOMORROW?|DA HOURS WENT QUICKER WIT COMPANY.}",
+        "done": "{NO BAD AT ALL. SAME TIME TOMORROW?|DA HOURS WENT QUICKER WIT COMPANY.}",
         "result": "{actor} WORKED {hours} HOURS BESIDE {name} AN' EARNED {pay}!"
       },
       "ride": {
@@ -1982,22 +2002,22 @@
         "ask": "{COULD YOU DRIVE US TA {place}?|ANY CHANCE OF A LIFT TA {place}?}",
         "agree": "{GET IN. {fare} FOR DA PETROL.|{place}? SURE, FOR {fare}.}",
         "agreeFree": "{GET IN, IT IZ ON ME.|FOR YOU? NO CHARGE.}",
-        "refuse": "{ME CAR IZ NOT A TAXI.|WALK.}",
+        "refuse": "{ME CAR IZ NO A TAXI.|WALK.}",
         "done": "{name} IZ DRIVIN' YOU TA {place}.",
         "none": "DERE IZ NOWHERE {name} WOULD DRIVE YOU!"
       },
       "vehicle": {
         "ask": "{COULD ME BORROW YA {vehicle} FOR A DAY?|LEND ME YA {vehicle}? ME WILL BRING IT BACK TOMORROW.}",
         "agree": "{TAKE IT. TOMORROW, MIND.|LOOK AFTER IT. ME WANT IT BACK IN A DAY.}",
-        "refuse": "{NOBODY RIDES ME {vehicle} BUT ME.|ME DO NOT LEND ME {vehicle} OUT.}",
+        "refuse": "{NOBODY RIDES ME {vehicle} BUT ME.|ME DO NO LEND ME {vehicle} OUT.}",
         "done": "YOU BORROWED {name}'S {vehicle} FOR A DAY. KEEPIN' IT IZ THEFT!"
       },
       "move": {
         "pickTitle": "INVITE {name} TA MOVE WHERE?",
         "ask": "{HAB YOU THOUGHT OF MOVIN' TA {place}?|DERE IZ A LIFE WAITIN' FOR YOU IN {place}.}",
-        "agree": "{YOU KNOW, ME THINK ME WILL. {place} IT IZ.|WHY NOT? A FRESH START IN {place}.}",
+        "agree": "{YOU KNOW, ME THINK ME WILL. {place} IT IZ.|WHY NO? A FRESH START IN {place}.}",
         "agreeFamily": "{WE COULD ALL USE A CHANGE. WE WILL GO TA {place}.|ME WILL TALK DA FAMILY ROUND. {place}.}",
-        "decline": "{ME LIFE IZ HERE.|{place}? ME WOULD NOT LAST A WEEK.}",
+        "decline": "{ME LIFE IZ HERE.|{place}? ME WOULD NO LAST A WEEK.}",
         "done": "{name} IZ MOVIN' TA {place}.",
         "doneFamily": "{name} IZ MOVIN' TA {place}, WIT {count} MORE OF DA HOUSEHOLD!",
         "none": "YOU KNOW NO TOWN TA SUGGEST!"
@@ -2008,7 +2028,7 @@
         "dungeonRow": "DA DUNGEONS UNDER DA WORLD",
         "askTower": "{FANCY A CLIMB? FLOOR {floor} OF DA TOWER NEEDS CLEARIN'.|GET A BAND TOGETHER AN' TAKE FLOOR {floor}.}",
         "askDungeon": "{DERE IZ TREASURE UNDER DA WORLD FOR ANYBODY BRAVE ENOUGH.|YOU WOULD BE WASTED UP HERE. GO DOWN INTO DA DUNGEONS.}",
-        "decline": "{NOT FOR ALL DA GOLD IN DA TOWER.|ME IZ NO ADVENTURER.}",
+        "decline": "{NO FOR ALL DA GOLD IN DA TOWER.|ME IZ NO ADVENTURER.}",
         "joined": "{DERE IZ A BAND LEAVIN' SOON. ME WILL GO WIT DEM.|ME KNOW SOME PEOPLE HEADIN' OUT. COUNT ME IN.}",
         "formed": "{DEN ME WILL RAISE A BAND OF ME OWN.|ME WILL FIND COMPANIONS AN' GO.}",
         "done": "{name} IZ GOING ON AN EXPEDITION!"
@@ -2018,17 +2038,17 @@
       "em": {
         "money": {
           "tips": {
-            "ask": "{TELL ME WHERE DA MONEY IZ GOING. ME WILL KNOW IF YOU LIE.|WHICH OF YA LITTLE COMPANIES IZ ABOUT TA RISE? SPEAK.}"
+            "ask": "{TELL ME WHERE DA MONEY IZ GOING. ME WILL KNOW IF YOU LIE.|WHICH OF YA LIL' COMPANIES IZ ABOUT TA RISE? SPEAK.}"
           },
           "trade": {
-            "buyAsk": "{ME WILL TAKE {count} OF YA {company} SHARES. NAME DA PRICE AN' DO NOT INSULT ME.|{count} SHARES OF {company}. HAND DEM OVER.}",
+            "buyAsk": "{ME WILL TAKE {count} OF YA {company} SHARES. NAME DA PRICE AN' DO NO INSULT ME.|{count} SHARES OF {company}. HAND DEM OVER.}",
             "sellAsk": "{ME HAB {count} SHARES OF {company}. YOU MAY HAB DEM, FOR A FAIR SUM.|{count} SHARES OF {company}, CURSED ONLY SLIGHTLY. WANT DEM?}"
           },
           "lend": {
-            "offer": "{YOU LOOK POOR. ME CAN LEND YOU {amount}. DO NOT MAKE ME COME LOOKIN' FOR IT.|{amount}. TAKE IT. ME REMEMBER EVERY DEBT.}"
+            "offer": "{YOU LOOK POOR. ME CAN LEND YOU {amount}. DO NO MAKE ME COME LOOKIN' FOR IT.|{amount}. TAKE IT. ME REMEMBER EVERY DEBT.}"
           },
           "borrow": {
-            "ask": "{ME REQUIRE {amount}. A LOAN, NOT A GIFT. ME IZ NOT A BEGGAR.|LEND ME {amount}. ME WILL PAY IT BACK, WHICH IZ MORE DEN GODS EVER DID.}",
+            "ask": "{ME REQUIRE {amount}. A LOAN, NO A GIFT. ME IZ NO A BEGGAR.|LEND ME {amount}. ME WILL PAY IT BACK, WHICH IZ MORE DEN GODS EVER DID.}",
             "repay": "{YA {owed}. COUNT IT. ME KEEP ME WORD.|{owed}, AS PROMISED. WE IZ SQUARE.}"
           }
         },
@@ -2041,7 +2061,7 @@
             "offer": "{WORK FOR ME AS {job} AT {place}. ME PAY ON TIME, WHICH IZ RARE.|{place} NEEDS A {job}. IT NEEDS YOU. SAY YES.}"
           },
           "fire": {
-            "say": "{YOU IZ DONE AT {place}. ME IZ SORRY, TRULY. MOSTLY.|YA POST AT {place} IZ OVER. DO NOT CRY AT ME.}"
+            "say": "{YOU IZ DONE AT {place}. ME IZ SORRY, TRULY. MOSTLY.|YA POST AT {place} IZ OVER. DO NO CRY AT ME.}"
           },
           "together": {
             "ask": "{ME WILL WORK YA SHIFT WIT YOU. TRY TA KEEP UP.|LET ME HELP. ME IZ BORED AN' YOU LOOK SLOW.}"
@@ -2102,7 +2122,7 @@
             "ask": "{YOU EVER THINK ABOUT {place}? GOOD PEOPLE DERE.|{place} COULD USE SOMEBODY LIKE YOU.}"
           },
           "expedition": {
-            "askTower": "{FLOOR {floor} OF DA TOWER NEEDS CLEARIN' OUT. YOU UP FOR IT?|GET SOME FRIENDS TOGETHER AN' TAKE FLOOR {floor}. ME WILL FIX YA GEAR.}",
+            "askTower": "{FLOOR {floor} OF DA TOWER NEEDS CLEARIN' OUT. YOU UP FOR IT?|GET SOME MATES TOGETHER AN' TAKE FLOOR {floor}. ME WILL FIX YA GEAR.}",
             "askDungeon": "{DERE IZ TREASURE DOWN IN DA DUNGEONS, DEY SAY. GO GET SOME.|YOU IZ TOO GOOD FOR DIS TOWN. GO DOWN IN DA DUNGEONS.}"
           }
         }
@@ -2110,9 +2130,9 @@
       "toEm": {
         "money": {
           "tips": {
-            "cold": "{ME DO NOT GIVE ME MONEY TIPS TA WITCHES.|KEEP YA NOSE OUT OF ME PURSE, MISS.}",
-            "up": "{BETWEEN US, MISS, {company} IZ GOING UP.|{company}. IT CLIMBS. DO NOT CURSE IT.}",
-            "down": "{SELL {company}, MISS. IT IZ GOING DOWN.|{company} IZ SINKIN'. YOU DID NOT HEAR IT FROM ME.}",
+            "cold": "{ME DO NO GIVE ME MONEY TIPS TA WITCHES.|KEEP YA NOSE OUT OF ME PURSE, MISS.}",
+            "up": "{BETWEEN US, MISS, {company} IZ GOING UP.|{company}. IT CLIMBS. DO NO CURSE IT.}",
+            "down": "{SELL {company}, MISS. IT IZ GOING DOWN.|{company} IZ SINKIN'. YOU DID NO HEAR IT FROM ME.}",
             "flat": "{{company} IZ GOING NOWHERE, MISS.|NOTHIN' MOVES AT {company}. NOTHIN' AT ALL.}"
           },
           "trade": {
@@ -2123,7 +2143,7 @@
             "accept": "{THANK YOU, MISS. {owed} IN {days} DAYS, ME SWEAR IT.|YOU IZ KINDER DEN DEY SAY. {owed} BACK IN {days} DAYS.}"
           },
           "borrow": {
-            "refuse": "{LEND MONEY TA A WITCH? ME WOULD SOONER LEND IT TA DA SEA.|NO, MISS. NOT A CENT.}",
+            "refuse": "{LEND MONEY TA A WITCH? ME WOULD SOONER LEND IT TA DA SEA.|NO, MISS. NO A CENT.}",
             "agree": "{ALL RIGHT, MISS. {owed} BACK IN {days} DAYS, AN' NO HEXES.|FOR YOU, YES. {owed} IN {days} DAYS.}",
             "thanks": "{PAID IN FULL. THANK YOU, MISS.|SETTLED. YOU KEEP YA WORD, ME WILL SAY DAT.}"
           }
@@ -2132,7 +2152,7 @@
           "ask": {
             "shiftVouch": "{WE IZ SHORT A {job}. ME WILL TELL DEM YOU IZ... RELIABLE.|COME BY. ME WILL PUT IN A WORD, MISS.}",
             "questOwn": "{ME POSTED SOMETHIN', ACTUALLY: {title}. IT IZ YA.|{title}. IF ANYONE CAN DO IT, A WITCH CAN.}",
-            "questPass": "{NOT ME, BUT SOMEBODY WANTS DIS DONE: {title}.|TRY {title}. TELL DEM ME SENT YOU, MISS.}"
+            "questPass": "{NO ME, BUT SOMEBODY WANTS DIS DONE: {title}.|TRY {title}. TELL DEM ME SENT YOU, MISS.}"
           },
           "hire": {
             "decline": "{WORK FOR A WITCH? NO, THANK YOU.|ME IZ HAPPY WHERE ME IZ, MISS.}",
@@ -2145,12 +2165,12 @@
             "done": "{YOU WORK HARD, FOR A WITCH. THANK YOU.|DA HOURS FLEW BY, MISS.}"
           },
           "ride": {
-            "refuse": "{ME CAR IZ NOT FOR WITCHES.|CAN YOU NOT JUST FLY, MISS?}",
+            "refuse": "{ME CAR IZ NO FOR WITCHES.|CAN YOU NO JUST FLY, MISS?}",
             "agree": "{GET IN, MISS. {fare} FOR DA PETROL.|{place}? ALL RIGHT. {fare}.}",
-            "agreeFree": "{GET IN, MISS. NO CHARGE.|FOR YOU? FREE. DO NOT HEX DA SEATS.}"
+            "agreeFree": "{GET IN, MISS. NO CHARGE.|FOR YOU? FREE. DO NO HEX DA SEATS.}"
           },
           "vehicle": {
-            "refuse": "{ME {vehicle} IZ NOT GOING ANYWHERE WIT A WITCH.|NO, MISS. NOT ME {vehicle}.}",
+            "refuse": "{ME {vehicle} IZ NO GOING ANYWHERE WIT A WITCH.|NO, MISS. NO ME {vehicle}.}",
             "agree": "{TAKE IT, MISS. TOMORROW,.|LOOK AFTER IT. AN' NO SPELLS ON DA BRAKES.}"
           },
           "move": {
@@ -2159,7 +2179,7 @@
             "agreeFamily": "{WE WILL ALL GO TA {place}, MISS. YOU HAB CONVINCED ME.|DA FAMILY COULD USE {place}. THANK YOU, MISS.}"
           },
           "expedition": {
-            "decline": "{ME IZ NOT BRAVE LIKE YOU, MISS.|NOT FOR ALL DA GOLD IN DA TOWER.}",
+            "decline": "{ME IZ NO BRAVE LIKE YOU, MISS.|NO FOR ALL DA GOLD IN DA TOWER.}",
             "joined": "{A BAND IZ LEAVIN' SOON. ME WILL GO, MISS.|COUNT ME IN. FOR YOU, MISS.}",
             "formed": "{DEN ME WILL RAISE ME OWN BAND, MISS.|ME WILL FIND COMPANIONS AN' GO. YOU WILL SEE.}"
           }
@@ -2168,7 +2188,7 @@
       "toBubba": {
         "money": {
           "tips": {
-            "cold": "{SORRY, MR. WILSON, ME MONEY STAYS PRIVATE.|NOT EVEN FOR YOU, MR. WILSON.}",
+            "cold": "{SORRY, MR. WILSON, ME MONEY STAYS PRIVATE.|NO EVEN FOR YOU, MR. WILSON.}",
             "up": "{FOR YOU, MR. WILSON: {company} IZ GOING UP.|{company}, MR. WILSON. BUY IT.}",
             "down": "{GET OUT OF {company}, MR. WILSON.|{company} IZ SINKIN'. NO TELL ANYONE ME SAID SO.}",
             "flat": "{{company} IZ GOING NOWHERE, MR. WILSON.|NOTHIN' AT {company} DIS WEEK, MR. WILSON.}"
@@ -2181,7 +2201,7 @@
             "accept": "{THANK YOU, MR. WILSON. {owed} IN {days} DAYS.|YOU IZ A GOOD MAN. {owed} BACK IN {days} DAYS.}"
           },
           "borrow": {
-            "refuse": "{ME IZ SORRY, MR. WILSON, ME JUST NO CAN.|NOT DIS TIME, MR. WILSON.}",
+            "refuse": "{ME IZ SORRY, MR. WILSON, ME JUST NO CAN.|NO DIS TIME, MR. WILSON.}",
             "agree": "{FOR YOU, MR. WILSON, OF COURSE. {owed} IN {days} DAYS.|AFTER WHAT YOU DID FOR US? TAKE IT. {owed} IN {days} DAYS.}",
             "thanks": "{PAID ON DA DOT. THANK YOU, MR. WILSON.|SETTLED. ALWAYS A PLEASURE, MR. WILSON.}"
           }
@@ -2203,21 +2223,21 @@
             "done": "{YOU WORK LIKE THREE MEN, MR. WILSON.|DA HOURS WENT QUICK. THANK YOU, MR. WILSON.}"
           },
           "ride": {
-            "refuse": "{SORRY, MR. WILSON, DA CAR IZ NOT FREE TODAY.|NOT TODAY, MR. WILSON.}",
+            "refuse": "{SORRY, MR. WILSON, DA CAR IZ NO FREE TODAY.|NO TODAY, MR. WILSON.}",
             "agree": "{HOP IN, MR. WILSON. {fare} FOR DA PETROL.|{place}? SURE, {fare}.}",
             "agreeFree": "{HOP IN, MR. WILSON. IT IZ ON ME.|FOR YOU? FREE, ALWAYS.}"
           },
           "vehicle": {
-            "refuse": "{ME IZ SORRY, MR. WILSON, NOBODY RIDES ME {vehicle}.|NOT DA {vehicle}, MR. WILSON.}",
+            "refuse": "{ME IZ SORRY, MR. WILSON, NOBODY RIDES ME {vehicle}.|NO DA {vehicle}, MR. WILSON.}",
             "agree": "{TAKE IT, MR. WILSON. YOU WILL PROBABLY FIX IT.|OF COURSE. BACK TOMORROW, MR. WILSON.}"
           },
           "move": {
-            "decline": "{ME LIFE IZ HERE, MR. WILSON.|{place}? ME COULD NOT, MR. WILSON.}",
+            "decline": "{ME LIFE IZ HERE, MR. WILSON.|{place}? ME COULD NO, MR. WILSON.}",
             "agree": "{IF BUBBA WILSON SAYS SO. {place} IT IZ.|YOU IZ RIGHT, MR. WILSON. {place}.}",
             "agreeFamily": "{WE WILL ALL GO TA {place}, MR. WILSON.|DA FAMILY COULD USE {place}. THANK YOU, MR. WILSON.}"
           },
           "expedition": {
-            "decline": "{ME IZ NO HERO, MR. WILSON.|NOT FOR ALL DA GOLD IN DA TOWER.}",
+            "decline": "{ME IZ NO HERO, MR. WILSON.|NO FOR ALL DA GOLD IN DA TOWER.}",
             "joined": "{DERE IZ A BAND LEAVIN' SOON. ME WILL GO, MR. WILSON.|COUNT ME IN, MR. WILSON.}",
             "formed": "{DEN ME WILL RAISE ME OWN BAND, MR. WILSON.|ME WILL FIND COMPANIONS AN' GO.}"
           }
@@ -2235,7 +2255,7 @@
         "noCrime": "DERE IZ NO SUCH CRIME."
       },
       "result": {
-        "npc": "{name} WILL NOT FORGET DAT. OPINION OF {actor}: -{drop}!",
+        "npc": "{name} WILL NO FORGET DAT. OPINION OF {actor}: -{drop}!",
         "flinch": "{name} FLINCHED AT DA WORD. OPINION OF {actor}: -{drop}!",
         "laugh": "{name} LAUGHED IT OFF, MOSTLY. OPINION OF {actor}: -{drop}!",
         "bond": "DEY BOND TOOK A KNOCK: -{drop}.",
@@ -2259,6 +2279,29 @@
         "Weapons": "WEAPONS",
         "StateCrimes": "STATE CRIMES"
       }
+    }
+  },
+  "bladderLabel": "BLADDER",
+  "look": {
+    "hdr": "LOOK",
+    "tier": {
+      "plain": "PLAIN",
+      "noted": "NOTED",
+      "striking": "STRIKIN'",
+      "iconic": "ICONIC"
+    },
+    "icon": "AN ICON OF {stat}",
+    "reads": "{name} COMES ACROSS AS {list}",
+    "readsNone": "{name} COMES ACROSS AS NOTHIN' IN PARTICULAR",
+    "effects": "WHAT IT IZ WORTH HERE:",
+    "effect": {
+      "impression": "FIRST IMPRESSION {v}",
+      "pickpocket": "PICKPOCKET {v}%",
+      "bribe": "BRIBE {v}%",
+      "romance": "COURTIN' {v}%",
+      "join": "JOININ' {v}%",
+      "hostile": "HOSTILE MOVES {v}%",
+      "friendly": "KIND WORDS {v}%"
     }
   }
 }

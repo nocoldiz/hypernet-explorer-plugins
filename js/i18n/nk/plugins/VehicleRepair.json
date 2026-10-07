@@ -1,5 +1,5 @@
 {
-  "notEnoughMaterials": "NOT ENOUGH MATERIALS.",
+  "notEnoughMaterials": "NO ENOUGH MATERIALS.",
   "vehicleFullyRepaired": "VEHICLE FULLY REPAIRED!",
   "vehicleRepaired": "VEHICLE REPAIRED.",
   "vehicleIsOperationalAgain": "VEHICLE IZ OPERATIONAL AGAIN!",
@@ -22,10 +22,11 @@
   "allCriticalComponentsMustMaintain": "EVERY ESSENTIAL COMPONENT MUST STAY ABOVE 0% INTEGRITY FOR DA VEHICLE TA RUN!",
   "repair": "REPAIR",
   "upgrades": "UPGRADES",
-  "close": "CLOSE",
+  "close": "SHUT IT",
+  "back": "GO BACK",
   "componentsRegistry": "COMPONENTS REGISTRY",
   "fullRepair": "FULL REPAIR",
-  "notInstalled": "NOT INSTALLED",
+  "notInstalled": "NO INSTALLED",
   "lv": "LV.",
   "maxed": "MAXED",
   "install": "INSTALL",
@@ -65,7 +66,7 @@
   "enablesTakeOffAndFlight": "ENABLES TAKE-OFF AN' FLIGHT!",
   "repairPercent": "REPAIR ({percent}%)",
   "timePerTile": "TIME PER TILE: {minutes} MIN",
-  "timePerTileNext": " → {minutes} MIN (SAVE {saved} MIN)",
+  "timePerTileNext": " → {minutes} MIN (STASH {saved} MIN)",
   "part": {
     "Engine": "ENGINE",
     "Transmission": "TRANSMISSION",
@@ -94,7 +95,7 @@
     "Ropes": "ROPES",
     "Patch Kit": "PATCH KIT"
   },
-  "systemNotReady": "SYSTEM NOT READY. TRY AGAIN!",
+  "systemNotReady": "SYSTEM NO READY. TRY AGAIN!",
   "criticalDamage": "\\C[2]CRITICAL DAMAGE!\\C[0] DA {vehicle} IZ NOW BROKEN!",
   "tookDamage": "DA {vehicle} HAB TAKEN DAMAGE!",
   "fullyRepaired": "DA {vehicle} HAB BEEN FULLY REPAIRED!",
@@ -111,13 +112,13 @@
     "boat": "BOAT"
   },
   "toast": {
-    "criticalFailure": "{part} HAB FAILED. DA VEHICLE WILL NOT MOVE!"
+    "criticalFailure": "{part} HAB FAILED. DA VEHICLE WILL NO MOVE!"
   },
   "help": {
     "title": "DA GARAGE",
     "items": {
       "close": {
-        "name": "CLOSE",
+        "name": "SHUT IT",
         "text": "LEAVES DA GARAGE."
       },
       "portrait": {
@@ -125,8 +126,8 @@
         "text": "DA VEHICLE, ITS DESCRIPTION AN' WHETHER IT RUNS. A STARSHIP CAN CHANGE ITS APPEARANCE FROM HERE!"
       },
       "status": {
-        "name": "STATUS",
-        "text": "BROKEN MEANS AN ESSENTIAL COMPONENT IZ AT 0% AN' DA VEHICLE WILL NOT MOVE UNTIL IT IZ REPAIRED!"
+        "name": "HOW ME DOIN'",
+        "text": "BROKEN MEANS AN ESSENTIAL COMPONENT IZ AT 0% AN' DA VEHICLE WILL NO MOVE UNTIL IT IZ REPAIRED!"
       },
       "tabs": {
         "name": "REPAIR AN' UPGRADES",

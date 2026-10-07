@@ -36,7 +36,7 @@
     "defeat": "DEFEAT",
     "drawn": "DRAWN",
     "pressToLeave": "PRESS TA LEAVE DA BOARD",
-    "noThree": "DA 3D BOARD COULD NOT BE SET UP ON DIS MACHINE!"
+    "noThree": "DA 3D BOARD COULD NO BE SET UP ON DIS MACHINE!"
   },
   "san": {
     "1": "P",
@@ -60,7 +60,7 @@
   },
   "end": {
     "checkmate": "CHECKMATE.",
-    "stalemate": "STALEMATE: DA SIDE TA MOVE HAB NO LEGAL MOVE AN' IZ NOT IN CHECK!",
+    "stalemate": "STALEMATE: DA SIDE TA MOVE HAB NO LEGAL MOVE AN' IZ NO IN CHECK!",
     "fiftyMove": "DRAWN BY DA FIFTY-MOVE RULE!",
     "repetition": "DRAWN BY THREEFOLD REPETITION!",
     "material": "DRAWN: NEITHER SIDE HAB ENOUGH LEFT TA MATE!",
@@ -121,7 +121,7 @@
       "\"FREE PIECE FRIDAY!\" BLACK GRINS AS A {piece} APPEARS! \"BUY ONE, GET ONE FREE!\""
     ],
     "spawnChaos": [
-      "\"MEET ME FRIEND!\" BLACK SUMMONS {piece} AT {square}! \"HE'S HOUSE-TRAINED!\"",
+      "\"MEET ME MATE!\" BLACK SUMMONS {piece} AT {square}! \"HE'S HOUSE-TRAINED!\"",
       "\"ME COLLECT DEZE!\" BLACK PROUDLY PLACES {piece} ON DA BOARD! \"LIMITED EDITION!\"",
       "\"EMOTIONAL SUPPORT PIECE!\" BLACK INTRODUCES {piece}! \"FOR WHEN REGULAR PIECES NO IZ ENOUGH!\"",
       "\"WHY BE BORIN'?\" BLACK SPAWNS {piece} WIT A FLOURISH! \"CHESS NEEDS MORE PERSONALITY!\"",

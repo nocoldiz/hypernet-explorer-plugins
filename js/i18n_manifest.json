@@ -1019,6 +1019,7 @@
     "plugins/Epidemics.json",
     "plugins/Equip.json",
     "plugins/Eurodemics.json",
+    "plugins/Expression.json",
     "plugins/Factions.json",
     "plugins/FastTravel.json",
     "plugins/Fishing.json",

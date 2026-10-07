@@ -22,7 +22,7 @@
     },
     "companionate": {
       "name": "COMPANIONATE",
-      "desc": "DEEP AFFECTION AN' PARTNERSHIP WIT LITTLE OR NO PASSION!"
+      "desc": "DEEP AFFECTION AN' PARTNERSHIP WIT LIL' OR NO PASSION!"
     },
     "throuple": {
       "name": "THROUPLE",
@@ -42,19 +42,19 @@
     },
     "single_content": {
       "name": "CONTENTEDLY SINGLE",
-      "desc": "NOT SEEKIN' A PARTNER AN' AT PEACE WIT IT!"
+      "desc": "NO SEEKIN' A PARTNER AN' AT PEACE WIT IT!"
     },
     "situationship": {
       "name": "SITUATIONSHIP",
       "desc": "AN UNDEFINED ROMANTIC ENTANGLEMENT DAT NEVER QUITE BECOMES A RELATIONSHIP!"
     },
     "friends_with_benefits": {
-      "name": "FRIENDS WIT BENEFITS",
-      "desc": "CASUAL INTIMACY BETWEEN FRIENDS WIT NO ROMANTIC COMMITMENT!"
+      "name": "MATES WIT BENEFITS",
+      "desc": "CASUAL INTIMACY BETWEEN MATES WIT NO ROMANTIC COMMITMENT!"
     },
     "queerplatonic": {
       "name": "QUEERPLATONIC PARTNERSHIP",
-      "desc": "A COMMITTED BOND STRONGER DEN FRIENDSHIP BUT NOT ROMANTIC!"
+      "desc": "A COMMITTED BOND STRONGER DEN FRIENDSHIP BUT NO ROMANTIC!"
     },
     "aromantic_solo": {
       "name": "AROMANTIC SOLO",
@@ -68,18 +68,18 @@
     },
     "acquaintances": {
       "name": "ACQUAINTANCES",
-      "desc": "DEY KNOW EACH OTHER BY NAME AN' LITTLE ELSE!"
+      "desc": "DEY KNOW EACH OTHER BY NAME AN' LIL' ELSE!"
     },
     "friends": {
-      "name": "FRIENDS",
+      "name": "MATES",
       "desc": "A SETTLED FRIENDSHIP, TESTED AN' KEPT!"
     },
     "best_friends": {
-      "name": "BEST FRIENDS",
+      "name": "BEST MATES",
       "desc": "DA FIRST PERSON EACH OF DEM WOULD CALL!"
     },
     "childhood_friends": {
-      "name": "CHILDHOOD FRIENDS",
+      "name": "CHILDHOOD MATES",
       "desc": "DEY GREW UP IN DA SAME STREETS AN' NEVER LOST TOUCH!"
     },
     "comrades": {
