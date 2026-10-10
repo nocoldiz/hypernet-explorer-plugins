@@ -262,6 +262,13 @@
     "nothingToMirror": "{actor} non ha ancora nessuna mossa da rilanciare.",
     "mutated": "Il corpo di {actor} cresce in {body}!"
   },
+  "steal": {
+    "stole": "{actor} ruba {item} a {enemy}!",
+    "nothing": "{actor} non trova più niente da rubare a {enemy}."
+  },
+  "improvise": {
+    "turnedInto": "{actor} improvvisa: è diventata {skill}!"
+  },
   "summon": {
     "alreadyActive": "C'è già un'evocazione attiva!",
     "mapWalks": "{name} risponde al richiamo e cammina con il gruppo per {steps} passi.",

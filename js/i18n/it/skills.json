@@ -2052,7 +2052,7 @@
     "message2": ""
   },
   "379": {
-    "name": "BarrieraMagica",
+    "name": "MagiBarriera",
     "description": "Aumenta COS e SAG di tutti gli alleati.",
     "message1": "%1 ha offerto una preghiera!",
     "message2": ""
@@ -2082,7 +2082,7 @@
     "message2": ""
   },
   "384": {
-    "name": "VeloOmbre",
+    "name": "VelOmbre",
     "description": "Aumenta DES e PSI di tutti gli alleati. Applica\nVelo d'ombra. Colpisce per ultimo.",
     "message1": "%1 proietta un velo d'ombra!",
     "message2": ""
@@ -2220,7 +2220,7 @@
     "message2": ""
   },
   "407": {
-    "name": "GocciaAcquea",
+    "name": "GocciAcquea",
     "description": "Infligge danni d'Acqua a un nemico e ne riduce\nFRZ. Può applicare Bagnato. Colpisce per primo.",
     "message1": "%1 schizza acqua!",
     "message2": ""
@@ -2268,7 +2268,7 @@
     "message2": ""
   },
   "415": {
-    "name": "PallaFuocoComune",
+    "name": "PallaDiFUocoGenerica",
     "description": "Infligge danni di Fuoco pesanti a un nemico.",
     "message1": "%1 casta %2",
     "message2": ""
@@ -2490,7 +2490,7 @@
     "message2": ""
   },
   "452": {
-    "name": "SangueElettrico",
+    "name": "SanguElettrico",
     "description": "Infligge danni di Fulmine a un nemico e ne\nriduce DES. Colpisce per ultimo. Precisione 85%.",
     "message1": "%1 riempie di elettricità le vene del nemico!",
     "message2": ""
@@ -2658,7 +2658,7 @@
     "message2": ""
   },
   "480": {
-    "name": "SpaccaAlba",
+    "name": "SpaccAlba",
     "description": "Infligge danni di Fuoco a tutti i nemici e ne\nriduce DES. Può applicare Bruciato.",
     "message1": "%1 casta %2",
     "message2": ""
@@ -3126,7 +3126,7 @@
     "message2": ""
   },
   "568": {
-    "name": "CuraAlleato",
+    "name": "CurAlleato",
     "description": "Ripristina HP a un alleato e ne aumenta PSI.",
     "message1": "%1 casta %2",
     "message2": ""
@@ -3282,7 +3282,7 @@
     "message2": ""
   },
   "604": {
-    "name": "MeteoraAbissale",
+    "name": "MeteorAbissale",
     "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Vulnerabilità. Precisione 90%.",
     "message1": "%1 invoca una pioggia di meteoriti!",
     "message2": ""
@@ -3318,7 +3318,7 @@
     "message2": ""
   },
   "610": {
-    "name": "DivoraAbisso",
+    "name": "DivorAbisso",
     "description": "Infligge danni oscuri a tutti i nemici e può\napplicare Marchio della morte. Colpisce per\nultimo. Precisione 80%.",
     "message1": "%1 evoca il vuoto tra i mondi!",
     "message2": ""
@@ -3390,7 +3390,7 @@
     "message2": ""
   },
   "632": {
-    "name": "SanguisugaArcana",
+    "name": "SanguisugArcana",
     "description": "Assorbe HP da un nemico e può applicare\nVulnerabilità.",
     "message1": "%1 drena l'energia magica!",
     "message2": ""
@@ -3414,7 +3414,7 @@
     "message2": ""
   },
   "636": {
-    "name": "DrenaAnima",
+    "name": "DrenAnima",
     "description": "Assorbe HP da un nemico. Colpisce per ultimo.",
     "message1": "%1 drena la forza vitale!",
     "message2": ""
@@ -3504,7 +3504,7 @@
     "message2": ""
   },
   "661": {
-    "name": "FonemiIndicibili",
+    "name": "FonemIndicibili",
     "description": "Può applicare Rabbia e Stordire a tutti i\nnemici. Colpisce per ultimo. Precisione 85%.",
     "message1": "%1 dice l'impronunciabile!",
     "message2": ""
@@ -3528,7 +3528,7 @@
     "message2": ""
   },
   "665": {
-    "name": "RitoOscuro",
+    "name": "RitOscuro",
     "description": "Aumenta FRZ e DES di chi la usa. Colpisce per\nultimo.",
     "message1": "%1 stringe un patto oscuro!",
     "message2": ""
@@ -3552,7 +3552,7 @@
     "message2": ""
   },
   "669": {
-    "name": "TrasformazioneEmpia",
+    "name": "TrasformazionEmpia",
     "description": "Aumenta FRZ/COS/DES/PSI di chi la usa.\nRipristina MP.",
     "message1": "%1 subisce una trasformazione empia!",
     "message2": ""
@@ -3666,7 +3666,7 @@
     "message2": ""
   },
   "688": {
-    "name": "CancellazioneEsistenziale",
+    "name": "CancellazionEsistenziale",
     "description": "Infligge danni a un nemico e ne riduce COS/PSI.\nApplica Confusione e può applicare Paralisi.\nColpisce per ultimo. Precisione 75%.",
     "message1": "%1 cancella temporaneamente il nemico\r\ndall'esistenza!",
     "message2": ""
@@ -3864,7 +3864,7 @@
     "message2": ""
   },
   "721": {
-    "name": "ObliterazioneEsistenziale",
+    "name": "ObliterazionEsistenziale",
     "description": "Infligge danni a un nemico e ne riduce ogni\nstatistica. Applica diversi malus. Può uccidere.\nColpisce per ultimo. Precisione 70%.",
     "message1": "%1 cancella il nemico dall'esistenza!",
     "message2": ""
@@ -4038,7 +4038,7 @@
     "message2": ""
   },
   "770": {
-    "name": "PennaArcana",
+    "name": "PennArcana",
     "description": "Aumenta INT di chi la usa. Applica Impulso\nArcano.",
     "message1": "%1 casta %2",
     "message2": ""
@@ -4056,7 +4056,7 @@
     "message2": ""
   },
   "773": {
-    "name": "BarrieraAssoluta",
+    "name": "BarrierAssoluta",
     "description": "Applica Proteggi a un alleato. Colpisce per\nultimo.",
     "message1": "%1 lancia una barriera assoluta!",
     "message2": ""
@@ -4116,7 +4116,7 @@
     "message2": ""
   },
   "783": {
-    "name": "SaggezzaAntica",
+    "name": "SaggezzAntica",
     "description": "Aumenta INT di tutti gli alleati.",
     "message1": "%1 usa SaggezzaAntica!",
     "message2": ""
@@ -4260,7 +4260,7 @@
     "message2": ""
   },
   "817": {
-    "name": "IspirazioneEroica",
+    "name": "IspirazionEroica",
     "description": "Aumenta tutte le statistiche di tutti gli\nalleati. Applica Ispirato. Colpisce per ultimo.",
     "message1": "%1 lancia un'ispirazione eroica!",
     "message2": ""
@@ -4320,7 +4320,7 @@
     "message2": ""
   },
   "827": {
-    "name": "NebbiaAccecante",
+    "name": "NebbiAccecante",
     "description": "Riduce PSI di tutti i nemici e può applicare\nCecità. Colpisce per ultimo. Precisione 90%.",
     "message1": "%1 crea una nube oscura!",
     "message2": ""
@@ -4566,7 +4566,7 @@
     "message2": ""
   },
   "868": {
-    "name": "EgidaArconte",
+    "name": "EgidArconte",
     "description": "Aumenta DES e FRZ di tutti gli alleati. Concede\nScudo Divino.",
     "message1": "%1 usa AegisDellArconte!",
     "message2": ""
@@ -4626,7 +4626,7 @@
     "message2": ""
   },
   "889": {
-    "name": "EvocaAlbero",
+    "name": "EvocAlbero",
     "description": "Evoca un piccolo treant che combatte per il\ngruppo.",
     "message1": "%1 evoca un alleato treant!",
     "message2": ""
@@ -6457,7 +6457,7 @@
   },
   "1294": {
     "name": "EvocaSOUL",
-    "description": "Concede una quota SOUL temporanea.",
+    "description": "Concede una quota SOUL.",
     "message1": "%1 estrae dal nulla una quota SOUL!",
     "message2": ""
   },
@@ -6474,7 +6474,7 @@
     "message2": ""
   },
   "1297": {
-    "name": "PattoOmbre",
+    "name": "PattOmbre",
     "description": "Aumenta PSI di chi la usa.",
     "message1": "%1 stringe un patto con le ombre!",
     "message2": ""
@@ -6510,7 +6510,7 @@
     "message2": ""
   },
   "1303": {
-    "name": "BrancoOmbre",
+    "name": "BrancOmbre",
     "description": "Infligge danni oscuri a tutti i nemici due volte\ne chiama un'ombra. Può applicare Sanguinamento.",
     "message1": "%1 evoca i segugi ombra!",
     "message2": ""
@@ -6648,7 +6648,7 @@
     "message2": ""
   },
   "1336": {
-    "name": "MaledizioneEterna",
+    "name": "MaledizionEterna",
     "description": "Infligge danni a un nemico e applica Silenzio.\nColpisce per ultimo. Precisione 75%.",
     "message1": "%1 sigilla permanentemente le abilità magiche!",
     "message2": ""
@@ -6732,7 +6732,7 @@
     "message2": ""
   },
   "1406": {
-    "name": "CronacaAnime",
+    "name": "CronacAnime",
     "description": "Legge la storia vissuta di un'anima vicina.",
     "message1": "%1 legge la cronaca di un'anima vicina!",
     "message2": ""
@@ -7002,7 +7002,7 @@
     "message2": ""
   },
   "1475": {
-    "name": "BalzoOrario",
+    "name": "BalzOrario",
     "description": "Sposta l'orologio avanti di un'ora.",
     "message1": "%1 piega un'ora fuori dal ciclo!",
     "message2": ""
@@ -7086,7 +7086,7 @@
     "message2": ""
   },
   "1489": {
-    "name": "ConvocaArmamento",
+    "name": "ConvocArmamento",
     "description": "Convoca un'arma a caso dalla probabilità.",
     "message1": "%1 convoca un'arma dalla probabilità!",
     "message2": ""
@@ -7128,7 +7128,7 @@
     "message2": ""
   },
   "1497": {
-    "name": "ConvocaAeronave",
+    "name": "ConvocAeronave",
     "description": "Convoca dal cielo l'aeronave del gruppo.",
     "message1": "%1 convoca un'aeronave dal cielo!",
     "message2": ""
@@ -7278,7 +7278,7 @@
     "message2": ""
   },
   "1537": {
-    "name": "Riscossione Affitti",
+    "name": "RiscossioneAffitti",
     "description": "Riscuote le rendite immobiliari del giorno.",
     "message1": "%1 riscuote gli affitti del giorno!",
     "message2": ""
@@ -7290,49 +7290,49 @@
     "message2": ""
   },
   "1539": {
-    "name": "Dividendo del Giorno",
+    "name": "DividendoGiorno",
     "description": "Forza il conteggio giornaliero della banca.",
     "message1": "%1 forza il bilancio della banca!",
     "message2": ""
   },
   "1540": {
-    "name": "Ricarica Anoki",
+    "name": "RicaricAnoki",
     "description": "Evoca credito sul telefono Anoki del gruppo.",
     "message1": "%1 fa comparire credito sul proprio telefono!",
     "message2": ""
   },
   "1541": {
-    "name": "Borsa Modesta",
+    "name": "BorsaModesta",
     "description": "Evoca diecimila monete.",
     "message1": "%1 fa comparire una borsa modesta!",
     "message2": ""
   },
   "1542": {
-    "name": "Bel Gruzzolo",
+    "name": "BelGruzzolo",
     "description": "Evoca cinquantamila monete.",
     "message1": "%1 fa comparire un bel gruzzolo!",
     "message2": ""
   },
   "1543": {
-    "name": "Malloppo Cospicuo",
+    "name": "MalloppoCospicuo",
     "description": "Evoca centomila monete.",
     "message1": "%1 fa comparire un ingente tesoro!",
     "message2": ""
   },
   "1544": {
-    "name": "Mormorio di Mida",
+    "name": "MormorioMida",
     "description": "Evoca un milione di monete.",
     "message1": "%1 mormora come Mida!",
     "message2": ""
   },
   "1545": {
-    "name": "Sazietà del Sovrano",
+    "name": "SazietàSovrano",
     "description": "Evoca dieci milioni di monete e piega i mercati.",
     "message1": "%1 piega i mercati alla propria volontà!",
     "message2": ""
   },
   "1546": {
-    "name": "Singolarità di Mercato",
+    "name": "SingolaritàMercato",
     "description": "Scuote il mercato, riscuote le rendite e chiude\nil giorno.",
     "message1": "%1 collassa l'intero mercato in un solo istante!",
     "message2": ""
@@ -7477,7 +7477,7 @@
   },
   "1576": {
     "name": "GraziaMaggiore",
-    "description": "Ristora del tutto corpo e risorse.",
+    "description": "Ripristina del tutto la salute e i bisogni\ndel gruppo.",
     "message1": "%1 invoca una grazia superiore!",
     "message2": ""
   },
@@ -7632,7 +7632,7 @@
     "message2": ""
   },
   "1604": {
-    "name": "PresagioOviparo",
+    "name": "PresagiOviparo",
     "description": "Rende oviparo il capogruppo.",
     "message1": "%1 passa alla riproduzione ovipara!",
     "message2": ""
@@ -7656,13 +7656,13 @@
     "message2": ""
   },
   "1609": {
-    "name": "BruciaAnima",
+    "name": "BruciAnima",
     "description": "Invoca il rito della bruciatura d'anime.",
     "message1": "%1 dà fuoco a un'anima!",
     "message2": ""
   },
   "1610": {
-    "name": "EvocaAnima",
+    "name": "EvocAnima",
     "description": "Invoca il rito dell'evocazione d'anime.",
     "message1": "%1 compie il rito di evocazione delle anime!",
     "message2": ""
@@ -7806,13 +7806,13 @@
     "message2": ""
   },
   "1636": {
-    "name": "RiservaArtigiano",
+    "name": "RiservArtigiano",
     "description": "Evoca materia comune da artigianato.",
     "message1": "%1 fa comparire materiali da lavoro!",
     "message2": ""
   },
   "1637": {
-    "name": "BracciataArcani",
+    "name": "BracciatArcani",
     "description": "Evoca reagenti arcani.",
     "message1": "%1 fa comparire una bracciata di reagenti!",
     "message2": ""
@@ -8238,7 +8238,7 @@
     "message2": ""
   },
   "1742": {
-    "name": "VampataAnime",
+    "name": "VampatAnime",
     "description": "Infligge danni sacri a tutti i nemici e può\napplicare Silenzio.",
     "message1": "%1 scatena RazzoDAnima!",
     "message2": ""
@@ -8298,7 +8298,7 @@
     "message2": ""
   },
   "1752": {
-    "name": "ScaricaAdArco",
+    "name": "ScaricAdArco",
     "description": "Infligge danni di Fulmine pesanti a tutti i\nnemici e ne riduce COS.",
     "message1": "%1 scatena ImpennataDArco!",
     "message2": ""
@@ -8658,7 +8658,7 @@
     "message2": ""
   },
   "1812": {
-    "name": "AgoOmbroso",
+    "name": "AgOmbroso",
     "description": "Infligge danni oscuri lievi a un nemico e ne\nriduce SAG. Colpisce per primo.",
     "message1": "%1 usa AgoDOmbra!",
     "message2": ""
@@ -8784,7 +8784,7 @@
     "message2": ""
   },
   "1833": {
-    "name": "TempestaAurorale",
+    "name": "TempestAurorale",
     "description": "Infligge danni di Fulmine a tutti i nemici e ne\nriduce INT. Colpisce per ultimo.",
     "message1": "%1 fonde Ghiaccio+Sacro+Vento!",
     "message2": ""
@@ -9210,7 +9210,7 @@
     "message2": ""
   },
   "1904": {
-    "name": "ConvocaAutoma",
+    "name": "ConvocAutoma",
     "description": "Avvia un automa che va a denaro.",
     "message1": "%1 avvia un automa che gira a monete!",
     "message2": ""
@@ -9240,7 +9240,7 @@
     "message2": ""
   },
   "1909": {
-    "name": "ConvocaAlato",
+    "name": "ConvocAlato",
     "description": "Richiama qualcosa di alato sulla linea.",
     "message1": "%1 fa scendere qualcosa di alato sulla linea!",
     "message2": ""
@@ -9318,7 +9318,7 @@
     "message2": ""
   },
   "1922": {
-    "name": "ConvocaAntico",
+    "name": "ConvocAntico",
     "description": "Chiama qualcosa di antichissimo che prosciuga\nchi la usa.",
     "message1": "%1 chiede a qualcosa di antichissimo di presentarsi!",
     "message2": ""
@@ -9391,7 +9391,7 @@
   },
   "1934": {
     "name": "StanzaOltreIlBordo",
-    "description": "Apre un varco verso un interno riservato, o\nfugge dalla battaglia.",
+    "description": "Apre un varco verso un interno riservato.",
     "message1": "%1 scavalca il bordo dello spazio!",
     "message2": ""
   },

@@ -2965,8 +2965,8 @@
                 this.refreshUISkill();
             } else {
                 SoundManager.playOk();
+                // useItem pays the cost; paying it again charged the caster twice.
                 actor.useItem(skill);
-                actor.paySkillCost(skill);
                 this._itemWindow.refresh();
                 this.refreshUISkill();
             }
@@ -4315,6 +4315,60 @@
     };
 
     // =====================================================================
+    // Once per day
+    // ---------------------------------------------------------------------
+    // A skill tagged <OncePerDay> can be cast once per in-game day by the
+    // whole party: the money spells, and anything else that would otherwise
+    // be repeated into a mint or a farm (a hive aged a day per cast, free
+    // knowledge per turn, all MP back for 80). Buying or conjuring MP back
+    // does not reset it; only the clock does. The day is read off
+    // TimeDateSystem's game minutes; without a clock the tag never blocks.
+    // =====================================================================
+    const DAY_MINUTES = 24 * 60;
+
+    function isOncePerDay(skill) {
+        return !!(skill && skill.meta && skill.meta.OncePerDay);
+    }
+
+    function gameDay() {
+        const tds = window.TimeDateSystem;
+        if (!tds || typeof tds.getGameTimeMinutes !== 'function') return null;
+        const minutes = Number(tds.getGameTimeMinutes());
+        return Number.isFinite(minutes) ? Math.floor(minutes / DAY_MINUTES) : null;
+    }
+
+    const OncePerDay = {
+        is: isOncePerDay,
+        day: gameDay,
+        castToday(skill) {
+            if (!isOncePerDay(skill) || !$gameSystem) return false;
+            const day = gameDay();
+            const log = $gameSystem._oncePerDayCasts || {};
+            return day !== null && log[skill.id] === day;
+        },
+        record(skill) {
+            if (!isOncePerDay(skill) || !$gameSystem) return;
+            const day = gameDay();
+            if (day === null) return;
+            if (!$gameSystem._oncePerDayCasts) $gameSystem._oncePerDayCasts = {};
+            $gameSystem._oncePerDayCasts[skill.id] = day;
+        }
+    };
+    window.OncePerDaySkills = OncePerDay;
+
+    const _Game_BattlerBase_meetsSkillConditions_daily = Game_BattlerBase.prototype.meetsSkillConditions;
+    Game_BattlerBase.prototype.meetsSkillConditions = function (skill) {
+        if (this.isActor() && OncePerDay.castToday(skill)) return false;
+        return _Game_BattlerBase_meetsSkillConditions_daily.call(this, skill);
+    };
+
+    const _Game_BattlerBase_paySkillCost_daily = Game_BattlerBase.prototype.paySkillCost;
+    Game_BattlerBase.prototype.paySkillCost = function (skill) {
+        _Game_BattlerBase_paySkillCost_daily.call(this, skill);
+        if (this.isActor()) OncePerDay.record(skill);
+    };
+
+    // =====================================================================
     // Assist
     // ---------------------------------------------------------------------
     // Common event 142 (the Assist skill) calls this. It borrows one battle
@@ -4343,6 +4397,7 @@
                 // battler can act with; 2 and 3 never reach a turn.
                 if (!skill || skill.occasion > 1) continue;
                 if (isAssistSkill(skill)) continue;
+                if (OncePerDay.castToday(skill)) continue;
                 if (!user.canPaySkillCost(skill)) continue;
                 pool.push({ donor: donor, skill: skill });
             }

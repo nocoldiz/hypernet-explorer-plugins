@@ -99,14 +99,11 @@
         if (fixed > 0) return fixed;
         const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
         let info = null;
-        if (BSEH && typeof BSEH.describeNationLevels === 'function') {
+        if (BSEH && typeof BSEH.describeDestinationLevels === 'function') {
+            // The country painted under the stop's square, the same answer the
+            // travel book printed for it and the spawner reads here.
             try {
-                if (entry.nationId && typeof BSEH.describeNationLevelsById === 'function') {
-                    info = BSEH.describeNationLevelsById(entry.nationId);
-                }
-                if ((!info || !info.median) && entry.country) {
-                    info = BSEH.describeNationLevels(entry.country);
-                }
+                info = BSEH.describeDestinationLevels(entry);
             } catch (e) {
                 info = null;
             }
@@ -169,16 +166,30 @@
         if (isAuthored) {
             const troopLevels = [];
             const levelRegex = /<Level:\s*(\d+)>/i;
-            const uniqueTroopIds = new Set(encounterList.map(encounter => encounter.troopId));
+            // A tower floor only fields the part of its list inside the
+            // floor's bracket, so the banner reads that part too.
+            const tower = window.DungeonFloors;
+            const band = tower && typeof tower.currentEnemyBand === 'function'
+                ? tower.currentEnemyBand() : null;
+            const fielded = (band && BSEH && typeof BSEH.filterTroopsToTowerBand === 'function')
+                ? BSEH.filterTroopsToTowerBand(encounterList, band) : encounterList;
+            const uniqueTroopIds = new Set(fielded.map(encounter => encounter.troopId));
 
-            for (const troopId of uniqueTroopIds) {
-                const enemy = $dataEnemies[troopId];
-                if (enemy && enemy.note) {
-                    const match = enemy.note.match(levelRegex);
-                    if (match && match[1]) {
-                        troopLevels.push(parseInt(match[1], 10));
-                    }
+            // An encounter entry names a TROOP, so its level is its members'.
+            const troopLevel = (troopId) => {
+                if (BSEH && typeof BSEH.getTroopMaxLevel === 'function') return BSEH.getTroopMaxLevel(troopId);
+                const troop = $dataTroops && $dataTroops[troopId];
+                let best = 0;
+                for (const m of (troop && troop.members) || []) {
+                    const enemy = $dataEnemies[m.enemyId];
+                    const match = enemy && enemy.note && enemy.note.match(levelRegex);
+                    if (match) best = Math.max(best, parseInt(match[1], 10));
                 }
+                return best;
+            };
+            for (const troopId of uniqueTroopIds) {
+                const lvl = troopLevel(troopId);
+                if (lvl > 0) troopLevels.push(lvl);
             }
 
             if (troopLevels.length > 0) {

@@ -120,6 +120,9 @@
     "counterfeiting": {
       "name": "Counterfeiting"
     },
+    "moneyforging": {
+      "name": "Money Forging"
+    },
     "identitytheft": {
       "name": "Identity Theft"
     },

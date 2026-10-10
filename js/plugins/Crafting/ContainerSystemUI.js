@@ -627,7 +627,7 @@
                 const max = Math.min(have, fit);
                 if (max === 1) {
                     SoundManager.playOk();
-                    $gameParty.loseItem(item, 1);
+                    $gameParty.keepConjured(() => $gameParty.loseItem(item, 1));
                     ContainerManager.addItem(this._containerId, ItemUtils.encodeKey(item), 1, this._isExtradimensional);
                     ContainerManager.noteStored(this._containerId, item, 1, this._isExtradimensional);
                     this._selectedIndex = 0;
@@ -683,7 +683,7 @@
             const qty  = this._quantityValue;
             SoundManager.playOk();
             if (this._quantityMode === "store") {
-                $gameParty.loseItem(item, qty);
+                $gameParty.keepConjured(() => $gameParty.loseItem(item, qty));
                 ContainerManager.addItem(this._containerId, ItemUtils.encodeKey(item), qty, this._isExtradimensional);
                 ContainerManager.noteStored(this._containerId, item, qty, this._isExtradimensional);
             } else {

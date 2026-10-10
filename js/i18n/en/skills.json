@@ -6457,7 +6457,7 @@
   },
   "1294": {
     "name": "SummonSOUL",
-    "description": "Grants one temporary SOUL share.",
+    "description": "Grants one SOUL share.",
     "message1": "%1 draws a SOUL share out of the air!",
     "message2": ""
   },
@@ -7278,7 +7278,7 @@
     "message2": ""
   },
   "1537": {
-    "name": "Rent Reap",
+    "name": "RentReap",
     "description": "Collects the day's property income.",
     "message1": "%1 reaps the day's rents!",
     "message2": ""
@@ -7290,49 +7290,49 @@
     "message2": ""
   },
   "1539": {
-    "name": "Day Dividend",
+    "name": "DayDividend",
     "description": "Forces the bank's daily reckoning.",
     "message1": "%1 forces the bank's reckoning!",
     "message2": ""
   },
   "1540": {
-    "name": "Anoki Ante",
+    "name": "AnokiAnte",
     "description": "Conjures credit onto the party's Anoki phone.",
     "message1": "%1 conjures credit onto their phone!",
     "message2": ""
   },
   "1541": {
-    "name": "Petty Purse",
+    "name": "PettyPurse",
     "description": "Conjures ten thousand coin.",
     "message1": "%1 conjures a modest purse!",
     "message2": ""
   },
   "1542": {
-    "name": "Tidy Treasure",
+    "name": "TidyTreasure",
     "description": "Conjures fifty thousand coin.",
     "message1": "%1 conjures a tidy treasure!",
     "message2": ""
   },
   "1543": {
-    "name": "Hefty Hoard",
+    "name": "HeftyHoard",
     "description": "Conjures a hundred thousand coin.",
     "message1": "%1 conjures a hefty hoard!",
     "message2": ""
   },
   "1544": {
-    "name": "Midas Murmur",
+    "name": "MidasMurmur",
     "description": "Conjures one million coin.",
     "message1": "%1 murmurs like Midas!",
     "message2": ""
   },
   "1545": {
-    "name": "Sovereign Surfeit",
+    "name": "SovereignSurfeit",
     "description": "Conjures ten million coin and bends the markets.",
     "message1": "%1 bends the markets to their will!",
     "message2": ""
   },
   "1546": {
-    "name": "Market Singularity",
+    "name": "MarketSingularity",
     "description": "Lurches the market, collects rents, closes the\nday.",
     "message1": "%1 collapses the whole market into one moment!",
     "message2": ""
@@ -7477,7 +7477,7 @@
   },
   "1576": {
     "name": "GreaterGrace",
-    "description": "Restores body and resources fully.",
+    "description": "Restores the party's health and needs fully.",
     "message1": "%1 calls down a greater grace!",
     "message2": ""
   },
@@ -9391,7 +9391,7 @@
   },
   "1934": {
     "name": "RoomOverEdge",
-    "description": "Opens a gateway into a reserved interior, or\nflees battle.",
+    "description": "Opens a gateway into a reserved interior.",
     "message1": "%1 steps over the edge of space!",
     "message2": ""
   },

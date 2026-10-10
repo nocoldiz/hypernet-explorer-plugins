@@ -1481,7 +1481,8 @@
     const item = $dataItems[Number(itemId)];
     if (!shop || !item || !isStockable(item)) return { ok: false, reason: 'notStockable' };
     let held = 0;
-    try { held = $gameParty.numItems(item); } catch (err) { held = 0; }
+    // A conjured copy is never stock: the shelf would sell it for the party.
+    try { held = $gameParty.tradableCount ? $gameParty.tradableCount(item) : $gameParty.numItems(item); } catch (err) { held = 0; }
     // Same rule as buying: only as many as the shelves take leave the bag.
     const room = stockSpaceFor(item.id, shop);
     const moving = Math.max(0, Math.min(Number(amount) || 1, held, room));
@@ -1490,7 +1491,10 @@
     if (!shop.menuPrices[item.id]) {
       shop.menuPrices[item.id] = Math.floor(item.price * defaultPriceMultiplier);
     }
-    try { $gameParty.loseItem(item, moving); } catch (err) { /* no party */ }
+    try {
+      if ($gameParty.keepConjured) $gameParty.keepConjured(() => $gameParty.loseItem(item, moving));
+      else $gameParty.loseItem(item, moving);
+    } catch (err) { /* no party */ }
     persistShops();
     return { ok: true, amount: moving };
   }

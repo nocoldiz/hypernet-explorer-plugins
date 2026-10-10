@@ -2053,7 +2053,10 @@
         if (caught) {
             const CS = window.CrimeSystem;
             try {
-                if (CS && typeof CS.addPresetCrime === "function") CS.addPresetCrime("shoplifting");
+                // Charged like any shoplifter: twice the price of the thing.
+                if (CS && typeof CS.theftBounty === "function") {
+                    CS.addCrime(CS.presetCrimeName("shoplifting"), CS.theftBounty(entry.data.price || 0), "shoplifting");
+                } else if (CS && typeof CS.addPresetCrime === "function") CS.addPresetCrime("shoplifting");
             } catch (e) { /* the shame is enough */ }
             Mind.feel("caught");
             announce("AutoIdle.auto.caught", { item: entry.data.name }, "bad");

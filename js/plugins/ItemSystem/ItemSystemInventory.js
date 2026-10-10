@@ -571,6 +571,75 @@
     if (item && amount > 0) window.ItemAcquisitionLog.record(item);
   };
 
+  //=============================================================================
+  // Conjured goods
+  //=============================================================================
+  // What a spell conjures is the party's to use, never to sell: otherwise a
+  // 26 MP spell that makes a 90,000 gold probe is a mint. The bag keeps a
+  // count of conjured copies per entry, and every route that turns a thing
+  // into money (the counter, an owned shop's shelf) offers only what is held
+  // beyond that count.
+  //
+  // A common event conjures between beginConjuring() and endConjuring(); every
+  // copy gained in between is counted. A copy that leaves the bag by being
+  // used up (eaten, drunk, spent at the bench, handed to someone) takes a
+  // conjured copy with it first. A copy that only changes place (sold,
+  // shelved, put in a chest, put on) leaves the count alone, so the
+  // conjured copies are still known when they come back.
+
+  const conjuredStore = (party) => {
+    if (!party._conjuredGoods) party._conjuredGoods = {};
+    return party._conjuredGoods;
+  };
+
+  Game_Party.prototype.conjuredCount = function (item) {
+    if (!item) return 0;
+    return Math.max(0, Number(conjuredStore(this)[acquisitionKind(item) + item.id]) || 0);
+  };
+
+  // How many copies may be turned into money.
+  Game_Party.prototype.tradableCount = function (item) {
+    if (!item) return 0;
+    return Math.max(0, this.numItems(item) - this.conjuredCount(item));
+  };
+
+  Game_Party.prototype.beginConjuring = function () {
+    if ($gameTemp) $gameTemp._conjuring = true;
+  };
+
+  Game_Party.prototype.endConjuring = function () {
+    if ($gameTemp) $gameTemp._conjuring = false;
+  };
+
+  // Runs fn with the conjured count held still: the copies it moves are going
+  // somewhere they will be counted again, not being used up.
+  Game_Party.prototype.keepConjured = function (fn) {
+    const was = $gameTemp ? $gameTemp._keepConjured : false;
+    if ($gameTemp) $gameTemp._keepConjured = true;
+    try { return fn(); } finally { if ($gameTemp) $gameTemp._keepConjured = was; }
+  };
+
+  const _Game_Party_gainItem_conjured = Game_Party.prototype.gainItem;
+  Game_Party.prototype.gainItem = function (item, amount, includeEquip) {
+    _Game_Party_gainItem_conjured.call(this, item, amount, includeEquip);
+    if (!item || !amount || !$gameTemp) return;
+    const store = conjuredStore(this);
+    const key = acquisitionKind(item) + item.id;
+    if (amount > 0) {
+      if ($gameTemp._conjuring) store[key] = (Number(store[key]) || 0) + amount;
+    } else if (!$gameTemp._keepConjured && store[key]) {
+      store[key] = Math.max(0, store[key] + amount);
+      if (!store[key]) delete store[key];
+    }
+  };
+
+  // Putting a piece on or taking it off only moves it between bag and body.
+  const _Game_Actor_tradeItemWithParty_conjured = Game_Actor.prototype.tradeItemWithParty;
+  Game_Actor.prototype.tradeItemWithParty = function (newItem, oldItem) {
+    return $gameParty.keepConjured(() =>
+      _Game_Actor_tradeItemWithParty_conjured.call(this, newItem, oldItem));
+  };
+
   const rawCategoryFromNote = (item) => {
     const utils = window.ItemSystemUtils;
     return utils && typeof utils.getRawCategoryFromNote === "function"

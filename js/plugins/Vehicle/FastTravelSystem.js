@@ -284,14 +284,11 @@
         if (fixed > 0) return { median: fixed, min: fixed, max: fixed, frozen: true };
         const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
         let info = null;
-        if (BSEH && typeof BSEH.describeNationLevels === 'function') {
+        if (BSEH && typeof BSEH.describeDestinationLevels === 'function') {
+            // The country painted under the stop's square, the same ground
+            // the spawner reads once the party is standing there.
             try {
-                if (entry.nationId && typeof BSEH.describeNationLevelsById === 'function') {
-                    info = BSEH.describeNationLevelsById(entry.nationId);
-                }
-                if ((!info || !info.median) && entry.country) {
-                    info = BSEH.describeNationLevels(entry.country);
-                }
+                info = BSEH.describeDestinationLevels(entry);
             } catch (e) {
                 info = null;
             }
@@ -303,14 +300,17 @@
     }
 
     // The level a row, a pin and the confirmation print, or "" where the place
-    // has nothing to say. One number, everywhere: the median of what roams
-    // there. The window it came out of used to ride along in the hover and in
-    // the confirmation row, and it only ever read as a second, wider, more
-    // frightening number for the same place - the party is choosing a ticket,
-    // not auditing the fauna table.
+    // has nothing to say: the bracket that roams there, "Lv. X to Y", the one
+    // window every creature met at that stop sits inside.
+    function levelInfoText(info) {
+        if (!info) return '';
+        return info.min === info.max
+            ? T('FastTravel.destLevel', { level: info.min })
+            : T('FastTravel.destLevelRange', { min: info.min, max: info.max });
+    }
+
     function destLevelText(dest) {
-        const info = destLevelInfo(dest);
-        return info ? T('FastTravel.destLevel', { level: info.median }) : '';
+        return levelInfoText(destLevelInfo(dest));
     }
 
     // ------------------------------------------------------------------------
@@ -3271,7 +3271,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
             const levelInfo = destLevelInfo(dest);
             levelRow.style.display = levelInfo ? '' : 'none';
             if (levelInfo) {
-                levelVal.innerText = T('FastTravel.destLevel', { level: levelInfo.median });
+                levelVal.innerText = levelInfoText(levelInfo);
                 levelVal.classList.toggle('is-frozen', !!levelInfo.frozen);
             }
         }

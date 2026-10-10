@@ -3431,7 +3431,9 @@
     // only way one ever appears on a shelf, and it can be bought back for
     // exactly what it paid out.
     if (fixedPrice(this._item) !== null) addConsignment(this._item, number, this);
-    _Scene_Shop_doSell.call(this, number);
+    // The copies sold are the bought ones: the conjured count stays put.
+    if ($gameParty.keepConjured) $gameParty.keepConjured(() => _Scene_Shop_doSell.call(this, number));
+    else _Scene_Shop_doSell.call(this, number);
     awardTradeXp('Appraising', earned);  // i18n-ignore  Specialization.json id
   };
 
@@ -3441,8 +3443,10 @@
   // Only what is in the bag is offered. Gear on someone's back stays there: a
   // piece has to be taken off in the equip menu before a shop will see it.
 
-  // What the party can actually hand over: the bag alone.
-  const sellableCount = (item) => $gameParty.numItems(item);
+  // What the party can actually hand over: the bag alone, less whatever a
+  // spell conjured (ItemSystemInventory's Conjured goods), which no till buys.
+  const sellableCount = (item) => ($gameParty.tradableCount
+    ? $gameParty.tradableCount(item) : $gameParty.numItems(item));
   window.ItemSystemShop = window.ItemSystemShop || {};
   window.ItemSystemShop.sellableCount = sellableCount;
   window.ItemSystemShop.stockMapKey = stockMapKey;

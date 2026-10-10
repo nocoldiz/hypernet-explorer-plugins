@@ -207,7 +207,8 @@
           sim.noteVacantTheft?.(entry.sourceMapId, entry.sourceEventId, item.price || 0);
           const C = window.CrimeSystem;
           if (C && typeof C.commit === 'function') {
-            C.commit({ crimeId: 'shoplifting', verb: 'theft', victim: recruit, target: item.name });
+            C.commit({ crimeId: 'shoplifting', verb: 'theft', victim: recruit, target: item.name,
+              bounty: typeof C.theftBounty === 'function' ? C.theftBounty(item.price || 0) : undefined });
           }
           if (window.ParchmentToast) {
             window.ParchmentToast.show(T('Steal.recruitSawTheft', { name: recruit, item: item.name }), {

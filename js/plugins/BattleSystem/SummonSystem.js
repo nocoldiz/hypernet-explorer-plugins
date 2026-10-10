@@ -2275,6 +2275,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         }
 
         const paid = payOnce(summoner, active.upkeep);
+        active.upkeepPaid = (active.upkeepPaid || 0) + paid.cost;
         refreshMeter();
         toast(T('Battle.summon.upkeep.' + active.upkeep.type, {
             name: active.name,
@@ -2396,7 +2397,21 @@ window.Game_SummonFollower = Game_SummonFollower;
                 break;
             }
             case 'purse': {                                         // i18n-ignore: internal tag
-                $gameParty.gainGold(Math.max(50, Math.round(dealt * 0.5)));
+                // A purse hands back what the rite has cost so far, in the
+                // coin it was paid in, and never more: a summon that minted
+                // money would be a mint you could leave running.
+                if (!active || !active.upkeep) break;
+                const owed = Math.max(0, (active.upkeepPaid || 0) - (active.upkeepRefunded || 0));
+                let back = 0;
+                if (active.upkeep.type === 'gold') {                // i18n-ignore: internal tag
+                    back = Math.min(owed, Math.max(50, Math.round(dealt * 0.5)));
+                    if (back > 0) $gameParty.gainGold(back);
+                } else if (active.upkeep.type === 'oil' || active.upkeep.type === 'soul') {   // i18n-ignore: internal tag
+                    back = owed;
+                    const varId = active.upkeep.type === 'oil' ? 51 : 52;   // i18n-ignore: internal tag
+                    if (back > 0) $gameVariables.setValue(varId, ($gameVariables.value(varId) || 0) + back);
+                }
+                active.upkeepRefunded = (active.upkeepRefunded || 0) + back;
                 break;
             }
         }

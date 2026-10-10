@@ -984,13 +984,16 @@
       if (!sys) return false;
       if (!this.resolveOrbitBody(systemName, planetName)) return false;
       this.stopTravel(false);
-      this.playerShip.currentSystem = systemName;
+      // The registered name, not the one asked with: a far system asked for
+      // by its label is still known everywhere else by its "GX." name.
+      const name = sys.name || systemName;
+      this.playerShip.currentSystem = name;
       this.playerShip.currentPlanet = planetName;
       this.playerShip.parkedBody = null;
-      this.currentSystem = systemName;
+      this.currentSystem = name;
       this.playerShip.position = { ...sys.position };
       this.playerShip.stoppedMidTravel = false;
-      $gameVariables.setValue(96, systemName);
+      $gameVariables.setValue(96, name);
       return true;
     }
 
@@ -2906,6 +2909,11 @@
         }
         return this._regenerateGalaxySystem(name) || undefined;
       }
+      // An authored system in another galaxy is filed under its "GX.<seed>.H"
+      // name (see _registerFarSystem), but the data files and the rocket name
+      // it by its label: "Titania" has to find the system Titania is in.
+      const far = typeof name === "string" && (this._farSystems || []).find((f) => f.label === name);
+      if (far) return far;
       return undefined;
     }
 

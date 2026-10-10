@@ -239,6 +239,12 @@
     "category": "White Collar",
     "name_int": "crime.counterfeiting.name"
   },
+  "moneyForging": {
+    "name": "Money Forging",
+    "bounty": 1000,
+    "category": "White Collar",
+    "name_int": "crime.moneyforging.name"
+  },
   "identityTheft": {
     "name": "Identity Theft",
     "bounty": 1000,

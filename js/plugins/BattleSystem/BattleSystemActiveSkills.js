@@ -40,6 +40,14 @@
  * @text Mirror Enemy Skills
  * @desc (Battle Only) The user of the skill temporarily learns all skills from all enemies in the current battle.
  *
+ * @command stealFromEnemy
+ * @text Steal From Enemy
+ * @desc (Battle Only) Takes one item from the struck enemy's drop table, once per enemy per fight.
+ *
+ * @command improvise
+ * @text Improvise
+ * @desc (Battle Only) The user casts a random ordinary battle skill at a random enemy.
+ *
  * ============================================================================
  * Parameters
  * ============================================================================
@@ -142,6 +150,92 @@
     // alive so any event still pointing at the former file name (e.g. one the
     // editor rewrites from its own project data) keeps working.
     PluginManager.registerCommand("EnhancedClassMechanics", "mirrorSkills", handleMirrorSkillsCommand);
+
+
+    //-----------------------------------------------------------------------------
+    // Steal (Mug, Master Theft)
+    //-----------------------------------------------------------------------------
+    // Takes one thing the struck enemy was carrying: a pick from its own drop
+    // table, once per enemy per fight. A miss steals nothing. It used to hand
+    // over one to four copies of any item in the database, top tier included,
+    // for 8 AP a turn.
+
+    const lastActionUser = () => {
+        const subject = BattleManager._subject;
+        if (subject && subject.isActor()) return subject;
+        const id = $gameTemp && $gameTemp.lastActionData ? $gameTemp.lastActionData(2) : 0;
+        return id ? $gameActors.actor(id) : null;
+    };
+
+    const lastTargetEnemy = () => {
+        const index = $gameTemp && $gameTemp.lastActionData ? $gameTemp.lastActionData(5) : 0;
+        return index > 0 ? $gameTroop.members()[index - 1] || null : null;
+    };
+
+    const logLine = (text) => {
+        if (BattleManager._logWindow) BattleManager._logWindow.push('addText', text);
+    };
+
+    const stealPool = (enemy) => (enemy.enemy().dropItems || [])
+        .filter(d => d && d.kind > 0 && d.dataId > 0)
+        .map(d => enemy.itemObject(d.kind, d.dataId))
+        .filter(Boolean);
+
+    const handleStealCommand = () => {
+        if (!$gameParty.inBattle()) return;
+        const user = lastActionUser();
+        const enemy = lastTargetEnemy();
+        if (!user || !enemy) return;
+        const result = enemy.result ? enemy.result() : null;
+        if (result && !result.isHit()) return;
+        const pool = enemy._stolenFrom ? [] : stealPool(enemy);
+        if (!pool.length) {
+            logLine(T('Battle.steal.nothing', { actor: user.name(), enemy: enemy.name() }));
+            return;
+        }
+        const item = pool[Math.randomInt(pool.length)];
+        enemy._stolenFrom = true;
+        $gameParty.gainItem(item, 1);
+        logLine(T('Battle.steal.stole', { actor: user.name(), item: item.name, enemy: enemy.name() }));
+    };
+
+    //-----------------------------------------------------------------------------
+    // Improvise
+    //-----------------------------------------------------------------------------
+    // Casts a random ordinary battle skill at an enemy. The pool is the plain
+    // book only: no menu rites (a common event: the level and money spells
+    // among them), nothing <Esoteric> or <Forbidden>, nothing usable only
+    // outside battle, nothing aimed at the party. It used to draw from every
+    // entry in the database, dividers and +90 levels included, cast by
+    // whoever stood first in the line rather than the one improvising.
+
+    const isImprovisable = (skill) => {
+        if (!skill || !skill.name || skill.name.startsWith('<--')) return false;
+        if (skill.meta && (skill.meta.Esoteric || skill.meta.Forbidden)) return false;
+        if (skill.occasion !== 0 && skill.occasion !== 1) return false;
+        if (skill.scope < 1 || skill.scope > 6) return false;
+        return !(skill.effects || []).some(e => e && e.code === 44);
+    };
+
+    const handleImproviseCommand = () => {
+        if (!$gameParty.inBattle()) return;
+        const user = lastActionUser();
+        const enemies = $gameTroop.aliveMembers();
+        if (!user || !enemies.length) return;
+        const pool = $dataSkills.filter(isImprovisable);
+        if (!pool.length) return;
+        const skill = pool[Math.randomInt(pool.length)];
+        const target = enemies[Math.randomInt(enemies.length)];
+        logLine(T('Battle.improvise.turnedInto', { actor: user.name(), skill: skill.name }));
+        user.forceAction(skill.id, target.index());
+        BattleManager.forceAction(user);
+    };
+
+    for (const key of [pluginName, "BattleSystem/BattleSystemActiveSkills"]) {
+        PluginManager.registerCommand(key, "stealFromEnemy", handleStealCommand);
+        PluginManager.registerCommand(key, "improvise", handleImproviseCommand);
+    }
+    window.BattleActiveSkills = { isImprovisable, stealPool };
 
 
     //-----------------------------------------------------------------------------

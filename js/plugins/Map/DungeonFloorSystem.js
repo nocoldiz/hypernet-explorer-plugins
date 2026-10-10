@@ -21,12 +21,23 @@
  * Maps within a valid group that lack Region ID 13 will not be used for
  * the start or end rooms.
  *
+ * --- The levels file ---
+ * A level is one map sitting in the Tower Levels folder (166) together with
+ * every map hanging under it in the editor. The build writes the levels, and
+ * each map's staircase (Region 13) and secret room (Region 14) squares, into
+ * data/DefaultWorld/dungeonLevels.json (tools/build/gen_dungeon_levels.js,
+ * rerun whenever the default world is regenerated). Every world lays its
+ * tower out of that file; the maps are only scanned when it is missing.
+ *
  * --- World generation ---
  * The floor layout is world data, not run data: it is rolled from the world
  * seed while the world is being created (WorldManager's "dungeon" step, which
  * runs the same routine as the Generate Dungeon plugin command) and the
  * Dungeon Generated switch is turned ON to say the world has one. Being a
  * world switch, it is shared by every savegame of that world.
+ * The default "esoteric" world is the exception: it ships as one snapshot, so
+ * its tower is rolled on a fresh seed of its own the first time the party
+ * takes Next Floor, Secret First Floor or any other way in.
  *
  * --- Special Floor Transitions ---
  * - From Town (Floor 0), using "nextFloor" teleports you to Map ID 1399 (X:22, Y:68).
@@ -238,7 +249,8 @@
     // directly in the dungeon folder (map 166). A map added to that folder is
     // a floor, no list to edit. The groups below only say which maps belong to
     // the SAME floor: a floor spread over several rooms, keyed by the room the
-    // pool deals. Ids that are not in the folder are ignored.
+    // pool deals. Ids that are not in the folder are ignored. Only read when
+    // data/DefaultWorld/dungeonLevels.json is missing: the file's levels win.
     floorGroups: [
       [12, 139], [15, 140, 348, 406, 546, 543], [16, 429], [19, 332, 697, 698],
       [20, 344, 407], [21, 334, 336, 335], [22, 446], [23, 346],
@@ -315,6 +327,44 @@
     }
     _mapDataCache[mapId] = mapData;
     return mapData;
+  }
+
+  //=============================================================================
+  // The tower's levels, as the build wrote them
+  //=============================================================================
+  // data/DefaultWorld/dungeonLevels.json (tools/build/gen_dungeon_levels.js,
+  // rebuilt with the default world) lists every level of the Tower Levels
+  // folder with all the maps in its subtree, and the squares on each map a
+  // staircase (Region 13) or a secret room (Region 14) may stand on. Every
+  // world lays its tower out of it; only when it is missing are the maps
+  // themselves opened and scanned.
+  const LEVELS_FILE = "data/DefaultWorld/dungeonLevels.json";
+  let _levelsFile;
+  function dungeonLevelsFile() {
+    if (_levelsFile !== undefined) return _levelsFile;
+    _levelsFile = null;
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", LEVELS_FILE, false);
+      xhr.overrideMimeType("application/json");
+      xhr.send();
+      if (xhr.status < 400 && xhr.responseText) {
+        const parsed = JSON.parse(xhr.responseText);
+        if (parsed && Array.isArray(parsed.levels) && parsed.maps) _levelsFile = parsed;
+      }
+    } catch (e) {
+      _levelsFile = null;
+    }
+    return _levelsFile;
+  }
+
+  // The squares of one kind ("stairs" or "secret") the file holds for a map,
+  // as {x, y}, or null when the file does not know the map.
+  function levelSquares(mapId, kind) {
+    const file = dungeonLevelsFile();
+    const entry = file && file.maps[String(mapId)];
+    if (!entry || !Array.isArray(entry[kind])) return null;
+    return entry[kind].map(([x, y]) => ({ x, y }));
   }
 
   //=============================================================================
@@ -506,14 +556,17 @@ Game_System.prototype.generateTreasureRoomPosition = function(mapId, floor) {
       this._treasureRoomPositions = {};
   }
 
-  let region14Tiles = [];
-  try {
-      const mapData = loadMapDataSync(mapId);
-      if (mapData) {
-          region14Tiles = this.findRegion14Tiles(mapData);
-      }
-  } catch (e) {
-      console.error("Error loading map data for treasure room positioning", e);
+  let region14Tiles = levelSquares(mapId, "secret");
+  if (!region14Tiles) {
+    region14Tiles = [];
+    try {
+        const mapData = loadMapDataSync(mapId);
+        if (mapData) {
+            region14Tiles = this.findRegion14Tiles(mapData);
+        }
+    } catch (e) {
+        console.error("Error loading map data for treasure room positioning", e);
+    }
   }
 
   // Store a randomly chosen Region 14 tile (or null if none exist)
@@ -552,6 +605,11 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
       }
 
       let hasRegion = false;
+      const known = levelSquares(mapId, "stairs");
+      if (known) {
+          this._mapRegion13Cache[mapId] = known.length > 0;
+          return known.length > 0;
+      }
       try {
           const mapData = loadMapDataSync(mapId);
           if (mapData) {
@@ -576,8 +634,18 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     if (!Array.isArray(infos)) return [];
 
     const groupFor = new Map();
-    for (const group of params.floorGroups) {
-      if (Array.isArray(group) && group.length) groupFor.set(group[0], group);
+    const file = dungeonLevelsFile();
+    if (file) {
+      // A level is its map and everything hanging under it in the editor.
+      for (const level of file.levels) {
+        if (level && Array.isArray(level.maps) && level.maps.length > 1) {
+          groupFor.set(level.mapId, level.maps.slice());
+        }
+      }
+    } else {
+      for (const group of params.floorGroups) {
+        if (Array.isArray(group) && group.length) groupFor.set(group[0], group);
+      }
     }
     const reserved = new Set([
       ...params.elevatorMaps,
@@ -641,6 +709,11 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
   // world's hundred floors above ground and its ninety-two below are the same
   // in every savegame of that world.
   function dungeonWorldSeed() {
+    // A tower rolled on first entry (the default "esoteric" world, see
+    // ensureDungeonLayout) carries a seed of its own instead of the world's.
+    if (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._dungeonSeed != null) {
+      return $gameSystem._dungeonSeed;
+    }
     if (window.HistoryManager && typeof window.HistoryManager.getSeed === "function") {
       return window.HistoryManager.getSeed();
     }
@@ -662,6 +735,49 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     }
     return this._seededRandom();
   };
+
+  // The default world is shipped as one snapshot, so a tower rolled from its
+  // seed would be the same hundred floors for every player who ever opens it.
+  // On the "esoteric" seed the layout is therefore NOT made with the world:
+  // it is rolled on a fresh seed of its own the first time the party heads
+  // into the tower (Next Floor, Secret First Floor, any staircase or lift).
+  function isEsotericSeedWorld() {
+    const wm = window.WorldManager;
+    if (!wm || typeof wm.worldInfo !== "function" || !wm.DEFAULT_SEED) return false;
+    try {
+      if (wm.hasActiveWorld && !wm.hasActiveWorld()) return false;
+      const info = wm.worldInfo();
+      return !!info && String(info.seed).toLowerCase() === String(wm.DEFAULT_SEED).toLowerCase();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // A layout this world's tower can still be rolled over: the esoteric world's
+  // was never given a seed of its own (none at all, or the one copied out of an
+  // older default world snapshot) and nobody has climbed into it yet.
+  function dungeonLayoutPending() {
+    if (!isEsotericSeedWorld() || params.demoMode) return false;
+    if ($gameSystem._dungeonSeed != null) return false;
+    if (!$gameSystem.isDungeonGenerated()) return true;
+    const reached = $gameVariables.value(params.maxFloorVariable) || 0;
+    return reached <= 0 && !($gameSystem._dungeonDepthReached > 0);
+  }
+
+  function rollDungeonSeed() {
+    return (Math.floor(Math.random() * 0xffffffff) >>> 0) || 1;
+  }
+
+  // Called by every way into the tower, before anything reads the layout.
+  function ensureDungeonLayout() {
+    $gameSystem.initDungeonSystem();
+    if (dungeonLayoutPending()) {
+      $gameSystem._dungeonSeed = rollDungeonSeed();
+      $gameSystem.generateDungeon();
+    } else if (!$gameSystem.isDungeonGenerated()) {
+      $gameSystem.generateDungeon();
+    }
+  }
 
   Game_System.prototype.generateDungeon = function () {
     const historySeed = dungeonWorldSeed();
@@ -825,10 +941,14 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
 
     // Helper to get tiles for a single map
     const getTilesForMap = (mapId) => {
+      const known = levelSquares(mapId, "stairs");
+      // The build's squares answer for a map that has them; a map without
+      // any still needs its open floor read for the fallback below.
+      if (known && known.length >= 2) return { regionTiles: known, passableTiles: [] };
       const mapData = loadMapDataSync(mapId);
       if (mapData) {
         try {
-          const regionTiles = this.findRegion13Tiles(mapData);
+          const regionTiles = known || this.findRegion13Tiles(mapData);
           const passableTiles = this.findPassableTiles(mapData);
           return { regionTiles, passableTiles };
         } catch (e) {
@@ -1088,6 +1208,8 @@ Game_System.prototype.isPassableTileFromTilesets = function (mapData, x, y) {
   if (window.WorldManager && window.WorldManager.registerWorldInitializer) {
     window.WorldManager.registerWorldInitializer("dungeon", 40, () => {
       $gameSystem.initDungeonSystem();
+      // The esoteric world's tower waits for its first visitor instead.
+      if (isEsotericSeedWorld()) return;
       if (!$gameSystem.isDungeonGenerated() || $gameSystem.isDemoLayoutStale()) {
         $gameSystem.generateDungeon();
       } else {
@@ -1317,6 +1439,10 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // Where Go to Previous Floor out of floor 1 lands in the Stairs Hall: south
     // of the up staircase (12-14, 24), so the walk back never re-touches it.
     FIRST_FLOOR_EXIT: { floor: 0, mapId: 635, x: 13, y: 25, dir: 2 },
+    // The lift car (map 3) Return to Elevator walks the party into from an
+    // authored floor: just inside its door, facing it. The door rides them
+    // back to the floor they left, the panel to any other.
+    ELEVATOR_CAR: { mapId: 3, x: 8, y: 9, dir: 8 },
     // The hidden way onto floor 1, reached through the Secret First Floor command.
     SECRET_FIRST_FLOOR: { floor: 1, mapId: 101, x: 16, y: 38, dir: 8 },
     // Where Return from Secret First Floor lets the party out, off the tower.
@@ -1856,6 +1982,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
 
   function moveToLowerFloor(floor, arrival) {
     if (!isLowerFloor(floor) || isDemoLockedLowerFloor(floor)) return;
+    ensureDungeonLayout();
     $gameVariables.setValue(params.currentFloorVariable, floor);
     $gameVariables.setValue(params.elevatorFloorVariable, floor);
     recordTowerDepth(floor);
@@ -1919,13 +2046,6 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // one of its floors. A false answer means the tower has no claim on them and
   // the world map may have the press.
   // ---------------------------------------------------------------------------
-
-  // The lift hall each level of nine authored floors hangs off: floors 1-9 ride
-  // out through floor 10, 11-19 through 20, and everything above 90 through the
-  // last hall there is.
-  function elevatorFloorFor(floor) {
-    return Math.min(Math.ceil(floor / 10) * 10, 90);
-  }
 
   function onElevatorFloor() {
     return params.elevatorMaps.indexOf($gameMap.mapId()) >= 0;
@@ -2041,19 +2161,14 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
 
     const floor = $gameVariables.value(params.currentFloorVariable);
     if (!(floor >= 1 && floor <= 100)) return false;
-    // Stepping into the lift is not the same as having climbed to the hall it
-    // stands in: the party rides out from their own floor, so that floor stays
-    // the current one and the deepest floor reached never moves. The lift car
-    // is the hall map for their stretch of the tower, entered at its own spot.
-    const reached = $gameVariables.value(params.maxFloorVariable) || 0;
-    moveToFloor(elevatorFloorFor(floor), "elevator");
-    // moveToFloor books the hall as the floor the party stands on. They are in
-    // the lift, not on floor 10: put their own floor back on the panel.
+    // The party steps into the lift car itself, not into the hall of their
+    // stretch of the tower. Their own floor stays the current one and the one
+    // the car's door takes them back to; the deepest floor reached never moves.
+    const car = TOWER.ELEVATOR_CAR;
     $gameVariables.setValue(params.currentFloorVariable, floor);
     $gameVariables.setValue(params.elevatorFloorVariable, floor);
-    if (($gameVariables.value(params.maxFloorVariable) || 0) > reached) {
-      $gameVariables.setValue(params.maxFloorVariable, reached);
-    }
+    $gameScreen.startFadeOut(1);
+    $gamePlayer.reserveTransfer(car.mapId, car.x, car.y, car.dir, 0);
     return true;
   }
 
@@ -2061,34 +2176,23 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // the world has been, or what a creature down here weighs, asks through it.
   // ---------------------------------------------------------------------------
   // What lives on an authored floor. A floor of the upper tower is a rung, and
-  // the rung says which levels stand on it, whichever map was dealt to it:
+  // the rung says which levels stand on it, whichever map was dealt to it.
+  // Each decade of floors starts at its own tens and its lower half stops five
+  // levels up; the upper half opens the ceiling to the next tens:
   //
-  //   floors 1-5    ->  enemy levels 1-10
-  //   floors 6-10   ->  1-20
+  //   floors 1-5    ->  1-5                    floors 51-55  ->  50-55
+  //   floors 6-10   ->  5-10                   floors 56-60  ->  50-60
+  //   floors 11-15  ->  10-15                  floors 61-65  ->  60-65
+  //   floors 16-20  ->  10-20                  floors 66-70  ->  60-70
+  //   floors 21-25  ->  20-25                  floors 71-75  ->  70-75
+  //   floors 26-30  ->  20-30                  floors 76-80  ->  70-80
+  //   floors 31-35  ->  30-35                  floors 81-85  ->  80-85
+  //   floors 36-40  ->  30-40                  floors 86-90  ->  80-90
+  //   floors 41-45  ->  40-45                  floors 91-95  ->  90-95
+  //   floors 46-50  ->  40-50                  floors 96-100 ->  90-100
   //
-  // The first ten floors keep their floor at 1: the tower a newcomer walks in
-  // on is a spread of everything weak, not a ladder, and it is the ceiling
-  // alone that opens as they climb.
-  //
-  // Above the tenth the rung is halved, so the ceiling creeps up five levels
-  // at a time instead of ten: a decade keeps its own floor throughout and it
-  // is the upper half of it that opens the ceiling.
-  //
-  //   floors 11-15  ->  20-25                  floors 51-55  ->  60-65
-  //   floors 16-20  ->  20-30                  floors 56-60  ->  60-70
-  //   floors 21-25  ->  30-35                  floors 61-65  ->  70-75
-  //   floors 26-30  ->  30-40                  floors 66-70  ->  70-80
-  //   floors 31-35  ->  40-45                  floors 71-75  ->  80-85
-  //   floors 36-40  ->  40-50                  floors 76-80  ->  80-90
-  //   floors 41-45  ->  50-55                  floors 81-85  ->  90-95
-  //   floors 46-50  ->  50-60                  floors 86-100 ->  90-100
-  //
-  // The top of the tower is the top of the bestiary and no further. Nothing in
-  // the enemy data is built above level 100, so a rung written over it holds
-  // NOBODY: the old open-ended 91-99 rung and a throne at 140-160 were both
-  // asking for creatures that do not exist, and the cull fell back to whatever
-  // the map declared underneath. 90-100 is the last rung the roster can
-  // actually fill, so every rung from 86 up is that one.
+  // The top of the tower is the top of the bestiary: nothing in the enemy data
+  // is built above level 100, so no rung asks for more.
   // The party's own level, how far from home the map lies and the enemy spawn
   // option in the menu all have no say inside the tower: the floor decides.
   // ---------------------------------------------------------------------------
@@ -2098,15 +2202,12 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   function upperFloorEnemyBand(floor) {
     if (!Number.isFinite(floor) || floor < 1 || floor > 100) return null;
     if (floor === 100) return { min: THRONE_BAND.min, max: THRONE_BAND.max };
-    if (floor >= 91) return { min: 90, max: ENEMY_LEVEL_CEILING };
-    if (floor <= 5) return { min: 1, max: 10 };
-    if (floor <= 10) return { min: 1, max: 20 };
+    if (floor <= 5) return { min: 1, max: 5 };
+    if (floor <= 10) return { min: 5, max: 10 };
     const decade = Math.ceil(floor / 10);
-    const min = Math.min(decade * 10, ENEMY_LEVEL_CEILING - 10);
-    // The lower half of a decade stops halfway up the rung, the upper half
-    // takes the whole of it.
-    const reach = (floor - (decade - 1) * 10) <= 5 ? 5 : 10;
-    return { min: min, max: Math.min(min + reach, ENEMY_LEVEL_CEILING) };
+    const min = (decade - 1) * 10;
+    const lowerHalf = (floor - min) <= 5;
+    return { min: min, max: Math.min(min + (lowerHalf ? 5 : 10), ENEMY_LEVEL_CEILING) };
   }
 
   // The authored floor the party is standing on, 0 when they are not on one.
@@ -3455,8 +3556,8 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // Every floor this handles is an authored map above ground, so whatever the
     // party was standing on below it, they are leaving the lower tower.
     clearTowerSession();
-    if (!$gameSystem.isDungeonGenerated()) {
-        $gameSystem.generateDungeon();
+    if (dungeonLayoutPending() || !$gameSystem.isDungeonGenerated()) {
+        ensureDungeonLayout();
     } else if ($gameSystem.isDemoLayoutStale()) {
         // A save made before the demo rules changed still holds forbidden maps.
         // Rebuild it, keeping the floor the player had already reached.

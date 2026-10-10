@@ -2158,12 +2158,15 @@
   // arrives on a real body moves the ship into orbit of that body, through
   // the one routine GalaxySim moves it with anywhere else.
   //
-  // Which body: the world a crossing is aimed at, else the pad it comes down
-  // on, else the pad it went up from (a climb to the ship from the Moon docks
-  // with a ship over the Moon), else the Earth.
+  // Which body: a flight to the SHIP docks with it over the world it left -
+  // the Earth off any Earth pad, Zeta B II off the Monument, Titania off the
+  // embassy - whatever crossing the cinematic flies to get there. Otherwise
+  // the world a crossing is aimed at, else the pad it comes down on, else the
+  // pad it went up from, else the Earth.
   // i18n-ignore-start  world ids, system and body names from Systems.json
   const EARTH_ORBIT = { system: "Sol", planet: "Earth" };
   function arrivalWorld(profile, site, dest) {
+    if (dest && dest.id === "ship") return (site && site.body) || "earth";
     return (profile && profile.world) || (dest && dest.body) || (site && site.body) || "earth";
   }
   // i18n-ignore-end
@@ -2176,7 +2179,11 @@
       const dm = GS && GS.getDataManager && GS.getDataManager();
       if (!dm || typeof dm.teleportToPlanetOrbit !== "function") return false;
       const ship = dm.playerShip || {};
-      if (!ship.isMoving && ship.currentSystem === w.system && ship.currentPlanet === w.planet) return true;
+      // Titania is filed under its galaxy's "GX." name: compare the system
+      // the label resolves to, not the label itself.
+      const sys = dm.getSystem && dm.getSystem(w.system);
+      const sysName = (sys && sys.name) || w.system;
+      if (!ship.isMoving && ship.currentSystem === sysName && ship.currentPlanet === w.planet) return true;
       return !!dm.teleportToPlanetOrbit(w.system, w.planet);
     } catch (e) { return false; }
   }

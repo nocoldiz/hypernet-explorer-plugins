@@ -48,6 +48,7 @@
   "destFuel": "{place} ({liters}L, {km} km)",
   "destCost": "{place} ({cost}€, {km} km)",
   "destLevel": "Lv. {level}",
+  "destLevelRange": "Lv. {min} to {max}",
   "ui": {
     "back": "Back",
     "edit": "Edit",

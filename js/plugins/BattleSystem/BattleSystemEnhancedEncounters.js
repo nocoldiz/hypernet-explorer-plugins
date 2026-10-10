@@ -37,10 +37,11 @@
  * reading before it is walked, and the atlas prints each country's median
  * enemy level for exactly that reason.
  *
- * The bracket is not a wall. Creatures below it and creatures above it both
- * keep a real chance of turning up, rarer the further out they sit and rarer
- * above than below, so a square is a place with a character rather than a rack
- * of identically levelled monsters.
+ * The bracket is a wall. Only creatures whose level sits inside it are met
+ * there: nothing rarer from under it, nothing rarer from over it, and no spawn
+ * is set aside for anything outside it. The country is read off the ground
+ * the party is standing on, so a fast travel lands them under the bracket the
+ * travel book printed for that stop.
  *
  * Underground goes with the country it is under: a dungeon, a sewer, a crypt
  * or any other generated interior rolled on a nation's ground is pitched at
@@ -140,15 +141,11 @@
  * Spawn era (in-game year; only where no nation bracket rules)
  * ----------------------------------------------------------------------------
  *   2001-2009  levels capped at 100, nothing else changes.
- *   2010+      the cap stays at 100, but a quarter of the roaming enemies is
- *              drawn from a level 80-100 pool.
- *   2012+      the cap is lifted and two fifths of the roaming enemies are
- *              drawn from a level 100+ pool.
- * These high-level spawns ignore the party level and how far from home the
- * party has walked, and appear alongside the normally levelled fauna. On a
- * nation's own ground they stand aside entirely: the bracket's tail of rarer
- * over-levelled strays is already what they were there to provide. The sandbox
- * lifts the cap at any year, and scales enemy stats instead (SandboxMode.js).
+ *   2010+      the cap stays at 100.
+ *   2012+      the cap is lifted.
+ * No share of the roaming enemies is reserved for a high-level pool any more:
+ * every spawn comes out of the band the place holds. The sandbox lifts the cap
+ * at any year, and scales enemy stats instead (SandboxMode.js).
  *
  * ----------------------------------------------------------------------------
  * Reinforcements (Scene_Battle fights only)
@@ -814,11 +811,10 @@
     // in every year of the game. France is dealt the low window too but climbs
     // out of it with everybody else.
     //
-    // Nothing about this bracket is a wall. Creatures BELOW it and creatures
-    // ABOVE it both keep a real chance of turning up (see nationBracketWeight),
-    // rarer the further out they sit and rarer above than below, so a square is
-    // a place with a character rather than a rack of identically levelled
-    // monsters.
+    // The bracket is a wall: only creatures whose level sits inside it turn up
+    // (see filterTroopsInBracket). Nothing rarer is let in from under it or
+    // over it, so the window the atlas, the travel book and the map banner
+    // print is exactly what roams there.
     //
     // Where it does NOT apply, and each of these keeps the rule it already had:
     //   - the Omega Tower, upper and lower alike: a floor's DEPTH is its level
@@ -885,24 +881,6 @@
     const BRACKET_MIN_WIDTH  = 10;  // narrowest window a rolled nation gets
     const BRACKET_MAX_WIDTH  = 25;  // widest
     const BRACKET_YEAR_STEP  = 5;   // levels every bracket climbs per year
-
-    // How much rarer a creature outside the bracket is. Below is still the
-    // gentler slope; above is the steeper one (something out of its depth is a
-    // surprise, and is meant to stay one).
-    //
-    // The floor under the bracket used to be wide and high enough that the
-    // strays outnumbered the residents: the troop table holds far more low
-    // creatures than high ones, so a 0.18 floor over six hundred of them beat
-    // the couple of hundred inside a high country's window, and the ground
-    // fielded small fry wherever it was read. That window is what the atlas,
-    // the travel book and the loot roll all print, so it has to be what
-    // actually turns up: the slope is tighter and the floor is the same as the
-    // one above the bracket, with the slope under still the gentler of the two.
-    // The small fry stay possible; they no longer own the country.
-    const BRACKET_UNDER_WIDTH = 9;
-    const BRACKET_OVER_WIDTH  = 8;
-    const BRACKET_UNDER_FLOOR = 0.05;
-    const BRACKET_OVER_FLOOR  = 0.05;
 
     // Deterministic 0..1 from the world seed, a nation's name and a salt, so a
     // nation's bracket is the same in every session of a world and no two
@@ -1032,10 +1010,17 @@
         return { min: min, max: max, center: (min + max) / 2, nation: countryName };
     };
 
-    // The country the party is standing in, by name. $gameWeather is the
-    // authority (it is what set Variable 86 in the first place); the variable
-    // is the fallback for a save taken before the weather came up.
+    // The country the party is standing in, by name. The ground decides: a
+    // map's own <Country> tag first, then the region painted on the world map
+    // under the square the party stands on. $gameWeather only learns the
+    // country while the party walks the world map, so a fast travel, a
+    // border crossing between squares or a globe walk leaves it naming the
+    // last country walked, and the bracket read off it was somebody else's.
+    // It (and Variable 86 after it) is only the fallback for ground no region
+    // is painted on.
     BSE.Helpers.getNationName = function() {
+        const ground = BSE.Helpers.getGroundNationName();
+        if (ground) return ground;
         let cc = null;
         try {
             cc = (typeof $gameWeather !== 'undefined' && $gameWeather)
@@ -1053,6 +1038,40 @@
         return hit ? hit.country : '';
     };
 
+    // The country painted at world-map square (x, y), by name, or '' where the
+    // region layer paints nothing (the sea, off the map, a globe square).
+    BSE.Helpers.getNationNameAt = function(x, y) {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem ||
+            typeof $gameSystem.getCountryFromWorldCoordinates !== 'function') return '';
+        const nx = Number(x), ny = Number(y);
+        if (!Number.isFinite(nx) || !Number.isFinite(ny)) return '';
+        try {
+            const c = $gameSystem.getCountryFromWorldCoordinates(nx | 0, ny | 0);
+            return (c && c.country) || '';
+        } catch (e) {
+            return '';
+        }
+    };
+
+    // The country of the ground under the party, '' where it cannot be told.
+    BSE.Helpers.getGroundNationName = function() {
+        if (typeof $gameMap === 'undefined' || !$gameMap) return '';
+        const tag = (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.meta)
+            ? $dataMap.meta.Country : undefined;
+        if (typeof tag === 'string' && tag.trim()) {
+            const wanted = tag.trim().toLowerCase();
+            const countries = (window.WorldGen && window.WorldGen.Countries) || [];
+            const hit = countries.find(c => c && c.country && c.country.toLowerCase() === wanted);
+            if (hit) return hit.country;
+        }
+        const WMT = window.WorldMapTransfer;
+        if (!WMT || typeof WMT.currentWorldCoords !== 'function') return '';
+        if (typeof WMT.isAlienSurface === 'function' && WMT.isAlienSurface()) return '';
+        let at = null;
+        try { at = WMT.currentWorldCoords(); } catch (e) { at = null; }
+        return at ? BSE.Helpers.getNationNameAt(at.x, at.y) : '';
+    };
+
     // The band in force where the party is standing, or null where the country
     // has nothing to say: the tower (the depth decides), off Earth (the space
     // decides) and anywhere outside the Europe zone.
@@ -1063,32 +1082,26 @@
         return BSE.Helpers.getNationBand(BSE.Helpers.getNationName());
     };
 
-    // How often a creature of this level turns up in a nation whose band is
-    // `band`. One inside the bracket, tapering outside it and then holding at a
-    // floor, so nothing the place holds is ever off the table: the country's
-    // own small fry stay a common sight and something well over the bracket
-    // stays a rare one.
+    // Is a creature of this level met at all in a nation whose band is `band`?
+    // 1 inside the bracket, 0 outside it: the bracket is a wall.
     BSE.Helpers.nationBracketWeight = function(level, band) {
-        const lvl = Math.max(1, level || 1);
         if (!band) return 1;
-        if (lvl >= band.min && lvl <= band.max) return 1;
-        if (lvl < band.min) {
-            const d = (band.min - lvl) / BRACKET_UNDER_WIDTH;
-            return Math.max(BRACKET_UNDER_FLOOR, 1 / (1 + d * d));
-        }
-        const d = (lvl - band.max) / BRACKET_OVER_WIDTH;
-        return Math.max(BRACKET_OVER_FLOOR, 1 / (1 + d * d));
+        const lvl = Math.max(1, level || 1);
+        return (lvl >= band.min && lvl <= band.max) ? 1 : 0;
     };
 
-    // Apply that weighting to an encounter list, leaving the entries themselves
-    // alone. Nothing is dropped, which is what keeps the strays possible and
-    // the list impossible to empty.
-    BSE.Helpers.spreadNationBracket = function(encList, band) {
+    // Narrow a candidate list to the creatures inside `band`, and nothing
+    // else. Only a list holding nothing at all inside it falls back, and then
+    // to the creatures sitting nearest the window, so a map is never emptied.
+    BSE.Helpers.filterTroopsInBracket = function(encList, band) {
         if (!encList || !encList.length || !band) return encList;
-        return encList.map(enc => Object.assign({}, enc, {
-            weight: (enc.weight || 1) * BSE.Helpers.nationBracketWeight(
-                BSE.Helpers.getTroopMaxLevel(enc.troopId), band)
-        }));
+        const levels = encList.map(enc => BSE.Helpers.getTroopMaxLevel(enc.troopId));
+        const inside = encList.filter((enc, i) => levels[i] >= band.min && levels[i] <= band.max);
+        if (inside.length > 0) return inside;
+        const gap = lvl => lvl < band.min ? band.min - lvl : lvl - band.max;
+        let best = Infinity;
+        levels.forEach(lvl => { best = Math.min(best, gap(lvl)); });
+        return encList.filter((enc, i) => gap(levels[i]) === best);
     };
 
     // The danger ladder. A generated structure sits on one rung of it and that
@@ -1142,7 +1155,8 @@
             if (!lead || !/<Biome:/i.test(lead.note || '')) continue;
             const lvl = BSE.Helpers.getTroopMaxLevel(i);
             if (!lvl) continue;
-            entries.push({ level: lvl, weight: BSE.Helpers.nationBracketWeight(lvl, band) });
+            const weight = BSE.Helpers.nationBracketWeight(lvl, band);
+            if (weight > 0) entries.push({ level: lvl, weight: weight });
         }
         let median = 0;
         if (entries.length) {
@@ -1189,6 +1203,24 @@
         const countries = (window.WorldGen && window.WorldGen.Countries) || [];
         const hit = countries.find(c => c && c.id === id && c.region === BRACKET_REGION);
         return hit ? BSE.Helpers.describeNationLevels(hit.country) : null;
+    };
+
+    // The same answer for a Destinations.json stop, read the way the spawner
+    // will read it once the party is there: the country painted under the
+    // stop's own square first, its "nationId" and "country" only where that
+    // square is unpainted. A stop whose data names one country while its
+    // square is painted as another prints the bracket that actually roams it.
+    BSE.Helpers.describeDestinationLevels = function(entry) {
+        if (!entry) return null;
+        const base = entry.base;
+        if (base && Number.isFinite(Number(base.x)) && Number.isFinite(Number(base.y))) {
+            const painted = BSE.Helpers.getNationNameAt(base.x, base.y);
+            const info = painted ? BSE.Helpers.describeNationLevels(painted) : null;
+            if (info) return info;
+        }
+        let info = entry.nationId ? BSE.Helpers.describeNationLevelsById(entry.nationId) : null;
+        if (!info && entry.country) info = BSE.Helpers.describeNationLevels(entry.country);
+        return info;
     };
 
     // ========================================================================
@@ -1303,45 +1335,6 @@
      */
     BSE.Helpers.getSeededBossTroop = function(targetBiome) {
         return BSE.Helpers.pickSeededTroop(BSE.Helpers.getBossTroops(targetBiome));
-    };
-
-    // The era's high-level pool: every troop whose level falls inside the era
-    // band (80-100 from 2010, 100+ from 2012), as weighted {troopId, weight}
-    // entries ready for the same weighted pick the encounter list uses.
-    //
-    // Neither the party level nor the distance from home is consulted, which
-    // is the whole point of these spawns. Troops matching the
-    // local biome are preferred so the monsters still belong to the place they
-    // turn up in, and the fallback is limited to biome-tagged fauna so bosses
-    // and alien species never leak into a roaming spawn. The nation frequency
-    // survives as a soft weight with a floor: these are not local fauna, so a
-    // nation never suppresses them entirely.
-    BSE.Helpers.getEraElitePool = function(targetBiome, era) {
-        era = era || BSE.Helpers.getSpawnEra();
-        if (!era.eliteMin) return [];
-        const biomeMatched = [];
-        const anyFauna = [];
-        for (let i = 1; i < $dataTroops.length; i++) {
-            const troop = $dataTroops[i];
-            if (!troop || !troop.members.length || troop._bseReinforced) continue;
-            const lvl = BSE.Helpers.getTroopMaxLevel(i);
-            if (lvl < era.eliteMin || lvl > era.eliteMax) continue;
-            const lead = $dataEnemies[troop.members[0].enemyId];
-            if (!lead || !lead.note || !/<Biome:/i.test(lead.note)) continue;
-            // The `anyFauna` fallback below reaches the whole table, so the
-            // special-biome residents have to be turned away here (section 4a).
-            if (!BSE.Helpers.troopAllowedInBiome(i, targetBiome)) continue;
-            const entry = {
-                troopId: i,
-                weight: Math.max(0.25, BSE.Helpers.getNationEnemyWeight(troop.members[0].enemyId)),
-                regionId: 0
-            };
-            if (targetBiome && BSE.Helpers.troopMatchesBiome(i, targetBiome)) {
-                biomeMatched.push(entry);
-            }
-            anyFauna.push(entry);
-        }
-        return biomeMatched.length > 0 ? biomeMatched : anyFauna;
     };
 
     // ========================================================================
@@ -1659,13 +1652,12 @@
     // party's head both stay possible.
     BSE.Helpers.filterTroopsForMode = function(encList, mode, band) {
         // Under a nation bracket the country is the whole rule: the window it
-        // was dealt, with the creatures under and over it kept as the rare
-        // strays that stop a square reading as a rack of equal monsters. The
+        // was dealt and nothing outside it. The
         // party is not consulted at all - a level 60 party in a 1-15 nation
         // meets that nation's rats, which is what makes the map worth reading.
         if (band && band.nation) {
             return BSE.Helpers.applyNoviceTilt(
-                BSE.Helpers.spreadNationBracket(encList, band));
+                BSE.Helpers.filterTroopsInBracket(encList, band));
         }
         if (BSE.Helpers.rollBiomeTether()) {
             return BSE.Helpers.applyNoviceTilt(BSE.Helpers.filterTroopsInLevelBand(
@@ -2336,13 +2328,11 @@
             candidates.push({ troopId: i });
         }
         // The band and the spread, exactly as the spawner applies them. Under a
-        // nation bracket nothing is filtered out at all - the strays above and
-        // below the country's window are part of what it fields, so they are
-        // part of what the median is taken over.
+        // nation bracket that is the country's window and nothing outside it.
         const local = [];
         let localTotal = 0;
         const inBand = band.nation
-            ? candidates
+            ? BSE.Helpers.filterTroopsInBracket(candidates, band)
             : BSE.Helpers.filterTroopsInLevelBand(candidates, band);
         inBand.forEach(enc => {
             const lvl = BSE.Helpers.getTroopMaxLevel(enc.troopId);
@@ -2355,27 +2345,9 @@
             localTotal += weight;
         });
 
-        // From 2010 a quarter of what roams (two fifths from 2012) is drawn
-        // from the era's high-level pool instead of from the local roster, and
-        // a median that ignored them would tell the party a place is safe on
-        // the strength of fauna that only fills three spawns in four. The two
-        // pools are mixed here in the same proportion the spawner mixes them.
-        const elitePool = band.nation ? [] : BSE.Helpers.getEraElitePool(biomeName, era);
-        const eliteShare = (elitePool.length && localTotal > 0) ? era.eliteShare : 0;
-        let eliteTotal = 0;
-        elitePool.forEach(e => { eliteTotal += e.weight; });
-
         const entries = [];
         if (localTotal > 0) {
-            const scale = (1 - eliteShare) / localTotal;
-            local.forEach(e => entries.push({ level: e.level, weight: e.weight * scale }));
-        }
-        if (eliteShare > 0 && eliteTotal > 0) {
-            const scale = eliteShare / eliteTotal;
-            elitePool.forEach(e => entries.push({
-                level: BSE.Helpers.getTroopMaxLevel(e.troopId),
-                weight: e.weight * scale
-            }));
+            local.forEach(e => entries.push({ level: e.level, weight: e.weight / localTotal }));
         }
 
         let value = { median: 0, min: 0, max: 0, count: 0, placeLevel: place };
@@ -2469,39 +2441,12 @@
             : null;
     };
 
-    // What the floor holds, and a thin tail of what lives under it. Nothing
-    // ABOVE the bracket ever stands on a floor - a rung is a ceiling, and the
-    // party is never handed something out of its depth - but the small fry the
-    // map declares below the bracket stay possible, rarer the further under it
-    // they are, so a floor is not a wall of identically levelled monsters.
-    // When the map declares nothing in the bracket at all, what it holds below
-    // it fills the floor on its own at full weight.
-    const TOWER_STRAY_SHARE = 0.2; // how much of a floor is under-levelled
-
+    // What the floor holds, and nothing else: the creatures of the map's own
+    // list whose level sits inside the floor's bracket. Only a map declaring
+    // nothing inside it falls back, to what sits nearest the bracket.
     BSE.Helpers.filterTroopsToTowerBand = function(encList, band) {
         if (!encList || !encList.length || !band) return encList;
-        const levels = encList.map(enc => BSE.Helpers.getTroopMaxLevel(enc.troopId));
-        const inBand = [];
-        const below = [];
-        encList.forEach((enc, i) => {
-            const level = levels[i];
-            if (level > band.max) return; // never above the floor's own bracket
-            if (level >= band.min) inBand.push(Object.assign({}, enc));
-            else below.push({ enc, level });
-        });
-        if (inBand.length === 0) {
-            return below.length > 0
-                ? below.map(b => Object.assign({}, b.enc))
-                : encList;
-        }
-        // The tail: the nearer a creature is to the bracket, the likelier it is
-        // to be the one met, and none of them is ever as likely as a resident.
-        below.forEach(b => {
-            const nearness = band.min > 0 ? Math.max(0, b.level) / band.min : 0;
-            const weight = (b.enc.weight || 1) * TOWER_STRAY_SHARE * nearness;
-            if (weight > 0) inBand.push(Object.assign({}, b.enc, { weight }));
-        });
-        return inBand;
+        return BSE.Helpers.filterTroopsInBracket(encList, band).map(enc => Object.assign({}, enc));
     };
 
     BSE.Helpers.getTowerFloorBand = function(level) {
@@ -3179,28 +3124,13 @@
                     ? BSE.Helpers.applyDangerToBand(structDanger, BSE.Helpers.getSpawnBand())
                     : null));
 
-        // The era's high-level fauna (level 80-110 from 2010, 100+ from 2012)
-        // rides on top of the biome's band: a share of the roaming enemies is
-        // drawn from this pool instead of from the biome roster, so the
-        // calendar's elites mix in with normal spawns.
-        const spawnEra = BSE.Helpers.getSpawnEra();
-        // Not in the tower: the calendar's elites would break a ladder whose
-        // whole point is that the floor decides what stands on it. Nor under a
-        // nation bracket, for the same reason a floor is exempt: the country
-        // said what its ground is worth, and the bracket's own tail of rarer
-        // over-levelled strays (see nationBracketWeight) is already the variety
-        // the elite pool was there to provide.
-        const eraElitePool = (bandApplies && !towerFloorLevel && !nationBand && spawnEra.eliteShare > 0)
-            ? BSE.Helpers.getEraElitePool(encounterBiome, spawnEra)
-            : [];
-
         // Narrowing a candidate list to `levelBand`. A tower floor and an
         // off-world map carry a band of their own - the depth, the level of the
-        // space - and it is taken flat, exactly as given. Everywhere else the
+        // space - and it is taken flat, exactly as given: nothing outside it. Everywhere else the
         // biome's own rule decides (see filterTroopsForMode).
         const flatBand = !!(towerFloorLevel || offWorldLevel > 0);
         const applyBand = list => flatBand
-            ? BSE.Helpers.filterTroopsInLevelBand(list, levelBand)
+            ? BSE.Helpers.filterTroopsInBracket(list, levelBand)
             : BSE.Helpers.filterTroopsForMode(list, 'biome', levelBand);
 
         // Rule 2 (section 4a): a Crystals field or a SpiritWoods grove always
@@ -3209,6 +3139,10 @@
         // roster instead of using their own, so they are read on `currentBiome`
         // and never qualify.
         const specialPool = bandApplies ? BSE.Helpers.getSpecialBiomeTroops(currentBiome) : [];
+        const troopInBand = (troopId, band) => {
+            const lvl = BSE.Helpers.getTroopMaxLevel(troopId);
+            return lvl >= band.min && lvl <= band.max;
+        };
         let specialPlaced = false;
 
         // The one-of-a-kind creature this map fields, if it fields one at all
@@ -3322,33 +3256,14 @@
                             BSE.Helpers.canTroopSpawnAtCurrentTime(enc.troopId) &&
                             BSE.Helpers.canTroopSpawnInRegion(enc.troopId, currentRegion, loc.x, loc.y));
                         if (specialHere.length > 0) {
-                            // Whichever resident sits nearest the band, so the
-                            // creature the party meets still fits where they
-                            // are: the filters fall back to the closest level
-                            // when the band holds none of them. The level is
-                            // the only thing the guarantee bends on; the hour
-                            // it does not, so a grove whose whole exclusive
-                            // roster is asleep simply holds none of them until
-                            // they wake.
-                            const inBand = bandApplies ? applyBand(specialHere) : specialHere;
-                            chosenTroopId = selectWeightedRandom(
-                                inBand.length > 0 ? inBand : specialHere).troopId;
-                        }
-                    }
-
-                    // Era high-level spawn: from 2010 a quarter of the roaming
-                    // enemies (and from 2012 two fifths of them) come out of the
-                    // era band regardless of the party level. A one-species
-                    // structure is exempt: its whole population is that
-                    // species by design.
-                    if (chosenTroopId === null && eraElitePool.length > 0 &&
-                        !uniformSpecies && Math.random() < spawnEra.eliteShare) {
-                        const eliteHere = eraElitePool.filter(enc =>
-                            BSE.Helpers.canTroopSpawnAtCurrentTime(enc.troopId) &&
-                            BSE.Helpers.canTroopSpawnInRegion(enc.troopId, currentRegion, loc.x, loc.y)
-                        );
-                        if (eliteHere.length > 0) {
-                            chosenTroopId = selectWeightedRandom(eliteHere).troopId;
+                            // Only a resident inside the band: no spot is held
+                            // for one from outside it. A grove whose exclusive
+                            // roster sits outside the band, or is asleep, simply
+                            // holds none of them.
+                            const inBand = (bandApplies && levelBand)
+                                ? specialHere.filter(enc => troopInBand(enc.troopId, levelBand))
+                                : specialHere;
+                            if (inBand.length > 0) chosenTroopId = selectWeightedRandom(inBand).troopId;
                         }
                     }
 
@@ -5652,10 +5567,9 @@
     // and its map sprite wears a hue no ordinary creature of that species wears.
     const RARITY_ROSTER = 24;        // one-of-a-kind creatures a world holds
     const RARITY_MAP_CHANCE = 0.02;  // chance a populated map fields one
-    // How far from the local band a rarity may be and still turn up there. The
-    // roster is spread over the whole ladder and the ground is not, so without
-    // this a level 5 country would field the level 90 one as readily as its own.
-    const RARITY_BAND_REACH = 12;
+    // How far outside the local band a rarity may be and still turn up there:
+    // not at all. The band is a wall for the one-of-a-kind creatures too.
+    const RARITY_BAND_REACH = 0;
 
     // The world's roster, dealt once from the world seed and cached per world.
     // Empty when the procedural-species algorithm is not up (GalaxySim owns it):

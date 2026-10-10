@@ -807,7 +807,11 @@
             a.states().filter(s => s.id !== death && isHarmful(s)).forEach(s => a.removeState(s.id));
         },
         mendMember: (a, p, arg) => { const m = fighting(arg); if (m && m.isAlive()) heal(m, m.mhp * MEMBER_MEND_RATE * p); },
-        windfall: (a, p) => $gameParty.gainGold(Math.round(WINDFALL_GOLD * p)),
+        // Gold out of nothing is money forging (CrimeSystem files it).
+        windfall: (a, p) => {
+            const pay = () => $gameParty.gainGold(Math.round(WINDFALL_GOLD * p));
+            return window.CrimeSystem ? window.CrimeSystem.forging(pay) : pay();
+        },
         grant: (a, p, arg) => a.addState(arg),
         inflict: (a, p, arg) => $gameTroop.aliveMembers().forEach(e => {
             if (Math.random() < Math.min(1, INFLICT_CHANCE * p * e.stateRate(arg))) e.addState(arg);

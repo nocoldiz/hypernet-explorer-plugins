@@ -262,6 +262,13 @@
     "nothingToMirror": "{actor} has no move to throw back yet.",
     "mutated": "{actor}'s body grows into {body}!"
   },
+  "steal": {
+    "stole": "{actor} steals {item} from {enemy}!",
+    "nothing": "{actor} finds nothing left to steal on {enemy}."
+  },
+  "improvise": {
+    "turnedInto": "{actor} improvises: it turned into {skill}!"
+  },
   "summon": {
     "alreadyActive": "A summon is already active!",
     "mapWalks": "{name} answers the call and walks with the party for {steps} steps.",

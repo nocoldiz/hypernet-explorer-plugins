@@ -120,6 +120,9 @@
     "counterfeiting": {
       "name": "Contraffazione"
     },
+    "moneyforging": {
+      "name": "Falsificazione di Moneta"
+    },
     "identitytheft": {
       "name": "Furto d'Identità"
     },

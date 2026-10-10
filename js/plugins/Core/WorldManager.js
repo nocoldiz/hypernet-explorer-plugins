@@ -528,6 +528,9 @@
         dungeon: {
             _dungeonFloors: "floors",
             _dungeonGenerated: "generated",
+            // The tower's own seed, set when the default world's tower is
+            // rolled on first entry (DungeonFloorSystem.js, ensureDungeonLayout).
+            _dungeonSeed: "seed",
             _stairLocations: "stairLocations",
             _elevatorSpawnPoints: "elevatorSpawnPoints",
             _eventPositions: "eventPositions",
@@ -1102,6 +1105,9 @@
                 for (const file of info.files) {
                     const key = file.replace(/\.json$/, "");
                     if (key === "world") continue;
+                    // The tower is rolled on first entry, never shipped, so no
+                    // two default worlds climb the same hundred floors.
+                    if (key === "dungeon") continue;
                     Backend.writeFile(name, key, fs.readFileSync(path.join(dir, file), "utf8"));
                 }
                 const own = JSON.parse(Backend.readFile(name, "world"));
@@ -1129,6 +1135,9 @@
             const path = require("path");
             Backend.ensureDir(dir);
             for (const entry of fs.readdirSync(dir)) {
+                // The tower's levels are build data, not this world's: every
+                // world reads them (gen_dungeon_levels.js rebuilds them).
+                if (entry === "dungeonLevels.json") continue;
                 if (entry.endsWith(".json")) fs.unlinkSync(path.join(dir, entry));
             }
             const from = Backend.worldDir(name);

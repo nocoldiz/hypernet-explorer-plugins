@@ -1380,7 +1380,8 @@
                 if (amount <= 0) { this.say(T('Container.holdall.overloaded', { hold: to.name }), true); return; }
             }
 
-            if (from.kind === 'party') $gameParty.loseItem(item, amount);
+            // A conjured copy put away is still conjured when it comes back out.
+            if (from.kind === 'party') $gameParty.keepConjured(() => $gameParty.loseItem(item, amount));
             else ContainerManager.removeItem(from.id, key, amount, from.kind === 'extra');
 
             if (to.kind === 'party') $gameParty.gainItem(item, amount);

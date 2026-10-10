@@ -159,6 +159,8 @@
  * @value forgery
  * @option Counterfeiting
  * @value counterfeiting
+ * @option Money Forging
+ * @value moneyForging
  * @option Identity Theft
  * @value identityTheft
  * @option Cybercrime
@@ -323,6 +325,14 @@
     // Raised only for the duration of CrimeSystem's own write to the heat
     // variable; see the Game_Variables.setValue guard at the bottom of the file.
     let writingHeat = false;
+
+    // Theft and forged money are both charged at twice what they were worth.
+    const THEFT_BOUNTY_MULT = 2;
+    const FORGING_BOUNTY_MULT = 2;
+    // CrimeSystem.forging() nesting, and the interpreter whose command is
+    // executing right now (see the money forging hooks at the bottom).
+    let forgingDepth = 0;
+    let runningInterpreter = null;
 
     // ======================================================================
     // Wanted heat
@@ -793,6 +803,7 @@
     // Counterfeiting
     forgery: "Counterfeiting",
     counterfeiting: "Counterfeiting",
+    moneyForging: "Counterfeiting",
     identityTheft: "Counterfeiting",
     // Hacking
     cybercrime: "Hacking",
@@ -907,6 +918,9 @@
         perjury: ['falseWitness', 4000],
         forgery: ['falseWitness', 2000],
         counterfeiting: ['falseWitness', 3000],
+        // At the preset's own tariff: the Holy Office asks what the coin was
+        // worth twice over, exactly as the common court does.
+        moneyForging: ['debasingTheCoin', 1000],
         identityTheft: ['falseWitness', 2000],
         kidnapping: ['tradeInSouls', 15000],
         hostage: ['tradeInSouls', 12000],
@@ -1592,6 +1606,43 @@
                 );
             }
             return result;
+        }
+
+        // What a theft is worth on the record: twice the price of what was
+        // lifted, from a shelf or from a pocket, and never less than a petty
+        // theft, since most of what an NPC carries is priced at 0.
+        static theftBounty(price) {
+            const preset = PresetCrimes.pettyTheft;
+            const floor = (preset && preset.bounty) || 0;
+            return Math.max(Math.round((Number(price) || 0) * THEFT_BOUNTY_MULT), floor);
+        }
+
+        // ==================================================================
+        // MONEY FORGING: gold a skill makes out of nothing
+        // ==================================================================
+        // A spell that fills the purse mints coin nobody earned, and both
+        // courts treat it like a theft from everybody holding the real thing:
+        // twice the sum forged, filed the moment it lands. The Holy Office
+        // files it as Debasing the Coin at the same tariff; the Horde, which
+        // only forbids stealing, files nothing.
+        //
+        // Gold gained while a skill's own common event runs is caught by the
+        // hooks at the bottom of the file. Anything else that conjures gold
+        // for a skill wraps the payment in forging(): every coin gained inside
+        // it is filed.
+        static moneyForged(amount) {
+            const forged = Math.round(Number(amount) || 0);
+            if (forged <= 0) return;
+            this.addCrime(this.presetCrimeName('moneyForging'), forged * FORGING_BOUNTY_MULT, 'moneyForging');
+        }
+
+        static forging(fn) {
+            forgingDepth++;
+            try { return fn(); } finally { forgingDepth--; }
+        }
+
+        static isForging() {
+            return forgingDepth > 0 || !!(runningInterpreter && runningInterpreter._forging);
         }
 
         // ==================================================================
@@ -2392,9 +2443,7 @@
         // is priced at 0, and filing nothing while StealCaught still called out
         // the police is what put officers on a party with an empty record: a
         // caught thief is charged with petty theft at the least.
-        const stolenValue = Number($gameVariables.value(79)) || 0;
-        const preset = CrimeSystem.getPresetCrime('pettyTheft');
-        const bountyAmount = Math.max(stolenValue, (preset && preset.bounty) || 0);
+        const bountyAmount = CrimeSystem.theftBounty(Number($gameVariables.value(79)) || 0);
         if (bountyAmount > 0) CrimeSystem.addCrime(crimeName, bountyAmount, 'pettyTheft');
     });
 
@@ -2633,5 +2682,72 @@
         if (++heatTick < HEAT_TICK_FRAMES) return;
         heatTick = 0;
         if ($gameSystem && $gameVariables) CrimeSystem.updateHeat();
+    };
+
+    // ----------------------------------------------------------------------
+    // Money forging: following a skill's common event
+    // ----------------------------------------------------------------------
+    // A skill only reserves its common event; the map or the troop runs it a
+    // frame later. So the reservation is counted per common event id while a
+    // skill is applied, the interpreter that picks that list up is marked as
+    // forging (and so is any child it calls), and gold the party gains while
+    // a marked interpreter executes a command is filed by moneyForged. An
+    // item, a map event or a quest running the same common event is not a
+    // skill, and is never counted.
+    let applyingSkill = false;
+    const pendingForgeries = () => {
+        if (!$gameTemp._pendingForgeries) $gameTemp._pendingForgeries = {};
+        return $gameTemp._pendingForgeries;
+    };
+
+    const _Game_Action_applyGlobal_forging = Game_Action.prototype.applyGlobal;
+    Game_Action.prototype.applyGlobal = function () {
+        const was = applyingSkill;
+        applyingSkill = this.isSkill();
+        try { _Game_Action_applyGlobal_forging.call(this); } finally { applyingSkill = was; }
+    };
+
+    const _Game_Temp_reserveCommonEvent_forging = Game_Temp.prototype.reserveCommonEvent;
+    Game_Temp.prototype.reserveCommonEvent = function (commonEventId) {
+        _Game_Temp_reserveCommonEvent_forging.call(this, commonEventId);
+        if (!applyingSkill) return;
+        const pending = pendingForgeries();
+        pending[commonEventId] = (pending[commonEventId] || 0) + 1;
+    };
+
+    const _Game_Interpreter_setup_forging = Game_Interpreter.prototype.setup;
+    Game_Interpreter.prototype.setup = function (list, eventId) {
+        _Game_Interpreter_setup_forging.call(this, list, eventId);
+        this._forging = false;
+        const pending = (typeof $gameTemp !== 'undefined' && $gameTemp) ? $gameTemp._pendingForgeries : null;
+        if (!pending || eventId || typeof $dataCommonEvents === 'undefined' || !$dataCommonEvents) return;
+        for (const id of Object.keys(pending)) {
+            const ev = $dataCommonEvents[id];
+            if (!ev || ev.list !== list) continue;
+            this._forging = true;
+            if (--pending[id] <= 0) delete pending[id];
+            return;
+        }
+    };
+
+    const _Game_Interpreter_setupChild_forging = Game_Interpreter.prototype.setupChild;
+    Game_Interpreter.prototype.setupChild = function (list, eventId) {
+        _Game_Interpreter_setupChild_forging.call(this, list, eventId);
+        if (this._forging && this._childInterpreter) this._childInterpreter._forging = true;
+    };
+
+    const _Game_Interpreter_executeCommand_forging = Game_Interpreter.prototype.executeCommand;
+    Game_Interpreter.prototype.executeCommand = function () {
+        const was = runningInterpreter;
+        runningInterpreter = this;
+        try { return _Game_Interpreter_executeCommand_forging.call(this); } finally { runningInterpreter = was; }
+    };
+
+    const _Game_Party_gainGold_forging = Game_Party.prototype.gainGold;
+    Game_Party.prototype.gainGold = function (amount) {
+        const before = this.gold();
+        _Game_Party_gainGold_forging.call(this, amount);
+        const forged = this.gold() - before;
+        if (forged > 0 && CrimeSystem.isForging()) CrimeSystem.moneyForged(forged);
     };
 })();
