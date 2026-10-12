@@ -276,8 +276,7 @@
     "groupFollowers": "Seguaci",
     "groupSummons": "Evocazioni",
     "summoned": "Evocato",
-    "summonSteps": "Trattenuto per altri {steps} passi.",
-    "summonBound": "Vincolato: resta finché non viene congedato o cade in battaglia.",
+    "summonBound": "Vincolato al suo padrone per altri {time}, se non viene congedato o abbattuto in battaglia.",
     "dismissSummon": "Congeda",
     "train": "Addestra",
     "trainChoose": "Scegli un addestramento. Circa {days} giorni di viaggio insieme.",
@@ -326,7 +325,8 @@
     "convoke": "Convoca ({cost} MP)",
     "dematerialize": "Dematerializza",
     "convokeNoMp": "{owner} ha bisogno di {cost} MP",
-    "convokeOwnerAway": "{owner} non è nel gruppo"
+    "convokeOwnerAway": "{owner} non è nel gruppo",
+    "summonTime": "Trattenuto per altri {time}."
   },
   "vehicles": {
     "fuel": "Carburante {fuel}L / {max}L",

@@ -55,8 +55,7 @@
       "mapId": 1043,
       "x": 14,
       "y": 15
-    },
-    "minLevel": 8
+    }
   },
   "Frozen Station": {
     "name": "Icebush Station",
@@ -83,9 +82,7 @@
       "mapId": 1414,
       "x": 46,
       "y": 49
-    },
-    "minLevel": 1,
-    "fixedLevel": 1
+    }
   },
   "GreenWitch": {
     "name": "Green Witch",
@@ -118,8 +115,7 @@
       "mapId": 596,
       "x": 23,
       "y": 23
-    },
-    "minLevel": 10
+    }
   },
   "GreenWitchSpaceCenter": {
     "name": "Green Witch Space Center",
@@ -146,8 +142,7 @@
       "mapId": 593,
       "x": 41,
       "y": 32
-    },
-    "minLevel": 10
+    }
   },
   "Ghent": {
     "name": "Ghent",
@@ -190,9 +185,7 @@
       "mapId": 1036,
       "x": 53,
       "y": 55
-    },
-    "minLevel": 1,
-    "fixedLevel": 1
+    }
   },
   "Kola Superdeep Borehole": {
     "locked": true,
@@ -260,9 +253,7 @@
       "mapId": 540,
       "x": 31,
       "y": 48
-    },
-    "minLevel": 10,
-    "fixedLevel": 10
+    }
   },
   "Luxembourg": {
     "locked": true,

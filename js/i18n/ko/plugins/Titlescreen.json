@@ -67,7 +67,7 @@
     "patronPerk": "신규든 기존이든 모든 Patreon 후원자는 다른 은하에 자신의 이름을 딴 거주 가능 행성을 받고, 월드 맵의 비밀 장소 좌표를 Patreon에서만 전달받습니다."
   },
   "background": {
-    "label": "✦ 배경: "
+    "label": "배경: "
   },
   "planet": {
     "type": "유형: ",
@@ -108,7 +108,7 @@
     "text": "0.8.3a"
   },
   "language": {
-    "label": "✦ 언어"
+    "label": "언어"
   },
   "update": {
     "checking": "✦ 빌드 확인 중",
@@ -130,7 +130,6 @@
     "procedural": "절차적 생성",
     "nextBody": "다음 천체",
     "freeLook": "자유 시점 // 드래그: 회전 . 휠: 확대",
-    "controls": "드래그 / RS: 회전 . 휠 / L2 R2: 확대 . 방향키: 다음",
     "catalogButton": "목록",
     "catalogTitle": "목록 // 알려진 천체",
     "catalogEmpty": "등재된 천체가 없습니다",

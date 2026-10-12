@@ -193,14 +193,11 @@
         }
     }
 
-    // How dangerous a nation's ground is, in the one unit that means anything:
-    // the median level of the creature its squares field. Every Europe-zone
-    // nation was dealt a level bracket when the world was made and the calendar
-    // has been moving it ever since (BattleSystemEnhancedEncounters, section
-    // 3c); this is the median that falls out of it, plus the window itself so
-    // the reader can see how wide the spread around it is. A nation with no
-    // bracket - outside the zone, or a session with no fauna table loaded -
-    // contributes no row at all rather than a "Lv. 0".
+    // How dangerous a nation's ground is: the lowest and highest level bracket
+    // its squares hold, read off their distance from the Omega Tower
+    // (BattleSystemEnhancedEncounters, section 3c), and the middle of that
+    // span. A nation with no painted square contributes no row at all rather
+    // than a "Lv. 0".
     function enemyLevelRow(country) {
         const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
         if (!BSEH || typeof BSEH.describeNationLevels !== "function") return [];

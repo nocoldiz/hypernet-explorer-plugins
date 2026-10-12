@@ -21,51 +21,35 @@
  * ----------------------------------------------------------------------------
  * How wandering enemies are chosen
  * ----------------------------------------------------------------------------
- * The COUNTRY decides how hard the ground is, and the biome decides what
- * shape the creature standing on it takes. Every nation of the Europe zone is
- * dealt a level bracket when the world is made (section 3c). A few are written
- * down rather than dealt, against the Countries.json id that names them:
- * France, Belgium and the UK open at levels 1-15 and the Vatican's Italy sits
- * at 40-60. Every other nation is rolled somewhere between 1 and 100, and the
- * deal is written into the world folder so every savegame of that world reads
- * the same map of danger. The travel book prints the window of every stop it
- * lists, so a journey can be read before it is bought.
+ * The DISTANCE FROM THE OMEGA TOWER decides how hard the ground is, and the
+ * biome decides what shape the creature standing on it takes (section 3c).
+ * The tower's own square is levels 1-5 and the farthest corner of the world
+ * map 96-100, on a smooth gradient read off the world coordinates and cut
+ * into brackets of five levels. Three countries are written down instead:
+ * the UK is levels 1-5, France and Belgium 1-8. Dungeons, underground layers
+ * and procedural interiors are the bracket of the square above them, five
+ * levels up. The travel book, the world map and the map banner all print the
+ * bracket of the square they are describing.
  *
- * The party is not consulted. A level 60 party that walks into a 1-15 nation
- * meets that nation's rats; a level 3 party that wanders into a 70-90 one is
- * somewhere it has no business being. That is the point - the map is worth
- * reading before it is walked, and the atlas prints each country's median
- * enemy level for exactly that reason.
+ * The party is not consulted, and neither is the calendar. A level 60 party at
+ * the tower's foot meets level 1-5 rats; a level 3 party that wanders out to
+ * the edge of the map is somewhere it has no business being. That is the point
+ * - the map is worth reading before it is walked.
  *
- * The bracket is a wall. Only creatures whose level sits inside it are met
- * there: nothing rarer from under it, nothing rarer from over it, and no spawn
- * is set aside for anything outside it. The country is read off the ground
- * the party is standing on, so a fast travel lands them under the bracket the
- * travel book printed for that stop.
- *
- * Underground goes with the country it is under: a dungeon, a sewer, a crypt
- * or any other generated interior rolled on a nation's ground is pitched at
- * that nation's bracket, shifted by the rung of the danger ladder its
- * catalogue entry sits on (a cellar below it, a bunker above it).
+ * The bracket is a wall. The spawner draws only from the creatures inside it,
+ * and one the roster can only supply from outside it is fought AT the bracket,
+ * its level and numbers moved into it (section 3d). Only quest creatures and
+ * the written <Boss> encounters keep their own level.
  *
  * No enemy is exclusive to a country. Every nation holds every creature its
  * biomes hold, and the nation seed only tints how common each of them is where
  * the party is standing (rare / normal / common - never absent).
  *
  * ----------------------------------------------------------------------------
- * The calendar (what the years do to the brackets)
+ * The calendar (where no bracket rules)
  * ----------------------------------------------------------------------------
- * Every nation's bracket climbs 5 levels a year, so a party that stands still
- * while the years run watches the whole continent get away from it. The frozen
- * nations are the exceptions and never move: Belgium and the UK are levels 1 to
- * 15 in 2001 and levels 1 to 15 in 2013, which keeps a corner of the world
- * walkable whatever year a world is begun in, and the Vatican's Italy is 40 to
- * 60 in both, one wall the climbing continent passes through rather than
- * carries with it. France opens low with its neighbours but climbs like
- * everybody else.
- *
- * Where no nation rules - off Earth, an alien surface, a world with no country
- * table - the older calendar band is what is left:
+ * Where no square of the world map speaks - off Earth, an alien surface - the
+ * older calendar band is what is left:
  *
  *   2001         the biome's own band, untouched
  *   2002 - 2009  the whole band climbs 5 levels a year
@@ -107,9 +91,10 @@
  *   Hand-made map with its own encounter list  -> exactly that list, untouched.
  *   Procedural map (636)                       -> always the algorithm above.
  *   The Omega Tower, upper and lower floors    -> the DEPTH decides and nothing
- *                                                 else: no nation bracket, no
+ *                                                 else: no radial bracket, no
  *                                                 calendar shift, no era elite
  *                                                 reaches a floor.
+ *   Anywhere else on Earth, authored or not    -> the radial bracket (3c).
  *   Alien surface (GalaxySim landing)          -> its own rules entirely
  *                                                 (section 16), none of this:
  *                                                 the WORLD's level decides,
@@ -138,7 +123,7 @@
  * to the party does not.
  *
  * ----------------------------------------------------------------------------
- * Spawn era (in-game year; only where no nation bracket rules)
+ * Spawn era (in-game year; only where no radial bracket rules)
  * ----------------------------------------------------------------------------
  *   2001-2009  levels capped at 100, nothing else changes.
  *   2010+      the cap stays at 100.
@@ -568,8 +553,8 @@
     //
     // The ONE exception is a <Special> creature (section 4a): a special biome's
     // exclusive residents are placed by the guarantee whatever the year says.
-    // One number for the whole game: a nation's bracket climbs by it (see
-    // section 3c) and so does every band built where no nation rules.
+    // One number for every band built where no radial bracket rules (the
+    // brackets of section 3c never move with the year).
     const ERA_YEAR_STEP    = 5;   // levels the band climbs per year to 2010
     // The book stops at level 100 (the apex trio sits at 80 / 92 / 100), so the
     // open ceiling is the top of the book rather than a level nothing reaches.
@@ -781,243 +766,256 @@
     };
 
     // ========================================================================
-    // 3c. THE NATION LEVEL BRACKET (the country decides how hard the ground is)
+    // 3c. THE RADIAL LEVEL BRACKET (how far the ground is from the Omega Tower)
     // ========================================================================
-    // Every nation of the Europe zone is dealt a LEVEL BRACKET when the world
-    // is made: the window its roaming fauna is pitched at, rolled from the
-    // world seed and written into the world folder so every savegame of that
-    // world walks the same map of danger. The bracket is a property of the
-    // COUNTRY, not of the party: a level 60 party crossing into a 1-15 nation
-    // meets its rats, and a level 3 party that wanders into a 70-90 one is in
-    // somewhere it has no business being. That is the point - the map is worth
-    // reading before it is walked.
+    // How hard the ground is depends on one thing: how far it lies from the
+    // Omega Tower. The tower's own square is the gentlest ground in the world
+    // and the farthest corner of the world map is the harshest, with a smooth
+    // gradient between them read straight off the world coordinates.
     //
-    //   France, Belgium, UK   the low countries the game opens on: levels 1-15
-    //   Italy                 the Holy Vatican Empire's ground: levels 40-60
-    //   everything else       a seeded window somewhere between 1 and 100
+    // The gradient is cut into BRACKETS of BRACKET_SIZE (5) levels: 1-5, 6-10,
+    // 11-15 ... 96-100. A square sits in exactly one of them, and it is the
+    // same one in every savegame, every year and for every party: nothing is
+    // dealt from a seed, the calendar does not move it and the party is never
+    // consulted. A level 60 party at the tower's foot meets level 1-5 fauna; a
+    // level 3 party that walks out to the far edge of the map meets 96-100.
     //
-    // The deal is the world SEED's, so two worlds made on one seed are the same
-    // continent down to which country holds the rats. A session with no world
-    // of its own - a playtest, the Test world - has no seed to deal from and
-    // nowhere to keep the answer, so it is dealt a random continent that lasts
-    // the session (see getNationBrackets).
+    //   distance 0                  levels 1-5
+    //   the farthest map corner     levels 96-100
+    //   off the world map entirely  (the globe beyond Europe) the top bracket
     //
-    // The calendar moves every bracket up BRACKET_YEAR_STEP levels a year, so a
-    // party that stands still while the years run watches the whole continent
-    // get away from it. The frozen entries of BRACKET_HARDCODED are the
-    // exceptions and never move: Belgium and the UK are levels 1 to 15 in 2001
-    // and levels 1 to 15 in 2013, which is what keeps a corner of the world
-    // walkable whenever a party starts, and the Vatican's Italy holds 40 to 60
-    // in every year of the game. France is dealt the low window too but climbs
-    // out of it with everybody else.
+    // Three countries are written down instead of read off the gradient, as
+    // the corner of the world a new party can always walk:
     //
-    // The bracket is a wall: only creatures whose level sits inside it turn up
-    // (see filterTroopsInBracket). Nothing rarer is let in from under it or
-    // over it, so the window the atlas, the travel book and the map banner
-    // print is exactly what roams there.
+    //   UK (and the Channel Islands)   levels 1-5
+    //   France, Belgium                levels 1-8
+    //
+    // Underground is harder than the ground above it: a dungeon, a cave, an
+    // underground layer or a procedural interior is the bracket of the square
+    // it is under, moved up by UNDERGROUND_SHIFT (5) levels at both ends. A UK
+    // dungeon is 6-10, a 21-25 square's cellar is 26-30.
+    //
+    // The bracket is a wall. Every creature met there is inside it: the
+    // spawner draws from the creatures whose level sits in it, and a creature
+    // the roster only holds outside it (a biome with nobody at that level) is
+    // fought AT the bracket, its level and numbers moved into it (section 3d).
+    // Only quest creatures and the written bosses keep their own level.
     //
     // Where it does NOT apply, and each of these keeps the rule it already had:
-    //   - the Omega Tower, upper and lower alike: a floor's DEPTH is its level
-    //     and the country the tower stands in has nothing to say about it
+    //   - the Omega Tower's own floors, upper and lower: a floor's DEPTH is its
+    //     level
     //   - anywhere off Earth (a ship, a station, an alien surface)
-    //   - a nation outside the Europe zone, and any world with no country table
-    //     loaded at all: the biome's own ladder, exactly as before
 
-    // The nations that are NOT dealt from the seed. Their window is written
-    // here, against the Countries.json ID that names them on the world map, and
-    // that ID is the identity this table is matched on: it is what the atlas
-    // paints, what a Destinations.json stop carries as "nationId" and what
-    // Variable 86 holds, so a country respelled in the data keeps its window.
-    // The name is only the fallback for a session whose country table has not
-    // loaded yet.
-    //
-    //   France (102)    opens at 1-15 like its neighbours, but CLIMBS: the
-    //                   country the game starts in gets away from a party that
-    //                   stands still, and that is what makes them move
-    //   Belgium (121)   frozen at 1-15 forever
-    //   UK (38)         frozen at 1-15 forever
-    //                   between them they are the corner of the world a party
-    //                   of any year can always walk
-    //   Italy (78)      frozen at 40-60: the ground the Holy Vatican Empire
-    //                   holds (Countries.json gives Italy as its controller).
-    //                   Fixed in both directions on purpose - it is never
-    //                   walkable at level 3 and never trivial at level 90, so
-    //                   the whole climbing continent passes through one wall
-    //                   that stays where it is
     // i18n-ignore-start  Countries.json ids and names, never shown as written here
-    const BRACKET_HARDCODED = [
-        { id: 102, country: 'France',  min: 1,  max: 15, frozen: false },
-        { id: 121, country: 'Belgium', min: 1,  max: 15, frozen: true  },
-        { id: 38,  country: 'UK',      min: 1,  max: 15, frozen: true  },
-        { id: 78,  country: 'Italy',   min: 40, max: 60, frozen: true  }
+    const BRACKET_EXCEPTIONS = [
+        { id: 38,  country: 'UK',                   min: 1, max: 5 },
+        { id: 110, country: 'UK - Channel Islands', min: 1, max: 5 },
+        { id: 102, country: 'France',               min: 1, max: 8 },
+        { id: 121, country: 'Belgium',              min: 1, max: 8 }
     ];
-    const BRACKET_REGION       = 'Europe';
     const BRACKET_TOWER_NATION = 'OmegaTower';
+    // Authored maps whose <Biome:> says they are under the ground.
+    const UNDERGROUND_BIOMES = ['dungeon', 'cave', 'caveflooded', 'underdark',
+        'sewer', 'crypt', 'catacombs', 'mines', 'ossuary'];
     // i18n-ignore-end
 
-    // The written window this nation holds, or null where it is dealt from the
-    // seed like everybody else. The ID is asked first and the name second; ID 0
-    // is the shared "never placed on the map" id a dozen entries carry and is
-    // never allowed to match anything.
-    function hardcodedBracket(countryName, countryId) {
-        let id = countryId;
-        if (id === undefined || id === null) {
-            const countries = (window.WorldGen && window.WorldGen.Countries) || [];
-            const hit = countries.find(c => c && c.country === countryName);
-            id = hit ? hit.id : null;
-        }
-        return BRACKET_HARDCODED.find(e =>
+    const BRACKET_SIZE      = 5;   // every bracket is five levels wide
+    const RADIAL_CEILING    = 100; // the top of the book: the farthest bracket ends here
+    const UNDERGROUND_SHIFT = 5;   // levels underground adds at both ends
+
+    // The written window of an exception country, or null where the gradient
+    // decides. The ID is asked first and the name second; ID 0 is the shared
+    // "never placed on the map" id a dozen entries carry and never matches.
+    function exceptionBracket(countryName, countryId) {
+        const id = countryId | 0;
+        return BRACKET_EXCEPTIONS.find(e =>
             (id && e.id === id) || (countryName && e.country === countryName)) || null;
     }
 
-    // Read by the atlas, the travel book and the tests: is this nation's window
-    // written down rather than dealt, and does the calendar leave it alone?
     BSE.Helpers.getHardcodedNationBracket = function(countryName, countryId) {
-        const fixed = hardcodedBracket(countryName, countryId);
-        return fixed ? { min: fixed.min, max: fixed.max, frozen: !!fixed.frozen } : null;
+        const fixed = exceptionBracket(countryName, countryId);
+        return fixed ? { min: fixed.min, max: fixed.max } : null;
     };
 
-    const BRACKET_CEILING    = 100; // the top of the book: no bracket is rolled above it
-    const BRACKET_MIN_WIDTH  = 10;  // narrowest window a rolled nation gets
-    const BRACKET_MAX_WIDTH  = 25;  // widest
-    const BRACKET_YEAR_STEP  = 5;   // levels every bracket climbs per year
+    // The farthest a square of the world map can be from the tower: the
+    // farthest of its four corners. That distance is the top of the gradient.
+    BSE.Helpers.getRadialMaxDistance = function() {
+        const tower = BSE.Helpers.getOmegaTowerCoords();
+        const edge = WORLD_MAP_TILES - 1;
+        const dx = Math.max(tower.x, edge - tower.x);
+        const dy = Math.max(tower.y, edge - tower.y);
+        return Math.max(1, Math.sqrt(dx * dx + dy * dy));
+    };
 
-    // Deterministic 0..1 from the world seed, a nation's name and a salt, so a
-    // nation's bracket is the same in every session of a world and no two
-    // nations share a roll. Order-free on purpose: adding a country to
-    // Countries.json must not re-deal the ones already there.
-    function bracketHash(seed, name, salt) {
-        const s = String(seed) + '|' + String(name) + '|' + salt;
-        let h = 2166136261 >>> 0;
-        for (let i = 0; i < s.length; i++) {
-            h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
-        }
-        h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0;
-        h ^= h >>> 13;
-        return (h >>> 0) / 4294967296;
+    // The smooth gradient itself: 1 at the tower, RADIAL_CEILING at the
+    // farthest corner, and the top for anything past it (the globe).
+    BSE.Helpers.getRadialLevelAt = function(x, y) {
+        const tower = BSE.Helpers.getOmegaTowerCoords();
+        const d = Math.sqrt(Math.pow(x - tower.x, 2) + Math.pow(y - tower.y, 2));
+        const t = Math.max(0, Math.min(1, d / BSE.Helpers.getRadialMaxDistance()));
+        return 1 + t * (RADIAL_CEILING - 1);
+    };
+
+    function makeBracket(min, max, nation) {
+        return { min: min, max: max, center: (min + max) / 2, bracket: true, nation: nation || '' };
     }
 
-    // Every Europe-zone nation the world holds, as {country: [min, max]}. The
-    // tower is left out: it is a country entry only because the world data
-    // needs a default somewhere, and its floors answer to their own depth.
-    BSE.Helpers.rollNationBrackets = function(seed) {
-        const out = {};
-        const countries = (window.WorldGen && window.WorldGen.Countries) || [];
-        for (const c of countries) {
-            if (!c || !c.country || c.region !== BRACKET_REGION) continue;
-            if (c.country === BRACKET_TOWER_NATION) continue;
-            const fixed = hardcodedBracket(c.country, c.id);
-            if (fixed) {
-                out[c.country] = [fixed.min, fixed.max];
-                continue;
-            }
-            const width = BRACKET_MIN_WIDTH + Math.floor(
-                bracketHash(seed, c.country, 'w') * (BRACKET_MAX_WIDTH - BRACKET_MIN_WIDTH + 1));
-            const min = 1 + Math.floor(bracketHash(seed, c.country, 'm') * (BRACKET_CEILING - width));
-            out[c.country] = [min, min + width];
-        }
-        return out;
-    };
+    // The surface window the world itself deals square (x, y): the written
+    // exception of its country, or its step of the gradient. Shared by every
+    // savegame of the world.
+    function worldBracketAt(nx, ny, nation) {
+        const fixed = exceptionBracket(nation);
+        if (fixed) return { min: fixed.min, max: fixed.max };
+        const top = Math.floor((RADIAL_CEILING - 1) / BRACKET_SIZE);
+        const k = Math.max(0, Math.min(top,
+            Math.floor((BSE.Helpers.getRadialLevelAt(nx, ny) - 1) / BRACKET_SIZE)));
+        const min = k * BRACKET_SIZE + 1;
+        return { min: min, max: min + BRACKET_SIZE - 1 };
+    }
 
-    // Nothing about a world is dealt twice. Where there IS a world the deal is
-    // its SEED's - the same string the map, the history and every other
-    // generator in the game are built from - so two worlds made on one seed are
-    // the same continent down to which country holds the rats, and the world
-    // folder keeps the answer so it can be read (and edited) without a game
-    // running. The world's name is only reached for by a world so old it has no
-    // seed written at all.
+    // ---- The start zone ----------------------------------------------------
+    // Wherever an origin, a custom scenario or the world setting puts the party
+    // down, the ground around that spot is pitched at the level the party was
+    // made at, not at the gradient: a world begun at level 1 meets 1-5 there,
+    // one begun at 50 (or a scenario adding 49 levels to a level 1 world)
+    // meets 50-54. It belongs to the savegame, never to the world: the other
+    // savegames of the same world keep the gradient there.
     //
-    // Where there is NO world - a playtest, the Test world, the title screen
-    // before anything has been chosen - there is no seed to deal from and
-    // nowhere to write a deal back to. Those get a fresh RANDOM continent
-    // instead of the one the empty string would always produce, so two
-    // playtests are not the same map of danger. It is still dealt once and kept
-    // for the session: a deal that re-rolled on every read would move the
-    // ground under the party between one map and the next.
-    let _bracketCache = null;
-    let _sessionSeed = null;
+    // The start anchor's square and every square within START_ZONE_RADIUS of
+    // it hold the starting window. Past them the window walks back to the
+    // world's own bracket over START_ZONE_FADE squares, both ends moved a step
+    // at a time, so the edge of home is a slope and never a cliff. A start
+    // that never stood on Earth (space, crash-landed) has no zone. Underground
+    // still adds UNDERGROUND_SHIFT on top.
+    const START_ZONE_RADIUS = 1;   // squares around the anchor at the start window
+    const START_ZONE_FADE   = 10;  // squares past them to blend into the world's
 
-    function sessionBracketSeed() {
-        if (_sessionSeed === null) {
-            _sessionSeed = 'playtest:' + Math.random().toString(36).slice(2) +
-                ':' + Math.random().toString(36).slice(2);
-        }
-        return _sessionSeed;
+    // The level this savegame's party was created at: the world's starting
+    // level, plus the levels a custom scenario adds to every member.
+    BSE.Helpers.getStartZoneLevel = function() {
+        let lvl = BSE.Helpers.getWorldStartingLevel();
+        const scenario = $gameSystem && $gameSystem._ccCustomScenario;
+        if (scenario && Number(scenario.levels) > 0) lvl += Math.round(Number(scenario.levels));
+        return Math.max(1, Math.min(RADIAL_CEILING - BRACKET_SIZE + 1, lvl));
+    };
+
+    function startZoneAnchor() {
+        const rec = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem._bseStartAnchor : null;
+        if (!rec || rec.offEarth || (!rec.x && !rec.y)) return null;
+        return rec;
     }
 
-    BSE.Helpers.getNationBrackets = function() {
-        const WM = window.WorldManager;
-        const worldName = (WM && WM.activeWorldName) || '';
-        if (_bracketCache && _bracketCache.world === worldName) return _bracketCache.value;
-        let value = null;
-        if (WM && typeof WM.hasActiveWorld === 'function' && WM.hasActiveWorld()) {
-            const stored = (typeof WM.getField === 'function')
-                ? WM.getField('world', 'nationBrackets') : null;
-            if (stored && typeof stored === 'object' && Object.keys(stored).length > 0) {
-                value = stored;
-            } else {
-                const info = (typeof WM.worldInfo === 'function') ? WM.worldInfo() : null;
-                value = BSE.Helpers.rollNationBrackets((info && info.seed) || worldName);
-                if (typeof WM.setField === 'function' && Object.keys(value).length > 0) {
-                    WM.setField('world', 'nationBrackets', value);
-                }
-            }
-        } else {
-            value = BSE.Helpers.rollNationBrackets(sessionBracketSeed());
+    // The starting window, written into the save the first time it is asked
+    // for, so a later change to the world's options never moves it.
+    function startZoneWindow() {
+        let zone = $gameSystem._bseStartZone;
+        if (!zone || !Number.isFinite(zone.min)) {
+            const min = BSE.Helpers.getStartZoneLevel();
+            zone = $gameSystem._bseStartZone = { min: min, max: min + BRACKET_SIZE - 1 };
         }
-        // Only cached once the country table has actually loaded, so an early
-        // call cannot freeze an empty deal for the session.
-        if (Object.keys(value).length > 0) _bracketCache = { world: worldName, value: value };
-        return value;
+        return zone;
+    }
+
+    // How far into the start zone square (x, y) lies: 1 inside the core,
+    // falling to 0 at the end of the fade, 0 outside or with no zone at all.
+    BSE.Helpers.getStartZoneWeight = function(x, y) {
+        const home = startZoneAnchor();
+        if (!home) return 0;
+        const d = Math.max(Math.abs((x | 0) - home.x), Math.abs((y | 0) - home.y)) - START_ZONE_RADIUS;
+        if (d <= 0) return 1;
+        return Math.max(0, 1 - d / (START_ZONE_FADE + 1));
     };
 
-    // Re-deal on the next read. The world manager calls this when it activates
-    // a world, so a second world in the same session is never handed the
-    // first one's map of danger. The unseeded session's own continent is NOT
-    // re-rolled by it: a playtest that passes through the world screen and back
-    // is still the same playtest, and only a new session re-randomizes it.
-    BSE.Helpers.resetNationBrackets = function() {
-        _bracketCache = null;
+    BSE.Helpers.isInStartZone = function(x, y) {
+        return BSE.Helpers.getStartZoneWeight(x, y) >= 1;
     };
 
-    // The bracket this nation was dealt, before the calendar touches it.
-    BSE.Helpers.getNationBracket = function(countryName) {
-        if (!countryName || countryName === BRACKET_TOWER_NATION) return null;
-        const pair = BSE.Helpers.getNationBrackets()[countryName];
-        if (!Array.isArray(pair) || pair.length < 2) return null;
-        return { min: Math.max(1, pair[0] | 0), max: Math.max(1, pair[1] | 0) };
+    // The surface window this savegame sees at (x, y), given the world's own.
+    function startZoneBlend(x, y, world) {
+        const w = BSE.Helpers.getStartZoneWeight(x, y);
+        if (w <= 0) return world;
+        const zone = startZoneWindow();
+        const min = Math.round(world.min + (zone.min - world.min) * w);
+        const max = Math.round(world.max + (zone.max - world.max) * w);
+        return { min: Math.max(1, min), max: Math.max(min, max) };
+    }
+
+    // The bracket of world square (x, y), on the surface or (underground =
+    // true) beneath it, as this savegame sees it. Null only where the square
+    // cannot be read at all.
+    BSE.Helpers.getLevelBracketAt = function(x, y, underground) {
+        const nx = Number(x), ny = Number(y);
+        if (!Number.isFinite(nx) || !Number.isFinite(ny)) return null;
+        const nation = BSE.Helpers.getNationNameAt(nx, ny);
+        const surface = startZoneBlend(nx, ny, worldBracketAt(nx, ny, nation));
+        let min = surface.min, max = surface.max;
+        if (underground) {
+            min += UNDERGROUND_SHIFT;
+            max += UNDERGROUND_SHIFT;
+        }
+        return makeBracket(min, max, nation);
     };
 
-    // Levels this nation's bracket has climbed since the 2001 epoch. The
-    // frozen entries of BRACKET_HARDCODED (Belgium, the UK and the Vatican's
-    // Italy) never move; everybody else takes BRACKET_YEAR_STEP a year.
-    BSE.Helpers.getNationYearShift = function(countryName) {
-        const fixed = hardcodedBracket(countryName);
-        if (fixed && fixed.frozen) return 0;
-        const year = Math.floor(BSE.Helpers.getCurrentGameYear());
-        return Math.max(0, year - SPAWN_START_YEAR) * BRACKET_YEAR_STEP;
+    // Is the party below the ground (or inside it) right now? A procedural
+    // underground layer, a procedural interior, a generated structure on the
+    // procedural map, or an authored map whose <Biome:> is a dungeon, a cave
+    // or one of their kin.
+    BSE.Helpers.isUndergroundPlace = function() {
+        if (typeof $gameMap === 'undefined' || !$gameMap) return false;
+        const onProc = $gameMap.mapId() === 636;
+        if (onProc && BSE.Helpers.isUnderground()) return true;
+        try {
+            const PI = window.ProceduralInteriors;
+            if (onProc && PI && typeof PI.isCurrent === 'function' && PI.isCurrent()) return true;
+        } catch (e) { /* no interior service loaded */ }
+        const biome = BSE.Helpers.getMapBiome();
+        if (!biome) return false;
+        // Every structure the procedural map generates is a dungeon or an
+        // interior, the ones that borrow a hand-made map's roster included.
+        if (onProc && BSE.Helpers.getStructure(biome)) return true;
+        return UNDERGROUND_BIOMES.includes(String(biome).toLowerCase().replace(/\s+/g, ''));
     };
 
-    // The window this nation's fauna is pitched at TODAY: its bracket plus
-    // whatever the calendar has added to it. `nation` on the band is what every
-    // rule downstream reads to tell a country's band from the biome's own.
-    BSE.Helpers.getNationBand = function(countryName) {
-        const bracket = BSE.Helpers.getNationBracket(countryName);
-        if (!bracket) return null;
-        const shift = BSE.Helpers.getNationYearShift(countryName);
-        const min = Math.max(1, bracket.min + shift);
-        const max = Math.max(min, bracket.max + shift);
-        return { min: min, max: max, center: (min + max) / 2, nation: countryName };
+    // The bracket in force where the party is standing, or null where the
+    // ground has nothing to say: the tower's floors (the depth decides) and
+    // anywhere off Earth (the space decides).
+    // Asked by every map plate and every ecology fight, so the answer is kept
+    // for the frame it was read in.
+    // A stitched square or a stairway can change the ground inside one frame,
+    // so the map and the square are part of the key.
+    let _groundBracketKey = '';
+    let _groundBracketValue = null;
+
+    BSE.Helpers.getGroundBracket = function() {
+        const frame = (typeof Graphics !== 'undefined' && Graphics && Graphics.frameCount) || 0;
+        const pg = (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._procGenData) || {};
+        const mapId = (typeof $gameMap !== 'undefined' && $gameMap) ? $gameMap.mapId() : 0;
+        const key = frame + '|' + mapId + '|' + pg.originX + ',' + pg.originY + '|' +
+            ((pg.biomeLayerStack && pg.biomeLayerStack.length) || 0);
+        if (frame > 0 && key === _groundBracketKey) return _groundBracketValue;
+        _groundBracketValue = groundBracketNow();
+        _groundBracketKey = key;
+        return _groundBracketValue;
     };
+
+    function groundBracketNow() {
+        if (BSE.Helpers.getTowerFloorLevel()) return null;
+        if (BSE.Helpers.getTowerAuthoredBand()) return null;
+        if (BSE.Helpers.isOffWorldMap && BSE.Helpers.isOffWorldMap()) return null;
+        const here = BSE.Helpers.getWorldPosition();
+        if (!here || (!here.x && !here.y)) return null;
+        return BSE.Helpers.getLevelBracketAt(here.x, here.y, BSE.Helpers.isUndergroundPlace());
+    }
+
+    // Kept under its old name for the callers outside this file (the zombie
+    // outbreak picks its dead by it).
+    BSE.Helpers.getActiveNationBand = BSE.Helpers.getGroundBracket;
 
     // The country the party is standing in, by name. The ground decides: a
     // map's own <Country> tag first, then the region painted on the world map
     // under the square the party stands on. $gameWeather only learns the
-    // country while the party walks the world map, so a fast travel, a
-    // border crossing between squares or a globe walk leaves it naming the
-    // last country walked, and the bracket read off it was somebody else's.
-    // It (and Variable 86 after it) is only the fallback for ground no region
-    // is painted on.
+    // country while the party walks the world map, so it (and Variable 86
+    // after it) is only the fallback for ground no region is painted on.
     BSE.Helpers.getNationName = function() {
         const ground = BSE.Helpers.getGroundNationName();
         if (ground) return ground;
@@ -1029,8 +1027,7 @@
         if (cc && cc.country) return cc.country;
         // Variable 86 is only worth reading once something has written to it:
         // a dozen Countries.json entries share the id 0 (the nations the world
-        // map never places), so an unset variable would pick one of them at
-        // random and hand a map somewhere else's bracket.
+        // map never places), so an unset variable would pick one of them.
         const id = BSE.Helpers.getNationId();
         if (!id) return '';
         const countries = (window.WorldGen && window.WorldGen.Countries) || [];
@@ -1072,27 +1069,18 @@
         return at ? BSE.Helpers.getNationNameAt(at.x, at.y) : '';
     };
 
-    // The band in force where the party is standing, or null where the country
-    // has nothing to say: the tower (the depth decides), off Earth (the space
-    // decides) and anywhere outside the Europe zone.
-    BSE.Helpers.getActiveNationBand = function() {
-        if (BSE.Helpers.getTowerFloorLevel()) return null;
-        if (BSE.Helpers.getTowerAuthoredBand()) return null;
-        if (BSE.Helpers.isOffWorldMap && BSE.Helpers.isOffWorldMap()) return null;
-        return BSE.Helpers.getNationBand(BSE.Helpers.getNationName());
-    };
-
-    // Is a creature of this level met at all in a nation whose band is `band`?
-    // 1 inside the bracket, 0 outside it: the bracket is a wall.
-    BSE.Helpers.nationBracketWeight = function(level, band) {
+    // Is a creature of this level met at all inside `band`? 1 inside, 0
+    // outside: the bracket is a wall.
+    BSE.Helpers.bracketWeight = function(level, band) {
         if (!band) return 1;
         const lvl = Math.max(1, level || 1);
         return (lvl >= band.min && lvl <= band.max) ? 1 : 0;
     };
 
     // Narrow a candidate list to the creatures inside `band`, and nothing
-    // else. Only a list holding nothing at all inside it falls back, and then
-    // to the creatures sitting nearest the window, so a map is never emptied.
+    // else. Only a list holding nothing at all inside it falls back, to the
+    // creatures sitting nearest the window, so a map is never emptied: those
+    // are fought at the bracket anyway (section 3d).
     BSE.Helpers.filterTroopsInBracket = function(encList, band) {
         if (!encList || !encList.length || !band) return encList;
         const levels = encList.map(enc => BSE.Helpers.getTroopMaxLevel(enc.troopId));
@@ -1104,123 +1092,169 @@
         return encList.filter((enc, i) => gap(levels[i]) === best);
     };
 
-    // The danger ladder. A generated structure sits on one rung of it and that
-    // rung is a shift of the band the place would otherwise field:
-    //   safe      below it - a cellar, a smuggler's cache
-    //   ordinary  the band itself - a dungeon, a sewer, a crypt
-    //   hostile   above it - a forge, a bunker, a frozen cave
-    //   deadly    far above, and not a shift at all: the caller swaps the
-    //             filter outright (filterTroopsWellAboveLevel)
-    //
-    // Under a nation bracket the band being shifted is the COUNTRY's, so a
-    // cellar under a 40-60 nation is a 30-50 cellar and a bunker under it a
-    // 50-70 one, and an ordinary interior is simply as hard as the country it
-    // is under. That is the whole of "underground goes with the ground above
-    // it"; off a nation's ground the same rung shifts the biome's own band.
-    BSE.Helpers.applyDangerToBand = function(danger, band) {
-        if (!band || (danger !== 'safe' && danger !== 'hostile')) return band;
-        // An open-ended band (the 2012 collapse, off a nation's ground) has no
-        // width to shift by: Infinity - min is Infinity and the shift comes out
-        // NaN, which would reject every candidate on the map.
-        if (!Number.isFinite(band.min) || !Number.isFinite(band.max)) return band;
-        const span = Math.max(2, band.max - band.min);
-        const shift = danger === 'safe' ? -Math.round(span * 0.5) : Math.round(span * 0.5);
-        const min = Math.max(1, band.min + shift);
-        const max = Math.max(min + 1, band.max + shift);
-        return Object.assign({}, band, { min: min, max: max, center: (min + max) / 2 });
+    // What the travel book, the world map and the banner print for one world
+    // square: its bracket, and the middle of it as the one-number answer.
+    BSE.Helpers.describeLevelsAt = function(x, y, underground) {
+        const b = BSE.Helpers.getLevelBracketAt(x, y, underground);
+        if (!b) return null;
+        return { nation: b.nation, min: b.min, max: b.max, median: Math.round(b.center) };
     };
 
-    // The weighted median level of a whole nation's fauna: what the atlas
-    // prints when a country is clicked, and the one honest one-number answer to
-    // "how hard is it there". Built out of the same weights the spawner uses,
-    // over every biome-tagged troop the world still allows, so it moves with
-    // the calendar and with who the world is populated with.
-    //
-    // Cached per (nation, band, population): the atlas asks once per click, but
-    // the scan walks the whole troop table.
-    let _nationMedianCache = {};
+    // The same answer for a Destinations.json stop, read off the stop's own
+    // square: the bracket the party will stand in once it lands there.
+    BSE.Helpers.describeDestinationLevels = function(entry) {
+        const base = entry && entry.base;
+        if (!base || !Number.isFinite(Number(base.x)) || !Number.isFinite(Number(base.y))) return null;
+        return BSE.Helpers.describeLevelsAt(Number(base.x), Number(base.y), false);
+    };
 
-    BSE.Helpers.getNationMedianLevel = function(countryName) {
-        const band = BSE.Helpers.getNationBand(countryName);
-        if (!band || typeof $dataTroops === 'undefined' || !$dataTroops) return 0;
-        const key = [countryName, band.min, band.max, BSE.Helpers.getPopulationMode()].join('|');
-        if (_nationMedianCache[key] !== undefined) return _nationMedianCache[key];
-        const entries = [];
-        for (let i = 1; i < $dataTroops.length; i++) {
-            const troop = $dataTroops[i];
-            if (!BSE.Helpers.isSpawnableTroopData(troop)) continue;
-            if (!BSE.Helpers.troopDataAllowedInPopulation(troop)) continue;
-            if (BSE.Helpers.isSpecialTroop(i)) continue;
-            const lead = $dataEnemies[troop.members[0].enemyId];
-            if (!lead || !/<Biome:/i.test(lead.note || '')) continue;
-            const lvl = BSE.Helpers.getTroopMaxLevel(i);
-            if (!lvl) continue;
-            const weight = BSE.Helpers.nationBracketWeight(lvl, band);
-            if (weight > 0) entries.push({ level: lvl, weight: weight });
-        }
-        let median = 0;
-        if (entries.length) {
-            entries.sort((a, b) => a.level - b.level);
-            const total = entries.reduce((sum, e) => sum + e.weight, 0);
-            let seen = 0;
-            median = entries[entries.length - 1].level;
-            for (const e of entries) {
-                seen += e.weight;
-                if (seen >= total / 2) { median = e.level; break; }
+    // The span of brackets a whole country covers, for the atlas: the lowest
+    // and highest of its painted squares. Built in one pass over the world
+    // map's region layer and kept for the session.
+    let _nationSpanCache = null;
+
+    function nationSpans() {
+        if (_nationSpanCache) return _nationSpanCache;
+        if (typeof $gameSystem === 'undefined' || !$gameSystem ||
+            typeof $gameSystem.getWorldRegionId !== 'function') return {};
+        const countries = (window.WorldGen && window.WorldGen.Countries) || [];
+        if (!countries.length) return {};
+        const byId = {};
+        for (const c of countries) if (c && c.id && !byId[c.id]) byId[c.id] = c.country;
+        const spans = {};
+        for (let y = 0; y < WORLD_MAP_TILES; y++) {
+            for (let x = 0; x < WORLD_MAP_TILES; x++) {
+                let id = 0;
+                try { id = $gameSystem.getWorldRegionId(x, y); } catch (e) { id = 0; }
+                const name = id ? byId[id] : null;
+                if (!name) continue;
+                // The world's own windows: one savegame's start zone is not
+                // a fact about the country.
+                const b = worldBracketAt(x, y, name);
+                const s = spans[name] || (spans[name] = { min: Infinity, max: 0 });
+                if (b.min < s.min) s.min = b.min;
+                if (b.max > s.max) s.max = b.max;
             }
         }
-        _nationMedianCache[key] = median;
-        return median;
-    };
+        if (Object.keys(spans).length) _nationSpanCache = spans;
+        return spans;
+    }
 
-    // Everything the atlas and the travel card want about one country, in one
-    // object: the window its fauna is pitched at, the median that comes out of
-    // it, and whether the calendar can still move it.
+    // Everything the atlas wants about one country: the lowest and highest
+    // bracket its ground holds, and the middle of that span.
     BSE.Helpers.describeNationLevels = function(countryName) {
-        const band = BSE.Helpers.getNationBand(countryName);
-        if (!band) return null;
-        const bracket = BSE.Helpers.getNationBracket(countryName);
+        if (!countryName || countryName === BRACKET_TOWER_NATION) return null;
+        const fixed = exceptionBracket(countryName);
+        const span = fixed ? { min: fixed.min, max: fixed.max } : nationSpans()[countryName];
+        if (!span || !Number.isFinite(span.min)) return null;
         return {
             nation: countryName,
-            min: band.min,
-            max: band.max,
-            median: BSE.Helpers.getNationMedianLevel(countryName),
-            baseMin: bracket.min,
-            baseMax: bracket.max,
-            shift: BSE.Helpers.getNationYearShift(countryName),
-            frozen: !!(hardcodedBracket(countryName) || {}).frozen
+            min: span.min,
+            max: span.max,
+            median: Math.round((span.min + span.max) / 2)
         };
     };
 
-    // The same answer asked for by the world map's own nation ID instead of by
-    // a name. A Destinations.json stop carries that ID ("nationId") and the
-    // travel book reads it, so a stop whose "country" is spelled in a way the
-    // country table does not know still prints the right window. ID 0 is the
-    // shared unplaced id and never resolves to anybody.
-    BSE.Helpers.describeNationLevelsById = function(nationId) {
-        const id = nationId | 0;
-        if (!id) return null;
-        const countries = (window.WorldGen && window.WorldGen.Countries) || [];
-        const hit = countries.find(c => c && c.id === id && c.region === BRACKET_REGION);
-        return hit ? BSE.Helpers.describeNationLevels(hit.country) : null;
+    // ========================================================================
+    // 3d. FOUGHT AT THE BRACKET
+    // ========================================================================
+    // The roster cannot always fill a five-level window: a biome may hold
+    // nobody at 41-45. The spawner then puts down the creature nearest the
+    // window, and this is what keeps the promise anyway: an ambient creature
+    // is fought at a level inside the bracket of the place it was met in, its
+    // numbers scaled with the move. A creature already inside keeps its own.
+    //
+    // Ambient means everything the world puts on the map by itself: the
+    // roaming "Enemy" events, the creatures standing on authored maps, the
+    // voxel world's fauna and the zombie dead. Quest creatures (a contract's
+    // own fight, a hunted one-of-a-kind) and the written <Boss> encounters are
+    // left at the level they were authored at.
+    //
+    // The bracket is armed by whoever starts the fight (armAmbientBracket),
+    // read by Game_Troop.setup and cleared straight after, so a fight started
+    // any other way can never inherit it.
+
+    // The level an ambient creature of `level` is fought at under `band`.
+    BSE.Helpers.clampLevelToBracket = function(level, band) {
+        const lvl = Math.max(1, Math.round(level || 1));
+        if (!band || !Number.isFinite(band.min) || !Number.isFinite(band.max)) return lvl;
+        return Math.max(band.min, Math.min(band.max, lvl));
     };
 
-    // The same answer for a Destinations.json stop, read the way the spawner
-    // will read it once the party is there: the country painted under the
-    // stop's own square first, its "nationId" and "country" only where that
-    // square is unpainted. A stop whose data names one country while its
-    // square is painted as another prints the bracket that actually roams it.
-    BSE.Helpers.describeDestinationLevels = function(entry) {
-        if (!entry) return null;
-        const base = entry.base;
-        if (base && Number.isFinite(Number(base.x)) && Number.isFinite(Number(base.y))) {
-            const painted = BSE.Helpers.getNationNameAt(base.x, base.y);
-            const info = painted ? BSE.Helpers.describeNationLevels(painted) : null;
-            if (info) return info;
-        }
-        let info = entry.nationId ? BSE.Helpers.describeNationLevelsById(entry.nationId) : null;
-        if (!info && entry.country) info = BSE.Helpers.describeNationLevels(entry.country);
-        return info;
+    // The level a map plate prints for this troop where the party stands.
+    BSE.Helpers.getAmbientTroopLevel = function(troopId) {
+        const lvl = BSE.Helpers.getTroopMaxLevel(troopId);
+        const troop = $dataTroops[troopId];
+        const boss = !!(troop && troop.members.some(m => {
+            const data = $dataEnemies[m.enemyId];
+            return !!(data && /<Boss>/i.test(data.note || ''));
+        }));
+        if (!lvl || boss) return lvl;
+        return BSE.Helpers.clampLevelToBracket(lvl, BSE.Helpers.getGroundBracket());
+    };
+
+    BSE.State.pendingBracket = null;
+
+    // Arm the next Game_Troop.setup with the bracket of the ground under the
+    // party. Returns the bracket armed (null where none applies).
+    BSE.Helpers.armAmbientBracket = function() {
+        BSE.State.pendingBracket = BSE.Helpers.getGroundBracket();
+        return BSE.State.pendingBracket;
+    };
+
+    BSE.Helpers.disarmAmbientBracket = function() {
+        BSE.State.pendingBracket = null;
+    };
+
+    // How much a creature's numbers move when it is fought at `to` instead of
+    // the level it was authored at. Pools (HP, MP) and rewards follow the
+    // roster's own HP curve, the other parameters the far flatter one the
+    // database's attack and defence climb by.
+    const BRACKET_POOL_OFFSET = 5;
+    const BRACKET_STAT_OFFSET = 50;
+
+    BSE.Helpers.bracketScale = function(from, to) {
+        const a = Math.max(1, from || 1), b = Math.max(1, to || 1);
+        return {
+            pool: (b + BRACKET_POOL_OFFSET) / (a + BRACKET_POOL_OFFSET),
+            stat: (b + BRACKET_STAT_OFFSET) / (a + BRACKET_STAT_OFFSET)
+        };
+    };
+
+    // Move one enemy into the bracket. Bosses are left alone.
+    BSE.Helpers.applyBracketToEnemy = function(enemy, band) {
+        if (!enemy || !band) return;
+        const data = enemy.enemy();
+        if (!data || /<Boss>/i.test(data.note || '')) return;
+        const authored = BSE.Helpers.getEnemyLevel(data.note);
+        if (!authored) return;
+        const lvl = BSE.Helpers.clampLevelToBracket(authored, band);
+        if (lvl === authored) return;
+        enemy._bseLevelOverride = lvl;
+        enemy._bseBracketScale = BSE.Helpers.bracketScale(authored, lvl);
+        // The pools were filled at the authored numbers before this ran.
+        enemy._hp = enemy.mhp;
+        enemy._mp = enemy.mmp;
+    };
+
+    const _BSE_Bracket_paramBase = Game_Enemy.prototype.paramBase;
+    Game_Enemy.prototype.paramBase = function(paramId) {
+        const base = _BSE_Bracket_paramBase.call(this, paramId);
+        const s = this._bseBracketScale;
+        if (!s) return base;
+        return Math.max(1, Math.round(base * (paramId <= 1 ? s.pool : s.stat)));
+    };
+
+    const _BSE_Bracket_exp = Game_Enemy.prototype.exp;
+    Game_Enemy.prototype.exp = function() {
+        const v = _BSE_Bracket_exp.call(this);
+        return this._bseBracketScale ? Math.round(v * this._bseBracketScale.pool) : v;
+    };
+
+    const _BSE_Bracket_gold = Game_Enemy.prototype.gold;
+    Game_Enemy.prototype.gold = function() {
+        const v = _BSE_Bracket_gold.call(this);
+        return this._bseBracketScale ? Math.round(v * this._bseBracketScale.pool) : v;
     };
 
     // ========================================================================
@@ -1606,9 +1640,9 @@
     // ========================================================================
     // 4b. SPAWN BAND (level selection on top of the nation-weighted pool)
     // ========================================================================
-    // Where a nation bracket rules (section 3c) the country owns this: its
-    // window is the band, and everything below is what is left for the tower,
-    // for off Earth and for any ground no country speaks for.
+    // On Earth the radial bracket (section 3c) owns this: its window is the
+    // band, and everything below is what is left for the tower and for off
+    // Earth, where no square of the world map speaks.
     //
     // There, biome is the only rule there is: the biome's whole roster. Every
     // creature whose <Biome:> tag names this place can be met, at any level up
@@ -1633,12 +1667,12 @@
         return partyLevel;
     };
 
-    // The level window to draw from, calendar already applied. The country the
-    // party is standing in is the first word (section 3c): its bracket IS the
-    // band there, and the biome's own ladder is what is left where no nation
-    // has anything to say - the tower, off Earth, outside the Europe zone.
+    // The level window to draw from. The bracket of the ground the party is
+    // standing on is the first word (section 3c), underground shift included,
+    // and the biome's own ladder is what is left where no square speaks: the
+    // tower and off Earth.
     BSE.Helpers.getSpawnBand = function() {
-        return BSE.Helpers.getActiveNationBand() || BSE.Helpers.getBiomeLevelBand();
+        return BSE.Helpers.getGroundBracket() || BSE.Helpers.getBiomeLevelBand();
     };
 
     // Narrow a candidate list to the band. Every branch ends in a nearest-level
@@ -1651,11 +1685,11 @@
     // biomeSpreadWeight), so the small fry and the monsters far over the
     // party's head both stay possible.
     BSE.Helpers.filterTroopsForMode = function(encList, mode, band) {
-        // Under a nation bracket the country is the whole rule: the window it
-        // was dealt and nothing outside it. The
-        // party is not consulted at all - a level 60 party in a 1-15 nation
-        // meets that nation's rats, which is what makes the map worth reading.
-        if (band && band.nation) {
+        // Under a radial bracket the ground is the whole rule: its window and
+        // nothing outside it. The party is not consulted at all - a level 60
+        // party at the tower's foot meets level 1-5 rats, which is what makes
+        // the map worth reading.
+        if (band && band.bracket) {
             return BSE.Helpers.applyNoviceTilt(
                 BSE.Helpers.filterTroopsInBracket(encList, band));
         }
@@ -1830,7 +1864,7 @@
     // ========================================================================
     // A party whose median level is still under NOVICE_MEDIAN_CEILING is at the
     // very start of the game, and the bands above are indifferent to that: a
-    // 2001 biome ladder centred on level 20, or a nation dealt a 45-65 bracket,
+    // 2001 biome ladder centred on level 20, or ground far out in a 41-45 bracket,
     // both hand a level 2 party fights it cannot read, let alone win. So while
     // the party is that young every candidate at or under NOVICE_LEVEL_MAX is
     // weighted up hard, in every biome and under every nation alike. Nothing is
@@ -2160,6 +2194,8 @@
     BSE.Helpers.anchorAtSpaceCenter = function() {
         const c = BSE.Helpers.getSpaceCenterCoords();
         BSE.Helpers.setStartAnchor(c.x, c.y);
+        // Measured from the pad, but never set down on it: no start zone.
+        if ($gameSystem && $gameSystem._bseStartAnchor) $gameSystem._bseStartAnchor.offEarth = true;
     };
 
     // Remember where the world was entered, once - the net under the origins,
@@ -2306,7 +2342,7 @@
     BSE.Helpers.getPlaceEncounterProfile = function(biomeName) {
         const place = BSE.Helpers.getPlaceLevel() || BSE.Helpers.getPartyReferenceLevel();
         const era = BSE.Helpers.getSpawnEra();
-        // The band the spawner would use here, the country's own included, so
+        // The band the spawner would use here, the ground's bracket included, so
         // the card reads what would actually walk out rather than what the
         // biome alone would field.
         const band = BSE.Helpers.getSpawnBand();
@@ -2315,7 +2351,7 @@
         // every step re-filtered all of $dataTroops for the HUD.
         const key = [biomeName || '', place, Math.floor(era.year),
             BSE.Helpers.getNationId(), BSE.Helpers.getPopulationMode(),
-            band.nation || '', band.min, band.max].join('|');
+            band.nation || '', band.min, band.max, !!band.bracket].join('|');
         if (_placeProfileCache && _placeProfileCache.key === key) return _placeProfileCache.value;
 
         const candidates = [];
@@ -2328,16 +2364,18 @@
             candidates.push({ troopId: i });
         }
         // The band and the spread, exactly as the spawner applies them. Under a
-        // nation bracket that is the country's window and nothing outside it.
+        // radial bracket that is the bracket and nothing outside it, and the
+        // level counted is the one the creature is fought at (section 3d).
         const local = [];
         let localTotal = 0;
-        const inBand = band.nation
+        const inBand = band.bracket
             ? BSE.Helpers.filterTroopsInBracket(candidates, band)
             : BSE.Helpers.filterTroopsInLevelBand(candidates, band);
         inBand.forEach(enc => {
-            const lvl = BSE.Helpers.getTroopMaxLevel(enc.troopId);
-            const spread = band.nation
-                ? BSE.Helpers.nationBracketWeight(lvl, band)
+            const raw = BSE.Helpers.getTroopMaxLevel(enc.troopId);
+            const lvl = band.bracket ? BSE.Helpers.clampLevelToBracket(raw, band) : raw;
+            const spread = band.bracket
+                ? 1
                 : BSE.Helpers.biomeSpreadWeight(lvl);
             const weight = spread * BSE.Helpers.populationSpawnBoost(enc.troopId);
             if (weight <= 0) return;
@@ -2403,7 +2441,8 @@
             placeLevel: BSE.Helpers.getPlaceLevel(),
             partyLevel: BSE.Helpers.getPartyReferenceLevel(),
             nation: BSE.Helpers.getNationName(),
-            nationBracket: BSE.Helpers.describeNationLevels(BSE.Helpers.getNationName()),
+            underground: BSE.Helpers.isUndergroundPlace(),
+            bracket: BSE.Helpers.getGroundBracket(),
             roster: BSE.Helpers.getPlaceEncounterProfile(BSE.Helpers.getMapBiome())
         };
     };
@@ -3100,29 +3139,22 @@
         // - its encounter list is the world's own species roster, already built
         // around that same level - and passes through with no band at all.
         const offWorldLevel = BSE.Helpers.getOffWorldLevel();
-        // The country's own window, where a country has one (section 3c). Not
-        // in the tower and not off Earth: a floor's depth and a station's orbit
-        // both outrank the ground the entrance happens to stand on.
-        const nationBand = (bandApplies && !towerFloorLevel && offWorldLevel <= 0)
-            ? BSE.Helpers.getActiveNationBand()
+        // The radial bracket of the ground, where the ground has one (section
+        // 3c). Not in the tower and not off Earth: a floor's depth and a
+        // station's orbit both outrank the ground the entrance stands on. A
+        // dungeon, an underground layer or an interior is already shifted up
+        // by the bracket itself, whatever structure was dealt there.
+        const groundBracket = (bandApplies && !towerFloorLevel && offWorldLevel <= 0)
+            ? BSE.Helpers.getGroundBracket()
             : null;
         // The level everything on this map is measured against: the depth in the
-        // tower, the country's own bracket where one rules, the party's median
-        // everywhere else. The `deadly` filter below reads it too, which is what
-        // makes a temple under a level 70 nation a level 70 nation's temple.
-        const baseRefLevel = nationBand ? Math.round(nationBand.center) : poolRefLevel;
-        // A structure sits on a rung of the danger ladder, and that rung shifts
-        // the band (see applyDangerToBand): a smuggler's cache below it, a
-        // bunker or an under-forge above it. A tower floor keeps its own level
-        // whichever structure was dealt to it - the depth is the danger, and
-        // the rung the borrowed layout sits on has nothing to say about it.
+        // tower, the bracket where one rules, the party's median everywhere else.
+        const baseRefLevel = groundBracket ? Math.round(groundBracket.center) : poolRefLevel;
         const levelBand = towerFloorLevel
             ? BSE.Helpers.getTowerFloorBand(towerFloorLevel)
             : (offWorldLevel > 0
                 ? BSE.Helpers.getOffWorldBand(offWorldLevel)
-                : (bandApplies
-                    ? BSE.Helpers.applyDangerToBand(structDanger, BSE.Helpers.getSpawnBand())
-                    : null));
+                : (bandApplies ? (groundBracket || BSE.Helpers.getSpawnBand()) : null));
 
         // Narrowing a candidate list to `levelBand`. A tower floor and an
         // off-world map carry a band of their own - the depth, the level of the
@@ -3277,14 +3309,14 @@
                             else validTroops = encounterList;
                         }
                         // Narrow the candidates to the band the place holds.
-                        // A `deadly` structure overrides it: its guardians are
-                        // always far above the level the map is pitched at,
-                        // which is the rule the temple has always used and the
-                        // shrine, the library and the lava tube now share. An
-                        // alien surface is filtered by none of it.
+                        // Off Earth's ground a `deadly` structure overrides it:
+                        // its guardians are far above the level the map is
+                        // pitched at. Under a radial bracket nothing does: the
+                        // bracket is a wall for the temple too. An alien
+                        // surface is filtered by none of it.
                         let pickList = validTroops;
                         if (pickList.length > 0 && bandApplies) {
-                            pickList = (structDanger === 'deadly' && !towerFloorLevel)
+                            pickList = (structDanger === 'deadly' && !towerFloorLevel && !groundBracket)
                                 ? BSE.Helpers.filterTroopsWellAboveLevel(pickList, baseRefLevel)
                                 : applyBand(pickList);
                         }
@@ -5497,6 +5529,12 @@
     Game_Troop.prototype.setup = function (troopId) {
         BSE.Helpers.ensureChaosTroops();
         _BSE_Game_Troop_setup.call(this, troopId);
+        // An ambient fight is fought inside the bracket of the ground it was
+        // met on (section 3d). The bracket is armed by whoever started it and
+        // read once, here.
+        const bracket = BSE.State.pendingBracket;
+        BSE.State.pendingBracket = null;
+        if (bracket) this.members().forEach(e => BSE.Helpers.applyBracketToEnemy(e, bracket));
         const troop = $dataTroops[troopId];
         if (!troop) return;
         // A rarity is met once, and this is the moment: the fight starting.

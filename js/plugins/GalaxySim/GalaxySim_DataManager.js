@@ -2716,6 +2716,10 @@
         if (far.galaxySeed !== seed) continue;
         if (!list.some((s) => s && s.name === far.name)) list.push(far);
       }
+      // The planets this world added to the galaxy (a crash world made to
+      // fit a party's level) go back into their systems every time.
+      const GS = window.GalaxySim;
+      if (GS && typeof GS.applyWorldPlanets === "function") GS.applyWorldPlanets(seed, list);
       this._galaxySystemsCache.set(key, list);
       return list;
     }

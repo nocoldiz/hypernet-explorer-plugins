@@ -249,21 +249,11 @@
     // HOW HARD THE GROUND IS THERE
     // ------------------------------------------------------------------------
     // A ticket is bought before the place is seen, so the one thing the book
-    // owes the reader beside the fare is what lives at the other end. Every
-    // Europe-zone nation was dealt a level bracket when the world was made
-    // (BattleSystemEnhancedEncounters, section 3c) and the calendar has been
-    // moving it ever since; a stop prints the window of the NATION it stands
-    // in, because that bracket, not the stop, is what the fauna around it is
-    // pitched at. Two stops in one country therefore read the same, which is
-    // the truth: the country is the whole rule.
-    //
-    // The nation is asked for by the world map's own id first ("nationId" on
-    // the Destinations.json entry) and by its "country" name second, so a stop
-    // whose country is spelled in a way the table does not know still answers.
-    // Where the deal never reached - a stop outside the Europe zone, a square
-    // the party wrote down themselves, a session with no fauna table loaded -
-    // the entry's own "minLevel" stands in, and a stop with neither prints no
-    // level at all rather than a "Lv. 0".
+    // owes the reader beside the fare is what lives at the other end: the
+    // level bracket of the stop's own square, read off its distance from the
+    // Omega Tower (BattleSystemEnhancedEncounters, section 3c). A square the
+    // party wrote down themselves reads the same way. A session with no fauna
+    // table loaded prints no level at all rather than a "Lv. 0".
     // The Destinations.json entry behind a row. The index is read LIVE, not
     // off the copy taken when the plugin loaded, because DataService may hand
     // window.WorkSystem its tables after this file has run; a stop built by
@@ -276,27 +266,18 @@
     }
 
     function destLevelInfo(dest) {
-        if (!dest || dest.custom) return null;
+        if (!dest) return null;
         const entry = destEntry(dest);
-        // "fixedLevel" beats the nation band, same rule as the map banner: it
-        // is a statement about this stop, not a fallback for a missing band.
-        const fixed = Number(entry.fixedLevel);
-        if (fixed > 0) return { median: fixed, min: fixed, max: fixed, frozen: true };
         const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
-        let info = null;
-        if (BSEH && typeof BSEH.describeDestinationLevels === 'function') {
-            // The country painted under the stop's square, the same ground
-            // the spawner reads once the party is standing there.
-            try {
-                info = BSEH.describeDestinationLevels(entry);
-            } catch (e) {
-                info = null;
-            }
+        if (!BSEH || typeof BSEH.describeDestinationLevels !== 'function') return null;
+        // The radial bracket of the stop's own square, the same ground the
+        // spawner reads once the party is standing there.
+        try {
+            const info = BSEH.describeDestinationLevels(entry);
+            return (info && info.min) ? info : null;
+        } catch (e) {
+            return null;
         }
-        if (info && info.median) return info;
-        const min = Number(entry.minLevel);
-        if (min > 0) return { median: min, min: min, max: min, frozen: false };
-        return null;
     }
 
     // The level a row, a pin and the confirmation print, or "" where the place
@@ -4770,6 +4751,108 @@ Scene_Map.prototype.printTravelCoordinates = function () {
         const data = getFastTravelData();
         if (data.timerActive) return;
         window.FastTravelSystem.rideTo(booking.name, TAXI_TRANSPORT, booking.fare);
+    };
+
+    // ── A cab to any square of the world map ───────────────────────────────
+    // The chart (Map/WorldMap.js) offers a taxi to the square picked on it.
+    // The fare and the hours are the Hail page's own (calculateTravelCost and
+    // calculateTravelTime on the taxi network), and the ride is the same one:
+    // the taxi interior and the travel timer, ending on the ground of the
+    // square. A square a named place stands on is driven to as that place, so
+    // the cab pulls up at its door rather than on a square built over it.
+    function taxiPlaceOnSquare(x, y) {
+        const key = x + ',' + y;   // i18n-ignore  coordinate key
+        return (getTeleportDestinations() || []).find(d => {
+            if (!d || d.patreonStation || isDestOffline(d)) return false;
+            const o = d.transportOverrides || {};
+            if (o.base && o.base.x === x && o.base.y === y) return true;
+            return Array.isArray(o.reservedTiles) &&
+                o.reservedTiles.some(t => String(t).replace(/\s+/g, '') === key);
+        }) || null;
+    }
+
+    function taxiSquareDestination(x, y) {
+        const place = taxiPlaceOnSquare(x, y);
+        if (place) return place;
+        return {
+            name: squareLabelAt(x, y),
+            type: 'custom',   // i18n-ignore  pin shape class
+            mapId: TAXI_WORLD_MAP_ID,
+            x: x,
+            y: y,
+            eventId: 0,
+            transportOverrides: { base: { x: x, y: y }, procedural: true },
+        };
+    }
+
+    // The i18n key of why no cab drives to that square, or null when one does.
+    function taxiSquareRefusal(x, y) {
+        const why = taxiRefusal();
+        if (why) return why;
+        if ($gamePlayer && $gamePlayer.isInVehicle && $gamePlayer.isInVehicle()) return 'FastTravel.taxi.refuseVehicle';
+        if (getFastTravelData().timerActive) return 'FastTravel.taxi.refuseUnderway';
+        if (!Number.isFinite(x) || !Number.isFinite(y) ||
+            x < 0 || y < 0 || x > WORLD_TILE_MAX || y > WORLD_TILE_MAX) return 'FastTravel.taxi.refuseSquare';
+        if (taxiPlaceOnSquare(x, y)) return null;
+        const px = $gameVariables.value(playerXVar), py = $gameVariables.value(playerYVar);
+        if (px === x && py === y) return 'FastTravel.taxi.refuseHere';
+        const biome = String(worldBiomeAt(x, y) || '');
+        if (/^(ocean|sea|water|lake|river)/i.test(biome)) return 'FastTravel.taxi.refuseWater';
+        if (/^mountain/i.test(biome)) return 'FastTravel.taxi.refuseMountain';
+        return null;
+    }
+
+    /**
+     * What a cab to world square (x, y) costs from where the party stands:
+     * { fare, time, fareText, timeText, canPay, refusal } where `refusal` is
+     * the reason no cab goes, already translated, or null.
+     */
+    window.FastTravelSystem.taxiQuote = function (x, y) {
+        x = Math.floor(Number(x)); y = Math.floor(Number(y));
+        const why = taxiSquareRefusal(x, y);
+        const dest = taxiSquareDestination(x, y);
+        let fare = null, time = null;
+        try {
+            fare = calculateTravelCost(dest, TAXI_TRANSPORT);
+            time = calculateTravelTime(dest, TAXI_TRANSPORT);
+        } catch (e) { fare = null; time = null; }
+        const canPay = fare != null && canAffordTravel(dest, TAXI_TRANSPORT);
+        return {
+            fare: fare,
+            time: time,
+            fareText: fare == null ? '' : wfMoney(fare),
+            timeText: time == null ? '' : wfMinutes(time),
+            canPay: canPay,
+            refusal: why ? T(why) : (fare != null && !canPay ? T('FastTravel.taxi.cannotPay') : null),
+        };
+    };
+
+    /**
+     * Hail a cab to world square (x, y) and set off at once: the fare is
+     * charged, the party is put in the taxi and the travel timer runs.
+     * Answers false (and plays the buzzer) when no cab goes there.
+     */
+    window.FastTravelSystem.taxiToSquare = function (x, y) {
+        x = Math.floor(Number(x)); y = Math.floor(Number(y));
+        const quote = window.FastTravelSystem.taxiQuote(x, y);
+        const scene = SceneManager._scene;
+        const ready = scene && scene._fastTravelDestWindow && typeof scene.closeFastTravelWindow === 'function';
+        if (quote.refusal || quote.fare == null || !ready) {
+            if (window.SoundManager) SoundManager.playBuzzer();
+            if (quote.refusal && window.ParchmentToast) ParchmentToast.show(quote.refusal, { severity: 'warning' });
+            return false;
+        }
+        const dest = taxiSquareDestination(x, y);
+        const data = getFastTravelData();
+        data.selectedTransport = TAXI_TRANSPORT;
+        data.ccLandingPending = false;
+        if ($gameMap.mapId() === TAXI_WORLD_MAP_ID) {
+            $gameVariables.setValue(playerXVar, $gamePlayer.x);
+            $gameVariables.setValue(playerYVar, $gamePlayer.y);
+        }
+        if (window.SoundManager) SoundManager.playOk();
+        executeTravel(dest, Math.max(0, Math.floor(quote.fare)), false);
+        return true;
     };
 
     if (window.HypernetOS && window.HypernetOS.registerApp) {

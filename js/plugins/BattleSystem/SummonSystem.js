@@ -330,10 +330,9 @@
  * Summon System (v4)
  * ============================================================================
  *
- * A summon is a temporary 4th party member. It exists only inside a battle:
- * it is never saved, never walks the map, never reaches the menu, and it goes
- * the moment the fight ends OR the moment the conditions holding it there stop
- * being met.
+ * A summon is a temporary 4th party member in battle. It leaves the line the
+ * moment the conditions holding it there stop being met, and when the fight
+ * ends it walks on with the party until its binding runs out (below).
  *
  * WHAT CAN BE SUMMONED
  *
@@ -391,10 +390,10 @@
  *
  * Only two things convoke it: the Convoke Familiar skill and the Convoke
  * button on its row of the Pets page, which costs the same MP. Each convoking
- * throws the die again, so a familiar can come back with a different kit. It
- * stays after the fight, walks with the party, joins every battle on its own
- * and can be ridden, until it dies or is dematerialized (from its row, or by
- * talking to it). It cannot be convoked while its owner is out of the party,
+ * throws the die again, so a familiar can come back with a different kit and
+ * for a different span of time. It walks with the party, joins every battle
+ * on its own and can be ridden, until its hour runs out, it dies or it is
+ * dematerialized (from its row, or by talking to it). It cannot be convoked while its owner is out of the party,
  * and it fades if they leave.
  *
  * THE CONDITIONS THAT HOLD IT THERE
@@ -438,13 +437,23 @@
  * map battles of MapBattleMode.js, where the summon takes the 4th body in the
  * follower train and is placed next to whoever called it.
  *
+ * THE BINDING THROW ALSO DECIDES HOW LONG IT STAYS
+ *
+ * Every summon, the familiar included, is held for a span of GAME time the
+ * throw bought: a natural 20 holds it for eight hours, a natural 1 for one
+ * minute (and it fades with the end of any fight it is in), anything between
+ * from ten minutes up to six hours, climbing with the total. The party HUD
+ * draws what is left as a clock ring around the summon's orb. A summon still
+ * standing when its fight ends walks off the field with the party; outside a
+ * fight, the moment its hour is reached, however the clock got there, it is
+ * gone. Inside a fight it is never cut short by the clock: the hour is read
+ * when the fight ends. It arrives and leaves with a sound (SE_SPAWN,
+ * SE_DESPAWN).
+ *
  * OUTSIDE A FIGHT the same rites are answered too. What they call takes a
  * trailing slot of its own (alongside the pet of PetFollowerSystem.js, never
- * instead of it) and walks with the party. What holds it there is what the rite
- * cost: every point of MP the caster paid buys a fixed number of steps, and
- * when the last one is walked the binding lets go with a notice. A familiar is
- * bound rather than rented and is never counted down: it stays until it falls
- * in a fight or is sent away from the Followers page, where everything the
+ * instead of it) and walks with the party until its hour runs out, it falls
+ * in a fight or it is sent away from the Followers page, where everything the
  * party is walking with can be dismissed.
  *
  * A summon walking with the party joins any fight the party gets into, at the
@@ -777,22 +786,27 @@ window.Game_SummonFollower = Game_SummonFollower;
     let heldBody = null;        // the follower slot a tactical summon stands in
 
     // ------------------------------------------------------------------
-    // Outside a fight the rite is answered all the same, and what it calls
-    // walks behind the party instead of standing in a battle line. What holds
-    // it there is what the rite cost: every point of MP the caster paid buys a
-    // number of steps beside them, and when the last one is walked the binding
-    // lets go. A familiar is the one exception and is never counted down: it is
-    // its summoner's own animal and stays until something kills it in a fight
-    // or they send it away from the Followers page.
+    // THE BINDING IS HELD BY THE CLOCK. Whatever answers a rite, in a fight or
+    // out of one, a familiar included, stays for as long as the binding throw
+    // bought it, counted in game minutes: a natural 20 holds it for eight
+    // hours, a natural 1 for a single minute (and a fight it is in is the last
+    // thing it sees), anything between climbs from a few minutes to six hours
+    // with the total. A summon that outlives its fight walks off the field with
+    // the party; outside a fight, the moment the hour is reached (walking,
+    // sleeping, travelling, however the clock got there) it is gone.
     //
     // Unlike a battle summon, a map summon IS save data: it lives on
     // $gameSystem so it survives a map change, a save and a load.
     // ------------------------------------------------------------------
-    const MAP_STEPS_PER_MP = 4;
-    const MAP_STEPS_MIN = 40;
-    const MAP_STEPS_MAX = 2000;
-    const MAP_STEPS_NO_RITE = 120;   // an event called it, and events pay nothing
+    const BIND_MINUTES_NAT20 = 480;
+    const BIND_MINUTES_NAT1 = 1;
+    const BIND_MINUTES_LOW = 10;     // the worst throw that is not a natural 1
+    const BIND_MINUTES_HIGH = 360;   // the best throw that is not a natural 20
+    const BIND_MINUTES_NO_ROLL = 60; // a record saved without a throw of its own
+    const EXPIRY_CHECK_FRAMES = 30;  // how often the clock is read outside a fight
     const RITE_WINDOW = 600;         // frames a paid rite still counts as the one being cast
+    const SE_SPAWN = 'Summon';       // i18n-ignore: audio file
+    const SE_DESPAWN = 'Teleport';   // i18n-ignore: audio file
 
     let riteCost = 0;           // MP the skill now casting took from its caster
     let riteActorId = 0;        // who paid it
@@ -831,6 +845,64 @@ window.Game_SummonFollower = Game_SummonFollower;
 
     function clamp(value, low, high) {
         return Math.max(low, Math.min(high, value));
+    }
+
+    function playSe(name) {
+        if (typeof AudioManager !== 'undefined' && AudioManager.playSe) {
+            AudioManager.playSe({ name, volume: 90, pitch: 100, pan: 0 });
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // The binding clock (see the constants above)
+    // ------------------------------------------------------------------
+
+    function nowMinutes() {
+        const tds = window.TimeDateSystem;
+        const value = tds && tds.getGameTimeMinutes ? Number(tds.getGameTimeMinutes()) : 0;
+        return Number.isFinite(value) ? value : 0;
+    }
+
+    // How long a throw holds what it called. Read off the total (the die and
+    // the summoner's INT together), climbing geometrically, so every point is
+    // worth roughly the same share more time at either end of the table.
+    function bindingMinutes(roll) {
+        if (!roll) return BIND_MINUTES_NO_ROLL;
+        if (roll.nat20) return BIND_MINUTES_NAT20;
+        if (roll.nat1) return BIND_MINUTES_NAT1;
+        const total = clamp(Number(roll.total) || Number(roll.roll) || 10, 2, 19);
+        const share = (total - 2) / 17;
+        const raw = BIND_MINUTES_LOW * Math.pow(BIND_MINUTES_HIGH / BIND_MINUTES_LOW, share);
+        return raw >= 30 ? Math.round(raw / 5) * 5 : Math.round(raw);
+    }
+
+    // Stamp a record with when its binding lets go.
+    function stampBinding(target, roll) {
+        const minutes = bindingMinutes(roll);
+        target.bindMinutes = minutes;
+        target.expiresAt = nowMinutes() + minutes;
+        target.fadesAfterBattle = !!(roll && roll.nat1);
+        return minutes;
+    }
+
+    function minutesLeft(record) {
+        if (!record || !Number.isFinite(record.expiresAt)) return 0;
+        return Math.max(0, record.expiresAt - nowMinutes());
+    }
+
+    function bindingSpent(record) {
+        return !!record && Number.isFinite(record.expiresAt) && nowMinutes() >= record.expiresAt;
+    }
+
+    // "45 min", "3 h 20 min"; `short` is the HUD's "45m" / "3h20".
+    function timeLabel(minutes, short) {
+        const m = Math.max(0, Math.ceil(Number(minutes) || 0));
+        const base = short ? 'Battle.summon.time.short.' : 'Battle.summon.time.long.';   // i18n-ignore: key prefix
+        if (m < 60) return T(base + 'minutes', { m });                                   // i18n-ignore: key fragment
+        const h = Math.floor(m / 60);
+        const rest = m % 60;
+        const mm = short ? String(rest).padStart(2, '0') : rest;
+        return T(base + (rest ? 'hours' : 'hoursOnly'), { h, m: mm });                    // i18n-ignore: key fragment
     }
 
     function median(values) {
@@ -1744,8 +1816,8 @@ window.Game_SummonFollower = Game_SummonFollower;
 
         const summoner = resolveSummoner();
         // A summon that walked into the fight beside the party is already paid
-        // for, in steps or in the bond of a familiar. It asks for nothing more
-        // and it has no clock on it: only a blade takes it off the field.
+        // for, out on the road. It asks for nothing more, and its clock is not
+        // read until the fight is over: only a blade takes it off the field.
         const upkeep = (!spec.mapBound && spec.kind && spec.kind.upkeep) ? spec.kind.upkeep : null;
 
         // The first turn is paid for up front, so a rite nobody can afford never
@@ -1789,6 +1861,15 @@ window.Game_SummonFollower = Game_SummonFollower;
             hyper: initialHyper,
             hyperMax: hyperMax
         });
+        // The clock starts with the throw. Something that walked in from the
+        // road keeps the hour it was bound until; a fresh rite stamps its own.
+        if (boundRoll && Number.isFinite(spec.expiresAt)) {
+            active.expiresAt = spec.expiresAt;
+            active.bindMinutes = spec.bindMinutes || 0;
+            active.fadesAfterBattle = !!spec.fadesAfterBattle;
+        } else {
+            stampBinding(active, rollRes);
+        }
         pendingLeave = null;
         pendingUltimate = pendingUlt;
         lastUpkeepFrame = -1;
@@ -1846,6 +1927,11 @@ window.Game_SummonFollower = Game_SummonFollower;
 
         toast(T('Battle.summon.summoned', { name: active.name }), 'info');
         if (!quiet) {
+            playSe(SE_SPAWN);
+            toast(active.fadesAfterBattle
+                ? T('Battle.summon.fadesAfterBattle', { name: active.name })
+                : T('Battle.summon.boundFor', { name: active.name, time: timeLabel(active.bindMinutes) }),
+                active.fadesAfterBattle ? 'warning' : 'info');
             announceSkills(active.name, active.skillIds, allSkillIds);
             if (rollRes.nat20) {
                 toast(T('Battle.summon.perfectRitual', { name: active.name }), 'good');
@@ -1911,8 +1997,8 @@ window.Game_SummonFollower = Game_SummonFollower;
         actor.clearActions();
     }
 
-    // Send the summon away. `reasonKey` names the line the party reads; a
-    // silent dismissal (the battle ending) passes none.
+    // Send the summon away. `reasonKey` names the line the party reads; the
+    // battle simply ending passes none.
     function dismissSummon(reasonKey) {
         if (!active) return;
         const name = active.name;
@@ -1921,12 +2007,17 @@ window.Game_SummonFollower = Game_SummonFollower;
         // a blade, a broken binding, an order to go - is a real departure and
         // takes it off the map with it.
         const wasMapBound = !!active.mapBound;
-        // A FAMILIAR OUTLIVES THE FIGHT. Convoked in the middle of one and
-        // still standing at the end, it does not go anywhere: it walks off the
-        // field beside the party and stays, wounds and kit and all.
+        // A SUMMON OUTLIVES THE FIGHT. Still standing when it ends, it walks
+        // off the field beside the party, wounds and kit and all, and stays
+        // until its binding runs out. Three things end it with the fight
+        // instead: a natural 1 at the binding, an hour already passed while it
+        // was fighting, and a creature with no body to walk in.
         const proxyNow = actorProxy();
         const hpRate = (proxyNow && proxyNow.mhp > 0) ? proxyNow.hp / proxyNow.mhp : 1;
-        const stays = !reasonKey && isBoundKind(active) && !!proxyNow && proxyNow.isAlive();
+        const alive = !!proxyNow && proxyNow.isAlive();
+        const stays = !reasonKey && alive && !active.fadesAfterBattle &&
+            !bindingSpent(active) && !!active.characterName;
+        const fades = !reasonKey && alive && !stays;
         const carried = stays ? Object.assign({}, active) : null;
         active = null;              // unlocks removeActor and the param overrides
         pendingLeave = null;
@@ -1949,13 +2040,15 @@ window.Game_SummonFollower = Game_SummonFollower;
             actor.setup(summonActorId);   // reset the proxy to its database state
         }
 
-        if (wasMapBound && reasonKey) dismissMapSummon(null);
-        if (carried) keepFamiliarOnMap(carried, hpRate, wasMapBound);
+        if (wasMapBound && !stays) dismissMapSummon(null);
+        if (carried) keepOnMap(carried, hpRate, wasMapBound);
         refreshFollowers();
 
         rebuildBars();
         refreshBattle();
+        if (reasonKey || fades) playSe(SE_DESPAWN);
         if (reasonKey) toast(T('Battle.summon.' + reasonKey, { name }), 'warning');
+        else if (fades) toast(T('Battle.summon.mapExpired', { name }), 'warning');
     }
 
     // A summon never leaves in the middle of something. Both the round loop
@@ -2001,25 +2094,17 @@ window.Game_SummonFollower = Game_SummonFollower;
         return ($gameSystem && $gameSystem._mapSummon) || null;
     }
 
-    // A familiar is bound rather than rented: it is not counted down in steps,
-    // and nothing but a death or an order sends it away.
+    // A familiar belongs to somebody: its record is linked to their Pets page
+    // row and it fades when they leave the party. Its hour is counted like
+    // every other summon's.
     function isBoundKind(spec) {
         return !!spec && spec.kindKey === 'familiar';               // i18n-ignore: internal tag
     }
 
-    // How far a rite carries. Every point of MP the caster paid buys the same
-    // number of steps, floored so even a free rite is worth walking with and
-    // capped so an enormous one is not effectively permanent. A rite an event
-    // cast (an event pays nothing) gets the flat allowance instead.
-    function riteSteps() {
-        if ((Graphics.frameCount - riteFrame) > RITE_WINDOW) return MAP_STEPS_NO_RITE;
-        return clamp(Math.round(riteCost * MAP_STEPS_PER_MP), MAP_STEPS_MIN, MAP_STEPS_MAX);
-    }
-
-    // The fight is over and the familiar is still standing: it is written down
-    // as walking with the party, keeping the throw and the kit it was bound
-    // with, so the next fight it walks into reads them back.
-    function keepFamiliarOnMap(carried, hpRate, wasMapBound) {
+    // The fight is over and the summon is still standing: it is written down
+    // as walking with the party, keeping the throw, the kit and the hour it
+    // was bound with, so the next fight it walks into reads them back.
+    function keepOnMap(carried, hpRate, wasMapBound) {
         const record = mapSummon();
         if (wasMapBound && record) {
             record.spec.hpRate = hpRate;
@@ -2032,11 +2117,12 @@ window.Game_SummonFollower = Game_SummonFollower;
         stored.hpRate = hpRate;
         $gameSystem._mapSummon = {
             spec: stored,
-            bound: true,
+            bound: isBoundKind(stored),
             petId: stored.petId || 0,
-            stepsLeft: 0,
-            stepsTotal: 0
+            expiresAt: stored.expiresAt,
+            bindMinutes: stored.bindMinutes || 0
         };
+        toast(T('Battle.summon.staysAfter', { name: stored.name, time: timeLabel(minutesLeft(stored)) }), 'info');
     }
 
     async function beginMapSummon(spec, opts) {
@@ -2055,7 +2141,6 @@ window.Game_SummonFollower = Game_SummonFollower;
         }
 
         const bound = isBoundKind(spec);
-        const steps = bound ? 0 : riteSteps();
         // KINDS is code, not save data: only the key is written down, and the
         // kind itself is looked up again when the thing goes into a fight.
         const stored = Object.assign({}, spec);
@@ -2068,19 +2153,29 @@ window.Game_SummonFollower = Game_SummonFollower;
         stored.ritual = await rollRitual(spec, intMod, silent);
         stored.allSkillIds = (spec.allSkillIds || spec.skillIds || []).slice();
         stored.skillIds = skillsForRoll(stored.allSkillIds, stored.ritual);
+        // The throw also decides how long it stays. A creature handed over
+        // with no throw at the table (Em's starter) is given its hours outright.
+        stampBinding(stored, stored.ritual);
+        if (opts && Number.isFinite(opts.minutes)) {
+            stored.bindMinutes = opts.minutes;
+            stored.expiresAt = nowMinutes() + opts.minutes;
+            stored.fadesAfterBattle = false;
+        }
 
         $gameSystem._mapSummon = {
             spec: stored,
             bound,
             petId: spec.petId || 0,
-            stepsLeft: steps,
-            stepsTotal: steps
+            expiresAt: stored.expiresAt,
+            bindMinutes: stored.bindMinutes
         };
         refreshFollowers();
         if (silent) return true;
+        playSe(SE_SPAWN);
+        const time = timeLabel(stored.bindMinutes);
         toast(bound
-            ? T('Battle.summon.mapBound', { name: spec.name })
-            : T('Battle.summon.mapWalks', { name: spec.name, steps }), 'info');
+            ? T('Battle.summon.mapBound', { name: spec.name, time })
+            : T('Battle.summon.mapWalks', { name: spec.name, time }), 'info');
         announceSkills(spec.name, stored.skillIds, stored.allSkillIds);
         if (stored.ritual.nat20) {
             toast(T('Battle.summon.perfectRitual', { name: spec.name }), 'good');
@@ -2102,7 +2197,10 @@ window.Game_SummonFollower = Game_SummonFollower;
         if (record.petId && vs && vs.isMounted && vs.isMounted(record.petId) && vs.dismount) vs.dismount();
         $gameSystem._mapSummon = null;
         refreshFollowers();
-        if (reasonKey) toast(T('Battle.summon.' + reasonKey, { name }), 'warning');
+        if (reasonKey) {
+            playSe(SE_DESPAWN);
+            toast(T('Battle.summon.' + reasonKey, { name }), 'warning');
+        }
         return true;
     }
 
@@ -2116,15 +2214,18 @@ window.Game_SummonFollower = Game_SummonFollower;
         if (inParty(owner) && familiarRecord(owner)) return;
         const name = record.spec.name;
         dismissMapSummon(null);
+        playSe(SE_DESPAWN);
         toast(T('Battle.summon.ownerLeft', { name, owner: owner ? owner.name() : '' }), 'warning');
     }
 
-    function walkMapSummon() {
+    // Outside a fight the hour is read off the clock, however it got there:
+    // walking, sleeping, a journey, a wait. Inside one nothing is counted
+    // down; the fight is over first, and dismissSummon reads the hour then.
+    function checkMapExpiry() {
+        if (active || ($gameParty && $gameParty.inBattle())) return;
         checkFamiliarOwner();
         const record = mapSummon();
-        if (!record || record.bound || active) return;
-        record.stepsLeft = Math.max(0, (record.stepsLeft || 0) - 1);
-        if (record.stepsLeft <= 0) dismissMapSummon('mapExpired');  // i18n-ignore: key fragment
+        if (record && bindingSpent(record)) dismissMapSummon('mapExpired');   // i18n-ignore: key fragment
     }
 
     // The fight opens and what the party has been walking with joins it, at the
@@ -2133,6 +2234,12 @@ window.Game_SummonFollower = Game_SummonFollower;
         checkFamiliarOwner();
         const record = mapSummon();
         if (!record || active) return;
+        // Its hour came while nobody was looking (the clock jumped straight
+        // into an ambush): it does not get to fight.
+        if (bindingSpent(record)) {
+            dismissMapSummon('mapExpired');                         // i18n-ignore: key fragment
+            return;
+        }
         // A record written before the rite kept its own throw: it is bound now,
         // once, and every fight after this one reads that same result back.
         if (!record.spec.ritual) {
@@ -2667,11 +2774,16 @@ window.Game_SummonFollower = Game_SummonFollower;
         _Spriteset_Map_createCharacters.call(this);
     };
 
-    // The road is what pays for a summon outside a fight.
-    const _Game_Player_increaseSteps = Game_Player.prototype.increaseSteps;
-    Game_Player.prototype.increaseSteps = function () {
-        _Game_Player_increaseSteps.call(this);
-        walkMapSummon();
+    // The binding clock, read every EXPIRY_CHECK_FRAMES frames of any scene
+    // but a fight: the map, the 3D world, a menu the party slept from.
+    let expiryTimer = 0;
+    const _Scene_Base_update = Scene_Base.prototype.update;
+    Scene_Base.prototype.update = function () {
+        _Scene_Base_update.call(this);
+        if (++expiryTimer < EXPIRY_CHECK_FRAMES) return;
+        expiryTimer = 0;
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
+        checkMapExpiry();
     };
 
     // A fight opens: whatever the party is walking with steps into it. This is
@@ -2894,7 +3006,7 @@ window.Game_SummonFollower = Game_SummonFollower;
         const spec = buildFamiliarSpec(actor);
         if (!spec) return false;
         spec.petId = pet.id;
-        beginMapSummon(spec, { silent: true });
+        beginMapSummon(spec, { silent: true, minutes: BIND_MINUTES_NAT20 });
         return true;
     }
 
@@ -3222,12 +3334,43 @@ window.Game_SummonFollower = Game_SummonFollower;
                 kindKey: record.spec.kindKey,
                 petId: record.petId || 0,
                 bound: !!record.bound,
-                stepsLeft: record.stepsLeft || 0,
-                stepsTotal: record.stepsTotal || 0,
+                minutesLeft: minutesLeft(record),
+                bindMinutes: record.bindMinutes || 0,
+                timeLeft: timeLabel(minutesLeft(record)),
                 fighting: !!active
             };
         },
         dismissMapSummon() { return dismissAnySummon(); },
+        // The binding clock of whatever is summoned right now, in a fight or
+        // walking with the party, for the party HUD's ring around the orb.
+        // `hp`/`mhp` are only filled for the walking one (in a fight the
+        // proxy actor's own card carries them).
+        binding() {
+            const record = active || mapSummon();
+            if (!record || !Number.isFinite(record.expiresAt)) return null;
+            const spec = active || record.spec;
+            const left = minutesLeft(record);
+            const total = Math.max(1, record.bindMinutes || left || 1);
+            const out = {
+                name: spec.name,
+                level: spec.level || 1,
+                minutesLeft: left,
+                bindMinutes: total,
+                rate: clamp(left / total, 0, 1),
+                label: timeLabel(left, true),
+                fadesAfterBattle: !!spec.fadesAfterBattle,
+                fighting: !!active
+            };
+            if (!active) {
+                const mhp = Math.max(1, Math.round((spec.params && spec.params[0]) || 100));
+                const rate = Number.isFinite(spec.hpRate) ? spec.hpRate : 1;
+                out.mhp = mhp;
+                out.hp = Math.max(1, Math.round(mhp * rate));
+            }
+            return out;
+        },
+        bindingMinutes,
+        timeLabel,
         markNpc,
         markEnemy,
         marks() { return marks(); },

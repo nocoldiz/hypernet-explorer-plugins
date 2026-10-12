@@ -2994,11 +2994,11 @@
             if (!box) return;
             const rect = kit.layout.rect();
             const s = kit.layout.scale(rect);
-            const btn = this._musicSwitchButton || this._bgSwitchButton;
+            const btn = this._bgSwitchButton;
             const btnRect = btn ? btn.getBoundingClientRect() : null;
             const below = btnRect && btnRect.height > 0
                 ? (btnRect.bottom - rect.top) / s
-                : 18 + 34 + 42; // switcher inset, its design height, the music plate
+                : 18 + 34; // switcher inset, its design height
             kit.layout.place(box, { right: 18, top: Math.round(below + 10) });
             box.style.setProperty('--title-w',
                 Math.round(Math.min(320 * s, rect.width * 0.3)) + 'px');

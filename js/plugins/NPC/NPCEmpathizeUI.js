@@ -1373,6 +1373,26 @@
     this._portrait3D = null;
     s.disposed = true;
     cancelAnimationFrame(s.rafId);
+    if (s.scene && typeof s.scene.traverse === 'function') {
+      s.scene.traverse((obj) => {
+        if (obj.geometry) {
+          try { obj.geometry.dispose(); } catch (e) {}
+        }
+        if (obj.material) {
+          const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+          for (const mat of mats) {
+            if (mat.map) try { mat.map.dispose(); } catch (e) {}
+            if (mat.lightMap) try { mat.lightMap.dispose(); } catch (e) {}
+            if (mat.bumpMap) try { mat.bumpMap.dispose(); } catch (e) {}
+            if (mat.normalMap) try { mat.normalMap.dispose(); } catch (e) {}
+            if (mat.specularMap) try { mat.specularMap.dispose(); } catch (e) {}
+            if (mat.envMap) try { mat.envMap.dispose(); } catch (e) {}
+            try { mat.dispose(); } catch (e) {}
+          }
+        }
+      });
+    }
+    try { s.model?.destroy?.(); } catch (e) {}
     // dispose() alone leaves the WebGL context alive, and the browser force-
     // loses the OLDEST context past its cap , which is the game's own canvas.
     // Release it explicitly, then drop the element: a canvas that lost a

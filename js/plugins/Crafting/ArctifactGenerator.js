@@ -748,10 +748,19 @@ function getPlayerLevel() {
 // Add a level-appropriate artifact to inventory
 function addLevelAppropriateArtifact() {
     const playerLevel = getPlayerLevel();
-    
+
     // Generate a level close to the player's level (±5 levels, capped at 1-99)
     const levelVariance = Math.floor(Math.random() * 11) - 5; // -5 to +5
-    const artifactLevel = Math.max(1, Math.min(99, playerLevel + levelVariance));
+    let artifactLevel = Math.max(1, Math.min(99, playerLevel + levelVariance));
+    // On the procedural map the ground decides instead: a level inside the
+    // radial bracket of the square it was found on (BattleSystemEnhancedEncounters, 3c).
+    const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+    const band = ($gameMap && $gameMap.mapId() === 636 && BSEH && BSEH.getGroundBracket)
+        ? BSEH.getGroundBracket() : null;
+    if (band) {
+        artifactLevel = Math.max(1, Math.min(99,
+            band.min + Math.floor(Math.random() * (band.max - band.min + 1))));
+    }
     
     const artifactId = generateArtifact(artifactLevel);
     if (artifactId > 0) {

@@ -1,0 +1,691 @@
+{
+  "title": "Roadmap",
+  "details": "Dettagli",
+  "close": "Chiudi",
+  "fullscreenTitle": "Roadmap",
+  "omegaTower": "Livelli della Torre Omega",
+  "destinations": "Destinazioni chiave",
+  "searchPlaceholder": "Filtra...",
+  "allCategories": "Tutto",
+  "doneHeader": "Fatto",
+  "selectFeature": "Seleziona un sistema per vedere cosa è fatto.",
+  "categories": {
+    "core": "Base",
+    "combat": "Combattimento",
+    "npcs": "Società",
+    "economy": "Economia",
+    "vehicles": "Veicoli",
+    "hypernet": "Hypernet",
+    "galaxy": "Spazio",
+    "health": "Salute",
+    "crafting": "Creazione",
+    "cards": "Minigiochi",
+    "world": "Mondo",
+    "multiplayer": "Multigiocatore"
+  },
+  "features": {
+    "worldPersistence": {
+      "name": "Mondi",
+      "desc": "Mondi che sopravvivono al singolo salvataggio, con tutto ciò che vi è accaduto.",
+      "done": [
+        "Cartelle dei mondi condivise da ogni salvataggio dello stesso mondo",
+        "Schermata Mondi nel menu del titolo",
+        "Mondo e storia generati dal seme del mondo",
+        "Salvataggio automatico a ogni cambio di mappa",
+        "Forzieri aperti conservati per mondo",
+        "Voxel scavati e alberi abbattuti conservati per mondo",
+        "Diario del gruppo scritto mentre accade, conservato nella cartella del mondo",
+        "Diario di viaggio salvato come file di testo per slot",
+        "Lettere tra gruppi di mondi diversi, con denaro e merci allegati"
+      ]
+    },
+    "timeSleepClock": {
+      "name": "Calendario",
+      "desc": "Un orologio e un calendario vivi su cui gira tutto il mondo.",
+      "done": [
+        "Orologio e calendario con tinte del giorno e della notte",
+        "Menu del sonno, letti, debito di sonno e sfinimento",
+        "Stagioni, meteo e temperatura",
+        "Festività e raduni",
+        "Fasi lunari, con due lune in più il venerdì",
+        "Orologio analogico"
+      ]
+    },
+    "hungerNutrition": {
+      "name": "Nutrizione",
+      "desc": "Cosa mangia il gruppo, e cosa gli fa.",
+      "done": [
+        "Fame, sazietà e abbuffate",
+        "Calorie, grassi, proteine e caffeina per ogni pasto",
+        "Consumabili che ripristinano bisogni specifici",
+        "Ingredienti crudi commestibili da soli",
+        "Cibo che va a male col tempo"
+      ]
+    },
+    "inputControls": {
+      "name": "Controlli",
+      "desc": "Tastiera, mouse e gamepad, rimappabili ovunque.",
+      "done": [
+        "Supporto per tastiera, mouse e gamepad",
+        "Rimappatura completa dei tasti",
+        "Movimento con lo stick analogico",
+        "Controlli del mouse e scorrimento della mappa",
+        "Tasti rapidi e barra rapida condivisa",
+        "Cambio del membro attivo del gruppo",
+        "Barre di ricerca e liste lunghe in ogni menu",
+        "Menu opzioni con ogni impostazione in schede",
+        "Schermo intero, 16:9 e scala pixel perfect"
+      ]
+    },
+    "audioMusic": {
+      "name": "Audio",
+      "desc": "Musica generata e registrata, radio e passi.",
+      "done": [
+        "Motore audio dedicato",
+        "Musica procedurale generata dal vivo",
+        "Selettore della musica di battaglia nelle opzioni",
+        "Brano e artista annunciati con un avviso o una cassetta",
+        "Musica delle mappe scelta per nazione, con brani di giorno e di notte",
+        "Radio nel mondo con stazioni sintonizzabili",
+        "Passi che cambiano col terreno",
+        "Musica casuale delle mappe con tonalità casuale"
+      ]
+    },
+    "modManager": {
+      "name": "Mod",
+      "desc": "Carica i plugin della comunità dalla cartella mods.",
+      "done": [
+        "Caricatore che legge la cartella mods",
+        "Ordine di caricamento e attivazione per ogni mod",
+        "Schermata Mod nel menu del titolo",
+        "Percorsi delle risorse trovati qualunque sia il maiuscolo"
+      ]
+    },
+    "battleEngine": {
+      "name": "Sistema di battaglia",
+      "desc": "Battaglie a turni in cui ogni combattente agisce alla propria velocità.",
+      "done": [
+        "Un'azione per combattente a round, in ordine di agilità",
+        "PV che restano tra uno scontro e l'altro",
+        "Avvisi di pericolo e protezione della salute",
+        "Lapidi, rinascita, morte permanente e ripristino",
+        "Cadaveri e ricompense di battaglia",
+        "Incontri che cambiano con l'ora del giorno",
+        "Livello dei nemici che sale con la distanza dalla Torre Omega",
+        "Finestra dei comandi e registro di battaglia a scorrimento",
+        "Modalità pacifica con il comando Parla",
+        "Parlare ai nemici in battaglia",
+        "Lanciare oggetti",
+        "Fuga garantita"
+      ]
+    },
+    "battlers3D": {
+      "name": "Combattenti 3D",
+      "desc": "Ogni nemico è un modello 3D fatto solo per lui.",
+      "done": [
+        "Un modello 3D unico per ogni nemico",
+        "Famiglie di bestie, uccelli, boss, draghi, umanoidi, melme e spiriti",
+        "Andature a piedi, di corsa, in volo e a nuoto",
+        "Parti del corpo che si possono perdere, con sangue",
+        "Acconciature condivise per persone e popoli",
+        "Varianti generate all'interno di una specie",
+        "Stili retrò SnapVertex e Pixel Art",
+        "Sfondi di battaglia animati con fasi lunari",
+        "Animazioni d'effetto per ogni abilità"
+      ]
+    },
+    "skillsLoadouts": {
+      "name": "Abilità",
+      "desc": "Centinaia di abilità e incantesimi, allenati, fusi e specializzati.",
+      "done": [
+        "Menu delle abilità a schede per ruolo e assetto da nove abilità",
+        "Abilità attive e una passiva distintiva per ogni classe",
+        "Livelli di specializzazione che crescono con ciò che fai",
+        "Enciclopedia delle abilità, allenamento e fusione degli incantesimi",
+        "289 incantesimi esoterici in 23 scuole",
+        "Competenze con le armi allenabili",
+        "Poteri Expression costruiti da inneschi, condizioni ed effetti",
+        "Abilità di trasformazione dei mimic",
+        "Enciclopedia degli stati con come finisce ciascuno"
+      ]
+    },
+    "arenaBattles": {
+      "name": "Arena",
+      "desc": "Sfide e prove con ricompense crescenti.",
+      "done": [
+        "Sfide a eliminazione e scontri singoli",
+        "Prove dei biomi",
+        "Ricompense per serie di vittorie in oro e oggetti",
+        "Menu dell'arena e schermata dei risultati"
+      ]
+    },
+    "summonsSpirits": {
+      "name": "Evocazioni",
+      "desc": "Alleati chiamati in battaglia per uno scontro.",
+      "done": [
+        "Evocazioni nel quarto posto del gruppo",
+        "Combattenti spirito",
+        "Reclute e famigli che combattono con le proprie mani in prima persona"
+      ]
+    },
+    "mapBattles": {
+      "name": "Battaglie sulla mappa",
+      "desc": "Scontri che avvengono proprio dove ti trovi.",
+      "done": [
+        "Scontri giocati sulla mappa dal vivo",
+        "Combattimento in tempo reale nel mondo 3D",
+        "Risse di strada tra persone e mostri, con fughe",
+        "Corpi a terra, saccheggio, colpi di grazia e recupero"
+      ]
+    },
+    "bulletHell": {
+      "name": "Bullet Hell",
+      "desc": "Schiva a mano gli attacchi nemici.",
+      "done": [
+        "Raffiche di proiettili da schivare durante gli attacchi nemici",
+        "Schivata integrata nelle battaglie normali"
+      ]
+    },
+    "npcLife": {
+      "name": "Vite degli PNG",
+      "desc": "Ogni persona ha una giornata, una casa, una famiglia e un futuro.",
+      "done": [
+        "Orari, lavori e turni",
+        "Bisogni di fame, sonno, igiene, socialità e svago",
+        "Case e traslochi",
+        "Coppie, rotture, gravidanze, adozioni e figli",
+        "La giornata di un bambino",
+        "Viaggi, trasferimenti e viaggiatori sulle strade",
+        "Invecchiamento e morte, con il mondo già invecchiato al tuo arrivo",
+        "Esperienza e specializzazioni",
+        "Dipendenze, voglie e il casinò",
+        "Equipaggiamento, impianti, veicoli e cibo in mano",
+        "Piante, animali, alveari e botti accuditi",
+        "Piccola criminalità e criminalità di strada",
+        "Compagnie di avventurieri",
+        "Conquiste dell'Orda e campi profughi",
+        "Apocalisse zombie"
+      ]
+    },
+    "dialogueBusts": {
+      "name": "Dialoghi",
+      "desc": "Conversazioni con busti, parole chiave e chiacchiere infinite.",
+      "done": [
+        "Dialoghi su pergamena con scelte e parole chiave",
+        "Busti e ritratti da visual novel",
+        "Nomi di chi parla che dispongono i busti da soli",
+        "Dialoghi tra PNG, chiacchiere di sottofondo e nuvolette di pensiero",
+        "Creature che parlano con la voce della propria specie",
+        "Chat generata nello stile di ogni PNG",
+        "Battute del gruppo adatte alla situazione",
+        "Pannello Empatizza: chat, dossier, wiki, Parla di, Insegna e Impara"
+      ]
+    },
+    "creatureSystem": {
+      "name": "Compagni",
+      "desc": "Recluta persone e creature nel gruppo.",
+      "done": [
+        "Reclutare PNG nel gruppo",
+        "Storico della squadra, panchina e richiamo",
+        "Personaggi creatura con la propria voce",
+        "Creature tenute separate dalle persone: niente lavoro, denaro o fazione",
+        "Animale da compagnia che segue il gruppo"
+      ]
+    },
+    "factionsReputation": {
+      "name": "Fazioni",
+      "desc": "Diciotto fazioni e gli eserciti che schierano.",
+      "done": [
+        "Diciotto fazioni con reputazione da -100 a +100",
+        "Reputazione propria di ogni membro del gruppo con ogni PNG",
+        "Eserciti delle fazioni sulla mappa del mondo",
+        "Reclutamento fino a 100 truppe",
+        "Battaglie campali tra eserciti"
+      ]
+    },
+    "onuAssembly": {
+      "name": "Politica",
+      "desc": "Governi, elezioni e l'assemblea mondiale.",
+      "done": [
+        "Governi delle iperpotenze, elezioni e partiti",
+        "Seggio all'assemblea ONU: dibattere, votare e porre il veto",
+        "Schermata Politica nel menu principale",
+        "Visioni del mondo che cambiano e convertono col tempo"
+      ]
+    },
+    "bankingSystem": {
+      "name": "Banca",
+      "desc": "Depositi, interessi, prestiti e un portafoglio completo.",
+      "done": [
+        "Depositi e prelievi",
+        "Interessi e prestiti",
+        "Portafoglio di proprietà, azioni, risparmi, prestiti e bestiame",
+        "Tutto il denaro mostrato in euro"
+      ]
+    },
+    "shopManagement": {
+      "name": "Negozi",
+      "desc": "Compra, vendi e gestisci un negozio tuo.",
+      "done": [
+        "Possedere negozi, con personale, produzione e consegne",
+        "Mercato Stockbusters: lotti, prezzi a volume, carrello e corrieri",
+        "Bancone per ogni venditore",
+        "Negozi giornalieri con merce rinnovata ogni giorno",
+        "Distributori automatici",
+        "Cambio gettoni per la sala giochi"
+      ]
+    },
+    "realEstateRentals": {
+      "name": "Proprietà",
+      "desc": "Compra luoghi, affittali e riempili.",
+      "done": [
+        "Comprare e vendere proprietà",
+        "Affittare un luogo per 24 ore reali",
+        "Arredare ciò che possiedi"
+      ]
+    },
+    "stockMarket": {
+      "name": "Borsa",
+      "desc": "Scambia azioni da un terminale.",
+      "done": [
+        "Terminale di trading",
+        "Prezzi in movimento",
+        "Titoli elencati nel portafoglio"
+      ]
+    },
+    "crimeBounties": {
+      "name": "Crimine",
+      "desc": "Ruba, fatti beccare e affronta il tribunale.",
+      "done": [
+        "Taglia, sospetto e attenzione della polizia",
+        "Furti nei negozi",
+        "Processi e pene detentive",
+        "Eris e l'arcimagistrato del Sacro Impero Vaticano",
+        "Sito N€police con taglie, custodia e udienze",
+        "Romance e opinione di Eris"
+      ]
+    },
+    "vehiclesGarage": {
+      "name": "Veicoli",
+      "desc": "Un camper in cui vivere e un garage per tenerlo in vita.",
+      "done": [
+        "Camper, auto, moto, barca, scopa e astronave",
+        "Camper modulare con potenziamenti",
+        "Equipaggio a bordo: chi guida e chi riposa",
+        "Carburante e danni alle parti critiche",
+        "I veicoli restano dove li hai lasciati",
+        "Volare come un dirigibile"
+      ]
+    },
+    "fastTravel": {
+      "name": "Viaggio rapido",
+      "desc": "Ventotto modi per attraversare l'Europa.",
+      "done": [
+        "28 mezzi di trasporto",
+        "Fermate dell'autobus e costi di viaggio",
+        "Mappa del mondo con zoom, scorrimento e nomi delle città",
+        "Minimappa"
+      ]
+    },
+    "voxelWorld": {
+      "name": "Mondo voxel",
+      "desc": "Il mondo 3D da attraversare in auto e da scavare.",
+      "done": [
+        "Terreno voxel distruttibile",
+        "Guidare il camper e camminare a piedi",
+        "Prima e terza persona",
+        "Grotte, fogne, isole e fiumi",
+        "Città, villaggi, fattorie e case isolate con interni",
+        "Strutture abbandonate, dungeon e grotte",
+        "Scavare col piccone, con minerali raccolti",
+        "Fauna a bordo strada, folle e veicoli parcheggiati",
+        "Cielo, meteo e mare",
+        "Combattimento in tempo reale",
+        "Schermo condiviso"
+      ]
+    },
+    "roadTraffic": {
+      "name": "Traffico stradale",
+      "desc": "Auto, pedoni e scope che condividono le strade.",
+      "done": [
+        "Auto degli PNG con collisioni, investimenti e furti",
+        "Traffico in scala reale nel mondo 3D",
+        "Pedoni, bici e scope sulle strade",
+        "Pilota automatico stradale"
+      ]
+    },
+    "hypernetOS": {
+      "name": "Archways XP",
+      "desc": "Un intero sistema operativo dentro il gioco.",
+      "done": [
+        "Desktop, barra delle applicazioni e finestre",
+        "Kernel dei processi",
+        "File system e registro",
+        "Risorse del computer e Documenti",
+        "Pannello di controllo e sfondi",
+        "Navigazione con mouse, tastiera e gamepad"
+      ]
+    },
+    "hyperDeck": {
+      "name": "HyperDeck",
+      "desc": "Il palmare che costruisci pezzo per pezzo.",
+      "done": [
+        "Assemblato da oggetti componente",
+        "Griglia dei componenti",
+        "Scocche 3D procedurali",
+        "Autotest all'accensione e avvio",
+        "Pezzi montati mostrati come specifiche hardware"
+      ]
+    },
+    "hypernetApps": {
+      "name": "App del desktop",
+      "desc": "I programmi che girano su Archways XP.",
+      "done": [
+        "Blocco note",
+        "Guida TV",
+        "N€police",
+        "Osservatorio delle epidemie Eurodemics",
+        "Analizzatore di artefatti",
+        "Cambio gettoni",
+        "Hyper Card Arena e Cadd Trader",
+        "HyperAmp, Whether, Incanta e Pain",
+        "Wyrd, Hexcel e Bobnzi"
+      ]
+    },
+    "hypernetBrowser": {
+      "name": "Browser",
+      "desc": "Hypernet Explorer e i siti che apre.",
+      "done": [
+        "Browser Hypernet Explorer",
+        "Indice degli oggetti catalogati",
+        "Mercato Stockbusters"
+      ]
+    },
+    "galaxyCosmos": {
+      "name": "Mappa stellare",
+      "desc": "Una galassia 3D da attraversare.",
+      "done": [
+        "Mappa stellare 3D",
+        "Camera orbitale e volo libero",
+        "Viste dalla scala dei pianeti fino al cosmo",
+        "Nebulose famose",
+        "Buchi neri",
+        "21 tipi di stelle esotiche",
+        "Anomalie con incontri a bivi",
+        "Viaggio in nave tra i sistemi"
+      ]
+    },
+    "galaxyPhysics": {
+      "name": "Pianeti",
+      "desc": "Sistemi stellari con mondi su cui atterrare.",
+      "done": [
+        "Sistemi stellari con corpi in orbita",
+        "Il Sistema Solare con lune, fasce e detriti",
+        "Atterraggio su 40 biomi alieni, un gruppo per tipo di pianeta",
+        "Cieli alieni tinti dalla loro stella",
+        "Durata del giorno data dalla rotazione del pianeta"
+      ]
+    },
+    "galaxyShips": {
+      "name": "Astronavi",
+      "desc": "La tua nave procedurale, e il cielo sopra di te.",
+      "done": [
+        "Generatore procedurale di astronavi",
+        "Editor dell'aspetto della nave",
+        "Galassia dal vivo dietro ogni mappa spaziale",
+        "Carta del cielo notturno con costellazioni"
+      ]
+    },
+    "limbDamage": {
+      "name": "Ferite",
+      "desc": "Danni che colpiscono arti e organi.",
+      "done": [
+        "Danni ad arti e organi per il gruppo",
+        "Lo stesso per i nemici, con attacchi mirati",
+        "Parti del corpo perse in battaglia, con sangue",
+        "Schizzi di sangue"
+      ]
+    },
+    "medicineSystem": {
+      "name": "Malattie",
+      "desc": "Malattie che si diffondono per il continente.",
+      "done": [
+        "228 malattie",
+        "Cure",
+        "Epidemie continentali",
+        "Osservatorio Eurodemics"
+      ]
+    },
+    "cybernetics": {
+      "name": "Potenziamenti",
+      "desc": "Sostituisci ciò che perdi, migliora ciò che tieni.",
+      "done": [
+        "Negozio e montaggio delle protesi",
+        "Registro dei potenziamenti con l'intero catalogo",
+        "Impianti e protesi sugli PNG"
+      ]
+    },
+    "biologicSim": {
+      "name": "Biologia",
+      "desc": "Sangue, organi e bisogni sotto la pelle.",
+      "done": [
+        "Simulazione del sangue",
+        "Simulazione degli organi",
+        "Bisogni guidati dal corpo"
+      ]
+    },
+    "cookingSystem": {
+      "name": "Cucina",
+      "desc": "Combina ingredienti in pasti.",
+      "done": [
+        "Combinare cibi in piatti",
+        "Ricette di cucina",
+        "Livello di cucina e piatti andati a male",
+        "Valori nutrizionali di ogni piatto"
+      ]
+    },
+    "forgottenGrimoires": {
+      "name": "Grimori",
+      "desc": "Libri antichi che insegnano un incantesimo.",
+      "done": [
+        "Un incantesimo appreso tra cinque offerte casuali",
+        "Libri leggibili con pagine da sfogliare",
+        "Titoli dei libri generati"
+      ]
+    },
+    "alchemistry": {
+      "name": "Alchemistria",
+      "desc": "Ricette, progetti e l'officina.",
+      "done": [
+        "Ricette e progetti di alchemistria",
+        "Prove di abilità",
+        "Officina: il banco del Pensatore e la forgia",
+        "Ogni ricetta di armi e armature, sbloccata per mestiere",
+        "Tavola periodica degli elementi esoterici"
+      ]
+    },
+    "proceduralArtifacts": {
+      "name": "Artefatti",
+      "desc": "Oggetti generati con una storia propria.",
+      "done": [
+        "Oggetti, armi e armature procedurali",
+        "Modificatori su armi e armature",
+        "Analizzatore di artefatti",
+        "Bottino in base al livello del gruppo",
+        "Stanze del tesoro nascoste",
+        "Modelli 3D procedurali delle armi",
+        "Descrizioni degli oggetti che cambiano ogni volta"
+      ]
+    },
+    "furnitureBuilding": {
+      "name": "Arredamento",
+      "desc": "Piazza mobili e animali ovunque possiedi.",
+      "done": [
+        "Comprare e piazzare mobili e animali",
+        "Catalogo ordinato per bioma",
+        "Interni procedurali arredati stanza per stanza",
+        "Rompere e scavare muri",
+        "Contenitori, fisici ed extradimensionali"
+      ]
+    },
+    "farmingAgriculture": {
+      "name": "Agricoltura",
+      "desc": "Coltivazioni che crescono con le stagioni.",
+      "done": [
+        "Ciclo di vita delle piante per stagione, meteo e stadio",
+        "Abbattere alberi, scavare e raccogliere",
+        "PNG che curano le proprie piante"
+      ]
+    },
+    "livestockBrewing": {
+      "name": "Allevamento",
+      "desc": "Animali, api e botti.",
+      "done": [
+        "Ciclo di vita degli animali, prodotti e proprietà",
+        "Animali che invecchiano, si riproducono e muoiono",
+        "Colonie di api con caste e miele",
+        "Fermentazione e birrificazione in botte"
+      ]
+    },
+    "arcadeCabinets": {
+      "name": "Sala giochi",
+      "desc": "Cabinati con veri giochi dentro.",
+      "done": [
+        "Snake, Frogger, Manpac e Asteroids",
+        "Breakout, Centipede, Space Invaders e Bubble Pop",
+        "Sequenza di avvio del cabinato",
+        "Gettoni della sala giochi"
+      ]
+    },
+    "cardGame": {
+      "name": "Gioco di carte",
+      "desc": "Un gioco di carte collezionabili completo.",
+      "done": [
+        "Catalogo delle carte su scala da 0 a 13",
+        "Duelli su tavola 3x3",
+        "Hyper Card Arena: partite contro la CPU e tabelloni",
+        "Collezione, costruttore di mazzi e apertura delle buste",
+        "Cadd Trader e il mercato delle carte"
+      ]
+    },
+    "sports3D": {
+      "name": "Sport",
+      "desc": "Giochi da tavolo e con la palla in 3D low poly.",
+      "done": [
+        "Scacchi",
+        "Biliardo",
+        "Bowling",
+        "Basket"
+      ]
+    },
+    "gamblingCasino": {
+      "name": "Casinò",
+      "desc": "Scommetti su tutto ciò che si muove.",
+      "done": [
+        "Corse dei cavalli",
+        "Slot machine",
+        "Gratta e vinci",
+        "Lettura dei tarocchi",
+        "Scommesse su vere battaglie tra mostri",
+        "Quote calcolate dai giochi stessi"
+      ]
+    },
+    "interactivePastimes": {
+      "name": "Passatempi",
+      "desc": "Pesca, surf e altro.",
+      "done": [
+        "Pesca in 3D",
+        "Surf",
+        "Poligono di tiro",
+        "Pianoforte suonabile di tre ottave",
+        "Rompicapo a blocchi per lo scasso",
+        "Animaletto virtuale HyperTamer",
+        "Scanner Raman per statue e dipinti"
+      ]
+    },
+    "monsterBestiary": {
+      "name": "Bestiario",
+      "desc": "Ogni mostro che hai incontrato.",
+      "done": [
+        "Collezione dei mostri su doppia pagina di pergamena",
+        "Descrizioni che cambiano ogni volta"
+      ]
+    },
+    "historySimulator": {
+      "name": "Storia",
+      "desc": "Un'Europa alternativa dal 1900 al 2001.",
+      "done": [
+        "Storia alternativa con colpi di stato, guerre ed elezioni",
+        "Visore dell'Archivio storico",
+        "Notizie nel mondo",
+        "Canali TV con palinsesti settimanali e televideo"
+      ]
+    },
+    "proceduralBiomes": {
+      "name": "Mondo procedurale",
+      "desc": "L'Europa generata quadrato per quadrato.",
+      "done": [
+        "Mappe dei biomi con strade, fiumi e spiagge",
+        "Meteo e temperatura",
+        "Nebbia di guerra",
+        "Panorami dei biomi dietro le tile",
+        "Bologna ricostruita da dati cartografici reali",
+        "Mondi onirici infiniti",
+        "Incontri a bivi su biomi terrestri e alieni"
+      ]
+    },
+    "proceduralStructures": {
+      "name": "Insediamenti",
+      "desc": "Villaggi e città pieni di gente.",
+      "done": [
+        "Villaggi, città e un catalogo di strutture",
+        "Edifici su più piani",
+        "Mappe prefabbricate piazzate per coordinate",
+        "Cartelli, fermate dell'autobus e parchi",
+        "Residenti generati per ogni insediamento",
+        "Un quadrato del mondo per ogni patron"
+      ]
+    },
+    "proceduralQuests": {
+      "name": "Missioni",
+      "desc": "Missioni scritte per ovunque tu sia.",
+      "done": [
+        "Motore delle missioni a passi",
+        "Bacheca con avvisi nella voce di chi li affigge",
+        "Registro delle missioni",
+        "Offerte di lavoro per luogo",
+        "Lavoro per denaro ed esperienza"
+      ]
+    },
+    "dungeonFloors": {
+      "name": "Dungeon",
+      "desc": "Piani, rompicapi e la Torre Omega.",
+      "done": [
+        "Dungeon su più piani con scale",
+        "Selettore dei piani",
+        "Livelli della Torre Omega",
+        "92 piani sotto la torre",
+        "Dungeon, cripte e fogne",
+        "Massi, ghiaccio, piastre a pressione, interruttori di cristallo e torce",
+        "Porte segrete"
+      ]
+    },
+    "splitScreenLocal": {
+      "name": "Schermo condiviso",
+      "desc": "Giocate fianco a fianco su un solo schermo.",
+      "done": [
+        "Schermo condiviso locale con gamepad",
+        "Minigiochi a turno sullo stesso schermo",
+        "Schermo condiviso nel mondo 3D"
+      ]
+    },
+    "multiplayerOnline": {
+      "name": "Gioco online",
+      "desc": "Fino a otto giocatori insieme.",
+      "done": [
+        "Multigiocatore su server e Steam fino a 8 giocatori",
+        "Obiettivi di Steam"
+      ]
+    }
+  }
+}

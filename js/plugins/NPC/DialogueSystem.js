@@ -3268,8 +3268,9 @@ Imported.DialogueSystem = true;
     }
 
     function markKeywords(text) {
-        const line = stripControlEscapes(text);
+        let line = stripControlEscapes(text);
         if (!line) return line;
+        line = line.replace(/<gold>([\s\S]*?)<\/gold>/gi, (_m, inner) => NAME_OPEN + inner + NAME_CLOSE);
         if (line.indexOf('[') < 0) return markNamedTopics(line);
         announceKeywords(learnKeywords(line));
         return markNamedTopics(
@@ -3284,7 +3285,10 @@ Imported.DialogueSystem = true;
     }
 
     function stripNameMarks(text) {
-        return String(text == null ? '' : text).split(NAME_OPEN).join('').split(NAME_CLOSE).join('');
+        return String(text == null ? '' : text)
+            .replace(/<\/?gold>/gi, '')
+            .split(NAME_OPEN).join('')
+            .split(NAME_CLOSE).join('');
     }
 
     window.DialogueNames = {
@@ -4362,12 +4366,13 @@ Imported.DialogueSystem = true;
     function resolveStoryKeys(text) {
         const pad = (typeof Input !== 'undefined' && Input.lastInputDevice
             && Input.lastInputDevice() === 'pad');
-        return String(text == null ? '' : text).replace(STORY_KEY_TOKEN, (whole, token) => {
+        const resolved = String(text == null ? '' : text).replace(STORY_KEY_TOKEN, (whole, token) => {
             const entry = STORY_KEYS[token];
             // A key name is printed in the same gold a keyword gets, so the
             // button to press stands out of the line at a glance.
             return entry ? NAME_OPEN + (pad ? entry.pad : entry.keyboard) + NAME_CLOSE : whole;
         });
+        return resolved.replace(/<gold>([\s\S]*?)<\/gold>/gi, (_m, inner) => NAME_OPEN + inner + NAME_CLOSE);
     }
 
     function storyStep(speaker, text) {

@@ -52,7 +52,8 @@
     "needTools": "REQUIRES SURGICAL TOOLS",
     "examineTitle": "EXAMINE: {name}",
     "bury": "BURY",
-    "buried": "YOU BURY WHAT IZ LEFT OF DA {name}!"
+    "buried": "YOU BURY WHAT IZ LEFT OF DA {name}!",
+    "carryWeight": "CARRY WEIGHT"
   },
   "holdall": {
     "appName": "HOLDALL",

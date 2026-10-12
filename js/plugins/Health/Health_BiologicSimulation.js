@@ -3009,6 +3009,28 @@
     },
   };
 
+  const escapeHtml = (text) =>
+    String(text === undefined || text === null ? "" : text).replace(
+      /[&<>"']/g,
+      (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
+
+  const formatMoney = (value) => {
+    const unit = ($dataSystem && $dataSystem.currencyUnit) || "G";
+    const num = window.MoneyFormatter ? window.MoneyFormatter.format(value) : String(value);
+    return `${num} ${unit}`;
+  };
+
+  const itemIconStyle = (iconIndex) => {
+    if (window.CCArt && window.CCArt.icon) {
+      return window.CCArt.icon(iconIndex, 32);
+    }
+    const cell = 32;
+    const col = (iconIndex || 0) % 16;
+    const row = Math.floor((iconIndex || 0) / 16);
+    return `--cc-icon-sheet:512px; --cc-icon-x:-${col * cell}px; --cc-icon-y:-${row * cell}px; --cc-icon-box:32px;`;
+  };
+
   function Window_BiologicDiagnosis() {
     this.initialize(...arguments);
   }
@@ -3033,14 +3055,10 @@
     this.changePaintOpacity(this.isCommandEnabled(index));
     this.drawText(cmd.name, rect.x, rect.y, rect.width - 140);
     if (row.entry.diagnosed) {
-      // A named illness is either something the surgery can treat on the spot,
-      // priced like the pack it would take, or just a name on the chart.
       const plan = window.BiologicDiagnosis.treatment(row);
       if (plan) {
         this.drawCurrencyValue(plan.cost, $dataSystem.currencyUnit, rect.x, rect.y, rect.width);
       } else {
-        // MZ keeps the palette on ColorManager; Window_Base.textColor was an MV method, and
-        // this window does not carry the shim Window_BiologicSimulation has.
         this.changeTextColor(ColorManager.textColor(3));
         this.drawText(T("Biologic.diagnose.knownTag"), rect.x, rect.y, rect.width, "right");
         this.resetTextColor();
@@ -3050,9 +3068,6 @@
     }
   };
 
-  // Every row acts the instant it is chosen rather than through a generic ok
-  // handler, since what happens (pay and reveal, or nothing) depends on the
-  // row itself. The window stays open and active either way.
   Window_BiologicDiagnosis.prototype.processOk = function () {
     const cmd = this._list[this.index()];
     const row = cmd && cmd.ext;
@@ -3083,7 +3098,6 @@
         );
       }
       this.refresh();
-      // Curing drops the row, so the cursor can be left past the end.
       this.select(Math.min(this.index(), Math.max(0, this.maxItems() - 1)));
       this.activate();
       return;
@@ -3115,17 +3129,215 @@
   Scene_BiologicDiagnosis.prototype = Object.create(Scene_MenuBase.prototype);
   Scene_BiologicDiagnosis.prototype.constructor = Scene_BiologicDiagnosis;
 
+  Scene_BiologicDiagnosis.prototype.initialize = function () {
+    Scene_MenuBase.prototype.initialize.call(this);
+  };
+
   Scene_BiologicDiagnosis.prototype.create = function () {
     Scene_MenuBase.prototype.create.call(this);
-    const rowCount = window.BiologicDiagnosis.entries().length;
-    const ww = 640;
-    const wh = this.calcWindowHeight(Math.min(Math.max(rowCount, 1), 10), true);
-    const wx = (Graphics.boxWidth - ww) / 2;
-    const wy = (Graphics.boxHeight - wh) / 2;
-    this._listWindow = new Window_BiologicDiagnosis(new Rectangle(wx, wy, ww, wh));
-    this._listWindow.setHandler("cancel", this.popScene.bind(this));
-    this.addWindow(this._listWindow);
+    this._selectedIndex = 0;
+    this.createDOM();
   };
+
+  Scene_BiologicDiagnosis.prototype.popScene = function () {
+    if (this._dndContainer) {
+      this._dndContainer.remove();
+      this._dndContainer = null;
+    }
+    Scene_MenuBase.prototype.popScene.call(this);
+  };
+
+  Scene_BiologicDiagnosis.prototype.terminate = function () {
+    if (this._dndContainer) {
+      this._dndContainer.remove();
+      this._dndContainer = null;
+    }
+    Scene_MenuBase.prototype.terminate.call(this);
+  };
+
+  Scene_BiologicDiagnosis.prototype.createDOM = function () {
+    if (typeof document === "undefined" || !document.createElement || !document.body) return;
+    this._dndContainer = document.createElement("div");
+    this._dndContainer.id = "menu-container";
+    this._dndContainer.className = "ui-overlay";
+    document.body.appendChild(this._dndContainer);
+    this.bindWheel();
+    this.render();
+  };
+
+  Scene_BiologicDiagnosis.prototype.bindWheel = function () {
+    if (!this._dndContainer) return;
+    this._dndContainer.addEventListener("wheel", (e) => {
+      const pane = e.target && e.target.closest ? e.target.closest(".ui-scroll") : null;
+      if (!pane) return;
+      const delta = e.deltaMode === 1 ? e.deltaY * 40 : (e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY);
+      pane.scrollTop += delta;
+      e.preventDefault();
+      e.stopPropagation();
+    }, { passive: false });
+  };
+
+  Scene_BiologicDiagnosis.prototype.render = function () {
+    if (!this._dndContainer) return;
+    const entries = window.BiologicDiagnosis.entries();
+    if (!entries.length) {
+      this.popScene();
+      return;
+    }
+    this._selectedIndex = Math.max(0, Math.min(this._selectedIndex, entries.length - 1));
+    const selected = entries[this._selectedIndex];
+    const diagnosed = selected && selected.entry.diagnosed;
+    const plan = diagnosed ? window.BiologicDiagnosis.treatment(selected) : null;
+    const gold = $gameParty ? $gameParty.gold() : 0;
+    const canAct = diagnosed
+      ? (plan && gold >= plan.cost)
+      : (gold >= window.BiologicDiagnosis.COST);
+
+    let actionLabel = "";
+    if (!diagnosed) {
+      actionLabel = T("Biologic.diagnose.examine", { cost: formatMoney(window.BiologicDiagnosis.COST) });
+    } else if (plan) {
+      actionLabel = T("Biologic.diagnose.treat", { cost: formatMoney(plan.cost) });
+    } else {
+      actionLabel = T("Biologic.diagnose.knownTag");
+    }
+
+    this._dndContainer.innerHTML = `
+      <div class="ui-panel">
+        <div class="page-header-bar">
+          <div class="back-button focusable" data-action="back">${T("Biologic.diagnose.back")}</div>
+          <h2 class="title">${T("Biologic.diagnose.title")}</h2>
+        </div>
+        <div class="ui-panel-body ui-scroll">
+          <div class="ui-list">
+            ${entries.map((row, idx) => {
+              const isSel = idx === this._selectedIndex;
+              const isDiag = row.entry.diagnosed;
+              const rowPlan = isDiag ? window.BiologicDiagnosis.treatment(row) : null;
+              const costLabel = isDiag
+                ? (rowPlan ? formatMoney(rowPlan.cost) : T("Biologic.diagnose.knownTag"))
+                : formatMoney(window.BiologicDiagnosis.COST);
+              const metaLabel = isDiag
+                ? (rowPlan ? (rowPlan.curable ? T("Biologic.diagnose.canCure") : T("Biologic.diagnose.canManage")) : T("Biologic.diagnose.knownTag"))
+                : T("Biologic.diagnose.needsExam");
+              return `
+                <div class="item-slot focusable${isSel ? " selected" : ""}" data-idx="${idx}">
+                  <div class="item-slot-info">
+                    <div class="item-slot-name">${isDiag ? escapeHtml(T("Biologic.diagnose.rowKnown", { actor: row.actor.name(), disease: row.disease.name })) : escapeHtml(T("Biologic.diagnose.rowUnknown", { actor: row.actor.name() }))}</div>
+                    <div class="item-slot-meta">${escapeHtml(metaLabel)}</div>
+                  </div>
+                  <div class="inspect-spec-value">${escapeHtml(costLabel)}</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+        <div class="inspect-actions">
+          <button class="inspect-btn action-btn confirm" data-action="act" ${canAct ? "" : "disabled"}>${escapeHtml(actionLabel)}</button>
+        </div>
+      </div>
+    `;
+
+    const backBtn = this._dndContainer.querySelector('[data-action="back"]');
+    if (backBtn) {
+      backBtn.addEventListener("click", () => {
+        SoundManager.playCancel();
+        this.popScene();
+      });
+    }
+
+    this._dndContainer.querySelectorAll("[data-idx]").forEach((el) => {
+      el.addEventListener("click", () => {
+        const idx = Number(el.dataset.idx);
+        this._selectedIndex = idx;
+        SoundManager.playCursor();
+        this.render();
+      });
+    });
+
+    const actBtn = this._dndContainer.querySelector('[data-action="act"]');
+    if (actBtn) {
+      actBtn.addEventListener("click", () => this.executeAction());
+    }
+  };
+
+  Scene_BiologicDiagnosis.prototype.executeAction = function () {
+    const entries = window.BiologicDiagnosis.entries();
+    const row = entries[this._selectedIndex];
+    if (!row) return;
+    if (row.entry.diagnosed) {
+      const plan = window.BiologicDiagnosis.treatment(row);
+      if (!plan) {
+        SoundManager.playBuzzer();
+        return;
+      }
+      if ($gameParty.gold() < plan.cost) {
+        SoundManager.playBuzzer();
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T("Biologic.diagnose.treatTooExpensive"), { severity: "warning", duration: 150 });
+        }
+        return;
+      }
+      const treatedName = row.actor.name();
+      const diseaseName = row.disease.name;
+      const icon = plan.item.iconIndex;
+      window.BiologicDiagnosis.treat(row, plan);
+      SoundManager.playShop();
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(
+          T(plan.curable ? "Biologic.diagnose.treated" : "Biologic.diagnose.managed",
+            { actor: treatedName, disease: diseaseName, item: plan.item.name, count: plan.doses }),
+          { severity: "good", duration: 200, icon }
+        );
+      }
+    } else {
+      if ($gameParty.gold() < window.BiologicDiagnosis.COST) {
+        SoundManager.playBuzzer();
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T("Biologic.diagnose.tooExpensive"), { severity: "warning", duration: 150 });
+        }
+        return;
+      }
+      $gameParty.loseGold(window.BiologicDiagnosis.COST);
+      window.BiologicDiagnosis.reveal(row);
+      SoundManager.playShop();
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(
+          T("Biologic.diagnose.revealed", { actor: row.actor.name(), disease: row.disease.name }),
+          { severity: "good", duration: 200 }
+        );
+      }
+    }
+    this.render();
+  };
+
+  Scene_BiologicDiagnosis.prototype.update = function () {
+    Scene_MenuBase.prototype.update.call(this);
+    if (Input.isTriggered("cancel") || Input.isTriggered("escape") || TouchInput.isCancelled()) {
+      SoundManager.playCancel();
+      this.popScene();
+      return;
+    }
+    const entries = window.BiologicDiagnosis.entries();
+    if (!entries.length) return;
+    if (Input.isRepeated("up") || (window.UINav && window.UINav.navDir() === "up")) {
+      if (this._selectedIndex > 0) {
+        this._selectedIndex--;
+        SoundManager.playCursor();
+        this.render();
+      }
+    } else if (Input.isRepeated("down") || (window.UINav && window.UINav.navDir() === "down")) {
+      if (this._selectedIndex < entries.length - 1) {
+        this._selectedIndex++;
+        SoundManager.playCursor();
+        this.render();
+      }
+    } else if (Input.isTriggered("ok")) {
+      this.executeAction();
+    }
+  };
+
+  window.Scene_BiologicDiagnosis = Scene_BiologicDiagnosis;
 
   PluginManager.registerCommand("Health_BiologicSimulation", "Diagnose", () => {
     if (!window.BiologicDiagnosis.entries().length) {
@@ -3432,47 +3644,303 @@
   Scene_BiologicCure.prototype = Object.create(Scene_MenuBase.prototype);
   Scene_BiologicCure.prototype.constructor = Scene_BiologicCure;
 
+  Scene_BiologicCure.prototype.initialize = function () {
+    Scene_MenuBase.prototype.initialize.call(this);
+  };
+
   Scene_BiologicCure.prototype.create = function () {
     Scene_MenuBase.prototype.create.call(this);
     this._basket = new Map();
-    const margin = 24;
-    const top = this.mainAreaTop() + margin;
-    const wh = Graphics.boxHeight - top - margin;
-    const total = Math.min(1100, Graphics.boxWidth - margin * 2);
-    const lw = Math.floor(total * 0.42);
-    const rw = total - lw;
-    const lx = (Graphics.boxWidth - total) / 2;
-    this._diseaseWindow = new Window_BiologicCureDiseases(new Rectangle(lx, top, lw, wh), this._basket);
-    this._medicineWindow = new Window_BiologicCureMedicines(new Rectangle(lx + lw, top, rw, wh), this._basket);
-    this._diseaseWindow.setHandler("checkout", this.onCheckout.bind(this));
-    this._diseaseWindow.setHandler("disease", this.onDisease.bind(this));
-    this._diseaseWindow.setHandler("cancel", this.popScene.bind(this));
-    this._medicineWindow.setHandler("cancel", this.onMedicineCancel.bind(this));
-    this._medicineWindow._onBasketChange = this.onBasketChange.bind(this);
-    this.addWindow(this._diseaseWindow);
-    this.addWindow(this._medicineWindow);
-    this._diseaseWindow.setMedicineWindow(this._medicineWindow);
-    // Straight onto the first illness, past the empty basket row.
-    if (this._diseaseWindow.maxItems() > 1) this._diseaseWindow.select(1);
+    const diagnosed = window.BiologicCure.diseaseRows().filter((r) => !!r.actor);
+    this._tab = diagnosed.length > 0 ? 0 : 1;
+    this._selectedIndex = 0;
+    this.createDOM();
   };
 
-  Scene_BiologicCure.prototype.onDisease = function () {
-    if (!this._medicineWindow.maxItems()) {
-      this._diseaseWindow.activate();
+  Scene_BiologicCure.prototype.popScene = function () {
+    if (this._dndContainer) {
+      this._dndContainer.remove();
+      this._dndContainer = null;
+    }
+    Scene_MenuBase.prototype.popScene.call(this);
+  };
+
+  Scene_BiologicCure.prototype.terminate = function () {
+    if (this._dndContainer) {
+      this._dndContainer.remove();
+      this._dndContainer = null;
+    }
+    Scene_MenuBase.prototype.terminate.call(this);
+  };
+
+  Scene_BiologicCure.prototype.currentRows = function () {
+    const all = window.BiologicCure.diseaseRows();
+    const party = all.filter((r) => !!r.actor);
+    if (this._tab === 0 && party.length > 0) return party;
+    return all.filter((r) => !r.actor);
+  };
+
+  Scene_BiologicCure.prototype.createDOM = function () {
+    if (typeof document === "undefined" || !document.createElement || !document.body) return;
+    this._dndContainer = document.createElement("div");
+    this._dndContainer.id = "menu-container";
+    this._dndContainer.className = "cure-container";
+    document.body.appendChild(this._dndContainer);
+    this.bindWheel();
+    this.render();
+  };
+
+  Scene_BiologicCure.prototype.bindWheel = function () {
+    if (!this._dndContainer) return;
+    this._dndContainer.addEventListener("wheel", (e) => {
+      const pane = e.target && e.target.closest ? e.target.closest(".ui-scroll, .ui-detail-scroll") : null;
+      if (!pane) return;
+      const delta = e.deltaMode === 1 ? e.deltaY * 40 : (e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY);
+      pane.scrollTop += delta;
+      e.preventDefault();
+      e.stopPropagation();
+    }, { passive: false });
+  };
+
+  Scene_BiologicCure.prototype.render = function () {
+    if (!this._dndContainer) return;
+    const allDiseaseRows = window.BiologicCure.diseaseRows();
+    const partyRows = allDiseaseRows.filter((r) => !!r.actor);
+    const libraryRows = allDiseaseRows.filter((r) => !r.actor);
+    const rows = this._tab === 0 && partyRows.length > 0 ? partyRows : libraryRows;
+
+    if (this._selectedIndex >= rows.length) {
+      this._selectedIndex = Math.max(0, rows.length - 1);
+    }
+    const selectedRow = rows[this._selectedIndex] || null;
+    const medRows = selectedRow ? window.BiologicCure.medicineRows(selectedRow.disease.id) : [];
+
+    const basketCount = window.BiologicCure.basketCount(this._basket);
+    const basketCost = window.BiologicCure.basketCost(this._basket);
+    const partyGold = $gameParty ? $gameParty.gold() : 0;
+    const canCheckout = basketCount > 0 && partyGold >= basketCost;
+
+    const leftHTML = `
+      <div class="left-page">
+        <div class="page-header-bar">
+          <div class="back-button focusable" data-action="back">${T("Biologic.cure.back")}</div>
+          <h2 class="title">${T("Biologic.cure.title")}</h2>
+        </div>
+        <div class="backpack-tabs" id="cure-tab-row">
+          <button class="backpack-tab focusable${this._tab === 0 ? " active" : ""}" data-tab="0">
+            ${T("Biologic.cure.tabParty", { count: partyRows.length })}
+          </button>
+          <button class="backpack-tab focusable${this._tab === 1 ? " active" : ""}" data-tab="1">
+            ${T("Biologic.cure.tabAll", { count: libraryRows.length })}
+          </button>
+        </div>
+        <div class="ui-list ui-scroll" id="cure-disease-list">
+          ${rows.length === 0 ? `<div class="ui-empty"><p class="ui-empty-text">${T("Biologic.cure.noDiseases")}</p></div>` : ""}
+          ${rows.map((r, idx) => {
+            const isSel = idx === this._selectedIndex;
+            const rMeds = window.BiologicCure.medicineRows(r.disease.id);
+            let inBasketCount = 0;
+            for (const mr of rMeds) {
+              inBasketCount += (this._basket.get(mr.item.id) || 0);
+            }
+            const name = r.actor ? T("Biologic.cure.rowLine", { actor: r.actor.name(), disease: r.disease.name }) : r.disease.name;
+            const meta = r.actor ? T("Biologic.cure.diagnosedPatient", { actor: r.actor.name() }) : T("Biologic.cure.remedyCount", { count: rMeds.length });
+            return `
+              <div class="item-slot focusable${isSel ? " selected" : ""}" data-disease-idx="${idx}">
+                <div class="item-slot-info">
+                  <div class="item-slot-name">${escapeHtml(name)}</div>
+                  <div class="item-slot-meta">${escapeHtml(meta)}</div>
+                </div>
+                ${inBasketCount > 0 ? `<span class="ui-chip">${escapeHtml(T("Biologic.cure.inBasket", { count: inBasketCount }))}</span>` : ""}
+              </div>
+            `;
+          }).join("")}
+        </div>
+        <div class="ui-footer">
+          <div class="inspect-spec-row">
+            <span class="inspect-spec-label">${T("Biologic.cure.goldAvailable")}</span>
+            <span class="inspect-spec-value">${escapeHtml(formatMoney(partyGold))}</span>
+          </div>
+          <div class="inspect-spec-row">
+            <span class="inspect-spec-label">${escapeHtml(T("Biologic.cure.checkout", { count: basketCount }))}</span>
+            <span class="inspect-spec-value">${escapeHtml(formatMoney(basketCost))}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    let rightHTML = "";
+    if (selectedRow) {
+      const disease = selectedRow.disease;
+      rightHTML = `
+        <div class="right-page">
+          <div class="ui-detail">
+            <div class="ui-detail-head">
+              <div class="ui-detail-titles">
+                <h2>${escapeHtml(disease.name)}</h2>
+                <div class="ui-detail-sub">
+                  ${selectedRow.actor ? escapeHtml(T("Biologic.cure.patientSub", { actor: selectedRow.actor.name() })) : escapeHtml(T("Biologic.cure.librarySub"))}
+                </div>
+              </div>
+            </div>
+            <div class="ui-detail-scroll">
+              ${selectedRow.actor ? `
+                <div class="ui-section">
+                  <div class="inspect-section-title">${T("Biologic.cure.patientSection")}</div>
+                  <div class="inspect-spec-grid">
+                    <div class="inspect-spec-row">
+                      <span class="inspect-spec-label">${T("Biologic.cure.patientLabel")}</span>
+                      <span class="inspect-spec-value">${escapeHtml(selectedRow.actor.name())}</span>
+                    </div>
+                    <div class="inspect-spec-row">
+                      <span class="inspect-spec-label">${T("Biologic.cure.statusLabel")}</span>
+                      <span class="inspect-spec-value">${T("Biologic.cure.diagnosedStatus")}</span>
+                    </div>
+                  </div>
+                </div>
+              ` : ""}
+              <div class="ui-section">
+                <div class="inspect-section-title">${T("Biologic.cure.remediesTitle")}</div>
+                ${medRows.length === 0 ? `<div class="ui-empty"><p class="ui-empty-text">${T("Biologic.cure.noRemedies")}</p></div>` : ""}
+                ${medRows.map((mr) => {
+                  const item = mr.item;
+                  const r = mr.remedy;
+                  const qty = this._basket.get(item.id) || 0;
+                  const held = $gameParty ? $gameParty.numItems(item) : 0;
+                  const maxRoom = window.BiologicCure.room(item);
+                  const kind = r.kind === "cure"
+                    ? T(r.lastResort ? "Biologic.cure.kindLastResort" : "Biologic.cure.kindCure", { days: r.days })
+                    : T("Biologic.cure.kindManage");
+                  const heldText = T("Biologic.cure.held", { count: held });
+                  return `
+                    <div class="item-slot cure-remedy-slot">
+                      <div class="item-slot-icon">
+                        <span class="cc-rpg-icon" style="${itemIconStyle(item.iconIndex)}"></span>
+                      </div>
+                      <div class="item-slot-info">
+                        <div class="item-slot-name">${escapeHtml(item.name)}</div>
+                        <div class="item-slot-meta">${escapeHtml(kind)} &middot; ${escapeHtml(heldText)}</div>
+                        <div class="item-slot-meta inspect-spec-value">${escapeHtml(formatMoney(item.price || 0))}</div>
+                      </div>
+                      <div class="sell-qty">
+                        <button class="sell-qty-step" data-action="minus" data-item-id="${item.id}" ${qty <= 0 ? "disabled" : ""}>-</button>
+                        <span class="sell-qty-val">${qty}</span>
+                        <button class="sell-qty-step" data-action="plus" data-item-id="${item.id}" ${qty >= maxRoom ? "disabled" : ""}>+</button>
+                      </div>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            </div>
+            <div class="inspect-actions">
+              ${basketCount > 0 ? `<button class="inspect-btn" data-action="clear">${T("Biologic.cure.clearBasket")}</button>` : ""}
+              <button class="inspect-btn action-btn confirm" data-action="checkout" ${canCheckout ? "" : "disabled"}>
+                ${basketCount > 0 ? escapeHtml(T("Biologic.cure.checkoutButton", { count: basketCount, cost: formatMoney(basketCost) })) : T("Biologic.cure.basketEmpty")}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      rightHTML = `<div class="right-page"><div class="ui-detail"><div class="ui-empty"><p class="ui-empty-text">${T("Biologic.cure.noDiseases")}</p></div></div></div>`;
+    }
+
+    this._dndContainer.innerHTML = `
+      <div class="book-spread">
+        ${leftHTML}
+        ${rightHTML}
+      </div>
+    `;
+
+    const backBtn = this._dndContainer.querySelector('[data-action="back"]');
+    if (backBtn) {
+      backBtn.addEventListener("click", () => {
+        SoundManager.playCancel();
+        this.popScene();
+      });
+    }
+
+    this._dndContainer.querySelectorAll("[data-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tab = Number(btn.dataset.tab);
+        if (this._tab !== tab) {
+          this._tab = tab;
+          this._selectedIndex = 0;
+          SoundManager.playCursor();
+          this.render();
+        }
+      });
+    });
+
+    this._dndContainer.querySelectorAll("[data-disease-idx]").forEach((slot) => {
+      slot.addEventListener("click", () => {
+        const idx = Number(slot.dataset.diseaseIdx);
+        if (this._selectedIndex !== idx) {
+          this._selectedIndex = idx;
+          SoundManager.playCursor();
+          this.render();
+        }
+      });
+    });
+
+    this._dndContainer.querySelectorAll('[data-action="minus"]').forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.changeQty(Number(btn.dataset.itemId), -1);
+      });
+    });
+
+    this._dndContainer.querySelectorAll('[data-action="plus"]').forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.changeQty(Number(btn.dataset.itemId), 1);
+      });
+    });
+
+    const clearBtn = this._dndContainer.querySelector('[data-action="clear"]');
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        this._basket.clear();
+        SoundManager.playCursor();
+        this.render();
+      });
+    }
+
+    const checkoutBtn = this._dndContainer.querySelector('[data-action="checkout"]');
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener("click", () => this.onCheckout());
+    }
+  };
+
+  Scene_BiologicCure.prototype.changeQty = function (itemId, delta) {
+    const item = $dataItems[itemId];
+    if (!item) return;
+    const now = this._basket.get(itemId) || 0;
+    const maxRoom = window.BiologicCure.room(item);
+    const next = Math.max(0, Math.min(maxRoom, now + delta));
+    if (next === now) {
+      SoundManager.playBuzzer();
       return;
     }
-    this._medicineWindow.select(0);
-    this._medicineWindow.activate();
+    if (next > 0) this._basket.set(itemId, next);
+    else this._basket.delete(itemId);
+    SoundManager.playCursor();
+    this.render();
   };
 
-  Scene_BiologicCure.prototype.onMedicineCancel = function () {
-    this._medicineWindow.deselect();
-    this._diseaseWindow.activate();
+  Scene_BiologicCure.prototype.scrollSelectedIntoView = function () {
+    if (!this._dndContainer) return;
+    const el = this._dndContainer.querySelector(".ui-list .item-slot.selected");
+    if (el && el.scrollIntoView) el.scrollIntoView({ block: "nearest" });
   };
 
-  // The basket row's count and total follow every dose added or taken off.
-  Scene_BiologicCure.prototype.onBasketChange = function () {
-    this._diseaseWindow.refresh();
+  Scene_BiologicCure.prototype.stepDose = function (delta) {
+    const rows = this.currentRows();
+    const sel = rows[this._selectedIndex];
+    if (!sel) return;
+    const meds = window.BiologicCure.medicineRows(sel.disease.id);
+    if (!meds.length) return;
+    this.changeQty(meds[0].item.id, delta);
   };
 
   Scene_BiologicCure.prototype.onCheckout = function () {
@@ -3483,7 +3951,6 @@
       if (window.ParchmentToast) {
         window.ParchmentToast.show(T("Biologic.cure.tooExpensive"), { severity: "warning", duration: 150 });
       }
-      this._diseaseWindow.activate();
       return;
     }
     const count = cure.basketCount(this._basket);
@@ -3492,10 +3959,53 @@
     if (window.ParchmentToast) {
       window.ParchmentToast.show(T("Biologic.cure.boughtBasket", { count }), { severity: "good", duration: 200 });
     }
-    this._diseaseWindow.refresh();
-    this._medicineWindow.refresh();
-    this._diseaseWindow.activate();
+    this.render();
   };
+
+  Scene_BiologicCure.prototype.update = function () {
+    Scene_MenuBase.prototype.update.call(this);
+    if (Input.isTriggered("cancel") || Input.isTriggered("escape") || TouchInput.isCancelled()) {
+      SoundManager.playCancel();
+      this.popScene();
+      return;
+    }
+    const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+    if (tabDir) {
+      this._tab = this._tab === 0 ? 1 : 0;
+      this._selectedIndex = 0;
+      SoundManager.playCursor();
+      this.render();
+      return;
+    }
+    const rows = this.currentRows();
+    if (Input.isRepeated("up") || (window.UINav && window.UINav.navDir() === "up")) {
+      if (this._selectedIndex > 0) {
+        this._selectedIndex--;
+        SoundManager.playCursor();
+        this.render();
+        this.scrollSelectedIntoView();
+      }
+    } else if (Input.isRepeated("down") || (window.UINav && window.UINav.navDir() === "down")) {
+      if (this._selectedIndex < rows.length - 1) {
+        this._selectedIndex++;
+        SoundManager.playCursor();
+        this.render();
+        this.scrollSelectedIntoView();
+      }
+    } else if (Input.isRepeated("right") || (window.UINav && window.UINav.navDir() === "right")) {
+      this.stepDose(1);
+    } else if (Input.isRepeated("left") || (window.UINav && window.UINav.navDir() === "left")) {
+      this.stepDose(-1);
+    } else if (Input.isTriggered("ok")) {
+      if (this._basket.size > 0 && $gameParty && $gameParty.gold() >= window.BiologicCure.basketCost(this._basket)) {
+        this.onCheckout();
+      } else {
+        this.stepDose(1);
+      }
+    }
+  };
+
+  window.Scene_BiologicCure = Scene_BiologicCure;
 
   // Always opens: a healthy party may stock up for whatever it fears.
   PluginManager.registerCommand("Health_BiologicSimulation", "CureDiseases", () => {

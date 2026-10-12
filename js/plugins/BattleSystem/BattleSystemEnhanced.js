@@ -2577,8 +2577,19 @@
         // map instead of pushing Scene_Battle. Presentation-only redirect -
         // MapBattleMode still calls BattleManager.setup itself and reuses all
         // of the win/lose/flee/recruit rules below untouched.
+        // Every creature standing on the map is ambient fauna and is fought
+        // inside the bracket of the ground it was met on (section 3d of the
+        // encounters module). A hunted one-of-a-kind is a contract's own fight
+        // and keeps its level. Armed for the one setup below and cleared after.
+        const armBracket = !(heldEvent && heldEvent._bseRarityKey) &&
+            BSE.Helpers.armAmbientBracket;
         if (window.isMapBattleMode && window.isMapBattleMode() && window.MapBattleMode) {
-            window.MapBattleMode.begin(troopId, persistentId, eventId, mapId);
+            if (armBracket) BSE.Helpers.armAmbientBracket();
+            try {
+                window.MapBattleMode.begin(troopId, persistentId, eventId, mapId);
+            } finally {
+                if (armBracket) BSE.Helpers.disarmAmbientBracket();
+            }
             return;
         }
 
@@ -2627,7 +2638,12 @@
             }
         }
 
-        BattleManager.setup(setupTroopId, false, false);
+        if (armBracket) BSE.Helpers.armAmbientBracket();
+        try {
+            BattleManager.setup(setupTroopId, false, false);
+        } finally {
+            if (armBracket) BSE.Helpers.disarmAmbientBracket();
+        }
         SceneManager.push(Scene_Battle);
     };
 

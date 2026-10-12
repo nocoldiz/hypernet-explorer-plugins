@@ -277,7 +277,14 @@
   }
 
   function startZombieBattle(request) {
-    BattleManager.setup(zombieTroopFor(request.mapId, request.eventId), true, false);
+    // The dead are ambient too: fought inside the ground's level bracket.
+    const H = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+    if (H && H.armAmbientBracket) H.armAmbientBracket();
+    try {
+      BattleManager.setup(zombieTroopFor(request.mapId, request.eventId), true, false);
+    } finally {
+      if (H && H.disarmAmbientBracket) H.disarmAmbientBracket();
+    }
     $gamePlayer.makeEncounterCount();
     // Armed after setup on purpose: all three are cleared at the top of
     // BattleManager.setup, so a fight begun any other way can never inherit

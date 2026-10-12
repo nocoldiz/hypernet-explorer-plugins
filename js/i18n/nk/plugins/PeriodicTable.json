@@ -7,7 +7,7 @@
     "esotericSection": "ESOTERIC ELEMENTS",
     "props": {
       "symbol": "SYMBOL",
-      "number": "ATOMIC №",
+      "number": "ATOMIC NUMBER",
       "mass": "ATOMIC MASS",
       "category": "CATEGORY",
       "state": "STATE AT STP",

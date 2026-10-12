@@ -1416,21 +1416,38 @@
   };
 
   // -------------------------------------------------------------------------
-  // Attack: targets a random enemy instead of opening the target picker.
-  // The base BattleManager.selectNextCommand also randomises for isAttack(),
-  // so the result is the same - a random alive enemy - without the player
-  // having to pick one manually.
+  // Attack: when multiple enemies are alive, opens the target picker so the
+  // player can select which one to hit. When only a single enemy is alive,
+  // startEnemySelection auto-targets it without confirmation.
+  // An aimed swing bypasses selection and goes straight to the body the limb
+  // was named on (Health_Monsters.js).
   // -------------------------------------------------------------------------
   Scene_Battle.prototype.commandAttack = function () {
     const action = BattleManager.inputtingAction();
     if (!action) { SoundManager.playBuzzer(); return; }
     action.setAttack();
-    // An aimed swing is not thrown at a random monster: it goes to the body the
-    // limb was named on (Health_Monsters.js, the Aim section, which also puts
-    // the target back after BattleManager has randomised it).
     const plan = window.Aiming ? window.Aiming.planFor(BattleManager.actor()) : null;
-    if (plan) action.setTarget(plan.enemyIndex);
-    this.selectNextCommand();
+    if (plan) {
+      action.setTarget(plan.enemyIndex);
+      this.selectNextCommand();
+      return;
+    }
+    this._battleSkillReturn = null;
+    this.onSelectAction();
+  };
+
+  // The base BattleManager.selectNextCommand randomises the target for isAttack().
+  // If a target was explicitly chosen (either picked by the player or aimed),
+  // preserve it across selectNextCommand.
+  const _BattleManager_selectNextCommand_AttackTarget = BattleManager.selectNextCommand;
+  BattleManager.selectNextCommand = function () {
+    const actor = this._currentActor;
+    const action = (actor && actor.inputtingAction) ? actor.inputtingAction() : null;
+    const chosenTarget = (action && typeof action.targetIndex === "function") ? action.targetIndex() : -1;
+    _BattleManager_selectNextCommand_AttackTarget.call(this);
+    if (action && chosenTarget >= 0) {
+      action.setTarget(chosenTarget);
+    }
   };
 
   // Aim: hand over to Health_Monsters, which picks the monster with the ordinary

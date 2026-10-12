@@ -1022,6 +1022,56 @@
             setTimeout(() => { if (this._domContainer) this._domContainer.style.opacity = '1'; }, 16);
         }
 
+        _buildCapacityHTML() {
+            const utils    = window.ItemSystemUtils;
+            const usedG    = utils && typeof utils.calculateTotalWeight === 'function' ? utils.calculateTotalWeight() : 0;
+            const maxG     = utils && typeof utils.calculateMaxCarryWeight === 'function' ? utils.calculateMaxCarryWeight() : 60000;
+            const usedKg   = (usedG / 1000).toFixed(1);
+            const limitKg  = (maxG / 1000).toFixed(maxG % 1000 === 0 ? 0 : 1);
+            const pct      = maxG > 0 ? Math.min(100, Math.round(usedG / maxG * 100)) : 0;
+            const isOver   = utils && typeof utils.isOverencumbered === 'function' ? utils.isOverencumbered() : usedG > maxG;
+            const barColor = isOver ? "var(--text-text-alt-10)" : pct >= 85 ? "var(--text-text-alt-15)" : "var(--text-cost-ok)";
+            return `
+                <div class="container-capacity">
+                    <div class="container-capacity-row">
+                        <span>${T('Container.harvest.carryWeight')}</span>
+                        <span class="container-capacity-text">${T('Container.weight', { used: usedKg, limit: limitKg })}</span>
+                    </div>
+                    <div class="container-capacity-track">
+                        <div class="container-capacity-fill" style="height:100%; width:${pct}%; background:${barColor}; transition:width 0.18s ease"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        _updateCapacityDisplay() {
+            if (!this._domContainer) return;
+            const textEl = this._domContainer.querySelector(".container-capacity-text");
+            const fillEl = this._domContainer.querySelector(".container-capacity-fill");
+            if (!textEl || !fillEl) return;
+            const utils    = window.ItemSystemUtils;
+            const usedG    = utils && typeof utils.calculateTotalWeight === 'function' ? utils.calculateTotalWeight() : 0;
+            const maxG     = utils && typeof utils.calculateMaxCarryWeight === 'function' ? utils.calculateMaxCarryWeight() : 60000;
+            const usedKg   = (usedG / 1000).toFixed(1);
+            const limitKg  = (maxG / 1000).toFixed(maxG % 1000 === 0 ? 0 : 1);
+            const pct      = maxG > 0 ? Math.min(100, Math.round(usedG / maxG * 100)) : 0;
+            const isOver   = utils && typeof utils.isOverencumbered === 'function' ? utils.isOverencumbered() : usedG > maxG;
+            const barColor = isOver ? "var(--text-text-alt-10)" : pct >= 85 ? "var(--text-text-alt-15)" : "var(--text-cost-ok)";
+            textEl.textContent = T('Container.weight', { used: usedKg, limit: limitKg });
+            fillEl.style.width = `${pct}%`;
+            fillEl.style.background = barColor;
+        }
+
+        _flashCapacity() {
+            const barEl = this._domContainer && this._domContainer.querySelector(".container-capacity");
+            if (!barEl) return;
+            barEl.style.transition = "none";
+            barEl.style.filter     = "brightness(1.8) drop-shadow(0 0 4px var(--text-text-alt-10))";
+            setTimeout(() => {
+                if (barEl) { barEl.style.transition = "filter 0.4s ease"; barEl.style.filter = "none"; }
+            }, 40);
+        }
+
         _refreshDOM() {
             if (!this._domContainer) return;
             if (this._actionIndex == null) this._actionIndex = 0;
@@ -1065,6 +1115,7 @@
                     <div class="back-button focusable" onclick="SceneManager._scene && SceneManager._scene.handleBack()">${T('Container.backBtn')}</div>
                     <span class="cs-title title">${T('Container.harvest.examineTitle', { name: enemyName })}</span>
                 </div>
+                ${this._buildCapacityHTML()}
                 <div class="cs-list" id="hv-list">${rowsHTML}</div>
                 <div class="cs-actbar" id="hv-actbar">${this._buildActionButtons(selectedKey)}</div>`;
 
@@ -1278,6 +1329,9 @@
 
             this._activeSection = 'items';
             this._refreshDOM();
+            if (window.ItemSystemUtils && typeof window.ItemSystemUtils.isOverencumbered === 'function' && window.ItemSystemUtils.isOverencumbered()) {
+                this._flashCapacity();
+            }
         }
 
         // Butchers one part and returns how many items it yielded (0 when it
@@ -1305,6 +1359,9 @@
             SoundManager.playOk();
             this._activeSection = 'items';
             this._refreshDOM();
+            if (window.ItemSystemUtils && typeof window.ItemSystemUtils.isOverencumbered === 'function' && window.ItemSystemUtils.isOverencumbered()) {
+                this._flashCapacity();
+            }
         }
 
         // One press for the whole carcass: every part still worth butchering,
@@ -1328,6 +1385,9 @@
             }
             this._activeSection = 'items';
             this._refreshDOM();
+            if (window.ItemSystemUtils && typeof window.ItemSystemUtils.isOverencumbered === 'function' && window.ItemSystemUtils.isOverencumbered()) {
+                this._flashCapacity();
+            }
         }
 
         // Burying what is left: the body leaves the ledger and the map together,

@@ -3914,6 +3914,17 @@
         }
         if (features.length) lines.push({ label: T('WorldMap.read.crossed'), value: features.join(', ') });
 
+        // How hard the square is: its level bracket, read off its distance from
+        // the Omega Tower (BattleSystemEnhancedEncounters, section 3c).
+        const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        const levels = (BSEH && BSEH.describeLevelsAt) ? BSEH.describeLevelsAt(x, y, false) : null;
+        if (levels) {
+            lines.push({
+                label: T('WorldMap.read.enemies'),
+                value: T('WorldMap.read.levelRange', { min: levels.min, max: levels.max }),
+            });
+        }
+
         // What has been put up on this square, in any savegame of this world
         // (Crafting/FurnitureSystem.js, THE BUILD REGISTER). A square somebody
         // built on is the single most useful thing a chart of open country can
@@ -4186,10 +4197,10 @@
         // a button. It is rewritten with every square the pointer crosses, so
         // it is watched by delegation rather than bound each time.
         el.addEventListener('pointerover', ev => {
-            if (ev.target.closest('.wm-show-map, .wm-note-btn')) chromePointerIn = true;
+            if (ev.target.closest('.wm-show-map, .wm-note-btn, .wm-taxi-btn')) chromePointerIn = true;
         });
         el.addEventListener('pointerout', ev => {
-            if (ev.target.closest('.wm-show-map, .wm-note-btn')) chromePointerIn = false;
+            if (ev.target.closest('.wm-show-map, .wm-note-btn, .wm-taxi-btn')) chromePointerIn = false;
         });
         el.addEventListener('click', ev => {
             const mmBtn = ev.target.closest('#wm-minimap-btn');
@@ -4206,6 +4217,13 @@
                 ev.stopPropagation();
                 if (setSheetView(String(viewBtn.dataset.wmView))) SoundManager.playCursor();
                 TouchInput.clear();
+                return;
+            }
+            const taxi = ev.target.closest('[data-wm-taxi-at]');
+            if (taxi) {
+                ev.stopPropagation();
+                const at = String(taxi.dataset.wmTaxiAt).split(',');
+                bookTaxiTo(Number(at[0]), Number(at[1]));
                 return;
             }
             const note = ev.target.closest('[data-wm-note-at]');
@@ -4286,12 +4304,41 @@
                 ? `<div class="inspect-btn focusable wm-note-btn" data-wm-note-at="${square.x},${square.y}">` +
                   `${escapeSheet(T('WorldMap.note.write'))}</div>`
                 : '') +
+            (picked ? taxiButtonMarkup(square) : '') +
             // Build the square and look at it before walking onto it. The
             // square is built for the look and thrown away again, so the
             // button is offered for any square, catalogued or bare ground.
             `<div class="inspect-btn focusable wm-show-map" data-wm-show="${square.x},${square.y}">` +
             `${escapeSheet(T('WorldMap.preview.showMap'))}</div>` +
             '</div>';
+    }
+
+    // A cab to the picked square, priced exactly as the Hail page prices it
+    // (FastTravelSystem.taxiQuote). A square no cab reaches shows the reason
+    // instead of a fare, and the button stays up so a press says it aloud.
+    function taxiButtonMarkup(square) {
+        const FT = window.FastTravelSystem;
+        if (!FT || typeof FT.taxiQuote !== 'function') return '';
+        const quote = FT.taxiQuote(square.x, square.y);
+        const label = quote.refusal || T('WorldMap.hint.taxi', { fare: quote.fareText, time: quote.timeText });
+        return `<div class="inspect-btn focusable wm-taxi-btn${quote.refusal ? ' inspect-btn--disabled' : ''}" ` +
+            `data-wm-taxi-at="${square.x},${square.y}">${escapeSheet(label)}</div>`;
+    }
+
+    // Shut the chart and take the cab: the ride is the taxi interior and the
+    // travel timer (FastTravelSystem.taxiToSquare).
+    function bookTaxiTo(x, y) {
+        const FT = window.FastTravelSystem;
+        if (!FT || typeof FT.taxiToSquare !== 'function') return false;
+        const quote = FT.taxiQuote(x, y);
+        if (quote.refusal) return FT.taxiToSquare(x, y);
+        currentMapState = savedMinimapState();
+        clearFullscreenCache();
+        destroyChrome();
+        clearSelectedSquare();
+        refreshWorldMapDisplay();
+        TouchInput.clear();
+        return FT.taxiToSquare(x, y);
     }
 
     // The coordinates of the square under the pointer, bottom right, in the
@@ -4860,6 +4907,9 @@
         if (Input.isTriggered('ok')) {
             const pin = pinAtSquare(square.x, square.y);
             if (pin && pin.destName && sheetTravelTransport()) bookPinTravel(pin);
+            // OK on the square already picked calls a cab to it, the pad's
+            // press of the readout's taxi button.
+            else if (selectedSquare && selectedSquare.x === square.x && selectedSquare.y === square.y) bookTaxiTo(square.x, square.y);
             else selectSquare(square);
             return;
         }

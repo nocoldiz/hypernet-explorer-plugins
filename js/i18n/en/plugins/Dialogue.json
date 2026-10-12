@@ -15,21 +15,26 @@
     "yes": "Walk me through it",
     "no": "I will work it out",
     "normal": [
-      "Bubba: One action each per round, fastest first. Pick a row and press [CONTINUE].",
-      "Bubba: Attack hits with whatever you hold. Skills is your packed loadout, paid in MP or AP.",
-      "Bubba: Reload fills the magazine and covers you for the round. Holding your vector gun, that row is Switch instead.",
-      "Bubba: That gun answers to you alone, darlin'. Its modes and its form are set from the main menu.",
-      "Bubba: Switch folds it into that form and back again, as often as you like, and costs no turn.",
-      "Bubba: Backpack uses what you carry. Actions holds Aim, Throw and Wrestle, plus the kit you never lose.",
-      "Bubba: Talk tries words first, some of them listen. Run always works: a corpse learns nothing."
+      "Bubba: In battle, we take turns by [speed], fastest first. Pick a command and press [CONTINUE].",
+      "Bubba: [Attack] strikes the enemy with your equipped [weapon]. You can always use this.",
+      "Bubba: [Skills] are your special attacks and spells. Using them costs [MP] or [AP].",
+      "Bubba: [Defense] protects you and cuts incoming [damage] for the round.",
+      "Bubba: [Reload] appears when holding a gun. It refills your [ammo] and guards you.",
+      "Bubba: [Switch] lets you fold your [vector gun] into its other form, costing [no turn].",
+      "Bubba: [Backpack] lets you use [items] you carry, like medicine or food.",
+      "Bubba: [Actions] has extra moves like [Aim] at body parts, [Throw], and [Wrestle].",
+      "Bubba: [Talk] tries words first. Some enemies can be talked down without violence.",
+      "Bubba: [Run] gets the whole party out of danger. It always works when you need to [escape]."
     ],
     "map": [
-      "Bubba: This one plays out where we are standing, so the map is the arena. Still one action each per round, in order of speed.",
-      "Bubba: Move walks you across the tiles before you act, once per round, as far as your legs and your DEX carry you.",
-      "Bubba: Attack only reaches as far as the range written on its row, so count the tiles between you and it before you swing.",
-      "Bubba: Skills, Actions, Aim, Wrestle, Talk, the backpack and Throw all stand as their own rows out here, only pointed at a tile.",
-      "Bubba: The cursor is how you name that tile: step it onto what you want and press [CONTINUE].",
-      "Bubba: Run walks the whole party out, unless something has hold of us."
+      "Bubba: This fight happens right on the map. We take turns in order of [speed].",
+      "Bubba: [Move] lets you walk across tiles before acting. How far you go depends on your [DEX].",
+      "Bubba: [Attack] has a tile [range]. Make sure you are close enough to reach the target.",
+      "Bubba: [Skills] are special moves and spells pointed at a specific tile.",
+      "Bubba: [Backpack] lets you use [items] from your inventory right where you stand.",
+      "Bubba: [Actions] has tactical moves like [Aim], [Throw], and [Wrestle].",
+      "Bubba: Move the [cursor] to choose your target tile and press [CONTINUE].",
+      "Bubba: [Run] leads the whole party away to [escape] the battle."
     ],
     "rearm": "Bubba: No problem darlin', I'm no magic expert but i can reteach you how to shoot your gun! You need to figure out the rest yourself"
   }

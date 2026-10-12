@@ -1543,6 +1543,8 @@
             // llama shared libraries beside it, and every platform looks for
             // those in a different variable.
             const env = Object.assign({}, process.env);
+            env.OMP_WAIT_POLICY = 'PASSIVE';
+            env.KMP_BLOCKTIME = '0';
             const prepend = (key, value) => {
                 env[key] = value + (env[key] ? NodeIO.path.delimiter + env[key] : '');
             };

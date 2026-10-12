@@ -153,6 +153,12 @@
     "offlineBlurb": "No cab reaches this town.",
     "footer": "The fare is quoted from the party's current position. Booking charges it and shuts the deck: the cab is waiting outside.",
     "refuseIndoors": "No cab can reach you in here. Step out onto open ground or the world map and call again.",
-    "refuseOffEarth": "No cab company operates this far from Earth."
+    "refuseOffEarth": "No cab company operates this far from Earth.",
+    "refuseVehicle": "Step out of the vehicle first: no cab picks up a party that is already driving.",
+    "refuseUnderway": "The party is already on its way somewhere.",
+    "refuseSquare": "No cab drives off the edge of the map.",
+    "refuseHere": "The party is already standing on that square.",
+    "refuseWater": "No cab drives across water.",
+    "refuseMountain": "No cab drives up a mountain."
   }
 }

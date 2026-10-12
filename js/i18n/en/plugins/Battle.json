@@ -271,8 +271,8 @@
   },
   "summon": {
     "alreadyActive": "A summon is already active!",
-    "mapWalks": "{name} answers the call and walks with the party for {steps} steps.",
-    "mapBound": "{name} answers the call and walks with the party until it is sent away.",
+    "mapWalks": "{name} answers the call and walks with the party for {time}.",
+    "mapBound": "{name} answers the call and walks at its owner's side for {time}.",
     "mapExpired": "The binding runs out, and {name} slips back where it came from.",
     "mapReplaced": "{name} is let go to make room for what is being called.",
     "noBodyToWalk": "{name} has no body it could walk beside the party in.",
@@ -407,7 +407,7 @@
       }
     },
     "perfectRitual": "\\DIE[20] Perfect ritual! {name} gains full HYPER and the master buffs!",
-    "empowered": "[\\DIE[{roll}] INT +{mod} = {total}] The summoning ritual empowered {name} with combat buffs!",
+    "empowered": "[\\DIE[{roll}] +{mod} INT = {total}] The summoning ritual empowered {name} with combat buffs!",
     "skillsBound": "{name} binds with {n} of its {max} skills.",
     "attackOnly": "{name} answers, but remembers nothing except how to strike.",
     "familiarHere": "{name} is already at your side.",
@@ -415,7 +415,22 @@
     "ownerLeft": "{name} fades away with {owner} gone from the party.",
     "convokeNoMp": "{owner} needs {cost} MP to convoke {name}.",
     "dematerialized": "{name} dematerializes.",
-    "talkDematerialize": "Dematerialize {name}"
+    "talkDematerialize": "Dematerialize {name}",
+    "boundFor": "The binding holds {name} for {time}.",
+    "fadesAfterBattle": "The binding is botched: {name} will not outlast this fight.",
+    "staysAfter": "{name} walks off the field with the party, bound for {time} more.",
+    "time": {
+      "long": {
+        "minutes": "{m} min",
+        "hours": "{h} h {m} min",
+        "hoursOnly": "{h} h"
+      },
+      "short": {
+        "minutes": "{m}m",
+        "hours": "{h}h{m}",
+        "hoursOnly": "{h}h"
+      }
+    }
   },
   "actorDied": "{actor} has died.",
   "knockout": {
@@ -614,8 +629,6 @@
   "vehicleHitMonsterPlain": "You run something down, and the bodywork takes the worst of it.",
   "hyper": {
     "name": {
-      "default": "Hyper",
-      "grimoire": "Graceful Death",
       "1": "Hyper",
       "2": "Overload",
       "3": "Miracle",
@@ -677,7 +690,9 @@
       "59": "Absolution",
       "60": "Encore",
       "61": "Apotheosis",
-      "62": "Spite"
+      "62": "Spite",
+      "default": "Hyper",
+      "grimoire": "Graceful Death"
     },
     "armed": "{actor} is on the floor. {hyper} is ready.",
     "armedToast": "{actor}: {hyper} ready",

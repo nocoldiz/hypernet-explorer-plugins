@@ -276,8 +276,7 @@
     "groupFollowers": "Followers",
     "groupSummons": "Called",
     "summoned": "Summoned",
-    "summonSteps": "Held for {steps} more steps.",
-    "summonBound": "Bound: it stays until it is sent away or falls in battle.",
+    "summonBound": "Bound to its owner for {time} more, unless sent away or felled in battle.",
     "dismissSummon": "Send away",
     "train": "Train",
     "trainChoose": "Pick a training. About {days} days of travelling together.",
@@ -326,7 +325,8 @@
     "convoke": "Convoke ({cost} MP)",
     "dematerialize": "Dematerialize",
     "convokeNoMp": "{owner} needs {cost} MP",
-    "convokeOwnerAway": "{owner} is not in the party"
+    "convokeOwnerAway": "{owner} is not in the party",
+    "summonTime": "Held for {time} more."
   },
   "vehicles": {
     "fuel": "Fuel {fuel}L / {max}L",

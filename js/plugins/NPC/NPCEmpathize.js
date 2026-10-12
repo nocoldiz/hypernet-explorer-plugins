@@ -560,6 +560,8 @@
   const STICK_SPEED      = 26;
   const STICK_DEADZONE   = 0.15;
   const TRIGGER_SPEED    = 26;
+  const WASD_DIRS        = ['up', 'down', 'left', 'right'];
+  const EMPTY_DIRS       = [];
   // Standard-mapping index of the pad's Select / Back button, which changes who
   // in the party is doing the talking. Input.gamepadMapper has no action on it
   // at all, so it is read raw through AnalogStickInput (the same route the
@@ -698,11 +700,6 @@
         this._updateNameModalPad(scene);
         return;
       }
-      // Scope to the live overlay so a stale/duplicate #menu-container copy can
-      // never hand us the wrong input element.
-      const inp   = scene._overlay?.querySelector('#npc-dlg-ask-input')
-        || document.getElementById('npc-dlg-ask-input');
-
       // Chat input has DOM focus, pass ALL keys to the browser, no game
       // navigation at all. This MUST run before the cancel/escape handler:
       // MZ's keyMapper maps letter keys (X to escape, plus W/A/S/D to
@@ -724,10 +721,10 @@
       // detailed creation editor puts a search box over its longer pickers, and
       // it needs the keyboard for exactly the same reason.
       const ae = document.activeElement;
-      const typing = !!ae && (
+      const isInput = !!ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA');
+      const typing = isInput && (
         ae.id === 'npc-dlg-ask-input' ||
-        (!!scene._overlay && scene._overlay.contains(ae) &&
-          (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA'))
+        (!!scene._overlay && scene._overlay.contains(ae))
       );
       scene._inputFocused = typing;
       if (typing) return;
@@ -800,7 +797,9 @@
       if (wasdMapped) {
         scene._wasdInput.up = scene._wasdInput.down = scene._wasdInput.left = scene._wasdInput.right = false;
       }
-      for (const dir of (wasdMapped ? [] : ['up', 'down', 'left', 'right'])) {
+      const dirs = wasdMapped ? EMPTY_DIRS : WASD_DIRS;
+      for (let i = 0; i < dirs.length; i++) {
+        const dir = dirs[i];
         if (scene._wasdHeld[dir]) {
           scene._wasdHoldFrames[dir]++;
           const t = scene._wasdHoldFrames[dir];

@@ -460,10 +460,10 @@
                 // rest at whatever the place holds; the roll is the battle
                 // system's own, so the share is the same in both worlds.
                 let band = H.getSpawnBand(mode, ref);
-                // Under a nation bracket the country is the whole rule and the
+                // Under a radial bracket the ground is the whole rule and the
                 // party has no say in it, so the tethered half does not exist
                 // here any more than it does in the 2D world.
-                if (band && !band.nation && mode === 'biome' &&
+                if (band && !band.bracket && mode === 'biome' &&
                     H.rollBiomeTether && H.rollBiomeTether() && H.getBiomeTetherBand) {
                     band = H.getBiomeTetherBand();
                 }
@@ -471,6 +471,18 @@
                 this._band = { mode, ref, band };
             } catch (e) { this._band = null; }
             return this._band;
+        }
+
+        // The level a creature is fought at here: its own, moved inside the
+        // ground's bracket where one rules (encounters module, section 3d), so
+        // the plate over its head reads what the fight will be.
+        _bracketLevel(data) {
+            const level = enemyLevelOf(data);
+            const sel = this._spawnBand();
+            const H = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+            if (!level || !sel || !sel.band || !sel.band.bracket || !H || !H.clampLevelToBracket) return level;
+            if (/<Boss>/i.test((data && data.note) || '')) return level;
+            return H.clampLevelToBracket(level, sel.band);
         }
 
         // One species out of a roster, chosen the way the current spawn mode
@@ -1497,7 +1509,7 @@
                 // from is the thing you meet again when you come back.
                 pid: 'w3d_' + wx + '_' + wy + '_' + data.id,
                 name: data.name,
-                level: enemyLevelOf(data),
+                level: this._bracketLevel(data),
                 dead: false, corpse: null, spooked: 0,
                 heading: yaw, turnT: 1 + Math.random() * 2
             };
@@ -3079,12 +3091,17 @@
                 type: $gameScreen._weatherType, power: $gameScreen._weatherPower,
                 duration: $gameScreen._weatherDuration, pictures: $gameScreen._pictures
             } : null;
+            // Roaming fauna out here is fought inside the bracket of the
+            // ground under it, as on the 2D map (encounters module, 3d).
+            const H = BSE && BSE.Helpers;
+            if (H && H.armAmbientBracket) H.armAmbientBracket();
             try {
                 BattleManager.setup(troopId, true, false);
             } catch (e) {
                 console.error('[VoxelWorld] combat setup', e);
                 return false;
             } finally {
+                if (H && H.disarmAmbientBracket) H.disarmAmbientBracket();
                 if (screen) {
                     $gameScreen._weatherType = screen.type;
                     $gameScreen._weatherPower = screen.power;

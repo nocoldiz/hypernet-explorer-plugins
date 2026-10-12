@@ -135,7 +135,7 @@
 
             // Engine enum -> label, the index staying the id.
             const enumName = (key, index) => {
-                const arr = T.list(key);
+                const arr = (typeof T.list === "function" ? T.list(key) : null) || [];
                 return arr[index] || arr[0] || "";
             };
             // MapBattleMode tags anything that reaches across the field with a
@@ -219,9 +219,10 @@
             // `actor` is optional: the requirement reads as a bare floor when
             // nobody is holding the page, and as "what you have against it"
             // when somebody is.
-            const combatSpecsOf = (skill, actor) => {
+            const combatSpecsOf = (skill, actor, opts) => {
                 const specs = [];
                 if (!skill) return specs;
+                const o = opts || {};
                 if (skill.stypeId > 0) specs.push({ label: T("Inventory.spec.label.skillType"), val: ($dataSystem.skillTypes || [])[skill.stypeId] || T("Inventory.spec.label.skillFallback") });
 
                 // A move the body teaches rather than the character: it is said
@@ -232,14 +233,14 @@
                 if (anatomy.length) {
                     specs.push({ label: T("SkillsMenu.spec.label.grantedBy"), val: anatomy.join(", ") });
                 }
-                if (skill.occasion !== undefined) specs.push({ label: T("Inventory.spec.label.occasion"), val: occasionName(skill.occasion) });
+                if (!o.hoistQuick && skill.occasion !== undefined) specs.push({ label: T("Inventory.spec.label.occasion"), val: occasionName(skill.occasion) });
                 if (skill.scope !== undefined && skill.scope !== 0) specs.push({ label: T("Inventory.spec.label.target"), val: scopeName(skill.scope) });
 
                 // The cost is already read off the header gauges, so it is not
                 // repeated as a row here.
 
                 const scaleData = scaleOf(skill);
-                if (scaleData) specs.push({ label: T("Equip.scale"), val: scaleData.stat, cls: 'inspect-spec-row--scaling' });
+                if (!o.hoistQuick && scaleData) specs.push({ label: T("Equip.scale"), val: scaleData.stat, cls: 'inspect-spec-row--scaling' });
 
                 if (skill.speed) specs.push({ label: T("Inventory.spec.label.speedAdjust"), val: (skill.speed > 0 ? "+" : "") + skill.speed });
                 if (skill.successRate !== undefined && skill.successRate !== 100) specs.push({ label: T("Inventory.spec.label.successRate"), val: skill.successRate + "%" });
@@ -285,10 +286,12 @@
                 const svc = window.SkillStatReq;
                 const req = svc && svc.of(skill);
                 if (req) {
-                    specs.push({
-                        label: T("SkillsMenu.spec.label.statReq"),
-                        val: svc.label(skill)
-                    });
+                    if (!o.hoistQuick) {
+                        specs.push({
+                            label: T("SkillsMenu.spec.label.statReq"),
+                            val: svc.label(skill)
+                        });
+                    }
                     // The stat the caster actually holds is only worth a row of
                     // its own when it falls short: "9 (met)" under "INT 8" says
                     // nothing the row above has not already said.
@@ -321,6 +324,7 @@
             const enemyLevelIndex = () => {
                 if (_enemyLevelIndex) return _enemyLevelIndex;
                 _enemyLevelIndex = [];
+                if (typeof $dataEnemies === "undefined" || !Array.isArray($dataEnemies)) return _enemyLevelIndex;
                 for (const e of $dataEnemies) {
                     if (!e || !e.note) continue;
                     if (/<Boss>/i.test(e.note)) continue;
@@ -500,7 +504,7 @@
             function build(skill, actor, opts) {
                 if (!skill) return "";
                 const o = opts || {};
-                const combat = combatSpecsOf(skill, actor);
+                const combat = combatSpecsOf(skill, actor, o);
                 const damage = damageSpecsOf(skill, actor);
                 const effects = effectsOf(skill);
                 const training = specRowsOf(skill, actor);
@@ -520,12 +524,14 @@
                 }
 
                 if (effects.length) {
-                    html += section(T("SkillsMenu.section.skillEffects"), effects.map(desc =>
-                        `<div class="inspect-bullet-item">${esc(desc)}</div>`
-                    ).join(""));
+                    html += section(T("SkillsMenu.section.skillEffects"), `<div class="inspect-chips-grid">` + effects.map(desc =>
+                        `<span class="inspect-stat-chip inspect-stat-chip--gain"><span class="inspect-stat-chip-val">${esc(desc)}</span></span>`
+                    ).join("") + `</div>`);
                 }
                 if (training.length) {
-                    html += section(T("SkillsMenu.section.training"), specRows(training));
+                    html += section(T("SkillsMenu.section.training"), `<div class="inspect-chips-grid">` + training.map(r =>
+                        `<span class="inspect-stat-chip"><span class="inspect-stat-chip-lbl">${r.label}:</span> <span class="inspect-stat-chip-val">${r.val}</span></span>`
+                    ).join("") + `</div>`);
                 }
                 // The skill's lore closes the card, under every number, the way
                 // an item's does on the backpack page: flavour is read last.
@@ -555,21 +561,36 @@
                 // in. A cost the character cannot pay is inked red where the
                 // pocket money would be.
                 const maxAp = actor.maxTp ? actor.maxTp() : 100;
+                const mpCost = actor.skillMpCost ? actor.skillMpCost(skill) : 0;
+                const tpCost = actor.skillTpCost ? actor.skillTpCost(skill) : 0;
                 const gauge = (label, current, maximum, cost) => {
                     const cur = Math.floor(current);
                     const max = Math.floor(maximum);
                     const color = cost > 0
                         ? (cost <= cur ? 'var(--text-success-active)' : 'var(--text-danger-hover)')
                         : 'var(--text-text-alt-7)';
+                    const costTag = cost > 0 ? ` (${cost} ${label})` : '';
                     return `
-                        <div class="inspect-meta-item">
-                            <span>${esc(label)}</span>
-                            <span class="inspect-meta-val" style="color:${color};">${cur} / ${max}</span>
+                        <div class="inspect-meta-item inspect-pill">
+                            <span class="inspect-pill-lbl">${esc(label)}:</span>
+                            <span class="inspect-meta-val inspect-pill-val" style="color:${color};">${cur} / ${max}${costTag}</span>
                         </div>`;
                 };
-                const resourceHTML =
-                    gauge(T("SkillsMenu.unit.mp"), actor.mp, actor.mmp, actor.skillMpCost(skill)) +
-                    gauge(T("SkillsMenu.unit.ap"), actor.tp, maxAp, actor.skillTpCost(skill));
+                let quickPills = gauge(T("SkillsMenu.unit.mp"), actor.mp, actor.mmp, mpCost) +
+                    gauge(T("SkillsMenu.unit.ap"), actor.tp, maxAp, tpCost);
+
+                if (skill.occasion !== undefined) {
+                    quickPills += `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${T("Inventory.spec.label.occasion")}:</span> <span class="inspect-meta-val inspect-pill-val">${occasionName(skill.occasion)}</span></div>`;
+                }
+                const scaleData = scaleOf(skill);
+                if (scaleData) {
+                    quickPills += `<div class="inspect-meta-item inspect-pill inspect-pill--scaling"><span class="inspect-pill-lbl">${T("Equip.scale")}:</span> <span class="inspect-meta-val inspect-pill-val stat-chip-val--scaling">${scaleData.stat}</span></div>`;
+                }
+                const svc = window.SkillStatReq;
+                const req = svc && svc.of(skill);
+                if (req) {
+                    quickPills += `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${T("SkillsMenu.spec.label.statReq")}:</span> <span class="inspect-meta-val inspect-pill-val">${svc.label(skill)}</span></div>`;
+                }
 
                 // The backpack's own card, class for class (.item-inspect,
                 // css/theme.css): header, meta strip, one scrolling reading,
@@ -586,10 +607,10 @@
                                 <div class="inspect-rarity inspect-rarity--school">${esc(subtitle)}</div>
                             </div>
                         </div>
-                        <div class="inspect-meta-grid">${resourceHTML}</div>
+                        <div class="inspect-meta-grid inspect-quick-pills">${quickPills}</div>
                         <div class="inspect-lore">
                             ${skill.description ? `<div class="inspect-desc">${esc(dbText(skill.description))}</div>` : ""}
-                            ${build(skill, actor)}
+                            ${build(skill, actor, Object.assign({}, o, { hoistQuick: true }))}
                         </div>
                         <div class="inspect-actions">${o.actionsHTML || ""}</div>
                     </div>`;
@@ -2682,14 +2703,18 @@
             const isFocused = (this._dndActiveSection === "actions" && this._dndSelectedActionIndex === idx) ? "selected" : "";
             let label = "";
             let unusable = "";
+            let primaryClass = "";
             if (action === "use") {
                 label = T('SkillsMenu.action.useSkill');
                 if (!actor.canUse(skill)) unusable = " unusable";
+                primaryClass = " inspect-btn--primary";
             } else if (action === "loadout") {
-                label = BattleLoadout.isActive(actor, skill)
+                const isActive = BattleLoadout.isActive(actor, skill);
+                label = isActive
                     ? T('SkillsMenu.action.bench') : T('SkillsMenu.action.carry');
+                if (!isActive) primaryClass = " inspect-btn--primary";
             }
-            return `<div class="inspect-btn ${isFocused}${unusable}" onclick="SceneManager._scene.triggerUISkillAction('${action}')">${label}</div>`;
+            return `<div class="inspect-btn ${primaryClass} ${isFocused}${unusable}" onclick="SceneManager._scene.triggerUISkillAction('${action}')">${label}</div>`;
         }).join("");
     };
 

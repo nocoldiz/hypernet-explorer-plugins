@@ -2711,6 +2711,176 @@
   window.GalaxySim.isAlienSpeciesEnemyId = isAlienSpeciesEnemyId;
 
   // ==========================================================================
+  // Crash worlds. The crash-landed origin puts the party down on a living
+  // world pitched at their own level: the planet's level (planetLevel) inside
+  // [party level, party level + 4], with life on it, so its procedural species
+  // are drawn from the creatures built at that level.
+  //
+  // Every crash of a world happens in ONE galaxy, its seed read off the world
+  // seed and written into the world's galaxy file the first time it is asked
+  // for. Each crash world found or made there is written down too, so every
+  // savegame of the world crashing at that level comes down on the same planet.
+  // When the galaxy holds no living world in the window, one is made: a new
+  // planet added to one of its systems, named so its level falls in the window
+  // and marked `life: true`. It is kept in the world's galaxy file
+  // (`worldPlanets`) and put back into its system every time that galaxy is
+  // generated (StarMapDataManager.generateGalaxySystems).
+  // ==========================================================================
+  const CRASH_LEVEL_SPAN = 5;
+  const CRASH_LEVEL_TOP = PLANET_LEVEL_MAX - CRASH_LEVEL_SPAN + 1;
+
+  function worldGalaxyField(prop) {
+    const WM = window.WorldManager;
+    if (!WM || typeof WM.getField !== "function") return undefined;
+    try { return WM.getField("galaxy", prop); } catch (e) { return undefined; }
+  }
+  function setWorldGalaxyField(prop, value) {
+    const WM = window.WorldManager;
+    if (!WM || typeof WM.setField !== "function") return;
+    try { WM.setField("galaxy", prop, value); } catch (e) { /* no world loaded */ }
+  }
+
+  // The galaxy every crash of this world happens in.
+  function crashGalaxySeed() {
+    const held = Number(worldGalaxyField("crashGalaxy"));
+    if (Number.isFinite(held) && held > 0) return held;
+    const seed = (fnv1a("crash|" + worldSeedInt()) & 0x7fffffff) || 1;
+    setWorldGalaxyField("crashGalaxy", seed);
+    return seed;
+  }
+  window.GalaxySim.crashGalaxySeed = crashGalaxySeed;
+
+  // The planets this world added to a galaxy, as {galaxySeed, system, planet}.
+  function worldPlanets() {
+    const list = worldGalaxyField("worldPlanets");
+    return Array.isArray(list) ? list : [];
+  }
+  window.GalaxySim.worldPlanets = worldPlanets;
+
+  // The window of planet levels a crash at party level `level` lands in.
+  function crashWindow(level) {
+    const min = Math.max(PLANET_LEVEL_MIN, Math.min(CRASH_LEVEL_TOP, Math.round(level) || 1));
+    return { min: min, max: min + CRASH_LEVEL_SPAN - 1 };
+  }
+  window.GalaxySim.crashWindow = crashWindow;
+
+  function fitsCrashWindow(planet, win) {
+    if (!planet || isSurfacelessWorld(planet) || !planetHasLife(planet)) return false;
+    const lvl = planetLevel(planet);
+    return lvl >= win.min && lvl <= win.max;
+  }
+
+  // The planet types life can stand on, the ones the party breathes on first.
+  function livingPlanetTypes() {
+    const PT = window.GalaxySim.PlanetTypes || {};
+    const all = Object.keys(PT).filter((k) => PT[k] && PT[k].supportLife &&
+      !isSurfacelessWorld({ type: k }));
+    const breathable = all.filter((k) => PT[k].breathable);
+    return breathable.length ? breathable : all;
+  }
+
+  // A new living planet in one of `systems`, named so its level falls in the
+  // window. Each system offers the next letter after its own planets; the
+  // first whose name lands in the window is used.
+  function makeCrashWorld(systems, win, seed) {
+    const types = livingPlanetTypes();
+    if (!types.length) return null;
+    const rnd = mulberry(seed ^ Math.imul(win.min, 0x9e3779b1));
+    const hosts = systems.filter((s) => s && s.type !== "ROGUE_PLANET" && Array.isArray(s.planets)); // i18n-ignore: star type id
+    const start = hosts.length ? Math.floor(rnd() * hosts.length) : 0;
+    for (let n = 0; n < hosts.length; n++) {
+      const sys = hosts[(start + n) % hosts.length];
+      for (let extra = 0; extra < 4; extra++) {
+        const letter = String.fromCharCode(98 + sys.planets.length + extra);
+        const name = sys.name + " " + letter;
+        if (sys.planets.some((p) => p && p.name === name)) continue;
+        const lvl = planetLevel({ name: name });
+        if (lvl < win.min || lvl > win.max) continue;
+        const last = sys.planets.reduce((r, p) => Math.max(r, (p && p.orbitRadius) || 0), 0);
+        const orbitRadius = last + 0.4 + rnd() * 1.6;
+        const type = types[Math.floor(rnd() * types.length)];
+        const PT = window.GalaxySim.PlanetTypes || {};
+        const info = PT[type] || {};
+        const planet = {
+          name: name,
+          type: type,
+          color: info.color || "#5a8f5a",
+          orbitRadius: orbitRadius,
+          radius: 0.8 + rnd() * 1.6,
+          mass: (Number(info.minMass) || 0.5) + rnd() * ((Number(info.maxMass) || 2) - (Number(info.minMass) || 0.5)),
+          period: Math.sqrt(Math.pow(orbitRadius, 3) / (sys.mass || 1)) * 365,
+          phase: rnd() * Math.PI * 2,
+          atmosphere: true,
+          life: true,
+          crashWorld: true,
+          moons: [],
+        };
+        return { system: sys, planet: planet };
+      }
+    }
+    return null;
+  }
+
+  // Put this world's own planets back into a galaxy's freshly generated
+  // systems. Called by the data manager; safe to call twice.
+  function applyWorldPlanets(seed, systems) {
+    const mine = worldPlanets().filter((w) => w && w.galaxySeed === seed && w.planet);
+    for (const w of mine) {
+      const sys = systems.find((s) => s && s.name === w.system);
+      if (!sys || !Array.isArray(sys.planets)) continue;
+      if (sys.planets.some((p) => p && p.name === w.planet.name)) continue;
+      sys.planets.push(JSON.parse(JSON.stringify(w.planet)));
+    }
+  }
+  window.GalaxySim.applyWorldPlanets = applyWorldPlanets;
+
+  /**
+   * The living world a party of `level` crash-lands on, as {system, planet,
+   * galaxySeed}, or null when the galaxy cannot be built. Found in the
+   * world's record first, then in the crash galaxy, and made there last.
+   */
+  function findCrashWorld(level) {
+    const dm = window.GalaxySim.getDataManager && window.GalaxySim.getDataManager();
+    if (!dm || typeof dm.generateGalaxySystems !== "function") return null;
+    const seed = crashGalaxySeed();
+    const systems = dm.generateGalaxySystems(seed) || [];
+    if (!systems.length) return null;
+    applyWorldPlanets(seed, systems);
+    const win = crashWindow(level);
+    const resolve = (rec) => {
+      const sys = systems.find((s) => s && s.name === rec.system);
+      const planet = sys && (sys.planets || []).find((p) => p && p.name === rec.planet);
+      return planet && fitsCrashWindow(planet, win) ? { system: sys, planet: planet, galaxySeed: seed } : null;
+    };
+
+    const known = worldGalaxyField("crashWorlds");
+    const record = Array.isArray(known) ? known.slice() : [];
+    for (const rec of record) {
+      if (!rec || rec.galaxySeed !== seed) continue;
+      const hit = resolve(rec);
+      if (hit) return hit;
+    }
+
+    let pick = null;
+    for (const sys of systems) {
+      const planet = (sys && sys.planets || []).find((p) => fitsCrashWindow(p, win));
+      if (planet) { pick = { system: sys, planet: planet }; break; }
+    }
+    if (!pick) {
+      pick = makeCrashWorld(systems, win, seed);
+      if (!pick) return null;
+      pick.system.planets.push(pick.planet);
+      const planets = worldPlanets().slice();
+      planets.push({ galaxySeed: seed, system: pick.system.name, planet: JSON.parse(JSON.stringify(pick.planet)) });
+      setWorldGalaxyField("worldPlanets", planets);
+    }
+    record.push({ galaxySeed: seed, system: pick.system.name, planet: pick.planet.name, level: planetLevel(pick.planet) });
+    setWorldGalaxyField("crashWorlds", record);
+    return { system: pick.system, planet: pick.planet, galaxySeed: seed };
+  }
+  window.GalaxySim.findCrashWorld = findCrashWorld;
+
+  // ==========================================================================
   // Crafting materials (see VehicleSystemRepair / ThinkerMenu, items 849-871)
   // ==========================================================================
   const MAT = {

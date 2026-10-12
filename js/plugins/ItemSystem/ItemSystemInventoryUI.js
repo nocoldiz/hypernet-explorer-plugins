@@ -302,7 +302,7 @@
               const nl = name.toLowerCase();
               if (nl === 'movement' || nl === 'weight' || nl === 'category' || nl === 'uncraftable' || nl === 'damagetype') return;
               // Sound file names are for the engine, not the reader.
-              if (nl === 'hitsounds' || nl === 'weaponsounds' || nl === 'hitsound' || nl === 'weaponsound') return;
+              if (nl === 'hitsounds' || nl === 'weaponsounds' || nl === 'hitsound' || nl === 'weaponsound' || nl === 'pickupsound' || nl === 'reloadsound' || nl.endsWith('sound') || nl.endsWith('sounds')) return;
               // <Scale:> is already printed as "Scaling" in the specifications
               // above, and a weapon carries one tag per stat, so leaving it here
               // repeated the same answer once per stat.
@@ -359,7 +359,16 @@
 
         if (dOpts.out) dOpts.out.general = generalSpecs;
         if (generalSpecs.length && !dOpts.hoistGeneral) { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.specifications')}</div>`         + buildSpecRows(generalSpecs); }
-        if (paramSpecs.length)      { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.attributeModifiers')}</div>`   + specBlock(paramSpecs.map(s => specRowHTML(s.label, s.val, s.val.startsWith('+') ? 'inspect-spec-value--gain' : 'inspect-spec-value--loss')).join('')); }
+        if (paramSpecs.length) {
+          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.attributeModifiers')}</div>`
+            + `<div class="inspect-chips-grid">`
+            + paramSpecs.map(s => {
+                const isGain = s.val.startsWith('+');
+                const chipClass = isGain ? 'inspect-stat-chip--gain' : 'inspect-stat-chip--loss';
+                return `<span class="inspect-stat-chip ${chipClass}"><span class="inspect-stat-chip-lbl">${s.label}:</span> <span class="inspect-stat-chip-val">${s.val}</span></span>`;
+              }).join('')
+            + `</div>`;
+        }
         if (invocationSpecs.length) { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.invocationStats')}</div>`      + buildSpecRows(invocationSpecs); }
         if (damageSpecs.length)     { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.combatApplication')}</div>`    + buildSpecRows(damageSpecs); }
         if (effectsOrdered.length) {
@@ -370,7 +379,12 @@
           ).join(''));
         }
         if (traitsList.length)      { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.specialProperties')}</div>`   + specBlock(traitsList.map(t => `<div class="inspect-bullet-item">${t}</div>`).join('')); }
-        if (nutritionSpecs.length)  { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.nutritionalProfile')}</div>`  + buildSpecRows(nutritionSpecs); }
+        if (nutritionSpecs.length) {
+          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.nutritionalProfile')}</div>`
+            + `<div class="inspect-chips-grid">`
+            + nutritionSpecs.map(s => `<span class="inspect-stat-chip"><span class="inspect-stat-chip-lbl">${s.label}:</span> <span class="inspect-stat-chip-val">${s.val}</span></span>`).join('')
+            + `</div>`;
+        }
         const needRestores = window.ItemSystemUtils && window.ItemSystemUtils.getNeedRestores ? window.ItemSystemUtils.getNeedRestores(selectedItem) : [];
         if (needRestores.length) {
           detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.needsRestored')}</div>`
@@ -438,11 +452,9 @@
         const detailsOut  = {};
         const detailsBody = detailsHTML(item, { hoistGeneral: !!extra, out: detailsOut });
         const hoistedHTML = (extra ? (detailsOut.general || []) : []).map(sp =>
-          `<div class="inspect-meta-item"><span>${sp.label}</span><span class="inspect-meta-val">${sp.val}</span></div>`).join('');
+          `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${sp.label}:</span> <span class="inspect-meta-val inspect-pill-val">${sp.val}</span></div>`).join('');
 
-        // Identity and numbers stand together in the left column, the turning
-        // piece as a borderless square on the right, so the card reads across
-        // rather than pushing the description a viewport further down.
+        // Full-width 3D preview banner up top, identity and compact quick-stat pills below.
         const identityHTML = `
             <div class="inspect-header">
               <div class="inspect-frame">
@@ -453,18 +465,16 @@
                 <div class="inspect-rarity rarity--${rarity.key}">${rarity.name} ${itemType}</div>
               </div>
             </div>
-            <div class="inspect-meta-grid inspect-meta-grid--stacked${weightGrams === 0 ? ' inspect-meta-grid--single' : ''}">
-              ${weightGrams > 0 ? `<div class="inspect-meta-item"><span>${T('Inventory.section.unitWeight')}</span><span class="inspect-meta-val">${weightText}</span></div>` : ''}
-              <div class="inspect-meta-item"><span>${T('Inventory.section.marketValue')}</span><span class="inspect-meta-val">${valueVal} €</span></div>
+            <div class="inspect-meta-grid inspect-meta-grid--stacked inspect-quick-pills${weightGrams === 0 ? ' inspect-meta-grid--single' : ''}">
+              ${weightGrams > 0 ? `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${T('Inventory.section.unitWeight')}:</span> <span class="inspect-meta-val inspect-pill-val">${weightText}</span></div>` : ''}
+              <div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${T('Inventory.section.marketValue')}:</span> <span class="inspect-meta-val inspect-pill-val">${valueVal} €</span></div>
               ${hoistedHTML}
             </div>`;
 
         return `
         <div class="item-inspect">
-          ${extra ? `<div class="inspect-topline">
-            <div class="inspect-topline-info">${identityHTML}</div>
-            <div class="inspect-topline-preview">${extra}</div>
-          </div>` : identityHTML}
+          ${extra ? `<div class="inspect-topline-preview inspect-topline-preview--fullwidth">${extra}</div>` : ''}
+          <div class="inspect-topline-info inspect-topline-info--fullwidth">${identityHTML}</div>
           <div class="inspect-lore">${detailsBody}</div>
           <div class="inspect-actions">${o.actionsHTML || ''}</div>
         </div>`;
@@ -944,12 +954,12 @@
         }
       } else if (isUseable) {
         const isFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
-        actionBtnsHTML += `<div class="inspect-btn ${isFocused}" data-pad="use" onclick="SceneManager._scene.triggerUIItemAction('use')">${T('Inventory.ui.useItem')}</div>`;
+        actionBtnsHTML += `<div class="inspect-btn inspect-btn--primary ${isFocused}" data-pad="use" onclick="SceneManager._scene.triggerUIItemAction('use')">${T('Inventory.ui.useItem')}</div>`;
         this._dndActionsList.push('use'); btnIdx++;
       }
       if (isEquippable) {
         const isFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
-        actionBtnsHTML += `<div class="inspect-btn ${isFocused}" data-pad="confirm" onclick="SceneManager._scene.triggerUIItemAction('equip')">${T('Inventory.ui.equip')}</div>`;
+        actionBtnsHTML += `<div class="inspect-btn inspect-btn--primary ${isFocused}" data-pad="confirm" onclick="SceneManager._scene.triggerUIItemAction('equip')">${T('Inventory.ui.equip')}</div>`;
         this._dndActionsList.push('equip'); btnIdx++;
       }
 

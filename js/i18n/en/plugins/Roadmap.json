@@ -1,0 +1,691 @@
+{
+  "title": "Roadmap",
+  "details": "Details",
+  "close": "Close",
+  "fullscreenTitle": "Roadmap",
+  "omegaTower": "Omega Tower levels",
+  "destinations": "Key destinations",
+  "searchPlaceholder": "Filter...",
+  "allCategories": "All",
+  "doneHeader": "Done",
+  "selectFeature": "Select a system to see what is done.",
+  "categories": {
+    "core": "Core",
+    "combat": "Combat",
+    "npcs": "Society",
+    "economy": "Economy",
+    "vehicles": "Vehicles",
+    "hypernet": "Hypernet",
+    "galaxy": "Space",
+    "health": "Health",
+    "crafting": "Crafting",
+    "cards": "Minigames",
+    "world": "World",
+    "multiplayer": "Multiplayer"
+  },
+  "features": {
+    "worldPersistence": {
+      "name": "Worlds",
+      "desc": "Worlds that outlive a single savegame, with everything that happened in them.",
+      "done": [
+        "World folders shared by every savegame of the same world",
+        "Worlds screen on the title menu",
+        "World and history generated from the world seed",
+        "Autosave on every map transition",
+        "Opened chests kept per world",
+        "Dug voxels and felled trees kept per world",
+        "Party diary written as it happens, kept in the world folder",
+        "Travel journal saved as a text file per slot",
+        "Letters between parties across worlds, with money and goods enclosed"
+      ]
+    },
+    "timeSleepClock": {
+      "name": "Calendar",
+      "desc": "A living clock and calendar the whole world runs on.",
+      "done": [
+        "Clock and calendar with day and night tints",
+        "Sleep menu, beds, sleep debt and exhaustion",
+        "Seasons, weather and temperature",
+        "Public holidays and gatherings",
+        "Moon phases, with two extra moons on Fridays",
+        "Analog clock widget"
+      ]
+    },
+    "hungerNutrition": {
+      "name": "Nutrition",
+      "desc": "What the party eats, and what it does to them.",
+      "done": [
+        "Hunger, satiety and overeating",
+        "Calories, fat, protein and caffeine tracked per meal",
+        "Consumables that restore specific needs",
+        "Raw ingredients edible on their own",
+        "Food spoiling over time"
+      ]
+    },
+    "inputControls": {
+      "name": "Controls",
+      "desc": "Keyboard, mouse and gamepad, remappable everywhere.",
+      "done": [
+        "Keyboard, mouse and gamepad support",
+        "Full key remapping",
+        "Analog stick movement",
+        "Mouse controls and map panning",
+        "Hotkeys and the shared quick bar",
+        "Party cycling",
+        "Search bars and long lists in every menu",
+        "Options menu with every setting in tabs",
+        "Fullscreen, 16:9 and pixel perfect scaling"
+      ]
+    },
+    "audioMusic": {
+      "name": "Audio",
+      "desc": "Generated and recorded music, radio and footsteps.",
+      "done": [
+        "Custom audio engine",
+        "Procedural music generated live",
+        "Battle music picker in the options",
+        "Track and artist announced as a toast or a cassette",
+        "Map music chosen by nation, with day and night pools",
+        "In world radio with tunable stations",
+        "Footsteps that change with the ground",
+        "Random map music with random pitch"
+      ]
+    },
+    "modManager": {
+      "name": "Mods",
+      "desc": "Load community plugins from the mods folder.",
+      "done": [
+        "Mod loader reading the mods folder",
+        "Load order and per mod toggles",
+        "Mods screen on the title menu",
+        "Asset paths resolved whatever their letter case"
+      ]
+    },
+    "battleEngine": {
+      "name": "Battle System",
+      "desc": "Turn based battles where every battler acts on its own speed.",
+      "done": [
+        "One action per battler per round, ordered by agility",
+        "HP carried between fights",
+        "Danger warnings and health protection",
+        "Gravestones, respawn, permadeath and restore",
+        "Corpses and battle rewards",
+        "Encounters that change with the time of day",
+        "Enemy levels rising with distance from the Omega Tower",
+        "Battle command window and scrolling battle log",
+        "Peaceful mode with the Talk command",
+        "Talking to enemies in battle",
+        "Throwing items",
+        "Guaranteed escape"
+      ]
+    },
+    "battlers3D": {
+      "name": "3D Battlers",
+      "desc": "Every enemy is a 3D model built for it alone.",
+      "done": [
+        "A bespoke 3D model for every enemy",
+        "Families of beasts, birds, bosses, dragons, humanoids, oozes and spirits",
+        "Walking, running, flying and swimming gaits",
+        "Body parts that can be lost, with blood",
+        "Shared hair styles for people and folk",
+        "Seeded variations within a species",
+        "SnapVertex and Pixel Art retro looks",
+        "Animated battle backgrounds with moon phases",
+        "Effect animations for every skill"
+      ]
+    },
+    "skillsLoadouts": {
+      "name": "Skills",
+      "desc": "Hundreds of skills and spells, trained, fused and specialized.",
+      "done": [
+        "Role tabbed skill menu and nine skill battle loadout",
+        "Active skills and a signature passive for every class",
+        "Specialization tiers that grow with what you do",
+        "Skill encyclopedia, training and spell fusion",
+        "289 esoteric spells across 23 schools",
+        "Trainable weapon proficiencies",
+        "Expression powers built from triggers, conditions and effects",
+        "Mimic transformation skills",
+        "State encyclopedia with how each state ends"
+      ]
+    },
+    "arenaBattles": {
+      "name": "Arena",
+      "desc": "Gauntlets and trials with growing rewards.",
+      "done": [
+        "Arena gauntlets and single fights",
+        "Biome trials",
+        "Win streak rewards in gold and items",
+        "Arena menus and results screen"
+      ]
+    },
+    "summonsSpirits": {
+      "name": "Summons",
+      "desc": "Allies called into battle for a fight.",
+      "done": [
+        "Summons taking the fourth party slot",
+        "Spirit battlers",
+        "Recruits and familiars fighting with their own hands in first person"
+      ]
+    },
+    "mapBattles": {
+      "name": "Map Battles",
+      "desc": "Fights that happen right where you stand.",
+      "done": [
+        "Fights played out on the live map",
+        "Real time combat in the 3D world",
+        "Street fights between people and monsters, with fleeing",
+        "Downed bodies, looting, finishing blows and recovery"
+      ]
+    },
+    "bulletHell": {
+      "name": "Bullet Hell",
+      "desc": "Dodge enemy attacks by hand.",
+      "done": [
+        "Bullet patterns dodged during enemy attacks",
+        "Dodging tied into regular battles"
+      ]
+    },
+    "npcLife": {
+      "name": "NPC Lives",
+      "desc": "Every person has a day, a home, a family and a future.",
+      "done": [
+        "Schedules, jobs and shifts",
+        "Hunger, sleep, hygiene, social and leisure needs",
+        "Homes and moving out",
+        "Couples, breakups, pregnancy, adoption and children",
+        "A child's day",
+        "Trips, relocation and travellers on the roads",
+        "Ageing and death, with the world aged before you arrive",
+        "Experience and specializations",
+        "Addictions, cravings and the casino",
+        "Gear, implants, vehicles and food in hand",
+        "Plants, animals, hives and barrels looked after",
+        "Petty crime and street crime",
+        "Adventuring bands",
+        "Horde conquests and refugee camps",
+        "Zombie apocalypse"
+      ]
+    },
+    "dialogueBusts": {
+      "name": "Dialogue",
+      "desc": "Conversations with busts, keywords and endless chatter.",
+      "done": [
+        "Parchment dialogue with choices and keywords",
+        "Visual novel busts and portraits",
+        "Speaker names that stage busts automatically",
+        "NPC to NPC talk, ambient chatter and thought bubbles",
+        "Creatures speaking in their own species voice",
+        "Generated chat in each NPC's own style",
+        "Party banter that fits the situation",
+        "Empathize panel: chat, dossier, wiki, Talk about, Teach and Learn"
+      ]
+    },
+    "creatureSystem": {
+      "name": "Companions",
+      "desc": "Recruit people and creatures into the party.",
+      "done": [
+        "Recruiting NPCs into the party",
+        "Roster history, bench and recall",
+        "Creature characters with their own voices",
+        "Creatures kept apart from people: no jobs, money or faction",
+        "Pet follower trailing the party"
+      ]
+    },
+    "factionsReputation": {
+      "name": "Factions",
+      "desc": "Eighteen factions and the armies they field.",
+      "done": [
+        "Eighteen factions with reputation from -100 to +100",
+        "Each party member's own reputation with every NPC",
+        "Faction armies on the world map",
+        "Troop recruitment up to 100 troops",
+        "Field battles between armies"
+      ]
+    },
+    "onuAssembly": {
+      "name": "Politics",
+      "desc": "Governments, elections and the world assembly.",
+      "done": [
+        "Hyperpower governments, elections and parties",
+        "Seat at the ONU assembly: debate, vote and veto",
+        "Politics screen in the main menu",
+        "Worldviews that shift and convert over time"
+      ]
+    },
+    "bankingSystem": {
+      "name": "Banking",
+      "desc": "Deposits, interest, loans and a full portfolio.",
+      "done": [
+        "Deposits and withdrawals",
+        "Interest and loans",
+        "Portfolio of properties, stocks, savings, loans and livestock",
+        "All money shown in euros"
+      ]
+    },
+    "shopManagement": {
+      "name": "Shops",
+      "desc": "Buy, sell, and run a shop of your own.",
+      "done": [
+        "Owning shops, with staff, production and deliveries",
+        "Stockbusters marketplace: lots, volume pricing, cart and couriers",
+        "Shop counter for every vendor",
+        "Daily shops with stock rerolled every day",
+        "Vending machines",
+        "Token exchange for the arcade"
+      ]
+    },
+    "realEstateRentals": {
+      "name": "Property",
+      "desc": "Buy places, rent them, and fill them.",
+      "done": [
+        "Buying and selling property",
+        "Renting a place for 24 real hours",
+        "Furnishing what you own"
+      ]
+    },
+    "stockMarket": {
+      "name": "Stock Market",
+      "desc": "Trade shares from a terminal.",
+      "done": [
+        "Trading terminal",
+        "Moving prices",
+        "Holdings listed in the portfolio"
+      ]
+    },
+    "crimeBounties": {
+      "name": "Crime",
+      "desc": "Steal, get caught, and face the court.",
+      "done": [
+        "Bounty, heat and police attention",
+        "Stealing from shops",
+        "Trials and prison sentences",
+        "Eris and the archmagistrate of the Holy Vatican Empire",
+        "N€police site with bounties, custody and hearings",
+        "Eris romance and opinion"
+      ]
+    },
+    "vehiclesGarage": {
+      "name": "Vehicles",
+      "desc": "A camper to live in and a garage to keep it running.",
+      "done": [
+        "Camper, car, bike, boat, broom and starship",
+        "Modular camper with upgrades",
+        "Crew aboard: who drives and who rests",
+        "Fuel and damage to critical parts",
+        "Vehicles stay where you left them",
+        "Flying like an airship"
+      ]
+    },
+    "fastTravel": {
+      "name": "Fast Travel",
+      "desc": "Twenty eight ways to cross Europe.",
+      "done": [
+        "28 transport modes",
+        "Bus stops and travel costs",
+        "World map with zoom, pan and city labels",
+        "Minimap"
+      ]
+    },
+    "voxelWorld": {
+      "name": "Voxel World",
+      "desc": "The 3D world you drive across and dig into.",
+      "done": [
+        "Destructible voxel ground",
+        "Driving the camper and walking on foot",
+        "First and third person",
+        "Caves, sewers, islands and rivers",
+        "Towns, villages, farms and lone houses with interiors",
+        "Abandoned structures, dungeons and grottoes",
+        "Digging with the pick, with ore drops",
+        "Roadside wildlife, crowds and parked vehicles",
+        "Sky, weather and the sea",
+        "Real time combat",
+        "Split screen"
+      ]
+    },
+    "roadTraffic": {
+      "name": "Road Traffic",
+      "desc": "Cars, walkers and brooms sharing the roads.",
+      "done": [
+        "NPC cars with collisions, roadkill and theft",
+        "Full scale traffic in the 3D world",
+        "Walkers, bikes and brooms on the roads",
+        "Road autopilot"
+      ]
+    },
+    "hypernetOS": {
+      "name": "Archways XP",
+      "desc": "A whole desktop operating system inside the game.",
+      "done": [
+        "Desktop, taskbar and windows",
+        "Process kernel",
+        "File system and registry",
+        "My Computer and My Documents",
+        "Control panel and wallpapers",
+        "Mouse, keyboard and gamepad navigation"
+      ]
+    },
+    "hyperDeck": {
+      "name": "HyperDeck",
+      "desc": "The handheld you build part by part.",
+      "done": [
+        "Assembled from component items",
+        "Component grid",
+        "Procedural 3D cases",
+        "Power on self test and boot",
+        "Fitted parts shown as hardware specs"
+      ]
+    },
+    "hypernetApps": {
+      "name": "Desktop Apps",
+      "desc": "The programs that run on Archways XP.",
+      "done": [
+        "Notepad",
+        "TV Guide",
+        "N€police",
+        "Eurodemics epidemic observatory",
+        "Artifact Analyzer",
+        "Token Exchange",
+        "Hyper Card Arena and Cadd Trader",
+        "HyperAmp, Whether, Incanta and Pain",
+        "Wyrd, Hexcel and Bobnzi"
+      ]
+    },
+    "hypernetBrowser": {
+      "name": "Browser",
+      "desc": "Hypernet Explorer and the sites it opens.",
+      "done": [
+        "Hypernet Explorer browser",
+        "Object Index of every catalogued item",
+        "Stockbusters marketplace"
+      ]
+    },
+    "galaxyCosmos": {
+      "name": "Star Map",
+      "desc": "A 3D galaxy to fly across.",
+      "done": [
+        "3D star map",
+        "Orbit and free fly camera",
+        "Views from planet scale up to the cosmos",
+        "Famous nebulae",
+        "Black holes",
+        "21 exotic star types",
+        "Anomalies with branching encounters",
+        "Ship travel between systems"
+      ]
+    },
+    "galaxyPhysics": {
+      "name": "Planets",
+      "desc": "Star systems with worlds you can land on.",
+      "done": [
+        "Star systems with orbiting bodies",
+        "The Solar System with its moons, belts and debris",
+        "Landing on 40 alien biomes, one set per planet type",
+        "Alien skies tinted by their star",
+        "Day length set by the planet's rotation"
+      ]
+    },
+    "galaxyShips": {
+      "name": "Starships",
+      "desc": "Your own procedural ship, and the sky above.",
+      "done": [
+        "Procedural starship generator",
+        "Ship appearance editor",
+        "Live galaxy behind every space map",
+        "Night sky chart with constellations"
+      ]
+    },
+    "limbDamage": {
+      "name": "Wounds",
+      "desc": "Damage that lands on limbs and organs.",
+      "done": [
+        "Limb and organ damage for the party",
+        "The same for enemies, with targeted attacks",
+        "Lost body parts in battle, with blood",
+        "Blood splatters"
+      ]
+    },
+    "medicineSystem": {
+      "name": "Diseases",
+      "desc": "Illness that spreads across the continent.",
+      "done": [
+        "228 diseases",
+        "Treatments",
+        "Continental epidemics",
+        "Eurodemics observatory"
+      ]
+    },
+    "cybernetics": {
+      "name": "Augments",
+      "desc": "Replace what you lose, improve what you keep.",
+      "done": [
+        "Prosthetic shop and fitting",
+        "Augments register with the whole catalogue",
+        "Implants and prosthetics on NPCs"
+      ]
+    },
+    "biologicSim": {
+      "name": "Biology",
+      "desc": "Blood, organs and needs under the skin.",
+      "done": [
+        "Blood simulation",
+        "Organ simulation",
+        "Needs driven by the body"
+      ]
+    },
+    "cookingSystem": {
+      "name": "Cooking",
+      "desc": "Combine ingredients into meals.",
+      "done": [
+        "Combining food items into dishes",
+        "Cooking recipes",
+        "Cooking level and spoiled dishes",
+        "Nutrition of every dish"
+      ]
+    },
+    "forgottenGrimoires": {
+      "name": "Grimoires",
+      "desc": "Ancient books that teach a spell.",
+      "done": [
+        "One spell learned out of five random offers",
+        "Readable books with page flip",
+        "Seeded book titles"
+      ]
+    },
+    "alchemistry": {
+      "name": "Alchemistry",
+      "desc": "Recipes, projects and the workshop.",
+      "done": [
+        "Alchemistry recipes and projects",
+        "Skill checks",
+        "Workshop: the Thinker's bench and the forge",
+        "Every weapon and armour recipe, gated by trade",
+        "Periodic table of esoteric elements"
+      ]
+    },
+    "proceduralArtifacts": {
+      "name": "Artifacts",
+      "desc": "Items generated with their own story.",
+      "done": [
+        "Procedural items, weapons and armour",
+        "Modifiers on weapons and armour",
+        "Artifact Analyzer",
+        "Loot scaled on the party's level",
+        "Hidden treasure rooms",
+        "Procedural 3D weapon models",
+        "Item descriptions that change every time"
+      ]
+    },
+    "furnitureBuilding": {
+      "name": "Furniture",
+      "desc": "Place furniture and animals anywhere you own.",
+      "done": [
+        "Buying and placing furniture and animals",
+        "Catalogue sorted by biome",
+        "Procedural interiors furnished room by room",
+        "Breaking and digging walls",
+        "Containers, physical and extradimensional"
+      ]
+    },
+    "farmingAgriculture": {
+      "name": "Farming",
+      "desc": "Crops that grow with the seasons.",
+      "done": [
+        "Plant lifecycle by season, weather and stage",
+        "Felling, mining and foraging",
+        "NPCs looking after their own plants"
+      ]
+    },
+    "livestockBrewing": {
+      "name": "Husbandry",
+      "desc": "Animals, bees and barrels.",
+      "done": [
+        "Animal lifecycle, produce and ownership",
+        "Animals ageing, breeding and dying",
+        "Bee colonies with castes and honey",
+        "Barrel brewing and fermentation"
+      ]
+    },
+    "arcadeCabinets": {
+      "name": "Arcade",
+      "desc": "Cabinets with real games inside.",
+      "done": [
+        "Snake, Frogger, Manpac and Asteroids",
+        "Breakout, Centipede, Space Invaders and Bubble Pop",
+        "Cabinet boot sequence",
+        "Arcade tokens"
+      ]
+    },
+    "cardGame": {
+      "name": "Card Game",
+      "desc": "A full collectible card game.",
+      "done": [
+        "Card catalogue on a 0 to 13 stat scale",
+        "3x3 board duels",
+        "Hyper Card Arena: CPU matches and brackets",
+        "Collection, deck builder and booster opening",
+        "Cadd Trader and the card market"
+      ]
+    },
+    "sports3D": {
+      "name": "Sports",
+      "desc": "Low poly 3D table and ball games.",
+      "done": [
+        "Chess",
+        "Pool",
+        "Bowling",
+        "Basketball"
+      ]
+    },
+    "gamblingCasino": {
+      "name": "Casino",
+      "desc": "Bet on anything that moves.",
+      "done": [
+        "Horse racing",
+        "Slot machines",
+        "Scratch cards",
+        "Tarot reading",
+        "Betting on real monster battles",
+        "Odds worked out from the games themselves"
+      ]
+    },
+    "interactivePastimes": {
+      "name": "Pastimes",
+      "desc": "Fishing, surfing and more.",
+      "done": [
+        "3D fishing",
+        "Surfing",
+        "Shooting range",
+        "Playable three octave piano",
+        "Lockpicking block puzzle",
+        "HyperTamer virtual pet",
+        "Raman scanner for statues and paintings"
+      ]
+    },
+    "monsterBestiary": {
+      "name": "Bestiary",
+      "desc": "Every monster you have met.",
+      "done": [
+        "Monster collection on a parchment spread",
+        "Descriptions that change every time"
+      ]
+    },
+    "historySimulator": {
+      "name": "History",
+      "desc": "An alternate Europe from 1900 to 2001.",
+      "done": [
+        "Alternate history with coups, wars and elections",
+        "Historical Archive viewer",
+        "In world news",
+        "TV channels with weekly schedules and teletext"
+      ]
+    },
+    "proceduralBiomes": {
+      "name": "Procedural World",
+      "desc": "Europe generated square by square.",
+      "done": [
+        "Biome maps with roads, rivers and beaches",
+        "Weather and temperature",
+        "Fog of war",
+        "Biome panoramas behind the tiles",
+        "Bologna rebuilt from real map data",
+        "Endless dream worlds",
+        "Branching encounters on Earth and alien biomes"
+      ]
+    },
+    "proceduralStructures": {
+      "name": "Settlements",
+      "desc": "Villages and cities full of people.",
+      "done": [
+        "Villages, cities and a catalogue of structures",
+        "Multi floor buildings",
+        "Prefab maps placed by coordinates",
+        "Signposts, bus stops and parks",
+        "Residents generated for every settlement",
+        "A world square for every patron"
+      ]
+    },
+    "proceduralQuests": {
+      "name": "Quests",
+      "desc": "Quests written for wherever you are.",
+      "done": [
+        "Step based quest engine",
+        "Quest board with notices in the poster's voice",
+        "Quest log",
+        "Job offers by location",
+        "Work for money and experience"
+      ]
+    },
+    "dungeonFloors": {
+      "name": "Dungeons",
+      "desc": "Floors, puzzles and the Omega Tower.",
+      "done": [
+        "Multi floor dungeons with stairs",
+        "Floor selector",
+        "Omega Tower levels",
+        "92 floors below the tower",
+        "Dungeons, crypts and sewers",
+        "Rocks, ice, pressure plates, crystal switches and torches",
+        "Secret doors"
+      ]
+    },
+    "splitScreenLocal": {
+      "name": "Split Screen",
+      "desc": "Play side by side on one screen.",
+      "done": [
+        "Local split screen with gamepads",
+        "Hot seat minigames",
+        "Split screen in the 3D world"
+      ]
+    },
+    "multiplayerOnline": {
+      "name": "Online Play",
+      "desc": "Up to eight players together.",
+      "done": [
+        "Server and Steam multiplayer for up to 8 players",
+        "Steam achievements"
+      ]
+    }
+  }
+}

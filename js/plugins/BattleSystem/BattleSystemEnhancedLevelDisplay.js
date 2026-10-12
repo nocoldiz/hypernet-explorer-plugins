@@ -53,6 +53,9 @@
         // fixed troop for the plate to read, and wears a stamp instead.
         if (event._bseRarityKey) return event._bseRarityLevel || 0;
         if (!event._fixedTroopId || event._fixedTroopId === 0) return 0;
+        // Everything else on the map is ambient and fought inside the ground's
+        // level bracket, so the plate prints the level the fight will be at.
+        if (BSE.Helpers.getAmbientTroopLevel) return BSE.Helpers.getAmbientTroopLevel(event._fixedTroopId);
         const cached = troopLevelCache.get(event._fixedTroopId);
         if (cached !== undefined) return cached;
         const troop = $dataTroops[event._fixedTroopId];

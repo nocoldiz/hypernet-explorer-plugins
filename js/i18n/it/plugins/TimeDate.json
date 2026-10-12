@@ -91,7 +91,8 @@
     "weatherClear": "Sereno",
     "awake": "Sveglio",
     "enemies": "Nemici",
-    "level": "Liv. {level}"
+    "level": "Liv. {level}",
+    "levelRange": "Liv. {min} a {max}"
   },
   "needLabel": {
     "hunger": "Fame",

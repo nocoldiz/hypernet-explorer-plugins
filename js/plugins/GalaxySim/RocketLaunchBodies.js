@@ -237,6 +237,12 @@
       const homeId = this._homeWorld();
       this._homeId = homeId;
       const homeSite = this.geoSite || this.site;
+      // OFF THE MOON THE BALL IS THE EARTH. The sphere hangs in the sky over
+      // the base at the size of a planet, and wearing the Moon's own map it
+      // read as a second, giant Moon with a tiny Earth beside it. It is the
+      // Earth instead, and the separate earthrise is not built for the climb.
+      const ballId = homeId === "moon" ? "earth" : homeId;   // i18n-ignore  world ids
+      this._homeBallId = ballId;
       // GalaxySim's real body is the single most expensive object in the
       // scene, and the painted stand-in below covers for it until it lands -
       // which is exactly what it is there for while the map decodes. So it is
@@ -246,24 +252,24 @@
         let body = null;
         try {
           body = R3D.buildPlanetGroup(
-            homeId === "earth" ? this._earthData() : (worldRecord(homeId) || this._earthData()), 1);
+            ballId === "earth" ? this._earthData() : (worldRecord(ballId) || this._earthData()), 1);
         } catch (e) { body = null; }
         if (!body) return;
         this.earthBody = body;
         body.scale.setScalar(EARTH_VIS_R);
         body.visible = false;
-        this._brighten(body, this._toneOf(homeId));
+        this._brighten(body, this._toneOf(ballId));
         holder.add(body);
       });
 
       const geo = this._geo(new THREE.SphereGeometry(EARTH_VIS_R, 64, 48));
       const mat = this._phong({
-        map: homeId === "earth" ? this._paintEarth() : this._paintHome(homeSite),
-        shininess: homeId === "earth" ? 14 : 6,
-        specular: homeId === "earth" ? 0x223344 : 0x1a1d12,
+        map: ballId === "earth" ? this._paintEarth() : this._paintHome(homeSite),
+        shininess: ballId === "earth" ? 14 : 6,
+        specular: ballId === "earth" ? 0x223344 : 0x1a1d12,
       });
       this.earthFallback = new THREE.Mesh(geo, mat);
-      this._brighten(this.earthFallback, this._toneOf(homeId));
+      this._brighten(this.earthFallback, this._toneOf(ballId));
       holder.add(this.earthFallback);
 
       // THE CITY LIGHTS.
@@ -296,7 +302,7 @@
       // The colour of the air over the world the pad is on, which on Titania is
       // the colour of what the ocean is giving off.
       this.limb = new THREE.Mesh(limbGeo, this._basic({
-        color: homeId === "earth" ? 0x5aa8ff : (homeSite.sea || 0x5aa8ff),
+        color: ballId === "earth" ? 0x5aa8ff : (homeSite.sea || 0x5aa8ff),
         transparent: true, opacity: 0.0,
         side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false,
       }));
@@ -385,6 +391,8 @@
         else if (to && to !== "moon" && at && BALL_BEATS.indexOf(at.key) >= 0) w = to; // i18n-ignore  world id
       }
       if (w === "earth" && this.earthLost) return null;                                // i18n-ignore  world id
+      // Off the Moon the ball wears the Earth, so it goes with the Earth.
+      if (leg === "depart" && this._homeBallId === "earth" && this.earthLost) return null;   // i18n-ignore  leg / world id
       return w;
     },
 
@@ -487,9 +495,9 @@
 
     _updateEarthrise(dt, ph) {
       const leg = this._leg(ph);
-      const up = !this.earthLost && (
-        (leg === "depart" && (this._homeId || this._homeWorld()) === "moon") ||        // i18n-ignore  leg / world id
-        (leg === "arrive" && this.profile.world === "moon" && BALL_BEATS.indexOf(ph.key) >= 0));   // i18n-ignore  leg / world id
+      // Not on the climb off the base: there the ball itself is the Earth.
+      const up = !this.earthLost &&
+        leg === "arrive" && this.profile.world === "moon" && BALL_BEATS.indexOf(ph.key) >= 0;   // i18n-ignore  leg / world id
       if (up) this._ensure("earthrise");
       if (!this.earthrise) return;
       this.earthrise.visible = up;

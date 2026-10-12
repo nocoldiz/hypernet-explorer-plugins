@@ -18,7 +18,13 @@
     "built": "Built on",
     "builtWhat": "{count}: {what}",
     "builtCount": "{count} pieces",
-    "power": "Held by"
+    "power": "Held by",
+    "enemies": "Enemies",
+    "levelRange": "Lv. {min} to {max}"
+  },
+  "banner": {
+    "level": "{name} Lv. {level}",
+    "levelRange": "{name} Lv. {min} to {max}"
   },
   "country": {
     "title": "Highlight a country",
@@ -28,7 +34,8 @@
     "sheet": "Click a square to pick it. Right-click to put the chart away.",
     "travel": "Click to set off for {place}.",
     "needVehicle": "You need to be aboard a vehicle to set off from the chart.",
-    "world": "Click Europe to look closer. Right-click to put the chart away."
+    "world": "Click Europe to look closer. Right-click to put the chart away.",
+    "taxi": "Taxi here: {fare}, {time}"
   },
   "note": {
     "title": "{place}",

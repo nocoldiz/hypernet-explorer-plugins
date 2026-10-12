@@ -3733,8 +3733,8 @@
             const summon = window.SummonSystem?.mapSummonInfo?.() ?? null;
             const summonPetId = summon ? (summon.petId || 0) : 0;
             const summonNote = (info) => info.bound
-                ? T('MainMenu.pets.summonBound')
-                : T('MainMenu.pets.summonSteps', { steps: info.stepsLeft });
+                ? T('MainMenu.pets.summonBound', { time: info.timeLeft })
+                : T('MainMenu.pets.summonTime', { time: info.timeLeft });
             const dismissBtn = `<div class="command-item focusable roster-action" onclick="SceneManager._scene?.dismissSummonUI?.()">${T('MainMenu.pets.dismissSummon')}</div>`;
             const className = (id) => {
                 const data = $dataClasses && $dataClasses[id];

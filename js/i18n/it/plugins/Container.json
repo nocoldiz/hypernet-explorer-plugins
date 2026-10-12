@@ -52,7 +52,8 @@
     "needTools": "Richiede strumenti chirurgici",
     "examineTitle": "Esamina: {name}",
     "bury": "Seppellisci",
-    "buried": "Seppellisci ciò che resta del {name}."
+    "buried": "Seppellisci ciò che resta del {name}.",
+    "carryWeight": "Peso trasportato"
   },
   "holdall": {
     "appName": "Holdall",

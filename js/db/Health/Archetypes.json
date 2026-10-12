@@ -13500,6 +13500,7 @@
     }
   },
   "Scarecrow": {
+    "tableAs": "Plant",
     "skills": [],
     "defaultBattler": "",
     "reproduction": 0,
@@ -13824,6 +13825,7 @@
     }
   },
   "Mineral": {
+    "tableAs": "Golem",
     "skills": [],
     "defaultBattler": "",
     "reproduction": 0,
@@ -16880,6 +16882,7 @@
     }
   },
   "MetalElemental": {
+    "tableAs": "Golem",
     "skills": [],
     "defaultBattler": "",
     "reproduction": 4,
@@ -19077,6 +19080,7 @@
     }
   },
   "Horse": {
+    "tableAs": "Beast",
     "skills": [
       837
     ],
@@ -19283,6 +19287,7 @@
     }
   },
   "Unicorn": {
+    "tableAs": "Beast",
     "skills": [],
     "defaultBattler": "",
     "reproduction": 1,
@@ -19699,6 +19704,7 @@
     }
   },
   "WingedDemon": {
+    "tableAs": "Demon",
     "sentient": true,
     "talkLook": {
       "arcane": 0.6,

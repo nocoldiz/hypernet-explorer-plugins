@@ -3519,6 +3519,17 @@
     scene._render();
   }
 
+  if (typeof Graphics !== 'undefined' && typeof Graphics._canRender === 'function') {
+    const _Graphics_canRender_Empathize = Graphics._canRender;
+    Graphics._canRender = function () {
+      const scene = SceneManager._scene;
+      if (scene instanceof Scene_NPCEmpathize && scene._overlay?.classList?.contains('npc-shown')) {
+        return false;
+      }
+      return _Graphics_canRender_Empathize.call(this);
+    };
+  }
+
   Object.assign(window.NPCEmpathize._internal, {
     _navigateInPlace, _pushReturnContext, Scene_NPCEmpathize,
   });

@@ -4910,14 +4910,16 @@
   // for reads cool, what is well over their heads reads hot, on the same scale
   // the temperature row uses.
   //
-  // Only the median is printed. The nation's own bracket used to ride along
-  // beside it, and it only ever read as a second, wider number for the same
-  // square: the reader is judging what stands in front of them, not auditing
-  // the country's fauna table.
+  // On Earth's ground it is the square's level bracket that is printed, read
+  // off its distance from the Omega Tower (BattleSystemEnhancedEncounters,
+  // section 3c): every creature met there is inside it. Where no bracket
+  // rules (the tower's floors, off Earth) the roster's median stands in.
   MapInfoHUD.prototype._enemyLevel = function () {
     const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
     if (!BSEH || !BSEH.getPlaceEncounterMedianLevel) return '';
-    const level = BSEH.getPlaceEncounterMedianLevel(this._getBiomeId());
+    const bracket = BSEH.getGroundBracket ? BSEH.getGroundBracket() : null;
+    const level = bracket ? Math.round(bracket.center)
+      : BSEH.getPlaceEncounterMedianLevel(this._getBiomeId());
     // Nothing spawnable here at all: an empty world, or a biome whose whole
     // roster this nation suppresses. Saying "Lv. 0" would be worse than
     // saying nothing.
@@ -4929,7 +4931,9 @@
     else if (over <= -3) cls = 'mih-temp-cool';
     else if (over >= 15) cls = 'mih-temp-hot';
     else if (over >= 5) cls = 'mih-temp-warm';
-    const text = T("TimeDate.hud.level", { level: level });
+    const text = bracket
+      ? T("TimeDate.hud.levelRange", { min: bracket.min, max: bracket.max })
+      : T("TimeDate.hud.level", { level: level });
     return `<div class="mih-region mih-danger">` +
       `<span class="mih-region-lbl">${T("TimeDate.hud.enemies")}</span>` +
       `<span class="mih-region-val ${cls}">${text}</span>` +

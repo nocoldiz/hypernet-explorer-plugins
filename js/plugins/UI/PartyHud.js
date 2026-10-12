@@ -107,6 +107,11 @@
  * (every maintenance part added up) and its fuel where a member's magic would
  * be, in purple. See MergedVehicleSystem.getHudVehicleStatus().
  *
+ * A summon (BattleSystem/SummonSystem.js) is held for a span of game time, and
+ * what is left of it is drawn as a clock ring around its orb: on its own card
+ * in a fight, with the time written under the orb, and on a card of its own
+ * under the party's on the map, with the time written inside the orb.
+ *
  * In battle the card also does the work the old portrait cards did: the acting
  * member's card is lit and carries a caret, and a card can be clicked to aim an
  * ally-targeted skill at whoever stands on it.
@@ -290,6 +295,17 @@
     const vehicleCardKey = (status) => 'vehicle:' + status.key;
 
     //=========================================================================
+    // The summon's binding clock
+    //=========================================================================
+    // What SummonSystem is holding and for how long, or null. In a fight the
+    // summon is a party member with a card of its own, so only the ring is
+    // asked for there; on the map it walks behind the party as a follower and
+    // gets a row under them.
+    const summonBinding = () => window.SummonSystem?.binding?.() || null;
+    const SUMMON_CARD_KEY = 'summon';
+    const CLOCK_LOW_RATE = 0.15;
+
+    //=========================================================================
     // States
     //=========================================================================
     // States are named on the card in words, not drawn as icons. A state with
@@ -403,6 +419,8 @@
         this._cards = new Map();    // actorId -> { root, name, states, hp, mp, alerts, ... }
         this._vehicleCard = null;   // the row above them, while the party is aboard one
         this._vehicleCardKey = '';  // which vehicle that row is drawing
+        this._summonCard = null;    // the row under them, while a summon walks with them
+        this._layoutSummon = false; // whether the layout was built with it
         this._layoutKey = '';
         this._layoutIds = null;     // the actor ids the cards were built for
         this._layoutVehicle = null; // and the vehicle key, compared in place
@@ -486,6 +504,52 @@
                 z-index: 10;
                 margin: 0 !important;
             }
+            #party-hud .phud-clock {
+                position: absolute;
+                left: -5px;
+                top: -5px;
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                pointer-events: none;
+                background:
+                    repeating-conic-gradient(rgba(0,0,0,0.75) 0deg 3deg, transparent 3deg 30deg),
+                    conic-gradient(#8fe3ff calc(var(--clock, 1) * 1turn), rgba(255,255,255,0.14) 0);
+                -webkit-mask: radial-gradient(circle, transparent 16.5px, #000 17px);
+                mask: radial-gradient(circle, transparent 16.5px, #000 17px);
+                filter: drop-shadow(0 0 3px rgba(120, 220, 255, 0.55));
+            }
+            #party-hud .phud-clock.phud-clock-low {
+                background:
+                    repeating-conic-gradient(rgba(0,0,0,0.75) 0deg 3deg, transparent 3deg 30deg),
+                    conic-gradient(#ff6a5a calc(var(--clock, 1) * 1turn), rgba(255,255,255,0.14) 0);
+                filter: drop-shadow(0 0 3px rgba(255, 90, 90, 0.6));
+            }
+            #party-hud .phud-clock-time {
+                position: absolute;
+                left: 50%;
+                top: 100%;
+                transform: translate(-50%, 4px);
+                font-size: 10px;
+                font-weight: 700;
+                line-height: 10px;
+                white-space: nowrap;
+                color: #bff0ff;
+                pointer-events: none;
+                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            }
+            #party-hud .phud-clock-time.phud-clock-low {
+                color: #ff8a7a;
+            }
+            #party-hud .phud-orb-val.phud-orb-val-time {
+                font-size: 9px;
+                line-height: 9px;
+                letter-spacing: -0.3px;
+            }
+            #party-hud .phud-summon .phud-bars-container {
+                min-height: 30px;
+                justify-content: center;
+            }
             #party-hud .phud-hp .phud-fill {
                 background: linear-gradient(to bottom, rgba(255,255,255,0.28) 50%, transparent 50%), linear-gradient(to right, #7a1420, #d94a4a) !important;
             }
@@ -536,6 +600,7 @@
         this._cards.clear();
         this._vehicleCard = null;
         this._vehicleCardKey = '';
+        this._summonCard = null;
     };
 
     // Forget everything the overlay remembers about a party, without taking the
@@ -548,6 +613,7 @@
         this._layoutKey = '';
         this._vehicleCardKey = '';
         this._vehicleCard = null;
+        this._summonCard = null;
         this._cards.clear();
         this._lastHp.clear();
         this._projectedAp.clear();
@@ -601,7 +667,16 @@
         orb.appendChild(ghost);
         orb.appendChild(fill);
         orb.appendChild(value);
-        return { orb, ghost, fill, value };
+        // The summon's binding clock: a ring around the orb that empties as
+        // the hour runs out, and the time left written under it. Siblings of
+        // the orb, since the orb clips whatever is inside it.
+        const clock = document.createElement('div');
+        clock.className = 'phud-clock';
+        clock.style.display = 'none';
+        const time = document.createElement('span');
+        time.className = 'phud-clock-time';
+        time.style.display = 'none';
+        return { orb, ghost, fill, value, clock, time };
     };
 
     PartyHudOverlay.prototype._makeChipRow = function (cls) {
@@ -637,7 +712,9 @@
         const orb = this._makeOrb();
         const mid = document.createElement('div');
         mid.className = 'phud-mid';
+        mid.appendChild(orb.clock);
         mid.appendChild(orb.orb);
+        mid.appendChild(orb.time);
 
         const chips = document.createElement('div');
         chips.className = 'phud-chips';
@@ -697,6 +774,19 @@
         return card;
     };
 
+    // The summon walking with the party on the map: its name, its health, and
+    // the orb carrying its binding clock instead of AP (it has none to spend
+    // outside a fight). No magic bar and no chips.
+    PartyHudOverlay.prototype._makeSummonCard = function () {
+        const card = this._makeCard();
+        card.root.classList.add('phud-summon');
+        card.mp.bar.style.display = 'none';
+        card.caret.style.visibility = 'hidden';
+        card.orb.fill.style.height = '0%';
+        card.orb.ghost.style.height = '0%';
+        return card;
+    };
+
     // Aiming an ally-targeted skill by pointing at the card. The engine's own
     // ally picker is an invisible window (BattleSystemEnhancedHUD hides it), so
     // the cards ARE the list: hovering one moves its cursor, clicking one
@@ -717,13 +807,14 @@
     // Rebuild the card list when the party itself changes (a member joins,
     // leaves, or the whole roster is swapped out), or when the party gets in or
     // out of a vehicle: that row is built and dropped with the same rebuild.
-    PartyHudOverlay.prototype._syncCards = function (members, vehicle) {
+    PartyHudOverlay.prototype._syncCards = function (members, vehicle, summon) {
         // Asked every drawn frame, and the answer is almost always "nothing
         // changed", so it is found by comparing the ids in place against the
         // ones the cards were last built for. The joined key string (which
         // canvasBottomY compares against) is only built when they differ.
         if (this._layoutKey !== '' && this._layoutIds &&
             this._layoutVehicle === (vehicle ? vehicle.key : null) &&
+            this._layoutSummon === !!summon &&
             this._layoutIds.length === members.length) {
             let same = true;
             for (let i = 0; i < members.length; i++) {
@@ -732,9 +823,11 @@
             if (same) return;
         }
         const key = (vehicle ? vehicleCardKey(vehicle) + '|' : '') +
-            members.map(m => m.actorId()).join(',');
+            members.map(m => m.actorId()).join(',') +
+            (summon ? '|' + SUMMON_CARD_KEY : '');
         this._layoutIds = members.map(m => m.actorId());
         this._layoutVehicle = vehicle ? vehicle.key : null;
+        this._layoutSummon = !!summon;
         if (key === this._layoutKey) return;
         this._layoutKey = key;
         this._el.innerHTML = '';
@@ -765,6 +858,15 @@
             this._el.appendChild(card.row);
         }
         this._cards = kept;
+
+        // The summon follows the party, so it stands below them.
+        if (summon) {
+            if (!this._summonCard) this._summonCard = this._makeSummonCard();
+            this._el.appendChild(this._summonCard.row);
+        } else if (this._summonCard) {
+            this._lastHp.delete(SUMMON_CARD_KEY);
+            this._summonCard = null;
+        }
     };
 
     //-------------------------------------------------------------------------
@@ -826,6 +928,49 @@
         card.orb.value.textContent = String(now);
         card.orb.orb.classList.toggle('phud-orb-spent', projected < now);
         card.orb.orb.classList.toggle('phud-orb-empty', now <= 0);
+    };
+
+    // The binding clock around an orb. `binding` is SummonSystem.binding(), or
+    // null to take the ring down. `inside` writes the time in the orb itself
+    // (the map card, which has no AP to show) rather than under it.
+    PartyHudOverlay.prototype._writeClock = function (card, binding, inside) {
+        const key = binding ? binding.label + '/' + binding.rate.toFixed(3) + (inside ? 'i' : '') : '';
+        if (card.clockKey === key) return;
+        card.clockKey = key;
+        const o = card.orb;
+        o.clock.style.display = binding ? '' : 'none';
+        o.time.style.display = (binding && !inside) ? '' : 'none';
+        if (!binding) return;
+        o.clock.style.setProperty('--clock', binding.rate.toFixed(3));
+        const low = binding.rate <= CLOCK_LOW_RATE || binding.fadesAfterBattle;
+        o.clock.classList.toggle('phud-clock-low', low);
+        o.time.classList.toggle('phud-clock-low', low);
+        if (inside) {
+            o.value.textContent = binding.label;
+            o.value.classList.add('phud-orb-val-time');
+        } else {
+            o.time.textContent = binding.label;
+        }
+    };
+
+    // The summon's own card in a fight: the proxy actor's card wears the ring.
+    PartyHudOverlay.prototype._writeBattleClock = function (card, actor, binding) {
+        const SS = window.SummonSystem;
+        const mine = !!(binding && binding.fighting && SS && SS.isProxyActor &&
+            SS.isProxyActor(actor.actorId()));
+        this._writeClock(card, mine ? binding : null, false);
+    };
+
+    // The summon walking with the party, on its row under them.
+    PartyHudOverlay.prototype._writeSummon = function (card, binding) {
+        const label = binding.name + ' L.' + binding.level;
+        if (card.nameKey !== label) {
+            card.nameKey = label;
+            card.name.textContent = label;
+        }
+        this._writeFlash(card, SUMMON_CARD_KEY, binding.hp);
+        this._writeBar(card.hp, binding.hp, binding.mhp, 'hp');
+        this._writeClock(card, binding, true);
     };
 
     // One chip row. `chips` is [{ key, text, critical?, down? }]; `extraClass`
@@ -963,8 +1108,11 @@
         const battle = inBattle();
         const members = this.members();
         const vehicle = this._vehicleNow(battle);
-        this._syncCards(members, vehicle);
+        const binding = summonBinding();
+        const walking = binding && !binding.fighting && !battle ? binding : null;
+        this._syncCards(members, vehicle, walking);
         if (vehicle && this._vehicleCard) this._writeVehicle(this._vehicleCard, vehicle);
+        if (walking && this._summonCard) this._writeSummon(this._summonCard, walking);
 
         const acting = actingActor();
         const picker = allyPicker();
@@ -1026,6 +1174,7 @@
             // The HYPER gauge moves on its own, between HP and MP changes, so it
             // is written before the quiet-frame check rather than behind it.
             this._writeHyper(card, actor);
+            this._writeBattleClock(card, actor, binding);
             if (!writeChips &&
                 card.kDead === dead && card.kActing === isActing &&
                 card.kTargeted === isTargeted && card.kHp === hp &&

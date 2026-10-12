@@ -67,7 +67,7 @@
     "patronPerk": "Chaque abonné Patreon, nouveau comme ancien, reçoit une planète habitable portant son nom dans une autre galaxie, ainsi que les coordonnées d'un lieu secret sur la carte du monde, communiquées uniquement sur Patreon."
   },
   "background": {
-    "label": "✦ FOND : "
+    "label": "FOND : "
   },
   "planet": {
     "type": "TYPE : ",
@@ -108,7 +108,7 @@
     "text": "0.8.3a"
   },
   "language": {
-    "label": "✦ LANGUE"
+    "label": "LANGUE"
   },
   "update": {
     "checking": "✦ VÉRIFICATION DES VERSIONS",
@@ -130,7 +130,6 @@
     "procedural": "PROCÉDURAL",
     "nextBody": "CORPS SUIVANT",
     "freeLook": "VUE LIBRE // GLISSER : PIVOTER . MOLETTE : ZOOM",
-    "controls": "GLISSER / RS : PIVOTER . MOLETTE / L2 R2 : ZOOM . FLÈCHES : SUIVANT",
     "catalogButton": "CATALOGUE",
     "catalogTitle": "CATALOGUE // CORPS CONNUS",
     "catalogEmpty": "AUCUN CORPS CATALOGUÉ DISPONIBLE",

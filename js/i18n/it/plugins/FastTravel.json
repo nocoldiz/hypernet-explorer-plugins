@@ -153,6 +153,12 @@
     "offlineBlurb": "Nessun taxi raggiunge questa citta.",
     "footer": "La tariffa e calcolata dalla posizione attuale del gruppo. Prenotare la addebita e spegne il deck: il taxi aspetta fuori.",
     "refuseIndoors": "Nessun taxi puo raggiungerti qui dentro. Esci all'aperto o sulla mappa del mondo e richiama.",
-    "refuseOffEarth": "Nessuna compagnia di taxi opera cosi lontano dalla Terra."
+    "refuseOffEarth": "Nessuna compagnia di taxi opera cosi lontano dalla Terra.",
+    "refuseVehicle": "Scendi prima dal veicolo: nessun taxi carica un gruppo che sta gia guidando.",
+    "refuseUnderway": "Il gruppo e gia in viaggio verso qualche luogo.",
+    "refuseSquare": "Nessun taxi guida oltre il bordo della mappa.",
+    "refuseHere": "Il gruppo si trova gia su quel riquadro.",
+    "refuseWater": "Nessun taxi attraversa l'acqua.",
+    "refuseMountain": "Nessun taxi sale su una montagna."
   }
 }

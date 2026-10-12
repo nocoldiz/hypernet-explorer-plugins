@@ -3584,10 +3584,9 @@
         // And on a crossing to another world, that world, under the round on
         // the beats it is flown over: see _ballWorld.
         if (this.profile.lunar) this._defer("arrivalBall", () => this._buildArrivalBall());
-        // The Earth in the Moon's own sky, at the base and over it - and over
-        // ANY climb off the base, which is what the climb to the ship off the
-        // Moon was missing: it had no Earth in its sky at all.
-        if ((this.profile.lunar || this._homeWorld() === "moon") && !earthGone()) {   // i18n-ignore  world id
+        // The Earth in the Moon's own sky on the way down to the base. A climb
+        // off the base has no use for it: its ball is the Earth (_buildFar).
+        if (this.profile.world === "moon" && !earthGone()) {   // i18n-ignore  world id
           this._defer("earthrise", () => this._buildEarthrise());
         }
         // And the world the crossing is AIMED at, for the two worlds that had

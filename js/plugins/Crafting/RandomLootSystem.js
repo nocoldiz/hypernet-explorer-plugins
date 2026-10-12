@@ -491,34 +491,27 @@
         // pile rather than the first thing (Appraising, specialization 496).
         const appraisal = window.SpecializationXP
             ? (window.SpecializationXP.partyLevel('Appraising') - 1) * 4 : 0;
-        const yearBonus = getYearLootBonus();
-        // On the procedural map the encounter level is set by the nation (or
-        // biome when no nation rules the square), not the party level. The spawn
-        // band center is the same value the atlas prints and the encounter engine
-        // uses, so loot in a hard country is hard-country loot regardless of
-        // how strong the party is. The party level still acts as a floor: loot
-        // is never worse than party level would give.
+        let yearBonus = getYearLootBonus();
+        // On the procedural map the level the crate pays at is the GROUND's:
+        // the radial bracket of the square it stands on (underground and
+        // interiors five levels up), the same window the encounter engine
+        // spawns from and the travel book and the world map print. A crate in
+        // a 1-5 bracket holds 1-5 loot whoever opens it, and one out at the
+        // far edge of the map holds the rare shelves. Neither the party's own
+        // level nor the calendar has a say there. Off the world map (the
+        // biome's own ladder) the old reading stands: the ground met halfway
+        // with the party, the party's level as a floor.
         let baseLootLevel = levelBracket * 10;
-        if (onProcMap && window.BSE && window.BSE.Helpers &&
-                typeof window.BSE.Helpers.getSpawnBand === 'function') {
+        const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        if (onProcMap && BSEH && typeof BSEH.getSpawnBand === 'function') {
             try {
-                const band = window.BSE.Helpers.getSpawnBand();
-                let groundLevel = (band && typeof band.center === 'number')
-                    ? band.center : null;
-                // Under a country it is the MEDIAN of what actually roams there
-                // that pays, not the middle of the window it was dealt. The two
-                // are not the same number: the window is a promise about the
-                // roster and the median is what the roster turned out to hold,
-                // and paying on the window handed purple crates to ground that
-                // was still fielding its own small fry. The median is also the
-                // one number the atlas and the travel book print, so the crate
-                // and the card now agree.
-                if (band && band.nation &&
-                        typeof window.BSE.Helpers.getNationMedianLevel === 'function') {
-                    const med = window.BSE.Helpers.getNationMedianLevel(band.nation);
-                    if (med > 0) groundLevel = med;
-                }
-                if (groundLevel !== null) {
+                const band = BSEH.getSpawnBand();
+                const groundLevel = (band && typeof band.center === 'number' &&
+                    Number.isFinite(band.center)) ? band.center : null;
+                if (groundLevel !== null && band.bracket) {
+                    baseLootLevel = Math.round(groundLevel);
+                    yearBonus = 0;
+                } else if (groundLevel !== null) {
                     // The ground can only pay so far above the party carrying
                     // the crate home. A level 1 party that wanders into a level
                     // 60 country finds that country's crates, never its

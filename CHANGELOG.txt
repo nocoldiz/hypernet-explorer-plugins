@@ -1,6 +1,38 @@
+0.8.5a
+
+Added:
+ - updated patrons and messages from the 20261012 export
+ - world map fast travel via taxi to clicked coordinate tile
+ - <BiomeBG> procedural biome panoramas showing weather and the distant omega tower
+ - every monster drops crafting materials based on name and biology
+ - carry weight indicator to the pickup parts modal
+ - roadmap plugin showing completeness of each game feature and details window
+ - new level 1 to 5 enemies across every biome and archetype
+
+Changed:
+ - removed tetris references, lockpick call id is now LockpickBlocks
+ - removed MIDI rendering of Beethoven's Ninth from title music
+ - title hyperverse labels golden, controls tooltip and plate borders removed
+ - roadmap screen fullscreen with BG, title panel less tall
+ - reworked roadmap UI to minimal, with realistic percentages and done lists
+ - starting areas and crash landed worlds match the party starting level
+ - reworked summoning: summons persist after battle on a dice-rolled time limit
+ - biomes default battle tracks replaced with Full Strength Unleashed
+ - reworked bubba explanation of battle commands into separate boxes with gold highlights
+ - reworked enemy level brackets: radial from the omega tower
+ - attack command lets you select enemy target when facing multiple enemies
+ - reworked inventory and skills screens with compact streamlined inspect cards
+
+Fixed:
+ - fix periodic table atomic number label
+ - rocket launch from moon draws earth in the sky instead of moon
+ - html window for buying disease treatment
+ - fix shop management shelves screen
+ - moved stats right of modifier in dice result
+
 0.8.4a
 
-Maps: 
+ Maps:
  - Fixed inn for Antwerpen
  - Reworked maps in Mirage oasis level
  - Moonlit station
@@ -20,10 +52,12 @@ Fixed:
 0.8.3a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - title menu and UI translated into Naguka goblin language
  - joined all build scripts into build_encrypted.bat and build_encrypted.sh
 
 Fixed:
+ - empathize menu fps drop when left open
  - battleback failed to load Grassland.png; Fields biome is the fallback
  - dicesystem no longer adds modifiers when hitting D1
  - party no longer stuck forever when dismounting the camper
@@ -34,6 +68,7 @@ Fixed:
  - Andromeda launch: SB charges every second past Pluto, collapsing into black holes
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - build zip goes to the dist folder, opened with the upload links
 
 Fixed:
@@ -49,6 +84,7 @@ Added
  - lobotomagic option in skillmaster to delete learned skills for KP
  - ticket booth for buying train ticket
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - leveling up is faster, enemy exp now varies and follows every curve
  - reworked eris trial into a generic trial system, Rota judges in the Vatican
  - added fines for public display of affection in Vatican territory
@@ -71,6 +107,7 @@ Added:
  - fishing from the titlescreen lets you choose the biome
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked blade seed into the expression system with custom powers
  - A1 wind animation, Em and Bubba Eris dates, inventory and mass disassemble
  - battle bgm select lists Full Strength Unleashed first after random
@@ -95,6 +132,7 @@ Added:
  - deeds menu hologram check
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - hyper array is now gigantic
  - removed battlebacks1 images where ground is not visible
  - reworked galaxy crossing: liminal engine array, realistic Local Group, Em and Bubba
@@ -143,6 +181,7 @@ Added:
  - inverted x for hyperverse title panning and inverted y on star map camera
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked bubba battle command explanation, shorter, explains vector gun switch
  - title screen ninth symphony starts from silence at better moments
  - reworked stock market graph, scrolling minute line toward hidden hourly price
@@ -186,6 +225,7 @@ Added:
  - Steam Workshop, bladder need, metamorphosis potion, hygiene and cosmetic items, shop restock
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - out of level join party and pet offers disabled at 0%, warn on click
  - steam builds keep the updater plugin, switched off in C:\build
  - set demo flag as off
@@ -251,6 +291,7 @@ Fixed:
 
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - quest log todo and done notes small, whiteboard in omega tower
  - reworked legend tooltip into one opaque line with H first
  - spike trap damages only the party leader for 25% of health
@@ -287,6 +328,7 @@ Added:
  - free camera in fishing minigame
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - sync plugin repo is second build encrypted option, build zip last
  - procedural houses keep playing the village or city biome music
  - reworked equip screen to show 1 character per time on right page
@@ -323,6 +365,7 @@ Added:
  - 3d parallax background for Great Divide
  
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - map legend for bubba semitransparent and triggers first time when folded
  - partyhud hidden on worldmap, added show/hide minimap button
  - slow wave water reflections for pixel art
@@ -417,6 +460,7 @@ Added:
  - opt-in hook profiler logging per-plugin map update cost to perf-log.txt
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - merged hand-written skill trees per school with tier rebalance
  - hook profiler now reports frame timing, rAF loops and overhead
  - item prices tied to company stocks instead of OIL and SOULS
@@ -442,6 +486,7 @@ Added:
  - new patreon vault
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - fixes on lighting changes
  - fixes on rocket launch system, lighting depend on arrival planet time not Earth
  - reworked shop UI, selected item price is yellow
@@ -461,6 +506,7 @@ Added:
  - map 1409 global earth worldmap, reached by exiting map 315 boundaries
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - shop visitors and shopkeepers route to and from the map teleport event
  - italian translation uses hex as the swear word in NPC lines and story dialogue
  - time passes in real time when the PC is opened
@@ -591,6 +637,7 @@ Added:
  - fire all button in the workforce tab, with modal confirmation
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - found party in politics is now a modal window
  - better main menu icons, find icon moved to multiplayer
  - reworked crime system: holy vatican empire and goblin horde have own laws
@@ -646,6 +693,7 @@ Added:
  - Eris camera titlescreen background playing the sandbox savegame
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - dossier export buttons hidden for Em, Bubba and presets, never scroll
  - dice 3d css moved to its own file, results window restyled
  - party dynamics right page text standardized, character creation tooltips on hover
@@ -705,6 +753,7 @@ Changed:
 
 0.6.41a
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - stuck interactions and idling detection for auto explorer experimental
 
  Fixed:
@@ -718,6 +767,7 @@ Added:
  - neapolitan translation for Bubba lines
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - restored HP curves
  - make chat column less wide to show full width options
  - default music for title screen and removed music label
@@ -741,6 +791,7 @@ Added:
  - added plastic surgery and face surgery in surgery augments menu
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - removed autoidle explorer wait time and halved re-engage delay
  - make all the ogg files in the bgm folder the same volume
 
@@ -762,6 +813,7 @@ Added:a
  - New battle music that depends on biome
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - block pushing tutorial now teach how to drag boulders
  - battle music selector: biome (default), selected track, random, none
  - buffed MP and HP progression for all classes
@@ -793,6 +845,7 @@ Added:
  - reading statues, fossils and books nets KP, more with raman scan
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - equip stats shown in two rows under the slots, previewing changes
  - map tooltip dialogue moved bottom right, slightly larger, clear of quickbar
  - map tooltips open on first visit in story mode, collapsed on revisits
@@ -814,6 +867,7 @@ Added:
  - equipment stats and special properties visible on the Equip menu
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - optimized empathize UI drawing, stats row, bios show biome and nation
  - no sleep rough when the map has an event named bed
  - removed type something box on lower empathize UI
@@ -829,6 +883,7 @@ Fixed:
 0.6.35a  
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - water enemies and crabs resist fire, weak to electricity
  - smaller name and HP/AP text in the main menu
  - bubba map infos now appear at the top middle of the screen
@@ -871,6 +926,7 @@ Added:
  - random item, weapon and armour chests on tower level maps
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - party preset equipment aligned left, shorter take this party button
  - one skill description box in battle, the bigger one
  - running on the map consumes AP again, whole party
@@ -933,6 +989,7 @@ Added:
  - kick out of the party option in dynamics menu
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - skill tree panel reuses the skills menu card, teachable circles unlit
  - minimap hidden in interiors and dungeons, kept underground
  - scrolling road behind the camper cabin while fast travelling
@@ -999,6 +1056,7 @@ Fixed:
 0.6.31a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked omega tower floor pool, enemy levels and lift
  - builds drop gguf models and keep the mac and linux launchers
  - patron coordinates frozen, never to move again
@@ -1016,6 +1074,7 @@ Added:
  - patron coordinates for the new members
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - spellcheck patron messages
  - reworked autoexplore, experimental switch, menuless leader decisions
  - party changes need a hypernet connection
@@ -1042,6 +1101,7 @@ Added:
  - the Moon is now haunted
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - deorbit flight from the starship down through the debris belt
  - esoteric skills unlock at level 15, forbidden only at 80
  - implant cap tied to COS bonus, warning when an implant adds nothing
@@ -1135,6 +1195,7 @@ Added:
  - randomized map 647 themed shop plugin commands to available ones
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - quests complete as soon objectives are done and deliver rewards via mail
  - removed the AP consuming when running on map
  - character creation controller navigation and trigger tab cycling
@@ -1155,6 +1216,7 @@ Added:
  - add in initial options the map battle option
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - random loot scales with nation encounter level on procedural map
  - reworked equipment into grid layout to fit all 3 party members
  - states that persist after battle except death removed after 50 steps
@@ -1167,6 +1229,7 @@ Fixed:
 0.6.26a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - villages have smaller sidewalks, fewer roads and more prefabs
 
     Fixed:
@@ -1178,6 +1241,7 @@ Added:
  - many new magical items
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - renamed plugin command events and added items for unlinked commands
  - reworked hypertamer to a clear LCD screen
  - reworked custom main menu layout to be fully controller accessible
@@ -1203,6 +1267,7 @@ Added:
  - omega tower augmentation clinic
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - stock market QOL edits
   - patrons hatches spawn free ground around
  - only VIP characters lock the scenario selection
@@ -1216,6 +1281,7 @@ Added:
  - omega tower casino
  - patreon coordinates system
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - only VIP characters lock the scenario selection
  - bgm for ghent exteriors, antwerpen children and silenced maps
 
@@ -1241,6 +1307,7 @@ Added:
  - longer map events with more endings and quest dungeons
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - randomize party button no longer takes you to scenarios
  - gguf model writes every empathize reply, fed both characters info
  - reworked city generator so it has space to spawn 32x32 prefabs
@@ -1272,6 +1339,7 @@ Added:
  - arena matches restore AP 
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - Structure of base floor of Omega tower
  - no biome bgs in city, village and burg interiors
  - reworked quick travel: destination list shows the encounter level of each city
@@ -1299,6 +1367,7 @@ Fixed:
 0.6.20a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked italian Eris dialogue into roman dialect
  - reworked italian i18n strings
  - reworked controller bindings on map, battle, voxel and menus
@@ -1316,6 +1385,7 @@ Added:
  - spaceship controls when in flyby mode
  - gas giant upper atmosphere
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked vector gun forms with an origami folding animation
  - junk weapons now give nausea, oily or poison
  - all Em sprites reference the Em bust
@@ -1338,6 +1408,7 @@ Added:
  - new warp animations inspired by 2001 Space odissey
  - new procedural "Rarities" enemies with golden level number, they are unique for savegame and never respawn
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked hunting quests: half ask for a rarity creature
  - back button shows the B pad face after its label
  - reworked spell incantations recital
@@ -1375,6 +1446,7 @@ Added:
  - added many missing bathrooms
  - autopilot for voxel mode when following roads
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - optimized world saving, npc pathfinding, passability and battler models
  - joined titlescreen data cards, artifacts, weapons and bestiary with 3d models
  - updates menu no longer autochecks or autodownloads
@@ -1433,6 +1505,7 @@ Added:
  - landing buttons and alien atmosphere sky colors in voxel mode
  - Sync button in skills
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked deeds and assets into a single plugin and menu button
  - Bubba can be set inactive in story mode
  - waiting on map 315 brings camping mode for sleep menu
@@ -1453,6 +1526,7 @@ Added:
  - world creation warns that a year other than 2001 disables the story tutorial
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - swordsmanship and firearms skills disabled without the matching weapon
  - download button fills like a bar, then installs and closes the game
  - reworked battle hud
@@ -1474,6 +1548,7 @@ Added:
  - headlights at night on player vehicles
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - village biomes prioritize village prefabs, max 2 landmarks
  - titlescreen performance increased, minigame menu is a grid
  - inventory and menu performance increased
@@ -1499,6 +1574,7 @@ Added:
  - Em and bubba special lines now trigger also in map talk, rumors and bubbles
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - removed road barriers in the liminal drive voxel mode
  - scrollbars now scrolled with the right analog stick, not L2 R2
  - rework updater, downloads automatically and installs on request
@@ -1525,6 +1601,7 @@ Added:
  - travel with no ticket, fined if the inspector catches you
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - incantation text rewritten as real chanting
  - incantation removed from physical skills, magical only
  - refactor voxel mode rendering and creature sizes
@@ -1556,6 +1633,7 @@ Added:
  - status menu shows +X unspent party stat points
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - rework all help menu and lore descriptions, shorter
  - rework skills and items, fixed effects, missing events and descriptions
  - enemy skill rates all equal, RPG Maker default
@@ -1600,6 +1678,7 @@ Added:
  - world of chaos timeline
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
 - specializations split into implemented and not implemented
 - vector gun: infinite ammo, free switch, gunmancer mana once a turn
 - skill stat floors read as held/required base, grafts now count
@@ -1622,6 +1701,7 @@ Changed:
 0.6.8a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
 - esoteric skills gated at level 20, forbidden at 80
 - money and level granting skills tagged Forbidden
 - monster gold rewards increased 10x
@@ -1645,6 +1725,7 @@ Fixed:
 0.6.7a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - faster UI: windowed object index, debounced search, culled voxel figures
  - reworked vector gun UI
  - skill card: Damage beside Info, lore under Incantation
@@ -1668,6 +1749,7 @@ Fixed:
 0.6.6a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - updater marks the version you are running in gold and locks it, no install or compare on your own build
  - vector gun morphs into its other shape when the form page opens and back when it closes, and the bench stands closer
  - the controls sheet lists the four directions as one move row with arrows and wasd, and wait no longer claims a pad button
@@ -1680,6 +1762,7 @@ Fixed:
 0.6.5a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - battle log centered at the top by default, options grouped under headings
  - weapon attack times capped at +1
  - sync scripts open a new changelog version when the top one has entries
@@ -1693,6 +1776,7 @@ Fixed:
 0.6.4a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - minimap shows by default on procedural maps, surface and underground
  - update menu no longer auto-downloads or offers the current build
  - lower title screen music volume
@@ -1706,6 +1790,7 @@ Fixed:
 0.6.3a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - story mode now starts on map 169 at 67,33
  - folded controls panel is now a bare key strip
 
@@ -1717,6 +1802,7 @@ Fixed:
 0.6.2a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - dialogue voices active by default
 
 
@@ -1726,6 +1812,7 @@ Added:
  - talk option in story dialogue, bubba and em voiced apart
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - map 169 lake and river ambience audible from further away
  - controls panel compacted and faded under busts
  - map legend controls moved to their own left window
@@ -1768,6 +1855,7 @@ Added:
  - first television in a main quest run plays bubba's warning
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - camper interior backdrop reframed, parked-vehicle exit offers the biome
  - title screen: link buttons, smaller selectors, real ode to joy
  - remove forage skill from all enemies
@@ -1874,6 +1962,7 @@ Added:
  - added damage types and help menu voice with details: Explosive, Piercing, Area, Cutting, Abstract, Blunt, None.
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked eurodemics to keep track of player started epidemics: plateal infection or party member being infected will get registered, convert infection will have to wait the windoow period of the disease before being tracked-
  - player started epidemics now spread on their own when time passes
  - reassigned monster spawn list for omega tower dungeon
@@ -1890,6 +1979,7 @@ Added:
  - vehicles have headlights at night
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - enemy levels capped at 100 and every floor's encounters re-themed, removed plus 100 enemies
  - weapon trails, ranged shot sounds and sound volumes reworked
  - damage numbers drawn as  html and stays longer
@@ -1923,6 +2013,7 @@ Added:
  - voxel mode: 3d caves, sewers with manholes, no more tile-sized frame spikes
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - default retro shader is vertexsnap, selectable during character creation
  - dice roll window reads as rolled over needed, autocloses in battle
  - party hud stat and state chips aligned to the hp and mp bars
@@ -1963,6 +2054,7 @@ Added:
  - swimming mode in voxel mode
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - using slopes instead of cubes
  - removed low health slowdown
  - voxel mode optimizations
@@ -1985,6 +2077,7 @@ Fixed:
 0.4.3a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - battle log fades and restarts after every full turn rotation
 
 Fixed:
@@ -2002,6 +2095,7 @@ Added:
  - rent toasts, and rented rooms listed in the assets menu
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - fly here on the star map boards the starship first
  - npc rumors now cite world lore, and are stranger
  - biomes with no music now fall silent on procedural maps
@@ -2100,6 +2194,7 @@ Added:
  - the market wire reports the biggest mover, and outbreaks lean on prices
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - the camper driving scene is reworked as voxelworld, fifteen modules
  - caves are walkable and diggable, never breaking the surface or flooding
  - houses are bigger, with pitched roofs, eaves and ceilings
@@ -2293,6 +2388,7 @@ Added:
  - a famous character can join the party as themselves, and the journey starts only once the party is confirmed
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - the critical hit die is smaller and rolls faster, so it no longer stalls a fight for long
  - switching character creation members now always opens their bio tab, which leads with the humanoid/creature/preset and archetype picks and shows a bigger portrait
  - the scenario dossier now reads in tidy columns with compact stats, no more gold tint behind it, and it lists the party's shared inventory too
@@ -2335,6 +2431,7 @@ Added:
  - every farm and yard animal now has its own photograph
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - everyone acts once per round, lone enemies included
  - monsters fight the way they look: claws and breath for beasts, spells for casters, a last move when cornered
  - casters can run out of mana, and the late game features far more kinds of monster
@@ -2378,6 +2475,7 @@ Fixed:
 0.3.4a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - Disabled test mode
  - Rebalanced traits and prostethic types
 
@@ -2385,6 +2483,7 @@ Changed:
 0.3.3a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - radical rebalance of stats, it requires a new game start
 
 
@@ -2396,6 +2495,7 @@ Added:
  - new boss rush arena mode
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - enemy toughness now  adapts to your party's danger level gear, and numbers for a fairer fight, and monster health has been recalculated to match
  - simplified overcomplicated damage math
  - a single regular enemy now act again after every party member's turn instead of just once per round, but bosses keep the normal pace
@@ -2418,6 +2518,7 @@ Fixed:
 0.3.1a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - smoothed monster difficulty across levels and fixed a couple of broken skills that ignored a fighter's own strength, so a lone fighter can take on a same-level monster but a pack of them is a real fight
  - rebalanced weapon and armor strength
  - rebalanced skill power
@@ -2446,6 +2547,7 @@ Added:
  - you can fish from the boat menu
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - the hypernet menu entry is now the hyperdeck: a Turing complete clamshell handheld you build yourself with spare parts
  - renamed the goblin-worshipped norwegian black metal band to "Junehem" and its notorious stabbed frontman to avoid using real names and not get me in legal troubles
  - the screen now fades fully to black before the tileset changes when entering or climbing back out of a dungeon, crypt or cellar
@@ -2504,6 +2606,7 @@ Added:
  - added personality selector to normal character creation
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - party now rides on top of boat
  - virtual scrolling for search results to increase perfomance
  - now needs replenish when driving starship since it has all the necessary
@@ -2521,6 +2624,7 @@ Added:
  - new party dialogue lines that depends on situation
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked world degradation system to not spawn trash in empty world and dead world starting setting but just overgrown cities and road
  - fast travel now leaves you at bus stop
 
@@ -2535,6 +2639,7 @@ Added:
  - added L1 R1 support for skills hotbar in battle
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - moved toast popup to the right
  - moved hotbars below
  - removed screen darkening when using item on map
@@ -2551,6 +2656,7 @@ Added:
  - search panel
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - all items categories can be found in shops
  - scenarios now add items to hotbar
  - new mountains biome algorithm
@@ -2582,6 +2688,7 @@ Added:
  - added remote work, increased hourly pay
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - categorized shop menu and inventory
  - css edits: bigger menus, moved bars, removed button bgs, rounded borders, removed italics
  - reworked procedural adventures to also work on earth biomes
@@ -2597,6 +2704,7 @@ Added:
  - T button now switches between worldmap and generated map
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - remove bg of background in menu
 
 Fixed:
@@ -2609,6 +2717,7 @@ Added:
  - raw meat and plant matter can now be used in cooking
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - limited the number of skills that can be synced in battle to 9
  - enemies are more frequent in liminal drive mode
 
@@ -2621,6 +2730,7 @@ Fixed:
 0.2.9a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - talk to enemy now support multiple enemies
 
 Fixed:
@@ -2633,6 +2743,7 @@ Added:
  - added skill hotbar
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - notifications in battle now appear in battlelog
  - removed statuses from basic attacks
  - updating the game now closes it to avoid problems in loading sprites
@@ -2644,6 +2755,7 @@ Added:
  - moons are now landable
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reworked the constellation viewer since it was using the legacy pixi.js code
  - removed armours from thinker menu they are exclusive of blacksmithing
  - repainted the camper
@@ -2663,6 +2775,7 @@ Added:
  - new social lines when talking to party members
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - reduced fuel usage for liminal drive
  - increased liminal drive speed
  - released the test version on itch.io to get even more feedback
@@ -2677,6 +2790,7 @@ Fixed:
 0.2.4a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - removed too powerful skills
  - made ship smaller
  - reduced spawning of terrain features in ruins biome
@@ -2729,6 +2843,7 @@ Added:
  - naguka added as a joke ui language
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - full rebalance: class curves, weapons, armours, enemies, exp and gold all regenerated from one model. a same level creature now takes 6 to 9 rounds to kill
  - heat level: the police only chase you if you have a bounty, they spot you by line of sight, and the heat fades over four hours of sleeping, waiting or travelling
  - augments moved out of the biologics menu into their own register, listing everything the party wears and the whole catalogue of 232
@@ -2782,6 +2897,7 @@ Added:
  - added a random selection of esoteric grade skills to Alesteir Crowley
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - the battlelog now scrolls instead of being redrawed
  - all enemies bodyparts now flash red when hit
  - buffed damage of Martial arts skills, debuffed single hit damage for multi hit
@@ -2814,6 +2930,7 @@ Added:
  - Added different models for each weapon
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - Reworked training menu
  - Added a skills limit of 7 skill and 7 magic to carry in battle
  - Reduces number of skills learnable by level up
@@ -2830,6 +2947,7 @@ Added:
  - Added dating system to sandbox menu
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - Reworked the specialization system so using skills in battle can increase the level.
  - Removed alien biomes spawning on earth
  - Made pushing rocks slower
@@ -2846,6 +2964,7 @@ Fixed:
 0.0.9a
 
 Changed:
+ - biomes default battle tracks replaced with Full Strength Unleashed
  - Streamlined updates
 
 Fixed:

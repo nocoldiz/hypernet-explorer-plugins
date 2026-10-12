@@ -11,7 +11,6 @@
     "wiki": "OLD WORLD STUFF",
     "preferences": "FIDDLY BITS",
     "mods": "BOLT-ONS",
-    "music": "NOISE BOX",
     "exit": "RUN AWAY",
     "continue": "KEEP GOIN'",
     "quickContinue": "KEEP GOIN'"
@@ -28,7 +27,6 @@
     "wiki": "OLD WORLD STUFF",
     "preferences": "FIDDLY BITS",
     "mods": "BOLT-ONS",
-    "music": "NOISE BOX",
     "exit": "RUN AWAY",
     "noWorld": "NO WORLD",
     "quickContinue": "KEEP GOIN'"
@@ -104,7 +102,7 @@
     "patronPerk": "EVERY PATREON SUBSCRIBER, NEW AN' OLD, GETS A HABITABLE PLANET NAMED AFTER DEM IN ANOTHER GALAXY PLUS DA COORDINATES OF A SECRET LOCATION ON DA WORLD MAP, COMMUNICATED ON PATREON ONLY!"
   },
   "background": {
-    "label": "✦ BG: "
+    "label": "BG: "
   },
   "planet": {
     "type": "TYPE: ",
@@ -145,7 +143,7 @@
     "text": "0.8.3A"
   },
   "language": {
-    "label": "✦ LANG"
+    "label": "LANG"
   },
   "update": {
     "checking": "✦ CHECKIN' BUILDS…",
@@ -181,7 +179,6 @@
     "procedural": "PROCEDURAL",
     "nextBody": "NEXT BODY",
     "freeLook": "FREE LOOK // DRAG: PAN. WHEEL: ZOOM",
-    "controls": "DRAG / RS: PAN. WHEEL / L2 R2: ZOOM. ARROWS: NEXT",
     "catalogButton": "CATALOG",
     "catalogTitle": "CATALOG // KNOWN BODIES",
     "catalogEmpty": "NO CATALOGUED BODIES AVAILABLE",
@@ -282,8 +279,5 @@
     ],
     "nameFormat": "{adj} {noun}",
     "fallbackType": "RELIC"
-  },
-  "music": {
-    "label": "✦ "
   }
 }

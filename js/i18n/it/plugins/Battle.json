@@ -271,8 +271,8 @@
   },
   "summon": {
     "alreadyActive": "C'è già un'evocazione attiva!",
-    "mapWalks": "{name} risponde al richiamo e cammina con il gruppo per {steps} passi.",
-    "mapBound": "{name} risponde al richiamo e cammina con il gruppo finché non viene congedato.",
+    "mapWalks": "{name} risponde al richiamo e cammina con il gruppo per {time}.",
+    "mapBound": "{name} risponde al richiamo e cammina al fianco del suo padrone per {time}.",
     "mapExpired": "Il vincolo si esaurisce e {name} scivola via da dove era venuto.",
     "mapReplaced": "{name} viene lasciato andare per fare posto a ciò che stai chiamando.",
     "noBodyToWalk": "{name} non ha un corpo con cui camminare accanto al gruppo.",
@@ -407,7 +407,7 @@
       }
     },
     "perfectRitual": "\\DIE[20] Rituale perfetto! {name} ottiene HYPER pieno e i potenziamenti da maestro!",
-    "empowered": "[\\DIE[{roll}] INT +{mod} = {total}] Il rituale di evocazione ha potenziato {name} con bonus da combattimento!",
+    "empowered": "[\\DIE[{roll}] +{mod} INT = {total}] Il rituale di evocazione ha potenziato {name} con bonus da combattimento!",
     "skillsBound": "{name} si lega con {n} delle sue {max} abilità.",
     "attackOnly": "{name} risponde, ma ricorda soltanto come colpire.",
     "familiarHere": "{name} è già al tuo fianco.",
@@ -415,7 +415,22 @@
     "ownerLeft": "{name} svanisce: {owner} non è più nel gruppo.",
     "convokeNoMp": "{owner} ha bisogno di {cost} MP per convocare {name}.",
     "dematerialized": "{name} si dematerializza.",
-    "talkDematerialize": "Dematerializza {name}"
+    "talkDematerialize": "Dematerializza {name}",
+    "boundFor": "Il vincolo trattiene {name} per {time}.",
+    "fadesAfterBattle": "Il vincolo è mal riuscito: {name} non sopravviverà a questo scontro.",
+    "staysAfter": "{name} lascia il campo insieme al gruppo, vincolato per altri {time}.",
+    "time": {
+      "long": {
+        "minutes": "{m} min",
+        "hours": "{h} h {m} min",
+        "hoursOnly": "{h} h"
+      },
+      "short": {
+        "minutes": "{m}m",
+        "hours": "{h}h{m}",
+        "hoursOnly": "{h}h"
+      }
+    }
   },
   "actorDied": "{actor} è morto.",
   "knockout": {
@@ -614,8 +629,6 @@
   "vehicleHitMonsterPlain": "Travolgi qualcosa e la carrozzeria ne esce peggio di tutte.",
   "hyper": {
     "name": {
-      "default": "Iper",
-      "grimoire": "Morte Aggraziata",
       "1": "Iper",
       "2": "Sovraccarico",
       "3": "Miracolo",
@@ -677,7 +690,9 @@
       "59": "Assoluzione",
       "60": "Bis",
       "61": "Apoteosi",
-      "62": "Rancore"
+      "62": "Rancore",
+      "default": "Iper",
+      "grimoire": "Morte Aggraziata"
     },
     "armed": "{actor} è a terra. {hyper} è pronta.",
     "armedToast": "{actor}: {hyper} pronta",

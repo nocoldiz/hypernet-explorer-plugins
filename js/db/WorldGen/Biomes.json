@@ -810,7 +810,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "battleBgm": "Battle8",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "winchester-wind-ambience",
       "desert-ambience",
@@ -2743,7 +2743,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
-    "battleBgm": "Battle1",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgm": [
       "Town7",
       "KevinMacLeod/Jazz/Airport Lounge",
@@ -3069,7 +3069,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Sewer",
-    "battleBgm": "Battle2",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgm": [
       "Town7",
       "KevinMacLeod/Jazz/Airport Lounge",
@@ -5877,7 +5877,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Cave",
-    "battleBgm": "Battle5",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgsNight": [
       "crickets5",
       "night-crickets2",
@@ -15364,7 +15364,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "battleBgm": "Battle2",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgm": [
       "Town4",
       "Town8",
@@ -15568,7 +15568,7 @@
     ],
     "specialBiomes": [],
     "lowerLayer": "Dungeon",
-    "battleBgm": "Battle1",
+    "battleBgm": "BattleMusic/13- Full Strength Unleashed",
     "bgm": [
       "Town3",
       "Town1",

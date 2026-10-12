@@ -197,6 +197,9 @@
         return T.has(key) ? T(key) : String(s || '');
     };
     const astroField = (k) => T('Astronomy.field.' + k);
+    // Marks a field name inside a readout line (MASS, RADIUS, TEMP...) so the
+    // info box can draw it golden apart from its value.
+    const infoLabel = (s) => '' + s + '';
     // Where a copy sitting behind a major update is sent. Patching cannot carry
     // it the rest of the way, so the notice offers the whole game instead of an
     // update. The updater owns the address (its fullDownloadUrl parameter); this
@@ -515,14 +518,13 @@
         this._commandWindow.setHandler('minigames', this.commandMinigames.bind(this));
         this._commandWindow.setHandler('worlds', this.commandWorlds.bind(this));
         this._commandWindow.setHandler('wiki', this.commandWiki.bind(this));
-        this._commandWindow.setHandler('titleMusic', this.commandTitleMusic.bind(this));
         this._commandWindow.setHandler('exitGame', this.commandExitGame.bind(this));
-        // Every command but the music picker leaves the title or replaces the
-        // $game* objects (new game, load, story, sandbox), so the Eris camera
-        // saves the sandbox slot and lets go of them first.
+        // Every command leaves the title or replaces the $game* objects (new
+        // game, load, story, sandbox), so the Eris camera saves the sandbox
+        // slot and lets go of them first.
         const callHandler = this._commandWindow.callHandler;
         this._commandWindow.callHandler = (symbol) => {
-            if (symbol !== 'titleMusic' && this._erisCameraBg) {
+            if (this._erisCameraBg) {
                 this._erisCameraBg.dispose();
                 this._erisCameraBg = null;
             }
@@ -2146,32 +2148,32 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 };
 
     // -------------------------------------------------------------------------
-    // Title music selector
+    // Title music
     //
-    // Every classical piece shipped under audio/bgm/Classical is on the dial, so
-    // any of them can be the one the title opens on. The entry names the piece playing
-    // and steps to the next one, so the pick is made by ear without leaving the
-    // screen. The pick lasts for the visit only: every arrival at the title
-    // opens on the finale of Beethoven's Ninth, whatever was picked before.
+    // The title always plays Beethoven's Ninth, in one of the versions that
+    // ship under audio/bgm/Classical: each arrival draws a version, then one of
+    // that version's cues. A version with no measured cues starts at the top.
     // -------------------------------------------------------------------------
     // i18n-ignore-start  bgm tracks, named after their file
     const TITLE_MUSIC_NINTH = 'Classical/Ludwig van Beethoven - symphony no. 9 in d minor, op. 125 - iv. finale';
-    const TITLE_MUSIC_DEFAULTS = [
-        { name: 'Ninth Symphony', value: TITLE_MUSIC_NINTH }
+    const TITLE_MUSIC_VERSIONS = [
+        TITLE_MUSIC_NINTH,
+        'Classical/Beethoven - Ode to Joy (Concert Band)',
+        'Classical/Beethoven - Ode to Joy Allegro',
     ];
     // i18n-ignore-end
 
     // Where a long piece may start, in seconds into its file. The title is not
     // long enough to wait out a twenty minute movement for its climax, so the
-    // piece opens on one of these, drawn each time it starts. Found by a
-    // 100 ms loudness pass over the lossless master of the recording
-    // (Horenstein, Pro Musica Symphony Orchestra and Choir, 1956, CC0 on
-    // Wikimedia Commons as "04 Horenstein 9. Beethoven Pantheon XP 2550 -
-    // 4. satz.flac"): each sits inside one of the score's real pauses, under
-    // -40 dB, half a second to a second before the entry, so the title comes
-    // in out of silence and the music arrives on its own cue. Re-measure
-    // these if the file is ever replaced by another recording.
+    // piece opens on one of these, drawn each time it starts. Each was found
+    // by a 100 ms loudness pass over the recording: it sits inside one of the
+    // score's real pauses, under -40 dB, half a second to a second before the
+    // entry, so the title comes in out of silence and the music arrives on its
+    // own cue. Re-measure them if a file is ever replaced.
     const TITLE_MUSIC_MOMENTS = {
+        // Horenstein, Pro Musica Symphony Orchestra and Choir, 1956. Public
+        // domain on Wikimedia Commons as "04 Horenstein 9. Beethoven Pantheon
+        // XP 2550 - 4. satz.flac", measured over that lossless master.
         [TITLE_MUSIC_NINTH]: [
             0,       // 0:00  the opening fanfare breaks the silence (enters at 0:01.4)
             180.5,   // 3:00  the Ode to Joy rises pianissimo from the basses (3:01.0)
@@ -2189,98 +2191,20 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return moments[Math.floor(Math.random() * moments.length)];
     }
 
-    const TITLE_MUSIC_EXT = /\.(ogg|m4a)_?$/i;
-
-    // Only the classical repertoire is on the title's dial: audio/bgm/Classical
-    // is walked once and every track found becomes an entry of the switcher.
-    function scanTitleMusic() {
-        const found = [];
-        if (typeof require !== 'function') return found;
-        try {
-            const fs = require('fs');
-            const path = require('path');
-            const root = path.join(process.cwd(), 'audio', 'bgm', 'Classical');  // i18n-ignore  asset path
-            const seen = {};
-            const walk = (dir, prefix) => {
-                for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-                    if (entry.isDirectory()) {
-                        walk(path.join(dir, entry.name), prefix + entry.name + '/');
-                        continue;
-                    }
-                    if (!TITLE_MUSIC_EXT.test(entry.name)) continue;
-                    const base = entry.name.replace(TITLE_MUSIC_EXT, '');
-                    const value = prefix + base;
-                    if (seen[value]) continue;   // .ogg and .m4a of the same track
-                    seen[value] = true;
-                    found.push({ name: base, value });
-                }
-            };
-            walk(root, 'Classical/');  // i18n-ignore  asset path
-            found.sort((a, b) => a.name.localeCompare(b.name));
-        } catch (e) {
-            return [];
-        }
-        return found;
+    function titleMusicVersion() {
+        return TITLE_MUSIC_VERSIONS[Math.floor(Math.random() * TITLE_MUSIC_VERSIONS.length)];
     }
 
-    // The openers stay first and in order, so the piece the game opens on
-    // is always one arrow away however many tracks the scan turns up.
-    const TITLE_MUSIC = TITLE_MUSIC_DEFAULTS.concat(
-        scanTitleMusic().filter(t =>
-            !TITLE_MUSIC_DEFAULTS.some(d => d.value === t.value)));
-
-    // The title always opens on the Ninth, first on the dial.
-    const TITLE_MUSIC_DEFAULT = TITLE_MUSIC_NINTH;
-
-    // The dial's pick, never written to the config: the next arrival at the
-    // title is back on the Ninth.
-    let titleMusicPick = TITLE_MUSIC_DEFAULT;
-
-    function titleMusicIndex() {
-        const i = TITLE_MUSIC.findIndex(t => t.value === titleMusicPick);
-        if (i >= 0) return i;
-        const fallback = TITLE_MUSIC.findIndex(t => t.value === TITLE_MUSIC_DEFAULT);
-        return fallback < 0 ? 0 : fallback;
-    }
-
-    function titleMusicValue() {
-        return TITLE_MUSIC[titleMusicIndex()].value;
-    }
-
-    function titleMusicLabel(overlay) {
-        const raw = TITLE_MUSIC[titleMusicIndex()].name;
-        return overlay ? raw.toUpperCase() : raw;
-    }
-
-    // The title BGM is whichever piece is currently picked, so the choice is
-    // heard the moment it is made. Every start, on arrival or off the dial,
-    // drops in on one of the piece's cues drawn afresh. `arriving` puts the
-    // dial back on the Ninth first.
-    Scene_Title.prototype.playTitleBgm = function (arriving) {
-        if (arriving && titleMusicPick !== TITLE_MUSIC_DEFAULT) {
-            titleMusicPick = TITLE_MUSIC_DEFAULT;
-            if (this.refreshMusicSwitchLabel) this.refreshMusicSwitchLabel();
-        }
-        const name = titleMusicValue();
+    // The title BGM is always a version of the Ninth, drawn afresh each time
+    // and started on one of its cues.
+    Scene_Title.prototype.playTitleBgm = function () {
+        const name = titleMusicVersion();
         AudioManager.playBgm({
             name,
             volume: 55, pitch: 100, pan: 0
         }, titleMusicStart(name));
         AudioManager.stopBgs();
         AudioManager.stopMe();
-    };
-
-    Scene_Title.prototype.commandTitleMusic = function () {
-        const next = (titleMusicIndex() + 1) % TITLE_MUSIC.length;
-        titleMusicPick = TITLE_MUSIC[next].value;
-        this.playTitleBgm();
-        if (this._commandWindow) {
-            const index = this._commandWindow.index();
-            this._commandWindow.refresh();
-            this._commandWindow.select(index);
-            this._commandWindow.activate();
-        }
-        if (this.refreshUIOverlayDOM) this.refreshUIOverlayDOM();
     };
 
     // -------------------------------------------------------------------------
@@ -2593,22 +2517,22 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             { text: astroLabel(d.type).toUpperCase(), color: '#FFA500', size: 11 }
         ];
         if (d.kind === 'blackhole') {
-            if (d.bhMass != null) lines.push(stat(`${bd('mass')} ${d.bhMass.toExponential(2)} [${bd('sun')}=1]`));
-            if (d.bhSpin != null) lines.push(stat(`${bd('spin')} a* ${d.bhSpin.toFixed(3)}`));
-            if (d.bhMass != null) lines.push(stat(`${bd('schwarzschild')} ${_fmtSchwarzschild(d.bhMass)}`));
+            if (d.bhMass != null) lines.push(stat(`${infoLabel(bd('mass'))} ${d.bhMass.toExponential(2)} [${bd('sun')}=1]`));
+            if (d.bhSpin != null) lines.push(stat(`${infoLabel(bd('spin'))} a* ${d.bhSpin.toFixed(3)}`));
+            if (d.bhMass != null) lines.push(stat(`${infoLabel(bd('schwarzschild'))} ${_fmtSchwarzschild(d.bhMass)}`));
             if (extra && extra.jets != null) {
-                lines.push(stat(`${bd('polarJets')} ${extra.jets ? bd('jetsActive') : bd('jetsNone')}`));
+                lines.push(stat(`${infoLabel(bd('polarJets'))} ${extra.jets ? bd('jetsActive') : bd('jetsNone')}`));
             }
         } else if (d.kind === 'galaxy') {
-            if (d.diameterLy != null) lines.push(stat(`${bd('diameter')} ${_fmtLy(d.diameterLy)} ${bd('lightYears')}`));
-            if (d.distanceKly != null) lines.push(stat(`${bd('distance')} ${_fmtDistance(d.distanceKly)}`));
-            if (d.mass != null) lines.push(stat(`${bd('mass')} ${d.mass.toExponential(2)} [${bd('sun')}=1]`));
-            if (d.arms) lines.push(stat(`${bd('arms')} ${d.arms}`));
+            if (d.diameterLy != null) lines.push(stat(`${infoLabel(bd('diameter'))} ${_fmtLy(d.diameterLy)} ${bd('lightYears')}`));
+            if (d.distanceKly != null) lines.push(stat(`${infoLabel(bd('distance'))} ${_fmtDistance(d.distanceKly)}`));
+            if (d.mass != null) lines.push(stat(`${infoLabel(bd('mass'))} ${d.mass.toExponential(2)} [${bd('sun')}=1]`));
+            if (d.arms) lines.push(stat(`${infoLabel(bd('arms'))} ${d.arms}`));
         } else {
             // star
-            if (d.spectral) lines.push(stat(`${bd('spectral')} ${d.spectral}`));
-            if (d.solarMass != null) lines.push(stat(`${bd('mass')} ${_fmtSolar(d.solarMass)}  ${bd('radius')} ${_fmtSolar(d.solarRadius)}  [${bd('sun')}=1]`));
-            if (d.tempK != null) lines.push(stat(`TEMP ${Math.round(d.tempK).toLocaleString()} K  LUM ${_fmtSolar(d.lum)}`));
+            if (d.spectral) lines.push(stat(`${infoLabel(bd('spectral'))} ${d.spectral}`));
+            if (d.solarMass != null) lines.push(stat(`${infoLabel(bd('mass'))} ${_fmtSolar(d.solarMass)}  ${infoLabel(bd('radius'))} ${_fmtSolar(d.solarRadius)}  [${bd('sun')}=1]`));
+            if (d.tempK != null) lines.push(stat(`${infoLabel('TEMP')} ${Math.round(d.tempK).toLocaleString()} K  ${infoLabel('LUM')} ${_fmtSolar(d.lum)}`));
         }
         return lines;
     }
@@ -4344,7 +4268,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             // testing against it would treat every background press as a UI press.
             // i18n-ignore-start: CSS selector list
             const onUI = (target) => !!(target && target.closest && target.closest(
-                '.ts-menu-overlay, #title-bg-switch, #title-music-switch, #title-hyperverse-info, ' +
+                '.ts-menu-overlay, #title-bg-switch, #title-hyperverse-info, ' +
                 '#title-hyperverse-next, #title-hyperverse-catalog-btn, #title-hyperverse-catalog'));
             // i18n-ignore-end
 
@@ -5001,16 +4925,15 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             // Every inner size is relative to the box font (INFO_BASE_FONT), which
             // is the single value the layout pass rescales.
             const em = px => (px / INFO_BASE_FONT).toFixed(3) + 'em';
+            const label = s => s.replace(/([^]*)/g, '<span class="title-info-label">$1</span>');
             const header = `<div class="title-info-head">${lead}${source}${pos}</div>`;
             const body = lines.map(ln => {
                 return `<div class="title-info-line${ln.bold ? ' title-info-line--bold' : ' title-info-line--spaced'}"` +
-                    ` style="--title-ink:${ln.color || 'var(--title-amber)'}; --title-size:${em(ln.size || 12)}">${esc(ln.text)}</div>`;
+                    ` style="--title-ink:${ln.color || 'var(--title-amber)'}; --title-size:${em(ln.size || 12)}">${label(esc(ln.text))}</div>`;
             }).join('');
-            const hint = (color, text) =>
-                `<div class="title-info-foot" style="--title-ink:${color}">${text}</div>`;
             const foot = this._look.active
-                ? hint('#7fe08f', T('Titlescreen.hyperverse.freeLook'))
-                : hint('#6f8a99', T('Titlescreen.hyperverse.controls'));
+                ? `<div class="title-info-foot" style="--title-ink:#7fe08f">${T('Titlescreen.hyperverse.freeLook')}</div>`
+                : '';
             this._infoBox.innerHTML = header + body + foot;
         }
 
@@ -5386,12 +5309,12 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 this._title(String(p.name).toUpperCase()),
                 this._sub(pl(p.moon ? 'moon' : 'planet')
                     + String(p.type || '').toUpperCase().replace(/_/g, ' ')),
-                this._stat(`${pl('radius')} ${num(p.radius)}  ${pl('mass')} ${num(p.mass)}  [${pl('earth')}=1]`),
-                this._stat(`${pl('orbit')} ${p.orbitRadius.toFixed(2)} AU  ECC ${p.eccentricity.toFixed(2)}`),
-                this._stat(`${pl('period')} ${p.period.toFixed(2)} ${pl('years')}  TEMP ${p.temperature} K`),
-                this._stat(`${pl('atmosphere')} ${p.atmosphere ? pl('yes') : pl('no')}  ${pl('moons')} ${p.moons}`)
+                this._stat(`${infoLabel(pl('radius'))} ${num(p.radius)}  ${infoLabel(pl('mass'))} ${num(p.mass)}  [${pl('earth')}=1]`),
+                this._stat(`${infoLabel(pl('orbit'))} ${p.orbitRadius.toFixed(2)} AU  ${infoLabel('ECC')} ${p.eccentricity.toFixed(2)}`),
+                this._stat(`${infoLabel(pl('period'))} ${p.period.toFixed(2)} ${pl('years')}  ${infoLabel('TEMP')} ${p.temperature} K`),
+                this._stat(`${infoLabel(pl('atmosphere'))} ${p.atmosphere ? pl('yes') : pl('no')}  ${infoLabel(pl('moons'))} ${p.moons}`)
             ];
-            if (p.biome) lines.push(this._stat(pl('biome') + window.BiomeNames.display(p.biome).toUpperCase()));
+            if (p.biome) lines.push(this._stat(infoLabel(pl('biome')) + window.BiomeNames.display(p.biome).toUpperCase()));
             return lines;
         }
 
@@ -5399,13 +5322,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             const lines = [
                 this._title(String(d.name).toUpperCase()),
                 this._sub(astroField('galaxyCluster')),
-                this._stat(`${astroField('members')} ~${d.members} ${astroField('galaxies')}`),
-                this._stat(`${astroField('diameter')} ${d.diamMly.toFixed(1)} Mly`), // i18n-ignore: Mly is a unit
-                this._stat(`${astroField('mass')} ${d.mass.toExponential(2)} [${astroField('sun')}=1]`),
-                this._stat(`REDSHIFT z ${d.z.toFixed(3)}`)
+                this._stat(`${infoLabel(astroField('members'))} ~${d.members} ${astroField('galaxies')}`),
+                this._stat(`${infoLabel(astroField('diameter'))} ${d.diamMly.toFixed(1)} Mly`), // i18n-ignore: Mly is a unit
+                this._stat(`${infoLabel(astroField('mass'))} ${d.mass.toExponential(2)} [${astroField('sun')}=1]`),
+                this._stat(`${infoLabel('REDSHIFT')} z ${d.z.toFixed(3)}`)
             ];
             if (d.distMly != null) {
-                lines.push(this._stat(`${astroField('distance')} ${Math.round(d.distMly).toLocaleString()} Mly`)); // i18n-ignore: Mly is a unit
+                lines.push(this._stat(`${infoLabel(astroField('distance'))} ${Math.round(d.distMly).toLocaleString()} Mly`)); // i18n-ignore: Mly is a unit
             }
             return lines;
         }
@@ -5416,10 +5339,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             return [
                 this._title(String(d.name).toUpperCase()),
                 this._sub(astroLabel(d.sub).toUpperCase()),
-                this._stat(`${astroField('span')} ${d.spanLy} ${astroField('lightYears')}`),
-                this._stat(`${astroField('distance')} ${d.distanceLy.toLocaleString()} ${astroField('lightYears')}`),
-                this._stat(`${astroField('constellation')} ${d.constellation.toUpperCase()}`),
-                this._stat(`${astroField('composition')} ${d.composition}`)
+                this._stat(`${infoLabel(astroField('span'))} ${d.spanLy} ${astroField('lightYears')}`),
+                this._stat(`${infoLabel(astroField('distance'))} ${d.distanceLy.toLocaleString()} ${astroField('lightYears')}`),
+                this._stat(`${infoLabel(astroField('constellation'))} ${d.constellation.toUpperCase()}`),
+                this._stat(`${infoLabel(astroField('composition'))} ${d.composition}`)
             ];
         }
 
@@ -5427,9 +5350,9 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             return [
                 this._title(String(d.name).toUpperCase()),
                 this._sub(astroLabel('Higher-Dimensional Anomaly').toUpperCase()), // i18n-ignore: id argument
-                this._stat(`${astroField('geometry')} ${T('Astronomy.geometry.' + d.geometry)}`),
-                this._stat(`${astroField('dimensions')} 4D -> 3D ${astroField('projection')}`),
-                this._stat(`${T('Titlescreen.anomaly.flux')} ${(d.flux || 0).toFixed(2)} ct/s`),
+                this._stat(`${infoLabel(astroField('geometry'))} ${T('Astronomy.geometry.' + d.geometry)}`),
+                this._stat(`${infoLabel(astroField('dimensions'))} 4D -> 3D ${astroField('projection')}`),
+                this._stat(`${infoLabel(T('Titlescreen.anomaly.flux'))} ${(d.flux || 0).toFixed(2)} ct/s`),
                 this._stat(T('Titlescreen.anomaly.curvature'))
             ];
         }
@@ -6384,9 +6307,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // Top-right button to change the active background on the fly
         this.createBgSwitchButton();
 
-        // ... and the music selector on the plate right under it
-        this.createMusicSwitchButton();
-
         // Top-left build badge (VersionText parameter)
         this.createVersionBadge();
 
@@ -6612,81 +6532,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this._bgPadConnected = null;   // forces the first badge refresh
         this.refreshBgSwitchLabel();
         this.layoutBgSwitchButton();
-    };
-
-    // The title music selector, cut from the same plate as the background
-    // switcher and docked directly under it: the piece is picked by ear from
-    // the title itself, with the chevrons stepping the short playlist.
-    Scene_Title.prototype.createMusicSwitchButton = function () {
-        const stale = document.getElementById('title-music-switch');
-        if (stale && stale.parentNode) stale.parentNode.removeChild(stale);
-        const btn = document.createElement('div');
-        btn.id = 'title-music-switch';
-        btn.className = 'title-plate title-plate-btn';
-        document.body.appendChild(btn);
-        this._musicSwitchButton = btn;
-
-        const makeArrow = (dir) => {
-            const el = document.createElement('span');
-            el.className = 'title-keycap';
-            el.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-            el.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                if (SceneManager._scene === this) this.cycleTitleMusic(dir);
-            });
-            return el;
-        };
-
-        this._musicSwitchPrev = makeArrow(-1);
-        this._musicSwitchNext = makeArrow(1);
-        this._musicSwitchLabel = document.createElement('span');
-        btn.appendChild(this._musicSwitchPrev);
-        btn.appendChild(this._musicSwitchLabel);
-        btn.appendChild(this._musicSwitchNext);
-
-        btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (SceneManager._scene === this) this.cycleTitleMusic(1);
-        });
-
-        this._musicSwitchPrev.textContent = '‹';
-        this._musicSwitchNext.textContent = '›';
-        this.refreshMusicSwitchLabel();
-        this.layoutMusicSwitchButton();
-    };
-
-    // Docked under the background switcher, sharing its right edge, the same
-    // way the news panel is docked under this one.
-    Scene_Title.prototype.layoutMusicSwitchButton = function () {
-        const btn = this._musicSwitchButton;
-        if (!btn) return;
-        const rect = TitleLayout.rect();
-        const s = TitleLayout.scale(rect);
-        const above = this._bgSwitchButton ? this._bgSwitchButton.getBoundingClientRect() : null;
-        const below = above && above.height > 0
-            ? (above.bottom - rect.top) / s
-            : 18 + 34;
-        TitleLayout.place(btn, { right: 18, top: Math.round(below + 8) });
-    };
-
-    Scene_Title.prototype.refreshMusicSwitchLabel = function () {
-        if (!this._musicSwitchLabel) return;
-        this._musicSwitchLabel.textContent =
-            T('Titlescreen.music.label') +
-            TITLE_MUSIC[titleMusicIndex()].name.toUpperCase();
-    };
-
-    Scene_Title.prototype.cycleTitleMusic = function (dir) {
-        const n = TITLE_MUSIC.length;
-        const next = ((titleMusicIndex() + (dir || 1)) % n + n) % n;
-        titleMusicPick = TITLE_MUSIC[next].value;
-        this.playTitleBgm();
-        this.refreshMusicSwitchLabel();
-        this.layoutMusicSwitchButton();
-        this.layoutDisclaimerBox();
     };
 
     // Top-left build badge. Text only, never interactive, so it can sit over the
@@ -7629,17 +7474,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     // L1 / R1 step the background; polled raw so a remapped gamepadMapper (or a
     // menu that is eating pageup/pagedown) cannot break it.
-    // The music switcher answers to the shoulders under the background's, and
-    // to PageUp / PageDown on the keyboard, so the chevrons beside the track
-    // name are never the only way to change it.
-    Scene_Title.prototype.updateMusicSwitchInput = function () {
-        if (!this._musicSwitchButton) return;
-        const prev = PAD.triggered(PAD.L2) || Input.isTriggered('pageup');
-        const next = PAD.triggered(PAD.R2) || Input.isTriggered('pagedown');
-        if (prev) this.cycleTitleMusic(-1);
-        else if (next) this.cycleTitleMusic(1);
-    };
-
     Scene_Title.prototype.updateBgSwitchInput = function () {
         if (!this._bgSwitchButton) return;
         const prev = PAD.triggered(PAD.L1);
@@ -7783,7 +7617,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         'title-language',
         'title-update',
         'title-bg-switch',
-        'title-music-switch',
         'title-disclaimer',
         'title-hyperverse-info',
         'title-hyperverse-catalog',
@@ -7897,8 +7730,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         if (this._logoSprite) this._logoSprite.layout();
         this.layoutBgSwitchButton();
-        // After the switcher: the music plate is docked under its measured bottom.
-        this.layoutMusicSwitchButton();
         this.layoutVersionBadge();
         // After the badge: the selector is docked under its measured bottom.
         this.layoutLanguageSelector();
@@ -8202,11 +8033,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         }
         this._bgSwitchButton = null;
         this._bgSwitchLabel = this._bgSwitchPrev = this._bgSwitchNext = null;
-        if (this._musicSwitchButton && this._musicSwitchButton.parentNode) {
-            this._musicSwitchButton.parentNode.removeChild(this._musicSwitchButton);
-        }
-        this._musicSwitchButton = null;
-        this._musicSwitchLabel = this._musicSwitchPrev = this._musicSwitchNext = null;
         if (this._versionBadge && this._versionBadge.parentNode) {
             this._versionBadge.parentNode.removeChild(this._versionBadge);
         }
@@ -8346,7 +8172,6 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
         // L1 / R1 (and the chevrons' badge state) for the background switcher
         this.updateBgSwitchInput();
-        this.updateMusicSwitchInput();
 
         // Follow the canvas when the window changes (resize, fullscreen toggle):
         // the signature only differs on the frames where it actually moved.
@@ -8480,48 +8305,20 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 })();
 
 //=============================================================================
-// The title music is a record off the concert hall shelf
+// The title music is always Beethoven's Ninth
 //=============================================================================
 // The title screen used to play whatever single track the database named. It
-// now plays whatever the music switcher is set to, and audio/bgm/Classical is
-// still a station of the radio's dial. The database's own title BGM is what
-// plays if the switcher is unavailable.
+// now always plays a version of the Ninth (playTitleBgm). The database's own
+// title BGM is what plays if that is unavailable.
 (() => {
     'use strict';
 
-    const CLASSICAL_DIR = 'audio/bgm/Classical';  // i18n-ignore  asset path
-    const AUDIO_EXT = /\.(ogg|m4a)_?$/i;
-
-    let cache = null;
-
-    function tracks() {
-        if (cache) return cache;
-        cache = [];
-        if (typeof require !== 'function') return cache;
-        try {
-            const fs = require('fs');
-            const path = require('path');
-            const dir = path.join(process.cwd(), CLASSICAL_DIR);
-            cache = fs.readdirSync(dir)
-                .filter(name => AUDIO_EXT.test(name))
-                .map(name => 'Classical/' + name.replace(AUDIO_EXT, ''))  // i18n-ignore  bgm key
-                .sort();
-        } catch (e) {
-            cache = [];
-        }
-        return cache;
-    }
-
-    // Arriving at the title always plays the Ninth, whatever the dial was last
-    // set to; a piece already playing (back from Preferences) carries on.
     const _Scene_Title_playTitleMusic = Scene_Title.prototype.playTitleMusic;
     Scene_Title.prototype.playTitleMusic = function () {
         if (this.playTitleBgm) {
-            this.playTitleBgm(true);
+            this.playTitleBgm();
             return;
         }
         _Scene_Title_playTitleMusic.call(this);
     };
-
-    window.TitleClassicalMusic = { tracks };
 })();

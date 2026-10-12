@@ -2251,12 +2251,13 @@
             return knit(put(b, 0, 6, 0), put(gQuad(3, 20, 0xe8552e), 0, 7.2, 0, -Math.PI / 2, 0, 0),
                         put(gCone(1.6, 3.4, 3, 0x2a2a34), 0, 4.4, -8, Math.PI, 0, 0));
         },
-        tetrisBlock: () => {
+        // The lockpick puzzle's "fork" bit, in brass.
+        lockBit: () => {
             const g = new THREE.Group();
-            const cells = [[0, 0], [1, 0], [1, 1], [2, 1]];
+            const cells = [[0, 0], [1, 0], [2, 0], [0, 1], [2, 1]];
             for (const cell of cells) {
-                g.add(put(gBox(7, 7, 7, 0x35c2f0, { glow: 0.35 }), cell[0] * 7 - 7, cell[1] * 7 + 4, 0));
-                g.add(put(gBox(7.6, 0.6, 7.6, 0x0b3a52), cell[0] * 7 - 7, cell[1] * 7 + 7.6, 0));
+                g.add(put(gBox(7, 7, 7, 0xc9a227, { glow: 0.2 }), cell[0] * 7 - 7, cell[1] * 7 + 4, 0));
+                g.add(put(gBox(7.6, 0.6, 7.6, 0x4a4640), cell[0] * 7 - 7, cell[1] * 7 + 7.6, 0));
             }
             return g;
         },

@@ -400,7 +400,7 @@
       }
     },
     "perfectRitual": "\\DIE[20] PERFECT RITUAL! {name} GAINS FULL HYPER AN' DA MASTER BUFFS!",
-    "empowered": "[\\DIE[{roll}] INT +{mod} = {total}] DA SUMMONIN' RITUAL EMPOWERED {name} WIT COMBAT BUFFS!",
+    "empowered": "[\\DIE[{roll}] +{mod} INT = {total}] DA SUMMONIN' RITUAL EMPOWERED {name} WIT COMBAT BUFFS!",
     "skillsBound": "{name} BINDS WIT {n} OF ITS {max} SKILLS!",
     "attackOnly": "{name} ANSWERS, BUT REMEMBERS NOTHIN' EXCEPT HOW TA STRIKE!",
     "familiarHere": "{name} IZ ALREADY AT YA SIDE.",

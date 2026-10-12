@@ -1809,11 +1809,9 @@ UnlockingBlocks.version = 3.0;
             );
         };
         PluginManager.registerCommand(PLUGIN, 'startMinigame', startMinigame);
-        // This puzzle used to carry its old block-puzzle name, and eight locks on the
-        // lockpicking map still call it under that name. Nothing registered it,
-        // so those eight could not be picked at all. The old name stays a live
-        // alias rather than having the event pages rewritten.
-        PluginManager.registerCommand('LockpickTetris', 'startMinigame', startMinigame);
+        // The eight locks on the lockpicking map call the puzzle by its call id,
+        // LockpickBlocks, rather than by the file name.
+        PluginManager.registerCommand('LockpickBlocks', 'startMinigame', startMinigame);
     }
 
     const _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;

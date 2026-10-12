@@ -2436,22 +2436,25 @@
     startWorldMapPickerOrigin();
   }
 
-  // Crash Landed origin (WIP): the party is stranded on a random planet in an
-  // uncharted, randomly-seeded galaxy. The starship survives the crash but is
-  // badly damaged, nearly out of local fuel and completely out of SB-Bridge
-  // (Schrodingerite) jump charges; the low orbit pin (item 166, same one the
-  // Space origin grants) marks the way back once repairs and refueling make
-  // the ship flight-worthy again.
+  // Crash Landed origin: the party is stranded on a living world pitched at
+  // their own level, in the one galaxy every crash of this world happens in
+  // (GalaxySim.findCrashWorld: found there, or made and kept in the world). The
+  // starship survives the crash but is badly damaged, nearly out of local fuel
+  // and completely out of SB-Bridge (Schrodingerite) jump charges; the low
+  // orbit pin (item 166, same one the Space origin grants) marks the way back
+  // once repairs and refueling make the ship flight-worthy again.
+  function crashPartyLevel() {
+    const members = ($gameParty && $gameParty.members) ? $gameParty.members() : [];
+    if (!members.length) return 1;
+    const sum = members.reduce((t, a) => t + ((a && a.level) || 1), 0);
+    return Math.max(1, Math.round(sum / members.length));
+  }
+
   function pickRandomCrashPlanet() {
-    if (!window.GalaxySim || !window.GalaxySim.getDataManager) return null;
-    const dm = window.GalaxySim.getDataManager();
-    const gxSeed = Math.floor(Math.random() * 0x7fffffff);
-    const systems = dm.generateGalaxySystems(gxSeed) || [];
-    const withPlanets = systems.filter((s) => s.planets && s.planets.length > 0);
-    if (!withPlanets.length) return null;
-    const system = withPlanets[Math.floor(Math.random() * withPlanets.length)];
-    const planet = system.planets[Math.floor(Math.random() * system.planets.length)];
-    return { system, planet, gxSeed };
+    const GS = window.GalaxySim;
+    if (!GS || typeof GS.findCrashWorld !== "function") return null;
+    const hit = GS.findCrashWorld(crashPartyLevel());
+    return hit ? { system: hit.system, planet: hit.planet, gxSeed: hit.galaxySeed } : null;
   }
 
   const CRASH_LANDED_FUEL = 200;        // litres out of the Starship's 10,000 litre rocket fuel tank
@@ -2494,7 +2497,10 @@
       window.VehicleSystemRepair.applyDamage("airship", CRASH_SHIP_DAMAGE_PERCENT);
     }
 
-    window.GalaxySim.enterPlanetSurface(pick.planet, {});
+    if (!window.GalaxySim.enterPlanetSurface(pick.planet, {})) {
+      console.warn("CharacterCreation: the crash world refused a landing; starting aboard the wreck instead.");
+      $gamePlayer.reserveTransfer(721, 27, 7, 2, 0);
+    }
   }
 
   // Independent Warlord origin: start with a mixed roster of 40 random troops

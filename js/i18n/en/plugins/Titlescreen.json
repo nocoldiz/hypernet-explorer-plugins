@@ -11,7 +11,6 @@
     "wiki": "World History",
     "preferences": "Preferences",
     "mods": "Mods",
-    "music": "Music",
     "exit": "Exit",
     "continue": "Continue",
     "quickContinue": "Continue"
@@ -28,7 +27,6 @@
     "wiki": "WORLD HISTORY",
     "preferences": "PREFERENCES",
     "mods": "MODS",
-    "music": "MUSIC",
     "exit": "EXIT",
     "noWorld": "NO WORLD",
     "quickContinue": "CONTINUE"
@@ -104,7 +102,7 @@
     "patronPerk": "Every Patreon subscriber, new and old, gets a habitable planet named after them in another galaxy plus the coordinates of a secret location on the world map, communicated on Patreon only."
   },
   "background": {
-    "label": "✦ BG: "
+    "label": "BG: "
   },
   "planet": {
     "type": "TYPE: ",
@@ -145,7 +143,7 @@
     "text": "0.8.4a"
   },
   "language": {
-    "label": "✦ LANG"
+    "label": "LANG"
   },
   "update": {
     "checking": "✦ CHECKING BUILDS…",
@@ -181,7 +179,6 @@
     "procedural": "PROCEDURAL",
     "nextBody": "NEXT BODY",
     "freeLook": "FREE LOOK // DRAG: PAN . WHEEL: ZOOM",
-    "controls": "DRAG / RS: PAN . WHEEL / L2 R2: ZOOM . ARROWS: NEXT",
     "catalogButton": "CATALOG",
     "catalogTitle": "CATALOG // KNOWN BODIES",
     "catalogEmpty": "NO CATALOGUED BODIES AVAILABLE",
@@ -282,8 +279,5 @@
     ],
     "nameFormat": "{adj} {noun}",
     "fallbackType": "Relic"
-  },
-  "music": {
-    "label": "✦ "
   }
 }

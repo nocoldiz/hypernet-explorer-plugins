@@ -15,21 +15,26 @@
     "yes": "Rispiegami tutto",
     "no": "Me la cavo da sola",
     "normal": [
-      "Bubba: Un'azione a testa per round, prima i piu' veloci. Scegli una riga e premi [CONTINUE].",
-      "Bubba: Attacco colpisce con quello che hai in mano. Abilita' e' il tuo assortimento, pagato in MP o AP.",
-      "Bubba: Ricarica riempie il caricatore e ti copre per il round. Con la tua vector gun in mano, quella riga diventa Cambia.",
-      "Bubba: Quella pistola risponde solo a te, tesoro. Le sue modalita' e la sua forma si scelgono dal menu principale.",
-      "Bubba: Cambia la ripiega in quella forma e poi di nuovo in pistola, quante volte vuoi, e non costa il turno.",
-      "Bubba: Zaino usa quello che porti. Azioni contiene Mira, Lancia e Lotta, piu' il repertorio che non perdi mai.",
-      "Bubba: Parla prova prima con le parole, qualcuno ascolta. Fuggi funziona sempre: un cadavere non impara niente."
+      "Bubba: In combattimento andiamo a turni in ordine di [velocita']. Scegli un comando e premi [CONTINUE].",
+      "Bubba: [Attacco] colpisce il nemico con la tua [arma] equipaggiata. E' sempre pronto all'uso.",
+      "Bubba: [Abilita'] sono i tuoi attacchi speciali e magie. Usarli consuma [MP] o [AP].",
+      "Bubba: [Difesa] ti protegge e riduce i [danni] subiti per il turno.",
+      "Bubba: [Ricarica] appare se impugni una pistola. Riempie i [proiettili] e ti copre le spalle.",
+      "Bubba: [Cambia] ti fa trasformare la tua [vector gun] nell'altra forma senza consumare [nessun turno].",
+      "Bubba: [Zaino] ti permette di usare gli [oggetti] che porti con te, come medicine o cibo.",
+      "Bubba: [Azioni] contiene mosse extra come [Mira] alle parti del corpo, [Lancia] e [Lotta].",
+      "Bubba: [Parla] prova prima con le parole. Alcuni nemici possono essere convinti a fermarsi.",
+      "Bubba: [Fuga] porta via tutto il gruppo. Funziona sempre quando hai bisogno di [fuggire]."
     ],
     "map": [
-      "Bubba: Questa si gioca dove siamo in piedi, quindi la mappa e' l'arena. Sempre un'azione a testa per round, in ordine di velocita'.",
-      "Bubba: Muovi ti porta in giro per le caselle prima di agire, una volta per round, fin dove ti portano le gambe e la tua DES.",
-      "Bubba: Attacco arriva solo fin dove dice la portata scritta sulla riga, quindi conta le caselle prima di menare.",
-      "Bubba: Abilita', Azioni, Mira, Lotta, Parla, lo zaino e Lancia qui stanno tutti come righe a se', solo puntati su una casella.",
-      "Bubba: Il cursore serve a scegliere quella casella: portalo su cio' che vuoi e premi [CONTINUE].",
-      "Bubba: Fuga porta fuori tutto il gruppo, a meno che qualcosa non ci tenga stretti."
+      "Bubba: Questo scontro si svolge direttamente sulla mappa. Andiamo a turni in ordine di [velocita'].",
+      "Bubba: [Muovi] ti sposta sulle caselle prima di agire. La distanza dipende dalla tua [DES].",
+      "Bubba: [Attacco] ha una [gittata] in caselle. Assicurati di essere a portata prima di colpire.",
+      "Bubba: [Abilita'] sono mosse speciali e magie indirizzate a una casella specifica.",
+      "Bubba: [Zaino] ti permette di usare gli [oggetti] del tuo inventario sul campo.",
+      "Bubba: [Azioni] include mosse come [Mira], [Lancia] e [Lotta] puntate su una casella.",
+      "Bubba: Sposta il [cursore] sulla casella del bersaglio e premi [CONTINUE].",
+      "Bubba: [Fuga] guida via tutto il gruppo per [scappare] dalla battaglia."
     ],
     "rearm": "Bubba: Nessun problema tesoro, non sono un esperto di magia ma posso rispiegarti come si spara con la pistola! Il resto lo devi capire da sola"
   }

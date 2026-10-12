@@ -4165,5 +4165,755 @@
   },
   "1389": {
     "name": "Ombra del Crepuscolo"
+  },
+  "1390": {
+    "name": "Topo della dispensa"
+  },
+  "1391": {
+    "name": "Coniglio delle siepi"
+  },
+  "1392": {
+    "name": "Gattino del fienile"
+  },
+  "1393": {
+    "name": "Scoiattolo delle ghiande"
+  },
+  "1394": {
+    "name": "Talpina dei prati"
+  },
+  "1395": {
+    "name": "Piccione di piazza"
+  },
+  "1396": {
+    "name": "Passero domestico"
+  },
+  "1397": {
+    "name": "Pulcino dell'aia"
+  },
+  "1398": {
+    "name": "Scarabeo stercorario"
+  },
+  "1399": {
+    "name": "Porcellino di terra"
+  },
+  "1400": {
+    "name": "Moscerino da picnic"
+  },
+  "1401": {
+    "name": "Grillo del focolare"
+  },
+  "1402": {
+    "name": "Limaccia dell'orto"
+  },
+  "1403": {
+    "name": "Verme del compost"
+  },
+  "1404": {
+    "name": "Rospo delle pozzanghere"
+  },
+  "1405": {
+    "name": "Girino di palude"
+  },
+  "1406": {
+    "name": "Vairone di fiume"
+  },
+  "1407": {
+    "name": "Pesce rosso fuggitivo"
+  },
+  "1408": {
+    "name": "Paguro del tappo"
+  },
+  "1409": {
+    "name": "Medusina lunare"
+  },
+  "1410": {
+    "name": "Soffione vagante"
+  },
+  "1411": {
+    "name": "Melma da pozzanghera"
+  },
+  "1412": {
+    "name": "Diavoletto del singhiozzo"
+  },
+  "1413": {
+    "name": "Spiritello delle pozzanghere"
+  },
+  "1414": {
+    "name": "Cucciolo di opossum"
+  },
+  "1415": {
+    "name": "Ratto di grondaia"
+  },
+  "1416": {
+    "name": "Riccio scorbutico"
+  },
+  "1417": {
+    "name": "Tamia accaparratore"
+  },
+  "1418": {
+    "name": "Furetto ruba-calzini"
+  },
+  "1419": {
+    "name": "Cucciolo randagio"
+  },
+  "1420": {
+    "name": "Lepre della neve"
+  },
+  "1421": {
+    "name": "Gabbiano del porto"
+  },
+  "1422": {
+    "name": "Gazza dei luccichii"
+  },
+  "1423": {
+    "name": "Giovane barbagianni"
+  },
+  "1424": {
+    "name": "Pipistrello nano"
+  },
+  "1425": {
+    "name": "Formica rossa"
+  },
+  "1426": {
+    "name": "Lucciola dei prati"
+  },
+  "1427": {
+    "name": "Damigella dello stagno"
+  },
+  "1428": {
+    "name": "Falena del lampione"
+  },
+  "1429": {
+    "name": "Sanguisuga del fosso"
+  },
+  "1430": {
+    "name": "Chiocciola del muschio"
+  },
+  "1431": {
+    "name": "Raganella della volta"
+  },
+  "1432": {
+    "name": "Spinarello di fiume"
+  },
+  "1433": {
+    "name": "Granchio di riva"
+  },
+  "1434": {
+    "name": "Germoglio d'ortica"
+  },
+  "1435": {
+    "name": "Muffa del pane"
+  },
+  "1436": {
+    "name": "Grumo di starnuto"
+  },
+  "1437": {
+    "name": "Fiammella di candela"
+  },
+  "1438": {
+    "name": "Password dimenticata"
+  },
+  "1439": {
+    "name": "Guanto smarrito"
+  },
+  "1440": {
+    "name": "Favilla errante"
+  },
+  "1441": {
+    "name": "Procione dei bidoni"
+  },
+  "1442": {
+    "name": "Gerboa delle dune"
+  },
+  "1443": {
+    "name": "Cucciolo di fennec"
+  },
+  "1444": {
+    "name": "Volpacchiotto del gelo"
+  },
+  "1445": {
+    "name": "Moffetta imbronciata"
+  },
+  "1446": {
+    "name": "Testuggine palustre"
+  },
+  "1447": {
+    "name": "Pipistrello della frutta"
+  },
+  "1448": {
+    "name": "Oca del parco"
+  },
+  "1449": {
+    "name": "Vespa cartonaia"
+  },
+  "1450": {
+    "name": "Tafano della stalla"
+  },
+  "1451": {
+    "name": "Ninfa di locusta"
+  },
+  "1452": {
+    "name": "Chiocciola luminosa"
+  },
+  "1453": {
+    "name": "Perioftalmo"
+  },
+  "1454": {
+    "name": "Pesce palla spinoso"
+  },
+  "1455": {
+    "name": "Gambero di fosso"
+  },
+  "1456": {
+    "name": "Germoglio di bardana"
+  },
+  "1457": {
+    "name": "Bisciolina dei prati"
+  },
+  "1458": {
+    "name": "Melma di marmellata"
+  },
+  "1459": {
+    "name": "Ombra degli spifferi"
+  },
+  "1460": {
+    "name": "Poltergeist scricchiolante"
+  },
+  "1461": {
+    "name": "Angoscia del lunedì"
+  },
+  "1462": {
+    "name": "Folletto statico"
+  },
+  "1463": {
+    "name": "Diavoletto tascabile"
+  },
+  "1464": {
+    "name": "Aeroplanino di carta"
+  },
+  "1465": {
+    "name": "Monello goblin"
+  },
+  "1466": {
+    "name": "Suonatore ambulante ubriaco"
+  },
+  "1467": {
+    "name": "Sciacallo della discarica"
+  },
+  "1468": {
+    "name": "Lupacchiotto della brughiera"
+  },
+  "1469": {
+    "name": "Tartarughina azzannatrice"
+  },
+  "1470": {
+    "name": "Cucciolo di dromedario"
+  },
+  "1471": {
+    "name": "Giovane airone cenerino"
+  },
+  "1472": {
+    "name": "Lontra di palude"
+  },
+  "1473": {
+    "name": "Rospo delle canne"
+  },
+  "1474": {
+    "name": "Giovane verme delle dune"
+  },
+  "1475": {
+    "name": "Polpo delle pozze"
+  },
+  "1476": {
+    "name": "Patata germogliata"
+  },
+  "1477": {
+    "name": "Lumaca al wasabi"
+  },
+  "1478": {
+    "name": "Teschio chiacchierone"
+  },
+  "1479": {
+    "name": "Gabbia toracica sferragliante"
+  },
+  "1480": {
+    "name": "Folletta della rugiada"
+  },
+  "1481": {
+    "name": "Apprendista fattucchiera"
+  },
+  "1482": {
+    "name": "Vedetta dei banditi"
+  },
+  "1483": {
+    "name": "Bullo del cortile"
+  },
+  "1484": {
+    "name": "Monello borseggiatore"
+  },
+  "1485": {
+    "name": "Drone giocattolo"
+  },
+  "1486": {
+    "name": "Robot aspirapolvere ribelle"
+  },
+  "1487": {
+    "name": "Soldatino a molla"
+  },
+  "1488": {
+    "name": "Occhio ficcanaso"
+  },
+  "1489": {
+    "name": "Golem di lanugine"
+  },
+  "1490": {
+    "name": "Passero delle nevi"
+  },
+  "1491": {
+    "name": "Acaro del gelo"
+  },
+  "1492": {
+    "name": "Pulcino di pinguino"
+  },
+  "1493": {
+    "name": "Ermellino del gelo"
+  },
+  "1494": {
+    "name": "Folletto palla di neve"
+  },
+  "1495": {
+    "name": "Pipistrello del gelo"
+  },
+  "1496": {
+    "name": "Civettina bianca"
+  },
+  "1497": {
+    "name": "Corvo d'inverno"
+  },
+  "1498": {
+    "name": "Cucciolo di yeti"
+  },
+  "1499": {
+    "name": "Cucciolo da slitta"
+  },
+  "1500": {
+    "name": "Geco delle sabbie"
+  },
+  "1501": {
+    "name": "Germoglio di cactus"
+  },
+  "1502": {
+    "name": "Rotolacampo del deserto"
+  },
+  "1503": {
+    "name": "Scorpioncino delle dune"
+  },
+  "1504": {
+    "name": "Folletto del miraggio"
+  },
+  "1505": {
+    "name": "Granchio del sale"
+  },
+  "1506": {
+    "name": "Diavolo di polvere"
+  },
+  "1507": {
+    "name": "Istrice del deserto"
+  },
+  "1508": {
+    "name": "Cucciolo di manticora"
+  },
+  "1509": {
+    "name": "Topo del santuario"
+  },
+  "1510": {
+    "name": "Pipistrello del campanile"
+  },
+  "1511": {
+    "name": "Colomba benedetta"
+  },
+  "1512": {
+    "name": "Tartaruga del tempio"
+  },
+  "1513": {
+    "name": "Cherubino novizio"
+  },
+  "1514": {
+    "name": "Capretto pellegrino"
+  },
+  "1515": {
+    "name": "Lanterna consacrata"
+  },
+  "1516": {
+    "name": "Innario sacro"
+  },
+  "1517": {
+    "name": "Falena serafica"
+  },
+  "1518": {
+    "name": "Volpe del santuario"
+  },
+  "1519": {
+    "name": "Gargoyle del campanile"
+  },
+  "1520": {
+    "name": "Anellino di ofanim"
+  },
+  "1521": {
+    "name": "Falena dei sogni"
+  },
+  "1522": {
+    "name": "Rosicchiaincubi"
+  },
+  "1523": {
+    "name": "Pecora del sonno"
+  },
+  "1524": {
+    "name": "Medusetta del vuoto"
+  },
+  "1525": {
+    "name": "Furetto del vuoto"
+  },
+  "1526": {
+    "name": "Bolla di fantasticheria"
+  },
+  "1527": {
+    "name": "Tapiro dei sogni"
+  },
+  "1528": {
+    "name": "Acaro glitch"
+  },
+  "1529": {
+    "name": "Folletto del taglio di carta"
+  },
+  "1530": {
+    "name": "Pulviscolo stellare"
+  },
+  "1531": {
+    "name": "Ratto della metropolitana"
+  },
+  "1532": {
+    "name": "Turista smarrito"
+  },
+  "1533": {
+    "name": "Slime di pixel"
+  },
+  "1534": {
+    "name": "Mimic graffatrice"
+  },
+  "1535": {
+    "name": "Moscerino satellitare"
+  },
+  "1536": {
+    "name": "Studente di scambio Dargos"
+  },
+  "1537": {
+    "name": "Sanguisuga di dati"
+  },
+  "1538": {
+    "name": "Gremlin della stampante"
+  },
+  "1539": {
+    "name": "Sassolino meteorico"
+  },
+  "1540": {
+    "name": "Cucciolo cibernetico"
+  },
+  "1541": {
+    "name": "Medusa astrale"
+  },
+  "1542": {
+    "name": "Drone di sicurezza dell'atrio"
+  },
+  "1543": {
+    "name": "Saltatore lunare"
+  },
+  "1544": {
+    "name": "Robot guardia del centro commerciale"
+  },
+  "1545": {
+    "name": "Spettro dello spam"
+  },
+  "1546": {
+    "name": "Grumo di germi"
+  },
+  "1547": {
+    "name": "Coleottero della ruggine"
+  },
+  "1548": {
+    "name": "Verme spaghetto"
+  },
+  "1549": {
+    "name": "Zanzara siringa"
+  },
+  "1550": {
+    "name": "Coleottero pillola"
+  },
+  "1551": {
+    "name": "Robot bullone allentato"
+  },
+  "1552": {
+    "name": "Ratto dell'unto"
+  },
+  "1553": {
+    "name": "Orsetto di peluche"
+  },
+  "1554": {
+    "name": "Spettro delle bende"
+  },
+  "1555": {
+    "name": "Folletto della candela"
+  },
+  "1556": {
+    "name": "Goblin friggitore"
+  },
+  "1557": {
+    "name": "Mano di manichino"
+  },
+  "1558": {
+    "name": "Sanguisuga della peste"
+  },
+  "1559": {
+    "name": "Folletto del dente ballerino"
+  },
+  "1560": {
+    "name": "Grumo di vernice"
+  },
+  "1561": {
+    "name": "Mimic borsellino"
+  },
+  "1562": {
+    "name": "Scarafaggio di cucina"
+  },
+  "1563": {
+    "name": "Strisciante dell'obitorio"
+  },
+  "1564": {
+    "name": "Zecca da impianto"
+  },
+  "1565": {
+    "name": "Castoro motosega"
+  },
+  "1566": {
+    "name": "Procione taccheggiatore"
+  },
+  "1567": {
+    "name": "Melma di pizza"
+  },
+  "1568": {
+    "name": "Armeggiatore nanico"
+  },
+  "1569": {
+    "name": "Elementale di rottami"
+  },
+  "1570": {
+    "name": "Torretta giocattolo"
+  },
+  "1571": {
+    "name": "Zecca di quarzo"
+  },
+  "1572": {
+    "name": "Sbuffo di spore"
+  },
+  "1573": {
+    "name": "Lumaca geode"
+  },
+  "1574": {
+    "name": "Folletto fungo"
+  },
+  "1575": {
+    "name": "Lucciola di cristallo"
+  },
+  "1576": {
+    "name": "Maialino da tartufi"
+  },
+  "1577": {
+    "name": "Coleottero prisma"
+  },
+  "1578": {
+    "name": "Germoglio miconide"
+  },
+  "1579": {
+    "name": "Geco di cristallo"
+  },
+  "1580": {
+    "name": "Toporagno fungino"
+  },
+  "1581": {
+    "name": "Lucertola del tesoro"
+  },
+  "1582": {
+    "name": "Gallo da combattimento"
+  },
+  "1583": {
+    "name": "Scarabeo rinoceronte da arena"
+  },
+  "1584": {
+    "name": "Kobold ladro di tesori"
+  },
+  "1585": {
+    "name": "Manichino d'allenamento"
+  },
+  "1586": {
+    "name": "Draghetto del tesoro"
+  },
+  "1587": {
+    "name": "Grillo gladiatore"
+  },
+  "1588": {
+    "name": "Zecca di drago"
+  },
+  "1589": {
+    "name": "Gladiatore novizio"
+  },
+  "1590": {
+    "name": "Marmotta alpina"
+  },
+  "1591": {
+    "name": "Buccina del porto"
+  },
+  "1592": {
+    "name": "Granchio della rete"
+  },
+  "1593": {
+    "name": "Pulcino di pappagallo"
+  },
+  "1594": {
+    "name": "Tamarino della giungla"
+  },
+  "1595": {
+    "name": "Tucano novizio"
+  },
+  "1596": {
+    "name": "Granchio del cocco"
+  },
+  "1597": {
+    "name": "Tritone di cenere"
+  },
+  "1598": {
+    "name": "Elementale fiammifero"
+  },
+  "1599": {
+    "name": "Pulcino di fenice"
+  },
+  "1600": {
+    "name": "Cucciolo di segugio infernale"
+  },
+  "1601": {
+    "name": "Folletto alato"
+  },
+  "1602": {
+    "name": "Ragno di cantina"
+  },
+  "1603": {
+    "name": "Scarabeo della tomba"
+  },
+  "1604": {
+    "name": "Alligatorino delle fogne"
+  },
+  "1605": {
+    "name": "Bambola di pezza cucita"
+  },
+  "1606": {
+    "name": "Testa di bambola smarrita"
+  },
+  "1607": {
+    "name": "Pozza d'ombra"
+  },
+  "1608": {
+    "name": "Vampiro novellino"
+  },
+  "1609": {
+    "name": "Scudiero maldestro"
+  },
+  "1610": {
+    "name": "Vitello minotauro"
+  },
+  "1611": {
+    "name": "Gorgone appena nata"
+  },
+  "1612": {
+    "name": "Bestiola dei rifiuti"
+  },
+  "1613": {
+    "name": "Elementale di pioggia"
+  },
+  "1614": {
+    "name": "Nano da giardino"
+  },
+  "1615": {
+    "name": "Totem dei desideri"
+  },
+  "1616": {
+    "name": "Germoglio Verden"
+  },
+  "1617": {
+    "name": "Alberello animato"
+  },
+  "1618": {
+    "name": "Spaventapasserino"
+  },
+  "1619": {
+    "name": "Paggio elfico"
+  },
+  "1620": {
+    "name": "Cucciolo d'orco"
+  },
+  "1621": {
+    "name": "Bicefalo litigioso"
+  },
+  "1622": {
+    "name": "Puledro selvatico"
+  },
+  "1623": {
+    "name": "Cucciolo di leviatano"
+  },
+  "1624": {
+    "name": "Puledro centauro"
+  },
+  "1625": {
+    "name": "Puledro di unicorno"
+  },
+  "1626": {
+    "name": "Apprendista tessitrice di seta"
+  },
+  "1627": {
+    "name": "Idra appena nata"
+  },
+  "1628": {
+    "name": "Elefantino"
+  },
+  "1629": {
+    "name": "Gerride"
+  },
+  "1630": {
+    "name": "Trollino del ponte"
+  },
+  "1631": {
+    "name": "Pulcino di falco autostradale"
+  },
+  "1632": {
+    "name": "Gabbiano del traghetto"
+  },
+  "1633": {
+    "name": "Cucciolo di panda"
+  },
+  "1634": {
+    "name": "Scoiattolo della taiga"
+  },
+  "1635": {
+    "name": "Cerbiatto del bosco degli spiriti"
+  },
+  "1636": {
+    "name": "Suricato della savana"
+  },
+  "1637": {
+    "name": "Rondone del canyon"
+  },
+  "1638": {
+    "name": "Arvicola della steppa"
+  },
+  "1639": {
+    "name": "Geco delle rovine"
   }
 }

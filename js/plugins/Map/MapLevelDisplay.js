@@ -91,27 +91,30 @@
         if (!dest) return null;
         const destinations = (window.WorkSystem && window.WorkSystem.Destinations) || {};
         const entry = destinations[dest.name] || dest;
-        // "fixedLevel" is a hand-written answer about one place and beats the
-        // nation band: Ghent and the Frozen Station are starter ground at Lv. 1
-        // whatever window Belgium and Scotland were dealt. "minLevel" below
-        // only stands in where no band exists at all.
-        const fixed = Number(entry.fixedLevel);
-        if (fixed > 0) return fixed;
         const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
         let info = null;
         if (BSEH && typeof BSEH.describeDestinationLevels === 'function') {
-            // The country painted under the stop's square, the same answer the
-            // travel book printed for it and the spawner reads here.
+            // The bracket of the stop's own square, the same answer the travel
+            // book printed for it and the spawner reads here.
             try {
                 info = BSEH.describeDestinationLevels(entry);
             } catch (e) {
                 info = null;
             }
         }
-        if (info && info.median) return info.median;
-        const min = Number(entry.minLevel);
-        if (min > 0) return min;
-        return null;
+        return (info && info.median) ? info.median : null;
+    }
+
+    // The level bracket of the ground under the party (BattleSystemEnhancedEncounters,
+    // section 3c), or null where none rules: the tower's floors and off Earth.
+    function groundBracket() {
+        const BSEH = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+        if (!BSEH || typeof BSEH.getGroundBracket !== 'function') return null;
+        try {
+            return BSEH.getGroundBracket();
+        } catch (e) {
+            return null;
+        }
     }
 
     Game_Map.prototype.findDestinationEntry = function () {
@@ -318,9 +321,15 @@
             }
         }
 
+        // On Earth's ground the banner prints the square's level bracket: every
+        // creature met here is inside it. A map with no fauna at all prints none.
+        const bracket = (mapName && this._medianEncounterLevel !== null) ? groundBracket() : null;
+        if (bracket) {
+            return T('WorldMap.banner.levelRange', { name: mapName, min: bracket.min, max: bracket.max }) + suffix;
+        }
         // Check if the map has a name and a median level was calculated.
         if (mapName && this._medianEncounterLevel !== null) {
-            return `${mapName} Lv. ${this._medianEncounterLevel}${suffix}`;
+            return T('WorldMap.banner.level', { name: mapName, level: this._medianEncounterLevel }) + suffix;
         }
         return `${mapName}${suffix}`;
     };

@@ -704,6 +704,18 @@
       this._refreshDOM();
     }
 
+    takeBackItem(itemId) {
+      const shop = SM.getCurrentShop();
+      if (!shop) return;
+      const result = SM.pullFromStock(shop.id, Number(itemId), 1);
+      if (result && result.ok) {
+        SoundManager.playOk();
+        this._refreshDOM();
+      } else {
+        SoundManager.playBuzzer();
+      }
+    }
+
     _buildStatusRows(shop, T) {
       const bal        = SM.formatEuroPrice(shop.balance || 0);
       const statusText = shop.isWorking ? T.working : T.offDuty;
@@ -767,7 +779,9 @@
           (sum, e) => sum + (shop.menuPrices[e.row.itemId] || 0) * e.row.amount, 0);
         const rows = onSale.length
           ? onSale.map(e => `
-              <div class="inspect-spec-row">
+              <div class="inspect-spec-row focusable" tabindex="0"
+                   onclick="SceneManager._scene?.takeBackItem?.(${e.row.itemId})"
+                   style="cursor: pointer;" title="${T('ShopManagement.shelves.takeBack')}">
                 <span class="inspect-spec-label">${_itemName(e.item)}</span>
                 <span class="inspect-spec-value">&times;${e.row.amount}</span>
               </div>`).join('')
