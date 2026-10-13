@@ -911,7 +911,13 @@
       evId = ev.eventId();
     } else {
       evId = $gameMap?._interpreter?._eventId ?? null;
-      if (!evId) { console.warn('[NPCEmpathize] Open: no eventName given and no active event interpreter found.'); return; }
+      // A spell cast from the menu runs in no event: it reaches the person
+      // nearest the leader instead.
+      if (!evId) {
+        const soul = window.NPCShared && window.NPCShared.nearbySoul();
+        if (!soul) { if (window.NPCShared) window.NPCShared.soulName(''); return; }
+        evId = soul.eventId();
+      }
     }
     window.NPCEmpathize.open(evId);
   });

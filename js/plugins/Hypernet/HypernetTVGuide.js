@@ -120,7 +120,7 @@
             statusEl.textContent = T('HypernetTVGuide.status', { channels: channels.length, map: db.studioMapId || '?', slots: (db.slotHours || []).length });
 
             if (channels.length === 0) {
-                detailEl.innerHTML = `<div style="padding:20px; color:var(--xp-bad)">No transmissions found. ${DB_PATH} could not be loaded.</div>`;
+                detailEl.innerHTML = `<div style="padding:20px; color:var(--xp-bad)">${T('HypernetTVGuide.noTransmissions', { path: DB_PATH })}</div>`;
                 return;
             }
 
@@ -241,7 +241,7 @@
                         <span style="width:12px; height:12px; border-radius:2px; border:1px solid var(--xp-ink-faint-2); background:${colorSwatch(ch.color)}; flex-shrink:0"></span>
                         <div style="flex:1; min-width:0">
                             <div style="font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">${escapeHtml(channelName(ch))}</div>
-                            <div style="font-size:13px; color:var(--xp-text-muted)">${(ch.programs || []).length} programs</div>
+                            <div style="font-size:13px; color:var(--xp-text-muted)">${T.n('HypernetTVGuide.programCount', (ch.programs || []).length)}</div>
                         </div>`;
 
                     const setSelected = () => {
@@ -274,7 +274,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: 'tv-guide',
-            name: T('HypernetTVGuide.title'),
+            name: () => T('HypernetTVGuide.title'),
             icon: 223,
             launchFn: function() {
                 window.HypernetTVGuide.launch();

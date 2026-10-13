@@ -9,23 +9,23 @@
     "availableCrimes": "Available Crimes by Category",
     "errorUnknown": "Error: Unknown crime type:",
     "total": "Total",
-    "selfPardon": "You self pardon this crime",
+    "selfPardon": "You pardon yourself.",
     "lawfulPardon": "{name} committed {crime} in the name of the law."
   },
   "bribe": {
     "action": "Bribe {name}: {cost}",
     "theOfficer": "The officer",
     "taken": "{name} pockets {cost} and looks the other way.",
-    "rejected": "{name} refuses the money and adds bribery to your charges.",
-    "incorruptible": "{name} is incorruptible and will never take your money. Bribery is added to your charges.",
-    "cannotAfford": "{name} wants {cost}, and you do not have it."
+    "rejected": "{name} refuses. Bribery added to your charges.",
+    "incorruptible": "{name} can't be bribed. Bribery added to your charges.",
+    "cannotAfford": "{name} wants {cost}. You can't afford it."
   },
   "law": {
     "notRecognised": "Your crime is not recognized in this territory",
-    "enterCanon": "You cross into the Holy Vatican Empire. Canon law holds here, and your record beyond its borders does not.",
-    "leaveCanon": "You leave the Holy Vatican Empire. Its canon law and its record stay behind.",
-    "enterHorde": "You cross into Goblin Horde ground. Anything goes here, except stealing.",
-    "leaveHorde": "You leave Goblin Horde ground. The common law and its record hold again."
+    "enterCanon": "Entered the Holy Vatican Empire. Canon law applies; crimes elsewhere don't count.",
+    "leaveCanon": "Left the Holy Vatican Empire. Crimes there don't follow you.",
+    "enterHorde": "Entered Goblin Horde ground. Only stealing is a crime here.",
+    "leaveHorde": "Left Goblin Horde ground. Common law applies again."
   },
   "canon": {
     "indecencyKiss": "Public indecency - kissing",
@@ -64,5 +64,5 @@
   "nobodySaw": "Nobody saw a thing.",
   "theShopkeeper": "the shopkeeper",
   "vendorRefusesForever": "{keeper} will never sell to you again.",
-  "vendorRefusesEntry": "{keeper} turns away. You are not welcome at this counter."
+  "vendorRefusesEntry": "{keeper} won't serve you."
 }

@@ -205,7 +205,7 @@
     "altitude": "Alt",
     "velocity": "Vertical",
     "density": "Air",
-    "downrange": "To run",
+    "downrange": "To go",
     "plates": "Plates {n}",
     "stages": "Stg {n}",
     "integrity": "Hull",
@@ -322,7 +322,7 @@
     "liminalSpool": "The liminal drive is spooling up.",
     "liminalHot": "The vanes are lit. Everything in here has two shadows.",
     "liminalGo": "Drive is in. Range collapsing.",
-    "transitDeep": "There is no outside. There is only the far end of it.",
+    "transitDeep": "There is only the far end of it.",
     "moonFills": "Range sixty kilometres. It is the whole window now.",
     "lunarSkim": "Over the regolith.",
     "baseSighted": "Pad has you. Lamps walking in.",
@@ -497,7 +497,7 @@
       "railExit": "Everyone all right? Good. That was the worst part.",
       "maxQ": "Breathe out. It sounds worse than it is.",
       "beltDeep": "Hull {pct}. Hold on to each other and it will pass.",
-      "beltBare": "{pct}. We have lost the skin, not the people.",
+      "beltBare": "{pct}. We have lost only the skin. Everyone is fine.",
       "beltClear": "We are through. Everybody is here.",
       "moonAhead": "Oh. Oh, it is lovely from here.",
       "liminalHot": "The light is beautiful and I do not trust it at all.",
@@ -547,7 +547,7 @@
       "gateSlabs": "Slit-scan. The bands are discrete and the spacing is logarithmic.",
       "whiteSolids": "A tesseract, a 16-cell and a 5-cell. Projected, not imagined.",
       "jupiterClose": "Periapsis inside two radii. The delta-v is worth every metre.",
-      "holeSphere": "A sphere, not a funnel. Every film but one gets that wrong.",
+      "holeSphere": "A sphere. Every film but one draws a funnel.",
       "throatDeep": "I am recording all of it and I will not be believed.",
       "zetaArrived": "Surface gravity is about one and a half. Mind your knees.",
       "titaniaArrived": "The ocean is pH zero and the hull is already etching.",
@@ -626,7 +626,7 @@
       "capture": "Capture confirmed. Orbit looks clean from here.",
       "moonAhead": "Visual, dead ahead. Attitude is holding on it.",
       "lunarDown": "Contact and shutdown. Weight is on the legs.",
-      "jupiterClose": "Periapsis in hand. We pass it, we do not hit it.",
+      "jupiterClose": "Periapsis in hand. We pass it with room to spare.",
       "breachGive": "Noted. Instruments still read, which is something.",
       "zetaArrived": "Down at the Monument. Helmets on until I clear it.",
       "titaniaArrived": "Down. Suits stay sealed until the embassy says otherwise.",
@@ -763,7 +763,7 @@
         "liminalHot": "Drive is hot. My drive. Hot.",
         "transitDeep": "Halfway through nothing. Lovely, isn't it?",
         "lunarArrived": "Down on the Moon. Captain's compliments to the crew.",
-        "gateSlabs": "Gate's open. Keep your eyes on the slabs, not on me.",
+        "gateSlabs": "Gate's open. Keep your eyes on the slabs.",
         "whiteSolids": "Shapes in the white. Don't wave at them.",
         "jupiterClose": "Jupiter close aboard. Hold her steady.",
         "zetaArrived": "Zeta Reticuli. Captain logs a clean arrival.",
@@ -951,7 +951,7 @@
       "trollBack3": "You told me it was tested!",
       "trollBack4": "I hate you. I hate you so much.",
       "trollBack5": "What happens if I let go? Bubba? BUBBA?",
-      "trollBack6": "I'm not looking. I'm never looking out a window again."
+      "trollBack6": "I'm never looking out a window again."
     }
   }
 }

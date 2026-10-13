@@ -75,14 +75,15 @@
       "Dormitory",
       "Aquarium",
       "Switchboard"
-    ]
+    ],
+    "format": "{adj} {noun}"
   },
   "wakeUp": "Pinch cheeks (wake up)",
   "keepDreaming": "Keep dreaming",
   "dreamThins": "The dream thins...",
-  "insight": "The dream works something out: you obtained {amount} KP",
+  "insight": "Dream insight: +{amount} KP",
   "youWokeUp": "You woke up",
-  "wokeWithInsight": "You carried {amount} Knowledge out of the dream (total: {total}).",
+  "wokeWithInsight": "Woke with {amount} Knowledge (total: {total}).",
   "forming": "The dream is still taking shape",
   "willNotForm": "You dream, but the world will not form...",
   "kp": "You obtained {amount} KP",

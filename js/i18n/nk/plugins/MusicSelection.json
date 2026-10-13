@@ -12,8 +12,8 @@
     "none": "NONE"
   },
   "noMusic": "NO MUSIC DURIN' BATTLES.",
-  "randomEachBattle": "A DIFFERENT TRACK IZ DRAWN AT DA START OF EVERY BATTLE!",
-  "continueMap": "CONTINUE PLAYIN' DA CURRENT MAP BGM!",
+  "randomEachBattle": "RANDOM TRACK EVERY BATTLE!",
+  "continueMap": "KEEP DA CURRENT MAP MUSIC!",
   "biomeEachBattle": "EACH BIOME PLAYS ITS OWN BATTLE TRACK!",
   "playingAsBattle": "PLAYIN' AS BATTLE BACKGROUND MUSIC!",
   "composer": "COMPOSER",

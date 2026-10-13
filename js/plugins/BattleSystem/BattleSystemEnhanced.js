@@ -755,24 +755,48 @@
     const STORY_IMMORTAL_NAMES = ['Em', 'Bubba'];
 
     /**
-     * Em and Bubba in the story mode (switch 100). On either of its two
-     * difficulties they are knocked out and come round, never lost for good,
-     * and in Blood and Oil they can lose limbs but never a vital part.
+     * The story mode's own Blood and Oil, the third of its difficulties: Em and
+     * Bubba are mortal there. Roguelike and Hardcore keep them protected.
+     */
+    BSE.Helpers.isStoryMortal = function() {
+        return !!($gameSwitches.value(100) && window.$gameSystem &&
+            $gameSystem._difficultyMode === 'blood_and_oil');
+    };
+
+    /**
+     * Em and Bubba in the story mode (switch 100). On Roguelike and Hardcore
+     * they are knocked out and come round, never lost for good, and on
+     * Hardcore they can lose limbs but never a vital part. On the story's
+     * Blood and Oil neither is protected.
      */
     BSE.Helpers.isStoryImmortal = function(actor) {
         if (!actor || !$gameSwitches.value(100)) return false;
+        if (BSE.Helpers.isStoryMortal()) return false;
         return STORY_IMMORTAL_NAMES.includes(actor.name());
+    };
+
+    /** Em in the story mode: never buried, her fall is a game over of its own. */
+    BSE.Helpers.isStoryEm = function(actor) {
+        return !!actor && $gameSwitches.value(100) && actor.name() === STORY_IMMORTAL_NAMES[0];
+    };
+
+    /** Bubba in the story mode. */
+    BSE.Helpers.isStoryBubba = function(actor) {
+        return !!actor && $gameSwitches.value(100) && actor.name() === STORY_IMMORTAL_NAMES[1];
     };
 
     /**
      * The one answer to "is this fallen party member gone for good?".
      * Hardcore and Blood and Oil (switch 9) lose everybody, the story mode
-     * loses everybody who joined the party except Em and Bubba, on either of
-     * its difficulties. Peaceful loses nobody.
+     * loses everybody who joined the party except Em and Bubba, on Roguelike
+     * and Hardcore. On the story's Blood and Oil Bubba is lost too; Em is never
+     * buried, her death opens the story's game over (BattleSystemEnhancedDeath).
+     * Peaceful loses nobody.
      */
     BSE.Helpers.diesForGood = function(actor) {
         if (!actor) return false;
         if (window.PeacefulMode && window.PeacefulMode.isActive()) return false;
+        if (BSE.Helpers.isStoryEm(actor)) return false;
         if (BSE.Helpers.isStoryImmortal(actor)) return false;
         return !!($gameSwitches.value(9) || $gameSwitches.value(100));
     };
@@ -2172,13 +2196,71 @@
 
     // Clear the cached party level at the start of every battle so the next
     // paramBase call recomputes it fresh instead of reusing the last fight's.
+    // The refusal below is for fights that start on their own (a monster
+    // walking into the party). A fight asked for by name, an event's Battle
+    // Processing or a story script such as the Eris challenge, is started out
+    // of the very dialogue that offers it, so the message window is always
+    // still up: refusing it ended those fights on their first frame.
+    let _deliberateSetupDepth = 0;
+    BSE.Functions.setupDeliberateBattle = function(troopId, canEscape, canLose) {
+        _deliberateSetupDepth++;
+        try {
+            BattleManager.setup(troopId, canEscape, canLose);
+        } finally {
+            _deliberateSetupDepth--;
+        }
+    };
+    if (typeof Game_Interpreter !== "undefined") {
+        const _Game_Interpreter_command301_ih = Game_Interpreter.prototype.command301;
+        Game_Interpreter.prototype.command301 = function(params) {
+            _deliberateSetupDepth++;
+            try {
+                return _Game_Interpreter_command301_ih.call(this, params);
+            } finally {
+                _deliberateSetupDepth--;
+            }
+        };
+    }
+
     const _BattleManager_setup_ih = BattleManager.setup;
     BattleManager.setup = function(troopId, canEscape, canLose) {
-        if (BSE.Functions.isBattleInitiationBlocked && BSE.Functions.isBattleInitiationBlocked()) {
+        if (_deliberateSetupDepth === 0 &&
+            BSE.Functions.isBattleInitiationBlocked && BSE.Functions.isBattleInitiationBlocked()) {
+            // Every caller pushes Scene_Battle straight after setup without
+            // asking whether it took. That scene would then open on the LAST
+            // fight's troop, already dead, and pay its spoils a second time;
+            // it is turned back as it starts instead (Scene_Battle.start below).
+            this._bseSetupRefused = true;
             return;
         }
+        this._bseSetupRefused = false;
         BSE.State.ihPartyLevel = null;
         _BattleManager_setup_ih.call(this, troopId, canEscape, canLose);
+    };
+
+    // A battle whose setup was refused is never fought: the scene goes back
+    // the moment it starts, before the engine's startBattle can read the old
+    // troop as a won fight.
+    const _Scene_Battle_start_refused = Scene_Battle.prototype.start;
+    Scene_Battle.prototype.start = function() {
+        if (BattleManager._bseSetupRefused) {
+            BattleManager._bseSetupRefused = false;
+            this._bseSetupRefused = true;
+            Scene_Message.prototype.start.call(this);
+            SceneManager.pop();
+            return;
+        }
+        _Scene_Battle_start_refused.call(this);
+    };
+
+    // Nothing of the refused battle runs while the scene is on its way out.
+    const _Scene_Battle_update_refused = Scene_Battle.prototype.update;
+    Scene_Battle.prototype.update = function() {
+        if (this._bseSetupRefused) {
+            Scene_Message.prototype.update.call(this);
+            return;
+        }
+        _Scene_Battle_update_refused.call(this);
     };
 
     const _Scene_Map_updateEncounter_BSE = Scene_Map.prototype.updateEncounter;
@@ -3379,8 +3461,37 @@
     // ------------------------------------------------------------------
     // 16. Scene_Gameover – redirect to map
     // ------------------------------------------------------------------
+    // The engine's own Game Over is never shown: its picture is drawn at the
+    // engine's old 816x624 size, a small boxed "Game Over" in the top-left
+    // corner of the screen with no way out of it. The scene is only a hop.
+    Scene_Gameover.prototype.createBackground = function() {
+        this._backSprite = new ScreenSprite();
+        this._backSprite.setBlack();
+        this.addChild(this._backSprite);
+    };
+
+    // A party that reaches it with nobody standing (a fight ended by a route
+    // that skipped processDefeat, a map battle that could not be lost) used
+    // to be put straight back on the map still dead, where the engine sent it
+    // here again, round and round. It is handed to the post-battle wipe
+    // instead, the one the defeat path raises: Scene_Map.start then respawns
+    // the party, or opens the permadeath gravestone screen when the death is
+    // terminal (BattleSystemEnhancedDeath.js).
+    BSE.Functions.flagStrandedWipe = function() {
+        if (!$gameParty || !$gameSystem) return false;
+        if (!$gameParty.isAllDead()) return false;
+        if ($gameSystem.setBattleEnded) $gameSystem.setBattleEnded(true);
+        if ($gameSystem.setFullPartyWipe) $gameSystem.setFullPartyWipe(true);
+        if ($gameSystem.setActor1Died) $gameSystem.setActor1Died(true);
+        BSE.State.needsRespawn = true;
+        const leader = $gameParty.members()[0];
+        if (leader) leader.recoverAll();
+        return true;
+    };
+
     Scene_Gameover.prototype.start = function() {
         AudioManager.stopBgm();
+        BSE.Functions.flagStrandedWipe();
         SceneManager.goto(Scene_Map);
     };
 

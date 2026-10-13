@@ -18,10 +18,10 @@
     "wallet": "Portafoglio: €{amount}",
     "terms": "Puntata €{cost}  ·  Premio massimo €{amount}",
     "back": "Indietro",
-    "backDesc": "Lascia il bancone con i soldi ancora in tasca.",
+    "backDesc": "Esci senza comprare.",
     "needMoney": "Soldi insufficienti per questo biglietto.",
     "desc": {
-      "esoteric": "Foglia viola e sigilli presi in prestito. Tetto modesto.",
+      "esoteric": "Lamina viola e sigilli presi in prestito. Tetto modesto.",
       "corporate": "Inchiostro blu, ottimismo trimestrale, mezzo milione sul tavolo.",
       "vacation": "Carta sbiadita dal sole, in vendita al bancone di ogni bar sulla costa.",
       "hypercapitalist": "Biglietto nero, foglia d'oro, stampato per chi ha già vinto."

@@ -24,19 +24,19 @@
     "black": "Black to move",
     "check": "CHECK",
     "finished": "Game over",
-    "level": "Level",
+    "level": "Even",
     "material": "Material {value}",
-    "yourMove": "Pick up a piece. SHIFT spends a full Cheat Meter.",
+    "yourMove": "Pick a piece. SHIFT uses a full Cheat Meter.",
     "opponentThinking": "Black is thinking...",
     "chooseMode": "CHESS",
     "chooseModeHint": "Select a game mode.",
     "promote": "PROMOTION",
-    "promoteHint": "The pawn reached the last rank. Choose what it becomes.",
+    "promoteHint": "Choose a promotion.",
     "victory": "VICTORY",
     "defeat": "DEFEAT",
     "drawn": "DRAWN",
-    "pressToLeave": "Press to leave the board",
-    "noThree": "The 3D board could not be set up on this machine."
+    "pressToLeave": "Press to exit",
+    "noThree": "3D board not supported on this machine."
   },
   "san": {
     "1": "P",
@@ -60,10 +60,10 @@
   },
   "end": {
     "checkmate": "Checkmate.",
-    "stalemate": "Stalemate: the side to move has no legal move and is not in check.",
+    "stalemate": "Stalemate: no legal moves.",
     "fiftyMove": "Drawn by the fifty-move rule.",
     "repetition": "Drawn by threefold repetition.",
-    "material": "Drawn: neither side has enough left to mate.",
+    "material": "Drawn: insufficient material.",
     "whiteWiped": "Every white piece is gone. Black wins!",
     "blackWiped": "Every black piece is gone. White wins!"
   },

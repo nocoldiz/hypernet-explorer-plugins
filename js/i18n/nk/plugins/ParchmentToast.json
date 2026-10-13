@@ -11,7 +11,7 @@
     "npc": {
       "need": {
         "sleep": "{name} DECIDES TA GO TA SLEEP",
-        "hunger": "{name} DECIDES TA FIND SOMETHIN' TA EAT",
+        "hunger": "{name} DECIDES TA FIND SOMETINK TA EAT",
         "hygiene": "{name} DECIDES TA GO AN' WASH",
         "work": "{name} DECIDES TA GO TA WORK",
         "shopwork": "{name} DECIDES TA MIND DA SHOP",
@@ -24,7 +24,7 @@
         "leisure": "{name} DECIDES TA HAB SOME FUN"
       },
       "goal": {
-        "wander": "{name} DECIDES TA WANDER ABOUT",
+        "wander": "{name} DECIDES TA WANDER 'BOUT",
         "socialize": "{name} DECIDES TA JOIN DA CROWD"
       },
       "flee": "{name} DECIDES TA RUN FROM A MONSTER",
@@ -32,7 +32,7 @@
     },
     "monster": {
       "idle": "{name} SETTLES DOWN",
-      "alert": "{name} NOTICES SOMETHIN'",
+      "alert": "{name} NOTICES SOMETINK",
       "commit": "{name} DECIDES TA GIVE CHASE",
       "search": "{name} SEARCHES FOR ITS LOST QUARRY",
       "return": "{name} HEADS BACK TA ITS LAIR",
@@ -43,10 +43,10 @@
       "follow": "{name} DECIDES TA WALK WIT DA LEADER",
       "walk": "{name} DECIDES TA TAKE A STROLL",
       "visit": "{name} DECIDES TA GO AN' CHAT WIT SOMEONE",
-      "look": "{name} DECIDES TA LOOK AT SOMETHIN'",
+      "look": "{name} DECIDES TA LOOK AT SOMETINK",
       "return": "{name} DECIDES TA CATCH UP WIT DA LEADER",
       "need": {
-        "hunger": "{name} DECIDES TA FIND SOMETHIN' TA EAT",
+        "hunger": "{name} DECIDES TA FIND SOMETINK TA EAT",
         "sleep": "{name} DECIDES TA GET SOME REST",
         "hygiene": "{name} DECIDES TA GO AN' WASH",
         "social": "{name} DECIDES TA LOOK FOR COMPANY",

@@ -45,7 +45,7 @@
     "name": ""
   },
   "Brickplace": {
-    "val": "Posto mattonoso",
+    "val": "Posto di mattoni",
     "excluded": "",
     "name": ""
   },
@@ -60,7 +60,7 @@
     "name": ""
   },
   "Labis the Gnome capital": {
-    "val": "Labis la Capitale degli gnomi",
+    "val": "Labis, la capitale degli gnomi",
     "excluded": "",
     "name": ""
   },
@@ -90,7 +90,7 @@
     "name": ""
   },
   "The Boneyard": {
-    "val": "Boneyard",
+    "val": "L'ossario",
     "excluded": "",
     "name": ""
   },
@@ -120,7 +120,7 @@
     "name": ""
   },
   "Moderna archipelago": {
-    "val": "Arcipelago moderno",
+    "val": "Arcipelago di Moderna",
     "excluded": "",
     "name": ""
   },
@@ -195,7 +195,7 @@
     "name": ""
   },
   "Mushroom planet": {
-    "val": "Pianeta fungo",
+    "val": "Pianeta dei funghi",
     "excluded": "",
     "name": ""
   },
@@ -505,7 +505,7 @@
     "name": ""
   },
   "Arcade": {
-    "val": "Galleria",
+    "val": "Sala giochi",
     "excluded": "",
     "name": ""
   },
@@ -555,7 +555,7 @@
     "name": ""
   },
   "Moderna's Temple": {
-    "val": "Moderna's Temple",
+    "val": "Tempio di Moderna",
     "excluded": "",
     "name": ""
   },
@@ -1220,7 +1220,7 @@
     "name": ""
   },
   "Holy reactor": {
-    "val": "Il Santo reattore",
+    "val": "Il reattore santo",
     "excluded": "",
     "name": ""
   },
@@ -1290,7 +1290,7 @@
     "name": ""
   },
   "Hidden airship": {
-    "val": "dirigibile nascosto",
+    "val": "Dirigibile nascosto",
     "excluded": "",
     "name": ""
   },
@@ -1490,7 +1490,7 @@
     "name": ""
   },
   "Labis fields": {
-    "val": "Campi Labis",
+    "val": "Campi di Labis",
     "excluded": "",
     "name": ""
   },
@@ -1605,7 +1605,7 @@
     "name": ""
   },
   "Camped corridor": {
-    "val": "Corridoio accampato",
+    "val": "Corridoio dell'accampamento",
     "excluded": "",
     "name": ""
   },
@@ -1690,7 +1690,7 @@
     "name": ""
   },
   "Training center": {
-    "val": "Centro allenamento",
+    "val": "Centro di allenamento",
     "excluded": "",
     "name": ""
   },
@@ -1720,7 +1720,7 @@
     "name": ""
   },
   "Graffiti Tunnel": {
-    "val": "Graffiti Tunnel",
+    "val": "Tunnel dei graffiti",
     "excluded": "",
     "name": ""
   },
@@ -1800,7 +1800,7 @@
     "name": ""
   },
   "Stacked cave ": {
-    "val": "Grotta accatastata",
+    "val": "Grotta a strati",
     "excluded": "",
     "name": ""
   },
@@ -1895,12 +1895,12 @@
     "name": ""
   },
   "Secret inn": {
-    "val": "Locanda Segreta",
+    "val": "Locanda segreta",
     "excluded": "",
     "name": ""
   },
   "Paiting": {
-    "val": "Pittura",
+    "val": "Dipinto",
     "excluded": "",
     "name": ""
   },
@@ -1910,7 +1910,7 @@
     "name": ""
   },
   "Toxic clearing": {
-    "val": "Radura Tossica",
+    "val": "Radura tossica",
     "excluded": "",
     "name": ""
   },
@@ -1930,7 +1930,7 @@
     "name": ""
   },
   "Road to FUji": {
-    "val": "Strada per Fuji",
+    "val": "Strada per il Fuji",
     "excluded": "",
     "name": ""
   },
@@ -1965,7 +1965,7 @@
     "name": ""
   },
   "Garage sale": {
-    "val": "vendita di garage",
+    "val": "Svendita in garage",
     "excluded": "",
     "name": ""
   },
@@ -2045,7 +2045,7 @@
     "name": ""
   },
   "Wilderness": {
-    "val": "Deserto",
+    "val": "Terre selvagge",
     "excluded": "",
     "name": ""
   },
@@ -2105,7 +2105,7 @@
     "name": ""
   },
   "Cardinal Longhi Office": {
-    "val": "Cardinal Longhi Office",
+    "val": "Ufficio del cardinale Longhi",
     "excluded": "",
     "name": ""
   },
@@ -2215,7 +2215,7 @@
     "name": ""
   },
   "Container": {
-    "val": "Contenitore",
+    "val": "Container",
     "excluded": "",
     "name": ""
   },
@@ -2295,7 +2295,7 @@
     "name": ""
   },
   "Hospital room": {
-    "val": "stanza d'ospedale",
+    "val": "Stanza d'ospedale",
     "excluded": "",
     "name": ""
   },
@@ -2320,7 +2320,7 @@
     "name": ""
   },
   "Ambulance room": {
-    "val": "sala ambulanza",
+    "val": "Sala ambulanze",
     "excluded": "",
     "name": ""
   },
@@ -2330,7 +2330,7 @@
     "name": ""
   },
   "Ghent Fire station": {
-    "val": "Stazione dei pompieri di Ghent",
+    "val": "Caserma dei pompieri di Ghent",
     "excluded": "",
     "name": ""
   },
@@ -2515,7 +2515,7 @@
     "name": ""
   },
   "Cursed slot": {
-    "val": "Slot maledetto",
+    "val": "Slot maledetta",
     "excluded": "",
     "name": ""
   },
@@ -2555,7 +2555,7 @@
     "name": ""
   },
   "Cursing temple": {
-    "val": "Tempio maledetto",
+    "val": "Tempio della maledizione",
     "excluded": "",
     "name": ""
   },
@@ -2585,7 +2585,7 @@
     "name": ""
   },
   "Cursing Temple FL -1": {
-    "val": "Tempio della Maledizione FL -1",
+    "val": "Tempio della maledizione FL -1",
     "excluded": "",
     "name": ""
   },
@@ -2840,12 +2840,12 @@
     "name": ""
   },
   "Super Sacred Shrine": {
-    "val": "Santuario Super Sacro",
+    "val": "Santuario super sacro",
     "excluded": "",
     "name": ""
   },
   "Dark Tower": {
-    "val": "Torre Oscura",
+    "val": "Torre oscura",
     "excluded": "",
     "name": ""
   },

@@ -18,11 +18,11 @@
       "{State fermi|Sedete in silenzio|Restate con noi}. {channel} vi porta \"{title}\".",
       "\"{title}\". {channel}. {Per favore sedetevi prima che cominciamo|Sedetevi prima di cominciare|Prendete posto prima che si vada avanti}.",
       "{channel}. \"{title}\". {Non c'è un modo leggero per dire niente di tutto questo|Niente di tutto questo si può dire alla leggera|Un modo gentile per dirlo non l'abbiamo trovato}.",
-      "{Siamo|Ci sentiamo} {obbligati|tenuti|in dovere} di leggere \"{title}\" per intero. {channel}, ore {hour}."
+      "{Siamo obbligati a|Ci sentiamo tenuti a|Ci sentiamo in dovere di} leggere \"{title}\" per intero. {channel}, ore {hour}."
     ],
     "wry": [
       "\"{title}\". {channel}. {Abbiamo provato a sottrarci|Ci abbiamo provato, a sottrarci|Avevamo chiesto di essere esonerati}.",
-      "Sono le {hour} e {channel} è {contrattualmente obbligato|legalmente obbligato|pagato} per presentare \"{title}\".",
+      "Sono le {hour} e {channel} è {contrattualmente tenuto a|legalmente tenuto a|pagato per} presentare \"{title}\".",
       "{Di nuovo qui, eh|Ancora voi|Tornati, vedo}? Bene. {channel}. \"{title}\".",
       "Ancora {channel}? Sì. {È l'ora di|Tocca a} \"{title}\".",
       "{Bentornati a|Che piacere riavervi su|Di nuovo con noi su} \"{title}\", qui su {channel}, dove {non si verifica niente|non si controlla niente|la verifica è un reparto di qualcun altro}.",
@@ -81,7 +81,7 @@
       "{channel}! \"{title}\"! {Piedi in alto|Mettetevi comodi|Sedetevi pure}, {oggi è|è} tutto assolutamente innocuo."
     ],
     "earnest": [
-      "{channel}. \"{title}\". {Carta e penna|Penna e quaderno|Qualcosa per scrivere}, se li avete tutti e due.",
+      "{channel}. \"{title}\". {Carta e penna, se li avete tutti e due|Penna e quaderno, se li avete tutti e due|Qualcosa per scrivere, se l'avete a portata di mano}.",
       "Questo è \"{title}\", su {channel}, e {all'esame ve lo chiedono|è materia d'esame|dopo vi servirà}.",
       "{channel} presenta \"{title}\". {Due parti, con una pausa in mezzo|Ci fermiamo a metà così recuperate|C'è un intervallo a metà, e vi servirà}.",
       "{Benvenuti, allievi|Benvenuti, studenti|Benvenuti a tutti voi} su {channel}. Oggi: \"{title}\".",
@@ -98,7 +98,7 @@
       "{channel} {sta subendo|sta attraversando|ospita} \"{title}\".",
       "\"{title}\". {channel}. Questa {trasmissione|puntata} è stata registrata {prima che accendeste il televisore|prima che il vostro apparecchio fosse acceso|in anticipo rispetto alla vostra visione}.",
       "{channel}, ore {hour}. \"{title}\". {Sapevamo che l'avreste trovato|Sapevamo che sareste stati qui|Il vostro arrivo era in scaletta}.",
-      "\"{title}\", su {channel}, {ancora|di nuovo|per la {n}esima volta questa settimana}. {Non ve ne siete ancora accorti|Non ve n'eravate accorti|Le prime volte non se ne accorge nessuno}."
+      "\"{title}\", su {channel}, {ancora|di nuovo|per la {n}ª volta questa settimana}. {Non ve ne siete ancora accorti|Non ve n'eravate accorti|Le prime volte non se ne accorge nessuno}."
     ]
   },
   "close": {
@@ -116,7 +116,7 @@
       "Chiudiamo il fascicolo. Il fascicolo {non si chiude a sua volta|non ricambia|non accetta di essere chiuso}.",
       "{Buonanotte|Buona notte}. Tenetevi stretto {tutto quello che sapete ancora nominare|quello a cui sapete ancora dare un nome|ciò che riuscite ancora a chiamare per nome}.",
       "{channel} chiude le {trasmissioni|comunicazioni}. {Il ricordare|Il resto del ricordare} tocca a voi.",
-      "{Che Archive Foundation li custodisca con delicatezza|Che Archive Foundation sia gentile con loro|Che il fascicolo sia gentile con loro}. {Buonanotte|Buona notte} da {channel}.",
+      "{Che l'Archive Foundation li custodisca con delicatezza|Che l'Archive Foundation sia gentile con loro|Che il fascicolo sia gentile con loro}. {Buonanotte|Buona notte} da {channel}.",
       "{Andati, ma indicizzati|Perduti, ma indicizzati|Andati, e indicizzati}. Indicizzati sempre.",
       "La registrazione finisce qui. Il {ricordare|piangere|contare} no.",
       "Abbiamo letto i nomi. {La funzione è tutta qui|È tutta qui la funzione|Il servizio è tutto qui}.",
@@ -168,7 +168,7 @@
       "{channel} adesso va in silenzio. Silenzio {non è la stessa cosa di|non è lo stesso di|è un'altra cosa rispetto a} spento.",
       "Le linee sono aperte. {Non chiama nessuno|Nessuno sta chiamando}. Non chiama mai nessuno. {Buonanotte|Buona notte}.",
       "{Restate con me|Restate con noi|Fatemi compagnia}. La notte è lunga qui fuori sulla Strada.",
-      "L'avete sentito? No? ...Bene. {channel}, fino a {domani|alla prossima|quando sarà}.",
+      "L'avete sentito? No? ...Bene. {channel}, {a domani|alla prossima|fino a quando sarà}.",
       "{Lascio|Lascerò} il microfono aperto. {Pare che preferisca così|La stanza preferisce così|Qualcosa preferisce averlo aperto}.",
       "{channel}, ore {hour}. {Dormite, se ci riuscite|Cercate di dormire|Provate a dormire}. {Alcuni di noi|Qualcuno di noi|Noi altri} restiamo svegli."
     ],
@@ -218,7 +218,7 @@
     ],
     "market_report": [
       "Mercati. Il Collettivo ha chiuso in rialzo del {pct}%, cosa che loro {attribuiscono alla domanda|mettono in conto alla domanda|accreditano alla domanda} e tutti gli altri {attribuiscono alla paura|mettono in conto alla paura|chiamano panico}.",
-      "{Mercati|Contrattazioni|Allora, mercati}. {Il Collettivo è uscito a {pct}%|Collettivo, {pct}%|Ho il Collettivo a {pct}%}, {e la spiegazione era allegata al numero, che non è mai buon segno|e io leggo quello che mi ha passato la redazione|e non chiedetemi di difenderlo}."
+      "{Mercati|Contrattazioni|Allora, mercati}. {Il Collettivo è uscito al {pct}%|Collettivo, {pct}%|Ho il Collettivo al {pct}%}, {e la spiegazione era allegata al numero, che non è mai buon segno|e io leggo quello che mi ha passato la redazione|e non chiedetemi di difenderlo}."
     ],
     "phone_in": [
       "Linee aperte. {Siete|Vi trovate} in collegamento con {channel}. {Da dove chiamate e siete in movimento|Da dove ci chiamate, e siete in movimento|Dateci posizione e velocità}?",

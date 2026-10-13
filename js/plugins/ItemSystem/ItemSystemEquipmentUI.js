@@ -87,6 +87,13 @@
             (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
         );
 
+    // Database names are stored in English and only window text is localized
+    // on its way to the bitmap, so a name headed for this DOM is translated here.
+    const dbName = (obj) => {
+        const raw = (obj && obj.name) || '';
+        return (raw && typeof window.translateText === 'function') ? window.translateText(raw) : raw;
+    };
+
     // The heading a piece is filed under on the bench: its weapon type, or its
     // armour type when it has one, falling back to the slot type it fills.
     const equipGroupOf = (item) => {
@@ -207,6 +214,59 @@
     if (!window.Weapon3DPreview) {
         window.Weapon3DPreview = (() => {
 
+            // The renderers are kept between previews, the way the battle and
+            // the hyperdeck keep theirs: every settled cursor step used to build
+            // a fresh WebGL context and throw it away again, recompiling every
+            // PSX program each time. A renderer draws offscreen and its picture
+            // is copied onto the caller's own canvas, so the canvas a menu laid
+            // out (and bound its own clicks to) stays the one on the page. Each
+            // live preview holds one renderer to itself; a couple are kept idle
+            // for the next one and any more are released as before, so the
+            // browser's cap on live contexts never reaches the game's own.
+            const IDLE_RENDERERS_KEPT = 2;
+            const _idleRenderers = [];
+
+            function contextAlive(renderer) {
+                try {
+                    const gl = renderer.getContext();
+                    return !!gl && !(gl.isContextLost && gl.isContextLost());
+                } catch (e) { return false; }
+            }
+
+            function acquireRenderer() {
+                while (_idleRenderers.length) {
+                    const kept = _idleRenderers.pop();
+                    if (contextAlive(kept)) return kept;
+                    // A lost context (driver reset) never comes back: drop it.
+                    try { kept.dispose(); } catch (e) { /* already gone */ }
+                }
+                const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                // Render at 1:1 device pixels. This is a small pane beside a
+                // page of text, and the hi-DPI multiplier (up to four times the
+                // fragment work on a Retina screen) is the single biggest cost
+                // here and buys almost nothing visually - the same call the
+                // codex's specimen viewer settled on. The equip bench puts two
+                // of these up at once, beside the game's own render loop.
+                renderer.setPixelRatio(1);
+                return renderer;
+            }
+
+            function releaseRenderer(renderer) {
+                if (!renderer) return;
+                if (_idleRenderers.length < IDLE_RENDERERS_KEPT && contextAlive(renderer)) {
+                    _idleRenderers.push(renderer);
+                    return;
+                }
+                // dispose() releases this renderer's GPU resources but leaves the
+                // WebGL context itself alive. The browser caps how many contexts
+                // may live at once and force-loses the OLDEST once the cap is
+                // passed: that is the game's own canvas, after which PIXI
+                // silently stops rendering and the picture freezes for the rest
+                // of the session. A renderer that is not kept is released here.
+                try { renderer.dispose(); } catch (e) { /* already gone */ }
+                try { if (renderer.forceContextLoss) renderer.forceContextLoss(); } catch (e) {}
+            }
+
             // Build one viewport on `canvas` for `item`. Returns a record the
             // caller keeps and later hands back to disposeAll(), or null when
             // three.js is missing or the canvas is not in the document.
@@ -217,15 +277,17 @@
                 const width  = rect.width  || 140;
                 const height = rect.height || 380;
 
-                const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-                renderer.setSize(width, height);
-                // Render at 1:1 device pixels. This is a small pane beside a
-                // page of text, and the hi-DPI multiplier (up to four times the
-                // fragment work on a Retina screen) is the single biggest cost
-                // here and buys almost nothing visually - the same call the
-                // codex's specimen viewer settled on. The equip bench puts two
-                // of these up at once, beside the game's own render loop.
-                renderer.setPixelRatio(1);
+                const picture = canvas.getContext('2d');
+                if (!picture) return null;
+                const renderer = acquireRenderer();
+                renderer.setSize(width, height, false);
+                // The canvas is sized the way the renderer used to size it when
+                // it drew straight onto it, so the pane's layout is unchanged.
+                canvas.width  = Math.floor(width);
+                canvas.height = Math.floor(height);
+                canvas.style.width  = width + 'px';
+                canvas.style.height = height + 'px';
+                let disposed = false;
 
                 const scene = new THREE.Scene();
                 scene.add(new THREE.AmbientLight(0xffffff, 0.95));
@@ -243,6 +305,12 @@
                 // whole and about the same size whatever shape it is, and
                 // however tall or wide the canvas happens to be.
                 const setupModelPosition = (m) => {
+                    // A model loaded after the stand was taken down is freed
+                    // at once: the renderer it would have drawn on is kept.
+                    if (disposed) {
+                        if (window.disposeWeaponObject3D) window.disposeWeaponObject3D(m);
+                        return;
+                    }
                     const framed = window.ItemModelSystem &&
                         window.ItemModelSystem.framePreview(m, {
                             distance: camera.position.z,
@@ -420,6 +488,22 @@
                 // A piece put away while it is still folding (the vector gun's
                 // SWITCH) plays the rest of its fold beside its replacement.
                 const ghosts = [];
+
+                // The renderer outlives this stand, so the piece's own buffers
+                // and textures are freed by hand: losing the context used to do
+                // it. A rig is the battle pool's and disposeAll hands it back.
+                previewEntry.disposeScene = () => {
+                    disposed = true;
+                    const drop = (m) => {
+                        scene.remove(m);
+                        if (window.disposeWeaponObject3D) window.disposeWeaponObject3D(m);
+                    };
+                    if (model && !(model.userData && model.userData.rigPreview)) drop(model);
+                    ghosts.forEach(drop);
+                    ghosts.length = 0;
+                    model = null;
+                    previewEntry.model = null;
+                };
                 /**
                  * Builds `next` in THIS viewport in place of the piece on it,
                  * with no new WebGL context, canvas or camera: the vector gun's
@@ -574,6 +658,10 @@
                     } else {
                         renderer.render(scene, camera);
                     }
+                    // Copied in the same task as the draw, while the offscreen
+                    // buffer still holds it.
+                    picture.clearRect(0, 0, canvas.width, canvas.height);
+                    picture.drawImage(renderer.domElement, 0, 0);
                 };
                 animate();
 
@@ -583,6 +671,9 @@
             function disposeAll(entries) {
                 if (!entries) return;
                 entries.forEach(p => {
+                    // Taken down once only: a second pass would hand the same
+                    // renderer back to the idle pool twice.
+                    if (!p || p.disposed) return;
                     if (p.rafId) cancelAnimationFrame(p.rafId);
                     p.disposed = true;
                     // A rig on the stand belongs to the battle's pool: it is
@@ -595,7 +686,8 @@
                         if (rig.entry.scene.parent) rig.entry.scene.parent.remove(rig.entry.scene);
                         WeaponSystemProcedural.releaseRig(rig.spec, rig.entry);
                     }
-                    p.renderer.dispose();
+                    if (p.disposeScene) p.disposeScene();
+                    releaseRenderer(p.renderer);
                     p.canvas.removeEventListener('mousedown',  p.listeners.mousedown);
                     p.canvas.removeEventListener('mousemove',  p.listeners.mousemove);
                     window.removeEventListener('mouseup',      p.listeners.mouseup);
@@ -603,15 +695,8 @@
                     p.canvas.removeEventListener('touchstart', p.listeners.touchstart);
                     p.canvas.removeEventListener('touchmove',  p.listeners.touchmove);
                     window.removeEventListener('touchend',     p.listeners.touchend);
-                    // dispose() releases this scene's GPU resources but leaves the
-                    // WebGL context itself alive. The browser caps how many contexts
-                    // may live at once and force-loses the OLDEST once the cap is
-                    // passed: that is the game's own canvas, after which PIXI
-                    // silently stops rendering and the picture freezes for the rest
-                    // of the session. Release it here, and swap in a clean canvas
-                    // node for the next preview, since a lost context never comes
-                    // back on the element it was taken from.
-                    try { if (p.renderer.forceContextLoss) p.renderer.forceContextLoss(); } catch (e) {}
+                    // A clean canvas node goes in for the next preview, so the
+                    // listeners a menu bound to this one go with it.
                     if (p.canvas && p.canvas.parentNode) {
                         p.canvas.parentNode.replaceChild(p.canvas.cloneNode(false), p.canvas);
                     }
@@ -642,17 +727,17 @@
     // service, so it is there whichever plugin happened to create it.
     window.Weapon3DPreview.modelFor = previewModelFor;
 
-    // A preview card is a fresh WebGL context and a weapon model built from
-    // scratch by the procedural pipeline, and there are two of them. Walking
-    // the bench with a held key would ask for a pair per step, and the browser
-    // force-loses the game's own context once the cap of live ones is passed,
-    // so the pieces are only put on the stand once the cursor comes to rest.
+    // A preview card is a weapon model built from scratch by the procedural
+    // pipeline, and there are two of them. Walking the bench with a held key
+    // would ask for a pair per step, so the pieces are only put on the stand
+    // once the cursor comes to rest.
     const PREVIEW_SETTLE_MS = 90;
 
     Scene_Equip.prototype.init3DWeaponPreview = function () {
         this.cleanup3DWeaponPreview();
         if (this._viewMode !== 'detail' || !this._inspectedItem) return;
 
+        this._previewItem = this._inspectedItem;
         const modelItem = previewModelFor(this._inspectedItem) || this._inspectedItem;
         this._previewTimer = setTimeout(() => {
             this._previewTimer = 0;
@@ -689,11 +774,38 @@
         }
         window.Weapon3DPreview.disposeAll(this._previewRenderers);
         this._previewRenderers = [];
+        this._previewItem = null;
+    };
+
+    // The page is redrawn for small things (a button lit, a stat refreshed)
+    // while the same piece stays on the stand. The canvas already showing it
+    // is carried across the redraw instead of building the model again.
+    // Returns the canvas to put back, true when the stand is still waiting to
+    // be built (it finds the new canvas itself), or null to rebuild.
+    Scene_Equip.prototype._keepPreviewAcrossRedraw = function () {
+        if (this._viewMode !== 'detail' || !this._inspectedItem) return null;
+        if (this._previewItem !== this._inspectedItem) return null;
+        if (this._previewTimer) return true;
+        const entry = (this._previewRenderers || [])[0];
+        if (!entry || entry.disposed || !entry.canvas || !entry.canvas.isConnected) return null;
+        return entry.canvas;
     };
 
     // =============================================================================
     // Actor switching
     // =============================================================================
+
+    // A piece open on the detail page belongs to the character it was opened
+    // for: the next one starts on their own paperdoll, never on the previous
+    // character's sword with that character's slot index behind its buttons.
+    Scene_Equip.prototype._leaveDetailForSwitch = function () {
+        if (this._viewMode !== 'detail') return;
+        this._viewMode = 'paperdoll';
+        this._inspectedItem = null;
+        this._inspectedSlotIdx = -1;
+        this._detailBtnIndex = 0;
+        if (typeof this.cleanup3DWeaponPreview === 'function') this.cleanup3DWeaponPreview();
+    };
 
     Scene_Equip.prototype.switchToPreviousCharacter = function () {
         const party = $gameParty.allMembers();
@@ -701,6 +813,7 @@
         this._currentActorIndex = (this._currentActorIndex - 1 + party.length) % party.length;
         this._actor = party[this._currentActorIndex];
         if (switchSound) SoundManager.playCursor();
+        this._leaveDetailForSwitch();
         this._refreshDOM();
     };
 
@@ -710,6 +823,7 @@
         this._currentActorIndex = (this._currentActorIndex + 1) % party.length;
         this._actor = party[this._currentActorIndex];
         if (switchSound) SoundManager.playCursor();
+        this._leaveDetailForSwitch();
         this._refreshDOM();
     };
 
@@ -815,14 +929,36 @@
     // ones are what the character WOULD have. Cloning a Game_Actor serialises
     // its whole object graph, and the page is built again on every cursor step,
     // so one stand-in is kept for as long as it still stands for the same
-    // character wearing the same things; only the slot being fitted is changed
-    // on it, which is what forceChangeEquip is for.
-    Scene_Equip.prototype.standInActor = function () {
+    // character wearing the same things, and wearing at most the ONE piece
+    // being previewed now. A stand-in that already tried something else on is
+    // cloned again from the real character first: trying pieces on one after
+    // another would otherwise leave every earlier one in place (or a hand
+    // emptied by a two-handed one) and the preview would drift.
+    //
+    // A stand-in never trades with the party: whatever forceChangeEquip or a
+    // refresh puts down on it must not land in the real bag.
+    const cloneForPreview = (actor) => {
+        const copy = JsonEx.makeDeepCopy(actor);
+        if (copy) copy.tradeItemWithParty = function () { return true; };
+        return copy;
+    };
+
+    const trialKey = (slot, item) => (slot >= 0 && item)
+        ? `${slot}|${DataManager.isWeapon(item) ? 'w' : 'a'}${item.id}` : '';
+
+    Scene_Equip.prototype.standInActor = function (slot, item) {
         const actor = this._actor;
         const stamp = `${actorKey(actor)}|${actor.equips().map(e => (e ? e.id : 0)).join('.')}|${actor.level || 0}`;
-        if (!this._standIn || this._standInStamp !== stamp) {
-            this._standIn      = JsonEx.makeDeepCopy(actor);
+        const trial = (item && actor.equips()[slot] === item) ? '' : trialKey(slot, item);
+        if (!this._standIn || this._standInStamp !== stamp
+            || (this._standInTrial && this._standInTrial !== trial)) {
+            this._standIn      = cloneForPreview(actor);
             this._standInStamp = stamp;
+            this._standInTrial = '';
+        }
+        if (trial && this._standInTrial !== trial) {
+            this._standIn.forceChangeEquip(slot, item);
+            this._standInTrial = trial;
         }
         return this._standIn;
     };
@@ -907,11 +1043,47 @@
         return t.tabGear || 'Gear';
     };
 
+    // The bag's weapons and armours as one short string, read off $gameParty's
+    // own containers so asking whether anything changed builds no array. Null
+    // when the party keeps no such containers (nothing is cached then).
+    function equipBagStamp(party) {
+        if (!party || !party._weapons || !party._armors) return null;
+        let stamp = '';
+        for (const id in party._weapons) if (party._weapons[id] > 0) stamp += 'w' + id + ':' + party._weapons[id] + ',';
+        for (const id in party._armors)  if (party._armors[id]  > 0) stamp += 'a' + id + ':' + party._armors[id]  + ',';
+        return stamp;
+    }
+
+    // The bench is asked for on every cursor step, and building it filters and
+    // sorts the whole bag. It is kept until the tab, the slot asked about, the
+    // character, what they wear, the bag or the language changes.
     Scene_Equip.prototype.getFilteredPartyEquipment = function () {
-        let weapons = ($gameParty && typeof $gameParty.weapons === 'function') ? $gameParty.weapons() : [];
-        let armors  = ($gameParty && typeof $gameParty.armors === 'function')  ? $gameParty.armors()  : [];
+        const bag = equipBagStamp($gameParty);
+        // An empty bag lists what the character could wear instead, which is
+        // small and read off them afresh every time.
+        if (!bag) return this._buildFilteredPartyEquipment();
+        const actor = this._actor || null;
+        const slotFilter = this._slotFilterIdx >= 0 ? this._slotFilterIdx : -1;
+        const worn = (slotFilter >= 0 && actor && typeof actor.equips === 'function')
+            ? actor.equips().map(it => it ? (DataManager.isWeapon(it) ? 'w' : 'a') + it.id : '').join(',')
+            : '';
+        const key = [this._activeTab || 'all', slotFilter, ConfigManager.language || 'en', worn, bag].join('|');
+        const memo = this._benchMemo;
+        if (memo && memo.key === key && memo.party === $gameParty && memo.actor === actor &&
+            memo.candidates === (actor && actor.slotCandidates)) {
+            return memo.list.slice();
+        }
+        const list = this._buildFilteredPartyEquipment();
+        this._benchMemo = { key, party: $gameParty, actor, candidates: actor && actor.slotCandidates, list };
+        return list.slice();
+    };
+
+    Scene_Equip.prototype._buildFilteredPartyEquipment = function () {
+        // An id the database no longer has comes back from the bag as undefined.
+        let weapons = (($gameParty && typeof $gameParty.weapons === 'function') ? $gameParty.weapons() : []).filter(Boolean);
+        let armors  = (($gameParty && typeof $gameParty.armors === 'function')  ? $gameParty.armors()  : []).filter(Boolean);
         if (weapons.length === 0 && armors.length === 0 && $gameParty && typeof $gameParty.equipItems === 'function') {
-            const all = $gameParty.equipItems();
+            const all = $gameParty.equipItems().filter(Boolean);
             weapons = all.filter(it => DataManager.isWeapon(it));
             armors = all.filter(it => DataManager.isArmor(it));
         }
@@ -988,7 +1160,9 @@
         if (this._actor && !filtered.includes(this._actor)) {
             filtered.unshift(this._actor);
         }
-        return filtered.slice(0, 3);
+        // Every member: the page shows one at a time, and a cap of three left
+        // a fourth member's tab drawing someone else's paperdoll.
+        return filtered;
     };
 
     Scene_Equip.prototype._buildSinglePaperdollHTML = function (actor, memberIdx = 0) {
@@ -1098,7 +1272,7 @@
                         <div class="item-rarity-bar ${rarityCls}"></div>
                         <div class="slot-item-icon"><div class="item-icon" style="${iconStyle}"></div></div>
                         <div class="slot-item-info">
-                            <div class="slot-item-name" title="${escapeHtml(equipped.name)}">${escapeHtml(equipped.name)}</div>
+                            <div class="slot-item-name" title="${escapeHtml(dbName(equipped))}">${escapeHtml(dbName(equipped))}</div>
                             ${statText ? `<div class="slot-item-stat">${statText}</div>` : ''}
                         </div>
                         <button class="slot-remove-btn" data-member-idx="${memberIdx}" data-slot-idx="${slotId}" title="${t.unequip || 'Unequip'}">✖</button>
@@ -1133,7 +1307,8 @@
         const bodyBoxesHtml = bodySlotIndices.map(renderSlotBox).join('');
         const upperBoxesHtml = handBoxesHtml + mouthBox + headBox + gearBoxes;
 
-        const className = actor.currentClass ? actor.currentClass().name : '';
+        const cls = actor.currentClass ? actor.currentClass() : null;
+        const className = cls ? dbName(cls) : '';
 
         const totalStatsHtml = this._paperdollStatsHTML(actor, this._previewActorFor(actor));
 
@@ -1141,7 +1316,7 @@
             <div class="paperdoll-container member-equip-container ${isActorActive ? 'active-actor' : ''}" data-member-idx="${memberIdx}">
                 <div class="paperdoll-actor-bar">
                     <span class="paperdoll-actor-name">${escapeHtml(actor.name())}</span>
-                    <span class="paperdoll-actor-class">${escapeHtml(className)} (Lv. ${actor.level})</span>
+                    <span class="paperdoll-actor-class">${escapeHtml(T('Equip.classLevel', { class: className, level: actor.level }))}</span>
                 </div>
                 <div class="paperdoll-slots-grid">
                     <div class="paperdoll-slots-row paperdoll-slots-row--upper">
@@ -1164,16 +1339,44 @@
         if (drag) return (drag.actors && drag.actors.get(actor)) || null;
         if (this._viewMode !== 'detail' || !actor || actor !== this._actor) return null;
         const item = this._inspectedItem;
-        if (!item || actor.equips().includes(item)) return null;
-        const slot = (this._inspectedSlotIdx >= 0) ? this._inspectedSlotIdx
-            : (window.HandSlots && typeof window.HandSlots.targetSlotFor === 'function')
-                ? window.HandSlots.targetSlotFor(actor, item) : -1;
-        const fitSlot = slot >= 0 ? slot
-            : DataManager.isWeapon(item) ? 0
-            : Math.max(0, actor.equipSlots().indexOf(item.etypeId));
-        const stand = this.standInActor();
-        stand.forceChangeEquip(fitSlot, item);
-        return stand;
+        if (!item) return null;
+        // A worn piece inspected from its slot changes nothing. A bench piece
+        // is a copy in the bag, even when another of it is worn.
+        if (this._inspectedSlotIdx >= 0 && actor.equips()[this._inspectedSlotIdx] === item) return null;
+        const fitSlot = (this._inspectedSlotIdx >= 0) ? this._inspectedSlotIdx
+            : this.benchTargetSlot(actor, item);
+        if (fitSlot < 0) return null;
+        return this.standInActor(fitSlot, item);
+    };
+
+    // Where a piece from the bench goes when Equip is pressed on it. The
+    // paperdoll cursor has nothing to say about it: it always rests on some
+    // slot, so reading it sent a helmet at the main hand. In order:
+    //   - the empty slot the player asked the bench about, if the piece fits it;
+    //   - the first empty slot that takes it with a hand to spare, which is the
+    //     free off-hand for a second one-handed weapon;
+    //   - the first slot of its kind, whose piece it replaces.
+    Scene_Equip.prototype.benchTargetSlot = function (actor, item) {
+        if (!actor || !item) return -1;
+        const hs = window.HandSlots;
+        const fits = (s) => (hs && typeof hs.slotFits === 'function') ? hs.slotFits(actor, s, item)
+            : actor.equipSlots()[s] === item.etypeId;
+        const asked = this._slotFilterIdx;
+        if (asked >= 0 && asked < actor.equipSlots().length && !actor.equips()[asked]
+            && fits(asked) && (!actor.isEquipChangeOk || actor.isEquipChangeOk(asked))) {
+            return asked;
+        }
+        if (hs && typeof hs.targetSlotFor === 'function') {
+            const slot = hs.targetSlotFor(actor, item);
+            if (slot >= 0) return slot;
+        }
+        if (hs && typeof hs.emptySlotFor === 'function') {
+            const slot = hs.emptySlotFor(actor, item);
+            if (slot >= 0) return slot;
+        }
+        const slots = actor.equipSlots();
+        for (let i = 0; i < slots.length; i++) if (fits(i)) return i;
+        return -1;
     };
 
     // One member's stats, under their slots: vitals and the six attributes on
@@ -1263,7 +1466,7 @@
             const tryOn = (actor, slot, piece) => {
                 if (!actor) return null;
                 let copy = actors.get(actor);
-                if (!copy) { copy = JsonEx.makeDeepCopy(actor); actors.set(actor, copy); }
+                if (!copy) { copy = cloneForPreview(actor); actors.set(actor, copy); }
                 copy.forceChangeEquip(slot, piece);
                 return copy;
             };
@@ -1335,6 +1538,8 @@
             const list = this.getInventoryItemsForSlot();
             if (list && list[this._inventoryIndex]) {
                 item = list[this._inventoryIndex];
+                // That list is what the cursor's own slot takes.
+                if (this._slotIndex >= 0) targetSlot = this._slotIndex;
             }
         }
 
@@ -1342,10 +1547,15 @@
             item = this._inspectedItem;
         }
 
-        if (this._inspectedSlotIdx >= 0) {
+        if (targetSlot >= 0) {
+            // Already settled by the slot list above.
+        } else if (this._inspectedSlotIdx >= 0) {
             targetSlot = this._inspectedSlotIdx;
             if (item === undefined) item = actor.equips()[targetSlot];
-        } else if (this._slotIndex != null && this._slotIndex >= 0) {
+        } else if (!item && this._slotIndex != null && this._slotIndex >= 0) {
+            // Nothing picked off the bench: the page is about the slot under
+            // the paperdoll cursor. A bench piece never reads the cursor, it
+            // gets a slot of its own below (benchTargetSlot).
             targetSlot = this._slotIndex;
             if (item === undefined) item = actor.equips()[targetSlot];
         }
@@ -1364,10 +1574,12 @@
                 </div>`;
         }
 
+        // A piece off the bench is a copy in the bag, never the one worn,
+        // even when the character wears another of the same.
+        let benchPiece = false;
         if (targetSlot < 0) {
-            targetSlot = (window.HandSlots && typeof window.HandSlots.targetSlotFor === 'function')
-                ? window.HandSlots.targetSlotFor(actor, item)
-                : -1;
+            benchPiece = true;
+            targetSlot = this.benchTargetSlot(actor, item);
             if (targetSlot < 0) {
                 const isWpn = DataManager.isWeapon(item);
                 if (isWpn) {
@@ -1382,11 +1594,8 @@
             }
         }
 
-        const tempActor = this.standInActor();
         const isEquippedHere = actor.equips()[targetSlot] === item;
-        if (!isEquippedHere) {
-            tempActor.forceChangeEquip(targetSlot, item);
-        }
+        const tempActor = isEquippedHere ? this.standInActor() : this.standInActor(targetSlot, item);
 
         const weaponProf = window.WeaponProficiency;
         const sh = t.short || {};
@@ -1504,6 +1713,15 @@
         if (traitList.length) {
             traitsHtml = `<div class="equip-traits-block">${traitList.map(line => `<div class="inspect-bullet-item">${line}</div>`).join('')}</div>`;
         }
+        // The piece's special abilities as tags, the same section the backpack
+        // card and the skill card draw (ItemSystemUtils.specialLines).
+        const specialList = (window.ItemSystemUtils && typeof window.ItemSystemUtils.specialLines === 'function')
+            ? window.ItemSystemUtils.specialLines(item) : [];
+        if (specialList.length) {
+            traitsHtml += `<div class="inspect-section-title">${T('Inventory.section.special')}</div>`
+                + `<div class="inspect-quick-pills equip-specials-block">${specialList.map(text =>
+                    `<div class="inspect-meta-item inspect-pill inspect-pill--special"><span class="inspect-meta-val inspect-pill-val">${escapeHtml(text)}</span></div>`).join('')}</div>`;
+        }
 
         let descHtml = '';
         if (item.description && String(item.description).trim()) {
@@ -1512,13 +1730,8 @@
             desc = desc.replace(/\s*\n\s*\n\s*/g, '<br><br>').replace(/\s*\n\s*/g, ' ');
             descHtml = `<div class="equip-desc">${desc}</div>`;
         }
-        let loreHtml = '';
-        if (window.ItemSystemUtils && typeof window.ItemSystemUtils.loreFor === 'function') {
-            const loreText = window.ItemSystemUtils.loreFor(item);
-            if (loreText) loreHtml = `<div class="equip-lore">${loreText}</div>`;
-        }
 
-        const isCurrentlyWorn = actor.equips().includes(item);
+        const isCurrentlyWorn = !benchPiece && actor.equips()[targetSlot] === item;
         const actionButtons = isCurrentlyWorn
             ? `<button class="equip-action-btn unequip-now-btn focusable" data-slot="${targetSlot}">${t.unequip || 'Unequip'}</button>`
             : `<button class="equip-action-btn equip-now-btn focusable" data-slot="${targetSlot}">${t.equip || 'Equip'}</button>`;
@@ -1526,7 +1739,7 @@
         return `
             <div class="paperdoll-detail-view">
                 <div class="detail-header">
-                    <div class="detail-item-title">${escapeHtml(item.name)}</div>
+                    <div class="detail-item-title">${escapeHtml(dbName(item))}</div>
                 </div>
                 <div class="detail-preview-row">
                     <div class="detail-preview-box">
@@ -1541,7 +1754,6 @@
                     ${traitsHtml}
                     <div class="equip-lore-col">
                         ${descHtml}
-                        ${loreHtml}
                     </div>
                 </div>
                 <div class="detail-actions-row">
@@ -1609,7 +1821,7 @@
                         <div class="equip-card-icon"><div class="item-icon" style="${iconStyle}"></div></div>
                         <div class="equip-card-info">
                             <div class="equip-card-name-row">
-                                <span class="equip-card-name">${escapeHtml(item.name)}</span>
+                                <span class="equip-card-name">${escapeHtml(dbName(item))}</span>
                                 ${count > 1 ? `<span class="equip-card-qty">×${count}</span>` : ''}
                             </div>
                             <div class="equip-card-meta">
@@ -1759,7 +1971,8 @@
         if (!container) return;
         const rightArea = container.querySelector('.right-content-area');
         if (!rightArea) return;
-        this.cleanup3DWeaponPreview();
+        const kept = this._keepPreviewAcrossRedraw();
+        if (!kept) this.cleanup3DWeaponPreview();
         // The bench can shrink under the cursor (the last card equipped from
         // its own detail): the cursor comes back onto the last card standing
         // instead of pointing past the end, with nothing lit and OK dead.
@@ -1767,13 +1980,57 @@
             const count = this.getFilteredPartyEquipment().length;
             this._gridIndex = Math.max(0, Math.min(this._gridIndex || 0, count - 1));
         }
+        // Taken out before the page goes, so the preview never sees its canvas
+        // leave the document (it lets itself go when that happens).
+        if (kept && kept !== true && kept.parentNode) kept.parentNode.removeChild(kept);
         rightArea.innerHTML = this._buildRightPageHTML();
         this._syncPaperdollStats();
         if (this._viewMode === 'detail') {
-            this.init3DWeaponPreview();
+            const fresh = kept && kept !== true ? document.getElementById('weapon-preview-canvas-inspect') : null;
+            if (fresh && fresh.parentNode) {
+                fresh.parentNode.replaceChild(kept, fresh);
+            } else if (kept !== true) {
+                this.init3DWeaponPreview();
+            }
             this._bindStatTooltips();
         }
         this._bindRightPageEvents();
+    };
+
+    // Moves a worn piece onto another slot, the same character's or a
+    // companion's, and the piece that was there (if any) back into the slot it
+    // came from. changeEquip only ever takes a piece out of the bag, so both
+    // pieces are put down first and then taken up again in their new places;
+    // the two-handed rules are changeEquip's own (a two-handed weapon taken up
+    // puts down what else was in hand). Anything that does not end where it
+    // was sent is undone, so a refused swap leaves both characters as they were.
+    Scene_Equip.prototype.swapWornPieces = function (srcActor, srcSlotId, targetActor, targetSlotId) {
+        if (!srcActor || !targetActor) return false;
+        if (srcActor === targetActor && srcSlotId === targetSlotId) return false;
+        const srcItem = srcActor.equips()[srcSlotId] || null;
+        const targetItem = targetActor.equips()[targetSlotId] || null;
+        if (!srcItem) return false;
+        const before = new Map();
+        [srcActor, targetActor].forEach(a => { if (!before.has(a)) before.set(a, a.equips()); });
+
+        srcActor.changeEquip(srcSlotId, null);
+        if (targetItem) targetActor.changeEquip(targetSlotId, null);
+        targetActor.changeEquip(targetSlotId, srcItem);
+        if (targetItem) srcActor.changeEquip(srcSlotId, targetItem);
+
+        const done = targetActor.equips()[targetSlotId] === srcItem
+            && (!targetItem || srcActor.equips()[srcSlotId] === targetItem);
+        if (done) return true;
+
+        // Put everything back where it was: clear every slot first so each
+        // piece is in the bag again, then wear the old loadouts.
+        before.forEach((equips, actor) => {
+            equips.forEach((piece, slot) => { if (actor.equips()[slot]) actor.changeEquip(slot, null); });
+        });
+        before.forEach((equips, actor) => {
+            equips.forEach((piece, slot) => { if (piece) actor.changeEquip(slot, piece); });
+        });
+        return false;
     };
 
     Scene_Equip.prototype.executeTransferEquip = function (srcMemberIdx, srcSlotId, targetMemberIdx, targetSlotId) {
@@ -1787,26 +2044,13 @@
         const targetItem = targetActor.equips()[targetSlotId];
         if (!srcItem) return;
 
-        if (!targetItem) {
-            const fits = window.HandSlots ? window.HandSlots.slotFits(targetActor, targetSlotId, srcItem) : true;
-            if (!fits) {
-                /* silent equip menu */
-                return;
-            }
+        const fits = (who, slot, piece) => !piece || !window.HandSlots || window.HandSlots.slotFits(who, slot, piece);
+        if (!fits(targetActor, targetSlotId, srcItem) || !fits(srcActor, srcSlotId, targetItem)) {
             /* silent equip menu */
-            srcActor.changeEquip(srcSlotId, null);
-            targetActor.changeEquip(targetSlotId, srcItem);
-        } else {
-            const fitsTarget = window.HandSlots ? window.HandSlots.slotFits(targetActor, targetSlotId, srcItem) : true;
-            const fitsSrc = window.HandSlots ? window.HandSlots.slotFits(srcActor, srcSlotId, targetItem) : true;
-            if (!fitsTarget || !fitsSrc) {
-                /* silent equip menu */
-                return;
-            }
-            /* silent equip menu */
-            srcActor.changeEquip(srcSlotId, targetItem);
-            targetActor.changeEquip(targetSlotId, srcItem);
+            return;
         }
+        /* silent equip menu */
+        this.swapWornPieces(srcActor, srcSlotId, targetActor, targetSlotId);
         this._refreshDOM();
     };
 
@@ -1947,6 +2191,7 @@
                 this._inspectedItem = equipped;
                 this._inspectedSlotIdx = slotId;
                 this._viewMode = 'detail';
+                this._detailBtnIndex = 0;
                 this._refreshRightPage();
             });
 
@@ -2042,13 +2287,19 @@
                 });
             });
 
+            // One listener of each kind on the grid rather than three on every
+            // card: a full bag is hundreds of cards, rebuilt on every redraw.
             const items = this.getFilteredPartyEquipment();
-            container.querySelectorAll('.equip-card').forEach(card => {
-                const idx = parseInt(card.getAttribute('data-idx'));
-                const item = items[idx];
-                if (!item) return;
-
-                card.addEventListener('dragstart', (e) => {
+            const grid = container.querySelector('.equip-grid');
+            const cardItem = (e) => {
+                const card = e.target && e.target.closest ? e.target.closest('.equip-card') : null;
+                if (!card || !grid.contains(card)) return null;
+                return items[parseInt(card.getAttribute('data-idx'))] || null;
+            };
+            if (grid) {
+                grid.addEventListener('dragstart', (e) => {
+                    const item = cardItem(e);
+                    if (!item) return;
                     this._draggedItem = item;
                     this._dragSource = { type: 'grid', item };
                     if (e.dataTransfer) {
@@ -2063,21 +2314,25 @@
                     this._highlightDroppableSlots(item);
                 });
 
-                card.addEventListener('dragend', () => {
+                grid.addEventListener('dragend', (e) => {
+                    if (!cardItem(e)) return;
                     this._clearSlotHighlights();
                     this._draggedItem = null;
                     this._dragSource = null;
                     this._setDragPreview(null);
                 });
 
-                card.addEventListener('click', () => {
+                grid.addEventListener('click', (e) => {
+                    const item = cardItem(e);
+                    if (!item) return;
                     /* silent equip menu */
                     this._inspectedItem = item;
                     this._inspectedSlotIdx = -1;
                     this._viewMode = 'detail';
+                    this._detailBtnIndex = 0;
                     this._refreshRightPage();
                 });
-            });
+            }
 
             const gridContainer = container.querySelector('.equip-grid-container');
             if (gridContainer) {
@@ -2117,6 +2372,39 @@
             row.addEventListener('mousemove',  (e) => showStatTooltip(e, key, label));
             row.addEventListener('mouseleave', hideStatTooltip);
         });
+    };
+
+    // The nearest drawn slot of the shown member from the focused one, in the
+    // direction (dx, dy). laidOut is false when the page has no geometry yet
+    // (nothing measured), and the caller then falls back to index stepping.
+    Scene_Equip.prototype._paperdollSlotInDirection = function (dx, dy) {
+        const container = document.getElementById('equip-container');
+        if (!container) return { laidOut: false, slot: null };
+        const boxes = [];
+        container.querySelectorAll('.paperdoll-slot').forEach((el) => {
+            const mIdx = parseInt(el.getAttribute('data-member-idx'), 10);
+            const sId  = parseInt(el.getAttribute('data-slot-idx'), 10);
+            if (isNaN(sId) || (!isNaN(mIdx) && mIdx !== this._memberIndex)) return;
+            const r = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+            if (!r || (r.width <= 0 && r.height <= 0)) return;
+            boxes.push({ slot: sId, x: r.left + r.width / 2, y: r.top + r.height / 2 });
+        });
+        const from = boxes.find(b => b.slot === this._slotIndex);
+        if (!from) return { laidOut: false, slot: null };
+        let best = null;
+        let bestScore = Infinity;
+        for (const b of boxes) {
+            if (b.slot === from.slot) continue;
+            const ddx = b.x - from.x;
+            const ddy = b.y - from.y;
+            const along = dx ? ddx * dx : ddy * dy;
+            const across = dx ? Math.abs(ddy) : Math.abs(ddx);
+            // Ahead in the asked direction, and more ahead than aside.
+            if (along <= 4 || across > along * 2) continue;
+            const score = along + across * 2;
+            if (score < bestScore) { bestScore = score; best = b; }
+        }
+        return { laidOut: true, slot: best ? best.slot : null };
     };
 
     Scene_Equip.prototype._updateSlotHighlight = function () {
@@ -2226,7 +2514,7 @@
         if (items.length === 0) return;
         const selected = items[this._gridIndex];
         if (selected) {
-            const targetSlot = window.HandSlots ? window.HandSlots.emptySlotFor(this._actor, selected) : 0;
+            const targetSlot = this.benchTargetSlot(this._actor, selected);
             if (targetSlot >= 0) {
                 this._actor.changeEquip(targetSlot, selected);
                 /* silent equip menu */
@@ -2336,7 +2624,7 @@
                 if (activeBtn) {
                     activeBtn.click();
                 } else {
-                    const target = this._inspectedSlotIdx >= 0 ? this._inspectedSlotIdx : (window.HandSlots ? window.HandSlots.emptySlotFor(this._actor, this._inspectedItem) : 0);
+                    const target = this._inspectedSlotIdx >= 0 ? this._inspectedSlotIdx : this.benchTargetSlot(this._actor, this._inspectedItem);
                     if (target >= 0 && this._inspectedItem && this._actor) {
                         /* silent equip menu */
                         this._actor.changeEquip(target, this._inspectedItem);
@@ -2509,7 +2797,28 @@
             const currActor = members[this._memberIndex] || this._actor;
             const slotsCount = currActor ? currActor.equipSlots().length : 0;
 
-            if (isRight) {
+            // The slots are walked by where they are drawn: the paperdoll's
+            // rows depend on how many hands and gear slots a body has, and a
+            // fixed index table left some of them (the third gear slot, extra
+            // hands) out of reach of a keyboard or a pad.
+            const spatial = (isRight || isLeft || isDown || isUp)
+                ? this._paperdollSlotInDirection(isRight ? 1 : isLeft ? -1 : 0, isDown ? 1 : isUp ? -1 : 0)
+                : null;
+            if (spatial && spatial.laidOut) {
+                if (spatial.slot !== null) {
+                    this._slotIndex = spatial.slot;
+                    this._updateSlotHighlight();
+                } else if (isRight) {
+                    this._clearAllHighlights();
+                    this._activeArea = 'grid';
+                    this._updateInventoryHighlight();
+                } else if (isUp) {
+                    this._clearAllHighlights();
+                    this._activeArea = 'commands';
+                    this._commandIndex = 0;
+                    this._updateCommandsHighlight();
+                }
+            } else if (isRight) {
                 const nextSlot = this._slotIndex + 1;
                 if (nextSlot < slotsCount && (this._slotIndex === 0 || this._slotIndex === 1 || this._slotIndex === 2 || this._slotIndex === 4 || this._slotIndex === 5)) {
                     this._slotIndex = nextSlot;

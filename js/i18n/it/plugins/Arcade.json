@@ -1,6 +1,81 @@
 {
   "boot": {
-    "stage": "FASE {stage}/{total}\n{pct}%"
+    "stage": "FASE {stage}/{total}\n{pct}%",
+    "lines": {
+      "POST": [
+        "AUTOTEST ALL'ACCENSIONE",
+        "ESOTERIC HEAVY INDUSTRIES",
+        "SISTEMA ARCADE TIPO-X",
+        "CPU: 68000 @ 10MHz",
+        "CO-CPU: Z80 @ 4MHz",
+        "RAM: 64KB PRINCIPALE / 2KB VRAM",
+        "PRODOTTO: 1991"
+      ],
+      "ROM_CHECK": [
+        "CONTROLLO ROM",
+        "VERIFICA ROM DI SISTEMA...",
+        "ROM CPU PRINCIPALE... OK",
+        "ROM CPU SECONDARIA... OK",
+        "ROM AUDIO... OK",
+        "ROM GRAFICA... OK",
+        "CONTROLLO ROM COMPLETATO"
+      ],
+      "RAM_TEST": [
+        "TEST RAM",
+        "VERIFICA MEMORIA...",
+        "VERIFICA 0x0000-0x3FFF... OK",
+        "VERIFICA 0x4000-0x7FFF... OK",
+        "VERIFICA 0x8000-0xBFFF... OK",
+        "VERIFICA 0xC000-0xFFFF... OK",
+        "TEST VRAM 0x0000-0x07FF... OK",
+        "TEST RAM COMPLETATO - 65536 BYTE OK"
+      ],
+      "SOUND_INIT": [
+        "SISTEMA AUDIO",
+        "INIZIALIZZAZIONE YM2151...",
+        "SINTESI FM... OK",
+        "CANALI PCM... OK",
+        "MIXER... OK",
+        "TONO DI PROVA... OK",
+        "SISTEMA AUDIO PRONTO"
+      ],
+      "VIDEO_TEST": [
+        "SISTEMA VIDEO",
+        "VERIFICA SCHERMO...",
+        "LIVELLO SPRITE... OK",
+        "LIVELLO TILEMAP 1... OK",
+        "LIVELLO TILEMAP 2... OK",
+        "RAM COLORI... OK",
+        "TEST PALETTE... OK",
+        "GENERATORE SYNC... OK",
+        "SISTEMA VIDEO PRONTO"
+      ],
+      "SECURITY": [
+        "CONTROLLO SICUREZZA",
+        "VERIFICA LICENZA...",
+        "CONNESSIONE AL SERVER...",
+        "AUTENTICAZIONE... OK",
+        "LICENZA VALIDA",
+        "CONTROLLO SICUREZZA SUPERATO"
+      ],
+      "SYSTEM_INIT": [
+        "INIZIALIZZAZIONE SISTEMA",
+        "CARICAMENTO DATI DI GIOCO...",
+        "CARICAMENTO SPRITE... OK",
+        "CARICAMENTO TILEMAP... OK",
+        "CARICAMENTO CAMPIONI AUDIO... OK",
+        "AVVIO MOTORE DI GIOCO... OK",
+        "PREPARAZIONE CONTROLLER... OK",
+        "INIZIALIZZAZIONE COMPLETATA"
+      ],
+      "COMPLETE": [
+        "AVVIO COMPLETATO",
+        "SISTEMA PRONTO",
+        "========================================",
+        "(C) 1991 ESOTERIC HEAVY INDUSTRIES",
+        "TUTTI I SISTEMI OPERATIVI"
+      ]
+    }
   },
   "hud": {
     "score": "PUNTEGGIO: {score}",
@@ -8,6 +83,10 @@
     "lives": "VITE: {lives}",
     "level": "LIVELLO: {level}",
     "hiScore": "RECORD: {score}",
-    "time": "TEMPO: {time}"
+    "time": "TEMPO: {time}",
+    "demoSpectating": "MODALITÀ DEMO - SPETTATORE",
+    "gameOver": "FINE PARTITA",
+    "del": "CANC",
+    "end": "FINE"
   }
 }

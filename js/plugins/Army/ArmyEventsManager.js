@@ -491,6 +491,12 @@ Game_AIArmies.prototype.initializeArmies = function () {
 
   if (totalArmies === 0) return;
 
+  // Every arrival on the world map builds the roster afresh (leaving it clears
+  // _initialized), so the last visit's armies go first. They used to be kept:
+  // the list grew by a full set every round trip, the stale copy shadowed the
+  // live one in getArmyByEventId, and saveFactionArmies wrote both into the save.
+  this._armies = [];
+
   // Check if we have saved faction army data (returning to map)
   if ($gameSystem._savedFactionArmies && $gameSystem._savedFactionArmies.length > 0) {
     this._restoreAndRegenerateArmies(armyEvents);
@@ -673,6 +679,13 @@ Game_AIArmies.prototype._findRandomPassablePosition = function (validRegions) {
 
 Game_AIArmies.prototype.getArmyByEventId = function (eventId) {
   return this._armies.find(army => army.getEventId() === eventId);
+};
+
+// A beaten army leaves the roster, so the map does not bring it back.
+Game_AIArmies.prototype.removeArmyByEventId = function (eventId) {
+  const before = this._armies.length;
+  this._armies = this._armies.filter(army => army.getEventId() !== eventId);
+  return this._armies.length !== before;
 };
 
 Game_AIArmies.prototype.getAllArmies = function () {
@@ -2234,6 +2247,7 @@ Sprite_ArmyLabel.prototype.refresh = function () {
     $gameTemp._battleEnemyArmy = buildBattleArmy(enemy);
     $gameTemp._battleAllyArmy = buildBattleArmy(ally);
     $gameTemp._battleArmyEventId = null;
+    $gameTemp._battleCampaignTarget = null;
     $gameTemp._battleCampaignSides = { allyId: ally.id, enemyId: enemy.id };
     SceneManager.push(Scene_ArmyBattle);
     return true;
@@ -2242,6 +2256,20 @@ Sprite_ArmyLabel.prototype.refresh = function () {
   // How a battle the party took part in is written back into the roster: the
   // column that lost the field is gone, the one they stood with holds it.
   function resolveJoinedBattle(result) {
+    const target = $gameTemp && $gameTemp._battleCampaignTarget;
+    if (target !== undefined && target !== null) {
+      $gameTemp._battleCampaignTarget = null;
+      const foe = armyById(target);
+      if (foe && result === "victory") {   // i18n-ignore  result key
+        const other = foe.engagedWith ? armyById(foe.engagedWith) : null;
+        if (other) disengage(foe, other);
+        foe.troopCount = 0;
+        const st = state();
+        if (st) st.armies = (st.armies || []).filter(a => a.troopCount > 0);
+        syncPlacedEvents();
+      }
+      return true;
+    }
     const sides = $gameTemp && $gameTemp._battleCampaignSides;
     if (!sides) return false;
     $gameTemp._battleCampaignSides = null;
@@ -2343,6 +2371,10 @@ Sprite_ArmyLabel.prototype.refresh = function () {
     }
     $gameTemp._battleEnemyArmy = buildBattleArmy(army);
     $gameTemp._battleArmyEventId = null;
+    $gameTemp._battleCampaignSides = null;
+    // The column attacked is named, so a won field takes it off the roster
+    // (it used to march on at full strength after being beaten).
+    $gameTemp._battleCampaignTarget = army.id;
     SceneManager.push(Scene_ArmyBattle);
     return true;
   }

@@ -907,10 +907,10 @@
             this._scoreboard = new Sprite_BasketballScoreboard(this._shotsPerGame, this.opponentName());
             this.addChild(this._scoreboard);
 
-            this._powerMeter = new Sprite_PowerMeter(6, 60, "POWER");
+            this._powerMeter = new Sprite_PowerMeter(6, 60, T('Basketball.hud.power'));
             this.addChild(this._powerMeter);
 
-            this._spinMeter = new Sprite_SpinMeter(hudW() - 40, 60, "TOUCH");
+            this._spinMeter = new Sprite_SpinMeter(hudW() - 40, 60, T('Basketball.hud.touch'));
             this.addChild(this._spinMeter);
 
             this._statusWindow = new Sprite_BasketballStatus();
@@ -922,6 +922,9 @@
             // The pixel font arrives asynchronously; repaint what was drawn once.
             if (window.PSXHud) {
                 window.PSXHud.onFontReady(() => {
+                    // The font can land after the player has left: the panels are
+                    // gone by then and a repaint would throw from the timer.
+                    if (SceneManager._scene !== this) return;
                     if (!this._scoreboard) return;
                     const last = this._scoreboard._last || [[], []];
                     this._scoreboard.refresh(last[0], last[1]);
@@ -1205,17 +1208,19 @@
             const playerTotal = this._playerShots.filter(Boolean).length;
             const cpuTotal = this._cpuShots.filter(Boolean).length;
 
+            // `result` is the internal outcome key: it picks the banner colour
+            // and the i18n line, and is never printed itself.
             let result = "";
             let resultValue = 0;
 
             if (playerTotal > cpuTotal) {
-                result = "VICTORY!";
+                result = "victory";
                 resultValue = 1;
             } else if (cpuTotal > playerTotal) {
-                result = "DEFEAT";
+                result = "defeat";
                 resultValue = 2;
             } else {
-                result = "DRAW";
+                result = "draw";
                 resultValue = 3;
             }
 
@@ -1248,7 +1253,7 @@
             BALL_DOMS = [];
             if (this._courtSprite) {
                 if (this._courtSprite.parent) this._courtSprite.parent.removeChild(this._courtSprite);
-                this._courtSprite.destroy();
+                this._courtSprite.destroy({ texture: true, baseTexture: true });
                 this._courtSprite = null;
             }
             if (this._court) {
@@ -1503,8 +1508,8 @@
             H.decoPanel(bmp, 0, 0, this._vw, this._vh, { step: 3 });
             H.decoSunburst(bmp, 1, 11, 12, D.goldLo, { from: 0, span: Math.PI / 2, rays: 5, dashed: false });
             H.decoSunburst(bmp, this._vw - 2, 11, 12, D.goldLo, { from: Math.PI, span: -Math.PI / 2, rays: 5, dashed: false });
-            const col = result === "VICTORY!" ? D.green : (result === "DEFEAT" ? D.red : D.goldHi);
-            this.hudText(result, 0, 7, this._vw, 'center', col, 16);
+            const col = result === "victory" ? D.green : (result === "defeat" ? D.red : D.goldHi);
+            this.hudText(T('Basketball.result.' + result), 0, 7, this._vw, 'center', col, 16);
             H.decoRule(bmp, 10, 28, this._vw - 20, D.goldLo);
             this.hudText(score, 0, 31, this._vw, 'center', D.ink, 8);
             this.endText();

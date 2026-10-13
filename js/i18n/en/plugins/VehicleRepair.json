@@ -8,9 +8,9 @@
   "camperExpedition": "CAMPER EXPEDITION",
   "aReinforcedHeavyCamperDesigned": "A reinforced heavy camper designed to endure wilderness tours and long journeys. Demands high overall structural integrity.",
   "standardUrbanSedan": "STANDARD URBAN SEDAN",
-  "aClassicStandardEngineTransport": "A classic standard engine transport suited for urban environments. Relies on tight steering and transmission control.",
-  "lightSportMotorcycle": "LIGHT SPORT MOTORCYCLE",
-  "anAgileAndRapidPersonal": "An agile and rapid personal sport bike. Requires perfect chain lubrication and brake responsiveness.",
+  "aClassicStandardEngineTransport": "A classic car built for city streets. Relies on its steering and transmission.",
+  "lightSportMotorcycle": "SPORT BICYCLE",
+  "anAgileAndRapidPersonal": "A light, fast sport bicycle. Needs a well-oiled chain and sharp brakes.",
   "explorerStarship": "EXPLORER STARSHIP",
   "anAdvancedDeepSpaceExplorer": "An advanced deep-space explorer equipped with hyper-navigation drives. Critical parts must be flawless to permit ascent.",
   "inflatableDinghy": "INFLATABLE DINGHY",
@@ -19,7 +19,7 @@
   "changeAppearance": "CHANGE APPEARANCE",
   "statusBroken": "STATUS: BROKEN",
   "statusOperational": "STATUS: OPERATIONAL",
-  "allCriticalComponentsMustMaintain": "Every essential component must stay above 0% integrity for the vehicle to run.",
+  "allCriticalComponentsMustMaintain": "Essential parts must stay above 0% or the vehicle won't run.",
   "repair": "Repair",
   "upgrades": "Upgrades",
   "close": "CLOSE",
@@ -38,23 +38,23 @@
     },
     "speed": {
       "name": "Aero Streamlining",
-      "desc": "Higher top speed and less game-time spent crossing each world tile."
+      "desc": "Higher top speed. Faster world map travel."
     },
     "fuel": {
       "name": "Expanded Tank",
-      "desc": "A larger reservoir raises the maximum fuel capacity."
+      "desc": "More fuel capacity."
     },
     "health": {
       "name": "Reinforced Chassis",
-      "desc": "A hardened frame makes the vehicle take less damage from impacts."
+      "desc": "Less damage from impacts."
     },
     "aquatic": {
       "name": "Amphibious Conversion",
-      "desc": "A sealed hull and pontoons let the camper drive on and dive beneath water."
+      "desc": "The camper can drive on and dive under water."
     },
     "flight": {
       "name": "Antigravity Rotors",
-      "desc": "Fold-out antigravity rotors let the camper take off and fly."
+      "desc": "The camper can take off and fly."
     }
   },
   "upgradeWorkshop": "UPGRADE WORKSHOP",
@@ -123,23 +123,23 @@
       },
       "portrait": {
         "name": "Vehicle",
-        "text": "The vehicle, its description and whether it runs. A starship can change its appearance from here."
+        "text": "Vehicle info and status. Starships can change appearance here."
       },
       "status": {
         "name": "Status",
-        "text": "Broken means an essential component is at 0% and the vehicle will not move until it is repaired."
+        "text": "Broken: an essential part is at 0%. Repair it to move again."
       },
       "tabs": {
         "name": "Repair and Upgrades",
-        "text": "Turn between mending parts and improving the vehicle."
+        "text": "Switch between repairs and upgrades."
       },
       "repair": {
         "name": "Components registry",
-        "text": "Every part with its integrity. Essential ones keep the vehicle running. Repair one part, or Full Repair for all of them, spending materials."
+        "text": "Each part and its condition. Repair one part, or use Full Repair for all. Costs materials."
       },
       "upgrades": {
         "name": "Upgrade workshop",
-        "text": "Improvements bought in levels: acceleration, top speed, fuel capacity, damage reduction, and for the camper driving on water and flight."
+        "text": "Upgrade acceleration, speed, fuel and armor by level. The camper can also gain water driving and flight."
       },
       "help": {
         "name": "? Help",

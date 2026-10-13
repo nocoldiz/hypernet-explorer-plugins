@@ -321,6 +321,19 @@
         }, fadeDuration * frame);
     }
 
+    // F4 is the core's own fullscreen key and it never told the config: the
+    // Options row kept showing the old answer and the next launch put the
+    // window back the way the player had just undone. The press is recorded
+    // as the preference it is.
+    const _Graphics_switchFullScreen = Graphics._switchFullScreen;
+    Graphics._switchFullScreen = function() {
+        const wanted = !this._isFullScreen();
+        _Graphics_switchFullScreen.call(this);
+        ConfigManager.fullscreen = wanted;
+        ConfigManager.save();
+        refitCanvasWhenSettled();
+    };
+
     Scene_Map.prototype.toggleFullscreenWithFade = function() {
         const newValue = !ConfigManager.fullscreen;
         ConfigManager.fullscreen = newValue;
@@ -434,7 +447,7 @@
     // ========================================================================
 
     if (window.GameOptions) {
-        window.GameOptions.registerOption('fullscreen', T('ResolutionSwitcher.fullscreen'), 
+        window.GameOptions.registerOption('fullscreen', () => T('ResolutionSwitcher.fullscreen'), 
             () => ConfigManager.fullscreen, 
             (value) => {
                 ConfigManager.fullscreen = value;

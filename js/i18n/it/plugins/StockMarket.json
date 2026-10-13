@@ -21,24 +21,24 @@
     "oil": "OIL",
     "souls": "SOUL",
     "cancel": "Annulla",
-    "sellAll": "Vendi Tutto",
+    "sellAll": "Vendi tutto",
     "share": "azione",
     "shares": "azioni"
   },
   "titles": {
-    "buyWhich": "Compra quale stock?",
-    "sellWhich": "Vendi quale stock?",
-    "buyHowMany": "Compra quante azioni di {stock}?",
-    "sellHowMany": "Vendi quante azioni di {stock}?"
+    "buyWhich": "Quale titolo comprare?",
+    "sellWhich": "Quale titolo vendere?",
+    "buyHowMany": "Quante azioni di {stock} comprare?",
+    "sellHowMany": "Quante azioni di {stock} vendere?"
   },
   "stockNames": {
     "oil": "OIL",
     "souls": "SOUL"
   },
-  "appName": "OILSOUL MARKET",
+  "appName": "Proiettore quantico",
   "portfolio": {
-    "liquid": "Euro liquidi",
-    "netWorth": "Patrimonio Netto"
+    "liquid": "Liquidità",
+    "netWorth": "Patrimonio netto"
   },
   "ui": {
     "oilTether": "Petrolio:",
@@ -72,7 +72,7 @@
   "errors": {
     "noFloat": "Non restano azioni da emettere",
     "noGold": "Denaro insufficiente per questo ordine",
-    "noShares": "Non possiedi cosi tante azioni"
+    "noShares": "Non possiedi così tante azioni"
   },
   "headlines": {
     "oil": [
@@ -360,5 +360,102 @@
     "someWar": "guerra lontana",
     "someTown": "mercato",
     "somePower": "le potenze"
+  },
+  "terminal": {
+    "appName": "Borsa",
+    "title": "BORSA",
+    "live": "● MERCATO APERTO",
+    "ticks": "Aggiornamenti:",
+    "liquid": "LIQUIDITÀ",
+    "portfolio": "AZIONI IN PORTAFOGLIO",
+    "netWorth": "PATRIMONIO NETTO",
+    "watchlist": "TITOLI OSSERVATI",
+    "assetProfile": "PROFILO DI {symbol}",
+    "holding": "Possedute: {n} azioni",
+    "orderBook": "REGISTRO ORDINI",
+    "spread": "SPREAD: {value}",
+    "mid": "MEDIO: {value}",
+    "market": "MERCATO",
+    "sharesShort": "{n} az.",
+    "sharesN": "{n} azioni",
+    "select": "Seleziona",
+    "noOrders": "Nessun ordine aperto. Usa gli ordini limite per operare a un prezzo obiettivo.",
+    "noHistory": "Nessuna operazione in questa sessione.",
+    "away": "a {pct}%",
+    "escrowMoney": "Vincolati: {value}",
+    "escrowShares": "{n} az. vincolate",
+    "filled": "ESEGUITO",
+    "chartLine": "Linea e area",
+    "chartCandle": "Candele",
+    "medianTarget": "Mediana",
+    "console": "TERMINALE ORDINI",
+    "buyLong": "COMPRA / LONG",
+    "sellLiquidate": "VENDI / LIQUIDA",
+    "execType": "TIPO DI ESECUZIONE",
+    "marketRef": "Riferimento di mercato:",
+    "orderQty": "QUANTITÀ ORDINE",
+    "available": "Disponibile:",
+    "max": "MAX",
+    "execRate": "Prezzo di esecuzione:",
+    "orderQtyLabel": "Quantità ordine:",
+    "totalRequired": "Totale richiesto:",
+    "proceeds": "Ricavo stimato:",
+    "place": "Piazza ordine {side} {type}",
+    "side": {
+      "buy": "Compra",
+      "sell": "Vendi"
+    },
+    "type": {
+      "market": "A mercato",
+      "limit": "Limite",
+      "stop_loss": "Stop loss",
+      "take_profit": "Take profit"
+    },
+    "priceLabel": {
+      "limit": "PREZZO LIMITE",
+      "stop": "PREZZO DI STOP",
+      "takeProfit": "PREZZO TAKE PROFIT"
+    },
+    "tab": {
+      "holdings": "Portafoglio",
+      "orders": "Ordini aperti ({n})",
+      "history": "Storico operazioni",
+      "news": "Notizie di mercato"
+    },
+    "col": {
+      "symbol": "Simbolo",
+      "assetName": "Titolo",
+      "shares": "Azioni",
+      "avgCost": "Costo medio",
+      "marketPrice": "Prezzo di mercato",
+      "totalValue": "Valore totale",
+      "unrealized": "Utile non realizzato",
+      "actions": "Operazioni",
+      "orderId": "ID ordine",
+      "sideType": "Lato e tipo",
+      "quantity": "Quantità",
+      "targetPrice": "Prezzo obiettivo",
+      "distance": "Distanza",
+      "escrow": "Vincolato",
+      "action": "Operazione",
+      "time": "Ora",
+      "execPrice": "Prezzo eseguito",
+      "totalVolume": "Volume totale",
+      "realized": "Utile realizzato",
+      "status": "Stato"
+    },
+    "errors": {
+      "badOrder": "Parametri dell'ordine non validi",
+      "noEscrow": "Denaro insufficiente per coprire questo ordine limite",
+      "exceedsHeld": "Supera le azioni possedute ({n})"
+    },
+    "toast": {
+      "cancelled": "Ordine {id} annullato. Fondi vincolati restituiti.",
+      "liquidated": "Vendute tutte le {n} azioni di {stock}",
+      "bought": "Comprate {n} azioni di {stock} a prezzo di mercato",
+      "sold": "Vendute {n} azioni di {stock} a prezzo di mercato",
+      "placed": "Ordine {side} {type} piazzato per {n} azioni a {price}",
+      "failed": "Ordine non piazzato: {reason}"
+    }
   }
 }

@@ -129,11 +129,17 @@
   let i18nData = {};
   let i18nLoading = false;
   let i18nLoaded = false;
+  // The language the banks above were read in. The first read happens while
+  // the database loads, which is BEFORE ConfigManager.load() has set the
+  // player's language, so it is always the default one: every lookup checks
+  // this against the active language and re-reads the banks when they differ.
+  let i18nLang = null;
 
   const loadAllI18n = async () => {
     const categories = ["enemyArchetypes", "objectArchetypes", "equip"];
     const lang = ConfigManager.language || "en";
-    
+    i18nLang = lang;
+
     const loadPromises = categories.map(async (category) => {
       const url = `js/i18n/${lang}/${category}.json`;
       try {
@@ -142,12 +148,30 @@
         console.log(`Health_Core: Loaded ${category} i18n for ${lang}`);
       } catch (e) {
         console.error(`Health_Core: Failed to load ${category} i18n from ${url}`, e);
-        i18nData[category] = {};
+        // A failed re-read keeps the bank already held rather than blanking it.
+        if (!i18nData[category]) i18nData[category] = {};
       }
     });
 
     await Promise.all(loadPromises);
     i18nLoaded = true;
+    i18nLoading = false;
+  };
+
+  function ensureI18nLanguage() {
+    if (!i18nLoaded || i18nLoading || typeof ConfigManager === "undefined") return;
+    const lang = ConfigManager.language || "en";
+    if (lang === i18nLang) return;
+    i18nLoading = true;
+    loadAllI18n();
+  }
+
+  // Re-read the banks as soon as the saved language is known, so they are in
+  // the player's language long before anything names a body part.
+  const _ConfigManager_applyData_HealthCore = ConfigManager.applyData;
+  ConfigManager.applyData = function (config) {
+    _ConfigManager_applyData_HealthCore.call(this, config);
+    ensureI18nLanguage();
   };
 
   const resolveI18nPath = (path, obj) => {
@@ -157,6 +181,7 @@
 
   function getArchetypeText(key) {
     if (!key) return "";
+    ensureI18nLanguage();
     // If it doesn't look like a key, return as is
     if (typeof key === "string" && !key.includes('.')) return key;
 
@@ -181,6 +206,7 @@
 
   function getEquipText(key) {
     if (!key) return "";
+    ensureI18nLanguage();
     const lowerKey = key.toLowerCase();
     if (i18nData.equip) {
       return i18nData.equip[lowerKey] || key;
@@ -500,6 +526,9 @@
       if (forced) return forced;
     }
     const s = subject || (action && action.subject ? action.subject() : (window.BattleManager ? BattleManager._subject : null));
+    // A held stance (DamageStances, below) decides how a physical blow lands.
+    const stanceType = stanceDamageType(s, action);
+    if (stanceType) return stanceType;
     const weaponType = weaponDamageType(s);
     if (action) {
       const item = typeof action.item === "function" ? action.item() : (action._item ? action.item() : null);
@@ -538,6 +567,57 @@
     const attackId = battler && typeof battler.attackSkillId === "function" ? battler.attackSkillId() : 1;
     return item.id === attackId || item.id === 1;
   }
+
+  // ===== DamageStances: a state that decides how a physical blow lands =====
+  //   A state carrying <DamageTypeOverride: Cutting|Blunt|Piercing|...> turns
+  //   every physical attack and skill of its holder into that damage type for
+  //   as long as it holds: the Edge stance makes a club cut and sever, the
+  //   Merciful stance makes a sword Blunt (vital parts held, a kill left
+  //   downed instead, see wasBluntDowned), the Spearpoint stance makes any
+  //   blow Piercing (half through a Guard, BattleSystemEnhancedMechanics).
+  //   Spells (hitType 2 or a magic skill type) and thrown items keep their own
+  //   type. It is read inside getActionDamageType, so Scene_Battle and
+  //   MapBattleMode (which runs the same Game_Action flow) both obey it.
+  //   Kept between getActionDamageType and attackerCanCut on purpose: the
+  //   resolver is lifted out of this file as one block by the tests.
+  // ==========================================================================
+  const STANCE_DAMAGE_TYPES = ["Blunt", "Cutting", "Piercing", "Explosive", "Area", "Abstract"];
+
+  /** The damage type a state forces, or null when it forces none. */
+  function stateDamageTypeOverride(state) {
+    if (!state) return null;
+    let raw = state.meta && state.meta.DamageTypeOverride;
+    if (!raw || raw === true) raw = state.note && (state.note.match(/<DamageTypeOverride:\s*([^>]+)>/i) || [])[1];
+    if (!raw) return null;
+    const want = String(raw).trim().toLowerCase();
+    for (const t of STANCE_DAMAGE_TYPES) if (t.toLowerCase() === want) return t;
+    return null;
+  }
+
+  /** Is this action a blow a stance speaks for: a physical, damaging attack or skill? */
+  function isStanceStrike(action) {
+    if (!action || typeof action.item !== "function") return false;
+    if (typeof action.isItem === "function" && action.isItem()) return false;
+    const item = action.item();
+    if (!item || !item.damage) return false;
+    const dmg = Number(item.damage.type) || 0;
+    if (dmg !== 1 && dmg !== 5) return false; // HP damage or HP drain
+    if (item.hitType === 2 || item.stypeId === 1) return false; // a spell keeps its own type
+    return true;
+  }
+
+  /** The damage type the battler's stance forces on this action, or null. */
+  function stanceDamageType(battler, action) {
+    if (!battler || typeof battler.states !== "function") return null;
+    if (!isStanceStrike(action)) return null;
+    const states = battler.states() || [];
+    for (const st of states) {
+      const forced = stateDamageTypeOverride(st);
+      if (forced) return forced;
+    }
+    return null;
+  }
+  // ===== end DamageStances =====
 
   function attackerCanCut(subject, action) {
     const act = action || (window.BattleManager ? BattleManager._action : null);
@@ -852,6 +932,11 @@
           // only ever ruined where it stands (partStatusLabel).
           canCutoff: !!archetypePart.canCutoff,
           limbCopy: archetypePart.limbCopy || 0,
+          // What the part teaches, kept on the body so a part a second
+          // archetype grafted on (a Bird's wings on a person) brings its own
+          // moves with it, and which half of a spliced body it came from.
+          skillId: archetypePart.skillId || 0,
+          fromArchetype: archetypePart.fromArchetype || 0,
         };
       }
 
@@ -887,11 +972,16 @@
   // Talking and wrestling are battle COMMANDS, not skills anybody learns
   // (BattleSystemEnhanchedCommands.js): both read the body themselves, so a
   // mouth grants spitting and a hand grants pushing, and nothing else.
+  // A wing flies: any part the WING family names (LEFT_WING, PINIONS, a rotor)
+  // teaches Fly, so a grafted or born pair of wings lifts the party off the
+  // map the same way the spell does (FlySystem).
+  const FLY_SKILL_ID = 9;
   const PART_TYPE_BONUS_SKILLS = [
     { test: (k) => k.includes("MOUTH"), skills: [10] },
     { test: (k) => k.includes("HAND"), skills: [11] },
     { test: (k) => k.includes("EYE"), skills: [12] },
     { test: (k) => k.includes("FOOT") || k.includes("FEET"), skills: [8] },
+    { test: (k) => partFamilies(k).includes("WING"), skills: [FLY_SKILL_ID] },
   ];
 
   // Normalize a part.skillId value (number, array, 0, or undefined) into a clean
@@ -941,6 +1031,49 @@
           actor.learnSkill(id);
         }
       }
+    }
+  }
+
+  // The body as a list a page can print: every part the actor has, in body
+  // order, with the share of HP it carries, whether it is vital, which half of
+  // a spliced body it came from and every skill it teaches. Read by character
+  // creation's Body parts tab, simple and detailed alike.
+  function partSkillRows(actor) {
+    if (!actor) return [];
+    if (!actor._bodyParts) initializeBodyParts(actor);
+    const parts = actor._bodyParts || {};
+    const rows = [];
+    for (const key in parts) {
+      const part = parts[key];
+      if (!part) continue;
+      rows.push({
+        key: key,
+        name: part.name || archetypePartName({ name: key }),
+        hpPercent: part.hpPercent || 0,
+        vital: !!part.vital,
+        fromArchetype: part.fromArchetype || 0,
+        skills: getPartSkillIds(part, key).filter((id) => $dataSkills && $dataSkills[id]),
+      });
+    }
+    return rows;
+  }
+
+  // The skills a body change takes and gives. `before` is anatomySkillIds read
+  // BEFORE the body was rebuilt: what the old body taught and the new one does
+  // not is forgotten, unless the class teaches it too; what the new one
+  // teaches is learned. A second archetype picked in character creation is
+  // the case it exists for: wings on, Fly on; wings off, Fly off.
+  function syncAnatomySkills(actor, before) {
+    if (!actor || typeof actor.learnSkill !== "function" ||
+        typeof actor.isLearnedSkill !== "function") return;
+    const after = anatomySkillIds(actor);
+    const cls = typeof actor.currentClass === "function" ? actor.currentClass() : null;
+    const classTaught = new Set(((cls && cls.learnings) || []).map((l) => l.skillId));
+    for (const id of before || []) {
+      if (!after.has(id) && !classTaught.has(id) && actor.isLearnedSkill(id)) actor.forgetSkill(id);
+    }
+    for (const id of after) {
+      if ($dataSkills && $dataSkills[id] && !actor.isLearnedSkill(id)) actor.learnSkill(id);
     }
   }
 
@@ -1827,7 +1960,15 @@
             noteVitalDestroyed(actor);
             actor.die();
             actor.refresh();
-            $gameParty.removeActor(actor.actorId());
+            // The story's Blood and Oil keeps Em in the party: her death is her
+            // own game over (StoryDeath), read once the blow has landed.
+            var SD = window.StoryDeath;
+            var helpers = window.BattleSystemEnhanced && window.BattleSystemEnhanced.Helpers;
+            var storyEmDown = !!(SD && SD.mortal() && helpers && helpers.isStoryEm && helpers.isStoryEm(actor));
+            if (!storyEmDown) {
+              $gameParty.removeActor(actor.actorId());
+              if (SD) SD.noteRemoved(actor);
+            }
             var purpleVitalName = "\\c[25]" + part.name + "\\c[0]";
             var msg = T('HealthCore.vitalOrganDestroyed', { actor: actor.name(), part: purpleVitalName });
             if ($gameParty.inBattle() && BattleManager._logWindow) {
@@ -2979,20 +3120,16 @@
         "\\c[25]" + log.partName + "\\c[0]"
       );
       var pushMethod = typeof this.appendToActionLine === "function" ? "appendToActionLine" : "addText";
+      // The possessive is the language's business, not this file's: English
+      // reads "Farn's skull was fractured!", Italian "Farn: cranio fratturato!".
       if (log.paramName && log.amount !== null && log.amount !== undefined) {
         var amountColor = log.amount < 0 ? 24 : 23;
         var amountStr = "\\c[" + amountColor + "]" + log.amount + "\\c[0]";
-        if (ConfigManager.language === "it") {
-          this.push(pushMethod, log.name + " " + coloredMsg + ", " + log.paramName + " " + amountStr + "!");
-        } else {
-          this.push(pushMethod, log.name + "'s " + coloredMsg + ", " + log.paramName + " " + amountStr + "!");
-        }
+        this.push(pushMethod, T('HealthCore.battleLogWoundStat', {
+          actor: log.name, wound: coloredMsg, param: log.paramName, amount: amountStr
+        }));
       } else {
-        if (ConfigManager.language === "it") {
-          this.push(pushMethod, log.name + " " + coloredMsg + "!");
-        } else {
-          this.push(pushMethod, log.name + "'s " + coloredMsg + "!");
-        }
+        this.push(pushMethod, T('HealthCore.battleLogWound', { actor: log.name, wound: coloredMsg }));
       }
 
       $gameTemp.limbDamageLog = null;
@@ -3008,7 +3145,9 @@
     // Apply to Actors 1, 2, and 3
     if (target.isActor() && (target.actorId() === 1 || target.actorId() === 2 || target.actorId() === 3)) {
       var value = Math.floor(target.mhp * effect.value1 + effect.value2);
-      healBodyParts(target, value);
+      // A negative recovery is an HP price (a blood sacrifice), not a wound:
+      // it costs the pool and leaves the limbs alone.
+      if (value > 0) healBodyParts(target, value);
     }
   };
 
@@ -3094,6 +3233,8 @@
   // Every skill the anatomy owes: read by CategorizedBattleSkills, which never
   // benches one (a body does not put its own claws in storage).
   window.HealthCore.anatomySkillIds = anatomySkillIds;
+  window.HealthCore.partSkillRows = partSkillRows;
+  window.HealthCore.syncAnatomySkills = syncAnatomySkills;
   // Losing what the anatomy taught: a part coming off (severed, amputated or
   // replaced in surgery) and an augment pulled on its own. Both keep whatever
   // the rest of the body still grants, so a one-handed character can still
@@ -3129,6 +3270,9 @@
   window.HealthCore.PLAYER_CUTTING_DAMAGE_TYPES = PLAYER_CUTTING_DAMAGE_TYPES;
   window.HealthCore.getActionDamageType = getActionDamageType;
   window.HealthCore.isBasicAttackSkill = isBasicAttackSkill;
+  // DamageStances: the type a held stance forces on a physical blow.
+  window.HealthCore.stanceDamageType = stanceDamageType;
+  window.HealthCore.stateDamageTypeOverride = stateDamageTypeOverride;
   window.HealthCore.isBluntAction = isBluntAction;
   window.HealthCore.resetFightRecord = resetFightRecord;
   window.HealthCore.noteVitalDestroyed = noteVitalDestroyed;

@@ -1,21 +1,21 @@
 {
   "back": "GO BACK",
-  "forbiddenDraw": "{percent}% FORBIDDEN DRAW",
+  "forbiddenDraw": "{percent}%",
   "forbiddenTitle": "FORBIDDEN GRIMOIRE",
   "skillBookTitle": "{school} SKILL BOOK",
   "forgottenTitle": "FORGOTTEN GRIMOIRE",
   "schoolTitle": "{school} GRIMOIRE",
-  "noSpells": "NOBODY HERE CAN GRASP A SPELL FROM DEZE PAGES.<br>(NONE WITHIN DA PARTY'S MP REACH, OR ALL ALREADY KNOWN)",
+  "noSpells": "NO ONE HERE CAN LEARN DEZE SPELLS.<br>(NO ENOUGH MP, OR ALREADY KNOWN)",
   "ui": {
     "beyondStat": "✧ NEEDS {stat} {points}, HAB {value}",
     "requires": "REQUIRES {stat} {points}",
-    "blurb": "DA SAME FIVE SPELLS IZ OFFERED TA EVERYONE. PICK A READER WHO CAN LEARN ONE, DEN CLAIM IT!",
+    "blurb": "FIVE SPELLS ON OFFER. PICK A READER, DEN A SPELL!",
     "alreadyKnown": "✧ ALREADY KNOWN",
-    "beyondReach": "✧ BEYOND DIS READER'S MP",
+    "beyondReach": "✧ NO ENOUGH MP",
     "partyReader": "PARTY READER",
     "psychicDiagnostics": "PSYCHIC DIAGNOSTICS",
     "medianPsi": "MEDIAN PSI (LUCK)",
-    "forbiddenSurfacing": "FORBIDDEN SURFACIN'",
+    "forbiddenSurfacing": "FORBIDDEN SPELL CHANCE",
     "forbidden": "✦ FORBIDDEN",
     "whisperedSpells": "WHISPERED SPELLS",
     "esoteric": "✦ ESOTERIC",
@@ -24,11 +24,11 @@
   },
   "toast": {
     "title": "SPELL LEARNED",
-    "learned": "{actor} COPIED {skill} OUT OF DA {book}."
+    "learned": "{actor} LEARNED {skill} FROM DA {book}."
   },
   "custom": {
     "title": "A WRITTEN LOUDNESS",
-    "blurb": "EVERY PAGE HAB TA BE READ OUT BEFORE DIS LOUDNESS CLOSES. {left} OF {total} IZ STILL UNREAD. LEAVE NOW AN' IT GOES BACK IN DA PACK, WHOLE!",
-    "takenBy": "READ OUT TA {actor}"
+    "blurb": "{left} OF {total} PAGES UNREAD. LEAVE NOW AN' DA BOOK GOES BACK IN DA PACK!",
+    "takenBy": "READ BY {actor}"
   }
 }

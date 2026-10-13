@@ -11,7 +11,7 @@
   "no": "NAH!",
   "headerText": "SPEND YA {budget} TRAIT POINTS. DRAWBACKS PAY POINTS BACK!",
   "pointsLabel": "POINTS SPENT",
-  "refundLabel": "PAID BACK BY DRAWBACKS",
+  "refundLabel": "DRAWBACK REFUND",
   "picksLabel": "TRAITS TAKEN",
   "costLabel": "COST:",
   "selectedTraitsLabel": "SELECTED TRAITS",
@@ -28,11 +28,11 @@
   "tabMental": "MENTAL",
   "tabMagical": "MAGICAL",
   "tabDiseases": "DISEASES",
-  "selectedDiseasesLabel": "ILLNESSES CARRIED",
+  "selectedDiseasesLabel": "ILLNESSES",
   "searchPlaceholder": "SEARCH TRAITS…",
-  "incompatibleNote": "CLASHES WIT A TRAIT YOU HAB ALREADY TAKEN!",
-  "unaffordableNote": "NO ENOUGH TRAIT POINTS LEFT FOR DIS ONE!",
-  "noneInCategory": "NOTHIN' HERE",
+  "incompatibleNote": "CONFLICTS WIT A CHOSEN TRAIT!",
+  "unaffordableNote": "NO ENOUGH TRAIT POINTS.",
+  "noneInCategory": "NUTTIN' HERE",
   "purseSpent": "SPENT",
   "purseRefunds": "REFUNDS",
   "purseLeft": "REMAININ'",
@@ -57,7 +57,7 @@
     },
     "mystic": {
       "name": "MYSTIC",
-      "description": "BORN TA DA WORK, VERSED IN DA STILL, AN' CAREFUL ABOUT OMENS!"
+      "description": "BORN TA DA WORK, VERSED IN DA STILL, AN' CAREFUL 'BOUT OMENS!"
     },
     "brawler": {
       "name": "BRAWLER",
@@ -97,15 +97,15 @@
     },
     "beastkin": {
       "name": "BEASTKIN",
-      "description": "RAISED BY SOMETHIN' WIT FOUR LEGS, AN' IT STILL SHOWS IN DA WALK!"
+      "description": "RAISED BY SOMETINK WIT FOUR LEGS, AN' IT STILL SHOWS IN DA WALK!"
     },
     "hermit": {
       "name": "HERMIT",
-      "description": "OWNS THREE THINGS, SPEAKS TA NOBODY, AN' WANTS IT KEPT DAT WAY!"
+      "description": "OWNS THREE TINKZ, SPEAKS TA NOBODY, AN' WANTS IT KEPT DAT WAY!"
     },
     "nightborn": {
       "name": "NIGHTBORN",
-      "description": "SOMETHIN' OLD IN DA BLOOD, A TASTE FOR PAIN, AN' SCARS DAT CAME WIT BOTH!"
+      "description": "SOMETINK OLD IN DA BLOOD, A TASTE FOR PAIN, AN' SCARS DAT CAME WIT BOTH!"
     },
     "oracle": {
       "name": "ORACLE",
@@ -117,7 +117,7 @@
     },
     "savant": {
       "name": "SAVANT",
-      "description": "NO CAN SIT STILL, FORGETS NOTHIN' READ, AN' ANSWERS IN FOUR LANGUAGES!"
+      "description": "NO CAN SIT STILL, FORGETS NUTTIN' READ, AN' ANSWERS IN FOUR LANGUAGES!"
     },
     "giant": {
       "name": "GIANT",
@@ -129,7 +129,7 @@
     },
     "shadow": {
       "name": "SHADOW",
-      "description": "TRAINED TA END THINGS QUIETLY, REMEMBERED BY NOBODY, MOVED BY NOTHIN'!"
+      "description": "TRAINED TA END TINKZ QUIETLY, REMEMBERED BY NOBODY, MOVED BY NUTTIN'!"
     },
     "monk": {
       "name": "MONK",
@@ -141,7 +141,7 @@
     },
     "doomsayer": {
       "name": "DOOMSAYER",
-      "description": "BELIEVES IN NOTHIN', EXPECTS DA WORST, AN' IZ TERRIFIED OF DA END ANYWAY!"
+      "description": "BELIEVES IN NUTTIN', EXPECTS DA WORST, AN' IZ TERRIFIED OF DA END ANYWAY!"
     },
     "caveborn": {
       "name": "CAVEBORN",
@@ -149,7 +149,7 @@
     },
     "gambler": {
       "name": "GAMBLER",
-      "description": "NO CAN WALK PAST A TABLE, WINS MORE DEN DEY SHOULD, AN' LIES ABOUT BOTH!"
+      "description": "NO CAN WALK PAST A TABLE, WINS MORE DEN DEY SHOULD, AN' LIES 'BOUT BOTH!"
     },
     "predator": {
       "name": "LONE PREDATOR",
@@ -161,10 +161,10 @@
     },
     "scavenger": {
       "name": "SCAVENGER",
-      "description": "IT EATS WHAT IZ LEFT, DIGS WHERE IT MUST AN' RUNS FROM ALMOST EVERYTHIN'!"
+      "description": "IT EATS WHAT IZ LEFT, DIGS WHERE IT MUST AN' RUNS FROM ALMOST EVERYTINK!"
     },
     "armoured": {
-      "name": "ARMOURED THING",
+      "name": "ARMOURED TINK",
       "description": "HIDE TOO THICK TA CUT, A BITE WORTH AVOIDIN' AN' A LONG WINTER SLEEP!"
     }
   }

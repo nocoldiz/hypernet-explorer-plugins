@@ -570,11 +570,11 @@
   },
   "articleDefault": "The ",
   "sacrifice": {
-    "blockedInBattle": "The ritual cannot be performed in the heat of battle.",
-    "noEligible": "There is no one who can be spared for the ritual.",
-    "prompt": "Choose who will be sacrificed to forge the weapon. This cannot be undone.",
+    "blockedInBattle": "Can't perform the ritual in battle.",
+    "noEligible": "Nobody can be sacrificed.",
+    "prompt": "Choose who to sacrifice for the weapon. This can't be undone.",
     "cancel": "Cancel",
-    "noSlots": "The ritual fails: no vessel remains for the weapon.",
+    "noSlots": "The ritual fails: there is no room for a new weapon.",
     "namePattern": "{name}'s {weapon}",
     "descLine": "Forged from the sacrificed body of {name}, once level {level}.",
     "result": "{name} is consumed in the ritual. {weapon} is forged from their remains."

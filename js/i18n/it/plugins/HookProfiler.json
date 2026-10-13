@@ -1,7 +1,7 @@
 {
   "option": {
     "label": "Profiler degli hook (richiede riavvio)",
-    "desc": "Misura la parte di ogni plugin nell'aggiornamento della mappa, una riga per plugin e hook, e aggiunge un rapporto a perf-log.txt nella cartella del gioco ogni 30 secondi o quando premi Ctrl+F8. Spento, non costa nulla.",
+    "desc": "Misura il tempo di ogni plugin nell'aggiornamento della mappa. Scrive un rapporto in perf-log.txt ogni 30 secondi o con Ctrl+F8. Spento non costa nulla.",
     "restart": "Ha effetto dopo il riavvio del gioco."
   },
   "enabled": "Profiler degli hook acceso. Riavvia il gioco per iniziare la misura.",

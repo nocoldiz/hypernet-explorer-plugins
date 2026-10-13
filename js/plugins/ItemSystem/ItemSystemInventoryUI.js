@@ -137,29 +137,24 @@
           if (!m) return part.trim();
           const obj = $dataItems[parseInt(m[1],10)];
           if (!obj) return T('Inventory.section.unknownStack', { n: m[2] });
-          return `<span class="recipe-mat">${recipeMatIconHTML(obj.iconIndex)}${obj.name} x${m[2]}</span>`;
+          return `<span class="recipe-mat">${recipeMatIconHTML(obj.iconIndex)}${escapeHtml(obj.name)} x${m[2]}</span>`;
         }).join(', ');
       };
 
-      // Every block of facts on the right page is the same stat block: one
-      // .inspect-spec-grid of label/value pairs, the label muted, the value in
-      // the bright ink and right-aligned in its own column. No block inks or
-      // sizes itself (docs/task/ui_fixing.md).
-      // A value that is a list rather than a word (every status a remedy lifts,
-      // every material a recipe eats) is crushed into a two-word right-hand
-      // column and comes out as a ragged tower with white space all down the
-      // row. Past a short measure the pair stacks instead: the label on its
-      // line, the list under it running the full width, left to right.
-      const STACK_AT = 28;
-      const specRowHTML = (label, val, valClass) => {
-        const plain   = String(val).replace(/<[^>]*>/g, '');
-        const stacked = (valClass || '').includes('inspect-spec-value--wrap') && plain.length > STACK_AT;
-        return `<div class="inspect-spec-row${stacked ? ' inspect-spec-row--stacked' : ''}">` +
-          `<span class="inspect-spec-label">${label}:</span>` +
-          `<span class="inspect-spec-value${valClass ? ' ' + valClass : ''}">${val}</span>` +
+      // Every fact on the card is a tag in the header's pill style: the label
+      // muted, the value bright. A label that already ends in a colon keeps
+      // just the one.
+      const pillHTML = (label, val, pillClass) =>
+        `<div class="inspect-meta-item inspect-pill${pillClass ? ' ' + pillClass : ''}">` +
+          `<span class="inspect-pill-lbl">${String(label).replace(/\s*:\s*$/, '')}:</span> ` +
+          `<span class="inspect-meta-val inspect-pill-val">${val}</span>` +
         `</div>`;
-      };
-      const specBlock = (rowsHTML) => `<div class="inspect-spec-grid">${rowsHTML}</div>`;
+      // A bare line (a trait, an effect) is a tag with no label.
+      const pillTextHTML = (text) =>
+        `<div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${text}</span></div>`;
+      const specRowHTML = (label, val, valClass) =>
+        pillHTML(label, val, (valClass || '').includes('inspect-spec-value--muted') ? 'inspect-pill--muted' : '');
+      const specBlock = (rowsHTML) => `<div class="inspect-quick-pills inspect-pill-block">${rowsHTML}</div>`;
       const buildSpecRows = (specs) =>
         specBlock(specs.map(s => specRowHTML(s.label, s.val, s.valClass)).join(''));
 
@@ -175,7 +170,6 @@
         const isArmor  = DataManager.isArmor(selectedItem);
         const isItem   = DataManager.isItem(selectedItem);
         const itemType = typeLabelOf(selectedItem);
-        const loreText = loreOf(selectedItem, itemType);
 
         const generalSpecs = [];
         if (isWeapon) {
@@ -189,7 +183,7 @@
           }
           const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
               (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-          if (dt) {
+          if (dt && !/^none$/i.test(String(dt).trim())) {
             generalSpecs.push({ label: T('Inventory.spec.label.damageCategory'), val: String(dt).trim() });
           }
           // The stats the weapon's attack is worked out from, as highlighted
@@ -224,7 +218,7 @@
           }
           const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
               (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-          if (dt && dt !== 'None' && !(selectedItem.damage && selectedItem.damage.type > 0)) {
+          if (dt && !/^none$/i.test(String(dt).trim()) && !(selectedItem.damage && selectedItem.damage.type > 0)) {
             generalSpecs.push({ label: T('Inventory.spec.label.damageCategory'), val: String(dt).trim() });
           }
         }
@@ -249,7 +243,7 @@
         if (selectedItem.damage && selectedItem.damage.type > 0) {
           const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
               (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-          if (dt) {
+          if (dt && !/^none$/i.test(String(dt).trim())) {
             damageSpecs.push({ label: T('Inventory.spec.label.damageCategory'), val: String(dt).trim() });
           }
           damageSpecs.push({ label: T('Inventory.spec.label.damageType'), val: getDamageTypeName(selectedItem.damage.type) });
@@ -301,6 +295,9 @@
               if (colonIdx !== -1) { name = inner.substring(0, colonIdx).trim(); val = inner.substring(colonIdx+1).trim(); }
               const nl = name.toLowerCase();
               if (nl === 'movement' || nl === 'weight' || nl === 'category' || nl === 'uncraftable' || nl === 'damagetype') return;
+              // What an enchanting bench or the forge wrote onto the piece is
+              // read out in words in the Special abilities section below.
+              if (nl === 'geartags' || nl === 'enchanted' || nl === 'enchantspell') return;
               // Sound file names are for the engine, not the reader.
               if (nl === 'hitsounds' || nl === 'weaponsounds' || nl === 'hitsound' || nl === 'weaponsound' || nl === 'pickupsound' || nl === 'reloadsound' || nl.endsWith('sound') || nl.endsWith('sounds')) return;
               // <Scale:> is already printed as "Scaling" in the specifications
@@ -339,8 +336,8 @@
           }
         }
 
-        // The short description states what the item does; the lore below it is
-        // the combinatorial, world-seeded flavour. Both are shown.
+        // The short description states what the item does. The world-seeded
+        // lore is not printed on the card.
         // Combinatorial descriptions leave double spaces and stray blank lines
         // where an alternative resolved to nothing, which print as gaps in the
         // middle of the sentence.
@@ -352,22 +349,13 @@
         const shortDesc = tidyProse(descriptionOf(selectedItem));
         let detailedInfoHTML = '';
         if (shortDesc) detailedInfoHTML += `<div class="inspect-desc">${shortDesc}</div>`;
-        // The lore is the last thing on the card. It is flavour, and reading it
-        // first pushed the numbers the player actually opened the card for off
-        // the bottom of the page, so it goes under every spec block instead.
-        const loreProse = tidyProse(loreText);
 
         if (dOpts.out) dOpts.out.general = generalSpecs;
         if (generalSpecs.length && !dOpts.hoistGeneral) { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.specifications')}</div>`         + buildSpecRows(generalSpecs); }
         if (paramSpecs.length) {
           detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.attributeModifiers')}</div>`
-            + `<div class="inspect-chips-grid">`
-            + paramSpecs.map(s => {
-                const isGain = s.val.startsWith('+');
-                const chipClass = isGain ? 'inspect-stat-chip--gain' : 'inspect-stat-chip--loss';
-                return `<span class="inspect-stat-chip ${chipClass}"><span class="inspect-stat-chip-lbl">${s.label}:</span> <span class="inspect-stat-chip-val">${s.val}</span></span>`;
-              }).join('')
-            + `</div>`;
+            + specBlock(paramSpecs.map(s =>
+                pillHTML(s.label, s.val, s.val.startsWith('+') ? 'inspect-pill--gain' : 'inspect-pill--loss')).join(''));
         }
         if (invocationSpecs.length) { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.invocationStats')}</div>`      + buildSpecRows(invocationSpecs); }
         if (damageSpecs.length)     { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.combatApplication')}</div>`    + buildSpecRows(damageSpecs); }
@@ -375,15 +363,20 @@
           detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.medicalEffects')}</div>` + specBlock(effectsOrdered.map(e =>
             e.group
               ? specRowHTML(e.group.label, e.group.items.join(', '), 'inspect-spec-value--wrap')
-              : `<div class="inspect-bullet-item">${e.text}</div>`
+              : pillTextHTML(e.text)
           ).join(''));
         }
-        if (traitsList.length)      { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.specialProperties')}</div>`   + specBlock(traitsList.map(t => `<div class="inspect-bullet-item">${t}</div>`).join('')); }
+        if (traitsList.length)      { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.specialProperties')}</div>`   + specBlock(traitsList.map(pillTextHTML).join('')); }
+        // The piece's special abilities as tags, the skill card's Special
+        // section on gear (ItemSystemUtils.specialLines).
+        const specials = window.ItemSystemUtils.specialLines ? window.ItemSystemUtils.specialLines(selectedItem) : [];
+        if (specials.length) {
+          detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.special')}</div>` + specBlock(specials.map(text =>
+            `<div class="inspect-meta-item inspect-pill inspect-pill--special"><span class="inspect-meta-val inspect-pill-val">${escapeHtml(text)}</span></div>`).join(''));
+        }
         if (nutritionSpecs.length) {
           detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.nutritionalProfile')}</div>`
-            + `<div class="inspect-chips-grid">`
-            + nutritionSpecs.map(s => `<span class="inspect-stat-chip"><span class="inspect-stat-chip-lbl">${s.label}:</span> <span class="inspect-stat-chip-val">${s.val}</span></span>`).join('')
-            + `</div>`;
+            + specBlock(nutritionSpecs.map(s => pillHTML(s.label, s.val)).join(''));
         }
         const needRestores = window.ItemSystemUtils && window.ItemSystemUtils.getNeedRestores ? window.ItemSystemUtils.getNeedRestores(selectedItem) : [];
         if (needRestores.length) {
@@ -422,7 +415,6 @@
             + specBlock(cravingsFed.map(r => specRowHTML(r.label, `-${r.amount}%`, 'inspect-spec-value--muted')).join(''));
         }
         if (noteTags.length)        { detailedInfoHTML += `<div class="inspect-section-title">${T('Inventory.section.blueprints')}</div>` + specBlock(noteTags.map(tag => specRowHTML(tag.name, tag.value, 'inspect-spec-value--wrap')).join('')); }
-        if (loreProse) detailedInfoHTML += `<div class="inspect-flavour">${loreProse}</div>`;
 
         return detailedInfoHTML;
       }
@@ -452,7 +444,7 @@
         const detailsOut  = {};
         const detailsBody = detailsHTML(item, { hoistGeneral: !!extra, out: detailsOut });
         const hoistedHTML = (extra ? (detailsOut.general || []) : []).map(sp =>
-          `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${sp.label}:</span> <span class="inspect-meta-val inspect-pill-val">${sp.val}</span></div>`).join('');
+          pillHTML(sp.label, sp.val)).join('');
 
         // Full-width 3D preview banner up top, identity and compact quick-stat pills below.
         const identityHTML = `
@@ -461,13 +453,13 @@
                 <canvas id="${canvasId}" class="inspect-frame-canvas" width="32" height="32"></canvas>
               </div>
               <div class="inspect-title-box">
-                <h3 class="inspect-name">${item.name}${o.nameExtraHTML || ''}</h3>
+                <h3 class="inspect-name">${escapeHtml(item.name)}${o.nameExtraHTML || ''}</h3>
                 <div class="inspect-rarity rarity--${rarity.key}">${rarity.name} ${itemType}</div>
               </div>
             </div>
             <div class="inspect-meta-grid inspect-meta-grid--stacked inspect-quick-pills${weightGrams === 0 ? ' inspect-meta-grid--single' : ''}">
-              ${weightGrams > 0 ? `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${T('Inventory.section.unitWeight')}:</span> <span class="inspect-meta-val inspect-pill-val">${weightText}</span></div>` : ''}
-              <div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${T('Inventory.section.marketValue')}:</span> <span class="inspect-meta-val inspect-pill-val">${valueVal} €</span></div>
+              ${weightGrams > 0 ? pillHTML(T('Inventory.section.unitWeight'), weightText) : ''}
+              ${pillHTML(T('Inventory.section.marketValue'), `${valueVal} €`)}
               ${hoistedHTML}
             </div>`;
 
@@ -714,6 +706,8 @@
       container.style.transition  = 'opacity 0.2s ease-out';
       container.style.opacity     = '0';
       container.style.pointerEvents = 'none';
+      // Marked so the main menu never adopts a page that is on its way out.
+      container._dndClosing = true;
       setTimeout(() => {
         if (container && container.parentNode) container.parentNode.removeChild(container);
       }, 200);
@@ -778,6 +772,16 @@
 
     // The category the roll below is read against: the fallback further down may
     // move it, and the grid key has to name the list that was actually built.
+    // The last of a category can leave the pockets while its tab is the one
+    // being read; the filter falls back to All (not to the first tab, which is
+    // New) BEFORE the list is built, so the page never draws an empty grid
+    // under a tab that is no longer there to press.
+    const categories = this.uiCategories();
+    if (!categories.includes(this._activeUICategory)) {
+      const fallback = categories.includes('All' /* i18n-ignore: category id */) ? 'All' /* i18n-ignore: category id */ : categories[0];
+      this._activeUICategory = fallback;
+      this._activeCategoryIndex = Math.max(0, categories.indexOf(fallback));
+    }
     const listCategory = this._activeUICategory;
     const itemsList = this.getFilteredUIItems();
 
@@ -791,14 +795,6 @@
     // Read off the pockets rather than fixed: every category actually carried
     // has a tab, in alphabetical order behind All and Favourites, and the row
     // wraps to as many lines as that takes.
-    const categories = this.uiCategories();
-    // The last of a category can leave the pockets while its tab is the one
-    // being read; the filter falls back to All rather than showing nothing
-    // under a tab that is no longer there to press.
-    if (!categories.includes(this._activeUICategory)) {
-      this._activeUICategory = categories[0];
-      this._activeCategoryIndex = 0;
-    }
 
     const tabsHTML = `
       <div class="backpack-tabs-row">${categories.map((cat, idx) => {
@@ -1003,6 +999,14 @@
         this._dndActionsList.push('disassemble'); btnIdx++;
       }
 
+      // Sent off to one of the party's vehicles (Vehicle/VehicleStorage.js),
+      // wherever it is parked: the hold answers over the same link.
+      if (!isBoundGear && this.transferHolds().length) {
+        const isFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
+        actionBtnsHTML += `<div class="inspect-btn ${isFocused}" onclick="SceneManager._scene.triggerUIItemAction('transfer')">${T('Inventory.ui.transfer')}</div>`;
+        this._dndActionsList.push('transfer'); btnIdx++;
+      }
+
       if (!isBoundGear) {
         const isDiscardFocused = (this._dndActiveSection === 'actions' && this._selectedActionIndex === btnIdx) ? 'selected' : '';
         actionBtnsHTML += `<div class="inspect-btn inspect-btn--danger ${isDiscardFocused}" data-pad="discard" onclick="SceneManager._scene.triggerUIItemAction('discard')">${T('Inventory.ui.discard')}</div>`;
@@ -1130,7 +1134,7 @@
               <canvas id="${canvasId}" class="item-slot-icon-canvas--sm" width="32" height="32"></canvas>
             </div>
             <div class="item-slot-info">
-              <div class="item-slot-name">${this.isItemFavorited(item) ? '★ ' : ''}${item.name}</div>
+              <div class="item-slot-name">${this.isItemFavorited(item) ? '★ ' : ''}${escapeHtml(item.name)}</div>
               <div class="item-slot-meta">
                 <span>${weightText}</span>
                 <span class="item-slot-count">x${count}</span>
@@ -1180,17 +1184,15 @@
     return '<div class="item-3d-viewport item-3d-viewport--borderless"><canvas id="backpack-item-canvas"></canvas></div>';
   };
 
-  // A mounted viewport is a fresh WebGL context and a model built from scratch
-  // by the procedural pipeline. Walking the pockets with a held key would ask
-  // for one per step, and the browser force-loses the game's own context once
-  // the cap of live ones is passed. The mount therefore waits for the cursor to
-  // come to rest; the square is empty for that moment and nothing else is.
+  // A mounted viewport is a model built from scratch by the procedural
+  // pipeline. Walking the pockets with a held key would ask for one per step,
+  // so the mount waits for the cursor to come to rest; the square is empty for
+  // that moment and nothing else is.
   const VIEWPORT_SETTLE_MS = 90;
 
   Scene_EnhancedItem.prototype.mountUIItemViewport = function (item) {
     // The old viewport goes first: its canvas has just been replaced by the
-    // page re-render, and its WebGL context has to be released or the browser
-    // force-loses the game's own once the cap is passed.
+    // page re-render, and its renderer goes back to be reused.
     this.disposeUIItemViewport();
     if (!item || !window.Weapon3DPreview) return;
     this._itemViewportTimer = setTimeout(() => {
@@ -1284,8 +1286,10 @@
     if (!this._dndContainer || !item) return;
     if (window.VectorGun && window.VectorGun.isBound(item)) { SoundManager.playBuzzer(); return; }
     if (mode === 'disassemble' && !this.canDisassembleItem(item)) { SoundManager.playBuzzer(); return; }
+    if (mode === 'transfer' && !this.transferHolds().length) { SoundManager.playBuzzer(); return; }
     this._discardModalOpen    = true;
-    this._discardModalMode    = mode === 'disassemble' ? 'disassemble' : 'discard';
+    this._discardModalMode    = mode === 'disassemble' || mode === 'transfer' ? mode : 'discard';
+    this._transferHoldIdx     = 0;
     this._discardModalFocusIdx = 0;
     this._discardPendingItem  = item;
     this._discardQty          = 1;
@@ -1311,10 +1315,15 @@
       el.innerHTML = this.disassembleModalHTML(item, qty, owned, confirmSel, cancelSel);
       return;
     }
+    if (this._discardModalMode === 'transfer') {
+      this._discardQty = Math.max(1, Math.min(this._discardQty, this.transferMax(item)));
+      el.innerHTML = this.transferModalHTML(item, this._discardQty, owned, confirmSel, cancelSel);
+      return;
+    }
     el.innerHTML = `
       <div class="army-dialog">
         <h3>${T('Inventory.ui.discardItem')}</h3>
-        <p>${T('Inventory.ui.discardBody', { qty: `<strong>${qty}</strong>`, item: `<strong>${item.name}</strong>`, owned: owned })}</p>
+        <p>${T('Inventory.ui.discardBody', { qty: `<strong>${qty}</strong>`, item: `<strong>${escapeHtml(item.name)}</strong>`, owned: owned })}</p>
         <div class="army-dialog-buttons">
           <div class="army-dialog-btn" id="discard-qty-minus" onclick="SceneManager._scene.adjustDiscardQty(-1)">-</div>
           <div class="army-dialog-btn" id="discard-qty-plus" onclick="SceneManager._scene.adjustDiscardQty(1)">+</div>
@@ -1329,9 +1338,89 @@
   Scene_EnhancedItem.prototype.adjustDiscardQty = function (delta) {
     const item = this._discardPendingItem;
     if (!item) return;
-    const owned = $gameParty.numItems(item);
+    const owned = this._discardModalMode === 'transfer' ? this.transferMax(item) : $gameParty.numItems(item);
     const next  = Math.max(1, Math.min(this._discardQty + delta, owned));
     if (next !== this._discardQty) { SoundManager.playCursor(); this._discardQty = next; this.renderDiscardModal(); }
+  };
+
+  // Every hold of a vehicle the party owns, with the room it has left.
+  Scene_EnhancedItem.prototype.transferHolds = function () {
+    const VST = window.VehicleStorage;
+    return VST && typeof VST.stores === 'function' ? VST.stores() : [];
+  };
+
+  Scene_EnhancedItem.prototype.transferHold = function () {
+    const holds = this.transferHolds();
+    if (!holds.length) return null;
+    const idx = ((this._transferHoldIdx || 0) % holds.length + holds.length) % holds.length;
+    return holds[idx];
+  };
+
+  // As many as are carried and as the chosen hold has room for.
+  Scene_EnhancedItem.prototype.transferMax = function (item) {
+    const hold = this.transferHold();
+    const owned = $gameParty.numItems(item);
+    if (!hold || !item) return 0;
+    return Math.max(0, Math.min(owned, window.VehicleStorage.room(hold.key, item)));
+  };
+
+  Scene_EnhancedItem.prototype.cycleTransferHold = function (dir) {
+    const holds = this.transferHolds();
+    if (holds.length < 2) return;
+    SoundManager.playCursor();
+    this._transferHoldIdx = ((this._transferHoldIdx || 0) + dir + holds.length) % holds.length;
+    this.renderDiscardModal();
+  };
+
+  Scene_EnhancedItem.prototype.pickTransferHold = function (idx) {
+    SoundManager.playCursor();
+    this._transferHoldIdx = idx;
+    this.renderDiscardModal();
+  };
+
+  Scene_EnhancedItem.prototype.transferModalHTML = function (item, qty, owned, confirmSel, cancelSel) {
+    const VST  = window.VehicleStorage;
+    const cur  = this.transferHold();
+    const kg   = (g) => (g / 1000).toLocaleString(undefined, { maximumFractionDigits: 1 });
+    const holds = this.transferHolds().map((h, i) =>
+      `<div class="army-dialog-btn ${cur && cur.key === h.key ? 'selected' : ''}" onclick="SceneManager._scene.pickTransferHold(${i})">` +
+      `${escapeHtml(h.name)}<br><small>${T('Inventory.ui.transferFree', { kg: kg(VST.freeGrams(h.key)) })}</small></div>`).join('');
+    const max = this.transferMax(item);
+    return `
+      <div class="army-dialog">
+        <h3>${T('Inventory.ui.transferTitle')}</h3>
+        <div class="army-dialog-buttons">${holds}</div>
+        <p>${max > 0
+          ? T('Inventory.ui.transferBody', { qty: `<strong>${qty}</strong>`, item: `<strong>${escapeHtml(item.name)}</strong>`, owned: owned })
+          : T('Inventory.ui.transferNoRoom')}</p>
+        <div class="army-dialog-buttons">
+          <div class="army-dialog-btn" id="discard-qty-minus" onclick="SceneManager._scene.adjustDiscardQty(-1)">-</div>
+          <div class="army-dialog-btn" id="discard-qty-plus" onclick="SceneManager._scene.adjustDiscardQty(1)">+</div>
+        </div>
+        <div class="army-dialog-buttons">
+          <div class="army-dialog-btn ${confirmSel}${max > 0 ? '' : ' unusable'}" id="discard-confirm-btn" onclick="SceneManager._scene.confirmDiscard()">${T('Inventory.ui.transfer')}</div>
+          <div class="army-dialog-btn ${cancelSel}" id="discard-cancel-btn" onclick="SceneManager._scene.cancelDiscard()">${T('Inventory.ui.cancel')}</div>
+        </div>
+      </div>`;
+  };
+
+  // Out of the pack and into the chosen vehicle's hold, as many as fit.
+  Scene_EnhancedItem.prototype.confirmTransfer = function () {
+    const item = this._discardPendingItem;
+    const hold = this.transferHold();
+    const max  = item ? this.transferMax(item) : 0;
+    if (!item || !hold || max <= 0) { SoundManager.playBuzzer(); return; }
+    const qty  = Math.max(1, Math.min(this._discardQty, max));
+    const sent = window.VehicleStorage.add(hold.key, item, qty);
+    if (sent > 0) {
+      SoundManager.playOk();
+      $gameParty.loseItem(item, sent);
+      if (window.ParchmentToast) {
+        window.ParchmentToast.show(T('Inventory.ui.transferred', { n: sent, item: item.name, hold: hold.name }));
+      }
+    }
+    if ($gameParty.numItems(item) <= 0) { this._dndActiveSection = 'items'; this._dndSelectedIndex = 0; }
+    this.closeDiscardModal();
   };
 
   // What taking the piece apart can give back: every material of its recipe
@@ -1403,6 +1492,7 @@
 
   Scene_EnhancedItem.prototype.confirmDiscard = function () {
     if (this._discardModalMode === 'disassemble') { this.confirmDisassemble(); return; }
+    if (this._discardModalMode === 'transfer') { this.confirmTransfer(); return; }
     const item = this._discardPendingItem;
     if (item) {
       const owned = $gameParty.numItems(item);
@@ -1563,6 +1653,15 @@
   Scene_EnhancedItem.prototype.applyUITarget = function (targetIdx) {
     const item = this._dndTargetingItem;
     if (!item) return;
+    // The piece may have left the bag while the picker was up: nothing is
+    // applied for a copy the party no longer holds.
+    if (!$gameParty.hasItem(item)) {
+      SoundManager.playBuzzer();
+      this._dndTargetingMode = false; this._dndTargetingItem = null;
+      this._dndActiveSection = 'items'; this._dndSelectedIndex = 0;
+      this.refreshUIbackpack();
+      return;
+    }
     const partySize = $gameParty.members().length;
     if (targetIdx === partySize) {
       // useItemOnAllParty plays the item sound itself; don't double it.
@@ -1580,6 +1679,9 @@
             this.useItemWithoutTarget(item);
           }
         } else {
+          // The picker lists the whole party; only someone who can wear the
+          // piece may be handed it.
+          if (actor.canEquip && !actor.canEquip(item)) { SoundManager.playBuzzer(); return; }
           SoundManager.playEquip();
           this.equipItemToActor(item, actor);
         }
@@ -1654,6 +1756,8 @@
       this.toggleFavoriteStatus(item);
     } else if (action === 'throw') {
       this.throwUIItem(item);
+    } else if (action === 'transfer') {
+      this.showDiscardModal(item, 'transfer');
     } else if (action === 'discard') {
       this.showDiscardModal(item);
     } else if (action === 'disassemble') {
@@ -1801,7 +1905,8 @@
     // A tab that is no longer on the row (the last of that category was used,
     // dropped or sold while the page was open) drops back to All rather than
     // leaving the pockets looking empty with no way out of the filter.
-    this._activeUICategory    = cats.includes(cat) ? cat : cats[0];
+    this._activeUICategory    = cats.includes(cat) ? cat
+      : (cats.includes('All' /* i18n-ignore: category id */) ? 'All' /* i18n-ignore: category id */ : cats[0]);
     this._activeCategoryIndex = Math.max(0, cats.indexOf(this._activeUICategory));
     this._dndSelectedIndex    = 0;
     this.refreshUIbackpack();
@@ -1985,7 +2090,10 @@
       // Discard modal takes full input priority: nothing below it, the tabs
       // included, reads a press while the question is up.
       if (scene._discardModalOpen) {
-        if (Input.isRepeated('left')) {
+        const holdDir = scene._discardModalMode === 'transfer' && window.UINav ? window.UINav.tabDir() : 0;
+        if (holdDir) {
+          scene.cycleTransferHold(holdDir);
+        } else if (Input.isRepeated('left')) {
           scene.adjustDiscardQty(-1);
         } else if (Input.isRepeated('right')) {
           scene.adjustDiscardQty(1);
@@ -2009,6 +2117,9 @@
 
       // L1 / R1 (Q / W, Shift+Tab / Tab) cycle the tabs from anywhere.
       const tabDir = window.UINav ? window.UINav.tabDir() : 0;
+      // Not while the "on whom" picker is up: changing tab under it left the
+      // picker on the page with the focus on the grid behind it.
+      if (tabDir && scene._dndTargetingMode) return;
       if (tabDir) {
         const tabs = scene.uiCategories();
         const cur  = tabs.indexOf(scene._activeUICategory);
@@ -2041,6 +2152,7 @@
       // so the button has to be told apart from a cancel here: otherwise leaving
       // the backpack asks to throw the piece under the cursor away.
       if (Input.isTriggered('menu') && !Input.isTriggered('escape')) {
+        if (scene._dndTargetingMode) { SoundManager.playBuzzer(); return; } // not under the picker
         const item = scene._dndSelectedItem;
         if (item && scene._dndActionsList && scene._dndActionsList.indexOf('discard') >= 0) {
           scene.triggerUIItemAction('discard');

@@ -83,13 +83,34 @@
     };
 
     let _helpI18nLang = null;
+    // The language the newest read was started for, and how many reads have
+    // landed: a read started for a language the player has since left must not
+    // land over the newer one, and the link index is rebuilt whenever a read
+    // lands, since the titles it indexes come out of the banks.
+    let _helpI18nWanted = null;
+    let _helpI18nVersion = 0;
 
     const _loadHelpI18n = async () => {
         const lang = ConfigManager.language || HELP_I18N_FALLBACK;
+        _helpI18nWanted = lang;
         const merged = await _readHelpBank(HELP_I18N_FALLBACK);
         if (lang !== HELP_I18N_FALLBACK) _mergeBank(merged, await _readHelpBank(lang));
+        if (_helpI18nWanted !== lang) return;
         _helpI18n = merged;
         _helpI18nLang = lang;
+        _helpI18nVersion++;
+    };
+
+    // The banks are first read while the plugins load, before the saved
+    // config has said which language the player uses, so the codex (and the
+    // topic titles DialogueSystem announces through HelpCodex) stayed in
+    // English for the whole session. Whenever the config lands, a language
+    // other than the one being read is read again.
+    const _ConfigManager_applyData_help = ConfigManager.applyData;
+    ConfigManager.applyData = function (config) {
+        _ConfigManager_applyData_help.call(this, config);
+        const lang = ConfigManager.language || HELP_I18N_FALLBACK;
+        if (lang !== _helpI18nWanted) _loadHelpI18n();
     };
 
     // The banks are read once at boot, but the language can be changed from the
@@ -192,7 +213,59 @@
             if (!title || title === page.title) return String(keyword || '');
             return title;
         },
+
+        // Runs `onReady` once the codex prose is in hand for the language being
+        // played, at once if it already is. Titles are part of what a word is
+        // matched against, so a reader waits for this before deciding which of
+        // its words are links.
+        whenReady(onReady) {
+            const lang = ConfigManager.language || HELP_I18N_FALLBACK;
+            if (_helpI18n && _helpI18nLang === lang) { if (onReady) onReady(); return; }
+            _loadHelpI18n().then(() => { if (onReady) onReady(); });
+        },
+
+        // The page a bare word names, the way a [term] in the book resolves it:
+        // a page's file key, keyword, synonym or printed title. A word written
+        // with its article ("the Omega Tower", "la Gilda dei Maghi") is tried
+        // without it too. Returns { page, title, open } or null.
+        linkFor(term) {
+            const text = String(term || '').trim();
+            if (!text) return null;
+            const rows = _linkRows();
+            let row = rows.get(text.toLowerCase());
+            if (!row) {
+                const bare = text.replace(LEADING_ARTICLE, '').trim();
+                if (bare && bare !== text) row = rows.get(bare.toLowerCase());
+            }
+            if (!row) return null;
+            return { page: _pageId(row), title: getLocalizedTitle(row) || text, open: _isPageOpen(row), row };
+        },
+
+        // Follows a word to its page from outside the book (the newspaper):
+        // a world topic nobody in the party has heard of is learned first,
+        // announced the way a line of dialogue naming it would be, and then
+        // the book is opened on it. Answers what happened: "opened",
+        // "learned", or null when the codex has nothing under that word.
+        follow(term) {
+            const link = this.linkFor(term);
+            if (!link) return null;
+            let result = 'opened';
+            if (!link.open) {
+                const topics = window.DialogueTopics;
+                if (!topics || typeof topics.learn !== 'function' || !link.row.keyword) return null;
+                topics.learn(link.row.keyword);
+                if (!_isPageOpen(link.row)) return null;
+                result = 'learned';
+            }
+            SceneManager.push(Scene_Help);
+            SceneManager.prepareNextScene({ page: link.page });
+            return result;
+        },
     };
+
+    // English and Italian articles a bracketed word may carry in front of it.
+    // i18n-ignore-next-line: grammar words matched against prose, never shown
+    const LEADING_ARTICLE = /^(the|a|an|il|lo|la|i|gli|le|l'|l’|un|uno|una|un'|del|della|dello|dei|degli|delle)\s*/i;
 
     // Parse and display control tags based on input method
     const ControlTagParser = {
@@ -408,7 +481,8 @@
         // Rebuilt when the language changes or when the banks finish loading
         // (the titles are part of the index, so an index built before the prose
         // arrived knows the keys and nothing else).
-        if (_linkIndex.rows && _linkIndex.lang === lang && _linkIndex.count === rows.length) {
+        if (_linkIndex.rows && _linkIndex.lang === lang && _linkIndex.count === rows.length &&
+            _linkIndex.version === _helpI18nVersion) {
             return _linkIndex.rows;
         }
         const map = new Map();
@@ -422,6 +496,7 @@
         _linkIndex.rows = map;
         _linkIndex.lang = lang;
         _linkIndex.count = rows.length;
+        _linkIndex.version = _helpI18nVersion;
         return map;
     };
 
@@ -554,6 +629,9 @@
     // rather than shown empty.
     Scene_Help.prototype.prepare = function (options) {
         this._hideTopics = !!(options && options.hideTopics);
+        // A page to open on arrival, for a book reached through a link from
+        // outside it (HelpCodex.follow).
+        this._openOnArrival = (options && options.page) || null;
     };
 
     Scene_Help.prototype.categories = function () {
@@ -599,13 +677,18 @@
 
         this.initUIHelp();
         this.refreshUIHelp();
+        if (this._openOnArrival && this.openPage(this._openOnArrival)) this._openOnArrival = null;
         // Repaint once the banks land, in case they were not read yet or the
         // language was changed since they were.
         _ensureHelpI18n(() => {
             this._topicCache = null;
             this._searchCache = null;
             this._lastCategory = null;
+            // The open article is keyed by its topic, which has not moved:
+            // forget it so it is drawn again in the language just read.
+            this._lastDetailKey = null;
             if (SceneManager._scene === this) this.refreshUIHelp();
+            if (this._openOnArrival && this.openPage(this._openOnArrival)) this._openOnArrival = null;
         });
     };
 

@@ -753,7 +753,7 @@
       }).join('');
       return `<h2 class="chp-h">${T('ONUMenu.portal.tab.powers')}</h2>
         <div class="chp-note chp-mb">${T('ONUMenu.portal.powersBlurb', {
-          who: leader ? leader.name() : '' })}</div>
+          who: chEsc(leader ? leader.name() : '') })}</div>
         <div class="chp-card chp-tight"><table class="chp-table">
           <thead><tr>
             <th class="chp-th">${T('ONUMenu.portal.colPower')}</th>
@@ -813,7 +813,7 @@
   if (window.HypernetOS && window.HypernetOS.registerApp) {
     window.HypernetOS.registerApp({
       id: ONU_APP_ID,
-      name: T('ONUMenu.portal.appName'),
+      name: () => T('ONUMenu.portal.appName'),
       icon: ONU_ICON,
       category: 'civic',
       launchFn: function () { window.ChamberPortal.launch(); },
@@ -1798,9 +1798,28 @@
         this.activatePoliticsRow();
         return;
       }
-      this._index = next;
       SoundManager.playCursor();
-      this.refreshPolitics();
+      this.movePoliticsCursor(next);
+    }
+
+    // A cursor step moves the frame and nothing else: the rows are the ones
+    // already on the page (the Parties tab counts every supporter in the
+    // world to build them), so only the two rows that change hands are
+    // touched, and the right page is redrawn for the row now under it.
+    movePoliticsCursor(next) {
+      const list = this._root && !this._draft ? this._root.querySelector("#pol-list") : null;
+      if (!list) { this._index = next; this.refreshPolitics(); return; }
+      const now = list.querySelector('.pol-row[data-pol-row="' + next + '"]');
+      this._index = next;
+      if (!now) { this.refreshPolitics(); return; }
+      list.querySelectorAll(".pol-row.selected").forEach((el) => el.classList.remove("selected"));
+      now.classList.add("selected");
+      if (now.scrollIntoView) now.scrollIntoView({ block: "nearest" });
+      const detail = this._root.querySelector("#pol-detail");
+      if (detail) {
+        detail.innerHTML = this.politicsDetailHTML(this._rows[this._index]);
+        paintMeasures(detail);
+      }
     }
 
     // Confirm on a row: a person opens their Empathize panel, a government,
@@ -1875,15 +1894,13 @@
       if (Input.isRepeated("left")) { this.setPoliticsTab(this._tab - 1); return; }
       if (Input.isRepeated("right")) { this.setPoliticsTab(this._tab + 1); return; }
       if (Input.isRepeated("down") && this._index < this._rows.length - 1) {
-        this._index++;
         SoundManager.playCursor();
-        this.refreshPolitics();
+        this.movePoliticsCursor(this._index + 1);
         return;
       }
       if (Input.isRepeated("up") && this._index > 0) {
-        this._index--;
         SoundManager.playCursor();
-        this.refreshPolitics();
+        this.movePoliticsCursor(this._index - 1);
         return;
       }
       if (Input.isTriggered("ok")) this.activatePoliticsRow();
@@ -2415,7 +2432,7 @@
   if (window.HypernetOS && window.HypernetOS.registerApp) {
     window.HypernetOS.registerApp({
       id: PG_APP_ID,
-      name: PT("Politics.app.name"),
+      name: () => PT("Politics.app.name"),
       icon: PG_ICON,
       category: "civic", // i18n-ignore: app category id
       launchFn: function () { window.Propaganda2App.launch(); },

@@ -16,7 +16,7 @@
       "Quella nuvola sembra un cattivo presagio.",
       "Riconto le monete. Stessa risposta.",
       "Qualcuno deve fare la guardia. Tanto vale io.",
-      "Questo posto odora di più antico di quanto sembri.",
+      "Questo posto ha un odore più antico del suo aspetto.",
       "Un giorno mi pagheranno per tutto questo.",
       "Dovrei scrivere una cartolina a casa. Continuo a dirlo.",
       "Se avessi una moneta per ogni salita, potrei comprarmi un cavallo.",
@@ -194,7 +194,7 @@
       "Un muro a cui appoggiarsi. Che lusso.",
       "Svegliatemi se succede qualcosa di interessante.",
       "Vi raggiungo. Prima o poi.",
-      "Non sono stanco. Sto supervisionando.",
+      "Riposare? Sto supervisionando.",
       "Prima fatemi togliere il sasso dallo scarpone.",
       "Bella panchina. Chi l'ha messa qui sapeva il fatto suo.",
       "Due minuti. Li conto.",
@@ -255,7 +255,7 @@
       "leisure": [
         "Ancora una partita. Una sola.",
         "Ne avevo bisogno più di quanto credessi.",
-        "Non dite al gruppo quanto ho perso.",
+        "Non dite al Party quanto ho perso.",
         "Per un momento mi sono scordato la strada.",
         "Il divertimento più grande di tutto il mese.",
         "Bene. Si torna a fare i seri.",
@@ -265,7 +265,7 @@
       ],
       "fish": [
         "È stata l'acqua a parlare, più che altro.",
-        "Un'ora in riva si lascia una strada alle spalle.",
+        "Un'ora in riva al fiume e la strada te la lasci alle spalle.",
         "Non ho pensato a niente per un'ora. Meraviglioso.",
         "Dite quel che volete del tempo, ma i pesci abboccavano.",
         "Non abboccava niente tranne i miei pensieri, ed erano tranquilli.",
@@ -278,7 +278,7 @@
         "Molto meglio.",
         "Non sarei arrivato alla prossima città.",
         "Nessuno ha visto niente.",
-        "Era una lunga strada per trattenerla.",
+        "È stata dura trattenerla per tutta quella strada.",
         "Un peso in meno.",
         "Bene. Dove eravamo rimasti?",
         "Non berrò mai più tanto tè.",
@@ -302,9 +302,35 @@
     "choiceBury": "Seppellisci",
     "choiceCancel": "Annulla",
     "looted": "Recuperato l'equipaggiamento di {name}.",
-    "nothingToLoot": "Non è rimasto nulla da prendere su {name}.",
-    "examined": "Esamini l'anatomia e le condizioni del corpo del compagno caduto.",
-    "buried": "{name} è stato sepolto con dignità."
+    "nothingToLoot": "Niente da saccheggiare su {name}.",
+    "examined": "Esamini il corpo.",
+    "buried": "{name} è stato sepolto con dignità.",
+    "leaderFallback": "Capo",
+    "prayer": {
+      "default": "\"Riposa in pace, {name}. Il tuo viaggio sarà ricordato.\"",
+      "sacred": "\"Che la Luce Eterna accolga la tua anima, {name}, e ti doni la pace eterna. Amen.\"",
+      "nature": "\"Torna alla terra e alle radici profonde della foresta antica, {name}. Cammina libero tra gli spiriti.\"",
+      "arcane": "\"Alle maree astrali e al profondo stellato: che la grande distesa custodisca la tua essenza, {name}.\"",
+      "martyr": "\"Il sangue è stato versato e il dovere compiuto, {name}. Risorgi con onore oltre il velo.\"",
+      "generic": "\"Riposa bene, {name}. La tua battaglia è finita, e il tuo nome non sarà dimenticato.\""
+    },
+    "commemorate": {
+      "warm": [
+        "Non dimenticherò mai quello che hai fatto per noi, {name}... Riposa in pace.",
+        "Non te lo meritavi, {name}. Porteremo con noi il tuo ricordo.",
+        "Che tu possa trovare la pace che cercavi, amico mio."
+      ],
+      "cold": [
+        "Te l'avevo detto che l'avventatezza ti avrebbe raggiunto, {name}... dannazione.",
+        "La strada si prende ciò che vuole. Addio, {name}.",
+        "Silenzio ora, {name}... dormi bene."
+      ],
+      "neutral": [
+        "Un altro preso dalla strada. Dobbiamo andare avanti, per amore di {name}.",
+        "Ha combattuto con coraggio fino alla fine. Onoriamo la sua memoria.",
+        "State in guardia, tutti. {name} non vorrebbe vederci cadere dopo di lui."
+      ]
+    }
   },
   "grave": {
     "prompt": "Tomba di {name}. Cosa vuoi fare?",
@@ -312,13 +338,68 @@
     "choiceDesecrate": "Profana",
     "choiceDismantle": "Smantella",
     "choiceCancel": "Annulla",
-    "epitaph": "\"Qui giace {name}. Nato il: {born}\"",
+    "epitaph": "\"Qui giace {name}. Nascita: {born}\"",
     "bornUnknown": "Ignota",
-    "desecrated": "Hai profanato la tomba di {name}. Recuperate le ossa e gli effetti personali rimasti.",
+    "bornYear": "Anno {year}",
+    "desecrated": "Hai profanato la tomba di {name} e preso ossa ed effetti personali.",
     "dismantled": "Smantellata la tomba di {name}."
   },
   "succession": {
-    "takesCommand": "{name} prende il comando del gruppo."
+    "takesCommand": "{name} prende il comando del Party."
+  },
+  "romance": {
+    "toast": "[Romanticismo] {suitor} → {target} ({action}): tiro {roll} contro {chance}% ➔ {outcome}",
+    "success": "Successo ({hearts})",
+    "rejected": "Respinto ({hearts})",
+    "actions": {
+      "flirt": {
+        "label": "Flirta",
+        "lines": [
+          "\"Speravo proprio di incontrarti, {name}.\"",
+          "\"Attento, {name}. Potrei abituarmici.\"",
+          "\"Ti ho pensato tutto il giorno, {name}.\""
+        ],
+        "good": ["*sorride dolcemente* \"Ah, davvero?\"", "*ride* \"Sei un guaio.\"", "*arrossisce* \"Continua a parlare così.\""],
+        "bad": ["*distoglie lo sguardo* \"Restiamo amici.\"", "*ridacchia seccamente* \"Bel tentativo.\"", "*scuote la testa* \"No.\""]
+      },
+      "admire": {
+        "label": "Ammira",
+        "lines": [
+          "\"È difficile toglierti gli occhi di dosso, {name}.\"",
+          "\"C'è qualcosa di magnetico in te, {name}.\"",
+          "\"Illumini sempre la stanza, {name}.\""
+        ],
+        "good": ["*raggiante* \"Grazie, è davvero dolce.\"", "*sorride compiaciuto* \"Hai buon gusto.\"", "*fa l'occhiolino* \"Vale anche per te.\""],
+        "bad": ["*alza le spalle* \"Per favore, no.\"", "*aggrotta la fronte* \"Sono occupato.\"", "*fa un passo indietro* \"Basta così.\""]
+      },
+      "serenade": {
+        "label": "Serenata",
+        "lines": [
+          "prende fiato e canticchia una melodia romantica per {name}.",
+          "canta un verso poetico dedicato a {name}."
+        ],
+        "good": ["*ascolta felice* \"Nessuno l'aveva mai fatto per me.\"", "*applaude* \"È stato meraviglioso.\"", "*arrossisce vistosamente* \"Sei troppo.\""],
+        "bad": ["*geme scherzosamente* \"Smettila, ci guardano tutti!\"", "*si divincola* \"Non è il momento.\"", "*sospira* \"Un po' teatrale.\""]
+      },
+      "kiss": {
+        "label": "Bacio giocoso",
+        "lines": [
+          "si avvicina e lascia un bacio delicato sulla guancia di {name}.",
+          "si fa vicino e abbraccia dolcemente {name}."
+        ],
+        "good": ["*spalanca gli occhi con un sorriso radioso* \"Oh...\"", "*ricambia il bacio con dolcezza*", "*stringe a sé con calore*"],
+        "bad": ["*schiva e fa un passo indietro* \"Ehi, giù le mani.\"", "*lo guarda storto* \"Troppo in fretta!\"", "*lo spinge via* \"Non mi interessa.\""]
+      },
+      "wink": {
+        "label": "Occhiolino giocoso",
+        "lines": [
+          "fa a {name} un occhiolino giocoso da lontano.",
+          "rivolge a {name} un sorriso provocante e un occhiolino."
+        ],
+        "good": ["*ricambia l'occhiolino con un sorrisetto*", "*ridacchia e saluta con la mano*", "*sorride con calore*"],
+        "bad": ["*alza gli occhi al cielo*", "*guarda dall'altra parte*", "*fissa con aria vuota*"]
+      }
+    }
   },
   "pet": {
     "actionPet": "Accarezza",
@@ -333,30 +414,30 @@
       "Ti siedi in mezzo alla strada e fai un mucchio di feste a {name}."
     ],
     "petted": [
-      "{name} si preme contro la tua mano e non si sposta piu'.",
+      "{name} si preme contro la tua mano e non si sposta più.",
       "{name} emette un verso basso e soddisfatto.",
       "Gratti {name} dove non arriva da solo. Ti perdona tutto.",
-      "{name} ti da' una testata sulla gamba e si acciambella.",
-      "{name} si rotola sulla schiena. A quanto pare e' la risposta giusta."
+      "{name} ti dà una testata sulla gamba e si acciambella.",
+      "{name} si rotola sulla schiena. A quanto pare è la risposta giusta."
     ],
     "said": [
-      "Sto al passo. Piu' o meno.",
+      "Sto al passo. Più o meno.",
       "Questa strada ha un odore che non mi piace.",
       "Dimmelo e passo avanti io.",
       "Mangerei. Quando mai non mangerei?",
       "Non lasciarmi indietro un'altra volta.",
-      "C'era qualcosa la' dietro. Adesso non c'e' piu'.",
+      "C'era qualcosa là dietro. Adesso non c'è più.",
       "Preferisco quando camminiamo."
     ],
     "actionStop": "Smetti di seguirmi",
-    "stopped": "{name} resta dov'e' e smette di seguirti."
+    "stopped": "{name} resta dov'è e smette di seguirti."
   },
   "member": {
     "actionTalk": "Parla",
     "actionEmpathize": "Empatizza",
     "actionReserves": "Manda in riserva",
     "actionJoin": "Torna con noi",
-    "rejoined": "{name} riprende il suo posto sulla strada.",
+    "rejoined": "{name} torna nel Party.",
     "actionCancel": "Lascia stare"
   },
   "auto": {
@@ -371,14 +452,14 @@
     "heads": "{name} si dirige verso {target}",
     "door": "{name} varca la porta di {target}",
     "wanders": "{name} gironzola",
-    "avoided": "{name} sta alla larga da {target}, livello {level}",
-    "stuck": "{name} non riesce a concludere nulla con {target} e cerca qualcos'altro",
+    "avoided": "{name} evita {target}, livello {level}",
+    "stuck": "{name} non raggiunge {target}, prova altro",
     "restless": "{name} è rimasto fermo anche troppo e si muove",
     "detour": "{name} smette di girare a vuoto e trova la strada lunga",
     "flees": "{name} fugge dallo scontro",
     "worldMap": "{name} esce sulla mappa del mondo",
     "rim": "{name} si dirige verso il confine della mappa",
-    "avoidedUnknown": "{name} sta alla larga da {target}, di cui non si legge il livello",
+    "avoidedUnknown": "{name} evita {target}, livello sconosciuto",
     "evades": "{name} scappa da {target} prima che si avvicini",
     "travelled": "{name} scende in {place}",
     "targetsPlace": "{name} si mette in cammino sulla mappa del mondo verso {place}",
@@ -391,7 +472,7 @@
     "swims": "{name} entra in acqua e nuota",
     "ate": "{name} mangia {item}",
     "stocked": "{name} fa scorta di {item} per {price}",
-    "handsOver": "{name} affida il gruppo a {other}",
+    "handsOver": "{name} affida il Party a {other}",
     "surveyed": "{name} annota {map}: {notes}",
     "routes": "{name} parte per {map}, a {hops} mappe di distanza: {why}",
     "routeStep": "{name} prende il passaggio verso {target}",
@@ -411,7 +492,7 @@
     },
     "why": {
       "hunger": "lo zaino è vuoto",
-      "shop": "al gruppo serve un banco",
+      "shop": "al Party serve un banco",
       "money": "la borsa è vuota",
       "sleep": "nessuno ha dormito",
       "frontier": "nessuno ci è mai stato",
@@ -428,9 +509,9 @@
     "why": {
       "errand": "qualcosa che vale la pena vedere",
       "onward": "la via da seguire",
-      "quest": "l'incarico che ha accettato",
+      "quest": "la missione che ha accettato",
       "work": "una giornata di paga",
-      "mail": "la posta che la aspetta",
+      "mail": "la posta in attesa",
       "bed": "un letto"
     }
   },

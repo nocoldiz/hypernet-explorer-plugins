@@ -118,6 +118,7 @@
     beginsOffEarth,
     grantStartingExpressions,
     activeCustomScenario,
+    customScenarioGold,
     startCustomScenarioOrigin,
   } = window.CCOrigins;
 
@@ -141,6 +142,16 @@
     for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
     return SETTINGS_ICON_POOL[h % SETTINGS_ICON_POOL.length];
   };
+
+  // Anything the player typed (a name, a preset or party title) is text, not
+  // markup: written raw into the sheet's innerHTML a '<' swallowed the rest of
+  // the tab and a crafted name ran as script. Every such value goes through
+  // this on its way into a template.
+  function ccEsc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
 
   // Robust i18n resolver with safe fallback that never leaks raw keys
   function ccT(key, fallback) {
@@ -258,6 +269,21 @@
   const CREATION_PAGE_TURN_SE = { name: "PixelUI/PixelUI (1)", volume: 90, pitch: 100, pan: 0 };
   const CREATION_START_GOLD = 2000; // per humanoid member, as the event gave it
   const SWITCH_CREATION_NAMED = 12;
+
+  // The naming purse is paid once per member, not once per walk past the
+  // gender step: Add member then Back, or leaving the sprite board and coming
+  // forward again, used to pay it every time. A member dropped from the party
+  // hands it back, so the purse only ever holds what the seated members bring.
+  function payNamingGold(actor) {
+    if (!actor || actor._ccNamingGoldPaid) return;
+    actor._ccNamingGoldPaid = true;
+    $gameParty.gainGold(CREATION_START_GOLD);
+  }
+  function refundNamingGold(actor) {
+    if (!actor || !actor._ccNamingGoldPaid) return;
+    actor._ccNamingGoldPaid = false;
+    $gameParty.loseGold(CREATION_START_GOLD);
+  }
   // The Markov call the event made, argument for argument. Plugin commands are
   // registered under the bare file name (Utils.extractFileName), which is why
   // this says MarkovTextGenerator where the event said UI/MarkovTextGenerator.
@@ -530,7 +556,7 @@
       return lang === "it" ? (name.it || name.en) : name.en;
     }
     const lang = (typeof ConfigManager !== 'undefined' && ConfigManager.language) || (typeof T !== 'undefined' && T.language ? T.language() : "en");
-    const bank = (lang === "it" ? _traitI18nData : _traitI18nDataEn) || _traitI18nData;
+    const bank = (lang !== "en" ? _traitI18nData : _traitI18nDataEn) || _traitI18nData;
     const key = String(traitId || name || "").toLowerCase().replace(/[-\s]/g, "_");
     if (bank && bank.traits && bank.traits[key] && bank.traits[key].name) {
       return bank.traits[key].name;
@@ -551,7 +577,7 @@
       return lang === "it" ? (desc.it || desc.en) : desc.en;
     }
     const lang = (typeof ConfigManager !== 'undefined' && ConfigManager.language) || (typeof T !== 'undefined' && T.language ? T.language() : "en");
-    const bank = (lang === "it" ? _traitI18nData : _traitI18nDataEn) || _traitI18nData;
+    const bank = (lang !== "en" ? _traitI18nData : _traitI18nDataEn) || _traitI18nData;
     const key = String(traitId || "").toLowerCase().replace(/[-\s]/g, "_");
     if (bank && bank.traits && bank.traits[key] && bank.traits[key].description) {
       return bank.traits[key].description;
@@ -785,11 +811,17 @@
     // The anatomy is rebuilt, not merely merged: a member who already had a
     // body kept the old one, so swapping archetype changed the name on the tab
     // and nothing else.
+    // What the old body taught is read first, so the parts a second archetype
+    // brings (a Bird's wings on a person) hand over their skills and the ones
+    // it takes away take theirs with them.
+    const HC = window.HealthCore;
+    const taughtBefore = (HC && HC.anatomySkillIds && actor._bodyParts) ? HC.anatomySkillIds(actor) : null;
     actor._bodyParts = null;
     if (typeof window.initializeBodyParts === "function") {
       window.initializeBodyParts(actor);
-    } else if (window.HealthCore && window.HealthCore.mergeArchetypeParts) {
-      window.HealthCore.mergeArchetypeParts(canonical);
+      if (HC && HC.syncAnatomySkills) HC.syncAnatomySkills(actor, taughtBefore);
+    } else if (HC && HC.mergeArchetypeParts) {
+      HC.mergeArchetypeParts(canonical);
     }
     return true;
   }
@@ -1331,6 +1363,21 @@
       },
     },
     {
+      // Body parts: the anatomy the chosen archetypes build, part by part, with
+      // the skills each part teaches. Read, never picked, and only ever opened
+      // from its tab: the walk steps over it (see setupStep).
+      id: "anatomy",
+      get title() {
+        return T('CharCreate.bodyParts');
+      },
+      get choices() {
+        return [];
+      },
+      handler: function () {
+        this.nextStep();
+      },
+    },
+    {
       // Class
       id: "class",
       get title() {
@@ -1821,7 +1868,12 @@
           this.nextStep();
           return;
         }
-        this._finishOriginChoice(symbol);
+        // Enter and the pad confirm the board here, the mouse through Embark.
+        // Both leave through onFinishPartyCreation: going straight to the
+        // origin dropped the pet, the garage and the banked points.
+        if (this._embarkBlockedReason()) { SoundManager.playBuzzer(); return; }
+        $gameSystem._ccOriginSymbol = symbol;
+        this.onFinishPartyCreation();
       },
     },
     {
@@ -1845,7 +1897,10 @@
       handler: function (symbol) {
         $gameSystem._ccHometown = symbol;
         markStepCompleted(STEP.HOMETOWN);
-        this._finishOriginChoice(this._pendingOriginSymbol);
+        // The same single exit as the Embark button (see the origin handler).
+        if (this._embarkBlockedReason()) { SoundManager.playBuzzer(); return; }
+        if (this._pendingOriginSymbol) $gameSystem._ccOriginSymbol = this._pendingOriginSymbol;
+        this.onFinishPartyCreation();
       },
     },
   ];
@@ -1872,6 +1927,7 @@
       BIO: byId.bio,
       DESCRIPTION: byId.description,
       ROMANCE: byId.romance,
+      ANATOMY: byId.anatomy,
       PERSONALITY: byId.personality,
       HOMETOWN: byId.hometown,
       BIRTHDATE: byId.birthdate,
@@ -2337,6 +2393,8 @@
       // Combat mode step is disabled for now (kept in code); always auto-skip so
       // Back/Forward navigation never lands on it. See setupStep().
       if (step === STEP.COMBAT_MODE) return true;
+      // The Body parts page is a tab's alone: Back and Forward walk past it.
+      if (step === STEP.ANATOMY) return true;
 
       // The story mode's own flow, and only while it is still running: once its
       // dossier has been taken the pages are reached by tab, and a step the
@@ -2988,7 +3046,7 @@
       // 1. Top Left: Party Member Tabs + Pet Slot
       const partyTabsHtml = partyMembers.map((partyActor, idx) => {
         if (isLab && partyActor.actorId() !== currentMemberIndex + 1) return '';
-        const name = partyActor.name() || T('CharCreate.memberN', { n: idx + 1 });
+        const name = ccEsc(partyActor.name() || T('CharCreate.memberN', { n: idx + 1 }));
         const isActive = !isSettingsActive && !isScenarioMode && !isPetActive && !isVehicleActive &&
           (isLab || idx === currentMemberIndex);
         const isComp = partyActor.name() && partyActor._classId > 0 && partyActor.characterName();
@@ -3025,7 +3083,7 @@
       const petTabLabel = Scene_CharacterCreation._storyMode
         ? ccT('CharCreate.companion')
         : ccT('CharCreate.petsTab');
-      const petName = pet ? pet.name : petTabLabel;
+      const petName = ccEsc(pet ? pet.name : petTabLabel);
       const removePetBtn = pet ? `
         <span class="cc-tab-remove-x" title="${this._petWord('CharCreate.releasePet', 'CharCreate.petsTabRelease')}" onclick="event.stopPropagation(); SceneManager._scene.onRemovePet(event)">
           ✕
@@ -3194,6 +3252,25 @@
           </button>`;
     }
 
+    // Dropping the open member sits beside the reroll of that member. The
+    // leader is the party, so the first seat never shows it; the story pair
+    // (PartyRoster.isStoryLocked) cannot be dropped either.
+    _actionBarDeleteMemberHtml() {
+      const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
+      if (isScenario || this._presetWindow) return '';
+      if (Scene_CharacterCreation.isLabMode()) return '';
+      if (this._isPartyBoardPage()) return '';
+      const idx = Scene_CharacterCreation._currentPartyMemberIndex || 0;
+      if (idx <= 0) return '';
+      const actor = $gameParty.members()[idx];
+      if (!actor || window.PartyRoster?.isStoryLocked?.(actor.actorId())) return '';
+      return `<button class="cc-compact-btn cc-action-delete-member focusable" tabindex="0"
+              data-nav-key="cc-action-delete-member"
+              onclick="SceneManager._scene.onRemovePartyMember(${idx}, event)">
+            <span>${ccT('CharCreate.deleteMember')}</span>
+          </button>`;
+    }
+
     _actionBarRandomizePartyHtml() {
       const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
       if (isScenario || Scene_CharacterCreation._storyMode) return '';
@@ -3302,6 +3379,7 @@
           <span class="cc-action-spacer"></span>
           ${blocked ? `<span class="cc-action-note">${blocked}</span>` : ''}
           ${this._actionBarModeToggleHtml()}
+          ${this._actionBarDeleteMemberHtml()}
           ${this._actionBarRandomizeMemberHtml()}
           ${this._actionBarRandomizePartyHtml()}
           ${this._actionBarPartyPresetsHtml()}
@@ -3383,6 +3461,9 @@
         Scene_CharacterCreation.ensureSpriteAndBust(Scene_CharacterCreation.getCurrentActor());
       }
       if (_curStepData.isSettingsStep) {
+        // The settings board draws over the spread in its own shape, so the
+        // page that comes back after it is drawn fresh rather than patched.
+        this._ccDrawnPage = null;
         this._enterSettingsAudio();
         this._refreshSettingsDOM();
         return;
@@ -3416,10 +3497,24 @@
         return;
       }
 
+      // The page already on screen is the page being asked for (same step,
+      // same member, same board) when all that changed is a pick on it: a
+      // gender, a class, a toggle, the cursor. That page is patched where it
+      // stands (CCMorph) rather than drawn again, so nothing flickers, no
+      // portrait reloads, the enter animation does not replay and the focus,
+      // the caret and every scrolled list stay put. Only a real change of page
+      // throws the old one away. _lastStep = -1 is how callers ask for a
+      // redraw at all, so what is on screen is remembered apart from it.
+      const pageSig = [currentStep, currentMemberIndex, isPreset, isPetMode,
+        isVehicleMode, isPartyPresetMode, isScenario].join("|");
+      const drawnLayout = this._dndContainer.querySelector(".cc-unified-layout");
+      const samePage = !!(drawnLayout && window.CCMorph && this._ccDrawnPage === pageSig);
+
       // The page is about to be rebuilt, and the row a hover card was raised
       // from goes with it without ever firing its mouseleave, so the card
-      // stayed on screen until another row was hovered.
-      if (this.onItemLeave) this.onItemLeave();
+      // stayed on screen until another row was hovered. A patched page keeps
+      // its rows, so the card only goes when its own row did.
+      if (!samePage && this.onItemLeave) this.onItemLeave();
 
       if (this._presetTitleWindow) {
         this._presetTitleWindow.visible = false;
@@ -3437,15 +3532,20 @@
         const grid = this._dndContainer ? this._dndContainer.querySelector(".cc-scenario-grid") : null;
         const prevScrollTop = grid ? grid.scrollTop : 0;
         const scenarioContent = this._renderScenarioDossierHtml();
-        this._dndContainer.innerHTML = `
-          <div class="cc-unified-layout">
+        const scenarioInner = `
             <div class="cc-top-folder-tabs-slot">${this._renderTopFolderTabsHtml()}</div>
             <div class="cc-dossier-main">
               ${scenarioContent}
             </div>
             ${this._renderActionBarHtml()}
-          </div>
         `;
+        if (samePage) {
+          window.CCMorph.inner(drawnLayout, scenarioInner);
+          this._ccDropOrphanedHover();
+        } else {
+          this._dndContainer.innerHTML = `<div class="cc-unified-layout">${scenarioInner}</div>`;
+        }
+        this._ccDrawnPage = pageSig;
         const newGrid = this._dndContainer ? this._dndContainer.querySelector(".cc-scenario-grid") : null;
         if (newGrid) newGrid.scrollTop = prevScrollTop;
         const activeCard = this._dndContainer ? this._dndContainer.querySelector(".cc-scenario-card.selected") : null;
@@ -3497,6 +3597,10 @@
         } else if (this._step === STEP.ROMANCE) {
           leftHtml = this._romancePickerLeftHtml();
           rightHtml = "";
+        } else if (this._step === STEP.ANATOMY) {
+          // One wide page: the body is read part by part, not picked.
+          leftHtml = this._anatomyPageHtml();
+          rightHtml = "";
         } else if (this._step === STEP.CLASS || this._isClassPickerStep()) {
           leftHtml = this._classPickerLeftHtml(stepData, activeIndex);
           rightHtml = this._classPickerRightHtml(stepData, activeIndex);
@@ -3519,8 +3623,23 @@
         }
       }
 
-      const unifiedLayout = this._dndContainer.querySelector(".cc-unified-layout");
-      if (!unifiedLayout || this._lastScenarioMode !== isScenario || this._lastPetMode !== isPetMode || this._lastVehicleMode !== isVehicleMode || this._lastPartyPresetMode !== isPartyPresetMode || this._lastPresetMode !== isPreset) {
+      const unifiedLayout = drawnLayout;
+      if (samePage) {
+        window.CCMorph.inner(unifiedLayout, `
+            <div class="cc-top-folder-tabs-slot">${this._renderTopFolderTabsHtml()}</div>
+            <div class="cc-dossier-main">
+              <div class="cc-sidebar-slot">${this._renderCompactSidebarHtml()}</div>
+              <div class="cc-content-pane${this._presetEditBlocked() ? ' cc-preset-locked' : ''}">
+                <div class="cc-pockets-spread">
+                  ${leftHtml}
+                  ${rightHtml}
+                </div>
+              </div>
+            </div>
+            ${this._renderActionBarHtml()}
+        `);
+        this._ccDropOrphanedHover();
+      } else if (!unifiedLayout || this._lastScenarioMode !== isScenario || this._lastPetMode !== isPetMode || this._lastVehicleMode !== isVehicleMode || this._lastPartyPresetMode !== isPartyPresetMode || this._lastPresetMode !== isPreset) {
         this._dndContainer.innerHTML = `
           <div class="cc-unified-layout">
             <div class="cc-top-folder-tabs-slot">${this._renderTopFolderTabsHtml()}</div>
@@ -3542,19 +3661,19 @@
         // The bar is outside the spread, so it is refreshed on its own: what it
         // offers changes with the page, and whether Embark is open at all
         // changes with the party.
+        // The tabs, the bar and the sidebar stand on every page, so even a
+        // change of page only patches them; the spread is the page itself and
+        // is the one thing swapped (and animated in) below.
         const bar = this._dndContainer.querySelector(".cc-action-bar");
-        if (bar) bar.outerHTML = this._renderActionBarHtml();
+        if (bar) {
+          if (window.CCMorph) window.CCMorph.outer(bar, this._renderActionBarHtml());
+          else bar.outerHTML = this._renderActionBarHtml();
+        }
 
         const pane = this._dndContainer.querySelector(".cc-content-pane");
         if (pane) pane.classList.toggle("cc-preset-locked", this._presetEditBlocked());
 
-        const sidebarSlot = this._dndContainer.querySelector(".cc-sidebar-slot");
-        if (sidebarSlot) {
-          sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
-        } else {
-          const sidebar = this._dndContainer.querySelector(".cc-compact-sidebar");
-          if (sidebar) sidebar.outerHTML = this._renderCompactSidebarHtml();
-        }
+        this._ccRefreshSidebar();
 
         const spread = this._dndContainer.querySelector(".cc-pockets-spread");
         if (spread) {
@@ -3573,10 +3692,63 @@
       this._lastVehicleMode = isVehicleMode;
       this._lastPartyPresetMode = isPartyPresetMode;
       this._lastScenarioMode = isScenario;
+      this._ccDrawnPage = pageSig;
 
       if (isPetMode) {
         this._attachPetVirtualScroll();
       }
+    }
+
+    // The hover card is raised off one row. A patched page keeps that row
+    // unless the patch replaced it or turned it into a different row, and
+    // only then is the card taken down; a page with no record of which row
+    // raised it is treated the old way, as gone.
+    _ccDropOrphanedHover() {
+      const anchor = this._ccHoverAnchor;
+      if (!anchor) { if (this.onItemLeave) this.onItemLeave(); return; }
+      const stale = !anchor.isConnected ||
+        (anchor.getAttribute && anchor.getAttribute("onmouseenter") !== this._ccHoverSig);
+      if (stale) {
+        this._ccHoverAnchor = null;
+        if (this.onItemLeave) this.onItemLeave();
+      }
+    }
+
+    // The two ways a piece of the page is redrawn: its contents (inner) or the
+    // element itself (outer). Both patch what is already drawn (CCMorph), and
+    // fall back to a plain rewrite only where there is no DOM to patch.
+    _ccMorphInner(el, html) {
+      if (!el) return el;
+      if (window.CCMorph) return window.CCMorph.inner(el, html);
+      el.innerHTML = html;
+      return el;
+    }
+
+    _ccMorphOuter(el, html) {
+      if (!el) return el;
+      if (window.CCMorph) return window.CCMorph.outer(el, html);
+      el.outerHTML = html;
+      return null;
+    }
+
+    // Patches a fresh sidebar into the slot it lives in. False when there is
+    // no sidebar on the page to patch, so the caller can draw the page.
+    _ccRefreshSidebar(html) {
+      const c = this._dndContainer;
+      if (!c) return false;
+      const markup = html != null ? html : this._renderCompactSidebarHtml();
+      const M = window.CCMorph;
+      const slot = c.querySelector(".cc-sidebar-slot");
+      if (slot) {
+        if (M) M.inner(slot, markup); else slot.innerHTML = markup;
+        return true;
+      }
+      const sidebar = c.querySelector(".cc-compact-sidebar");
+      if (sidebar) {
+        if (M) M.outer(sidebar, markup); else sidebar.outerHTML = markup;
+        return true;
+      }
+      return false;
     }
 
     // Moves the "picked" and "current class" marks onto the cards already on
@@ -3606,6 +3778,14 @@
     _ccSwapPage(el, html) {
       if (!el) return null;
       if (typeof document === "undefined" || !document.createElement) return el;
+      // The page is patched where it stands when it can be: same column, same
+      // cards, only their marks and words changed. Nothing is replaced, so
+      // scroll, focus and hover all hold without being put back by hand.
+      if (window.CCMorph && el.nodeType === 1 && el.parentNode && String(html).trim()) {
+        const kept = window.CCMorph.outer(el, String(html).trim());
+        if (kept && kept !== el && kept.classList) kept.classList.add("cc-no-anim");
+        return kept || el;
+      }
       const holder = document.createElement("template");
       holder.innerHTML = String(html).trim();
       const fresh = holder.content.firstElementChild;
@@ -3656,10 +3836,20 @@
     _refreshTopFolderTabs() {
       const container = this._dndContainer;
       if (!container) return;
+      // Patched, never rewritten: the rail is on screen through every pick and
+      // every page, and a rewrite flickered it each time.
+      const M = window.CCMorph;
       const slot = container.querySelector(".cc-top-folder-tabs-slot");
-      if (slot) { slot.innerHTML = this._renderTopFolderTabsHtml(); return; }
+      if (slot) {
+        if (M) M.inner(slot, this._renderTopFolderTabsHtml());
+        else slot.innerHTML = this._renderTopFolderTabsHtml();
+        return;
+      }
       const bar = container.querySelector(".cc-dossier-top-bar");
-      if (bar) bar.outerHTML = this._renderTopFolderTabsHtml();
+      if (bar) {
+        if (M) M.outer(bar, this._renderTopFolderTabsHtml());
+        else bar.outerHTML = this._renderTopFolderTabsHtml();
+      }
     }
 
     // ── Sidebar Tabs & Completion Calculation ──
@@ -3692,11 +3882,21 @@
         step: STEP.DESCRIPTION
       };
 
+      // Every character has a body, person, creature or dossier alike, so the
+      // Body parts tab is drawn in every mode.
+      const anatomy = {
+        id: "anatomy",
+        iconIndex: 292,
+        title: ccT('CharCreate.bodyParts'),
+        subtitle: archetypeDisplayName(actorArchetypeKey(actor) || "Humanoid") || ccT('CharCreate.pending'), // i18n-ignore: Archetypes.json key
+        step: STEP.ANATOMY
+      };
+
       const traits = {
         id: "traits",
         iconIndex: 87,
         title: ccT('CharCreate.traits'),
-        subtitle: actor && actor._selectedTraits && actor._selectedTraits.length > 0 ? `${actor._selectedTraits.length} traits` : ccT('CharCreate.optional'),
+        subtitle: actor && actor._selectedTraits && actor._selectedTraits.length > 0 ? ccTp("CharCreate.traitCount", { n: actor._selectedTraits.length }) : ccT('CharCreate.optional'),
         step: STEP.TRAITS
       };
 
@@ -3717,15 +3917,15 @@
             title: ccT('CharCreate.romanceTab'),
             subtitle: (actor && actor._ccRomance) ? ccT('CharCreate.customized') : ccT('CharCreate.optional'),
             step: STEP.ROMANCE
-          }];
+          }, anatomy];
         }
         // Simple mode is ONE sheet per character. The vocation, the traits and
         // the history the wizard used to ask for on tabs of their own are all
-        // on the bio sheet now (see _simpleSheetPickersHtml), so there is no
-        // strip left to draw: the party rail above it is the only tab row, and
-        // a character is a tab. Followers and the scenario keep their own
-        // pages, since neither belongs to any one member.
-        return [];
+        // on the bio sheet now (see _simpleSheetPickersHtml). The one page
+        // beside it is the body that sheet builds, which is read rather than
+        // filled in. Followers and the scenario keep their own pages, since
+        // neither belongs to any one member.
+        return [bio, anatomy];
       }
 
       const isCreature = !!(actor && actor._isCreatureActor);
@@ -3750,7 +3950,7 @@
         id: "specializations",
         iconIndex: 126,
         title: ccT('CharCreate.specializations'),
-        subtitle: (actor && actor._specPointsSpent ? `${actor._specPointsSpent} pts` : ccT('CharCreate.optional')),
+        subtitle: (actor && actor._specPointsSpent ? ccTp("CharCreate.pointCount", { n: actor._specPointsSpent }) : ccT('CharCreate.optional')),
         step: STEP.SPECIALIZATIONS
       };
 
@@ -3759,7 +3959,9 @@
       // the strip drops the tab rather than opening it on a line of refusal.
       const NC = window.NPCCreature;
       const noRomance = !!(NC && NC.isNonSentientActor && NC.isNonSentientActor(actor));
-      const dossier = noRomance ? [bio] : [bio, romance];
+      // The written history is its own tab, right after the Bio it is written
+      // from.
+      const dossier = noRomance ? [bio, description] : [bio, description, romance];
       // The story mode is played as Em, whose class is the one the story gives
       // her: the page that would change it is not drawn at all there, in any
       // mode, rather than drawn and then refused.
@@ -3768,8 +3970,8 @@
       // mode draws neither tab.
       const buildTabs = Scene_CharacterCreation._storyMode ? [] : [traits, specializations];
       return isCreature
-        ? [...dossier, archetype, ...klassTab, ...buildTabs]
-        : [...dossier, ...klassTab, ...buildTabs];
+        ? [...dossier, archetype, anatomy, ...klassTab, ...buildTabs]
+        : [...dossier, anatomy, ...klassTab, ...buildTabs];
     }
 
     _isTabCompleted(tabId) {
@@ -3789,6 +3991,7 @@
         case "specializations":
         case "description":
         case "bio":
+        case "anatomy":
         case "romance":
         case "personality":
           return true; // Optional steps
@@ -3928,6 +4131,7 @@
       // Only a deliberate visit to the Class tab opens the class step for a
       // creature; the linear flow still walks past it.
       this._classStepRequested = (tabId === "class");
+      this._anatomyStepRequested = (tabId === "anatomy");
       if (this._presetWindow) {
         this.onPresetCancel();
       }
@@ -3937,6 +4141,8 @@
         this._step = STEP.BIO;
       } else if (tabId === "romance") {
         this._step = STEP.ROMANCE;
+      } else if (tabId === "anatomy") {
+        this._step = STEP.ANATOMY;
       } else if (tabId === "traits") {
         this._step = STEP.TRAITS;
       } else if (tabId === "origin") {
@@ -4558,7 +4764,7 @@
           }
           this._ccSwapPage(container.querySelector(".cc-page-right"), this._classPickerRightHtml(stepData2, index));
           const sidebarSlot = container.querySelector(".cc-sidebar-slot");
-          if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
+          if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._renderCompactSidebarHtml());
           this._refreshTopFolderTabs();
           this._lastIndex = index;
           return;
@@ -4572,7 +4778,7 @@
           if (dossier) {
             const grid = container.querySelector(".cc-scenario-grid");
             const prevScrollTop = grid ? grid.scrollTop : 0;
-            dossier.outerHTML = this._renderScenarioDossierHtml();
+            this._ccMorphOuter(dossier, this._renderScenarioDossierHtml());
             const newGrid = container.querySelector(".cc-scenario-grid");
             if (newGrid) newGrid.scrollTop = prevScrollTop;
             const activeCard = container.querySelector(".cc-scenario-card.selected");
@@ -4600,7 +4806,7 @@
 
         // Update sidebar
         const sidebar = container.querySelector(".cc-compact-sidebar");
-        if (sidebar) sidebar.outerHTML = this._renderCompactSidebarHtml();
+        if (sidebar) this._ccMorphOuter(sidebar, this._renderCompactSidebarHtml());
 
         // Update folder tabs
         this._refreshTopFolderTabs();
@@ -4876,6 +5082,12 @@
       // the wizard resumes past it. Asking for it by name is another matter -
       // the Class tab on a creature's dossier used to land here and be bounced
       // straight on to Traits, so the tab did nothing at all.
+      if (this._step === STEP.ANATOMY && !this._anatomyStepRequested) {
+        this._step++;
+        this.setupStep();
+        return;
+      }
+
       if (this._step === STEP.CLASS && Scene_CharacterCreation._isCreatureMode &&
           !this._classStepRequested) {
         this._step++;
@@ -4989,6 +5201,7 @@
 
     nextStep() {
       this._classStepRequested = false;
+      this._anatomyStepRequested = false;
       this._step++;
       // autoSkip steps are always skipped; showOnlyOnce steps only once the
       // first creation is already complete.
@@ -5007,6 +5220,7 @@
     // NEW: Handles going to the previous step.
     previousStep() {
       this._classStepRequested = false;
+      this._anatomyStepRequested = false;
       // Character-type step for the second or third party member: this is
       // where "add_member" landed after adding the actor and jumping ahead,
       // so Back undoes exactly that (drops the actor it just added) and
@@ -5014,6 +5228,7 @@
       // falling through to the title screen.
       if (this._step === STEP.CHARACTER_TYPE && (Scene_CharacterCreation._currentPartyMemberIndex || 0) > 0) {
         const removedIndex = Scene_CharacterCreation._currentPartyMemberIndex;
+        refundNamingGold($gameActors.actor(removedIndex + 1));
         $gameParty.removeActor(removedIndex + 1); // Actor IDs are 1-based
         Scene_CharacterCreation._currentPartyMemberIndex = removedIndex - 1;
         Scene_CharacterCreation._isCreatureMode = false;
@@ -5131,7 +5346,16 @@
       // on the brief page, the editor opens on a blank one, and saving it
       // starts it.
       if (symbol === "origin_custom" && !activeCustomScenario()) {
-        this._openCustomScenarioEditor(null, null, () => this._finishOriginChoice(symbol));
+        this._openCustomScenarioEditor(null, null, () => {
+          // The purse was settled on Embark, before this scenario existed, so
+          // the cash written in the editor was counted as nothing: it is paid
+          // now that there is a scenario to read it from.
+          if ($gameSystem._ccStartingMoneyGiven && typeof customScenarioGold === "function") {
+            const cash = customScenarioGold();
+            if (cash > 0) $gameParty.gainGold(cash);
+          }
+          this._finishOriginChoice(symbol);
+        });
         return;
       }
       // Whatever this origin decides below, the party is about to be set down
@@ -5450,7 +5674,7 @@
       const actorId = Scene_CharacterCreation.getCurrentActorId();
 
       AudioManager.playSe(CREATION_PAGE_TURN_SE);
-      $gameParty.gainGold(CREATION_START_GOLD);
+      payNamingGold($gameActors.actor(actorId));
       $gameSwitches.setValue(SWITCH_CREATION_NAMED, true);
       // The suggestion has to exist before the prompt opens, so it is generated
       // here rather than between the two screens. Aimed at the member actually
@@ -5833,7 +6057,17 @@
         // looked at through an empty window.
         const fallbackKey = Scene_CharacterCreation.isCreatureActor(actor)
           ? CREATURE_DEFAULT_ARCHETYPE : "Humanoid"; // i18n-ignore: Archetypes.json key
-        cfg = M3D.configFromArchetypes(keys.length ? keys : [fallbackKey]);
+        // Asked once a frame: the body is built again only when the archetypes
+        // it is built from changed.
+        const from = keys.length ? keys : [fallbackKey];
+        const sig = from.join("|") + "|" + !!(window.Battler3D && window.Battler3D.CREATURE_PROFILES);
+        const memo = this._ccArchetypeCfgMemo;
+        if (memo && memo.sig === sig) {
+          cfg = memo.cfg;
+        } else {
+          cfg = M3D.configFromArchetypes(from);
+          this._ccArchetypeCfgMemo = { sig: sig, cfg: cfg };
+        }
       }
       if (!wrap || !actor || !cfg) { this._destroyCC3DPortrait(); return; }
       this._showCC3DPortrait(wrap, { kind: "custom", cfg: cfg, actorId: actor.actorId() });
@@ -5848,9 +6082,19 @@
         const fallback = wrap.querySelector(".cc3d-live-portrait-fallback");
         if (fallback) fallback.style.display = "none";
         wrap.classList.remove("empty");
+        this._fitCC3DPortrait(this._ccPortrait3D, wrap);
         // Same body, perhaps repainted on the Bio page since the last frame.
+        // Tinting walks every material of the model, and this runs once a
+        // frame, so it is only done when the colours actually changed.
         const shown = this._ccPortrait3D.model;
-        if (shown && info.kind === "glb") window.ActorModel3D.tint(shown.model, info.colours);
+        if (shown && info.kind === "glb") {
+          const tintKey = JSON.stringify(info.colours || null);
+          if (this._ccPortrait3D.tintKey !== tintKey || this._ccPortrait3D.tintedModel !== shown.model) {
+            window.ActorModel3D.tint(shown.model, info.colours);
+            this._ccPortrait3D.tintKey = tintKey;
+            this._ccPortrait3D.tintedModel = shown.model;
+          }
+        }
         return;
       }
       this._destroyCC3DPortrait();
@@ -5864,9 +6108,11 @@
       canvas.classList.add("cc-fill-layer");
       wrap.appendChild(canvas);
 
-      const rect = wrap.getBoundingClientRect();
-      const width = Math.max(1, Math.round(rect.width) || 220);
-      const height = Math.max(1, Math.round(rect.height) || 220);
+      // The frame's own layout size: a rect read while the page is still
+      // settling (the Bio sheet stands the model on the facing page) can be a
+      // sliver, and a canvas built that small never showed the body.
+      const width = Math.round(wrap.clientWidth) || 220;
+      const height = Math.round(wrap.clientHeight) || 220;
 
       let renderer;
       try {
@@ -5896,9 +6142,9 @@
       scene.add(pivot);
 
       const state = {
-        key: key, canvas: canvas, renderer: renderer, scene: scene, camera: camera, pivot: pivot,
+        key: key, canvas: canvas, renderer: renderer, scene: scene, camera: camera, pivot: pivot, w: width, h: height,
         model: null, rafId: 0, disposed: false, frameAcc: 0, clock: new THREE.Clock(),
-        listeners: {}, activeButton: -1, prev: null, travel: 0
+        listeners: {}, activeButton: -1, prev: null, travel: 0, moved: false, margin: 1.25
       };
       this._ccPortrait3D = state;
       this._bindCC3DPortraitControls(state);
@@ -5921,7 +6167,7 @@
         } else {
           try { battler.update(1 / 60); } catch (e) {}
         }
-        const fit = window.ActorModel3D.framing(battler, camera, 1.25);
+        const fit = window.ActorModel3D.framing(battler, camera, state.margin);
         if (!fit) return;
         const holder = new THREE.Group();
         holder.position.copy(fit.center).multiplyScalar(-1);
@@ -5973,6 +6219,7 @@
         if (state.activeButton === -1 || !state.prev) return;
         const dx = e.clientX - state.prev.x, dy = e.clientY - state.prev.y;
         state.travel += Math.abs(dx) + Math.abs(dy);
+        if (state.travel > 6) state.moved = true;
         if (state.activeButton === 0) {
           pivot.rotation.y += dx * 0.012; pivot.rotation.x += dy * 0.012;
         } else {
@@ -5985,6 +6232,7 @@
       L.onClick = (e) => { if (state.travel > 6) { e.stopPropagation(); e.preventDefault(); } state.travel = 0; };
       L.onWheel = (e) => {
         e.preventDefault(); e.stopPropagation();
+        state.moved = true;
         camera.position.z = Math.max(1.5, Math.min(60, camera.position.z + e.deltaY * 0.012));
       };
       L.onAux = (e) => { if (e.button === 1) e.preventDefault(); };
@@ -5997,6 +6245,7 @@
         if (e.touches.length !== 1 || !state.prev) return;
         const dx = e.touches[0].clientX - state.prev.x, dy = e.touches[0].clientY - state.prev.y;
         state.travel += Math.abs(dx) + Math.abs(dy);
+        if (state.travel > 6) state.moved = true;
         pivot.rotation.y += dx * 0.012; pivot.rotation.x += dy * 0.012;
         state.prev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       };
@@ -6010,6 +6259,29 @@
       canvas.addEventListener("touchstart", L.onTStart);
       canvas.addEventListener("touchmove", L.onTMove);
       window.addEventListener("touchend", L.onTEnd);
+    }
+
+    // Keeps the canvas drawn at the size its frame really has, so a frame that
+    // grows or moves to another page is never filled by a stretched sliver.
+    _fitCC3DPortrait(state, wrap) {
+      if (!state || !wrap) return;
+      const w = Math.round(wrap.clientWidth);
+      const h = Math.round(wrap.clientHeight);
+      if (!w || !h || (w === state.w && h === state.h)) return;
+      state.w = w;
+      state.h = h;
+      try { state.renderer.setSize(w, h, false); } catch (e) { return; }
+      state.camera.aspect = w / h;
+      state.camera.updateProjectionMatrix();
+      // The body is framed again for the new shape, whole and centred, the
+      // way it first stood, unless the player has already turned or zoomed it.
+      if (state.moved || !state.model || !window.ActorModel3D) return;
+      const holder = state.model.model && state.model.model.parent;
+      const fit = window.ActorModel3D.framing(state.model, state.camera, state.margin);
+      if (!fit) return;
+      if (holder) { holder.add(state.model.model); holder.position.copy(fit.center).multiplyScalar(-1); }
+      state.camera.position.set(0, 0, fit.distance);
+      state.camera.lookAt(0, 0, 0);
     }
 
     _destroyCC3DPortrait() {
@@ -6400,6 +6672,29 @@
     return !!train && mapId === train;
   }
 
+  // The curtain is a plain black hold: no fade runs, so not one frame of the
+  // map gets through. (A fade out starts from a clear screen, which let the
+  // landing show for a frame.)
+  function holdCreationCurtain(scene) {
+    scene._fadeSign = 0;
+    scene._fadeDuration = 0;
+    scene._fadeWhite = 0;
+    scene._fadeOpacity = 255;
+    if (scene._colorFilter) scene.updateColorFilter();
+  }
+
+  function creationCurtainPending() {
+    return !!($gameSystem && ($gameSystem._pendingCreationCurtain || $gameSystem._pendingStoryModeCreation));
+  }
+
+  // Down from the very first frame: the map is drawn while its images load,
+  // well before start() runs.
+  const _CC_Scene_Map_create = Scene_Map.prototype.create;
+  Scene_Map.prototype.create = function () {
+    _CC_Scene_Map_create.call(this);
+    if (creationCurtainPending()) holdCreationCurtain(this);
+  };
+
   const _CC_Scene_Map_start = Scene_Map.prototype.start;
   Scene_Map.prototype.start = function () {
     // A run that opens on the wizard (the title screen's own New game and
@@ -6410,16 +6705,26 @@
     const pendingStory = !!($gameSystem && $gameSystem._pendingStoryModeCreation &&
         !isStoryCreationMap($gameMap.mapId()) &&
         !(SceneManager._scene instanceof Scene_CharacterCreation));
-    _CC_Scene_Map_start.call(this);
-    if (curtain || pendingStory) {
+    const covered = curtain || pendingStory;
+    // Nor is the landing heard: its music and ambience wait for the map the
+    // wizard hands the party to.
+    const autoplay = $gameMap.autoplay;
+    if (covered) $gameMap.autoplay = function () {};
+    try {
+      _CC_Scene_Map_start.call(this);
+    } finally {
+      if (covered) delete $gameMap.autoplay;
+      if (covered && $gameMap.autoplay !== autoplay) $gameMap.autoplay = autoplay;
+    }
+    if (covered) {
       $gameSystem._pendingCreationCurtain = false;
-      this.startFadeOut(1);
+      holdCreationCurtain(this);
     }
     if (pendingStory) openCharacterCreation();
     // Insurance: if the wizard never arrives (an event that did not run, a
     // landing with nothing to open it) the curtain lifts by itself rather
     // than leaving the player on a black screen.
-    this._ccCurtainWait = (curtain || pendingStory) ? 90 : 0;
+    this._ccCurtainWait = covered ? 90 : 0;
   };
 
   const _CC_Scene_Map_update = Scene_Map.prototype.update;
@@ -6428,6 +6733,7 @@
     if (this._ccCurtainWait > 0 && --this._ccCurtainWait === 0 &&
         SceneManager._scene === this && !$gameMap.isEventRunning()) {
       this.startFadeIn(this.fadeSpeed(), false);
+      $gameMap.autoplay();
     }
   };
 
@@ -6561,6 +6867,8 @@
     Window_CharacterCreationGrid,
     ccT,
     ccTp,
+    ccEsc,
+    refundNamingGold,
     ccStatLabel,
     ccList,
     ccReproChoices,

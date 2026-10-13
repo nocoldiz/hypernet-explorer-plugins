@@ -1,4 +1,5 @@
 {
+  "wipPlace": "{name} (WIP)",
   "description": "DESCRIPTION",
   "faction": "FACTION",
   "locations": "LOCATIONS",
@@ -6,12 +7,12 @@
   "moreLocations": "+{count} MORE",
   "requirements": "REQUIREMENTS",
   "successRate": "SUCCESS RATE",
-  "deficitWarning": "DEFICITS DETECTED. TAKIN' DIS CONTRACT ON CARRIES A HIGHER RISK OF FAILURE AN' INJURY!",
+  "deficitWarning": "STATS TOO LOW. HIGHER RISK OF FAILURE AN' INJURY!",
   "successRatePct": "{pct}% SUCCESS",
   "selectWorker": "SELECT WORKER:",
-  "noGuildLaborRequisitionsCurrently": "NO GUILD LABOR REQUISITIONS CURRENTLY AVAILABLE!",
+  "noGuildLaborRequisitionsCurrently": "NO GUILD JOBS AVAILABLE.",
   "dismiss": "DISMISS",
-  "selectALaborContractTo": "SELECT A LABOR CONTRACT TA VIEW DA SPECIFICATIONS!",
+  "selectALaborContractTo": "SELECT A CONTRACT TA SEE DETAILS!",
   "deploymentLocations": "DEPLOYMENT LOCATIONS",
   "laborContract": "LABOR CONTRACT",
   "category": "CATEGORY: {category}",
@@ -25,10 +26,10 @@
   "signContract": "SIGN CONTRACT",
   "retractContract": "RETRACT CONTRACT",
   "jobBoardOffers": "JOB BOARD OFFERS",
-  "noJobOffersCurrentlyAvailable": "NO JOB OFFERS CURRENTLY AVAILABLE!",
-  "selectAJobOfferTo": "SELECT A JOB OFFER TA VIEW DA CONTRACT SPECIFICATIONS!",
+  "noJobOffersCurrentlyAvailable": "NO JOB OFFERS AVAILABLE.",
+  "selectAJobOfferTo": "SELECT A JOB OFFER TA SEE DETAILS!",
   "availableLocations": "AVAILABLE LOCATIONS",
-  "proposalContract": "PROPOSAL CONTRACT",
+  "proposalContract": "JOB OFFER",
   "totalReward": "TOTAL REWARD",
   "hourlyRate": "HOURLY RATE",
   "remoteWorkLabel": "REMOTE WORK",
@@ -77,8 +78,8 @@
     "ambush": "DA SHIFT ENDED IN AN ALLEY, AN' DA ALLEY WAZ NO EMPTY!",
     "raid": "SOMEBODY CAME FOR DA STOCK, AN' {actor} WAZ DA ONLY ONE STANDIN' BETWEEN DEM AN' IT!",
     "difficultCustomer": "A CUSTOMER TOOK AGAINST {actor} ON SIGHT AN' MADE A SHOW OF IT IN FRONT OF DA MANAGER!",
-    "inspection": "AN INSPECTOR TURNED UP ASKIN' QUESTIONS {actor} WOULD RATHER NO HAB BEEN ASKED!",
-    "nearMiss": "SOMETHIN' HEAVY CAME DOWN WHERE {actor} HAB BEEN STANDIN' A MOMENT BEFORE!",
+    "inspection": "AN INSPECTOR TURNED UP ASKIN' QUESTIONS {actor} WOULD RATHER NO HAB BIN ASKED!",
+    "nearMiss": "SOMETINK HEAVY CAME DOWN WHERE {actor} HAB BIN STANDIN' A MOMENT BEFORE!",
     "backlash": "DA WORKIN' TURNED BACK ON {actor} HALFWAY THROUGH AN' HAB TA BE WRESTLED SHUT!",
     "docked": "DA DAMAGE CAME OUT OF {actor}'S PAY, AS DA DAMAGE TENDS TA!"
   },
@@ -107,11 +108,11 @@
   "shift": {
     "dispatched": "{actor} LEAVES FOR A {hours}H SHIFT AT {job}!",
     "returned": "{actor} IZ BACK FROM {job} WIT {amount}€.",
-    "benched": "{actor} FINISHED AT {job} WIT {amount}€, AN' WAITS WIT DA MEMBERS IN RESERVES!",
+    "benched": "{actor} FINISHED AT {job} WIT {amount}€ AN' IZ NOW IN RESERVE!",
     "awayTitle": "AWAY ON A SHIFT",
     "awayOn": "WORKIN' {job}",
     "remaining": "{hours}H {minutes}M LEFT",
-    "leavesParty": "WHOEVER TAKES DIS CONTRACT LEAVES DA PARTY FOR ITS HOURS AN' REJOINS WHEN DEY IZ UP!",
-    "lastMemberWarning": "NOBODY WOULD BE LEFT TA TRAVEL WIT. DIS SHIFT IZ WORKED DA OLD WAY INSTEAD: DA SCREEN FADES AN' DA HOURS IZ SKIPPED!"
+    "leavesParty": "DA WORKER LEAVES DA PARTY FOR DA SHIFT AN' REJOINS AFTER!",
+    "lastMemberWarning": "NOBODY ELSE IZ IN DA PARTY. TIME SKIPS UNTIL DA SHIFT ENDS!"
   }
 }

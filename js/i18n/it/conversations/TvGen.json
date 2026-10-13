@@ -107,7 +107,7 @@
     ],
     "legal_entity": [
       "Un gruppo concorrente",
-      "Archive Foundation",
+      "l'Archive Foundation",
       "Un trust della Gilda",
       "L'ufficio legale del Collettivo",
       "Un consorzio che nessuno sa nominare",
@@ -175,7 +175,7 @@
       "l'anno in cui è atterrata la Torre",
       "il decennio delle Falkland",
       "l'ultima quiete {prima dello Squishing|precedente allo Squishing}",
-      "un secolo su cui Archive Foundation ha da ridire",
+      "un secolo su cui l'Archive Foundation ha da ridire",
       "gli anni del pozzo",
       "l'epoca delle centraliniste",
       "un periodo che la Gilda ha ripulito",
@@ -488,7 +488,7 @@
       "{tutti|proprio tutti}, francamente"
     ],
     "authority": [
-      "Archive Foundation",
+      "l'Archive Foundation",
       "La Gilda dei Maghi",
       "la Società dei Camionisti",
       "il Sacro Impero Vaticano",
@@ -604,7 +604,7 @@
       "la staffetta dei piccioni",
       "il manto stradale",
       "l'atmosfera, per quel che ne resta",
-      "gli strumenti di Archive Foundation"
+      "gli strumenti dell'Archive Foundation"
     ],
     "pressure_type": [
       "temporale",
@@ -649,7 +649,7 @@
       "La causalità",
       "La rete dei confini",
       "La griglia delle leyline",
-      "Il servizio previsioni di Archive Foundation",
+      "Il servizio previsioni dell'Archive Foundation",
       "La realtà condivisa",
       "La staffetta",
       "L'instradamento della Società",
@@ -810,7 +810,7 @@
       "coerente con quanto agli atti",
       "infalsificabile, ed è proprio quello il problema",
       "vero in almeno una linea temporale",
-      "materia per la Gilda, non per noi",
+      "materia per la sola Gilda",
       "non confermato da nessuno strumento",
       "la cosa meno {strana|bizzarra|singolare} {di questa settimana|degli ultimi giorni|della settimana}",
       "in fase di valutazione e probabilmente ci resterà",
@@ -1091,10 +1091,10 @@
       "La data sarà contestata. Usate quella della protezione civile.",
       "Potreste ricordarvi questa trasmissione due volte.",
       "La sequenza è sospesa. La causalità è a titolo indicativo.",
-      "{Alcuni di voi|Qualcuno di voi|Una parte di voi} sta sentendo questo per la seconda volta."
+      "{Qualcuno di voi|Più d'uno di voi|Qualcuno fra voi} sta sentendo questo per la seconda volta."
     ],
     "organization": [
-      "Archive Foundation",
+      "l'Archive Foundation",
       "La Gilda dei Maghi",
       "La Società dei Camionisti",
       "Il Sacro Impero Vaticano",
@@ -1199,7 +1199,7 @@
     ],
     "authority": [
       "La Gilda dei Maghi",
-      "Archive Foundation",
+      "l'Archive Foundation",
       "Il Sacro Impero Vaticano",
       "L'ufficio di protezione civile",
       "I Tre Pilastri",
@@ -1470,7 +1470,7 @@
       "Siate riconoscibili a voi stessi, quando finirà."
     ],
     "deity": [
-      "Archive Foundation",
+      "l'Archive Foundation",
       "l'aspetto Padre, com'era",
       "Maat, sotto la crosta",
       "chiunque occupi il trono {questa settimana|in questi giorni|adesso}",
@@ -1644,7 +1644,7 @@
       "TELESPETTATORI SUPERIORI ALLA POPOLAZIONE. TRASMISSIONE IN CORSO.",
       "...ci scusiamo per il...ci scusiamo per il...non ci scusiamo...",
       "GOBBO IN ANTICIPO. IL GOBBO HA GIÀ LA CHIUSURA.",
-      "REALTA.EXE HA ESEGUITO UN'OPERAZIONE NON VALIDA. NUOVO TENTATIVO ALL'INFINITO."
+      "REALTÀ.EXE HA ESEGUITO UN'OPERAZIONE NON VALIDA. NUOVO TENTATIVO ALL'INFINITO."
     ]
   },
   "tvChannels": [
@@ -1786,7 +1786,7 @@
     "Il Vuoto tra i Mondi",
     "Ex Settore di Realtà 7",
     "Il Territorio dei Campi Verdi",
-    "Sede di Archive Foundation",
+    "Sede dell'Archive Foundation",
     "Il Complesso della Torre della Thatcher",
     "Il Punto di Collisione",
     "Memoriale Ground Zero Y2K",
@@ -1895,7 +1895,7 @@
     "Anoki: L'Eredità Indistruttibile",
     "Margaret contro Crowley: Le Guerre dei Maghi",
     "Vita nei Loop: Storia di un Superstite",
-    "I Blitz di Archive Foundation",
+    "I Blitz dell'Archive Foundation",
     "La Società Ipercapitalista allo Scoperto",
     "Civiltà Goblin: Prima della Caduta",
     "La Strada che Collega Ogni Cosa",
@@ -1967,7 +1967,7 @@
   ],
   "newsTemplates": [
     "{Ultim'ora:|Notizia dell'ultima ora:|Ci arriva adesso:} bolla di loop {rilevata a|registrata a|confermata a} {location}. {Si raccomanda ai residenti di|Ai residenti si raccomanda di|Agli abitanti si dice di} restare sotto gli 80 all'ora o di farsi raccogliere da quella. In collegamento {anchor}.",
-    "Archive Foundation ha fatto irruzione oggi in un altro stabilimento di {company}, pretendendo l'accesso a '{document}'. Tre archivisti sono stati {fermati|trattenuti|portati via} da {security}.",
+    "L'Archive Foundation ha fatto irruzione oggi in un altro stabilimento di {company}, pretendendo l'accesso a '{document}'. Tre archivisti sono stati {fermati|trattenuti|portati via} da {security}.",
     "La fazione di Margaret Thatcher rivendica una svolta in materia di {research}. I sostenitori di Aleister Crowley la chiamano '{criticism}'.",
     "Il titolo Anoki tocca il massimo storico: i modelli {model} risultano immuni a {anomaly}. Gli scienziati restano {emotion}.",
     "Il collettivo ipercapitalista annuncia il nuovo servizio '{service}'. I critici dicono che sfrutta {victims}.",
@@ -1976,7 +1976,7 @@
     "Aumentano le razzie goblin in {territory}. {Le autorità ricordano ai cittadini che|Le autorità ricordano a tutti che|L'avviso in vigore ricorda che} la tecnologia successiva a {era} scatena la loro {reaction}.",
     "Il nuovo rivestimento FantaBlack risulta {percentage}% {resistance}. {legal_entity} presenta ricorso da oltre {barrier}.",
     "Viabilità: {highway} interessata da {temporal_condition}. {Previsti ritardi di|Mettete in conto altri} {time_amount}.",
-    "Un {profession} della zona ha trovato {artifact} risalente a {time_period}. Archive Foundation {action}.",
+    "Un {profession} della zona ha trovato {artifact} risalente a {time_period}. L'Archive Foundation {action}.",
     "Anomalia meteo a {location}: c'è {effect}. I residenti segnalano {strange_phenomenon}.",
     "{Ultim'ora:|Notizia dell'ultima ora:|Ci arriva adesso:} {celebrity} avvistato dalle parti di {location} alla guida di {vehicle} a {speed}. I fan si radunano nonostante {danger}.",
     "Nota economica: {currency} {segna un nuovo|tocca un nuovo|mette a segno un nuovo} {direction} contro {comparison}. Gli ipercapitalisti reagiscono con {reaction}.",
@@ -2225,7 +2225,7 @@
     "800-AIUTO-LOOP",
     "166-FERMA-TEMPO",
     "800-NO-RESET",
-    "899-REALTA",
+    "899-REALTÀ",
     "800-AGGIUSTA-TEMPO",
     "166-MAGHI",
     "800-GOBLIN",
@@ -2271,7 +2271,7 @@
     "Rompiloop Anonimi",
     "Prova di Realtà in Diretta",
     "Superstiti del Post-Squishing",
-    "I Fascicoli di Archive Foundation",
+    "I Fascicoli dell'Archive Foundation",
     "Ipercapitalisti allo Scoperto",
     "Misteri della Gilda dei Maghi",
     "Cronache Anoki",
@@ -2374,7 +2374,7 @@
   ],
   "prophecies": [
     "...la tempesta sta arrivando, Bubba lo sa, Bubba lo sa sempre... il camper sogna pecore elettriche...",
-    "...quando l'Anoki squillerà tre volte, Archive Foundation cadrà... la conoscenza muore insieme alla saggezza...",
+    "...quando l'Anoki squillerà tre volte, l'Archive Foundation cadrà... la conoscenza muore insieme alla saggezza...",
     "...i ricordi di Em trafiggeranno il cuore degli dèi... ciò che è dimenticato si ricorda da sé...",
     "...guardatevi da chi va più piano di 80, perché si è perso nel domani di ieri...",
     "...la Strada porta a Beagle, ma Beagle non porta da nessuna parte... e da nessuna parte porta a casa...",

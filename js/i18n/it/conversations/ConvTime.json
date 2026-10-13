@@ -20,7 +20,7 @@
     ],
     "Melancholic": [
       "Un'altra mattina. I giorni insistono a continuare.",
-      "Sveglio prima dell'alba, di nuovo. Le ore silenziose mi conoscono.",
+      "{g:Sveglio|Sveglia|Sveglio} prima dell'alba, di nuovo. Le ore silenziose mi conoscono.",
       "La luce del mattino è bella. Solo che arriva con troppa insistenza.",
       "Corrono tutti a cominciare la giornata. Verso cosa, mi chiedo."
     ],
@@ -37,7 +37,7 @@
       "Controllo che le serrature abbiano tenuto la notte, poi colazione."
     ],
     "Impulsive": [
-      "Sveglio! Cosa faccio per primo? Non importa, mi muovo!",
+      "{g:Sveglio|Sveglia|Sveglio}! Cosa faccio per primo? Non importa, mi muovo!",
       "Colazione saltata. Troppe cose da fare. O da trovare. O da iniziare!",
       "Mattino! Ora di impegnarmi in qualcosa di cui dubiterò entro mezzogiorno!",
       "La giornata è fresca, vince la prima idea che passa!"
@@ -45,7 +45,7 @@
     "Stoic": [
       "Alzati. Comincia. L'ora non tratta.",
       "Il mattino è una porta. Attraversala.",
-      "Ho dormito, mi sono svegliato, proseguo.",
+      "Ho dormito, mi sono {g:svegliato|svegliata|svegliato}, proseguo.",
       "All'alba non serve altro che presentarsi."
     ],
     "Paranoid": [
@@ -88,7 +88,7 @@
       "Hanno mangiato tutti? Nessuno comincia la giornata a stomaco vuoto, non finché ci sono io.",
       "Il latte è sul fuoco. Venite a prenderlo finché è caldo.",
       "La mattina è fatta di roba calda e parole gentili. Ho pronte entrambe.",
-      "Dormito bene? Sei pallido, tesoro. Siediti e mangia."
+      "Dormito bene? Hai una brutta cera, tesoro. Siediti e mangia."
     ],
     "Mischievous": [
       "Di mattina sono tutti rimbambiti. Orario di punta per gli scherzi.",
@@ -127,7 +127,7 @@
       "Avevo promesso di dare una mano stamattina, e mattina è."
     ],
     "Brave": [
-      "Giorno nuovo. Qualunque cosa porti, sono pronto.",
+      "Giorno nuovo. Qualunque cosa porti, sono {g:pronto|pronta|pronto}.",
       "Alba. L'ora migliore per fare la cosa che ti fa paura.",
       "Il coraggio del mattino è quello che costa meno. Fanne scorta.",
       "In piedi prima del sole. Che mi rincorra lui."
@@ -146,7 +146,7 @@
     ],
     "Apathetic": [
       "Mattina. Di nuovo. Va bene.",
-      "Mi sono svegliato. Il risultato della giornata è già raggiunto.",
+      "Mi sono {g:svegliato|svegliata|svegliato}. Il risultato della giornata è già raggiunto.",
       "Il sole insiste, quindi eccomi qua.",
       "Mattina, pomeriggio. Stessa roba, luce diversa."
     ],
@@ -161,7 +161,7 @@
     "Nervous": [
       "Mezza giornata andata e la mia lista si è pure allungata!",
       "È già così tardi?! Ma quando è successo? COME?",
-      "Sembrano tutti indaffarati. Sono abbastanza indaffarato io? Dovrei sembrarlo di più.",
+      "Sembrano tutti indaffarati. Sono abbastanza {g:indaffarato|indaffarata|indaffarato} io? Dovrei sembrarlo di più.",
       "Il pranzo mi è rimasto sullo stomaco. O forse è la scadenza. O entrambe. Probabilmente entrambe."
     ],
     "Calm": [
@@ -275,7 +275,7 @@
     "Grumpy": [
       "È già sera? No? Svegliatemi quando lo è.",
       "Il caldo del pomeriggio, il rumore del pomeriggio, la gente del pomeriggio.",
-      "Ancora tre ore a fingermi simpatico. Tic tac.",
+      "Ancora tre ore a fingermi {g:simpatico|simpatica|simpatico}. Tic tac.",
       "Chi ha messo in calendario pomeriggi così lunghi dovrebbe risponderne."
     ],
     "Loyal": [
@@ -437,14 +437,14 @@
       "Il sole se ne va. La cosa più intelligente che abbia fatto qualcuno oggi."
     ],
     "Loyal": [
-      "Giro di sera, per essere sicuro che i miei amici siano tornati sani.",
+      "Giro di sera, per essere {g:sicuro|sicura|sicuro} che i miei amici siano tornati sani.",
       "La giornata finisce dov'è cominciata: a badare l'uno all'altro.",
-      "Un colpo alla sua porta prima che alla mia. Giusto per essere sicuro.",
+      "Un colpo alla sua porta prima che alla mia. Giusto per essere {g:sicuro|sicura|sicuro}.",
       "La cena condivisa ha un altro sapore. Porto la mia di là."
     ],
     "Brave": [
       "Sta arrivando il buio. Bene. Dovrebbe avere più paura lui di me.",
-      "La giornata ha messo tutti alla prova. Sono fiero di chi è ancora in piedi.",
+      "La giornata ha messo tutti alla prova. Sono {g:fiero|fiera|fiero} di chi è ancora in piedi.",
       "Serve un volontario per il turno di notte? L'avete trovato.",
       "L'imbrunire è solo la giornata che ti sfida a continuare."
     ],
@@ -537,7 +537,7 @@
     "Authoritative": [
       "Il paese dorme perché qualcuno tiene l'ordine. Ricordatelo.",
       "Ronda notturna fatta? Allora la giornata è ufficialmente conclusa.",
-      "Il coprifuoco non è crudeltà. È premura con la schiena dritta.",
+      "Il coprifuoco è premura con la schiena dritta.",
       "Dormo quando rientra la guardia. Non un minuto prima."
     ],
     "Scholarly": [
@@ -571,7 +571,7 @@
       "Domani qualcuno troverà gli stivali sul tetto. Stanotte ce li metto io."
     ],
     "Cynical": [
-      "Il buio non nasconde niente di nuovo. È lo stesso marcio, solo senza luce.",
+      "Il buio nasconde lo stesso marcio di sempre, solo senza luce.",
       "Sogni d'oro a tutti. Le bollette riprendono all'alba.",
       "Stelle: belle, lontane, indifferenti. Almeno su questo sono oneste.",
       "La notte è l'unico momento in cui questo paese sta zitto, e pure quello è sospetto."
@@ -603,7 +603,7 @@
     "Brave": [
       "Qualunque cosa ci sia in quel buio, può venire a salutare.",
       "Turno di guardia notturno? Volentieri. Al buio serve qualcuno che non ne abbia paura.",
-      "Sono andato io a controllare quel rumore strano. È sempre un gatto. Sempre.",
+      "Sono {g:andato|andata|andato} io a controllare quel rumore strano. È sempre un gatto. Sempre.",
       "Dormite bene, gente. C'è sveglio qualcuno abbastanza coraggioso."
     ],
     "Timid": [

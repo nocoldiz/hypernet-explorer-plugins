@@ -28,7 +28,7 @@
   "expectedYield": "EXPECTED YIELD:",
   "produces": "PRODUCES:",
   "conditionsActions": "CONDITIONS & ACTIONS",
-  "plotBlurb": "HOW WELL DIS PLOT IZ GROWIN' RIGHT NOW",
+  "plotBlurb": "CURRENT GROWTH CONDITIONS",
   "growingConditions": "GROWIN' CONDITIONS",
   "seasonLabel": "SEASON:",
   "greenhouseLabel": "GREENHOUSE:",
@@ -43,7 +43,7 @@
   "close": "SHUT IT",
   "closeDash": "- CLOSE -",
   "emptyPlot": "EMPTY PLOT",
-  "emptyHint": "SELECT 'PLANT' TA GROW SOMETHIN' HERE!",
+  "emptyHint": "SELECT 'PLANT' TA GROW SOMETINK HERE!",
   "harvestLabel": "HARVEST:",
   "yieldLabel": "YIELD:",
   "greenhouseTag": "  ✓ GREENHOUSE",
@@ -61,8 +61,8 @@
   "growth": "GROWTH",
   "yield": "YIELD",
   "seeds": "SEEDS",
-  "pickSeedHint": "PICK A SEED ON DA RIGHT TA SEE ITS SEASONS AN' HOW LONG IT TAKES TA GROW!",
-  "seedBlurb": "SEEDS PLANTED IN DA RIGHT SEASON WILL GROW. IN A GREENHOUSE DEY GROW ALL YEAR, AN' FASTER!",
+  "pickSeedHint": "PICK A SEED TA SEE ITS SEASONS AN' GROWTH TIME!",
+  "seedBlurb": "SEEDS GROW IN DEY SEASON. IN A GREENHOUSE DEY GROW ALL YEAR, FASTER!",
   "seasonAbbr": {
     "SPRING": "SPR",
     "SUMMER": "SUM",
@@ -83,7 +83,28 @@
     "check": "CHECK"
   },
   "toast": {
-    "ripe": "{plant} IZ RIPE FOR PICKIN'."
+    "ripe": "{plant} IZ READY TA HARVEST."
   },
-  "plotAt": "OPEN GROUND, TILE {tile}"
+  "plotAt": "OPEN GROUND, TILE {tile}",
+  "plantName": {
+    "Tomato": "TOMATO",
+    "Watermelon": "WATERMELON",
+    "Wheat": "WHEAT",
+    "Pumpkin": "PUMPKIN",
+    "Carrot": "CARROT",
+    "Potato": "POTATO",
+    "Mushroom": "MUSHROOM",
+    "Sunflower": "SUNFLOWER",
+    "Strawberry": "STRAWBERRY",
+    "Corn": "CORN",
+    "Lavender": "LAVENDER",
+    "Onion": "ONION",
+    "Cabbage": "CABBAGE",
+    "Eggplant": "EGGPLANT",
+    "Pepper": "PEPPER",
+    "Ananas": "PINEAPPLE",
+    "Grapes": "GRAPEVINE",
+    "Cactus": "CACTUS",
+    "Beanstalk": "BEANSTALK"
+  }
 }

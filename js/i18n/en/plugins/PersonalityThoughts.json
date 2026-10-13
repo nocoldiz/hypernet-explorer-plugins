@@ -379,7 +379,7 @@
         "No shortcuts; they cause accidents."
       ],
       "leisure": [
-        "Free time, used wisely, not wasted.",
+        "Free time, to be used wisely.",
         "I'll relax somewhere I know is safe.",
         "A planned break beats an idle one."
       ],
@@ -511,7 +511,7 @@
         "I'll lie down and rise again ready."
       ],
       "hunger": [
-        "Hunger is a signal, not a master.",
+        "Hunger warns; I'm still the one in charge.",
         "I'll eat what I must, no more.",
         "The body is fed so the work continues."
       ],
@@ -521,7 +521,7 @@
         "Duty does not wait on mood."
       ],
       "leisure": [
-        "Rest is earned, not indulged.",
+        "Rest is earned, like everything else.",
         "A quiet moment is enough.",
         "I need little to be content."
       ],
@@ -739,9 +739,9 @@
         "A short respite, then back to the helm."
       ],
       "crime": [
-        "I rule by example, not by theft.",
+        "I rule by example. Theft I leave to others.",
         "Such pettiness is beneath me.",
-        "Authority is earned, not stolen."
+        "Authority is earned. Stealing it gets you nowhere."
       ],
       "hygiene": [
         "Presentation commands respect.",
@@ -751,7 +751,7 @@
       "money": [
         "Resources are thin; I'll secure more.",
         "A leader provides, for himself first.",
-        "I'll command an income, not beg for one."
+        "I'll command an income. Begging isn't my style."
       ],
       "safety": [
         "A strategic withdrawal, nothing more.",
@@ -1231,7 +1231,7 @@
         "I'll hold the line and finish properly."
       ],
       "leisure": [
-        "Rest is scheduled, not squandered.",
+        "Rest is on the schedule, and I keep to it.",
         "I'll use the break to maintain my routine.",
         "Even free time has its discipline."
       ],
@@ -1262,7 +1262,7 @@
       ],
       "social": [
         "A measured word with the right people.",
-        "I'll network with purpose, not for idleness.",
+        "I'll network with a clear purpose.",
         "Allies are an asset; I'll cultivate them."
       ],
       "idle": [

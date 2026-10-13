@@ -1,0 +1,1089 @@
+{
+  "_comment": "The Gnome voice (NPCConversation II.1b, SpeciesVoice). speech: the rules run over any shared line they say. voice: openers and closers. thought: their own thoughts by situation. script: two-person scripts, speaker 0 is always the Gnome.",
+  "voice": {
+    "openers": [
+      "COGS AN' SPROCKETS,",
+      "BY DA MAINSPRIN',",
+      "TA BE EXCEEDINGLY PRECISE,",
+      "GEARS AN' GASKETS,",
+      "IF ME SUMS IZ RIGHT,",
+      "SPEAKIN' AS A LIL' PERSON,",
+      "MEASURE TWICE, AS WE SAY,",
+      "NOW DEN, NOW DEN,",
+      "OH! OH! LISTEN,",
+      "FROM DOWN HERE,",
+      "AS ME GRANDMOTHER USED TA SAY,",
+      "SPRINGS AN' SPINDLES,",
+      "HOLD ON, HOLD ON,",
+      "GIVE OR TAKE A MILLIMETRE,",
+      "RIGHT, BY ME RECKONIN',",
+      "LIL' OBSERVATION:",
+      "TINKER'S HONOUR,",
+      "BRASS AN' BOTHER,",
+      "IN GNOMISH TERMS,",
+      "CARRY DA ONE, AN'",
+      "FOOTNOTE FIRST:",
+      "OH, SPLENDID, SPLENDID,",
+      "LIL' VOICE, BIG POINT:",
+      "HEAR A GNOME OUT:",
+      "PARDON DA PRECISION, BUT"
+    ],
+    "closers": [
+      "MEASURE TWICE, CUT ONCE.",
+      "TA DA MILLIMETRE, MORE OR LESS!",
+      "DA SUMS ALWAYS BALANCE IN DA END!",
+      "LIL', BUT CORRECT.",
+      "ME HAB IT WRITTEN DOWN SOMEWHERE!",
+      "DA COGS KEEP TURNIN'.",
+      "CARRY DA ONE.",
+      "DAT IZ DA GNOMISH VIEW, ANYWAY!",
+      "MARK ME WORDS, IN PENCIL.",
+      "TRUST DA SPRINGS.",
+      "EVERY BOLT HAB ITS NUT.",
+      "SO SAYS DA LIL' ONE.",
+      "TINKER'S HONOUR.",
+      "TA DA CENT, MIND YOU.",
+      "A SPOT OF OIL FIXES MOST TINKZ!",
+      "FOOTNOTE TA FOLLOW.",
+      "NOBODY AIMS LOW, YOU SEE.",
+      "ME GRANDMOTHER WOULD AGREE!",
+      "IN TRIPLICATE, IDEALLY.",
+      "LIL' HANDS, FINE WORK.",
+      "PRECISELY SO.",
+      "ASK ANY CLOCKMAKER.",
+      "DA LIL' WHEELS TURN FASTEST!",
+      "ME COULD DRAW YOU A DIAGRAM!",
+      "SPLENDID, SPLENDID."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "FORTY-ONE TOOLS IN ME BELT AN' ME STILL NEED DA {FORTY-SECOND|ODD ONE|ONE AT HOME}!",
+      "DAT LAMP POST LEANS TWO DEGREES EAST. {SOMEONE SHOULD FIX IT|ME COULD FIX IT|IT IZ BOTHERIN' ME}!",
+      "ACCOUNTS BALANCED TA DA CENT. {BLISS|PURE BLISS|WHAT A MORNIN'}!",
+      "EVERYONE IZ TALL TODAY. {AGAIN|AS USUAL|CONSISTENTLY}!",
+      "ME COULD BUILD A BETTER {KETTLE|DOORBELL|MOUSETRAP} DEN DAT ONE. IN AN AFTERNOON!",
+      "A SELF-TYING BOOTLACE. DEN ME WOULD NEVER NEED TA BEND DOWN. NO DAT ME BEND FAR!",
+      "ME POCKET WATCH IZ {TWO SECONDS FAST|ONE SECOND SLOW|EXACTLY RIGHT}. ADJUSTIN'!",
+      "COPPER WIRE, THREE METRES, ELEVEN CENTS. BARGAIN. MUST TELL {SOMEBODY|DA FAMILY|EVERYBODY}!",
+      "A LOOSE COBBLE, FOURTH FROM DA KERB. MENTAL COMPLAINT FILED!",
+      "NOBODY AIMS LOW. DAT IZ WHY GNOMES {LIVE LONG|GET FAR|STAY LUCKY}!",
+      "DA BAKERY COUNTER IZ TOO HIGH AGAIN. TOMORROW ME BRING {A CRATE|ME STOOL|STILTS}!",
+      "THIRTEEN-HOUR CLOCK. THIRTEEN-HOUR CLOCK. WHERE DOES DA EXTRA HOUR GO...",
+      "ME WONDER WHAT DAT MACHINE {DOES|COSTS|WEIGHS}. ME MUST KNOW!",
+      "ME HAT IZ SLIGHTLY CROOKED. ME CAN FEEL IT. DA WHOLE WORLD FEELS CROOKED WIT IT!",
+      "ALCHEMY TEST TONIGHT: {COPPER AN' VINEGAR|SALT AN' LIGHTNING|HONEY AN' MERCURY}. WHAT COULD GO WRONG!",
+      "SEVENTY-NINE KILOMETRES AN HOUR. NO ONE MORE. GNOMES RESPECT DA RULE!",
+      "DA TRAM IZ THREE MINUTES LATE. {WRITTEN DOWN|DRIVER TOLD|NOBODY FORGIVEN}!",
+      "A SPRING IN ME STEP, AN' TWO IN ME POCKET!",
+      "FIXED A STRANGER'S {UMBRELLA|BICYCLE BELL|SPECTACLES} WITOUT ASKIN'. LOVELY FEELIN'!",
+      "ME COUSIN DA PIRATE WRITES AGAIN. DA {SHIP|PARROT|RUM} IZ FINE, DA ACCOUNTS IZ NO!",
+      "ANOTHER DAY, ANOTHER DOORWAY BUILT FOR GIANTS!",
+      "ME COUNTED DA STAIRS HERE. {FOURTEEN|TWENTY-TWO|THIRTY-ONE}. EVERY ONE FAR TOO TALL!",
+      "GREASE UNDER DA FINGERNAILS. DA SIGN OF AN HONEST DAY!",
+      "BUBBA'S ENGINE IZ A MARVEL. ME WOULD STILL ADD A {SPRING|VALVE|LIL' BELL}!",
+      "SOMEBODY LEFT DA GAS A QUARTER TURN OPEN. ME CAN SMELL IT FROM HERE. TURNED OFF!",
+      "IF DA WORLD ENDS TOMORROW, ME WANT ME ACCOUNTS CLOSED TONIGHT!",
+      "A BRASS BUTTON ON DA PAVEMENT! {POCKETED|TREASURED|CATALOGUED}!",
+      "ME COUSIN DA PRINCESS WANTS A CLOCKWORK SWAN FOR HER BIRTHDAY. {AGAIN|BIGGER DIS YEAR|WIT WINGS DAT FLAP}!",
+      "MUST REMEMBER: BUY {SOLDER|RIVETS|LAMP OIL}, SELL {GOSSIP|OLD GEARS|NUTTIN'}!",
+      "DA SQUARE HERE IZ A RHOMBUS, IF YOU LOOK CLOSELY. NOBODY ELSE CARES!",
+      "TINY SCREWDRIVER, WHERE IZ YOU. IN DA OTHER TROUSERS, OF COURSE!",
+      "CHEF'S RULE: WEIGH DA SALT, TRUST DA GARLIC!",
+      "DAT PIGEON IZ CARRYIN' DA POST BETWEEN BUBBLES. ME {ENVY|ADMIRE|PITY} IT!",
+      "A REAL GOOD HINGE ON DAT GATE. ME {NODDED|BOWED|SALUTED} AT IT!",
+      "INTEREST AT FOUR PERCENT, COMPOUNDED MONTHLY. AH, DA MUSIC OF IT!",
+      "A HAT WIT A PERISCOPE. DEN CROWDS WOULD BE NO PROBLEM AT ALL!",
+      "SOMEBODY WHISTLED IN TUNE TODAY. IN TUNE! ME NEARLY CRIED!",
+      "LIL' FOLK, BIG PLANS. {TODAY: A BETTER CAN OPENER|TOMORROW: A BETTER TRAM|NEXT WEEK: WHO KNOWS}!",
+      "DA WIND SMELLS OF HOT IRON. {A FORGE NEARBY|A TRAM BRAKE|ME KIND OF TOWN}!",
+      "ME DIARY SAYS ME WAZ HAPPY AT {NINE|ELEVEN|HALF PAST TWO}. ACCURATE AS ALWAYS!"
+    ],
+    "need": {
+      "sleep": [
+        "ME EYES KEEP {SLIPPIN'|DRIFTIN'|SLIDIN'} OUT OF FOCUS. EVEN DA SCREWS LOOK BLURRY!",
+        "TOO TIRED TA COUNT. DAT HAB NEVER HAPPENED. {BED|PILLOW|DRAWER}, NOW!",
+        "IF ME SLEEP NOW ME WILL DREAM OF {GEARS|SUMS|SOUP}. ACCEPTABLE!",
+        "AWAKE {NINETEEN|TWENTY-TWO|TWENTY-SEVEN} HOURS. ME HAB DA EXACT FIGURE, OF COURSE!",
+        "YAWNED SO WIDE ME HAT FELL OFF. TIME FOR BED!",
+        "ME MAINSPRIN' IZ FULLY UNWOUND. {WIND ME TOMORROW|BED|LIGHTS OUT}!"
+      ],
+      "hunger": [
+        "STOMACH MAKIN' A DRY-BEARIN' NOISE. {SOUP|BREAD AN' CHEESE|MUSHROOMS},!",
+        "LIL' STOMACH, LOUD COMPLAINTS. {LUNCH|DINNER|ANYTINK} SOON!",
+        "ME COULD EAT A WHOLE WHEEL OF {CHEESE|GOUDA|EMMENTAL}. WELL, A SLICE OF ONE!",
+        "HUNGRY HANDS SLIP ON FINE SCREWS. MUST EAT BEFORE ME {SOLDER|WIND|FILE} ANYTINK!",
+        "PRICED DA BAKERY WINDOW: {FOUR|SIX|NINE} TINKZ ME WANT, ONE ME CAN AFFORD!",
+        "COOK'S INSTINCT SAYS {STEW|OMELETTE|RISOTTO}. STOMACH SAYS YES!"
+      ],
+      "work": [
+        "OFF TA DA {WORKSHOP|COUNTIN' HOUSE|KITCHEN}. LOVELY, LOVELY WORK!",
+        "TODAY'S JOB: {FORTY CLOCKS|THREE BOILERS|A DUKE'S ACCOUNTS}. BRING DEM ON!",
+        "WORK IZ JUST TINKERIN' SOMEBODY PAYS FOR. BEST ARRANGEMENT EVER INVENTED!",
+        "COLUMNS TA ADD, {INVOICES|RECEIPTS|BILLS} TA FILE. A HAPPY MORNIN'!",
+        "SHIFT STARTS IN {FOUR|SEVEN|TWELVE} MINUTES. EARLY. ALWAYS EARLY!",
+        "ME BENCH IZ WAITIN'. ME BENCH MISSES ME. ME MISS ME BENCH!"
+      ],
+      "leisure": [
+        "NEED A GAME. A PUZZLE. {A CROSSWORD|A CHESS PROBLEM|A BROKEN RADIO}. ANYTINK!",
+        "A SONG, A PINT AN' SOMEBODY TA BEAT AT {CARDS|DICE|DARTS}!",
+        "ME BRAIN IZ ALL SUMS. IT NEEDS {A TUNE|A JOKE|A JIGSAW} TA LOOSEN UP!",
+        "OFF TA DA ARCADE. ME WANT TA SEE HOW DA {CABINETS|TOKEN SLOTS|JOYSTICKS} IZ WIRED!",
+        "A LIL' FUN WOULD OIL DA GEARS NICELY!",
+        "TOO MUCH WORK MAKES A GNOME A {GRUMPY|CREAKY|SQUEAKY} GNOME!"
+      ],
+      "crime": [
+        "DAT {LOCK|LATCH|PADLOCK} IZ A TOY. A HAIRPIN WOULD OPEN IT. ME NO WILL. MAYBE-MAYBE!",
+        "A REAL LIL' PERSON FITS THROUGH A REAL LIL' WINDOW. {ONLY A THOUGHT|A BAD THOUGHT|SHOO}!",
+        "NOBODY COUNTS DEY {CHANGE|COINS|CENTS} LIKE ME DO. EASY TA SKIM. NO. NO SKIMMIN'!",
+        "COOKIN' DA BOOKS IZ A CRIME. ALSO AN ART. {STILL A CRIME|MOSTLY A CRIME|STOP IT}!",
+        "NOBODY LOOKS DOWN. NOBODY EVER LOOKS DOWN. {TEMPTIN'|USEFUL|DREADFUL}!",
+        "GRANDFATHER DA PIRATE WOULD HAB TAKEN IT ALREADY. ME IZ NO ME GRANDFATHER!"
+      ],
+      "hygiene": [
+        "GREASE TA DA ELBOWS. {BATH|BASIN|BUCKET}, NOW!",
+        "ME SMELL OF {SULPHUR|SOLDER|BURNT TOAST}. EVEN ME CAN TELL!",
+        "SOOT IN DA BEARD AGAIN. A GNOME MUST NO GO TA MARKET LIKE DIS!",
+        "DIRTY HANDS RUIN FINE WORK. {SCRUB|WASH|SOAP}, DEN DA SPRINGS!",
+        "NEED A BASIN AT ME HEIGHT. OR A STOOL. OR BOTH, AN' SOAP!",
+        "ME SPECTACLES IZ SMUDGED AN' SO IZ DA REST OF ME!"
+      ],
+      "money": [
+        "ACCOUNTS SAY {NINE|FOURTEEN|TWENTY-TWO} EUROS UNTIL MONTH'S END. RECALCULATIN'!",
+        "SOLD A CLOCK, BOUGHT SPRINGS, SOLD A CLOCK. DA SPRINGS IZ WINNIN'!",
+        "EVERY CENT IN ITS COLUMN. DA COLUMNS IZ WORRYINGLY SHORT!",
+        "INVENT SOMETINK AN' BE RICH. INVENT NUTTIN' AN' BE {THRIFTY|FRUGAL|CLEVER}!",
+        "RENT IZ DUE. ME HAB DA EXACT FIGURE. ME LACK DA EXACT EUROS!",
+        "NOTE: CHARGE MORE FOR {REPAIRS|RECIPES|ADVICE}. GNOMISH MODESTY IZ EXPENSIVE!"
+      ],
+      "safety": [
+        "LOW PROFILE. EASY FOR ME. {LOWER STILL|UNDER DA TABLE|BEHIND A CRATE}!",
+        "BETTER {HIDE DIS|STASH DIS|FORGET DIS} IN DA DRAWER WIT DA FALSE BOTTOM!",
+        "TOO MANY TALL SHAPES IN DA STREET TONIGHT. HOME, QUICK, LIL' STEPS!",
+        "A GOOD LOCK COSTS ELEVEN EUROS. ME {DOOR|WORKSHOP|STRONGBOX} NEEDS THREE!",
+        "KEEP DA HEAD DOWN. ME IZ ALREADY QUITE FAR DOWN!",
+        "IF TROUBLE COMES, ME IZ {UNDER DA COUNTER|UP DA CHIMNEY|BEHIND DA BARREL}!"
+      ],
+      "comfort": [
+        "A ROOM BUILT TA ME HEIGHT. SHELVES ME CAN REACH. {ONE DAY|SOON|ME DREAM OF IT}!",
+        "ME BED IZ A DRAWER AGAIN. {A NICE DRAWER|A CLEAN DRAWER|STILL A DRAWER}!",
+        "ME COULD USE A WORKSHOP WIT A {WINDOW|CHIMNEY|PROPER VICE}!",
+        "STASHED ENOUGH FOR A STEPLADDER IN EVERY ROOM. {LUXURY|OPULENCE|FINALLY}!",
+        "A WARM HEARTH AN' A QUIET CLOCK TICKIN'. DAT IZ COMFORT!",
+        "ME CHAIR HAB A CUSHION ON A CUSHION ON A CUSHION. TIME FOR A REAL ONE!"
+      ],
+      "social": [
+        "NOBODY TA TALK GEARS WIT ALL DAY. {LONELY|TOO QUIET|DREADFUL}!",
+        "ME SHOULD VISIT {DA CLOCKMAKER|ME COUSIN|DA CAFÉ}. ME HAB ELEVEN TINKZ TA SAY!",
+        "MUST TELL SOMEBODY 'BOUT ME NEW {VALVE|RECIPE|KNOT}. ANYBODY!",
+        "TALKIN' TA DA KETTLE AGAIN. GOOD LISTENER, BUT IT BOILS OVER!",
+        "NEED COMPANY. LIL' OR TALL, ME IZ NO FUSSY!",
+        "A PARTY! WIT {SINGIN'|CARDS|CAKE}. A GNOME NEEDS A PARTY!"
+      ]
+    },
+    "weather": {
+      "rain": [
+        "RAIN. COUNTED {FORTY|SIXTY|A HUNDRED} DROPS ON DA BRIM BEFORE IT SOAKED THROUGH!",
+        "PUDDLES IZ LAKES AT ME HEIGHT. {GALOSHES|BOOTS|A BOAT}, DEN!",
+        "WET COPPER SMELLS MARVELLOUS. RAIN IMPROVES A TOWN!",
+        "AN UMBRELLA ME SIZE COSTS AS MUCH AS A FULL ONE. ROBBERY!",
+        "RAIN ON A TIN ROOF, IN FOUR-FOUR TIME. LOVELY!",
+        "MUST CHECK DA GUTTERS. SOMEBODY ALWAYS FORGETS DA GUTTERS!"
+      ],
+      "storm": [
+        "LIGHTNING! {TWELVE|FOURTEEN|NINE} SECONDS TA DA THUNDER. FOUR KILOMETRES OFF!",
+        "STORM. IF ME HAB A COPPER ROD AN' A KITE... NO. INSIDE!",
+        "HOLD ON TA YA HAT. HOLD ON TA ME. ME IZ REAL LIGHT!",
+        "DA WIND IZ {RATTLIN'|TESTIN'|SHAKIN'} EVERY HINGE IN TOWN. TAKIN' NOTES!",
+        "THUNDER. ME SPRINGS ALL SHIVER IN SYMPATHY!",
+        "STORMY NIGHTS IZ FOR DA WORKSHOP. SOMETINK ALWAYS GETS INVENTED!"
+      ],
+      "snow": [
+        "SNOW UP TA ME KNEES. UP TA YA ANKLES. {UNFAIR|TYPICAL|CHARACTER BUILDIN'}!",
+        "EVERY SNOWFLAKE SIX-SIDED. SOMEBODY UP DERE IZ A GOOD ENGINEER!",
+        "NEED A LIL' SLEDGE WIT A LIL' ENGINE. {DRAWIN' IT NOW|TONIGHT|PATENT PENDIN'}!",
+        "SNOW MUFFLES DA STREET. ME CAN HEAR CLOCKS TICKIN' THROUGH WALLS!",
+        "COLD OIL RUNS SLOW. SO DO COLD GNOMES!",
+        "SNOWMAN BUILT TA SCALE. IT IZ TALLER DEN ME. OF COURSE IT IZ!"
+      ],
+      "clear": [
+        "CLEAR SKY. GOOD LIGHT FOR FINE WORK!",
+        "SUNSHINE! EVERYTINK BRASS IZ GLINTIN'. {GLORIOUS|SPLENDID|DAZZLIN'}!",
+        "PERFECT DAY TA DRY OUT A {GEARBOX|CARBURETTOR|GRIMORIE}!",
+        "BLUE SKY, LOW HUMIDITY. IDEAL FOR GLUIN'!",
+        "SHADOWS AT NOON IZ SHORT, LIKE ME. A FAIR DAY!",
+        "DA SUN CATCHES EVERY SPRING ON ME WINDOWSILL. PRETTY!"
+      ]
+    },
+    "time": {
+      "morning": [
+        "UP AT {SIX|SIX SHARP|SIX EXACTLY}. WOUND FOUR CLOCKS BEFORE BREAKFAST!",
+        "MORNIN'. FIRST COFFEE, FIRST SUM, FIRST SCREW OF DA DAY!",
+        "EARLY MARKET. BEST PRICES BEFORE DA TALL FOLK WAKE UP!",
+        "FRESH MORNIN' LIGHT. ME WORKBENCH GLOWS!",
+        "BREAKFAST EATEN, ACCOUNTS OPENED, DAY BEGUN. IN DAT ORDER!",
+        "MORNIN' BELLS: {THREE|TWO|ONE} LATE. ME HAB NOTED WHICH!"
+      ],
+      "afternoon": [
+        "AFTERNOON. DA LONG STRETCH BETWEEN LUNCH AN' TEA. MUST TINKER THROUGH IT!",
+        "{HALF PAST TWO|QUARTER PAST THREE|FOUR O'CLOCK}, AN' DA SOLDERIN' IZ GOING WELL!",
+        "AFTER LUNCH: {SUMS|RIVETS|RECIPES}. NAPS CAN WAIT!",
+        "AFTERNOON SUN ON DA WORKBENCH. PERFECT ANGLE FOR CLOSE WORK!",
+        "TEA AT FOUR. BISCUITS COUNTED. TWO EACH!",
+        "HALFWAY THROUGH DA DAY AN' THREE-QUARTERS THROUGH ME LIST!"
+      ],
+      "evening": [
+        "EVENIN'. LAMP ON, GEARS OUT, MIND HUMMIN'!",
+        "CLOSIN' DA DAY'S ACCOUNTS. {IN DA BLACK|NEARLY EVEN|A WHISKER SHORT}!",
+        "SUPPER, A SONG, A LIL' BRANDY. A GNOME'S EVENIN'!",
+        "DA STREET LAMPS CAME ON {FOUR|TWO|NINE} MINUTES LATE. SOMEBODY IZ SLACKIN'!",
+        "DUSK. EVERY TALL PERSON LOOKS EVEN TALLER IN DA LONG SHADOWS!",
+        "EVENIN' CHORES: OIL DA HINGES, WIND DA CLOCKS, TELL SOMEBODY 'BOUT IT!"
+      ],
+      "night": [
+        "NIGHT. DA TOWN TICKS QUIETER. ME CAN HEAR ME OWN WATCH!",
+        "NO CAN SLEEP. INVENTIN'. {A BETTER LAMP|A QUIETER HINGE|A CAT FEEDER}!",
+        "STARS OUT. SOME OF DEM MUST RUN ON CLOCKWORK. SURELY!",
+        "LATE. LAST SUM OF DA DAY: ONE GNOME, REAL TIRED!",
+        "MIDNIGHT OIL, QUITE LITERALLY. ME LAMP IZ NEARLY DRY!",
+        "DA NIGHT WATCHMAN IZ TWO STREETS OFF. ME COUNTED HIS STEPS!"
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "SPRING CLEANIN': EVERY TOOL POLISHED, EVERY DRAWER RELABELLED!",
+        "SPRING! {GARDENS|FAIRS|MARKETS} AGAIN. AN' NEW TINKZ TA FIX!",
+        "RAIN AN' SUN IN TURNS. SPRING IZ A REAL INDECISIVE ENGINEER!",
+        "BLOSSOM ON DA TREES AN' OIL ON ME HANDS. SPRING!",
+        "SPRING SALES. PRICES DOWN {SIX|EIGHT|TEN} PERCENT. BLESS DA SEASON!"
+      ],
+      "SUMMER": [
+        "SUMMER HEAT. DA BRASS EXPANDS. MUST LOOSEN DA {CLOCKS|HINGES|VALVES} A TOUCH!",
+        "LONG DAYS, MORE LIGHT FOR FINE WORK. SUMMER IZ A GNOME'S MATE!",
+        "TOO HOT FOR A HAT. WEARIN' IT ANYWAY. PRINCIPLES!",
+        "SUMMER FAIR! SOMEBODY WILL HAB BUILT {A CAROUSEL|A STEAM ORGAN|A BALLOON}. ME MUST SEE!",
+        "SUNBURN ON DA TIPS OF ME EARS. DA ONLY PART DAT GETS ANYWHERE NEAR DA SUN!"
+      ],
+      "AUTUMN": [
+        "AUTUMN. TIME TA CHECK DA BOILERS BEFORE SOMEBODY ELSE FORGETS!",
+        "LEAVES EVERYWHERE. LEAVES IN DA GEARS. LEAVES IN ME HAT!",
+        "MUSHROOM SEASON! BLESS EVERY {DAMP|SHADY|MOSSY} CORNER OF DIS TOWN!",
+        "YEAR-END ACCOUNTS ALREADY ON ME MIND. AUTUMN DOES DAT!",
+        "DA CLOCKS GO BACK SOON. ME HAB OPINIONS 'BOUT DAT!"
+      ],
+      "WINTER": [
+        "WINTER. EVERY PIPE IN TOWN IZ A FROZEN PUZZLE ME COULD SOLVE!",
+        "COLD FINGERS, SLOW SCREWS. GLOVES WIT NO FINGERTIPS, DEN!",
+        "SNOWED IN? PERFECT. {WORKSHOP|KITCHEN|ACCOUNTS} ALL DAY!",
+        "SHORT DAYS. ME WORK BY LAMPLIGHT AN' COUNT DA OIL!",
+        "WINTER MARKETS, HOT WINE, WARM HANDS. WORTH DA CHILBLAINS!"
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "DOWN TA ME LAST {FOUR|SEVEN|TWELVE} EUROS. EVERY CENT NAMED AN' PLACED!",
+        "NO CAN AFFORD NEW SPRINGS. TAKIN' DA OLD ONES OUT OF DA OLD CLOCK!",
+        "POOR, BUT TIDY. A TIDY POVERTY IZ HALF A FORTUNE!",
+        "PAWNED ME GOOD SCREWDRIVER. DA PAWNBROKER DID NO APPRECIATE IT!",
+        "SOUP AGAIN. EXCELLENT SOUP, THOUGH. SKILL COSTS NUTTIN'!",
+        "NO MONEY, MANY IDEAS. ONE DAY DA IDEAS WILL TURN INTO MONEY!"
+      ],
+      "comfortable": [
+        "ENOUGH FOR RENT, RIVETS AN' DA OCCASIONAL CAKE. A BALANCED LIFE!",
+        "ACCOUNTS COMFORTABLE. DULL, EVEN. COMFORTABLE IZ EXCELLENT!",
+        "BOUGHT A BETTER STOOL DIS MONTH. A TREAT!",
+        "SAVINGS UP {THREE|FOUR|FIVE} PERCENT. STEADY, LIL', LIKE ME!",
+        "ME COULD AFFORD A HOLIDAY. ME WOULD SPEND IT IN A CLOCK MUSEUM!",
+        "A FULL TOOLBOX AN' A FULL PANTRY. NUTTIN' MORE NEEDED. WELL, A LATHE!"
+      ],
+      "rich": [
+        "RICH ENOUGH TA HAB EVERY COUNTER IN DA HOUSE BUILT LOW!",
+        "ME WORKSHOP HAB A WORKSHOP NOW. FOR DA SMALLER JOBS!",
+        "MONEY IN THREE BANKS, FOUR CURRENCIES, AN' ONE SECRET DRAWER!",
+        "BOUGHT A WHOLE BROKEN CAROUSEL JUST TA FIX IT. {WORTH IT|NO REGRETS|WONDERFUL}!",
+        "WEALTH IZ JUST ACCOUNTS WIT GOOD NEWS IN DEM!",
+        "ME COUSIN DA PRINCESS ASKS ME FOR LOANS NOW. HOW DA WHEEL TURNS!"
+      ]
+    },
+    "familiar": [
+      "DOZE TRAVELLERS AGAIN. DEY CAMPER RATTLES AT DA {BACK|LEFT WHEEL|EXHAUST}. ME COULD FIX IT!",
+      "DAT PARTY PAYS TA DA CENT, ME HAB NOTICED. GOOD PEOPLE!",
+      "IF DEY COME BY, ME WILL SHOW DEM ME {NEW VALVE|CLOCKWORK BIRD|BEST SUM}!",
+      "DA TALL ONE IN DAT GROUP ALWAYS DUCKS UNDER DOORWAYS. IT MAKES ME LAUGH EVERY TIME!",
+      "DOZE TRAVELLERS TAKE DA LONG WAY. ME WOULD HAB DRAWN DEM A SHORTER MAP!",
+      "ME HAB STARTED KEEPIN' A LIL' FILE ON DAT PARTY. PURELY ADMIRIN'!",
+      "DEY LISTENED TA ME WHOLE EXPLANATION OF ESCAPEMENTS. NOBODY DOES DAT!",
+      "NEXT TIME DEY PASS, ME WILL {OIL DEY HINGES|WEIGH DEY LUGGAGE|FEED DEM STEW}!",
+      "DAT PARTY SURVIVED ANOTHER BUBBLE SEASON. A GREAT RELIEF, MATHEMATICALLY!",
+      "ME WOULD LIKE TA TRAVEL WIT DEM. ME LEGS SAY NO. ME HEAD SAYS YES!"
+    ],
+    "hordeGround": [
+      "HORDE GROUND. DA GOBLINS TAKE ME FOR KIN UNTIL ME START TALKIN'. DEN DEY IZ SURE OF IT!",
+      "DA GOBLINS TOOK DA TOWN AN' KEPT DA CLOCK TOWER. DEY LIKE DA BELLS. TASTE, AT LEAST!",
+      "HORDE BANNERS ON EVERY LAMP POST. BADLY HUNG. ME COULD HANG DEM STRAIGHT. ME NO WILL!",
+      "BEING LIL' HELPS HERE. GOBLINS LOOK DOWN AT ME AN' SEE A {COUSIN|SNACK|PET}. ME SMILE!",
+      "NO ACCOUNTS UNDER DA HORDE. NOBODY COUNTS ANYTINK. ME SOUL ITCHES!",
+      "DA GOBLINS SMASHED DA TOWN'S MACHINES. ME MOURN EACH ONE BY NAME!",
+      "A GOBLIN ASKED ME TA FIX HIS DRUM. ME TUNED IT INSTEAD. HE WEPT!",
+      "UNDER DA HORDE, TRADE IZ BARTER. ME IZ REAL GOOD AT BARTER!",
+      "EVERY MACHINE HERE IZ HIDDEN IN A CELLAR. ME TOO. QUIETLY TICKIN'!",
+      "GOBLINS ONCE BUILT DA FINEST MACHINES IN 92 DIMENSIONS, DEY SAY. DEN BROKE DEM ALL. WHY!"
+    ],
+    "abroad": [
+      "HUMANS BUILD DEY DOORS FAR TOO TALL. ME HAB STOPPED MINDIN'. MOSTLY!",
+      "ME NEIGHBOURS BRING ME DEY BROKEN {RADIOS|TOASTERS|CLOCKS}. ME IZ BELOVED!",
+      "PEOPLE HERE CROUCH TA TALK TA ME. ME LET DEM. IT IZ POLITE OF DEM!",
+      "DA HUMANS HERE KEEP GOOD ACCOUNTS. BETTER DEN DEY TINK!",
+      "A CHILD ASKED IF ME LIVE IN A MUSHROOM. ME SAID ONLY ON HOLIDAYS!",
+      "HERE {SIX|ELEVEN|TWENTY} YEARS AN' ME STILL NEED A STOOL AT DA POST OFFICE!",
+      "HUMAN TOWNS IZ FULL OF CLEVER MACHINES NOBODY LOOKS AT. ME LOOK AT ALL OF DEM!",
+      "DA TRAM DRIVER WAITS FOR ME NOW. LIL' KINDNESSES, NOTED AN' FILED!",
+      "DEY CALL ME 'DA LIL' TINKER' HERE. ME ACCEPT DA TITLE!",
+      "PAID ME TAXES EARLY. DA CLERK DID NO KNOW WHAT TA DO WIT HIMSELF!"
+    ],
+    "lore": {
+      "clockwork": [
+        "A GOOD ESCAPEMENT IZ A HEARTBEAT YOU CAN HOLD IN YA HAND!",
+        "NEVER TRUST A MACHINE YOU NO CAN HEAR. GRANDFATHER'S RULE!",
+        "BRASS FOR DA GEARS, STEEL FOR DA SPRINGS, PATIENCE FOR DA REST!",
+        "EVERY CLOCK IN TOWN RUNS A LIL' DIFFERENTLY. ME KNOW EACH ONE'S MOOD!",
+        "EVEN IN A BUBBLE DA CLOCKS TICK ON. DEY JUST TICK DA SAME DAY AGAIN!",
+        "GNOME GUILDS FILE DEY PATENTS IN TRIPLICATE. DA THIRD COPY GOES IN DA CELLAR!",
+        "ME FIRST CLOCK RAN BACKWARDS. GRANDMOTHER FRAMED IT!",
+        "DA FINEST CLOCKS HIDE A SPARE GEAR. FOR LUCK, AN' FOR REPAIRS!"
+      ],
+      "accounts": [
+        "DOUBLE ENTRY: EVERY EURO HAB A TWIN SOMEWHERE. FIND DA TWIN!",
+        "GNOME CHILDREN LEARN TA COUNT BEFORE DEY WALK. WALKIN' IZ OVERRATED ANYWAY!",
+        "A GRIMORIE OF ACCOUNTS CAN BE AS DANGEROUS AS A GRIMORIE OF SPELLS. ASK ANY AUDITOR!",
+        "EURO NOTES CARRY FANTABLACK, DEY SAY. A BUBBLE RESETS DA DAY. DA BILL STAYS AS IT IZ!",
+        "INTEREST COMPOUNDS. SO DOES TROUBLE. TRACK BOTH!",
+        "OUR FAMILY MOTTO: CARRY DA ONE, NEVER DA GRUDGE!",
+        "DA HYPERCAPITALIST COLLECTIVE'S ACCOUNTS WOULD MAKE ME FAINT. IN A GOOD WAY!",
+        "EVERY GNOME NOBLE KEEPS TWO SETS OF BOOKS. ONE FOR DA TAX MAN, ONE FOR DA TRUTH!"
+      ],
+      "alchemy": [
+        "ALCHEMY IZ COOKIN' WIT CONSEQUENCES!",
+        "MERCURY, SALT AN' SULPHUR. DA THREE INGREDIENTS, AN' ONE FIRE BUCKET!",
+        "WEIGH TWICE, MIX ONCE. ALCHEMISTS WHO SKIP DA WEIGHIN' LOSE DEY EYEBROWS!",
+        "LEYLINES RISE FROM OIL, DEY SAY. ME KEEP A JAR OF CRUDE BY DA STOVE, FOR LUCK!",
+        "GNOME ALCHEMISTS PREFER LIL' BATCHES. LIL' EXPLOSIONS TOO!",
+        "GRANDMOTHER TURNED LEAD INTO GOLD ONCE. IT COST HER MORE DEN DA GOLD WAZ WORTH!",
+        "EVERY POTION IZ A RECIPE. EVERY RECIPE IZ A SUM. EVERY SUM IZ A SONG!",
+        "A BADLY WRITTEN SPELL EATS DA WORDS BESIDE IT. KEEP RECIPES ON SEPARATE PAGES!"
+      ],
+      "smallness": [
+        "LIL' IZ EFFICIENT. LESS TA FEED, LESS TA CLOTHE, LESS TA HIT!",
+        "GNOMES MEASURE BY DA GNOME. ONE GNOME, TWO GNOMES, A GNOME AN' A HAT!",
+        "NOBODY AIMS LOW. EVERY GNOME SOLDIER KNOWS IT!",
+        "OUR PRINCESSES RIDE PONIES. OUR PIRATES SAIL BARGES. IT WORKS OUT!",
+        "BIG FOLK TINK IN METRES. WE TINK IN MILLIMETRES. DAT IZ WHY OUR TINKZ WORK!",
+        "A GNOME ON A STEPLADDER IZ A GNOME ON A THRONE!",
+        "LIL' HANDS BUILT HALF DA WATCHES IN SWITZERLAND. ASK WHO GETS DA CREDIT!",
+        "PROUD TA BE LIL'. BEING TALL WOULD ONLY SLOW DA THINKIN' DOWN!"
+      ],
+      "ruleOf80": [
+        "RULE OF 80: KEEP STEADY AT SEVENTY-NINE AN' DA BUBBLES LEAVE YOU BE!",
+        "PIGEONS CARRY DA POST BETWEEN BUBBLES NOW. NINETY WIT A TAILWIND. CLEVER BIRDS!",
+        "ME SET ME CART'S GOVERNOR TA CUT OUT AT SEVENTY-NINE. SOLD FORTY OF DEM SINCE!",
+        "INSIDE A BUBBLE, DA DAY RESETS. EVEN DA ACCOUNTS. ESPECIALLY DA ACCOUNTS!",
+        "SINCE 1992 EVERY SPEEDOMETER IZ A SAFETY DEVICE. ME MAKE REAL GOOD SPEEDOMETERS!",
+        "BUBBLES IZ MARKED ON DA ROAD MAPS. ME MARK ME MORE PRECISELY!",
+        "EVERY YEAR DA BUBBLES GROW A LIL'. ME KEEP A CHART. DA CHART WORRIES ME!",
+        "TA LEAVE A BUBBLE YOU NEED EIGHTY, OUTWARD. NOBODY PLANS AN EXIT LIKE A GNOME!"
+      ],
+      "liminal": [
+        "BUBBA'S LIMINAL ENGINE FOLDS DA ROAD. ME WOULD REAL MUCH LIKE TA UNFOLD ONE!",
+        "DA LIMINAL ENGINE IGNORES DA RULE OF 80. RULES SHOULD NO BE IGNORABLE. IT BOTHERS ME!",
+        "LIMINAL ENGINES ON EVERY TRAM NOW. ME HAB PEEKED INSIDE THREE. LOVELY WORK!",
+        "FANTABLACK INSIDE EVERY LIMINAL CABIN. SCRAPED OFF DA OMEGA TOWER, DEY SAY. PRICEY PAINT!",
+        "RUN A LIMINAL ENGINE NEAR A BUBBLE AN' IT COMES APART. ME WOULD FIT A WARNIN' BELL!",
+        "ONE DAY A GNOME WILL BUILD A LIMINAL ENGINE DA SIZE OF A POCKET WATCH!",
+        "BUBBA IZ A MECHANIC. NEARLY A GNOME. REAL NEARLY!",
+        "EVERY ROAD IN EVERY WORLD JOINS DA ENCOMPASSIN' ROAD. IMAGINE DA TOLL ACCOUNTS!"
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! ME FIXED YA GATE. IT WAZ SQUEAKIN' IN DA WRONG KEY!"
+        ],
+        [
+          1,
+          "YOU NO HAB TA DO DAT, {a}."
+        ],
+        [
+          0,
+          "ME DID. IT WAZ KEEPIN' ME AWAKE, AN' YOU IZ ME MATE!"
+        ]
+      ],
+      [
+        [
+          0,
+          "ME BROUGHT YOU A LOAF, {b}. IT WEIGHED EXACTLY A KILO BEFORE ME NIBBLED DA CORNER!"
+        ],
+        [
+          1,
+          "HA! THANK YOU. ME WILL PRETEND ME NO SEE DA CORNER!"
+        ],
+        [
+          0,
+          "KIND OF YOU. IT WAZ A REAL LIL' CORNER!"
+        ]
+      ],
+      [
+        [
+          0,
+          "YA ACCOUNTS, {b}. BALANCED. DA GROCER OWES YOU ELEVEN EUROS!"
+        ],
+        [
+          1,
+          "ELEVEN? ME HAB NO IDEA."
+        ],
+        [
+          0,
+          "NOW YOU DO. GO AN' FETCH IT BEFORE HE DOES DA SUMS HIMSELF!"
+        ]
+      ],
+      [
+        [
+          0,
+          "HOLD STILL. DERE. YA WATCH RUNS TRUE NOW!"
+        ],
+        [
+          1,
+          "IT IZ BIN SLOW FOR YEARS! WHAT DO ME OWE YOU?"
+        ],
+        [
+          0,
+          "A COFFEE, AN' TEN MINUTES OF LISTENIN' TA ME EXPLAIN WHY!"
+        ],
+        [
+          1,
+          "DEAL."
+        ]
+      ],
+      [
+        [
+          0,
+          "{b}, YOU ALWAYS CROUCH WHEN WE TALK. YOU NO HAB TA!"
+        ],
+        [
+          1,
+          "ME JUST LIKE SEEIN' YA FACE!"
+        ],
+        [
+          0,
+          "WELL. DAT IZ DA NICEST TINK A TALL PERSON HAB SAID TA ME ALL WEEK!"
+        ]
+      ],
+      [
+        [
+          0,
+          "TASTE DIS. MUSHROOM SOUP, ME GRANDMOTHER'S WAY!"
+        ],
+        [
+          1,
+          "OH, DAT IZ WONDERFUL, {a}."
+        ],
+        [
+          0,
+          "POINT FOUR GRAMS MORE SALT DEN HERS. NO TELL HER!"
+        ]
+      ],
+      [
+        [
+          0,
+          "ME MADE YOU A LIL' SOMETINK. A MUSIC BOX. IT PLAYS YA NAME!"
+        ],
+        [
+          1,
+          "HOW DOES IT PLAY A NAME?"
+        ],
+        [
+          0,
+          "REAL CAREFULLY, {b}. WIND IT AN' SEE!"
+        ]
+      ],
+      [
+        [
+          0,
+          "YOU LENT ME YA LADDER LAST SPRING. ME HAB BUILT YOU A BETTER ONE!"
+        ],
+        [
+          1,
+          "IT FOLDS INTO A STOOL? DAT IZ BRILLIANT!"
+        ],
+        [
+          0,
+          "AN' BACK INTO A LADDER. AN' DEN INTO A SLIGHTLY SMALLER STOOL, FOR ME!"
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "{b}, YOU HAB BIN ROUNDIN' ME BILL UP. THREE WEEKS RUNNIN'!"
+        ],
+        [
+          1,
+          "IT IZ A FEW CENTS, {a}."
+        ],
+        [
+          0,
+          "FOUR EUROS TWELVE, TA BE PRECISE. ME HAB IT IN WRITIN'!"
+        ]
+      ],
+      [
+        [
+          0,
+          "YOU STEPPED RIGHT OVER ME AGAIN!"
+        ],
+        [
+          1,
+          "ME NO SEE YOU DOWN DERE!"
+        ],
+        [
+          0,
+          "NOBODY EVER DOES. BY NOW IT IZ A PATTERN!"
+        ]
+      ],
+      [
+        [
+          0,
+          "YA CART IZ BLOCKIN' ME WORKSHOP DOOR!"
+        ],
+        [
+          1,
+          "JUST FOR AN HOUR."
+        ],
+        [
+          0,
+          "YOU SAID DAT YESTERDAY. ME TIMED IT. THREE HOURS, NINE MINUTES!"
+        ]
+      ],
+      [
+        [
+          0,
+          "DID YOU TOUCH ME BENCH? SOMEBODY TOUCHED ME BENCH!"
+        ],
+        [
+          1,
+          "ME ONLY MOVED A FEW SCREWS!"
+        ],
+        [
+          0,
+          "A FEW SCREWS! DERE WAZ FORTY OF DEM AN' DEY WAZ IN ORDER!"
+        ]
+      ],
+      [
+        [
+          0,
+          "STOP CALLIN' ME 'LIL' FELLA', {b}!"
+        ],
+        [
+          1,
+          "IT IZ MEANT KINDLY."
+        ],
+        [
+          0,
+          "DEN MEAN IT KINDLY WIT ME NAME!"
+        ]
+      ],
+      [
+        [
+          0,
+          "DAT CLOCK YOU SOLD ME RUNS EIGHT MINUTES SLOW!"
+        ],
+        [
+          1,
+          "IT IZ AN ANTIQUE, IT IZ GOT CHARACTER!"
+        ],
+        [
+          0,
+          "CHARACTER IZ FINE. EIGHT MINUTES IZ FRAUD!"
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "EXCUSE ME, IZ DA POST OFFICE COUNTER STILL DA TALL ONE?"
+        ],
+        [
+          1,
+          "AFRAID SO."
+        ],
+        [
+          0,
+          "DEN ME WILL BRING DA CRATE AGAIN!"
+        ]
+      ],
+      [
+        [
+          0,
+          "WHAT TIME DO YOU HAB?"
+        ],
+        [
+          1,
+          "'BOUT HALF PAST."
+        ],
+        [
+          0,
+          "HALF PAST AN' ELEVEN SECONDS. BUT 'BOUT, YES!"
+        ]
+      ],
+      [
+        [
+          0,
+          "DO YOU KNOW WHERE ME CAN BUY BRASS SCREWS?"
+        ],
+        [
+          1,
+          "DA IRONMONGER BY DA BRIDGE, ME TINK!"
+        ],
+        [
+          0,
+          "SPLENDID. ME WILL CHECK HIS THREADS BEFORE ME TRUST HIM!"
+        ]
+      ],
+      [
+        [
+          0,
+          "IZ DA TRAM RUNNIN' TA SCHEDULE TODAY?"
+        ],
+        [
+          1,
+          "MOSTLY, ME WOULD SAY."
+        ],
+        [
+          0,
+          "MOSTLY. ME WILL WRITE DAT DOWN. MOSTLY!"
+        ]
+      ],
+      [
+        [
+          0,
+          "HOW MUCH DID YOU PAY FOR DOZE APPLES?"
+        ],
+        [
+          1,
+          "TWO EUROS DA KILO."
+        ],
+        [
+          0,
+          "DA STALL ACROSS DA SQUARE DOES ONE NINETY. JUST SO YOU KNOW!"
+        ]
+      ],
+      [
+        [
+          0,
+          "LOVELY BICYCLE. IZ IT A THREE-SPEED?"
+        ],
+        [
+          1,
+          "FIVE, ACTUALLY."
+        ],
+        [
+          0,
+          "FIVE! MAY ME LOOK AT DA GEARS? ME NO WILL TOUCH. MUCH!"
+        ]
+      ],
+      [
+        [
+          0,
+          "DO YOU KNOW IF DERE IZ A BUBBLE NEAR DA EAST ROAD?"
+        ],
+        [
+          1,
+          "DEY SAY DERE IZ ONE PAST DA MILL!"
+        ],
+        [
+          0,
+          "PAST DA MILL. DEN ME WILL KEEP TA SEVENTY-NINE AFTER DA MILL!"
+        ]
+      ],
+      [
+        [
+          0,
+          "LOTS ON AT WORK TODAY?"
+        ],
+        [
+          1,
+          "SAME AS EVER."
+        ],
+        [
+          0,
+          "SAME AS EVER IZ UNDERRATED. IT IZ REAL EASY TA PLAN AROUND!"
+        ]
+      ],
+      [
+        [
+          0,
+          "COULD YOU REACH DAT JAR FOR ME? TOP SHELF!"
+        ],
+        [
+          1,
+          "DIS ONE?"
+        ],
+        [
+          0,
+          "DA ONE BESIDE IT. THANK YOU. ME WOULD HAB CLIMBED, BUT DA SHELF LOOKS NERVOUS!"
+        ]
+      ],
+      [
+        [
+          0,
+          "RAIN COMIN', DO YOU TINK?"
+        ],
+        [
+          1,
+          "LOOKS LIKE IT."
+        ],
+        [
+          0,
+          "DA BAROMETER AGREES. IT IZ FALLEN THREE MILLIMETRES SINCE BREAKFAST!"
+        ]
+      ],
+      [
+        [
+          0,
+          "NEW IN TOWN?"
+        ],
+        [
+          1,
+          "JUST PASSIN' THROUGH."
+        ],
+        [
+          0,
+          "DEN TRY DA BAKERY ON DA CORNER. HONEST SCALES. ME CHECKED!"
+        ]
+      ],
+      [
+        [
+          0,
+          "IZ DAT YA DOG?"
+        ],
+        [
+          1,
+          "ME NEIGHBOUR'S."
+        ],
+        [
+          0,
+          "LOVELY ANIMAL. EXACTLY ME HEIGHT. WE UNDERSTAND EACH OTHER!"
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "DA RULE OF 80 IZ A DESIGN FLAW IN DA UNIVERSE. SOMEBODY SHOULD FIX IT!"
+          ],
+          [
+            1,
+            "FIX DA UNIVERSE? WIT WHAT?"
+          ],
+          [
+            0,
+            "A REAL LIL' SCREWDRIVER AN' A GREAT DEAL OF PATIENCE!"
+          ],
+          [
+            1,
+            "LEAVE IT ALONE. DA LAST PEOPLE WHO FIXED TINKZ MADE IT WORSE!"
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "EVERY SHOP SHOULD HAB A LOW COUNTER. IT IZ SIMPLE COURTESY!"
+          ],
+          [
+            1,
+            "FOR CHILDREN TOO, REALLY."
+          ],
+          [
+            0,
+            "EXACTLY. CHILDREN, GNOMES, ANYBODY SITTIN' DOWN!"
+          ],
+          [
+            1,
+            "ME WOULD SIGN A PETITION FOR DAT!"
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "MAGIC IZ JUST ENGINEERIN' NOBODY HAB BOTHERED TA WRITE DOWN!"
+          ],
+          [
+            1,
+            "NO. MAGIC NO FOLLOW RULES LIKE DAT!"
+          ],
+          [
+            0,
+            "EVERYTINK FOLLOWS RULES. SOME RULES IZ JUST SHY!"
+          ],
+          [
+            1,
+            "TELL DAT TA DA MAGES WHO LOST DEY VOICES!"
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "BUBBA'S LIMINAL ENGINE IZ DA BEST TINK ANYBODY HAB BUILT DIS CENTURY!"
+          ],
+          [
+            1,
+            "NO CAN ARGUE. ME TOOK DA LIMINAL TRAM TA VIENNA IN AN HOUR!"
+          ],
+          [
+            0,
+            "AN HOUR! AN' NOBODY STUCK IN A BUBBLE. MARVELLOUS!"
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "MONEY BELONGS IN AN ACCOUNT. MATTRESSES IZ FOR SLEEPIN'!"
+          ],
+          [
+            1,
+            "BANKS FAIL. MATTRESSES NO!"
+          ],
+          [
+            0,
+            "MATTRESSES GET SAT ON, SLEPT ON, AN' STOLEN ALONG WIT DA BED!"
+          ],
+          [
+            1,
+            "ME WILL TAKE ME CHANCES WIT DA MATTRESS!"
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "TINKZ WAZ BUILT BETTER IN DA OLD DAYS!"
+          ],
+          [
+            1,
+            "ME GRANDFATHER'S TOOLS STILL WORK. ME BREAK IN A YEAR!"
+          ],
+          [
+            0,
+            "HAND-FILED TEETH. NOBODY FILES TEETH ANY MORE!"
+          ],
+          [
+            1,
+            "SAD, REALLY."
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "MORNIN', {b}. YA HINGE STILL HOLDIN'?"
+        ],
+        [
+          1,
+          "NO A SQUEAK SINCE YOU FIXED IT!"
+        ]
+      ],
+      [
+        [
+          0,
+          "LOVELY WEATHER FOR SOLDERIN'!"
+        ],
+        [
+          1,
+          "IF YOU SAY SO."
+        ]
+      ],
+      [
+        [
+          0,
+          "BREAD'S UP FIVE CENTS AT DA BAKERY!"
+        ],
+        [
+          1,
+          "OF COURSE YOU NOTICED."
+        ]
+      ],
+      [
+        [
+          0,
+          "AFTERNOON! MIND YA STEP, ME IZ DOWN HERE!"
+        ],
+        [
+          1,
+          "SORRY! AFTERNOON."
+        ]
+      ],
+      [
+        [
+          0,
+          "BUSY, {b}?"
+        ],
+        [
+          1,
+          "ALWAYS. YOU?"
+        ]
+      ],
+      [
+        [
+          0,
+          "DA CLOCK TOWER'S FOUR MINUTES SLOW AGAIN!"
+        ],
+        [
+          1,
+          "ME WILL TAKE YA WORD FOR IT!"
+        ]
+      ],
+      [
+        [
+          0,
+          "EVENIN', {b}. SUPPER SMELLS GOOD!"
+        ],
+        [
+          1,
+          "COME BY LATER, DERE IZ PLENTY!"
+        ]
+      ],
+      [
+        [
+          0,
+          "SEEN ANY GOOD MACHINES LATELY?"
+        ],
+        [
+          1,
+          "ONLY YA, {a}."
+        ]
+      ],
+      [
+        [
+          0,
+          "COLD ONE TODAY."
+        ],
+        [
+          1,
+          "FREEZIN'. STAY WARM."
+        ]
+      ],
+      [
+        [
+          0,
+          "YA LACES IZ UNTIED, {b}. BOTH OF DEM!"
+        ],
+        [
+          1,
+          "THANKS. YOU WOULD SEE DAT FIRST!"
+        ]
+      ],
+      [
+        [
+          0,
+          "OFF TA DA MARKET? MIND DA FISHMONGER'S SCALES!"
+        ],
+        [
+          1,
+          "JUST FOR BREAD."
+        ]
+      ],
+      [
+        [
+          0,
+          "HOW'S DA FAMILY, {b}?"
+        ],
+        [
+          1,
+          "WELL, THANKS. AN' ALL YA COUSINS?"
+        ]
+      ],
+      [
+        [
+          0,
+          "NICE HAT."
+        ],
+        [
+          1,
+          "NO AS NICE AS YA."
+        ]
+      ],
+      [
+        [
+          0,
+          "ME IZ COUNTIN' PIGEONS. FORTY-THREE!"
+        ],
+        [
+          1,
+          "OF COURSE YOU IZ."
+        ]
+      ],
+      [
+        [
+          0,
+          "HELLO UP DERE!"
+        ],
+        [
+          1,
+          "HELLO DOWN DERE!"
+        ]
+      ],
+      [
+        [
+          0,
+          "LOVELY DAY, NO IZ IT?"
+        ],
+        [
+          1,
+          "NO CAN COMPLAIN."
+        ]
+      ],
+      [
+        [
+          0,
+          "NEED ANYTINK FIXED?"
+        ],
+        [
+          1,
+          "NO TODAY, THANKS."
+        ]
+      ],
+      [
+        [
+          0,
+          "GOOD NIGHT, {b}. LOCK YA DOOR. TWICE!"
+        ],
+        [
+          1,
+          "NIGHT, {a}."
+        ]
+      ]
+    ]
+  }
+}

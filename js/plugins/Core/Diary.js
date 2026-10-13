@@ -1773,13 +1773,13 @@
     // 8. Belongings
     //=========================================================================
 
-    // The artifacts the history simulator forges live in one band of ids and
-    // are the one thing whose LOSS is worth writing down. Everything else the
-    // party drops, throws or sells off is its own business.
-    const ARTIFACT_MIN = 1501;
-    const ARTIFACT_MAX = 1513;
+    // The artifacts the history simulator forges live in one band of ids
+    // (window.RuntimeItemIds, ItemSystemUtils.js) and are the one thing whose
+    // LOSS is worth writing down. Everything else the party drops, throws or
+    // sells off is its own business.
     function isArtifact(item) {
-        return !!item && item.id >= ARTIFACT_MIN && item.id <= ARTIFACT_MAX;
+        const R = window.RuntimeItemIds;
+        return !!item && !!R && R.inBand('historyArtifact', item.id);   // i18n-ignore: band id
     }
 
     function isNotableFind(item) {
@@ -2311,16 +2311,22 @@
     // than a hook apiece, the scene stack is watched: leaving one of these is
     // having played it. The label is the scene's own i18n name where it has
     // one, so nothing here has to be kept in step with the game's copy.
+    // Keys are the scene classes' real names (klass.name). The arcade carts
+    // (Hoppa, Snake, Bubble Pop) run inside Scene_Arcade, and the piano is an
+    // overlay with no scene of its own: it is hooked on its own open() below.
     const MINIGAME_SCENES = {
-        Scene_Arcade: 'arcade', Scene_Frogger: 'frogger', Scene_Snake: 'snake',
-        Scene_BubblePop: 'bubblePop', Scene_SlotMachine: 'slots', Scene_Bowling: 'bowling',
-        Scene_PoolGame: 'pool', Scene_UnlockingBlocks: 'lockpick',
-        Scene_ScratchCard: 'scratchCard', Scene_HorseRace: 'horseRace', Scene_Tarot: 'tarot',
-        Scene_FishingMinigame: 'fishing', Scene_SurfingGame: 'surfing', Scene_VisualPiano: 'piano',
+        Scene_Arcade: 'arcade', Scene_SlotMachine: 'slots',
+        Scene_BowlingMinigame: 'bowling', Scene_Pool: 'pool',
+        Scene_BasketballMinigame: 'basketball', Scene_UnlockingBlocks: 'lockpick',
+        Scene_ScratchCard: 'scratchCard', Scene_ScratchCardSelect: 'scratchCard',
+        Scene_HorseRace: 'horseRace', Scene_Tarot: 'tarot', Scene_TarotNPC: 'tarot',
+        Scene_TarotPick: 'tarot', Scene_TarotSandbox: 'tarot',
+        Scene_FishingMinigame: 'fishing', Scene_SurfingGame: 'surfing',
         Scene_PeriodicTable: 'periodicTable', Scene_RamanScan: 'raman', Scene_Chess: 'chess',
         Scene_MonsterTournament: 'tournament', Scene_HyperTamer: 'hyperTamer',
-        Scene_BoosterPack: 'boosters', Scene_CardDuel: 'cardDuel', Scene_DreamFreeplay: 'dream',
-        Scene_TargetRange: 'targetRange'
+        Scene_BoosterPack: 'boosters', Scene_CardBooster: 'boosters',
+        Scene_CardDuel: 'cardDuel', Scene_DreamFreeplay: 'dream',
+        Scene_TargetRange: 'targetRange', Scene_PizzaMaker3D: 'pizza'
     };
 
     whenReady(() => typeof SceneManager !== 'undefined' && SceneManager.push,
@@ -2339,6 +2345,19 @@
                         score: ""
                     }, { dedupe: key });
                 } catch (e) { /* the game still played */ }
+            });
+        });
+
+    // The piano is a DOM overlay over the map, not a scene.
+    whenReady(() => window.VisualPiano && window.VisualPiano.open,
+        () => {
+            before(window.VisualPiano, 'open', function () {
+                try {
+                    if (window.VisualPiano.isOpen) return;
+                    log('minigame.played', {
+                        game: T('Diary.game.piano'), outcome: "", score: ""
+                    }, { dedupe: 'piano' });
+                } catch (e) { /* the piano still plays */ }
             });
         });
 

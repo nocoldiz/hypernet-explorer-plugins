@@ -1206,8 +1206,13 @@
             if (!model) return entry;
 
             Promise.resolve(model.load(null, 0, 0, 0)).then(() => {
-                // The field can be dismissed while a model is still building.
-                if (!entry.alive || !this.scene || !model.model) return;
+                // The field can be dismissed while a model is still building:
+                // nobody else holds that model any more, so it is taken apart
+                // here rather than left orphaned with its GPU buffers.
+                if (!entry.alive || !this.scene || !model.model) {
+                    disposeOrphanModel(model);
+                    return;
+                }
                 const root = model.model;
 
                 // Measured, not assumed: the families build at wildly different
@@ -1463,6 +1468,29 @@
     //=========================================================================
     // Scene_HorseRace
     //=========================================================================
+    // A Battler3D model whose owner was cleared while it was still loading.
+    // The family's own dispose() is used when it has one; otherwise the mesh
+    // tree is taken down by hand. Exposed for the regression test.
+    function disposeOrphanModel(model) {
+        if (!model) return;
+        if (typeof model.dispose === 'function') {
+            try { model.dispose(); return; } catch (e) { /* fall through */ }
+        }
+        const root = model.model;
+        if (!root) return;
+        if (root.parent) root.parent.remove(root);
+        if (typeof root.traverse === 'function') {
+            root.traverse(obj => {
+                if (obj.geometry && obj.geometry.dispose) obj.geometry.dispose();
+                if (obj.material) {
+                    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+                    for (const m of mats) if (m && m.dispose) m.dispose();
+                }
+            });
+        }
+    }
+    window.HorseRaceDisposeOrphanModel = disposeOrphanModel;
+
     Scene_HorseRace = class extends Scene_MenuBase {
         initialize() {
             super.initialize();
@@ -1621,6 +1649,9 @@
             // The pixel font arrives asynchronously; repaint what was drawn once.
             if (window.PSXHud) {
                 window.PSXHud.onFontReady(() => {
+                    // The font can land after the player has left: the panels are
+                    // gone by then and a repaint would throw from the timer.
+                    if (SceneManager._scene !== this) return;
                     if (!this._banner) return;
                     this._banner.refresh();
                     this._card.refresh();
@@ -1672,7 +1703,7 @@
             this.stopCrowd();
             if (this._trackSprite) {
                 if (this._trackSprite.parent) this._trackSprite.parent.removeChild(this._trackSprite);
-                this._trackSprite.destroy();
+                this._trackSprite.destroy({ texture: true, baseTexture: true });
                 this._trackSprite = null;
             }
             if (this._track) {

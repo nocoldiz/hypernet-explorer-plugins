@@ -55,6 +55,9 @@
   "actionPet": "Pet",
   "actionEmpathize": "Empathize",
   "actionCancel": "Cancel",
+  "actionFeed": "Feed",
+  "feedChoice": "{item} ×{qty}",
+  "nothingToFeed": "You have nothing the \\c[14]{animal}\\c[0] would eat.",
   "petting": [
     "You crouch down and scratch the {animal} behind the ears.",
     "You run a hand along the {animal}'s back and let it lean into you.",
@@ -75,5 +78,6 @@
     "grownUp": "The {animal} has grown up.",
     "died": "Your {animal} at {place} has died.",
     "born": "A young {animal} was born at {place}."
-  }
+  },
+  "wilderness": "Wilderness"
 }

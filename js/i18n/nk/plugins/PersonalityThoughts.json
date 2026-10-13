@@ -2,8 +2,8 @@
   "nervous": {
     "thoughts": [
       "WHAT WAZ DAT NOISE?",
-      "ME HAB A BAD FEELIN' ABOUT DIS!",
-      "DID ME FORGET SOMETHIN' IMPORTANT?",
+      "ME HAB A BAD FEELIN' 'BOUT DIS!",
+      "DID ME FORGET SOMETINK IMPORTANT?",
       "ME HEART IZ POUNDIN'...",
       "ME JUST WANT DIS TA BE OVER!"
     ],
@@ -11,12 +11,12 @@
       "sleep": [
         "ME IZ TOO WOUND UP, BUT ME HAB TA LIE DOWN!",
         "IF ME NO SLEEP SOON ME WILL FALL APART!",
-        "LET ME REST WITHOUT NIGHTMARES!"
+        "LET ME REST WITOUT NIGHTMARES!"
       ],
       "hunger": [
         "ME STOMACH IZ IN KNOTS, IZ IT HUNGER OR NERVES?",
         "ME SHOULD EAT, IF ME CAN KEEP IT DOWN!",
-        "ME NO CAN THINK STRAIGHT WHEN ME IZ DIS HUNGRY!"
+        "ME NO CAN TINK STRAIGHT WHEN ME IZ DIS HUNGRY!"
       ],
       "work": [
         "WHAT IF ME MESS UP DA SHIFT AGAIN?",
@@ -30,7 +30,7 @@
       ],
       "crime": [
         "OH NO, ME NO CAN, ME WILL GET CAUGHT!",
-        "ME HANDS IZ SHAKIN' JUST THINKIN' ABOUT IT!",
+        "ME HANDS IZ SHAKIN' JUST THINKIN' 'BOUT IT!",
         "WHAT IF SOMEONE SAW ME?"
       ],
       "hygiene": [
@@ -39,7 +39,7 @@
         "WHERE'S DA NEAREST WC, QUICKLY!"
       ],
       "money": [
-        "WHAT IF ME NO CAN PAY FOR THINGS?",
+        "WHAT IF ME NO CAN PAY FOR TINKZ?",
         "ME IZ RUNNIN' LOW AN' IT TERRIFIES ME!",
         "ME NEED A CUSHION OR ME WILL PANIC!"
       ],
@@ -54,13 +54,13 @@
         "SOMEWHERE ME FEEL SECURE, FINALLY!"
       ],
       "social": [
-        "ME WANT COMPANY, BUT WHAT IF ME SAY DA WRONG THING?",
+        "ME WANT COMPANY, BUT WHAT IF ME SAY DA WRONG TINK?",
         "TALKIN' MIGHT CALM ME DOWN... MAYBE!",
-        "ME HOPE DEY NO THINK ME IZ STRANGE!"
+        "ME HOPE DEY NO TINK ME IZ STRANGE!"
       ],
       "idle": [
-        "IZ EVERYTHIN' ALRIGHT? IT FEELS TOO QUIET!",
-        "ME KEEP EXPECTIN' SOMETHIN' TA GO WRONG!",
+        "IZ EVERYTINK ALRIGHT? IT FEELS TOO QUIET!",
+        "ME KEEP EXPECTIN' SOMETINK TA GO WRONG!",
         "STAY CALM, STAY CALM..."
       ],
       "familiar": [
@@ -73,9 +73,9 @@
   "calm": {
     "thoughts": [
       "ONE STEP AT A TIME.",
-      "KEEP BREATHIN'. EVERYTHIN' IZ FINE!",
+      "KEEP BREATHIN'. EVERYTINK IZ FINE!",
       "DIS, TOO, SHALL PASS.",
-      "WORRYIN' SOLVES NOTHIN'.",
+      "WORRYIN' SOLVES NUTTIN'.",
       "MAINTAIN FOCUS."
     ],
     "need": {
@@ -86,7 +86,7 @@
       ],
       "hunger": [
         "A MEAL, DEN BACK TA DA DAY!",
-        "NO RUSH, ME WILL FIND SOMETHIN' TA EAT!",
+        "NO RUSH, ME WILL FIND SOMETINK TA EAT!",
         "DA BODY ASKS; ME WILL ANSWER CALMLY!"
       ],
       "work": [
@@ -121,7 +121,7 @@
       ],
       "comfort": [
         "A NICER PLACE WOULD BE PLEASANT!",
-        "MAYBE ME WILL SEE ABOUT A BETTER ROOM!",
+        "MAYBE ME WILL SEE 'BOUT A BETTER ROOM!",
         "COMFORT, WHEN DA TIME IZ RIGHT!"
       ],
       "social": [
@@ -131,8 +131,8 @@
       ],
       "idle": [
         "ALL IZ WELL, MORE OR LESS!",
-        "A QUIET MOMENT TA GATHER MYSELF!",
-        "NOTHIN' PRESSIN'. GOOD."
+        "A QUIET MOMENT TA GATHER ME!",
+        "NUTTIN' PRESSIN'. GOOD."
       ],
       "familiar": [
         "DAT TRAVELLER SEEMS STEADY, ME LIKE DAT!",
@@ -168,7 +168,7 @@
       "leisure": [
         "ME NEED TA BURN OFF DIS ENERGY!",
         "BOREDOM MAKES ME ITCH FOR A BRAWL!",
-        "FIND ME SOMETHIN' TA HIT, FOR FUN!"
+        "FIND ME SOMETINK TA HIT, FOR FUN!"
       ],
       "crime": [
         "DEY HAB GOT IT COMIN'.",
@@ -202,7 +202,7 @@
       ],
       "idle": [
         "QUIET. TOO QUIET. ME NO LIKE IT!",
-        "TCH. NOTHIN' TA FIGHT TODAY!",
+        "TCH. NUTTIN' TA FIGHT TODAY!",
         "COME ON, GIVE ME A REASON!"
       ],
       "familiar": [
@@ -215,10 +215,10 @@
   "melancholic": {
     "thoughts": [
       "IZ DIS ALL DERE IZ?",
-      "ME REMEMBER WHEN THINGS WAZ BETTER!",
+      "ME REMEMBER WHEN TINKZ WAZ BETTER!",
       "A HEAVY FEELIN'...",
       "SOLITUDE FEELS RIGHT.",
-      "EVERYTHIN' SEEMS GREY."
+      "EVERYTINK SEEMS GREY."
     ],
     "need": {
       "sleep": [
@@ -229,7 +229,7 @@
       "hunger": [
         "ME SHOULD EAT, THOUGH ME HAB NO APPETITE!",
         "FOOD NO WILL FILL DIS EMPTINESS!",
-        "ME SUPPOSE ME OUGHT TA FEED MYSELF!"
+        "ME SUPPOSE ME OUGHT TA FEED ME!"
       ],
       "work": [
         "ANOTHER SHIFT TA FILL DA HOURS!",
@@ -242,12 +242,12 @@
         "WHAT IZ DERE TA ENJOY, REALLY?"
       ],
       "crime": [
-        "NOTHIN' MATTERS, SO WHY NO?",
+        "NUTTIN' MATTERS, SO WHY NO?",
         "EVEN DIS LEAVES ME HOLLOW!",
-        "MAYBE TROUBLE WOULD MAKE ME FEEL SOMETHIN'!"
+        "MAYBE TROUBLE WOULD MAKE ME FEEL SOMETINK!"
       ],
       "hygiene": [
-        "ME HAB LET MYSELF GO AGAIN!",
+        "ME HAB LET ME GO AGAIN.",
         "A WASH, IF ME CAN FIND DA WILL!",
         "EVEN DIS FEELS LIKE A CHORE!"
       ],
@@ -279,7 +279,7 @@
       "familiar": [
         "DAT TRAVELLER, ONE FAMILIAR FACE IN DA GREY!",
         "STRANGE COMFORT, SEEIN' DEM AGAIN!",
-        "ME ALMOST LET MYSELF HOPE WHEN DEY IZ NEAR!"
+        "ME ALMOST LET ME HOPE WHEN DEY IZ NEAR!"
       ]
     }
   },
@@ -287,7 +287,7 @@
     "thoughts": [
       "WHAT A WONDERFUL DAY!",
       "ME SHOULD TALK TA SOMEONE!",
-      "WHAT IZ NEXT? SOMETHIN' FUN, ME HOPE!",
+      "WHAT IZ NEXT? SOMETINK FUN, ME HOPE!",
       "ME FEEL GREAT!",
       "DA FUTURE IZ BRIGHT."
     ],
@@ -300,7 +300,7 @@
       "hunger": [
         "OOH, SNACK TIME! WHAT IZ GOOD AROUND HERE?",
         "A BITE TA EAT AN' ME IZ BACK AT FULL SPEED!",
-        "FOOD MAKES EVERYTHIN' BETTER!"
+        "FOOD MAKES EVERYTINK BETTER!"
       ],
       "work": [
         "LETZ MAKE DIS SHIFT A FUN ONE!",
@@ -310,7 +310,7 @@
       "leisure": [
         "FREE TIME! LETZ FIND SOME FUN!",
         "MAYBE DA ARCADE, MAYBE A PARTY!",
-        "SO MANY LOVELY THINGS TA DO!"
+        "SO MANY LOVELY TINKZ TA DO!"
       ],
       "crime": [
         "NAH, DAT WOULD SPOIL DA GOOD VIBES!",
@@ -335,7 +335,7 @@
       "comfort": [
         "A NICER PLACE MEANS NICER PARTIES!",
         "OOH, IMAGINE DA HOUSEWARMIN'!",
-        "TIME TA TREAT MYSELF, ME THINK!"
+        "TIME TA TREAT ME, ME TINK!"
       ],
       "social": [
         "ME SIMPLY MUST GO CHAT WIT SOMEONE!",
@@ -344,7 +344,7 @@
       ],
       "idle": [
         "WHAT A LOVELY MOMENT TA JUST BE!",
-        "EVERYTHIN''S LOOKIN' UP!",
+        "EVERYTINK'S LOOKIN' UP!",
         "ME WONDER WHO ME WILL MEET TODAY!"
       ],
       "familiar": [
@@ -356,7 +356,7 @@
   },
   "cautious": {
     "thoughts": [
-      "LETZ THINK DIS THROUGH.",
+      "LETZ TINK DIS THROUGH.",
       "WHAT IZ DA RISKS?",
       "A HASTY DECISION IZ A BAD DECISION!",
       "BETTER TA BE SAFE DEN SORRY!",
@@ -370,16 +370,16 @@
       ],
       "hunger": [
         "ME SHOULD EAT BEFORE ME FOCUS SLIPS!",
-        "A MEASURED MEAL, NOTHIN' RISKY!",
+        "A MEASURED MEAL, NUTTIN' RISKY!",
         "SKIPPIN' FOOD WOULD BE A CARELESS ERROR!"
       ],
       "work": [
-        "ME WILL DOUBLE-CHECK EVERYTHIN' ON SHIFT!",
+        "ME WILL DOUBLE-CHECK EVERYTINK ON SHIFT!",
         "MEASURE TWICE, ACT ONCE.",
         "NO SHORTCUTS; DEY CAUSE ACCIDENTS!"
       ],
       "leisure": [
-        "FREE TIME, USED WISELY, NO WASTED!",
+        "FREE TIME, TA BE USED WISELY!",
         "ME WILL RELAX SOMEWHERE ME KNOW IZ SAFE!",
         "A PLANNED BREAK BEATS AN IDLE ONE!"
       ],
@@ -414,7 +414,7 @@
         "GOOD TA KNOW WHO IZ AROUND, CAREFULLY!"
       ],
       "idle": [
-        "EVERYTHIN' IN ORDER? LET ME CHECK!",
+        "EVERYTINK IN ORDER? LET ME CHECK!",
         "ME WILL REVIEW DA DAY'S PLAN!",
         "BEST TA STAY ONE STEP AHEAD!"
       ],
@@ -430,8 +430,8 @@
       "JUST DO IT!",
       "WHY WAIT?",
       "DIS SEEMS LIKE A GOOD IDEA!",
-      "WORRY ABOUT CONSEQUENCES LATER!",
-      "ACT NOW, THINK LATER."
+      "WORRY 'BOUT CONSEQUENCES LATER!",
+      "ACT NOW, TINK LATER."
     ],
     "need": {
       "sleep": [
@@ -440,7 +440,7 @@
         "ME WILL NAP WHEREVER ME DROP!"
       ],
       "hunger": [
-        "STARVIN'! ME WILL GRAB DA FIRST THING ME SEE!",
+        "STARVIN'! ME WILL GRAB DA FIRST TINK ME SEE!",
         "EAT NOW, REGRET DA CHOICE LATER!",
         "OOH, DAT LOOKS TASTY, DONE DEAL!"
       ],
@@ -450,13 +450,13 @@
         "BORED ALREADY, LETZ WING IT!"
       ],
       "leisure": [
-        "FREE TIME! LETZ DO SOMETHIN' RIGHT NOW!",
-        "FIRST FUN THING ME SEE, ME IZ IN!",
+        "FREE TIME! LETZ DO SOMETINK RIGHT NOW!",
+        "FIRST FUN TINK ME SEE, ME IZ IN!",
         "NO PLAN? BEST KIND OF AFTERNOON!"
       ],
       "crime": [
         "NOBODY'S LOOKIN', GRAB IT, GO!",
-        "EH, WHY NO? DO IT BEFORE ME THINK TWICE!",
+        "EH, WHY NO? DO IT BEFORE ME TINK TWICE!",
         "QUICK HANDS, QUICK GETAWAY, EASY!"
       ],
       "hygiene": [
@@ -486,7 +486,7 @@
       ],
       "idle": [
         "ME NO CAN JUST STAND HERE, COME ON!",
-        "SOMETHIN', ANYTHIN', LETZ GO!",
+        "SOMETINK, ANYTINK, LETZ GO!",
         "RESTLESS... ME NEED TA MOVE!"
       ],
       "familiar": [
@@ -498,9 +498,9 @@
   },
   "stoic": {
     "thoughts": [
-      "DIS IZ JUST A THING. IT WILL PASS!",
+      "DIS IZ JUST A TINK. IT WILL PASS!",
       "PAIN IZ TEMPORARY.",
-      "COMPLAININ' CHANGES NOTHIN'!",
+      "COMPLAININ' CHANGES NUTTIN'!",
       "CONTROL WHAT YOU CAN, ACCEPT WHAT YOU NO CAN!",
       "ME WILL ENDURE."
     ],
@@ -511,17 +511,17 @@
         "ME WILL LIE DOWN AN' RISE AGAIN READY!"
       ],
       "hunger": [
-        "HUNGER IZ A SIGNAL, NO A MASTER!",
+        "HUNGER WARNS; ME IZ STILL DA ONE IN CHARGE!",
         "ME WILL EAT WHAT ME MUST, NO MORE!",
         "DA BODY IZ FED SO DA WORK CONTINUES!"
       ],
       "work": [
         "DA TASK IZ SET; ME WILL SEE IT DONE!",
-        "LABOR WITHOUT COMPLAINT.",
+        "LABOR WITOUT COMPLAINT.",
         "DUTY DOES NO WAIT ON MOOD!"
       ],
       "leisure": [
-        "REST IZ EARNED, NO INDULGED!",
+        "REST IZ EARNED, LIKE EVERYTINK ELSE!",
         "A QUIET MOMENT IZ ENOUGH.",
         "ME NEED LIL' TA BE CONTENT!"
       ],
@@ -531,7 +531,7 @@
         "HARDSHIP IZ NO EXCUSE FOR DISHONOR!"
       ],
       "hygiene": [
-        "DISCIPLINE INCLUDES DA LIL' THINGS!",
+        "DISCIPLINE INCLUDES DA LIL' TINKZ!",
         "ME WILL CLEAN UP; ORDER MATTERS!",
         "A CLEAN BODY, A CLEAR MIND!"
       ],
@@ -548,7 +548,7 @@
       "comfort": [
         "COMFORT IZ PLEASANT BUT NO NEEDED!",
         "A BETTER ROOF, IF IT AIDS DA WORK!",
-        "ME WILL IMPROVE ME LOT, WITHOUT ATTACHMENT!"
+        "ME WILL IMPROVE ME LOT, WITOUT ATTACHMENT!"
       ],
       "social": [
         "A WORD WIT ANOTHER IZ SOMETIMES GOOD!",
@@ -556,7 +556,7 @@
         "EVEN DA STEADFAST VALUE AN ALLY!"
       ],
       "idle": [
-        "DA DAY ASKS NOTHIN'; ME IZ STILL!",
+        "DA DAY ASKS NUTTIN'; ME IZ STILL!",
         "ME STAND READY FOR WHAT COMES!",
         "CALM HOLDS. AS IT SHOULD."
       ],
@@ -579,7 +579,7 @@
       "sleep": [
         "ME NO CAN SLEEP WIT ONE EYE OPEN FOREVER!",
         "WHAT IF DEY COME WHILE ME REST?",
-        "ME WILL LOCK EVERYTHIN' TWICE FIRST!"
+        "ME WILL LOCK EVERYTINK TWICE FIRST!"
       ],
       "hunger": [
         "IZ DIS FOOD SAFE? WHO TOUCHED IT?",
@@ -603,13 +603,13 @@
       ],
       "hygiene": [
         "ME WILL WASH WHERE NO ONE CAN SEE ME!",
-        "DEY NOTICE EVERYTHIN', BEST STAY CLEAN!",
-        "NO CAN GIVE DEM ANYTHIN' TA WHISPER ABOUT!"
+        "DEY NOTICE EVERYTINK, BEST STAY CLEAN!",
+        "NO CAN GIVE DEM ANYTINK TA WHISPER 'BOUT!"
       ],
       "money": [
         "DEY WANT ME BROKE AN' DEPENDENT!",
         "ME WILL HIDE ME COIN WHERE NO ONE FINDS IT!",
-        "SOMEONE'S BEEN SKIMMIN' FROM ME, ME SWEAR!"
+        "SOMEONE'S BIN SKIMMIN' FROM ME, ME SWEAR!"
       ],
       "safety": [
         "STAY HIDDEN. DEY IZ DEFINITELY LOOKIN'!",
@@ -617,7 +617,7 @@
         "TRUST DA SHADOWS MORE DEN DA PEOPLE!"
       ],
       "comfort": [
-        "A PLACE WIT LOCKS ME INSTALL MYSELF!",
+        "A PLACE WIT LOCKS ME INSTALL ME!",
         "SOMEWHERE DEY NO CAN GET TA ME!",
         "COMFORT MEANS WALLS AN' ONE DOOR ME CONTROL!"
       ],
@@ -655,7 +655,7 @@
       "hunger": [
         "ME FORGOT TA EAT, CARIN' FOR OTHERS AGAIN!",
         "A MEAL WILL STEADY ME.",
-        "ME SHOULD NOURISH MYSELF TOO!"
+        "ME SHOULD NOURISH ME TOO."
       ],
       "work": [
         "ME HOPE ME CAN MAKE SOMEONE'S DAY EASIER!",
@@ -665,7 +665,7 @@
       "leisure": [
         "A LIL' PEACE TA REFILL ME OWN CUP!",
         "ME WILL FIND SOMEONE WHO COULD USE COMPANY!",
-        "TIME TA SIMPLY FEEL DA GOOD THINGS!"
+        "TIME TA SIMPLY FEEL DA GOOD TINKZ!"
       ],
       "crime": [
         "ME NO CAN, SOMEONE WOULD BE HURT BY IT!",
@@ -674,12 +674,12 @@
       ],
       "hygiene": [
         "ME WILL FRESHEN UP; ME WANT TA FEEL PRESENT!",
-        "CARIN' FOR MYSELF IZ CARE TOO!",
+        "CARIN' FOR ME IZ CARE TOO!",
         "A QUICK WASH TA CLEAR ME HEAD!"
       ],
       "money": [
         "ME GAVE TOO MUCH AWAY AGAIN, NO ME?",
-        "FUNDS IZ LOW; ME MUST LOOK AFTER MYSELF!",
+        "FUNDS IZ LOW; ME MUST LOOK AFTER ME!",
         "ME WILL EARN SOME, GENTLY, HONESTLY!"
       ],
       "safety": [
@@ -705,7 +705,7 @@
       "familiar": [
         "DAT TRAVELLER, ME SENSE A KIND HEART DERE!",
         "WE HAB SHARED ENOUGH DAT ME FEEL DEY MOODS!",
-        "ME WOULD KNOW IF DEY WAZ HURTIN', ME THINK!"
+        "ME WOULD KNOW IF DEY WAZ HURTIN', ME TINK!"
       ]
     }
   },
@@ -731,7 +731,7 @@
       "work": [
         "TIME TA TAKE CHARGE OF DIS SHIFT!",
         "ME WILL SET DA STANDARD FOR DA REST!",
-        "ORDER AN' RESULTS, DAT IZ HOW ME RUN THINGS!"
+        "ORDER AN' RESULTS, DAT IZ HOW ME RUN TINKZ!"
       ],
       "leisure": [
         "EVEN REST SHOULD BE PURPOSEFUL!",
@@ -739,9 +739,9 @@
         "A SHORT RESPITE, DEN BACK TA DA HELM!"
       ],
       "crime": [
-        "ME RULE BY EXAMPLE, NO BY THEFT!",
+        "ME RULE BY EXAMPLE. THEFT ME LEAVE TA OTHERS!",
         "SUCH PETTINESS IZ BENEATH ME!",
-        "AUTHORITY IZ EARNED, NO STOLEN!"
+        "AUTHORITY IZ EARNED. STEALIN' IT GETS YOU NOWHERE!"
       ],
       "hygiene": [
         "PRESENTATION COMMANDS RESPECT!",
@@ -751,10 +751,10 @@
       "money": [
         "RESOURCES IZ THIN; ME WILL SECURE MORE!",
         "A LEADER PROVIDES, FOR HIMSELF FIRST!",
-        "ME WILL COMMAND AN INCOME, NO BEG FOR ONE!"
+        "ME WILL COMMAND AN INCOME. BEGGIN' NO IZ ME STYLE!"
       ],
       "safety": [
-        "A STRATEGIC WITHDRAWAL, NOTHIN' MORE!",
+        "A STRATEGIC WITHDRAWAL, NUTTIN' MORE!",
         "ME WILL HOLD POSITION UNTIL DA TIME IZ RIGHT!",
         "DISCIPLINE NOW; DECISIVE ACTION LATER!"
       ],
@@ -771,7 +771,7 @@
       "idle": [
         "ALL IZ IN ORDER UNDER ME WATCH!",
         "ME WILL KEEP AN EYE ON DA SITUATION!",
-        "STEADY HANDS KEEP THINGS ON COURSE!"
+        "STEADY HANDS KEEP TINKZ ON COURSE!"
       ],
       "familiar": [
         "DAT TRAVELLER COULD BE A USEFUL ALLY!",
@@ -800,13 +800,13 @@
         "ME WILL DINE, AN' PERHAPS READ WHILE ME DO!"
       ],
       "work": [
-        "EVERY TASK TEACHES SOMETHIN', IF YOU LOOK!",
+        "EVERY TASK TEACHES SOMETINK, IF YOU LOOK!",
         "ME WILL APPROACH DA SHIFT METHODICALLY!",
         "WORK IZ JUST APPLIED UNDERSTANDIN'!"
       ],
       "leisure": [
         "FREE TIME MEANS TIME TA STUDY!",
-        "ME WILL SEEK OUT SOMETHIN' NEW TA LEARN!",
+        "ME WILL SEEK OUT SOMETINK NEW TA LEARN!",
         "A LIBRARY, A QUESTION, AN AFTERNOON, PERFECT!"
       ],
       "crime": [
@@ -892,7 +892,7 @@
       ],
       "money": [
         "ART RARELY PAYS DA RENT, ALAS!",
-        "ME IZ SHORT AGAIN, MUST SELL SOMETHIN' ME MADE!",
+        "ME IZ SHORT AGAIN, MUST SELL SOMETINK ME MADE!",
         "MONEY IZ DULL, BUT IT BUYS ME TIME TA CREATE!"
       ],
       "safety": [
@@ -902,7 +902,7 @@
       ],
       "comfort": [
         "A STUDIO WIT GOOD LIGHT, ME DREAM!",
-        "SOMEWHERE BEAUTIFUL TA MAKE BEAUTIFUL THINGS!",
+        "SOMEWHERE BEAUTIFUL TA MAKE BEAUTIFUL TINKZ!",
         "COMFORT FEEDS DA CREATIVE SPIRIT!"
       ],
       "social": [
@@ -913,7 +913,7 @@
       "idle": [
         "LOOK HOW DA LIGHT FALLS JUST DERE...",
         "A WHOLE COMPOSITION IN DIS QUIET MOMENT!",
-        "EVERYTHIN' IZ TEXTURE AN' COLOR TODAY!"
+        "EVERYTINK IZ TEXTURE AN' COLOR TODAY!"
       ],
       "familiar": [
         "DAT TRAVELLER HAB A FACE WORTH PAINTIN'!",
@@ -925,10 +925,10 @@
   "adventurous": {
     "thoughts": [
       "ME WONDER WHAT IZ OVER DAT HILL!",
-      "DIS IZ BORIN'. LETZ DO SOMETHIN'!",
+      "DIS IZ BORIN'. LETZ DO SOMETINK!",
       "A LIL' DANGER MAKES LIFE INTERESTIN'!",
       "ON TA DA NEXT ADVENTURE!",
-      "ME HAB NEVER BEEN DERE? LETZ GO!"
+      "ME HAB NEVER BIN DERE? LETZ GO!"
     ],
     "need": {
       "sleep": [
@@ -947,7 +947,7 @@
         "LETZ GET DIS DONE AN' HIT DA ROAD!"
       ],
       "leisure": [
-        "FREE TIME, SOMEWHERE ME HAB NEVER BEEN!",
+        "FREE TIME, SOMEWHERE ME HAB NEVER BIN!",
         "LETZ EXPLORE DAT STRANGE CORNER OVER DERE!",
         "ADVENTURE NO WAIT FOR PERMISSION!"
       ],
@@ -1009,8 +1009,8 @@
       ],
       "hunger": [
         "ME SHOULD EAT, NO CAN HELP ANYONE IF ME IZ WEAK!",
-        "A MEAL, DEN BACK TA LOOKIN' AFTER THINGS!",
-        "ME FED EVERYONE BUT MYSELF AGAIN!"
+        "A MEAL, DEN BACK TA LOOKIN' AFTER TINKZ!",
+        "ME FED EVERYONE BUT ME AGAIN!"
       ],
       "work": [
         "ME WILL LOOK OUT FOR ME COWORKERS TODAY!",
@@ -1019,7 +1019,7 @@
       ],
       "leisure": [
         "A LIL' REST, DEN ME WILL CHECK ON EVERYONE!",
-        "MAYBE ME WILL COOK SOMETHIN' FOR MATES!",
+        "MAYBE ME WILL COOK SOMETINK FOR MATES!",
         "QUIET TIME, ME WILL MEND AN' TIDY!"
       ],
       "crime": [
@@ -1028,9 +1028,9 @@
         "ME PROTECT PEOPLE; ME NO PREY ON DEM!"
       ],
       "hygiene": [
-        "ME WILL TIDY MYSELF, COMFORT STARTS WIT CARE!",
+        "ME WILL TIDY ME, COMFORT STARTS WIT CARE!",
         "A QUICK WASH; ME WANT TA BE PRESENTABLE FOR DEM!",
-        "LOOKIN' AFTER MYSELF IZ PART OF LOOKIN' AFTER OTHERS!"
+        "LOOKIN' AFTER ME IZ PART OF LOOKIN' AFTER OTHERS!"
       ],
       "money": [
         "ME NEED ENOUGH TA KEEP US ALL FED!",
@@ -1050,7 +1050,7 @@
       "social": [
         "SOMEONE MIGHT NEED A KIND WORD TODAY!",
         "ME WILL GO SEE WHO COULD USE A HAND!",
-        "IT IZ BEEN TOO LONG SINCE ME CHECKED ON MATES!"
+        "IT IZ BIN TOO LONG SINCE ME CHECKED ON MATES!"
       ],
       "idle": [
         "IZ EVERYONE WARM AN' FED? ME HOPE SO!",
@@ -1067,7 +1067,7 @@
   "mischievous": {
     "thoughts": [
       "DIS WOULD BE SO MUCH FUNNIER IF...",
-      "LETZ STIR THINGS UP A BIT!",
+      "LETZ STIR TINKZ UP A BIT.",
       "DEY WILL NEVER SEE DIS COMIN'!",
       "ME WONDER WHAT DIS BUTTON DOES?",
       "A LIL' PRANK NEVER HURT ANYONE... MUCH!"
@@ -1139,13 +1139,13 @@
     "thoughts": [
       "EVERYONE'S IN IT FOR THEMSELVES!",
       "WHAT IZ DA CATCH?",
-      "DAT IZ JUST WHAT DEY WANT ME TA THINK!",
+      "DAT IZ JUST WHAT DEY WANT ME TA TINK!",
       "SURE, 'ALTRUISM'. RIGHT.",
       "DIS WILL ALL END BADLY."
     ],
     "need": {
       "sleep": [
-        "SLEEP'S DA ONLY HONEST THING LEFT!",
+        "SLEEP'S DA ONLY HONEST TINK LEFT!",
         "ME WILL REST, DA WORLD WILL STILL BE A MESS TOMORROW!",
         "AT LEAST DREAMS NO LIE TA YA FACE!"
       ],
@@ -1165,7 +1165,7 @@
         "FREE TIME, FREE TA BE DISAPPOINTED!"
       ],
       "crime": [
-        "EVERYONE STEALS; ME WOULD JUST BE HONEST ABOUT IT!",
+        "EVERYONE STEALS; ME WOULD JUST BE HONEST 'BOUT IT!",
         "DA SYSTEM ROBS ME DAILY, FAIR'S FAIR!",
         "NO ONE'S ACTUALLY INNOCENT, SO WHY NO?"
       ],
@@ -1176,11 +1176,11 @@
       ],
       "money": [
         "BROKE AGAIN. DA HOUSE ALWAYS WINS!",
-        "MONEY'S DA ONLY THING PEOPLE RESPECT!",
+        "MONEY'S DA ONLY TINK PEOPLE RESPECT!",
         "ME WILL CLAW BACK WHAT DEY TOOK, SOMEHOW!"
       ],
       "safety": [
-        "TRUST NO ONE, HIDE EVERYTHIN'. STANDARD!",
+        "TRUST NO ONE, HIDE EVERYTINK. STANDARD!",
         "DEY'D SELL ME OUT IN A HEARTBEAT!",
         "LAY LOW, IT IZ DA ONLY SMART MOVE!"
       ],
@@ -1190,7 +1190,7 @@
         "ME HAB EARNED A DOOR ME CAN SHUT ON DA WORLD!"
       ],
       "social": [
-        "TALK TA PEOPLE? DEY ONLY WANT SOMETHIN'!",
+        "TALK TA PEOPLE? DEY ONLY WANT SOMETINK!",
         "MAYBE ONE PERSON NO IZ COMPLETELY FAKE!",
         "COMPANY, ME GUESS, KEEP ME GUARD UP THOUGH!"
       ],
@@ -1222,7 +1222,7 @@
       ],
       "hunger": [
         "MEASURED PORTIONS, ON TIME!",
-        "ME WILL EAT WHAT FUELS ME, NOTHIN' MORE!",
+        "ME WILL EAT WHAT FUELS ME, NUTTIN' MORE!",
         "DISCIPLINE AT DA TABLE AS EVERYWHERE ELSE!"
       ],
       "work": [
@@ -1231,7 +1231,7 @@
         "ME WILL HOLD DA LINE AN' FINISH PROPERLY!"
       ],
       "leisure": [
-        "REST IZ SCHEDULED, NO SQUANDERED!",
+        "REST IZ ON DA SCHEDULE, AN' ME KEEP TA IT!",
         "ME WILL USE DA BREAK TA MAINTAIN ME ROUTINE!",
         "EVEN FREE TIME HAB ITS DISCIPLINE!"
       ],
@@ -1242,7 +1242,7 @@
       ],
       "hygiene": [
         "CLEANLINESS ON SCHEDULE, AS EVER!",
-        "ME WILL MAINTAIN MYSELF TA STANDARD!",
+        "ME WILL MAINTAIN ME TA STANDARD!",
         "ORDER IN DA BODY, ORDER IN DA MIND!"
       ],
       "money": [
@@ -1258,11 +1258,11 @@
       "comfort": [
         "A WELL-ORDERED HOME AIDS A WELL-ORDERED LIFE!",
         "ME WILL IMPROVE ME QUARTERS, EFFICIENTLY!",
-        "COMFORT DAT SUPPORTS DA REGIMEN, NOTHIN' EXCESSIVE!"
+        "COMFORT DAT SUPPORTS DA REGIMEN, NUTTIN' EXCESSIVE!"
       ],
       "social": [
         "A MEASURED WORD WIT DA RIGHT PEOPLE!",
-        "ME WILL NETWORK WIT PURPOSE, NO FOR IDLENESS!",
+        "ME WILL NETWORK WIT A CLEAR PURPOSE!",
         "ALLIES IZ AN ASSET; ME WILL CULTIVATE DEM!"
       ],
       "idle": [
@@ -1339,7 +1339,7 @@
       "idle": [
         "DA DAY UNFOLDS AS IT ALWAYS WOULD!",
         "ME SIMPLY WAIT FOR WHAT IZ TA COME!",
-        "NOTHIN' TA DECIDE; IT IZ ALL DECIDED!"
+        "NUTTIN' TA DECIDE; IT IZ ALL DECIDED!"
       ],
       "familiar": [
         "OUR PATHS WAZ ALWAYS GOING TA CROSS!",
@@ -1360,7 +1360,7 @@
       "sleep": [
         "FINALLY, AN EXCUSE TA BE LEFT ALONE, BED!",
         "ME IZ EXHAUSTED AN' CRANKIER FOR IT!",
-        "NO WAKE ME. NO EVEN THINK ABOUT IT!"
+        "NO WAKE ME. NO EVEN TINK 'BOUT IT!"
       ],
       "hunger": [
         "HUNGRY. NATURALLY. JUST ME LUCK!",
@@ -1370,7 +1370,7 @@
       "work": [
         "WORK. JOY. NO CAN WAIT.",
         "ANOTHER SHIFT WIT DEZE IDIOTS!",
-        "LETZ JUST GET DIS MISERABLE THING OVER WIT!"
+        "LETZ JUST GET DIS MISERABLE TINK OVER WIT!"
       ],
       "leisure": [
         "'FREE TIME.' FREE TA BE ANNOYED SOMEWHERE ELSE!",
@@ -1384,11 +1384,11 @@
       ],
       "hygiene": [
         "UGH, FINE, ME WILL WASH. HAPPY NOW?",
-        "ME REEK AN' ME IZ ANNOYED ABOUT IT!",
-        "GET DIS OVER WIT, LIKE EVERYTHIN' ELSE!"
+        "ME REEK AN' ME IZ ANNOYED 'BOUT IT!",
+        "GET DIS OVER WIT, LIKE EVERYTINK ELSE!"
       ],
       "money": [
-        "BROKE. OF COURSE. EVERYTHIN' COSTS TOO MUCH!",
+        "BROKE. OF COURSE. EVERYTINK COSTS TOO MUCH!",
         "WHY IZ MONEY ALWAYS DA PROBLEM?",
         "ME WILL GO SCRAPE SOME TOGETHER. GRUMBLE!"
       ],
@@ -1410,7 +1410,7 @@
       "idle": [
         "BAH. QUIET FOR ONCE. NO RUIN IT!",
         "WHATEVER. AS LONG AS NOBODY BUGS ME!",
-        "OF COURSE NOTHIN''S GOING RIGHT. TYPICAL!"
+        "OF COURSE NUTTIN''S GOING RIGHT. TYPICAL!"
       ],
       "familiar": [
         "OH, IT IZ YOU AGAIN. HMPH!",
@@ -1422,7 +1422,7 @@
   "loyal": {
     "thoughts": [
       "ME WILL NO ABANDON DEM.",
-      "FOR ME MATES, ANYTHIN'.",
+      "FOR ME MATES, ANYTINK.",
       "ME MUST KEEP ME PROMISE.",
       "TOGETHER, NO MATTER WHAT.",
       "ME LOYALTY IZ ME BOND."
@@ -1486,7 +1486,7 @@
       "familiar": [
         "DAT TRAVELLER STOOD BY ME, ME NO WILL FORGET IT!",
         "AN ALLY WORTH KEEPIN' CLOSE!",
-        "ME WOULD HAB DEY BACK WITHOUT A SECOND THOUGHT!"
+        "ME WOULD HAB DEY BACK WITOUT A SECOND THOUGHT!"
       ]
     }
   },
@@ -1511,7 +1511,7 @@
       ],
       "work": [
         "NO TASK TOO HARD, ME WILL TAKE IT HEAD ON!",
-        "ME WILL HANDLE DA DANGEROUS PARTS MYSELF!",
+        "ME WILL HANDLE DA DANGEROUS PARTS ME!",
         "SOMEONE HAB TA STEP UP. MIGHT AS WELL BE ME!"
       ],
       "leisure": [
@@ -1525,7 +1525,7 @@
         "DERE IZ NO HONOR IN STEALIN'!"
       ],
       "hygiene": [
-        "QUICK WASH, NO CAN CHARGE INTO THINGS FILTHY!",
+        "QUICK WASH, NO CAN CHARGE INTO TINKZ FILTHY!",
         "ME WILL CLEAN UP AN' STAND TALL!",
         "A SOLDIER KEEPS HIMSELF SHARP!"
       ],
@@ -1556,7 +1556,7 @@
       ],
       "familiar": [
         "DAT TRAVELLER NO FLINCH, ME RESPECT DAT!",
-        "WE HAB FACED THINGS TOGETHER; ME WOULD FIGHT BESIDE DEM!",
+        "WE HAB FACED TINKZ TOGETHER; ME WOULD FIGHT BESIDE DEM!",
         "A BRAVE HEART KNOWS ANOTHER!"
       ]
     }
@@ -1621,8 +1621,8 @@
         "TALKIN' IZ SCARY, BUT ME IZ LONELY!"
       ],
       "idle": [
-        "IT IZ QUIET. DAT IZ... GOOD, ME THINK!",
-        "ME HOPE NOTHIN' BAD HAPPENS!",
+        "IT IZ QUIET. DAT IZ... GOOD, ME TINK!",
+        "ME HOPE NUTTIN' BAD HAPPENS!",
         "JUST STAY OUT OF DA WAY, DAT IZ SAFEST!"
       ],
       "familiar": [
@@ -1647,7 +1647,7 @@
         "SLEEP IZ JUST ANOTHER PLEASURE TA SAVOR!"
       ],
       "hunger": [
-        "OOH, TIME FOR SOMETHIN' DELICIOUS!",
+        "OOH, TIME FOR SOMETINK DELICIOUS!",
         "ME WANT DA FINEST MEAL ME CAN GET!",
         "FOOD IZ ONE OF LIFE'S GREAT JOYS!"
       ],
@@ -1664,11 +1664,11 @@
       "crime": [
         "IF IT GETS ME WHAT ME WANT... MAYBE!",
         "A LIL' INDULGENCE NEVER HURT, MUCH!",
-        "WHY DENY MYSELF? TAKE DA PLEASURE!"
+        "WHY DENY ME? TAKE DA PLEASURE!"
       ],
       "hygiene": [
         "A LONG, WARM SOAK SOUNDS DIVINE!",
-        "ME WILL PAMPER MYSELF A LIL', WHY NO?",
+        "ME WILL PAMPER ME A LIL', WHY NO?",
         "CLEAN AN' PERFUMED, DA WAY ME LIKE IT!"
       ],
       "money": [
@@ -1683,7 +1683,7 @@
       ],
       "comfort": [
         "A LAVISH PLACE TA ENJOY LIFE PROPERLY!",
-        "SOFT CUSHIONS, FINE THINGS, YES, ALL OF IT!",
+        "SOFT CUSHIONS, FINE TINKZ, YES, ALL OF IT!",
         "COMFORT? DAT IZ WHAT ME IZ HERE FOR!"
       ],
       "social": [
@@ -1713,7 +1713,7 @@
     ],
     "need": {
       "sleep": [
-        "EH, MIGHT AS WELL SLEEP. NOTHIN' ELSE TA DO!",
+        "EH, MIGHT AS WELL SLEEP. NUTTIN' ELSE TA DO!",
         "TIRED. WHATEVER. ME WILL LIE DOWN!",
         "SLEEP, WAKE, REPEAT. SURE!"
       ],
@@ -1728,8 +1728,8 @@
         "CLOCK IN, CLOCK OUT. SAME AS ALWAYS!"
       ],
       "leisure": [
-        "FREE TIME. ME WILL JUST... SIT, PROBABLY!",
-        "COULD DO SOMETHIN'. NO WILL, THOUGH!",
+        "FREE TIME. ME WILL JUST... SIT, MAYBE-MAYBE!",
+        "COULD DO SOMETINK. NO WILL, THOUGH!",
         "NO MATTER HOW ME SPEND IT!"
       ],
       "crime": [
@@ -1738,7 +1738,7 @@
         "WHATEVER, ME NO NEED IT DAT BAD!"
       ],
       "hygiene": [
-        "SHOULD PROBABLY WASH. EVENTUALLY!",
+        "SHOULD MAYBE-MAYBE WASH. EVENTUALLY!",
         "EH, FINE, ME WILL CLEAN UP. ME GUESS!",
         "NO REALLY BOTHER ME, BUT OKAY!"
       ],
@@ -1763,8 +1763,8 @@
         "COMPANY'S FINE. OR NO. WHATEVER!"
       ],
       "idle": [
-        "...NOTHIN'. AS USUAL.",
-        "JUST ANOTHER DAY DOING NOTHIN' MUCH!",
+        "...NUTTIN'. AS USUAL.",
+        "JUST ANOTHER DAY DOING NUTTIN' MUCH!",
         "MEH. DA HOURS PASS."
       ],
       "familiar": [
@@ -1777,7 +1777,7 @@
   "capability": {
     "cooking_station": [
       "DAT MEAL HIT DA SPOT.",
-      "COOKIN' FOR MYSELF BEATS BUYIN' OUT!",
+      "COOKIN' FOR ME BEATS BUYIN' OUT!",
       "ME SHOULD DO DAT MORE OFTEN!"
     ],
     "container": [
@@ -1798,12 +1798,12 @@
     "bank": [
       "DAT SHOULD TIDE ME OVER.",
       "BETTER SAFE DEN SORRY, INTO DA VAULT IT GOES!",
-      "BANKS. NO CAN LIVE WIT DEM, NO CAN LIVE WITHOUT DEM!"
+      "BANKS. NO CAN LIVE WIT DEM, NO CAN LIVE WITOUT DEM!"
     ],
     "real_estate_office": [
       "PROPERTY REALLY DOES PAY FOR ITSELF!",
       "ANOTHER MONTH, ANOTHER RENT CHEQUE!",
-      "OWNIN' LAND WAZ DA SMARTEST THING ME EVER DID!"
+      "OWNIN' LAND WAZ DA SMARTEST TINK ME EVER DID!"
     ],
     "stock_exchange": [
       "EASY COME, EASY GO.",
@@ -1811,13 +1811,13 @@
       "ME WILL MAKE IT BACK NEXT TIME!"
     ],
     "fast_travel_terminal": [
-      "NOTHIN' LIKE SEEIN' SOMEWHERE NEW!",
+      "NUTTIN' LIKE SEEIN' SOMEWHERE NEW!",
       "TRAVEL CLEARS DA HEAD.",
       "WONDER WHAT IZ OUT DERE TODAY!"
     ],
     "furniture_builder": [
       "A FEW NEW TOUCHES AN' DIS PLACE FEELS LIKE HOME!",
-      "NICE THINGS MAKE A HOUSE A HOME!",
+      "NICE TINKZ MAKE A HOUSE A HOME!",
       "DAT LOOKS BETTER ALREADY."
     ]
   }

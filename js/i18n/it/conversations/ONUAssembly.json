@@ -182,7 +182,7 @@
       "text": [
         "{sponsor} propone di riaffermare che la Torre è terreno neutrale, {e di dire cosa significhi|per la prima volta per iscritto|con l'elenco di ciò che non significa}. {leader} definisce l'assetto attuale {una cortesia|un incidente|una bandierina che tiene insieme un panino}.",
         "La Torre. {sponsor} chiede che gli uffici di ogni potenza al suo interno siano {registrati|limitati|aperti a ispezione}. {target} ne ha {nove piani|più piani di quanti ne abbia dichiarati|un piano che non compare su nessuna pianta}.",
-        "{sponsor} propone che l'assemblea riconosca la Torre come l'unica cosa che impedisce alle novantadue dimensioni di collassare l'una nell'altra, {e agisca di conseguenza|e la finanzi di conseguenza|cosa che {target} definisce teologia, non procedura}."
+        "{sponsor} propone che l'assemblea riconosca la Torre come l'unica cosa che impedisce alle novantadue dimensioni di collassare l'una nell'altra, {e agisca di conseguenza|e la finanzi di conseguenza|cosa che {target} definisce teologia}."
       ]
     },
     "ceasefire": {
@@ -425,7 +425,7 @@
       ],
       "against": [
         "\"La Costa si oppone a {topic}. {Sappiamo quanto poco pesi|Ci è stato detto di farlo|Avremmo preferito non essere interpellati}.\"",
-        "\"No. {Il Protettorato è governato da altrove dal 1783|Siamo una costa, non un Paese, e la costa dice no|Non aggiungeremo altro}.\"",
+        "\"No. {Il Protettorato è governato da altrove dal 1783|Siamo una costa, e la costa dice no|Non aggiungeremo altro}.\"",
         "\"Respingiamo la mozione. Il Guardiano Arnold ha {delle opinioni|delle istruzioni|un elenco}.\"",
         "\"Contrari, {a malincuore|senza astio|e la delegazione desidera che sia annotato}.\""
       ],
@@ -505,7 +505,7 @@
         "\"Contrari. Il Collettivo commercia ricordi, emozioni e la fuga da un anello, e non si farà dire quale delle tre sia legittima.\""
       ],
       "odd": [
-        "\"Il Collettivo vorrebbe comprare la mozione. Non l'esito. La mozione.\"",
+        "\"Il Collettivo vorrebbe comprare la mozione in sé. Solo la mozione.\"",
         "{leader} non batte ciglio per tutti e quattro i minuti. La delegazione dietro di lui non si muove dal 1996.",
         "\"I nostri sono stati sopra gli ottanta così a lungo che l'anello ha smesso di valere per noi anche da fermi. Non è rilevante per {topic}. Lo diciamo comunque.\"",
         "\"Il Collettivo si astiene e venderà la propria astensione alla prima delegazione che la chiede.\""
@@ -689,7 +689,7 @@
     },
     "petrodemons": {
       "open": [
-        "Hanno la parola i Petrodemoni. {leader} {si alza|più che alzarsi arriva a essere in piedi|lascia un segno sul banco}.",
+        "Hanno la parola i Petrodemoni. {leader} {si alza|arriva in piedi e basta|lascia un segno sul banco}.",
         "{leader}, per i Petrodemoni, {parla|parla, e il microfono si scalda|esordisce chiedendo chi detenga la linea tellurica sotto questo pavimento}.",
         "La delegazione petrodemone {viene chiamata|viene chiamata e le luci calano un poco|risponde con una voce che è più voci}."
       ],

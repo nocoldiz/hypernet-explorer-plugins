@@ -1,0 +1,888 @@
+{
+  "traits": {
+    "obese": {
+      "name": "OBESE",
+      "description": "CARRIES EXTRA WEIGHT"
+    },
+    "underweight": {
+      "name": "UNDERWEIGHT",
+      "description": "LIGHTER DEN AVERAGE"
+    },
+    "claustrophobic": {
+      "name": "CLAUSTROPHOBIC",
+      "description": "FEARS ENCLOSED SPACES"
+    },
+    "trigger_happy": {
+      "name": "TRIGGER HAPPY",
+      "description": "QUICK TA ATTACK"
+    },
+    "paranoid": {
+      "name": "PARANOID",
+      "description": "ALWAYS ON EDGE"
+    },
+    "athletic": {
+      "name": "ATHLETIC",
+      "description": "PHYSICALLY FIT"
+    },
+    "genius": {
+      "name": "GENIUS",
+      "description": "INTELLECTUALLY GIFTED"
+    },
+    "lucky": {
+      "name": "LUCKY",
+      "description": "FORTUNE FAVORS YOU"
+    },
+    "hot-headed": {
+      "name": "HOT-HEADED",
+      "description": "QUICK TA ANGER"
+    },
+    "defensive": {
+      "name": "DEFENSIVE",
+      "description": "PREFERS PROTECTION"
+    },
+    "marksman": {
+      "name": "MARKSMAN",
+      "description": "EXPERT WIT RANGED WEAPONS"
+    },
+    "nearsighted": {
+      "name": "NEARSIGHTED",
+      "description": "POOR VISION WITOUT GLASSES"
+    },
+    "lombrosian_physiognomy": {
+      "name": "LOMBROSIAN PHYSIOGNOMY",
+      "description": "SUSPICIOUS APPEARANCE INCREASES CRIME DETECTION"
+    },
+    "hydrophobic": {
+      "name": "HYDROPHOBIC",
+      "description": "NO CAN SWIM, FEARS WATER"
+    },
+    "silvertongue": {
+      "name": "SILVERTONGUE",
+      "description": "MASTER OF PERSUASION AN' SPEECH"
+    },
+    "vegan": {
+      "name": "VEGAN",
+      "description": "NO CAN CONSUME ANIMAL PRODUCTS"
+    },
+    "vegetarian": {
+      "name": "VEGETARIAN",
+      "description": "NO CAN CONSUME MEAT"
+    },
+    "impostor_syndrome": {
+      "name": "IMPOSTOR SYNDROME",
+      "description": "DOUBTS OWN ABILITIES CONSTANTLY"
+    },
+    "vampire": {
+      "name": "VAMPIRE",
+      "description": "UNDEAD CREATURE OF DA NIGHT"
+    },
+    "alcoholic": {
+      "name": "ALCOHOLIC",
+      "description": "DEPENDENT ON ALCOHOL"
+    },
+    "germaphobe": {
+      "name": "GERMAPHOBE",
+      "description": "FEARS CONTAMINATION AN' DISEASE"
+    },
+    "adrenaline_junkie": {
+      "name": "ADRENALINE JUNKIE",
+      "description": "THRIVES ON DANGER AN' EXCITEMENT"
+    },
+    "pacifist": {
+      "name": "PACIFIST",
+      "description": "ABHORS VIOLENCE"
+    },
+    "pyromaniac": {
+      "name": "PYROMANIAC",
+      "description": "OBSESSED WIT FIRE"
+    },
+    "hoarder": {
+      "name": "HOARDER",
+      "description": "NO CAN LET GO OF ITEMS"
+    },
+    "minimalist": {
+      "name": "MINIMALIST",
+      "description": "PREFERS SIMPLICITY AN' FEW POSSESSIONS"
+    },
+    "compulsive_liar": {
+      "name": "COMPULSIVE LIAR",
+      "description": "NO CAN HELP BUT DECEIVE"
+    },
+    "perfectionist": {
+      "name": "PERFECTIONIST",
+      "description": "EVERYTINK MUST BE FLAWLESS"
+    },
+    "masochist": {
+      "name": "MASOCHIST",
+      "description": "FINDS STRENGTH IN PAIN"
+    },
+    "sociopath": {
+      "name": "SOCIOPATH",
+      "description": "LACKS EMPATHY AN' REMORSE"
+    },
+    "empath": {
+      "name": "EMPATH",
+      "description": "FEELS OTHERS' EMOTIONS DEEPLY"
+    },
+    "technophobe": {
+      "name": "TECHNOPHOBE",
+      "description": "FEARS MODERN TECHNOLOGY"
+    },
+    "tech_savvy": {
+      "name": "TECH SAVVY",
+      "description": "MASTER OF MODERN TECHNOLOGY"
+    },
+    "superstitious": {
+      "name": "SUPERSTITIOUS",
+      "description": "BELIEVES IN OMENS AN' SIGNS"
+    },
+    "skeptic": {
+      "name": "SKEPTIC",
+      "description": "QUESTIONS EVERYTINK"
+    },
+    "night_owl": {
+      "name": "NIGHT OWL",
+      "description": "MORE ACTIVE AT NIGHT"
+    },
+    "early_bird": {
+      "name": "EARLY BIRD",
+      "description": "MORE ACTIVE IN DA MORNIN'"
+    },
+    "workaholic": {
+      "name": "WORKAHOLIC",
+      "description": "OBSESSED WIT PRODUCTIVITY"
+    },
+    "photographic_memory": {
+      "name": "PHOTOGRAPHIC MEMORY",
+      "description": "REMEMBERS EVERYTINK IN PERFECT DETAIL"
+    },
+    "colorblind": {
+      "name": "COLORBLIND",
+      "description": "NO CAN DISTINGUISH CERTAIN COLORS"
+    },
+    "ambidextrous": {
+      "name": "AMBIDEXTROUS",
+      "description": "SKILLED WIT BOTH HANDS EQUALLY"
+    },
+    "blind": {
+      "name": "BLIND",
+      "description": "NO CAN SEE, RELIES ON OTHER SENSES"
+    },
+    "deaf": {
+      "name": "DEAF",
+      "description": "NO CAN HEAR SOUNDS"
+    },
+    "agoraphobic": {
+      "name": "AGORAPHOBIC",
+      "description": "FEARS OPEN OR CROWDED SPACES"
+    },
+    "sadist": {
+      "name": "SADIST",
+      "description": "DERIVES PLEASURE FROM OTHERS' PAIN"
+    },
+    "hemophobic": {
+      "name": "HEMOPHOBIC",
+      "description": "FEARS BLOOD AN' INJURY"
+    },
+    "kleptomaniac": {
+      "name": "KLEPTOMANIAC",
+      "description": "COMPULSIVELY STEALS ITEMS"
+    },
+    "ascetic": {
+      "name": "ASCETIC",
+      "description": "PRACTICES EXTREME SELF-DISCIPLINE"
+    },
+    "acrophobic": {
+      "name": "ACROPHOBIC",
+      "description": "FEARS HEIGHTS"
+    },
+    "synesthete": {
+      "name": "SYNESTHETE",
+      "description": "EXPERIENCES CROSSED SENSORY PERCEPTIONS"
+    },
+    "berserker": {
+      "name": "BERSERKER",
+      "description": "ENTERS UNCONTROLLABLE RAGE IN COMBAT"
+    },
+    "coward": {
+      "name": "COWARD",
+      "description": "QUICK TA FLEE FROM DANGER"
+    },
+    "xenophobic": {
+      "name": "XENOPHOBIC",
+      "description": "FEARS FOREIGNERS AN' OUTSIDERS"
+    },
+    "hypochondriac": {
+      "name": "HYPOCHONDRIAC",
+      "description": "OBSESSIVELY WORRIED 'BOUT ILLNESS"
+    },
+    "eidetic_reader": {
+      "name": "EIDETIC READER",
+      "description": "CAN RECALL ANY TEXT PERFECTLY"
+    },
+    "amblyopic": {
+      "name": "AMBLYOPIC",
+      "description": "HAB A LAZY EYE"
+    },
+    "prosopagnosic": {
+      "name": "PROSOPAGNOSIC",
+      "description": "NO CAN RECOGNIZE FACES"
+    },
+    "megalomaniac": {
+      "name": "MEGALOMANIAC",
+      "description": "DELUSIONS OF GRANDEUR AN' POWER"
+    },
+    "albinism": {
+      "name": "ALBINISM",
+      "description": "LACKS MELANIN PIGMENTATION"
+    },
+    "gigantism": {
+      "name": "GIGANTISM",
+      "description": "EXCESSIVE GROWTH HORMONE PRODUCTION"
+    },
+    "dwarfism": {
+      "name": "DWARFISM",
+      "description": "GENETIC SHORT STATURE"
+    },
+    "hemophilia": {
+      "name": "HEMOPHILIA",
+      "description": "BLOOD NO CLOT PROPERLY"
+    },
+    "marfan_syndrome": {
+      "name": "MARFAN SYNDROME",
+      "description": "CONNECTIVE TISSUE DISORDER"
+    },
+    "hypermobility": {
+      "name": "HYPERMOBILITY",
+      "description": "JOINTS EXTEND BEYOND NORMAL RANGE"
+    },
+    "polydactyly": {
+      "name": "POLYDACTYLY",
+      "description": "BORN WIT EXTRA FINGERS OR TOES"
+    },
+    "hypertrichosis": {
+      "name": "HYPERTRICHOSIS",
+      "description": "EXCESSIVE BODY HAIR GROWTH"
+    },
+    "thalassemia": {
+      "name": "THALASSEMIA",
+      "description": "INHERITED BLOOD DISORDER"
+    },
+    "heterochromia": {
+      "name": "HETEROCHROMIA",
+      "description": "EYES OF DIFFERENT COLORS"
+    },
+    "sensitive": {
+      "name": "SENSITIVE",
+      "description": "SENSITIVE TA PSI FORCES"
+    },
+    "sickle_cell_trait": {
+      "name": "SICKLE CELL TRAIT",
+      "description": "ALTERED RED BLOOD CELL SHAPE"
+    },
+    "ehlers-danlos": {
+      "name": "EHLERS-DANLOS",
+      "description": "AFFECTS CONNECTIVE TISSUES"
+    },
+    "congenital_analgesia": {
+      "name": "CONGENITAL ANALGESIA",
+      "description": "NO CAN FEEL PHYSICAL PAIN"
+    },
+    "savant_syndrome": {
+      "name": "SAVANT SYNDROME",
+      "description": "EXCEPTIONAL ABILITY IN ONE FIELD"
+    },
+    "adhd": {
+      "name": "ADHD",
+      "description": "ATTENTION DEFICIT, HYPERACTIVE IMPULSES"
+    },
+    "dyslexic": {
+      "name": "DYSLEXIC",
+      "description": "DIFFICULTY PROCESSIN' WRITTEN LANGUAGE"
+    },
+    "dyscalculic": {
+      "name": "DYSCALCULIC",
+      "description": "DIFFICULTY WIT NUMBERS AN' MATH"
+    },
+    "charismatic": {
+      "name": "CHARISMATIC",
+      "description": "NATURAL CHARM AN' INFLUENCE"
+    },
+    "extrovert": {
+      "name": "EXTROVERT",
+      "description": "ENERGIZED BY SOCIAL INTERACTION"
+    },
+    "introvert": {
+      "name": "INTROVERT",
+      "description": "DRAINED BY SOCIAL INTERACTION"
+    },
+    "chronic_pain": {
+      "name": "CHRONIC PAIN",
+      "description": "CONSTANT PHYSICAL DISCOMFORT"
+    },
+    "ambitious": {
+      "name": "AMBITIOUS",
+      "description": "DRIVEN TA ACHIEVE GREATNESS"
+    },
+    "slothful": {
+      "name": "SLOTHFUL",
+      "description": "PREFERS MINIMAL EFFORT"
+    },
+    "greedy": {
+      "name": "GREEDY",
+      "description": "OBSESSED WIT WEALTH AN' POSSESSIONS"
+    },
+    "generous": {
+      "name": "GENEROUS",
+      "description": "FREELY GIVES TA OTHERS"
+    },
+    "loyal": {
+      "name": "LOYAL",
+      "description": "UNWAVERIN' DEVOTION TA ALLIES"
+    },
+    "treacherous": {
+      "name": "TREACHEROUS",
+      "description": "NO CAN BE TRUSTED"
+    },
+    "proud": {
+      "name": "PROUD",
+      "description": "EXCESSIVE SELF-REGARD"
+    },
+    "humble": {
+      "name": "HUMBLE",
+      "description": "MODEST AN' UNASSUMIN'"
+    },
+    "gluttonous": {
+      "name": "GLUTTONOUS",
+      "description": "EXCESSIVE CONSUMPTION OF FOOD"
+    },
+    "hedonist": {
+      "name": "HEDONIST",
+      "description": "SEEKS PLEASURE ABOVE ALL"
+    },
+    "stoic": {
+      "name": "STOIC",
+      "description": "ENDURES PAIN WITOUT COMPLAINT"
+    },
+    "tracker": {
+      "name": "TRACKER",
+      "description": "EXPERT AT FOLLOWIN' TRAILS"
+    },
+    "survivalist": {
+      "name": "SURVIVALIST",
+      "description": "THRIVES IN HARSH ENVIRONMENTS"
+    },
+    "tactician": {
+      "name": "TACTICIAN",
+      "description": "MASTER OF STRATEGY AN' PLANNIN'"
+    },
+    "cursed": {
+      "name": "CURSED",
+      "description": "BEARER OF SUPERNATURAL MISFORTUNE"
+    },
+    "blessed": {
+      "name": "BLESSED",
+      "description": "TOUCHED BY DIVINE FAVOR"
+    },
+    "caffeine_dependent": {
+      "name": "CAFFEINE DEPENDENT",
+      "description": "REQUIRES CAFFEINE TA FUNCTION NORMALLY"
+    },
+    "nicotine_addict": {
+      "name": "NICOTINE ADDICT",
+      "description": "DEPENDENT ON TOBACCO PRODUCTS"
+    },
+    "gambling_addict": {
+      "name": "GAMBLIN' ADDICT",
+      "description": "COMPULSIVELY GAMBLES RESOURCES"
+    },
+    "drug_dependent": {
+      "name": "DRUG DEPENDENT",
+      "description": "RELIES ON SUBSTANCES TA COPE"
+    },
+    "restrictive_eating": {
+      "name": "RESTRICTIVE EATIN'",
+      "description": "SEVERELY LIMITS FOOD INTAKE"
+    },
+    "binge_eating": {
+      "name": "BINGE EATIN'",
+      "description": "EPISODES OF UNCONTROLLED EATIN'"
+    },
+    "nyctophobic": {
+      "name": "NYCTOPHOBIC",
+      "description": "FEARS DARKNESS"
+    },
+    "thanatophobic": {
+      "name": "THANATOPHOBIC",
+      "description": "FEARS DEATH INTENSELY"
+    },
+    "entomophobic": {
+      "name": "ENTOMOPHOBIC",
+      "description": "FEARS INSECTS AN' BUGS"
+    },
+    "ophidiophobic": {
+      "name": "OPHIDIOPHOBIC",
+      "description": "FEARS SNAKES"
+    },
+    "cynophobic": {
+      "name": "CYNOPHOBIC",
+      "description": "FEARS DOGS"
+    },
+    "pyrophobic": {
+      "name": "PYROPHOBIC",
+      "description": "FEARS FIRE"
+    },
+    "trypophobic": {
+      "name": "TRYPOPHOBIC",
+      "description": "FEARS CLUSTERED HOLES OR PATTERNS"
+    },
+    "atychiphobic": {
+      "name": "ATYCHIPHOBIC",
+      "description": "FEARS FAILURE"
+    },
+    "autophobic": {
+      "name": "AUTOPHOBIC",
+      "description": "FEARS BEING ALONE"
+    },
+    "devout": {
+      "name": "DEVOUT",
+      "description": "DEEPLY RELIGIOUS AN' FAITHFUL"
+    },
+    "atheist": {
+      "name": "ATHEIST",
+      "description": "REJECTS RELIGIOUS BELIEFS"
+    },
+    "heretic": {
+      "name": "HERETIC",
+      "description": "BRANDED AS RELIGIOUS OUTCAST"
+    },
+    "pilgrim": {
+      "name": "PILGRIM",
+      "description": "JOURNEYS FOR SPIRITUAL PURPOSE"
+    },
+    "excommunicated": {
+      "name": "EXCOMMUNICATED",
+      "description": "EXPELLED FROM RELIGIOUS COMMUNITY"
+    },
+    "monk-trained": {
+      "name": "MONK-TRAINED",
+      "description": "DISCIPLINED IN MONASTIC WAYS"
+    },
+    "prophetic": {
+      "name": "PROPHETIC",
+      "description": "HAB VISIONS OF DA FUTURE"
+    },
+    "noble": {
+      "name": "NOBLE",
+      "description": "BORN INTO ARISTOCRACY"
+    },
+    "street_urchin": {
+      "name": "STREET URCHIN",
+      "description": "GREW UP IN POVERTY"
+    },
+    "orphan": {
+      "name": "ORPHAN",
+      "description": "NO LIVIN' PARENTS"
+    },
+    "bastard": {
+      "name": "BASTARD",
+      "description": "BORN OUTSIDE OF WEDLOCK"
+    },
+    "heir": {
+      "name": "HEIR",
+      "description": "DESTINED TA INHERIT WEALTH"
+    },
+    "twin": {
+      "name": "TWIN",
+      "description": "HAB AN IDENTICAL SIBLIN'"
+    },
+    "exiled": {
+      "name": "EXILED",
+      "description": "BANISHED FROM HOMELAND"
+    },
+    "slave-born": {
+      "name": "SLAVE-BORN",
+      "description": "BORN INTO SERVITUDE"
+    },
+    "wealthy": {
+      "name": "WEALTHY",
+      "description": "BORN WIT FINANCIAL PRIVILEGE"
+    },
+    "scholar": {
+      "name": "SCHOLAR",
+      "description": "DEDICATED TA LEARNIN'"
+    },
+    "merchant": {
+      "name": "MERCHANT",
+      "description": "SKILLED IN TRADE AN' COMMERCE"
+    },
+    "criminal": {
+      "name": "CRIMINAL",
+      "description": "BACKGROUND IN ILLEGAL ACTIVITIES"
+    },
+    "illiterate": {
+      "name": "ILLITERATE",
+      "description": "NO CAN READ OR WRITE"
+    },
+    "veteran": {
+      "name": "VETERAN",
+      "description": "EXPERIENCED SOLDIER"
+    },
+    "farmer": {
+      "name": "FARMER",
+      "description": "RURAL AGRICULTURAL BACKGROUND"
+    },
+    "herbalist": {
+      "name": "HERBALIST",
+      "description": "EXPERT IN MEDICINAL PLANTS"
+    },
+    "alchemist": {
+      "name": "ALCHEMIST",
+      "description": "PRACTICES TRANSMUTATION ARTS"
+    },
+    "navigator": {
+      "name": "NAVIGATOR",
+      "description": "EXPERT IN TRAVEL AN' WAYFINDIN'"
+    },
+    "blacksmith": {
+      "name": "BLACKSMITH",
+      "description": "SKILLED METALWORKER"
+    },
+    "thief": {
+      "name": "THIEF",
+      "description": "EXPERT AT STEALIN'"
+    },
+    "bard": {
+      "name": "BARD",
+      "description": "MUSICIAN AN' STORYTELLER"
+    },
+    "beautiful": {
+      "name": "BEAUTIFUL",
+      "description": "EXCEPTIONALLY ATTRACTIVE"
+    },
+    "scarred": {
+      "name": "SCARRED",
+      "description": "MARKED BY VISIBLE WOUNDS"
+    },
+    "tall": {
+      "name": "TALL",
+      "description": "ABOVE AVERAGE HEIGHT"
+    },
+    "short": {
+      "name": "SHORT",
+      "description": "BELOW AVERAGE HEIGHT"
+    },
+    "muscular": {
+      "name": "MUSCULAR",
+      "description": "EXCEPTIONAL PHYSICAL STRENGTH"
+    },
+    "frail": {
+      "name": "FRAIL",
+      "description": "WEAK CONSTITUTION"
+    },
+    "left-handed": {
+      "name": "LEFT-HANDED",
+      "description": "DOMINANT LEFT HAND"
+    },
+    "quick_reflexes": {
+      "name": "QUICK REFLEXES",
+      "description": "LIGHTNING-FAST REACTIONS"
+    },
+    "duelist": {
+      "name": "DUELIST",
+      "description": "MASTER OF ONE-ON-ONE COMBAT"
+    },
+    "brawler": {
+      "name": "BRAWLER",
+      "description": "STREET FIGHTIN' EXPERT"
+    },
+    "archer": {
+      "name": "ARCHER",
+      "description": "SKILLED WIT BOW AN' ARROW"
+    },
+    "shield_master": {
+      "name": "SHIELD MASTER",
+      "description": "EXPERT IN DEFENSIVE TACTICS"
+    },
+    "assassin": {
+      "name": "ASSASSIN",
+      "description": "TRAINED TA KILL SILENTLY"
+    },
+    "berserker_rage": {
+      "name": "BERSERKER RAGE",
+      "description": "CHANNELS BATTLE FURY"
+    },
+    "mounted_combat": {
+      "name": "MOUNTED COMBAT",
+      "description": "EXPERT CAVALRY FIGHTER"
+    },
+    "martial_artist": {
+      "name": "MARTIAL ARTIST",
+      "description": "UNARMED COMBAT MASTER"
+    },
+    "optimist": {
+      "name": "OPTIMIST",
+      "description": "ALWAYS SEES DA BRIGHT SIDE"
+    },
+    "pessimist": {
+      "name": "PESSIMIST",
+      "description": "EXPECTS DA WORST OUTCOME"
+    },
+    "nihilist": {
+      "name": "NIHILIST",
+      "description": "BELIEVES LIFE HAB NO MEANIN'"
+    },
+    "idealist": {
+      "name": "IDEALIST",
+      "description": "PURSUES LOFTY PRINCIPLES"
+    },
+    "pragmatist": {
+      "name": "PRAGMATIST",
+      "description": "PRACTICAL AN' REALISTIC"
+    },
+    "romantic": {
+      "name": "ROMANTIC",
+      "description": "LED BY HEART OVER MIND"
+    },
+    "cynic": {
+      "name": "CYNIC",
+      "description": "DISTRUSTS OTHERS' MOTIVES"
+    },
+    "vengeful": {
+      "name": "VENGEFUL",
+      "description": "NEVER FORGIVES A SLIGHT"
+    },
+    "forgiving": {
+      "name": "FORGIVIN'",
+      "description": "QUICK TA PARDON TRANSGRESSIONS"
+    },
+    "jealous": {
+      "name": "JEALOUS",
+      "description": "ENVIES OTHERS CONSTANTLY"
+    },
+    "spiteful": {
+      "name": "SPITEFUL",
+      "description": "PETTY AN' VINDICTIVE"
+    },
+    "honest": {
+      "name": "HONEST",
+      "description": "NO CAN TELL LIES"
+    },
+    "blunt": {
+      "name": "BLUNT",
+      "description": "SPEAKS WITOUT TACT"
+    },
+    "famous": {
+      "name": "FAMOUS",
+      "description": "WIDELY RECOGNIZED AN' CELEBRATED"
+    },
+    "infamous": {
+      "name": "INFAMOUS",
+      "description": "KNOWN FOR TERRIBLE DEEDS"
+    },
+    "anonymous": {
+      "name": "ANONYMOUS",
+      "description": "UNKNOWN AN' UNREMARKABLE"
+    },
+    "wanted": {
+      "name": "WANTED",
+      "description": "HUNTED BY AUTHORITIES"
+    },
+    "hero": {
+      "name": "HERO",
+      "description": "CELEBRATED SAVIOR OF PEOPLE"
+    },
+    "disgraced": {
+      "name": "DISGRACED",
+      "description": "FALLEN FROM FORMER HONOR"
+    },
+    "cold-blooded": {
+      "name": "COLD-BLOODED",
+      "description": "ADAPTED TA COLD CLIMATES"
+    },
+    "heat-adapted": {
+      "name": "HEAT-ADAPTED",
+      "description": "THRIVES IN HOT ENVIRONMENTS"
+    },
+    "mountain-born": {
+      "name": "MOUNTAIN-BORN",
+      "description": "HIGH ALTITUDE ENDURANCE"
+    },
+    "island-raised": {
+      "name": "ISLAND-RAISED",
+      "description": "MARITIME SURVIVAL SKILLS"
+    },
+    "desert_dweller": {
+      "name": "DESERT DWELLER",
+      "description": "SURVIVES ARID WASTELANDS"
+    },
+    "cave_dweller": {
+      "name": "CAVE DWELLER",
+      "description": "ADAPTED TA UNDERGROUND LIFE"
+    },
+    "animal_handler": {
+      "name": "ANIMAL HANDLER",
+      "description": "BONDS EASILY WIT CREATURES"
+    },
+    "beast_whisperer": {
+      "name": "BEAST WHISPERER",
+      "description": "COMMUNICATES WIT ANIMALS"
+    },
+    "nature_attuned": {
+      "name": "NATURE ATTUNED",
+      "description": "DEEP CONNECTION TA WILDERNESS"
+    },
+    "urban_native": {
+      "name": "URBAN NATIVE",
+      "description": "THRIVES ONLY IN CITIES"
+    },
+    "feral": {
+      "name": "FERAL",
+      "description": "RAISED IN WILDERNESS"
+    },
+    "magically_gifted": {
+      "name": "MAGICALLY GIFTED",
+      "description": "NATURAL ARCANE TALENT"
+    },
+    "mana-starved": {
+      "name": "MANA-STARVED",
+      "description": "NO CAN CHANNEL MAGICAL ENERGY"
+    },
+    "spell-scarred": {
+      "name": "SPELL-SCARRED",
+      "description": "MARKED BY MAGICAL MISHAP"
+    },
+    "witch-marked": {
+      "name": "WITCH-MARKED",
+      "description": "BEARS SUPERNATURAL CURSE MARK"
+    },
+    "clairvoyant": {
+      "name": "CLAIRVOYANT",
+      "description": "SEES BEYOND NORMAL PERCEPTION"
+    },
+    "booming_voice": {
+      "name": "BOOMIN' VOICE",
+      "description": "NATURALLY LOUD AN' COMMANDIN'"
+    },
+    "soft-spoken": {
+      "name": "SOFT-SPOKEN",
+      "description": "QUIET AN' GENTLE VOICE"
+    },
+    "mute": {
+      "name": "MUTE",
+      "description": "NO CAN SPEAK"
+    },
+    "polyglot": {
+      "name": "POLYGLOT",
+      "description": "SPEAKS MANY LANGUAGES"
+    },
+    "prosopometamorphopsia": {
+      "name": "PROSOPOMETAMORPHOPSIA",
+      "description": "SEE DEMON FACES"
+    },
+    "gun_fu": {
+      "name": "GUN-FU",
+      "description": "MARTIAL ARTS SKILLS WIT A GUN OR BOW TRIGGER A FREE FOLLOW-UP ATTACK"
+    },
+    "cystic_fibrosis": {
+      "name": "CYSTIC FIBROSIS",
+      "description": "GENETIC LUNG AN' PANCREAS DISORDER"
+    },
+    "huntingtons_disease": {
+      "name": "HUNTINGTON'S DISEASE",
+      "description": "INHERITED MOVEMENT AN' MEMORY DECLINE"
+    },
+    "porphyria": {
+      "name": "PORPHYRIA",
+      "description": "INHERITED BLOOD DISORDER, SUN BLISTERS"
+    },
+    "pack_hunter": {
+      "name": "PACK HUNTER",
+      "description": "BRINGS DOWN PREY TOGETHER WIT ITS OWN KIND"
+    },
+    "lone_predator": {
+      "name": "LONE PREDATOR",
+      "description": "HUNTS ALONE AN' WANTS NO COMPANY DOING IT"
+    },
+    "skittish": {
+      "name": "SKITTISH",
+      "description": "BOLTS AT A SHADOW, FASTER DEN ANYTINK CHASIN' IT"
+    },
+    "territorial": {
+      "name": "TERRITORIAL",
+      "description": "DRIVES OFF WHATEVER CROSSES ITS GROUND"
+    },
+    "scavenger": {
+      "name": "SCAVENGER",
+      "description": "EATS WHAT OTHERS LEAVE BEHIND AN' THRIVES ON IT"
+    },
+    "thick_hide": {
+      "name": "THICK HIDE",
+      "description": "SKIN DAT TURNS A BLADE AN' SLOWS DA BODY UNDER IT"
+    },
+    "keen_nose": {
+      "name": "KEEN NOSE",
+      "description": "SMELLS WHAT IZ COMIN' LONG BEFORE IT ARRIVES"
+    },
+    "venomous": {
+      "name": "VENOMOUS",
+      "description": "POISONOUS BITE DAT COSTS SOME VIGOUR"
+    },
+    "imprinted": {
+      "name": "IMPRINTED",
+      "description": "BONDED TA ONE PERSON AN' CALM BESIDE DEM"
+    },
+    "rabid": {
+      "name": "RABID",
+      "description": "SICK AN' FURIOUS, IMPOSSIBLE TA CALM"
+    },
+    "burrower": {
+      "name": "BURROWER",
+      "description": "DIGS IN AN' IZ HARD TA ROOT OUT"
+    },
+    "hibernator": {
+      "name": "HIBERNATOR",
+      "description": "SLEEPS THROUGH DA COLD ON STORED FAT"
+    },
+    "peanut_allergy": {
+      "name": "PEANUT ALLERGY",
+      "description": "PEANUTS CAN CLOSE DA THROAT"
+    },
+    "tree_nut_allergy": {
+      "name": "TREE NUT ALLERGY",
+      "description": "ALMONDS, HAZELNUTS AN' WALNUTS BRING ON A REACTION"
+    },
+    "shellfish_allergy": {
+      "name": "SHELLFISH ALLERGY",
+      "description": "PRAWNS, CRAB AN' LOBSTER IZ DANGEROUS"
+    },
+    "fish_allergy": {
+      "name": "FISH ALLERGY",
+      "description": "FISH BRINGS OUT HIVES AN' NAUSEA"
+    },
+    "milk_allergy": {
+      "name": "MILK ALLERGY",
+      "description": "DAIRY BRINGS OUT HIVES AN' CRAMPS"
+    },
+    "egg_allergy": {
+      "name": "EGG ALLERGY",
+      "description": "EGGS BRING OUT A RASH"
+    },
+    "wheat_allergy": {
+      "name": "WHEAT ALLERGY",
+      "description": "WHEAT AN' BARLEY BRING OUT A RASH"
+    },
+    "soy_allergy": {
+      "name": "SOY ALLERGY",
+      "description": "SOY BRINGS OUT AN ITCH"
+    },
+    "hay_fever": {
+      "name": "HAY FEVER",
+      "description": "SPRING POLLEN BRINGS ON SNEEZIN' FITS OUTDOORS"
+    },
+    "penicillin_allergy": {
+      "name": "PENICILLIN ALLERGY",
+      "description": "PENICILLIN BRINGS ON A VIOLENT REACTION"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "Fisica",
-  "blurb": "Materia, energia e spaziotempo sotto misura. La precisione dipende dall'apparato che puoi costruire.",
+  "blurb": "Materia, energia e spaziotempo. La precisione dipende dal tuo apparato.",
   "nodes": {
     "phys_attosecond": {
       "name": "Impulsi di Luce ad Attosecondi",
@@ -40,11 +40,11 @@
     },
     "phys_superconductor": {
       "name": "Superconduttori a Base di Ferro",
-      "desc": "L'ossido di lantanio ferro arseniuro drogato con fluoro diventa superconduttore a 26 kelvin, e sostituendo la terra rara la temperatura critica sale a 55 kelvin nel composto al samario. L'accoppiamento avviene nei piani ferro-arsenico, con tasche di lacune e di elettroni su fogli distinti della superficie di Fermi e una gap priva di nodi su ciascun foglio ma di segno opposto fra i due. I composti di partenza sono metalli antiferromagnetici il cui ordine viene soppresso dal drogaggio, e la cupola superconduttiva si apre dove quell'ordine si chiude; i campi critici superiori superano i 50 tesla con scarsa anisotropia."
+      "desc": "L'ossido di lantanio ferro arseniuro drogato con fluoro diventa superconduttore a 26 kelvin, e sostituendo la terra rara la temperatura critica sale a 55 kelvin nel composto al samario. L'accoppiamento avviene nei piani ferro-arsenico, con tasche di lacune e di elettroni su fogli distinti della superficie di Fermi e un gap privo di nodi su ciascun foglio ma di segno opposto fra i due. I composti di partenza sono metalli antiferromagnetici il cui ordine viene soppresso dal drogaggio, e la cupola superconduttiva si apre dove quell'ordine si chiude; i campi critici superiori superano i 50 tesla con scarsa anisotropia."
     },
     "phys_lhc": {
       "name": "Primo Fascio all'LHC",
-      "desc": "La macchina occupa il tunnel LEP di 26,7 chilometri: 1.232 dipoli a 8,3 tesla curvano due fasci di protoni controrotanti, 392 quadrupoli li focalizzano e sedici cavità a radiofrequenza da 400 megahertz ne mantengono la struttura a pacchetti. Ogni fascio porta 2.808 pacchetti da circa 115 miliardi di protoni distanziati di 25 nanosecondi, per circa 360 megajoule di energia immagazzinata per fascio ai sette tera-elettronvolt di progetto. Il fascio viene fatto girare in entrambe le direzioni al primo tentativo; nove giorni dopo un'interconnessione difettosa fra magneti vaporizza, 53 magneti restano danneggiati e l'anello resta fermo quattordici mesi."
+      "desc": "La macchina occupa il tunnel LEP di 26,7 chilometri: 1.232 dipoli a 8,3 tesla curvano due fasci di protoni controrotanti, 392 quadrupoli li focalizzano e sedici cavità a radiofrequenza da 400 megahertz ne mantengono la struttura a pacchetti. Ogni fascio porta 2.808 pacchetti da circa 115 miliardi di protoni distanziati di 25 nanosecondi, per circa 360 megajoule di energia immagazzinata per fascio ai sette tera-elettronvolt di progetto. Il fascio viene fatto girare in entrambe le direzioni al primo tentativo; nove giorni dopo un'interconnessione difettosa fra magneti si vaporizza, 53 magneti restano danneggiati e l'anello resta fermo quattordici mesi."
     },
     "phys_quantum_machine": {
       "name": "La Prima Macchina Quantistica",

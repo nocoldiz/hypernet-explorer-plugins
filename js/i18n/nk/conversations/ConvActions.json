@@ -1,0 +1,759 @@
+{
+  "_comment": "Empathize action board lines (NPCEmpathize.Help): Help, Games, Romance and Talk. Player lines by speaker voice (default, em, bubba); replies by who they answer (default, toEm, toBubba).",
+  "help": {
+    "treat": {
+      "offer": {
+        "default": [
+          "HOLD STILL, {name}. {LET ME SEE TA DAT|ME HAB SOMETINK FOR DIS}!",
+          "YOU IZ HURT. {HERE|TAKE DIS}, IT WILL HELP!",
+          "SIT DOWN A MOMENT, {name}. ME WILL PATCH YOU UP!"
+        ],
+        "em": [
+          "HOLD STILL. ME IZ FIXIN' YOU, AN' ME DO NO DO DIS FOR EVERYONE!",
+          "YOU IZ BLEEDIN' ON ME TIME, {name}. ALLOW ME!"
+        ],
+        "bubba": [
+          "MADONNA, LOOK AT YOU. SIT, SIT, ME GOT SOMETINK FOR DAT!",
+          "EASY, DARLIN'. BUBBA'S GOT A {RAG|KIT} FOR EVERYTINK!"
+        ]
+      },
+      "thanks": {
+        "default": [
+          "{THANK YOU|THANKS}. {DAT IZ MUCH BETTER|ME OWE YOU ONE}!",
+          "OH, DAT HELPS. {REALLY|IT REALLY DOES}!",
+          "ME DID NO EXPECT ANYONE TA STOP. THANK YOU!"
+        ],
+        "toEm": [
+          "FROM YOU? ME WILL NO FORGET IT!",
+          "THANK YOU. YOU IZ KINDER DEN DEY SAY!"
+        ],
+        "toBubba": [
+          "GRAZIE, BIG MAN. DAT IZ MUCH BETTER!",
+          "YOU HAB GENTLE HANDS FOR A MECHANIC. THANKS!"
+        ]
+      }
+    },
+    "medicine": {
+      "offer": {
+        "default": [
+          "YOU LOOK UNWELL, {name}. {TAKE DIS|TRY DIS}, IT IZ {item}!",
+          "ME HAB {item} HERE. IT SHOULD HELP WIT DAT!",
+          "DAT DOES NO SOUND GOOD. {HERE|TAKE DIS}: {item}!"
+        ],
+        "em": [
+          "{item}. TAKE IT. DO NO ARGUE WIT A GODDESS 'BOUT DOSAGE!",
+          "YOU IZ ILL AN' IT OFFENDS ME. HERE, {item}!"
+        ],
+        "bubba": [
+          "HERE, {item}. ME NONNA SWORE BY IT. DA PHARMACY TOO!",
+          "TAKE DIS, GUAGLIO', {item}. TWICE A DAY, LIKE DA PRIEST SAYS!"
+        ]
+      },
+      "thanks": {
+        "default": [
+          "ME COULD NO AFFORD {item}. THANK YOU!",
+          "ME WILL TAKE IT. {THANK YOU|BLESS YOU}!",
+          "YOU DID NO HAB TA DO DAT. THANK YOU!"
+        ],
+        "toEm": [
+          "MEDICINE FROM A GODDESS. ME WILL TAKE IT, THANK YOU!",
+          "ME WILL DO AS YOU SAY. THANK YOU!"
+        ],
+        "toBubba": [
+          "GRAZIE, BUBBA. ME FEEL BETTER ALREADY!",
+          "YOU IZ A GOOD MAN. THANK YOU!"
+        ]
+      }
+    },
+    "firstAid": {
+      "kneel": {
+        "default": [
+          "{STAY WIT ME|COME ON}, {name}. {BREATHE|EASY NOW}!",
+          "HEY. HEY, {name}. CAN YOU HEAR ME?",
+          "DO NO MOVE. LET ME LOOK AT YOU!"
+        ],
+        "em": [
+          "GET UP, {name}. ME DID NO GIVE YOU PERMISSION TA LIE DERE!",
+          "BREATHE. DAT IZ AN ORDER."
+        ],
+        "bubba": [
+          "OH NO NO NO, COME ON, {name}. UP YOU GET!",
+          "EASY, EASY. BUBBA'S HERE. OPEN YA EYES!"
+        ]
+      },
+      "wake": {
+        "default": [
+          "WHAT... WHAT HAPPENED? {YOU HELPED ME|YOU STOPPED}!",
+          "ME THOUGHT ME WAZ DONE FOR. THANK YOU!",
+          "ME CAN STAND. ME TINK. THANK YOU!"
+        ],
+        "toEm": [
+          "YOU... PICKED ME UP? THANK YOU!",
+          "ME WILL NO FORGET DIS, ME SWEAR IT!"
+        ],
+        "toBubba": [
+          "BUBBA? YOU GOT ME UP. GRAZIE!",
+          "BIG MAN. YOU STASHED ME NECK!"
+        ]
+      }
+    },
+    "fix": {
+      "offer": {
+        "default": [
+          "{YOU LOOK LIKE YOU NEED DIS|HERE}. {item}, ON ME!",
+          "TAKE DA EDGE OFF, {name}. {item}.",
+          "ME KNOW DAT LOOK. HERE, {item}."
+        ],
+        "em": [
+          "{item}. ME KNOW WHAT YOU WANT. DO NO MAKE A HABIT OF ASKIN' ME!",
+          "HERE. MORTALS AN' DEY WANTS!"
+        ],
+        "bubba": [
+          "EH, ME KNOW HOW IT IZ. TAKE DA {item}!",
+          "HERE, DARLIN'. JUST DIS ONCE, HM?"
+        ]
+      },
+      "thanks": {
+        "default": [
+          "OH, {THANK YOU|YOU IZ A SAINT}. ME NEEDED DAT!",
+          "DAT IZ... YES. {THANK YOU|MUCH BETTER}!",
+          "ME WILL PAY YOU BACK. {SOME DAY|ME PROMISE}!"
+        ],
+        "toEm": [
+          "FROM YOU? ME WILL TAKE IT. THANK YOU!",
+          "YOU UNDERSTAND. THANK YOU!"
+        ],
+        "toBubba": [
+          "BUBBA, YOU IZ A LIFESAVER!",
+          "GRAZIE. ME WAZ GOING OUT OF ME MIND!"
+        ]
+      }
+    },
+    "intervene": {
+      "plea": {
+        "default": [
+          "{name}, DA {substance}... IT IZ EATIN' YOU ALIVE. {WILL YOU TRY TA CUT DOWN|LET US TALK 'BOUT IT}?",
+          "ME CARE WHAT HAPPENS TA YOU. DA {substance} HAB TA STOP!",
+          "YOU IZ BETTER DEN DA {substance}, {name}. TRY, FOR ME!"
+        ],
+        "em": [
+          "DA {substance} IZ MAKIN' YOU LIL', {name}. ME PREFER YOU LARGE. STOP!",
+          "ME HAB WATCHED EMPIRES FALL TA LESS. PUT DA {substance} DOWN!"
+        ],
+        "bubba": [
+          "LISTEN, GUAGLIO'. DA {substance}, IT TAKES AN' TAKES. EASE OFF, FOR ME!",
+          "ME COUSIN WENT DOWN DAT ROAD WIT {substance}. DO NO FOLLOW HIM!"
+        ]
+      },
+      "accept": {
+        "default": [
+          "{YOU IZ RIGHT|MAYBE YOU IZ RIGHT}. ME WILL TRY. ME WILL REALLY TRY!",
+          "NOBODY EVER SAID IT TA ME FACE. ALRIGHT. ME WILL CUT DOWN!",
+          "ME KNOW. ME KNOW. ME WILL TRY!"
+        ],
+        "toEm": [
+          "IF YOU SAY SO, DEN... ME WILL TRY!",
+          "YOU IZ RIGHT. ME WILL TRY, ME SWEAR!"
+        ],
+        "toBubba": [
+          "ALRIGHT, ALRIGHT. FOR YOU, BUBBA. ME WILL TRY!",
+          "YOU SOUND LIKE ME FATHER. FINE. ME WILL CUT DOWN!"
+        ]
+      },
+      "refuse": {
+        "default": [
+          "{MIND YA OWN BUSINESS|WHO ASKED YOU}!",
+          "ME HAB IT UNDER CONTROL. LEAVE IT!",
+          "YOU DO NO KNOW ANYTINK 'BOUT IT!"
+        ],
+        "toEm": [
+          "EVEN YOU DO NO GET TA TELL ME DAT!",
+          "GODDESS OR NO, LEAVE IT ALONE!"
+        ],
+        "toBubba": [
+          "NO NOW, BUBBA. LEAVE IT.",
+          "GO FIX YA CAMPER."
+        ]
+      }
+    },
+    "shelter": {
+      "offer": {
+        "default": [
+          "{name}, WE HAB A PLACE IN {place}. {IT IZ YA|STAY DERE}, FOR AS LONG AS YOU NEED!",
+          "NOBODY SHOULD SLEEP OUTSIDE. DERE IZ A ROOM FOR YOU IN {place}!",
+          "WE OWN A HOME IN {place}. TAKE IT.."
+        ],
+        "em": [
+          "ME OWN A HOUSE IN {place}. YOU WILL LIVE IN IT. DAT IZ NO A REQUEST!",
+          "A ROOF, {name}. IN {place}. YOU IZ WELCOME!"
+        ],
+        "bubba": [
+          "WE GOT A HOUSE IN {place}, DARLIN'. MI CASA, CAPISCI?",
+          "COME STAY AT OURS IN {place}. DA DOOR STICKS, ME WILL FIX IT!"
+        ]
+      },
+      "accept": {
+        "default": [
+          "A ROOF? A REAL ONE? {THANK YOU|ME DO NO KNOW WHAT TA SAY}!",
+          "ME WILL LOOK AFTER IT LIKE IT WAZ ME. THANK YOU!",
+          "ME HAB STOPPED HOPIN'. THANK YOU!"
+        ],
+        "toEm": [
+          "UNDER YA ROOF? ME IZ HONOURED. THANK YOU!",
+          "ME WILL KEEP IT SPOTLESS, ME SWEAR!"
+        ],
+        "toBubba": [
+          "BUBBA, YOU IZ AN ANGEL. GRAZIE!",
+          "ME WILL NO GET IN YA WAY. THANK YOU!"
+        ]
+      }
+    }
+  },
+  "games": {
+    "challenge": {
+      "ask": {
+        "default": [
+          "{FANCY|HOW 'BOUT} A GAME OF {game}, {name}?",
+          "ME BET ME CAN BEAT YOU AT {game}!",
+          "YOU AN' ME, {name}. {game}. {NOW|RIGHT NOW}!"
+        ],
+        "em": [
+          "{game}. YOU AN' ME. ME WILL BE GRACIOUS IN VICTORY!",
+          "PLAY {game} WIT ME, {name}. ME IZ BORED!"
+        ],
+        "bubba": [
+          "EH, {name}! A LIL' {game}? FRIENDLY, FRIENDLY!",
+          "COME ON, {game}, JUST DA TWO OF US!"
+        ]
+      },
+      "accept": {
+        "default": [
+          "{YOU IZ ON|ALRIGHT, YOU ASKED FOR IT}!",
+          "SURE, {WHY NO|ME COULD USE DA FUN}!",
+          "OH, ME LOVE {game}. LET US GO."
+        ],
+        "toEm": [
+          "AGAINST YOU? ME WILL TRY NO TA EMBARRASS ME!",
+          "AN HONOUR. ME WILL NO GO EASY!"
+        ],
+        "toBubba": [
+          "YOU IZ ON, BIG MAN.",
+          "HAH, ALRIGHT BUBBA. LET US SEE IT!"
+        ]
+      },
+      "refuse": {
+        "default": [
+          "{NO NOW|SOME OTHER TIME}.",
+          "ME IZ NO IN DA MOOD FOR {game}.",
+          "NO THANKS, {name}."
+        ],
+        "toEm": [
+          "NO TODAY. FORGIVE ME.",
+          "ME WOULD RATHER NO, IF IT IZ ALL DA SAME!"
+        ],
+        "toBubba": [
+          "NAH, NO NOW, BUBBA.",
+          "ANOTHER DAY, BIG MAN."
+        ]
+      },
+      "won": {
+        "default": [
+          "{WELL PLAYED|GOOD GAME}. YOU GOT ME!",
+          "HAH, FAIR AN' SQUARE. AGAIN SOMETIME?",
+          "YOU IZ BETTER DEN YOU LOOK!"
+        ],
+        "toEm": [
+          "OF COURSE YOU WON. WELL PLAYED!",
+          "ME SHOULD HAB KNOWN BETTER. GOOD GAME!"
+        ],
+        "toBubba": [
+          "YOU GOT ME, BUBBA. GOOD GAME!",
+          "BEATEN BY A MECHANIC. WELL PLAYED!"
+        ]
+      },
+      "lost": {
+        "default": [
+          "{BETTER LUCK NEXT TIME|NO BAD, NO BAD}!",
+          "HAH! {ME|DAT ONE IZ ME}.",
+          "YOU GAVE IT A GO. GOOD GAME!"
+        ],
+        "toEm": [
+          "ME... WON? AGAINST YOU? GOOD GAME!",
+          "FORGIVE ME. GOOD GAME ALL DA SAME!"
+        ],
+        "toBubba": [
+          "HAH, SORRY BUBBA. GOOD GAME!",
+          "NEXT TIME, BIG MAN."
+        ]
+      },
+      "draw": {
+        "default": [
+          "EVEN. {WE WILL NEED A REMATCH|FAIR ENOUGH}!",
+          "NEITHER OF US, DEN. GOOD GAME!",
+          "A DRAW. ME WILL TAKE IT."
+        ],
+        "toEm": [
+          "A DRAW WIT YOU IZ A WIN FOR ME!",
+          "EVEN. DAT WILL DO."
+        ],
+        "toBubba": [
+          "EVEN, BUBBA. REMATCH SOON!",
+          "NOBODY WINS. GOOD GAME."
+        ]
+      }
+    }
+  },
+  "romance": {
+    "introduce": {
+      "pitch": {
+        "default": [
+          "{name}, YOU SHOULD MEET {other}. {ME TINK YOU TWO WOULD GET ON|TRUST ME}!",
+          "HAB YOU EVER MET {other}? YOU WOULD LIKE DEM!",
+          "ME KNOW SOMEONE FOR YOU, {name}. {other}!"
+        ],
+        "em": [
+          "{other}. YOU AN' {other}. ME HAB DECIDED, AN' ME IZ NEVER WRONG!",
+          "MEET {other}, {name}. CONSIDER IT DIVINE INTERVENTION!"
+        ],
+        "bubba": [
+          "EH, {name}, YOU KNOW {other}? NICE PERSON. REAL NICE!",
+          "ME MATE {other}, SINGLE, LOVELY. JUST SAYIN'!"
+        ]
+      },
+      "accept": {
+        "default": [
+          "{other}? ALRIGHT. {WHY NO|ME WILL SAY HELLO}!",
+          "YOU TINK SO? ME WILL GIVE IT A TRY!",
+          "WELL... ALRIGHT. INTRODUCE US!"
+        ],
+        "toEm": [
+          "IF YOU SAY WE IZ MEANT TA, WHO IZ ME TA ARGUE?",
+          "ALRIGHT. ME TRUST YA EYE."
+        ],
+        "toBubba": [
+          "ALRIGHT BUBBA, YOU OLD MATCHMAKER!",
+          "FINE, FINE. ME WILL MEET DEM!"
+        ]
+      },
+      "refuse": {
+        "default": [
+          "ME DO NO TINK {other} IZ ME TYPE!",
+          "THANK YOU, BUT NO.",
+          "ME IZ NO LOOKIN' RIGHT NOW!"
+        ],
+        "toEm": [
+          "ME WOULD RATHER CHOOSE FOR ME, FORGIVE ME!",
+          "NO EVEN YOU CAN MAKE DAT WORK!"
+        ],
+        "toBubba": [
+          "NICE TRY, BUBBA. NO.",
+          "STICK TA ENGINES, BIG MAN!"
+        ]
+      }
+    }
+  },
+  "talk": {
+    "rumours": {
+      "ask": {
+        "default": [
+          "{HEARD ANYTINK|WHAT IZ NEW} LATELY, {name}?",
+          "ANY NEWS, {name}?",
+          "WHAT IZ PEOPLE SAYIN' DEZE DAYS?"
+        ],
+        "em": [
+          "TELL ME WHAT DA MORTALS IZ WHISPERIN', {name}!",
+          "NEWS. NOW. ENTERTAIN ME."
+        ],
+        "bubba": [
+          "EH, {name}, WHAT IZ DA GOSSIP?",
+          "SO, WHAT IZ GOING ON ROUND HERE?"
+        ]
+      },
+      "war": {
+        "default": [
+          "{DEY SAY|WORD IZ} {a} AN' {b} IZ STILL AT EACH OTHER'S THROATS!",
+          "DA WAR BETWEEN {a} AN' {b}? IT IZ NO ENDIN' ANY TIME SOON!",
+          "EVERYONE IZ TALKIN' 'BOUT {a} AN' {b}. DA FIGHTIN' GOES ON!"
+        ],
+        "toEm": [
+          "{a} AN' {b} IZ AT WAR. YOU MAYBE-MAYBE KNEW DAT!",
+          "DA {a} AN' {b} WAR DRAGS ON."
+        ],
+        "toBubba": [
+          "{a} AN' {b}, STILL FIGHTIN'. CRAZY WORLD, BUBBA!",
+          "WAR BETWEEN {a} AN' {b}. KEEP DA CAMPER FUELLED!"
+        ]
+      },
+      "horde": {
+        "default": [
+          "DA GOBLINS STILL HOLD {country}. {PEOPLE IZ SCARED|NOBODY KNOWS WHAT COMES NEXT}!",
+          "ME HEARD DA HORDE IZ DUG IN AT {country}!",
+          "REFUGEES FROM {country} KEEP TURNIN' UP. DA HORDE HAB IT!"
+        ],
+        "toEm": [
+          "DA HORDE HOLDS {country}. DEY SAY IT WOULD NO DARE CROSS YOU!",
+          "GOBLINS IN {country}, STILL."
+        ],
+        "toBubba": [
+          "GOBLINS IN {country}, BUBBA. LOCK DA CAMPER!",
+          "DA HORDE STILL HAB {country}."
+        ]
+      },
+      "election": {
+        "default": [
+          "DA {power} ELECTION IZ IN {days} DAYS. {party} OR {rival}, TAKE YA PICK!",
+          "EVERYONE IZ ON 'BOUT DA VOTE IN {power}. {days} DAYS TA GO!",
+          "IT IZ {party} AGAINST {rival} IN {power}. {days} DAYS!"
+        ],
+        "toEm": [
+          "AN ELECTION IN {power}, IN {days} DAYS. DO YOU VOTE?",
+          "{party} OR {rival}. WHO WOULD YOU BLESS?"
+        ],
+        "toBubba": [
+          "VOTE IN {power} IN {days} DAYS, BUBBA.",
+          "{party}, {rival}, SAME CIRCUS."
+        ]
+      },
+      "electionResult": {
+        "default": [
+          "{winner} WON IN {power}. {SOME IZ HAPPY|NO EVERYONE IZ HAPPY}!",
+          "DID YOU HEAR? {winner} TOOK {power}.",
+          "DA COUNT IZ IN: {winner}, IN {power}."
+        ],
+        "toEm": [
+          "{winner} WON {power}. YA DOING?",
+          "{winner} TOOK {power}."
+        ],
+        "toBubba": [
+          "{winner} WON IN {power}, BUBBA.",
+          "{winner} GOT IN. NUTTIN' CHANGES."
+        ]
+      },
+      "epidemic": {
+        "default": [
+          "DERE IZ {disease} GOING ROUND. {WASH YA HANDS|KEEP YA DISTANCE}!",
+          "HALF DA TOWN IZ DOWN WIT {disease}, DEY SAY!",
+          "BE CAREFUL. {disease} IZ SPREADIN'!"
+        ],
+        "toEm": [
+          "{disease} IZ SPREADIN'. SURELY NO YA DOING!",
+          "BEWARE {disease}, EVEN GODDESSES SNEEZE!"
+        ],
+        "toBubba": [
+          "{disease} GOING ROUND, BUBBA. WASH DOZE HANDS!",
+          "WATCH OUT FOR {disease}."
+        ]
+      },
+      "marketUp": {
+        "default": [
+          "{company} SHARES IZ FLYIN'. WISH ME HAB BOUGHT SOME!",
+          "EVERYONE IZ BUYIN' {company}, DEY SAY!",
+          "{company} IZ DOING WELL. TOO WELL, MAYBE!"
+        ],
+        "toEm": [
+          "{company} IZ SOARIN'. DID YOU BLESS IT?",
+          "{company}, UP AN' UP."
+        ],
+        "toBubba": [
+          "{company} IZ UP, BUBBA. BUY LOW, EH?",
+          "{company} SHARES IZ FLYIN'."
+        ]
+      },
+      "marketDown": {
+        "default": [
+          "{company} IZ SINKIN'. SOMEBODY IZ LOSIN' DEY SHIRT!",
+          "ME WOULD NO TOUCH {company} RIGHT NOW!",
+          "{company} SHARES IZ IN DA GUTTER."
+        ],
+        "toEm": [
+          "{company} IZ COLLAPSIN'. WAZ IT YOU?",
+          "{company}, DOWN AN' DOWN."
+        ],
+        "toBubba": [
+          "{company} IZ GOING UNDER, BUBBA.",
+          "STAY AWAY FROM {company}."
+        ]
+      },
+      "town": {
+        "default": [
+          "{DID YOU HEAR|HAB YOU HEARD}? {news}",
+          "ROUND HERE, DA TALK IZ DIS: {news}",
+          "YOU WILL NO BELIEVE IT. {news}"
+        ],
+        "toEm": [
+          "SOMETINK HAPPENED: {news}",
+          "NEWS FOR YOU: {news}"
+        ],
+        "toBubba": [
+          "EH BUBBA, LISTEN: {news}",
+          "SO: {news}"
+        ]
+      },
+      "generic": {
+        "default": [
+          "{BETWEEN YOU AN' ME|DO NO QUOTE ME}: {rumour}",
+          "ME HEARD DIS ONE DA OTHER DAY. {rumour}",
+          "PEOPLE SAY ALL SORTS. {rumour}"
+        ],
+        "toEm": [
+          "YOU MAYBE-MAYBE KNOW BETTER, BUT: {rumour}",
+          "DEY SAY: {rumour}"
+        ],
+        "toBubba": [
+          "CRAZY ONE FOR YOU, BUBBA: {rumour}",
+          "LISTEN TA DIS: {rumour}"
+        ]
+      },
+      "nothing": {
+        "default": [
+          "{NUTTIN' MUCH|QUIET TIMES}, HONESTLY!",
+          "ME HAB NO HEARD A TINK.",
+          "NUTTIN' WORTH REPEATIN'."
+        ],
+        "toEm": [
+          "NUTTIN' YOU DO NO ALREADY KNOW!",
+          "QUIET, FOR ONCE."
+        ],
+        "toBubba": [
+          "NUTTIN', BUBBA. DEAD QUIET!",
+          "NUTTIN' NEW."
+        ]
+      }
+    }
+  },
+  "rough": {
+    "accuse": {
+      "speak": {
+        "default": [
+          "{name}, ME KNOW WHAT YOU DID. {crime}.",
+          "YOU. {crime}. {ADMIT IT|DO NO BOTHER DENYIN' IT}!",
+          "ME HAB HEARD TINKZ 'BOUT YOU, {name}. {crime}, {DEY SAY|PEOPLE WHISPER}!"
+        ],
+        "em": [
+          "{crime}, {name}. ME CAN SMELL IT ON YOU!",
+          "ME KNOW WHAT YOU IZ, {name}. GUILTY OF {crime}. CONFESS!"
+        ],
+        "bubba": [
+          "ME HATE TA SAY IT, {name}, BUT FOLKS SAY {crime}. DAT TRUE?",
+          "EH, {name}. {crime}? TELL ME IT AIN'T SO!"
+        ]
+      },
+      "npc": {
+        "deny": {
+          "default": [
+            "{WHAT|EXCUSE ME}? ME NEVER DID ANY SUCH TINK!",
+            "{crime}? ME? YOU HAB DA WRONG PERSON!",
+            "DAT IZ A LIE AN' YOU KNOW IT!"
+          ],
+          "toEm": [
+            "{crime}? SAYS DA WITCH WHO FED DA SPEAR?",
+            "ME DID NUTTIN' OF DA KIND, MISS. NUTTIN'!"
+          ],
+          "toBubba": [
+            "MR. WILSON, ME SWEAR, ME NEVER DID!",
+            "NO ME, MR. WILSON. NEVER."
+          ],
+          "em": [
+            "{crime}? ME? ME HAB DONE WORSE, AN' NONE OF IT WAZ DAT!",
+            "WRONG. ME DO NO DO {crime}. ME DO TINKZ WIT FAR MORE STYLE!"
+          ],
+          "bubba": [
+            "{crime}? ME? ME FIX TINKZ, ME NO BREAK 'EM!",
+            "NOW HOLD ON, ME NEVER DID NUTTIN' LIKE DAT!"
+          ]
+        },
+        "anger": {
+          "default": [
+            "HOW {DARE|CAN} YOU SAY DAT TA ME FACE?",
+            "SAY DAT AGAIN AN' SEE WHAT HAPPENS!",
+            "{crime}? GET OUT OF ME SIGHT."
+          ],
+          "toEm": [
+            "ACCUSE ME AGAIN, WITCH, AN' ME WILL CALL DA PRIEST!",
+            "YOU HAB SOME NERVE, MISS."
+          ],
+          "toBubba": [
+            "ME THOUGHT BETTER OF YOU, WILSON!",
+            "YOU OF ALL PEOPLE, WILSON? SHAME ON YOU!"
+          ],
+          "em": [
+            "CHOOSE YA NEXT WORDS CAREFULLY. ME REMEMBER NAMES!",
+            "ACCUSE ME AGAIN AN' YOU WILL FIND OUT WHAT A WITCH DOES WIT GRUDGES!"
+          ],
+          "bubba": [
+            "HEY. DAT AIN'T RIGHT TA SAY, AN' YOU KNOW IT!",
+            "ME IZ GONNA PRETEND ME NO HEAR DAT, GUAGLIO'!"
+          ]
+        },
+        "shock": {
+          "default": [
+            "{ME|WE}... ME THOUGHT WE WAZ MATES!",
+            "YOU REALLY TINK ME WOULD DO {crime}?",
+            "ME... DO NO KNOW WHAT TA SAY TA DAT!"
+          ],
+          "toEm": [
+            "EVEN YOU TINK DAT OF ME, MISS?",
+            "ME THOUGHT YOU OF ALL PEOPLE WOULD UNDERSTAND!"
+          ],
+          "toBubba": [
+            "MR. WILSON... ME WOULD NEVER!",
+            "DAT HURTS, COMIN' FROM YOU!"
+          ],
+          "em": [
+            "YOU TINK DAT OF ME? AFTER EVERYTINK?",
+            "ME IZ... GENUINELY OFFENDED. DAT IZ RARE!"
+          ],
+          "bubba": [
+            "AW, COME ON. YOU KNOW ME BETTER DEN DAT!",
+            "DAT ONE HURTS, DARLIN'. IT REALLY DOES!"
+          ]
+        },
+        "flinch": {
+          "default": [
+            "{WHO TOLD YOU DAT|WHERE DID YOU HEAR DAT}? DAT WAZ A LONG TIME AGO!",
+            "ME... DAT IZ NO... KEEP YA VOICE DOWN!",
+            "DAT WAZ YEARS AGO. ME PAID FOR IT!"
+          ],
+          "toEm": [
+            "HOW DID YOU KNOW? WITCHCRAFT?",
+            "MISS, NO SO LOUD."
+          ],
+          "toBubba": [
+            "MR. WILSON,. DAT IZ BEHIND ME!",
+            "ME IZ NO PROUD OF IT, MR. WILSON!"
+          ],
+          "em": [
+            "DAT WAZ ANOTHER LIFE. MOSTLY!",
+            "YOU HAB BIN READIN' TINKZ YOU SHOULD NO!"
+          ],
+          "bubba": [
+            "AW. DAT WAZ A LONG TIME AGO. ME WAZ YOUNG AN' STUPID!",
+            "KEEP IT DOWN, EH? ME AIN'T DAT GUY NO MORE!"
+          ]
+        },
+        "laugh": {
+          "default": [
+            "{crime}? {HA|HAH}! ME? HAB YOU SEEN ME?",
+            "OH YES, {crime}. IN ME SPARE TIME. BETWEEN LUNCH AN' A NAP!",
+            "DAT IZ DA FUNNIEST TINK ME HAB HEARD ALL WEEK!"
+          ],
+          "toEm": [
+            "{crime}? SAYS DA WOMAN WHO KILLED A GOD?",
+            "OH, DAT IZ RICH, COMIN' FROM YOU, MISS!"
+          ],
+          "toBubba": [
+            "{crime}? HA! GOOD ONE, MR. WILSON!",
+            "YOU HAB ME FOR A SECOND DERE, MR. WILSON!"
+          ],
+          "em": [
+            "{crime}. HOW FLATTERIN'. HOW WRONG!",
+            "IF ME HAB DONE {crime}, YOU WOULD KNOW. EVERYONE WOULD!"
+          ],
+          "bubba": [
+            "{crime}? HA! ME? ME NO CAN EVEN PICK A LOCK!",
+            "HA! DAT IZ A GOOD ONE. YOU SHOULD DO COMEDY!"
+          ]
+        }
+      },
+      "member": {
+        "hurt": {
+          "default": [
+            "AFTER ALL DA ROADS WE HAB WALKED, YOU SAY DAT?",
+            "ME THOUGHT YOU TRUSTED ME!",
+            "DAT HURTS. COMIN' FROM YOU, DAT REALLY HURTS!"
+          ],
+          "toEm": [
+            "EVEN YOU, EM? ME THOUGHT WE WAZ PAST DAT!",
+            "YOU COULD HAB JUST SAID YOU WAZ ANGRY!"
+          ],
+          "toBubba": [
+            "BUBBA... ME THOUGHT YOU HAB ME BACK!",
+            "NO YOU TOO, BUBBA."
+          ],
+          "em": [
+            "ME WILL REMEMBER DAT. ME REMEMBER EVERYTINK!",
+            "WE TRAVEL TOGETHER AN' YOU SAY DAT. NOTED!"
+          ],
+          "bubba": [
+            "DAT ONE STINGS, PAL. IT REALLY DOES!",
+            "WE IZ FAMILY ON DA ROAD, AN' YOU SAY DAT?"
+          ]
+        },
+        "anger": {
+          "default": [
+            "SAY DAT AGAIN, AN' WE IZ DONE TRAVELLIN' TOGETHER!",
+            "WATCH YA MOUTH.",
+            "YOU WANT TA START DIS HERE? FINE!"
+          ],
+          "toEm": [
+            "WATCH IT, WITCH.",
+            "BIG WORDS, EM. BACK DEM UP!"
+          ],
+          "toBubba": [
+            "CAREFUL, WILSON.",
+            "YOU IZ OUT OF LINE, BUBBA!"
+          ],
+          "em": [
+            "CAREFUL. ME SHARE A CAMP WIT YOU. ME KNOW WHERE YOU SLEEP!",
+            "TRY DAT AGAIN AN' SEE WHAT HAPPENS!"
+          ],
+          "bubba": [
+            "HEY. WE NO TALK LIKE DAT IN DIS OUTFIT!",
+            "DAT AIN'T HOW WE DO TINKZ, AN' YOU KNOW IT!"
+          ]
+        },
+        "laugh": {
+          "default": [
+            "{crime}? ME? SURE, AN' ME ALSO {FLY|BREATHE UNDERWATER}!",
+            "HA! YOU HAB BIN IN DA {SUN|PUB} TOO LONG!"
+          ],
+          "toEm": [
+            "{crime}? DAT IZ YA DEPARTMENT, EM!",
+            "HA! HAB YOU BIN AT DA POTIONS AGAIN?"
+          ],
+          "toBubba": [
+            "HA! GOOD ONE, BUBBA.",
+            "{crime}? BUBBA, YOU KILL ME."
+          ],
+          "em": [
+            "{crime}. YES. OBVIOUSLY. HOW DID YOU GUESS!",
+            "ME WOULD DO IT WIT MORE FLAIR!"
+          ],
+          "bubba": [
+            "HA! ME? {crime}? ME CAN BARELY PARALLEL PARK!",
+            "GOOD ONE, PAL. REAL GOOD."
+          ]
+        }
+      },
+      "self": {
+        "default": [
+          "{crime}. DID ME? MAYBE NO IN SO MANY WORDS. BUT ME HAB THOUGHT 'BOUT IT!",
+          "IF ANYONE ASKED, COULD ME HONESTLY SAY ME NEVER DID {crime}?",
+          "ME TELL ME ME IZ NO DA KIND WHO WOULD DO {crime}. ME TELL ME A LOT OF TINKZ!"
+        ],
+        "em": [
+          "{crime}. OF ALL DA TINKZ ME HAB DONE, DAT IZ NO ONE. MAYBE-MAYBE!",
+          "ME ACCUSE ME OF {crime}. DA COURT OF ONE FINDS ME INSUFFERABLE!"
+        ],
+        "bubba": [
+          "{crime}? NAH. BUT ME DID LEAVE DAT WRENCH IN DA HENDERSONS' SINK!",
+          "ME? {crime}? ME WOULD NEVER. WOULD ME?"
+        ]
+      },
+      "selfGuilty": {
+        "default": [
+          "{crime}. YES. ME DID. AN' ME TINK 'BOUT IT {MORE DEN ME LET ON|MOST NIGHTS}!",
+          "DERE IZ NO POINT {LYING TA ME|PRETENDIN'}: {crime}. IT WAZ ME!"
+        ],
+        "em": [
+          "{crime}. GUILTY. ME WOULD DO IT AGAIN, WHICH IZ DA WORST PART!",
+          "YES. {crime}. DA SPEAR WAZ NO ME ONLY MISTAKE!"
+        ],
+        "bubba": [
+          "{crime}. YEAH. ME AIN'T PROUD OF IT!",
+          "MA WOULD BE ASHAMED. {crime}. ME DID IT!"
+        ]
+      }
+    }
+  }
+}

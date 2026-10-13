@@ -1123,6 +1123,16 @@
     _Scene_Map_callMenu.call(this);
   };
 
+  // The chamber is opened by a plugin command that returns at once, so the
+  // event that called it is over while the sitting is still up. Without this
+  // the arrows that pick an answer also walked the party across the map, and
+  // the OK that chose one started whatever event the party now faced.
+  const _Game_Player_canMove = Game_Player.prototype.canMove;
+  Game_Player.prototype.canMove = function () {
+    if (assemblyIsSitting()) return false;
+    return _Game_Player_canMove.call(this);
+  };
+
   //===========================================================================
   // The session
   //===========================================================================
@@ -1148,190 +1158,198 @@
     };
 
     chamber.open();
-    chamber.setSidebar(agendaHTML(session, null));
-    chamber.setHeadline(vary(T("ONUMenu.ui.sessionHeadline", { week: weekIndex() + 1 })));
-
-    chamber.add(say("ONUAssembly.openings", {
-      venue: session.venue, chair: session.chair,
-      power: sg ? T("ONUMenu.role.secretaryGeneral") : delegation.name,
-      name: actor.name(),
-    }), "narrator");
-    await chamber.advance();
-
-    chamber.add(say("ONUAssembly.ambience"), "narrator");
-    await chamber.advance();
-
-    let persuade = persuasion(actor, delegation, sg);
-    const secretaryPresent = sg || isSecretaryCandidate();
-
-    let carried = 0;
-    for (let i = 0; i < session.agenda.length; i++) {
-      session.index = i;
-      const motion = session.agenda[i];
-      chamber.setSidebar(agendaHTML(session, motion));
-
-      // The chair reads it.
-      chamber.add(motion.title, "eris", session.chair);
-      await chamber.advance();
-      chamber.add(motion.text, "eris", session.chair);
-      await chamber.advance();
-
-      // The floor.
-      const speakers = speakersFor(motion, null);
-      for (const speaker of speakers) {
-        const speech = speechFor(speaker, motion);
-        if (!speech.text) continue;
-        chamber.add(speech.text, "eris", `${speaker.name} (${leaderOf(speaker)})`);
-        await chamber.advance();
-        if (chance(0.22)) {
-          chamber.add(say("ONUAssembly.interruptions", { power: speaker.name }), "narrator");
-          await chamber.advance();
-        }
-      }
-
-      // The chairs with no ballot. They are not part of the debate, so they
-      // speak after it and are answerable to nobody for what they say.
-      for (const watcher of observers()) {
-        if (!chance(0.7)) continue;
-        const line = observerComment(watcher, motion, "floor");
-        if (!line) continue;
-        chamber.add(line, "eris", `${watcher.name} (${T("ONUMenu.ui.observer")})`);
-        await chamber.advance();
-      }
-
-      // The player answers.
-      const optionKeys = sg
-        ? ["amend", "support", "oppose", "abstain", "wild"]
-        : ["support", "oppose", "amend", "filibuster", "wild"];
-      const labels = optionKeys.map((k) =>
-        say("ONUAssembly.choice." + (sg ? "sg." : "") + k, {
-          power: sg ? T("ONUMenu.role.secretaryGeneral") : delegation.name,
-          topic: T("ONUAssembly.motion." + motion.def.key + ".tag"),
-          sponsor: motion.sponsor.name,
-        }));
-      const chosen = await chamber.choose(labels, {
-        speaker: sg ? T("ONUMenu.role.secretaryGeneral") : delegation.name,
-      });
-      // choose() resolves to the index of the label that was picked, so the answer
-      // has to be read back out of the key list the labels were built from.
-      const option = optionKeys[chosen] || optionKeys[0];
-      chamber.add(say("ONUAssembly.reactions." + (option === "wild" ? "wild" : "normal"), {
-        power: sg ? T("ONUMenu.role.secretaryGeneral") : delegation.name,
-      }), "narrator");
-      await chamber.advance();
-
-      // Roll 3D D20 for debate persuasion impact on the chamber
-      if (window.Dice3D && option !== "abstain") {
-        const psiMod = Math.floor(((actor.luk || 10) - 10) / 2);
-        const res = await window.Dice3D.rollD20({
-          dc: option === "wild" ? 14 : 11,
-          modifier: psiMod + Math.round((persuade - 1) * 3),
-          statName: "PSI (Diplomacy)",
-          actionName: "ONU Assembly Debate"
-        });
-        if (res.nat20) persuade *= 1.4;
-        else if (res.nat1) persuade *= 0.6;
-        else if (res.success) persuade *= 1.15;
-        else persuade *= 0.85;
-      }
-
-      // The division. Every seat votes, whether it spoke or not.
-      const ctx = { option, persuasion: persuade, delegation, sg, secretaryPresent };
-      const votes = castVotes(motion, ctx);
-      const secret = motion.ballot === "secret";
-      // A secret ballot is not read out by name, so the tiles are shuffled and
-      // nothing can be traced back to a chair.
-      const shown = secret ? votes.slice().sort(() => Math.random() - 0.5) : votes;
-
-      chamber.setSidebar(boardHTML(shown, { secret }));
-      chamber.add(say(secret ? "ONUAssembly.ballot.secret" : "ONUAssembly.ballot.public",
-        { chair: session.chair }), "narrator");
-
-      if (secret) {
-        await sleep(700);
-        shown.forEach((v, idx) => paintSeat(idx, v.vote));
-      } else {
-        for (let idx = 0; idx < shown.length; idx++) {
-          paintSeat(idx, shown[idx].vote);
-          SoundManager.playCursor();
-          await sleep(90);
-        }
-      }
-      const counts = tally(votes);
-      paintTally(counts);
-      await chamber.advance(420);
-
-      let passed = counts.for > counts.against;
-      let council = null;
-
-      if (motion.def.grave) {
-        chamber.add(say("ONUAssembly.council.opening", { chair: session.chair }), "narrator");
-        await chamber.advance();
-
-        council = councilRuling(motion, votes, ctx);
-        for (const ruling of council.rulings) {
-          chamber.add(say("ONUAssembly.council." + ruling.ruling, {
-            power: ruling.delegation.name,
-            leader: leaderOf(ruling.delegation),
-          }), "eris", `${ruling.delegation.name} (${T("ONUMenu.ui.permanentMember")})`);
-          await chamber.advance(240);
-        }
-
-        if (council.tiebreak === "none") {
-          chamber.add(say("ONUAssembly.council.noTiebreaker"), "narrator");
-          await chamber.advance();
-        } else if (council.tiebreak) {
-          const sgName = sg ? actor.name() : (secretaryActor() ? secretaryActor().name() : SG_NAME);
-          chamber.add(say("ONUAssembly.council.tiebreak." + council.tiebreak, { name: sgName }),
-            "eris", T("ONUMenu.role.secretaryGeneral"));
-          await chamber.advance();
-        }
-        passed = council.passed;
-      }
-
-      session.results[i] = { passed, counts, council, option };
-      if (passed) carried++;
-
-      chamber.add(say(passed ? "ONUAssembly.outcome.carried" : "ONUAssembly.outcome.failed", {
-        title: motion.title, forCount: counts.for, againstCount: counts.against,
-      }), "narrator");
+    // Whatever goes wrong mid-sitting, the chamber comes down: the party cannot
+    // move while it is up (Game_Player.canMove), so a stuck one is a soft lock.
+    try {
       chamber.setSidebar(agendaHTML(session, null));
+      chamber.setHeadline(vary(T("ONUMenu.ui.sessionHeadline", { week: weekIndex() + 1 })));
+
+      chamber.add(say("ONUAssembly.openings", {
+        venue: session.venue, chair: session.chair,
+        power: sg ? T("ONUMenu.role.secretaryGeneral") : delegation.name,
+        name: actor.name(),
+      }), "narrator");
       await chamber.advance();
 
-      for (const watcher of observers()) {
-        const line = observerComment(watcher, motion, passed ? "carried" : "failed");
-        if (!line) continue;
-        chamber.add(line, "eris", `${watcher.name} (${T("ONUMenu.ui.observer")})`);
-        await chamber.advance();
-      }
+      chamber.add(say("ONUAssembly.ambience"), "narrator");
+      await chamber.advance();
 
-      applyMotionOutcome(actor, delegation, sg, motion, votes, option, passed);
-      if (motion.warResult) {
-        chamber.add(say("ONUAssembly.warOutcome." + motion.warResult, {
-          attacker: motion.attackerName, defender: motion.defenderName,
+      let persuade = persuasion(actor, delegation, sg);
+      const secretaryPresent = sg || isSecretaryCandidate();
+
+      let carried = 0;
+      for (let i = 0; i < session.agenda.length; i++) {
+        session.index = i;
+        const motion = session.agenda[i];
+        chamber.setSidebar(agendaHTML(session, motion));
+
+        // The chair reads it.
+        chamber.add(motion.title, "eris", session.chair);
+        await chamber.advance();
+        chamber.add(motion.text, "eris", session.chair);
+        await chamber.advance();
+
+        // The floor.
+        const speakers = speakersFor(motion, null);
+        for (const speaker of speakers) {
+          const speech = speechFor(speaker, motion);
+          if (!speech.text) continue;
+          chamber.add(speech.text, "eris", `${speaker.name} (${leaderOf(speaker)})`);
+          await chamber.advance();
+          if (chance(0.22)) {
+            chamber.add(say("ONUAssembly.interruptions", { power: speaker.name }), "narrator");
+            await chamber.advance();
+          }
+        }
+
+        // The chairs with no ballot. They are not part of the debate, so they
+        // speak after it and are answerable to nobody for what they say.
+        for (const watcher of observers()) {
+          if (!chance(0.7)) continue;
+          const line = observerComment(watcher, motion, "floor");
+          if (!line) continue;
+          chamber.add(line, "eris", `${watcher.name} (${T("ONUMenu.ui.observer")})`);
+          await chamber.advance();
+        }
+
+        // The player answers.
+        const optionKeys = sg
+          ? ["amend", "support", "oppose", "abstain", "wild"]
+          : ["support", "oppose", "amend", "filibuster", "wild"];
+        const labels = optionKeys.map((k) =>
+          say("ONUAssembly.choice." + (sg ? "sg." : "") + k, {
+            power: sg ? T("ONUMenu.role.secretaryGeneral") : delegation.name,
+            topic: T("ONUAssembly.motion." + motion.def.key + ".tag"),
+            sponsor: motion.sponsor.name,
+          }));
+        const chosen = await chamber.choose(labels, {
+          speaker: sg ? T("ONUMenu.role.secretaryGeneral") : delegation.name,
+        });
+        // choose() resolves to the index of the label that was picked, so the answer
+        // has to be read back out of the key list the labels were built from.
+        const option = optionKeys[chosen] || optionKeys[0];
+        chamber.add(say("ONUAssembly.reactions." + (option === "wild" ? "wild" : "normal"), {
+          power: sg ? T("ONUMenu.role.secretaryGeneral") : delegation.name,
         }), "narrator");
         await chamber.advance();
+
+        // Roll 3D D20 for debate persuasion impact on the chamber
+        if (window.Dice3D && option !== "abstain") {
+          const psiMod = Math.floor(((actor.luk || 10) - 10) / 2);
+          const res = await window.Dice3D.rollD20({
+            dc: option === "wild" ? 14 : 11,
+            modifier: psiMod + Math.round((persuade - 1) * 3),
+            statName: (typeof TextManager !== "undefined" && TextManager.param) ? TextManager.param(7) : "",
+            actionName: T("ONUMenu.dice.debate"),
+            force3D: true
+          });
+          if (res.nat20) persuade *= 1.4;
+          else if (res.nat1) persuade *= 0.6;
+          else if (res.success) persuade *= 1.15;
+          else persuade *= 0.85;
+        }
+
+        // The division. Every seat votes, whether it spoke or not.
+        const ctx = { option, persuasion: persuade, delegation, sg, secretaryPresent };
+        const votes = castVotes(motion, ctx);
+        const secret = motion.ballot === "secret";
+        // A secret ballot is not read out by name, so the tiles are shuffled and
+        // nothing can be traced back to a chair.
+        const shown = secret ? votes.slice().sort(() => Math.random() - 0.5) : votes;
+
+        chamber.setSidebar(boardHTML(shown, { secret }));
+        chamber.add(say(secret ? "ONUAssembly.ballot.secret" : "ONUAssembly.ballot.public",
+          { chair: session.chair }), "narrator");
+
+        if (secret) {
+          await sleep(700);
+          shown.forEach((v, idx) => paintSeat(idx, v.vote));
+        } else {
+          for (let idx = 0; idx < shown.length; idx++) {
+            paintSeat(idx, shown[idx].vote);
+            SoundManager.playCursor();
+            await sleep(90);
+          }
+        }
+        const counts = tally(votes);
+        paintTally(counts);
+        await chamber.advance(420);
+
+        let passed = counts.for > counts.against;
+        let council = null;
+
+        if (motion.def.grave) {
+          chamber.add(say("ONUAssembly.council.opening", { chair: session.chair }), "narrator");
+          await chamber.advance();
+
+          council = councilRuling(motion, votes, ctx);
+          for (const ruling of council.rulings) {
+            chamber.add(say("ONUAssembly.council." + ruling.ruling, {
+              power: ruling.delegation.name,
+              leader: leaderOf(ruling.delegation),
+            }), "eris", `${ruling.delegation.name} (${T("ONUMenu.ui.permanentMember")})`);
+            await chamber.advance(240);
+          }
+
+          if (council.tiebreak === "none") {
+            chamber.add(say("ONUAssembly.council.noTiebreaker"), "narrator");
+            await chamber.advance();
+          } else if (council.tiebreak) {
+            const sgName = sg ? actor.name() : (secretaryActor() ? secretaryActor().name() : SG_NAME);
+            chamber.add(say("ONUAssembly.council.tiebreak." + council.tiebreak, { name: sgName }),
+              "eris", T("ONUMenu.role.secretaryGeneral"));
+            await chamber.advance();
+          }
+          passed = council.passed;
+        }
+
+        session.results[i] = { passed, counts, council, option };
+        if (passed) carried++;
+
+        chamber.add(say(passed ? "ONUAssembly.outcome.carried" : "ONUAssembly.outcome.failed", {
+          title: motion.title, forCount: counts.for, againstCount: counts.against,
+        }), "narrator");
+        chamber.setSidebar(agendaHTML(session, null));
+        await chamber.advance();
+
+        for (const watcher of observers()) {
+          const line = observerComment(watcher, motion, passed ? "carried" : "failed");
+          if (!line) continue;
+          chamber.add(line, "eris", `${watcher.name} (${T("ONUMenu.ui.observer")})`);
+          await chamber.advance();
+        }
+
+        applyMotionOutcome(actor, delegation, sg, motion, votes, option, passed);
+        if (motion.warResult) {
+          chamber.add(say("ONUAssembly.warOutcome." + motion.warResult, {
+            attacker: motion.attackerName, defender: motion.defenderName,
+          }), "narrator");
+          await chamber.advance();
+        }
       }
+
+      session.index = session.agenda.length;
+      chamber.setSidebar(agendaHTML(session, null));
+      chamber.add(say("ONUAssembly.closings", {
+        chair: session.chair, carried: carried, total: session.agenda.length,
+      }), "narrator");
+      await chamber.advance();
+
+      // Arguing is the only thing that teaches diplomacy.
+      if (window.SpecializationXP && typeof window.SpecializationXP.award === "function") {
+        window.SpecializationXP.award(DIPLOMACY_SPEC, 2 + Math.floor(Math.random() * 3), { actor: actor });
+      }
+
+      const state = assemblyState();
+      if (state) {
+        state.lastSessionWeek = weekIndex();
+        state.sessionsHeld = (state.sessionsHeld || 0) + 1;
+      }
+
+    } catch (err) {
+      try { chamber.close(); } catch (_) { /* already gone */ }
+      throw err;
     }
-
-    session.index = session.agenda.length;
-    chamber.setSidebar(agendaHTML(session, null));
-    chamber.add(say("ONUAssembly.closings", {
-      chair: session.chair, carried: carried, total: session.agenda.length,
-    }), "narrator");
-    await chamber.advance();
-
-    // Arguing is the only thing that teaches diplomacy.
-    if (window.SpecializationXP && typeof window.SpecializationXP.award === "function") {
-      window.SpecializationXP.award(DIPLOMACY_SPEC, 2 + Math.floor(Math.random() * 3), { actor: actor });
-    }
-
-    const state = assemblyState();
-    if (state) {
-      state.lastSessionWeek = weekIndex();
-      state.sessionsHeld = (state.sessionsHeld || 0) + 1;
-    }
-
     chamber.close();
 
     if (window.ParchmentToast) {

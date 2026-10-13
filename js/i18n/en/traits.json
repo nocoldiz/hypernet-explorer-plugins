@@ -146,7 +146,7 @@
     },
     "early_bird": {
       "name": "Early Bird",
-      "description": "More active in morning"
+      "description": "More active in the morning"
     },
     "workaholic": {
       "name": "Workaholic",
@@ -222,7 +222,7 @@
     },
     "amblyopic": {
       "name": "Amblyopic",
-      "description": "Has lazy eye condition"
+      "description": "Has a lazy eye"
     },
     "prosopagnosic": {
       "name": "Prosopagnosic",
@@ -290,7 +290,7 @@
     },
     "savant_syndrome": {
       "name": "Savant Syndrome",
-      "description": "Exceptional ability in specific area"
+      "description": "Exceptional ability in one field"
     },
     "adhd": {
       "name": "ADHD",
@@ -470,7 +470,7 @@
     },
     "prophetic": {
       "name": "Prophetic",
-      "description": "Experiences visions of future"
+      "description": "Has visions of the future"
     },
     "noble": {
       "name": "Noble",
@@ -782,7 +782,7 @@
     },
     "gun_fu": {
       "name": "Gun-Fu",
-      "description": "Martial arts skills fired through a gun or bow chain into a free follow-up attack"
+      "description": "Martial arts skills with a gun or bow trigger a free follow-up attack"
     },
     "cystic_fibrosis": {
       "name": "Cystic Fibrosis",
@@ -826,7 +826,7 @@
     },
     "venomous": {
       "name": "Venomous",
-      "description": "Carries poison in its bite at the cost of its own vigour"
+      "description": "Poisonous bite that costs some vigour"
     },
     "imprinted": {
       "name": "Imprinted",
@@ -834,7 +834,7 @@
     },
     "rabid": {
       "name": "Rabid",
-      "description": "Sick, furious, and past any reaching"
+      "description": "Sick and furious, impossible to calm"
     },
     "burrower": {
       "name": "Burrower",
@@ -842,7 +842,7 @@
     },
     "hibernator": {
       "name": "Hibernator",
-      "description": "Sleeps out the cold on a body built to store it"
+      "description": "Sleeps through the cold on stored fat"
     },
     "peanut_allergy": {
       "name": "Peanut Allergy",

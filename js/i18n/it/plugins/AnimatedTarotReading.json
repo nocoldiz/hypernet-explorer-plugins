@@ -1,12 +1,12 @@
 {
   "ui": {
-    "title": "Lettura dei Tarocchi",
+    "title": "Lettura dei tarocchi",
     "past": "Passato",
     "present": "Presente",
     "future": "Futuro",
     "upright": "Dritto",
     "reversed": "Rovesciato",
-    "npcTitle": "Lettura dei Tarocchi per {name}",
+    "npcTitle": "Lettura dei tarocchi per {name}",
     "unclear": "Il significato non è chiaro...",
     "readerOffers": "IL LETTORE PROPONE",
     "layout": "LA DISPOSIZIONE",
@@ -19,8 +19,8 @@
     "actionReadWho": "A chi leggi i tarocchi?",
     "actionPick": "Pesca una carta",
     "actionSpread": "Stesa libera",
-    "pickTitle": "Pesca una Carta",
-    "sandboxTitle": "Stesa Libera",
+    "pickTitle": "Pesca una carta",
+    "sandboxTitle": "Stesa libera",
     "sandboxDeck": "MAZZO {count}",
     "sandboxShuffle": "MESCOLA",
     "sandboxCut": "TAGLIA",
@@ -28,13 +28,67 @@
     "sandboxScramble": "SPARPAGLIA",
     "sandboxGather": "RACCOGLI",
     "sandboxShuffled": "Il mazzo è mescolato.",
-    "sandboxDrawn": "{name} esce dalla cima del mazzo.",
-    "sandboxDeckEmpty": "Nel mazzo non è rimasto nulla.",
-    "sandboxScrambled": "{count} carte, coperte, sparse sul panno.",
-    "sandboxGathered": "Ogni carta è tornata nel mazzo.",
-    "sandboxCastleFew": "Troppe poche carte sul tavolo per costruire qualcosa.",
-    "sandboxCutDone": "Il mazzo è tagliato e riposato sul panno.",
-    "sandboxCastleBuilt": "Un castello di {levels} piani, {cards} carte."
+    "sandboxDrawn": "Pescata: {name}.",
+    "sandboxDeckEmpty": "Il mazzo è vuoto.",
+    "sandboxScrambled": "{count} carte sparse a faccia in giù.",
+    "sandboxGathered": "Tutte le carte sono nel mazzo.",
+    "sandboxCastleFew": "Troppo poche carte per costruire.",
+    "sandboxCutDone": "Mazzo tagliato.",
+    "sandboxCastleBuilt": "Un castello di carte di {levels} piani, {cards} carte.",
+    "noThree": "THREE.JS NON CARICATO",
+    "psi": "PSI",
+    "psiValue": "PSI {value}",
+    "reader": "LETTORE  {name}",
+    "nobody": "NESSUNO",
+    "shuffling": "SI MESCOLANO GLI ARCANI",
+    "deckCut": "IL MAZZO È TAGLIATO",
+    "layingSpread": "SI DISPONE LA STESA",
+    "turnCards": "GIRA LE CARTE",
+    "spreadCards": "{count} CARTE",
+    "reversedShort": "R",
+    "turned": "GIRATE",
+    "faceDownTitle": "COPERTA",
+    "faceDownLine1": "LA CARTA GIACE COPERTA.",
+    "faceDownLine2": "NULLA È DECISO FINCHÉ NON SI VEDE.",
+    "readingFor": "LETTURA PER {name}",
+    "trueCount": "{n} / 3 VERE",
+    "resonance": "RISONANZA",
+    "verdict3": "UN VERO VEGGENTE",
+    "verdict2": "QUASI TUTTO VERO",
+    "verdict1": "SENTITO A METÀ",
+    "verdict0": "GLI SPIRITI HANNO TACIUTO",
+    "meaningsTrue": "{n} SIGNIFICATI SU 3 LETTI GIUSTI",
+    "asciiHeader": "== {title} ==",
+    "asciiCorrect": "GIUSTE: {n} / 3",
+    "toneAgainst": "LA STESA TI È CONTRARIA",
+    "toneDivided": "LA STESA È DIVISA",
+    "toneClean": "LA STESA È LIMPIDA",
+    "toneWith": "LA STESA TI È FAVOREVOLE",
+    "synthesis": "{tone}. TUTTO DIPENDE DA {key}.",
+    "keywords": [
+      "INIZIO",
+      "VOLONTÀ",
+      "SEGRETEZZA",
+      "ABBONDANZA",
+      "ORDINE",
+      "TRADIZIONE",
+      "UNIONE",
+      "RISOLUTEZZA",
+      "CORAGGIO",
+      "SOLITUDINE",
+      "FATO",
+      "EQUILIBRIO",
+      "SOSPENSIONE",
+      "FINE",
+      "MISURA",
+      "SCHIAVITÙ",
+      "ROTTURA",
+      "SPERANZA",
+      "ILLUSIONE",
+      "CHIAREZZA",
+      "RESA DEI CONTI",
+      "COMPIMENTO"
+    ]
   },
   "cards": {
     "The Fool": {
@@ -87,7 +141,7 @@
       "upright": [
         "L'abbondanza fluisce naturalmente in tutte le aree della tua vita.",
         "L'energia creativa sboccia e porta nuovi progetti a compimento.",
-        "Le relazioni nutrienti forniscono conforto e appagamento emotivo.",
+        "Le relazioni premurose danno conforto e appagamento emotivo.",
         "La bellezza naturale e la sensualità aumentano il tuo magnetismo personale."
       ],
       "reversed": [
@@ -237,7 +291,7 @@
       "upright": [
         "La trasformazione crea spazio per una potente rinascita.",
         "Le conclusioni creano opportunità per nuovi inizi.",
-        "Il rilascio del vecchio fa spazio per una nuova crescita.",
+        "Lasciar andare il vecchio fa spazio a una nuova crescita.",
         "Il cambiamento profondo rimodella la tua intera esistenza."
       ],
       "reversed": [
@@ -252,7 +306,7 @@
       "upright": [
         "L'equilibrio perfetto crea armonia in tutte le aree della vita.",
         "Pazienza e moderazione portano al successo duraturo.",
-        "Mescolare gli opposti crea una potente alchimica.",
+        "Mescolare gli opposti crea una potente alchimia.",
         "Il tempismo divino orchestra risultati perfetti."
       ],
       "reversed": [
@@ -274,7 +328,7 @@
         "La liberazione da credenze limitanti ti rende libero.",
         "Rompere schemi malsani ripristina il potere personale.",
         "Il riconoscimento delle illusioni dissolve la loro influenza.",
-        "Il rilascio dalla schiavitù apre nuove possibilità."
+        "La liberazione dalla schiavitù apre nuove possibilità."
       ]
     },
     "The Tower": {
@@ -316,10 +370,10 @@
         "Le paure nascoste emergono per la guarigione e il rilascio."
       ],
       "reversed": [
-        "La confusione si solleva mentre la chiarezza ritorna alla tua visione.",
+        "La confusione si dirada mentre la chiarezza ritorna alla tua visione.",
         "Gli inganni rivelati permettono alla verità di emergere.",
         "Le emozioni represse richiedono attenzione consapevole.",
-        "La nebbia mentale si schiarisce rivelando il percorso davanti."
+        "La nebbia mentale si dirada e rivela la strada da percorrere."
       ]
     },
     "The Sun": {
@@ -420,7 +474,7 @@
     },
     "single": {
       "name": "LA CARTA",
-      "blurb": "Una carta dalla cima.",
+      "blurb": "Una carta dalla cima del mazzo.",
       "slots": {
         "0": "LA CARTA"
       }

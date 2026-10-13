@@ -11,5 +11,21 @@
   "powerPrompt": "{bowler}: POWER",
   "hookPrompt": "{bowler}: HOOK",
   "player2": "PLAYER 2",
-  "cpu": "CPU"
+  "cpu": "CPU",
+  "hud": {
+    "total": "TOT",
+    "p1": "P1",
+    "power": "POWER",
+    "hook": "HOOK",
+    "asciiScore": "{p1} {player} {opponent} {opponentScore}",
+    "sign": "HYPER BOWL"
+  },
+  "banner": {
+    "strike": "STRIKE!",
+    "spare": "SPARE!",
+    "gutter": "GUTTER",
+    "miss": "MISS",
+    "pin": "{count} PIN",
+    "pins": "{count} PINS"
+  }
 }

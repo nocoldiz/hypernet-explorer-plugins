@@ -4,7 +4,7 @@
     "left": {
       "flavour": [
         "{Questa città l'hanno costruita i lavoratori|I lavoratori hanno costruito tutto questo}, ricordalo.",
-        "{Solidarietà|Solidarietà, compagno}. È l'unica cosa che funziona.",
+        "{Solidarietà|Solidarietà, sempre}. È l'unica cosa che funziona.",
         "I padroni {non perdono mai|non perdono} il sonno per niente di tutto questo."
       ],
       "politics": [
@@ -20,7 +20,7 @@
         "I lavoratori di {enemy} non sono miei nemici."
       ],
       "family": [
-        "Una famiglia ha bisogno di un salario e di un ambulatorio gratuito, non di prediche.",
+        "Una famiglia ha bisogno di un salario e di un ambulatorio gratuito. Le prediche possono aspettare.",
         "Ogni bambino merita una scuola e un pasto caldo."
       ],
       "goblins": [
@@ -28,7 +28,7 @@
         "L'Orda è quello che succede quando la forza possiede tutto."
       ],
       "money": [
-        "Il denaro è un furto con un sarto migliore.",
+        "Il denaro è un furto vestito meglio.",
         "{Affitti|Prezzi} su, salari fermi. Strano, eh."
       ],
       "elections": [
@@ -39,7 +39,7 @@
     "centreLeft": {
       "flavour": [
         "Un patto equo per tutti, chiedo solo questo.",
-        "{Riforme|Riforme costanti}, non rivoluzione.",
+        "{Riforme|Riforme costanti}, un passo alla volta.",
         "Buone scuole e una pensione decente. È chiedere troppo?"
       ],
       "politics": [
@@ -52,7 +52,7 @@
       ],
       "war": [
         "Prima la diplomazia, sempre.",
-        "Mandate l'ONU, non i carri armati."
+        "Mandate l'ONU e lasciate i carri armati in caserma."
       ],
       "family": [
         "{L'asilo|Il congedo parentale} dovrebbe essere un diritto.",
@@ -60,7 +60,7 @@
       ],
       "goblins": [
         "Dovremmo accogliere i profughi dell'Orda.",
-        "I muri non fermano l'Orda. Le alleanze forse sì."
+        "Le alleanze fermano un'Orda meglio di qualsiasi muro."
       ],
       "money": [
         "Tassare un po' i ricchi, aiutare molto gli altri.",
@@ -68,7 +68,7 @@
       ],
       "elections": [
         "Ogni voto conta. Soprattutto il mio.",
-        "Le elezioni le vince l'affluenza, non gli slogan."
+        "Le elezioni le vince l'affluenza. Gli slogan contano poco."
       ]
     },
     "centre": {
@@ -95,11 +95,11 @@
       ],
       "goblins": [
         "Un confine stabile è un confine sensato.",
-        "L'Orda è un problema da gestire, non da urlare."
+        "L'Orda è un problema da gestire a mente fredda."
       ],
       "money": [
         "Un bilancio in pareggio aiuta tutti.",
-        "I mercati funzionano, quasi sempre, con un arbitro."
+        "I mercati funzionano, quasi sempre, se c'è un arbitro."
       ],
       "elections": [
         "Voterò chi ha un programma.",
@@ -137,7 +137,7 @@
         "Metti da parte i soldi. La banca di mamma e papà non dura."
       ],
       "elections": [
-        "Vota per l'ordine, non per le promesse.",
+        "Vota per l'ordine. Le promesse lasciale agli altri.",
         "Chiunque, tranne gli spendaccioni."
       ]
     },
@@ -172,7 +172,7 @@
         "Gli speculatori stranieri ci stanno dissanguando."
       ],
       "elections": [
-        "Vota per la nazione, non per i partiti.",
+        "Vota per la nazione, sopra ogni partito.",
         "Un vero patriota sa dove mettere la croce."
       ]
     },
@@ -180,7 +180,7 @@
       "flavour": [
         "{Il cielo|I cieli} vegliano su questa strada.",
         "Prima prega, poi agisci.",
-        "{La fede|La fede, amico}. Ti sostiene."
+        "{La fede|La fede, credimi}. Ti sostiene."
       ],
       "politics": [
         "Nessuna legge sta sopra quella divina.",
@@ -208,7 +208,7 @@
       ],
       "elections": [
         "Vota come ti dicono la coscienza e il parroco.",
-        "Il cielo non ha bisogno di schede, noi sì."
+        "Il cielo fa i suoi conti da sé. A noi servono le schede."
       ]
     },
     "monarchist": {
@@ -222,8 +222,8 @@
         "Un re al di sopra dei partiti, questa è stabilità."
       ],
       "work": [
-        "Servi bene e sarai ricompensato.",
-        "Il brevetto reale sulla porta, questa è qualità."
+        "Servi bene e avrai la tua ricompensa.",
+        "Fornitore della Real Casa: quella sì che è qualità."
       ],
       "war": [
         "Per la corona e le antiche insegne.",
@@ -266,7 +266,7 @@
       ],
       "family": [
         "Le famiglie si scelgono quanto si ereditano.",
-        "Crescere i figli liberi, non obbedienti."
+        "I figli vanno cresciuti liberi, prima di tutto."
       ],
       "goblins": [
         "L'Orda e lo stato hanno lo stesso capo.",
@@ -285,7 +285,7 @@
       "flavour": [
         "{La disciplina|Disciplina e ordine}, ecco cosa manca.",
         "La vita da soldato ti insegna tutto.",
-        "Stai dritto quando mi parli."
+        "Schiena dritta quando mi parli."
       ],
       "politics": [
         "I generali lo gestirebbero meglio.",
@@ -293,7 +293,7 @@
       ],
       "work": [
         "Ogni lavoro è più facile con un sergente istruttore.",
-        "Puntuale, lucidato, pronto."
+        "{g:Puntuale, lucidato, pronto|Puntuale, lucidata, pronta}."
       ],
       "war": [
         "Vittoria su {enemy}, a qualunque costo.",
@@ -319,7 +319,7 @@
     "mystic": {
       "flavour": [
         "Le stelle {sono inquiete|si sono spostate} stanotte.",
-        "{Le linee di forza vibrano|Tutto è collegato}.",
+        "{Le leyline vibrano|Tutto è collegato}.",
         "Ci sono forze di cui nessuno parla."
       ],
       "politics": [
@@ -331,7 +331,7 @@
         "Lavora con intenzione, il resto segue."
       ],
       "war": [
-        "{enemy} è nato sotto un cattivo segno.",
+        "Su {enemy} pesa un cattivo segno.",
         "I presagi erano chiari, e nessuno ha ascoltato."
       ],
       "family": [
@@ -388,7 +388,7 @@
     },
     "alien": {
       "flavour": [
-        "{Affascinante|Che pittoresche}, queste usanze locali.",
+        "{Affascinanti|Che pittoresche}, queste usanze locali.",
         "Sul mio mondo questo sarebbe un saluto.",
         "La vostra specie {dorme|mangia} così spesso."
       ],
@@ -461,7 +461,7 @@
     "orthodox_communist": {
       "flavour": [
         "Come dicono i classici, la storia ha le sue leggi.",
-        "{Compagno|Amico}, la dialettica non mente.",
+        "La dialettica non mente, {compagni|credetemi}.",
         "Il piano quinquennale è nei tempi."
       ],
       "politics": [
@@ -490,7 +490,7 @@
       ],
       "elections": [
         "Elezioni borghesi, circo borghese.",
-        "Decidono i Soviet, non l'urna."
+        "Decidono i Soviet. L'urna è un dettaglio."
       ]
     },
     "kemalist": {
@@ -508,7 +508,7 @@
         "Ogni maestro di scuola è un soldato del progresso."
       ],
       "war": [
-        "L'esercito difende la Repubblica, non una fazione.",
+        "L'esercito difende la Repubblica intera, al di sopra delle fazioni.",
         "L'indipendenza non si negozia, {enemy} dovrebbe saperlo."
       ],
       "family": [
@@ -517,7 +517,7 @@
       ],
       "goblins": [
         "La superstizione genera orde. La ragione le ferma.",
-        "L'Orda è l'aspetto dell'arretratezza."
+        "L'Orda è la faccia dell'arretratezza."
       ],
       "money": [
         "Un'economia nazionale per un popolo nazionale.",
@@ -525,7 +525,7 @@
       ],
       "elections": [
         "La scheda è il cuore della Repubblica.",
-        "Vota per la Repubblica, non per la moschea o per il pascià."
+        "Il voto va alla Repubblica. Moschea e pascià restino fuori."
       ]
     },
     "pacifist_theocratic": {
@@ -556,7 +556,7 @@
       ],
       "money": [
         "Dona con generosità. Il cielo tiene i conti.",
-        "La ricchezza è una prova, non un premio."
+        "La ricchezza è una prova da superare."
       ],
       "elections": [
         "Voto per chi vuole meno soldati.",
@@ -582,11 +582,11 @@
         "Dite a {enemy} che il loro esercito ha gli stivali al contrario."
       ],
       "family": [
-        "I cuccioli umani sono i migliori da confondere.",
+        "Confondere i cuccioli umani è il massimo.",
         "Ho insegnato a un bambino che le nuvole sono pecore. Stupendo."
       ],
       "goblins": [
-        "I goblin non sono divertenti, rispondono agli scherzi.",
+        "Con i goblin non c'è gusto: rispondono agli scherzi.",
         "Ho scambiato l'elmo di un goblin con una pentola. Non se n'è accorto."
       ],
       "money": [
@@ -665,7 +665,7 @@
       ],
       "elections": [
         "Il dio ha già scelto.",
-        "Vota goblin, o sarai convertito."
+        "Vota goblin, o ti convertiremo noi."
       ]
     }
   }

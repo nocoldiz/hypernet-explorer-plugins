@@ -739,7 +739,7 @@
       "caveats": [
         "Conduct yourself as though observed, because you are.",
         "Insolence toward officials is deducted from the fee.",
-        "Bribery is a tradition, not an entitlement.",
+        "Bribery is a tradition, and traditions have limits.",
         "The route may be inspected. Your baggage certainly will.",
         "Discretion is the coin of the realm, and the realm is short of coin."
       ],
@@ -787,7 +787,7 @@
     "spooky": {
       "openers": [
         "There is a small hole in the world and we should like it filled.",
-        "Something is owed. It was not agreed to, but it is owed.",
+        "Something is owed, agreed or not.",
         "Written in a hand that is not quite finished being a hand.",
         "The lease on this errand expires with the light.",
         "You have been thinking about this notice for some time."
@@ -885,7 +885,7 @@
     "streetwise": {
       "openers": [
         "Word is you take work and keep quiet. Word is usually wrong.",
-        "Not a posting. A conversation, in writing.",
+        "Call this a conversation, in writing.",
         "Somebody needs something moved, found, or forgotten.",
         "Read it and take it down. The pin is the receipt.",
         "You did not get this from anyone."
@@ -1626,7 +1626,7 @@
         "You are the apparatus. Please behave repeatably."
       ],
       "signoffs": [
-        "Results, not anecdotes."
+        "Results only."
       ]
     }
   },
@@ -1787,7 +1787,7 @@
       ],
       "openers": [
         "Tendered on the Seaboard exchange floor and available to any qualified bearer.",
-        "This is a commercial instrument, not a favour. Read it as one.",
+        "This is a commercial instrument. Read it as one.",
         "The board opened at {nine|the bell} and this was on it by {ten|noon}."
       ],
       "caveats": [
@@ -1872,7 +1872,7 @@
       ],
       "transform": "shout",
       "openers": [
-        "It has been decided. You are being told, not consulted.",
+        "It has been decided. You are being told.",
         "A small thing is wanted, and it is wanted by something very large.",
         "This was written before you read it and will be true after."
       ],
@@ -1941,7 +1941,7 @@
       ],
       "caveats": [
         "Do the work on the day named. A day early is as useless as a day late.",
-        "Blood is not required. It is merely traditional, and traditions can be waived."
+        "Blood is merely traditional, and traditions can be waived."
       ],
       "signoffs": [
         "Marked in the long count against your name, favourably.",
@@ -1978,7 +1978,7 @@
       ],
       "openers": [
         "Allocated by the Directorate at the {fourth|eleventh} sitting, without discussion.",
-        "One item of a very long list. The list is the Directorate's business, not yours.",
+        "One item of a very long list. The list is the Directorate's business.",
         "Filed, numbered, and released to the boards on schedule."
       ],
       "caveats": [
@@ -2025,7 +2025,7 @@
       ],
       "caveats": [
         "Wisdom is expected of the bearer. It is not, unfortunately, supplied.",
-        "Bring back the thing itself, not an account of it."
+        "Bring back the thing itself."
       ],
       "signoffs": [
         "Sealed with the ring. The ring is not a metaphor.",
@@ -2130,7 +2130,7 @@
       ],
       "caveats": [
         "Cold kills faster than anything on the objective list. Dress for the first problem.",
-        "Report what you saw, not what you think it meant."
+        "Report only what you saw."
       ],
       "signoffs": [
         "Paid on return to the line. Nobody is paid in the field.",
@@ -2144,7 +2144,7 @@
         "Threat classification exceeds all available response tiers. External contractor authorised."
       ],
       "caveats": [
-        "Survival is not a listed deliverable. It is merely preferred."
+        "Survival is merely preferred."
       ],
       "signoffs": [
         "Should you succeed, the file will be amended. Should you not, it will not."
@@ -2532,7 +2532,7 @@
     },
     "21": {
       "openers": [
-        "Knowledge Preservation Division: it is erasing things. Not burning. Erasing."
+        "Knowledge Preservation Division: it is erasing things, without a single flame."
       ],
       "signoffs": [
         "Preserve us from it and we will preserve your name properly."
@@ -2767,7 +2767,7 @@
         "Science Command. The specimen has stopped being a specimen and started being a problem."
       ],
       "signoffs": [
-        "Results, not anecdotes, and an obscene research grant."
+        "Results only, and an obscene research grant."
       ]
     }
   },
@@ -2932,7 +2932,7 @@
         "Footnote-shaped problem, boot-shaped solution."
       ],
       "caveats": [
-        "Record what you see, not what you expect to see.",
+        "Record only what you actually see.",
         "Do not tidy the site. Untidiness is evidence."
       ],
       "signoffs": [
@@ -3324,7 +3324,7 @@
     "smuggle": [
       "A {crate|satchel|drum} needs to reach [DEST] without appearing on any manifest, grimorie or Archive publication. {Take the back roads.|If a checkpoint asks, it is pickled herring.|The seals are Fantablack, do not scratch them.}",
       "Nothing illegal, {merely unregistered|merely unfiled|merely undocumented}. Get it to [DEST] and forget the weight. {Customs are counting crates this month.|The Archive is publishing manifests again, so keep off the highway.}",
-      "There is a {load|parcel|barrel} that must arrive in [DEST] without arriving officially. {Do not open it to find out why.|You are paid for the silence, not the distance.}",
+      "There is a {load|parcel|barrel} that must arrive in [DEST] without arriving officially. {Do not open it to find out why.|You are paid for the silence.}",
       "The {short road|highway|toll road} is watched. Take the {long way|old way|smugglers' way} into [DEST] with this and nobody has to file anything. {Checkpoints do not read pickled herring labels closely.}"
     ],
     "supply": [
@@ -3380,7 +3380,7 @@
     "bounty_criminal": [
       "{A warrant has been issued for|The judiciary of Eris seeks|A price now rests on} [ENEMY], {level [LVL], armed and talkative|a known face at level [LVL]}, last seen holding ground at ([X], [Y]). {Dead settles the account.|The court accepts no excuses, only results.}",
       "[ENEMY] (Lv [LVL]) has been {robbing couriers|extorting the villages|running their own toll} out of ([X], [Y]) for {a season|a year|longer than anyone will admit}. {The warrant does not specify condition on delivery.}",
-      "We have tried {reasoning|paying|arresting} [ENEMY]. What remains is a bounty. Lv [LVL], at ([X], [Y]). {Bring proof, not stories.}"
+      "We have tried {reasoning|paying|arresting} [ENEMY]. What remains is a bounty. Lv [LVL], at ([X], [Y]). {Bring proof.}"
     ],
     "bounty_monster": [
       "{Something|A [ENEMY]} has {claimed|nested at|been dragging travellers toward} coordinates ([X], [Y]). {It does not negotiate.|It is not native to that ground, which worries the locals more.|Level [LVL]. Bring friends.}",
@@ -3389,7 +3389,7 @@
     ],
     "survey": [
       "Walk the ground at coordinates ([X], [Y]) and come back in one piece. {That is the whole job.|Your presence there is the deliverable.|If the coordinates are gone, report that too.}",
-      "Stand at ([X], [Y]). {Look around. Leave.|That is all. Truly.|We need a witness, not a report.}",
+      "Stand at ([X], [Y]). {Look around. Leave.|That is all. Truly.|We need a witness. Nothing written.}",
       "The maps say one thing about ([X], [Y]) and the last traveller said another. {Go and break the tie.|Somebody has to be there in person.}"
     ],
     "survey_dest": [
@@ -3403,8 +3403,8 @@
       "Reach [DEST] on foot if you can bear it. {The distance is the point.|Nobody checks how, but the road knows.}"
     ],
     "interview": [
-      "Find any citizen of [DEST] and {listen to them properly|record their words|empathize, in the technical sense}. {Publish-ready notes preferred.|The Foundation pays for voices, not opinions.}",
-      "One conversation in [DEST], conducted {honestly|patiently|without leading the witness}. {We pay for what they say, not what you think.}",
+      "Find any citizen of [DEST] and {listen to them properly|record their words|empathize, in the technical sense}. {Publish-ready notes preferred.|The Foundation pays for voices.}",
+      "One conversation in [DEST], conducted {honestly|patiently|without leading the witness}. {We pay for what they say.}",
       "Somebody in [DEST] knows something and does not know that they know it. {Talk to anybody. Start there.}"
     ],
     "offworld": [
@@ -3435,7 +3435,7 @@
     "purge": [
       "Something at ([X], [Y]) is standing between us and a {vault|cache|stores room}. Kill it, then bring out what it was guarding. {In that order, please.}",
       "There is a {guardian|squatter|tenant} at ([X], [Y]) with no lease and considerable teeth. {Evict it, then empty the store behind it.}",
-      "Our property at ([X], [Y]) is currently inhabited. {Deal with the inhabitant. Then collect.|We want the contents. The occupant is an obstacle, not a negotiation.}"
+      "Our property at ([X], [Y]) is currently inhabited. {Deal with the inhabitant. Then collect.|We want the contents. The occupant is an obstacle.}"
     ],
     "grand_tour": [
       "Ride the circuit: present yourself at each listed settlement, in any order. {The Society keeps its maps honest with boots like yours.|Stamp your card at every board.}",
@@ -3444,8 +3444,8 @@
     ],
     "elite_hunt": [
       "SUBJECT: [ENEMY]. ASSESSED LEVEL: [LVL]. LOCATION: ([X], [Y]), and it has not moved in {weeks|months|as long as anyone has been counting}. It arrived {without warning|during the storms|the week the road closed|from a direction that does not have a road} and settled onto the site as though it had been promised it. {Livestock went first, then the outbuildings, then the people who went to look at the outbuildings.|Everything within a mile has either left or stopped moving.|Three families abandoned holdings they had farmed for four generations rather than share a valley with it.} What we know is thin and expensive: {it does not sleep|it does not bleed the way things bleed|it hears intent before it hears footsteps|it is patient, which is the worst of it}, and {every ranged attempt has been wasted|it closes distance faster than the reports suggested|armour has made no measurable difference}. The job is to kill it. {There is no secondary objective, no sample to bring back, no report to file.|Nothing else about the site matters and nothing else will be paid for.} {The fee is what it is because the arithmetic is what it is.|The sum below has been raised twice and taken zero times.}",
-      "This contract has been open since {the spring|last winter|before the current clerk was hired} and we have stopped pretending it is routine. The target is [ENEMY], level [LVL], holding ground at ([X], [Y]). {Four|Five|Six|Seven} parties have accepted it before you. {None of them came back.|Two came back, neither whole, neither talkative.|One came back alone and has not spoken since.} From what those returns told us: {it fights in the open by choice|it does not defend a lair, it defends a radius|it is stronger after dark, or believes it is, which amounts to the same thing|it will let you approach, which is not mercy}. {Bring everything.|Bring your best, and bring more of it than you think reasonable.|Bring a party, not a plan.} {We pay on proof, and proof is its absence from that coordinate.|Payment is immediate, in full, and frankly a relief to be rid of.} {If you decide against it, take the notice down and let somebody braver read the board.|If you read this and walk away, nobody here will think less of you.}",
-      "A formal threat assessment was completed on [ENEMY] at ([X], [Y]) and the conclusion was that no force we can field is adequate. Assessed level: [LVL]. {The assessment took eleven days. Nine of them were spent arguing about the number.|The assessor asked to be reassigned on completion and was.} Behaviourally: {it does not roam, it accretes|it collects the remains of what it kills and arranges them|it responds to noise, to light, and to being discussed nearby|it appears to be waiting for something specific}. Structurally: {conventional weapons have been tried and logged as ineffective|it has survived fire, water and a controlled collapse|two of its wounds from last season have closed}. The contract is a kill order and nothing else. {Do not attempt capture.|Do not attempt communication, whatever it appears to offer.|Do not bring anything you would mind losing, including people.} {The fee reflects the assessment rather than the effort.|We are paying for a result nobody has produced yet.}",
+      "This contract has been open since {the spring|last winter|before the current clerk was hired} and we have stopped pretending it is routine. The target is [ENEMY], level [LVL], holding ground at ([X], [Y]). {Four|Five|Six|Seven} parties have accepted it before you. {None of them came back.|Two came back, neither whole, neither talkative.|One came back alone and has not spoken since.} From what those returns told us: {it fights in the open by choice|it defends a radius around itself|it is stronger after dark, or believes it is, which amounts to the same thing|it will let you approach, which is not mercy}. {Bring everything.|Bring your best, and bring more of it than you think reasonable.|Bring a party. Bring everyone.} {We pay on proof, and proof is its absence from that coordinate.|Payment is immediate, in full, and frankly a relief to be rid of.} {If you decide against it, take the notice down and let somebody braver read the board.|If you read this and walk away, nobody here will think less of you.}",
+      "A formal threat assessment was completed on [ENEMY] at ([X], [Y]) and the conclusion was that no force we can field is adequate. Assessed level: [LVL]. {The assessment took eleven days. Nine of them were spent arguing about the number.|The assessor asked to be reassigned on completion and was.} Behaviourally: {it stays put and accretes|it collects the remains of what it kills and arranges them|it responds to noise, to light, and to being discussed nearby|it appears to be waiting for something specific}. Structurally: {conventional weapons have been tried and logged as ineffective|it has survived fire, water and a controlled collapse|two of its wounds from last season have closed}. The contract is a kill order and nothing else. {Do not attempt capture.|Do not attempt communication, whatever it appears to offer.|Do not bring anything you would mind losing, including people.} {The fee reflects the assessment rather than the effort.|We are paying for a result nobody has produced yet.}",
       "Read the whole notice before you decide, because the short version has already killed people. [ENEMY], level [LVL], at ([X], [Y]). {It has been there long enough that the maps have been redrawn around it.|The road past that coordinate is now marked impassable, which is a polite way of putting it.|Two settlements have quietly rerouted their entire year around not going near it.} {Nobody knows where it came from and everybody has a theory.|The theories are worthless. The body count is not.} Practical detail, such as we have: {approach from the open ground, not the treeline|do not split up, it counts|it is slow to start and impossible to stop|whatever it does first is not what it does second}. {Kill it and the coordinate goes back to being a field.|End it and half this district can go home.} {The money has been set aside for a year and grows no smaller for waiting.|The purse is sealed and witnessed. It is yours the hour it dies.}"
     ],
     "pet": [

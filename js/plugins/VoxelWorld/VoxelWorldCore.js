@@ -1132,10 +1132,9 @@
     // cut off against the sky. It is twenty times the highest mountain the world
     // can generate (MOUNTAIN_MAX_H).
     //
-    // WHAT IT LOOKS LIKE. Not one shaft: a HEAP. Every deck of it carries a
-    // whole cluster of art deco skyscrapers, and the next deck is laid over
-    // them, smaller and turned, with the tallest of the towers underneath
-    // pushing up past its edge. See VoxelWorldDecor's omegaTowerPlan.
+    // WHAT IT LOOKS LIKE. The spear of the intro movie: one tapering shaft
+    // gridded in gold, ringed, with the celestial throne floating over its
+    // tip. See VoxelWorldDecor's omegaTowerPlan.
     // =========================================================================
     // Gravity
     // =========================================================================
@@ -1573,8 +1572,6 @@
     // Alien biomes with atmosphere: sky colors that reflect the atmospheric
     // composition and surface chemistry of each world.
     const ALIEN_BIOME_SKY_PALETTES = {
-        AlienEarthLike:       { day: [0.40, 0.72, 0.90], sunset: [0.85, 0.45, 0.25], night: [0.02, 0.03, 0.09] },
-        AlienSuperEarth:      { day: [0.55, 0.45, 0.82], sunset: [0.80, 0.35, 0.60], night: [0.04, 0.02, 0.08] },
         AlienAcidOcean:       { day: [0.62, 0.82, 0.22], sunset: [0.85, 0.70, 0.15], night: [0.05, 0.08, 0.02] },
         AlienLavaOcean:       { day: [0.85, 0.30, 0.12], sunset: [0.95, 0.20, 0.08], night: [0.12, 0.03, 0.02] },
         AlienMagmaPlanet:     { day: [0.88, 0.28, 0.12], sunset: [0.98, 0.18, 0.06], night: [0.15, 0.03, 0.02] },

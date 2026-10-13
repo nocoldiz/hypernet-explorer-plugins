@@ -868,6 +868,32 @@
   }
 
   /**
+   * Whether a spell cast by this battler is chanted in FULL: the Grimoire of
+   * Solomon sitting in the form bay, or the book the limit break opens. Either
+   * way the whole incantation goes into the battle log, mode fitted or not.
+   * @param {Game_Battler} subject - Whoever is about to cast
+   * @returns {boolean}
+   */
+  function chantsInFull(subject) {
+    if (!subject || !subject.weapons || !subject.weapons().some(isVectorGun)) return false;
+    if (solomonFitted()) return true;
+    const LB = window.LimitBreak;
+    return !!(LB && LB.isGrimoireOpen && LB.isGrimoireOpen(subject));
+  }
+
+  /**
+   * Whether the Solomon incantation lets a broken line of the chant slip out:
+   * the mode fitted and the gun in hand, with no open book to read it whole.
+   * @param {Game_Battler} subject - Whoever is about to cast
+   * @returns {boolean}
+   */
+  function murmuring(subject) {
+    if (!hasMode('solomonIncantation')) return false;
+    if (!subject || !subject.weapons || !subject.weapons().some(isVectorGun)) return false;
+    return !chantsInFull(subject);
+  }
+
+  /**
    * Whether a skill is a spell at all. The line is not drawn here:
    * window.SkillDetails.isMagical (CategorizedBattleSkills.js) draws it once
    * for the whole game, and the rest is only for a load order where that
@@ -881,6 +907,18 @@
     const nature = (MN && typeof MN.natureOf === 'function') ? MN.natureOf(skill) : null;
     if (nature) return nature === 'magical';
     return skill.stypeId === MAGIC_STYPE_ID;
+  }
+
+  /**
+   * Whether a spell is cast with the frame held still. Only the gun's own
+   * shape fires a spell down the barrel: folded into any form, the weapon
+   * plays no attack motion for a spell, and the spell's own animation is all
+   * that is seen. WeaponSystem and the Gunmancer's chamber both ask this.
+   */
+  function castsStill(subject, skill) {
+    if (!subject || typeof subject.weapons !== 'function') return false;
+    if (!subject.weapons().some(isVectorGun)) return false;
+    return inBlade() && isSpell(skill);
   }
 
   /**
@@ -2901,7 +2939,7 @@
     modes, hasMode, toggleMode, fitMode,
     emActor, wielder, firing,
     scaleOverride, damageTypeOverride, damageRate, onShotLanded,
-    incanting, incantation, isSpell, SOLOMON_INCANT_BONUS,
+    incanting, chantsInFull, murmuring, incantation, isSpell, castsStill, SOLOMON_INCANT_BONUS,
     // The Blade of Thelema and the element, both read by the screen and by the
     // battle command window.
     BLADE_SOUNDS, BLADE_ANIMATION, bladeReady, inBlade, switchForm, resetForm,

@@ -676,41 +676,69 @@
     };
 
     Scene_Map.prototype.animateThrow = function(itemData, trajectory, finalPos) {
-        if (!this._spriteset) return;
+        // The item has already left the bag, so it must land whatever happens
+        // to the flight: a throw still in the air when the scene goes (the
+        // menu opened, a transfer, an encounter) lands from terminate instead.
+        let landed = false;
+        const land = (withSprite) => {
+            if (landed) return;
+            landed = true;
+            if (this._throwsInFlight) {
+                const i = this._throwsInFlight.indexOf(land);
+                if (i >= 0) this._throwsInFlight.splice(i, 1);
+            }
+            this.landThrow(itemData, finalPos, withSprite);
+        };
+        if (!this._spriteset || !this._spriteset._tilemap) { land(false); return; }
 
         // Create throw animation sprite
         const throwSprite = new Sprite_ThrowAnimation(itemData, trajectory, finalPos);
         this._spriteset._tilemap.addChild(throwSprite);
+        if (!this._throwsInFlight) this._throwsInFlight = [];
+        this._throwsInFlight.push(land);
 
         // Set callback for when animation completes
-        throwSprite.setCompletionCallback(() => {
-            // Whoever is standing on the landing tile wears the throw: an
-            // object hitting a person is assault, a culture vial breaking on
-            // one is an infection (window.ThrowItem owns both answers).
-            const struck = ThrowService.hitEventAt(finalPos.x, finalPos.y, itemData);
-            if (struck) ThrowService.announce(struck);
+        throwSprite.setCompletionCallback(() => land(true));
+    };
 
-            // A vial is gone once it breaks; anything else falls at their feet.
-            if (struck && struck.kind === 'infect') return;
+    // Where a thrown object comes to rest. `withSprite` is false when the map
+    // is being left: the landing is still written, nothing is drawn.
+    Scene_Map.prototype.landThrow = function(itemData, finalPos, withSprite) {
+        // Whoever is standing on the landing tile wears the throw: an
+        // object hitting a person is assault, a culture vial breaking on
+        // one is an infection (window.ThrowItem owns both answers).
+        const struck = ThrowService.hitEventAt(finalPos.x, finalPos.y, itemData);
+        if (struck) ThrowService.announce(struck);
 
-            // Check if final position should destroy item
-            if ($gameMap.isDestroyTile(finalPos.x, finalPos.y)) {
-                if (window.ParchmentToast) {
-                  window.ParchmentToast.show(T('Battle.throw.destroyed'), {
-                    severity: 'warning',
-                    plainLog: true
-                  });
-                }
-            } else {
-                // Place item on map
-                ThrownItemManager.addItem($gameMap.mapId(), finalPos.x, finalPos.y, itemData);
+        // A vial is gone once it breaks; anything else falls at their feet.
+        if (struck && struck.kind === 'infect') return;
 
-                // Create thrown item sprite on map
-                if (this._spriteset) {
-                    this._spriteset.createThrownItemSprite(finalPos.x, finalPos.y, itemData);
-                }
+        // Check if final position should destroy item
+        if ($gameMap.isDestroyTile(finalPos.x, finalPos.y)) {
+            if (window.ParchmentToast) {
+              window.ParchmentToast.show(T('Battle.throw.destroyed'), {
+                severity: 'warning',
+                plainLog: true
+              });
             }
-        });
+        } else {
+            // Place item on map
+            ThrownItemManager.addItem($gameMap.mapId(), finalPos.x, finalPos.y, itemData);
+
+            // Create thrown item sprite on map
+            if (withSprite && this._spriteset) {
+                this._spriteset.createThrownItemSprite(finalPos.x, finalPos.y, itemData);
+            }
+        }
+    };
+
+    const _Scene_Map_terminate_throw = Scene_Map.prototype.terminate;
+    Scene_Map.prototype.terminate = function() {
+        if (this._throwsInFlight && this._throwsInFlight.length) {
+            this._throwsInFlight.slice().forEach(land => land(false));
+        }
+        this._throwsInFlight = null;
+        _Scene_Map_terminate_throw.call(this);
     };
 
     Scene_Map.prototype.cancelThrow = function() {

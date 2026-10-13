@@ -48,7 +48,10 @@
         prototurret:        { variant: 'prototurret',        scale: 2.5, metal: 0x7a6f55, accent: 0xff6622, texturePool: 'metal', hue: [0.10, 0.04], sat: [0.18, 0.06], lit: [0.45, 0.1] },
         quantumintellect:   { variant: 'quantumintellect',   scale: 2.7, metal: 0x55606a, accent: 0x44ffdd, texturePool: 'metal', hue: [0.5, 0.05], sat: [0.12, 0.06], lit: [0.4, 0.1], front: true },
         frostbacktortoise:  { variant: 'frostbacktortoise',  scale: 2.6, metal: 0xa8c8d8, accent: 0x88eeff, texturePool: 'water', hue: [0.55, 0.05], sat: [0.30, 0.10], lit: [0.65, 0.08] },
-        brasssentinelmk4:   { variant: 'brasssentinelmk4',   scale: 2.6, metal: 0xc8962a, accent: 0xffcc33, texturePool: 'metal', hue: [0.11, 0.04], sat: [0.45, 0.10], lit: [0.5, 0.1], front: true }
+        brasssentinelmk4:   { variant: 'brasssentinelmk4',   scale: 2.6, metal: 0xc8962a, accent: 0xffcc33, texturePool: 'metal', hue: [0.11, 0.04], sat: [0.45, 0.10], lit: [0.5, 0.1], front: true },
+        // Toy Turret (level 1-5, bespoke): a chunky plastic foam-dart turret on a
+        // rubber-footed tripod, a clear dart hopper and its battery hanging out.
+        lv_toyturret:       { variant: 'lv_toyturret',       scale: 1.9, metal: 0xff7a1a, accent: 0x2a6aff, texturePool: 'pale', hue: [0.07, 0.03], sat: [0.70, 0.10], lit: [0.52, 0.06] }
     };
 
     class MechanicalBattler3D extends Base {
@@ -71,6 +74,7 @@
                 case 'quantumintellect': this._buildQuantumIntellect(); break;
                 case 'frostbacktortoise': this._buildFrostbackTortoise(); break;
                 case 'brasssentinelmk4': this._buildBrassSentinel(); break;
+                case 'lv_toyturret': this._buildToyTurret(); break;
                 default: this._buildTurret(); break;
             }
 
@@ -385,6 +389,62 @@
             this._wireTurret(core, barrel, sensor, rot, ammo);
         }
 
+        // ── Toy Turret: a plastic foam-dart turret that hits far too hard ──
+        // ROTATION_MECH is the tripod and turntable, CORE the rounded orange
+        // body, GUN_BARREL a stubby blue barrel with a dart loaded, AMMO_CHAMBER
+        // the clear hopper of darts on top, SENSOR_ARRAY two printed sticker
+        // eyes with angry brows, JAWS the battery door hanging open.
+        _plastic(color, emissive, opacity) {
+            const m = new THREE.MeshStandardMaterial({
+                color, roughness: 0.35, metalness: 0.05, transparent: true, opacity: opacity === undefined ? 1 : opacity,
+                emissive: new THREE.Color(emissive || 0x000000), emissiveIntensity: emissive ? 0.6 : 0
+            });
+            this._materials.push(m);
+            return m;
+        }
+        _buildToyTurret() {
+            const p = this.profile;
+            const orange = this._plastic(p.metal); orange.map = this.skinTex();
+            const blue = this._plastic(p.accent);
+            const grey = this._plastic(0x3a3a40);
+            const V = (x, y, z) => new THREE.Vector3(x, y, z);
+            const rot = new THREE.Group(); this.bodyGroup.add(rot);
+            const table = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.22, 0.08, 10), grey); table.position.y = 0.36; rot.add(table);
+            for (let i = 0; i < 3; i++) {
+                const a = (i / 3) * Math.PI * 2 + Math.PI / 2, foot = V(Math.cos(a) * 0.42, 0.05, Math.sin(a) * 0.42);
+                this.addStrut(rot, blue, V(0, 0.34, 0), foot, 0.05, 0.04, 6);
+                const pad = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 4), this._plastic(0x1a1a1a)); pad.scale.y = 0.55; pad.position.copy(foot); rot.add(pad);
+            }
+            const core = new THREE.Group(); core.position.y = 0.66; this.bodyGroup.add(core);
+            const shell = new THREE.Mesh(new THREE.SphereGeometry(0.3, 10, 7), orange); shell.scale.set(1.15, 0.85, 1.0); core.add(shell);
+            const stripe = new THREE.Mesh(new THREE.TorusGeometry(0.33, 0.03, 4, 14), blue); stripe.rotation.x = Math.PI / 2; core.add(stripe);
+            for (const [x, z] of [[0.3, 0.1], [-0.3, 0.1], [0.25, -0.18], [-0.25, -0.18]]) { const screw = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.02, 6), grey); screw.position.set(x, -0.1, z); screw.lookAt(x * 3, -0.1, z * 3); screw.rotateX(Math.PI / 2); core.add(screw); }
+            const barrel = new THREE.Group(); barrel.position.set(0, 0.62, 0.25); this.bodyGroup.add(barrel);
+            const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.11, 0.34, 10), blue); tube.rotation.x = Math.PI / 2; tube.position.z = 0.12; barrel.add(tube);
+            const muzzle = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.035, 4, 10), this._plastic(0xff4a1a)); muzzle.position.z = 0.29; barrel.add(muzzle);
+            const dart = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.14, 6), this._plastic(0x3ad04a)); dart.rotation.x = Math.PI / 2; dart.position.z = 0.33; barrel.add(dart);
+            const cup = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 4, 0, Math.PI * 2, 0, Math.PI / 2), this._plastic(0xe02a2a)); cup.rotation.x = Math.PI / 2; cup.position.z = 0.4; barrel.add(cup);
+            const ammo = new THREE.Group(); ammo.position.set(0, 0.88, -0.04); this.bodyGroup.add(ammo);
+            const hopper = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 5, 0, Math.PI * 2, 0, Math.PI / 2), this._plastic(0xd8f0ff, null, 0.35)); ammo.add(hopper);
+            const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.05, 10), grey); ring.position.y = -0.02; ammo.add(ring);
+            [0xff4a4a, 0x3ad04a, 0xffd23a, 0x3a8aff, 0xff7a1a].forEach((c, k) => { const d = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.12, 5), this._plastic(c)); d.position.set((k - 2) * 0.05, 0.06, (k % 2) * 0.05 - 0.02); d.rotation.z = (k - 2) * 0.3; ammo.add(d); });
+            const sensor = new THREE.Group(); sensor.position.set(0, 0.76, 0.24); this.bodyGroup.add(sensor);
+            for (const s of [-1, 1]) {
+                const white = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.012, 10), this._plastic(0xffffff)); white.rotation.x = Math.PI / 2 - 0.35; white.position.set(s * 0.11, 0, 0); sensor.add(white);
+                const pupil = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.014, 8), this._plastic(0x111111)); pupil.rotation.x = Math.PI / 2 - 0.35; pupil.position.set(s * 0.1, -0.01, 0.006); sensor.add(pupil);
+                const brow = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.025, 0.02), this._plastic(0x111111)); brow.position.set(s * 0.11, 0.07, -0.02); brow.rotation.z = -s * 0.45; sensor.add(brow);
+            }
+            const jaws = new THREE.Group(); jaws.position.set(0, 0.6, -0.3); this.bodyGroup.add(jaws);
+            const door = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.14, 0.02), orange); door.position.set(0, -0.09, -0.03); door.rotation.x = 0.7; jaws.add(door);
+            const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.2, 5), grey); hinge.rotation.z = Math.PI / 2; jaws.add(hinge);
+            const battery = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.16, 7), this._plastic(0x1a1a1a)); battery.rotation.set(1.2, 0, 0.3); battery.position.set(0.05, -0.04, -0.06); jaws.add(battery);
+            const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.036, 0.05, 7), this._plastic(0xd8b040)); cap.rotation.set(1.2, 0, 0.3); cap.position.set(0.075, -0.1, -0.14); jaws.add(cap);
+            this._wireTurret(core, barrel, sensor, rot, ammo, [jaws]);
+            this._partMeshMap.JAWS = jaws;
+            this._cascadeRules.push({ gone: ['JAWS'], hide: [jaws] });
+            this._toySensor = sensor;
+        }
+
         // ── Frostback Tortoise: ice-clad turret-tortoise, frozen barrel, rotating shell ──
         _buildFrostbackTortoise() {
             const p = this.profile;
@@ -533,7 +593,7 @@
             if (this.currentAnimation === 'spawn') growth = Math.min(1.0, t / 0.6);
             this.applyModelScale(growth);
 
-            const isTurret = (this.variant === 'turret' || this.variant === 'prototurret' || this.variant === 'frostbacktortoise');
+            const isTurret = (this.variant === 'turret' || this.variant === 'prototurret' || this.variant === 'frostbacktortoise' || this.variant === 'lv_toyturret');
             const isBiped = (this.variant === 'hydrokineticengine' || this.variant === 'neuralinterface' || this.variant === 'quantumintellect' || this.variant === 'brasssentinelmk4');
 
             if (isBiped) {
@@ -562,6 +622,12 @@
                 // Adaptive plates / frost shell rotate.
                 if (this.core && this.core._plates) this.core._plates.rotation.y = t * 0.8;
                 if (this.variant === 'frostbacktortoise' && this.core) this.core.rotation.y = t * 0.4;
+                if (this.variant === 'lv_toyturret') {
+                    // Cheap motor: the whole head judders and the eyes follow the barrel.
+                    if (this.core) this.core.rotation.y = yaw * 0.5;
+                    if (this._toySensor) this._toySensor.rotation.y = yaw * 0.5;
+                    if (this.ammoChamber) this.ammoChamber.position.y = 0.88 + (this.currentAnimation === 'attack' ? Math.abs(Math.sin(t * 18)) * 0.02 : 0);
+                }
                 if (this.sensorArray && this.sensorArray.material) {
                     this.sensorArray.material.emissiveIntensity = 0.5 + Math.sin(t * 5) * 0.4;
                 }
@@ -610,6 +676,7 @@
     reg('quantumintellect',   { aliases: ['quantumintellect'],   scale: S.quantumintellect.scale,   weapon: 0, create: make });
     reg('frostbacktortoise',  { aliases: ['frostbacktortoise'],  scale: S.frostbacktortoise.scale,  weapon: 0, create: make });
     reg('brasssentinelmk4',   { aliases: ['brasssentinelmk4'],   scale: S.brasssentinelmk4.scale,   weapon: 0, create: make });
+    reg('lv_toyturret',       { aliases: ['lv_toyturret'],       scale: S.lv_toyturret.scale,       weapon: 0, create: make });
 
     const NAMED = {
         hydrokineticengine: ["Hydrokinetic Engine"],
@@ -617,7 +684,8 @@
         prototurret:        ["Proto Turret"],
         quantumintellect:   ["Quantum Intellect"],
         frostbacktortoise:  ["Frostback Tortoise"],
-        brasssentinelmk4:   ["Brass Sentinel Mk. IV"]
+        brasssentinelmk4:   ["Brass Sentinel Mk. IV"],
+        lv_toyturret:       ["Toy Turret"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

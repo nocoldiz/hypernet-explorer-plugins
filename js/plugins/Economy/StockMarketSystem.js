@@ -485,6 +485,11 @@
     if (res && !res.startsWith('StockMarket.')) return res;
     return null;
   };
+  // The trading terminal's own copy (StockMarket.terminal.*): always a string.
+  const smt = (key, vars) => _smi18n('terminal.' + key, vars) || '';
+  // An order's side and type as the terminal prints them.
+  const smSide = (side) => smt('side.' + (side === 'sell' ? 'sell' : 'buy'));
+  const smType = (type) => smt('type.' + (['limit', 'stop_loss', 'take_profit'].includes(type) ? type : 'market'));
 
   //=============================================================================
   // Listing Builders
@@ -1988,7 +1993,7 @@
 
     // Place Advanced Orders (Limit, Stop-Loss, Take-Profit)
     placeOrder({ stockId, side, type, shares, targetPrice }) {
-      if (!this._stocks[stockId] || shares <= 0 || targetPrice <= 0) return { success: false, reason: "Invalid order parameters" };
+      if (!this._stocks[stockId] || shares <= 0 || targetPrice <= 0) return { success: false, reason: smt('errors.badOrder') };
 
       const orderId = "ORD_" + Date.now().toString(36) + "_" + Math.random().toString(36).substr(2, 4);
 
@@ -1999,7 +2004,7 @@
         // Escrow funds for limit buy
         const totalEscrow = Math.round(shares * targetPrice);
         if ($gameParty.gold() < totalEscrow) {
-          return { success: false, reason: "Insufficient gold for limit order escrow" };
+          return { success: false, reason: smt('errors.noEscrow') };
         }
         $gameParty.loseGold(totalEscrow);
 
@@ -2021,7 +2026,7 @@
         // Escrow shares for limit / stop / take-profit sell
         const availableShares = this._shares[stockId] || 0;
         if (availableShares < shares) {
-          return { success: false, reason: "Insufficient shares available" };
+          return { success: false, reason: _smi18n('errors.noShares') || "" };
         }
         this._shares[stockId] -= shares;
 
@@ -2635,7 +2640,7 @@
     launch: function(params) {
       if (!window.HypernetWindowManager) return;
       
-      const appTitle = "Stock Market";
+      const appTitle = smt('appName');
       
       if (!this.win || !document.getElementById('app-stock-market')) {
         this.win = window.HypernetWindowManager.createWindow({
@@ -2896,7 +2901,7 @@
                 </div>
               </div>
             </div>
-            ${sharesOwned > 0 ? `<div style="font-size:11px; color:var(--xp-text-muted); margin-top:3px; display:flex; justify-content:space-between"><span>Holding: <b>${sharesOwned}</b> shares</span><span>${formatMoney(sharesOwned * price)}</span></div>` : ''}
+            ${sharesOwned > 0 ? `<div style="font-size:11px; color:var(--xp-text-muted); margin-top:3px; display:flex; justify-content:space-between"><span>${smt('holding', { n: `<b>${sharesOwned}</b>` })}</span><span>${formatMoney(sharesOwned * price)}</span></div>` : ''}
           </div>
         `;
       }
@@ -2917,16 +2922,16 @@
       let orderBookHTML = `
         <div class="sm-orderbook-box">
           <div style="font-size:11px; font-weight:bold; color:var(--xp-ink-5); margin-bottom:4px; display:flex; justify-content:space-between">
-            <span>LIVE ORDER BOOK</span>
-            <span style="color:var(--xp-ink-faint)">SPREAD: ${formatMoney(spread * 2)}</span>
+            <span>${smt('orderBook')}</span>
+            <span style="color:var(--xp-ink-faint)">${smt('spread', { value: formatMoney(spread * 2) })}</span>
           </div>
           <div style="display:flex; flex-direction:column; gap:2px; font-size:11px">
-            ${asks.reverse().map(a => `<div style="display:flex; justify-content:space-between; color:var(--xp-red-2); background:rgba(231,76,60,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(a.price)}</span><span>${a.size} sh</span></div>`).join('')}
+            ${asks.reverse().map(a => `<div style="display:flex; justify-content:space-between; color:var(--xp-red-2); background:rgba(231,76,60,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(a.price)}</span><span>${smt('sharesShort', { n: a.size })}</span></div>`).join('')}
             <div style="display:flex; justify-content:space-between; font-weight:bold; padding:2px 4px; background:#eef4fb; border-top:1px dashed var(--xp-border); border-bottom:1px dashed var(--xp-border)">
-              <span style="color:var(--xp-blue-dark)">MID: ${formatMoney(stockPrice)}</span>
-              <span>MARKET</span>
+              <span style="color:var(--xp-blue-dark)">${smt('mid', { value: formatMoney(stockPrice) })}</span>
+              <span>${smt('market')}</span>
             </div>
-            ${bids.map(b => `<div style="display:flex; justify-content:space-between; color:${UP_INK}; background:rgba(39,174,96,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(b.price)}</span><span>${b.size} sh</span></div>`).join('')}
+            ${bids.map(b => `<div style="display:flex; justify-content:space-between; color:${UP_INK}; background:rgba(39,174,96,0.08); padding:1px 4px; border-radius:2px"><span>${formatMoney(b.price)}</span><span>${smt('sharesShort', { n: b.size })}</span></div>`).join('')}
           </div>
         </div>
       `;
@@ -2943,12 +2948,12 @@
       if (isBuy) {
         if (totalEstimated > playerGold) {
           isValid = false;
-          validationMsg = "Insufficient liquid gold";
+          validationMsg = _smi18n('errors.noGold') || '';
         }
       } else {
         if (this._inputShares > sharesHeld) {
           isValid = false;
-          validationMsg = `Exceeds owned shares (${sharesHeld})`;
+          validationMsg = smt('errors.exceedsHeld', { n: sharesHeld });
         }
       }
 
@@ -2976,8 +2981,8 @@
                 ${qty > 0 ? `${pnl >= 0 ? '+' : ''}${formatMoney(pnl)} (${pnlPct.toFixed(1)}%)` : '-'}
               </td>
               <td style="padding:6px 8px; text-align:center">
-                <button class="sm-btn-small focusable" data-action="quick-trade" data-stock="${stk.id}">Select</button>
-                ${qty > 0 ? `<button class="sm-btn-small focusable" style="color:var(--xp-red-2)" data-action="quick-sell-all" data-stock="${stk.id}">Sell All</button>` : ''}
+                <button class="sm-btn-small focusable" data-action="quick-trade" data-stock="${stk.id}">${smt('select')}</button>
+                ${qty > 0 ? `<button class="sm-btn-small focusable" style="color:var(--xp-red-2)" data-action="quick-sell-all" data-stock="${stk.id}">${_smi18n('commands.sellAll') || ''}</button>` : ''}
               </td>
             </tr>
           `;
@@ -2987,14 +2992,14 @@
           <table style="width:100%; border-collapse:collapse; font-size:12px">
             <thead>
               <tr style="background:var(--xp-row-tint); border-bottom:2px solid var(--xp-border); color:var(--xp-blue-dark); text-align:left">
-                <th style="padding:6px 8px">Symbol</th>
-                <th style="padding:6px 8px">Asset Name</th>
-                <th style="padding:6px 8px; text-align:right">Shares</th>
-                <th style="padding:6px 8px; text-align:right">Avg Cost</th>
-                <th style="padding:6px 8px; text-align:right">Market Price</th>
-                <th style="padding:6px 8px; text-align:right">Total Value</th>
-                <th style="padding:6px 8px; text-align:right">Unrealized P&L</th>
-                <th style="padding:6px 8px; text-align:center">Actions</th>
+                <th style="padding:6px 8px">${smt('col.symbol')}</th>
+                <th style="padding:6px 8px">${smt('col.assetName')}</th>
+                <th style="padding:6px 8px; text-align:right">${smt('col.shares')}</th>
+                <th style="padding:6px 8px; text-align:right">${smt('col.avgCost')}</th>
+                <th style="padding:6px 8px; text-align:right">${smt('col.marketPrice')}</th>
+                <th style="padding:6px 8px; text-align:right">${smt('col.totalValue')}</th>
+                <th style="padding:6px 8px; text-align:right">${smt('col.unrealized')}</th>
+                <th style="padding:6px 8px; text-align:center">${smt('col.actions')}</th>
               </tr>
             </thead>
             <tbody>${holdingsRows}</tbody>
@@ -3003,7 +3008,7 @@
       } else if (this._bottomTab === 'orders') {
         const openOrders = sm.getOpenOrders();
         if (openOrders.length === 0) {
-          bottomContentHTML = `<div style="padding:24px; text-align:center; color:var(--xp-ink-faint); font-size:13px">No active limit or stop orders. Place limit orders above to trade automatically at target prices.</div>`;
+          bottomContentHTML = `<div style="padding:24px; text-align:center; color:var(--xp-ink-faint); font-size:13px">${smt('noOrders')}</div>`;
         } else {
           const orderRows = openOrders.map(ord => {
             const stock = sm.getStock(ord.stockId) || { symbol: ord.stockId };
@@ -3015,14 +3020,14 @@
               <tr style="border-bottom:1px solid var(--xp-gray); background:var(--xp-white)">
                 <td style="padding:6px 8px; font-weight:bold; color:var(--xp-blue-dark)">${ord.id}</td>
                 <td style="padding:6px 8px; font-weight:bold">${stock.symbol}</td>
-                <td style="padding:6px 8px; font-weight:bold; color:${sideColor}; text-transform:uppercase">${ord.side} ${ord.type.replace('_', ' ')}</td>
+                <td style="padding:6px 8px; font-weight:bold; color:${sideColor}; text-transform:uppercase">${smSide(ord.side)} ${smType(ord.type)}</td>
                 <td style="padding:6px 8px; text-align:right">${ord.shares}</td>
                 <td style="padding:6px 8px; text-align:right; font-weight:bold">${formatMoney(ord.targetPrice)}</td>
                 <td style="padding:6px 8px; text-align:right">${formatMoney(curP)}</td>
-                <td style="padding:6px 8px; text-align:right; color:var(--xp-text-muted)">${dist}% away</td>
-                <td style="padding:6px 8px; text-align:right">${ord.escrowGold > 0 ? `Escrow: ${formatMoney(ord.escrowGold)}` : `${ord.escrowShares} sh escrowed`}</td>
+                <td style="padding:6px 8px; text-align:right; color:var(--xp-text-muted)">${smt('away', { pct: dist })}</td>
+                <td style="padding:6px 8px; text-align:right">${ord.escrowGold > 0 ? smt('escrowMoney', { value: formatMoney(ord.escrowGold) }) : smt('escrowShares', { n: ord.escrowShares })}</td>
                 <td style="padding:6px 8px; text-align:center">
-                  <button class="sm-btn-small focusable" style="color:var(--xp-red-2)" data-action="cancel-order" data-order-id="${ord.id}">Cancel</button>
+                  <button class="sm-btn-small focusable" style="color:var(--xp-red-2)" data-action="cancel-order" data-order-id="${ord.id}">${_smi18n('commands.cancel') || ''}</button>
                 </td>
               </tr>
             `;
@@ -3032,15 +3037,15 @@
             <table style="width:100%; border-collapse:collapse; font-size:12px">
               <thead>
                 <tr style="background:var(--xp-row-tint); border-bottom:2px solid var(--xp-border); color:var(--xp-blue-dark); text-align:left">
-                  <th style="padding:6px 8px">Order ID</th>
-                  <th style="padding:6px 8px">Symbol</th>
-                  <th style="padding:6px 8px">Side & Type</th>
-                  <th style="padding:6px 8px; text-align:right">Quantity</th>
-                  <th style="padding:6px 8px; text-align:right">Target Price</th>
-                  <th style="padding:6px 8px; text-align:right">Market Price</th>
-                  <th style="padding:6px 8px; text-align:right">Distance</th>
-                  <th style="padding:6px 8px; text-align:right">Held in Escrow</th>
-                  <th style="padding:6px 8px; text-align:center">Action</th>
+                  <th style="padding:6px 8px">${smt('col.orderId')}</th>
+                  <th style="padding:6px 8px">${smt('col.symbol')}</th>
+                  <th style="padding:6px 8px">${smt('col.sideType')}</th>
+                  <th style="padding:6px 8px; text-align:right">${smt('col.quantity')}</th>
+                  <th style="padding:6px 8px; text-align:right">${smt('col.targetPrice')}</th>
+                  <th style="padding:6px 8px; text-align:right">${smt('col.marketPrice')}</th>
+                  <th style="padding:6px 8px; text-align:right">${smt('col.distance')}</th>
+                  <th style="padding:6px 8px; text-align:right">${smt('col.escrow')}</th>
+                  <th style="padding:6px 8px; text-align:center">${smt('col.action')}</th>
                 </tr>
               </thead>
               <tbody>${orderRows}</tbody>
@@ -3050,7 +3055,7 @@
       } else if (this._bottomTab === 'history') {
         const historyList = sm.getOrderHistory();
         if (historyList.length === 0) {
-          bottomContentHTML = `<div style="padding:24px; text-align:center; color:var(--xp-ink-faint); font-size:13px">No trading history recorded for this session.</div>`;
+          bottomContentHTML = `<div style="padding:24px; text-align:center; color:var(--xp-ink-faint); font-size:13px">${smt('noHistory')}</div>`;
         } else {
           const histRows = historyList.slice(0, 30).map(t => {
             const stock = sm.getStock(t.stockId) || { symbol: t.stockId };
@@ -3062,14 +3067,14 @@
               <tr style="border-bottom:1px solid var(--xp-gray); background:var(--xp-white)">
                 <td style="padding:5px 8px; color:var(--xp-ink-soft)">${timeStr}</td>
                 <td style="padding:5px 8px; font-weight:bold">${stock.symbol}</td>
-                <td style="padding:5px 8px; font-weight:bold; color:${sideColor}; text-transform:uppercase">${t.side} (${t.type || 'market'})</td>
-                <td style="padding:5px 8px; text-align:right">${t.shares} sh</td>
+                <td style="padding:5px 8px; font-weight:bold; color:${sideColor}; text-transform:uppercase">${smSide(t.side)} (${smType(t.type)})</td>
+                <td style="padding:5px 8px; text-align:right">${smt('sharesShort', { n: t.shares })}</td>
                 <td style="padding:5px 8px; text-align:right">${formatMoney(t.price || t.fillPrice || 0)}</td>
                 <td style="padding:5px 8px; text-align:right; font-weight:bold">${formatMoney(t.total || ((t.shares || 0) * (t.fillPrice || 0)))}</td>
                 <td style="padding:5px 8px; text-align:right; font-weight:bold; color:${pnlColor}">
                   ${t.side === 'sell' && t.pnl !== undefined ? `${t.pnl >= 0 ? '+' : ''}${formatMoney(t.pnl)}` : '-'}
                 </td>
-                <td style="padding:5px 8px; text-align:center"><span style="color:${UP_INK}; font-size:11px; font-weight:bold">FILLED</span></td>
+                <td style="padding:5px 8px; text-align:center"><span style="color:${UP_INK}; font-size:11px; font-weight:bold">${smt('filled')}</span></td>
               </tr>
             `;
           }).join('');
@@ -3078,14 +3083,14 @@
             <table style="width:100%; border-collapse:collapse; font-size:12px">
               <thead>
                 <tr style="background:var(--xp-row-tint); border-bottom:2px solid var(--xp-border); color:var(--xp-blue-dark); text-align:left">
-                  <th style="padding:6px 8px">Time</th>
-                  <th style="padding:6px 8px">Symbol</th>
-                  <th style="padding:6px 8px">Action</th>
-                  <th style="padding:6px 8px; text-align:right">Quantity</th>
-                  <th style="padding:6px 8px; text-align:right">Execution Price</th>
-                  <th style="padding:6px 8px; text-align:right">Total Volume</th>
-                  <th style="padding:6px 8px; text-align:right">Realized Gain</th>
-                  <th style="padding:6px 8px; text-align:center">Status</th>
+                  <th style="padding:6px 8px">${smt('col.time')}</th>
+                  <th style="padding:6px 8px">${smt('col.symbol')}</th>
+                  <th style="padding:6px 8px">${smt('col.action')}</th>
+                  <th style="padding:6px 8px; text-align:right">${smt('col.quantity')}</th>
+                  <th style="padding:6px 8px; text-align:right">${smt('col.execPrice')}</th>
+                  <th style="padding:6px 8px; text-align:right">${smt('col.totalVolume')}</th>
+                  <th style="padding:6px 8px; text-align:right">${smt('col.realized')}</th>
+                  <th style="padding:6px 8px; text-align:center">${smt('col.status')}</th>
                 </tr>
               </thead>
               <tbody>${histRows}</tbody>
@@ -3249,21 +3254,21 @@
         <!-- Top Header Bar -->
         <div class="sm-header-bar">
           <div style="display:flex; align-items:center; gap:12px">
-            <span style="font-size:18px; font-weight:bold; letter-spacing:1px; color:var(--xp-white)">STOCK MARKET</span>
-            <span style="background:${UP_INK}; color:var(--xp-white); font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px">● LIVE MARKET OPEN</span>
-            <span style="font-size:12px; color:var(--xp-sky-4)">Session Ticks: <span id="sm-ticks">${sm._updateCounter}</span></span>
+            <span style="font-size:18px; font-weight:bold; letter-spacing:1px; color:var(--xp-white)">${smt('title')}</span>
+            <span style="background:${UP_INK}; color:var(--xp-white); font-size:10px; font-weight:bold; padding:2px 8px; border-radius:10px">${smt('live')}</span>
+            <span style="font-size:12px; color:var(--xp-sky-4)">${smt('ticks')} <span id="sm-ticks">${sm._updateCounter}</span></span>
           </div>
           <div style="display:flex; gap:10px">
             <div class="sm-stat-pill">
-              <span style="font-size:10px; color:var(--xp-sky-4)">LIQUID GOLD</span>
+              <span style="font-size:10px; color:var(--xp-sky-4)">${smt('liquid')}</span>
               <span style="font-size:14px; font-weight:bold; color:var(--xp-white)">${goldToEurosForDisplay(playerGold)}</span>
             </div>
             <div class="sm-stat-pill">
-              <span style="font-size:10px; color:var(--xp-sky-4)">PORTFOLIO STOCKS</span>
+              <span style="font-size:10px; color:var(--xp-sky-4)">${smt('portfolio')}</span>
               <span style="font-size:14px; font-weight:bold; color:var(--xp-white)">${formatMoney(sm.getTotalStockValue())}</span>
             </div>
             <div class="sm-stat-pill">
-              <span style="font-size:10px; color:var(--xp-sky-4)">NET WORTH</span>
+              <span style="font-size:10px; color:var(--xp-sky-4)">${smt('netWorth')}</span>
               <span style="font-size:14px; font-weight:bold; color:var(--xp-green-6)">${sm.getNetWorthFormatted()}</span>
             </div>
           </div>
@@ -3275,7 +3280,7 @@
           <!-- Column 1: Watchlist (Left) -->
           <div style="width:260px; background:var(--xp-white); border:1px solid var(--xp-border); border-radius:3px; display:flex; flex-direction:column; padding:8px">
             <div style="font-size:13px; font-weight:bold; color:var(--xp-blue-dark); border-bottom:1px solid var(--xp-border); padding-bottom:4px; margin-bottom:8px; display:flex; justify-content:space-between">
-              <span>MARKET WATCHLIST</span>
+              <span>${smt('watchlist')}</span>
               <span style="font-size:11px; color:var(--xp-ink-soft)">${_smi18n('ui.assetCount', { n: allStocks.length }) || allStocks.length}</span>
             </div>
             <div style="flex:1; overflow-y:auto; padding-right:2px">
@@ -3283,7 +3288,7 @@
             </div>
             <!-- Key Stats Box -->
             <div style="background:var(--xp-row-tint-2); border:1px solid var(--xp-steel-3); padding:6px 8px; border-radius:3px; margin-top:6px; font-size:11px">
-              <div style="font-weight:bold; color:var(--xp-blue-dark); margin-bottom:3px">${currentStock.symbol} ASSET PROFILE</div>
+              <div style="font-weight:bold; color:var(--xp-blue-dark); margin-bottom:3px">${smt('assetProfile', { symbol: currentStock.symbol })}</div>
               <div style="color:var(--xp-text-muted); line-height:1.3; margin-bottom:4px">${currentStock.description}</div>
               <div style="display:flex; justify-content:space-between"><span>${_smi18n('ui.category') || ''}</span><b>${currentStock.category}</b></div>
               <div style="display:flex; justify-content:space-between"><span>${_smi18n('ui.volatility') || ''}</span><b>${(currentStock.volatility * 100).toFixed(0)}%</b></div>
@@ -3309,8 +3314,8 @@
                   </span>
                 </div>
                 <div style="display:flex; gap:4px">
-                  <button class="sm-action-btn focusable ${this._chartMode === 'line' ? 'active' : ''}" data-action="toggle-chart" data-mode="line">Line & Area</button>
-                  <button class="sm-action-btn focusable ${this._chartMode === 'candle' ? 'active' : ''}" data-action="toggle-chart" data-mode="candle">Candlestick</button>
+                  <button class="sm-action-btn focusable ${this._chartMode === 'line' ? 'active' : ''}" data-action="toggle-chart" data-mode="line">${smt('chartLine')}</button>
+                  <button class="sm-action-btn focusable ${this._chartMode === 'candle' ? 'active' : ''}" data-action="toggle-chart" data-mode="candle">${smt('chartCandle')}</button>
                 </div>
               </div>
               <div style="flex:1; position:relative; min-height:0; overflow:hidden">
@@ -3321,10 +3326,10 @@
             <!-- Bottom Tabs Header & Tab Panel -->
             <div style="flex:1; background:var(--xp-white); border:1px solid var(--xp-border); border-radius:3px; display:flex; flex-direction:column; min-height:0">
               <div style="display:flex; background:var(--xp-bg); border-bottom:1px solid var(--xp-border); padding:4px 6px 0 6px">
-                <button class="sm-tab-btn focusable ${this._bottomTab === 'holdings' ? 'active' : ''}" data-tab="holdings">Portafoglio / Holdings</button>
-                <button class="sm-tab-btn focusable ${this._bottomTab === 'orders' ? 'active' : ''}" data-tab="orders">Open Orders (${sm.getOpenOrders().length})</button>
-                <button class="sm-tab-btn focusable ${this._bottomTab === 'history' ? 'active' : ''}" data-tab="history">Trade History</button>
-                <button class="sm-tab-btn focusable ${this._bottomTab === 'news' ? 'active' : ''}" data-tab="news">Market News Feed</button>
+                <button class="sm-tab-btn focusable ${this._bottomTab === 'holdings' ? 'active' : ''}" data-tab="holdings">${smt('tab.holdings')}</button>
+                <button class="sm-tab-btn focusable ${this._bottomTab === 'orders' ? 'active' : ''}" data-tab="orders">${smt('tab.orders', { n: sm.getOpenOrders().length })}</button>
+                <button class="sm-tab-btn focusable ${this._bottomTab === 'history' ? 'active' : ''}" data-tab="history">${smt('tab.history')}</button>
+                <button class="sm-tab-btn focusable ${this._bottomTab === 'news' ? 'active' : ''}" data-tab="news">${smt('tab.news')}</button>
               </div>
               <div style="flex:1; overflow-y:auto; padding:6px">
                 ${bottomContentHTML}
@@ -3336,27 +3341,27 @@
           <!-- Column 3: Order Execution Console (Right) -->
           <div style="width:280px; flex:0 0 280px; box-sizing:border-box; overflow-x:hidden; background:var(--xp-white); border:1px solid var(--xp-border); border-radius:3px; display:flex; flex-direction:column; padding:10px">
             <div style="font-size:14px; font-weight:bold; color:var(--xp-blue-dark); border-bottom:1px solid var(--xp-border); padding-bottom:4px; margin-bottom:8px">
-              ORDER PLACEMENT TERMINAL
+              ${smt('console')}
             </div>
 
             <!-- Buy / Sell Mode Toggle -->
             <div style="display:flex; gap:4px; margin-bottom:8px">
               <button class="focusable" id="sm-side-buy" style="flex:1; padding:7px; font-weight:bold; font-size:13px; cursor:pointer; border:1px solid var(--xp-green); background:${isBuy ? UP_INK : '#f0f0f0'}; color:${isBuy ? '#fff' : UP_INK}; border-radius:2px">
-                BUY / LONG
+                ${smt('buyLong')}
               </button>
               <button class="focusable" id="sm-side-sell" style="flex:1; padding:7px; font-weight:bold; font-size:13px; cursor:pointer; border:1px solid var(--xp-red-2); background:${!isBuy ? '#c0392b' : '#f0f0f0'}; color:${!isBuy ? '#fff' : '#c0392b'}; border-radius:2px">
-                SELL / LIQUIDATE
+                ${smt('sellLiquidate')}
               </button>
             </div>
 
             <!-- Order Type Selector -->
             <div style="margin-bottom:8px">
-              <div style="font-size:11px; font-weight:bold; color:var(--xp-text-muted); margin-bottom:3px">ORDER EXECUTION TYPE</div>
+              <div style="font-size:11px; font-weight:bold; color:var(--xp-text-muted); margin-bottom:3px">${smt('execType')}</div>
               <div style="display:flex; gap:2px; flex-wrap:wrap">
-                <button class="sm-order-type-btn focusable ${this._orderType === 'market' ? 'active' : ''}" data-type="market">Market</button>
-                <button class="sm-order-type-btn focusable ${this._orderType === 'limit' ? 'active' : ''}" data-type="limit">Limit</button>
-                <button class="sm-order-type-btn focusable ${this._orderType === 'stop_loss' ? 'active' : ''}" data-type="stop_loss">Stop Loss</button>
-                <button class="sm-order-type-btn focusable ${this._orderType === 'take_profit' ? 'active' : ''}" data-type="take_profit">Take Profit</button>
+                <button class="sm-order-type-btn focusable ${this._orderType === 'market' ? 'active' : ''}" data-type="market">${smType('market')}</button>
+                <button class="sm-order-type-btn focusable ${this._orderType === 'limit' ? 'active' : ''}" data-type="limit">${smType('limit')}</button>
+                <button class="sm-order-type-btn focusable ${this._orderType === 'stop_loss' ? 'active' : ''}" data-type="stop_loss">${smType('stop_loss')}</button>
+                <button class="sm-order-type-btn focusable ${this._orderType === 'take_profit' ? 'active' : ''}" data-type="take_profit">${smType('take_profit')}</button>
               </div>
             </div>
 
@@ -3364,7 +3369,7 @@
             ${this._orderType !== 'market' ? `
               <div style="background:var(--xp-row-tint-2); border:1px solid var(--xp-steel-3); padding:6px 8px; border-radius:3px; margin-bottom:8px">
                 <div style="font-size:11px; font-weight:bold; color:var(--xp-blue-dark); margin-bottom:3px">
-                  ${this._orderType === 'limit' ? 'LIMIT TARGET PRICE' : this._orderType === 'stop_loss' ? 'STOP TRIGGER PRICE' : 'TAKE PROFIT PRICE'}
+                  ${smt('priceLabel.' + (this._orderType === 'limit' ? 'limit' : this._orderType === 'stop_loss' ? 'stop' : 'takeProfit'))}
                 </div>
                 <input type="number" id="sm-input-target-price" value="${Math.round(this._customTargetPrice / 100)}" step="1" style="width:100%; box-sizing:border-box; padding:3px 6px; font-weight:bold; font-size:13px; text-align:center; border:1px solid var(--xp-border)">
                 <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap; margin-top:4px">
@@ -3374,7 +3379,7 @@
                   <button class="sm-btn-small focusable" style="flex:1; min-width:0" data-action="adjust-price" data-delta="500">+5%</button>
                 </div>
                 <div style="font-size:10px; color:var(--xp-text-muted); margin-top:3px; text-align:center">
-                  Market Reference: <b>${formatMoney(stockPrice)}</b>
+                  ${smt('marketRef')} <b>${formatMoney(stockPrice)}</b>
                 </div>
               </div>
             ` : ''}
@@ -3382,8 +3387,8 @@
             <!-- Quantity Stepper & Presets -->
             <div style="margin-bottom:8px">
               <div style="font-size:11px; font-weight:bold; color:var(--xp-text-muted); margin-bottom:3px; display:flex; justify-content:space-between">
-                <span>ORDER QUANTITY</span>
-                <span>Available: <b>${isBuy ? goldToEurosForDisplay(playerGold) : `${sharesHeld} shares`}</b></span>
+                <span>${smt('orderQty')}</span>
+                <span>${smt('available')} <b>${isBuy ? goldToEurosForDisplay(playerGold) : smt('sharesN', { n: sharesHeld })}</b></span>
               </div>
               <input type="number" id="sm-input-qty" value="${this._inputShares}" min="1" max="999999999" style="width:100%; box-sizing:border-box; padding:4px 6px; font-weight:bold; font-size:14px; text-align:center; border:1px solid var(--xp-border)">
               <div style="display:flex; gap:3px; align-items:center; flex-wrap:wrap; margin-top:4px">
@@ -3403,29 +3408,29 @@
                 <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="100">+100</button>
                 <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="1000">+1000</button>
                 <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="10000">+10000</button>
-                <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="max">MAX</button>
+                <button class="sm-btn-small focusable" style="flex:1; min-width:38px" data-action="preset-qty" data-preset="max">${smt('max')}</button>
               </div>
             </div>
 
             <!-- Order Summary Card -->
             <div style="background:#f9f9f9; border:1px solid var(--xp-silver-3); padding:8px; border-radius:3px; font-size:12px; margin-bottom:8px">
               <div style="display:flex; justify-content:space-between; margin-bottom:3px">
-                <span style="color:var(--xp-ink-soft)">Execution Rate:</span>
+                <span style="color:var(--xp-ink-soft)">${smt('execRate')}</span>
                 <b>${formatMoney(unitTargetPrice)}</b>
               </div>
               <div style="display:flex; justify-content:space-between; margin-bottom:3px">
-                <span style="color:var(--xp-ink-soft)">Order Quantity:</span>
-                <b>${this._inputShares} shares</b>
+                <span style="color:var(--xp-ink-soft)">${smt('orderQtyLabel')}</span>
+                <b>${smt('sharesN', { n: this._inputShares })}</b>
               </div>
               <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:bold; border-top:1px dashed var(--xp-silver); padding-top:4px; margin-top:4px">
-                <span style="color:var(--xp-blue-dark)">${isBuy ? 'Total Required:' : 'Estimated Proceeds:'}</span>
+                <span style="color:var(--xp-blue-dark)">${isBuy ? smt('totalRequired') : smt('proceeds')}</span>
                 <span style="color:${isBuy ? '#c0392b' : UP_INK}">${formatMoney(totalEstimated)}</span>
               </div>
             </div>
 
             <!-- Order Execution Button -->
             <button id="sm-execute-order-btn" class="focusable" style="width:auto; min-width:180px; align-self:center; padding:10px 26px; font-size:14px; font-weight:bold; cursor:${isValid ? 'pointer' : 'not-allowed'}; background:${isValid ? (isBuy ? UP_PLATE : 'linear-gradient(180deg, #e74c3c, var(--xp-red-2))') : '#ccc'}; color:var(--xp-white); border:1px solid ${isValid ? (isBuy ? '#1e8449' : '#922b21') : '#aaa'}; border-radius:3px; box-shadow:${isValid ? '0 2px 5px rgba(0,0,0,0.2)' : 'none'}">
-              ${isValid ? `PLACE ${isBuy ? 'BUY' : 'SELL'} ${this._orderType.toUpperCase().replace('_', ' ')} ORDER` : validationMsg.toUpperCase()}
+              ${isValid ? smt('place', { side: smSide(this._tradeSide), type: smType(this._orderType) }).toUpperCase() : validationMsg.toUpperCase()}
             </button>
 
             <!-- Order Book Visual Depth in Console -->
@@ -3583,7 +3588,7 @@
           const ordId = btn.getAttribute("data-order-id");
           if (ordId && sm.cancelOrder(ordId)) {
             SoundManager.playCancel();
-            this.showToast(`Order ${ordId} cancelled. Escrow released.`);
+            this.showToast(smt('toast.cancelled', { id: ordId }));
             this.refreshUIStock();
           }
         });
@@ -3609,7 +3614,7 @@
           const shares = sm.getShares(stkId);
           if (shares > 0 && sm.sellStock(stkId, shares)) {
             SoundManager.playShop();
-            this.showToast(`Liquidated all ${shares} shares of ${stkId.toUpperCase()}`);
+            this.showToast(smt('toast.liquidated', { n: shares, stock: stkId.toUpperCase() }));
             this.refreshUIStock();
           }
         });
@@ -3633,7 +3638,7 @@
         if (this._tradeSide === 'buy') {
           if (sm.buyStock(stockId, shares)) {
             SoundManager.playShop();
-            this.showToast(`Bought ${shares} shares of ${stockId.toUpperCase()} @ market price!`);
+            this.showToast(smt('toast.bought', { n: shares, stock: stockId.toUpperCase() }));
             this.refreshUIStock();
           } else {
             SoundManager.playBuzzer();
@@ -3645,7 +3650,7 @@
         } else {
           if (sm.sellStock(stockId, shares)) {
             SoundManager.playShop();
-            this.showToast(`Sold ${shares} shares of ${stockId.toUpperCase()} @ market price!`);
+            this.showToast(smt('toast.sold', { n: shares, stock: stockId.toUpperCase() }));
             this.refreshUIStock();
           } else {
             SoundManager.playBuzzer();
@@ -3665,12 +3670,12 @@
 
         if (result.success) {
           SoundManager.playOk();
-          this.showToast(`Placed ${this._tradeSide.toUpperCase()} ${this._orderType.toUpperCase()} order for ${shares} shares @ ${formatMoney(targetPrice)}`);
+          this.showToast(smt('toast.placed', { side: smSide(this._tradeSide), type: smType(this._orderType), n: shares, price: formatMoney(targetPrice) }));
           this._bottomTab = 'orders';
           this.refreshUIStock();
         } else {
           SoundManager.playBuzzer();
-          this.showToast(`Failed to place order: ${result.reason}`, true);
+          this.showToast(smt('toast.failed', { reason: result.reason || '' }), true);
         }
       }
     }
@@ -3747,7 +3752,7 @@
           ctx.stroke();
           ctx.setLineDash([]);
           ctx.fillStyle = "rgba(155, 89, 182, 0.9)";
-          ctx.fillText("Median Target", w - padR - 5, my - 4);
+          ctx.fillText(smt('medianTarget'), w - padR - 5, my - 4);
         }
       }
 
@@ -3925,7 +3930,7 @@
     if (!window.HypernetOS) return false;
     window.HypernetOS.registerApp({
       id: 'app-stock-market',
-      name: "Stock Market",
+      name: () => smt('appName'),
       icon: 229,
       launchFn: function() {
         if ($gameSystem && !($gameSystem.stockMarket && $gameSystem.stockMarket.update)) {

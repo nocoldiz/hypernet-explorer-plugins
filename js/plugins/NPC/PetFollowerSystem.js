@@ -517,9 +517,12 @@ window.Game_PetFollower = Game_PetFollower;
         let ids = [];
         if (CC && CC.groupsForArchetypes) {
             const groups = CC.groupsForArchetypes(keys[0] || null, keys[1] || null);
-            ids = speaks ? groups.sentient.slice() : groups.creature.concat(groups.sentient);
+            ids = (speaks ? groups.sentient : groups.creature).slice();
         }
-        if (speaks) ids = ids.filter(id => !_isCreatureClass(id));
+        // The two books never mix: a companion that talks (<Talk>, pet.sentient)
+        // is drilled into a trade, one that does not into its own kind's
+        // non-sentient classes, never into a trade it cannot hold.
+        ids = ids.filter(id => _isCreatureClass(id) !== speaks);
         // The drill that is always on the board, whatever the archetype answers.
         const floor = speaks ? FREELANCER_CLASS_ID : BEAST_CLASS_ID;
         if (!ids.includes(floor)) ids.unshift(floor);
@@ -919,7 +922,14 @@ window.Game_PetFollower = Game_PetFollower;
             list.splice(idx, 1);
             if ($gameSystem._activePetId === id) {
                 // Fall back to the most recently recruited remaining pet, if any.
-                $gameSystem._activePetId = list.length ? list[list.length - 1].id : null;
+                // Never a familiar: it walks only in the summon's own slot, so
+                // putting it on the leash drew it twice (or drew one nobody had
+                // convoked), the same rule setActivePet keeps.
+                let next = null;
+                for (let i = list.length - 1; i >= 0; i--) {
+                    if (list[i] && !list[i].isFamiliar) { next = list[i]; break; }
+                }
+                $gameSystem._activePetId = next ? next.id : null;
             }
             _refreshFollower();
         },

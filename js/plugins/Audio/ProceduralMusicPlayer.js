@@ -22,6 +22,54 @@
 
 (() => {
     // =========================================================================
+    // What the player can actually play
+    // =========================================================================
+    // The genres, the Strudel scripts and the MIDI files are all voiced by
+    // ProceduralMusicGenerator (window.ProceduralMusic). With that plugin off,
+    // picking one used to stop the music and then play nothing, so they are
+    // only offered while the generator is loaded. Plain .ogg tracks always are.
+    function generatorLoaded() {
+        return !!window.ProceduralMusic;
+    }
+
+    // Built-in genre ids, shown only while the generator can voice them.
+    function builtInGenres() {
+        if (!generatorLoaded()) return [];
+        return [
+            { name: 'Auto', type: 'system' },  // i18n-ignore  genre id
+            { name: 'Battle', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Dungeon', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Exploration', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Village', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'City', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Cave', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Desert', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Ice', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Digital', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Eldritch', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Industrial', type: 'biome' },  // i18n-ignore  genre id
+            { name: 'Ethereal', type: 'biome' }  // i18n-ignore  genre id
+        ];
+    }
+
+    // The folder index.html sits in: the working directory may be anywhere.
+    function gameRoot() {
+        try {
+            if (typeof process === 'object' && process.mainModule && process.mainModule.filename) {
+                return require('path').dirname(process.mainModule.filename);
+            }
+            return process.cwd();
+        } catch (e) {
+            return '';
+        }
+    }
+
+    // A track entry's own volume. AudioManager.bgmVolume (the Options music
+    // slider) is applied on top of it by the engine, so passing the slider in
+    // here applied it twice.
+    const TRACK_VOLUME = 90;
+
+    // =========================================================================
     // Scene_MusicPlayer
     // =========================================================================
 
@@ -42,26 +90,12 @@
     };
 
     Scene_MusicPlayer.prototype.makeItemList = function () {
-        this._data = [
-            { name: 'Auto', type: 'system' },  // i18n-ignore  genre id
-            { name: 'Battle', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Dungeon', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Exploration', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Village', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'City', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Cave', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Desert', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Ice', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Digital', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Eldritch', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Industrial', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Ethereal', type: 'biome' }  // i18n-ignore  genre id
-        ];
+        this._data = builtInGenres();
 
         if (typeof require !== 'undefined') {
             const fs = require('fs');
             const path = require('path');
-            const showStrudel = !(window.ProceduralMusic && window.ProceduralMusic.useClassicSequencer);
+            const showStrudel = generatorLoaded() && !window.ProceduralMusic.useClassicSequencer;
 
             const scanDirectoryRecursive = (dirPath, relativeTo = '') => {
                 let results = [];
@@ -84,7 +118,7 @@
                         } else if (ext === '.js' && showStrudel) {
                             const name = relPath.replace(/\.js$/i, '');
                             results.push({ name: name, type: 'strudel' });
-                        } else if (ext === '.mid' || ext === '.midi') {
+                        } else if ((ext === '.mid' || ext === '.midi') && generatorLoaded()) {
                             const name = relPath.replace(/\.midi?$/i, '');
                             results.push({ name: name, type: 'midi' });
                         }
@@ -94,7 +128,7 @@
             };
 
             try {
-                const bgmDir = path.join(process.cwd(), 'audio', 'bgm');
+                const bgmDir = path.join(gameRoot(), 'audio', 'bgm');
                 const scannedFiles = scanDirectoryRecursive(bgmDir);
                 
                 scannedFiles.forEach(item => {
@@ -586,6 +620,9 @@
 
     Scene_MusicPlayer.prototype.playSelectedTrack = function () {
         const item = this._data[this._selectedIndex];
+        // Only a plain track plays without the generator: anything else would
+        // stop the music and then voice nothing.
+        if (item && item.type !== 'ogg' && !generatorLoaded()) return;
         if (item) {
             SoundManager.playOk();
             this._playSeconds = 0;
@@ -613,7 +650,7 @@
                     }
                     window.ProceduralMusic._isStarted = false;
                 }
-                AudioManager.playBgm({ name: item.name, volume: AudioManager.bgmVolume || 90, pitch: 100, pan: 0 });
+                AudioManager.playBgm({ name: item.name, volume: TRACK_VOLUME, pitch: 100, pan: 0 });
             }
         }
     };
@@ -873,32 +910,18 @@
     };
 
     Window_MusicList.prototype.makeItemList = function () {
-        this._data = [
-            { name: 'Auto', type: 'system' },  // i18n-ignore  genre id
-            { name: 'Battle', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Dungeon', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Exploration', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Village', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'City', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Cave', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Desert', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Ice', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Digital', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Eldritch', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Industrial', type: 'biome' },  // i18n-ignore  genre id
-            { name: 'Ethereal', type: 'biome' }  // i18n-ignore  genre id
-        ];
+        this._data = builtInGenres();
 
         if (typeof require !== 'undefined') {
             const fs = require('fs');
             const path = require('path');
 
-            const showStrudel = !(window.ProceduralMusic && window.ProceduralMusic.useClassicSequencer);
+            const showStrudel = generatorLoaded() && !window.ProceduralMusic.useClassicSequencer;
 
             // Scan Strudel scripts
             if (showStrudel) {
                 try {
-                    const dir = path.join(process.cwd(), 'audio', 'bgm', 'Strudel');  // i18n-ignore  asset directory
+                    const dir = path.join(gameRoot(), 'audio', 'bgm', 'Strudel');  // i18n-ignore  asset directory
                     if (fs.existsSync(dir)) {
                         const files = fs.readdirSync(dir);
                         files.forEach(file => {
@@ -914,8 +937,8 @@
             }
 
             // Scan MIDI files
-            try {
-                const dirMidi = path.join(process.cwd(), 'audio', 'bgm', 'Midi');  // i18n-ignore  asset directory
+            if (generatorLoaded()) try {
+                const dirMidi = path.join(gameRoot(), 'audio', 'bgm', 'Midi');  // i18n-ignore  asset directory
                 if (fs.existsSync(dirMidi)) {
                     const files = fs.readdirSync(dirMidi);
                     files.forEach(file => {

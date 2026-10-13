@@ -290,13 +290,11 @@ Imported.Hendrix_Localization = true;
     // list is also the allow-list: an i18n folder that is not named here (fr,
     // ko, ru) is never offered, whatever sits on disk.
     //
-    // Naguka ("nk") is the Goblin patois: only the UI chrome (terms/system/
-    // commands/misc plus every plugins/*.json screen) is rendered into it, in
-    // ALL CAPS, by tools/i18n/gen_naguka.js. The narrative banks (conversations/,
-    // lore/, news/help, database content like items/skills/enemies) are left
-    // untranslated on purpose and fall back to English, the same way the
-    // in-fiction Naguka "express themselves like children" (docs/Lore.md) while
-    // everything around them stays in the surface-dwellers' tongue.
+    // Naguka ("nk") is the Goblin patois: the whole English text of the game
+    // (UI, database, NPC dialogue banks, TV, lore, help, and the story mode and
+    // tutorial scripts in js/db/Dialogues) is rendered into it, in ALL CAPS, by
+    // tools/i18n/gen_naguka.js. Only what is not prose (ids, asset names, enum
+    // keys, grammar directives) is copied from English unchanged.
     const LANGUAGE_MENU_ORDER = ['en', 'it', 'nk'];
 
     // Languages carried far enough to be offered without a caveat. Every other
@@ -1922,6 +1920,19 @@ Imported.Hendrix_Localization = true;
     };
 
     // Script Call
+    // The double-quoted strings of an event Script call are translated, so a
+    // line a script prints reads in the player's language. A quoted JSON key or
+    // value ({"category": "Cooking"}) is data the called plugin filters on, not
+    // text, and is left exactly as written.
+    function translateScriptLiterals(line) {
+        return String(line).replace(/"([^"]*)"/g, (match, p1, offset, all) => {
+            const before = all.slice(0, offset);
+            if (/"\s*:\s*$/.test(before)) return match;
+            if (/[{,]\s*$/.test(before) && /^\s*:/.test(all.slice(offset + match.length))) return match;
+            return `"${translateText(p1)}"`;
+        });
+    }
+
     const _Game_Interpreter_command355 = Game_Interpreter.prototype.command355;
     Game_Interpreter.prototype.command355 = function (params) {
         const scriptText = Utils.RPGMAKER_NAME === 'MZ' ? params[0] : this._params[0];
@@ -1935,12 +1946,7 @@ Imported.Hendrix_Localization = true;
             nextIndex++;
         }
 
-        const processedLines = allLines.map(line => {
-            return line.replace(/"([^"]*)"/g, (match, p1) => {
-                const translated = translateText(p1);
-                return `"${translated}"`;
-            });
-        });
+        const processedLines = allLines.map(translateScriptLiterals);
 
         if (Utils.RPGMAKER_NAME === 'MZ') {
             params[0] = processedLines[0];
@@ -1958,13 +1964,12 @@ Imported.Hendrix_Localization = true;
     };
 
     // Handle single continuation lines (in case they're called directly)
-    const _Game_Interpreter_command655 = Game_Interpreter.prototype.command655;
+    // MZ has no command655 of its own: a 655 line is consumed by command355,
+    // so one reached alone (an orphan continuation) is a no-op, as in vanilla.
+    const _Game_Interpreter_command655 = Game_Interpreter.prototype.command655 || function () { return true; };
     Game_Interpreter.prototype.command655 = function (params) {
         const scriptText = Utils.RPGMAKER_NAME === 'MZ' ? params[0] : this._params[0];
-        const script = scriptText.replace(/"([^"]*)"/g, (match, p1) => {
-            const translated = translateText(p1);
-            return `"${translated}"`;
-        });
+        const script = translateScriptLiterals(scriptText);
         if (Utils.RPGMAKER_NAME === 'MZ') {
             params[0] = script;
             return _Game_Interpreter_command655.call(this, params);

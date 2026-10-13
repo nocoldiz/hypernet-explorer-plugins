@@ -15,7 +15,7 @@
   ],
   "Aggressive": [
     "Non mi provocare, che oggi non è giornata.",
-    "Se cerchi rogne sei capitato nel posto giusto.",
+    "Se cerchi rogne, sei nel posto giusto.",
     "Che c'è, ho la faccia strana? Guarda da un'altra parte.",
     "La pazienza mi sta finendo, e al mercato non la vendono.",
     "O ti sposti tu, o ti sposto io."
@@ -24,7 +24,7 @@
     "E quindi era tutto qui. Bella roba.",
     "Una volta si stava meglio. O ero solo più giovane io.",
     "Ho un peso sullo stomaco, e non è la cena.",
-    "Da solo si sta bene: non c'è nessuno da deludere.",
+    "{g:Da solo|Da sola|Da solo} si sta bene: non c'è nessuno da deludere.",
     "Il mondo l'hanno lavato a novanta gradi ed è uscito tutto grigio."
   ],
   "Sanguine": [
@@ -63,18 +63,18 @@
     "Acqua in bocca. Qui anche i muri hanno le orecchie."
   ],
   "Empathetic": [
-    "Si vede che stai messo male, non serve che parli.",
+    "Si vede che non stai bene, non serve che parli.",
     "Quello sta soffrendo. Si capisce da come tiene le spalle.",
     "In questa stanza c'è una tensione che la tagli col coltello.",
     "Dimmi come ti do una mano, che una mano ce l'ho libera.",
-    "Se sei contento tu sono contento io, funziona così."
+    "Se sei felice tu sono felice io, funziona così."
   ],
   "Authoritative": [
     "Si fa come dico io, poi ne riparliamo.",
     "Il piano è questo. Qui non si improvvisa.",
     "Decido io e me la prendo io, la responsabilità.",
     "Senza disciplina siamo solo gente che cammina insieme.",
-    "Si torna a casa col risultato, non con le scuse."
+    "Si torna a casa col risultato. Le scuse restano fuori dalla porta."
   ],
   "Scholarly": [
     "Mi domando quale sia il meccanismo, là sotto.",
@@ -95,7 +95,7 @@
     "Qui ci si annoia. Muoviamoci.",
     "Un pizzico di pericolo dà sapore, come il sale.",
     "Prossima tappa, prossima storia da raccontare al ritorno.",
-    "Non ci sono mai stato? Motivo in più per andarci."
+    "Non ci sono mai {g:stato|stata|stato}? Motivo in più per andarci."
   ],
   "Nurturing": [
     "Tutto bene? Guardami in faccia quando rispondi.",

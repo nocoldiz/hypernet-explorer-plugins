@@ -1865,7 +1865,7 @@
   if (window.HypernetOS && window.HypernetOS.registerApp) {
     window.HypernetOS.registerApp({
       id: BQ_APP_ID,
-      name: T('QuestBoard.bqAppName'),
+      name: () => T('QuestBoard.bqAppName'),
       icon: BQ_ICON,
       category: "office",
       launchFn: function () { window.BeagleQuest.launch(); },

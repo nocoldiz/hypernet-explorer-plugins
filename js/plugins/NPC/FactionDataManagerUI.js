@@ -410,7 +410,7 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
   if (members.length > 1 && window.CharSwitcher) {
     const tabs = members.map((m, i) => {
       const sel = (this._repActorIndex || 0) === i ? "selected" : "";
-      return `<div class="companion-tab ${sel}" onclick="SceneManager._scene.switchRepActor(${i})">${m.name()}</div>`;
+      return `<div class="companion-tab ${sel}" onclick="SceneManager._scene.switchRepActor(${i})">${window.NPCShared.escapeHtml(m.name())}</div>`;
     }).join("");
     switcherHTML = `<div class="companion-switcher ui-switcher-row">` +
       window.CharSwitcher.inner(`<div class="companion-tabs-row">${tabs}</div>`, members.length) +
@@ -495,7 +495,7 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
       const rows = leaderSource.slice()
         .sort((a, b) => (Number((b.years || [])[0]) || 0) - (Number((a.years || [])[0]) || 0))
         .map(l => `<div class="ui-succession-row">` +
-          `<span class="ui-succession-name">${leaderName(l)}</span>` +
+          `<span class="ui-succession-name">${window.NPCShared.escapeHtml(leaderName(l))}</span>` +
           `<span class="ui-succession-years">${reignOf(l)}</span></div>`)
         .join("");
       leadersHTML = fact(T("Factions.pastGovernments"),
@@ -691,7 +691,7 @@ Scene_FactionStatus.prototype.refreshUIFactions = function () {
     const rep = $gameFactions.getReputationFor(viewed, selectedRecord.standingKey);
     const standingHTML = viewed ? `
       <div class="fac-standing ${$gameFactions.reputationClassOf(rep)}">
-        <span class="fac-standing-who">${T("Factions.standingOf", { name: viewed.name() })}</span>
+        <span class="fac-standing-who">${T("Factions.standingOf", { name: window.NPCShared.escapeHtml(viewed.name()) })}</span>
         <span class="fac-standing-val">${$gameFactions.reputationLevelOf(rep)} (${rep})</span>
       </div>
     ` : "";

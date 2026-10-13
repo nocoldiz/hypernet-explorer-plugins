@@ -234,6 +234,10 @@
       // the tower stands on, so the square alone would hand all ninety of them
       // the same crowd. The floor is what tells them apart.
       if (towerFloor) baseSeed = (baseSeed ^ (towerFloor * 2654435761)) >>> 0;
+      // An earthlike world's square shares its numbers with Earth's: the world
+      // tells the crowds apart.
+      const grid = $gameSystem?._procGenData?.alienGrid;
+      if (grid && grid.earthlike && grid.salt) baseSeed = (baseSeed ^ Math.imul(grid.salt, 2246822519)) >>> 0;
 
       const p2Active = window.$gameSplitScreen && window.$gameSplitScreen.active;
       const p2Name = p2Active ? window.$gameSplitScreen.p2EventName : null;
@@ -633,6 +637,7 @@
     // The Talk / Empathize / Cancel page every AI slot on a procedural map
     // carries, so somebody put down on a pad answers the button exactly the
     // way somebody put down in a village does.
+    // i18n-ignore-start: branch labels and plugin command ids, the engine localizes the shown choices
     _spacerPageList: () => ([
       { code: 102, indent: 0, parameters: [["Talk", "Empathize", "Cancel"], 3, 0, 2, 0] },  // i18n-ignore: choice labels are localized by the engine's own pass
       { code: 402, indent: 0, parameters: [0, "Talk"] },
@@ -646,6 +651,7 @@
       { code: 404, indent: 0, parameters: [] },
       { code: 0, indent: 0, parameters: [] },
     ]),
+    // i18n-ignore-end
 
     // One person on the pad. A fresh $dataMap event, because these maps carry
     // no slots to dress: the same way a wild creature is put down
@@ -835,6 +841,7 @@
     // it. What a hand can do to an animal on the street is lay itself on the
     // animal, so that is the first entry, and it answers where it stands
     // (NPCEmpathize's Pet command, a line and a noise, no second window).
+    // i18n-ignore-start: branch labels and plugin command ids, the engine localizes the shown choices
     _creaturePageList: () => ([
       { code: 102, indent: 0, parameters: [["Pet", "Empathize", "Cancel"], 3, 0, 2, 0] },  // i18n-ignore: choice labels are localized by the engine's own pass
       { code: 402, indent: 0, parameters: [0, "Pet"] },
@@ -848,6 +855,7 @@
       { code: 404, indent: 0, parameters: [] },
       { code: 0, indent: 0, parameters: [] },
     ]),
+    // i18n-ignore-end
 
     // ── the people behind a procedural door ─────────────────────────────────
     //
@@ -1459,7 +1467,7 @@
     // differ from the record's when the person turns out to be a creature.
     ensureProcResidentProfile: (rec, worldX, worldY) => {
       if (!rec || !rec.name) return null;
-      const group = 'Proc:' + worldX + ',' + worldY;   // i18n-ignore: settlement key
+      const group = ProceduralManager.procGroupName(worldX, worldY);
       const profile = ProceduralManager.registerProcCitizen(rec.name, null, group, rec.classId,
         { spriteKey: rec.spriteName, bustIndex: rec.charIdx, roughSleeper: rec.roughSleeper });
       let charName = rec.spriteName, charIdx = rec.charIdx;
@@ -1848,7 +1856,17 @@
 
     PROC_GROUP_PREFIX: "Proc", // i18n-ignore: settlement key prefix, "Proc:x,y"
 
-    procGroupName: (worldX, worldY) => `${ProceduralManager.PROC_GROUP_PREFIX}:${worldX},${worldY}`,
+    procGroupName: (worldX, worldY) =>
+      `${ProceduralManager.PROC_GROUP_PREFIX}:${worldX},${worldY}${ProceduralManager.planetSuffix()}`,
+
+    // A settlement on an earthlike world stands at planet-local numbers that
+    // Earth's squares and every other such world share, so the world's salt
+    // (GalaxySim enterPlanetSurface) joins the key: "Proc:3,4@<salt>". It still
+    // reads as procedural, and never as a square of Earth's map.
+    planetSuffix: () => {
+      const grid = $gameSystem?._procGenData?.alienGrid;
+      return (grid && grid.earthlike && grid.salt) ? "@" + grid.salt : "";
+    },
 
     // Registers (once) a deterministic synthetic settlement for the current
     // procedural world tile and marks it as the live settlement so
@@ -2118,14 +2136,20 @@
       // resolveGroupPolity). A tile's nation never changes, so refresh it each
       // visit, which also backfills groups saved before this field existed.
       {
-        const nationId = ($gameVariables?.value(86)) || 0;
+        // Off Earth there is no country under the square: variable 86 still
+        // holds the last one on Earth, and a colony belongs to none of them.
+        const offEarth = !!$gameSystem?._procGenData?.alienGrid;
+        const nationId = offEarth ? 0 : (($gameVariables?.value(86)) || 0);
         const country  = (window.WorldGen?.Countries || []).find(c => c.id === nationId) || null;
         const grp = groups[groupName];
         grp.nationId = nationId;
         grp.country  = country?.country || null;
-        // Readable home-town label for menus (the raw key is "Proc:x,y").
+        // Readable home-town label for menus (the raw key is "Proc:x,y"). A
+        // colony is known by its own name.
+        const colony = offEarth ? window.GalaxySim?.currentColony?.() : null;
         const isPlace = biomeName && !['Normal', 'Road'].includes(biomeName); // i18n-ignore: Biomes.json ids
-        const place   = isPlace ? window.BiomeNames.display(biomeName) : T('NPCSystem.frontier');
+        const place   = colony ? colony.name
+          : (isPlace ? window.BiomeNames.display(biomeName) : T('NPCSystem.frontier'));
         grp.displayName = country
           ? T('NPCSystem.placeOfCountry', { place: place, country: country.country })
           : T('NPCSystem.placeSettlement', { place: place });
@@ -2232,7 +2256,8 @@
     // identified by those three coordinates. Map 636 is reused for every world
     // tile, so the world coords MUST be part of the key (a bare eventId would
     // wrongly erase the same event slot on every other tile too).
-    procRecruitKey: (worldX, worldY, eventId) => `${worldX},${worldY},${eventId}`,
+    procRecruitKey: (worldX, worldY, eventId) =>
+      `${worldX},${worldY},${eventId}${ProceduralManager.planetSuffix()}`,
 
     // Records a procedural citizen (map 636) that has just joined the party, so
     // it never respawns on this world tile again. The record lives in the world

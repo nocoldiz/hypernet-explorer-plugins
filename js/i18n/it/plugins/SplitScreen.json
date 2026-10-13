@@ -1,14 +1,14 @@
 {
   "unknownTrait": "Tratto sconosciuto",
   "noCompanions": "Nessun compagno disponibile",
-  "chooseCompanion": "Scegli Compagno",
+  "chooseCompanion": "Scegli compagno",
   "selectACompanion": "Seleziona un compagno",
   "none": "Nessuno",
   "stats": "Statistiche",
   "equipment": "Equipaggiamento",
   "traits": "Tratti",
-  "selectCompanion": "Seleziona Compagno",
-  "startGauntlet": "Gauntlet 2P (Shift / X)",
+  "selectCompanion": "Seleziona compagno",
+  "startGauntlet": "Avvia gauntlet 2P (Shift / X)",
   "companionNames": [
     "Aria",
     "Boran",

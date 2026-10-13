@@ -513,20 +513,110 @@
         _hold: 0,
         _px: -1,
         _py: -1,
+        // Frame stamps of the last mouse move and the last menu press. A pad
+        // player's mouse stays wherever it was left, often over the list, and
+        // a pointer that old is not where the player is looking: it only
+        // steers the stick while it has moved since the cursor last did.
+        _tick: 0,
+        _pointerTick: 0,
+        _navTick: -1,
+        NAV_KEYS: ['up', 'down', 'left', 'right', 'ok', 'cancel', 'pageup', 'pagedown'],
 
         // Where the mouse last was, so a pushed stick scrolls the pane the
         // player is pointing at, exactly as their wheel would.
         trackPointer(event) {
             this._px = event.clientX;
             this._py = event.clientY;
+            this._pointerTick = this._tick;
+        },
+
+        pointerFresh() {
+            return this._px >= 0 && this._pointerTick > this._navTick;
+        },
+
+        noteNav() {
+            this._tick++;
+            if (typeof Input === 'undefined' || typeof Input.isPressed !== 'function') return;
+            for (const key of this.NAV_KEYS) {
+                if (Input.isPressed(key)) { this._navTick = this._tick; return; }
+            }
+        },
+
+        // The cursor every menu lights, whatever it calls it. Menus name their
+        // own ring, so this is the list of the names in use; the first one on
+        // screen is the one the player is standing on.
+        FOCUS_SELECTOR: '.cc-nav-focus, .focused, .kb-focus, .sg3-focus, .cc3d-focus, ' +
+            '.npc-content-focused, .npc-action-focused, .fbcursor, .cd-cursor, .cgc-cell--cursor',
+        litElement() {
+            const shown = (el) => !el.getClientRects || el.getClientRects().length > 0;
+            if (typeof document.querySelectorAll === 'function') {
+                for (const el of document.querySelectorAll(this.FOCUS_SELECTOR)) {
+                    if (shown(el)) return el;
+                }
+                return null;
+            }
+            return document.querySelector(this.FOCUS_SELECTOR);
+        },
+
+        isInside(el, root) {
+            for (let n = el; n; n = n.parentElement) if (n === root) return true;
+            return false;
+        },
+
+        // The overlay a node belongs to: its ancestor that is a child of body.
+        overlayOf(node) {
+            let el = node;
+            while (el && el.parentElement && el.parentElement !== document.body) el = el.parentElement;
+            return el && el.parentElement === document.body ? el : null;
+        },
+
+        // The class a list row shares with its siblings, the ring left out.
+        rowClassOf(lit) {
+            const raw = lit.className || (lit.getAttribute && lit.getAttribute('class')) || '';
+            const ring = /focus|cursor|^selected$|^active$|^hover/;
+            return String(raw).split(/\s+/).find((c) => c && !ring.test(c)) || null;
+        },
+
+        // The cursor walks a list and the stick reads what the list is about.
+        // When the lit control sits in a pane of rows like it and the same
+        // overlay has another pane holding none of them, that other pane is
+        // the text the player cannot otherwise reach: the d-pad already moves
+        // the list. The right page of a spread first, else the tallest.
+        proseBeside(lit, litPane, delta) {
+            const cls = this.rowClassOf(lit);
+            if (!cls || !litPane.querySelectorAll) return null;
+            const sel = '.' + (typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(cls) : cls);
+            let rows;
+            try { rows = litPane.querySelectorAll(sel); } catch (e) { return null; }
+            if (!rows || rows.length < 3) return null;
+            const root = this.overlayOf(litPane);
+            if (!root) return null;
+            let best = null;
+            let bestRight = false;
+            for (const pane of this.scrollablePanes(root)) {
+                if (pane === litPane || this.isInside(lit, pane) || this.isInside(pane, litPane)) continue;
+                if (!this.canScroll(pane, delta)) continue;
+                if (pane.querySelector(sel)) continue;
+                let right = false;
+                for (let n = pane; n && n !== root; n = n.parentElement) {
+                    if (n.matches && n.matches('.cc-page-right, .right-page')) { right = true; break; }
+                }
+                if (!best || (right && !bestRight) ||
+                    (right === bestRight && pane.clientHeight > best.clientHeight)) {
+                    best = pane;
+                    bestRight = right;
+                }
+            }
+            return best;
         },
 
         // The pane the stick should move, in the order a player means it:
         //   the pane the open scene names, for a screen that knows which of its
         //   panes is the one being read;
-        //   the pane under the pointer, if the mouse is over the overlay;
-        //   the pane holding whatever the cursor is lit on, so the text beside
-        //   a focused control scrolls with it;
+        //   the pane under the pointer, if the mouse has moved since the
+        //   cursor last did;
+        //   the text beside the list the cursor walks, else the pane holding
+        //   the lit control itself;
         //   else the one pane of the overlay that can still move, and failing
         //   that the right page of a book spread, which is the page a menu in
         //   this game puts its prose on.
@@ -537,17 +627,17 @@
                 const pane = named.call(scene);
                 if (this.isScrollable(pane)) return pane;
             }
-            if (this._px >= 0 && document.elementFromPoint) {
+            if (this.pointerFresh() && document.elementFromPoint) {
                 const at = document.elementFromPoint(this._px, this._py);
                 if (at && at.id !== 'gameCanvas') {
                     const pane = this.paneFor(at, delta);
                     if (pane) return pane;
                 }
             }
-            const lit = document.querySelector('.cc-nav-focus, .focused, .kb-focus');
+            const lit = this.litElement();
             if (lit) {
                 const pane = this.paneFor(lit, delta);
-                if (pane) return pane;
+                if (pane) return this.proseBeside(lit, pane, delta) || pane;
             }
             const overlay = this.topOverlay();
             if (!overlay) return null;
@@ -563,18 +653,31 @@
         },
 
         // The overlay a plugin has put over the game: the last child of the
-        // body that is on screen and is not the canvas itself.
+        // body that is on screen and is not the canvas itself. A HUD, a toast
+        // or a badge layer added after the menu is on screen too, and taking
+        // it for the menu left the stick with nothing to move: a layer the
+        // pointer passes through, or one covering a sliver of the screen, is
+        // passed over while a real panel sits under it.
+        MIN_OVERLAY_SHARE: 0.12,
         topOverlay() {
             const kids = document.body ? document.body.children : [];
+            const screen = (typeof window !== 'undefined' && window.innerWidth && window.innerHeight)
+                ? window.innerWidth * window.innerHeight : 0;
+            let fallback = null;
             for (let i = kids.length - 1; i >= 0; i--) {
                 const el = kids[i];
                 if (!el || el.nodeType !== 1) continue;
                 if (el.id === 'gameCanvas' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') continue;
                 if (el.style && el.style.display === 'none') continue;
                 if (!el.clientHeight) continue;
+                if (!fallback) fallback = el;
+                const cs = getComputedStyle(el);
+                if (cs && (cs.pointerEvents === 'none' || cs.visibility === 'hidden')) continue;
+                if (screen && el.clientWidth &&
+                    el.clientWidth * el.clientHeight < screen * this.MIN_OVERLAY_SHARE) continue;
                 return el;
             }
-            return null;
+            return fallback;
         },
 
         // A book spread reads left to right: the left page carries the list the
@@ -604,6 +707,7 @@
             // A screen that reads the stick for itself claims it first (see
             // rightStickReadsThisFrame below), so a push never does two things.
             if (this.STICK_SCROLL_ENABLED !== true) return;
+            this.noteNav();
             const pads = window.AnalogStickInput;
             if (!pads || typeof pads.rightY !== 'function') return;
             if (typeof pads.rightStickReadsThisFrame === 'function' &&
@@ -611,7 +715,10 @@
             const dz = this.STICK_DEADZONE;
             const y = pads.rightY();
             const push = Math.abs(y) > dz ? (Math.abs(y) - dz) / (1 - dz) * Math.sign(y) : 0;
-            const amount = push * this.STICK_SPEED;
+            // Squared, so a light push creeps a line at a time for reading and
+            // a full one still sweeps the page; never under a pixel a frame.
+            const curved = push * Math.abs(push);
+            const amount = curved ? Math.sign(curved) * Math.max(1, Math.abs(curved) * this.STICK_SPEED) : 0;
             if (!amount) {
                 this._hold = 0;
                 return;
@@ -811,17 +918,28 @@
     if (!Input.lastInputDevice) {
         let device = null;
 
+        // A pad counts only with buttons (the rule Controller.ports() keeps),
+        // and only its two sticks count as axes: a non-standard pad lists its
+        // analog triggers as axes RESTING at -1, and the Windows HID ghost of a
+        // controller has no buttons at all. Either one read as "the pad was
+        // just touched" every frame and took the hints back from a keyboard
+        // player the frame after every key they pressed.
+        const realPad = (pad) => !!(pad && pad.connected && pad.buttons && pad.buttons.length);
+        const STICK_AXES = 4;
+
         const padPressed = () => {
             const pads = navigator.getGamepads ? navigator.getGamepads() : [];
             for (let i = 0; i < pads.length; i++) {
                 const pad = pads[i];
-                if (!pad || !pad.connected) continue;
+                if (!realPad(pad)) continue;
                 for (let b = 0; b < pad.buttons.length; b++) {
                     const button = pad.buttons[b];
                     if (button && (button.pressed || button.value > 0.5)) return true;
                 }
-                for (let a = 0; a < pad.axes.length; a++) {
-                    if (Math.abs(pad.axes[a]) > 0.5) return true;
+                const axes = pad.axes || [];
+                const n = Math.min(axes.length, STICK_AXES);
+                for (let a = 0; a < n; a++) {
+                    if (Math.abs(axes[a]) > 0.5) return true;
                 }
             }
             return false;
@@ -830,7 +948,7 @@
         const padConnected = () => {
             const pads = navigator.getGamepads ? navigator.getGamepads() : [];
             for (let i = 0; i < pads.length; i++) {
-                if (pads[i] && pads[i].connected) return true;
+                if (realPad(pads[i])) return true;
             }
             return false;
         };
@@ -846,7 +964,13 @@
         const _updateInput = Input.update;
         Input.update = function () {
             _updateInput.apply(this, arguments);
-            if (device !== 'pad' && padPressed()) device = 'pad';
+            if (device !== 'pad') {
+                if (padPressed()) device = 'pad';
+            } else if (!padConnected()) {
+                // The pad was unplugged: its hints go with it, rather than
+                // staying up for a mouse player until a key is pressed.
+                device = null;
+            }
         };
 
         Input.lastInputDevice = function () {

@@ -293,6 +293,11 @@
     // Game_Actor accessors
     // =========================================================================
 
+    // Bumped whenever any actor's effective level can have moved, so the menu
+    // can keep its sorted list between cursor steps and still notice a tier
+    // bought or earned while it is open.
+    let specLevelsGeneration = 0;
+
     // Trained level: only levels above Untrained (2-5) are ever stored, so a
     // fresh actor with no entry simply reads as Untrained (1).
     Game_Actor.prototype.specializationTrainedLevel = function (id) {
@@ -303,6 +308,7 @@
     Game_Actor.prototype.setSpecializationTrainedLevel = function (id, level) {
         if (!this._specLevels) this._specLevels = {};
         const clamped = Math.max(1, Math.min(5, level));
+        specLevelsGeneration++;
         if (clamped <= 1) {
             delete this._specLevels[id];
         } else {
@@ -362,11 +368,13 @@
     // Pass null to take the whole grant again.
     Game_Actor.prototype.setSpecializationGrantKept = function (id, level) {
         if (!this._specGrantsKept) this._specGrantsKept = {};
+        specLevelsGeneration++;
         if (level == null) delete this._specGrantsKept[id];
         else this._specGrantsKept[id] = Math.max(1, Math.min(5, level));
     };
 
     Game_Actor.prototype.clearSpecializationGrantsKept = function () {
+        specLevelsGeneration++;
         this._specGrantsKept = {};
     };
 
@@ -832,6 +840,9 @@
     // when the DOM overlay passed as `opts.el` leaves the document, so a caller
     // that forgets to hide() never leaves a badge stranded on screen.
     // =========================================================================
+    // How often a shown chip re-measures its anchor between explicit syncs.
+    const SPEC_BADGE_RESYNC_MS = 300;
+
     const SpecBadge = {
         _el: null,
         _specs: [],
@@ -841,6 +852,9 @@
         _anchorSel: null,
         _raf: null,
         _expireAt: 0,
+        _lastSyncAt: 0,
+        _syncSig: '',
+        _resizeBound: false,
 
         show(spec, opts) {
             opts = opts || {};
@@ -904,6 +918,16 @@
             el.id = 'spec-badge-stack';
             document.body.appendChild(el);
             this._el = el;
+            // A fresh element carries none of the styles the last one was given.
+            this._syncSig = '';
+            // A resize moves every anchor at once, so it is followed straight
+            // away rather than waiting for the tick's next look.
+            if (!this._resizeBound && typeof window.addEventListener === 'function') {
+                this._resizeBound = true;
+                window.addEventListener('resize', () => {
+                    if (this._specs.length && this._el) this._sync();
+                });
+            }
         },
 
         _render() {
@@ -1008,28 +1032,31 @@
             const r = canvas.getBoundingClientRect();
             const sx = r.width / Graphics.width;
             const sy = r.height / Graphics.height;
-            const s = this._el.style;
-            s.fontSize = Math.round(15 * sy) + 'px';
+            this._lastSyncAt = Date.now();
             const a = this._anchor(sx, sy);
+            let place;
             if (a && a.center != null) {
-                s.transform = 'translateX(-50%)';
-                s.alignItems = 'center';
-                s.left = a.center + 'px';
-                s.top = a.top + 'px';
-                s.maxWidth = Math.max(120, a.width) + 'px';
-                return;
+                place = ['translateX(-50%)', 'center', a.center, a.top, Math.max(120, a.width)];
+            } else if (a) {
+                place = ['translateX(-100%)', 'flex-end', a.right, a.top,
+                    Math.max(120, Math.min(a.width, a.right - r.left - 24 * sx))];
+            } else {
+                place = ['translateX(-100%)', 'flex-end', r.left + r.width - 24 * sx,
+                    r.top + 24 * sy, Math.max(120, r.width - 48 * sx)];
             }
-            s.transform = 'translateX(-100%)';
-            s.alignItems = 'flex-end';
-            if (a) {
-                s.left = a.right + 'px';
-                s.top = a.top + 'px';
-                s.maxWidth = Math.max(120, Math.min(a.width, a.right - r.left - 24 * sx)) + 'px';
-                return;
-            }
-            s.left = (r.left + r.width - 24 * sx) + 'px';
-            s.top = (r.top + 24 * sy) + 'px';
-            s.maxWidth = Math.max(120, r.width - 48 * sx) + 'px';
+            const fontSize = Math.round(15 * sy);
+            // A chip that has not moved is left alone: writing the same styles
+            // back still dirties the layout the next read has to recompute.
+            const sig = fontSize + '|' + place.join('|');
+            if (sig === this._syncSig) return;
+            this._syncSig = sig;
+            const s = this._el.style;
+            s.fontSize = fontSize + 'px';
+            s.transform = place[0];
+            s.alignItems = place[1];
+            s.left = place[2] + 'px';
+            s.top = place[3] + 'px';
+            s.maxWidth = place[4] + 'px';
         },
 
         _tick() {
@@ -1043,7 +1070,12 @@
                 this.hide();
                 return;
             }
-            this._sync();
+            // The checks above are cheap and keep the chip from outliving its
+            // scene by even a frame. Measuring the page is not, so the chip only
+            // re-reads its anchor a few times a second, which is enough to
+            // follow a page that settles or relays out after it was shown;
+            // show(), refresh() and a resize sync it straight away.
+            if (Date.now() - this._lastSyncAt >= SPEC_BADGE_RESYNC_MS) this._sync();
             this._raf = requestAnimationFrame(() => this._tick());
         }
     };
@@ -1129,6 +1161,7 @@
                 sorts: ['name', 'level'],
                 onChange: () => {
                     this._selectedIndex = 0;
+                    this._listCache = null;
                     this.refreshSpecDOM();
                     if (this._specBar) this._specBar.restoreFocus();
                 }
@@ -1277,7 +1310,27 @@
             }, 16);
         }
 
+        // Everything the ordered list depends on. A cursor step changes none of
+        // it, so the sorted list is reused rather than rebuilt over 800 specs.
+        specListKey(actor) {
+            const bar = this._specBar;
+            return [
+                this._currentActorIndex, actor.actorId ? actor.actorId() : 0, this._categoryIndex,
+                this._categoryTabs.length, window.Specializations.list.length,
+                bar ? `${bar.query}|${bar.sortKey}|${bar.sortDir}|${bar.category}` : '',
+                specLevelsGeneration
+            ].join('|');
+        }
+
         buildListOrder(actor) {
+            const key = this.specListKey(actor);
+            if (this._listCache && this._listCache.key === key) return this._listCache.sections;
+            const sections = this.computeListOrder(actor);
+            this._listCache = { key, sections };
+            return sections;
+        }
+
+        computeListOrder(actor) {
             const category = this._categoryTabs[this._categoryIndex] || 'Trained';  // i18n-ignore  category id
             // A typed query searches the whole book: the menu opens on "Trained",
             // and hiding the 800 untrained ones from a search would answer
@@ -1403,6 +1456,34 @@
                 }
             }
 
+            this.buildSpecEntries(actor);
+            this.renderSpecList();
+            this.renderSpecDetail();
+        }
+
+        // A cursor step: the strip, the rail and the party row already say
+        // everything but where the cursor is, so only the rail's focus mark,
+        // the list's hairline and the card on the right page are redrawn.
+        refreshSpecFocus() {
+            if (!this._dndContainer || !window.Specializations.ready || !this._actor) return;
+            if (!this._specEntries || !this._listCache
+                || this._listCache.key !== this.specListKey(this._actor)) {
+                this.refreshSpecDOM();
+                return;
+            }
+            const categoryRow = document.getElementById('spec-category-row');
+            if (categoryRow) {
+                categoryRow.querySelectorAll('.backpack-tab').forEach(tab => {
+                    const idx = parseInt(tab.getAttribute('data-cat-idx'), 10);
+                    tab.classList.toggle('selected',
+                        idx === this._categoryIndex && this._activeArea === 'categories');
+                });
+            }
+            this.renderSpecList();
+            this.renderSpecDetail();
+        }
+
+        buildSpecEntries(actor) {
             const sections = this.buildListOrder(actor);
             const { trained, trainedTodo, untrained, untrainedTodo, order } = sections;
             this._listOrder = order;
@@ -1475,10 +1556,19 @@
                 run(untrainedTodo, T('SpecMenu.ui.notImplemented'));
             }
 
+            this._specEntries = entries;
+            this._specFullWidth = fullWidth;
+        }
+
+        renderSpecList() {
+            const entries = this._specEntries;
+            const fullWidth = this._specFullWidth;
             const listBox = document.getElementById('spec-list-content');
-            if (listBox) {
+            if (listBox && entries) {
                 window.MenuVirtualList.render(listBox, {
-                    key: `${this._currentActorIndex}|${this._categoryIndex}|${this._specBar ? this._specBar.query : ''}`,
+                    // The list's own key, so a re-sort or a tier bought repaints
+                    // the rows rather than only moving the hairline over them.
+                    key: this._listCache ? this._listCache.key : '',
                     count: entries.length,
                     renderItem: idx => entries[idx](),
                     fullWidth: idx => !!fullWidth[idx],
@@ -1496,14 +1586,18 @@
                                 this._selectedIndex = parseInt(row.getAttribute('data-idx'), 10);
                                 this._activeArea = 'list';
                                 SoundManager.playCursor();
-                                this.refreshSpecDOM();
+                                this.refreshSpecFocus();
                             });
                         });
                     }
                 });
             }
+        }
 
-            document.getElementById('spec-detail-content').innerHTML = this.buildDetailHTML(actor, this._listOrder[this._selectedIndex]);
+        renderSpecDetail() {
+            const detail = document.getElementById('spec-detail-content');
+            if (!detail) return;
+            detail.innerHTML = this.buildDetailHTML(this._actor, this._listOrder[this._selectedIndex]);
             // Rebound on every redraw: the card is rewritten whole, so the
             // button that was there a moment ago is a different element now.
             const spendButton = document.getElementById('spec-spend-button');
@@ -1659,7 +1753,7 @@
                 if (this._activeArea === 'list') {
                     this._activeArea = 'categories';
                     SoundManager.playCancel();
-                    this.refreshSpecDOM();
+                    this.refreshSpecFocus();
                     return;
                 }
                 this.closeMenu();
@@ -1675,7 +1769,7 @@
                     if (this._listOrder.length) {
                         this._activeArea = 'list';
                         SoundManager.playCursor();
-                        this.refreshSpecDOM();
+                        this.refreshSpecFocus();
                     }
                 } else if (Input.isTriggered('ok')) {
                     SoundManager.playOk();
@@ -1695,7 +1789,7 @@
             const moveTo = (idx) => {
                 this._selectedIndex = Math.max(0, Math.min(last, idx));
                 SoundManager.playCursor();
-                this.refreshSpecDOM();
+                this.refreshSpecFocus();
                 this.scrollSelectedIntoView();
             };
 
@@ -1711,7 +1805,7 @@
                 } else {
                     this._activeArea = 'categories';
                     SoundManager.playCursor();
-                    this.refreshSpecDOM();
+                    this.refreshSpecFocus();
                 }
             }
         }

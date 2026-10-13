@@ -28,6 +28,7 @@
 
   const {
     ccT,
+    ccEsc,
     ccTp,
     ccStatLabel,
     ccStatLabels,
@@ -502,7 +503,7 @@
         const container = this._dndContainer;
         if (container) {
           const sidebarSlot = container.querySelector(".cc-sidebar-slot");
-          if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
+          if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._renderCompactSidebarHtml());
           const leftPage = container.querySelector(".cc-page-left");
           if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
           const rightPage = container.querySelector(".cc-page-right");
@@ -553,6 +554,17 @@
       const picked = selectedTraitIds(actor);
       const idx = picked.findIndex((id) => String(id) === String(trait.id));
       if (idx >= 0) {
+        // Dropping a drawback takes its refund back with it, so it is refused
+        // while that refund is what pays for the rest of the build: the purse
+        // went negative and the board still let the party leave.
+        const after = picked.filter((_, i) => i !== idx)
+          .map((id) => traitBank.find((t) => String(t.id) === String(id)))
+          .filter(Boolean);
+        const TP = window.TraitPoints;
+        if (TP && TP.tally && TP.tally(after).remaining < 0) {
+          SoundManager.playBuzzer();
+          return;
+        }
         picked.splice(idx, 1);
         SoundManager.playCancel();
       } else {
@@ -676,7 +688,7 @@
       }
       this._ccSwapPage(container.querySelector(".cc-page-right"), this._traitPickerRightHtml());
       const sidebarSlot = container.querySelector(".cc-sidebar-slot");
-      if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
+      if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._renderCompactSidebarHtml());
       this._refreshTopFolderTabs();
     }
 
@@ -700,6 +712,9 @@
     }
 
     onRandomizeTraitsForCurrentActor() {
+      // A taken dossier keeps its traits: the pad reaches this button even
+      // where the locked sheet stops the mouse.
+      if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
       const targetActorId = (Scene_CharacterCreation._currentPartyMemberIndex || 0) + 1;
@@ -725,6 +740,15 @@
     }
 
     onTraitConfirm() {
+      // An over-budget build is not a finished page (Scene_TraitSelector's
+      // canSeal asks the same of its own board).
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      const TP = window.TraitPoints;
+      // A written dossier is played as written, whatever its build cost.
+      if (actor && TP && TP.tally && !this._presetEditBlocked()) {
+        const bought = selectedTraitObjects(actor).filter((t) => t && !t.diseaseId);
+        if (TP.tally(bought).remaining < 0) { SoundManager.playBuzzer(); return; }
+      }
       markStepCompleted(STEP.TRAITS);
       this.nextStep();
     }
@@ -1309,6 +1333,7 @@
 
     onRandomizeSpecsForCurrentActor() {
       if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
+      if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
       const catalog = this._specsCatalog();
@@ -1329,6 +1354,7 @@
     // nothing else about the board reset.
     onResetSpecsForCurrentActor() {
       if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
+      if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
       actor._specTrained = {};
@@ -1415,6 +1441,7 @@
 
     onSuggestSpecsForCurrentActor() {
       if (this._specsReadOnly()) { SoundManager.playBuzzer(); return; }
+      if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return;
       this._applySuggestedSpecs(actor);
@@ -1824,6 +1851,10 @@
         return;
       }
       this.onBioOptionChange("class", classId);
+      // A refused change (a taken dossier, story mode's Em) leaves the class as
+      // it was, and the tab is not ticked off for a buzzer.
+      const picked = Scene_CharacterCreation.getCurrentActor();
+      if (!picked || picked._classId !== classId) return;
       if (typeof markStepCompleted === "function") markStepCompleted(STEP.CLASS);
     }
 
@@ -1906,9 +1937,9 @@
         const current = colours[part];
         const openClass = this._storyOpenClass(field);
         const shipped = MODEL_COLOUR_ORIGINALS[part];
-        const original = `<button type="button" class="cc-bio-chip cc-colour-swatch${openClass} ${current ? '' : 'selected'}" style="background:${shipped} !important" data-colour="${shipped}" title="${ccT('CharCreate.colourOriginal')}" onclick="SceneManager._scene.onBioOptionChange('${field}', '')"></button>`;
+        const original = `<button type="button" class="cc-bio-chip cc-colour-swatch${openClass} ${current ? '' : 'selected'}" style="--cc-swatch:${shipped}" data-colour="${shipped}" title="${ccT('CharCreate.colourOriginal')}" onclick="SceneManager._scene.onBioOptionChange('${field}', '')"></button>`;
         const swatches = MODEL_COLOUR_SWATCHES[part].map((hex) => (
-          `<button type="button" class="cc-bio-chip cc-colour-swatch${openClass} ${current === hex ? 'selected' : ''}" style="background:${hex} !important" data-colour="${hex}" onclick="SceneManager._scene.onBioOptionChange('${field}', '${hex}')"></button>`
+          `<button type="button" class="cc-bio-chip cc-colour-swatch${openClass} ${current === hex ? 'selected' : ''}" style="--cc-swatch:${hex}" data-colour="${hex}" onclick="SceneManager._scene.onBioOptionChange('${field}', '${hex}')"></button>`
         )).join("");
         const free = `<input type="color" class="cc-colour-free${openClass}" value="${current || shipped}" title="${ccT('CharCreate.colourAny')}"
           oninput="SceneManager._scene.onModelColourPreview('${part}', this.value)"
@@ -2216,10 +2247,15 @@
       // facing page is left to her written history alone.
       if (isStoryEm) {
         const storyClassData = (typeof $dataClasses !== 'undefined') ? $dataClasses[actor._classId] : null;
-        // The story mode's difficulty: Roguelike or Blood and Oil, nothing else.
+        // The story mode's difficulty: Peaceful, Roguelike, Hardcore or Blood
+        // and Oil, nothing else.
         const difficultyOpenClass = this._storyOpenClass("difficulty");
-        const currentDifficulty = $gameSystem._bloodAndOilMode ? "blood_and_oil" : "roguelite";
-        const difficultyChips = ["roguelite", "blood_and_oil"].map((mode) => {
+        const storyModes = ["peaceful", "roguelite", "hardcore", "blood_and_oil"];
+        const pickedMode = $gameSystem._difficultyMode;
+        const currentDifficulty = $gameSystem._peacefulMode ? "peaceful"
+          : ($gameSystem._bloodAndOilMode && (pickedMode === "hardcore" || pickedMode === "blood_and_oil"))
+            ? pickedMode : "roguelite";
+        const difficultyChips = storyModes.map((mode) => {
           const isSelected = currentDifficulty === mode;
           return `<button class="cc-bio-chip ${isSelected ? 'selected' : ''}${difficultyOpenClass}" onclick="SceneManager._scene.onBioOptionChange('difficulty', '${mode}')">${ccT('CharCreate.storyDifficulty.' + mode + '.name')}</button>`;
         }).join("");
@@ -2229,7 +2265,7 @@
               <div class="cc-bio-section">
                 <div class="cc-bio-section-title">${this._ccIconHtml(176, 16)} <span>${ccT('CharCreate.difficulty')}</span></div>
                 <div class="cc-bio-chips-row">${difficultyChips}</div>
-                <div class="cc-difficulty-note${currentDifficulty === 'blood_and_oil' ? ' cc-difficulty-warning' : ''}">${ccT('CharCreate.storyDifficulty.' + currentDifficulty + '.desc')}</div>
+                <div class="cc-difficulty-note${(currentDifficulty === 'hardcore' || currentDifficulty === 'blood_and_oil') ? ' cc-difficulty-warning' : ''}">${ccT('CharCreate.storyDifficulty.' + currentDifficulty + '.desc')}</div>
               </div>
               ${typePillsHtml}
               ${professionSectionHtml}
@@ -2528,7 +2564,7 @@
         <div class="cc-page cc-page-full cc-description-page cc-col">
           <div class="cc-bio-identity cc-description-head">
             <span class="cc-compact-avatar cc-avatar-sm" style="${avatarStyle}"></span>
-            <span class="cc-bio-identity-name">${actor.name()}</span>
+            <span class="cc-bio-identity-name">${ccEsc(actor.name())}</span>
             <span class="cc-bio-identity-class">(${className})</span>
             <span class="cc-col-grow"></span>
             ${rewriteHtml}
@@ -2585,8 +2621,9 @@
       const CP = window.CharacterPresets;
       const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm(actor));
       const simpleClassHtml = (isSimpleMode && !isStoryEm) ? this._renderSimpleClassDetailsHtml(actor, classData) : "";
-      // The history reads in the sidebar's portrait well on this sheet, and the
-      // portrait stands here in its place (see _bioSwapsPortraitAndHistory).
+      // Detailed mode keeps the history on its own Description tab. Story mode
+      // Em reads hers in the sidebar's portrait well, and the portrait stands
+      // here in its place (see _bioSwapsPortraitAndHistory).
       const sheetHistoryHtml = this._bioSwapsPortraitAndHistory()
         ? `<div class="cc-bio-portrait-page">${this._ccPortraitCardHtml(actor, this._isActorLockedPreset(actor), Scene_CharacterCreation.isCreatureActor(actor))}</div>`
         : ((isSimpleMode || isStoryEm) ? this._simpleSheetHistoryHtml(actor, age) : "");
@@ -2596,7 +2633,7 @@
           <div class="cc-dossier-card cc-step-scroll-padded">
             <div class="cc-bio-identity">
               <span class="cc-compact-avatar cc-avatar-sm" style="${avatarStyle}"></span>
-              <span class="cc-bio-identity-name">${actor.name()}</span>
+              <span class="cc-bio-identity-name">${ccEsc(actor.name())}</span>
               <span class="cc-bio-identity-class">(${className})</span>
             </div>
 
@@ -2671,6 +2708,7 @@
 
     onSetActorGender(genderVal) {
       if (this._storyModeEmLocksField("gender")) { SoundManager.playBuzzer(); return; }
+      if (this._refusePresetEdit()) return;
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (actor && actor.setGender) actor.setGender(genderVal);
       const isSimple = Scene_CharacterCreation.isSimpleMode();
@@ -2693,7 +2731,7 @@
         const rightPage = container.querySelector ? container.querySelector(".cc-page-right") : null;
         if (rightPage && typeof this._ccSwapPage === 'function') this._ccSwapPage(rightPage, this._bioPickerRightHtml());
         const sidebar = container.querySelector ? container.querySelector(".cc-compact-sidebar") : null;
-        if (sidebar) sidebar.outerHTML = this._renderCompactSidebarHtml();
+        if (sidebar) this._ccMorphOuter(sidebar, this._renderCompactSidebarHtml());
         return;
       }
       this.refreshUIOverlayDOM();
@@ -2904,14 +2942,19 @@
           return;
         }
       } else if (field === "difficulty") {
-        // The story mode's two difficulties. Em and Bubba never die for good on
-        // either; everybody else who joins does (BattleSystemEnhanced.diesForGood).
-        const bloodAndOil = value === "blood_and_oil";
-        $gameSwitches.setValue(9, bloodAndOil);
+        // The story mode's four difficulties. Peaceful loses nobody (PeacefulMode).
+        // Hardcore and Blood and Oil both cut limbs; Em and Bubba never die for
+        // good on Roguelike and Hardcore, and are mortal on Blood and Oil
+        // (BattleSystemEnhanced.isStoryMortal). Everybody else who joins dies
+        // for good on the three that are not Peaceful.
+        const known = ["peaceful", "hardcore", "blood_and_oil"];
+        const mode = known.includes(value) ? value : "roguelite";
+        const cutting = mode === "hardcore" || mode === "blood_and_oil";
+        $gameSwitches.setValue(9, cutting);
         $gameSwitches.setValue(33, true);
-        $gameSystem._bloodAndOilMode = bloodAndOil;
-        $gameSystem._peacefulMode = false;
-        $gameSystem._difficultyMode = bloodAndOil ? "blood_and_oil" : "roguelite";
+        $gameSystem._bloodAndOilMode = cutting;
+        $gameSystem._peacefulMode = mode === "peaceful";
+        $gameSystem._difficultyMode = mode;
         SoundManager.playCursor();
         const leftPage = this._dndContainer && this._dndContainer.querySelector(".cc-page-left");
         if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
@@ -2936,7 +2979,7 @@
         const container = this._dndContainer;
         if (container) {
           const sidebarSlot = container.querySelector(".cc-sidebar-slot");
-          if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
+          if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._renderCompactSidebarHtml());
           const leftPage = container.querySelector(".cc-page-left");
           if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
           const rightPage = container.querySelector(".cc-page-right");
@@ -3018,7 +3061,7 @@
       const container = this._dndContainer;
       if (container) {
         const sidebarSlot = container.querySelector(".cc-sidebar-slot");
-        if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
+        if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._renderCompactSidebarHtml());
         // Most of these fields are a row of chips and nothing else: which one
         // is marked is the only thing that changed, so the mark is moved and
         // the page is left standing. Rebuilding it threw the reader back up
@@ -3234,7 +3277,7 @@
           <div class="cc-stack-gapped cc-gap-below">
             <div class="cc-row-inline">
               <span class="cc-compact-avatar cc-avatar-xs" style="${avatar}"></span>
-              <span class="cc-col-grow cc-romance-name">${other.name()}</span>
+              <span class="cc-col-grow cc-romance-name">${ccEsc(other.name())}</span>
             </div>
             ${this._pickTriggerHtml('bond', this._pickLabel('bond', other.actorId()), other.actorId())}
             ${desc && currentKey !== "none" ? `<div class="cc-bio-slider-readout">${desc}</div>` : ""}
@@ -3490,13 +3533,20 @@
         const rightPage = container.querySelector(".cc-page-right");
         this._ccSwapPage(rightPage, this._bioPickerRightHtml());
         const sidebar = container.querySelector(".cc-compact-sidebar");
-        if (sidebar) sidebar.outerHTML = this._renderCompactSidebarHtml();
+        if (sidebar) this._ccMorphOuter(sidebar, this._renderCompactSidebarHtml());
         return;
       }
       this.refreshUIOverlayDOM();
     }
 
     // ── Familiar selection screen ──
+    // The kind is an id ("Animal") matched against the category tabs; this is
+    // the word the card shows for it. The none card already carries its label.
+    _petKindLabel(kind) {
+      const keys = { Animal: "petKindAnimal", Creature: "petKindCreature", Construct: "petKindConstruct", Undead: "petKindUndeadOne" }; // i18n-ignore: pet kind ids
+      return keys[kind] ? ccT("CharCreate." + keys[kind], kind) : kind;
+    }
+
     _petCatalog() {
       if (this._cachedPetCatalog && this._cachedPetCatalog.length > 0) {
         return this._cachedPetCatalog;
@@ -3702,7 +3752,7 @@
             })}
           </div>
           <div class="ts-tab-row">${catTabsHtml}</div>
-          <div class="cc-pet-grid" id="cc-pet-grid-virt">
+          <div class="cc-pet-grid" id="cc-pet-grid-virt" data-cc-morph-own>
             ${initialCards}
           </div>
         </div>
@@ -3783,7 +3833,7 @@
               <div class="cc-sprite cc-sprite-x12" style="${this.getSpriteStyle(pet.sprite, pet.spriteIndex || 0)}"></div>
             </div>
             <div class="cc-pet-name" title="${pet.name}">${pet.name}</div>
-            <div class="cc-pet-kind">${pet.kind}</div>
+            <div class="cc-pet-kind">${this._petKindLabel(pet.kind)}</div>
           </div>
         `;
       }).join("");
@@ -3799,7 +3849,18 @@
     // Called once per full DOM rebuild. Re-binds are guarded by _petVirtBound.
     _attachPetVirtualScroll() {
       const grid = document.getElementById("cc-pet-grid-virt");
-      if (!grid || grid._petVirtBound) return;
+      if (!grid) return;
+      // A page patched in place (CCMorph) keeps the grid it had, listener and
+      // all, but its cards were drawn as the window at the top of the list: the
+      // window is laid back over wherever the grid is actually scrolled to.
+      if (grid._petVirtBound) {
+        if (grid._petVirtRemeasure) {
+          const st = Scene_CharacterCreation._petVirtScrollTop || 0;
+          if (grid.scrollTop !== st) grid.scrollTop = st;
+          grid._petVirtRemeasure(st);
+        }
+        return;
+      }
       grid._petVirtBound = true;
 
       // The first window was built before this grid existed, off the fallback
@@ -3809,9 +3870,12 @@
       const savedScroll = Scene_CharacterCreation._petVirtScrollTop || 0;
       const remeasure = (scrollTop) => {
         const filtered = Scene_CharacterCreation._petVirtFiltered || [];
-        grid.innerHTML = this._buildPetCardsWindow(filtered, scrollTop, this._petGridMetrics());
+        // Patched rather than rewritten, so the cards that stay in the window
+        // keep their sprites instead of reloading them on every scroll step.
+        this._ccMorphInner(grid, this._buildPetCardsWindow(filtered, scrollTop, this._petGridMetrics()));
         grid._petVirtBound = true; // re-mark after innerHTML wipe
       };
+      grid._petVirtRemeasure = remeasure;
       if (savedScroll > 0) grid.scrollTop = savedScroll;
       remeasure(savedScroll);
 
@@ -4015,8 +4079,8 @@
 
       const sidebarSlot = this._dndContainer && this._dndContainer.querySelector(".cc-sidebar-slot");
       const sidebar = this._dndContainer && this._dndContainer.querySelector(".cc-compact-sidebar");
-      if (sidebarSlot) sidebarSlot.innerHTML = this._petSidebarHtml();
-      else if (sidebar) sidebar.outerHTML = this._petSidebarHtml();
+      if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._petSidebarHtml());
+      else if (sidebar) this._ccMorphOuter(sidebar, this._petSidebarHtml());
       else {
         this._lastStep = -1;
         this._lastIndex = -1;
@@ -4038,8 +4102,8 @@
       const sidebar = this._dndContainer && this._dndContainer.querySelector(".cc-compact-sidebar");
       const grid = document.getElementById("cc-pet-grid-virt");
       if ((sidebarSlot || sidebar) && grid) {
-        if (sidebarSlot) sidebarSlot.innerHTML = this._petSidebarHtml();
-        else sidebar.outerHTML = this._petSidebarHtml();
+        if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._petSidebarHtml());
+        else this._ccMorphOuter(sidebar, this._petSidebarHtml());
         const cards = grid.querySelectorAll(".cc-pet-card");
         cards.forEach((c) => {
           if (c.getAttribute("onclick") && c.getAttribute("onclick").includes(`'${petId}'`)) {
@@ -4073,6 +4137,8 @@
 
     onRandomizePet() {
       const catalog = this._petCatalog();
+      // An empty catalogue (the creature data not loaded) has nothing to roll.
+      if (!catalog || !catalog.length) { SoundManager.playBuzzer(); return; }
       const pet = catalog[Math.floor(Math.random() * catalog.length)];
       $gameSystem._partyPet = pet;
       Scene_CharacterCreation._hoveredPetId = pet.id;
@@ -4198,7 +4264,7 @@
       if (Scene_CharacterCreation._hoveredVehicleSymbol === symbol) return;
       Scene_CharacterCreation._hoveredVehicleSymbol = symbol;
       const sidebarSlot = this._dndContainer && this._dndContainer.querySelector(".cc-sidebar-slot");
-      if (sidebarSlot) sidebarSlot.innerHTML = this._vehicleSidebarHtml();
+      if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._vehicleSidebarHtml());
     }
 
     onVehicleCardToggle(symbol) {

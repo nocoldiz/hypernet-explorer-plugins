@@ -153,7 +153,7 @@
       "Crop circles are old hat. I'm thinking crop triangles. {Subtle|Bold|Disrespectful}.",
       "One lamp in a field and the village has a story for a decade. Cheap, effective.",
       "A human just said 'nothing ever happens here'. Noted. Noted.",
-      "I don't want their water, gold or planet. I want their faces when the fridge talks.",
+      "All I want from them is their faces when the fridge talks.",
       "Radios hiss between stations. Sometimes that hiss is me saying hello.",
       "Patience. The best bits ripen like cheese.",
       "Herschel thought he named our moon all by himself. Adorable.",
@@ -170,7 +170,7 @@
       "Every town has one person who has seen us. I visit them on anniversaries.",
       "I told the truth once on this planet. Nobody laughed. Never again.",
       "Mental note: buy {a hat|a moustache|a tie} that looks normal. Humans trust normal.",
-      "The joke isn't what we do. The joke is the next morning, when they explain it.",
+      "The real joke is the next morning, when they try to explain it.",
       "Everyone on this bus thinks they're the main character. Cute.",
       "Should I tell the baker his oven is haunted? It isn't. That's the trick.",
       "My people waited ten thousand years for the invention of the doorbell. Worth it.",
@@ -181,7 +181,7 @@
       "I swapped the town clock's hands. Nobody can read it, everyone's late, nobody blames me.",
       "Their television shows aliens with big eyes. Those are the Tourists. Typecasting.",
       "A good prank leaves the house tidier than you found it. Unsettlingly tidier.",
-      "I'm not lost. I'm studying how humans give directions. Badly, with pointing.",
+      "I'm studying how humans give directions. Badly, with pointing.",
       "Somewhere a guard near Genoa is telling the story again. I hope he's added the hats.",
       "They think we're cruel. We're thorough.",
       "{Seventeen|Twenty|Forty} years ago I put a farmer's cow on his roof. He still tells it at weddings.",
@@ -312,7 +312,7 @@
       "safety": [
         "Someone's watching me. Professional courtesy says I watch back.",
         "That guard looked at me twice. Time to be extremely boring.",
-        "If the Guild sends someone to 'talk', I'm a tourist. Not a Tourist. A tourist.",
+        "If the Guild sends someone to 'talk', I'm here on holiday. As a tourist. Small t.",
         "Danger nearby. Pranks don't work on people with drawn swords.",
         "Quiet. Step slowly. A frightened human isn't a funny human.",
         "I don't like this street. Too many shadows that aren't mine.",
@@ -479,7 +479,7 @@
         "{Twilight|Dusk|The blue hour}. The edges of things go soft.",
         "Evening news. I'm listening for 'unexplained'.",
         "People closing shutters. Perfect time to knock once and walk off. No. Be good.",
-        "First star. Not mine. Mine's out past the seventh planet.",
+        "First star. Mine's further out, past the seventh planet.",
         "Couples strolling. I'll walk in step two metres behind. Too far? Research.",
         "Cool evening, long walk, and nobody suspects a thing."
       ],
@@ -495,7 +495,7 @@
         "Night bus. Every passenger a short story.",
         "{Stars|The moon|Silence} everywhere. Lovely backdrop. No audience.",
         "Can't sleep. Neither can the farmer three fields over. Not my fault, this time.",
-        "Dogs barking at nothing. Not nothing. Me, waving.",
+        "Dogs barking at nothing. At me, really, waving.",
         "Night air. Cold, thin, almost like home, if home had crickets.",
         "Street lamps buzzing, one lone guard on a night shift. Nostalgia.",
         "Late. Go to bed. Or stand very still in a garden. Bed. Fine."
@@ -589,7 +589,7 @@
         "Rich enough to fund a research grant on Titania. Into myself.",
         "Varlenia is full of billionaires. I'll buy the plot next to the most serious one.",
         "I own a newspaper now. Guess whose stories get page three.",
-        "My butler is unflappable. That's a challenge, not a compliment.",
+        "My butler is unflappable. I take that as a personal challenge.",
         "{Gold taps|A private pool|A small island}. Each one a stage.",
         "Charity galas. Everyone pretending to care. An expert crowd.",
         "Money is paper with a god's name on it, and I own a great deal of his name."
@@ -626,7 +626,7 @@
       "Here the music is louder than anything I could ever arrange.",
       "Corpse paint everywhere. They're already dressed for the joke. Respect.",
       "Under the Horde nobody is surprised by anything. Terrible audience.",
-      "The goblins found Junehem and Junehem found the goblins. Best prank in Europe, not ours.",
+      "The goblins found Junehem and Junehem found the goblins. Best prank in Europe, and it isn't even ours.",
       "Never pull a goblin's ear. They all feel it. They all remember it.",
       "Horde streets. Quiet humans, loud goblins. Reversed. Fascinating.",
       "I tried a spooky light on a Naguka. He tried to eat it.",
@@ -735,7 +735,7 @@
         "Eleven visits, each better than the last. A franchise.",
         "Somewhere in Liguria a man still checks the sky before his shift. We're touched.",
         "The best part of the Zanfretta case is the lawyers. Nobody planned the lawyers.",
-        "We gave him a little sphere and told him it was important. It wasn't. It was perfect.",
+        "We gave him a little sphere and told him it was important. A lie. But what a perfect sphere.",
         "Every species has its classic. Humans have opera. We have Zanfretta.",
         "A villa outside Genoa. A torch beam, a shadow, and him running. We replay it at parties.",
         "People ask if Zanfretta was real. He was. We just made sure nobody could prove it."
@@ -772,7 +772,7 @@
         "The Pale Warpers never speak. Impossible to prank. Respect, and resentment.",
         "The Tourists give any human ship a free refuel. Generous. We'd give a free fake map.",
         "Every film with grey aliens is about them. Every story nobody believes is about us.",
-        "The Tourists call us 'cousins'. We are not cousins. We're the older kid next door.",
+        "The Tourists call us 'cousins'. Sweet. We feel more like the older kid next door.",
         "They waited until 1999 for official first contact. Official! With a form! Bless them.",
         "Their mirror around the Sun broke. We didn't touch it. We did laugh.",
         "A Grey Wanderer asked to take my picture. I pulled a face that will haunt his album.",
@@ -1439,7 +1439,7 @@
         ],
         [
           0,
-          "Moved. To your other pocket. That isn't theft, it's choreography."
+          "Moved. To your other pocket. It's called choreography."
         ]
       ],
       [
@@ -1801,7 +1801,7 @@
         ],
         [
           0,
-          "Poor man. Famous enough for bronze, not for a name."
+          "Poor man. Famous enough for bronze, too obscure for a name."
         ]
       ],
       [
@@ -2147,7 +2147,7 @@
           ],
           [
             1,
-            "That's not a reason, that's a hobby."
+            "That's called a hobby."
           ]
         ]
       },
@@ -2189,7 +2189,7 @@
           ],
           [
             1,
-            "Because we forgive charm. Not lies."
+            "Because charm we forgive. Lies, much less."
           ]
         ]
       },

@@ -52,6 +52,7 @@
       "NEXUS",
       "WILDS"
     ],
+    "format": "{adj} {noun}",
     "fallback": "NEW WORLD {n}"
   },
   "ui": {

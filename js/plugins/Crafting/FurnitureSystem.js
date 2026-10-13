@@ -1385,7 +1385,7 @@
     if (window.HypernetOS && window.HypernetOS.registerApp) {
         window.HypernetOS.registerApp({
             id: HOME_APP_ID,
-            name: T('Furniture.homely.appName'),
+            name: () => T('Furniture.homely.appName'),
             icon: HOME_ICON,
             category: 'economy',
             launchFn: function () { window.Homely.launch(); },
@@ -4503,7 +4503,7 @@
             rows.push(`<div class="fbuild-town-line ${tally.houses >= TF.MIN_HOUSES ? 'ok' : 'bad'}">
                 ${T('Towns.found.requirement', { have: tally.houses, need: TF.MIN_HOUSES })}</div>`);
             if (existing) {
-                rows.push(`<div class="fbuild-town-line ok">${T('Towns.found.founded', { name: existing.name })}</div>`);
+                rows.push(`<div class="fbuild-town-line ok">${T('Towns.found.founded', { name: hmEsc(existing.name) })}</div>`);
             } else if (!check.ok) {
                 rows.push(`<div class="fbuild-town-line bad">${T('Towns.found.reason.' + check.reason,
                     { place: check.place || '' })}</div>`);
@@ -5498,7 +5498,34 @@
         this._fbArmedId = null;
         this._fbArmedKind = null;
         this._fbArmedPicture = '';
+        // A placing stroke ends with the piece it was laying: the same held
+        // button must not carry on as a removal sweep once the piece is gone.
+        this.endFurniturePaintStroke();
         if (this._fbUI) this._fbUI.setArmed();
+    };
+
+    // The picker panel re-renders its whole DOM on refresh, so a paint stroke
+    // crossing ten tiles in one frame must not rebuild it ten times: while a
+    // stroke batch is open the request is only remembered, and the batch
+    // closes with a single refresh.
+    Scene_Map.prototype.refreshFurnitureBuildUI = function () {
+        if (this._fbUIBatch) { this._fbUIDirty = true; return; }
+        if (this._fbUI) this._fbUI.refresh();
+    };
+
+    Scene_Map.prototype.runFurnitureUIBatch = function (fn) {
+        const outer = !this._fbUIBatch;
+        this._fbUIBatch = true;
+        try { fn.call(this); }
+        finally {
+            if (outer) {
+                this._fbUIBatch = false;
+                if (this._fbUIDirty) {
+                    this._fbUIDirty = false;
+                    if (this._fbUI) this._fbUI.refresh();
+                }
+            }
+        }
     };
 
     // Swap the piece being placed to the previous/next one in the current tab
@@ -5761,7 +5788,7 @@
         if (!canObtainFurniture(f)) {
             this.disarmFurniture();
         }
-        if (this._fbUI) this._fbUI.refresh();
+        this.refreshFurnitureBuildUI();
     };
 
     // Places a wall/terrain autotile or a tileset feature at (x,y): pays its
@@ -5808,7 +5835,7 @@
         if (!canObtainFurniture(info)) {
             this.disarmFurniture();
         }
-        if (this._fbUI) this._fbUI.refresh();
+        this.refreshFurnitureBuildUI();
     };
 
     // Buys a house-door entrance: pays gold, spawns the invisible trigger
@@ -5835,7 +5862,7 @@
         recordBuild(info.name);
         this.disarmFurniture();
         SoundManager.playOk();
-        if (this._fbUI) this._fbUI.refresh();
+        this.refreshFurnitureBuildUI();
     };
 
     // Stands a whole authored prefab on the square: pays for it, remembers it
@@ -5859,7 +5886,7 @@
         this._fbPlaceCacheKey = null;
         this.disarmFurniture();
         SoundManager.playOk();
-        if (this._fbUI) this._fbUI.refresh();
+        this.refreshFurnitureBuildUI();
     };
 
     // Buys a live animal and stands it on the tile. Payment is always money
@@ -5881,7 +5908,7 @@
         fbPlayBuildSound(() => SoundManager.playShop());
         // Out of money for another one: put the piece down.
         if (!isFreeBuild() && !canPurchaseFurniture(info)) this.disarmFurniture();
-        if (this._fbUI) this._fbUI.refresh();
+        this.refreshFurnitureBuildUI();
     };
 
     // Fallback used by removeFurnitureAtTile when no placed FURNITURE occupies
@@ -5911,7 +5938,7 @@
         refundTileCost(rec.cost);
         this._fbPlaceCacheKey = null;
         fbPlayBuildSound(() => SoundManager.playUseItem());
-        if (this._fbUI) this._fbUI.refresh();
+        this.refreshFurnitureBuildUI();
         return true;
     };
 
@@ -5960,7 +5987,7 @@
         if ($gameMap) $gameMap.requestRefresh();
         this._fbPlaceCacheKey = null;
         SoundManager.playUseItem();
-        if (this._fbUI) this._fbUI.refresh();
+        this.refreshFurnitureBuildUI();
     };
 
     Scene_Map.prototype.removeFurnitureAtTile = function (tx, ty) {
@@ -5978,7 +6005,7 @@
                 // Placed set + materials changed: force the validity recompute.
                 this._fbPlaceCacheKey = null;
                 fbPlayBuildSound(() => SoundManager.playUseItem());
-                if (this._fbUI) this._fbUI.refresh();
+                this.refreshFurnitureBuildUI();
                 return true;
             }
         }
@@ -6239,22 +6266,20 @@
             // fences and floor tiles go down in one stroke instead of one click
             // per tile. Only a stroke that STARTED on the map paints, otherwise
             // dragging a piece out of the picker would smear it across the map.
-            const painted = this.updateFurniturePaintStroke(okPressed, usePad, x, y);
+            const painted = this.updateFurniturePaintStroke(okPressed, usePad, x, y,
+                !overPanel, 'place');
             if (okPressed) {
                 if (placeable && affordable) this.placeArmedFurniture(x, y);
-                // A stroke crossing a wall or a tile you cannot afford just skips
-                // it; only a deliberate single press buzzes.
+                // A stroke crossing a wall just skips it; only a deliberate
+                // single press buzzes.
                 else SoundManager.playBuzzer();
             }
             // Every tile the stroke crossed since the last frame, so a fast drag
             // draws an unbroken line the way the RPG Maker tile brush does.
-            for (const t of painted) {
-                if (this.isFurnitureBuildPlacementValid(this._fbArmedId, t.x, t.y) &&
-                    this.isArmedAffordable()) {
-                    this.placeArmedFurniture(t.x, t.y);
-                }
+            if (painted.length) {
+                this.paintArmedFurnitureTiles(painted);
+                this._fbPlaceCacheKey = null;
             }
-            if (painted.length) this._fbPlaceCacheKey = null;
         } else {
             // Removal mode: target a placed piece to take it back. Sweeping with
             // the button held clears a run, mirroring paint-placement.
@@ -6268,10 +6293,55 @@
                 y = $gameMap.canvasToMapY(TouchInput.y);
                 pressed = !overPanel && TouchInput.isTriggered();
             }
-            const painted = this.updateFurniturePaintStroke(pressed, usePad, x, y);
+            const painted = this.updateFurniturePaintStroke(pressed, usePad, x, y,
+                !overPanel, 'remove');
             if (pressed) this.removeFurnitureAtTile(x, y);
-            for (const t of painted) this.removeFurnitureAtTile(t.x, t.y);
+            if (painted.length) {
+                this.runFurnitureUIBatch(function () {
+                    for (const t of painted) this.removeFurnitureAtTile(t.x, t.y);
+                });
+            }
         }
+    };
+
+    // Lays the armed piece on every tile a paint stroke crossed this frame.
+    // Each tile goes through the very path a single click takes (the same
+    // validity test, the same price, the same placement record, so each one
+    // can be taken back with the removal tool exactly like a clicked one).
+    // There is no undo history in build mode: a stroke is undone tile by tile.
+    //
+    // A tile that cannot hold the piece is skipped. Running out of materials
+    // or money ENDS the stroke, with one "cannot afford" warning, instead of
+    // buzzing on every tile the cursor still sweeps over.
+    Scene_Map.prototype.paintArmedFurnitureTiles = function (tiles) {
+        this.runFurnitureUIBatch(function () {
+            for (const t of tiles) {
+                const id = this._fbArmedId;
+                if (!id) break;
+                const info = resolvePlaceable(id);
+                if (!info) break;
+                if (!this.isFurnitureBuildPlacementValid(id, t.x, t.y)) continue;
+                if (!this.isArmedAffordable()) {
+                    warnCannotAfford(info);
+                    this.endFurniturePaintStroke();
+                    break;
+                }
+                this.placeArmedFurniture(t.x, t.y);
+                // The placement put the piece down because the next copy is
+                // out of reach: the stroke stops here, and says why once.
+                if (!this._fbArmedId && !isFreeBuild() && !canObtainFurniture(info)) {
+                    warnCannotAfford(info);
+                    break;
+                }
+            }
+        });
+    };
+
+    Scene_Map.prototype.endFurniturePaintStroke = function () {
+        this._fbPaintArmed = false;
+        this._fbPaintTile = null;
+        this._fbPaintVisited = null;
+        this._fbPaintMode = null;
     };
 
     // Tracks a held-button "paint" stroke across tiles.
@@ -6284,28 +6354,46 @@
     //
     // The stroke only arms on a press that begins over the map (started), and
     // disarms as soon as the button is released, so a panel-to-map
-    // drag-and-drop still places exactly one piece.
+    // drag-and-drop still places exactly one piece. It also ends when the
+    // cursor leaves the map or slides onto the panel (inside false), and when
+    // the mode it was started in (place / remove) no longer holds.
+    //
+    // A tile is handed back at most once per stroke: sweeping back over a
+    // wall just laid never pays for it a second time.
     const NO_PAINT = [];
-    Scene_Map.prototype.updateFurniturePaintStroke = function (started, usePad, x, y) {
+    Scene_Map.prototype.updateFurniturePaintStroke = function (started, usePad, x, y, inside, mode) {
         // Livestock is never painted in a sweep: each animal is a separate
         // purchase, so a stray drag must not empty the player's wallet.
         if (this._fbArmedKind === 'animal') return NO_PAINT;
         const held = usePad ? Input.isPressed('ok') : TouchInput.isPressed();
-        if (started) this._fbPaintArmed = true;
-        if (!held) {
-            this._fbPaintArmed = false;
-            this._fbPaintTile = null;
+        const onMap = inside !== false && !!$gameMap && $gameMap.isValid(x, y);
+        if (started && onMap) {
+            this._fbPaintArmed = true;
+            this._fbPaintMode = mode || null;
+            this._fbPaintTile = { x, y };
+            this._fbPaintVisited = new Set([x + ',' + y]);
+            if (!held) this.endFurniturePaintStroke();
             return NO_PAINT;
         }
-        if (!this._fbPaintArmed) return NO_PAINT;
-
-        const tile = x + ',' + y;
-        if (started) { this._fbPaintTile = { x, y }; return NO_PAINT; }
+        if (!held || !this._fbPaintArmed || !onMap ||
+            (mode && this._fbPaintMode && mode !== this._fbPaintMode)) {
+            this.endFurniturePaintStroke();
+            return NO_PAINT;
+        }
         const last = this._fbPaintTile;
         if (last && last.x === x && last.y === y) return NO_PAINT;
         const trail = last ? tilesBetween(last.x, last.y, x, y) : [{ x, y }];
         this._fbPaintTile = { x, y };
-        return trail;
+        if (!this._fbPaintVisited) this._fbPaintVisited = new Set();
+        const visited = this._fbPaintVisited;
+        const fresh = [];
+        for (const t of trail) {
+            const key = t.x + ',' + t.y;
+            if (visited.has(key)) continue;
+            visited.add(key);
+            fresh.push(t);
+        }
+        return fresh;
     };
 
     // Every tile on the line from (x0,y0) to (x1,y1), the start excluded.

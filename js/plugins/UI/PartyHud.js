@@ -183,7 +183,7 @@
     // standing there all day. WARN_PCT still colours the bars themselves.
     const WARN_PCT = 30;
     const CRIT_PCT = 15;
-    const NEED_WARN = { hunger: 20, sleep: 20, hygiene: 11, social: 11, leisure: 11, bladder: 15 };
+    const NEED_WARN = { hunger: 20, sleep: 20, hygiene: 11, social: 11, leisure: 11, bladder: 9 };
     const NEED_CRIT = { hunger: 15, sleep: 15, hygiene: 8, social: 8, leisure: 8, bladder: 6 };
     // A craving is worth a chip once it is close to the withdrawal state, which
     // AddictionSystem hands out at 100 and only clears again under 80.
@@ -195,6 +195,12 @@
     // Where the party is standing
     //=========================================================================
     const inBattle = () => SceneManager._scene instanceof Scene_Battle;
+    // A fight played out on the live map (MapBattleMode) has the same class
+    // chips and battle stacks to show, on the map's own cards.
+    const inMapFight = () => {
+        const MBM = window.MapBattleMode;
+        return !!(MBM && typeof MBM.isActive === 'function' && MBM.isActive());
+    };
 
     //=========================================================================
     // ConfigManager
@@ -1248,7 +1254,7 @@
             this._writeChips(card.alerts, 'alertsKey', card,
                 battle ? [] : urgentAlertsFor(actor, needs), 'phud-need');
             this._writeChips(card.stats, 'statsKey', card,
-                battle ? classChipsFor(actor).map(c => ({
+                (battle || inMapFight()) ? classChipsFor(actor).map(c => ({
                     key: 'class:' + c.label, text: c.label, color: c.color, tip: c.info
                 })) : [], 'phud-stat');
             this._writeChips(card.states, 'statesKey', card,

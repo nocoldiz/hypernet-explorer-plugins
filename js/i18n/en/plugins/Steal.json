@@ -5,5 +5,7 @@
   "stealFailed": "You failed to steal",
   "stealTitle": "Steal",
   "nothingNearby": "Nothing to steal nearby.",
-  "recruitSawTheft": "{name} watched you take the {item} off their old counter."
+  "recruitSawTheft": "{name} watched you take the {item} off their old counter.",
+  "rollSteal": "Steal Attempt",
+  "rollShoplift": "Shoplift"
 }

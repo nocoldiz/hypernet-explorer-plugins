@@ -79,6 +79,25 @@
         return String((item && item.name) || '').trim();
     }
 
+    // The database keeps English names; the window-text hook that localizes
+    // them never sees this DOM catalogue, so every name and description headed
+    // for markup is translated here. nameOf stays English for the divider test.
+    const translated = (s) => (s && typeof window.translateText === 'function') ? window.translateText(s) : s;
+    const displayNameOf = (item) => translated(nameOf(item));
+
+    // A catalogue group is headed by a divider entry's English label.
+    function groupLabel(name) {
+        const key = 'ObjectIndex.group.' + name;
+        return (typeof T.has === 'function' && T.has(key)) ? T(key) : translated(name);
+    }
+
+    // Rarity.json tiers carry English names; the inventory's own words say them.
+    const RARITY_KEYS = { common: 'common', uncommon: 'uncommon', rare: 'rare', epic: 'epic', legendary: 'mythic', mythic: 'mythic' };
+    function rarityLabel(rarity) {
+        const k = RARITY_KEYS[String(rarity.name).toLowerCase()];
+        return k ? T('Inventory.rarity.' + k) : translated(String(rarity.name));
+    }
+
     function dividerLabel(item) {
         const m = DIVIDER_RE.exec(nameOf(item));
         return m ? m[1] : null;
@@ -206,7 +225,7 @@
             const m = /^\s*(\d+)\s*x\s*(\d+)\s*$/i.exec(part);
             if (!m) return part.trim();
             const ing = $dataItems[Number(m[1])];
-            const label = ing && nameOf(ing) ? nameOf(ing)
+            const label = ing && nameOf(ing) ? displayNameOf(ing)
                 : T('ObjectIndex.itemNumbered', { id: m[1] });
             return label + ' x' + m[2];
         }).join(', ');
@@ -473,10 +492,11 @@
                 const matches = group.items.filter(item =>
                     !filter ||
                     nameOf(item).toLowerCase().indexOf(filter) !== -1 ||
+                    displayNameOf(item).toLowerCase().indexOf(filter) !== -1 ||
                     categoryOf(item).toLowerCase().indexOf(filter) !== -1
                 );
                 if (!matches.length) return;
-                lines.push({ head: group.name + ' (' + matches.length + ')' });
+                lines.push({ head: groupLabel(group.name) + ' (' + matches.length + ')' });
                 matches.forEach(item => {
                     shown++;
                     lines.push({ item });
@@ -503,7 +523,7 @@
                     + '">'
                     + '<span style="flex-shrink:0">' + iconHTML(item.iconIndex, 16) + '</span>'
                     + '<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap">'
-                    + escapeHtml(nameOf(item)) + '</span>'
+                    + escapeHtml(displayNameOf(item)) + '</span>'
                     + '</div>';
             };
 
@@ -555,12 +575,12 @@
                 '<div style="flex-shrink:0">' + iconHTML(item.iconIndex, 40) + '</div>' +
                 '<div style="min-width:0">' +
                 '<div style="font-size:20px; font-weight:bold; color:var(--xp-ink-2)">' +
-                escapeHtml(nameOf(item)) + '</div>' +
+                escapeHtml(displayNameOf(item)) + '</div>' +
                 '<div style="' + S.note + '">' + T('ObjectIndex.indexNo', { id: item.id }) +
                 (categoryOf(item) ? ' &middot; ' + escapeHtml(categoryOf(item)) : '') +
                 (rarity && rarity.name ? ' &middot; <span class="xp-rarity xp-rarity--' +
                     escapeHtml(String(rarity.name).toLowerCase()) + '">' +
-                    escapeHtml(rarity.name) + '</span>' : '') +
+                    escapeHtml(rarityLabel(rarity)) + '</span>' : '') +
                 '</div></div></div>'
             );
 
@@ -572,7 +592,7 @@
             }
 
             if (item.description) {
-                html.push('<div style="' + S.card + '">' + escapeHtml(item.description) + '</div>');
+                html.push('<div style="' + S.card + '">' + escapeHtml(translated(item.description)) + '</div>');
             }
 
             const sb = shop();
@@ -788,7 +808,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: APP_ID,
-            name: T('ObjectIndex.appName'),
+            name: () => T('ObjectIndex.appName'),
             icon: APP_ICON,
             launchFn: function() {
                 window.HypernetObjectIndex.launch();

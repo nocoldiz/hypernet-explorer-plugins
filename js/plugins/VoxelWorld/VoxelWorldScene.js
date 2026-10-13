@@ -2242,6 +2242,8 @@
             const TI = window.TerrainInteractions;
             if (!TI || !TI.interactWithFeature || !this._terrain || !this._terrain.nearestProp) return false;
             if (this.isPaused()) return false;
+            // The salvage list is a choice in the engine's message box.
+            if (!this._hasMessageHost()) return false;
             const rig = this._fpc.getRig();
             // A chest is opened, not taken apart: it is _openChest's, and it
             // must not fall through to the salvage table when that one has
@@ -2287,6 +2289,7 @@
         _talkToShopkeeper() {
             if (!this._interiors || this._viewMode !== 'foot') return false;
             if (this.isPaused()) return false;
+            if (!this._hasMessageHost()) return false;
             const rig = this._fpc.getRig().position;
             const keeper = this._interiors.nearestKeeper(
                 rig.x, rig.y - (this._fpc.eyeH || FOOT_EYE), rig.z, TALK_RANGE);
@@ -2360,6 +2363,7 @@
 
         _callLift() {
             if (this.isPaused()) return false;
+            if (!this._hasMessageHost()) return false;
             const stop = this._liftHere();
             if (!stop) return false;
             if (typeof $gameMessage === 'undefined' || $gameMessage.isBusy()) return true;
@@ -2434,14 +2438,25 @@
             return this._travellers.nearest(x, z, maxD);
         }
 
+        // Is there a message box on the page to put a question in? Every
+        // conversation, salvage list and lift panel out here is the engine's
+        // own message window, which only the map scene has. Free play (the
+        // title screen's Liminal World) runs over a menu scene with none at
+        // all: a question asked there is never shown and never answered, and
+        // the world waits for it for ever with every key refused.
+        _hasMessageHost() {
+            if (typeof SceneManager === 'undefined' || typeof Scene_Map === 'undefined') return false;
+            const sc = SceneManager._scene;
+            return sc instanceof Scene_Map && !!sc._messageWindow;
+        }
+
         _talkToCitizen() {
             if (!this._crowd || this._viewMode !== 'foot') return false;
             if (this.isPaused()) return false;
             // The conversation is the game's own message box, so there has to be
             // one: asked for on a frame where the map scene is being rebuilt, the
             // question would go up with nothing able to answer or close it.
-            if (!(SceneManager._scene instanceof Scene_Map)) return false;
-            if (!SceneManager._scene._messageWindow) return false;
+            if (!this._hasMessageHost()) return false;
             const rig = this._fpc.getRig().position;
             const ped = this._nearestPerson(rig.x, rig.z, TALK_RANGE);
             if (!ped) return false;
@@ -3465,7 +3480,7 @@
                 // it. The world stays down until it is dismissed, or bringing
                 // the overlay back would drop it straight over the clock.
                 const waiting = (typeof $gameTemp !== 'undefined') && $gameTemp._sleepMenuOpen;
-                if (!waiting && SceneManager._scene instanceof Scene_Map) {
+                if (!waiting && this._isHostScene(SceneManager._scene)) {
                     this._suspended = false;
                     if (this._overlay) this._overlay.style.display = '';
                     // Anything done in the menu - a weapon swapped, the party
@@ -3496,6 +3511,14 @@
             // left on the map behind it (the Omega Tower's confirm), a line a
             // tool item's common event spoke. The world holds for it the way it
             // holds for its own, drawn under it rather than over it.
+            // Free play stands on a menu scene with no message box: a line
+            // queued there is never shown and never closed, and holding for it
+            // would freeze the world with every key refused. It is dropped
+            // instead (see _hasMessageHost).
+            if (this._standalone && typeof $gameMessage !== 'undefined' && $gameMessage &&
+                $gameMessage.isBusy() && !this._hasMessageHost()) {
+                $gameMessage.clear();
+            }
             if (typeof $gameMessage !== 'undefined' && $gameMessage && $gameMessage.isBusy()) {
                 this._msgWatch = true;
                 return this._holdForWindow(delta, now);
@@ -4890,9 +4913,20 @@
         _windowStillUp() {
             if (typeof SceneManager !== 'undefined') {
                 if (SceneManager.isSceneChanging && SceneManager.isSceneChanging()) return true;
-                if (!(SceneManager._scene instanceof Scene_Map)) return true;
+                if (!this._isHostScene(SceneManager._scene)) return true;
             }
             return !!(typeof $gameMessage !== 'undefined' && $gameMessage.isBusy());
+        }
+
+        // The scene this world is drawn over, and the one a pushed scene
+        // hands it back to: the map, or for free play the scene that hosts it
+        // and says so (Scene_CamperFreeplay, UI/Titlescreen.js, keeps the
+        // world running under a pushed scene and answers hostsVoxelWorld()).
+        // Back on it, a world suspended for a pushed scene comes back up.
+        _isHostScene(sc) {
+            if (!sc) return false;
+            if (typeof Scene_Map !== 'undefined' && sc instanceof Scene_Map) return true;
+            return !!(this._standalone && typeof sc.hostsVoxelWorld === 'function' && sc.hostsVoxelWorld());
         }
 
         isPaused() {
@@ -5127,6 +5161,20 @@
                 });
             }
 
+            // The vehicle's own hold (VehicleStorage.js), opened where it is
+            // parked, the way the maintenance sheet is.
+            const holdKey = this._vehicleId || 'camper';  // i18n-ignore: vehicle key
+            if (window.VehicleStorage && window.VehicleStorage.has(holdKey)) {
+                choices.push(window.VehicleStorage.title(holdKey));
+                handlers.push(() => {
+                    restore();
+                    this._suspended = true;
+                    if (this._overlay) this._overlay.style.display = 'none';
+                    releasePointerLock();
+                    window.VehicleStorage.open(holdKey);
+                });
+            }
+
             // Fuel out of the party's own cans, wherever they are standing. The
             // station option below is the other half of this and only shows at
             // a forecourt.
@@ -5220,7 +5268,8 @@
         // the exit proper runs under it, so the 2D map is never seen at the
         // old square. The map scene on the other side lifts the sheet.
         _leaveToWorldMap() {
-            if (this._leaving) return;
+            // Answered after the world went: no sheet over the map.
+            if (this._leaving || this._disposed) return;
             if (this._standalone || this._alien) { this._endDriveToWorldMap(); return; }
             this._leaving = true;
             this._suspended = true;
@@ -6419,19 +6468,15 @@
             const ts = WORLD_TILE_SIZE;
             const tx = Math.floor(x / ts), tz = Math.floor(z / ts);
             const plan = this._planAt(tx, tz);
-            // Omega Tower: solid base collision across its entire footprint
-            if (this._omegaAt) {
-                const half = (OMEGA_SPAN * ts) * 0.5;
+            // Omega Tower: the foot of its shaft is solid, round as the shaft is.
+            if (this._omegaAt && this._omega) {
                 const ox = this._omegaAt.x, oz = this._omegaAt.z;
                 const dx = x - ox, dz = z - oz;
-                const hw = half + r, hd = half + r;
-                if (Math.abs(dx) < hw && Math.abs(dz) < hd) {
-                    if (hw - Math.abs(dx) < hd - Math.abs(dz)) {
-                        x = ox + (dx < 0 ? -hw : hw);
-                    } else {
-                        z = oz + (dz < 0 ? -hd : hd);
-                    }
-                    return { x, z };
+                const reach = this._omega.plan.footR + r;
+                const d = Math.hypot(dx, dz);
+                if (d < reach) {
+                    const k = d > 1e-6 ? reach / d : 0;
+                    return d > 1e-6 ? { x: ox + dx * k, z: oz + dz * k } : { x: ox + reach, z: oz };
                 }
             }
             // Out in open country there is no town to be pushed out of, but
@@ -6985,9 +7030,9 @@
         // ---------------------------------------------------------------------
         // The Omega Tower
         // ---------------------------------------------------------------------
-        // Six world squares of black stone and gold, a heap of art deco
-        // skyscrapers piled deck on deck nearly five kilometres up, and the
-        // whole point of it is that it can be seen coming.
+        // The spear of the intro movie standing on six world squares, a gold
+        // gridded shaft nearly five kilometres up with the throne over its tip,
+        // and the whole point of it is that it can be seen coming.
         //
         // WHICH IS THE HARD PART. The camera clips at eight thousand units -
         // sixteen world squares - and the haze has eaten everything well before
@@ -7023,6 +7068,7 @@
             if (this._omega.setNightGlow) {
                 this._omega.setNightGlow(1 - (this._dayFactor == null ? 1 : this._dayFactor));
             }
+            if (this._omega.tick) this._omega.tick(performance.now() / 1000);
             // The ground it stands on, once the terrain under it has been built
             // at least once. Until then it is put on the sea's own level, which
             // is close enough to see from far off and corrected the moment the
@@ -8873,14 +8919,14 @@
                     AudioManager.playSe({ name: 'Thunder1', volume: 100, pitch: 70, pan: 0 });
                 }
                 if (this._hud && this._hud.showToast) {
-                    this._hud.showToast('THE SOLOMON RITUAL HAS BEGUN');
+                    this._hud.showToast(T('VoxelWorld.hud.solomonBegun'));
                 }
             } else {
                 if (typeof AudioManager !== 'undefined' && AudioManager.playSe) {
                     AudioManager.playSe({ name: 'Collapse1', volume: 75, pitch: 120, pan: 0 });
                 }
                 if (this._hud && this._hud.showToast) {
-                    this._hud.showToast('Solomon Ritual Dismissed');
+                    this._hud.showToast(T('VoxelWorld.hud.solomonDismissed'));
                 }
             }
         }
@@ -8908,6 +8954,9 @@
                 try { this._disposeRenderer(); } catch (e2) { /* already gone */ }
                 if (this._animId) { cancelAnimationFrame(this._animId); this._animId = null; }
                 try { releasePointerLock(); } catch (e) { /* nothing held it */ }
+                // The HUD's quick bar hangs off document.body, not the
+                // overlay. Safe to run twice.
+                try { if (this._hud) this._hud.dispose(); } catch (e) { console.error('[VoxelWorld] hud dispose', e); }
                 if (this._overlay && this._overlay.parentNode) {
                     this._overlay.parentNode.removeChild(this._overlay);
                 }

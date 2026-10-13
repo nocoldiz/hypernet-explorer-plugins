@@ -47,7 +47,7 @@
       "{spec}. {level}. I keep notes on my own mistakes, and the notebook is getting thin.",
       "I have {spec} down to a method. I will explain it to anyone who asks, and to some who don't.",
       "{spec} is a system. I have taken it apart twice and put it back better.",
-      "If you want {spec} done correctly, I am the correct person. That is a fact, not a boast.",
+      "If you want {spec} done correctly, I am the correct person. That is simply a fact.",
       "Every time I get better at {spec}, I find a new way to be wrong about it. Fascinating."
     ],
     "bubba": [
@@ -110,7 +110,7 @@
       "warm": [
         "A good sword is a promise to stand between trouble and the people you love.",
         "I still practise with the sword every morning. It clears my head for the day.",
-        "Anyone who wants to learn the sword can find me. Bring patience, not pride."
+        "Anyone who wants to learn the sword can find me. Bring patience and leave your pride at the door."
       ],
       "wry": [
         "I'm a {level} with a sword. The world moved on to guns and forgot to tell me.",
@@ -137,7 +137,7 @@
       "analytical": [
         "A heavy weapon is momentum management. Stopping the swing is the real skill.",
         "Commit fully or don't swing at all. Half measures with a maul get you killed.",
-        "Your spine does the work, not your arms. That took me years to understand."
+        "Your spine does the work. The arms just follow. That took me years to understand."
       ],
       "warm": [
         "My big hammer builds fences more often than it breaks anything. I like that.",
@@ -211,7 +211,7 @@
       "wry": [
         "Master of the whip. People assume the worst about me, and they're usually wrong.",
         "The whip. Nobody takes you seriously until you crack it indoors.",
-        "Years of practice and I'm still explaining it's not a hobby, it's a discipline."
+        "Years of practice and I'm still explaining it's a proper discipline."
       ],
       "playful": [
         "I can snatch a hat off a head with my whip. I've a small collection now.",
@@ -359,7 +359,7 @@
         "I fight close because I'm not good at anything longer. That's the truth of it."
       ],
       "analytical": [
-        "Claws are about angles. You don't strike through, you rake across.",
+        "Claws are about angles: you rake across.",
         "The fight with claws is won inside their reach. Everything is about the entry.",
         "Grip and wrist strength matter more than the blades on the gauntlet."
       ],
@@ -398,7 +398,7 @@
       "warm": [
         "I teach the kids at the gym on Saturdays. They're better than me already.",
         "Boxing gave me discipline when I had none. I owe it a lot.",
-        "Learning to fight made me calmer, not angrier. Funny how that works."
+        "Learning to fight gave me a calm I never had before. Funny how that works."
       ],
       "wry": [
         "Good with my fists. Not much good for anything else, according to my mother.",

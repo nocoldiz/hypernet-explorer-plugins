@@ -5,7 +5,7 @@
     "available": "AVAILABLE",
     "taken": "OFF MARKET",
     "titleDeed": "TITLE DEED",
-    "selectAnAssetFromThe": "SELECT AN ASSET FROM DA REGISTRY TA INSPECT ITS TITLE DEED!",
+    "selectAnAssetFromThe": "SELECT AN ASSET TA SEE ITS DEED!",
     "liquidateAsset": "LIQUIDATE ASSET",
     "vacateRental": "VACATE RENTAL",
     "acquireDeed": "ACQUIRE DEED",
@@ -55,12 +55,12 @@
     "evicted": "EVICTED FROM \"{name}\": RENT UNPAID!",
     "appName": "REAL ESTATE BOARD",
     "manageShop": "RUN DA SHOP",
-    "manageFromDeeds": "DA SHOP BOOK OPENS FROM DA DEEDS PAGE!",
+    "manageFromDeeds": "MANAGE DA SHOP FROM DA DEEDS PAGE!",
     "workingPlaces": "WORKIN' PLACES",
     "workingPlacesRegistry": "WORKIN' PLACES",
     "businessDeed": "BUSINESS DEED",
     "businessDeed2": "BUSINESS DEED",
-    "selectAWorkplace": "SELECT A WORKIN' PLACE TA INSPECT ITS BUSINESS!",
+    "selectAWorkplace": "SELECT A WORKPLACE TA INSPECT IT!",
     "businessesHeld": "BUSINESSES HELD",
     "weeklyYield": "WEEKLY YIELD",
     "weeklyPayout": "WEEKLY PAYOUT",
@@ -80,7 +80,7 @@
       "description": "CONSUMER ELECTRONICS CONGLOMERATE. LARGE, WIDELY HELD AN' OVERVALUED!"
     },
     "limecorp": {
-      "description": "CONSUMER ELECTRONICS STARTUP FOUNDED BY FORMER LEMONCORP ENGINEERS. FAST GROWIN' AN' VOLATILE!"
+      "description": "CONSUMER ELECTRONICS STARTUP FOUNDED BY FORMER LemonCorp ENGINEERS. FAST GROWIN' AN' VOLATILE!"
     },
     "petrodyne": {
       "description": "OIL AN' GAS PRODUCER. STEADY DIVIDENDS, PRICED OFF DA OIL MARKET!"

@@ -2,5 +2,6 @@
   "defaultName": "SKILL BOOSTER PACK",
   "fallbackSkill": "WHACK",
   "categoryTitle": "{categories} BOOSTER PACK",
-  "newSkill": "NEW SKILL!"
+  "newSkill": "NEW SKILL!",
+  "duplicate": "DUPLICATE"
 }

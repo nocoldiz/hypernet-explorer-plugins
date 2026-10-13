@@ -1,0 +1,1105 @@
+{
+  "_comment": "The Dwarf voice (NPCConversation II.1b, SpeciesVoice). speech: the rules run over any shared line they say. voice: openers and closers. thought: their own thoughts by situation. script: two-person scripts, speaker 0 is always the Dwarf.",
+  "voice": {
+    "openers": [
+      "BY ME BEARD,",
+      "MARK ME WORDS:",
+      "HMPH.",
+      "LISTEN HERE,",
+      "AS ME GRANDFATHER USED TA SAY,",
+      "AYE.",
+      "NOW DEN,",
+      "BETWEEN YOU, ME AN' DA ANVIL,",
+      "STONE AN' ALE,",
+      "ON ME MOTHER'S FORGE,",
+      "BY DA DEEP HALLS,",
+      "HEAR A DWARF OUT:",
+      "BEGGIN' YA PARDON,",
+      "*STROKES BEARD*",
+      "HAMMER AN' TONGS,",
+      "ME WILL SAY DIS ONCE, AN' SLOWLY:",
+      "RIGHT, DEN.",
+      "GRANITE AN' GRUDGES,",
+      "MEASURE TWICE, SPEAK ONCE:",
+      "ACH,",
+      "SPEAKIN' AS A CRAFTSMAN,",
+      "WELL, BY IRON,",
+      "*SETS DOWN DA TANKARD*",
+      "DOWN IN DA HALLS WE SAY,",
+      "HONEST TRUTH, STONE TRUTH:"
+    ],
+    "closers": [
+      "MARK ME WORDS.",
+      "BY ME BEARD.",
+      "STONE DOES NO LIE.",
+      "AYE, DAT IT IZ.",
+      "DAT IZ DWARF WISDOM, FREE OF CHARGE!",
+      "MEASURE TWICE.",
+      "AN' DAT IZ DA END OF IT.",
+      "NOW PASS DA ALE.",
+      "HMPH. SO DERE.",
+      "ME GRANDFATHER SAID SO, AN' HE WAZ NEVER WRONG!",
+      "CARVE DAT SOMEWHERE.",
+      "ME WILL REMEMBER DIS.",
+      "LIKE IRON.",
+      "*TAPS DA TABLE TWICE*",
+      "ON ME MOTHER'S ANVIL.",
+      "NUTTIN' BUILT IN A HURRY, MIND!",
+      "SOLID AS GRANITE.",
+      "DAT GOES IN DA BOOK.",
+      "WRITE IT DOWN. NO, CARVE IT!",
+      "OR ME IZ A GNOME.",
+      "AS SURE AS DA DEEP HALLS.",
+      "SO SAY DA HAMMERS.",
+      "TAKE IT OR LEAVE IT, BUT TAKE IT!",
+      "*GRUNTS APPROVINGLY*",
+      "ALE AN' ANVILS."
+    ]
+  },
+  "thought": {
+    "generic": [
+      "DA MORTAR ON DIS STREET IZ {CRUMBLIN'|ROTTEN|A DISGRACE}. SOMEBODY SHOULD BE ASHAMED!",
+      "IRON PRICES UP AGAIN. {ME ANVIL WEEPS|ME PURSE WEEPS|EVERYBODY WEEPS}!",
+      "MUST SHARPEN DA {CHISELS|AXE|KITCHEN KNIVES} TONIGHT. DEY HAB GONE DULL WIT SHAME!",
+      "A GRUDGE KEPT WARM IZ A GRUDGE KEPT WELL!",
+      "DIS TOWN'S BEER IZ {THIN|CLOUDY|CRIMINAL}. ME WILL DRINK IT ANYWAY. OUT OF POLITENESS!",
+      "WHO BUILT DAT BALCONY? IT IZ HELD UP BY HOPE AN' TWO NAILS!",
+      "ME BEARD HAB A KNOT IN IT. ME WILL NO REST UNTIL IT IZ OUT!",
+      "ME FORGE WAZ COLD DIS MORNIN'. ME TOOK IT PERSONALLY!",
+      "A GOOD DOOR SHUTS WIT ONE SOUND. DIS ONE MAKES THREE!",
+      "{GRANITE|BASALT|MARBLE} ON DA CHURCH STEPS. SOMEBODY HERE ONCE HAB TASTE!",
+      "ME HAB BIN CHEWIN' ON DIS PROBLEM FOR {THREE DAYS|A WEEK|ELEVEN YEARS}. IT IZ NEARLY SOFT!",
+      "TALL FOLK KEEP PATTIN' ME HEAD. ME KEEP A LIST!",
+      "NUTTIN' WORTH HAVIN' WAZ EVER MADE IN A HURRY. EXCEPT BEER. BEER IZ URGENT!",
+      "DA NEW BRIDGE SINGS IN DA WIND. BRIDGES SHOULD NO SING!",
+      "ME CAN HEAR A {LOOSE BOLT|CRACKED BELL|BAD HINGE} FROM ACROSS DA SQUARE. CURSE OF DA TRADE!",
+      "ME APPRENTICE USED GLUE AGAIN. WE WILL BE HAVIN' WORDS!",
+      "STONE REMEMBERS. DAT IZ WHY ME TALK TA IT KINDLY!",
+      "THINKERIN' ON A NEW LOCK. {SEVEN|NINE|THIRTEEN} PINS. NOBODY WILL OPEN IT, INCLUDIN' ME!",
+      "A SONG FOR DA HAMMER: ONE STRIKE PER WORD. ME SONGS IZ SHORT!",
+      "DEZE CHAIRS IZ BUILT FOR GIANTS. ME FEET HAB NO TOUCHED DA FLOOR ALL DAY!",
+      "ME COUSIN WROTE FROM DA MINES. DA SEAM RUNS {DEEPER|RICHER|STRANGER} DEN ANYONE THOUGHT!",
+      "A DWARF FORGIVES. A DWARF ALSO WRITES IT DOWN, JUST IN CASE!",
+      "SOMEBODY PAINTED OVER GOOD OAK. ME MAY NEVER RECOVER!",
+      "ME NEED A PINT AN' A PROBLEM, IN DAT ORDER!",
+      "VALKYRIE DRILL AT DAWN. {ME SHIELD ARM|ME BACK|ME PRIDE} STILL ACHES FROM YESTERDAY!",
+      "DA GUARD ROSTER HAB ME ON NIGHTS AGAIN. GOOD. DA NIGHT IZ HONEST!",
+      "POLISHED ME HELMET. ME CAN SEE ME BEARD IN IT. MAGNIFICENT!",
+      "DA TRAM RAILS HERE IZ BADLY LAID. ME COULD DO IT WIT ME EYES SHUT!",
+      "NOBODY HUMS WHILE DEY WORK ANYMORE. DA WORK CAN TELL!",
+      "ME GRANDFATHER'S ANVIL IZ THREE HUNDRED YEARS OLD AN' STILL RINGS TRUE. LIKE HIM!",
+      "{ONE MORE|JUST ONE|A FINAL} PINT AN' DEN HOME. DA USUAL LIE!",
+      "GNOMES MAKE TINKZ CLEVER. DWARVES MAKE TINKZ LAST. ELVES MAKE TINKZ PRETTY. GUESS WHO GETS PAID!",
+      "WROTE TA DA TOWN COUNCIL 'BOUT DAT DRAIN. ME {FOURTH|NINTH|TWELFTH} LETTER!",
+      "COAL SMOKE IN DA AIR. SOMEBODY IZ WORKIN'. GOOD!",
+      "ME KNEES KNOW DA WEATHER BEFORE DA RADIO DOES!",
+      "DA BEST HAMMER IZ DA ONE YA HAND FORGETS IT IZ HOLDIN'!",
+      "SOMEBODY WHISTLED AT ME BEARD. ME WILL TAKE IT AS A COMPLIMENT. DEN AS A GRUDGE!",
+      "ME DREAMT OF HINGES AGAIN. PERFECT, SILENT HINGES!",
+      "A CRACK IN DA WALL IZ A STORY. DIS WALL HAB WRITTEN A NOVEL!",
+      "EARNED {FORTY|SIXTY|NINETY} EUROS MENDIN' POTS TODAY. HONEST MONEY, SOOTY HANDS!"
+    ],
+    "need": {
+      "sleep": [
+        "ME EYELIDS WEIGH MORE DEN AN ANVIL. BED!",
+        "AWAKE SINCE {DA FIRST SHIFT|DA COCK CROWED|DA FORGE WAZ LIT}. ENOUGH!",
+        "NEED SLEEP. SOMEWHERE LOW, DARK AN' QUIET. LIKE A CELLAR!",
+        "ME NEARLY NODDED OFF INTO ME BEER. DAT IZ A CRIME AGAINST BEER!",
+        "EVEN STONE GETS TIRED. WELL, NO. BUT ME DO!",
+        "BED, AN' A PILLOW UNDER DA BEARD. NUTTIN' MORE!"
+      ],
+      "hunger": [
+        "HUNGRY ENOUGH TA EAT {A ROAST|A WHOLE HAM|A CART OF SAUSAGES}!",
+        "ME STOMACH IZ GRUMBLIN' LOUDER DEN ME DO. DAT TAKES EFFORT!",
+        "DARK BREAD AN' HARD CHEESE. DAT IZ ALL ME ASK OF DIS WORLD!",
+        "NO CAN WORK ON AN EMPTY BELLY. DA HAMMER KNOWS!",
+        "SOMETINK WIT GRAVY. ANYTINK WIT GRAVY!",
+        "IF ME DO NO EAT SOON ME WILL START HOLDIN' GRUDGES AGAINST FOOD!"
+      ],
+      "work": [
+        "BACK TA DA FORGE. DA {HORSESHOES|HINGES|BLADES} WILL NO SHAPE THEMSELVES!",
+        "IDLE HANDS RUST. TIME TA WORK!",
+        "SHIFT STARTS SOON. BOOTS LACED, BEARD TUCKED!",
+        "A DAY WITOUT WORK IZ A DAY WITOUT A STORY!",
+        "DAT COMMISSION IZ OVERDUE. OVERDUE IZ A DIRTY WORD!",
+        "ME CAN HEAR ME WORKBENCH CALLIN'. IT SOUNDS HURT!"
+      ],
+      "leisure": [
+        "AN EVENIN' OFF. A PINT, A PIPE, A SONG!",
+        "EVEN AN ANVIL GETS SUNDAYS OFF. MOSTLY!",
+        "TIME FOR DARTS. ME THROW LIKE ME HAMMER: HARD AN' STRAIGHT!",
+        "ME SHOULD DO SOMETINK FOR FUN. CARVIN' COUNTS. CARVIN' ALWAYS COUNTS!",
+        "A LONG SONG IN A LOW ROOM. DAT IZ WHAT ME NEED!",
+        "TOO MUCH WORK MAKES A DWARF {A BOULDER|A GRUMP|A BORE}!"
+      ],
+      "crime": [
+        "DAT MERCHANT CHEATED ME COUSIN IN 1987. HIS WINDOW IZ RIGHT DERE... NO. GRUDGES IZ FOR BOOKS!",
+        "DAT LOCK IZ SHODDY WORK. ME COULD OPEN IT WIT {A SPOON|A HAIRPIN|A HARSH WORD}. ME WILL NO!",
+        "NOBODY GUARDS DAT TOOL SHED. LOVELY CHISELS IN DERE. LOVELY, UNGUARDED CHISELS!",
+        "A DWARF TAKES WHAT IZ OWED. IZ IT OWED? LET ME CHECK DA BOOK!",
+        "DAT PURSE IZ HEAVY. HEAVIER DEN ME CONSCIENCE? CLOSE!",
+        "SHODDY DOOR, CHEAP HINGE, NOBODY HOME. IT IZ PRACTICALLY AN INVITATION!"
+      ],
+      "hygiene": [
+        "ME BEARD SMELLS OF {SOOT|ONIONS|THREE DIFFERENT TAVERNS}. BATH!",
+        "SOOT TA DA ELBOWS. TIME TA SCRUB!",
+        "ME FOUND YESTERDAY'S LUNCH IN ME BEARD. ENOUGH!",
+        "NEED A WASH, AN' DA COMB, AN' DA GOOD BEARD OIL!",
+        "ME SMELL LIKE A FORGE. LOVELY TA ME, LESS TA OTHERS!",
+        "DUST FROM DA ME IN EVERY CREASE. HOT WATER,!"
+      ],
+      "money": [
+        "{EIGHT|TWELVE|TWENTY} EUROS UNTIL PAYDAY. IRON DOES NO BUY ITSELF!",
+        "PURSE IZ LIGHT. A DWARF WIT A LIGHT PURSE IZ A DWARF IN A BAD MOOD!",
+        "SOMEONE STILL OWES ME FOR DAT GATE. IT IZ IN DA BOOK!",
+        "NEED COIN. COULD TAKE ON A FEW REPAIR JOBS. POTS, LOCKS, ANYTINK!",
+        "GOLD IN DA HILLS AN' NUTTIN' IN ME POCKET. DA WORLD IZ BADLY ARRANGED!",
+        "COUNTED ME SAVINGS TWICE. DEY DID NO GROW. COUNTED A THIRD TIME ANYWAY!"
+      ],
+      "safety": [
+        "SOMETINK IZ OFF ON DIS STREET. ME BEARD IZ BRISTLIN'!",
+        "HAND ON DA HAMMER. JUST IN CASE!",
+        "TOO MANY SHADOWS, TOO FEW WALLS. ME WANT STONE AROUND ME!",
+        "HEARD {BOOTS|SHOUTIN'|GLASS BREAKIN'} BEHIND ME. NO TURNIN' ROUND. YET!",
+        "FEET PLANTED, BACK TA DA WALL. OLD GUARD HABIT!",
+        "IF GOBLINS COME, DEY COME THROUGH ME FIRST. SHORT, BUT WIDE!"
+      ],
+      "comfort": [
+        "ME CHAIR AT HOME WAZ CUT TA ME HEIGHT. EVERYTINK HERE IZ CUT FOR HERONS!",
+        "MISS ME HEARTH. MISS ME SLIPPERS. MISS ME ANVIL, ODDLY MOST OF ALL!",
+        "A LOW CEILING AN' A THICK WALL. DAT IZ ALL COMFORT IZ!",
+        "DIS ROOM IZ TOO {DRAUGHTY|TALL|BRIGHT}. GIVE ME A CELLAR!",
+        "A WARM FIRE AN' BOOTS OFF. IZ DAT SO MUCH TA ASK?",
+        "ME BACK WANTS A PROPER BENCH. DIS WOBBLY TINK WAZ BUILT BY ELVES!"
+      ],
+      "social": [
+        "NOBODY TA ARGUE WIT FOR {TWO DAYS|A WEEK|TOO LONG}. ME IZ GOING SOFT!",
+        "NEED A CROWDED TABLE AN' SOMEBODY TA OUT-SING!",
+        "SHOULD VISIT ME COUSINS. DEY WILL HAB NEW GRUDGES TA SHARE!",
+        "A PINT ALONE IZ JUST A DRINK. A PINT WIT MATES IZ A FEAST!",
+        "BIN TALKIN' TA ME HAMMER AGAIN. IT IZ A GOOD LISTENER, BUT DULL!",
+        "SOMEBODY, ANYBODY, COME AN' TELL ME ME IZ WRONG. ME MISS IT!"
+      ]
+    },
+    "weather": {
+      "rain": [
+        "RAIN. NOW WE SEE WHAT {DA GUTTERS|DA DRAINS|DA ROOF TILES} OF DIS TOWN IZ WORTH!",
+        "RAIN ON DA FORGE ROOF. BEST MUSIC DERE IZ!",
+        "WET BEARD, WET BOOTS, WET MOOD!",
+        "RAIN. STONE LOVES RAIN. IRON DOES NO. ME IZ TORN!",
+        "GOOD DAY FOR DA WORKSHOP. BAD DAY FOR WHOEVER BUILT DAT LEAKY ROOF!",
+        "RAIN FINDS EVERY CRACK. DAT IZ HOW YOU LEARN WHERE DA CRACKS IZ!"
+      ],
+      "storm": [
+        "THUNDER! SOUNDS LIKE DA OLD HALLS ON A FEAST DAY!",
+        "LIGHTNING LIKES TALL TINKZ. ONE MORE REASON TA BE SHORT!",
+        "STORM. SHUTTERS DOWN, FIRE UP, ALE OUT!",
+        "DAT ROOF WILL NO LAST DA NIGHT. ME SAID SO {IN SPRING|IN MARCH|IN WRITIN'}!",
+        "DA WIND IZ TESTIN' EVERY WELD IN TOWN. LET US SEE WHO DID HONEST WORK!",
+        "A STORM IZ JUST DA SKY SWINGIN' A HAMMER!"
+      ],
+      "snow": [
+        "SNOW. LIKE HOME IN DA HIGH PASSES. ALMOST!",
+        "SNOW UP TA ME KNEES. WHICH IZ NO REAL MUCH SNOW, TA BE FAIR!",
+        "COLD IRON STICKS TA DA FINGERS. GLOVES TODAY!",
+        "SNOW ON DA BEARD. REAL DISTINGUISHED!",
+        "SNOWED IN? GOOD. MULLED ALE AN' A LONG STORY!",
+        "SHOVELLED {DA PATH|DA STEPS|DA WHOLE STREET} BEFORE ANYONE WOKE. NOBODY THANKED ME. NOTED!"
+      ],
+      "clear": [
+        "CLEAR SKY. GOOD LIGHT FOR FINE WORK!",
+        "SUN ON DA STONE. DA WHOLE TOWN LOOKS WARMER, EVEN DA UGLY BITS!",
+        "CLEAR DAY. YOU CAN SEE DA MOUNTAINS. ME ALWAYS LOOK!",
+        "TOO MUCH SUN FOR A DWARF. ME WILL FIND SHADE UNDER AN ARCH!",
+        "BRIGHT DAY. PERFECT FOR {DRYIN' HIDES|AIRIN' DA FORGE|A BEER OUTSIDE}!",
+        "DRY WEATHER. MORTAR SETS WELL TODAY. GOOD DAY TA BUILD!"
+      ]
+    },
+    "time": {
+      "morning": [
+        "MORNIN'. FORGE LIT BEFORE SUNRISE, AS IT SHOULD BE!",
+        "DAWN. ME BEARD IZ STILL ASLEEP, DA REST OF ME IZ WORKIN'!",
+        "PORRIDGE, STRONG TEA, COLD WATER ON DA FACE. READY!",
+        "MORNIN' SHIFT. DA BEST HAMMERIN' IZ DONE BEFORE ANYONE COMPLAINS!",
+        "EARLY. DA STREETS BELONG TA BAKERS AN' DWARVES!",
+        "WOKE BEFORE DA {ROOSTER|BELLS|BAKER}. AS USUAL. SMUG 'BOUT IT!"
+      ],
+      "afternoon": [
+        "AFTERNOON. DA WORK IZ HALF DONE AN' DA BEER IZ HALF EARNED!",
+        "SUN IZ HIGH. ME SHADOW IZ DA SAME SIZE AS ME, FOR ONCE!",
+        "LUNCH SETTLIN'. DA HAMMER FEELS HEAVIER AFTER LUNCH!",
+        "AFTERNOON LULL. GOOD TIME FOR FINE FILIN'!",
+        "HALFWAY THROUGH DA DAY AN' ONLY ONE ARGUMENT SO FAR. SLOW DAY!",
+        "LONG AFTERNOON. ME WILL {MEND A CHAIR|SHARPEN SOMETINK|NAP ON A SACK}!"
+      ],
+      "evening": [
+        "EVENIN'. FIRE BANKED, TOOLS HUNG, TANKARD FOUND!",
+        "DA TAVERN LIGHTS IZ ON. ME FEET KNOW DA WAY!",
+        "EVENIN'. TIME TA POLISH DA GRUDGES!",
+        "SUNSET ON DA HILLS. SOMEWHERE UNDER DEM, ORE IZ SLEEPIN'!",
+        "END OF DA SHIFT. ME HANDS SMELL OF IRON AN' HONEST SWEAT!",
+        "EVENIN' SONG TIME. LOW VOICES, LONG VERSES!"
+      ],
+      "night": [
+        "NIGHT. QUIET AS A MINESHAFT. ME LIKE IT!",
+        "NIGHT WATCH. LANTERN, AXE, FLASK OF TEA. MOSTLY TEA!",
+        "DARK. DWARVES SEE WELL ENOUGH IN DA DARK. WE JUST DO NO BRAG!",
+        "LATE. STILL THINKIN' 'BOUT DAT HINGE. IT WILL NO LET ME SLEEP!",
+        "NIGHT. DA STARS LOOK LIKE SPARKS OFF A BIG ANVIL!",
+        "{MIDNIGHT|PAST ONE|NEARLY TWO}. LAST PINT. TRULY DA LAST. MAYBE-MAYBE!"
+      ]
+    },
+    "season": {
+      "SPRING": [
+        "SPRING. DA THAW FINDS EVERY BAD ROOF IN TOWN!",
+        "SPRING CLEANIN': FORGE, BELLOWS, BEARD!",
+        "MOUNTAIN PASSES OPEN AGAIN. LETTERS FROM HOME SOON!",
+        "SPRING. DA YOUNG ONES IZ DANCIN'. ME IZ SUPERVISIN', WIT ALE!",
+        "MUD SEASON. BOOTS TWICE AS HEAVY, TEMPER TOO!"
+      ],
+      "SUMMER": [
+        "SUMMER. A FORGE IN SUMMER IZ A PUNISHMENT FOR OLD SINS!",
+        "HOT. EVEN ME BEARD IZ SWEATIN'!",
+        "SUMMER. COLD CELLAR, COLD BEER, CLOSED DOOR!",
+        "LONG DAYS. GOOD LIGHT FOR LONG WORK!",
+        "SUMMER FAIR IN TOWN. ME WILL JUDGE DA METALWORK STALLS. HARSHLY!"
+      ],
+      "AUTUMN": [
+        "AUTUMN. BREWIN' SEASON. DA BEST SEASON!",
+        "LEAVES FALLIN'. TIME TA CHECK DA CHIMNEY BEFORE WINTER CHECKS IT FOR ME!",
+        "AUTUMN. WOOD STACKED, COAL ORDERED, GRUDGES SORTED!",
+        "HARVEST BEER IZ IN. ME HEART IZ FULL, ME TANKARD FULLER!",
+        "AUTUMN WIND IN DA BEARD. FEELS LIKE DA OLD COUNTRY!"
+      ],
+      "WINTER": [
+        "WINTER. DA FORGE IZ DA WARMEST PLACE IN TOWN. EVERYONE VISITS!",
+        "LONG NIGHTS, LONG SONGS, LONG BEARDS. DWARF SEASON!",
+        "ICE ON DA TOOLS. BRING DEM IN, WARM DEM UP, APOLOGISE!",
+        "WINTER FEAST SOON. ME HAB BIN GROWIN' ME APPETITE SINCE AUTUMN!",
+        "FROST ON DA WINDOWS. PRETTY, LIKE ELF WORK. GONE BY NOON, LIKE ELF WORK!"
+      ]
+    },
+    "wealth": {
+      "poor": [
+        "BREAD AN' DRIPPIN' AGAIN. HONEST FOOD FOR AN HONEST PURSE!",
+        "MENDED ME BOOTS A {THIRD|FIFTH|SEVENTH} TIME. DEY IZ MORE PATCH DEN BOOT!",
+        "SOLD ME SECOND HAMMER. A DWARF WIT ONE HAMMER IZ HALF A DWARF!",
+        "NO COIN FOR COAL. COLD FORGE, COLD HEART!",
+        "POOR, AYE. BUT NOBODY CAN SAY ME WORK IZ POOR!",
+        "WATER INSTEAD OF ALE TONIGHT. ME ANCESTORS IZ TURNIN' IN DEY CAIRNS!"
+      ],
+      "comfortable": [
+        "ENOUGH FOR COAL, ENOUGH FOR ALE, A LIL' FOR DA GOOD BEARD OIL. PLENTY!",
+        "STEADY WORK, STEADY PAY. LIKE A STEADY HAMMER!",
+        "BOUGHT NEW TONGS, SIMPLY COZ ME WANTED DEM. DAT IZ COMFORT!",
+        "RENT PAID, LARDER FULL, GRUDGES UP TA DATE. A GOOD MONTH!",
+        "PUT A LIL' ASIDE FOR {A NEW ANVIL|ME NEPHEW'S APPRENTICESHIP|A BARREL OF GOOD ALE}!",
+        "SOLID ACCOUNTS. LIKE A GOOD WALL!"
+      ],
+      "rich": [
+        "COMMISSIONED A GOLD-INLAID TANKARD. FOR ME. EVERY DWARF DESERVES ONE!",
+        "BOUGHT DA WHOLE ME. WELL, A SHARE. A BIG SHARE!",
+        "RICH ENOUGH TA PAY OFF ME GRUDGES. NO GOING TA. GRUDGES IZ NO FOR SALE!",
+        "ME VAULT DOOR IZ A METRE OF STEEL. ME FORGED IT ME. TWICE!",
+        "BOUGHT A ROUND FOR DA WHOLE TAVERN. {TWICE|THREE TIMES|ALL NIGHT}!",
+        "VARLENIA FOLK KEEP INVITIN' ME TA DINNER. DEY IZ AFTER ME VAULT DOOR. ME COMPANY BARELY INTERESTS DEM!"
+      ]
+    },
+    "familiar": [
+      "DOZE TRAVELLERS AGAIN. ME {REMEMBER DEM WELL|HAB NO FORGOTTEN|NEVER FORGET} FACES LIKE DEY!",
+      "AH, DA ONES WIT DA VAN. DEY OWE ME NUTTIN'. YET!",
+      "BACK AGAIN? GOOD. FAMILIAR FACES IZ LIKE OLD TOOLS: DEY FIT DA HAND!",
+      "DOZE FOLK. DEY PAID FAIR LAST TIME. DAT GOES IN DA GOOD BOOK!",
+      "ME KNOW DAT LOT. ONE OF DEM LEANS ON ME WALLS!",
+      "DA TRAVELLERS! SOMEBODY PUT DA KETTLE ON. AN' DA ALE!",
+      "DEM AGAIN. A DWARF NEVER FORGETS A FACE, OR A DEBT, OR A KINDNESS!",
+      "DERE DEY IZ. STILL IN ONE PIECE, ME SEE. MOSTLY!",
+      "DOZE WANDERERS. DEY BOOTS LOOK WORSE EACH TIME. ME COULD FIX DEM!",
+      "FAMILIAR FACES. ME WILL NOD. A DWARF NOD IZ WORTH A HUG FROM ANYONE ELSE!"
+    ],
+    "hordeGround": [
+      "HORDE GROUND. DEY HAB PULLED DOWN GOOD STONE WALLS TA BUILD UGLY ONES!",
+      "GOBLIN BANNERS ON A DWARF-BUILT BRIDGE. ME GRANDFATHER WOULD WEEP!",
+      "DA HORDE KEEPS EVERYTINK EXCEPT GRUDGES!",
+      "HORDE LAND. HAMMER CLOSE, MOUTH SHUT, EYES OPEN!",
+      "ME IZ WRITIN' EVERY GOBLIN ME SEE INTO DA BOOK. ME WILL NEED A BIGGER BOOK!",
+      "DEY FORGES BURN TOO HOT AN' TOO FAST. EVERYTINK DEY MAKE CRACKS BY SPRING!",
+      "DEY PAINT EVERYTINK. PAINT HIDES BAD WORK. ME WOULD KNOW!",
+      "ONE SHARED HEAD, DEY SAY. ME WOULD LIKE A WORD WIT IT!",
+      "HORDE GROUND. KEEP DA BEARD TUCKED. DEY GRAB!",
+      "EVEN HERE DA MOUNTAINS IZ NO DEY. MOUNTAINS BELONG TA NOBODY, AN' A LIL' TA DWARVES!"
+    ],
+    "abroad": [
+      "FAR FROM DA HALLS. DA BEER HERE IZ A FOREIGN CONCEPT, IN EVERY SENSE!",
+      "DEY BUILD WIT BRICK HERE. BRICK! LIKE BREAD FOR WALLS!",
+      "NOBODY HERE HAB HEARD OF ME FAMILY. DEY LOSS!",
+      "A LONG WAY FROM HOME. ME BOOTS KNOW EVERY MILE OF IT!",
+      "FOREIGNERS KEEP ASKIN' IF DA BEARD IZ REAL. PULL IT AN' SEE. GENTLY!",
+      "WROTE HOME. TOLD DEM DA STONE HERE IZ SOFT AN' DA PEOPLE SOFTER!",
+      "ABROAD, A DWARF IZ A RUMOUR. ME IZ HAPPY TA BE A SOLID ONE!",
+      "DA LOCALS HERE IZ KIND. KIND, AN' REAL TALL!",
+      "NO DWARF HALL FOR {A HUNDRED|THREE HUNDRED|FIVE HUNDRED} KILOMETRES. ME IZ DA HALL NOW!",
+      "STRANGE LAND, STRANGE FOOD, SAME HAMMER. EVERYTINK IZ FINE!"
+    ],
+    "lore": {
+      "forge": [
+        "A DWARF CHILD'S FIRST WORD IZ OFTEN 'HOT'. FORGE CHILDREN LEARN FAST!",
+        "WE NAME OUR ANVILS. ME IZ CALLED PATIENCE. SHE IZ NO!",
+        "A BLADE TAKES {A HUNDRED|A THOUSAND|TEN THOUSAND} STRIKES. A REPUTATION TAKES ONE BAD ONE!",
+        "THINKERERS IZ DWARVES WHO FORGE IDEAS. MOST OF DEM EXPLODE. SOME OF DEM FLY!",
+        "DA FIRE IN DA OLD HALL HAB NO GONE OUT IN FOUR HUNDRED YEARS. SOMEONE ALWAYS STAYS!",
+        "NEVER QUENCH IN ANGER. DA STEEL REMEMBERS!",
+        "DA MAGES' GUILD BUYS OUR STEEL FOR DEY STAFF CAPS. DEY NEVER ASK HOW. WE NEVER TELL!",
+        "A MASTER'S MARK IZ TINY AN' HIDDEN. IF YOU HAB TA SHOW IT, DA WORK WAZ NO GOOD ENOUGH!"
+      ],
+      "deep": [
+        "DEEP DOWN, DA STONE IZ WARM AN' IT HUMS. MINERS SAY IT IZ DA WORLD THINKIN'!",
+        "SINCE 1992, SOME TUNNELS COME OUT SOMEWHERE DEY DID NO GO IN. WE MARK DOZE WIT RED CHALK!",
+        "EVERY MINER KNOWS DA CANARY. OURS SING IN HARMONY!",
+        "NEVER WHISTLE IN A ME. DA MOUNTAIN THINKS YOU IZ MOCKIN' IT!",
+        "ME GRANDMOTHER FOUND A SEAM OF {SILVER|BLUE QUARTZ|SOMETINK NAMELESS} DAT HUMMED IN TWO DIMENSIONS AT ONCE!",
+        "UNDER DA ALPS DERE IZ HALLS OLDER DEN ANY MAP. WE DO NO DRAW DEM ON MAPS!",
+        "STONE TELLS YOU WHERE IT WILL BREAK, IF YOU LISTEN. MOST PEOPLE DO NO LISTEN!",
+        "A CAVE-IN IZ DA MOUNTAIN CHANGIN' ITS MIND. YOU RESPECT DAT, AN' YOU DIG FASTER!"
+      ],
+      "grudges": [
+        "ME FAMILY'S GRUDGE BOOK RUNS TA {ELEVEN|FOURTEEN|TWENTY} VOLUMES. LOUDNESS ONE IZ MOSTLY 'BOUT A GOAT!",
+        "A GRUDGE IZ CROSSED OUT ONLY WHEN DA DEBT IZ PAID. SOME OF DA INK IZ THREE HUNDRED YEARS OLD!",
+        "WE REMEMBER PRECISELY. DAT IZ ALL. CALLIN' IT HATE IZ A MISMEASUREMENT!",
+        "GRANDFATHER HELD A GRUDGE AGAINST A BRIDGE FOR FORTY YEARS. DA BRIDGE FELL FIRST!",
+        "DERE IZ A PAGE IN DA BOOK FOR DA HORDE. IT IZ A REAL LONG PAGE!",
+        "FORGIVIN' IZ ALLOWED. FORGETTIN' IZ NO. DAT IZ DA WHOLE RULE!",
+        "ME AUNT CROSSED OUT A GRUDGE ON HER DEATHBED. DA FAMILY STILL TALKS 'BOUT IT!",
+        "A GOOD GRUDGE MAKES YOU WORK HARDER. SPITE HAB BUILT MORE HALLS DEN GOLD!"
+      ],
+      "ale": [
+        "EVERY HALL HAB ITS OWN YEAST. OURS CAME OVER DA MOUNTAINS IN A BEARD. DO NO ASK!",
+        "A WEDDIN' NEEDS THREE BARRELS: ONE FOR DA GUESTS, ONE FOR DA FAMILY, ONE FOR DA ARGUMENTS!",
+        "ALE IZ LIQUID BREAD. BREAD IZ SOLID ALE. DA CYCLE IZ SACRED!",
+        "WE TOAST DA DEAD WIT DARK ALE AN' DA NEWBORN WIT LIGHT. EVERYONE IN BETWEEN GETS WHAT IZ LEFT!",
+        "NEVER BREW IN A HURRY. HURRIED ALE TASTES LIKE REGRET!",
+        "ME UNCLE BREWED A STOUT SO THICK YOU COULD {STAND A SPOON|FLOAT A COIN|DRIVE A NAIL} IN IT!",
+        "VALKYRIES DRINK LAST AT DA FEAST. IT IZ AN HONOUR. DEY PRETEND IT IZ NO A HARDSHIP!",
+        "A SINGER DRINKS FREE IN ANY HALL. DAT IZ WHY WE HAB SO MANY SINGERS!"
+      ],
+      "beards": [
+        "A BEARD IZ A RECORD. EVERY BRAID IZ A DEED, EVERY BEAD A PROMISE!",
+        "CUTTIN' A DWARF'S BEARD IZ A CRIME IN THREE COUNTRIES AN' A WAR IN A FOURTH!",
+        "ME FIRST BRAID WAZ FOR ME FIRST HINGE. ME WAZ {NINE|ELEVEN|TWELVE}!",
+        "VALKYRIES BRAID STEEL WIRE INTO DEY. IT STOPS A SWORD. IT HAB ALSO STOPPED A WEDDIN'!",
+        "BEARD OIL RECIPES IZ FAMILY SECRETS. OURS HAB JUNIPER AN' SOMETINK WE DO NO NAME!",
+        "CLEAN-SHAVEN DWARVES EXIST. WE IZ POLITE 'BOUT IT. MOSTLY!",
+        "TUCK YA BEARD NEAR MACHINES. EVERY DWARF LEARNS DIS EXACTLY ONCE!",
+        "A GREY BEARD IZ SEASONED, LIKE GOOD TIMBER!"
+      ],
+      "squishing": [
+        "VARLENIA APPEARED IN ONE NIGHT IN JANUARY. NUTTIN' BUILT IN A NIGHT CAN BE TRUSTED. NO EVEN A CONTINENT!",
+        "DA RULE OF 80: NUTTIN' FASTER DEN EIGHTY AN HOUR. DWARVES OBEYED IT FOR CENTURIES BEFORE IT EXISTED!",
+        "DAT OMEGA TOWER GOES DOWN FURTHER DEN IT GOES UP, DEY SAY. ME WOULD LOVE TA SEE ITS FOOTINGS!",
+        "NINETY-TWO DIMENSIONS, SQUEEZIN' TOGETHER SINCE 1992. SOMEWHERE, A REAL BAD MASON IZ RESPONSIBLE!",
+        "A TIME BUBBLE SWALLOWED A QUARRY NEAR US. DA SAME BLOCK GETS CUT EVERY MORNIN', FOREVER!",
+        "DAT LIMINAL ENGINE FOLDS DA ROAD. CLEVER. ME WOULD NEVER RIDE IN IT. ME WOULD TAKE IT APART, THOUGH!",
+        "RICH FOLK MOVED TA VARLENIA BY DA BOATLOAD. LET DEM. ITS STONE HAB NO MEMORY!",
+        "SINCE DA SQUISHING, SOME ORES TURN UP FROM {OTHER WORLDS|NOWHERE|TOMORROW}. DEY RING WRONG ON DA ANVIL!"
+      ]
+    }
+  },
+  "script": {
+    "positive": [
+      [
+        [
+          0,
+          "{b}! ME FIXED YA GATE. IT SQUEAKED. ME COULD NO BEAR IT!"
+        ],
+        [
+          1,
+          "YOU NO HAB TA DO DAT, {a}. THANK YOU!"
+        ],
+        [
+          0,
+          "ME DID HAB TA. DA SQUEAK WAZ PERSONAL!"
+        ]
+      ],
+      [
+        [
+          0,
+          "FIRST ROUND IZ ON ME, {b}. SECOND ONE TOO!"
+        ],
+        [
+          1,
+          "WHAT IZ DA OCCASION?"
+        ],
+        [
+          0,
+          "YOU PAID ME BACK ON TIME. DAT EARNS A DWARF'S RESPECT AN' TWO PINTS!"
+        ]
+      ],
+      [
+        [
+          0,
+          "ME MADE YOU SOMETINK. A KNIFE. DO NO ARGUE!"
+        ],
+        [
+          1,
+          "IT IZ BEAUTIFUL. LOOK AT DA HANDLE!"
+        ],
+        [
+          0,
+          "ASH WOOD, OILED THREE TIMES. IT WILL OUTLIVE BOTH OF US!"
+        ],
+        [
+          1,
+          "DEN ME WILL LEAVE IT TA SOMEONE IN ME WILL!"
+        ]
+      ],
+      [
+        [
+          0,
+          "YOU REMEMBERED ME GRANDFATHER'S NAME, {b}. NOBODY REMEMBERS!"
+        ],
+        [
+          1,
+          "YOU TOLD DA STORY FOUR TIMES. IT STUCK!"
+        ],
+        [
+          0,
+          "FOUR TIMES! DEN YOU IZ PRACTICALLY FAMILY!"
+        ]
+      ],
+      [
+        [
+          0,
+          "YA NEW SHELF IZ LEVEL. ME CHECKED. ME WAZ IMPRESSED!"
+        ],
+        [
+          1,
+          "COMIN' FROM YOU, DAT IZ SOMETINK!"
+        ],
+        [
+          0,
+          "IT IZ EVERYTINK. DO NO LET IT GO TA YA HEAD!"
+        ]
+      ],
+      [
+        [
+          0,
+          "SING WIT ME, {b}. DA OLD MININ' SONG!"
+        ],
+        [
+          1,
+          "ME NO KNOW DA WORDS."
+        ],
+        [
+          0,
+          "NOBODY KNOWS DA WORDS. DAT IZ NO DA POINT OF DA SONG!"
+        ],
+        [
+          1,
+          "FINE. LOUDLY, DEN."
+        ]
+      ],
+      [
+        [
+          0,
+          "ME IZ CROSSIN' YOU OUT OF DA BOOK, {b}!"
+        ],
+        [
+          1,
+          "WHAT BOOK?"
+        ],
+        [
+          0,
+          "DA GRUDGE BOOK. DAT BUSINESS WIT DA LADDER. FORGIVEN!"
+        ],
+        [
+          1,
+          "ME NO EVEN KNOW ME WAZ IN IT!"
+        ],
+        [
+          0,
+          "SINCE 1996. DO NO WORRY. IT WAZ A LIL' ENTRY!"
+        ]
+      ],
+      [
+        [
+          0,
+          "YA BREAD IZ GOOD, {b}. HEAVY. HONEST!"
+        ],
+        [
+          1,
+          "HEAVY IZ A COMPLIMENT?"
+        ],
+        [
+          0,
+          "FROM A DWARF, HEAVY IZ DA HIGHEST COMPLIMENT DERE IZ!"
+        ]
+      ]
+    ],
+    "negative": [
+      [
+        [
+          0,
+          "YOU USED NAILS ON DAT OAK, {b}. NAILS!"
+        ],
+        [
+          1,
+          "IT IZ JUST A FENCE."
+        ],
+        [
+          0,
+          "EVERYTINK IZ A CATHEDRAL IF YOU DO IT RIGHT!"
+        ]
+      ],
+      [
+        [
+          0,
+          "YOU PATTED ME HEAD AGAIN."
+        ],
+        [
+          1,
+          "IT WAZ FRIENDLY!"
+        ],
+        [
+          0,
+          "SO IZ A GRUDGE, AT FIRST."
+        ]
+      ],
+      [
+        [
+          0,
+          "DAT KNIFE ME SOLD YOU. YOU USED IT AS A SCREWDRIVER!"
+        ],
+        [
+          1,
+          "IT WORKED FINE."
+        ],
+        [
+          0,
+          "IT WORKED. IT DID NO WORK FINE. DERE IZ A DIFFERENCE!"
+        ],
+        [
+          1,
+          "NO TA ME."
+        ]
+      ],
+      [
+        [
+          0,
+          "YOU STILL OWE ME FOR DA HINGES, {b}. SIX MONTHS NOW!"
+        ],
+        [
+          1,
+          "ME SAID ME WOULD PAY YOU NEXT WEEK!"
+        ],
+        [
+          0,
+          "YOU SAID DAT IN DA SPRING. ME WROTE IT DOWN!"
+        ]
+      ],
+      [
+        [
+          0,
+          "DID YOU TOUCH ME ANVIL?"
+        ],
+        [
+          1,
+          "ME PUT ME COFFEE ON IT FOR A SECOND!"
+        ],
+        [
+          0,
+          "A SECOND IZ ALL IT TAKES TA LOSE A MATE!"
+        ]
+      ],
+      [
+        [
+          0,
+          "YA BEER IZ THIN, {b}, AN' YA TAP IZ CROOKED!"
+        ],
+        [
+          1,
+          "DEN DRINK SOMEWHERE ELSE."
+        ],
+        [
+          0,
+          "ME WOULD, IF ANYWHERE ELSE WAZ BETTER. DAT IZ WHAT MAKES ME ANGRY!"
+        ]
+      ]
+    ],
+    "neutral": [
+      [
+        [
+          0,
+          "EXCUSE ME. WHO LAID DEZE COBBLES?"
+        ],
+        [
+          1,
+          "DA COUNCIL, ME TINK. YEARS AGO!"
+        ],
+        [
+          0,
+          "TELL DA COUNCIL A DWARF NOTICED. DEY WILL KNOW WHAT DAT MEANS!"
+        ]
+      ],
+      [
+        [
+          0,
+          "IZ DERE A SMITHY IN DIS TOWN?"
+        ],
+        [
+          1,
+          "DOWN BY DA RIVER. OLD MARCO RUNS IT!"
+        ],
+        [
+          0,
+          "IZ OLD MARCO ANY GOOD?"
+        ],
+        [
+          1,
+          "HE'S DA ONLY ONE."
+        ],
+        [
+          0,
+          "DAT IZ NO WHAT ME ASKED."
+        ]
+      ],
+      [
+        [
+          0,
+          "YA DOOR IZ OUT OF TRUE, YOU KNOW!"
+        ],
+        [
+          1,
+          "IT SHUTS, NO IT?"
+        ],
+        [
+          0,
+          "IT SHUTS. IT DOES NO SHUT PROPERLY. GOOD DAY!"
+        ]
+      ],
+      [
+        [
+          0,
+          "WHICH WAY TA DA TRAM STOP?"
+        ],
+        [
+          1,
+          "STRAIGHT ON, DEN LEFT AT DA BAKERY!"
+        ],
+        [
+          0,
+          "A BAKERY. GOOD. DAT MAKES TWO STOPS, DEN!"
+        ]
+      ],
+      [
+        [
+          0,
+          "WEATHER IZ TURNIN'."
+        ],
+        [
+          1,
+          "IZ IT? DA SKY LOOKS CLEAR!"
+        ],
+        [
+          0,
+          "ME KNEES DISAGREE WIT DA SKY. ME KNEES IZ USUALLY RIGHT!"
+        ]
+      ],
+      [
+        [
+          0,
+          "HOW MUCH FOR DA IRON PAN?"
+        ],
+        [
+          1,
+          "TWELVE EUROS."
+        ],
+        [
+          0,
+          "HM. *TAPS IT* ELEVEN, AN' ME WILL NO MENTION DA CASTIN' FLAW!"
+        ],
+        [
+          1,
+          "DONE."
+        ]
+      ],
+      [
+        [
+          0,
+          "IZ DAT A CHESS SET? WHO CARVED IT?"
+        ],
+        [
+          1,
+          "ME FATHER, A LONG TIME AGO!"
+        ],
+        [
+          0,
+          "DEN YA FATHER HAB GOOD HANDS. TELL HIM A DWARF SAID SO!"
+        ]
+      ],
+      [
+        [
+          0,
+          "DOES DIS TAVERN HAB A LOW STOOL?"
+        ],
+        [
+          1,
+          "WE HAB A CRATE."
+        ],
+        [
+          0,
+          "A CRATE. WELL. ME HAB SAT ON WORSE THRONES!"
+        ]
+      ],
+      [
+        [
+          0,
+          "SEEN DA NEWS? DEY IZ BUILDIN' A NEW BRIDGE ON DA RING ROAD!"
+        ],
+        [
+          1,
+          "'BOUT TIME, DA OLD ONE SHAKES!"
+        ],
+        [
+          0,
+          "DA NEW ONE WILL SHAKE TOO. MARK ME WORDS. DEY IZ RUSHIN' IT!"
+        ]
+      ],
+      [
+        [
+          0,
+          "GOOD MORNIN'. IZ DIS DA QUEUE FOR DA POST OFFICE?"
+        ],
+        [
+          1,
+          "IT IZ. IT IZ BIN DA QUEUE SINCE NINE!"
+        ],
+        [
+          0,
+          "GOOD. ME IZ PATIENT. ME IZ BUILT FOR QUEUES!"
+        ]
+      ],
+      [
+        [
+          0,
+          "IZ {DOZE MOUNTAINS|DOZE HILLS|DOZE PEAKS} TA DA NORTH MINED?"
+        ],
+        [
+          1,
+          "DERE WAZ A QUARRY ONCE. IT CLOSED!"
+        ],
+        [
+          0,
+          "CLOSED. HMPH. WIT A MOUNTAIN YOU CAN ONLY EVER TAKE A BREAK!"
+        ]
+      ],
+      [
+        [
+          0,
+          "IZ IT ALWAYS DIS LOUD IN DIS SQUARE?"
+        ],
+        [
+          1,
+          "MARKET DAY. IT IZ WORSE ON SATURDAYS!"
+        ],
+        [
+          0,
+          "GOOD. NOISE MEANS TRADE. TRADE MEANS WORK. WORK MEANS BEER!"
+        ]
+      ]
+    ],
+    "debate": [
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "MACHINES WILL NEVER REPLACE A SMITH'S HANDS!"
+          ],
+          [
+            1,
+            "FACTORIES MAKE A THOUSAND NAILS AN HOUR!"
+          ],
+          [
+            0,
+            "A THOUSAND BAD NAILS. ME MAKE TWELVE GOOD ONES!"
+          ],
+          [
+            1,
+            "AN' ME NEED A THOUSAND."
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "TINKZ SHOULD BE BUILT TA LAST A HUNDRED YEARS!"
+          ],
+          [
+            1,
+            "AGREED. ME GRANDMOTHER'S TABLE IZ STILL DA BEST TINK IN DA HOUSE!"
+          ],
+          [
+            0,
+            "DERE. DAT IZ HOW A TABLE SHOULD BE!"
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "VARLENIA SHOULD NO BE TRUSTED. IT APPEARED OVERNIGHT!"
+          ],
+          [
+            1,
+            "IT IZ A WHOLE CONTINENT. PEOPLE LIVE DERE NOW!"
+          ],
+          [
+            0,
+            "PEOPLE LIVED IN POMPEII TOO!"
+          ],
+          [
+            1,
+            "DAT IZ NO DA SAME TINK AT ALL!"
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "A GRUDGE IZ JUST MEMORY WIT A SENSE OF DUTY!"
+          ],
+          [
+            1,
+            "HA! ME MOTHER WOULD AGREE WIT YOU!"
+          ],
+          [
+            0,
+            "YA MOTHER SOUNDS LIKE A WISE WOMAN!"
+          ]
+        ]
+      },
+      {
+        "agreement": false,
+        "lines": [
+          [
+            0,
+            "MAGIC IZ A CRAFT, LIKE SMITHIN'. PRACTICE AN' CALLUSES!"
+          ],
+          [
+            1,
+            "MAGIC IZ A GIFT. SOME PEOPLE JUST HAB IT!"
+          ],
+          [
+            0,
+            "NOBODY JUST HAB ANYTINK. DEY PRACTISED WHERE YOU COULD NO SEE!"
+          ]
+        ]
+      },
+      {
+        "agreement": true,
+        "lines": [
+          [
+            0,
+            "DA BEST BEER IZ BREWED SLOWLY!"
+          ],
+          [
+            1,
+            "NO ARGUMENT DERE. DA FAST STUFF TASTES LIKE TIN!"
+          ],
+          [
+            0,
+            "TIN! EXACTLY. LET ME BUY YOU A SLOW ONE!"
+          ]
+        ]
+      }
+    ],
+    "ambient": [
+      [
+        [
+          0,
+          "MORNIN', {b}. FORGE IZ LIT."
+        ],
+        [
+          1,
+          "ME CAN SMELL IT FROM HERE!"
+        ]
+      ],
+      [
+        [
+          0,
+          "DAT CART WHEEL IZ WOBBLIN'!"
+        ],
+        [
+          1,
+          "IT IZ BIN WOBBLIN' FOR YEARS!"
+        ]
+      ],
+      [
+        [
+          0,
+          "PINT LATER, {b}?"
+        ],
+        [
+          1,
+          "IF YOU IZ BUYIN'."
+        ]
+      ],
+      [
+        [
+          0,
+          "COLD ENOUGH FOR GLOVES TODAY!"
+        ],
+        [
+          1,
+          "COLD ENOUGH FOR TWO PAIRS!"
+        ]
+      ],
+      [
+        [
+          0,
+          "MIND DA STEP, IT IZ CRACKED!"
+        ],
+        [
+          1,
+          "THANKS, ME NEARLY WENT OVER!"
+        ]
+      ],
+      [
+        [
+          0,
+          "GOOD STONE, DIS WALL."
+        ],
+        [
+          1,
+          "IF YOU SAY SO."
+        ]
+      ],
+      [
+        [
+          0,
+          "*NODS GRAVELY*"
+        ],
+        [
+          1,
+          "AFTERNOON TA YOU TOO."
+        ]
+      ],
+      [
+        [
+          0,
+          "LONG DAY AT DA BENCH, {b}."
+        ],
+        [
+          1,
+          "EVERY DAY'S LONG AT DA BENCH!"
+        ]
+      ],
+      [
+        [
+          0,
+          "SMELL DAT? RAIN BY EVENIN'!"
+        ],
+        [
+          1,
+          "YA KNEES AGAIN?"
+        ]
+      ],
+      [
+        [
+          0,
+          "SEEN ME APPRENTICE?"
+        ],
+        [
+          1,
+          "RAN OFF TOWARDS DA BAKERY!"
+        ]
+      ],
+      [
+        [
+          0,
+          "FINE WEATHER FOR {BUILDIN'|MENDIN'|BREWIN'}!"
+        ],
+        [
+          1,
+          "FINE WEATHER FOR SITTIN', TOO!"
+        ]
+      ],
+      [
+        [
+          0,
+          "HINGE ON YA SHUTTER NEEDS OIL!"
+        ],
+        [
+          1,
+          "ME WILL GET TA IT."
+        ]
+      ],
+      [
+        [
+          0,
+          "EVENIN', {b}. SINGIN' TONIGHT?"
+        ],
+        [
+          1,
+          "ONLY IF YOU START."
+        ]
+      ],
+      [
+        [
+          0,
+          "BUSY MARKET."
+        ],
+        [
+          1,
+          "TOO BUSY FOR ME LIKIN'."
+        ]
+      ],
+      [
+        [
+          0,
+          "NEW BOOTS, {b}? GOOD LEATHER!"
+        ],
+        [
+          1,
+          "COST ME A FORTUNE."
+        ]
+      ],
+      [
+        [
+          0,
+          "QUIET STREET TONIGHT."
+        ],
+        [
+          1,
+          "LETZ KEEP IT DAT WAY."
+        ]
+      ],
+      [
+        [
+          0,
+          "TRAM'S LATE AGAIN."
+        ],
+        [
+          1,
+          "TRAM'S ALWAYS LATE."
+        ]
+      ],
+      [
+        [
+          0,
+          "DAT BELL IZ CRACKED, YOU KNOW!"
+        ],
+        [
+          1,
+          "ME ALWAYS THOUGHT IT SOUNDED ODD!"
+        ]
+      ]
+    ]
+  }
+}

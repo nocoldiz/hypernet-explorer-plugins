@@ -413,7 +413,7 @@
             }
 
             delete $gameSystem._brewingBarrels[key];
-            this._feedbackMsg   = `Harvested: ${gains.join(', ')}`;
+            this._feedbackMsg   = T('Brewing.harvested', { list: gains.join(', ') });
             this._feedbackTimer = 180;
             SoundManager.playUseItem();
             if (window.SpecializationXP) {
@@ -471,7 +471,7 @@
                     const have   = $gameParty.numItems(item);
                     const ok     = have >= ing.quantity;
                     const mkIcon = ok ? ic(87, 14) : ic(12, 14);
-                    return `<div class="brewery-ingredient-check ${ok ? 'brewery-ink--ok' : 'brewery-ink--bad'}">${mkIcon} ${item.name} ×${ing.quantity} <span class="brewery-have">(have ${have})</span></div>`;
+                    return `<div class="brewery-ingredient-check ${ok ? 'brewery-ink--ok' : 'brewery-ink--bad'}">${mkIcon} ${item.name} ×${ing.quantity} <span class="brewery-have">${T('Brewing.have', { have })}</span></div>`;
                 }).join('');
                     ingredientCheckHTML = `
                         <div class="apiary-section" style="margin-top:14px">
@@ -1159,7 +1159,7 @@
     if (window.HypernetOS && window.HypernetOS.registerApp) {
         window.HypernetOS.registerApp({
             id: GRANGE_APP_ID,
-            name: T('Brewing.grange.appName'),
+            name: () => T('Brewing.grange.appName'),
             icon: GRANGE_ICON,
             category: 'reference',
             launchFn: function () { window.Grange.launch(); },

@@ -1,7 +1,7 @@
 {
   "option": {
     "label": "Hook profiler (needs restart)",
-    "desc": "Times every plugin's share of the map update, one row per plugin and hook, and appends a report to perf-log.txt in the game folder every 30 seconds or when you press Ctrl+F8. Off, it costs nothing.",
+    "desc": "Measures each plugin's time in the map update. Writes a report to perf-log.txt every 30 seconds or on Ctrl+F8. No cost when off.",
     "restart": "Takes effect after you restart the game."
   },
   "enabled": "Hook profiler turned on. Restart the game to start profiling.",

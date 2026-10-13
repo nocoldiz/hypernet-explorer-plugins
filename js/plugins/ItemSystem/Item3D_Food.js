@@ -2144,6 +2144,7 @@
     1793: { form: 'pail', main: 0xF4F2EC },
     // The kitchen's staples (CookingSystem recipes).
     2070: { form: 'wheel', main: 0xEDE6D6, accent: 0xF8F4EA },
+    2113: { form: 'wheel', main: 0xE8CFA0, accent: 0xF4E4C0 },
     2071: { form: 'wedge', main: 0xF2DC7A, accent: 0xE8C85A, ware: 0xEFEAE0 },
     2072: { form: 'nuts', main: 0xF2EEE4, accent: 0xD8D0C0, count: 9 },
     2073: { form: 'sheaf', main: 0xE8D08A, accent: 0xC8A860 },

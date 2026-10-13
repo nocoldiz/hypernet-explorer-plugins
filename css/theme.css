@@ -62,7 +62,7 @@
 *::before,
 *::after {
     font-style: normal !important;
-    scrollbar-width: thin !important;
+    scrollbar-width: auto !important;
     scrollbar-color: var(--border-gold-amber, #d4a050) var(--accent-gold-pure-translucent-08, rgba(212, 160, 80, 0.08)) !important;
 }
 
@@ -580,7 +580,7 @@
     box-sizing: border-box;
 }
 
-/* On the simple bio sheet the portrait well holds the written history
+/* On story mode Em's bio sheet the portrait well holds the written history
    instead, read top down and scrolled inside the well. */
 .cc-compact-portrait-card.cc-sidebar-history {
     align-items: stretch;
@@ -4837,7 +4837,7 @@
 }
 
 .cc-colour-label {
-    color: var(--text-primary);
+    color: var(--text-card-dark);
     font-size: var(--fs-label);
     margin-bottom: 4px;
 }
@@ -4857,9 +4857,17 @@
     border-radius: 50%;
 }
 
+/* The swatch's paint is the model colour it stands for, handed in by the
+   plugin as --cc-swatch. The shared chip rule strips a chip's background with
+   !important, so the swatch wins it back the same way. */
+.cc-bio-chip.cc-colour-swatch,
+.cc-bio-chip.cc-colour-swatch.selected {
+    background: var(--cc-swatch, transparent) !important;
+}
+
 
 /* The shared chip rule strips a selected chip's background and shadow with
-   !important, so the swatch keeps its colour inline and is ringed instead.
+   !important, so the swatch keeps its colour and is ringed instead.
    The ring is a shadow, not an outline, so it follows the round swatch
    rather than drawing a square around it. */
 .cc-colour-swatch.selected {
@@ -5607,15 +5615,6 @@
     gap: 8px;
     padding-bottom: 6px;
     margin-bottom: 6px;
-}
-
-.cc-scenario-sheet-bust {
-    width: 42px;
-    height: 56px;
-    flex: 0 0 auto;
-    border-radius: 4px;
-    background-size: cover;
-    background-position: top center;
 }
 
 .cc-scenario-sheet-sprite {
@@ -7071,12 +7070,16 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: rgba(255, 255, 255, 0.04);
+    background: var(--bg-white-translucent-4);
     border: 1px solid var(--border-primary-hover-translucent-15);
     border-radius: 4px;
     padding: 3px 8px;
     font-size: var(--fs-chip);
     line-height: 1.2;
+    /* Every fact on an inspect card is one of these tags now, so a long value
+       (a recipe, a list of illnesses) wraps inside its own tag. */
+    max-width: 100%;
+    flex-wrap: wrap;
 }
 .inspect-pill-lbl {
     color: var(--text-text-alt-4);
@@ -7085,7 +7088,16 @@
 .inspect-pill-val {
     color: var(--text-primary-hover);
     font-weight: 600;
+    overflow-wrap: anywhere;
 }
+
+.inspect-pill--gain { background: var(--bg-gain-translucent-12); border-color: rgba(46, 204, 113, 0.35); }
+.inspect-pill--gain .inspect-pill-val { color: #4ade80; }
+.inspect-pill--loss { background: var(--bg-loss-translucent-12); border-color: rgba(231, 76, 60, 0.35); }
+.inspect-pill--loss .inspect-pill-val { color: #f87171; }
+.inspect-pill--muted .inspect-pill-val { color: var(--text-text-alt-4); }
+/* A skill's special: the tag is its short name, the whole rule is the hover. */
+.inspect-pill--special[title] { cursor: help; }
 
 /* Stat chips for attribute modifiers & nutrition */
 .inspect-chips-grid {
@@ -7098,7 +7110,7 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-white-translucent-5);
     border: 1px solid var(--border-primary-hover-translucent-15);
     border-radius: 4px;
     padding: 2px 7px;
@@ -7108,12 +7120,12 @@
 .inspect-stat-chip-lbl { color: var(--text-detail-label); }
 .inspect-stat-chip-val { color: var(--text-success-active); font-weight: bold; }
 .inspect-stat-chip--gain {
-    background: rgba(46, 204, 113, 0.12);
+    background: var(--bg-gain-translucent-12);
     border-color: rgba(46, 204, 113, 0.35);
 }
 .inspect-stat-chip--gain .inspect-stat-chip-val { color: #4ade80; }
 .inspect-stat-chip--loss {
-    background: rgba(231, 76, 60, 0.12);
+    background: var(--bg-loss-translucent-12);
     border-color: rgba(231, 76, 60, 0.35);
 }
 .inspect-stat-chip--loss .inspect-stat-chip-val { color: #f87171; }
@@ -8992,6 +9004,324 @@
 .forge-piece-spread #forge-piece-left > .inspect-section-title:first-child,
 .forge-piece-spread #forge-piece-right > .inspect-section-title:first-child {
     margin-top: 0;
+}
+
+/* ==========================================================================
+   The model editor (Quest/ThinkerMenu.js, Scene_WeaponSculptor). A page of
+   the workshop's book like the piece's own: the left leaf is the piece, what
+   is fitted on it and the handles of the fitting in hand; the right leaf is
+   the stand, its view chips, and the shelf of parts under them. Every button,
+   rail, chip and search line here wears the shared stamps (see "One button,
+   one tab, one row" and the chip and search line stamps); what is below is
+   only layout and the parts the stamps do not draw.
+   ========================================================================== */
+#wsculpt-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--gradient-1);
+    font-family: var(--font-ui);
+    color: var(--text-muted-hover);
+    box-sizing: border-box;
+    padding: 0;
+    user-select: none;
+    animation: fade-in 0.25s ease-out;
+}
+#wsculpt-container .book-spread {
+    --spine-x: 42%;
+}
+#wsculpt-container .left-page,
+#wsculpt-container .right-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 10px 25px;
+}
+#wsculpt-container .left-page {
+    width: 42%;
+    border-right: 1px solid var(--border-secondary-hover-translucent-15);
+}
+#wsculpt-container .right-page {
+    width: 58%;
+    padding-left: 2.5%;
+}
+#wsculpt-container .page-header-bar {
+    margin-bottom: 8px;
+}
+#wsculpt-container .inspect-section-title {
+    margin: 14px 0 6px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--border-secondary-hover-translucent-15);
+}
+#wsculpt-container .wsculpt-scroll > .inspect-section-title:first-child {
+    margin-top: 0;
+}
+.wsculpt-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+.wsculpt-actions {
+    flex: 0 0 auto;
+    padding-top: 8px;
+}
+.wsculpt-empty {
+    margin: 4px 0;
+    font-size: 0.85em;
+}
+#wsculpt-container .inspect-btn.wsculpt-idle {
+    opacity: 0.5;
+}
+/* The ring is the one thing that must always show, whatever a stamp further
+   down does to a chosen control's outline. */
+#wsculpt-container .cc-nav-focus {
+    outline: 2px solid var(--text-primary-hover) !important;
+    outline-offset: 2px !important;
+}
+
+/* The piece's bands and the view of the stand: chips on one wrapping row. */
+.wsculpt-chips {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+.wsculpt-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 0.8em;
+    white-space: nowrap;
+}
+.wsculpt-chip-state {
+    font-weight: normal;
+    opacity: 0.8;
+}
+
+/* The fittings: one row each, the one in hand framed in gold. */
+.wsculpt-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.wsculpt-row {
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: var(--text-muted-hover);
+}
+.wsculpt-row:hover {
+    color: var(--text-primary-hover);
+}
+.wsculpt-row.on {
+    border-color: var(--text-primary-hover);
+    color: var(--text-primary-hover);
+    font-weight: bold;
+}
+
+/* A handle: label, step down, bar, step up, value. */
+.wsculpt-knobs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+.wsculpt-knob {
+    display: grid;
+    grid-template-columns: minmax(5em, auto) auto 1fr auto 4.5em;
+    align-items: center;
+    gap: 8px;
+}
+.wsculpt-knob-label {
+    color: var(--text-secondary-active);
+    font-size: 0.85em;
+}
+.wsculpt-knob-val {
+    color: var(--text-primary-hover);
+    font-size: 0.85em;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+.wsculpt-step {
+    width: 1.6em;
+    height: 1.6em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 4px;
+    color: var(--text-primary-hover);
+    font-weight: bold;
+    cursor: pointer;
+}
+.wsculpt-step:hover {
+    border-color: var(--text-primary-hover);
+}
+.wsculpt-bar {
+    height: 10px;
+    border-radius: 4px;
+    background: var(--bg-card-translucent-5);
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    overflow: hidden;
+    cursor: pointer;
+}
+.wsculpt-bar-fill {
+    height: 100%;
+    width: var(--ws-bar-w, 0);
+    background: var(--text-primary-hover);
+    opacity: 0.7;
+    pointer-events: none;
+}
+.wsculpt-swatches {
+    max-height: 132px;
+    overflow-y: auto;
+}
+.wsculpt-part-actions {
+    margin-top: 10px;
+}
+
+/* The stand, and the note said in its place when there is nothing to draw. */
+.wsculpt-stage {
+    position: relative;
+    flex: 1 1 55%;
+    min-height: 180px;
+    border: 1px solid var(--border-secondary-hover-translucent-15);
+    border-radius: 4px;
+    background: var(--bg-card-translucent-5);
+    overflow: hidden;
+}
+.wsculpt-canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+}
+.wsculpt-hint {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 8px;
+    text-align: center;
+    font-size: var(--fs-caption);
+    color: var(--text-muted-hover);
+    opacity: 0.7;
+    pointer-events: none;
+}
+.wsculpt-note {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 40%;
+    margin: 0;
+    text-align: center;
+    pointer-events: none;
+}
+.wsculpt-hint[hidden],
+.wsculpt-note[hidden] {
+    display: none;
+}
+.wsculpt-view {
+    flex: 0 0 auto;
+    justify-content: center;
+    padding: 6px 0 2px;
+}
+
+/* The shelf: a rail of bands and a search line over a grid of parts. */
+#wsculpt-container .right-page .left-header {
+    margin: 6px 0;
+}
+.wsculpt-bands {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+.wsculpt-search {
+    flex: 1 1 160px;
+    min-width: 0;
+    padding: 4px 2px;
+    font-size: var(--fs-caption);
+}
+.wsculpt-shelf-body {
+    flex: 1 1 45%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+.wsculpt-shelf {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 6px;
+    align-content: start;
+}
+.wsculpt-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid var(--border-primary-hover-translucent-15);
+    border-radius: 4px;
+    font-size: 0.7em;
+    line-height: 1.15;
+    color: var(--text-muted-hover);
+}
+.wsculpt-card:hover {
+    border-color: var(--text-primary-hover);
+    color: var(--text-primary-hover);
+}
+.wsculpt-card-name {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.wsculpt-shot {
+    width: 100%;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    background: var(--bg-card-translucent-5);
+    overflow: hidden;
+}
+.wsculpt-shot img {
+    max-width: 100%;
+    max-height: 100%;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.wsculpt-shot img.is-ready {
+    opacity: 1;
+}
+.wsculpt-more {
+    grid-column: 1 / -1;
 }
 /* Facts are read in two columns on a page this wide: a bill of eight lines is
    one glance rather than a scroll. */
@@ -12445,6 +12775,11 @@
    short cards left a third of it empty. The scene walks it with a cursor, so
    SM_CATEGORY_COLS in the plugin follows this track count. */
 .category-grid,
+/* A shelf row in the shop's stock list: clicking it takes the piece back. */
+.sm-takeback-row {
+    cursor: pointer;
+}
+
 .sm-school-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -20146,9 +20481,9 @@
       padding: 10px 16px;
       display: flex; flex-direction: column; gap: 7px;
       overscroll-behavior: contain;
-      /* The global 6px scrollbar is too thin to grab in a chat log, and Firefox's
+      /* A chat log paints its own bar in the focus colour, and Firefox's
          `scrollbar-width: thin` would suppress the ::-webkit- rules below, so this
-         box opts back out of it and paints its own wider bar. */
+         box keeps the full width. */
       scrollbar-width: auto; scrollbar-color: var(--border-focus-hover) transparent;
     }
     /* Once _sizeChatLog has measured the panel it fixes the log at that height
@@ -20157,7 +20492,7 @@
       flex: 0 0 auto; box-sizing: border-box;
       height: var(--npc-chat-h, auto); min-height: 0; overflow-y: auto;
     }
-    .npc-chat-bubbles::-webkit-scrollbar { width: 12px !important; }
+    .npc-chat-bubbles::-webkit-scrollbar { width: 14px !important; }
     .npc-chat-bubbles::-webkit-scrollbar-track {
       background: var(--shadow-primary-hover-translucent-5) !important;
     }
@@ -20482,6 +20817,14 @@
       gap: 5px;
       margin: 2px 0 6px;
     }
+    /* Emotions (window.EmotionModel): the subject under the name, the
+       speaking party member under the switcher. Rows reuse .npc-pred-*. */
+    .npc-emo-block {
+      flex-shrink: 0;
+      padding: 4px 12px 6px;
+      background: var(--bg-secondary-hover);
+    }
+    .npc-emo-mood { font-weight: normal; color: var(--text-text-alt-4); }
     .npc-focus-switcher-lbl {
       width: 100%;
       text-align: center;
@@ -20537,7 +20880,7 @@
       max-height: var(--npc-actions-max, 100%); overflow-y: auto; overscroll-behavior: contain;
       scrollbar-width: auto; scrollbar-color: var(--border-focus-hover) transparent;
     }
-    .npc-chat-actions-row::-webkit-scrollbar { width: 10px !important; }
+    .npc-chat-actions-row::-webkit-scrollbar { width: 14px !important; }
     .npc-chat-actions-row::-webkit-scrollbar-track {
       background: var(--shadow-primary-hover-translucent-5) !important;
     }
@@ -20644,14 +20987,6 @@
       text-underline-offset: 2px;
     }
     .npc-wiki-link:hover { text-decoration-style: solid; }
-    /* The panel's back control sits in the tab bar but is a back chip, not a
-       tab: same look as every other "back" in these menus, lined up with the
-       tabs beside it. */
-    .npc-back-btn.npc-tab-back {
-      display: inline-flex; align-items: center;
-      padding: 6px 12px; margin-right: 4px;
-      white-space: nowrap;
-    }
     .npc-entity-emblem {
       width: 130px; height: 130px;
       margin: 28px auto 8px;
@@ -20833,6 +21168,10 @@ padding: 2px 10px;
       cursor: pointer; user-select: none; -webkit-user-select: none;
       transition: color 0.1s;
       min-width: 0;
+      /* A shelf can hold thousands of tiles: the ones scrolled out of sight
+         are neither laid out nor painted until they come back. */
+      content-visibility: auto;
+      contain-intrinsic-size: auto 44px;
     }
     .npc-wiki-entry:hover .npc-wiki-entry-name { color: var(--border-focus-hover); }
     /* Selected wiki category header, plain text: no frame around it */
@@ -21333,6 +21672,7 @@ padding: 2px 10px;
     background-repeat: no-repeat;
     image-rendering: pixelated;
 }
+.trait-icon { margin-right: 0.3em; }
 .toast-qty   { color: var(--toast-text-muted); }
 .toast-value { color: var(--text-gold-dark); font-weight: bold; font-size: 1.05em; }
 .toast-note  { color: var(--toast-text-muted); font-size: 0.95em; }
@@ -23967,6 +24307,10 @@ body.ascii-ui-active #title-menu-container {
     letter-spacing: 0.5px;
     min-width: calc(180px * var(--ts-ui-scale, 1));
 }
+/* A gap opens between the column's groups (TITLE_COMMAND_GROUPS). */
+#title-menu-container .ts-menu-item.ts-group-start {
+    margin-top: calc(10px * var(--ts-ui-scale, 1));
+}
 
 /* ==========================================================================
    Minigame picker overlay (.mg-menu-*)
@@ -25132,6 +25476,54 @@ body.ascii-ui-active .ascii-passthrough {
 #gx-service .gx-svc-pct { flex:0 0 40px; text-align:right; font-size:var(--fs-chip); }
 #gx-service .gx-btn { margin:0; flex:0 0 auto; }
 #gx-service .gx-btn.gx-disabled { opacity:0.35; cursor:not-allowed; }
+/* Pizza Delivery (GalaxySim_PizzaDelivery.js): the trading console, a modal
+   like the servicing bay. */
+#gx-ui .gx-btn.gx-pizza.gx-on { background:var(--chip-active-bg); color:var(--chip-active-fg); }
+#gx-pizza { position:absolute; top:0; right:0; bottom:0; left:0; z-index:25; display:none;
+  align-items:center; justify-content:center; pointer-events:auto;
+  background:var(--shadow-black-translucent-55); }
+#gx-pizza .gx-pz-card { position:relative; pointer-events:auto;
+  width:min(760px,92vw); max-height:88vh; display:flex; flex-direction:column;
+  background:var(--gx-hull); border:1px solid var(--gx-line);
+  border-radius:6px; padding:14px 18px;
+  box-shadow:0 6px 20px var(--shadow-black-translucent-55); }
+#gx-pizza .gx-pz-tabs { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+#gx-pizza .gx-pz-wrap { flex-wrap:wrap; }
+#gx-pizza .gx-pz-tabs .gx-btn.gx-on,
+#gx-pizza .gx-pz-row .gx-btn.gx-on,
+#gx-pizza .gx-actions .gx-btn.gx-on { background:var(--chip-active-bg); color:var(--chip-active-fg); }
+#gx-pizza .gx-pz-body { overflow-y:auto; overscroll-behavior:contain;
+  margin:8px -4px 0; padding:0 4px; flex:1 1 auto; min-height:0; }
+#gx-pizza .gx-pz-head { font-weight:bold; font-size:var(--fs-body); margin:4px 0; }
+#gx-pizza .gx-pz-note { font-size:var(--fs-chip); color:var(--accent-amber-light);
+  line-height:1.4; margin:6px 0; }
+#gx-pizza .gx-pz-list { margin-top:6px; }
+#gx-pizza .gx-pz-row { display:flex; align-items:center; gap:10px;
+  padding:6px 8px; border-radius:4px; border:1px solid var(--gx-line); margin-bottom:6px; }
+#gx-pizza .gx-pz-row.gx-pz-sel { border-color:var(--gx-accent-ship); }
+#gx-pizza .gx-pz-main { flex:1 1 auto; min-width:0; }
+#gx-pizza .gx-pz-name { font-weight:bold; font-size:var(--fs-body); }
+#gx-pizza .gx-pz-sub { font-size:var(--fs-chip); color:var(--gx-ink-dim); line-height:1.35; }
+#gx-pizza .gx-pz-satrow { display:flex; align-items:center; gap:8px;
+  font-size:var(--fs-chip); margin:6px 0; }
+#gx-pizza .gx-pz-bar { flex:1 1 auto; height:9px; border-radius:5px;
+  background:var(--gx-hull-deep); border:1px solid var(--gx-line); overflow:hidden; }
+#gx-pizza .gx-pz-fill { height:100%; width:var(--ui-bar-w, 0%); border-radius:4px;
+  background:linear-gradient(to right,var(--gx-accent-fuel-deep),var(--gx-accent-fuel)); }
+#gx-pizza .gx-pz-qty { display:flex; align-items:center; gap:4px; margin:8px 0; flex-wrap:wrap; }
+#gx-pizza .gx-pz-qty-val { min-width:48px; text-align:center; font-weight:bold; }
+#gx-pizza .gx-pz-builder { display:flex; flex-direction:column; gap:6px; }
+#gx-pizza .gx-pz-input { pointer-events:auto; font:inherit; font-size:var(--fs-body);
+  color:var(--gx-ink); background:var(--gx-hull-deep);
+  border:1px solid var(--gx-line); border-radius:4px; padding:4px 8px; }
+#gx-pizza .gx-pz-input.focused,
+#gx-pizza .gx-pz-input:focus { border-color:var(--gx-accent-ship); outline:none; }
+#gx-pizza .gx-pz-chips { display:flex; flex-wrap:wrap; gap:4px; }
+#gx-pizza .gx-pz-foods { display:flex; flex-wrap:wrap; gap:4px;
+  max-height:160px; overflow-y:auto; overscroll-behavior:contain; }
+#gx-pizza .gx-pz-price { color:var(--gx-ink-dim); font-size:var(--fs-chip); }
+#gx-pizza .gx-btn { margin:0; flex:0 0 auto; }
+#gx-pizza .gx-btn.gx-disabled { opacity:0.35; cursor:not-allowed; }
 /* Anomaly log: the branching encounter, as a message window over the map. */
 #gx-anomaly { position:absolute; top:0; right:0; bottom:0; left:0; z-index:26; display:none;
   align-items:center; justify-content:center; pointer-events:auto;
@@ -25519,6 +25911,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 #world-manage-container .wm-diary-row .wm-diary-meta {
     font-size: var(--fs-caption);
     color: var(--text-detail-label);
+}
+/* A QR card written from the Worlds screen, shown at a size a phone can read. */
+#world-manage-container .wm-qr-image {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto var(--sp-4);
+    image-rendering: pixelated;
 }
 /* The balance: one block of facts per hyperpower, strongest first. */
 #world-manage-container .wm-power {
@@ -30553,6 +30953,14 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     padding-top: var(--sp-3);
 }
 
+/* On the augment shelf the briefing carries the augment's inspect card and
+   takes the page under the patient's head, scrolling on its own. */
+.pshop-briefing--card {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+}
+
 .pshop-note {
     margin: var(--sp-2) 0 var(--sp-3) 0;
 }
@@ -33804,133 +34212,23 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 /* ==========================================================================
    The augments register (js/plugins/Health/PartyAugmentsMenu.js)
 
-   Lifted out of the plugin, which used to paint these inline in one
-   preset's palette. Every colour is a theme token now, so both presets
-   (and any future one) reach the whole menu.
+   The page is the backpack's spread (.inspect-pockets): tab rail, slot grid
+   and inspect card all come from the inventory rules. Only what the backpack
+   has no word for is styled here.
    ========================================================================== */
 
-.augment-01 {
-    position: relative;
+/* The kind icon is an IconSet cell painted as a background, so it needs a
+   box of its own to show in. */
+.aug-icon {
+    display: block;
+    flex-shrink: 0;
 }
 
-.augment-02 {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    padding: 6px 0 10px;
-}
-
-.augment-03 {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-    color: var(--text-card-medium);
-}
-
-/* The catalogue reads three across; MenuVirtualList takes its track count
-   off this container's own columns. */
-.aug-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-content: start;
-    gap: 4px 8px;
-}
-
-/* In the catalogue every entry is a card: the name and price on top, the
-   sockets it fits along the bottom. */
-.aug-grid .augment-09 {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
-    border: 1px solid var(--border-subtle);
-}
-
-.aug-grid .augment-10 {
-    gap: 2px;
-}
-
-.aug-sockets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px;
-    margin-top: 3px;
-}
-
-.aug-socket-chip {
-    font-family: var(--font-ui);
-    font-size: var(--fs-caption);
-    letter-spacing: 0.04em;
-    padding: 0 2px;
-    background: transparent;
-    color: var(--text-success-active);
-    white-space: nowrap;
-}
-
-.augment-04 {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    color: var(--text-success-active);
-}
-
-/* The Fitted / Catalogue tabs are .inspect-btn; this only drops the stamp's
-   top margin so they sit in the tab row. */
-.augment-05 {
-    margin-top: 0;
-}
-
-.augment-06 {
-    opacity: 0.6;
-    padding: 14px 10px;
-    font-family: var(--font-ui);
-}
-
-.augment-07 {
-    font-size: 0.83rem;
+/* A fitted augment whose host part is ruined says so where the price sits. */
+.item-slot-count.aug-damaged {
     color: var(--text-text-alt-17);
 }
 
-.augment-08 {
-    font-size: 0.878rem;
-    opacity: 0.7;
-}
-
-.augment-09 {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 6px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    background: transparent;
-}
-
-.augment-10 {
-    display: flex;
-    flex-direction: column;
-}
-
-.augment-11 {
-    font-family: var(--font-ui);
-    color: var(--text-card-medium);
-}
-
-/* The row the cursor is reading. Written as a rule rather than an inline
-   colour on the name so the list can move the mark without rebuilding the row
-   (UI/MenuVirtualList.js, the `focus` contract). */
-.aug-row.selected .augment-11 {
-    color: var(--text-secondary-active);
-}
-
-/* The right page is the shared detail card (docs/task/ui_fixing.md): the
-   headings are gold `.inspect-section-title`, the effects and the fitting are
-   the one `.inspect-spec-grid` stat block, and the sockets are `.ui-chip`, so
-   the augment reads at the same size and in the same inks as every other right
-   column. The only rule left here is the damage warning's own ink. */
 .aug-warning {
     font-size: var(--fs-detail-body);
     color: var(--text-text-alt-17);
@@ -34832,9 +35130,18 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     cursor: pointer;
 }
 
-#hardcore-gameover-container .hgo-button:hover {
+#hardcore-gameover-container .hgo-button:hover,
+#hardcore-gameover-container .hgo-button.hgo-button-focus {
     background: var(--hgo-button-bg-hover);
     box-shadow: 0 0 14px var(--shadow-danger-dark-60);
+}
+
+/* The story's two ways out, side by side, wrapping on a narrow screen. */
+#hardcore-gameover-container .hgo-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
 }
 
 /* Crop plot and seed rack (js/plugins/Farming/PlantGrowthSystem.js). */
@@ -36738,6 +37045,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     overflow-y: auto;
     padding: var(--sp-5) var(--sp-5);
     box-sizing: border-box;
+    /* .ui-panel centres its text; the card reads left like the skills page. */
+    text-align: left;
 }
 
 .sm-skill-detail--popup { flex: 1 1 auto; min-height: 0; }
@@ -38517,8 +38826,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    -------------------------------------------------------------------------- */
 
 .cc-compact-bust-full,
-.cc-dossier-large-bust,
-.cc-scenario-sheet-bust { background-image: var(--cc-bust, none); }
+.cc-dossier-large-bust { background-image: var(--cc-bust, none); }
 
 .cc-inked,
 .cc-loadout-name-cell,
@@ -38640,6 +38948,21 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .cc-dossier-row--lead { font-size: var(--fs-detail-body); padding: var(--sp-1) 0; }
 .cc-dossier-row--tight { font-size: var(--fs-label); padding: 2px 0; }
+
+/* Body parts tab: the status screen's anatomy grid, read-only, with the skills
+   a part teaches under its gauge. */
+.cc-anatomy-grid { overflow: visible; row-gap: var(--sp-3); }
+.cc-anatomy-cell { cursor: default; }
+.cc-anatomy-cell .bodypart-name { font-size: var(--fs-label); }
+.cc-anatomy-skills {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--sp-2);
+    row-gap: 2px;
+    margin-top: var(--sp-1);
+    font-size: var(--fs-caption);
+}
+.cc-anatomy-skill { display: inline-flex; align-items: center; gap: 4px; }
 
 /* A label over a group of facts: small caps, not a heading. */
 .cc-section-label {
@@ -38917,32 +39240,33 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
    The 3D model editor (CharacterCreation3DModel.js). Lifted out of the
    runtime <style> block the scene used to append to the document head.
    ========================================================================== */
-/* The workshop's weapon model editor (Quest/ThinkerMenu.js) is this same
-   screen pointed at a weapon instead of at a body, and it is drawn with these
-   same rules rather than with a second set saying the same thing. All it needs
-   of its own is a mount, and room for the two strips a weapon has that a
-   creature does not: the finishes a fitting may be given. */
-#wsculpt-container { position:absolute; top:0; left:0; width:100%; height:100%;
-  z-index:1000; background:var(--gradient-1); font-family:var(--font-ui); }
-#wsculpt-container .cc3d-handles { width:252px; max-height:calc(100% - 24px); overflow-y:auto; }
-#wsculpt-container .forge-swatches { max-height:104px; overflow-y:auto; }
+/* The workshop's weapon and armour model editor (Quest/ThinkerMenu.js) no
+   longer borrows these rules: it is a page of the workshop's own book, and its
+   block sits with the workshop's ("The model editor", after the forge's piece
+   spread). */
 
-.cc3d { display:flex; flex-direction:column; width:100%; height:100%;
-  box-sizing:border-box; overflow:hidden;
+/* The creature editor is drawn on the creation book's own page: the
+   .cc-pockets-spread leaf (single, so no crease) carries the paper and the
+   frame, and everything inside stands on it with no plate of its own. The
+   font size is pinned back to the UI's so the shared button and tab stamps,
+   which are sized in em, come out at their usual size on the larger book
+   type. */
+.cc3d-spread { padding:10px 12px; }
+.cc3d { display:flex; flex-direction:column; flex:1 1 auto; width:100%; height:100%; min-width:0;
+  box-sizing:border-box; overflow:hidden; font-size:1rem;
   font-family:var(--font-ui); color:var(--text-muted-hover); user-select:none; }
 
 /* --- top bar ------------------------------------------------------- */
 /* The bar must never be wider than the screen: a chip that will not shrink
    pushes the whole layout out and takes Continue off the right edge with
    it, along with everything the columns below are measured against. */
-.cc3d-top { display:flex; align-items:center; gap:6px; padding:6px 10px; min-width:0;
-  overflow:hidden; border-bottom:1px solid var(--border-accent-hover-translucent-5);
-  background:var(--gradient-1); flex:0 0 auto; }
+.cc3d-top { display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:6px;
+  padding:4px 4px 8px; min-width:0;
+  border-bottom:1px solid var(--border-accent-hover-translucent-5);
+  background:transparent; flex:0 0 auto; }
 .cc3d-top > * { min-width:0; }
 .cc3d-top .cc3d-chip { overflow:hidden; text-overflow:ellipsis; }
-.cc3d-top .cc-btn-treaty,
-.cc3d-top .inspect-btn,
-.cc3d-top .cc3d-continue-btn {
+.cc3d-top .cc-btn-treaty {
   flex: 0 0 auto;
   font-family: var(--font-ui);
   font-size: 0.95rem;
@@ -38962,20 +39286,13 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 }
 .cc3d-top .cc-btn-treaty:hover,
 .cc3d-top .cc-btn-treaty.confirm:hover,
-.cc3d-top .cc-btn-treaty.selected,
-.cc3d-top .inspect-btn:hover,
-.cc3d-top .inspect-btn.selected,
-.cc3d-top .inspect-btn:focus-visible,
-.cc3d-top .cc3d-continue-btn:hover,
-.cc3d-top .cc3d-continue-btn.selected,
-.cc3d-top .cc3d-continue-btn:focus-visible {
+.cc3d-top .cc-btn-treaty.selected {
   background: var(--chip-active-bg);
   color: var(--chip-active-fg);
   box-shadow: 0 4px 8px var(--shadow-primary-hover-translucent-5);
   transform: none;
 }
-.cc3d-top .cc-btn-treaty.confirm,
-.cc3d-top .inspect-btn.confirm {
+.cc3d-top .cc-btn-treaty.confirm {
   background: var(--bg-secondary-hover);
   border: 2px solid var(--text-primary-hover);
   color: var(--text-primary-hover);
@@ -38987,8 +39304,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 /* --- the two sidebars, then the creature ---------------------------- */
 .cc3d-mid { flex:1; min-height:0; min-width:0; display:flex; overflow:hidden; }
-.cc3d-side { flex:0 0 auto; display:flex; flex-direction:column; gap:4px;
-  padding:8px; box-sizing:border-box; background:var(--gradient-1);
+.cc3d-side { flex:0 0 auto; display:flex; flex-direction:column; gap:6px;
+  padding:8px; box-sizing:border-box; background:transparent;
   border-right:1px solid var(--border-accent-hover-translucent-5); }
 .cc3d-anat { width:236px; min-width:200px; }
 .cc3d-parts { width:352px; min-width:280px; }
@@ -39026,7 +39343,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   display:block; cursor:grab; }
 .cc3d-hint { position:absolute; left:12px; right:12px; top:8px; text-align:center;
   font-size:0.92rem; color:var(--text-muted-hover); opacity:0.5; pointer-events:none; }
-.cc3d-handles { position:absolute; right:12px; bottom:12px; width:222px; max-width:calc(100% - 24px);
+.cc3d-handles { position:absolute; right:12px; bottom:12px; width:252px; max-width:calc(100% - 24px);
+  max-height:calc(100% - 24px); overflow-y:auto;
   box-sizing:border-box; padding:7px 8px;
   border-radius:7px; display:flex; flex-direction:column; gap:4px;
   background:var(--bg-primary-hover-translucent-35);
@@ -39051,7 +39369,6 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 .cc3d-chip.on { border-color:var(--text-primary-hover); color:var(--text-primary-hover);
   background:var(--border-primary-hover-translucent-15); font-weight:bold; }
 .cc3d-chip.spent { opacity:0.35; cursor:default; pointer-events:none; }
-.cc3d-chip.grow { flex:1; text-align:center; }
 .cc3d-chip .cc3d-dot { display:inline-block; width:5px; height:5px; border-radius:50%;
   margin-left:5px; vertical-align:middle; background:var(--text-primary-hover); }
 .cc3d-lbl { font-size:0.93rem; opacity:0.75; white-space:nowrap; }
@@ -39070,7 +39387,26 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
   border:1px solid var(--border-primary-hover-translucent-15); }
 .cc3d-tag.vital { border-color:var(--accent-red-3); color:var(--accent-red-3); }
 .cc3d-tag.graft { border-color:var(--text-primary-hover); color:var(--text-primary-hover); }
-.cc3d-focus { outline:1px solid var(--text-primary-hover); outline-offset:1px; }
+/* The editor's cursor is the shared creation ring (.cc-nav-focus, painted
+   alongside this marker); the override at the foot of this sheet keeps it
+   visible on a row the list-row stamp strips the outline from. */
+.cc3d-focus { outline:2px solid var(--text-primary-hover); outline-offset:2px; }
+
+/* A strip of buttons or chips: side by side, wrapping, each as wide as its
+   words. */
+.cc3d-row { display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:6px; }
+.cc3d-row .cc3d-search { flex:1 1 120px; min-width:0; }
+
+/* The two rails (the groups of parts, and Move / Turn / Size) are the
+   backpack's tab rail, set tighter than a page-wide rail. */
+.cc3d .backpack-tabs { margin-bottom:2px; padding-bottom:2px; gap:4px; }
+.cc3d .backpack-tab .cc3d-dot { display:inline-block; width:5px; height:5px; border-radius:50%;
+  margin-left:5px; vertical-align:middle; background:var(--text-primary-hover); }
+
+/* Said on the stage when there is no 3D preview to draw (no WebGL). */
+.cc3d-nopreview { display:none; position:absolute; left:24px; right:24px; top:40%;
+  text-align:center; font-size:var(--fs-body); color:var(--text-muted-hover); pointer-events:none; }
+.cc3d-nopreview.on { display:block; }
 .cc3d-tip { position:fixed; left:0; top:0; padding:2px 8px; border-radius:4px;
   font-size:var(--fs-caption); pointer-events:none; display:none; z-index:1400;
   background:var(--bg-primary-hover-translucent-35); color:var(--text-primary-hover);
@@ -39331,6 +39667,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 #gx-landing-grid.ui-open,
 #gx-service.ui-open,
+#gx-pizza.ui-open,
 /* The catalog modal is a column: header, tab strip, then the scrolling list. */
 #gx-catalog.ui-open,
 #gx-anomaly.ui-open { display: flex; }
@@ -39669,6 +40006,17 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     border-color: transparent;
     background: transparent;
     box-shadow: none;
+}
+
+/* With no plate behind it the readout sits straight on the body it describes,
+   so every glyph carries a solid black outline to stay legible on a bright
+   accretion disc. */
+#title-hyperverse-info.title-info-box {
+    text-shadow:
+        -2px -2px 0 #000, 0 -2px 0 #000, 2px -2px 0 #000,
+        -2px 0 0 #000, 2px 0 0 #000,
+        -2px 2px 0 #000, 0 2px 0 #000, 2px 2px 0 #000,
+        0 0 6px #000;
 }
 
 .title-catalog {
@@ -41744,19 +42092,23 @@ select option:hover {
    gold rail, whatever local rule styled it before.
    ========================================================================== */
 
+/* Wide enough to read from the sofa and to grab with a pointer: a 6px rail
+   was the reason long text felt stuck. One width for every pane, so no local
+   rule may narrow it again. */
 ::-webkit-scrollbar {
-    width: 6px !important;
-    height: 6px !important;
+    width: 14px !important;
+    height: 14px !important;
 }
 
 ::-webkit-scrollbar-track {
     background: var(--accent-gold-pure-translucent-08, rgba(212, 160, 80, 0.08)) !important;
-    border-radius: 3px !important;
+    border-radius: 7px !important;
 }
 
 ::-webkit-scrollbar-thumb {
     background: var(--border-gold-amber, #d4a050) !important;
-    border-radius: 3px !important;
+    border-radius: 7px !important;
+    min-height: 40px !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -42258,6 +42610,7 @@ body.pad-input .kb-only {
     grid-template-columns: minmax(88px, auto) minmax(88px, auto);
     gap: 6px;
     align-items: center;
+    justify-items: start;
 }
 
 .tpp-move {
@@ -42951,6 +43304,7 @@ body.pad-input .kb-only {
 .qb-tab,
 #gsv-root .gsv-tab,
 #cs-mini .cs-tab,
+.wsculpt-tab,
 .news-tab,
 #fbuild-panel .fbuild-mode-opt {
     font-family: var(--font-ui);
@@ -42994,6 +43348,7 @@ body.pad-input .kb-only {
 #gsv-root .gsv-tab:hover,
 #cs-mini .cs-tab:hover,
 .news-tab:hover,
+.wsculpt-tab:hover,
 #fbuild-panel .fbuild-mode-opt:hover {
     color: var(--text-primary-hover);
     background: transparent;
@@ -43018,6 +43373,7 @@ body.pad-input .kb-only {
 #gsv-root .gsv-tab.gsv-active,
 #cs-mini .cs-tab.active, #cs-mini .cs-tab.selected,
 .news-tab.selected,
+.wsculpt-tab.active, .wsculpt-tab.selected,
 #fbuild-panel .fbuild-mode-opt.active {
     background: transparent;
     background-image: none;
@@ -43043,7 +43399,8 @@ body.pad-input .kb-only {
 #gsv-root .gsv-tabs,
 #equip-container .equip-type-tabs,
 .right-tools-tabs,
-.news-tabs {
+.news-tabs,
+.wsculpt-tabs {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -43058,6 +43415,7 @@ body.pad-input .kb-only {
       and a gold box when it is on, and never a plate behind it.
    -------------------------------------------------------------------------- */
 .cc3d-chip,
+.wsculpt-chip,
 .cc-bio-chip,
 .npc-focus-chip,
 .npc-action-cat,
@@ -43077,6 +43435,7 @@ body.pad-input .kb-only {
 }
 
 .cc3d-chip:hover,
+.wsculpt-chip:hover,
 .cc-bio-chip:hover,
 .npc-focus-chip:hover,
 .npc-action-cat:hover,
@@ -43088,6 +43447,7 @@ body.pad-input .kb-only {
 /* Under the pad cursor: the frame, as a tab wears it. */
 .cc3d-chip.selected,
 .cc3d-chip:focus-visible,
+.wsculpt-chip:focus-visible,
 .news-alert-toggle.selected {
     border-color: var(--text-primary-hover);
     color: var(--text-primary-hover);
@@ -43095,6 +43455,7 @@ body.pad-input .kb-only {
 }
 
 .cc3d-chip.on,
+.wsculpt-chip.on,
 .cc-bio-chip.selected,
 .npc-focus-chip.on,
 .npc-action-cat.active,
@@ -43132,9 +43493,14 @@ body.pad-input .kb-only {
     background: var(--bg-black-translucent-96, #000);
     border-bottom-color: transparent;
 }
-/* The Close / Back chip in front of the tabs wears the same backing, so it
-   does not float as bare text over the map behind the panel. */
+/* The panel's back control sits in the tab bar but is a back chip, not a
+   tab: same look as every other "back" in these menus, lined up with the tabs
+   beside it. It wears the same backing as they do, so it does not float as
+   bare text over the map behind the panel. */
 .npc-back-btn.npc-tab-back {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
     align-self: flex-end;
     background: var(--bg-black-translucent-96, #000);
     border-radius: 6px 6px 0 0;
@@ -43563,6 +43929,14 @@ body.pad-input .kb-only {
 
 /* -- The readout, bottom right -------------------------------------------- */
 
+/* Europe's readout opens beside the picked square (WorldMap.js placeReadout)
+   and takes its own clicks; Bologna's stays bottom right. */
+#worldmap-chrome #wm-readout {
+    right: auto;
+    bottom: auto;
+    pointer-events: auto;
+}
+
 #worldmap-chrome .wm-readout {
     right: calc(var(--sp-5) + 44px);
     bottom: calc(var(--sp-5) + 48px);
@@ -43609,6 +43983,8 @@ body.pad-input .kb-only {
 }
 
 #worldmap-chrome .wm-note-btn,
+#worldmap-chrome .wm-taxi-btn,
+#worldmap-chrome .wm-show-map,
 #worldmap-chrome .wm-teleport-btn {
     pointer-events: auto;
 }
@@ -43664,9 +44040,8 @@ body.pad-input .kb-only {
 }
 
 #worldmap-chrome .wm-view-buttons > .inspect-btn {
-    flex: 1 1 0;
+    flex: 0 0 auto;
     margin-top: 0;
-    min-width: 0;
     text-align: center;
 }
 
@@ -43683,7 +44058,6 @@ body.pad-input .kb-only {
 
 #worldmap-chrome .wm-minimap-btn {
     margin-top: var(--sp-2);
-    width: 100%;
     text-align: center;
 }
 
@@ -44650,6 +45024,7 @@ body.pad-input .kb-only {
 .news-search-input,
 #fbuild-panel .fbuild-search,
 .cc3d-search,
+.wsculpt-search,
 .cc3d-modal-search,
 .cc-pick-search,
 .backpack-search-input.cc-rail-search {
@@ -44666,6 +45041,7 @@ body.pad-input .kb-only {
 .news-search-input:focus,
 #fbuild-panel .fbuild-search:focus,
 .cc3d-search:focus,
+.wsculpt-search:focus,
 .cc3d-modal-search:focus,
 .cc-pick-search:focus,
 .backpack-search-input.cc-rail-search:focus {
@@ -44975,4 +45351,15 @@ body.pad-input .kb-only {
     font-size: var(--fs-detail-prose);
     line-height: 1.45;
     color: var(--text-success-active);
+}
+
+/* --- The 3D creature editor's cursor (CharacterCreation3DModel.js) ---------
+   The list-row stamp above strips every outline off a chosen row with
+   !important, which took the focus ring off the very card or body row the
+   cursor was standing on whenever that row was also the worn one. The ring
+   is the one thing that must always show, so it is restated last. */
+.cc3d .cc-nav-focus,
+.cc3d .cc3d-focus {
+    outline: 2px solid var(--text-primary-hover) !important;
+    outline-offset: 2px !important;
 }

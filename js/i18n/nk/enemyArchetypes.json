@@ -1,0 +1,3686 @@
+{
+  "enemyArchetypes": {
+    "humanoid": {
+      "name": "HUMANOID",
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "brain": {
+        "name": "BRAIN",
+        "msg": "BRAIN RUPTURED!",
+        "brokenMsg": "BRAIN BATTERED!"
+      },
+      "left_eye": {
+        "name": "LEFT EYE",
+        "msg": "LEFT EYE SEVERED!",
+        "brokenMsg": "LEFT EYE SWOLLEN SHUT!"
+      },
+      "right_eye": {
+        "name": "RIGHT EYE",
+        "msg": "RIGHT EYE SEVERED!",
+        "brokenMsg": "RIGHT EYE SWOLLEN SHUT!"
+      },
+      "nose": {
+        "name": "NOSE",
+        "msg": "NOSE SHEARED OFF!",
+        "brokenMsg": "NOSE CHIPPED!"
+      },
+      "left_ear": {
+        "name": "LEFT EAR",
+        "msg": "LEFT EAR SEVERED!",
+        "brokenMsg": "LEFT EAR LEFT RINGIN'!"
+      },
+      "right_ear": {
+        "name": "RIGHT EAR",
+        "msg": "RIGHT EAR SEVERED!",
+        "brokenMsg": "RIGHT EAR LEFT RINGIN'!"
+      },
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      },
+      "teeth": {
+        "name": "TEETH",
+        "msg": "TEETH SMASHED APART!",
+        "brokenMsg": "TEETH CHIPPED!"
+      },
+      "genitals": {
+        "name": "GENITALS",
+        "msg": "GENITALS SEVERED!",
+        "brokenMsg": "GENITALS BATTERED!"
+      },
+      "heart": {
+        "name": "HEART",
+        "msg": "HEART RUPTURED!",
+        "brokenMsg": "HEART BATTERED!"
+      },
+      "left_lung": {
+        "name": "LEFT LUNG",
+        "msg": "LEFT LUNG RUPTURED!",
+        "brokenMsg": "LEFT LUNG BATTERED!"
+      },
+      "right_lung": {
+        "name": "RIGHT LUNG",
+        "msg": "RIGHT LUNG RUPTURED!",
+        "brokenMsg": "RIGHT LUNG BATTERED!"
+      },
+      "liver": {
+        "name": "LIVER",
+        "msg": "LIVER RUPTURED!",
+        "brokenMsg": "LIVER BATTERED!"
+      },
+      "stomach": {
+        "name": "STOMACH",
+        "msg": "STOMACH RUPTURED!",
+        "brokenMsg": "STOMACH BATTERED!"
+      },
+      "spleen": {
+        "name": "SPLEEN",
+        "msg": "SPLEEN RUPTURED!",
+        "brokenMsg": "SPLEEN BATTERED!"
+      },
+      "intestines": {
+        "name": "INTESTINES",
+        "msg": "INTESTINES RUPTURED!",
+        "brokenMsg": "INTESTINES BATTERED!"
+      },
+      "left_hand": {
+        "name": "LEFT HAND",
+        "msg": "LEFT HAND CUT OFF!",
+        "brokenMsg": "LEFT HAND MANGLED!"
+      },
+      "left_fingers": {
+        "name": "LEFT FINGERS",
+        "msg": "LEFT FINGERS TORN OFF!",
+        "brokenMsg": "LEFT FINGERS TORN!"
+      },
+      "right_hand": {
+        "name": "RIGHT HAND",
+        "msg": "RIGHT HAND CUT OFF!",
+        "brokenMsg": "RIGHT HAND MANGLED!"
+      },
+      "right_fingers": {
+        "name": "RIGHT FINGERS",
+        "msg": "RIGHT FINGERS TORN OFF!",
+        "brokenMsg": "RIGHT FINGERS TORN!"
+      },
+      "left_foot": {
+        "name": "LEFT FOOT",
+        "msg": "LEFT FOOT CUT OFF!",
+        "brokenMsg": "LEFT FOOT MANGLED!"
+      },
+      "left_toes": {
+        "name": "LEFT TOES",
+        "msg": "LEFT TOES CUT OFF!",
+        "brokenMsg": "LEFT TOES MANGLED!"
+      },
+      "right_foot": {
+        "name": "RIGHT FOOT",
+        "msg": "RIGHT FOOT CUT OFF!",
+        "brokenMsg": "RIGHT FOOT MANGLED!"
+      },
+      "right_toes": {
+        "name": "RIGHT TOES",
+        "msg": "RIGHT TOES CUT OFF!",
+        "brokenMsg": "RIGHT TOES MANGLED!"
+      }
+    },
+    "nagukagoblin": {
+      "name": "NAGUKA GOBLIN"
+    },
+    "verdengoblin": {
+      "name": "VERDEN GOBLIN"
+    },
+    "elf": {
+      "name": "ELF"
+    },
+    "orc": {
+      "name": "ORC"
+    },
+    "tourist": {
+      "name": "TOURIST"
+    },
+    "dargos": {
+      "name": "DARGOS"
+    },
+    "humanoid_roguelite": {
+      "name": "HUMANOID",
+      "head": {
+        "name": "HEAD"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO CRUSHED!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM RIPPED OFF!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM RIPPED OFF!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG CUT OFF!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG CUT OFF!"
+      },
+      "brain": {
+        "name": "BRAIN",
+        "msg": "BRAIN CONCUSSED!"
+      },
+      "left_eye": {
+        "name": "LEFT EYE",
+        "msg": "LEFT EYE SWOLLEN SHUT!"
+      },
+      "right_eye": {
+        "name": "RIGHT EYE",
+        "msg": "RIGHT EYE SWOLLEN SHUT!"
+      },
+      "nose": {
+        "name": "NOSE",
+        "msg": "NOSE BROKEN!"
+      },
+      "left_ear": {
+        "name": "LEFT EAR",
+        "msg": "LEFT EAR RINGIN'!"
+      },
+      "right_ear": {
+        "name": "RIGHT EAR",
+        "msg": "RIGHT EAR RINGIN'!"
+      },
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "JAW DISLOCATED!"
+      },
+      "teeth": {
+        "name": "TEETH",
+        "msg": "TEETH KNOCKED OUT!"
+      },
+      "genitals": {
+        "name": "GENITALS",
+        "msg": "GENITALS DAMAGED!"
+      },
+      "heart": {
+        "name": "HEART",
+        "msg": "HEART DAMAGED!"
+      },
+      "left_lung": {
+        "name": "LEFT LUNG",
+        "msg": "LEFT LUNG COLLAPSED!"
+      },
+      "right_lung": {
+        "name": "RIGHT LUNG",
+        "msg": "RIGHT LUNG COLLAPSED!"
+      },
+      "liver": {
+        "name": "LIVER",
+        "msg": "LIVER LACERATED!"
+      },
+      "stomach": {
+        "name": "STOMACH",
+        "msg": "STOMACH RUPTURED!"
+      },
+      "spleen": {
+        "name": "SPLEEN",
+        "msg": "SPLEEN RUPTURED!"
+      },
+      "intestines": {
+        "name": "INTESTINES",
+        "msg": "INTESTINES PERFORATED!"
+      },
+      "left_hand": {
+        "name": "LEFT HAND",
+        "msg": "LEFT HAND MANGLED!"
+      },
+      "left_fingers": {
+        "name": "LEFT FINGERS",
+        "msg": "LEFT FINGERS BROKEN!"
+      },
+      "right_hand": {
+        "name": "RIGHT HAND",
+        "msg": "RIGHT HAND MANGLED!"
+      },
+      "right_fingers": {
+        "name": "RIGHT FINGERS",
+        "msg": "RIGHT FINGERS BROKEN!"
+      },
+      "left_foot": {
+        "name": "LEFT FOOT",
+        "msg": "LEFT FOOT DAMAGED!"
+      },
+      "left_toes": {
+        "name": "LEFT TOES",
+        "msg": "LEFT TOES CRUSHED!"
+      },
+      "right_foot": {
+        "name": "RIGHT FOOT",
+        "msg": "RIGHT FOOT DAMAGED!"
+      },
+      "right_toes": {
+        "name": "RIGHT TOES",
+        "msg": "RIGHT TOES CRUSHED!"
+      }
+    },
+    "beast": {
+      "name": "BEAST",
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "rear_left_leg": {
+        "name": "REAR LEFT LEG",
+        "msg": "REAR LEFT LEG SEVERED!",
+        "brokenMsg": "REAR LEFT LEG BROKEN!"
+      },
+      "rear_right_leg": {
+        "name": "REAR RIGHT LEG",
+        "msg": "REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "REAR RIGHT LEG BROKEN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      }
+    },
+    "insectoid": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "thorax": {
+        "name": "THORAX",
+        "msg": "THORAX RUPTURED!",
+        "brokenMsg": "THORAX BATTERED!"
+      },
+      "abdomen": {
+        "name": "ABDOMEN",
+        "msg": "ABDOMEN RUPTURED!",
+        "brokenMsg": "ABDOMEN BATTERED!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "middle_left_leg": {
+        "name": "MIDDLE LEFT LEG",
+        "msg": "MIDDLE LEFT LEG SEVERED!",
+        "brokenMsg": "MIDDLE LEFT LEG BROKEN!"
+      },
+      "middle_right_leg": {
+        "name": "MIDDLE RIGHT LEG",
+        "msg": "MIDDLE RIGHT LEG SEVERED!",
+        "brokenMsg": "MIDDLE RIGHT LEG BROKEN!"
+      },
+      "rear_left_leg": {
+        "name": "REAR LEFT LEG",
+        "msg": "REAR LEFT LEG SEVERED!",
+        "brokenMsg": "REAR LEFT LEG BROKEN!"
+      },
+      "rear_right_leg": {
+        "name": "REAR RIGHT LEG",
+        "msg": "REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "REAR RIGHT LEG BROKEN!"
+      },
+      "mandibles": {
+        "name": "MANDIBLES",
+        "msg": "MANDIBLES SHEARED OFF!",
+        "brokenMsg": "MANDIBLES CHIPPED!"
+      },
+      "name": "INSECTOID"
+    },
+    "frog": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "tongue": {
+        "name": "TONGUE",
+        "msg": "TONGUE SHEARED OFF!",
+        "brokenMsg": "TONGUE CHIPPED!"
+      },
+      "vocal_sac": {
+        "name": "VOCAL SAC",
+        "msg": "VOCAL SAC SEVERED!",
+        "brokenMsg": "VOCAL SAC BATTERED!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "hind_left_leg": {
+        "name": "HIND LEFT LEG",
+        "msg": "HIND LEFT LEG SEVERED!",
+        "brokenMsg": "HIND LEFT LEG BROKEN!"
+      },
+      "hind_right_leg": {
+        "name": "HIND RIGHT LEG",
+        "msg": "HIND RIGHT LEG SEVERED!",
+        "brokenMsg": "HIND RIGHT LEG BROKEN!"
+      },
+      "name": "FROG"
+    },
+    "dragon": {
+      "name": "DRAGON",
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "fire_breath_organ": {
+        "name": "FIRE BREATH ORGAN",
+        "msg": "FIRE BREATH ORGAN RUPTURED!",
+        "brokenMsg": "FIRE BREATH ORGAN BATTERED!"
+      },
+      "neck": {
+        "name": "NECK",
+        "msg": "NECK RUPTURED!",
+        "brokenMsg": "NECK BATTERED!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "left_wing": {
+        "name": "LEFT WING",
+        "msg": "LEFT WING TORN OFF!",
+        "brokenMsg": "LEFT WING TORN!"
+      },
+      "right_wing": {
+        "name": "RIGHT WING",
+        "msg": "RIGHT WING TORN OFF!",
+        "brokenMsg": "RIGHT WING TORN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "left_claw": {
+        "name": "LEFT FORECLAW",
+        "msg": "LEFT FORECLAW CUT OFF!",
+        "brokenMsg": "LEFT FORECLAW MANGLED!"
+      },
+      "right_claw": {
+        "name": "RIGHT FORECLAW",
+        "msg": "RIGHT FORECLAW CUT OFF!",
+        "brokenMsg": "RIGHT FORECLAW MANGLED!"
+      },
+      "maw": {
+        "name": "MAW",
+        "msg": "MAW SMASHED APART!",
+        "brokenMsg": "MAW CHIPPED!"
+      }
+    },
+    "skeleton": {
+      "name": "SKELETON",
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "jaws": {
+        "name": "JAWS",
+        "msg": "JAWS SMASHED APART!",
+        "brokenMsg": "JAWS CHIPPED!"
+      }
+    },
+    "fairy": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_wing": {
+        "name": "LEFT WING",
+        "msg": "LEFT WING TORN OFF!",
+        "brokenMsg": "LEFT WING TORN!"
+      },
+      "right_wing": {
+        "name": "RIGHT WING",
+        "msg": "RIGHT WING TORN OFF!",
+        "brokenMsg": "RIGHT WING TORN!"
+      },
+      "pixie_dust_sac": {
+        "name": "PIXIE DUST SAC",
+        "msg": "PIXIE DUST SAC SEVERED!",
+        "brokenMsg": "PIXIE DUST SAC BATTERED!"
+      },
+      "name": "FAIRY",
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      }
+    },
+    "slime": {
+      "name": "SLIME",
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "upper_body": {
+        "name": "UPPER BODY",
+        "msg": "UPPER BODY DESTROYED!",
+        "brokenMsg": "UPPER BODY BROKEN!"
+      },
+      "lower_body": {
+        "name": "LOWER BODY",
+        "msg": "LOWER BODY DESTROYED!",
+        "brokenMsg": "LOWER BODY BROKEN!"
+      },
+      "pseudopod_1": {
+        "name": "PSEUDOPOD 1",
+        "msg": "PSEUDOPOD 1 TORN OFF!",
+        "brokenMsg": "PSEUDOPOD 1 LACERATED!"
+      },
+      "pseudopod_2": {
+        "name": "PSEUDOPOD 2",
+        "msg": "PSEUDOPOD 2 TORN OFF!",
+        "brokenMsg": "PSEUDOPOD 2 LACERATED!"
+      },
+      "maw": {
+        "name": "DISSOLVIN' MAW",
+        "msg": "DISSOLVIN' MAW SMASHED APART!",
+        "brokenMsg": "DISSOLVIN' MAW CHIPPED!"
+      }
+    },
+    "undead": {
+      "skull": {
+        "name": "SKULL",
+        "msg": "SKULL SHEARED OFF!",
+        "brokenMsg": "SKULL CHIPPED!"
+      },
+      "ribcage": {
+        "name": "RIBCAGE",
+        "msg": "RIBCAGE RUPTURED!",
+        "brokenMsg": "RIBCAGE BATTERED!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "UNDEAD",
+      "jaws": {
+        "name": "ROTTIN' JAWS",
+        "msg": "ROTTIN' JAWS SMASHED APART!",
+        "brokenMsg": "ROTTIN' JAWS CHIPPED!"
+      }
+    },
+    "scorpion": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "cephalothorax": {
+        "name": "CEPHALOTHORAX",
+        "msg": "CEPHALOTHORAX RUPTURED!",
+        "brokenMsg": "CEPHALOTHORAX BATTERED!"
+      },
+      "abdomen": {
+        "name": "ABDOMEN",
+        "msg": "ABDOMEN RUPTURED!",
+        "brokenMsg": "ABDOMEN BATTERED!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "stinger": {
+        "name": "STINGER",
+        "msg": "STINGER SHEARED OFF!",
+        "brokenMsg": "STINGER CHIPPED!"
+      },
+      "pincer_left": {
+        "name": "LEFT PINCER",
+        "msg": "LEFT PINCER CUT OFF!",
+        "brokenMsg": "LEFT PINCER MANGLED!"
+      },
+      "pincer_right": {
+        "name": "RIGHT PINCER",
+        "msg": "RIGHT PINCER CUT OFF!",
+        "brokenMsg": "RIGHT PINCER MANGLED!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "mid_left_leg": {
+        "name": "MID-FRONT LEFT LEG",
+        "msg": "MID-FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "MID-FRONT LEFT LEG BROKEN!"
+      },
+      "mid_right_leg": {
+        "name": "MID-FRONT RIGHT LEG",
+        "msg": "MID-FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "MID-FRONT RIGHT LEG BROKEN!"
+      },
+      "mid_rear_left_leg": {
+        "name": "MID-REAR LEFT LEG",
+        "msg": "MID-REAR LEFT LEG SEVERED!",
+        "brokenMsg": "MID-REAR LEFT LEG BROKEN!"
+      },
+      "mid_rear_right_leg": {
+        "name": "MID-REAR RIGHT LEG",
+        "msg": "MID-REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "MID-REAR RIGHT LEG BROKEN!"
+      },
+      "rear_left_leg": {
+        "name": "REAR LEFT LEG",
+        "msg": "REAR LEFT LEG SEVERED!",
+        "brokenMsg": "REAR LEFT LEG BROKEN!"
+      },
+      "rear_right_leg": {
+        "name": "REAR RIGHT LEG",
+        "msg": "REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "REAR RIGHT LEG BROKEN!"
+      },
+      "name": "SCORPION",
+      "mandibles": {
+        "name": "MANDIBLES",
+        "msg": "MANDIBLES SMASHED APART!",
+        "brokenMsg": "MANDIBLES CHIPPED!"
+      }
+    },
+    "spider": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "cephalothorax": {
+        "name": "CEPHALOTHORAX",
+        "msg": "CEPHALOTHORAX RUPTURED!",
+        "brokenMsg": "CEPHALOTHORAX BATTERED!"
+      },
+      "abdomen": {
+        "name": "ABDOMEN",
+        "msg": "ABDOMEN RUPTURED!",
+        "brokenMsg": "ABDOMEN BATTERED!"
+      },
+      "fangs": {
+        "name": "FANGS",
+        "msg": "FANGS SHEARED OFF!",
+        "brokenMsg": "FANGS CHIPPED!"
+      },
+      "spinnerets": {
+        "name": "SPINNERETS",
+        "msg": "SPINNERETS SEVERED!",
+        "brokenMsg": "SPINNERETS BROKEN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "mid_left_leg": {
+        "name": "MID-FRONT LEFT LEG",
+        "msg": "MID-FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "MID-FRONT LEFT LEG BROKEN!"
+      },
+      "mid_right_leg": {
+        "name": "MID-FRONT RIGHT LEG",
+        "msg": "MID-FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "MID-FRONT RIGHT LEG BROKEN!"
+      },
+      "mid_rear_left_leg": {
+        "name": "MID-REAR LEFT LEG",
+        "msg": "MID-REAR LEFT LEG SEVERED!",
+        "brokenMsg": "MID-REAR LEFT LEG BROKEN!"
+      },
+      "mid_rear_right_leg": {
+        "name": "MID-REAR RIGHT LEG",
+        "msg": "MID-REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "MID-REAR RIGHT LEG BROKEN!"
+      },
+      "rear_left_leg": {
+        "name": "REAR LEFT LEG",
+        "msg": "REAR LEFT LEG SEVERED!",
+        "brokenMsg": "REAR LEFT LEG BROKEN!"
+      },
+      "rear_right_leg": {
+        "name": "REAR RIGHT LEG",
+        "msg": "REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "REAR RIGHT LEG BROKEN!"
+      },
+      "name": "SPIDER"
+    },
+    "plant": {
+      "name": "PLANT",
+      "flower": {
+        "name": "FLOWER",
+        "msg": "FLOWER LOPPED OFF!",
+        "brokenMsg": "FLOWER SPLIT!"
+      },
+      "stem": {
+        "name": "STEM",
+        "msg": "STEM PULPED!",
+        "brokenMsg": "STEM SPLIT!"
+      },
+      "roots": {
+        "name": "ROOTS",
+        "msg": "ROOTS PULPED!",
+        "brokenMsg": "ROOTS SPLIT!"
+      },
+      "vine_1": {
+        "name": "VINE 1",
+        "msg": "VINE 1 LOPPED OFF!",
+        "brokenMsg": "VINE 1 SPLIT!"
+      },
+      "vine_2": {
+        "name": "VINE 2",
+        "msg": "VINE 2 LOPPED OFF!",
+        "brokenMsg": "VINE 2 SPLIT!"
+      },
+      "maw": {
+        "name": "SNAPPIN' BUD",
+        "msg": "SNAPPIN' BUD SMASHED APART!",
+        "brokenMsg": "SNAPPIN' BUD CHIPPED!"
+      }
+    },
+    "elemental": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "upper_form": {
+        "name": "UPPER FORM",
+        "msg": "UPPER FORM DESTROYED!",
+        "brokenMsg": "UPPER FORM BROKEN!"
+      },
+      "lower_form": {
+        "name": "LOWER FORM",
+        "msg": "LOWER FORM DESTROYED!",
+        "brokenMsg": "LOWER FORM BROKEN!"
+      },
+      "left_appendage": {
+        "name": "LEFT APPENDAGE",
+        "msg": "LEFT APPENDAGE SEVERED!",
+        "brokenMsg": "LEFT APPENDAGE BROKEN!"
+      },
+      "right_appendage": {
+        "name": "RIGHT APPENDAGE",
+        "msg": "RIGHT APPENDAGE SEVERED!",
+        "brokenMsg": "RIGHT APPENDAGE BROKEN!"
+      },
+      "name": "ELEMENTAL",
+      "maw": {
+        "name": "ELEMENTAL MAW",
+        "msg": "ELEMENTAL MAW SMASHED APART!",
+        "brokenMsg": "ELEMENTAL MAW CHIPPED!"
+      }
+    },
+    "aquaticfish": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "tail_fin": {
+        "name": "TAIL FIN",
+        "msg": "TAIL FIN TORN OFF!",
+        "brokenMsg": "TAIL FIN TORN!"
+      },
+      "dorsal_fin": {
+        "name": "DORSAL FIN",
+        "msg": "DORSAL FIN TORN OFF!",
+        "brokenMsg": "DORSAL FIN TORN!"
+      },
+      "left_pectoral_fin": {
+        "name": "LEFT PECTORAL FIN",
+        "msg": "LEFT PECTORAL FIN TORN OFF!",
+        "brokenMsg": "LEFT PECTORAL FIN TORN!"
+      },
+      "right_pectoral_fin": {
+        "name": "RIGHT PECTORAL FIN",
+        "msg": "RIGHT PECTORAL FIN TORN OFF!",
+        "brokenMsg": "RIGHT PECTORAL FIN TORN!"
+      },
+      "name": "AQUATIC FISH",
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      }
+    },
+    "octopus": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "mantle": {
+        "name": "MANTLE",
+        "msg": "MANTLE DESTROYED!",
+        "brokenMsg": "MANTLE TORN!"
+      },
+      "tentacle_1": {
+        "name": "TENTACLE 1",
+        "msg": "TENTACLE 1 TORN OFF!",
+        "brokenMsg": "TENTACLE 1 LACERATED!"
+      },
+      "tentacle_2": {
+        "name": "TENTACLE 2",
+        "msg": "TENTACLE 2 TORN OFF!",
+        "brokenMsg": "TENTACLE 2 LACERATED!"
+      },
+      "tentacle_3": {
+        "name": "TENTACLE 3",
+        "msg": "TENTACLE 3 TORN OFF!",
+        "brokenMsg": "TENTACLE 3 LACERATED!"
+      },
+      "tentacle_4": {
+        "name": "TENTACLE 4",
+        "msg": "TENTACLE 4 TORN OFF!",
+        "brokenMsg": "TENTACLE 4 LACERATED!"
+      },
+      "name": "OCTOPUS",
+      "beak": {
+        "name": "BEAK",
+        "msg": "BEAK SMASHED APART!",
+        "brokenMsg": "BEAK CHIPPED!"
+      }
+    },
+    "robot": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "ROBOT",
+      "jaws": {
+        "name": "SERVO JAWS",
+        "msg": "SERVO JAWS SMASHED APART!",
+        "brokenMsg": "SERVO JAWS CHIPPED!"
+      }
+    },
+    "bird": {
+      "name": "BIRD",
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "beak": {
+        "name": "BEAK",
+        "msg": "BEAK SHEARED OFF!",
+        "brokenMsg": "BEAK CHIPPED!"
+      },
+      "left_wing": {
+        "name": "LEFT WING",
+        "msg": "LEFT WING TORN OFF!",
+        "brokenMsg": "LEFT WING TORN!"
+      },
+      "right_wing": {
+        "name": "RIGHT WING",
+        "msg": "RIGHT WING TORN OFF!",
+        "brokenMsg": "RIGHT WING TORN!"
+      },
+      "talons": {
+        "name": "TALONS",
+        "msg": "TALONS CUT OFF!",
+        "brokenMsg": "TALONS MANGLED!"
+      }
+    },
+    "reptilian": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "name": "REPTILIAN",
+      "maw": {
+        "name": "FANGED MAW",
+        "msg": "FANGED MAW SMASHED APART!",
+        "brokenMsg": "FANGED MAW CHIPPED!"
+      }
+    },
+    "mushroom": {
+      "cap": {
+        "name": "CAP",
+        "msg": "CAP LOPPED OFF!",
+        "brokenMsg": "CAP SPLIT!"
+      },
+      "stalk": {
+        "name": "STALK",
+        "msg": "STALK PULPED!",
+        "brokenMsg": "STALK SPLIT!"
+      },
+      "roots": {
+        "name": "ROOTS",
+        "msg": "ROOTS PULPED!",
+        "brokenMsg": "ROOTS SPLIT!"
+      },
+      "spore_sacs": {
+        "name": "SPORE SACS",
+        "msg": "SPORE SACS SEVERED!",
+        "brokenMsg": "SPORE SACS BATTERED!"
+      },
+      "name": "MUSHROOM",
+      "maw": {
+        "name": "GILL MAW",
+        "msg": "GILL MAW SMASHED APART!",
+        "brokenMsg": "GILL MAW CHIPPED!"
+      }
+    },
+    "tree": {
+      "name": "TREE",
+      "crown": {
+        "name": "CROWN",
+        "msg": "CROWN SEVERED!",
+        "brokenMsg": "CROWN CRACKED!"
+      },
+      "trunk": {
+        "name": "TRUNK",
+        "msg": "TRUNK PULPED!",
+        "brokenMsg": "TRUNK SPLIT!"
+      },
+      "roots": {
+        "name": "ROOTS",
+        "msg": "ROOTS PULPED!",
+        "brokenMsg": "ROOTS SPLIT!"
+      },
+      "branch_1": {
+        "name": "BRANCH 1",
+        "msg": "BRANCH 1 LOPPED OFF!",
+        "brokenMsg": "BRANCH 1 SPLIT!"
+      },
+      "branch_2": {
+        "name": "BRANCH 2",
+        "msg": "BRANCH 2 LOPPED OFF!",
+        "brokenMsg": "BRANCH 2 SPLIT!"
+      }
+    },
+    "bacterial": {
+      "nucleus": {
+        "name": "NUCLEUS",
+        "msg": "NUCLEUS RUPTURED!",
+        "brokenMsg": "NUCLEUS BATTERED!"
+      },
+      "membrane": {
+        "name": "MEMBRANE",
+        "msg": "MEMBRANE DESTROYED!",
+        "brokenMsg": "MEMBRANE TORN!"
+      },
+      "flagellum": {
+        "name": "FLAGELLUM",
+        "msg": "FLAGELLUM TORN OFF!",
+        "brokenMsg": "FLAGELLUM LACERATED!"
+      },
+      "toxin_sacs": {
+        "name": "TOXIN SACS",
+        "msg": "TOXIN SACS SEVERED!",
+        "brokenMsg": "TOXIN SACS BATTERED!"
+      },
+      "name": "BACTERIAL",
+      "mouth": {
+        "name": "FEEDIN' PORE",
+        "msg": "FEEDIN' PORE DESTROYED!",
+        "brokenMsg": "FEEDIN' PORE BROKEN!"
+      }
+    },
+    "doubleheadedhumanoid": {
+      "head_left": {
+        "name": "HEAD LEFT",
+        "msg": "HEAD LEFT SEVERED!",
+        "brokenMsg": "HEAD LEFT BROKEN!"
+      },
+      "head_right": {
+        "name": "HEAD RIGHT",
+        "msg": "HEAD RIGHT SEVERED!",
+        "brokenMsg": "HEAD RIGHT BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "DOUBLE-HEADED HUMANOID",
+      "mouth": {
+        "name": "TWIN MOUTHS",
+        "msg": "TWIN MOUTHS DESTROYED!",
+        "brokenMsg": "TWIN MOUTHS BROKEN!"
+      }
+    },
+    "serpent": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "fangs": {
+        "name": "FANGS",
+        "msg": "FANGS SHEARED OFF!",
+        "brokenMsg": "FANGS CHIPPED!"
+      },
+      "body_segment_1": {
+        "name": "BODY SEGMENT 1",
+        "msg": "BODY SEGMENT 1 PULPED!",
+        "brokenMsg": "BODY SEGMENT 1 LACERATED!"
+      },
+      "body_segment_2": {
+        "name": "BODY SEGMENT 2",
+        "msg": "BODY SEGMENT 2 PULPED!",
+        "brokenMsg": "BODY SEGMENT 2 LACERATED!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "name": "SERPENT"
+    },
+    "golem": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "GOLEM",
+      "maw": {
+        "name": "STONE MAW",
+        "msg": "STONE MAW SMASHED APART!",
+        "brokenMsg": "STONE MAW CHIPPED!"
+      }
+    },
+    "demon": {
+      "name": "DEMON",
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "horns": {
+        "name": "HORNS",
+        "msg": "HORNS SHEARED OFF!",
+        "brokenMsg": "HORNS CHIPPED!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_wing": {
+        "name": "LEFT WING",
+        "msg": "LEFT WING TORN OFF!",
+        "brokenMsg": "LEFT WING TORN!"
+      },
+      "right_wing": {
+        "name": "RIGHT WING",
+        "msg": "RIGHT WING TORN OFF!",
+        "brokenMsg": "RIGHT WING TORN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "left_claw": {
+        "name": "LEFT CLAW",
+        "msg": "LEFT CLAW CUT OFF!",
+        "brokenMsg": "LEFT CLAW MANGLED!"
+      },
+      "right_claw": {
+        "name": "RIGHT CLAW",
+        "msg": "RIGHT CLAW CUT OFF!",
+        "brokenMsg": "RIGHT CLAW MANGLED!"
+      },
+      "maw": {
+        "name": "MAW",
+        "msg": "MAW SMASHED APART!",
+        "brokenMsg": "MAW CHIPPED!"
+      }
+    },
+    "ghost": {
+      "face": {
+        "name": "FACE",
+        "msg": "FACE SMASHED APART!",
+        "brokenMsg": "FACE CHIPPED!"
+      },
+      "core": {
+        "name": "ESSENCE CORE",
+        "msg": "ESSENCE CORE DESTROYED!",
+        "brokenMsg": "ESSENCE CORE BROKEN!"
+      },
+      "left_wisp": {
+        "name": "LEFT WISP",
+        "msg": "LEFT WISP SHATTERED!",
+        "brokenMsg": "LEFT WISP CRACKED!"
+      },
+      "right_wisp": {
+        "name": "RIGHT WISP",
+        "msg": "RIGHT WISP SHATTERED!",
+        "brokenMsg": "RIGHT WISP CRACKED!"
+      },
+      "name": "GHOST",
+      "maw": {
+        "name": "WAILIN' MAW",
+        "msg": "WAILIN' MAW SMASHED APART!",
+        "brokenMsg": "WAILIN' MAW CHIPPED!"
+      }
+    },
+    "drone": {
+      "sensor_array": {
+        "name": "SENSOR ARRAY",
+        "msg": "SENSOR ARRAY SEVERED!",
+        "brokenMsg": "SENSOR ARRAY SWOLLEN SHUT!"
+      },
+      "chassis": {
+        "name": "CHASSIS",
+        "msg": "CHASSIS SHATTERED!",
+        "brokenMsg": "CHASSIS DENTED!"
+      },
+      "left_prop": {
+        "name": "LEFT PROPELLER",
+        "msg": "LEFT PROPELLER SEVERED!",
+        "brokenMsg": "LEFT PROPELLER MALFUNCTIONIN'!"
+      },
+      "right_prop": {
+        "name": "RIGHT PROPELLER",
+        "msg": "RIGHT PROPELLER SEVERED!",
+        "brokenMsg": "RIGHT PROPELLER MALFUNCTIONIN'!"
+      },
+      "name": "DRONE",
+      "jaws": {
+        "name": "GRIP JAWS",
+        "msg": "GRIP JAWS SMASHED APART!",
+        "brokenMsg": "GRIP JAWS CHIPPED!"
+      }
+    },
+    "voidspawn": {
+      "abyssal_eye": {
+        "name": "ABYSSAL EYE",
+        "msg": "ABYSSAL EYE PUT OUT FOR GOOD!",
+        "brokenMsg": "ABYSSAL EYE SWOLLEN SHUT!"
+      },
+      "maw": {
+        "name": "MAW",
+        "msg": "MAW SHEARED OFF!",
+        "brokenMsg": "MAW CHIPPED!"
+      },
+      "void_tendril_1": {
+        "name": "VOID TENDRIL 1",
+        "msg": "VOID TENDRIL 1 TORN OFF!",
+        "brokenMsg": "VOID TENDRIL 1 LACERATED!"
+      },
+      "void_tendril_2": {
+        "name": "VOID TENDRIL 2",
+        "msg": "VOID TENDRIL 2 TORN OFF!",
+        "brokenMsg": "VOID TENDRIL 2 LACERATED!"
+      },
+      "core": {
+        "name": "CORE SHARD",
+        "msg": "CORE SHARD DESTROYED!",
+        "brokenMsg": "CORE SHARD BROKEN!"
+      },
+      "name": "VOIDSPAWN"
+    },
+    "mutant": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "mass": {
+        "name": "SHIFTIN' MASS",
+        "msg": "SHIFTIN' MASS PULPED!",
+        "brokenMsg": "SHIFTIN' MASS LACERATED!"
+      },
+      "extra_limb_1": {
+        "name": "EXTRA LIMB 1",
+        "msg": "EXTRA LIMB 1 SEVERED!",
+        "brokenMsg": "EXTRA LIMB 1 BROKEN!"
+      },
+      "extra_limb_2": {
+        "name": "EXTRA LIMB 2",
+        "msg": "EXTRA LIMB 2 SEVERED!",
+        "brokenMsg": "EXTRA LIMB 2 BROKEN!"
+      },
+      "eye_cluster": {
+        "name": "EYE CLUSTER",
+        "msg": "EYE CLUSTER SEVERED!",
+        "brokenMsg": "EYE CLUSTER SWOLLEN SHUT!"
+      },
+      "tail_spike": {
+        "name": "TAIL SPIKE",
+        "msg": "TAIL SPIKE SHEARED OFF!",
+        "brokenMsg": "TAIL SPIKE CHIPPED!"
+      },
+      "name": "MUTANT",
+      "maw": {
+        "name": "GAPIN' MAW",
+        "msg": "GAPIN' MAW SMASHED APART!",
+        "brokenMsg": "GAPIN' MAW CHIPPED!"
+      }
+    },
+    "crystalentity": {
+      "core": {
+        "name": "CRYSTAL CORE",
+        "msg": "CRYSTAL CORE DESTROYED!",
+        "brokenMsg": "CRYSTAL CORE BROKEN!"
+      },
+      "left_spire": {
+        "name": "LEFT SPIRE",
+        "msg": "LEFT SPIRE SEVERED!",
+        "brokenMsg": "LEFT SPIRE CRACKED!"
+      },
+      "right_spire": {
+        "name": "RIGHT SPIRE",
+        "msg": "RIGHT SPIRE SEVERED!",
+        "brokenMsg": "RIGHT SPIRE CRACKED!"
+      },
+      "focus_gem": {
+        "name": "FOCUS GEM",
+        "msg": "FOCUS GEM SHATTERED!",
+        "brokenMsg": "FOCUS GEM CRACKED!"
+      },
+      "shield_crystal": {
+        "name": "SHIELD CRYSTAL",
+        "msg": "SHIELD CRYSTAL SEVERED!",
+        "brokenMsg": "SHIELD CRYSTAL CRACKED!"
+      },
+      "name": "CRYSTAL ENTITY",
+      "maw": {
+        "name": "PRISM MAW",
+        "msg": "PRISM MAW SMASHED APART!",
+        "brokenMsg": "PRISM MAW CHIPPED!"
+      }
+    },
+    "amphibian": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "tongue": {
+        "name": "TONGUE",
+        "msg": "TONGUE SHEARED OFF!",
+        "brokenMsg": "TONGUE CHIPPED!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "AMPHIBIAN"
+    },
+    "constructedundead": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "torso": {
+        "name": "STITCHED TORSO",
+        "msg": "STITCHED TORSO DESTROYED!",
+        "brokenMsg": "STITCHED TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "power_stitch": {
+        "name": "POWER STITCH",
+        "msg": "POWER STITCH WRECKED!",
+        "brokenMsg": "POWER STITCH MALFUNCTIONIN'!"
+      },
+      "name": "CONSTRUCTED UNDEAD",
+      "jaws": {
+        "name": "STITCHED JAWS",
+        "msg": "STITCHED JAWS SMASHED APART!",
+        "brokenMsg": "STITCHED JAWS CHIPPED!"
+      }
+    },
+    "minotaur": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "horns": {
+        "name": "HORNS",
+        "msg": "HORNS SHEARED OFF!",
+        "brokenMsg": "HORNS CHIPPED!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT BULL LEG",
+        "msg": "LEFT BULL LEG SEVERED!",
+        "brokenMsg": "LEFT BULL LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT BULL LEG",
+        "msg": "RIGHT BULL LEG SEVERED!",
+        "brokenMsg": "RIGHT BULL LEG BROKEN!"
+      },
+      "name": "MINOTAUR",
+      "maw": {
+        "name": "SNORTIN' MAW",
+        "msg": "SNORTIN' MAW SMASHED APART!",
+        "brokenMsg": "SNORTIN' MAW CHIPPED!"
+      }
+    },
+    "goblin": {
+      "brain": {
+        "name": "BRAIN",
+        "msg": "BRAIN RUPTURED!",
+        "brokenMsg": "BRAIN BATTERED!"
+      },
+      "skull": {
+        "name": "SKULL",
+        "msg": "SKULL SHEARED OFF!",
+        "brokenMsg": "SKULL CHIPPED!"
+      },
+      "cervical_vertebrae": {
+        "name": "CERVICAL VERTEBRAE",
+        "msg": "NECK VERTEBRAE SNAPPED!"
+      },
+      "thoracic_vertebrae": {
+        "name": "THORACIC VERTEBRAE",
+        "msg": "UPPER SPINE CRACKED!"
+      },
+      "lumbar_vertebrae": {
+        "name": "LUMBAR VERTEBRAE",
+        "msg": "LOWER SPINE COLLAPSED!"
+      },
+      "ribcage": {
+        "name": "RIB CAGE",
+        "msg": "RIB CAGE RUPTURED!",
+        "brokenMsg": "RIB CAGE BATTERED!"
+      },
+      "pelvis": {
+        "name": "PELVIS",
+        "msg": "PELVIS RUPTURED!",
+        "brokenMsg": "PELVIS BATTERED!"
+      },
+      "heart": {
+        "name": "HEART",
+        "msg": "HEART RUPTURED!",
+        "brokenMsg": "HEART BATTERED!"
+      },
+      "lungs": {
+        "name": "LUNGS",
+        "msg": "LUNGS RUPTURED!",
+        "brokenMsg": "LUNGS BATTERED!"
+      },
+      "liver": {
+        "name": "LIVER",
+        "msg": "LIVER RUPTURED!",
+        "brokenMsg": "LIVER BATTERED!"
+      },
+      "kidneys": {
+        "name": "KIDNEYS",
+        "msg": "KIDNEYS RUPTURED!",
+        "brokenMsg": "KIDNEYS BATTERED!"
+      },
+      "stomach": {
+        "name": "STOMACH",
+        "msg": "STOMACH RUPTURED!",
+        "brokenMsg": "STOMACH BATTERED!"
+      },
+      "small_intestine": {
+        "name": "LIL' INTESTINE",
+        "msg": "LIL' INTESTINE RUPTURED!",
+        "brokenMsg": "LIL' INTESTINE BATTERED!"
+      },
+      "large_intestine": {
+        "name": "LARGE INTESTINE",
+        "msg": "LARGE INTESTINE RUPTURED!",
+        "brokenMsg": "LARGE INTESTINE BATTERED!"
+      },
+      "pancreas": {
+        "name": "PANCREAS",
+        "msg": "PANCREAS RUPTURED!",
+        "brokenMsg": "PANCREAS BATTERED!"
+      },
+      "spleen": {
+        "name": "SPLEEN",
+        "msg": "SPLEEN RUPTURED!",
+        "brokenMsg": "SPLEEN BATTERED!"
+      },
+      "eye_left": {
+        "name": "LEFT EYE",
+        "msg": "LEFT EYE SEVERED!",
+        "brokenMsg": "LEFT EYE SWOLLEN SHUT!"
+      },
+      "eye_right": {
+        "name": "RIGHT EYE",
+        "msg": "RIGHT EYE SEVERED!",
+        "brokenMsg": "RIGHT EYE SWOLLEN SHUT!"
+      },
+      "ear_left": {
+        "name": "LEFT EAR",
+        "msg": "LEFT EAR SEVERED!",
+        "brokenMsg": "LEFT EAR LEFT RINGIN'!"
+      },
+      "ear_right": {
+        "name": "RIGHT EAR",
+        "msg": "RIGHT EAR SEVERED!",
+        "brokenMsg": "RIGHT EAR LEFT RINGIN'!"
+      },
+      "tongue": {
+        "name": "TONGUE",
+        "msg": "TONGUE SHEARED OFF!",
+        "brokenMsg": "TONGUE CHIPPED!"
+      },
+      "left_upper_arm": {
+        "name": "LEFT UPPER ARM",
+        "msg": "LEFT UPPER ARM SEVERED!",
+        "brokenMsg": "LEFT UPPER ARM BROKEN!"
+      },
+      "left_forearm": {
+        "name": "LEFT FOREARM",
+        "msg": "LEFT FOREARM SEVERED!",
+        "brokenMsg": "LEFT FOREARM BROKEN!"
+      },
+      "left_hand": {
+        "name": "LEFT HAND",
+        "msg": "LEFT HAND CUT OFF!",
+        "brokenMsg": "LEFT HAND MANGLED!"
+      },
+      "right_upper_arm": {
+        "name": "RIGHT UPPER ARM",
+        "msg": "RIGHT UPPER ARM SEVERED!",
+        "brokenMsg": "RIGHT UPPER ARM BROKEN!"
+      },
+      "right_forearm": {
+        "name": "RIGHT FOREARM",
+        "msg": "RIGHT FOREARM SEVERED!",
+        "brokenMsg": "RIGHT FOREARM BROKEN!"
+      },
+      "right_hand": {
+        "name": "RIGHT HAND",
+        "msg": "RIGHT HAND CUT OFF!",
+        "brokenMsg": "RIGHT HAND MANGLED!"
+      },
+      "left_thigh": {
+        "name": "LEFT THIGH",
+        "msg": "LEFT THIGH SEVERED!",
+        "brokenMsg": "LEFT THIGH BROKEN!"
+      },
+      "left_shin": {
+        "name": "LEFT SHIN",
+        "msg": "LEFT SHIN SEVERED!",
+        "brokenMsg": "LEFT SHIN BROKEN!"
+      },
+      "left_foot": {
+        "name": "LEFT FOOT",
+        "msg": "LEFT FOOT CUT OFF!",
+        "brokenMsg": "LEFT FOOT MANGLED!"
+      },
+      "right_thigh": {
+        "name": "RIGHT THIGH",
+        "msg": "RIGHT THIGH SEVERED!",
+        "brokenMsg": "RIGHT THIGH BROKEN!"
+      },
+      "right_shin": {
+        "name": "RIGHT SHIN",
+        "msg": "RIGHT SHIN SEVERED!",
+        "brokenMsg": "RIGHT SHIN BROKEN!"
+      },
+      "right_foot": {
+        "name": "RIGHT FOOT",
+        "msg": "RIGHT FOOT CUT OFF!",
+        "brokenMsg": "RIGHT FOOT MANGLED!"
+      },
+      "name": "GOBLIN",
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "nose": {
+        "name": "NOSE",
+        "msg": "NOSE SHEARED OFF!",
+        "brokenMsg": "NOSE CHIPPED!"
+      }
+    },
+    "crustacean": {
+      "claw_left": {
+        "name": "LEFT CLAW",
+        "msg": "LEFT CLAW CUT OFF!",
+        "brokenMsg": "LEFT CLAW MANGLED!"
+      },
+      "claw_right": {
+        "name": "RIGHT CLAW",
+        "msg": "RIGHT CLAW CUT OFF!",
+        "brokenMsg": "RIGHT CLAW MANGLED!"
+      },
+      "carapace": {
+        "name": "CARAPACE",
+        "msg": "CARAPACE SHATTERED!",
+        "brokenMsg": "CARAPACE DENTED!"
+      },
+      "abdomen": {
+        "name": "ABDOMEN",
+        "msg": "ABDOMEN RUPTURED!",
+        "brokenMsg": "ABDOMEN BATTERED!"
+      },
+      "front_leg": {
+        "name": "FRONT LEG",
+        "msg": "FRONT LEG SEVERED!",
+        "brokenMsg": "FRONT LEG BROKEN!"
+      },
+      "rear_leg": {
+        "name": "REAR LEG",
+        "msg": "REAR LEG SEVERED!",
+        "brokenMsg": "REAR LEG BROKEN!"
+      },
+      "antennae": {
+        "name": "ANTENNAE",
+        "msg": "ANTENNAE SEVERED!",
+        "brokenMsg": "ANTENNAE LEFT RINGIN'!"
+      },
+      "name": "CRUSTACEAN",
+      "mandibles": {
+        "name": "MANDIBLES",
+        "msg": "MANDIBLES SMASHED APART!",
+        "brokenMsg": "MANDIBLES CHIPPED!"
+      }
+    },
+    "spherical": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "shell": {
+        "name": "OUTER SHELL",
+        "msg": "OUTER SHELL SHATTERED!",
+        "brokenMsg": "OUTER SHELL DENTED!"
+      },
+      "sensor_array": {
+        "name": "SENSOR ARRAY",
+        "msg": "SENSOR ARRAY SEVERED!",
+        "brokenMsg": "SENSOR ARRAY SWOLLEN SHUT!"
+      },
+      "spin_spines": {
+        "name": "SPIN SPINES",
+        "msg": "SPIN SPINES SEVERED!",
+        "brokenMsg": "SPIN SPINES BATTERED!"
+      },
+      "aux_drives": {
+        "name": "AUXILIARY DRIVES",
+        "msg": "AUXILIARY DRIVES WRECKED!",
+        "brokenMsg": "AUXILIARY DRIVES MALFUNCTIONIN'!"
+      },
+      "name": "SPHERICAL",
+      "maw": {
+        "name": "HATCH MAW",
+        "msg": "HATCH MAW SMASHED APART!",
+        "brokenMsg": "HATCH MAW CHIPPED!"
+      }
+    },
+    "turtle": {
+      "shell": {
+        "name": "SHELL",
+        "msg": "SHELL SHATTERED!",
+        "brokenMsg": "SHELL DENTED!"
+      },
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "rear_left_leg": {
+        "name": "REAR LEFT LEG",
+        "msg": "REAR LEFT LEG SEVERED!",
+        "brokenMsg": "REAR LEFT LEG BROKEN!"
+      },
+      "rear_right_leg": {
+        "name": "REAR RIGHT LEG",
+        "msg": "REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "REAR RIGHT LEG BROKEN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "name": "TURTLE",
+      "beak": {
+        "name": "BEAK",
+        "msg": "BEAK SMASHED APART!",
+        "brokenMsg": "BEAK CHIPPED!"
+      }
+    },
+    "manticore": {
+      "brain": {
+        "name": "BRAIN",
+        "msg": "BRAIN RUPTURED!",
+        "brokenMsg": "BRAIN BATTERED!"
+      },
+      "skull": {
+        "name": "SKULL",
+        "msg": "SKULL SMASHED APART!",
+        "brokenMsg": "SKULL CHIPPED!"
+      },
+      "spine": {
+        "name": "SPINE",
+        "msg": "SPINE RUPTURED!",
+        "brokenMsg": "SPINE BATTERED!"
+      },
+      "ribcage": {
+        "name": "RIB CAGE",
+        "msg": "RIB CAGE RUPTURED!",
+        "brokenMsg": "RIB CAGE BATTERED!"
+      },
+      "front_left_paw": {
+        "name": "FRONT LEFT PAW",
+        "msg": "FRONT LEFT PAW CUT OFF!",
+        "brokenMsg": "FRONT LEFT PAW MANGLED!"
+      },
+      "front_right_paw": {
+        "name": "FRONT RIGHT PAW",
+        "msg": "FRONT RIGHT PAW CUT OFF!",
+        "brokenMsg": "FRONT RIGHT PAW MANGLED!"
+      },
+      "rear_left_leg": {
+        "name": "REAR LEFT LEG",
+        "msg": "REAR LEFT LEG SEVERED!",
+        "brokenMsg": "REAR LEFT LEG BROKEN!"
+      },
+      "rear_right_leg": {
+        "name": "REAR RIGHT LEG",
+        "msg": "REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "REAR RIGHT LEG BROKEN!"
+      },
+      "left_eye": {
+        "name": "LEFT EYE",
+        "msg": "LEFT EYE SEVERED!",
+        "brokenMsg": "LEFT EYE SWOLLEN SHUT!"
+      },
+      "right_eye": {
+        "name": "RIGHT EYE",
+        "msg": "RIGHT EYE SEVERED!",
+        "brokenMsg": "RIGHT EYE SWOLLEN SHUT!"
+      },
+      "left_wing": {
+        "name": "LEFT WING",
+        "msg": "LEFT WING TORN OFF!",
+        "brokenMsg": "LEFT WING TORN!"
+      },
+      "right_wing": {
+        "name": "RIGHT WING",
+        "msg": "RIGHT WING TORN OFF!",
+        "brokenMsg": "RIGHT WING TORN!"
+      },
+      "left_lung": {
+        "name": "LEFT LUNG",
+        "msg": "LEFT LUNG RUPTURED!",
+        "brokenMsg": "LEFT LUNG BATTERED!"
+      },
+      "right_lung": {
+        "name": "RIGHT LUNG",
+        "msg": "RIGHT LUNG RUPTURED!",
+        "brokenMsg": "RIGHT LUNG BATTERED!"
+      },
+      "name": "MANTICORE",
+      "maw": {
+        "name": "LION MAW",
+        "msg": "LION MAW SMASHED APART!",
+        "brokenMsg": "LION MAW CHIPPED!"
+      }
+    },
+    "chestmimic": {
+      "core": {
+        "name": "SQUISHY CORE",
+        "msg": "SQUISHY CORE DESTROYED!",
+        "brokenMsg": "SQUISHY CORE BROKEN!"
+      },
+      "lid": {
+        "name": "CHEST LID",
+        "msg": "CHEST LID SEVERED!",
+        "brokenMsg": "CHEST LID SWOLLEN SHUT!"
+      },
+      "teeth": {
+        "name": "JAGGED TEETH",
+        "msg": "JAGGED TEETH SHEARED OFF!",
+        "brokenMsg": "JAGGED TEETH CHIPPED!"
+      },
+      "tongue": {
+        "name": "SLIME TONGUE",
+        "msg": "SLIME TONGUE SHEARED OFF!",
+        "brokenMsg": "SLIME TONGUE CHIPPED!"
+      },
+      "feet": {
+        "name": "STUBBY FEET",
+        "msg": "STUBBY FEET CUT OFF!",
+        "brokenMsg": "STUBBY FEET MANGLED!"
+      },
+      "name": "CHEST MIMIC"
+    },
+    "phoenix": {
+      "core": {
+        "name": "ASH CORE",
+        "msg": "ASH CORE DESTROYED!",
+        "brokenMsg": "ASH CORE BROKEN!"
+      },
+      "feathers": {
+        "name": "FLAMIN' FEATHERS",
+        "msg": "FLAMIN' FEATHERS TORN OFF!",
+        "brokenMsg": "FLAMIN' FEATHERS TORN!"
+      },
+      "beak": {
+        "name": "BEAK",
+        "msg": "BEAK SHEARED OFF!",
+        "brokenMsg": "BEAK CHIPPED!"
+      },
+      "talons": {
+        "name": "TALONS",
+        "msg": "TALONS CUT OFF!",
+        "brokenMsg": "TALONS MANGLED!"
+      },
+      "left_wing": {
+        "name": "LEFT WING",
+        "msg": "LEFT WING TORN OFF!",
+        "brokenMsg": "LEFT WING TORN!"
+      },
+      "right_wing": {
+        "name": "RIGHT WING",
+        "msg": "RIGHT WING TORN OFF!",
+        "brokenMsg": "RIGHT WING TORN!"
+      },
+      "left_eye": {
+        "name": "LEFT EMBER EYE",
+        "msg": "LEFT EMBER EYE SEVERED!",
+        "brokenMsg": "LEFT EMBER EYE SWOLLEN SHUT!"
+      },
+      "right_eye": {
+        "name": "RIGHT EMBER EYE",
+        "msg": "RIGHT EMBER EYE SEVERED!",
+        "brokenMsg": "RIGHT EMBER EYE SWOLLEN SHUT!"
+      },
+      "name": "PHOENIX"
+    },
+    "ogre": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "OGRE",
+      "maw": {
+        "name": "GAPIN' MAW",
+        "msg": "GAPIN' MAW SMASHED APART!",
+        "brokenMsg": "GAPIN' MAW CHIPPED!"
+      }
+    },
+    "scarecrow": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD DESTROYED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "SCARECROW",
+      "mouth": {
+        "name": "STITCHED MOUTH",
+        "msg": "STITCHED MOUTH DESTROYED!",
+        "brokenMsg": "STITCHED MOUTH BROKEN!"
+      }
+    },
+    "segmentworm": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "heart_segment": {
+        "name": "HEART SEGMENT",
+        "msg": "HEART SEGMENT RUPTURED!",
+        "brokenMsg": "HEART SEGMENT BATTERED!"
+      },
+      "body_segment": {
+        "name": "BODY SEGMENT",
+        "msg": "BODY SEGMENT TORN OFF!",
+        "brokenMsg": "BODY SEGMENT LACERATED!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "name": "SEGMENT WORM",
+      "maw": {
+        "name": "RINGED MAW",
+        "msg": "RINGED MAW SMASHED APART!",
+        "brokenMsg": "RINGED MAW CHIPPED!"
+      }
+    },
+    "mineral": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "shell": {
+        "name": "SHELL",
+        "msg": "SHELL SHATTERED!",
+        "brokenMsg": "SHELL DENTED!"
+      },
+      "crystals": {
+        "name": "CRYSTALS",
+        "msg": "CRYSTALS SEVERED!",
+        "brokenMsg": "CRYSTALS CRACKED!"
+      },
+      "veins": {
+        "name": "VEINS",
+        "msg": "VEINS SEVERED!",
+        "brokenMsg": "VEINS BATTERED!"
+      },
+      "name": "MINERAL",
+      "maw": {
+        "name": "CRUSHIN' MAW",
+        "msg": "CRUSHIN' MAW SMASHED APART!",
+        "brokenMsg": "CRUSHIN' MAW CHIPPED!"
+      }
+    },
+    "hydra": {
+      "head_one": {
+        "name": "LEFT HEAD",
+        "msg": "LEFT HEAD SEVERED!",
+        "brokenMsg": "LEFT HEAD BROKEN!"
+      },
+      "head_two": {
+        "name": "CENTER HEAD",
+        "msg": "CENTER HEAD SEVERED!",
+        "brokenMsg": "CENTER HEAD BROKEN!"
+      },
+      "head_three": {
+        "name": "RIGHT HEAD",
+        "msg": "RIGHT HEAD SEVERED!",
+        "brokenMsg": "RIGHT HEAD BROKEN!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "name": "HYDRA",
+      "maw": {
+        "name": "CENTRAL MAW",
+        "msg": "CENTRAL MAW SMASHED APART!",
+        "brokenMsg": "CENTRAL MAW CHIPPED!"
+      }
+    },
+    "vampire": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "heart": {
+        "name": "HEART",
+        "msg": "HEART RUPTURED!",
+        "brokenMsg": "HEART BATTERED!"
+      },
+      "fangs": {
+        "name": "FANGS",
+        "msg": "FANGS SHEARED OFF!",
+        "brokenMsg": "FANGS CHIPPED!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG DESTROYED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG DESTROYED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "VAMPIRE",
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      }
+    },
+    "bat": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "left_wing": {
+        "name": "LEFT WING",
+        "msg": "LEFT WING TORN OFF!",
+        "brokenMsg": "LEFT WING TORN!"
+      },
+      "right_wing": {
+        "name": "RIGHT WING",
+        "msg": "RIGHT WING TORN OFF!",
+        "brokenMsg": "RIGHT WING TORN!"
+      },
+      "fangs": {
+        "name": "FANGS",
+        "msg": "FANGS SHEARED OFF!",
+        "brokenMsg": "FANGS CHIPPED!"
+      },
+      "name": "BAT"
+    },
+    "rabbit": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "ears": {
+        "name": "EARS",
+        "msg": "EARS SEVERED!",
+        "brokenMsg": "EARS LEFT RINGIN'!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "rear_left_leg": {
+        "name": "REAR LEFT LEG",
+        "msg": "REAR LEFT LEG SEVERED!",
+        "brokenMsg": "REAR LEFT LEG BROKEN!"
+      },
+      "rear_right_leg": {
+        "name": "REAR RIGHT LEG",
+        "msg": "REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "REAR RIGHT LEG BROKEN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "name": "RABBIT",
+      "teeth": {
+        "name": "INCISORS",
+        "msg": "INCISORS SMASHED APART!",
+        "brokenMsg": "INCISORS CHIPPED!"
+      }
+    },
+    "armoredknight": {
+      "helmet": {
+        "name": "HELMET",
+        "msg": "HELMET SEVERED!",
+        "brokenMsg": "HELMET DENTED!"
+      },
+      "chestplate": {
+        "name": "CHESTPLATE",
+        "msg": "CHESTPLATE SEVERED!",
+        "brokenMsg": "CHESTPLATE DENTED!"
+      },
+      "pauldron_left": {
+        "name": "LEFT PAULDRON",
+        "msg": "LEFT PAULDRON SEVERED!",
+        "brokenMsg": "LEFT PAULDRON DENTED!"
+      },
+      "pauldron_right": {
+        "name": "RIGHT PAULDRON",
+        "msg": "RIGHT PAULDRON SEVERED!",
+        "brokenMsg": "RIGHT PAULDRON DENTED!"
+      },
+      "greaves_left": {
+        "name": "LEFT GREAVES",
+        "msg": "LEFT GREAVES SEVERED!",
+        "brokenMsg": "LEFT GREAVES DENTED!"
+      },
+      "greaves_right": {
+        "name": "RIGHT GREAVES",
+        "msg": "RIGHT GREAVES SEVERED!",
+        "brokenMsg": "RIGHT GREAVES DENTED!"
+      },
+      "name": "ARMORED KNIGHT",
+      "left_gauntlet": {
+        "name": "LEFT GAUNTLET",
+        "msg": "LEFT GAUNTLET SEVERED!",
+        "brokenMsg": "LEFT GAUNTLET DENTED!"
+      },
+      "right_gauntlet": {
+        "name": "RIGHT GAUNTLET",
+        "msg": "RIGHT GAUNTLET SEVERED!",
+        "brokenMsg": "RIGHT GAUNTLET DENTED!"
+      },
+      "mouth": {
+        "name": "VISOR MOUTH",
+        "msg": "VISOR MOUTH DESTROYED!",
+        "brokenMsg": "VISOR MOUTH BROKEN!"
+      }
+    },
+    "centaur": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "torso": {
+        "name": "HUMAN TORSO",
+        "msg": "HUMAN TORSO DESTROYED!",
+        "brokenMsg": "HUMAN TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "body": {
+        "name": "EQUINE BODY",
+        "msg": "EQUINE BODY DESTROYED!",
+        "brokenMsg": "EQUINE BODY BROKEN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "rear_left_leg": {
+        "name": "REAR LEFT LEG",
+        "msg": "REAR LEFT LEG SEVERED!",
+        "brokenMsg": "REAR LEFT LEG BROKEN!"
+      },
+      "rear_right_leg": {
+        "name": "REAR RIGHT LEG",
+        "msg": "REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "REAR RIGHT LEG BROKEN!"
+      },
+      "name": "CENTAUR",
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      }
+    },
+    "insectswarm": {
+      "mandibles": {
+        "name": "MANDIBLES CLUSTER",
+        "msg": "MANDIBLES CLUSTER SHEARED OFF!",
+        "brokenMsg": "MANDIBLES CLUSTER CHIPPED!"
+      },
+      "wings": {
+        "name": "WINGS SWARM",
+        "msg": "WINGS SWARM TORN OFF!",
+        "brokenMsg": "WINGS SWARM TORN!"
+      },
+      "legs": {
+        "name": "LEGS CLUSTER",
+        "msg": "LEGS CLUSTER SEVERED!",
+        "brokenMsg": "LEGS CLUSTER BROKEN!"
+      },
+      "abdomen": {
+        "name": "ABDOMENS CLUSTER",
+        "msg": "ABDOMENS CLUSTER SEVERED!",
+        "brokenMsg": "ABDOMENS CLUSTER BATTERED!"
+      },
+      "stingers": {
+        "name": "STINGERS SWARM",
+        "msg": "STINGERS SWARM SHEARED OFF!",
+        "brokenMsg": "STINGERS SWARM CHIPPED!"
+      },
+      "name": "INSECT SWARM"
+    },
+    "roboticdefender": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "arm_cannon": {
+        "name": "ARM CANNON",
+        "msg": "ARM CANNON SEVERED!",
+        "brokenMsg": "ARM CANNON MALFUNCTIONIN'!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "leg_joints": {
+        "name": "LEG JOINTS",
+        "msg": "LEG JOINTS SEVERED!",
+        "brokenMsg": "LEG JOINTS MALFUNCTIONIN'!"
+      },
+      "sensors": {
+        "name": "SENSORS",
+        "msg": "SENSORS PUT OUT FOR GOOD!",
+        "brokenMsg": "SENSORS SWOLLEN SHUT!"
+      },
+      "name": "ROBOTIC DEFENDER",
+      "jaws": {
+        "name": "CLAMP JAWS",
+        "msg": "CLAMP JAWS SMASHED APART!",
+        "brokenMsg": "CLAMP JAWS CHIPPED!"
+      }
+    },
+    "turret": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "gun_barrel": {
+        "name": "GUN BARREL",
+        "msg": "GUN BARREL SEVERED!",
+        "brokenMsg": "GUN BARREL MALFUNCTIONIN'!"
+      },
+      "sensor_array": {
+        "name": "SENSOR ARRAY",
+        "msg": "SENSOR ARRAY PUT OUT FOR GOOD!",
+        "brokenMsg": "SENSOR ARRAY SWOLLEN SHUT!"
+      },
+      "rotation_mech": {
+        "name": "ROTATION MECHANISM",
+        "msg": "ROTATION MECHANISM SEVERED!",
+        "brokenMsg": "ROTATION MECHANISM MALFUNCTIONIN'!"
+      },
+      "ammo_chamber": {
+        "name": "AMMO CHAMBER",
+        "msg": "AMMO CHAMBER WRECKED!",
+        "brokenMsg": "AMMO CHAMBER MALFUNCTIONIN'!"
+      },
+      "name": "TURRET",
+      "jaws": {
+        "name": "FEED JAWS",
+        "msg": "FEED JAWS SMASHED APART!",
+        "brokenMsg": "FEED JAWS CHIPPED!"
+      }
+    },
+    "gorgon": {
+      "name": "GORGON",
+      "eyes": {
+        "name": "EYES",
+        "msg": "EYES SEVERED!",
+        "brokenMsg": "EYES SWOLLEN SHUT!"
+      },
+      "snake_hair": {
+        "name": "SNAKE HAIR",
+        "msg": "SNAKE HAIR SHEARED OFF!",
+        "brokenMsg": "SNAKE HAIR CHIPPED!"
+      },
+      "upper_body": {
+        "name": "UPPER BODY",
+        "msg": "UPPER BODY DESTROYED!",
+        "brokenMsg": "UPPER BODY BROKEN!"
+      },
+      "lower_body": {
+        "name": "LOWER BODY",
+        "msg": "LOWER BODY DESTROYED!",
+        "brokenMsg": "LOWER BODY BROKEN!"
+      },
+      "left_hand": {
+        "name": "LEFT HAND",
+        "msg": "LEFT HAND CUT OFF!",
+        "brokenMsg": "LEFT HAND MANGLED!"
+      },
+      "right_hand": {
+        "name": "RIGHT HAND",
+        "msg": "RIGHT HAND CUT OFF!",
+        "brokenMsg": "RIGHT HAND MANGLED!"
+      },
+      "fangs": {
+        "name": "FANGS",
+        "msg": "FANGS SMASHED APART!",
+        "brokenMsg": "FANGS CHIPPED!"
+      }
+    },
+    "abyssalleviathan": {
+      "eye": {
+        "name": "GIANT EYE",
+        "msg": "GIANT EYE SEVERED!",
+        "brokenMsg": "GIANT EYE SWOLLEN SHUT!"
+      },
+      "maw": {
+        "name": "MAW",
+        "msg": "MAW SHEARED OFF!",
+        "brokenMsg": "MAW CHIPPED!"
+      },
+      "dorsal_plates": {
+        "name": "DORSAL PLATES",
+        "msg": "DORSAL PLATES SHATTERED!",
+        "brokenMsg": "DORSAL PLATES DENTED!"
+      },
+      "tentacles": {
+        "name": "TENTACLES",
+        "msg": "TENTACLES TORN OFF!",
+        "brokenMsg": "TENTACLES LACERATED!"
+      },
+      "heart_chamber": {
+        "name": "HEART CHAMBER",
+        "msg": "HEART CHAMBER RUPTURED!",
+        "brokenMsg": "HEART CHAMBER BATTERED!"
+      },
+      "name": "ABYSSAL LEVIATHAN"
+    },
+    "snail": {
+      "shell": {
+        "name": "SHELL",
+        "msg": "SHELL SHATTERED!",
+        "brokenMsg": "SHELL DENTED!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY SEVERED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "tentacle_1": {
+        "name": "TENTACLE 1",
+        "msg": "TENTACLE 1 TORN OFF!",
+        "brokenMsg": "TENTACLE 1 LACERATED!"
+      },
+      "tentacle_2": {
+        "name": "TENTACLE 2",
+        "msg": "TENTACLE 2 TORN OFF!",
+        "brokenMsg": "TENTACLE 2 LACERATED!"
+      },
+      "eye": {
+        "name": "EYE",
+        "msg": "EYE SEVERED!",
+        "brokenMsg": "EYE SWOLLEN SHUT!"
+      },
+      "foot": {
+        "name": "FOOT",
+        "msg": "FOOT CUT OFF!",
+        "brokenMsg": "FOOT MANGLED!"
+      },
+      "name": "SNAIL",
+      "mouth": {
+        "name": "RADULA",
+        "msg": "RADULA DESTROYED!",
+        "brokenMsg": "RADULA BROKEN!"
+      }
+    },
+    "waterelemental": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "body": {
+        "name": "WATER BODY",
+        "msg": "WATER BODY DESTROYED!",
+        "brokenMsg": "WATER BODY BROKEN!"
+      },
+      "water_arms": {
+        "name": "WATER ARMS",
+        "msg": "WATER ARMS DESTROYED!",
+        "brokenMsg": "WATER ARMS BROKEN!"
+      },
+      "left_water_leg": {
+        "name": "LEFT WATER LEG",
+        "msg": "LEFT WATER LEG DESTROYED!",
+        "brokenMsg": "LEFT WATER LEG BROKEN!"
+      },
+      "right_water_leg": {
+        "name": "RIGHT WATER LEG",
+        "msg": "RIGHT WATER LEG DESTROYED!",
+        "brokenMsg": "RIGHT WATER LEG BROKEN!"
+      },
+      "name": "WATER ELEMENTAL",
+      "maw": {
+        "name": "SURGIN' MAW",
+        "msg": "SURGIN' MAW SMASHED APART!",
+        "brokenMsg": "SURGIN' MAW CHIPPED!"
+      }
+    },
+    "thunderelemental": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "body": {
+        "name": "ELECTRIC BODY",
+        "msg": "ELECTRIC BODY DESTROYED!",
+        "brokenMsg": "ELECTRIC BODY BROKEN!"
+      },
+      "left_electric_arm": {
+        "name": "LEFT ELECTRIC ARM",
+        "msg": "LEFT ELECTRIC ARM DESTROYED!",
+        "brokenMsg": "LEFT ELECTRIC ARM BROKEN!"
+      },
+      "right_electric_arm": {
+        "name": "RIGHT ELECTRIC ARM",
+        "msg": "RIGHT ELECTRIC ARM DESTROYED!",
+        "brokenMsg": "RIGHT ELECTRIC ARM BROKEN!"
+      },
+      "left_electric_leg": {
+        "name": "LEFT ELECTRIC LEG",
+        "msg": "LEFT ELECTRIC LEG DESTROYED!",
+        "brokenMsg": "LEFT ELECTRIC LEG BROKEN!"
+      },
+      "right_electric_leg": {
+        "name": "RIGHT ELECTRIC LEG",
+        "msg": "RIGHT ELECTRIC LEG DESTROYED!",
+        "brokenMsg": "RIGHT ELECTRIC LEG BROKEN!"
+      },
+      "name": "THUNDER ELEMENTAL",
+      "maw": {
+        "name": "ARCIN' MAW",
+        "msg": "ARCIN' MAW SMASHED APART!",
+        "brokenMsg": "ARCIN' MAW CHIPPED!"
+      }
+    },
+    "stormelemental": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "body": {
+        "name": "WIND BODY",
+        "msg": "WIND BODY DESTROYED!",
+        "brokenMsg": "WIND BODY BROKEN!"
+      },
+      "left_rain_arm": {
+        "name": "LEFT RAIN ARM",
+        "msg": "LEFT RAIN ARM DESTROYED!",
+        "brokenMsg": "LEFT RAIN ARM BROKEN!"
+      },
+      "right_rain_arm": {
+        "name": "RIGHT RAIN ARM",
+        "msg": "RIGHT RAIN ARM DESTROYED!",
+        "brokenMsg": "RIGHT RAIN ARM BROKEN!"
+      },
+      "left_thunder_leg": {
+        "name": "LEFT THUNDER LEG",
+        "msg": "LEFT THUNDER LEG DESTROYED!",
+        "brokenMsg": "LEFT THUNDER LEG BROKEN!"
+      },
+      "right_thunder_leg": {
+        "name": "RIGHT THUNDER LEG",
+        "msg": "RIGHT THUNDER LEG DESTROYED!",
+        "brokenMsg": "RIGHT THUNDER LEG BROKEN!"
+      },
+      "name": "STORM ELEMENTAL",
+      "maw": {
+        "name": "HOWLIN' MAW",
+        "msg": "HOWLIN' MAW SMASHED APART!",
+        "brokenMsg": "HOWLIN' MAW CHIPPED!"
+      }
+    },
+    "fireelemental": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "body": {
+        "name": "FLAME BODY",
+        "msg": "FLAME BODY DESTROYED!",
+        "brokenMsg": "FLAME BODY BROKEN!"
+      },
+      "ember_arms": {
+        "name": "EMBER ARMS",
+        "msg": "EMBER ARMS DESTROYED!",
+        "brokenMsg": "EMBER ARMS BROKEN!"
+      },
+      "ash_legs": {
+        "name": "ASH LEGS",
+        "msg": "ASH LEGS DESTROYED!",
+        "brokenMsg": "ASH LEGS BROKEN!"
+      },
+      "name": "FIRE ELEMENTAL",
+      "maw": {
+        "name": "BLAZIN' MAW",
+        "msg": "BLAZIN' MAW SMASHED APART!",
+        "brokenMsg": "BLAZIN' MAW CHIPPED!"
+      }
+    },
+    "metalelemental": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "plate_armor": {
+        "name": "PLATE ARMOR",
+        "msg": "PLATE ARMOR SHATTERED!",
+        "brokenMsg": "PLATE ARMOR DENTED!"
+      },
+      "spike_arms": {
+        "name": "SPIKE ARMS",
+        "msg": "SPIKE ARMS SMASHED APART!",
+        "brokenMsg": "SPIKE ARMS CHIPPED!"
+      },
+      "gear_legs": {
+        "name": "GEAR LEGS",
+        "msg": "GEAR LEGS WRECKED!",
+        "brokenMsg": "GEAR LEGS MALFUNCTIONIN'!"
+      },
+      "name": "METAL ELEMENTAL",
+      "jaws": {
+        "name": "VISE JAWS",
+        "msg": "VISE JAWS SMASHED APART!",
+        "brokenMsg": "VISE JAWS CHIPPED!"
+      }
+    },
+    "darkelemental": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "body": {
+        "name": "SHADOW BODY",
+        "msg": "SHADOW BODY DESTROYED!",
+        "brokenMsg": "SHADOW BODY BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT WRAITH ARM",
+        "msg": "LEFT WRAITH ARM DESTROYED!",
+        "brokenMsg": "LEFT WRAITH ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT WRAITH ARM",
+        "msg": "RIGHT WRAITH ARM DESTROYED!",
+        "brokenMsg": "RIGHT WRAITH ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT CURSE LEG",
+        "msg": "LEFT CURSE LEG DESTROYED!",
+        "brokenMsg": "LEFT CURSE LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT CURSE LEG",
+        "msg": "RIGHT CURSE LEG DESTROYED!",
+        "brokenMsg": "RIGHT CURSE LEG BROKEN!"
+      },
+      "name": "DARK ELEMENTAL",
+      "maw": {
+        "name": "VOID MAW",
+        "msg": "VOID MAW SMASHED APART!",
+        "brokenMsg": "VOID MAW CHIPPED!"
+      }
+    },
+    "sacredelemental": {
+      "core": {
+        "name": "CORE",
+        "msg": "CORE DESTROYED!",
+        "brokenMsg": "CORE BROKEN!"
+      },
+      "body": {
+        "name": "LIGHT BODY",
+        "msg": "LIGHT BODY DESTROYED!",
+        "brokenMsg": "LIGHT BODY BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT RADIANT ARM",
+        "msg": "LEFT RADIANT ARM DESTROYED!",
+        "brokenMsg": "LEFT RADIANT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT RADIANT ARM",
+        "msg": "RIGHT RADIANT ARM DESTROYED!",
+        "brokenMsg": "RIGHT RADIANT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT AURA LEG",
+        "msg": "LEFT AURA LEG DESTROYED!",
+        "brokenMsg": "LEFT AURA LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT AURA LEG",
+        "msg": "RIGHT AURA LEG DESTROYED!",
+        "brokenMsg": "RIGHT AURA LEG BROKEN!"
+      },
+      "name": "SACRED ELEMENTAL",
+      "mouth": {
+        "name": "CHORUS MOUTH",
+        "msg": "CHORUS MOUTH DESTROYED!",
+        "brokenMsg": "CHORUS MOUTH BROKEN!"
+      }
+    },
+    "totem": {
+      "core": {
+        "name": "SPIRIT CORE",
+        "msg": "SPIRIT CORE DESTROYED!",
+        "brokenMsg": "SPIRIT CORE BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "eyes": {
+        "name": "TOTEM EYES",
+        "msg": "TOTEM EYES SEVERED!",
+        "brokenMsg": "TOTEM EYES SWOLLEN SHUT!"
+      },
+      "base": {
+        "name": "BASE",
+        "msg": "BASE DESTROYED!",
+        "brokenMsg": "BASE BROKEN!"
+      },
+      "name": "TOTEM",
+      "mouth": {
+        "name": "CARVED MOUTH",
+        "msg": "CARVED MOUTH DESTROYED!",
+        "brokenMsg": "CARVED MOUTH BROKEN!"
+      }
+    },
+    "ophanim": {
+      "wheel_one": {
+        "name": "WHEEL ONE",
+        "msg": "WHEEL ONE SEVERED!",
+        "brokenMsg": "WHEEL ONE MALFUNCTIONIN'!"
+      },
+      "wheel_two": {
+        "name": "WHEEL TWO",
+        "msg": "WHEEL TWO SEVERED!",
+        "brokenMsg": "WHEEL TWO MALFUNCTIONIN'!"
+      },
+      "wheel_three": {
+        "name": "WHEEL THREE",
+        "msg": "WHEEL THREE SEVERED!",
+        "brokenMsg": "WHEEL THREE MALFUNCTIONIN'!"
+      },
+      "wheel_four": {
+        "name": "WHEEL FOUR",
+        "msg": "WHEEL FOUR SEVERED!",
+        "brokenMsg": "WHEEL FOUR MALFUNCTIONIN'!"
+      },
+      "eye_ring": {
+        "name": "EYE RING",
+        "msg": "EYE RING PUT OUT FOR GOOD!",
+        "brokenMsg": "EYE RING SWOLLEN SHUT!"
+      },
+      "name": "OPHANIM",
+      "mouth": {
+        "name": "CHANTIN' MOUTH",
+        "msg": "CHANTIN' MOUTH DESTROYED!",
+        "brokenMsg": "CHANTIN' MOUTH BROKEN!"
+      }
+    },
+    "angel": {
+      "left_wing": {
+        "name": "LEFT WING",
+        "msg": "LEFT WING TORN OFF!",
+        "brokenMsg": "LEFT WING TORN!"
+      },
+      "right_wing": {
+        "name": "RIGHT WING",
+        "msg": "RIGHT WING TORN OFF!",
+        "brokenMsg": "RIGHT WING TORN!"
+      },
+      "halo": {
+        "name": "HALO",
+        "msg": "HALO SHATTERED!",
+        "brokenMsg": "HALO CRACKED!"
+      },
+      "core": {
+        "name": "HEART CORE",
+        "msg": "HEART CORE DESTROYED!",
+        "brokenMsg": "HEART CORE BROKEN!"
+      },
+      "robe": {
+        "name": "ROBE",
+        "msg": "ROBE SHATTERED!",
+        "brokenMsg": "ROBE DENTED!"
+      },
+      "left_foot": {
+        "name": "LEFT FOOT",
+        "msg": "LEFT FOOT CUT OFF!",
+        "brokenMsg": "LEFT FOOT MANGLED!"
+      },
+      "right_foot": {
+        "name": "RIGHT FOOT",
+        "msg": "RIGHT FOOT CUT OFF!",
+        "brokenMsg": "RIGHT FOOT MANGLED!"
+      },
+      "name": "ANGEL",
+      "left_hand": {
+        "name": "LEFT HAND",
+        "msg": "LEFT HAND CUT OFF!",
+        "brokenMsg": "LEFT HAND MANGLED!"
+      },
+      "right_hand": {
+        "name": "RIGHT HAND",
+        "msg": "RIGHT HAND CUT OFF!",
+        "brokenMsg": "RIGHT HAND MANGLED!"
+      },
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      }
+    },
+    "elven": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "heart": {
+        "name": "HEART",
+        "msg": "HEART RUPTURED!",
+        "brokenMsg": "HEART BATTERED!"
+      },
+      "bow": {
+        "name": "BOW",
+        "msg": "BOW SEVERED!",
+        "brokenMsg": "BOW BROKEN!"
+      },
+      "robe": {
+        "name": "ROBE",
+        "msg": "ROBE SHATTERED!",
+        "brokenMsg": "ROBE DENTED!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "ELVEN",
+      "left_hand": {
+        "name": "LEFT HAND",
+        "msg": "LEFT HAND CUT OFF!",
+        "brokenMsg": "LEFT HAND MANGLED!"
+      },
+      "right_hand": {
+        "name": "RIGHT HAND",
+        "msg": "RIGHT HAND CUT OFF!",
+        "brokenMsg": "RIGHT HAND MANGLED!"
+      },
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      }
+    },
+    "gnome": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "beard": {
+        "name": "BEARD",
+        "msg": "BEARD SHEARED OFF!",
+        "brokenMsg": "BEARD CHIPPED!"
+      },
+      "hat": {
+        "name": "HAT",
+        "msg": "HAT SEVERED!",
+        "brokenMsg": "HAT DENTED!"
+      },
+      "heart": {
+        "name": "HEART",
+        "msg": "HEART RUPTURED!",
+        "brokenMsg": "HEART BATTERED!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "GNOME",
+      "left_hand": {
+        "name": "LEFT HAND",
+        "msg": "LEFT HAND CUT OFF!",
+        "brokenMsg": "LEFT HAND MANGLED!"
+      },
+      "right_hand": {
+        "name": "RIGHT HAND",
+        "msg": "RIGHT HAND CUT OFF!",
+        "brokenMsg": "RIGHT HAND MANGLED!"
+      },
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      }
+    },
+    "dwarf": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "beard": {
+        "name": "BEARD",
+        "msg": "BEARD SHEARED OFF!",
+        "brokenMsg": "BEARD CHIPPED!"
+      },
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO DESTROYED!",
+        "brokenMsg": "TORSO BROKEN!"
+      },
+      "left_arm": {
+        "name": "LEFT ARM",
+        "msg": "LEFT ARM SEVERED!",
+        "brokenMsg": "LEFT ARM BROKEN!"
+      },
+      "right_arm": {
+        "name": "RIGHT ARM",
+        "msg": "RIGHT ARM SEVERED!",
+        "brokenMsg": "RIGHT ARM BROKEN!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "brain": {
+        "name": "BRAIN",
+        "msg": "BRAIN RUPTURED!",
+        "brokenMsg": "BRAIN BATTERED!"
+      },
+      "left_eye": {
+        "name": "LEFT EYE",
+        "msg": "LEFT EYE SEVERED!",
+        "brokenMsg": "LEFT EYE SWOLLEN SHUT!"
+      },
+      "right_eye": {
+        "name": "RIGHT EYE",
+        "msg": "RIGHT EYE SEVERED!",
+        "brokenMsg": "RIGHT EYE SWOLLEN SHUT!"
+      },
+      "nose": {
+        "name": "NOSE",
+        "msg": "NOSE SHEARED OFF!",
+        "brokenMsg": "NOSE CHIPPED!"
+      },
+      "left_ear": {
+        "name": "LEFT EAR",
+        "msg": "LEFT EAR SEVERED!",
+        "brokenMsg": "LEFT EAR LEFT RINGIN'!"
+      },
+      "right_ear": {
+        "name": "RIGHT EAR",
+        "msg": "RIGHT EAR SEVERED!",
+        "brokenMsg": "RIGHT EAR LEFT RINGIN'!"
+      },
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH DESTROYED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      },
+      "teeth": {
+        "name": "TEETH",
+        "msg": "TEETH SMASHED APART!",
+        "brokenMsg": "TEETH CHIPPED!"
+      },
+      "genitals": {
+        "name": "GENITALS",
+        "msg": "GENITALS SEVERED!",
+        "brokenMsg": "GENITALS BATTERED!"
+      },
+      "heart": {
+        "name": "HEART",
+        "msg": "HEART RUPTURED!",
+        "brokenMsg": "HEART BATTERED!"
+      },
+      "left_lung": {
+        "name": "LEFT LUNG",
+        "msg": "LEFT LUNG RUPTURED!",
+        "brokenMsg": "LEFT LUNG BATTERED!"
+      },
+      "right_lung": {
+        "name": "RIGHT LUNG",
+        "msg": "RIGHT LUNG RUPTURED!",
+        "brokenMsg": "RIGHT LUNG BATTERED!"
+      },
+      "liver": {
+        "name": "LIVER",
+        "msg": "LIVER RUPTURED!",
+        "brokenMsg": "LIVER BATTERED!"
+      },
+      "stomach": {
+        "name": "STOMACH",
+        "msg": "STOMACH RUPTURED!",
+        "brokenMsg": "STOMACH BATTERED!"
+      },
+      "spleen": {
+        "name": "SPLEEN",
+        "msg": "SPLEEN RUPTURED!",
+        "brokenMsg": "SPLEEN BATTERED!"
+      },
+      "intestines": {
+        "name": "INTESTINES",
+        "msg": "INTESTINES RUPTURED!",
+        "brokenMsg": "INTESTINES BATTERED!"
+      },
+      "left_hand": {
+        "name": "LEFT HAND",
+        "msg": "LEFT HAND CUT OFF!",
+        "brokenMsg": "LEFT HAND MANGLED!"
+      },
+      "left_fingers": {
+        "name": "LEFT FINGERS",
+        "msg": "LEFT FINGERS TORN OFF!",
+        "brokenMsg": "LEFT FINGERS TORN!"
+      },
+      "right_hand": {
+        "name": "RIGHT HAND",
+        "msg": "RIGHT HAND CUT OFF!",
+        "brokenMsg": "RIGHT HAND MANGLED!"
+      },
+      "right_fingers": {
+        "name": "RIGHT FINGERS",
+        "msg": "RIGHT FINGERS TORN OFF!",
+        "brokenMsg": "RIGHT FINGERS TORN!"
+      },
+      "left_foot": {
+        "name": "LEFT FOOT",
+        "msg": "LEFT FOOT CUT OFF!",
+        "brokenMsg": "LEFT FOOT MANGLED!"
+      },
+      "left_toes": {
+        "name": "LEFT TOES",
+        "msg": "LEFT TOES CUT OFF!",
+        "brokenMsg": "LEFT TOES MANGLED!"
+      },
+      "right_foot": {
+        "name": "RIGHT FOOT",
+        "msg": "RIGHT FOOT CUT OFF!",
+        "brokenMsg": "RIGHT FOOT MANGLED!"
+      },
+      "right_toes": {
+        "name": "RIGHT TOES",
+        "msg": "RIGHT TOES CUT OFF!",
+        "brokenMsg": "RIGHT TOES MANGLED!"
+      },
+      "name": "DWARF"
+    },
+    "elephant": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD DESTROYED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "trunk": {
+        "name": "TRUNK",
+        "msg": "TRUNK LOPPED OFF!",
+        "brokenMsg": "TRUNK SPLIT!"
+      },
+      "tusks": {
+        "name": "TUSKS",
+        "msg": "TUSKS SHEARED OFF!",
+        "brokenMsg": "TUSKS CHIPPED!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "hind_left_leg": {
+        "name": "HIND LEFT LEG",
+        "msg": "HIND LEFT LEG SEVERED!",
+        "brokenMsg": "HIND LEFT LEG BROKEN!"
+      },
+      "hind_right_leg": {
+        "name": "HIND RIGHT LEG",
+        "msg": "HIND RIGHT LEG SEVERED!",
+        "brokenMsg": "HIND RIGHT LEG BROKEN!"
+      },
+      "name": "ELEPHANT"
+    },
+    "tentacledcreature": {
+      "eye": {
+        "name": "CENTRAL EYE",
+        "msg": "CENTRAL EYE SEVERED!",
+        "brokenMsg": "CENTRAL EYE SWOLLEN SHUT!"
+      },
+      "tentacle_one": {
+        "name": "TENTACLE ONE",
+        "msg": "TENTACLE ONE TORN OFF!",
+        "brokenMsg": "TENTACLE ONE LACERATED!"
+      },
+      "tentacle_two": {
+        "name": "TENTACLE TWO",
+        "msg": "TENTACLE TWO TORN OFF!",
+        "brokenMsg": "TENTACLE TWO LACERATED!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "name": "TENTACLED CREATURE",
+      "beak": {
+        "name": "BEAK",
+        "msg": "BEAK SMASHED APART!",
+        "brokenMsg": "BEAK CHIPPED!"
+      }
+    },
+    "spiderhumanhybrid": {
+      "body": {
+        "name": "SPIDER BODY",
+        "msg": "SPIDER BODY DESTROYED!",
+        "brokenMsg": "SPIDER BODY BROKEN!"
+      },
+      "torso": {
+        "name": "HUMAN TORSO",
+        "msg": "HUMAN TORSO DESTROYED!",
+        "brokenMsg": "HUMAN TORSO BROKEN!"
+      },
+      "head": {
+        "name": "HUMAN HEAD",
+        "msg": "HUMAN HEAD SEVERED!",
+        "brokenMsg": "HUMAN HEAD BROKEN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "middle_left_leg": {
+        "name": "MIDDLE LEFT LEG",
+        "msg": "MIDDLE LEFT LEG SEVERED!",
+        "brokenMsg": "MIDDLE LEFT LEG BROKEN!"
+      },
+      "middle_right_leg": {
+        "name": "MIDDLE RIGHT LEG",
+        "msg": "MIDDLE RIGHT LEG SEVERED!",
+        "brokenMsg": "MIDDLE RIGHT LEG BROKEN!"
+      },
+      "rear_left_leg": {
+        "name": "REAR LEFT LEG",
+        "msg": "REAR LEFT LEG SEVERED!",
+        "brokenMsg": "REAR LEFT LEG BROKEN!"
+      },
+      "rear_right_leg": {
+        "name": "REAR RIGHT LEG",
+        "msg": "REAR RIGHT LEG SEVERED!",
+        "brokenMsg": "REAR RIGHT LEG BROKEN!"
+      },
+      "name": "SPIDER-HUMAN HYBRID",
+      "left_hand": {
+        "name": "LEFT HAND",
+        "msg": "LEFT HAND CUT OFF!",
+        "brokenMsg": "LEFT HAND MANGLED!"
+      },
+      "right_hand": {
+        "name": "RIGHT HAND",
+        "msg": "RIGHT HAND CUT OFF!",
+        "brokenMsg": "RIGHT HAND MANGLED!"
+      },
+      "fangs": {
+        "name": "FANGS",
+        "msg": "FANGS SMASHED APART!",
+        "brokenMsg": "FANGS CHIPPED!"
+      }
+    },
+    "spikymonster": {
+      "spikes": {
+        "name": "SPIKES",
+        "msg": "SPIKES SHEARED OFF!",
+        "brokenMsg": "SPIKES CHIPPED!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "eyes": {
+        "name": "EYES",
+        "msg": "EYES SEVERED!",
+        "brokenMsg": "EYES SWOLLEN SHUT!"
+      },
+      "left_leg": {
+        "name": "LEFT LEG",
+        "msg": "LEFT LEG SEVERED!",
+        "brokenMsg": "LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "RIGHT LEG",
+        "msg": "RIGHT LEG SEVERED!",
+        "brokenMsg": "RIGHT LEG BROKEN!"
+      },
+      "name": "SPIKY MONSTER",
+      "left_claw": {
+        "name": "LEFT CLAW",
+        "msg": "LEFT CLAW CUT OFF!",
+        "brokenMsg": "LEFT CLAW MANGLED!"
+      },
+      "right_claw": {
+        "name": "RIGHT CLAW",
+        "msg": "RIGHT CLAW CUT OFF!",
+        "brokenMsg": "RIGHT CLAW MANGLED!"
+      },
+      "maw": {
+        "name": "BRISTLIN' MAW",
+        "msg": "BRISTLIN' MAW SMASHED APART!",
+        "brokenMsg": "BRISTLIN' MAW CHIPPED!"
+      }
+    },
+    "horse": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "hind_left_leg": {
+        "name": "HIND LEFT LEG",
+        "msg": "HIND LEFT LEG SEVERED!",
+        "brokenMsg": "HIND LEFT LEG BROKEN!"
+      },
+      "hind_right_leg": {
+        "name": "HIND RIGHT LEG",
+        "msg": "HIND RIGHT LEG SEVERED!",
+        "brokenMsg": "HIND RIGHT LEG BROKEN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "name": "HORSE",
+      "mouth": {
+        "name": "MUZZLE",
+        "msg": "MUZZLE DESTROYED!",
+        "brokenMsg": "MUZZLE BROKEN!"
+      }
+    },
+    "unicorn": {
+      "horn": {
+        "name": "HORN",
+        "msg": "HORN SMASHED APART!",
+        "brokenMsg": "HORN CHIPPED!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "hind_left_leg": {
+        "name": "HIND LEFT LEG",
+        "msg": "HIND LEFT LEG SEVERED!",
+        "brokenMsg": "HIND LEFT LEG BROKEN!"
+      },
+      "hind_right_leg": {
+        "name": "HIND RIGHT LEG",
+        "msg": "HIND RIGHT LEG SEVERED!",
+        "brokenMsg": "HIND RIGHT LEG BROKEN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "name": "UNICORNO",
+      "mouth": {
+        "name": "MUZZLE",
+        "msg": "MUZZLE DESTROYED!",
+        "brokenMsg": "MUZZLE BROKEN!"
+      }
+    },
+    "hellhound": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "collar": {
+        "name": "COLLAR",
+        "msg": "COLLAR SHATTERED!",
+        "brokenMsg": "COLLAR DENTED!"
+      },
+      "body": {
+        "name": "BODY",
+        "msg": "BODY DESTROYED!",
+        "brokenMsg": "BODY BROKEN!"
+      },
+      "left_leg": {
+        "name": "FRONT LEFT LEG",
+        "msg": "FRONT LEFT LEG SEVERED!",
+        "brokenMsg": "FRONT LEFT LEG BROKEN!"
+      },
+      "right_leg": {
+        "name": "FRONT RIGHT LEG",
+        "msg": "FRONT RIGHT LEG SEVERED!",
+        "brokenMsg": "FRONT RIGHT LEG BROKEN!"
+      },
+      "hind_left_leg": {
+        "name": "HIND LEFT LEG",
+        "msg": "HIND LEFT LEG SEVERED!",
+        "brokenMsg": "HIND LEFT LEG BROKEN!"
+      },
+      "hind_right_leg": {
+        "name": "HIND RIGHT LEG",
+        "msg": "HIND RIGHT LEG SEVERED!",
+        "brokenMsg": "HIND RIGHT LEG BROKEN!"
+      },
+      "name": "HELLHOUND",
+      "maw": {
+        "name": "BURNIN' MAW",
+        "msg": "BURNIN' MAW SMASHED APART!",
+        "brokenMsg": "BURNIN' MAW CHIPPED!"
+      }
+    },
+    "wingeddemon": {
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "left_wing": {
+        "name": "LEFT WING",
+        "msg": "LEFT WING TORN OFF!",
+        "brokenMsg": "LEFT WING TORN!"
+      },
+      "right_wing": {
+        "name": "RIGHT WING",
+        "msg": "RIGHT WING TORN OFF!",
+        "brokenMsg": "RIGHT WING TORN!"
+      },
+      "tail": {
+        "name": "TAIL",
+        "msg": "TAIL SEVERED!",
+        "brokenMsg": "TAIL BROKEN!"
+      },
+      "core": {
+        "name": "INFERNAL CORE",
+        "msg": "INFERNAL CORE DESTROYED!",
+        "brokenMsg": "INFERNAL CORE BROKEN!"
+      },
+      "claws": {
+        "name": "CLAWS",
+        "msg": "CLAWS CUT OFF!",
+        "brokenMsg": "CLAWS MANGLED!"
+      },
+      "name": "WINGED DEMON",
+      "maw": {
+        "name": "MAW",
+        "msg": "MAW SMASHED APART!",
+        "brokenMsg": "MAW CHIPPED!"
+      }
+    },
+    "trashcreature": {
+      "trash_pile": {
+        "name": "TRASH PILE",
+        "msg": "TRASH PILE DESTROYED!",
+        "brokenMsg": "TRASH PILE BROKEN!"
+      },
+      "limbs": {
+        "name": "LIMBS",
+        "msg": "LIMBS SEVERED!",
+        "brokenMsg": "LIMBS BROKEN!"
+      },
+      "eyes": {
+        "name": "EYES",
+        "msg": "EYES SEVERED!",
+        "brokenMsg": "EYES SWOLLEN SHUT!"
+      },
+      "heart": {
+        "name": "HEART",
+        "msg": "HEART RUPTURED!",
+        "brokenMsg": "HEART BATTERED!"
+      },
+      "name": "TRASH CREATURE",
+      "maw": {
+        "name": "REFUSE MAW",
+        "msg": "REFUSE MAW SMASHED APART!",
+        "brokenMsg": "REFUSE MAW CHIPPED!"
+      }
+    },
+    "severedhead": {
+      "name": "SEVERED HEAD",
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD SEVERED!",
+        "brokenMsg": "HEAD BROKEN!"
+      },
+      "brain": {
+        "name": "BRAIN",
+        "msg": "BRAIN SEVERED!",
+        "brokenMsg": "BRAIN BROKEN!"
+      },
+      "left_eye": {
+        "name": "LEFT EYE",
+        "msg": "LEFT EYE SEVERED!",
+        "brokenMsg": "LEFT EYE BROKEN!"
+      },
+      "right_eye": {
+        "name": "RIGHT EYE",
+        "msg": "RIGHT EYE SEVERED!",
+        "brokenMsg": "RIGHT EYE BROKEN!"
+      },
+      "nose": {
+        "name": "NOSE",
+        "msg": "NOSE SEVERED!",
+        "brokenMsg": "NOSE BROKEN!"
+      },
+      "left_ear": {
+        "name": "LEFT EAR",
+        "msg": "LEFT EAR SEVERED!",
+        "brokenMsg": "LEFT EAR BROKEN!"
+      },
+      "right_ear": {
+        "name": "RIGHT EAR",
+        "msg": "RIGHT EAR SEVERED!",
+        "brokenMsg": "RIGHT EAR BROKEN!"
+      },
+      "mouth": {
+        "name": "MOUTH",
+        "msg": "MOUTH SEVERED!",
+        "brokenMsg": "MOUTH BROKEN!"
+      },
+      "teeth": {
+        "name": "TEETH",
+        "msg": "TEETH SEVERED!",
+        "brokenMsg": "TEETH BROKEN!"
+      },
+      "neck_stump": {
+        "name": "NECK STUMP",
+        "msg": "NECK STUMP SEVERED!",
+        "brokenMsg": "NECK STUMP BROKEN!"
+      },
+      "grafted_head": {
+        "name": "EXTRA HEAD",
+        "msg": "EXTRA HEAD SEVERED!",
+        "brokenMsg": "EXTRA HEAD BROKEN!"
+      }
+    },
+    "crawlinghand": {
+      "name": "CRAWLIN' HAND",
+      "palm": {
+        "name": "PALM",
+        "msg": "PALM SEVERED!",
+        "brokenMsg": "PALM BROKEN!"
+      },
+      "wrist_stump": {
+        "name": "WRIST STUMP",
+        "msg": "WRIST STUMP SEVERED!",
+        "brokenMsg": "WRIST STUMP BROKEN!"
+      },
+      "thumb": {
+        "name": "THUMB",
+        "msg": "THUMB SEVERED!",
+        "brokenMsg": "THUMB BROKEN!"
+      },
+      "index_finger": {
+        "name": "INDEX FINGER",
+        "msg": "INDEX FINGER SEVERED!",
+        "brokenMsg": "INDEX FINGER BROKEN!"
+      },
+      "middle_finger": {
+        "name": "MIDDLE FINGER",
+        "msg": "MIDDLE FINGER SEVERED!",
+        "brokenMsg": "MIDDLE FINGER BROKEN!"
+      },
+      "ring_finger": {
+        "name": "RING FINGER",
+        "msg": "RING FINGER SEVERED!",
+        "brokenMsg": "RING FINGER BROKEN!"
+      },
+      "little_finger": {
+        "name": "LIL' FINGER",
+        "msg": "LIL' FINGER SEVERED!",
+        "brokenMsg": "LIL' FINGER BROKEN!"
+      },
+      "knuckles": {
+        "name": "KNUCKLES",
+        "msg": "KNUCKLES SEVERED!",
+        "brokenMsg": "KNUCKLES BROKEN!"
+      },
+      "nails": {
+        "name": "NAILS",
+        "msg": "NAILS SEVERED!",
+        "brokenMsg": "NAILS BROKEN!"
+      },
+      "grafted_hand": {
+        "name": "EXTRA HAND",
+        "msg": "EXTRA HAND SEVERED!",
+        "brokenMsg": "EXTRA HAND BROKEN!"
+      }
+    }
+  }
+}

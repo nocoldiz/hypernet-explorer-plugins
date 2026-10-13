@@ -5,7 +5,7 @@
     "3": "congelato",
     "4": "folgorato",
     "5": "inzuppato",
-    "6": "spaccato",
+    "6": "schiacciato",
     "7": "spazzato via",
     "8": "sciolto",
     "9": "corrotto",
@@ -34,7 +34,7 @@
   "elementLabel": "Elemento:",
   "weakToLabel": "Debole a:",
   "statesLabel": "Stati:",
-  "bodyParts": "Parti del Corpo",
+  "bodyParts": "Parti del corpo",
   "none": "Nessuno",
   "panel": {
     "check": "Esamina",
@@ -42,7 +42,7 @@
     "hitChance": "Colpo {percent}%",
     "hp": "{current} / {max} HP",
     "vital": "Vitale",
-    "severable": "Recidibile",
+    "severable": "Amputabile",
     "regenerates": "Si rigenera",
     "destroyed": "Distrutto",
     "broken": "ROTTO"
@@ -51,16 +51,21 @@
     "menu": {
       "partRow": "{part}  {percent}%  colpo {chance}%",
       "partRowCurrent": "{part}  {percent}%  colpo {chance}%  (mirato)",
-      "clear": "Non mirare",
+      "clear": "Annulla mira",
       "back": "Indietro",
       "noParts": "Non resta nulla da mirare",
       "wholeName": "tutto il corpo",
-      "wholeRow": "Tutto il corpo  (dove capita)",
-      "wholeRowCurrent": "Tutto il corpo  (dove capita)  (mirato)"
+      "wholeRow": "Tutto il corpo  (parte casuale)",
+      "wholeRowCurrent": "Tutto il corpo  (parte casuale)  (mirato)"
     },
     "log": {
       "missed": "{actor} mira al {part} di {enemy} e trova solo aria.",
       "moved": "{actor} sposta la mira sul {part} di {enemy}."
+    }
+  },
+  "aimedSkill": {
+    "log": {
+      "noPart": "{enemy} non ha nulla del genere a cui mirare {skill}: il colpo va dove capita."
     }
   },
   "wrestle": {
@@ -85,12 +90,12 @@
     },
     "limbs": {
       "helpMine": "{part} può fare: {holds}.",
-      "helpMineNone": "{part} non serve a nulla per una presa.",
+      "helpMineNone": "{part} non può fare prese.",
       "helpTheirs": "{part}: {note}",
       "note": {
-        "vital": "una parte vitale, e lotta per restare fuori dalla tua portata.",
-        "awkward": "piccola e scomoda, difficile da tenere.",
-        "plain": "abbastanza solida da afferrarla con due mani."
+        "vital": "vitale, difficile da afferrare.",
+        "awkward": "piccola, difficile da tenere.",
+        "plain": "facile da afferrare."
       }
     },
     "hold": {

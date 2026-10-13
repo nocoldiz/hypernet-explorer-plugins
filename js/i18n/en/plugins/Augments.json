@@ -4,11 +4,22 @@
     "title": "Augments",
     "tab": {
       "fitted": "Fitted ({count})",
-      "catalogue": "Catalogue ({count})"
+      "all": "All ({count})",
+      "region": "{name} ({count})"
     },
-    "noneFitted": "Nobody in the party is carrying an augment.",
+    "region": {
+      "head": "Head",
+      "senses": "Senses",
+      "torso": "Torso",
+      "organs": "Organs",
+      "arms": "Arms",
+      "legs": "Legs",
+      "appendages": "Appendages",
+      "other": "Other"
+    },
+    "noneFitted": "No augments fitted.",
     "noCatalogue": "No augment catalogue is loaded.",
-    "noneSelected": "Pick an augment to read its dossier.",
+    "noneSelected": "Select an augment.",
     "wornBy": "{actor} · {part}",
     "type": {
       "biological": "Biological",
@@ -17,24 +28,23 @@
     },
     "damagedHost": "host part damaged",
     "effects": "Effects",
-    "noStatChange": "No change to any parameter.",
+    "noStatChange": "No stat changes.",
     "grantedSkill": "Ability granted",
-    "alwaysCarried": "Carried into every fight; it spends no skill slot.",
-    "sockets": "Sockets it fits",
-    "noSocket": "No socket accepts it.",
-    "noSocketShort": "no socket",
-    "moreSockets": "+{count}",
+    "alwaysCarried": "Always synced.",
+    "sockets": "Sockets",
+    "noSocket": "Fits no socket.",
     "capacity": "Capacity",
     "capacityValue": "{fitted} of {max} sockets",
     "fittedTo": "Fitted to",
-    "damagedWarning": "The part it sits in is ruined. The augment still works, but the limb does not.",
-    "severWarning": "Severing the part takes the augment with it.",
+    "damagedWarning": "Host part ruined. The augment works, the limb doesn't.",
+    "severWarning": "Losing the part loses the augment.",
     "need": {
       "halted": "Never depletes",
       "slowed": "Drains {pct}% slower",
       "hastened": "Drains {pct}% faster",
-      "restores": "Refills at {pct}% of the usual rate"
+      "restores": "Refills at {pct}% speed"
     },
-    "searchPlaceholder": "Search augments…"
+    "searchPlaceholder": "Search augments…",
+    "price": "Price"
   }
 }

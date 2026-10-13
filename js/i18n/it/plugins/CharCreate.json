@@ -1,7 +1,7 @@
 {
-  "characterCreation": "Creazione Personaggio",
+  "characterCreation": "Creazione personaggio",
   "randomizeMember": "Personaggio casuale",
-  "randomizeParty": "Gruppo casuale",
+  "randomizeParty": "Party casuale",
   "embark": "Inizia il tuo viaggio",
   "appearance": "Aspetto",
   "class": "Classe",
@@ -12,10 +12,10 @@
   "presets": "PRESET",
   "pending": "In attesa",
   "ready": "Pronto",
-  "unnamed": "Senza Nome",
-  "addPartyMember": "Aggiungi Membro",
-  "deleteMember": "Rimuovi Membro",
-  "confirmDeleteMember": "Sei sicuro di voler rimuovere questo personaggio dal gruppo?",
+  "unnamed": "Senza nome",
+  "addPartyMember": "Aggiungi membro",
+  "deleteMember": "Rimuovi membro",
+  "confirmDeleteMember": "Rimuovere questo personaggio dal Party?",
   "pastLife": "Vita passata",
   "warrior": "Guerriero",
   "disciplinedFrontLineFighters": "Combattenti disciplinati in prima linea.",
@@ -36,13 +36,21 @@
   "initialSettings": "IMPOSTAZIONI INIZIALI",
   "confirm": "Conferma",
   "storyDifficulty": {
+    "peaceful": {
+      "name": "Pacifista",
+      "desc": "I nemici attaccano solo se provocati, e puoi parlare con loro in battaglia.\nNessun membro del Party muore per sempre."
+    },
     "roguelite": {
       "name": "Roguelike",
-      "desc": "Em e Bubba si rialzano dopo ogni sconfitta.\nGli altri membri del gruppo muoiono per sempre."
+      "desc": "Em e Bubba si rialzano dopo ogni sconfitta.\nGli altri membri del Party muoiono per sempre."
+    },
+    "hardcore": {
+      "name": "Hardcore",
+      "desc": "Gli arti possono essere mozzati.\nEm e Bubba conservano gli organi vitali e si rialzano sempre.\nGli altri membri del Party muoiono per sempre."
     },
     "blood_and_oil": {
       "name": "Sangue e Petrolio",
-      "desc": "Gli arti possono essere mozzati.\nEm e Bubba conservano gli organi vitali e si rialzano sempre.\nGli altri membri del gruppo muoiono per sempre."
+      "desc": "Gli arti possono essere mozzati e nessuno è protetto.\nSe Bubba muore, è perduto per il resto della storia.\nSe Em muore, ti arrendi oppure lei risorge da qualche parte in Europa.\nGli altri membri del Party muoiono per sempre."
     }
   },
   "difficulty": "Difficoltà",
@@ -50,8 +58,8 @@
   "selectCombatMode": "Seleziona modalità di combattimento",
   "chooseCreationMode": "Scegli modalità di creazione",
   "chooseYourHometown": "Scegli la tua città natale",
-  "worldHistory": "Storia del Mondo",
-  "chooseCharacterType": "Scegli Tipo di Personaggio",
+  "worldHistory": "Storia del mondo",
+  "chooseCharacterType": "Scegli il tipo di personaggio",
   "selectYourGender": "Seleziona il tuo genere:",
   "male": "Maschio",
   "female": "Femmina",
@@ -63,29 +71,29 @@
   "selectYourTraits": "Seleziona i tuoi tratti",
   "selectYourPersonality": "Seleziona la tua personalità",
   "personalityVoice": "Come pensa",
-  "personalityBody": "Cosa fa al corpo",
+  "personalityBody": "Effetti sul corpo",
   "chooseYourBirthDate": "Scegli la tua data di nascita",
-  "addAnotherPartyMember": "Aggiungere un altro membro del gruppo?",
+  "addAnotherPartyMember": "Aggiungere un altro membro del Party?",
   "chooseYourOrigin": "Scegli la tua origine",
   "chooseYourVehicle": "Scegli il tuo veicolo",
-  "confirmParty": "Conferma il gruppo",
+  "confirmParty": "Conferma il Party",
   "noCompanion": "Nessun famiglio",
   "petKindNone": "Da solo",
-  "noCompanionDesc": "Parti senza nessuno alle calcagna. Il posto resta libero per chi incontrerai.",
+  "noCompanionDesc": "Parti senza compagno. Puoi reclutarne uno in seguito.",
   "noDefiningTraits": "Nessun tratto distintivo",
   "noSkillsLearned": "Nessuna abilità appresa",
   "noSpecializations": "Nessuna specializzazione",
-  "emptyBackpack": "Sacca vuota",
-  "hometown": "Città Natale",
-  "nationOfBirth": "Nazione di Nascita",
-  "dateOfBirth": "Data di Nascita",
-  "currentAge": "Età Attuale",
+  "emptyBackpack": "Zaino vuoto",
+  "hometown": "Città natale",
+  "nationOfBirth": "Nazione di nascita",
+  "dateOfBirth": "Data di nascita",
+  "currentAge": "Età attuale",
   "origin": "Origine",
-  "background": "Trascorso",
+  "background": "Passato",
   "personalDossier": "DOSSIER PERSONALE",
   "identityProfile": "Genere",
   "vocation": "Classe",
-  "startingWealth": "Ricchezza Iniziale",
+  "startingWealth": "Ricchezza iniziale",
   "traits": "Tratti",
   "skills": "Abilità",
   "specializations": "Specializzazioni",
@@ -93,14 +101,14 @@
   "presetCharacters": "PERSONAGGI PRESET",
   "back": "Indietro",
   "exitWizard": "Esci",
-  "returnToTitle": "Menu Principale",
+  "returnToTitle": "Menu principale",
   "pendingSense": "IN ATTESA...",
   "none": "Nessuna",
   "none2": "Nessuno",
   "nonBinary2": "Non binario",
   "registering": "REGISTRAZIONE...",
   "finalized": "CONFERMATO",
-  "unnamedAlly": "Alleato Senza Nome",
+  "unnamedAlly": "Alleato senza nome",
   "traits2": "TRATTI",
   "gear": "EQUIP.",
   "yourParty": "IL TUO PARTY",
@@ -118,10 +126,10 @@
   "glove": "Guanto",
   "spear": "Lancia",
   "noStartingSkills": "Nessuna abilità iniziale",
-  "startingItems": "Oggetti Iniziali",
-  "skillRoadmap": "Piano di Crescita",
-  "equipmentProficiencies": "Maestrie Equipaggiamento",
-  "startingSkills": "Abilità Iniziali",
+  "startingItems": "Oggetti iniziali",
+  "skillRoadmap": "Piano di crescita",
+  "equipmentProficiencies": "Maestrie equipaggiamento",
+  "startingSkills": "Abilità iniziali",
   "head": "Testa",
   "torso": "Torso",
   "leftArm": "Braccio Sx",
@@ -129,38 +137,38 @@
   "leftLeg": "Gamba Sx",
   "rightLeg": "Gamba Dx",
   "human": "Umano",
-  "goblinHead": "Testa Goblin",
+  "goblinHead": "Testa goblin",
   "elf": "Elfo",
   "rounded": "Rotondo",
   "narrow": "Stretto",
-  "squareJaw": "Mascella Quadra",
+  "squareJaw": "Mascella quadrata",
   "youthful": "Giovanile",
   "elder": "Anziano",
-  "bigEars": "Grandi Orecchie",
+  "bigEars": "Orecchie grandi",
   "orcish": "Orchesco",
   "tusked": "Zannuto",
   "fanged": "Zanne",
   "beastkin": "Bestiale",
-  "longFace": "Viso Lungo",
-  "flatFace": "Viso Piatto",
+  "longFace": "Viso lungo",
+  "flatFace": "Viso piatto",
   "horned": "Cornuto",
   "cyclops": "Ciclope",
   "default": "Predefinita",
-  "randomizeAll": "Randomizza Tutto",
+  "randomizeAll": "Randomizza tutto",
   "structure": "Struttura",
   "body": "Corpo",
   "variation": "Variante",
   "surface": "Superficie",
   "height": "Altezza",
   "weight": "Peso",
-  "headSize": "Dim. Testa",
+  "headSize": "Dim. testa",
   "ears": "Orecchie",
   "nose": "Naso",
-  "skinHue": "Tinta Pelle",
+  "skinHue": "Tinta pelle",
   "saturation": "Saturazione",
   "lightness": "Luminosità",
   "hair": "Capelli",
-  "hairColour": "Colore Capelli",
+  "hairColourTitle": "Colore capelli",
   "fangs": "Zanne",
   "none3": "No",
   "small": "Piccole",
@@ -171,15 +179,15 @@
   "yes": "Sì",
   "wings": "Ali",
   "halo": "Aureola",
-  "3dModel": "MODELLO 3D",
+  "3dModel": "MODELLO 3D (WIP)",
   "mixPartsFromAnyCreatureDragToRotateWheelToZo": "Mescola parti da qualsiasi creatura. Trascina per ruotare, rotella per lo zoom.",
   "customize": "PERSONALIZZA",
   "search": "Cerca...",
   "close": "Chiudi",
   "noMatches": "Nessun risultato",
-  "skillRoadmap2": "Lista Abilità",
+  "skillRoadmap2": "Lista abilità",
   "attributeBreakdown": "Statistiche",
-  "skillsSpecialties": "Categorie Abilità",
+  "skillsSpecialties": "Categorie abilità",
   "confirmClass": "Conferma classe",
   "skillRoadmap3": "PIANO DI CRESCITA",
   "initialSpecialSkillsAndProgressionUnlockedAl": "Abilità speciali iniziali e progressione sbloccata lungo il percorso.",
@@ -189,16 +197,16 @@
   "decreasesPhysicalDamageTaken": "Diminuisce il danno fisico subito.",
   "increasesSpellDamageAndAlchemicalPower": "Aumenta il danno magico e il potere alchemico.",
   "decreasesMagicalDamageTaken": "Diminuisce il danno magico subito.",
-  "increasesHitRateDodgeAndActionSpeed": "Aumenta la velocità di movimento e l'elusione.",
-  "increasesCriticalHitsAndAlchemicalAnomaliesC": "Aumenta i colpi critici e la resistenza ad anomalie.",
-  "masteries": "SPECIALIZZAZIONI",
-  "primaryMastery": "Maestria Primaria",
-  "secondaryMastery": "Maestria Secondaria",
+  "increasesHitRateDodgeAndActionSpeed": "Aumenta precisione, schivata e velocità d'azione.",
+  "increasesCriticalHitsAndAlchemicalAnomaliesC": "Aumenta la probabilità di critici e di anomalie alchemiche.",
+  "masteries": "MAESTRIE",
+  "primaryMastery": "Maestria primaria",
+  "secondaryMastery": "Maestria secondaria",
   "details": "DETTAGLI",
   "onlyWhatYourArchetypesSupport": "Solo ciò che i tuoi archetipi permettono.",
   "classes": "CLASSI",
-  "startingWeaponProficiencies": "Maestrie Armi Iniziali",
-  "startingSpecialSkills": "Abilità Speciali Iniziali",
+  "startingWeaponProficiencies": "Maestrie armi iniziali",
+  "startingSpecialSkills": "Abilità speciali iniziali",
   "continue": "Continua",
   "creatureCreation": "CREAZIONE CREATURA",
   "chooseATypeOfCreation": "Scegli un tipo di creazione.",
@@ -206,22 +214,22 @@
   "hybridMonstrosity": "MOSTRUOSITÀ IBRIDA",
   "archetipes": "ARCHETIPI",
   "cancel": "Annulla",
-  "baseSkills": "Abilità Base",
+  "baseSkills": "Abilità base",
   "anatomy": "Anatomia",
   "preview": "Anteprima",
   "selectArchetypes": "Seleziona archetipi...",
   "primary": "Primario",
   "secondary": "Secondario",
   "archetypeS": "ARCHETIPO/I",
-  "selectOneArchetypeTemplateForABaselineCreatu": "Seleziona un archetipo per una creatura base, o due per creare un ibrido. Conferma un archetipo selezionato per continuare.",
+  "selectOneArchetypeTemplateForABaselineCreatu": "Scegli un archetipo per una creatura base, o due per un ibrido. Conferma per continuare.",
   "biology": "BIOLOGIA",
   "noAnatomicalOrgansDefined": "Nessun organo anatomico definito",
-  "confirmBlueprint": "Conferma Progetto",
-  "custom3dModel": "Modello 3D",
-  "sculptAUniqueCreatureFromMixedPartsSeededFro": "Scolpisci una creatura unica da parti miste, inizializzata dagli archetipi scelti.",
+  "confirmBlueprint": "Conferma progetto",
+  "custom3dModel": "Modello 3D (WIP)",
+  "sculptAUniqueCreatureFromMixedPartsSeededFro": "Crea una creatura da parti miste, basata sui tuoi archetipi.",
   "dragToRotateWheelToZoomMiddleDragToPan": "Trascina per ruotare · rotella per zoom · tasto centrale per spostare",
   "loadingBattlerAsset": "Caricamento asset battler...",
-  "profileImage": "IMMAGINEPROFILO",
+  "profileImage": "IMMAGINE PROFILO",
   "profileImageSelection": "SELEZIONE IMMAGINE PROFILO",
   "chooseAProfileImage": "Scegli un'immagine profilo.",
   "sprites": "Aspetto",
@@ -239,87 +247,87 @@
   "choice": {
     "vehicleBroom": {
       "name": "Scopa volante",
-      "desc": "Una scopa che non risponde a nessuna strada. Ignora muri, acqua e dirupi, e atterra dove le pare."
+      "desc": "Una scopa. Vola sopra muri, acqua e dirupi."
     },
     "vehicleCar": {
       "name": "Auto",
-      "desc": "Un'utilitaria, parcheggiata ai margini del villaggio. Veloce in campo aperto, e beve carburante."
+      "desc": "Un'auto. Veloce in campo aperto, consuma carburante."
     },
     "vehicleCamper": {
       "name": "Camper",
-      "desc": "Un furgone in cui si può vivere: un letto, un fornello e tutto ciò che possiedi, ovunque tu decida di fermarti."
+      "desc": "Un furgone abitabile, con letto e fornello."
     },
     "vehicleBoat": {
       "name": "Barca",
-      "desc": "Un gommone, ormeggiato giù all'acqua. Non costa nulla mantenerlo, e va solo dove c'è acqua."
+      "desc": "Un gommone. Costo zero, solo in acqua."
     },
     "vehicleBike": {
       "name": "Bicicletta",
-      "desc": "Una bicicletta, appoggiata dove l'hai lasciata. Niente carburante, niente manutenzione, e segue ogni strada che c'è."
+      "desc": "Una bicicletta. Niente carburante, niente manutenzione."
     },
     "vehicleStarship": {
       "name": "Astronave",
-      "desc": "Una nave che lascia il suolo del tutto. Nessuna pompa di benzina la riempirà mai."
+      "desc": "Un'astronave. Non si rifornisce ai distributori."
     },
     "originDeserter": {
       "name": "Disertore",
-      "desc": "Scegli una fazione da cui hai disertato: inizia con [40 delle sue truppe]."
+      "desc": "Scegli la fazione da cui hai disertato: inizi con [40 delle sue truppe], ma sei [odiato] da essa (e dalla sua fazione madre)."
     },
     "originAugmented": {
       "name": "Innestati",
-      "desc": "Vi siete conosciuti nella stessa clinica dove vi siete fatti impiantare [innesti cibernetici]."
+      "desc": "Vi siete conosciuti nella stessa clinica. Ognuno inizia con [due o tre innesti]."
     },
     "originFactionLeader": {
-      "name": "Capo di Fazione",
-      "desc": "Scegli una fazione e inizia al comando di [40 delle sue truppe], in [buoni rapporti] con essa e con euro per [due settimane di stipendio]."
+      "name": "Capo di fazione",
+      "desc": "Scegli una fazione e inizia al comando di [40 delle sue truppe], in [buoni rapporti] con essa (e con la sua fazione madre), con euro per [due settimane di stipendio]."
     },
     "originWarlord": {
-      "name": "Signore della Guerra Indipendente",
-      "desc": "Inizia al comando di [40 truppe] prese da fazioni casuali, leali a nessuno, con euro sufficiente per [due settimane di stipendio]."
+      "name": "Signore della guerra indipendente",
+      "desc": "Inizia al comando di [40 truppe] prese da fazioni casuali, leali a nessuno, con abbastanza euro per [due settimane di stipendio]."
     },
     "originGoblin": {
       "name": "Modalità Goblin",
-      "desc": "Tutto il gruppo è composto da [goblin]. Inizia in un luogo a tua scelta, ma solo tra i [luoghi che l'Orda dei Goblin controlla] all'inizio della partita."
+      "desc": "Tutto il Party è composto da [goblin]. Inizia in un luogo a tua scelta, ma solo tra i [luoghi che l'Orda dei Goblin controlla] all'inizio della partita."
     },
     "originGoblinHorde": {
       "name": "Orda dei Goblin",
-      "desc": "Goblin dell'Orda stessa: inizia in un luogo che l'Orda controlla, al comando di [{count} truppe dell'Orda dei Goblin] con [due settimane del loro stipendio], ben voluto dall'Orda e [odiato da ogni potenza in guerra con essa]."
+      "desc": "Goblin dell'Orda. Inizia in un luogo dell'Orda, al comando di [{count} truppe dell'Orda dei Goblin] con [due settimane del loro stipendio]. Benvoluto dall'Orda, [odiato da ogni potenza in guerra con essa]."
     },
     "originCrash": {
-      "name": "Atterraggio di Fortuna",
+      "name": "Atterraggio di fortuna",
       "desc": "Inizia [bloccato su un pianeta casuale] in una galassia inesplorata, con la nave [danneggiata], quasi senza carburante e [senza cariche di Schrodinger-Bohr]."
     },
     "originArtifact": {
-      "name": "Erede di un Artefatto",
+      "name": "Erede di un artefatto",
       "desc": "Eredita uno degli [antichi artefatti] del mondo insieme alla sua storia."
     },
     "originCeo": {
       "name": "CEO",
-      "desc": "Inizia ricco sfondato: [1.000.000€] in contanti e una [quota di controllo dell'80% in LimeCorp]."
+      "desc": "Inizia ricco sfondato: [1.000.000€] in contanti e una [quota di controllo dell'80% in LimeCorp], nella sua sede centrale."
     },
     "originBunker": {
       "name": "Bunker",
-      "desc": "Dal 31 dicembre del 2000 ti sei rifugiato in un [bunker] insieme a tutti i tuoi averi, è il momento di uscire."
+      "desc": "Ti svegli in una [cantina piena di bottino] sotto un bioma casuale. Il denaro è tuo, e la [botola] da cui esci resta aperta per sempre."
     },
     "originStranded": {
       "name": "Naufrago",
-      "desc": "Inizi [a piedi] in un luogo remoto a caso, lontano da dove chiunque ti cercherebbe."
+      "desc": "Inizi [a piedi] in un luogo remoto a caso."
     },
     "originCriminal": {
       "name": "Criminale",
-      "desc": "Il vostro gruppo è [ricercato] con una [taglia di 10.000€]."
+      "desc": "Inizi accanto al tuo camper, già [ricercato] con una [taglia di 10.000€]."
     },
     "originMayor": {
       "name": "Sindaco",
-      "desc": "Scegli una [città] e inizia lì con [50 unità di ogni materiale da costruzione]."
+      "desc": "Scegli una [città] e inizia lì con [50 unità di ogni materiale da artigianato]."
     },
     "originDungeon": {
       "name": "Ingresso della Torre",
       "desc": "Inizia al [cancello della torre] con un kit da esplorazione: [pozioni extra], la [mappa dei percorsi della torre], una [torcia] e una [corda da arrampicata]."
     },
     "originLot": {
-      "name": "Full automation",
-      "desc": "Costruisci la tua utopia: ogni membro del gruppo inizia con [specializzazioni artigianali avanzate] e l'[officina] già completamente rifornita. Le macchine faranno il resto - tutto ciò che serve è la visione."
+      "name": "Automazione totale",
+      "desc": "Ogni membro del Party inizia con [specializzazioni artigianali avanzate] e un'[officina] completamente rifornita."
     },
     "originBike": {
       "name": "Inizia in bici",
@@ -327,15 +335,15 @@
     },
     "originCar": {
       "name": "Inizia in auto",
-      "desc": "Ti svegli in aperta campagna accanto alla tua [auto], con le chiavi in mano. Dove andare sta a te."
+      "desc": "Inizi in aperta campagna accanto alla tua [auto]."
     },
     "originCamper": {
       "name": "Inizia nel camper",
-      "desc": "Ti svegli in aperta campagna accanto al tuo [camper], con le chiavi in mano. Dove andare sta a te."
+      "desc": "Inizi in aperta campagna accanto al tuo [camper]."
     },
     "originSpace": {
       "name": "Parti nello spazio",
-      "desc": "Salta la selezione della mappa e inizia il viaggio nello [spazio]."
+      "desc": "Salta la selezione della mappa e inizia nello [spazio]."
     },
     "originTrain": {
       "name": "Parti in treno",
@@ -347,11 +355,11 @@
     },
     "noMoreMembers": {
       "name": "No, continua",
-      "desc": "Continua con il gruppo attuale."
+      "desc": "Continua con il Party attuale."
     },
     "addMember": {
       "name": "Sì, aggiungi membro",
-      "desc": "Crea un altro membro del gruppo."
+      "desc": "Crea un altro membro del Party."
     },
     "ageRandom": {
       "name": "Casuale",
@@ -363,7 +371,7 @@
     },
     "ageMiddle": {
       "name": "Mezza età (41-60)",
-      "desc": "Vicino alla crisi di mezza età."
+      "desc": "Esperto e segnato dagli anni."
     },
     "ageAdult": {
       "name": "Adulto (26-40)",
@@ -379,7 +387,7 @@
     },
     "randomPersonality": {
       "name": "Casuale",
-      "desc": "Lascia che al tuo personaggio venga assegnata un'indole."
+      "desc": "Ottieni una personalità casuale."
     },
     "pickTraits": {
       "name": "Scegli tratti",
@@ -394,19 +402,19 @@
       "desc": "Scegli la tua classe iniziale."
     },
     "randomizeAllParty": {
-      "name": "Randomizza tutto il gruppo",
-      "desc": "Riempi ogni slot del gruppo con un personaggio casuale, poi scegli la tua origine."
+      "name": "Randomizza tutto il Party",
+      "desc": "Riempi ogni slot del Party con un personaggio casuale, poi scegli la tua origine."
     },
     "totalRandom": {
-      "name": "Completamente Casuale",
+      "name": "Completamente casuale",
       "desc": "Crea un personaggio completamente casuale."
     },
     "createCreature": {
-      "name": "Crea Creatura",
+      "name": "Crea creatura",
       "desc": "Crea una creatura."
     },
     "newCharacter": {
-      "name": "Crea Nuovo Personaggio",
+      "name": "Crea nuovo personaggio",
       "desc": "Crea un nuovo personaggio."
     },
     "createCreature2": {
@@ -430,32 +438,32 @@
       "desc": "Cattura e combatti con i mostri. \\C[1]Non potrà essere cambiato in seguito.\\C[0]"
     },
     "combatMap": {
-      "name": "Battaglia Strategica",
-      "desc": "Combattimenti tattici sulla mappa invece che in una schermata separata. Ti muovi sulla griglia, armi e abilità hanno una portata e la linea di vista conta. Modificabile in seguito nelle Opzioni."
+      "name": "Battaglia strategica",
+      "desc": "Combattimenti tattici sulla griglia della mappa. Armi e abilità hanno una portata e la linea di vista conta. Modificabile nelle Opzioni."
     },
     "combatRpg": {
-      "name": "Battaglia a Turni",
+      "name": "Battaglia a turni",
       "desc": "Combattimento a turni standard. Le abilità costano MP/AP e si scelgono dal menu comandi."
     },
     "peaceful": {
       "name": "Pacifista",
-      "desc": "I nemici non ti attaccano né ti inseguono se non provocati, e puoi \\C[1]Parlare\\C[0] con loro in battaglia. La sconfitta ti riporta solo all'ultimo ."
+      "desc": "I nemici attaccano solo se provocati, e puoi \\C[1]Parlare\\C[0] con loro in battaglia. La sconfitta ti riporta all'ultimo punto di rinascita."
     },
     "bloodAndOil": {
       "name": "Sangue e Petrolio",
-      "desc": "Un colpo da taglio può staccare per sempre una parte del corpo, con debuff permanenti alle statistiche; una parte che si limita a rompersi guarisce ancora. Perdere un organo vitale uccide il personaggio all'istante. Gli alleati non resuscitati entro la fine della battaglia muoiono permanentemente."
+      "desc": "I colpi da taglio possono staccare parti del corpo per sempre, con malus permanenti. Le parti rotte guariscono. Perdere un organo vitale uccide all'istante. Gli alleati non resuscitati a fine battaglia muoiono per sempre."
     },
     "permadeath": {
       "name": "Permadeath",
-      "desc": "Gli alleati non resuscitati entro la fine della battaglia muoiono permanentemente. Se tutti i membri del gruppo muoiono, il gioco finisce."
+      "desc": "Gli alleati non resuscitati entro la fine della battaglia muoiono per sempre. Se cade tutto il Party, devi creare un nuovo personaggio."
     },
     "roguelite": {
       "name": "Roguelite",
-      "desc": "Se sconfitto ti risvegli nell'ultimo checkpoint. Gli alleati caduti restano nel gruppo e possono essere resuscitati dopo la battaglia."
+      "desc": "Se sconfitto, ti risvegli al piano base del dungeon. Gli alleati caduti restano nel Party e possono essere resuscitati dopo la battaglia."
     },
     "originCardCollector": {
       "name": "Collezionista di carte",
-      "desc": "Viaggi per il mondo con un [mazzo di carte]. Chiunque incontri è qualcuno che potrebbe sedersi a giocare."
+      "desc": "Inizi con uno scaffale di [carte mostro] e un [mazzo] pronto. Chiunque incontri potrebbe sedersi a giocare."
     },
     "originArcanist": {
       "name": "Arcanista",
@@ -466,12 +474,12 @@
       "desc": "L'ultimo contratto ha pagato in materiale invece che in denaro: un'[arma a distanza] a testa, un [giubbotto da campo], la [borsa del medico] e quel che restava dell'equipaggiamento da sopravvivenza sul camion. Scegli dove ti porta il lavoro."
     },
     "originLostConvoker": {
-      "name": "Convocatore Perduto",
-      "desc": "Il rito ha funzionato. Le dimensioni sono state infrante. Ti risvegli da qualche parte con [otto riti di evocazione] a testa, un [bastone], una [veste] e nessuna idea di quale paese sia questo."
+      "name": "Convocatore perduto",
+      "desc": "Il rito ha funzionato, ma non ha detto dove. Ti risvegli in un campo, un bosco o su un monte, con [otto riti di evocazione] a testa, un [bastone], una [veste] e nessuna idea di che paese sia."
     },
     "originSkeletonKey": {
-      "name": "Portatore di Passepartout",
-      "desc": "Possiedi un [Passepartout] e apre [qualunque serratura comune]. Tutto ciò che ti serve è già dietro la porta di qualcun altro."
+      "name": "Portatore di passepartout",
+      "desc": "Possiedi solo un [Passepartout] che apre [qualunque serratura comune]. Scegli dove iniziare sulla mappa."
     },
     "originPlague": {
       "name": "Untore",
@@ -479,15 +487,15 @@
     },
     "originDiplomat": {
       "name": "Diplomatico",
-      "desc": "Inizi a [Bruxelles] con un [seggio alle Nazioni Unite] e credenziali diplomatiche."
+      "desc": "Inizi a [Bruxelles] con un [Terminale ONU] per l'accesso remoto all'assemblea, e nient'altro."
     },
     "originExpressions": {
       "name": "Espressioni",
-      "desc": "Tutti nel gruppo si svegliano [Esprimendo]: un potere tutto loro, tirato a caso e già finalizzato. Chiunque si unisca a voi più tardi ne avrà uno a sua volta. Inizi in una città qualsiasi."
+      "desc": "Ogni membro del Party inizia [Esprimendo], con un potere casuale. Anche chi si unisce dopo ne avrà uno. Inizi in una città qualsiasi."
     },
     "originHypernetExplorer": {
       "name": "Esploratore Hypernet",
-      "desc": "Ti riprendi davanti a un terminale dell'[Hypernet Point] con una borsa di [componenti], un energy drink e nessun ricordo di aver pagato l'ora. L'[Hyperdeck e' montato a meta']. Il resto e' la' fuori, nei negozi, nei cassonetti e nelle case degli altri."
+      "desc": "Ti riprendi davanti a un terminale dell'[Hypernet Point] con una borsa di [componenti], un energy drink e nessun ricordo di aver pagato l'ora. L'[Hyperdeck è montato a metà]. Il resto è là fuori, nei negozi, nei cassonetti e nelle case degli altri."
     },
     "originPatronVault": {
       "name": "Bunker del Santo Patrono",
@@ -499,7 +507,7 @@
     },
     "originCustom": {
       "name": "Scenario personalizzato",
-      "desc": "Il tuo scenario, scritto nell'[editor] di questa pagina: dove cominci, cosa porti con te, la [taglia] sulle vostre teste, un [esercito], e il tuo posto nel mondo come [membro] di una fazione o di una superpotenza, [sindaco] di una città, o fondatore di un [partito] o di una [fazione]. Salvato nella [cartella scenarios], e ogni file al suo interno compare qui."
+      "desc": "Scrivi il tuo scenario nell'[editor] qui: partenza, equipaggiamento, [taglia], [esercito] e un ruolo come [membro] di una fazione o superpotenza, [sindaco] di una città, o fondatore di un [partito] o di una [fazione]. Salvato nella [cartella scenarios]; ogni file al suo interno compare qui."
     }
   },
   "hairStyle": {
@@ -513,19 +521,19 @@
     "mohawk": "Cresta",
     "afro": "Afro",
     "dreads": "Rasta",
-    "spiky": "A Punte",
+    "spiky": "A punte",
     "bald": "Calvo",
     "helmet": "Elmo"
   },
   "hairColor": {
     "black": "Neri",
-    "darkbrown": "Castano Scuro",
+    "darkbrown": "Castani scuri",
     "brown": "Castani",
-    "chestnut": "Castano Ramato",
+    "chestnut": "Castani ramati",
     "auburn": "Ramati",
     "ginger": "Rossi",
     "blond": "Biondi",
-    "sandy": "Biondo Cenere",
+    "sandy": "Biondo cenere",
     "platinum": "Platino",
     "ash": "Cenere",
     "grey": "Grigi",
@@ -533,14 +541,14 @@
     "moss": "Muschio",
     "ink": "Inchiostro",
     "wine": "Vino",
-    "teal": "Verde Acqua"
+    "teal": "Verde acqua"
   },
-  "confirmBust": "Conferma Busto",
+  "confirmBust": "Conferma busto",
   "randomBust": "Casuale",
   "startAsClass": "Inizia come {name}.",
   "slotVacant": "SLOT {slot}: VUOTO",
   "heightMetres": "{m}m {cm}cm",
-  "selectCharacterSprite": "Scegli pure il personaggio.",
+  "selectCharacterSprite": "Scegli uno sprite del personaggio.",
   "selectBustImage": "Scegli un'immagine di busto.",
   "pressOkToOpenCategory": "Premi OK per aprire questa categoria.",
   "selectedBust": "Selezionato: {name}",
@@ -616,37 +624,37 @@
   "goblinHordeUpkeep": "{weeks} settimane di paga, {amount} euro in contanti",
   "standing": "Reputazione",
   "goblinHordeStanding": "Venerato dall'Orda, ostile ai suoi nemici in guerra",
-  "goblinNoHordeDestination": "L'Orda dei Goblin non controlla alcun luogo sulla mappa in questo momento: va bene qualsiasi città.",
+  "goblinNoHordeDestination": "L'Orda dei Goblin non controlla alcun luogo ora: scegli una città qualsiasi.",
   "cash": "Contanti",
-  "startingOut": "Punto di Partenza",
+  "startingOut": "Punto di partenza",
   "language": "Lingua",
-  "gameLanguageAnyMissingTranslationFallsBackTo": "Lingua del gioco. Le traduzioni mancanti ripiegano sull'inglese.",
-  "fogOfWar": "Nebbia di Guerra (WIP)",
-  "revealsTheMapGraduallyAsYouExploreUnvisitedA": "Rivela la mappa gradualmente mentre esplori. Le aree non visitate rimangono nascoste.",
-  "theEntireMapIsFullyRevealedNoHiddenAreas": "L'intera mappa è visibile, nessuna area nascosta.",
-  "exploreTileByTileDarknessVeilsTheUnknown": "Esplora casella per casella, l'ignoto resta nell'ombra.",
+  "gameLanguageAnyMissingTranslationFallsBackTo": "Lingua del gioco. Le traduzioni mancanti usano l'inglese.",
+  "fogOfWar": "Nebbia di guerra (WIP)",
+  "revealsTheMapGraduallyAsYouExploreUnvisitedA": "La mappa si rivela mentre esplori. Le aree non visitate restano nascoste.",
+  "theEntireMapIsFullyRevealedNoHiddenAreas": "Tutta la mappa è visibile.",
+  "exploreTileByTileDarknessVeilsTheUnknown": "Rivela la mappa casella per casella.",
   "cpuPartyMembers": "Compagni CPU",
-  "everyPartyMemberExceptTheLeaderActsAutomatic": "Ogni membro del gruppo tranne il leader agisce automaticamente in battaglia, scegliendo le proprie azioni.",
-  "youManuallyControlEveryPartyMemberSActions": "Controlli manualmente le azioni di ogni membro del gruppo.",
+  "everyPartyMemberExceptTheLeaderActsAutomatic": "Tutti tranne il leader agiscono da soli in battaglia.",
+  "youManuallyControlEveryPartyMemberSActions": "Controlli manualmente le azioni di ogni membro del Party.",
   "onlyTheLeaderIsControlledByYouTheRestFightOn": "Solo il leader è controllato da te, gli altri combattono da soli.",
-  "enemyBattlers": "Nemici in Battaglia",
-  "howEnemiesAreShownInBattle2dTheClassicBattle": "Come appaiono i nemici in battaglia. 3D: modelli 3D procedurali (goblin, slime, elementali...). Sprite: lo sprite del personaggio nemico dalle sue info. 2D: un'immagine fissa dello stesso modello 3D, la più leggera delle tre.",
+  "enemyBattlers": "Nemici in battaglia",
+  "howEnemiesAreShownInBattle2dTheClassicBattle": "Aspetto dei nemici in battaglia. 3D: modelli procedurali. Sprite: lo sprite del nemico. 2D: un'immagine fissa del modello 3D, l'opzione più leggera.",
   "3dRendersProceduralModelsSpritesUsesTheEnemy": "3D mostra modelli procedurali, Sprite usa lo sprite del nemico.",
-  "battleMode": "Modalità Battaglia",
-  "battleModeDesc": "Presentazione della battaglia. Battaglia a Turni combatte nella classica scena a turni. Battaglia Strategica combatte battaglie tattiche sulla griglia della mappa.",
-  "battleModeTurn": "Battaglia a Turni",
-  "battleModeStrategic": "Battaglia Strategica",
-  "battleMusic": "Musica di Battaglia",
-  "musicTrackPlayedDuringCombatPressToPreviewTr": "Traccia musicale in combattimento. Premi ←→ per ascoltare un'anteprima.",
+  "battleMode": "Modalità battaglia",
+  "battleModeDesc": "Battaglia a turni: classica scena a turni. Battaglia strategica: combattimenti tattici sulla griglia della mappa.",
+  "battleModeTurn": "Battaglia a turni",
+  "battleModeStrategic": "Battaglia strategica",
+  "battleMusic": "Musica di battaglia",
+  "musicTrackPlayedDuringCombatPressToPreviewTr": "Musica di battaglia. Premi ←→ per l'anteprima.",
   "uiTheme": "Tema UI",
-  "visualThemeAppliedToMenusAndHudPressToSwitch": "Tema visivo per menu e HUD. Premi ←→ per cambiare. Richiede riavvio per applicare.",
+  "visualThemeAppliedToMenusAndHudPressToSwitch": "Tema di menu e HUD. Premi ←→ per cambiare. Richiede il riavvio.",
   "settingsPreview": "ANTEPRIMA IMPOSTAZIONI",
   "musicTrack": {
     "Battle": "Percussioni",
     "shortcuts": "Scorciatoie",
-    "MelodicTechno": "Techno Melodica"
+    "MelodicTechno": "Techno melodica"
   },
-  "selectCharacter": "Seleziona Personaggio",
+  "selectCharacter": "Seleziona personaggio",
   "abbrev": {
     "hp": "HP:",
     "mp": "MP:",
@@ -659,18 +667,18 @@
     "level": "Lv"
   },
   "statInfo": {
-    "HP": "Punti Vita. Se scendono a 0 il personaggio viene messo fuori combattimento.",
-    "MP": "Punti Mana. Spesi per lanciare abilita e incantesimi; a zero restano solo le azioni gratuite.",
-    "STR": "Forza. Determina la potenza d'attacco fisico, sia in mischia che con armi da lancio.",
-    "CON": "Costituzione. Difesa fisica: quanto viene ridotto il danno di un colpo prima che arrivi.",
-    "DEX": "Destrezza. Ordine di turno e probabilita di schivare un attacco.",
-    "INT": "Intelligenza. Determina la potenza d'attacco magico, il danno effettivo di un incantesimo.",
+    "HP": "Punti Vita. A 0 il personaggio è fuori combattimento.",
+    "MP": "Punti Mana. Spesi per abilità e incantesimi.",
+    "STR": "Forza. Potenza d'attacco fisico, in mischia e da lancio.",
+    "CON": "Costituzione. Difesa fisica: riduce il danno dei colpi.",
+    "DEX": "Destrezza. Ordine di turno e probabilità di schivata.",
+    "INT": "Intelligenza. Potenza d'attacco magico.",
     "WIS": "Saggezza. Difesa magica: resistenza a incantesimi e altri danni magici.",
-    "PSI": "Psiche. Fortuna: colpi critici, bottini rari e altre probabilita a favore del personaggio.",
-    "ARCANE": "Arcano. Quanto il personaggio appare magico a chi lo osserva.",
-    "SUBSTANCE": "Sostanza. Quanto il personaggio e elegante, l'impressione che lascia il suo aspetto.",
-    "STEALTH": "Furtivita. Quanto il personaggio si confonde con l'ambiente circostante.",
-    "INTIMIDATION": "Intimidazione. Quanto i vestiti e l'equipaggiamento del personaggio appaiono minacciosi."
+    "PSI": "Psiche. Fortuna: colpi critici, bottini rari e altre probabilità.",
+    "ARCANE": "Arcano. Quanto il personaggio appare magico.",
+    "SUBSTANCE": "Sostanza. Quanto il personaggio appare elegante.",
+    "STEALTH": "Furtività. Quanto il personaggio si mimetizza.",
+    "INTIMIDATION": "Intimidazione. Quanto appare minaccioso il suo equipaggiamento."
   },
   "characterType": "Tipo di personaggio",
   "portraitStyle": "Ritratto",
@@ -689,15 +697,15 @@
   "detailed": {
     "tab": "Crea",
     "title": "Scheda del personaggio",
-    "hint": "Ogni riga è un campo. Clicca per cambiarlo, oppure clicca il ritratto per ridisegnare il personaggio.",
+    "hint": "Clicca un campo per cambiarlo, o il ritratto per ridisegnare il personaggio.",
     "portraitHint": "Cambia sprite, mezzobusto o modello 3D",
-    "unavailable": "Non c'è nessun personaggio da modificare qui.",
+    "unavailable": "Nessun personaggio da modificare.",
     "unset": "Non impostato",
     "rolled": "Estratto dal mondo",
     "none": "Nessuna",
     "random": "Casuale",
     "back": "Indietro",
-    "noOptions": "Qui non c'è ancora niente da scegliere.",
+    "noOptions": "Nessuna opzione per ora.",
     "pickCategory": "Scegli un campo di studio",
     "section": {
       "ideology": "Ideologia",
@@ -706,7 +714,7 @@
       "talents": "Tratti e talenti",
       "biology": "Biologia",
       "society": "Posizione sociale",
-      "romance": "Romanticismo",
+      "romance": "Relazioni",
       "history": "Storia",
       "finish": "Concludi"
     },
@@ -735,10 +743,10 @@
       "bloodType": "Gruppo sanguigno",
       "bloodTypeRandom": "Randomizza gruppo sanguigno",
       "rerollBackstory": "Riscrivi il passato",
-      "rerollLife": "Distribuisci un'altra vita",
+      "rerollLife": "Rigenera la vita",
       "randomizeKeepBuild": "Randomizza (natura e classe invariate)",
       "randomizeAll": "Randomizza tutto",
-      "done": "Fatto, questo personaggio è pronto",
+      "done": "Fatto",
       "specsRandom": "Randomizza specializzazioni",
       "specPoints": "Punti"
     },
@@ -750,35 +758,37 @@
     },
     "specPoints": "Punti rimasti: {left} su {total}",
     "specCost": "costa {n}",
-    "specRefund": "clicca per riavere i punti",
+    "specRefund": "clicca per rimborsare",
     "specGranted": "(gratis fino a {level})",
-    "specsRandomHint": "Spendi tutto il budget a caso, sopra a quello che classe e tratti già concedono.",
+    "specsRandomHint": "Spendi tutto il budget a caso. I bonus di classe e tratti restano.",
     "search": "Cerca…",
     "noMatches": "Nessun risultato.",
     "specLower": "restituisci {n}",
     "specPointsShort": "{left} / {total} punti",
-    "partyNote": "Un nuovo personaggio entra in un gruppo solo se ne scegli uno qui. Sono elencati solo i gruppi nella loro nazione d'origine.",
+    "partyNote": "Scegli qui un partito a cui iscriverti. Sono elencati solo i partiti della nazione d'origine.",
     "partyMatch": "Stesso credo",
-    "wealthNote": "Quanto questo personaggio porta alla cassa del gruppo.",
-    "moreMatches": "Altri {n} , affina la ricerca per vederli.",
+    "wealthNote": "Denaro che questo personaggio porta al Party.",
+    "moreMatches": "Altri {n}. Affina la ricerca per vederli.",
     "specNotImplemented": "Non implementate",
     "factionsTab": "Fazioni",
-    "factionsTitle": "Posizione presso le potenze",
-    "factionsHint": "Ogni fazione parte da neutrale. Spendi punti per alzare una reputazione, o abbassane una per finanziarne un'altra.",
+    "bodyTab": "Corpo",
+    "bodyTitle": "Parti del corpo",
+    "factionsTitle": "Reputazione con le fazioni",
+    "factionsHint": "Tutte le fazioni partono neutrali. Spendi punti per alzare una reputazione, o abbassane una per finanziarne un'altra.",
     "factionsBudget": "{left} / {total} gradi rimasti",
     "factionsIndependents": "Indipendenti",
     "factionsSwear": "Giura",
     "factionsSworn": "Fedeltà a",
     "factionsRenounce": "Rinnega",
-    "factionsLocked": "Questa posizione è già scritta. Non può essere cambiata.",
+    "factionsLocked": "Questa reputazione è fissa.",
     "factionsNoData": "Le fazioni non sono caricate."
   },
   "augments": "Innesti",
-  "augmentsPerMember": "{min}-{max} a testa, montati sulle proprie sedi",
+  "augmentsPerMember": "{min}-{max} a testa",
   "collection": "Collezione",
   "deck": "Mazzo",
-  "cardsInCollection": "{count} carte, tirate su tutte le rarità",
-  "cardsSleevedDeck": "Un mazzo valido costruito con quelle, pronto da giocare",
+  "cardsInCollection": "{count} carte di ogni rarità",
+  "cardsSleevedDeck": "Un mazzo valido costruito con quelle",
   "cardCollectorDeckName": "Mazzo del circuito",
   "esotericSpells": "Incantesimi esoterici",
   "esotericSpellsPerMember": "{count} a testa, appresi al collegio",
@@ -789,7 +799,7 @@
   "summoningRitesPerMember": "{count} a testa, e nessuna mappa che li accompagni",
   "craftingSpecsAllMembers": "{count} specializzazioni artigianali a testa, da Avanzato a Maestro (randomizzate per membro)",
   "supplies": "Provviste",
-  "nothingButTheKey": "Nessuna. La chiave è tutto ciò che porti.",
+  "nothingButTheKey": "Nessuna. Solo la chiave.",
   "primaryLocked": "Primario (fisso)",
   "theHypernetPoint": "L'Hypernet Point, la sala terminali della Torre Omega",
   "components": "Componenti",
@@ -803,35 +813,37 @@
   "companion": "Famiglio",
   "petsTab": "Animali",
   "releasePet": "Libera il famiglio",
-  "chooseCompanion": "Scegli Compagno",
+  "chooseCompanion": "Scegli animale o seguace",
   "companionStats": "Parametri del famiglio",
   "behavioralTraits": "Comportamento",
   "chooseAsCompanion": "Scegli come famiglio iniziale",
   "selectedCompanion": "Compagno scelto",
   "budget": "Budget",
-  "specializationSummary": "Dossier Talenti",
-  "allocatedTalents": "Talenti Assegnati",
+  "specializationSummary": "Dossier talenti",
+  "allocatedTalents": "Talenti assegnati",
   "noTalentsSpent": "Nessun punto specializzazione assegnato.",
   "removeAllocated": "Rimuovi",
   "specsCurrent": "Attuali",
-  "specGranted": "Concesso da Classe e Tratti",
+  "specGranted": "Concesso da classe e tratti",
   "creedIdeology": "Credo",
-  "originCity": "Città Natale",
+  "originCity": "Città natale",
   "moralityAlignment": "Moralità",
   "ageBand": "Età",
-  "socialStanding": "Estrazione Sociale",
-  "bloodType": "Gruppo Sanguigno",
-  "backgroundSummary": "Profilo di Background",
-  "narrativeHistory": "Biografia e Storia",
+  "socialStanding": "Estrazione sociale",
+  "bloodType": "Gruppo sanguigno",
+  "backgroundSummary": "Profilo personale",
+  "narrativeHistory": "Storia personale",
   "randomize": "Randomizza",
   "randomizeCompanion": "Randomizza compagno",
   "suggestSpecs": "Suggerito",
   "resetSpecs": "Azzera",
   "applyToMember": "Applica al membro corrente",
-  "beginAdventure": "Inizia l'Avventura",
-  "embarkWithPreset": "Inizia con questo Preset",
+  "beginAdventure": "Inizia l'avventura",
+  "embarkWithPreset": "Inizia con il preset",
   "budgetPoints": "Budget: {remaining} / {total} pt",
   "bodyParts": "Parti del corpo",
+  "anatomyHint": "Il corpo di cui è fatto questo personaggio. Ogni parte insegna le sue abilità finché resta attaccata.",
+  "anatomyTeaches": "Insegna",
   "reproductiveOrgans": "Organi riproduttivi",
   "reproductiveOrgansShort": "Organi:",
   "reproNone": "Sterile",
@@ -859,49 +871,50 @@
   "hormoneReadout": "testosterone {tLow}-{tHigh} ng/dL, estrogeni {eLow}-{eHigh} pg/mL",
   "filterAll": "Tutte",
   "noClassMatches": "Nessuna classe corrisponde alla ricerca",
-  "armorProficiencies": "Maestrie Armature",
-  "elementalAffinities": "Affinità Elementali",
+  "armorProficiencies": "Maestrie armature",
+  "elementalAffinities": "Affinità elementali",
   "classCurrent": "Classe attuale",
-  "growthToLevel": "Lv 1 a Lv {n}",
+  "growthToLevel": "Da Lv 1 a Lv {n}",
   "dossierName": "Nome",
-  "presetNoLore": "Un operativo di riguardo, pronto alle operazioni sul campo nella rete.",
-  "removeMemberTitle": "Rimuovi dal gruppo",
-  "removeMemberBody": "{name} sarà rimosso dal gruppo e il suo dossier verrà scartato.",
-  "scenarioRoster": "Dossier del gruppo",
+  "presetNoLore": "Un agente di spicco, pronto alle operazioni sul campo nella rete.",
+  "removeMemberTitle": "Rimuovi dal Party",
+  "removeMemberBody": "{name} sarà rimosso dal Party e il suo dossier verrà scartato.",
+  "scenarioRoster": "Dossier del Party",
   "scenarioExclusiveItems": "Dotazione esclusiva",
   "scenarioNoExclusiveItems": "Nessuna dotazione esclusiva per questo scenario",
-  "scenarioPartyInventory": "Inventario del gruppo",
-  "scenarioNoPartyInventory": "Il gruppo non porta ancora nulla con sé",
-  "scenarioPickPrompt": "Scegli lo scenario in cui parte il gruppo",
-  "suggestedScenarios": "Scenari Consigliati",
-  "otherScenarios": "Altri Scenari",
-  "simpleMode": "Modalità Semplice",
-  "detailedMode": "Modalità Dettagliata",
-  "toggleModeTooltip": "Passa dalla modalità di creazione Semplice a quella Dettagliata",
-  "petDesc": "Un compagno in sintonia con l'ecosistema circostante. Resistente, vigile e devoto a seguire e proteggere il gruppo.",
-  "petDescKind": "Un compagno {kind} selvatico in sintonia con l'ecosistema circostante.",
-  "returnToParty": "Torna alla configurazione del gruppo",
-  "startingFunds": "Fondi Iniziali",
+  "scenarioPartyInventory": "Inventario del Party",
+  "scenarioNoPartyInventory": "Il Party non porta ancora nulla con sé",
+  "scenarioPickPrompt": "Scegli lo scenario iniziale",
+  "suggestedScenarios": "Scenari consigliati",
+  "otherScenarios": "Altri scenari",
+  "simpleMode": "Modalità semplice",
+  "detailedMode": "Modalità dettagliata",
+  "toggleModeTooltip": "Passa dalla creazione semplice a quella dettagliata",
+  "petDesc": "Un compagno che segue e protegge il Party.",
+  "petDescKind": "Un compagno {kind} selvatico.",
+  "returnToParty": "Torna alla configurazione del Party",
+  "startingFunds": "Fondi iniziali",
   "skillCount": "{n} abilità",
   "traitCount": "{n} tratti",
+  "pointCount": "{n} punti",
   "entryCount": "{n} voci",
   "primaryArchetype": "Archetipo primario",
   "weaponSlotsHeld": "Armi impugnabili: {n}",
   "handSlotsHeld": "({n} prese)",
   "deletePreset": "Elimina dossier",
-  "deletePresetBody": "Eliminare il dossier di {name}? Non si potrà tornare indietro.",
+  "deletePresetBody": "Eliminare il dossier di {name}? Non si può annullare.",
   "secondaryArchetype": "Archetipo secondario",
   "vital": "Vitale",
-  "archetypeBoardHint": "Scegli un archetipo per un corpo base, oppure aggiungine un secondo per creare un ibrido.",
+  "archetypeBoardHint": "Scegli un archetipo per un corpo base, o due per un ibrido.",
   "cc3d": {
-    "hint": "Apri un gruppo di parti, poi scegline una per montarla. Afferra una parte montata per spostarla, ruotarla o ridimensionarla; le parti restano sempre attaccate all'arto da cui pendono. Trascina col tasto destro per ruotare la vista, rotella per lo zoom.",
+    "hint": "Apri un gruppo, poi scegli una parte da montare. Trascina una parte montata per spostarla, ruotarla o ridimensionarla. Le parti restano attaccate al loro arto.",
     "symmetry": "Simmetria",
     "symMirror": "Speculare",
     "symOff": "No",
     "parts": "parti",
     "shape": "Forma",
     "bare": "Nuda",
-    "pickAPart": "Clicca una parte sul modello, oppure apri un gruppo qui sotto, per lavorarci.",
+    "pickAPart": "Clicca una parte sul modello, o apri un gruppo qui sotto.",
     "move": "Sposta",
     "turn": "Ruota",
     "size": "Dimensione",
@@ -912,33 +925,38 @@
     "axisZ": "Avanti / Indietro",
     "reset": "Reimposta",
     "detach": "Stacca",
-    "structureHasNoKnobs": "Questo scheletro è costruito intero. Rigenera la variazione per rimodellarlo.",
-    "noSlots": "Questo corpo non ha parti sostituibili. Scegli un'altra struttura per scolpirlo.",
+    "structureHasNoKnobs": "Questo scheletro non si può rimodellare. Rigenera la variazione.",
+    "noSlots": "Questo corpo non ha parti sostituibili. Scegli un'altra struttura.",
     "undo": "Annulla",
     "redo": "Ripeti",
     "surprise": "Sorprendimi",
     "build": "Corporatura",
     "skin": "Pelle",
     "pickAGroup": "Scegli un gruppo di parti qui sotto.",
-    "addPart": "Aggiungi parte"
+    "addPart": "Aggiungi parte",
+    "noPreview": "Anteprima 3D non disponibile. Puoi comunque montare, modellare e colorare le parti dagli elenchi."
   },
-  "confirmEmbark": "Conferma e Parti",
-  "confirmPartyScenario": "Conferma Gruppo e Scenario",
+  "confirmEmbark": "Conferma e parti",
+  "confirmPartyScenario": "Conferma Party e scenario",
   "petKindAnimals": "Animali",
   "petKindCreatures": "Creature",
   "petKindConstructs": "Costrutti",
-  "petKindUndead": "Non Morti",
+  "petKindUndead": "Non morti",
+  "petKindAnimal": "Animale",
+  "petKindCreature": "Creatura",
+  "petKindConstruct": "Costrutto",
+  "petKindUndeadOne": "Non morto",
   "petSearchPlaceholder": "Cerca mostri famigli...",
   "petCount": "{n} mostri",
   "petNoneFound": "Nessun mostro famiglio corrisponde a questo filtro",
   "petSpecies": "Specie",
   "petClassification": "Classificazione",
-  "petMaxHp": "HP Massimi",
+  "petMaxHp": "HP massimi",
   "petCombatPower": "Potenza di combattimento",
   "petTraitsTitle": "Tratti",
   "petTraitSentient": "Senziente",
   "petTraitMagical": "Magico",
-  "petTraitGeneticFreak": "Mutante Genetico",
+  "petTraitGeneticFreak": "Mutante genetico",
   "spriteTab": {
     "monsters": "Mostri",
     "all": "Tutti",
@@ -958,17 +976,17 @@
     "military": "Militari",
     "underworld": "Malavita",
     "urban": "Urbani",
-    "nobility": "Nobilta",
+    "nobility": "Nobiltà",
     "wilderness": "Natura",
     "bards": "Bardi"
   },
   "politicalGraph": "Grafico",
   "openPoliticalGraph": "Apri il grafico politico",
-  "classProfile": "Profilo di Classe",
+  "classProfile": "Abilità di classe",
   "estimatedValue": "Valore stimato",
   "standardIssueGear": "Oggetto o equipaggiamento di serie.",
   "settings": "Impostazioni",
-  "startGame": "Inizia Partita",
+  "startGame": "Inizia partita",
   "presetLocked": "Preimpostato",
   "noBustSelected": "Nessun ritratto scelto",
   "spriteLockedHint": "Sprite preimpostato (bloccato)",
@@ -1018,15 +1036,15 @@
       "middle": "borghese",
       "wealthy": "benestante"
     },
-    "compatTitle": "Compatibilità Trasfusionale Gruppo",
+    "compatTitle": "Compatibilità trasfusionale del Party",
     "compatSelected": "Selezionato",
     "canDonate": "Può donare a:",
     "canReceive": "Può ricevere da:",
-    "noDonor": "Nessuno (Donatore incompatibile)",
-    "noRecipient": "Nessuno (Richiede donatore compatibile)",
-    "traitLabel": "Proprietà:",
-    "bloodStandard": "Sangue Standard",
-    "bloodExotic": "Sangue Esotico",
+    "noDonor": "Nessuno (donatore incompatibile)",
+    "noRecipient": "Nessuno (serve un donatore compatibile)",
+    "traitLabel": "Tratto:",
+    "bloodStandard": "Sangue standard",
+    "bloodExotic": "Sangue esotico",
     "bloodTrait": {
       "O_NEG": "🌟 Donatore Universale per tutti i soggetti standard ABO/Rh.",
       "AB_POS": "🧬 Ricevente Universale (riceve in sicurezza tutto il sangue ABO/Rh standard).",
@@ -1038,22 +1056,23 @@
     },
     "jobless": "Disoccupato",
     "joblessOption": "Nessuna",
-    "joblessShort": "Disoccupato",
-    "jobGear": "Dotazione oggetti di lavoro iniziale:",
-    "noJobGear": "Nessun equipaggiamento o strumento professionale iniziale in dotazione.",
+    "identityJob": "{class}, {job}",
+    "identityJobless": "{class} senza lavoro",
+    "jobGear": "Equipaggiamento di lavoro iniziale:",
+    "noJobGear": "Nessun equipaggiamento di lavoro iniziale.",
     "noBackstory": "Nessuna biografia registrata."
   },
   "specGenericDesc": "Competenza acquisita attraverso studio rigoroso e pratica sul campo.",
   "name": "Nome",
   "gender": "Genere",
-  "coreAttributes": "Attributi Principali",
-  "personalInventory": "Inventario Personale ed Equipaggiamento",
+  "coreAttributes": "Attributi principali",
+  "personalInventory": "Inventario personale ed equipaggiamento",
   "noPersonalEquipment": "Nessun equipaggiamento personale",
   "preset": "Preimpostato",
-  "presetDossiers": "Dossier Preimpostati",
+  "presetDossiers": "Dossier preimpostati",
   "vip": "VIP",
   "vipDossiers": "Dossier VIP",
-  "onlyOnePreset": "È ammesso un solo personaggio preimpostato nel gruppo",
+  "onlyOnePreset": "È ammesso un solo personaggio preimpostato nel Party",
   "romanceTab": "Relazioni",
   "romance": {
     "romanticOrientation": "Orientamento romantico",
@@ -1061,28 +1080,28 @@
     "kinseyScale": "Posizione sulla scala Kinsey",
     "kinseyLabel": "Kinsey",
     "style": "Stile di relazione preferito",
-    "bonds": "Rapporti con il resto del gruppo",
-    "bondsTitle": "Legami gia stretti",
-    "noBonds": "Questo personaggio non parte legato a nessuno del gruppo.",
-    "noOthers": "Non e ancora stato creato nessun altro. Aggiungi un secondo membro e qui potrai stabilire il suo rapporto con questo personaggio.",
+    "bonds": "Rapporti nel Party",
+    "bondsTitle": "Rapporti esistenti",
+    "noBonds": "Nessun legame con il Party.",
+    "noOthers": "Nessun altro membro ancora. Aggiungine uno per impostare qui il loro rapporto.",
     "ofPopulation": "della popolazione",
     "esoteric": "esoterico",
     "summaryTitle": "Registro degli affetti",
-    "summaryPara1": "<b>{name}</b> si innamora come <b>{romantic}</b> e desidera come <b>{sexual}</b>, e tiene a un modo di legarsi <b>{style}</b>.",
-    "summaryPara2": "Sulla scala Kinsey e registrato al grado <b>{kinsey}</b>:",
-    "nonSentient": "Questa creatura non ha credo, mestiere né legami. Risponde con la voce di ciò che è."
+    "summaryPara1": "<b>{name}</b> si innamora come <b>{romantic}</b> e desidera come <b>{sexual}</b>, e si attiene a un modo di legarsi <b>{style}</b>.",
+    "summaryPara2": "Sulla scala Kinsey è registrato al grado <b>{kinsey}</b>:",
+    "nonSentient": "Non senziente: niente credo, mestiere o legami."
   },
   "vehiclesTab": "Veicoli",
   "vehicleCount": "{n} selezionati",
   "vehicleOwned": "In garage",
   "vehicleFree": "Non preso",
   "vehicleKeys": "Chiavi nello zaino",
-  "vehicleNoneTaken": "Niente in garage. Parti a piedi.",
+  "vehicleNoneTaken": "Nessun veicolo. Parti a piedi.",
   "vehicleGarage": "Il tuo garage",
-  "vehicleRequired": "La modalità storia richiede un veicolo prima di partire.",
+  "vehicleRequired": "La modalità storia richiede un veicolo.",
   "vehicleTake": "Prendi questo veicolo",
   "vehicleDrop": "Lascialo indietro",
-  "classAbilities": "Abilità di Classe",
+  "classAbilities": "Abilità di classe",
   "limitBreak": "Limit break",
   "genderDesc": {
     "male": "Biologia e identità maschili tradizionali. Pronomi: lui. Legata alla biologia testicolare e all'inseminazione.",
@@ -1097,7 +1116,7 @@
   "specNumber": "Spec. #{id}",
   "itemNumber": "Oggetto #{id}",
   "petsNone": "Nessun animale",
-  "petsNoneDesc": "Parti senza nessuno alle calcagna.",
+  "petsNoneDesc": "Parti senza animale.",
   "petsSearchPlaceholder": "Cerca mostri da compagnia...",
   "petsNoneFound": "Nessun mostro da compagnia corrisponde a questo filtro",
   "petsChoose": "Scegli come animale iniziale",
@@ -1105,19 +1124,19 @@
   "pickSearch": "Cerca...",
   "pickNoResults": "Nessun risultato.",
   "description": "Descrizione",
-  "regenerateBackstory": "Riscrivi la storia",
+  "regenerateBackstory": "Rigenera la storia",
   "pickJob": "Scegli una professione",
   "pickCreed": "Scegli un credo",
-  "pickHometown": "Scegli una citta natale",
-  "pickArchetype": "Scegli una anatomia",
+  "pickHometown": "Scegli una città natale",
+  "pickArchetype": "Scegli un'anatomia",
   "pickSecondaryArchetype": "Scegli una seconda anatomia",
   "pickBond": "Scegli un legame",
   "pickClass": "Scegli una vocazione",
   "pickTraitPackage": "Scegli un tipo di persona",
   "embarkLocked": "Ogni personaggio ha bisogno di un nome e di un volto.",
-  "saveAsPreset": "Salva Come Preset",
-  "presetSavedToast": "{name} archiviato tra i tuoi dossier.",
-  "presetResaved": "Il dossier di {name} è stato riscritto.",
+  "saveAsPreset": "Salva come preset",
+  "presetSavedToast": "{name} salvato come dossier.",
+  "presetResaved": "Dossier di {name} aggiornato.",
   "patronVaultAskTitle": "Le coordinate segrete",
   "patronVaultAskWorld": "Quadrante del mondo",
   "patronVaultAskWorldHint": "79, 124",
@@ -1130,32 +1149,32 @@
   "patronVaultPickSquare": "Scegli prima uno dei quadranti salvati.",
   "padDelete": "Canc",
   "padNext": "Avanti",
-  "patronVaultWrongSquare": "Nessuna botola risponde a quelle coordinate.",
+  "patronVaultWrongSquare": "Nessuna botola a quelle coordinate.",
   "patronVaultTravelName": "Bunker del Santo Patrono",
   "floorMinusOneOfAPatronsVault": "Piano -1 di un Bunker del Santo Patrono",
   "thePatronsOwnHatch": "La botola del patrono, sulla superficie sopra",
   "locked": "Chiuso da",
   "theSecretCoordinates": "Le coordinate segrete della botola",
-  "exitToTitleTitle": "Torna al Menu Principale",
-  "exitToTitleBody": "La creazione sarà abbandonata e questo gruppo verrà scartato.",
+  "exitToTitleTitle": "Torna al menu principale",
+  "exitToTitleBody": "Questo Party verrà scartato.",
   "exitToTitleAccept": "Torna",
-  "partyPresets": "Gruppi Predefiniti",
-  "partyPresetsTitle": "Dossier di Gruppo",
-  "loadPartyPreset": "Prendi Questo Gruppo",
-  "savePartyPreset": "Salva il Gruppo Attuale",
-  "savePartyPresetBody": "Archiviare il gruppo così com'è ({name}) come dossier di gruppo tuo?",
-  "partyPresetSaved": "{name} archiviato tra i tuoi gruppi.",
+  "partyPresets": "Party preimpostati",
+  "partyPresetsTitle": "Dossier di Party",
+  "loadPartyPreset": "Carica Party",
+  "savePartyPreset": "Salva il Party attuale",
+  "savePartyPresetBody": "Salvare il Party attuale ({name}) come dossier di Party?",
+  "partyPresetSaved": "{name} salvato come Party.",
   "partyPresetResaved": "{name} riscritto.",
-  "partyPresetLoaded": "{name} ha preso i posti.",
-  "deletePartyPreset": "Elimina Gruppo",
-  "deletePartyPresetBody": "Eliminare il dossier di gruppo di {name}? L'operazione è irreversibile.",
-  "exportPreset": "Esporta Dossier",
-  "presetExported": "{name} scritto nella cartella characters.",
-  "presetExportFailed": "Non è stato possibile scrivere nella cartella characters.",
+  "partyPresetLoaded": "{name} caricato.",
+  "deletePartyPreset": "Elimina Party",
+  "deletePartyPresetBody": "Eliminare il dossier del Party di {name}? Non si può annullare.",
+  "exportPreset": "Esporta dossier",
+  "presetExported": "{name} salvato nella cartella characters.",
+  "presetExportFailed": "Impossibile scrivere nella cartella characters.",
   "lab": {
     "cancel": "Scarta",
     "cancelTitle": "Scartare questo embrione?",
-    "cancelBody": "Non crescerà nulla, e il dispositivo torna inutilizzato.",
+    "cancelBody": "Il dispositivo torna inutilizzato.",
     "confirmVat": "Avvia la crescita",
     "confirmSplice": "Impianta l'embrione"
   },
@@ -1183,7 +1202,7 @@
     "editorTitle": "Editor di scenari",
     "save": "Salva scenario",
     "saveBegin": "Salva e comincia",
-    "saved": "{name} scritto nella cartella scenarios.",
+    "saved": "{name} salvato nella cartella scenarios.",
     "saveFailed": "Impossibile scrivere nella cartella scenarios.",
     "sectionGeneral": "Scenario",
     "sectionStart": "Punto di partenza",
@@ -1218,15 +1237,15 @@
     "weeks": "{n} settimane",
     "allegiance": "Membro di",
     "allegianceWhich": "Quale",
-    "memberNote": "Un membro giurato e stimato. Mai il capo: la casata tiene il suo vertice.",
+    "memberNote": "Un membro giurato e stimato. Mai il capo.",
     "mayor": "Sindaco di",
     "nobody": "Nessun luogo",
-    "mayorNote": "Il sindaco in carica si dimette in tuo favore, e la storia del mondo lo registra. Cominci in quella città.",
+    "mayorNote": "Il sindaco in carica si dimette in tuo favore. Inizi in quella città.",
     "party": "Partito politico",
     "partyName": "Nome del partito",
     "partyUnnamed": "Il nome viene tirato a sorte",
     "creed": "Credo",
-    "partyNote": "Il mondo ospita un solo partito tuo. Se un altro salvataggio di questo mondo l'ha già fondato, ti unisci a quello.",
+    "partyNote": "Il mondo ha un solo partito tuo. Se un altro salvataggio l'ha già fondato, ti unisci a quello.",
     "faction": "Fazione fondata",
     "factionWhich": "Quale fazione",
     "factionName": "Nome della fazione",
@@ -1258,7 +1277,7 @@
       "join": "Unisciti a uno esistente"
     },
     "perk": {
-      "augments": "Dotati di potenziamenti",
+      "augments": "Dotati di innesti",
       "cards": "Una collezione di carte",
       "hyperdeck": "Un Hyperdeck completo",
       "crafting": "Maestria artigiana",

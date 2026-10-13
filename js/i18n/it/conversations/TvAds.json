@@ -22,7 +22,7 @@
     "{Chiedetevi|Fate il conto di|Calcolate} quanto vale {price}. Poi guardate {item} e richiedetevelo.",
     "{item}. {price}. Indicizzato, in dogana e {quasi certamente|pressoché certamente|molto probabilmente} legale in {realm}.",
     "Per {price}, {item}. Gratis, {la sensazione di aver aspettato troppo|la sensazione di esservi mossi tardi|il rimpianto, senza sovrapprezzo}.",
-    "{item}. Prezzo base {price}. {faction} {vorrebbe|vorrebbe tanto} che ne desideraste uno.",
+    "{item}. Prezzo base {price}. {faction} {vorrebbe|vorrebbe tanto} che ve ne venisse voglia.",
     "{Stanchi di|Stufi di|Non ne potete più di} {phenomenon}? {item}, {solo|appena|appena appena} {price}, non {vi serve a niente|risolve niente} - però è vostro.",
     "{Novità da|Appena uscito da|Appena indicizzato da} {faction}: {item}. {price}. {Stabile nel loop|A prova di reset|Omologato per le bolle}, {a loro dire|stando a loro|così dicono}.",
     "{item}, {price}, {spedito|inviato|portato} per piccione dove le bolle rendono le strade {inutili|senza senso|uno spreco di gasolio}.",
@@ -30,7 +30,7 @@
     "{item} - {price} a prezzo base, {di più|più caro|parecchio di più} appena {faction} finisce di {aggiustare|rivedere|reinterpretare} il mercato.",
     "Prendetevi {item} per {price} e dite a {person} che {ci avete pensato voi per primi|ci siete arrivati prima|l'idea è stata vostra}.",
     "{item}. {price}. Garantito {adj}. Garanzia {non riconosciuta|nulla|sospesa} {dentro una bolla|dentro una bolla di loop|dentro una delle bolle}.",
-    "Un {item}, {price}, {catalogato e indicizzato|registrato e indicizzato|protocollato e indicizzato} da {faction} prima ancora che apriste la scatola.",
+    "{item}, {price}, {catalogato e indicizzato|registrato e indicizzato|protocollato e indicizzato} da {faction} prima ancora che apriste la scatola.",
     "{item} a {price}. La scelta {adj} per chi {conta di esistere ancora|ha in programma di esistere|si aspetta di essere ancora qui} domani.",
     "{item}. {price}. Non serve a nessuno. Lo stanno comprando tutti quelli che questa antenna raggiunge.",
     "{Disponibile|Reperibile|In magazzino} presso {place} a {price}: {item}. {Chiedetelo per nome|Chiedete alla cassa|Chiedete, e continuate a chiedere}."
@@ -49,14 +49,14 @@
     "Condizioni {indicizzate|depositate|protocollate} presso {faction}. Avete accettato {guardando|non spegnendo il televisore|restando nella stanza}.",
     "{Non superate|Non andate oltre|Mai superare} gli 80 all'ora mentre trasportate questo prodotto. La bolla più vicina è {più vicina di quanto sembri|più vicina di quel che pare|più vicina di quanto ammetta la cartina}.",
     "Non contiene {ricordi|nulla che porti memoria|memoria recuperata} di {qualcun altro|altre persone}. {Probabilmente|Con ogni probabilità|Per quanto abbiano controllato}.",
-    "Reso accettato {entro un loop|nell'arco di un loop} dall'acquisto, oppure entro la {versione|edizione|copia} di voi che lo ha comprato, a seconda di quale scada prima."
+    "Reso accettato {entro un loop|nell'arco di un loop} dall'acquisto, oppure entro {la versione|l'edizione|la copia} di voi che lo ha comprato, a seconda di quale scada prima."
   ],
   "bumperOut": [
     "{Sponsor soddisfatto|Sponsor pagato|Sponsor contento}. Trasmissione ripresa. Dignità in sospeso.",
     "Ecco. {Pagato|Saldato|Sistemato}. Allora, dov'eravamo?",
     "Di nuovo in studio, e di nuovo su qualcosa di {meno commerciale e più inquietante|più economico e molto peggio|non in vendita e molto più cupo}.",
     "{Ecco fatto, i soldi|Ecco, i soldi|Ecco, il commercio}: tolti di mezzo.",
-    "E {siamo tornati|eccoci di nuovo|vi abbiamo di nuovo}. Dov'eravamo? Ah, sì. {In nessun posto bello|In nessun posto piacevole|In un posto brutto}.",
+    "{E siamo tornati|Ed eccoci di nuovo|E vi abbiamo di nuovo}. Dov'eravamo? Ah, sì. {In nessun posto bello|In nessun posto piacevole|In un posto brutto}.",
     "Quello era un messaggio. Questa è la {trasmissione|puntata|diretta}. La differenza {si sta assottigliando|si restringe|ogni settimana è più difficile da trovare}.",
     "Bene - si torna, prima che {qualcun altro compri l'antenna|qualcuno si compri il resto dell'ora|arrivi il prossimo sponsor}.",
     "Vi restituiamo a {qualunque cosa fosse|quello che stavamo facendo|la trasmissione, in senso lato}.",
@@ -66,28 +66,28 @@
   ],
   "bumperInNotice": [
     "I prossimi {novanta secondi|due minuti|sessanta secondi} sono di {faction}. {I soldi li abbiamo presi|I soldi sono stati presi|Li abbiamo incassati} {e li riprenderemmo|e li prenderemmo due volte|prima ancora di leggere il testo}.",
-    "{Prima di andare avanti|Un attimo prima di proseguire|Un momento}: {faction} si è comprata un minuto per dirvi {cosa pensare|a cosa credere|dove state}.",
+    "{Prima di andare avanti|Un attimo prima di proseguire|Un momento}: {faction} ha comprato un minuto per dirvi {cosa pensare|a cosa credere|dove state}.",
     "{faction} ha qualcosa da dire e {la concessione ci impone di trasmetterla|la nostra concessione ci obbliga a trasmetterla|le norme sulla trasparenza ci impongono di trasmetterla}.",
-    "Un {comunicato a pagamento|minuto comprato|spazio acquistato} di {faction}. {L'opinione di questa emittente|La nostra posizione|Quello che ne pensiamo noi} {non è compresa|costa a parte|non andrà in onda}.",
+    "{Un comunicato a pagamento di|Un minuto comprato da|Uno spazio acquistato da} {faction}. {L'opinione di questa emittente|La nostra posizione|Quello che ne pensiamo noi} {non è compresa|costa a parte|non andrà in onda}.",
     "{Restate dove siete|Non toccate la manopola|Lasciate stare l'apparecchio}. {faction} {si rivolge|sta per rivolgersi|parla} a {tutti quelli che questa antenna raggiunge|tutta la regione|la zona coperta da questo trasmettitore}.",
     "{Non ci è stato chiesto di essere d'accordo con quello che segue|L'accordo non era nel contratto|Nessuno ci ha chiesto cosa ne pensiamo}. {Ci hanno pagato per trasmetterlo, e nient'altro|Ci hanno pagato per trasmetterlo|Il compenso copre solo la trasmissione}.",
     "{E ora|Adesso}, un {messaggio|comunicato|avviso} di {faction}. {Il commento non è consentito|Non possiamo commentare|Ci hanno chiesto di non commentare}.",
     "{Questo prossimo minuto|Il minuto che segue|Quello che segue} è stato {comprato|acquistato|preso} da {faction} {a tariffa corrente|a tariffa piena|per una cifra oscena}.",
-    "{faction} {ha preso|ha affittato|ha requisito} l'antenna. {Ce la ridanno a breve|Torna a noi tra poco|Ci hanno promesso di restituircela}.",
+    "{faction} {ha preso|ha affittato|ha requisito} l'antenna. {Ce la ridanno a breve|L'antenna torna a noi tra poco|Ci hanno promesso di restituircela}.",
     "Quanto segue {viene trasmesso|va in onda|viene diffuso} {in base alle norme sulla trasparenza|perché le regole lo impongono|come previsto}. {faction} paga, e voi siete {i destinatari|il pubblico|il bersaglio}.",
     "{Un attimo|Un momento|State fermi}. {faction} {vuole dirvi una parola|ha una parola per voi|vi vuole parlare}, e {l'ha pagata|quella parola è pagata|è già pagata}."
   ],
   "propagandaTag": [
     "Un {messaggio|avviso|comunicato a pagamento} di {sponsor}.",
-    "{sponsor} ha pagato quel {minuto|spazio|comunicato}. {Siamo obbligati a dirvelo|La concessione ci obbliga a dirlo|Lo dobbiamo dire ad alta voce}.",
-    "Quello era {sponsor}, {che parla per sé|con parole sue|interamente con parole sue}.",
+    "{sponsor} ha pagato {quel minuto|quello spazio|quel comunicato}. {Siamo obbligati a dirvelo|La concessione ci obbliga a dirlo|Lo dobbiamo dire ad alta voce}.",
+    "Avete ascoltato {sponsor}, {che parla per sé|con parole sue|interamente con parole sue}.",
     "Trasmesso per conto di {sponsor}. {Questa emittente|La stazione|Questa antenna} {non prende posizione|non ha opinioni in merito|non è pagata per essere d'accordo}.",
     "{sponsor}. {Pagato in anticipo|Pagato per intero|Pagato in contanti, saldato}.",
     "Quanto sopra è stato {comprato|acquistato|affittato} da {sponsor} e non {rappresenta|rispecchia in alcun modo} l'opinione di {nessuno presente in questo studio|chi conduce|questo trasmettitore}.",
-    "{sponsor} {vi ricorda|vorrebbe ricordarvi|ci chiede di ricordarvi} che {guarda anche lui questo canale|guarda anche lui questa rete|sta anche lui nel pubblico}.",
+    "{sponsor} {vi ricorda|vorrebbe ricordarvi|ci chiede di ricordarvi} che {segue anche questo canale|guarda anche questa rete|sta anche nel pubblico}.",
     "{Approvato|Autorizzato|Indicizzato} per la messa in onda: {sponsor}, {testo di questa settimana|testo corrente|testo aggiornato a stamattina}.",
-    "Vi si è rivolto {sponsor}. {Non esiste un canale di risposta|Il televisore non risponde|Non rispondete al televisore}.",
-    "{sponsor}, {paga quest'antenna dal|su quest'antenna dal|compra questo spazio dal} {1992|1996|1999|2000}.",
+    "Vi ha parlato {sponsor}. {Non esiste un canale di risposta|Il televisore non risponde|Non rispondete al televisore}.",
+    "{sponsor} {paga quest'antenna dal|occupa quest'antenna dal|compra questo spazio dal} {1992|1996|1999|2000}.",
     "{sponsor} {non accetta corrispondenza|non riceve lettere|non legge lettere} {in merito|su questo|su niente di tutto ciò}."
   ],
   "propaganda": {
@@ -118,7 +118,7 @@
       "sponsor": "Umbra Excidii",
       "lines": [
         "Magia sacra e tecnomanzia sono lecite. {Tutto il resto|La pratica arcana|Qualunque cosa tirata fuori da una leyline} {finisce al rogo|è una catasta col vostro nome sopra|è un fuoco che aspetta un nome}.",
-        "Il {capanno|cantinato|orto} del vostro vicino {ronza|sa di nafta|si illumina} dopo il tramonto? {Il petrolio sta dove le leyline affiorano|Il petrolio sotto la vostra strada non è solo petrolio|Le leyline salgono dove c'è il petrolio}. {Ditelo in parrocchia|Chiamate il numero che vedete sullo schermo|Parlatene con un sacerdote}.",
+        "{Il capanno|Il cantinato|L'orto} del vostro vicino {ronza|sa di nafta|si illumina} dopo il tramonto? {Il petrolio sta dove le leyline affiorano|Il petrolio sotto la vostra strada non è solo petrolio|Le leyline salgono dove c'è il petrolio}. {Ditelo in parrocchia|Chiamate il numero che vedete sullo schermo|Parlatene con un sacerdote}.",
         "Anche noi eravamo {praticanti arcani|incantatori di linea|dannati}, un tempo. {L'Impero ci ha trovato un'utilità|Roma ha trovato il modo di usarci|Ci hanno offerto una scelta e una divisa}. {Ce n'è una aperta anche per voi|La stessa scelta è aperta a voi|È ancora aperta}.",
         "{La denuncia|La segnalazione|Denunciare} è {anonima|riservata}, {gratuita|senza spese}, e {vale come penitenza|vale un'indulgenza|conta come atto di contrizione}.",
         "{Sappiamo|L'Impero sa|Roma sa} {come comincia|come cominciano queste cose}: {una candela|un libro prestato|una parola detta al contrario}, {una brutta nottata|un inverno duro|un raccolto andato male}, {e una leyline sotto casa|e una leyline che passa sotto il pavimento}. {Venite da noi prima che ci venga il vicino|Venite con le vostre gambe|Il rogo è per chi aspetta}."
@@ -129,7 +129,7 @@
       "lines": [
         "{Una nuova|Un'altra|Un'ennesima} orda è salita dal pozzo superprofondo di Kola {questa settimana|negli ultimi otto giorni|nella notte}. {Stima|Conteggio|A occhio}: {nove|dodici|quaranta|centosei}mila{ e in aumento|, e il conteggio è indietro| e continuano a salire}.",
         "Il pozzo è profondo dodici chilometri e {non è più un pozzo|un pozzo non lo è più}. {L'hanno allargato, ed è una strada|È una strada dal 1970|È una strada, e si percorre nei due sensi}.",
-        "{Al tappo di Kola|Al Finnmark|Alla linea nord|Alla Norvegia settentrionale} è {consigliato|ordinato|chiesto} di {spostarsi a sud della linea|ritirarsi a sud|scendere a sud} e {lasciare le mandrie|lasciare il bestiame|lasciare le bestie dove sono}.",
+        "{A chi sta al tappo di Kola|A chi vive nel Finnmark|A chi sta sulla linea nord|A chi abita nella Norvegia settentrionale} {si consiglia|si ordina|si chiede} di {spostarsi a sud della linea|ritirarsi a sud|scendere a sud} e {lasciare le mandrie|lasciare il bestiame|lasciare le bestie dove sono}.",
         "{Il corpse paint|La pittura sulla faccia|Il nero sul viso} {vuol dire|è|segnala} banda da guerra, e una banda da guerra {non tratta|non si ferma davanti a una bandiera|non vi legge i documenti}. {Non salutate|Non avvicinatevi|Non fotografateli}.",
         "{Fate male a un Naguka|Colpitene uno|Ammazzate un goblin} e {entro sera lo sa tutta la specie|entro un'ora lo sa la specie intera|lo sanno tutti, ovunque}. {L'inconscio collettivo è un fatto documentato|Non è superstizione|Non è un modo di dire}.",
         "{La linea tiene|Il tappo lo teniamo noi|Il comitato tiene la linea}. {La teniamo dal 1970|Trentun anni e ancora in piedi|La teniamo da un bel pezzo}. {Per favore non andate a nord a guardare|I turisti non li recuperiamo|Chi va a vedere non lo recuperiamo}.",
@@ -144,7 +144,7 @@
         "{Assolti|Prosciolti|Dichiarati innocenti} {ieri|la settimana scorsa|in primavera}? {Il caso è stato riaperto|La causa è di nuovo aperta|Il verdetto è stato riconsiderato}. {Ci ha dormito sopra|Ci ha ripensato|Ha cambiato idea}.",
         "{Non si può appellare|Non esiste appello|Gli appelli non si discutono}. {Sopra quel banco non c'è nessuno|Quel banco è l'ultimo grado|Il trono non ascolta appelli} {dal 2001|da quando il trono è stato preso|ormai}.",
         "{Il reato richiede un testimone|Se vi vedono farlo, è reato|Nel momento in cui qualcuno vi vede, la taglia esiste}. {Niente testimone, niente taglia|Non visto è non incriminato|La legge è uno sport da spettatori}.",
-        "{La giustizia|La legge|Il banco} viene {amministrata|dispensata|distribuita} {in modo caotico e arbitrario|a umore|come viene}. {Questa è la dicitura ufficiale|È la dicitura ufficiale, non una lamentela|Stiamo citando, non commentando}.",
+        "{La giustizia|La legge|La sentenza} viene {amministrata|dispensata|distribuita} {in modo caotico e arbitrario|a umore|come viene}. {Questa è la dicitura ufficiale|È la dicitura ufficiale, parola per parola|Stiamo solo citando}.",
         "{I fantasmi giudiziari|I Suoi fantasmi|I fantasmi} {viaggiano in linea retta|non girano gli angoli|vanno dritti, sempre}. {Le porte|I muri|I portoni} {non entrano nel calcolo|non c'entrano niente|non vengono considerati}.",
         "{Sua Radiosità|La dea|Lei} {desidera si sappia|vorrebbe si sapesse|ci ha chiesto di dire} che {è equa|il sistema è equo|il banco è imparziale}, e che {chi dice il contrario scoprirà quanto|al prossimo che dice il contrario tocca una dimostrazione|il testo di questo comunicato adesso è a sua volta legge}."
       ],
@@ -166,7 +166,7 @@
       ]
     },
     "archive_disclosure": {
-      "sponsor": "Archive Foundation",
+      "sponsor": "l'Archive Foundation",
       "lines": [
         "{Tutto|Tutto quanto|L'intero registro} {deve essere pubblico|va allo scoperto|finisce nell'indice}. {I vostri messaggi|La vostra corrispondenza|Quello che avete sul telefono} {fanno|fa} parte di tutto.",
         "{Al posto di blocco|Al punto di rilievo|Alla stazione stradale}, {consegnate il telefono|consegnate l'apparecchio|esibite il dispositivo}. {Viene letto, indicizzato e restituito|Lo leggiamo, lo indicizziamo e ve lo ridiamo|Ve lo ridiamo, e lo ridiamo anche a tutti gli altri}.",
@@ -221,7 +221,7 @@
       "lines": [
         "{Cercasi volontari|Prendiamo volontari|Volontari, ancora}. {Nessun costo|A titolo gratuito|Neanche un euro} per {voi|il volontario|la famiglia}. {Addestramento fornito|Addestramento compreso|Due settimane di addestramento}.",
         "{I nuovi razzi sono corazza|Il mezzo è una corazza con dentro un sedile|Li costruiamo di corazza} {fino in fondo|strato su strato|e di poco altro}. {Sono fatti per essere distrutti|La distruzione è di progetto|Sono progettati per essere smontati} {dai detriti|dalla fascia|durante la salita}, {abbastanza lentamente|giusto abbastanza lentamente|abbastanza lentamente perché l'equipaggio arrivi in orbita}.",
-        "{La professoressa Hack|Margherita Hack|La direttrice} {lo dice chiaro|lo dice senza giri di parole|ve lo dirà lei stessa}: {il cielo è chiuso|l'orbita è chiusa|la fascia è un tritacarne}. {Da solo non si riapre|Qualcuno la deve aprire|Si apre quando la apriamo noi}.",
+        "{La professoressa Hack|Margherita Hack|La direttrice} {lo dice chiaro|lo dice senza giri di parole|ve lo dirà lei stessa}: {la strada per il cielo è chiusa|l'orbita è chiusa|la fascia è un tritacarne}. {Da sola non si riapre|Qualcuno la deve aprire|Si apre quando la apriamo noi}.",
         "{Presentatevi a GreenWitch|Taranto oppure GreenWitch|Presentatevi allo spazioporto pugliese di Taranto}. {Non portate niente|Portate i dati dei prossimi congiunti|Portate un nome per la targa}.",
         "{Dal 1999 i detriti sono aumentati|La fascia si infittisce ogni anno|La nube si è infittita dopo l'Evento Y2K}. {Ogni anno che aspettiamo si infittisce|Ad aspettare peggiora|Da sola non si pulisce}. {Noi non aspettiamo|Abbiamo smesso di aspettare|Aspettare lo abbiamo già provato}.",
         "{Nove lanci su dieci|La maggior parte dei lanci|La gran parte dei nostri lanci} {non torna|finisce male|non rientra}. {Il dato lo pubblichiamo|Il dato è pubblicato|Il dato non lo nascondiamo}. {La lista d'attesa è ancora di quattro mesi|La lista d'attesa è ancora lunga|La gente si mette in fila lo stesso}."
@@ -294,10 +294,10 @@
       ]
     },
     "midwest_freedom": {
-      "sponsor": "gli Stati Indipendenti del Midwest",
+      "sponsor": "la federazione degli Stati Indipendenti del Midwest",
       "lines": [
         "{Il centro è libero|Il Midwest è libero|Il centro del continente non risponde a nessuno}. {Cascadia si prende l'est|Cascadia ha l'est|L'est è di Cascadia}, {Britannia tiene l'ovest|l'ovest è di Britannia|il Protettorato ha l'ovest}, {e il centro è di sé stesso|e il centro è suo|e noi apparteniamo a noi}.",
-        "{Il presidente Clinton|Il Presidente|La presidenza} {saluta|porge i suoi saluti|estende i suoi saluti} {a ogni stato libero|agli stati liberi|a chiunque sia ancora libero}, {e a nessuno dentro un protettorato|e a nessuno che batta bandiera altrui|e a nessun altro}.",
+        "{Il presidente Clinton|Il Presidente|La presidenza} {manda i suoi saluti|porge i suoi saluti|estende i suoi saluti} {a ogni stato libero|agli stati liberi|a chiunque sia ancora libero}, {e a nessuno dentro un protettorato|e a nessuno che batta bandiera altrui|e a nessun altro}.",
         "{La Route 666 è aperta|La 666 corre|La strada è aperta} {da un capo all'altro|per tutta la sua lunghezza|per tutte e tre le Americhe}, {e sopra non fermiamo nessuno|e non fermiamo nessuno|e non si perquisisce nessuno}. {Provate a confrontare i valichi a nord|Provate a passare a nord|Chiedete a un autista dei valichi settentrionali}.",
         "{L'indipendenza non ce l'ha concessa nessuno|Nessuno ci ha dato l'indipendenza|Non ci è mai stata data}. {L'abbiamo dichiarata|L'abbiamo dichiarata noi|Ce la siamo presa}, {e non è mai stata riconosciuta|e da allora non è stata riconosciuta|e resta non riconosciuta}. {Regge lo stesso|Regge comunque|Regge}.",
         "{Venite a coltivare|C'è terra|La terra è qui}. {Non portate niente|Portate un aratro|Portatevi l'acqua}. {Nessuno vi chiederà cosa facevate prima|Del prima non chiede nessuno|Sul prima non facciamo domande}."
@@ -330,7 +330,7 @@
         "{Dai novanta ai cento all'ora col vento in coda|Punte di cento all'ora col vento|Cento, in discesa di vento}. {Sopra gli ottanta, e quindi fuori|Abbastanza veloce da uscire|È sopra la soglia, e di proposito}. {Una chiavetta USB non pesa niente|La chiavetta non pesa niente|Quattro grammi di chiavetta}.",
         "{Tariffe al grammo|Prezzi al grammo|Si paga a peso}. {Consegna entro un loop|Un loop, porta a porta|Entro un loop, garantito} {dove il loop si comporta bene|quando il tempo si comporta|ammesso che la giornata tenga}.",
         "{Non mangiate la posta|Per favore non mangiate gli uccelli|Gli uccelli non sono bestiame}. {La Foundation alcuni li tiene a libro paga|Alcuni di loro sono personale della Foundation|Uno di loro è più in alto di voi in gerarchia}.",
-        "{Abbiamo portato|La cooperativa ha portato|Abbiamo fatto volare} {testamenti, diagnosi, fughe d'amore e una confessione|ultime parole, diagnosi, date di matrimonio|carte giudiziarie, lettere d'amore, e di peggio}. {Non è stato letto niente|Non ne abbiamo letto niente|Non è stato aperto niente}. {Su questo Archive Foundation vorrebbe dire la sua|La Foundation obietta|Gli archivisti la vedono diversamente}."
+        "{Abbiamo portato|La cooperativa ha portato|Abbiamo fatto volare} {testamenti, diagnosi, fughe d'amore e una confessione|ultime parole, diagnosi, date di matrimonio|carte giudiziarie, lettere d'amore, e di peggio}. {Non è stato letto niente|Non ne abbiamo letto niente|Non è stato aperto niente}. {Su questo l'Archive Foundation vorrebbe dire la sua|La Foundation obietta|Gli archivisti la vedono diversamente}."
       ]
     }
   }

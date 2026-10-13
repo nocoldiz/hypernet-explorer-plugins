@@ -10,7 +10,7 @@
   "hypernetExplorer": "Hypernet Explorer",
   "logOff": "Disconnetti",
   "turnOff": "Spegni",
-  "networkEstablished": "Rete stabilita",
+  "networkEstablished": "Connessione stabilita",
   "encryptionMax": "Cifratura al massimo",
   "clockAm": "AM",
   "clockPm": "PM",
@@ -44,7 +44,7 @@
   "oomTitle": "Memoria esaurita",
   "noConnectionTitle": "Nessuna connessione",
 
-  "noConnectionMessage": "{name} non riesce a raggiungere l’Hypernet. Da qui non c’è linea.",
+  "noConnectionMessage": "{name} non raggiunge l'Hypernet da qui.",
 
   "noConnectionTray": "Nessuna connessione",
 
@@ -72,21 +72,21 @@
   "notRecognized": "'{cmd}' non è riconosciuto come comando interno o esterno, programma eseguibile o file batch.",
   "colosseum": "Iper Colosseo",
   "colosseumBanner": "IPER COLOSSEO",
-  "colosseumTagline": "Sfida a squadre casuale. Seleziona una fascia di livello.",
-  "partyRestoredNote": "Il gruppo torna com'era<br>alla fine della prova.",
+  "colosseumTagline": "Combatti con un Party casuale. Scegli una fascia di livello.",
+  "partyRestoredNote": "Il Party torna com'era<br>alla fine della prova.",
   "levelBrackets": "FASCE DI LIVELLO",
   "levelBracket": "Livello {range}",
   "eligibleVessels": {
-    "one": "{count} vascello idoneo in questa fascia",
-    "other": "{count} vascelli idonei in questa fascia"
+    "one": "{count} nemico in questa fascia",
+    "other": "{count} nemici in questa fascia"
   },
-  "randomPartyProtocol": "PROTOCOLLO GRUPPO CASUALE",
-  "protoDraft": "3 attori estratti a caso dal roster non attivo",
+  "randomPartyProtocol": "PROTOCOLLO PARTY CASUALE",
+  "protoDraft": "3 membri a caso tra chi è fuori dal Party attivo",
   "protoLevel": "Ognuno portato al livello medio della fascia (Liv.&nbsp;{level})",
-  "protoGear": "Equipaggiamento automatico dal bacino adatto alla fascia",
-  "protoHealing": "Oggetti curativi forniti per la prova",
-  "protoWin": "Vinci 7 battaglie per avanzare di fascia, se perdi finisce",
-  "protoRestore": "Il gruppo originale viene ripristinato del tutto dopo il gauntlet",
+  "protoGear": "Equipaggiamento adatto alla fascia",
+  "protoHealing": "Oggetti curativi inclusi",
+  "protoWin": "Vinci 7 battaglie per salire di fascia; una sconfitta chiude la prova",
+  "protoRestore": "Il Party viene ripristinato alla fine",
   "enterColosseum": "ENTRA NEL COLOSSEO",
   "colosseumHint": "Scegli una fascia dall'elenco, poi premi Entra nel Colosseo.",
   "bios": "Configurazione HyperDeck",
@@ -102,7 +102,7 @@
   "biosDraw": "Assorbimento / erogazione",
   "biosBoard": "Occupazione scheda",
   "biosNoDeck": "Nessun deck collegato a questo terminale.",
-  "biosNoFaults": "Nessun guasto rilevato. Ogni pezzo montato ha risposto.",
+  "biosNoFaults": "Nessun guasto rilevato.",
   "biosWillBoot": "L'avvio riuscirebbe.",
   "biosWillNotBoot": "L'avvio fallirebbe.",
   "biosGraphics": "Grafica",
@@ -205,7 +205,7 @@
   "termInfoDisk": "Disco fisso:            {size}",
   "termInfoBoot": "Avviato da:             {source}",
   "termChkdsk": [
-    "Il tipo di file system e' NTFS.",
+    "Il tipo di file system è NTFS.",
     "Controllo del file system su {drive}",
     "Verifica dei file... Verifica dei file completata.",
     "Verifica degli indici... Verifica degli indici completata.",
@@ -282,12 +282,12 @@
     "dialog": {
       "ok": "OK",
       "cancel": "Annulla",
-      "yes": "Si",
+      "yes": "Sì",
       "no": "No",
       "defaultTitle": "Archways",
       "errorTitle": "Errore",
       "cannotOpenTitle": "Archways",
-      "cannotOpenBody": "Archways non e' in grado di aprire il file:\n\n  File: {file}\n\nPer aprire il file, Archways deve sapere quale programma lo ha creato. Selezionare il programma dall'elenco.",
+      "cannotOpenBody": "Archways non è in grado di aprire il file:\n\n  File: {file}\n\nPer aprire il file, Archways deve sapere quale programma lo ha creato. Selezionare il programma dall'elenco.",
       "alwaysUse": "Usa sempre il programma selezionato per aprire questo tipo di file"
     },
     "filebox": {
@@ -316,11 +316,11 @@
       "docFiles": "Documenti Wyrd (*.md)",
       "sheetFiles": "Fogli Hexcel (*.csv)",
       "imageFiles": "Immagini (*.png)",
-      "emptyFolder": "Questa cartella e vuota.",
-      "noName": "E necessario digitare un nome file.",
+      "emptyFolder": "Questa cartella è vuota.",
+      "noName": "È necessario digitare un nome file.",
       "notFound": "{file}\nFile non trovato. Controllare il nome del file e riprovare.",
       "overwriteTitle": "Salva con nome",
-      "overwriteBody": "{file} esiste gia.\nSostituirlo?"
+      "overwriteBody": "{file} esiste già.\nSostituirlo?"
     },
     "taskbar": {
       "appName": "Barra delle applicazioni e menu Start",
@@ -332,7 +332,7 @@
       "minimizeAll": "Mostra il desktop",
       "lock": "Blocca la barra delle applicazioni",
       "autoHide": "Nascondi automaticamente la barra",
-      "properties": "Proprieta",
+      "properties": "Proprietà",
       "taskManager": "Task Manager",
       "restore": "Ripristina",
       "move": "Sposta",
@@ -344,7 +344,7 @@
       "groupOf": "{name} ({count})",
       "showHidden": "Mostra icone nascoste",
       "hideInactive": "Nascondi icone inattive",
-      "propsTitle": "Proprieta della barra delle applicazioni e del menu Start",
+      "propsTitle": "Proprietà della barra delle applicazioni e del menu Start",
       "tab": {
         "taskbar": "Barra delle applicazioni",
         "startMenu": "Menu Start"
@@ -369,24 +369,24 @@
       "riskTitle": "Il computer potrebbe essere a rischio",
       "riskText": "Potrebbe non essere installato un antivirus. Fare clic sul fumetto per risolvere il problema.",
       "unusedTitle": "Sul desktop sono presenti icone inutilizzate",
-      "unusedText": "La pulizia guidata del desktop puo' aiutare a riordinarlo. Fare clic sul fumetto per avviarla.",
+      "unusedText": "La pulizia guidata del desktop può aiutare a riordinarlo. Fare clic sul fumetto per avviarla.",
       "newHardwareTitle": "Trovato nuovo hardware",
       "newHardwareText": "{name}",
-      "hardwareReady": "Il nuovo hardware e' installato e pronto per l'uso.",
+      "hardwareReady": "Il nuovo hardware è installato e pronto per l'uso.",
       "lowDiskTitle": "Spazio su disco insufficiente",
       "lowDiskText": "Lo spazio sul Disco locale (C:) sta per esaurirsi. Per liberare spazio eliminando file vecchi o inutili, fare clic qui.",
       "tourTitle": "Fai un giro di Archways XP",
-      "tourText": "Per scoprire subito le entusiasmanti novita' di XP, fare clic qui."
+      "tourText": "Per scoprire subito le entusiasmanti novità di XP, fare clic qui."
     },
     "events": {
       "logon": "Accesso riuscito: {user}",
       "newHardware": "Nuova periferica installata: {name}",
       "taskRan": "Operazione pianificata eseguita: {name}",
       "standby": "Il sistema entra in standby.",
-      "resume": "Il sistema e' stato ripristinato dallo standby.",
+      "resume": "Il sistema è stato ripristinato dallo standby.",
       "switchUser": "Utente cambiato: {user}",
       "unlock": "Workstation sbloccata da {user}",
-      "saver": "Lo screen saver e' partito."
+      "saver": "Lo screen saver è partito."
     },
     "power": {
       "turnOffTitle": "Spegni computer",
@@ -398,24 +398,24 @@
       "logOff": "Disconnetti",
       "eventOff": "Il processo USER32 ha avviato lo spegnimento del computer.",
       "eventRestart": "Il processo USER32 ha avviato il riavvio del computer.",
-      "eventLogoff": "L'utente si e' disconnesso.",
+      "eventLogoff": "L'utente si è disconnesso.",
       "savingSettings": "Salvataggio impostazioni in corso...",
       "shuttingDown": "Arresto di Archways in corso...",
-      "safeToTurnOff": "E' ora possibile spegnere il computer."
+      "safeToTurnOff": "È ora possibile spegnere il computer."
     },
     "welcome": {
       "brand": "Archways XP",
       "hint": "Per iniziare, fare clic sul proprio nome utente",
       "locked": "Account bloccato",
       "loggedOn": "Connesso",
-      "foot": "Dopo l'accesso e' possibile aggiungere o modificare account dal Pannello di controllo, in Account utente."
+      "foot": "Dopo l'accesso è possibile aggiungere o modificare account dal Pannello di controllo, in Account utente."
     },
     "errrep": {
       "body": "{name} ha riscontrato un problema e deve essere chiuso. Ci scusiamo per l'inconveniente.\n\nSe si stava lavorando, le informazioni non salvate potrebbero andare perdute.\n\nSegnalare il problema a Omni-Lex.",
       "send": "Invia segnalazione",
       "dontSend": "Non inviare",
       "sentTitle": "Segnalazione inviata",
-      "sentText": "Grazie. Nessuno la leggera', ma e' stata archiviata.",
+      "sentText": "Grazie. Nessuno la leggerà, ma è stata archiviata.",
       "event": "Applicazione in errore {name}: {error}"
     },
     "saver": {
@@ -428,7 +428,7 @@
       "open": "Apri:",
       "browse": "Sfoglia...",
       "notFound": "Impossibile trovare '{name}'. Verificare di aver digitato correttamente il nome e riprovare.",
-      "removed": "{name} e' stato rimosso da questo computer. Reinstallarlo da Installazione applicazioni."
+      "removed": "{name} è stato rimosso da questo computer. Reinstallarlo da Installazione applicazioni."
     },
     "winver": {
       "appName": "Informazioni su Archways",
@@ -495,7 +495,7 @@
       "confirmDelete": "Eliminare il valore {name}?"
     },
     "msconfig": {
-      "appName": "Utilita' Configurazione di sistema",
+      "appName": "Utilità Configurazione di sistema",
       "tab": {
         "general": "Generale",
         "systemini": "SYSTEM.INI",
@@ -518,7 +518,7 @@
       "disableAll": "Disattiva tutto",
       "startupLocation": "HKCU\\Software\\Archways\\CurrentVersion\\Run",
       "apply": "Applica",
-      "restartPrompt": "Per rendere effettive alcune modifiche apportate da Configurazione di sistema e' necessario riavviare il computer.",
+      "restartPrompt": "Per rendere effettive alcune modifiche apportate da Configurazione di sistema è necessario riavviare il computer.",
       "restartNow": "Riavvia",
       "restartLater": "Esci senza riavviare",
       "services": [
@@ -534,7 +534,7 @@
         "Client DNS",
         "Servizio segnalazione errori",
         "Registro eventi",
-        "Compatibilita' cambio rapido utente",
+        "Compatibilità cambio rapido utente",
         "Guida in linea e supporto",
         "Servizio di indicizzazione",
         "Messenger",
@@ -547,10 +547,10 @@
         "Centro sicurezza PC",
         "Rilevamento hardware shell",
         "Servizio Ripristino configurazione",
-        "Utilita' di pianificazione",
+        "Utilità di pianificazione",
         "Telefonia",
         "Temi",
-        "Gruppo di continuita'",
+        "Gruppo di continuità",
         "Ora di Windows",
         "Configurazione zero wireless",
         "Workstation"
@@ -581,12 +581,12 @@
     },
     "cleanmgr": {
       "appName": "Pulitura disco",
-      "scanning": "Pulitura disco sta calcolando lo spazio che sara' possibile liberare su {drive}. L'operazione puo' richiedere alcuni minuti.",
+      "scanning": "Pulitura disco sta calcolando lo spazio che sarà possibile liberare su {drive}. L'operazione può richiedere alcuni minuti.",
       "tab": {
         "cleanup": "Pulitura disco",
         "more": "Altre opzioni"
       },
-      "intro": "Pulitura disco puo' liberare fino a {size} di spazio su {drive}.",
+      "intro": "Pulitura disco può liberare fino a {size} di spazio su {drive}.",
       "totalGain": "Spazio totale su disco recuperato:",
       "descDefault": "Selezionare una categoria per leggere cosa contiene.",
       "cat": {
@@ -598,26 +598,26 @@
       },
       "desc": {
         "temp": "Alcuni programmi memorizzano informazioni temporanee nella cartella TEMP. Di solito le eliminano prima di chiudersi.",
-        "inet": "La cartella File temporanei Hypernet contiene le pagine salvate sul disco per una visualizzazione piu' rapida.",
+        "inet": "La cartella File temporanei Hypernet contiene le pagine salvate sul disco per una visualizzazione più rapida.",
         "recycle": "Il Cestino contiene i file eliminati dal computer. Vengono rimossi definitivamente solo quando il Cestino viene svuotato.",
         "downloaded": "I file di programma scaricati sono controlli e applet scaricati automaticamente dall'Hypernet durante la visualizzazione di alcune pagine.",
         "logs": "File creati da Archways durante l'installazione."
       },
       "moreComponents": "Componenti di Archways",
-      "moreComponentsText": "E' possibile liberare altro spazio rimuovendo i componenti facoltativi di Archways che non si usano.",
+      "moreComponentsText": "È possibile liberare altro spazio rimuovendo i componenti facoltativi di Archways che non si usano.",
       "moreRestore": "Ripristino configurazione di sistema",
-      "moreRestoreText": "E' possibile liberare altro spazio eliminando tutti i punti di ripristino tranne il piu' recente.",
-      "restoreConfirm": "Eliminare tutti i punti di ripristino tranne il piu' recente?",
+      "moreRestoreText": "È possibile liberare altro spazio eliminando tutti i punti di ripristino tranne il più recente.",
+      "restoreConfirm": "Eliminare tutti i punti di ripristino tranne il più recente?",
       "cleanUp": "Pulitura...",
       "confirm": "Eseguire le operazioni selezionate?",
       "event": "Pulitura disco ha liberato spazio su C:."
     },
     "defrag": {
-      "appName": "Utilita' di deframmentazione dischi",
+      "appName": "Utilità di deframmentazione dischi",
       "volume": "Volume",
       "status": "Stato sessione",
       "fileSystem": "File system",
-      "capacity": "Capacita'",
+      "capacity": "Capacità",
       "freeSpace": "Spazio libero",
       "pctFree": "% spazio libero",
       "before": "Utilizzo stimato del disco prima della deframmentazione:",
@@ -638,8 +638,8 @@
       "defragmented": "Deframmentato",
       "paused": "In pausa",
       "progress": "Deframmentazione... {pct}%",
-      "shouldDefrag": "Analisi completata per: (C:)\nE' consigliabile deframmentare il volume.",
-      "noNeed": "Analisi completata per: (C:)\nNon e' necessario deframmentare il volume.",
+      "shouldDefrag": "Analisi completata per: (C:)\nÈ consigliabile deframmentare il volume.",
+      "noNeed": "Analisi completata per: (C:)\nNon è necessario deframmentare il volume.",
       "complete": "Deframmentazione completata per: (C:)",
       "reportTitle": "Rapporto di analisi",
       "report": "Volume (C:)\n  Dimensione volume = {size}\n  Spazio utilizzato = {used}\n  File totali = {files}\n  Frammentazione totale = {frag} %\n  Ultima deframmentazione = {last}",
@@ -647,7 +647,7 @@
       "event": "Deframmentazione completata su C:."
     },
     "timedate": {
-      "appName": "Proprieta' - Data e ora",
+      "appName": "Proprietà - Data e ora",
       "tab": {
         "datetime": "Data e ora",
         "zone": "Fuso orario",
@@ -659,10 +659,10 @@
       "server": "Server:",
       "defaultServer": "time.archways.com",
       "updateNow": "Aggiorna",
-      "inetNote": "La sincronizzazione e' possibile solo quando il computer e' connesso all'Hypernet.",
+      "inetNote": "La sincronizzazione è possibile solo quando il computer è connesso all'Hypernet.",
       "syncing": "Sincronizzazione con {server} in corso...",
-      "syncOk": "L'ora e' stata sincronizzata con {server} il {time}.",
-      "syncFail": "Errore durante la sincronizzazione con {server}. Il peer non e' raggiungibile.",
+      "syncOk": "L'ora è stata sincronizzata con {server} il {time}.",
+      "syncFail": "Errore durante la sincronizzazione con {server}. Il peer non è raggiungibile.",
       "apply": "Applica",
       "zones": [
         "(GMT) Ora di Greenwich: Dublino, Edimburgo, Lisbona, Londra",
@@ -694,8 +694,8 @@
       "time": "Ora:",
       "shortDate": "Data breve:",
       "longDate": "Data estesa:",
-      "location": "Localita'",
-      "locationText": "Per ricevere informazioni locali, come notizie e meteo, selezionare la localita' corrente:",
+      "location": "Località",
+      "locationText": "Per ricevere informazioni locali, come notizie e meteo, selezionare la località corrente:",
       "inputLangs": "Servizi installati",
       "inputLangsList": [
         "EN Inglese (Regno Unito) - Tastiera: Regno Unito",
@@ -759,7 +759,7 @@
       "mute": "Disattiva",
       "trayIcon": "Mostra l'icona del volume sulla barra delle applicazioni",
       "advanced": "Avanzate...",
-      "advancedBody": "Ogni cursore del mixer e' lo stesso cursore. Spostandone uno si spostano tutti. E' voluto.",
+      "advancedBody": "Ogni cursore del mixer è lo stesso cursore. Spostandone uno si spostano tutti. È voluto.",
       "speakerSettings": "Impostazioni altoparlanti",
       "speakers": [
         "Altoparlanti stereo da tavolo",
@@ -767,7 +767,7 @@
         "Altoparlante mono portatile",
         "Altoparlanti quadrifonici",
         "Altoparlanti surround 5.1",
-        "Un altoparlante, l'altro e' rotto"
+        "Un altoparlante, l'altro è rotto"
       ],
       "scheme": "Combinazione di suoni:",
       "schemes": [
@@ -808,7 +808,7 @@
       "voicePlayback": "Riproduzione voce",
       "voiceRecording": "Registrazione voce",
       "testHardware": "Prova hardware...",
-      "testHardwareBody": "L'installazione guidata chiederebbe ora di parlare nel microfono. Non c'e' nessun microfono. La prova e' superata.",
+      "testHardwareBody": "La verifica guidata dell'hardware audio chiederebbe ora di parlare nel microfono. Non c'è nessun microfono. La prova è superata.",
       "codecs": "Codec audio",
       "codecsList": [
         "CODEC ADPCM Omni-Lex",
@@ -822,7 +822,7 @@
       "apply": "Applica"
     },
     "sysdm": {
-      "appName": "Proprieta' del sistema",
+      "appName": "Proprietà del sistema",
       "tab": {
         "general": "Generale",
         "name": "Nome computer",
@@ -846,13 +846,13 @@
       "defaultWorkgroup": "HYPERGROUP",
       "networkId": "ID di rete",
       "change": "Cambia...",
-      "networkIdBody": "L'Identificazione guidata in rete unirebbe questo computer a un dominio. Non c'e' nessun dominio. C'e' a malapena una rete.",
+      "networkIdBody": "L'Identificazione guidata in rete unirebbe questo computer a un dominio. Non c'è nessun dominio. C'è a malapena una rete.",
       "renameTitle": "Cambiamenti nome computer",
-      "renameBody": "E' possibile cambiare il nome di questo computer. Le modifiche possono influire sull'accesso alle risorse di rete.",
-      "renameBad": "Il nome del computer non puo' essere vuoto. Usare lettere, numeri e trattini.",
-      "renameRestart": "Per rendere effettive le modifiche e' necessario riavviare il computer.",
+      "renameBody": "È possibile cambiare il nome di questo computer. Le modifiche possono influire sull'accesso alle risorse di rete.",
+      "renameBad": "Il nome del computer non può essere vuoto. Usare lettere, numeri e trattini.",
+      "renameRestart": "Per rendere effettive le modifiche è necessario riavviare il computer.",
       "devmgmt": "Gestione periferiche",
-      "devmgmtText": "Gestione periferiche elenca tutte le periferiche hardware installate nel computer. Usarla per modificarne le proprieta'.",
+      "devmgmtText": "Gestione periferiche elenca tutte le periferiche hardware installate nel computer. Usarla per modificarne le proprietà.",
       "drivers": "Driver",
       "driversText": "La firma dei driver consente di verificare che i driver installati siano compatibili con Archways.",
       "driverSigning": "Firma driver",
@@ -861,7 +861,7 @@
       "wupdateBody": "Archways Update non riesce a connettersi al sito. L'ultimo aggiornamento risale al 1 gennaio 2000 e da allora nessuno ha toccato il sito.",
       "profiles": "Profili hardware",
       "profilesText": "I profili hardware consentono di impostare e memorizzare configurazioni hardware diverse.",
-      "profilesBody": "Profilo 1 (corrente) su {name}\n\nC'e' un solo profilo. Ce ne sara' sempre uno solo.",
+      "profilesBody": "Profilo 1 (corrente) su {name}\n\nC'è un solo profilo. Ce ne sarà sempre uno solo.",
       "performance": "Prestazioni (effetti visivi)",
       "fxAnimate": "Anima le finestre quando vengono ridotte a icona o ingrandite",
       "fxShadows": "Mostra ombreggiature sotto finestre e menu",
@@ -875,53 +875,53 @@
       "autoReboot": "Riavvia automaticamente in caso di errore di sistema",
       "envVars": "Variabili d'ambiente",
       "errorReporting": "Segnalazione errori",
-      "errrepBody": "E' possibile segnalare gli errori software a Omni-Lex per contribuire a migliorare i prodotti futuri.",
+      "errrepBody": "È possibile segnalare gli errori software a Omni-Lex per contribuire a migliorare i prodotti futuri.",
       "errrepDisable": "Disattiva la segnalazione errori",
-      "restoreOff": "Disattiva Ripristino configurazione di sistema su tutte le unita'",
-      "restoreDrives": "Impostazioni unita'",
+      "restoreOff": "Disattiva Ripristino configurazione di sistema su tutte le unità",
+      "restoreDrives": "Impostazioni unità",
       "monitoring": "Monitoraggio",
       "turnedOff": "Disattivato",
       "diskUsage": "Spazio su disco da usare:",
-      "restorePoints": "Punti di ripristino su questa unita': {n}",
+      "restorePoints": "Punti di ripristino su questa unità: {n}",
       "createPoint": "Crea un punto di ripristino",
       "pointDescription": "Descrizione del punto di ripristino:",
-      "pointCreated": "Il nuovo punto di ripristino e' stato creato. Non ripristinera' nulla, ma esiste.",
-      "updatesIntro": "Proteggi il PC. Archways puo' cercare regolarmente aggiornamenti importanti e installarli.",
+      "pointCreated": "Il nuovo punto di ripristino è stato creato. Non ripristinerà nulla, ma esiste.",
+      "updatesIntro": "Proteggi il PC. Archways può cercare regolarmente aggiornamenti importanti e installarli.",
       "updAuto": "Automatico (scelta consigliata)",
       "updDownload": "Scarica gli aggiornamenti, ma lascia che sia io a scegliere quando installarli",
       "updNotify": "Avvisa senza scaricare o installare automaticamente",
       "updOff": "Disattiva Aggiornamenti automatici",
       "remoteAssist": "Consenti l'invio di inviti di Assistenza remota da questo computer",
       "remoteDesktop": "Consenti agli utenti di connettersi in remoto al computer",
-      "remoteNote": "Nome completo computer: {host}. Nessuno si connettera'.",
+      "remoteNote": "Nome completo computer: {host}. Nessuno si connetterà.",
       "apply": "Applica"
     },
     "devmgmt": {
       "appName": "Gestione periferiche",
-      "properties": "Proprieta'",
+      "properties": "Proprietà",
       "disable": "Disattiva / Attiva",
       "scan": "Rileva modifiche hardware",
       "updateDriver": "Aggiorna driver...",
       "count": "{n} periferiche",
       "propsBody": "{name}\n\nTipo periferica: come elencato\nProduttore: {vendor}\nPercorso: su questa macchina\n\nStato periferica:\n{status}",
       "statusOk": "La periferica funziona correttamente.",
-      "statusDisabled": "La periferica e' disattivata. (Codice 22)",
-      "disableConfirm": "Disattivando la periferica, questa smettera' di funzionare. Disattivare {name}?",
+      "statusDisabled": "La periferica è disattivata. (Codice 22)",
+      "disableConfirm": "Disattivando la periferica, questa smetterà di funzionare. Disattivare {name}?",
       "eventDisabled": "Periferica disattivata: {name}",
       "eventEnabled": "Periferica attivata: {name}",
       "scanning": "Rilevamento modifiche hardware...",
       "scanDone": "Nessun nuovo hardware trovato.",
-      "updateBody": "L'Aggiornamento guidato hardware ha cercato un driver migliore per {name}. Il driver installato e' gia' il migliore che ci sara' mai.",
+      "updateBody": "L'Aggiornamento guidato hardware ha cercato un driver migliore per {name}. Il driver installato è già il migliore che ci sarà mai.",
       "catComputer": "Computer",
       "devStandardPc": "PC standard",
       "devDeck": "Clamshell Hyperdeck",
-      "catDisk": "Unita' disco",
+      "catDisk": "Unità disco",
       "devDisk": "Disco fisso {vendor} ({size})",
       "catDisplay": "Schede video",
-      "catOptical": "Unita' DVD/CD-ROM",
-      "devCdrom": "Unita' CD-ROM 52x",
-      "catFloppy": "Unita' floppy",
-      "devFloppy": "Unita' floppy 3.5\" 1.44 MB",
+      "catOptical": "Unità DVD/CD-ROM",
+      "devCdrom": "Unità CD-ROM 52x",
+      "catFloppy": "Unità floppy",
+      "devFloppy": "Unità floppy 3.5\" 1.44 MB",
       "catIde": "Controller IDE ATA/ATAPI",
       "devIdePrimary": "Canale IDE primario",
       "devIdeSecondary": "Canale IDE secondario",
@@ -957,7 +957,7 @@
       "addNew": "Aggiungi nuovi programmi",
       "components": "Installa/Rimuovi componenti di Windows",
       "componentsList": [
-        "Accessori e utilita'",
+        "Accessori e utilità",
         "Servizi fax",
         "Servizio di indicizzazione",
         "Hypernet Explorer",
@@ -987,11 +987,11 @@
       "install": "Installa",
       "nothingToAdd": "Tutti i programmi sono installati.",
       "cdOrFloppy": "CD o floppy",
-      "cdBody": "Inserire il primo floppy o il CD-ROM di installazione del prodotto e fare clic su Avanti. Non c'e' un lettore in cui inserirlo.",
-      "componentsIntro": "Per aggiungere o rimuovere un componente, selezionare la casella. Una casella ombreggiata indica che sara' installata solo una parte del componente.",
+      "cdBody": "Inserire il primo floppy o il CD-ROM di installazione del prodotto e fare clic su Avanti. Non c'è un lettore in cui inserirlo.",
+      "componentsIntro": "Per aggiungere o rimuovere un componente, selezionare la casella. Una casella ombreggiata indica che sarà installata solo una parte del componente.",
       "next": "Avanti",
-      "componentsDone": "Archways ha terminato la configurazione dei componenti. Non e' cambiato nulla di visibile. E' previsto.",
-      "defaultsIntro": "Una configurazione dei programmi specifica i programmi predefiniti per alcune attivita', come la navigazione Web o la posta, e quali programmi sono accessibili dal menu Start, dal desktop e da altri percorsi.",
+      "componentsDone": "Archways ha terminato la configurazione dei componenti. Non è cambiato nulla di visibile. È previsto.",
+      "defaultsIntro": "Una configurazione dei programmi specifica i programmi predefiniti per alcune attività, come la navigazione Web o la posta, e quali programmi sono accessibili dal menu Start, dal desktop e da altri percorsi.",
       "defaultsArchways": "Predefiniti di Archways",
       "defaultsNonArchways": "Non Archways (non ce ne sono)",
       "defaultsCustom": "Personalizzata",
@@ -1003,17 +1003,17 @@
       "restore": "Ripristina",
       "delete": "Elimina",
       "empty": "Svuota Cestino",
-      "properties": "Proprieta'",
+      "properties": "Proprietà",
       "name": "Nome",
       "origin": "Percorso originale",
       "deleted": "Data eliminazione",
-      "emptyList": "Il Cestino e' vuoto.",
+      "emptyList": "Il Cestino è vuoto.",
       "count": "{n} oggetto/i",
       "deleteConfirm": "Eliminare definitivamente '{name}'?",
       "emptyConfirm": "Eliminare questi {n} elementi?",
-      "eventEmptied": "Il Cestino e' stato svuotato.",
-      "propsTitle": "Proprieta' - Cestino",
-      "propsBody": "Dimensione massima del Cestino: {size} MB (10% dell'unita' C:)",
+      "eventEmptied": "Il Cestino è stato svuotato.",
+      "propsTitle": "Proprietà - Cestino",
+      "propsBody": "Dimensione massima del Cestino: {size} MB (10% dell'unità C:)",
       "propsConfirm": "Visualizza la finestra di conferma eliminazione"
     },
     "search": {
@@ -1061,25 +1061,25 @@
         "antivirus": "Protezione antivirus"
       },
       "on": "ATTIVO",
-      "off": "DISATTIVO",
+      "off": "DISATTIVATO",
       "turnOn": "Attiva",
       "turnOff": "Disattiva",
       "text": {
         "firewallOn": "Firewall Archways ATTIVO. Nessuno stava cercando di entrare.",
-        "firewallOff": "Firewall Archways DISATTIVO. Il computer potrebbe essere a rischio dall'Hypernet. Fare clic su Attiva per proteggerlo.",
-        "updatesOn": "Aggiornamenti automatici ATTIVI. Non trovera' aggiornamenti, ma li cerchera'.",
-        "updatesOff": "Aggiornamenti automatici disattivati. Il computer e' piu' vulnerabile a virus e altre minacce.",
-        "antivirusOn": "Norton Antivenom 2001 e' installato e aggiornato. L'ultimo file delle definizioni e' del 1 gennaio 2000.",
+        "firewallOff": "Firewall Archways DISATTIVATO. Il computer potrebbe essere a rischio dall'Hypernet. Fare clic su Attiva per proteggerlo.",
+        "updatesOn": "Aggiornamenti automatici ATTIVI. Non troverà aggiornamenti, ma li cercherà.",
+        "updatesOff": "Aggiornamenti automatici disattivati. Il computer è più vulnerabile a virus e altre minacce.",
+        "antivirusOn": "Norton Antivenom 2001 è installato e aggiornato. L'ultimo file delle definizioni è del 1° gennaio 2000.",
         "antivirusOff": "Archways non ha trovato un antivirus su questo computer. Un antivirus aiuta a proteggere il computer da virus e altre minacce."
       },
-      "noAntivirus": "Nessun antivirus installato. Archways fara' finta che ce ne sia uno, che e' comunque quello che facevano quasi tutti.",
+      "noAntivirus": "Nessun antivirus installato. Archways farà finta che ce ne sia uno, che è comunque quello che facevano quasi tutti.",
       "alertSettings": "Modifica il modo in cui Centro sicurezza PC avvisa",
-      "alertBody": "Centro sicurezza PC puo' avvisare quando il computer potrebbe essere a rischio.",
+      "alertBody": "Centro sicurezza PC può avvisare quando il computer potrebbe essere a rischio.",
       "alertBalloons": "Mostra i fumetti di avviso nell'area di notifica",
       "event": "{item} impostato su {state}"
     },
     "desk": {
-      "appName": "Proprieta' - Schermo",
+      "appName": "Proprietà - Schermo",
       "tab": {
         "themes": "Temi",
         "desktop": "Desktop",
@@ -1087,7 +1087,7 @@
         "appearance": "Aspetto",
         "settings": "Impostazioni"
       },
-      "themesIntro": "Un tema e' uno sfondo piu' un insieme di suoni, icone e altri elementi per personalizzare il computer con un solo clic.",
+      "themesIntro": "Un tema è uno sfondo più un insieme di suoni, icone e altri elementi per personalizzare il computer con un solo clic.",
       "previewTitle": "Finestra attiva",
       "previewBody": "Testo finestra",
       "scheme": {
@@ -1135,7 +1135,7 @@
       },
       "effects": "Effetti...",
       "advanced": "Avanzate",
-      "advancedBody": "Aspetto avanzato: ogni colore qui e' il colore che e' gia'.",
+      "advancedBody": "Aspetto avanzato: ogni colore qui è il colore che è già.",
       "display": "Schermo: {name}",
       "resolution": "Risoluzione dello schermo:",
       "resolutionValue": "{w} per {h} pixel",
@@ -1157,19 +1157,19 @@
         "Alt+Tab passa da una finestra all'altra. Tenere premuto Alt e continuare a premere Tab.",
         "Ctrl+Esc apre il menu Start. Esc lo chiude.",
         "Digitando calc, notepad o charmap in Esegui si apre il programma.",
-        "I file eliminati da Risorse del computer restano nel Cestino finche' non viene svuotato.",
-        "Lo screen saver parte dopo l'attesa impostata nelle Proprieta' dello schermo.",
-        "Win+L blocca la workstation; la schermata iniziale elenca il gruppo.",
+        "I file eliminati da Risorse del computer restano nel Cestino finché non viene svuotato.",
+        "Lo screen saver parte dopo l'attesa impostata nelle Proprietà dello schermo.",
+        "Win+L blocca la workstation; la schermata iniziale elenca il Party.",
         "Il Visualizzatore eventi annota tutto quello che fa la macchina.",
-        "Avviata dall'Hyperdeck, la macchina ha le parti montate sulla scheda.",
-        "I blocchi colorati del deframmentatore erano la cosa piu' vicina a un gioco su quasi tutte le macchine da ufficio."
+        "Sull'Hyperdeck, l'hardware sono le parti montate sulla scheda.",
+        "I blocchi colorati del deframmentatore erano la cosa più vicina a un gioco su quasi tutte le macchine da ufficio."
       ],
       "topics": {
         "tour": {
           "title": "Fai un giro di Archways XP",
           "body": [
-            "Archways XP e' il sistema operativo dell'Hyperdeck e di ogni desktop beige del 2001 a cui il gruppo si siede.",
-            "Il menu Start contiene tutti i programmi, ordinati per voce. La colonna destra ha i posti visitati piu' spesso.",
+            "Archways XP gira sull'Hyperdeck e su ogni desktop del 2001.",
+            "Il menu Start contiene tutti i programmi, ordinati per voce. La colonna destra ha i posti visitati più spesso.",
             "I programmi si aprono in finestre; la barra delle applicazioni mostra ogni finestra aperta e l'area di notifica cosa sta facendo la macchina."
           ]
         },
@@ -1185,43 +1185,43 @@
           "body": [
             "Alt+Tab cambia finestra. Alt+F4 chiude quella attiva, o spegne la macchina se non ce ne sono.",
             "Ctrl+Esc apre il menu Start. Ctrl+Maiusc+Esc e Ctrl+Alt+Canc aprono Task Manager.",
-            "Win+D mostra il desktop, Win+M riduce tutto a icona, Win+E apre Risorse del computer, Win+F cerca, Win+L blocca, Win+Pausa apre Proprieta' del sistema.",
+            "Win+D mostra il desktop, Win+M riduce tutto a icona, Win+E apre Risorse del computer, Win+F cerca, Win+L blocca, Win+Pausa apre Proprietà del sistema.",
             "F1 apre questa finestra, F3 la ricerca, Stamp copia lo schermo negli Appunti."
           ]
         },
         "hardware": {
           "title": "La macchina a cui siete seduti",
           "body": [
-            "Quando l'Hyperdeck avvia il desktop, le parti montate sulla scheda sono l'hardware: memoria, processore, scheda video, disco, modem e scheda audio sono letti dal deck, e Proprieta' del sistema, Gestione periferiche e Pannello di controllo concordano.",
-            "Raggiunto da qualsiasi altro posto, il desktop gira su una macchina di serie del 2001, generata una volta per mondo e conservata."
+            "Sull'Hyperdeck, l'hardware sono le parti montate sulla scheda: memoria, processore, scheda video, disco, modem e scheda audio.",
+            "Altrove, il desktop gira su una macchina di serie del 2001, fissa per ogni mondo."
           ]
         },
         "recycle": {
           "title": "Il Cestino",
           "body": [
-            "Un file eliminato da Risorse del computer va nel Cestino, dove ricorda la cartella da cui viene. Si puo' ripristinare, eliminare per sempre o svuotare il cestino.",
-            "Il DEL del prompt dei comandi e' una cancellazione vera, come sempre."
+            "Un file eliminato da Risorse del computer va nel Cestino, dove ricorda la cartella da cui viene. Si può ripristinare, eliminare per sempre o svuotare il cestino.",
+            "Il DEL del prompt dei comandi è una cancellazione vera, come sempre."
           ]
         },
         "security": {
           "title": "Centro sicurezza PC",
           "body": [
             "Il fumetto che dice che il computer potrebbe essere a rischio viene dal Centro sicurezza PC. I suoi tre interruttori (firewall, aggiornamenti, antivirus) sono tutti spenti su un'installazione nuova.",
-            "Accendendoli il fumetto smette. Non cambia altro, com'era allora."
+            "Attivandoli, il fumetto sparisce. Non cambia altro, com'era allora."
           ]
         },
         "saver": {
           "title": "Screen saver",
           "body": [
-            "Le Proprieta' dello schermo scelgono lo screen saver e l'attesa. Ci sono Campo stellare, Mistero, Testo scorrevole, Bezier e Tubi piatti.",
+            "Le Proprietà dello schermo scelgono lo screen saver e l'attesa. Ci sono Campo stellare, Mistero, Testo scorrevole, Bezier e Tubi piatti.",
             "Qualsiasi tasto o clic lo interrompe."
           ]
         },
         "power": {
           "title": "Spegnere",
           "body": [
-            "Spegni offre Standby, Spegni e Riavvia. Standby oscura il pannello finche' non si preme un tasto. Riavvia riporta su il desktop.",
-            "Disconnetti offre Cambia utente: i membri del gruppo sono gli account di questa macchina."
+            "Spegni offre Standby, Spegni e Riavvia. Standby oscura il pannello finché non si preme un tasto. Riavvia riporta su il desktop.",
+            "Disconnetti offre Cambia utente: i membri del Party sono gli account di questa macchina."
           ]
         }
       }
@@ -1264,8 +1264,8 @@
       "clear": "Cancella tutti gli eventi",
       "clearConfirm": "Cancellare il registro?",
       "saveAs": "Salva file di registro con nome...",
-      "saved": "Il registro e' stato salvato in {path}.",
-      "eventProps": "Proprieta' evento",
+      "saved": "Il registro è stato salvato in {path}.",
+      "eventProps": "Proprietà evento",
       "detail": "Tipo: {level}\nData: {date}\nOrigine: {source}\n\nDescrizione:\n{text}"
     },
     "netstat": {
@@ -1279,15 +1279,15 @@
       "connected": "Connesso",
       "disconnected": "Disconnesso",
       "duration": "Durata:",
-      "speed": "Velocita':",
+      "speed": "Velocità:",
       "kbps": "{n} Kbps",
       "mbps": "{n} Mbps",
       "noLink": "Nessuna scheda",
-      "activity": "Attivita'",
+      "activity": "Attività",
       "sent": "Inviati",
       "received": "Ricevuti",
       "packets": "Pacchetti:",
-      "properties": "Proprieta'",
+      "properties": "Proprietà",
       "propsBody": "Connetti tramite: {name}\n\nLa connessione utilizza gli elementi seguenti:\n  Client per reti Archways\n  Condivisione file e stampanti\n  Protocollo Hypernet (TCP/IP)",
       "disable": "Disattiva",
       "disconnect": "Disconnetti",
@@ -1299,7 +1299,7 @@
       "subnet": "Subnet mask:",
       "gateway": "Gateway predefinito:",
       "repair": "Ripristina",
-      "repairBody": "Archways ha rinnovato il lease, svuotato una cache, ri-registrato un nome e segnalato successo. La connessione e' come prima."
+      "repairBody": "Archways ha rinnovato il lease, svuotato una cache, ri-registrato un nome e segnalato successo. La connessione è come prima."
     },
     "minesweeper": {
       "appName": "Cercamine",
@@ -1331,7 +1331,7 @@
       "moves": "Mosse: {n}",
       "won": "Tutti e quattro i mazzi sono completi.",
       "wonTitle": "Solitario",
-      "noMove": "La carta non puo andare li."
+      "noMove": "La carta non può andare lì."
     },
     "folderopt": {
       "appName": "Opzioni cartella",
@@ -1359,25 +1359,25 @@
       },
       "buttonConfig": "Configurazione pulsanti",
       "swap": "Scambia i pulsanti primario e secondario",
-      "doubleSpeed": "Velocita del doppio clic",
+      "doubleSpeed": "Velocità del doppio clic",
       "slow": "Lenta",
       "fast": "Veloce",
       "motion": "Movimento",
-      "pointerSpeed": "Selezionare la velocita del puntatore",
+      "pointerSpeed": "Selezionare la velocità del puntatore",
       "trails": "Visualizza scia del puntatore",
       "snapTo": "Sposta sul pulsante predefinito nelle finestre di dialogo"
     },
     "keyboard": {
       "appName": "Tastiera",
       "tab": {
-        "speed": "Velocita"
+        "speed": "Velocità"
       },
       "repeat": "Ripetizione caratteri",
       "repeatDelay": "Ritardo di ripetizione",
-      "repeatRate": "Velocita di ripetizione",
+      "repeatRate": "Velocità di ripetizione",
       "long": "Lungo",
       "short": "Breve",
-      "cursorBlink": "Velocita intermittenza cursore",
+      "cursorBlink": "Velocità intermittenza cursore",
       "none": "Nessuna",
       "test": "Fare clic qui e tenere premuto un tasto per provare",
       "slow": "Lenta",
@@ -1391,7 +1391,7 @@
       "current": "Connesso",
       "noParty": "Questo computer ha un solo account.",
       "changeType": "Cambia il tipo di account",
-      "changed": "{name} ora e un {type}."
+      "changed": "{name} ora è un {type}."
     },
     "printers": {
       "appName": "Stampanti e fax",
@@ -1399,20 +1399,20 @@
       "add": "Aggiungi stampante",
       "added": "Stampante a impatto aeterico",
       "status": "Pronta",
-      "installed": "{name} e installata e pronta."
+      "installed": "{name} è installata e pronta."
     },
     "netconn": {
       "appName": "Connessioni di rete",
       "dialup": "Accesso remoto",
-      "lan": "LAN o Internet ad alta velocita",
+      "lan": "LAN o Internet ad alta velocità",
       "connected": "Connesso",
       "disconnected": "Non connesso",
       "speedOf": "{speed}",
       "detailsTitle": "Stato di {name}",
-      "detailsBody": "Stato: {status}\nDurata: {duration}\nVelocita: {speed}\n\nPacchetti inviati: {sent}\nPacchetti ricevuti: {received}"
+      "detailsBody": "Stato: {status}\nDurata: {duration}\nVelocità: {speed}\n\nPacchetti inviati: {sent}\nPacchetti ricevuti: {received}"
     },
     "access": {
-      "appName": "Opzioni accessibilita",
+      "appName": "Opzioni accessibilità",
       "tab": {
         "keyboardTab": "Tastiera",
         "displayTab": "Schermo"
@@ -1441,33 +1441,33 @@
       "ok": "OK",
       "notConnected": "Non connessa",
       "none": "Nessuna periferica di gioco collegata.",
-      "attached": "{name} e collegata."
+      "attached": "{name} è collegata."
     },
     "allprograms": {
       "appName": "Tutti i programmi",
-      "hint": "Ogni programma che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
-      "empty": "Ogni programma e' gia' sul desktop.",
+      "hint": "Trascina un programma sul desktop per aggiungerlo. Riporta qui il collegamento per toglierlo.",
+      "empty": "Ogni programma è già sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     },
     "programs": {
       "appName": "Programmi",
-      "hint": "Ogni programma che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
-      "empty": "Ogni programma e' gia' sul desktop.",
+      "hint": "Trascina un programma sul desktop per aggiungerlo. Riporta qui il collegamento per toglierlo.",
+      "empty": "Ogni programma è già sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     },
     "games": {
       "appName": "Giochi",
-      "hint": "Ogni gioco che non e' sul desktop. Trascinane uno sul desktop per tenerlo li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporlo.",
-      "empty": "Ogni gioco e' gia' sul desktop.",
+      "hint": "Trascina un gioco sul desktop per aggiungerlo. Riporta qui il collegamento per toglierlo.",
+      "empty": "Ogni gioco è già sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     },
     "utilities": {
       "appName": "Utilità",
-      "hint": "Ogni utilità che non e' sul desktop. Trascinane una sul desktop per tenerla li'; trascina un collegamento del desktop qui dentro, o nel Cestino, per riporla.",
-      "empty": "Ogni utilità e' gia' sul desktop.",
+      "hint": "Trascina un'utilità sul desktop per aggiungerla. Riporta qui il collegamento per toglierla.",
+      "empty": "Ogni utilità è già sul desktop.",
       "open": "Apri",
       "addToDesktop": "Aggiungi al desktop"
     }

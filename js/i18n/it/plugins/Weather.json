@@ -23,7 +23,7 @@
     "kmh": "{n} km/h",
     "outlook": "Previsioni a cinque giorni",
     "precip": "{n}% precip.",
-    "disclaimer": "Le previsioni sono tirate dalle tabelle stagionali e dal calendario. Il cielo non deve loro niente.",
+    "disclaimer": "Le previsioni possono sbagliare.",
     "months": [
       "Gen",
       "Feb",

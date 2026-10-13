@@ -9,8 +9,8 @@
   "earnings": "Earnings:",
   "yes": "Yes",
   "no": "No",
-  "insufficientGold": "Insufficient gold!",
-  "insufficientTokens": "Insufficient tokens!",
+  "insufficientGold": "Not enough money!",
+  "insufficientTokens": "Not enough tokens!",
   "msg": {
     "notConfigured": "Token Converter is not configured correctly.",
     "error": "Token Converter Error. Check Console.",

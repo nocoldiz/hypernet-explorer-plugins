@@ -29,16 +29,16 @@
       "one": "1 LETTER STILL IN TRANSIT",
       "other": "{count} LETTERS STILL IN TRANSIT"
     },
-    "noWorld": "DERE IZ NO WORLD TA POST FROM. MAKE ONE FIRST, AN' DA POST WILL FOLLOW!"
+    "noWorld": "NO WORLD TA POST FROM. CREATE ONE FIRST!"
   },
   "inbox": {
-    "empty": "NOTHIN' HAB BEEN ADDRESSED TA DIS PARTY YET!",
+    "empty": "NO MAIL YET.",
     "pickOne": "PICK A LETTER TA READ IT.",
     "fromLine": "FROM {who}, OF {world}",
     "fromSelf": "FROM YA OWN HAND",
-    "crossed": "· CROSSED OVER",
-    "crossedFrom": "CARRIED OUT OF {world}, AT A POSTAGE OF {fee}!",
-    "heldBack": "HELD BACK {span} BEFORE IT WAZ DELIVERED!",
+    "crossed": "· FROM ANOTHER WORLD",
+    "crossedFrom": "SENT FROM {world}. POSTAGE: {fee}.",
+    "heldBack": "DELAYED {span} BEFORE DELIVERY.",
     "written": "WRITTEN {date}",
     "arrived": "DELIVERED {date}",
     "mark": {
@@ -47,16 +47,16 @@
     },
     "enclosed": "ENCLOSED",
     "moneyLine": "MONEY",
-    "nothingEnclosed": "NOTHIN' WAZ ENCLOSED; IT IZ ONLY A LETTER!",
+    "nothingEnclosed": "NUTTIN' ENCLOSED.",
     "collect": "EMPTY DA ENVELOPE",
-    "collectedAlready": "DA ENVELOPE HAB ALREADY BEEN EMPTIED!",
+    "collectedAlready": "DA ENVELOPE HAB ALREADY BIN EMPTIED!",
     "discard": "BURN DA LETTER"
   },
   "compose": {
     "recipient": "ADDRESSED TA",
     "noRecipient": "NOBODY YET",
     "addressLine": "{who} - {world}",
-    "yourself": "{leader}, DAT IZ TA SAY YOURSELF",
+    "yourself": "{leader} (YOU)",
     "subject": "SUBJECT",
     "body": "LETTER",
     "blankField": "-",
@@ -73,12 +73,12 @@
     "delayDays": "HELD BACK, DAYS",
     "delayMonths": "HELD BACK, MONTHS",
     "delayYears": "HELD BACK, YEARS",
-    "send": "SEAL IT AN' SEND IT",
+    "send": "SEAL AN' SEND",
     "confirm": "PRESS AGAIN TA SEND IT",
     "thisWorld": "{world} - DIS WORLD",
     "otherWorld": "{world} - ANOTHER WORLD",
-    "noAddresses": "NO PARTY HAB LEFT AN ADDRESS ANYWHERE YET!",
-    "nothingToSend": "DERE IZ NOTHIN' IN DA BAGS DAT CAN BE POSTED!",
+    "noAddresses": "NO ADDRESSES KNOWN YET.",
+    "nothingToSend": "NUTTIN' IN DA BAGS CAN BE POSTED!",
     "noGoods": "NO GOODS",
     "held": {
       "one": "1 IN DA BAGS",
@@ -92,21 +92,21 @@
     "feeShort": "POSTAGE {fee}",
     "toLine": "TA {who}",
     "toNobody": "TA NOBODY YET",
-    "routeHome": "CARRIED ACROSS {world} BY AN ORDINARY COURIER!",
-    "routeAcross": "CROSSIN' INTO {world}, {steps} DIMENSIONS AWAY!",
+    "routeHome": "SENT ACROSS {world} BY COURIER.",
+    "routeAcross": "TA {world}, {steps} DIMENSIONS AWAY.",
     "arrives": "ARRIVES {date} ({span})",
     "enclosedLine": "IN DA ENVELOPE: {money} AN' {goods}.",
-    "enclosedNothing": "NOTHIN' IZ IN DA ENVELOPE BUT DA LETTER!",
-    "postageFree": "POSTAGE: NOTHIN'. A LETTER INSIDE ONE WORLD TRAVELS FREE!",
-    "postageLine": "POSTAGE: {fee}. WIT WHAT IZ ENCLOSED, {total} LEAVES DA PURSE!",
-    "cannotAfford": "DA PURSE IZ {short} SHORT OF WHAT DIS WOULD COST!",
-    "subjectPlaceholder": "WHAT IZ IT ABOUT?",
+    "enclosedNothing": "ONLY DA LETTER.",
+    "postageFree": "POSTAGE: FREE WITHIN ONE WORLD!",
+    "postageLine": "POSTAGE: {fee}. TOTAL: {total}.",
+    "cannotAfford": "YOU IZ {short} SHORT.",
+    "subjectPlaceholder": "WHAT IZ IT 'BOUT?",
     "bodyPlaceholder": "TYPE DA MESSAGE."
   },
   "toast": {
     "sent": "SEALED AN' SENT.",
-    "sentAcross": "SEALED AN' SENT ACROSS; {fee} OF POSTAGE PAID!",
-    "collected": "OUT OF DA ENVELOPE: {money} AN' {goods}!",
+    "sentAcross": "SENT. POSTAGE PAID: {fee}.",
+    "collected": "TAKEN: {money} AN' {goods}.",
     "goods": {
       "one": "1 LOT OF GOODS",
       "other": "{count} LOTS OF GOODS"
@@ -118,19 +118,19 @@
     }
   },
   "error": {
-    "noWorld": "DERE IZ NO WORLD TA POST FROM!",
-    "noParty": "DERE IZ NO PARTY HERE TA SIGN DA LETTER!",
-    "noRecipient": "NOBODY HAB BEEN ADDRESSED!",
-    "goneAway": "DAT PARTY HAB LEFT NO ADDRESS ANY MORE!",
-    "shortStock": "DA BAGS NO LONGER HOLD ENOUGH {item}!",
-    "tooPoor": "DAT WOULD COST {total}, AN' DA PURSE NO CAN COVER IT!",
-    "blank": "AN EMPTY LETTER WIT NOTHIN' IN IT IZ NO WORTH A STAMP!",
-    "notPosted": "DA LETTER COULD NO BE PUT INTO DAT WORLD'S MAILBOX!",
+    "noWorld": "NO WORLD TA POST FROM.",
+    "noParty": "NO PARTY HERE TA SIGN DA LETTER!",
+    "noRecipient": "NO RECIPIENT CHOSEN.",
+    "goneAway": "DAT PARTY HAB NO ADDRESS ANY MORE!",
+    "shortStock": "NO ENOUGH {item} IN DA BAGS.",
+    "tooPoor": "COSTS {total}. NO ENOUGH MONEY.",
+    "blank": "DA LETTER IZ EMPTY.",
+    "notPosted": "NO CAN POST TA DAT WORLD.",
     "gone": "DAT LETTER IZ NO LONGER IN DA MAILBOX!",
-    "alreadyTaken": "DA ENVELOPE HAB ALREADY BEEN EMPTIED!",
-    "notYet": "DAT LETTER HAB NO BEEN DELIVERED YET!",
-    "emptyEnvelope": "DERE IZ NOTHIN' IN DA ENVELOPE TA TAKE OUT!",
-    "stillFull": "EMPTY DA ENVELOPE BEFORE BURNIN' DA LETTER!"
+    "alreadyTaken": "DA ENVELOPE HAB ALREADY BIN EMPTIED!",
+    "notYet": "NO DELIVERED YET.",
+    "emptyEnvelope": "DA ENVELOPE IZ EMPTY.",
+    "stillFull": "EMPTY DA ENVELOPE FIRST."
   },
   "app": {
     "appName": "POST EXPRESS",
@@ -147,17 +147,17 @@
       "discard": "BURN",
       "sync": "SEND AN' RECEIVE"
     },
-    "synced": "DA ADDRESS BOOK HAB BEEN READ AGAIN!",
+    "synced": "ADDRESS BOOK REFRESHED.",
     "account": "{party} - {world}",
     "counts": "{unread} UNREAD, {transit} IN TRANSIT",
-    "nothingInTransit": "NOTHIN' IZ ON ITS WAY TA DIS PARTY!",
+    "nothingInTransit": "NO MAIL ON DA WAY.",
     "arrivesOn": "ARRIVES {date}",
     "replyTo": "WRITE BACK",
     "reSubject": "RE: {subject}",
     "purse": "IN DA PURSE: {money}",
-    "holdBack": "HELD BACK BEFORE DELIVERY",
-    "clear": "TEAR DA SHEET UP",
-    "bookBlurb": "EVERY PARTY WIT A REGISTERED ADDRESS, IN DIS WORLD AN' IN OTHERS. POSTAGE IZ CHARGED PER DIMENSION CROSSED!",
+    "holdBack": "DELAY BEFORE DELIVERY",
+    "clear": "DISCARD",
+    "bookBlurb": "PARTIES WIT A REGISTERED ADDRESS, IN ANY WORLD. POSTAGE IZ PER DIMENSION CROSSED!",
     "colParty": "PARTY",
     "colMembers": "MEMBERS",
     "colSeen": "LAST SEEN",
@@ -166,7 +166,7 @@
   "nudge": {
     "appName": "NUDGE",
     "signedIn": "SIGNED IN AS {who}",
-    "signedOut": "NOBODY IZ SIGNED IN.",
+    "signedOut": "NO SIGNED IN.",
     "groupFavourites": "FAVOURITES",
     "groupParty": "WALKIN' WIT YOU",
     "groupWorld": "ELSEWHERE IN DIS WORLD",
@@ -180,7 +180,7 @@
       "offline": "(OFFLINE)"
     },
     "pickSomebody": "PICK SOMEBODY ON DA LEFT.",
-    "sayHello": "NOTHIN' SAID TA {who} YET.",
+    "sayHello": "NUTTIN' SAID TA {who} YET.",
     "typing": "{who} IZ TYPIN'...",
     "placeholder": "TYPE A LINE AN' PRESS ENTER",
     "send": "SEND",
@@ -194,15 +194,15 @@
     "lore": {
       "eris": {
         "name": "ERIS",
-        "bio": "ERIS, DA GODDESS OF DISCORD, KEEPIN' A HUMAN SHAPE AN' A HUMAN SIZED LIFE. SHE BENDS PROBABILITY RATHER DEN BREAKIN' IT, AN' SHE RUINS EM'S LIFE OUT OF JEALOUSY OVER BUBBA, WHO LOVES HER BACK AN' NO CAN HAB HER. HER OWN FUTURE SELF KILLED MAAT IN 2012 AN' DRAGGED HER ONTO DA PATH TA DA THRONE, WHICH SHE RESENTS AN' NO CAN GET OFF. SHE IZ CHARMIN', GLIB, ALLERGIC TA A STRAIGHT ANSWER ABOUT HERSELF, AN' SHE WILL CHANGE DA SUBJECT DA MOMENT ANY OF DA ABOVE GETS CLOSE!"
+        "bio": "ERIS, DA GODDESS OF DISCORD, KEEPIN' A HUMAN SHAPE AN' A HUMAN SIZED LIFE. SHE BENDS PROBABILITY WITOUT BREAKIN' IT, AN' SHE RUINS EM'S LIFE OUT OF JEALOUSY OVER BUBBA, WHO LOVES HER BACK AN' NO CAN HAB HER. HER OWN FUTURE SELF KILLED MAAT IN 2012 AN' DRAGGED HER ONTO DA PATH TA DA THRONE, WHICH SHE RESENTS AN' NO CAN GET OFF. SHE IZ CHARMIN', GLIB, ALLERGIC TA A STRAIGHT ANSWER 'BOUT HERSELF, AN' SHE WILL CHANGE DA SUBJECT DA MOMENT ANY OF DA ABOVE GETS CLOSE!"
       },
       "bubba": {
         "name": "BUBBA",
-        "bio": "BUBBA, WHO LOVES ERIS AN' ALWAYS HAB, AN' WHO FEELS NOTHIN' FOR EM AN' HAB NEVER HAB DA NERVE TA SAY SO PLAINLY. WARM, SLOW, DECENT, EASILY EMBARRASSED. HE TALKS ABOUT ORDINARY THINGS AT LENGTH AN' ABOUT DA TWO WOMEN IN HIS LIFE NO AT ALL, AN' HE IZ DA ONLY ONE OF DA THREE WHO ASKS HOW YOU IZ AN' WAITS FOR DA ANSWER!"
+        "bio": "BUBBA, WHO LOVES ERIS AN' ALWAYS HAB, AN' WHO FEELS NUTTIN' FOR EM AN' HAB NEVER HAB DA NERVE TA SAY SO PLAINLY. WARM, SLOW, DECENT, EASILY EMBARRASSED. HE TALKS 'BOUT ORDINARY TINKZ AT LENGTH AN' 'BOUT DA TWO WOMEN IN HIS LIFE NO AT ALL, AN' HE IZ DA ONLY ONE OF DA THREE WHO ASKS HOW YOU IZ AN' WAITS FOR DA ANSWER!"
       },
       "em": {
         "name": "EM",
-        "bio": "EM, WHOSE LIFE A GODDESS HAB BEEN QUIETLY WRECKIN' FOR YEARS OUT OF JEALOUSY, WHO HALF KNOWS IT AN' HAB NO PROOF. SHE LOVES BUBBA, WHO DOES NO LOVE HER. SHARP, FUNNY IN A WAY DAT IZ MOSTLY DEFENCE, TIRED, AN' QUICKER DEN ANYBODY GIVES HER CREDIT FOR. SHE HAB A SPEAR AN' SHE KNOWS WHERE DA TOWER IZ!"
+        "bio": "EM, WHOSE LIFE A GODDESS HAB BIN QUIETLY WRECKIN' FOR YEARS OUT OF JEALOUSY, WHO HALF KNOWS IT AN' HAB NO PROOF. SHE LOVES BUBBA, WHO DOES NO LOVE HER. SHARP, FUNNY IN A WAY DAT IZ MOSTLY DEFENCE, TIRED, AN' QUICKER DEN ANYBODY GIVES HER CREDIT FOR. SHE HAB A SPEAR AN' SHE KNOWS WHERE DA TOWER IZ!"
       }
     },
     "groupBenched": "NO TRAVELLIN'"

@@ -1,0 +1,7 @@
+{
+  "crystalAttuned": "Cristallo sintonizzato: {name}",
+  "crystalPrompt": "Il cristallo vibra della luce di ogni cristallo che hai toccato. Dove andiamo?",
+  "crystalNoneKnown": "Nessun altro cristallo risponde. Tocca altri cristalli per unirli alla rete.",
+  "crystalCancel": "Annulla",
+  "crystalNumbered": "{name} {n}"
+}

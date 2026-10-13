@@ -512,6 +512,8 @@
     Scene_Title.prototype.createCommandWindow = function () {
         _Scene_Title_createCommandWindow.call(this);
         this._commandWindow.setHandler('defaultStart', this.commandDefaultStart.bind(this));
+        this._commandWindow.setHandler('storyDebug', this.commandStoryDebug.bind(this));
+        this._commandWindow.setHandler('forceNewStory', this.commandForceNewStory.bind(this));
         this._commandWindow.setHandler('quickContinue', this.commandQuickContinue.bind(this));
         this._commandWindow.setHandler('storymode', this.commandStoryMode.bind(this));
         this._commandWindow.setHandler('sandboxGame', this.commandSandboxGame.bind(this));
@@ -599,6 +601,48 @@
         start();
     };
 
+    // Story debug, playtest only: a story run on the editor's start position,
+    // past Em's wizard, with Em at STORY_DEBUG_LEVEL and Bubba in the party.
+    const STORY_DEBUG_LEVEL = 10;
+    const STORY_DEBUG_STORY_SWITCH = 48;  // "StoryMode"
+    const STORY_DEBUG_BUBBA_SWITCH = 49;  // "BubbaInParty"
+
+    Scene_Title.prototype.commandStoryDebug = function () {
+        this._commandWindow.close();
+        this.fadeOutAll();
+        const start = () => {
+            DataManager.setupNewGame();
+            $gameSwitches.setValue(STORY_MODE_SWITCH, true);
+            skipStoryStartNight();
+            const join = window.CCPresetJoin;
+            if (!join || !join.startStoryDebugParty || !join.startStoryDebugParty(STORY_DEBUG_LEVEL)) {
+                console.error('[Titlescreen] Story debug could not seat Em and Bubba');
+            }
+            // Raised last, after the dossier stamp has switched the others off.
+            $gameSwitches.setValue(STORY_DEBUG_STORY_SWITCH, true);
+            $gameSwitches.setValue(STORY_DEBUG_BUBBA_SWITCH, true);
+            SceneManager.goto(Scene_Map);
+        };
+        if (!hasActiveWorld()) {
+            createDefaultWorld().then(start).catch(e => {
+                console.error('[Titlescreen] World creation failed', e);
+                SoundManager.playBuzzer();
+                this._commandWindow.open();
+                this.startFadeIn(this.slowFadeSpeed(), false);
+            });
+            return;
+        }
+        start();
+    };
+
+    // Force new story, playtest only: every story-mode savegame is erased and
+    // a new story run begins from the start, whatever the band held.
+    Scene_Title.prototype.commandForceNewStory = function () {
+        this._commandWindow.close();
+        this.fadeOutAll();
+        beginFreshStory(true);
+    };
+
     // One-click Continue: resumes the single most recently written save (the
     // shared autosave, a playthrough slot or a quicksave, whichever is
     // newest) without going through the Reconnect slot picker.
@@ -669,10 +713,21 @@
     // landing and asks for the wizard itself (switch 100 is what the tutorial
     // map would have raised).
     Scene_Title.prototype.startStoryRun = function () {
-        DataManager.setupNewGame();
-        beginStoryRunTransfer();
-        SceneManager.goto(Scene_Map);
+        openStoryRun(() => {
+            DataManager.setupNewGame();
+            beginStoryRunTransfer();
+            SceneManager.goto(Scene_Map);
+        });
     };
+
+    // A new story opens on the intro movie, and the run (the new game, the
+    // landing and Em's creation wizard) is only begun once it ends: a run set
+    // up underneath it left the movie a black screen.
+    function openStoryRun(run) {
+        const SM = window.StartinMovie;
+        if (SM && SM.beforeStory) SM.beforeStory(run);
+        else run();
+    }
 
     function beginStoryRunTransfer() {
         const landing = storyModeLanding();
@@ -1147,6 +1202,12 @@
                                            : String(a.label).localeCompare(String(b.label)));
     }
 
+    // The intro movie's dice faces, each with the vector gun shape it gives.
+    function introDiceFaces() {
+        const SM = window.StartinMovie;
+        return SM && SM.diceFaces ? SM.diceFaces() : [];
+    }
+
     function timeModeId(name, fallback) {
         const modes = window.SkyRenderer && window.SkyRenderer.TIME_MODES;
         return (modes && typeof modes[name] === 'number') ? modes[name] : fallback;
@@ -1178,6 +1239,7 @@
             { name: T('Titlescreen.minigame.chess'),                   avail: () => hasCmd('ChessGame', 'startNormalChess'), run: s => PluginManager.callCommand(s, 'ChessGame', 'startNormalChess', {}) },
             { name: T('Titlescreen.minigame.bowling'),                 avail: () => hasScene('Scene_BowlingMinigame'),   run: s => SceneManager.push(window.Scene_BowlingMinigame) },
             { name: T('Titlescreen.minigame.basketball'),              avail: () => hasScene('Scene_BasketballMinigame'), run: s => SceneManager.push(window.Scene_BasketballMinigame) },
+            { name: T('Titlescreen.minigame.pizza'),                   avail: () => !!(window.PizzaMaker3D && window.Scene_PizzaMaker3D), run: s => window.PizzaMaker3D.open({ mode: 'free' }) },
             { name: T('Titlescreen.minigame.fishing'),                 avail: () => hasScene('Scene_FishingMinigame'),   run: s => SceneManager.push(window.Scene_FishingMinigame), setup: true, biomeSetup: true },
             { name: T('Titlescreen.minigame.slotMachine'),            avail: () => hasScene('Scene_SlotMachine'),       run: s => SceneManager.push(window.Scene_SlotMachine) },
             { name: T('Titlescreen.minigame.horseRace'),              avail: () => hasScene('Scene_HorseRace'),         run: s => SceneManager.push(window.Scene_HorseRace) },
@@ -1207,7 +1269,10 @@
             // fare and comes down nowhere, so the arrival pops back to this list
             // instead of transferring a party that is standing on no map.
             { name: T('Titlescreen.minigame.rocketLaunch'),           avail: () => !!(window.RocketLaunch && window.RocketLaunch.start), run: s => window.RocketLaunch.start({ site: 'ask', mode: 'ask', dest: 'ask', freePlay: true }) },
-            { name: T('Titlescreen.minigame.piano'),                   avail: () => !!(window.VisualPiano && window.VisualPiano.open), run: s => launchPiano(s) }
+            { name: T('Titlescreen.minigame.piano'),                   avail: () => !!(window.VisualPiano && window.VisualPiano.open), run: s => launchPiano(s) },
+            // The movie a new story opens with, watched again on its own: it
+            // rolls its own dice and comes back to this list when it ends.
+            { name: T('Titlescreen.minigame.introMovie'),              avail: () => !!(window.StartinMovie && window.StartinMovie.canPlay && window.StartinMovie.canPlay()), run: s => window.StartinMovie.play({ face: s._pendingFace }), diceSetup: true }
         ];
         // A catalogue this long is only findable in one order, and it is not the
         // order it was written in: the list is dealt alphabetically in whatever
@@ -1339,6 +1404,13 @@
                     rows: liminalVehicles().map(v => T(v.label))
                 };
             }
+            if (this._mode === 'dice') {
+                return {
+                    title: T('Titlescreen.minigameSetup.diceTitle'),
+                    rows: [T('Titlescreen.minigameSetup.diceRandom')].concat(introDiceFaces().map(f =>
+                        T('Titlescreen.minigameSetup.diceFace', { face: f.face, name: f.name })))
+                };
+            }
             return {
                 title: T('Titlescreen.menuOverlay.minigames'),
                 rows: this._entries.map(e => e.name)
@@ -1354,7 +1426,7 @@
         // The catalogue and the biome page are long enough to need a grid;
         // the other setup pages are a handful of answers in one column.
         isGridMode() {
-            return this._mode === 'list' || this._mode === 'biome';
+            return this._mode === 'list' || this._mode === 'biome' || this._mode === 'dice';
         }
 
         createUIOverlay() {
@@ -1550,6 +1622,15 @@
                 this.openLiminalDestinationPicker();
                 return;
             }
+            if (this._mode === 'dice') {
+                // Row 0 is a roll; the rest are faces 1 to 20.
+                this._pendingFace = this._selectedIndex > 0 ? this._selectedIndex : null;
+                const entry = this._entries[this._pendingEntry];
+                this._mode = 'list';
+                this._selectedIndex = this._pendingEntry;
+                if (entry) this.launchEntry(entry);
+                return;
+            }
             if (this._mode === 'venue') {
                 this._pendingVenue = WATER_VENUES[this._selectedIndex].venue;
                 this.gotoPage(this.pendingAsksBiome() ? 'biome' : 'time');
@@ -1598,6 +1679,13 @@
                 this.gotoPage('vehicle');
                 return;
             }
+            // The intro movie asks what the Dice of Yaldabaoth lands on.
+            if (entry && entry.diceSetup) {
+                this._pendingEntry = index;
+                this._pendingFace = null;
+                this.gotoPage('dice');
+                return;
+            }
             this.launchEntry(entry);
         }
 
@@ -1632,7 +1720,7 @@
                 this.gotoPage('venue');
                 return;
             }
-            if (this._mode === 'vehicle' || this._mode === 'venue') {
+            if (this._mode === 'vehicle' || this._mode === 'venue' || this._mode === 'dice') {
                 this._mode = 'list';
                 this._selectedIndex = this._pendingEntry >= 0 ? this._pendingEntry : 0;
                 this.refreshOverlay();
@@ -1772,27 +1860,60 @@
             if (this._camperStarted) return;
             this._camperStarted = true;
             const sys = window.VoxelWorldSystem;
+            const onExit = () => {
+                if (this._exiting) return;
+                this._exiting = true;
+                this.popScene();
+            };
+            // Back from a scene pushed over free play (a body searched opens
+            // Scene_BodyPartHarvest): the engine builds a fresh instance of
+            // this scene on the pop, and the world it left running underneath
+            // is picked up where the party stood rather than raised again at
+            // the start square. Only its way out is pointed at this instance.
+            const kept = Scene_CamperFreeplay._world;
+            if (kept && sys && sys.isActive && sys.isActive() && sys._scene === kept && !kept._disposed) {
+                kept._onStandaloneExit = onExit;
+                return;
+            }
+            Scene_CamperFreeplay._world = null;
             // Null when the world could not be raised at all: without it this
             // scene is an empty black screen whose only way out is the callback
             // that is never going to come.
             const drive = sys && sys.startStandalone
-                ? sys.startStandalone(() => {
-                    if (this._exiting) return;
-                    this._exiting = true;
-                    this.popScene();
-                }, MinigameArcade.liminal() || {})
+                ? sys.startStandalone(onExit, MinigameArcade.liminal() || {})
                 : null;
             if (!drive) {
                 this._exiting = true;
                 this.popScene();
+                return;
             }
+            Scene_CamperFreeplay._world = drive;
+        }
+        // The world says whether it is back on its own ground through this
+        // (VoxelWorldScene._isHostScene): a world suspended for a pushed scene
+        // comes back up once this scene is current again.
+        hostsVoxelWorld() { return true; }
+        // A scene pushed OVER free play is not free play being left: the engine
+        // terminates this scene on a push as well as on a pop, and stopping the
+        // world here used to throw the whole walk away and raise a new one at
+        // the start square on the way back. A push leaves this scene's class
+        // on top of the stack; anything else (the pop out, a goto) is the end.
+        static isPushedOver() {
+            const stack = (typeof SceneManager !== 'undefined' && SceneManager._stack) || [];
+            return stack.length > 0 && stack[stack.length - 1] === Scene_CamperFreeplay;
         }
         terminate() {
             super.terminate();
             const sys = window.VoxelWorldSystem;
+            if (!this._exiting && Scene_CamperFreeplay.isPushedOver() &&
+                sys && sys.isActive && sys.isActive() && sys._scene === Scene_CamperFreeplay._world) {
+                return;
+            }
+            Scene_CamperFreeplay._world = null;
             if (sys && sys.isActive && sys.isActive()) sys.stop();
         }
     }
+    Scene_CamperFreeplay._world = null;
     window.Scene_CamperFreeplay = Scene_CamperFreeplay;
 
 
@@ -1977,8 +2098,21 @@
     }
 
     function beginStoryPlaytest() {
+        return beginFreshStory(false);
+    }
+
+    // Wipes the story band (and, with allSaves, the story's quicksaves too),
+    // begins a new story run and writes its savegame before the map is handed
+    // over. Shared by the playtest boot and the Force new story entry.
+    function beginFreshStory(allSaves) {
+        openStoryRun(() => setUpFreshStory(allSaves));
+    }
+
+    function setUpFreshStory(allSaves) {
         const SS = window.SaveSystem;
-        const erase = (SS && SS.eraseStoryBand) ? SS.eraseStoryBand() : Promise.resolve();
+        const erase = (SS && SS.eraseStoryBand)
+            ? SS.eraseStoryBand(allSaves ? { quicksaves: true } : undefined)
+            : Promise.resolve();
         const WM = window.WorldManager;
         const world = (WM && WM.hasActiveWorld && WM.hasActiveWorld())
             ? Promise.resolve()
@@ -1996,7 +2130,7 @@
         }).then(() => {
             SceneManager.goto(Scene_Map);
         }).catch((e) => {
-            console.error('[Titlescreen] story playtest boot failed', e);
+            console.error('[Titlescreen] fresh story start failed', e);
             SceneManager.goto(Scene_Title);
         });
     }
@@ -2121,6 +2255,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     if (isPlaytestLaunch()) {
         this.addCommand(T('Titlescreen.menu.defaultStart'), 'defaultStart');
+        this.addCommand(T('Titlescreen.menu.storyDebug'), 'storyDebug');
+        this.addCommand(T('Titlescreen.menu.forceNewStory'), 'forceNewStory');
     }
 
     this.addCommand(T('Titlescreen.menu.quickContinue'), 'quickContinue',
@@ -2150,26 +2286,33 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // -------------------------------------------------------------------------
     // Title music
     //
-    // The title always plays Beethoven's Ninth, in one of the versions that
-    // ship under audio/bgm/Classical: each arrival draws a version, then one of
-    // that version's cues. A version with no measured cues starts at the top.
+    // The title plays one of the classical pieces that ship under
+    // audio/bgm/Classical: Beethoven's Ninth in its versions, Dvorak's New
+    // World finale, the Blue Danube or the 1812 Overture. Each arrival draws a
+    // track, then one of that track's cues. A track with no measured cues
+    // starts at the top.
     // -------------------------------------------------------------------------
     // i18n-ignore-start  bgm tracks, named after their file
     const TITLE_MUSIC_NINTH = 'Classical/Ludwig van Beethoven - symphony no. 9 in d minor, op. 125 - iv. finale';
+    const TITLE_MUSIC_NINTH_NEW_WORLD = "Classical/Antonin Dvorak - symphony no. 9 in e minor 'from the new world', op. 95 - iv. al";
+    const TITLE_MUSIC_BLUE_DANUBE = 'Classical/Johann Strauss jr - The Blue Danube, Op. 314';
     const TITLE_MUSIC_VERSIONS = [
         TITLE_MUSIC_NINTH,
         'Classical/Beethoven - Ode to Joy (Concert Band)',
         'Classical/Beethoven - Ode to Joy Allegro',
+        TITLE_MUSIC_NINTH_NEW_WORLD,
+        'Classical/Pyotr Ilyich Tchaikovsky - 1812 overture',
+        TITLE_MUSIC_BLUE_DANUBE,
     ];
     // i18n-ignore-end
 
     // Where a long piece may start, in seconds into its file. The title is not
-    // long enough to wait out a twenty minute movement for its climax, so the
-    // piece opens on one of these, drawn each time it starts. Each was found
-    // by a 100 ms loudness pass over the recording: it sits inside one of the
-    // score's real pauses, under -40 dB, half a second to a second before the
-    // entry, so the title comes in out of silence and the music arrives on its
-    // own cue. Re-measure them if a file is ever replaced.
+    // long enough to wait out a long movement for its climax, so the piece
+    // opens on one of these, drawn each time it starts. Each was found by a
+    // loudness pass over the recording: it sits inside one of the score's real
+    // pauses, under -40 dB, just before the entry, so the title comes in out
+    // of silence and the music arrives on its own cue. Re-measure them if a
+    // file is ever replaced.
     const TITLE_MUSIC_MOMENTS = {
         // Horenstein, Pro Musica Symphony Orchestra and Choir, 1956. Public
         // domain on Wikimedia Commons as "04 Horenstein 9. Beethoven Pantheon
@@ -2183,6 +2326,29 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             1168.0,  // 19:28 the pause before the coda (19:28.9)
             1303.6,  // 21:43 out of the silence into the Prestissimo (21:44.3)
         ],
+        // Allegro con fuoco, 11:43. The movement hardly stops, so its pauses
+        // are short: each cue sits in a gap under -40 dB found by a 20 ms
+        // pass, the entry right after it.
+        [TITLE_MUSIC_NINTH_NEW_WORLD]: [
+            0,       // 0:00  the rising semitones of the opening
+            20.7,    // 0:20  the break before the horns and trumpets theme (0:21.1)
+            101.1,   // 1:41  the hush before the clarinet's second theme
+            191.7,   // 3:11  out of a gap into the full orchestra (3:11.9)
+            324.3,   // 5:24  the pause inside the development (5:25.0)
+            390.9,   // 6:30  out of a gap into the full orchestra (6:31.1)
+        ],
+        // 12:51. The waltzes are parted by real silences of a second or two,
+        // under -50 dB; each cue sits half a second before the next entry.
+        [TITLE_MUSIC_BLUE_DANUBE]: [
+            0,       // 0:00  the tremolo opening
+            97.6,    // 1:37  the long pause before the next strain (1:38.3)
+            185.5,   // 3:05  the long pause before the next strain (3:06.1)
+            343.1,   // 5:43  the pause before the next strain (5:43.7)
+            459.0,   // 7:39  the pause before the next strain (7:40.1)
+            564.0,   // 9:24  the full silence before the next strain (9:24.6)
+            604.5,   // 10:04 the pause before the next strain (10:05.1)
+            675.1,   // 11:15 the pause before the next strain (11:15.7)
+        ],
     };
 
     function titleMusicStart(value) {
@@ -2195,7 +2361,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return TITLE_MUSIC_VERSIONS[Math.floor(Math.random() * TITLE_MUSIC_VERSIONS.length)];
     }
 
-    // The title BGM is always a version of the Ninth, drawn afresh each time
+    // The title BGM is always one of the classical pieces, drawn afresh each time
     // and started on one of its cues.
     Scene_Title.prototype.playTitleBgm = function () {
         const name = titleMusicVersion();
@@ -3226,10 +3392,15 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         const itemNouns = T.list('Titlescreen.artifact.itemNouns');
         const weaponNouns = T.list('Titlescreen.artifact.weaponNouns');
         const armorNouns = T.list('Titlescreen.artifact.armorNouns');
+        // A language that agrees the adjective (Italian) ships the feminine
+        // list, index for index, and names the nouns that take it.
+        const adjectivesFem = T.has('Titlescreen.artifact.adjectivesFem') ? T.list('Titlescreen.artifact.adjectivesFem') : [];
+        const nounGender = T.has('Titlescreen.artifact.nounGender') ? (T.obj('Titlescreen.artifact.nounGender') || {}) : {};
 
         const make = (id, nounList, kind) => {
-            const adj = adjectives[Math.floor(sRand() * adjectives.length)];
+            const adjIdx = Math.floor(sRand() * adjectives.length);
             const noun = nounList[Math.floor(sRand() * nounList.length)];
+            const adj = (nounGender[noun] === 'f' ? adjectivesFem[adjIdx] : null) || adjectives[adjIdx];
             const obj = {
                 id, name: T('Titlescreen.artifact.nameFormat', { adj, noun }), note: '<category: artifact>',
                 price: 2500000 + Math.floor(sRand() * 500000), iconIndex: 245
@@ -5831,7 +6002,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // The title keeps its own music: the map is watched in silence.
         wrap(AudioManager, ['playBgm', 'playBgs', 'playMe', 'playSe', 'playStaticSe',
             'stopBgm', 'stopBgs', 'stopMe', 'stopSe', 'stopAll', 'fadeOutBgm', 'fadeOutBgs',
-            'fadeOutMe', 'fadeInBgm', 'fadeInBgs', 'replayBgm', 'replayBgs'], undefined);
+            'fadeOutMe', 'fadeInBgm', 'fadeInBgs', 'replayBgm', 'replayBgs',
+            // The MUSH channels (weather on 4, spatial beds, voice clips) are
+            // played past the stock calls above.
+            'playMushBgm', 'playMushBgs', 'continueMushBgm', 'continueMushBgs', 'playVsc'], undefined);
         wrap(window.ParchmentToast, ['show'], undefined);
         // The keyboard, pad and mouse belong to the title menu.
         wrap(Input, ['isPressed', 'isTriggered', 'isRepeated', 'isLongPressed'], false);
@@ -6050,7 +6224,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                     if (this._released) return false;
                     DataManager._lastLoadedSavefileId = slot;
                     DataManager.createGameObjects();
-                    DataManager.extractSaveContents(contents);
+                    // Its rain and spatial beds stay off the title.
+                    erisSilently(() => DataManager.extractSaveContents(contents));
                     DataManager.correctDataErrors();
                     // onAfterLoad replays the BGM the save was made on: the
                     // title keeps its own music.
@@ -6310,14 +6485,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // Top-left build badge (VersionText parameter)
         this.createVersionBadge();
 
-        // English / Italian flags, docked under the badge
-        // Language flags, docked under the badge. The selector is drawn only
+        // Language flags, docked under the background switcher. The selector is drawn only
         // while the game is not pinned to a single language.
         if (!(window.HendrixLocalization && window.HendrixLocalization.isLocked && window.HendrixLocalization.isLocked())) {
             this.createLanguageSelector();
         }
 
-        // Update notice under the flags, plus the launch check that fills it in
+        // Update notice under the badge, plus the launch check that fills it in
         this.createUpdateButton();
         this.beginUpdateCheck();
 
@@ -6765,19 +6939,19 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     };
 
     // Every metric in design pixels, and the panel is hung off the measured
-    // bottom of the build badge so it follows it whatever the badge says (an
-    // empty VersionText hides the badge and the selector takes its corner).
+    // bottom of the background switcher in the top-right column, so it follows
+    // it whatever the switcher says (no switcher: it takes the corner).
     Scene_Title.prototype.layoutLanguageSelector = function () {
         const box = this._languageBox;
         if (!box) return;
         const rect = TitleLayout.rect();
         const s = TitleLayout.scale(rect);
-        const badge = this._versionBadge;
-        const badgeRect = badge ? badge.getBoundingClientRect() : null;
-        const below = badgeRect && badgeRect.height > 0
-            ? (badgeRect.bottom - rect.top) / s + 8
-            : 18; // no badge: take the corner inset itself
-        TitleLayout.place(box, { left: 18, top: Math.round(below) });
+        const sw = this._bgSwitchButton;
+        const swRect = sw ? sw.getBoundingClientRect() : null;
+        const below = swRect && swRect.height > 0
+            ? (swRect.bottom - rect.top) / s + 8
+            : 18; // no switcher: take the corner inset itself
+        TitleLayout.place(box, { right: 18, top: Math.round(below) });
         // The flags are 3:2, the ratio they are all drawn at; the whole strip
         // is sized off --title-scale in the stylesheet.
     };
@@ -6839,7 +7013,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return (typeof url === 'string' && url) ? url : FULL_GAME_FALLBACK;
     };
 
-    // Docked under the language flags, the way they are docked under the badge.
+    // Docked under the build badge.
     Scene_Title.prototype.createUpdateButton = function () {
         const stale = document.getElementById('title-update');
         if (stale && stale.parentNode) stale.parentNode.removeChild(stale);
@@ -7136,14 +7310,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         fadeIn();
     };
 
-    // Hung off the measured bottom of the language panel, so it follows however
-    // many flags the build ships.
+    // Hung off the measured bottom of the build badge (the flags live in the
+    // top-right column now), so it follows whatever the badge says.
     Scene_Title.prototype.layoutUpdateButton = function () {
         const btn = this._updateButton;
         if (!btn) return;
         const rect = TitleLayout.rect();
         const s = TitleLayout.scale(rect);
-        const above = this._languageBox || this._versionBadge;
+        const above = this._versionBadge;
         const aboveRect = above ? above.getBoundingClientRect() : null;
         const below = aboveRect && aboveRect.height > 0
             ? (aboveRect.bottom - rect.top) / s + 8
@@ -7731,9 +7905,10 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         if (this._logoSprite) this._logoSprite.layout();
         this.layoutBgSwitchButton();
         this.layoutVersionBadge();
-        // After the badge: the selector is docked under its measured bottom.
+        // After the switcher: the selector is docked under its measured bottom,
+        // and the roadmap button under the selector's.
         this.layoutLanguageSelector();
-        // ... and the update notice under the selector's.
+        // The update notice is docked under the badge.
         this.layoutUpdateButton();
         this.layoutDisclaimerBox();
         if (this._hyperverseBg && this._hyperverseBg.layout) this._hyperverseBg.layout();
@@ -7854,6 +8029,14 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 text: T('Titlescreen.menuOverlay.defaultStart'),
                 symbol: 'defaultStart'
             });
+            commands.push({
+                text: T('Titlescreen.menuOverlay.storyDebug'),
+                symbol: 'storyDebug'
+            });
+            commands.push({
+                text: T('Titlescreen.menuOverlay.forceNewStory'),
+                symbol: 'forceNewStory'
+            });
         }
 
         commands.push({
@@ -7926,6 +8109,18 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         return commands;
     };
 
+    // The overlay column is drawn in groups with a gap between them: playtest
+    // starts, the ways into a run, the side modes, setup, reading, Exit. A
+    // symbol not listed here (another plugin's entry) joins the group above it.
+    const TITLE_COMMAND_GROUPS = {
+        defaultStart: 'debug', storyDebug: 'debug', forceNewStory: 'debug',
+        quickContinue: 'play', newGame: 'play', continue: 'play', storymode: 'play',
+        minigames: 'modes', sandboxGame: 'modes',
+        worlds: 'setup', options: 'setup', mods: 'setup', gameUpdater: 'setup',
+        help: 'read', credits: 'read',
+        exitGame: 'exit'
+    };
+
     Scene_Title.prototype.refreshUIOverlayDOM = function () {
         if (!this._menuContainer || !this._commandWindow) return;
 
@@ -7948,14 +8143,18 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         this._lastCommandPaint = paintKey;
         this._lastCommandIndex = activeIndex;
 
+        let lastGroup = null;
         const menuItems = commands.map((cmd, index) => {
             const isSelected = index === activeIndex;
             const isDisabled = cmd.enabled === false;
+            const group = TITLE_COMMAND_GROUPS[cmd.symbol] || lastGroup;
+            const groupStart = index > 0 && group !== lastGroup;
+            lastGroup = group;
             // i18n-ignore-start: css class names and inline handlers, not text.
             // The only user-facing string here is cmd.text, already localised in
             // getTitleCommandText.
             return `
-                <div class="ts-menu-item ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                <div class="ts-menu-item ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''} ${groupStart ? 'ts-group-start' : ''}"
                      data-index="${index}" data-symbol="${cmd.symbol}"
                      onmouseenter="SceneManager._scene && SceneManager._scene.onTitleCommandHover && SceneManager._scene.onTitleCommandHover(${index})"
                      onclick="SceneManager._scene && SceneManager._scene.onTitleCommandClick && SceneManager._scene.onTitleCommandClick(${index})">

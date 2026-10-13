@@ -48,14 +48,14 @@
     "appointments": "Appuntamenti"
   },
   "none": {
-    "holidays": "Un normale giorno lavorativo.",
-    "deadlines": "Nessun contratto in scadenza.",
-    "appointments": "Niente in agenda."
+    "holidays": "Nessuna festività.",
+    "deadlines": "Nessuna scadenza.",
+    "appointments": "Nessun appuntamento."
   },
   "status": {
-    "added": "Appuntamento annotato.",
-    "removed": "Appuntamento cancellato.",
-    "empty": "Scrivi prima di cosa si tratta."
+    "added": "Appuntamento aggiunto.",
+    "removed": "Appuntamento rimosso.",
+    "empty": "Inserisci prima una descrizione."
   },
   "toast": {
     "title": "Appuntamento",

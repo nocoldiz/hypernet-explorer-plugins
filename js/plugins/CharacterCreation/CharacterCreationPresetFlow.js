@@ -44,6 +44,7 @@
 
   const {
     ccT,
+    ccEsc,
     ccTp,
     ccStatLabels,
     resolveTraitName,
@@ -733,42 +734,8 @@
     _applyStoryModeEmPreset() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor || actor._isPresetActor) return;
-      const preset = storyModeEmPreset();
-      if (!preset) {
-        console.error("CharacterCreation: the story mode Em dossier is missing.");
-        return;
-      }
-      try {
-        // Seat 0 by name, not by whatever the wizard's static happens to hold:
-        // the story mode is played as Em and she is always the leader, so her
-        // body, her gender and her bio belong in the first seat's variables
-        // (38 / 87) rather than in a seat left over from an earlier party.
-        this._applyPreset(preset, actor, presetSkins(preset)[0] || preset, { memberIndex: 0 });
-      } catch (e) {
-        console.error('CharacterCreation: failed to apply the story mode dossier "Em"', e);
-        return;
-      }
-      if (typeof markPresetUsed === "function") markPresetUsed(preset.id);
-      // The story mode is Em's playthrough and nobody else's: her own dossier
-      // switch stands alone, and every other dossier switch the record would
-      // hand out (Bubba's 49, the shared 50) stays off.
-      const EM_STORY_SWITCH = 48;
-      const CPApi = window.CharacterPresets;
-      const dossierSwitches = (CPApi && typeof CPApi.getPresetSwitchIds === "function")
-        ? CPApi.getPresetSwitchIds()
-        : (preset.switches || []);
-      dossierSwitches.forEach((id) => {
-        if (id > 0 && id !== EM_STORY_SWITCH) $gameSwitches.setValue(id, false);
-      });
-      $gameSwitches.setValue(EM_STORY_SWITCH, true);
-      // Her creed and her lack of a job are story mode's, not the dossier's, so
-      // they are written on now rather than waiting for the bio page to draw.
-      const CP = window.CharacterPresets;
-      if (CP && CP.applyStoryModeEmLocks) CP.applyStoryModeEmLocks(actor);
-      actor.refresh();
-      actor.recoverAll();
-      $gameSystem._currentPresetId = preset.id;
-      this._recordPresetLanding(preset);
+      const preset = stampStoryModeEm(actor);
+      if (preset) this._recordPresetLanding(preset);
     }
 
     // Leaving the wizard, whether for good or only as far as one of the screens
@@ -984,7 +951,7 @@
       if (!this._presetIsPlayerMade(preset)) { SoundManager.playBuzzer(); return; }
       this._ccConfirm({
         title: ccT('CharCreate.deletePreset'),
-        body: ccTp('CharCreate.deletePresetBody', { name: preset.name }),
+        body: ccTp('CharCreate.deletePresetBody', { name: ccEsc(preset.name) }),
         acceptLabel: ccT('CharCreate.deletePreset')
       }, () => {
         const CP = window.CharacterPresets;
@@ -1060,7 +1027,7 @@
           </div>
           ${skinsHtml}
           <div class="cc-dossier-card cc-card-padded">
-            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.dossierName')}</span><span class="cc-dossier-value">${preset.name}</span></div>
+            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.dossierName')}</span><span class="cc-dossier-value">${ccEsc(preset.name)}</span></div>
             <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${T('CharCreate.vocation')}</span><span class="cc-dossier-value">${className}</span></div>
           </div>
           <div class="cc-scroll-pane">
@@ -1122,7 +1089,7 @@
         return `
           <div class="cc-wanted-card ${isSelected ? 'selected' : ''}" onclick="SceneManager._scene.onPresetCardClick(${index})">
             <div class="cc-wanted-sprite" style="${this.getSpriteStyle(cardSkin.sprite, cardSkin.spriteIndex)}"></div>
-            <div class="cc-wanted-name">${p.name}</div>
+            <div class="cc-wanted-name">${ccEsc(p.name)}</div>
             <div class="cc-wanted-class">${$dataClasses[p.classId] ? window.CCDbName($dataClasses[p.classId]) : T('CharCreate.defaultClassName')}</div>
           </div>
         `;
@@ -1163,7 +1130,7 @@
               <div class="cc-compact-avatar" style="${avatarStyle}"></div>
             </div>
             <div class="cc-col cc-col-gap-1 cc-col-grow">
-              <div class="cc-detail-title">${preset.name || ""}</div>
+              <div class="cc-detail-title">${ccEsc(preset.name || "")}</div>
               <div class="cc-identity-name">${className}</div>
             </div>
           </div>
@@ -1356,8 +1323,26 @@
         const skins = presetSkins(preset);
         const skinIdx = this._presetWindow && this._presetWindow.skinIndex ? this._presetWindow.skinIndex(presetIndex) : 0;
         const skinData = skins[skinIdx] || skins[0] || preset;
+        // Only the first seat founds the party. A dossier put on seat 2 or 3
+        // joins it: emptying the bag and the purse there threw away everything
+        // the members already built had been handed.
+        const seat = Scene_CharacterCreation._currentPartyMemberIndex || 0;
         try {
-          this._applyPreset(preset, actor, skinData);
+          this._applyPreset(preset, actor, skinData, { memberIndex: seat, joining: seat > 0 });
+          // What a saved dossier records beyond its sheet: the sculpted body,
+          // the battler it is portrayed by and its Expression. The party board
+          // put the body back and this seat did not, so a saved creature came
+          // back on the default model.
+          if (preset.model3d && window.CC3DModel && window.CC3DModel.setConfig) {
+            window.CC3DModel.setConfig(actor.actorId(), preset.model3d);
+          }
+          if (!preset.busts && preset.battler && actor.setVnBattler) {
+            actor.setVnBattler(preset.battler);
+            actor._recruitedEnemyId = preset.enemyId || 0;
+          }
+          if (preset.expression && window.Expression && window.Expression.restorePerson) {
+            window.Expression.restorePerson(actor, preset.expression);
+          }
         } catch (e) {
           console.error(`CharacterCreation: failed to apply preset "${preset.name}"`, e);
         }
@@ -1506,7 +1491,13 @@
         // export the character.
         if (api.toCard) Promise.resolve(api.toCard(preset)).catch((e) =>
           console.error("CharacterCreation: the dossier card could not be drawn", e));
-        if (api.toQr) api.toQr(preset);
+        // A dossier too large for one code still exported: the JSON is on
+        // disk, so a QR that cannot be drawn is logged, not reported as failure.
+        if (api.toQr) {
+          try { api.toQr(preset); } catch (qrErr) {
+            console.error("CharacterCreation: the dossier code could not be drawn", qrErr);
+          }
+        }
       } catch (e) {
         console.error(`CharacterCreation: "${preset.name}" could not be exported`, e);
         written = "";
@@ -1631,10 +1622,14 @@
           console.error(`CharacterCreation: "${member.name}" could not be seated`, e);
           return;
         }
-        // _applyPreset hands the founding purse to the first seat alone; the
-        // other two are paid the same class purse a member built by hand gets.
-        if (i > 0 && typeof classStartingMoney === "function") {
-          $gameParty.gainGold((CC_BASE_START_GOLD || 0) + classStartingMoney(member.classId));
+        // _applyPreset hands the founding purse (the base allowance among it)
+        // to the first seat alone; the other two are paid the same class purse
+        // a member built by hand gets, and the base allowance is not paid again.
+        // A non-sentient creature brings nothing into the purse (NPCCreature).
+        const beast = !!(window.NPCCreature && window.NPCCreature.isNonSentientActor &&
+          window.NPCCreature.isNonSentientActor(actor));
+        if (i > 0 && !beast && !party.stock && typeof classStartingMoney === "function") {
+          $gameParty.gainGold(classStartingMoney(member.classId));
         }
         // The body the card states, so a written crew is the same three people
         // in the battle scene as on the board.
@@ -1649,6 +1644,13 @@
         actor.refresh();
         actor.recoverAll();
       });
+
+      // A party card carries what the crew held together: its purse, its
+      // backpack, its Knowledge Points and its vehicles. It replaces the
+      // founding kit the first seat was just handed.
+      if (party.stock && window.CharacterPresets && window.CharacterPresets.applyPartyStock) {
+        window.CharacterPresets.applyPartyStock(party.stock);
+      }
 
       Scene_CharacterCreation._currentPartyMemberIndex = 0;
       Scene_CharacterCreation._isCreatureMode = false;
@@ -1665,7 +1667,7 @@
       const names = $gameParty.members().map((m) => m.name()).join(", ");
       this._ccConfirm({
         title: ccT('CharCreate.savePartyPreset'),
-        body: ccTp('CharCreate.savePartyPresetBody', { name: names }),
+        body: ccTp('CharCreate.savePartyPresetBody', { name: ccEsc(names) }),
         acceptLabel: ccT('CharCreate.savePartyPreset')
       }, () => {
         const result = CP.savePartyPresetFromParty(names);
@@ -1692,7 +1694,7 @@
       }
       this._ccConfirm({
         title: ccT('CharCreate.deletePartyPreset'),
-        body: ccTp('CharCreate.deletePartyPresetBody', { name: party.name }),
+        body: ccTp('CharCreate.deletePartyPresetBody', { name: ccEsc(party.name) }),
         acceptLabel: ccT('CharCreate.deletePartyPreset')
       }, () => {
         if (!CP.removePartyPreset(party.id)) { SoundManager.playBuzzer(); return; }
@@ -1726,7 +1728,7 @@
       return `
         <div class="cc-party-preset-member">
           <div class="cc-wanted-sprite" style="${this.getSpriteStyle(member.sprite, member.spriteIndex || 0)}"></div>
-          <div class="cc-wanted-name">${member.name}</div>
+          <div class="cc-wanted-name">${ccEsc(member.name)}</div>
           <div class="cc-wanted-class">${className}</div>
           ${kitHtml ? `<div class="cc-party-preset-kit">${kitHtml}</div>` : ""}
         </div>
@@ -1745,7 +1747,7 @@
           <div class="cc-party-preset-card cc-wanted-card ${index === active ? 'selected' : ''} focusable" tabindex="0"
                data-nav-key="cc-party-preset-${index}"
                onclick="SceneManager._scene.onPartyPresetCardClick(${index})">
-            <div class="cc-subheader cc-subheader--flush">${name}</div>
+            <div class="cc-subheader cc-subheader--flush">${ccEsc(name)}</div>
             <div class="cc-party-preset-row">${party.members.map((m) => this._partyPresetMemberHtml(m)).join("")}</div>
             ${lore ? `<p class="cc-text-desc cc-text-desc--body cc-flush">${this.cleanText(lore)}</p>` : ""}
             <div class="cc-compact-actions cc-actions-row">
@@ -1802,6 +1804,82 @@
   // sheet has been snapshotted off it. The same slot NPCSystemParty uses.
   const BENCH_SCRATCH_ACTOR_ID = 8;
 
+  // Em's story mode sheet, written onto the actor that plays her: her dossier
+  // in seat 0, her switch alone among the dossier switches, and her creed and
+  // joblessness locked on. Shared by the wizard and the playtest story start.
+  // Returns the dossier, or null when it could not be applied.
+  function stampStoryModeEm(actor) {
+    const preset = storyModeEmPreset();
+    if (!preset) {
+      console.error("CharacterCreation: the story mode Em dossier is missing.");
+      return null;
+    }
+    try {
+      // Seat 0 by name, not by whatever the wizard's static happens to hold:
+      // the story mode is played as Em and she is always the leader, so her
+      // body, her gender and her bio belong in the first seat's variables
+      // (38 / 87) rather than in a seat left over from an earlier party.
+      Scene_CharacterCreation.prototype._applyPreset.call(
+        Scene_CharacterCreation.prototype,
+        preset, actor, presetSkins(preset)[0] || preset, { memberIndex: 0 }
+      );
+    } catch (e) {
+      console.error('CharacterCreation: failed to apply the story mode dossier "Em"', e);
+      return null;
+    }
+    if (typeof markPresetUsed === "function") markPresetUsed(preset.id);
+    // The story mode is Em's playthrough and nobody else's: her own dossier
+    // switch stands alone, and every other dossier switch the record would
+    // hand out (Bubba's 49, the shared 50) stays off.
+    const EM_STORY_SWITCH = 48;
+    const CPApi = window.CharacterPresets;
+    const dossierSwitches = (CPApi && typeof CPApi.getPresetSwitchIds === "function")
+      ? CPApi.getPresetSwitchIds()
+      : (preset.switches || []);
+    dossierSwitches.forEach((id) => {
+      if (id > 0 && id !== EM_STORY_SWITCH) $gameSwitches.setValue(id, false);
+    });
+    $gameSwitches.setValue(EM_STORY_SWITCH, true);
+    // Her creed and her lack of a job are story mode's, not the dossier's, so
+    // they are written on now rather than waiting for the bio page to draw.
+    if (CPApi && CPApi.applyStoryModeEmLocks) CPApi.applyStoryModeEmLocks(actor);
+    actor.refresh();
+    actor.recoverAll();
+    $gameSystem._currentPresetId = preset.id;
+    return preset;
+  }
+
+  // The playtest story start (Titlescreen's Story debug): a story run already
+  // past its wizard, with Em in the lead and Bubba at her side, both at the
+  // given level, standing wherever the new game put them.
+  function startStoryDebugParty(level) {
+    if (!$gameParty || !$gameActors || !$gameSwitches) return false;
+    const leader = $gameParty.leader() || $gameActors.actor(1);
+    if (!leader || !stampStoryModeEm(leader)) return false;
+    // What the end of creation raises (_walkPresetLanding), minus the walk.
+    $gameSwitches.setValue(13, true);
+    $gameSwitches.setValue(33, true);
+    markFirstCreationComplete();
+    grantMinimumCards();
+    const lv = Math.max(1, Math.min(99, Number(level) || 1));
+    leader.changeLevel(lv, false);
+    leader.recoverAll();
+    const bubba = storyModePresetBy((entry) => entry.name === "Bubba"); // i18n-ignore: preset id
+    // Quiet: this runs under the title screen, which would show the toast.
+    const joined = bubba ? joinPresetCharacter(bubba.id, { quiet: true }) : null;
+    if (joined && joined.ok && joined.actorId) {
+      const BUBBA_SWITCH = 49;
+      $gameSwitches.setValue(BUBBA_SWITCH, true);
+      const actor = $gameActors.actor(joined.actorId);
+      if (actor) {
+        actor.changeLevel(lv, false);
+        actor.recoverAll();
+      }
+    }
+    if (typeof $gamePlayer !== "undefined" && $gamePlayer && $gamePlayer.refresh) $gamePlayer.refresh();
+    return true;
+  }
+
   // Stamps a dossier onto an actor without a scene under it. _applyPreset only
   // ever reaches for `this` to answer the bio, which the prototype answers too.
   function stampPreset(preset, actor, memberIndex) {
@@ -1818,9 +1896,11 @@
   /**
    * Sign a premade dossier on by its id, into the party or onto the bench.
    * @param {number} presetId - Dossier id, as listed in the preset records
+   * @param {object} [opts] - { quiet: true } signs them on without a toast
    * @returns {object} { ok, reason?, actorId?, inactive?, preset? }
    */
-  function joinPresetCharacter(presetId) {
+  function joinPresetCharacter(presetId, opts) {
+    const quiet = !!(opts && opts.quiet);
     if (!$gameParty || !$gameActors) return { ok: false, reason: "noParty" };
     const api = window.CharacterPresets || {};
     const id = Number(presetId);
@@ -1835,6 +1915,10 @@
     if (preset.name === "Bubba" && !isEmStoryParty) { // i18n-ignore: preset id
       return { ok: false, reason: "storyLocked" };
     }
+    // Bubba lost on the story's Blood and Oil stays lost until a new story.
+    if (preset.name === "Bubba" && window.StoryDeath && window.StoryDeath.bubbaLost()) { // i18n-ignore: preset id
+      return { ok: false, reason: "storyLost" };
+    }
     if ($gameParty.members().some((mem) => mem.name() === preset.name)) {
       return { ok: false, reason: "alreadyHere" };
     }
@@ -1846,8 +1930,11 @@
       // everything it writes goes onto the actor, never onto the seat.
       $gameParty.addActor(actorId);
       stampPreset(preset, actor, $gameParty.members().indexOf(actor));
+      // addActor already redrew the followers with the seat's database sprite
+      // (Actor 2's Backpacker): draw them again now the dossier's look is on.
+      if (typeof $gamePlayer !== "undefined" && $gamePlayer && $gamePlayer.refresh) $gamePlayer.refresh();
       if (typeof markPresetUsed === "function" && !preset.storyModeOnly) markPresetUsed(preset.id);
-      window.ParchmentToast?.show?.(T("CharPresets.dossierJoined", { name: preset.name }));
+      if (!quiet) window.ParchmentToast?.show?.(T("CharPresets.dossierJoined", { name: preset.name }));
       return { ok: true, actorId, inactive: false, preset };
     }
 
@@ -1866,7 +1953,7 @@
     $gameActors._data[BENCH_SCRATCH_ACTOR_ID] = null;
     if (!result || !result.ok) return { ok: false, reason: "partyFull" };
     if (typeof markPresetUsed === "function" && !preset.storyModeOnly) markPresetUsed(preset.id);
-    window.ParchmentToast?.show?.(T("CharPresets.dossierJoinedInactive", { name: preset.name }));
+    if (!quiet) window.ParchmentToast?.show?.(T("CharPresets.dossierJoinedInactive", { name: preset.name }));
     return { ok: true, inactive: true, preset: result.preset };
   }
 
@@ -1878,7 +1965,7 @@
   PluginManager.registerCommand("CharacterPresets", "joinPresetCharacter", joinPresetCommand);
   PluginManager.registerCommand("CharacterCreation", "joinPresetCharacter", joinPresetCommand);
 
-  window.CCPresetJoin = { joinPresetCharacter };
+  window.CCPresetJoin = { joinPresetCharacter, startStoryDebugParty };
 
   for (const key of Object.getOwnPropertyNames(CCPresetFlow.prototype)) {
     if (key === "constructor") continue;

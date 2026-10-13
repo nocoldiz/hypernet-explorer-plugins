@@ -1,6 +1,6 @@
 {
   "verb": {
-    "fell": "Fell down",
+    "fell": "Fell",
     "mine": "Mine",
     "pick": "Pick Up",
     "dismantle": "Dismantle"
@@ -9,7 +9,7 @@
   "read": "Read",
   "cancel": "Cancel",
   "collect": "Collect",
-  "foolsGold": "Fool's gold: pyrite, and barely a coin's worth under it.",
+  "foolsGold": "Fool's gold. Just pyrite, worth almost nothing.",
   "drink": "Drink",
   "pickUp": "Pick up",
   "breakIt": "Break",
@@ -17,6 +17,8 @@
   "open": "Open",
   "blowOut": "Blow out",
   "lightUp": "Light up",
+  "turnOn": "Turn on",
+  "turnOff": "Turn off",
   "bathe": "Bathe",
   "enter": "Enter",
   "descend": "Descend",

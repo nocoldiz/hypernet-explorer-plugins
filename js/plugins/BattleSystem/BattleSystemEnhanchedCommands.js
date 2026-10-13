@@ -1144,7 +1144,7 @@
       ConfigManager.save();
     };
     window.GameOptions.registerOption('battleCommandPosition',
-      T('Battle.cmdPosition.positionOption'),
+      () => T('Battle.cmdPosition.positionOption'),
       () => ConfigManager.battleCommandPosition,
       (value) => ConfigManager.battleCommandPosition = value,
       'gameplay', 'custom',
@@ -1641,10 +1641,35 @@
     this._vectorSwitchGrace = VECTOR_SWITCH_GRACE;
   };
 
+  // How long a die still tumbling is waited on before the switch goes on
+  // without it. A throw in battle is over in about two seconds; one whose
+  // frame loop died (a renderer that threw mid tumble) never reports itself
+  // landed, and the command window must not stay shut behind it.
+  const VECTOR_DICE_WAIT_MAX = 600;
+
+  /**
+   * Whether a Dice3D throw is still to be waited on. Counts the frames spent
+   * waiting, and gives up once VECTOR_DICE_WAIT_MAX have passed.
+   * @param {Scene_Battle} scene
+   * @returns {boolean}
+   */
+  const vectorDiceHolds = (scene) => {
+    const D3 = window.Dice3D;
+    if (!(D3 && D3.isRolling && D3.isRolling())) {
+      scene._vectorDiceWaited = 0;
+      return false;
+    }
+    scene._vectorDiceWaited = (scene._vectorDiceWaited || 0) + 1;
+    if (scene._vectorDiceWaited > VECTOR_DICE_WAIT_MAX) {
+      scene._vectorDiceWaited = 0;
+      return false;
+    }
+    return true;
+  };
+
   /** The die is left to land before the frame starts to fold. */
   Scene_Battle.prototype.waitVectorDice = function () {
-    const D3 = window.Dice3D;
-    if (D3 && D3.isRolling && D3.isRolling()) {
+    if (vectorDiceHolds(this)) {
       this._vectorSwitchWait = 1;
       return;
     }
@@ -1692,7 +1717,7 @@
    */
   Scene_Battle.prototype.finishVectorSwitch = function () {
     const D3 = window.Dice3D;
-    if (D3 && D3.isRolling && D3.isRolling()) {
+    if (D3 && D3.isRolling && D3.isRolling() && vectorDiceHolds(this)) {
       this._vectorSwitchWait = 1;
       return;
     }

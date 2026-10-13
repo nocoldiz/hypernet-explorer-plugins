@@ -2098,6 +2098,9 @@
       // before the branch resolves.
       Promise.resolve(A.choose(index)).then((view) => {
         if (!view) return;
+        // The star map was left while the die was in the air: its overlay is
+        // gone with it.
+        if (SceneManager._scene !== this || this._overlayUI !== ov) return;
         if (window.SoundManager) SoundManager.playOk();
         ov.renderAnomaly(view);
       });
@@ -2540,6 +2543,32 @@
             });
           });
         });
+
+      // Every colony of the galaxy on screen (GalaxySim "Colonies"; the ship
+      // controls list every one in every galaxy). Its system is only named
+      // here and built when a row is acted on (see _catalogAction).
+      const hereSeed = this._galaxySeedOf
+        ? this._galaxySeedOf(this.dataManager.playerShip && this.dataManager.playerShip.currentSystem)
+        : null;
+      const dmRef = this.dataManager;
+      ((GS.colonies && GS.colonies()) || []).forEach((c) => {
+        if ((c.galaxySeed == null ? null : c.galaxySeed) !== (hereSeed == null ? null : hereSeed)) return;
+        const id = "c" + entries.length;
+        entries.push({
+          id, scale: SCALE_SYSTEM, kind: "planet", name: c.planet, data: null, system: null,
+          resolve: () => {
+            const sys = dmRef.getSystem(c.system);
+            const planet = sys && (sys.planets || []).find((p) => p.name === c.planet);
+            return planet ? { system: sys, planet } : null;
+          },
+        });
+        spaceports.push({
+          id, name: c.name,
+          sub: (window.BiomeNames ? window.BiomeNames.display(c.kind) : c.kind) + " · " +
+            T('Galaxy.colony.production.' + c.production) + " · " + c.planet,
+          course: courseOK(c.system),
+        });
+      });
 
       // Bookmarks: resolved from the saved records so a stale/unresolvable one
       // (e.g. a procedural cluster galaxy whose view was torn down) is simply
@@ -2985,6 +3014,14 @@
     _catalogAction(id, what) {
       const e = (this._catalogEntries || []).find((x) => x.id === id);
       if (!e) { if (window.SoundManager) SoundManager.playBuzzer(); return; }
+      // A colony row names its world without having built it (a thousand of
+      // them would materialize a thousand systems): it is built now, once.
+      if (typeof e.resolve === "function" && !e.data) {
+        const found = e.resolve();
+        if (!found) { if (window.SoundManager) SoundManager.playBuzzer(); return; }
+        e.data = found.planet;
+        e.system = found.system;
+      }
       // The catalog stays open through both actions: it is a list to work
       // down - zoom to one body, look, zoom to the next - and closing it after
       // every pick meant reopening and re-finding your place each time. Only

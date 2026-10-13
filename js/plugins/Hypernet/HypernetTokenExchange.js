@@ -56,6 +56,15 @@
                 return;
             }
 
+            // Already open: only raise it. Building the panel again bound a
+            // second set of handlers to the same buttons, so one Confirm click
+            // ran the exchange twice (two charges, two deliveries).
+            const open = document.getElementById(WINDOW_ID);
+            if (open && open.querySelector('#hte-confirm')) {
+                window.HypernetOS.Syscalls.createWindow({ id: WINDOW_ID, title: T('TokenExchange.title'), contentHTML: '' });
+                return;
+            }
+
             let mode = 'buy';
             let amount = 1;
 
@@ -301,7 +310,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: APP_ID,
-            name: T('TokenExchange.title'),
+            name: () => T('TokenExchange.title'),
             icon: 191, // Arcade Token item icon
             desktopShortcut: true,
             launchFn: function() {

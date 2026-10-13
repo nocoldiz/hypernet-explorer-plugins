@@ -40,7 +40,7 @@
   "use strict";
 
   const {
-    animalWhereText, BORN_HERE, dateStrOf, ensureLifeRecord, getProfile, getRecords, LifeRng,
+    agreeGender, animalWhereText, BORN_HERE, dateStrOf, ensureLifeRecord, genderIndexOf, getProfile, getRecords, LifeRng,
     MINUTES_PER_DAY, MINUTES_PER_YEAR, nameHash, pushLifeEvent, resolveAlternation, worldSeed,
     yearFloatOf,
   } = window.NPCLifeSim._internal;
@@ -767,7 +767,10 @@
     const params = { name, parents, where: animalWhereText(whereParams(record)) };
     const bank = typeof T.list === "function" ? T.list(bankKey, params) : [];
     const line = bank.length ? bank[(nameHash(name + "_abio") >>> 0) % bank.length] : T(bankKey, params);
-    return resolveAlternation(String(line || ""), (nameHash(name + "_abioAlt") ^ worldSeed()) >>> 0)
+    // {g:male|female} forms agree with the animal's sex before any {a|b}
+    // choice is made, so the two are never confused.
+    const agreed = agreeGender(String(line || ""), genderIndexOf(name, record));
+    return resolveAlternation(agreed, (nameHash(name + "_abioAlt") ^ worldSeed()) >>> 0)
       .replace(/ {2,}/g, " ").trim();
   }
 

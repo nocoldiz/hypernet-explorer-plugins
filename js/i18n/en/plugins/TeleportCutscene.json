@@ -1,0 +1,7 @@
+{
+  "crystalAttuned": "Crystal attuned: {name}",
+  "crystalPrompt": "The crystal hums with the light of every crystal you have touched. Where to?",
+  "crystalNoneKnown": "No other crystal answers. Touch more crystals to join them to the network.",
+  "crystalCancel": "Cancel",
+  "crystalNumbered": "{name} {n}"
+}

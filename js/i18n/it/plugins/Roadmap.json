@@ -5,10 +5,27 @@
   "fullscreenTitle": "Roadmap",
   "omegaTower": "Livelli della Torre Omega",
   "destinations": "Destinazioni chiave",
+  "bevyRework": "Riscrittura in Bevy ECS",
+  "bevyReworkNote": "Una build parallela che sostituirà la versione alpha",
+  "storyMode": "Modalità storia",
+  "textRewrite": "Riscrittura completa dei testi e revisione manuale",
+  "textRewriteNote": "I banchi di testo generati con l'IA sostituiti da testi scritti a mano. Richiederà molto tempo, vista l'enorme quantità di banchi di testo già presenti nel gioco",
+  "ggufModels": "Integrazione di modelli GGUF locali",
+  "ggufModelsNote": "Obiettivo a lungo termine: un modello di testo locale che controlla la simulazione come suo regista",
+  "asciiMode": "Modalità ASCII",
+  "balancing": "Bilanciamento",
+  "balancingNote": "I livelli dei nemici crescono con la distanza dalla Torre Omega, il bottino segue il livello del gruppo, e armature, armi e quote delle scommesse escono da generatori verificati da test di bilanciamento. Obiettivo a lungo termine: raccogliere l'esperienza dei giocatori per bilanciare ancora di più",
+  "skyscraperInteriors": "Interni dei grattacieli",
+  "skyscraperInteriorsNote": "Atri e piani sono tracciati. Obiettivo a lungo termine: popolarli",
+  "shopInteriors": "Interni dei negozi",
+  "shopInteriorsNote": "Tutti i tipi di negozio di base sono definiti. Obiettivo a lungo termine: più varietà e nuovi tipi di negozio",
+  "patronContent": "Contenuti per i patron",
+  "patronContentNote": "Le stelle e i caveau di Patreon ci sono, e i caveau saranno sbloccati in modalità storia per chi non è patron. Obiettivo a lungo termine: più luoghi esclusivi per Patreon",
   "searchPlaceholder": "Filtra...",
   "allCategories": "Tutto",
   "doneHeader": "Fatto",
   "selectFeature": "Seleziona un sistema per vedere cosa è fatto.",
+  "goalsHeader": "Obiettivi a lungo termine",
   "categories": {
     "core": "Base",
     "combat": "Combattimento",
@@ -23,6 +40,57 @@
     "world": "Mondo",
     "multiplayer": "Multigiocatore"
   },
+  "goals": {
+    "core": [
+      "Mondi che durano secoli, con ogni salvataggio che legge la stessa storia viva",
+      "Una colonna sonora originale composta dallo sviluppatore per tutto il gioco"
+    ],
+    "combat": [
+      "Ogni classe, abilità e nemico bilanciati su tutta la scala dei livelli",
+      "Grandi battaglie che uniscono Party, eserciti ed evocazioni sullo stesso campo"
+    ],
+    "npcs": [
+      "Intere città di persone che ricordano il Party e si cambiano la vita a vicenda",
+      "Personaggi generati con storie profonde quanto quelle scritte"
+    ],
+    "economy": [
+      "Un'economia continentale in cui i prezzi seguono offerta, guerre e raccolti"
+    ],
+    "vehicles": [
+      "Treni, navi e aerei su cui vivere e lavorare"
+    ],
+    "hypernet": [
+      "Un Hypernet di centinaia di siti scritti dalle persone e dalle fazioni del mondo",
+      "Reti tra HyperDeck, con hacking e file condivisi"
+    ],
+    "galaxy": [
+      "Colonie e stazioni che commerciano, crescono e combattono tra le stelle",
+      "Ogni mondo su cui atterrare con la sua vita, i suoi insediamenti e le sue missioni",
+      "Colonizzazione spaziale avanzata come fase finale del gioco, insediando e plasmando interi mondi"
+    ],
+    "health": [
+      "Ospedali, medici e chirurgia gestiti dagli NPC",
+      "Mente, vecchiaia e vecchie ferite che pesano sul Party per tutta la vita"
+    ],
+    "crafting": [
+      "Case e basi costruite blocco per blocco, sulla mappa e nel mondo 3D",
+      "Fattorie e botteghe grandi abbastanza da rifornire un'intera città"
+    ],
+    "cards": [
+      "Leghe e tornei per ogni gioco, con campioni NPC",
+      "Ogni minigioco giocabile contro altri giocatori"
+    ],
+    "world": [
+      "Una storia principale con più finali, dalla prima casella alla cima della Torre Omega",
+      "Ogni paese europeo con i suoi luoghi simbolo, le sue tradizioni e le sue catene di missioni",
+      "92 mappe del mondo, una per ogni dimensione che la Torre Omega attraversa, ognuna raggiunta dal suo piano, con la torre come snodo tra i mondi",
+      "Ogni bioma popolato da migliaia di prefabbricati e pezzi di mappa fatti a mano"
+    ],
+    "multiplayer": [
+      "Mondi persistenti condivisi dove i Party si incontrano, commerciano e combattono",
+      "L'intera storia giocabile insieme da fino a otto giocatori"
+    ]
+  },
   "features": {
     "worldPersistence": {
       "name": "Mondi",
@@ -34,9 +102,9 @@
         "Salvataggio automatico a ogni cambio di mappa",
         "Forzieri aperti conservati per mondo",
         "Voxel scavati e alberi abbattuti conservati per mondo",
-        "Diario del gruppo scritto mentre accade, conservato nella cartella del mondo",
+        "Diario del Party scritto mentre accade, conservato nella cartella del mondo",
         "Diario di viaggio salvato come file di testo per slot",
-        "Lettere tra gruppi di mondi diversi, con denaro e merci allegati"
+        "Lettere tra Party di mondi diversi, con denaro e merci allegati"
       ]
     },
     "timeSleepClock": {
@@ -53,7 +121,7 @@
     },
     "hungerNutrition": {
       "name": "Nutrizione",
-      "desc": "Cosa mangia il gruppo, e cosa gli fa.",
+      "desc": "Cosa mangia il Party, e cosa gli fa.",
       "done": [
         "Fame, sazietà e abbuffate",
         "Calorie, grassi, proteine e caffeina per ogni pasto",
@@ -71,7 +139,7 @@
         "Movimento con lo stick analogico",
         "Controlli del mouse e scorrimento della mappa",
         "Tasti rapidi e barra rapida condivisa",
-        "Cambio del membro attivo del gruppo",
+        "Cambio del membro attivo del Party",
         "Barre di ricerca e liste lunghe in ogni menu",
         "Menu opzioni con ogni impostazione in schede",
         "Schermo intero, 16:9 e scala pixel perfect"
@@ -98,15 +166,15 @@
         "Caricatore che legge la cartella mods",
         "Ordine di caricamento e attivazione per ogni mod",
         "Schermata Mod nel menu del titolo",
-        "Percorsi delle risorse trovati qualunque sia il maiuscolo"
+        "Percorsi delle risorse trovati senza badare a maiuscole e minuscole"
       ]
     },
     "battleEngine": {
       "name": "Sistema di battaglia",
-      "desc": "Battaglie a turni in cui ogni combattente agisce alla propria velocità.",
+      "desc": "Battaglie a turni in cui i combattenti più veloci agiscono prima.",
       "done": [
-        "Un'azione per combattente a round, in ordine di agilità",
-        "PV che restano tra uno scontro e l'altro",
+        "Un'azione per combattente a turno, in ordine di agilità",
+        "HP che restano tra uno scontro e l'altro",
         "Avvisi di pericolo e protezione della salute",
         "Lapidi, rinascita, morte permanente e ripristino",
         "Cadaveri e ricompense di battaglia",
@@ -163,7 +231,7 @@
       "name": "Evocazioni",
       "desc": "Alleati chiamati in battaglia per uno scontro.",
       "done": [
-        "Evocazioni nel quarto posto del gruppo",
+        "Evocazioni nel quarto posto del Party",
         "Combattenti spirito",
         "Reclute e famigli che combattono con le proprie mani in prima persona"
       ]
@@ -194,7 +262,6 @@
         "Bisogni di fame, sonno, igiene, socialità e svago",
         "Case e traslochi",
         "Coppie, rotture, gravidanze, adozioni e figli",
-        "La giornata di un bambino",
         "Viaggi, trasferimenti e viaggiatori sulle strade",
         "Invecchiamento e morte, con il mondo già invecchiato al tuo arrivo",
         "Esperienza e specializzazioni",
@@ -202,7 +269,7 @@
         "Equipaggiamento, impianti, veicoli e cibo in mano",
         "Piante, animali, alveari e botti accuditi",
         "Piccola criminalità e criminalità di strada",
-        "Compagnie di avventurieri",
+        "Party di avventurieri",
         "Conquiste dell'Orda e campi profughi",
         "Apocalisse zombie"
       ]
@@ -217,19 +284,19 @@
         "Dialoghi tra PNG, chiacchiere di sottofondo e nuvolette di pensiero",
         "Creature che parlano con la voce della propria specie",
         "Chat generata nello stile di ogni PNG",
-        "Battute del gruppo adatte alla situazione",
+        "Battute del Party adatte alla situazione",
         "Pannello Empatizza: chat, dossier, wiki, Parla di, Insegna e Impara"
       ]
     },
     "creatureSystem": {
       "name": "Compagni",
-      "desc": "Recluta persone e creature nel gruppo.",
+      "desc": "Recluta persone e creature nel Party.",
       "done": [
-        "Reclutare PNG nel gruppo",
-        "Storico della squadra, panchina e richiamo",
+        "Reclutare PNG nel Party",
+        "Storico del Party, panchina e richiamo",
         "Personaggi creatura con la propria voce",
         "Creature tenute separate dalle persone: niente lavoro, denaro o fazione",
-        "Animale da compagnia che segue il gruppo"
+        "Animale da compagnia che segue il Party"
       ]
     },
     "factionsReputation": {
@@ -237,7 +304,7 @@
       "desc": "Diciotto fazioni e gli eserciti che schierano.",
       "done": [
         "Diciotto fazioni con reputazione da -100 a +100",
-        "Reputazione propria di ogni membro del gruppo con ogni PNG",
+        "Reputazione propria di ogni membro del Party con ogni PNG",
         "Eserciti delle fazioni sulla mappa del mondo",
         "Reclutamento fino a 100 truppe",
         "Battaglie campali tra eserciti"
@@ -309,12 +376,13 @@
       "name": "Veicoli",
       "desc": "Un camper in cui vivere e un garage per tenerlo in vita.",
       "done": [
-        "Camper, auto, moto, barca, scopa e astronave",
+        "Camper, auto, bici, barca, scopa e astronave",
         "Camper modulare con potenziamenti",
         "Equipaggio a bordo: chi guida e chi riposa",
         "Carburante e danni alle parti critiche",
         "I veicoli restano dove li hai lasciati",
-        "Volare come un dirigibile"
+        "Volare come un dirigibile",
+        "Stive dimensionate su ogni veicolo"
       ]
     },
     "fastTravel": {
@@ -341,7 +409,7 @@
         "Fauna a bordo strada, folle e veicoli parcheggiati",
         "Cielo, meteo e mare",
         "Combattimento in tempo reale",
-        "Schermo condiviso"
+        "Schermo diviso"
       ]
     },
     "roadTraffic": {
@@ -389,7 +457,8 @@
         "Cambio gettoni",
         "Hyper Card Arena e Cadd Trader",
         "HyperAmp, Whether, Incanta e Pain",
-        "Wyrd, Hexcel e Bobnzi"
+        "Wyrd, Hexcel e Bobnzi",
+        "Calendario con le festività di ogni nazione"
       ]
     },
     "hypernetBrowser": {
@@ -440,7 +509,7 @@
       "name": "Ferite",
       "desc": "Danni che colpiscono arti e organi.",
       "done": [
-        "Danni ad arti e organi per il gruppo",
+        "Danni ad arti e organi per il Party",
         "Lo stesso per i nemici, con attacchi mirati",
         "Parti del corpo perse in battaglia, con sangue",
         "Schizzi di sangue"
@@ -457,11 +526,11 @@
       ]
     },
     "cybernetics": {
-      "name": "Potenziamenti",
+      "name": "Innesti",
       "desc": "Sostituisci ciò che perdi, migliora ciò che tieni.",
       "done": [
         "Negozio e montaggio delle protesi",
-        "Registro dei potenziamenti con l'intero catalogo",
+        "Registro degli innesti con l'intero catalogo",
         "Impianti e protesi sugli PNG"
       ]
     },
@@ -511,7 +580,7 @@
         "Oggetti, armi e armature procedurali",
         "Modificatori su armi e armature",
         "Analizzatore di artefatti",
-        "Bottino in base al livello del gruppo",
+        "Bottino in base al livello del Party",
         "Stanze del tesoro nascoste",
         "Modelli 3D procedurali delle armi",
         "Descrizioni degli oggetti che cambiano ogni volta"
@@ -600,7 +669,8 @@
         "Pianoforte suonabile di tre ottave",
         "Rompicapo a blocchi per lo scasso",
         "Animaletto virtuale HyperTamer",
-        "Scanner Raman per statue e dipinti"
+        "Scanner Raman per statue e dipinti",
+        "Tavolo della pizza in 3D con ordini dei clienti"
       ]
     },
     "monsterBestiary": {
@@ -671,12 +741,12 @@
       ]
     },
     "splitScreenLocal": {
-      "name": "Schermo condiviso",
+      "name": "Schermo diviso",
       "desc": "Giocate fianco a fianco su un solo schermo.",
       "done": [
-        "Schermo condiviso locale con gamepad",
+        "Schermo diviso locale con gamepad",
         "Minigiochi a turno sullo stesso schermo",
-        "Schermo condiviso nel mondo 3D"
+        "Schermo diviso nel mondo 3D"
       ]
     },
     "multiplayerOnline": {
@@ -685,6 +755,135 @@
       "done": [
         "Multigiocatore su server e Steam fino a 8 giocatori",
         "Obiettivi di Steam"
+      ]
+    },
+    "characterCreation": {
+      "name": "Creazione del personaggio",
+      "desc": "Costruisci il gruppo da zero, una scheda alla volta.",
+      "done": [
+        "Procedura guidata con classi raggruppate per categoria di abilità",
+        "Origini con provviste, denaro e luogo di partenza propri",
+        "Personaggi creatura",
+        "Modalità dettagliata che modifica l'intera scheda",
+        "Dossier pronti, salvati e caricati",
+        "Editor del modello 3D che mescola parti di qualsiasi creatura",
+        "Selettore di sprite e busti",
+        "Punti tratto",
+        "Bussola politica in 3D"
+      ]
+    },
+    "interface": {
+      "name": "Interfaccia",
+      "desc": "Menu, HUD e avvisi disegnati su pergamena.",
+      "done": [
+        "Menu principale su pergamena con l'hub Dinamiche",
+        "Ruota del menu rapido tenuta aperta sul campo",
+        "Schermata di stato",
+        "Codice di aiuto",
+        "HUD del gruppo",
+        "Notifiche per ogni evento",
+        "Legenda della mappa con comandi e avvisi locali",
+        "Dado d20 in 3D per le prove di caratteristica"
+      ]
+    },
+    "visuals": {
+      "name": "Grafica",
+      "desc": "Luce, profondità e l'aspetto di ogni scena.",
+      "done": [
+        "Luci dinamiche",
+        "Livelli di parallasse con scala e ripetizione",
+        "Ritratti animati",
+        "Panorami del bioma dietro le caselle"
+      ]
+    },
+    "sandbox": {
+      "name": "Sandbox",
+      "desc": "Strumenti per piegare il mondo al tuo volere.",
+      "done": [
+        "Menu sandbox",
+        "Sistema dei desideri",
+        "Teletrasporto su qualsiasi mappa",
+        "Editor di pixel art",
+        "Immagini di una mappa intera"
+      ]
+    },
+    "equipment": {
+      "name": "Equipaggiamento",
+      "desc": "Ciò che il gruppo porta e indossa.",
+      "done": [
+        "Zaino con categorie e ricerca",
+        "Menu equipaggiamento con cambio del personaggio",
+        "Modificatori su armi e armature",
+        "Oggetti preferiti nella barra rapida",
+        "Un modello 3D per ogni oggetto",
+        "Difesa delle armature ricavata da materiale e slot"
+      ]
+    },
+    "weapons": {
+      "name": "Armi",
+      "desc": "Ogni arma impugnata, brandita e sparata in prima persona.",
+      "done": [
+        "Arma in prima persona sovrapposta alla scena",
+        "Modelli 3D procedurali per ogni tipo di arma",
+        "Attacchi generati da lunghezza e peso di ogni arma",
+        "Armi da fuoco con parti funzionanti e munizioni",
+        "Suoni delle armi",
+        "Effetti di colpo per gli attacchi semplici",
+        "Il fucile vettoriale di Em con le sue modalità"
+      ]
+    },
+    "hexphone": {
+      "name": "Hexphone",
+      "desc": "Il telefono nella tasca del gruppo.",
+      "done": [
+        "Credito, chiamate e messaggi",
+        "Giochi sul telefono",
+        "Telefoni pubblici che condividono lo stesso grimorio"
+      ]
+    },
+    "spaceTrade": {
+      "name": "Commercio spaziale",
+      "desc": "Commercio all'ingrosso tra i mondi.",
+      "done": [
+        "Console commerciale con le fazioni di Terra, Zeta Reticuli e Titania",
+        "Prezzi guidati dalla borsa",
+        "Mercato delle pizze con la sua cambusa",
+        "Rotte giornaliere",
+        "Merci trasportate nella stiva dell'astronave"
+      ]
+    },
+    "rocketLaunch": {
+      "name": "Lancio del razzo",
+      "desc": "Dalla rampa del cannone magnetico fino all'astronave.",
+      "done": [
+        "Filmato del lancio: conto alla rovescia, sgancio magnetico e accensione",
+        "Spazioporti con le loro torri e città",
+        "Attraversamento della fascia di Kessler",
+        "Attracco all'astronave",
+        "Salti suborbitali tra le rampe"
+      ]
+    },
+    "research": {
+      "name": "Ricerca",
+      "desc": "Scoperte condivise da tutto il mondo.",
+      "done": [
+        "Sette alberi a schede di scienza e magia",
+        "Scoperte condivise da ogni salvataggio di un mondo",
+        "Progetti di ricerca"
+      ]
+    },
+    "exploration": {
+      "name": "Esplorazione",
+      "desc": "Ogni modo per attraversare una mappa.",
+      "done": [
+        "Nuoto, arrampicata e ponti a più livelli",
+        "Punti di pesca",
+        "Mappe a piattaforme",
+        "Sbirciata in avanti prima di un trasferimento",
+        "Filmato di teletrasporto",
+        "La CPU che esplora per un giocatore inattivo",
+        "Formazione libera del gruppo",
+        "Atlante politico del mondo"
       ]
     }
   }

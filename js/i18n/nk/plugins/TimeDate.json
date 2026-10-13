@@ -19,7 +19,7 @@
     "collapsed": "{name} COLLAPSED FROM STARVATION!",
     "outOfMp": "{name} RAN OUT OF MP!",
     "bladderLow": "NEEDS TA FIND A TOILET",
-    "bladderCritical": "IZ ABOUT TA BURST!"
+    "bladderCritical": "IZ 'BOUT TA BURST!"
   },
   "sleepMenu": {
     "titleMain": "REST",
@@ -51,7 +51,7 @@
     "cryoFieldMonth": "MONTH",
     "cryoFieldYear": "YEAR",
     "cryoConfirm": "CLOSE DA LID",
-    "cryoSpanLabel": "UNDER FOR",
+    "cryoSpanLabel": "DURATION",
     "cryoSpanDay": "1 DAY",
     "cryoSpanDays": "%1 DAYS",
     "cryoSpanMonth": "1 MONTH",
@@ -63,9 +63,9 @@
     "cryoCost": "FARE",
     "cryoPurse": "PURSE",
     "cryoNights": "%1 NIGHTS IN DA POD",
-    "cryoNoFunds": "DA POD WILL NO RUN FOR LESS DEN %1 A DAY!",
-    "cryoUnaffordable": "DA PURSE WILL NO COVER DIS FARE!",
-    "cryoEraOver": "DA POD IZ DEAD. NOTHIN' WAZ BUILT TA SLEEP THROUGH DA END OF 2012!",
+    "cryoNoFunds": "DA POD COSTS %1 A DAY.",
+    "cryoUnaffordable": "NO ENOUGH MONEY.",
+    "cryoEraOver": "DA POD NO CAN RUN PAST DA END OF 2012!",
     "cryoTravelTitle": "CRYOGENIC SUSPENSION",
     "cryoWakeSub": "DA LID OPENS.",
     "cryoWakeClean": "STEADY",
@@ -77,12 +77,12 @@
     "cryoTp": "AP",
     "cryoHunger": "FOOD",
     "cryoSleep": "REST",
-    "cryoHeld": "HELD"
+    "cryoHeld": "IN STASIS"
   },
   "camp": {
     "tended": "DA CAMP WASHES AN' TALKS DA HOURS AWAY!",
     "ate": "A POT GOES ON DA FIRE: {items}.",
-    "noFood": "DA CAMP HAB NOTHIN' LEFT TA COOK!"
+    "noFood": "DA CAMP HAB NUTTIN' LEFT TA COOK!"
   },
   "hud": {
     "food": "FOOD",
@@ -91,7 +91,8 @@
     "weatherClear": "CLEAR",
     "awake": "AWAKE",
     "enemies": "BAD 'UNS",
-    "level": "LV. {level}"
+    "level": "LV. {level}",
+    "levelRange": "LV. {min} TA {max}"
   },
   "needLabel": {
     "hunger": "HUNGER",
@@ -111,23 +112,23 @@
   "addiction": {
     "withdrawal": "{name} IZ IN WITHDRAWAL FROM {substance}!",
     "relieved": "{name} IZ OVER DA WORST OF DA {substance} CRAVIN'",
-    "eased": "{name}: DA ITCH FOR {substance} EASES BY {amount}.",
+    "eased": "{name}: {substance} CRAVIN' -{amount}.",
     "partyCard": "ADDICTIONS ({count})",
     "none": "CLEAN"
   },
   "insomnia": {
-    "years": "{n} YEARS WITHOUT SLEEP",
-    "yearsOne": "1 YEAR WITHOUT SLEEP",
-    "months": "{n} MONTHS WITHOUT SLEEP",
-    "monthsOne": "1 MONTH WITHOUT SLEEP",
-    "weeks": "{n} WEEKS WITHOUT SLEEP",
-    "weeksOne": "1 WEEK WITHOUT SLEEP",
-    "days": "{n} DAYS WITHOUT SLEEP",
-    "daysOne": "1 DAY WITHOUT SLEEP",
-    "hours": "{n} HOURS WITHOUT SLEEP",
-    "hoursOne": "1 HOUR WITHOUT SLEEP",
-    "minutes": "{n} MINUTES WITHOUT SLEEP",
-    "minutesOne": "1 MINUTE WITHOUT SLEEP",
+    "years": "{n} YEARS WITOUT SLEEP",
+    "yearsOne": "1 YEAR WITOUT SLEEP",
+    "months": "{n} MONTHS WITOUT SLEEP",
+    "monthsOne": "1 MONTH WITOUT SLEEP",
+    "weeks": "{n} WEEKS WITOUT SLEEP",
+    "weeksOne": "1 WEEK WITOUT SLEEP",
+    "days": "{n} DAYS WITOUT SLEEP",
+    "daysOne": "1 DAY WITOUT SLEEP",
+    "hours": "{n} HOURS WITOUT SLEEP",
+    "hoursOne": "1 HOUR WITOUT SLEEP",
+    "minutes": "{n} MINUTES WITOUT SLEEP",
+    "minutesOne": "1 MINUTE WITOUT SLEEP",
     "seized": "{name}: {state}. {time}."
   },
   "intox": {
@@ -190,14 +191,14 @@
     "talk": "{name} IZ TALKIN' TA {other}",
     "wash": "{name} IZ GOING TA DA BATHROOM",
     "idle": "{name} IZ STRETCHIN' DEY LEGS",
-    "relieve": "{name} SLIPS AWAY FOR A MOMENT TA RELIEVE THEMSELVES"
+    "relieve": "{name} GOES TA RELIEVE THEMSELVES"
   },
   "forage": {
     "found": "DA PARTY COMES BACK WIT {items}.",
-    "nothing": "HOURS OF SEARCHIN', AN' DA COUNTRY GIVES UP NOTHIN'!",
+    "nothing": "HOURS OF SEARCHIN', AN' DA COUNTRY GIVES UP NUTTIN'!",
     "scavenged": "HOURS GOING OVER DA SEATS AN' DA FOOTWELLS TURN UP {items}!",
     "nothingAboard": "HOURS GOING OVER DA SEATS, AN' NO SO MUCH AS A DROPPED TICKET!",
-    "learned": "DA GROUND IZ BETTER KNOWN NOW: {points} KP!"
+    "learned": "GAINED {points} KP FROM FORAGIN'."
   },
   "holiday": {
     "toastTitle": "PUBLIC HOLIDAY",

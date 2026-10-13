@@ -13,6 +13,15 @@
  * @command Land
  * @desc Land the airship (stop flying mode)
  *
+ * @command Levitate
+ * @desc Timed flight: the party lifts off for a number of steps, then sets down
+ *
+ * @arg steps
+ * @type number
+ * @min 1
+ * @default 30
+ * @desc Steps the flight lasts before the party comes down
+ *
  * @help
  * FlySystem v1.0
  *
@@ -23,23 +32,86 @@
  * Plugin Commands:
  * - Fly: Start flying mode
  * - Land: Stop flying mode and land
+ * - Levitate: Start flying for a number of steps (the levitation spells and
+ *   Glide). When they run out the party comes down on the first tile it can
+ *   stand on, never inside a wall.
+ *
+ * Every kind of flight answers to VehicleSystem's sky rule: under a roof the
+ * flier keeps to walkable ground and terrain tag 7 is shut; outdoors it
+ * crosses anything.
  */
 
 (() => {
     const pluginName = 'FlySystem';
     const PLUGIN_PARAMS = PluginManager.parameters(pluginName);
 
+    // The sky rule is VehicleSystem's (the Broom answers to it too); the
+    // fallback only covers a build where that plugin is not loaded.
+    function flightGroundedHere() {
+        const vs = window.VehicleSystem;
+        if (vs && typeof vs.flightGroundedHere === 'function') return vs.flightGroundedHere();
+        const note = (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.note) || '';
+        return note.includes('<Interior>') && !note.includes('<Covered>');
+    }
+
+    function flightBarredTile(x, y) {
+        const vs = window.VehicleSystem;
+        if (vs && typeof vs.flightBarredTile === 'function') return vs.flightBarredTile(x, y);
+        return flightGroundedHere() && $gameMap.terrainTag(x, y) === 7;
+    }
+
+    // Somewhere the party can be set down: a tile a walker could leave in at
+    // least one direction, outside the keep-out region and, under a roof, off
+    // terrain tag 7.
+    function canLandAt(x, y) {
+        if (!$gameMap.isValid(x, y)) return false;
+        if ($gameMap.regionId(x, y) === 10) return false;
+        if (flightBarredTile(x, y)) return false;
+        return [2, 4, 6, 8].some(d => $gameMap.isPassable(x, y, d));
+    }
+
+    function takeOff(steps) {
+        $gamePlayer._flying = true;
+        $gamePlayer._flightSteps = steps > 0 ? steps : 0;
+        $gamePlayer._flightExpired = false;
+        $gameMap._airshipFly = true;
+    }
+
+    function land() {
+        $gamePlayer._flying = false;
+        $gamePlayer._flightSteps = 0;
+        $gamePlayer._flightExpired = false;
+        $gameMap._airshipFly = false;
+    }
+
     // Plugin command: Fly
     PluginManager.registerCommand(pluginName, 'Fly', function() {
-        $gamePlayer._flying = true;
-        $gameMap._airshipFly = true;
+        takeOff(0);
     });
 
     // Plugin command: Land
     PluginManager.registerCommand(pluginName, 'Land', function() {
-        $gamePlayer._flying = false;
-        $gameMap._airshipFly = false;
+        land();
     });
+
+    // Plugin command: Levitate (timed flight)
+    PluginManager.registerCommand(pluginName, 'Levitate', function(args) {
+        takeOff(Math.max(1, Number(args && args.steps) || 30));
+    });
+
+    // A timed flight wears off one step at a time. Once it has, the party
+    // comes down on the first tile it can stand on, so a spell that runs out
+    // over a lake or a rooftop carries on until there is ground below.
+    const _Game_Player_increaseSteps = Game_Player.prototype.increaseSteps;
+    Game_Player.prototype.increaseSteps = function() {
+        _Game_Player_increaseSteps.call(this);
+        if (!this._flying) return;
+        if (this._flightSteps > 0) {
+            this._flightSteps--;
+            if (this._flightSteps === 0) this._flightExpired = true;
+        }
+        if (this._flightExpired && canLandAt(this._x, this._y)) land();
+    };
 
     // Override Game_Player.prototype.moveDiagonally to allow 8-directional movement when flying
     const _Game_Player_moveDiagonally = Game_Player.prototype.moveDiagonally;
@@ -79,6 +151,13 @@
             if (window.RegionRules && window.RegionRules.blocksMovement(x2, y2)) {
                 return false;
             }
+            // Under a roof there is no sky: the flier keeps to the ground the
+            // party could walk, and terrain tag 7 is shut to them. Outdoors
+            // tag 7 (a roof seen from above) is crossed like anything else.
+            if (flightGroundedHere()) {
+                if (flightBarredTile(x2, y2)) return false;
+                return _Game_Player_canPass.call(this, x, y, d);
+            }
             return true;
         } else {
             return _Game_Player_canPass.call(this, x, y, d);
@@ -95,8 +174,8 @@
         // the scene is busy so it does not double as a land command.
         if ($gamePlayer._flying && Input.isTriggered('ok') &&
             !$gameMessage.isBusy() && !this.isBusy() && $gamePlayer.canMove()) {
-            $gamePlayer._flying = false;
-            $gameMap._airshipFly = false;
+            if (canLandAt($gamePlayer.x, $gamePlayer.y)) land();
+            else if (typeof SoundManager !== 'undefined' && SoundManager.playBuzzer) SoundManager.playBuzzer();
         }
     };
 
@@ -112,10 +191,14 @@
     Game_Player.prototype.performTransfer = function() {
         if (this.isTransferring()) {
             this._flying = false;
+            this._flightSteps = 0;
+            this._flightExpired = false;
         }
         _Game_Player_performTransfer.call(this);
         if ($gameMap) {
             $gameMap._airshipFly = false;
         }
     };
+
+    window.FlySystem = { takeOff, land, canLandAt, flightBarredTile, flightGroundedHere };
 })();

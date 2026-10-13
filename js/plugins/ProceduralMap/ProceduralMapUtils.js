@@ -774,7 +774,13 @@
    * cave rebuilds the very map the player descended from.
    */
   function procMapSeed(originX, originY, layerDepth, salt) {
-    const base = hashCoords(getWorldSeed(), originX, originY);
+    // A square of an earthlike world sits at planet-local numbers that Earth and
+    // every other such world share, and grows Earth's own biomes, so the world's
+    // salt (GalaxySim enterPlanetSurface) is what keeps its towns its own.
+    const pg = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._procGenData : null;
+    const grid = pg && pg.alienGrid;
+    const world = (grid && grid.earthlike && grid.salt) ? hashCoords(getWorldSeed(), grid.salt | 0, 7) : getWorldSeed();
+    const base = hashCoords(world, originX, originY);
     const depth = layerDepth | 0;
     const extra = salt | 0;
     if (!depth && !extra) return base;

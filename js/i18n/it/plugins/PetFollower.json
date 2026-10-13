@@ -1,16 +1,16 @@
 {
   "defaultName": "Compagno",
   "defaultChildName": "Piccolo",
-  "born": "{name} è nato, ed entra nella famiglia.",
-  "cloneJoined": "{parent} si divide. {name} prende posto nel gruppo.",
-  "cloneFollows": "{parent} si divide. Non c'è posto nel gruppo, così {name} segue da dietro.",
+  "born": "{name} è nato ed entra nella famiglia.",
+  "cloneJoined": "{parent} si divide. {name} prende posto nel Party.",
+  "cloneFollows": "{parent} si divide. Non c'è posto nel Party, così {name} lo segue.",
   "training": {
-    "started": "{name} inizia l'addestramento da {className}. Serviranno circa {days} giorni di viaggio insieme.",
+    "started": "{name} inizia l'addestramento da {className}. Circa {days} giorni di viaggio.",
     "stopped": "L'addestramento di {name} viene interrotto.",
-    "readyNoRoom": "{name} ha finito l'addestramento, ma nel gruppo non c'è ancora posto.",
-    "graduated": "{name} completa l'addestramento e si unisce al gruppo come {className}."
+    "readyNoRoom": "{name} ha finito l'addestramento. Nel Party non c'è ancora posto.",
+    "graduated": "{name} completa l'addestramento e si unisce al Party come {className}."
   },
-  "designedJoined": "{name} prende posto nel gruppo.",
+  "designedJoined": "{name} prende posto nel Party.",
   "ride": {
     "ride": "Cavalca {name}",
     "cancel": "Annulla"

@@ -1,6 +1,6 @@
 {
   "name": "Arcano",
-  "blurb": "La magia misurata come campo: intensita, tolleranze e varianza con la distanza. Le linee di ricerca fallite restano registrate.",
+  "blurb": "La magia studiata come campo misurabile, comprese le ricerche fallite.",
   "nodes": {
     "arc_leyline": {
       "name": "Cartografia delle Leyline",
@@ -39,7 +39,7 @@
       "desc": "Un focus che condivide materia o storia con un bersaglio vi si accoppia, per cui l'opera viene indirizzata al focus e si risolve sul bersaglio senza dipendenza misurabile dalla distanza fino al limite del rilevamento. La forza dell'accoppiamento scala con la specificità del legame ed è all'incirca logaritmica in essa: un indumento dà un accoppiamento debole, un nome personale uno più forte, capelli e sangue il più forte registrato. L'accoppiamento è simmetrico, e nulla nel metodo impedisce che sia l'estremo lontano a indirizzare il focus."
     },
     "arc_geomancy_porphyrin": {
-      "name": "Porfirina e la Teoria dell'Olio",
+      "name": "Porfirina e la Teoria del Petrolio",
       "desc": "Ogni giacimento di greggio ospita entità petrodemoniache legate, e le porfirine già presenti nel greggio aprono un canale fra giacimento, offerta di sangue e leyline. La portata supera di due ordini di grandezza quella di una linea rilevata e non cala con il prelievo, perché il giacimento non è la sorgente. Il canale conduce in entrambe le direzioni e non ha stadio di misura, per cui l'installazione standard è un tratto di linea con un'interruzione, e gli incidenti registrati sono tutti incidenti di flusso inverso."
     },
     "arc_convokation": {
@@ -68,7 +68,7 @@
     },
     "arc_imagination_discipline": {
       "name": "La Disciplina della Pura Immaginazione",
-      "desc": "Il rito va tenuto intero nella mente, senza deriva, per tutto il tempo che impiega a svolgersi. L'addestramento si misura come tempo di tenuta ininterrotta sotto distrazione, da pochi secondi fino a ore nell'arco di anni, con un esame che aggiunge rumore, freddo e interruzioni. Il modo di guasto non è un'opera fallita: il substrato immaginato è ciò su cui l'operatore sta in piedi mentre il rito gira, e i casi registrati di deriva oltre una certa profondità finiscono con un operatore che respira ancora e non torna."
+      "desc": "Il rito va tenuto intero nella mente, senza deriva, per tutto il tempo che impiega a svolgersi. L'addestramento si misura come tempo di tenuta ininterrotta sotto distrazione, da pochi secondi fino a ore nell'arco di anni, con un esame che aggiunge rumore, freddo e interruzioni. Il modo di guasto è più grave di un'opera fallita: il substrato immaginato è ciò su cui l'operatore sta in piedi mentre il rito gira, e i casi registrati di deriva oltre una certa profondità finiscono con un operatore che respira ancora e non torna."
     }
   }
 }

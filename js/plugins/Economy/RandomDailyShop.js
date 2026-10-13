@@ -1279,6 +1279,16 @@
 
   const prettifySchool = s => String(s || "").replace(/([a-z])([A-Z])/g, "$1 $2");
 
+  // Money is shown in euros like every other till (100 gold = 1 euro).
+  const teachMoney = v => T('DailyShop.ui.price', {
+    value: window.MoneyFormatter ? window.MoneyFormatter.format(v) : (Number(v || 0) / 100).toFixed(2)
+  });
+  // Actor and skill names go into innerHTML: a name typed at character
+  // creation must not be able to break the page.
+  const escTeach = v => String(v == null ? "" : v).replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[ch]));
+
   function skillSchool(skill) {
     return skill && skill.meta && skill.meta.category ? String(skill.meta.category) : "";
   }
@@ -1425,6 +1435,7 @@
       c.style.transition = "opacity .2s ease-out";
       c.style.opacity = "0";
       c.style.pointerEvents = "none";
+      c._dndClosing = true;
       setTimeout(() => { if (c && c.parentNode) c.parentNode.removeChild(c); }, 200);
       this._dom = null;
     }
@@ -1445,6 +1456,13 @@
     if (!actor) return T('DailyShop.ui.noPupil');
     if (actor.skills().some(k => k && k.id === skill.id)) return T('DailyShop.ui.alreadyKnown');
     if ((skill.mpCost || 0) > actor.mmp) return T('DailyShop.ui.beyondMpReach');
+    // The same floors every counter that sells a skill outright keeps
+    // (Stockbusters included): esoteric and forbidden lore by level, and the
+    // skill's own stat requirement.
+    if (window.SkillArcana && typeof window.SkillArcana.canBuy === "function" &&
+        !window.SkillArcana.canBuy(actor, skill)) return T('DailyShop.ui.tooLowLevel');
+    if (window.SkillStatReq && typeof window.SkillStatReq.meets === "function" &&
+        !window.SkillStatReq.meets(actor, skill)) return T('DailyShop.ui.statTooLow');
     if ($gameParty.gold() < teachingPrice(skill)) return T('DailyShop.ui.notEnoughGold');
     return null;
   };
@@ -1505,7 +1523,7 @@
     $gameParty.members().forEach((a, idx) => {
       const sel = (this._focus === "party" && idx === this._actorIdx) ? "sel" : "";
       actorsHTML += `<div class="teach-actor focusable ${sel}" onclick="SceneManager._scene.selectActor(${idx})">
-          <span>${a.name()}</span><span class="teach-price">${a.mp}/${a.mmp} MP</span></div>`;
+          <span>${escTeach(a.name())}</span><span class="teach-price">${a.mp}/${a.mmp} MP</span></div>`;
     });
 
     const blurb = isMagic
@@ -1528,7 +1546,7 @@
           <div style="font-weight:bold; color:var(--accent-gold-pure,#b8860b);">${isMagic ? (T('DailyShop.ui.todaySSchools')) : (T('DailyShop.ui.todaySDisciplines'))}</div>
           ${schoolsHTML}
           <div class="row" style="margin-top:8px; border-top:1px solid var(--border-primary-hover-translucent-15,rgba(184,134,11,0.2)); padding-top:6px;">
-            <span>${T('DailyShop.ui.gold')}</span><span class="teach-price">${$gameParty.gold()}</span>
+            <span>${T('DailyShop.ui.gold')}</span><span class="teach-price">${teachMoney($gameParty.gold())}</span>
           </div>
         </div>
       </div>`;
@@ -1551,7 +1569,7 @@
           ? ` · ${T('SkillsMenu.magicSystem.' + s.meta.MagicSystem) || s.meta.MagicSystem}` : "";
         const desc = (s.description || "").replace(/\n/g, " ");
         cardsHTML += `<div class="teach-card focusable ${sel} ${taught} ${locked}" onclick="SceneManager._scene.buyOffer(${idx})">
-            <div class="teach-name"><span>${s.name}</span><span class="teach-price">${teachingPrice(s)}G</span></div>
+            <div class="teach-name"><span>${escTeach(s.name)}</span><span class="teach-price">${teachMoney(teachingPrice(s))}</span></div>
             <div class="teach-meta">${prettifySchool(skillSchool(s))}${cost ? " · " + cost : ""}${magicSys} ${forb}</div>
             <div class="teach-desc">${desc}</div>
             ${reason ? `<div class="teach-meta" style="color:var(--text-cost-bad);">${reason}</div>` : ""}

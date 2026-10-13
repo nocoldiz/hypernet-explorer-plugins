@@ -5,21 +5,21 @@
   "vehicleIsOperationalAgain": "Veicolo di nuovo operativo!",
   "installed": "INSTALLATO",
   "hullAppearanceUpdated": "Aspetto dello scafo aggiornato.",
-  "camperExpedition": "CAMPER ADVENTURE",
+  "camperExpedition": "CAMPER DA SPEDIZIONE",
   "aReinforcedHeavyCamperDesigned": "Un camper pesante rinforzato progettato per resistere a lunghi tragitti nelle terre selvagge. Richiede una solida integrità strutturale.",
   "standardUrbanSedan": "AUTOMOBILE URBANA",
-  "aClassicStandardEngineTransport": "Una vettura classica adatta alle strade cittadine. Dipende fortemente dal controllo dello sterzo e della trazione.",
-  "lightSportMotorcycle": "MOTOCICLO LEGGERO",
-  "anAgileAndRapidPersonal": "Un motociclo sportivo agile e rapido. Richiede una catena perfettamente oliata e una risposta immediata dei freni.",
-  "explorerStarship": "IMPERIAL STARSHIP",
-  "anAdvancedDeepSpaceExplorer": "Un vascello spaziale orbitale a propulsione termica. Le parti critiche devono essere impeccabili per permettere il volo astrale.",
+  "aClassicStandardEngineTransport": "Un'auto classica per le strade cittadine. Dipende da sterzo e trasmissione.",
+  "lightSportMotorcycle": "BICI SPORTIVA",
+  "anAgileAndRapidPersonal": "Una bici sportiva leggera e veloce. Richiede una catena ben oliata e freni pronti.",
+  "explorerStarship": "ASTRONAVE ESPLORATIVA",
+  "anAdvancedDeepSpaceExplorer": "Un'astronave per lo spazio profondo con motori di iper-navigazione. Le parti critiche devono essere impeccabili per decollare.",
   "inflatableDinghy": "GOMMONE GONFIABILE",
   "aLightPackableBoatFor": "Un gommone leggero per acque aperte. Lo scafo e le camere d'aria devono restare integri per non affondare.",
   "critical": "ESSENZIALE",
   "changeAppearance": "CAMBIA ASPETTO",
   "statusBroken": "STATO: DANNEGGIATO",
   "statusOperational": "STATO: OPERATIVO",
-  "allCriticalComponentsMustMaintain": "Ogni componente essenziale deve restare sopra lo 0% di integrità perché il veicolo funzioni.",
+  "allCriticalComponentsMustMaintain": "Le parti essenziali devono restare sopra lo 0% o il veicolo non parte.",
   "repair": "Riparazione",
   "upgrades": "Potenziamenti",
   "close": "CHIUDI",
@@ -33,28 +33,28 @@
   "upgradeAction": "Potenzia",
   "upgrade": {
     "accel": {
-      "name": "Iniettori Turbo",
+      "name": "Iniettori turbo",
       "desc": "Risposta dell'acceleratore più pronta e accelerazione più rapida."
     },
     "speed": {
-      "name": "Profilo Aerodinamico",
-      "desc": "Velocità massima maggiore e meno tempo di gioco per attraversare ogni tassello."
+      "name": "Profilo aerodinamico",
+      "desc": "Velocità massima maggiore. Viaggi più rapidi sulla mappa."
     },
     "fuel": {
-      "name": "Serbatoio Maggiorato",
-      "desc": "Un serbatoio più grande aumenta la capacità massima di carburante."
+      "name": "Serbatoio maggiorato",
+      "desc": "Più capacità di carburante."
     },
     "health": {
-      "name": "Telaio Rinforzato",
-      "desc": "Un telaio irrobustito fa subire meno danni al veicolo negli impatti."
+      "name": "Telaio rinforzato",
+      "desc": "Meno danni dagli urti."
     },
     "aquatic": {
-      "name": "Conversione Anfibia",
-      "desc": "Uno scafo stagno e i pontoni permettono al camper di navigare e immergersi."
+      "name": "Conversione anfibia",
+      "desc": "Il camper può navigare e immergersi."
     },
     "flight": {
-      "name": "Rotori Antigravità",
-      "desc": "Rotori antigravità ripiegabili permettono al camper di decollare e volare."
+      "name": "Rotori antigravità",
+      "desc": "Il camper può decollare e volare."
     }
   },
   "upgradeWorkshop": "OFFICINA POTENZIAMENTI",
@@ -62,10 +62,10 @@
   "acceleration": "Accelerazione",
   "fuelCapacity": "Capacità carburante",
   "damageReduction": "Riduzione danni",
-  "enablesDrivingOnAndDiving": "Abilita navigazione e immersione sull\\'acqua.",
-  "enablesTakeOffAndFlight": "Abilita decollo e volo.",
+  "enablesDrivingOnAndDiving": "Permette di navigare e immergersi.",
+  "enablesTakeOffAndFlight": "Permette di decollare e volare.",
   "repairPercent": "Riparazione ({percent}%)",
-  "timePerTile": "Tempo per tassello: {minutes} min",
+  "timePerTile": "Tempo per casella: {minutes} min",
   "timePerTileNext": " → {minutes} min (risparmi {saved} min)",
   "part": {
     "Engine": "Motore",
@@ -98,9 +98,9 @@
   "systemNotReady": "Sistema non pronto. Riprova.",
   "criticalDamage": "\\C[2]Danno critico!\\C[0] {vehicle} adesso è fuori uso!",
   "tookDamage": "{vehicle} ha subito danni!",
-  "fullyRepaired": "{vehicle} è stato riparato del tutto!",
-  "partiallyRepaired": "{vehicle} è stato riparato in parte ({percent}%).",
-  "nowOperational": "\\C[3]{vehicle} è di nuovo operativo!\\C[0]",
+  "fullyRepaired": "{vehicle} ha ricevuto una riparazione completa!",
+  "partiallyRepaired": "{vehicle} ha ricevuto una riparazione parziale ({percent}%).",
+  "nowOperational": "\\C[3]{vehicle} torna a funzionare!\\C[0]",
   "brokenCannotUse": "{vehicle} è fuori uso e non si può usare!",
   "repairCriticalFirstLong": "Le parti essenziali vanno riparate prima di poterlo usare.",
   "repairCriticalFirst": "Prima vanno riparate le parti essenziali.",
@@ -108,7 +108,7 @@
     "camper": "Il camper",
     "car": "L'auto",
     "starship": "L'astronave",
-    "bike": "La moto",
+    "bike": "La bici",
     "boat": "Il gommone"
   },
   "toast": {
@@ -123,23 +123,23 @@
       },
       "portrait": {
         "name": "Veicolo",
-        "text": "Il veicolo, la sua descrizione e se funziona. Un'astronave può cambiare aspetto da qui."
+        "text": "Info e stato del veicolo. Le astronavi possono cambiare aspetto qui."
       },
       "status": {
         "name": "Stato",
-        "text": "Danneggiato significa che un componente essenziale è allo 0% e il veicolo non si muove finché non viene riparato."
+        "text": "Danneggiato: una parte essenziale è allo 0%. Riparala per ripartire."
       },
       "tabs": {
-        "name": "Riparazione e Potenziamenti",
-        "text": "Passa dal riparare i pezzi al migliorare il veicolo."
+        "name": "Riparazione e potenziamenti",
+        "text": "Passa tra riparazioni e potenziamenti."
       },
       "repair": {
         "name": "Registro integrità",
-        "text": "Ogni pezzo con la sua integrità. Quelli essenziali tengono in moto il veicolo. Ripara un pezzo, o Riparazione totale per tutti, spendendo materiali."
+        "text": "Ogni pezzo e la sua integrità. Ripara un pezzo, o usa Riparazione totale per tutti. Costa materiali."
       },
       "upgrades": {
         "name": "Officina potenziamenti",
-        "text": "Miglioramenti comprati a livelli: accelerazione, velocità massima, capacità del serbatoio, riduzione dei danni, e per il camper guida sull'acqua e volo."
+        "text": "Migliora accelerazione, velocità, carburante e resistenza a livelli. Il camper può anche navigare e volare."
       },
       "help": {
         "name": "? Aiuto",

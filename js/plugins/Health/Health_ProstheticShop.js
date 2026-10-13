@@ -172,6 +172,43 @@
     }
   }
 
+  // One part taken off the body in surgery: its augment, the graft bonus it
+  // carried, what it taught, the weapon in its grip (handed back while the slot
+  // list still says which slot was its) and the part itself, back in the pack
+  // when it was ever an item.
+  function amputatePart(actor, partKey, statEffect, statBonus) {
+    const part = actor && actor._bodyParts ? actor._bodyParts[partKey] : null;
+    if (!part) return;
+    if (actor._prosthetics && actor._prosthetics[partKey]) {
+      removeProstheticImmediate(actor, partKey);
+    }
+    if (statEffect && statBonus > 0 && actor._bodyPartStatEffects) {
+      const p = statEffect.param;
+      if (actor._bodyPartStatEffects[p]) {
+        actor._bodyPartStatEffects[p] -= statBonus;
+        if (actor._bodyPartStatEffects[p] <= 0) delete actor._bodyPartStatEffects[p];
+      }
+    }
+    // Amputated, so what the limb taught leaves with it: its own moves and
+    // the ones it granted for being a hand, a mouth, an eye or a foot, kept
+    // only where another part of that kind is still attached.
+    if (window.HealthCore && window.HealthCore.forgetPartSkills) {
+      window.HealthCore.forgetPartSkills(actor, part, partKey);
+    } else {
+      skillIdList(part.skillId).forEach((sid) => actor.forgetSkill(sid));
+    }
+    if (window.HandSlots && window.HandSlots.releaseSlotForPart) {
+      try { window.HandSlots.releaseSlotForPart(actor, partKey); } catch (e) { /* equip layer not up */ }
+    }
+    if (part.itemId && $dataItems[part.itemId]) {
+      $gameParty.gainItem($dataItems[part.itemId], 1);
+    }
+    // Off the body, so the portrait stops drawing it.
+    actor._severedParts = actor._severedParts || {};
+    actor._severedParts[partKey] = true;
+    delete actor._bodyParts[partKey];
+  }
+
   // Display label for a part's skill(s): joined skill names, or "" if none.
   function skillNames(value) {
     return skillIdList(value)
@@ -1885,7 +1922,9 @@
       let moved = false;
       const len = this.activeElements.length;
 
-      if (Input.isTriggered('down') || Input.isRepeated('down')) {
+      if (this.updateGridNavigation()) {
+        moved = true;
+      } else if (Input.isTriggered('down') || Input.isRepeated('down')) {
         this.focusIndex = (this.focusIndex + 1) % len;
         moved = true;
       } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
@@ -1913,6 +1952,37 @@
         this.updateFocus();
         this.scene.onUIFocusChange(this.focusedRow());
       }
+    }
+
+    // The augment shelf reads several across, the way the augments register
+    // does: left and right walk within a line, up and down a whole line. Up off
+    // the first line and down off the last leave the shelf for the rest of the
+    // ring, so the Back stamp is still reached. True when the cursor moved.
+    static updateGridNavigation() {
+      const el = this.activeElements[this.focusIndex];
+      const grid = el && el.closest ? el.closest('.backpack-grid') : null;
+      const dir = grid && window.UINav ? window.UINav.navDir() : null;
+      if (!dir) return false;
+      const cells = this.activeElements.filter((node) => grid.contains(node));
+      const at = cells.indexOf(el);
+      const cols = window.MenuVirtualList ? window.MenuVirtualList.columnsOf(grid, 3) : 3;
+      const next = window.UINav.gridStep(at, dir, cells.length, cols);
+      if (next !== at) {
+        this.focusIndex = this.activeElements.indexOf(cells[next]);
+        return true;
+      }
+      // Off an edge: up leaves for the control before the shelf, down for the
+      // one after it, whichever column the cursor stood in.
+      const len = this.activeElements.length;
+      if (dir === 'up') {
+        this.focusIndex = (this.activeElements.indexOf(cells[0]) - 1 + len) % len;
+        return true;
+      }
+      if (dir === 'down') {
+        this.focusIndex = (this.activeElements.indexOf(cells[cells.length - 1]) + 1) % len;
+        return true;
+      }
+      return false;
     }
 
     static updateActionsNavigation() {
@@ -2788,8 +2858,8 @@
 
     if (window.Dice3D) {
       const res = await window.Dice3D.rollPercentage(odds.chance, {
-        actionName: isSelfSurgery ? 'Self Surgery' : 'Field Surgery',
-        statName: 'DEX/INT',
+        actionName: T(isSelfSurgery ? 'Prosthetics.dice.selfSurgery' : 'Prosthetics.dice.fieldSurgery'),
+        statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(6) + '/' + TextManager.param(4) : '',
         modifier: medMod
       });
       success = res.success;
@@ -3115,39 +3185,18 @@
     } else if (action === "remove") {
       $gameParty.loseGold(this.priceOf(item.cost));
 
-      if (item.hasImplant && actor._prosthetics && actor._prosthetics[item.partKey]) {
-        removeProstheticImmediate(actor, item.partKey);
-      }
-
-      if (item.statEffect && item.statBonus > 0 && actor._bodyPartStatEffects) {
-        const p = item.statEffect.param;
-        if (actor._bodyPartStatEffects[p]) {
-          actor._bodyPartStatEffects[p] -= item.statBonus;
-          if (actor._bodyPartStatEffects[p] <= 0) delete actor._bodyPartStatEffects[p];
-        }
-      }
-
-      // Amputated, so what the limb taught leaves with it: its own moves and
-      // the ones it granted for being a hand, a mouth, an eye or a foot, kept
-      // only where another part of that kind is still attached.
-      const removedPart = actor._bodyParts[item.partKey];
-      if (removedPart) {
-        if (window.HealthCore && window.HealthCore.forgetPartSkills) {
-          window.HealthCore.forgetPartSkills(actor, removedPart, item.partKey);
-        } else {
-          skillIdList(removedPart.skillId).forEach((sid) => actor.forgetSkill(sid));
-        }
-      }
-      if (removedPart && removedPart.itemId && $dataItems[removedPart.itemId]) {
-        $gameParty.gainItem($dataItems[removedPart.itemId], 1);
-      }
-
-      // Off the body, so the portrait stops drawing it.
-      if (window.HealthCore && window.HealthCore.partStates) {
-        actor._severedParts = actor._severedParts || {};
-        actor._severedParts[item.partKey] = true;
-      }
-      delete actor._bodyParts[item.partKey];
+      // An arm does not leave its hand hanging in the air: whatever sits further
+      // down the limb comes off with it (HealthCore.dependentPartKeys), each part
+      // handing back its augment, its bonus, its skills and its weapon.
+      const HCr = window.HealthCore;
+      const dependents = HCr && HCr.dependentPartKeys ? HCr.dependentPartKeys(actor, item.partKey) : [];
+      dependents.forEach((key) => {
+        const part = actor._bodyParts && actor._bodyParts[key];
+        if (!part) return;
+        const se = lookupStatEffect(key, part, actor);
+        amputatePart(actor, key, se, computeStatBonus(se));
+      });
+      amputatePart(actor, item.partKey, item.statEffect, item.statBonus);
       actor.refresh();
       SoundManager.playShop();
       this.showClinicNotification(T('Prosthetics.limbAmputatedSuccessfully'));
@@ -3452,6 +3501,10 @@
       const blocked = window.RemoteClinic ? window.RemoteClinic.blockedReason() : '';
       let patient = $gameParty.members()[0];
       let filter = '';
+      // A party member is named by the player, so a name goes into the markup
+      // as text, never as markup.
+      const esc = (text) => String(text == null ? '' : text).replace(/[&<>"']/g,
+        (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
       const contentHTML = `
         <div class="xpr-app">
@@ -3499,7 +3552,7 @@
       function renderTabs() {
         tabs.innerHTML = $gameParty.members().map((actor, i) => {
           const active = actor === patient;
-          return `<button class="focusable xpr-tab${active ? ' xpr-tab--on' : ''}" data-focus-key="rb-tab-${i}" data-tab="${i}" tabindex="0">${actor.name()}</button>`;
+          return `<button class="focusable xpr-tab${active ? ' xpr-tab--on' : ''}" data-focus-key="rb-tab-${i}" data-tab="${i}" tabindex="0">${esc(actor.name())}</button>`;
         }).join('');
         tabs.querySelectorAll('[data-tab]').forEach((btn) => {
           btn.addEventListener('click', () => {
@@ -3535,8 +3588,8 @@
           return `<button class="focusable xpr-row${row.blockedReason ? ' xpr-row--blocked' : ''}" data-focus-key="rb-row-${i}" data-row="${i}" tabindex="0"
               ${row.blockedReason ? 'disabled' : ''}>
               <span class="xpr-grow">
-                <span class="xpr-row-label">${row.name}</span><br>
-                <span class="xpr-row-detail">${note}</span>
+                <span class="xpr-row-label">${esc(row.name)}</span><br>
+                <span class="xpr-row-detail">${esc(note)}</span>
               </span>
               <span class="xpr-price ${affordable ? 'xpr-price--ok' : 'xpr-price--short'}">&euro;${(row.cost / 100).toFixed(2)}</span>
             </button>`;
@@ -3575,7 +3628,7 @@
   if (window.HypernetOS && window.HypernetOS.registerApp) {
     window.HypernetOS.registerApp({
       id: RB_APP_ID,
-      name: T('Prosthetics.remote.title'),
+      name: () => T('Prosthetics.remote.title'),
       icon: RB_APP_ICON,
       category: 'internet',
       desktopShortcut: true,

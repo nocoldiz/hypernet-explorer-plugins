@@ -54,8 +54,8 @@
     "heading": "REQUIRED"
   },
   "rail": {
-    "heading": "PARTS CARRIED",
-    "empty": "You are carrying no components.",
+    "heading": "YOUR PARTS",
+    "empty": "No components.",
     "count": "x{n}"
   },
   "hint": {
@@ -95,7 +95,7 @@
     "failLine": "no {kind} detected",
     "failFooter": "Fit the missing parts and try again.",
     "overdrawHeading": "POWER FAULT",
-    "overdrawLine": "the cell cannot carry {n} W"
+    "overdrawLine": "cell can't supply {n} W"
   },
   "tool": {
     "auto": "AUTO-FIT",
@@ -113,18 +113,18 @@
     "handheld": "Handheld pad",
     "phone": "Telephone keypad"
   },
-  "caseWarning": "Changing the case empties the board. Every part goes back in the bag.",
+  "caseWarning": "Changing the case returns all parts to your bag.",
   "fault": {
-    "missing": "No {kind} is fitted. The machine will not start without one.",
-    "power": "The cell is {n} W short of what the fitted parts draw.",
-    "heat": "Nothing is cooling a {n} W board. Expect it to throttle.",
+    "missing": "No {kind} fitted. The machine won't start.",
+    "power": "Power cell is {n} W short.",
+    "heat": "No cooling on a {n} W board. It will throttle.",
     "uplink": "No uplink fitted. The Hypernet will not answer.",
     "memory": "Only {n} MB of memory. Archways XP will crawl.",
-    "integrated": "No graphics adapter. The processor drives the panel itself, on {n} MB borrowed from main memory."
+    "integrated": "No graphics card. Using {n} MB of shared memory."
   },
   "chip": {
     "heading": "CHIP LAB",
-    "hint": "Left button draws, right button rubs out, middle button pans, wheel zooms. Pick a tile twice to step through its settings.",
+    "hint": "Left click draws, right click erases, middle button pans, wheel zooms. Pick a tile again to change its setting.",
     "tile": {
       "wire": "Wire",
       "source": "Source",
@@ -203,9 +203,9 @@
     },
     "bus": "Bus",
     "instr": "Instr",
-    "presetHeading": "CANNED SCHEMATICS",
-    "presetHint": "Pick a preset and it is drawn where you are looking, as ordinary tiles. Move it, wire it into something bigger, or etch it as it is.",
-    "placing": "{name} in hand. Click to place it, right button or Esc to put it back.",
+    "presetHeading": "PRESETS",
+    "presetHint": "Places the preset as normal tiles where you're looking. Edit it or etch it as is.",
+    "placing": "{name} selected. Click to place, right click or Esc to cancel.",
     "app": {
       "name": "Circuit Board Editor",
       "dies": "ETCHED DIES",
@@ -219,7 +219,7 @@
     "heading": "HYPERDECK FIRMWARE SETUP",
     "tabMain": "MAIN",
     "tabHealth": "HEALTH",
-    "noFaults": "No faults reported. Every fitted part answered.",
+    "noFaults": "No faults.",
     "willBoot": "This machine will POST.",
     "willNotBoot": "This machine will not POST.",
     "boot": "POWER ON",

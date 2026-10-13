@@ -573,10 +573,12 @@
     // Wherever a leader can go down outside a fight (poison on the road,
     // a trap, a need run dry), the lead passes the moment it happens; a
     // leader who went down IN a fight passes it once the fight is over.
-    const _Game_BattlerBase_die_lead = Game_BattlerBase.prototype.die;
-    Game_BattlerBase.prototype.die = function() {
-        _Game_BattlerBase_die_lead.call(this);
-        if (this.isActor && this.isActor()) window.PartyRoster.ensureLiveLeader();
+    // Hooked on Game_Actor, not Game_BattlerBase: SummonSystem loads first and
+    // gives Game_Actor a die() of its own, which would shadow a base override.
+    const _Game_Actor_die_lead = Game_Actor.prototype.die;
+    Game_Actor.prototype.die = function() {
+        _Game_Actor_die_lead.call(this);
+        window.PartyRoster.ensureLiveLeader();
     };
     const _Game_Party_onBattleEnd_lead = Game_Party.prototype.onBattleEnd;
     Game_Party.prototype.onBattleEnd = function() {
@@ -1112,7 +1114,13 @@
             if (typeof $gameTemp === "undefined" || !$gameTemp || !$gameMap) return 0;
             const drops = $gameTemp._lodgingDrops;
             if (!Array.isArray(drops) || !drops.length) return 0;
-            const here = drops.filter(drop => drop && drop.mapId === $gameMap.mapId());
+            // Somebody called back since (the Dynamics board in the same menu
+            // visit, or asked along off the floor) walks with the party now:
+            // laying their body down again stood a second of them on the map.
+            const travelling = new Set((typeof $gameParty !== "undefined" && $gameParty
+                ? $gameParty.members() : []).map(a => a.name()));
+            const here = drops.filter(drop => drop && drop.mapId === $gameMap.mapId()
+                && !(drop.snapshot && travelling.has(drop.snapshot.name)));
             // Anything left on another map is left behind for good.
             $gameTemp._lodgingDrops = here;
             let put = 0;
@@ -1924,7 +1932,15 @@
     };
 
     Game_BubbaFollower.prototype.chaseCharacter = function(character) {
-        if (!this.isVisible()) return;
+        // Not walking with the party, he still keeps his place in the chain,
+        // the way any hidden follower does: the slots behind him (the pet)
+        // chase HIS tile, and a Bubba frozen where the party last arrived
+        // held the pet there whenever the engine's own chase ran (the world
+        // map, a platformer map, split screen).
+        if (!this.isVisible()) {
+            Game_Follower.prototype.chaseCharacter.call(this, character);
+            return;
+        }
         let target = character;
         if (!target || !target.isVisible || !target.isVisible()) {
             const followers = ($gamePlayer && $gamePlayer.followers()) ? $gamePlayer.followers().data() : [];

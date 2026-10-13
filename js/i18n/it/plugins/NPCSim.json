@@ -1,9 +1,16 @@
 {
   "anItem": "un oggetto",
+  "noSoulNearby": "Nessuno nei paraggi.",
   "mapFallback": "Mappa {id}",
   "homePool": {
-    "houses": "casa",
-    "skyscrapers": "grattacielo"
+    "houses": "una casa",
+    "skyscrapers": "un grattacielo"
+  },
+  "home": {
+    "homeless": "Senzatetto",
+    "frontierSettlement": "Insediamento di frontiera",
+    "door": "Porta ({x}, {y})",
+    "floor": "Piano {n}"
   },
   "log": {
     "swam": "è andato a nuotare",
@@ -23,7 +30,7 @@
     "rentalIncome": "ha incassato {amount} di affitti",
     "stocksGain": "ha guadagnato {amount} in borsa",
     "stocksLoss": "ha perso {amount} in borsa",
-    "movedHome": "si è trasferito in una {home} ({saved} da parte)",
+    "movedHome": "si è trasferito in {home} ({saved} da parte)",
     "reachedLevel": "ha raggiunto il livello {level}",
     "specHoned": "ha raggiunto il grado {level} in {spec}",
     "met": "ha incontrato {name}",
@@ -39,19 +46,19 @@
     "harvestedFor": "ha raccolto {qty} {item} per {owner}",
     "collected": "ha raccolto {qty} {item} dagli animali",
     "collectedFor": "ha raccolto {qty} {item} per {owner}",
-    "wateredParty": "ha annaffiato le piante di {plant} del gruppo",
-    "fedParty": "ha dato da mangiare a {animal} del gruppo",
-    "wateredHive": "ha riempito l'acqua dell'alveare del gruppo",
+    "wateredParty": "ha annaffiato le piante di {plant} del Party",
+    "fedParty": "ha dato da mangiare a {animal} del Party",
+    "wateredHive": "ha riempito l'acqua dell'alveare del Party",
     "usedFix": "ha usato {item} per calmare la voglia di {substance}",
     "withdrawal": "è andato in astinenza da {substance}",
     "withdrawalOver": "ha superato l'astinenza da {substance}",
     "hiveCared": "si è preso cura delle api",
-    "hiveCaredParty": "si è preso cura delle api del gruppo",
+    "hiveCaredParty": "si è preso cura delle api del Party",
     "hiveTreated": "ha curato le api contro {threats}",
     "honeyTaken": "ha tolto {qty} {item} dall'alveare",
     "honeyTakenFor": "ha tolto {qty} {item} dall'alveare per {owner}",
     "barrelCared": "ha badato a una botte di {brew}",
-    "barrelCaredParty": "ha badato alla botte di {brew} del gruppo",
+    "barrelCaredParty": "ha badato alla botte di {brew} del Party",
     "barrelBottled": "ha imbottigliato {qty} {item}",
     "barrelBottledFor": "ha imbottigliato {qty} {item} per {owner}",
     "barrelStarted": "ha messo a fermentare una botte di {brew}",
@@ -77,8 +84,8 @@
     "pool": "una partita a biliardo",
     "basketball": "una partita a basket",
     "target": "al poligono di tiro",
-    "piano": "il pianoforte",
-    "tarot": "una lettura dei tarocchi"
+    "piano": "con il pianoforte",
+    "tarot": "con i tarocchi"
   },
   "narrative": {
     "noHistory": "{name} non ha ancora una storia registrata.",

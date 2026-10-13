@@ -988,11 +988,6 @@
         margin-bottom: 4px;
     }
 
-    .cc-scenario-sheet-bust {
-        width: 28px;
-        height: 38px;
-    }
-
     .cc-scenario-sheet-name {
         font-size: 1.04rem;
     }
@@ -1795,22 +1790,6 @@
 
     #biologic-container .gauge-container {
         margin-top: 3px;
-    }
-}
-
-
-/* ==========================================================================
-   The augments register (Health/PartyAugmentsMenu.js)
-   ========================================================================== */
-@media (max-width: 1366px) and (max-height: 860px) {
-
-    .aug-tab {
-        padding: 3px 8px;
-    }
-
-    .aug-row {
-        gap: 8px;
-        padding: 4px 8px;
     }
 }
 
@@ -3890,15 +3869,6 @@
         margin-bottom: 9px;
     }
 
-    .detail-spec-grid {
-        gap: 6px;
-        margin-bottom: 9px;
-    }
-
-    .detail-spec-badge {
-        padding: 4px 7px;
-    }
-
     .detail-price-box {
         padding: 7px 10px;
         margin-bottom: 9px;
@@ -3914,21 +3884,10 @@
         margin-bottom: 7px;
     }
 
-    .detail-lore {
-        margin-bottom: 9px;
-    }
-
     .gauges-section {
         margin-bottom: 9px;
     }
 
-    .detail-effect-chips {
-        gap: 4px;
-    }
-
-    .detail-effect-chip {
-        padding: 2px 6px;
-    }
 }
 
 

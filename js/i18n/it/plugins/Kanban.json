@@ -1,6 +1,6 @@
 {
-  "resolved": "Risolto",
-  "failed": "Fallite",
+  "resolved": "Risolta",
+  "failed": "Fallita",
   "urgent": "URGENTE",
   "reward": "Ricompensa: ",
   "readyToCollect": "Pronta da riscuotere",
@@ -13,31 +13,31 @@
   "terms": "Condizioni",
   "log": "Registro",
   "close": "Chiudi",
-  "toDo": "Da Fare",
-  "inProgress": "In Corso",
-  "done": "Risolto",
+  "toDo": "Da fare",
+  "inProgress": "In corso",
+  "done": "Risolta",
   "noQuests": "Nessuna missione",
   "back": "Indietro",
-  "questLog": "Registro Missioni",
+  "questLog": "Registro missioni",
   "appName": "Task Master",
-  "questCompleted": "Incarico completato!",
-  "questFailed": "Incarico fallito.",
+  "questCompleted": "Missione completata!",
+  "questFailed": "Missione fallita.",
   "columnTitles": [
-    "Da Fare",
-    "In Corso",
-    "Risolto",
-    "Fallite"
+    "Da fare",
+    "In corso",
+    "Risolta",
+    "Fallita"
   ],
   "showOnMapAt": "Mostra sulla mappa: {place} · Shift",
-  "moveToInProgress": "Sposta in In Corso · →",
-  "moveToToDo": "Riporta in Da Fare · ←",
-  "boardHint": "Trascina un foglio, o tieni premuto OK e premi ←/→, per spostarlo tra le colonne",
+  "moveToInProgress": "Sposta in In corso · →",
+  "moveToToDo": "Riporta in Da fare · ←",
+  "boardHint": "Trascina un foglio, o tieni OK + ←/→, per spostarlo",
   "mapMarker": "Indicatore mappa",
   "notify": {
-    "newQuest": "Nuovo incarico: {title}",
-    "newQuestUnknown": "Nuovo incarico: ???",
-    "questUpdated": "Incarico aggiornato: {title}",
-    "questComplete": "Incarico concluso: {title}",
-    "questFailed": "Incarico fallito: {title}"
+    "newQuest": "Nuova missione: {title}",
+    "newQuestUnknown": "Nuova missione: ???",
+    "questUpdated": "Missione aggiornata: {title}",
+    "questComplete": "Missione conclusa: {title}",
+    "questFailed": "Missione fallita: {title}"
   }
 }

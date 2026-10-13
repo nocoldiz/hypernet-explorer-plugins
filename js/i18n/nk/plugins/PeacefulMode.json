@@ -2,7 +2,7 @@
   "idle": {
     "aquaticfish": [
       "{name} IZ SWIMMIN' HAPPILY.",
-      "{name} BLOWS A STRIN' OF BUBBLES!"
+      "{name} BLOWS A STRING OF BUBBLES!"
     ],
     "abyssalleviathan": [
       "{name} DRIFTS IN DA DARK, PAYIN' YOU NO MIND!",
@@ -46,7 +46,7 @@
     ],
     "insectswarm": [
       "{name} DRONES IN A LAZY CLOUD.",
-      "{name} SWIRLS ABOUT WITHOUT PURPOSE!"
+      "{name} SWIRLS 'BOUT WITOUT PURPOSE!"
     ],
     "spider": [
       "{name} FUSSES WIT A STRAND OF SILK!",
@@ -137,7 +137,7 @@
       "{name} IDLY TAPS ITS RIBS."
     ],
     "constructedundead": [
-      "{name} TWITCHES WIT BORROWED LIFE, BUT DOES NOTHIN'!",
+      "{name} TWITCHES WIT BORROWED LIFE, BUT DOES NUTTIN'!",
       "{name} CREAKS AN' SETTLES."
     ],
     "vampire": [
@@ -146,7 +146,7 @@
     ],
     "voidspawn": [
       "{name} RIPPLES WIT QUIET STATIC!",
-      "{name} STARES INTO NOTHIN'."
+      "{name} STARES INTO NUTTIN'."
     ],
     "demon": [
       "{name} SMIRKS BUT MAKES NO MOVE!",
@@ -165,7 +165,7 @@
       "{name} GLOWS WIT CALM RADIANCE."
     ],
     "fairy": [
-      "{name} FLITS ABOUT, GIGGLIN'.",
+      "{name} FLITS 'BOUT, GIGGLIN'.",
       "{name} SPRINKLES HARMLESS SPARKLES!"
     ],
     "elemental": [
@@ -221,7 +221,7 @@
       "{name} CYCLES A QUIET DIAGNOSTIC!"
     ],
     "turret": [
-      "{name} SWIVELS IDLY, TARGETIN' NOTHIN'!",
+      "{name} SWIVELS IDLY, TARGETIN' NUTTIN'!",
       "{name} POWERS DOWN ITS BARREL."
     ],
     "mineral": [

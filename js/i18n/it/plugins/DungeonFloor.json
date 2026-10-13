@@ -1,7 +1,7 @@
 {
   "demoLimit": " (limite modalità demo: {max})",
   "bandFallbackName": "Scalatore",
-  "bandFell": "{name} è caduto su questo piano.",
+  "bandFell": "Su questo piano {name} ha trovato la morte.",
   "bandLooted": "Perquisiti gli effetti personali di {name}: trovati {gold}€ ed equipaggiamento.",
   "bandLines": [
     "Siamo saliti per il bottino. Finora il piano ha preso più di quanto abbia dato.",
@@ -179,20 +179,20 @@
   },
   "worldKindBlurb": {
     "mixed": "Un mondo che ha accolto chiunque il pozzo gli mandasse, e da quella mescolanza ha ricavato un popolo.",
-    "earthling": "Gente della Terra che e' salita quaggiu' e non e' piu' tornata. Tengono ancora il calendario terrestre.",
+    "earthling": "Gente della Terra che è entrata quaggiù e non ne è più uscita. Tengono ancora il calendario terrestre.",
     "goblin": "Goblin fino in fondo, rumorosi al riguardo, organizzati in qualcosa che insistono sia un governo.",
-    "monster": "Qui nulla e' mai stato domato, e chi comanda comanda perche' e' la cosa piu' grossa nella stanza.",
-    "beast": "Niente citta', niente uffici, nessun credo. Animali, e il tempo che li muove.",
-    "zombie": "La peste ha fatto il suo corso e la popolazione e' rimasta al suo posto.",
+    "monster": "Qui nulla è mai stato domato, e chi comanda comanda perché è la cosa più grossa nella stanza.",
+    "beast": "Animali, e il tempo che li muove. Qui niente costruisce né crede in nulla.",
+    "zombie": "La peste ha fatto il suo corso e la popolazione è rimasta al suo posto.",
     "fungoid": "Un solo organismo che indossa moltissimi corpi, e che in tutti quanti litiga con se stesso.",
-    "machine": "La gente e' morta e le istituzioni no. Le elezioni si tengono ancora puntuali.",
+    "machine": "La gente è morta e le istituzioni no. Le elezioni si tengono ancora puntuali.",
     "alien": "Nulla di terrestre vale qui, e la sua gente non se ne cura.",
-    "magical": "La magia non e' mai stata legata qui, cosi' ogni mestiere e' una scuola e ogni scuola una fazione.",
+    "magical": "La magia non è mai stata legata qui, così ogni mestiere è una scuola e ogni scuola una fazione.",
     "undead": "Un mondo che ha tenuto i suoi morti in carica.",
-    "mutant": "Un mondo cambiato piu' in fretta di quanto riuscisse a decidere cosa fosse.",
+    "mutant": "Un mondo cambiato più in fretta di quanto riuscisse a decidere cosa fosse.",
     "severed": "La magia non arriva fin qui. Restano macchinari, scartoffie e pazienza.",
-    "ruin": "Qualunque cosa vivesse qui ha finito, e agli edifici non e' stato detto.",
-    "mimic": "Tutto e' mobilio finche' non lo e' piu'."
+    "ruin": "Qualunque cosa vivesse qui ha finito, e nessuno l'ha detto agli edifici.",
+    "mimic": "Tutto è mobilio finché non lo è più."
   },
   "world": {
     "heading": "Mondo",
@@ -207,9 +207,9 @@
     "reachedFloor": "Torre Omega, piano {floor}",
     "band": "Livello tipico",
     "bandRange": "intorno a {median} (da {min} a {max})",
-    "noGovernment": "Non ha alcun governo.",
-    "earthSeat": "Mantiene le nazioni e le iperpotenze della Terra.",
-    "offworld": "Fuori dal mondo. Nessun luogo sulla mappa risponde per esso.",
+    "noGovernment": "Nessun governo.",
+    "earthSeat": "Usa le nazioni e le iperpotenze della Terra.",
+    "offworld": "Fuori dal mondo. Non è sulla mappa.",
     "ofWorld": "di {world}",
     "unknown": "Non registrato"
   },

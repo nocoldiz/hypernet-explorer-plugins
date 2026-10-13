@@ -107,7 +107,7 @@
     [
       "@shake",
       "~ The chair you were about to sit in collapses as you touch it.",
-      "{Oops.|Probability. Not me. Well. Me.}",
+      "{Oops.|Probability. Well. Me.}",
       "~ She pushes her own chair over to you with her foot, and stays standing."
     ],
     [
@@ -153,7 +153,7 @@
     "cList": [
       "You want to know something nobody writes down?",
       "For about four thousand years I was nothing. A footnote goddess. One temple, badly maintained, in a town that has since fallen into the sea.",
-      "Discord. That was the whole portfolio. Not war, not love, not harvest. Just... things going slightly wrong at parties.",
+      "Discord. That was the whole portfolio. Just... things going slightly wrong at parties.",
       "I started planning the throne because I was tired of being a joke with an altar.",
       "And now I have it, and there is nobody left who remembers I was ever the joke. Except me."
     ],
@@ -162,7 +162,7 @@
       "We ran Route 666 for years. Three Americas, end to end, and a bank in every second town.",
       "He drove. I did the safes. You do not need a drill if you can lean on the odds until the tumblers agree with you.",
       "Do you know how easy it is to be good at something when the universe is embarrassed to say no to you?",
-      "That was the best I have ever been. Not the throne. A bad camper and a man who sang badly to the radio."
+      "That was the best I have ever been: a bad camper and a man who sang badly to the radio."
     ],
     "paradox": [
       "December 1992. You will have read the official version.",
@@ -172,22 +172,22 @@
       "That is the only way I ever get near enough to decide not to."
     ],
     "bubba": [
-      "He is why it ended. Not a fight. Not another woman. A paradox with my face on it.",
+      "He is why it ended. A paradox with my face on it.",
       "I left in December because staying meant letting the timeline come apart around him, and he would have let me.",
       "I still love him. I want to be extremely clear about that, since you sleep three metres from him.",
-      "I cannot have him. Not because of you. Because of me, in twenty years, with a spear.",
+      "I cannot have him. The fault is mine, in twenty years, with a spear.",
       "The only thing in ninety-two dimensions I am not allowed to touch, and I built the courthouse that decides what anyone is allowed to touch."
     ],
     "jealousy": [
-      "I owe you something. Not an apology. Something adjacent to one.",
+      "I owe you something adjacent to an apology.",
       "Every door that stuck. Every coin that fell wrong. Every train you missed by four seconds. That was me.",
       "I know he feels nothing for you. I checked. I keep checking, which is the humiliating part.",
-      "It was never really about what you are to him. It is that you get to be near him and I do not.",
+      "What hurts is that you get to be near him and I do not.",
       "I have been using the machinery of cosmic law to trip a witch in the street. Say it out loud and it sounds exactly as small as it is."
     ],
     "throne": [
       "New Year's Eve, 2000. The Father died in the Solomon ritual and the throne went empty.",
-      "I sat down in it. Not because I had won anything. Because the room went quiet and nobody said no.",
+      "I sat down in it, because the room went quiet and nobody said no.",
       "Every god in existence looked at me and decided it was easier to let it happen.",
       "I inherited the justice of ninety-two dimensions that night. Billions of trials a day. No training, no precedent, no Maat, because I am the reason there is no Maat.",
       "I have no idea what I am doing, Em. I have never had any idea what I am doing."
@@ -235,8 +235,8 @@
     },
     "romanticConversation": {
       "choices": [
-        "{You're not alone tonight. I count.|Alone is a habit, not a law. Even for you.|You keep saying alone like I'm not sitting right here.}",
-        "{I want the person, not the pantheon.|Your power is your least interesting feature.|I didn't come here for the thunder. I came for the company.}",
+        "{You're not alone tonight. I count.|Alone is only a habit. Even for you.|You keep saying alone like I'm not sitting right here.}",
+        "{I want the person behind the pantheon.|Your power is your least interesting feature.|I came for the company, thunder or no thunder.}",
         "{Everyone deserves one person who isn't afraid of them.|Even judges deserve a witness of their own.|Being seen won't kill you. Probably.}",
         "{Maybe the universe rigged us into meeting.|Coincidence has never once looked this smug.|If this was one of your probability tricks, thank you.}"
       ]
@@ -270,7 +270,7 @@
         "{Same coin, two faces, and the coin is spinning.|They're one process wearing two masks.|Order is just chaos that got a job.}",
         "{Chaos invents, order keeps the receipts.|Chaos writes the first draft, order edits.|One makes, one preserves. Fire and pantry.}",
         "{No chaos, no change. Just a museum.|Without chaos everything is reruns.|A world without chaos is a waiting room.}",
-        "{The trick is the dosage, not the winner.|It's a recipe question, not a war.|Balance. Anything pure is poison, even order.}"
+        "{The trick is the dosage.|It's a recipe question.|Balance. Anything pure is poison, even order.}"
       ]
     },
     "intellectualChallenge": {
@@ -278,7 +278,7 @@
         "{The paradox IS the answer. It's load-bearing.|The contradiction is the point. Frame it, don't solve it.|That's omnipotence signing its work.}",
         "{Real power includes the power to limit yourself.|Omnipotence that can't tie its own hands is just strength.|Making the stone is the flex. Not lifting it is the art.}",
         "{The riddle only breaks mortal logic. Yours never applied.|You're grading divinity on a mortal curve.|The question smuggles in rules you never agreed to.}",
-        "{You make it AND lift it, simultaneously, and dare anyone to object.|Both. At once. You're Eris, not a logician.|Do both and let the philosophers bill each other.}"
+        "{You make it AND lift it, simultaneously, and dare anyone to object.|Both. At once. You're Eris. Leave logic to the logicians.|Do both and let the philosophers bill each other.}"
       ]
     },
     "standardActivity": {
@@ -337,7 +337,7 @@
         "{Chaos, order, my whole job description...|Everything I stamped 'settled'...|My purpose, my throne, my filing system...}",
         "{And I've arrived somewhere.|And a conclusion found me.|And here's the ruling.}",
         "{You're the paradox I couldn't file.|You're the case that doesn't fit the categories.|You're the stone I made and cannot lift, and I am DELIGHTED.}",
-        "{Order that completes chaos instead of caging it.|The counterweight, not the cage.|Structure that dances.}",
+        "{Order that completes chaos.|The counterweight it was missing.|Structure that dances.}",
         "{I think I love you. Intellectually. Emotionally. Comprehensively.|So: love. My verdict is love. All appeals denied.|I love you, on every axis I've checked. I checked several.}"
       ],
       "choices": [
@@ -359,7 +359,7 @@
       "romantic": [
         "{This is... nice. Don't quote me.|Huh. This is pleasant. Suspicious, but pleasant.|This is good. I'm saying it before I can stop myself.}",
         "{I don't get many evenings like this.|These moments are rare on my calendar.|My schedule doesn't usually include... whatever this is.}",
-        "{Peaceful isn't the word. I don't do peaceful.|Not peace. Something adjacent to it.|Call it a ceasefire. A good one.}",
+        "{Peaceful isn't the word. I don't do peaceful.|Something adjacent to peace.|Call it a ceasefire. A good one.}",
         "{Perfect chaos. Small size.|Chaos, but the kind you can hold.|Everything moving, nothing breaking. New for me.}",
         "{With you, specifically. That's the strange part.|You're the variable, in case that wasn't obvious.|And it's your fault. Take the credit.}"
       ],
@@ -392,7 +392,7 @@
         "{It's fine. Some evenings are drafts.|No matter. Not everything is a final version.|We'll call it a rehearsal.}"
       ],
       "choices": [
-        "{We can do better than tonight.|That was our floor, not our ceiling.|Rematch. We owe ourselves a rematch.}",
+        "{We can do better than tonight.|That was only our floor.|Rematch. We owe ourselves a rematch.}",
         "{Sorry if I made it weird.|The weird parts were mostly mine. Apologies.|I'll take the blame for at least half of that.}",
         "{Give it one more chance.|One more try. Different everything.|Let's appeal the verdict on tonight.}",
         "{Maybe the timing's just wrong.|Maybe tonight wasn't our night.|Possibly the stars weren't consulted.}"
@@ -445,7 +445,7 @@
         "{I didn't think this was on the menu...|I had ruled this impossible. Personally. In writing.|This wasn't supposed to be possible for me...}",
         "{Not for me. Not for what I am.|Goddesses of discord don't get this.|My job description forbids this, technically.}",
         "{And yet: complete. That's the word. Complete.|Whole. Weird word. Good fit.|Finished, in the way a song is finished.}",
-        "{Stay. Not for an evening. For the whole run.|Stay with me. Indefinitely. Renewably.|Stay. I'm invoking eternity, don't check the clause.}",
+        "{Stay. For the whole run.|Stay with me. Indefinitely. Renewably.|Stay. I'm invoking eternity, don't check the clause.}",
         "{Let's rattle this world together!|We'll shake this place till the good stuff falls out!|Chaos, table for two, standing reservation!}",
         "{In the most beautiful way available!|Gorgeously. It has to be done gorgeously.|And we do it in STYLE or not at all!}"
       ]
@@ -454,7 +454,7 @@
       "ending": [
         "{This was genuinely special. I checked against records.|Tonight goes in the good archive.|That was... special. I don't use the word for weather.}",
         "{This does not happen often. Cite me.|Rare event. Astronomers would care.|Statistically, tonight shouldn't have gone this well.}",
-        "{I want a sequel.|We're doing this again.|I want to see you again. That's a statement, not a question.}",
+        "{I want a sequel.|We're doing this again.|I want to see you again. That's a statement.}",
         "{Soon.|Shortly.|Sooner than is dignified.}",
         "{VERY soon. I'll bend a calendar if I have to.|Extremely soon. The schedule will cope.|Soon as in: don't unpack.}"
       ]
@@ -526,7 +526,7 @@
       ],
       "nervous": [
         "You came. Good. That's... {statistically|objectively|honestly} good.",
-        "I've been here {a while|since lunch|long enough to name the pigeons}. Not waiting. Present. There's a difference.",
+        "I've been here {a while|since lunch|long enough to name the pigeons}. Simply present, which beats waiting.",
         "Okay. Okay okay okay. Hi. {I'm fine.|This is fine.|Everything's arranged, mostly.}",
         "Don't read anything into the {seating|candles|escape routes}. I always plan those."
       ],
@@ -617,7 +617,7 @@
     "confession": [
       "{I... need to say a thing.|There's a statement. Prepared. Sort of.|I have an announcement and my hands are misbehaving.}",
       "{I'm bad at this genre.|This is not my department.|I sentence people for a living. THIS has no procedure.}",
-      "{Discord goddess. Not love goddess. Different union.|My portfolio is chaos, not... this.|I do endings, mostly. Not beginnings.}",
+      "{Discord goddess. Different union.|My portfolio is chaos. This is... something else.|I do endings, mostly.}",
       "{But you... you cause a specific weather in me.|Yet around you there's this... climate.|You produce symptoms. Good ones. Unlisted ones.}",
       "{The chaos in my chest finally has a shape it likes.|All my inner noise agrees on you. That NEVER happens.|You make the discord in me sound arranged.}",
       "{I love you, {address}.|So: I love you, {address}. There. Filed.|Love. You. {address}. In that order, forever.}",
@@ -647,7 +647,7 @@
     "theAtmosphereSoftensErisSeems": "Something in her posture {unclenches|puts its weapons down|comes off duty}. The evening gets quieter without getting emptier.",
     "nobodyNobodyHasEverTold": "{Nobody says that to me.|That's...|Say that again.} {People compliment my power, my hair, my verdicts. Never that.|I have altars, you know. None of them ever say that.|I don't have a filing place for that one.}",
     "youKnowBeingAGoddess": "Being a goddess is {a crowd and no company|applause from people who lock their doors after|the loneliest job with the best view}. {They fear you or they want something.|Worship is just fear with candles.|Nobody asks how the judge is doing.}",
-    "butYouYouSeeMe": "But you sit there and look at me like I'm {a person|somebody|just... Eris}. {No title.|No thunder.|Not a court, not a cause. Just Eris.} It's disorienting. Don't stop.",
+    "butYouYouSeeMe": "But you sit there and look at me like I'm {a person|somebody|just... Eris}. {No title.|No thunder.|Just Eris, nothing attached.} It's disorienting. Don't stop.",
     "itSBeenALong": "It's been {a long time|centuries|longer than I'll admit in writing} since anything felt {new|like this|worth staying awake for}. I'd forgotten the flavour.",
     "erisMovesCloserHerScent": "She moves closer. She smells of {rain on hot stone and something older|storm fronts and church candles|ozone, honey, and a library on fire}, and the distance between you stops being a fact.",
     "canICanITry": "Can I... {hold still a moment|try something|do one small reckless thing}? {Say no and I won't.|You can refuse a goddess, it's legal.|One chance to duck.}",
@@ -688,7 +688,7 @@
     "erisStudiesYouWithAn": "She studies you {like an incriminating bank statement|with the cynical curiosity of an auditor finding a third grimorie|the way a cat watches a vase near a ledge}.",
     "erisMovesCloserHerEyes": "She leans in, {smelling faintly of burnt ozone and expensive spite|looking suspiciously like a problem you can't afford|radiating the kind of trouble that gets songs written and warrants issued}.",
     "thereSSomethingInThe": "There is a {palpable charge in the air, mostly statutory|current between you two that could jump-start a dead galaxy|tension so thick you could carve bail bonds out of it}.",
-    "theAtmosphereIsComfortableLike": "The evening settles into {a strange, domestic truce|a lull that feels less like safety and more like a well-timed commercial break|the quiet comfort of two people who know the fire exits}.",
+    "theAtmosphereIsComfortableLike": "The evening settles into {a strange, domestic truce|a lull that feels like a well-timed commercial break|the quiet comfort of two people who know the fire exits}.",
     "anAwkwardSilenceFallsBetween": "An awkward silence {drops between you like an anvil|drags on long enough for both of you to regret having vocal cords|sits down, orders the most expensive drink, and stares at you}.",
     "theTensionIsPalpableEris": "The tension {is practically taking notes for the autopsy|could cut glass, or at least your remaining life expectancy|feels like a bomb timer with three seconds left and no colored wires}.",
     "theDateComesToAn": "{The evening inevitably runs out of plausible excuses to continue.|The date reaches the part where reality demands a closing statement.|The night folds up its folding chairs and threatens to go home.}",
@@ -709,13 +709,13 @@
     "donTDonTBe": "...{Don't|Don't be kind|Not now}. I am not equipped for kindness.",
     "fineAllRightIfYou": "{Fine|All right|If you insist}. There is more. There is always more.",
     "noYouReRightIt": "No. You're right. It isn't.\\n*she does not apologise, but she does not deny it either*",
-    "forALongMomentNeither": "{For a long moment, neither of you speaks. It isn't romantic; it's the specific dread of two people realizing the joke went too far.|The silence stretches until you can hear the local leylines groaning under the strain.}",
+    "forALongMomentNeither": "{For a long moment, neither of you speaks. It's the specific dread of two people realizing the joke went too far.|The silence stretches until you can hear the local leylines groaning under the strain.}",
     "theGoddessOfDiscordHas": "★★ {The Goddess of Discord has leaked state secrets to a mortal. Your trial tomorrow will be an absolute farce.|Eris gave up the game. Expect future courtroom proceedings to be heavily rigged in your favor.} ★★",
     "somethingHasLoosenedTheNext": "★ {Something gave way in the cosmic gears. Your next trial will still be an ordeal, but with marginally fewer snipers.|A tiny crack in her cynicism. Don't let it go to your head; she still owns the courtroom.} ★",
     "nothingHasChangedTheOdds": "{Nothing has changed. The house still wins, the deck is still stacked, and you're still sitting at the worst table.|Zero progress. She will happily watch you get banished before breakfast tomorrow.}",
     "theGoddessOfJusticeHas": "★★ {The Goddess of Justice threw out the rulebook. In future sessions, your defense will consist of her yelling at the jury.|Courtroom standards have collapsed into your favor. Enjoy the nepotism.} ★★",
     "theBenchWillLeanYour": "★ {The judge's bench tilts slightly in your direction. It won't save you from a felony, but misdemeanors are now free.|The scales of justice have a thumb on them. Guess whose thumb.} ★",
-    "sheWillRememberThisEvening": "{She'll remember tonight. Not out of tenderness, but because she keeps meticulous records of people who test her patience.|This evening is now permanently logged in her grimorie under 'Unresolved Liabilities.'}",
+    "sheWillRememberThisEvening": "{She'll remember tonight, because she keeps meticulous records of people who test her patience.|This evening is now permanently logged in her grimorie under 'Unresolved Liabilities.'}",
     "theDate": "The Date",
     "opinion": "Opinion",
     "rapport": "Rapport",
@@ -853,7 +853,7 @@
       ],
       "chaotic": "{The empty stands suddenly fill with phantom cheers that cut off dead silent after two seconds.|A cloud of dust whips up in the center of the ring, forming a mock sword-fight silhouette.|The trapdoor in the middle of the sand drops open with a loud thud, dumping out a shower of confetti.}",
       "activity": [
-        "Fight me. Not properly. Rules: no hands, no winning.",
+        "Fight me, badly on purpose. Rules: no hands, no winning.",
         "{You have a goofy fake sword fight in the sand, trading dramatic insults until you're out of breath.|You pretend to be gladiators, shouting at the empty bleachers until you both start laughing.|You sit on the arena railing, shaking sand out of your boots and watching the sun go down.}"
       ],
       "incidents": [
@@ -925,7 +925,7 @@
       "label": "Bridge",
       "intro": "{A high concrete and steel bridge over a massive drop.|Wind howling through the rusted suspension cables.|A narrow footbridge suspended over a rocky river gorge.}\n{The road vibrates every time the wind blows.|Looking over the edge makes your stomach do flips.|The guardrail looks pretty rusty.}",
       "question": [
-        "Halfway. Not one side, not the other. Best place on the whole route.",
+        "Halfway, between the two sides. Best place on the whole route.",
         "Do you like the middle of things, or does it make you want to pick?"
       ],
       "romantic": [
@@ -1153,7 +1153,7 @@
       ],
       "chaotic": "{A light bulb overhead flickers violently, hums, and pops with a shower of sparks.|A door down the hall slams shut with a loud bang, rattling the picture frames.|A pile of loose papers on a table flies up and scatters across the room.}",
       "activity": [
-        "Light one. Not for anyone. Just to see if the building notices.",
+        "Light one, just to see if the building notices.",
         "{You poke around the room, opening drawers and laughing at the weird junk left behind.|You sit on the beat-up furniture, killing time and trading dumb stories.|You check out the weird decor on the walls, making fun of the previous owner's taste.}"
       ],
       "incidents": [
@@ -1353,7 +1353,7 @@
       ],
       "chaotic": "{A loose flagstone clicks underfoot, and a cloud of harmless dust shoots out of the wall.|A rusted wall sconce falls off the wall with a loud metallic clatter.|The torches flare up bright green for three seconds, then go back to normal.}",
       "activity": [
-        "Pick a direction. We are going to get lost properly, not by accident.",
+        "Pick a direction. We are going to get lost properly, on purpose.",
         "{You explore the dark corridors, taking turns leading the way with a torch.|You poke at old broken chest locks, finding nothing but cobwebs and rust.|You sit against the stone wall, taking a breather and listening to the dripping water.}"
       ],
       "incidents": [
@@ -1433,7 +1433,7 @@
       ],
       "chaotic": "{A gust of wind knocks over a stack of dry branches with a loud clatter.|A bunch of crows take off from a nearby tree, screeching in unison.|The ground shudders for a second as a heavy gust sweeps across the field.}",
       "activity": [
-        "Do not take the path. We are going to walk beside it the whole way.",
+        "We are going to walk beside the path the whole way.",
         "{You wander the open ground, kicking rocks and complaining about the walk.|You sit on a boulder together, splitting a snack and talking about nothing.|You race each other to the nearest fence line, laughing when you almost trip.}"
       ],
       "incidents": [
@@ -1453,7 +1453,7 @@
       ],
       "chaotic": "{A gust of wind knocks over a stack of dry branches with a loud clatter.|A bunch of crows take off from a nearby tree, screeching in unison.|The ground shudders for a second as a heavy gust sweeps across the field.}",
       "activity": [
-        "Help me steal exactly one of something. Not enough to matter. Enough to have done it.",
+        "Help me steal exactly one of something. Just enough to have done it.",
         "{You wander the open ground, kicking rocks and complaining about the walk.|You sit on a boulder together, splitting a snack and talking about nothing.|You race each other to the nearest fence line, laughing when you almost trip.}"
       ],
       "incidents": [
@@ -1753,7 +1753,7 @@
       ],
       "chaotic": "{A loose flagstone clicks underfoot, and a cloud of harmless dust shoots out of the wall.|A rusted wall sconce falls off the wall with a loud metallic clatter.|The torches flare up bright green for three seconds, then go back to normal.}",
       "activity": [
-        "Put something into the hoard instead of taking. I want to see if it notices.",
+        "Put something into the hoard. I want to see if it notices.",
         "{You explore the dark corridors, taking turns leading the way with a torch.|You poke at old broken chest locks, finding nothing but cobwebs and rust.|You sit against the stone wall, taking a breather and listening to the dripping water.}"
       ],
       "incidents": [
@@ -1845,7 +1845,7 @@
       "label": "Mangroves",
       "intro": "{A wet, soggy area smelling of murky water and damp moss.|You're standing near cold, dirty water with mud sucking at your boots.|A shoreline covered in weeds, slick rocks, and puddles.}\n{Your shoes are definitely soaked.|The humidity is gross and the bugs are biting.|Watch your step; the rocks are slippery as ice.}",
       "question": [
-        "Not land, not sea. They just refused to choose and got away with it.",
+        "Half land, half sea. They just refused to choose and got away with it.",
         "Have you ever refused to choose? How did that go for you?"
       ],
       "romantic": [
@@ -2607,7 +2607,7 @@
       "label": "Desert Village",
       "intro": "{An open stretch of ground under an overcast sky.|A quiet patch of dirt and weeds with a stiff breeze blowing.|A scrubby landscape with a few scattered trees and rocks.}\n{The wind keeps blowing dirt into your face.|It's quiet, but there's nothing much to look at.|The ground is rocky and uneven.}",
       "question": [
-        "Every wall here is a metre thick. Nobody built that for the look of it. They were arguing with the sky.",
+        "Every wall here is a metre thick. They were arguing with the sky.",
         "Would you have stayed and built, or moved on?"
       ],
       "romantic": [
@@ -2687,7 +2687,7 @@
       "label": "Fishing Village",
       "intro": "{A wet, soggy area smelling of murky water and damp moss.|You're standing near cold, dirty water with mud sucking at your boots.|A shoreline covered in weeds, slick rocks, and puddles.}\n{Your shoes are definitely soaked.|The humidity is gross and the bugs are biting.|Watch your step; the rocks are slippery as ice.}",
       "question": [
-        "Every house here faces the water. Not the road. The water.",
+        "Every house here faces the water. Every single one.",
         "Would you wait for somebody like that? Every day, on a wall?"
       ],
       "romantic": [
@@ -2715,7 +2715,7 @@
       ],
       "chaotic": "{A gust of wind knocks over a stack of dry branches with a loud clatter.|A bunch of crows take off from a nearby tree, screeching in unison.|The ground shudders for a second as a heavy gust sweeps across the field.}",
       "activity": [
-        "Get closer with me. Not stupidly closer. Just closer than we should.",
+        "Get closer with me. Just closer than we should.",
         "{You wander the open ground, kicking rocks and complaining about the walk.|You sit on a boulder together, splitting a snack and talking about nothing.|You race each other to the nearest fence line, laughing when you almost trip.}"
       ],
       "incidents": [
@@ -2739,7 +2739,7 @@
   "toneIntros": {
     "serious": [
       "Something is deeply wrong tonight: {she isn't putting on the usual cabaret act|the theatre has been stripped down to bare, uncomfortable floorboards|the circus music has stopped, which is far more terrifying than when it's playing}. {She has her hands flat on the table, like an actual human being.|Nothing has caught fire in ten minutes, which feels like a confession.|The silence carries the uncomfortable weight of genuine intent.}",
-      "The date opens with {an eerie, sober stillness|a quiet that feels less like peace and more like an unexploded ordnance|a calm so dense you could choke on it}. {She is actually looking at you, not through you.|She seems to have forgotten her rehearsed punchlines.|You get the distinct impression you're about to hear something off the record.}",
+      "The date opens with {an eerie, sober stillness|a quiet that feels like unexploded ordnance|a calm so dense you could choke on it}. {She is actually looking at you, for once.|She seems to have forgotten her rehearsed punchlines.|You get the distinct impression you're about to hear something off the record.}",
       "No theatrics, no parlor tricks. {She sits there like someone who forgot to bring their armor.|Her usual sneer is missing, leaving behind something uncomfortably raw.|The air is quiet, and for once she isn't trying to set it on fire.}",
       "A heavy stillness hangs over her. {It fits her terribly, like a stolen coat that's two sizes too large.|You didn't think the embodiment of chaos could sit this still without combusting.|Brace yourself: sincerity is apparently on tonight's menu, and neither of you has a refund policy.}"
     ],
@@ -3077,7 +3077,7 @@
       "Let's {kidnap|adopt|elope with} {a vending machine|a municipal fountain|the arena's least popular gladiator} and raise it as our own.",
       "Bite {a vending machine|an ATM|the courthouse door} until it {apologises|pays out|respects you}.",
       "{Start|Spread|Retire} a rumour that {the sea is a rental|pigeons unionised|I'm dead again}, and see how far it gets by morning.",
-      "Break into {the aquarium|a museum|the town hall} and {rearrange, don't take|leave things|improve one exhibit}. We are not thieves. We are editors.",
+      "Break into {the aquarium|a museum|the town hall} and {rearrange, don't take|leave things|improve one exhibit}. We are editors.",
       "Trade outfits with {a scarecrow|a statue|whoever loses the next argument} and hold a press conference.",
       "Eat the {oldest|most cursed|legally ambiguous} thing on the next menu we find. I'll cover the exorcism.",
       "Set every {caged bird|carousel horse|shopping trolley} in this place free. {They know what they did.|They've waited long enough.|Tonight they ride.}",
@@ -3404,7 +3404,7 @@
     ],
     "speech": [
       "{Everything here is a simulation, mortal. But you? You're a delightfully chaotic bug in the code.|Do you know what happens when eternity gets bored? It goes on dates.|I have watched stars die of old age, and none of them were half as entertaining as your panicked expression.}",
-      "{Your species spends so much time inventing rules, and I spend all my afternoons stepping on them.|The universe is not expanding; it is simply running away from me.|Tell me another lie. I collect them.}"
+      "{Your species spends so much time inventing rules, and I spend all my afternoons stepping on them.|The universe is simply running away from me.|Tell me another lie. I collect them.}"
     ],
     "incidents": [
       "A portal briefly opens in her soup bowl, {revealing the cold black void of the Andromeda galaxy before she stirs it with a spoon|whispering ancient secrets in dead tongues until she taps the rim with her fork|belching a tiny puff of stellar plasma that singes her napkin}.",
@@ -3425,7 +3425,7 @@
     "endNote": [
       "The cosmic tear stitches itself closed with a wet, tearing sound, leaving you alone on the pavement with a pounding headache and a receipt written in burning sulfur.",
       "The evening lets go of you slowly, the way deep water does. By the time you can name what was strange about her, the names no longer fit.",
-      "She does not leave so much as recede. The smile is the last of her to go, and it stays several seconds longer than the rest of her, apologetically.",
+      "She recedes, like a tide. The smile is the last of her to go, and it stays several seconds longer than the rest of her, apologetically.",
       "Afterwards the night files itself in the wrong order, and one hour refuses to be found. It will write later, saying it is happy where it is.",
       "The birds come back first. Then the ordinary dark. Then the sound of your own heartbeat, which you notice is keeping better time than it used to.",
       "You walk home with the distinct sense of having been escorted, although there is nothing beside you but a hand-wide warmth between your shoulder blades."
@@ -3483,7 +3483,7 @@
           "~ She is on time. That alone is new.",
           "{Hi.|Hello.|Bubba.}",
           "~ {She looks at your hands, then at the table, then at a point roughly a metre to the left of your head.|She has folded her napkin into something that is either a swan or a very small throne.}",
-          "{You look... the same. That is not a compliment. That is an observation. Fine, it is a compliment.|You still smell of engine grease. Do not take that as a complaint.|You kept the jacket. Of course you kept the jacket.}"
+          "{You look... the same. That is an observation. Fine, it is a compliment.|You still smell of engine grease. Do not take that as a complaint.|You kept the jacket. Of course you kept the jacket.}"
         ],
         [
           "~ Her hands are wrapped round a cup she has not drunk from.",
@@ -3492,7 +3492,7 @@
         ],
         [
           "{So.|Well.|Right.}",
-          "{The weather is very... weather.|How is The Beast? The camper. Not you. You are not a beast. Well. Sometimes.|Is the engine still knocking on cold mornings? Don't answer. I know it is. I remember the knock.}",
+          "{The weather is very... weather.|How is The Beast? The camper, I mean. Well. You too, sometimes.|Is the engine still knocking on cold mornings? Don't answer. I know it is. I remember the knock.}",
           "~ She goes red at her own sentence and tries to hide behind the menu."
         ],
         [
@@ -3531,7 +3531,7 @@
           "{Still the calluses.|Still the burn from the exhaust pipe in '89.|Still hopeless at manicures, I see.}"
         ],
         [
-          "{Tell me about the engine.|Tell me about the liminal engine. Properly. Not the brochure.|They put your engine in every bus in Europe and nobody says your name right.}",
+          "{Tell me about the engine.|Tell me about the liminal engine. Properly, the long version.|They put your engine in every bus in Europe and nobody says your name right.}",
           "~ Her eyes stay on you the whole time you talk about compression ratios, which is a thing nobody else has ever done."
         ],
         [
@@ -3828,7 +3828,7 @@
             ],
             [
               "~ {The window behind her fogs, clears, and for a second shows a camper on a road that isn't there.|Something cosmic goes very quiet.}",
-              "{...That's why it couldn't find me. I'm not in a dimension. I'm in a job.|You built the liminal engine for me?}"
+              "{...That's why it couldn't find me. I'm in a job.|You built the liminal engine for me?}"
             ],
             [
               "~ {At 'taught Em' her eye twitches, but she's smiling.|She laughs so hard the next table moves.}",
@@ -3960,7 +3960,7 @@
         },
         {
           "prompt": [
-            "{If I asked you to come with me tonight. Not to the throne. Just... out. Driving.|What would you say if I asked for one more road trip?}"
+            "{If I asked you to come with me tonight. Just... out. Driving.|What would you say if I asked for one more road trip?}"
           ],
           "choices": [
             "{I'd say get in.|I'd already have the engine runnin'.}",
@@ -3992,7 +3992,7 @@
       "reunited": [
         {
           "prompt": [
-            "~ She sits beside you, not across. Her head finds your shoulder as if it had never been anywhere else.",
+            "~ She sits right beside you. Her head finds your shoulder as if it had never been anywhere else.",
             "{Tell me what you're thinking.|What's going on in that head of yours, mechanic?}"
           ],
           "choices": [
@@ -4084,7 +4084,7 @@
     "confessions": {
       "papers": [
         "{The papers. The ones in your glovebox.|The divorce. The papers you're taking to Beagle.}",
-        "I sent them. Not because I'd stopped. Because I was trying to cut the string before somebody followed it to you.",
+        "I sent them because I was trying to cut the string before somebody followed it to you.",
         "{If the throne ever goes wrong, anyone holding my heart goes down with it.|A goddess on the throne doesn't get a husband. She gets a hostage.}",
         "I wanted you divorced and safe. I never wanted you divorced."
       ],
@@ -4109,7 +4109,7 @@
       "em": [
         "{About the witch.|About Em.}",
         "I make her life hell. You know I do. I bend every coin she tosses.",
-        "It isn't because she's with you. It's because she gets the passenger seat, and I built a courthouse instead.",
+        "It's because she gets the passenger seat, and I built a courthouse instead.",
         "{I'll try to stop. I won't promise.|I'll stop. Mostly. A bit. I'll make her coffee go cold less often.}"
       ],
       "radio": [
@@ -4293,7 +4293,7 @@
         ],
         [
           "~ She grabs it back, furious.",
-          "{You don't get to leave first.|I let go. Not you. Me.}"
+          "{You don't get to leave first.|I let go. Me, first.}"
         ]
       ]
     },
@@ -4814,7 +4814,7 @@
       "sour": [
         [
           "~ She cuts the thread with a fingernail.",
-          "{No. Not both of us. Just you.}"
+          "{No. Just you.}"
         ],
         [
           "~ She pulls it tighter.",

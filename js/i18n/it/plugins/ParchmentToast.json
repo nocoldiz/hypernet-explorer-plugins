@@ -4,7 +4,7 @@
     "optionName": "Registro della simulazione",
     "line": "[{kind}] {text}",
     "kind": {
-      "party": "Gruppo",
+      "party": "Party",
       "monster": "Mostro",
       "npc": "PNG"
     },
@@ -40,11 +40,11 @@
     },
     "party": {
       "idle": "{name} decide di restare fermo",
-      "follow": "{name} decide di camminare con il capogruppo",
+      "follow": "{name} decide di camminare con il leader del Party",
       "walk": "{name} decide di fare una passeggiata",
       "visit": "{name} decide di andare a chiacchierare con qualcuno",
       "look": "{name} decide di guardare qualcosa",
-      "return": "{name} decide di raggiungere il capogruppo",
+      "return": "{name} decide di raggiungere il leader del Party",
       "need": {
         "hunger": "{name} decide di cercare qualcosa da mangiare",
         "sleep": "{name} decide di riposarsi",

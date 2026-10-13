@@ -1,40 +1,40 @@
 {
   "stance": {
     "support": [
-      "Dite quello che vi pare di {head}, ma il {power} non ha mai camminato così {dritto|bene|spedito}.",
-      "Il {party} la gente come me {la capisce|la ascolta davvero|la rappresenta}. Se potessi li voterei {due volte|anche domani|con tutte e due le mani}.",
-      "{head} è l'unico {title} a memoria d'uomo che {se la meriti, quella poltrona|sia all'altezza|meriti fiducia}.",
-      "Finalmente col {party} {si va nella direzione giusta|le cose si muovono|si respira}.",
-      "I miei {nonni|genitori|vecchi} sarebbero orgogliosi di cosa sta diventando il {power}.",
-      "La spilletta del {party} me la sono messa sul cappotto e {non me la tolgo|la porto ovunque|si vede bene}.",
+      "Dite quello che vi pare di {head}, ma qui ({power}) le cose non sono mai andate così {lisce|bene|spedite}.",
+      "Quelli del partito «{party}» la gente come me {la capiscono|la ascoltano davvero|la rappresentano}. Se potessi li voterei {due volte|anche domani|con tutte e due le mani}.",
+      "{head}, {title}: a memoria d'uomo nessuno {si era meritato così quella poltrona|era stato così all'altezza|aveva meritato tanta fiducia}.",
+      "Finalmente, col partito «{party}» al governo, {si va nella direzione giusta|le cose si muovono|si respira}.",
+      "I miei {nonni|genitori|vecchi} sarebbero orgogliosi di come sta crescendo questo paese ({power}).",
+      "La spilletta del partito «{party}» me la sono messa sul cappotto e {non me la tolgo più|la porto ovunque|si vede bene}.",
       "Dicano pure quel che vogliono i {brontoloni|malmostosi|cinici}: {head} ha ereditato un disastro e lo sta {sistemando|rimettendo in piedi|risolvendo}.",
       "{Uno che comanda e sa dove andare|Ordine e mano ferma|Gente che lavora in silenzio}. Chiedo solo questo, e finalmente ce l'abbiamo.",
-      "Per una volta il {power} {è tenuto bene|è in mani attente|non è uno sfacelo}, e nessuno lo vuole ammettere."
+      "Per una volta il governo ({power}) {funziona come si deve|è in mani attente|non è uno sfacelo}, e nessuno lo vuole ammettere."
     ],
     "oppose": [
-      "Non farmi parlare di {head}. Il {peggior|più inutile|più penoso} {title} che il {power} si sia mai beccato.",
-      "Il {party} questo governo {se l'è comprato|l'ha pagato|se l'è preso}, e adesso {gli interessi|il conto|il prezzo} li paghiamo noi.",
+      "Non farmi parlare di {head}. Come {title} è {una sciagura|una vergogna|una pena} come qui ({power}) non se ne erano mai viste.",
+      "Il partito «{party}» questo governo {se l'è comprato|l'ha pagato|se l'è preso}, e adesso {gli interessi li paghiamo noi|il conto lo paghiamo noi|il prezzo lo paghiamo noi}.",
       "Ogni promessa di {head} è {evaporata in silenzio|finita nel nulla|sparita}. {Come sempre|Naturalmente|Ovviamente}.",
-      "Il {power} meriterebbe di meglio di questo {circo|teatrino|sfacelo} che chiamano governo.",
-      "Un altro mandato del {party} e non resta {più niente da governare|niente|che debiti}.",
-      "Io questa roba non l'ho votata, e {conosco un sacco di gente che dice uguale|non sono il solo|lo sento dire ovunque}.",
+      "La nostra gente ({power}) meriterebbe di meglio {del circo|del teatrino|dello sfacelo} che chiamano governo.",
+      "Un altro mandato del partito «{party}» e {non resterà più niente da governare|non resterà più niente|resteranno solo i debiti}.",
+      "Io questa roba non l'ho votata, e {conosco un sacco di gente che dice uguale|non sono {g:il solo|la sola}|lo sento dire ovunque}.",
       "Loro lo chiamano {ordine|stabilità|disciplina}. Io lo chiamo {uno stivale sul collo|furto con timbro|dover pure ringraziare}.",
       "Qualcuno dovrebbe chiedere a {head} dove sono finiti {davvero tutti quei soldi|i soldi|quei quattrini}.",
-      "{Ovviamente|Naturalmente|Tipico} il {party} i soldi li ha trovati per {sé|gli amici|la capitale} e per noi niente."
+      "{Ovviamente|Naturalmente|Che novità}: il partito «{party}» i soldi li ha trovati per {sé|gli amici suoi|la capitale}, e per noi niente."
     ],
     "apathetic": [
-      "Politica? Ho già i miei problemi a {mettere il pane in tavola|arrivare a sera|tirare avanti}.",
+      "Politica? Ho già i miei problemi {a mettere il pane in tavola|ad arrivare a sera|a tirare avanti}.",
       "{title} di qua, {election} di là... e l'affitto {resta quello|non cala|è sempre lo stesso}.",
       "Una volta {seduti in poltrona|arrivati|eletti} sono tutti uguali, per come la vedo io.",
       "Ho smesso di {leggere i proclami|seguire la faccenda|ascoltarli} anni fa. Ci ho guadagnato in {digestione|salute|nervi}.",
       "Vinca chi vuole, io domani {sono in piedi all'alba a fare le stesse cose|ho lo stesso turno|pago lo stesso affitto}.",
-      "Il mio {vicino|cugino|padrone di casa} non smette un attimo di parlare del {party}. Io {annuisco|annuisco e penso a cosa cucino|lascio correre}.",
+      "{Il mio vicino|Mio cugino|Il mio padrone di casa} non smette un attimo di parlare del partito «{party}». Io {annuisco|annuisco e penso a cosa cucino|lascio correre}.",
       "{Vabbè|Suppongo|Boh}. {Cambia poco|Sempre uguale|Non è affar mio}."
     ],
     "radical": [
-      "Le chiacchiere non cambiano niente. Al {power} serve {il fuoco|una resa dei conti|che salti tutto}, non un'altra {election}.",
-      "Quando sarà il momento tocca {schierarsi|scegliere|stare da una parte}. Io mi sono già schierato.",
-      "Il {party} è l'unica cosa fra noi e {il baratro|il buio|la rovina}. {La storia ci darà ragione|Ci daranno ragione|Il tempo lo dirà}.",
+      "Le chiacchiere non cambiano niente. Qui ({power}) serve {il fuoco|una resa dei conti|che salti tutto}: un'altra tornata di {election} non basterà mai.",
+      "Quando sarà il momento toccherà {schierarsi|scegliere|stare da una parte}. Io la mia parte l'ho già scelta.",
+      "Il partito «{party}» è l'unica cosa fra noi e {il baratro|il buio|la rovina}. {La storia ci darà ragione|Ci daranno ragione|Il tempo lo dirà}.",
       "Nelle {piazze|strade|sale} ci ridevano dietro. Non rideranno {per sempre|ancora a lungo|quando succederà}.",
       "Ogni {impero|regime|ordine} sembra eterno {la settimana|la stagione|l'anno} prima di cadere.",
       "Tengo una lista di tutti quelli che hanno detto che {non si poteva fare|non sarebbe mai successo|era impossibile}."
@@ -42,49 +42,49 @@
   },
   "election": {
     "upcoming": [
-      "Mancano {days} giorni alla {election}. Si sente {nell'aria, per strada|ovunque|in ogni osteria}.",
-      "La {election} è fra {days} giorni e i candidati {si stanno già scannando|si tirano già fango|già urlano}.",
+      "Mancano {days} giorni e c'è già aria di {election}: si sente {per strada|ovunque|in ogni osteria}.",
+      "Tempo di {election}: fra {days} giorni si vota e i candidati {si stanno già scannando|si tirano già fango|già urlano}.",
       "Restano {days} giorni. {Non ho deciso|Ci sto ancora pensando|Non lo dico}, e {non provare a convincermi|risparmiami il comizio|non cominciare}.",
-      "Hanno ricominciato a {scrivere slogan sui muri|tappezzare i muri|urlare dai carri}, aria di {election}.",
-      "Prima di una {election} {sorridono tutti di più|diventano tutti gentili|si ricordano tutti il tuo nome}. Non dura mai.",
-      "Mi dicono che la {election} è fra {days} giorni. {Le bandierine|Il palco|Lo striscione} è già {appeso|montato|su}."
+      "Hanno ricominciato a {scrivere slogan sui muri|tappezzare i muri|urlare dai carri}. C'è aria di {election}.",
+      "In tempo di {election} {sorridono tutti di più|diventano tutti gentili|si ricordano tutti il tuo nome}. Non dura mai.",
+      "Mi dicono che mancano {days} giorni ed è tempo di {election}. {Le bandierine sono già appese|Il palco è già montato|Lo striscione è già su}."
     ],
     "won": [
-      "Alla scorsa {election} ha vinto la mia parte. Ancora {non ci credo|aspetto la fregatura|ci sbatto gli occhi}.",
-      "Ho votato {winner} e per una volta è {servito a qualcosa|contato|valso qualcosa}.",
-      "Abbiamo vinto! Ora vediamo se {si ricordano di noi poveracci|mantengono una parola|tornano in questa via}.",
+      "All'ultima tornata di {election} ha vinto la mia parte. Ancora {non ci credo|aspetto la fregatura|mi stropiccio gli occhi}.",
+      "Ho votato per {winner} e per una volta {è servito a qualcosa|il mio voto è contato|ne è valsa la pena}.",
+      "Abbiamo vinto! Ora vediamo se {si ricordano di noi poveracci|mantengono almeno una promessa|tornano in questa via}.",
       "La sera che l'ha spuntata {winner} nella mia via si {ballava|cantava|brindava}.",
       "Il giornale della vittoria lo tengo piegato {nella tasca del cappotto|nel cassetto|nel vestito buono}."
     ],
     "lost": [
-      "Ha vinto {winner}. Ancora non mi capacito che {ci siano cascati|l'abbiano votato|si siano fatti fregare}.",
+      "Ha vinto {winner}. Ancora non mi capacito che {ci siano cascati|la gente abbia votato così|si siano fatti fregare}.",
       "Il mio voto è finito {dritto nel tombino|da nessuna parte|in un buco}, {come al solito|come sempre|naturalmente}.",
-      "La {election} era decisa {prima ancora che si votasse|in una stanza chiusa|da mesi}, {segnatelo|potete citarmi|e lo sanno tutti}.",
-      "Torniamo. Perdere una {election} non vuol dire {avere torto|essere finiti|perdere}.",
-      "Con mio {cugino|fratello|vicino} di politica non ne parlo più. Non da quando ha vinto {winner}."
+      "La tornata di {election} era decisa {prima ancora che si votasse|in una stanza chiusa|da mesi}, {segnatelo|potete citarmi|e lo sanno tutti}.",
+      "Torneremo. Perdere una tornata di {election} non vuol dire {avere torto|essere finiti|aver perso tutto}.",
+      "{Con mio cugino|Con mio fratello|Col mio vicino} di politica non ne parlo più. Non da quando ha vinto {winner}."
     ]
   },
   "rumor": [
-    "Dicono che {rumorSubject} sia {in mezzo a|dentro fino al collo in|dietro a} una storia di {rumorKind}. Me l'hanno detto {in tre|due persone diverse|da fonte sicura}.",
-    "L'hai sentita quella di {rumorSubject}? Roba di {rumorKind}. {Acqua in bocca|Non dirlo in giro|Piano}.",
+    "Dicono che {rumorSubject} sia {in mezzo a|dentro fino al collo in|dietro a} una storia di {rumorKind}. {Me l'hanno detto in tre|Me l'hanno detto due persone diverse|Lo so da fonte sicura}.",
+    "L'hai sentita quella di {rumorSubject}? Si parla di {rumorKind}. {Acqua in bocca|Non dirlo in giro|Parla piano}.",
     "{Al mercato|Alla fontana|All'osteria} non si parla d'altro: {rumorSubject} e quella faccenda di {rumorKind}.",
-    "Io non {metto in giro voci|ripeto le cose|do retta alle chiacchiere}... però {rumorSubject}? Un {rumorKind}? {Non c'è fumo senza arrosto|Qualcosa vorrà dire|Fatti due conti}...",
-    "Il mio {barbiere|padrona di casa|cugino alla dogana} giura che la storia del {rumorKind} di {rumorSubject} è vera. {E i barbieri sanno le cose|Lei sente tutto|Lui è ben informato}.",
+    "Io non {metto in giro voci|ripeto le cose|do retta alle chiacchiere}... però {rumorSubject}? Con una storia di {rumorKind}? {Non c'è fumo senza arrosto|Qualcosa vorrà dire|Fatti due conti}...",
+    "{Il mio barbiere giura|La mia padrona di casa giura|Mio cugino alla dogana giura} che su {rumorSubject} è tutto vero, {rumorKind} compreso. {E certe cose chi le sa le sa|Ha orecchie dappertutto|È gente ben informata}.",
     "Se anche solo metà di quello che dicono su {rumorSubject} è vero, qui {saltano delle teste|finisce male per qualcuno|crolla tutto}."
   ],
   "grumble": [
-    "Detto fra {noi|noi due|noi soli}, {gripe} ci sta {dissanguando|finendo|ammazzando in silenzio}.",
-    "Tutto il resto lo reggerei, se non ci fosse {gripe}.",
+    "Detto fra {noi|noi due|noi soli}, con {gripe} {ci stanno dissanguando|siamo alla fine|ci ammazzano piano piano}.",
+    "Tutto il resto lo reggerei, ma {gripe} no.",
     "Si aspettano pure che {sorridiamo e diciamo grazie|ringraziamo|stiamo zitti} per {gripe}. {Roba da matti|Che faccia tosta|Ma pensa te}.",
     "{Mio padre|Mia madre|Mio nonno} una cosa come {gripe} non se l'è mai dovuta sorbire.",
-    "All'inizio era {provvisorio|per una stagione|una misura d'emergenza}, adesso {gripe} è semplicemente... {la vita|definitivo|così}.",
+    "All'inizio doveva essere {una cosa provvisoria|per una stagione|una misura d'emergenza}, e adesso ci teniamo {gripe} {per sempre|a vita|e basta}.",
     "Qualcuno in capitale è stato {promosso|premiato|sistemato} per aver inventato {gripe}, ci {metto la mano sul fuoco|scommetto|giurerei}."
   ],
   "officeHolder": [
-    "Fare il {office} di {group} è per lo più {scartoffie e lamentele|firme e lagne|ascoltare}. Soprattutto lamentele.",
+    "Essere {office} di {group} vuol dire per lo più {scartoffie e lamentele|firme e lagne|ascoltare}. Soprattutto lamentele.",
     "Adesso mi chiamano {office}. Mia madre finalmente {parla di me con i vicini|ha qualcosa da vantare|è contenta}.",
-    "Tutti vogliono {un favore|una parola|una firma} dal {office}. Del {office} non si ricorda nessuno {a tempo di sagra|il resto dell'anno|quando serve}.",
-    "Non ho mai voluto fare il {office}, ma {qualcuno che ci capisse qualcosa ci voleva|non lo faceva nessun altro|l'alternativa era peggio}.",
+    "Quando sei {office} tutti vogliono {un favore|una parola|una firma}. Di chi fa {office}, poi, non si ricorda nessuno {a tempo di sagra|il resto dell'anno|quando serve}.",
+    "Non ho mai voluto diventare {office}, ma {ci voleva qualcuno che ci capisse qualcosa|non lo faceva nessun altro|l'alternativa era peggio}.",
     "{Il dovere|La carica|Il lavoro} non {guarda in faccia a nessuno|chiede il permesso|si cura di come sto}."
   ],
   "debate": [
@@ -101,7 +101,7 @@
         ],
         [
           0,
-          "La mia parte? Io voto per {principio|coscienza|ragionamento}, non per abitudine!"
+          "La mia parte? Io voto per {principio|coscienza|ragionamento}, e l'abitudine non c'entra niente!"
         ],
         [
           1,

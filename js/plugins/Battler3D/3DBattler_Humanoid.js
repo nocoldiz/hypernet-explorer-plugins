@@ -73,6 +73,14 @@
     const HEAD_Y   = 1.75;
     const RIG_TOP  = HEAD_Y + 0.35;
 
+    // Wolf riders (gear 'mount', see _gearMount): how far the rider is lifted
+    // to sit its hips on the saddle, and the straddle pose of its legs (hip
+    // pitch forward, hip splay out over the flank, knee fold back down).
+    const MOUNT_SEAT      = 0.3;
+    const MOUNT_HIP_PITCH = 0.55;
+    const MOUNT_HIP_SPLAY = 1.0;
+    const MOUNT_KNEE      = 1.1;
+
     // Hair (see _applyHair): surfaces that never grow it, and the gear pieces
     // that already cover the scalp.
     const BALD_POOLS = ['bone', 'metal', 'stone'];
@@ -371,7 +379,17 @@
         hob_archer:        _hob({ scale: 2.5, bodyBulk: 1.00, weapon: 7, gear: ['hood', 'quiver', 'spikes'] }),
         hob_scout:         _hob({ scale: 2.4, bodyBulk: 0.95, weapon: 1, gear: ['hood', 'spikes'] }),
         hob_firestarter:   _hob({ scale: 2.5, bodyBulk: 1.00, weapon: 1, gear: ['torch', 'firemotes', 'spikes'] }),
-        hob_shaman:        _hob({ scale: 2.5, bodyBulk: 1.00, weapon: 6, gear: ['spikes', 'bonenecklace'] })
+        hob_shaman:        _hob({ scale: 2.5, bodyBulk: 1.00, weapon: 6, gear: ['spikes', 'bonenecklace'] }),
+        // ── Level 1-5 roster (bespoke pieces built by `bespoke`, on the shared
+        //    biped rig; `noHair` keeps the rolled hair off their own headgear) ──
+        // Goblin Scamp: a big-headed brat in a stolen pot, slingshot in hand.
+        lv_goblinscamp:    _gob({ scale: 2.1, bodyBulk: 0.78, headScale: 1.3, earScale: 1.45, weapon: 0, gear: ['loincloth'], mouthStyle: 'gaptooth', goblinoid: 1, noHair: 1, bespoke: '_buildGoblinScamp', hue: [0.25, 0.06], sat: [0.60, 0.15], lit: [0.42, 0.10] }),
+        // Fry Cook Goblin: pot-bellied, aproned, a toque, spatula and frying pan.
+        lv_frycookgoblin:  _gob({ scale: 2.3, bodyBulk: 1.25, weapon: 0, mouthStyle: 'frown', goblinoid: 1, noHair: 1, bespoke: '_buildFryCookGoblin', hue: [0.28, 0.06], sat: [0.45, 0.12], lit: [0.40, 0.08] }),
+        // Verden Seedling: a leafy green youngster with a blue shoot on its head.
+        lv_verdenseedling: _gob({ scale: 2.2, bodyBulk: 0.85, headScale: 1.15, earScale: 1.2, weapon: 0, mouthStyle: 'grin', goblinoid: 1, noHair: 1, bespoke: '_buildVerdenSeedling', hue: [0.34, 0.05], sat: [0.65, 0.15], lit: [0.40, 0.08] }),
+        // Bandit Lookout (a man, not a goblin): gaunt, hat and bandana, spyglass.
+        lv_banditlookout:  Object.assign({}, CREATURE_PROFILES.humanoid, { scale: 2.6, bodyBulk: 0.8, weapon: 1, slouch: 0.06, noHair: 1, bespoke: '_buildBanditLookout', hue: [0.07, 0.03], sat: [0.40, 0.12], lit: [0.50, 0.10] })
     });
 
     // Mark every goblinoid profile (the two base rigs plus each species) and give
@@ -380,7 +398,8 @@
     // species reads at one size however its per-id size multiplier rolled.
     for (const k in CREATURE_PROFILES) {
         if (k !== 'goblin' && k !== 'hobgoblin' &&
-            k.indexOf('gob_') !== 0 && k.indexOf('gobm_') !== 0 && k.indexOf('hob_') !== 0) continue;
+            k.indexOf('gob_') !== 0 && k.indexOf('gobm_') !== 0 && k.indexOf('hob_') !== 0 &&
+            !CREATURE_PROFILES[k].goblinoid) continue;
         const p = CREATURE_PROFILES[k];
         p.goblinoid = 1;
         p.standHeight = (p.scale || 2.5) * GOBLIN_HEIGHT_PER_SCALE;
@@ -430,7 +449,12 @@
         // via the 'skull'/'skeleton' keyword aliases; now pinned by exact name).
         hmn_gigglingskull: ["Giggling Skull"],
         hmn_deathshead: ["Death's Head"],
-        hmn_skullkeeper: ["Skull Keeper"]
+        hmn_skullkeeper: ["Skull Keeper"],
+        // Level 1-5 roster.
+        lv_goblinscamp: ["Goblin Scamp"],
+        lv_frycookgoblin: ["Fry Cook Goblin"],
+        lv_verdenseedling: ["Verden Seedling"],
+        lv_banditlookout: ["Bandit Lookout"]
     };
 
     //=========================================================================
@@ -695,11 +719,21 @@
                 // ── PER-SPECIES GEAR (goblin/hobgoblin clothing, props, paint)
                 if (this.profile.gear || this.profile.corpsePaint) this._applyGear();
 
+                // ── BESPOKE PIECES (the level 1-5 roster builders below)
+                if (this.profile.bespoke && typeof this[this.profile.bespoke] === 'function') this[this.profile.bespoke]();
+
                 // ── HAIR (after gear, so a helmeted/hooded head stays bald)
                 this._applyHair();
 
                 // ── STANDING HEIGHT (last: it measures the finished head+gear)
                 this._normalizeHeight();
+
+                // ── BUILD POSE: every limb is placed by animatePose, so until the
+                // first frame the whole rig sat piled at the origin. Pose it once
+                // here (after the height measure, which reads the head at the
+                // origin) so the model as built is the creature standing up.
+                if (this.animTime === undefined) this.animTime = 0;
+                try { this.animatePose(0); } catch (e) { /* first frame poses it */ }
 
                 this.loaded = true;
                 resolve(this);
@@ -1006,6 +1040,7 @@
             const H = window.Battler3D && window.Battler3D.Hair;
             if (!H || !this.head) return;
             const p = this.profile || {};
+            if (p.noHair) return;
             let style, color;
             if (p.hair && p.hair.style) {
                 style = p.hair.style;
@@ -1061,6 +1096,7 @@
         }
         _gearMotes(coreColor, glowColor) {
             this._motesGroup = new THREE.Group();
+            this._motesGroup.userData.float = true;   // drifts round the body by design
             for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const mo = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 6), this._gmat(coreColor, 0.3, 0, glowColor)); mo.position.set(Math.cos(a) * 0.45, 0.3 + Math.sin(a * 2) * 0.3, Math.sin(a) * 0.45); this._motesGroup.add(mo); }
             this.bodyGroup.add(this._motesGroup);
         }
@@ -1123,6 +1159,7 @@
         // A drifting cloud of rainbow glitter shards around the body.
         _gearGlitter() {
             this._glitter = new THREE.Group();
+            this._glitter.userData.float = true;      // a loose cloud by design
             const colors = [0xff4fd8, 0x4fd8ff, 0xfff14f, 0x9b5cff, 0x5cff9b];
             for (let i = 0; i < 24; i++) {
                 const c = colors[i % colors.length];
@@ -1134,23 +1171,156 @@
             this.bodyGroup.add(this._glitter);
         }
         // A procedural wolf mount beneath the rider (not a body part, so it never
-        // dismembers). Sits in model-space under the goblin's hips.
+        // dismembers). Sits in model-space under the goblin's hips. The rider is
+        // lifted MOUNT_SEAT onto the saddle and its legs straddle the barrel in
+        // animatePose; nothing else about the shared rig changes.
         _gearMount() {
             const fur = this._gmat(0x4a4038, 0.9), dark = this._gmat(0x2a241e, 0.9);
+            const leather = this._gmat(0x6b2a2a, 0.9);
             this._mount = new THREE.Group();
-            const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.32, 1.0, 6, 10), fur); body.rotation.z = Math.PI / 2; body.position.set(0, 0.6, 0.1); this._mount.add(body);
-            const chest = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 10), fur); chest.position.set(0, 0.62, 0.7); chest.scale.set(1, 1, 0.9); this._mount.add(chest);
+            // Barrel nose to tail along +Z, chest and haunch overlapping it.
+            const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.32, 1.0, 6, 10), fur); body.rotation.x = Math.PI / 2; body.position.set(0, 0.62, 0.05); this._mount.add(body);
+            const chest = new THREE.Mesh(new THREE.SphereGeometry(0.36, 10, 10), fur); chest.position.set(0, 0.66, 0.62); chest.scale.set(1, 1.05, 0.9); this._mount.add(chest);
+            const haunch = new THREE.Mesh(new THREE.SphereGeometry(0.33, 10, 8), fur); haunch.position.set(0, 0.64, -0.5); this._mount.add(haunch);
+            // Neck bridging chest and head, so the head never floats off the front.
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.24, 0.42, 8), fur); neck.position.set(0, 0.86, 0.9); neck.rotation.x = 0.85; this._mount.add(neck);
             const head = new THREE.Group();
             const skull = new THREE.Mesh(new THREE.SphereGeometry(0.26, 12, 12), fur); skull.scale.set(0.9, 0.9, 1.1); head.add(skull);
-            const snout = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.3, 8), fur); snout.rotation.x = Math.PI / 2; snout.position.set(0, -0.04, 0.26); head.add(snout);
-            for (const s of [-1, 1]) { const ear = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.2, 4), fur); ear.position.set(s * 0.13, 0.24, -0.02); head.add(ear); }
+            const snout = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.3, 8), fur); snout.rotation.x = Math.PI / 2; snout.position.set(0, -0.04, 0.3); head.add(snout);
+            for (const s of [-1, 1]) { const ear = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.2, 4), fur); ear.position.set(s * 0.13, 0.26, -0.02); head.add(ear); }
             for (const x of [-0.1, 0.1]) { const eye = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), this._gmat(0xffcc33, 0.2, 0, 0xaa7700)); eye.position.set(x, 0.06, 0.2); head.add(eye); }
-            head.position.set(0, 0.86, 1.05); this._mount.add(head);
-            const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.02, 0.5, 6), fur); tail.position.set(0, 0.72, -0.7); tail.rotation.x = -0.6; this._mount.add(tail);
-            const leg = (x, z) => { const g = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.05, 0.6, 6), dark); g.position.set(x, 0.3, z); this._mount.add(g); };
-            leg(-0.22, 0.6); leg(0.22, 0.6); leg(-0.22, -0.4); leg(0.22, -0.4);
-            const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 0.62), this._gmat(0x6b2a2a, 0.9)); saddle.position.set(0, 0.92, 0.0); this._mount.add(saddle);
+            head.position.set(0, 1.0, 1.1); this._mount.add(head);
+            // Tail rooted inside the haunch, sweeping down and back.
+            const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.025, 0.55, 6), fur); tail.position.set(0, 0.56, -1.0); tail.rotation.x = 0.93; this._mount.add(tail);
+            // Legs from inside the barrel down to the ground, with paws.
+            const leg = (x, z) => {
+                const g = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.055, 0.62, 6), dark); g.position.set(x, 0.31, z); this._mount.add(g);
+                const paw = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.06, 0.17), dark); paw.position.set(x, 0.03, z + 0.03); this._mount.add(paw);
+            };
+            leg(-0.2, 0.6); leg(0.2, 0.6); leg(-0.2, -0.5); leg(0.2, -0.5);
+            // Saddle on the back, flaps down both flanks and a stirrup strap per
+            // side that the rider's feet hang beside.
+            const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.1, 0.6), leather); saddle.position.set(0, 0.97, 0.0); this._mount.add(saddle);
+            for (const s of [-1, 1]) {
+                const flap = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.36, 0.42), leather); flap.position.set(s * 0.3, 0.8, 0.0); flap.rotation.z = s * 0.28; this._mount.add(flap);
+            }
             this.bodyGroup.add(this._mount);
+        }
+
+        // ── LEVEL 1-5 ROSTER: bespoke pieces on the shared biped ─────────────
+        // Every piece parents to a body-part mesh, so it rides the FK and hides
+        // with its part. Head-local: the skull is a 0.35 sphere at the origin
+        // with the face toward +Z; torso-local: a 0.8 tall cylinder, radius 0.3
+        // at the top (y 0.4) widening to 0.4 at the hips (y -0.4).
+        // A tapered rod from point a to point b (arrays) in `parent` space.
+        _pstrut(parent, mat, a, b, r0, r1) {
+            const A = new THREE.Vector3(a[0], a[1], a[2]), B = new THREE.Vector3(b[0], b[1], b[2]);
+            const dir = new THREE.Vector3().subVectors(B, A), len = dir.length();
+            if (len < 1e-4 || !parent) return null;
+            const rod = new THREE.Mesh(new THREE.CylinderGeometry(Math.max(0.005, r1), Math.max(0.005, r0), len, 5), mat);
+            rod.position.copy(A).lerp(B, 0.5);
+            rod.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+            parent.add(rod);
+            return rod;
+        }
+        // Goblin Scamp: a stolen cooking pot for a helmet, a plaster on the
+        // nose, freckles, a slingshot and a pouch of stones.
+        _buildGoblinScamp() {
+            const tin = this._gmat(0x6a6e74, 0.45, 0.6), brown = this._gmat(0x5a3a1e, 0.9), stone = this._gmat(0x8a8a86, 0.9);
+            if (this.head) {
+                const pot = new THREE.Group(); pot.position.set(0.05, 0.24, -0.02); pot.rotation.z = -0.35; this.head.add(pot);
+                pot.add(new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.33, 0.24, 8), tin));
+                const handle = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.04, 0.05), tin); handle.position.set(0.4, 0.02, 0); pot.add(handle);
+                const dent = new THREE.Mesh(new THREE.SphereGeometry(0.06, 5, 4), this._gmat(0x4a4e54, 0.5, 0.6)); dent.scale.z = 0.4; dent.position.set(-0.1, 0.05, 0.3); pot.add(dent);
+                for (const r of [0.6, -0.6]) { const plaster = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.035, 0.012), this._gmat(0xe8c8a0, 0.8)); plaster.position.set(0, 0.03, 0.4); plaster.rotation.z = r; this.head.add(plaster); }
+                for (const [x, y] of [[-0.2, -0.04], [-0.16, -0.09], [-0.24, -0.1], [0.2, -0.04], [0.16, -0.09], [0.24, -0.1]]) { const f = new THREE.Mesh(new THREE.SphereGeometry(0.015, 4, 3), brown); f.position.set(x, y, Math.sqrt(Math.max(0, 0.35 * 0.35 - x * x - y * y)) - 0.005); this.head.add(f); }
+            }
+            if (this.rightHand) {
+                const sling = new THREE.Group(); sling.rotation.x = 1.2; sling.scale.setScalar(1.7); this.rightHand.add(sling);   // held out in front
+                const wood = this._gmat(0x7a5428, 0.9);
+                this._pstrut(sling, wood, [0, -0.02, 0], [0, 0.16, 0], 0.02, 0.018);
+                for (const s of [-1, 1]) this._pstrut(sling, wood, [0, 0.16, 0], [s * 0.07, 0.28, 0], 0.016, 0.012);
+                const band = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.008, 3, 8, Math.PI), this._gmat(0xc83a2a, 0.6)); band.rotation.z = Math.PI; band.position.y = 0.28; sling.add(band);
+            }
+            if (this.leftHand) { const pebble = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06, 0), stone); pebble.position.set(0, -0.05, 0.06); this.leftHand.add(pebble); }
+            if (this.torso) {
+                const pouch = new THREE.Mesh(new THREE.SphereGeometry(0.11, 6, 5), brown); pouch.position.set(0.36, -0.28, 0.1); this.torso.add(pouch);
+                for (const [x, z] of [[0.33, 0.12], [0.38, 0.06]]) { const st = new THREE.Mesh(new THREE.DodecahedronGeometry(0.045, 0), stone); st.position.set(x, -0.18, z); this.torso.add(st); }
+            }
+        }
+        // Fry Cook Goblin: toque, apron with grease stains, a pot belly, sweat
+        // on the brow, a slotted spatula and a pan with an egg in it.
+        _buildFryCookGoblin() {
+            const white = this._gmat(0xf2f0e8, 0.8), steel = this._gmat(0x9aa0a8, 0.35, 0.7), dark = this._gmat(0x1e1e22, 0.6);
+            if (this.head) {
+                const band = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.27, 0.22, 9), white); band.position.y = 0.36; this.head.add(band);
+                for (const [x, z] of [[-0.1, 0.04], [0.1, 0.04], [0, -0.08], [0, 0.1]]) { const puff = new THREE.Mesh(new THREE.SphereGeometry(0.15, 7, 5), white); puff.position.set(x, 0.52, z); this.head.add(puff); }
+                const sweat = this._gmat(0xaad8ff, 0.2); sweat.transparent = true; sweat.opacity = 0.8;
+                for (const [x, y] of [[-0.16, 0.18], [0.12, 0.2], [0.22, 0.1]]) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.025, 5, 4), sweat); d.scale.y = 1.5; d.position.set(x, y, Math.sqrt(Math.max(0, 0.35 * 0.35 - x * x - y * y))); this.head.add(d); }
+            }
+            if (this.torso) {
+                const belly = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), this.torso.material); belly.scale.set(1, 0.9, 0.7); belly.position.set(0, -0.12, 0.13); this.torso.add(belly);
+                const apron = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.72, 0.03), white); apron.position.set(0, -0.14, 0.385); this.torso.add(apron);
+                for (const [x, y, r] of [[-0.1, -0.05, 0.05], [0.12, -0.3, 0.07], [0.02, 0.1, 0.03]]) { const st = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.01, 7), this._gmat(0x9a7a3a, 0.9)); st.rotation.x = Math.PI / 2; st.position.set(x, y, 0.402); this.torso.add(st); }
+                const strap = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.02, 3, 12), white); strap.rotation.x = Math.PI / 2; strap.position.y = 0.38; this.torso.add(strap);
+            }
+            if (this.rightHand) {
+                const sp = new THREE.Group(); sp.rotation.x = 1.2; this.rightHand.add(sp);   // held out in front
+                this._pstrut(sp, dark, [0, -0.03, 0], [0, 0.26, 0], 0.018, 0.018);
+                const blade = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.15, 0.012), steel); blade.position.y = 0.33; sp.add(blade);
+                for (const x of [-0.03, 0.03]) { const slot = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.09, 0.016), dark); slot.position.set(x, 0.34, 0); sp.add(slot); }
+            }
+            if (this.leftHand) {
+                const pan = new THREE.Group(); this.leftHand.add(pan);
+                this._pstrut(pan, dark, [0, 0, 0], [0, 0, 0.08], 0.02, 0.02);
+                const dish = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.14, 0.05, 10), dark); dish.position.set(0, 0, 0.24); pan.add(dish);
+                const eggWhite = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.014, 8), white); eggWhite.position.set(0.02, 0.03, 0.24); pan.add(eggWhite);
+                const yolk = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 4), this._gmat(0xffb020, 0.4)); yolk.position.set(0.02, 0.045, 0.24); yolk.scale.y = 0.6; pan.add(yolk);
+            }
+        }
+        // Verden Seedling: the blue shoot on its head, a leaf collar and skirt,
+        // a seed pouch, a seed in hand and root toes.
+        _buildVerdenSeedling() {
+            const leaf = this._gmat(0x4a9a3a, 0.7), blue = this._gmat(0x3a78ff, 0.5, 0, 0x0a1a50), bark = this._gmat(0x6a4a24, 0.9);
+            if (this.head) {
+                const c = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.28, 0), new THREE.Vector3(0.05, 0.48, 0), new THREE.Vector3(-0.03, 0.64, 0.03), new THREE.Vector3(0.05, 0.76, 0.06)]);
+                this.head.add(new THREE.Mesh(new THREE.TubeGeometry(c, 8, 0.025, 4, false), leaf));
+                for (const [x, y, z, rz] of [[0.13, 0.53, 0, 0.45], [-0.11, 0.66, 0.03, -0.45]]) { const l = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 4), blue); l.scale.set(1.6, 0.25, 0.8); l.position.set(x, y, z); l.rotation.z = rz; this.head.add(l); }
+                const bud = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.1, 5), blue); bud.position.set(0.06, 0.8, 0.07); bud.rotation.z = -0.3; this.head.add(bud);
+            }
+            if (this.torso) {
+                for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2, l = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.2, 3), leaf); l.position.set(Math.cos(a) * 0.3, 0.42, Math.sin(a) * 0.3); l.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(Math.cos(a), 0.8, Math.sin(a)).normalize()); this.torso.add(l); }
+                for (let i = 0; i < 9; i++) { const a = (i / 9) * Math.PI * 2, l = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.26, 3), leaf); l.position.set(Math.cos(a) * 0.4, -0.45, Math.sin(a) * 0.4); l.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(Math.cos(a) * 0.4, -1, Math.sin(a) * 0.4).normalize()); this.torso.add(l); }
+                const pouch = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 5), bark); pouch.position.set(-0.4, -0.22, 0.05); this.torso.add(pouch);
+            }
+            if (this.leftHand) { const seed = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.1, 5), bark); seed.position.set(0, -0.04, 0.07); seed.rotation.x = Math.PI; this.leftHand.add(seed); }
+            [this.leftFoot, this.rightFoot].forEach(f => { if (!f) return; for (let k = -1; k <= 1; k++) { const toe = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.12, 4), bark); toe.rotation.x = Math.PI / 2; toe.position.set(k * 0.05, -0.02, 0.14); f.add(toe); } });
+            [this.leftUpperArm, this.rightUpperArm].forEach(a => { if (!a) return; const moss = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08, 0), leaf); moss.position.set(0, 0.12, 0); moss.scale.y = 0.6; a.add(moss); });
+        }
+        // Bandit Lookout: wide hat, bandana over the face, a poncho, a brass
+        // spyglass in the off hand, a signal horn at the hip and one eye stuck
+        // wide open from watching the road.
+        _buildBanditLookout() {
+            const felt = this._gmat(0x4a3420, 0.9), red = this._gmat(0x9a2a22, 0.8), brass = this._gmat(0xc89a3a, 0.35, 0.7), wool = this._gmat(0x8a6a3a, 0.95);
+            if (this.head) {
+                const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.56, 0.56, 0.03, 12), felt); brim.position.y = 0.26; brim.rotation.x = -0.08; this.head.add(brim);
+                const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.31, 0.26, 8), felt); crown.position.y = 0.4; this.head.add(crown);
+                const hband = new THREE.Mesh(new THREE.CylinderGeometry(0.315, 0.315, 0.05, 8), red); hband.position.y = 0.3; this.head.add(hband);
+                const mask = new THREE.Mesh(new THREE.CylinderGeometry(0.365, 0.33, 0.22, 10, 1, true, -Math.PI / 2, Math.PI), red); mask.material.side = THREE.DoubleSide; mask.position.y = -0.14; this.head.add(mask);
+                const knot = new THREE.Mesh(new THREE.SphereGeometry(0.05, 5, 4), red); knot.position.set(0, -0.1, -0.33); this.head.add(knot);
+                for (const s of [-1, 1]) { const tail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.16, 0.012), red); tail.position.set(s * 0.04, -0.2, -0.36); tail.rotation.z = s * 0.3; this.head.add(tail); }
+                if (this.leftEyeMesh) this.leftEyeMesh.scale.setScalar(1.45);
+            }
+            if (this.torso) {
+                const poncho = new THREE.Mesh(new THREE.ConeGeometry(0.62, 0.62, 8, 1, true), wool); poncho.material.side = THREE.DoubleSide; poncho.position.y = 0.1; this.torso.add(poncho);
+                const stripe = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.03, 3, 8), red); stripe.rotation.x = Math.PI / 2; stripe.position.y = -0.1; this.torso.add(stripe);
+                const horn = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.32, 6), this._gmat(0xd8c8a0, 0.6)); horn.position.set(-0.42, -0.3, 0.06); horn.rotation.z = 1.25; this.torso.add(horn);
+            }
+            if (this.leftHand) {
+                const glass = new THREE.Group(); glass.rotation.x = 1.1; this.leftHand.add(glass);
+                [[0.05, 0.18, 0.09], [0.04, 0.14, 0.24], [0.03, 0.1, 0.35]].forEach(([r, h, y]) => { const c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 7), brass); c.position.y = y; glass.add(c); });
+                const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.01, 7), this._gmat(0x9ad8ff, 0.1, 0.2, 0x224455)); lens.position.y = 0.405; glass.add(lens);
+            }
         }
 
         _buildWeaponMesh() {
@@ -1353,9 +1523,12 @@
             // Stand the torso at its nominal height and let the FK below pose
             // the limbs; a small bob/sway keeps the idle alive.
             const bob = Math.sin(t * 1.5) * 0.02;
-            this.torso.position.set(0, 1.1 + bob, 0);
+            // A rider sits up on its wolf's saddle (see _gearMount); the bob
+            // then reads as the wolf's stride under it.
+            const seat = this._mount ? MOUNT_SEAT : 0;
+            this.torso.position.set(0, 1.1 + bob + seat, 0);
             this.torso.rotation.set(0, 0, Math.sin(t * 1.2) * 0.03);
-            const tx = 0, ty = 1.1 + bob, tz = 0;
+            const tx = 0, ty = 1.1 + bob + seat, tz = 0;
 
 
             // ── ANIMATION ANGLES ─────────────────────────────────────────────
@@ -1533,20 +1706,39 @@
             const hipToGnd   = Math.max(0, hipY - footTargLY);
             const kneeBend   = 0.12 + Math.max(0, 0.4 - hipToGnd) * 0.6;
 
-            const lHp = { x: tx - 0.2, y: hipY, z: tz };
-            const lKn = fk(this.leftThigh, lHp.x, lHp.y, lHp.z, lL,             0.3);
-            const lAn = fk(this.leftShin,  lKn.x, lKn.y, lKn.z, lL - kneeBend,  0.3);
-            if (this.leftFoot && this.leftFoot.visible) {
-                this.leftFoot.position.set(lAn.x, lAn.y - 0.05, lAn.z + 0.04);
-                this.leftFoot.rotation.set(-(lL - kneeBend) * 0.35, 0, 0);
-            }
+            if (this._mount) {
+                // Astride the wolf: each thigh splays out and forward over the
+                // flank (2-DOF hip, solved by the arm IK) and the knee folds the
+                // shin back down beside the saddle flap, so the legs straddle
+                // the barrel instead of passing through it.
+                const kick = Math.sin(t * 1.5) * 0.04;
+                for (const side of [-1, 1]) {
+                    const L = side < 0;
+                    const ft = fk2(L ? this.leftThigh : this.rightThigh, L ? this.leftShin : this.rightShin, null,
+                                   tx + side * 0.2, hipY, tz, MOUNT_HIP_PITCH + kick * side, MOUNT_HIP_SPLAY, -MOUNT_KNEE,
+                                   side, 0.3, 0.3);
+                    const foot = L ? this.leftFoot : this.rightFoot;
+                    if (foot && foot.visible) {
+                        foot.position.set(ft.x, ft.y - 0.05, ft.z + 0.04);
+                        foot.rotation.set(0, 0, side * 0.35);
+                    }
+                }
+            } else {
+                const lHp = { x: tx - 0.2, y: hipY, z: tz };
+                const lKn = fk(this.leftThigh, lHp.x, lHp.y, lHp.z, lL,             0.3);
+                const lAn = fk(this.leftShin,  lKn.x, lKn.y, lKn.z, lL - kneeBend,  0.3);
+                if (this.leftFoot && this.leftFoot.visible) {
+                    this.leftFoot.position.set(lAn.x, lAn.y - 0.05, lAn.z + 0.04);
+                    this.leftFoot.rotation.set(-(lL - kneeBend) * 0.35, 0, 0);
+                }
 
-            const rHp = { x: tx + 0.2, y: hipY, z: tz };
-            const rKn = fk(this.rightThigh, rHp.x, rHp.y, rHp.z, rL,            0.3);
-            const rAn = fk(this.rightShin,  rKn.x, rKn.y, rKn.z, rL - kneeBend, 0.3);
-            if (this.rightFoot && this.rightFoot.visible) {
-                this.rightFoot.position.set(rAn.x, rAn.y - 0.05, rAn.z + 0.04);
-                this.rightFoot.rotation.set(-(rL - kneeBend) * 0.35, 0, 0);
+                const rHp = { x: tx + 0.2, y: hipY, z: tz };
+                const rKn = fk(this.rightThigh, rHp.x, rHp.y, rHp.z, rL,            0.3);
+                const rAn = fk(this.rightShin,  rKn.x, rKn.y, rKn.z, rL - kneeBend, 0.3);
+                if (this.rightFoot && this.rightFoot.visible) {
+                    this.rightFoot.position.set(rAn.x, rAn.y - 0.05, rAn.z + 0.04);
+                    this.rightFoot.rotation.set(-(rL - kneeBend) * 0.35, 0, 0);
+                }
             }
 
             // ── FACIAL ANIMATION ─────────────────────────────────────────────

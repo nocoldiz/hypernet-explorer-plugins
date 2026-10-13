@@ -1,6 +1,81 @@
 {
   "boot": {
-    "stage": "STAGE {stage}/{total}\n{pct}%"
+    "stage": "STAGE {stage}/{total}\n{pct}%",
+    "lines": {
+      "POST": [
+        "POWER ON SELF TEST",
+        "ESOTERIC HEAVY INDUSTRIES",
+        "ARCADE SYSTEM TYPE-X",
+        "CPU: 68000 @ 10MHz",
+        "CO-CPU: Z80 @ 4MHz",
+        "RAM: 64KB MAIN / 2KB VRAM",
+        "MANUFACTURED: 1991"
+      ],
+      "ROM_CHECK": [
+        "ROM CHECK",
+        "CHECKING SYSTEM ROMS...",
+        "MAIN CPU ROM... OK",
+        "SUB CPU ROM... OK",
+        "SOUND ROM... OK",
+        "GRAPHICS ROM... OK",
+        "ROM CHECK COMPLETE"
+      ],
+      "RAM_TEST": [
+        "RAM TEST",
+        "TESTING MEMORY...",
+        "TESTING 0x0000-0x3FFF... OK",
+        "TESTING 0x4000-0x7FFF... OK",
+        "TESTING 0x8000-0xBFFF... OK",
+        "TESTING 0xC000-0xFFFF... OK",
+        "VRAM TEST 0x0000-0x07FF... OK",
+        "RAM TEST COMPLETE - 65536 BYTES OK"
+      ],
+      "SOUND_INIT": [
+        "SOUND SYSTEM",
+        "INITIALIZING YM2151...",
+        "FM SYNTHESIS... OK",
+        "PCM CHANNELS... OK",
+        "MIXER... OK",
+        "AUDIO TEST TONE... OK",
+        "SOUND SYSTEM READY"
+      ],
+      "VIDEO_TEST": [
+        "VIDEO SYSTEM",
+        "TESTING DISPLAY...",
+        "SPRITE LAYER... OK",
+        "TILEMAP LAYER 1... OK",
+        "TILEMAP LAYER 2... OK",
+        "COLOR RAM... OK",
+        "PALETTE TEST... OK",
+        "SYNC GENERATOR... OK",
+        "VIDEO SYSTEM READY"
+      ],
+      "SECURITY": [
+        "SECURITY CHECK",
+        "VERIFYING LICENSE...",
+        "CONNECTING TO SERVER...",
+        "AUTHENTICATION... OK",
+        "LICENSE VALID",
+        "SECURITY CHECK PASSED"
+      ],
+      "SYSTEM_INIT": [
+        "SYSTEM INITIALIZATION",
+        "LOADING GAME DATA...",
+        "LOADING SPRITE DATA... OK",
+        "LOADING TILE MAPS... OK",
+        "LOADING AUDIO SAMPLES... OK",
+        "INITIALIZING GAME ENGINE... OK",
+        "PREPARING CONTROLLERS... OK",
+        "SYSTEM INITIALIZATION COMPLETE"
+      ],
+      "COMPLETE": [
+        "BOOT COMPLETE",
+        "SYSTEM READY",
+        "========================================",
+        "(C) 1991 ESOTERIC HEAVY INDUSTRIES",
+        "ALL SYSTEMS OPERATIONAL"
+      ]
+    }
   },
   "hud": {
     "score": "SCORE: {score}",
@@ -8,6 +83,10 @@
     "lives": "LIVES: {lives}",
     "level": "LEVEL: {level}",
     "hiScore": "HI-SCORE: {score}",
-    "time": "TIME: {time}"
+    "time": "TIME: {time}",
+    "demoSpectating": "DEMO MODE - SPECTATING",
+    "gameOver": "GAME OVER",
+    "del": "DEL",
+    "end": "END"
   }
 }

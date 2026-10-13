@@ -142,6 +142,53 @@
     return c;
   }
 
+  // ==========================================================================
+  // The climate of a terrestrial world
+  // --------------------------------------------------------------------------
+  // How warm and how wet one point of the world is, read off the same fields
+  // the picture is painted from: the elevation field for height, latitude for
+  // the sun, and the cloud field for the rain. paintTerrestrial colours its
+  // land by it, and an earthlike world's landing grid lays its Earth biomes by
+  // it (GalaxySim_Core "Earthlike worlds"), so the desert seen from orbit is
+  // the desert walked on. climateClass is the one place the two agree on where
+  // cold ends and hot begins.
+  // ==========================================================================
+  const CLIMATE_COLD = 0.3;
+  const CLIMATE_HOT = 0.66;
+  const CLIMATE_DRY = 0.42;
+  const CLIMATE_WET = 0.56;
+
+  // A whole world runs a little warmer or colder than another: +-0.15.
+  function climateOffset(seed) {
+    return (hash(seed * 0.013, 17.3, 9) - 0.5) * 0.3;
+  }
+
+  function climateAt(px, py, e, seaLevel, seed) {
+    const polar = Math.abs((py / TEX_H - 0.5) * 2);
+    const land = e < seaLevel ? 0 : (e - seaLevel) / (1 - seaLevel);
+    let temp = 1.05 - polar * 1.15 - Math.max(0, land - 0.45) * 0.6 + climateOffset(seed);
+    temp = Math.max(0, Math.min(1, temp));
+    // The cloud field is where the rain falls; the coast is wetter than the
+    // heart of a continent.
+    const cloud = fbmTileX(px, py, TEX_W, 0.05, seed + 777, 5);
+    const moist = Math.max(0, Math.min(1, cloud + (land < 0.15 ? 0.06 : 0) - land * 0.08));
+    return { temp, moist, land };
+  }
+
+  function climateClass(temp, moist) {
+    const heat = temp < CLIMATE_COLD ? "cold" : (temp > CLIMATE_HOT ? "hot" : "temperate");
+    const wet = moist < CLIMATE_DRY ? "dry" : (moist > CLIMATE_WET ? "wet" : "mid");
+    return { heat, wet };
+  }
+
+  // The colour of the land a climate grows, before height and ice are laid
+  // over it.
+  const CLIMATE_LAND = {
+    cold:      { dry: ["#8f9478", "#6f7a5e"], mid: ["#7f9a72", "#3d5f48"], wet: ["#6f9070", "#2f5a46"] },
+    temperate: { dry: ["#a99a5c", "#7f7a46"], mid: ["#2e8b57", "#1f6b3a"], wet: ["#2f7f4a", "#1a5a32"] },
+    hot:       { dry: ["#d9b877", "#c49a5a"], mid: ["#a8a048", "#6f7f30"], wet: ["#1f7a32", "#0f5a24"] },
+  };
+
   function paintTerrestrial(planet, seed) {
     const isOcean = planet.type === "ocean";
     const color = newCanvas(TEX_W, TEX_H);
@@ -154,8 +201,6 @@
     const deepSea = isOcean ? rgb("#013a5c") : rgb("#0b3a6b");
     const shallow = isOcean ? rgb("#0b6f9c") : rgb("#1e6bb8");
     const beach = rgb("#c2b280");
-    const grass = rgb("#2e8b57");
-    const forest = rgb("#1f6b3a");
     const rock = rgb("#6b5b45");
     const snow = rgb("#f4faff");
     const seaLevel = isOcean ? 0.62 : 0.5;
@@ -176,8 +221,13 @@
           height = 0.15 * d;
         } else {
           const land = (e - seaLevel) / (1 - seaLevel);
+          const cl = climateAt(x, y, e, seaLevel, seed);
+          const cc = climateClass(cl.temp, cl.moist);
+          const pair = CLIMATE_LAND[cc.heat][cc.wet];
+          const grass = rgb(pair[0]);
+          const forest = rgb(pair[1]);
           if (land < 0.08) col = mix(shallow, beach, land / 0.08);
-          else if (land < 0.45) col = mix(beach, grass, (land - 0.08) / 0.37);
+          else if (land < 0.45) col = mix(beach, grass, Math.min(1, (land - 0.08) / 0.2));
           else if (land < 0.72) col = mix(grass, forest, (land - 0.45) / 0.27);
           else col = mix(forest, rock, (land - 0.72) / 0.28);
           height = 0.4 + land * 0.6;
@@ -1470,7 +1520,7 @@
       return ["lava_ocean", "magma_planet", "chthonian"].includes(type);
     },
     isTerrestrial(type) {
-      return ["earth_like", "ocean", "habitable"].includes(type);
+      return ["earth_like", "super_earth", "ocean", "habitable"].includes(type);
     },
     hasRings(type) {
       return type === "ringed_gas_giant";
@@ -1529,6 +1579,21 @@
       if (Math.abs(lat) > iceLine) band = "snow";
       return { elevation: e, seaLevel, band };
     },
+
+    // terrestrialElevation plus the climate paintTerrestrial colours the land
+    // by: temp and moist in 0..1, and their class ({heat, wet}) on the same
+    // thresholds the picture uses. An earthlike world lays its Earth biomes
+    // off this (GalaxySim_Core "Earthlike worlds").
+    terrestrialClimate(seed, u, v, isOcean) {
+      const r = this.terrestrialElevation(seed, u, v, isOcean);
+      const cl = climateAt(u * TEX_W, v * TEX_H, r.elevation, r.seaLevel, seed);
+      r.temp = cl.temp;
+      r.moist = cl.moist;
+      r.land = cl.land;
+      r.climate = climateClass(cl.temp, cl.moist);
+      return r;
+    },
+    climateClass,
 
     // Crater scatter for the ground (alien-surface crater-field terrain):
     // {u, v, r}. u/v are the SAME longitude/latitude fractions [0,1) paintRocky

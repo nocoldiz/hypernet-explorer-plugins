@@ -1,240 +1,31 @@
 {
+  "_comment": "Market effects of each procedural event type. Headlines, bodies and word banks live in js/i18n/<lang>/plugins/News.json under procedural.<category>.<type>, one set per paper tone.",
   "positive": {
     "festival": {
-      "templates": {
-        "en": [
-          "{location} announces major international {festival} festival - Tourism boom expected!",
-          "Annual {festival} celebration in {location} attracts record visitors",
-          "{location} selected to host European {festival} Championship",
-          "The prestigious {festival} Biennale to be hosted in {location}, attracting art world elite",
-          "World's Largest Pillow Fight championship announced in {location}'s main square",
-          "International Hot Air Balloon Fiesta to fill the skies above {location}",
-          "Massive historical reenactment event in {location} draws history buffs worldwide",
-          "{location} Comic & Gaming Convention breaks attendance records",
-          "The {location} International Street Magic Tournament mesmerizes crowds",
-          "Annual {festival_type} festival returns to {location} with star-studded lineup",
-          "A month-long celebration of {festival_type} will take over {location}'s cultural venues"
-        ],
-        "it": [
-          "{location} annuncia il grande festival internazionale di {festival} - Boom turistico previsto!",
-          "La celebrazione annuale di {festival} a {location} attrae visitatori record",
-          "{location} selezionata per ospitare il Campionato Europeo di {festival}",
-          "La prestigiosa Biennale di {festival} si terr\u00e0 a {location}, attirando l'\u00e9lite del mondo dell'arte",
-          "Il campionato mondiale della Battaglia di Cuscini annunciato nella piazza principale di {location}",
-          "La Fiesta Internazionale delle Mongolfiere riempir\u00e0 i cieli sopra {location}",
-          "Un'imponente rievocazione storica a {location} attira appassionati da tutto il mondo",
-          "La Convention di Fumetti & Gaming di {location} batte i record di presenze",
-          "Il Torneo Internazionale di Magia di Strada di {location} ipnotizza le folle",
-          "Il festival annuale di {festival_type} torna a {location} con un cast stellare",
-          "Una celebrazione di un mese di {festival_type} conquister\u00e0 i luoghi culturali di {location}"
-        ]
-      },
-      "festivals": {
-        "en": [
-          "Music",
-          "Film",
-          "Food & Wine",
-          "Art",
-          "Cultural",
-          "Tech",
-          "Gaming",
-          "Literature",
-          "Fashion"
-        ],
-        "it": [
-          "Musica",
-          "Cinema",
-          "Enogastronomia",
-          "Arte",
-          "Cultura",
-          "Tecnologia",
-          "Gaming",
-          "Letteratura",
-          "Moda"
-        ]
-      },
-      "festival_types": {
-        "en": [
-          "Jazz",
-          "Electronic Music",
-          "Indie Film",
-          "Poetry",
-          "Robotics"
-        ],
-        "it": [
-          "Jazz",
-          "Musica Elettronica",
-          "Cinema Indipendente",
-          "Poesia",
-          "Robotica"
-        ]
-      },
       "priceEffect": 1.06,
       "occupancyEffect": 1.25,
       "duration": 168,
       "soulTendencyModifier": -1.9
     },
     "infrastructure": {
-      "templates": {
-        "en": [
-          "New high-speed rail connects {location} - Property values soar!",
-          "{location} opens new international airport terminal",
-          "Major tech company announces HQ in {location} - Housing demand surges",
-          "{location} completes city-wide fiber optic network, offering free gigabit hypernet",
-          "Futuristic 'Hyperloop' project approved, connecting {location} to major hubs in minutes",
-          "Massive urban renewal project revitalizes {location}'s historic downtown",
-          "State-of-the-art University campus for Science and Technology opens in {location}",
-          "{location} announces plan for Europe's largest public park and urban forest",
-          "The new {location} Museum of Modern Art, an architectural marvel, opens its doors",
-          "Construction of a new, advanced desalination plant secures {location}'s water future",
-          "Plans for a sub-orbital spaceport near {location} have been officially greenlit"
-        ],
-        "it": [
-          "Nuova ferrovia ad alta velocit\u00e0 collega {location} - I valori immobiliari volano!",
-          "{location} apre nuovo terminal aeroportuale internazionale",
-          "Grande azienda tech annuncia sede centrale a {location} - Domanda abitativa alle stelle",
-          "{location} completa la rete cittadina in fibra ottica, offrendo hypernet gigabit gratuito",
-          "Approvato il progetto futuristico 'Hyperloop', che collegher\u00e0 {location} ai principali hub in minuti",
-          "Un imponente progetto di rinnovamento urbano rivitalizza il centro storico di {location}",
-          "Un campus universitario all'avanguardia per Scienza e Tecnologia apre a {location}",
-          "{location} annuncia il piano per il pi\u00f9 grande parco pubblico e foresta urbana d'Europa",
-          "Il nuovo Museo d'Arte Moderna di {location}, una meraviglia architettonica, apre le sue porte",
-          "La costruzione di un nuovo e avanzato impianto di desalinizzazione assicura il futuro idrico di {location}",
-          "I piani per uno spazioporto sub-orbitale vicino a {location} hanno ricevuto il via libera ufficiale"
-        ]
-      },
       "priceEffect": 1.12,
       "occupancyEffect": 1.18,
       "duration": 840,
       "soulTendencyModifier": -1.3
     },
     "discovery": {
-      "templates": {
-        "en": [
-          "Archaeological discovery in {location} attracts global attention",
-          "Rare {discovery} found near {location} - Tourist influx expected",
-          "{location} wins UNESCO World Heritage status",
-          "Pristine, fully-intact T-Rex skeleton unearthed during subway construction in {location}",
-          "Previously unknown Da Vinci notebook discovered in {location} library archives",
-          "Vast underground cave system with unique bioluminescent fungi found under {location}",
-          "Lost recipe for a legendary local dish rediscovered, causing a culinary tourism frenzy in {location}",
-          "A perfectly preserved ancient Roman galley is found in the waters near {location}",
-          "An unknown species of butterfly with iridescent wings is found exclusively in {location}'s parks"
-        ],
-        "it": [
-          "Scoperta archeologica a {location} attira l'attenzione mondiale",
-          "Rari {discovery} trovati vicino a {location} - Afflusso turistico previsto",
-          "{location} ottiene lo status di Patrimonio UNESCO",
-          "Scheletro di T-Rex intatto e pristino scoperto durante la costruzione della metropolitana a {location}",
-          "Taccuino sconosciuto di Leonardo da Vinci scoperto negli archivi della biblioteca di {location}",
-          "Vasto sistema di grotte sotterranee con funghi bioluminescenti unici trovato sotto {location}",
-          "Riscoperta la ricetta perduta di un leggendario piatto locale, causando una frenesia turistica culinaria a {location}",
-          "Una galea romana perfettamente conservata \u00e8 stata trovata nelle acque vicino a {location}",
-          "Una specie sconosciuta di farfalla con ali iridescenti \u00e8 stata trovata esclusivamente nei parchi di {location}"
-        ]
-      },
-      "discoveries": {
-        "en": [
-          "Roman ruins",
-          "Viking settlement",
-          "mineral springs",
-          "artistic masterpiece",
-          "shipwreck",
-          "fossil bed"
-        ],
-        "it": [
-          "rovine romane",
-          "insediamento vichingo",
-          "sorgenti minerali",
-          "capolavoro artistico",
-          "relitto",
-          "giacimento fossile"
-        ]
-      },
       "priceEffect": 1.09,
       "occupancyEffect": 1.28,
       "duration": 480,
       "soulTendencyModifier": -1.1
     },
     "economic": {
-      "templates": {
-        "en": [
-          "{location} announces tax breaks for property investors",
-          "EU grants \u20ac{amount}M for {location} urban development",
-          "Cryptocurrency billionaire moves to {location} - Luxury market heats up",
-          "{location} selected for Universal Basic Income trial, attracting new residents",
-          "Stock market surge leads to record-breaking wealth in {location}",
-          "A {company_type} giant establishes its European HQ in {location}, creating thousands of jobs",
-          "Record-breaking tourism season injects billions into {location}'s economy",
-          "{location} rated #1 city for startups and innovation in Europe",
-          "Luxury fashion brand opens spectacular new flagship store in {location}",
-          "Unemployment in {location} drops to a historic 50-year low"
-        ],
-        "it": [
-          "{location} annuncia agevolazioni fiscali per investitori immobiliari",
-          "UE concede \u20ac{amount}M per lo sviluppo urbano di {location}",
-          "Miliardario delle criptovalute si trasferisce a {location} - Il mercato del lusso si scalda",
-          "{location} selezionata per la sperimentazione del Reddito di Base Universale, attirando nuovi residenti",
-          "L'impennata del mercato azionario porta a una ricchezza record a {location}",
-          "Un gigante del settore {company_type} stabilisce la sua sede europea a {location}, creando migliaia di posti di lavoro",
-          "Una stagione turistica da record inietta miliardi nell'economia di {location}",
-          "{location} classificata come la citt\u00e0 n. 1 per startup e innovazione in Europa",
-          "Un marchio di moda di lusso apre un nuovo spettacolare flagship store a {location}",
-          "La disoccupazione a {location} scende a un minimo storico di 50 anni"
-        ]
-      },
-      "company_types": {
-        "en": [
-          "biotech",
-          "pharmaceutical",
-          "aerospace",
-          "artificial intelligence",
-          "renewable energy"
-        ],
-        "it": [
-          "biotecnologico",
-          "farmaceutico",
-          "aerospaziale",
-          "dell'intelligenza artificiale",
-          "delle energie rinnovabili"
-        ]
-      },
       "priceEffect": 1.18,
       "occupancyEffect": 1.15,
       "duration": 600,
       "soulTendencyModifier": -1
     },
     "environmental": {
-      "templates": {
-        "en": [
-          "{location}'s air quality improves dramatically, now ranked cleanest in the nation",
-          "Rare species of {animal}, thought to be extinct, returns to the countryside near {location}",
-          "The river flowing through {location} is declared pristine and safe for swimming after decades of cleanup",
-          "{location} wins 'European Green Capital' award for its sustainability efforts",
-          "Massive reforestation project near {location} is completed, creating a new nature reserve"
-        ],
-        "it": [
-          "La qualit\u00e0 dell'aria di {location} migliora drasticamente, ora classificata come la pi\u00f9 pulita della nazione",
-          "Una rara specie di {animal}, ritenuta estinta, ritorna nelle campagne vicino a {location}",
-          "Il fiume che attraversa {location} \u00e8 dichiarato pristino e balneabile dopo decenni di bonifica",
-          "{location} vince il premio 'Capitale Verde Europea' per i suoi sforzi di sostenibilit\u00e0",
-          "Completato un imponente progetto di riforestazione vicino a {location}, creando una nuova riserva naturale"
-        ]
-      },
-      "animals": {
-        "en": [
-          "Golden Eagle",
-          "European Otter",
-          "Wildcat",
-          "Beaver"
-        ],
-        "it": [
-          "Aquila Reale",
-          "Lontra Europea",
-          "Gatto Selvatico",
-          "Castoro"
-        ]
-      },
       "priceEffect": 1.07,
       "occupancyEffect": 1.1,
       "duration": 1080,
@@ -243,186 +34,30 @@
   },
   "negative": {
     "disaster": {
-      "templates": {
-        "en": [
-          "Breaking: {disaster} strikes {location} - Evacuations underway",
-          "Severe {disaster} damage reported in {location}",
-          "{location} declares emergency after unexpected {disaster}",
-          "Industrial chemical spill contaminates {location}'s water supply",
-          "Massive sinkhole swallows several buildings in downtown {location}",
-          "A swarm of locusts descends upon the agricultural region around {location}, threatening crops",
-          "Prolonged drought leads to critical water rationing in {location}",
-          "Ash cloud from a distant volcano grounds all flights at {location} airport",
-          "Failure at a nearby dam prompts flood warnings for downstream {location}",
-          "Unprecedented 'super-hail' storm causes widespread property damage in {location}"
-        ],
-        "it": [
-          "Ultimo minuto: {disaster} colpisce {location} - Evacuazioni in corso",
-          "Gravi danni da {disaster} segnalati a {location}",
-          "{location} dichiara emergenza dopo {disaster} inaspettata",
-          "Sversamento chimico industriale contamina la fornitura d'acqua di {location}",
-          "Enorme voragine inghiotte diversi edifici nel centro di {location}",
-          "Uno sciame di locuste si abbatte sulla regione agricola intorno a {location}, minacciando i raccolti",
-          "Una siccit\u00e0 prolungata porta a un razionamento idrico critico a {location}",
-          "Una nuvola di cenere da un vulcano lontano blocca tutti i voli all'aeroporto di {location}",
-          "Un guasto a una diga vicina provoca allarmi alluvione per le zone a valle di {location}",
-          "Una tempesta di 'super-grandine' senza precedenti causa danni diffusi alle propriet\u00e0 a {location}"
-        ]
-      },
-      "disasters": {
-        "en": [
-          "flooding",
-          "earthquake",
-          "wildfire",
-          "storm",
-          "heatwave",
-          "avalanche",
-          "tornado",
-          "landslide",
-          "tsunami"
-        ],
-        "it": [
-          "alluvione",
-          "terremoto",
-          "incendio",
-          "tempesta",
-          "ondata di calore",
-          "valanga",
-          "tornado",
-          "frana",
-          "tsunami"
-        ]
-      },
       "priceEffect": 0.82,
       "occupancyEffect": 0.25,
       "duration": 360,
       "soulTendencyModifier": 1.8
     },
     "security": {
-      "templates": {
-        "en": [
-          "Security alert in {location} - Tourist warnings issued",
-          "{location} increases threat level after suspicious activity",
-          "Major protest disrupts {location} city center for third day",
-          "Massive cyberattack cripples {location}'s public services and payment systems",
-          "String of high-profile art heists from {location} museums baffles police",
-          "An international diplomatic incident unfolds at an embassy in {location}",
-          "A massive data breach exposes personal information of {location}'s citizens",
-          "Organized crime syndicates are blamed for a sharp rise in extortion in {location}",
-          "A series of unsolved bombings puts {location} on edge",
-          "Counterfeiting ring operating out of {location} destabilizes local economy"
-        ],
-        "it": [
-          "Allerta sicurezza a {location} - Emessi avvisi per turisti",
-          "{location} aumenta il livello di minaccia dopo attivit\u00e0 sospette",
-          "Grande protesta blocca il centro di {location} per il terzo giorno",
-          "Massiccio attacco informatico paralizza i servizi pubblici e i sistemi di pagamento di {location}",
-          "Serie di clamorosi furti d'arte dai musei di {location} sconcerta la polizia",
-          "Un incidente diplomatico internazionale si verifica in un'ambasciata a {location}",
-          "Una massiccia violazione dei dati espone le informazioni personali dei cittadini di {location}",
-          "I sindacati del crimine organizzato sono accusati di un forte aumento delle estorsioni a {location}",
-          "Una serie di attentati irrisolti mette {location} in stato di allerta",
-          "Una rete di contraffazione operante da {location} destabilizza l'economia locale"
-        ]
-      },
       "priceEffect": 0.9,
       "occupancyEffect": 0.65,
       "duration": 144,
       "soulTendencyModifier": 1.2
     },
     "economic": {
-      "templates": {
-        "en": [
-          "Major employer in {location} announces {number} layoffs",
-          "{location} housing bubble concerns - Experts warn of correction",
-          "Banking crisis affects {location} mortgage market",
-          "Hyperinflation crisis hits {location} - Local economy in turmoil",
-          "Massive tax hike on properties announced in {location} to cover budget deficit",
-          "International credit agency downgrades {location}'s economic outlook to 'negative'",
-          "A key local industry in {location} collapses due to foreign competition",
-          "Mass 'brain drain' as skilled workers leave {location} for better opportunities",
-          "The largest pension fund for {location}'s municipal workers is found to be insolvent",
-          "Crippling trade tariffs imposed on goods exported from {location}"
-        ],
-        "it": [
-          "Grande datore di lavoro a {location} annuncia {number} licenziamenti",
-          "Preoccupazioni bolla immobiliare a {location} - Esperti avvertono di correzione",
-          "Crisi bancaria colpisce il mercato dei mutui di {location}",
-          "Crisi di iperinflazione colpisce {location} - Economia locale in subbuglio",
-          "Annunciato massiccio aumento delle tasse immobiliari a {location} per coprire il deficit di bilancio",
-          "Un'agenzia di credito internazionale declassa le prospettive economiche di {location} a 'negative'",
-          "Un'industria locale chiave a {location} crolla a causa della concorrenza straniera",
-          "Massiccia 'fuga di cervelli' mentre i lavoratori qualificati lasciano {location} per opportunit\u00e0 migliori",
-          "Il pi\u00f9 grande fondo pensione per i dipendenti comunali di {location} risulta insolvente",
-          "Imposte tariffe commerciali paralizzanti sui beni esportati da {location}"
-        ]
-      },
       "priceEffect": 0.85,
       "occupancyEffect": 0.75,
       "duration": 504,
       "soulTendencyModifier": 1.5
     },
     "infrastructure": {
-      "templates": {
-        "en": [
-          "Transport strike paralyzes {location} - No end in sight",
-          "{location} water shortage enters critical phase",
-          "Power grid failure leaves {location} in darkness",
-          "Key bridge connecting two halves of {location} collapses, causing traffic chaos",
-          "City-wide hypernet outage enters its second day, businesses crippled",
-          "Engineers declare {location}'s main railway station structurally unsound; closed indefinitely",
-          "Widespread asbestos discovered in {location}'s public schools, forcing closures",
-          "A critical communications tower near {location} has collapsed, disrupting mobile networks",
-          "{location}'s waste management system fails, leading to a sanitation crisis",
-          "Frequent rolling blackouts are scheduled for {location} all summer"
-        ],
-        "it": [
-          "Sciopero dei trasporti paralizza {location} - Nessuna fine in vista",
-          "Carenza idrica a {location} entra in fase critica",
-          "Guasto alla rete elettrica lascia {location} al buio",
-          "Crolla il ponte chiave che collega le due met\u00e0 di {location}, causando il caos del traffico",
-          "L'interruzione di hypernet in tutta la citt\u00e0 entra nel suo secondo giorno, aziende paralizzate",
-          "Gli ingegneri dichiarano la stazione ferroviaria principale di {location} strutturalmente inadeguata; chiusa a tempo indeterminato",
-          "Amianto diffuso scoperto nelle scuole pubbliche di {location}, costringendole alla chiusura",
-          "Una torre di comunicazione critica vicino a {location} \u00e8 crollata, interrompendo le reti mobili",
-          "Il sistema di gestione dei rifiuti di {location} va in tilt, portando a una crisi sanitaria",
-          "Frequenti blackout programmati sono previsti per {location} per tutta l'estate"
-        ]
-      },
       "priceEffect": 0.93,
       "occupancyEffect": 0.5,
       "duration": 216,
       "soulTendencyModifier": 1.9
     },
     "health": {
-      "templates": {
-        "en": [
-          "Mysterious respiratory illness outbreak reported in {location}",
-          "Health officials issue 'do not drink' advisory for {location}'s tap water",
-          "Hospitals in {location} are at maximum capacity due to spike in {illness} cases",
-          "Shortage of critical medicines, including antibiotics, reported in {location}'s pharmacies",
-          "An unusually aggressive strain of seasonal flu is spreading rapidly through {location}"
-        ],
-        "it": [
-          "Segnalato focolaio di una misteriosa malattia respiratoria a {location}",
-          "Le autorit\u00e0 sanitarie emettono un avviso di 'non bere' per l'acqua del rubinetto di {location}",
-          "Gli ospedali di {location} sono alla massima capacit\u00e0 a causa di un picco di casi di {illness}",
-          "Carenza di medicinali critici, inclusi antibiotici, segnalata nelle farmacie di {location}",
-          "Un ceppo insolitamente aggressivo di influenza stagionale si sta diffondendo rapidamente a {location}"
-        ]
-      },
-      "illness": {
-        "en": [
-          "pneumonia",
-          "gastroenteritis",
-          "norovirus"
-        ],
-        "it": [
-          "polmonite",
-          "gastroenterite",
-          "norovirus"
-        ]
-      },
       "priceEffect": 0.94,
       "occupancyEffect": 0.4,
       "duration": 336,
@@ -431,96 +66,12 @@
   },
   "neutral": {
     "political": {
-      "templates": {
-        "en": [
-          "{location} elects new mayor - Property tax review promised",
-          "EU considers new regulations for {location} rental market",
-          "{location} parliament debates foreign investment limits",
-          "Controversial rezoning laws for {location} suburbs face unexpected delays",
-          "Referendum on {location} becoming an independent city-state announced",
-          "A visit from a controversial foreign dignitary to {location} sparks protests and heavy security",
-          "{location} announces a radical policy shift on public transportation, effects unclear",
-          "Sensitive historical documents concerning {location}'s past have been declassified, causing widespread debate",
-          "The long-serving, popular mayor of {location} announces their surprise retirement"
-        ],
-        "it": [
-          "{location} elegge nuovo sindaco - Promessa revisione tasse immobiliari",
-          "UE considera nuove regolamentazioni per mercato affitti di {location}",
-          "Parlamento di {location} dibatte limiti investimenti stranieri",
-          "Le controverse leggi di rizonizzazione per le periferie di {location} subiscono ritardi inaspettati",
-          "Annunciato referendum sull'indipendenza di {location} come citt\u00e0-stato",
-          "La visita di un controverso dignitario straniero a {location} scatena proteste e massicce misure di sicurezza",
-          "{location} annuncia un cambio di politica radicale sui trasporti pubblici, effetti poco chiari",
-          "Documenti storici sensibili riguardanti il passato di {location} sono stati declassificati, causando un ampio dibattito",
-          "Il sindaco di lunga data e popolare di {location} annuncia il suo ritiro a sorpresa"
-        ]
-      },
       "priceEffect": 1,
       "occupancyEffect": 0.95,
       "duration": 96,
       "soulTendencyModifier": 1.1
     },
     "cultural": {
-      "templates": {
-        "en": [
-          "{location} museums offer free entry this month",
-          "Famous {celebrity} spotted house-hunting in {location}",
-          "{location} ranked {rank} in European quality of life survey",
-          "Major Hollywood movie begins filming in {location}, causing street closures and excitement",
-          "A Banksy-style artwork appears overnight on a {location} landmark, sparking debate",
-          "A beloved local landmark in {location} is scheduled to be moved to a new location, dividing opinion",
-          "An ultra-modern glass skyscraper is approved for construction in {location}'s historic center",
-          "A famous, but reclusive, author who lives in {location} has announced they will give a public reading",
-          "The works of a controversial {art_movement} artist are chosen for a major exhibition in {location}"
-        ],
-        "it": [
-          "Musei di {location} offrono ingresso gratuito questo mese",
-          "Famoso {celebrity} avvistato in cerca di casa a {location}",
-          "{location} classificata {rank} nel sondaggio europeo sulla qualit\u00e0 della vita",
-          "Un grande film di Hollywood inizia le riprese a {location}, causando chiusure stradali ed eccitazione",
-          "Un'opera in stile Banksy appare durante la notte su un monumento di {location}, scatenando un dibattito",
-          "Un amato monumento locale a {location} sar\u00e0 spostato in una nuova posizione, dividendo l'opinione pubblica",
-          "Un grattacielo di vetro ultra-moderno \u00e8 stato approvato per la costruzione nel centro storico di {location}",
-          "Un famoso, ma schivo, autore che vive a {location} ha annunciato che terr\u00e0 una lettura pubblica",
-          "Le opere di un controverso artista del movimento {art_movement} sono state scelte per una grande mostra a {location}"
-        ]
-      },
-      "celebrities": {
-        "en": [
-          "actor",
-          "musician",
-          "athlete",
-          "tech mogul",
-          "royalty",
-          "director",
-          "artist",
-          "philosopher"
-        ],
-        "it": [
-          "attore",
-          "musicista",
-          "atleta",
-          "magnate tech",
-          "reale",
-          "regista",
-          "artista",
-          "filosofo"
-        ]
-      },
-      "art_movement": {
-        "en": [
-          "brutalist",
-          "surrealist",
-          "minimalist",
-          "dadaist"
-        ],
-        "it": [
-          "brutalista",
-          "surrealista",
-          "minimalista",
-          "dadaista"
-        ]
-      },
       "priceEffect": 1.02,
       "occupancyEffect": 1.05,
       "duration": 48,
@@ -529,154 +80,24 @@
   },
   "surreal": {
     "paranormal": {
-      "templates": {
-        "en": [
-          "Ghost sightings in {location} castle attract paranormal tourists",
-          "UFO spotted hovering over {location} - Hotels fully booked by enthusiasts",
-          "Mysterious {phenomenon} appears in {location} sky - Scientists baffled",
-          "Time anomaly reported in {location} - Clocks running backwards",
-          "Bermuda Triangle-like zone discovered near {location} coast",
-          "Residents of {location} report their reflections are acting independently",
-          "The ghosts of {location} have unionized and are demanding better haunting conditions",
-          "A rash of doppelg\u00e4nger sightings is causing confusion and intrigue in {location}",
-          "People in {location} report hearing the city's statues whisper secrets at night"
-        ],
-        "it": [
-          "Avvistamenti di fantasmi nel castello di {location} attirano turisti paranormali",
-          "UFO avvistato sopra {location} - Hotel tutto esaurito per appassionati",
-          "Misteriosa {phenomenon} appare nel cielo di {location} - Scienziati perplessi",
-          "Anomalia temporale segnalata a {location} - Orologi vanno all'indietro",
-          "Zona simile al Triangolo delle Bermuda scoperta vicino alla costa di {location}",
-          "I residenti di {location} segnalano che i loro riflessi agiscono in modo indipendente",
-          "I fantasmi di {location} si sono sindacalizzati e chiedono migliori condizioni di infestazione",
-          "Un'ondata di avvistamenti di doppelg\u00e4nger sta causando confusione e intrighi a {location}",
-          "La gente a {location} riferisce di sentire le statue della citt\u00e0 sussurrare segreti di notte"
-        ]
-      },
-      "phenomenon": {
-        "en": [
-          "aurora",
-          "floating island",
-          "purple rain",
-          "singing fog",
-          "gravity well",
-          "double sun",
-          "lunar eclipse during the day"
-        ],
-        "it": [
-          "aurora",
-          "isola galleggiante",
-          "pioggia viola",
-          "nebbia cantante",
-          "pozzo gravitazionale",
-          "doppio sole",
-          "eclissi lunare diurna"
-        ]
-      },
       "priceEffect": 1.14,
       "occupancyEffect": 1.35,
       "duration": 120,
       "soulTendencyModifier": -2.2
     },
     "bizarre": {
-      "templates": {
-        "en": [
-          "{number} rubber ducks mysteriously appear in {location} fountain",
-          "All cats in {location} start walking backwards - Vets puzzled",
-          "Invisible mime troupe terrorizes {location} tourists",
-          "Spontaneous yodeling outbreak in {location} - WHO investigates",
-          "{location} reports all buildings turned {color} overnight",
-          "All shadows in {location} now point north, regardless of sun's position",
-          "The concept of 'Thursday' is briefly forgotten by everyone in {location}",
-          "It begins raining harmless, colorful gelatin in {location}",
-          "{location} lampposts have started to gently hum classical music",
-          "The pigeons of {location} have organized themselves into a complex bartering society"
-        ],
-        "it": [
-          "{number} paperelle di gomma appaiono misteriosamente nella fontana di {location}",
-          "Tutti i gatti di {location} iniziano a camminare all'indietro - Veterinari perplessi",
-          "Troupe di mimi invisibili terrorizza i turisti di {location}",
-          "Epidemia spontanea di yodel a {location} - OMS indaga",
-          "{location} segnala tutti gli edifici diventati {color} durante la notte",
-          "Tutte le ombre a {location} ora puntano a nord, indipendentemente dalla posizione del sole",
-          "Il concetto di 'gioved\u00ec' viene brevemente dimenticato da tutti a {location}",
-          "Inizia a piovere gelatina colorata e innocua a {location}",
-          "I lampioni di {location} hanno iniziato a canticchiare dolcemente musica classica",
-          "I piccioni di {location} si sono organizzati in una complessa societ\u00e0 di baratto"
-        ]
-      },
-      "colors": {
-        "en": [
-          "pink",
-          "neon green",
-          "glittery",
-          "transparent",
-          "upside-down",
-          "polka-dotted",
-          "plaid"
-        ],
-        "it": [
-          "rosa",
-          "verde neon",
-          "luccicanti",
-          "trasparenti",
-          "sottosopra",
-          "a pois",
-          "scozzese"
-        ]
-      },
       "priceEffect": 0.96,
       "occupancyEffect": 0.9,
       "duration": 72,
       "soulTendencyModifier": -1.2
     },
     "magical": {
-      "templates": {
-        "en": [
-          "Wizard convention chooses {location} as permanent venue",
-          "Fountain of Youth rumored to exist in {location} park",
-          "Dragons spotted nesting on {location} cathedral - Tourism explodes",
-          "Portal to parallel dimension opens in {location} metro station",
-          "Ancient curse lifted from {location} - Property values skyrocket",
-          "Cthulhu emerges from {location} harbor for a brief holiday, seems pleased with the service",
-          "Excalibur has been pulled from a fountain in {location}'s main square by a tourist",
-          "The {location} Academy of Magic is now accepting applications from non-magical students",
-          "Garden gnomes across {location} have come to life and are tending to the city's parks with remarkable efficiency"
-        ],
-        "it": [
-          "Convenzione di maghi sceglie {location} come sede permanente",
-          "Si dice che la Fontana della Giovinezza esista nel parco di {location}",
-          "Draghi avvistati nidificare sulla cattedrale di {location} - Turismo esplode",
-          "Portale per dimensione parallela si apre nella stazione metro di {location}",
-          "Antica maledizione rimossa da {location} - Valori immobiliari alle stelle",
-          "Cthulhu emerge dal porto di {location} per una breve vacanza, sembra soddisfatto del servizio",
-          "Excalibur \u00e8 stata estratta da una fontana nella piazza principale di {location} da un turista",
-          "L'Accademia di Magia di {location} accetta ora domande da studenti non magici",
-          "Gli gnomi da giardino di tutta {location} hanno preso vita e si occupano dei parchi della citt\u00e0 con notevole efficienza"
-        ]
-      },
       "priceEffect": 1.25,
       "occupancyEffect": 1.5,
       "duration": 240,
       "soulTendencyModifier": -1.8
     },
     "mythological": {
-      "templates": {
-        "en": [
-          "Griffins have begun nesting atop the tallest skyscrapers in {location}",
-          "A Labyrinth, complete with a surprisingly polite Minotaur, has appeared beneath {location}",
-          "The local forests of {location} are now protected by a council of Dryads and Satyrs",
-          "A flock of Phoenixes has been seen circling {location}, causing a spike in demand for fire insurance",
-          "A family of Centaurs has opened a highly-regarded archery school on the outskirts of {location}"
-        ],
-        "it": [
-          "Grifoni hanno iniziato a nidificare in cima ai grattacieli pi\u00f9 alti di {location}",
-          "Un Labirinto, con un Minotauro sorprendentemente educato, \u00e8 apparso sotto {location}",
-          "Le foreste locali di {location} sono ora protette da un consiglio di Driadi e Satiri",
-          "Uno stormo di Fenici \u00e8 stato visto volteggiare sopra {location}, causando un picco nella domanda di assicurazioni contro gli incendi",
-          "Una famiglia di Centauri ha aperto una scuola di tiro con l'Arco molto apprezzata alla periferia di {location}"
-        ]
-      },
       "priceEffect": 1.1,
       "occupancyEffect": 1.4,
       "duration": 360,

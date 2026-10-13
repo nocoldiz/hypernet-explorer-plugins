@@ -497,7 +497,9 @@
       if (!actor._paramPlus) {
         actor._paramPlus = [0, 0, 0, 0, 0, 0, 0, 0];
       }
-      actor._paramPlus[paramId] = (actor._paramPlus[paramId] || 0) + value;
+      // HP and MP are worth ten a point, as on every board (window.TraitParams).
+      const scaled = window.TraitParams ? window.TraitParams.scale(paramName, value) : value;
+      actor._paramPlus[paramId] = (actor._paramPlus[paramId] || 0) + scaled;
     } else if (paramName === 'eva') {
       console.log(`Evasion modifier: ${value} (implement via traits if needed)`);
     }
@@ -1257,7 +1259,11 @@
       for (const box of boxes) {
         const frames = String(box.dataset.ccWalk || "").split("|");
         const x = frames[order[step]];
-        if (x !== undefined) box.style.setProperty("--cc-sprite-x", x + "%");
+        // Written only when the frame turns: a write of the same value still
+        // restyles the box, and this runs every frame for every walker.
+        if (x !== undefined && box.style.getPropertyValue("--cc-sprite-x") !== x + "%") {
+          box.style.setProperty("--cc-sprite-x", x + "%");
+        }
       }
       this.fixSpriteBoxes(container);
     },
@@ -1706,7 +1712,268 @@
     },
   };
 
+  //===========================================================================
+  // CCMorph - a redrawn page patched into the one already on screen
+  //===========================================================================
+  //
+  // Every creation page is written as one HTML string, and a pick on it (a
+  // gender, a class, a toggle) used to answer by throwing the drawn page away
+  // and parsing the string again: portraits reloaded and flickered, the page's
+  // enter animation replayed, the hover card under the pointer was orphaned,
+  // and the caret, the focus and every scrolled list were lost.
+  //
+  // CCMorph keeps the string as the one description of the page and only
+  // changes what differs. The fresh markup is parsed off screen, then walked
+  // alongside the drawn tree: attributes and text are patched where they
+  // stand, and a node is only swapped when it became a different element (a
+  // new tag, or a new id / data-key / data-choice-index). Children left over
+  // are dropped and missing ones are moved in.
+  //
+  // What the markup never draws is left where it is: the live 3D portrait's
+  // canvas, a modal sheet laid over the page, anything marked
+  // data-cc-morph-keep; an element marked data-cc-morph-own is patched but
+  // its children are left to the code that draws them. A focused text field keeps what is being typed into it,
+  // and the classes other code inks onto the page at runtime (the focus
+  // ring, the no-replay mark) survive the patch.
+  const CCMorph = (() => {
+    const KEEP_CLASSES = ["cc-nav-focus", "cc-no-anim"];
+
+    const isFocused = (el) => typeof document !== "undefined" && document.activeElement === el;
+
+    function isForeign(node) {
+      if (!node || node.nodeType !== 1) return false;
+      if (node.hasAttribute("data-cc-morph-keep")) return true;
+      const cl = node.classList;
+      return !!cl && (cl.contains("cc3d-live-canvas") || cl.contains("cc-modal-veil"));
+    }
+
+    function keyOf(node) {
+      if (!node || node.nodeType !== 1) return null;
+      const id = node.getAttribute("id");
+      if (id) return "#" + id;
+      const k = node.getAttribute("data-key");
+      if (k !== null) return "k:" + k;
+      const c = node.getAttribute("data-choice-index");
+      if (c !== null) return "c:" + node.tagName + ":" + c;
+      return null;
+    }
+
+    function sameKind(a, b) {
+      if (a.nodeType !== b.nodeType) return false;
+      if (a.nodeType !== 1) return true;
+      if (a.tagName !== b.tagName) return false;
+      if (a.tagName === "INPUT") {
+        return (a.getAttribute("type") || "").toLowerCase() === (b.getAttribute("type") || "").toLowerCase();
+      }
+      return true;
+    }
+
+    // An image that reacts to its own loading (an onerror fallback, an onload
+    // that hides the placeholder beside it) is a fresh image once its source
+    // changes, so its handlers run as they did on a rebuilt page. Kept with
+    // the same source, it has already loaded, and what its handlers inked
+    // onto the page is put back after the patch (replayLoads).
+    const reacts = (el) => el.tagName === "IMG" && (el.hasAttribute("onload") || el.hasAttribute("onerror"));
+    function reusable(a, b) {
+      if (!sameKind(a, b)) return false;
+      if (a.nodeType === 1 && reacts(a) && a.getAttribute("src") !== b.getAttribute("src")) return false;
+      return true;
+    }
+    let pendingLoads = [];
+    function replayLoads() {
+      const list = pendingLoads;
+      pendingLoads = [];
+      for (const img of list) {
+        if (!img.isConnected || !img.complete) continue;
+        const view = img.ownerDocument && img.ownerDocument.defaultView;
+        if (!view || !view.Event) continue;
+        img.dispatchEvent(new view.Event(img.naturalWidth > 0 ? "load" : "error"));
+      }
+    }
+
+    // The new class list, plus whichever runtime marks the old node wore.
+    function mergedClass(oldEl, value) {
+      let out = value == null ? "" : String(value);
+      const cl = oldEl.classList;
+      if (!cl) return out;
+      for (const name of KEEP_CLASSES) {
+        if (cl.contains(name) && !(" " + out + " ").includes(" " + name + " ")) {
+          out = out ? out + " " + name : name;
+        }
+      }
+      return out;
+    }
+
+    function morphAttrs(oldEl, newEl) {
+      const typing = (oldEl.tagName === "INPUT" || oldEl.tagName === "TEXTAREA") && isFocused(oldEl);
+      const na = newEl.attributes;
+      for (let i = 0; i < na.length; i++) {
+        const name = na[i].name;
+        // The value attribute of a field being typed into would reset what is
+        // in it on a field the player has not edited yet.
+        if (typing && name === "value") continue;
+        const value = name === "class" ? mergedClass(oldEl, na[i].value) : na[i].value;
+        if (oldEl.getAttribute(name) !== value) oldEl.setAttribute(name, value);
+      }
+      const oa = oldEl.attributes;
+      for (let i = oa.length - 1; i >= 0; i--) {
+        const name = oa[i].name;
+        if (newEl.hasAttribute(name)) continue;
+        if (name === "class") {
+          const kept = mergedClass(oldEl, "");
+          if (kept) { if (oldEl.getAttribute("class") !== kept) oldEl.setAttribute("class", kept); continue; }
+        }
+        oldEl.removeAttribute(name);
+      }
+    }
+
+    // What an element replaced by the same markup would have shown, for the
+    // form controls whose live state is a property rather than an attribute.
+    function morphFormState(oldEl, newEl) {
+      const tag = oldEl.tagName;
+      if (tag === "INPUT") {
+        const type = (oldEl.getAttribute("type") || "").toLowerCase();
+        if (type === "checkbox" || type === "radio") {
+          const want = newEl.hasAttribute("checked");
+          if (oldEl.checked !== want) oldEl.checked = want;
+        } else if (!isFocused(oldEl)) {
+          const want = newEl.getAttribute("value") || "";
+          if (oldEl.value !== want) oldEl.value = want;
+        }
+      } else if (tag === "TEXTAREA") {
+        if (!isFocused(oldEl)) {
+          const want = newEl.textContent || "";
+          if (oldEl.value !== want) oldEl.value = want;
+        }
+      } else if (tag === "SELECT") {
+        if (isFocused(oldEl) || !oldEl.options) return;
+        let at = -1;
+        const opts = newEl.querySelectorAll("option");
+        for (let i = 0; i < opts.length; i++) if (opts[i].hasAttribute("selected")) at = i;
+        if (at < 0 && oldEl.options.length) at = 0;
+        if (at >= 0 && oldEl.selectedIndex !== at) oldEl.selectedIndex = at;
+      }
+    }
+
+    function morphNode(oldNode, newNode) {
+      if (oldNode.nodeType !== 1) {
+        if (oldNode.nodeValue !== newNode.nodeValue) oldNode.nodeValue = newNode.nodeValue;
+        return;
+      }
+      morphAttrs(oldNode, newNode);
+      const tag = oldNode.tagName;
+      // A canvas's picture is drawn, not written, and a field being typed in
+      // owns its own text.
+      if (tag === "CANVAS") return;
+      if (tag === "IMG" && reacts(oldNode)) pendingLoads.push(oldNode);
+      // A list that draws its own rows (a virtual scroller) keeps them.
+      if (oldNode.hasAttribute("data-cc-morph-own")) return;
+      if (tag === "TEXTAREA" && isFocused(oldNode)) return;
+      if (oldNode.isContentEditable === true && isFocused(oldNode)) return;
+      morphChildren(oldNode, newNode);
+      morphFormState(oldNode, newNode);
+    }
+
+    function morphChildren(oldParent, newParent) {
+      const oldKids = [];
+      for (let c = oldParent.firstChild; c; c = c.nextSibling) {
+        if (!isForeign(c)) oldKids.push(c);
+      }
+      const keyed = new Map();
+      for (const c of oldKids) {
+        const k = keyOf(c);
+        if (k !== null && !keyed.has(k)) keyed.set(k, c);
+      }
+      const used = new Set();
+      const newKids = [];
+      for (let c = newParent.firstChild; c; c = c.nextSibling) newKids.push(c);
+
+      let oi = 0;
+      let prev = null;
+      for (const nc of newKids) {
+        while (oi < oldKids.length && used.has(oldKids[oi])) oi++;
+        let match = null;
+        const k = keyOf(nc);
+        if (k !== null) {
+          const c = keyed.get(k);
+          if (c && !used.has(c) && reusable(c, nc)) match = c;
+        } else {
+          const c = oldKids[oi];
+          if (c && keyOf(c) === null && reusable(c, nc)) match = c;
+        }
+        let node;
+        if (match) {
+          used.add(match);
+          morphNode(match, nc);
+          node = match;
+        } else {
+          // Moved straight out of the parsed fragment: inserting adopts it.
+          node = nc;
+        }
+        let want = prev ? prev.nextSibling : oldParent.firstChild;
+        while (want && isForeign(want)) want = want.nextSibling;
+        if (node !== want) oldParent.insertBefore(node, want);
+        prev = node;
+      }
+      for (const c of oldKids) {
+        if (!used.has(c) && c.parentNode === oldParent) oldParent.removeChild(c);
+      }
+    }
+
+    // Null where there is no real DOM to parse into (a bare harness), and
+    // the callers then fall back to the plain rewrite.
+    function parse(html) {
+      if (typeof document === "undefined" || !document.createElement) return null;
+      const holder = document.createElement("template");
+      holder.innerHTML = String(html == null ? "" : html);
+      const frag = holder.content;
+      return frag && typeof frag.firstChild !== "undefined" && frag.children ? frag : null;
+    }
+
+    const isNode = (el) => !!el && el.nodeType === 1 && typeof el.firstChild !== "undefined";
+
+    return {
+      morphChildren,
+      morphNode,
+      keyOf,
+
+      // Makes el's contents match html, el itself untouched.
+      inner(el, html) {
+        if (!el) return el;
+        const frag = isNode(el) ? parse(html) : null;
+        if (!frag) { el.innerHTML = html; return el; }
+        morphChildren(el, frag);
+        replayLoads();
+        return el;
+      },
+
+      // Makes el match html, which describes one element. el is patched where
+      // it stands when html is still the same element, and swapped for it
+      // otherwise. Returns whichever element is now on the page.
+      outer(el, html) {
+        if (!el) return el;
+        const frag = isNode(el) && el.parentNode ? parse(String(html == null ? "" : html).trim()) : null;
+        if (!frag) { el.outerHTML = html; return null; }
+        const fresh = frag.firstElementChild;
+        if (!fresh || frag.children.length !== 1) {
+          // Not one element: a plain replacement, as before.
+          const parent = el.parentNode;
+          if (parent) { parent.insertBefore(frag, el); parent.removeChild(el); }
+          return fresh || null;
+        }
+        if (reusable(el, fresh) && keyOf(el) === keyOf(fresh)) {
+          morphNode(el, fresh);
+          replayLoads();
+          return el;
+        }
+        el.replaceWith(fresh);
+        return fresh;
+      },
+    };
+  })();
+
   window.CCPanel = CCPanel;
+  window.CCMorph = CCMorph;
   window.CCScroll = CCScroll;
   window.CCPick = CCPick;
   window.CCSearch = CCSearch;

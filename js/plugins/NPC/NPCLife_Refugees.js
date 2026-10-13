@@ -114,7 +114,7 @@
 
   // Is this a person the Horde's coming makes leave at all?
   function mayFlee(record, profile) {
-    if (!record || !profile || record.nonSentient || record.refugee) return false;
+    if (!record || !profile || record.dead || profile._killed || record.nonSentient || record.refugee) return false;
     if (record.child || isMinor(record.name, profile)) return false;
     if (window.NPCCreature?.isNonSentientProfile?.(profile)) return false;
     if (profile._hordeGoblin === true || profile._hordeIntegrated) return false;
@@ -464,7 +464,8 @@
       return v;
     };
     for (const record of Object.values(records)) {
-      if (!record) continue;
+      // The dead go nowhere: not out, not home, not on to the Horde's ground.
+      if (!record || record.dead) continue;
       const ref = record.refugee;
       if (ref) {
         if (ref.status === REFUGEE_FLEEING) fleeing.push(record);

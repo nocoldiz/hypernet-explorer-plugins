@@ -13,16 +13,23 @@
  * page about blood chemistry had to make room for hardware. It is its own menu
  * entry now, sitting directly after Biologics.
  *
- * Two lists, switched with Left/Right:
+ * It wears the backpack's page (ItemSystem/ItemSystemInventoryUI.js): a tab
+ * rail, the search strip, a three-across grid of slots with a rarity stripe,
+ * and the inspect card on the right page.
+ *
+ * The tabs, turned with Left/Right on the rail or L1/R1 anywhere:
  *   Fitted    - every augment the party is actually wearing, whoever wears it,
  *               named with its patient and the socket it sits in.
- *   Catalogue - all of ProstheticTypes.json, so a player can read what an
+ *   All       - all of ProstheticTypes.json, so a player can read what an
  *               augment does before paying a clinic to graft it in.
+ *   Head, Senses, Torso, Organs, Arms, Legs, Appendages
+ *             - the catalogue cut by the part of the body it goes into, the
+ *               way the equip screen cuts gear by slot. An augment that fits
+ *               more than one region is listed under each.
  *
- * The right page is the dossier: what it costs, what it adds, the skill it
- * teaches (with that skill's own description), and every socket that takes it,
- * resolved through Health_Core's name matcher, so a creature's BODY or a
- * dragon's REAR_LEFT_LEG is listed alongside the humanoid sockets.
+ * Rarity is read off the price, against augment thresholds of its own: an
+ * augment costs far more than a pocket item, and the backpack's bands would
+ * call nearly the whole catalogue Epic.
  *
  * Reads, never writes: fitting and removing is the prosthetic shop's business.
  *
@@ -61,10 +68,6 @@
     return T.list('Prosthetics.paramNames')[paramId] || T('Prosthetics.statFallback');
   }
 
-  // How many socket chips a catalogue card carries before the rest are
-  // counted off instead.
-  const SOCKET_CHIPS = 3;
-
   function skillIds(value) {
     if (window.HealthCore && window.HealthCore.normalizeSkillIds) {
       return window.HealthCore.normalizeSkillIds(value);
@@ -72,14 +75,85 @@
     return typeof value === "number" && value > 0 ? [value] : [];
   }
 
-  // Which sockets accept this augment. The compatibility table is keyed by both
-  // concrete part keys (LEFT_EYE) and general parts (WING), and the general ones
-  // are what a creature's own anatomy resolves to, so both are listed.
-  function socketsFor(key) {
-    const table = getCompatibility();
-    if (!table) return [];
-    return Object.keys(table).filter((socket) => (table[socket] || []).includes(key));
+  // =========================================================================
+  // Rarity, read off the price
+  // =========================================================================
+  // Augment bands, in raw gold (100 gold = 1 euro). The catalogue runs from
+  // 60 to 15000 euros with most of it between 2500 and 5500, so the bands are
+  // cut there: a common augment is a cheap one, a mythic one costs a house.
+  // The ids are the backpack's, so the stripe and the label wear the same
+  // --rarity-* inks the pockets do.
+  const AUGMENT_RARITY = [
+    { key: "legendary", label: "mythic",   minCost: 1000000 },
+    { key: "epic",      label: "epic",     minCost: 550000 },
+    { key: "rare",      label: "rare",     minCost: 400000 },
+    { key: "uncommon",  label: "uncommon", minCost: 250000 },
+    { key: "common",    label: "common",   minCost: 0 }
+  ];
+
+  function augmentRarity(prosthetic) {
+    const cost = Number(prosthetic && prosthetic.cost) || 0;
+    const tier = AUGMENT_RARITY.find((t) => cost >= t.minCost) || AUGMENT_RARITY[AUGMENT_RARITY.length - 1];
+    return {
+      key: tier.key,
+      name: T('Inventory.rarity.' + tier.label),
+      color: `var(--rarity-${tier.key})`
+    };
   }
+
+  // =========================================================================
+  // Body regions
+  // =========================================================================
+  // The compatibility table names concrete sockets (LEFT_EYE) and the general
+  // parts a creature's anatomy resolves to (EYE, WING). Each one belongs to a
+  // region of the body, and the regions are the tabs. A socket nobody has
+  // placed yet lands in "other", which only shows when something is in it.
+  const REGIONS = [
+    { id: "head",       sockets: ["HEAD", "BRAIN", "NECK", "HAIR", "HORN"] },
+    { id: "senses",     sockets: ["LEFT_EYE", "RIGHT_EYE", "EYE", "NOSE", "LEFT_EAR", "RIGHT_EAR", "EAR", "MOUTH", "TEETH", "SENSOR"] },
+    { id: "torso",      sockets: ["TORSO", "BODY", "SHELL", "CORE", "GENITALS"] },
+    { id: "organs",     sockets: ["HEART", "LEFT_LUNG", "RIGHT_LUNG", "LUNG", "LIVER", "STOMACH", "SPLEEN", "INTESTINES", "VISCERA", "GLAND"] },
+    { id: "arms",       sockets: ["LEFT_ARM", "RIGHT_ARM", "ARM", "LEFT_HAND", "RIGHT_HAND", "HAND", "LEFT_FINGERS", "RIGHT_FINGERS", "WEAPON_MOUNT"] },
+    { id: "legs",       sockets: ["LEFT_LEG", "RIGHT_LEG", "LEG", "LEFT_FOOT", "RIGHT_FOOT", "FOOT", "LEFT_TOES", "RIGHT_TOES", "WHEEL"] },
+    { id: "appendages", sockets: ["WING", "TAIL", "TENTACLE", "FIN"] }
+  ];
+  const OTHER_REGION = "other";
+  const REGION_OF = {};
+  for (const region of REGIONS) for (const sock of region.sockets) REGION_OF[sock] = region.id;
+  const regionOfSocket = (socket) => REGION_OF[socket] || OTHER_REGION;
+
+  // One icon per kind of augment, drawn off the IconSet: a heart for flesh,
+  // a cog for hardware, a spark for the enchanted.
+  const TYPE_ICONS = { biological: 84, technological: 83, magical: 72 };
+
+  function iconStyle(prosthetic) {
+    const icon = TYPE_ICONS[(prosthetic && prosthetic.type) || "biological"] || TYPE_ICONS.biological;
+    return `background:url('img/system/IconSet.png') -${(icon % 16) * 32}px -${Math.floor(icon / 16) * 32}px no-repeat;width:32px;height:32px;`;
+  }
+
+  // Which sockets accept each augment, and which regions those make up. Built
+  // once per compatibility table: the tabs count every region on every redraw.
+  let socketMemo = null;
+
+  function socketIndex() {
+    const table = getCompatibility();
+    if (socketMemo && socketMemo.table === table) return socketMemo;
+    const sockets = {};
+    const regions = {};
+    if (table) {
+      for (const socket of Object.keys(table)) {
+        for (const key of table[socket] || []) {
+          (sockets[key] = sockets[key] || []).push(socket);
+          (regions[key] = regions[key] || new Set()).add(regionOfSocket(socket));
+        }
+      }
+    }
+    socketMemo = { table, sockets, regions };
+    return socketMemo;
+  }
+
+  const socketsFor = (key) => socketIndex().sockets[key] || [];
+  const regionsFor = (key) => socketIndex().regions[key] || new Set();
 
   // Every augment the party is wearing, one row per fitted socket.
   function fittedAugments() {
@@ -106,12 +180,133 @@
     return rows;
   }
 
+  // The whole catalogue in name order. Every step of the cursor redraws the
+  // page, and sorting a few hundred localised names each time is the bulk of
+  // it, so the order is kept until the table or the language changes.
+  let catalogueMemo = null;
+
   function catalogueAugments() {
     const types = getProstheticTypes();
     if (!types) return [];
-    return Object.keys(types)
+    const keys = Object.keys(types);
+    const lang = ConfigManager.language;
+    const memo = catalogueMemo;
+    if (memo && memo.types === types && memo.lang === lang && memo.count === keys.length) {
+      return memo.list.slice();
+    }
+    const list = keys
       .map((key) => ({ key, prosthetic: types[key] }))
       .sort((a, b) => augmentName(a.key, a.prosthetic).localeCompare(augmentName(b.key, b.prosthetic)));
+    catalogueMemo = { types, lang, count: keys.length, list };
+    return list.slice();
+  }
+
+  // The tab rail: Fitted, All, then every region something fits into, in body
+  // order. A region with nothing in it has no tab.
+  function augmentTabs(fitted, catalogue) {
+    const tabs = [
+      { id: "fitted", label: T('Augments.ui.tab.fitted', { count: fitted.length }), rows: fitted },
+      { id: "all", label: T('Augments.ui.tab.all', { count: catalogue.length }), rows: catalogue }
+    ];
+    for (const id of REGIONS.map((r) => r.id).concat(OTHER_REGION)) {
+      const rows = catalogue.filter((row) => regionsFor(row.key).has(id));
+      if (!rows.length) continue;
+      tabs.push({
+        id,
+        label: T('Augments.ui.tab.region', { name: T('Augments.ui.region.' + id), count: rows.length }),
+        rows
+      });
+    }
+    return tabs;
+  }
+
+  // One line of the inspect card, the backpack's pill: label, then answer.
+  const pill = (label, value, cls) =>
+    `<div class="inspect-meta-item inspect-pill${cls ? " " + cls : ""}">` +
+      `<span class="inspect-pill-lbl">${escapeHtml(label)}:</span> ` +
+      `<span class="inspect-meta-val inspect-pill-val">${escapeHtml(value)}</span>` +
+    `</div>`;
+  const pillText = (text) =>
+    `<div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${escapeHtml(text)}</span></div>`;
+  const pillBlock = (rowsHTML) => `<div class="inspect-quick-pills inspect-pill-block">${rowsHTML}</div>`;
+  const sectionTitle = (key) => `<div class="inspect-section-title">${T(key)}</div>`;
+
+  // =========================================================================
+  // The inspect card, shared
+  // =========================================================================
+  // The surgery screen (Health_ProstheticShopUI.js) wears the same card over
+  // an augment it is about to fit, so both halves of it are built here once.
+
+  // The head: icon and name with the rarity under it, the price as a pill.
+  function augmentHeader(key, p, priceText) {
+    const rarity = augmentRarity(p);
+    const typeLabel = T('Augments.ui.type.' + (p.type || "biological"));
+    return `
+          <div class="inspect-topline-info inspect-topline-info--fullwidth">
+            <div class="inspect-header">
+              <div class="inspect-frame"><span class="aug-icon" style="${iconStyle(p)}"></span></div>
+              <div class="inspect-title-box">
+                <h3 class="inspect-name">${escapeHtml(augmentName(key, p))}</h3>
+                <div class="inspect-rarity rarity--${rarity.key}">${escapeHtml(rarity.name)} ${escapeHtml(typeLabel)}</div>
+              </div>
+            </div>
+            <div class="inspect-meta-grid inspect-meta-grid--stacked inspect-quick-pills inspect-meta-grid--single">
+              ${pill(T('Augments.ui.price'), priceText)}
+            </div>
+          </div>`;
+  }
+
+  // The body: a section per thing the augment does. Stats are the backpack's
+  // gain and loss pills; a `needs` block is a multiplier on how fast that need
+  // drains, so it is read out as plain English: stopped, slowed by a share, or
+  // reversed.
+  function augmentSections(key, p) {
+    const statPills = [];
+    for (const [paramId, value] of Object.entries(p.effects || {})) {
+      statPills.push(pill(paramName(parseInt(paramId, 10)), (value >= 0 ? "+" : "") + value,
+        value >= 0 ? "inspect-pill--gain" : "inspect-pill--loss"));
+    }
+    for (const [needKey, rate] of Object.entries(p.needs || {})) {
+      const label = (window.PartyNeeds && window.PartyNeeds.LABELS && window.PartyNeeds.LABELS[needKey]) || needKey;
+      let value;
+      if (rate < 0) {
+        value = T('Augments.ui.need.restores', { pct: Math.round(Math.abs(rate) * 100) });
+      } else if (rate === 0) {
+        value = T('Augments.ui.need.halted');
+      } else if (rate < 1) {
+        value = T('Augments.ui.need.slowed', { pct: Math.round((1 - rate) * 100) });
+      } else if (rate > 1) {
+        value = T('Augments.ui.need.hastened', { pct: Math.round((rate - 1) * 100) });
+      } else {
+        continue;
+      }
+      statPills.push(pill(label, value));
+    }
+
+    // An endocrine implant's real effect is in the blood, not in the params,
+    // so the biologic simulation supplies that sentence itself.
+    const endocrine = window.EndocrineImplants && window.EndocrineImplants.describe
+      ? window.EndocrineImplants.describe(key) : null;
+
+    let body = endocrine ? `<div class="inspect-desc">${escapeHtml(endocrine)}</div>` : "";
+    body += sectionTitle('Augments.ui.effects') + (statPills.length
+      ? pillBlock(statPills.join(""))
+      : `<div class="ui-empty-note">${T('Augments.ui.noStatChange')}</div>`);
+
+    for (const sid of skillIds(p.skill)) {
+      const skill = $dataSkills && $dataSkills[sid];
+      if (!skill || !skill.name) continue;
+      const desc = String(skill.description || "").split(/\s*[\r\n]+\s*/).join(" ").trim();
+      body += sectionTitle('Augments.ui.grantedSkill')
+        + pillBlock(pill(skill.name, T('Augments.ui.alwaysCarried'), "inspect-pill--special"))
+        + (desc ? `<div class="inspect-desc">${escapeHtml(desc)}</div>` : "");
+    }
+
+    const sockets = socketsFor(key);
+    body += sectionTitle('Augments.ui.sockets') + (sockets.length
+      ? pillBlock(sockets.map(pillText).join(""))
+      : `<div class="ui-empty-note">${T('Augments.ui.noSocket')}</div>`);
+    return body;
   }
 
   // =========================================================================
@@ -123,14 +318,15 @@
       // A chaos world prices the catalogue itself, so the register quotes the
       // same money the clinic does rather than the database's own.
       if (window.ChaosAugmentPrices) window.ChaosAugmentPrices();
-      this._tab = 0;              // 0 fitted, 1 catalogue
+      this._tab = 0;              // index into this._tabs
+      this._tabs = [];
       this._selectedIndex = 0;
       this._activeArea = "tabs";  // 'tabs' | 'list'
       this._rows = [];
 
-      // The shared search + filter strip (UI/MenuSearchBar.js), sitting under
-      // the title as it does in every other list menu. An augment has a name
-      // and a price and nothing else worth ordering on.
+      // The shared search + filter strip (UI/MenuSearchBar.js), in the slot
+      // the backpack keeps for its own search and sort tags. An augment has a
+      // name and a price and nothing else worth ordering on.
       this._augBar = window.MenuSearchBar ? window.MenuSearchBar.create({
         id: 'augments',
         placeholder: T('Augments.ui.searchPlaceholder'),
@@ -172,25 +368,24 @@
       s.display = "flex";
       s.justifyContent = "center";
       s.alignItems = "center";
-      s.fontFamily = "var(--font-ui)";
       s.boxSizing = "border-box";
       s.opacity = "0";
       s.transition = "opacity 0.22s ease-out";
 
+      // The backpack's spread, part for part: header, tab rail, search strip,
+      // the grid of slots, and the inspect card on the right page.
       this._dndContainer.innerHTML = `
-        <div class="book-spread">
-          <div class="left-page augment-01">
+        <div class="book-spread inspect-pockets">
+          <div class="left-page">
             <div class="page-header-bar">
               <div class="back-button focusable">${T('Augments.ui.back')}</div>
               <h2 class="title">${T('Augments.ui.title')}</h2>
             </div>
-            <div id="aug-search-slot"></div>
-            <div class="augment-02" id="aug-tab-row"></div>
-            <div class="augment-03" id="aug-list-content"></div>
+            <div class="backpack-tabs" id="aug-tab-row"></div>
+            <div class="backpack-search" id="aug-search-slot"></div>
+            <div class="backpack-grid" id="aug-list-content"></div>
           </div>
-          <div class="right-page augment-01">
-            <div class="augment-04" id="aug-detail-content"></div>
-          </div>
+          <div class="right-page" id="aug-detail-content"></div>
         </div>
       `;
       document.body.appendChild(this._dndContainer);
@@ -210,8 +405,8 @@
       }, 16);
     }
 
-    buildRows() {
-      const rows = this._tab === 0 ? fittedAugments() : catalogueAugments();
+    buildRows(base) {
+      const rows = base || [];
       if (!this._augBar) return rows;
       return this._augBar.apply(rows, (row) => ({
         name: augmentName(row.key, row.prosthetic),
@@ -219,71 +414,85 @@
       }));
     }
 
+    currentTabId() {
+      const tab = this._tabs[this._tab];
+      return tab ? tab.id : "fitted";
+    }
+
+    selectTab(idx) {
+      if (idx === this._tab) return;
+      this._tab = idx;
+      this._selectedIndex = 0;
+      SoundManager.playCursor();
+      this.refreshAugmentDOM();
+    }
+
     refreshAugmentDOM() {
       if (!this._dndContainer) return;
 
-      // Rebuilt in place with the page, then handed its caret back.
+      // Rebuilt in place with the page, then handed its caret back. A cursor
+      // step leaves the strip's markup as it was, so it is only rebuilt when
+      // the query, the sort or the field's state has changed it.
       const searchSlot = document.getElementById("aug-search-slot");
       if (searchSlot && this._augBar) {
-        searchSlot.innerHTML = this._augBar.html();
+        const stripHTML = this._augBar.html();
+        if (stripHTML !== this._augStripHTML || searchSlot !== this._augStripSlot) {
+          searchSlot.innerHTML = stripHTML;
+          this._augStripHTML = stripHTML;
+          this._augStripSlot = searchSlot;
+        }
         this._augBar.restoreFocus();
       }
 
-      this._rows = this.buildRows();
+      // Both lists are read once per redraw: every tab is cut from the same
+      // read, and the open one is filtered from its own copy.
+      const tabId = this.currentTabId();
+      this._tabs = augmentTabs(fittedAugments(), catalogueAugments());
+      // A region can empty out from under its tab (a language change, a new
+      // table); the rail keeps the same tab by id where it still stands.
+      const keep = this._tabs.findIndex((t) => t.id === tabId);
+      this._tab = keep >= 0 ? keep : Math.min(this._tab, this._tabs.length - 1);
+      this._rows = this.buildRows(this._tabs[this._tab].rows);
       if (this._selectedIndex >= this._rows.length) {
         this._selectedIndex = Math.max(0, this._rows.length - 1);
       }
 
-      const fittedCount = fittedAugments().length;
-      const tabs = [
-        T('Augments.ui.tab.fitted', { count: fittedCount }),
-        T('Augments.ui.tab.catalogue', { count: catalogueAugments().length })
-      ];
       const tabRow = document.getElementById("aug-tab-row");
       if (tabRow) {
-        tabRow.innerHTML = tabs.map((label, idx) => {
-          const isSel = idx === this._tab;
-          // The tabs are the shared .inspect-btn stamp: the open one wears its
-          // selected state, so they read like every other button in the menus.
-          return `<div class="aug-tab focusable inspect-btn augment-05${isSel ? ' selected' : ''}" data-tab-idx="${idx}">${escapeHtml(label)}</div>`;
-        }).join("");
+        tabRow.innerHTML = `<div class="backpack-tabs-row">` + this._tabs.map((tab, idx) => {
+          const active = idx === this._tab ? " active" : "";
+          const focused = idx === this._tab && this._activeArea === "tabs" ? " selected" : "";
+          return `<div class="backpack-tab aug-tab focusable${active}${focused}" data-tab-idx="${idx}">${escapeHtml(tab.label)}</div>`;
+        }).join("") + `</div>`;
         tabRow.querySelectorAll(".aug-tab").forEach((tab) => {
           tab.addEventListener("click", () => {
-            const idx = parseInt(tab.getAttribute("data-tab-idx"), 10);
-            if (idx !== this._tab) {
-              this._tab = idx;
-              this._selectedIndex = 0;
-            }
             this._activeArea = "tabs";
-            SoundManager.playCursor();
-            this.refreshAugmentDOM();
+            const idx = parseInt(tab.getAttribute("data-tab-idx"), 10);
+            if (idx !== this._tab) this.selectTab(idx);
+            else { SoundManager.playCursor(); this.refreshAugmentDOM(); }
           });
         });
       }
 
-      // The catalogue is the whole of ProstheticTypes.json, so the list is
-      // windowed: only the rows the page can show are ever built
+      // The catalogue is the whole of ProstheticTypes.json, so the grid is
+      // windowed: only the slots the page can show are ever built
       // (UI/MenuVirtualList.js).
       const listBox = document.getElementById("aug-list-content");
       if (listBox) {
-        // The catalogue is hundreds of entries, so it reads three across;
-        // the fitted list stays one row per line.
-        listBox.classList.toggle("aug-grid", this._tab === 1);
-        const empty = this._tab === 0 ? T('Augments.ui.noneFitted') : T('Augments.ui.noCatalogue');
+        const empty = this.currentTabId() === "fitted" ? T('Augments.ui.noneFitted') : T('Augments.ui.noCatalogue');
         window.MenuVirtualList.render(listBox, {
-          key: `${this._tab}|${this._augBar ? this._augBar.query : ''}`,
+          key: `${this.currentTabId()}|${this._augBar ? this._augBar.query : ''}`,
           count: this._rows.length,
           renderItem: (idx) => this.buildRowHTML(this._rows[idx], idx),
-          emptyHTML: `<div class="augment-06">${empty}</div>`,
-          // Walking the register moves two marks. The rows on screen already
-          // say the rest, so they are left as they are rather than rebuilt and
-          // rebound a row at a time.
+          emptyHTML: `<div class="item-grid-empty">${empty}</div>`,
+          // Walking the grid moves one mark. The slots on screen already say
+          // the rest, so they are left as they are rather than rebuilt and
+          // rebound a slot at a time.
           focus: {
             index: this._selectedIndex,
             selector: '.aug-row',
             classes: {
-              selected: this._selectedIndex,
-              focused: this._activeArea === 'list' ? this._selectedIndex : -1
+              selected: this._activeArea === 'list' ? this._selectedIndex : -1
             }
           },
           onWindow: (win) => {
@@ -303,193 +512,80 @@
       if (detail) detail.innerHTML = this.buildDetailHTML(this._rows[this._selectedIndex]);
     }
 
+    // One slot, the backpack's: rarity stripe, icon, name, and a meta line
+    // under it. The catalogue reads kind and price; the fitted list reads who
+    // wears it and where, with the price or the host's damage on the right.
     buildRowHTML(row, idx) {
       if (!row) return "";
-      const isSel = idx === this._selectedIndex;
-      const isFocused = isSel && this._activeArea === "list";
+      const isSel = idx === this._selectedIndex && this._activeArea === "list";
       const name = augmentName(row.key, row.prosthetic);
-      const sub = this._tab === 0
+      const rarity = augmentRarity(row.prosthetic);
+      const sub = row.actor
         ? T('Augments.ui.wornBy', { actor: row.actor.name(), part: row.partName })
         : T('Augments.ui.type.' + (row.prosthetic.type || "biological"));
-      const flag = this._tab === 0 && row.damaged
-        ? `<span class="augment-07">${T('Augments.ui.damagedHost')}</span>`
-        : `<span class="augment-08">${escapeHtml(priceLabel(row.prosthetic.cost))}</span>`;
-      // A catalogue card says where the augment can go without being opened:
-      // the sockets are the one thing a shopper reads every entry for. Long
-      // lists of sockets are cut short rather than wrapping the card open.
-      let socketsHTML = "";
-      if (this._tab === 1) {
-        const sockets = socketsFor(row.key);
-        const shown = sockets.slice(0, SOCKET_CHIPS);
-        const rest = sockets.length - shown.length;
-        socketsHTML = shown.length
-          ? `<span class="aug-sockets">` + shown.map((sock) =>
-              `<span class="aug-socket-chip">${escapeHtml(sock)}</span>`
-            ).join("") + (rest > 0
-              ? `<span class="aug-socket-chip">${escapeHtml(T('Augments.ui.moreSockets', { count: rest }))}</span>`
-              : "") + `</span>`
-          : `<span class="aug-sockets"><span class="aug-socket-chip">${escapeHtml(T('Augments.ui.noSocketShort'))}</span></span>`;
-      }
+      const right = row.actor && row.damaged ? T('Augments.ui.damagedHost') : priceLabel(row.prosthetic.cost);
       return `
-        <div class="aug-row focusable ${isSel ? 'selected ' : ''}${isFocused ? 'focused' : ''} augment-09" data-idx="${idx}">
-          <span class="augment-10">
-            <span class="augment-11">${escapeHtml(name)}</span>
-            <span class="augment-08">${escapeHtml(sub)}</span>
-            ${socketsHTML}
-          </span>
-          ${flag}
+        <div class="item-slot aug-row focusable${isSel ? ' selected' : ''}" data-idx="${idx}">
+          <div class="item-rarity-bar" style="background:${rarity.color};"></div>
+          <div class="item-slot-icon"><span class="aug-icon" style="${iconStyle(row.prosthetic)}"></span></div>
+          <div class="item-slot-info">
+            <div class="item-slot-name">${escapeHtml(name)}</div>
+            <div class="item-slot-meta">
+              <span>${escapeHtml(sub)}</span>
+              <span class="item-slot-count${row.actor && row.damaged ? ' aug-damaged' : ''}">${escapeHtml(right)}</span>
+            </div>
+          </div>
         </div>`;
     }
 
+    // The right page is the backpack's inspect card: icon and name with the
+    // rarity under it, the price as a pill, then a section per thing the
+    // augment does.
     buildDetailHTML(row) {
       if (!row) {
-        return `<div class="ui-empty"><div class="ui-empty-text">${T('Augments.ui.noneSelected')}</div></div>`;
+        return `
+          <div class="item-inspect item-inspect--empty">
+            <div class="inspect-placeholder-icon"></div>
+            <h3 class="title">${T('Augments.ui.noneSelected')}</h3>
+          </div>`;
       }
       const p = row.prosthetic;
-      const name = augmentName(row.key, p);
-      const typeLabel = T('Augments.ui.type.' + (p.type || "biological"));
+      let body = augmentSections(row.key, p);
 
-      // Every effect the augment has is read in the one stat-block shape the
-      // rest of the game's right columns use: label on the left, answer on the
-      // right, the pair no wider than its own column.
-      const effectRows = [];
-      for (const [paramId, value] of Object.entries(p.effects || {})) {
-        effectRows.push({
-          label: paramName(parseInt(paramId, 10)),
-          value: (value >= 0 ? "+" : "") + value
-        });
+      if (row.actor) {
+        const capacity = window.ProstheticCapacity ? pill(T('Augments.ui.capacity'), T('Augments.ui.capacityValue', {
+          fitted: window.ProstheticCapacity.fitted(row.actor),
+          max: window.ProstheticCapacity.capacity(row.actor)
+        })) : "";
+        body += sectionTitle('Augments.ui.fittedTo')
+          + pillBlock(`${pill(row.actor.name(), row.partName)}${capacity}`)
+          + (row.damaged ? `<div class="aug-warning">${T('Augments.ui.damagedWarning')}</div>` : "")
+          + `<div class="inspect-desc">${T('Augments.ui.severWarning')}</div>`;
       }
-
-      // A `needs` block is a multiplier on how fast that need drains, so it is
-      // read out as plain English: stopped, slowed by a share, or reversed.
-      for (const [needKey, rate] of Object.entries(p.needs || {})) {
-        const label = (window.PartyNeeds && window.PartyNeeds.LABELS && window.PartyNeeds.LABELS[needKey]) || needKey;
-        let value;
-        if (rate < 0) {
-          value = T('Augments.ui.need.restores', { pct: Math.round(Math.abs(rate) * 100) });
-        } else if (rate === 0) {
-          value = T('Augments.ui.need.halted');
-        } else if (rate < 1) {
-          value = T('Augments.ui.need.slowed', { pct: Math.round((1 - rate) * 100) });
-        } else if (rate > 1) {
-          value = T('Augments.ui.need.hastened', { pct: Math.round((rate - 1) * 100) });
-        } else {
-          continue;
-        }
-        effectRows.push({ label, value });
-      }
-
-      const specRow = (r) => `
-        <div class="inspect-spec-row">
-          <span class="inspect-spec-label">${escapeHtml(r.label)}</span>
-          <span class="inspect-spec-value">${escapeHtml(String(r.value))}</span>
-        </div>`;
-
-      // An endocrine implant's real effect is in the blood, not in the params,
-      // so the biologic simulation supplies that sentence itself.
-      const endocrine = window.EndocrineImplants && window.EndocrineImplants.describe
-        ? window.EndocrineImplants.describe(row.key) : null;
-
-      let effectsHTML = effectRows.length
-        ? `<div class="inspect-spec-grid">${effectRows.map(specRow).join("")}</div>`
-        : `<div class="ui-empty-note">${T('Augments.ui.noStatChange')}</div>`;
-      if (endocrine) effectsHTML += `<div class="ui-prose">${escapeHtml(endocrine)}</div>`;
-
-      let skillHTML = "";
-      for (const sid of skillIds(p.skill)) {
-        const skill = $dataSkills && $dataSkills[sid];
-        if (!skill || !skill.name) continue;
-        const desc = String(skill.description || "").split(/\s*[\r\n]+\s*/).join(" ").trim();
-        skillHTML += `
-          <div class="inspect-spec-grid">
-            ${specRow({ label: skill.name, value: T('Augments.ui.alwaysCarried') })}
-          </div>
-          ${desc ? `<div class="ui-prose">${escapeHtml(desc)}</div>` : ""}`;
-      }
-
-      const sockets = socketsFor(row.key);
-      const socketsHTML = sockets.length
-        ? `<div class="ui-chip-row">` + sockets.map((s) =>
-            `<span class="ui-chip">${escapeHtml(s)}</span>`
-          ).join("") + `</div>`
-        : `<div class="ui-empty-note">${T('Augments.ui.noSocket')}</div>`;
-
-      const fittedHTML = row.actor
-        ? `<div class="ui-section">
-             <div class="inspect-section-title">${T('Augments.ui.fittedTo')}</div>
-             <div class="inspect-spec-grid">
-               ${specRow({ label: row.actor.name(), value: row.partName })}
-               ${window.ProstheticCapacity ? specRow({
-                 label: T('Augments.ui.capacity'),
-                 value: T('Augments.ui.capacityValue', {
-                   fitted: window.ProstheticCapacity.fitted(row.actor),
-                   max: window.ProstheticCapacity.capacity(row.actor)
-                 })
-               }) : ""}
-             </div>
-             ${row.damaged ? `<div class="aug-warning">${T('Augments.ui.damagedWarning')}</div>` : ""}
-             <div class="ui-prose">${T('Augments.ui.severWarning')}</div>
-           </div>`
-        : "";
 
       return `
-        <div class="ui-detail">
-          <div class="ui-detail-head">
-            <div class="ui-detail-titles">
-              <h2>${escapeHtml(name)}</h2>
-              <div class="ui-detail-sub">${escapeHtml(typeLabel)} &middot; ${escapeHtml(priceLabel(p.cost))}</div>
-            </div>
-          </div>
-          <div class="ui-detail-scroll">
-            <div class="ui-section">
-              <div class="inspect-section-title">${T('Augments.ui.effects')}</div>
-              ${effectsHTML}
-            </div>
-            ${skillHTML ? `<div class="ui-section">
-              <div class="inspect-section-title">${T('Augments.ui.grantedSkill')}</div>
-              ${skillHTML}
-            </div>` : ""}
-            <div class="ui-section">
-              <div class="inspect-section-title">${T('Augments.ui.sockets')}</div>
-              ${socketsHTML}
-            </div>
-            ${fittedHTML}
-          </div>
-        </div>
-      `;
+        <div class="item-inspect">
+          ${augmentHeader(row.key, p, priceLabel(p.cost))}
+          <div class="inspect-lore">${body}</div>
+        </div>`;
     }
 
     updateAugmentInput() {
       const isCancel = Input.isTriggered("cancel") || Input.isTriggered("escape") || TouchInput.isCancelled();
+      const lastTab = Math.max(0, this._tabs.length - 1);
 
-      // L1 / R1 (Q / W, Tab) turn the two tabs from wherever the cursor is.
+      // L1 / R1 (Q / W, Tab) turn the tabs from wherever the cursor is.
       const tabDir = window.UINav ? window.UINav.tabDir() : 0;
       if (tabDir) {
-        const next = Math.max(0, Math.min(1, this._tab + tabDir));
-        if (next !== this._tab) {
-          this._tab = next;
-          this._selectedIndex = 0;
-          SoundManager.playCursor();
-          this.refreshAugmentDOM();
-        }
+        this.selectTab(Math.max(0, Math.min(lastTab, this._tab + tabDir)));
         return;
       }
 
       if (this._activeArea === "tabs") {
         if (Input.isTriggered("right") || Input.isRepeated("right")) {
-          if (this._tab < 1) {
-            this._tab++;
-            this._selectedIndex = 0;
-            SoundManager.playCursor();
-            this.refreshAugmentDOM();
-          }
+          if (this._tab < lastTab) this.selectTab(this._tab + 1);
         } else if (Input.isTriggered("left") || Input.isRepeated("left")) {
-          if (this._tab > 0) {
-            this._tab--;
-            this._selectedIndex = 0;
-            SoundManager.playCursor();
-            this.refreshAugmentDOM();
-          }
+          if (this._tab > 0) this.selectTab(this._tab - 1);
         } else if (Input.isTriggered("down") || Input.isRepeated("down")) {
           if (this._rows.length) {
             this._activeArea = "list";
@@ -512,13 +608,15 @@
         return;
       }
 
-      // The catalogue reads several across, so down walks a whole line of
-      // cards and left and right walk within one. How many across is read off
-      // the live grid rather than restated here (UI/MenuVirtualList.js).
+      // The grid reads several across, so down walks a whole line of slots
+      // and left and right walk within one. How many across is read off the
+      // live grid rather than restated here (UI/MenuVirtualList.js).
       // UINav.gridStep keeps left and right on the row and stops at its ends.
-      const cols = window.MenuVirtualList.columnsOf("#aug-list-content", 1);
+      // The layout is only read on a frame that moves: reading it forces a
+      // style pass, and this runs every frame the list has the cursor.
       const dir = window.UINav ? window.UINav.navDir() : null;
       if (dir) {
+        const cols = window.MenuVirtualList.columnsOf("#aug-list-content", 1);
         if (dir === "up" && this._selectedIndex < cols) {
           this._activeArea = "tabs";
           SoundManager.playCursor();
@@ -539,8 +637,8 @@
       }
     }
 
-    // The row moved onto may not be in the DOM at all, so the viewport is moved
-    // by index rather than by element (UI/MenuVirtualList.js).
+    // The slot moved onto may not be in the DOM at all, so the viewport is
+    // moved by index rather than by element (UI/MenuVirtualList.js).
     scrollSelectedIntoView() {
       const listBox = document.getElementById("aug-list-content");
       if (listBox) window.MenuVirtualList.scrollToIndex(listBox, this._selectedIndex);
@@ -548,6 +646,15 @@
   }
 
   window.Scene_PartyAugments = Scene_PartyAugments;
+  // The price bands, for anything else that prints an augment's rarity.
+  window.AugmentRarity = augmentRarity;
+  // The slot's mark and the inspect card, for the surgery screen.
+  window.AugmentCard = {
+    rarity: augmentRarity,
+    iconStyle,
+    header: augmentHeader,
+    sections: augmentSections
+  };
 
   const openAugments = () => {
     SceneManager.push(Scene_PartyAugments);

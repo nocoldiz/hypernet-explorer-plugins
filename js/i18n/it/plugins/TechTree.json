@@ -1,25 +1,25 @@
 {
   "selectNodeHint": "Seleziona un nodo con le frecce.",
   "nobelWorthy": "Da Nobel",
-  "fringe": "Contestato / Frangia",
+  "fringe": "Contestato / Marginale",
   "speculative": "Speculativo",
   "researched": "Ricercato",
   "knownAtFounding": "Già noto alla fondazione del mondo",
   "discoveredBy": "Scoperto da ",
   "prereqIncomplete": "Prerequisiti incompleti",
-  "activeProject": "Progetto di Ricerca Attivo",
+  "activeProject": "Progetto di ricerca attivo",
   "day": "giorno",
-  "materialsRequired": "Materiali Richiesti",
+  "materialsRequired": "Materiali richiesti",
   "requires": "Richiede",
-  "permanentBuffs": "Potenziamenti Permanenti",
+  "permanentBuffs": "Potenziamenti permanenti",
   "rewardLabel": "Ricompensa",
   "exp": "EXP",
   "gold": "Euro",
   "complete": "Completato",
   "locked": "Bloccato",
   "research": "Ricerca",
-  "clearProject": "Rimuovi Progetto Attivo",
-  "setProject": "Imposta come Progetto Attivo",
+  "clearProject": "Rimuovi progetto attivo",
+  "setProject": "Imposta come progetto attivo",
   "discovered": "Scoperto: ",
   "recoveredMaterials": "Materiali recuperati:",
   "menuName": "Ricerca",
@@ -47,7 +47,7 @@
         "di reticolo",
         "di fonone",
         "di bosone",
-        "di simmetria",
+        "di spin",
         "di vortice",
         "di plasma",
         "di interferometro"
@@ -57,7 +57,7 @@
         "Condensato",
         "Effetto",
         "Regime",
-        "Limite",
+        "Soglia",
         "Fenomeno"
       ]
     },
@@ -67,17 +67,17 @@
         "errante",
         "transnettuniano",
         "circumbinario",
-        "reliquia",
+        "fossile",
         "iperveloce",
         "oscuro"
       ],
       "b": [
-        "di compagna",
+        "di compagno stellare",
         "di alone",
-        "di aurora",
+        "di bagliore polare",
         "di transito",
-        "di nebulosa",
-        "di microlente",
+        "di residuo nebulare",
+        "di lampo",
         "di anello"
       ],
       "c": [
@@ -101,9 +101,9 @@
       "b": [
         "di crivello",
         "di lemma",
-        "di varietà",
+        "di spazio",
         "di automa",
-        "di partizione",
+        "di insieme",
         "di funtore",
         "di limite"
       ],
@@ -151,13 +151,13 @@
         "informale"
       ],
       "b": [
-        "di cascata",
+        "di flusso",
         "di bene comune",
-        "di norma",
+        "di consenso",
         "di segnale",
-        "di coorte",
+        "di campione",
         "di contagio",
-        "di istituzione"
+        "di apparato"
       ],
       "c": [
         "Teoria",
@@ -174,17 +174,17 @@
         "calante",
         "sigillato",
         "cavo",
-        "novenario",
+        "nonuplo",
         "umbratile"
       ],
       "b": [
         "di sigillo",
-        "di guardia",
+        "di baluardo",
         "di rito",
-        "di evocazione",
+        "di richiamo",
         "di velo",
         "di cerchio",
-        "di litania"
+        "di salmo"
       ],
       "c": [
         "Opera",
@@ -226,17 +226,17 @@
         "consacrato",
         "promulgato",
         "corazzato",
-        "dogmatico",
+        "canonico",
         "ordinato",
         "unto",
         "aviotrasportato"
       ],
       "b": [
-        "di coilgun",
+        "del solenoide",
         "di reliquiario",
         "del collare",
         "del pulpito",
-        "del canone",
+        "del breve",
         "del contrafforte",
         "del sacramento"
       ],
@@ -257,7 +257,7 @@
     "False Lead": "Pista falsa",
     "Vaporware": "Vaporware",
     "Foundation": "Fondamento",
-    "First Working": "Primo funzionante",
+    "First Working": "Prima opera",
     "Sympathy": "Simpatia",
     "Sublimation": "Sublimazione",
     "Prototype": "Prototipo",
@@ -282,26 +282,26 @@
     "generic": "{name} è stato finalmente scoperto",
     "nobelSuffix": ", e si parla già di un premio Nobel",
     "credit": " Il merito va a {who} e alla sua cerchia.",
-    "theotecnical": "il Santo Impero Vaticano ha promulgato {name}"
+    "theotecnical": "il Sacro Impero Vaticano ha promulgato {name}"
   },
   "toast": {
     "title": "Scoperta"
   },
   "lyceum": {
     "appName": "Lyceum",
-    "subtitle": "Il registro di ciò che questo mondo ha scoperto, e di ciò che resta aperto.",
+    "subtitle": "Le ricerche fatte in questo mondo e quelle ancora aperte.",
     "register": "Il registro",
     "worldProgress": "{done} su {total} scoperte",
-    "benchNote": "Solo lettura e direzione. La ricerca vera si fa al banco.",
-    "project": "Progetto in corso",
-    "noProject": "Il laboratorio non ha un progetto. Assegnane uno e la squadra ci si mette.",
-    "makeProject": "Assegna come progetto",
-    "clearProject": "Annulla",
-    "currentProject": "Il laboratorio è su questo.",
-    "projectSet": "Il laboratorio ha i suoi ordini.",
+    "benchNote": "Solo consultazione e indirizzo. La ricerca si fa al banco.",
+    "project": "Progetto attivo",
+    "noProject": "Nessun progetto attivo. Impostane uno per metterci la forza lavoro.",
+    "makeProject": "Imposta come progetto",
+    "clearProject": "Annulla progetto",
+    "currentProject": "Progetto attuale.",
+    "projectSet": "Progetto impostato.",
     "projectCleared": "Progetto annullato.",
-    "daysOfWork": "(a {n} giorni di lavoro)",
-    "noWorkforce": "(nessuno lo sta raccogliendo)",
+    "daysOfWork": "({n} giorni di lavoro)",
+    "noWorkforce": "(nessuno raccoglie)",
     "colField": "Campo",
     "colAbout": "Di cosa tratta",
     "colWorkedOut": "Scoperte",
@@ -312,10 +312,10 @@
     "done": "Nota",
     "ready": "Pronta da eseguire",
     "open": "Aperta",
-    "locked": "Attende lavori precedenti",
-    "noMaterials": "Nulla, solo tempo",
+    "locked": "Richiede prerequisiti",
+    "noMaterials": "Nessun materiale",
     "latest": "Di recente",
-    "nothingYet": "In questo mondo nessuno ha ancora messo nulla per iscritto.",
+    "nothingYet": "Ancora nessuna scoperta.",
     "by": "di {who}"
   }
 }

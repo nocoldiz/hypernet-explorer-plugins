@@ -1007,7 +1007,13 @@
                 this.rewardReading('open');
             } catch (e) {
                 console.error(e);
-                SceneManager.goto(Scene_Map);
+                // A book that cannot be read leaves the way it came in, and
+                // the scene keeps a blank spread to stand on until it has
+                // gone: every frame it still gets reads this._pages.
+                this._pages = ['', ''];
+                this._totalPages = this._pages.length;
+                this._currentPageIndex = 0;
+                SceneManager.pop();
             }
         }
 

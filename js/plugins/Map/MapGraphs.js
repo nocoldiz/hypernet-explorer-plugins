@@ -843,9 +843,11 @@ if (enableMenuCommand) {
         if (hubMapData.events) {
           for (const event of hubMapData.events) {
             if (event && event.name.startsWith("Teleport")) {
-              const destinationName = event.name
+              const destinationKey = event.name
                 .replace(/Teleport\s*-\s*/, "")
                 .trim();
+              const destinationName = window.WorkSystem?.destinationTravelName
+                ? window.WorkSystem.destinationTravelName(destinationKey) : destinationKey;
               const fakeMapId = `teleport_${event.id}`;
               this._mapData.set(fakeMapId, {
                 id: fakeMapId,
@@ -1772,6 +1774,18 @@ if (enableMenuCommand) {
       }
     }
 
+    // Both faces are Bitmaps of the compass's own, and the engine's sprite
+    // teardown leaves a sprite's Bitmap alone: each compass taken down (every
+    // menu opened over the map while it shows) left two canvases and two GPU
+    // textures behind.
+    destroy(options) {
+      const hand = this._handSprite;
+      if (hand && hand.bitmap) hand.bitmap.destroy();
+      if (this.bitmap) this.bitmap.destroy();
+      this._handSprite = null;
+      super.destroy(options);
+    }
+
     update() {
       super.update();
       // Only update if we have target coordinates
@@ -1840,8 +1854,10 @@ if (enableMenuCommand) {
   Scene_Map.prototype.removeCompassSprite = function () {
     if (this._compassSprite) {
       dlog("Removing compass sprite");
-      this.removeChild(this._compassSprite);
+      const compass = this._compassSprite;
+      this.removeChild(compass);
       this._compassSprite = null;
+      compass.destroy();
     }
   };
 

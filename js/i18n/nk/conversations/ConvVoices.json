@@ -1,302 +1,841 @@
 {
   "Nervous": {
     "openers": [
-      "",
-      "",
-      ""
+      "OH NO...",
+      "UM...",
+      "W-WAIT..."
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "...RIGHT?",
+      "ME-ME HOPE.",
+      "NO QUOTE ME ON DAT."
+    ],
+    "favors": [
+      "WORRY",
+      "WORRIED",
+      "CAREFUL",
+      "MAYBE",
+      "MAYBE-MAYBE",
+      "RISKY",
+      "AFRAID",
+      "SCARED",
+      "UNSURE",
+      "TROUBLE",
+      "NERVOUS",
+      "HOPE",
+      "DANGER"
+    ],
+    "avoids": [
+      "OBVIOUSLY",
+      "CERTAINLY",
+      "EASY",
+      "FEARLESS",
+      "BOLD",
+      "SIMPLE",
+      "FINE",
+      "CALM"
     ]
   },
   "Calm": {
     "openers": [
-      "",
-      "",
-      ""
+      "MM.",
+      "STEADY NOW.",
+      "AS ME SEE IT,"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "NO NEED TA RUSH.",
+      "ALL IN GOOD TIME.",
+      "BREATHE."
+    ],
+    "favors": [
+      "STEADY",
+      "QUIET",
+      "GENTLY",
+      "PATIENT",
+      "SLOWLY",
+      "SETTLED",
+      "FINE",
+      "CALM",
+      "EASY",
+      "BALANCE",
+      "STILL"
+    ],
+    "avoids": [
+      "PANIC",
+      "FRANTIC",
+      "SCREAMIN'",
+      "FURIOUS",
+      "CHAOS",
+      "DISASTER",
+      "HURRY",
+      "DESPERATE"
     ]
   },
   "Aggressive": {
     "openers": [
-      "",
-      "",
-      ""
+      "LISTEN UP.",
+      "TCH.",
+      "ME WILL SAY DIS ONCE:"
     ],
     "closers": [
+      "GOT A PROBLEM WIT DAT?",
+      "DEAL WIT IT.",
+      "END OF STORY."
+    ],
+    "favors": [
+      "FIGHT",
+      "SMASH",
+      "IDIOT",
+      "FISTS",
+      "HARD",
+      "BLOOD",
+      "PUNCH",
+      "TEETH",
+      "ANGRY",
+      "TOUGH",
+      "BREAK",
+      "DAMN"
+    ],
+    "avoids": [
+      "GENTLY",
+      "KINDLY",
+      "SWEET",
+      "POLITE",
+      "DELICATE",
+      "SOFTLY",
       "",
-      "",
-      ""
+      "TENDER"
     ]
   },
   "Melancholic": {
     "openers": [
-      "",
-      "",
-      ""
+      "*SIGHS*",
+      "IF IT MATTERS...",
+      "FOR WHAT LIL' IT IZ WORTH,"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "NO DAT ANYONE LISTENS.",
+      "IT ALL FADES ANYWAY.",
+      "...LIKE EVERYTINK ELSE."
+    ],
+    "favors": [
+      "FADES",
+      "GONE",
+      "SAD",
+      "EMPTY",
+      "GREY",
+      "LOST",
+      "RAIN",
+      "ALONE",
+      "ASHES",
+      "FORGOTTEN",
+      "TIRED",
+      "WEIGHT",
+      "GRIM",
+      "BLEAK"
+    ],
+    "avoids": [
+      "WONDERFUL",
+      "THRILLED",
+      "BRIGHT",
+      "DELIGHTED",
+      "JOYFUL",
+      "LUCKY",
+      "CHEERFUL"
     ]
   },
   "Sanguine": {
     "openers": [
-      "",
-      "",
-      ""
+      "OH, LOVELY,",
+      "YOU KNOW WHAT?",
+      "HA!"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "NO IZ DAT GREAT?",
+      "WHAT A DAY!",
+      "TINKZ IZ LOOKIN' UP!"
+    ],
+    "favors": [
+      "LOVELY",
+      "WONDERFUL",
+      "BRIGHT",
+      "LAUGH",
+      "WARM",
+      "GREAT",
+      "CHEERFUL",
+      "GOOD",
+      "FUN",
+      "SUNNY",
+      "DELIGHTFUL"
+    ],
+    "avoids": [
+      "GRIM",
+      "HOPELESS",
+      "ROT",
+      "DREAD",
+      "MISERABLE",
+      "DOOMED",
+      "BLEAK"
     ]
   },
   "Cautious": {
     "openers": [
-      "",
-      "",
-      ""
+      "LETZ NO BE HASTY,",
+      "CAREFUL, NOW.",
+      "BEFORE ANYTINK ELSE:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "BEST TA BE SURE.",
+      "MEASURE TWICE.",
+      "ONE NO CAN BE TOO CAREFUL!"
+    ],
+    "favors": [
+      "CAREFUL",
+      "MEASURE",
+      "CHECK",
+      "SLOWLY",
+      "SAFE",
+      "PREPARED",
+      "PERHAPS",
+      "RISK",
+      "SURE",
+      "TWICE",
+      "PRUDENT"
+    ],
+    "avoids": [
+      "RECKLESS",
+      "GAMBLE",
+      "DIVE",
+      "INSTANTLY",
+      "WHATEVER",
+      "BLINDLY",
+      "HURRY"
     ]
   },
   "Impulsive": {
     "openers": [
-      "",
-      "",
-      ""
+      "OKAY OKAY OKAY,",
+      "RIGHT, NEW PLAN:",
+      "FORGET IT,"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "LETZ JUST DO IT!",
+      "NO TIME TA WASTE!",
+      "DECIDED!"
+    ],
+    "favors": [
+      "NOW",
+      "INSTANTLY",
+      "JUST",
+      "QUICK",
+      "SUDDENLY",
+      "JUMP",
+      "FAST",
+      "ALREADY",
+      "TODAY"
+    ],
+    "avoids": [
+      "PATIENT",
+      "EVENTUALLY",
+      "CAREFULLY",
+      "GRADUALLY",
+      "WAIT",
+      "MEASURED",
+      "SLOWLY"
     ]
   },
   "Stoic": {
     "openers": [
-      "",
-      "",
-      ""
+      "SO BE IT.",
+      "NOTED.",
+      "IT IZ SIMPLE:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "NUTTIN' MORE TA SAY.",
+      "IT CHANGES NUTTIN'.",
+      "WE ENDURE."
+    ],
+    "favors": [
+      "ENDURE",
+      "BEAR",
+      "DUTY",
+      "STONE",
+      "SIMPLY",
+      "MATTER",
+      "HOLD",
+      "MUST",
+      "FACT",
+      "WEATHER"
+    ],
+    "avoids": [
+      "WHININ'",
+      "COMPLAIN",
+      "CRYIN'",
+      "FUSS",
+      "DRAMA",
+      "DELIGHTFUL",
+      "THRILLED"
     ]
   },
   "Paranoid": {
     "openers": [
-      "",
-      "",
-      ""
+      "KEEP YA VOICE DOWN,",
+      "NO LOOK NOW, BUT",
+      "BETWEEN US:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "YOU NO HEAR IT FROM ME.",
+      "SOMEONE'S LISTENIN'. ALWAYS!",
+      "TRUST NO ONE."
+    ],
+    "favors": [
+      "WATCHIN'",
+      "LISTENIN'",
+      "DEY",
+      "SPIES",
+      "SECRET",
+      "BEHIND",
+      "CAREFUL",
+      "TRAP",
+      "MARKED",
+      "EYES",
+      "PLOT"
+    ],
+    "avoids": [
+      "HARMLESS",
+      "COINCIDENCE",
+      "TRUST",
+      "INNOCENT",
+      "SAFE",
+      "OPENLY",
+      "FRIENDLY"
     ]
   },
   "Empathetic": {
     "openers": [
-      "",
-      "",
-      ""
+      "OH, DEAR HEART,",
+      "ME FEEL IT TOO,",
+      "TELL ME HONESTLY:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "IZ YOU HOLDIN' UP ALRIGHT?",
+      "ME IZ HERE, YOU KNOW.",
+      "WE WILL GET THROUGH IT TOGETHER!"
+    ],
+    "favors": [
+      "FEEL",
+      "HEART",
+      "GENTLE",
+      "TOGETHER",
+      "KIND",
+      "HURT",
+      "HOLD",
+      "WARM",
+      "UNDERSTAND",
+      "TEARS",
+      "DEAR"
+    ],
+    "avoids": [
+      "DESERVED",
+      "WEAK",
+      "PATHETIC",
+      "STUPID",
+      "ALONE",
+      "RUTHLESS",
+      "COLD"
     ]
   },
   "Authoritative": {
     "openers": [
-      "",
-      "",
-      ""
+      "PAY ATTENTION.",
+      "MARK ME WORDS:",
+      "AS ME HAB SAID BEFORE:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "DAT IZ AN ORDER.",
+      "SEE IT DONE.",
+      "NO ARGUMENTS."
+    ],
+    "favors": [
+      "ORDER",
+      "MUST",
+      "COMMAND",
+      "RULES",
+      "PROPER",
+      "DISCIPLINE",
+      "AUTHORITY",
+      "STAND",
+      "LAW",
+      "CLEAR"
+    ],
+    "avoids": [
+      "MAYBE",
+      "WHATEVER",
+      "GUESS",
+      "PERHAPS",
+      "CHAOS",
+      "SLOPPY",
+      "SHRUG"
     ]
   },
   "Scholarly": {
     "openers": [
-      "",
-      "",
-      ""
+      "FASCINATIN',",
+      "CONSIDER DIS:",
+      "IF ME READIN' IZ RIGHT,"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "WORTH A FOOTNOTE, AT LEAST!",
+      "DA EVIDENCE SPEAKS.",
+      "ME SHOULD WRITE DIS DOWN."
+    ],
+    "favors": [
+      "STUDY",
+      "EVIDENCE",
+      "PRECISELY",
+      "OBSERVE",
+      "THEORY",
+      "RECORD",
+      "INTERESTIN'",
+      "READIN'",
+      "MEASURED",
+      "HISTORY",
+      "PATTERN"
+    ],
+    "avoids": [
+      "NONSENSE",
+      "WHATEVER",
+      "DUNNO",
+      "GUESS",
+      "SUPERSTITION",
+      "RUBBISH"
     ]
   },
   "Artistic": {
     "openers": [
-      "",
-      "",
-      ""
+      "OH, BUT LOOK,",
+      "DERE IZ A POEM IN DIS:",
+      "PICTURE IT:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "ALMOST BEAUTIFUL, NO IZ IT?",
+      "DA MUSE WORKS IN STRANGE WAYS!",
+      "ME MUST SKETCH DIS LATER."
+    ],
+    "favors": [
+      "COLOUR",
+      "LIGHT",
+      "BEAUTIFUL",
+      "SONG",
+      "SHAPE",
+      "STRANGE",
+      "PAINT",
+      "DREAM",
+      "RHYTHM",
+      "SHADOW",
+      "GOLD"
+    ],
+    "avoids": [
+      "DULL",
+      "PRACTICAL",
+      "NUMBERS",
+      "GRIMORIE",
+      "EFFICIENT",
+      "BORIN'",
+      "GREY"
     ]
   },
   "Adventurous": {
     "openers": [
-      "",
-      "",
-      ""
+      "NOW WE IZ TALKIN'!",
+      "PICTURE DA OPEN ROAD,",
+      "WORD FROM DA ROAD:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "WHAT IZ LIFE WITOUT A LIL' RISK?",
+      "ONWARD!",
+      "BEATS SITTIN' STILL!"
+    ],
+    "favors": [
+      "ROAD",
+      "FAR",
+      "HORIZON",
+      "CLIMB",
+      "NEW",
+      "WILD",
+      "TRAVEL",
+      "OUT",
+      "NORTH",
+      "DANGER",
+      "SEE"
+    ],
+    "avoids": [
+      "HOME",
+      "SETTLED",
+      "ROUTINE",
+      "INDOORS",
+      "STAY",
+      "COMFORTABLE",
+      "DULL"
     ]
   },
   "Nurturing": {
     "openers": [
-      "",
-      "",
-      ""
+      "COME HERE, LISTEN,",
+      "BLESS YOU,",
+      "NOW, SWEETHEART,"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "HAB YOU EATEN TODAY?",
+      "WRAP UP WARM, NO WILL YOU?",
+      "LET ME KNOW IF YOU NEED ANYTINK!"
+    ],
+    "favors": [
+      "FEED",
+      "WARM",
+      "CHILD",
+      "SOUP",
+      "CAREFUL",
+      "REST",
+      "HOME",
+      "HANDS",
+      "GENTLE",
+      "MEND"
+    ],
+    "avoids": [
+      "CRUEL",
+      "ABANDON",
+      "COLD",
+      "HARSH",
+      "ALONE",
+      "FEND",
+      "NEGLECT"
     ]
   },
   "Mischievous": {
     "openers": [
-      "",
-      "",
-      ""
+      "HEH.",
+      "PROMISE YOU NO WILL TELL?",
+      "OH, DIS IZ GOOD,"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "*GRINS*",
+      "NO ASK HOW ME KNOW.",
+      "DIS'LL BE FUN."
+    ],
+    "favors": [
+      "TRICK",
+      "FUNNY",
+      "SNEAK",
+      "WINK",
+      "TROUBLE",
+      "JOKE",
+      "PINCH",
+      "LAUGH",
+      "GRIN",
+      "CLEVER"
+    ],
+    "avoids": [
+      "PROPER",
+      "OBEDIENT",
+      "SERIOUS",
+      "SOLEMN",
+      "HONEST",
+      "RULES",
+      "DUTIFUL"
     ]
   },
   "Cynical": {
     "openers": [
-      "",
-      "",
-      ""
+      "OH, SURE.",
+      "LET ME GUESS,",
+      "SHOCKIN', TRULY:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "WHAT DID YOU EXPECT?",
+      "SAME OLD STORY.",
+      "COLOR ME SURPRISED."
+    ],
+    "favors": [
+      "TYPICAL",
+      "MONEY",
+      "LIES",
+      "NATURALLY",
+      "PRETEND",
+      "FOOLS",
+      "AGAIN",
+      "SOLD",
+      "EXCUSE"
+    ],
+    "avoids": [
+      "HONEST",
+      "HOPEFUL",
+      "NOBLE",
+      "PURE",
+      "GENUINE",
+      "TRUST",
+      "SINCERE"
     ]
   },
   "Disciplined": {
     "openers": [
-      "",
-      "",
-      ""
+      "STATUS:",
+      "ON SCHEDULE:",
+      "ITEM ONE:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "BACK TA WORK.",
+      "NO EXCEPTIONS.",
+      "AS PER DA ROUTINE."
+    ],
+    "favors": [
+      "ROUTINE",
+      "SCHEDULE",
+      "TRAININ'",
+      "DRILL",
+      "EXACT",
+      "EARLY",
+      "DONE",
+      "ORDER",
+      "HABIT",
+      "PRECISE"
+    ],
+    "avoids": [
+      "LAZY",
+      "WHENEVER",
+      "SLOPPY",
+      "DRIFT",
+      "IDLE",
+      "EXCUSE",
+      "LATE"
     ]
   },
   "Fatalistic": {
     "openers": [
-      "",
-      "",
-      ""
+      "IT WAZ WRITTEN:",
+      "AS FATE WOULD HAB IT,",
+      "INEVITABLY,"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "IT WAZ ALWAYS GOING TA END DIS WAY!",
+      "DA THREAD IZ ALREADY SPUN!",
+      "WHAT WILL BE, WILL BE."
+    ],
+    "favors": [
+      "FATE",
+      "WRITTEN",
+      "ANYWAY",
+      "END",
+      "INEVITABLE",
+      "SOONER",
+      "DUST",
+      "ALREADY",
+      "DESTINED",
+      "COMES"
+    ],
+    "avoids": [
+      "CHANGE",
+      "CHOOSE",
+      "AVOID",
+      "PREVENT",
+      "HOPE",
+      "CONTROL",
+      "ESCAPE"
     ]
   },
   "Grumpy": {
     "openers": [
-      "",
-      "",
-      ""
+      "UGH.",
+      "OH, WONDERFUL.",
+      "YOU WANT ME OPINION?"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "NOW LEAVE ME BE.",
+      "TYPICAL.",
+      "BAH."
+    ],
+    "favors": [
+      "BAH",
+      "AGAIN",
+      "NOISE",
+      "WASTE",
+      "TYPICAL",
+      "BACKACHE",
+      "COMPLAIN",
+      "YOUNGER",
+      "CHEAPER",
+      "HMPH",
+      "NONSENSE",
+      "GRIM",
+      "MISERABLE"
+    ],
+    "avoids": [
+      "LOVELY",
+      "DELIGHTED",
+      "WONDERFUL",
+      "CHARMIN'",
+      "GRATEFUL",
+      "SWEET"
     ]
   },
   "Loyal": {
     "openers": [
-      "",
-      "",
-      ""
+      "ON ME HONOR,",
+      "MATE,",
+      "YOU CAN COUNT ON DIS:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "ME KEEP ME WORD.",
+      "FOR ME MATES, ALWAYS.",
+      "YOU HAB ME WORD ON IT."
+    ],
+    "favors": [
+      "OURS",
+      "MATE",
+      "STAND",
+      "PROMISE",
+      "SIDE",
+      "TOGETHER",
+      "WORD",
+      "OWE",
+      "TRUST"
+    ],
+    "avoids": [
+      "BETRAY",
+      "ABANDON",
+      "ALONE",
+      "DOUBT",
+      "TURN",
+      "DESERT"
     ]
   },
   "Brave": {
     "openers": [
-      "",
-      "",
-      ""
+      "FEAR NO,",
+      "HERE IZ DA TRUTH:",
+      "CHIN UP,"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "WE FACE IT HEAD-ON.",
+      "NO RETREAT.",
+      "COURAGE, MATE."
+    ],
+    "favors": [
+      "FACE",
+      "STAND",
+      "FORWARD",
+      "FEAR",
+      "DARE",
+      "STRONG",
+      "FIRST",
+      "RISK",
+      "CHEST"
+    ],
+    "avoids": [
+      "HIDE",
+      "FLEE",
+      "COWER",
+      "SCARED",
+      "BEHIND",
+      "TREMBLE",
+      "RETREAT"
     ]
   },
   "Timid": {
     "openers": [
-      "",
-      "",
-      ""
+      "S-SORRY, BUT...",
+      "IF IT IZ OKAY TA SAY...",
+      "NO MIND ME, BUT"
     ],
     "closers": [
-      "",
-      "",
+      "...IF DAT IZ ALRIGHT.",
+      "SORRY. SORRY.",
+      "ME WILL BE QUIET NOW."
+    ],
+    "favors": [
+      "SORRY",
+      "MAYBE",
+      "QUIETLY",
+      "LIL'",
+      "EXCUSE",
+      "HOPE",
+      "BARELY",
+      "HIDE",
       ""
+    ],
+    "avoids": [
+      "DEMAND",
+      "LOUD",
+      "SHOUT",
+      "CONFIDENT",
+      "BOLDLY",
+      "NEVER",
+      "INSIST"
     ]
   },
   "Hedonistic": {
     "openers": [
-      "",
-      "",
-      ""
+      "MMM, YOU KNOW,",
+      "LIFE'S SHORT,",
+      "POUR ME ANOTHER AN' LISTEN:"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "NOW, WHERE'S DA FUN GONE?",
+      "CHEERS TA DAT.",
+      "BACK TA ME COMFORTS."
+    ],
+    "favors": [
+      "WINE",
+      "TASTE",
+      "PLEASURE",
+      "WARM",
+      "TONIGHT",
+      "ENJOY",
+      "SWEET",
+      "FINE",
+      "SOFT",
+      "MORE"
+    ],
+    "avoids": [
+      "DUTY",
+      "DISCIPLINE",
+      "DENIAL",
+      "WORK",
+      "ABSTAIN",
+      "VIRTUE",
+      "FASTIN'"
     ]
   },
   "Apathetic": {
     "openers": [
-      "",
-      "",
-      ""
+      "EH.",
+      "IF YOU SAY SO.",
+      "NO DAT IT MATTERS, BUT"
     ],
     "closers": [
-      "",
-      "",
-      ""
+      "OR WHATEVER.",
+      "WHO CARES.",
+      "ANYWAY."
+    ],
+    "favors": [
+      "WHATEVER",
+      "FINE",
+      "SUPPOSE",
+      "MATTER",
+      "SHRUG",
+      "ANYWAY",
+      "CARE",
+      "SAME",
+      "MEH"
+    ],
+    "avoids": [
+      "URGENT",
+      "PASSION",
+      "MUST",
+      "THRILLIN'",
+      "DESPERATE",
+      "GLORIOUS",
+      "FIGHT"
     ]
   }
 }

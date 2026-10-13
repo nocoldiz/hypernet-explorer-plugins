@@ -2,11 +2,11 @@
   "no3d": "3D SYSTEM UNAVAILABLE",
   "badCast": "BAD CAST",
   "lineSnapped": "LINE SNAPPED",
-  "nothingBiting": "NOTHIN' BITIN'",
+  "nothingBiting": "NUTTIN' BITIN'",
   "tooSlow": "TOO SLOW",
   "freeCamOn": "FREE CAMERA",
   "freeCamOff": "ANGLER CAMERA",
-  "something": "SOMETHIN'",
+  "something": "SOMETINK",
   "hint": {
     "loading": "LOADIN' DA LAKE...",
     "no3d": "3D SYSTEM UNAVAILABLE",
@@ -45,5 +45,22 @@
     "18": "PUFFERFISH",
     "19": "JELLYFISH",
     "20": "KRAKEN"
+  },
+  "hud": {
+    "bite": "BITE",
+    "depth": "DEPTH {n}M",
+    "onLand": "ON LAND!",
+    "cast": "CAST {n}M",
+    "water": "WATER {n}M",
+    "powerMetres": "POWER {n}M",
+    "line": "LINE",
+    "snap": "SNAP!",
+    "good": "GOOD",
+    "slack": "SLACK",
+    "dist": "DIST",
+    "fish": "FISH",
+    "weightAt": "{kg}KG AT {depth}M",
+    "upFrom": "UP FROM {depth}M",
+    "notLettingGo": "IT IZ NO LETTIN' GO"
   }
 }

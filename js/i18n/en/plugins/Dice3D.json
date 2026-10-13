@@ -22,12 +22,12 @@
   },
   "prompt": {
     "title": "Trial of {stat}",
-    "titleFlat": "A Turn of Fortune",
-    "who": "{name} steps up",
+    "titleFlat": "Luck Check",
+    "who": "{name} rolls",
     "target": "{dc} or better",
     "formula": "d20 {mod} {stat}",
-    "formulaFlat": "d20, and nothing else",
+    "formulaFlat": "d20 only",
     "try": "Try it",
-    "cancel": "Walk away"
+    "cancel": "Cancel"
   }
 }

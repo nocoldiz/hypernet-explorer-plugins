@@ -29,30 +29,48 @@
       "unarmed": "2 mani libere"
     }
   },
+  "ammo": {
+    "label": "Munizioni",
+    "roundOne": "1 colpo",
+    "rounds": "{n} colpi",
+    "all": "L'intero caricatore",
+    "reload": "Ricarica il caricatore",
+    "whip": "Nessun costo in AP a caricatore vuoto",
+    "dry": "Servono {need} colpi in canna, ne restano {have}",
+    "dryOne": "Serve un colpo in canna, il caricatore è vuoto",
+    "full": "Il caricatore è già pieno",
+    "noMagazine": "Quest'arma non ha un caricatore da ricaricare",
+    "chip": {
+      "dry": "Senza colpi",
+      "full": "Caricatore pieno",
+      "noMagazine": "Niente caricatore"
+    }
+  },
   "discipline": {
     "basic": "Disciplina di base",
     "standard": "Disciplina ordinaria"
   },
   "section": {
     "info": "Info",
-    "incantation": "Incantesimo",
+    "incantation": "Formula",
     "damage": "Danno",
     "skillEffects": "Effetti dell'abilità",
     "classifications": "Classificazioni",
-    "training": "Addestramento"
+    "training": "Addestramento",
+    "special": "Speciale"
   },
   "role": {
     "offensive": {
       "name": "Offensiva",
-      "description": "Abilità che infliggono danni.\nAbbatti i tuoi nemici."
+      "description": "Abilità che infliggono danni."
     },
     "healing": {
       "name": "Guarigione",
-      "description": "Cura HP e disturbi.\nRistora te stesso e gli alleati."
+      "description": "Ripristina HP e cura le alterazioni."
     },
     "support": {
       "name": "Supporto",
-      "description": "Potenziamenti, indebolimenti e utilità.\nCambia le sorti della battaglia."
+      "description": "Potenziamenti, indebolimenti e utilità."
     }
   },
   "cmd": {
@@ -93,8 +111,8 @@
     "allCompanions": "Tutti i compagni"
   },
   "empty": {
-    "title": "Codicillo del Grimorio",
-    "hint": "Seleziona un'abilita dalla lista a sinistra per vederne elemento, costo ed effetti.",
+    "title": "Codicillo del grimorio",
+    "hint": "Seleziona un'abilità per vederne i dettagli.",
     "section": "[Vuoto]",
     "category": "[Vuoto]"
   },
@@ -106,11 +124,9 @@
     "label": {
       "damageCategory": "Classe di danno",
       "statReq": "Richiede",
-      "statHeld": "Base posseduta",
       "grantedBy": "Concessa da",
       "damage": "Danno",
-      "range": "Gittata",
-      "statCounts": "Cosa conta"
+      "range": "Gittata"
     },
     "range": {
       "tiles": {
@@ -134,13 +150,13 @@
     "random": "Casuali",
     "bestApplied": "Sincronizzate le {n} abilità più utili.",
     "randomApplied": "Sincronizzate {n} abilità casuali.",
-    "statLocked": "{name} richiede {stat} base; qui ce ne sono {value}."
+    "statLocked": "{name} richiede {stat} base; il personaggio ha {value}."
   },
   "tag": {
     "field": "Campo"
   },
   "magicSystem": {
-    "label": "Sistema Magico",
+    "label": "Sistema magico",
     "Arcane": "Arcano",
     "Sacred": "Sacro",
     "Sympathetic": "Simpatetico",
@@ -149,7 +165,7 @@
     "Technomagic": "Tecnomagia",
     "Pataphysic": "Patafisica",
     "Natural": "Naturale",
-    "Thermodynamics": "Termodinamico",
+    "Thermodynamics": "Termodinamica",
     "Ritual": "Rituale"
   },
   "searchPlaceholder": "Cerca abilità…",
@@ -175,11 +191,11 @@
         },
         "loadout": {
           "name": "Abilità sincronizzate",
-          "text": "Le nove abilità portate in battaglia. Solo queste si possono usare in combattimento; Migliori e Casuali riempiono la barra per te."
+          "text": "Le nove abilità usabili in battaglia. Migliori e Casuali riempiono la barra per te."
         },
         "sync": {
-          "name": "Sincronizza e Desincronizza",
-          "text": "Sincronizza mette l'abilità selezionata nella barra, Desincronizza la toglie. Alcune abilità sono sempre portate e non occupano spazio."
+          "name": "Sincronizza e desincronizza",
+          "text": "Sincronizza mette l'abilità selezionata nella barra, Desincronizza la toglie. Alcune abilità sono sempre sincronizzate e non occupano slot."
         },
         "card": {
           "name": "Scheda abilità",
@@ -200,7 +216,7 @@
       "items": {
         "list": {
           "name": "Abilità",
-          "text": "Le abilità che questo personaggio porta in battaglia. Scegline una per lanciarla."
+          "text": "Le abilità sincronizzate del personaggio. Scegline una per lanciarla."
         },
         "cost": {
           "name": "Costo",
@@ -212,7 +228,7 @@
         },
         "target": {
           "name": "Bersaglio",
-          "text": "Un'abilità rivolta a un alleato chiede su chi cade dopo averla scelta."
+          "text": "Le abilità sugli alleati chiedono un bersaglio dopo averle scelte."
         },
         "help": {
           "name": "? Aiuto",
@@ -220,5 +236,139 @@
         }
       }
     }
+  },
+  "special": {
+    "mcLoop": "Fa ripetere al nemico la sua ultima azione per 1-3 turni",
+    "mcSeal": "Sigilla l'ultima abilità del nemico",
+    "mcRebound": "Rispedisce la prossima abilità nemica a chi l'ha lanciata",
+    "mcPuppet": "Chi la usa sceglie la prossima mossa del nemico, rivolta contro i suoi",
+    "mcTurncoat": "Rivolge la prossima azione del nemico contro i suoi",
+    "mcEcho": "La prossima abilità di chi la usa parte due volte, la seconda gratis",
+    "mcMindRead": "Svela la prossima azione del nemico e lo vincola a essa",
+    "reaction": {
+      "generic": "Innesca {state} su un nemico",
+      "Electrocute": "Paralizza un nemico Bagnato e lo asciuga",
+      "FlashFreeze": "Può congelare un nemico Bagnato",
+      "Ignite": "Rende Bruciato un nemico Oleoso, e salta sui vicini unti",
+      "Shatter": "Frantuma un nemico Congelato o Fragile per il 50-60% di danno in più",
+      "Thaw": "Scioglie un nemico Congelato lasciandolo Bagnato, e la brina di uno Fragile",
+      "Steam": "Muta l'aura di un nemico Caldo in vapore accecante",
+      "Extinguish": "Spegne un nemico Bruciato",
+      "Fanned": "Attizza le fiamme di un nemico Bruciato sui vicini",
+      "Fumes": "Fa evaporare il veleno di un nemico Avvelenato in fumi di Nausea",
+      "Detonate": "Fa detonare un nemico Volatile per il doppio del danno",
+      "Spark": "Innesca un nemico Volatile per il 50% di danno in più"
+    },
+    "lifeLinkAllies": "Lega il Party: i danni agli HP sono divisi in parti uguali",
+    "lifeLinkFoes": "Lega i nemici: un colpo su uno si sparge sugli altri",
+    "guardianSelf": "Chi la usa subisce metà dei danni agli HP di ogni alleato",
+    "guardian": "Subisce metà dei danni agli HP di ogni alleato",
+    "aimedTargetPart": "Mira a: {part}",
+    "aimedPartOr": " o ",
+    "aimedAimable": "Scegli con la Mira la parte del corpo da colpire",
+    "aimedAimRider": "Parte colpita ({part}): {state}",
+    "aimedPart": {"head": "testa", "eye": "occhio", "neck": "collo", "heart": "cuore", "hand": "mano", "arm": "braccio", "foot": "piede", "leg": "gamba", "wing": "ala", "tail": "coda", "torso": "busto", "vital": "organi vitali"},
+    "spendsState": "Consuma {state} dell'utilizzatore",
+    "buildsStack": "Aggiunge {count} a {stack} (max {max})",
+    "buildsStackOnKill": "Ogni nemico abbattuto aggiunge 1 a {stack} (max {max})",
+    "spendsStacks": "Consuma tutta la riserva di {stack}",
+    "scalesWithStacks": "Più forte con più {stack}",
+    "expireDamage": "{state} giunge a scadenza dopo {turns} turni e colpisce chi la porta",
+    "expireDamageArea": "{state} esplode dopo {turns} turni: colpisce chi la porta e tutti i suoi alleati",
+    "expireHeal": "{state} cura chi la porta quando finisce, dopo {turns} turni",
+    "expireSkill": "{state} lancia {skill} su chi la porta quando finisce, dopo {turns} turni",
+    "expireSkillArea": "{state} lancia {skill} su tutto lo schieramento di chi la porta quando finisce, dopo {turns} turni",
+    "ammoCostOne": "Spende 1 colpo; deve essere in canna",
+    "ammoCost": "Spende {n} colpi; devono essere in canna",
+    "ammoAll": "Svuota il caricatore: un colpo per ogni proiettile speso",
+    "ammoReload": "Ricarica il caricatore; non se è pieno",
+    "ammoWhip": "Gratis a caricatore vuoto",
+    "selfState": "Conferisce {state} a chi la usa",
+    "bulletHell": "Lanciata da un nemico: avvia una schivata, il danno cresce coi colpi presi",
+    "psiDodge": "Avvia una schivata guidata da chi la usa",
+    "slowsDodge": "Rallenta la trama di proiettili",
+    "shrinksHitbox": "Rimpicciolisce il velivolo nella schivata",
+    "selfStateChance": "{chance}% di probabilità di dare {state} a chi la usa",
+    "drainRate": "Cura chi la usa del {pct}% del danno",
+    "drainMp": "Ruba MP pari al {pct}% del danno",
+    "oncePerDay": "Una volta al giorno",
+    "hpCost": "Costa {amount} degli HP di chi la usa",
+    "bonusVsState": "Più forte contro un nemico con {state}",
+    "bonusWhileState": "Più forte mentre chi la usa ha {state}",
+    "bonusVsWounded": "Più forte contro un nemico ferito",
+    "bonusWhileWounded": "Più forte quanto più chi la usa è ferito",
+    "scalesWithAp": "Cresce con gli AP di chi la usa",
+    "usesTargetPower": "Rivolge la forza del bersaglio contro di lui",
+    "ignoresDefence": "Ignora la difesa",
+    "stance": "{state}: ogni colpo diventa {type}",
+    "drill": "{state}: alza la competenza con l'arma",
+    "actionFail": "{state}: il nemico può inciampare ({pct}%)",
+    "taunt": "Provoca il nemico ad attaccare chi la usa"
+  },
+  "specialName": {
+    "mcLoop": "Ciclo",
+    "mcSeal": "Sigillo",
+    "mcRebound": "Rimbalzo",
+    "mcPuppet": "Marionetta",
+    "mcTurncoat": "Voltagabbana",
+    "mcEcho": "Eco",
+    "mcMindRead": "Lettura mentale",
+    "reaction": {
+      "generic": "Reazione",
+      "Electrocute": "Folgorazione",
+      "FlashFreeze": "Congelamento lampo",
+      "Ignite": "Innesco",
+      "Shatter": "Frantumazione",
+      "Thaw": "Disgelo",
+      "Steam": "Vapore",
+      "Extinguish": "Spegnimento",
+      "Fanned": "Attizzare",
+      "Fumes": "Esalazioni",
+      "Detonate": "Detonazione",
+      "Spark": "Scintilla"
+    },
+    "lifeLinkAllies": "Legame vitale",
+    "lifeLinkFoes": "Legame vitale",
+    "guardianSelf": "Guardiano",
+    "guardian": "Guardiano",
+    "spendsState": "Consuma {state}",
+    "buildsStack": "+{count} {stack}",
+    "buildsStackOnKill": "{stack} per uccisione",
+    "spendsStacks": "Consuma {stack}",
+    "scalesWithStacks": "Cresce con {stack}",
+    "aimedTargetPart": "Mirato",
+    "aimedAimable": "Puntabile",
+    "aimedAimRider": "Colpo invalidante",
+    "expireDamage": "Colpo ritardato",
+    "expireDamageArea": "Esplosione ritardata",
+    "expireHeal": "Cura ritardata",
+    "expireSkill": "Lancio ritardato",
+    "expireSkillArea": "Ondata ritardata",
+    "ammoCostOne": "1 colpo",
+    "ammoCost": "{n} colpi",
+    "ammoAll": "Svuota caricatore",
+    "ammoReload": "Ricarica",
+    "ammoWhip": "Calcio di pistola",
+    "selfState": "Su di sé: {state}",
+    "selfStateChance": "Su di sé: {state}",
+    "bulletHell": "Bullet hell",
+    "psiDodge": "Schivata psi",
+    "slowsDodge": "Rallentamento",
+    "shrinksHitbox": "Bersaglio ridotto",
+    "drainRate": "Furto vitale",
+    "drainMp": "Furto di mana",
+    "oncePerDay": "Giornaliera",
+    "hpCost": "Prezzo di sangue",
+    "bonusVsState": "Sfrutta {state}",
+    "bonusWhileState": "Potenziata da {state}",
+    "bonusVsWounded": "Carnefice",
+    "bonusWhileWounded": "Disperazione",
+    "scalesWithAp": "Cresce con gli AP",
+    "usesTargetPower": "Rovescio",
+    "ignoresDefence": "Perforante",
+    "stance": "Postura: {type}",
+    "drill": "Addestramento",
+    "actionFail": "Inciampo",
+    "taunt": "Provocazione"
   }
 }

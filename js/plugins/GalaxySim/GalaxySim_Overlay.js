@@ -559,7 +559,7 @@
     setHomeSystem(name) {
       if (!this.els.homeBtn || name === this._homeName) return;
       this._homeName = name;
-      this.els.homeBtn.textContent = name || "Home";
+      this.els.homeBtn.textContent = name || T('Galaxy.hud.home');
       window.UIPanel.toggle(this.els.homeBtn, !!name);
       this._invalidateFocusables();
     }
@@ -650,6 +650,12 @@
             ? `<span class="gx-btn gx-land focusable" tabindex="0" data-action="cat-course" ` +
               `data-target="${esc(it.id)}" title="${T('Galaxy.hud.plotACourseToThis')}">` +
               `${T('Galaxy.hud.setCourse')}</span>`
+            : "") +
+          // The world the ship orbits, when it has factions to trade with
+          // (GalaxySim_PizzaDelivery.js sets the flag and answers the button).
+          (it.trade
+            ? `<span class="gx-btn gx-trade focusable" tabindex="0" data-action="cat-trade" ` +
+              `data-target="${esc(it.id)}">${T('PizzaDelivery.tradeButton')}</span>`
             : "") +
           `</div>`).join("");
         return `<div class="gx-cat-group">` +
@@ -1286,14 +1292,17 @@
       // place of Land Here, which has nothing to generate there.
       const port = (GS && GS.spaceportAtCell)
         ? GS.spaceportAtCell(lg.planet, lg.cursor.gx, lg.cursor.gy) : null;
+      // Only a hand-drawn pad replaces Land Here: a colony is generated
+      // ground, and Land Here is what builds the town (GalaxySim isAuthoredPort).
+      const pad = !!(port && GS.isAuthoredPort && GS.isAuthoredPort(port));
       Array.prototype.slice.call(el.querySelectorAll('[data-action="landing-go"]'))
         .forEach((b) => {
           const mode = b.getAttribute('data-mode');
           const ground = mode !== 'flyby';
           const isPort = mode === 'port-foot' || mode === 'port-ship';
           let hide = surfaceless && ground;
-          if (isPort && !port) hide = true;
-          if (mode === 'land' && port) hide = true;
+          if (isPort && !pad) hide = true;
+          if (mode === 'land' && pad) hide = true;
           b.classList.toggle('ui-closed', hide);
         });
       if (this.els.landingChoiceSub) {

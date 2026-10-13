@@ -44,7 +44,7 @@
   "oomTitle": "Out of Memory",
   "noConnectionTitle": "No Connection",
 
-  "noConnectionMessage": "{name} cannot reach the Hypernet. There is no line out from here.",
+  "noConnectionMessage": "{name} cannot reach the Hypernet from here.",
 
   "noConnectionTray": "No Connection",
 
@@ -72,21 +72,21 @@
   "notRecognized": "'{cmd}' is not recognized as an internal or external command, operable program or batch file.",
   "colosseum": "Hyper Colosseum",
   "colosseumBanner": "HYPER COLOSSEUM",
-  "colosseumTagline": "Random party gauntlet. Select a level bracket.",
+  "colosseumTagline": "Fight with a random party. Pick a level bracket.",
   "partyRestoredNote": "Party restored<br>after run ends.",
   "levelBrackets": "LEVEL BRACKETS",
   "levelBracket": "Level {range}",
   "eligibleVessels": {
-    "one": "{count} eligible vessel in this bracket",
-    "other": "{count} eligible vessels in this bracket"
+    "one": "{count} enemy in this bracket",
+    "other": "{count} enemies in this bracket"
   },
   "randomPartyProtocol": "RANDOM PARTY PROTOCOL",
-  "protoDraft": "3 actors drafted at random from non-active roster",
+  "protoDraft": "3 random members from outside your active party",
   "protoLevel": "Each leveled to bracket midpoint (Lv.&nbsp;{level})",
-  "protoGear": "Gear auto-equipped from tier-appropriate pool",
-  "protoHealing": "Healing items provisioned for the run",
-  "protoWin": "Win 7 battles to advance bracket, lose and it ends",
-  "protoRestore": "Your original party is fully restored after the gauntlet",
+  "protoGear": "Gear equipped to match the bracket",
+  "protoHealing": "Healing items included",
+  "protoWin": "Win 7 battles to move up a bracket; one loss ends the run",
+  "protoRestore": "Your party is restored afterwards",
   "enterColosseum": "ENTER THE COLOSSEUM",
   "colosseumHint": "Select a bracket from the list, then click Enter the Colosseum.",
   "bios": "HyperDeck Setup",
@@ -102,7 +102,7 @@
   "biosDraw": "Draw / supply",
   "biosBoard": "Board occupancy",
   "biosNoDeck": "No deck is attached to this terminal.",
-  "biosNoFaults": "No faults found. Every fitted part answered.",
+  "biosNoFaults": "No faults found.",
   "biosWillBoot": "POST would pass.",
   "biosWillNotBoot": "POST would fail.",
   "biosGraphics": "Graphics",
@@ -1161,14 +1161,14 @@
         "The screen saver starts after the wait set in Display Properties.",
         "Win+L locks the workstation; the welcome screen lists the party.",
         "The Event Viewer writes down everything the machine does.",
-        "Booted from the Hyperdeck, the machine's parts are the ones fitted to the board.",
+        "On the Hyperdeck, the hardware is the parts fitted to its board.",
         "Disk Defragmenter's coloured blocks were the closest thing to a game on most office machines."
       ],
       "topics": {
         "tour": {
           "title": "Take a tour of Archways XP",
           "body": [
-            "Archways XP is the operating system of the Hyperdeck and of every beige desktop of 2001 the party sits at.",
+            "Archways XP runs on the Hyperdeck and on every desktop of 2001.",
             "The Start menu holds every program, filed by heading. The right column has the places you visit most.",
             "Programs open in windows; the taskbar shows each open window, and the tray shows what the machine is up to."
           ]
@@ -1192,8 +1192,8 @@
         "hardware": {
           "title": "The machine you are sitting at",
           "body": [
-            "When the Hyperdeck boots the desktop, the parts fitted to its board are the hardware: memory, processor, adapter, disk, modem and sound card are read off the deck, and System Properties, Device Manager and the Control Panel all agree.",
-            "Reached from anywhere else, the desktop runs on a stock machine of 2001, rolled once per world and kept."
+            "On the Hyperdeck, the hardware is the parts fitted to its board: memory, processor, adapter, disk, modem and sound card.",
+            "Anywhere else, the desktop runs on a stock 2001 machine, fixed per world."
           ]
         },
         "recycle": {
@@ -1445,28 +1445,28 @@
     },
     "allprograms": {
       "appName": "All Programs",
-      "hint": "Every program that is not on the desktop. Drag one onto the desktop to keep it there; drag a desktop shortcut back here, or onto the Recycle Bin, to put it away.",
+      "hint": "Drag a program to the desktop to add it. Drag its shortcut back here to remove it.",
       "empty": "Every program is already on the desktop.",
       "open": "Open",
       "addToDesktop": "Add to Desktop"
     },
     "programs": {
       "appName": "Programs",
-      "hint": "Installed programs that are not on the desktop. Drag one onto the desktop to keep it there; drag a desktop shortcut back here, or onto the Recycle Bin, to put it away.",
+      "hint": "Drag a program to the desktop to add it. Drag its shortcut back here to remove it.",
       "empty": "Every program is already on the desktop.",
       "open": "Open",
       "addToDesktop": "Add to Desktop"
     },
     "games": {
       "appName": "Games",
-      "hint": "Installed games that are not on the desktop. Drag one onto the desktop to keep it there; drag a desktop shortcut back here, or onto the Recycle Bin, to put it away.",
+      "hint": "Drag a game to the desktop to add it. Drag its shortcut back here to remove it.",
       "empty": "Every game is already on the desktop.",
       "open": "Open",
       "addToDesktop": "Add to Desktop"
     },
     "utilities": {
       "appName": "Utilities",
-      "hint": "Installed utilities that are not on the desktop. Drag one onto the desktop to keep it there; drag a desktop shortcut back here, or onto the Recycle Bin, to put it away.",
+      "hint": "Drag a utility to the desktop to add it. Drag its shortcut back here to remove it.",
       "empty": "Every utility is already on the desktop.",
       "open": "Open",
       "addToDesktop": "Add to Desktop"

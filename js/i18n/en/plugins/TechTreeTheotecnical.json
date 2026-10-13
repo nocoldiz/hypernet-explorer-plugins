@@ -1,6 +1,6 @@
 {
   "name": "Theotecnical",
-  "blurb": "Doctrine and religious technology of the Holy Vatican Empire, filed as drawings with a parts list.",
+  "blurb": "Doctrine and religious technology of the Holy Vatican Empire.",
   "nodes": {
     "theo_ascension": {
       "name": "The Unmooring of the See",
@@ -84,7 +84,7 @@
     },
     "theo_deus_machina": {
       "name": "The Mechanical God",
-      "desc": "The vacant seat is filled by an object built to occupy it: a lattice running the length of the citadel's keel, fed by the aggregated prayer of a converted nation at some 40,000 animus a day, answering in the register the doctrine specifies and within the latency the sacrament protocol allows. It is not claimed to be the Father. The claim entered in the file is narrower and is the one that compiles: that it satisfies every clause the Father satisfied. The compiler agrees, and the minutes of the session record no vote."
+      "desc": "The vacant seat is filled by an object built to occupy it: a lattice running the length of the citadel's keel, fed by the aggregated prayer of a converted nation at some 40,000 animus a day, answering in the register the doctrine specifies and within the latency the sacrament protocol allows. The claim entered in the file is a narrow one, and it is the one that compiles: that it satisfies every clause the Father satisfied. The compiler agrees, and the minutes of the session record no vote."
     },
     "theo_theonuclear": {
       "name": "The Theonuclear Device",

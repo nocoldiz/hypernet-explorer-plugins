@@ -979,7 +979,7 @@
     return $gameParty.members().map((actor) => `
       <div class="cryo-pod-card" data-actor="${actor.actorId()}">
         <div class="cryo-pod-head">
-          <span class="cryo-pod-name">${actor.name()}</span>
+          <span class="cryo-pod-name">${window.NPCShared.escapeHtml(actor.name())}</span>
           <span class="cryo-pod-level">${t.cryoLevel.format(actor.level)}</span>
         </div>
         ${cryoGaugeHTML(t.cryoHp, actor.hp, actor.mhp, "cryo-fill-hp")}
@@ -1161,6 +1161,15 @@
   function runSleepWatchdog() {
     const scene = SceneManager._scene;
     if (!(scene instanceof Scene_Map) || !window.$gameTemp) return;
+    // Nearly every frame nothing is resting: no popup, no fast-forward, no
+    // sequence. The verdict for that is always "none" with no mark, so it is
+    // answered here instead of building a state object, reading the clock and
+    // building a verdict object sixty times a second to say so.
+    if (!$gameTemp._sleepMenuOpen && !$gameTemp._isWaitingFastForward &&
+        !scene._waitAdvance && !scene._sleepAdvance) {
+      if (scene._sleepWatchdogMark) scene._sleepWatchdogMark = null;
+      return;
+    }
     const state = {
       menuOpen: !!$gameTemp._sleepMenuOpen,
       menuEl: !!scene._sleepMenuEl,

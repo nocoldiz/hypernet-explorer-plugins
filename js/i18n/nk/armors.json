@@ -1,0 +1,3390 @@
+{
+  "1": {
+    "name": "<-- Clothes -->",
+    "description": ""
+  },
+  "2": {
+    "name": "SPLINTERED DOOR PLANK",
+    "description": "A WALL SLAT STRAPPED TA ONE ARM. SOFTENS\nPHYSICAL BLOWS!"
+  },
+  "3": {
+    "name": "ROADSIDE CONE VEST",
+    "description": "A HI-VIS VEST STITCHED WIT TRAFFIC CONES.\nCARRIES MORE PUNISHMENT AN' RAISES HP!"
+  },
+  "4": {
+    "name": "TWITCHIN' REFLEX CAP",
+    "description": "A CAP DAT FLINCHES BEFORE YOU DO. BLOCKS\nBLIND!"
+  },
+  "5": {
+    "name": "CONCRETE LID HELM",
+    "description": "A BUNKER HATCH WORN AS A HELMET. RESISTS\nPETRO!"
+  },
+  "6": {
+    "name": "CRACKED SCREEN DIADEM",
+    "description": "A CIRCLET OF DEAD PHONE DISPLAYS. SOFTENS\nPHYSICAL BLOWS!"
+  },
+  "7": {
+    "name": "DENTED SURVIVAL PACK",
+    "description": "A BATTERED KIT OF BENT TOOLS. RESISTS FIRE!"
+  },
+  "8": {
+    "name": "MISMATCHED FIRST AID",
+    "description": "A SATCHEL OF EXPIRED BANDAGES. TURNS ASIDE\nCRITICAL HITS!"
+  },
+  "9": {
+    "name": "TIN FOIL CORONET",
+    "description": "A CROWN BENT FROM KITCHEN FOIL. TURNS ASIDE\nCRITICAL HITS!"
+  },
+  "10": {
+    "name": "FLICKERIN' WARD CHARM",
+    "description": "A TRINKET DAT HUMS WHEN THREATENED. RESISTS\nPHYSICAL!"
+  },
+  "11": {
+    "name": "LOOSE GLYPH TRINKETS",
+    "description": "A POUCH OF HALF-CHARGED RUNES. BLOCKS NAUSEA!"
+  },
+  "12": {
+    "name": "SPLICED CIRCUIT BRACE",
+    "description": "A GAUNTLET OF WIRE AN' BONE. MENDS A LIL'\nMANA!"
+  },
+  "13": {
+    "name": "FOLDED SPACE SCARF",
+    "description": "A SCARF LONGER ON DA INSIDE. STIFFENS DA\nGUARD!"
+  },
+  "14": {
+    "name": "GILDED REFUSE WRAP",
+    "description": "A GARBAGE BAG PAINTED GOLD. MENDS A LIL'\nHEALTH!"
+  },
+  "15": {
+    "name": "COMPACTOR SALVAGE",
+    "description": "A PRESSED BRICK OF WORN CLOTH. TURNS ASIDE\nCRITICAL HITS!"
+  },
+  "16": {
+    "name": "HOLED WOOL SHIRT",
+    "description": "A SHIRT EATEN THROUGH BY MOTHS. BLOCKS\nBLEEDIN'!"
+  },
+  "17": {
+    "name": "FRAYIN' KNIT CAP",
+    "description": "A CAP UNRAVELIN' AT DA SEAM. HARDER TA HIT\nWIT MAGIC!"
+  },
+  "18": {
+    "name": "SOAKED PAPER SHIRT",
+    "description": "A PULPY SHIRT DAT DRINKS DA RAIN. SOAKS\nMAGICAL DAMAGE!"
+  },
+  "19": {
+    "name": "PLASTIC BADGE VEST",
+    "description": "A VEST WIT A TOY POLICE BADGE. RESISTS WATER!"
+  },
+  "20": {
+    "name": "FOAM THEATER HELM",
+    "description": "A STAGE PROP HELMET OF FOAM. BLOCKS GUARD\nBROKEN!"
+  },
+  "21": {
+    "name": "DROOPIN' PARTY HAT",
+    "description": "A SOGGY CARDBOARD CONE HAT. BLOCKS SILENCE!"
+  },
+  "22": {
+    "name": "KNOCKOFF LOGO CAP",
+    "description": "A CAP WIT A MISSPELLED BRAND. BLOCKS BLIND!"
+  },
+  "23": {
+    "name": "BIN LID BRACER",
+    "description": "A TRASH CAN LID FOR AN ARM. SOMETIMES\nCOUNTERS!"
+  },
+  "24": {
+    "name": "TOY PRIZE PAULDRON",
+    "description": "A PLASTIC SHOULDER FROM A KIDS' SET. STEADIES\nDA ARM!"
+  },
+  "25": {
+    "name": "SUGAR PILL PENDANT",
+    "description": "A PENDANT DAT DOES NUTTIN'. WARDS OFF STUN!"
+  },
+  "26": {
+    "name": "HONEST RUBBISH",
+    "description": "A BUNDLE OF ACTUAL GARBAGE. BLOCKS GRAPPLED!"
+  },
+  "27": {
+    "name": "STAINED DINER SHIRT",
+    "description": "A SHIRT CRUSTED WIT OLD GREASE. MENDS A\nLIL' HEALTH!"
+  },
+  "28": {
+    "name": "GUTTER THRONE CROWN",
+    "description": "A CROWN OF DUMPSTER SCRAPS. BLOCKS CONCUSSED!"
+  },
+  "29": {
+    "name": "CITY DRIFTER BUNDLE",
+    "description": "A ROLL OF URBAN SURVIVAL RAGS. SOMETIMES\nCOUNTERS!"
+  },
+  "30": {
+    "name": "CARDBOARD SKULL CAP",
+    "description": "A FLIMSY HELMET OF PRESSED BOARD. BLOCKS\nUNBALANCED!"
+  },
+  "31": {
+    "name": "TRAILHEAD BASICS",
+    "description": "A PLAIN SET OF TREKKIN' GEAR. STEADIES DA\nARM!"
+  },
+  "32": {
+    "name": "SAGGIN' PACK STRAPS",
+    "description": "A HARNESS OF WORN CARRY STRAPS. STEADIES DA\nARM!"
+  },
+  "33": {
+    "name": "CRACKED TRAIL BOOTS",
+    "description": "A PAIR OF SPLIT WALKIN' BOOTS. BLOCKS ROOTED!"
+  },
+  "34": {
+    "name": "PANIC KIT BELT",
+    "description": "A BELT OF EMERGENCY ODDMENTS. BLOCKS SLEEP!"
+  },
+  "35": {
+    "name": "FRAYED CLIMB HARNESS",
+    "description": "A WORN RIG OF ROPE AN' CLIPS. BLOCKS\nUNBALANCED!"
+  },
+  "36": {
+    "name": "ALL FLASH TRINKET",
+    "description": "A SHINY CHARM WIT NO USE. TURNS ASIDE\nCRITICAL HITS!"
+  },
+  "37": {
+    "name": "VANITY BRIM HAT",
+    "description": "A STYLISH HAT WIT NO PADDIN'. SOFTENS\nPHYSICAL BLOWS!"
+  },
+  "38": {
+    "name": "POCKETED UTILITY SASH",
+    "description": "A SASH OF LIL', FULL POCKETS. TURNS LUCK OVER\nAN' SHARPENS DA INSTINCTS!"
+  },
+  "39": {
+    "name": "OUT OF DATE COAT",
+    "description": "A COAT FROM A LOST DECADE. BLOCKS GRAPPLED!"
+  },
+  "40": {
+    "name": "LOCAL PATTERN SHAWL",
+    "description": "A SHAWL IN REGIONAL WEAVE. RESISTS PHYSICAL!"
+  },
+  "41": {
+    "name": "GOSSIP SILK WRAP",
+    "description": "A FLASHY WRAP BUILT TA IMPRESS. CARRIES MORE\nPUNISHMENT!"
+  },
+  "42": {
+    "name": "CARTOON LOGO CAP",
+    "description": "A CAP WIT A FADED MASCOT. CARRIES MORE\nPUNISHMENT!"
+  },
+  "43": {
+    "name": "PLASTIC CLIP SET",
+    "description": "A HANDFUL OF BRIGHT HAIR CLIPS. SOFTENS\nPHYSICAL BLOWS!"
+  },
+  "44": {
+    "name": "FADED TOUR SHIRT",
+    "description": "A WORN SHIRT WIT BAND ART. CARRIES MORE\nPUNISHMENT!"
+  },
+  "45": {
+    "name": "GLITCHED PATTERN TUNIC",
+    "description": "A TUNIC WIT CORRUPTED PRINT. MENDS A LIL'\nHEALTH!"
+  },
+  "46": {
+    "name": "SELF AWARE SASH",
+    "description": "A SASH DAT SEEMS TA WATCH YOU. BLOCKS SLEEP!"
+  },
+  "47": {
+    "name": "RUSTED KNIGHT KIT",
+    "description": "A BUNDLE OF CORRODED FITTINGS. CARRIES MORE\nPUNISHMENT!"
+  },
+  "48": {
+    "name": "PITTED IRON HELM",
+    "description": "A PLAIN DENTED OLD HELMET. STEADIES DA MIND!"
+  },
+  "49": {
+    "name": "BATTERED ROUND SHIELD",
+    "description": "A WORN WOODEN BUCKLER. RESISTS PETRO!"
+  },
+  "50": {
+    "name": "CRACKED QUIVER RIG",
+    "description": "A SPLIT LEATHER ARROW RIG. STEADIES DA ARM!"
+  },
+  "51": {
+    "name": "FADED NOBLE PLATE",
+    "description": "A TARNISHED DECORATIVE BREASTPLATE. RESISTS\nPETRO!"
+  },
+  "52": {
+    "name": "REPLICA HERO MAIL",
+    "description": "A CHEAP COPY OF FAMOUS ARMOR. TURNS ASIDE\nCRITICAL HITS!"
+  },
+  "53": {
+    "name": "PLAIN HOMESPUN TUNIC",
+    "description": "A SIMPLE PEASANT TUNIC. BLOCKS POISON!"
+  },
+  "54": {
+    "name": "STRAPPED VISOR HELM",
+    "description": "A HELMET WIT A FLIP VISOR. WARDS OFF BLIND!"
+  },
+  "55": {
+    "name": "RIOT FOAM PAD",
+    "description": "A WORN CROWD CONTROL PAD. RESISTS PETRO!"
+  },
+  "56": {
+    "name": "TRIAGE FIELD POUCH",
+    "description": "A MEDIC'S DEPLETED POUCH. MENDS A LIL' MANA!"
+  },
+  "57": {
+    "name": "THIN WEATHER SUIT",
+    "description": "A FLIMSY ALL CLIMATE JUMPSUIT. BLOCKS\nUNBALANCED!"
+  },
+  "58": {
+    "name": "LEAKY DIVE VEST",
+    "description": "A PATCHED DIVIN' VEST. CARRIES MORE\nPUNISHMENT!"
+  },
+  "59": {
+    "name": "DEFLATED FLOAT SUIT",
+    "description": "A LIMP ZERO GRAVITY SUIT. CARRIES MORE\nPUNISHMENT!"
+  },
+  "60": {
+    "name": "CHIPPED PICKAXE",
+    "description": "A WORN MINER'S PICKAXE. RESISTS PETRO!"
+  },
+  "61": {
+    "name": "DUSTY HARDHAT KIT",
+    "description": "A SCUFFED WORKSITE SAFETY SET. SOFTENS\nPHYSICAL BLOWS!"
+  },
+  "62": {
+    "name": "SCORCHED TURNOUT COAT",
+    "description": "A BURNED FIREFIGHTER'S COAT. TURNS LUCK OVER\nAN' SHARPENS DA INSTINCTS!"
+  },
+  "63": {
+    "name": "SURPLUS PATROL BELT",
+    "description": "A WORN OFFICER'S DUTY BELT. STEADIES DA ARM!"
+  },
+  "64": {
+    "name": "SCRAPED SPORT PADS",
+    "description": "A SET OF ROAD RASH PADS. BLOCKS SLEEP!"
+  },
+  "65": {
+    "name": "CRUMBLIN' BRONZE VEST",
+    "description": "A FLAKIN' ANCIENT CUIRASS. CARRIES MORE\nPUNISHMENT!"
+  },
+  "66": {
+    "name": "BORROWED GALA COAT",
+    "description": "A RENTED FORMAL COAT. SOMETIMES COUNTERS!"
+  },
+  "67": {
+    "name": "PINSTRIPE COMBAT SUIT",
+    "description": "A SUIT CUT FOR BOARDROOM WARS. THICKENS DA\nPLATE AN' STIFFENS DA GUARD!"
+  },
+  "68": {
+    "name": "DEAD TECH HARNESS",
+    "description": "A RIG OF INERT OLD DEVICES. SLIGHTLY HARDER TA\nHIT!"
+  },
+  "69": {
+    "name": "ARCHIVIST'S TOOL BELT",
+    "description": "A BELT OF CATALOGUIN' TOOLS. RESISTS WIND!"
+  },
+  "70": {
+    "name": "LOGO STAMPED VEST",
+    "description": "A VEST PLASTERED WIT BRANDS. BLOCKS\nPARALYSIS!"
+  },
+  "71": {
+    "name": "PLAIN GUILD ROBE",
+    "description": "AN UNDYED APPRENTICE ROBE. SOAKS PHYSICAL\nDAMAGE!"
+  },
+  "72": {
+    "name": "TIN IDOL BUCKLER",
+    "description": "A LIL' SHIELD BEARIN' A GOD. RESISTS PETRO!"
+  },
+  "73": {
+    "name": "OIL SLICK WRAP",
+    "description": "A WRAP STAINED BLACK AN' SHINY. EASIER TA\nDODGE BEHIND!"
+  },
+  "74": {
+    "name": "ROAD WORN SASH",
+    "description": "A SASH BLEACHED BY DA ROAD. RESISTS PHYSICAL!"
+  },
+  "75": {
+    "name": "WARPED SEAM CLOAK",
+    "description": "A CLOAK WIT EDGES DAT BLUR. RESISTS WATER!"
+  },
+  "76": {
+    "name": "SLAG CRUSTED GLOVE",
+    "description": "A GLOVE CAKED IN DRIED METAL. QUICKENS DA\nSTEP!"
+  },
+  "77": {
+    "name": "SMUGGLER'S SASH",
+    "description": "A SASH WIT HIDDEN SEAMS. BLOCKS SLEEP!"
+  },
+  "78": {
+    "name": "STOPPED CLOCK CHARM",
+    "description": "A TRINKET FROZEN MID TICK. BLOCKS CHARM!"
+  },
+  "79": {
+    "name": "BACKFLOW WADER",
+    "description": "A BOOT CAKED IN RIVER SILT. SLIGHTLY HARDER TA\nHIT!"
+  },
+  "80": {
+    "name": "SPIRE RUBBLE BRACE",
+    "description": "A BRACE OF FALLEN MASONRY. BLOCKS NAUSEA!"
+  },
+  "81": {
+    "name": "WANDERER'S PACK",
+    "description": "A TRAVELER'S WELL WORN BUNDLE. STEADIES DA\nARM!"
+  },
+  "82": {
+    "name": "GOBLIN SCRAP BELT",
+    "description": "A BELT OF CRUDE TROPHIES. RESISTS WIND!"
+  },
+  "83": {
+    "name": "Y2K PARTY TOP",
+    "description": "A SHINY TURN OF CENTURY SHIRT. BLOCKS\nBLEEDIN'!"
+  },
+  "84": {
+    "name": "BUCKLED STREET HARNESS",
+    "description": "A HARNESS OF STRAPS AN' RINGS. TURNS ASIDE\nCRITICAL HITS!"
+  },
+  "85": {
+    "name": "MOURNIN' LACE DRESS",
+    "description": "A DARK DRESS OF HEAVY LACE. RESISTS FIRE!"
+  },
+  "86": {
+    "name": "TRUCKER'S WORN VEST",
+    "description": "A FADED LONG HAUL VEST. EASIER TA DODGE\nBEHIND!"
+  },
+  "87": {
+    "name": "PULSIN' FLESH WRAP",
+    "description": "A WRAP DAT FEELS WARM AN' DAMP. BLOCKS\nUNBALANCED!"
+  },
+  "88": {
+    "name": "SOUVENIR ALIEN CLOAK",
+    "description": "A GAUDY FAUX XENOTECH CLOAK. STIFFENS DA\nGUARD!"
+  },
+  "89": {
+    "name": "LUCKY CHARM KIT",
+    "description": "A POUCH OF USELESS TOKENS. WARDS OFF STUN!"
+  },
+  "90": {
+    "name": "DEAD ALERT PENDANT",
+    "description": "A MEDICAL PENDANT GONE SILENT. QUICKENS DA\nSTEP!"
+  },
+  "91": {
+    "name": "RUNNER'S LIGHT KIT",
+    "description": "A TRIM SET OF VAULT GEAR. BLOCKS NAUSEA!"
+  },
+  "92": {
+    "name": "WIDE BRIM GUARD",
+    "description": "A BROAD HAT DAT SHADES DA EYES. RESISTS\nSACRED!"
+  },
+  "93": {
+    "name": "BORROWED CROWN SASH",
+    "description": "A CHEAP SASH MIMICKIN' NOBILITY. MENDS A\nLIL' MANA!"
+  },
+  "94": {
+    "name": "FRAYED BOND WRAPS",
+    "description": "WORN HAND WRAPS COMIN' APART. QUICKENS DA\nSTEP!"
+  },
+  "95": {
+    "name": "STOPPED POCKET WATCH",
+    "description": "A LIL' WATCH DAT MAY OR MAY NO TICK. BLOCKS\nCHARM!"
+  },
+  "96": {
+    "name": "VENDOR'S SKIN TONIC",
+    "description": "A BOTTLED GREEN-TINTIN' SALVE. BLOCKS ROOTED!"
+  },
+  "97": {
+    "name": "CROOKED EYE FRAMES",
+    "description": "BENT SPECTACLES WIT WARPED LENSES. BLOCKS\nPARALYSIS!"
+  },
+  "98": {
+    "name": "SALVAGED PATCHWORK COAT",
+    "description": "A COAT STITCHED FROM DUMPSTER CLOTH. RESISTS\nICE!"
+  },
+  "99": {
+    "name": "FADED GREY SHIRT",
+    "description": "A PLAIN WORN COTTON TEE. RESISTS CURSED!"
+  },
+  "100": {
+    "name": "DUST FILTER SCARF",
+    "description": "A WRAP DAT FILTERS ROAD GRIT. WARDS OFF\nPOISON!"
+  },
+  "101": {
+    "name": "PEELIN' FAUX JACKET",
+    "description": "A FAKE LEATHER JACKET, CRACKIN'. MENDS A\nLIL' HEALTH!"
+  },
+  "102": {
+    "name": "LOGO PADDED VEST",
+    "description": "A PUFFY BRANDED STREET VEST. BLOCKS BLEEDIN'!"
+  },
+  "103": {
+    "name": "REINFORCED LABOR BOOTS",
+    "description": "STURDY STEEL-TOE WORK BOOTS. QUICKENS DA\nSTEP!"
+  },
+  "104": {
+    "name": "WASHED DENIM JACKET",
+    "description": "A FADED BLUE DENIM SHELL. SOAKS PHYSICAL\nDAMAGE!"
+  },
+  "105": {
+    "name": "TIN STREET CIRCLET",
+    "description": "A FLIMSY DECORATIVE HEAD RING. RESISTS PETRO!"
+  },
+  "106": {
+    "name": "FLASHIN' SOLE SNEAKERS",
+    "description": "CHEAP SHOES WIT GIMMICK LIGHTS. BLOCKS\nPARALYSIS!"
+  },
+  "107": {
+    "name": "BALD EXECUTIVE CAP",
+    "description": "A SNUG CORPORATE SCALP CAP. MENDS A LIL'\nMANA!"
+  },
+  "108": {
+    "name": "PADDED COMFORT CAP",
+    "description": "A SOFT CAP WIT THIN LININ'. BLOCKS CONCUSSED!"
+  },
+  "109": {
+    "name": "CRACKED ROAD JACKET",
+    "description": "A WEATHERED LEATHER RIDIN' COAT. SOAKS\nPHYSICAL DAMAGE!"
+  },
+  "110": {
+    "name": "QUICK DRY TOWEL WRAP",
+    "description": "A FAST-DRYIN' CLOTH GARMENT. SLIGHTLY HARDER\nTA HIT!"
+  },
+  "111": {
+    "name": "PAINTED SITE HELMET",
+    "description": "A HARDHAT DONE UP IN BRIGHT COLORS. RESISTS\nSACRED!"
+  },
+  "112": {
+    "name": "WORN HOPE BELT",
+    "description": "A SCUFFED LEATHER UTILITY BELT. BLOCKS SLEEP!"
+  },
+  "113": {
+    "name": "PATROL WEBBIN' HARNESS",
+    "description": "A STRAPPED CHEST HARNESS. BLOCKS INFECTED!"
+  },
+  "114": {
+    "name": "WIDE HORIZON HAT",
+    "description": "A BROAD-BRIMMED TRAVELER'S HAT. HARDER TA HIT\nWIT MAGIC!"
+  },
+  "115": {
+    "name": "FIELD REPAIR BELT",
+    "description": "A BELT HUNG WIT LIL' TOOLS. BLOCKS\nPARALYSIS!"
+  },
+  "116": {
+    "name": "BROW BAND CAP",
+    "description": "A CAP DAT WICKS AWAY SWEAT. BLOCKS SILENCE!"
+  },
+  "117": {
+    "name": "PLAIN WORK COVERALLS",
+    "description": "ONE-PIECE LABOR COVERALLS. RESISTS WATER!"
+  },
+  "118": {
+    "name": "PADDED COLLAR GUARD",
+    "description": "A REINFORCED NECK COLLAR. BLOCKS CONFUSION!"
+  },
+  "119": {
+    "name": "TANNED LUCK CHARM",
+    "description": "A DRIED RABBIT'S FOOT TRINKET. RESISTS WIND!"
+  },
+  "120": {
+    "name": "QUICKSTEP TRAINERS",
+    "description": "LIGHT RUNNIN' SHOES. BLOCKS NAUSEA!"
+  },
+  "121": {
+    "name": "MESH INSECT VEIL",
+    "description": "A NETTED HEAD VEIL. RESISTS SACRED!"
+  },
+  "122": {
+    "name": "WORN TRAININ' GI",
+    "description": "A FADED COTTON PRACTICE ROBE. THICKENS DA\nPLATE AN' STIFFENS DA GUARD!"
+  },
+  "123": {
+    "name": "TAPED PRACTICE CLUBS",
+    "description": "WIRE-BOUND SPARRIN' CLUBS. RESISTS PETRO!"
+  },
+  "124": {
+    "name": "PULL-TAB MAILLE",
+    "description": "MAIL WOVEN FROM CAN TABS. RESISTS ICE!"
+  },
+  "125": {
+    "name": "PLAIN ACOLYTE STOLE",
+    "description": "A SIMPLE RITUAL CLOTH STOLE. EASIER TA DODGE\nBEHIND!"
+  },
+  "126": {
+    "name": "ROAD RAGE VEST",
+    "description": "A PADDED DRIVIN' VEST. RESISTS WATER!"
+  },
+  "127": {
+    "name": "REFLEX TRIGGER GLOVE",
+    "description": "A SNUG REACTION-TRAININ' GLOVE. QUICKENS DA\nSTEP!"
+  },
+  "128": {
+    "name": "WORN ROAD BOOTS",
+    "description": "HEAVY-TREAD TRAVELIN' BOOTS. BLOCKS SLEEP!"
+  },
+  "129": {
+    "name": "RUGGED TRAIL TROUSERS",
+    "description": "TOUGH HIKIN' PANTS. BLOCKS BLEEDIN'!"
+  },
+  "130": {
+    "name": "CLEATED STOMP BOOTS",
+    "description": "AGGRESSIVE-TREAD MOUNTAIN BOOTS. FOCUSES DA\nWILL!"
+  },
+  "131": {
+    "name": "GRIP CONTROL SOLES",
+    "description": "SHOES WIT HIGH-FRICTION SOLES. BLOCKS ROOTED!"
+  },
+  "132": {
+    "name": "CRUMPLE BRACE PADS",
+    "description": "SHOCK-ABSORBIN' KNEE PADS. FOCUSES DA WILL!"
+  },
+  "133": {
+    "name": "SEALED STORM SHELL",
+    "description": "A WATERPROOFED OUTER SHELL. RESISTS THUNDER!"
+  },
+  "134": {
+    "name": "ALL-TERRAIN STOMPERS",
+    "description": "RUGGED ALL-GROUND BOOTS. SLIGHTLY HARDER TA\nHIT!"
+  },
+  "135": {
+    "name": "KNUCKLE COMM BAND",
+    "description": "A GLOVE WIT A BUILT-IN PHONE. TURNS LUCK OVER\nAN' SHARPENS DA INSTINCTS!"
+  },
+  "136": {
+    "name": "ROUTE GUARD KIT",
+    "description": "A BELT OF ROAD SAFETY TOOLS. TURNS LUCK OVER\nAN' SHARPENS DA INSTINCTS!"
+  },
+  "137": {
+    "name": "COARSE PEASANT TUNIC",
+    "description": "A ROUGH HOMESPUN TUNIC. CARRIES MORE\nPUNISHMENT!"
+  },
+  "138": {
+    "name": "SURPLUS COMBAT WEBBIN'",
+    "description": "A LOADOUT VEST OF POUCHES. BLOCKS CHARM!"
+  },
+  "139": {
+    "name": "BOLTED SIGN STAVE",
+    "description": "A STAFF MADE FROM ROAD SIGNAGE. CARRIES MORE\nPUNISHMENT!"
+  },
+  "140": {
+    "name": "PRE-WORN DENIM COAT",
+    "description": "A FACTORY-FADED DENIM SHELL. RESISTS WATER!"
+  },
+  "141": {
+    "name": "SEALED FLINT LIGHTER",
+    "description": "A WEATHERPROOF FIRESTARTER. RESISTS WATER!"
+  },
+  "142": {
+    "name": "TOOTH TROPHY VEST",
+    "description": "A VEST STRUNG WIT OLD TEETH. RESISTS WATER!"
+  },
+  "143": {
+    "name": "CART WIRE WRAP",
+    "description": "A VEST BOUND IN SCAVENGED WIRE. RESISTS ICE!"
+  },
+  "144": {
+    "name": "SCOUT LOADOUT VEST",
+    "description": "A LIGHT RECON UTILITY VEST. BLOCKS BLEEDIN'!"
+  },
+  "145": {
+    "name": "ROPE HAULER RIG",
+    "description": "A CLIMBIN' AN' HAULIN' HARNESS. MENDS A LIL'\nMANA!"
+  },
+  "146": {
+    "name": "MOCK CEREMONY SASH",
+    "description": "A GAUDY CEREMONIAL SASH. SOMETIMES COUNTERS!"
+  },
+  "147": {
+    "name": "STUBBORN TREAD BOOTS",
+    "description": "HARD-WEARIN' SPITEFUL BOOTS. BLOCKS NAUSEA!"
+  },
+  "148": {
+    "name": "BOLTED SCRAP PLATES",
+    "description": "STRAP-ON SCRAP METAL PLATES. STEADIES DA ARM!"
+  },
+  "149": {
+    "name": "MANY-POCKET OVERALLS",
+    "description": "COVERALLS COVERED IN POCKETS. BLOCKS BLEEDIN'!"
+  },
+  "150": {
+    "name": "FOIL RADIATION HOOD",
+    "description": "A FOIL-LINED PROTECTIVE HOOD. SLIGHTLY HARDER\nTA HIT!"
+  },
+  "151": {
+    "name": "BACKWOODS MULTI-TOOL",
+    "description": "A FOLDIN' WILDERNESS TOOL. STEADIES DA ARM!"
+  },
+  "152": {
+    "name": "ROADSIDE PATCH KIT",
+    "description": "A GRAB-BAG OF REPAIR PARTS. MENDS A LIL'\nMANA!"
+  },
+  "153": {
+    "name": "TAPE-BOUND SUIT",
+    "description": "A SUIT HELD TOGETHER BY TAPE. MENDS A LIL'\nHEALTH!"
+  },
+  "154": {
+    "name": "ODDS CALCULATOR BAND",
+    "description": "A WRIST GAMBLIN' AID. BLOCKS SLEEP!"
+  },
+  "155": {
+    "name": "DISTRESS WHISTLE TAG",
+    "description": "A LOUD EMERGENCY WHISTLE. BLOCKS PARALYSIS!"
+  },
+  "156": {
+    "name": "QUICKSTEP OXFORDS",
+    "description": "LIGHTWEIGHT DRESS SHOES. EASIER TA DODGE\nBEHIND!"
+  },
+  "157": {
+    "name": "TIGHT GRIP BAND",
+    "description": "A GRIP-STRENGTHENIN' WRISTBAND. FOCUSES DA\nWILL!"
+  },
+  "158": {
+    "name": "SOLAR CHARGE PACK",
+    "description": "A WEARABLE SUN BATTERY. TURNS LUCK OVER AN'\nSHARPENS DA INSTINCTS!"
+  },
+  "159": {
+    "name": "LINER SKULL CAP",
+    "description": "A THIN UNDER-HELMET CAP. RESISTS THUNDER!"
+  },
+  "160": {
+    "name": "HEAVY CARGO JEANS",
+    "description": "REINFORCED CARGO DENIM. TURNS LUCK OVER AN'\nSHARPENS DA INSTINCTS!"
+  },
+  "161": {
+    "name": "CLIP-ON SIGNAL BEACON",
+    "description": "A HANDS-FREE LOCATOR LIGHT. RESISTS WIND!"
+  },
+  "162": {
+    "name": "FIELD TRAUMA PACK",
+    "description": "A BACKCOUNTRY MEDICAL KIT. BLOCKS PARALYSIS!"
+  },
+  "163": {
+    "name": "ALL-USE FILTER MASK",
+    "description": "A GENERAL-PURPOSE AIR FILTER. WARDS OFF\nPOISON!"
+  },
+  "164": {
+    "name": "FOCUS BOOST BAND",
+    "description": "A WRIST FOCUS STIMULATOR. STEADIES DA ARM!"
+  },
+  "165": {
+    "name": "LOOSE TEAM JERSEY",
+    "description": "AN OVERSIZED CASUAL JERSEY. BLOCKS POISON!"
+  },
+  "166": {
+    "name": "POCKET MAP COMPASS",
+    "description": "A LIL' FOLDIN' NAVIGATOR. BLOCKS ROOTED!"
+  },
+  "167": {
+    "name": "ARCHER'S ARM BRACER",
+    "description": "A LEATHER FOREARM GUARD. MENDS A LIL' MANA!"
+  },
+  "168": {
+    "name": "BACKWARD LOGIC VEST",
+    "description": "A STRANGE REVERSED-SEAM VEST. EASIER TA DODGE\nBEHIND!"
+  },
+  "169": {
+    "name": "FLORAL BELL TROUSERS",
+    "description": "WIDE FLARED PATTERNED PANTS. THICKENS DA\nPLATE AN' STIFFENS DA GUARD!"
+  },
+  "170": {
+    "name": "GRIP SOLE SANDALS",
+    "description": "ALL-SURFACE GRIPPIN' SANDALS. CARRIES MORE\nPUNISHMENT!"
+  },
+  "171": {
+    "name": "FORM DRILL RING",
+    "description": "A FINGER RING FOR MUSCLE DRILLS. MENDS A\nLIL' HEALTH!"
+  },
+  "172": {
+    "name": "WATCHER'S LOOP",
+    "description": "AN AWARENESS-TRAININ' BAND. BLOCKS PARALYSIS!"
+  },
+  "173": {
+    "name": "STUDDED LEATHER VEST",
+    "description": "A RIVETED LEATHER BODY VEST. BLOCKS POISON!"
+  },
+  "174": {
+    "name": "BOILED LEATHER CUIRASS",
+    "description": "A HARDENED LEATHER CHESTPIECE. WARDS OFF\nBURNED!"
+  },
+  "175": {
+    "name": "QUIET OPERATIVE SUIT",
+    "description": "A DARK LOW-PROFILE BODYSUIT. WARDS OFF\nSILENCE!"
+  },
+  "176": {
+    "name": "FIELD COMBAT RIG",
+    "description": "A COMBAT UTILITY HARNESS. BLOCKS NAUSEA!"
+  },
+  "177": {
+    "name": "LEVY GAMBESON",
+    "description": "A QUILTED CLOTH WAR JACKET. SOAKS MAGICAL\nDAMAGE!"
+  },
+  "178": {
+    "name": "HAZARD CLEANUP SUIT",
+    "description": "A SEALED CONTAMINATION SUIT. EASIER TA DODGE\nBEHIND!"
+  },
+  "179": {
+    "name": "TRIBAL RAG VEST",
+    "description": "A VEST OF KNOTTED RAGS. RESISTS CURSED!"
+  },
+  "180": {
+    "name": "CHAINED CARGO PANTS",
+    "description": "CARGO TROUSERS HUNG WIT CHAINS. MENDS A\nLIL' HEALTH!"
+  },
+  "181": {
+    "name": "PADDED SPARRIN' VEST",
+    "description": "A LIGHT TRAININ' BODY PAD. CARRIES MORE\nPUNISHMENT!"
+  },
+  "182": {
+    "name": "DEAD SENSOR HELM",
+    "description": "A HELMET WIT DEFUNCT SENSORS. BLOCKS\nCONCUSSED!"
+  },
+  "183": {
+    "name": "FORMAL SERVICE TUNIC",
+    "description": "A STIFF DRESS UNIFORM TUNIC. RESISTS WATER!"
+  },
+  "184": {
+    "name": "SPORE LININ' TUNIC",
+    "description": "A CLAMMY BODY SUIT GROWN FROM FUNGUS. RESISTS\nCURSED!"
+  },
+  "185": {
+    "name": "BLOODSHOT SIGHT PATCH",
+    "description": "AN ADHESIVE PATCH WORN OVER ONE EYE. EASIER TA\nDODGE BEHIND!"
+  },
+  "186": {
+    "name": "TRICKLE SAVER NODE",
+    "description": "A LIL' CLIP DAT HOARDS STRAY CURRENT. EASIER\nTA DODGE BEHIND!"
+  },
+  "187": {
+    "name": "EARDRUM BOOST STUDS",
+    "description": "CARTILAGE PLUGS DAT AMPLIFY SOUND. EASIER TA\nDODGE BEHIND!"
+  },
+  "188": {
+    "name": "TRAILHEAD MARSHAL BAND",
+    "description": "A WORN ARMBAND FOR CREW LEADERS. BLOCKS\nNAUSEA!"
+  },
+  "189": {
+    "name": "SETTLED PHASE MITTS",
+    "description": "GLOVES DAT KEEP YA HANDS SOLID. MENDS A\nLIL' MANA!"
+  },
+  "190": {
+    "name": "SQUALL LOADER VEST",
+    "description": "A WEATHERPROOFED DOCKWORKER'S VEST. RESISTS\nWATER!"
+  },
+  "191": {
+    "name": "HEAVY FILTER MASK",
+    "description": "A BULKY INDUSTRIAL RESPIRATOR. BLOCKS POISON!"
+  },
+  "192": {
+    "name": "LIMITED RUN LAYERS",
+    "description": "A DRAB GARMENT WIT A FLASHY LABEL. BLOCKS\nPARALYSIS!"
+  },
+  "193": {
+    "name": "CITY SIGHTLINE FRAMES",
+    "description": "PLAIN GLASSES FOR CROWDED STREETS. EASIER TA\nDODGE BEHIND!"
+  },
+  "194": {
+    "name": "HUMOUR DYED SHIRT",
+    "description": "A SHIRT DAT SHIFTS COLOR WIT MOOD. BLOCKS\nPOISON!"
+  },
+  "195": {
+    "name": "LONG ODDS COVERALL",
+    "description": "A WORKER'S SUIT DAT BENDS LUCK. CARRIES MORE\nPUNISHMENT!"
+  },
+  "196": {
+    "name": "BRITTLE BEAD STRAND",
+    "description": "A NECKLACE OF FRAGILE GLASSY BEADS. BLOCKS\nCONFUSION!"
+  },
+  "197": {
+    "name": "LINED RESTRAINT WRAPS",
+    "description": "PADDED STRAPS FOR DA FOREARMS. EASIER TA\nDODGE BEHIND!"
+  },
+  "198": {
+    "name": "TACKY GRIP GLOVES",
+    "description": "RUBBER-DOTTED WORK GLOVES. EASIER TA DODGE\nBEHIND!"
+  },
+  "199": {
+    "name": "RESERVOIR SMALLCLOTHES",
+    "description": "UNDERWEAR WIT A HIDDEN BLADDER. BLOCKS\nPOISON!"
+  },
+  "200": {
+    "name": "LUCK MURMUR CHARM",
+    "description": "A TRINKET DAT HUMS SOFTLY. DOUBLES ITEM\nDROPS!"
+  },
+  "201": {
+    "name": "EASY REST PAD",
+    "description": "A STRAP-ON SEAT CUSHION. EASIER TA DODGE\nBEHIND!"
+  },
+  "202": {
+    "name": "PURGE LENS SUIT",
+    "description": "A SUIT THREADED WIT FILTER LENSES. BLOCKS\nPOISON!"
+  },
+  "203": {
+    "name": "ENGINE SLICK PAINT",
+    "description": "BODY PAINT MIXED WIT MOTOR OIL. BLOCKS RAGE!"
+  },
+  "204": {
+    "name": "COILED GUT BELT",
+    "description": "A BELT OF PRESERVED INTESTINE. BLOCKS POISON!"
+  },
+  "205": {
+    "name": "MENACE WEAVE SASH",
+    "description": "A COARSE SASH WIT JAGGED TRIM. NEVER CAUGHT\nBY SURPRISE!"
+  },
+  "206": {
+    "name": "ECHO CELL PACK",
+    "description": "A PACK DAT STORES FAINT SOUNDS. SLIGHTLY\nHARDER TA HIT!"
+  },
+  "207": {
+    "name": "VERSE SILK SHIRT",
+    "description": "A SOFT SILK POET'S SHIRT. EASIER TA DODGE\nBEHIND!"
+  },
+  "208": {
+    "name": "VEIN PATTERN TROUSERS",
+    "description": "TROUSERS VEINED LIKE CIRCULATORY TISSUE.\nEASIER TA DODGE BEHIND!"
+  },
+  "209": {
+    "name": "SHARP EYE CAP",
+    "description": "A SNUG CAP FOR KEEN FOCUS. EASIER TA DODGE\nBEHIND!"
+  },
+  "210": {
+    "name": "SURGE PRIMER VIAL",
+    "description": "A WORN VIAL OF ADRENAL PRIMER. EASIER TA DODGE\nBEHIND!"
+  },
+  "211": {
+    "name": "SMOOTH TALK BAND",
+    "description": "A THIN BRACELET FOR LOOSENIN' TONGUES. BLOCKS\nSLEEP!"
+  },
+  "212": {
+    "name": "WILL DAMP WRAP",
+    "description": "A WRAP DAT DULLS DA NERVES. BLOCKS CHARM!"
+  },
+  "213": {
+    "name": "TRUE FORM BELT",
+    "description": "A POSTURE-CORRECTIN' CINCH BELT. EASIER TA\nDODGE BEHIND!"
+  },
+  "214": {
+    "name": "COATED NERVE RING",
+    "description": "AN ENAMELED RING DAT TINGLES. EASIER TA DODGE\nBEHIND!"
+  },
+  "215": {
+    "name": "ROADWAY GLARE SHADES",
+    "description": "TINTED GLASSES FOR LONG DRIVES. EASIER TA\nDODGE BEHIND!"
+  },
+  "216": {
+    "name": "QUICK STEP BANDS",
+    "description": "ELASTIC BANDS FOR DA ANKLES. EASIER TA DODGE\nBEHIND!"
+  },
+  "217": {
+    "name": "DIVER'S STARTER KIT",
+    "description": "A BASIC SET OF WATER GEAR. BLOCKS WET!"
+  },
+  "218": {
+    "name": "CLEAN ROOM COVERALL",
+    "description": "A STERILE SEALED BODYSUIT. BLOCKS POISON!"
+  },
+  "219": {
+    "name": "CLINGIN' TOE SOCKS",
+    "description": "GRIPPY SOCKS WIT SEPARATE TOES. EASIER TA\nDODGE BEHIND!"
+  },
+  "220": {
+    "name": "WIREWEAVER'S HARNESS",
+    "description": "A RIG OF CABLES AN' SIGNAL JACKS. MENDS A\nLIL' HEALTH!"
+  },
+  "221": {
+    "name": "THOUGHT DRIVER BAND",
+    "description": "A HEADBAND DAT PUSHES DA MIND HARD. MENDS A\nLIL' MANA!"
+  },
+  "222": {
+    "name": "DEADEYE LENSES",
+    "description": "PRECISION SHOOTIN' SPECTACLES. EASIER TA DODGE\nBEHIND!"
+  },
+  "223": {
+    "name": "SHIFT POCKETS ORGANIZER",
+    "description": "A CLIP-ON TIME-TRACKIN' TOOL. EASIER TA DODGE\nBEHIND!"
+  },
+  "224": {
+    "name": "TIDY OUTPUT CORE",
+    "description": "A LIL' EFFICIENCY REGULATOR. EASIER TA DODGE\nBEHIND!"
+  },
+  "225": {
+    "name": "BLACKENED SOUND CANS",
+    "description": "HEAVY MATTE HEADPHONES. BLOCKS RAGE!"
+  },
+  "226": {
+    "name": "HIDE COMBAT GUARD",
+    "description": "A BOILED-LEATHER MOUTHGUARD. BLOCKS CONFUSION!"
+  },
+  "227": {
+    "name": "BOTTOMLESS BREW FLASK",
+    "description": "A THERMOS DAT STAYS WARM TOO LONG. EASIER TA\nDODGE BEHIND!"
+  },
+  "228": {
+    "name": "HOARFROST FINERY",
+    "description": "A PALE FROST-PATTERNED GOWN. RESISTS ICE!"
+  },
+  "229": {
+    "name": "CHROMED CROP TEE",
+    "description": "A SHORT METALLIC-SHEEN SHIRT. BLOCKS\nCONFUSION!"
+  },
+  "230": {
+    "name": "FIELD EYE SHROUD",
+    "description": "A TACTICAL VISOR DAT HIDES DA EYES. EASIER\nTA DODGE BEHIND!"
+  },
+  "231": {
+    "name": "MANA DRAIN CORE",
+    "description": "A DEVICE DAT SIPS AMBIENT MAGIC. SPELLS COST\nMORE!"
+  },
+  "232": {
+    "name": "RIVETED BRAWL GLOVES",
+    "description": "STUDDED LEATHER FIGHTIN' GLOVES. EASIER TA\nDODGE BEHIND!"
+  },
+  "233": {
+    "name": "CONVOY HEADSET",
+    "description": "A SHORT-RANGE RADIO HEADSET. EASIER TA DODGE\nBEHIND!"
+  },
+  "234": {
+    "name": "BONE SPUR BOOTS",
+    "description": "BOOTS REINFORCED WIT GROWN BONE. EASIER TA\nDODGE BEHIND!"
+  },
+  "235": {
+    "name": "DEADEYE MONOCLE",
+    "description": "A SINGLE PRECISION TARGETIN' LENS. STEADIES\nDA AIM!"
+  },
+  "236": {
+    "name": "DRIFTIN' EYE SHIELD",
+    "description": "A FLOATIN' LENS DAT GUARDS DA EYES. BLOCKS\nWET!"
+  },
+  "237": {
+    "name": "QUIET TRUCE ROBE",
+    "description": "A MUTED ROBE DAT CALMS TEMPERS. EASIER TA\nDODGE BEHIND!"
+  },
+  "238": {
+    "name": "SLICK BANISHIN' WARD",
+    "description": "A CHARM AGAINST OIL-SPIRITS. BLOCKS OILY!"
+  },
+  "239": {
+    "name": "RIVETED CREST WIG",
+    "description": "A STIFF INDUSTRIAL MOHAWK PIECE. BLOCKS RAGE!"
+  },
+  "240": {
+    "name": "HIGH GLOSS SHEEN",
+    "description": "A LACQUERED ORNAMENTAL LAYER. BLOCKS SLEEP!"
+  },
+  "241": {
+    "name": "MARK OF OFFICE",
+    "description": "A BADGE DENOTIN' RANK. BLOCKS RAGE!"
+  },
+  "242": {
+    "name": "BARBED WARNIN' CUFF",
+    "description": "A SPIKED METAL WRISTBAND. BLOCKS RAGE!"
+  },
+  "243": {
+    "name": "POLAR SKULL HOOD",
+    "description": "AN INSULATED HEAD WRAP. BLOCKS COLD!"
+  },
+  "244": {
+    "name": "FROST HAULER SHELL",
+    "description": "A LINED COLD-WEATHER JACKET. RESISTS ICE!"
+  },
+  "245": {
+    "name": "BRANDED DRIVER CAP",
+    "description": "A COMPANY-LOGO TRUCKER CAP. EASIER TA DODGE\nBEHIND!"
+  },
+  "246": {
+    "name": "DREAD COUTURE GOWN",
+    "description": "AN IMPOSIN' HIGH-FASHION GOWN. RESISTS\nPHYSICAL!"
+  },
+  "247": {
+    "name": "OBSTINATE FINERY",
+    "description": "A RIGID, UNYIELDIN' FORMAL COAT. BLOCKS CHARM!"
+  },
+  "248": {
+    "name": "SPINE REFLEX CHAIN",
+    "description": "A CHAIN WORN DOWN DA BACK. EASIER TA DODGE\nBEHIND!"
+  },
+  "249": {
+    "name": "CHARMED HOOP RINGS",
+    "description": "A PAIR OF ENCHANTED EARRINGS. EASIER TA DODGE\nBEHIND!"
+  },
+  "250": {
+    "name": "MUCK SHEDDER BOOTS",
+    "description": "BOOTS DAT SHRUG OFF MUD. BLOCKS WET!"
+  },
+  "251": {
+    "name": "GLACIAL HEIRLOOM COAT",
+    "description": "AN OLD FROST-PATTERNED COAT. RESISTS ICE!"
+  },
+  "252": {
+    "name": "CAMEO LACE CHOKER",
+    "description": "A LACE NECKLACE BEARIN' A PORTRAIT. BLOCKS\nCONFUSION!"
+  },
+  "253": {
+    "name": "WAYFARER'S BANDANA",
+    "description": "A DUST-STAINED HEAD CLOTH. RESISTS FIRE!"
+  },
+  "254": {
+    "name": "SMOKE TINT FRAMES",
+    "description": "RECTANGULAR TINTED GLASSES. EASIER TA DODGE\nBEHIND!"
+  },
+  "255": {
+    "name": "STAR AUTHORITY SHADES",
+    "description": "FLASHY OVERSIZED SUNGLASSES. EASIER TA DODGE\nBEHIND!"
+  },
+  "256": {
+    "name": "SCENT SCRAMBLE SUIT",
+    "description": "A BODYSUIT DAT MASKS PHEROMONES. EASIER TA\nDODGE BEHIND!"
+  },
+  "257": {
+    "name": "COMMAND CRAVAT",
+    "description": "A FORMAL TIE OF OFFICE. BLOCKS RAGE!"
+  },
+  "258": {
+    "name": "IRON THIGH GUARDS",
+    "description": "PLATED LEG COVERINGS. BLOCKS RAGE!"
+  },
+  "259": {
+    "name": "SAW TOOTH CROWN",
+    "description": "A JAGGED METAL HEADPIECE. BLOCKS RAGE!"
+  },
+  "260": {
+    "name": "HI-VIS SAFETY VEST",
+    "description": "A REFLECTIVE WORK VEST. EASIER TA DODGE\nBEHIND!"
+  },
+  "261": {
+    "name": "POISE BLAZER",
+    "description": "A SHARP CONFIDENCE-LENDIN' JACKET. BLOCKS\nCONFUSION!"
+  },
+  "262": {
+    "name": "TOILER'S SUSPENDERS",
+    "description": "HEAVY-DUTY WORK SUSPENDERS. EASIER TA DODGE\nBEHIND!"
+  },
+  "263": {
+    "name": "CALCIFIED PLATE VEST",
+    "description": "A VEST CRUSTED WIT BONE GROWTH. EASIER TA\nDODGE BEHIND!"
+  },
+  "264": {
+    "name": "RENEWAL VESTMENTS",
+    "description": "ROBES WORN AT SECOND CHANCES. EASIER TA DODGE\nBEHIND!"
+  },
+  "265": {
+    "name": "LOUD TRAIL SNEAKERS",
+    "description": "GARISH MULTICOLORED SHOES. EASIER TA DODGE\nBEHIND!"
+  },
+  "266": {
+    "name": "TOP RANK SHIRT",
+    "description": "A SHIRT CUT TA PROJECT STATUS. EASIER TA DODGE\nBEHIND!"
+  },
+  "267": {
+    "name": "SPANGLED STRAP TOP",
+    "description": "A GLITTERIN' THIN-STRAPPED TOP. BLOCKS\nCONFUSION!"
+  },
+  "268": {
+    "name": "REFORGED CUFF BANDS",
+    "description": "WRISTBANDS MADE FROM OLD SHACKLES. RESISTS\nPHYSICAL!"
+  },
+  "269": {
+    "name": "SINEW WEAVE VEST",
+    "description": "A VEST WOVEN OF MUSCLE FIBER. EASIER TA DODGE\nBEHIND!"
+  },
+  "270": {
+    "name": "STIPPLE TEXTURE COAT",
+    "description": "A COAT WIT A ROUGH POPCORN FINISH. EASIER TA\nDODGE BEHIND!"
+  },
+  "271": {
+    "name": "STILLNESS ROBE",
+    "description": "A MEDITATIVE EASTERN-CUT ROBE. EASIER TA DODGE\nBEHIND!"
+  },
+  "272": {
+    "name": "CLEAN DRAW GLOVES",
+    "description": "SNUG GLOVES FOR FAST HANDWORK. EASIER TA DODGE\nBEHIND!"
+  },
+  "273": {
+    "name": "REFINED HAND GLOVES",
+    "description": "ELEGANT FORMAL GLOVES. BLOCKS SLEEP!"
+  },
+  "274": {
+    "name": "STUDDED RESIN CHOKER",
+    "description": "A SPIKED PLASTIC NECKBAND. BLOCKS RAGE!"
+  },
+  "275": {
+    "name": "RESONANT EAR STUDS",
+    "description": "LIL' STUDS DAT SHARPEN NEARBY SOUND. EASIER\nTA DODGE BEHIND!"
+  },
+  "276": {
+    "name": "SUNBLEACHED RESORT WEAR",
+    "description": "A LOUD, LIGHTWEIGHT TROPICAL SHIRT. RESISTS\nFIRE!"
+  },
+  "277": {
+    "name": "BLEACHED CONTRAST LOCKS",
+    "description": "A CLIP-IN SET OF PALE HAIR STREAKS. EASIER TA\nDODGE BEHIND!"
+  },
+  "278": {
+    "name": "FRONTIER RESPONSE COAT",
+    "description": "A RUGGED FIELD COAT WIT DEEP POCKETS. EASIER\nTA DODGE BEHIND!"
+  },
+  "279": {
+    "name": "SLOGAN PRINT JACKET",
+    "description": "A JACKET LOUD WIT FADED SLOGANS. EASIER TA\nDODGE BEHIND!"
+  },
+  "280": {
+    "name": "THROAT-WARMER SCARF",
+    "description": "A SOFT SCARF WOUND FOR DA THROAT. BLOCKS\nRAGE!"
+  },
+  "281": {
+    "name": "HARVEST SENSE SMOCK",
+    "description": "A FARMER'S SMOCK DYED IN FIELD COLORS. EASIER\nTA DODGE BEHIND!"
+  },
+  "282": {
+    "name": "AUTHORITATIVE STEP SHOES",
+    "description": "STIFF SHOES DAT ANNOUNCE YA ARRIVAL. BLOCKS\nRAGE!"
+  },
+  "283": {
+    "name": "VELVET CROSS PENDANT",
+    "description": "A VELVET-BACKED PENDANT OF OLD FAITH. BLOCKS\nRAGE!"
+  },
+  "284": {
+    "name": "EYECATCHER GOWN",
+    "description": "A FLOWIN' GOWN BUILT TA DRAW STARES. BLOCKS\nCONFUSION!"
+  },
+  "285": {
+    "name": "OLD ROAD FLANNEL",
+    "description": "A WORN FLANNEL SHIRT, SOFT WIT AGE. RESISTS\nICE!"
+  },
+  "286": {
+    "name": "HUSHPHASE BOOTS",
+    "description": "BOOTS DAT MUFFLE EVERY FOOTFALL. EASIER TA\nDODGE BEHIND!"
+  },
+  "287": {
+    "name": "WARDED BOW TIE",
+    "description": "A TIDY BOW TIE WIT A FAINT WARD. EASIER TA\nDODGE BEHIND!"
+  },
+  "288": {
+    "name": "SODA-STAIN HAZMAT SUIT",
+    "description": "A PATCHED CHEMICAL HAZARD SUIT. RESISTS\nPHYSICAL!"
+  },
+  "289": {
+    "name": "PRESENCE PROJECTOR PINS",
+    "description": "LAPEL PINS DAT BEND A ROOM'S FOCUS. BLOCKS\nRAGE!"
+  },
+  "290": {
+    "name": "ROADSIDE HAZARD VEST",
+    "description": "A BRIGHT REFLECTIVE WORK VEST. EASIER TA DODGE\nBEHIND!"
+  },
+  "291": {
+    "name": "WIDOW'S MOURNIN' VEIL",
+    "description": "A LONG DARK VEIL FOR GRIEVIN'. BLOCKS\nCONFUSION!"
+  },
+  "292": {
+    "name": "RHINESTONE VELOUR SET",
+    "description": "A GAUDY VELOUR TWO-PIECE OUTFIT. BLOCKS SLEEP!"
+  },
+  "293": {
+    "name": "STUDDED THREAT VEST",
+    "description": "A SPIKED VEST MEANT TA INTIMIDATE. BLOCKS\nRAGE!"
+  },
+  "294": {
+    "name": "LUCITE PLATFORM SANDALS",
+    "description": "CLEAR PLATFORM SANDALS, ALL SHOW. EASIER TA\nDODGE BEHIND!"
+  },
+  "295": {
+    "name": "IRONIC MESH CAP",
+    "description": "A MESH-BACKED TRUCKER CAP. BLOCKS SILENCE!"
+  },
+  "296": {
+    "name": "FROST GLITTER SHADOW",
+    "description": "A POT OF ICY SHIMMERIN' EYESHADOW. BLOCKS\nCONFUSION!"
+  },
+  "297": {
+    "name": "SURFACE REPELLENT SOCKS",
+    "description": "SOCKS DAT SHED WATER AN' GRIME. RESISTS\nWATER!"
+  },
+  "298": {
+    "name": "RHINESTONE DENIM SUIT",
+    "description": "A DENIM OUTFIT CRUSTED WIT GEMS. EASIER TA\nDODGE BEHIND!"
+  },
+  "299": {
+    "name": "TAGGED TRANSIT UNIFORM",
+    "description": "A UNIFORM MARKED FOR TELEPORT TRANSIT. WEAK TA\nPHYSICAL!"
+  },
+  "300": {
+    "name": "THERMAL MOOD RING",
+    "description": "A RING DAT SHIFTS WIT TEMPERATURE. RESISTS\nFIRE!"
+  },
+  "301": {
+    "name": "PERFECT MOMENT WATCH",
+    "description": "A WATCH DAT ALWAYS READS ON TIME. EASIER TA\nDODGE BEHIND!"
+  },
+  "302": {
+    "name": "STATUS LIFT BOOTS",
+    "description": "TALL BOOTS DAT ADD HEIGHT AN' GLOSS. EASIER\nTA DODGE BEHIND!"
+  },
+  "303": {
+    "name": "PATCHWORK SOUVENIR JACKET",
+    "description": "A JACKET LAYERED WIT TRAVEL PATCHES. EASIER\nTA DODGE BEHIND!"
+  },
+  "304": {
+    "name": "BRIGHT BUTTERFLY CLIPS",
+    "description": "A SET OF CHEERFUL BUTTERFLY HAIRCLIPS. BLOCKS\nCONFUSION!"
+  },
+  "305": {
+    "name": "BONED LACE CORSET",
+    "description": "A LACED CORSET WIT RIGID BONIN'. BLOCKS\nCONFUSION!"
+  },
+  "306": {
+    "name": "GLYPH-STITCHED CAP",
+    "description": "A CAP PRINTED WIT UNREADABLE SCRIPT. BLOCKS\nSILENCE!"
+  },
+  "307": {
+    "name": "LAYERED SLIP TEE",
+    "description": "A THIN DRAPED LAYERIN' SHIRT. BLOCKS\nCONFUSION!"
+  },
+  "308": {
+    "name": "CONCRETE PROPHET CHARM",
+    "description": "A GREY CHARM OF A STREET ORACLE. NEVER CAUGHT\nBY SURPRISE!"
+  },
+  "309": {
+    "name": "POCKET DIMENSION BELT",
+    "description": "A BELT WIT A LIL' FOLDED SPACE. STEADIES DA\nARM!"
+  },
+  "310": {
+    "name": "HEATWAVE ENSEMBLE",
+    "description": "A BREEZY OUTFIT FOR BLISTERIN' DAYS. RESISTS\nFIRE!"
+  },
+  "311": {
+    "name": "DEAL-CLOSER SUIT",
+    "description": "A SHARP SUIT CUT FOR NEGOTIATIONS. EASIER TA\nDODGE BEHIND!"
+  },
+  "312": {
+    "name": "CHROMATIC CHAOS COAT",
+    "description": "A COAT OF CLASHIN' SHIFTIN' COLORS. BLOCKS\nCONFUSION!"
+  },
+  "313": {
+    "name": "WANDERIN' ROAD BOOTS",
+    "description": "BOOTS SCUFFED BY ENDLESS WALKIN'. EASIER TA\nDODGE BEHIND!"
+  },
+  "314": {
+    "name": "UTILITY RING CHOKER",
+    "description": "A CHOKER HUNG WIT LIL' TOOLS. EASIER TA\nDODGE BEHIND!"
+  },
+  "315": {
+    "name": "SHIMMER COAT POWDER",
+    "description": "A FINE POWDER DAT CATCHES LIGHT. BLOCKS\nCONFUSION!"
+  },
+  "316": {
+    "name": "ELASTIC PEASANT BLOUSE",
+    "description": "A LOOSE GATHERED CLOTH BLOUSE. BLOCKS SLEEP!"
+  },
+  "317": {
+    "name": "ROADSIDE FLARE KIT",
+    "description": "A POUCH OF EMERGENCY SIGNAL FLARES. EASIER TA\nDODGE BEHIND!"
+  },
+  "318": {
+    "name": "UPSTREAM TIME BOOTS",
+    "description": "BOOTS SAID TA DRAG AGAINST TIME. EASIER TA\nDODGE BEHIND!"
+  },
+  "319": {
+    "name": "DECORATED DRESS UNIFORM",
+    "description": "A FORMAL UNIFORM HEAVY WIT MEDALS. BLOCKS\nRAGE!"
+  },
+  "320": {
+    "name": "TEMPORAL FLOW GAUGE",
+    "description": "A DIAL DAT TRACKS TIME'S DRIFT. EASIER TA\nDODGE BEHIND!"
+  },
+  "321": {
+    "name": "POWER TUXEDO",
+    "description": "AN IMPOSIN' TAILORED BLACK TUXEDO. BLOCKS\nSLEEP!"
+  },
+  "322": {
+    "name": "LEATHER MENACE MASK",
+    "description": "A STIFF LEATHER MASK, FACELESS. BLOCKS\nCONFUSION!"
+  },
+  "323": {
+    "name": "TIME TRADER'S SUIT",
+    "description": "A SUIT LINED WIT TINY CLOCKWORK. EASIER TA\nDODGE BEHIND!"
+  },
+  "324": {
+    "name": "ORNATE VELVET BLAZER",
+    "description": "A RICH VELVET BLAZER WIT TRIM. EASIER TA\nDODGE BEHIND!"
+  },
+  "325": {
+    "name": "POLYGON GLITCH SUIT",
+    "description": "A SUIT DAT SEEMS TA FLICKER AN' SKIP. BLOCKS\nRAGE!"
+  },
+  "326": {
+    "name": "GRAVITY ANOMALY METER",
+    "description": "A CLIP-ON GAUGE FOR WEIGHT SHIFTS. EASIER TA\nDODGE BEHIND!"
+  },
+  "327": {
+    "name": "STASIS-LOCKED GARB",
+    "description": "CLOTHIN' DAT NEVER SEEMS TA AGE. CARRIES MORE\nPUNISHMENT!"
+  },
+  "328": {
+    "name": "REINFORCED THREAT TROUSERS",
+    "description": "HEAVY TROUSERS WIT HIDDEN PLATIN'. EASIER TA\nDODGE BEHIND!"
+  },
+  "329": {
+    "name": "TATTERED LACE HOSIERY",
+    "description": "DELIBERATELY RUINED LACE STOCKINGS. EASIER TA\nDODGE BEHIND!"
+  },
+  "330": {
+    "name": "ANONYMITY COWL",
+    "description": "A DEEP COWL DAT HIDES DA FACE. BLOCKS BLIND!"
+  },
+  "331": {
+    "name": "RIFTPOINT COMPASS",
+    "description": "A COMPASS DAT POINTS AT THIN PLACES. EASIER\nTA DODGE BEHIND!"
+  },
+  "332": {
+    "name": "GOTHIC TALON NAILS",
+    "description": "LONG LACQUERED ORNAMENTAL NAILS. EASIER TA\nDODGE BEHIND!"
+  },
+  "333": {
+    "name": "SHEDDIN' CAMOUFLAGE SHELL",
+    "description": "AN OUTER SHELL DAT MOLTS ON DEMAND. EASIER TA\nDODGE BEHIND!"
+  },
+  "334": {
+    "name": "EXECUTIVE PRESENCE DRESS",
+    "description": "A COMMANDIN' TAILORED OFFICE DRESS. EASIER TA\nDODGE BEHIND!"
+  },
+  "335": {
+    "name": "SHADOW DRAMA PALETTE",
+    "description": "A KIT OF DARK THEATRICAL MAKEUP. BLOCKS\nCONFUSION!"
+  },
+  "336": {
+    "name": "WHISPERSTEP BOOTS",
+    "description": "SOFT BOOTS DAT SWALLOW YA STEPS. EASIER TA\nDODGE BEHIND!"
+  },
+  "337": {
+    "name": "UNBRANDED MYSTERY SODA",
+    "description": "A DENTED CAN WORN AS AN ODD CHARM. EASIER TA\nDODGE BEHIND!"
+  },
+  "338": {
+    "name": "WEIGHTLESS CARRYALL",
+    "description": "A PACK DAT HOLDS MORE DEN IT SHOULD. BLOCKS\nROOTED!"
+  },
+  "339": {
+    "name": "EFFECT-FLIP DENIM",
+    "description": "REVERSIBLE DENIM WIT HIDDEN LININ'. BLOCKS\nPOISON AN' DODGES BETTER!"
+  },
+  "340": {
+    "name": "MESH BRALETTE LAYER",
+    "description": "A SHEER MESH UNDERLAYER TOP. BLOCKS CONFUSION!"
+  },
+  "341": {
+    "name": "UNBREAKABLE HANDSET",
+    "description": "A DEAD PHONE TOO TOUGH TA CRACK. BLOCKS\nPARALYSIS AN' DODGES BETTER!"
+  },
+  "342": {
+    "name": "POINTLESS MICRO PURSE",
+    "description": "A TINY PURSE DAT HOLDS ALMOST NUTTIN'. EASIER\nTA DODGE BEHIND!"
+  },
+  "343": {
+    "name": "COLLAB INTIMIDATOR SET",
+    "description": "A BOLD DESIGNER OUTFIT WIT EDGE. BLOCKS RAGE!"
+  },
+  "344": {
+    "name": "CLUBFACE GEMSTONES",
+    "description": "ADHESIVE GEMS FOR DA FACE. BLOCKS CONFUSION!"
+  },
+  "345": {
+    "name": "CHAINED PLATFORM STOMPERS",
+    "description": "HEAVY BOOTS DRAPED IN CHAINS. BLOCKS RAGE!"
+  },
+  "346": {
+    "name": "NERVE-SENSE GLOVES",
+    "description": "THIN GLOVES DAT HEIGHTEN TOUCH. DODGES\nBETTER!"
+  },
+  "347": {
+    "name": "EFFICIENCY TIMEPIECE",
+    "description": "A WATCH DAT NAGS YOU TA HURRY. EASIER TA\nDODGE BEHIND!"
+  },
+  "348": {
+    "name": "NETWORK CATALYST BLAZER",
+    "description": "A BLAZER CUT TA OPEN DOORS. EASIER TA DODGE\nBEHIND!"
+  },
+  "349": {
+    "name": "DAMAGE FORMULA TEE",
+    "description": "A SHIRT PRINTED WIT CRYPTIC MATH. EASIER TA\nDODGE BEHIND!"
+  },
+  "350": {
+    "name": "ETERNAL MIDNIGHT WATCH",
+    "description": "A WATCH FROZEN AT TWELVE. EASIER TA DODGE\nBEHIND!"
+  },
+  "351": {
+    "name": "MANIFOLD TIMEPIECE",
+    "description": "A WATCH WIT TOO MANY HANDS. BLOCKS SLEEP!"
+  },
+  "352": {
+    "name": "KNOTTED BANDANA HALTER",
+    "description": "A SIMPLE TIED-CLOTH HALTER TOP. EASIER TA\nDODGE BEHIND!"
+  },
+  "353": {
+    "name": "VICTORIAN SHADOW COAT",
+    "description": "A LONG DARK HIGH-COLLARED COAT. BLOCKS\nCONFUSION!"
+  },
+  "354": {
+    "name": "AUDIO ASSAULT CAP",
+    "description": "A CAP RIGGED WIT TINY SPEAKERS. BLOCKS\nSILENCE AN' DODGES BETTER!"
+  },
+  "355": {
+    "name": "OCCULT SIGIL RINGS",
+    "description": "A SET OF RINGS CUT WIT SYMBOLS. EASIER TA\nDODGE BEHIND!"
+  },
+  "356": {
+    "name": "FALSEFIGURE VISOR",
+    "description": "A VISOR DAT DISPLAYS BAD NUMBERS. BLOCKS\nSILENCE!"
+  },
+  "357": {
+    "name": "WINTER WARFARE KIT",
+    "description": "AN INSULATED COLD-WEATHER FIELD SET. BLOCKS\nCOLD!"
+  },
+  "358": {
+    "name": "BULLETPROOF TUXEDO",
+    "description": "A FORMAL SUIT WIT HIDDEN WEAVE. BLOCKS SLEEP!"
+  },
+  "359": {
+    "name": "PRODUCTIVITY SHIRT",
+    "description": "A STARCHED SHIRT FOR LONG SHIFTS. EASIER TA\nDODGE BEHIND!"
+  },
+  "360": {
+    "name": "FOCUS BRIEFCASE",
+    "description": "A SLIM CASE DAT STEADIES DA MIND. EASIER TA\nDODGE BEHIND!"
+  },
+  "361": {
+    "name": "CULTURED HIDE SHELL",
+    "description": "AN OUTER LAYER OF GROWN SKIN. RESISTS FIRE!"
+  },
+  "362": {
+    "name": "FEATHERED RIBBON HAT",
+    "description": "A BROAD HAT TRIMMED WIT FEATHERS. BLOCKS\nCONFUSION!"
+  },
+  "363": {
+    "name": "REALITY STRETCH BAND",
+    "description": "A WRISTBAND DAT WARPS A LIL'. DODGES\nBETTER!"
+  },
+  "364": {
+    "name": "D-RING LACE TROUSERS",
+    "description": "LACE TROUSERS STRUNG WIT RINGS. EASIER TA\nDODGE BEHIND!"
+  },
+  "365": {
+    "name": "SECOND HEARTBEAT SUIT",
+    "description": "A SUIT DAT PULSES FAINTLY WHEN WORN. EASIER\nTA DODGE BEHIND!"
+  },
+  "366": {
+    "name": "PLAZA WANDERER'S CAP",
+    "description": "A FADED MALL-LOGO BASEBALL CAP. BLOCKS POISON!"
+  },
+  "367": {
+    "name": "SENTIMENT GLASS RING",
+    "description": "A RING DAT FLICKERS WIT MOOD COLOR. RESISTS\nFIRE!"
+  },
+  "368": {
+    "name": "THERMOWEAVE FIELD JACKET",
+    "description": "A SELF-REGULATIN' CLIMATE JACKET. BLOCKS COLD!"
+  },
+  "369": {
+    "name": "MANTLE OF STANDIN'",
+    "description": "A DRAPED CAPE MARKIN' RANK. BLOCKS PARALYSIS!"
+  },
+  "370": {
+    "name": "DOJO PRACTICE GI",
+    "description": "A PLAIN WHITE MARTIAL UNIFORM. WARDS OFF\nBURNED!"
+  },
+  "371": {
+    "name": "MOURNIN' LACE GLOVES",
+    "description": "DELICATE FINGERLESS LACE GLOVES. EASIER TA\nDODGE BEHIND!"
+  },
+  "372": {
+    "name": "FOLLICLE TONIC VEST",
+    "description": "A VEST WOVEN WIT SCALP-TENDIN' FIBERS.\nRESISTS FIRE!"
+  },
+  "373": {
+    "name": "LATTICE MESH TOP",
+    "description": "AN OPEN FISHNET OVERLAY SHIRT. EASIER TA DODGE\nBEHIND!"
+  },
+  "374": {
+    "name": "GODKILLER'S RELIQUARY",
+    "description": "A SPEAR HUNG WIT DEICIDE RELICS. SOFTENS\nPHYSICAL BLOWS!"
+  },
+  "375": {
+    "name": "HOLLOW CARRY BELT",
+    "description": "A BELT WIT POCKET-SIZED VOIDS. BLOCKS ROOTED!"
+  },
+  "376": {
+    "name": "BONE SPLINTER SKULLCAP",
+    "description": "A CAP SET WIT SKULL FRAGMENTS. BLOCKS\nSILENCE!"
+  },
+  "377": {
+    "name": "LAGGIN' HOUR WATCH",
+    "description": "A WRISTWATCH DAT RUNS SLIGHTLY WRONG. EASIER\nTA DODGE BEHIND!"
+  },
+  "378": {
+    "name": "ENVOY'S SASHED COAT",
+    "description": "A FORMAL DIPLOMATIC BODY COAT. BLOCKS POISON!"
+  },
+  "379": {
+    "name": "FRACTURED LIGHT BOMBER",
+    "description": "A BOMBER JACKET OF SHIFTIN' HUES. BLOCKS\nCONFUSION!"
+  },
+  "380": {
+    "name": "SIGIL OF DISORDER",
+    "description": "A LIL' CHAOTIC ENAMEL BADGE. DODGES BETTER!"
+  },
+  "381": {
+    "name": "ALVEOLAR BREATH MASK",
+    "description": "A FILTERIN' BREATH MASK. RESISTS PETRO AN'\nBLOCKS POISON!"
+  },
+  "382": {
+    "name": "LIMELIGHT CONFIDENCE SUIT",
+    "description": "A FLASHY STAGE-READY OUTFIT. BLOCKS CONFUSION!"
+  },
+  "383": {
+    "name": "CLIMBER'S PATCH JACKET",
+    "description": "A PATCHWORK JACKET OF EARNED BADGES. WEAK TA\nPHYSICAL!"
+  },
+  "384": {
+    "name": "AUDITOR'S FAR LENSES",
+    "description": "SPECTACLES DAT SHARPEN DETAIL. EASIER TA\nDODGE BEHIND!"
+  },
+  "385": {
+    "name": "HIGHBORN COCKTAIL DRESS",
+    "description": "AN ELEGANT EVENIN' GOWN. BLOCKS CONFUSION!"
+  },
+  "386": {
+    "name": "PATRICIAN'S ARRAY",
+    "description": "FINE ARISTOCRATIC ATTIRE. WARDS OFF BURNED!"
+  },
+  "387": {
+    "name": "INTERVAL CHARM CHAIN",
+    "description": "A NECKLACE STRUNG WIT IDLE CHARMS. PRONE TA\nPOISON!"
+  },
+  "388": {
+    "name": "SOURCEWELL BAND",
+    "description": "A BRACELET ETCHED WIT OLD CODE. EASIER TA\nDODGE BEHIND!"
+  },
+  "389": {
+    "name": "GLITCHSKIN TEE",
+    "description": "A SHIRT DAT SEEMS TA STUTTER. EASIER TA DODGE\nBEHIND!"
+  },
+  "390": {
+    "name": "ANNOTATOR'S HAT",
+    "description": "A WIDE HAT SCRAWLED WIT NOTES. BLOCKS CHARM!"
+  },
+  "391": {
+    "name": "REGIMENTED PLEAT SKIRT",
+    "description": "A CRISP PLEATED UNIFORM SKIRT. EASIER TA DODGE\nBEHIND!"
+  },
+  "392": {
+    "name": "SCHOOLYARD BARTER BAND",
+    "description": "A WORN TRADIN' WRISTBAND. EASIER TA DODGE\nBEHIND!"
+  },
+  "393": {
+    "name": "GREENWOOD SCOUT KIT",
+    "description": "A RUGGED WOODLAND FIELD OUTFIT. CARRIES MORE\nPUNISHMENT!"
+  },
+  "394": {
+    "name": "FUNEREAL LACE GOWN",
+    "description": "A DARK GOTHIC LACE GOWN. BLOCKS CONFUSION!"
+  },
+  "395": {
+    "name": "COMPANION CHIRP EARPIECE",
+    "description": "AN EARPIECE DAT PIPES A TINY VOICE. BLOCKS\nSILENCE!"
+  },
+  "396": {
+    "name": "BROCADE TAILCOAT",
+    "description": "AN EMBROIDERED FORMAL TAILCOAT. EASIER TA\nDODGE BEHIND!"
+  },
+  "397": {
+    "name": "ENDLESS SPECTRUM TEE",
+    "description": "A SHIRT OF RESTLESS RAINBOW COLOR. BLOCKS\nCHARM AN' DODGES BETTER!"
+  },
+  "398": {
+    "name": "SLIPPHASE GLOVES",
+    "description": "GLOVES DAT BLUR AT DA EDGES. BLOCKS POISON!"
+  },
+  "399": {
+    "name": "PENDANT OF HELD GAZES",
+    "description": "A PENDANT DAT DRAWS DA EYE. BLOCKS CHARM!"
+  },
+  "400": {
+    "name": "DECAL CARNIVAL HAT",
+    "description": "A HAT PLASTERED WIT FACE STICKERS. BLOCKS\nRAGE!"
+  },
+  "401": {
+    "name": "GRAVITY REFUSAL TROUSERS",
+    "description": "PANTS DAT HANG ODDLY WEIGHTLESS. WEAK TA\nWATER!"
+  },
+  "402": {
+    "name": "STUDDED COMMAND COLLAR",
+    "description": "A STUDDED COLLAR OF OFFICE. BLOCKS RAGE!"
+  },
+  "403": {
+    "name": "TREADWHEEL BOOTS",
+    "description": "BOOTS FITTED WIT TINY WHEELS. EASIER TA DODGE\nBEHIND!"
+  },
+  "404": {
+    "name": "SHIFTIN' SIGHT GLASSES",
+    "description": "GLASSES WIT ADJUSTABLE VISION. BLOCKS\nCONFUSION AN' DODGES BETTER!"
+  },
+  "405": {
+    "name": "ETERNAL COMFORT LAYER",
+    "description": "RESISTS FIRE."
+  },
+  "406": {
+    "name": "INKLINE REALITY GLASSES",
+    "description": "GLASSES DAT FLATTEN DA WORLD. DODGES BETTER!"
+  },
+  "407": {
+    "name": "BEGINNER'S FORTUNE RING",
+    "description": "A LIL' RING SAID TA NUDGE LUCK. SLIGHTLY\nHARDER TA HIT!"
+  },
+  "408": {
+    "name": "EXECUTIVE THRONEWEAR",
+    "description": "AN IMPOSIN' TAILORED POWER SUIT. BLOCKS SLEEP!"
+  },
+  "409": {
+    "name": "FOLDIN' POCKET CASE",
+    "description": "A BRIEFCASE LARGER WITHIN. EASIER TA DODGE\nBEHIND!"
+  },
+  "410": {
+    "name": "DOMINION POWER SUIT",
+    "description": "A SHARP SUIT OF CORPORATE CUT. EASIER TA DODGE\nBEHIND!"
+  },
+  "411": {
+    "name": "VEIL-PIERCIN' LENSES",
+    "description": "GLASSES DAT REVEAL HIDDEN TINKZ. EASIER TA\nDODGE BEHIND!"
+  },
+  "412": {
+    "name": "GRAVE-FINDER'S CHARM",
+    "description": "A CHARM DAT POINTS TA DA BURIED. BLOCKS\nCOLD!"
+  },
+  "413": {
+    "name": "RELICWARD BANGLE",
+    "description": "AN OLD BANGLE HUMMIN' FAINTLY. BLOCKS\nPARALYSIS!"
+  },
+  "414": {
+    "name": "FATE-TANGLE CHIP",
+    "description": "A LIL' CHIP DAT SCRAMBLES ODDS. BLOCKS\nVULNERABILITY, CHARM!"
+  },
+  "415": {
+    "name": "LIVEWIRE CONDUIT",
+    "description": "A GEAR DAT CHANNELS CURRENT. EASIER TA DODGE\nBEHIND!"
+  },
+  "416": {
+    "name": "RECURSION BREAKER JACKET",
+    "description": "A JACKET SAID TA END LOOPS. EASIER TA DODGE\nBEHIND!"
+  },
+  "417": {
+    "name": "SILKLINED TRAVEL CAPE",
+    "description": "A FINE SILK-LINED CAPE. BLOCKS CONFUSION!"
+  },
+  "418": {
+    "name": "CHAINLINK VESTURE",
+    "description": "A MINIMAL CHAIN-STRUNG GARMENT. BLOCKS\nCONFUSION!"
+  },
+  "419": {
+    "name": "SIGIL-WARDED GOWN",
+    "description": "AN EVENIN' GOWN STITCHED WIT WARDS. BLOCKS\nCONFUSION!"
+  },
+  "420": {
+    "name": "BROKER'S FORMAL ARRAY",
+    "description": "REFINED ATTIRE FOR NEGOTIATION. BLOCKS SLEEP!"
+  },
+  "421": {
+    "name": "CHAMELEON CARAPACE",
+    "description": "A SHELL DAT MIMICS SURROUNDINGS. RESISTS\nFIRE, WATER, PETRO!"
+  },
+  "422": {
+    "name": "RESERVE POWER AMULET",
+    "description": "AN AMULET HOLDIN' STORED CHARGE. EASIER TA\nDODGE BEHIND!"
+  },
+  "423": {
+    "name": "MANA-CHANNEL GLOVES",
+    "description": "GLOVES DAT FOCUS ARCANE FLOW. EASIER TA DODGE\nBEHIND!"
+  },
+  "424": {
+    "name": "CLARITY MANTLE",
+    "description": "A LIGHT JACKET. BLOCKS SILENCE, RAGE, CHARM,\nSLEEP!"
+  },
+  "425": {
+    "name": "ELEMENTAL CONFLUENCE RIG",
+    "description": "A GARMENT FUSIN' ELEMENTAL. RESISTS PETRO,\nSACRED, FIRE, WATER, THUNDER, ICE!"
+  },
+  "426": {
+    "name": "WARKIN''S BATTLE REGALIA",
+    "description": "GRAND MARTIAL STATE ATTIRE. THICKENS DA PLATE\nAN' STIFFENS DA GUARD!"
+  },
+  "427": {
+    "name": "SOVEREIGN DIADEM",
+    "description": "AN ORNATE RULIN' CROWN. BLOCKS CONCUSSED!"
+  },
+  "428": {
+    "name": "HEXBANE ENSEMBLE",
+    "description": "A CURSE-WARDED OUTFIT. RESISTS WATER!"
+  },
+  "429": {
+    "name": "DISCOTHEQUE KICKS",
+    "description": "FLASHY LIGHT-UP DANCE SHOES. RESISTS WIND AN'\nDODGES BETTER!"
+  },
+  "430": {
+    "name": "CIRCUIT SIGIL INK",
+    "description": "CONDUCTIVE TATTOO INK AS GEAR. BLOCKS SLEEP!"
+  },
+  "431": {
+    "name": "FIELDWORKER'S OBSERVER SUIT",
+    "description": "A DISCREET STUDY OUTFIT. RESISTS PETRO!"
+  },
+  "432": {
+    "name": "DEAD GOD'S SHARD",
+    "description": "A COLD FRAGMENT OF DIVINE REMAINS. BLOCKS\nSILENCE!"
+  },
+  "433": {
+    "name": "TEMPFLUX CHRONOMETER",
+    "description": "A WATCH DAT BENDS DA HOUR. FOCUSES DA WILL!"
+  },
+  "434": {
+    "name": "PARIAH'S COLD JACKET",
+    "description": "A JACKET DAT REPELS COMPANY. EASIER TA DODGE\nBEHIND!"
+  },
+  "435": {
+    "name": "HIVE-MIND VESTMENT",
+    "description": "A GARMENT OF SHARED THOUGHT. BLOCKS BLEEDIN'!"
+  },
+  "436": {
+    "name": "ODDSBENDER HAT",
+    "description": "A HAT DAT TOYS WIT PROBABILITY. STEADIES DA\nMIND!"
+  },
+  "437": {
+    "name": "AEGIS OF DA FIREWALL",
+    "description": "WARDED ACCESSORIES OF PURE DEFENSE. RESISTS\nFIRE!"
+  },
+  "438": {
+    "name": "SIGNET OF DA INFERNO",
+    "description": "A SIGNET RING WREATHED IN HEAT. BLOCKS CHARM!"
+  },
+  "439": {
+    "name": "HELM OF DA SPIRIT TIDE",
+    "description": "A HELM CROWNED WIT GHOSTLIGHT. RESISTS WATER!"
+  },
+  "440": {
+    "name": "RIFTSIGHT GOGGLES",
+    "description": "GOGGLES DAT PIERCE DIMENSIONS. WARDS OFF\nBLIND!"
+  },
+  "441": {
+    "name": "CROWN OF DA DISCORD QUEEN",
+    "description": "A JAGGED CROWN OF STRIFE. EASIER TA DODGE\nBEHIND!"
+  },
+  "442": {
+    "name": "BEANIE OF DA BROADCAST",
+    "description": "A HUMBLE KNIT CAP OF LEGEND. EASIER TA DODGE\nBEHIND!"
+  },
+  "443": {
+    "name": "OTHERWORLD SHARD RING",
+    "description": "A RING SET WIT ALIEN CRYSTAL. MENDS A LIL'\nHEALTH!"
+  },
+  "444": {
+    "name": "DEBUGGER'S STRIDE BOOTS",
+    "description": "BOOTS DAT SKIP ACROSS SPACE. DODGES BETTER!"
+  },
+  "455": {
+    "name": "<-- Robe -->",
+    "description": ""
+  },
+  "456": {
+    "name": "BABBLIN' TOME",
+    "description": "A GRIMOIRE OF GARBLED SPELLS. SOMETIMES\nCOUNTERS!"
+  },
+  "457": {
+    "name": "POCKET ARCANE KIT",
+    "description": "A CHEAP MODERN SPELL SATCHEL. SLIGHTLY HARDER\nTA HIT!"
+  },
+  "458": {
+    "name": "SAGGIN' COMFORT ROBE",
+    "description": "A SHAPELESS OVERSIZED ROBE. SOAKS PHYSICAL\nDAMAGE!"
+  },
+  "459": {
+    "name": "PLASTIC TIARA",
+    "description": "A FLIMSY TOY CROWN. HARDER TA HIT WIT MAGIC!"
+  },
+  "460": {
+    "name": "QUACK CHARM BRACELET",
+    "description": "A WORTHLESS CHARM BRACELET. FOCUSES DA WILL!"
+  },
+  "461": {
+    "name": "CRACKED SLAB WARD",
+    "description": "A BROKEN-SCREEN WARDIN' PLATE. TURNS ASIDE\nCRITICAL HITS!"
+  },
+  "462": {
+    "name": "BARGAIN CRYSTAL CHARM",
+    "description": "A FAKE HEALIN' CRYSTAL. FOCUSES DA WILL!"
+  },
+  "463": {
+    "name": "TOY MYSTIC WAND",
+    "description": "A PLASTIC PRETEND WAND. SLIGHTLY HARDER TA\nHIT!"
+  },
+  "464": {
+    "name": "CRUMPLED GRADUATION ROBE",
+    "description": "A WRINKLED CEREMONIAL ROBE. RESISTS FIRE!"
+  },
+  "465": {
+    "name": "FOIL THEORIST CAP",
+    "description": "A CRUDE FOIL-LINED HOOD. BLOCKS CONFUSION!"
+  },
+  "466": {
+    "name": "SMUDGED OVERLAY VISOR",
+    "description": "A CLOUDED AUGMENTED VISOR. WARDS OFF BLIND!"
+  },
+  "467": {
+    "name": "DISCOUNT WIZARD ROBE",
+    "description": "A CHEAP CLEARANCE-RACK ROBE. CARRIES MORE\nPUNISHMENT!"
+  },
+  "468": {
+    "name": "COMPILER'S COWL",
+    "description": "A SOFT HOOD WIT WORN FELT LININ'. BLOCKS\nBLIND!"
+  },
+  "469": {
+    "name": "APPRENTICE GUILD ROBE",
+    "description": "PLAIN GREY MAGE ROBES, LIGHTLY PATCHED. BLOCKS\nINFECTED!"
+  },
+  "470": {
+    "name": "SEALED HAZARD WRAP",
+    "description": "A HEAVY RUBBERIZED CONTAINMENT SUIT. RESISTS\nWATER!"
+  },
+  "471": {
+    "name": "SYNAPSE HEADBAND",
+    "description": "A TAUT BAND OF CONDUCTIVE THREAD. RESISTS\nTHUNDER!"
+  },
+  "472": {
+    "name": "DATAFLOW DIADEM",
+    "description": "A THIN CIRCLET OF DEAD FIBER OPTICS. MENDS A\nLIL' MANA AN' TEACHES A SKILL!"
+  },
+  "473": {
+    "name": "QUARANTINE HOOD",
+    "description": "A SEALED CLOTH HELM WIT FOGGY VISOR. RESISTS\nCURSED!"
+  },
+  "474": {
+    "name": "PSI CHOCKER COLLAR",
+    "description": "A SNUG CHOKER WOVEN WIT GREY SIGILS. TEACHES\nA SKILL AN' RESISTS WIND!"
+  },
+  "475": {
+    "name": "QUIET MIND CHARM",
+    "description": "A LIL' CHARM ON A FRAYED CORD. EASIER TA\nDODGE BEHIND!"
+  },
+  "476": {
+    "name": "INTRUSION WARD BAND",
+    "description": "A COILED BAND OF INSULATED WIRE. RESISTS\nTHUNDER AN' TURNS SPELLS BACK!"
+  },
+  "477": {
+    "name": "PERSONAL ICE WARD",
+    "description": "A PALM-SIZED BARRIER EMITTER. RESISTS ICE!"
+  },
+  "478": {
+    "name": "VEIL BRACELET",
+    "description": "A PLAIN BRACELET OF DULL BEADS. HARDER TA HIT\nWIT MAGIC!"
+  },
+  "479": {
+    "name": "SPECTRAL LODESTONE",
+    "description": "A LIL' COMPASS WIT A RESTLESS NEEDLE.\nRESISTS CURSED AN' BUILDS AP IN A FIGHT!"
+  },
+  "480": {
+    "name": "LUCKY BREAK SUIT",
+    "description": "A LOOSE SUIT OF MISMATCHED. DODGES BETTER AN'\nDOUBLES EUROS!"
+  },
+  "481": {
+    "name": "MENDIN' MAGE ROBE",
+    "description": "SOFT ROBES DAT SMELL OF OLD. DODGES BETTER!"
+  },
+  "482": {
+    "name": "BUBBLE FIELD EMITTER",
+    "description": "A HANDHELD SHIELD-FIELD GENERATOR. GUARDS\nHARDER!"
+  },
+  "483": {
+    "name": "FOCUS CIRCLET",
+    "description": "A SLIM CIRCLET OF POLISHED TIN. BLOCKS\nCONFUSION!"
+  },
+  "484": {
+    "name": "STEADFAST AMULET",
+    "description": "A WEIGHTED AMULET ON A LEATHER THONG. EASIER\nTA DODGE BEHIND!"
+  },
+  "485": {
+    "name": "MUSE'S CORONET",
+    "description": "A DELICATE CORONET OF BENT BRASS. EASIER TA\nDODGE BEHIND!"
+  },
+  "486": {
+    "name": "FEATHERFALL ROBE",
+    "description": "AN IMPOSSIBLY LIGHT WOVEN ROBE. SOFTENS FLOOR\nDAMAGE!"
+  },
+  "487": {
+    "name": "FORESIGHT HAT",
+    "description": "A BROAD CLOTH HAT. BLOCKS SILENCE!"
+  },
+  "488": {
+    "name": "POLYMATH'S GARB",
+    "description": "A TIDY SCHOLAR'S OUTFIT, INK-STAINED. DODGES\nBETTER!"
+  },
+  "489": {
+    "name": "GHOST SIGNAL JACKET",
+    "description": "A WORN JACKET LINED WIT FOIL MESH. RESISTS\nTHUNDER!"
+  },
+  "490": {
+    "name": "DATAKEEPER'S COAT",
+    "description": "A LONG COAT WIT MANY LIL' POCKETS. DOUBLES\nITEM DROPS!"
+  },
+  "491": {
+    "name": "WAYFINDER'S CROWN",
+    "description": "A PLAIN CIRCLET ETCHED WIT ARROWS. FEWER\nRANDOM BATTLES!"
+  },
+  "492": {
+    "name": "PHASE VEIL MODULE",
+    "description": "A LIL' DEVICE DAT HUMS FAINTLY. HARDER TA\nHIT WIT MAGIC!"
+  },
+  "493": {
+    "name": "DATAWARRIOR VEST",
+    "description": "A PADDED VEST WIT CRACKED PLATIN'. EASIER TA\nDODGE BEHIND!"
+  },
+  "494": {
+    "name": "VETERAN AR VISOR",
+    "description": "A SCUFFED VISOR OF DARK GLASS. STEADIES DA\nAIM!"
+  },
+  "495": {
+    "name": "BACKLASH WARD SUIT",
+    "description": "A GROUNDED SUIT OF INSULATED CLOTH. TURNS\nSPELLS BACK!"
+  },
+  "496": {
+    "name": "LECTURER'S MORTARBOARD",
+    "description": "A STIFF ACADEMIC CAP, SLIGHTLY FADED. LEARNS\nFASTER!"
+  },
+  "497": {
+    "name": "COMMAND HALO",
+    "description": "A HEADPIECE RINGED WIT DEAD PROJECTORS.\nBUILDS AP FASTER!"
+  },
+  "498": {
+    "name": "SERENE COUTURE SET",
+    "description": "AN ELEGANT MINIMALIST ROBE. EASIER TA DODGE\nBEHIND!"
+  },
+  "499": {
+    "name": "GUILD WITCH'S HAT",
+    "description": "A TALL POINTED HAT OF DARK FELT. SPELLS COST\nMORE!"
+  },
+  "500": {
+    "name": "CHROME WEAVE SUIT",
+    "description": "A SNUG SUIT THREADED WIT METAL. SOFTENS\nPHYSICAL BLOWS!"
+  },
+  "501": {
+    "name": "SEER'S VISOR",
+    "description": "A CLEAR VISOR DAT NEVER FOGS. EASIER TA DODGE\nBEHIND!"
+  },
+  "502": {
+    "name": "WILDLINK SUIT",
+    "description": "A RUGGED SUIT GROWN WIT MOSS. MENDS A LIL'\nHEALTH!"
+  },
+  "503": {
+    "name": "CIPHER TOUCH GLOVES",
+    "description": "THIN GLOVES WIT TINGLIN' FINGERTIPS. DODGES\nBETTER!"
+  },
+  "504": {
+    "name": "ADEPT'S PRACTICE ROBE",
+    "description": "STURDY ROBES WORN AT DA ELBOWS. LEARNS\nFASTER!"
+  },
+  "505": {
+    "name": "ASCENSION CIRCLET",
+    "description": "A BRIGHT CIRCLET DAT FEELS WEIGHTLESS.\nRESISTS SACRED AN' REGAINS MP!"
+  },
+  "506": {
+    "name": "LOOMWORK ROBE",
+    "description": "A ROBE OF DENSE ORNAMENTAL WEAVE. PRONE TA\nCONFUSION!"
+  },
+  "507": {
+    "name": "CONCORD VESTMENTS",
+    "description": "SOFT WHITE ROBES WIT GREEN TRIM. EASIER TA\nDODGE BEHIND!"
+  },
+  "508": {
+    "name": "VERDANT CELL ROBE",
+    "description": "A LIVIN' ROBE. DODGES BETTER!"
+  },
+  "509": {
+    "name": "NEON MEMORY ROBE",
+    "description": "A ROBE STITCHED WIT OLD LIGHT STRIPS. BLOCKS\nSILENCE AN' DODGES BETTER!"
+  },
+  "510": {
+    "name": "STATIC VULTURE TALISMAN",
+    "description": "A JAGGED CHARM DAT CRACKLES SOFTLY. IMMUNE TA\nTHUNDER!"
+  },
+  "511": {
+    "name": "IRON CONVICTION ROBES",
+    "description": "STIFF ROBES IN SEVERE GREY. EASIER TA DODGE\nBEHIND!"
+  },
+  "512": {
+    "name": "SPELLFORM HAT",
+    "description": "A STRUCTURED HAT LINED WIT SIGILS. EASIER TA\nDODGE BEHIND!"
+  },
+  "513": {
+    "name": "CONVERGENCE CROWN",
+    "description": "A HEAVY CROWN OF FOCUSIN' LENSES. MENDS A\nLIL' MANA!"
+  },
+  "514": {
+    "name": "RUNE BOMBER JACKET",
+    "description": "A WORN FLIGHT JACKET, HAND-INKED. THICKENS DA\nPLATE AN' STIFFENS DA GUARD!"
+  },
+  "515": {
+    "name": "TECHNOMANCER VESTMENT",
+    "description": "A ROBE WIRED WIT HUMMIN' THREADS. BLOCKS\nINFECTED!"
+  },
+  "516": {
+    "name": "MANTLE OF RAW CHAOS",
+    "description": "A SHIFTIN' ROBE OF RESTLESS CLOTH. EASIER TA\nDODGE BEHIND!"
+  },
+  "517": {
+    "name": "STORMLOOM MANTLE",
+    "description": "A COAT DAT SMELLS OF LIGHTNING. RESISTS\nTHUNDER!"
+  },
+  "518": {
+    "name": "SPELLWEAVER'S REGALIA",
+    "description": "ORNATE ROBES OF LAYERED SILK. BLOCKS BLEEDIN'!"
+  },
+  "519": {
+    "name": "HIGH CLERIC'S VESTMENTS",
+    "description": "GILDED CEREMONIAL WHITE ROBES. THICKENS DA\nPLATE AN' STIFFENS DA GUARD!"
+  },
+  "520": {
+    "name": "ZEPHYR'S EMBRACE",
+    "description": "A ROBE SO LIGHT IT SEEMS TA DRIFT. WARDS OFF\nBURNED!"
+  },
+  "521": {
+    "name": "INNER EYE BEANIE",
+    "description": "A SOFT KNIT CAP, ODDLY WARM. WARDS OFF CHARM!"
+  },
+  "522": {
+    "name": "NULLSTONE PENDANT",
+    "description": "A DARK PENDANT DAT SWALLOWS LIGHT. BLOCKS\nGUARD BROKEN!"
+  },
+  "523": {
+    "name": "SIGIL OF PURE CLARITY",
+    "description": "A PALE CAP MARKED WIT ONE RUNE. MENDS A\nLIL' MANA!"
+  },
+  "524": {
+    "name": "MINDRACE CROWN",
+    "description": "A CROWN DAT THRUMS AGAINST DA SKULL. BLOCKS\nSILENCE!"
+  },
+  "525": {
+    "name": "WELLSPRIN' CIRCLET",
+    "description": "A CIRCLET WARM WIT STORED POWER. EASIER TA\nDODGE BEHIND!"
+  },
+  "526": {
+    "name": "MATRIXWEAVE COAT",
+    "description": "A COAT OF IMPOSSIBLY FINE LATTICE. MENDS A\nLIL' HEALTH!"
+  },
+  "527": {
+    "name": "WARDLIGHT COAT",
+    "description": "A LONG LAB COAT ETCHED WIT GLYPHS. EASIER TA\nDODGE BEHIND!"
+  },
+  "528": {
+    "name": "VOIDSUPPER HOOD",
+    "description": "A BLACK HOOD DAT DRINKS DA DARK. RESISTS\nCURSED!"
+  },
+  "529": {
+    "name": "SPELL RELIQUARY HAT",
+    "description": "A DEEP HAT DAT HOLDS MORE DEN IT SHOULD.\nEASIER TA DODGE BEHIND!"
+  },
+  "530": {
+    "name": "LEYSURGE HOOD",
+    "description": "A HOOD DAT HUMS ON DA LEY LINES. BLOCKS\nBLIND!"
+  },
+  "531": {
+    "name": "ROBES OF DA GREAT BEAST",
+    "description": "CRIMSON ROBES HEAVY WIT OLD SYMBOLS. EASIER\nTA DODGE BEHIND!"
+  },
+  "532": {
+    "name": "ARCHMAGISTER'S REGALIA",
+    "description": "TOWERIN' ROBES OF DEEP VIOLET. WARDS OFF\nBURNED!"
+  },
+  "533": {
+    "name": "STARWOVEN CIRCLET",
+    "description": "A CIRCLET DAT GLINTS LIKE NIGHT SKY. SHARPENS\nDA INSTINCTS!"
+  },
+  "534": {
+    "name": "ENDWORLD GRIMOIRE",
+    "description": "A BATTERED, HAND-BOUND SPELLBOOK. QUICKENS DA\nSTEP!"
+  },
+  "535": {
+    "name": "EQUATION VISOR",
+    "description": "A VISOR DAT SCROLLS WIT FAINT GLYPHS. WARDS\nOFF BLIND!"
+  },
+  "536": {
+    "name": "STORMCALLER'S MANTLE",
+    "description": "A HEAVY MANTLE DAT SMELLS OF RAIN. RESISTS\nTHUNDER!"
+  },
+  "537": {
+    "name": "PHASEWALKER'S COAT",
+    "description": "A COAT DAT BLURS AT DA EDGES. CARRIES MORE\nPUNISHMENT!"
+  },
+  "538": {
+    "name": "CORTEX AMPLIFIER CROWN",
+    "description": "A CROWN WIRED TA DA TEMPLES. HARDER TA HIT\nWIT MAGIC!"
+  },
+  "539": {
+    "name": "HOLOMATRIX ROBES",
+    "description": "SHIMMERIN' ROBES OF PROJECTED LIGHT. CARRIES\nMORE PUNISHMENT!"
+  },
+  "540": {
+    "name": "COSMIC ARCHMAGE ROBES",
+    "description": "VAST ROBES SCATTERED WIT STARS. EASIER TA\nDODGE BEHIND!"
+  },
+  "541": {
+    "name": "CIRCUITWOVEN ROBES",
+    "description": "ROBES LACED WIT LIVIN' WIRE. RESISTS WATER!"
+  },
+  "552": {
+    "name": "<-- Light Armor -->",
+    "description": ""
+  },
+  "553": {
+    "name": "SWEATSHOP CASTOFF",
+    "description": "A FLIMSY MASS-PRODUCED JERKIN. RESISTS FIRE!"
+  },
+  "554": {
+    "name": "KNOCKOFF TEAM JERSEY",
+    "description": "A FADED JERSEY WIT PEELIN' PRINT. BLOCKS\nINFECTED!"
+  },
+  "555": {
+    "name": "DENTED SKULL CAP",
+    "description": "A CHEAP STEEL CAP, BADLY BENT. WARDS OFF\nCHARM!"
+  },
+  "556": {
+    "name": "TOY SOLDIER HELM",
+    "description": "A PLASTIC HELMET OF DUBIOUS WORTH. STEADIES\nDA MIND!"
+  },
+  "557": {
+    "name": "WORKSITE SALVAGE VEST",
+    "description": "A GRUBBY HI-VIS VEST WIT ARMOR PADS. MENDS A\nLIL' HEALTH!"
+  },
+  "558": {
+    "name": "REBEL'S HIDE JACKET",
+    "description": "A SCUFFED LEATHER JACKET. RESISTS ICE!"
+  },
+  "559": {
+    "name": "PULP PAPER ARMOR",
+    "description": "LAYERED NEWSPRINT, SURPRISINGLY STIFF. RESISTS\nCURSED!"
+  },
+  "560": {
+    "name": "FLEX SPORT SUIT",
+    "description": "A STRETCHY PADDED ATHLETIC SUIT. SOAKS\nPHYSICAL DAMAGE!"
+  },
+  "561": {
+    "name": "COMMUTER'S HELM",
+    "description": "A SCUFFED CYCLIN' HELMET. RESISTS SACRED!"
+  },
+  "562": {
+    "name": "STAINED HAND-ME-DOWN",
+    "description": "A VEST OF INDETERMINATE ORIGIN. SOAKS PHYSICAL\nDAMAGE!"
+  },
+  "563": {
+    "name": "GRIFTER'S BLAZER",
+    "description": "A WORN BLAZER WIT DEEP POCKETS. THICKENS DA\nPLATE AN' STIFFENS DA GUARD!"
+  },
+  "564": {
+    "name": "SCRAP TIN GAUNTLETS",
+    "description": "CRUDE GAUNTLETS OF HAMMERED CANS. RESISTS\nWIND!"
+  },
+  "565": {
+    "name": "TREAD PLATE VEST",
+    "description": "A VEST OF CUT TIRE RUBBER. THICKENS DA PLATE\nAN' STIFFENS DA GUARD!"
+  },
+  "566": {
+    "name": "SPIKED COLANDER HELM",
+    "description": "A KITCHEN STRAINER TURNED HELMET. SHARPENS DA\nINSTINCTS!"
+  },
+  "567": {
+    "name": "PAVEMENT KISSER HELM",
+    "description": "A BLUNT, HEAVY HEADGUARD. BLOCKS SILENCE!"
+  },
+  "568": {
+    "name": "OILDRUM HELM",
+    "description": "A HELMET CUT FROM A STEEL DRUM. HARDER TA HIT\nWIT MAGIC!"
+  },
+  "569": {
+    "name": "TREAD SOLE BOOTS",
+    "description": "BOOTS SOLED WIT THICK TIRE RUBBER. MENDS A\nLIL' MANA!"
+  },
+  "570": {
+    "name": "PADDED CRASH COWL",
+    "description": "A FOAM-LINED IMPACT HELMET. HARDER TA HIT WIT\nMAGIC!"
+  },
+  "571": {
+    "name": "OPEN SALLET",
+    "description": "AN OPEN-FACED STEEL SALLET. MENDS A LIL'\nMANA!"
+  },
+  "572": {
+    "name": "WORN PAULDRON SET",
+    "description": "A SET OF RUSTED PLATE SHOULDERS. BLOCKS\nPOISON!"
+  },
+  "573": {
+    "name": "PILOT SKULLCAP",
+    "description": "A LIGHTWEIGHT ALLOY SKULL CAP. BLOCKS\nCONCUSSED!"
+  },
+  "574": {
+    "name": "PATROLMAN HELM",
+    "description": "A DENTED URBAN PATROL HELMET. MENDS A LIL'\nMANA!"
+  },
+  "575": {
+    "name": "FLATTENED TIN BRACERS",
+    "description": "BRACERS BEATEN FROM SCRAP CANS. BLOCKS SLEEP!"
+  },
+  "576": {
+    "name": "CARBON FLIGHT JACKET",
+    "description": "A WOVEN CARBON BOMBER JACKET. SOAKS PHYSICAL\nDAMAGE!"
+  },
+  "577": {
+    "name": "ASPHALT CAPTAIN CAP",
+    "description": "A REINFORCED ROAD CAPTAIN'S CAP. RESISTS\nSACRED!"
+  },
+  "578": {
+    "name": "CLIMBER'S HARNESS SET",
+    "description": "A WALL-CLIMBIN' HARNESS RIG. EASIER TA DODGE\nBEHIND!"
+  },
+  "579": {
+    "name": "STIMULANT VEST",
+    "description": "A PADDED COMBAT STIMULANT VEST. THICKENS DA\nPLATE AN' STIFFENS DA GUARD!"
+  },
+  "580": {
+    "name": "WARDEN'S ROAD RIG",
+    "description": "A LAYERED TACTICAL ROAD VEST. THICKENS DA\nPLATE AN' STIFFENS DA GUARD!"
+  },
+  "581": {
+    "name": "ROADSIDE BREASTPLATE",
+    "description": "A SCUFFED RIVETED BREASTPLATE. WARDS OFF\nBURNED!"
+  },
+  "582": {
+    "name": "FOOTMAN'S KETTLE HAT",
+    "description": "A WIDE-BRIMMED INFANTRY KETTLE HAT. BLOCKS\nCONFUSION!"
+  },
+  "583": {
+    "name": "ASCENT CLIMBIN' HELM",
+    "description": "A VENTED CLIMBIN' HELMET. BLOCKS CONFUSION!"
+  },
+  "584": {
+    "name": "BUOYANT WORK VEST",
+    "description": "A PADDED FLOTATION WORK VEST. RESISTS WATER!"
+  },
+  "585": {
+    "name": "BEACON SAFETY HELM",
+    "description": "A HIGH-VISIBILITY SAFETY HELMET. STEADIES DA\nMIND!"
+  },
+  "586": {
+    "name": "PARKOUR TRAINERS",
+    "description": "GRIPPY LIGHTWEIGHT RUNNIN' SHOES. EASIER TA\nDODGE BEHIND!"
+  },
+  "587": {
+    "name": "TWO-TONE BUCKET HAT",
+    "description": "A REINFORCED CLOTH BUCKET HAT. HARDER TA HIT\nWIT MAGIC!"
+  },
+  "588": {
+    "name": "RAIN SHEDDIN' COAT",
+    "description": "A WATER-REPELLENT LAYERED COAT. RESISTS WATER!"
+  },
+  "589": {
+    "name": "HYBRID APPROACH SHOES",
+    "description": "STIFFENED TRAIL AN' CLIMBIN' SHOES. SLIGHTLY\nHARDER TA HIT!"
+  },
+  "590": {
+    "name": "PLATED MAILLE SHIRT",
+    "description": "CHAINMAIL BACKED WIT STEEL PLATES. RESISTS\nICE!"
+  },
+  "591": {
+    "name": "LAMP MININ' HELM",
+    "description": "A HELMET WIT A MOUNTED LAMP. STEADIES DA\nMIND!"
+  },
+  "592": {
+    "name": "TRAIL SPRINT SHOES",
+    "description": "CUSHIONED LIGHTWEIGHT TRAIL SHOES. MENDS A\nLIL' HEALTH!"
+  },
+  "593": {
+    "name": "BRONZE HOPLITE CUIRASS",
+    "description": "A MUSCLED BRONZE CUIRASS. RESISTS CURSED!"
+  },
+  "594": {
+    "name": "SEGMENTED LEGION PLATE",
+    "description": "BANDED SEGMENTED TORSO ARMOR. RESISTS ICE!"
+  },
+  "595": {
+    "name": "POLAR SURVEY SHELL",
+    "description": "AN INSULATED EXPEDITION SHELL. RESISTS CURSED!"
+  },
+  "596": {
+    "name": "QUICK CHAIN VEST",
+    "description": "A LIGHT, FLEXIBLE CHAIN VEST. MENDS A LIL'\nHEALTH!"
+  },
+  "597": {
+    "name": "REACTIVE STORM COAT",
+    "description": "A STIFFENED REACTIVE COAT. RESISTS THUNDER!"
+  },
+  "598": {
+    "name": "OPERATOR POLYMER VEST",
+    "description": "A MOLDED POLYMER COMBAT VEST. SOAKS MAGICAL\nDAMAGE!"
+  },
+  "599": {
+    "name": "STALKER'S CLIMB KIT",
+    "description": "A VERTICAL HUNTIN' HARNESS SUIT. RESISTS\nCURSED!"
+  },
+  "600": {
+    "name": "JUG TERROR MASK",
+    "description": "A HEAVY INTIMIDATIN' FACE MASK. BLOCKS\nCONFUSION!"
+  },
+  "601": {
+    "name": "ENDURANCE FIELD SUIT",
+    "description": "A BREATHABLE STAMINA FIELD SUIT. EASIER TA\nDODGE BEHIND!"
+  },
+  "602": {
+    "name": "SPELUNKER COVERALLS",
+    "description": "REINFORCED CAVE COVERALLS. RESISTS CURSED!"
+  },
+  "603": {
+    "name": "RESPONDER'S RIG",
+    "description": "A QUICK-RESPONSE TACTICAL RIG. EASIER TA DODGE\nBEHIND!"
+  },
+  "604": {
+    "name": "SCULPTED CRASH POD",
+    "description": "A STYLED IMPACT HELMET. RESISTS SACRED!"
+  },
+  "605": {
+    "name": "DOMINATOR HARNESS",
+    "description": "A STUDDED LEATHER BODY HARNESS. BLOCKS RAGE!"
+  },
+  "606": {
+    "name": "SHROUD OF CONCEALMENT",
+    "description": "A DARK CONCEALIN' CLOAK. EASIER TA DODGE\nBEHIND!"
+  },
+  "607": {
+    "name": "MISDIRECTION ENSEMBLE",
+    "description": "A DECEPTIVE LAYERED OUTFIT. EASIER TA DODGE\nBEHIND!"
+  },
+  "608": {
+    "name": "MAGMA PROXIMITY SUIT",
+    "description": "A HEAT-SHIELDED APPROACH SUIT. RESISTS FIRE!"
+  },
+  "609": {
+    "name": "WAVE RIDER SKIN",
+    "description": "A SLEEK HYDRODYNAMIC BODYSUIT. BLOCKS WET!"
+  },
+  "610": {
+    "name": "ARCTIC SURVEY ARMOR",
+    "description": "AN INSULATED RESEARCH ARMOR. RESISTS ICE!"
+  },
+  "611": {
+    "name": "BRUTE'S LEATHER HOOD",
+    "description": "A HEAVY INTIMIDATIN' LEATHER HOOD. BLOCKS\nCONFUSION!"
+  },
+  "612": {
+    "name": "REINFORCED CORSET",
+    "description": "A BONED, REINFORCED LEATHER CORSET. BLOCKS\nCONFUSION!"
+  },
+  "613": {
+    "name": "CIRCUIT RACIN' LEATHERS",
+    "description": "PADDED RACIN' LEATHERS. EASIER TA DODGE\nBEHIND!"
+  },
+  "614": {
+    "name": "MARKSMAN'S LEATHERS",
+    "description": "SUPPLE ARCHER'S LEATHER ARMOR. BLOCKS POISON!"
+  },
+  "615": {
+    "name": "SPRINT TRAIL KIT",
+    "description": "A LIGHTWEIGHT RUNNIN' ARMOR KIT. SOAKS MAGICAL\nDAMAGE!"
+  },
+  "616": {
+    "name": "GLITCH DISTORTION VEST",
+    "description": "A SHIMMERIN' DISTORTION VEST. BLOCKS CONFUSION\nAN' DODGES BETTER!"
+  },
+  "617": {
+    "name": "PETRODEMON HAZMAT",
+    "description": "A SEALED ANTI-TOXIN HAZMAT SUIT. RESISTS\nPHYSICAL AN' BLOCKS OILY!"
+  },
+  "618": {
+    "name": "GLARE VISION VISOR",
+    "description": "A TINTED SNOW-VISION HELMET. BLOCKS COLD!"
+  },
+  "619": {
+    "name": "FOAM ROAR HELM",
+    "description": "A PADDED FAN-STYLE HELMET. DODGES BETTER!"
+  },
+  "620": {
+    "name": "NIGHTFALL COMBAT HELM",
+    "description": "A MATTE NIGHT-OPERATIONS HELMET. BLOCKS\nCONCUSSED!"
+  },
+  "621": {
+    "name": "FULL COMBAT LEATHERS",
+    "description": "A COMPLETE LEATHER COMBAT SUIT. RESISTS\nPHYSICAL!"
+  },
+  "622": {
+    "name": "NAGUKA WAR SKIN",
+    "description": "A PATTERNED TRIBAL WAR ARMOR. WARDS OFF\nBURNED!"
+  },
+  "623": {
+    "name": "WRAITH DRAPE",
+    "description": "A PALE, GHOSTLY DRAPED GARMENT. EASIER TA\nDODGE BEHIND!"
+  },
+  "624": {
+    "name": "STORMWARDEN HELM",
+    "description": "A WEATHERPROOF STORM HELMET. BLOCKS COLD!"
+  },
+  "625": {
+    "name": "STUTTER-STEP ACTIVEWEAR",
+    "description": "A REACTIVE PERFORMANCE SUIT. EASIER TA DODGE\nBEHIND!"
+  },
+  "626": {
+    "name": "CONSECRATED CHAINMAIL",
+    "description": "BLESSED SILVERED CHAINMAIL. SOAKS MAGICAL\nDAMAGE!"
+  },
+  "627": {
+    "name": "SLOPE CRASH POD",
+    "description": "A HIGH-IMPACT SLOPE HELMET. BLOCKS COLD!"
+  },
+  "628": {
+    "name": "GUILDSHADOW LEATHERS",
+    "description": "DARK, SUPPLE SHADOW LEATHERS. SOAKS MAGICAL\nDAMAGE!"
+  },
+  "629": {
+    "name": "THERMAL SIGHT VISOR",
+    "description": "A HEAT-SENSIN' COMBAT VISOR. EASIER TA DODGE\nBEHIND!"
+  },
+  "630": {
+    "name": "EFFECT SCRAMBLER SUIT",
+    "description": "A SPELL-SCRAMBLIN' BODYSUIT. EASIER TA DODGE\nBEHIND!"
+  },
+  "631": {
+    "name": "AFFLICTION WARD VEST",
+    "description": "A TOXIN-RESISTANT WARDED VEST. BLOCKS POISON!"
+  },
+  "632": {
+    "name": "WYRMSPIRIT VEST",
+    "description": "A SCALED SPIRIT-BOUND VEST. MENDS A LIL'\nHEALTH!"
+  },
+  "633": {
+    "name": "DEEPWATER BASTION",
+    "description": "A SEALED COLD-WATER ARMOR. BLOCKS COLD!"
+  },
+  "634": {
+    "name": "CHAMPION'S COLLAB SUIT",
+    "description": "A PREMIUM PERFORMANCE ARMOR. EASIER TA DODGE\nBEHIND!"
+  },
+  "635": {
+    "name": "TEMPEST TYRANT HELM",
+    "description": "A CROWNED STORM HELMET. RESISTS SACRED!"
+  },
+  "636": {
+    "name": "GLIDEWIN' WAR SUIT",
+    "description": "A WINGED GLIDIN' COMBAT SUIT. EASIER TA DODGE\nBEHIND!"
+  },
+  "637": {
+    "name": "SILENT STALKER GARB",
+    "description": "A MUFFLED ASSASSIN'S GARB. EASIER TA DODGE\nBEHIND!"
+  },
+  "638": {
+    "name": "LIVIN' FLAME PLATE",
+    "description": "BURNIN' EMBER-FORGED PLATE. RESISTS FIRE!"
+  },
+  "639": {
+    "name": "SPELLCIRCUIT PLATE",
+    "description": "RUNE-ETCHED CONDUCTIVE PLATE. THICKENS DA\nPLATE AN' STIFFENS DA GUARD!"
+  },
+  "640": {
+    "name": "LUNARIA, DA MOONWEAVE",
+    "description": "SHIMMERIN' ELVEN MOONWEAVE ARMOR. RESISTS\nFIRE!"
+  },
+  "651": {
+    "name": "<-- Heavy Armor -->",
+    "description": ""
+  },
+  "652": {
+    "name": "COSTUME AUTHORITY SUIT",
+    "description": "A FLIMSY COSTUME BREASTPLATE. BLOCKS POISON!"
+  },
+  "653": {
+    "name": "PILGRIM'S PLATE",
+    "description": "A PLAIN DEVOTIONAL PLATE HARNESS. SOAKS\nMAGICAL DAMAGE!"
+  },
+  "654": {
+    "name": "TAPE AN' HOPE ARMOR",
+    "description": "SCRAP PLATE HELD BY DUCT TAPE. RESISTS FIRE!"
+  },
+  "655": {
+    "name": "CARDBOARD CUIRASS",
+    "description": "A PAINTED CARDBOARD BREASTPLATE. SOAKS\nPHYSICAL DAMAGE!"
+  },
+  "656": {
+    "name": "SITE STANDARD HELM",
+    "description": "A STANDARD HARD HAT. RESISTS SACRED!"
+  },
+  "657": {
+    "name": "CONCUSSION POT",
+    "description": "A DENTED OLD COMBAT HELM. RESISTS SACRED!"
+  },
+  "658": {
+    "name": "GUARD'S DOME HELM",
+    "description": "A ROUNDED STEEL GUARD HELMET. SHARPENS DA\nINSTINCTS!"
+  },
+  "659": {
+    "name": "CROWD CONTROL HELM",
+    "description": "A VISORED RIOT HELMET. BLOCKS CONCUSSED!"
+  },
+  "660": {
+    "name": "HIRED GUARD PLATE",
+    "description": "A BASIC SECURITY BREASTPLATE. SOAKS MAGICAL\nDAMAGE!"
+  },
+  "661": {
+    "name": "CRUSHER RIOT VEST",
+    "description": "A HEAVY PADDED RIOT VEST. WARDS OFF BURNED!"
+  },
+  "662": {
+    "name": "FULL RIOT CARAPACE",
+    "description": "A COMPLETE RIOT ARMOR SET. BLOCKS BLEEDIN'!"
+  },
+  "663": {
+    "name": "COMPOSITE WAR SHELL",
+    "description": "A LAYERED COMPOSITE CUIRASS. MENDS A LIL'\nHEALTH!"
+  },
+  "664": {
+    "name": "FRONTLINE SENTINEL HELM",
+    "description": "A HEAVY FRONTLINE HELMET. RESISTS THUNDER!"
+  },
+  "665": {
+    "name": "OPERATOR COMMAND HELM",
+    "description": "A REINFORCED COMMAND HELMET. HARDER TA HIT\nWIT MAGIC!"
+  },
+  "666": {
+    "name": "CERAMIC TRAUMA RIG",
+    "description": "A CERAMIC PLATE CARRIER. RESISTS CURSED!"
+  },
+  "667": {
+    "name": "KNIGHT'S BASCINET",
+    "description": "A POINTED STEEL BASCINET. RESISTS THUNDER!"
+  },
+  "668": {
+    "name": "TRAUMA PLATE CARRIER",
+    "description": "A PLATED TRAUMA VEST. BLOCKS POISON!"
+  },
+  "669": {
+    "name": "ICE CLIMB CRAMPONS",
+    "description": "SPIKED HEAVY ICE CRAMPONS. RESISTS ICE!"
+  },
+  "670": {
+    "name": "FROSTWASTE BOOTS",
+    "description": "HEAVY INSULATED WAR BOOTS. RESISTS ICE!"
+  },
+  "671": {
+    "name": "FORTRESS PROTOCOL SUIT",
+    "description": "A HEAVY BUNKER DEFENSE SUIT. SOAKS PHYSICAL\nDAMAGE!"
+  },
+  "672": {
+    "name": "CRAGWALKER SABATONS",
+    "description": "HEAVY IRON BOOTS FOR MOUNTAIN TRAILS. MENDS A\nLIL' HEALTH!"
+  },
+  "673": {
+    "name": "BASTION GREATHELM",
+    "description": "A THICK STEEL WAR HELM. WARDS OFF CHARM!"
+  },
+  "674": {
+    "name": "RIVETED RING COAT",
+    "description": "A COAT OF INTERLINKED STEEL RINGS. SOAKS\nPHYSICAL DAMAGE!"
+  },
+  "675": {
+    "name": "GLACIER TOOTHED BOOTS",
+    "description": "CLEATED BOOTS WIT IRON SPIKES. MENDS A LIL'\nHEALTH!"
+  },
+  "676": {
+    "name": "HARDWEATHER CUIRASS",
+    "description": "A SEALED PLATE SUIT FOR HARSH CLIMATES. WARDS\nOFF BURNED!"
+  },
+  "677": {
+    "name": "POINTED HALF PLATE",
+    "description": "GOTHIC-STYLE STEEL HALF-PLATE. RESISTS CURSED!"
+  },
+  "678": {
+    "name": "COUNTERWEIGHT HELM",
+    "description": "A BALANCED HELM WIT NECK GUARD. MENDS A\nLIL' MANA!"
+  },
+  "679": {
+    "name": "SLOPE RESCUE HARNESS",
+    "description": "A REINFORCED RESCUE RIG WIT HOOKS. BLOCKS\nNAUSEA!"
+  },
+  "680": {
+    "name": "SCORCHPROOF SUIT",
+    "description": "A HEAT-SEALED FIREFIGHTIN' PLATE. BLOCKS\nBLEEDIN'!"
+  },
+  "681": {
+    "name": "PILGRIM'S FULL PLATE",
+    "description": "A COMPLETE SUIT OF CRUSADER PLATE. SOAKS\nMAGICAL DAMAGE!"
+  },
+  "682": {
+    "name": "BACKDRAFT CARAPACE",
+    "description": "A FLAME-RESISTANT BODY SHELL. RESISTS FIRE!"
+  },
+  "683": {
+    "name": "TESSELLATED PLATE",
+    "description": "ARMOR OF LIL' SQUARE STEEL PLATES. EASIER TA\nDODGE BEHIND!"
+  },
+  "684": {
+    "name": "ASHVENT HELMET",
+    "description": "A SEALED HELM WIT SMOKE FILTERS. BLOCKS\nPOISON!"
+  },
+  "685": {
+    "name": "FURNACE WALKER SUIT",
+    "description": "A LAYERED HEAT-SHIELDED PLATE SUIT. RESISTS\nFIRE!"
+  },
+  "686": {
+    "name": "WHITEWATER CASQUE",
+    "description": "A BUOYANT SEALED COMBAT HELM. BLOCKS WET!"
+  },
+  "687": {
+    "name": "VITAL SUSTAIN PLATE",
+    "description": "AN ARMORED SUIT WIT LIFE SUPPORT. WARDS OFF\nBURNED!"
+  },
+  "688": {
+    "name": "DEEP PRESSURE SHELL",
+    "description": "A PRESSURE-SEALED DIVIN' CUIRASS. RESISTS\nPETRO!"
+  },
+  "689": {
+    "name": "CONCUSSION FRAME",
+    "description": "A SHOCK-ABSORBIN' PLATE HARNESS. MENDS A\nLIL' HEALTH!"
+  },
+  "690": {
+    "name": "URBAN COLOSSUS RIG",
+    "description": "A BULKY STREET COMBAT FRAME. SOAKS MAGICAL\nDAMAGE!"
+  },
+  "691": {
+    "name": "AVALANCHE PROBE RIG",
+    "description": "A RESCUE HARNESS WIT A STEEL PROBE. BLOCKS\nCOLD!"
+  },
+  "692": {
+    "name": "THERMAL SLOPE GREAVES",
+    "description": "INSULATED ARMORED LEGGINGS. BLOCKS COLD!"
+  },
+  "693": {
+    "name": "RUBBLE BREAKER RIG",
+    "description": "A DIGGIN' HARNESS FOR COLLAPSED SITES. BLOCKS\nCOLD!"
+  },
+  "694": {
+    "name": "CORTEX SADDLE HELM",
+    "description": "A NEURAL-LINKED COMBAT HELM. BLOCKS BLIND!"
+  },
+  "695": {
+    "name": "GOLDSEAM PLATE",
+    "description": "STEEL PLATE TRIMMED WIT GOLD. SOAKS PHYSICAL\nDAMAGE!"
+  },
+  "696": {
+    "name": "VACUUM COMM HELM",
+    "description": "A SEALED HELM WIT A VOICE RELAY. RESISTS\nPETRO!"
+  },
+  "697": {
+    "name": "SKYFALL SHARD HELM",
+    "description": "A HELM SET WIT A FALLEN-STAR FRAGMENT.\nRESISTS PETRO!"
+  },
+  "698": {
+    "name": "OVERLAY BATTLE HELM",
+    "description": "A HELM WIT A GLOWIN' VISOR DISPLAY. SHARPENS\nDA INSTINCTS!"
+  },
+  "699": {
+    "name": "LANDSLIDE SHELL",
+    "description": "A REINFORCED IMPACT BODY SHELL. BLOCKS COLD!"
+  },
+  "700": {
+    "name": "WARGOD'S HELM",
+    "description": "A GRIM WAR-DEITY CEREMONIAL HELM. RESISTS\nTHUNDER!"
+  },
+  "701": {
+    "name": "VOIDWALK LIFE SUIT",
+    "description": "A PRESSURIZED FULL LIFE-SUPPORT SUIT. RESISTS\nPETRO, FIRE!"
+  },
+  "702": {
+    "name": "IRON DIVER SUIT",
+    "description": "A MECHANIZED DEEP-DIVE ARMOR SUIT. RESISTS\nICE!"
+  },
+  "703": {
+    "name": "CONSECRATED PLATE",
+    "description": "HOLY BLESSED BATTLE PLATE. MENDS A LIL'\nHEALTH!"
+  },
+  "704": {
+    "name": "WYRMHIDE AEGIS",
+    "description": "ARMOR FORGED FROM DRAGON SCALES. RESISTS FIRE!"
+  },
+  "715": {
+    "name": "<-- Equipment -->",
+    "description": ""
+  },
+  "716": {
+    "name": "GREASY POT LID",
+    "description": "A DENTED KITCHEN LID HELD AS A SHIELD. RESISTS\nPETRO!"
+  },
+  "717": {
+    "name": "BONE RIBBED UMBRELLA",
+    "description": "A SKELETAL UMBRELLA, ODDLY STURDY. RESISTS\nCURSED!"
+  },
+  "718": {
+    "name": "TOY CHEST LID",
+    "description": "A CHILD'S TOY BOX LID, SCUFFED. EASIER TA\nDODGE BEHIND!"
+  },
+  "719": {
+    "name": "MYSTERY PRIZE CRATE",
+    "description": "A SEALED BOX HELD AS COVER. TURNS ASIDE\nCRITICAL HITS!"
+  },
+  "720": {
+    "name": "TIGHT QUARTERS PLANK",
+    "description": "A SHORT BARRIER BOARD FOR ALLEYS. BLOCKS\nGRAPPLED!"
+  },
+  "721": {
+    "name": "BACKSTREET GUARD",
+    "description": "A SCRAP-METAL ALLEY SHIELD. SOFTENS PHYSICAL\nBLOWS!"
+  },
+  "722": {
+    "name": "LIGHT PLANK BULWARK",
+    "description": "A LIGHTWEIGHT WOODEN COVER BOARD. TURNS ASIDE\nCRITICAL HITS!"
+  },
+  "723": {
+    "name": "EVEN ROUND SHIELD",
+    "description": "A PLAIN BALANCED ROUND SHIELD. BLOCKS\nGRAPPLED!"
+  },
+  "724": {
+    "name": "HEATPROOF WRAP",
+    "description": "A REFLECTIVE THERMAL SHEET. RESISTS WIND!"
+  },
+  "725": {
+    "name": "KINETIC SPREADER",
+    "description": "A PAD DAT SCATTERS IMPACT FORCE. BLOCKS\nUNBALANCED!"
+  },
+  "726": {
+    "name": "STATIC WARD PLATE",
+    "description": "A GROUNDED ANTI-SHOCK SHIELD. RESISTS THUNDER!"
+  },
+  "727": {
+    "name": "STUDDED BIN LID",
+    "description": "A TRASH LID SPIKED WIT NAILS. BLOCKS\nUNBALANCED!"
+  },
+  "728": {
+    "name": "HUBCAP BUCKLER",
+    "description": "A POLISHED HUBCAP WIT A STRAP. SOFTENS\nPHYSICAL BLOWS!"
+  },
+  "729": {
+    "name": "RIPOSTE GUARD",
+    "description": "A SHIELD BUILT FOR COUNTERBLOWS. RESISTS\nPHYSICAL!"
+  },
+  "730": {
+    "name": "DAYTRIP PACK",
+    "description": "A LIGHT GEAR PACK FOR SHORT RUNS. MENDS A\nLIL' HEALTH!"
+  },
+  "731": {
+    "name": "BAILOUT COCOON",
+    "description": "AN EMERGENCY WRAP-UP SURVIVAL SHELL. MENDS A\nLIL' HEALTH!"
+  },
+  "732": {
+    "name": "GLASS CONE BLUDGEON",
+    "description": "A HEAVY TRAFFIC-CONE CUDGEL. BLOCKS GUARD\nBROKEN!"
+  },
+  "733": {
+    "name": "OATHBREAKER CLUB",
+    "description": "A BLUNT, MUCH-USED CUDGEL. STIFFENS DA GUARD!"
+  },
+  "734": {
+    "name": "PIZZA PAN GUARD",
+    "description": "A ROUND STEEL PAN USED AS COVER. SOMETIMES\nCOUNTERS!"
+  },
+  "735": {
+    "name": "DRIFTER'S PACK",
+    "description": "A ROOMY URBAN TRAVELIN' PACK. MENDS A LIL'\nMANA!"
+  },
+  "736": {
+    "name": "CLIMB SAFETY RIG",
+    "description": "A REINFORCED FALL-ARREST HARNESS. RESISTS\nPHYSICAL!"
+  },
+  "737": {
+    "name": "REBAR HATCHETS",
+    "description": "TWIN AXES FORGED FROM REBAR. SOMETIMES\nCOUNTERS!"
+  },
+  "738": {
+    "name": "FENCER'S BUCKLER",
+    "description": "A LIL' QUICK-HANDLIN' BUCKLER. EASIER TA\nDODGE BEHIND!"
+  },
+  "739": {
+    "name": "WARDFORCE BRACER",
+    "description": "A BRACER WOVEN WIT FAINT WARDS. CARRIES MORE\nPUNISHMENT!"
+  },
+  "740": {
+    "name": "VOLTGUARD AEGIS",
+    "description": "AN INSULATED ANTI-SHOCK SHIELD. RESISTS\nTHUNDER!"
+  },
+  "741": {
+    "name": "LASHIN' DEFENDER",
+    "description": "A FLEXIBLE WHIP-SHIELD WEAPON. EASIER TA DODGE\nBEHIND!"
+  },
+  "742": {
+    "name": "DIMENSIONAL ANCHOR",
+    "description": "A HEAVY CHARM DAT FIXES ITS BEARER. SOFTENS\nPHYSICAL BLOWS!"
+  },
+  "743": {
+    "name": "GROUNDIN' AEGIS",
+    "description": "A SHIELD DAT ROOTS DA WIELDER. WARDS OFF\nSTUN!"
+  },
+  "744": {
+    "name": "THRESHIN' BATON",
+    "description": "A FARM FLAIL REWORKED FOR WAR. BLOCKS RAGE!"
+  },
+  "745": {
+    "name": "MISFORTUNE MIRROR",
+    "description": "A FIELD DAT BENDS BAD LUCK. RESISTS PHYSICAL!"
+  },
+  "746": {
+    "name": "SENTINEL SPIRIT AEGIS",
+    "description": "A SHIELD BOUND TA A GUARDIAN SPIRIT. RESISTS\nPHYSICAL!"
+  },
+  "747": {
+    "name": "PURE VEIN AEGIS",
+    "description": "A CLEAR CRYSTALLINE WARD SHIELD. BLOCKS\nPOISON, PARALYSIS!"
+  },
+  "748": {
+    "name": "DA LIVIN' CODEX",
+    "description": "A FLOATIN' GRIMOIRE DAT SHIELDS ITSELF.\nBLOCKS UNBALANCED!"
+  },
+  "759": {
+    "name": "<-- Shield -->",
+    "description": ""
+  },
+  "760": {
+    "name": "PLASTIC PLAY SHIELD",
+    "description": "A TOY SHIELD OF BRIGHT PLASTIC. EASIER TA\nDODGE BEHIND!"
+  },
+  "761": {
+    "name": "COSTUME PROP SHIELD",
+    "description": "A FLIMSY DECORATIVE PROP SHIELD. BLOCKS\nGRAPPLED!"
+  },
+  "762": {
+    "name": "PATROL STANDARD SHIELD",
+    "description": "A BASIC GUARD-ISSUE SHIELD. BLOCKS GRAPPLED!"
+  },
+  "763": {
+    "name": "LOT GUARD SHIELD",
+    "description": "A SCUFFED SHEET-METAL SHIELD. EASIER TA DODGE\nBEHIND!"
+  },
+  "764": {
+    "name": "CLEARVIEW BARRIER",
+    "description": "A TRANSPARENT RIOT SHIELD. SOMETIMES COUNTERS!"
+  },
+  "765": {
+    "name": "SLIT VISION SHIELD",
+    "description": "A BALLISTIC SHIELD WIT A VIEW SLOT. BLOCKS\nUNBALANCED!"
+  },
+  "766": {
+    "name": "CROWD PRESS BARRIER",
+    "description": "A WIDE SHIELD FOR HOLDIN' CROWDS. STIFFENS DA\nGUARD!"
+  },
+  "767": {
+    "name": "SHIFTIN' BASTION",
+    "description": "AN ADJUSTABLE ADAPTIVE SHIELD. CARRIES MORE\nPUNISHMENT!"
+  },
+  "768": {
+    "name": "HEATER WAR SHIELD",
+    "description": "A CLASSIC HEATER-STYLE WAR SHIELD. RESISTS\nPHYSICAL!"
+  },
+  "769": {
+    "name": "PHANTOM STEP AEGIS",
+    "description": "A SHIELD DAT FLICKERS WHEN STRUCK. BLOCKS\nGRAPPLED!"
+  },
+  "770": {
+    "name": "STRONGHOLD TOWER SHIELD",
+    "description": "A TALL HEAVY TOWER SHIELD. STIFFENS DA GUARD!"
+  },
+  "771": {
+    "name": "LEGIONARY TOWER SHIELD",
+    "description": "A WIDE INTERLOCKIN' WAR SHIELD. BLOCKS GUARD\nBROKEN!"
+  },
+  "772": {
+    "name": "CONVOY BULWARK",
+    "description": "A RUGGED LONG-HAUL TOWER SHIELD. BLOCKS\nGRAPPLED!"
+  },
+  "773": {
+    "name": "HOLY SIGIL SHIELD",
+    "description": "A SHIELD MARKED WIT A SACRED SIGN. RESISTS\nSACRED!"
+  },
+  "774": {
+    "name": "PHASIN' SHIELD",
+    "description": "A SHIELD DAT HALF-FADES ON IMPACT. WEAK TA\nPHYSICAL!"
+  },
+  "775": {
+    "name": "SEALED HAUL SHIELD",
+    "description": "A WATERTIGHT SHIELD-PACK HYBRID. BLOCKS WET!"
+  },
+  "776": {
+    "name": "CORTICAL WARD SHIELD",
+    "description": "A SHIELD LINKED TA DA WIELDER'S MIND. RESISTS\nPHYSICAL!"
+  },
+  "777": {
+    "name": "MANAFORGE BARRIER",
+    "description": "A SHIELD HUMMIN' WIT BOUND MANA. BLOCKS\nUNBALANCED!"
+  },
+  "778": {
+    "name": "SOUND SYSTEM SHIELD",
+    "description": "A SHIELD RIGGED WIT OLD SPEAKERS. WEAK TA\nPHYSICAL!"
+  },
+  "779": {
+    "name": "SKATE WHEEL SHIELD",
+    "description": "A SHIELD MOUNTED ON ROLLIN' WHEELS. WEAK TA\nPHYSICAL!"
+  },
+  "780": {
+    "name": "ELDER AEGIS",
+    "description": "AN ANCIENT AN' STORIED GREAT SHIELD. STIFFENS\nDA GUARD!"
+  },
+  "781": {
+    "name": "DA WARDEN CODEX",
+    "description": "A LIVIN' GRIMOIRE DAT GUARDS ITS KEEPER.\nEASIER TA DODGE BEHIND!"
+  },
+  "782": {
+    "name": "CINDERGLASS WARD",
+    "description": "A SCORCHED LENS ON A BRASS RING. RESISTS FIRE!"
+  },
+  "783": {
+    "name": "FROSTBITE TALISMAN",
+    "description": "A CHARM RIMED WIT PERMANENT FROST. RESISTS\nICE!"
+  },
+  "784": {
+    "name": "TIDE ANCHOR PENDANT",
+    "description": "A WORN LEAD WEIGHT ON WET CORD. RESISTS WATER!"
+  },
+  "785": {
+    "name": "GALEWALL BROOCH",
+    "description": "A PIN SHAPED LIKE A FOLDED FAN. RESISTS WIND!"
+  },
+  "786": {
+    "name": "PETROL WARD BADGE",
+    "description": "A GREASY ENAMEL PIN. RESISTS PETRO!"
+  },
+  "787": {
+    "name": "SANCTIFIED SIGIL",
+    "description": "A LIL' DISC OF POLISHED BONE. RESISTS CURSED!"
+  },
+  "788": {
+    "name": "HEXBREAKER LOCKET",
+    "description": "A LOCKET DAT WILL NO STAY SHUT. RESISTS\nCURSED AN' TURNS SPELLS BACK!"
+  },
+  "789": {
+    "name": "CANTRIP SMOCK",
+    "description": "A PATCHED APPRENTICE'S ROBE. EASIER TA DODGE\nBEHIND!"
+  },
+  "790": {
+    "name": "LEYLINE SHAWL",
+    "description": "A SHAWL DAT HUMS NEAR POWER LINES. SPELLS\nCOST MORE!"
+  },
+  "791": {
+    "name": "CONDUIT HOOD",
+    "description": "A HOOD THREADED WIT COPPER HAIR. MENDS A\nLIL' MANA!"
+  },
+  "792": {
+    "name": "SPELLCACHE VEST",
+    "description": "A VEST OF MANY SEWN-SHUT POCKETS. SPELLS COST\nMORE!"
+  },
+  "793": {
+    "name": "AUGUR'S MANTLE",
+    "description": "A MANTLE STITCHED WIT CLOSED EYES. SPELLS\nCOST MORE!"
+  },
+  "794": {
+    "name": "NECROTIC STOLE",
+    "description": "A COLD STOLE DAT SMELLS OF SOIL. RESISTS\nCURSED!"
+  },
+  "795": {
+    "name": "DREAMSPUN COWL",
+    "description": "A COWL DAT BLURS AT DA EDGES. DODGES BETTER!"
+  },
+  "796": {
+    "name": "GEOMANCER'S BELT",
+    "description": "A HEAVY BELT STRUNG WIT RIVER STONES. SOFTENS\nFLOOR DAMAGE AN' TEACHES A SKILL!"
+  },
+  "797": {
+    "name": "CONVOKER'S REGALIA",
+    "description": "ORNATE ROBES COVERED IN SUMMONIN' MARKS.\nSPELLS COST MORE!"
+  },
+  "798": {
+    "name": "CHRONOWEAVE COAT",
+    "description": "A COAT WHERE DA THREADS NEVER SETTLE. DODGES\nBETTER AN' BUILDS AP FASTER!"
+  },
+  "799": {
+    "name": "TRIAGE APRON",
+    "description": "A STAINED APRON WIT MANY TIES. HEALS BETTER\nAN' TEACHES A SKILL!"
+  },
+  "800": {
+    "name": "MENDANT WRAP",
+    "description": "A ROLL OF SELF-KNOTTIN' BANDAGE. MENDS A\nLIL' HEALTH AN' HEALS BETTER!"
+  },
+  "801": {
+    "name": "LIFESEED PENDANT",
+    "description": "A SEED POD DAT NEVER QUITE DRIES. MENDS A\nLIL' HEALTH AN' TEACHES A SKILL!"
+  },
+  "802": {
+    "name": "SAWBONES SATCHEL",
+    "description": "A SATCHEL OF CLINKIN' INSTRUMENTS. MAKES ITEMS\nGO FURTHER AN' TEACHES A SKILL!"
+  },
+  "803": {
+    "name": "PANACEA RELIQUARY",
+    "description": "A VIAL RACK DAT ALWAYS HOLDS ONE MORE. HEALS\nBETTER AN' TEACHES A SKILL!"
+  },
+  "804": {
+    "name": "PADFOOT SLIPPERS",
+    "description": "SOFT SHOES DAT MAKE NO SOUND. EASIER TA DODGE\nBEHIND!"
+  },
+  "805": {
+    "name": "CUTPURSE BELT",
+    "description": "A BELT LINED WIT HIDDEN HOOKS. DOUBLES EUROS!"
+  },
+  "806": {
+    "name": "SMUGGLER'S VEST",
+    "description": "A VEST DAT HIDES MORE DEN IT SHOWS. DOUBLES\nITEM DROPS AN' TEACHES A SKILL!"
+  },
+  "807": {
+    "name": "LOCKSMITH'S GLOVES",
+    "description": "THIN GLOVES WIT WORN FINGERTIPS. FINDS DA\nGAP MORE OFTEN AN' TEACHES A SKILL!"
+  },
+  "808": {
+    "name": "GHOSTFOOT CLOAK",
+    "description": "A CLOAK DA EYE KEEPS SLIDIN' OFF. EASIER TA\nDODGE BEHIND!"
+  },
+  "809": {
+    "name": "FORTUNE'S LININ'",
+    "description": "A DRAB COAT WIT A LUCKY RED LININ'. DOUBLES\nEUROS!"
+  },
+  "810": {
+    "name": "BOUNTY HUNTER'S RIG",
+    "description": "A PRACTICAL HARNESS OF STRAPS AN' POUCHES.\nSTEADIES DA AIM AN' TEACHES A SKILL!"
+  },
+  "811": {
+    "name": "VANISH SHROUD",
+    "description": "A GAUZY WRAP DAT FLICKERS IN LIGHT. HARDER TA\nHIT WIT MAGIC!"
+  },
+  "812": {
+    "name": "BULWARK PLATE VEST",
+    "description": "A VEST OF OVERLAPPIN' SCRAP PLATE. SOFTENS\nPHYSICAL BLOWS AN' GUARDS HARDER!"
+  },
+  "813": {
+    "name": "RIOT CARAPACE",
+    "description": "HEAVY PADDIN' UNDER A HARD SHELL. RESISTS\nPHYSICAL!"
+  },
+  "814": {
+    "name": "COUNTERGUARD BRACER",
+    "description": "A REINFORCED FOREARM GUARD. SOMETIMES\nCOUNTERS!"
+  },
+  "815": {
+    "name": "AEGIS FIELD BELT",
+    "description": "A BELT WIT A FAINT SHIMMERIN' EDGE. GUARDS\nHARDER!"
+  },
+  "816": {
+    "name": "STONEWARD CUIRASS",
+    "description": "A GREY CUIRASS COLD AS A CELLAR. RESISTS PETRO\nAN' SOFTENS PHYSICAL BLOWS!"
+  },
+  "817": {
+    "name": "LAST STAND HARNESS",
+    "description": "A BATTERED HARNESS HELD BY OLD FAITH. MENDS A\nLIL' HEALTH AN' GUARDS HARDER!"
+  },
+  "818": {
+    "name": "TARGETIN' MONOCLE",
+    "description": "A SINGLE LENS CRAWLIN' WIT MARKERS. STEADIES\nDA AIM AN' FINDS DA GAP MORE OFTEN!"
+  },
+  "819": {
+    "name": "THREATSCAN VISOR",
+    "description": "A VISOR DAT PAINTS DA ROOM RED. STEADIES DA\nAIM!"
+  },
+  "820": {
+    "name": "REFLEX BOOSTER COLLAR",
+    "description": "A COLLAR DAT TWITCHES AGAINST DA SKIN.\nEASIER TA DODGE BEHIND!"
+  },
+  "821": {
+    "name": "STATIC DAMPER SUIT",
+    "description": "A GREY SUIT DAT DRINKS DA SPARKS. RESISTS\nTHUNDER!"
+  },
+  "822": {
+    "name": "COOLANT WEAVE JACKET",
+    "description": "A JACKET VEINED WIT CHILL TUBIN'. RESISTS\nFIRE!"
+  },
+  "823": {
+    "name": "FARADAY MESH HOOD",
+    "description": "A FINE METAL HOOD, SLIGHTLY TARNISHED. RESISTS\nTHUNDER AN' TURNS SPELLS BACK!"
+  },
+  "824": {
+    "name": "OVERCLOCK CROWN",
+    "description": "A CROWN DAT RUNS WARM TA DA TOUCH. BUILDS AP\nFASTER!"
+  },
+  "825": {
+    "name": "PHASE STABILIZER BELT",
+    "description": "A BELT DAT HUMS WHEN YOU MOVE FAST. HARDER TA\nHIT WIT MAGIC!"
+  },
+  "826": {
+    "name": "MOSSWEAVE TUNIC",
+    "description": "A TUNIC SLOWLY RETURNIN' TA DA SOIL. MENDS A\nLIL' HEALTH!"
+  },
+  "827": {
+    "name": "POLLEN VEIL",
+    "description": "A GAUZY VEIL DUSTED GOLD. HEALS BETTER AN'\nTEACHES A SKILL!"
+  },
+  "828": {
+    "name": "BRAMBLE MANTLE",
+    "description": "A MANTLE OF DRIED THORNED VINES. RESISTS\nPHYSICAL!"
+  },
+  "829": {
+    "name": "TIDEPOOL WRAP",
+    "description": "A DAMP WRAP DAT SMELLS OF SALT. RESISTS WATER\nAN' MENDS A LIL' HEALTH!"
+  },
+  "830": {
+    "name": "BEASTCALLER PELT",
+    "description": "A ROUGH PELT DAT STILL FEELS WARM. TEACHES A\nSKILL AN' BLOCKS CHARM!"
+  },
+  "831": {
+    "name": "PALIMPSEST VEIL",
+    "description": "A VEIL PRINTED WIT FADIN' TEXT. TEACHES A\nSKILL!"
+  },
+  "832": {
+    "name": "OMEN READER'S CAP",
+    "description": "A CAP SEWN WIT TINY BELLS. EASIER TA DODGE\nBEHIND!"
+  },
+  "833": {
+    "name": "THREAD OF FATE SASH",
+    "description": "A RED SASH DAT TUGS ON ITS OWN. MORE FIRST\nSTRIKES!"
+  },
+  "834": {
+    "name": "SOUL POCKETS LOCKET",
+    "description": "A LOCKET HEAVY WIT UNSEEN WEIGHT. RESISTS\nCURSED AN' TEACHES A SKILL!"
+  },
+  "835": {
+    "name": "EYE OF CATCHUP VISOR",
+    "description": "A VISOR DAT SCROLLS WIT OLD NEWS. STEADIES\nDA AIM AN' TEACHES A SKILL!"
+  },
+  "836": {
+    "name": "MANTLE OF LIL' APOCALYPSE",
+    "description": "A CHARRED MANTLE DAT NEVER COOLS. RESISTS\nFIRE!"
+  },
+  "837": {
+    "name": "VESTMENTS OF QUIET ROT",
+    "description": "ROBES SOFT WIT PATIENT DECAY. RESISTS CURSED\nAN' MENDS A LIL' HEALTH!"
+  },
+  "838": {
+    "name": "REGALIA OF DA OPEN HAND",
+    "description": "PLAIN ROBES DAT FEEL ODDLY. SPELLS COST MORE!"
+  },
+  "839": {
+    "name": "CROWN OF BORROWED YEARS",
+    "description": "A CROWN DAT MAKES DA WEARER LOOK OLDER.\nREGAINS MP AN' BUILDS AP FASTER!"
+  },
+  "840": {
+    "name": "SHROUD OF DA UNSEEN CHOIR",
+    "description": "A SHROUD DAT SEEMS TA MURMUR. RESISTS SACRED!"
+  },
+  "841": {
+    "name": "COAT OF A THOUSAND POCKETS",
+    "description": "A COAT DAT IZ ALWAYS HIDIN'. DOUBLES ITEM\nDROPS!"
+  },
+  "842": {
+    "name": "HALO OF FINAL DECREE",
+    "description": "A RING OF COLD, CERTAIN LIGHT. DRAWS MORE\nATTACKS AN' GUARDS HARDER!"
+  },
+  "843": {
+    "name": "AEGIS OF DA DROWNED KING",
+    "description": "BARNACLED ARMOR COLD AS DEEP WATER. RESISTS\nWATER!"
+  },
+  "844": {
+    "name": "STEADIER HANDS BRACER",
+    "description": "A SNUG BRACER OF STITCHED LEATHER. STEADIES\nDA AIM AN' FINDS DA GAP MORE OFTEN!"
+  },
+  "845": {
+    "name": "QUILTED FRONTIER COAT",
+    "description": "A THICK COAT AGAINST DA COLD. RESISTS ICE AN'\nSOFTENS FLOOR DAMAGE!"
+  },
+  "846": {
+    "name": "SINGER'S GORGET",
+    "description": "A THROAT GUARD OF SOFT FELT. SPELLS COST MORE!"
+  },
+  "847": {
+    "name": "PILGRIM'S PLAIN ROBE",
+    "description": "A SIMPLE ROBE WORN THIN BY ROADS. SOFTENS\nFLOOR DAMAGE!"
+  },
+  "848": {
+    "name": "RATCATCHER'S COAT",
+    "description": "A GRIMY COAT DAT SMELLS OF TAR. BLOCKS CHARM\nAN' TEACHES A SKILL!"
+  },
+  "849": {
+    "name": "GLASSBLOWER'S APRON",
+    "description": "A SCORCHED LEATHER APRON. RESISTS FIRE!"
+  },
+  "850": {
+    "name": "DIVER'S HARNESS",
+    "description": "A HARNESS OF STRAPS AN' BRASS VALVES. RESISTS\nWATER!"
+  },
+  "851": {
+    "name": "SURVEYOR'S VEST",
+    "description": "A VEST HUNG WIT LIL' INSTRUMENTS. STEADIES\nDA AIM AN' TEACHES A SKILL!"
+  },
+  "852": {
+    "name": "NIGHTWATCH CLOAK",
+    "description": "A DARK CLOAK SMELLIN' OF LAMP OIL. BLOCKS\nCONFUSION!"
+  },
+  "853": {
+    "name": "CINDER MONK'S WRAP",
+    "description": "ASH-GREY WRAPPINGS, WARM TA TOUCH. RESISTS\nFIRE AN' BUILDS AP FASTER!"
+  },
+  "854": {
+    "name": "MIRRORFACE MASK",
+    "description": "A POLISHED MASK DAT SHOWS NO FACE. TURNS\nSPELLS BACK AN' TEACHES A SKILL!"
+  },
+  "855": {
+    "name": "SALT CIRCLE ANKLET",
+    "description": "AN ANKLET STRUNG WIT WHITE GRAINS. RESISTS\nCURSED AN' BLOCKS CONFUSION!"
+  },
+  "856": {
+    "name": "IRON FILIN' GLOVES",
+    "description": "GLOVES DUSTED WIT CLINGIN' METAL. RESISTS\nTHUNDER AN' FINDS DA GAP MORE OFTEN!"
+  },
+  "857": {
+    "name": "SUNSTEEP VEIL",
+    "description": "A BRIGHT VEIL DAT HOLDS DA DAY'S WARMTH.\nRESISTS SACRED!"
+  },
+  "858": {
+    "name": "BRINE-SOAKED BANDANA",
+    "description": "A STIFF BANDANA CRUSTED WIT SALT. RESISTS\nFIRE!"
+  },
+  "859": {
+    "name": "GRAVE DUST POUCH",
+    "description": "A LIL' POUCH OF PALE GREY POWDER. RESISTS\nCURSED!"
+  },
+  "860": {
+    "name": "STORMGLASS PENDANT",
+    "description": "A VIAL OF LIQUID DAT STORMS INSIDE. RESISTS\nTHUNDER!"
+  },
+  "861": {
+    "name": "EMBERPROOF SHAWL",
+    "description": "A HEAVY SHAWL DAT WILL NO CATCH. RESISTS\nFIRE!"
+  },
+  "862": {
+    "name": "JESTER'S MOTLEY",
+    "description": "A LOUD PATCHWORK OF CLASHIN' COLOR. EASIER TA\nDODGE BEHIND!"
+  },
+  "863": {
+    "name": "BUMBLER'S BALLOON SUIT",
+    "description": "AN ABSURDLY PUFFY PADDED SUIT. RESISTS\nPHYSICAL AN' SOFTENS FLOOR HARM!"
+  },
+  "864": {
+    "name": "DISCO SPECTACLES",
+    "description": "MIRRORED GLASSES SCATTERIN' LIGHT. TEACHES A\nSKILL AN' BLOCKS CONFUSION!"
+  },
+  "865": {
+    "name": "TIPSY TINTED GOGGLES",
+    "description": "GOGGLES DAT WARP DA WHOLE ROOM. BLOCKS\nCONFUSION AN' TEACHES A SKILL!"
+  },
+  "866": {
+    "name": "MERCHANT PRINCE'S SASH",
+    "description": "A RICH SASH HEAVY WIT COIN. DOUBLES EUROS AN'\nTEACHES A SKILL!"
+  },
+  "867": {
+    "name": "TAX COLLECTOR'S COAT",
+    "description": "A SEVERE COAT WIT BRASS BUTTONS. DOUBLES\nEUROS AN' TEACHES A SKILL!"
+  },
+  "868": {
+    "name": "GUILD SEAL RING",
+    "description": "A SIGNET RING OF WORN GOLD. LEARNS FASTER!"
+  },
+  "869": {
+    "name": "CITIZEN'S PLAIN BADGE",
+    "description": "A MODEST PIN OF PRESSED TIN. FEWER RANDOM\nBATTLES!"
+  },
+  "870": {
+    "name": "CHRYSALIS SHROUD",
+    "description": "A WAXY SHROUD DAT PULSES FAINTLY. MENDS A\nLIL' HEALTH AN' TEACHES A SKILL!"
+  },
+  "871": {
+    "name": "SECOND SKIN WRAP",
+    "description": "A WRAP DAT FITS A LIL' TOO WELL. EASIER TA\nDODGE BEHIND!"
+  },
+  "872": {
+    "name": "GENDERSHIFT MANTLE",
+    "description": "A SHIMMERIN' MANTLE OF SHIFTIN' HUE. TEACHES A\nSKILL AN' RESISTS FIRE!"
+  },
+  "873": {
+    "name": "PROSTHETIST'S HARNESS",
+    "description": "A HARNESS STUDDED WIT SOCKETS. WARDS OFF\nBURNED!"
+  },
+  "874": {
+    "name": "BONE CHAR CUIRASS",
+    "description": "ARMOR OF BLACKENED, FUSED BONE. RESISTS\nCURSED!"
+  },
+  "875": {
+    "name": "WRAITHSILK HOOD",
+    "description": "A HOOD WOVEN FROM COLD GREY THREAD. RESISTS\nCURSED!"
+  },
+  "876": {
+    "name": "SOULHARVEST GAUNTLET",
+    "description": "A CLAWED GAUNTLET DAT DRINKS WARMTH.\nSOMETIMES COUNTERS!"
+  },
+  "877": {
+    "name": "IMMORTAL COIL AMULET",
+    "description": "A COILED AMULET WARM AS A PULSE. MENDS A\nLIL' HEALTH AN' TEACHES A SKILL!"
+  },
+  "878": {
+    "name": "LICHGATE DIADEM",
+    "description": "A DIADEM COLD ENOUGH TA BURN. RESISTS CURSED\nAN' MENDS A LIL' MANA!"
+  },
+  "879": {
+    "name": "MANTLE OF DA GRAND CARAVAN",
+    "description": "A TRAVEL-WORN MANTLE OF MANY. FEWER RANDOM\nBATTLES!"
+  },
+  "880": {
+    "name": "WORLDQUAKE GIRDLE",
+    "description": "A HEAVY GIRDLE DAT TREMBLES FAINTLY. RESISTS\nPETRO AN' TEACHES A SKILL!"
+  },
+  "881": {
+    "name": "APOTHEOSIS VEIL",
+    "description": "A VEIL OF LIGHT DAT HIDES NUTTIN'. RESISTS\nSACRED AN' MENDS A LIL' MANA!"
+  },
+  "882": {
+    "name": "STARLIT SILK HOOD",
+    "description": "SILK WOVEN UNDER ONE NIGHT OF STARS. LENDS DA\nWEARER FORESIGHT!"
+  },
+  "883": {
+    "name": "ARCHON'S IRON CIRCLET",
+    "description": "COLD IRON, WARM AT DA TEMPLES. LENDS DA\nWEARER DIVINE INSIGHT!"
+  },
+  "884": {
+    "name": "EMPYREAN SIGIL ROBE",
+    "description": "SIGILS DAT MEND WHOEVER STANDS NEAR. LENDS\nDA WEARER HEAL PARTY!"
+  },
+  "885": {
+    "name": "RUNED LEATHER JERKIN",
+    "description": "RUNES CUT ALONG EVERY SEAM. LENDS DA WEARER\nSWIFT AURA!"
+  },
+  "886": {
+    "name": "SANCTUM PLATE HAUBERK",
+    "description": "CONSECRATED PLATE, UNBOTHERED BY HARM. LENDS\nDA WEARER ABSOLUTE BARRIER!"
+  },
+  "887": {
+    "name": "WARDIN' MOON SHIELD",
+    "description": "A PALE DISC DAT ANSWERS BEFORE YOU DO. LENDS\nDA WEARER DIVINE SHIELD!"
+  },
+  "888": {
+    "name": "ASTRAL FOCUS ORB",
+    "description": "WEATHER TURNS INSIDE DA GLASS. LENDS DA\nWEARER CATACLYSMIC STORM!"
+  },
+  "889": {
+    "name": "LEY LINE SIGNET RING",
+    "description": "WARM WHEREVER DA OLD LINES CROSS. LENDS DA\nWEARER GREAT HEAL!"
+  },
+  "890": {
+    "name": "TECHNOMANTIC ALLOY VISOR",
+    "description": "READS A FIGHT FASTER DEN YOU CAN. LENDS DA\nWEARER COMBAT ANALYSIS!"
+  },
+  "891": {
+    "name": "HEXCODED SENSOR BANDANA",
+    "description": "HEXCODE PRINTED ON PLAIN COTTON. LENDS DA\nWEARER PRECISION FOCUS!"
+  },
+  "892": {
+    "name": "CIRCUIT MESH VEST",
+    "description": "MESH DAT LEANS BEFORE DA BLOW LANDS. LENDS\nDA WEARER DODGE!"
+  },
+  "893": {
+    "name": "SERVO PLATE VEST",
+    "description": "MOTORS IN DA SHOULDERS DO DA SHOVIN'. LENDS\nDA WEARER GUARD BREAKER!"
+  },
+  "894": {
+    "name": "HEX ROUTER CLOAK",
+    "description": "CARRIES A VOICE FURTHER DEN LUNGS DO. LENDS\nDA WEARER RALLYIN' CRY!"
+  },
+  "895": {
+    "name": "DEFLECTOR FIELD SHIELD",
+    "description": "A FIELD DAT STANDS WHERE YOU STAND. LENDS DA\nWEARER COUNTER STANCE!"
+  },
+  "896": {
+    "name": "SPELLSOCKET LANTERN",
+    "description": "LIGHTS DA WORK AN' DOES HALF OF IT. LENDS DA\nWEARER FIELD REPAIR!"
+  },
+  "897": {
+    "name": "DAEMON THREAD GLOVES",
+    "description": "THREADS DAT REMEMBER EVERY LOCK. LENDS DA\nWEARER LOCKPICKIN'!"
+  }
+}

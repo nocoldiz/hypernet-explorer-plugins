@@ -158,6 +158,11 @@
     return occupants.length % floors;
   }
 
+  // Every word the home registry shows the player comes from NPCSim.home.*.
+  function _homeText(key, params) {
+    return typeof window.T === 'function' ? window.T(key, params) : key;
+  }
+
   function _getBuildingMapName(building, groupName) {
     if (!building) return '';
     const mapId = building.mapId;
@@ -167,25 +172,25 @@
       if (grp?.displayName) return grp.displayName;
       if (grp?.biome) {
         const isPlace = !['Normal', 'Road'].includes(grp.biome);
-        return isPlace ? (window.BiomeNames?.display?.(grp.biome) || grp.biome) : 'Frontier Settlement';
+        return isPlace ? (window.BiomeNames?.display?.(grp.biome) || grp.biome) : _homeText('NPCSim.home.frontierSettlement');
       }
-      return window.MapManager?.getMapName?.(636) || 'Frontier Settlement';
+      return window.MapManager?.getMapName?.(636) || _homeText('NPCSim.home.frontierSettlement');
     }
     if (mapId) {
-      return window.MapManager?.getMapName?.(mapId) || ($dataMapInfos?.[mapId]?.name) || `Map ${mapId}`;
+      return window.MapManager?.getMapName?.(mapId) || ($dataMapInfos?.[mapId]?.name) || _homeText('NPCSim.mapFallback', { id: mapId });
     }
     return '';
   }
 
   function _getHomeDescription(profile) {
     if (!profile) return '';
-    if (profile.isHomeless) return 'Homeless';
+    if (profile.isHomeless) return _homeText('NPCSim.home.homeless');
     const b = profile.homeBuilding;
     if (!b) return '';
     const mapName = b.mapName || _getBuildingMapName(b, profile._homeGroupName || b.groupName);
-    const coords = (b.x != null && b.y != null) ? `Door (${b.x}, ${b.y})` : '';
+    const coords = (b.x != null && b.y != null) ? _homeText('NPCSim.home.door', { x: b.x, y: b.y }) : '';
     const floorNum = (b.floorIndex != null ? b.floorIndex : 0) + 1;
-    const floorStr = `Floor ${floorNum}`;
+    const floorStr = _homeText('NPCSim.home.floor', { n: floorNum });
     return [mapName, coords, floorStr].filter(Boolean).join(' · ');
   }
 
@@ -322,6 +327,8 @@
     }
     return [...names].filter(n => {
       const p = $gameSystem?._npcSociety?.[n];
+      // The dead gave up their door (NPCLifeSim.killNpc): never dealt another.
+      if (p?._killed || window.NPCLifeSim?.isDead?.(n)) return false;
       return _isSentientForHomeOwnership(p, n);
     }).sort();
   }

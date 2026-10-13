@@ -25,7 +25,7 @@
     "journey": "Journey",
     "rest": "Rest",
     "combat": "Fighting",
-    "party": "Company",
+    "party": "Party",
     "people": "People",
     "health": "Health",
     "wealth": "Belongings",
@@ -33,7 +33,7 @@
     "work": "Work",
     "knowledge": "Learning",
     "leisure": "Diversions",
-    "written": "Our Hand",
+    "written": "Our notes",
     "other": "Other"
   },
   "foot": {
@@ -59,7 +59,7 @@
   },
   "worlds": {
     "tab": "Diaries",
-    "none": "No party has kept a diary in this world yet.",
+    "none": "No diaries in this world yet.",
     "entry": "{names}",
     "meta": "{count} lines, last seen at {place}",
     "unknownParty": "An unnamed party",
@@ -293,6 +293,7 @@
     "slots": "the slot machine",
     "bowling": "bowling",
     "pool": "pool",
+    "basketball": "basketball",
     "lockpick": "a lock",
     "bitstack": "Bitstack",
     "scratchCard": "a scratch card",
@@ -309,7 +310,8 @@
     "hyperTamer": "Hyper Tamer",
     "boosters": "booster packs",
     "cardDuel": "a card duel",
-    "dream": "a dream"
+    "dream": "a dream",
+    "pizza": "the pizza table"
   },
   "romance": {
     "flirt": "a little flirting",
@@ -320,7 +322,8 @@
     "holdHands": "held hands",
     "askOut": "an evening out",
     "confess": "a confession",
-    "kiss": "a kiss"
+    "kiss": "a kiss",
+    "wink": "a playful wink"
   },
   "vehicle": {
     "camper": "the camper",
@@ -353,8 +356,8 @@
     "button": "Write",
     "title": "Write in the diary",
     "placeholder": "What is worth remembering?",
-    "save": "Write it",
-    "cancel": "Never mind"
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "onu": {
     "for": "in favour",

@@ -1894,6 +1894,10 @@
     // A disease still inside its window period has not been diagnosed: nobody
     // knows to treat it, which is the whole danger of a long window.
     if (!st.known) return;
+    // Already dosed by hand today (a bottle taken at two in the night, before
+    // the eight o'clock round): one dose a day, so the round leaves it be
+    // rather than swallowing a second bottle and counting the day twice.
+    if (!forced && entry.lastDoseDay === day) return;
     const pick = forced || window.Medicines.bestHeldFor(entry.id, actor);
     if (!pick) {
       entry.missed = (entry.missed || 0) + 1;

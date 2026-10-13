@@ -10,6 +10,12 @@
   "askGroupHere": "Here",
   "askGroupAgain": "Teach me again",
   "askCombat": "Combat",
+  "keyFaces": {
+    "scrollWheel": "SCROLLWHEEL",
+    "rightStick": "RIGHT STICK",
+    "leftStick": "LEFT STICK",
+    "dpad": "D-PAD"
+  },
   "combat": {
     "offer": "Bubba: Hold on, darlin'. Before you swing at anything, do you want me to walk you through the buttons?",
     "yes": "Walk me through it",
@@ -36,6 +42,17 @@
       "Bubba: Move the [cursor] to choose your target tile and press [CONTINUE].",
       "Bubba: [Run] leads the whole party away to [escape] the battle."
     ],
-    "rearm": "Bubba: No problem darlin', I'm no magic expert but i can reteach you how to shoot your gun! You need to figure out the rest yourself"
+    "rearm": "Bubba: No problem darlin', I'm no magic expert but I can reteach you how to shoot your gun! You need to figure out the rest yourself"
+  },
+  "story": {
+    "missBubba": [
+      "Bubba would have known what to say here. I keep turning to tell him things.",
+      "It is so quiet without his stupid jokes. I would give anything to hear one more.",
+      "Bubba, you oaf. You were supposed to see this with me.",
+      "I still set out two cups in the morning. Old habits.",
+      "Every road we planned together, I am walking alone now.",
+      "He would have laughed at me for crying. So I will not. Not here.",
+      "The prophecies are free and I am not. I miss you, Bubba."
+    ]
   }
 }

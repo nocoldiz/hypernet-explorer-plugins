@@ -62,7 +62,14 @@
         livingtheorem:     { variant: 'livingtheorem', scale: 2.5, texturePool: 'void', bodyColor: 0x0a1426, accent: 0x40ffd0, front: true, hue: [0.50, 0.08], sat: [0.55, 0.15], lit: [0.14, 0.06] },
         leylineaneurysm:   { variant: 'leylineaneurysm', scale: 2.5, texturePool: 'void', bodyColor: 0x2a0a30, accent: 0xff40a0, front: true, hue: [0.88, 0.08], sat: [0.55, 0.15], lit: [0.20, 0.08] },
         timeloopstalker:   { variant: 'timeloopstalker', scale: 2.6, texturePool: 'void', bodyColor: 0x101822, accent: 0x60d0ff, front: true, hue: [0.56, 0.08], sat: [0.45, 0.15], lit: [0.18, 0.06] },
-        u_eyeballslug:     { variant: 'eyeballslug', scale: 2.2, texturePool: 'flesh', bodyColor: 0x7a8a4a, accent: 0xffe14a, front: true, hue: [0.24, 0.08], sat: [0.38, 0.14], lit: [0.40, 0.10] }
+        u_eyeballslug:     { variant: 'eyeballslug', scale: 2.2, texturePool: 'flesh', bodyColor: 0x7a8a4a, accent: 0xffe14a, front: true, hue: [0.24, 0.08], sat: [0.38, 0.14], lit: [0.40, 0.10] },
+        // Level 1-5 starters, each on its own builder (no shared rig).
+        lv_gardenslug:     { variant: 'lv_gardenslug',    scale: 1.9, texturePool: 'flesh', bodyColor: 0x9a6a32, accent: 0xd8e0e8, hue: [0.08, 0.04], sat: [0.45, 0.10], lit: [0.40, 0.08] },
+        lv_ditchleech:     { variant: 'lv_ditchleech',    scale: 1.9, texturePool: 'void',  bodyColor: 0x22221a, accent: 0xc82030, hue: [0.15, 0.05], sat: [0.15, 0.08], lit: [0.14, 0.05] },
+        lv_nosypeeper:     { variant: 'lv_nosypeeper',    scale: 2.0, texturePool: 'flesh', bodyColor: 0xc89080, accent: 0x3a7ad8, hue: [0.03, 0.04], sat: [0.35, 0.10], lit: [0.56, 0.08] },
+        lv_staplermimic:   { variant: 'lv_staplermimic',  scale: 1.9, texturePool: 'metal', bodyColor: 0x6a6e74, accent: 0xc02020, hue: [0.58, 0.04], sat: [0.06, 0.04], lit: [0.44, 0.08] },
+        lv_lostdollhead:   { variant: 'lv_lostdollhead',  scale: 1.9, texturePool: 'pale',  bodyColor: 0xf0e6dc, accent: 0x5a8ad8, hue: [0.07, 0.03], sat: [0.20, 0.06], lit: [0.86, 0.05] },
+        lv_littercritter:  { variant: 'lv_littercritter', scale: 1.9, texturePool: 'stone', bodyColor: 0x26262c, accent: 0x9ae040, hue: [0.66, 0.04], sat: [0.06, 0.04], lit: [0.16, 0.05] }
     };
 
     class AberrationBattler3D extends Base {
@@ -95,6 +102,12 @@
                 case 'leylineaneurysm':     this._buildLeylineAneurysm(); break;
                 case 'timeloopstalker':     this._buildTimeLoopStalker(); break;
                 case 'eyeballslug':         this._buildEyeballSlug(); break;
+                case 'lv_gardenslug':       this._buildLvGardenSlug(); break;
+                case 'lv_ditchleech':       this._buildLvDitchLeech(); break;
+                case 'lv_nosypeeper':       this._buildLvNosyPeeper(); break;
+                case 'lv_staplermimic':     this._buildLvStaplerMimic(); break;
+                case 'lv_lostdollhead':     this._buildLvLostDollHead(); break;
+                case 'lv_littercritter':    this._buildLvLitterCritter(); break;
                 default:          this._buildChestMimic(); break;
             }
             this.model = this.bodyGroup;
@@ -993,6 +1006,8 @@
                 const strut = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, len, 4), this._mat(p.accent, 0.45, 0.3, p.accent));
                 strut.position.copy(mid); strut.lookAt(b); strut.rotateX(Math.PI / 2); this.maw.add(strut);
             }
+            // The proof-diagram orbits the node and its glyphs tumble, by design.
+            this.maw.userData.float = true;
             this.bodyGroup.add(this.maw);
 
             // Two formula tendrils: chains of tiny glyph beads trailing down.
@@ -1003,7 +1018,8 @@
                     const geo = (i % 2) ? new THREE.BoxGeometry(0.06, 0.06, 0.06) : new THREE.TetrahedronGeometry(0.05, 0);
                     const s = new THREE.Mesh(geo, glyphMat); s.position.set(Math.sin(i) * 0.05, py, 0); s.rotation.set(i, i, 0); g.add(s); py -= 0.14;
                 }
-                g.position.set(x, 0.85, 0.05);
+                // Loose glyph beads hanging in the air under the node, by design.
+                g.position.set(x, 0.85, 0.05); g.userData.float = true;
                 return g;
             };
             this.tendril1 = mkFormula(-0.3); this.bodyGroup.add(this.tendril1);
@@ -1138,6 +1154,326 @@
                 { gone: ['VOID_TENDRIL_1'], hide: [this.tendril1] },
                 { gone: ['VOID_TENDRIL_2'], hide: [this.tendril2] },
             ];
+        }
+
+        // ══ Level 1-5 starters: each its own body plan, not a reskin ════════
+        // `root` takes every part with it; every other key hides only itself.
+        _lvWire(parts, root) {
+            const all = [];
+            this._partMeshMap = {};
+            for (const k in parts) if (parts[k]) { this._partMeshMap[k] = parts[k]; if (all.indexOf(parts[k]) < 0) all.push(parts[k]); }
+            this._cascadeRules = [{ gone: [root], hide: all }];
+            for (const k in parts) if (parts[k] && k !== root) this._cascadeRules.push({ gone: [k], hide: [parts[k]] });
+        }
+
+        // ── Garden Slug: a fat glistening slug with a mantle saddle, long eye
+        //    tentacles and a nibbled lettuce leaf stuck to its back ─────────
+        //    (SegmentWorm keys: HEAD/HEART_SEGMENT/BODY_SEGMENT/TAIL/MAW.)
+        _buildLvGardenSlug() {
+            const p = this.profile;
+            const skin = this.applySkin(this._mat(p.bodyColor, 1.0, 0.25));
+            const spot = this._mat(0x2a1a0a, 1.0, 0.4);
+            const slime = this._mat(p.accent, 0.35, 0.1, p.accent);
+            // BODY_SEGMENT: the long soft body on a frilled foot, spotted on top.
+            this.mass = new THREE.Group();
+            for (const [z, r] of [[0.32, 0.3], [0.02, 0.33], [-0.3, 0.29]]) { const s = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 7), skin); s.position.set(0, 0.26, z); s.scale.set(1.0, 0.8, 1.15); this.mass.add(s); }
+            const foot = new THREE.Mesh(new THREE.SphereGeometry(0.4, 10, 5), this._mat(0xc8a070, 1.0, 0.4)); foot.position.set(0, 0.07, 0.0); foot.scale.set(0.95, 0.18, 2.0); this.mass.add(foot);
+            for (let i = 0; i < 7; i++) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.045 + (i % 3) * 0.015, 6, 4), spot); s.position.set((i % 2 ? 0.12 : -0.1) + (i % 3 - 1) * 0.05, 0.46 - (i % 2) * 0.03, 0.25 - i * 0.1); s.scale.y = 0.35; this.mass.add(s); }
+            this.bodyGroup.add(this.mass);
+            // HEART_SEGMENT: the mantle saddle with its breathing pore.
+            this.core = new THREE.Group();
+            const mantle = new THREE.Mesh(new THREE.SphereGeometry(0.3, 10, 7), skin); mantle.scale.set(1.05, 0.62, 1.35); this.core.add(mantle);
+            for (let i = 0; i < 3; i++) { const ridge = new THREE.Mesh(new THREE.TorusGeometry(0.2 - i * 0.05, 0.012, 3, 12), spot); ridge.rotation.x = Math.PI / 2; ridge.scale.set(1.1, 1.4, 1); ridge.position.y = 0.17 - i * 0.01; this.core.add(ridge); }
+            const pore = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.02, 4, 8), this._mat(0x1a0a04, 1.0, 0.5)); pore.position.set(0.3, 0.0, -0.05); pore.rotation.y = Math.PI / 2; this.core.add(pore);
+            // The nibbled lettuce leaf it carries on its back.
+            const leaf = new THREE.Mesh(new THREE.CircleGeometry(0.2, 7), this._mat(0x6ac04a, 1.0, 0.6)); leaf.material.side = THREE.DoubleSide; leaf.rotation.set(-Math.PI / 2 + 0.25, 0, 0.6); leaf.position.set(-0.08, 0.2, -0.06); this.core.add(leaf);
+            const vein = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.3), this._mat(0xd8f0a0, 1.0, 0.6)); vein.rotation.y = 0.6; vein.position.set(-0.08, 0.215, -0.06); this.core.add(vein);
+            this.core.position.set(0, 0.42, 0.22); this.bodyGroup.add(this.core);
+            // HEAD: blunt head, two long eye tentacles and two short feelers.
+            this.head = new THREE.Group();
+            const h = new THREE.Mesh(new THREE.SphereGeometry(0.22, 9, 7), skin); h.scale.set(1, 0.85, 1.1); this.head.add(h);
+            this.slugStalks = [];
+            for (const sx of [-1, 1]) {
+                const st = new THREE.Group();
+                const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.045, 0.4, 5), skin); rod.position.y = 0.2; st.add(rod);
+                const knob = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 5), this._mat(0x101010, 1.0, 0.2)); knob.position.y = 0.41; st.add(knob);
+                st.position.set(sx * 0.08, 0.12, 0.06); st.rotation.set(0.45, 0, -sx * 0.35); this.head.add(st); this.slugStalks.push(st);
+                const feel = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.12, 4), skin); feel.position.set(sx * 0.1, -0.06, 0.24); feel.rotation.x = 1.3; this.head.add(feel);
+            }
+            this.head.position.set(0, 0.3, 0.62); this.bodyGroup.add(this.head);
+            // MAW: the mouth under the head, a pale rasping radula.
+            this.maw = new THREE.Group();
+            const lip = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.02, 4, 8), this._mat(0x5a2a1a, 1.0, 0.5)); this.maw.add(lip);
+            const rad = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.02, 0.05), this._mat(0xe8a0a0, 1.0, 0.4)); rad.position.z = 0.02; this.maw.add(rad);
+            this.maw.position.set(0, 0.17, 0.82); this.maw.rotation.x = 0.9; this.bodyGroup.add(this.maw);
+            // TAIL: a keeled taper with the silver trail it lays behind.
+            this.tail = new THREE.Group();
+            const taper = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.6, 7), skin); taper.rotation.x = -Math.PI / 2; taper.scale.set(1, 0.75, 1); taper.position.set(0, 0.2, -0.72); this.tail.add(taper);
+            const keel = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.08, 0.4), skin); keel.position.set(0, 0.32, -0.68); keel.rotation.x = -0.25; this.tail.add(keel);
+            for (let i = 0; i < 3; i++) { const t = new THREE.Mesh(new THREE.CircleGeometry(0.2 - i * 0.04, 9), slime); t.rotation.x = -Math.PI / 2; t.position.set(0, 0.012, -0.75 - i * 0.28); this.tail.add(t); }
+            this.bodyGroup.add(this.tail);
+            this._lvWire({ BODY_SEGMENT: this.mass, HEART_SEGMENT: this.core, HEAD: this.head, TAIL: this.tail, MAW: this.maw }, 'BODY_SEGMENT');
+        }
+
+        // ── Ditch Leech: a black swollen leech reared up in a question mark,
+        //    tail sucker on the ground, a belly full of someone's blood ─────
+        //    (SegmentWorm keys.)
+        _buildLvDitchLeech() {
+            const p = this.profile;
+            const skin = this.applySkin(this._mat(p.bodyColor, 1.0, 0.15));
+            const ring = this._mat(0x0a0a08, 1.0, 0.3);
+            const stripe = this._mat(0xd8782a, 1.0, 0.5);
+            const path = [[0.15, -0.58], [0.32, -0.48], [0.5, -0.32], [0.6, -0.1], [0.6, 0.12], [0.52, 0.3], [0.5, 0.48], [0.58, 0.62], [0.7, 0.72]];
+            const radii = [0.2, 0.19, 0.18, 0.19, 0.2, 0.18, 0.16, 0.15, 0.14];
+            // BODY_SEGMENT: annulated rings along the arch, orange flank dots.
+            this.mass = new THREE.Group();
+            let prev = null;
+            path.forEach(([y, z], i) => {
+                if (i === 4) { prev = new THREE.Vector3(0, y, z); return; }
+                const s = new THREE.Mesh(new THREE.SphereGeometry(radii[i], 9, 7), skin); s.position.set(0, y, z); s.scale.set(1.1, 0.95, 1.0); this.mass.add(s);
+                const cur = new THREE.Vector3(0, y, z);
+                if (prev) {
+                    this.addStrut(this.mass, skin, prev, cur, radii[i - 1] * 0.85, radii[i] * 0.85, 7);
+                    const c = new THREE.Mesh(new THREE.TorusGeometry(radii[i] * 0.98, 0.015, 3, 12), ring); c.position.copy(prev).lerp(cur, 0.5); c.lookAt(cur); this.mass.add(c);
+                }
+                for (const sx of [-1, 1]) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.025, 5, 4), stripe); d.position.set(sx * radii[i] * 1.06, y + 0.04, z); this.mass.add(d); }
+                prev = cur;
+            });
+            this.bodyGroup.add(this.mass);
+            // HEART_SEGMENT: the swollen, translucent blood belly at the crest.
+            this.core = new THREE.Group();
+            const belly = new THREE.Mesh(new THREE.SphereGeometry(0.27, 10, 8), this._mat(0x4a0a10, 0.75, 0.1, 0x200004)); belly.scale.set(1.1, 1.0, 1.15); this.core.add(belly);
+            this.leechBlood = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 6), this._mat(p.accent, 1.0, 0.3, 0x600008)); this.core.add(this.leechBlood);
+            this.core.position.set(0, 0.6, 0.12); this.bodyGroup.add(this.core);
+            // HEAD: the anterior sucker turned forward, an arc of eyespots on top.
+            this.head = new THREE.Group();
+            const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.11, 0.16, 9), skin); cup.rotation.x = Math.PI / 2; this.head.add(cup);
+            for (let i = 0; i < 5; i++) { const a = -0.8 + i * 0.4; const e = new THREE.Mesh(new THREE.SphereGeometry(0.018, 4, 3), this._mat(0xf0e080, 1.0, 0.2, 0x403000)); e.position.set(Math.sin(a) * 0.1, 0.12 + Math.cos(a) * 0.02, -0.02); this.head.add(e); }
+            this.head.position.set(0, 0.74, 0.82); this.head.rotation.x = 0.5; this.bodyGroup.add(this.head);
+            // MAW: three toothed jaws set in a Y inside the sucker.
+            this.maw = new THREE.Group();
+            const throat = new THREE.Mesh(new THREE.CircleGeometry(0.13, 9), this._mat(0x3a0408, 1.0, 0.8)); this.maw.add(throat);
+            for (let i = 0; i < 3; i++) { const a = (i / 3) * Math.PI * 2 + Math.PI / 2; const jaw = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.1, 0.03), this._mat(0xe8d8c0, 1.0, 0.3)); jaw.position.set(Math.cos(a) * 0.05, Math.sin(a) * 0.05, 0.02); jaw.rotation.z = a - Math.PI / 2; this.maw.add(jaw); }
+            this.maw.position.set(0, 0, 0.085); this.head.add(this.maw);
+            // TAIL: the posterior sucker gripping the ground.
+            this.tail = new THREE.Group();
+            const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.08, 10), skin); disc.position.set(0, 0.04, -0.62); this.tail.add(disc);
+            const rim = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.025, 3, 12), ring); rim.rotation.x = Math.PI / 2; rim.position.set(0, 0.06, -0.62); this.tail.add(rim);
+            this.bodyGroup.add(this.tail);
+            this._lvWire({ BODY_SEGMENT: this.mass, HEART_SEGMENT: this.core, HEAD: this.head, TAIL: this.tail, MAW: this.maw }, 'BODY_SEGMENT');
+        }
+
+        // ── Nosy Peeper: a bloodshot eye squinting between its lids, dangling
+        //    its optic nerve, a stolen window frame held up to peer through ─
+        //    (Mutant keys: HEAD/MASS/EXTRA_LIMB_1/2/EYE_CLUSTER/TAIL_SPIKE/MAW.)
+        _buildLvNosyPeeper() {
+            const p = this.profile;
+            const flesh = this.applySkin(this._mat(p.bodyColor, 1.0, 0.5));
+            const vein = this._mat(0xc81828, 1.0, 0.4, 0x400000);
+            // HEAD: the eye itself, squinting between two lids, veins over it.
+            this.head = new THREE.Group();
+            const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 10), this._mat(0xf4ece0, 1.0, 0.25)); this.head.add(sclera);
+            const iris = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 8), this._mat(p.accent, 1.0, 0.2, p.accent)); iris.position.z = 0.33; iris.scale.z = 0.5; this.head.add(iris);
+            this.peepPupil = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), this._mat(0x060606, 1.0, 0.2)); this.peepPupil.position.z = 0.4; this.peepPupil.scale.z = 0.4; this.head.add(this.peepPupil);
+            for (let i = 0; i < 7; i++) {
+                const a = (i / 7) * Math.PI * 2, pts = [];
+                for (let k = 0; k < 3; k++) { const th = 0.55 + k * 0.32; pts.push(new THREE.Vector3(Math.cos(a + k * 0.25) * Math.sin(th) * 0.4, Math.sin(a + k * 0.25) * Math.sin(th) * 0.4, Math.cos(th) * 0.4)); }
+                for (let k = 1; k < 3; k++) this.addStrut(this.head, vein, pts[k - 1], pts[k], 0.012, 0.008, 3);
+            }
+            this.peepLids = [];
+            for (const sgn of [1, -1]) {
+                const lid = new THREE.Mesh(new THREE.SphereGeometry(0.43, 12, 6, 0, Math.PI * 2, 0, Math.PI * (sgn > 0 ? 0.3 : 0.28)), flesh);
+                const piv = new THREE.Group(); piv.add(lid); lid.rotation.x = sgn > 0 ? 0.1 : Math.PI - 0.05; piv._base = lid.rotation.x; piv._lid = lid; piv._sgn = sgn;
+                this.head.add(piv); this.peepLids.push(piv);
+            }
+            this.head.position.set(0, 1.2, 0.08); this.bodyGroup.add(this.head);
+            // MASS: the fleshy socket cupping the back of the eye, ridged.
+            this.mass = new THREE.Group();
+            const cupM = new THREE.Mesh(new THREE.SphereGeometry(0.44, 11, 8, 0, Math.PI * 2, Math.PI * 0.45, Math.PI * 0.55), flesh); cupM.rotation.x = Math.PI / 2; this.mass.add(cupM);
+            for (let i = 0; i < 4; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.3 - i * 0.06, 0.03, 4, 12), flesh); r.position.z = -0.3 - i * 0.05; this.mass.add(r); }
+            this.mass.position.set(0, 1.2, 0.0); this.bodyGroup.add(this.mass);
+            // MAW: a small puckered mouth on the socket rim under the eye.
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.025, 4, 8), this._mat(0x7a2a2a, 1.0, 0.4)); this.maw.position.set(0, 0.8, 0.05); this.maw.rotation.x = 1.1; this.bodyGroup.add(this.maw);
+            // TAIL_SPIKE: the optic nerve dangling below, ending in a spike.
+            this.tailSpike = new THREE.Group();
+            const nPts = [[0, 0, 0], [0.05, -0.18, -0.04], [-0.02, -0.36, -0.06], [0.04, -0.52, -0.05]].map(a => new THREE.Vector3(...a));
+            for (let k = 1; k < nPts.length; k++) this.addStrut(this.tailSpike, flesh, nPts[k - 1], nPts[k], 0.07 - k * 0.012, 0.06 - k * 0.012, 6);
+            const spike = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.14, 4), this._mat(0xe8dcc0, 1.0, 0.4)); spike.rotation.x = Math.PI; spike.position.set(0.04, -0.6, -0.05); this.tailSpike.add(spike);
+            this.tailSpike.position.set(0, 0.86, -0.2); this.bodyGroup.add(this.tailSpike);
+            // EYE_CLUSTER: three little eyes budding along the nerve.
+            this.eyeCluster = new THREE.Group();
+            for (let k = 1; k < 4; k++) this._eye(this.eyeCluster, nPts[k].x + (k % 2 ? 0.05 : -0.05), nPts[k].y, nPts[k].z + 0.03, 0.04, p.accent);
+            this.tailSpike.add(this.eyeCluster);
+            // EXTRA_LIMB_1: a tendril holding up the stolen window frame.
+            const tendril = (sx, reach) => {
+                const g = new THREE.Group();
+                const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(sx * 0.2, -0.05, 0.06), new THREE.Vector3(sx * 0.36, 0.04, 0.12), reach];
+                for (let k = 1; k < pts.length; k++) this.addStrut(g, flesh, pts[k - 1], pts[k], 0.05 - k * 0.01, 0.04 - k * 0.01, 5);
+                g.position.set(sx * 0.4, 1.05, -0.1); this.bodyGroup.add(g); return g;
+            };
+            this.extraLimb1 = tendril(-1, new THREE.Vector3(-0.48, 0.18, 0.2));
+            const frame = new THREE.Group(), wood = this._mat(0x6a4a2a, 1.0, 0.8);
+            for (const [w, h, x, y] of [[0.4, 0.04, 0, 0.2], [0.4, 0.04, 0, -0.2], [0.04, 0.44, -0.2, 0], [0.04, 0.44, 0.2, 0], [0.025, 0.4, 0, 0], [0.4, 0.025, 0, 0]]) { const b = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.04), wood); b.position.set(x, y, 0); frame.add(b); }
+            frame.position.set(-0.48, 0.18, 0.2); frame.rotation.y = 0.5; this.extraLimb1.add(frame);
+            // EXTRA_LIMB_2: a tendril trailing a torn scrap of net curtain.
+            this.extraLimb2 = tendril(1, new THREE.Vector3(0.5, -0.1, 0.18));
+            const curtain = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.34, 0.01), this._mat(0xf0ecd8, 0.75, 0.9)); curtain.position.set(0.52, -0.27, 0.18); curtain.rotation.z = -0.15; this.extraLimb2.add(curtain);
+            this._lvWire({ MASS: this.mass, HEAD: this.head, EXTRA_LIMB_1: this.extraLimb1, EXTRA_LIMB_2: this.extraLimb2, EYE_CLUSTER: this.eyeCluster, TAIL_SPIKE: this.tailSpike, MAW: this.maw }, 'MASS');
+        }
+
+        // ── Stapler Mimic: an office stapler on six crab legs, one eye on the
+        //    hinge, staples for teeth, a tongue over the anvil ──────────────
+        //    (ChestMimic keys: CORE/LID/TEETH/TONGUE/FEET.)
+        _buildLvStaplerMimic() {
+            const p = this.profile;
+            const metal = this.applySkin(this._mat(p.bodyColor, 1.0, 0.35));
+            const chrome = this._mat(0xd0d4d8, 1.0, 0.15);
+            const steel = this._mat(0xe0e0e8, 1.0, 0.2);
+            const staple = (g, x, y, z, down) => {
+                const top = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.015, 0.015), steel); top.position.set(x, y, z); g.add(top);
+                for (const sx of [-1, 1]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.06, 0.015), steel); leg.position.set(x + sx * 0.05, y + (down ? -0.03 : 0.03), z); g.add(leg); }
+            };
+            // CORE: the base plate, the shiny anvil, the hinge block and its eye.
+            this.core = new THREE.Group();
+            const base = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.1, 1.15), metal); base.position.set(0, 0.2, 0); this.core.add(base);
+            const nose = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.1, 10, 1, false, 0, Math.PI), metal); nose.position.set(0, 0.2, 0.575); nose.rotation.y = -Math.PI / 2; this.core.add(nose);
+            const anvil = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.02, 0.16), chrome); anvil.position.set(0, 0.26, 0.42); this.core.add(anvil);
+            const hinge = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.22, 0.22), metal); hinge.position.set(0, 0.36, -0.46); this.core.add(hinge);
+            this._eye(this.core, 0, 0.38, -0.34, 0.08, p.accent);
+            for (let i = 0; i < 4; i++) staple(this.core, 0, 0.27, 0.1 + i * 0.07, false);
+            this.bodyGroup.add(this.core);
+            // LID: the top arm hinged at the back, red stripe down its spine.
+            this.lid = new THREE.Group();
+            const arm = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.14, 1.08), metal); arm.position.set(0, 0.04, 0.5); this.lid.add(arm);
+            const armNose = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.14, 10, 1, false, 0, Math.PI), metal); armNose.position.set(0, 0.04, 1.04); armNose.rotation.y = -Math.PI / 2; this.lid.add(armNose);
+            const band = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.8), this._mat(p.accent, 1.0, 0.4)); band.position.set(0, 0.12, 0.5); this.lid.add(band);
+            // TEETH: rows of staples biting down from under the arm.
+            this.teeth = new THREE.Group();
+            for (let i = 0; i < 6; i++) staple(this.teeth, 0, -0.04, 0.45 + i * 0.09, true);
+            this.lid.add(this.teeth);
+            this.lid.position.set(0, 0.43, -0.48); this.lid.rotation.x = -0.32; this.bodyGroup.add(this.lid);
+            // TONGUE: a grey-pink tongue lolling out over the anvil.
+            this.tongue = new THREE.Group();
+            const tg = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.03, 0.34), this._mat(0xc87a8a, 1.0, 0.5)); tg.position.z = 0.17; this.tongue.add(tg);
+            const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.03, 8), this._mat(0xc87a8a, 1.0, 0.5)); tip.position.z = 0.34; this.tongue.add(tip);
+            this.tongue.position.set(0, 0.27, 0.35); this.tongue.rotation.x = 0.25; this.bodyGroup.add(this.tongue);
+            // FEET: six jointed crab legs under the base plate.
+            this.feet = new THREE.Group();
+            for (const z of [-0.35, 0.0, 0.35]) for (const sx of [-1, 1]) {
+                const leg = new THREE.Group();
+                const up = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.02, 0.22, 4), metal); up.position.set(sx * 0.1, 0.03, 0); up.rotation.z = -sx * 1.1; leg.add(up);
+                const lo = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.012, 0.2, 4), metal); lo.position.set(sx * 0.2, -0.05, 0); lo.rotation.z = sx * 0.35; leg.add(lo);
+                leg.position.set(sx * 0.16, 0.15, z); this.feet.add(leg);
+            }
+            this.bodyGroup.add(this.feet);
+            this._lvWire({ CORE: this.core, LID: this.lid, TEETH: this.teeth, TONGUE: this.tongue, FEET: this.feet }, 'CORE');
+        }
+
+        // ── Lost Doll Head: a cracked porcelain head rolling on its cheek, one
+        //    lid stuck half shut, a music box ticking where the brain was ───
+        //    (SeveredHead keys.)
+        _buildLvLostDollHead() {
+            const p = this.profile;
+            const porcelain = this.applySkin(this._mat(p.bodyColor, 1.0, 0.18));
+            const hairMat = this._mat(0x6a3a1a, 1.0, 0.7);
+            const dark = this._mat(0x140c0c, 1.0, 0.8);
+            const brass = this._mat(0xc8a040, 1.0, 0.3);
+            this.dollRoot = new THREE.Group();
+            // HEAD: the porcelain skull with its ringlets, bow and crack.
+            this.head = new THREE.Group();
+            const skull = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 10), porcelain); skull.scale.set(1, 1.06, 0.96); this.head.add(skull);
+            for (const [x, y, rz, len] of [[-0.08, 0.32, 0.5, 0.18], [0.02, 0.24, -0.3, 0.14], [0.1, 0.18, 0.6, 0.1]]) { const c = new THREE.Mesh(new THREE.BoxGeometry(0.015, len, 0.015), dark); c.position.set(x, y, 0.3); c.rotation.z = rz; c.lookAt(x * 3, y * 3, 2); this.head.add(c); }
+            const chip = new THREE.Mesh(new THREE.CircleGeometry(0.06, 6), dark); chip.position.set(0.24, 0.24, 0.27); chip.lookAt(0.72, 0.72, 0.81); this.head.add(chip);
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(0.455, 12, 6, 0, Math.PI * 2, 0, Math.PI * 0.42), hairMat); cap.scale.set(1, 1.07, 0.98); cap.rotation.x = -0.35; this.head.add(cap);
+            for (let i = 0; i < 6; i++) { const a = Math.PI * 0.85 + (i / 5) * Math.PI * 1.3, ringlet = new THREE.Group(); for (let k = 0; k < 3; k++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.02, 4, 8), hairMat); r.position.y = -k * 0.06; r.rotation.y = k * 0.8; ringlet.add(r); } ringlet.position.set(Math.cos(a) * 0.38, -0.05, Math.sin(a) * 0.36 - 0.02); this.head.add(ringlet); }
+            for (const sx of [-1, 1]) { const bow = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.16, 4), this._mat(0xd84a6a, 1.0, 0.5)); bow.rotation.z = sx * Math.PI / 2; bow.position.set(sx * 0.1, 0.44, -0.08); this.head.add(bow); }
+            this.dollRoot.add(this.head);
+            // LEFT/RIGHT_EYE: glass eyes with lashes; the right lid sticks half shut.
+            const eye = (sx) => {
+                const g = new THREE.Group();
+                const ball = new THREE.Mesh(new THREE.SphereGeometry(0.08, 9, 7), this._mat(0xfafaf4, 1.0, 0.1)); g.add(ball);
+                const iris = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), this._mat(p.accent, 1.0, 0.1, p.accent)); iris.position.z = 0.045; iris.scale.z = 0.5; g.add(iris);
+                const pup = new THREE.Mesh(new THREE.SphereGeometry(0.022, 5, 4), this._mat(0x050505, 1.0, 0.1)); pup.position.z = 0.068; g.add(pup);
+                for (let k = 0; k < 3; k++) { const lash = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.05, 0.008), dark); lash.position.set((k - 1) * 0.035, 0.08, 0.04); lash.rotation.z = (k - 1) * 0.4; g.add(lash); }
+                const lid = new THREE.Mesh(new THREE.SphereGeometry(0.085, 9, 5, 0, Math.PI * 2, 0, Math.PI * 0.5), porcelain); lid.rotation.x = sx > 0 ? 1.1 : 0.2; g.add(lid); g._lid = lid;
+                g.position.set(sx * 0.15, 0.06, 0.35); this.dollRoot.add(g); return g;
+            };
+            this.leftEye = eye(-1); this.rightEye = eye(1);
+            // NOSE, cheeks-ears, MOUTH and TEETH.
+            this.nose = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 5), porcelain); this.nose.position.set(0, -0.06, 0.41); this.dollRoot.add(this.nose);
+            this.leftEar = new THREE.Mesh(new THREE.SphereGeometry(0.07, 7, 5, 0, Math.PI), porcelain); this.leftEar.position.set(-0.41, 0.0, 0); this.leftEar.rotation.y = -Math.PI / 2; this.dollRoot.add(this.leftEar);
+            this.rightEar = new THREE.Mesh(new THREE.SphereGeometry(0.07, 7, 5, 0, Math.PI), porcelain); this.rightEar.position.set(0.41, 0.0, 0); this.rightEar.rotation.y = Math.PI / 2; this.dollRoot.add(this.rightEar);
+            this.mouth = new THREE.Group();
+            for (const sx of [-1, 1]) { const lip = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 5), this._mat(0xc02838, 1.0, 0.3)); lip.position.x = sx * 0.025; lip.scale.set(1.2, 0.7, 0.6); this.mouth.add(lip); }
+            this.mouth.position.set(0, -0.18, 0.37); this.dollRoot.add(this.mouth);
+            this.teeth = new THREE.Group();
+            for (const sx of [-1, 1]) { const t = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.022, 0.01), this._mat(0xffffff, 1.0, 0.2)); t.position.set(sx * 0.011, -0.012, 0.025); this.teeth.add(t); }
+            this.mouth.add(this.teeth);
+            // BRAIN: a music box mechanism showing through a hole at the crown.
+            this.brain = new THREE.Group();
+            const hole = new THREE.Mesh(new THREE.CircleGeometry(0.12, 8), dark); hole.rotation.x = -Math.PI / 2; this.brain.add(hole);
+            const drum = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.16, 8), brass); drum.rotation.z = Math.PI / 2; drum.position.y = 0.02; this.brain.add(drum);
+            for (let i = 0; i < 5; i++) { const pin = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.025, 0.01), brass); pin.position.set(-0.06 + i * 0.03, 0.075, (i % 2) * 0.02 - 0.01); this.brain.add(pin); }
+            this.dollGear = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.015, 4, 8), brass); this.dollGear.position.set(0.0, 0.03, -0.07); this.brain.add(this.dollGear);
+            this.brain.position.set(0.1, 0.4, -0.15); this.brain.rotation.set(-0.3, 0, -0.25); this.dollRoot.add(this.brain);
+            // NECK_STUMP: the hollow porcelain neck, a frayed string end hanging out.
+            this.neckStump = new THREE.Group();
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.17, 0.14, 9, 1, true), porcelain); this.neckStump.add(neck);
+            const inside = new THREE.Mesh(new THREE.CircleGeometry(0.15, 9), dark); inside.rotation.x = Math.PI / 2; inside.position.y = -0.06; this.neckStump.add(inside);
+            const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.2, 4), this._mat(0xd8c8a0, 1.0, 0.9)); cord.position.set(0.05, -0.14, 0.02); cord.rotation.z = 0.4; this.neckStump.add(cord);
+            this.neckStump.position.set(0, -0.44, -0.04); this.dollRoot.add(this.neckStump);
+            // Built level; animatePose rolls it onto its cheek, as if it had
+            // just rolled to a stop and keeps rocking there.
+            this.dollRoot.position.set(0, 0.62, 0); this.dollRoot.rotation.set(0.15, 0, 0); this.bodyGroup.add(this.dollRoot);
+            this._lvWire({ HEAD: this.head, BRAIN: this.brain, LEFT_EYE: this.leftEye, RIGHT_EYE: this.rightEye, NOSE: this.nose, LEFT_EAR: this.leftEar, RIGHT_EAR: this.rightEar, MOUTH: this.mouth, TEETH: this.teeth, NECK_STUMP: this.neckStump }, 'HEAD');
+        }
+
+        // ── Litter Critter: a knotted bin bag up on two corner-feet, tie ears
+        //    sticking up like a rabbit's, eyes in a tear, a can for a heart ─
+        //    (TrashCreature keys: TRASH_PILE/LIMBS/EYES/HEART/MAW.)
+        _buildLvLitterCritter() {
+            const p = this.profile;
+            const bag = this.applySkin(this._mat(p.bodyColor, 1.0, 0.18));
+            const crease = this._mat(0x3a3a44, 1.0, 0.3);
+            const news = this._mat(0xd8d4c4, 1.0, 0.9);
+            // TRASH_PILE: the bag, its creases, the knotted neck and tie ears.
+            this.pile = new THREE.Group();
+            const sack = new THREE.Mesh(new THREE.IcosahedronGeometry(0.48, 1), bag); sack.scale.set(1.0, 1.15, 0.92); sack.position.y = 0.72; this.pile.add(sack);
+            for (let i = 0; i < 5; i++) { const a = i * 1.25; const c = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.32, 0.02), crease); c.position.set(Math.cos(a) * 0.46, 0.68, Math.sin(a) * 0.42); c.rotation.z = Math.cos(a) * 0.3; this.pile.add(c); }
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.18, 0.18, 7), bag); neck.position.y = 1.29; this.pile.add(neck);
+            const knot = new THREE.Mesh(new THREE.IcosahedronGeometry(0.09, 0), bag); knot.position.y = 1.4; this.pile.add(knot);
+            this.bagEars = [];
+            for (const sx of [-1, 1]) { const ear = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.36, 4), bag); ear.scale.z = 0.35; ear.position.set(sx * 0.1, 1.55, 0); ear.rotation.z = -sx * 0.35; this.pile.add(ear); this.bagEars.push(ear); }
+            const draw = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.015, 3, 10), this._mat(0xe8c020, 1.0, 0.5)); draw.position.set(0, 1.32, 0.04); draw.rotation.x = 1.2; this.pile.add(draw);
+            this.bodyGroup.add(this.pile);
+            // MAW: a ragged tear low on the front, rubbish spilling out of it.
+            this.maw = new THREE.Group();
+            const tear = new THREE.Mesh(new THREE.SphereGeometry(0.17, 7, 5), this._mat(0x060608, 1.0, 0.9)); tear.scale.set(1.3, 0.7, 0.35); this.maw.add(tear);
+            for (let i = 0; i < 4; i++) { const sh = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.08, 3), bag); const a = i * 1.6; sh.position.set(Math.cos(a) * 0.2, Math.sin(a) * 0.11, 0.02); sh.rotation.z = a - Math.PI / 2; this.maw.add(sh); }
+            const peel = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.2, 4), this._mat(0xe8d040, 1.0, 0.6)); peel.position.set(-0.08, -0.1, 0.06); peel.rotation.set(0.6, 0, 0.9); this.maw.add(peel);
+            const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(0.06, 0), news); ball.position.set(0.1, -0.08, 0.06); this.maw.add(ball);
+            this.maw.position.set(0, 0.52, 0.42); this.bodyGroup.add(this.maw);
+            // HEART: a crushed can glowing inside the tear.
+            this.heart = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.1, 8), this._mat(p.accent, 1.0, 0.3, p.accent)); this.heart.position.set(0.02, 0.53, 0.38); this.heart.rotation.set(0.3, 0, 0.6); this.heart.scale.y = 0.7; this.bodyGroup.add(this.heart);
+            // EYES: two eyes shining out of a smaller split higher up.
+            this.eyes = new THREE.Group();
+            const split = new THREE.Mesh(new THREE.SphereGeometry(0.13, 7, 5), this._mat(0x060608, 1.0, 0.9)); split.scale.set(1.5, 0.45, 0.35); this.eyes.add(split);
+            for (const sx of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 5), this._mat(p.accent, 1.0, 0.2, p.accent)); e.position.set(sx * 0.07, 0, 0.03); this.eyes.add(e); }
+            this.eyes.position.set(0, 0.88, 0.43); this.bodyGroup.add(this.eyes);
+            // LIMBS: two bag-corner feet and two rolled-newspaper arms.
+            this.limbs = new THREE.Group(); this._litterLegs = []; this._litterArms = [];
+            for (const sx of [-1, 1]) {
+                const leg = new THREE.Group();
+                const shin = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.26, 5), bag); shin.rotation.x = Math.PI; shin.position.y = -0.1; leg.add(shin);
+                const sole = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 4), bag); sole.scale.set(1, 0.4, 1.4); sole.position.set(0, -0.22, 0.04); leg.add(sole);
+                leg.position.set(sx * 0.2, 0.26, 0.02); this.limbs.add(leg); this._litterLegs.push(leg);
+                const arm = new THREE.Group();
+                const roll = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.05, 0.4, 6), news); roll.position.y = -0.2; arm.add(roll);
+                for (let k = 0; k < 3; k++) { const line = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.006, 3, 8), crease); line.rotation.x = Math.PI / 2; line.position.y = -0.08 - k * 0.1; arm.add(line); }
+                arm.position.set(sx * 0.44, 0.86, 0.04); arm.rotation.z = sx * 0.45; this.limbs.add(arm); this._litterArms.push(arm);
+            }
+            this.bodyGroup.add(this.limbs);
+            this._lvWire({ TRASH_PILE: this.pile, LIMBS: this.limbs, EYES: this.eyes, HEART: this.heart, MAW: this.maw }, 'TRASH_PILE');
         }
 
         animatePose(deltaTime) {
@@ -1301,6 +1637,65 @@
                     if (this.tendril2 && this.tendril2.visible) this.tendril2.rotation.z = -Math.sin(t * 2 + 1) * 0.2;
                     break;
                 }
+                case 'lv_gardenslug': {
+                    const fast = (anim === 'attack' || anim === 'specialattack');
+                    this.model.position.y = this._baseY;
+                    this.model.rotation.z = hitJolt;
+                    if (this.mass && this.mass.visible) this.mass.children.forEach((c, i) => { if (i < 3) { const w = Math.sin(t * (fast ? 6 : 2.2) - i * 1.1) * 0.05; c.scale.set(1.0 - w, 0.8 + w, 1.15 + w); } });
+                    if (this.slugStalks) this.slugStalks.forEach((st, i) => { st.rotation.x = 0.45 + Math.sin(t * 1.7 + i * 2) * 0.2; st.rotation.z = (i ? -0.35 : 0.35) + Math.sin(t * 1.3 + i) * 0.12; });
+                    if (this.head && this.head.visible) this.head.position.z = 0.62 + (fast ? Math.max(0, Math.sin(t * 7)) * 0.1 : 0);
+                    break;
+                }
+                case 'lv_ditchleech': {
+                    const fast = (anim === 'attack' || anim === 'specialattack');
+                    this.model.position.y = this._baseY;
+                    this.model.rotation.z = hitJolt;
+                    if (this.head && this.head.visible) { this.head.rotation.y = Math.sin(t * (fast ? 5 : 1.3)) * 0.35; this.head.rotation.x = 0.5 + Math.sin(t * (fast ? 8 : 1.9)) * 0.18; }
+                    if (this.leechBlood) { const s = 1 + Math.sin(t * 2.6) * 0.08; this.leechBlood.scale.setScalar(s); }
+                    if (this.maw) this.maw.rotation.z = t * (fast ? 4 : 0.8);
+                    break;
+                }
+                case 'lv_nosypeeper': {
+                    const fast = (anim === 'attack' || anim === 'specialattack');
+                    this.model.position.y = this._baseY + Math.sin(t * 1.4) * 0.06 * this.scale;
+                    this.model.rotation.z = hitJolt;
+                    const blink = Math.sin(t * 1.9) > 0.94 ? 0.5 : 0;
+                    if (this.peepLids) this.peepLids.forEach(pv => { pv.rotation.x = pv._sgn * (Math.sin(t * 0.7) * 0.08 + blink - (fast ? 0.25 : 0)); });
+                    if (this.peepPupil) this.peepPupil.position.x = Math.sin(t * 1.3) * 0.06;
+                    if (this.head && this.head.visible) this.head.position.z = 0.08 + (fast ? Math.abs(Math.sin(t * 7)) * 0.1 : 0);
+                    if (this.tailSpike) this.tailSpike.rotation.z = Math.sin(t * 1.6) * 0.15;
+                    [this.extraLimb1, this.extraLimb2].forEach((l, i) => { if (l) l.rotation.z = Math.sin(t * 1.2 + i * 2) * 0.08; });
+                    break;
+                }
+                case 'lv_staplermimic': {
+                    const fast = (anim === 'attack' || anim === 'specialattack');
+                    this.model.position.y = this._baseY;
+                    this.model.rotation.z = hitJolt;
+                    const open = (Math.sin(t * (fast ? 11 : 2.0)) * 0.5 + 0.5) * (fast ? 0.55 : 0.25);
+                    if (this.lid && this.lid.visible) this.lid.rotation.x = -(0.08 + open);
+                    if (this.tongue && this.tongue.visible) this.tongue.rotation.y = Math.sin(t * 3) * 0.2;
+                    if (this.feet) this.feet.children.forEach((lg, i) => { lg.rotation.x = Math.sin(t * (fast ? 14 : 4) + i * 1.3) * (fast ? 0.25 : 0.08); });
+                    break;
+                }
+                case 'lv_lostdollhead': {
+                    const fast = (anim === 'attack' || anim === 'specialattack');
+                    this.model.position.y = this._baseY + Math.sin(t * 1.1) * 0.04 * this.scale;
+                    if (this.dollRoot) { this.dollRoot.rotation.z = 0.42 + Math.sin(t * 1.2) * 0.15 + hitJolt; this.dollRoot.rotation.x = 0.15 + (fast ? Math.sin(t * 9) * 0.25 : 0); }
+                    if (this.rightEye && this.rightEye._lid) this.rightEye._lid.rotation.x = Math.sin(t * 2.7) > 0.85 ? 0.3 : 1.1;
+                    if (this.dollGear) this.dollGear.rotation.z = t * 3;
+                    break;
+                }
+                case 'lv_littercritter': {
+                    const fast = (anim === 'attack' || anim === 'specialattack');
+                    const sw = Math.sin(t * (fast ? 9 : 3));
+                    this.model.position.y = this._baseY + Math.abs(sw) * 0.02 * this.scale;
+                    this.model.rotation.z = hitJolt + sw * 0.05;
+                    if (this._litterLegs) this._litterLegs.forEach((l, i) => { l.rotation.x = (i ? -sw : sw) * 0.25; });
+                    if (this._litterArms) this._litterArms.forEach((a, i) => { a.rotation.x = (i ? sw : -sw) * (fast ? 0.7 : 0.3); });
+                    if (this.bagEars) this.bagEars.forEach((e, i) => { e.rotation.z = (i ? -0.35 : 0.35) + Math.sin(t * 2.5 + i) * 0.12; });
+                    if (this.heart && this.heart.material) this.heart.material.emissiveIntensity = 0.5 + Math.abs(Math.sin(t * 3)) * 0.6;
+                    break;
+                }
                 case 'livingtheorem': {
                     this.model.position.y = this._baseY + Math.sin(t * 1.3) * 0.06 * this.scale;
                     this.model.rotation.z = hitJolt;
@@ -1371,6 +1766,7 @@
     reg('livingtheorem',       { aliases: ['livingtheorem'], scale: S.livingtheorem.scale, weapon: 0, create: make });
     reg('leylineaneurysm',     { aliases: ['leylineaneurysm'], scale: S.leylineaneurysm.scale, weapon: 0, create: make });
     reg('timeloopstalker',     { aliases: ['timeloopstalker'], scale: S.timeloopstalker.scale, weapon: 0, create: make });
+    ['lv_gardenslug', 'lv_ditchleech', 'lv_nosypeeper', 'lv_staplermimic', 'lv_lostdollhead', 'lv_littercritter'].forEach(k => reg(k, { aliases: [k], scale: S[k].scale, weapon: 0, create: make }));
 
     const NAMED = {
         floatingeye:      ["Wandering Eyeball"],
@@ -1383,6 +1779,12 @@
         voidmanipulator:     ["Void Manipulator"],
         advertisementbadger: ["Advertisement Badger"],
         livingtheorem:       ["Living Theorem"],
+        lv_gardenslug:       ["Garden Slug"],
+        lv_ditchleech:       ["Ditch Leech"],
+        lv_nosypeeper:       ["Nosy Peeper"],
+        lv_staplermimic:     ["Stapler Mimic"],
+        lv_lostdollhead:     ["Lost Doll Head"],
+        lv_littercritter:    ["Litter Critter"],
         leylineaneurysm:     ["Leyline Aneurysm"],
         timeloopstalker:     ["Time-Loop Stalker"],
     };

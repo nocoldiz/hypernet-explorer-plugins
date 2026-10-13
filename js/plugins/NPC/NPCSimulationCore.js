@@ -403,7 +403,8 @@
   // ============================================================================
 
   PluginManager.registerCommand(pluginName, "NPCHistory", args => {
-    const name = String(args.eventName || "").trim();
+    // Cast from the menu, no event is named: the person nearest the leader is read.
+    const name = window.NPCShared ? window.NPCShared.soulName(args.eventName) : String(args.eventName || "").trim();
     if (!name) return;
     const narrative = StoryLogger.generateNarrative(name);
     window.skipLocalization = true;

@@ -4,7 +4,7 @@
   "introduce": "My name is {name} and I'm a {className}",
   "joinsParty": "{name} joins the party!",
   "residence": "Residence",
-  "joinedInactive": "{name} signs on, but there is no room on the road: they wait in the reserves.",
+  "joinedInactive": "{name} joins, but the party is full. They wait in the Reserves.",
   "benchedLore": "{name} agreed to travel with the party, and has been waiting for a place in it ever since.",
   "lodging": {
     "halls": "the Stairs Hall",

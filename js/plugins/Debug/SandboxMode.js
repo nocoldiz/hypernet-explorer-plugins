@@ -1182,7 +1182,7 @@
                         <div class="sandbox-22">
                             <div class="sandbox-11">
                                 <span class="sandbox-12">Party Leader:</span>
-                                <span>${$gameParty.leader() ? $gameParty.leader().name() : "None"} (Lv. ${$gameParty.leader() ? $gameParty.leader().level : 1})</span>
+                                <span>${$gameParty.leader() ? escapeHtml($gameParty.leader().name()) : "None"} (Lv. ${$gameParty.leader() ? $gameParty.leader().level : 1})</span>
                             </div>
                             <div class="sandbox-11">
                                 <span class="sandbox-12">Current Map:</span>

@@ -1359,20 +1359,32 @@
                 return;
             }
 
-            // Charge the stake up front. Without a cost, a repeatable trigger event
-            // is an infinite-gold exploit (average prize ~500-575 gold, free to open).
+            // The stake is checked up front and charged once the card exists.
+            // Without a cost, a repeatable trigger event is an infinite-gold
+            // exploit (average prize ~500-575 gold, free to open); charging
+            // before the build would take the money for a card that a failed
+            // WebGL context never put on the counter.
             if (CARD_COST_GOLD > 0 && $gameParty.gold() < CARD_COST_GOLD) {
                 this._cannotAfford = true;
                 safePlaySe({ name: 'Buzzer1', volume: 90, pitch: 100, pan: 0 });
                 this._hudDirty = true;
                 return;
             }
+
+            try {
+                this._model = new ScratchCardModel(this._style);
+                this.createCard();
+            } catch (e) {
+                console.error('ScratchingCardSystem: the card could not be built', e);
+                this.teardownCard();
+                this._model = null;
+                this._fatal = T('ScratchingCard.noRenderer');
+                this._hudDirty = true;
+                return;
+            }
             if (CARD_COST_GOLD > 0) {
                 $gameParty.loseGold(CARD_COST_GOLD);
             }
-
-            this._model = new ScratchCardModel(this._style);
-            this.createCard();
             safePlaySe({ name: 'Casino/cards_pack_take_out_1', volume: 90, pitch: 100, pan: 0 });
             if (window.MinigameFun) window.MinigameFun.played({ spec: 'Card Counting' });
         }
@@ -1387,6 +1399,19 @@
             this._backgroundSprite.bitmap.fillAll('#05040a');
             this._backgroundSprite.scale.set(Graphics.width / 8, Graphics.height / 8);
             this.addChild(this._backgroundSprite);
+        }
+
+        // Takes down the 3D card and its sprite, whole or half built.
+        teardownCard() {
+            if (this._cardSprite) {
+                if (this._cardSprite.parent) this._cardSprite.parent.removeChild(this._cardSprite);
+                try { this._cardSprite.destroy({ texture: true, baseTexture: true }); } catch (e) { /* half built */ }
+                this._cardSprite = null;
+            }
+            if (this._card) {
+                try { this._card.dispose(); } catch (e) { /* half built */ }
+                this._card = null;
+            }
         }
 
         createCard() {
@@ -1733,15 +1758,7 @@
 
         terminate() {
             super.terminate();
-            if (this._cardSprite) {
-                if (this._cardSprite.parent) this._cardSprite.parent.removeChild(this._cardSprite);
-                this._cardSprite.destroy();
-                this._cardSprite = null;
-            }
-            if (this._card) {
-                this._card.dispose();
-                this._card = null;
-            }
+            this.teardownCard();
             if (this._hudSprite && this._hudSprite.bitmap) this._hudSprite.bitmap.destroy();
             if (this._backgroundSprite && this._backgroundSprite.bitmap) this._backgroundSprite.bitmap.destroy();
         }
@@ -2451,7 +2468,7 @@
             }
             if (this._rackSprite) {
                 if (this._rackSprite.parent) this._rackSprite.parent.removeChild(this._rackSprite);
-                this._rackSprite.destroy();
+                this._rackSprite.destroy({ texture: true, baseTexture: true });
                 this._rackSprite = null;
             }
             if (this._rack) {

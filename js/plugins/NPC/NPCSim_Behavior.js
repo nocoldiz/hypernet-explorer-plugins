@@ -488,7 +488,7 @@
       controller._lastDispatchedNeed = need;
       if (was !== need && need) {
         window.SimLog?.decide("npc", controller.eventName,
-          "ParchmentToast.simLog.npc.need." + need, { name: controller.eventName });
+          "ParchmentToast.simLog.npc.need." + need, { name: controller.eventName }); // i18n-ignore: i18n key prefix
       }
 
       // The shift is over (or the worker was called off it): whatever part of
@@ -1005,7 +1005,16 @@
         if (s.reason === WATER_WASH) satisfyNeedTick(ctrl.eventName, "hygiene", dt); // i18n-ignore: need id
         else if (s.reason !== WATER_ESCAPE) {
           satisfyNeedTick(ctrl.eventName, "leisure", dt); // i18n-ignore: need id
-          if (this.swimmersNear(ctrl).length) satisfyNeedTick(ctrl.eventName, "social", dt); // i18n-ignore: need id
+          // Whether swimmersNear would name anybody, without the list: this
+          // is asked on every swim tick of everybody in the water.
+          let company = false;
+          const ctrls = $gameSystem?.getActiveNPCControllers?.() || [];
+          for (let i = 0; ctrl.event && i < ctrls.length && !company; i++) {
+            const c = ctrls[i];
+            company = !!(c && c !== ctrl && c.state === WATER_SWIMMING && c.event && !c.event._erased &&
+              this._dist(c.event, ctrl.event) <= 3);
+          }
+          if (company) satisfyNeedTick(ctrl.eventName, "social", dt); // i18n-ignore: need id
         }
       }
       if (s.reason !== WATER_ESCAPE && Math.random() < this.BUBBLE_CHANCE) this.say(ctrl, "swimming");

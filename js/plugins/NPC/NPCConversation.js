@@ -143,8 +143,24 @@
   // pick toward the option, avoided ones push it away; an option that carries
   // neither keeps a neutral weight, so a template with no charged wording is
   // still picked uniformly.
+  //
+  // The weight is a pure reading of the option and the lexicon, so it is
+  // remembered per lexicon: the same alternatives come up line after line.
+  const _optionWeights = new WeakMap();
+  const OPTION_WEIGHT_CAP = 4096;
   function _optionWeight(option, lex) {
     if (!lex) return 1;
+    let memo = _optionWeights.get(lex);
+    if (!memo) { memo = new Map(); _optionWeights.set(lex, memo); }
+    let weight = memo.get(option);
+    if (weight === undefined) {
+      if (memo.size >= OPTION_WEIGHT_CAP) memo.clear();
+      weight = _optionWeightOf(option, lex);
+      memo.set(option, weight);
+    }
+    return weight;
+  }
+  function _optionWeightOf(option, lex) {
     const hay = ' ' + String(option).toLowerCase().replace(/[^a-z0-9À-ɏ']+/g, ' ') + ' ';
     let score = 0;
     for (const w of lex.favors) if (hay.indexOf(' ' + w) >= 0) score += 1;
@@ -167,14 +183,63 @@
     return options[options.length - 1];
   }
 
+  // Gender agreement for a language that needs it (English lines carry none
+  // and pass through untouched). A line writes the forms inline as
+  // {g:masculine|feminine|non-binary} for the speaker, {go:...} for the one
+  // spoken to, and {g@a:...} / {g@b:...} for a script's participant {a} or
+  // {b}; a missing third form reads as the first. The same convention as the
+  // life talk (II.8). `genders` maps self / other / a / b to anything
+  // _genderIndexOf reads: a profile, a party actor, a name or 0/1/2.
+  const AGREE_RE = /\{g(o|@[ab])?:([^{}]*)\}/g;
+  const AGREE_ANY_RE = /\{g(?:o|@[A-Za-z0-9]+)?:([^{}|]*)[^{}]*\}/g;
+  function _genderIndexOf(source) {
+    let g = null;
+    if (typeof source === 'number') g = source;
+    else if (typeof source === 'string' && source) {
+      const prof = _getProfile(source);
+      if (prof && prof.gender != null) g = prof.gender;
+      else {
+        const actor = SpeciesVoice._partyActorNamed(source);
+        if (actor && typeof actor.gender === 'function') g = actor.gender();
+      }
+    } else if (source && typeof source === 'object') {
+      g = typeof source.gender === 'function' ? source.gender() : source.gender;
+    }
+    g = Number(g);
+    return g === 1 ? 1 : g >= 2 ? 2 : 0;
+  }
+  function agree(text, genders) {
+    if (typeof text !== 'string' || text.indexOf('{g') < 0) return text;
+    const gs = genders || {};
+    return text.replace(AGREE_RE, (m, who, body) => {
+      const src = !who ? gs.self : who === 'o' ? gs.other : gs[who.slice(1)];
+      const forms = body.split('|');
+      return forms[_genderIndexOf(src)] ?? forms[0];
+    });
+  }
+  // A script's {g:} / {go:} forms pinned to the participant who says each
+  // line ({g@a:} / {g@b:}), so the line agrees with the right person however
+  // it is resolved later (_resolveLine, or DialogueSystem's Rumors exchange,
+  // which reads lines without knowing whose turn it is).
+  function _pinScriptGenders(lines) {
+    if (!Array.isArray(lines)) return lines;
+    return lines.map((entry) => {
+      if (!Array.isArray(entry) || typeof entry[1] !== 'string' || entry[1].indexOf('{g') < 0) return entry;
+      const [who, text] = entry;
+      const self = who === 1 ? 'b' : 'a', other = who === 1 ? 'a' : 'b';
+      return [who, text.replace(/\{g(o)?:/g, (m, o) => '{g@' + (o ? other : self) + ':')];
+    });
+  }
+
   // Resolves "{a|b|c}" groups innermost-first, so groups can nest.
   // With a speaker named, every alternative is weighed against that
   // personality's lexicon (above), so the SAME template phrases itself
   // differently in a Grumpy mouth than in a Sanguine one.
+  // A gender form nobody resolved reads as its first form, never as a choice.
   function vary(text, persName) {
     if (typeof text !== "string" || text.indexOf("{") < 0) return text;
     const lex = _lexiconOf(persName);
-    let out = text;
+    let out = text.indexOf("{g") < 0 ? text : text.replace(AGREE_ANY_RE, "$1");
     let guard = 0;
     while (guard++ < 64) {
       const next = out.replace(/\{([^{}]*\|[^{}]*)\}/g,
@@ -238,6 +303,11 @@
   const SPEECH_TOKEN_RE = /\{[^{}]*\}|%\d+|\\[A-Za-z]+(?:\[[^\]]*\])?|\\[.|!><^$]|<[^>]+>|&[a-zA-Z]+;/g;
   const SPEECH_WORD_RE = /[\p{L}']+/gu;
   const SPEECH_LOWER_RE = /\p{Ll}/u;
+  // Languages written wholly in capitals (Naguka): there a line with no
+  // lower-case letter is just the language, not a line already in a patois.
+  const CAPS_LANGUAGES = new Set(['nk']);
+  const inCapsLanguage = () =>
+    CAPS_LANGUAGES.has((typeof T !== 'undefined' && T.language) ? T.language() : 'en');
   const SPEECH_MASK_RE = /(\d+)/g;
 
   const SpeciesVoice = {
@@ -367,12 +437,12 @@
       let out = this.transform(line, id);
       if (out.startsWith('*')) return this._remember(out);
       const voice = this.bank(id).voice;
-      if (out === line && this.rules(id)?.upper) return this._remember(out);
+      if (out === line && this.rules(id)?.upper && !inCapsLanguage()) return this._remember(out);
       if (voice && Math.random() < (SPECIES_VOICE_CHANCE[this.mode(id)] ?? SPECIES_VOICE_CHANCE.own)) {
         const opener = Math.random() < 0.5;
         const list = opener ? voice.openers : voice.closers;
         if (Array.isArray(list) && list.length) {
-          const extra = vary(_pickFrom(list), null);
+          const extra = vary(agree(_pickFrom(list), { self: speaker }), null);
           out = opener ? `${extra} ${out}` : `${out} ${extra}`;
         }
       }
@@ -538,6 +608,12 @@
   }
 
   function _buildScript(profA, profB, aName, bName) {
+    const script = _pickScript(profA, profB, aName, bName);
+    if (script && Array.isArray(script.lines)) script.lines = _pinScriptGenders(script.lines);
+    return script;
+  }
+
+  function _pickScript(profA, profB, aName, bName) {
     // Each personality brings its own appetite for a good debate
     let debateChance = 0.12;
     for (const p of [profA, profB]) {
@@ -573,8 +649,16 @@
     return { kind: tone, lines: _pickFrom(pool), agreement: tone === 'positive' };
   }
 
-  function _resolveLine(text, aName, bName, persName) {
-    return vary(String(text).replace(/{a}/g, aName).replace(/{b}/g, bName), persName);
+  // `who` (0 or 1, optional) is whose turn the line is, for any {g:} / {go:}
+  // form a script did not pin to {a} or {b} (_pinScriptGenders).
+  function _resolveLine(text, aName, bName, persName, who) {
+    const turn = who === 0 || who === 1;
+    const agreed = agree(String(text), {
+      a: aName, b: bName,
+      self: turn ? (who === 0 ? aName : bName) : null,
+      other: turn ? (who === 0 ? bName : aName) : null,
+    });
+    return vary(agreed.replace(/{a}/g, aName).replace(/{b}/g, bName), persName);
   }
 
   // True while Map Battle Mode (BattleSystem/MapBattleMode.js) has the map:
@@ -1005,7 +1089,7 @@
       // personality voice, so the two participants never sound interchangeable.
       const speakerPers = _personalityNameOf(_getProfile(speakerCtrl.eventName));
       let text = applyVoice(
-        _resolveLine(rawText, convo.aName, convo.bName, speakerPers),
+        _resolveLine(rawText, convo.aName, convo.bName, speakerPers, who),
         speakerPers, VOICE_CHANCE_DIALOGUE);
       // The speaker's creed frames the topic now and then (II.9), on top of
       // the personality voice. Em and Bubba are never framed.
@@ -1100,42 +1184,53 @@
   // the source plugin (or this NPC's identity) isn't available, so everything
   // degrades gracefully.
 
+  // A world name the simulation stores in English (a power, a nation, a
+  // town) as the language being played reads it (DataService WorldNames).
+  // English keeps the stored name as it is.
+  function _worldName(name) {
+    if (name == null || name === '') return name;
+    const WN = window.WorldNames;
+    if (!WN || typeof WN.any !== 'function' || T.language() === 'en') return name; // i18n-ignore: fallback language id
+    return WN.any(name) || name;
+  }
+
   const WorldProvider = {
-    fill(template, ctx, persName) {
+    // `self` is the speaker, for the line's {g:} forms (II.1).
+    fill(template, ctx, persName, self) {
       // Fallbacks are words a player reads, so they live with the rest of them.
       const fb = bank('ConvWorld.fallback');
-      return vary(String(template)
-        .replace(/{group}/g, ctx.group ?? fb.group)
+      return vary(agree(String(template), { self })
+        .replace(/{group}/g, _worldName(ctx.group) ?? fb.group)
         .replace(/{festival}/g, ctx.festival ?? fb.festival)
         .replace(/{epidemic}/g, ctx.epidemic ?? fb.epidemic)
         .replace(/{headline}/g, ctx.headline ?? fb.headline), persName);
     },
 
-    _pickRaw(ctx, persName) {
+    _pickRaw(ctx, persName, self) {
       // Most pressing topic first: plague > crime > festival > economy >
       // wanted player > headline > market chatter.
       const r = Math.random();
-      if (ctx.epidemic && r < 0.35) return this.fill(_pickFrom(WORLD_THOUGHTS().epidemic), ctx, persName);
-      if (ctx.crimeWave && r < 0.5) return this.fill(_pickFrom(WORLD_THOUGHTS().crimeWave), ctx, persName);
-      if (ctx.festival && r < 0.6) return this.fill(_pickFrom(WORLD_THOUGHTS().festival), ctx, persName);
-      if (ctx.boom && r < 0.7) return this.fill(_pickFrom(WORLD_THOUGHTS().boom), ctx, persName);
-      if (ctx.bust && r < 0.7) return this.fill(_pickFrom(WORLD_THOUGHTS().bust), ctx, persName);
-      if (ctx.playerNotorious && r < 0.8) return this.fill(_pickFrom(WORLD_THOUGHTS().outlaw), ctx, persName);
-      if (ctx.headline && r < 0.92) return this.fill(_pickFrom(WORLD_THOUGHTS().headline), ctx, persName);
-      if (ctx.marketMood) return this.fill(_pickFrom(WORLD_THOUGHTS().market[ctx.marketMood]), ctx, persName);
+      if (ctx.epidemic && r < 0.35) return this.fill(_pickFrom(WORLD_THOUGHTS().epidemic), ctx, persName, self);
+      if (ctx.crimeWave && r < 0.5) return this.fill(_pickFrom(WORLD_THOUGHTS().crimeWave), ctx, persName, self);
+      if (ctx.festival && r < 0.6) return this.fill(_pickFrom(WORLD_THOUGHTS().festival), ctx, persName, self);
+      if (ctx.boom && r < 0.7) return this.fill(_pickFrom(WORLD_THOUGHTS().boom), ctx, persName, self);
+      if (ctx.bust && r < 0.7) return this.fill(_pickFrom(WORLD_THOUGHTS().bust), ctx, persName, self);
+      if (ctx.playerNotorious && r < 0.8) return this.fill(_pickFrom(WORLD_THOUGHTS().outlaw), ctx, persName, self);
+      if (ctx.headline && r < 0.92) return this.fill(_pickFrom(WORLD_THOUGHTS().headline), ctx, persName, self);
+      if (ctx.marketMood) return this.fill(_pickFrom(WORLD_THOUGHTS().market[ctx.marketMood]), ctx, persName, self);
       return null;
     },
 
     // Nibiru is not a settlement-scoped mood, it's a fact of survival, so it
     // is picked per personality (like WEATHER_THOUGHTS) rather than as shared
     // text run through applyVoice, and it outranks every routine topic below.
-    _pickWorldEndingRaw(ctx, persName) {
+    _pickWorldEndingRaw(ctx, persName, self) {
       const topic = ctx.earthDestroyed ? WORLD_THOUGHTS().earthDestroyed
                   : ctx.earthSaved ? WORLD_THOUGHTS().earthSaved
                   : null;
       if (!topic) return null;
       const pool = (persName && topic[persName]) || topic.default;
-      return pool && pool.length ? vary(_pickFrom(pool), persName) : null;
+      return pool && pool.length ? vary(agree(_pickFrom(pool), { self }), persName) : null;
     },
 
     pickWorldThought(profile) {
@@ -1146,22 +1241,23 @@
       if (!ctx) return null;
       const persName = _personalityNameOf(profile);
       if ((ctx.earthDestroyed || ctx.earthSaved) && Math.random() < 0.5) {
-        const ending = this._pickWorldEndingRaw(ctx, persName);
+        const ending = this._pickWorldEndingRaw(ctx, persName, profile);
         if (ending) return ending;
       }
-      const line = this._pickRaw(ctx, persName);
+      const line = this._pickRaw(ctx, persName, profile);
       return line ? applyVoice(line, persName) : null;
     },
   };
 
   const PoliticsProvider = {
-    fill(template, ctx, persName) {
+    // `self` is the speaker, for the line's {g:} forms (II.1).
+    fill(template, ctx, persName, self) {
       const fb = bank('ConvPolitics.fallback');
-      return vary(String(template)
+      return vary(agree(String(template), { self })
         .replace(/{party}/g, ctx.partyName ?? fb.party)
         .replace(/{head}/g, ctx.headName ?? fb.head)
         .replace(/{title}/g, ctx.headTitle ?? fb.title)
-        .replace(/{power}/g, ctx.powerName ?? fb.power)
+        .replace(/{power}/g, _worldName(ctx.powerName) ?? fb.power)
         .replace(/{days}/g, ctx.daysToElection ?? "?")
         .replace(/{election}/g, (ctx.electionLabel ?? fb.election).toLowerCase())
         .replace(/{gripe}/g, ctx.gripe ?? fb.gripe)
@@ -1169,24 +1265,24 @@
         .replace(/{rumorKind}/g, ctx.rumorKind ?? fb.rumorKind)
         .replace(/{winner}/g, ctx.lastWinnerName ?? fb.winner)
         .replace(/{office}/g, ctx.localOffice ?? fb.office)
-        .replace(/{group}/g, ctx.group ?? fb.group), persName);
+        .replace(/{group}/g, _worldName(ctx.group) ?? fb.group), persName);
     },
 
-    _pickRaw(ctx, persName) {
+    _pickRaw(ctx, persName, self) {
       // Most salient topic first: holding office > hot rumor > policy pain
       // > imminent election > fresh result > general stance.
       const r = Math.random();
-      if (ctx.localOffice && r < 0.25) return this.fill(_pickFrom(OFFICE_HOLDER_THOUGHTS()), ctx, persName);
-      if (ctx.rumorSubject && r < 0.40) return this.fill(_pickFrom(POLITICAL_RUMOR_THOUGHTS()), ctx, persName);
-      if (ctx.gripe && r < 0.55) return this.fill(_pickFrom(POLICY_GRUMBLES()), ctx, persName);
+      if (ctx.localOffice && r < 0.25) return this.fill(_pickFrom(OFFICE_HOLDER_THOUGHTS()), ctx, persName, self);
+      if (ctx.rumorSubject && r < 0.40) return this.fill(_pickFrom(POLITICAL_RUMOR_THOUGHTS()), ctx, persName, self);
+      if (ctx.gripe && r < 0.55) return this.fill(_pickFrom(POLICY_GRUMBLES()), ctx, persName, self);
       if (ctx.daysToElection != null && ctx.daysToElection <= 30 && r < 0.75) {
-        return this.fill(_pickFrom(ELECTION_THOUGHTS().upcoming), ctx, persName);
+        return this.fill(_pickFrom(ELECTION_THOUGHTS().upcoming), ctx, persName, self);
       }
       if (ctx.lastWinnerName && ctx.engagement >= 25 && r < 0.85) {
-        return this.fill(_pickFrom(ctx.lastElectionWon ? ELECTION_THOUGHTS().won : ELECTION_THOUGHTS().lost), ctx, persName);
+        return this.fill(_pickFrom(ctx.lastElectionWon ? ELECTION_THOUGHTS().won : ELECTION_THOUGHTS().lost), ctx, persName, self);
       }
       const pool = POLITICAL_THOUGHTS()[ctx.stance] || POLITICAL_THOUGHTS().apathetic;
-      return this.fill(_pickFrom(pool), ctx, persName);
+      return this.fill(_pickFrom(pool), ctx, persName, self);
     },
 
     pickPoliticalThought(profile) {
@@ -1196,7 +1292,7 @@
       try { ctx = window.NPCPolitics.getConversationContext(name); } catch (_) { return null; }
       if (!ctx) return null;
       const persName = _personalityNameOf(profile);
-      const line = this._pickRaw(ctx, persName);
+      const line = this._pickRaw(ctx, persName, profile);
       if (!line) return null;
       // The creed they hold frames what they just said (II.9); an election
       // season frames it as an election.
@@ -1244,8 +1340,8 @@
 
   window.NPCConversation = { _internal: { _late: [] } };
   Object.assign(window.NPCConversation._internal, {
-    _buildScript, _getProfile, _personalityNameOf, _personalityOf, _pickFrom, _resolveLine,
-    applyVoice, ConversationLog, ConversationManager, isTacticalFight, PoliticsProvider, SpeciesVoice, vary,
+    _buildScript, _genderIndexOf, _getProfile, _personalityNameOf, _personalityOf, _pickFrom, _resolveLine,
+    agree, applyVoice, ConversationLog, ConversationManager, isTacticalFight, PoliticsProvider, SpeciesVoice, vary,
     VOICE_CHANCE_DIALOGUE, WorldProvider,
   });
 

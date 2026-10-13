@@ -1,6 +1,6 @@
 {
   "name": "Astronomy",
-  "blurb": "Observations and space missions, each figure quoted with the instrument behind it.",
+  "blurb": "Observations and space missions.",
   "nodes": {
     "astro_wmap": {
       "name": "WMAP Cosmic Age",

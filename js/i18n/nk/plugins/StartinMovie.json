@@ -1,0 +1,13 @@
+{
+  "cards": {
+    "newYear": "01 . 01 . 2001"
+  },
+  "labels": {
+    "holyRay": "HolyRay",
+    "judgment": "Judgment",
+    "holyPillars": "HolyPillars",
+    "divineAnnihilation": "DivineAnnihilation",
+    "genericFireball": "GenericFireball",
+    "spearOfMemories": "SpearOfMemories"
+  }
+}

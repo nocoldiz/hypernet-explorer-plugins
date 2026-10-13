@@ -15,8 +15,8 @@
   "statusScanning": "LASER SCANNIN'{dots} [Ν = {shift} CM⁻¹]",
   "statusRendering": "RENDERIN' SPECTRUM{dots}",
   "msgHeader": "\\C[8][ RAMAN SCANNER ]\\C[0]",
-  "msgNoMaterial": "NO SPECTRALLY ACTIVE MATERIAL DETECTED IN SCAN AREA!",
-  "msgHint": "TARGET MUST BE A STATUE, PAINTIN', OR LIBRARY OBJECT WITHIN 1M!",
+  "msgNoMaterial": "NUTTIN' TA ANALYZE HERE.",
+  "msgHint": "FACE A STATUE, PAINTIN' OR BOOKCASE!",
   "choices": [
     "LOOK",
     "ANALYZE",
@@ -33,19 +33,19 @@
   },
   "material": {
     "marble": {
-      "name": "CALCITE CACO₃",
+      "name": "CALCITE CaCO₃",
       "subname": "MARBLE"
     },
     "granite": {
-      "name": "SIO₂ + FELDSPARS",
+      "name": "SiO₂ + FELDSPARS",
       "subname": "GRANITE"
     },
     "bronze": {
-      "name": "CU₂O / SNO₂ ALLOY",
+      "name": "CU₂O / SnO₂ ALLOY",
       "subname": "BRONZE + PATINA"
     },
     "limestone": {
-      "name": "CACO₃ / MGCO₃",
+      "name": "CaCO₃ / MgCO₃",
       "subname": "LIMESTONE"
     },
     "lapis": {
@@ -53,7 +53,7 @@
       "subname": "LAPIS LAZULI + OIL BINDER"
     },
     "vermillion": {
-      "name": "Α-HGS CINNABAR",
+      "name": "Α-HgS CINNABAR",
       "subname": "VERMILLION PIGMENT"
     },
     "malachite": {
@@ -73,23 +73,23 @@
       "subname": "AGED PARCHMENT"
     },
     "onyx": {
-      "name": "SIO₂ CHALCEDONY",
+      "name": "SiO₂ CHALCEDONY",
       "subname": "BLACK ONYX"
     },
     "obsidian": {
-      "name": "SIO₂ VOLCANIC GLASS",
+      "name": "SiO₂ VOLCANIC GLASS",
       "subname": "OBSIDIAN"
     },
     "jade": {
-      "name": "NAALSI₂O₆ JADEITE",
+      "name": "NaAlSi₂O₆ JADEITE",
       "subname": "JADE"
     },
     "quartz": {
-      "name": "SIO₂ Α-QUARTZ",
+      "name": "SiO₂ Α-QUARTZ",
       "subname": "ROCK CRYSTAL / QUARTZ"
     },
     "sandstone": {
-      "name": "SIO₂ + CALCITE CEMENT",
+      "name": "SiO₂ + CALCITE CEMENT",
       "subname": "SANDSTONE"
     },
     "basalt": {
@@ -97,7 +97,7 @@
       "subname": "BASALT"
     },
     "alabaster": {
-      "name": "CASO₄·2H₂O GYPSUM",
+      "name": "CaSO₄·2H₂O GYPSUM",
       "subname": "ALABASTER"
     },
     "clay": {
@@ -109,11 +109,11 @@
       "subname": "GOLD (GILDED)"
     },
     "silver": {
-      "name": "AG₂S + AGCL TARNISH",
+      "name": "AG₂S + AgCl TARNISH",
       "subname": "SILVER (TARNISHED)"
     },
     "copper": {
-      "name": "CU₂O / CUO PATINA",
+      "name": "CU₂O / CuO PATINA",
       "subname": "COPPER"
     },
     "iron": {
@@ -137,7 +137,7 @@
       "subname": "BAMBOO"
     },
     "ultramarine": {
-      "name": "NA₈[ALSIO₄]₆S₃ SYNTHETIC",
+      "name": "NA₈[AlSiO₄]₆S₃ SYNTHETIC",
       "subname": "ULTRAMARINE BLUE"
     },
     "prussian_blue": {
@@ -145,7 +145,7 @@
       "subname": "PRUSSIAN BLUE"
     },
     "cobalt_blue": {
-      "name": "COAL₂O₄ SPINEL",
+      "name": "CoAl₂O₄ SPINEL",
       "subname": "COBALT BLUE"
     },
     "burnt_sienna": {
@@ -173,15 +173,15 @@
       "subname": "PERMINERALIZED BONE"
     },
     "fossil_silicified": {
-      "name": "SIO₂ CHALCEDONY / CHERT",
+      "name": "SiO₂ CHALCEDONY / CHERT",
       "subname": "SILICIFIED FOSSIL"
     },
     "fossil_pyrite": {
-      "name": "FES₂ IRON DISULFIDE",
+      "name": "FeS₂ IRON DISULFIDE",
       "subname": "PYRITIZED FOSSIL"
     },
     "fossil_calcite": {
-      "name": "CACO₃ DIAGENETIC CALCITE",
+      "name": "CaCO₃ DIAGENETIC CALCITE",
       "subname": "CALCIFIED SHELL / CORAL"
     }
   }

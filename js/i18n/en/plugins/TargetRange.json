@@ -1,0 +1,22 @@
+{
+  "noThree": "THREE.JS IS NOT LOADED - THE RANGE IS CLOSED",
+  "nothingOnRack": "NO RANGED WEAPON ON THE RACK",
+  "rangeHot": "RANGE HOT",
+  "rangeCold": "RANGE COLD",
+  "standBy": "STAND BY",
+  "standByCount": "STAND BY - {n}",
+  "seconds": "{n}S",
+  "metres": "{n}M",
+  "title": "SHOOTING RANGE",
+  "reloading": "RELOADING",
+  "nocked": "NOCKED",
+  "kindGun": "GUN",
+  "kindBow": "BOW",
+  "kindThrown": "THROWN",
+  "rack": "RACK",
+  "qualified": "QUALIFIED",
+  "notQualified": "NOT QUALIFIED",
+  "scorePar": "SCORE {score}   PAR {par}",
+  "hitsAccuracy": "HITS {hits}/{shots}   ACCURACY {acc}%",
+  "bestRun": "BEST RUN {n}"
+}

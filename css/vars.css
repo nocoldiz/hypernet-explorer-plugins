@@ -176,6 +176,10 @@
     --bg-subtle-translucent-5: rgba(74, 39, 17, 0.05);
     --bg-subtle-translucent-10: rgba(74, 39, 17, 0.10);
     --bg-subtle-translucent-15: rgba(74, 39, 17, 0.15);
+    --bg-white-translucent-4: rgba(255, 255, 255, 0.04);
+    --bg-white-translucent-5: rgba(255, 255, 255, 0.05);
+    --bg-gain-translucent-12: rgba(46, 204, 113, 0.12);
+    --bg-loss-translucent-12: rgba(231, 76, 60, 0.12);
     --bg-white-translucent-25: rgba(255, 255, 255, 0.25);
     --bg-white-translucent-30: rgba(255, 255, 255, 0.30);
     --bg-white-translucent-40: rgba(255, 255, 255, 0.40);
@@ -302,7 +306,7 @@
        entry as a solid gold plate with black text, one loud fill per screen.
        They now share a quiet tint, the accent ink and an underline, so every
        rail in the game reads the same and the text stays legible. */
-    --chip-active-bg: rgba(255, 204, 102, 0.18);
+    --chip-active-bg: rgba(255, 204, 102, 0.07);
     --chip-active-fg: #ffcc66;
 
     /* === The stat ladder ===

@@ -1,7 +1,7 @@
 {
   "msg": {
     "noUnderstand": "Il nemico non ti capisce.",
-    "unrecruitable": "{name} non risponde.\nLi dentro non c'è nulla con cui trattare.",
+    "unrecruitable": "{name} non risponde.\nNon si può reclutare.",
     "cantTalkNow": "Il nemico non può parlare ora.",
     "silenced": "Il nemico è silenziato!\n Non può parlare ora.",
     "enraged": "Il nemico è infuriato!\n Non vuole parlarti.",
@@ -12,35 +12,40 @@
     "surrender": "Il nemico accetta di ritirarsi!",
     "refuseSurrender": "Il nemico rifiuta di arrendersi!",
     "enragedAfterInsult": "Il nemico è infuriato!",
-    "notFriendlyEnough": "Il nemico non è abbastanza amichevole per unirsi.",
-    "toBeImplemented": "(Funzione unisciti al gruppo - da implementare)",
-    "partyFull": "Il gruppo è pieno!",
-    "joined": "si è unito al gruppo!",
-    "stoneThrown": "Hai lanciato un sasso al nemico!",
+    "notFriendlyEnough": "Il nemico non è abbastanza amichevole per unirsi a te.",
+    "toBeImplemented": "(Funzione unisciti al Party - da implementare)",
+    "partyFull": "Il Party è pieno!",
+    "joined": "si è unito al Party!",
+    "stoneThrown": "Hai lanciato un sasso contro il nemico!",
     "petSuccess": "Al nemico sembra piacere essere accarezzato!",
     "petFail": "Il nemico non vuole essere accarezzato.",
     "petRefuse": "Questa creatura non risponde alle carezze.",
-    "outOfReach": "{name} ti squadra e si volta dall'altra parte.\nNon ha motivo di seguire un gruppo così inferiore."
+    "outOfReach": "{name} si volta dall'altra parte.\nIl livello del tuo Party è troppo basso."
   },
   "choices": [
     "Chiacchiera",
     "Unisciti",
-    "Chiedi Resa",
+    "Chiedi la resa",
     "Insulta",
-    "Lancia Sasso",
+    "Lancia un sasso",
     "Accarezza",
     "Annulla"
   ],
+  "dice": {
+    "recruit": "Recluta: {name}",
+    "follower": "Seguace: {name}",
+    "tame": "Addomestica: {name}"
+  },
   "opinion": "Opinione",
   "recruit": {
-    "askToFollow": "Chiedi di Seguirti",
-    "adoptAsPet": "Adotta come Animale"
+    "askToFollow": "Chiedi di seguirti",
+    "adoptAsPet": "Adotta come animale domestico"
   },
   "pet": {
     "refusesToFollow": "Rifiuta di seguirti.",
     "wontApproach": "Non si lascia avvicinare.",
     "follower": "seguace",
-    "pet": "animale",
+    "pet": "animale domestico",
     "joined": "{name} ora ti accompagna come {kind}!"
   },
   "menu": {

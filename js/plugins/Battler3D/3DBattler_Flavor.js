@@ -112,8 +112,54 @@
         stormcaller:     { variant: 'stormcaller',     front: true,  scale: 2.8, texturePool: 'crystal', bodyColor: 0x4a5a7a, accent: 0xffe04a, hue: [0.60, 0.08], sat: [0.35, 0.12], lit: [0.40, 0.10] },
         swampcrocodile:  { variant: 'swampcrocodile',  front: false, scale: 3.0, texturePool: 'foliage', bodyColor: 0x4a5a3a, accent: 0xc8d070, hue: [0.28, 0.08], sat: [0.35, 0.12], lit: [0.32, 0.10] },
         tarantula:       { variant: 'tarantula',       front: false, scale: 2.6, texturePool: 'fur',     bodyColor: 0x2a1f18, accent: 0xc04a2a, hue: [0.06, 0.04], sat: [0.30, 0.12], lit: [0.18, 0.08] },
-        thundersprite:   { variant: 'thundersprite',   front: true,  scale: 1.8, texturePool: 'crystal', bodyColor: 0x8acfff, accent: 0xffff8a, hue: [0.58, 0.08], sat: [0.45, 0.14], lit: [0.66, 0.12] }
+        thundersprite:   { variant: 'thundersprite',   front: true,  scale: 1.8, texturePool: 'crystal', bodyColor: 0x8acfff, accent: 0xffff8a, hue: [0.58, 0.08], sat: [0.45, 0.14], lit: [0.66, 0.12] },
+        // ── Level 1-5 roster: bespoke starter models (built along Z, facing +Z) ──
+        lv_foldedairplane:     { variant: 'lv_foldedairplane',     front: false, scale: 2.0, texturePool: 'pale',    bodyColor: 0xe8e2cc, accent: 0xc0302a, hue: [0.12, 0.03], sat: [0.15, 0.06], lit: [0.84, 0.06] },
+        lv_wasabisnail:        { variant: 'lv_wasabisnail',        front: false, scale: 2.0, texturePool: 'flesh',   bodyColor: 0x7fa83a, accent: 0xe88a9a, hue: [0.24, 0.04], sat: [0.55, 0.12], lit: [0.44, 0.08] },
+        lv_clockworktinsoldier:{ variant: 'lv_clockworktinsoldier',front: true,  scale: 2.2, texturePool: 'metal',   bodyColor: 0xb8262a, accent: 0xe0b040, hue: [0.00, 0.03], sat: [0.65, 0.10], lit: [0.42, 0.08] },
+        lv_dryerlintgolem:     { variant: 'lv_dryerlintgolem',     front: true,  scale: 2.2, texturePool: 'fur',     bodyColor: 0x9a9aa4, accent: 0x6ad8ff, hue: [0.62, 0.05], sat: [0.06, 0.04], lit: [0.62, 0.08] },
+        lv_sandgecko:          { variant: 'lv_sandgecko',          front: false, scale: 2.0, texturePool: 'stone',   bodyColor: 0xd8b878, accent: 0x3a2a1a, hue: [0.11, 0.03], sat: [0.45, 0.12], lit: [0.62, 0.08] },
+        lv_deserttumbleweed:   { variant: 'lv_deserttumbleweed',   front: true,  scale: 2.0, texturePool: 'wood',    bodyColor: 0x9a7a4a, accent: 0xff8a3a, hue: [0.09, 0.03], sat: [0.40, 0.12], lit: [0.44, 0.08] },
+        lv_dunescorpling:      { variant: 'lv_dunescorpling',      front: false, scale: 2.0, texturePool: 'pale',    bodyColor: 0xe6d6a8, accent: 0x8aff6a, hue: [0.12, 0.03], sat: [0.40, 0.10], lit: [0.76, 0.06] },
+        lv_saltcrab:           { variant: 'lv_saltcrab',           front: true,  scale: 2.0, texturePool: 'bone',    bodyColor: 0xeae6dc, accent: 0xd84a3a, hue: [0.10, 0.03], sat: [0.12, 0.06], lit: [0.86, 0.05] },
+        lv_desertporcupine:    { variant: 'lv_desertporcupine',    front: false, scale: 2.1, texturePool: 'fur',     bodyColor: 0x8a6a48, accent: 0xf0e8d8, hue: [0.08, 0.03], sat: [0.35, 0.10], lit: [0.42, 0.08] },
+        lv_manticorecub:       { variant: 'lv_manticorecub',       front: false, scale: 2.3, texturePool: 'fur',     bodyColor: 0xb07a40, accent: 0xd84a6a, hue: [0.08, 0.03], sat: [0.50, 0.12], lit: [0.46, 0.08] },
+        lv_belltowergargoyle:  { variant: 'lv_belltowergargoyle',  front: true,  scale: 2.3, texturePool: 'stone',   bodyColor: 0x7a7670, accent: 0x6ab0e0, hue: [0.10, 0.04], sat: [0.06, 0.04], lit: [0.46, 0.08] },
+        lv_voidferretkit:      { variant: 'lv_voidferretkit',      front: false, scale: 2.0, texturePool: 'void',    bodyColor: 0x4a3a6a, accent: 0xc06aff, hue: [0.74, 0.06], sat: [0.30, 0.10], lit: [0.32, 0.08] },
+        lv_astraljellyfish:    { variant: 'lv_astraljellyfish',    front: true,  scale: 2.4, texturePool: 'water',   bodyColor: 0x2a3a8a, accent: 0xbfe6ff, hue: [0.64, 0.05], sat: [0.55, 0.12], lit: [0.36, 0.08] },
+        lv_lunarhopper:        { variant: 'lv_lunarhopper',        front: false, scale: 2.1, texturePool: 'pale',    bodyColor: 0xd8d8d0, accent: 0xffe89a, hue: [0.14, 0.03], sat: [0.06, 0.04], lit: [0.82, 0.05] },
+        lv_mallguardbot:       { variant: 'lv_mallguardbot',       front: true,  scale: 2.3, texturePool: 'metal',   bodyColor: 0x2a3a6a, accent: 0xff3a3a, hue: [0.62, 0.04], sat: [0.45, 0.10], lit: [0.30, 0.06] },
+        lv_looseboltbot:       { variant: 'lv_looseboltbot',       front: true,  scale: 2.0, texturePool: 'metal',   bodyColor: 0x8a8a7a, accent: 0x5ad0ff, hue: [0.16, 0.04], sat: [0.08, 0.05], lit: [0.50, 0.08] },
+        lv_plushbear:          { variant: 'lv_plushbear',          front: true,  scale: 2.1, texturePool: 'fur',     bodyColor: 0x9a6a40, accent: 0xd83a4a, hue: [0.08, 0.03], sat: [0.45, 0.10], lit: [0.42, 0.08] },
+        lv_sparkplugsprite:    { variant: 'lv_sparkplugsprite',    front: true,  scale: 1.9, texturePool: 'crystal', bodyColor: 0xeeeae0, accent: 0x6ac8ff, hue: [0.12, 0.03], sat: [0.10, 0.05], lit: [0.88, 0.05] },
+        lv_plagueleech:        { variant: 'lv_plagueleech',        front: false, scale: 2.1, texturePool: 'flesh',   bodyColor: 0x2e2a22, accent: 0xb8d040, hue: [0.12, 0.04], sat: [0.20, 0.08], lit: [0.18, 0.06] },
+        lv_coinpursemimic:     { variant: 'lv_coinpursemimic',     front: true,  scale: 2.0, texturePool: 'flesh',   bodyColor: 0x7a4a2a, accent: 0xe0b040, hue: [0.07, 0.03], sat: [0.50, 0.10], lit: [0.32, 0.06] },
+        lv_morguecrawler:      { variant: 'lv_morguecrawler',      front: false, scale: 2.1, texturePool: 'pale',    bodyColor: 0xd8d8d4, accent: 0x6a8ad0, hue: [0.55, 0.05], sat: [0.06, 0.04], lit: [0.82, 0.05] },
+        lv_pizzaooze:          { variant: 'lv_pizzaooze',          front: false, scale: 2.1, texturePool: 'flesh',   bodyColor: 0xf0b840, accent: 0xc0302a, hue: [0.12, 0.03], sat: [0.75, 0.10], lit: [0.58, 0.06] },
+        lv_hoardlizard:        { variant: 'lv_hoardlizard',        front: false, scale: 2.0, texturePool: 'foliage', bodyColor: 0x6a7a3a, accent: 0xe0b040, hue: [0.20, 0.04], sat: [0.40, 0.10], lit: [0.36, 0.06] },
+        lv_pitrhinobeetle:     { variant: 'lv_pitrhinobeetle',     front: false, scale: 2.1, texturePool: 'metal',   bodyColor: 0x4a1e12, accent: 0xf0e8d0, hue: [0.04, 0.03], sat: [0.55, 0.10], lit: [0.20, 0.05] },
+        lv_hoardwyrmling:      { variant: 'lv_hoardwyrmling',      front: false, scale: 2.2, texturePool: 'fire',    bodyColor: 0x8a3a2a, accent: 0xffa040, hue: [0.03, 0.03], sat: [0.50, 0.10], lit: [0.36, 0.06] },
+        lv_fishnetcrab:        { variant: 'lv_fishnetcrab',        front: true,  scale: 2.0, texturePool: 'water',   bodyColor: 0x4a6a6a, accent: 0xff6a3a, hue: [0.48, 0.05], sat: [0.20, 0.08], lit: [0.38, 0.06] },
+        lv_sewergatorhatchling:{ variant: 'lv_sewergatorhatchling',front: false, scale: 2.2, texturePool: 'pale',    bodyColor: 0xe8e0d0, accent: 0xd83030, hue: [0.10, 0.03], sat: [0.12, 0.05], lit: [0.84, 0.05] },
+        lv_shadowpuddle:       { variant: 'lv_shadowpuddle',       front: true,  scale: 2.2, texturePool: 'void',    bodyColor: 0x140e1c, accent: 0xe8d86a, hue: [0.76, 0.06], sat: [0.30, 0.10], lit: [0.10, 0.04] },
+        lv_wishingtotem:       { variant: 'lv_wishingtotem',       front: true,  scale: 2.2, texturePool: 'wood',    bodyColor: 0x8a5a30, accent: 0x40d0c0, hue: [0.08, 0.03], sat: [0.45, 0.10], lit: [0.36, 0.06] },
+        lv_centaurfoal:        { variant: 'lv_centaurfoal',        front: false, scale: 2.6, texturePool: 'fur',     bodyColor: 0x9a6a3a, accent: 0xf0e8d8, hue: [0.07, 0.03], sat: [0.45, 0.10], lit: [0.38, 0.06] },
+        lv_ruingecko:          { variant: 'lv_ruingecko',          front: false, scale: 2.0, texturePool: 'stone',   bodyColor: 0x8a8a84, accent: 0x8aff9a, hue: [0.14, 0.04], sat: [0.06, 0.04], lit: [0.52, 0.06] },
+        // ── Bespoke uniques pinned by key from the enemy's own note ─────────────
+        u_umbrallurker:          { variant: 'u_umbrallurker', front: true, scale: 2.6, texturePool: 'void', bodyColor: 0x1a1424, accent: 0xb06aff, hue: [0.76, 0.05], sat: [0.30, 0.10], lit: [0.12, 0.05] },
+        u_bureaucraticnightmare: { variant: 'u_bureaucraticnightmare', front: true, scale: 2.8, texturePool: 'metal', bodyColor: 0x6a7a6a, accent: 0xff3a2a, hue: [0.30, 0.04], sat: [0.10, 0.05], lit: [0.44, 0.06] },
+        u_offrampincarnate:      { variant: 'u_offrampincarnate', front: true, scale: 3.2, texturePool: 'stone', bodyColor: 0x2e2e30, accent: 0xfff0b0, hue: [0.60, 0.04], sat: [0.04, 0.03], lit: [0.20, 0.05] },
+        u_varleniamirage:        { variant: 'u_varleniamirage', front: true, scale: 2.7, texturePool: 'stone', bodyColor: 0xe8c880, accent: 0xffe8a0, hue: [0.11, 0.03], sat: [0.50, 0.10], lit: [0.70, 0.06] },
+        u_rimespinner:           { variant: 'u_rimespinner', front: false, scale: 2.6, texturePool: 'crystal', bodyColor: 0x6a9ac8, accent: 0xd0f4ff, hue: [0.56, 0.04], sat: [0.40, 0.10], lit: [0.52, 0.06] },
+        u_thothsbrokenward:      { variant: 'u_thothsbrokenward', front: true, scale: 2.6, texturePool: 'stone', bodyColor: 0xb8a888, accent: 0xd02a8a, hue: [0.11, 0.03], sat: [0.25, 0.08], lit: [0.60, 0.06] }
     };
+
+    // ── Level 1-5 roster helpers: terse low-poly primitives ──────────────────
+    const lvBox = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+    const lvSph = (r, w, h) => new THREE.SphereGeometry(r, w || 7, h || 5);
+    const lvCyl = (rt, rb, h, s) => new THREE.CylinderGeometry(rt, rb, h, s || 7);
+    const lvCone = (r, h, s) => new THREE.ConeGeometry(r, h, s || 5);
+    const lvTor = (R, r, rs, ts, arc) => new THREE.TorusGeometry(R, r, rs || 4, ts || 10, arc === undefined ? Math.PI * 2 : arc);
 
     class FlavorBattler3D extends Base {
         constructor(scale, offsetY, battler, weaponType, creatureType) {
@@ -195,6 +241,43 @@
                 case 'swampcrocodile':    this._buildSwampCrocodile(); break;
                 case 'tarantula':         this._buildTarantula(); break;
                 case 'thundersprite':     this._buildThunderSprite(); break;
+                case 'lv_foldedairplane':      this._buildLvFoldedAirplane(); break;
+                case 'lv_wasabisnail':         this._buildLvWasabiSnail(); break;
+                case 'lv_clockworktinsoldier': this._buildLvTinSoldier(); break;
+                case 'lv_dryerlintgolem':      this._buildLvLintGolem(); break;
+                case 'lv_sandgecko':           this._buildLvSandGecko(); break;
+                case 'lv_deserttumbleweed':    this._buildLvTumbleweed(); break;
+                case 'lv_dunescorpling':       this._buildLvScorpling(); break;
+                case 'lv_saltcrab':            this._buildLvSaltCrab(); break;
+                case 'lv_desertporcupine':     this._buildLvPorcupine(); break;
+                case 'lv_manticorecub':        this._buildLvManticoreCub(); break;
+                case 'lv_belltowergargoyle':   this._buildLvGargoyle(); break;
+                case 'lv_voidferretkit':       this._buildLvVoidFerret(); break;
+                case 'lv_astraljellyfish':     this._buildLvAstralJelly(); break;
+                case 'lv_lunarhopper':         this._buildLvLunarHopper(); break;
+                case 'lv_mallguardbot':        this._buildLvMallGuard(); break;
+                case 'lv_looseboltbot':        this._buildLvLooseBolt(); break;
+                case 'lv_plushbear':           this._buildLvPlushBear(); break;
+                case 'lv_sparkplugsprite':     this._buildLvSparkPlug(); break;
+                case 'lv_plagueleech':         this._buildLvPlagueLeech(); break;
+                case 'lv_coinpursemimic':      this._buildLvCoinPurse(); break;
+                case 'lv_morguecrawler':       this._buildLvMorgueCrawler(); break;
+                case 'lv_pizzaooze':           this._buildLvPizzaOoze(); break;
+                case 'lv_hoardlizard':         this._buildLvHoardLizard(); break;
+                case 'lv_pitrhinobeetle':      this._buildLvRhinoBeetle(); break;
+                case 'lv_hoardwyrmling':       this._buildLvWyrmling(); break;
+                case 'lv_fishnetcrab':         this._buildLvFishnetCrab(); break;
+                case 'lv_sewergatorhatchling': this._buildLvGatorHatchling(); break;
+                case 'lv_shadowpuddle':        this._buildLvShadowPuddle(); break;
+                case 'lv_wishingtotem':        this._buildLvWishingTotem(); break;
+                case 'lv_centaurfoal':         this._buildLvCentaurFoal(); break;
+                case 'lv_ruingecko':           this._buildLvRuinGecko(); break;
+                case 'u_umbrallurker':          this._buildUUmbralLurker(); break;
+                case 'u_bureaucraticnightmare': this._buildUBureaucrat(); break;
+                case 'u_offrampincarnate':      this._buildUOffRamp(); break;
+                case 'u_varleniamirage':        this._buildUVarlenia(); break;
+                case 'u_rimespinner':           this._buildURimeSpinner(); break;
+                case 'u_thothsbrokenward':      this._buildUThothWard(); break;
                 default:           this._buildGunBurger(); break;
             }
             this.model = this.bodyGroup;
@@ -382,7 +465,7 @@
             const btn = (x) => { const b = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.04, 10), this._mat(p.accent, 1.0, 0.4)); b.rotation.x = Math.PI / 2; b.position.set(x, 0.06, 0.29); this.head.add(b); };
             btn(-0.14); btn(0.14);
             this.head.position.y = 2.1; this.bodyGroup.add(this.head);
-            this.leftArm = this._pillowLimb(fab, -1, 1.45); this.rightArm = this._pillowLimb(fab, 1, 1.45);
+            this.leftArm = this._pillowLimb(fab, -0.62, 1.45); this.rightArm = this._pillowLimb(fab, 0.62, 1.45);
             this.leftLeg = this._pillowLimb(fab, -0.3, 0.2); this.rightLeg = this._pillowLimb(fab, 0.3, 0.2);
             this._mapCommon({ head: this.head, body: this.body, leftArm: this.leftArm, rightArm: this.rightArm, leftLeg: this.leftLeg, rightLeg: this.rightLeg });
             this._bodyCascade({ head: this.head, body: this.body, leftArm: this.leftArm, rightArm: this.rightArm, leftLeg: this.leftLeg, rightLeg: this.rightLeg });
@@ -409,7 +492,7 @@
             // Falling tears.
             this.tears = new THREE.Group();
             for (let i = 0; i < 6; i++) { const t = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), this._mat(0x0a0a14, 0.9, 0.2)); t.position.set((i % 2 ? 0.2 : -0.2), 1.3 - this.idRand() * 0.9, 0.34); t.scale.y = 1.6; t._t = this.idRand(); this.tears.add(t); }
-            this.bodyGroup.add(this.tears);
+            this.bodyGroup.add(this.tears); this._floaters.push(this.tears);
             this._partMeshMap = { FACE: this.body, HEAD: this.body, BODY: this.body, EYES: this.body };
             this._cascadeRules = [{ gone: ['FACE', 'HEAD', 'BODY', 'CORE'], hide: [this.body, this.tears] }];
         }
@@ -619,7 +702,7 @@
             let py = 0;
             for (let s = 0; s < 5; s++) {
                 const seg = new THREE.Mesh(new THREE.SphereGeometry(0.11 - s * 0.016, 10, 10), acidMat);
-                seg.position.set(0, py, 0); py += 0.2; this.tongue.add(seg);
+                seg.position.set(0, py, 0); py += 0.15; this.tongue.add(seg);
             }
             this.tongue.position.set(0, 1.48, 0.1); this.bodyGroup.add(this.tongue);
             this.halo = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.025, 8, 24), this._mat(0xfff0b0, 0.8, 0.3, 0xffe080));
@@ -725,6 +808,7 @@
         // Small glowing orb that we track for orbit/pulse animation.
         _orb(r, color, list) {
             const o = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 12), this._mat(color, 0.85, 0.2, color));
+            o.userData.orbit = true;   // drifts free of the body by design
             (list || this._floaters).push(o); this.bodyGroup.add(o); return o;
         }
 
@@ -776,7 +860,7 @@
             const woodMat = this._mat(0x5a3a1e, 1.0, 0.6);
             // Equine barrel (BODY) + neck up to the human waist.
             this.body = new THREE.Group();
-            const barrel = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 1.0, 6, 12), hide); barrel.rotation.z = Math.PI / 2; barrel.position.set(0, 1.0, -0.1); this.body.add(barrel);
+            const barrel = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 1.0, 6, 12), hide); barrel.rotation.x = Math.PI / 2; barrel.position.set(0, 1.0, -0.1); this.body.add(barrel);
             const chest = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 12), hide); chest.position.set(0, 1.1, 0.5); chest.scale.set(0.9, 1.0, 0.8); this.body.add(chest);
             this.bodyGroup.add(this.body);
             // Human torso rising from the withers.
@@ -804,8 +888,9 @@
             const rUp = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.5, 8), flesh); rUp.position.set(0, -0.2, 0); this.rightArm.add(rUp);
             this.arrow = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.6, 5), woodMat); this.arrow.rotation.x = Math.PI / 2; this.arrow.position.set(0, -0.34, 0.18); this.rightArm.add(this.arrow);
             this.rightArm.position.set(0.3, 1.7, 0.45); this.rightArm.rotation.z = -0.3; this.bodyGroup.add(this.rightArm);
-            // Four stag legs.
-            const leg = (x, z) => { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.04, 0.95, 8), hide); l.position.set(x, 0.48, z); this.bodyGroup.add(l); return l; };
+            // Four stag legs, each hung from a hip pivot inside the barrel so a
+            // stride swings it about the hip instead of about its own middle.
+            const leg = (x, z) => { const l = new THREE.Group(); const m = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.04, 0.95, 8), hide); m.position.y = -0.475; l.add(m); l.position.set(x, 0.955, z); this.bodyGroup.add(l); return l; };
             this.leftLeg = leg(-0.28, 0.45); this.rightLeg = leg(0.28, 0.45);
             this.rearLeftLeg = leg(-0.28, -0.6); this.rearRightLeg = leg(0.28, -0.6);
             this._partMeshMap = { HEAD: this.head, EYE: this.head, TORSO: this.torso, BODY: this.body, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, REAR_LEFT_LEG: this.rearLeftLeg, REAR_RIGHT_LEG: this.rearRightLeg };
@@ -848,7 +933,7 @@
             this.shards = [];
             for (let i = 0; i < 7; i++) {
                 const sh = new THREE.Mesh(new THREE.TetrahedronGeometry(0.12 + this.idRand() * 0.08), glass);
-                sh._a = (i / 7) * Math.PI * 2; sh._r = 0.75 + this.idRand() * 0.3; sh._h = 0.8 + this.idRand() * 1.1; sh._sp = 0.6 + this.idRand() * 0.6;
+                sh.userData.orbit = true; sh._a = (i / 7) * Math.PI * 2; sh._r = 0.75 + this.idRand() * 0.3; sh._h = 0.8 + this.idRand() * 1.1; sh._sp = 0.6 + this.idRand() * 0.6;
                 this.shards.push(sh); this.bodyGroup.add(sh);
             }
             this._partMeshMap = { CORE: this.core, EYE: this.core, BODY: this.body, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg };
@@ -1357,7 +1442,7 @@
             const dark = this._mat(icy ? 0x4a7088 : 0x140f0c, 1.0, 0.5);
             // ABDOMEN (rear bulb) + CEPHALOTHORAX (front).
             this.abdomen = new THREE.Mesh(new THREE.SphereGeometry(0.55, 14, 12), chitin); this.abdomen.position.set(-0.5, 0.85, 0); this.abdomen.scale.set(1.0, 0.9, 1.1); this.bodyGroup.add(this.abdomen);
-            if (icy) { for (let i = 0; i < 5; i++) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.3, 5), this._mat(p.accent, 0.8, 0.1, p.accent)); const a = this.idRand() * 6.28; sp.position.set(-0.5 + Math.cos(a) * 0.4, 0.85 + this.idRand() * 0.4, Math.sin(a) * 0.4); sp.rotation.set(this.idRand() * 6, 0, this.idRand() * 6); this.abdomen.add(sp); } }
+            if (icy) { for (let i = 0; i < 5; i++) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.3, 5), this._mat(p.accent, 0.8, 0.1, p.accent)); const a = this.idRand() * 6.28; sp.position.set(Math.cos(a) * 0.45, this.idRand() * 0.4, Math.sin(a) * 0.45); sp.rotation.set(this.idRand() * 6, 0, this.idRand() * 6); this.abdomen.add(sp); } }
             this.cephalo = new THREE.Mesh(new THREE.SphereGeometry(0.36, 12, 12), chitin); this.cephalo.position.set(0.2, 0.8, 0); this.bodyGroup.add(this.cephalo);
             // HEAD + eye cluster + FANGS.
             this.head = new THREE.Group();
@@ -1416,8 +1501,8 @@
             const mkTent = (a, len, thick) => {
                 const g = new THREE.Group(); let ty = 0;
                 const n = Math.round(len / 0.18);
-                for (let s = 0; s < n; s++) { const seg = new THREE.Mesh(new THREE.SphereGeometry(thick - s * (thick * 0.6 / n), 8, 8), bell); seg.position.y = ty; ty -= 0.18; g.add(seg); }
-                g.position.set(Math.cos(a) * 0.5, 1.25, Math.sin(a) * 0.5); g._a = a; this.bodyGroup.add(g); this.tentacles.push(g); return g;
+                for (let s = 0; s < n; s++) { const r = thick - s * (thick * 0.6 / n); const seg = new THREE.Mesh(new THREE.SphereGeometry(r, 8, 8), bell); seg.position.y = ty; if (s) this.addStrut(g, bell, new THREE.Vector3(0, ty + 0.18, 0), new THREE.Vector3(0, ty, 0), r * 0.8, r * 0.75, 6); ty -= 0.18; g.add(seg); }
+                g.position.set(Math.cos(a) * 0.62, 1.3, Math.sin(a) * 0.62); g._a = a; this.bodyGroup.add(g); this.tentacles.push(g); return g;
             };
             this.t1 = mkTent(0, 1.4, 0.08); this.t2 = mkTent(Math.PI, 1.4, 0.08);
             for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2 + 0.4; mkTent(a, 0.9 + this.idRand() * 0.5, 0.05); }
@@ -1605,7 +1690,7 @@
             this.tongue = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.06, 0.4), this._mat(0xc04a5a, 1.0, 0.5)); this.tongue.position.set(0, 0.67, 0.26); this.tongue.rotation.x = 0.4; this.bodyGroup.add(this.tongue);
             // FEET.
             this.feet = new THREE.Group();
-            for (const fx of [-0.36, 0.36]) { const foot = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.16, 0.4), wood); foot.position.set(fx, 0.1, 0.06); this.feet.add(foot); }
+            for (const fx of [-0.36, 0.36]) { const foot = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.3, 0.4), wood); foot.position.set(fx, 0.15, 0.06); this.feet.add(foot); }
             this.bodyGroup.add(this.feet);
             this._partMeshMap = { CORE: this.body, LID: this.lid, TEETH: this.teeth, TONGUE: this.tongue, FEET: this.feet };
             this._cascadeRules = [
@@ -1639,7 +1724,7 @@
             // Horizontal scanline rings.
             this.scanlines = new THREE.Group();
             for (let i = 0; i < 5; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.01, 4, 18), bright); r.rotation.x = Math.PI / 2; r.position.y = 0.5 + i * 0.35; this.scanlines.add(r); }
-            this.bodyGroup.add(this.scanlines);
+            this.bodyGroup.add(this.scanlines); this._floaters.push(this.scanlines);
             this._partMeshMap = { HEAD: this.head, CORE: this.core, BODY: this.body, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg };
             this._cascadeRules = [
                 { gone: ['CORE'], hide: [this.core, this.body, this.head, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg, this.scanlines] },
@@ -2102,7 +2187,9 @@
             this.tail = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 8), flesh); this.tail.scale.set(1, 0.5, 1); this.tail.position.set(-0.75, 0.25, 0); this.bodyGroup.add(this.tail);
             this.drips = new THREE.Group();
             for (let i = 0; i < 4; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 6), this._mat(p.accent, 0.7, 0.3, p.accent)); d.position.set(0.55 + (this.idRand() - 0.5) * 0.3, 0.4 - this.idRand() * 0.3, 0); this.drips.add(d); }
-            this.bodyGroup.add(this.drips);
+            this.bodyGroup.add(this.drips); this._floaters.push(this.drips);
+            // The tail end of the arch runs down to the ground.
+            this.addStrut(this.bodySeg, flesh, new THREE.Vector3(-0.824, 0.718, 0), new THREE.Vector3(-0.75, 0.25, 0), 0.1, 0.12, 8);
             this._partMeshMap = { HEAD: this.head, HEART_SEGMENT: this.heart, BODY_SEGMENT: this.bodySeg, TAIL: this.tail };
             this._cascadeRules = [
                 { gone: ['HEART_SEGMENT'], hide: [this.heart, this.bodySeg, this.head, this.tail, this.drips] },
@@ -2202,7 +2289,7 @@
             const dome = new THREE.Mesh(new THREE.SphereGeometry(0.24, 14, 12, 0, Math.PI * 2, 0, Math.PI / 2), metal); this.head.add(dome);
             const visor = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.1, 0.05), dark); visor.position.set(0, 0.02, 0.2); this.head.add(visor);
             this.optic = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), this._mat(p.accent, 0.9, 0.2, p.accent)); this.optic.position.set(0, 0.02, 0.24); this.head.add(this.optic);
-            this.head.position.set(0, 1.5, 0); this.bodyGroup.add(this.head);
+            this.head.position.set(0, 1.35, 0); this.bodyGroup.add(this.head);
             this.leftArm = new THREE.Group();
             const la = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.55, 8), metal); la.position.y = -0.05; this.leftArm.add(la);
             const shield = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.5, 0.4), dark); shield.position.set(0, -0.3, 0.1); this.leftArm.add(shield);
@@ -2232,7 +2319,7 @@
             const headM = new THREE.Mesh(new THREE.SphereGeometry(0.2, 14, 14), this._mat(0xfff0d8, 1.0, 0.5, 0x553311)); headM.position.y = 1.6; this.core.add(headM);
             this.bodyGroup.add(this.core);
             this.robe = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.0, 14), robeMat); this.robe.position.y = 0.55; this.bodyGroup.add(this.robe);
-            this.halo = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 20), glow); this.halo.position.y = 1.95; this.halo.rotation.x = Math.PI / 2; this.bodyGroup.add(this.halo);
+            this.halo = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.035, 8, 20), glow); this.halo.position.y = 1.95; this.halo.rotation.x = Math.PI / 2; this.bodyGroup.add(this.halo); this._floaters.push(this.halo);
             const mkWing = (s) => { const g = new THREE.Group(); for (let i = 0; i < 4; i++) { const feather = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.7 - i * 0.1, 5), this._mat(0xfff0d8, 0.92, 0.4, p.accent)); feather.position.set(s * (0.2 + i * 0.18), 0.1 - i * 0.12, -0.05); feather.rotation.z = s * (1.1 + i * 0.15); g.add(feather); } g.position.set(s * 0.2, 1.3, -0.1); this.bodyGroup.add(g); return g; };
             this.leftWing = mkWing(-1); this.rightWing = mkWing(1);
             this.leftFoot = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), this._mat(0xfff0d8, 1.0, 0.5)); this.leftFoot.position.set(-0.12, 0.1, 0.05); this.bodyGroup.add(this.leftFoot);
@@ -2340,7 +2427,7 @@
             this.eyes = new THREE.Group();
             const lantern = new THREE.Mesh(new THREE.OctahedronGeometry(0.16, 0), this._mat(p.accent, 0.85, 0.2, p.accent)); this.eyes.add(lantern);
             this.eyes.position.set(0, 1.75, 0.1); this.bodyGroup.add(this.eyes);
-            const mkHand = (s) => { const g = new THREE.Group(); const palm = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), stone); palm.scale.set(1, 0.6, 1); g.add(palm); for (let f = 0; f < 3; f++) { const fin = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.015, 0.18, 5), stone); fin.position.set((f - 1) * 0.07, 0.1, 0.05); g.add(fin); } g.position.set(s * 0.55, 1.1, 0.2); this.bodyGroup.add(g); return g; };
+            const mkHand = (s) => { const g = new THREE.Group(); const palm = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), stone); palm.scale.set(1, 0.6, 1); g.add(palm); for (let f = 0; f < 3; f++) { const fin = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.015, 0.18, 5), stone); fin.position.set((f - 1) * 0.07, 0.1, 0.05); g.add(fin); } this.addStrut(g, stone, new THREE.Vector3(0, 0, 0), new THREE.Vector3(-s * 0.3, 0, -0.12), 0.06, 0.07, 6); g.position.set(s * 0.55, 1.1, 0.2); this.bodyGroup.add(g); return g; };
             this.leftArm = mkHand(-1); this.rightArm = mkHand(1);
             this._partMeshMap = { CORE: this.core, BASE: this.base, EYES: this.eyes, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm };
             this._cascadeRules = [
@@ -2413,10 +2500,10 @@
             for (const s of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), rune); e.position.set(s * 0.13, 1.68, 0.24); this.core.add(e); }
             const glyph = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 6, 12), rune); glyph.position.set(0, 1.0, 0.29); this.core.add(glyph);
             this.bodyGroup.add(this.core);
-            const mkFist = (s) => { const g = new THREE.Group(); const fist = new THREE.Mesh(new THREE.DodecahedronGeometry(0.22, 0), stone); g.add(fist); g.position.set(s * 0.65, 1.0, 0.1); this.bodyGroup.add(g); return g; };
+            const mkFist = (s) => { const g = new THREE.Group(); const fist = new THREE.Mesh(new THREE.DodecahedronGeometry(0.22, 0), stone); g.add(fist); g.position.set(s * 0.5, 1.0, 0.1); this.bodyGroup.add(g); return g; };
             this.leftArm = mkFist(-1); this.rightArm = mkFist(1);
-            this.leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.4, 0.25), stone); this.leftLeg.position.set(-0.2, 0.3, 0); this.bodyGroup.add(this.leftLeg);
-            this.rightLeg = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.4, 0.25), stone); this.rightLeg.position.set(0.2, 0.3, 0); this.bodyGroup.add(this.rightLeg);
+            this.leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.55, 0.25), stone); this.leftLeg.position.set(-0.2, 0.34, 0); this.bodyGroup.add(this.leftLeg);
+            this.rightLeg = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.55, 0.25), stone); this.rightLeg.position.set(0.2, 0.34, 0); this.bodyGroup.add(this.rightLeg);
             this._mapCommon({ head: this.core, body: this.core, leftArm: this.leftArm, rightArm: this.rightArm, leftLeg: this.leftLeg, rightLeg: this.rightLeg });
             this._bodyCascade({ head: this.core, body: this.core, leftArm: this.leftArm, rightArm: this.rightArm, leftLeg: this.leftLeg, rightLeg: this.rightLeg });
         }
@@ -2508,7 +2595,7 @@
             const hairMat = this._mat(0x1a120c, 1.0, 0.95);
             const up = new THREE.Vector3(0, 1, 0);
             this.abdomen = new THREE.Mesh(new THREE.SphereGeometry(0.5, 14, 12), fur); this.abdomen.position.set(-0.45, 0.7, 0); this.bodyGroup.add(this.abdomen);
-            for (let i = 0; i < 12; i++) { const a = this.idRand() * 6.28, e = Math.acos(2 * this.idRand() - 1); const dir = new THREE.Vector3(Math.sin(e) * Math.cos(a), Math.cos(e), Math.sin(e) * Math.sin(a)); const h = new THREE.Mesh(new THREE.ConeGeometry(0.015, 0.16, 4), hairMat); h.position.set(dir.x * 0.5, 0.7 + dir.y * 0.5, dir.z * 0.5); h.quaternion.setFromUnitVectors(up, dir.clone().normalize()); this.abdomen.add(h); }
+            for (let i = 0; i < 12; i++) { const a = this.idRand() * 6.28, e = Math.acos(2 * this.idRand() - 1); const dir = new THREE.Vector3(Math.sin(e) * Math.cos(a), Math.cos(e), Math.sin(e) * Math.sin(a)); const h = new THREE.Mesh(new THREE.ConeGeometry(0.015, 0.16, 4), hairMat); h.position.set(dir.x * 0.5, dir.y * 0.5, dir.z * 0.5); h.quaternion.setFromUnitVectors(up, dir.clone().normalize()); this.abdomen.add(h); }
             this.cephalo = new THREE.Mesh(new THREE.SphereGeometry(0.34, 12, 12), fur); this.cephalo.position.set(0.2, 0.68, 0); this.bodyGroup.add(this.cephalo);
             this.head = new THREE.Group();
             const face = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), fur); this.head.add(face);
@@ -2556,6 +2643,1842 @@
             ];
         }
 
+        // ═════════════════════════════════════════════════════════════════════
+        // Level 1-5 roster (lv_ keys): small, odd starter creatures that used
+        // to borrow another enemy's model. Every one faces +Z and walks along
+        // Z; limbs hang from joint pivots so a swing never leaves the body.
+        // ═════════════════════════════════════════════════════════════════════
+        _lvMesh(parent, geo, mat, p, r, s) {
+            const m = new THREE.Mesh(geo, mat);
+            if (p) m.position.set(p[0], p[1], p[2]);
+            if (r) m.rotation.set(r[0], r[1], r[2]);
+            if (s !== undefined && s !== null) { if (typeof s === 'number') m.scale.setScalar(s); else m.scale.set(s[0], s[1], s[2]); }
+            if (parent) parent.add(m);
+            return m;
+        }
+        _lvGroup(parent, x, y, z) { const g = new THREE.Group(); g.position.set(x, y, z); (parent || this.bodyGroup).add(g); return g; }
+        // A limb hung from its joint: a Group at (x,y,z), struts through `pts`
+        // (local points after the joint), a ball at every bend, and an optional
+        // end mesh (foot, claw, hand) carried to the last point.
+        _lvLimb(parent, x, y, z, pts, r0, r1, mat, end) {
+            const g = this._lvGroup(parent, x, y, z);
+            const P = [new THREE.Vector3(0, 0, 0)].concat(pts.map(q => new THREE.Vector3(q[0], q[1], q[2])));
+            const n = P.length - 1;
+            for (let i = 0; i < n; i++) {
+                const ra = r0 + (r1 - r0) * (i / n), rb = r0 + (r1 - r0) * ((i + 1) / n);
+                this.addStrut(g, mat, P[i], P[i + 1], ra, rb, 6);
+                if (i > 0) this._lvMesh(g, lvSph(ra * 1.05, 6, 4), mat, [P[i].x, P[i].y, P[i].z]);
+            }
+            if (end) { end.position.add(P[n]); g.add(end); }
+            g._tip = P[n];
+            return g;
+        }
+        // One flat mesh from a raw triangle list [[[x,y,z] x3], ...].
+        _lvTris(parent, mat, tris) {
+            const v = [];
+            tris.forEach(tri => tri.forEach(q => v.push(q[0], q[1], q[2])));
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
+            geo.computeVertexNormals();
+            const m = new THREE.Mesh(geo, mat); if (parent) parent.add(m); return m;
+        }
+        // A mesh stood on an ellipsoid (centre c, radii rad) along direction d,
+        // its own +Y turned to the outward direction and lifted by `lift`.
+        _lvStud(parent, geo, mat, c, rad, d, lift) {
+            const n = new THREE.Vector3(d[0], d[1], d[2]).normalize();
+            const m = new THREE.Mesh(geo, mat);
+            m.position.set(c[0] + n.x * rad[0], c[1] + n.y * rad[1], c[2] + n.z * rad[2]).addScaledVector(n, lift || 0);
+            m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
+            parent.add(m); return m;
+        }
+        // A splayed fan of toe pads (geckos).
+        _lvToes(mat, n, r, spread, side) {
+            const g = new THREE.Group();
+            for (let i = 0; i < n; i++) { const a = (i / (n - 1) - 0.5) * spread + (side > 0 ? 0.5 : Math.PI - 0.5); this._lvMesh(g, lvSph(r, 5, 4), mat, [Math.cos(a) * r * 2.2, -0.005, Math.sin(a) * r * 2.2], null, [1, 0.6, 1]); }
+            this._lvMesh(g, lvSph(r * 1.3, 5, 4), mat, [0, 0, 0], null, [1, 0.6, 1]);
+            return g;
+        }
+        // Part map + cascade: the vital keys take `all` with them, every key in
+        // `singles` takes only its own part.
+        _lvRig(map, vital, all, singles) {
+            this._partMeshMap = map;
+            const rules = [{ gone: vital, hide: all.filter(Boolean) }];
+            (singles || []).forEach(k => { if (map[k]) rules.push({ gone: [k], hide: [map[k]] }); });
+            this._cascadeRules = rules;
+        }
+
+        // ── Folded Airplane: an overdue bill folded into a dart, inked eye ───
+        // Bird rig: HEAD/BODY/BEAK/LEFT_WING/RIGHT_WING/TALONS.
+        _buildLvFoldedAirplane() {
+            const p = this.profile;
+            const paper = this._skinMat(p.bodyColor, 0.85);
+            const ink = this._mat(0x2a2a3a, 1.0, 0.8);
+            const red = this._mat(p.accent, 1.0, 0.6);
+            // BODY: the creased keel under the spine.
+            this.body = this._lvGroup(null, 0, 1.0, 0);
+            this._lvTris(this.body, paper, [
+                [[0, 0, 0.75], [0, 0, -0.7], [-0.045, -0.28, -0.55]],
+                [[0, 0, 0.75], [0.045, -0.28, -0.55], [0, 0, -0.7]],
+                [[0, 0, -0.7], [0.045, -0.28, -0.55], [-0.045, -0.28, -0.55]]
+            ]);
+            // Wings hinge on the spine; the trailing third of each edge is folded up.
+            const wing = (s) => {
+                const g = this._lvGroup(null, 0, 1.0, 0);
+                this._lvTris(g, paper, [
+                    [[0, 0, 0.75], [s * 0.78, 0.07, -0.7], [0, 0, -0.7]],
+                    [[s * 0.78, 0.07, -0.7], [s * 0.52, 0.047, -0.22], [s * 0.76, 0.28, -0.62]]
+                ]);
+                return g;
+            };
+            this.leftWing = wing(-1); this.rightWing = wing(1);
+            // The bill it was folded from: printed lines on one wing, a red
+            // OVERDUE stamp on the other.
+            for (let i = 0; i < 3; i++) this._lvMesh(this.leftWing, lvBox(0.26, 0.008, 0.014), ink, [-0.26, 0.024, -0.08 - i * 0.1], [0, 0, -0.09]);
+            this._lvMesh(this.rightWing, lvBox(0.24, 0.012, 0.13), red, [0.3, 0.028, -0.36], [0, 0.2, 0.09]);
+            this._lvMesh(this.rightWing, lvBox(0.16, 0.016, 0.02), this._mat(0xf4e8e0, 1.0, 0.7), [0.3, 0.03, -0.36], [0, 0.2, 0.09]);
+            // HEAD: the folded nose cone with a pair of inked, staring eyes.
+            this.head = this._lvGroup(null, 0, 0.965, 0.5);
+            this._lvMesh(this.head, lvCone(0.07, 0.42, 3), paper, null, [Math.PI / 2, 0, 0]);
+            for (const s of [-1, 1]) {
+                this._lvMesh(this.head, lvSph(0.042, 6, 4), this._mat(0xf8f4ea, 1.0, 0.5), [s * 0.04, 0.012, -0.06], null, [0.5, 1, 1.1]);
+                this._lvMesh(this.head, lvSph(0.02, 5, 4), this._mat(p.accent, 1.0, 0.4, p.accent), [s * 0.058, 0.012, -0.05]);
+            }
+            // BEAK: the red-inked crease at the very tip.
+            this.beak = this._lvMesh(this.head, lvCone(0.03, 0.12, 3), red, [0, 0, 0.25], [Math.PI / 2, 0, 0]);
+            // TALONS: a paper clip still hanging off the keel.
+            this.talons = this._lvMesh(this.body, lvTor(0.05, 0.01, 3, 10), this._mat(0xa0a6b0, 1.0, 0.3), [0, -0.3, -0.42], [0, Math.PI / 2, 0], [1, 1.9, 1]);
+            this._lvRig({ HEAD: this.head, BODY: this.body, BEAK: this.beak, LEFT_WING: this.leftWing, RIGHT_WING: this.rightWing, TALONS: this.talons },
+                ['BODY'], [this.body, this.head, this.leftWing, this.rightWing], ['HEAD', 'BEAK', 'LEFT_WING', 'RIGHT_WING', 'TALONS']);
+        }
+
+        // ── Wasabi Snail: a piped wasabi swirl shell, weeping eyestalks ──────
+        // Slime rig: CORE/UPPER_BODY/LOWER_BODY/PSEUDOPOD_1/PSEUDOPOD_2/MAW.
+        _buildLvWasabiSnail() {
+            const p = this.profile;
+            const paste = this._skinMat(p.bodyColor, 0.55);
+            const deep = this._mat(0x4f7a22, 1.0, 0.6);
+            const ginger = this._mat(p.accent, 0.92, 0.4);
+            // LOWER_BODY: the creeping foot, with the head rising at the front.
+            this.foot = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.foot, new THREE.CapsuleGeometry(0.22, 0.85, 3, 7), paste, [0, 0.13, -0.02], [Math.PI / 2, 0, 0], [1.25, 1, 0.55]);
+            this._lvMesh(this.foot, lvCyl(0.13, 0.17, 0.36, 7), paste, [0, 0.32, 0.5], [0.35, 0, 0]);
+            this._lvMesh(this.foot, lvSph(0.14, 7, 5), paste, [0, 0.5, 0.57]);
+            this.maw = this._lvMesh(this.foot, lvSph(0.07, 6, 4), this._mat(0x1a2410, 1.0, 0.7), [0, 0.44, 0.68], null, [1.5, 0.45, 0.6]);
+            // UPPER_BODY: the shell is a piped swirl of paste, ring on ring.
+            this.shell = this._lvGroup(null, 0, 0.22, -0.18);
+            this._lvMesh(this.shell, lvCyl(0.06, 0.28, 0.62, 7), deep, [0, 0.3, 0]);
+            [[0.3, 0.11, 0.06], [0.25, 0.1, 0.2], [0.19, 0.09, 0.33], [0.13, 0.075, 0.45], [0.07, 0.06, 0.55]].forEach(([R, r, y], i) =>
+                this._lvMesh(this.shell, lvTor(R, r, 4, 9), paste, [Math.sin(i * 1.7) * 0.02, y, 0], [Math.PI / 2, 0, i * 0.5]));
+            this._lvMesh(this.shell, lvCone(0.05, 0.16, 5), paste, [0.02, 0.66, 0], [0, 0, -0.3]);
+            // CORE: a rosette of pickled ginger tucked under the shell's lip.
+            this.core = this._lvGroup(null, 0, 0.25, -0.5);
+            for (let i = 0; i < 4; i++) this._lvMesh(this.core, lvSph(0.09, 6, 4), ginger, [Math.cos(i * 1.57) * 0.05, 0.02, Math.sin(i * 1.57) * 0.05], [0.6, i * 1.57, 0], [1, 0.25, 1.3]);
+            // PSEUDOPODS: eyestalks, red-rimmed and dripping a tear apiece.
+            const stalk = (s) => {
+                const eye = new THREE.Group();
+                this._eye(eye, 0, 0, 0, 0.055, 0xcc2222);
+                this._lvMesh(eye, lvCone(0.025, 0.07, 4), this._mat(0xaee8ff, 0.8, 0.1), [0, -0.075, 0.03], [Math.PI, 0, 0]);
+                return this._lvLimb(null, s * 0.07, 0.6, 0.58, [[s * 0.05, 0.14, 0.03], [s * 0.08, 0.26, 0.07]], 0.035, 0.022, paste, eye);
+            };
+            this.stalkL = stalk(-1); this.stalkR = stalk(1);
+            this._lvRig({ CORE: this.core, UPPER_BODY: this.shell, LOWER_BODY: this.foot, PSEUDOPOD_1: this.stalkL, PSEUDOPOD_2: this.stalkR, MAW: this.maw },
+                ['LOWER_BODY', 'CORE'], [this.foot, this.shell, this.core, this.stalkL, this.stalkR], ['UPPER_BODY', 'PSEUDOPOD_1', 'PSEUDOPOD_2', 'MAW']);
+        }
+
+        // ── Clockwork Tin Soldier: painted toy, nutcracker jaw, wind-up key ──
+        // Robot rig: HEAD/CORE/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/JAWS.
+        _buildLvTinSoldier() {
+            const p = this.profile;
+            const coat = this._skinMat(p.bodyColor, 0.4);
+            const blue = this._mat(0x22306a, 1.0, 0.45);
+            const white = this._mat(0xeeeae0, 1.0, 0.5);
+            const gold = this._mat(p.accent, 1.0, 0.3);
+            const black = this._mat(0x151515, 1.0, 0.35);
+            const peach = this._mat(0xf0c8a8, 1.0, 0.55);
+            // Tin tunic: white plastron, brass buttons, belt and epaulettes.
+            this.body = this._lvGroup(null, 0, 1.0, 0);
+            this._lvMesh(this.body, lvCyl(0.2, 0.22, 0.52, 8), coat);
+            this._lvMesh(this.body, lvBox(0.17, 0.36, 0.04), white, [0, 0.02, 0.2]);
+            for (let i = 0; i < 3; i++) this._lvMesh(this.body, lvSph(0.024, 5, 4), gold, [0, 0.12 - i * 0.1, 0.225]);
+            this._lvMesh(this.body, lvTor(0.215, 0.03, 4, 12), black, [0, -0.22, 0], [Math.PI / 2, 0, 0]);
+            for (const s of [-1, 1]) this._lvMesh(this.body, lvSph(0.075, 7, 4), gold, [s * 0.21, 0.25, 0], null, [1, 0.45, 1]);
+            this._lvMesh(this.body, lvCyl(0.07, 0.08, 0.1, 7), peach, [0, 0.3, 0]);
+            // HEAD: painted face, round red cheeks, a tall shako and plume.
+            this.head = this._lvGroup(null, 0, 1.43, 0);
+            this._lvMesh(this.head, lvSph(0.15, 8, 6), peach, null, null, [1, 1.08, 1]);
+            for (const s of [-1, 1]) {
+                this._lvMesh(this.head, lvSph(0.022, 5, 4), black, [s * 0.055, 0.03, 0.135]);
+                this._lvMesh(this.head, lvSph(0.03, 5, 4), this._mat(0xe05050, 1.0, 0.6), [s * 0.085, -0.035, 0.115], null, [1, 1, 0.4]);
+            }
+            this._lvMesh(this.head, lvBox(0.12, 0.025, 0.03), black, [0, -0.04, 0.14]);
+            this._lvMesh(this.head, lvCyl(0.15, 0.13, 0.3, 8), black, [0, 0.24, 0]);
+            this._lvMesh(this.head, lvCyl(0.155, 0.155, 0.03, 8), gold, [0, 0.1, 0]);
+            this._lvMesh(this.head, lvBox(0.1, 0.1, 0.02), gold, [0, 0.21, 0.135]);
+            this._lvMesh(this.head, lvSph(0.06, 6, 5), this._mat(0xd02020, 1.0, 0.7), [0, 0.42, 0.03], null, [1, 1.4, 1]);
+            // JAWS: a nutcracker jaw that clacks on its hinge.
+            this.jaw = this._lvGroup(this.head, 0, -0.07, 0.02);
+            this._lvMesh(this.jaw, lvBox(0.14, 0.05, 0.13), peach, [0, -0.04, 0.05]);
+            this._lvMesh(this.jaw, lvBox(0.1, 0.014, 0.02), white, [0, -0.015, 0.11]);
+            // Arms: white gloves; the right shoulders a rifle with a pin for a bayonet.
+            const glove = () => this._lvMesh(null, lvSph(0.055, 6, 5), white);
+            this.leftArm = this._lvLimb(null, -0.25, 1.2, 0, [[-0.03, -0.42, 0.02]], 0.055, 0.05, coat, glove());
+            this.rightArm = this._lvLimb(null, 0.25, 1.2, 0, [[0.03, -0.24, 0.12], [0.02, -0.3, 0.3]], 0.055, 0.05, coat, glove());
+            this.rifle = this._lvGroup(this.rightArm, 0.02, -0.3, 0.3);
+            this.rifle.rotation.x = -0.5;
+            this._lvMesh(this.rifle, lvBox(0.04, 0.05, 0.55), this._mat(0x6a4020, 1.0, 0.7), [0, 0.02, 0.05]);
+            this._lvMesh(this.rifle, lvCyl(0.012, 0.012, 0.3, 5), black, [0, 0.05, 0.4], [Math.PI / 2, 0, 0]);
+            this._lvMesh(this.rifle, lvCyl(0.002, 0.005, 0.12, 4), this._mat(0xd8dde4, 1.0, 0.2), [0, 0.05, 0.61], [Math.PI / 2, 0, 0]);
+            // Legs: stiff blue trousers and black boots.
+            const boot = () => this._lvMesh(null, lvBox(0.11, 0.08, 0.17), black, [0, -0.02, 0.03]);
+            this.leftLeg = this._lvLimb(null, -0.1, 0.76, 0, [[0, -0.66, 0]], 0.075, 0.065, blue, boot());
+            this.rightLeg = this._lvLimb(null, 0.1, 0.76, 0, [[0, -0.66, 0]], 0.075, 0.065, blue, boot());
+            // CORE: the brass wind-up key in its back, always turning.
+            this.core = this._lvGroup(null, 0, 1.02, -0.19);
+            this._lvMesh(this.core, lvCyl(0.025, 0.025, 0.28, 6), gold, [0, 0, -0.13], [Math.PI / 2, 0, 0]);
+            for (const s of [-1, 1]) this._lvMesh(this.core, lvTor(0.085, 0.022, 4, 10), gold, [0, s * 0.09, -0.24], [0, Math.PI / 2, 0]);
+            this._lvRig({ HEAD: this.head, CORE: this.core, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, JAWS: this.jaw, TORSO: this.body, BODY: this.body },
+                ['TORSO', 'BODY'], [this.body, this.head, this.core, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg], ['HEAD', 'CORE', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'JAWS']);
+        }
+
+        // ── Dryer Lint Golem: grey fluff, coin and button eyes, a sock arm ───
+        // Golem rig: CORE/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/MAW.
+        _buildLvLintGolem() {
+            const p = this.profile;
+            const lint = this._skinMat(p.bodyColor, 0.95);
+            const lintDk = this._mat(0x7a7a84, 1.0, 0.95);
+            this.body = this._lvGroup(null, 0, 0.78, 0);
+            this._lvMesh(this.body, new THREE.IcosahedronGeometry(0.48, 1), lint, null, null, [1.1, 0.95, 0.95]);
+            for (let i = 0; i < 9; i++) {
+                const a = i * 2.4, e = (this.idRand() - 0.3) * 1.2;
+                this._lvStud(this.body, new THREE.IcosahedronGeometry(0.14 + this.idRand() * 0.08, 0), i % 2 ? lint : lintDk, [0, 0, 0], [0.5, 0.43, 0.43], [Math.cos(a) * Math.cos(e), Math.sin(e), Math.sin(a) * Math.cos(e)], -0.05);
+            }
+            // Mismatched eyes: a coin and a four-hole shirt button.
+            this.eyes = this._lvGroup(this.body, 0, 0.12, 0.43);
+            this._lvMesh(this.eyes, lvCyl(0.075, 0.075, 0.025, 8), this._mat(0xc8a040, 1.0, 0.3), [-0.15, 0, 0], [Math.PI / 2, 0, 0]);
+            this._lvMesh(this.eyes, lvSph(0.025, 5, 4), this._mat(0x8a6a20, 1.0, 0.4), [-0.15, 0.01, 0.012]);
+            this._lvMesh(this.eyes, lvCyl(0.055, 0.055, 0.025, 8), this._mat(0xf4f0e8, 1.0, 0.3), [0.14, 0.02, 0], [Math.PI / 2, 0, 0]);
+            for (let i = 0; i < 4; i++) this._lvMesh(this.eyes, lvSph(0.011, 4, 3), this._mat(0x101010, 1.0, 0.5), [0.14 + (i % 2 ? 0.018 : -0.018), 0.02 + (i < 2 ? 0.018 : -0.018), 0.014]);
+            // MAW: a lint-trap slot of a mouth, grille and all.
+            this.maw = this._lvGroup(this.body, 0, -0.1, 0.43);
+            this._lvMesh(this.maw, lvBox(0.3, 0.08, 0.04), this._mat(0x101014, 1.0, 0.8));
+            for (let i = 0; i < 5; i++) this._lvMesh(this.maw, lvBox(0.012, 0.08, 0.05), this._mat(0xb8bcc4, 1.0, 0.3), [-0.12 + i * 0.06, 0, 0]);
+            // CORE: a crackling knot of static that sparks out of its crown.
+            this.core = this._lvMesh(this.body, new THREE.OctahedronGeometry(0.12, 0), this._mat(p.accent, 0.9, 0.2, p.accent), [0.08, 0.42, 0.05]);
+            for (let i = 0; i < 3; i++) { const a = i * 2.1; this.addStrut(this.core, this.core.material, new THREE.Vector3(0, 0, 0), new THREE.Vector3(Math.cos(a) * 0.18, 0.12, Math.sin(a) * 0.18), 0.012, 0.005, 4); }
+            // LEFT_ARM: a lost striped sock; RIGHT_ARM: a club of matted lint.
+            const sockA = this._mat(0xd84a4a, 1.0, 0.9), sockB = this._mat(0xf0ece0, 1.0, 0.9);
+            this.leftArm = this._lvGroup(null, -0.48, 0.86, 0);
+            [[-0.06, -0.06, 0.02], [-0.12, -0.16, 0.05], [-0.15, -0.27, 0.08], [-0.16, -0.38, 0.11], [-0.14, -0.48, 0.16]].forEach((q, i) => this._lvMesh(this.leftArm, lvSph(0.1 - i * 0.004, 6, 5), i % 2 ? sockB : sockA, q));
+            this._lvMesh(this.leftArm, lvSph(0.11, 6, 5), sockA, [-0.12, -0.56, 0.24], null, [1, 0.8, 1.4]);
+            this.rightArm = this._lvGroup(null, 0.48, 0.86, 0);
+            [[0.07, -0.1, 0.02, 0.13], [0.12, -0.25, 0.06, 0.12], [0.12, -0.42, 0.1, 0.15]].forEach(([x, y, z, r], i) => this._lvMesh(this.rightArm, new THREE.IcosahedronGeometry(r, 0), i % 2 ? lintDk : lint, [x, y, z]));
+            const lFoot = () => this._lvMesh(null, new THREE.IcosahedronGeometry(0.14, 0), lintDk, null, null, [1.1, 0.6, 1.3]);
+            this.leftLeg = this._lvLimb(null, -0.2, 0.42, 0, [[0, -0.3, 0.02]], 0.13, 0.12, lint, lFoot());
+            this.rightLeg = this._lvLimb(null, 0.2, 0.42, 0, [[0, -0.3, 0.02]], 0.13, 0.12, lint, lFoot());
+            this._lvRig({ CORE: this.core, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, MAW: this.maw, BODY: this.body, TORSO: this.body, EYES: this.eyes },
+                ['BODY', 'TORSO'], [this.body, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg], ['CORE', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'MAW', 'EYES']);
+        }
+
+        // ── Sand Gecko: banded, bug-eyed, its tongue up licking its own eye ──
+        // Reptilian rig: HEAD/TORSO/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/TAIL/MAW.
+        _buildLvSandGecko() {
+            const p = this.profile;
+            const skin = this._skinMat(p.bodyColor, 0.75);
+            const pale = this._mat(0xf0dcb0, 1.0, 0.7);
+            const band = this._mat(0x8a5a2a, 1.0, 0.8);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, new THREE.CapsuleGeometry(0.16, 0.5, 3, 7), skin, [0, 0.22, 0], [Math.PI / 2, 0, 0], [1.3, 1, 0.8]);
+            for (let i = 0; i < 4; i++) this._lvMesh(this.body, lvSph(0.12, 6, 4), band, [0, 0.33, -0.27 + i * 0.16], null, [1.5, 0.3, 0.4]);
+            this.head = this._lvGroup(null, 0, 0.26, 0.48);
+            this._lvMesh(this.head, lvSph(0.15, 7, 5), skin, null, null, [1.15, 0.72, 1.3]);
+            for (const s of [-1, 1]) this._eye(this.head, s * 0.12, 0.07, 0.03, 0.075, p.accent).rotation.y = s * 0.9;
+            this.jaw = this._lvMesh(this.head, lvSph(0.12, 6, 4), pale, [0, -0.05, 0.08], null, [1.05, 0.3, 1.25]);
+            this.tongue = this._lvLimb(this.head, 0.05, -0.04, 0.2, [[0.06, 0.04, 0.0], [0.1, 0.1, -0.06], [0.1, 0.14, -0.12]], 0.022, 0.016, this._mat(0xe06a7a, 1.0, 0.5));
+            const leg = (s, z, pts) => this._lvLimb(null, s * 0.15, 0.24, z, pts, 0.045, 0.032, skin, this._lvToes(pale, 4, 0.028, 1.6, s));
+            this.leftArm = leg(-1, 0.24, [[-0.16, 0.02, 0.05], [-0.24, -0.2, 0.1]]);
+            this.rightArm = leg(1, 0.24, [[0.16, 0.02, 0.05], [0.24, -0.2, 0.1]]);
+            this.leftLeg = leg(-1, -0.24, [[-0.18, 0.0, -0.06], [-0.26, -0.21, -0.12]]);
+            this.rightLeg = leg(1, -0.24, [[0.18, 0.0, -0.06], [0.26, -0.21, -0.12]]);
+            // A fat carrot of a tail, where it keeps its water.
+            this.tail = this._lvLimb(null, 0, 0.22, -0.38, [[0, -0.03, -0.2], [0.05, -0.1, -0.42], [0.13, -0.15, -0.6]], 0.12, 0.03, skin);
+            this._lvRig({ HEAD: this.head, TORSO: this.body, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, TAIL: this.tail, MAW: this.jaw },
+                ['TORSO'], [this.body, this.head, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg, this.tail], ['HEAD', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'TAIL', 'MAW']);
+        }
+
+        // ── Desert Tumbleweed: rings of brush caging a sun-bleached skull ────
+        // Spherical rig: CORE/SHELL/SENSOR_ARRAY/SPIN_SPINES/AUX_DRIVES/MAW.
+        _buildLvTumbleweed() {
+            const p = this.profile;
+            const twig = this._skinMat(p.bodyColor, 0.9);
+            const dry = this._mat(0x6a5030, 1.0, 0.9);
+            const bone = this._mat(0xe8dcc0, 1.0, 0.6);
+            this.ball = this._lvGroup(null, 0, 0.67, 0);
+            this.shell = this._lvGroup(this.ball, 0, 0, 0);
+            const rings = [];
+            for (let i = 0; i < 9; i++) {
+                const R = 0.53 + this.idRand() * 0.03;
+                const r = this._lvMesh(this.shell, lvTor(R, 0.022, 3, 14), i % 3 ? twig : dry, null, [this.idRand() * Math.PI, this.idRand() * Math.PI, 0]);
+                r._R = R; rings.push(r);
+            }
+            // A point on ring i at angle a, in the ball's space.
+            const onRing = (i, a) => new THREE.Vector3(Math.cos(a) * rings[i]._R, Math.sin(a) * rings[i]._R, 0).applyQuaternion(rings[i].quaternion);
+            this.spines = this._lvGroup(this.ball, 0, 0, 0);
+            for (let i = 0; i < 16; i++) { const v = onRing(i % 9, i * 1.9); this._lvStud(this.spines, lvCone(0.022, 0.15, 4), dry, [0, 0, 0], [v.length(), v.length(), v.length()], [v.x, v.y, v.z], 0.05); }
+            // CORE: a little cow skull lodged in the middle on four twigs.
+            this.core = this._lvGroup(this.ball, 0, 0, 0);
+            this._lvMesh(this.core, lvSph(0.15, 7, 5), bone, [0, 0.03, -0.02], null, [1, 0.9, 1.1]);
+            this._lvMesh(this.core, lvBox(0.12, 0.09, 0.2), bone, [0, -0.04, 0.13]);
+            for (const s of [-1, 1]) this._lvMesh(this.core, lvCone(0.035, 0.24, 5), bone, [s * 0.17, 0.08, 0], [0, 0, -s * 1.2]);
+            for (let i = 0; i < 4; i++) { const v = onRing(i * 2, 0.7 + i); const d = v.clone().normalize(); this.addStrut(this.shell, dry, d.clone().multiplyScalar(0.1), v, 0.022, 0.016, 4); }
+            // SENSOR_ARRAY: embers in the eye sockets; MAW: the loose jawbone.
+            this.sensors = this._lvGroup(this.core, 0, 0.06, 0.1);
+            for (const s of [-1, 1]) this._lvMesh(this.sensors, lvSph(0.03, 5, 4), this._mat(p.accent, 1.0, 0.3, p.accent), [s * 0.06, 0, 0.02]);
+            this.jaw = this._lvGroup(this.core, 0, -0.09, 0.03);
+            this._lvMesh(this.jaw, lvBox(0.11, 0.03, 0.18), bone, [0, -0.01, 0.09]);
+            for (const s of [-1, 1]) this._lvMesh(this.jaw, lvCone(0.012, 0.04, 4), bone, [s * 0.03, 0.025, 0.16]);
+            // AUX_DRIVES: the snapped root stem it broke loose from.
+            const v0 = onRing(3, 4.0);
+            this.roots = this._lvLimb(this.ball, v0.x, v0.y, v0.z, [[v0.x * 0.25, v0.y * 0.25 - 0.05, v0.z * 0.25], [v0.x * 0.4, v0.y * 0.4 - 0.12, v0.z * 0.45]], 0.035, 0.012, dry);
+            this._lvRig({ CORE: this.core, SHELL: this.shell, SENSOR_ARRAY: this.sensors, SPIN_SPINES: this.spines, AUX_DRIVES: this.roots, MAW: this.jaw },
+                ['CORE'], [this.core, this.shell, this.spines, this.roots], ['SHELL', 'SENSOR_ARRAY', 'SPIN_SPINES', 'AUX_DRIVES', 'MAW']);
+        }
+
+        // ── Dune Scorpling: glassy little scorpion, gut showing, one eye ─────
+        // Scorpion rig: HEAD/CEPHALOTHORAX/ABDOMEN/TAIL/STINGER/PINCER_*/8 legs/MANDIBLES.
+        _buildLvScorpling() {
+            const p = this.profile;
+            const shell = this.applySkin(this._mat(p.bodyColor, 0.72, 0.35));
+            const gut = this._mat(0x5a2a1a, 1.0, 0.6);
+            const amber = this._mat(0xd89a2a, 1.0, 0.3, 0x3a2000);
+            this.ceph = this._lvMesh(this.bodyGroup, lvSph(0.2, 7, 5), shell, [0, 0.22, 0.18], null, [1.05, 0.5, 1.0]);
+            this.head = this._lvGroup(null, 0, 0.23, 0.36);
+            this._lvMesh(this.head, new THREE.DodecahedronGeometry(0.1, 0), shell, null, null, [1.2, 0.6, 0.9]);
+            this._eye(this.head, 0, 0.06, 0.02, 0.055, p.accent);
+            this.mandibles = this._lvGroup(this.head, 0, -0.02, 0.08);
+            for (const s of [-1, 1]) this._lvMesh(this.mandibles, lvCone(0.025, 0.08, 4), amber, [s * 0.035, 0, 0.02], [Math.PI / 2, 0, 0]);
+            // ABDOMEN: shingled glassy plates over a dark coil of gut.
+            this.abdomen = this._lvGroup(null, 0, 0, 0);
+            [[-0.02, 0.19], [-0.16, 0.18], [-0.29, 0.16], [-0.4, 0.13]].forEach(([z, r]) => this._lvMesh(this.abdomen, lvSph(r, 7, 4), shell, [0, 0.22, z], null, [1.05, 0.5, 0.75]));
+            const gp = [[0, 0.22, 0.08], [0.03, 0.22, -0.14], [-0.03, 0.22, -0.3], [0, 0.23, -0.44]].map(q => new THREE.Vector3(q[0], q[1], q[2]));
+            for (let i = 0; i < 3; i++) this.addStrut(this.abdomen, gut, gp[i], gp[i + 1], 0.035, 0.03, 5);
+            // TAIL arched over the back; STINGER is a venom bulb and barb.
+            this.stinger = new THREE.Group();
+            this._lvMesh(this.stinger, lvSph(0.05, 6, 4), amber);
+            this._lvMesh(this.stinger, lvCone(0.025, 0.12, 4), amber, [0, -0.05, 0.06], [Math.PI * 0.75, 0, 0]);
+            this.tail = this._lvLimb(null, 0, 0.25, -0.47, [[0, 0.12, -0.12], [0, 0.3, -0.14], [0, 0.44, -0.04], [0, 0.48, 0.1]], 0.06, 0.04, shell, this.stinger);
+            const pincer = (s) => {
+                const claw = new THREE.Group();
+                this._lvMesh(claw, lvSph(0.085, 6, 4), shell, [0, 0, 0.05], null, [0.85, 0.6, 1.35]);
+                this._lvMesh(claw, lvCone(0.026, 0.13, 4), shell, [s * 0.03, 0, 0.17], [Math.PI / 2, 0, 0]);
+                claw._f = this._lvGroup(claw, -s * 0.03, 0, 0.1);
+                this._lvMesh(claw._f, lvCone(0.024, 0.13, 4), shell, [0, 0, 0.065], [Math.PI / 2, 0, 0]);
+                const g = this._lvLimb(null, s * 0.14, 0.22, 0.32, [[s * 0.13, 0.05, 0.1], [s * 0.13, 0.07, 0.22]], 0.04, 0.034, shell, claw);
+                g._claw = claw; return g;
+            };
+            this.pincerL = pincer(-1); this.pincerR = pincer(1);
+            this._legs = [];
+            const legKeys = [['LEFT_LEG', 'RIGHT_LEG'], ['MID_LEFT_LEG', 'MID_RIGHT_LEG'], ['MID_REAR_LEFT_LEG', 'MID_REAR_RIGHT_LEG'], ['REAR_LEFT_LEG', 'REAR_RIGHT_LEG']];
+            const map = { HEAD: this.head, CEPHALOTHORAX: this.ceph, ABDOMEN: this.abdomen, TAIL: this.tail, STINGER: this.stinger, PINCER_LEFT: this.pincerL, PINCER_RIGHT: this.pincerR, MANDIBLES: this.mandibles };
+            [0.27, 0.17, 0.07, -0.03].forEach((z, i) => {
+                const dz = (1.5 - i) * 0.05;
+                [-1, 1].forEach((s, j) => { const l = this._lvLimb(null, s * 0.15, 0.2, z, [[s * 0.13, 0.07, dz], [s * 0.24, -0.2, dz * 2]], 0.024, 0.014, shell); this._legs.push(l); map[legKeys[i][j]] = l; });
+            });
+            this._lvRig(map, ['CEPHALOTHORAX'], [this.ceph, this.head, this.abdomen, this.tail, this.pincerL, this.pincerR, ...this._legs],
+                ['HEAD', 'ABDOMEN', 'TAIL', 'STINGER', 'PINCER_LEFT', 'PINCER_RIGHT', 'MANDIBLES', 'LEFT_LEG', 'RIGHT_LEG', 'MID_LEFT_LEG', 'MID_RIGHT_LEG', 'MID_REAR_LEFT_LEG', 'MID_REAR_RIGHT_LEG', 'REAR_LEFT_LEG', 'REAR_RIGHT_LEG']);
+        }
+
+        // ── Salt Crab: tall crusted shell growing salt cubes, one huge claw ──
+        // Crustacean rig: CLAW_LEFT/CLAW_RIGHT/CARAPACE/ABDOMEN/FRONT_LEG/REAR_LEG/ANTENNAE/MANDIBLES.
+        _buildLvSaltCrab() {
+            const p = this.profile;
+            const crust = this._skinMat(p.bodyColor, 0.85);
+            const red = this._mat(0xc87a5a, 1.0, 0.6);
+            const salt = this._mat(0xfafaf4, 0.95, 0.25);
+            const dark = this._mat(0x1a1410, 1.0, 0.4);
+            const C = [0, 0.42, 0], R = [0.468, 0.198, 0.36];
+            this.carapace = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.carapace, lvSph(0.36, 8, 5), crust, C, null, [1.3, 0.55, 1.0]);
+            for (let i = 0; i < 10; i++) {
+                const a = i * 2.39, e = 0.45 + this.idRand() * 0.9;
+                const c = this._lvStud(this.carapace, lvBox(1, 1, 1), salt, C, R, [Math.cos(a) * Math.cos(e), Math.sin(e), Math.sin(a) * Math.cos(e)], 0);
+                c.scale.setScalar(0.06 + this.idRand() * 0.07); c.rotateY(this.idRand() * 3);
+            }
+            this.abdomen = this._lvMesh(this.bodyGroup, lvSph(0.22, 7, 4), red, [0, 0.3, -0.12], null, [1, 0.45, 1]);
+            this.antennae = this._lvGroup(null, 0, 0.5, 0.3);
+            for (const s of [-1, 1]) {
+                this._lvLimb(this.antennae, s * 0.08, 0, 0, [[s * 0.02, 0.14, 0.02]], 0.02, 0.016, red, this._lvMesh(null, lvSph(0.035, 6, 4), dark));
+                this.addStrut(this.antennae, red, new THREE.Vector3(s * 0.03, -0.02, 0.02), new THREE.Vector3(s * 0.18, 0.12, 0.3), 0.008, 0.005, 4);
+            }
+            this.mandibles = this._lvGroup(null, 0, 0.37, 0.33);
+            for (const s of [-1, 1]) this._lvMesh(this.mandibles, lvBox(0.05, 0.06, 0.04), red, [s * 0.03, 0, 0.01], [0, 0, s * 0.2]);
+            const claw = (s, k) => {
+                const hand = new THREE.Group();
+                this._lvMesh(hand, lvSph(0.13 * k, 7, 5), red, [0, 0, 0.08 * k], null, [0.8, 0.9, 1.3]);
+                this._lvMesh(hand, lvCone(0.05 * k, 0.2 * k, 5), crust, [s * 0.03 * k, 0.04 * k, 0.26 * k], [Math.PI / 2, 0, 0]);
+                hand._f = this._lvGroup(hand, -s * 0.03 * k, -0.02 * k, 0.16 * k);
+                this._lvMesh(hand._f, lvCone(0.045 * k, 0.18 * k, 5), crust, [0, 0, 0.09 * k], [Math.PI / 2, 0, 0]);
+                const g = this._lvLimb(null, s * 0.38, 0.4, 0.18, [[s * 0.14, 0.04, 0.14], [s * 0.18, 0.1, 0.3]], 0.05, 0.045, red, hand);
+                g._hand = hand; return g;
+            };
+            this.leftClaw = claw(-1, 1.5); this.rightClaw = claw(1, 0.75);
+            const ext = (z) => R[0] * Math.sqrt(Math.max(0, 1 - (z / R[2]) * (z / R[2])));
+            this.frontLegs = this._lvGroup(null, 0, 0, 0); this.rearLegs = this._lvGroup(null, 0, 0, 0); this._legs = [];
+            [0.08, -0.06, -0.18, -0.29].forEach((z, i) => {
+                const dz = (1.5 - i) * 0.06;
+                for (const s of [-1, 1]) this._legs.push(this._lvLimb(i < 2 ? this.frontLegs : this.rearLegs, s * (ext(z) - 0.04), 0.38, z, [[s * 0.16, 0.06, dz], [s * 0.28, -0.38, dz * 1.5]], 0.035, 0.018, red));
+            });
+            this._lvRig({ CLAW_LEFT: this.leftClaw, CLAW_RIGHT: this.rightClaw, CARAPACE: this.carapace, ABDOMEN: this.abdomen, FRONT_LEG: this.frontLegs, REAR_LEG: this.rearLegs, ANTENNAE: this.antennae, MANDIBLES: this.mandibles },
+                ['CARAPACE'], [this.carapace, this.abdomen, this.leftClaw, this.rightClaw, this.frontLegs, this.rearLegs, this.antennae, this.mandibles], ['CLAW_LEFT', 'CLAW_RIGHT', 'ABDOMEN', 'FRONT_LEG', 'REAR_LEG', 'ANTENNAE', 'MANDIBLES']);
+        }
+
+        // ── Desert Porcupine: banded quills swept back, a hollow-quill rattle ─
+        // SpikyMonster rig: SPIKES/BODY/EYES/LEFT_LEG/RIGHT_LEG/LEFT_CLAW/RIGHT_CLAW/MAW.
+        _buildLvPorcupine() {
+            const p = this.profile;
+            const fur = this._skinMat(p.bodyColor, 0.9);
+            const face = this._mat(0x3a2a20, 1.0, 0.8);
+            const qA = this._mat(p.accent, 1.0, 0.5), qB = this._mat(0x2a2018, 1.0, 0.5);
+            const C = [0, 0.42, -0.05], R = [0.36, 0.306, 0.45];
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvSph(0.36, 8, 6), fur, C, null, [1, 0.85, 1.25]);
+            this._lvMesh(this.body, lvSph(0.14, 7, 5), face, [0, 0.36, 0.42], null, [0.85, 0.75, 1.25]);
+            this._lvMesh(this.body, lvSph(0.035, 5, 4), this._mat(0x0a0a0a, 1.0, 0.3), [0, 0.37, 0.6]);
+            this.eyes = this._lvGroup(null, 0, 0.44, 0.385);
+            for (const s of [-1, 1]) this._eye(this.eyes, s * 0.09, 0, 0, 0.03, 0x101010);
+            // MAW: bright orange incisors, as a porcupine's are.
+            this.maw = this._lvGroup(null, 0, 0.29, 0.57);
+            for (const s of [-1, 1]) this._lvMesh(this.maw, lvBox(0.02, 0.05, 0.015), this._mat(0xe08a2a, 1.0, 0.4), [s * 0.012, 0, 0]);
+            // SPIKES: two-tone quills swept back, and a rattle of hollow quills on the rump.
+            this.spikes = this._lvGroup(null, 0, 0, 0);
+            const back = new THREE.Vector3(0, 0.15, -0.6);
+            for (let i = 0; i < 34; i++) {
+                const d = new THREE.Vector3(this.idRand() * 2 - 1, 0.15 + this.idRand() * 0.85, this.idRand() * 1.4 - 1.0).normalize();
+                const dir = d.clone().add(back).normalize(), h = 0.32 + this.idRand() * 0.14;
+                const q = new THREE.Group();
+                q.position.set(C[0] + d.x * R[0], C[1] + d.y * R[1], C[2] + d.z * R[2]).addScaledVector(dir, -0.04);
+                q.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+                this._lvMesh(q, lvCone(0.024, h, 4), qA, [0, h / 2, 0]);
+                this._lvMesh(q, lvCone(0.014, h * 0.3, 4), qB, [0, h * 0.86, 0]);
+                this.spikes.add(q);
+            }
+            for (let i = 0; i < 6; i++) { const a = i * 1.05; this._lvMesh(this.spikes, new THREE.CylinderGeometry(0.03, 0.03, 0.16, 6, 1, true), qA, [Math.cos(a) * 0.06, 0.5 + Math.sin(a) * 0.05, -0.5], [-0.9, 0, 0]); }
+            const paw = (claws) => { const g = new THREE.Group(); this._lvMesh(g, lvSph(0.07, 6, 4), face, [0, 0, 0.03], null, [1, 0.5, 1.4]); if (claws) for (let i = -1; i <= 1; i++) this._lvMesh(g, lvCone(0.012, 0.06, 4), qA, [i * 0.03, -0.01, 0.12], [Math.PI / 2, 0, 0]); return g; };
+            this.leftLeg = this._lvLimb(null, -0.2, 0.26, -0.22, [[0, -0.2, 0.02]], 0.07, 0.06, fur, paw(false));
+            this.rightLeg = this._lvLimb(null, 0.2, 0.26, -0.22, [[0, -0.2, 0.02]], 0.07, 0.06, fur, paw(false));
+            this.leftClaw = this._lvLimb(null, -0.17, 0.26, 0.22, [[0, -0.2, 0.04]], 0.06, 0.05, fur, paw(true));
+            this.rightClaw = this._lvLimb(null, 0.17, 0.26, 0.22, [[0, -0.2, 0.04]], 0.06, 0.05, fur, paw(true));
+            this._lvRig({ SPIKES: this.spikes, BODY: this.body, EYES: this.eyes, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, LEFT_CLAW: this.leftClaw, RIGHT_CLAW: this.rightClaw, MAW: this.maw },
+                ['BODY'], [this.body, this.spikes, this.eyes, this.maw, this.leftLeg, this.rightLeg, this.leftClaw, this.rightClaw], ['SPIKES', 'EYES', 'LEFT_LEG', 'RIGHT_LEG', 'LEFT_CLAW', 'RIGHT_CLAW', 'MAW']);
+        }
+
+        // ── Manticore Cub: scruffy cub with a pale human mask of a face ──────
+        // Manticore rig: BRAIN/SKULL/SPINE/RIBCAGE/paws+legs/eyes/wings/lungs/MAW.
+        _buildLvManticoreCub() {
+            const p = this.profile;
+            const fur = this._skinMat(p.bodyColor, 0.85);
+            const mane = this._mat(0x5a2a14, 1.0, 0.9);
+            const face = this._mat(0xe8c0a0, 1.0, 0.55);
+            const wingM = this._mat(0x6a3020, 0.9, 0.6);
+            const soft = this._mat(p.accent, 1.0, 0.6);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, new THREE.CapsuleGeometry(0.25, 0.42, 3, 8), fur, [0, 0.52, -0.08], [Math.PI / 2, 0, 0]);
+            for (let i = 0; i < 6; i++) this._lvStud(this.body, lvCone(0.05, 0.14, 4), mane, [0, 0.52, -0.08], [0.25, 0.25, 0.46], [(this.idRand() - 0.5) * 0.6, 1, 0.3 - i * 0.22], 0.04);
+            // SKULL / BRAIN: an oversized cub head wearing a too-human face.
+            this.head = this._lvGroup(null, 0, 0.8, 0.4);
+            this._lvMesh(this.head, lvSph(0.24, 8, 6), fur, null, null, [1, 0.95, 0.95]);
+            this._lvMesh(this.head, lvSph(0.19, 8, 6), face, [0, -0.02, 0.15], null, [0.9, 1.05, 0.4]);
+            for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; this._lvMesh(this.head, lvCone(0.05, i % 2 ? 0.14 : 0.1, 4), mane, [Math.cos(a) * 0.21, Math.sin(a) * 0.21 - 0.02, 0.05], [0, 0, a - Math.PI / 2]); }
+            for (const s of [-1, 1]) this._lvMesh(this.head, lvCone(0.06, 0.1, 4), fur, [s * 0.14, 0.2, -0.04], [0, 0, -s * 0.5]);
+            this.leftEye = this._eye(this.head, -0.07, 0.04, 0.2, 0.035, 0x3a6a2a);
+            this.rightEye = this._eye(this.head, 0.07, 0.04, 0.2, 0.035, 0x3a6a2a);
+            for (const s of [-1, 1]) this._lvMesh(this.head, lvBox(0.07, 0.015, 0.02), mane, [s * 0.07, 0.09, 0.21], [0, 0, s * 0.25]);
+            this._lvMesh(this.head, lvBox(0.025, 0.06, 0.03), face, [0, -0.01, 0.22]);
+            this.maw = this._lvGroup(this.head, 0, -0.08, 0.2);
+            this._lvMesh(this.maw, lvTor(0.08, 0.016, 3, 8, Math.PI), this._mat(0x3a0a0a, 1.0, 0.6), null, [0, 0, Math.PI]);
+            this._lvMesh(this.maw, lvBox(0.1, 0.016, 0.01), this._mat(0xf4ecd8, 1.0, 0.4), [0, -0.06, 0.006]);
+            // Stubby wings, swept back off the shoulders.
+            this.leftWing = this.buildDragonWing(wingM, 1, -0.14, 0.72, -0.1, { span: 0.6, fingers: 3 }); this.leftWing.rotation.y = -0.5;
+            this.rightWing = this.buildDragonWing(wingM, -1, 0.14, 0.72, -0.1, { span: 0.6, fingers: 3 }); this.rightWing.rotation.y = 0.5;
+            // A soft tail that ends in a rubbery spike ball it flings anyway.
+            const ball = new THREE.Group();
+            this._lvMesh(ball, lvSph(0.08, 6, 5), soft);
+            for (let i = 0; i < 6; i++) this._lvStud(ball, lvCone(0.025, 0.1, 4), soft, [0, 0, 0], [0.08, 0.08, 0.08], [Math.cos(i * 1.05), (i % 3) - 1, Math.sin(i * 1.05)], 0.03);
+            this.tail = this._lvLimb(null, 0, 0.6, -0.5, [[0, 0.12, -0.16], [0, 0.32, -0.22], [0, 0.5, -0.12]], 0.06, 0.04, fur, ball);
+            const pawM = () => this._lvMesh(null, lvSph(0.09, 6, 4), fur, null, null, [1.1, 0.6, 1.3]);
+            this.flPaw = this._lvLimb(null, -0.14, 0.42, 0.2, [[0, -0.36, 0.03]], 0.085, 0.07, fur, pawM());
+            this.frPaw = this._lvLimb(null, 0.14, 0.42, 0.2, [[0, -0.36, 0.03]], 0.085, 0.07, fur, pawM());
+            this.rlLeg = this._lvLimb(null, -0.14, 0.42, -0.32, [[0, -0.14, -0.06], [0, -0.36, 0.0]], 0.085, 0.07, fur, pawM());
+            this.rrLeg = this._lvLimb(null, 0.14, 0.42, -0.32, [[0, -0.14, -0.06], [0, -0.36, 0.0]], 0.085, 0.07, fur, pawM());
+            this._lvRig({ SPINE: this.body, RIBCAGE: this.body, LEFT_LUNG: this.body, RIGHT_LUNG: this.body, SKULL: this.head, BRAIN: this.head, LEFT_EYE: this.leftEye, RIGHT_EYE: this.rightEye,
+                FRONT_LEFT_PAW: this.flPaw, FRONT_RIGHT_PAW: this.frPaw, REAR_LEFT_LEG: this.rlLeg, REAR_RIGHT_LEG: this.rrLeg, LEFT_WING: this.leftWing, RIGHT_WING: this.rightWing, TAIL: this.tail, MAW: this.maw },
+                ['SPINE', 'RIBCAGE'], [this.body, this.head, this.flPaw, this.frPaw, this.rlLeg, this.rrLeg, this.leftWing, this.rightWing, this.tail],
+                ['SKULL', 'FRONT_LEFT_PAW', 'FRONT_RIGHT_PAW', 'REAR_LEFT_LEG', 'REAR_RIGHT_LEG', 'LEFT_WING', 'RIGHT_WING', 'TAIL', 'LEFT_EYE', 'RIGHT_EYE', 'MAW']);
+        }
+
+        // ── Belltower Gargoyle: crouched stone, lead spout mouth, a bell ─────
+        // Golem rig: CORE/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/MAW.
+        _buildLvGargoyle() {
+            const p = this.profile;
+            const stone = this._skinMat(p.bodyColor, 0.95);
+            const lead = this._mat(0x5a6068, 1.0, 0.5);
+            const bronze = this._mat(0x8a6a3a, 1.0, 0.35);
+            const water = this._mat(0x7ab8e0, 0.7, 0.1, 0x1a3a50);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvSph(0.3, 7, 5), stone, [0, 0.62, -0.05], null, [1.05, 1.1, 0.9]);
+            for (let i = 0; i < 4; i++) this._lvMesh(this.body, lvCone(0.04, 0.12, 4), stone, [0, 0.88 - i * 0.12, -0.27 - i * 0.012], [-1.2, 0, 0]);
+            // Folded wings, pressed flat to the back.
+            for (const s of [-1, 1]) this._lvTris(this.body, stone, [[[s * 0.1, 0.85, -0.17], [s * 0.42, 1.05, -0.3], [s * 0.3, 0.42, -0.32]], [[s * 0.42, 1.05, -0.3], [s * 0.4, 0.62, -0.36], [s * 0.3, 0.42, -0.32]]]);
+            this.head = this._lvGroup(null, 0, 0.95, 0.15);
+            this._lvMesh(this.head, new THREE.DodecahedronGeometry(0.19, 0), stone, null, null, [1, 0.9, 1.05]);
+            this._lvMesh(this.head, lvBox(0.3, 0.06, 0.08), stone, [0, 0.07, 0.13]);
+            for (const s of [-1, 1]) {
+                this._lvMesh(this.head, lvCone(0.04, 0.22, 4), stone, [s * 0.12, 0.16, -0.06], [-0.8, 0, -s * 0.5]);
+                this._lvMesh(this.head, lvCone(0.035, 0.14, 4), stone, [s * 0.2, 0.02, -0.02], [0, 0, -s * 1.3]);
+                this._lvMesh(this.head, lvSph(0.025, 5, 4), this._mat(p.accent, 1.0, 0.3, p.accent), [s * 0.07, 0.025, 0.165]);
+            }
+            // MAW: a lead rain spout jutting from the jaws, still dripping.
+            this.maw = this._lvGroup(this.head, 0, -0.07, 0.12);
+            this._lvMesh(this.maw, lvCyl(0.045, 0.045, 0.25, 7), lead, [0, 0, 0.12], [Math.PI / 2, 0, 0]);
+            this._lvMesh(this.maw, lvTor(0.045, 0.012, 3, 8), lead, [0, 0, 0.25]);
+            this._lvMesh(this.maw, lvBox(0.16, 0.05, 0.12), stone, [0, -0.06, 0.02]);
+            this.drip = this._lvGroup(this.maw, 0, -0.02, 0.24);
+            this._lvMesh(this.drip, lvCyl(0.012, 0.016, 0.24, 5), water, [0, -0.12, 0]);
+            this._lvMesh(this.drip, lvSph(0.024, 5, 4), water, [0, -0.25, 0], null, [1, 1.3, 1]);
+            // CORE: an iron collar with a little bronze bell on the chest.
+            this.core = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.core, lvTor(0.18, 0.016, 3, 12), lead, [0, 0.86, 0.0], [Math.PI / 2, 0, 0], [1.05, 0.9, 1]);
+            this.bell = this._lvGroup(this.core, 0, 0.86, 0.17);
+            this.addStrut(this.bell, lead, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, -0.1, 0.05), 0.01, 0.01, 4);
+            this._lvMesh(this.bell, lvCyl(0.04, 0.085, 0.12, 8), bronze, [0, -0.16, 0.06]);
+            this._lvMesh(this.bell, lvSph(0.025, 5, 4), bronze, [0, -0.23, 0.06]);
+            const hand = (s) => { const g = new THREE.Group(); this._lvMesh(g, lvSph(0.08, 6, 4), stone, null, null, [1, 0.6, 1.2]); for (let i = -1; i <= 1; i++) this._lvMesh(g, lvCone(0.018, 0.08, 4), lead, [i * 0.04, -0.03, 0.1], [Math.PI * 0.6, 0, 0]); return g; };
+            this.leftArm = this._lvLimb(null, -0.3, 0.8, 0.02, [[-0.1, -0.28, 0.14], [-0.08, -0.67, 0.24]], 0.075, 0.06, stone, hand(-1));
+            this.rightArm = this._lvLimb(null, 0.3, 0.8, 0.02, [[0.1, -0.28, 0.14], [0.08, -0.67, 0.24]], 0.075, 0.06, stone, hand(1));
+            const foot = () => { const g = new THREE.Group(); this._lvMesh(g, lvBox(0.14, 0.07, 0.22), stone, [0, 0, 0.05]); for (let i = -1; i <= 1; i++) this._lvMesh(g, lvCone(0.02, 0.07, 4), lead, [i * 0.045, -0.01, 0.18], [Math.PI / 2, 0, 0]); return g; };
+            this.leftLeg = this._lvLimb(null, -0.17, 0.4, -0.08, [[-0.04, 0.02, 0.22], [-0.04, -0.35, 0.12]], 0.1, 0.08, stone, foot());
+            this.rightLeg = this._lvLimb(null, 0.17, 0.4, -0.08, [[0.04, 0.02, 0.22], [0.04, -0.35, 0.12]], 0.1, 0.08, stone, foot());
+            this._lvRig({ CORE: this.core, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, MAW: this.maw, HEAD: this.head, BODY: this.body, TORSO: this.body },
+                ['BODY', 'TORSO'], [this.body, this.head, this.core, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg], ['CORE', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'MAW', 'HEAD']);
+        }
+
+        // ── Void Ferret Kit: a slinky ferret half-poured through a hole ──────
+        // Voidspawn rig: ABYSSAL_EYE/MAW/VOID_TENDRIL_1/VOID_TENDRIL_2/CORE.
+        _buildLvVoidFerret() {
+            const p = this.profile;
+            const fur = this._skinMat(p.bodyColor, 0.8);
+            const ghost = this.applySkin(this._mat(p.bodyColor, 0.42, 0.8));   // the half still somewhere else
+            const voidM = this._mat(0x05030a, 1.0, 0.2, 0x10051a);
+            const rim = this._mat(p.accent, 0.95, 0.3, p.accent);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            const V = (x, y, z) => new THREE.Vector3(x, y, z);
+            this.addStrut(this.body, fur, V(0, 0.32, 0), V(0, 0.33, 0.2), 0.12, 0.11, 7);
+            this.addStrut(this.body, fur, V(0, 0.33, 0.2), V(0, 0.3, 0.36), 0.11, 0.1, 7);
+            this._lvMesh(this.body, lvSph(0.11, 7, 5), fur, [0, 0.33, 0.2]);
+            this.addStrut(this.body, ghost, V(0, 0.32, 0), V(0, 0.3, -0.25), 0.12, 0.115, 7);
+            this.addStrut(this.body, ghost, V(0, 0.3, -0.25), V(0, 0.26, -0.44), 0.115, 0.1, 7);
+            this._lvMesh(this.body, lvSph(0.115, 7, 5), ghost, [0, 0.3, -0.25]);
+            this._lvMesh(this.body, lvSph(0.1, 7, 5), ghost, [0, 0.26, -0.44]);
+            // CORE: the hole in the world its waist passes through.
+            this.core = this._lvGroup(null, 0, 0.32, 0);
+            this.core.rotation.y = 0.25;
+            this._lvMesh(this.core, new THREE.CircleGeometry(0.27, 9), voidM);
+            this._lvMesh(this.core, lvTor(0.27, 0.035, 4, 12), rim);
+            // A second tendril creeps out of the rim with a stolen spoon.
+            const spoon = new THREE.Group();
+            this._lvMesh(spoon, lvSph(0.035, 6, 4), this._mat(0xd0d4dc, 1.0, 0.2), [0, 0, 0.03], null, [1, 0.3, 1.4]);
+            this._lvMesh(spoon, lvBox(0.015, 0.008, 0.12), this._mat(0xd0d4dc, 1.0, 0.2), [0, 0, -0.06]);
+            this.tendril = this._lvLimb(this.core, Math.cos(0.7) * 0.27, Math.sin(0.7) * 0.27, 0, [[0.08, 0.08, 0.06], [0.12, 0.04, 0.16]], 0.03, 0.012, ghost, spoon);
+            this.head = this._lvGroup(null, 0, 0.33, 0.42);
+            this._lvMesh(this.head, lvSph(0.12, 7, 5), fur, null, null, [0.9, 0.85, 1.1]);
+            this._lvMesh(this.head, lvCone(0.07, 0.14, 5), fur, [0, -0.02, 0.15], [Math.PI / 2, 0, 0]);
+            this._lvMesh(this.head, lvSph(0.022, 5, 4), voidM, [0, -0.02, 0.22]);
+            for (const s of [-1, 1]) this._lvMesh(this.head, lvSph(0.045, 5, 4), fur, [s * 0.08, 0.09, -0.02], null, [1, 1, 0.45]);
+            // ABYSSAL_EYE: no eyes but one, open in the forehead.
+            this.eye = this._eye(this.head, 0, 0.06, 0.09, 0.05, p.accent);
+            this.maw = this._lvMesh(this.head, lvSph(0.05, 6, 4), voidM, [0, -0.07, 0.12], null, [1.2, 0.4, 1]);
+            this.tail = this._lvLimb(null, 0, 0.26, -0.5, [[0, 0.04, -0.15], [0.06, 0.12, -0.28], [0.02, 0.24, -0.34]], 0.06, 0.015, ghost);
+            const pawM = (m) => this._lvMesh(null, lvSph(0.04, 5, 4), m, null, null, [1, 0.6, 1.3]);
+            this.leftLeg = this._lvLimb(null, -0.06, 0.26, 0.28, [[-0.02, -0.21, 0.02]], 0.04, 0.035, fur, pawM(fur));
+            this.rightLeg = this._lvLimb(null, 0.06, 0.26, 0.28, [[0.02, -0.21, 0.02]], 0.04, 0.035, fur, pawM(fur));
+            this.rearLeftLeg = this._lvLimb(null, -0.06, 0.24, -0.36, [[-0.02, -0.2, -0.02]], 0.04, 0.035, ghost, pawM(ghost));
+            this.rearRightLeg = this._lvLimb(null, 0.06, 0.24, -0.36, [[0.02, -0.2, -0.02]], 0.04, 0.035, ghost, pawM(ghost));
+            this._lvRig({ ABYSSAL_EYE: this.eye, MAW: this.maw, VOID_TENDRIL_1: this.tail, VOID_TENDRIL_2: this.tendril, CORE: this.core, HEAD: this.head, BODY: this.body,
+                LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, REAR_LEFT_LEG: this.rearLeftLeg, REAR_RIGHT_LEG: this.rearRightLeg },
+                ['CORE', 'BODY'], [this.core, this.body, this.head, this.tail, this.leftLeg, this.rightLeg, this.rearLeftLeg, this.rearRightLeg],
+                ['ABYSSAL_EYE', 'MAW', 'VOID_TENDRIL_1', 'VOID_TENDRIL_2', 'HEAD', 'LEFT_LEG', 'RIGHT_LEG', 'REAR_LEFT_LEG', 'REAR_RIGHT_LEG']);
+        }
+
+        // ── Astral Jellyfish: a faceted night-sky bell, a ringed planet eye ──
+        // TentacledCreature rig: EYE/TENTACLE_ONE/TENTACLE_TWO/BODY/BEAK.
+        _buildLvAstralJelly() {
+            const p = this.profile;
+            const bellM = this.applySkin(this._mat(p.bodyColor, 0.74, 0.2, 0x10184a));
+            const star = this._mat(0xffffff, 1.0, 0.2, 0xfff8d0);
+            const line = this._mat(p.accent, 0.8, 0.2, p.accent);
+            const sting = this._mat(0x9adfff, 0.85, 0.2, 0x3a9adf);
+            this.body = this._lvGroup(null, 0, 1.35, 0);
+            this._lvMesh(this.body, new THREE.SphereGeometry(0.45, 7, 4, 0, Math.PI * 2, 0, Math.PI * 0.55), bellM);
+            this._lvMesh(this.body, lvTor(0.44, 0.03, 3, 14), bellM, [0, -0.07, 0], [Math.PI / 2, 0, 0]);
+            // Star specks on the bell and a constellation drawn inside it.
+            for (let i = 0; i < 10; i++) { const a = i * 2.4, e = 0.25 + this.idRand() * 1.1; this._lvStud(this.body, new THREE.OctahedronGeometry(0.03, 0), star, [0, 0, 0], [0.45, 0.45, 0.45], [Math.cos(a) * Math.cos(e), Math.sin(e), Math.sin(a) * Math.cos(e)], -0.005); }
+            const cp = [[-0.6, 0.5], [-0.1, 0.9], [0.4, 0.7], [0.9, 1.1], [1.5, 0.6]].map(([a, e]) => new THREE.Vector3(Math.cos(a) * Math.cos(e), Math.sin(e), Math.sin(a) * Math.cos(e)).multiplyScalar(0.44));
+            for (let i = 0; i < cp.length; i++) { this._lvMesh(this.body, new THREE.OctahedronGeometry(0.035, 0), star, [cp[i].x, cp[i].y, cp[i].z]); if (i) this.addStrut(this.body, line, cp[i - 1], cp[i], 0.007, 0.007, 3); }
+            // EYE: a stalked eye like a small planet, wearing its own ring.
+            this.addStrut(this.body, bellM, new THREE.Vector3(0, 0.0, 0), new THREE.Vector3(0, -0.3, 0), 0.07, 0.05, 6);
+            this.eye = this._lvGroup(this.body, 0, -0.38, 0);
+            this._lvMesh(this.eye, lvSph(0.1, 8, 6), this._mat(0xd8e8ff, 1.0, 0.3));
+            this._lvMesh(this.eye, lvSph(0.05, 6, 4), this._mat(p.accent, 1.0, 0.2, p.accent), [0, 0, 0.07]);
+            this.ring = this._lvMesh(this.eye, lvTor(0.16, 0.012, 3, 16), line, null, [1.2, 0.3, 0]);
+            this.ring.userData.float = true; this._floaters.push(this.ring);
+            // BEAK: four oral arms under the eye.
+            this.beak = this._lvGroup(this.body, 0, -0.48, 0);
+            for (let i = 0; i < 4; i++) this._lvMesh(this.beak, lvCone(0.025, 0.12, 4), bellM, [Math.cos(i * 1.57) * 0.04, -0.03, Math.sin(i * 1.57) * 0.04], [Math.PI, 0, 0]);
+            // Two long zigzag stinging tentacles, plus a fringe off the rim.
+            const zig = (s) => this._lvLimb(null, s * 0.42, 1.27, 0.1, [[s * 0.06, -0.22, 0.04], [-s * 0.03, -0.44, 0.06], [s * 0.06, -0.66, 0.04], [0, -0.86, 0.02]], 0.03, 0.014, sting);
+            this.tentacleOne = zig(-1); this.tentacleTwo = zig(1);
+            this._fringe = [];
+            for (let i = 0; i < 8; i++) { const a = (i + 0.5) / 8 * Math.PI * 2; this._fringe.push(this._lvLimb(null, Math.cos(a) * 0.43, 1.27, Math.sin(a) * 0.43, [[Math.cos(a) * 0.03, -0.18, Math.sin(a) * 0.03], [0, -0.36, 0]], 0.018, 0.008, line)); }
+            this._lvRig({ EYE: this.eye, TENTACLE_ONE: this.tentacleOne, TENTACLE_TWO: this.tentacleTwo, BODY: this.body, BEAK: this.beak },
+                ['BODY'], [this.body, this.tentacleOne, this.tentacleTwo, ...this._fringe], ['EYE', 'TENTACLE_ONE', 'TENTACLE_TWO', 'BEAK']);
+        }
+
+        // ── Lunar Hopper: crater-pocked hare, a glowing crescent on its brow ──
+        // Rabbit rig: HEAD/BODY/EARS/LEFT_LEG/RIGHT_LEG/REAR_LEFT_LEG/REAR_RIGHT_LEG/TAIL/TEETH.
+        _buildLvLunarHopper() {
+            const p = this.profile;
+            const fur = this._skinMat(p.bodyColor, 0.9);
+            const crater = this._mat(0x8a8a88, 1.0, 0.9);
+            const pink = this._mat(0xe8b8c0, 1.0, 0.7);
+            const C = [0, 0.42, -0.06], R = [0.255, 0.255, 0.39];
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvSph(0.3, 8, 6), fur, C, null, [0.85, 0.85, 1.3]);
+            for (let i = 0; i < 6; i++) { const a = i * 2.2 + 0.4, e = 0.1 + this.idRand() * 0.8; this._lvStud(this.body, lvCyl(0.055, 0.045, 0.03, 7), crater, C, R, [Math.cos(a) * Math.cos(e), Math.sin(e), Math.sin(a) * Math.cos(e)], -0.008); }
+            this.head = this._lvGroup(null, 0, 0.62, 0.34);
+            this._lvMesh(this.head, lvSph(0.16, 8, 6), fur, null, null, [0.9, 0.95, 1.15]);
+            this._lvMesh(this.head, lvTor(0.055, 0.014, 3, 8, Math.PI), this._mat(p.accent, 1.0, 0.3, p.accent), [0, 0.1, 0.13], [-0.6, 0, Math.PI]);
+            for (const s of [-1, 1]) this._eye(this.head, s * 0.1, 0.03, 0.09, 0.045, 0x101018).rotation.y = s * 0.8;
+            this._lvMesh(this.head, lvSph(0.025, 5, 4), pink, [0, -0.02, 0.18]);
+            this.teeth = this._lvGroup(this.head, 0, -0.08, 0.16);
+            for (const s of [-1, 1]) this._lvMesh(this.teeth, lvBox(0.025, 0.05, 0.015), this._mat(0xfaf6ec, 1.0, 0.3), [s * 0.014, 0, 0]);
+            this.ears = this._lvGroup(this.head, 0, 0.12, -0.04);
+            for (const s of [-1, 1]) { const e = this._lvGroup(this.ears, s * 0.05, 0, 0); e.rotation.set(-0.35, 0, -s * 0.18); this._lvMesh(e, lvSph(0.06, 6, 5), fur, [0, 0.25, 0], null, [0.6, 4.5, 0.3]); this._lvMesh(e, lvSph(0.045, 6, 5), pink, [0, 0.25, 0.012], null, [0.5, 4.2, 0.2]); }
+            const pawM = () => this._lvMesh(null, lvSph(0.04, 5, 4), fur, null, null, [1, 0.6, 1.4]);
+            this.leftLeg = this._lvLimb(null, -0.09, 0.3, 0.2, [[0, -0.26, 0.04]], 0.035, 0.03, fur, pawM());
+            this.rightLeg = this._lvLimb(null, 0.09, 0.3, 0.2, [[0, -0.26, 0.04]], 0.035, 0.03, fur, pawM());
+            const hind = (s) => {
+                const g = this._lvLimb(null, s * 0.16, 0.36, -0.2, [[0, -0.16, -0.14], [0, -0.31, -0.02]], 0.06, 0.045, fur, this._lvMesh(null, lvBox(0.08, 0.045, 0.36), fur, [0, -0.005, 0.12]));
+                this._lvMesh(g, lvSph(0.15, 7, 5), fur, null, null, [0.6, 1.0, 1.3]); return g;
+            };
+            this.rearLeftLeg = hind(-1); this.rearRightLeg = hind(1);
+            this.tail = this._lvMesh(this.bodyGroup, lvSph(0.08, 6, 5), this._mat(0xfaf8f0, 1.0, 0.95), [0, 0.5, -0.44]);
+            this._lvRig({ HEAD: this.head, BODY: this.body, EARS: this.ears, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, REAR_LEFT_LEG: this.rearLeftLeg, REAR_RIGHT_LEG: this.rearRightLeg, TAIL: this.tail, TEETH: this.teeth },
+                ['BODY'], [this.body, this.head, this.leftLeg, this.rightLeg, this.rearLeftLeg, this.rearRightLeg, this.tail], ['HEAD', 'EARS', 'LEFT_LEG', 'RIGHT_LEG', 'REAR_LEFT_LEG', 'REAR_RIGHT_LEG', 'TAIL', 'TEETH']);
+        }
+
+        // ── Mall Guard Bot: a squat drum on casters, CCTV head, riot shield ──
+        // RoboticDefender rig: HEAD/ARM_CANNON/TORSO/LEG_JOINTS/SENSORS/JAWS.
+        _buildLvMallGuard() {
+            const p = this.profile;
+            const plate = this._skinMat(p.bodyColor, 0.4);
+            const grey = this._mat(0x9aa0a8, 1.0, 0.4);
+            const black = this._mat(0x181818, 1.0, 0.5);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvCyl(0.36, 0.4, 0.56, 8), plate, [0, 0.56, 0]);
+            this._lvMesh(this.body, lvCyl(0.376, 0.384, 0.08, 8), this._mat(0xf0f0f0, 1.0, 0.5), [0, 0.66, 0]);
+            this._lvMesh(this.body, lvBox(0.1, 0.12, 0.02), this._mat(0xd8b040, 1.0, 0.3), [0.17, 0.76, 0.33], [0, 0.48, 0]);
+            for (const s of [-1, 1]) this._lvMesh(this.body, lvSph(0.08, 6, 4), grey, [s * 0.38, 0.74, 0]);
+            this._lvMesh(this.body, lvCyl(0.05, 0.05, 0.16, 6), grey, [0, 0.9, 0]);
+            // The keys to every exit, swinging on a lanyard from the badge.
+            const ring = new THREE.Group();
+            this._lvMesh(ring, lvTor(0.03, 0.006, 3, 8), grey, [0, -0.03, 0]);
+            for (let i = 0; i < 3; i++) this._lvMesh(ring, lvBox(0.015, 0.07, 0.006), this._mat(0xc8b060, 1.0, 0.3), [(i - 1) * 0.02, -0.09, 0.004], [0, 0, (i - 1) * 0.3]);
+            this.keys = this._lvLimb(this.body, 0.17, 0.7, 0.34, [[0.01, -0.12, 0.02], [-0.01, -0.2, 0.03]], 0.008, 0.008, this._mat(0xc02020, 1.0, 0.8), ring);
+            // LEG_JOINTS: a skirt on three caster wheels.
+            this.base = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.base, lvCyl(0.4, 0.34, 0.14, 8), grey, [0, 0.21, 0]);
+            for (let i = 0; i < 3; i++) { const a = i * 2.09 + 0.5; this._lvMesh(this.base, lvBox(0.03, 0.08, 0.03), grey, [Math.cos(a) * 0.22, 0.14, Math.sin(a) * 0.22]); this._lvMesh(this.base, lvCyl(0.07, 0.07, 0.05, 8), black, [Math.cos(a) * 0.22, 0.07, Math.sin(a) * 0.22], [0, 0, Math.PI / 2]); }
+            // HEAD: a CCTV camera that turns to follow you.
+            this.head = this._lvGroup(null, 0, 0.98, 0);
+            this._lvMesh(this.head, lvBox(0.24, 0.18, 0.34), grey, [0, 0.04, 0.04]);
+            this._lvMesh(this.head, lvBox(0.28, 0.03, 0.4), plate, [0, 0.145, 0.06]);
+            this._lvMesh(this.head, lvCyl(0.07, 0.08, 0.06, 8), black, [0, 0.04, 0.23], [Math.PI / 2, 0, 0]);
+            this.lens = this._lvMesh(this.head, lvSph(0.045, 6, 4), this._mat(p.accent, 1.0, 0.2, p.accent), [0, 0.04, 0.255], null, [1, 1, 0.5]);
+            // SENSORS: a red and blue beacon on the hood.
+            this.siren = this._lvGroup(this.head, 0, 0.16, 0.0);
+            this._lvMesh(this.siren, lvCyl(0.06, 0.07, 0.03, 8), black, [0, 0.0, 0]);
+            this._lvMesh(this.siren, new THREE.SphereGeometry(0.06, 6, 4, 0, Math.PI, 0, Math.PI / 2), this._mat(0xff2a2a, 0.9, 0.2, 0xff2a2a), [0, 0.015, 0]);
+            this._lvMesh(this.siren, new THREE.SphereGeometry(0.06, 6, 4, Math.PI, Math.PI, 0, Math.PI / 2), this._mat(0x2a5aff, 0.9, 0.2, 0x2a5aff), [0, 0.015, 0]);
+            // JAWS: the speaker grille it barks "the mall is closed" through.
+            this.jaws = this._lvGroup(null, 0, 0.47, 0.385);
+            this._lvMesh(this.jaws, lvBox(0.24, 0.12, 0.03), black);
+            for (let i = 0; i < 4; i++) this._lvMesh(this.jaws, lvBox(0.22, 0.012, 0.04), grey, [0, -0.045 + i * 0.03, 0]);
+            // ARM_CANNON: a long police torch; the left arm holds a riot shield.
+            const torch = new THREE.Group();
+            this._lvMesh(torch, lvCyl(0.05, 0.07, 0.26, 8), black, [0, 0, 0.1], [Math.PI / 2, 0, 0]);
+            this.torchLens = this._lvMesh(torch, lvCyl(0.065, 0.065, 0.01, 8), this._mat(0xfff0a0, 1.0, 0.2, 0xfff0a0), [0, 0, 0.235], [Math.PI / 2, 0, 0]);
+            this.rightArm = this._lvLimb(null, 0.4, 0.72, 0, [[0.06, -0.16, 0.12], [0.06, -0.2, 0.28]], 0.06, 0.05, grey, torch);
+            const shield = new THREE.Group();
+            this._lvMesh(shield, lvBox(0.36, 0.5, 0.03), this._mat(0x9ac8e8, 0.55, 0.1), [0, -0.02, 0.05]);
+            this._lvMesh(shield, lvBox(0.3, 0.06, 0.035), black, [0, 0.12, 0.05]);
+            this.leftArm = this._lvLimb(null, -0.4, 0.72, 0, [[-0.06, -0.14, 0.14]], 0.06, 0.05, grey, shield);
+            this._lvRig({ HEAD: this.head, ARM_CANNON: this.rightArm, TORSO: this.body, LEG_JOINTS: this.base, SENSORS: this.siren, JAWS: this.jaws, LEFT_ARM: this.leftArm },
+                ['TORSO'], [this.body, this.head, this.base, this.jaws, this.leftArm, this.rightArm], ['HEAD', 'ARM_CANNON', 'LEG_JOINTS', 'SENSORS', 'JAWS', 'LEFT_ARM']);
+        }
+
+        // ── Loose Bolt Bot: a crooked box held by one bolt, spring legs ──────
+        // Robot rig: HEAD/CORE/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/JAWS.
+        _buildLvLooseBolt() {
+            const p = this.profile;
+            const tin = this._skinMat(p.bodyColor, 0.5);
+            const steel = this._mat(0xb8bcc4, 1.0, 0.3);
+            const dark = this._mat(0x202020, 1.0, 0.5);
+            this.body = this._lvGroup(null, 0, 0.62, 0);
+            this.body.rotation.z = 0.12;
+            this._lvMesh(this.body, lvBox(0.42, 0.36, 0.34), tin);
+            this._lvMesh(this.body, lvBox(0.16, 0.14, 0.02), this._mat(0xa86a3a, 1.0, 0.6), [0.1, 0.05, 0.175], [0, 0, 0.1]);
+            for (let i = 0; i < 6; i++) this._lvMesh(this.body, lvSph(0.016, 4, 3), steel, [(i % 3 - 1) * 0.17, i < 3 ? 0.15 : -0.15, 0.172]);
+            this.oil = this._lvGroup(this.body, 0.14, -0.18, 0.1);
+            this._lvMesh(this.oil, lvCone(0.02, 0.06, 4), dark, [0, -0.03, 0], [Math.PI, 0, 0]);
+            this._lvMesh(this.oil, lvSph(0.02, 4, 3), dark, [0, -0.075, 0], null, [1, 1.3, 1]);
+            // CORE: the one loose bolt right through it, half its nut spun off.
+            this.core = this._lvGroup(this.body, 0, 0, 0.04);
+            this._lvMesh(this.core, lvCyl(0.035, 0.035, 0.62, 6), steel, null, [0, 0, Math.PI / 2]);
+            this._lvMesh(this.core, lvCyl(0.08, 0.08, 0.06, 6), steel, [0.32, 0, 0], [0, 0, Math.PI / 2]);
+            this._lvMesh(this.core, lvCyl(0.07, 0.07, 0.05, 6), steel, [-0.29, 0, 0], [0.4, 0, Math.PI / 2]);
+            // HEAD: a tin can on a spring, one big lens and one tiny one.
+            for (let i = 0; i < 3; i++) this._lvMesh(this.body, lvTor(0.05, 0.016, 4, 8), steel, [0, 0.2 + i * 0.03, 0], [Math.PI / 2, 0, 0]);
+            this.head = this._lvGroup(this.body, 0, 0.37, 0);
+            this.head.rotation.z = -0.2;
+            this._lvMesh(this.head, lvCyl(0.14, 0.14, 0.2, 8), tin);
+            this._lvMesh(this.head, lvTor(0.14, 0.012, 3, 10), steel, [0, 0.1, 0], [Math.PI / 2, 0, 0]);
+            this._eye(this.head, -0.05, 0.02, 0.12, 0.055, p.accent);
+            this._eye(this.head, 0.07, 0.04, 0.125, 0.025, 0xff3322);
+            this.addStrut(this.head, steel, new THREE.Vector3(0.06, 0.08, 0), new THREE.Vector3(0.06, 0.24, 0), 0.008, 0.008, 4);
+            this.addStrut(this.head, steel, new THREE.Vector3(0.06, 0.24, 0), new THREE.Vector3(0.13, 0.3, 0), 0.008, 0.008, 4);
+            this._lvMesh(this.head, lvSph(0.02, 5, 4), this._mat(0xff3322, 1.0, 0.3, 0xff3322), [0.13, 0.3, 0]);
+            // JAWS: a jaw plate dangling off its last hinge.
+            this.jaw = this._lvGroup(this.head, 0, -0.1, 0.12);
+            this.jaw.rotation.x = 0.5;
+            this._lvMesh(this.jaw, lvBox(0.16, 0.02, 0.1), tin, [0, -0.01, 0.04]);
+            const claw = new THREE.Group();
+            for (const s of [-1, 1]) this._lvMesh(claw, lvCone(0.02, 0.1, 4), steel, [s * 0.025, -0.04, 0], [0, 0, s * 0.3 + Math.PI]);
+            this.leftArm = this._lvLimb(this.body, -0.22, 0.08, 0, [[-0.1, -0.12, 0.06], [-0.12, -0.28, 0.12]], 0.03, 0.025, steel, claw);
+            const wrench = new THREE.Group();
+            this._lvMesh(wrench, lvBox(0.03, 0.18, 0.015), steel, [0, -0.07, 0]);
+            this._lvMesh(wrench, lvTor(0.04, 0.014, 3, 8, Math.PI * 1.4), steel, [0, -0.19, 0], [0, 0, -Math.PI * 0.2]);
+            this.rightArm = this._lvLimb(this.body, 0.22, 0.08, 0, [[0.1, -0.1, 0.08], [0.12, -0.26, 0.14]], 0.03, 0.025, steel, wrench);
+            const spring = (s) => {
+                const g = this._lvGroup(null, s * 0.12, 0.47, 0);
+                for (let i = 0; i < 12; i++) this._lvMesh(g, lvTor(0.05, 0.018, 4, 8), steel, [0, -0.02 - i * 0.034, 0], [Math.PI / 2, 0, 0]);
+                this._lvMesh(g, lvBox(0.12, 0.04, 0.16), dark, [0, -0.43, 0.02]);
+                return g;
+            };
+            this.leftLeg = spring(-1); this.rightLeg = spring(1);
+            this._lvRig({ HEAD: this.head, CORE: this.core, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, JAWS: this.jaw, TORSO: this.body, BODY: this.body },
+                ['TORSO', 'BODY'], [this.body, this.leftLeg, this.rightLeg], ['HEAD', 'CORE', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'JAWS']);
+        }
+
+        // ── Plush Bear: a threadbare shop teddy, one button eye, price tag ───
+        // Golem rig: CORE/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/MAW.
+        _buildLvPlushBear() {
+            const p = this.profile;
+            const plush = this._skinMat(p.bodyColor, 0.95);
+            const tan = this._mat(0xd8b088, 1.0, 0.9);
+            const black = this._mat(0x101010, 1.0, 0.3);
+            const thread = this._mat(0x2a1a10, 1.0, 0.9);
+            const C = [0, 0.42, 0], R = [0.34, 0.38, 0.306];
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvSph(0.34, 8, 6), plush, C, null, [1, 1.12, 0.9]);
+            this._lvMesh(this.body, lvSph(0.22, 7, 5), tan, [0, 0.36, 0.16], null, [1, 1.1, 0.75]);
+            // Stuffing bursting out of a split side seam.
+            for (let i = 0; i < 3; i++) this._lvStud(this.body, new THREE.IcosahedronGeometry(0.07 - i * 0.012, 0), this._mat(0xf4f0e8, 1.0, 0.95), C, R, [-0.8, 0.3 - i * 0.12, 0.5 + i * 0.05], -0.01);
+            // CORE: a stitched red felt heart.
+            this.core = this._lvGroup(null, -0.12, 0.58, 0.27);
+            const felt = this._mat(p.accent, 1.0, 0.85);
+            for (const s of [-1, 1]) this._lvMesh(this.core, lvSph(0.04, 6, 4), felt, [s * 0.03, 0.01, 0], null, [1, 1, 0.4]);
+            this._lvMesh(this.core, lvCone(0.065, 0.08, 4), felt, [0, -0.045, 0], [Math.PI, 0, 0], [1, 1, 0.35]);
+            this.head = this._lvGroup(null, 0, 0.93, 0.02);
+            this._lvMesh(this.head, lvSph(0.27, 8, 6), plush);
+            this._lvMesh(this.head, lvSph(0.11, 7, 5), tan, [0, -0.06, 0.23], null, [1.25, 0.9, 0.85]);
+            this._lvMesh(this.head, lvSph(0.04, 6, 4), black, [0, -0.02, 0.31], null, [1.3, 0.8, 0.8]);
+            for (const s of [-1, 1]) { this._lvMesh(this.head, lvSph(0.09, 6, 5), plush, [s * 0.19, 0.2, 0], null, [1, 1, 0.5]); this._lvMesh(this.head, lvSph(0.055, 6, 4), tan, [s * 0.19, 0.2, 0.03], null, [1, 1, 0.3]); }
+            // One shank button eye; the other is gone, sewn shut with an X.
+            this._lvMesh(this.head, lvCyl(0.045, 0.045, 0.02, 8), black, [-0.09, 0.05, 0.25], [Math.PI / 2, 0, 0]);
+            for (const s of [-1, 1]) this._lvMesh(this.head, lvBox(0.07, 0.012, 0.014), thread, [0.09, 0.05, 0.25], [0, 0, s * 0.78]);
+            this.addStrut(this.head, thread, new THREE.Vector3(0.11, 0.03, 0.25), new THREE.Vector3(0.13, -0.06, 0.27), 0.004, 0.004, 3);
+            // The shop's price tag, still hanging off the left ear.
+            this.addStrut(this.head, this._mat(0xf0f0f0, 1.0, 0.8), new THREE.Vector3(-0.24, 0.2, 0.02), new THREE.Vector3(-0.3, 0.06, 0.06), 0.005, 0.005, 3);
+            this._lvMesh(this.head, lvBox(0.09, 0.06, 0.008), this._mat(0xfafafa, 1.0, 0.8), [-0.3, 0.03, 0.06]);
+            this._lvMesh(this.head, lvBox(0.07, 0.015, 0.01), this._mat(0xd02020, 1.0, 0.7), [-0.3, 0.03, 0.062]);
+            // MAW: a stitched mouth under the nose.
+            this.maw = this._lvGroup(this.head, 0, -0.1, 0.305);
+            this._lvMesh(this.maw, lvBox(0.01, 0.05, 0.01), thread, [0, 0.03, 0]);
+            for (const s of [-1, 1]) this._lvMesh(this.maw, lvBox(0.05, 0.01, 0.01), thread, [s * 0.02, 0.005, -0.004], [0, 0, s * 0.5]);
+            const pawEnd = () => { const g = new THREE.Group(); this._lvMesh(g, lvSph(0.1, 7, 5), plush); this._lvMesh(g, lvSph(0.06, 6, 4), tan, [0, 0, 0.06], null, [1, 1, 0.4]); return g; };
+            this.leftArm = this._lvLimb(null, -0.27, 0.62, 0.02, [[-0.12, -0.05, 0.2]], 0.09, 0.085, plush, pawEnd());
+            this.rightArm = this._lvLimb(null, 0.27, 0.62, 0.02, [[0.12, -0.05, 0.2]], 0.09, 0.085, plush, pawEnd());
+            const footEnd = () => { const g = new THREE.Group(); this._lvMesh(g, lvSph(0.12, 7, 5), plush, null, null, [1, 1, 0.6]); this._lvMesh(g, lvSph(0.08, 6, 4), tan, [0, 0, 0.06], null, [1, 1, 0.3]); return g; };
+            this.leftLeg = this._lvLimb(null, -0.16, 0.2, 0.1, [[-0.02, -0.06, 0.26]], 0.1, 0.095, plush, footEnd());
+            this.rightLeg = this._lvLimb(null, 0.16, 0.2, 0.1, [[0.02, -0.06, 0.26]], 0.1, 0.095, plush, footEnd());
+            this._lvRig({ CORE: this.core, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, MAW: this.maw, HEAD: this.head, BODY: this.body, TORSO: this.body },
+                ['BODY', 'TORSO'], [this.body, this.head, this.core, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg], ['CORE', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'MAW', 'HEAD']);
+        }
+
+        // ── Spark Plug Sprite: an escaped spark plug, arcing in its own gap ──
+        // ThunderElemental rig: CORE/BODY/arms/legs (electric)/MAW.
+        _buildLvSparkPlug() {
+            const p = this.profile;
+            const ceramic = this._skinMat(p.bodyColor, 0.3);
+            const steel = this._mat(0xa8b0b8, 1.0, 0.25);
+            const zap = this._mat(p.accent, 0.95, 0.2, p.accent);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvCyl(0.05, 0.05, 0.08, 6), steel, [0, 1.32, 0]);
+            for (let i = 0; i < 4; i++) this._lvMesh(this.body, lvCyl(i % 2 ? 0.085 : 0.1, i % 2 ? 0.085 : 0.1, 0.06, 8), ceramic, [0, 1.25 - i * 0.06, 0]);
+            this._lvMesh(this.body, lvCyl(0.11, 0.12, 0.2, 8), ceramic, [0, 0.93, 0]);
+            this._lvMesh(this.body, lvCyl(0.15, 0.15, 0.12, 6), steel, [0, 0.77, 0]);
+            this._lvMesh(this.body, lvCyl(0.08, 0.08, 0.18, 8), steel, [0, 0.62, 0]);
+            for (let i = 0; i < 3; i++) this._lvMesh(this.body, lvTor(0.08, 0.012, 3, 8), steel, [0, 0.57 + i * 0.05, 0], [Math.PI / 2, 0, 0]);
+            this._lvMesh(this.body, lvCyl(0.015, 0.015, 0.06, 5), steel, [0, 0.5, 0]);
+            this._lvMesh(this.body, lvBox(0.025, 0.12, 0.025), steel, [0.07, 0.47, 0]);
+            this._lvMesh(this.body, lvBox(0.09, 0.025, 0.025), steel, [0.035, 0.4, 0]);
+            // A face on the insulator: two arc-light eyes and a zigzag grin.
+            for (const s of [-1, 1]) this._lvMesh(this.body, lvSph(0.025, 5, 4), zap, [s * 0.045, 0.97, 0.105]);
+            this.maw = this._lvGroup(null, 0, 0.9, 0.115);
+            const mp = [[-0.05, 0.01], [-0.025, -0.01], [0, 0.01], [0.025, -0.01], [0.05, 0.01]].map(([x, y]) => new THREE.Vector3(x, y, 0));
+            for (let i = 0; i < 4; i++) this.addStrut(this.maw, this._mat(0x1a1a24, 1.0, 0.5), mp[i], mp[i + 1], 0.008, 0.008, 3);
+            // CORE: the spark itself, jumping the electrode gap.
+            this.core = this._lvMesh(this.bodyGroup, new THREE.OctahedronGeometry(0.04, 0), this._mat(0xffffff, 1.0, 0.2, p.accent), [0, 0.44, 0]);
+            const spark = () => this._lvMesh(null, new THREE.OctahedronGeometry(0.035, 0), zap);
+            const bolt = (s, y, pts) => this._lvLimb(null, s * 0.1, y, 0, pts, 0.022, 0.014, zap, spark());
+            this.leftArm = bolt(-1, 0.77, [[-0.14, 0.1, 0.02], [-0.2, -0.02, 0.05], [-0.32, 0.08, 0.06]]);
+            this.rightArm = bolt(1, 0.77, [[0.14, 0.1, 0.02], [0.2, -0.02, 0.05], [0.32, 0.08, 0.06]]);
+            this.leftLeg = bolt(-1, 0.73, [[-0.06, -0.12, 0.02], [0.0, -0.24, 0.03], [-0.08, -0.36, 0.02]]);
+            this.rightLeg = bolt(1, 0.73, [[0.06, -0.12, 0.02], [0.0, -0.24, 0.03], [0.08, -0.36, 0.02]]);
+            this._lvRig({ CORE: this.core, BODY: this.body, LEFT_ELECTRIC_ARM: this.leftArm, RIGHT_ELECTRIC_ARM: this.rightArm, LEFT_ELECTRIC_LEG: this.leftLeg, RIGHT_ELECTRIC_LEG: this.rightLeg, MAW: this.maw },
+                ['BODY'], [this.body, this.core, this.maw, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg], ['CORE', 'LEFT_ELECTRIC_ARM', 'RIGHT_ELECTRIC_ARM', 'LEFT_ELECTRIC_LEG', 'RIGHT_ELECTRIC_LEG', 'MAW']);
+        }
+
+        // ── Plague Leech: arched and bloated, a glassy blood-full segment ────
+        // SegmentWorm rig: HEAD/HEART_SEGMENT/BODY_SEGMENT/TAIL/MAW.
+        _buildLvPlagueLeech() {
+            const p = this.profile;
+            const hide = this._skinMat(p.bodyColor, 0.35);
+            const band = this._mat(0x8a5a2a, 1.0, 0.5);
+            const boil = this._mat(p.accent, 1.0, 0.4, 0x2a3000);
+            // Anchored by the rear sucker, the front reared up to bite.
+            const S = [[-0.6, 0.13, 0.15], [-0.4, 0.18, 0.2], [-0.15, 0.24, 0.25], [0.1, 0.3, 0.26], [0.3, 0.42, 0.2], [0.44, 0.56, 0.14]];
+            this._segs = [];
+            const seg = (parent, i, mat) => { const [z, y, r] = S[i]; const m = this._lvMesh(parent, lvSph(r, 8, 6), mat, [0, y, z], null, [1.15, 0.8, 1]); this._segs.push(m); this._lvMesh(parent, lvTor(r * 0.97, 0.018, 3, 12), band, [0, y, z], null, [1.15, 0.8, 1]); return m; };
+            this.body = this._lvGroup(null, 0, 0, 0);
+            [1, 2, 4].forEach(i => seg(this.body, i, hide));
+            for (let i = 0; i < 6; i++) { const [z, y, r] = S[[1, 2, 4][i % 3]]; this._lvStud(this.body, lvSph(0.035 + (i % 2) * 0.015, 5, 4), boil, [0, y, z], [r * 1.15, r * 0.8, r], [Math.cos(i * 2.1) * 0.7, 0.8, Math.sin(i * 2.1) * 0.5], -0.01); }
+            // HEART_SEGMENT: glassy skin over a dark sac of every sickness it drank,
+            // pierced by the brass ring of an apothecary's tag.
+            this.heart = this._lvGroup(null, 0, 0, 0);
+            seg(this.heart, 3, this.applySkin(this._mat(0x6a1a1a, 0.55, 0.15)));
+            const H = S[3];
+            this.sac = this._lvMesh(this.heart, lvSph(0.15, 7, 5), this._mat(0xa01010, 1.0, 0.3, 0x300000), [0, H[1], H[0]]);
+            this._lvMesh(this.heart, lvTor(0.07, 0.012, 3, 10), this._mat(0xc8a040, 1.0, 0.3), [0.29, H[1] + 0.02, H[0]], [0, Math.PI / 2, 0]);
+            this._lvMesh(this.heart, lvBox(0.008, 0.1, 0.07), this._mat(0xe8dcb0, 1.0, 0.8), [0.31, H[1] - 0.1, H[0]]);
+            this.head = this._lvGroup(null, 0, 0, 0);
+            seg(this.head, 5, hide);
+            for (let i = 0; i < 5; i++) this._lvMesh(this.head, lvSph(0.012, 4, 3), this._mat(0x0a0a0a, 1.0, 0.3), [(i - 2) * 0.03, S[5][1] + 0.105, S[5][0] + 0.02 - Math.abs(i - 2) * 0.01]);
+            // MAW: a ring sucker set with tiny teeth, tipped down to bite.
+            this.maw = this._lvGroup(this.head, 0, S[5][1] - 0.02, S[5][0] + 0.13);
+            this.maw.rotation.x = 0.35;
+            this._lvMesh(this.maw, lvTor(0.07, 0.025, 4, 10), this._mat(0x5a1018, 1.0, 0.5));
+            for (let i = 0; i < 8; i++) this._lvMesh(this.maw, lvSph(0.012, 4, 3), this._mat(0xf0e8d8, 1.0, 0.4), [Math.cos(i * 0.785) * 0.05, Math.sin(i * 0.785) * 0.05, 0.01]);
+            this.tail = this._lvGroup(null, 0, 0, 0);
+            seg(this.tail, 0, hide);
+            this._lvMesh(this.tail, lvCyl(0.13, 0.15, 0.03, 10), this._mat(0x1a1410, 1.0, 0.6), [0, 0.02, -0.6]);
+            this._lvRig({ HEAD: this.head, HEART_SEGMENT: this.heart, BODY_SEGMENT: this.body, TAIL: this.tail, MAW: this.maw },
+                ['HEART_SEGMENT'], [this.heart, this.body, this.head, this.tail], ['HEAD', 'BODY_SEGMENT', 'TAIL', 'MAW']);
+        }
+
+        // ── Coin Purse Mimic: a kiss-lock purse, clasp knobs for eyes ────────
+        // ChestMimic rig: CORE/LID/TEETH/TONGUE/FEET.
+        _buildLvCoinPurse() {
+            const p = this.profile;
+            const leather = this._skinMat(p.bodyColor, 0.7);
+            const brass = this._mat(0xd8b040, 1.0, 0.25);
+            const tooth = this._mat(0xf0ead8, 1.0, 0.4);
+            const coinM = this._mat(p.accent, 1.0, 0.25, 0x302000);
+            this.core = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.core, new THREE.SphereGeometry(0.38, 9, 4, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), leather, [0, 0.4, 0], null, [1.25, 0.85, 0.8]);
+            this._lvMesh(this.core, lvCyl(0.44, 0.44, 0.01, 10), this._mat(0x3a0a10, 1.0, 0.8), [0, 0.39, 0], null, [1, 1, 0.64]);
+            this._lvMesh(this.core, lvTor(0.38, 0.022, 4, 14), brass, [0, 0.4, 0], [Math.PI / 2, 0, 0], [1.25, 0.8, 1]);
+            for (let i = 0; i < 2; i++) this._lvMesh(this.core, lvTor(0.3 - i * 0.08, 0.012, 3, 12), this._mat(0x5a3418, 1.0, 0.8), [0, 0.28 - i * 0.08, 0], [Math.PI / 2, 0, 0], [1.25 + i * 0.05, 0.8, 1]);
+            this.teeth = this._lvGroup(null, 0, 0, 0);
+            for (let i = 0; i < 9; i++) { const a = Math.PI * (0.12 + i * 0.095); this._lvMesh(this.teeth, lvCone(0.03, 0.08, 4), tooth, [Math.cos(a) * 0.44, 0.43, Math.sin(a) * 0.27]); }
+            // LID: the upper half on its rear hinge; the clasp knobs stare.
+            this.lid = this._lvGroup(null, 0, 0.4, -0.3);
+            this.lid.rotation.x = -0.18;
+            this._lvMesh(this.lid, new THREE.SphereGeometry(0.38, 9, 4, 0, Math.PI * 2, 0, Math.PI / 2), leather, [0, 0, 0.3], null, [1.25, 0.7, 0.8]);
+            this._lvMesh(this.lid, lvTor(0.38, 0.022, 4, 14), brass, [0, 0, 0.3], [Math.PI / 2, 0, 0], [1.25, 0.8, 1]);
+            for (let i = 0; i < 7; i++) { const a = Math.PI * (0.18 + i * 0.11); this._lvMesh(this.lid, lvCone(0.026, 0.07, 4), tooth, [Math.cos(a) * 0.44, -0.03, 0.3 + Math.sin(a) * 0.27], [Math.PI, 0, 0]); }
+            this.eyes = this._lvGroup(this.lid, 0, 0.05, 0.58);
+            for (const s of [-1, 1]) { this._lvMesh(this.eyes, lvSph(0.055, 7, 5), brass, [s * 0.06, 0, 0]); this._lvMesh(this.eyes, lvSph(0.025, 5, 4), this._mat(0x0a0a0a, 1.0, 0.3), [s * 0.06, 0.005, 0.045]); }
+            // TONGUE: a shingled run of coins lolling over the front lip.
+            this.tongue = this._lvGroup(null, 0, 0.41, -0.05);
+            for (let i = 0; i < 6; i++) this._lvMesh(this.tongue, lvCyl(0.07, 0.07, 0.022, 10), coinM, [Math.sin(i) * 0.02, 0.02 - Math.max(0, i - 3) * 0.05, 0.05 + i * 0.065], [1.2 + Math.max(0, i - 3) * 0.3, 0, 0]);
+            this.feet = this._lvGroup(null, 0, 0, 0);
+            for (const sx of [-1, 1]) for (const sz of [-1, 1]) this._lvMesh(this.feet, lvCyl(0.04, 0.03, 0.15, 6), leather, [sx * 0.18, 0.075, sz * 0.12]);
+            this._lvRig({ CORE: this.core, LID: this.lid, TEETH: this.teeth, TONGUE: this.tongue, FEET: this.feet },
+                ['CORE'], [this.core, this.lid, this.teeth, this.tongue, this.feet], ['LID', 'TEETH', 'TONGUE', 'FEET']);
+        }
+
+        // ── Morgue Crawler: pallid blue-veined centipede, a toe tag in tow ───
+        // SegmentWorm rig: HEAD/HEART_SEGMENT/BODY_SEGMENT/TAIL/MAW.
+        _buildLvMorgueCrawler() {
+            const p = this.profile;
+            const pale = this._skinMat(p.bodyColor, 0.6);
+            const vein = this._mat(p.accent, 1.0, 0.5);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this.heart = this._lvGroup(null, 0, 0, 0);
+            this.tail = this._lvGroup(null, 0, 0, 0);
+            this._legs = [];
+            const Z = [0.5, 0.33, 0.16, -0.01, -0.18, -0.35, -0.52, -0.69];
+            Z.forEach((z, i) => {
+                if (i === 0) return;
+                const parent = i === 3 ? this.heart : (i === 7 ? this.tail : this.body);
+                const y = 0.2 + Math.sin(i * 1.3) * 0.015, r = i > 5 ? 0.15 - (i - 5) * 0.02 : 0.15;
+                this._lvMesh(parent, lvSph(r, 8, 5), pale, [0, y, z], null, [1.3, 0.72, 1.0]);
+                this.addStrut(parent, vein, new THREE.Vector3(-0.05, y + r * 0.58, z - 0.08), new THREE.Vector3(0.04, y + r * 0.58, z + 0.08), 0.006, 0.006, 3);
+                for (const s of [-1, 1]) this._legs.push(this._lvLimb(this.body, s * 0.16, 0.19, z, [[s * 0.1, 0.08, 0.0], [s * 0.19, -0.19, 0.03]], 0.02, 0.013, pale));
+            });
+            this._lvMesh(this.heart, lvSph(0.05, 6, 4), this._mat(0xd88a9a, 1.0, 0.5, 0x401018), [0, 0.245, -0.01], null, [1.4, 0.5, 1]);
+            this.head = this._lvGroup(null, 0, 0.21, 0.52);
+            this._lvMesh(this.head, lvSph(0.12, 8, 5), pale, null, null, [1.3, 0.6, 1.1]);
+            for (const s of [-1, 1]) { this._lvMesh(this.head, lvSph(0.025, 5, 4), this._mat(0xe8eef0, 1.0, 0.2), [s * 0.08, 0.04, 0.08]); this.addStrut(this.head, pale, new THREE.Vector3(s * 0.04, 0.04, 0.1), new THREE.Vector3(s * 0.2, 0.06, 0.34), 0.01, 0.005, 3); }
+            // MAW: two hooked forcipules that gnaw at toes.
+            this.maw = this._lvGroup(this.head, 0, -0.03, 0.12);
+            this._jaws = [-1, 1].map(s => { const j = this._lvGroup(this.maw, s * 0.05, 0, 0); this._lvMesh(j, lvCone(0.022, 0.12, 4), this._mat(0x6a3a2a, 1.0, 0.4), [-s * 0.02, 0, 0.05], [Math.PI / 2, 0, s * 0.4]); return j; });
+            // The toe tag tied round its last segment, dragging behind.
+            this.addStrut(this.tail, this._mat(0xe8e0d0, 1.0, 0.9), new THREE.Vector3(0, 0.15, -0.75), new THREE.Vector3(0.05, 0.03, -0.92), 0.005, 0.005, 3);
+            this._lvMesh(this.tail, lvBox(0.1, 0.008, 0.16), this._mat(0xd8c890, 1.0, 0.9), [0.06, 0.012, -0.99], [0, 0.3, 0]);
+            this._lvMesh(this.tail, lvBox(0.06, 0.01, 0.012), this._mat(0x2a2a2a, 1.0, 0.8), [0.06, 0.015, -1.0], [0, 0.3, 0]);
+            this._lvRig({ HEAD: this.head, HEART_SEGMENT: this.heart, BODY_SEGMENT: this.body, TAIL: this.tail, MAW: this.maw },
+                ['HEART_SEGMENT'], [this.heart, this.body, this.head, this.tail], ['HEAD', 'BODY_SEGMENT', 'TAIL', 'MAW']);
+        }
+
+        // ── Pizza Ooze: a melted slice on a puddle of cheese, pepperoni eyes ─
+        // Slime rig: CORE/UPPER_BODY/LOWER_BODY/PSEUDOPOD_1/PSEUDOPOD_2/MAW.
+        _buildLvPizzaOoze() {
+            const p = this.profile;
+            const cheese = this._skinMat(p.bodyColor, 0.45);
+            const crust = this._mat(0xc8883a, 1.0, 0.8);
+            const pep = this._mat(p.accent, 1.0, 0.5);
+            this.blob = this._lvMesh(this.bodyGroup, lvSph(0.42, 8, 5), cheese, [0, 0.15, -0.05], null, [1.15, 0.38, 1.15]);
+            // UPPER_BODY: the slice itself, crust forward like a lip, tip drooping back.
+            this.slice = this._lvGroup(null, 0, 0, 0);
+            const L = [-0.42, 0.34, 0.32], Rr = [0.42, 0.34, 0.32], T = [0, 0.22, -0.6];
+            const lo = (q) => [q[0], q[1] - 0.05, q[2]];
+            this._lvTris(this.slice, cheese, [[L, Rr, T], [lo(L), lo(T), lo(Rr)], [L, T, lo(T)], [L, lo(T), lo(L)], [Rr, lo(T), T], [Rr, lo(Rr), lo(T)]]);
+            this._lvMesh(this.slice, lvCyl(0.075, 0.075, 0.9, 7), crust, [0, 0.32, 0.34], [0, 0, Math.PI / 2]);
+            const topY = (z) => 0.34 - 0.13 * (0.32 - z);
+            [[-0.05, -0.3], [0.08, -0.45]].forEach(([x, z]) => this._lvMesh(this.slice, lvCyl(0.06, 0.06, 0.015, 8), pep, [x, topY(z) + 0.006, z], [-0.13, 0, 0]));
+            for (let i = 0; i < 4; i++) this._lvMesh(this.slice, lvBox(0.06, 0.012, 0.02), this._mat(0x3a8a2a, 1.0, 0.6), [(i - 1.5) * 0.12, topY(-0.1) + 0.008, -0.1 - (i % 2) * 0.12], [-0.13, i, 0]);
+            // Pepperoni for eyes, each with a black olive pupil.
+            this.eyes = this._lvGroup(this.slice, 0, 0, 0);
+            for (const s of [-1, 1]) { this._lvMesh(this.eyes, lvCyl(0.085, 0.085, 0.02, 8), pep, [s * 0.15, topY(0.12) + 0.07, 0.12], [1.07, 0, 0]); this._lvMesh(this.eyes, lvSph(0.032, 5, 4), this._mat(0x101010, 1.0, 0.3), [s * 0.15, topY(0.12) + 0.08, 0.135]); }
+            // MAW: the crust bites, a row of teeth in the gap under it.
+            this.maw = this._lvGroup(null, 0, 0.25, 0.37);
+            this._lvMesh(this.maw, lvBox(0.6, 0.05, 0.03), this._mat(0x3a1008, 1.0, 0.8), [0, 0, -0.02]);
+            for (let i = 0; i < 8; i++) this._lvMesh(this.maw, lvCone(0.022, 0.06, 4), this._mat(0xf4ecd8, 1.0, 0.4), [(i - 3.5) * 0.07, -0.005, 0], [Math.PI, 0, 0]);
+            // CORE: one slow bubble of hot cheese.
+            this.core = this._lvMesh(this.bodyGroup, lvSph(0.06, 6, 5), this._mat(0xffd860, 0.95, 0.2, 0x402800), [0.12, topY(-0.22), -0.22]);
+            const glob = () => this._lvMesh(null, lvSph(0.05, 6, 4), cheese, null, null, [1, 0.8, 1]);
+            this.podL = this._lvLimb(null, -0.27, 0.28, 0, [[-0.16, -0.02, 0.14], [-0.22, -0.14, 0.3]], 0.045, 0.025, cheese, glob());
+            this.podR = this._lvLimb(null, 0.27, 0.28, 0, [[0.16, -0.02, 0.14], [0.22, -0.14, 0.3]], 0.045, 0.025, cheese, glob());
+            this._lvRig({ CORE: this.core, UPPER_BODY: this.slice, LOWER_BODY: this.blob, PSEUDOPOD_1: this.podL, PSEUDOPOD_2: this.podR, MAW: this.maw },
+                ['LOWER_BODY', 'CORE'], [this.blob, this.slice, this.core, this.maw, this.podL, this.podR], ['UPPER_BODY', 'PSEUDOPOD_1', 'PSEUDOPOD_2', 'MAW']);
+        }
+
+        // ── Hoard Lizard: coin-swollen belly, a coin in its jaws, gem studs ──
+        // Reptilian rig: HEAD/TORSO/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/TAIL/MAW.
+        _buildLvHoardLizard() {
+            const p = this.profile;
+            const scales = this._skinMat(p.bodyColor, 0.6);
+            const belly = this._mat(0xc8b070, 1.0, 0.6);
+            const gold = this._mat(p.accent, 1.0, 0.25, 0x2a1a00);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvSph(0.26, 8, 6), scales, [0, 0.3, -0.02], null, [1.05, 0.82, 1.5]);
+            this._lvMesh(this.body, lvSph(0.22, 8, 5), belly, [0, 0.22, 0.0], null, [1.15, 0.75, 1.4]);
+            for (let i = 0; i < 7; i++) this._lvStud(this.body, lvCyl(0.05, 0.05, 0.012, 8), gold, [0, 0.22, 0], [0.253, 0.165, 0.308], [Math.cos(i * 0.9) * 0.8, -0.3 + (i % 3) * 0.2, Math.sin(i * 0.9)], -0.004);
+            [0xc02040, 0x20a060, 0x3060d0, 0xc02040, 0x20a060].forEach((c, i) => { const z = 0.2 - i * 0.11; this._lvMesh(this.body, new THREE.OctahedronGeometry(0.035, 0), this._mat(c, 1.0, 0.2, c), [0, 0.3 + 0.213 * Math.sqrt(1 - (z + 0.02) * (z + 0.02) / 0.152), z]); });
+            this.head = this._lvGroup(null, 0, 0.36, 0.42);
+            this._lvMesh(this.head, lvSph(0.13, 7, 5), scales, null, null, [1.05, 0.7, 1.35]);
+            for (const s of [-1, 1]) this._eye(this.head, s * 0.09, 0.05, 0.06, 0.04, 0x2a1a00).rotation.y = s * 0.8;
+            this.jaw = this._lvMesh(this.head, lvSph(0.11, 6, 4), belly, [0, -0.04, 0.06], null, [1, 0.3, 1.3]);
+            this.coin = this._lvMesh(this.head, lvCyl(0.06, 0.06, 0.014, 10), gold, [0, -0.02, 0.17], [0, 0, Math.PI / 2]);
+            const foot = () => this._lvMesh(null, lvSph(0.05, 6, 4), scales, null, null, [1.2, 0.5, 1.4]);
+            const leg = (s, z) => this._lvLimb(null, s * 0.2, 0.26, z, [[s * 0.1, -0.1, 0.02], [s * 0.13, -0.24, 0.05]], 0.055, 0.04, scales, foot());
+            this.leftArm = leg(-1, 0.2); this.rightArm = leg(1, 0.2); this.leftLeg = leg(-1, -0.22); this.rightLeg = leg(1, -0.22);
+            // TAIL coiled round a little stack of hoarded coins.
+            const stack = new THREE.Group();
+            for (let i = 0; i < 4; i++) this._lvMesh(stack, lvCyl(0.06, 0.06, 0.02, 10), gold, [-0.06, -0.05 + i * 0.021, 0.04], [0, i, 0]);
+            this.tail = this._lvLimb(null, 0, 0.27, -0.36, [[0, -0.08, -0.2], [0.12, -0.18, -0.38], [0.3, -0.2, -0.36], [0.34, -0.2, -0.16]], 0.1, 0.03, scales, stack);
+            this._lvRig({ HEAD: this.head, TORSO: this.body, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, TAIL: this.tail, MAW: this.jaw },
+                ['TORSO'], [this.body, this.head, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg, this.tail], ['HEAD', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'TAIL', 'MAW']);
+        }
+
+        // ── Pit Rhino Beetle: glossy arena beetle, painted, a ringed horn ────
+        // Insectoid rig: HEAD/THORAX/ABDOMEN/6 legs/MANDIBLES.
+        _buildLvRhinoBeetle() {
+            const p = this.profile;
+            const chitin = this._skinMat(p.bodyColor, 0.25);
+            const black = this._mat(0x120a08, 1.0, 0.3);
+            const paint = this._mat(p.accent, 1.0, 0.6);
+            this.abdomen = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.abdomen, lvSph(0.2, 7, 5), black, [0, 0.27, -0.12], null, [1.05, 0.5, 1.7]);
+            for (const s of [-1, 1]) {
+                this._lvMesh(this.abdomen, new THREE.SphereGeometry(0.24, 7, 4, 0, Math.PI * 2, 0, Math.PI * 0.55), chitin, [s * 0.115, 0.29, -0.16], null, [0.55, 0.85, 1.35]);
+                this._lvMesh(this.abdomen, lvBox(0.03, 0.012, 0.36), paint, [s * 0.115, 0.488, -0.16]);
+            }
+            // The fight number painted on the left wing case.
+            this._lvMesh(this.abdomen, lvCyl(0.05, 0.05, 0.012, 8), paint, [-0.12, 0.47, -0.3], [0.4, 0, 0.3]);
+            this._lvMesh(this.abdomen, lvBox(0.012, 0.014, 0.06), black, [-0.12, 0.478, -0.3], [0.4, 0, 0.3]);
+            this.thorax = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.thorax, lvSph(0.22, 7, 5), chitin, [0, 0.34, 0.17], null, [1.15, 0.75, 0.85]);
+            this._lvMesh(this.thorax, lvCone(0.05, 0.18, 4), chitin, [0, 0.5, 0.24], [0.9, 0, 0]);
+            this.head = this._lvGroup(null, 0, 0.27, 0.38);
+            this._lvMesh(this.head, lvSph(0.11, 6, 5), black, null, null, [1.1, 0.8, 1]);
+            const hp = [[0, 0.02, 0.06], [0, 0.14, 0.2], [0, 0.32, 0.27], [0, 0.44, 0.22]].map(q => new THREE.Vector3(q[0], q[1], q[2]));
+            for (let i = 0; i < 3; i++) { this.addStrut(this.head, chitin, hp[i], hp[i + 1], 0.065 - i * 0.017, 0.048 - i * 0.017, 5); if (i) this._lvMesh(this.head, lvSph(0.05 - i * 0.012, 5, 4), chitin, [hp[i].x, hp[i].y, hp[i].z]); }
+            for (const s of [-1, 1]) this._lvMesh(this.head, lvCone(0.018, 0.08, 4), chitin, [s * 0.025, 0.47, 0.2], [0, 0, -s * 0.4]);
+            // A dented brass bout ring hammered onto the horn.
+            const band = this._lvMesh(this.head, lvTor(0.052, 0.014, 3, 10), this._mat(0xc8a040, 1.0, 0.3), [hp[1].x, hp[1].y, hp[1].z]);
+            band.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), hp[2].clone().sub(hp[0]).normalize());
+            this.mandibles = this._lvGroup(this.head, 0, -0.05, 0.09);
+            for (const s of [-1, 1]) this._lvMesh(this.mandibles, lvCone(0.018, 0.07, 4), black, [s * 0.035, 0, 0.02], [Math.PI / 2, 0, -s * 0.4]);
+            const map = { HEAD: this.head, THORAX: this.thorax, ABDOMEN: this.abdomen, MANDIBLES: this.mandibles };
+            this._legs = [];
+            [['LEFT_LEG', 'RIGHT_LEG', 0.28, 0.26], ['MIDDLE_LEFT_LEG', 'MIDDLE_RIGHT_LEG', 0.27, 0.08], ['REAR_LEFT_LEG', 'REAR_RIGHT_LEG', 0.26, -0.18]].forEach(([kl, kr, y, z], i) => {
+                const dz = (1 - i) * 0.08;
+                [-1, 1].forEach(s => { const l = this._lvLimb(null, s * 0.15, y, z, [[s * 0.15, 0.06, dz], [s * 0.28, -y + 0.01, dz * 2]], 0.03, 0.018, black); this._lvMesh(l, lvCone(0.012, 0.05, 3), black, [s * 0.21, -0.1, dz * 1.5], [0, 0, s * 1.2]); this._legs.push(l); map[s < 0 ? kl : kr] = l; });
+            });
+            this._lvRig(map, ['THORAX'], [this.thorax, this.head, this.abdomen, ...this._legs], ['HEAD', 'ABDOMEN', 'MANDIBLES', 'LEFT_LEG', 'RIGHT_LEG', 'MIDDLE_LEFT_LEG', 'MIDDLE_RIGHT_LEG', 'REAR_LEFT_LEG', 'REAR_RIGHT_LEG']);
+        }
+
+        // ── Hoard Wyrmling: a puffed whelp sitting on buttons and bottle caps ─
+        // Dragon rig: HEAD/FIRE_BREATH_ORGAN/NECK/BODY/wings/legs/TAIL/claws/MAW.
+        _buildLvWyrmling() {
+            const p = this.profile;
+            const scales = this._skinMat(p.bodyColor, 0.6);
+            const belly = this._mat(0xd8a060, 1.0, 0.6);
+            const wingM = this._mat(0x6a2a1a, 0.92, 0.6);
+            // The hoard: a heap of buttons and crimped bottle caps.
+            this.hoard = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.hoard, lvCone(0.55, 0.3, 8), this._mat(0x4a3a2a, 1.0, 0.9), [0, 0.15, 0]);
+            const cols = [0xd83a3a, 0x3a7ad8, 0xe8c040, 0x40b060, 0xf0f0f0, 0x8a3ad8];
+            for (let i = 0; i < 18; i++) {
+                const a = i * 2.39, r = 0.16 + (i % 6) * 0.065, cap = i % 3 === 0;
+                const n = new THREE.Vector3(Math.cos(a) * 0.3, 0.55, Math.sin(a) * 0.3).normalize();
+                const m = this._lvMesh(this.hoard, cap ? lvCyl(0.05, 0.05, 0.025, 10) : lvCyl(0.04, 0.04, 0.014, 8), this._mat(cols[i % cols.length], 1.0, cap ? 0.3 : 0.5), [Math.cos(a) * r, 0.3 * (1 - r / 0.55) + 0.006, Math.sin(a) * r]);
+                m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
+            }
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvSph(0.26, 8, 6), scales, [0, 0.52, 0], null, [1, 1.2, 0.95]);
+            this._lvMesh(this.body, lvSph(0.2, 7, 5), belly, [0, 0.46, 0.07], null, [1, 1.2, 0.8]);
+            // FIRE_BREATH_ORGAN: a throat sac puffed out with pride and smoke.
+            this.sac = this._lvMesh(this.bodyGroup, lvSph(0.15, 7, 5), this._mat(0xff8a30, 0.8, 0.2, 0xa03a00), [0, 0.66, 0.17], null, [1, 1.1, 0.9]);
+            this.neck = this._lvGroup(null, 0, 0, 0);
+            this.addStrut(this.neck, scales, new THREE.Vector3(0, 0.76, 0.03), new THREE.Vector3(0, 0.94, 0.1), 0.09, 0.08, 6);
+            this.head = this._lvGroup(null, 0, 1.0, 0.14);
+            this._lvMesh(this.head, lvSph(0.15, 7, 5), scales, null, null, [0.95, 0.85, 1.15]);
+            this._lvMesh(this.head, lvBox(0.14, 0.1, 0.18), scales, [0, -0.03, 0.17]);
+            for (const s of [-1, 1]) {
+                this._lvMesh(this.head, lvCone(0.035, 0.14, 4), belly, [s * 0.08, 0.12, -0.08], [-0.9, 0, -s * 0.3]);
+                this._eye(this.head, s * 0.08, 0.05, 0.1, 0.04, p.accent);
+                this._lvMesh(this.head, lvSph(0.03, 5, 4), this._mat(0x8a8a8a, 0.7, 0.9), [s * 0.03, 0.04, 0.25]);
+                this._lvMesh(this.head, lvSph(0.04, 5, 4), this._mat(0x9a9a9a, 0.55, 0.9), [s * 0.04, 0.09, 0.27]);
+            }
+            this.jaw = this._lvGroup(this.head, 0, -0.07, 0.08);
+            this._lvMesh(this.jaw, lvBox(0.12, 0.04, 0.16), belly, [0, -0.01, 0.08]);
+            this.leftWing = this.buildDragonWing(wingM, 1, -0.14, 0.7, -0.1, { span: 0.5, fingers: 3 }); this.leftWing.rotation.y = -0.6;
+            this.rightWing = this.buildDragonWing(wingM, -1, 0.14, 0.7, -0.1, { span: 0.5, fingers: 3 }); this.rightWing.rotation.y = 0.6;
+            const foot = () => { const g = new THREE.Group(); this._lvMesh(g, lvBox(0.1, 0.05, 0.14), scales, [0, 0, 0.04]); for (let i = -1; i <= 1; i++) this._lvMesh(g, lvCone(0.014, 0.05, 3), belly, [i * 0.03, -0.01, 0.12], [Math.PI / 2, 0, 0]); return g; };
+            this.leftLeg = this._lvLimb(null, -0.16, 0.3, 0.02, [[-0.04, -0.04, 0.14], [-0.05, -0.15, 0.22]], 0.08, 0.06, scales, foot());
+            this.rightLeg = this._lvLimb(null, 0.16, 0.3, 0.02, [[0.04, -0.04, 0.14], [0.05, -0.15, 0.22]], 0.08, 0.06, scales, foot());
+            const hand = () => this._lvMesh(null, lvSph(0.04, 5, 4), scales);
+            this.leftClaw = this._lvLimb(null, -0.17, 0.6, 0.12, [[-0.04, -0.08, 0.1], [0.0, -0.1, 0.18]], 0.045, 0.035, scales, hand());
+            this.rightClaw = this._lvLimb(null, 0.17, 0.6, 0.12, [[0.04, -0.08, 0.1], [0.0, -0.1, 0.18]], 0.045, 0.035, scales, hand());
+            this._lvMesh(this.rightClaw, lvCyl(0.05, 0.05, 0.025, 10), this._mat(0xd83a3a, 1.0, 0.3), [0.0, -0.1, 0.23], [Math.PI / 2, 0, 0]);
+            const spade = this._lvMesh(null, lvCone(0.06, 0.12, 3), scales, [0, 0, 0.04], [Math.PI / 2, 0, 0], [1, 1, 0.3]);
+            this.tail = this._lvLimb(null, 0, 0.32, -0.2, [[0.08, -0.1, -0.18], [0.26, -0.18, -0.24], [0.42, -0.22, -0.08], [0.46, -0.24, 0.12]], 0.09, 0.025, scales, spade);
+            this._lvRig({ HEAD: this.head, FIRE_BREATH_ORGAN: this.sac, NECK: this.neck, BODY: this.body, LEFT_WING: this.leftWing, RIGHT_WING: this.rightWing, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg,
+                TAIL: this.tail, LEFT_CLAW: this.leftClaw, RIGHT_CLAW: this.rightClaw, MAW: this.jaw },
+                ['BODY'], [this.body, this.sac, this.neck, this.head, this.leftWing, this.rightWing, this.leftLeg, this.rightLeg, this.tail, this.leftClaw, this.rightClaw],
+                ['HEAD', 'FIRE_BREATH_ORGAN', 'LEFT_WING', 'RIGHT_WING', 'LEFT_LEG', 'RIGHT_LEG', 'TAIL', 'LEFT_CLAW', 'RIGHT_CLAW', 'MAW']);
+            this._cascadeRules.push({ gone: ['NECK'], hide: [this.neck, this.head] });
+        }
+
+        // ── Fishnet Crab: flat and long-legged, draped in net, hooked ────────
+        // Crustacean rig: CLAW_LEFT/CLAW_RIGHT/CARAPACE/ABDOMEN/FRONT_LEG/REAR_LEG/ANTENNAE/MANDIBLES.
+        _buildLvFishnetCrab() {
+            const p = this.profile;
+            const shellM = this._skinMat(p.bodyColor, 0.55);
+            const under = this._mat(0xb8a080, 1.0, 0.6);
+            const netM = this._mat(0x8a7a5a, 1.0, 0.9);
+            const steel = this._mat(0xc0c4cc, 1.0, 0.2);
+            const C = [0, 0.34, 0], R = [0.525, 0.134, 0.357];
+            this.carapace = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.carapace, lvSph(0.42, 9, 4), shellM, C, null, [1.25, 0.32, 0.85]);
+            for (let i = 0; i < 6; i++) { const a = Math.PI * (0.2 + i * 0.12); this._lvStud(this.carapace, lvCone(0.022, 0.08, 4), shellM, C, R, [Math.cos(a), 0, Math.sin(a)], 0.02); }
+            // The net: a lattice draped over the shell and trailing behind it.
+            this.net = this._lvGroup(this.carapace, 0, 0, 0);
+            const surf = (x, z) => { const k = 1 - (x / R[0]) * (x / R[0]) - (z / R[2]) * (z / R[2]); return new THREE.Vector3(x, C[1] + R[1] * Math.sqrt(Math.max(0, k)) + 0.006, z); };
+            const xs = [-0.3, -0.1, 0.1, 0.3], zs = [-0.22, -0.08, 0.06, 0.2];
+            zs.forEach(z => { const w = R[0] * Math.sqrt(1 - (z / R[2]) * (z / R[2])) * 0.92; for (let i = 0; i < 5; i++) this.addStrut(this.net, netM, surf(-w + i * w / 2.5, z), surf(-w + (i + 1) * w / 2.5, z), 0.009, 0.009, 3); });
+            xs.forEach(x => { const d = R[2] * Math.sqrt(1 - (x / R[0]) * (x / R[0])) * 0.95; const pts = [surf(x, d), surf(x, d * 0.4), surf(x, -d * 0.4), surf(x, -d)]; for (let i = 0; i < 3; i++) this.addStrut(this.net, netM, pts[i], pts[i + 1], 0.009, 0.009, 3);
+                this.addStrut(this.net, netM, pts[3], new THREE.Vector3(x * 1.25, 0.015, -0.6), 0.009, 0.009, 3); this.addStrut(this.net, netM, new THREE.Vector3(x * 1.25, 0.015, -0.6), new THREE.Vector3(x * 1.4, 0.015, -0.8), 0.009, 0.009, 3); });
+            for (const z of [-0.6, -0.8]) this.addStrut(this.net, netM, new THREE.Vector3(xs[0] * (z < -0.7 ? 1.4 : 1.25), 0.015, z), new THREE.Vector3(xs[3] * (z < -0.7 ? 1.4 : 1.25), 0.015, z), 0.009, 0.009, 3);
+            this._lvMesh(this.net, lvSph(0.06, 6, 4), this._mat(p.accent, 1.0, 0.7), [0.42, 0.06, -0.8], null, [1, 1, 1.6]);
+            // A fishhook stuck fast in the shell, its line trailing to the ground.
+            this._lvMesh(this.carapace, lvTor(0.05, 0.01, 3, 10, Math.PI * 1.3), steel, [0.2, 0.47, 0.05], [0, 0.4, 0.5]);
+            this.addStrut(this.carapace, this._mat(0xe0e0d0, 1.0, 0.5), new THREE.Vector3(0.22, 0.5, 0.05), new THREE.Vector3(0.45, 0.01, 0.32), 0.004, 0.004, 3);
+            this.abdomen = this._lvMesh(this.bodyGroup, lvSph(0.2, 7, 4), under, [0, 0.27, -0.12], null, [1, 0.4, 1]);
+            this.antennae = this._lvGroup(null, 0, 0.4, 0.3);
+            for (const s of [-1, 1]) { this._lvLimb(this.antennae, s * 0.07, 0, 0, [[s * 0.02, 0.12, 0.03]], 0.018, 0.015, shellM, this._lvMesh(null, lvSph(0.035, 6, 4), this._mat(0x0a0a0a, 1.0, 0.3))); this.addStrut(this.antennae, shellM, new THREE.Vector3(s * 0.03, 0, 0.03), new THREE.Vector3(s * 0.25, 0.08, 0.35), 0.007, 0.004, 3); }
+            this.mandibles = this._lvGroup(null, 0, 0.3, 0.33);
+            for (const s of [-1, 1]) this._lvMesh(this.mandibles, lvBox(0.04, 0.05, 0.04), under, [s * 0.025, 0, 0], [0, 0, s * 0.3]);
+            // Scissor claws: two long crossed blades on a rivet.
+            const claw = (s) => {
+                const hand = new THREE.Group();
+                this._lvMesh(hand, lvSph(0.045, 5, 4), shellM);
+                this._lvMesh(hand, lvBox(0.03, 0.02, 0.3), under, [0, 0, 0.15], [0, s * 0.15, 0]);
+                hand._b = this._lvGroup(hand, 0, 0.02, 0);
+                this._lvMesh(hand._b, lvBox(0.03, 0.02, 0.3), under, [0, 0, 0.15], [0, -s * 0.15, 0]);
+                const g = this._lvLimb(null, s * 0.45, 0.34, 0.12, [[s * 0.12, 0.06, 0.12], [s * 0.12, 0.1, 0.28]], 0.04, 0.035, shellM, hand);
+                g._hand = hand; return g;
+            };
+            this.leftClaw = claw(-1); this.rightClaw = claw(1);
+            const ext = (z) => R[0] * Math.sqrt(Math.max(0, 1 - (z / R[2]) * (z / R[2])));
+            this.frontLegs = this._lvGroup(null, 0, 0, 0); this.rearLegs = this._lvGroup(null, 0, 0, 0); this._legs = [];
+            [0.1, -0.04, -0.16, -0.26].forEach((z, i) => {
+                const dz = (1.5 - i) * 0.07;
+                for (const s of [-1, 1]) this._legs.push(this._lvLimb(i < 2 ? this.frontLegs : this.rearLegs, s * (ext(z) - 0.04), 0.33, z, [[s * 0.24, 0.1, dz], [s * 0.46, -0.32, dz * 1.4]], 0.028, 0.014, shellM));
+            });
+            this._lvRig({ CLAW_LEFT: this.leftClaw, CLAW_RIGHT: this.rightClaw, CARAPACE: this.carapace, ABDOMEN: this.abdomen, FRONT_LEG: this.frontLegs, REAR_LEG: this.rearLegs, ANTENNAE: this.antennae, MANDIBLES: this.mandibles },
+                ['CARAPACE'], [this.carapace, this.abdomen, this.leftClaw, this.rightClaw, this.frontLegs, this.rearLegs, this.antennae, this.mandibles], ['CLAW_LEFT', 'CLAW_RIGHT', 'ABDOMEN', 'FRONT_LEG', 'REAR_LEG', 'ANTENNAE', 'MANDIBLES']);
+        }
+
+        // ── Sewer Gator Hatchling: albino baby, red eyes, eggshell cap ───────
+        // Reptilian rig: HEAD/TORSO/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/TAIL/MAW.
+        _buildLvGatorHatchling() {
+            const p = this.profile;
+            const hide = this._skinMat(p.bodyColor, 0.6);
+            const belly = this._mat(0xf4ece0, 1.0, 0.6);
+            const shellM = this._mat(0xf0e8d0, 1.0, 0.5);
+            const tooth = this._mat(0xffffff, 1.0, 0.3);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, new THREE.CapsuleGeometry(0.16, 0.5, 3, 8), hide, [0, 0.2, -0.05], [Math.PI / 2, 0, 0], [1.15, 1, 0.75]);
+            for (const s of [-1, 1]) for (let i = 0; i < 5; i++) this._lvMesh(this.body, lvBox(0.04, 0.03, 0.05), hide, [s * 0.06, 0.315, -0.3 + i * 0.12]);
+            this.head = this._lvGroup(null, 0, 0.25, 0.42);
+            this._lvMesh(this.head, lvSph(0.16, 8, 6), hide, null, null, [1.05, 0.85, 1]);
+            this._lvMesh(this.head, lvBox(0.17, 0.07, 0.26), hide, [0, -0.02, 0.2]);
+            for (const s of [-1, 1]) {
+                this._eye(this.head, s * 0.09, 0.08, 0.06, 0.065, p.accent).rotation.y = s * 0.6;
+                this._lvMesh(this.head, lvSph(0.02, 4, 3), hide, [s * 0.035, 0.02, 0.32]);
+                for (let i = 0; i < 4; i++) this._lvMesh(this.head, lvCone(0.01, 0.035, 3), tooth, [s * 0.075, -0.065, 0.12 + i * 0.06], [Math.PI, 0, 0]);
+            }
+            // The eggshell it hatched from, still worn as a cap.
+            const cap = this._lvGroup(this.head, 0.02, 0.11, -0.03);
+            cap.rotation.z = 0.25;
+            this._lvMesh(cap, new THREE.SphereGeometry(0.12, 7, 3, 0, Math.PI * 2, 0, Math.PI * 0.45), shellM);
+            for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; this._lvMesh(cap, lvCone(0.022, 0.05, 3), shellM, [Math.cos(a) * 0.115, 0.02, Math.sin(a) * 0.115], [0, -a, 0]); }
+            this.jaw = this._lvGroup(this.head, 0, -0.06, 0.06);
+            this._lvMesh(this.jaw, lvBox(0.15, 0.045, 0.26), belly, [0, -0.02, 0.13]);
+            for (const s of [-1, 1]) for (let i = 0; i < 3; i++) this._lvMesh(this.jaw, lvCone(0.01, 0.035, 3), tooth, [s * 0.065, 0.015, 0.1 + i * 0.07]);
+            const foot = () => { const g = new THREE.Group(); this._lvMesh(g, lvBox(0.1, 0.02, 0.1), hide); for (let i = -1; i <= 1; i++) this._lvMesh(g, lvCone(0.012, 0.05, 3), hide, [i * 0.035, 0, 0.07], [Math.PI / 2, 0, 0]); return g; };
+            const leg = (s, z, dz) => this._lvLimb(null, s * 0.15, 0.18, z, [[s * 0.12, 0.0, dz], [s * 0.17, -0.15, dz * 1.6]], 0.045, 0.035, hide, foot());
+            this.leftArm = leg(-1, 0.22, 0.04); this.rightArm = leg(1, 0.22, 0.04); this.leftLeg = leg(-1, -0.3, -0.04); this.rightLeg = leg(1, -0.3, -0.04);
+            const tp = [[0, -0.02, -0.22], [0.04, -0.06, -0.45], [0.1, -0.1, -0.66]];
+            this.tail = this._lvLimb(null, 0, 0.2, -0.45, tp, 0.11, 0.03, hide);
+            for (let i = 0; i < 6; i++) { const k = i / 6, a = new THREE.Vector3(); const j = Math.min(2, Math.floor(k * 3)), f = k * 3 - j; const A = j ? tp[j - 1] : [0, 0, 0], B = tp[j]; a.set(A[0] + (B[0] - A[0]) * f, A[1] + (B[1] - A[1]) * f, A[2] + (B[2] - A[2]) * f); const r = 0.11 - 0.08 * k; for (const s of [-1, 1]) this._lvMesh(this.tail, lvCone(0.018, 0.05, 3), hide, [a.x + s * r * 0.4, a.y + r * 0.85, a.z]); }
+            this._lvRig({ HEAD: this.head, TORSO: this.body, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, TAIL: this.tail, MAW: this.jaw },
+                ['TORSO'], [this.body, this.head, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg, this.tail], ['HEAD', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'TAIL', 'MAW']);
+        }
+
+        // ── Shadow Puddle: an ink pool with one eye, hands and tripping tendrils
+        // DarkElemental rig: CORE/BODY/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/MAW.
+        _buildLvShadowPuddle() {
+            const p = this.profile;
+            const ink = this._mat(p.bodyColor, 0.92, 0.08, 0x0a0614);
+            const inkSoft = this._mat(0x30244a, 0.8, 0.1, 0x0a0614);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvCyl(0.62, 0.66, 0.04, 9), ink, [0, 0.02, 0]);
+            for (let i = 0; i < 7; i++) { const a = i * 0.9 + 0.3; this._lvMesh(this.body, lvSph(0.13, 6, 4), ink, [Math.cos(a) * 0.6, 0.02, Math.sin(a) * 0.6], null, [1, 0.22, 1]); }
+            this.ripples = [0.3, 0.48].map(r => this._lvMesh(this.body, lvTor(r, 0.012, 3, 16), inkSoft, [0, 0.042, 0], [Math.PI / 2, 0, 0]));
+            // CORE: one eye floating at the surface, looking up at you.
+            this.core = this._lvGroup(null, 0, 0.05, 0.1);
+            this._lvMesh(this.core, lvSph(0.13, 8, 6), this._mat(0xf0ead8, 1.0, 0.2), null, null, [1, 0.75, 1]);
+            this.iris = this._lvMesh(this.core, lvSph(0.06, 6, 5), this._mat(p.accent, 1.0, 0.2, p.accent), [0, 0.04, 0.09]);
+            this._lvMesh(this.core, lvBox(0.015, 0.07, 0.02), this._mat(0x050505, 1.0, 0.3), [0, 0.045, 0.145]);
+            // MAW: a split in the surface lined with little teeth.
+            this.maw = this._lvGroup(null, 0, 0.045, 0.4);
+            this._lvMesh(this.maw, lvBox(0.3, 0.02, 0.07), this._mat(0x3a0010, 1.0, 0.6));
+            for (let i = 0; i < 6; i++) this._lvMesh(this.maw, lvCone(0.014, 0.04, 3), this._mat(0xe8e0d0, 1.0, 0.4), [(i - 2.5) * 0.05, 0.02, (i % 2 ? 0.025 : -0.025)]);
+            const hand = () => { const g = new THREE.Group(); this._lvMesh(g, lvSph(0.05, 6, 4), ink); for (let i = -1; i <= 1; i++) this._lvMesh(g, lvCone(0.015, 0.14, 4), ink, [i * 0.035, -0.03, 0.07], [Math.PI * 0.6, i * 0.3, 0]); return g; };
+            this.leftArm = this._lvLimb(null, -0.3, 0.03, 0.05, [[-0.03, 0.28, 0.04], [0.03, 0.52, 0.14], [0.0, 0.6, 0.28]], 0.075, 0.035, ink, hand());
+            this.rightArm = this._lvLimb(null, 0.3, 0.03, 0.05, [[0.03, 0.28, 0.04], [-0.03, 0.52, 0.14], [0.0, 0.6, 0.28]], 0.075, 0.035, ink, hand());
+            this.leftLeg = this._lvLimb(null, -0.22, 0.03, 0.5, [[-0.08, 0.0, 0.2], [0.0, 0.0, 0.4], [-0.1, 0.01, 0.56]], 0.04, 0.014, ink);
+            this.rightLeg = this._lvLimb(null, 0.22, 0.03, 0.5, [[0.08, 0.0, 0.2], [0.0, 0.0, 0.4], [0.1, 0.01, 0.56]], 0.04, 0.014, ink);
+            this._lvRig({ CORE: this.core, BODY: this.body, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, MAW: this.maw },
+                ['BODY'], [this.body, this.core, this.maw, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg], ['CORE', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'MAW']);
+        }
+
+        // ── Wishing Totem: carved faces, a coin-slot mouth, knotted ribbons ──
+        // Totem rig: CORE/LEFT_ARM/RIGHT_ARM/EYES/BASE/MOUTH.
+        _buildLvWishingTotem() {
+            const p = this.profile;
+            const wood = this._skinMat(p.bodyColor, 0.85);
+            const darkW = this._mat(0x4a2a14, 1.0, 0.9);
+            const brass = this._mat(0xc8a040, 1.0, 0.3);
+            const ribbonCols = [0xd83a3a, 0xe8c040, 0x3a7ad8, 0x40b060];
+            this.base = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.base, lvCyl(0.3, 0.36, 0.18, 6), this._mat(0x8a8680, 1.0, 0.95), [0, 0.09, 0]);
+            for (let i = 0; i < 4; i++) this._lvMesh(this.base, lvCyl(0.03, 0.03, 0.01, 8), brass, [Math.cos(i * 1.7 + 0.4) * 0.24, 0.185, Math.sin(i * 1.7 + 0.4) * 0.24]);
+            this.core = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.core, lvBox(0.34, 0.34, 0.3), wood, [0, 0.35, 0]);
+            // The grumpy lower face: angry brows, a wedge nose, a frown.
+            for (const s of [-1, 1]) this._lvMesh(this.core, lvBox(0.12, 0.035, 0.04), darkW, [s * 0.07, 0.44, 0.16], [0, 0, s * 0.35]);
+            this._lvMesh(this.core, lvBox(0.06, 0.1, 0.05), wood, [0, 0.37, 0.17]);
+            this._lvMesh(this.core, lvTor(0.07, 0.018, 3, 8, Math.PI), darkW, [0, 0.25, 0.155]);
+            this._lvMesh(this.core, lvBox(0.3, 0.3, 0.28), wood, [0, 0.67, 0]);
+            this._lvMesh(this.core, new THREE.SphereGeometry(0.17, 7, 4, 0, Math.PI * 2, 0, Math.PI / 2), wood, [0, 0.82, 0]);
+            // A wishbone crowns it.
+            const V = (x, y, z) => new THREE.Vector3(x, y, z);
+            this._lvMesh(this.core, lvSph(0.04, 6, 4), darkW, [0, 0.98, 0]);
+            for (const s of [-1, 1]) { this.addStrut(this.core, darkW, V(0, 0.98, 0), V(s * 0.1, 1.12, 0), 0.025, 0.022, 5); this.addStrut(this.core, darkW, V(s * 0.1, 1.12, 0), V(s * 0.07, 1.26, 0), 0.022, 0.018, 5); this._lvMesh(this.core, lvSph(0.023, 5, 4), darkW, [s * 0.1, 1.12, 0]); }
+            // EYES: inlaid shell, the irises lit; MOUTH: a brass-framed coin slot.
+            this.eyes = this._lvGroup(null, 0, 0.71, 0.14);
+            for (const s of [-1, 1]) { this._lvMesh(this.eyes, lvCyl(0.05, 0.05, 0.02, 8), this._mat(0xf4f0e0, 1.0, 0.3), [s * 0.07, 0, 0.005], [Math.PI / 2, 0, 0]); this._lvMesh(this.eyes, lvSph(0.025, 5, 4), this._mat(p.accent, 1.0, 0.2, p.accent), [s * 0.07, 0, 0.02]); }
+            this.mouth = this._lvGroup(null, 0, 0.6, 0.145);
+            this._lvMesh(this.mouth, lvBox(0.14, 0.05, 0.02), brass);
+            this._lvMesh(this.mouth, lvBox(0.1, 0.015, 0.025), this._mat(0x050505, 1.0, 0.5));
+            // Ribbons knotted to the arms and the wishbone, each on its own knot.
+            this.ribbons = [];
+            const ribbon = (parent, x, y, z, i) => { const g = this._lvGroup(parent, x, y, z); this._lvMesh(g, lvBox(0.035, 0.28, 0.006), this._mat(ribbonCols[i % 4], 1.0, 0.8), [0, -0.14, 0]); this._lvMesh(g, lvSph(0.02, 4, 3), this._mat(ribbonCols[i % 4], 1.0, 0.8)); this.ribbons.push(g); return g; };
+            const paddle = (i) => { const m = this._lvMesh(null, lvBox(0.08, 0.18, 0.04), wood, [0, 0.04, 0]); ribbon(m, 0, -0.08, 0.025, i); return m; };
+            this.leftArm = this._lvLimb(null, -0.14, 0.7, 0, [[-0.16, 0.04, 0.0], [-0.28, 0.14, 0.02]], 0.04, 0.035, wood, paddle(0));
+            this.rightArm = this._lvLimb(null, 0.14, 0.7, 0, [[0.16, 0.04, 0.0], [0.28, 0.14, 0.02]], 0.04, 0.035, wood, paddle(1));
+            ribbon(this.core, -0.1, 1.12, 0.02, 2); ribbon(this.core, 0.1, 1.12, 0.02, 3);
+            this._lvRig({ CORE: this.core, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, EYES: this.eyes, BASE: this.base, MOUTH: this.mouth },
+                ['CORE'], [this.core, this.eyes, this.mouth, this.leftArm, this.rightArm], ['LEFT_ARM', 'RIGHT_ARM', 'EYES', 'BASE', 'MOUTH']);
+        }
+
+        // ── Centaur Foal: gangly knob-kneed foal, dappled, a stone to throw ──
+        // Centaur rig: HEAD/TORSO/LEFT_ARM/RIGHT_ARM/BODY/LEFT_LEG/RIGHT_LEG/REAR_LEFT_LEG/REAR_RIGHT_LEG/MOUTH.
+        _buildLvCentaurFoal() {
+            const p = this.profile;
+            const coat = this._skinMat(p.bodyColor, 0.8);
+            const spot = this._mat(p.accent, 1.0, 0.9);
+            const skin = this._mat(0xd8a880, 1.0, 0.6);
+            const hair = this._mat(0x3a2414, 1.0, 0.9);
+            const vest = this._mat(0x4a6a3a, 1.0, 0.8);
+            const hoofM = this._mat(0x2a1e14, 1.0, 0.5);
+            // BODY: a short barrel running nose to tail, dappled on the rump.
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, new THREE.CapsuleGeometry(0.22, 0.42, 3, 8), coat, [0, 0.95, -0.08], [Math.PI / 2, 0, 0]);
+            this._lvMesh(this.body, lvSph(0.23, 8, 6), coat, [0, 1.0, 0.3], null, [0.95, 1, 0.85]);
+            for (let i = 0; i < 7; i++) this._lvStud(this.body, lvSph(0.045, 5, 4), spot, [0, 0.95, -0.08], [0.22, 0.22, 0.43], [(i % 2 ? 1 : -1) * (0.5 + this.idRand() * 0.5), 0.3 + this.idRand() * 0.6, -0.2 - this.idRand() * 0.8], -0.012).scale.set(1, 0.35, 1);
+            // TORSO: a child's torso in a little vest, rising from the withers.
+            this.torso = this._lvGroup(null, 0, 1.34, 0.3);
+            this._lvMesh(this.torso, lvCyl(0.13, 0.15, 0.3, 8), vest);
+            this._lvMesh(this.torso, lvSph(0.15, 7, 5), vest, [0, 0.12, 0], null, [1.1, 0.8, 0.8]);
+            this._lvMesh(this.torso, lvCyl(0.05, 0.05, 0.12, 6), skin, [0, 0.2, 0]);
+            // HEAD: big for its body, messy hair, pointed ears, freckles.
+            this.head = this._lvGroup(null, 0, 1.7, 0.33);
+            this._lvMesh(this.head, lvSph(0.16, 8, 6), skin);
+            for (let i = 0; i < 8; i++) { const a = i * 0.8; this._lvStud(this.head, lvCone(0.05, 0.13, 4), hair, [0, 0, 0], [0.16, 0.16, 0.16], [Math.cos(a) * 0.6, 0.9, Math.sin(a) * 0.6 - 0.35], 0.02); }
+            for (const s of [-1, 1]) {
+                this._lvMesh(this.head, lvCone(0.035, 0.12, 4), skin, [s * 0.16, 0.03, -0.02], [0, 0, -s * 1.3]);
+                this._eye(this.head, s * 0.06, 0.02, 0.135, 0.035, 0x3a2a1a);
+                for (let i = 0; i < 3; i++) this._lvMesh(this.head, lvSph(0.008, 4, 3), this._mat(0xa0583a, 1.0, 0.8), [s * (0.07 + i * 0.015), -0.035 - (i % 2) * 0.01, 0.138]);
+            }
+            this.mouth = this._lvMesh(this.head, lvBox(0.06, 0.014, 0.012), this._mat(0x5a1a10, 1.0, 0.7), [0, -0.075, 0.148]);
+            // Arms: thin; the right hand clutches a stone it means to throw.
+            const handM = () => this._lvMesh(null, lvSph(0.04, 5, 4), skin);
+            this.leftArm = this._lvLimb(null, -0.17, 1.44, 0.3, [[-0.05, -0.18, 0.06], [-0.03, -0.34, 0.16]], 0.04, 0.035, skin, handM());
+            this.rightArm = this._lvLimb(null, 0.17, 1.44, 0.3, [[0.05, -0.18, 0.06], [0.03, -0.34, 0.16]], 0.04, 0.035, skin, handM());
+            this.stone = this._lvMesh(this.rightArm, new THREE.DodecahedronGeometry(0.05, 0), this._mat(0x8a8680, 1.0, 0.9), [0.03, -0.36, 0.21]);
+            // Gangly legs with oversized knobbly knees and small dark hooves.
+            const hoof = () => this._lvMesh(null, lvCyl(0.045, 0.055, 0.07, 6), hoofM);
+            const leg = (s, z, pts) => { const g = this._lvLimb(null, s * 0.12, 0.92, z, pts, 0.045, 0.03, coat, hoof()); this._lvMesh(g, lvSph(0.065, 6, 4), coat, pts[pts.length - 2]); return g; };
+            this.leftLeg = leg(-1, 0.3, [[0, -0.42, 0.03], [0, -0.87, 0.0]]);
+            this.rightLeg = leg(1, 0.3, [[0, -0.42, 0.03], [0, -0.87, 0.0]]);
+            this.rearLeftLeg = leg(-1, -0.36, [[0, -0.3, -0.08], [0, -0.6, 0.02], [0, -0.87, 0.0]]);
+            this.rearRightLeg = leg(1, -0.36, [[0, -0.3, -0.08], [0, -0.6, 0.02], [0, -0.87, 0.0]]);
+            // A braided tail finished with a bead.
+            this.tail = this._lvGroup(null, 0, 1.02, -0.5);
+            for (let i = 0; i < 8; i++) this._lvMesh(this.tail, lvSph(0.045 - i * 0.0018, 5, 4), hair, [0, -i * 0.05, -i * 0.02]);
+            this._lvMesh(this.tail, lvSph(0.035, 6, 4), this._mat(0x3a8ad8, 1.0, 0.3), [0, -0.39, -0.16]);
+            this._lvRig({ HEAD: this.head, TORSO: this.torso, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, BODY: this.body, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg,
+                REAR_LEFT_LEG: this.rearLeftLeg, REAR_RIGHT_LEG: this.rearRightLeg, MOUTH: this.mouth, TAIL: this.tail },
+                ['BODY'], [this.body, this.torso, this.head, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg, this.rearLeftLeg, this.rearRightLeg, this.tail],
+                ['HEAD', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'REAR_LEFT_LEG', 'REAR_RIGHT_LEG', 'MOUTH', 'TAIL']);
+            this._cascadeRules.push({ gone: ['TORSO'], hide: [this.torso, this.head, this.leftArm, this.rightArm] });
+        }
+
+        // ── Ruin Gecko: flat stone gecko, glyph-carved, a ruin shard fused on ─
+        // Reptilian rig: HEAD/TORSO/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/TAIL/MAW.
+        _buildLvRuinGecko() {
+            const p = this.profile;
+            const stone = this._skinMat(p.bodyColor, 0.95);
+            const glyph = this._mat(0x2a2a30, 1.0, 0.9);
+            const lichen = this._mat(0x7a9a4a, 1.0, 0.95);
+            const C = [0, 0.16, 0], R = [0.26, 0.09, 0.4];
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvSph(0.2, 8, 5), stone, C, null, [1.3, 0.45, 2.0]);
+            const topY = (x, z) => C[1] + R[1] * Math.sqrt(Math.max(0, 1 - (x / R[0]) * (x / R[0]) - (z / R[2]) * (z / R[2])));
+            [[-0.08, 0.12, 0.6], [0.08, 0.12, -0.6], [0, -0.05, 0], [-0.1, -0.22, 0.9], [0.1, -0.22, -0.9]].forEach(([x, z, r]) => this._lvMesh(this.body, lvBox(0.014, 0.008, 0.1), glyph, [x, topY(x, z) - 0.001, z], [0, r, 0]));
+            [[0.0, 0.18], [0.06, -0.14]].forEach(([x, z]) => this._lvMesh(this.body, lvTor(0.028, 0.006, 3, 8), glyph, [x, topY(x, z), z], [Math.PI / 2, 0, 0]));
+            for (let i = 0; i < 3; i++) this._lvStud(this.body, lvSph(0.05, 5, 4), lichen, C, R, [Math.cos(i * 2.3) * 0.7, 0.6, Math.sin(i * 2.3) * 0.7], -0.02).scale.set(1, 0.3, 1);
+            // The carved ruin shard grown into its back.
+            this.shard = this._lvGroup(null, 0.04, 0.31, -0.08);
+            this.shard.rotation.set(-0.2, 0.3, 0.25);
+            this._lvMesh(this.shard, lvBox(0.16, 0.2, 0.04), stone);
+            this._lvMesh(this.shard, lvTor(0.04, 0.008, 3, 8), glyph, [0, 0.02, 0.022]);
+            this._lvMesh(this.shard, lvBox(0.012, 0.1, 0.006), glyph, [0, 0.02, 0.024]);
+            this.head = this._lvGroup(null, 0, 0.2, 0.46);
+            this.head.rotation.x = -0.15;
+            this._lvMesh(this.head, lvCone(0.16, 0.3, 3), stone, null, [Math.PI / 2, 0, 0], [1.2, 1, 0.5]);
+            this._lvMesh(this.head, lvSph(0.025, 5, 4), this._mat(p.accent, 1.0, 0.2, p.accent), [0, 0.04, -0.03]);
+            for (const s of [-1, 1]) this._eye(this.head, s * 0.1, 0.02, -0.02, 0.03, 0x1a1a10).rotation.y = s * 1.2;
+            this.jaw = this._lvMesh(this.head, lvBox(0.16, 0.02, 0.18), stone, [0, -0.045, 0.02]);
+            const leg = (s, z, pts) => this._lvLimb(null, s * 0.2, 0.15, z, pts, 0.04, 0.03, stone, this._lvToes(stone, 4, 0.025, 1.8, s));
+            this.leftArm = leg(-1, 0.2, [[-0.2, 0.04, 0.06], [-0.3, -0.13, 0.12]]);
+            this.rightArm = leg(1, 0.2, [[0.2, 0.04, 0.06], [0.3, -0.13, 0.12]]);
+            this.leftLeg = leg(-1, -0.2, [[-0.22, 0.04, -0.06], [-0.32, -0.13, -0.14]]);
+            this.rightLeg = leg(1, -0.2, [[0.22, 0.04, -0.06], [0.32, -0.13, -0.14]]);
+            // A tail curled round to one side, like a carved spiral.
+            this.tail = this._lvLimb(null, 0, 0.15, -0.38, [[0, -0.03, -0.2], [0.12, -0.06, -0.4], [0.32, -0.08, -0.46], [0.44, -0.09, -0.32], [0.4, -0.1, -0.18]], 0.08, 0.02, stone);
+            this._lvRig({ HEAD: this.head, TORSO: this.body, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, TAIL: this.tail, MAW: this.jaw },
+                ['TORSO'], [this.body, this.shard, this.head, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg, this.tail], ['HEAD', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'TAIL', 'MAW']);
+        }
+
+        // ═════════════════════════════════════════════════════════════════════
+        // Bespoke uniques (u_ keys) that an enemy's own note pins by key.
+        // ═════════════════════════════════════════════════════════════════════
+
+        // ── Umbral Lurker: a hooded rag of shadow, a three-slit mask, and an
+        // arm that reaches over its own head; it is tethered to its shadow.
+        // Ghost rig: FACE/CORE/LEFT_WISP/RIGHT_WISP/MAW.
+        _buildUUmbralLurker() {
+            const p = this.profile;
+            const shade = this._mat(p.bodyColor, 0.9, 0.3, 0x0a0614);
+            const bone = this._skinMat(0xd8d0c0, 0.5);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvCone(0.32, 1.3, 7), shade, [0, 1.15, 0], [Math.PI, 0, 0]);
+            this._lvMesh(this.body, lvSph(0.26, 7, 5), shade, [0, 1.8, 0], null, [1, 1.2, 1]);
+            for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; this._lvMesh(this.body, lvCone(0.07, 0.45, 4), shade, [Math.cos(a) * 0.12, 0.55, Math.sin(a) * 0.12], [Math.PI + Math.sin(a) * 0.3, 0, Math.cos(a) * 0.3]); }
+            // Its own shadow, still holding on to it by a thread of dark.
+            this.addStrut(this.body, shade, new THREE.Vector3(0, 0.55, 0), new THREE.Vector3(0.05, 0.02, -0.1), 0.05, 0.02, 5);
+            this.pool = this._lvMesh(this.body, lvCyl(0.5, 0.55, 0.02, 9), this._mat(0x05030a, 0.85, 0.1), [0.05, 0.01, -0.1]);
+            // FACE: a cracked bone mask with three slit eyes; MAW: a vertical split.
+            this.face = this._lvGroup(null, 0, 1.72, 0.28);
+            this._lvMesh(this.face, lvSph(0.17, 7, 5), bone, null, null, [0.9, 1.2, 0.45]);
+            for (const [x, y, rz] of [[-0.07, 0.05, 0.4], [0.07, 0.05, -0.4], [0, 0.14, Math.PI / 2]]) {
+                this._lvMesh(this.face, lvBox(0.07, 0.016, 0.02), this._mat(0x050505, 1.0, 0.4), [x, y, 0.07], [0, 0, rz]);
+                this._lvMesh(this.face, lvSph(0.012, 4, 3), this._mat(p.accent, 1.0, 0.2, p.accent), [x, y, 0.08]);
+            }
+            this.maw = this._lvGroup(this.face, 0, -0.08, 0.07);
+            this._lvMesh(this.maw, lvBox(0.025, 0.14, 0.02), this._mat(0x200010, 1.0, 0.5));
+            for (let i = 0; i < 4; i++) for (const s of [-1, 1]) this._lvMesh(this.maw, lvCone(0.008, 0.03, 3), bone, [s * 0.016, -0.05 + i * 0.033, 0.005], [0, 0, s * Math.PI / 2]);
+            // CORE: a cold violet heart showing through the rags.
+            this.core = this._lvMesh(this.bodyGroup, lvSph(0.09, 6, 5), this._mat(p.accent, 0.95, 0.2, p.accent), [0, 1.25, 0.17]);
+            // Wisps: one arm reaches over its own head, the other comes in low.
+            const hook = () => { const g = new THREE.Group(); for (let i = -1; i <= 1; i++) this._lvMesh(g, lvCone(0.018, 0.14, 4), shade, [i * 0.03, 0, 0.06], [Math.PI / 2 + 0.4, i * 0.3, 0]); return g; };
+            this.leftWisp = this._lvLimb(null, -0.22, 1.55, 0.05, [[-0.2, 0.15, 0.05], [-0.35, 0.45, 0.15], [-0.15, 0.65, 0.35]], 0.07, 0.025, shade, hook());
+            this.rightWisp = this._lvLimb(null, 0.2, 1.4, 0.05, [[0.25, -0.15, 0.1], [0.45, -0.45, 0.25], [0.4, -0.7, 0.45]], 0.07, 0.025, shade, hook());
+            this._lvRig({ FACE: this.face, CORE: this.core, LEFT_WISP: this.leftWisp, RIGHT_WISP: this.rightWisp, MAW: this.maw, BODY: this.body },
+                ['CORE', 'BODY'], [this.body, this.face, this.core, this.leftWisp, this.rightWisp], ['FACE', 'LEFT_WISP', 'RIGHT_WISP', 'MAW']);
+        }
+
+        // ── Bureaucratic Nightmare: a filing cabinet bound in red tape, a
+        // rubber stamp for a head, a pen nib for a hand, castors for feet.
+        // Humanoid rig.
+        _buildUBureaucrat() {
+            const p = this.profile;
+            const steel = this._skinMat(p.bodyColor, 0.45);
+            const suit = this._mat(0x2a2a30, 1.0, 0.7);
+            const paper = this._mat(0xf4f0e4, 1.0, 0.8);
+            const tape = this._mat(0xc81e1e, 1.0, 0.6);
+            const dark = this._mat(0x101012, 1.0, 0.5);
+            this.body = this._lvGroup(null, 0, 1.15, 0);
+            this._lvMesh(this.body, lvBox(0.5, 0.8, 0.42), steel);
+            for (const i of [0, 2]) { this._lvMesh(this.body, lvBox(0.14, 0.03, 0.03), this._mat(0xb8bcc4, 1.0, 0.3), [0, 0.26 - i * 0.26, 0.22]); this._lvMesh(this.body, lvBox(0.1, 0.05, 0.01), paper, [0, 0.31 - i * 0.26, 0.212]); }
+            // Red tape wound round and round it.
+            const band = this._lvGroup(this.body, 0, 0.05, 0); band.rotation.x = 0.35;
+            for (const [w, d, x, z] of [[0.6, 0.012, 0, 0.216], [0.6, 0.012, 0, -0.216], [0.012, 0.44, 0.27, 0], [0.012, 0.44, -0.27, 0]]) this._lvMesh(band, lvBox(w, 0.05, d), tape, [x, 0, z]);
+            // STOMACH: the middle drawer hangs open, stuffed with forms.
+            this.drawer = this._lvGroup(this.body, 0, 0.0, 0.2);
+            this._lvMesh(this.drawer, lvBox(0.44, 0.22, 0.3), steel, [0, 0, 0.1]);
+            for (let i = 0; i < 6; i++) this._lvMesh(this.drawer, lvBox(0.3, 0.008, 0.24), paper, [(i % 2 - 0.5) * 0.04, 0.1 + i * 0.012, 0.08], [-0.25 - i * 0.12, 0, (i - 2.5) * 0.06]);
+            this._lvMesh(this.body, lvCyl(0.05, 0.05, 0.14, 6), suit, [0, 0.46, 0]);
+            // HEAD: a rubber stamp; its eyes are punched holes, its mouth a slot.
+            this.head = this._lvGroup(null, 0, 1.72, 0);
+            this._lvMesh(this.head, lvBox(0.34, 0.14, 0.26), this._mat(0x6a4020, 1.0, 0.7));
+            this._lvMesh(this.head, lvBox(0.34, 0.03, 0.26), this._mat(0xa81818, 1.0, 0.5), [0, -0.08, 0]);
+            this._lvMesh(this.head, lvCyl(0.045, 0.06, 0.2, 7), this._mat(0x6a4020, 1.0, 0.7), [0, 0.17, 0]);
+            this._lvMesh(this.head, lvSph(0.09, 7, 5), this._mat(0xa81818, 1.0, 0.4), [0, 0.3, 0]);
+            this.eyes = [-1, 1].map(s => { const e = this._lvMesh(this.head, lvCyl(0.035, 0.035, 0.02, 8), dark, [s * 0.08, 0.02, 0.13], [Math.PI / 2, 0, 0]); this._lvMesh(e, lvSph(0.015, 4, 3), this._mat(p.accent, 1.0, 0.2, p.accent), [0, 0.012, 0]); return e; });
+            this.mouth = this._lvMesh(this.head, lvBox(0.16, 0.02, 0.02), dark, [0, -0.035, 0.13]);
+            // Arms: a clipboard in one hand, the other ends in a fountain-pen nib.
+            const clip = new THREE.Group();
+            this._lvMesh(clip, lvBox(0.2, 0.28, 0.02), this._mat(0x8a5a2a, 1.0, 0.7), [0, -0.1, 0.02]);
+            this._lvMesh(clip, lvBox(0.17, 0.22, 0.005), paper, [0, -0.12, 0.033]);
+            this._lvMesh(clip, lvBox(0.08, 0.03, 0.03), this._mat(0xb8bcc4, 1.0, 0.3), [0, 0.03, 0.03]);
+            this.leftArm = this._lvLimb(null, -0.3, 1.48, 0, [[-0.12, -0.3, 0.06], [-0.1, -0.55, 0.22]], 0.045, 0.04, suit, clip);
+            const nib = this._lvMesh(null, lvCone(0.04, 0.24, 4), this._mat(0xd8b040, 1.0, 0.2), [0, 0, 0.1], [Math.PI / 2, 0, 0]);
+            this.rightArm = this._lvLimb(null, 0.3, 1.48, 0, [[0.12, -0.28, 0.08], [0.08, -0.48, 0.28]], 0.045, 0.04, suit, nib);
+            const castor = () => { const g = new THREE.Group(); this._lvMesh(g, lvBox(0.05, 0.05, 0.05), dark); this._lvMesh(g, lvCyl(0.05, 0.05, 0.04, 8), dark, [0, -0.05, 0], [0, 0, Math.PI / 2]); return g; };
+            this.leftLeg = this._lvLimb(null, -0.13, 0.78, 0, [[0, -0.4, 0.02], [0, -0.68, 0]], 0.05, 0.04, suit, castor());
+            this.rightLeg = this._lvLimb(null, 0.13, 0.78, 0, [[0, -0.4, 0.02], [0, -0.68, 0]], 0.05, 0.04, suit, castor());
+            const m = { HEAD: this.head, BRAIN: this.head, NOSE: this.head, LEFT_EAR: this.head, RIGHT_EAR: this.head, LEFT_EYE: this.eyes[0], RIGHT_EYE: this.eyes[1], MOUTH: this.mouth, TEETH: this.mouth,
+                TORSO: this.body, HEART: this.body, LEFT_LUNG: this.body, RIGHT_LUNG: this.body, LIVER: this.body, SPLEEN: this.body, GENITALS: this.body, STOMACH: this.drawer, INTESTINES: this.drawer,
+                LEFT_ARM: this.leftArm, LEFT_HAND: this.leftArm, LEFT_FINGERS: this.leftArm, RIGHT_ARM: this.rightArm, RIGHT_HAND: this.rightArm, RIGHT_FINGERS: this.rightArm,
+                LEFT_LEG: this.leftLeg, LEFT_FOOT: this.leftLeg, LEFT_TOES: this.leftLeg, RIGHT_LEG: this.rightLeg, RIGHT_FOOT: this.rightLeg, RIGHT_TOES: this.rightLeg };
+            this._lvRig(m, ['TORSO'], [this.body, this.head, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg], ['LEFT_EYE', 'RIGHT_EYE', 'MOUTH', 'STOMACH', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG']);
+            this._cascadeRules.push({ gone: ['HEAD', 'BRAIN'], hide: [this.head] });
+        }
+
+        // ── Off-Ramp Incarnate: a wrong turn with a body. Asphalt torso with
+        // lane lines and a lit tunnel in its belly, an exit-sign head pointing
+        // the wrong way, gantry-sign wings and a tail that is a curling ramp.
+        // Demon rig: HEAD/HORNS/TORSO/LEFT_WING/RIGHT_WING/TAIL/LEFT_CLAW/RIGHT_CLAW/MAW.
+        _buildUOffRamp() {
+            const p = this.profile;
+            const asphalt = this._skinMat(p.bodyColor, 0.95);
+            const yellow = this._mat(0xf0c020, 1.0, 0.6);
+            const white = this._mat(0xf0f0ea, 1.0, 0.6);
+            const green = this._mat(0x1a6a3a, 1.0, 0.5);
+            const steel = this._mat(0x9aa0a8, 1.0, 0.35);
+            const concrete = this._mat(0x8a8884, 1.0, 0.95);
+            this.body = this._lvGroup(null, 0, 1.25, 0);
+            this._lvMesh(this.body, lvBox(0.9, 0.85, 0.5), asphalt);
+            for (let i = 0; i < 3; i++) this._lvMesh(this.body, lvBox(0.05, 0.14, 0.01), yellow, [0, 0.3 - i * 0.2, 0.255]);
+            for (const s of [-1, 1]) this._lvMesh(this.body, lvBox(0.03, 0.8, 0.01), white, [s * 0.38, 0, 0.255]);
+            // Somewhere that should not touch here, glowing at the end of a tunnel.
+            this._lvMesh(this.body, new THREE.CircleGeometry(0.17, 8, 0, Math.PI), this._mat(0x020204, 1.0, 0.5), [0, -0.3, 0.256]);
+            this.farLight = this._lvMesh(this.body, new THREE.CircleGeometry(0.04, 6), this._mat(p.accent, 1.0, 0.2, p.accent), [0, -0.24, 0.258]);
+            this._lvMesh(this.body, lvCyl(0.04, 0.04, 0.24, 6), steel, [0, 0.5, 0]);
+            // HEAD: an exit sign, its arrow pointing back where you came from.
+            this.head = this._lvGroup(null, 0, 1.95, 0.05);
+            this._lvMesh(this.head, lvBox(0.6, 0.38, 0.06), green);
+            for (const [w, h, x, y] of [[0.56, 0.02, 0, 0.165], [0.56, 0.02, 0, -0.165], [0.02, 0.34, 0.27, 0], [0.02, 0.34, -0.27, 0]]) this._lvMesh(this.head, lvBox(w, h, 0.065), white, [x, y, 0]);
+            this._lvMesh(this.head, lvBox(0.04, 0.16, 0.065), white, [-0.12, 0.04, 0], [0, 0, 0.6]);
+            this._lvMesh(this.head, lvCone(0.06, 0.1, 3), white, [-0.17, 0.11, 0], [0, 0, 0.6]);
+            for (const s of [-1, 1]) this._lvMesh(this.head, lvBox(0.06, 0.035, 0.02), this._mat(0xffb020, 1.0, 0.2, 0xffb020), [s * 0.1 + 0.08, -0.06, 0.04]);
+            this.horns = this._lvGroup(this.head, 0, 0, 0);
+            for (const s of [-1, 1]) { this.addStrut(this.horns, steel, new THREE.Vector3(s * 0.24, 0.17, 0), new THREE.Vector3(s * 0.38, 0.4, 0), 0.025, 0.02, 5); this.addStrut(this.horns, steel, new THREE.Vector3(s * 0.38, 0.4, 0), new THREE.Vector3(s * 0.3, 0.56, 0), 0.02, 0.016, 5); this._lvMesh(this.horns, lvSph(0.022, 5, 4), steel, [s * 0.38, 0.4, 0]); }
+            this._lvMesh(this.horns, lvCyl(0.08, 0.08, 0.02, 8), this._mat(0xc81e1e, 1.0, 0.5), [0.3, 0.6, 0], [Math.PI / 2, 0, 0]);
+            // MAW: the lower sign panel drops open on a row of road studs.
+            this.maw = this._lvGroup(this.head, 0, -0.19, 0.02);
+            this._lvMesh(this.maw, lvBox(0.5, 0.12, 0.05), green, [0, -0.06, 0]);
+            for (let i = 0; i < 6; i++) this._lvMesh(this.maw, lvCone(0.022, 0.06, 4), white, [-0.2 + i * 0.08, 0.02, 0.01]);
+            // Wings: two overhead gantry signs.
+            const wing = (s) => { const g = this._lvGroup(null, s * 0.45, 1.6, -0.15); this._lvMesh(g, lvBox(0.7, 0.32, 0.04), green, [s * 0.35, 0.15, 0], [0, 0, s * 0.45]); this._lvMesh(g, lvBox(0.66, 0.03, 0.045), white, [s * 0.35, 0.15, 0], [0, 0, s * 0.45]); return g; };
+            this.leftWing = wing(-1); this.rightWing = wing(1);
+            // Claws: guardrail arms ending in bent rebar.
+            const rebar = () => { const g = new THREE.Group(); this._lvMesh(g, lvBox(0.14, 0.1, 0.12), concrete); for (let i = -1; i <= 1; i++) this._lvMesh(g, lvCone(0.018, 0.16, 4), this._mat(0x7a3a1a, 1.0, 0.6), [i * 0.045, -0.06, 0.08], [Math.PI * 0.65, 0, 0]); return g; };
+            this.leftClaw = this._lvLimb(null, -0.5, 1.5, 0.05, [[-0.15, -0.35, 0.1], [-0.18, -0.75, 0.2]], 0.07, 0.06, steel, rebar());
+            this.rightClaw = this._lvLimb(null, 0.5, 1.5, 0.05, [[0.15, -0.35, 0.1], [0.18, -0.75, 0.2]], 0.07, 0.06, steel, rebar());
+            // Legs: bridge pillars on concrete footings.
+            const footing = () => this._lvMesh(null, lvBox(0.3, 0.06, 0.3), concrete);
+            this.leftLeg = this._lvLimb(null, -0.25, 0.86, 0, [[0, -0.8, 0]], 0.15, 0.17, concrete, footing());
+            this.rightLeg = this._lvLimb(null, 0.25, 0.86, 0, [[0, -0.8, 0]], 0.15, 0.17, concrete, footing());
+            // TAIL: a ramp curling down behind it, lane line and all.
+            this.tail = this._lvGroup(null, 0, 1.0, -0.24);
+            const tp = [[0, 0, 0], [0, -0.12, -0.28], [0.18, -0.32, -0.5], [0.45, -0.52, -0.55], [0.65, -0.72, -0.38], [0.72, -0.93, -0.12]].map(q => new THREE.Vector3(q[0], q[1], q[2]));
+            for (let i = 0; i < tp.length - 1; i++) {
+                const d = tp[i + 1].clone().sub(tp[i]), len = d.length();
+                const seg = this._lvMesh(this.tail, lvBox(0.28, 0.04, len + 0.06), asphalt);
+                seg.position.copy(tp[i]).lerp(tp[i + 1], 0.5); seg.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), d.normalize());
+                this._lvMesh(seg, lvBox(0.03, 0.045, len * 0.4), yellow);
+            }
+            this._lvRig({ HEAD: this.head, HORNS: this.horns, TORSO: this.body, LEFT_WING: this.leftWing, RIGHT_WING: this.rightWing, TAIL: this.tail, LEFT_CLAW: this.leftClaw, RIGHT_CLAW: this.rightClaw, MAW: this.maw, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg },
+                ['TORSO'], [this.body, this.head, this.leftWing, this.rightWing, this.tail, this.leftClaw, this.rightClaw, this.leftLeg, this.rightLeg], ['HEAD', 'HORNS', 'LEFT_WING', 'RIGHT_WING', 'TAIL', 'LEFT_CLAW', 'RIGHT_CLAW', 'MAW', 'LEFT_LEG', 'RIGHT_LEG']);
+        }
+
+        // ── Varlenia Mirage: a floating scrap of oasis, palm and pool, with
+        // eyes in the water and teeth all round its underside.
+        // Ghost rig: FACE/CORE/LEFT_WISP/RIGHT_WISP/MAW.
+        _buildUVarlenia() {
+            const p = this.profile;
+            const sand = this.applySkin(this._mat(p.bodyColor, 0.85, 0.7, 0x2a1a00));
+            const earth = this._mat(0x7a5a3a, 0.8, 0.9, 0x1a0a00);
+            const haze = this._mat(p.accent, 0.5, 0.2, p.accent);
+            this.core = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.core, lvCyl(0.5, 0.45, 0.08, 9), sand, [0, 1.3, 0]);
+            this._lvMesh(this.core, lvCone(0.45, 0.6, 9), earth, [0, 0.96, 0], [Math.PI, 0, 0]);
+            const V = (x, y, z) => new THREE.Vector3(x, y, z);
+            const palm = [V(0.15, 1.33, -0.1), V(0.2, 1.68, -0.12), V(0.28, 1.95, -0.05)];
+            for (let i = 0; i < 2; i++) this.addStrut(this.core, this._mat(0x8a6a3a, 0.85, 0.8), palm[i], palm[i + 1], 0.045 - i * 0.01, 0.035 - i * 0.01, 6);
+            for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; this._lvMesh(this.core, lvCone(0.07, 0.4, 3), this._mat(0x3a9a4a, 0.8, 0.6), [0.28 + Math.cos(a) * 0.17, 1.9, -0.05 + Math.sin(a) * 0.17], [Math.sin(a) * 1.7, 0, -Math.cos(a) * 1.7], [1, 1, 0.3]); }
+            for (const s of [-1, 1]) this._lvMesh(this.core, lvSph(0.04, 5, 4), this._mat(0x5a3a1a, 0.85, 0.6), [0.28 + s * 0.04, 1.9, -0.02]);
+            // FACE: two eyes watching out of the pool.
+            this.face = this._lvGroup(null, -0.1, 1.34, 0.12);
+            this._lvMesh(this.face, lvCyl(0.2, 0.2, 0.02, 10), this._mat(0x4ad8d0, 0.7, 0.1, 0x0a4a4a));
+            this.eyes = [-1, 1].map(s => this._eye(this.face, s * 0.07, 0.02, 0.03, 0.05, 0x1a0a00));
+            // MAW: the underside is all teeth.
+            this.maw = this._lvGroup(null, 0, 1.08, 0);
+            this._lvMesh(this.maw, lvTor(0.3, 0.03, 4, 12), this._mat(0x3a0a10, 0.9, 0.5), null, [Math.PI / 2, 0, 0]);
+            for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; this._lvMesh(this.maw, lvCone(0.025, 0.1, 4), this._mat(0xf0ead8, 0.9, 0.4), [Math.cos(a) * 0.32, (i % 2 ? 0.05 : -0.05), Math.sin(a) * 0.32], [i % 2 ? Math.PI : 0, 0, 0]); }
+            // Wisps: heat-shimmer ribbons trailing under it.
+            this.leftWisp = this._lvLimb(null, -0.45, 1.28, 0, [[-0.1, -0.25, 0.05], [-0.02, -0.5, 0.1], [-0.12, -0.75, 0.05]], 0.05, 0.012, haze);
+            this.rightWisp = this._lvLimb(null, 0.45, 1.28, 0, [[0.1, -0.25, 0.05], [0.02, -0.5, 0.1], [0.12, -0.75, 0.05]], 0.05, 0.012, haze);
+            this._lvRig({ FACE: this.face, CORE: this.core, LEFT_WISP: this.leftWisp, RIGHT_WISP: this.rightWisp, MAW: this.maw, BODY: this.core },
+                ['CORE', 'BODY'], [this.core, this.face, this.maw, this.leftWisp, this.rightWisp], ['FACE', 'LEFT_WISP', 'RIGHT_WISP', 'MAW']);
+        }
+
+        // ── Rime Spinner: an ice-mantis sorcerer with an icicle crown, a hex
+        // barrier held in its forelegs and a snowflake turning in its belly.
+        // Insectoid rig: HEAD/THORAX/ABDOMEN/6 legs/MANDIBLES.
+        _buildURimeSpinner() {
+            const p = this.profile;
+            const chitin = this._skinMat(p.bodyColor, 0.3);
+            const ice = this._mat(0xbfe8ff, 0.55, 0.1, 0x1a4a6a);
+            const bright = this._mat(p.accent, 1.0, 0.2, p.accent);
+            this.abdomen = this._lvGroup(null, 0, 0.35, -0.35);
+            this._lvMesh(this.abdomen, lvSph(0.26, 8, 6), ice, null, null, [0.9, 0.8, 1.3]);
+            this.flake = this._lvGroup(this.abdomen, 0, 0, 0);
+            for (let i = 0; i < 3; i++) this._lvMesh(this.flake, lvBox(0.3, 0.02, 0.02), bright, null, [0, i * Math.PI / 3, 0]);
+            this.thorax = this._lvGroup(null, 0, 0, 0);
+            this.addStrut(this.thorax, chitin, new THREE.Vector3(0, 0.4, -0.1), new THREE.Vector3(0, 0.85, 0.12), 0.09, 0.07, 6);
+            this._lvMesh(this.thorax, lvSph(0.1, 6, 5), chitin, [0, 0.42, -0.08]);
+            this._lvMesh(this.thorax, lvSph(0.085, 6, 5), chitin, [0, 0.85, 0.12]);
+            this.head = this._lvGroup(null, 0, 0.95, 0.18);
+            this._lvMesh(this.head, lvSph(0.1, 7, 5), chitin, null, null, [1.5, 0.8, 0.8]);
+            for (const s of [-1, 1]) this._lvMesh(this.head, lvSph(0.05, 6, 4), bright, [s * 0.13, 0.02, 0.02]);
+            for (let i = 0; i < 5; i++) this._lvMesh(this.head, lvCone(0.022, 0.16 - Math.abs(i - 2) * 0.03, 4), ice, [(i - 2) * 0.05, 0.12 - Math.abs(i - 2) * 0.012, -0.02]);
+            this.mandibles = this._lvGroup(this.head, 0, -0.06, 0.06);
+            for (const s of [-1, 1]) this._lvMesh(this.mandibles, lvCone(0.015, 0.07, 3), chitin, [s * 0.025, -0.02, 0.01], [Math.PI, 0, s * 0.3]);
+            // Raptorial forelegs, holding a hexagonal ice barrier between them.
+            const fore = (s) => this._lvLimb(null, s * 0.08, 0.75, 0.08, [[s * 0.12, 0.05, 0.18], [s * 0.1, 0.25, 0.3]], 0.035, 0.025, chitin, this._lvMesh(null, lvCone(0.025, 0.14, 4), ice, [0, 0.06, 0.02]));
+            this.leftLeg = fore(-1); this.rightLeg = fore(1);
+            this.barrier = this._lvMesh(this.leftLeg, lvCyl(0.2, 0.2, 0.02, 6), ice, [0.1, 0.25, 0.34], [Math.PI / 2, 0, 0]);
+            const walk = (s, x, y, z, pts) => this._lvLimb(null, s * x, y, z, pts, 0.03, 0.018, chitin);
+            this.midLeftLeg = walk(-1, 0.07, 0.42, -0.05, [[-0.18, 0.08, 0.05], [-0.32, -0.42, 0.1]]);
+            this.midRightLeg = walk(1, 0.07, 0.42, -0.05, [[0.18, 0.08, 0.05], [0.32, -0.42, 0.1]]);
+            this.rearLeftLeg = walk(-1, 0.08, 0.38, -0.2, [[-0.2, 0.1, -0.05], [-0.34, -0.38, -0.15]]);
+            this.rearRightLeg = walk(1, 0.08, 0.38, -0.2, [[0.2, 0.1, -0.05], [0.34, -0.38, -0.15]]);
+            this._lvRig({ HEAD: this.head, THORAX: this.thorax, ABDOMEN: this.abdomen, MANDIBLES: this.mandibles, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg,
+                MIDDLE_LEFT_LEG: this.midLeftLeg, MIDDLE_RIGHT_LEG: this.midRightLeg, REAR_LEFT_LEG: this.rearLeftLeg, REAR_RIGHT_LEG: this.rearRightLeg },
+                ['THORAX'], [this.thorax, this.head, this.abdomen, this.leftLeg, this.rightLeg, this.midLeftLeg, this.midRightLeg, this.rearLeftLeg, this.rearRightLeg],
+                ['HEAD', 'ABDOMEN', 'MANDIBLES', 'LEFT_LEG', 'RIGHT_LEG', 'MIDDLE_LEFT_LEG', 'MIDDLE_RIGHT_LEG', 'REAR_LEFT_LEG', 'REAR_RIGHT_LEG']);
+        }
+
+        // ── Thoth's Broken Ward: a stone cage under an ibis head, one pillar
+        // snapped, the chaos it was built to hold leaking out of the gap.
+        // Golem rig: CORE/LEFT_ARM/RIGHT_ARM/LEFT_LEG/RIGHT_LEG/MAW.
+        _buildUThothWard() {
+            const p = this.profile;
+            const stone = this._skinMat(p.bodyColor, 0.9);
+            const glyph = this._mat(0x2a2620, 1.0, 0.9);
+            const lapis = this._mat(0x2a4a9a, 1.0, 0.5);
+            const chaos = this._mat(p.accent, 0.95, 0.2, p.accent);
+            this.body = this._lvGroup(null, 0, 0, 0);
+            this._lvMesh(this.body, lvBox(0.7, 0.12, 0.55), stone, [0, 0.72, 0]);
+            this._lvMesh(this.body, lvBox(0.75, 0.14, 0.6), stone, [0, 1.52, 0]);
+            for (const [x, z] of [[-0.3, 0.22], [-0.3, -0.22], [0.3, -0.22]]) this._lvMesh(this.body, lvBox(0.1, 0.7, 0.1), stone, [x, 1.12, z]);
+            // The snapped pillar: a jagged stump below, a jagged stub above.
+            this._lvMesh(this.body, lvBox(0.1, 0.38, 0.1), stone, [0.3, 0.95, 0.22]);
+            for (let i = 0; i < 3; i++) this._lvMesh(this.body, lvCone(0.03, 0.08, 3), stone, [0.27 + i * 0.03, 1.17, 0.2 + (i % 2) * 0.04]);
+            this._lvMesh(this.body, lvCone(0.035, 0.1, 3), stone, [0.3, 1.41, 0.22], [Math.PI, 0, 0]);
+            for (let i = 0; i < 4; i++) { this._lvMesh(this.body, lvBox(0.04, 0.06, 0.01), glyph, [-0.25 + i * 0.16, 1.52, 0.302]); this._lvMesh(this.body, lvBox(0.06, 0.03, 0.01), glyph, [-0.22 + i * 0.15, 0.72, 0.277]); }
+            // CORE: the chaos it was meant to cage, leaking out of the gap.
+            this.core = this._lvGroup(null, 0, 1.12, 0);
+            this._lvMesh(this.core, new THREE.IcosahedronGeometry(0.2, 0), chaos);
+            const V = (x, y, z) => new THREE.Vector3(x, y, z);
+            for (const [a, b] of [[V(0.1, 0.05, 0.1), V(0.45, 0.2, 0.4)], [V(0.12, -0.05, 0.08), V(0.5, -0.15, 0.3)], [V(0.05, 0.1, 0.14), V(0.3, 0.32, 0.45)]]) this.addStrut(this.core, chaos, a, b, 0.035, 0.008, 4);
+            // HEAD: an ibis head in a striped headdress; MAW: the long curved beak.
+            this._lvMesh(this.body, lvCyl(0.06, 0.08, 0.22, 7), stone, [0, 1.68, 0]);
+            this.head = this._lvGroup(null, 0, 1.85, 0.03);
+            this._lvMesh(this.head, lvSph(0.13, 7, 5), stone, null, null, [0.9, 1, 1.2]);
+            for (const s of [-1, 1]) {
+                this._lvMesh(this.head, lvBox(0.08, 0.3, 0.02), lapis, [s * 0.11, -0.12, -0.05], [0.2, 0, 0]);
+                this._lvMesh(this.head, lvBox(0.085, 0.03, 0.025), this._mat(0xd8b040, 1.0, 0.3), [s * 0.11, -0.08, -0.05], [0.2, 0, 0]);
+                this._lvMesh(this.head, lvSph(0.025, 5, 4), this._mat(0x40e0d0, 1.0, 0.2, 0x40e0d0), [s * 0.08, 0.03, 0.1]);
+            }
+            this.maw = this._lvLimb(this.head, 0, -0.02, 0.13, [[0, -0.06, 0.2], [0, -0.18, 0.34]], 0.04, 0.012, glyph);
+            // Arms: a scribe's palette and a reed pen.
+            const palette = new THREE.Group();
+            this._lvMesh(palette, lvBox(0.08, 0.03, 0.26), this._mat(0xc8a878, 1.0, 0.8), [0, 0, 0.08]);
+            for (const z of [0.0, 0.08]) this._lvMesh(palette, lvCyl(0.018, 0.018, 0.012, 6), z ? this._mat(0xc81e1e, 1.0, 0.5) : glyph, [0, 0.018, z]);
+            this.leftArm = this._lvLimb(null, -0.42, 1.45, 0, [[-0.1, -0.3, 0.08], [-0.08, -0.58, 0.2]], 0.08, 0.07, stone, palette);
+            const pen = new THREE.Group(); this._lvMesh(pen, lvSph(0.07, 6, 4), stone); this._lvMesh(pen, lvCyl(0.012, 0.012, 0.3, 4), this._mat(0xb89a5a, 1.0, 0.7), [0, 0.06, 0.08], [0.8, 0, 0]);
+            this.rightArm = this._lvLimb(null, 0.42, 1.45, 0, [[0.1, -0.3, 0.08], [0.08, -0.58, 0.2]], 0.08, 0.07, stone, pen);
+            const foot = () => this._lvMesh(null, lvBox(0.18, 0.08, 0.26), stone, [0, 0, 0.04]);
+            this.leftLeg = this._lvLimb(null, -0.2, 0.7, 0, [[0, -0.62, 0.02]], 0.1, 0.09, stone, foot());
+            this.rightLeg = this._lvLimb(null, 0.2, 0.7, 0, [[0, -0.62, 0.02]], 0.1, 0.09, stone, foot());
+            this._lvRig({ CORE: this.core, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.leftLeg, RIGHT_LEG: this.rightLeg, MAW: this.maw, HEAD: this.head, BODY: this.body, TORSO: this.body },
+                ['BODY', 'TORSO'], [this.body, this.core, this.head, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg], ['CORE', 'LEFT_ARM', 'RIGHT_ARM', 'LEFT_LEG', 'RIGHT_LEG', 'MAW', 'HEAD']);
+        }
+
+        // Motion for the level 1-5 roster and the u_ uniques.
+        _animateLv(t, fast, stride, baseX, deltaTime) {
+            const S = Math.sin, A = Math.abs;
+            switch (this.variant) {
+                case 'lv_foldedairplane': {
+                    const f = S(t * (fast ? 10 : 2.4)) * (fast ? 0.14 : 0.06);
+                    if (this.leftWing) this.leftWing.rotation.z = -f;
+                    if (this.rightWing) this.rightWing.rotation.z = f;
+                    this.model.rotation.z = S(t * 0.9) * 0.14;
+                    break;
+                }
+                case 'lv_wasabisnail': {
+                    [this.stalkL, this.stalkR].forEach((g, i) => { if (g) { g.rotation.z = (i ? -1 : 1) * S(t * 1.6 + i) * 0.18; g.rotation.x = fast ? 0.5 * A(S(t * 8)) : S(t * 1.1 + i) * 0.1; } });
+                    if (this.foot) this.foot.scale.z = 1 + S(t * 1.8) * 0.04;
+                    if (this.shell) this.shell.rotation.z = S(t * 0.9) * 0.05;
+                    break;
+                }
+                case 'lv_clockworktinsoldier': {
+                    const m = S(t * (fast ? 7 : 3.2)) * 0.32;
+                    if (this.leftLeg) this.leftLeg.rotation.x = m;
+                    if (this.rightLeg) this.rightLeg.rotation.x = -m;
+                    if (this.leftArm) this.leftArm.rotation.x = -m * 0.8;
+                    if (this.rightArm) this.rightArm.rotation.x = fast ? -0.5 * A(S(t * 8)) : 0;
+                    if (this.core) this.core.rotation.z -= deltaTime * (fast ? 9 : 3);
+                    if (this.jaw) this.jaw.rotation.x = A(S(t * (fast ? 12 : 4))) * 0.3;
+                    this.model.position.y = this._baseY + A(S(t * (fast ? 7 : 3.2))) * 0.03 * this.scale;
+                    break;
+                }
+                case 'lv_dryerlintgolem': {
+                    const b = 1 + S(t * 1.4) * 0.03;
+                    if (this.body) this.body.scale.set(b, 2 - b, b);
+                    if (this.leftArm) this.leftArm.rotation.x = fast ? -0.7 * A(S(t * 6)) : S(t * 1.2) * 0.12;
+                    if (this.rightArm) this.rightArm.rotation.x = fast ? -0.7 * A(S(t * 6 + 1.5)) : S(t * 1.2 + 1) * 0.12;
+                    if (this.core) { this.core.rotation.y = t * 4; if (this.core.material) this.core.material.emissiveIntensity = (fast ? 1.6 : 0.7) + A(S(t * 23)) * 0.8; }
+                    break;
+                }
+                case 'lv_sandgecko':
+                case 'lv_ruingecko':
+                case 'lv_hoardlizard':
+                case 'lv_sewergatorhatchling': {
+                    if (this.head) this.head.rotation.y = S(t * (this.variant === 'lv_hoardlizard' ? 3.1 : 0.9)) * (this.variant === 'lv_hoardlizard' ? 0.25 : 0.12);
+                    if (this.tail) this.tail.rotation.y = S(t * (fast ? 5 : 1.4)) * 0.2;
+                    if (this.tongue) this.tongue.rotation.x = S(t * 5) * 0.15;
+                    if (this.jaw && this.jaw.isGroup) this.jaw.rotation.x = fast ? A(S(t * 9)) * 0.45 : A(S(t * 0.8)) * 0.08;
+                    const lg = [this.leftArm, this.rightLeg, this.rightArm, this.leftLeg];
+                    lg.forEach((l, i) => { if (l) l.rotation.x = S(t * 4 + (i < 2 ? 0 : Math.PI)) * 0.25 * stride; });
+                    if (this.variant === 'lv_sandgecko' && !fast) this.model.position.y = this._baseY + Math.max(0, S(t * 1.6)) * 0.02 * this.scale; // push-ups
+                    break;
+                }
+                case 'lv_deserttumbleweed': {
+                    if (this.ball) this.ball.rotation.x += deltaTime * (fast ? 5 : 1.1);
+                    if (this.jaw) this.jaw.rotation.x = A(S(t * (fast ? 10 : 2))) * 0.35;
+                    this.model.position.y = this._baseY + A(S(t * (fast ? 6 : 2.2))) * 0.04 * this.scale;
+                    break;
+                }
+                case 'lv_dunescorpling': {
+                    if (this.tail) this.tail.rotation.x = fast ? -0.35 * A(S(t * 8)) : S(t * 1.3) * 0.06;
+                    [this.pincerL, this.pincerR].forEach((g, i) => { if (g && g._claw && g._claw._f) g._claw._f.rotation.y = (i ? -1 : 1) * A(S(t * (fast ? 10 : 2) + i)) * 0.4; });
+                    if (this._legs) this._legs.forEach((l, i) => { l.rotation.x = S(t * 6 + i * 0.9) * 0.18 * stride; });
+                    break;
+                }
+                case 'lv_saltcrab':
+                case 'lv_fishnetcrab': {
+                    [this.leftClaw, this.rightClaw].forEach((g, i) => {
+                        if (!g) return;
+                        g.rotation.x = fast ? -0.45 * A(S(t * 7 + i)) : S(t * 1.2 + i) * 0.08;
+                        const h = g._hand; if (h && h._f) h._f.rotation.y = (i ? -1 : 1) * A(S(t * (fast ? 9 : 2) + i)) * 0.35;
+                        if (h && h._b) h._b.rotation.y = (i ? 1 : -1) * A(S(t * (fast ? 9 : 2) + i)) * 0.3;
+                    });
+                    if (this._legs) this._legs.forEach((l, i) => { l.rotation.z = S(t * 5 + i * 0.8) * 0.08 * (fast ? 1.5 : 0.4); });
+                    this.model.position.x = baseX + S(t * 0.7) * 0.03 * this.scale;
+                    break;
+                }
+                case 'lv_desertporcupine': {
+                    if (this.spikes) { this.spikes.rotation.z = fast ? S(t * 40) * 0.025 : 0; const b = 1 + S(t * 1.5) * 0.02; this.spikes.scale.set(b, b, b); }
+                    if (this.eyes) this.eyes.rotation.y = S(t * 0.8) * 0.1;
+                    [this.leftClaw, this.rightLeg, this.rightClaw, this.leftLeg].forEach((l, i) => { if (l) l.rotation.x = S(t * 5 + (i < 2 ? 0 : Math.PI)) * 0.3 * stride; });
+                    break;
+                }
+                case 'lv_manticorecub': {
+                    if (this.leftWing) this.leftWing.rotation.z = S(t * (fast ? 12 : 2.4)) * 0.15;
+                    if (this.rightWing) this.rightWing.rotation.z = -S(t * (fast ? 12 : 2.4)) * 0.15;
+                    if (this.tail) { this.tail.rotation.y = S(t * 1.8) * 0.25; this.tail.rotation.x = fast ? 0.5 * A(S(t * 6)) : 0; }
+                    if (this.head) this.head.rotation.z = S(t * 0.9) * 0.1;
+                    [this.flPaw, this.rrLeg, this.frPaw, this.rlLeg].forEach((l, i) => { if (l) l.rotation.x = S(t * 5 + (i < 2 ? 0 : Math.PI)) * 0.3 * stride; });
+                    break;
+                }
+                case 'lv_belltowergargoyle': {
+                    if (this.drip) this.drip.scale.y = 1 + S(t * 3) * 0.25;
+                    if (this.bell) this.bell.rotation.x = S(t * (fast ? 9 : 1.6)) * (fast ? 0.35 : 0.12);
+                    if (this.head) this.head.rotation.y = S(t * 0.6) * 0.18;
+                    [this.leftArm, this.rightArm].forEach((a, i) => { if (a) a.rotation.x = fast ? -0.6 * A(S(t * 6 + i * 1.5)) : 0; });
+                    break;
+                }
+                case 'lv_voidferretkit': {
+                    if (this.core) this.core.rotation.z = S(t * 0.7) * 0.25;
+                    if (this.tendril) this.tendril.rotation.z = S(t * 1.9) * 0.3;
+                    if (this.tail) this.tail.rotation.y = S(t * 2.2) * 0.3;
+                    if (this.head) this.head.rotation.y = S(t * 1.3) * 0.2;
+                    [this.leftLeg, this.rearRightLeg, this.rightLeg, this.rearLeftLeg].forEach((l, i) => { if (l) l.rotation.x = S(t * 6 + (i < 2 ? 0 : Math.PI)) * 0.3 * stride; });
+                    break;
+                }
+                case 'lv_astraljellyfish': {
+                    const pulse = S(t * (fast ? 5 : 1.6));
+                    if (this.body) this.body.scale.set(1 + pulse * 0.06, 1 - pulse * 0.05, 1 + pulse * 0.06);
+                    [this.tentacleOne, this.tentacleTwo].forEach((g, i) => { if (g) { g.rotation.x = S(t * 1.3 + i) * 0.15; g.rotation.z = (i ? -1 : 1) * (fast ? 0.3 * A(S(t * 7)) : S(t * 0.9 + i) * 0.08); } });
+                    if (this._fringe) this._fringe.forEach((g, i) => { g.rotation.x = S(t * 1.6 + i) * 0.12; });
+                    if (this.ring) this.ring.rotation.z = t * 0.8;
+                    break;
+                }
+                case 'lv_lunarhopper': {
+                    const hop = A(S(t * (fast ? 6 : 1.8)));
+                    this.model.position.y = this._baseY + hop * (fast ? 0.25 : 0.04) * this.scale;
+                    if (this.ears) this.ears.rotation.x = S(t * 3.1) * 0.1 - hop * 0.2;
+                    if (this.rearLeftLeg) this.rearLeftLeg.rotation.x = hop * 0.4;
+                    if (this.rearRightLeg) this.rearRightLeg.rotation.x = hop * 0.4;
+                    break;
+                }
+                case 'lv_mallguardbot': {
+                    if (this.head) this.head.rotation.y = S(t * (fast ? 4 : 0.9)) * 0.45;
+                    if (this.siren) this.siren.rotation.y = t * 6;
+                    if (this.keys) this.keys.rotation.z = S(t * 2.4) * 0.25;
+                    if (this.leftArm) this.leftArm.rotation.x = fast ? -0.4 * A(S(t * 6)) : 0;
+                    if (this.torchLens && this.torchLens.material) this.torchLens.material.emissiveIntensity = fast ? 1.8 : 0.6;
+                    this.model.position.x = baseX + S(t * 0.5) * 0.03 * this.scale;
+                    break;
+                }
+                case 'lv_looseboltbot': {
+                    if (this.body) this.body.rotation.z = 0.12 + S(t * (fast ? 9 : 2.6)) * 0.05;
+                    if (this.head) this.head.rotation.z = -0.2 + S(t * 3.3) * 0.12;
+                    if (this.core) this.core.rotation.x += deltaTime * (fast ? 14 : 2);
+                    if (this.jaw) this.jaw.rotation.x = 0.5 + S(t * 5) * 0.2;
+                    [this.leftLeg, this.rightLeg].forEach((l, i) => { if (l) l.scale.y = 1 + S(t * (fast ? 10 : 3) + i * 1.6) * 0.06; });
+                    if (this.rightArm) this.rightArm.rotation.x = fast ? -0.6 * A(S(t * 7)) : S(t * 1.4) * 0.1;
+                    break;
+                }
+                case 'lv_plushbear': {
+                    if (this.head) this.head.rotation.z = S(t * 0.8) * 0.12;
+                    const hug = fast ? 0.35 * A(S(t * 5)) : S(t * 1.1) * 0.05;
+                    if (this.leftArm) this.leftArm.rotation.y = -hug;
+                    if (this.rightArm) this.rightArm.rotation.y = hug;
+                    break;
+                }
+                case 'lv_sparkplugsprite': {
+                    if (this.core) { const j = 1.1 + S(t * 37) * S(t * 23) * 0.3; this.core.scale.setScalar(j); if (this.core.material) this.core.material.emissiveIntensity = (fast ? 2.0 : 1.0) + A(S(t * 29)) * 0.8; }
+                    [this.leftArm, this.rightArm, this.leftLeg, this.rightLeg].forEach((l, i) => { if (l) l.rotation.z = S(t * (fast ? 14 : 7) + i * 1.3) * 0.18; });
+                    this.model.rotation.y = S(t * 0.8) * 0.3;
+                    this.model.position.x = baseX + S(t * 2.2) * 0.04 * this.scale;
+                    break;
+                }
+                case 'lv_plagueleech': {
+                    if (this._segs) this._segs.forEach((m, i) => { m.scale.y = 0.8 * (1 + S(t * (fast ? 6 : 2.4) - i * 0.9) * 0.08); });
+                    if (this.maw) { const k = 1 + (fast ? A(S(t * 9)) * 0.35 : S(t * 2) * 0.08); this.maw.scale.set(k, k, 1); }
+                    if (this.sac && this.sac.material) this.sac.material.emissiveIntensity = 0.4 + A(S(t * 2.2)) * 0.6;
+                    break;
+                }
+                case 'lv_coinpursemimic': {
+                    const gape = fast ? 0.55 + S(t * 9) * 0.15 : 0.14 + Math.max(0, S(t * 0.7)) * 0.16;
+                    if (this.lid) this.lid.rotation.x = -gape;
+                    if (this.tongue) this.tongue.rotation.x = -gape * 0.4 + S(t * 3) * 0.05;
+                    if (this.eyes) this.eyes.rotation.y = S(t * 1.1) * 0.15;
+                    break;
+                }
+                case 'lv_morguecrawler': {
+                    if (this._legs) this._legs.forEach((l, i) => { l.rotation.x = S(t * (fast ? 12 : 5) + i * 0.6) * 0.25; });
+                    if (this.head) this.head.rotation.y = S(t * 1.4) * 0.15;
+                    if (this._jaws) this._jaws.forEach((j, i) => { j.rotation.y = (i ? -1 : 1) * A(S(t * (fast ? 12 : 3))) * 0.35; });
+                    break;
+                }
+                case 'lv_pizzaooze': {
+                    const w = 1 + S(t * (fast ? 6 : 2)) * 0.06;
+                    if (this.blob) this.blob.scale.set(1.15 * w, 0.38 / w, 1.15 * w);
+                    if (this.core) this.core.scale.setScalar(0.8 + A(S(t * 1.7)) * 0.4);
+                    [this.podL, this.podR].forEach((g, i) => { if (g) { g.rotation.x = fast ? -0.4 * A(S(t * 7 + i)) : S(t * 1.5 + i) * 0.1; } });
+                    if (this.maw) this.maw.position.y = 0.25 - A(S(t * (fast ? 10 : 2))) * 0.02;
+                    break;
+                }
+                case 'lv_pitrhinobeetle': {
+                    if (this.head) this.head.rotation.x = fast ? -0.4 * A(S(t * 6)) : S(t * 1.1) * 0.05;
+                    if (this._legs) this._legs.forEach((l, i) => { l.rotation.x = S(t * 6 + i * 1.7) * 0.2 * stride; });
+                    break;
+                }
+                case 'lv_hoardwyrmling': {
+                    if (this.sac) { const s = 1 + A(S(t * (fast ? 5 : 1.5))) * 0.15; this.sac.scale.set(s, 1.1 * s, 0.9 * s); if (this.sac.material) this.sac.material.emissiveIntensity = 0.4 + s - 1; }
+                    if (this.head) this.head.rotation.y = S(t * 0.8) * 0.2;
+                    if (this.jaw) this.jaw.rotation.x = fast ? A(S(t * 8)) * 0.4 : 0;
+                    if (this.leftWing) this.leftWing.rotation.z = S(t * (fast ? 10 : 2)) * 0.12;
+                    if (this.rightWing) this.rightWing.rotation.z = -S(t * (fast ? 10 : 2)) * 0.12;
+                    if (this.tail) this.tail.rotation.y = S(t * 1.2) * 0.12;
+                    break;
+                }
+                case 'lv_shadowpuddle': {
+                    if (this.ripples) this.ripples.forEach((r, i) => { const k = (t * 0.4 + i * 0.5) % 1; r.scale.set(0.8 + k * 0.4, 0.8 + k * 0.4, 1); });
+                    if (this.iris && this.iris.material) this.iris.material.emissiveIntensity = (fast ? 1.6 : 0.6) + S(t * 3) * 0.3;
+                    [this.leftArm, this.rightArm].forEach((a, i) => { if (a) { a.rotation.x = fast ? 0.5 * A(S(t * 7 + i)) : S(t * 1.2 + i) * 0.1; a.rotation.z = (i ? -1 : 1) * S(t * 1.6 + i) * 0.1; } });
+                    [this.leftLeg, this.rightLeg].forEach((l, i) => { if (l) l.rotation.y = (i ? -1 : 1) * S(t * 1.8 + i) * 0.2; });
+                    break;
+                }
+                case 'lv_wishingtotem': {
+                    if (this.ribbons) this.ribbons.forEach((r, i) => { r.rotation.z = S(t * 2.1 + i) * 0.25; r.rotation.x = S(t * 1.7 + i * 2) * 0.15; });
+                    [this.leftArm, this.rightArm].forEach((a, i) => { if (a) a.rotation.z = (i ? -1 : 1) * (fast ? 0.6 * A(S(t * 7)) : S(t * 1.3) * 0.08); });
+                    if (fast) this.model.position.y = this._baseY + A(S(t * 7)) * 0.06 * this.scale;
+                    break;
+                }
+                case 'u_umbrallurker': {
+                    if (this.leftWisp) this.leftWisp.rotation.x = fast ? 0.5 * A(S(t * 7)) : S(t * 1.1) * 0.12;
+                    if (this.rightWisp) { this.rightWisp.rotation.z = S(t * 1.4) * 0.15; this.rightWisp.rotation.x = fast ? -0.4 * A(S(t * 7 + 1)) : 0; }
+                    if (this.face) this.face.rotation.z = S(t * 0.7) * 0.12;
+                    if (this.core && this.core.material) this.core.material.emissiveIntensity = (fast ? 1.6 : 0.6) + A(S(t * 2.3)) * 0.4;
+                    break;
+                }
+                case 'u_bureaucraticnightmare': {
+                    if (this.head) this.head.rotation.x = fast ? 0.4 * A(S(t * 8)) : 0;
+                    if (this.rightArm) this.rightArm.rotation.x = fast ? -0.7 * A(S(t * 7)) : S(t * 1.3) * 0.08;
+                    if (this.leftArm) this.leftArm.rotation.x = S(t * 1.1) * 0.06;
+                    if (this.drawer) this.drawer.position.z = 0.2 + A(S(t * (fast ? 6 : 0.9))) * 0.05;
+                    [this.leftLeg, this.rightLeg].forEach((l, i) => { if (l) l.rotation.x = S(t * 5 + i * Math.PI) * 0.3 * stride; });
+                    break;
+                }
+                case 'u_offrampincarnate': {
+                    if (this.leftWing) this.leftWing.rotation.z = -S(t * (fast ? 6 : 1.2)) * 0.12;
+                    if (this.rightWing) this.rightWing.rotation.z = S(t * (fast ? 6 : 1.2)) * 0.12;
+                    if (this.maw) this.maw.rotation.x = fast ? 0.5 * A(S(t * 8)) : A(S(t * 0.8)) * 0.1;
+                    if (this.tail) this.tail.rotation.y = S(t * 0.8) * 0.1;
+                    if (this.farLight && this.farLight.material) this.farLight.material.emissiveIntensity = 0.6 + A(S(t * 1.7)) * 1.2;
+                    [this.leftClaw, this.rightClaw].forEach((c, i) => { if (c) c.rotation.x = fast ? -0.6 * A(S(t * 6 + i)) : S(t * 1.1 + i) * 0.06; });
+                    break;
+                }
+                case 'u_varleniamirage': {
+                    if (this.core) this.core.rotation.y = S(t * 0.4) * 0.3;
+                    if (this.maw) { const k = 1 + (fast ? A(S(t * 9)) * 0.25 : S(t * 1.6) * 0.05); this.maw.scale.set(k, 1, k); }
+                    [this.leftWisp, this.rightWisp].forEach((w, i) => { if (w) { w.rotation.z = (i ? -1 : 1) * S(t * 1.8 + i) * 0.2; w.rotation.x = S(t * 1.3 + i) * 0.15; } });
+                    break;
+                }
+                case 'u_rimespinner': {
+                    if (this.flake) this.flake.rotation.y += deltaTime * (fast ? 6 : 1.5);
+                    [this.leftLeg, this.rightLeg].forEach(l => { if (l) l.rotation.x = fast ? -0.4 * A(S(t * 6)) : S(t * 1.2) * 0.08; });
+                    if (this.head) this.head.rotation.y = S(t * 0.9) * 0.2;
+                    [this.midLeftLeg, this.rearRightLeg, this.midRightLeg, this.rearLeftLeg].forEach((l, i) => { if (l) l.rotation.x = S(t * 5 + (i < 2 ? 0 : Math.PI)) * 0.25 * stride; });
+                    break;
+                }
+                case 'u_thothsbrokenward': {
+                    if (this.core) { this.core.rotation.y = t * (fast ? 3 : 0.8); this.core.rotation.x = S(t * 1.3) * 0.3; }
+                    if (this.head) this.head.rotation.y = S(t * 0.6) * 0.2;
+                    if (this.maw) this.maw.rotation.x = fast ? 0.5 * A(S(t * 7)) : 0;
+                    [this.leftArm, this.rightArm].forEach((a, i) => { if (a) a.rotation.x = fast ? -0.6 * A(S(t * 6 + i)) : S(t * 1 + i) * 0.05; });
+                    break;
+                }
+                case 'lv_centaurfoal': {
+                    if (this.head) this.head.rotation.y = S(t * 0.9) * 0.25;
+                    if (this.tail) this.tail.rotation.z = S(t * 2.2) * 0.2;
+                    if (this.rightArm) this.rightArm.rotation.x = fast ? -1.2 * A(S(t * 6)) : S(t * 1.2) * 0.06;
+                    const kick = fast ? A(S(t * 7)) * 0.6 : 0;
+                    if (this.rearLeftLeg) this.rearLeftLeg.rotation.x = -kick + S(t * 5) * 0.25 * stride;
+                    if (this.rearRightLeg) this.rearRightLeg.rotation.x = -kick - S(t * 5) * 0.25 * stride;
+                    if (this.leftLeg) this.leftLeg.rotation.x = -S(t * 5) * 0.3 * stride;
+                    if (this.rightLeg) this.rightLeg.rotation.x = S(t * 5) * 0.3 * stride;
+                    break;
+                }
+            }
+        }
+
         animatePose(deltaTime) {
             if (this._baseY === null) this._baseY = this.model.position.y;
             if (this._baseX === null) this._baseX = this.model.position.x;
@@ -2567,10 +4490,11 @@
             // Four-legged models only stride while really travelling (overworld
             // walk) or lunging on an attack; standing in battle they keep still.
             const stride = this.strideMul(fast);
-            const floats = (this.variant === 'origami' || this.variant === 'mask' || this.variant === 'paperwork' || this.variant === 'sawblade' || this.variant === 'tidesculptor' || this.variant === 'obsidianvisionary' || this.variant === 'ochrejelly' || this.variant === 'enchantress' || this.variant === 'embersprite' || this.variant === 'frostelemental' || this.variant === 'giantjellyfish' || this.variant === 'fluxlingfurret' || this.variant === 'glimmershrimp' || this.variant === 'insectswarm' || this.variant === 'marshwraith' || this.variant === 'reaganite' || this.variant === 'seraphicemissary' || this.variant === 'shadowstalker' || this.variant === 'shadowwraith' || this.variant === 'stoneguardian' || this.variant === 'stormbanshee' || this.variant === 'thundersprite');
+            const floats = (this.variant === 'origami' || this.variant === 'mask' || this.variant === 'paperwork' || this.variant === 'sawblade' || this.variant === 'tidesculptor' || this.variant === 'obsidianvisionary' || this.variant === 'ochrejelly' || this.variant === 'enchantress' || this.variant === 'embersprite' || this.variant === 'frostelemental' || this.variant === 'giantjellyfish' || this.variant === 'fluxlingfurret' || this.variant === 'glimmershrimp' || this.variant === 'insectswarm' || this.variant === 'marshwraith' || this.variant === 'reaganite' || this.variant === 'seraphicemissary' || this.variant === 'shadowstalker' || this.variant === 'shadowwraith' || this.variant === 'stoneguardian' || this.variant === 'stormbanshee' || this.variant === 'thundersprite' || this.variant === 'lv_foldedairplane' || this.variant === 'lv_astraljellyfish' || this.variant === 'lv_sparkplugsprite' || this.variant === 'u_umbrallurker' || this.variant === 'u_varleniamirage');
             this.model.position.y = this._baseY + Math.sin(t * 1.3) * (floats ? 0.09 : 0.03) * this.scale;
 
             const baseX = this._baseX !== null ? this._baseX : this.model.position.x;
+            if (this.variant.indexOf('lv_') === 0 || this.variant.indexOf('u_') === 0) this._animateLv(t, fast, stride, baseX, deltaTime);
             switch (this.variant) {
                 case 'gunburger': {
                     if (this.head) this.head.rotation.y = Math.sin(t * (fast ? 5 : 1.4)) * 0.3; // surveillance scan
@@ -2663,7 +4587,7 @@
                 case 'forestcentaur': {
                     const draw = fast ? Math.abs(Math.sin(t * 6)) * 0.3 : 0.1 + Math.sin(t * 1.5) * 0.05;
                     if (this.rightArm) this.rightArm.position.z = 0.45 - draw;
-                    if (this.arrow) this.arrow.position.z = -0.34 + (fast && Math.sin(t * 6) > 0.9 ? 0.5 : 0);
+                    if (this.arrow) this.arrow.position.z = 0.18 + (fast && Math.sin(t * 6) > 0.9 ? 0.5 : 0);
                     if (this.head) this.head.rotation.y = Math.sin(t * 0.9) * 0.15;
                     [this.leftLeg, this.rightLeg, this.rearLeftLeg, this.rearRightLeg].forEach((l, i) => { if (l) l.rotation.x = Math.sin(t * 2 + i * 1.6) * (fast ? 0.18 : 0.05) * stride; });
                     break;
@@ -3123,6 +5047,38 @@
     reg('swampcrocodile',    { aliases: ['swampcrocodile'],    scale: S.swampcrocodile.scale,    weapon: 0, create: make });
     reg('tarantula',         { aliases: ['tarantula'],         scale: S.tarantula.scale,         weapon: 0, create: make });
     reg('thundersprite',     { aliases: ['thundersprite'],     scale: S.thundersprite.scale,     weapon: 0, create: make });
+    // Level 1-5 roster: each lv_ key is its own bespoke model.
+reg('lv_foldedairplane',      { aliases: ['lv_foldedairplane'],      scale: S.lv_foldedairplane.scale,      weapon: 0, create: make });
+    reg('lv_wasabisnail',         { aliases: ['lv_wasabisnail'],         scale: S.lv_wasabisnail.scale,         weapon: 0, create: make });
+    reg('lv_clockworktinsoldier', { aliases: ['lv_clockworktinsoldier'], scale: S.lv_clockworktinsoldier.scale, weapon: 0, create: make });
+    reg('lv_dryerlintgolem',      { aliases: ['lv_dryerlintgolem'],      scale: S.lv_dryerlintgolem.scale,      weapon: 0, create: make });
+    reg('lv_sandgecko',           { aliases: ['lv_sandgecko'],           scale: S.lv_sandgecko.scale,           weapon: 0, create: make });
+    reg('lv_deserttumbleweed',    { aliases: ['lv_deserttumbleweed'],    scale: S.lv_deserttumbleweed.scale,    weapon: 0, create: make });
+    reg('lv_dunescorpling',       { aliases: ['lv_dunescorpling'],       scale: S.lv_dunescorpling.scale,       weapon: 0, create: make });
+    reg('lv_saltcrab',            { aliases: ['lv_saltcrab'],            scale: S.lv_saltcrab.scale,            weapon: 0, create: make });
+    reg('lv_desertporcupine',     { aliases: ['lv_desertporcupine'],     scale: S.lv_desertporcupine.scale,     weapon: 0, create: make });
+    reg('lv_manticorecub',        { aliases: ['lv_manticorecub'],        scale: S.lv_manticorecub.scale,        weapon: 0, create: make });
+    reg('lv_belltowergargoyle',   { aliases: ['lv_belltowergargoyle'],   scale: S.lv_belltowergargoyle.scale,   weapon: 0, create: make });
+    reg('lv_voidferretkit',       { aliases: ['lv_voidferretkit'],       scale: S.lv_voidferretkit.scale,       weapon: 0, create: make });
+    reg('lv_astraljellyfish',     { aliases: ['lv_astraljellyfish'],     scale: S.lv_astraljellyfish.scale,     weapon: 0, create: make });
+    reg('lv_lunarhopper',         { aliases: ['lv_lunarhopper'],         scale: S.lv_lunarhopper.scale,         weapon: 0, create: make });
+    reg('lv_mallguardbot',        { aliases: ['lv_mallguardbot'],        scale: S.lv_mallguardbot.scale,        weapon: 0, create: make });
+    reg('lv_looseboltbot',        { aliases: ['lv_looseboltbot'],        scale: S.lv_looseboltbot.scale,        weapon: 0, create: make });
+    reg('lv_plushbear',           { aliases: ['lv_plushbear'],           scale: S.lv_plushbear.scale,           weapon: 0, create: make });
+    reg('lv_sparkplugsprite',     { aliases: ['lv_sparkplugsprite'],     scale: S.lv_sparkplugsprite.scale,     weapon: 0, create: make });
+    reg('lv_plagueleech',         { aliases: ['lv_plagueleech'],         scale: S.lv_plagueleech.scale,         weapon: 0, create: make });
+    reg('lv_coinpursemimic',      { aliases: ['lv_coinpursemimic'],      scale: S.lv_coinpursemimic.scale,      weapon: 0, create: make });
+    reg('lv_morguecrawler',       { aliases: ['lv_morguecrawler'],       scale: S.lv_morguecrawler.scale,       weapon: 0, create: make });
+    reg('lv_pizzaooze',           { aliases: ['lv_pizzaooze'],           scale: S.lv_pizzaooze.scale,           weapon: 0, create: make });
+    reg('lv_hoardlizard',         { aliases: ['lv_hoardlizard'],         scale: S.lv_hoardlizard.scale,         weapon: 0, create: make });
+    reg('lv_pitrhinobeetle',      { aliases: ['lv_pitrhinobeetle'],      scale: S.lv_pitrhinobeetle.scale,      weapon: 0, create: make });
+    reg('lv_hoardwyrmling',       { aliases: ['lv_hoardwyrmling'],       scale: S.lv_hoardwyrmling.scale,       weapon: 0, create: make });
+    reg('lv_fishnetcrab',         { aliases: ['lv_fishnetcrab'],         scale: S.lv_fishnetcrab.scale,         weapon: 0, create: make });
+    reg('lv_sewergatorhatchling', { aliases: ['lv_sewergatorhatchling'], scale: S.lv_sewergatorhatchling.scale, weapon: 0, create: make });
+    reg('lv_shadowpuddle',        { aliases: ['lv_shadowpuddle'],        scale: S.lv_shadowpuddle.scale,        weapon: 0, create: make });
+    reg('lv_wishingtotem',        { aliases: ['lv_wishingtotem'],        scale: S.lv_wishingtotem.scale,        weapon: 0, create: make });
+    reg('lv_centaurfoal',         { aliases: ['lv_centaurfoal'],         scale: S.lv_centaurfoal.scale,         weapon: 0, create: make });
+    reg('lv_ruingecko',           { aliases: ['lv_ruingecko'],           scale: S.lv_ruingecko.scale,           weapon: 0, create: make });
 
     //=========================================================================
     // Name assignments (description-matched).
@@ -3134,7 +5090,7 @@
         cursedcandle:   ["Cursed Candle"],
         pillowguardian: ["Pillow Guardian"],
         weepingmask:    ["Weeping Mask"],
-        paperwork:      ["Tax Collector", "Bureaucratic Nightmare"],
+        paperwork:      ["Tax Collector"],
         trafficcone:    ["Cone Mimic"],
         sentientcone:   ["Sentient Traffic Cone"],
         walkingdoor:    ["Talking Door"],
@@ -3201,7 +5157,46 @@
         stormcaller:       ["Storm Caller"],
         swampcrocodile:    ["Swamp Crocodile"],
         tarantula:         ["Tarantula"],
-        thundersprite:     ["Thunder Sprite"]
+        thundersprite:     ["Thunder Sprite"],
+        // Level 1-5 roster (bespoke lv_ models).
+        lv_foldedairplane:      ["Folded Airplane"],
+        lv_wasabisnail:         ["Wasabi Snail"],
+        lv_clockworktinsoldier: ["Clockwork Tin Soldier"],
+        lv_dryerlintgolem:      ["Dryer Lint Golem"],
+        lv_sandgecko:           ["Sand Gecko"],
+        lv_deserttumbleweed:    ["Desert Tumbleweed"],
+        lv_dunescorpling:       ["Dune Scorpling"],
+        lv_saltcrab:            ["Salt Crab"],
+        lv_desertporcupine:     ["Desert Porcupine"],
+        lv_manticorecub:        ["Manticore Cub"],
+        lv_belltowergargoyle:   ["Belltower Gargoyle"],
+        lv_voidferretkit:       ["Void Ferret Kit"],
+        lv_astraljellyfish:     ["Astral Jellyfish"],
+        lv_lunarhopper:         ["Lunar Hopper"],
+        lv_mallguardbot:        ["Mall Guard Bot"],
+        lv_looseboltbot:        ["Loose Bolt Bot"],
+        lv_plushbear:           ["Plush Bear"],
+        lv_sparkplugsprite:     ["Spark Plug Sprite"],
+        lv_plagueleech:         ["Plague Leech"],
+        lv_coinpursemimic:      ["Coin Purse Mimic"],
+        lv_morguecrawler:       ["Morgue Crawler"],
+        lv_pizzaooze:           ["Pizza Ooze"],
+        lv_hoardlizard:         ["Hoard Lizard"],
+        lv_pitrhinobeetle:      ["Pit Rhino Beetle"],
+        lv_hoardwyrmling:       ["Hoard Wyrmling"],
+        lv_fishnetcrab:         ["Fishnet Crab"],
+        lv_sewergatorhatchling: ["Sewer Gator Hatchling"],
+        lv_shadowpuddle:        ["Shadow Puddle"],
+        lv_wishingtotem:        ["Wishing Totem"],
+        lv_centaurfoal:         ["Centaur Foal"],
+        lv_ruingecko:           ["Ruin Gecko"],
+        // Bespoke uniques (their notes also pin the key).
+        u_umbrallurker:          ["Umbral Lurker"],
+        u_bureaucraticnightmare: ["Bureaucratic Nightmare"],
+        u_offrampincarnate:      ["Off-Ramp Incarnate"],
+        u_varleniamirage:        ["Varlenia Mirage"],
+        u_rimespinner:           ["Rime Spinner"],
+        u_thothsbrokenward:      ["Thoth's Broken Ward"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));
@@ -3209,7 +5204,10 @@
 
     debugLog('Flavor uniques registered');
 
-    ;[['u_bureaucraticnightmare',2.8],['u_varleniamirage',2.7],['u_thothsbrokenward',2.6],['u_offrampincarnate',3.2]].forEach(([k,sc]) => reg(k, { aliases: [k], scale: sc, weapon: 0, create: make }));
-
-    ;[['u_rimespinner',2.6],['u_umbrallurker',2.6]].forEach(([k,sc]) => reg(k, { aliases: [k], scale: sc, weapon: 0, create: make }));
+    reg('u_umbrallurker',         { aliases: ['u_umbrallurker'],         scale: S.u_umbrallurker.scale,         weapon: 0, create: make });
+    reg('u_bureaucraticnightmare',{ aliases: ['u_bureaucraticnightmare'],scale: S.u_bureaucraticnightmare.scale,weapon: 0, create: make });
+    reg('u_offrampincarnate',     { aliases: ['u_offrampincarnate'],     scale: S.u_offrampincarnate.scale,     weapon: 0, create: make });
+    reg('u_varleniamirage',       { aliases: ['u_varleniamirage'],       scale: S.u_varleniamirage.scale,       weapon: 0, create: make });
+    reg('u_rimespinner',          { aliases: ['u_rimespinner'],          scale: S.u_rimespinner.scale,          weapon: 0, create: make });
+    reg('u_thothsbrokenward',     { aliases: ['u_thothsbrokenward'],     scale: S.u_thothsbrokenward.scale,     weapon: 0, create: make });
 })();

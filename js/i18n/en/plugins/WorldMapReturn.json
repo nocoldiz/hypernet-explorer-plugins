@@ -18,10 +18,10 @@
   "visit": "Visit {place}",
   "explorePlace": "Explore {place}",
   "investigatePlace": "Investigate {place}",
-  "freeWalk": "Liminal walk",
+  "freeWalk": "Liminal walk (WIP)",
   "forage": "Forage",
   "makeCamp": "Make a camp",
-  "returnDisabledHere": "You cannot return to world map from here",
+  "returnDisabledHere": "You cannot return to the world map from here",
   "icebushBlocked": "The fields around Icebush are infested with Petrodemons and Neurofog, why don't you take the Hypermetro like any sane human being",
   "stop": "Stop",
   "worldMapMenu": "World map",
@@ -32,5 +32,5 @@
   "squareBare": "({x} {y})",
   "atTile": "at {x},{y}",
   "lockedPlace": "{place} is trapped in a space and time bubble",
-  "lockedAhead": "There is a spacetime bubble ahead, you cannot proceed"
+  "lockedAhead": "A spacetime bubble blocks the way"
 }

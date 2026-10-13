@@ -84,6 +84,7 @@
         wasActive: false,
         results: [],
         resultsKey: '',      // signature the cached results were built from
+        resultsGen: 0,       // bumped every time the results are gathered anew
         pending: null,       // { action: 'use' | 'equip', row } while picking a target
         pendingIndex: 0,     // which party member the picker's cursor is on
         focusInput: false
@@ -236,15 +237,59 @@
         return rows;
     }
 
+    // Each bench's verdict on a recipe, kept for as long as nothing it was read
+    // from has moved. An empty query (the tile's way in, or a cleared field)
+    // asks about every recipe in the game, thousands of bills of materials, and
+    // without this every keystroke after it asked all over again. The query is
+    // deliberately NOT part of the signature: it only decides which recipes
+    // are asked about, never what the answer is.
+    const craftMemo = { sig: null, bench: new Map(), forge: new Map() };
+
+    // Dropped whenever a session starts, so training done since the last visit
+    // is read fresh rather than out of the bench's level cache.
+    function forgetCraftables() {
+        craftMemo.sig = null;
+    }
+
+    // What the verdicts depend on that can change while the page is open:
+    // the reagents in the sack (a use from this very page spends one) and who
+    // is in the party.
+    function craftSignature() {
+        const kindOf = (item) => DataManager.isWeapon(item) ? 'w' : DataManager.isArmor(item) ? 'a' : 'i';
+        const sack = $gameParty.allItems()
+            .map(item => item ? `${kindOf(item)}${item.id}:${$gameParty.numItems(item)}` : '')
+            .join(',');
+        const party = $gameParty.members().map(m => m.actorId()).join(',');
+        return `${sack}|${party}`;
+    }
+
+    function memoVerdict(map, item, ask) {
+        let ok = map.get(item);
+        if (ok === undefined) {
+            ok = !!ask(item);
+            map.set(item, ok);
+        }
+        return ok;
+    }
+
     // Recipes the party could put together this minute. A blueprint nobody can
     // read is not listed at all, and neither is one whose reagents are short.
     // Answering "could we make this" walks a whole bill of materials, so the
-    // name is matched against the query FIRST: the alternative is pricing every
-    // recipe in the game on every keystroke.
+    // name is matched against the query FIRST and each answer is remembered
+    // (see craftMemo): the alternative is pricing every recipe in the game on
+    // every keystroke.
     function collectCraftables(needle) {
         const rows = [];
         const seen = new Set();
         const named = (item) => !needle || item.name.toLowerCase().includes(needle);
+
+        const sig = craftSignature();
+        const fresh = craftMemo.sig !== sig;
+        if (fresh) {
+            craftMemo.sig = sig;
+            craftMemo.bench.clear();
+            craftMemo.forge.clear();
+        }
 
         const push = (item, tradeName) => {
             const key = `c${DataManager.isWeapon(item) ? 'w' : DataManager.isArmor(item) ? 'a' : 'i'}${item.id}`;
@@ -271,11 +316,12 @@
         if (bench) {
             // What the PARTY can make, and levels read fresh: the page is opened
             // long after the workshop last redrew and somebody may have trained
-            // since (Quest/ThinkerMenu.js caches a level per redraw).
-            bench.clearKnowledgeCache();
+            // since (Quest/ThinkerMenu.js caches a level per redraw). Once per
+            // set of verdicts is enough: nobody trains with the page open.
+            if (fresh) bench.clearKnowledgeCache();
             bench.entries().forEach(item => {
                 if (!item || !item.name || !named(item)) return;
-                if (!bench.canMakeNow(item)) return;
+                if (!memoVerdict(craftMemo.bench, item, it => bench.canMakeNow(it))) return;
                 push(item, bench.tradeName(item));
             });
         }
@@ -287,7 +333,7 @@
                 if (!item || !item.name || !named(item)) return;
                 // The party's, not the leader's: the workshop hands each piece
                 // to whoever is best at it, and this page must agree with it.
-                if (!forge.canMakeNowForParty(item)) return;
+                if (!memoVerdict(craftMemo.forge, item, it => forge.canMakeNowForParty(it))) return;
                 push(item, forge.tradeName(item));
             });
         }
@@ -362,6 +408,7 @@
         // it does for every other menu that wears it.
         state.results = b ? b.apply(rows, row => row) : rows;
         state.resultsKey = key;
+        state.resultsGen++;
         if (state.selected >= state.results.length) state.selected = Math.max(0, state.results.length - 1);
         return state.results;
     }
@@ -405,7 +452,10 @@
         if (!list) return;
         const b = ensureBar();
         window.MenuVirtualList.render(list, {
-            key: `${b ? b.query : ''}|${b ? b.kind : ''}|${b ? b.category : ''}|${b ? b.sortKey + b.sortDir : ''}`,
+            // The generation, not the strip's fields: a weight or price range
+            // narrows the rows without moving any of them, and a key that
+            // stood still while it did kept the old rows on screen.
+            key: `${state.resultsGen}`,
             count: state.results.length,
             renderItem: rowHTML,
             emptyHTML: `<div class="item-grid-empty" style="grid-column:1/-1;">${T('MainMenu.search.noResults', { query: escapeHtml(b ? b.query : '') })}</div>`,
@@ -658,6 +708,7 @@
         state.wasActive = false;
         state.opened = false;
         state.justOpened = false;
+        forgetCraftables();
     }
 
     // The search field, when it is the thing holding the keyboard.
@@ -709,6 +760,17 @@
     function restoreCaret() {
         const b = ensureBar();
         if (b) b.restoreFocus();
+    }
+
+    // Move the party picker's mark onto the member its cursor now names. Only
+    // the mark changes between two steps, so the chips already on the page are
+    // re-classed in place; a picker that is not on the page (it never drew)
+    // goes through the menu instead.
+    function markPendingTarget() {
+        const detail = document.getElementById('menu-search-detail');
+        const chips = detail ? detail.querySelectorAll('.target-option') : [];
+        if (!chips.length) { fullRefresh(); return; }
+        Array.from(chips).forEach((el, idx) => el.classList.toggle('selected', idx === state.pendingIndex));
     }
 
     // By index: the selected row exists in the DOM only while the window is
@@ -825,12 +887,15 @@
         },
 
         // Part of the menu's left-page cache key, so any change here redraws.
+        // The selected row is left out: nothing on the left page is drawn from
+        // it except the windowed list's mark, which mountResults moves after
+        // every render without the page being rebuilt around it.
         stateKey() {
             if (!this.isActive()) return '';
             const b = ensureBar();
             return [
                 b.query, b.kind, b.sortKey, b.sortDir, b.category,
-                state.selected, state.pending ? state.pending.action : ''
+                state.pending ? state.pending.action : ''
             ].join('|');
         },
 
@@ -921,6 +986,7 @@
             state.pending = null;
             state.wasActive = true;
             state.resultsKey = '';
+            forgetCraftables();
             // The keypress that clicked the tile is still triggered this frame,
             // and the menu's navigator ran before this call: without the skip it
             // would arrive at the fresh list as "run the first row".
@@ -952,6 +1018,9 @@
         // a kind chip, a sort key, the category picker or a range field.
         onBarChanged() {
             const wasActive = state.wasActive;
+            // Anything on the strip can change which rows match, the range
+            // fields included, which the cache signature does not spell out.
+            state.resultsKey = '';
             state.selected = 0;
             state.pending = null;
             state.wasActive = this.isActive();
@@ -1023,7 +1092,7 @@
             if (step) {
                 state.pendingIndex = (state.pendingIndex + step + members.length) % members.length;
                 SoundManager.playCursor();
-                fullRefresh();
+                markPendingTarget();
                 return;
             }
             if (Input.isTriggered('ok')) this.applyTarget(state.pendingIndex);
@@ -1055,9 +1124,14 @@
             if (index === state.selected) return;
             SoundManager.playCursor();
             state.selected = index;
-            // The caret goes back only where it already was: a player browsing
-            // the open page with the mouse or a pad never asked to type.
-            fullRefresh(fieldHasFocus());
+            // The same patch the arrow keys use: a click picks a row the way a
+            // keypress does, and rebuilding both pages for it re-mounted the
+            // whole list. The caret goes back only where it already was: a
+            // player browsing the open page with the mouse or a pad never asked
+            // to type.
+            const hadCaret = fieldHasFocus();
+            patchRefresh(false);
+            if (hadCaret) restoreCaret();
         },
 
         act(action) {

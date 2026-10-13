@@ -310,6 +310,21 @@
                 this.container = null;
             }
             this.pianoKeys.clear();
+            // The button that closed the piano (pad B, Escape) is usually still
+            // down: the engine must not read it as a fresh cancel on the map.
+            // Input keeps being cleared until every pad button is let go.
+            this._drainInput = true;
+            if (typeof Input !== 'undefined') Input.clear();
+            if (typeof TouchInput !== 'undefined') TouchInput.clear();
+        }
+
+        // True while a pad button that was down at close time is still held.
+        padStillHeld() {
+            const state = this.readPadState();
+            for (const k in state) {
+                if (k !== 'axisX' && state[k]) return true;
+            }
+            return false;
         }
 
         // ====================================================================
@@ -794,9 +809,13 @@
     const _Input_update = Input.update;
     Input.update = function () {
         _Input_update.call(this);
-        if (window.VisualPiano && window.VisualPiano.isOpen) {
+        const piano = window.VisualPiano;
+        if (piano && piano.isOpen) {
             this.clear();
             TouchInput.clear();
+        } else if (piano && piano._drainInput) {
+            if (piano.padStillHeld()) this.clear();
+            else piano._drainInput = false;
         }
     };
 

@@ -129,7 +129,8 @@
         7: '▒'   // Roof
     };
 
-    let asciiMode = false;
+    // 0 Off, 1 On, 2 Only UI. Always a number: callers test `active !== 0`.
+    let asciiMode = 0;
     // ASCII HUD: forces ASCII styling of DOM menus/HUD even when ASCII map mode
     // is disabled. Independent ConfigManager option (see below).
     let asciiHud = false;
@@ -2346,7 +2347,9 @@
 
     // Expose AsciiMode API for other plugins
     window.AsciiMode = {
-        get active() { return asciiMode; },
+        // A stray boolean read `false !== 0` as "on" and left the kitchen and
+        // the bestiary drawing an ASCII screen nobody could see.
+        get active() { return Number(asciiMode) || 0; },
         get canvas() { return asciiCanvas; },
         get context() { return asciiContext; },
         get fontSize() { return currentFontSize; },

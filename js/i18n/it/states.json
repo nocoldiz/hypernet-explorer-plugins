@@ -25,10 +25,10 @@
     "message1": "%1 è avvelenato!",
     "message2": "%1 è avvelenato!",
     "message3": "",
-    "message4": "%1 non è più bruciato!"
+    "message4": "%1 non è più avvelenato!"
   },
   "5": {
-    "name": "Acceca",
+    "name": "Cecità",
     "message1": "%1 è accecato!",
     "message2": "%1 è accecato!",
     "message3": "",
@@ -60,7 +60,7 @@
     "message1": "%1 è affascinato!",
     "message2": "%1 è affascinato!",
     "message3": "",
-    "message4": "%1 non è più ammaliato!"
+    "message4": "%1 non è più affascinato!"
   },
   "10": {
     "name": "Sonno",
@@ -70,11 +70,11 @@
     "message4": "%1 si sveglia!"
   },
   "11": {
-    "name": "Congelare",
+    "name": "Congelamento",
     "message1": "%1 è completamente congelato e non può muoversi!",
     "message2": "%1 è completamente congelato!",
-    "message3": "%1 è bloccato e non può muoversi!",
-    "message4": "%1 non è più bloccato!"
+    "message3": "%1 è congelato e non può muoversi!",
+    "message4": "%1 non è più congelato!"
   },
   "12": {
     "name": "Paralisi",
@@ -84,18 +84,18 @@
     "message4": "%1 non è più paralizzato!"
   },
   "13": {
-    "name": "Stordire",
+    "name": "Stordimento",
     "message1": "%1 viene sbilanciato!",
     "message2": "%1 viene sbilanciato!",
     "message3": "%1 è ancora sbilanciato…",
     "message4": "%1 ha ritrovato l'equilibrio!"
   },
   "14": {
-    "name": "Bloccato su",
-    "message1": "%1 è bloccato!",
-    "message2": "%1 è bloccato su",
-    "message3": "%1 è bloccato!",
-    "message4": "La concentrazione di %1 diminuisce!"
+    "name": "Puntamento",
+    "message1": "%1 punta il bersaglio!",
+    "message2": "%1 punta il bersaglio!",
+    "message3": "%1 punta il bersaglio!",
+    "message4": "%1 perde la concentrazione!"
   },
   "15": {
     "name": "Rigenerazione HP",
@@ -126,21 +126,21 @@
     "message4": ""
   },
   "19": {
-    "name": "Proteggi",
+    "name": "Protezione",
     "message1": "",
     "message2": "",
     "message3": "",
     "message4": ""
   },
   "20": {
-    "name": "Provocare",
-    "message1": "%1 è diventato più facile da colpire!",
-    "message2": "",
+    "message1": "%1 attira lo sguardo del nemico!",
+    "message2": "%1 è provocato!",
     "message3": "",
-    "message4": ""
+    "message4": "",
+    "name": "Provocazione"
   },
   "21": {
-    "name": "Nasconditi",
+    "name": "Nascosto",
     "message1": "%1 è diventato più difficile da colpire!",
     "message2": "",
     "message3": "",
@@ -154,7 +154,7 @@
     "message4": ""
   },
   "23": {
-    "name": "Blocco di stato di disturbo",
+    "name": "Immunità agli stati",
     "message1": "",
     "message2": "",
     "message3": "",
@@ -186,7 +186,7 @@
     "message1": "%1 è ora avvolto da un'aura statica.",
     "message2": "%1 è ora avvolto da un'aura statica.",
     "message3": "",
-    "message4": "%1 è ora a terra."
+    "message4": "%1 si è scaricato."
   },
   "28": {
     "name": "Bagnato",
@@ -196,7 +196,7 @@
     "message4": "%1 è asciutto."
   },
   "29": {
-    "name": "Incontri a metà",
+    "name": "Incontri dimezzati",
     "message1": "",
     "message2": "",
     "message3": "",
@@ -217,7 +217,7 @@
     "message4": "La sete di sangue di %1 si placa!"
   },
   "32": {
-    "name": "Scudo Divino",
+    "name": "Scudo divino",
     "message1": "%1 è benedetto dalla protezione divina!",
     "message2": "%1 è benedetto dalla protezione divina!",
     "message3": "",
@@ -225,17 +225,17 @@
   },
   "33": {
     "name": "Marchio della morte",
-    "message1": "%1 è contrassegnato per la morte!",
-    "message2": "%1 è contrassegnato per la morte!",
+    "message1": "%1 è marchiato per la morte!",
+    "message2": "%1 è marchiato per la morte!",
     "message3": "Il segno della morte persiste su %1...",
     "message4": "Il segno della morte su %1 scompare."
   },
   "34": {
-    "name": "Messa a fuoco perfetta",
+    "name": "Concentrazione perfetta",
     "message1": "%1 è in uno stato di perfetta concentrazione!",
     "message2": "%1 è in uno stato di perfetta concentrazione!",
-    "message3": "%1 mantiene la messa a fuoco perfetta...",
-    "message4": "Il focus di %1 torna normale."
+    "message3": "%1 resta perfettamente concentrato...",
+    "message4": "La concentrazione di %1 torna normale."
   },
   "35": {
     "name": "Velo d'ombra",
@@ -245,7 +245,7 @@
     "message4": "Le ombre che circondano %1 si dissipano."
   },
   "36": {
-    "name": "Impulso Arcano",
+    "name": "Impulso arcano",
     "message1": "%1 brucia di potere arcano!",
     "message2": "%1 brucia di potere arcano!",
     "message3": "L'energia arcana fluisce attraverso %1...",
@@ -266,18 +266,18 @@
     "message4": "%1 riacquista il corretto equilibrio."
   },
   "39": {
-    "name": "Collegamento di vita",
-    "message1": "%1 è collegato alla forza vitale del party!",
-    "message2": "%1 è collegato alla forza vitale del party!",
-    "message3": "%1 mantiene il collegamento vitale...",
-    "message4": "Il legame vitale con %1 è reciso."
+    "message1": "%1 entra nel legame vitale!",
+    "message2": "%1 entra nel legame vitale!",
+    "message3": "%1 mantiene il legame vitale...",
+    "message4": "Il legame vitale con %1 è reciso.",
+    "name": "Legame vitale"
   },
   "40": {
     "name": "Vulnerabilità",
     "message1": "%1 è maledetto dalla vulnerabilità!",
     "message2": "%1 è maledetto dalla vulnerabilità!",
     "message3": "La maledizione della vulnerabilità persiste su %1...",
-    "message4": "La maledizione della vulnerabilità su %1 è stata revocata."
+    "message4": "La maledizione della vulnerabilità su %1 svanisce."
   },
   "41": {
     "name": "Nausea",
@@ -308,9 +308,9 @@
     "message4": "%1 non è più infetto!"
   },
   "45": {
-    "name": "Galleggiante",
-    "message1": "%1 è mobile!",
-    "message2": "%1 è mobile!",
+    "name": "Levitazione",
+    "message1": "%1 fluttua!",
+    "message2": "%1 fluttua!",
     "message3": "",
     "message4": ""
   },
@@ -322,11 +322,11 @@
     "message4": "%1 non è più invisibile!"
   },
   "47": {
-    "name": "Oleoso",
-    "message1": "%1 è ora coperto di petrolio",
-    "message2": "%1 è ora coperto dal petrolio",
+    "message1": "%1 è ora coperto d'olio.",
+    "message2": "%1 è ora coperto d'olio.",
     "message3": "",
-    "message4": ""
+    "message4": "L'olio su %1 è sparito.",
+    "name": "Oleoso"
   },
   "48": {
     "name": "Sanguinamento",
@@ -350,7 +350,7 @@
     "message4": "%1 non è più in astinenza!"
   },
   "51": {
-    "name": "Presa",
+    "name": "Afferrato",
     "message1": "%1 è bloccato in una presa!",
     "message2": "%1 è bloccato in una presa!",
     "message3": "%1 si dimena nella presa...",
@@ -364,14 +364,14 @@
     "message4": "%1 torna in piedi!"
   },
   "53": {
-    "name": "Guardia Rotta",
+    "name": "Guardia rotta",
     "message1": "La guardia di %1 è rotta!",
     "message2": "La guardia di %1 è rotta!",
     "message3": "%1 combatte senza alcuna guardia...",
     "message4": "%1 ritrova la guardia."
   },
   "54": {
-    "name": "Senza Fiato",
+    "name": "Senza fiato",
     "message1": "%1 è senza fiato!",
     "message2": "%1 è senza fiato!",
     "message3": "%1 boccheggia in cerca d'aria...",
@@ -379,22 +379,22 @@
   },
   "55": {
     "name": "Combo",
-    "message1": "%1 vede l'apertura!",
-    "message2": "%1 vede l'apertura!",
+    "message1": "%1 vede un varco!",
+    "message2": "%1 vede un varco!",
     "message3": "%1 attende il colpo successivo...",
-    "message4": "%1 perde l'apertura."
+    "message4": "%1 perde il varco."
   },
   "56": {
-    "name": "Punto Vitale Esposto",
+    "name": "Punto vitale esposto",
     "message1": "I punti vitali di %1 sono esposti!",
     "message2": "I punti vitali di %1 sono esposti!",
     "message3": "%1 non riesce a coprire l'apertura...",
     "message4": "%1 richiude la guardia."
   },
   "57": {
-    "name": "In posizione",
-    "message1": "%1 pianta la sua posizione!",
-    "message2": "%1 pianta la sua posizione!",
+    "name": "Radicato",
+    "message1": "%1 si pianta a terra!",
+    "message2": "%1 si pianta a terra!",
     "message3": "%1 tiene la posizione...",
     "message4": "%1 abbandona la posizione."
   },
@@ -406,21 +406,21 @@
     "message4": "%1 esce dal flusso."
   },
   "59": {
-    "name": "Chi Bruciato",
+    "name": "Chi bruciato",
     "message1": "%1 ha bruciato il proprio chi!",
     "message2": "%1 ha bruciato il proprio chi!",
     "message3": "%1 soffre per lo sforzo...",
     "message4": "Il chi di %1 si ristabilisce."
   },
   "60": {
-    "name": "Commozione Cerebrale",
+    "name": "Commozione cerebrale",
     "message1": "%1 ha una commozione cerebrale!",
     "message2": "%1 ha una commozione cerebrale!",
     "message3": "%1 ha ancora la testa che rimbomba...",
     "message4": "%1 riprende lucidità."
   },
   "61": {
-    "name": "Reazione Allergica",
+    "name": "Reazione allergica",
     "message1": "%1 si copre di orticaria!",
     "message2": "%1 si copre di orticaria!",
     "message3": "",
@@ -434,10 +434,178 @@
     "message4": "%1 torna a respirare."
   },
   "63": {
-    "name": "Febbre da Fieno",
+    "name": "Febbre da fieno",
     "message1": "%1 comincia a starnutire!",
     "message2": "%1 comincia a starnutire!",
     "message3": "",
     "message4": "%1 smette di starnutire."
+  },
+  "64": {
+    "message1": "%1 entra nel ritmo dell'esercizio di lama!",
+    "message2": "%1 entra nel ritmo dell'esercizio di lama!",
+    "message3": "",
+    "message4": "%1 perde il ritmo della lama.",
+    "name": "Esercizio di Lama"
+  },
+  "65": {
+    "message1": "%1 entra nel ritmo dell'esercizio di tiro!",
+    "message2": "%1 entra nel ritmo dell'esercizio di tiro!",
+    "message3": "",
+    "message4": "%1 perde il ritmo dell'esercizio.",
+    "name": "Esercizio di Tiro"
+  },
+  "66": {
+    "message1": "%1 è addestrato!",
+    "message2": "%1 è addestrato!",
+    "message3": "",
+    "message4": "%1 dimentica l'addestramento.",
+    "name": "Addestrato"
+  },
+  "67": {
+    "message1": "%1 è intrappolato in un ciclo!",
+    "message2": "%1 è intrappolato in un ciclo!",
+    "message3": "",
+    "message4": "%1 esce dal ciclo.",
+    "name": "Ciclo Mentale"
+  },
+  "68": {
+    "message1": "L'ultima mossa di %1 è sigillata!",
+    "message2": "L'ultima mossa di %1 è sigillata!",
+    "message3": "",
+    "message4": "%1 ricorda di nuovo come muoversi.",
+    "name": "Sigillo Mentale"
+  },
+  "69": {
+    "message1": "%1 erge un rimbalzo psichico!",
+    "message2": "%1 erge un rimbalzo psichico!",
+    "message3": "",
+    "message4": "Il rimbalzo di %1 svanisce.",
+    "name": "Rimbalzo"
+  },
+  "70": {
+    "message1": "%1 danza su fili psichici!",
+    "message2": "%1 danza su fili psichici!",
+    "message3": "",
+    "message4": "I fili di %1 vengono recisi.",
+    "name": "Burattino"
+  },
+  "71": {
+    "message1": "%1 si rivolta contro i suoi!",
+    "message2": "%1 si rivolta contro i suoi!",
+    "message3": "",
+    "message4": "%1 torna in sé.",
+    "name": "Voltagabbana"
+  },
+  "72": {
+    "message1": "La mente di %1 comincia a echeggiare.",
+    "message2": "La mente di %1 comincia a echeggiare.",
+    "message3": "",
+    "message4": "L'eco di %1 svanisce.",
+    "name": "Eco"
+  },
+  "73": {
+    "message1": "I pensieri di %1 sono esposti!",
+    "message2": "I pensieri di %1 sono esposti!",
+    "message3": "",
+    "message4": "I pensieri di %1 si richiudono.",
+    "name": "Mente Letta"
+  },
+  "77": {
+    "message1": "%1 è coperto di brina fragile!",
+    "message2": "%1 è coperto di brina fragile!",
+    "message3": "",
+    "message4": "La brina su %1 è sparita.",
+    "name": "Fragile"
+  },
+  "78": {
+    "message1": "%1 è impregnato di un reagente volatile!",
+    "message2": "%1 è impregnato di un reagente volatile!",
+    "message3": "",
+    "message4": "Il reagente su %1 è diventato inerte.",
+    "name": "Volatile"
+  },
+  "80": {
+    "message1": "%1 è azzoppato!",
+    "message2": "%1 è azzoppato!",
+    "message3": "%1 continua a zoppicare...",
+    "message4": "%1 ritrova l'equilibrio.",
+    "name": "Azzoppato"
+  },
+  "81": {
+    "message1": "%1 è disarmato!",
+    "message2": "%1 è disarmato!",
+    "message3": "Il braccio di %1 pende inerte...",
+    "message4": "%1 ritrova la presa.",
+    "name": "Disarmato"
+  },
+  "82": {
+    "message1": "%1 volge il filo al nemico!",
+    "message2": "%1 volge il filo al nemico!",
+    "message3": "",
+    "message4": "%1 abbassa il filo.",
+    "name": "Posizione di Taglio"
+  },
+  "83": {
+    "message1": "%1 colpisce senza voler uccidere!",
+    "message2": "%1 colpisce senza voler uccidere!",
+    "message3": "",
+    "message4": "%1 smette di trattenersi.",
+    "name": "Posizione Clemente"
+  },
+  "84": {
+    "message1": "%1 abbassa la punta!",
+    "message2": "%1 abbassa la punta!",
+    "message3": "",
+    "message4": "%1 rialza la punta.",
+    "name": "Posizione di Punta"
+  },
+  "85": {
+    "message1": "%1 inserisce un caricatore nuovo!",
+    "message2": "%1 inserisce un caricatore nuovo!",
+    "message3": "",
+    "message4": "Il caricatore nuovo di %1 è esaurito.",
+    "name": "Caricatore Nuovo"
+  },
+  "87": {
+    "message1": "%1 è segnato dalla Condanna!",
+    "message2": "%1 è segnato dalla Condanna!",
+    "message3": "%1 sente scorrere il conto alla rovescia...",
+    "message4": "La Condanna su %1 si dissolve.",
+    "name": "Condanna"
+  },
+  "88": {
+    "message1": "Una miccia si accende su %1!",
+    "message2": "Una miccia si accende su %1!",
+    "message3": "La miccia su %1 sfrigola...",
+    "message4": "La miccia su %1 si spegne.",
+    "name": "Miccia Accesa"
+  },
+  "89": {
+    "message1": "Un voto è pronunciato su %1!",
+    "message2": "Un voto è pronunciato su %1!",
+    "message3": "Il voto su %1 attende l'alba...",
+    "message4": "Il voto su %1 si spezza.",
+    "name": "Voto dell'Alba"
+  },
+  "90": {
+    "message1": "%1 scivola nel tempo rallentato!",
+    "message2": "%1 scivola nel tempo rallentato!",
+    "message3": "",
+    "message4": "%1 torna al tempo reale.",
+    "name": "Tempo Rallentato"
+  },
+  "91": {
+    "message1": "%1 vede ciò che sta per accadere!",
+    "message2": "%1 vede ciò che sta per accadere!",
+    "message3": "",
+    "message4": "%1 perde la visione di ciò che verrà.",
+    "name": "Preveggenza"
+  },
+  "92": {
+    "message1": "%1 fa la guardia agli altri!",
+    "message2": "%1 fa la guardia agli altri!",
+    "message3": "%1 mantiene la guardia...",
+    "message4": "%1 abbassa la guardia.",
+    "name": "Legame del guardiano"
   }
 }

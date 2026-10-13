@@ -150,7 +150,7 @@
       "The streetlights come on all at once. Who decides? I must find out.",
       "My elders say machines make a people forget how to wait. I wait for the bus every day.",
       "There is honey at the market today. {Good|Proper|Real} honey.",
-      "I keep thinking about {the Fields|home|the old orchards}. Not sadly. Just often.",
+      "I keep thinking about {the Fields|home|the old orchards}. Often, and gently.",
       "A photocopier made two of my letter. I was nearly frightened.",
       "Someone left a newspaper on the bench. I read every page, even the adverts.",
       "The soil in this courtyard is tired. It needs {rest|clover|a kind hand}.",
@@ -271,7 +271,7 @@
         "The till is open. My conscience is not.",
         "If I am caught, they will say 'that goblin'. And they will mean all of us.",
         "I could pay it back later. I could. Probably.",
-        "The police here are slow. That is not a reason. It is a temptation.",
+        "The police here are slow. There is a temptation, plain and simple.",
         "Easy pickings, a Naguka would say. I am not a Naguka.",
         "One quick hand and the rent is paid. One quick hand and I am a thief."
       ],
@@ -317,7 +317,7 @@
         "Those men have been watching me for a while. Keep walking, calmly.",
         "I need somewhere with a locked door and a kettle.",
         "There are monsters in the outskirts again. Better indoors.",
-        "My heart is racing. I am not a fighter, I am a gardener.",
+        "My heart is racing. These hands only know how to dig.",
         "Somebody shouted 'goblin' behind me. Not the friendly way.",
         "I know a warding charm. I hope I will not need it.",
         "The police station is two streets away. That is good to know.",
@@ -584,7 +584,7 @@
         "I have more euros than I know what to do with. So I bought a greenhouse.",
         "My ancestors threw away the greatest machines in the multiverse. I bought a television. We are even.",
         "Wealth is pleasant, but it does not make the beans grow faster.",
-        "I fund a little school for Verden children. Money should be planted, not stored.",
+        "I fund a little school for Verden children. Money is for planting.",
         "A car! I own a car. I drive it very, very slowly.",
         "The humans at the bank are suddenly very polite to me.",
         "I could buy every vending machine in this district. I am tempted, truly.",
@@ -641,7 +641,7 @@
       "A Horde camp has no clocks. Time is measured in fights and naps.",
       "Someone brought back a television from a raid. No power, of course. They worship it anyway.",
       "I mend their wounds and they mend nothing. A fair division of labour, I suppose.",
-      "They are not wicked. They are young, loud, and listening to the wrong gods.",
+      "They are young and loud, and they listen to the wrong gods. They will grow out of it.",
       "I can feel the whole Horde turn its head at once, like a field of grass in the wind.",
       "Grissnack's voice is in every dream around here. I sleep with cotton in my ears, for all the good it does.",
       "The humans fled this town and the Horde moved in. I tend what the humans left: the roses.",
@@ -695,7 +695,7 @@
         "My spore-mother's garden had a pear tree older than your oldest city.",
         "Nobody hurried in the Fields. Nobody needed to.",
         "The last time I saw the Fields, the horizon was folding like a wet page.",
-        "We lived in houses grown from hedges. You did not build a home; you raised it.",
+        "We lived in houses grown from hedges. A home was raised, the way you raise a child.",
         "The Fields had no winter. I had to learn the word here.",
         "In the Fields a library was a grove. You read under the tree that held the book.",
         "Home was green, quiet and endless. Now it is none of those things.",
@@ -750,7 +750,7 @@
       ],
       "spores": [
         "My pod is in its {fourth|ninth|thirteenth} month. Well over four hundred days to go, in all.",
-        "A Verden is not born; a Verden ripens.",
+        "A Verden ripens, like fruit.",
         "I keep the pod warm and damp and talk to it every evening. They say it helps.",
         "Over four hundred days in a pod. Humans think nine months is long.",
         "My cousin lost a finger to a car door. She planted it. Now she has a niece.",
@@ -758,12 +758,12 @@
         "A spore pod humming in the dark is the most hopeful sound I know.",
         "The landlord asked why there is a large green pod in the airing cupboard. I said: family.",
         "When the pod opens, the little ones come out already talking. Mostly complaining about the light.",
-        "Patience is not a virtue for us. It is biology.",
+        "Patience, for us, is plain biology.",
         "I worry the Squishing will reach this world before my pod ripens. Then I water it anyway.",
         "A severed limb, planted with care, grows a new Verden. We are very careful with knives.",
         "Human doctors are baffled by us. One asked if I needed sunlight or a vet.",
         "The spores drift when I sneeze. I apologise to whoever stands downwind.",
-        "We count family in pods, not in generations.",
+        "We count family in pods.",
         "My spore-mother planted me under a pear tree. I still like pears more than is reasonable.",
         "Sporangium season. Every Verden in the district is a little moody and very warm.",
         "I sang to the pod in the old tongue. It hummed back. That is how you know it is well.",
@@ -795,7 +795,7 @@
         "The humans ask me to put a thought into the collective. I cannot. Nobody can, except the Junehem.",
         "Harm one Naguka and the whole species knows. I see the news ripple through them before the papers do.",
         "Reading the collective is like overhearing a very large, very loud family dinner.",
-        "The army asked me to spy for them through the collective. I told them I read; I do not report.",
+        "The army asked me to spy for them through the collective. I told them I only read.",
         "Knowing what comes next and being unable to change it. That is the Verden condition.",
         "The collective dreams of caves, of a big drilled hole and of the light at the top of it.",
         "Today the collective is calm. Somewhere, a great many Naguka are napping.",
@@ -1260,7 +1260,7 @@
         ],
         [
           0,
-          "The word is not the problem. The tone is."
+          "The whole problem is the tone."
         ]
       ],
       [
@@ -1288,7 +1288,7 @@
         ],
         [
           0,
-          "It worked for one song. I am patient, not foolish."
+          "It worked for one song. My patience has limits."
         ],
         [
           1,
@@ -1334,7 +1334,7 @@
         ],
         [
           0,
-          "Patience is for seeds, {b}, not for borrowers."
+          "Patience is for seeds, {b}. Borrowers get a deadline."
         ]
       ],
       [
@@ -1454,7 +1454,7 @@
         ],
         [
           0,
-          "Give them a blanket. Not my melons."
+          "Give them a blanket. My melons were meant to stay where they were."
         ],
         [
           1,
@@ -2079,7 +2079,7 @@
           ],
           [
             1,
-            "Most people don't have years, {a}. They have a Tuesday."
+            "Most people have a Tuesday, {a}. Years are a luxury."
           ]
         ]
       },
@@ -2088,7 +2088,7 @@
         "lines": [
           [
             0,
-            "The Horde will settle one day. They are young, not wicked."
+            "The Horde will settle one day. They are only young."
           ],
           [
             1,
@@ -2109,7 +2109,7 @@
         "lines": [
           [
             0,
-            "The Junehem are not gods. They are four men with very loud guitars."
+            "The Junehem are four men with very loud guitars, and that is all."
           ],
           [
             1,
@@ -2117,11 +2117,11 @@
           ],
           [
             0,
-            "Belief keeps them alive. That makes them fed, not divine."
+            "Belief keeps them alive. It just keeps them well fed."
           ],
           [
             1,
-            "Sounds like a god to me."
+            "Sounds like gods to me."
           ]
         ]
       },
@@ -2243,7 +2243,7 @@
           ],
           [
             0,
-            "They want an army, not a congregation."
+            "They want an army, and they want it made of Naguka."
           ],
           [
             1,
@@ -2445,7 +2445,7 @@
         "lines": [
           [
             0,
-            "Knowing the future is a burden, not a gift."
+            "Knowing the future is a burden, and it weighs on every day."
           ],
           [
             1,

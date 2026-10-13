@@ -2,7 +2,7 @@
   "someone": "Someone",
   "weapon": {
     "title": "Weapon proficiency",
-    "trains": "Trains by winning battles with such a weapon equipped.",
+    "trains": "Train by winning battles with this weapon type equipped.",
     "cut": "Stats of {weapon} weapons are cut to {pct}% until Intermediate.",
     "raised": "Stats of {weapon} weapons are raised to {pct}%.",
     "full": "Stats of {weapon} weapons apply in full."

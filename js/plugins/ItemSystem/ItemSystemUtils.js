@@ -125,26 +125,12 @@
         totalWeight += this.getItemWeight(item) * $gameParty.numItems(item);
       }
 
-      // 2. Get a copy of weapon and armor counts
+      // 2. Weapon and armor counts in the bag. Worn pieces are already out of
+      // _weapons / _armors (equipping moves a piece from bag to body), so they
+      // are not subtracted again: doing so made a spare copy of anything worn
+      // weigh nothing.
       const weapons = Object.assign({}, $gameParty._weapons);
       const armors = Object.assign({}, $gameParty._armors);
-
-      // 3. Subtract equipped items
-      for (const actor of $gameParty.members()) {
-        for (const equip of actor.equips()) {
-          if (equip) {
-            if (DataManager.isWeapon(equip)) {
-              if (weapons[equip.id]) {
-                weapons[equip.id]--;
-              }
-            } else if (DataManager.isArmor(equip)) {
-              if (armors[equip.id]) {
-                armors[equip.id]--;
-              }
-            }
-          }
-        }
-      }
 
       // 4. Calculate weight of unequipped weapons
       for (const weaponId in weapons) {
@@ -1299,6 +1285,19 @@
   // and Equipment screens so their trait-code tables never drift apart again
   // (see the STR-rate/attack-element mislabel bug this replaced).
   //=============================================================================
+  // Which IconSet cell stands for an element: the same nine cells the
+  // character sheet, the class picker and the battle HUD use.
+  const ELEMENT_ICONS = [0, 96, 64, 65, 66, 67, 68, 69, 70, 71];
+  function elementIcon(elementId) { return ELEMENT_ICONS[elementId] || 0; }
+
+  // An IconSet cell as an inline chip icon, sized to the text around it.
+  function iconSpan(idx) {
+    idx = Number(idx) || 0;
+    if (idx <= 0) return '';
+    return `<span class="toast-icon trait-icon" style="width:1.1em;height:1.1em;` +
+      `background-size:17.6em auto;background-position:-${1.1 * (idx % 16)}em -${1.1 * Math.floor(idx / 16)}em;"></span>`;
+  }
+
   function traitLines(item) {
     if (!item || !Array.isArray(item.traits)) return [];
     const T = window.T;
@@ -1313,8 +1312,8 @@
       else if (tr.code === 21) desc = T('Inventory.trait.paramRate', { param: getParamName(did), pct: Math.round(val * 100) });
       else if (tr.code === 22) { if (!val) return; const exN = T.list('Inventory.xparam'); desc = T('Inventory.trait.xparamLine', { name: exN[did] || T('Inventory.trait.specialStat'), value: `${val >= 0 ? '+' : ''}${Math.round(val * 100)}` }); }
       else if (tr.code === 23) { const spN = T.list('Inventory.sparam'); desc = T('Inventory.trait.sparamLine', { name: spN[did] || T('Inventory.trait.specialProperty'), pct: Math.round(val * 100) }); }
-      else if (tr.code === 31) { const el = $dataSystem.elements[did]; desc = T('Inventory.trait.attackElement', { element: el || T('Inventory.trait.physicalFallback') }); }
-      else if (tr.code === 32) { const s = $dataStates[did]; if (s && s.name) desc = T('Inventory.trait.attackState', { state: s.name, pct: Math.round(val * 100) }); }
+      else if (tr.code === 31) { const el = $dataSystem.elements[did]; desc = iconSpan(elementIcon(did)) + T('Inventory.trait.attackElement', { element: el || T('Inventory.trait.physicalFallback') }); }
+      else if (tr.code === 32) { const s = $dataStates[did]; if (s && s.name) desc = iconSpan(s.iconIndex) + T('Inventory.trait.attackState', { state: s.name, pct: Math.round(val * 100) }); }
       else if (tr.code === 33) desc = T('Inventory.trait.attackSpeed', { value: `${val > 0 ? '+' : ''}${val}` });
       else if (tr.code === 34) desc = T('Inventory.trait.attackTimes', { value: val });
       else if (tr.code === 41) { const st = $dataSystem.skillTypes[did]; if (st) desc = T('Inventory.trait.allowsSkillType', { type: st }); }
@@ -1337,6 +1336,28 @@
     return lines;
   }
 
+  // Special abilities: what a piece does that its numbers and its trait
+  // lines do not say in so many words, the gear twin of the skill card's
+  // Special section (SkillDetails.registerSpecial). A plugin that writes a
+  // mechanic onto gear registers a provider, (item) => [text, ...]; the
+  // enchanting bench and the forge register theirs from SkillMaster.js
+  // (window.GearTags), so a piece's tags read out here and nowhere else. A
+  // provider registered before this file loaded waits on _specialProviders.
+  const specialProviders = (window.ItemSystemUtils && Array.isArray(window.ItemSystemUtils._specialProviders))
+    ? window.ItemSystemUtils._specialProviders : [];
+  function registerSpecial(fn) {
+    if (typeof fn === 'function' && specialProviders.indexOf(fn) < 0) specialProviders.push(fn);
+  }
+  function specialLines(item) {
+    if (!item) return [];
+    const out = [];
+    for (const fn of specialProviders) {
+      try { for (const t of (fn(item) || [])) if (t && out.indexOf(t) < 0) out.push(t); }
+      catch (e) { console.warn('[ItemSystemUtils] special provider failed', e); }
+    }
+    return out;
+  }
+
   // How a weapon sits in the hands: <TwoHanded> fills two hand slots, and a
   // <MartialArts> weapon (fists, claws, nunchakus) always does, leaving the
   // martial arts usable (window.SkillWeaponReq). Shown by the backpack, the
@@ -1352,6 +1373,8 @@
 
   window.ItemSystemUtils = window.ItemSystemUtils || {};
   window.ItemSystemUtils.handLines = handLines;
+  window.ItemSystemUtils.elementIcon = elementIcon;
+  window.ItemSystemUtils.iconSpan = iconSpan;
   window.ItemSystemUtils.fillLore = fill;
   window.ItemSystemUtils.resolveLoreTokens = resolve;
   window.ItemSystemUtils.loreFor = loreFor;
@@ -1359,6 +1382,9 @@
   window.ItemSystemUtils.craftInfo = craftInfo;
   window.ItemSystemUtils.craftHTML = craftHTML;
   window.ItemSystemUtils.traitLines = traitLines;
+  window.ItemSystemUtils._specialProviders = specialProviders;
+  window.ItemSystemUtils.registerSpecial = registerSpecial;
+  window.ItemSystemUtils.specialLines = specialLines;
   window.ArmorLore = { fill: fill, resolve: resolve, loreFor: loreFor };
 })();
 
@@ -1485,7 +1511,7 @@
   // Fix an indefinite article that the chosen option just flipped, e.g.
   // "a {shard | ember}" -> "an ember". Only an article directly preceding a
   // resolved choice is touched, so authored prose is never disturbed.
-  var ARTICLE_TAIL = /\b([Aa])n?([ \t]+)$/;
+  var ARTICLE_TAIL = /\b([Aa])[Nn]?([ \t]+)$/;
 
   function evalNodes(nodes, rng) {
     var out = "";
@@ -1497,7 +1523,9 @@
       var m = out.match(ARTICLE_TAIL);
       if (m && /[A-Za-z]/.test(s.charAt(0))) {
         var art = /^[aeiou]/i.test(s) ? "an" : "a";
-        if (m[1] === "A") art = art.charAt(0).toUpperCase() + art.slice(1);
+        // An all-capitals language (Naguka) keeps its article in capitals.
+        if (s === s.toUpperCase()) art = art.toUpperCase();
+        else if (m[1] === "A") art = art.charAt(0).toUpperCase() + art.slice(1);
         out = out.slice(0, out.length - m[0].length) + art + m[2];
       }
       out += s;
@@ -1738,7 +1766,11 @@
      */
     createModel(entry) {
       if (!window.THREE || !entry || !this._linkLibrary()) return null;
-      const key = this.keyFor(entry) + ":" + (this.isLowDetail() ? "lo" : "hi");
+      // A piece sculpted at the workshop (Quest/ThinkerMenu.js) carries its
+      // fittings in <ForgeParts:>, exactly as a weapon does, so two looks of
+      // one entry are two models and never one.
+      const key = this.keyFor(entry) + ":" + (this.isLowDetail() ? "lo" : "hi") +
+        ":" + this.designKeyOf(entry);
       const cached = this._modelCache.get(key);
       if (cached) {
         this._modelCache.delete(key);
@@ -1747,6 +1779,19 @@
       }
       const root = this._buildModel(entry);
       if (!root) return null;
+      // Hung on before the merge, as the weapons do. The fittings are cut off
+      // WEAPONS, so the weapon pipeline itself does the hanging: called through
+      // this object the harvest would build each donor with the item builders
+      // and file the result in the parts cache the weapons share.
+      const design = this.designOf(entry);
+      const weapons = window.WeaponSystemProcedural;
+      if (design && weapons && typeof weapons.applyDesign === "function") {
+        try {
+          weapons.applyDesign(root, design, entry);
+        } catch (e) {
+          console.warn("[ItemModelSystem] fitted parts failed for " + (entry && entry.name), e);
+        }
+      }
       try {
         this.mergeStaticParts(root);
         this._protectResources(root);
@@ -3117,4 +3162,132 @@
   }
 
   window.UIHelp = UIHelp;
+})();
+
+//=============================================================================
+// Module: RuntimeItemIds
+//=============================================================================
+// Every database row the game writes at run time (the world's historical
+// artifacts, the relics an anomaly hands out, the hyperdeck's etched chip
+// dies) lives in a reserved band of ids past everything data/ ships, so a
+// runtime row can never land on an authored one (the history artifacts once
+// sat on 1501-1513 and wore the Culture Vials away).
+//
+// A band is FIXED, not "the first id past the database": an id is written
+// into the party's pack and into the world folder, so it has to mean the same
+// row on the next load even after data/ has grown. The test suite asserts
+// every band still clears the authored tables.
+//
+// window.RuntimeItemIds is the one answer to "which id may I write": never
+// pick a runtime row id from a literal anywhere else.
+//   band(name)            -> { base, size }
+//   id(name, index)       -> base + index, 0 past the band's end
+//   inBand(name, id)      -> true when id belongs to that band
+//   authoredLength(table) -> length the table had when read off disk
+//   isAuthored(table, id) -> true for a row data/ ships
+//   place(table, entry)   -> writes entry at entry.id, padding with null;
+//                            refuses (false) an authored row
+//   skip(id)              -> id, or the first id past the reserved bands when
+//                            id falls inside them (for counters that grow)
+(function () {
+  "use strict";
+
+  const BANDS = {
+    // The thirteen artifacts HistorySimulator composes per world, one id each
+    // across $dataItems, $dataWeapons and $dataArmors.
+    historyArtifact: { base: 10001, size: 13 },
+    // The relics an anomaly mints (ProceduralAdventureSystem), items only.
+    relic: { base: 10014, size: 87 },
+    // The chip dies a hyperdeck etches (HyperDeck), items only.
+    chipDie: { base: 10101, size: 32 },
+  };
+  const RESERVED_START = 10001;
+  const RESERVED_END = 10200;
+  const TABLES = ["$dataItems", "$dataWeapons", "$dataArmors"];
+  const authored = {};
+
+  function root() {
+    return typeof globalThis !== "undefined" ? globalThis : window;
+  }
+
+  function nameOf(table) {
+    const g = root();
+    for (const name of TABLES) if (g[name] && g[name] === table) return name;
+    return null;
+  }
+
+  function capture(table) {
+    const name = nameOf(table);
+    if (name && Array.isArray(table)) authored[name] = table.length;
+  }
+
+  function band(name) {
+    const b = BANDS[name];
+    return b ? { base: b.base, size: b.size } : null;
+  }
+
+  function id(name, index) {
+    const b = BANDS[name];
+    const i = Math.floor(Number(index));
+    if (!b || !(i >= 0) || i >= b.size) return 0;
+    return b.base + i;
+  }
+
+  function inBand(name, rowId) {
+    const b = BANDS[name];
+    const n = Number(rowId);
+    return !!b && n >= b.base && n < b.base + b.size;
+  }
+
+  // Before the database is read, or for a table nobody captured, the safe
+  // assumption is that everything below the reserved bands may be authored.
+  function authoredLength(table) {
+    const name = nameOf(table);
+    if (name && authored[name]) return authored[name];
+    return Array.isArray(table) ? Math.min(table.length, RESERVED_START) : 0;
+  }
+
+  function isAuthored(table, rowId) {
+    const n = Number(rowId);
+    return n > 0 && n < authoredLength(table);
+  }
+
+  function place(table, entry) {
+    if (!Array.isArray(table) || !entry) return false;
+    const n = Number(entry.id);
+    if (!(n > 0) || Math.floor(n) !== n || isAuthored(table, n)) return false;
+    // Filled rather than left as holes: $dataItems[0] is null in every
+    // project, so every reader already copes with null, where a hole makes
+    // `for (const item of $dataItems)` yield undefined.
+    while (table.length < n) table.push(null);
+    table[n] = entry;
+    return true;
+  }
+
+  function skip(rowId) {
+    const n = Number(rowId) || 0;
+    return n >= RESERVED_START && n <= RESERVED_END ? RESERVED_END + 1 : n;
+  }
+
+  if (typeof DataManager !== "undefined" && DataManager.onLoad) {
+    const _onLoad = DataManager.onLoad;
+    DataManager.onLoad = function (object) {
+      _onLoad.apply(this, arguments);
+      if (Array.isArray(object)) capture(object);
+    };
+  }
+
+  root().RuntimeItemIds = {
+    RESERVED_START,
+    RESERVED_END,
+    band,
+    id,
+    inBand,
+    authoredLength,
+    isAuthored,
+    place,
+    skip,
+    // Test seam: records a table's authored length the way a load does.
+    _capture: capture,
+  };
 })();

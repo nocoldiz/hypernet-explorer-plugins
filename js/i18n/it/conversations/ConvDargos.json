@@ -1,64 +1,64 @@
 {
-  "_comment": "La voce Dargos (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo e' sempre Dargos.",
+  "_comment": "La voce Dargos (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo è sempre Dargos.",
   "voice": {
     "openers": [
       "Salve, terrestre.",
       "Affascinante.",
-      "Domanda veloce:",
-      "In via del tutto ipotetica,",
+      "Una domanda veloce.",
+      "Parlo in via del tutto ipotetica.",
       "Non allarmarti.",
-      "Per la cronaca,",
-      "Sinceramente, e lo dico sul serio:",
+      "Lo dico per la cronaca.",
+      "Sinceramente. E lo dico sul serio.",
       "Mh.",
       "Ah. Di nuovo tu. O qualcuno con la tua forma.",
-      "Detto tra noi,",
+      "Che resti tra noi.",
       "Non badare alle luci.",
-      "Da amico,",
+      "Te lo dico da {g:amico|amica}.",
       "Interessante.",
-      "Oh, questa è bella:",
-      "Lo dirò una volta sola, poi negherò:",
+      "Oh, questa è bella.",
+      "Lo dirò una volta sola, poi negherò.",
       "Saluti da Titania.",
-      "Fuori verbale,",
+      "Fuori verbale, s'intende.",
       "Sorridi. No, dall'altra parte.",
-      "Parlando da semplice diplomatico,",
-      "Lascia che sia del tutto onesto con te, per una volta:",
+      "Parlo a titolo puramente diplomatico.",
+      "Lascia che sia del tutto {g:onesto|onesta} con te, per una volta.",
       "Cosa buffa.",
       "Non guardare in alto.",
-      "Solo per la scienza,",
-      "Risolvimi una scommessa:",
+      "È solo per la scienza.",
+      "Risolvimi una scommessa.",
       "Ricordati di questo momento.",
-      "Stai fermo.",
+      "Non muoverti.",
       "Ehm.",
-      "Bene, soggetto, ecco che arriva:",
+      "Bene, soggetto, ci siamo.",
       "Nessun motivo.",
       "Questa non è una prova. Probabilmente.",
       "Senti un ronzio? No? Bene.",
-      "Persona della Terra,",
-      "Immagina la scena:",
-      "Mi hanno detto di dirti:",
-      "A nome dell'Ambasciata,",
+      "Salute a te, persona della Terra.",
+      "Immagina la scena.",
+      "Mi hanno incaricato di riferirti una cosa.",
+      "Parlo a nome dell'Ambasciata.",
       "Questa ti piacerà.",
-      "Preparati, emotivamente:",
+      "Preparati. Emotivamente.",
       "Oh no. Cioè, oh bene.",
-      "Con delicatezza, adesso:",
-      "Senza alcun sottinteso,",
+      "Adesso, con delicatezza.",
+      "Lo dico senza alcun sottinteso.",
       "Ah.",
       "Mm, sì.",
-      "In veste ufficiale,",
+      "Parlo in veste ufficiale.",
       "Fidati.",
-      "Non dirlo ai Turisti:",
-      "Prima hai sbattuto le palpebre. Comunque,",
+      "Non dirlo ai Turisti.",
+      "Prima hai sbattuto le palpebre. Ma lasciamo stare.",
       "Dunque.",
-      "Ho notato una cosa di te:",
-      "Proviamo un esperimento:",
-      "Pianissimo, così non sente nessuno:"
+      "Ho notato una cosa di te.",
+      "Facciamo un esperimento.",
+      "Pianissimo, così non sente nessuno."
     ],
     "closers": [
       "Per la scienza.",
       "Per la gag.",
       "Nessun'altra domanda.",
       "Era una prova.",
-      "Superata. Più o meno.",
+      "Prova superata. Più o meno.",
       "Me lo segno.",
       "Comportati normalmente.",
       "Non controllarti le tasche.",
@@ -80,12 +80,12 @@
       "Mh. Mh mh.",
       "Prosegui pure.",
       "Non parlare di me a nessuno.",
-      "Ero sincero, comunque.",
-      "...Probabilmente.",
-      "Di nuovo domani.",
+      "Ero {g:sincero|sincera}, comunque.",
+      "Probabilmente, eh.",
+      "Si replica domani.",
       "Ottima reazione. Dieci su dieci.",
       "Ci vediamo tra sei ore. Non te lo ricorderai.",
-      "Io non sono mai stato qui.",
+      "Io non sono mai {g:stato|stata} qui.",
       "*fa l'occhiolino*",
       "Grazie per la partecipazione.",
       "Risultati in attesa.",
@@ -128,12 +128,12 @@
       "Qualcuno in questa via canticchia ancora il motivetto che gli ho lasciato in testa nel 1983.",
       "È uno scherzo se non lo scoprono mai? I filosofi di Titania non sono d'accordo.",
       "Quel cane lo sa. Quel cane l'ha sempre saputo.",
-      "I loro orologi sono tutti sfasati di un minuto. Non sono stato io. Vorrei esserlo stato.",
+      "I loro orologi sono tutti sfasati di un minuto. Io non c'entro. Magari c'entrassi.",
       "Non devo ridere all'ufficio postale. Non devo ridere all'ufficio postale.",
       "Gli umani danno un nome a tutto ciò che temono. Poi ci stampano il nome su una tazza.",
       "Un giorno capiranno. {Non oggi|Non in questo secolo|Non questi qui}.",
       "Se dico 'fidati' abbastanza lentamente, si fidano.",
-      "Lo Schiacciamento è lo scherzo migliore che abbia mai visto, e non l'abbiamo nemmeno fatto noi.",
+      "Lo Squishing è lo scherzo migliore che abbia mai visto, e non l'abbiamo nemmeno fatto noi.",
       "I giornali pubblicano il nostro lavoro tra le 'stranezze locali'. Noi incorniciamo i ritagli.",
       "Ho lasciato una sola impronta bagnata sul soffitto. Arte.",
       "Nessuno mi ha fatto una domanda diretta in tutto il giorno. Lo percepiscono.",
@@ -153,7 +153,7 @@
       "I cerchi nel grano sono roba vecchia. Penso a triangoli nel grano. {Sottili|Audaci|Irrispettosi}.",
       "Una lanterna in un campo e il paese ha una storia per dieci anni. Economico, efficace.",
       "Un umano ha appena detto 'qui non succede mai niente'. Annotato. Annotato.",
-      "Non voglio la loro acqua, il loro oro o il loro pianeta. Voglio le loro facce quando il frigo parla.",
+      "Da loro voglio solo una cosa: le loro facce quando il frigo parla.",
       "Le radio fischiano tra una stazione e l'altra. A volte quel fischio sono io che saluto.",
       "Pazienza. Le gag migliori stagionano come il formaggio.",
       "Herschel credeva di aver dato il nome alla nostra luna tutto da solo. Adorabile.",
@@ -161,7 +161,7 @@
       "Chiudono la porta a chiave e lasciano la finestra aperta. Ogni volta. Ogni volta.",
       "Mi hanno chiamato fantasma, demone e pallone sonda. Il pallone sonda mi ha ferito.",
       "Quel lampione sfarfalla da solo. Lo invidio.",
-      "Qualcuno in questa città mi deve una reazione dal 1979. Sono un creditore paziente.",
+      "Qualcuno in questa città mi deve una reazione dal 1979. Ho la pazienza di un creditore.",
       "Canticchia la stessa nota per un'ora e tutto il tram finisce per canticchiarla.",
       "La risata umana è contagiosa. L'urlo umano, meno. Ci sto lavorando.",
       "Dicono 'vedere per credere'. Non hanno idea di quanto sia sbagliato.",
@@ -170,7 +170,7 @@
       "Ogni città ha una persona che ci ha visti. Le faccio visita agli anniversari.",
       "Ho detto la verità una volta su questo pianeta. Nessuno ha riso. Mai più.",
       "Promemoria: comprare {un cappello|dei baffi|una cravatta} dall'aria normale. Gli umani si fidano del normale.",
-      "Lo scherzo non è quello che facciamo. Lo scherzo è la mattina dopo, quando lo spiegano.",
+      "Il vero scherzo arriva la mattina dopo, quando cercano di spiegarlo.",
       "Tutti su questo autobus si credono il protagonista. Carini.",
       "Dico al fornaio che il suo forno è infestato? Non lo è. È questo il trucco.",
       "Il mio popolo ha aspettato diecimila anni l'invenzione del campanello. Ne è valsa la pena.",
@@ -181,7 +181,7 @@
       "Ho scambiato le lancette dell'orologio della piazza. Nessuno lo legge, tutti in ritardo, nessuno incolpa me.",
       "La loro televisione mostra alieni con gli occhioni. Sono i Turisti. Ruolo fisso.",
       "Un buon scherzo lascia la casa più ordinata di come l'hai trovata. Inquietantemente più ordinata.",
-      "Non mi sono perso. Studio come gli umani danno indicazioni. Male, e indicando.",
+      "Sto studiando come gli umani danno indicazioni. Male, e col dito puntato.",
       "Da qualche parte vicino a Genova una guardia la sta raccontando di nuovo. Spero abbia aggiunto i cappelli.",
       "Pensano che siamo crudeli. Siamo meticolosi.",
       "{Diciassette|Venti|Quaranta} anni fa ho messo la mucca di un contadino sul suo tetto. La racconta ancora ai matrimoni.",
@@ -191,7 +191,7 @@
     ],
     "need": {
       "sleep": [
-        "Un giorno di Titania dura otto dei loro. Questo pianeta mi vuole addormentato {ogni notte|di continuo|di nuovo}.",
+        "Un giorno di Titania dura otto dei loro. Questo pianeta pretende che io dorma {ogni notte|di continuo|di nuovo}.",
         "Devo riposare. Gli scherzi richiedono {una mente lucida|una mano ferma|una faccia seria}.",
         "Gli umani dormono così profondamente. Li invidio. E ho anche degli appunti.",
         "Se mi appisolo su questa panchina, qualcuno mi rapirà? Sarebbe giusto.",
@@ -205,7 +205,7 @@
         "{Un letto|Una branda|Un'amaca}. Poi {sogni|il nulla|qualunque cosa mi faccia questo pianeta di notte}.",
         "Anche i burloni staccano. Domani sarò inquietante il doppio.",
         "Se russo, è {voluto|una gag|ricerca}.",
-        "Troppo stanco per i dispetti. Triste condizione per un diplomatico."
+        "Troppa stanchezza per i dispetti. Triste condizione per un diplomatico."
       ],
       "hunger": [
         "Il cibo terrestre: un esperimento audace riuscito. Prendo {una zuppa|qualunque fritto|tre di quella cosa lì}.",
@@ -216,7 +216,7 @@
         "Pizza. Un cibo piatto che si piega. La prova che questo mondo l'hanno progettato dei comici.",
         "Devo mangiare prima che la faccia sincera scivoli via.",
         "L'odore del forno mi segue. O lo seguo io. In ogni caso, pane.",
-        "Se mangio lo stufato misterioso, lo scherzo è su di me. Sono disposto.",
+        "Se mangio lo stufato misterioso, lo scherzo è su di me. Ci sto.",
         "{Una mela|Una pasta|Delle patatine}. Qualcosa di normale. Mi mimetizzo meglio a bocca piena.",
         "La fame è l'unica gag che non riesco a reggere a lungo.",
         "Nota: mai accettare cibo da un umano che sorride come me.",
@@ -233,10 +233,10 @@
         "Il lavoro è il miglior posto d'osservazione. Umani stanchi sono umani sinceri.",
         "L'Ambasciata paga in {niente|risate|qualche reazione}. Questo lavoro paga in euro. Una novità.",
         "Sorriderò ai clienti. Il sorriso lungo. Quello che dura un secondo di troppo.",
-        "Oggi sarò l'impiegato del mese. Poi negherò di aver mai lavorato qui.",
+        "Oggi vincerò il premio di dipendente del mese. Poi negherò di aver mai lavorato qui.",
         "La cassa non ride alle mie battute. La cassa è la mia collega preferita.",
         "Mi hanno dato il turno di notte. Non sanno che lo preferisco.",
-        "Professionale, puntuale, profondamente sospetto agli occhi di tutti. Tutta la mia carriera.",
+        "Professionalità, puntualità e il sospetto profondo di tutti. Tutta la mia carriera.",
         "Quella riunione poteva essere una lettera. La farò diventare una riunione molto più lunga.",
         "Si torna a sgobbare. Ho nascosto una paperella di gomma da qualche parte nell'edificio. Giorno {quattro|nove|trenta}.",
         "Lavora sodo, dicono. Io lavoro con discrezione."
@@ -252,7 +252,7 @@
         "Un'ora libera. Mi esercito con la camminata normale.",
         "Il museo ha una vetrina su di noi. È sbagliata in modi che custodisco gelosamente.",
         "Niente da fare. Su Titania si chiama {vacanza|un secolo|martedì}.",
-        "Andrò da una cartomante e le leggerò il futuro per primo.",
+        "Andrò da una cartomante e le leggerò il futuro prima che lo faccia lei.",
         "Un concerto stasera. Applaudirò un battito dopo tutti gli altri.",
         "Giochi da tavolo. Imparerò le regole a fondo, poi le seguirò fin troppo bene.",
         "Mi siedo in un bar e racconto in testa la vita degli sconosciuti, con le voci.",
@@ -264,10 +264,10 @@
         "Non è furto se lo rimetto a posto {capovolto|nella casa sbagliata|una settimana dopo}.",
         "Una piccola regola infranta, solo per la reazione.",
         "Eris nota i crimini. Noterebbe anche questo, e probabilmente riderebbe.",
-        "Attento. Una taglia mi renderebbe famoso, e le facce famose non ottengono buone reazioni.",
+        "Attenzione. Una taglia mi darebbe notorietà, e le facce note non ottengono buone reazioni.",
         "Quel nano da giardino merita di vedere il mondo. Manderò cartoline.",
         "Mani svelte, faccia seria, confusione credibile. Tutto il metodo.",
-        "Se mi beccano, sono uno straniero confuso. Funziona sempre.",
+        "Se mi beccano, recito la parte dello straniero che non capisce. Funziona sempre.",
         "Potrei prenderlo. Ma il vuoto dove stava è molto più divertente.",
         "Ssh. Ssh. È per la scienza.",
         "La legge qui è molto seria. È questo che la rende allettante.",
@@ -281,7 +281,7 @@
         "L'acqua calda: l'unica cosa terrestre migliore della sua fama.",
         "Le docce qui sembrano una cascata che litiga. Le adoro.",
         "{Sapone|Un asciugamano|Acqua pulita}. Anche un burlone ha i suoi standard.",
-        "Bleah. Sembro uno che è stato rapito. Ironico.",
+        "Bleah. Ho l'aria di chi è appena stato rapito. Ironico.",
         "Lava la faccia, prova la faccia, indossa la faccia.",
         "Ho i capelli in disordine. Gli umani si fidano dei capelli in ordine. Sistemali.",
         "Devo togliermi il fango del campo prima che qualcuno chieda quale campo.",
@@ -297,7 +297,7 @@
         "A corto di fondi. L'Ambasciata non rimborsa niente e dice che fa parte della gag.",
         "I soldi sono l'unico scherzo che gli umani non trovano mai divertente.",
         "Borsello vuoto. Troverò lavoro. O una partita a carte con qualcuno troppo sicuro di sé.",
-        "I prezzi sono saliti di nuovo. Non sono stato io. Per una volta la vittima sono io.",
+        "I prezzi sono saliti di nuovo. Io non c'entro. Per una volta la vittima sono io.",
         "Il nome di Draghi su ogni banconota, e nessuna banconota nelle mie tasche.",
         "Mi serve {un lavoro|qualche moneta|un pollo generoso}. Non per forza in quest'ordine.",
         "Riconto i miei euro. Non si moltiplicano. Gliel'ho chiesto con gentilezza.",
@@ -305,20 +305,20 @@
         "L'affitto chiede con garbo, poi con meno garbo. Rispetto l'escalation.",
         "Magari venderò la mia storia a un giornale. La archivieranno come bufala. Giustamente.",
         "Farò lavoretti strani. Molto strani. Tra i più strani.",
-        "È più facile farsi prestare soldi quando sembri sincero. Mi sono esercitato.",
+        "È più facile farsi prestare soldi quando hai l'aria sincera. Ho fatto pratica.",
         "La faccia del cassiere quando le mie monete non bastavano. Va bene, quella era colpa mia.",
-        "Se sono povero, è recitazione di metodo. Se resto povero, è un problema."
+        "Se ho le tasche vuote, è recitazione di metodo. Se restano vuote, è un problema."
       ],
       "safety": [
         "Qualcuno mi osserva. La cortesia professionale vuole che io ricambi.",
-        "Quella guardia mi ha guardato due volte. È ora di essere noiosissimo.",
-        "Se la Gilda manda qualcuno a 'parlare', sono un turista. Non un Turista. Un turista.",
+        "Quella guardia mi ha guardato due volte. È ora di diventare la noia fatta persona.",
+        "Se la Gilda manda qualcuno a 'parlare', io sono qui in vacanza. Da turista. Con la t minuscola.",
         "Pericolo vicino. Gli scherzi non funzionano su chi ha la spada sguainata.",
         "Silenzio. Passi lenti. Un umano spaventato non è un umano divertente.",
         "Non mi piace questa via. Troppe ombre che non sono mie.",
         "I mostri non ridono. Mai fare scherzi a un mostro.",
         "Calma. Tieni la faccia sincera. Continua a camminare.",
-        "L'Orda non capisce le battute. Capisce solo prendere tutti. Stanne lontano.",
+        "L'Orda le battute non le capisce. Si prende tutti e basta. Meglio starne alla larga.",
         "Quel vicolo sembra una trappola. Conosco le trappole. Ne ho costruite centinaia.",
         "Se qualcosa va storto, nega tutto. Poi scappa.",
         "Questo posto innervosisce perfino me. È una prima volta.",
@@ -345,7 +345,7 @@
       ],
       "social": [
         "Ho bisogno di una conversazione. Una vera. Poi una finta, per equilibrio.",
-        "Solo. Uno scherzo senza testimoni è solo fare ordine.",
+        "Solitudine. Uno scherzo senza testimoni è semplice riordino.",
         "Qualcuno con cui parlare. Preferibilmente qualcuno che si spaventa facilmente.",
         "Mi mancano gli altri Dargos. Ridevamo del nulla per ore.",
         "Gli umani si radunano nelle taverne. Io mi radunerò lì vicino.",
@@ -356,8 +356,8 @@
         "L'amicizia umana sembra così calda. La studio molto da vicino. Un po' troppo da vicino.",
         "Un buon amico ride alla preparazione. Uno ottimo aspetta la battuta finale.",
         "Nessuno con cui condividere la battuta. Triste. La tengo per dopo.",
-        "{Il bar|La piazza|La taverna} è pieno di gente. È ora di essere affascinante, in modo inquietante.",
-        "Parlo di nuovo da solo. Almeno le battute le capisco.",
+        "C'è un sacco di gente {al bar|in piazza|in taverna}. È ora di essere affascinante, in modo inquietante.",
+        "Parlo di nuovo tra me e me. Almeno le battute le capisco.",
         "Troverò qualcuno a cui parlare di Titania. Non mi crederà. È pur sempre compagnia."
       ]
     },
@@ -394,7 +394,7 @@
         "{Vento|Grandine|Tuoni} così rendono ogni storia due volte più bella.",
         "Tutto il cielo che sfarfalla. Se solo potessi prendermene il merito.",
         "Imposte che sbattono. Gli umani pensano ai fantasmi. I fantasmi pensano a noi.",
-        "Il temporale è più rumoroso della mia battuta migliore. Seccato. Colpito."
+        "Il temporale è più rumoroso della mia battuta migliore. Che seccatura. Che spettacolo."
       ],
       "snow": [
         "Neve! Il clima di Titania, ma più morbido e con più bambini dentro.",
@@ -442,18 +442,18 @@
         "Il coro dell'alba. Gli uccelli sono fin troppo sicuri di sé.",
         "Giornata nuova. Testimoni nuovi.",
         "Sono {le sette|le otto|le sei e mezza} del mattino e c'è già qualcuno che litiga per un parcheggio.",
-        "Mi sono svegliato esattamente dove mi ero addormentato. Deludente. Qualcuno avrebbe dovuto spostarmi.",
+        "Risveglio esattamente nel punto in cui ho preso sonno. Deludente. Qualcuno avrebbe dovuto spostarmi.",
         "La luce ai poli di Titania dura quarantadue anni. Le mattine terrestri vanno di fretta.",
         "Bottiglie del latte sugli usci. Così fiduciosi. Così facili da riordinare.",
         "Il giornale del mattino. Vediamo se ci siamo finiti dentro.",
-        "La giornata è nuova e nessuno è ancora stato confuso. Inaccettabile.",
+        "La giornata è nuova e nessuno ha ancora perso la bussola. Inaccettabile.",
         "Sole basso, ombre lunghe, nervi corti."
       ],
       "afternoon": [
         "Pomeriggio. La parte lenta. Dopo pranzo gli umani si ammorbidiscono.",
         "Ora della siesta. Vie intere addormentate. Molto allettante. Comportati bene.",
         "Mezzogiorno passato. Troppo luminoso per sgattaiolare, troppo presto per i fantasmi.",
-        "Facce da ufficio dopo pranzo. Nemmeno un pensiero dietro nessuna.",
+        "Facce da ufficio dopo pranzo. Dietro nessuna di loro, nemmeno un pensiero.",
         "Le tre. Quando la giornata dimentica a cosa serviva.",
         "Tè del pomeriggio. Uno zucchero. Poi sposterò la loro zuccheriera di un centimetro.",
         "Bambini fuori da scuola. Rumorosi, sinceri, impossibili da ingannare. Rispetto.",
@@ -461,7 +461,7 @@
         "Sole a picco, ombre nascoste sotto i piedi. Ombre timide.",
         "{Ora del mercato|Pausa pranzo|Ora di punta}, e ognuno crede di avere in mano la propria giornata.",
         "La luce del pomeriggio fa sembrare la città una cartolina. Ci scriverò sopra.",
-        "Le ore lente sono le migliori per una lunga fissata.",
+        "Le ore lente sono le migliori per fissare qualcuno a lungo.",
         "Campane alle quattro. Qualcuno le suona con sincerità. Commovente.",
         "Il caldo del giorno. Anche i miei dispetti sudano.",
         "A metà giornata e ancora niente di strano. Rimediamo."
@@ -478,8 +478,8 @@
         "Di nuovo il tramonto. Lo stesso trucco ogni giorno, e applaudono ancora.",
         "{Imbrunire|Crepuscolo|L'ora blu}. I contorni delle cose si ammorbidiscono.",
         "Il telegiornale della sera. Aspetto la parola 'inspiegabile'.",
-        "Gente che chiude le imposte. Momento perfetto per bussare una volta e andarsene. No. Fai il bravo.",
-        "La prima stella. Non è la mia. La mia sta oltre il settimo pianeta.",
+        "Gente che chiude le imposte. Momento perfetto per bussare una volta e andarsene. No. Comportati bene.",
+        "La prima stella. La mia sta più in là, oltre il settimo pianeta.",
         "Coppie a passeggio. Camminerò al loro passo due metri dietro. Troppo lontano? Ricerca.",
         "Sera fresca, passeggiata lunga, e nessuno sospetta niente."
       ],
@@ -491,11 +491,11 @@
         "Non c'è nessuno in giro. Ogni finestra accesa è un invito che declinerò. Stanotte.",
         "Una luce in un campo di notte: il trucco più economico e migliore del repertorio.",
         "Gli umani temono il buio. A torto. È il silenzio che dovrebbe preoccuparli.",
-        "Mezzanotte. Sdraiato sull'erba a fissare in alto finché qualcuno chiede se sto bene.",
+        "Mezzanotte. Stendersi sull'erba a fissare in alto finché qualcuno chiede se va tutto bene.",
         "Autobus notturno. Ogni passeggero un racconto breve.",
         "{Stelle|La luna|Silenzio} ovunque. Bello sfondo. Niente pubblico.",
         "Non riesco a dormire. Neanche il contadino tre campi più in là. Stavolta non è colpa mia.",
-        "Cani che abbaiano al nulla. Non al nulla. A me, che saluto.",
+        "Cani che abbaiano al nulla. Cioè a me, che saluto.",
         "Aria notturna. Fredda, sottile, quasi come a casa, se a casa ci fossero i grilli.",
         "Lampioni che ronzano, una guardia sola nel turno di notte. Nostalgia.",
         "È tardi. Vai a letto. Oppure stai immobile in un giardino. A letto. Va bene."
@@ -542,7 +542,7 @@
         "Inverno. Finalmente una temperatura con delle ambizioni.",
         "Giorni corti, notti lunghe. Il calendario dei Dargos.",
         "Luci di Natale ovunque. Buona fortuna a distinguere le nostre.",
-        "Neve sui tetti. Qualcuno giurerà di aver visto impronte di renna. Qualcuno di solito ha aiutato.",
+        "Neve sui tetti. Qualcuno giurerà di aver visto impronte di renna. Di solito qualcuno ha dato una mano.",
         "Il freddo tiene tutti in casa a chiacchierare. Stagione delle dicerie.",
         "Dicembre. Un turno di notte vicino a Genova. Ah, i classici.",
         "Brina sui vetri. Scrivo 'ciao' al contrario dalla parte di fuori.",
@@ -553,8 +553,8 @@
     },
     "wealth": {
       "poor": [
-        "Senza un soldo. È un ruolo. Sono dedito al ruolo.",
-        "Essere povero qui significa fare la fila. Sto diventando un esperto di file.",
+        "Senza un soldo. È un ruolo. Mi ci dedico anima e corpo.",
+        "Qui la povertà significa fare la fila. Ormai le file non hanno segreti per me.",
         "Niente soldi, niente pensieri. Qualche pensiero. Soprattutto l'affitto.",
         "Dormo in una stanza economica sopra un bar rumoroso. Il rumore è ricerca.",
         "Tasche vuote. Più facili da rovesciare per una risata.",
@@ -563,7 +563,7 @@
         "Ho imparato a fare la zuppa con quasi niente. Soprattutto col niente.",
         "Vestiti dal mercatino dell'usato. Umani vestiti con gli avanzi di altri umani. Ottimo camuffamento.",
         "Conto le monete per il pane. Ogni volta un totale diverso. Sono io?",
-        "{Al verde|In bolletta|Senza un soldo} e ancora compiaciuto. Un talento dei Dargos.",
+        "{Al verde|In bolletta|Senza un soldo} e con la solita aria compiaciuta. Un talento dei Dargos.",
         "Niente euro, niente piano, tanto materiale."
       ],
       "comfortable": [
@@ -576,20 +576,20 @@
         "Una buona sedia, una buona radio, una buona finestra. Tutto ciò che serve.",
         "Finalmente ceto medio. Possiedo un tosaerba. Mai usato. Di notte si muove.",
         "Paga fissa, vita stabile, scherzi in costante crescita.",
-        "{Un'auto|Una bicicletta|Un abbonamento}. Perfettamente integrato. Terrificante.",
+        "{Un'auto|Una bicicletta|Un abbonamento}. Integrazione perfetta. Terrificante.",
         "Ho comprato una pianta d'appartamento. È l'unica che conosce il mio vero nome.",
-        "Abbastanza agiato da essere generoso. La generosità li confonde più di tutto."
+        "Abbastanza soldi da potermi permettere la generosità. La generosità li confonde più di tutto."
       ],
       "rich": [
-        "Ricco. Il denaro fa ascoltare agli umani qualunque cosa. Un dono pericoloso. Ne abuserò con garbo.",
+        "Ricchezza. Il denaro fa ascoltare agli umani qualunque cosa. Un dono pericoloso. Ne abuserò con garbo.",
         "Ho comprato un quadro solo per appenderlo leggermente storto.",
         "Una villa con sessanta stanze. In ognuna ho nascosto qualcosa di diverso.",
         "I ricchi mi trattano come uno di loro. Non hanno idea di cosa stia studiando.",
         "Lo champagne sa di stelle frizzanti. Ne prendo un altro.",
-        "Abbastanza ricco da finanziare una borsa di ricerca su Titania. Su me stesso.",
+        "Ho abbastanza soldi da finanziare una borsa di ricerca su Titania. Su di me.",
         "Varlenia è piena di miliardari. Comprerò il lotto accanto a quello più serio.",
         "Ora possiedo un giornale. Indovina di chi sono le storie a pagina tre.",
-        "Il mio maggiordomo è imperturbabile. È una sfida, non un complimento.",
+        "Il mio maggiordomo è imperturbabile. Lo prendo come una sfida personale.",
         "{Rubinetti d'oro|Una piscina privata|Un'isoletta}. Ognuno un palcoscenico.",
         "Galà di beneficenza. Tutti che fingono di interessarsi. Un pubblico esperto.",
         "Il denaro è carta con il nome di un dio, e io possiedo un sacco del suo nome."
@@ -597,21 +597,21 @@
     },
     "familiar": [
       "Di nuovo quei viaggiatori. Hanno la faccia di chi mi crederebbe.",
-      "Quel gruppo continua a spuntare. O mi seguono loro o li seguo io. Sì.",
+      "Quel Party continua a spuntare. O mi seguono loro o li seguo io. Sì.",
       "Ah, i miei sconosciuti preferiti. Mai un urlo. Continuerò a provarci.",
-      "Conosco quella compagnia. I camper sono fantastici per {giochi di luce|nascondercisi|lasciarci biglietti}.",
+      "Conosco quel Party. I camper sono fantastici per {giochi di luce|nascondercisi|lasciarci biglietti}.",
       "Ancora loro. Non si sorprendono più di me. Maleducati. Teneri.",
       "Quelle facce. Archiviate sotto 'interessanti, non rapire'.",
       "Adesso mi salutano con un cenno. Un cenno! Contatto stabilito. L'Ambasciata sarà furiosa.",
       "Mi piacciono quelli. Non gli farei mai uno scherzo. Davvero. Probabilmente.",
-      "Già di ritorno? Sono cresciuti. O mi sono rimpicciolito io. Mh.",
-      "Stavolta ha salutato per primo. Rovesciamento. Specie intelligente.",
+      "Già di ritorno? Sono cresciuti. O sono io che rimpicciolisco. Mh.",
+      "Stavolta il primo saluto è arrivato da loro. Rovesciamento. Specie intelligente.",
       "Facce familiari su un pianeta strano. Bello. Inquietante. Bello.",
       "Ogni volta che passano, quasi gli dico qualcosa di vero.",
       "Li ho visti già in tre città. Schemi, schemi.",
       "Si ricordano il mio nome. Non gliel'ho mai detto. Aspetta. O sì?",
       "Quegli avventurieri hanno storie che voglio. Io ho storie a cui non crederebbero mai.",
-      "Eccoli. Fingerò di essere sorpreso. Poi fingeranno anche loro.",
+      "Eccoli. Fingerò sorpresa. Poi fingeranno anche loro.",
       "Il mio gruppo di studio. Non sanno di essere un gruppo di studio.",
       "Li seguirei fino in fondo alla strada. Sul lato opposto, per osservarli.",
       "Ah, quelli del camper. Lì dentro qualcuno guida come un comico.",
@@ -635,10 +635,10 @@
       "Un goblin mi ha offerto uno scarafaggio. Ho accettato. Diplomazia.",
       "Ogni muro qui ha lo stesso simbolo scarabocchiato. Ottimo marchio.",
       "I goblin non credono in noi. Non credono in molto, tranne che in una band.",
-      "Il pozzo di Kola è stato l'umanità che faceva uno scherzo a se stessa. Ancora il migliore mai registrato.",
+      "Col pozzo di Kola l'umanità ha fatto uno scherzo a se stessa. Ancora il migliore mai registrato.",
       "Troppe menti condivise qui. Riderebbero tutti insieme, o nessuno.",
       "I mercati dei goblin vendono di tutto. Anche cose ancora vive.",
-      "Testa bassa. Le cose alte si notano, e io sono più alto di quanto sembri.",
+      "Testa bassa. Le cose alte si notano, e la mia statura inganna.",
       "Si dipingono la faccia di bianco e nero. Comunicazione molto chiara. Ammiro la chiarezza.",
       "Qui sussurrano perfino i profughi. Sussurrerò con loro.",
       "L'Orda tiene questa città. La città trattiene il fiato.",
@@ -693,10 +693,10 @@
         "I canyon di casa sono più profondi delle loro montagne più alte. Ottimi per l'eco e per nascondersi.",
         "Un giorno su Titania dura otto dei loro. Abbastanza per preparare una gag come si deve.",
         "Gli umani hanno avvistato la nostra luna solo nel 1787. Noi li osservavamo da secoli.",
-        "Herschel ha avvistato Titania e ha creduto di aver scoperto qualcosa. Lo scoperto era lui.",
+        "Herschel ha avvistato Titania e ha creduto di aver scoperto qualcosa. In realtà eravamo noi ad aver scoperto lui.",
         "A casa non c'è meteo. Per questo veniamo qui a divertirci.",
         "Da Titania la Terra è un puntino blu. Un puntino blu pieno di gente che urla benissimo.",
-        "{Le scogliere di ghiaccio|La lunga notte|Le pianure silenziose} di casa. Mi mancano, con sufficienza.",
+        "{Le scogliere di ghiaccio|La lunga notte|Le pianure silenziose} di casa. Mi mancano, con aria di superiorità.",
         "Su Titania non raccontiamo storie. Aspettiamo che qualcun altro racconti le nostre, sbagliandole.",
         "I nostri anziani ricordano la Terra prima del fuoco. Dicono che era un pubblico molto silenzioso.",
         "I Turisti dicono che Titania è 'graziosa'. Non sono mai stati invitati.",
@@ -735,7 +735,7 @@
         "Undici visite, ognuna migliore della precedente. Una saga.",
         "Da qualche parte in Liguria un uomo controlla ancora il cielo prima del turno. Siamo commossi.",
         "La parte migliore del caso Zanfretta sono gli avvocati. Nessuno aveva previsto gli avvocati.",
-        "Gli abbiamo dato una sferetta e gli abbiamo detto che era importante. Non lo era. Era perfetta.",
+        "Gli abbiamo dato una sferetta e gli abbiamo detto che era importante. Una bugia. Ma che sferetta perfetta.",
         "Ogni specie ha il suo classico. Gli umani hanno l'opera. Noi abbiamo Zanfretta.",
         "Una villa fuori Genova. Il fascio di una torcia, un'ombra, e lui che corre. Lo riguardiamo alle feste.",
         "Ci chiedono se Zanfretta era reale. Lo era. Ci siamo solo assicurati che nessuno potesse provarlo."
@@ -772,7 +772,7 @@
         "I Deformatori Pallidi non parlano mai. Impossibile fargli scherzi. Rispetto, e rancore.",
         "I Turisti fanno il pieno gratis a qualsiasi nave umana. Generosi. Noi daremmo una mappa falsa gratis.",
         "Ogni film con alieni grigi parla di loro. Ogni storia a cui nessuno crede parla di noi.",
-        "I Turisti ci chiamano 'cugini'. Non siamo cugini. Siamo il ragazzo più grande della porta accanto.",
+        "I Turisti ci chiamano 'cugini'. Carini. Noi ci sentiamo più il ragazzo grande della porta accanto.",
         "Hanno aspettato il 1999 per il primo contatto ufficiale. Ufficiale! Con un modulo! Che tenerezza.",
         "Il loro specchio attorno al Sole si è rotto. Non l'abbiamo toccato. Abbiamo riso, questo sì.",
         "Un Viandante Grigio ha chiesto di farmi una foto. Ho fatto una faccia che perseguiterà il suo album.",
@@ -795,7 +795,7 @@
         "Abbiamo scambiato due gemelli per un giorno. Non se ne sono accorti neanche loro. Ci è sembrato di aver perso.",
         "Una buona gag finisce quando ridono anche loro. Le migliori non finiscono mai.",
         "Eris capisce. La discordia è solo uno scherzo con un trono.",
-        "Lo Schiacciamento è lo scherzo di un dio al tempo stesso. Siamo umiliati. E un po' gelosi.",
+        "Lo Squishing è lo scherzo di un dio al tempo stesso. Siamo umiliati. E un po' gelosi.",
         "Lascia una sedia in mezzo a un campo. Aspetta. Ogni passante costruisce la storia per te.",
         "La reazione è il pagamento. Il racconto è l'interesse.",
         "Gli umani si fanno scherzi il primo d'aprile. Un giorno all'anno. Dolcissimi dilettanti."
@@ -833,7 +833,7 @@
         ],
         [
           1,
-          "Ora sono preoccupato e lusingato."
+          "Ora sono {g:preoccupato|preoccupata} e {g:lusingato|lusingata}."
         ]
       ],
       [
@@ -883,7 +883,7 @@
         ],
         [
           1,
-          "Quindi mi hai fatto accompagnarti per niente?"
+          "Quindi mi hai fatto fare tutta la strada per niente?"
         ],
         [
           0,
@@ -979,11 +979,11 @@
         ],
         [
           0,
-          "L'ho anche dipinto. Guarda l'altro lato quando sei pronto."
+          "L'ho anche dipinto. Guarda l'altro lato quando sei {go:pronto|pronta}."
         ],
         [
           1,
-          "...Pronto per cosa?"
+          "...{g:Pronto|Pronta} per cosa?"
         ],
         [
           0,
@@ -1011,7 +1011,7 @@
         ],
         [
           1,
-          "Be', hai salutato tu per primo."
+          "Be', hai salutato tu {go:per primo|per prima}."
         ],
         [
           0,
@@ -1103,11 +1103,11 @@
       [
         [
           0,
-          "Buone notizie: non sei stato scelto."
+          "Buone notizie: non sei {go:stato scelto|stata scelta}."
         ],
         [
           1,
-          "Scelto per cosa?"
+          "{g:Scelto|Scelta} per cosa?"
         ],
         [
           0,
@@ -1177,7 +1177,7 @@
       [
         [
           0,
-          "Fissi il cielo da quando sono arrivato."
+          "Fissi il cielo da quando sono {g:arrivato|arrivata}."
         ],
         [
           1,
@@ -1217,7 +1217,7 @@
         ],
         [
           1,
-          "Non andava avanti fino a ieri. Quando sei passato tu."
+          "Non andava avanti fino a ieri. Quando sei {go:passato|passata} tu."
         ],
         [
           0,
@@ -1271,7 +1271,7 @@
         ],
         [
           1,
-          "Sono stanco. Qualcuno di noi lavora."
+          "Sono {g:stanco|stanca}. C'è chi lavora."
         ],
         [
           0,
@@ -1289,7 +1289,7 @@
         ],
         [
           0,
-          "Niente di importante. Per questo sei così curioso. Guardati."
+          "Niente di importante. Per questo sei così {go:curioso|curiosa}. Guardati."
         ],
         [
           1,
@@ -1363,7 +1363,7 @@
       [
         [
           0,
-          "Sono un diplomatico."
+          "Sono {g:un diplomatico|una diplomatica}."
         ],
         [
           1,
@@ -1377,7 +1377,7 @@
       [
         [
           0,
-          "Perché così arrabbiato?"
+          "Perché così {go:arrabbiato|arrabbiata}?"
         ],
         [
           1,
@@ -1403,17 +1403,17 @@
         ],
         [
           0,
-          "Appunto. Chi è il sospetto, adesso?"
+          "Appunto. Chi è che fa una figura sospetta, adesso?"
         ]
       ],
       [
         [
           0,
-          "Hai detto a tutti che sono strano."
+          "Hai detto a tutti che sono {g:strano|strana}."
         ],
         [
           1,
-          "Sei strano. Te ne stai nei campi di notte."
+          "Sei {go:strano|strana}. Te ne stai nei campi di notte."
         ],
         [
           0,
@@ -1423,15 +1423,15 @@
       [
         [
           0,
-          "Sono offeso, {b}."
+          "Sono {g:offeso|offesa}, {b}."
         ],
         [
           1,
-          "Tu? Offeso? Da cosa?"
+          "Tu? {go:Offeso|Offesa}? Da cosa?"
         ],
         [
           0,
-          "Ti sei controllato le tasche dopo che ti ho abbracciato."
+          "Hai controllato le tasche dopo che ti ho abbracciato."
         ],
         [
           1,
@@ -1439,7 +1439,7 @@
         ],
         [
           0,
-          "Spostate. Nell'altra tasca. Non è furto, è coreografia."
+          "Spostate. Nell'altra tasca. Si chiama coreografia."
         ]
       ],
       [
@@ -1449,11 +1449,11 @@
         ],
         [
           1,
-          "Non con te. L'ultima volta hai detto 'non guardarti alle spalle' e te ne sei andato."
+          "Non con te. L'ultima volta hai detto 'non guardarti alle spalle' e te ne sei {go:andato|andata}."
         ],
         [
           0,
-          "E tu non ti sei voltato. Carattere forte. Peccato."
+          "E tu non ti sei {g:voltato|voltata}. Carattere forte. Peccato."
         ]
       ],
       [
@@ -1523,7 +1523,7 @@
         ],
         [
           0,
-          "Mh. Allora sono io. Starò più dritto."
+          "Mh. Allora sono io. Starò più {g:dritto|dritta}."
         ]
       ],
       [
@@ -1541,7 +1541,7 @@
         ],
         [
           1,
-          "Dove finiscono sempre, credo."
+          "Dove finiscono sempre i pomeriggi, credo."
         ]
       ],
       [
@@ -1619,7 +1619,7 @@
         ],
         [
           1,
-          "Sono impiegato all'ufficio postale."
+          "Sono {g:impiegato|impiegata} all'ufficio postale."
         ],
         [
           0,
@@ -1651,7 +1651,7 @@
         ],
         [
           1,
-          "Nato qui. La mia famiglia è qui da sempre."
+          "{g:Nato|Nata} qui. La mia famiglia è qui da sempre."
         ],
         [
           0,
@@ -1705,7 +1705,7 @@
         ],
         [
           0,
-          "Allora starò zitto. Per ora."
+          "Allora starò {g:zitto|zitta}. Per ora."
         ]
       ],
       [
@@ -1743,7 +1743,7 @@
         ],
         [
           1,
-          "Tutti. Guidi troppo veloce e resti bloccato in un loop."
+          "Come tutti. Se guidi troppo veloce resti intrappolato in un loop."
         ],
         [
           0,
@@ -1801,7 +1801,7 @@
         ],
         [
           0,
-          "Pover'uomo. Abbastanza famoso per il bronzo, non per un nome."
+          "Pover'uomo. Abbastanza famoso per il bronzo, troppo poco per avere un nome."
         ]
       ],
       [
@@ -1825,7 +1825,7 @@
       [
         [
           0,
-          "Sei mai stato alla Torre?"
+          "Sei mai {go:stato|stata} alla Torre?"
         ],
         [
           1,
@@ -1961,11 +1961,11 @@
       [
         [
           0,
-          "Sei sposato, {b}?"
+          "Sei {go:sposato|sposata}, {b}?"
         ],
         [
           1,
-          "Fidanzato. Il matrimonio è a giugno."
+          "{g:Fidanzato|Fidanzata}. Il matrimonio è a giugno."
         ],
         [
           0,
@@ -1979,7 +1979,7 @@
       [
         [
           0,
-          "Sei mai stato in un posto davvero freddo?"
+          "Sei mai {go:stato|stata} in un posto davvero freddo?"
         ],
         [
           1,
@@ -2067,7 +2067,7 @@
       [
         [
           0,
-          "Hai l'aria di uno che ha visto qualcosa."
+          "Hai l'aria di chi ha visto qualcosa."
         ],
         [
           1,
@@ -2075,7 +2075,7 @@
         ],
         [
           0,
-          "Vero. Lo Schiacciamento ci ha resi tutti dilettanti."
+          "Vero. Lo Squishing ci ha resi tutti dilettanti."
         ]
       ],
       [
@@ -2125,7 +2125,7 @@
         ],
         [
           1,
-          "Non sembri convinto."
+          "Non sembri {go:convinto|convinta}."
         ]
       ]
     ],
@@ -2147,7 +2147,7 @@
           ],
           [
             1,
-            "Quello non è un motivo, è un hobby."
+            "Quello si chiama hobby."
           ]
         ]
       },
@@ -2189,7 +2189,7 @@
           ],
           [
             1,
-            "Perché perdoniamo il fascino. Non le bugie."
+            "Perché il fascino lo perdoniamo. Le bugie, molto meno."
           ]
         ]
       },
@@ -2252,7 +2252,7 @@
           ],
           [
             1,
-            "Preferisco essere vivo che interessante."
+            "Preferisco restare in vita che essere interessante."
           ]
         ]
       },
@@ -2542,7 +2542,7 @@
           ],
           [
             1,
-            "Qualcuno di noi deve pagare l'affitto."
+            "C'è chi deve pagare l'affitto."
           ],
           [
             0,
@@ -2613,7 +2613,7 @@
         ],
         [
           1,
-          "Dove? ...Ah, spiritoso."
+          "Dove? ...Ah, {go:spiritoso|spiritosa}."
         ]
       ],
       [
@@ -2669,7 +2669,7 @@
       [
         [
           0,
-          "Tranquillo oggi."
+          "Che calma, oggi."
         ],
         [
           1,
@@ -2719,7 +2719,7 @@
       [
         [
           0,
-          "Stai fermo un attimo."
+          "Stai {go:fermo|ferma} un attimo."
         ],
         [
           1,
@@ -2789,7 +2789,7 @@
       [
         [
           0,
-          "Sono stato qui tutto il giorno."
+          "Sono {g:stato|stata} qui tutto il giorno."
         ],
         [
           1,
@@ -2819,7 +2819,7 @@
       [
         [
           0,
-          "Perso di nuovo."
+          "Mi sono {g:perso|persa} di nuovo."
         ],
         [
           1,
@@ -2869,7 +2869,7 @@
       [
         [
           0,
-          "Ti sei mai fatto domande sulle stelle?"
+          "Ti capita mai di pensare alle stelle?"
         ],
         [
           1,
@@ -2983,7 +2983,7 @@
         ],
         [
           1,
-          "Fino a adesso."
+          "Finora sì."
         ]
       ],
       [
@@ -3009,7 +3009,7 @@
       [
         [
           0,
-          "Zitto. Ascolta."
+          "Ssst. Ascolta."
         ],
         [
           1,
@@ -3019,7 +3019,7 @@
       [
         [
           0,
-          "Strada sbagliata, amico."
+          "Strada sbagliata, {go:amico|amica}."
         ],
         [
           1,

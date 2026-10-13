@@ -11,5 +11,21 @@
   "powerPrompt": "{bowler}: POTENZA",
   "hookPrompt": "{bowler}: EFFETTO",
   "player2": "Giocatore 2",
-  "cpu": "CPU"
+  "cpu": "CPU",
+  "hud": {
+    "total": "TOT",
+    "p1": "G1",
+    "power": "POTENZA",
+    "hook": "EFFETTO",
+    "asciiScore": "{p1} {player}   {opponent} {opponentScore}",
+    "sign": "HYPER BOWL"
+  },
+  "banner": {
+    "strike": "STRIKE!",
+    "spare": "SPARE!",
+    "gutter": "CANALETTA",
+    "miss": "MANCATO",
+    "pin": "{count} BIRILLO",
+    "pins": "{count} BIRILLI"
+  }
 }

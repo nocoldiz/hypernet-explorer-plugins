@@ -2366,7 +2366,9 @@
     if (!name || window.NPCCreature?.isNonSentientProfile?.(driverProfileOf(name))) return false;
     driver.turnTowardPlayer?.();
     $gameMessage.setSpeakerName?.(name);
+    window.skipLocalization = true;
     $gameMessage.add(hitRemarkFor(name));
+    window.skipLocalization = false;
     return true;
   }
 

@@ -135,7 +135,7 @@
   if (window.HypernetOS) {
     window.HypernetOS.registerApp({
       id: 'app-job-offers',
-      name: T('WorkSystem.jobBoardApp'),
+      name: () => T('WorkSystem.jobBoardApp'),
       icon: 244,
       launchFn: function() {
         if (window.HypernetJobsApp) {
@@ -536,7 +536,7 @@
               ${factionRow}
             </div>
             ${locationsHTML}
-            <div class="inspect-section-title">${T('WorkSystem.requiredStats')} (${actor.name()})</div>
+            <div class="inspect-section-title">${T('WorkSystem.requiredStats')} (${window.NPCShared.escapeHtml(actor.name())})</div>
             <div class="inspect-spec-grid${this.xpc('xp-group')}">${requirementsHTML}</div>
             <div class="inspect-spec-row">
               <span class="inspect-spec-label">${T('WorkSystem.estimatedSuccessRate')}</span>
@@ -587,7 +587,7 @@
     getActorFaceHTML(actor, size = 64) {
       const faceName = actor.faceName();
       if (!faceName) {
-        return `<div class="job-face job-face--initial" data-size="${size}">${actor.name().charAt(0)}</div>`;
+        return `<div class="job-face job-face--initial" data-size="${size}">${window.NPCShared.escapeHtml(actor.name().charAt(0))}</div>`;
       }
       return `<div class="job-face" data-size="${size}" data-face="${faceName}"></div>`;
     }
@@ -626,7 +626,7 @@
             ${this.getActorFaceHTML(actor, 44)}
             <div class="roster-item-info">
               <div class="roster-item-head">
-                <strong class="roster-item-name">${actor.name()}</strong>
+                <strong class="roster-item-name">${window.NPCShared.escapeHtml(actor.name())}</strong>
                 <span class="roster-item-chance ${chanceClass}">${T('WorkSystem.successRatePct', { pct: chancePercent })}</span>
               </div>
               <div class="roster-item-reqs">${this.getActorRequirementDetailHTML(actor, selectedJob)}</div>
@@ -857,7 +857,7 @@
             ${this.getActorFaceHTML(actor, 44)}
             <div class="roster-item-info">
               <div class="roster-item-head">
-                <strong class="roster-item-name">${actor.name()}</strong>
+                <strong class="roster-item-name">${window.NPCShared.escapeHtml(actor.name())}</strong>
                 <span class="roster-item-chance job-away-clock">${T('WorkSystem.shift.remaining', { hours: hours, minutes: mins })}</span>
               </div>
               <div class="roster-item-reqs">${T('WorkSystem.shift.awayOn', { job: window.WorkSystem.jobName(entry.job) })}</div>

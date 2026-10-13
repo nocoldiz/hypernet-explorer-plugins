@@ -1,7 +1,7 @@
 {
   "title": "Pannello di controllo",
   "defaultUser": "Alchimista",
-  "cpuName": "Core {user} v{level} Processore",
+  "cpuName": "Processore Core {user} v{level}",
   "ramSize": "{mb} MB  RAM",
   "ramDefault": "256 MB RAM",
   "gpuName": "Cronoacceleratore da {mhz} MHz (scala DES)",
@@ -27,14 +27,14 @@
   "factionsRep": "Reputazione fazioni:",
   "tendencyVar": "Var 53 (tendenza)",
   "selectBackground": "Scegli lo sfondo del desktop",
-  "wallpaperHint": "Scegli uno stile o una tinta. Le modifiche allo sfondo si applicano subito.",
+  "wallpaperHint": "Scegli uno sfondo. Le modifiche si applicano subito.",
   "wpBliss": "Archways XP Bliss (Luna)",
   "wpTeal": "Verde acqua classico (retro)",
   "wpSpace": "Spazio profondo (tema scuro)",
   "wpGold": " Oro (mistico)",
   "machineStats": "STATISTICHE DELLA MACCHINA",
   "performance": "Prestazioni:",
-  "thermals": "Termica:",
+  "thermals": "Temperature:",
   "endurance": "Autonomia:",
   "uplink": "Collegamento:",
   "audio": "Audio:",
@@ -48,7 +48,7 @@
   "caseRow": "Case:",
   "serial": "Seriale:",
   "runningOn": "In esecuzione su {machine} ({host})",
-  "openSysdm": "Proprieta' del sistema...",
+  "openSysdm": "Proprietà del sistema...",
   "openDevmgmt": "Gestione periferiche...",
-  "openDesk": "Proprieta' dello schermo..."
+  "openDesk": "Proprietà dello schermo..."
 }

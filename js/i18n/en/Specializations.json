@@ -29,7 +29,7 @@
   "spec": {
     "902": {
       "name": "Enchanting",
-      "description": "Binding a spell into an object so the object can spend it, and keeping the object whole while it does."
+      "description": "Binding a spell into an object so it can cast it later."
     },
     "490": {
       "name": "3D Modeling and Printing",
@@ -41,7 +41,7 @@
     },
     "492": {
       "name": "Acoustics",
-      "description": "The behaviour of sound in a space, and shaping rooms and materials to control it."
+      "description": "How sound behaves in a space, and how to control it."
     },
     "2": {
       "name": "Acrobatics",
@@ -101,7 +101,7 @@
     },
     "11": {
       "name": "Anatomy",
-      "description": "The structure of the body: bones, muscles, vessels and organs, and where they lie."
+      "description": "The structure of the body: bones, muscles, vessels and organs."
     },
     "12": {
       "name": "Animal Husbandry",
@@ -117,7 +117,7 @@
     },
     "14": {
       "name": "Animism",
-      "description": "Reading the world as populated by spirits, and treating with them."
+      "description": "Reading the world as populated by spirits, and dealing with them."
     },
     "15": {
       "name": "Anthropology",
@@ -221,7 +221,7 @@
     },
     "891": {
       "name": "Axe",
-      "description": "Fighting with hand axes and their weight-forward chopping arcs."
+      "description": "Fighting with hand axes and their heavy chopping swings."
     },
     "863": {
       "name": "Axe Throwing",
@@ -353,7 +353,7 @@
     },
     "514": {
       "name": "Blogging",
-      "description": "Writing regularly for an audience that arrives on its own."
+      "description": "Writing posts regularly and building a readership."
     },
     "515": {
       "name": "Blood Magic",
@@ -437,7 +437,7 @@
     },
     "524": {
       "name": "Brewing Potions",
-      "description": "Compounding liquid preparations that carry a magical effect."
+      "description": "Compounding liquid preparations with a magical effect."
     },
     "50": {
       "name": "Bricklaying",
@@ -457,7 +457,7 @@
     },
     "326": {
       "name": "Bungee Cord Testing",
-      "description": "Load-testing elastic cord to the point it must not fail."
+      "description": "Load-testing elastic cord for safety."
     },
     "51": {
       "name": "Bungee Jumping",
@@ -473,7 +473,7 @@
     },
     "327": {
       "name": "Cable Splicing",
-      "description": "Joining cable so the join carries load or signal as well as the run."
+      "description": "Joining cables without losing strength or signal."
     },
     "528": {
       "name": "Calisthenics",
@@ -485,7 +485,7 @@
     },
     "54": {
       "name": "Calligraphy",
-      "description": "Writing letterforms as a controlled, deliberate hand."
+      "description": "Writing letterforms with a controlled, deliberate hand."
     },
     "328": {
       "name": "Campfire Cooking",
@@ -569,7 +569,7 @@
     },
     "873": {
       "name": "Chocolate Tempering",
-      "description": "Working couverture through its crystal curve for snap and shine."
+      "description": "Heating and cooling chocolate so it sets with snap and shine."
     },
     "535": {
       "name": "Choir Singing",
@@ -621,7 +621,7 @@
     },
     "68": {
       "name": "Cold Reading",
-      "description": "Producing accurate-sounding detail from cues and probability."
+      "description": "Guessing convincing personal details from cues and probability."
     },
     "69": {
       "name": "Cold Tolerance",
@@ -669,7 +669,7 @@
     },
     "547": {
       "name": "Corpse Butchery",
-      "description": "Dismembering a body cleanly, whatever the reason."
+      "description": "Dismembering a body cleanly."
     },
     "76": {
       "name": "Cosplay",
@@ -709,7 +709,7 @@
     },
     "553": {
       "name": "Crop Rotation",
-      "description": "Sequencing crops across fields to keep soil in heart."
+      "description": "Sequencing crops across fields to keep soil fertile."
     },
     "554": {
       "name": "Crossfit",
@@ -721,7 +721,7 @@
     },
     "857": {
       "name": "Crowd Reading",
-      "description": "Judging mood, intent and the dangerous edge of a crowd."
+      "description": "Judging a crowd's mood and intent, and when it turns dangerous."
     },
     "555": {
       "name": "Crowd Surfing",
@@ -749,11 +749,11 @@
     },
     "557": {
       "name": "Customer Service",
-      "description": "Handling people, complaints and returns without losing either side."
+      "description": "Handling customers, complaints and returns without upsetting anyone."
     },
     "558": {
       "name": "Cybernetics",
-      "description": "Control and feedback in machines and living systems, and the joins between."
+      "description": "Control and feedback in machines and living systems."
     },
     "900": {
       "name": "Cycling",
@@ -769,7 +769,7 @@
     },
     "82": {
       "name": "Dancing",
-      "description": "Moving in time and shape to music, alone or led."
+      "description": "Moving in time to music, alone or with a partner."
     },
     "83": {
       "name": "Data Analysis",
@@ -845,7 +845,7 @@
     },
     "91": {
       "name": "Dodging",
-      "description": "Reading an incoming attack early enough to not be there."
+      "description": "Seeing an attack coming and getting out of the way."
     },
     "343": {
       "name": "Dog Sledding",
@@ -877,11 +877,11 @@
     },
     "93": {
       "name": "Druidism",
-      "description": "Old practice bound to trees, seasons and the land's own law."
+      "description": "Old practice bound to trees, seasons and the land."
     },
     "344": {
       "name": "Drum Making",
-      "description": "Building shells and heading drums to tone."
+      "description": "Building drum shells and tuning the heads."
     },
     "345": {
       "name": "Dry-stone Walling",
@@ -969,11 +969,11 @@
     },
     "583": {
       "name": "Esports",
-      "description": "Competitive videogame play at trained, timed level."
+      "description": "Playing videogames competitively, at a trained level."
     },
     "585": {
       "name": "Etiquette",
-      "description": "Knowing the expected form in any room, and using it."
+      "description": "Knowing the expected manners in any setting, and using them."
     },
     "586": {
       "name": "Evangelism",
@@ -1065,7 +1065,7 @@
     },
     "354": {
       "name": "Firewalking",
-      "description": "Crossing hot coals on the physics of contact time."
+      "description": "Crossing hot coals unburned, thanks to brief contact."
     },
     "837": {
       "name": "Firmware Reverse Engineering",
@@ -1101,7 +1101,7 @@
     },
     "600": {
       "name": "Floral Arrangement",
-      "description": "Composing cut flowers by line, mass and lasting order."
+      "description": "Arranging cut flowers by line and mass, so they last."
     },
     "828": {
       "name": "Fluid Dynamics",
@@ -1369,7 +1369,7 @@
     },
     "372": {
       "name": "Hula Dancing",
-      "description": "Hawaiian dance where the hands carry the story."
+      "description": "Hawaiian dance that tells a story with the hands."
     },
     "626": {
       "name": "Hula Hooping",
@@ -1417,7 +1417,7 @@
     },
     "631": {
       "name": "Ice Sculpting",
-      "description": "Carving blocks of ice against a melting clock."
+      "description": "Carving blocks of ice before they melt."
     },
     "138": {
       "name": "Ice Skating",
@@ -1481,7 +1481,7 @@
     },
     "140": {
       "name": "Intimidation",
-      "description": "Making someone believe the consequences of refusing."
+      "description": "Making someone fear what happens if they refuse."
     },
     "638": {
       "name": "Investigative Journalism",
@@ -1633,7 +1633,7 @@
     },
     "655": {
       "name": "Light Armor Training",
-      "description": "Fighting in light armour and keeping the mobility it is for."
+      "description": "Fighting in light armour while keeping its mobility."
     },
     "158": {
       "name": "Lightfooted",
@@ -1697,7 +1697,7 @@
     },
     "166": {
       "name": "Magus",
-      "description": "The full practice of a trained magician, not one school of it."
+      "description": "General magic across every school."
     },
     "167": {
       "name": "Maintenance",
@@ -1969,7 +1969,7 @@
     },
     "688": {
       "name": "Packing",
-      "description": "Fitting what is needed into what will actually carry."
+      "description": "Packing what you need into what you can actually carry."
     },
     "191": {
       "name": "Pain Tolerance",
@@ -2165,15 +2165,15 @@
     },
     "212": {
       "name": "Poetry",
-      "description": "Writing verse that earns its line breaks."
+      "description": "Writing verse with rhythm, imagery and form."
     },
     "213": {
       "name": "Poison Resistance",
-      "description": "A body that has learned to survive doses that should not be survived."
+      "description": "Surviving doses of poison that would kill others."
     },
     "214": {
       "name": "Poker",
-      "description": "Betting, reading and folding across the hand."
+      "description": "Betting, reading opponents and knowing when to fold."
     },
     "420": {
       "name": "Poker Face",
@@ -2277,11 +2277,11 @@
     },
     "427": {
       "name": "Quantum Computing",
-      "description": "Computing on superposition and interference rather than bits alone."
+      "description": "Computing with superposition and interference."
     },
     "836": {
       "name": "Quantum Cryptography",
-      "description": "Key exchange that a measurement would give away."
+      "description": "Exchanging keys so that any eavesdropping is detected."
     },
     "428": {
       "name": "Quilling",
@@ -2449,7 +2449,7 @@
     },
     "736": {
       "name": "Scrapbooking",
-      "description": "Composing photographs and ephemera into kept pages."
+      "description": "Composing photographs and keepsakes into album pages."
     },
     "439": {
       "name": "Scrimshaw",
@@ -2557,7 +2557,7 @@
     },
     "242": {
       "name": "Sleep Deprivation",
-      "description": "Functioning after the sleep the body was owed."
+      "description": "Staying functional without enough sleep."
     },
     "243": {
       "name": "Sleight of Hand",
@@ -2605,7 +2605,7 @@
     },
     "757": {
       "name": "Software Testing",
-      "description": "Designing tests that find real defects, not just pass."
+      "description": "Designing tests that find real defects."
     },
     "834": {
       "name": "Soil Science",
@@ -2701,11 +2701,11 @@
     },
     "258": {
       "name": "Statistics",
-      "description": "Sampling, inference and knowing what a number does not say."
+      "description": "Sampling, inference and reading data correctly."
     },
     "456": {
       "name": "Steadicam Operation",
-      "description": "Carrying a stabilised camera and walking a shot smooth."
+      "description": "Carrying a stabilised camera for smooth moving shots."
     },
     "765": {
       "name": "Stealth Kills",
@@ -2713,7 +2713,7 @@
     },
     "245": {
       "name": "Stealth Movement",
-      "description": "Moving unseen and unheard past attention."
+      "description": "Moving past people unseen and unheard."
     },
     "745": {
       "name": "Stenography",
@@ -2741,7 +2741,7 @@
     },
     "459": {
       "name": "Street Magic",
-      "description": "Close-up conjuring with no stage and no angles."
+      "description": "Close-up magic with no stage, seen from every side."
     },
     "767": {
       "name": "Street Sweeping",
@@ -2877,7 +2877,7 @@
     },
     "464": {
       "name": "Telescope Making",
-      "description": "Grinding, figuring and mounting optics that hold a star."
+      "description": "Grinding, shaping and mounting telescope optics."
     },
     "276": {
       "name": "Tennis",
@@ -2893,7 +2893,7 @@
     },
     "466": {
       "name": "Terrarium Building",
-      "description": "Building a closed planted vessel that keeps itself."
+      "description": "Building a sealed, self-sustaining terrarium."
     },
     "782": {
       "name": "Thatching",
@@ -2929,7 +2929,7 @@
     },
     "471": {
       "name": "Topiary",
-      "description": "Clipping living shrubs into held shapes."
+      "description": "Clipping living shrubs into lasting shapes."
     },
     "280": {
       "name": "Torture",
@@ -2965,7 +2965,7 @@
     },
     "282": {
       "name": "Translation",
-      "description": "Carrying meaning between languages, not just words."
+      "description": "Rendering meaning from one language into another."
     },
     "283": {
       "name": "Trapping",
@@ -3065,7 +3065,7 @@
     },
     "850": {
       "name": "Violin Making",
-      "description": "Carving, graduating and varnishing violins."
+      "description": "Carving, thinning and varnishing violins."
     },
     "803": {
       "name": "Voice Acting",
@@ -3157,7 +3157,7 @@
     },
     "298": {
       "name": "Windsurfing",
-      "description": "Sailing a board on rig, trim and stance."
+      "description": "Sailing a board: rig handling, trim and stance."
     },
     "758": {
       "name": "Wine Tasting",

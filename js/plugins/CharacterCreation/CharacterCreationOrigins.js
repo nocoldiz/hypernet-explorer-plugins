@@ -2395,13 +2395,15 @@
   }
 
   // Artifact Heir origin: inherit one of the world's 13 generated historical
-  // artifacts (HistorySimulator.js ids 1501-1513, each existing as an item,
-  // a weapon AND an armor variant) at random, with whatever provenance the
-  // history sim rolled for it. Spawn is the full city picker (the train's own
-  // three-station whitelist belongs to origin_train alone); the artifact itself
-  // is the one random part of any origin's loadout.
+  // artifacts (the historyArtifact band of window.RuntimeItemIds, each existing
+  // as an item, a weapon AND an armor variant) at random, with whatever
+  // provenance the history sim rolled for it. Spawn is the full city picker
+  // (the train's own three-station whitelist belongs to origin_train alone);
+  // the artifact itself is the one random part of any origin's loadout.
   function startArtifactHeirOrigin() {
-    const artifactId = 1501 + Math.floor(Math.random() * 13);
+    const R = window.RuntimeItemIds;
+    const band = R ? R.band("historyArtifact") : null;   // i18n-ignore: band id
+    const artifactId = band ? band.base + Math.floor(Math.random() * band.size) : 0;
     const kinds = [
       { key: "items", data: $dataItems },
       { key: "weapons", data: $dataWeapons },

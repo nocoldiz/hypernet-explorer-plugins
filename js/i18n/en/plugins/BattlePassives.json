@@ -2,7 +2,7 @@
   "passive": {
     "4": {
       "name": "Guardian's Vow",
-      "desc": "While you live above 25% HP, your other party members take 15% less damage and the redirected portion is dealt to you."
+      "desc": "While above 25% HP, you absorb 15% of the damage your allies take."
     },
     "13": {
       "name": "Bloodrage",
@@ -18,7 +18,7 @@
     },
     "33": {
       "name": "Aegis Ward",
-      "desc": "While you live, the whole party takes less physical AND magical damage, scaled by your current HP (a full-HP Guardian wards 25%). Multiple Guardians stack, up to 50%."
+      "desc": "While you live, the party takes less physical and magical damage, scaled by your HP (25% at full HP). Multiple Guardians stack, up to 50%."
     },
     "40": {
       "name": "Thick Hide",
@@ -58,7 +58,7 @@
     },
     "18": {
       "name": "Kayfabe",
-      "desc": "You play to the crowd, opening every battle with a surge of bonus AP."
+      "desc": "You start every battle with bonus AP."
     },
     "14": {
       "name": "Freerunner",
@@ -98,7 +98,7 @@
     },
     "34": {
       "name": "Spell Edge",
-      "desc": "Your basic attacks carry the element of the last spell you cast."
+      "desc": "Basic attacks use the element of your last spell."
     },
     "37": {
       "name": "War Caster",
@@ -110,11 +110,11 @@
     },
     "31": {
       "name": "Grave Harvest",
-      "desc": "Every enemy that dies leaves a soul charge that fuels your summons."
+      "desc": "Every enemy that dies leaves a Soul, up to five, that Necromancy soul rites spend."
     },
     "8": {
       "name": "Devotee",
-      "desc": "During night hours you deal +15% damage and take 10% less; your trial penalties are reduced. You copy any skill out of a grimoire or a skill book whatever your level, but the Skill Master teaches you nothing."
+      "desc": "At night you deal +15% damage and take 10% less; trial penalties are reduced. You can copy any skill from a grimoire or skill book at any level, but the Skill Master teaches you nothing."
     },
     "7": {
       "name": "Sanguine",
@@ -122,7 +122,7 @@
     },
     "62": {
       "name": "Desperation",
-      "desc": "The less gold you carry, the higher your critical and evasion; you fear nothing."
+      "desc": "The less money you carry, the higher your critical and evasion. Immune to fear."
     },
     "21": {
       "name": "Ambush",
@@ -130,7 +130,7 @@
     },
     "35": {
       "name": "Songweaver",
-      "desc": "Each turn a rotating song pulses a buff to the whole party."
+      "desc": "Each turn a rotating song buffs the whole party."
     },
     "3": {
       "name": "Benediction",
@@ -138,7 +138,7 @@
     },
     "25": {
       "name": "Divine Favor",
-      "desc": "Overhealing you deliver is converted into a protective barrier rather than wasted."
+      "desc": "Your overhealing becomes a protective barrier."
     },
     "59": {
       "name": "Sermon",
@@ -190,11 +190,11 @@
     },
     "46": {
       "name": "Press Pass",
-      "desc": "You cover every fight for a small gold scoop per enemy defeated, and NPCs reveal more to you."
+      "desc": "You earn a little money per enemy defeated, and NPCs reveal more to you."
     },
     "54": {
       "name": "Gearhead",
-      "desc": "Vehicle repairs cost half and dismantling furniture returns full materials. Nothing you do is magic: your mana never rises above the ten you started with."
+      "desc": "Vehicle repairs cost half and dismantling furniture returns full materials. Your max mana is capped at 10."
     },
     "24": {
       "name": "Marksman",
@@ -202,7 +202,7 @@
     },
     "28": {
       "name": "Pathfinder",
-      "desc": "You spot danger early: battles you enter are far more likely to be a preemptive strike, and enemies rarely ambush you."
+      "desc": "Battles are far more likely to start with a preemptive strike, and enemies rarely ambush you."
     },
     "52": {
       "name": "Forager",
@@ -246,11 +246,11 @@
     },
     "60": {
       "name": "Showtime",
-      "desc": "You earn gold and goodwill performing, the party gains morale after any minigame win, and everybody's Fun climbs on its own while you travel with them."
+      "desc": "You earn gold and goodwill performing, the party gains morale after any minigame win, and everybody's Fun rises while you travel together."
     },
     "66": {
       "name": "Augmented",
-      "desc": "You are immune to poison, disease and bleed, run on power instead of hunger, and carry a regenerating energy shield."
+      "desc": "You are immune to poison, disease and bleed, run on power instead of hunger, and have a regenerating energy shield."
     },
     "63": {
       "name": "Feral",
@@ -296,7 +296,7 @@
     },
     "31": {
       "name": "Pain Feeds",
-      "desc": "Damage you take charges your energy instead of only hurting you."
+      "desc": "Damage you take also charges your energy."
     },
     "190": {
       "name": "Mana Wellspring",
@@ -349,19 +349,19 @@
     "gunFu": "Gun-Fu"
   },
   "chipInfo": {
-    "next": "What this monster is about to do, read by an Oracle in the party.",
-    "pin": "Pins held on the current target. The third pin locks it down for good.",
-    "chi": "Chi gathered by the Martial Artist. Every third action comes free.",
-    "combo": "Combo stacks built by dodging. Each one makes the next blow land harder.",
-    "decoys": "Illusory doubles still standing. Each one soaks up one attack meant for you.",
-    "iaido": "The blade is sheathed and ready: the first strike of the fight cuts deep.",
-    "edge": "The element carried on the blade from the last spell cast.",
-    "attuned": "Attuned to the weather: spells of this element are stronger while it holds.",
-    "souls": "Souls harvested from the fallen, spent on necromantic power.",
-    "divineBlood": "The one revival divine blood grants is still unspent.",
-    "rage": "Bloodrage: the closer to death, the harder this one hits.",
-    "aegis": "The ward the Guardian is holding over the party right now.",
-    "night": "Night empowerment: the Cultist is stronger while it is dark.",
-    "gunFu": "A ranged weapon is equipped, so the follow-up shot is armed."
+    "next": "This monster's next action, foreseen by your Oracle.",
+    "pin": "Pins on the current target. At 3 it is stunned.",
+    "chi": "Martial Artist's chi. Every 3rd action is free.",
+    "combo": "Built by dodging. Each stack adds damage to your next hit.",
+    "decoys": "Decoys left. Each absorbs one attack.",
+    "iaido": "Your first strike this battle deals double damage.",
+    "edge": "Element of your last spell, added to basic attacks.",
+    "attuned": "Matches the weather. This element is stronger.",
+    "souls": "Souls from fallen enemies, up to five. Necromancy soul rites spend them.",
+    "divineBlood": "Revival still available this battle.",
+    "rage": "Attack bonus from low HP.",
+    "aegis": "Party damage reduction from the Guardian.",
+    "night": "Night bonus: stronger while it is dark.",
+    "gunFu": "Ranged weapon equipped. Follow-up shot ready."
   }
 }

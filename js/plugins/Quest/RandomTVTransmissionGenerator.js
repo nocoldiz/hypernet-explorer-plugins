@@ -1099,6 +1099,70 @@
             });
     }
 
+    // --- Italian agreement (test-extracted) ---
+    // The fused article above is not the only thing a resolved token can
+    // break. A number, an hour, a destination or an alternation branch decides
+    // the sound the article in front of it has to agree with, and the writer
+    // of the template cannot know which one will turn up: "il {pct}%" has to
+    // read "l'8%", "alle {hour}" has to read "all'una", "a {dest}" has to read
+    // "ad Atene", "Il {capanno|orto}" has to read "L'orto". Every rule here is
+    // obligatory in Italian, so it is applied after the tokens resolve.
+    const TV_IT_ELIDE = {
+        il: "l'", una: "un'",
+        del: "dell'", dello: "dell'", della: "dell'",
+        al: "all'", allo: "all'", alla: "all'",
+        dal: "dall'", dallo: "dall'", dalla: "dall'",
+        nel: "nell'", nello: "nell'", nella: "nell'",
+        sul: "sull'", sullo: "sull'", sulla: "sull'"
+    };
+    // Before s + consonant, z, gn, ps, x the masculine article is "lo"/"gli".
+    const TV_IT_IMPURE = { il: "lo", i: "gli", un: "uno", del: "dello", al: "allo", dal: "dallo", nel: "nello", sul: "sullo",
+        ai: "agli", nei: "negli", sui: "sugli" };
+    const TV_IT_PLURAL_VOWEL = { i: "gli", ai: "agli", nei: "negli", sui: "sugli" };
+    // "le 1" is one o'clock: "l'una", likewise every preposition fused with it.
+    const TV_IT_HOUR_ONE = { le: "l'una", alle: "all'una", dalle: "dall'una", sulle: "sull'una", nelle: "nell'una", delle: "dell'una" };
+    function tvItCase(src, out) {
+        if (src.length > 1 && src === src.toUpperCase()) return out.toUpperCase();
+        if (src[0] === src[0].toUpperCase()) return out[0].toUpperCase() + out.slice(1);
+        return out;
+    }
+    // Only articles are touched: "il", "una" and the fused forms are never
+    // pronouns, so they can be agreed blindly. "lo"/"la" also stand for
+    // objects ("lo erano", "la apre") and are left as written. A word only
+    // starts after something that is not a letter, accents included, or
+    // "dèi" would read as "dè" + "i".
+    const TV_IT_START = "(?<![A-Za-zÀ-ÿ'])";
+    function tvItalianAgreement(text) {
+        const V = "aeiouàèéìòùAEIOUÀÈÉÌÒÙ";
+        const W = "A-Za-zÀ-ÿ";
+        return String(text)
+            // "Sono le 1" is "È l'una": one o'clock is singular
+            .replace(new RegExp(TV_IT_START + "(sono|Sono|SONO)\\s+le\\s+1(?![\\d']|[.,:]\\d)", "g"),
+                (m, v) => v === "SONO" ? "È L'UNA" : (v === "Sono" ? "È l'una" : "è l'una"))
+            // l'una: "alle 1" -> "all'una"
+            .replace(new RegExp(TV_IT_START + "(le|alle|dalle|sulle|nelle|delle)\\s+1(?![\\d']|[.,:]\\d)", "gi"),
+                (m, art) => tvItCase(art, TV_IT_HOUR_ONE[art.toLowerCase()]))
+            // elision before a number read with a vowel: l'1%, l'8%, l'11, l'80
+            .replace(new RegExp(TV_IT_START + "(il|del|al|dal|nel|sul)\\s+(?=(?:1|11|8\\d*)(?!\\d))", "gi"),
+                (m, art) => tvItCase(art, TV_IT_ELIDE[art.toLowerCase()]))
+            // elision before a vowel; one-letter words and "ed"/"ad"/"od" are left alone
+            .replace(new RegExp(TV_IT_START + "(il|una|del|dello|della|al|allo|alla|dal|dallo|dalla|nel|nello|nella|sul|sullo|sulla)\\s+(?=[" + V + "][" + W + "'])(?!(?:ed|ad|od)(?![" + W + "]))", "gi"),
+                (m, art) => tvItCase(art, TV_IT_ELIDE[art.toLowerCase()]))
+            // plural masculine before a vowel: gli, agli, negli, sugli
+            .replace(new RegExp(TV_IT_START + "(i|ai|nei|sui)\\s+(?=[" + V + "][" + W + "])", "g"),
+                (m, art) => TV_IT_PLURAL_VOWEL[art] + " ")
+            // s + consonant, z, gn, ps, x: lo, uno, dello...
+            .replace(new RegExp(TV_IT_START + "(il|un|del|al|dal|nel|sul)\\s+(?=(?:s[bcdfgklmnpqrtvz]|z|gn|ps|x)[a-zàèéìòù])", "gi"),
+                (m, art) => tvItCase(art, TV_IT_IMPURE[art.toLowerCase()]) + " ")
+            .replace(new RegExp(TV_IT_START + "(i|ai|nei|sui)\\s+(?=(?:s[bcdfgklmnpqrtvz]|z|gn|ps|x)[a-zàèéìòù])", "g"),
+                (m, art) => TV_IT_IMPURE[art] + " ")
+            // "a" before a word opening on a: "ad Atene"
+            .replace(new RegExp(TV_IT_START + "a\\s+(?=[aAàÀ][" + W + "])", "g"), "ad ")
+            // "ed" belongs before a vowel only
+            .replace(new RegExp(TV_IT_START + "ed\\s+(?=[b-df-hj-np-tv-zB-DF-HJ-NP-TV-Z])", "g"), "e ");
+    }
+    // --- end Italian agreement ---
+
     // Tokens filled from a bank land mid-sentence as often as not, so a
     // sentence that opens on one would otherwise be read out lowercase.
     function tvCapitalize(text) {
@@ -1175,7 +1239,7 @@
         }
         // Anything still unresolved would be read out on air verbatim.
         s = tvTidySpacing(s.replace(/\{(\w+)\}/g, (m, k) => k.replace(/_/g, " ")));
-        if (!tvArticlesApply()) return tvCapitalize(tvIsItalian() ? tvFixItalianArticles(s) : s);
+        if (!tvArticlesApply()) return tvCapitalize(tvIsItalian() ? tvItalianAgreement(tvFixItalianArticles(s)) : s);
         return tvCapitalize(tvFixIndefinite(tvFixArticles(s)));
     }
 
@@ -1533,12 +1597,13 @@
 
     // Whoever a line was addressed to before, it is addressed to her now.
     // Ordered widest-last, so "everyone at home" is caught before "viewers".
+    // The Naguka forms (IZ, AN', DA, LISTENIN') are caught alongside the English.
     const TV_EM_GENERAL_ADDRESS = [
-        /\b(?:everybody|everyone|anybody|anyone)\s+(?:at\s+home|out\s+there|still\s+listening|listening)\b/gi,
-        /\bwhoever\s+(?:is|'s)\s+(?:listening|watching|still\s+listening|out\s+there)\b/gi,
+        /\b(?:everybody|everyone|anybody|anyone)\s+(?:at\s+home|out\s+there|still\s+listen(?:ing|in')|listen(?:ing|in'))/gi,
+        /\bwhoever\s+(?:is|iz|'s)\s+(?:listen(?:ing|in')|watch(?:ing|in')|still\s+listen(?:ing|in')|out\s+there)/gi,
         /\byou\s+at\s+home\b/gi,
-        /\bladies\s+and\s+gentlemen\b/gi,
-        /\bthe\s+(?:viewers|listeners|audience\s+at\s+home)\b/gi,
+        /\bladies\s+(?:and|an')\s+gentlemen\b/gi,
+        /\b(?:the|da)\s+(?:viewers|listeners|audience\s+at\s+home)\b/gi,
         /\bviewers\b/gi,
         /\blisteners\b/gi
     ];

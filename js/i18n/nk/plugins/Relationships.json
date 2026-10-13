@@ -6,7 +6,7 @@
     },
     "civil_union": {
       "name": "CIVIL UNION",
-      "desc": "A LEGALLY RECOGNIZED PARTNERSHIP WITHOUT A FORMAL MARRIAGE!"
+      "desc": "A LEGALLY RECOGNIZED PARTNERSHIP WITOUT A FORMAL MARRIAGE!"
     },
     "long_distance": {
       "name": "LONG-DISTANCE",
@@ -38,7 +38,7 @@
     },
     "serial_monogamy": {
       "name": "SERIAL MONOGAMIST",
-      "desc": "ONE EXCLUSIVE PARTNER AT A TIME, IN A LONG STRIN' OF RELATIONSHIPS!"
+      "desc": "ONE EXCLUSIVE PARTNER AT A TIME, IN A LONG STRING OF RELATIONSHIPS!"
     },
     "single_content": {
       "name": "CONTENTEDLY SINGLE",
@@ -58,7 +58,7 @@
     },
     "aromantic_solo": {
       "name": "AROMANTIC SOLO",
-      "desc": "LIVIN' BY CHOICE WITHOUT ANY ROMANTIC PARTNERSHIP!"
+      "desc": "LIVIN' BY CHOICE WITOUT ANY ROMANTIC PARTNERSHIP!"
     }
   },
   "bond": {
@@ -104,15 +104,15 @@
     },
     "situationship": {
       "name": "SITUATIONSHIP",
-      "desc": "SOMETHIN' IZ GOING ON AN' NEITHER WILL DEFINE IT!"
+      "desc": "SOMETINK IZ GOING ON AN' NEITHER WILL DEFINE IT!"
     },
     "exes": {
       "name": "EXES",
-      "desc": "A ROMANCE DAT ENDED, WIT WHATEVER IT LEFT BEHIND!"
+      "desc": "A ROMANCE DAT HAB ENDED."
     },
     "unrequited": {
       "name": "PINES FOR DEM",
-      "desc": "A LOVE CARRIED ALONE AN' NEVER SPOKEN OUT LOUD!"
+      "desc": "A ONE-SIDED LOVE, NEVER CONFESSED!"
     },
     "unaware": {
       "name": "UNAWARE OF DEY FEELINGS",

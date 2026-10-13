@@ -120,7 +120,7 @@
       "{Every|Each|All} of us in this building were hired {tonight|this hour|for the hour} to get one word out of {em}.",
       "{Somebody upstairs|Someone above the weather|The floor above this one} is paying by the word, {em}, and the invoice has one line on it.",
       "The autocue tonight is {one word|a single word|the same word}, {em}, {over and over|repeated to the end of the reel|all the way down}.",
-      "{We would rather do this pleasantly|This can be pleasant|We can be civil}, {em}. {That is entirely up to you|That part is yours|Your choice, not ours}."
+      "{We would rather do this pleasantly|This can be pleasant|We can be civil}, {em}. {That is entirely up to you|That part is yours|Your choice entirely}."
     ],
     "demand": [
       "Say {word}, {em}. {Say it|Out loud|Where the microphone can hear it}.",
@@ -181,7 +181,7 @@
       "(She turns the volume up. If they want a voice they can listen to their own for a while.)",
       "(Her jaw sets. Whatever wants that word out of her mouth is going to have to come and take it in person.)",
       "(She hums, tunelessly, loudly, over the whole demand. Humming has no words in it. She checked.)",
-      "(She points at the screen and mouths something extremely rude. It is not the word. It is nowhere near the word.)",
+      "(She points at the screen and mouths something extremely rude. It is nowhere near the word.)",
       "(Nothing. She counts the chanting voices instead, gets to a number she does not like, and stops counting.)",
       "(She puts a book over the card on the screen and reads the book instead, out of spite, silently.)",
       "(She says nothing, gets up, and puts the kettle on where they can see her do it.)",

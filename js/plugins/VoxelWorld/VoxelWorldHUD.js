@@ -113,10 +113,11 @@
         talk:     ['E',             'walk:interact', 'CamperDrive.hud.cmdTalk'],
         dig:      ['LMB',           'walk:dig',     'VoxelWorld.hud.cmdDig'],
         place:    ['G',             'walk:place',   'VoxelWorld.hud.cmdPlace'],
-        // In a fight the two buttons split: the weapon on the left (R2), the
-        // spell, item or block in hand on the right (R1).
-        fightHit: ['LMB',           'R2',           'VoxelWorld.hud.cmdFightHit'],
-        fightUse: ['RMB',           'R1',           'VoxelWorld.hud.cmdFightUse'],
+        // In a fight the two buttons split: the weapon on the left (the attack
+        // trigger), the spell, item or block in hand on the right (the dig
+        // shoulder). Both faces are read off the walk bindings.
+        fightHit: ['LMB',           'walk:attack',  'VoxelWorld.hud.cmdFightHit'],
+        fightUse: ['RMB',           'walk:dig',     'VoxelWorld.hud.cmdFightUse'],
         // The d-pad walks the cells of the bar in hand, which is the same thing
         // the digit row does; it is no binding-table action, so the faces are
         // written out here.
@@ -1329,12 +1330,22 @@
             if (on && this._bar) this._bar.hide();
         }
 
+        // Safe to run twice: the scene's own dispose() calls it again from
+        // its finally, for the teardown that threw before reaching it. Each
+        // step is its own, so one that throws never leaves the next on the
+        // page.
         dispose() {
-            this._unbindFullMap();
-            if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
+            try { this._unbindFullMap(); } catch (e) { console.error('[VoxelWorld] hud unbind', e); }
+            try {
+                if (this._el && this._el.parentNode) this._el.parentNode.removeChild(this._el);
+            } catch (e) { console.error('[VoxelWorld] hud remove', e); }
             // The quick bar lives on the page, not in the overlay: it has to be
             // taken down with the world or it is left hanging over the map.
-            if (this._bar) { this._bar.destroy(); this._bar = null; }
+            const bar = this._bar;
+            this._bar = null;
+            if (bar) {
+                try { bar.destroy(); } catch (e) { console.error('[VoxelWorld] hud bar', e); }
+            }
         }
     }
 

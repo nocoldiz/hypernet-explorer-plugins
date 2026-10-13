@@ -419,6 +419,14 @@
     };
 
     ArenaBattleHandler.endGauntlet = function () {
+        // The run is over whichever way it ended. A win keeps the gauntlet
+        // flag up between bouts (endBattle(0)), so a run that stops after a
+        // win (the next bracket has nobody in it) used to walk the party out
+        // with the flag still up: the next ordinary defeat was then taken for
+        // a gauntlet bout, skipped the respawn and left a dead party on the
+        // map, which the engine answers with its own Game Over screen.
+        _gauntletMode = false;
+        _arenaMode = false;
         if (_randomPartyMode) this.restoreParty();
         $gameVariables.setValue(gauntletWinsVarId, 0);
 
@@ -428,6 +436,8 @@
             if (!SceneManager.isSceneChanging()) SceneManager.goto(Scene_Title);
             return;
         }
+
+        this.reviveAfterRun();
 
         if (window.ParchmentToast) {
           window.ParchmentToast.show(T('Arena.gauntletHasEnded'), {
@@ -464,6 +474,46 @@
     // or a boss rush.
     ArenaBattleHandler.isArenaSession = function () {
         return _arenaMode || _gauntletMode || _biomeTrialMode || _bossRushMode;
+    };
+
+    // An arena defeat ends the run, never the party: whoever went down in the
+    // last bout gets back up on one hit point, the way a battle the party is
+    // allowed to lose ends. Left dead, the party walked back onto the map
+    // with nobody standing and the engine sent it to its Game Over screen.
+    // The death flags the bout raised come down with it.
+    ArenaBattleHandler.reviveAfterRun = function () {
+        if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.members) return;
+        $gameParty.members().forEach(actor => {
+            if (actor && actor.isDead && actor.isDead()) actor.setHp(1);
+        });
+        if (typeof $gameSystem !== 'undefined' && $gameSystem) {
+            if ($gameSystem.setActor1Died) $gameSystem.setActor1Died(false);
+            if ($gameSystem.setActor2Died) $gameSystem.setActor2Died(false, '');
+            if ($gameSystem.setActor3Died) $gameSystem.setActor3Died(false, '');
+        }
+        if (typeof $gamePlayer !== 'undefined' && $gamePlayer && $gamePlayer.refresh) $gamePlayer.refresh();
+    };
+
+    // Every piece of arena session state back to "no run": the mode flags,
+    // the run records, the title flow and the queued bout timers. Called when
+    // a run ends and whenever the world is swapped under it (the title, a new
+    // game, a loaded save), so nothing a run left behind can reach a later
+    // fight. The party snapshot is dropped, not restored: it belongs to the
+    // game objects that are being replaced.
+    ArenaBattleHandler.resetSession = function () {
+        _arenaMode = false;
+        _gauntletMode = false;
+        _biomeTrialMode = false;
+        _bossRushMode = false;
+        _biomeTrial = null;
+        _bossRush = null;
+        _savedPartyData = null;
+        _randomPartyMode = false;
+        this.cancelTitleFlow();
+        ['_nextBoutTimer', '_nextTrialTimer', '_nextBossTimer'].forEach(key => {
+            if (this[key]) { clearTimeout(this[key]); this[key] = null; }
+        });
+        if (typeof $gameSystem !== 'undefined' && $gameSystem) $gameSystem._forcedBattleBiome = null;
     };
 
     //=========================================================================
@@ -1006,7 +1056,27 @@
     Scene_Title.prototype.start = function () {
         _Scene_Title_start_arenaRestore.call(this);
         ArenaBattleHandler.restoreIfSessionOver();
+        // Back at the title nothing of a run may survive into the next game.
+        ArenaBattleHandler.resetSession();
     };
+
+    // A new game or a loaded save is a different world: whatever run was
+    // still flagged belonged to the one being replaced. The title arena
+    // starts its own run AFTER these (beginTitleFlow follows the new game or
+    // the load), so it is untouched.
+    if (typeof DataManager !== 'undefined') {
+        const _DataManager_setupNewGame_arenaReset = DataManager.setupNewGame;
+        DataManager.setupNewGame = function () {
+            ArenaBattleHandler.resetSession();
+            return _DataManager_setupNewGame_arenaReset.apply(this, arguments);
+        };
+
+        const _DataManager_extractSaveContents_arenaReset = DataManager.extractSaveContents;
+        DataManager.extractSaveContents = function (contents) {
+            ArenaBattleHandler.resetSession();
+            return _DataManager_extractSaveContents_arenaReset.call(this, contents);
+        };
+    }
 
     // One-shot API for external callers (e.g. HypernetOS Colosseum app). Always
     // uses a random roster and starts immediately from the current (in-game) map.
@@ -1200,6 +1270,8 @@
         if ($gameSystem) $gameSystem._forcedBattleBiome = null;
         _biomeTrial = null;
         BattleManager.setBiomeTrialMode(false);
+        _gauntletMode = false;
+        _arenaMode = false;
 
         if (fromTitle) {
             this.cancelTitleFlow();
@@ -1207,6 +1279,7 @@
             if (!SceneManager.isSceneChanging()) SceneManager.goto(Scene_Title);
             return;
         }
+        this.reviveAfterRun();
         if (SceneManager._scene && !(SceneManager._scene instanceof Scene_Map) && !SceneManager.isSceneChanging()) {
             SceneManager.goto(Scene_Map);
         }
@@ -1322,6 +1395,8 @@
         if (_randomPartyMode) this.restoreParty();
         _bossRush = null;
         BattleManager.setBossRushMode(false);
+        _gauntletMode = false;
+        _arenaMode = false;
 
         if (fromTitle) {
             this.cancelTitleFlow();
@@ -1329,6 +1404,7 @@
             if (!SceneManager.isSceneChanging()) SceneManager.goto(Scene_Title);
             return;
         }
+        this.reviveAfterRun();
 
         if (window.ParchmentToast) {
           window.ParchmentToast.show(T('Arena.bossRushHasEnded'), {

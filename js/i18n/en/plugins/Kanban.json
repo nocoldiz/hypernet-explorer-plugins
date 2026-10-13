@@ -31,7 +31,7 @@
   "showOnMapAt": "Show on map: {place} · Shift",
   "moveToInProgress": "Move to In Progress · →",
   "moveToToDo": "Move back to To Do · ←",
-  "boardHint": "Drag a note, or hold OK and press ←/→, to move it between columns",
+  "boardHint": "Drag a note, or hold OK + ←/→, to move it",
   "mapMarker": "Map marker",
   "notify": {
     "newQuest": "New Quest: {title}",

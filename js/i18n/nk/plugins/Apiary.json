@@ -65,5 +65,28 @@
   },
   "toast": {
     "swarmed": "DA HIVE SWARMED: {bees} BEES LEFT WIT DA OLD QUEEN!"
+  },
+  "weather": {
+    "sunny": "SUNNY",
+    "cloudy": "CLOUDY",
+    "rainy": "RAINY",
+    "stormy": "STORMY",
+    "windy": "WINDY"
+  },
+  "state": {
+    "thriving": "THRIVIN'",
+    "stable": "STABLE",
+    "struggling": "STRUGGLIN'",
+    "swarming": "SWARMIN'",
+    "supersedure": "SUPERSEDURE",
+    "dormant": "DORMANT"
+  },
+  "threat": {
+    "varroa": "VARROA MITES",
+    "nosema": "NOSEMA",
+    "foulbrood": "FOULBROOD",
+    "waxmoth": "WAX MOTH",
+    "wasps": "WASPS",
+    "bears": "BEARS"
   }
 }

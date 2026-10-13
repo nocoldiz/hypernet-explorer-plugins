@@ -104,19 +104,19 @@
     },
     "situationship": {
       "name": "Storia non definita",
-      "desc": "Qualcosa c'e, ma nessuno dei due vuole definirlo."
+      "desc": "Qualcosa c'è, ma nessuno dei due vuole definirlo."
     },
     "exes": {
       "name": "Ex",
-      "desc": "Una storia finita, con tutto quello che ha lasciato."
+      "desc": "Una storia d'amore finita."
     },
     "unrequited": {
       "name": "Amore non corrisposto",
-      "desc": "Un amore portato da soli e mai detto ad alta voce."
+      "desc": "Un amore a senso unico, mai confessato."
     },
     "unaware": {
       "name": "Ignaro dei suoi sentimenti",
-      "desc": "L'altro e innamorato; questo non se ne e mai accorto."
+      "desc": "L'altro è innamorato; questo non se n'è mai accorto."
     },
     "siblings": {
       "name": "Fratelli",
@@ -132,7 +132,7 @@
     },
     "child": {
       "name": "Suo figlio",
-      "desc": "Questo e stato cresciuto dall'altro."
+      "desc": "Questo è stato cresciuto dall'altro."
     },
     "cousins": {
       "name": "Cugini",
@@ -148,7 +148,7 @@
     },
     "rivals": {
       "name": "Rivali",
-      "desc": "Una gara continua che nessuno dei due vuole concedere."
+      "desc": "Una sfida continua in cui nessuno dei due vuole cedere."
     }
   }
 }

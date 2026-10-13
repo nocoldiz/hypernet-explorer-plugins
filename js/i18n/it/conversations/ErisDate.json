@@ -107,7 +107,7 @@
     [
       "@shake",
       "~ La sedia su cui stavi per sederti crolla appena la tocchi.",
-      "{Ops.|Le probabilità. Mica io. Be'. Io.}",
+      "{Ops.|Le probabilità. Be'. Io.}",
       "~ Ti spinge la propria sedia con un piede, e resta in piedi."
     ],
     [
@@ -153,16 +153,16 @@
     "cList": [
       "Vuoi sapé una cosa che nessuno mette per iscritto?",
       "Per quattromila anni circa nun so' stata gnente. Una dea a pie di pagina. Un tempio, mal tenuto, in una città che ner frattempo è finita in mare.",
-      "Discordia. Tutto qui er repertorio. Nun guerra, nun amore, nun raccolto. Solo... cose che vanno storte alle feste.",
+      "Discordia. Tutto qui er repertorio. Solo... cose che vanno storte alle feste.",
       "Ho iniziato a progettare er trono perché ero stanca di esse una barzelletta con un altare.",
       "E mo' ce l'ho, e nun è rimasto nessuno che ricordi che ero la barzelletta. Tranne me."
     ],
     "route666": [
       "Er camper in cui dormi. Ne conosco ogni bullone.",
       "Avemo battuto la Route 666 per anni. Le tre Americhe da un capo all'antro, e una banca ogni due paesi.",
-      "Guidava lui. Le casseforti le facevo io. Nun serve un trapano se puoi appoggiarti alle probabilita finché i contatori nun te danno ragione.",
+      "Guidava lui. Le casseforti le facevo io. Nun serve un trapano se puoi appoggiarti alle probabilità finché i contatori nun te danno ragione.",
       "Sai quanto è facile esse brava in una cosa quanno l'universo se vergogna a dirti di no?",
-      "Quello è er mejo che sia mai stata. Nun er trono. Un camper scassato e un uomo che cantava male alla radio."
+      "Quello è er mejo che sia mai stata: un camper scassato e un uomo che cantava male alla radio."
     ],
     "paradox": [
       "Dicembre 1992. Avrai letto la versione ufficiale.",
@@ -172,22 +172,22 @@
       "E l'unico modo per arrivarci abbastanza vicino da decide di nun farlo."
     ],
     "bubba": [
-      "È lui er motivo per cui è finita. Nun un litigio. Nun un'antra donna. Un paradosso con la mia faccia sopra.",
+      "È lui er motivo per cui è finita. Un paradosso con la mia faccia sopra.",
       "Me ne so' annata a dicembre perché restà voleva dì lassà che la linea temporale se sfaldasse attorno a lui, e lui me l'avrebbe permesso.",
       "Lo amo ancora. Vojo esse estremamente chiara, visto che tu dormi a tre metri da lui.",
-      "Nun posso averlo. Nun per corpa tua. Per corpa mia, fra vent'anni, con una lancia in mano.",
+      "Nun posso averlo. La corpa è mia, fra vent'anni, con una lancia in mano.",
       "L'unica cosa in novantadue dimensioni che nun mi è concesso toccà, e so' io ad aver costruito er tribunale che decide cosa è concesso toccà."
     ],
     "jealousy": [
-      "Te devo una cosa. Nun delle scuse. Quarcosa di adiacente.",
+      "Te devo quarcosa di adiacente alle scuse.",
       "Ogni porta che si è bloccata. Ogni moneta caduta storta. Ogni treno perso per quattro seconni. Ero io.",
       "So che nun prova gnente per te. Ho controllato. Continuo a controllare, ed è questa la parte umiliante.",
-      "Nun è mai stato per quello che sei per lui. E che tu puoi stargli vicino e io no.",
+      "Quello che brucia è che tu puoi stargli vicino e io no.",
       "Ho usato er meccanismo della legge cosmica per far inciampare una strega per strada. Detto ad arta voce suona piccolo esattamente quanto e."
     ],
     "throne": [
       "Capodanno, 2000. Er Padre è morto ner rituale di Salomone e er trono è rimasto vuoto.",
-      "Me ce so' seduta. Nun perché avessi vinto quarcosa. Perché la stanza e ammutolita e nessuno ha detto di no.",
+      "Me ce so' seduta, perché la stanza è ammutolita e nessuno ha detto di no.",
       "Ogni dio esistente mi ha guardata e ha deciso che era più comodo lasciar fà.",
       "Quella notte ho ereditato la giustizia di novantadue dimensioni. Miliardi di processi ar giorno. Nessuna formazione, nessun precedente, nessuna Maat, perché so' io er motivo per cui nun c'è più Maat.",
       "Nun ho la minima idea di cosa sto facenno, Em. Nun l'ho mai avuta."
@@ -235,8 +235,8 @@
     },
     "romanticConversation": {
       "choices": [
-        "{Stasera non sei sola. Io conto.|La solitudine è un'abitudine, non una legge. Anche per te.|Continui a dire 'sola' come se io non fossi seduto qui.}",
-        "{Voglio la persona, non il pantheon.|Il tuo potere è la cosa meno interessante di te.|Non sono venuto per il tuono. Sono venuto per la compagnia.}",
+        "{Stasera non sei sola. Io conto.|La solitudine è solo un'abitudine. Anche per te.|Continui a dire 'sola' come se io non fossi seduto qui.}",
+        "{Voglio la persona dietro il pantheon.|Il tuo potere è la cosa meno interessante di te.|Sono venuto per la compagnia, tuono o non tuono.}",
         "{Tutti meritano qualcuno che non abbia paura di loro.|Anche i giudici meritano un testimone tutto loro.|Farsi vedere non uccide. Probabilmente.}",
         "{Magari l'universo ha truccato il nostro incontro.|Il caso non è mai stato così compiaciuto.|Se era uno dei tuoi trucchi di probabilità, grazie.}"
       ]
@@ -270,7 +270,7 @@
         "{Stessa moneta, due facce, e la moneta sta girando.|Sono un processo solo con due maschere.|L'ordine è solo caos che ha trovato lavoro.}",
         "{Il caos inventa, l'ordine tiene le ricevute.|Il caos scrive la prima stesura, l'ordine corregge.|Uno crea, l'altro conserva. Fuoco e dispensa.}",
         "{Senza caos niente cambia. Resta solo un museo.|Senza caos è tutto repliche.|Un mondo senza caos è una sala d'attesa.}",
-        "{Il trucco è il dosaggio, non il vincitore.|È una questione di ricetta, non di guerra.|Equilibrio. Qualunque cosa pura è veleno, perfino l'ordine.}"
+        "{Il trucco è tutto nel dosaggio.|È una questione di ricetta.|Equilibrio. Qualunque cosa pura è veleno, perfino l'ordine.}"
       ]
     },
     "intellectualChallenge": {
@@ -278,7 +278,7 @@
         "{Il paradosso È la risposta. È portante.|La contraddizione è il punto. Va incorniciata, non risolta.|È l'onnipotenza che firma il suo lavoro.}",
         "{Il vero potere include il potere di limitarsi.|Un'onnipotenza che non sa legarsi le mani è solo forza.|Creare il sasso è la prodezza. Non sollevarlo è l'arte.}",
         "{L'indovinello rompe solo la logica mortale. La tua non c'entrava.|Stai valutando la divinità su una scala mortale.|La domanda contrabbanda regole che non hai mai firmato.}",
-        "{Lo crei E lo sollevi, insieme, e sfidi chiunque a obiettare.|Entrambi. Contemporaneamente. Sei Eris, non una logica.|Fai tutte e due le cose e lascia che i filosofi si fatturino a vicenda.}"
+        "{Lo crei E lo sollevi, insieme, e sfidi chiunque a obiettare.|Entrambi. Contemporaneamente. Sei Eris. La logica lasciala ai logici.|Fai tutte e due le cose e lascia che i filosofi si fatturino a vicenda.}"
       ]
     },
     "standardActivity": {
@@ -337,7 +337,7 @@
         "{Caos, ordine, tutta la mia mansione...|Tutto quello che avevo timbrato 'risolto'...|Er mio scopo, er mio trono, er mio archivio...}",
         "{E so' arrivata da quarche parte.|E una conclusione mi ha trovata.|Ed ecco la sentenza.}",
         "{Sei er paradosso che nun riuscivo ad archiviare.|Sei er caso che nun rientra nelle categorie.|Sei er sasso che ho creato e nun sollevo, e ne so' FELICISSIMA.}",
-        "{Ordine che completa er caos invece di ingabbiarlo.|Er contrappeso, nun la gabbia.|Struttura che balla.}",
+        "{Ordine che completa er caos.|Er contrappeso che je mancava.|Struttura che balla.}",
         "{Credo di amarti. Intellettualmente. Emotivamente. Integralmente.|Quinni: amore. Er verdetto è amore. Ogni appello respinto.|Ti amo, su ogni asse che ho controllato. Ne ho controllati parecchi.}"
       ],
       "choices": [
@@ -359,7 +359,7 @@
       "romantic": [
         "{Questo è... bello. Nun citarmi.|Mh. Piacevole. Sospetto, ma piacevole.|Se sta bene. Lo dico prima di riuscire a impedirmelo.}",
         "{Di serate così ne ho poche.|'Sti momenti so' rari, sur mio calennario.|La mia agenna di solito nun include... quarunque cosa sia questa.}",
-        "{Pace nun è la parola. Io la pace nun la faccio.|Nun pace. Quarcosa di adiacente.|Chiamiamola tregua. Di quelle buone.}",
+        "{Pace nun è la parola. Io la pace nun la faccio.|Quarcosa di adiacente alla pace.|Chiamiamola tregua. Di quelle buone.}",
         "{Caos perfetto. Formato piccolo.|Caos, ma der tipo che puoi tené in mano.|Tutto se muove, gnente se rompe. Nuovo, per me.}",
         "{Con te, nello specifico. È quella la parte strana.|La variabile sei tu, se nun fosse ovvio.|Ed è corpa tua. Prenniti er merito.}"
       ],
@@ -392,7 +392,7 @@
         "{Va bene così. Certe serate so' bozze.|Pazienza. Nun tutto è versione definitiva.|La chiameremo prova generale.}"
       ],
       "choices": [
-        "{Possiamo fare di meglio di stasera.|Quello era il nostro pavimento, non il soffitto.|Rivincita. Ci dobbiamo una rivincita.}",
+        "{Possiamo fare di meglio di stasera.|Quello era solo il nostro pavimento.|Rivincita. Ci dobbiamo una rivincita.}",
         "{Scusa se l'ho resa strana.|Le parti strane erano perlopiù mie. Scuse.|Mi prendo la colpa di almeno metà.}",
         "{Dalle un'altra possibilità.|Un altro tentativo. Tutto diverso.|Facciamo appello contro il verdetto su stasera.}",
         "{Forse è solo il momento sbagliato.|Forse stasera non era la nostra.|Forse le stelle non sono state consultate.}"
@@ -445,7 +445,7 @@
         "{Nun pensavo fosse ner menù...|L'avevo dichiarato impossibile. Personalmente. Per iscritto.|Questo nun doveva esse possibile, per me...}",
         "{Nun per me. Nun per quello che so'.|Le dee della discordia nun ricevono questo.|La mia mansione lo vieta, tecnicamente.}",
         "{Eppure: completa. È la parola. Completa.|Intera. Parola strana. Misura giusta.|Finita, ner senso in cui è finita una canzone.}",
-        "{Resta. Nun per una serata. Per l'intera tournée.|Resta con me. A tempo inneterminato. Rinnovabile.|Resta. Invoco l'eternità, nun controllare la clausola.}",
+        "{Resta. Per l'intera tournée.|Resta con me. A tempo inneterminato. Rinnovabile.|Resta. Invoco l'eternità, nun controllare la clausola.}",
         "{Annamo a scuotere 'sto monno insieme!|Scrolliamo 'sto posto finché nun cade er mejo!|Caos, tavolo per due, prenotazione fissa!}",
         "{Ner modo più bello disponibile!|Splennidamente. Va fatto splennidamente.|E lo famo con STILE o gnente!}"
       ]
@@ -454,7 +454,7 @@
       "ending": [
         "{È stato davero speciale. Ho controllato i registri.|Stasera va nell'archivio buono.|È stato... speciale. Nun uso la parola per er meteo.}",
         "{Nun succede spesso. Citami pure.|Evento raro. Interesserebbe agli astronomi.|Statisticamente, stasera nun doveva annà così bene.}",
-        "{Vojo un seguito.|Lo rifacciamo.|Vojo rivederti. È un'affermazione, nun una domanna.}",
+        "{Vojo un seguito.|Lo rifacciamo.|Vojo rivederti. È un'affermazione.}",
         "{Presto.|A breve.|Prima di quanto sia dignitoso.}",
         "{ASSAI presto. Piegherò un calennario, se serve.|Prestissimo. L'agenna reggerà.|Presto ner senso: nun disfare la valigia.}"
       ]
@@ -526,7 +526,7 @@
       ],
       "nervous": [
         "Sei venuto. Bene. Che è... {statisticamente|oggettivamente|onestamente} bene.",
-        "So' qui da {un po'|pranzo|abbastanza da dà un nome ai piccioni}. Nun in attesa. Presente. C'è una differenza.",
+        "So' qui da {un po'|pranzo|abbastanza da dà un nome ai piccioni}. Presente e basta, che è mejo che aspettà.",
         "Ok. Ok ok ok. Ciao. {Sto bene.|Va tutto bene.|È tutto organizzato, più o meno.}",
         "Nun legge gnente {nella disposizione dei posti|nelle cannele|nelle vie di fuga}. Quelle le pianifico sempre."
       ],
@@ -617,7 +617,7 @@
     "confession": [
       "{Devo... dì una cosa.|C'è una dichiarazione. Preparata. Più o meno.|Ho un annuncio e le mani nun collaborano.}",
       "{'Sto genere nun è er mio.|Nun è er mio reparto.|Io emetto connanne, di mestiere. QUESTO nun ha procedura.}",
-      "{Dea della discordia. Nun dell'amore. Sinnacato diverso.|Er mio portafojo è er caos, nun... questo.|Io faccio i finali, di solito. Nun gli inizi.}",
+      "{Dea della discordia. Sinnacato diverso.|Er mio portafojo è er caos. Questo è... n'antra cosa.|Io faccio i finali, di solito.}",
       "{Ma tu... tu me provochi un meteo specifico.|Eppure attorno a te c'è 'sto... clima.|Tu produci sintomi. Buoni. Nun in etichetta.}",
       "{Er caos che ho ner petto ha finalmente una forma che je piace.|Tutto er mio rumore interno è d'accordo su di te. Nun succede MAI.|Fai suonare la mia discordia come se fosse arrangiata.}",
       "{Ti amo, {address}.|Quinni: ti amo, {address}. Ecco. Protocollato.|Amore. Tu. {address}. In quest'ordine, per sempre.}",
@@ -647,7 +647,7 @@
     "theAtmosphereSoftensErisSeems": "Qualcosa nella sua postura {si scioglie|depone le armi|smonta dal turno}. La serata si fa più quieta senza farsi più vuota.",
     "nobodyNobodyHasEverTold": "{Nessuno me lo dice.|Questo è...|Ridillo.} {Fanno complimenti ar mio podé, ai capelli, ai verdetti. Mai a questo.|Ho degli altari, sai. Nessuno dice mai questo.|Nun ho un posto dove archiviare questa.}",
     "youKnowBeingAGoddess": "Esse una dea è {una folla e nessuna compagnia|applausi da gente che poi chiude a chiave|er lavoro più solitario con la vista mijore}. {Te temono o voleno quarcosa.|Er culto è paura con le cannele.|Nessuno chiede mai come sta er giudice.}",
-    "butYouYouSeeMe": "Ma tu te ne stai lì e me guardi come se fossi {una persona|quarcuno|solo... Eris}. {Gnente titolo.|Gnente tuono.|Nun un tribunale, nun una causa. Solo Eris.} È disorientante. Nun smette.",
+    "butYouYouSeeMe": "Ma tu te ne stai lì e me guardi come se fossi {una persona|quarcuno|solo... Eris}. {Gnente titolo.|Gnente tuono.|Solo Eris, e basta.} È disorientante. Nun smette.",
     "itSBeenALong": "Era {tanto|da secoli|da più tempo di quanto ammetterò per iscritto} che quarcosa nun me sembrava {nuovo|così|degno di restà svegli}. Avevo dimenticato er sapore.",
     "erisMovesCloserHerScent": "Si avvicina. Profuma di {pioggia su pietra calda e qualcosa di più antico|fronte temporalesco e candele di chiesa|ozono, miele e una biblioteca in fiamme}, e la distanza tra voi smette di essere un fatto.",
     "canICanITry": "Posso... {stai fermo 'n attimo|provà una cosa|fà una piccola cosa avventata}? {Di' di no e nun la faccio.|Se può rifiutà una dea, è legale.|Un'occasione sola per schivare.}",
@@ -709,12 +709,12 @@
     "donTDonTBe": "...{Nun fà così|Nun esse gentile|Nun mo'}. Nun so' attrezzata per la gentilezza.",
     "fineAllRightIfYou": "{Va bene|D'accordo|Se insisti}. C'è dell'antro. C'è sempre dell'antro.",
     "noYouReRightIt": "No. Hai ragione. Nun lo è.\\n*nun se scusa, ma nun lo nega nemmeno*",
-    "forALongMomentNeither": "Per un lungo momento nessuna delle due dice niente. Non è imbarazzante. E peggio.",
+    "forALongMomentNeither": "Per un lungo momento nessuna delle due dice niente. È peggio dell'imbarazzo.",
     "theGoddessOfDiscordHas": "★★ La dea della discordia ha detto a Em cose che non ha mai detto a nessuno. In tribunale, adesso, la maggior parte delle accuse cadra. La maggior parte. ★★",
     "somethingHasLoosenedTheNext": "★ Qualcosa si è allentato. Il prossimo processo sarà meno crudele, il che con Eris non è una promessa. ★",
     "nothingHasChangedTheOdds": "Niente è cambiato. La taglia sulla tua vita resta esattamente dove l'ha messa lei.",
     "theGoddessOfJusticeHas": "★★ La Dea della Giustizia ha smesso di fingere. In tribunale, adesso, molti casi non arriveranno nemmeno alla lettura delle accuse. Molti. ★★",
-    "theBenchWillLeanYour": "★ Il banco pendera dalla tua parte. Non abbastanza da contarci, ma pendera. ★",
+    "theBenchWillLeanYour": "★ Il banco penderà dalla tua parte. Non abbastanza da contarci, ma penderà. ★",
     "sheWillRememberThisEvening": "Si ricorderà di questa serata. Non è la stessa cosa che perdonarti qualcosa.",
     "theDate": "L'Appuntamento",
     "opinion": "Opinione",
@@ -814,7 +814,7 @@
       ],
       "romantic": [
         "Le forme attorno a voi rallentano, si posano e si dispongono in modo che voi due siate l'unica cosa ferma.",
-        "L'ho fermato. Non il tempo. L'altra cosa.",
+        "L'ho fermato. Parlo dell'altra cosa, quella accanto al tempo.",
         "Sei l'unico dettaglio qui dentro che non ho dovuto inventare."
       ],
       "chaotic": "Tutti gli angoli in vista diventano acuti insieme. I colori si scambiano di posto e si rifiutano di tornare indietro.",
@@ -863,7 +863,7 @@
       ],
       "chaotic": "Gli spalti vuoti si riempiono del boato di una folla che non c'è, che scandisce un nome non proprio il suo.",
       "activity": [
-        "Combatti con me. Nun sur serio. Regole: gnente mani, gnente vittoria.",
+        "Combatti con me, male apposta. Regole: gnente mani, gnente vittoria.",
         "Vi girate intorno sulla sabbia con minacce sempre più idiote finché nessuno dei due riesce a restà serio."
       ],
       "incidents": [
@@ -941,7 +941,7 @@
       "label": "Ponte",
       "intro": "Un ponte, a metà traversata.\nTecnicamente non siete da nessuna parte, sopra qualcosa che preferirebbe che non ci foste.",
       "question": [
-        "A metà. Né da una parte né dall'antra. Er posto mijore di tutto er percorso.",
+        "A metà, tra una parte e l'antra. Er posto mijore di tutto er percorso.",
         "Te piace er mezzo delle cose, o te fa venì voja di sceje?"
       ],
       "romantic": [
@@ -1128,7 +1128,7 @@
       "chaotic": "Tutte le ossa nell'angolo si ricompongono in un animale mai esistito che si sdraia comodo.",
       "activity": [
         "Siediti, stai zitto e vedemo se torna a casa mentre semo qui.",
-        "Aspettate ar buio in casa di quarcuno. Nun arriva gnente. Lei e visibilmente delusa."
+        "Aspettate ar buio in casa di quarcuno. Nun arriva gnente. Lei è visibilmente delusa."
       ],
       "incidents": [
         "Qualcosa fuori dalla tana passa davanti all'ingresso senza rallentare.",
@@ -1193,7 +1193,7 @@
       ],
       "chaotic": "Tutte le candele si riaccendono nell'ordine sbagliato e l'organo suona quattro note che nessuno ha chiesto.",
       "activity": [
-        "Accennine una. Nun per nessuno. Solo per vedé se l'edificio se ne accorge.",
+        "Accennine una, solo per vedé se l'edificio se ne accorge.",
         "Accenni una cannela per nessuno in particolare. Brucia esattamente come quelle che avevano un motivo."
       ],
       "incidents": [
@@ -1386,7 +1386,7 @@
       ],
       "romantic": [
         "Lo scenario si riorganizza in silenzio finché non c'è un posto a sedere che va bene a entrambi esattamente.",
-        "L'ha fatto per te, non per me. I sogni non mi hanno mai fatto un favore.",
+        "L'ha fatto per te. I sogni non mi hanno mai fatto un favore.",
         "Non svegliarti ancora. Prendilo come una richiesta. Mi vengono male, quindi forse non sembrava tale."
       ],
       "chaotic": "Tutta la scena diventa lo stesso posto visto da quattro epoche insieme, e nessuna e d'accordo su dov'è la porta.",
@@ -1413,7 +1413,7 @@
       ],
       "chaotic": "Tutte le porte del livello si aprono e si chiudono una volta, in ordine, dal fondo verso voi due.",
       "activity": [
-        "Scegli una direzione. Ce perdiamo per bene, nun per sbajo.",
+        "Scegli una direzione. Ce perdiamo per bene, apposta.",
         "Vi perdete completamente insieme e nessuno dei due propone di tornà innietro."
       ],
       "incidents": [
@@ -1501,7 +1501,7 @@
       ],
       "chaotic": "Tutte le luci del bosco si spengono, tornano nei colori sbagliati, e qualcosa nel buio ride per primo.",
       "activity": [
-        "Nun pijà er sentiero. Ce camminiamo accanto per tutto er tragitto.",
+        "Camminiamo accanto ar sentiero per tutto er tragitto.",
         "Camminate accanto ar sentiero per un'ora. Continua a offrirsi e voi continuate a rifiutà."
       ],
       "incidents": [
@@ -1523,7 +1523,7 @@
       ],
       "chaotic": "Tutto il campo matura in un'unica ondata da una siepe all'altra, con quattro mesi di anticipo.",
       "activity": [
-        "Aiutami a rubà esattamente una cosa. Nun abbastanza da contà. Abbastanza da averlo fatto.",
+        "Aiutami a rubà esattamente una cosa. Giusto abbastanza da averlo fatto.",
         "Ne prennete uno in due e ne mangiate metà a testa, in piedi in un campo che appartiene a uno sconosciuto."
       ],
       "incidents": [
@@ -1760,7 +1760,7 @@
       ],
       "romantic": [
         "Si siede sul divano di qualcun altro nel modo in cui ci si siede solo sul proprio.",
-        "E questo che non ho. Non il divano. L'avere un divano.",
+        "È questo che non ho: l'avere un divano.",
         "Non dire niente di gentile, poi diventero insopportabile."
       ],
       "chaotic": "Ogni oggetto della casa si sposta esattamente dieci centimetri a sinistra. I proprietari lo sentiranno per anni.",
@@ -1807,7 +1807,7 @@
         "Sotto tutto questo ci sono città. Intere. Nessuno ricorda chi fosse re.",
         "Essere dimenticata non mi spaventa. Esserlo mentre sono ancora qui si."
       ],
-      "chaotic": "Tutto cio che è verde in vista cresce al doppio della velocità per un minuto intero e il sentiero dietro di voi sparisce per sempre.",
+      "chaotic": "Tutto ciò che è verde in vista cresce al doppio della velocità per un minuto intero e il sentiero dietro di voi sparisce per sempre.",
       "activity": [
         "Trovami quarcosa fatto da persone. Qui dentro c'è, c'è tutto.",
         "Trovate una pietra lavorata sotto due secoli di radici. Lei se rifiuta di dì se sapeva che c'era."
@@ -1848,12 +1848,12 @@
       ],
       "romantic": [
         "Si siede su un tesoro che appartiene a qualcos'altro e non ne tocca niente.",
-        "Non è l'oro. Non lo è mai. E avere un posto in cui non è ammesso nient'altro.",
+        "Quello che conta è avere un posto in cui non è ammesso nient'altro.",
         "Tu sei ammesso. E tutto l'annuncio, non faccio un discorso."
       ],
       "chaotic": "Tutto il tesoro si riordina in una spirale ordinata, i pezzi più grandi all'esterno, in totale silenzio.",
       "activity": [
-        "Metti quarcosa ner tesoro invece di prennerne. Vojo vedé se se ne accorge.",
+        "Metti quarcosa ner tesoro. Vojo vedé se se ne accorge.",
         "Aggiungi un oggetto senza valore ar mucchio. Quarcosa in fonno ar covo se fa immobilissimo."
       ],
       "incidents": [
@@ -1885,7 +1885,7 @@
     },
     "Landfill": {
       "label": "Discarica",
-      "intro": "Una discarica, a strati e che fuma piano.\nTutto cio contro cui qualcuno ha mai deciso e qui in un posto solo.",
+      "intro": "Una discarica, a strati e che fuma piano.\nTutto ciò contro cui qualcuno ha mai deciso è qui in un posto solo.",
       "question": [
         "Questo e er museo più onesto der paese e nessuno ha curato gnente.",
         "E orribile? E orribile. Vuoi annà via?"
@@ -1953,7 +1953,7 @@
       "label": "Mangrovie",
       "intro": "Mangrovie: alberi in piedi nel mare sulle proprie radici, che si rifiutano di scegliere una parte.\nL'acqua entra ed esce da tutto il bosco due volte al giorno.",
       "question": [
-        "Nun terra, nun mare. Se so' rifiutate di sceje e l'hanno passata liscia.",
+        "Mezza terra, mezzo mare. Se so' rifiutate di sceje e l'hanno passata liscia.",
         "Te sei mai rifiutato di sceje? Com'è annata?"
       ],
       "romantic": [
@@ -2085,7 +2085,7 @@
       "label": "Vetta Ghiacciata",
       "intro": "Una vetta sopra il limite delle nevi, in un vento che non si ferma per nessuno.\nOgni respiro ha un costo.",
       "question": [
-        "Quassu nun vive gnente. Nun ci ha mai vissuto gnente. E meravijosamente scortese.",
+        "Quassù nun vive gnente. Nun ci ha mai vissuto gnente. È meravijosamente scortese.",
         "Hai freddo? Puoi dì di si. Nun te stimero meno, me divertiro e basta."
       ],
       "romantic": [
@@ -2423,7 +2423,7 @@
         "Quaggiù non è mai arrivata una voce. A questa profondità non ci sono pettegolezzi.",
         "Sai da quanto non sto in un posto dove nessuno ha un'opinione su di me?"
       ],
-      "chaotic": "Tutto cio che fa luce sul fondo si accende insieme, e per qualche secondo il fondale e una città.",
+      "chaotic": "Tutto ciò che fa luce sul fondo si accende insieme, e per qualche secondo il fondale è una città.",
       "activity": [
         "Raccogli quarcosa dar fonno. Quarunque cosa sia, e li da più tempo della tua lingua.",
         "Raccogli quarcosa lavorato da delle mani. Nessuno dei due dice cosa pensa che fosse."
@@ -2435,7 +2435,7 @@
     },
     "Sewer": {
       "label": "Fogne",
-      "intro": "Una fogna in mattoni, voltata come una cappella da qualcuno che la prendeva sul serio.\nTutto cio contro cui la città ha deciso scorre accanto ai tuoi piedi.",
+      "intro": "Una fogna in mattoni, voltata come una cappella da qualcuno che la prendeva sul serio.\nTutto ciò contro cui la città ha deciso scorre accanto ai tuoi piedi.",
       "question": [
         "Aó, guarda quelle vorte. Quarcuno l'ha reso bello e nun l'avrebbe mai visto nessuno.",
         "E er lavoro più puro che ce sia. Sei d'accordo, o te sta venenno da vomitare?"
@@ -2443,7 +2443,7 @@
       "romantic": [
         "Alza una luce verso i mattoni e trova una data e il marchio di uno scalpellino di centosessant'anni fa.",
         "L'ha firmata. Quaggiu. Dove nessuno avrebbe mai guardato.",
-        "E questo che voglio. Non i templi. Quello."
+        "È questo che voglio. Quello lì."
       ],
       "chaotic": "Tutti gli scarichi del sistema buttano acqua limpida per un minuto, il che provochera quattro inchieste ufficiali distinte.",
       "activity": [
@@ -2467,7 +2467,7 @@
         "Stanotte ne scendono undicimila miliardi e non ce ne sono due uguali. Sembra poesia. È aritmetica.",
         "Comunque entro domattina saranno tutti acqua. Anche questo. Percio guardalo."
       ],
-      "chaotic": "La neve si ferma. Non a terra: in aria. Ogni fiocco in vista tiene la posizione per sei secondi.",
+      "chaotic": "La neve si ferma a mezz'aria. Ogni fiocco in vista tiene la posizione per sei secondi.",
       "activity": [
         "Cadi all'innietro con me. Apposta. Nella neve. Mo'.",
         "Cadete entrambi all'innietro e restate li, e la neve continua a scennervi in faccia."
@@ -2731,7 +2731,7 @@
         "Quaggiu niente ha mai visto il sole e a niente manca qualcosa.",
         "Continuano a dirmi cosa dovrei volere. Quaggiu nessuno dice niente a nessuno."
       ],
-      "chaotic": "Tutto cio che è luminoso nell'intera caverna si abbassa e si rialza insieme, due volte, come un animale molto grande che sbatte le palpebre.",
+      "chaotic": "Tutto ciò che è luminoso nell'intera caverna si abbassa e si rialza insieme, due volte, come un animale molto grande che sbatte le palpebre.",
       "activity": [
         "Gridiamo dall'antra parte. Vojo sapé se c'è un'antra parte.",
         "Gridate insieme attraverso er buio. Torna innietro quarcosa e nun è la voce di nessuno dei due."
@@ -2746,7 +2746,7 @@
       "intro": "Una villa privata con il parco curato e nessuno in residenza.\nQui tutto è stato scelto per essere visto da gente invitata.",
       "question": [
         "Quarcuno ce spenne una fortuna all'anno e ce viene tre settimane ad agosto.",
-        "Stiamo violando una proprieta? Si. La cosa la mijora?"
+        "Stiamo violando una proprietà? Sì. La cosa la mijora?"
       ],
       "romantic": [
         "Si siede sul bordo della fontana vuota come se fosse stata invitata, per bene, con una lettera.",
@@ -2789,7 +2789,7 @@
       "label": "Villaggio del Deserto",
       "intro": "Un villaggio di muri spessi e finestre piccole, costruito interamente contro il sole.\nLe strade sono strette apposta e l'ombra e il bene principale del paese.",
       "question": [
-        "Ogni muro qui è spesso un metro. Nun l'hanno costruito per bellezza. Stavano discutenno con er cielo.",
+        "Ogni muro qui è spesso un metro. Stavano discutenno con er cielo.",
         "Te saresti fermato a costruì, o saresti annato oltre?"
       ],
       "romantic": [
@@ -2877,13 +2877,13 @@
       "label": "Villaggio di Pescatori",
       "intro": "Un villaggio di pescatori con le barche tirate in secca e le reti stese ad asciugare.\nQui sono tutti in mare, ad aspettare qualcuno in mare, o in pensione dal mare.",
       "question": [
-        "Ogni casa qui guarda l'acqua. Nun la strada. L'acqua.",
+        "Ogni casa qui guarda l'acqua. Tutte quante.",
         "Aspetteresti quarcuno così? Ogni giorno, su un muretto?"
       ],
       "romantic": [
         "Si siede sul muro del porto rivolta al largo, nel posto in cui si sono chiaramente seduti per duecento anni.",
         "La pietra qui e consumata in un avvallamento. Qualcuno aspetta esattamente in questo punto da prima che la tua lingua si assestasse.",
-        "Essere aspettata e la cosa che capisco meno e che voglio di più."
+        "Essere aspettata è la cosa che capisco meno e che voglio di più."
       ],
       "chaotic": "Tutte le reti del villaggio si sbrogliano, tutte insieme, perfettamente, cosa che rovinera quattro reputazioni.",
       "activity": [
@@ -2909,7 +2909,7 @@
       ],
       "chaotic": "La montagna si schiarisce la gola. Non erutta niente, ma tutti gli uccelli sul fianco se ne vanno nello stesso istante.",
       "activity": [
-        "Avviciniamoci. Nun stupidamente. Solo più di quanto dovremmo.",
+        "Avviciniamoci. Solo un po' più di quanto dovremmo.",
         "Vi avvicinate più der ragionevole. Er calore e un muro e nessuno dei due se gira per primo."
       ],
       "incidents": [
@@ -3272,7 +3272,7 @@
       "{Rapiamo|Adottiamo|Fuggiamo con} {un distributore automatico|una fontana comunale|er gladiatore meno popolare dell'arena} e cresciamolo come un fijo.",
       "Mordi {un distributore|un bancomat|er portone der tribunale} finché nun {se scusa|paga|te rispetta}.",
       "{Mettiamo in giro|Diffonniamo|Manniamo in pensione} la voce che {er mare è a noleggio|i piccioni se so' sinnacalizzati|so' morta di nuovo}, e vedemo dove arriva entro l'alba.",
-      "Entriamo {nell'acquario|in un museo|in municipio} e {spostiamo, nun rubiamo|lasciamo delle cose|mijoriamo una sola teca}. Nun semo ladri. Semo redattori.",
+      "Entriamo {nell'acquario|in un museo|in municipio} e {spostiamo, nun rubiamo|lasciamo delle cose|mijoriamo una sola teca}. Semo redattori.",
       "Scambiati i vestiti con {uno spaventapasseri|una statua|chi perde la prossima discussione} e inniciamo una conferenza stampa.",
       "Mangia la cosa {più vecchia|più maledetta|legalmente più ambigua} der prossimo menù che troviamo. L'esorcismo lo offro io.",
       "Liberiamo tutti {gli uccelli in gabbia|i cavalli della giostra|i carrelli della spesa} di 'sto posto. {Sanno cos'hanno fatto.|Hanno aspettato abbastanza.|Stanotte se cavalca.}",
@@ -3368,8 +3368,8 @@
     "likes": [
       "\"{member}.\" Dice er nome come una carta che è contenta di avé in mano. \"{Sempre di buona compagnia, spero.|L'avrei invitato io stessa.|Tieni gente per bene. Sospetto, ma per bene.}\"",
       "\"Me piace {member},\" annuncia, a proposito di gnente. \"{Nun dirglielo.|Me sente? Bene.|È un parere legale.}\"",
-      "\"Detto tra noi, {member} è {er competente|quello da tené d'occhio|er meno spacciato} der tuo gruppo. Presenti esclusi. Forse.\"",
-      "\"Se mai sparissi misteriosamente,\" dice a {member}, amabile, \"er gruppo me lo tengo io. Tu in particolare.\"",
+      "\"Detto tra noi, {member} è {er competente|quello da tené d'occhio|er meno spacciato} der tuo Party. Presenti esclusi. Forse.\"",
+      "\"Se mai sparissi misteriosamente,\" dice a {member}, amabile, \"er Party me lo tengo io. Tu in particolare.\"",
       "\"{member}! Siedi più dritto, li dèi guardano. ...Solo io. Guardo solo io. Comunque.\""
     ],
     "neutral": [
@@ -3377,7 +3377,7 @@
       "\"{member},\" dice, soppesanno er nome. \"Nun ho ancora sentenze in merito. {Colpiscimi.|Nun sprecà l'occasione.|Er ruolo è aperto.}\"",
       "\"Ricordami,\" sussurra teatrale, \"cosa fa esattamente {member}? Oltre a testimoniare.\"",
       "Studia {member} per un momento. \"Nun deciso,\" sentenzia, e passa oltre.",
-      "\"Statisticamente,\" dice, innicanno {member} cor mento, \"in ogni gruppo quarcuno è segretamente interessante. Nun ho escluso nessuno.\""
+      "\"Statisticamente,\" dice, innicanno {member} cor mento, \"in ogni Party quarcuno è segretamente interessante. Nun ho escluso nessuno.\""
     ],
     "dislikes": [
       "\"Oh. C'è {member}.\" La frase arriva già congelata. \"{Che bello.|Magnifico.|Alla serata mancava giusto un difetto.}\"",
@@ -3596,7 +3596,7 @@
       "\"So' stata {sveja|altrove|plurale} dall'ultima vorta che ce semo parlati. Porta pazienza. La grammatica torna.\"",
       "\"LA {MAREA|CORALE|CONTABILITÀ} È FAVOREVOLE,\" annuncia, poi fa una smorfia. \"...La serata. Intennevo che la serata è favorevole.\"",
       "\"Nun allarmarti per {le ombre|er ronzio|quello che fanno le cannele}. So' con me. Tutto qui lo è, un po'.\"",
-      "\"Stasera sento {er tuo cuore|le maree che hai dentro|ogni orologio che tu abbia mai posseduto}. Nun è una minaccia. È un bel suono.\"",
+      "\"Stasera sento {er tuo cuore|le maree che hai dentro|ogni orologio che tu abbia mai posseduto}. È solo un bel suono.\"",
       "\"Perdona la...\" si innica tutta, innica l'erroneità dei bordi, \"...impaginazione. Er contenuto so' ancora io. Er contenuto è in gran parte me.\""
     ],
     "interjections": [
@@ -3655,7 +3655,7 @@
     "endNote": [
       "Lo strappo cosmico si ricuce da sé con un suono umido di stoffa lacerata e ti lascia solo sul marciapiede, con un mal di testa che martella e una ricevuta scritta in zolfo ardente.",
       "La serata ti lascia andare lentamente, come l'acqua profonda. Quando riesci a dare un nome a ciò che in lei era strano, i nomi hanno smesso di calzare.",
-      "Non se ne va: recede. L'ultima cosa a sparire è il sorriso, che resta parecchi secondi oltre il resto di lei, con aria di scuse.",
+      "Si ritira piano, come una marea. L'ultima cosa a sparire è il sorriso, che resta parecchi secondi oltre il resto di lei, con aria di scuse.",
       "Dopo, il ricordo della notte si archivia nell'ordine sbagliato, e un'ora si rifiuta di farsi trovare. Manderà notizie, più tardi, dicendo che sta bene dov'è.",
       "Tornano prima gli uccelli. Poi il buio ordinario. Poi il suono del tuo battito, che noti, adesso, tiene il tempo meglio di prima.",
       "Torni a casa con la netta sensazione di essere stato accompagnato, benché accanto a te non ci sia niente se non un calore largo una mano, tra le scapole."
@@ -3713,7 +3713,7 @@
           "~ È puntuale. Già questo è una novità.",
           "{Ciao.|Salve.|Bubba.}",
           "~ {Ti guarda le mani, poi il tavolo, poi un punto a circa un metro a sinistra della tua testa.|Ha piegato il tovagliolo in qualcosa che è o un cigno o un trono piccolissimo.}",
-          "{Sei... uguale. Nun è un complimento. È 'n'osservazione. Va be', è un complimento.|Puzzi ancora de grasso de motore. Nun la prenne come 'na lamentela.|T'hai tenuto er giubbotto. Ovvio che t'hai tenuto er giubbotto.}"
+          "{Sei... uguale. È 'n'osservazione. Va be', è un complimento.|Puzzi ancora de grasso de motore. Nun la prenne come 'na lamentela.|T'hai tenuto er giubbotto. Ovvio che t'hai tenuto er giubbotto.}"
         ],
         [
           "~ Ha le mani strette attorno a una tazza da cui non ha bevuto.",
@@ -3722,7 +3722,7 @@
         ],
         [
           "{Allora.|Be'.|Dunque.}",
-          "{Er tempo è proprio... tempo.|Come sta The Beast? Er camper. Mica te. Te nun sei 'na bestia. Be'. A vorte.|Er motore batte ancora la mattina quanno fa freddo? Nun risponne. Lo so che batte. Me lo ricordo, quer colpo.}",
+          "{Er tempo è proprio... tempo.|Come sta The Beast? Er camper, dico. Be'. A vorte pure te.|Er motore batte ancora la mattina quanno fa freddo? Nun risponne. Lo so che batte. Me lo ricordo, quer colpo.}",
           "~ Arrossisce per la sua stessa frase e prova a nascondersi dietro il menù."
         ],
         [
@@ -3761,7 +3761,7 @@
           "{Ancora li calli.|Ancora la bruciatura della marmitta dell'89.|Sempre negato pe' la manicure, vedo.}"
         ],
         [
-          "{Raccontame der motore.|Raccontame der motore liminale. Pe' bene. Mica er dépliant.|Hanno messo er motore tuo su ogni autobus d'Europa e nessuno dice er nome tuo giusto.}",
+          "{Raccontame der motore.|Raccontame der motore liminale. Pe' bene, la versione lunga.|Hanno messo er motore tuo su ogni autobus d'Europa e nessuno dice er nome tuo giusto.}",
           "~ Non ti stacca gli occhi di dosso per tutto il tempo in cui parli di rapporti di compressione, cosa che nessun altro ha mai fatto."
         ],
         [
@@ -4058,7 +4058,7 @@
             ],
             [
               "~ {La finestra dietro di lei si appanna, si schiarisce, e per un secondo mostra un camper su una strada che non esiste.|Qualcosa di cosmico si fa silenziosissimo.}",
-              "{...Ecco perché nun me trovava. Nun sto in una dimensione. Sto in un lavoro.|Er motore liminale l'hai costruito pe' me?}"
+              "{...Ecco perché nun me trovava. Sto in un lavoro.|Er motore liminale l'hai costruito pe' me?}"
             ],
             [
               "~ {A 'l'ho insegnato a Em' le scatta un occhio, ma sorride.|Ride così forte che il tavolo accanto si sposta.}",
@@ -4190,7 +4190,7 @@
         },
         {
           "prompt": [
-            "{Si stasera te chiedessi de venì co' me. Mica ar trono. Solo... fori. A guidà.|Che diresti si te chiedessi 'n antro viaggio on the road?}"
+            "{Si stasera te chiedessi de venì co' me. Solo... fori. A guidà.|Che diresti si te chiedessi 'n antro viaggio on the road?}"
           ],
           "choices": [
             "{Direi sali.|Avrei già il motore acceso.}",
@@ -4222,7 +4222,7 @@
       "reunited": [
         {
           "prompt": [
-            "~ Si siede accanto a te, non di fronte. La sua testa trova la tua spalla come se non fosse mai stata altrove.",
+            "~ Si siede proprio accanto a te. La sua testa trova la tua spalla come se non fosse mai stata altrove.",
             "{Dimme a che pensi.|Che te passa pe' 'sta testa, meccanico?}"
           ],
           "choices": [
@@ -4314,7 +4314,7 @@
     "confessions": {
       "papers": [
         "{Le carte. Quelle ner cruscotto tuo.|Er divorzio. Le carte che stai a portà a Beagle.}",
-        "Le ho mannate io. Mica perché avevo smesso. Perché provavo a tajà er filo prima che quarcuno lo seguisse fino a te.",
+        "Le ho mannate io, perché provavo a tajà er filo prima che quarcuno lo seguisse fino a te.",
         "{Si er trono va storto, chiunque c'ha er core mio va giù co' lui.|Una dea sur trono nun c'ha un marito. C'ha un ostaggio.}",
         "Te volevo divorziato e ar sicuro. Divorziato, e basta, nun t'ho mai voluto."
       ],
@@ -4339,7 +4339,7 @@
       "em": [
         "{Della strega.|De Em.}",
         "Je rendo la vita un inferno. Lo sai. Je storto ogni moneta che lancia.",
-        "Nun è perché sta co' te. È perché a lei je tocca er sedile der passeggero, e io invece me so' costruita un tribunale.",
+        "È perché a lei je tocca er sedile der passeggero, e io invece me so' costruita un tribunale.",
         "{Ce provo a smette. Nun prometto.|La smetto. Quasi. Un po'. Je faccio raffreddà er caffè meno spesso.}"
       ],
       "radio": [
@@ -4523,7 +4523,7 @@
         ],
         [
           "~ Te la riprende, furiosa.",
-          "{Nun sei te quella che se ne va per prima.|Ho mollato io. Mica te. Io.}"
+          "{Nun sei te quella che se ne va per prima.|Ho mollato io. Io per prima.}"
         ]
       ]
     },
@@ -5044,7 +5044,7 @@
       "sour": [
         [
           "~ Taglia il filo con un'unghia.",
-          "{No. Nun tutte e due. Solo te.}"
+          "{No. Solo te.}"
         ],
         [
           "~ Lo stringe di più.",

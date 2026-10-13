@@ -96,6 +96,12 @@
     const MAX_FLOOR_VARIABLE_ID = 2;
 
     // --- Seeded RNG (mulberry32) keyed by world seed + location + level bracket ---
+    // An artifact is what its note says it is (<Category: Artifact>, stamped by
+    // ArctifactGenerator), never an id range.
+    function isArtifactItem(item) {
+        return !!(item && item.note && /<category:\s*artifact\s*>/i.test(item.note));
+    }
+
     function getWorldSeed() {
         let historySeed = 19002001;
         if (window.HistoryManager && typeof window.HistoryManager.getSeed === 'function') {
@@ -566,8 +572,10 @@
             // off the biome the crate was opened in.
             weight *= biomeCategoryFactor(item, biomeLoot);
 
-            // Add extreme rarity for artifacts
-            if (item.id >= 1500 || (item.note && item.note.toLowerCase().includes('<category: artifact>'))) {
+            // Add extreme rarity for artifacts. Only the tag makes one: the
+            // database runs past id 1500 with ordinary goods, and an id test
+            // all but erased every one of them from the chests.
+            if (isArtifactItem(item)) {
                 if (typeof $gameParty !== 'undefined' && $gameParty.hasItem(item, true)) continue;
                 weight *= 0.005; // 0.5% of standard weight
             }

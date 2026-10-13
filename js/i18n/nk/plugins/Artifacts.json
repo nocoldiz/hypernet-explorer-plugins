@@ -570,11 +570,11 @@
   },
   "articleDefault": "DA ",
   "sacrifice": {
-    "blockedInBattle": "DA RITUAL NO CAN BE PERFORMED IN DA HEAT OF BATTLE!",
-    "noEligible": "DERE IZ NO ONE WHO CAN BE SPARED FOR DA RITUAL!",
-    "prompt": "CHOOSE WHO WILL BE SACRIFICED TA FORGE DA WEAPON. DIS NO CAN BE UNDONE!",
+    "blockedInBattle": "NO CAN PERFORM DA RITUAL IN BATTLE!",
+    "noEligible": "NOBODY CAN BE SACRIFICED.",
+    "prompt": "CHOOSE WHO TA SACRIFICE FOR DA WEAPON. DIS NO CAN BE UNDONE!",
     "cancel": "FORGET IT",
-    "noSlots": "DA RITUAL FAILS: NO VESSEL REMAINS FOR DA WEAPON!",
+    "noSlots": "DA RITUAL FAILS: DERE IZ NO ROOM FOR A NEW WEAPON!",
     "namePattern": "{name}'S {weapon}",
     "descLine": "FORGED FROM DA SACRIFICED BODY OF {name}, ONCE LEVEL {level}!",
     "result": "{name} IZ CONSUMED IN DA RITUAL. {weapon} IZ FORGED FROM DEY REMAINS!"

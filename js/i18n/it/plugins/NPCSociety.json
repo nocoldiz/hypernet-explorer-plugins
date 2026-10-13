@@ -15,7 +15,8 @@
       "remembers": "ricorda",
       "grewUp": "crebbe",
       "saw": "vide",
-      "had": "aveva"
+      "had": "aveva",
+      "g": 0
     },
     "1": {
       "sub": "lei",
@@ -32,7 +33,8 @@
       "remembers": "ricorda",
       "grewUp": "crebbe",
       "saw": "vide",
-      "had": "aveva"
+      "had": "aveva",
+      "g": 1
     },
     "2": {
       "sub": "loro",
@@ -49,7 +51,8 @@
       "remembers": "ricordano",
       "grewUp": "crebbero",
       "saw": "videro",
-      "had": "avevano"
+      "had": "avevano",
+      "g": 2
     },
     "3": {
       "sub": "xe",
@@ -66,13 +69,14 @@
       "remembers": "ricordano",
       "grewUp": "crebbero",
       "saw": "videro",
-      "had": "avevano"
+      "had": "avevano",
+      "g": 2
     },
     "beast": {
       "sub": "essa",
-      "obj": "essa",
+      "obj": "lei",
       "cap": "Essa",
-      "pos": "sua",
+      "pos": "suo",
       "was": "fu",
       "is": "è",
       "tries": "cerca",
@@ -83,7 +87,26 @@
       "remembers": "ricorda",
       "grewUp": "crebbe",
       "saw": "vide",
-      "had": "aveva"
+      "had": "aveva",
+      "g": 1
+    },
+    "drone": {
+      "sub": "esso",
+      "obj": "lui",
+      "cap": "Esso",
+      "pos": "suo",
+      "was": "fu",
+      "is": "è",
+      "tries": "cerca",
+      "has": "ha",
+      "answers": "risponde",
+      "born": "Nato",
+      "wasChild": "era piccolo",
+      "remembers": "ricorda",
+      "grewUp": "crebbe",
+      "saw": "vide",
+      "had": "aveva",
+      "g": 0
     }
   },
   "adjective": [
@@ -94,10 +117,38 @@
     "silenziosa"
   ],
   "bio": {
-    "uncertainTimes": "tempi incerti",
-    "wildsNear": "nelle terre selvagge vicino a {city}",
+    "uncertainTimes": "Tempi incerti all'orizzonte",
+    "wildsNear": "nelle terre selvagge nei dintorni di {city}",
+    "wildsIn": "nelle terre selvagge {placeIn}",
+    "city": {
+      "rome": "Roma",
+      "london": "Londra",
+      "oslo": "Oslo",
+      "moscow": "Mosca",
+      "istanbul": "Istanbul",
+      "amsterdam": "Amsterdam",
+      "brussels": "Bruxelles",
+      "zurich": "Zurigo",
+      "vienna": "Vienna",
+      "warsaw": "Varsavia",
+      "prague": "Praga",
+      "budapest": "Budapest",
+      "bucharest": "Bucarest",
+      "sofia": "Sofia",
+      "belgrade": "Belgrado",
+      "athens": "Atene",
+      "copenhagen": "Copenaghen",
+      "stockholm": "Stoccolma",
+      "helsinki": "Helsinki",
+      "dublin": "Dublino",
+      "tirana": "Tirana",
+      "tallinn": "Tallinn",
+      "riga": "Riga",
+      "vilnius": "Vilnius"
+    },
     "inCountry": "in {place}",
     "inTown": "a {place}",
+    "inTownA": "ad {place}",
     "placeIn": {
       "unitedkingdom": "nel {place}",
       "uk": "nel {place}",
@@ -107,191 +158,202 @@
       "unitedarabemirates": "negli {place}",
       "unitedstatesfreestatesofmidwest": "negli {place}",
       "cascadiaprotectorate": "nel {place}",
-      "easternseaboard": "sulla {place}"
+      "easternseaboard": "sulla {place}",
+      "cyprus": "a {place}",
+      "malta": "a {place}",
+      "monaco": "a {place}",
+      "sanmarino": "a {place}",
+      "italylampedusa": "a Lampedusa",
+      "italysardinia": "in Sardegna",
+      "italysicily": "in Sicilia",
+      "spainbalearics": "alle Baleari",
+      "ukchannelislands": "nelle Isole del Canale",
+      "omegatower": "nella Torre Omega",
+      "europe": "in Europa"
     },
     "later": [
-      "In seguito {sub} {has} conosciuto anche il tempo in cui {event}.",
-      "Anni dopo {sub} {saw} da vicino il momento in cui {event}.",
-      "Poi venne la stagione in cui {event}.",
-      "Poco dopo {sub} {has} imparato che cosa significa quando {event}.",
-      "{cap} {remembers} la settimana in cui {event}: un ricordo di cui non si parla volentieri."
+      "In seguito {has} visto anche la stagione di «{event}».",
+      "Anni dopo {saw} da vicino come andò: «{event}».",
+      "Poi venne la stagione dei titoli che dicevano «{event}».",
+      "Poco dopo fu la volta di «{event}», e ci volle tempo per capire che cosa significasse.",
+      "{remembers} la settimana di «{event}»: un ricordo di cui non si parla volentieri."
     ],
     "moral": {
       "high": [
-        "{cap} {has} un'integrità incrollabile.",
+        "{has} un'integrità incrollabile.",
         "La gente si fida di {obj} a prima vista, e di rado sbaglia.",
-        "Non c'è mai stato bisogno di chiedere due volte a {obj} di fare la cosa giusta."
+        "Non c'è mai stato bisogno di {g:chiedergli|chiederle|chiedergli} due volte di fare la cosa giusta."
       ],
       "good": [
-        "{cap} {tries} di fare la cosa giusta, quasi sempre.",
-        "{cap} {is} perbene, almeno finché non costa troppo.",
-        "{cap} {tries} di lasciare i posti non peggio di come li {has} trovati."
+        "{tries} di fare la cosa giusta, quasi sempre.",
+        "{is} perbene, almeno finché non costa troppo.",
+        "{tries} di lasciare i posti non peggio di come li {has} trovati."
       ],
       "weary": [
-        "La vita ha lasciato a {obj} poche illusioni.",
-        "{cap} {has} smesso da anni di aspettarsi qualcosa dagli altri.",
-        "{cap} non {has} più né crudeltà né gentilezza: soltanto stanchezza."
+        "La vita {g:gli|le|gli} ha lasciato poche illusioni.",
+        "{has} smesso da anni di aspettarsi qualcosa dagli altri.",
+        "Non {has} più né crudeltà né gentilezza: soltanto stanchezza."
       ],
       "loose": [
-        "{cap} {has} imparato che le regole valgono per gli altri.",
-        "{cap} {has} un rapporto elastico con la legge, e con la verità.",
-        "Quello che {sub} {has} preso, lo {has} preso in silenzio."
+        "{has} imparato che le regole valgono per gli altri.",
+        "{has} un rapporto elastico con la legge, e con la verità.",
+        "Quello che {has} preso, lo {has} preso in silenzio."
       ],
       "lawless": [
-        "{cap} non {answers} ad altro codice che il {pos}.",
-        "Non esiste più un limite che {sub} non {has} superato.",
-        "Per quello che {sub} {is} non esiste una parola educata."
+        "Non {answers} ad altro codice che il proprio.",
+        "Non è rimasto un limite che non {has} già superato.",
+        "Per quello che {is} non esiste una parola educata."
       ]
     },
     "creature": [
-      "{born} {placeIn}, lontano dalle città degli uomini: creatura {adj}, segnata dalla stagione in cui {event}. {later} {moral}",
-      "Nessuna città ha mai avuto voce su di {obj}. {born} {placeIn}, creatura {adj} che ancora ricorda quando {event}. {later} {moral}",
-      "Di {sub} non resta atto di nascita. {born} {placeIn}, natura {adj} già cresciuta quando {event}. {later} {moral}",
-      "{born} {placeIn} e di nessun padrone: creatura {adj}, abbastanza vecchia da capire quando {event}. {later} {moral}"
+      "{born} {placeIn}, lontano dalle città degli uomini, creatura {adj} già cresciuta quando la notizia arrivò anche nelle terre selvagge: «{event}». {later} {moral}",
+      "Nessuna città ha mai avuto voce su di {obj}. {born} {placeIn}, creatura {adj} che ricorda ancora la stagione di «{event}». {later} {moral}",
+      "Nessun atto ne registra la nascita. {born} {placeIn}, natura {adj} già cresciuta quando arrivò la notizia: «{event}». {later} {moral}",
+      "{born} {placeIn} e di nessun padrone: creatura {adj}, abbastanza vecchia da capire la notizia quando arrivò: «{event}». {later} {moral}"
     ],
     "turbulent": [
-      "{born} nel {year} {placeIn}, in un'epoca che non sapeva stare ferma: {sub} {wasChild} quando {event}. {later} {moral}",
-      "{born} {placeIn} nel {year}: il {pos} primo ricordo nitido è l'anno in cui {event}. {later} {moral}",
-      "{born} {placeIn} nel {year}, indole {adj} di un secolo cominciato male: {sub} {had} appena iniziato la scuola quando {event}. {later} {moral}",
-      "Nei registri del {year} {placeIn} c'è il {pos} nome. Di quel giorno in cui {event}, {sub} non {has} mai parlato molto. {later} {moral}"
+      "{born} nel {year} {placeIn}, in un'epoca che non sapeva stare ferma, {wasChild} quando i giornali titolarono «{event}». {later} {moral}",
+      "{born} {placeIn} nel {year}: il primo ricordo nitido è l'anno di «{event}». {later} {moral}",
+      "{born} {placeIn} nel {year}, indole {adj} di un secolo cominciato male, {had} appena iniziato la scuola quando arrivò la notizia: «{event}». {later} {moral}",
+      "Nei registri del {year} {placeIn} c'è il {pos} nome. Del giorno in cui il titolo fu «{event}» non {has} mai parlato molto. {later} {moral}"
     ],
     "warYears": [
-      "{born} negli anni di guerra {placeIn}: {sub} {wasChild} quando {event}. {later} {moral}",
-      "{cap} {grewUp} {placeIn} con le sirene, e {saw} il mattino in cui {event}. {later} {moral}",
-      "{born} nel {year}, {sub} {grewUp} {placeIn} mentre {event}. {later} {moral}",
-      "Un'infanzia {placeIn} fatta di tessere annonarie, e poi la settimana in cui {event}. {later} {moral}"
+      "{born} negli anni di guerra {placeIn}, {wasChild} quando la radio annunciò «{event}». {later} {moral}",
+      "{grewUp} {placeIn} con le sirene, e {saw} il mattino di «{event}». {later} {moral}",
+      "{born} nel {year}, {grewUp} {placeIn} negli anni di «{event}». {later} {moral}",
+      "Un'infanzia {placeIn} fatta di tessere annonarie, e poi l'inverno di «{event}». {later} {moral}"
     ],
     "postwar": [
-      "{born} nel {year} {placeIn}, {sub} {has} l'anima {adj} di chi è cresciuto negli anni in cui {event}. {later} {moral}",
-      "{cap} {grewUp} {placeIn} in un paese da ricostruire, di tempra {adj} e impaziente, e {saw} tutto da vicino quando {event}. {later} {moral}",
-      "{born} {placeIn} nel {year}, {sub} {has} raccontato mille volte come {event}. {later} {moral}",
-      "Figura {adj} del {year} {placeIn}, {sub} {had} un turno come tanti il giorno in cui {event}. {later} {moral}"
+      "{born} nel {year} {placeIn}, {has} l'anima {adj} di chi è cresciuto negli anni di «{event}». {later} {moral}",
+      "{grewUp} {placeIn} in un paese da ricostruire, di tempra {adj} e impaziente, e {saw} tutto da vicino: «{event}». {later} {moral}",
+      "{born} {placeIn} nel {year}, {has} raccontato mille volte la storia che comincia con «{event}». {later} {moral}",
+      "Figura {adj} del {year} {placeIn}, {had} un turno come tanti il giorno di «{event}». {later} {moral}"
     ],
     "modern": [
-      "{born} {placeIn} mentre il mondo si faceva strano, {sub} non {has} mai dimenticato quando {event}. {later} {moral}",
-      "{born} nel {year} {placeIn}, {sub} {grewUp} sentendo raccontare come {event}. {later} {moral}",
-      "{cap} {has} l'anima {adj} di fine secolo, venuta al mondo {placeIn} e segnata ancora dall'anno in cui {event}. {later} {moral}",
-      "{born} {placeIn} nel {year}, tra schermi e disturbi di segnale: {sub} {saw} tutto in diretta quando {event}. {later} {moral}"
+      "{born} {placeIn} mentre il mondo si faceva strano, non {has} mai dimenticato il giorno di «{event}». {later} {moral}",
+      "{born} nel {year} {placeIn}, {grewUp} sentendo raccontare la storia di «{event}». {later} {moral}",
+      "{has} l'anima {adj} di fine secolo, venuta al mondo {placeIn} e segnata ancora dall'anno di «{event}». {later} {moral}",
+      "{born} {placeIn} nel {year}, tra schermi e disturbi di segnale, {saw} tutto in diretta quando il notiziario disse «{event}». {later} {moral}"
     ],
     "bornMeta": "Nascita {year} · {place}",
     "classOrigin": {
       "academic": [
-        "È rimasta dopo il dottorato perché nessuno le ha mai davvero proposto di andarsene.",
+        "{g:È rimasto|È rimasta|Sono rimasti} dopo il dottorato perché nessuno {g:gli|le|gli} ha mai davvero proposto di andarsene.",
         "Vent'anni, un dipartimento e una faida sopravvissuta a entrambi i contendenti originali.",
-        "Tiene lo stesso corso da così tanto che ha cominciato a dissentire dai propri appunti."
+        "{g:Tiene|Tiene|Tengono} lo stesso corso da così tanto che {has} cominciato a dissentire dai propri appunti."
       ],
       "acrobat": [
-        "Cresciuta in un circo itinerante, camminava sulla fune prima di saper scrivere il proprio nome.",
-        "Ha imparato a cadere bene sui tetti di una città che non la voleva per strada.",
-        "Una caviglia rotta a quindici anni le ha insegnato tutto ciò che gli istruttori non dicevano."
+        "{g:Cresciuto|Cresciuta|Cresciuti} in un circo itinerante, {g:camminava|camminava|camminavano} sulla fune prima di saper scrivere il proprio nome.",
+        "{has} imparato a cadere bene sui tetti di una città che non {g:lo|la|li} voleva per strada.",
+        "Una caviglia rotta a quindici anni {g:gli|le|gli} ha insegnato tutto ciò che gli istruttori non dicevano."
       ],
       "archaeologist": [
-        "A diciannove anni ha dissotterrato in un campo qualcosa che nessun catalogo registra ancora.",
+        "A diciannove anni {has} dissotterrato in un campo qualcosa che nessun catalogo registra ancora.",
         "Fondi, una cazzuola e un rifiuto testardo della cronologia accettata.",
-        "È stata bandita da due scavi e richiamata in uno."
+        "{g:È stato bandito|È stata bandita|Sono stati banditi} da due scavi e {g:richiamato|richiamata|richiamati} in uno."
       ],
       "archmage": [
         "Quarant'anni di studio, due espulsioni e una tesi che tre accademie hanno rifiutato di pubblicare.",
-        "Era la più giovane della torre ed è l'unica rimasta a ricordarla in piedi.",
-        "Ha dimenticato più teoria di quanta se ne insegni alla maggior parte dei praticanti."
+        "{g:Era il più giovane della torre ed è l'unico rimasto|Era la più giovane della torre ed è l'unica rimasta|Erano i più giovani della torre e sono gli unici rimasti} a ricordarla in piedi.",
+        "{has} dimenticato più teoria di quanta se ne insegni alla maggior parte dei praticanti."
       ],
       "barbarian": [
-        "È scesa da un altopiano dove nessuno scrive niente e nessuno ne ha bisogno.",
-        "La città l'ha chiamata selvaggia, e così ha deciso di esserlo molto bene.",
-        "Non ha mai perso una discussione a cui fosse concesso diventare una rissa."
+        "{g:È sceso|È scesa|Sono scesi} da un altopiano dove nessuno scrive niente e nessuno ne ha bisogno.",
+        "La città {g:l'ha chiamato selvaggio|l'ha chiamata selvaggia|li ha chiamati selvaggi}, e così {has} deciso di esserlo molto bene.",
+        "Non {has} mai perso una discussione a cui fosse concesso diventare una rissa."
       ],
       "bard": [
-        "Cantava per monete in un sottopassaggio finché qualcuno non ha notato che le monete si muovevano da sole.",
+        "{g:Cantava|Cantava|Cantavano} per qualche moneta in un sottopassaggio finché qualcuno non ha notato che le monete si muovevano da sole.",
         "Tre accordi, buona memoria per i segreti altrui e una voce che apre le porte.",
-        "È stata cacciata da posti migliori di quelli in cui la gente viene invitata."
+        "{g:È stato cacciato|È stata cacciata|Sono stati cacciati} da posti migliori di quelli in cui viene invitata la maggior parte della gente."
       ],
       "battlemage": [
-        "L'accademia fu requisita al secondo anno e il programma cambiò in una notte.",
-        "Ha imparato la teoria in aula e l'applicazione in trincea, a tre mesi di distanza.",
-        "Le vesti non fermano le schegge, ed è per questo che ci porta sopra la piastra."
+        "L'accademia fu requisita durante il {pos} secondo anno e il programma cambiò in una notte.",
+        "{has} imparato la teoria in aula e l'applicazione in trincea, a tre mesi di distanza.",
+        "Le vesti non fermano le schegge, ed è per questo che ci {g:porta|porta|portano} sopra un'armatura a piastre."
       ],
       "berserker": [
-        "La prima volta che è calato il rosso si è svegliata illesa in una stanza dove non c'era più nessun altro.",
-        "Le hanno insegnato a lasciarlo uscire invece che ingoiarlo: le ha salvato la vita e ne ha tolte altre.",
+        "La prima volta che è calato il rosso {g:si è svegliato illeso|si è svegliata illesa|si sono svegliati illesi} in una stanza dove non c'era più nessun altro.",
+        "{g:gli|le|gli} hanno insegnato a sfogare la rabbia invece di ingoiarla: questo {g:gli|le|gli} ha salvato la vita e ne ha tolte altre.",
         "Scorre nel sangue, e ogni generazione della famiglia ha una storia in proposito."
       ],
       "boxer": [
         "Una palestra sopra una lavanderia, quattro cinture dilettanti e una sera che ha chiuso i piani da professionista.",
-        "Combatteva per soldi a sedici anni perché l'alternativa pagava meno e faceva più male.",
-        "Ha un naso rotto da tre persone diverse, e le ha battute tutte e tre."
+        "{g:Combatteva|Combatteva|Combattevano} per soldi a sedici anni perché l'alternativa pagava meno e faceva più male.",
+        "{has} un naso rotto da tre persone diverse, e le {has} battute tutte e tre."
       ],
       "ceo": [
-        "Ha ereditato l'undici per cento di un'azienda e ha passato dieci anni a ricomprarsi il resto.",
-        "Un consiglio di amministrazione è un campo di battaglia con sedie migliori, e lo ha capito prima di imparare a guidare.",
-        "Ha cominciato con una bancarella, un foglio di calcolo e nessuno scrupolo degno di nota."
+        "{has} ereditato l'undici per cento di un'azienda e {has} passato dieci anni a comprarne il resto.",
+        "Un consiglio di amministrazione è un campo di battaglia con sedie migliori, e lo {has} capito prima di imparare a guidare.",
+        "{has} cominciato con una bancarella, un foglio di calcolo e nessuno scrupolo degno di nota."
       ],
       "chef": [
-        "Ha cominciato a lavare i piatti a quattordici anni e a ventidue gestiva il passe.",
+        "{has} cominciato a lavare i piatti a quattordici anni e a ventidue {g:gestiva|gestiva|gestivano} il passe.",
         "Una nonna, un quaderno di ricette e un caratteraccio che si è rivelato professionalmente utile.",
-        "Si è bruciata le mani così spesso che non sente più i piatti caldi."
+        "{g:Si è bruciato|Si è bruciata|Si sono bruciati} le mani così spesso che non {g:sente|sente|sentono} più i piatti caldi."
       ],
       "cleric": [
-        "Ha pregato su uno sconosciuto morente, lo sconosciuto si è alzato, e la parrocchia non l'ha più lasciata andare.",
+        "{has} pregato su uno sconosciuto morente, lo sconosciuto si è alzato, e la parrocchia non {g:l'ha più lasciato|l'ha più lasciata|li ha più lasciati} andare.",
         "Un seminario, un anno di peste e una fede sopravvissuta a entrambi.",
-        "Ci sta per la gente più che per la teologia, e la teologia ci ha fatto pace."
+        "{g:Ci sta|Ci sta|Ci stanno} per la gente più che per la teologia, e la teologia se n'è fatta una ragione."
       ],
       "combatmedic": [
-        "Si è diplomata infermiera e nello stesso pomeriggio le hanno messo in mano un fucile.",
-        "Due turni al fronte le hanno insegnato a suturare mentre le urlano addosso, cosa che nessun ospedale era riuscito a fare.",
-        "Ha continuato a tirare fuori gente dalla linea finché qualcuno non ne ha fatto il suo incarico ufficiale."
+        "{g:Si è diplomato infermiere|Si è diplomata infermiera|Si sono diplomati infermieri} e nello stesso pomeriggio {g:gli|le|gli} hanno messo in mano un fucile.",
+        "Due turni al fronte {g:gli|le|gli} hanno insegnato a suturare mentre qualcuno urla, cosa che nessun ospedale era riuscito a fare.",
+        "{has} continuato a tirare fuori gente dalla linea finché qualcuno non ne ha fatto il {pos} incarico ufficiale."
       ],
       "commander": [
-        "Ha preso il comando della compagnia il secondo giorno, perché l'ufficiale che doveva farlo era morto.",
-        "Scuola di stato maggiore, due incarichi noiosi e una settimana che le ha fatto il nome.",
-        "Non è mai stata la migliore combattente della stanza ed è sempre stata quella che tutti guardavano."
+        "{has} preso il comando della compagnia il secondo giorno, perché l'ufficiale che doveva farlo era morto.",
+        "Scuola di stato maggiore, due incarichi noiosi e una settimana che {g:gli|le|gli} ha fatto un nome.",
+        "Non {g:è mai stato il miglior combattente|è mai stata la migliore combattente|sono mai stati i migliori combattenti} della stanza {g:ed è sempre stato quello|ed è sempre stata quella|e sono sempre stati quelli} che tutti guardavano."
       ],
       "constructionworker": [
-        "È salita su un cantiere a diciassette anni per un'estate e non ne è più scesa.",
-        "Ha contribuito a tirare su quattro torri e non può permettersi un appartamento in nessuna.",
+        "{g:È salito|È salita|Sono saliti} su un cantiere a diciassette anni per un'estate e non ne {g:è più sceso|è più scesa|sono più scesi}.",
+        "{has} contribuito a tirare su quattro torri e non {g:può|può|possono} permettersi un appartamento in nessuna.",
         "Un mestiere imparato da uno zio che, a insegnarlo, ci ha rimesso due dita."
       ],
       "convoker": [
-        "Ha letto ad alta voce un nome che doveva restare sulla pagina, e dall'altra parte qualcosa ha letto lei.",
+        "{has} letto ad alta voce un nome che doveva restare sulla pagina, e dall'altra parte qualcosa ha letto {g:lui|lei|loro}.",
         "Il cerchio era di gesso, la candela da poco, e ciò che è passato si è presentato comunque all'appuntamento.",
-        "Baratta favori con cose senza volto da quando aveva diciannove anni."
+        "{g:Baratta|Baratta|Barattano} favori con cose senza volto da quando {g:aveva|aveva|avevano} diciannove anni."
       ],
       "cultist": [
-        "Furono i primi a pronunciare il suo nome come se contasse; il prezzo è arrivato dopo.",
-        "Si è unita per i pasti gratis ed è rimasta per la rivelazione.",
-        "Un volantino, uno scantinato, un canto: tre passi e apparteneva a qualcun altro."
+        "Il culto fu il primo a pronunciare il {pos} nome come se contasse; il prezzo arrivò dopo.",
+        "{g:Si è unito|Si è unita|Si sono uniti} per i pasti gratis {g:ed è rimasto|ed è rimasta|e sono rimasti} per la rivelazione.",
+        "Un volantino, uno scantinato, un canto: tre passi e {g:apparteneva|apparteneva|appartenevano} a qualcun altro."
       ],
       "demigod": [
-        "Uno dei suoi genitori non è mai stato fotografato, non è mai invecchiato e non si è mai spiegato.",
-        "Ha scoperto cosa fosse a diciannove anni, nel modo peggiore e davanti a testimoni.",
-        "Il tempio che avrebbe dovuto reclamarla è bruciato un secolo prima che nascesse."
+        "Uno dei {g:suoi|suoi|loro} genitori non è mai stato fotografato, non è mai invecchiato e nessuno l'ha mai spiegato.",
+        "{has} scoperto cosa {g:fosse|fosse|fossero} a diciannove anni, nel modo peggiore e davanti a testimoni.",
+        "Il tempio che avrebbe dovuto {g:reclamarlo|reclamarla|reclamarli} è bruciato un secolo prima che {g:nascesse|nascesse|nascessero}."
       ],
       "doctor": [
-        "Sei anni di medicina, due di specializzazione e una notte che le ha insegnato più di tutti e otto.",
-        "Ci è entrata per i soldi ed è rimasta per un motivo che non è mai riuscita a formulare.",
-        "Ha firmato più certificati di morte di quanti ne ricordi, e ogni nome è ancora archiviato da qualche parte."
+        "Sei anni di medicina, due di specializzazione e una notte che {g:gli|le|gli} ha insegnato più di tutti e otto.",
+        "{g:Ci è entrato|Ci è entrata|Ci sono entrati} per i soldi {g:ed è rimasto|ed è rimasta|e sono rimasti} per un motivo che non {g:è mai riuscito|è mai riuscita|sono mai riusciti} a formulare.",
+        "{has} firmato più certificati di morte di quanti ne {g:ricordi|ricordi|ricordino}, e ogni nome è ancora archiviato da qualche parte."
       ],
       "drone": [
-        "È stata assemblata su specifica, caricata con un set di comportamenti e accesa rivolta verso il mondo.",
+        "È stato assemblato su specifica, caricato con un set di comportamenti e acceso rivolto verso il mondo.",
         "I suoi operatori non ci sono più. Le istruzioni che hanno lasciato girano ancora.",
-        "È stata costruita per un compito, lo ha portato a termine e non gliene è mai stato assegnato un secondo.",
-        "Qualcuno le ha scritto il mondo in memoria come una lista di condizioni, e da allora le spunta.",
+        "È stato costruito per un compito, lo ha portato a termine e non gliene è mai stato assegnato un secondo.",
+        "Qualcuno gli ha scritto il mondo in memoria come una lista di condizioni, e da allora le spunta una a una.",
         "Ha un notiziario che non può spegnere, e agisce in base a ciò che il notiziario dice.",
         "Il firmware è stato scritto da un comitato poi dissoltosi in tre iperpotenze."
       ],
       "elementalist": [
-        "A sei anni ha incendiato una tenda senza toccarla, e la famiglia ha traslocato due volte.",
-        "Un vecchio maestro le ha insegnato che fuoco, acqua, terra e aria sono quattro domande con la stessa risposta.",
-        "Ha sempre sentito il tempo arrivare attraverso i denti."
+        "A sei anni {has} incendiato una tenda senza toccarla, e la famiglia ha traslocato due volte.",
+        "Un vecchio maestro {g:gli|le|gli} ha insegnato che fuoco, acqua, terra e aria sono quattro domande con la stessa risposta.",
+        "{has} sempre sentito il tempo arrivare attraverso i denti."
       ],
       "enchanter": [
-        "Ha cominciato riparando un bollitore incrinato con una parola, e non ha più smesso di migliorare cose che funzionavano già.",
-        "Un apprendistato da gioielliere, un grimorie rubato, e all'improvviso gli anelli facevano più che brillare.",
-        "È convinta che ogni oggetto voglia essere migliore, e ha passato la vita a chiederglielo."
+        "{has} cominciato riparando un bollitore incrinato con una parola, e non {has} più smesso di migliorare cose che funzionavano già.",
+        "Un apprendistato da gioielliere, un grimorio rubato, e all'improvviso gli anelli facevano più che brillare.",
+        "{g:È convinto|È convinta|Sono convinti} che ogni oggetto voglia essere migliore, e {has} passato la vita a chiederglielo."
       ],
       "entertainer": [
-        "A undici anni ha scoperto che una sala perdona tutto, se ride.",
+        "A undici anni {has} scoperto che una sala perdona tutto, se ride.",
         "Locali, matrimoni, una comparsata in televisione e un lungo silenzio dopo.",
-        "Ha calcato ogni tipo di palco e prima di ognuno le viene ancora da star male."
+        "{has} calcato ogni tipo di palco e prima di ognuno {g:gli|le|gli} viene ancora da star male."
       ],
       "feral": [
         "Non l'ha mai addomesticata nessuno. È nata in una siepe e si è cresciuta da sola con ciò che riusciva a rincorrere.",
@@ -302,100 +364,100 @@
         "La cucciolata da cui veniva si è dispersa nella prima stagione, e da allora è sola."
       ],
       "firefighter": [
-        "Una volta è entrata da passante in una tromba delle scale in fiamme, e la stessa settimana i vigili l'hanno arruolata.",
-        "Undici anni di turni e un palazzo che ancora si sogna.",
-        "È la persona più calma in una stanza che brucia e la più nervosa in una che non brucia."
+        "Una volta {g:è entrato da passante|è entrata da passante|sono entrati da passanti} in una tromba delle scale in fiamme, e la stessa settimana i vigili {g:l'hanno arruolato|l'hanno arruolata|li hanno arruolati}.",
+        "Undici anni di turni e un palazzo che ancora {g:gli|le|gli} torna in sogno.",
+        "{g:È la persona più calma|È la persona più calma|Sono le persone più calme} in una stanza che brucia e {g:la più nervosa|la più nervosa|le più nervose} in una che non brucia."
       ],
       "firemage": [
-        "A otto anni ha bruciato un capanno e ha passato i vent'anni successivi a imparare a mirare.",
-        "Il fuoco era l'unica cosa che veniva quando chiamava, e ha continuato a chiamare.",
-        "Non sente davvero freddo dalla notte in cui è arrivato il dono."
+        "A otto anni {has} bruciato un capanno e {has} passato i vent'anni successivi a imparare a mirare.",
+        "Il fuoco era l'unica cosa che veniva quando {g:chiamava|chiamava|chiamavano}, e {has} continuato a chiamare.",
+        "Non {g:sente|sente|sentono} davvero freddo dalla notte in cui è arrivato il dono."
       ],
       "freelancer": [
-        "Nessuna gilda {obj} ha mai voluto, e alla fine ha smesso di chiedere: prende il lavoro che la bacheca offre quella settimana.",
-        "Ha cominciato quattro mestieri e non ne ha finito nessuno, il che è diventato un mestiere.",
-        "Un contratto, una stretta di mano, un compenso: tutta qui l'istruzione che ha ricevuto."
+        "Nessuna gilda {g:l'ha mai voluto|l'ha mai voluta|li ha mai voluti}, e alla fine {has} smesso di chiedere: {g:prende|prende|prendono} il lavoro che la bacheca offre quella settimana.",
+        "{has} cominciato quattro mestieri e non ne {has} finito nessuno, il che è diventato un mestiere a sé.",
+        "Un contratto, una stretta di mano, un compenso: tutta qui l'istruzione che {has} ricevuto."
       ],
       "ghost": [
         "È morta in un posto con una porta che non è riuscita ad attraversare, e ci sta ancora lavorando.",
         "Sul corpo nessuno ha detto le parole, e il resto è rimasto dov'era caduto.",
         "È annegata, e l'acqua ha restituito tutto tranne la parte che se ne va.",
         "Un debito, una promessa o un rancore l'hanno tenuta qui. Non ricorda più quale.",
-        "La casa è stata demolita quarant'anni fa e lei non ha accettato la notizia.",
+        "La casa è stata demolita quarant'anni fa e non ha ancora accettato la notizia.",
         "È stata sepolta come si deve, nella terra sbagliata, ed è tornata in quella giusta."
       ],
       "gladiator": [
-        "È stata venduta a un'arena a diciannove anni e si è ricomprata il contratto a ventisei.",
-        "Sabbia, folla e un cancello che si apre in un senso solo: tutta qui la sua istruzione.",
-        "È famosa in quattro città e ricercata in una."
+        "{g:È stato venduto|È stata venduta|Sono stati venduti} a un'arena a diciannove anni e {g:si è ricomprato|si è ricomprata|si sono ricomprati} il contratto a ventisei.",
+        "Sabbia, folla e un cancello che si apre in un senso solo: tutta qui {g:la sua|la sua|la loro} istruzione.",
+        "{g:È famoso|È famosa|Sono famosi} in quattro città e {g:ricercato|ricercata|ricercati} in una."
       ],
       "guardian": [
-        "L'hanno messa a guardia di una porta a vent'anni e si è scoperta difficilissima da spostare.",
-        "Qualcuno che doveva proteggere è morto, e da allora esagera nella direzione opposta.",
+        "{g:L'hanno messo|L'hanno messa|Li hanno messi} a guardia di una porta a vent'anni e {g:si è scoperto difficilissimo|si è scoperta difficilissima|si sono scoperti difficilissimi} da spostare.",
+        "Qualcuno che {g:doveva|doveva|dovevano} proteggere è morto, e da allora {g:esagera|esagera|esagerano} nella direzione opposta.",
         "Lo scudo era del nonno, e così l'abitudine di mettersi davanti alla gente."
       ],
       "gunmancer": [
-        "Ha inciso un sigillo sull'impugnatura di una pistola per scommessa, e da allora la pistola ascolta.",
-        "Metà canna è acciaio e metà è qualcosa che non vuole nominare.",
-        "Un armaiolo le ha insegnato il meccanismo e una strega il resto."
+        "{has} inciso un sigillo sull'impugnatura di una pistola per scommessa, e da allora la pistola ascolta.",
+        "Metà canna è acciaio e metà è qualcosa che non {g:vuole|vuole|vogliono} nominare.",
+        "Un armaiolo {g:gli|le|gli} ha insegnato il meccanismo e una strega il resto."
       ],
       "huntergatherer": [
-        "È cresciuta dove i negozi erano a un giorno di cammino e il bosco no.",
-        "Da bambina in poi non ha mangiato nulla che non avesse preso, scavato o riconosciuto.",
-        "Una famiglia che non è mai entrata davvero nel secolo, e una figlia che non ne vedeva il motivo."
+        "{g:È cresciuto|È cresciuta|Sono cresciuti} dove i negozi erano a un giorno di cammino e il bosco no.",
+        "Da quando {g:era bambino|era bambina|erano bambini} non {has} mangiato nulla che non {g:avesse|avesse|avessero} preso, scavato o riconosciuto.",
+        "Una famiglia che non è mai entrata davvero nel secolo, e {g:un figlio che non ne vedeva|una figlia che non ne vedeva|dei figli che non ne vedevano} il motivo."
       ],
       "icemage": [
-        "L'hanno trovata viva in un cumulo di neve che avrebbe dovuto ucciderla, e qualcosa era cambiato.",
-        "Un inverno lungo quattordici mesi le ha insegnato la forma del freddo da dentro.",
-        "Ha preso questa strada perché era l'unica cosa che le rallentasse il carattere."
+        "{g:L'hanno trovato vivo|L'hanno trovata viva|Li hanno trovati vivi} in un cumulo di neve che avrebbe dovuto {g:ucciderlo|ucciderla|ucciderli}, e qualcosa era cambiato.",
+        "Un inverno lungo quattordici mesi {g:gli|le|gli} ha insegnato la forma del freddo da dentro.",
+        "{has} preso questa strada perché era l'unica cosa che {g:gli|le|gli} tenesse a freno il carattere."
       ],
       "illusionist": [
-        "Ha cominciato con i trucchi da palco e verso il quarto anno ha smesso di aver bisogno degli oggetti.",
-        "Un'infanzia in cui nessuno le credeva le ha insegnato esattamente come funziona il credere.",
-        "Non è mai stata fotografata in un modo che non avesse approvato."
+        "{has} cominciato con i trucchi da palco e verso il quarto anno {has} smesso di aver bisogno degli oggetti.",
+        "Un'infanzia in cui nessuno {g:gli|le|gli} credeva {g:gli|le|gli} ha insegnato esattamente come funziona il credere.",
+        "Non {g:è mai stato fotografato|è mai stata fotografata|sono mai stati fotografati} in un modo che non {g:avesse|avesse|avessero} approvato."
       ],
       "journalist": [
-        "Ha stampato una verità nel momento sbagliato e da allora lavora da freelance.",
-        "Un tesserino, un registratore e una rubrica che brucerebbe prima di consegnarla.",
-        "È stata querelata due volte, entrambe da gente che ha poi transatto in silenzio."
+        "{has} stampato una verità nel momento sbagliato e da allora {g:lavora|lavora|lavorano} da freelance.",
+        "Un tesserino, un registratore e una rubrica che {g:brucerebbe|brucerebbe|brucerebbero} prima di consegnarla.",
+        "{g:È stato querelato|È stata querelata|Sono stati querelati} due volte, entrambe da gente che ha poi transatto in silenzio."
       ],
       "knight": [
-        "Una casata minore cercava una spada a buon prezzo: era giovane, ostinata e costava poco.",
-        "Ha portato lo scudo di un altro per sei anni prima che le lasciassero portare il proprio.",
-        "Il giuramento fu fatto a un signore morto un mese dopo, e lo ha mantenuto lo stesso."
+        "Una casata minore cercava una spada a buon prezzo: {g:era giovane, ostinato|era giovane, ostinata|erano giovani, ostinati} e {g:costava|costava|costavano} poco.",
+        "{has} portato lo scudo di un altro per sei anni prima che {g:gli|le|gli} lasciassero portare il proprio.",
+        "Il giuramento fu fatto a un signore morto un mese dopo, e lo {g:mantenne|mantenne|mantennero} lo stesso."
       ],
       "lumberjack": [
-        "Ha preso la sega perché la segheria era l'unico datore di lavoro nel raggio di sessanta chilometri.",
+        "{has} preso la sega perché la segheria era l'unico datore di lavoro nel raggio di sessanta chilometri.",
         "Quattordici stagioni nel legname, due unghie perse e una schiena che protesta col freddo.",
-        "Ha abbattuto alberi più vecchi di ogni edificio in cui abbia mai dormito."
+        "{has} abbattuto alberi più vecchi di ogni edificio in cui {g:abbia|abbia|abbiano} mai dormito."
       ],
       "manacyborg": [
         "Un chirurgo ha sostituito ciò che l'incidente aveva portato via, e ha usato il metallo sbagliato di proposito.",
         "Prima era un corpo. Le piastre le ha aggiunte qualcuno che voleva una batteria con le gambe.",
         "Metà del suo sistema nervoso è rame, ed è il rame a sognare.",
-        "Un programma di guerra ne ha equipaggiate undici. Questa è quella che se n'è andata sulle proprie gambe.",
+        "Un programma di guerra ha equipaggiato undici esemplari così. Questo è quello che se n'è andato sulle proprie gambe.",
         "I condotti dovevano portare corrente. Qualcos'altro ha cominciato a usarli.",
-        "Funziona con una carica che non sa spiegare e non le hanno mai lasciato esaurire."
+        "Funziona con una carica che non sa spiegare e che nessuno ha mai lasciato esaurire."
       ],
       "martialartist": [
-        "L'hanno mandata al dojo per sfogare il carattere e ci ha trovato una disciplina.",
+        "{g:L'hanno mandato|L'hanno mandata|Li hanno mandati} al dojo per sfogare il carattere e ci {has} trovato una disciplina.",
         "Dodici anni sugli stessi quattro movimenti, finché hanno smesso di essere movimenti.",
-        "Ha perso il primo scontro abbastanza male da passare dieci anni a preparare il secondo."
+        "{has} perso il primo scontro abbastanza male da passare dieci anni a preparare il secondo."
       ],
       "mechanic": [
-        "Ha ricostruito il primo motore con due motori rotti e un manuale nella lingua sbagliata.",
-        "Un'officina, un padre che non spiegava niente e una figlia che capiva lo stesso.",
-        "Non ha mai incontrato una macchina che non riuscisse a convincere a ripartire."
+        "{has} ricostruito il primo motore con due motori rotti e un manuale nella lingua sbagliata.",
+        "Un'officina, un padre che non spiegava niente e {g:un figlio che capiva|una figlia che capiva|dei figli che capivano} lo stesso.",
+        "Non {has} mai incontrato una macchina che non {g:riuscisse|riuscisse|riuscissero} a convincere a ripartire."
       ],
       "mercenary": [
-        "Ha lasciato un esercito regolare per una compagnia che pagava quattro volte tanto e faceva metà delle domande.",
+        "{has} lasciato un esercito regolare per una compagnia che pagava quattro volte tanto e faceva metà delle domande.",
         "Il primo contratto doveva essere l'unico, ed era undici contratti fa.",
-        "Ha combattuto sotto sei bandiere e non ne ha mai posseduta una."
+        "{has} combattuto sotto sei bandiere e non ne {has} mai posseduta una."
       ],
       "meteoarcanist": [
-        "È sopravvissuta a una tempesta che nessuno aveva previsto e ha deciso che era inaccettabile.",
-        "Una stazione sul tetto, un decennio di rilevazioni e la notte in cui le rilevazioni hanno cominciato a obbedirle.",
-        "Ha avuto ragione sul tempo abbastanza spesso da far smettere alla gente di chiamarla fortuna."
+        "{g:È sopravvissuto|È sopravvissuta|Sono sopravvissuti} a una tempesta che nessuno aveva previsto e {has} deciso che era inaccettabile.",
+        "Una stazione sul tetto, un decennio di rilevazioni e la notte in cui le rilevazioni hanno cominciato a {g:obbedirgli|obbedirle|obbedirgli}.",
+        "{has} avuto ragione sul tempo così spesso che la gente ha smesso di chiamarla fortuna."
       ],
       "mimic": [
         "Ha imparato la forma dello scrigno perché è la forma che la gente apre senza pensarci.",
@@ -403,164 +465,164 @@
         "È cresciuta in un caveau tra scrigni veri e li ha copiati come un pulcino copia la chioccia.",
         "Qualcosa in una cantina le ha insegnato che la pazienza è un metodo di caccia.",
         "È stata il mobile sbagliato in nove case diverse.",
-        "Non imita per ingannare. L'imitazione è semplicemente l'unica forma che abbia mai avuto."
+        "La sua imitazione è innocente: semplicemente l'unica forma che abbia mai avuto."
       ],
       "monk": [
-        "Ha regalato tutto ciò che possedeva in un pomeriggio e non ha mai rimpianto quel conto.",
-        "Il monastero accoglieva chiunque portasse l'acqua, e lei l'ha portata per quattro anni.",
-        "Silenzio, pane e un'ora di violenza al giorno: si è rivelato adatto a lei."
+        "{has} regalato tutto ciò che {g:possedeva|possedeva|possedevano} in un pomeriggio e non {has} mai rimpianto quel conto.",
+        "Il monastero accoglieva chiunque portasse l'acqua, e {g:lui l'ha portata|lei l'ha portata|loro l'hanno portata} per quattro anni.",
+        "Silenzio, pane e un'ora di violenza al giorno: si è rivelato adatto a {obj}."
       ],
       "monster": [
-        "Nessun bestiario ha una pagina per lei, e tre ci hanno provato.",
+        "Nessun bestiario le dedica una pagina, e tre ci hanno provato.",
         "È strisciata fuori da un posto che da allora è stato riempito e recintato.",
         "Qualcuno l'ha fatta di proposito e poi l'ha persa di vista.",
         "È l'ultima di qualunque cosa sia, e non sembra essersene accorta.",
-        "Due specie di cose si sono incontrate nel buio, ed è venuta fuori lei.",
+        "Due specie di cose si sono incontrate nel buio, e ne è venuta fuori questa.",
         "Era già vecchia quando hanno costruito la strada, e ha guardato costruire la strada."
       ],
       "mutant": [
         "Sua madre lavorava in uno stabilimento chiuso l'anno in cui è nata, e le recinzioni sono ancora lì.",
-        "È stata qualcosa nell'acqua, nell'arco di due generazioni, in silenzio.",
+        "È stato qualcosa nell'acqua, nell'arco di due generazioni, in silenzio.",
         "Era normale finché una febbre a nove anni non ne ha riscritto la forma.",
         "Un poligono, un vento dominante e un paese che nessuno ha evacuato.",
         "È cambiata una volta, male, e da allora cambia lentamente.",
         "La stirpe da cui viene è sbagliata da molto tempo e peggiora."
       ],
       "necromancer": [
-        "Ha provato a riportare indietro una persona in particolare, ha fallito, e ha scoperto di aver imparato tutto il resto.",
+        "{has} provato a riportare indietro una persona in particolare, {has} fallito, e {has} scoperto di aver imparato tutto il resto.",
         "Un apprendistato da becchino è diventato una corrispondenza, e la corrispondenza una carriera.",
-        "Non è morbosa: semplicemente non ha mai accettato che i morti abbiano finito di parlare."
+        "Non {g:è morboso|è morbosa|sono morbosi}: semplicemente non {has} mai accettato che i morti abbiano finito di parlare."
       ],
       "nun": [
-        "È entrata in convento per nascondersi da qualcosa ed è rimasta perché il silenzio le rispondeva.",
-        "L'ordine la accolse trovatella e non le diede mai un motivo per andarsene.",
+        "{g:È entrato|È entrata|Sono entrati} in convento per nascondersi da qualcosa {g:ed è rimasto|ed è rimasta|e sono rimasti} perché il silenzio {g:gli|le|gli} rispondeva.",
+        "L'ordine {g:lo accolse trovatello|la accolse trovatella|li accolse trovatelli} e non {g:gli|le|gli} diede mai un motivo per andarsene.",
         "Un voto fatto a un capezzale è diventato un abito, e l'abito una vita."
       ],
       "nurse": [
-        "Si è formata in un ospedale a cui mancava tutto tranne i pazienti.",
+        "{g:Si è formato|Si è formata|Si sono formati} in un ospedale a cui mancava tutto tranne i pazienti.",
         "Notti, sempre notti, per sei anni, finché il reparto ha smesso di sembrare un edificio.",
-        "Ha tenuto per mano più gente alla fine di quanta ne abbia tenuta un prete."
+        "{has} tenuto per mano, alla fine, più gente di quanta ne abbia tenuta la maggior parte dei preti."
       ],
       "oracle": [
-        "I sogni sono cominciati prima che avesse le parole per dirli, e non hanno mai sbagliato né consolato.",
-        "Una febbre a undici anni le ha lasciato il senso dell'odore del domani.",
-        "Ha smesso di avvisare la gente: non ascoltano finché non è il giorno."
+        "I sogni sono cominciati prima che {g:avesse|avesse|avessero} le parole per dirli, e non hanno mai sbagliato né consolato.",
+        "Una febbre a undici anni {g:gli|le|gli} ha lasciato il fiuto per l'odore del domani.",
+        "{has} smesso di avvisare la gente: non ascoltano finché non è il giorno."
       ],
       "paladin": [
-        "È stata ordinata su un campo di battaglia da un prete morto prima di finire la benedizione.",
+        "{g:È stato ordinato|È stata ordinata|Sono stati ordinati} su un campo di battaglia da un prete morto prima di finire la benedizione.",
         "Prima è venuto il voto, e la fede lo ha raggiunto anni dopo, su una brutta strada.",
-        "Ha portato lo stesso giuramento attraverso tre guerre senza mai posarlo."
+        "{has} portato lo stesso giuramento attraverso tre guerre senza mai posarlo."
       ],
       "plantmage": [
         "La terra è in famiglia da quattro generazioni, e la terza ha cominciato a farle domande.",
-        "È tornata alla fattoria dopo che la città non aveva funzionato, e il frutteto le ha risposto quando gli ha parlato.",
-        "Legge il cielo da così tanto che le radici hanno cominciato a leggere lei."
+        "{g:È tornato|È tornata|Sono tornati} alla fattoria dopo che la città non aveva funzionato, e il frutteto {g:gli|le|gli} ha risposto quando {g:gli ha|gli ha|gli hanno} parlato.",
+        "{g:Legge|Legge|Leggono} il cielo da così tanto che le radici hanno cominciato a leggere {g:lui|lei|loro}."
       ],
       "policeofficer": [
-        "È entrata credendo che la divisa significasse qualcosa, e non ha del tutto smesso di crederlo.",
-        "Otto anni di pattuglia le hanno insegnato quali leggi la città applichi davvero.",
-        "Ha preso il distintivo perché la famiglia se lo aspettava e lo ha tenuto per motivi suoi."
+        "{g:È entrato|È entrata|Sono entrati} in polizia credendo che la divisa significasse qualcosa, e non {has} del tutto smesso di crederlo.",
+        "Otto anni di pattuglia {g:gli|le|gli} hanno insegnato quali leggi la città applichi davvero.",
+        "{has} preso il distintivo perché la famiglia se lo aspettava e lo {has} tenuto per motivi {g:suoi|suoi|loro}."
       ],
       "priest": [
-        "È stata ordinata in una parrocchia che in cinque anni aveva perso due preti, e non ha chiesto perché.",
+        "{g:È stato ordinato|È stata ordinata|Sono stati ordinati} in una parrocchia che in cinque anni aveva perso due preti, e non {has} chiesto perché.",
         "Una vocazione arrivata tardi, forte e in un momento scomodissimo.",
-        "Ha sepolto più fedeli di quanti ne abbia sposati."
+        "{has} sepolto più fedeli di quanti ne {g:abbia|abbia|abbiano} sposati."
       ],
       "prowrestler": [
-        "Quella stagione il pubblico voleva un cattivo, e ha scoperto di esserlo benissimo.",
-        "Ha imparato prima le cadute, poi i monologhi, e il mestiere da qualche parte nel mezzo.",
+        "Quella stagione il pubblico voleva un cattivo, e {has} scoperto di saperlo fare benissimo.",
+        "{has} imparato prima le cadute, poi i monologhi, e il mestiere da qualche parte nel mezzo.",
         "Ogni cicatrice ha una data, una città e un incasso attaccati."
       ],
       "psyker": [
-        "A sette anni ha sentito pensare una stanza intera e per un anno non ha più dormito bene.",
-        "Un programma statale l'ha testata a nove anni, ha segnalato il fascicolo e si è dimenticato di chiuderlo.",
-        "Ha imparato a tenere la porta chiusa, più o meno, e ciò che passa basta e avanza."
+        "A sette anni {has} sentito pensare una stanza intera e per un anno non {has} più dormito bene.",
+        "Un programma statale {g:l'ha testato|l'ha testata|li ha testati} a nove anni, ha segnalato il fascicolo e si è dimenticato di chiuderlo.",
+        "{has} imparato a tenere la porta chiusa, più o meno, e ciò che passa basta e avanza."
       ],
       "ranger": [
-        "Ha passato tre stagioni da sola su un sentiero di confine ed è tornata parlando meno e colpendo meglio.",
-        "Il bracconaggio le ha insegnato il bosco; la guardia che l'ha presa le ha insegnato il resto.",
-        "Ha percorso più mappa di quanta la gente ne abbia letta."
+        "{has} passato tre stagioni {g:da solo|da sola|da soli} su un sentiero di confine {g:ed è tornato|ed è tornata|e sono tornati} parlando meno e colpendo meglio.",
+        "Il bracconaggio {g:gli|le|gli} ha insegnato il bosco; la guardia che {g:l'ha preso|l'ha presa|li ha presi} {g:gli|le|gli} ha insegnato il resto.",
+        "{has} percorso più mappa di quanta la maggior parte della gente ne abbia mai letta."
       ],
       "rogue": [
-        "Era brava con le serrature prima che con qualunque altra cosa, e nessuno le ha offerto un'alternativa.",
-        "Un borseggiatore con la coscienza è solo un borseggiatore lento, e l'ha capito presto.",
-        "È stata arrestata due volte e incriminata mai: lo considera un curriculum."
+        "{g:Era bravo|Era brava|Erano bravi} con le serrature prima che con qualunque altra cosa, e nessuno {g:gli|le|gli} ha offerto un'alternativa.",
+        "Un borseggiatore con la coscienza è solo un borseggiatore lento, e lo {has} capito presto.",
+        "{g:È stato arrestato|È stata arrestata|Sono stati arrestati} due volte e {g:incriminato|incriminata|incriminati} mai: lo {g:considera|considera|considerano} un curriculum."
       ],
       "sage": [
-        "Ha risposto correttamente alla domanda di uno sconosciuto, e ha passato i trent'anni successivi a riceverne altre.",
+        "{has} risposto correttamente alla domanda di uno sconosciuto, e {has} passato i trent'anni successivi a riceverne altre.",
         "Quarant'anni di letture in una lingua che parlano ancora in sei.",
-        "Non ha titolo, non ha cattedra e non ha dubbi su nessuna delle due cose."
+        "Non {has} titolo, non {has} cattedra e non {has} dubbi su nessuna delle tre cose."
       ],
       "samurai": [
-        "L'hanno messa in una scuola a sette anni e le hanno dato una lama vera a dodici.",
-        "La casata che serviva non esiste più, e per ostinazione ne ha conservato le forme.",
-        "Un duello vinto male le ha insegnato ciò che l'intero codice cercava di dirle."
+        "{g:L'hanno messo|L'hanno messa|Li hanno messi} in una scuola a sette anni e {g:gli|le|gli} hanno dato una lama vera a dodici.",
+        "La casata che {g:serviva|serviva|servivano} non esiste più, e per ostinazione ne {has} conservato le forme.",
+        "Un duello vinto male {g:gli|le|gli} ha insegnato ciò che l'intero codice cercava di {g:dirgli|dirle|dirgli}."
       ],
       "scientist": [
-        "Ha pubblicato un risultato che nessuno è riuscito a replicare e ci convive da tutta la carriera.",
+        "{has} pubblicato un risultato che nessuno è riuscito a replicare e ci {g:convive|convive|convivono} da tutta la carriera.",
         "Una borsa di studio, un laboratorio in cantina e uno strumento costruito con pezzi di recupero.",
-        "Ha sbagliato in pubblico quattro volte, quattro più di quante i colleghi ne ammettano."
+        "{has} sbagliato in pubblico quattro volte, quattro più di quante i colleghi ne ammettano."
       ],
       "scout": [
-        "A nove anni sapeva tornare a casa da qualunque posto, e prima o poi qualcuno l'ha pagata per questo.",
+        "A nove anni {g:sapeva|sapeva|sapevano} tornare a casa da qualunque posto, e prima o poi qualcuno {g:l'ha pagato|l'ha pagata|li ha pagati} per questo.",
         "Due anni a portare messaggi attraverso terre che nessun altro voleva attraversare.",
-        "È sempre la prima a varcare una porta, e ha i riflessi per permetterselo."
+        "{g:È sempre il primo|È sempre la prima|Sono sempre i primi} a varcare una porta, e {has} i riflessi per permetterselo."
       ],
       "shopkeeper": [
-        "Ha ereditato un bancone, un debito e le opinioni di tutta la via sul proprietario precedente.",
+        "{has} ereditato un bancone, un debito e le opinioni di tutta la via sul proprietario precedente.",
         "Vent'anni a sapere cosa compra ognuno nel quartiere senza dirlo mai.",
-        "Ha tenuto aperta la stessa bottega attraverso due recessioni e una sommossa."
+        "{has} tenuto aperta la stessa bottega attraverso due recessioni e una sommossa."
       ],
       "spellblade": [
-        "La scuola di scherma l'ha cacciata perché borbottava, e l'accademia perché accoltellava.",
-        "Si è rifiutata di scegliere tra la spada e il libro, così li ha saldati insieme: prima male, poi bene.",
+        "La scuola di scherma {g:l'ha cacciato|l'ha cacciata|li ha cacciati} perché {g:borbottava|borbottava|borbottavano}, e l'accademia perché {g:accoltellava|accoltellava|accoltellavano}.",
+        "{g:Si è rifiutato|Si è rifiutata|Si sono rifiutati} di scegliere tra la spada e il libro, così li {has} saldati insieme: prima male, poi bene.",
         "Un maestro per il gioco di gambe, un altro per le sillabe, e una cicatrice tra i due."
       ],
       "technomage": [
-        "A sei anni ha smontato una radio e ci ha trovato un circuito che sullo schema non c'era.",
+        "A sei anni {has} smontato una radio e ci {has} trovato un circuito che sullo schema non c'era.",
         "Una laurea in ingegneria, un rito rubato e una lunga discussione su quale dei due stesse lavorando.",
-        "È convinta che un incantesimo sia solo una macchina che nessuno ha ancora disegnato, e ha gli schemi per sostenerlo."
+        "{g:È convinto|È convinta|Sono convinti} che un incantesimo sia solo una macchina che nessuno ha ancora disegnato, e {has} gli schemi per sostenerlo."
       ],
       "vampire": [
         "Il morso fu un incidente; i cent'anni che seguirono no.",
-        "Ha acconsentito, ed è la parte che nessuno crede.",
-        "Si è svegliata in una cantina con una sete che nessun bicchiere d'acqua ha più toccato."
+        "{has} acconsentito, ed è la parte a cui nessuno crede.",
+        "{g:Si è svegliato|Si è svegliata|Si sono svegliati} in una cantina con una sete che nessun bicchiere d'acqua ha più toccato."
       ],
       "warlock": [
         "Il patto è stato firmato in un corridoio d'ospedale alle quattro del mattino e da allora frutta.",
-        "Qualcosa di antico le ha offerto una via d'uscita, e non ha letto oltre la prima clausola.",
-        "Ha un patrono che non ha mai visto e non ha ancora saltato un pagamento."
+        "Qualcosa di antico {g:gli|le|gli} ha offerto una via d'uscita, e non {has} letto oltre la prima clausola.",
+        "{has} un patrono che non {has} mai visto e non {has} ancora saltato un pagamento."
       ],
       "witch": [
-        "Una zia di cui nessuno parlava le ha lasciato un libro di ricette in cui solo metà degli ingredienti era cibo.",
-        "Ha imparato l'arte dalla donna che viveva oltre l'ultimo lampione, e ogni lezione se l'è pagata.",
-        "La prima maledizione ha funzionato, e dopo quella non si torna al lavoro onesto."
+        "Una zia di cui nessuno parlava {g:gli|le|gli} ha lasciato un libro di ricette in cui solo metà degli ingredienti era cibo.",
+        "{has} imparato l'arte dalla donna che viveva oltre l'ultimo lampione, e ogni lezione {g:se l'è pagata|se l'è pagata|se la sono pagata}.",
+        "La prima maledizione ha funzionato, e dopo quella non c'è stato ritorno al lavoro onesto."
       ],
       "wretch": [
-        "Tutto ciò che aveva le è stato tolto in una stagione, e nessuno le ha mai offerto di restituirglielo.",
-        "Ha dormito in più portoni che letti e ha smesso di contare entrambi.",
-        "C'è stata una vita prima di questa, ma non ne parla."
+        "Tutto ciò che {g:aveva|aveva|avevano} {g:gli|le|gli} è stato tolto in una stagione, e nessuno {g:gli|le|gli} ha mai offerto di restituirglielo.",
+        "{has} dormito in più portoni che letti e {has} smesso di contare gli uni e gli altri.",
+        "C'è stata una vita prima di questa, ma non ne {g:parla|parla|parlano}."
       ],
       "zombie": [
         "Una febbre ha attraversato il quartiere e questa si è rialzata tre giorni dopo aver smesso di respirare.",
         "È stata rialzata di proposito, da qualcuno che cercava braccia e non badava a quali.",
-        "La maledizione era su una famiglia, non su una persona, ed è arrivata con quattro generazioni di ritardo.",
+        "La maledizione era su un'intera famiglia, ed è arrivata con quattro generazioni di ritardo.",
         "Ha bevuto da un pozzo che una guerra aveva avvelenato, e il veleno non era del tutto chimico.",
-        "È stata morsa, è morta del morso, e poi il morso è andato avanti senza di lei.",
+        "È stata morsa, è morta del morso, e poi il morso è andato avanti da solo.",
         "Un rito che doveva riportare indietro una persona precisa ha riportato indietro questa."
       ]
     },
     "beast": [
-      "Avvistata {placeIn}, e di più antico non c'è nulla. {classOrigin} {moral}",
-      "{classOrigin} Resta nelle terre {placeIn}, cosa {adj} che gli anni non hanno cambiato granché. {moral}",
+      "Avvistata per la prima volta {placeIn}, e prima di allora non c'è nulla. {classOrigin} {moral}",
+      "{classOrigin} Si aggira {placeIn}, cosa {adj} che gli anni non hanno cambiato granché. {moral}",
       "Nessun anno di nascita, nessun documento, nessuna nazione: solo un territorio, {placeIn}. {classOrigin} {moral}",
-      "{classOrigin} Sta {placeIn} da quando qualcuno si è preso la briga di accorgersene. {moral}"
+      "{classOrigin} È lì, {placeIn}, da quando qualcuno si è preso la briga di accorgersene. {moral}"
     ],
     "drone": [
-      "{classOrigin} È stata attivata {placeIn} nel {year}, e le sue condizioni si sono verificate per la prima volta nella stagione in cui {event}. {later} {moral}",
-      "{classOrigin} Registrata {placeIn} nel {year}; il set di comportamenti è scattato la settimana in cui {event}. {later} {moral}",
-      "{classOrigin} Non ha infanzia, solo una data di costruzione: {year}, {placeIn}. Il registro si apre il giorno in cui {event}. {later} {moral}",
-      "{classOrigin} Di lei non si ricorda nulla e si registra tutto: dal {year}, {placeIn}, risponde ogni volta che {event}. {later} {moral}"
+      "{classOrigin} È stato attivato {placeIn} nel {year}, e le sue condizioni si sono verificate per la prima volta nella stagione di «{event}». {later} {moral}",
+      "{classOrigin} Registrato {placeIn} nel {year}; il set di comportamenti è scattato per la prima volta con «{event}». {later} {moral}",
+      "{classOrigin} Non ha infanzia, solo una data di costruzione: {year}, {placeIn}. Il registro si apre con «{event}». {later} {moral}",
+      "{classOrigin} Nulla viene ricordato e tutto viene registrato: dal {year}, {placeIn}, risponde a ogni notizia, a cominciare da «{event}». {later} {moral}"
     ]
   },
   "animalBio": {
@@ -570,95 +632,95 @@
       "both": " da {mother} e {father}"
     },
     "default": [
-      "{Nato|Venuto al mondo}{parents} {where}, {name} {ha vissuto come ha sempre vissuto la sua specie|segue le abitudini della sua specie}. {Cibo, riparo e i suoi simili: non conosce altro.|Ricorda poco oltre il tempo e la fame.}",
-      "{name} {è nato|è venuto al mondo}{parents} {where}. {Non ha mai pensato al domani, e non gli è mai servito.|Quello che sa, l'ha imparato vivendo.}"
+      "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {ha vissuto come ha sempre vissuto la sua specie|segue le abitudini della sua specie}. {Cibo, riparo e i suoi simili: non conosce altro.|Ricorda poco oltre il tempo e la fame.}",
+      "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {Non ha mai pensato al domani, e non {g:gli|le} è mai servito.|Quello che sa, l'ha imparato vivendo.}"
     ],
     "breed": {
       "Cat": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {segue orari tutti suoi|va e viene come gli pare}. {Caccia ciò che si muove al tramonto e dorme nelle ore calde.|I topi lo temono; le persone le tollera appena.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}. {Non appartiene a nessuno, qualunque cosa si creda.|Ha un posto caldo per ogni ora del giorno e sa dove trovarli tutti.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {segue orari tutti suoi|va e viene come {g:gli|le} pare}. {Caccia ciò che si muove al tramonto e dorme nelle ore calde.|I topi {g:lo|la} temono; le persone le tollera appena.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {Non appartiene a nessuno, qualunque cosa si creda.|Ha un posto caldo per ogni ora del giorno e sa dove trovarli tutti.}"
       ],
       "Dog": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {segue il suo branco|sta vicino ai suoi}. {Conosce ogni odore del posto e si fida di pochi.|Buona voce e naso migliore.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}. {Difenderebbe da chiunque la terra dove è cresciuto.|Ha imparato presto che un cane paziente mangia.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {segue il suo branco|sta vicino ai suoi}. {Conosce ogni odore del posto e si fida di pochi.|Buona voce e naso migliore.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {Difenderebbe da chiunque la terra dove è {g:cresciuto|cresciuta}.|Ha imparato presto che un cane paziente mangia.}"
       ],
       "Pigeon": [
-        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {cerca briciole per terra|sta sui tetti e nelle piazze}. {Ha visto della città più di molti che ci abitano.|Niente lo spaventa due volte.}",
-        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Vola con lo stormo e ogni sera torna sullo stesso cornicione.|Capisce l'ora dalla folla.}"
+        "{{g:Uscito|Uscita} dall'uovo|{g:Nato|Nata}}{parents} {where}, {name} {cerca briciole per terra|sta sui tetti e nelle piazze}. {Ha visto della città più di molti che ci abitano.|Niente {g:lo|la} spaventa due volte.}",
+        "{name} {{g:è uscito|è uscita} dall'uovo|{g:è nato|è nata}}{parents} {where}. {Vola con lo stormo e ogni sera torna sullo stesso cornicione.|Capisce l'ora dalla folla.}"
       ],
       "Crab": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta sulla linea della marea|cammina di lato nel suo piccolo mondo}. {Ha cambiato più gusci di quanti ne sappia contare.|Teme i gabbiani e nient'altro.}",
-        "{name} {è uscito dalla risacca|è nato}{parents} {where}. {Il mare gli porta tutto ciò che gli serve due volte al giorno.|Conosce ogni sasso del suo tratto di riva.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {sta sulla linea della marea|cammina di lato nel suo piccolo mondo}. {Ha cambiato più gusci di quanti ne sappia contare.|Teme i gabbiani e nient'altro.}",
+        "{name} {{g:è uscito|è uscita} dalla risacca|{g:è nato|è nata}}{parents} {where}. {Il mare {g:gli|le} porta tutto ciò che {g:gli|le} serve due volte al giorno.|Conosce ogni sasso del suo tratto di riva.}"
       ],
       "Toad": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {passa il giorno sotto un sasso|aspetta la pioggia}. {Di notte mangia tutto ciò che è abbastanza piccolo.|È sopravvissuto a gran parte dello stagno in cui è nato.}",
-        "{name} {è uscito dall'acqua|è nato}{parents} {where}. {Canta quando l'aria si fa umida.|La pazienza è tutto il suo mestiere.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {passa il giorno sotto un sasso|aspetta la pioggia}. {Di notte mangia tutto ciò che è abbastanza piccolo.|È {g:sopravvissuto|sopravvissuta} a gran parte dello stagno in cui è {g:nato|nata}.}",
+        "{name} {{g:è uscito|è uscita} dall'acqua|{g:è nato|è nata}}{parents} {where}. {Canta quando l'aria si fa umida.|La pazienza è tutto il suo mestiere.}"
       ],
       "Chicken": [
-        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {razzola in cerca di grano tutto il giorno|sta nell'aia con lo stormo}. {Depone quando mangia e tiene il muso quando no.|Conosce la mano che porta il becchime.}",
-        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Lo stormo ha le sue gerarchie e lui conosce il suo posto.|Dall'alba al tramonto è indaffarato, e al tramonto si appollaia.}"
+        "{{g:Uscito|Uscita} dall'uovo|{g:Nato|Nata}}{parents} {where}, {name} {razzola in cerca di grano tutto il giorno|sta nell'aia con lo stormo}. {Depone quando mangia e tiene il muso quando no.|Conosce la mano che porta il becchime.}",
+        "{name} {{g:è uscito|è uscita} dall'uovo|{g:è nato|è nata}}{parents} {where}. {Lo stormo ha le sue gerarchie e {g:lui|lei} conosce il suo posto.|Dall'alba al tramonto è {g:indaffarato|indaffarata}, e al tramonto si appollaia.}"
       ],
       "Rooster": [
-        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {comanda l'aia|veglia sulle galline}. {Chiama il sole che qualcuno l'abbia chiesto o no.|Ha combattuto ogni rivale che ha incontrato.}",
-        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Si pavoneggia, canta, fa la guardia.|La sua voce è la prima cosa che la fattoria sente.}"
+        "{{g:Uscito|Uscita} dall'uovo|{g:Nato|Nata}}{parents} {where}, {name} {comanda l'aia|veglia sulle galline}. {Chiama il sole che qualcuno l'abbia chiesto o no.|Ha combattuto ogni rivale che ha incontrato.}",
+        "{name} {{g:è uscito|è uscita} dall'uovo|{g:è nato|è nata}}{parents} {where}. {Si pavoneggia, canta, fa la guardia.|La sua voce è la prima cosa che la fattoria sente.}"
       ],
       "Duck": [
-        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {segue gli altri fino all'acqua|sguazza in ogni pozzanghera}. {Cammina in fila e nuota in gruppo.|La pioggia è il suo tempo preferito.}",
-        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Da qualunque posto sa la strada per l'acqua.|Brontola per tutto e non intende niente.}"
+        "{{g:Uscito|Uscita} dall'uovo|{g:Nato|Nata}}{parents} {where}, {name} {segue gli altri fino all'acqua|sguazza in ogni pozzanghera}. {Cammina in fila e nuota in gruppo.|La pioggia è il suo tempo preferito.}",
+        "{name} {{g:è uscito|è uscita} dall'uovo|{g:è nato|è nata}}{parents} {where}. {Da qualunque posto sa la strada per l'acqua.|Brontola per tutto senza mai pensarlo davvero.}"
       ],
       "Pig": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {grufola dappertutto|scova col muso tutto ciò che è sepolto}. {È più furbo di quanto lasci vedere.|Mangia bene e dorme meglio.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}, {in una figliata numerosa|uno di una figliata affollata}. {Non ha mai avuto fame a lungo.|Fango d'estate, paglia d'inverno, e cibo sempre.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {grufola dappertutto|scova col muso tutto ciò che è sepolto}. {È più {g:furbo|furba} di quanto lasci vedere.|Mangia bene e dorme meglio.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}, {in una figliata numerosa|{g:uno|una} di una figliata affollata}. {Non ha mai avuto fame a lungo.|Fango d'estate, paglia d'inverno, e cibo sempre.}"
       ],
       "Sheep": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta col gregge|pascola dove pascolano gli altri}. {La sua lana ha tenuto caldo a qualcuno, da qualche parte.|Si spaventa facilmente e dimentica in fretta.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}. {Riconosce il gregge dalla voce.|Erba, ombra, il gregge: tutto il suo mondo.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {sta col gregge|pascola dove pascolano gli altri}. {La sua lana ha tenuto caldo a qualcuno, da qualche parte.|Si spaventa facilmente e dimentica in fretta.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {Riconosce il gregge dalla voce.|Erba, ombra, il gregge: tutto il suo mondo.}"
       ],
       "Cow": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {pascola lento e non si perde nulla|sta con la mandria}. {Dà latte e chiede erba.|Ha una lunga memoria per la gentilezza.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}. {Le stagioni lo portano dal campo alla stalla e ritorno.|È pesante, paziente e senza fretta.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {pascola {g:lento|lenta} e non si perde nulla|sta con la mandria}. {Dà latte e chiede erba.|Ha una lunga memoria per la gentilezza.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {Le stagioni {g:lo|la} portano dal campo alla stalla e ritorno.|È pesante, paziente e senza fretta.}"
       ],
       "Goat": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {si arrampica su tutto ciò che sta fermo|mangia quello che gli altri scartano}. {Nessun recinto l'ha tenuto a lungo.|È curioso di tutto e ha paura di poco.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}. {Ha assaggiato quasi tutta la fattoria, anche le parti che non sono cibo.|Tiene per sé i suoi pensieri e la sua strada.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {si arrampica su tutto ciò che sta fermo|mangia quello che gli altri scartano}. {Nessun recinto l'ha {g:tenuto|tenuta} a lungo.|È {g:curioso|curiosa} di tutto e ha paura di poco.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {Ha assaggiato quasi tutta la fattoria, anche le parti che non sono cibo.|Tiene per sé i suoi pensieri e la sua strada.}"
       ],
       "Horse": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {corre con la mandria|pascola in campo aperto}. {Ha portato più di un cavaliere e li ricorda tutti.|È forte, veloce e diffidente con ciò che non conosce.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}. {Conosce ogni strada che ha percorso.|Se ha spazio, corre per il piacere di farlo.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {corre con la mandria|pascola in campo aperto}. {Ha portato più di un cavaliere e li ricorda tutti.|È forte, veloce e diffidente con ciò che non conosce.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {Conosce ogni strada che ha percorso.|Se ha spazio, corre per il piacere di farlo.}"
       ],
       "Donkey": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {lavora quando decide lui|va al suo passo}. {Porta i carichi senza lamentarsi e i rancori senza fine.|Testardo, paziente e più saggio di quanto sembri.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}. {È sopravvissuto a diversi padroni.|Non si lascia mettere fretta, né prendere in giro.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {lavora quando decide {g:lui|lei}|va al suo passo}. {Porta i carichi senza lamentarsi e i rancori senza fine.|{g:Testardo|Testarda}, paziente e più {g:saggio|saggia} di quanto sembri.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {È {g:sopravvissuto|sopravvissuta} a diversi padroni.|Non si lascia mettere fretta, né prendere in giro.}"
       ],
       "Rabbit": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta vicino alla sua tana|mangia all'alba e al tramonto}. {Tutto gli dà la caccia e lui lo sa.|Ha una famiglia grande e un carattere breve.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}, {in una tana piena di parenti|uno di una figliata numerosa}. {Prima scappa, poi si chiede perché.|Trifoglio e quiete: non chiede altro.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {sta vicino alla sua tana|mangia all'alba e al tramonto}. {Tutto {g:gli|le} dà la caccia e {g:lui|lei} lo sa.|Ha una famiglia numerosa e poca pazienza.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}, {in una tana piena di parenti|uno di una figliata numerosa}. {Prima scappa, poi si chiede perché.|Trifoglio e quiete: non chiede altro.}"
       ]
     },
     "archetype": {
       "Beast": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {resta nel suo territorio|va dove c'è cibo}. {Si fida più del suo naso che della parola di chiunque.|È vissuto d'ingegno e di denti.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}. {Conosce ogni sentiero del suo territorio.|Niente in lui è mai stato domestico.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {resta nel suo territorio|va dove c'è cibo}. {Si fida più del suo naso che della parola di chiunque.|È {g:vissuto|vissuta} d'ingegno e di denti.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {Conosce ogni sentiero del suo territorio.|Niente in {g:lui|lei} è mai stato domestico.}"
       ],
       "Bird": [
-        "{Uscito dall'uovo|Nato}{parents} {where}, {name} {sta tra l'aria e i rami|va dove lo portano il vento e i semi}. {Sente il tempo prima di chiunque.|Il suo canto è l'unica cosa che possiede.}",
-        "{name} {è uscito dall'uovo|è nato}{parents} {where}. {Non è mai rimasto a lungo sullo stesso albero.|Dorme leggero e si sveglia presto.}"
+        "{{g:Uscito|Uscita} dall'uovo|{g:Nato|Nata}}{parents} {where}, {name} {sta tra l'aria e i rami|va dove {g:lo|la} portano il vento e i semi}. {Sente il tempo prima di chiunque.|Il suo canto è l'unica cosa che possiede.}",
+        "{name} {{g:è uscito|è uscita} dall'uovo|{g:è nato|è nata}}{parents} {where}. {Non è mai {g:rimasto|rimasta} a lungo sullo stesso albero.|Dorme leggero e si sveglia presto.}"
       ],
       "Crustacean": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta tra i sassi bagnati|corre da un riparo all'altro}. {Il guscio è la sua casa e la sua armatura.|Non è mai stato lontano dall'acqua.}",
-        "{name} {è uscito dall'acqua|è nato}{parents} {where}. {Mangia quello che lascia la marea.|Si muove di lato e mai di fretta.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {sta tra i sassi bagnati|corre da un riparo all'altro}. {Il guscio è la sua casa e la sua armatura.|Non è mai {g:stato|stata} lontano dall'acqua.}",
+        "{name} {{g:è uscito|è uscita} dall'acqua|{g:è nato|è nata}}{parents} {where}. {Mangia quello che lascia la marea.|Si muove di lato e mai di fretta.}"
       ],
       "Frog": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {aspetta tra le canne|passa il caldo nel fango}. {Caccia con la lingua e molta pazienza.|Ogni notte umida è una buona notte.}",
-        "{name} {è uscito dall'acqua|è nato}{parents} {where}. {Ha cominciato la vita con una coda e l'ha persa per strada.|Conosce ogni pozzanghera a portata di salto.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {aspetta tra le canne|passa il caldo nel fango}. {Caccia con la lingua e molta pazienza.|Ogni notte umida è una buona notte.}",
+        "{name} {{g:è uscito|è uscita} dall'acqua|{g:è nato|è nata}}{parents} {where}. {Ha cominciato la vita con una coda e l'ha persa per strada.|Conosce ogni pozzanghera a portata di salto.}"
       ],
       "Horse": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {corre con la sua mandria|sta in campo aperto}. {È forte, veloce e diffidente con ciò che non conosce.|Ricorda ogni strada che ha percorso.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}. {Se ha spazio, corre per il piacere di farlo.|Ha portato carichi e cavalieri.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {corre con la sua mandria|sta in campo aperto}. {È forte, veloce e diffidente con ciò che non conosce.|Ricorda ogni strada che ha percorso.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}. {Se ha spazio, corre per il piacere di farlo.|Ha portato carichi e cavalieri.}"
       ],
       "Rabbit": [
-        "{Nato|Venuto al mondo}{parents} {where}, {name} {sta vicino alla sua tana|mangia all'alba e al tramonto}. {Tutto gli dà la caccia e lui lo sa.|Prima scappa, poi si chiede perché.}",
-        "{name} {è nato|è venuto al mondo}{parents} {where}, {uno di una figliata numerosa|in una tana piena di parenti}. {Trifoglio e quiete: non chiede altro.|Ha una famiglia grande e un carattere breve.}"
+        "{{g:Nato|Nata}|{g:Venuto|Venuta} al mondo}{parents} {where}, {name} {sta vicino alla sua tana|mangia all'alba e al tramonto}. {Tutto {g:gli|le} dà la caccia e {g:lui|lei} lo sa.|Prima scappa, poi si chiede perché.}",
+        "{name} {{g:è nato|è nata}|{g:è venuto|è venuta} al mondo}{parents} {where}, {{g:uno|una} di una figliata numerosa|in una tana piena di parenti}. {Trifoglio e quiete: non chiede altro.|Ha una famiglia numerosa e poca pazienza.}"
       ]
     }
   }

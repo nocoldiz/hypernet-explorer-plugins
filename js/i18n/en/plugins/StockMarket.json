@@ -26,10 +26,10 @@
     "shares": "Shares"
   },
   "titles": {
-    "buyWhich": "Buy Which Stock?",
-    "sellWhich": "Sell Which Stock?",
-    "buyHowMany": "Buy How Many {stock} Shares?",
-    "sellHowMany": "Sell How Many {stock} Shares?"
+    "buyWhich": "Buy which stock?",
+    "sellWhich": "Sell which stock?",
+    "buyHowMany": "How many {stock} shares to buy?",
+    "sellHowMany": "How many {stock} shares to sell?"
   },
   "stockNames": {
     "oil": "Oil",
@@ -37,7 +37,7 @@
   },
   "appName": "Quantum Projector",
   "portfolio": {
-    "liquid": "Liquid Gold",
+    "liquid": "Cash",
     "netWorth": "Net Worth"
   },
   "ui": {
@@ -360,5 +360,102 @@
     "someWar": "fighting abroad",
     "someTown": "the market towns",
     "somePower": "the powers"
+  },
+  "terminal": {
+    "appName": "Stock Market",
+    "title": "STOCK MARKET",
+    "live": "● LIVE MARKET OPEN",
+    "ticks": "Session Ticks:",
+    "liquid": "LIQUID FUNDS",
+    "portfolio": "PORTFOLIO STOCKS",
+    "netWorth": "NET WORTH",
+    "watchlist": "MARKET WATCHLIST",
+    "assetProfile": "{symbol} ASSET PROFILE",
+    "holding": "Holding: {n} shares",
+    "orderBook": "LIVE ORDER BOOK",
+    "spread": "SPREAD: {value}",
+    "mid": "MID: {value}",
+    "market": "MARKET",
+    "sharesShort": "{n} sh",
+    "sharesN": "{n} shares",
+    "select": "Select",
+    "noOrders": "No open orders. Use limit orders to trade at a target price.",
+    "noHistory": "No trades this session.",
+    "away": "{pct}% away",
+    "escrowMoney": "Escrow: {value}",
+    "escrowShares": "{n} sh escrowed",
+    "filled": "FILLED",
+    "chartLine": "Line & Area",
+    "chartCandle": "Candlestick",
+    "medianTarget": "Median Target",
+    "console": "ORDER PLACEMENT TERMINAL",
+    "buyLong": "BUY / LONG",
+    "sellLiquidate": "SELL / LIQUIDATE",
+    "execType": "ORDER EXECUTION TYPE",
+    "marketRef": "Market Reference:",
+    "orderQty": "ORDER QUANTITY",
+    "available": "Available:",
+    "max": "MAX",
+    "execRate": "Execution Rate:",
+    "orderQtyLabel": "Order Quantity:",
+    "totalRequired": "Total Required:",
+    "proceeds": "Estimated Proceeds:",
+    "place": "Place {side} {type} order",
+    "side": {
+      "buy": "Buy",
+      "sell": "Sell"
+    },
+    "type": {
+      "market": "Market",
+      "limit": "Limit",
+      "stop_loss": "Stop Loss",
+      "take_profit": "Take Profit"
+    },
+    "priceLabel": {
+      "limit": "LIMIT TARGET PRICE",
+      "stop": "STOP TRIGGER PRICE",
+      "takeProfit": "TAKE PROFIT PRICE"
+    },
+    "tab": {
+      "holdings": "Holdings",
+      "orders": "Open Orders ({n})",
+      "history": "Trade History",
+      "news": "Market News Feed"
+    },
+    "col": {
+      "symbol": "Symbol",
+      "assetName": "Asset Name",
+      "shares": "Shares",
+      "avgCost": "Avg Cost",
+      "marketPrice": "Market Price",
+      "totalValue": "Total Value",
+      "unrealized": "Unrealized P&L",
+      "actions": "Actions",
+      "orderId": "Order ID",
+      "sideType": "Side & Type",
+      "quantity": "Quantity",
+      "targetPrice": "Target Price",
+      "distance": "Distance",
+      "escrow": "Held in Escrow",
+      "action": "Action",
+      "time": "Time",
+      "execPrice": "Execution Price",
+      "totalVolume": "Total Volume",
+      "realized": "Realized Gain",
+      "status": "Status"
+    },
+    "errors": {
+      "badOrder": "Invalid order parameters",
+      "noEscrow": "Not enough money to cover this limit order",
+      "exceedsHeld": "Exceeds owned shares ({n})"
+    },
+    "toast": {
+      "cancelled": "Order {id} cancelled. Escrow released.",
+      "liquidated": "Liquidated all {n} shares of {stock}",
+      "bought": "Bought {n} shares of {stock} at market price",
+      "sold": "Sold {n} shares of {stock} at market price",
+      "placed": "Placed {side} {type} order for {n} shares at {price}",
+      "failed": "Failed to place order: {reason}"
+    }
   }
 }

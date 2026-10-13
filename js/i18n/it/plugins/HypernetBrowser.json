@@ -3,7 +3,7 @@
   "windowTitle": "Hypernet Explorer",
   "windowTitlePage": "{title} - Hypernet Explorer",
   "version": "6.0 (Build 2001.9.3)",
-  "linkLost": "Collegamento di trasmissione perso. Impossibile caricare la pagina Hypernet richiesta.",
+  "linkLost": "Collegamento perso. Impossibile caricare la pagina.",
   "linkStable": "COLLEGAMENTO DI TRASMISSIONE STABILE",
   "secureSsl": "SSL SICURO: MASSIMO",
   "menu": {
@@ -141,7 +141,7 @@
     "offline": "Non in linea",
     "popupBlocked": "Un popup è stato bloccato. Fai clic qui per le opzioni.",
     "popupAllowed": "I popup sono consentiti nella zona Hypernet.",
-    "external": "Indirizzo esterno. Il gateway Hypernet non ha alcuna rotta verso {address}.",
+    "external": "Nessuna rotta verso {address}.",
     "downloadStarted": "Download di {name} in corso...",
     "downloadDone": "Download completato: {name}",
     "saved": "Salvato in {path}",
@@ -174,7 +174,7 @@
     "close": "Chiudi",
     "count": "{count} corrispondenze",
     "none": "Nessuna corrispondenza",
-    "unreadable": "Questa pagina non si lascia leggere dal cercatore."
+    "unreadable": "Impossibile cercare in questa pagina."
   },
   "address": {
     "placeholder": "Digita un indirizzo Hypernet, oppure una frase da cercare",
@@ -194,15 +194,15 @@
     "stats": "Circa {count} risultati ({seconds} secondi)",
     "noResults": "La ricerca di {query} non ha prodotto risultati.",
     "directory": "Elenco Hypernet",
-    "directoryHint": "Da questo terminale sono raggiungibili {count} siti. Scegli una lettera.",
+    "directoryHint": "{count} siti disponibili. Scegli una lettera.",
     "connecting": "Contatto con l'indice Noodle in corso...",
-    "indexOffline": "L'indice Noodle non è raggiungibile. L'elenco qui sotto è letto direttamente dalla cache locale del gateway.",
+    "indexOffline": "Indice Noodle offline. Qui sotto l'elenco dalla cache.",
     "suggestion": "Prova con un'altra frase, oppure sfoglia l'elenco qui sotto."
   },
   "error": {
     "title": "Impossibile visualizzare la pagina",
     "heading": "Impossibile visualizzare la pagina",
-    "body": "La pagina cercata non si trova su questo gateway, oppure il nome è stato digitato male.",
+    "body": "La pagina non esiste o l'indirizzo è sbagliato.",
     "address": "Indirizzo: {address}",
     "tryTitle": "Prova quanto segue:",
     "try1": "Controlla che l'indirizzo Hypernet sia scritto correttamente.",
@@ -211,13 +211,13 @@
     "didYouMean": "Forse cercavi:",
     "searchFor": "Cerca \"{query}\" su Noodle",
     "code": "Hypernet Explorer - risposta del gateway 404 (nessuna rotta verso il documento)",
-    "external": "Quell'indirizzo vive fuori dall'Hypernet. Questo terminale non ha alcuna rotta per raggiungerlo.",
+    "external": "Quell'indirizzo è fuori dall'Hypernet e non è raggiungibile.",
     "friendlyOff": "GATEWAY 404. NESSUNA ROTTA. DOCUMENTO NON PRESENTE IN LOCALE."
   },
   "history": {
     "title": "Cronologia",
     "heading": "Cronologia",
-    "hint": "Tutte le pagine aperte da questo terminale, dalla più recente.",
+    "hint": "Pagine visitate, dalla più recente.",
     "empty": "Non è ancora stato visitato nulla.",
     "today": "Oggi",
     "earlier": "In precedenza",
@@ -228,7 +228,7 @@
   "downloads": {
     "title": "Download",
     "heading": "Download",
-    "hint": "I file prelevati dall'Hypernet finiscono in C:\\Documents.",
+    "hint": "I download vengono salvati in C:\\Documents.",
     "empty": "Nessun download.",
     "file": "File",
     "from": "Origine",
@@ -242,7 +242,7 @@
   "mail": {
     "title": "Posta Hypernet",
     "heading": "Posta in arrivo",
-    "hint": "Posta trattenuta per questo terminale. Non si puo rispondere: il ripetitore e a senso unico dal passaggio all'anno 2000.",
+    "hint": "Posta trattenuta per questo terminale. Non si può rispondere: il ripetitore è a senso unico dal passaggio all'anno 2000.",
     "from": "Da",
     "subject": "Oggetto",
     "received": "Ricevuto",
@@ -254,7 +254,7 @@
     "composeSubject": "Oggetto:",
     "composeBody": "Messaggio:",
     "send": "Invia",
-    "sent": "Messaggio in coda. Il ripetitore lo porterà quando il ripetitore tornerà.",
+    "sent": "Messaggio in coda. Partirà quando il ripetitore tornerà attivo.",
     "news": "Newsgroup",
     "newsHint": "Il server delle news rifiuta le credenziali di questo terminale.",
     "messages": [
@@ -294,7 +294,7 @@
   },
   "open": {
     "title": "Apri",
-    "hint": "Digita l'indirizzo di un documento Hypernet, oppure scegline uno dalla lista.",
+    "hint": "Digita un indirizzo o scegline uno dalla lista.",
     "label": "Apri:",
     "filter": "Filtro:",
     "ok": "OK",
@@ -373,7 +373,7 @@
   },
   "sync": {
     "title": "Sincronizza",
-    "hint": "Le pagine non in linea vengono copiate nella cache del gateway per poter essere lette a collegamento assente.",
+    "hint": "Copia le pagine nella cache per leggerle offline.",
     "start": "Sincronizza",
     "close": "Chiudi",
     "working": "Sincronizzazione di {name}...",
@@ -408,9 +408,9 @@
   "helpPage": {
     "title": "Guida di Hypernet Explorer",
     "heading": "Guida di Hypernet Explorer",
-    "intro": "Tutto quello che questo browser sa fare, e il tasto che lo fa.",
+    "intro": "Funzioni e scorciatoie del browser.",
     "navHeading": "Muoversi",
-    "navBody": "Digita un indirizzo nella barra degli indirizzi e premi Invio. Un indirizzo senza punti viene invece cercato. Una pagina che non si trova su questo gateway mostra l'avviso 404 del gateway con sotto gli indirizzi più simili.",
+    "navBody": "Digita un indirizzo nella barra degli indirizzi e premi Invio. Il testo senza punti viene cercato. Le pagine mancanti mostrano un avviso 404 con indirizzi simili.",
     "keysHeading": "Tastiera",
     "keys": [
       "Ctrl+T - nuova scheda",
@@ -427,7 +427,7 @@
       "Esc - interrompi il caricamento"
     ],
     "favHeading": "Preferiti",
-    "favBody": "I Preferiti sono conservati nel registro del terminale, quindi sopravvivono allo spegnimento della macchina e viaggiano col salvataggio.",
+    "favBody": "I Preferiti vengono salvati con la partita.",
     "offlineHeading": "Quando il collegamento cade",
     "offlineBody": "Il gateway conserva una copia locale di ogni documento della zona Hypernet, perciò le pagine si aprono anche a linea caduta. Solo gli indirizzi fuori dalla zona avrebbero bisogno della linea, e non ce ne sono.",
     "close": "Chiudi"
@@ -471,15 +471,15 @@
     "close": "Chiudi",
     "tips": [
       "Un indirizzo senza punti viene trattato come una ricerca. Digita una frase e premi Invio.",
-      "Sei a metà di una pagina lunga? Ctrl+F trova una parola senza doverla cercare a mano.",
-      "La barra Collegamenti accetta tutti i Preferiti che vuoi fissarci.",
+      "Ctrl+F trova una parola nella pagina.",
+      "Fissa sulla barra Collegamenti tutti i Preferiti che vuoi.",
       "Ctrl+T apre una scheda. Ogni scheda tiene il proprio Indietro e Avanti.",
       "Origine (Ctrl+U) mostra la pagina esattamente come l'ha inviata il gateway.",
-      "L'Elenco Hypernet nella pagina iniziale riporta ogni sito conservato dal gateway.",
-      "Una pagina che non si apre mostra gli indirizzi più simili a quello richiesto.",
-      "Lo zoom sta sulla barra di stato. Fai clic sulla percentuale per farlo girare.",
-      "I popup sono bloccati per impostazione predefinita. Strumenti, Blocco popup cambia le cose, a tuo rischio.",
-      "Tutto quello che salvi da una pagina finisce in C:\\Documents e compare in Risorse del computer."
+      "L'Elenco Hypernet nella pagina iniziale riporta tutti i siti.",
+      "Una pagina mancante suggerisce indirizzi simili.",
+      "Fai clic sulla percentuale di zoom nella barra di stato per cambiarla.",
+      "I popup sono bloccati per impostazione predefinita. Cambialo in Strumenti, Blocco popup.",
+      "Le pagine salvate finiscono in C:\\Documents e compaiono in Risorse del computer."
     ]
   },
   "context": {
@@ -510,17 +510,17 @@
   },
   "hexapedia": {
     "appName": "Hexapedia",
-    "tooltip": "La libera enciclopedia del sapere post-Compressione",
+    "tooltip": "La libera enciclopedia del sapere post-Squishing",
     "peopleTitle": "Persone viventi di rilievo",
-    "peopleIntro": "Questo server scrive di chiunque il mondo abbia sentito nominare. Un viaggiatore che raggiunge il livello {level} si guadagna una voce, conservata con il mondo e non con la squadra, cosicché gli sopravvive.",
+    "peopleIntro": "Chi raggiunge il livello {level} ottiene una voce. Le voci restano con il mondo, non con il Party.",
     "peopleEmpty": "Ancora nessuna voce. Nessuno in questo mondo ha raggiunto il livello {level}.",
     "peopleLine": "livello {level} {cls}",
     "personMeta": "{cls} di livello {level}, del mondo di {world}.",
     "personDiary": "Dal registro",
-    "personNoDiary": "Il registro non contiene ancora nulla sotto questo nome.",
-    "personFooter": "Scritto dall'enciclopedia a partire dal diario di squadra. Conservato con il mondo, e leggibile da chi lo giocherà dopo.",
+    "personNoDiary": "Ancora nulla sotto questo nome.",
+    "personFooter": "Scritto dal diario del Party. Salvato con il mondo.",
     "backToPortal": "Portale Hexapedia",
     "written": "Hexapedia ha scritto una voce su {name}",
-    "updated": "Pagine di Hexapedia su {name} aggiornate con le ultime imprese"
+    "updated": "Voce di Hexapedia su {name} aggiornata"
   }
 }

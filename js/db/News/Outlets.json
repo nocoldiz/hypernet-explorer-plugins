@@ -1,0 +1,32 @@
+{
+  "_comment": "The papers that print the news. Display text (name, motto, publisher, voice) lives in js/i18n/<lang>/plugins/News.json under outlets.<id>. 'hyperpower' is the power the publishing house answers to (Countries.json faction names, 'Neutral' for none); 'tone' groups an outlet for the procedural headline banks; 'masthead' and 'headline' name the newspaper fonts (fonts/newspaper/) the reader sets it in; 'staff' is how many residents of the world write for it. 'overseas' marks a foreign desk outside Europe: its staff are residents filing as overseas editors.",
+  "outlets": [
+    {"id":"gridCourier","hyperpower":"Britannia","tone":"serious","city":"London","founded":1871,"staff":5,"masthead":"blackletter","headline":"playfair","accent":"#1d1d1d"},
+    {"id":"dailyHex","hyperpower":"Britannia","tone":"scandalous","city":"Manchester","founded":1986,"staff":4,"masthead":"fatface","headline":"fatface","accent":"#b3141b"},
+    {"id":"skepticLantern","hyperpower":"Britannia","tone":"skeptical","city":"Edinburgh","founded":1983,"staff":3,"masthead":"playfair","headline":"oldstandard","accent":"#23415a"},
+    {"id":"petitChaos","hyperpower":"Britannia","tone":"playful","city":"Paris","founded":1993,"staff":3,"masthead":"fatface","headline":"playfair","accent":"#5b2a6e"},
+    {"id":"osservatoreCeleste","hyperpower":"Holy Vatican Empire","tone":"serious","city":"Vatican Citadel","founded":1861,"staff":4,"masthead":"blackletter","headline":"fell","accent":"#6b1b2a"},
+    {"id":"kreuzbote","hyperpower":"Holy Vatican Empire","tone":"scandalous","city":"Berlin","founded":1934,"staff":3,"masthead":"blackletter","headline":"oswald","accent":"#3b2a1a"},
+    {"id":"corriereOlimpo","hyperpower":"The Gods","tone":"serious","city":"Bologna","founded":1919,"staff":4,"masthead":"blackletter","headline":"playfair","accent":"#20304a"},
+    {"id":"marketGrimorie","hyperpower":"Hypercapitalist Collective","tone":"serious","city":"Amsterdam","founded":1902,"staff":3,"masthead":"playfair","headline":"playfair","accent":"#7a5a12"},
+    {"id":"hypernetWeekly","hyperpower":"Hypercapitalist Collective","tone":"playful","city":"Eindhoven","founded":1995,"staff":3,"masthead":"oswald","headline":"oswald","accent":"#0f5c6e"},
+    {"id":"towerDispatch","hyperpower":"Archive Foundation","tone":"serious","city":"Omega Tower","founded":2000,"staff":3,"masthead":"fell","headline":"oldstandard","accent":"#2f3d2a"},
+    {"id":"iskraNova","hyperpower":"USSR","tone":"serious","city":"Belgrado","founded":1946,"staff":3,"masthead":"oswald","headline":"oswald","accent":"#a51d12"},
+    {"id":"dublinArcanum","hyperpower":"Mages Guild","tone":"serious","city":"Dublin","founded":1888,"staff":3,"masthead":"fell","headline":"playfair","accent":"#1f4a3a"},
+    {"id":"sublimeGazette","hyperpower":"Ottoman Empire","tone":"serious","city":"Tunisi","founded":1831,"staff":3,"masthead":"fell","headline":"playfair","accent":"#7a1f3d"},
+    {"id":"vocedelTitano","hyperpower":"San Marino Republic","tone":"playful","city":"San Marino","founded":1949,"staff":2,"masthead":"fell","headline":"oldstandard","accent":"#2a5a8a"},
+    {"id":"hordeHoller","hyperpower":"Goblin Horde","tone":"scandalous","city":"Reykyavik","founded":1999,"staff":2,"masthead":"fatface","headline":"fatface","accent":"#4a6b12"},
+    {"id":"truckersBulletin","hyperpower":"Neutral","tone":"playful","city":"","founded":1958,"staff":3,"masthead":"fell","headline":"oswald","accent":"#8a4b14"},
+    {"id":"bubbleWhispers","hyperpower":"Neutral","tone":"scandalous","city":"","founded":1997,"staff":2,"masthead":"typewriter","headline":"typewriter","accent":"#3a3a3a"},
+    {"id":"europeanWire","hyperpower":"Neutral","tone":"serious","city":"Brusselles","founded":1949,"staff":5,"masthead":"playfair","headline":"oldstandard","accent":"#2b2b2b"},
+    {"id":"nordicMorning","hyperpower":"Neutral","tone":"serious","city":"Oslo","founded":1911,"staff":3,"masthead":"oldstandard","headline":"oldstandard","accent":"#284a5e"},
+    {"id":"continentalHerald","hyperpower":"Continental Union","overseas":true,"tone":"serious","city":"Chicago","founded":1847,"staff":3,"masthead":"blackletter","headline":"playfair","accent":"#1b2f52"},
+    {"id":"dharmaDaily","hyperpower":"Dharma Directorate","overseas":true,"tone":"serious","city":"Beijing","founded":1949,"staff":2,"masthead":"oswald","headline":"oswald","accent":"#9a1b12"},
+    {"id":"heraldoKukulkan","hyperpower":"Kukulkan Ascendancy","overseas":true,"tone":"serious","city":"Tenochtitlan","founded":1971,"staff":2,"masthead":"fatface","headline":"playfair","accent":"#1f6b4a"},
+    {"id":"petroCrescent","hyperpower":"Petro Kingdom of Arabia","overseas":true,"tone":"serious","city":"Riyadh","founded":1975,"staff":2,"masthead":"playfair","headline":"playfair","accent":"#6b5212"},
+    {"id":"rashtraTimes","hyperpower":"Sanatana Rashtra","overseas":true,"tone":"playful","city":"Delhi","founded":1938,"staff":2,"masthead":"fell","headline":"playfair","accent":"#a3561a"},
+    {"id":"juchePulse","hyperpower":"Democratic People's Republic of Korea","overseas":true,"tone":"serious","city":"Pyongyang","founded":1948,"staff":1,"masthead":"oswald","headline":"oswald","accent":"#8a0f0f"}
+  ],
+  "sections": ["politics","world","economy","science","arcane","culture","sport","crime","faith","disaster","society"],
+  "journalistClassId": 46
+}

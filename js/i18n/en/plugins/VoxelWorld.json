@@ -79,13 +79,13 @@
   "tool": {
     "target": "{name}",
     "holding": "Holding {name}",
-    "bedrock": "The bedrock does not give.",
-    "noRoom": "Nothing to build against there.",
+    "bedrock": "Can't dig bedrock.",
+    "noRoom": "No surface to build on.",
     "struck": "Struck a seam of {name}.",
-    "pouchFull": "No room left for what came out of the rock.",
-    "barFull": "The quick bar is full. Build something with what is on it first.",
-    "noBlock": "Nothing in hand to build with.",
-    "noDigFight": "Not in a fight. The ground stays where it is.",
+    "pouchFull": "Inventory full.",
+    "barFull": "Quick bar full. Use some blocks first.",
+    "noBlock": "No block in hand.",
+    "noDigFight": "Can't dig during a fight.",
     "bareHands": "Bare hands"
   },
   "hud": {
@@ -93,10 +93,12 @@
     "cmdPlace": "Place block",
     "cmdBlock": "Change block",
     "cmdBar": "Change quick bar",
-    "cmdCast": "Cast the spell in hand",
+    "cmdCast": "Cast spell",
     "cmdReady": "Reload, fold the gun, or guard",
-    "cmdFightHit": "Attack with the weapon",
-    "cmdFightUse": "Use the spell, item or block in hand"
+    "cmdFightHit": "Attack",
+    "cmdFightUse": "Use held spell, item or block",
+    "solomonBegun": "THE SOLOMON RITUAL HAS BEGUN",
+    "solomonDismissed": "Solomon Ritual Dismissed"
   },
   "bar": {
     "blocks": "Blocks",
@@ -112,7 +114,7 @@
     "broom": "Broomstick",
     "starship": "Starship",
     "none": "No vehicles owned",
-    "called": "{name} brought round."
+    "called": "{name} summoned."
   },
   "combat": {
     "begin": "Fight!",

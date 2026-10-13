@@ -676,6 +676,33 @@
         }
     }
 
+    // The title screen, and the map the title walks about behind its menu
+    // (UI/Titlescreen.js, the Eris camera), are never on air.
+    function isTitleCamera(scene) {
+        const cam = window.TitleErisCamera;
+        return !!(cam && cam.Scene && scene instanceof cam.Scene);
+    }
+    function titleIsRunning() {
+        const scene = typeof SceneManager !== 'undefined' ? SceneManager._scene : null;
+        return !!scene && ((typeof Scene_Title !== 'undefined' && scene instanceof Scene_Title) ||
+            isTitleCamera(scene));
+    }
+
+    // Off air without giving the map its music back: what was playing is left
+    // to whoever takes the channel next (the title's own theme, a new game's
+    // first map, a save's music). The web stream, the ticker and a retune still
+    // in flight are all stopped, since nothing else would ever stop them.
+    function standDown() {
+        radio.on = false;
+        radio.suspended = false;
+        radio.playing = null;
+        radio._playingFile = null;
+        radio._lastSeek = 0;
+        if (radio._retune !== null) { clearTimeout(radio._retune); radio._retune = null; }
+        stopStream();
+        stopTicker();
+    }
+
     // Anything that is not the radio asking for the BGM is held back while the
     // set is on, which is what carries one station through a map transfer and
     // through a battle without a gap.
@@ -1244,6 +1271,16 @@
         open: openRadio,
         close: closeRadio,
         stop: powerOff,
+        // Stands the set down the way a battle does: nothing is saved, and it
+        // comes back on by itself the next time the party is on the map.
+        suspend: () => {
+            if (!radio.on) return false;
+            radio.on = false;
+            radio.suspended = true;
+            stopStream();
+            stopTicker();
+            return true;
+        },
         isOn: () => radio.on,
         isOpen: () => RadioUI.isOpen(),
         // What the set is playing, so the artist card knows the music is the
@@ -1255,7 +1292,8 @@
         // Pure parts, for the test harness.
         __test: {
             walkLibrary, buildStations, layoutBands, bandFrequencies, nextTrackIndex,
-            parseWebRadios, webStation, hashString, tick, radio, advanceTrack
+            parseWebRadios, webStation, hashString, tick, radio, advanceTrack,
+            installBattleHook, installMapBattleHook, resumeAfterFight, standDown
         }
     };
 
@@ -1294,6 +1332,7 @@
         const _Scene_Boot_start = Scene_Boot.prototype.start;
         Scene_Boot.prototype.start = function () {
             _Scene_Boot_start.call(this);
+            installBattleHook();
             try { initializeRadio(); } catch (e) {
                 console.error('TunableRadio: station scan failed', e);
             }
@@ -1307,20 +1346,36 @@
         const _DataManager_extractSaveContents = DataManager.extractSaveContents;
         DataManager.extractSaveContents = function (contents) {
             _DataManager_extractSaveContents.call(this, contents);
-            radio.on = false;
+            // The session being replaced may have had a web stream on air,
+            // which is not a BGM and so is not replaced by the save's music.
+            standDown();
             loadState();
             if (radio.on) {
                 radio.on = false;
-                playCurrentStation();
+                // Read in under the title (a quick continue, or the title's
+                // own background camera walking a save about): the title keeps
+                // its theme, and the set comes on with the map instead.
+                if (titleIsRunning()) radio.suspended = true;
+                else playCurrentStation();
             }
         };
 
         const _DataManager_setupNewGame = DataManager.setupNewGame;
         DataManager.setupNewGame = function () {
             _DataManager_setupNewGame.call(this);
-            radio.on = false;
-            radio.playing = null;
-            stopTicker();
+            standDown();
+        };
+    }
+
+    // The title is nobody's radio. Without this a set left on held the BGM
+    // through Return to Title: the title theme was refused, the station (or
+    // its web stream) played on over the menu and on into the next game.
+    if (typeof Scene_Title !== 'undefined' && Scene_Title.prototype.start) {
+        const _Scene_Title_start = Scene_Title.prototype.start;
+        Scene_Title.prototype.start = function () {
+            if (radio.on || radio.suspended || radio._stream) standDown();
+            RadioUI.close();
+            _Scene_Title_start.call(this);
         };
     }
 
@@ -1347,7 +1402,17 @@
     // the panel is the answer. When the set plays through, the battle's own
     // music never starts; when it stands down, the station comes back on the
     // moment the party is on the map again.
-    if (typeof BattleManager !== 'undefined' && BattleManager.playBattleBgm) {
+    //
+    // Installed at boot rather than at load, so it is the OUTERMOST wrapper:
+    // MusicSelectionSystem loads later and replaces playBattleBgm with its own
+    // track pick, which never calls down to the one it wrapped. Wrapped at
+    // load, this answer was never asked and a set told to stand down for a
+    // fight played right through it.
+    let battleHookInstalled = false;
+    function installBattleHook() {
+        if (battleHookInstalled) return;
+        if (typeof BattleManager === 'undefined' || !BattleManager.playBattleBgm) return;
+        battleHookInstalled = true;
         const _BattleManager_playBattleBgm = BattleManager.playBattleBgm;
         BattleManager.playBattleBgm = function () {
             if (radio.on && !radio.inBattle) {
@@ -1359,13 +1424,41 @@
             if (radio.on) return;
             return _BattleManager_playBattleBgm.call(this);
         };
+        installMapBattleHook();
+    }
+
+    // A fight played out on the live map (BattleSystem/MapBattleMode.js) never
+    // leaves Scene_Map, so the set it stood down cannot wait for the next
+    // Scene_Map.start: it comes back the moment the fight is over. A fight
+    // lost for good is left to the game over screen.
+    function resumeAfterFight() {
+        if (!radio.suspended) return false;
+        if (typeof $gameParty !== 'undefined' && $gameParty && $gameParty.isAllDead &&
+            $gameParty.isAllDead()) return false;
+        radio.suspended = false;
+        playCurrentStation();
+        return true;
+    }
+
+    let mapBattleHookInstalled = false;
+    function installMapBattleHook() {
+        if (mapBattleHookInstalled) return;
+        const MBM = window.MapBattleMode;
+        if (!MBM || typeof MBM.finish !== 'function') return;
+        mapBattleHookInstalled = true;
+        const _MBM_finish = MBM.finish;
+        MBM.finish = function () {
+            const result = _MBM_finish.apply(this, arguments);
+            resumeAfterFight();
+            return result;
+        };
     }
 
     if (typeof Scene_Map !== 'undefined' && Scene_Map.prototype.start) {
         const _Scene_Map_start = Scene_Map.prototype.start;
         Scene_Map.prototype.start = function () {
             _Scene_Map_start.call(this);
-            if (radio.suspended) {
+            if (radio.suspended && !isTitleCamera(this)) {
                 radio.suspended = false;
                 playCurrentStation();
             }

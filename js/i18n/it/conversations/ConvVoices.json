@@ -6,7 +6,7 @@
       "A-aspetta un attimo..."
     ],
     "closers": [
-      "...vero?",
+      "V-vero?",
       "S-spero.",
       "Poi non dire che l'ho detto io."
     ],
@@ -35,7 +35,7 @@
     "openers": [
       "Mm.",
       "Piano piano.",
-      "Per come la vedo io,"
+      "Te la dico come la vedo."
     ],
     "closers": [
       "Non c'è fretta.",
@@ -65,7 +65,7 @@
     "openers": [
       "Senti bene.",
       "Tsk.",
-      "Te lo dico una volta sola:"
+      "Te lo dico una volta sola."
     ],
     "closers": [
       "Hai qualcosa da ridire?",
@@ -95,12 +95,12 @@
     "openers": [
       "*sospira*",
       "Se poi conta qualcosa...",
-      "Per quel poco che vale,"
+      "Per quel poco che vale..."
     ],
     "closers": [
       "Tanto non ascolta nessuno.",
       "Sbiadisce tutto, comunque.",
-      "...come ogni cosa."
+      "Come ogni cosa."
     ],
     "favors": [
       "svanisce",
@@ -126,7 +126,7 @@
   },
   "Sanguine": {
     "openers": [
-      "Ma che bello,",
+      "Ma che bello!",
       "Sai che ti dico?",
       "Ah!"
     ],
@@ -156,9 +156,9 @@
   },
   "Cautious": {
     "openers": [
-      "Non corriamo,",
+      "Non corriamo.",
       "Piano con le mani.",
-      "Prima di tutto il resto:"
+      "Prima di tutto, una cosa."
     ],
     "closers": [
       "Meglio andare sul sicuro.",
@@ -185,9 +185,9 @@
   },
   "Impulsive": {
     "openers": [
-      "Ok ok ok,",
-      "Cambio di programma:",
-      "Lascia perdere,"
+      "Ok ok ok!",
+      "Cambio di programma!",
+      "Lascia perdere."
     ],
     "closers": [
       "E facciamolo, dai!",
@@ -216,7 +216,7 @@
     "openers": [
       "E sia.",
       "Preso nota.",
-      "È semplice:"
+      "È semplice."
     ],
     "closers": [
       "Non c'è altro da dire.",
@@ -242,9 +242,9 @@
   },
   "Paranoid": {
     "openers": [
-      "Abbassa la voce,",
-      "Non voltarti ora, ma",
-      "Fra noi due:"
+      "Abbassa la voce.",
+      "Non voltarti adesso.",
+      "Che resti fra noi due."
     ],
     "closers": [
       "Non l'hai sentito da me.",
@@ -272,9 +272,9 @@
   },
   "Empathetic": {
     "openers": [
-      "Ehi, cuore mio,",
-      "Lo sento anch'io,",
-      "Dimmi la verità:"
+      "Ehi, cuore mio.",
+      "Lo sento anch'io.",
+      "Dimmi la verità."
     ],
     "closers": [
       "Ma tu stai reggendo?",
@@ -303,8 +303,8 @@
   "Authoritative": {
     "openers": [
       "Attenzione.",
-      "Segnatelo bene:",
-      "Come ho già detto:"
+      "Segnatelo bene.",
+      "L'ho già detto e lo ripeto."
     ],
     "closers": [
       "È un ordine.",
@@ -330,9 +330,9 @@
   },
   "Scholarly": {
     "openers": [
-      "Affascinante,",
-      "Consideriamo questo:",
-      "Se ho letto bene,"
+      "Affascinante.",
+      "Consideriamo un punto.",
+      "Se le mie letture non sbagliano..."
     ],
     "closers": [
       "Merita almeno una nota a piè di pagina.",
@@ -359,9 +359,9 @@
   },
   "Artistic": {
     "openers": [
-      "Ma guarda un po',",
-      "Qui dentro c'è una poesia:",
-      "Immaginatelo:"
+      "Ma guarda un po'!",
+      "Qui dentro c'è una poesia.",
+      "Immaginatelo un attimo."
     ],
     "closers": [
       "Quasi bello, no?",
@@ -392,8 +392,8 @@
   "Adventurous": {
     "openers": [
       "Ah, ora sì che ragioniamo!",
-      "Immagina la strada aperta,",
-      "Notizie dalla strada:"
+      "Immagina la strada aperta!",
+      "Notizie dalla strada!"
     ],
     "closers": [
       "Che vita è senza un po' di rischio?",
@@ -422,9 +422,9 @@
   },
   "Nurturing": {
     "openers": [
-      "Vieni qua, ascolta,",
-      "Benedetto ragazzo,",
-      "Allora, tesoro,"
+      "Vieni qua, ascolta.",
+      "Che il cielo ti benedica.",
+      "Allora, tesoro."
     ],
     "closers": [
       "Ma hai mangiato oggi?",
@@ -455,7 +455,7 @@
     "openers": [
       "Eh eh.",
       "Giuri che non lo dici?",
-      "Oh, questa è bella,"
+      "Oh, questa è bella!"
     ],
     "closers": [
       "*sogghigna*",
@@ -483,13 +483,13 @@
   "Cynical": {
     "openers": [
       "Ma certo.",
-      "Fammi indovinare,",
-      "Che sorpresa, eh:"
+      "Fammi indovinare.",
+      "Che sorpresa, eh."
     ],
     "closers": [
       "E che ti aspettavi?",
       "Solita minestra.",
-      "Sono sconvolto, davvero."
+      "Che shock, davvero."
     ],
     "favors": [
       "ovviamente",
@@ -514,9 +514,9 @@
   },
   "Disciplined": {
     "openers": [
-      "Situazione:",
-      "In orario:",
-      "Punto primo:"
+      "Rapporto di situazione.",
+      "Tutto in orario.",
+      "Punto primo."
     ],
     "closers": [
       "Si torna al lavoro.",
@@ -544,9 +544,9 @@
   },
   "Fatalistic": {
     "openers": [
-      "Era scritto:",
-      "Come voleva il destino,",
-      "Inevitabilmente,"
+      "Era scritto.",
+      "Così ha voluto il destino.",
+      "Inevitabile."
     ],
     "closers": [
       "Doveva finire così dall'inizio.",
@@ -605,9 +605,9 @@
   },
   "Loyal": {
     "openers": [
-      "Sul mio onore,",
-      "Amico mio,",
-      "Su questo ci puoi contare:"
+      "Sul mio onore.",
+      "Credimi.",
+      "Su questo ci puoi contare."
     ],
     "closers": [
       "Io la parola la mantengo.",
@@ -633,14 +633,14 @@
   },
   "Brave": {
     "openers": [
-      "Niente paura,",
-      "La verità è questa:",
-      "Testa alta,"
+      "Niente paura.",
+      "Ti dico la verità.",
+      "Testa alta!"
     ],
     "closers": [
       "Ci andiamo dritti in faccia.",
       "Nessuna ritirata.",
-      "Coraggio, amico."
+      "Coraggio, e avanti."
     ],
     "favors": [
       "affrontare",
@@ -663,14 +663,14 @@
   },
   "Timid": {
     "openers": [
-      "S-scusa, ma...",
+      "S-scusa...",
       "Se posso permettermi...",
-      "Non badare a me, però"
+      "Non badare a me..."
     ],
     "closers": [
-      "...se per te va bene.",
+      "Se per te va bene.",
       "Scusa. Scusa.",
-      "Ecco, sto zitto."
+      "Ecco, non dico altro."
     ],
     "favors": [
       "scusa",
@@ -692,9 +692,9 @@
   },
   "Hedonistic": {
     "openers": [
-      "Mmm, sai com'è,",
-      "La vita è corta,",
-      "Versamene un altro e ascolta:"
+      "Mmm, sai com'è.",
+      "La vita è corta.",
+      "Versamene un altro e ascolta."
     ],
     "closers": [
       "Ma dov'è finito il bello?",
@@ -725,7 +725,7 @@
     "openers": [
       "Eh.",
       "Se lo dici tu.",
-      "Non che conti, però"
+      "Non che conti qualcosa."
     ],
     "closers": [
       "O come ti pare.",

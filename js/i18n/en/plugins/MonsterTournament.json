@@ -2,7 +2,7 @@
   "stat": "Stat",
   "fighter": "Fighter",
   "uses": "{user} uses {skill}!",
-  "no3d": "3D system unavailable - cannot open tournament",
+  "no3d": "3D unavailable. Cannot open the tournament.",
   "chooseFighter": "Monster Tournament - Choose Your Fighter",
   "fighterOf": "Fighter {index} / {total}",
   "doubleBet": "Double your bet (+{bet})",
@@ -22,6 +22,23 @@
     "hp": "HP",
     "mp": "MP",
     "tp": "AP",
-    "time": "TIME"
+    "time": "TIME",
+    "available": "Available: {count}",
+    "combatPower": "Combat Power: {power}"
+  },
+  "advances": "{name} advances!",
+  "bout": "{round}: {a}  VS  {b}",
+  "round": {
+    "final": "FINAL",
+    "semi": "SEMI-FINAL",
+    "quarter": "QUARTER-FINAL",
+    "other": "ROUND"
+  },
+  "popup": {
+    "down": "DOWN",
+    "miss": "MISS",
+    "mp": "{n} MP",
+    "buffUp": "{param} Up",
+    "buffDown": "{param} Down"
   }
 }

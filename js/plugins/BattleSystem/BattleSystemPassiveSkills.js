@@ -366,12 +366,12 @@
       return xparamId === 1 ? base + 0.15 : base; // evasion
     },
     outgoing(actor, target, action, value) {
-      const stacks = actor._comboStacks || 0;
+      const stacks = actor.stacks ? actor.stacks("combo") : 0;
       return stacks > 0 ? value * (1 + 0.08 * stacks) : value;
     },
     afterAction(actor) {
       // Combo lasts only until your next action; spend it whatever you do.
-      actor._comboStacks = 0;
+      if (actor.setStacks) actor.setStacks("combo", 0);
     },
   });
   reg(18, {
@@ -482,7 +482,9 @@
   reg(31, {
     // Necromancer
     onEnemyKilled(actor) {
-      actor._soulCharges = (actor._soulCharges || 0) + 1;
+      // The same Souls counter Necromancy's soul rites spend
+      // (ConsumeStacks, BattleSystemEnhancedMechanics.js).
+      if (actor.gainStacks) actor.gainStacks("souls", 1);
     },
   });
   reg(8, {
@@ -1167,11 +1169,11 @@
       isPassiveActor(target) &&
       classIdOf(target) === 17
     ) {
-      target._comboStacks = Math.min(5, (target._comboStacks || 0) + 1);
+      if (target.gainStacks) target.gainStacks("combo", 1, 5);
       battleLog(
         T("BattlePassives.log.comboSlip", {
           target: target.name(),
-          combo: target._comboStacks,
+          combo: target.stacks ? target.stacks("combo") : 0,
         })
       );
     }
@@ -1395,7 +1397,10 @@
         subject &&
         subject.isActor &&
         subject.isActor() &&
-        isChamberedSpell(subject, action.item())
+        isChamberedSpell(subject, action.item()) &&
+        // A vector gun folded into a form casts its spells held still.
+        !(window.VectorGun && window.VectorGun.castsStill &&
+          window.VectorGun.castsStill(subject, action.item()))
       ) {
         this._lastAttacker = subject;
         this._multiAttackHitCount = 0;
@@ -1413,8 +1418,7 @@
     $gameParty.allMembers().forEach((actor) => {
       actor._spellEdgeElement = null;
       actor._attuneElement = null;
-      actor._soulCharges = 0;
-      actor._comboStacks = 0;
+      // Souls and Combo are battle stacks now, wiped by onBattleEnd.
     });
     _gunFuPending = null;
     _BattleManager_endBattle.call(this, result);
@@ -1590,8 +1594,13 @@
   };
   function battleChipsFor(actor) {
     if (!actor || !actor.isActor || !actor.isActor()) return [];
-    if (!isPassiveActor(actor)) return [];
-    const chips = [];
+    // Battle stacks (ConsumeStacks) belong to whoever built them, passive or
+    // not; a counter a class chip below already draws is left to that chip.
+    const passive = isPassiveActor(actor);
+    const owned = passive ? ({ 17: ["combo"], 31: ["souls"] }[classIdOf(actor)] || []) : [];
+    const stackChips = window.BattleStacks ? window.BattleStacks.chipsFor(actor, owned) : [];
+    if (!passive) return stackChips;
+    const chips = stackChips.slice();
     switch (classIdOf(actor)) {
       case 5: // Wrestler - Pin counter on the current target
         if (
@@ -1613,9 +1622,9 @@
         break;
       }
       case 17: // Boxer - Combo stacks from dodging
-        if (actor._comboStacks > 0) {
+        if (actor.stacks && actor.stacks("combo") > 0) {
           chips.push({
-            label: T("BattlePassives.chip.combo", { count: actor._comboStacks }),
+            label: T("BattlePassives.chip.combo", { count: actor.stacks("combo") }),
             info: chipInfo("combo"),
             color: "#ff9f43",
           });
@@ -1654,9 +1663,9 @@
         }
         break;
       case 31: // Necromancer - soul charges
-        if (actor._soulCharges > 0) {
+        if (actor.stacks && actor.stacks("souls") > 0) {
           chips.push({
-            label: T("BattlePassives.chip.souls", { count: actor._soulCharges }),
+            label: T("BattlePassives.chip.souls", { count: actor.stacks("souls") }),
             info: chipInfo("souls"),
             color: "#c48cff",
           });

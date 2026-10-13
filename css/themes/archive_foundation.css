@@ -499,6 +499,10 @@
     --bg-success-medium-5: rgba(39, 174, 96, 0.05);
     --bg-success-medium-8: rgba(46, 125, 50, 0.08);
     --bg-warm-cream-25: rgba(255, 240, 200, 0.25);
+    --bg-white-translucent-4: rgba(255, 255, 255, 0.04);
+    --bg-white-translucent-5: rgba(255, 255, 255, 0.05);
+    --bg-gain-translucent-12: rgba(46, 204, 113, 0.12);
+    --bg-loss-translucent-12: rgba(231, 76, 60, 0.12);
     --bg-white-translucent-25: rgba(255, 255, 255, 0.25);
     --bg-white-translucent-30: rgba(255, 255, 255, 0.30);
     --bg-white-translucent-40: rgba(255, 255, 255, 0.40);

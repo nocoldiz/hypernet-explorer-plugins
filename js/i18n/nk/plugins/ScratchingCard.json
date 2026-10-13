@@ -18,10 +18,10 @@
     "wallet": "WALLET: €{amount}",
     "terms": "STAKE €{cost} · TOP PRIZE €{amount}",
     "back": "GO BACK",
-    "backDesc": "LEAVE DA COUNTER WIT YA MONEY IN YA POCKET!",
+    "backDesc": "LEAVE WITOUT BUYIN'.",
     "needMoney": "NO ENOUGH MONEY FOR DIS TICKET!",
     "desc": {
-      "esoteric": "PURPLE FOIL AN' BORROWED SIGILS. A MODEST CEILIN'!",
+      "esoteric": "PURPLE FOIL AN' BORROWED SIGILS. A MODEST CEILING!",
       "corporate": "BLUE INK, QUARTERLY OPTIMISM, HALF A MILLION ON DA TABLE!",
       "vacation": "SUN-BLEACHED STOCK, SOLD AT DA COUNTER OF EVERY COASTAL BAR!",
       "hypercapitalist": "BLACK CARD, GOLD FOIL, PRINTED FOR PEOPLE WHO ALREADY WON!"

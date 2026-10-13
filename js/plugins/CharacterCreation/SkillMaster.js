@@ -194,6 +194,14 @@
     _loadCategoryData();
     SkillMaster.CATEGORY_DATA = CATEGORY_DATA;
 
+    // A character's name is typed in by the player, so it is escaped before
+    // it goes into a page: a "<" in a name must not eat the markup after it.
+    function escHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
     function uncamelCase(str) {
         if (!str) return '';
         const decamel = str
@@ -1813,12 +1821,133 @@
 
     window.SkillMaster = window.SkillMaster || {};
 
-    const GROVE_MAX = 20;
-    const GROVE_MIN = 4;
-    const GROVE_FANOUT = 3;
     const FUSION_CATEGORY = 'Fusion'; // i18n-ignore: skill category id / type discriminator
     const CUSTOM_CATEGORIES = (window.SkillMaster && window.SkillMaster.CUSTOM_CATEGORIES) || ['Fusion', 'Crafted', 'Devised']; // i18n-ignore: skill category id / type discriminator
     const ROLE_RE = /<role:\s*([^>]+)>/i;
+
+    // SpineTree:begin
+    // One school, one connected tree. The plain skills climb a central SPINE,
+    // cheapest and simplest at the top, each rung a step dearer; every other
+    // plain skill hangs off the rung of its own price band in short side
+    // branches grouped by role. <Esoteric> workings and the menu-only world
+    // spells are side leaves nothing leads on from, so the main climb never
+    // asks for one, and <Forbidden>
+    // ones continue the spine below its last rung. Each node carries `row`
+    // (where it is drawn) and `tier` (the KP band, 0..5). Shared by
+    // tools/skills/gen_skill_trees.js, which writes js/db/Skills/SkillTrees.json
+    // from it, and by the trees built at runtime for the magic systems.
+    const SpineTree = {
+        BRANCH_MAX: 3,
+        TIERS: 6,
+
+        price: function (skill) {
+            return Math.max(Number(skill.mpCost) || 0, Number(skill.tpCost) || 0);
+        },
+
+        _role: function (skill) {
+            const m = ROLE_RE.exec(skill.note || '');
+            return m ? m[1].trim() : '';
+        },
+
+        // How far a skill is from "a plain blow": a dominant-role, one-target,
+        // HP-damaging skill with no riders scores 0.
+        _plainness: function (skill, dominant) {
+            const d = skill.damage || {};
+            let score = 0;
+            if (this._role(skill) !== dominant) score += 2;
+            if (skill.scope !== 1 && skill.scope !== 7 && skill.scope !== 11) score += 1;
+            if (d.type !== 1 && d.type !== 3) score += 1;
+            score += (skill.effects || []).length * 0.5;
+            if ((skill.repeats || 1) > 1) score += 0.5;
+            return score;
+        },
+
+        build: function (skills) {
+            const flag = (s, tag) => new RegExp('<' + tag + '>', 'i').test(s.note || '');
+            const byPrice = (a, b) => (this.price(a) - this.price(b)) || (a.id - b.id);
+            // A world spell, cast from the menu only, is a working whether or
+            // not it carries the tag: it never stands on the battle climb.
+            const working = s => flag(s, 'Esoteric') || s.occasion === 2;
+            let main = skills.filter(s => !flag(s, 'Forbidden') && !working(s)).sort(byPrice);
+            let occult = skills.filter(s => !flag(s, 'Forbidden') && working(s)).sort(byPrice);
+            const forbidden = skills.filter(s => flag(s, 'Forbidden')).sort(byPrice);
+            // A school of nothing but workings still needs a climb to stand on.
+            if (!main.length) { main = occult; occult = []; }
+            const nodes = [];
+            if (!main.length) {
+                forbidden.forEach((s, i) => nodes.push({ id: s.id, tier: this.TIERS - 1, row: i, spine: true, requires: i ? [forbidden[i - 1].id] : [] }));
+                return nodes;
+            }
+
+            const tally = {};
+            for (const s of main) { const r = this._role(s); tally[r] = (tally[r] || 0) + 1; }
+            const dominant = Object.keys(tally).sort((a, b) => (tally[b] - tally[a]) || a.localeCompare(b))[0];
+
+            const n = main.length;
+            const length = n <= 4 ? n : Math.max(4, Math.min(16, Math.round(Math.sqrt(n) * 1.6)));
+            const bands = [];
+            for (let b = 0; b < length; b++) {
+                bands.push(main.slice(Math.floor(b * n / length), Math.floor((b + 1) * n / length)));
+            }
+            const tierOf = b => Math.min(this.TIERS - 1, Math.floor(this.TIERS * b / length));
+
+            // Each rung is the plainest skill of its band. The root has no rung
+            // above it to catch a cheaper sibling, so it is the plainest of the
+            // band's cheapest: the climb starts on the simplest, cheapest skill.
+            const plainest = list => list.slice().sort((a, b) =>
+                (this._plainness(a, dominant) - this._plainness(b, dominant)) || byPrice(a, b))[0];
+            const spine = bands.map((band, b) => {
+                if (b > 0) return plainest(band);
+                const low = Math.min(...band.map(s => this.price(s)));
+                return plainest(band.filter(s => this.price(s) === low));
+            });
+            spine.forEach((s, b) => nodes.push({ id: s.id, tier: tierOf(b), row: b, spine: true, requires: b ? [spine[b - 1].id] : [] }));
+
+            bands.forEach((band, b) => {
+                const lanes = {};
+                for (const s of band) {
+                    if (s === spine[b]) continue;
+                    const r = this._role(s);
+                    (lanes[r] = lanes[r] || []).push(s);
+                }
+                // A branch never starts cheaper than the rung it hangs from: a
+                // skill priced under its band's rung hangs from the rung above.
+                const rungPrice = this.price(spine[b]);
+                for (const role of Object.keys(lanes).sort()) {
+                    for (const under of [true, false]) {
+                        const lane = lanes[role].filter(s => (this.price(s) < rungPrice) === under);
+                        const anchor = (under && b > 0) ? spine[b - 1] : spine[b];
+                        const startRow = (under && b > 0) ? b : b + 1;
+                        for (let i = 0; i < lane.length; i += this.BRANCH_MAX) {
+                            lane.slice(i, i + this.BRANCH_MAX).forEach((s, k, chain) => nodes.push({
+                                id: s.id, tier: tierOf(b), row: startRow + k,
+                                requires: [k ? chain[k - 1].id : anchor.id]
+                            }));
+                        }
+                    }
+                }
+            });
+
+            // Workings ride the lower two thirds of the spine as leaves.
+            const from = Math.floor(length / 3);
+            occult.forEach((s, i) => {
+                const b = Math.min(length - 1, from + Math.floor(i * (length - from) / occult.length));
+                nodes.push({ id: s.id, tier: tierOf(b), row: b + 1, requires: [spine[b].id] });
+            });
+
+            // Below everything else on the page, so the end of the climb reads
+            // as its end even where a side branch runs deep.
+            const floor = nodes.reduce((m, n) => Math.max(m, n.row), 0) + 1;
+            let tail = spine[length - 1].id;
+            forbidden.forEach((s, i) => {
+                nodes.push({ id: s.id, tier: this.TIERS - 1, row: floor + i, spine: true, requires: [tail] });
+                tail = s.id;
+            });
+            return nodes;
+        }
+    };
+    // SpineTree:end
+    SkillMaster.SpineTree = SpineTree;
 
     const SKY_SCHOOLS = {
         MartialArts:       { hue:  18 },
@@ -2055,15 +2184,6 @@
             return `${category}|${level}`;
         },
 
-        _lane: function (skill) {
-            const el = (skill.damage && skill.damage.elementId) || 0;
-            if (el > 1) return 'E' + el;
-            const role = (skill.note || '').match(ROLE_RE);
-            if (role) return 'R' + role[1].trim();
-            if (el === 1) return 'R@physical';
-            return 'R@other';
-        },
-
         _organise: function (category) {
             this._reset();
             const key = this._key(category);
@@ -2075,36 +2195,11 @@
             this._trees[key] = tree;
             if (!skills.length) return tree;
 
-            const hand = SkillMaster.HandTrees && SkillMaster.HandTrees.tree(category);
-            if (hand) {
-                this._plant(tree, category, hand, skills);
-                return tree;
-            }
-
-            const forbidden = [];
-            const climb = [];
-            for (const skill of skills) {
-                (this.isForbidden(skill.id) ? forbidden : climb).push(skill);
-            }
-
-            const power = {};
-            const scoreFn = SkillMaster.skillPower || window.skillPower || (() => 1);
-            for (const skill of skills) power[skill.id] = scoreFn(skill);
-            const rank = (a, b) => (power[a.id] - power[b.id]) || (a.id - b.id);
-
-            const laneNames = Array.from(new Set(skills.map(s => this._lane(s)))).sort();
-            const laneOf = {};
-            laneNames.forEach((name, i) => { laneOf[name] = i; });
-            tree.lanes = laneNames;
-
-            for (const members of this._groves(climb, rank)) {
-                this._grow(tree, category, members, laneOf, false);
-            }
-            if (forbidden.length) {
-                this._grow(tree, category, forbidden.slice().sort(rank), laneOf, true);
-            }
-
-            this._rank(tree);
+            // A school plants its written tree; a magic system or a bench of
+            // the party's own spells grows the same spine shape on the spot.
+            const hand = (SkillMaster.HandTrees && SkillMaster.HandTrees.tree(category))
+                || { nodes: SpineTree.build(skills) };
+            this._plant(tree, category, hand, skills);
             return tree;
         },
 
@@ -2133,16 +2228,19 @@
             };
 
             const grove = { index: 0, nodes: [], forbidden: false };
+            // `row` is where a node is drawn, `tier` its KP band (HandTrees);
+            // a tree written before rows existed draws by tier.
+            const rowOf = entry => (entry.row !== undefined ? entry.row : entry.tier);
             const ordered = (hand.nodes || []).slice()
                 .filter(entry => present[entry.id])
-                .sort((a, b) => (a.tier - b.tier) || 0);
+                .sort((a, b) => (rowOf(a) - rowOf(b)) || 0);
             ordered.forEach((entry, seat) => {
                 const skill = present[entry.id];
                 const node = {
                     id: skill.id, skill: skill, category: category,
-                    tier: entry.tier, grove: 0, seat: seat,
-                    lane: 0,
-                    forbidden: this.isForbidden(skill.id), hand: true,
+                    tier: rowOf(entry), grove: 0, seat: seat,
+                    lane: 0, spine: !!entry.spine,
+                    forbidden: this.isForbidden(skill.id),
                     parents: standing(entry.requires), children: [], need: 0
                 };
                 node.need = node.parents.length;
@@ -2159,81 +2257,9 @@
             }
             grove.depth = grove.nodes.reduce((d, n) => Math.max(d, n.tier), 0);
             tree.groves.push(grove);
-            tree.lanes = [];
-            tree.hand = true;
 
             const tiers = [];
             for (const node of tree.order) (tiers[node.tier] = tiers[node.tier] || []).push(node);
-            for (let t = 0; t < tiers.length; t++) if (!tiers[t]) tiers[t] = [];
-            tree.tiers = tiers;
-        },
-
-        _groves: function (climb, rank) {
-            if (!climb.length) return [];
-            const byLane = {};
-            for (const skill of climb) {
-                const lane = this._lane(skill);
-                (byLane[lane] = byLane[lane] || []).push(skill);
-            }
-            const groves = [];
-            const spill = [];
-            const deal = (list) => {
-                const parts = Math.max(1, Math.ceil(list.length / GROVE_MAX));
-                const bins = [];
-                for (let i = 0; i < parts; i++) bins.push([]);
-                list.slice().sort(rank).forEach((skill, i) => bins[i % parts].push(skill));
-                for (const bin of bins) if (bin.length) groves.push(bin);
-            };
-            for (const lane of Object.keys(byLane).sort()) {
-                const list = byLane[lane];
-                if (list.length < GROVE_MIN) spill.push(...list);
-                else deal(list);
-            }
-            if (spill.length) deal(spill);
-            if (!groves.length) deal(climb);
-            return groves;
-        },
-
-        _grow: function (tree, category, members, laneOf, forbidden) {
-            if (!members.length) return;
-            const grove = { index: tree.groves.length, nodes: [], forbidden: !!forbidden };
-            members.forEach((skill, seat) => {
-                const node = {
-                    id: skill.id, skill: skill, category: category,
-                    tier: 0, grove: grove.index, seat: seat,
-                    lane: laneOf[this._lane(skill)] || 0,
-                    forbidden: !!forbidden,
-                    parents: [], children: [], need: 0
-                };
-                grove.nodes.push(node);
-                tree.nodes[skill.id] = node;
-                tree.order.push(node);
-                this._index[skill.id] = node;
-            });
-            if (!forbidden) {
-                for (let i = 1; i < grove.nodes.length; i++) {
-                    const parent = grove.nodes[Math.floor((i - 1) / GROVE_FANOUT)];
-                    const node = grove.nodes[i];
-                    node.parents = [parent.id];
-                    node.tier = parent.tier + 1;
-                    node.need = 1;
-                    parent.children.push(node.id);
-                }
-            }
-            grove.depth = grove.nodes.reduce((d, n) => Math.max(d, n.tier), 0);
-            tree.groves.push(grove);
-        },
-
-        _rank: function (tree) {
-            let deepest = -1;
-            for (const node of tree.order) if (!node.forbidden) deepest = Math.max(deepest, node.tier);
-            // A school that is nothing but forbidden workings (Economy) has no
-            // climb to hang beyond, so its core stands on the first tier.
-            for (const node of tree.order) if (node.forbidden) node.tier = deepest + 1;
-            const tiers = [];
-            for (const node of tree.order) {
-                (tiers[node.tier] = tiers[node.tier] || []).push(node);
-            }
             for (let t = 0; t < tiers.length; t++) if (!tiers[t]) tiers[t] = [];
             tree.tiers = tiers;
         },
@@ -2300,9 +2326,7 @@
 
         isEntry: function (skillId) {
             const node = this._nodeFor(skillId);
-            if (!node) return true;
-            if (node.hand) return !node.parents.length;
-            return !node.forbidden && node.tier === 0;
+            return !node || !node.parents.length;
         },
 
         isOpen: function (actor, skillId) {
@@ -2319,11 +2343,7 @@
             const node = this._nodeFor(skillId);
             if (!node) return true;
             const category = node.category;
-            // Past the level floor a forbidden node of an unwritten tree stands
-            // open on its own; in a hand-written tree it still wants its roots.
-            if (node.forbidden && !node.hand) return true;
             const foreign = SkillMaster.actorCategoryManager.isForeign(category);
-            if (!foreign && (node.hand ? !node.parents.length : node.tier === 0)) return true;
             if (!node.parents.length) return !foreign;
             let held = 0;
             // A lent skill opens what stands behind it: while the gear is worn the
@@ -2333,10 +2353,6 @@
         },
 
         openers: function (skillId, actor) {
-            // A forbidden skill of an unwritten tree has no prerequisite skills,
-            // only a level floor, which the lock line states by itself.
-            const placed = this._nodeFor(skillId);
-            if (this.isForbidden(skillId) && !(placed && placed.hand)) return [];
             return this.requires(skillId)
                 .filter(id => !(actor && EquipSkills.holds(actor, id)))
                 .map(id => $dataSkills[id])
@@ -2345,7 +2361,7 @@
 
         stillWanted: function (skillId, actor) {
             const node = this._nodeFor(skillId);
-            if (!node || (node.forbidden && !node.hand) || !node.parents.length) return 0;
+            if (!node || !node.parents.length) return 0;
             let held = 0;
             for (const id of node.parents) if (EquipSkills.holds(actor, id)) held++;
             return Math.max(0, Math.max(1, node.need) - held);
@@ -2366,7 +2382,7 @@
             // its edge below.
             const nodes = tree.order.map(n => ({
                 id: n.id, skill: n.skill, tier: n.tier,
-                grove: n.grove, seat: n.seat, forbidden: n.forbidden,
+                grove: n.grove, seat: n.seat, forbidden: n.forbidden, spine: n.spine,
                 parent: n.parents.length ? n.parents[0] : 0,
                 children: n.children.filter(id => tree.nodes[id] && tree.nodes[id].parents[0] === n.id)
             }));
@@ -2458,7 +2474,7 @@
                 const node = {
                     id: n.id, skill: n.skill, category: category,
                     tier: n.tier, grove: n.grove, seat: n.seat,
-                    forbidden: !!n.forbidden, parent: n.parent, children: n.children,
+                    forbidden: !!n.forbidden, spine: !!n.spine, parent: n.parent, children: n.children,
                     x: 0, y: 0, z: 0,
                     hue: SkillShapes.hueFor(n.id, category),
                     sx: 0, sy: 0, sd: 0, vis: false
@@ -2503,7 +2519,75 @@
             };
         },
 
+        // A spine tree: the rungs run straight down the middle, and each rung's
+        // side branches are laid out as small trees of their own, dealt left
+        // and right in turn and packed row by row against what that side
+        // already holds, so no branch lands on another.
+        _laySpine: function (grove, byId) {
+            const reach = { '-1': [], '1': [] };
+            const placed = new Set();
+            const kidsOf = node => (node.children || [])
+                .map(id => byId[id])
+                .filter(k => k && !k.spine && k.grove === node.grove);
+            const local = (root) => {
+                const out = [];
+                let cursor = 0;
+                const walk = (node) => {
+                    const kids = kidsOf(node);
+                    if (!kids.length) { node._col = cursor++; }
+                    else {
+                        kids.forEach(walk);
+                        node._col = (kids[0]._col + kids[kids.length - 1]._col) / 2;
+                    }
+                    out.push(node);
+                };
+                walk(root);
+                return out;
+            };
+            const hang = (branch, side) => {
+                const edge = reach[side];
+                let offset = 1;
+                for (const n of branch) offset = Math.max(offset, (edge[n.tier] || 0) + 1 - n._col);
+                for (const n of branch) {
+                    const col = offset + n._col;
+                    edge[n.tier] = Math.max(edge[n.tier] || 0, col);
+                    n.x = side * col * SKY_COL;
+                    n.y = n.tier * SKY_ROW;
+                    placed.add(n);
+                }
+            };
+            let side = 1;
+            const spine = grove.nodes.filter(n => n.spine).sort((a, b) => a.tier - b.tier);
+            for (const rung of spine) {
+                rung.x = 0;
+                rung.y = rung.tier * SKY_ROW;
+                placed.add(rung);
+                for (const kid of kidsOf(rung)) { hang(local(kid), side); side = -side; }
+            }
+            // A branch whose rung this world holds back still hangs somewhere.
+            for (const node of grove.nodes) {
+                if (placed.has(node) || (node.parent && byId[node.parent] && !byId[node.parent].spine)) continue;
+                hang(local(node), side);
+                side = -side;
+            }
+
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            for (const n of grove.nodes) {
+                if (n.x < minX) minX = n.x;
+                if (n.x > maxX) maxX = n.x;
+                if (n.y < minY) minY = n.y;
+                if (n.y > maxY) maxY = n.y;
+            }
+            for (const n of grove.nodes) { n.x -= minX; n.y -= minY; }
+            return {
+                grove: grove,
+                w: (maxX - minX) + SKY_GROVE_GAP,
+                h: (maxY - minY) + SKY_GROVE_GAP
+            };
+        },
+
         _layGrove: function (grove, byId) {
+            if (grove.nodes.some(n => n.spine)) return this._laySpine(grove, byId);
             const roots = grove.nodes.filter(n => !n.parent);
             let cursor = 0;
             const place = (root) => {
@@ -3601,9 +3685,48 @@
     const FORGE_DOMINANT_IDX = 0;
     const FORGE_RECESSIVE_IDX = 1;
     const FORGE_ANIM_IDX = 2;
-    const FORGE_CREATE_IDX = 3;
-    const FORGE_SPLIT_BASE = 4;
-    const FORGE_SECTION_ICONS = { dominant: 79, recessive: 76, animation: 234, fused: 183 };
+    const FORGE_TAGS_IDX = 3;
+    const FORGE_CREATE_IDX = 4;
+    const FORGE_SPLIT_BASE = 5;
+    const FORGE_SECTION_ICONS = { dominant: 79, recessive: 76, animation: 234, tags: 87, fused: 183 };
+
+    //-------------------------------------------------------------------------
+    // Fusion as tags
+    //
+    // Both parents are read back into tags (window.SkillTags.decompile, in the
+    // Workbench section), and the fused entry is rebuilt from the tags the
+    // player keeps, priced on the same shipped curve as anything the Workbench
+    // writes. A shipped skill that does not decompile in full still fuses by
+    // the tags it does read as; what has no tag is listed as lost.
+    //-------------------------------------------------------------------------
+
+    // What a pair of parents offers: the union of their tags (the dominant's
+    // first), the bench the result belongs on (a skill if the recessive is a
+    // skill, as the forge always ruled), and how much of them has no tag.
+    function fusionPool(components) {
+        const ST = window.SkillTags;
+        if (!ST || !components || components.some(c => !c)) return null;
+        const reads = components.map(c => ST.decompile(c));
+        const last = reads[reads.length - 1];
+        const target = last.target === 'skill' ? 'skill' : 'spell';
+        const pool = [];
+        reads.forEach((r, i) => {
+            for (const key of r.tags) if (!pool.some(p => p.key === key)) pool.push({ key, from: i });
+        });
+        const lost = reads.reduce((n, r) => n + r.lost.length, 0);
+        return { pool, target, reads, lost };
+    }
+
+    // The tags kept when the player has not chosen: everything that fits,
+    // read in group order with the dominant's tag first wherever only one fits.
+    function fusionDefaultKept(read) {
+        const ST = window.SkillTags;
+        if (!ST || !read) return [];
+        const order = read.pool.slice().sort((a, b) => a.from - b.from).map(p => p.key);
+        return ST.normalize(order, read.target).tags;
+    }
+    SkillMaster.fusionPool = fusionPool;
+    SkillMaster.fusionDefaultKept = fusionDefaultKept;
 
     function makeFusedSpellName(names) {
         const parts = names.map(n => {
@@ -3615,10 +3738,36 @@
         return parts.join('') || 'CustomSpell';
     }
 
-    function buildFusedSkill(components, actorId, animationId) {
+    function buildFusedSkill(components, actorId, animationId, keptTags) {
         const clone = obj => JSON.parse(JSON.stringify(obj));
         const dominant = components[0];
         const recessive = components[1];
+        const ST = window.SkillTags;
+        const read = ST ? fusionPool(components) : null;
+        if (read) {
+            const tags = Array.isArray(keptTags)
+                ? ST.normalize(keptTags, read.target).tags
+                : fusionDefaultKept(read);
+            if (ST.validate(tags, read.target).ok) {
+                const fusedTags = ST.buildSkill(tags, {
+                    target: read.target,
+                    id: $gameSystem.allocCustomSkillId(),
+                    name: makeFusedSpellName(components.map(c => c.name)),
+                    iconIndex: dominant.iconIndex,
+                    animationId: (animationId && animationId > 0) ? animationId : (dominant.animationId || 0),
+                    actorId: actorId,
+                    category: SkillMaster.FUSION_CATEGORY
+                });
+                fusedTags._resultIsSkill = read.target === 'skill';
+                fusedTags._components = components.map(c => c.id);
+                fusedTags._baseSkillId = dominant.id;
+                fusedTags._fusionTags = tags.slice();
+                fusedTags._craftKind = read.target;
+                return fusedTags;
+            }
+        }
+        // Nothing reads as a whole build: the pair is welded the old way, the
+        // dominant's sheet carrying both parents' effects.
         const fused = clone(dominant);
 
         fused.id = $gameSystem.allocCustomSkillId();
@@ -3730,6 +3879,8 @@
     Proto.openSpellEditor = function () {
         this._viewMode = 'spellEditor';
         this._editorSlots = [null, null];
+        this._editorKept = null;
+        this._editorTagChip = 0;
         this._editorFocus = 0;
         this._editorPicking = false;
         this._editorPickIndex = 0;
@@ -3769,6 +3920,8 @@
         const skill = candidates[k];
         if (!skill) { SoundManager.playBuzzer(); return; }
         this._editorSlots[this._editorFocus] = skill.id;
+        this._editorKept = null;
+        this._editorTagChip = 0;
         this._editorPicking = false;
         if (!this._editorAnimId) this._editorAnimId = this.getDefaultAnimId();
         SoundManager.playOk();
@@ -3820,6 +3973,85 @@
         this.refreshUISkillDOM();
     };
 
+    // The pair in the slots, read into tags once per pair.
+    Proto.editorFusionRead = function () {
+        if (!this._editorSlots || !this._editorSlots.every(x => x != null)) return null;
+        const key = this._editorSlots.join(',');
+        if (this._editorReadKey !== key) {
+            this._editorReadKey = key;
+            this._editorRead = fusionPool(this._editorSlots.map(id => $dataSkills[id]));
+        }
+        return this._editorRead;
+    };
+
+    Proto.editorKeptTags = function () {
+        const read = this.editorFusionRead();
+        if (!read) return [];
+        if (!Array.isArray(this._editorKept)) this._editorKept = fusionDefaultKept(read);
+        return this._editorKept;
+    };
+
+    // Whether a tag of the pool can be kept beside the others, and why not.
+    Proto.editorTagVerdict = function (key) {
+        const ST = window.SkillTags;
+        const read = this.editorFusionRead();
+        if (!ST || !read) return { ok: false, reason: 'unknown' };
+        const kept = this.editorKeptTags();
+        if (kept.includes(key)) return { ok: true, on: true };
+        const def = ST.get(key);
+        if (!def) return { ok: false, reason: 'unknown' };
+        const single = ST.GROUPS.find(g => g.key === def.group);
+        let work = (single && single.max === 1) ? kept.filter(k => { const d = ST.get(k); return d && d.group !== def.group; }) : kept.slice();
+        if (def.group === 'core') work = work.filter(k => { const d = ST.get(k); return d && d.group !== 'shape'; });
+        return ST.allowed(work, key, read.target);
+    };
+
+    Proto.editorToggleTag = function (key) {
+        const ST = window.SkillTags;
+        const read = this.editorFusionRead();
+        if (!ST || !read) { SoundManager.playBuzzer(); return; }
+        const kept = this.editorKeptTags();
+        const at = read.pool.findIndex(p => p.key === key);
+        if (at >= 0) this._editorTagChip = at;
+        this._editorFocus = FORGE_TAGS_IDX;
+        if (kept.includes(key)) {
+            this._editorKept = ST.normalize(kept.filter(k => k !== key), read.target).tags;
+            SoundManager.playCancel();
+        } else {
+            const verdict = this.editorTagVerdict(key);
+            if (!verdict.ok) { SoundManager.playBuzzer(); this.refreshUISkillDOM(); return; }
+            const def = ST.get(key);
+            const single = ST.GROUPS.find(g => g.key === def.group);
+            let next = (single && single.max === 1) ? kept.filter(k => { const d = ST.get(k); return d && d.group !== def.group; }) : kept.slice();
+            next.push(key);
+            if (def.group === 'core') {
+                const shape = next.find(k => { const d = ST.get(k); return d && d.group === 'shape'; });
+                if (!ST.coreShapeOk(def, ST.get(shape))) {
+                    const heals = def.dmg === 3 || def.dmg === 4;
+                    next = next.filter(k => k !== shape).concat([heals ? 'oneAlly' : 'oneEnemy']);
+                }
+            }
+            this._editorKept = ST.normalize(next, read.target).tags;
+            SoundManager.playOk();
+        }
+        this.refreshUISkillDOM();
+    };
+
+    // The fused entry as it would come off the forge, for the preview.
+    Proto.editorFusionPreview = function () {
+        const ST = window.SkillTags;
+        const read = this.editorFusionRead();
+        if (!ST || !read) return null;
+        const kept = this.editorKeptTags();
+        if (!ST.validate(kept, read.target).ok) return null;
+        const dominant = $dataSkills[this._editorSlots[FORGE_DOMINANT_IDX]];
+        return ST.buildSkill(kept, {
+            target: read.target, id: 0,
+            name: makeFusedSpellName(this._editorSlots.map(id => ($dataSkills[id] || {}).name)),
+            iconIndex: dominant ? dominant.iconIndex : 0, category: SkillMaster.FUSION_CATEGORY
+        });
+    };
+
     Proto.editorFusionCost = function () {
         if (!this._editorSlots || !this._editorSlots.every(x => x != null)) return 0;
         const actor = this.getTeachActor();
@@ -3827,27 +4059,40 @@
     };
 
     Proto.editorCreate = async function () {
+        // One fusion at a time: the bench still reads the pad while the die
+        // is in the air, and a second OK would pay and fuse the pair again.
+        if (this._editorFusing) { SoundManager.playBuzzer(); return; }
         if (!this._editorSlots || !this._editorSlots.every(x => x != null)) { SoundManager.playBuzzer(); return; }
         const actor = this.getTeachActor();
         const components = this._editorSlots.map(id => $dataSkills[id]);
-        if (components.some(c => !c)) { SoundManager.playBuzzer(); return; }
+        if (!actor || components.some(c => !c)) { SoundManager.playBuzzer(); return; }
 
         const cost = SkillMaster.kpFusionCost(this._editorSlots, actor.actorId());
         if ($gameSystem.getKnowledge() < cost) { SoundManager.playBuzzer(); return; }
         $gameSystem.spendKnowledge(cost);
+        // What is melted down is what was paid for, whatever the slots hold
+        // by the time the die lands.
+        const consumedSlots = this._editorSlots.slice();
+        const keptTags = Array.isArray(this._editorKept) ? this._editorKept.slice() : null;
+        const animId = (this._editorAnimId && this._editorAnimId > 0) ? this._editorAnimId : this.getDefaultAnimId();
+        this._editorFusing = true;
 
         const intMod = actor ? (actor.intMod ?? Math.floor(((actor.mat || 10) - 10) / 2)) : 0;
         const dc = Math.min(18, Math.max(10, 11 + Math.floor(cost / 30)));
         let rollRes = null;
 
         if (window.Dice3D) {
-            rollRes = await window.Dice3D.rollD20({
-                actionName: T('SkillMaster.fusionRollAction', { parts: components.map(c => c.name).join(' + ') }),
-                statName: 'INT',
-                modifier: intMod,
-                dc: dc,
-                force3D: true
-            });
+            try {
+                rollRes = await window.Dice3D.rollD20({
+                    actionName: T('SkillMaster.fusionRollAction', { parts: components.map(c => c.name).join(' + ') }),
+                    statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(4) : '',
+                    modifier: intMod,
+                    dc: dc,
+                    force3D: true
+                });
+            } finally {
+                this._editorFusing = false;
+            }
         } else {
             const rawRoll = Math.floor(Math.random() * 20) + 1;
             rollRes = {
@@ -3859,15 +4104,15 @@
                 success: rawRoll === 20 || (rawRoll !== 1 && rawRoll + intMod >= dc)
             };
         }
+        this._editorFusing = false;
 
-        const consumedSlots = this._editorSlots.slice();
-        const animId = (this._editorAnimId && this._editorAnimId > 0) ? this._editorAnimId : this.getDefaultAnimId();
         this._editorSlots = [null, null];
+        this._editorKept = null;
         this._editorAnimId = 0;
         this._editorFocus = FORGE_CREATE_IDX;
 
         if (rollRes.success) {
-            const fused = buildFusedSkill(components, actor.actorId(), animId);
+            const fused = buildFusedSkill(components, actor.actorId(), animId, keptTags);
 
             if (rollRes.nat20) {
                 fused.mpCost = Math.max(1, Math.round((fused.mpCost || 1) * 0.8));
@@ -3922,6 +4167,8 @@
             window.skipLocalization = false;
         }
 
+        // The bench may have been closed while the die rolled.
+        if (window.Dice3D && window.Dice3D.ownerAlive && !window.Dice3D.ownerAlive(this)) return;
         this.refreshUISkillDOM();
     };
 
@@ -4053,10 +4300,45 @@
             body: K.trigger({ focused: animFocused, value: animName, onclick: 'SceneManager._scene.openAnimPicker()' })
         });
 
+        // The tags the fused entry keeps: every tag the pair reads as, a chip
+        // each, the kept ones lit and the ones that cannot sit beside them
+        // greyed with the reason.
+        const ST = window.SkillTags;
+        const read = this.editorFusionRead();
+        let tagsRowHTML = '';
+        if (ST && read) {
+            const kept = this.editorKeptTags();
+            const tagsFocused = !animPicking && this._editorFocus === FORGE_TAGS_IDX;
+            const chipAt = Math.max(0, Math.min(read.pool.length - 1, this._editorTagChip || 0));
+            const chips = read.pool.map((p, k) => {
+                const verdict = this.editorTagVerdict(p.key);
+                return {
+                    label: ST.name(p.key), selected: kept.includes(p.key),
+                    disabled: !verdict.ok, title: verdict.ok ? ST.info(p.key) : ST.why(verdict),
+                    cursor: tagsFocused && k === chipAt,
+                    onclick: `SceneManager._scene.editorToggleTag('${p.key}')`
+                };
+            });
+            let note = T('SkillMaster.craft.fuse.keepNote');
+            if (tagsFocused && read.pool[chipAt]) {
+                const v = this.editorTagVerdict(read.pool[chipAt].key);
+                note = v.ok ? ST.info(read.pool[chipAt].key) : ST.why(v);
+            }
+            if (read.lost) note += ' ' + T('SkillMaster.craft.fuse.lost', { n: read.lost });
+            tagsRowHTML = K.section({
+                icon: FORGE_SECTION_ICONS.tags, title: T('SkillMaster.craft.fuse.keep'),
+                badge: `${kept.length}/${read.pool.length}`,
+                cls: tagsFocused ? 'sm-kit-section--focused' : '',
+                body: chips.length ? K.chips(chips) : `<div class="ui-empty-text">${T('SkillMaster.craft.fuse.none')}</div>`,
+                note
+            });
+        }
+
         const allFilled = this._editorSlots.every(x => x != null);
         const fuseCost = allFilled ? this.editorFusionCost() : 0;
         const canPay = !allFilled || knowledge >= fuseCost;
-        const canForge = allFilled && canPay;
+        const tagsWhole = !ST || !read || ST.validate(this.editorKeptTags(), read.target).ok;
+        const canForge = allFilled && canPay && tagsWhole;
         const createFocused = !animPicking && this._editorFocus === FORGE_CREATE_IDX;
         const costTag = allFilled ? ` <span class="sm-forge-cost">&middot; ${fuseCost} KP</span>` : '';
         const createHTML = `
@@ -4091,6 +4373,7 @@
             <div class="sm-kit-scroll sm-forge-rows">
                 ${slotsHTML}
                 ${animRowHTML}
+                ${tagsRowHTML}
             </div>
             ${createHTML}
             ${K.section({
@@ -4167,7 +4450,33 @@
                 const resultIsSkill = recCat ? SkillMaster.getCategoryType(recCat) !== 'Magic' : false; // i18n-ignore: skill category id / type discriminator
                 const resultKind = resultIsSkill ? (T('SkillMaster.skill')) : (T('SkillMaster.magic'));
                 const previewCost = this.editorFusionCost();
-                rightHTML = `
+                const fusedPreview = this.editorFusionPreview();
+                const fusedQuote = (ST && read && fusedPreview) ? ST.quote(this.editorKeptTags(), read.target) : null;
+                const previewKind = fusedPreview ? (read.target === 'skill' ? T('SkillMaster.skill') : T('SkillMaster.magic')) : resultKind;
+                let fusedCard = '';
+                if (fusedPreview && window.SkillDetails && typeof window.SkillDetails.card === 'function') {
+                    try { fusedCard = window.SkillDetails.card(fusedPreview, actor, { canvasId: 'sm-fuse-inspect-canvas', subtitle: T('SkillMaster.preview2') }); }
+                    catch (e) { fusedCard = ''; }
+                }
+                if (fusedPreview) {
+                    rightHTML = `
+                    <div class="ui-detail sm-fuse-preview">
+                        ${K.stats([
+                            { label: T('SkillMaster.mpLabel'), value: fusedPreview.mpCost },
+                            { label: T('SkillMaster.apLabel'), value: fusedPreview.tpCost },
+                            { label: T('SkillMaster.fusionCost'), value: `${previewCost} KP`, bad: knowledge < previewCost },
+                            { label: T('SkillMaster.youHold'), value: `${knowledge} KP` },
+                            { label: T('SkillMaster.craft.statFloor'), value: fusedQuote ? `${fusedQuote.statKey} ${fusedQuote.statReq}` : '' },
+                            { label: T('SkillMaster.becomesA'), value: previewKind }
+                        ])}
+                        <div class="sm-craft-card">${fusedCard || `<h3 class="sm-detail-name">${previewName}</h3><div class="ui-prose">${window.NPCShared ? window.NPCShared.escapeHtml(fusedPreview.description) : fusedPreview.description}</div>`}</div>
+                        <div class="cc-bio-note sm-kit-note">${T('SkillMaster.theDominantDefinesDamageAnd')}</div>
+                    </div>`;
+                    if (window.ItemInspect && window.ItemInspect.drawIcon) {
+                        const icon = fusedPreview.iconIndex;
+                        requestAnimationFrame(() => window.ItemInspect.drawIcon(icon, 'sm-fuse-inspect-canvas'));
+                    }
+                } else rightHTML = `
                     <div class="ui-detail sm-fuse-preview">
                         <div class="ui-detail-head">
                             <div class="ui-detail-titles">
@@ -4193,7 +4502,7 @@
                     <div class="ui-empty sm-empty">
                         <div class="sm-empty-icon" style="${SkillMaster.getCategoryIconStyle('All')}"></div>
                         <h3 class="sm-detail-name">${T('SkillMaster.fuseSpells3')}</h3>
-                        <div class="ui-empty-text">${T('SkillMaster.forgeBlurb', { actor: actor.name(), knowledge: knowledge })}</div>
+                        <div class="ui-empty-text">${T('SkillMaster.forgeBlurb', { actor: window.NPCShared.escapeHtml(actor.name()), knowledge: knowledge })}</div>
                     </div>`;
             }
         }
@@ -4268,6 +4577,10 @@
                 this.editorFocusSlot(this._editorFocus);
             } else if (this._editorFocus === FORGE_ANIM_IDX) {
                 this.openAnimPicker();
+            } else if (this._editorFocus === FORGE_TAGS_IDX) {
+                const read = this.editorFusionRead();
+                const chip = read && read.pool[Math.max(0, Math.min(read.pool.length - 1, this._editorTagChip || 0))];
+                if (chip) this.editorToggleTag(chip.key); else SoundManager.playBuzzer();
             } else if (this._editorFocus === FORGE_CREATE_IDX) {
                 this.editorCreate();
             } else {
@@ -4278,8 +4591,22 @@
             return;
         } else if (Input.isTriggered('down') || Input.isRepeated('down')) {
             this._editorFocus = (this._editorFocus + 1) % maxFocus;
+            // with no pair in the slots there are no tags to stop on
+            if (this._editorFocus === FORGE_TAGS_IDX && !this.editorFusionRead()) this._editorFocus++;
         } else if (Input.isTriggered('up') || Input.isRepeated('up')) {
             this._editorFocus = (this._editorFocus - 1 + maxFocus) % maxFocus;
+            if (this._editorFocus === FORGE_TAGS_IDX && !this.editorFusionRead()) this._editorFocus--;
+        } else if (this._editorFocus === FORGE_TAGS_IDX && this.editorFusionRead()
+            && (Input.isTriggered('right') || Input.isRepeated('right') || Input.isTriggered('left') || Input.isRepeated('left'))) {
+            // On the kept tags, left and right walk the chips; OK keeps or drops one.
+            const n = this.editorFusionRead().pool.length;
+            if (n) {
+                const step = (Input.isTriggered('right') || Input.isRepeated('right')) ? 1 : -1;
+                this._editorTagChip = ((this._editorTagChip || 0) + step + n) % n;
+                SoundManager.playCursor();
+                this.refreshUISkillDOM();
+            }
+            return;
         } else if (Input.isTriggered('right') || Input.isRepeated('right')) {
             if (this._ccEnterNav('right')) return;
         }
@@ -5145,7 +5472,7 @@
             if (lender) {
                 actionsListHTML += `
                     <div class="sm-state-row sm-state-row--lent">
-                        <span class="sm-state-title">${actor.name()}</span>
+                        <span class="sm-state-title">${escHtml(actor.name())}</span>
                         <span class="sm-state-mark">${T('SkillMaster.lentBy', { item: lender.name })}</span>
                     </div>
                 `;
@@ -5155,7 +5482,7 @@
                 const learnedLabel = T('SkillMaster.learned');
                 actionsListHTML += `
                     <div class="sm-state-row sm-state-row--learned">
-                        <span class="sm-state-title">${actor.name()}</span>
+                        <span class="sm-state-title">${escHtml(actor.name())}</span>
                         <span class="sm-state-mark">✓ ${learnedLabel}</span>
                     </div>
                 `;
@@ -5292,7 +5619,9 @@
         if (!overlay) {
             overlay = document.createElement('div');
             overlay.id = 'skill-detail-popup';
-            overlay.className = 'sm-detail-dock';
+            // ".inspect-pockets" is what makes it the skills menu's own page:
+            // the compact tags and the flat card hang off it (css/theme.css).
+            overlay.className = 'sm-detail-dock inspect-pockets';
             this._dndContainer.appendChild(overlay);
         }
         overlay.innerHTML = `
@@ -5325,7 +5654,7 @@
                 let tabs = '';
                 members.forEach((m, idx) => {
                     const sel = m.actorId() === this._teachActorId ? 'selected' : '';
-                    tabs += `<div class="companion-tab ${sel}" onclick="SceneManager._scene.switchTeachActor(${idx})">${m.name()}</div>`;
+                    tabs += `<div class="companion-tab ${sel}" onclick="SceneManager._scene.switchTeachActor(${idx})">${escHtml(m.name())}</div>`;
                 });
                 compRow.innerHTML = window.CharSwitcher ? window.CharSwitcher.inner(`<div class="companion-tabs-row">${tabs}</div>`, members.length) : `<div class="companion-tabs-row">${tabs}</div>`;
             }
@@ -5620,6 +5949,11 @@
         this._selectedCategoryIndex = 0;
         this._categoryFuseFocused = false;
         this._selectedSkillIndex = 0;
+        // A cut armed on one character is never carried over to the next:
+        // the Lobotomagic bench follows the switcher, and its second press
+        // would otherwise cut the new character's row unasked.
+        this._loboArmed = -1;
+        this._loboIndex = 0;
 
         const allowed = SkillMaster.actorCategoryManager.allowedCategories();
         const stillOpen = !this._selectedCategory || this._selectedCategory === 'All' || !allowed || allowed.includes(this._selectedCategory); // i18n-ignore: skill category id / type discriminator
@@ -5751,7 +6085,9 @@
         const current = spell.name || '';
         const promptText = T('SkillMaster.renamePrompt');
         const next = (window.prompt && window.prompt(promptText, current)) || '';
-        const clean = next.trim();
+        // The name is printed straight into every page that lists the spell,
+        // so markup characters are not part of a spell name.
+        const clean = next.replace(/[<>]/g, '').trim();
         if (!clean || clean === current) return;
         spell.name = clean;
         SoundManager.playOk();
@@ -5779,6 +6115,11 @@
         const isWorkshop = SkillMaster.isWorkshopMode && SkillMaster.isWorkshopMode();
 
         if (!actor || !skill || (!isWorkshop && $gameSystem.getKnowledge() < cost)) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        // Nobody pays twice for what they already know.
+        if (actor.isLearnedSkill(skill.id)) {
             SoundManager.playBuzzer();
             return;
         }
@@ -5885,6 +6226,10 @@
         // Same again for the letter sheet a pad types on: it answers every
         // press itself until it is spent.
         if (window.Controller && Controller.textEntryOpen && Controller.textEntryOpen()) return;
+        // A pick sheet (the Workbench's tag catalogue) is modal: it is read
+        // before the focus ring, so the press that walks its list never also
+        // moves the page behind it.
+        if (window.CCPick && window.CCPick.isOpen && window.CCPick.isOpen()) { window.CCPick.pollInput(); return; }
 
         if (window.CCNav && window.CCNav.update()) return;
         if (window.CCScroll) window.CCScroll.update(this._dndContainer);
@@ -6088,8 +6433,16 @@
                     SoundManager.playBuzzer();
                 } else if (this._selectedActionIndex === 0) {
                     const actor = this.getTeachActor();
-                    const cost = $gameSystem.getSkillKnowledgeCost(skill.id, actor.actorId());
-                    this.teachSkill(actor.actorId(), cost);
+                    if (!actor) {
+                        SoundManager.playBuzzer();
+                    } else if (actor.isLearnedSkill(skill.id)) {
+                        // A known skill's first action is the carry toggle,
+                        // not a lesson: the pad reaches it the way a click does.
+                        this.toggleCarry(actor.actorId());
+                    } else {
+                        const cost = $gameSystem.getSkillKnowledgeCost(skill.id, actor.actorId());
+                        this.teachSkill(actor.actorId(), cost);
+                    }
                 } else {
                     this.openSpellPreview(skill.id);
                 }
@@ -6233,40 +6586,75 @@
 //=============================================================================
 /*:
  * @target MZ
- * @plugindesc v1.0.0 SkillMaster - the Workbench: writing a spell or a skill from bought components.
+ * @plugindesc v2.0.0 SkillMaster - the Workbench: a spell or a skill written from tags.
  * @author Omni-Lex
  *
  * @help
  * The Fusion forge welds together two things somebody else wrote. The
- * Workbench is the other half of the bench: nothing is melted down, every part
- * is bought, and what comes off it is a skill entry written field by field,
- * the same fields the editor itself writes.
+ * Workbench is the other half of the bench: nothing is melted down, and what
+ * comes off it is a skill entry assembled from TAGS.
  *
- * A build is a core, a shape, an optional amplifier, any number of riders and
- * any number of refinements. Each part carries two numbers: what it costs in
- * knowledge, and how much complexity it adds. The knowledge is paid once, at
- * the moment the entry is written. The complexity is paid forever:
+ * A tag is one mechanic: an element, a damage kind, a shape, a rider state,
+ * a refinement, a payoff written into the damage formula, a note tag the
+ * battle system reads (<SelfState:>, <DrainRate:>, <ConsumeSelfState:>,
+ * <Stack:>, <TargetPart:>, <AmmoCost:> and the rest). Every tag is the same
+ * vocabulary the shipped skills are written in, so a crafted entry behaves in
+ * battle exactly as a database skill does, in Scene_Battle and in
+ * MapBattleMode alike, and its abilities read out in the skill card's Special
+ * section with no help from this file.
  *
- *   resource cost    a spell spends MP, a skill spends AP, and both scale
- *                    with the complexity of the build
- *   stat floor       the build stamps <StatReq: STAT n> on the stat its core
- *                    scales on (craftScaling: an offensive spell INT, a mend,
- *                    a ward or a sacred or cursed spell WIS, a mind spell PSI,
- *                    a blow STR, an aimed one DEX, a second wind CON, a
- *                    bandage or a rally WIS), the damage formula reads that
- *                    same stat, and the bench refuses to write an entry whose
- *                    floor the character cannot reach
- *
- * That floor is the balance: knowledge alone never buys an ultimate, because
- * the only characters who can hold a complicated build are the ones who
- * studied the stat it leans on. Under the floor a skill still slips in battle
- * exactly as every shipped skill does (window.SkillStatReq owns that, and this
- * bench does not re-derive it).
+ * Pricing is read off the SHIPPED book: the entry's damage formula is struck
+ * at the reference caster test/test_skill_power_budget.js uses, and the MP or
+ * AP it costs is the price the shipped skills of that power are sold at (the
+ * same log-log curve, fitted from $dataSkills at runtime). Riders and
+ * mechanics that add no damage are worth a share of power on top, with
+ * diminishing returns, so a crafted entry always sits inside the x0.5..x2 band
+ * the shipped book is held to. The <StatReq:> floor is the floor the shipped
+ * book gives that price. Knowledge (KP) is paid once, at the writing.
  *
  * The name, the description, the lore, the icon and the animation are the
- * writer's own, and any of them can be rewritten later for nothing. A crafted
- * entry can also be re-opened and rebuilt: the bench charges only the
- * difference in price and never refunds.
+ * writer's own; an unwritten description is generated from the tags.
+ *
+ * ---------------------------------------------------------------------------
+ * window.SkillTags: the one tag registry, shared by every bench that writes a
+ * mechanic onto something (the Workbench, the Fusion forge, and the Enchant
+ * bench and the ThinkerMenu forge for weapons and armour).
+ *
+ *   TARGETS                    ['spell', 'skill', 'weapon', 'armor']
+ *   GROUPS                     [{ key, min, max, label }] in build order
+ *   list(filter)               tag defs; filter { target, group, search }
+ *   get(key)                   one tag def, or null
+ *   name(key) / info(key)      localized name / one line description
+ *   allowed(tags, key, target) { ok, reason, params } may `key` join `tags`?
+ *                              reason keys live under SkillMaster.craft.why.*
+ *   validate(tags, target)     { ok, reason, key, params } for a whole build
+ *   normalize(tags, target)    { tags, dropped } the build with every tag
+ *                              that no longer fits taken off, in group order
+ *   apply(entry, tags, target) writes the tags onto `entry`. For 'spell' and
+ *                              'skill' the entry's skill fields are rebuilt
+ *                              (id, name, icon, animation kept). For
+ *                              'weapon' / 'armor' traits and note tags are
+ *                              ADDED to the item (element -> trait 31 or
+ *                              11, on-hit states -> trait 32, resisted
+ *                              states -> trait 14, stance -> <DamageType:>,
+ *                              speed / extra hits / crit / hit -> traits 33,
+ *                              34, 22). A tag with no equipment form does
+ *                              nothing there; list({ target }) only offers
+ *                              the ones that have one.
+ *   buildSkill(tags, opts)     a whole $dataSkills-shaped entry; opts
+ *                              { target, id, name, description, lore,
+ *                              iconIndex, animationId, actorId, category }
+ *   quote(tags, target)        { price, complexity, mpCost, tpCost, statKey,
+ *                              paramId, statReq, power, owed, ratio, curve,
+ *                              overload (AP over 100), beyond (stronger than
+ *                              the book's top floor) } (equipment: price +
+ *                              complexity)
+ *   describe(tags, target)     the generated description, in the current
+ *                              language (SkillMaster.craft.auto.*)
+ *   decompile(entry)           { target, tags, lost, complete } any skill,
+ *                              shipped or crafted, read back into tags
+ *   curves()                   the shipped price curves in use
+ * ---------------------------------------------------------------------------
  *
  * The bench also rewrites the description and the lore of ordinary skills the
  * character already knows. Those overrides live on $gameSystem and are laid
@@ -6283,12 +6671,8 @@
     SkillMaster.CRAFT_SPELL_CATEGORY = CRAFT_SPELL_CATEGORY;
     SkillMaster.CRAFT_SKILL_CATEGORY = CRAFT_SKILL_CATEGORY;
 
-    // How many entries one character may keep on the bench at a time. The cap
-    // is the bench's, not the party's: it stops a character carrying forty
-    // near-identical builds and turning the list into something unreadable.
+    // How many entries one character may keep on the bench at a time.
     const CRAFT_MAX_PER_ACTOR = 12;
-    const CRAFT_MAX_RIDERS = 4;
-    const CRAFT_MAX_REFINES = 5;
 
     // The six base parameters a build can scale on: param id, the formula term
     // it swings with and the defence it is measured against.
@@ -6300,203 +6684,1071 @@
         DEX: { paramId: 6, atk: 'a.agi', def: 'b.def' },
         PSI: { paramId: 7, atk: 'a.luk', def: 'b.mdf' }
     };
-    const CRAFT_AIMED = ['thrust', 'marksman', 'venomEdge'];
+    const STAT_OF_TERM = { atk: 'STR', def: 'CON', mat: 'INT', mdf: 'WIS', agi: 'DEX', luk: 'PSI' };
 
     const tr = (key, params) => (typeof T === 'function' ? T('SkillMaster.craft.' + key, params) : key);
 
     //=========================================================================
-    // The catalogue
+    // The tag registry
     //
-    // Every component is one row of these tables. `kp` is what it costs to
-    // buy, `cx` the complexity it adds, and `use` which bench it belongs to.
-    // Nothing else in the module knows a component by name.
+    // Every mechanic is one row. `kp` is what it costs to buy, `cx` the
+    // complexity it adds, `fits` the benches it belongs on, `worth` the share
+    // of power it is priced at when it adds no damage of its own, `slot` a
+    // family only one member of which may be on a build, `needs` / `excludes`
+    // the rules that keep an incoherent build impossible.
     //=========================================================================
 
-    // Cores. `dmg` is the damage type an entry with this core writes
-    // (1 HP damage, 2 MP damage, 3 HP recovery, 4 MP recovery, 5 HP drain,
-    // 6 MP drain, 0 nothing at all), `power` the multiplier on the caster's
-    // attacking stat and `pierce` the share of the target's defence that
-    // still counts against it.
-    const CORES = [
-        { key: 'fire',       use: 'spell', kp: 140, cx: 1.0, dmg: 1, element: 2, power: 2.4, pierce: 1.0, hit: 2 },
-        { key: 'ice',        use: 'spell', kp: 140, cx: 1.0, dmg: 1, element: 3, power: 2.3, pierce: 1.0, hit: 2 },
-        { key: 'thunder',    use: 'spell', kp: 150, cx: 1.1, dmg: 1, element: 4, power: 2.6, pierce: 0.8, hit: 2 },
-        { key: 'water',      use: 'spell', kp: 135, cx: 1.0, dmg: 1, element: 5, power: 2.2, pierce: 1.1, hit: 2 },
-        { key: 'stone',      use: 'spell', kp: 145, cx: 1.0, dmg: 1, element: 6, power: 2.5, pierce: 0.9, hit: 2 },
-        { key: 'gale',       use: 'spell', kp: 135, cx: 1.0, dmg: 1, element: 7, power: 2.2, pierce: 1.0, hit: 2 },
-        { key: 'sacred',     use: 'spell', kp: 200, cx: 1.5, dmg: 1, element: 8, power: 2.8, pierce: 0.7, hit: 2 },
-        { key: 'cursed',     use: 'spell', kp: 220, cx: 1.6, dmg: 1, element: 9, power: 3.0, pierce: 0.6, hit: 2 },
-        { key: 'arcane',     use: 'spell', kp: 180, cx: 1.3, dmg: 1, element: 0, power: 2.5, pierce: 0.8, hit: 2 },
-        { key: 'mend',       use: 'spell', kp: 160, cx: 1.1, dmg: 3, element: 0, power: 2.6, pierce: 0.0, hit: 0 },
-        { key: 'etherFlow',  use: 'spell', kp: 190, cx: 1.3, dmg: 4, element: 0, power: 0.9, pierce: 0.0, hit: 0 },
-        { key: 'siphon',     use: 'spell', kp: 260, cx: 1.9, dmg: 5, element: 9, power: 1.8, pierce: 0.8, hit: 2 },
-        { key: 'mindBurn',   use: 'spell', kp: 210, cx: 1.4, dmg: 2, element: 0, power: 1.2, pierce: 0.5, hit: 2 },
-        { key: 'ward',       use: 'spell', kp: 90,  cx: 0.5, dmg: 0, element: 0, power: 0.0, pierce: 0.0, hit: 0 },
-
-        { key: 'strike',     use: 'skill', kp: 120, cx: 0.9, dmg: 1, element: 1, power: 3.0, pierce: 1.0, hit: 1 },
-        { key: 'cleave',     use: 'skill', kp: 150, cx: 1.1, dmg: 1, element: 1, power: 3.4, pierce: 1.2, hit: 1 },
-        { key: 'thrust',     use: 'skill', kp: 165, cx: 1.2, dmg: 1, element: 1, power: 2.8, pierce: 0.5, hit: 1 },
-        { key: 'brawl',      use: 'skill', kp: 130, cx: 1.0, dmg: 1, element: 1, power: 3.1, pierce: 0.9, hit: 1 },
-        { key: 'marksman',   use: 'skill', kp: 175, cx: 1.2, dmg: 1, element: 1, power: 2.9, pierce: 0.7, hit: 0 },
-        { key: 'venomEdge',  use: 'skill', kp: 190, cx: 1.3, dmg: 1, element: 9, power: 2.6, pierce: 0.8, hit: 1 },
-        { key: 'bandage',    use: 'skill', kp: 140, cx: 1.0, dmg: 3, element: 0, power: 1.6, pierce: 0.0, hit: 0 },
-        { key: 'secondWind', use: 'skill', kp: 200, cx: 1.4, dmg: 5, element: 1, power: 1.6, pierce: 0.9, hit: 1 },
-        { key: 'rally',      use: 'skill', kp: 80,  cx: 0.5, dmg: 0, element: 0, power: 0.0, pierce: 0.0, hit: 0 }
+    const GROUPS = [
+        { key: 'core', min: 1, max: 1 },
+        { key: 'element', min: 0, max: 1 },
+        { key: 'power', min: 0, max: 1 },
+        { key: 'shape', min: 1, max: 1 },
+        { key: 'rider', min: 0, max: 4 },
+        { key: 'refine', min: 0, max: 5 },
+        { key: 'payoff', min: 0, max: 2 },
+        { key: 'mechanic', min: 0, max: 3 }
     ];
+    const GROUP_ORDER = GROUPS.map(g => g.key);
+    const EQUIP_MAX = { element: 1, rider: 3, refine: 3, mechanic: 2 };
+    const TARGETS = ['spell', 'skill', 'weapon', 'armor'];
+    const SKILL_TARGETS = ['spell', 'skill'];
 
-    // Amplifiers. One at most, and the multiplier lands on the core's power.
-    const POWERS = [
-        { key: 'plain',   kp: 0,   cx: 0.0, mult: 1.00 },
-        { key: 'focused', kp: 140, cx: 0.8, mult: 1.25 },
-        { key: 'potent',  kp: 380, cx: 1.8, mult: 1.60 },
-        { key: 'ruinous', kp: 900, cx: 3.4, mult: 2.10 }
+    const SPELL = ['spell'], SKILL = ['skill'], BOTH = ['spell', 'skill'];
+    const fx = (code, dataId, value1, value2) => ({ code, dataId, value1, value2: value2 || 0 });
+    const trait = (code, dataId, value) => ({ code, dataId, value });
+
+    const TAGS = [];
+    const BY_KEY = {};
+    const add = (def) => {
+        if (!def.fits) def.fits = BOTH;
+        if (def.worth === undefined) def.worth = 0;
+        TAGS.push(def);
+        BY_KEY[def.key] = def;
+        return def;
+    };
+
+    // --- cores: what the entry is (its damage kind, power, defence pierced,
+    // hit type and the stat it scales on and asks for) ----------------------
+    const core = (key, fits, kp, cx, dmg, power, pierce, hit, stat, el) =>
+        add({ key, group: 'core', fits, kp, cx, dmg, power, pierce, hit, stat, el: el || 0 });
+    core('bolt',       SPELL, 140, 1.0, 1, 2.4, 1.0, 2, 'INT');
+    core('mend',       SPELL, 160, 1.1, 3, 2.6, 0.0, 0, 'WIS');
+    core('etherFlow',  SPELL, 190, 1.3, 4, 0.9, 0.0, 0, 'WIS');
+    core('siphon',     SPELL, 260, 1.9, 5, 1.8, 0.8, 2, 'WIS', 9);
+    core('mindBurn',   SPELL, 210, 1.4, 2, 1.2, 0.5, 2, 'PSI');
+    core('ward',       SPELL, 90,  0.5, 0, 0.0, 0.0, 0, 'WIS');
+    core('strike',     SKILL, 120, 0.9, 1, 3.0, 1.0, 1, 'STR', 1);
+    core('cleave',     SKILL, 150, 1.1, 1, 3.4, 1.2, 1, 'STR', 1);
+    core('thrust',     SKILL, 165, 1.2, 1, 2.8, 0.5, 1, 'DEX', 1);
+    core('brawl',      SKILL, 130, 1.0, 1, 3.1, 0.9, 1, 'STR', 1);
+    core('marksman',   SKILL, 175, 1.2, 1, 2.9, 0.7, 0, 'DEX', 1);
+    core('venomEdge',  SKILL, 190, 1.3, 1, 2.6, 0.8, 1, 'DEX', 9);
+    core('bandage',    SKILL, 140, 1.0, 3, 1.6, 0.0, 0, 'WIS');
+    core('secondWind', SKILL, 200, 1.4, 5, 1.6, 0.9, 1, 'CON', 1);
+    core('rally',      SKILL, 80,  0.5, 0, 0.0, 0.0, 0, 'WIS');
+
+    // --- elements: the element id, a factor on power, a factor on the
+    // defence still counted against it, and (sacred, cursed) the stat a
+    // spell then leans on --------------------------------------------------
+    const element = (key, kp, cx, id, mult, pierce, wis) =>
+        add({ key, group: 'element', kp, cx, id, mult, pierce, wis: !!wis, fits: ['spell', 'skill', 'weapon', 'armor'], needs: ['harms'],
+            worth: Math.max(0, 1 - pierce) * 0.25,
+            equip: (entry, target) => {
+                if (target === 'weapon') entry.traits.push(trait(31, id, 0));
+                else entry.traits.push(trait(11, id, 0.5));
+            } });
+    element('physical', 0,   0.0, 1, 1.00, 1.0);
+    element('fire',     40,  0.1, 2, 1.00, 1.0);
+    element('ice',      40,  0.1, 3, 0.96, 1.0);
+    element('thunder',  60,  0.2, 4, 1.08, 0.8);
+    element('water',    35,  0.1, 5, 0.92, 1.1);
+    element('stone',    50,  0.1, 6, 1.04, 0.9);
+    element('gale',     35,  0.1, 7, 0.92, 1.0);
+    element('sacred',   110, 0.6, 8, 1.17, 0.7, true);
+    element('cursed',   130, 0.7, 9, 1.25, 0.6, true);
+
+    // --- amplifiers ---------------------------------------------------------
+    add({ key: 'focused', group: 'power', kp: 140, cx: 0.8, mult: 1.25, needs: ['acts'] });
+    add({ key: 'potent',  group: 'power', kp: 380, cx: 1.8, mult: 1.60, needs: ['acts'] });
+    add({ key: 'ruinous', group: 'power', kp: 900, cx: 3.4, mult: 2.10, needs: ['acts'] });
+
+    // --- shapes: `side` is the line the shape points at ---------------------
+    const shape = (key, kp, cx, scope, side) => add({ key, group: 'shape', kp, cx, scope, side });
+    shape('oneEnemy',    0,   0.0, 1,  'enemy');
+    shape('twoRandom',   160, 0.9, 4,  'enemy');
+    shape('threeRandom', 300, 1.5, 5,  'enemy');
+    shape('allEnemies',  520, 2.3, 2,  'enemy');
+    shape('oneAlly',     0,   0.0, 7,  'ally');
+    shape('allAllies',   420, 2.0, 8,  'ally');
+    shape('theUser',     0,   0.0, 11, 'ally');
+    shape('everyone',    780, 3.0, 14, 'both');
+
+    // --- riders: effects written onto the entry. A state rider on the enemy
+    // line is an on-hit state on a weapon and a resisted state on armour ------
+    const stateRider = (key, kp, cx, side, stateId, chance, extra) => add(Object.assign({
+        key, group: 'rider', kp, cx, side, state: stateId, worth: cx * 0.12,
+        effects: [fx(21, stateId, chance)],
+        fits: side === 'enemy' ? ['spell', 'skill', 'weapon', 'armor'] : BOTH,
+        equip: side === 'enemy' ? (entry, target) => {
+            if (target === 'weapon') entry.traits.push(trait(32, stateId, Math.min(1, Math.round(chance * 50) / 100)));
+            else entry.traits.push(trait(14, stateId, 0));
+        } : undefined
+    }, extra || {}));
+    const fxRider = (key, kp, cx, side, effects, extra) => add(Object.assign({
+        key, group: 'rider', kp, cx, side, worth: cx * 0.12, effects
+    }, extra || {}));
+
+    stateRider('poison',      150, 0.7, 'enemy', 4,  0.60);
+    stateRider('blind',       150, 0.7, 'enemy', 5,  0.55);
+    stateRider('silence',     210, 1.0, 'enemy', 6,  0.45);
+    stateRider('confusion',   230, 1.1, 'enemy', 8,  0.35);
+    stateRider('sleep',       250, 1.2, 'enemy', 10, 0.35);
+    stateRider('freeze',      260, 1.2, 'enemy', 11, 0.32);
+    stateRider('paralysis',   300, 1.4, 'enemy', 12, 0.30);
+    stateRider('stun',        240, 1.1, 'enemy', 13, 0.40);
+    stateRider('deathMark',   620, 2.6, 'enemy', 33, 0.22);
+    stateRider('provoke',     120, 0.5, 'enemy', 20, 0.90);
+    stateRider('bleeding',    170, 0.8, 'enemy', 48, 0.60);
+    stateRider('burned',      170, 0.8, 'enemy', 43, 0.60);
+    stateRider('vulnerable',  190, 0.9, 'enemy', 40, 0.60);
+    stateRider('unbalanced',  220, 1.0, 'enemy', 38, 0.50);
+    stateRider('concussed',   240, 1.1, 'enemy', 60, 0.40);
+    stateRider('guardBroken', 260, 1.2, 'enemy', 53, 0.50);
+    stateRider('hobbled',     220, 1.0, 'enemy', 80, 0.50);
+    stateRider('disarmed',    240, 1.1, 'enemy', 81, 0.50);
+    // the reaction setups: the state the next element hit sets off
+    stateRider('wet',         130, 0.6, 'enemy', 28, 0.80);
+    stateRider('oily',        150, 0.7, 'enemy', 47, 0.80);
+    stateRider('brittle',     190, 0.9, 'enemy', 77, 0.70);
+    stateRider('volatile',    230, 1.1, 'enemy', 78, 0.60);
+    // the delayed states: they land when they run out
+    stateRider('doom',        700, 2.8, 'enemy', 87, 0.50);
+    stateRider('litFuse',     420, 1.9, 'enemy', 88, 0.60);
+    // mind control
+    stateRider('looped',      300, 1.4, 'enemy', 67, 0.50);
+    stateRider('mindSealed',  280, 1.3, 'enemy', 68, 0.60);
+    stateRider('puppeted',    520, 2.3, 'enemy', 70, 0.35);
+    stateRider('turncoat',    560, 2.5, 'enemy', 71, 0.30);
+    stateRider('mindRead',    120, 0.5, 'enemy', 73, 0.90);
+    fxRider('sapAtk',     170, 0.8, 'enemy', [fx(32, 2, 5)]);
+    fxRider('sapDef',     170, 0.8, 'enemy', [fx(32, 3, 5)]);
+    fxRider('sapMat',     170, 0.8, 'enemy', [fx(32, 4, 5)]);
+    fxRider('sapAgi',     190, 0.9, 'enemy', [fx(32, 6, 5)]);
+    fxRider('stripBuffs', 260, 1.1, 'enemy', [fx(33, 2, 0), fx(33, 3, 0), fx(33, 4, 0)]);
+
+    stateRider('regenHP',      260, 1.2, 'ally', 15, 1.0, { fits: ['spell', 'skill', 'armor'], equip: (e) => e.traits.push(trait(22, 7, 0.05)) });
+    stateRider('regenMP',      280, 1.3, 'ally', 16, 1.0, { fits: ['spell', 'skill', 'armor'], equip: (e) => e.traits.push(trait(22, 8, 0.05)) });
+    stateRider('regenAP',      280, 1.3, 'ally', 17, 1.0, { fits: ['spell', 'skill', 'armor'], equip: (e) => e.traits.push(trait(22, 9, 0.05)) });
+    stateRider('protect',      300, 1.4, 'ally', 19, 1.0);
+    stateRider('counter',      330, 1.5, 'ally', 22, 0.90);
+    stateRider('inspired',     280, 1.2, 'ally', 24, 1.0);
+    stateRider('arcaneSurge',  480, 2.1, 'ally', 36, 0.80);
+    stateRider('divineShield', 700, 2.9, 'ally', 32, 0.35);
+    stateRider('shadowVeil',   340, 1.5, 'ally', 35, 0.85);
+    stateRider('wardAilments', 360, 1.6, 'ally', 23, 0.90);
+    stateRider('dawnVow',      520, 2.3, 'ally', 89, 1.0);
+    stateRider('rebound',      380, 1.7, 'ally', 69, 1.0);
+    stateRider('echo',         520, 2.3, 'ally', 72, 1.0);
+    stateRider('bladeDrill',   160, 0.7, 'ally', 64, 1.0);
+    stateRider('gunDrill',     160, 0.7, 'ally', 65, 1.0);
+    stateRider('drilled',      140, 0.6, 'ally', 66, 1.0);
+    // the stances: on a weapon a stance is the damage type it cuts with
+    const stance = (key, stateId, type) => stateRider(key, 150, 0.6, 'ally', stateId, 1.0, {
+        fits: ['spell', 'skill', 'weapon'], damageType: type,
+        equip: (entry) => {
+            entry.note = String(entry.note || '').replace(/\n?<DamageType:[^>]*>/i, '') + '\n<DamageType: ' + type + '>'; // i18n-ignore: note tag
+            entry.meta = entry.meta || {};
+            entry.meta.DamageType = ' ' + type;
+        }
+    });
+    stance('edgeStance',       82, 'Cutting'); // i18n-ignore: Health_Core damage type id
+    stance('mercifulStance',   83, 'Blunt'); // i18n-ignore: Health_Core damage type id
+    stance('spearpointStance', 84, 'Piercing'); // i18n-ignore: Health_Core damage type id
+    stateRider('bulletTime',   420, 1.9, 'ally', 90, 1.0);
+    stateRider('foresight',    420, 1.9, 'ally', 91, 1.0);
+    stateRider('guardianBond', 360, 1.6, 'ally', 92, 1.0, { needs: ['userShape'] });
+    stateRider('lifeLink',     320, 1.4, 'any',  39, 1.0);
+    stateRider('freshMagazine', 160, 0.7, 'ally', 85, 1.0);
+    const brace = (key, kp, cx, param) => fxRider(key, kp, cx, 'ally', [fx(31, param, 5)], {
+        fits: ['spell', 'skill', 'weapon', 'armor'],
+        equip: (e) => e.traits.push(trait(21, param, 1.1))
+    });
+    brace('braceAtk', 170, 0.8, 2);
+    brace('braceDef', 170, 0.8, 3);
+    brace('braceMat', 170, 0.8, 4);
+    brace('braceAgi', 190, 0.9, 6);
+    const CLEANSE_IDS = [4, 5, 6, 8, 10, 11, 12, 13];
+    fxRider('cleanse',     320, 1.3, 'ally', CLEANSE_IDS.map(id => fx(22, id, 1.0)));
+    fxRider('firstAid',    240, 1.0, 'ally', [fx(11, 0, 0.15)]);
+    fxRider('etherSplash', 300, 1.3, 'ally', [fx(12, 0, 0.12)]);
+    fxRider('apSurge',     220, 1.0, 'ally', [fx(13, 0, 15)]);
+
+    // --- refinements: single named changes to the plain fields --------------
+    const refine = (key, kp, cx, apply, extra) => add(Object.assign({ key, group: 'refine', kp, cx, apply }, extra || {}));
+    refine('certain',    260, 1.1, sk => { sk.hitType = 0; }, { worth: 0.10 });
+    refine('twinCast',   420, 2.0, sk => { sk.repeats = 2; }, {
+        slot: 'repeats', fits: ['spell', 'skill', 'weapon'], equip: (e) => e.traits.push(trait(34, 0, 1)) });
+    refine('tripleCast', 900, 3.6, sk => { sk.repeats = 3; }, { slot: 'repeats' });
+    refine('swift',      200, 0.9, sk => { sk.speed = (sk.speed || 0) + 25; }, {
+        worth: 0.08, fits: ['spell', 'skill', 'weapon'], equip: (e) => e.traits.push(trait(33, 0, 25)) });
+    refine('precise',    150, 0.6, sk => { sk.successRate = 100; }, {
+        worth: 0.05, fits: ['spell', 'skill', 'weapon'], equip: (e) => e.traits.push(trait(22, 0, 0.1)) });
+    refine('stable',     130, 0.5, sk => { if (sk.damage) sk.damage.variance = 0; }, { worth: 0.03, slot: 'variance' });
+    refine('wild',       60,  0.2, sk => { if (sk.damage) sk.damage.variance = 50; }, { worth: -0.03, slot: 'variance' });
+    refine('keenEdge',   340, 1.5, sk => { if (sk.damage) sk.damage.critical = true; }, {
+        worth: 0.15, needs: ['damage'], fits: ['spell', 'skill', 'weapon', 'armor'], equip: (e) => e.traits.push(trait(22, 2, 0.1)) });
+    refine('guardBreak', 300, 1.3, (sk, ctx) => { ctx.pierce *= 0.5; }, { worth: 0.20, needs: ['hpHit'] });
+    refine('efficient',  380, 0.0, (sk, ctx) => { ctx.costMult *= 0.8; });
+    refine('menuCast',   260, 1.0, sk => { sk.occasion = 0; }, { worth: 0.05, needs: ['notFoe'] });
+    refine('apReturn',   200, 0.8, sk => { sk.tpGain = (sk.tpGain || 0) + 12; }, { worth: 0.08 });
+
+    // --- payoffs: a condition written into the damage formula ---------------
+    // A conditional payoff doubles (or half again) the multiplier when its
+    // condition holds; the reference strike prices the plain branch, the
+    // worth prices the chance of the other.
+    const payoff = (key, kp, cx, worth, extra) => add(Object.assign({
+        key, group: 'payoff', kp, cx, worth, needs: ['damage']
+    }, extra));
+    const consume = (key, stateId, kp) => payoff(key, kp, 1.4, 0.35, {
+        slot: 'cond', state: stateId, cond: 'a.isStateAffected(' + stateId + ')', factor: 2,
+        note: '<ConsumeSelfState: ' + stateId + '>', consumes: stateId }); // i18n-ignore: note tag
+    consume('consumeCombo',  55, 300);
+    consume('consumeLockOn', 14, 320);
+    consume('consumeFocus',  34, 380);
+    consume('consumeHide',   21, 300);
+    const versus = (key, stateId, kp) => payoff(key, kp, 1.2, 0.30, {
+        slot: 'cond', state: stateId, cond: 'b.isStateAffected(' + stateId + ')', factor: 2 });
+    versus('vsWet',        28, 240);
+    versus('vsOily',       47, 240);
+    versus('vsBrittle',    77, 260);
+    versus('vsBurned',     43, 240);
+    versus('vsPoison',     4,  240);
+    versus('vsGrappled',   51, 260);
+    versus('vsConcussed',  60, 260);
+    versus('vsUnbalanced', 38, 260);
+    versus('vsVital',      56, 280);
+    const whileHeld = (key, stateId, kp) => payoff(key, kp, 1.0, 0.25, {
+        slot: 'cond', state: stateId, cond: 'a.isStateAffected(' + stateId + ')', factor: 1.5 });
+    whileHeld('whileRage',     7,  220);
+    whileHeld('whileBerserk',  31, 220);
+    whileHeld('whileInspired', 24, 240);
+    whileHeld('whileSurge',    36, 260);
+    whileHeld('whileFlow',     58, 260);
+    payoff('execute', 360, 1.5, 0.30, { slot: 'cond', cond: 'b.hpRate() < 0.3', factor: 2 });
+    payoff('desperation', 280, 1.2, 0.10, { slot: 'desperate', desperate: true, needs: ['hpHit'] });
+    const spend = (key, name, kp) => payoff(key, kp, 1.3, 0.30, {
+        slot: 'spend', stack: name, note: '<SpendStacks: ' + name + '>' }); // i18n-ignore: note tag
+    spend('spendChi',   'chi',   300);
+    spend('spendFaith', 'faith', 300);
+    spend('spendSouls', 'souls', 340);
+
+    // --- mechanics: note tags the battle system reads -----------------------
+    const mech = (key, kp, cx, worth, extra) => add(Object.assign({ key, group: 'mechanic', kp, cx, worth }, extra));
+    const self = (key, stateId, chance, kp, cx, worth) => mech(key, kp, cx, worth, {
+        slot: 'self', state: stateId, chance: chance,
+        note: '<SelfState: ' + stateId + (chance < 1 ? ', ' + chance : '') + '>' }); // i18n-ignore: note tag
+    self('selfCombo',      55, 0.5, 160, 0.7, 0.10);
+    self('selfLockOn',     14, 1,   220, 1.0, 0.15);
+    self('selfFocus',      34, 1,   320, 1.4, 0.20);
+    self('selfDodge',      49, 1,   200, 0.9, 0.12);
+    self('selfFlow',       58, 1,   240, 1.1, 0.15);
+    self('selfCounter',    22, 1,   260, 1.2, 0.15);
+    self('selfGuard',      2,  1,   140, 0.6, 0.08);
+    self('selfHide',       21, 1,   200, 0.9, 0.12);
+    // drawbacks: a price the user pays, so the cast costs less
+    self('selfChiBurn',    59, 1,   40,  0.2, -0.15);
+    self('selfUnbalanced', 38, 1,   40,  0.2, -0.15);
+    self('selfWinded',     54, 1,   30,  0.2, -0.10);
+    self('selfVulnerable', 40, 1,   30,  0.2, -0.10);
+    mech('drainGentle', 60,  0.3, -0.10, { slot: 'drain', rate: 0.5, needs: ['drain'], note: '<DrainRate: 0.5>' }); // i18n-ignore: note tag
+    mech('drainDeep',   320, 1.4, 0.20,  { slot: 'drain', rate: 1.5, needs: ['drain'], note: '<DrainRate: 1.5>' }); // i18n-ignore: note tag
+    mech('manaSap',     260, 1.2, 0.15,  { slot: 'sap', needs: ['hpHit'], note: '<DrainMp: 0.3>' }); // i18n-ignore: note tag
+    const stackBuilder = (key, name, kp) => mech(key, kp, 0.8, 0.10, {
+        slot: 'stack-' + name, stack: name, note: '<Stack: ' + name + ', max 5>' }); // i18n-ignore: note tag
+    stackBuilder('stackChi',   'chi',   180);
+    stackBuilder('stackFaith', 'faith', 180);
+    mech('soulsOnKill', 200, 0.8, 0.10, { slot: 'stack-souls', stack: 'souls', needs: ['damage'],
+        note: '<StackOnKill: souls, max 5>' }); // i18n-ignore: note tag
+    const aim = (key, part, kp) => mech(key, kp, 0.9, 0.10, {
+        slot: 'aim', fits: SKILL, part: part, needs: ['hpHit', 'oneFoe'], note: '<TargetPart: ' + part + '>' }); // i18n-ignore: note tag
+    aim('aimHead', 'head', 260);
+    aim('aimArm',  'hand|arm', 220);
+    aim('aimLeg',  'leg', 220);
+    mech('aimable', 240, 0.9, 0.10, { slot: 'aim', fits: SKILL, needs: ['hpHit', 'oneFoe'], note: '<Aimable>' }); // i18n-ignore: note tag
+    const ammo = (key, n, worth, extra) => mech(key, 20, 0.2, worth, Object.assign({
+        slot: 'ammo', fits: SKILL, rounds: n, needs: ['marksman'], note: '<AmmoCost: ' + n + '>' }, extra || {})); // i18n-ignore: note tag
+    ammo('ammo2', 2, -0.05);
+    ammo('ammo4', 4, -0.10);
+    ammo('ammoAll', 'all', -0.10, { needs: ['marksman', 'multiHit'] });
+    mech('reload', 160, 0.6, 0, { slot: 'ammo', fits: SKILL, needs: ['emptyUser'], note: '<Reload>' }); // i18n-ignore: note tag
+    // A dodge phase the user flies (the PSI Blast common event): Scene_Battle
+    // opens it, anywhere else the skill is a plain hit.
+    const PSI_DODGE_EVENT = 7;
+    mech('bulletHell', 600, 2.6, 0.30, { needs: ['hpHit', 'foeSide'], effects: [fx(44, PSI_DODGE_EVENT, 0)] });
+
+    // A few pairs that read as one mechanic undone by the other.
+    const EXCLUDES = [
+        ['consumeCombo', 'selfCombo'], ['consumeLockOn', 'selfLockOn'], ['consumeFocus', 'selfFocus'],
+        ['consumeHide', 'selfHide'], ['spendChi', 'stackChi'], ['spendFaith', 'stackFaith'],
+        ['spendSouls', 'soulsOnKill'], ['wild', 'stable']
     ];
-
-    // Shapes. `side` is the line the shape points at, so the bench can refuse
-    // a healing core aimed across the field.
-    const SCOPES = [
-        { key: 'oneEnemy',    kp: 0,   cx: 0.0, scope: 1,  side: 'enemy' },
-        { key: 'twoRandom',   kp: 160, cx: 0.9, scope: 4,  side: 'enemy' },
-        { key: 'threeRandom', kp: 300, cx: 1.5, scope: 5,  side: 'enemy' },
-        { key: 'allEnemies',  kp: 520, cx: 2.3, scope: 2,  side: 'enemy' },
-        { key: 'oneAlly',     kp: 0,   cx: 0.0, scope: 7,  side: 'ally' },
-        { key: 'allAllies',   kp: 420, cx: 2.0, scope: 8,  side: 'ally' },
-        { key: 'theUser',     kp: 0,   cx: 0.0, scope: 11, side: 'ally' },
-        { key: 'everyone',    kp: 780, cx: 3.0, scope: 14, side: 'both' }
-    ];
-
-    // Riders. Each writes effects onto the entry. `side` is the line the rider
-    // makes sense on, and the bench bars the ones the shape cannot reach.
-    const RIDERS = [
-        { key: 'poison',       kp: 150, cx: 0.7, side: 'enemy', effects: [{ code: 21, dataId: 4,  value1: 0.60, value2: 0 }] },
-        { key: 'blind',        kp: 150, cx: 0.7, side: 'enemy', effects: [{ code: 21, dataId: 5,  value1: 0.55, value2: 0 }] },
-        { key: 'silence',      kp: 210, cx: 1.0, side: 'enemy', effects: [{ code: 21, dataId: 6,  value1: 0.45, value2: 0 }] },
-        { key: 'confusion',    kp: 230, cx: 1.1, side: 'enemy', effects: [{ code: 21, dataId: 8,  value1: 0.35, value2: 0 }] },
-        { key: 'sleep',        kp: 250, cx: 1.2, side: 'enemy', effects: [{ code: 21, dataId: 10, value1: 0.35, value2: 0 }] },
-        { key: 'freeze',       kp: 260, cx: 1.2, side: 'enemy', effects: [{ code: 21, dataId: 11, value1: 0.32, value2: 0 }] },
-        { key: 'paralysis',    kp: 300, cx: 1.4, side: 'enemy', effects: [{ code: 21, dataId: 12, value1: 0.30, value2: 0 }] },
-        { key: 'stun',         kp: 240, cx: 1.1, side: 'enemy', effects: [{ code: 21, dataId: 13, value1: 0.40, value2: 0 }] },
-        { key: 'deathMark',    kp: 620, cx: 2.6, side: 'enemy', effects: [{ code: 21, dataId: 33, value1: 0.22, value2: 0 }] },
-        { key: 'provoke',      kp: 120, cx: 0.5, side: 'enemy', effects: [{ code: 21, dataId: 20, value1: 0.90, value2: 0 }] },
-        { key: 'sapAtk',       kp: 170, cx: 0.8, side: 'enemy', effects: [{ code: 32, dataId: 2,  value1: 5, value2: 0 }] },
-        { key: 'sapDef',       kp: 170, cx: 0.8, side: 'enemy', effects: [{ code: 32, dataId: 3,  value1: 5, value2: 0 }] },
-        { key: 'sapMat',       kp: 170, cx: 0.8, side: 'enemy', effects: [{ code: 32, dataId: 4,  value1: 5, value2: 0 }] },
-        { key: 'sapAgi',       kp: 190, cx: 0.9, side: 'enemy', effects: [{ code: 32, dataId: 6,  value1: 5, value2: 0 }] },
-        { key: 'stripBuffs',   kp: 260, cx: 1.1, side: 'enemy', effects: [{ code: 33, dataId: 2, value1: 0, value2: 0 }, { code: 33, dataId: 3, value1: 0, value2: 0 }, { code: 33, dataId: 4, value1: 0, value2: 0 }] },
-
-        { key: 'regenHP',      kp: 260, cx: 1.2, side: 'ally',  effects: [{ code: 21, dataId: 15, value1: 1.0, value2: 0 }] },
-        { key: 'regenMP',      kp: 280, cx: 1.3, side: 'ally',  effects: [{ code: 21, dataId: 16, value1: 1.0, value2: 0 }] },
-        { key: 'regenAP',      kp: 280, cx: 1.3, side: 'ally',  effects: [{ code: 21, dataId: 17, value1: 1.0, value2: 0 }] },
-        { key: 'protect',      kp: 300, cx: 1.4, side: 'ally',  effects: [{ code: 21, dataId: 19, value1: 1.0, value2: 0 }] },
-        { key: 'counter',      kp: 330, cx: 1.5, side: 'ally',  effects: [{ code: 21, dataId: 22, value1: 0.90, value2: 0 }] },
-        { key: 'inspired',     kp: 280, cx: 1.2, side: 'ally',  effects: [{ code: 21, dataId: 24, value1: 1.0, value2: 0 }] },
-        { key: 'arcaneSurge',  kp: 480, cx: 2.1, side: 'ally',  effects: [{ code: 21, dataId: 36, value1: 0.80, value2: 0 }] },
-        { key: 'divineShield', kp: 700, cx: 2.9, side: 'ally',  effects: [{ code: 21, dataId: 32, value1: 0.35, value2: 0 }] },
-        { key: 'shadowVeil',   kp: 340, cx: 1.5, side: 'ally',  effects: [{ code: 21, dataId: 35, value1: 0.85, value2: 0 }] },
-        { key: 'wardAilments', kp: 360, cx: 1.6, side: 'ally',  effects: [{ code: 21, dataId: 23, value1: 0.90, value2: 0 }] },
-        { key: 'braceAtk',     kp: 170, cx: 0.8, side: 'ally',  effects: [{ code: 31, dataId: 2, value1: 5, value2: 0 }] },
-        { key: 'braceDef',     kp: 170, cx: 0.8, side: 'ally',  effects: [{ code: 31, dataId: 3, value1: 5, value2: 0 }] },
-        { key: 'braceMat',     kp: 170, cx: 0.8, side: 'ally',  effects: [{ code: 31, dataId: 4, value1: 5, value2: 0 }] },
-        { key: 'braceAgi',     kp: 190, cx: 0.9, side: 'ally',  effects: [{ code: 31, dataId: 6, value1: 5, value2: 0 }] },
-        { key: 'cleanse',      kp: 320, cx: 1.3, side: 'ally',  effects: [4, 5, 6, 8, 10, 11, 12, 13].map(id => ({ code: 22, dataId: id, value1: 1.0, value2: 0 })) },
-        { key: 'firstAid',     kp: 240, cx: 1.0, side: 'ally',  effects: [{ code: 11, dataId: 0, value1: 0.15, value2: 0 }] },
-        { key: 'etherSplash',  kp: 300, cx: 1.3, side: 'ally',  effects: [{ code: 12, dataId: 0, value1: 0.12, value2: 0 }] },
-        { key: 'apSurge',      kp: 220, cx: 1.0, side: 'ally',  effects: [{ code: 13, dataId: 0, value1: 15, value2: 0 }] }
-    ];
-
-    // Refinements write the plain fields of the entry rather than its effects,
-    // and each one is a single named change, so the readout can say exactly
-    // what the build did to the sheet.
-    const REFINES = [
-        { key: 'certain',    kp: 260, cx: 1.1, apply: sk => { sk.hitType = 0; } },
-        { key: 'twinCast',   kp: 420, cx: 2.0, apply: sk => { sk.repeats = 2; } },
-        { key: 'tripleCast', kp: 900, cx: 3.6, apply: sk => { sk.repeats = 3; } },
-        { key: 'swift',      kp: 200, cx: 0.9, apply: sk => { sk.speed = (sk.speed || 0) + 25; } },
-        { key: 'precise',    kp: 150, cx: 0.6, apply: sk => { sk.successRate = 100; } },
-        { key: 'stable',     kp: 130, cx: 0.5, apply: sk => { if (sk.damage) sk.damage.variance = 0; } },
-        { key: 'wild',       kp: 60,  cx: 0.2, apply: sk => { if (sk.damage) sk.damage.variance = 50; } },
-        { key: 'keenEdge',   kp: 340, cx: 1.5, apply: sk => { if (sk.damage) sk.damage.critical = true; } },
-        { key: 'guardBreak', kp: 300, cx: 1.3, apply: (sk, ctx) => { ctx.pierce *= 0.5; } },
-        { key: 'efficient',  kp: 380, cx: 0.0, apply: (sk, ctx) => { ctx.costMult *= 0.7; } },
-        { key: 'menuCast',   kp: 260, cx: 1.0, apply: sk => { sk.occasion = 0; } },
-        { key: 'apReturn',   kp: 200, cx: 0.8, apply: sk => { sk.tpGain = (sk.tpGain || 0) + 12; } }
-    ];
-
-    const byKey = (list, key) => list.find(c => c.key === key) || null;
-
-    SkillMaster.CraftCatalogue = { CORES, POWERS, SCOPES, RIDERS, REFINES };
-
-    //=========================================================================
-    // Pricing
-    //
-    // One place answers what a build costs and what it asks of the character.
-    // Nothing else in the module works it out a second time.
-    //=========================================================================
-
-    function craftParts(build) {
-        const parts = [];
-        const core = byKey(CORES, build.core);
-        const power = byKey(POWERS, build.power) || POWERS[0];
-        const scope = byKey(SCOPES, build.scope);
-        if (core) parts.push(core);
-        if (power && power.kp) parts.push(power);
-        if (scope) parts.push(scope);
-        for (const k of (build.riders || [])) { const r = byKey(RIDERS, k); if (r) parts.push(r); }
-        for (const k of (build.refines || [])) { const r = byKey(REFINES, k); if (r) parts.push(r); }
-        return parts;
+    for (const [a, b] of EXCLUDES) {
+        (BY_KEY[a].excludes = BY_KEY[a].excludes || []).push(b);
+        (BY_KEY[b].excludes = BY_KEY[b].excludes || []).push(a);
     }
 
-    // The stat a build scales on, and asks for, read off its core: the same
-    // rules the shipped skills follow (tools/skills/gen_stat_requirements.js).
-    function craftScaling(build) {
-        const core = byKey(CORES, build.core);
-        const spell = build.kind !== 'skill';
-        const mends = core && (core.dmg === 0 || core.dmg === 3 || core.dmg === 4);
-        let key;
-        if (!core) key = spell ? 'INT' : 'STR';
-        else if (spell) {
-            if (core.key === 'mindBurn') key = 'PSI';
-            else if (mends || core.element === 8 || core.element === 9) key = 'WIS';
-            else key = 'INT';
-        } else if (mends) key = 'WIS';
-        else if (core.key === 'secondWind') key = 'CON';
-        else if (CRAFT_AIMED.includes(core.key)) key = 'DEX';
-        else key = 'STR';
-        return Object.assign({ key: key }, CRAFT_STATS[key]);
-    }
-    SkillMaster.craftScaling = craftScaling;
+    const tagDef = (key) => BY_KEY[key] || null;
 
-    function craftQuote(build) {
-        const parts = craftParts(build);
-        const spell = build.kind !== 'skill';
-        let kp = 0, cx = 0;
-        for (const p of parts) { kp += p.kp || 0; cx += p.cx || 0; }
+    //=========================================================================
+    // The rules
+    //=========================================================================
 
-        // A long build is worth more than the sum of its parts: every
-        // component past the second asks the bench to reconcile it with
-        // everything already on the slab, and that is what is being paid for.
-        const stacking = 1 + 0.12 * Math.max(0, parts.length - 2);
-        let costMult = 1;
-        if ((build.refines || []).includes('efficient')) costMult *= 0.7;
-
-        const resourceRaw = spell ? (3 + cx * 3.4) : (4 + cx * 4.2);
-        const resource = Math.max(1, Math.round(resourceRaw * costMult));
-
+    // What the build already is, read once for every rule that asks.
+    function buildFacts(tags) {
+        const defs = (tags || []).map(tagDef).filter(Boolean);
+        const coreDef = defs.find(d => d.group === 'core') || null;
+        const shapeDef = defs.find(d => d.group === 'shape') || null;
         return {
-            parts: parts,
-            complexity: Math.round(cx * 100) / 100,
-            price: Math.max(50, Math.round(kp * stacking * (spell ? 1.0 : 0.9))),
-            // A spell spends MP and a skill spends AP. AP is the battler's
-            // hundred point pool, so a skill can never ask for more than all
-            // of it; MP has no such ceiling.
-            mpCost: spell ? resource : 0,
-            tpCost: spell ? 0 : Math.min(100, resource),
-            statKey: craftScaling(build).key,
-            paramId: craftScaling(build).paramId,
-            statReq: Math.max(3, Math.min(20, Math.round(5 + cx * 1.15)))
+            defs, keys: new Set(defs.map(d => d.key)), core: coreDef, shape: shapeDef,
+            dmg: coreDef ? coreDef.dmg : -1, side: shapeDef ? shapeDef.side : null
         };
     }
 
+    const NEEDS = {
+        damage:    f => f.dmg === 1 || f.dmg === 5,
+        harms:     f => !f.core || [1, 2, 5, 6].includes(f.dmg),
+        acts:      f => !f.core || f.dmg !== 0,
+        hpHit:     f => f.dmg === 1,
+        drain:     f => f.dmg === 5 || f.dmg === 6,
+        oneFoe:    f => !f.shape || f.shape.scope === 1,
+        foeSide:   f => !f.shape || f.side === 'enemy' || f.side === 'both',
+        notFoe:    f => !f.core || f.dmg === 0 || f.dmg === 3 || f.dmg === 4,
+        userShape: f => !f.shape || f.shape.key === 'theUser',
+        marksman:  f => !!f.core && f.core.key === 'marksman',
+        multiHit:  f => f.keys.has('twinCast') || f.keys.has('tripleCast'),
+        emptyUser: f => !!f.core && f.dmg === 0 && (!f.shape || f.shape.key === 'theUser')
+    };
+
+    const groupMax = (group, target) => SKILL_TARGETS.includes(target)
+        ? (GROUPS.find(g => g.key === group) || { max: 0 }).max
+        : (EQUIP_MAX[group] || 0);
+
+    // Does the shape reach the line a tag means something on?
+    function sideOk(def, f) {
+        if (!def.side || def.side === 'any' || !f.side || f.side === 'both') return true;
+        return def.side === f.side;
+    }
+
+    // A core that heals cannot keep an enemy shape, and the other way about.
+    function coreShapeOk(coreDef, shapeDef) {
+        if (!coreDef || !shapeDef || coreDef.dmg === 0 || shapeDef.side === 'both') return true;
+        const heals = coreDef.dmg === 3 || coreDef.dmg === 4;
+        return heals ? shapeDef.side === 'ally' : shapeDef.side === 'enemy';
+    }
+
+    // May `key` join `tags`? A tag already on the build answers for itself as
+    // it stands, so the same question reads whether a build is still whole.
+    // Core and shape swap: the one already there is not counted against them.
+    function allowed(tags, key, target) {
+        const def = tagDef(key);
+        target = target || 'spell';
+        if (!def) return { ok: false, reason: 'unknown' };
+        if (!def.fits.includes(target)) return { ok: false, reason: 'bench' };
+        const equip = !SKILL_TARGETS.includes(target);
+        if (equip && !def.equip) return { ok: false, reason: 'bench' };
+        const list = (tags || []).filter(k => k !== key);
+        const single = def.group === 'core' || def.group === 'shape';
+        const others = single ? list.filter(k => { const d = tagDef(k); return !d || d.group !== def.group; }) : list;
+        const f = buildFacts(others);
+        const max = groupMax(def.group, target);
+        if (max <= 0) return { ok: false, reason: 'bench' };
+        const inGroup = f.defs.filter(d => d.group === def.group).length;
+        if (!single && inGroup >= max) return { ok: false, reason: 'full', params: { max } };
+        if (def.slot) {
+            const twin = f.defs.find(d => d.slot === def.slot);
+            if (twin) return { ok: false, reason: 'slot', params: { other: tagName(twin.key) } };
+        }
+        for (const x of def.excludes || []) {
+            if (f.keys.has(x)) return { ok: false, reason: 'clash', params: { other: tagName(x) } };
+        }
+        if (equip) return { ok: true };
+        if (def.group === 'core' && !coreShapeOk(def, f.shape)) return { ok: false, reason: 'shape' };
+        if (def.group === 'shape' && !coreShapeOk(f.core, def)) return { ok: false, reason: 'shape' };
+        if (def.group === 'shape') {
+            // every rider and mechanic already bought must still reach its line
+            const stranded = f.defs.find(d => d.group !== 'core' && !sideOk(d, { side: def.side }));
+            if (stranded) return { ok: false, reason: 'strands', params: { other: tagName(stranded.key) } };
+        }
+        if (!sideOk(def, f)) return { ok: false, reason: 'side' };
+        for (const n of def.needs || []) {
+            if (NEEDS[n] && !NEEDS[n](f)) return { ok: false, reason: 'needs.' + n };
+        }
+        return { ok: true };
+    }
+
+    // The whole build at once: every tag allowed, every group's minimum met.
+    function validate(tags, target) {
+        target = target || 'spell';
+        const list = tags || [];
+        if (new Set(list).size !== list.length) return { ok: false, reason: 'have' };
+        for (const key of list) {
+            const v = allowed(list, key, target);
+            if (!v.ok) return Object.assign({ key }, v);
+        }
+        if (SKILL_TARGETS.includes(target)) {
+            for (const g of GROUPS) {
+                if (g.min && !list.some(k => { const d = tagDef(k); return d && d.group === g.key; })) {
+                    return { ok: false, reason: 'missing', params: { group: tr('group.' + g.key) }, group: g.key };
+                }
+            }
+        }
+        return { ok: true };
+    }
+
+    const groupIndex = (def) => GROUP_ORDER.indexOf(def.group);
+    const sortTags = (tags) => (tags || []).filter(k => tagDef(k))
+        .map((k, i) => ({ k, i, g: groupIndex(tagDef(k)) }))
+        .sort((x, y) => (x.g - y.g) || (x.i - y.i)).map(x => x.k);
+
+    // The build with every tag that no longer fits taken off. Tags are read in
+    // group order, so a core and a shape always win over what hangs on them.
+    function normalize(tags, target) {
+        const kept = [];
+        const dropped = [];
+        for (const key of sortTags(tags)) {
+            if (kept.includes(key)) continue;
+            const v = allowed(kept, key, target);
+            if (v.ok) kept.push(key);
+            else dropped.push(key);
+        }
+        return { tags: kept, dropped };
+    }
+
+    //=========================================================================
+    // The shipped curve
+    //
+    // test/test_skill_power_budget.js fits it over data/Skills.json: power is
+    // the formula struck by a caster with every stat 100 at level 1 against a
+    // target with no defence, times its hits on a lone enemy; the price is
+    // the MP or AP of the single-pool skills. The same fit runs here over the
+    // live $dataSkills (crafted and fused entries left out), so a crafted
+    // entry is priced on the book it sits in. The fallback is that fit as it
+    // stood when the bench was written.
+    //=========================================================================
+
+    const CURVE_FALLBACK = {
+        'damage-one/mp': { slope: 0.5432, mx: 3.2664, my: 6.4049 },
+        'damage-one/ap': { slope: 0.5611, mx: 3.4390, my: 6.5734 },
+        'damage-all/mp': { slope: 0.6468, mx: 4.0345, my: 6.2635 },
+        'damage-all/ap': { slope: 0.6825, mx: 3.7868, my: 6.1570 },
+        'heal-one/mp':   { slope: 0.7187, mx: 2.9768, my: 5.9543 },
+        'heal-one/ap':   { slope: 0.6872, mx: 2.9849, my: 6.0799 },
+        'heal-all/mp':   { slope: 0.6513, mx: 3.7569, my: 5.9758 },
+        'heal-all/ap':   { slope: 0.6077, mx: 3.4714, my: 5.9621 },
+        req:             { slope: 8.3566, mx: 6.3699, my: 11.6385 }
+    };
+    const WHOLE_SIDE = [2, 8, 10, 14];
+    const RANDOM_HITS = { 3: 1, 4: 2, 5: 3, 6: 4 };
+    const refBattler = (v) => ({
+        atk: v, def: v, mat: v, mdf: v, agi: v, luk: v, level: 1,
+        mhp: 1000, hp: 500, mmp: 100, mp: 100, tp: 50,
+        hpRate: () => 0.5, mpRate: () => 1, tpRate: () => 0.5,
+        isStateAffected: () => false, isDead: () => false, isAlive: () => true,
+        param: () => v, states: () => [], elementRate: () => 1
+    });
+    const REF_CASTER = refBattler(100);
+    const REF_TARGET = refBattler(0);
+    const FORMULA_FN = new Map();
+    function refPower(skill) {
+        const f = String((skill && skill.damage && skill.damage.formula) || '');
+        if (!f || f === '0') return 0;
+        let fn = FORMULA_FN.get(f);
+        if (fn === undefined) {
+            try { fn = new Function('a', 'b', 'v', 'Math', 'return (' + f + ');'); } catch (e) { fn = null; }
+            FORMULA_FN.set(f, fn);
+        }
+        if (!fn) return NaN;
+        let v;
+        try { v = Number(fn(REF_CASTER, REF_TARGET, [], Math)); } catch (e) { return NaN; }
+        return v * Math.max(1, skill.repeats || 1) * (RANDOM_HITS[skill.scope] || 1);
+    }
+
+    const fitLine = (xs, ys) => {
+        const n = xs.length;
+        const mx = xs.reduce((a, b) => a + b, 0) / n, my = ys.reduce((a, b) => a + b, 0) / n;
+        let sxy = 0, sxx = 0;
+        for (let i = 0; i < n; i++) { sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; }
+        return { slope: sxx ? sxy / sxx : 0, mx, my, n };
+    };
+    const lineAt = (c, x) => c.my + c.slope * (x - c.mx);
+    const lineInv = (c, y) => c.mx + (y - c.my) / c.slope;
+    const curveGroup = (dmg, scope) => (dmg === 3 ? 'heal' : 'damage') + (WHOLE_SIDE.includes(scope) ? '-all' : '-one');
+    const noteCategory = (s) => ((String(s.note || '').match(/<category:\s*([^>]+)>/i) || [])[1] || '').trim();
+    const noteReq = (s) => {
+        const m = String(s.note || '').match(/<StatReq:\s*([^>]+)>/i);
+        if (!m) return 0;
+        return Math.max(0, ...[...m[1].matchAll(/[A-Z]+\s+(\d+)/g)].map(x => Number(x[1])));
+    };
+
+    let curveCache = null, curveKey = null;
+    function curves() {
+        const db = (typeof $dataSkills !== 'undefined' && Array.isArray($dataSkills)) ? $dataSkills : null;
+        const key = db ? db.length : 0;
+        if (curveCache && curveKey === key) return curveCache;
+        const out = Object.assign({}, CURVE_FALLBACK);
+        out.fitted = false;
+        if (db && db.length > 400) {
+            const rows = [];
+            const custom = (window.SkillMaster && SkillMaster.CUSTOM_CATEGORIES) || ['Fusion', 'Crafted', 'Devised']; // i18n-ignore: skill category id / type discriminator
+            for (const s of db) {
+                if (!s || !s.name || String(s.name).startsWith('<--') || s._customSpell) continue;
+                const t = s.damage && s.damage.type;
+                if (t !== 1 && t !== 5 && t !== 3) continue;
+                const cat = noteCategory(s);
+                if (cat === 'Basic' || custom.includes(cat)) continue; // i18n-ignore: skill category id / type discriminator
+                const p = refPower(s);
+                if (!isFinite(p) || p <= 0) continue;
+                rows.push({ s, power: p, mp: s.mpCost || 0, ap: s.tpCost || 0, req: noteReq(s), group: curveGroup(t, s.scope) });
+            }
+            const fitted = {};
+            for (const g of ['damage-one', 'damage-all', 'heal-one', 'heal-all']) {
+                for (const pool of ['mp', 'ap']) {
+                    const other = pool === 'mp' ? 'ap' : 'mp';
+                    const shelf = rows.filter(r => r.group === g && r[pool] > 0 && r[other] === 0);
+                    if (shelf.length < 8) continue;
+                    fitted[g + '/' + pool] = fitLine(shelf.map(r => Math.log(r[pool])), shelf.map(r => Math.log(r.power)));
+                }
+            }
+            if (Object.keys(fitted).length === 8) {
+                Object.assign(out, fitted);
+                const pick = (g, pool) => out[g + '/' + pool] || out[g.replace(/-.*/, '-one') + '/' + pool];
+                const owedOf = (r) => {
+                    const apC = pick(r.group, 'ap'), mpC = pick(r.group, 'mp');
+                    if (!(r.ap > 0)) return Math.exp(lineAt(mpC, Math.log(r.mp)));
+                    let ap = r.ap;
+                    if (r.mp > 0) ap += Math.exp(lineInv(apC, lineAt(mpC, Math.log(r.mp))));
+                    return Math.exp(lineAt(apC, Math.log(ap)));
+                };
+                const gated = rows.filter(r => (r.mp > 0 || r.ap > 0) && r.req > 0);
+                if (gated.length > 20) out.req = fitLine(gated.map(r => Math.log(owedOf(r))), gated.map(r => r.req));
+                out.fitted = true;
+            }
+        }
+        curveCache = out;
+        curveKey = key;
+        return out;
+    }
+
+    //=========================================================================
+    // Assembling an entry
+    //=========================================================================
+
+    const round2 = (n) => Math.round(n * 100) / 100;
+    const LEVEL_LADDER = '(1 + a.level * 0.05)'; // i18n-ignore: RPG Maker damage formula
+
+    // The damage formula, in the shape the shipped book is written in:
+    //   (a.mat * 2.4) * (1 + a.level * 0.05) - b.mdf * 1
+    // with a payoff as a ternary over the two branches, exactly as the
+    // shipped payoffs are, so SkillDetails reads the condition back.
+    function composeFormula(ctx, dmg) {
+        if (dmg === 0) return '0';
+        const st = CRAFT_STATS[ctx.stat] || CRAFT_STATS.INT;
+        const heals = dmg === 3 || dmg === 4;
+        const pierce = round2(ctx.pierce);
+        const branch = (m) => {
+            let s = '(' + st.atk + ' * ' + round2(m) + ') * ' + LEVEL_LADDER;
+            if (ctx.stack) s += " * (1 + 0.25 * (a.stacks ? a.stacks('" + ctx.stack + "') : 0))"; // i18n-ignore: RPG Maker damage formula
+            if (ctx.desperate) s = '(a.mhp - a.hp) * 0.3 + ' + s; // i18n-ignore: RPG Maker damage formula
+            if (!heals && pierce > 0) s += ' - ' + st.def + ' * ' + pierce;
+            return s;
+        };
+        if (ctx.cond) return ctx.cond + ' ? ' + branch(ctx.mult * ctx.factor) + ' : ' + branch(ctx.mult);
+        return branch(ctx.mult);
+    }
+
+    function freshSkill(spell) {
+        return {
+            id: 0, name: '', iconIndex: 0, description: '', animationId: 0,
+            stypeId: spell ? 1 : 2, mpCost: 0, tpCost: 0, scope: 1, occasion: 1,
+            speed: 0, successRate: 95, repeats: 1, tpGain: spell ? 0 : 5, hitType: 1,
+            requiredWtypeId1: 0, requiredWtypeId2: 0, message1: '', message2: '', messageType: 0,
+            damage: { type: 0, elementId: 0, formula: '0', variance: 20, critical: false },
+            effects: [], note: '', meta: {}
+        };
+    }
+
+    // The skill fields of a build, everything but its price. Returns the
+    // entry, the context the tags wrote into and the defs in build order.
+    function assemble(tags, target) {
+        const spell = target !== 'skill';
+        const defs = sortTags(tags).map(tagDef);
+        const coreDef = defs.find(d => d.group === 'core');
+        const shapeDef = defs.find(d => d.group === 'shape');
+        const sk = freshSkill(spell);
+        const ctx = {
+            target, spell, core: coreDef || null,
+            mult: coreDef ? coreDef.power : 0, pierce: coreDef ? coreDef.pierce : 1,
+            stat: coreDef ? coreDef.stat : (spell ? 'INT' : 'STR'),
+            costMult: 1, cond: null, factor: 1, stack: null, desperate: false,
+            notes: [], worth: 0, cx: 0, kp: 0
+        };
+        if (coreDef) {
+            sk.damage.type = coreDef.dmg;
+            sk.damage.elementId = coreDef.el;
+            sk.hitType = coreDef.hit;
+        }
+        if (shapeDef) sk.scope = shapeDef.scope;
+        for (const d of defs) {
+            ctx.kp += d.kp || 0;
+            ctx.cx += d.cx || 0;
+            ctx.worth += d.worth || 0;
+            if (d.group === 'element') {
+                sk.damage.elementId = d.id;
+                ctx.mult *= d.mult;
+                ctx.pierce *= d.pierce;
+                if (d.wis && spell && coreDef && (coreDef.dmg === 1 || coreDef.dmg === 5)) ctx.stat = 'WIS';
+            } else if (d.group === 'power') {
+                ctx.mult *= d.mult;
+            }
+            if (d.apply) d.apply(sk, ctx);
+            if (d.effects) for (const e of d.effects) sk.effects.push(Object.assign({}, e));
+            if (d.cond) { ctx.cond = d.cond; ctx.factor = d.factor; }
+            if (d.group === 'payoff' && d.stack) ctx.stack = d.stack;
+            if (d.desperate) ctx.desperate = true;
+            if (d.note) ctx.notes.push(d.note);
+        }
+        // Payoffs are only ever offered on a damaging core, so the formula is
+        // the core's whatever else the build says.
+        sk.damage.formula = composeFormula(ctx, sk.damage.type);
+        return { sk, ctx, defs };
+    }
+
+    // What a build costs and what it asks of the character.
+    function priceOf(sk, ctx, defs, target) {
+        const spell = target !== 'skill';
+        const n = defs.length;
+        const stacking = 1 + 0.12 * Math.max(0, n - 2);
+        const price = Math.max(50, Math.round(ctx.kp * stacking * (spell ? 1.0 : 0.9)));
+        const stat = CRAFT_STATS[ctx.stat] ? ctx.stat : 'INT';
+        const out = {
+            price, complexity: Math.round(ctx.cx * 100) / 100,
+            statKey: stat, paramId: CRAFT_STATS[stat].paramId,
+            mpCost: 0, tpCost: 0, statReq: 3, power: 0, owed: 0, ratio: 0, curve: null, overload: false, beyond: false
+        };
+        const dmg = sk.damage.type;
+        const power = refPower(sk);
+        const pool = spell ? 'mp' : 'ap';
+        let cost;
+        const c = curves();
+        if ((dmg === 1 || dmg === 5 || dmg === 3) && power > 0 && isFinite(power)) {
+            // Riders and mechanics are priced as a share of power with
+            // diminishing returns: the share never passes 0.8, so the entry's
+            // damage never falls under x0.55 of what its price buys.
+            const w = ctx.worth;
+            const share = w > 0 ? 0.8 * (1 - Math.exp(-w / 0.8)) : Math.max(-0.4, w);
+            const group = curveGroup(dmg, sk.scope);
+            const line = c[group + '/' + pool];
+            cost = Math.exp(lineInv(line, Math.log(power * (1 + share)))) * ctx.costMult;
+            cost = Math.max(1, Math.round(cost));
+            const owed = Math.exp(lineAt(line, Math.log(cost)));
+            out.power = Math.round(power);
+            out.owed = Math.round(owed);
+            out.ratio = Math.round(power / owed * 100) / 100;
+            out.curve = group + '/' + pool;
+            const floor = lineAt(c.req, Math.log(owed));
+            out.statReq = Math.max(3, Math.min(20, Math.round(floor)));
+            // Past a floor of 25 the build is stronger than anything the
+            // book holds at any price, and the bench will not write it.
+            if (floor > 25) out.beyond = true;
+        } else {
+            // A build with no HP formula sits off the curve: it is priced on
+            // its complexity, the way the support skills of the book are.
+            cost = Math.max(1, Math.round((spell ? (3 + ctx.cx * 3.4) : (4 + ctx.cx * 4.2)) * ctx.costMult));
+            out.statReq = Math.max(3, Math.min(20, Math.round(5 + ctx.cx * 1.15)));
+        }
+        // AP is the battler's hundred point pool: a skill that would need more
+        // cannot be written at all.
+        if (!spell && cost > 100) { out.overload = true; cost = 100; }
+        if (spell) out.mpCost = cost; else out.tpCost = cost;
+        return out;
+    }
+
+    function quote(tags, target) {
+        target = target || 'spell';
+        if (!SKILL_TARGETS.includes(target)) {
+            let kp = 0, cx = 0;
+            const defs = (tags || []).map(tagDef).filter(Boolean);
+            for (const d of defs) { kp += d.kp || 0; cx += d.cx || 0; }
+            return { price: Math.round(kp * (1 + 0.12 * Math.max(0, defs.length - 2))), complexity: Math.round(cx * 100) / 100 };
+        }
+        const { sk, ctx, defs } = assemble(tags, target);
+        return priceOf(sk, ctx, defs, target);
+    }
+
+    // RMMZ's own metadata reader, so the battle plugins find the tags on
+    // item.meta exactly as on a database entry.
+    function parseMeta(note) {
+        const meta = {};
+        const re = /<([^<>:]+)(:?)([^>]*)>/g;
+        let m;
+        while ((m = re.exec(String(note || '')))) meta[m[1]] = m[2] === ':' ? m[3] : true;
+        return meta;
+    }
+
+    function buildSkill(tags, opts) {
+        const o = opts || {};
+        const target = o.target === 'skill' ? 'skill' : 'spell';
+        const spell = target === 'spell';
+        const { sk, ctx, defs } = assemble(tags, target);
+        const q = priceOf(sk, ctx, defs, target);
+        sk.id = o.id || 0;
+        sk.name = o.name || tr(spell ? 'defaultSpellName' : 'defaultSkillName');
+        sk.iconIndex = o.iconIndex || 0;
+        sk.animationId = o.animationId || 0;
+        sk.mpCost = q.mpCost;
+        sk.tpCost = q.tpCost;
+        const category = o.category || (spell ? CRAFT_SPELL_CATEGORY : CRAFT_SKILL_CATEGORY);
+        const lore = String(o.lore || '').replace(/[<>]/g, '').trim();
+        let note = '<customSpell>\n<category:' + category + '>\n<StatReq: ' + q.statKey + ' ' + q.statReq + '>';
+        for (const line of ctx.notes) note += '\n' + line;
+        if (lore) note += '\n<Lore: ' + lore + '>';
+        sk.note = note;
+        sk.meta = parseMeta(note);
+        sk.meta.customSpell = true;
+        if (lore) sk.meta.Lore = lore;
+        sk.description = o.description || describeEntry(sk, defs, target);
+        // a generated description is written again in whatever language the
+        // save is next loaded in; a written one is the writer's and stays
+        sk._autoDesc = !o.description;
+        sk._customSpell = true;
+        sk._customCategory = category;
+        sk._craftTags = sortTags(tags);
+        sk._animationId = sk.animationId;
+        if (o.actorId !== undefined) sk._ownerActorId = o.actorId;
+        return sk;
+    }
+
+    // Writing tags onto something that already exists. A skill is rebuilt
+    // field by field around its identity; a piece of equipment only gains.
+    function apply(entry, tags, target) {
+        if (!entry) return entry;
+        target = target || 'spell';
+        if (SKILL_TARGETS.includes(target)) {
+            const sk = buildSkill(tags, {
+                target, id: entry.id, name: entry.name, iconIndex: entry.iconIndex,
+                animationId: entry.animationId, description: entry.description
+            });
+            return Object.assign(entry, sk);
+        }
+        entry.traits = Array.isArray(entry.traits) ? entry.traits : [];
+        entry.note = String(entry.note || '');
+        for (const key of sortTags(tags)) {
+            const def = tagDef(key);
+            if (def && def.equip && def.fits.includes(target)) def.equip(entry, target);
+        }
+        return entry;
+    }
+
+    //=========================================================================
+    // The generated description
+    //
+    // House style: what it does, to whom, with which element and states, then
+    // the payoffs and the mechanics, ending on timing and accuracy. Every word
+    // is a template in SkillMaster.craft.auto.
+    //=========================================================================
+
+    function dbName(text) {
+        if (!text) return '';
+        return typeof window.Hendrix_Localization === 'function' ? window.Hendrix_Localization(String(text)) : String(text);
+    }
+    function stateLabel(id) {
+        const st = (typeof $dataStates !== 'undefined' && $dataStates) ? $dataStates[id] : null;
+        return st && st.name ? dbName(st.name) : tr('auto.stateN', { id });
+    }
+    function joinList(items) {
+        if (items.length <= 1) return items.join('');
+        return items.slice(0, -1).join(tr('auto.comma')) + tr('auto.and') + items[items.length - 1];
+    }
+    const sentence = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+
+    // The words the shipped descriptions use for the same multipliers.
+    function weightOf(mult) {
+        if (mult < 4) return 'minor';
+        if (mult < 5.5) return 'light';
+        if (mult < 8) return 'normal';
+        if (mult < 11) return 'heavy';
+        return 'massive';
+    }
+
+    function describeEntry(sk, defs, target) {
+        if (!SKILL_TARGETS.includes(target)) {
+            return defs.map(d => tagName(d.key)).join(tr('auto.comma'));
+        }
+        const shapeDef = defs.find(d => d.group === 'shape');
+        const who = tr('auto.target.' + (shapeDef ? shapeDef.key : 'oneEnemy'));
+        const dmg = sk.damage.type;
+        // the plain branch: a payoff's other branch is named on its own
+        const mult = (() => {
+            const all = [...String(sk.damage.formula).matchAll(/a\.\w+ \* ([\d.]+)\)/g)];
+            return all.length ? Number(all[all.length - 1][1]) : 0;
+        })();
+        const inflicts = [], grants = [], lines = [];
+        for (const d of defs) {
+            if (d.group !== 'rider') continue;
+            if (d.state) (d.side === 'enemy' ? inflicts : grants).push(stateLabel(d.state));
+            else lines.push(tr('auto.rider.' + d.key));
+        }
+        const times = sk.repeats > 1 ? tr('auto.times.' + Math.min(3, sk.repeats)) : '';
+        let lead;
+        const params = {
+            target: who, weight: tr('auto.weight.' + weightOf(mult)),
+            element: sk.damage.elementId > 0 ? tr('auto.el.' + sk.damage.elementId) : ''
+        };
+        if (dmg === 0) {
+            if (inflicts.length) { lead = tr('auto.lead.inflict', { states: joinList(inflicts), target: who }); inflicts.length = 0; }
+            else if (grants.length) { lead = tr('auto.lead.grant', { states: joinList(grants), target: who }); grants.length = 0; }
+            else if (lines.length) { lead = tr('auto.lead.acts', { target: who }); }
+            else lead = '';
+        } else {
+            lead = tr('auto.lead.' + dmg, params) + times;
+        }
+        const tail = [];
+        if (inflicts.length) tail.push(tr('auto.inflicts', { states: joinList(inflicts) }));
+        if (grants.length) tail.push(tr('auto.grants', { states: joinList(grants) }));
+        for (const l of lines) tail.push(l);
+        let text = lead ? sentence(lead + (tail.length ? tr('auto.and') + joinList(tail) : '')) + '.' : '';
+
+        const more = [];
+        for (const d of defs) {
+            if (d.group === 'payoff' || d.group === 'mechanic') {
+                const p = { state: d.state ? stateLabel(d.state) : '', stack: d.stack ? tr('auto.stackName.' + d.stack) : '',
+                    part: d.part ? tr('auto.part.' + d.part.split('|').pop()) : '', n: d.rounds };
+                let key = 'auto.tag.' + d.key;
+                if (d.slot === 'self') key = d.worth < 0 ? 'auto.selfCost' : (d.chance < 1 ? 'auto.selfMaybe' : 'auto.self');
+                else if (d.consumes) key = 'auto.consume';
+                else if (d.slot === 'cond' && d.state) key = d.factor === 2 ? 'auto.versus' : 'auto.whileHeld';
+                else if (d.group === 'payoff' && d.stack) key = 'auto.spend';
+                else if (d.slot === 'aim' && d.part) key = 'auto.aim';
+                else if (d.slot === 'ammo' && d.rounds) key = d.rounds === 'all' ? 'auto.ammoAll' : 'auto.ammo';
+                else if (d.slot && d.slot.startsWith('stack-')) key = d.key === 'soulsOnKill' ? 'auto.stackOnKill' : 'auto.stack';
+                more.push(tr(key, p));
+            }
+        }
+        for (const d of defs) {
+            if (d.group === 'refine' && ['certain', 'keenEdge', 'menuCast', 'guardBreak', 'apReturn'].includes(d.key)) {
+                more.push(tr('auto.tag.' + d.key));
+            }
+        }
+        if (sk.speed > 0) more.push(tr('auto.first'));
+        if (dmg === 0 && sk.successRate < 100 && (shapeDef && shapeDef.side === 'enemy')) {
+            more.push(tr('auto.lands', { pct: sk.successRate }));
+        }
+        if (more.length) text += (text ? ' ' : '') + more.join(' ');
+        return text || sentence(tr('auto.lead.empty')) + '.';
+    }
+
+    function describe(tags, target) {
+        target = target || 'spell';
+        if (!SKILL_TARGETS.includes(target)) return describeEntry(null, sortTags(tags).map(tagDef), target);
+        const { sk, defs } = assemble(tags, target);
+        return describeEntry(sk, defs, target);
+    }
+
+    //=========================================================================
+    // The decompiler
+    //
+    // Any skill read back into the tags it could be rebuilt from, as far as it
+    // can be. What has no tag (an effect, a scope, a note tag the registry
+    // does not know) is listed in `lost`.
+    //=========================================================================
+
+    const SCOPE_TO_SHAPE = { 1: 'oneEnemy', 2: 'allEnemies', 3: 'oneEnemy', 4: 'twoRandom', 5: 'threeRandom', 6: 'threeRandom',
+        7: 'oneAlly', 8: 'allAllies', 11: 'theUser', 14: 'everyone' };
+    const POWER_STEPS = [['', 1], ['focused', 1.25], ['potent', 1.6], ['ruinous', 2.1]];
+
+    function targetOf(skill) {
+        if (skill._craftKind) return skill._craftKind === 'skill' ? 'skill' : 'spell';
+        const cat = noteCategory(skill);
+        if (cat && window.SkillMaster && SkillMaster.getCategoryType && cat !== 'Fusion') { // i18n-ignore: skill category id / type discriminator
+            const type = SkillMaster.getCategoryType(cat);
+            if (type) return type === 'Magic' ? 'spell' : 'skill'; // i18n-ignore: skill category id / type discriminator
+        }
+        return skill.stypeId === 1 ? 'spell' : 'skill';
+    }
+
+    function decompile(skill) {
+        const out = { target: 'spell', tags: [], lost: [], complete: true };
+        if (!skill) { out.complete = false; return out; }
+        if (Array.isArray(skill._craftTags) && skill._craftTags.length) {
+            out.target = skill._craftKind === 'skill' ? 'skill' : (skill._craftKind === 'spell' ? 'spell' : targetOf(skill));
+            const n = normalize(skill._craftTags, out.target);
+            out.tags = n.tags;
+            out.lost = n.dropped.map(k => 'tag:' + k);
+            out.complete = !n.dropped.length;
+            return out;
+        }
+        const target = targetOf(skill);
+        out.target = target;
+        const tags = [];
+        const lose = (what) => { out.lost.push(what); };
+        const d = skill.damage || { type: 0, formula: '0', elementId: 0 };
+        const f = String(d.formula || '0');
+        const note = String(skill.note || '');
+        // the plain branch of a payoff is the formula the core is read off
+        const condM = /^\s*([ab])\.isStateAffected\((\d+)\)\s*\?/.exec(f) || /^\s*(b)\.hpRate\(\)\s*<\s*[\d.]+\s*\?/.exec(f);
+        const plain = condM ? f.slice(f.lastIndexOf(':') + 1) : f;
+        const term = /a\.(atk|def|mat|mdf|agi|luk)\s*\*\s*([\d.]+)/.exec(plain);
+        const stat = term ? STAT_OF_TERM[term[1]] : null;
+        const mult = term ? Number(term[2]) : 0;
+        const pierceM = /-\s*b\.(?:def|mdf)\s*\*\s*([\d.]+)/.exec(plain);
+
+        // the core
+        let coreKey = null;
+        if (target === 'spell') {
+            coreKey = { 0: 'ward', 1: 'bolt', 2: 'mindBurn', 3: 'mend', 4: 'etherFlow', 5: 'siphon' }[d.type] || null;
+        } else if (d.type === 1) {
+            if (/<AmmoCost:/i.test(note)) coreKey = 'marksman';
+            else if (stat === 'DEX') coreKey = skill.hitType === 0 ? 'marksman' : (d.elementId === 9 ? 'venomEdge' : 'thrust');
+            else if (noteCategory(skill) === 'MartialArts') coreKey = 'brawl'; // i18n-ignore: skill category id
+            else coreKey = (pierceM && Number(pierceM[1]) > 1.1) ? 'cleave' : 'strike';
+        } else {
+            coreKey = { 0: 'rally', 3: 'bandage', 5: 'secondWind' }[d.type] || null;
+        }
+        if (!coreKey) { lose('core'); out.complete = false; return out; }
+        const coreDef = tagDef(coreKey);
+        tags.push(coreKey);
+
+        // the element
+        const el = TAGS.find(t => t.group === 'element' && t.id === d.elementId);
+        let elMult = 1;
+        // an element on an entry that strikes nothing is never read, so it is not a loss either
+        if (d.elementId > 0 && d.elementId !== coreDef.el && [1, 2, 5, 6].includes(d.type)) {
+            if (el) { tags.push(el.key); elMult = el.mult; } else lose('element');
+        } else if (d.elementId < 0 && d.type) lose('element');
+
+        // the amplifier, read as the nearest step over what the core alone strikes for
+        if (coreDef.power > 0 && mult > 0) {
+            const ratio = mult / (coreDef.power * elMult);
+            let best = POWER_STEPS[0];
+            for (const step of POWER_STEPS) if (Math.abs(Math.log(ratio / step[1])) < Math.abs(Math.log(ratio / best[1]))) best = step;
+            if (best[0]) tags.push(best[0]);
+        }
+
+        // the shape
+        const shapeKey = SCOPE_TO_SHAPE[skill.scope];
+        if (shapeKey) tags.push(shapeKey); else lose('scope');
+
+        // the refinements
+        if (skill.hitType === 0 && coreDef.hit !== 0) tags.push('certain');
+        if (skill.repeats === 2) tags.push('twinCast'); else if (skill.repeats >= 3) tags.push('tripleCast');
+        if (skill.speed > 0) tags.push('swift');
+        // a shipped skill lands 100% of the time by default, so only a
+        // crafted entry (read off its own tags above) ever carries Precise
+        if (d.type && d.variance === 0) tags.push('stable'); else if (d.type && d.variance >= 40) tags.push('wild');
+        if (d.type && d.critical) tags.push('keenEdge');
+        if (skill.occasion === 0) tags.push('menuCast');
+        if ((skill.tpGain || 0) >= 12) tags.push('apReturn');
+
+        // the riders, matched on their first effect
+        let cleansed = false, stripped = false;
+        for (const e of skill.effects || []) {
+            if (!e) continue;
+            if (e.code === 22 && CLEANSE_IDS.includes(e.dataId)) { if (!cleansed) tags.push('cleanse'); cleansed = true; continue; }
+            if (e.code === 33) { if (!stripped) tags.push('stripBuffs'); stripped = true; continue; }
+            const rider = TAGS.find(t => t.effects && t.effects.length && t.effects[0].code === e.code &&
+                (t.effects[0].dataId === e.dataId || [11, 12, 13].includes(e.code)) && (e.code !== 11 || e.value1 > 0 || e.value2 > 0));
+            if (rider && !tags.includes(rider.key)) tags.push(rider.key);
+            else if (!rider) lose('effect:' + e.code + ':' + e.dataId);
+        }
+
+        // the payoffs
+        const consumeM = /<ConsumeSelfState:\s*(\d+)/i.exec(note);
+        if (condM && condM[1] === 'a' && consumeM) {
+            const t = TAGS.find(x => x.consumes === Number(consumeM[1]));
+            if (t) tags.push(t.key); else lose('consume');
+        } else if (condM && condM[2] !== undefined) {
+            const id = Number(condM[2]);
+            const t = TAGS.find(x => x.slot === 'cond' && x.state === id && !x.consumes &&
+                (condM[1] === 'b' ? x.factor === 2 : x.factor === 1.5));
+            if (t) tags.push(t.key); else lose('payoff');
+        } else if (condM) tags.push('execute');
+        if (/a\.mhp\s*-\s*a\.hp/.test(f)) tags.push('desperation');
+        const spendM = /<SpendStacks:\s*([^>]+)>/i.exec(note);
+        if (spendM) {
+            const t = TAGS.find(x => x.group === 'payoff' && x.stack === spendM[1].trim().split(',')[0].trim().toLowerCase());
+            if (t) tags.push(t.key); else lose('spend');
+        }
+
+        // the mechanics
+        const selfM = /<SelfState:\s*(\d+)/i.exec(note);
+        if (selfM) { const t = TAGS.find(x => x.slot === 'self' && x.state === Number(selfM[1])); if (t) tags.push(t.key); else lose('self'); }
+        const drainM = /<DrainRate:\s*([\d.]+)/i.exec(note);
+        if (drainM) tags.push(Number(drainM[1]) < 1 ? 'drainGentle' : 'drainDeep');
+        if (/<DrainMp:/i.test(note)) tags.push('manaSap');
+        const stackM = /<Stack:\s*([A-Za-z][\w-]*)/i.exec(note);
+        if (stackM) { const t = TAGS.find(x => x.group === 'mechanic' && x.stack === stackM[1].toLowerCase()); if (t) tags.push(t.key); else lose('stack'); }
+        if (/<StackOnKill:/i.test(note)) tags.push('soulsOnKill');
+        const partM = /<TargetPart:\s*([^>]+)>/i.exec(note);
+        if (partM) {
+            const part = partM[1].toLowerCase();
+            tags.push(/head|neck/.test(part) ? 'aimHead' : (/leg|foot|wing/.test(part) ? 'aimLeg' : 'aimArm'));
+        } else if (/<Aimable>/i.test(note)) tags.push('aimable');
+        const ammoM = /<AmmoCost:\s*(all|\d+)/i.exec(note);
+        if (ammoM) tags.push(/all/i.test(ammoM[1]) ? 'ammoAll' : (Number(ammoM[1]) <= 2 ? 'ammo2' : 'ammo4'));
+        if (/<Reload>/i.test(note)) tags.push('reload');
+        if ((skill.effects || []).some(e => e && e.code === 44 && e.dataId === PSI_DODGE_EVENT)) tags.push('bulletHell');
+        for (const k of ['BulletHell', 'OncePerDay', 'PistolWhip', 'FreeHandsNeeded']) {
+            if (new RegExp('<' + k + '>', 'i').test(note)) lose('note:' + k);
+        }
+
+        const n = normalize(tags, target);
+        out.tags = n.tags;
+        for (const k of n.dropped) lose('tag:' + k);
+        out.complete = out.lost.length === 0;
+        return out;
+    }
+
+    //=========================================================================
+    // Names, and the public service
+    //=========================================================================
+
+    function tagName(key) { return tr('tags.' + key + '.name'); }
+    function tagInfo(key) { return tr('tags.' + key + '.desc'); }
+    function whyText(verdict) {
+        if (!verdict || verdict.ok) return '';
+        return tr('why.' + verdict.reason, verdict.params || {});
+    }
+
+    function list(filter) {
+        const fl = filter || {};
+        const needle = String(fl.search || '').trim().toLowerCase();
+        return TAGS.filter(t => {
+            if (fl.group && t.group !== fl.group) return false;
+            if (fl.target && !t.fits.includes(fl.target)) return false;
+            if (fl.target && !SKILL_TARGETS.includes(fl.target) && !t.equip) return false;
+            if (needle && (tagName(t.key) + ' ' + tagInfo(t.key) + ' ' + t.key).toLowerCase().indexOf(needle) < 0) return false;
+            return true;
+        });
+    }
+
+    const SkillTags = {
+        TARGETS, GROUPS, TAGS,
+        list, get: tagDef, name: tagName, info: tagInfo, why: whyText,
+        allowed, validate, normalize, sort: sortTags,
+        apply, buildSkill, quote, describe, decompile,
+        curves, refPower, parseMeta, coreShapeOk
+    };
+    window.SkillTags = SkillTags;
+    SkillMaster.SkillTags = SkillTags;
+
+    //=========================================================================
+    // The bench's own reading of a build: { kind, name, description, lore,
+    // iconIndex, animationId, tags }
+    //=========================================================================
+
+    function craftQuote(build) {
+        return quote((build && build.tags) || [], build && build.kind === 'skill' ? 'skill' : 'spell');
+    }
     SkillMaster.craftQuote = craftQuote;
 
     // What the character brings to the floor. SkillStatReq is the one
@@ -6510,131 +7762,25 @@
     }
     SkillMaster.craftBaseStat = craftBaseStat;
 
-    function scopeSide(build) {
-        const scope = byKey(SCOPES, build.scope);
-        return scope ? scope.side : 'enemy';
-    }
-
-    // A rider aimed at the line the shape never reaches is not an error, it
-    // simply never lands, so the bench refuses to sell it rather than letting
-    // it be bought and wasted.
-    function riderAllowed(build, rider) {
-        const side = scopeSide(build);
-        return side === 'both' || rider.side === side;
-    }
-
-    // A healing core pointed at the enemy line, or a damaging core pointed at
-    // the party, is the other half of the same rule.
-    function coreMatchesScope(build) {
-        const core = byKey(CORES, build.core);
-        if (!core) return false;
-        if (core.dmg === 0) return true;
-        const side = scopeSide(build);
-        if (side === 'both') return true;
-        const heals = (core.dmg === 3 || core.dmg === 4);
-        return heals ? side === 'ally' : side === 'enemy';
-    }
-
-    SkillMaster.craftRiderAllowed = riderAllowed;
-    SkillMaster.craftCoreMatchesScope = coreMatchesScope;
-
-    //=========================================================================
-    // Writing the entry
-    //=========================================================================
-
-    function craftFormula(build, ctx) {
-        const core = byKey(CORES, build.core);
-        const power = byKey(POWERS, build.power) || POWERS[0];
-        if (!core || core.dmg === 0) return '0';
-        const scaling = craftScaling(build);
-        const atkStat = scaling.atk;
-        const defStat = scaling.def;
-        const mult = Math.round(core.power * power.mult * 100) / 100;
-
-        if (core.dmg === 3) return `${atkStat} * ${mult} + a.level * 2`; // i18n-ignore: RPG Maker damage formula
-        if (core.dmg === 4) return `${atkStat} * ${mult} + a.level`; // i18n-ignore: RPG Maker damage formula
-        const pierce = Math.round(ctx.pierce * 100) / 100;
-        if (pierce <= 0) return `${atkStat} * ${mult}`;
-        return `${atkStat} * ${mult} - ${defStat} * ${pierce}`;
-    }
-
-    // The entry itself, field by field. Everything the bench decides is
-    // decided here and nowhere else, so a build reads back the same way
-    // whether it is being previewed or written for good.
+    // The entry itself. Everything the bench decides is decided by the tags,
+    // so a build reads back the same way previewed or written for good.
     function buildCraftedSkill(build, actorId, existing) {
-        const core = byKey(CORES, build.core);
-        const scope = byKey(SCOPES, build.scope);
-        const quote = craftQuote(build);
-        const spell = build.kind !== 'skill';
-        const ctx = { pierce: core ? core.pierce : 1.0, costMult: 1 };
-
-        const sk = {
+        const kind = build.kind === 'skill' ? 'skill' : 'spell';
+        const sk = buildSkill(build.tags || [], {
+            target: kind,
             id: existing ? existing.id : $gameSystem.allocCustomSkillId(),
-            name: build.name || tr(spell ? 'defaultSpellName' : 'defaultSkillName'),
-            iconIndex: build.iconIndex || 0,
-            description: build.description || '',
-            animationId: build.animationId || 0,
-            stypeId: spell ? 1 : 2,
-            mpCost: quote.mpCost,
-            tpCost: quote.tpCost,
-            scope: scope ? scope.scope : 1,
-            occasion: 1,
-            speed: 0,
-            successRate: 95,
-            repeats: 1,
-            tpGain: spell ? 0 : 5,
-            hitType: core ? core.hit : 1,
-            requiredWtypeId1: 0,
-            requiredWtypeId2: 0,
-            message1: '',
-            message2: '',
-            messageType: 0,
-            damage: {
-                type: core ? core.dmg : 0,
-                elementId: core ? core.element : 0,
-                formula: '0',
-                variance: 20,
-                critical: false
-            },
-            effects: []
-        };
-
-        for (const k of (build.refines || [])) {
-            const r = byKey(REFINES, k);
-            if (r && r.apply) r.apply(sk, ctx);
-        }
-        sk.damage.formula = craftFormula(build, ctx);
-
-        for (const k of (build.riders || [])) {
-            const r = byKey(RIDERS, k);
-            if (!r) continue;
-            for (const e of r.effects) sk.effects.push(Object.assign({}, e));
-        }
-
-        const category = spell ? CRAFT_SPELL_CATEGORY : CRAFT_SKILL_CATEGORY;
-        const lore = String(build.lore || '').replace(/[<>]/g, '').trim();
-        let note = '<customSpell>\n<category:' + category + '>\n'
-            + '<StatReq: ' + quote.statKey + ' ' + quote.statReq + '>';
-        if (lore) note += '\n<Lore: ' + lore + '>';
-        sk.note = note;
-        sk.meta = { customSpell: true };
-        if (lore) sk.meta.Lore = lore;
-
-        sk._customSpell = true;
+            name: build.name, description: build.description, lore: build.lore,
+            iconIndex: build.iconIndex, animationId: build.animationId, actorId: actorId
+        });
         sk._crafted = true;
-        sk._craftKind = spell ? 'spell' : 'skill';
-        sk._customCategory = category;
-        sk._ownerActorId = actorId;
+        sk._craftKind = kind;
         sk._craftBuild = {
-            kind: build.kind, core: build.core, power: build.power, scope: build.scope,
-            riders: (build.riders || []).slice(), refines: (build.refines || []).slice(),
-            name: sk.name, description: sk.description, lore: build.lore || '',
+            kind, tags: sortTags(build.tags || []),
+            name: sk.name, description: build.description || '', lore: build.lore || '',
             iconIndex: sk.iconIndex, animationId: sk.animationId
         };
-        sk._animationId = sk.animationId;
         return sk;
     }
-
     SkillMaster.buildCraftedSkill = buildCraftedSkill;
 
     //=========================================================================
@@ -6690,9 +7836,21 @@
     }
     SkillMaster.applySkillTextOverrides = applySkillTextOverrides;
 
+    // Every generated description is read off its tags again in the language
+    // the game is in now.
+    function refreshAutoDescriptions() {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem || !$gameSystem.getCustomSpells) return;
+        for (const s of $gameSystem.getCustomSpells()) {
+            if (!s || !s._autoDesc || !Array.isArray(s._craftTags)) continue;
+            try { s.description = describe(s._craftTags, s._craftKind === 'skill' ? 'skill' : 'spell'); } catch (e) { /* keep the old words */ }
+        }
+    }
+    SkillMaster.refreshAutoDescriptions = refreshAutoDescriptions;
+
     const _SkillMasterCraft_extract = DataManager.extractSaveContents;
     DataManager.extractSaveContents = function (contents) {
         _SkillMasterCraft_extract.call(this, contents);
+        refreshAutoDescriptions();
         applySkillTextOverrides();
     };
 
@@ -6707,25 +7865,25 @@
     }
     const Proto = window.Scene_SkillEncyclopedia.prototype;
 
-    // The rows of the bench, in the order they are drawn and walked.
-    const CRAFT_ROWS = ['name', 'description', 'lore', 'icon', 'animation',
-        'core', 'power', 'scope', 'riders', 'refines', 'randomize', 'create'];
+
+    // The rows of the bench, in the order they are drawn and walked: the
+    // identity, one row of chips per tag group, then the three actions.
+    const CRAFT_CHIP_ROWS = GROUP_ORDER.slice();
+    SkillMaster.CRAFT_CHIP_ROWS = CRAFT_CHIP_ROWS;
+    const CRAFT_ROWS = ['name', 'description', 'lore', 'icon', 'animation']
+        .concat(CRAFT_CHIP_ROWS, ['catalogue', 'randomize', 'create']);
     SkillMaster.CRAFT_ROWS = CRAFT_ROWS;
+    const ADD_CHIP = '+';
+    const SINGLE_GROUPS = ['core', 'shape'];
+
+    const CRAFT_DEFAULT_TAGS = { spell: ['bolt', 'fire', 'oneEnemy'], skill: ['strike', 'oneEnemy'] };
 
     Proto.craftDefaultBuild = function (kind) {
         const spell = kind !== 'skill';
         return {
             kind: spell ? 'spell' : 'skill',
-            name: '',
-            description: '',
-            lore: '',
-            iconIndex: 0,
-            animationId: 0,
-            core: spell ? 'fire' : 'strike',
-            power: 'plain',
-            scope: 'oneEnemy',
-            riders: [],
-            refines: []
+            name: '', description: '', lore: '', iconIndex: 0, animationId: 0,
+            tags: CRAFT_DEFAULT_TAGS[spell ? 'spell' : 'skill'].slice()
         };
     };
 
@@ -6733,13 +7891,18 @@
         this._viewMode = 'craft';
         this._craftEditingId = editId || null;
         this._craftBaseQuote = null;
-        const source = editId && $dataSkills[editId] ? $dataSkills[editId]._craftBuild : null;
+        this._craftDropped = [];
+        const entry = editId ? $dataSkills[editId] : null;
+        const source = entry ? entry._craftBuild : null;
         if (source) {
+            // An entry written before the bench spoke in tags is read back
+            // through the decompiler, the same way a fusion reads a parent.
+            const k = source.kind === 'skill' ? 'skill' : 'spell';
+            const tags = Array.isArray(source.tags) ? source.tags.slice() : decompile(Object.assign({}, entry, { _craftTags: null })).tags;
             this._craft = {
-                kind: source.kind, name: source.name, description: source.description, lore: source.lore,
+                kind: k, name: source.name, description: source.description, lore: source.lore,
                 iconIndex: source.iconIndex, animationId: source.animationId,
-                core: source.core, power: source.power, scope: source.scope,
-                riders: (source.riders || []).slice(), refines: (source.refines || []).slice()
+                tags: normalize(tags, k).tags
             };
             this._craftBaseQuote = craftQuote(this._craft);
         } else {
@@ -6758,6 +7921,7 @@
 
     Proto.closeCraftBench = function () {
         this.closeCraftTextSheet();
+        if (window.CCPick && window.CCPick.isOpen && window.CCPick.isOpen()) window.CCPick.close(true);
         // Leaving the bench with the stage still lit would leave the effect
         // running behind a page that no longer has a canvas for it.
         if (this._craftPicker === 'animation' && window.SkillAnimPreview) window.SkillAnimPreview.dispose();
@@ -6797,17 +7961,127 @@
             (!kind || s._craftKind === kind));
     };
 
-    //--- pickers -------------------------------------------------------------
+    //--- the tags on the build -----------------------------------------------
+
+    const groupOf = (key) => { const d = tagDef(key); return d ? d.group : null; };
+
+    // The tags a build is weighed against when `key` is offered: a group that
+    // takes one tag swaps it, so the one already there is set aside.
+    function craftWorkingTags(build, key) {
+        const def = tagDef(key);
+        const tags = (build && build.tags) || [];
+        if (!def) return tags.slice();
+        return groupMax(def.group, build.kind) === 1 ? tags.filter(k => groupOf(k) !== def.group) : tags.slice();
+    }
+
+    // Is `key` on offer to this build, and if not, why not?
+    Proto.craftTagVerdict = function (key) {
+        const build = this._craft;
+        if (!build) return { ok: false, reason: 'unknown' };
+        if (build.tags.includes(key)) return { ok: false, reason: 'have' };
+        let work = craftWorkingTags(build, key);
+        const def = tagDef(key);
+        // a core that heals is offered even under an enemy shape: taking it
+        // moves the shape onto the party, as the list picker always did
+        if (def && def.group === 'core' && def.fits.includes(build.kind)) {
+            work = work.filter(k => groupOf(k) !== 'shape');
+        }
+        return allowed(work, key, build.kind);
+    };
+
+    Proto.craftAddTag = function (key) {
+        const build = this._craft;
+        const def = tagDef(key);
+        const verdict = this.craftTagVerdict(key);
+        if (!def || !verdict.ok) { SoundManager.playBuzzer(); this.refreshUISkillDOM(); return false; }
+        let tags = craftWorkingTags(build, key).concat([key]);
+        if (def.group === 'core') {
+            const shapeKey = tags.find(k => groupOf(k) === 'shape');
+            if (!coreShapeOk(def, tagDef(shapeKey))) {
+                const heals = def.dmg === 3 || def.dmg === 4;
+                tags = tags.filter(k => k !== shapeKey).concat([heals ? 'oneAlly' : 'oneEnemy']);
+            }
+        }
+        const n = normalize(tags, build.kind);
+        build.tags = n.tags;
+        this._craftDropped = n.dropped;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+        return true;
+    };
+
+    Proto.craftRemoveTag = function (key) {
+        const build = this._craft;
+        if (!build || !build.tags.includes(key)) { SoundManager.playBuzzer(); return; }
+        const n = normalize(build.tags.filter(k => k !== key), build.kind);
+        build.tags = n.tags;
+        this._craftDropped = n.dropped;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    //--- the catalogue -------------------------------------------------------
+    // Every tag the bench sells, grouped, each with the verdict on this build:
+    // a refused tag is still listed, greyed, with the reason beside it.
+
+    Proto.craftCatalogueRows = function (group) {
+        const build = this._craft;
+        if (!build) return [];
+        return list({ target: build.kind, group: group || undefined }).map(def => {
+            const verdict = this.craftTagVerdict(def.key);
+            return { key: def.key, def, verdict, have: build.tags.includes(def.key) };
+        });
+    };
+
+    Proto.craftCatalogueHint = function (row) {
+        if (row.have) return tr('why.have');
+        if (!row.verdict.ok) return whyText(row.verdict);
+        return tr('tagCost', { kp: row.def.kp || 0, cx: (row.def.cx || 0).toFixed(1) });
+    };
+
+    Proto.openCraftCatalogue = function (group) {
+        const rows = this.craftCatalogueRows(group);
+        if (!rows.length) { SoundManager.playBuzzer(); return; }
+        this._craftPickGroup = group || null;
+        const pick = window.CCPick;
+        if (pick && typeof pick.open === 'function' && this._dndContainer) {
+            pick.open({
+                title: group ? tr('pick.' + group) : tr('pick.catalogue'),
+                container: this._dndContainer,
+                search: true,
+                options: rows.map(row => ({
+                    value: row.key,
+                    label: tagName(row.key),
+                    hint: this.craftCatalogueHint(row),
+                    group: tr('group.' + row.def.group),
+                    disabled: row.have || !row.verdict.ok
+                })),
+                detail: (opt) => {
+                    const row = rows.find(r => r.key === opt.value);
+                    if (!row) return '';
+                    return `<h4 class="cc-modal-title">${esc(tagName(row.key))}</h4>
+                        <div class="ui-prose">${esc(tagInfo(row.key))}</div>
+                        <div class="cc-bio-note">${esc(tr('tagCost', { kp: row.def.kp || 0, cx: (row.def.cx || 0).toFixed(1) }))}</div>
+                        ${row.verdict.ok || row.have ? '' : `<div class="sm-craft-block">${esc(whyText(row.verdict))}</div>`}`;
+                },
+                onPick: (key) => this.craftAddTag(key)
+            });
+            SoundManager.playOk();
+            return;
+        }
+        // No pick sheet in this build: the catalogue is a list on the right page.
+        this._craftPicker = 'tags';
+        this._craftPickIndex = Math.max(0, rows.findIndex(r => !r.have && r.verdict.ok));
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    //--- pickers for the icon, the animation and the in-page catalogue --------
 
     Proto.craftPickerRows = function (group) {
-        const build = this._craft;
-        if (group === 'core') return CORES.filter(c => c.use === build.kind);
-        if (group === 'power') return POWERS;
-        if (group === 'scope') return SCOPES;
-        if (group === 'riders') return RIDERS;
-        if (group === 'refines') return REFINES;
         if (group === 'icon') return this.craftIconChoices();
         if (group === 'animation') return this.getAvailableAnimations();
+        if (group === 'tags') return this.craftCatalogueRows(this._craftPickGroup);
         return [];
     };
 
@@ -6838,13 +8112,8 @@
         this._craftPicker = group;
         const build = this._craft;
         let idx = 0;
-        if (group === 'core' || group === 'power' || group === 'scope') {
-            idx = rows.findIndex(r => r.key === build[group]);
-        } else if (group === 'icon') {
-            idx = rows.findIndex(r => r.iconIndex === build.iconIndex);
-        } else if (group === 'animation') {
-            idx = rows.findIndex(r => r.id === build.animationId);
-        }
+        if (group === 'icon') idx = rows.findIndex(r => r.iconIndex === build.iconIndex);
+        else if (group === 'animation') idx = rows.findIndex(r => r.id === build.animationId);
         this._craftPickIndex = Math.max(0, idx);
         SoundManager.playOk();
         this.refreshUISkillDOM();
@@ -6856,60 +8125,21 @@
         if (!row) { SoundManager.playBuzzer(); return; }
         const build = this._craft;
         this._craftPickIndex = k;
-
-        if (group === 'riders' || group === 'refines') {
-            const list = build[group];
-            const cap = group === 'riders' ? CRAFT_MAX_RIDERS : CRAFT_MAX_REFINES;
-            if (group === 'riders' && !riderAllowed(build, row)) { SoundManager.playBuzzer(); return; }
-            const at = list.indexOf(row.key);
-            if (at >= 0) list.splice(at, 1);
-            else if (list.length >= cap) { SoundManager.playBuzzer(); return; }
-            else list.push(row.key);
-            SoundManager.playCursor();
-            this.refreshUISkillDOM();
+        if (group === 'tags') {
+            if (row.have || !row.verdict.ok) { SoundManager.playBuzzer(); this.refreshUISkillDOM(); return; }
+            this._craftPicker = null;
+            this.craftAddTag(row.key);
             return;
         }
-
-        if (group === 'core') {
-            build.core = row.key;
-            // A core that heals cannot keep an enemy shape, and the other way
-            // about. Rather than refuse the pick, the bench moves the shape to
-            // the nearest one that makes sense.
-            if (!coreMatchesScope(build)) {
-                build.scope = (row.dmg === 3 || row.dmg === 4) ? 'oneAlly' : 'oneEnemy';
-            }
-            this.craftDropInvalidRiders();
-        } else if (group === 'power') {
-            build.power = row.key;
-        } else if (group === 'scope') {
-            const before = build.scope;
-            build.scope = row.key;
-            if (!coreMatchesScope(build)) {
-                const wantsHealing = row.side === 'ally';
-                const fallback = CORES.find(c => c.use === build.kind &&
-                    (wantsHealing ? (c.dmg === 3 || c.dmg === 0) : (c.dmg === 1)));
-                if (fallback) build.core = fallback.key;
-                else build.scope = before;
-            }
-            this.craftDropInvalidRiders();
-        } else if (group === 'icon') {
+        if (group === 'icon') {
             build.iconIndex = row.iconIndex;
         } else if (group === 'animation') {
             build.animationId = row.id;
             if (window.SkillAnimPreview) window.SkillAnimPreview.dispose();
         }
-
         this._craftPicker = null;
         SoundManager.playOk();
         this.refreshUISkillDOM();
-    };
-
-    Proto.craftDropInvalidRiders = function () {
-        const build = this._craft;
-        build.riders = build.riders.filter(k => {
-            const r = byKey(RIDERS, k);
-            return r && riderAllowed(build, r);
-        });
     };
 
     Proto.closeCraftPicker = function () {
@@ -7074,6 +8304,7 @@
         if (warnName) this.openCraftNameWarning();
     };
 
+
     //--- naming, and rolling a whole build -----------------------------------
 
     // A spell's name is one CamelCase word, the convention every shipped
@@ -7089,46 +8320,48 @@
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
         .join('');
 
-    // A rolled name is read off the parts the roll bought, so it says what the
+
+    // A rolled name is read off the tags the roll bought, so it says what the
     // entry does in whatever language the bench is drawn in.
     Proto.craftRolledName = function (build) {
+        const tags = sortTags(build.tags || []);
+        const first = (group) => tags.find(k => groupOf(k) === group);
         const parts = [];
-        if (build.power && build.power !== 'plain') parts.push(componentName('power', build.power));
-        parts.push(componentName('core', build.core));
-        if (build.riders.length) parts.push(componentName('riders', build.riders[0]));
-        else if (build.refines.length) parts.push(componentName('refines', build.refines[0]));
+        if (first('power')) parts.push(tagName(first('power')));
+        parts.push(tagName(first('element') || first('core') || tags[0]));
+        const tail = first('rider') || first('payoff') || first('mechanic') || first('refine');
+        if (tail) parts.push(tagName(tail));
         const name = build.kind === 'skill'
             ? parts.join(' ').replace(/\s+/g, ' ').trim()
             : camelJoin(parts);
         return name.slice(0, 40);
     };
 
-    // Rolls every row of the form at once, the name with them. The roll only
-    // ever builds something the bench would accept: the shape matches the
-    // core's line, and no rider is bought for a line the shape cannot reach.
-    // What it costs is not part of the roll, so an unaffordable build is still
-    // rolled and simply refused at the Write button like any other.
+    // Rolls the whole build at once, the name with it. The roll only ever
+    // builds something the bench would accept: every tag is asked of the same
+    // rules the catalogue greys its rows by. What it costs is not part of the
+    // roll, so an unaffordable build is still rolled and refused at Write.
     Proto.craftRandomize = function () {
         const build = this._craft;
         if (!build) return;
+        const kind = build.kind;
         const roll = (n) => Math.floor(Math.random() * n);
-        const pick = (list) => list[roll(list.length)];
-        const some = (list, cap) => {
-            const pool = list.slice();
-            const out = [];
-            const want = roll(Math.min(cap, pool.length) + 1);
-            while (out.length < want) out.push(pool.splice(roll(pool.length), 1)[0]);
-            return out;
+        const pick = (arr) => arr[roll(arr.length)];
+        const coreDef = pick(list({ target: kind, group: 'core' }));
+        const shapes = list({ target: kind, group: 'shape' }).filter(s => coreShapeOk(coreDef, s));
+        let tags = [coreDef.key, pick(shapes).key];
+        const tryAdd = (group, chance) => {
+            if (Math.random() >= chance) return;
+            const open = list({ target: kind, group }).filter(t => allowed(tags, t.key, kind).ok);
+            if (open.length) tags.push(pick(open).key);
         };
-
-        const core = pick(CORES.filter(c => c.use === build.kind));
-        build.core = core.key;
-        const heals = (core.dmg === 3 || core.dmg === 4);
-        const shapes = SCOPES.filter(sc => core.dmg === 0 || (heals ? sc.side !== 'enemy' : sc.side !== 'ally'));
-        build.scope = pick(shapes.length ? shapes : SCOPES).key;
-        build.power = pick(POWERS).key;
-        build.riders = some(RIDERS.filter(r => riderAllowed(build, r)), CRAFT_MAX_RIDERS).map(r => r.key);
-        build.refines = some(REFINES, CRAFT_MAX_REFINES).map(r => r.key);
+        if (coreDef.dmg !== 0) { tryAdd('element', 0.6); tryAdd('power', 0.6); }
+        for (const [group, most] of [['rider', 3], ['refine', 3], ['payoff', 1], ['mechanic', 2]]) {
+            const want = roll(most + 1);
+            for (let i = 0; i < want; i++) tryAdd(group, 1);
+        }
+        build.tags = normalize(tags, kind).tags;
+        this._craftDropped = [];
 
         const icons = this.craftIconChoices();
         if (icons.length) build.iconIndex = pick(icons).iconIndex;
@@ -7170,25 +8403,31 @@
         else this.refreshUISkillDOM();
     };
 
+
     //--- writing the entry ---------------------------------------------------
 
     Proto.craftCanWrite = function () {
         const actor = this.getTeachActor();
         const build = this._craft;
         if (!actor || !build) return { ok: false, reason: 'incomplete' };
-        if (!byKey(CORES, build.core) || !byKey(SCOPES, build.scope)) return { ok: false, reason: 'incomplete' };
-        const quote = craftQuote(build);
+        const check = validate(build.tags, build.kind);
+        const quoted = craftQuote(build);
         const owed = (this._craftEditingId && this._craftBaseQuote)
-            ? Math.max(0, quote.price - this._craftBaseQuote.price)
-            : quote.price;
-        const have = craftBaseStat(actor, quote.paramId);
-        if (!coreMatchesScope(build)) return { ok: false, reason: 'mismatch', quote, owed, have };
-        if ($gameSystem.getKnowledge() < owed) return { ok: false, reason: 'knowledge', quote, owed, have };
-        if (have < quote.statReq) return { ok: false, reason: 'stat', quote, owed, have };
-        if (!this._craftEditingId && this.craftedEntries(build.kind).length >= CRAFT_MAX_PER_ACTOR) {
-            return { ok: false, reason: 'full', quote, owed, have };
+            ? Math.max(0, quoted.price - this._craftBaseQuote.price)
+            : quoted.price;
+        const have = craftBaseStat(actor, quoted.paramId);
+        const base = { quote: quoted, owed, have };
+        if (!check.ok) {
+            return Object.assign(base, { ok: false, reason: check.reason === 'missing' ? 'incomplete' : 'invalid', why: whyText(check), tag: check.key });
         }
-        return { ok: true, quote, owed, have };
+        if (quoted.overload) return Object.assign(base, { ok: false, reason: 'overload' });
+        if (quoted.beyond) return Object.assign(base, { ok: false, reason: 'beyond' });
+        if ($gameSystem.getKnowledge() < owed) return Object.assign(base, { ok: false, reason: 'knowledge' });
+        if (have < quoted.statReq) return Object.assign(base, { ok: false, reason: 'stat' });
+        if (!this._craftEditingId && this.craftedEntries(build.kind).length >= CRAFT_MAX_PER_ACTOR) {
+            return Object.assign(base, { ok: false, reason: 'full' });
+        }
+        return Object.assign(base, { ok: true });
     };
 
     Proto.craftWrite = function () {
@@ -7210,20 +8449,16 @@
         this._craftBaseQuote = verdict.quote;
         SoundManager.playRecovery();
 
-        if (typeof T === 'function') {
-            if (window.ParchmentToast) {
-              window.ParchmentToast.show(tr(existing ? 'rewrittenResult' : 'writtenResult', {
+        if (typeof T === 'function' && window.ParchmentToast) {
+            window.ParchmentToast.show(tr(existing ? 'rewrittenResult' : 'writtenResult', {
                 name: entry.name, cost: verdict.owed, left: $gameSystem.getKnowledge()
-                            }), {
-                severity: 'good'
-              });
-            }
+            }), { severity: 'good' });
         }
         window.skipLocalization = false;
         this.refreshUISkillDOM();
     };
 
-    // Unmaking a crafted entry hands back nothing: the components were spent
+    // Unmaking a crafted entry hands back nothing: the tags were spent
     // on the writing, not lent to it. It exists so a full bench can be cleared.
     Proto.craftDiscard = function (skillId) {
         const actor = this.getTeachActor();
@@ -7246,6 +8481,7 @@
         this.refreshUISkillDOM();
     };
 
+
     //=========================================================================
     // Drawing
     //=========================================================================
@@ -7256,63 +8492,54 @@
             .replace(/"/g, '&quot;');
     }
 
-    const componentName = (group, key) => tr('comp.' + group + '.' + key + '.name');
-    const componentDesc = (group, key) => tr('comp.' + group + '.' + key + '.desc');
-
-    // The five parts of a build are picked straight off the page, one row of
-    // chips each, the way the character sheet asks its questions. Only the
-    // icon and the animation still open a list: those run to hundreds.
-    const CRAFT_CHIP_ROWS = ['core', 'power', 'scope', 'riders', 'refines'];
-    SkillMaster.CRAFT_CHIP_ROWS = CRAFT_CHIP_ROWS;
-    const CRAFT_MULTI_ROWS = ['riders', 'refines'];
     const CRAFT_SECTION_ICONS = {
-        identity: 224, core: 79, power: 176, scope: 190, riders: 87, refines: 193, entries: 183
+        identity: 224, core: 79, element: 64, power: 176, shape: 190, rider: 87,
+        refine: 193, payoff: 77, mechanic: 83, entries: 183
     };
     // The icon sheet is a grid this many across (.sm-kit-icon-grid in theme.css).
     const CRAFT_ICON_COLS = 8;
     SkillMaster.CRAFT_ICON_COLS = CRAFT_ICON_COLS;
+    const CRAFT_PREVIEW_CANVAS = 'sm-craft-inspect-canvas';
 
-    // The chips a row offers. A rider the shape cannot reach is not offered at
-    // all, so the row stays short and no chip on it only buzzes.
+    // The chips of one group's row: the tags the build carries in it, then the
+    // add chip that opens the catalogue on that group.
     Proto.craftChipRows = function (group) {
         const build = this._craft;
-        const rows = this.craftPickerRows(group);
-        if (group !== 'riders' || !build) return rows;
-        return rows.filter(r => riderAllowed(build, r) || build.riders.includes(r.key));
+        if (!build) return [];
+        const rows = build.tags.filter(k => groupOf(k) === group).map(k => ({ key: k }));
+        rows.push({ key: ADD_CHIP, add: true });
+        return rows;
     };
 
-    // Which chip of a row the pad cursor stands on. A single choice row opens
-    // on the chip already chosen, a multi choice row on its first chip.
+    // Which chip of a row the pad cursor stands on.
     Proto.craftChipCursor = function (group) {
         const rows = this.craftChipRows(group);
         if (!rows.length) return 0;
         const store = this._craftChipAt || (this._craftChipAt = {});
-        let at = store[group];
-        if (at == null) {
-            at = CRAFT_MULTI_ROWS.includes(group) ? 0 : rows.findIndex(r => r.key === this._craft[group]);
-        }
+        const at = store[group] == null ? 0 : store[group];
         return Math.max(0, Math.min(rows.length - 1, at | 0));
     };
 
+    // A tag chip on a row that takes one (core, shape) swaps it; on any other
+    // row it takes the tag off. The add chip opens the catalogue.
     Proto.craftPickChip = function (group, key) {
         const rows = this.craftChipRows(group);
         const at = rows.findIndex(r => r.key === key);
-        const k = this.craftPickerRows(group).findIndex(r => r.key === key);
-        if (at < 0 || k < 0) { SoundManager.playBuzzer(); return; }
+        if (at < 0) { SoundManager.playBuzzer(); return; }
         (this._craftChipAt || (this._craftChipAt = {}))[group] = at;
         this._craftFocus = CRAFT_ROWS.indexOf(group);
-        this.craftChoose(group, k);
+        if (key === ADD_CHIP || SINGLE_GROUPS.includes(group)) this.openCraftCatalogue(group);
+        else this.craftRemoveTag(key);
     };
 
-    // One line that says everything a part is: its name, what it does, what
-    // it costs and how much it complicates the build.
+    // One line that says everything a tag is.
     Proto.craftChipInfo = function (group, key) {
-        const row = byKey(this.craftPickerRows(group), key);
-        if (!row) return '';
+        if (key === ADD_CHIP) return tr('addHint', { group: tr('group.' + group) });
+        const def = tagDef(key);
+        if (!def) return '';
         return tr('chipInfo', {
-            name: componentName(group, key), desc: componentDesc(group, key),
-            kp: row.kp || 0, cx: (row.cx || 0).toFixed(1)
-        });
+            name: tagName(key), desc: tagInfo(key), kp: def.kp || 0, cx: (def.cx || 0).toFixed(1)
+        }) + ' ' + (SINGLE_GROUPS.includes(group) ? tr('chipSwap') : tr('chipRemove'));
     };
 
     // A pointer resting on a chip reads it out under the row, without
@@ -7323,15 +8550,11 @@
     };
 
     Proto.craftRowNote = function (group) {
-        const build = this._craft;
         if (!this._craftPicker && CRAFT_ROWS[this._craftFocus] === group) {
             const row = this.craftChipRows(group)[this.craftChipCursor(group)];
             if (row) return this.craftChipInfo(group, row.key);
         }
-        if (CRAFT_MULTI_ROWS.includes(group)) {
-            return tr('pickUpTo', { max: group === 'riders' ? CRAFT_MAX_RIDERS : CRAFT_MAX_REFINES });
-        }
-        return this.craftChipInfo(group, build[group]);
+        return tr('groupHint.' + group, { max: groupMax(group, this._craft ? this._craft.kind : 'spell') });
     };
 
     Proto.renderCraftBench = function (knowledge) {
@@ -7344,7 +8567,7 @@
         const K = SkillMaster.BenchKit;
 
         const spell = build.kind !== 'skill';
-        const quote = craftQuote(build);
+        const quoted = craftQuote(build);
         const verdict = this.craftCanWrite();
         const picking = this._craftPicker;
         const focusOn = (row) => !picking && this._craftFocus === CRAFT_ROWS.indexOf(row);
@@ -7368,39 +8591,44 @@
                 ${K.trigger({ label: rowLabelOf('animation'), focused: focusOn('animation'),
                     value: anim ? anim.name : tr('none'), muted: !anim, onclick: activate('animation') })}
                 ${K.trigger({ label: rowLabelOf('description'), cls: 'sm-kit-span2', focused: focusOn('description'),
-                    value: build.description || tr('unwritten'), muted: !build.description, onclick: activate('description') })}
+                    value: build.description || tr('autoWritten'), muted: !build.description, onclick: activate('description') })}
                 ${K.trigger({ label: rowLabelOf('lore'), cls: 'sm-kit-span2', focused: focusOn('lore'),
                     value: build.lore || tr('unwritten'), muted: !build.lore, onclick: activate('lore') })}
             </div>`;
 
+        // One section per tag group: the tags the build carries as chips, and
+        // the add chip at the end of the row.
         const chipSection = (group) => {
-            const multi = CRAFT_MULTI_ROWS.includes(group);
             const focused = focusOn(group);
             const cursor = this.craftChipCursor(group);
-            const list = this.craftChipRows(group).map((r, k) => ({
-                label: componentName(group, r.key),
-                selected: multi ? build[group].includes(r.key) : build[group] === r.key,
+            const chips = this.craftChipRows(group).map((r, k) => ({
+                label: r.add ? (SINGLE_GROUPS.includes(group) ? tr('swapChip') : tr('addChip')) : tagName(r.key),
+                selected: !r.add,
                 cursor: focused && k === cursor,
                 hover: `SceneManager._scene.craftHoverChip('${group}', '${r.key}')`,
                 onclick: `SceneManager._scene.craftPickChip('${group}', '${r.key}')`
             }));
-            const cap = group === 'riders' ? CRAFT_MAX_RIDERS : CRAFT_MAX_REFINES;
+            const held = build.tags.filter(k => groupOf(k) === group).length;
             return K.section({
-                icon: CRAFT_SECTION_ICONS[group], title: rowLabelOf(group),
-                badge: multi ? `${build[group].length}/${cap}` : '',
-                body: K.chips(list), note: this.craftRowNote(group), noteId: 'craft-note-' + group,
+                icon: CRAFT_SECTION_ICONS[group], title: tr('group.' + group),
+                badge: `${held}/${groupMax(group, build.kind)}`,
+                body: K.chips(chips), note: this.craftRowNote(group), noteId: 'craft-note-' + group,
                 cls: focused ? 'sm-kit-section--focused' : ''
             });
         };
 
-        const owed = verdict.owed !== undefined ? verdict.owed : quote.price;
-        const statName = window.SkillStatReq ? window.SkillStatReq.statName(quote.statKey) : quote.statKey;
-        const blockText = verdict.ok ? '' : tr('blocked.' + verdict.reason, {
-            stat: statName, need: quote.statReq,
+        const owed = verdict.owed !== undefined ? verdict.owed : quoted.price;
+        const statName = window.SkillStatReq ? window.SkillStatReq.statName(quoted.statKey) : quoted.statKey;
+        let blockText = verdict.ok ? '' : tr('blocked.' + verdict.reason, {
+            stat: statName, need: quoted.statReq, why: verdict.why || '',
             have: verdict.have !== undefined ? verdict.have : 0, max: CRAFT_MAX_PER_ACTOR
         });
+        if (this._craftDropped && this._craftDropped.length) {
+            blockText = (blockText ? blockText + ' ' : '') + tr('dropped', { tags: this._craftDropped.map(tagName).join(', ') });
+        }
         const actionsHTML = `
             <div class="inspect-actions sm-forge-actions">
+                <div class="inspect-btn focusable ${focusOn('catalogue') ? 'selected' : ''}" onclick="SceneManager._scene.openCraftCatalogue(null)">${esc(tr('catalogue'))}</div>
                 <div class="inspect-btn focusable ${focusOn('randomize') ? 'selected' : ''}" onclick="SceneManager._scene.craftRandomize()">${esc(tr('randomize'))}</div>
                 <div class="inspect-btn focusable ${focusOn('create') ? 'selected' : ''} ${verdict.ok ? '' : 'unusable'}" onclick="SceneManager._scene.craftWrite()">
                     ${esc(this._craftEditingId ? tr('rewrite') : tr('writeIt'))} <span class="sm-forge-cost">&middot; ${owed} KP</span>
@@ -7450,12 +8678,15 @@
         if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('noneYet'))}</div></div>`;
 
         rightBox.innerHTML = `
-            ${this.renderCraftPreviewHTML(quote, verdict)}
+            ${this.renderCraftPreviewHTML(quoted, verdict)}
             ${K.section({
                 icon: CRAFT_SECTION_ICONS.entries, title: spell ? tr('yourSpells') : tr('yourSkills'),
                 badge: `${entries.length}/${CRAFT_MAX_PER_ACTOR}`, cls: 'sm-kit-entries',
                 body: `<div id="craft-entries-box" class="ui-list ui-scroll sm-forged-list">${listHTML}</div>`
             })}`;
+        if (this._craftPreviewIcon && window.ItemInspect && window.ItemInspect.drawIcon) {
+            window.ItemInspect.drawIcon(this._craftPreviewIcon, CRAFT_PREVIEW_CANVAS);
+        }
     };
 
     Proto.renderCraftPickerHTML = function (group) {
@@ -7485,35 +8716,17 @@
                 </div>`;
         }
 
-        rows.forEach((row, k) => {
-            const focused = this._craftPickIndex === k;
-            if (group === 'animation') {
+        // An animation is chosen by eye: the bench plays it over the writer's
+        // face on the forge's own stage, and the pick is only taken on Use.
+        if (group === 'animation') {
+            rows.forEach((row, k) => {
+                const focused = this._craftPickIndex === k;
                 html += `
                     <div class="sm-skill-row anim-row focusable ${focused ? 'focused' : ''}" data-idx="${k}" onclick="SceneManager._scene.craftAnimHighlight(${k})">
                         <span class="sm-skill-name">${esc(row.name)}</span>
                         <span class="sm-skill-cost">#${row.id}</span>
                     </div>`;
-                return;
-            }
-            const chosen = (group === 'riders' || group === 'refines')
-                ? build[group].includes(row.key)
-                : build[group] === row.key;
-            const barred = group === 'riders' && !riderAllowed(build, row);
-            html += `
-                <div class="sm-skill-row focusable ${focused ? 'focused' : ''} ${chosen ? 'selected' : ''} ${barred ? 'is-shut' : ''}" onclick="SceneManager._scene.craftChoose('${group}', ${k})">
-                    <span class="sm-skill-ident"><span class="sm-skill-name">${chosen ? '✓ ' : ''}${esc(componentName(group, row.key))}</span></span>
-                    <span class="sm-skill-cost">${row.kp || 0} KP · ${esc(tr('cxShort'))} ${(row.cx || 0).toFixed(1)}</span>
-                </div>`;
-        });
-        if (!html) html = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingToBuy'))}</div></div>`;
-
-        const focusedRow = rows[this._craftPickIndex];
-        const blurb = (focusedRow && focusedRow.key && group !== 'animation')
-            ? `<div class="ui-prose">${esc(componentDesc(group, focusedRow.key))}</div>` : '';
-
-        // An animation is chosen by eye: the bench plays it over the writer's
-        // face on the forge's own stage, and the pick is only taken on Use.
-        if (group === 'animation') {
+            });
             const actor = this.getTeachActor();
             const cur = rows[this._craftPickIndex] || rows[0];
             return `
@@ -7530,10 +8743,30 @@
                 </div>`;
         }
 
+        // The catalogue as a list: every tag, the refused ones greyed with
+        // the reason in place of their price.
+        let lastGroup = null;
+        rows.forEach((row, k) => {
+            const focused = this._craftPickIndex === k;
+            const shut = row.have || !row.verdict.ok;
+            if (row.def.group !== lastGroup) {
+                html += `<div class="cc-pick-group">${esc(tr('group.' + row.def.group))}</div>`;
+                lastGroup = row.def.group;
+            }
+            html += `
+                <div class="sm-skill-row focusable ${focused ? 'focused' : ''} ${row.have ? 'selected' : ''} ${shut ? 'is-shut' : ''}" onclick="SceneManager._scene.craftChoose('tags', ${k})">
+                    <span class="sm-skill-ident"><span class="sm-skill-name">${esc(tagName(row.key))}</span></span>
+                    <span class="sm-skill-cost">${esc(this.craftCatalogueHint(row))}</span>
+                </div>`;
+        });
+        if (!html) html = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothingToBuy'))}</div></div>`;
+        const focusedRow = rows[this._craftPickIndex];
+        const blurb = focusedRow ? `<div class="ui-prose">${esc(tagInfo(focusedRow.key))}</div>` : '';
         return `
             <div class="ui-detail">
                 <div class="ui-detail-head">
-                    <div class="ui-detail-titles"><h3 class="sm-detail-name">${esc(tr('pick.' + group))}</h3></div>
+                    <div class="ui-detail-titles"><h3 class="sm-detail-name">${esc(this._craftPickGroup ? tr('pick.' + this._craftPickGroup) : tr('pick.catalogue'))}</h3></div>
+                    <div class="inspect-btn focusable" onclick="SceneManager._scene.closeCraftPicker()">${esc(tr('cancel'))}</div>
                 </div>
                 ${blurb}
                 <div id="craft-pick-box" class="ui-detail-scroll ui-scroll sm-candidate-list">${html}</div>
@@ -7561,48 +8794,53 @@
             () => this._viewMode === 'craft' && this._craftPicker === 'animation');
     };
 
-    Proto.renderCraftPreviewHTML = function (quote, verdict) {
+
+    // The live preview: the price and the floor as stat boxes, then the
+    // entry read on the very card the skills menu draws (SkillDetails.card),
+    // so what the bench shows is what the book will show.
+    Proto.renderCraftPreviewHTML = function (quoted, verdict) {
         const build = this._craft;
         const actor = this.getTeachActor();
         const K = SkillMaster.BenchKit;
         const spell = build.kind !== 'skill';
         const preview = buildCraftedSkill(build, actor.actorId(), { id: 0 });
-        const statName = window.SkillStatReq ? window.SkillStatReq.statName(quote.statKey) : quote.statKey;
-        const have = verdict.have !== undefined ? verdict.have : craftBaseStat(actor, quote.paramId);
-        const short = have < quote.statReq;
-        const elName = (preview.damage.elementId && typeof $dataSystem !== 'undefined' && $dataSystem && $dataSystem.elements)
-            ? $dataSystem.elements[preview.damage.elementId] : '';
+        const statName = window.SkillStatReq ? window.SkillStatReq.statName(quoted.statKey) : quoted.statKey;
+        const have = verdict.have !== undefined ? verdict.have : craftBaseStat(actor, quoted.paramId);
+        const short = have < quoted.statReq;
+        this._craftPreviewIcon = preview.iconIndex;
 
-        // Everything that is a number is a stat box, the way the character
-        // sheet shows a build, so the whole preview reads at one glance.
         const boxes = K.stats([
-            { label: spell ? tr('mpLabel') : tr('apLabel'), value: spell ? preview.mpCost : preview.tpCost },
-            { label: tr('price'), value: `${verdict.owed !== undefined ? verdict.owed : quote.price} KP`, bad: verdict.reason === 'knowledge' },
-            { label: tr('statFloor'), value: `${statName} ${quote.statReq}`, bad: short },
+            { label: spell ? tr('mpLabel') : tr('apLabel'), value: spell ? preview.mpCost : preview.tpCost, bad: quoted.overload },
+            { label: tr('price'), value: `${verdict.owed !== undefined ? verdict.owed : quoted.price} KP`, bad: verdict.reason === 'knowledge' },
+            { label: tr('statFloor'), value: `${statName} ${quoted.statReq}`, bad: short },
             { label: tr('yourStat'), value: `${statName} ${have}`, bad: short },
-            { label: tr('complexity'), value: quote.complexity.toFixed(1) },
-            { label: tr('effectLabel'), value: tr('dmgType.' + preview.damage.type) },
-            { label: tr('element'), value: elName || tr('none') },
-            { label: tr('repeats'), value: preview.repeats },
-            { label: tr('variance'), value: preview.damage.variance + '%' },
-            { label: tr('critical'), value: preview.damage.critical ? tr('yes') : tr('no') },
-            { label: tr('occasionLabel'), value: preview.occasion === 0 ? tr('anywhere') : tr('battleOnly') },
-            { label: tr('riderCount'), value: preview.effects.length }
+            { label: tr('complexity'), value: quoted.complexity.toFixed(1) },
+            { label: tr('powerLabel'), value: quoted.power ? `${quoted.power} / ${quoted.owed}` : tr('offCurve') },
+            { label: tr('tagCount'), value: build.tags.length }
         ]);
 
-        return `
-            <div class="ui-detail sm-fuse-preview sm-kit-preview">
+        let card = '';
+        if (window.SkillDetails && typeof window.SkillDetails.card === 'function') {
+            try {
+                card = window.SkillDetails.card(preview, actor, { canvasId: CRAFT_PREVIEW_CANVAS, subtitle: tr('preview') });
+            } catch (e) { card = ''; }
+        }
+        if (!card) {
+            card = `
                 <div class="ui-detail-head">
                     <div class="ui-detail-titles">
                         <h3 class="sm-detail-name">${esc(preview.name)}</h3>
                         <div class="sm-detail-meta">${esc(tr('preview'))}</div>
                     </div>
-                    <span class="ui-chip sm-result-chip">${esc(spell ? tr('spendsMP') : tr('spendsAP'))}</span>
                 </div>
+                <div class="ui-prose sm-kit-prose">${esc(preview.description)}</div>`;
+        }
+
+        return `
+            <div class="ui-detail sm-fuse-preview sm-kit-preview">
                 ${boxes}
-                ${preview.damage.formula ? `<div class="sm-kit-formula"><span class="cc-stat-label">${esc(tr('formula'))}</span> <code>${esc(preview.damage.formula)}</code></div>` : ''}
-                ${preview.description ? `<div class="ui-prose sm-kit-prose">${esc(preview.description)}</div>` : ''}
-                ${build.lore ? `<div class="inspect-flavour sm-kit-prose">${esc(build.lore)}</div>` : ''}
+                <div class="sm-craft-card">${card}</div>
+                <div class="sm-kit-formula"><span class="cc-stat-label">${esc(tr('formula'))}</span> <code>${esc(preview.damage.formula)}</code></div>
                 <div class="cc-bio-note sm-kit-note">${esc(tr('benchBlurb', { stat: statName }))}</div>
             </div>`;
     };
@@ -7623,6 +8861,7 @@
         if (row === 'name' || row === 'description' || row === 'lore') this.openCraftTextSheet(row);
         else if (row === 'randomize') this.craftRandomize();
         else if (row === 'create') this.craftWrite();
+        else if (row === 'catalogue') this.openCraftCatalogue(null);
         else if (CRAFT_CHIP_ROWS.includes(row)) {
             // OK on a row of chips presses the chip under the cursor.
             const chip = this.craftChipRows(row)[this.craftChipCursor(row)];
@@ -7634,6 +8873,12 @@
 
     Proto.updateCraftBenchInput = function () {
         if (this._craftTyping) return;
+
+        // The catalogue sheet is modal: while it is up it reads the pad itself.
+        if (window.CCPick && window.CCPick.isOpen && window.CCPick.isOpen()) {
+            window.CCPick.pollInput();
+            return;
+        }
 
         // The name warning is a sheet of its own: OK keeps the name, Cancel
         // goes back to the field. Nothing else on the bench answers while it is up.
@@ -7739,6 +8984,7 @@
             </div>`;
     };
 
+
 })();
 
 
@@ -7771,7 +9017,18 @@
  * the vector gun is never a base: VectorGunSystem rewrites that row's form,
  * element and model at runtime and a binding would fight it for all three.
  *
- * Enchanting buys no damage and no stats. A bound weapon has exactly the
+ * A weapon or a piece of armour may also, or instead, be given special
+ * properties: tags out of window.SkillTags (the one registry the Workbench and
+ * the Fusion forge write with), each in its equipment form - an element, an
+ * on-hit or resisted state, a stance, Swift, Twinned, Keen, Precise, a brace,
+ * a regeneration. They are chosen on chip rows the way the Workbench builds a
+ * spell, priced in KP off SkillTags.quote(tags, 'weapon' | 'armor'), written
+ * as traits and note tags (window.GearTags.write) and marked <GearTags:>, and
+ * read in battle by the engine and by ItemSystemEquipment's GearTags section.
+ * A book takes a spell and nothing else: it IS the spell, so a tag would have
+ * nothing to ride on.
+ *
+ * A binding alone buys no damage and no stats. A bound weapon has exactly the
  * numbers it had before. What it gains is the spell, the spell's element in
  * place of its own, and the look that element wears: the bench stamps
  * <ForgeTexture:> on the entry, chosen by element first and by school when
@@ -7964,6 +9221,171 @@
     };
 
     //=========================================================================
+    // Gear tags: special properties written onto a piece
+    //
+    // window.SkillTags is the one registry; nothing here lists a mechanic of
+    // its own. A piece of gear takes the tags whose equipment form the
+    // registry declares (list({ target: 'weapon' | 'armor' })), written as the
+    // traits and note tags SkillTags.apply writes, and the piece is marked
+    // <GearTags: key, key> so every card and every battle reader can tell
+    // what was put on it. The enchanting bench and the forge
+    // (Quest/ThinkerMenu.js) both write through window.GearTags.
+    //=========================================================================
+
+    const GEAR_TAGS_NOTE = /<GearTags:[^>]*>\s*/gi; // i18n-ignore: note tag regex
+
+    const tagRegistry = () => window.SkillTags || null;
+
+    /** 'weapon' or 'armor': which equipment target a piece is. */
+    function gearTarget(item) {
+        if (!item) return 'weapon';
+        if (item._enchantKind === 'armor' || item._enchantKind === 'weapon') return item._enchantKind;
+        return item.wtypeId !== undefined ? 'weapon' : 'armor';
+    }
+
+    /** The tag keys a piece carries, in build order. */
+    function gearTagsOf(item) {
+        if (!item) return [];
+        let keys = Array.isArray(item._gearTags) ? item._gearTags.slice() : null;
+        if (!keys) {
+            const raw = (item.meta && item.meta.GearTags) ||
+                ((String(item.note || '').match(/<GearTags:\s*([^>]*)>/i) || [])[1]) || '';
+            keys = String(raw === true ? '' : raw).split(',').map(s => s.trim()).filter(Boolean);
+        }
+        const ST = tagRegistry();
+        return ST ? keys.filter(k => ST.get(k)) : keys;
+    }
+
+    /**
+     * Writes `tags` onto an entry that is being made (a copy, never a shipped
+     * row). An element tag on a weapon replaces the blade's element rather
+     * than joining it. Returns the tags that were written.
+     */
+    function writeGearTags(entry, tags, target) {
+        const ST = tagRegistry();
+        if (!entry || !ST || !tags || !tags.length) return [];
+        const kept = ST.normalize(tags, target).tags;
+        if (!kept.length) return [];
+        entry.traits = Array.isArray(entry.traits) ? entry.traits : [];
+        if (target === 'weapon' && kept.some(k => (ST.get(k) || {}).group === 'element')) {
+            entry.traits = entry.traits.filter(t => t && t.code !== 31);
+        }
+        ST.apply(entry, kept, target);
+        entry.note = String(entry.note || '').replace(GEAR_TAGS_NOTE, '').trim() +
+            '\n<GearTags: ' + kept.join(', ') + '>'; // i18n-ignore: note tag
+        entry.meta = entry.meta || {};
+        entry.meta.GearTags = ' ' + kept.join(', ');
+        entry._gearTags = kept.slice();
+        return kept;
+    }
+
+    const stateText = (id) => {
+        const st = (typeof $dataStates !== 'undefined' && $dataStates) ? $dataStates[id] : null;
+        return st && st.name ? tx(st.name) : String(id);
+    };
+    const elementText = (id) => tx((((typeof $dataSystem !== 'undefined' && $dataSystem) || {}).elements || [])[id] || '');
+    const pct = (v) => Math.round(Math.abs(Number(v) || 0) * 100);
+    // The stat a brace lifts, in the label SkillStatReq gives it everywhere
+    // else (FRZ COS INT SAG DES PSI in Italian).
+    const PARAM_KEY = ['', '', 'STR', 'CON', 'INT', 'WIS', 'DEX', 'PSI']; // i18n-ignore: stat ids
+    const statLabel = (paramId) => {
+        const key = PARAM_KEY[paramId] || '';
+        return (window.SkillStatReq && window.SkillStatReq.statName) ? window.SkillStatReq.statName(key) : key;
+    };
+    const REGEN_KEY = { 7: 'regenHP', 8: 'regenMP', 9: 'regenAP' }; // i18n-ignore: i18n key tails
+
+    /**
+     * What a tag does on a piece of gear, in a phrase. It is read off the very
+     * traits the registry writes (the tag is applied to a scratch entry), so
+     * the words can never disagree with what the piece carries.
+     */
+    function gearEffectText(key, target) {
+        const ST = tagRegistry();
+        const def = ST ? ST.get(key) : null;
+        if (!def || typeof def.equip !== 'function') return '';
+        const scratch = { traits: [], note: '', meta: {} };
+        try { def.equip(scratch, target); } catch (e) { return ''; }
+        const parts = [];
+        for (const t of scratch.traits) {
+            if (t.code === 31) parts.push(tr('gear.attackElement', { element: elementText(t.dataId) }));
+            else if (t.code === 11) parts.push(tr('gear.resistElement', { element: elementText(t.dataId), pct: pct(1 - t.value) }));
+            else if (t.code === 32) parts.push(tr('gear.attackState', { state: stateText(t.dataId), pct: pct(t.value) }));
+            else if (t.code === 14) parts.push(tr('gear.resistState', { state: stateText(t.dataId) }));
+            else if (t.code === 33) parts.push(tr('gear.speed', { value: t.value }));
+            else if (t.code === 34) parts.push(tr('gear.extraHit', { n: t.value }));
+            else if (t.code === 21) parts.push(tr('gear.paramRate', { stat: statLabel(t.dataId), pct: pct(t.value - 1) }));
+            else if (t.code === 22 && t.dataId === 0) parts.push(tr('gear.hit', { pct: pct(t.value) }));
+            else if (t.code === 22 && t.dataId === 2) parts.push(tr('gear.crit', { pct: pct(t.value) }));
+            else if (t.code === 22 && REGEN_KEY[t.dataId]) parts.push(tr('gear.' + REGEN_KEY[t.dataId], { pct: pct(t.value) }));
+        }
+        const type = scratch.meta.DamageType ? String(scratch.meta.DamageType).trim() : '';
+        if (type) parts.push(tr('gear.damageType', { type: tr('gear.damageTypes.' + type) }));
+        return parts.join(tr('gear.and'));
+    }
+
+    /** One line per tag: its name and what it does on this piece. */
+    function gearTagLine(key, target) {
+        const ST = tagRegistry();
+        if (!ST) return '';
+        const effect = gearEffectText(key, target);
+        return effect ? tr('gear.line', { name: ST.name(key), effect }) : ST.name(key);
+    }
+
+    /** Every special ability a piece carries, as the item cards print them. */
+    function gearSpecialLines(item) {
+        if (!item) return [];
+        const target = gearTarget(item);
+        const out = gearTagsOf(item).map(k => gearTagLine(k, target)).filter(Boolean);
+        const spellId = Number((item.meta && item.meta.EnchantSpell) || item._enchantSpellId || 0);
+        const kind = item._enchantKind || (item.meta && item.meta.Enchanted);
+        const spell = spellId && typeof $dataSkills !== 'undefined' && $dataSkills ? $dataSkills[spellId] : null;
+        if (spell && (kind === 'weapon' || kind === 'armor')) {
+            out.push(tr(kind === 'weapon' ? 'gear.onCrit' : 'gear.onCritTaken', { spell: tx(spell.name) }));
+        }
+        return out;
+    }
+
+    // What the tags of an enchantment cost: the registry's own equipment
+    // quote, which is the KP the same mechanics cost on the Workbench, times
+    // what a weapon or a piece of armour does with them all battle long.
+    const ENCH_TAG_MULT = { weapon: 1.5, armor: 1.15 };
+
+    function tagsCost(tags, kind) {
+        const ST = tagRegistry();
+        if (!ST || !tags || !tags.length || !ENCH_TAG_MULT[kind]) return 0;
+        const q = ST.quote(tags, kind);
+        return Math.max(ENCH_MIN, Math.round(q.price * ENCH_TAG_MULT[kind]));
+    }
+
+    /** The whole price of an enchantment: the spell, the tags, or both. */
+    function enchantmentCost(spell, tags, kind) {
+        return (spell ? enchantCost(spell, kind) : 0) + tagsCost(tags, kind);
+    }
+
+    const GearTags = {
+        of: gearTagsOf,
+        target: gearTarget,
+        write: writeGearTags,
+        effect: gearEffectText,
+        line: gearTagLine,
+        specials: gearSpecialLines,
+        has: (item) => gearTagsOf(item).length > 0
+    };
+    window.GearTags = GearTags;
+    SkillMaster.Enchant.GearTags = GearTags;
+    SkillMaster.Enchant.tagsCost = tagsCost;
+    SkillMaster.Enchant.enchantmentCost = enchantmentCost;
+    SkillMaster.Enchant.TAG_MULT = ENCH_TAG_MULT;
+
+    // The item cards (ItemSystemUtils.specialLines) ask every registered
+    // provider for a piece's special abilities; this is gear's.
+    (function registerGearSpecials() {
+        const U = window.ItemSystemUtils = window.ItemSystemUtils || {};
+        if (typeof U.registerSpecial === 'function') U.registerSpecial(gearSpecialLines);
+        else (U._specialProviders = U._specialProviders || []).push(gearSpecialLines);
+    })();
+
+    //=========================================================================
     // Persistence
     //
     // A bound piece is a database entry the database never shipped, so it is
@@ -7971,8 +9393,7 @@
     // every load, exactly the way a crafted spell is.
     //=========================================================================
 
-    // Clear of the artifact generator's reserved band (1501-1600) and of
-    // everything data/ ships.
+    // Clear of everything data/ ships.
     const ENCH_ID_FLOOR = 2000;
 
     function ensureSlot(arr, id) {
@@ -8003,6 +9424,9 @@
             const len = db ? db.length : ENCH_ID_FLOOR;
             this[key] = Math.max(ENCH_ID_FLOOR, len);
         }
+        // Never into the reserved bands the world's artifacts, relics and
+        // chip dies take (window.RuntimeItemIds, ItemSystemUtils.js).
+        if (window.RuntimeItemIds) this[key] = window.RuntimeItemIds.skip(this[key]);
         return this[key]++;
     };
 
@@ -8031,40 +9455,70 @@
     // Forging
     //=========================================================================
 
+    /** The words an enchantment's tags are listed in on its name and card. */
+    function tagsPhrase(tags, kind) {
+        const ST = tagRegistry();
+        if (!ST || !tags.length) return '';
+        return ST.describe(tags, kind);
+    }
+
     /**
-     * The unique entry a binding writes. Nothing here touches params or the
-     * traits that carry a number: enchanting buys the spell and the look, and
-     * never a point of damage.
+     * The unique entry an enchantment writes: a spell bound to it, a set of
+     * tags written onto it, or both. A binding alone touches no params and no
+     * trait that carries a number: it buys the spell and the look. Tags are
+     * the registry's equipment forms, paid for in KP (tagsCost). `opts.preview`
+     * builds the entry without taking an id, for the bench's live card.
      */
-    function forgeEnchanted(base, kind, spell) {
+    function forgeEnchanted(base, kind, spell, tags, opts) {
+        const o = opts || {};
         const entry = JSON.parse(JSON.stringify(base));
-        entry.id = $gameSystem.allocEnchantedGearId(kind);
-        entry.name = tr(kind === 'weapon' ? 'weaponName' : 'armorName',
-            { base: tx(base.name), spell: tx(spell.name) });
-        entry.description = tr(kind === 'weapon' ? 'weaponDesc' : 'armorDesc',
-            { spell: tx(spell.name) });
+        entry.id = o.preview ? (base.id || 0) : $gameSystem.allocEnchantedGearId(kind);
+        const ST = tagRegistry();
+        const kept = (ST && tags && tags.length) ? ST.normalize(tags, kind).tags : [];
+        const tagWords = tagsPhrase(kept, kind);
+        const lead = kept.length && ST ? ST.name(kept[0]) : '';
+        const weapon = kind === 'weapon';
+        if (spell) {
+            entry.name = tr(weapon ? 'weaponName' : 'armorName', { base: tx(base.name), spell: tx(spell.name) });
+            entry.description = kept.length
+                ? tr(weapon ? 'weaponDescBoth' : 'armorDescBoth', { spell: tx(spell.name), tags: tagWords })
+                : tr(weapon ? 'weaponDesc' : 'armorDesc', { spell: tx(spell.name) });
+        } else {
+            entry.name = tr(weapon ? 'weaponNameTags' : 'armorNameTags', { base: tx(base.name), tag: lead });
+            entry.description = tr(weapon ? 'weaponDescTags' : 'armorDescTags', { tags: tagWords });
+        }
+
+        // The finish follows the element: an element tag first, the bound
+        // spell's next. A piece that gains neither keeps the look it had.
+        const elTag = kept.map(k => ST.get(k)).find(d => d && d.group === 'element');
+        const texture = kind !== 'weapon' ? ''
+            : (elTag && ELEMENT_TEXTURE[elTag.id]) ? ELEMENT_TEXTURE[elTag.id]
+                : (spell ? enchantTexture(spell) : '');
 
         let note = String(base.note || '')
-            .replace(/<ForgeTexture:[^>]*>\s*/gi, '') // i18n-ignore: note tag
             .replace(/<EnchantSpell:[^>]*>\s*/gi, '') // i18n-ignore: note tag
             .replace(/<Enchanted:[^>]*>\s*/gi, ''); // i18n-ignore: note tag
-        note += '\n<EnchantSpell: ' + spell.id + '>\n<Enchanted: ' + kind + '>'; // i18n-ignore: note tag
-        if (kind === 'weapon') note += '\n<ForgeTexture: ' + enchantTexture(spell) + '>'; // i18n-ignore: note tag
+        if (texture) note = note.replace(/<ForgeTexture:[^>]*>\s*/gi, ''); // i18n-ignore: note tag
+        if (spell) note += '\n<EnchantSpell: ' + spell.id + '>'; // i18n-ignore: note tag
+        note += '\n<Enchanted: ' + kind + '>'; // i18n-ignore: note tag
+        if (texture) note += '\n<ForgeTexture: ' + texture + '>'; // i18n-ignore: note tag
         entry.note = note.trim();
         entry.meta = Object.assign({}, base.meta);
-        entry.meta.EnchantSpell = String(spell.id);
+        delete entry.meta.EnchantSpell;
+        if (spell) entry.meta.EnchantSpell = String(spell.id);
         entry.meta.Enchanted = kind;
-        if (kind === 'weapon') entry.meta.ForgeTexture = enchantTexture(spell);
+        if (texture) entry.meta.ForgeTexture = texture;
 
-        if (kind === 'weapon') {
+        if (kind === 'weapon' && spell) {
             // The binding's element replaces the blade's, and is the only
             // trait a binding ever writes.
             entry.traits = (base.traits || []).filter(t => t && t.code !== 31);
             entry.traits.push({ code: 31, dataId: enchantElement(spell), value: 1 });
         }
+        if (kept.length) writeGearTags(entry, kept, kind);
 
         entry._enchantKind = kind;
-        entry._enchantSpellId = spell.id;
+        entry._enchantSpellId = spell ? spell.id : 0;
         entry._enchantBaseId = base.id;
         entry._enchanted = true;
         return entry;
@@ -8279,16 +9733,53 @@
      * @returns {object|null} the entry written, or null when nothing was
      */
     function bindSpell(slot, spell) {
-        if (!slot || !slot.item || !spell) return null;
-        if (!isBindableBase(slot.item)) return null;
-        if (!bindableTo(spell, slot.kind)) return null;
+        if (!spell) return null;
+        return enchantGear(slot, { spell: spell, tags: [] });
+    }
+
+    /**
+     * Whether an enchantment may go onto `slot` as it stands, and why not.
+     * @param {object} slot - as enchantableGear() lists it
+     * @param {object} spec - { spell, tags }: either, or both on gear; a book
+     *                        takes a spell and no tags
+     * @returns {{ ok, reason, cost, tags }}
+     */
+    function enchantVerdict(slot, spec) {
+        const s = spec || {};
+        const spell = s.spell || null;
+        const kind = slot ? slot.kind : 'weapon';
+        const ST = tagRegistry();
+        const tags = (kind !== 'book' && ST && s.tags && s.tags.length) ? s.tags.slice() : [];
+        const out = { ok: false, reason: '', cost: 0, tags };
+        if (!slot || !slot.item || !isBindableBase(slot.item)) { out.reason = 'noBase'; return out; }
+        if (!spell && !tags.length) { out.reason = 'empty'; return out; }
+        if (spell && !bindableTo(spell, kind)) { out.reason = 'spell'; return out; }
+        if (spell && window.BoundSkill && window.BoundSkill.has(slot.item)) { out.reason = 'ownSkill'; return out; }
+        if (tags.length) {
+            const v = ST.validate(tags, kind);
+            if (!v.ok) { out.reason = 'tags'; out.why = ST.why(v); return out; }
+        }
+        out.cost = enchantmentCost(spell, tags, kind);
+        if ($gameSystem.getKnowledge() < out.cost) { out.reason = 'knowledge'; return out; }
+        out.ok = true;
+        return out;
+    }
+
+    /**
+     * Writes an enchantment into `slot`: the spell, the tags, or both. The
+     * base piece is consumed and the knowledge is paid once.
+     * @returns {object|null} the entry written, or null when nothing was
+     */
+    function enchantGear(slot, spec) {
+        const verdict = enchantVerdict(slot, spec);
+        if (!verdict.ok) return null;
         const kind = slot.kind;
-        const cost = enchantCost(spell, kind);
-        if ($gameSystem.getKnowledge() < cost) return null;
+        const spell = (spec && spec.spell) || null;
+        const cost = verdict.cost;
 
         const entry = (kind === 'book')
             ? forgeEnchantedBook(slot.item, spell)
-            : forgeEnchanted(slot.item, kind, spell);
+            : forgeEnchanted(slot.item, kind, spell, verdict.tags);
         injectOne(entry);
         $gameSystem.getEnchantedGear().push(entry);
         $gameParty.gainItem(entry, 1);
@@ -8335,9 +9826,11 @@
         // Anything either bench already wrote: a bound piece, and a volume the
         // writing bench filled with pages. Neither is raw material again.
         if (item._enchanted || (item.meta && (item.meta.EnchantSpell || item.meta.Enchanted))) return false;
+        // A piece the forge already gave special properties to has had its
+        // enchantment, the same as one this bench wrote.
+        if (gearTagsOf(item).length) return false;
         // One skill per piece: a wand or a robe that came with its own is
-        // never bound a second.
-        if (window.BoundSkill && window.BoundSkill.has(item)) return false;
+        // never bound a second (enchantVerdict), though it may still take tags.
         const VG = window.VectorGun;
         if (VG && typeof VG.isVectorGun === 'function' && VG.isVectorGun(item)) return false;
         return true;
@@ -8359,6 +9852,8 @@
             for (const item of $gameParty.items()) {
                 if (!isBindableBase(item)) continue;
                 if (!BL || !BL.isBook(item)) continue;
+                // A book is all spell: one that already casts something is done.
+                if (window.BoundSkill && window.BoundSkill.has(item)) continue;
                 if (seen.has(item.id)) continue;
                 seen.add(item.id);
                 out.push({ kind: kind, item: item, actorId: 0, equipSlot: -1 });
@@ -8406,6 +9901,8 @@
     }
 
     SkillMaster.Enchant.bindSpell = bindSpell;
+    SkillMaster.Enchant.enchantGear = enchantGear;
+    SkillMaster.Enchant.verdict = enchantVerdict;
     SkillMaster.Enchant.unbind = unbind;
     SkillMaster.Enchant.enchantableGear = enchantableGear;
     SkillMaster.Enchant.bindableSpells = bindableSpells;
@@ -8425,11 +9922,16 @@
         this._enchantColumn = 0;
         this._enchantChip = 0;
         this._enchantChosen = null;
+        this._enchantDraft = null;
+        this._enchantDropped = null;
+        this._enchantFormRow = 0;
+        this._enchantChipAt = {};
         SoundManager.playOk();
         this.refreshUISkillDOM();
     };
 
     Proto.closeEnchantBench = function () {
+        if (window.CCPick && window.CCPick.isOpen && window.CCPick.isOpen()) window.CCPick.close(true);
         this._viewMode = 'category';
         this._lastLeftMode = null;
         this._lastLeftCategory = null;
@@ -8492,6 +9994,12 @@
         this._enchantChosen = slots[idx];
         this._enchantColumn = 1;
         this._enchantSpellIndex = 0;
+        // A new piece starts a new draft: nothing chosen for the last one
+        // carries over onto this one.
+        this._enchantDraft = { spellId: 0, tags: [] };
+        this._enchantDropped = null;
+        this._enchantFormRow = 0;
+        this._enchantChipAt = {};
         SoundManager.playOk();
         this.refreshUISkillDOM();
     };
@@ -8521,6 +10029,321 @@
             this._enchantChip = 0;
             SoundManager.playCancel();
             this.refreshUISkillDOM();
+        }
+    };
+
+    //--- the gear form: a spell, a set of tags, or both ----------------------
+    //
+    // A weapon or a piece of armour is enchanted on a form, the Workbench's
+    // own: the bound spell on one trigger, then one row of chips per tag
+    // group the registry offers this kind of gear, then the Enchant button.
+    // A refused tag is still listed in the catalogue, greyed, with the reason.
+
+    const isGearKind = (kind) => kind === 'weapon' || kind === 'armor';
+    const ADD = '+';
+
+    // The tag groups this kind of gear can carry anything in, in build order.
+    function gearGroups(kind) {
+        const ST = tagRegistry();
+        if (!ST) return [];
+        return ST.GROUPS.map(g => g.key).filter(g => ST.list({ target: kind, group: g }).length > 0);
+    }
+    SkillMaster.Enchant.gearGroups = gearGroups;
+
+    Proto.enchantFormRows = function () {
+        return ['spell'].concat(gearGroups(this._enchantKind || 'weapon'), ['enchant']);
+    };
+
+    Proto.enchantDraft = function () {
+        if (!this._enchantDraft) this._enchantDraft = { spellId: 0, tags: [] };
+        return this._enchantDraft;
+    };
+
+    Proto.enchantDraftSpell = function () {
+        const id = this.enchantDraft().spellId;
+        return id && $dataSkills[id] ? $dataSkills[id] : null;
+    };
+
+    Proto.enchantFormVerdict = function () {
+        const d = this.enchantDraft();
+        return enchantVerdict(this._enchantChosen, { spell: this.enchantDraftSpell(), tags: d.tags });
+    };
+
+    // Is `key` on offer to this piece's draft, and if not, why not?
+    Proto.enchantTagVerdict = function (key) {
+        const ST = tagRegistry();
+        const d = this.enchantDraft();
+        if (!ST) return { ok: false, reason: 'unknown' };
+        if (d.tags.includes(key)) return { ok: false, reason: 'have' };
+        return ST.allowed(d.tags, key, this._enchantKind);
+    };
+
+    Proto.enchantAddTag = function (key) {
+        const ST = tagRegistry();
+        const d = this.enchantDraft();
+        if (!ST || !this.enchantTagVerdict(key).ok) { SoundManager.playBuzzer(); this.refreshUISkillDOM(); return false; }
+        const n = ST.normalize(d.tags.concat([key]), this._enchantKind);
+        d.tags = n.tags;
+        this._enchantDropped = n.dropped;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+        return true;
+    };
+
+    Proto.enchantRemoveTag = function (key) {
+        const ST = tagRegistry();
+        const d = this.enchantDraft();
+        if (!ST || !d.tags.includes(key)) { SoundManager.playBuzzer(); return; }
+        const n = ST.normalize(d.tags.filter(k => k !== key), this._enchantKind);
+        d.tags = n.tags;
+        this._enchantDropped = n.dropped;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    // The chips of one group's row: the tags the draft carries in it, then the
+    // add chip that opens the catalogue on that group.
+    Proto.enchantChipRow = function (group) {
+        const ST = tagRegistry();
+        const tags = this.enchantDraft().tags.filter(k => ST && (ST.get(k) || {}).group === group);
+        return tags.map(k => ({ key: k })).concat([{ key: ADD, add: true }]);
+    };
+
+    Proto.enchantChipCursor = function (group) {
+        const n = this.enchantChipRow(group).length;
+        const at = (this._enchantChipAt || {})[group] | 0;
+        return Math.max(0, Math.min(n - 1, at));
+    };
+
+    Proto.enchantPickChip = function (group, key) {
+        const row = this.enchantFormRows().indexOf(group);
+        if (row >= 0) { this._enchantColumn = 1; this._enchantFormRow = row; }
+        const at = this.enchantChipRow(group).findIndex(c => c.key === key);
+        (this._enchantChipAt || (this._enchantChipAt = {}))[group] = Math.max(0, at);
+        if (key === ADD) this.openEnchantCatalogue(group);
+        else this.enchantRemoveTag(key);
+    };
+
+    Proto.enchantChipInfo = function (group, key) {
+        const ST = tagRegistry();
+        if (!ST) return '';
+        if (key === ADD) return tr('addHint', { group: T('SkillMaster.craft.group.' + group) });
+        return tr('chipInfo', { line: gearTagLine(key, this._enchantKind), kp: tagsCost([key], this._enchantKind) });
+    };
+
+    Proto.enchantHoverChip = function (group, key) {
+        const note = document.getElementById('enchant-note-' + group);
+        if (note) note.textContent = this.enchantChipInfo(group, key);
+    };
+
+    // Every tag the registry puts on this kind of gear, in one group or all of
+    // them, each with its verdict on the draft.
+    Proto.openEnchantCatalogue = function (group) {
+        const ST = tagRegistry();
+        const pick = window.CCPick;
+        const kind = this._enchantKind;
+        if (!ST || !pick || typeof pick.open !== 'function') { SoundManager.playBuzzer(); return; }
+        const rows = ST.list({ target: kind, group: group || undefined }).map(def => ({
+            def, verdict: this.enchantTagVerdict(def.key), have: this.enchantDraft().tags.includes(def.key)
+        }));
+        if (!rows.length) { SoundManager.playBuzzer(); return; }
+        pick.open({
+            title: tr('pick'),
+            container: this._dndContainer,
+            search: true,
+            options: rows.map(r => ({
+                value: r.def.key,
+                label: ST.name(r.def.key),
+                hint: r.have ? ST.why({ ok: false, reason: 'have' })
+                    : (r.verdict.ok ? tr('tagCost', { kp: tagsCost([r.def.key], kind) }) : ST.why(r.verdict)),
+                group: T('SkillMaster.craft.group.' + r.def.group),
+                disabled: r.have || !r.verdict.ok
+            })),
+            detail: (opt) => {
+                const r = rows.find(x => x.def.key === opt.value);
+                if (!r) return '';
+                return `<h4 class="cc-modal-title">${esc(ST.name(r.def.key))}</h4>
+                    <div class="ui-prose">${esc(gearEffectText(r.def.key, kind))}</div>
+                    <div class="cc-bio-note">${esc(tr('tagCost', { kp: tagsCost([r.def.key], kind) }))}</div>
+                    ${r.verdict.ok || r.have ? '' : `<div class="sm-craft-block">${esc(ST.why(r.verdict))}</div>`}`;
+            },
+            onPick: (key) => this.enchantAddTag(key)
+        });
+        SoundManager.playOk();
+    };
+
+    // The spell the piece is to cast, or none: a weapon or a piece of armour
+    // may be enchanted with tags alone.
+    Proto.openEnchantSpellPicker = function () {
+        const pick = window.CCPick;
+        const slot = this._enchantChosen;
+        if (!pick || typeof pick.open !== 'function' || !slot) { SoundManager.playBuzzer(); return; }
+        const kind = this._enchantKind;
+        const own = window.BoundSkill && window.BoundSkill.has(slot.item);
+        const options = [{ value: 0, label: tr('noSpell'), hint: '' }].concat(this.enchantSpells().map(s => ({
+            value: s.id, label: tx(s.name),
+            hint: own ? tr('ownSkill') : tr('tagCost', { kp: enchantCost(s, kind) }),
+            disabled: own
+        })));
+        pick.open({
+            title: tr('pickSpell'),
+            container: this._dndContainer,
+            search: true,
+            value: this.enchantDraft().spellId || 0,
+            options,
+            onPick: (id) => {
+                this.enchantDraft().spellId = Number(id) || 0;
+                SoundManager.playOk();
+                this.refreshUISkillDOM();
+            }
+        });
+        SoundManager.playOk();
+    };
+
+    Proto.enchantCommit = function () {
+        const slot = this._enchantChosen;
+        const verdict = this.enchantFormVerdict();
+        if (!slot || !verdict.ok) { SoundManager.playBuzzer(); this.refreshUISkillDOM(); return; }
+        const entry = enchantGear(slot, { spell: this.enchantDraftSpell(), tags: this.enchantDraft().tags });
+        if (!entry) { SoundManager.playBuzzer(); return; }
+        SoundManager.playSave();
+        if (window.ParchmentToast) window.ParchmentToast.show(tr('bound', { item: entry.name }));
+        this._enchantChosen = null;
+        this._enchantDraft = null;
+        this._enchantDropped = null;
+        this._enchantColumn = 0;
+        this._enchantSlotIndex = 0;
+        this.refreshUISkillDOM();
+    };
+
+    Proto.enchantActivateRow = function (row) {
+        const rows = this.enchantFormRows();
+        const name = rows[row];
+        this._enchantColumn = 1;
+        this._enchantFormRow = row;
+        if (name === 'spell') this.openEnchantSpellPicker();
+        else if (name === 'enchant') this.enchantCommit();
+        else if (name) {
+            const chip = this.enchantChipRow(name)[this.enchantChipCursor(name)];
+            if (chip) this.enchantPickChip(name, chip.key);
+        }
+    };
+
+    const ENCHANT_GROUP_ICONS = { element: 64, rider: 87, refine: 193, mechanic: 83, power: 176, payoff: 77 };
+
+    // The right page while a weapon or a piece of armour is on the bench.
+    Proto.renderEnchantFormHTML = function (knowledge) {
+        const K = SkillMaster.BenchKit;
+        const ST = tagRegistry();
+        const slot = this._enchantChosen;
+        const kind = this._enchantKind;
+        const d = this.enchantDraft();
+        const rows = this.enchantFormRows();
+        const on = (name) => this._enchantColumn === 1 && rows[this._enchantFormRow || 0] === name;
+        const spell = this.enchantDraftSpell();
+        const verdict = this.enchantFormVerdict();
+        const spellKP = spell ? enchantCost(spell, kind) : 0;
+        const tagKP = tagsCost(d.tags, kind);
+
+        let html = K.section({
+            icon: ENCHANT_ICONS.book, title: tr('spellRow'),
+            body: K.trigger({
+                label: '', value: spell ? tx(spell.name) : tr('noSpell'), muted: !spell,
+                iconIndex: spell ? spell.iconIndex : 0, focused: on('spell'),
+                onclick: 'SceneManager._scene.openEnchantSpellPicker()'
+            }),
+            note: spell ? tr(kind === 'weapon' ? 'gear.onCrit' : 'gear.onCritTaken', { spell: tx(spell.name) }) : tr('spellOptional'),
+            cls: on('spell') ? 'sm-kit-section--focused' : ''
+        });
+        for (const group of rows.slice(1, -1)) {
+            const focused = on(group);
+            const cursor = this.enchantChipCursor(group);
+            const chips = this.enchantChipRow(group).map((c, k) => ({
+                label: c.add ? tr('addChip') : ST.name(c.key),
+                selected: !c.add,
+                cursor: focused && k === cursor,
+                hover: `SceneManager._scene.enchantHoverChip('${group}', '${c.key}')`,
+                onclick: `SceneManager._scene.enchantPickChip('${group}', '${c.key}')`
+            }));
+            const note = focused ? this.enchantChipInfo(group, (this.enchantChipRow(group)[cursor] || {}).key)
+                : tr('groupHint');
+            html += K.section({
+                icon: ENCHANT_GROUP_ICONS[group] || 83, title: T('SkillMaster.craft.group.' + group),
+                badge: String(d.tags.filter(k => (ST.get(k) || {}).group === group).length),
+                body: K.chips(chips), note, noteId: 'enchant-note-' + group,
+                cls: focused ? 'sm-kit-section--focused' : ''
+            });
+        }
+
+        // The piece as it will come off the bench, on the backpack's own card.
+        let card = '';
+        const preview = forgeEnchanted(slot.item, kind, spell, d.tags, { preview: true });
+        if (window.ItemInspect && typeof window.ItemInspect.build === 'function') {
+            try { card = window.ItemInspect.build(preview, { canvasId: 'enchant-preview-canvas' }); } catch (e) { card = ''; }
+        }
+        if (!card) {
+            card = `<div class="ui-prose">${esc(preview.name)}</div><div class="ui-prose">${esc(preview.description)}</div>`;
+        }
+        this._enchantPreviewIcon = preview.iconIndex;
+        const q = ST && d.tags.length ? ST.quote(d.tags, kind) : { complexity: 0 };
+        html += `<div class="ui-detail sm-fuse-preview sm-kit-preview">
+                ${K.stats([
+                    { label: tr('spellPrice'), value: `${spellKP} KP` },
+                    { label: tr('tagsPrice'), value: `${tagKP} KP` },
+                    { label: tr('price'), value: `${spellKP + tagKP} KP`, bad: verdict.reason === 'knowledge' },
+                    { label: tr('complexity'), value: Number(q.complexity || 0).toFixed(1) }
+                ])}
+                <div class="sm-craft-card">${card}</div>
+            </div>`;
+
+        let block = verdict.ok ? '' : tr('blocked.' + verdict.reason, { cost: verdict.cost, why: verdict.why || '' });
+        if (this._enchantDropped && this._enchantDropped.length && ST) {
+            block = (block ? block + ' ' : '') + tr('dropped', { tags: this._enchantDropped.map(k => ST.name(k)).join(', ') });
+        }
+        return `
+            <div class="page-header-bar sm-bench-header">
+              <h2 class="title">${esc(tr('formTitle'))}</h2>
+              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+            </div>
+            ${K.title(slot.item.iconIndex, tr('bindingInto', { item: tx(slot.item.name) }))}
+            <div id="enchant-form-box" class="ui-scroll sm-kit-scroll sm-craft-rows">${html}</div>
+            <div class="inspect-actions sm-forge-actions">
+                <div class="inspect-btn focusable ${on('enchant') ? 'selected' : ''} ${verdict.ok ? '' : 'unusable'}" onclick="SceneManager._scene.enchantCommit()">
+                    ${esc(tr('enchantIt'))} <span class="sm-forge-cost">&middot; ${spellKP + tagKP} KP</span>
+                </div>
+            </div>
+            ${block ? `<div class="sm-craft-block">${esc(block)}</div>` : ''}`;
+    };
+
+    // The pad on the gear form: up and down walk its rows, left and right the
+    // chips of a row, OK presses what the cursor is on, and left off the
+    // first chip (or off a row with none) goes back to the pieces.
+    Proto.updateEnchantFormInput = function () {
+        const rows = this.enchantFormRows();
+        const row = Math.max(0, Math.min(rows.length - 1, this._enchantFormRow || 0));
+        this._enchantFormRow = row;
+        const name = rows[row];
+        const pressed = (dir) => Input.isTriggered(dir) || Input.isRepeated(dir);
+        const redraw = () => {
+            SoundManager.playCursor();
+            this.refreshUISkillDOM();
+            this.scrollToActiveItem('enchant-form-box', '#enchant-form-box .sm-kit-section--focused');
+        };
+        if (Input.isTriggered('ok')) { this.enchantActivateRow(row); return; }
+        const chipRow = name !== 'spell' && name !== 'enchant';
+        if (pressed('down')) { this._enchantFormRow = (row + 1) % rows.length; redraw(); return; }
+        if (pressed('up')) { this._enchantFormRow = (row - 1 + rows.length) % rows.length; redraw(); return; }
+        if (pressed('right') && chipRow) {
+            const n = this.enchantChipRow(name).length;
+            const at = this.enchantChipCursor(name);
+            if (at < n - 1) { (this._enchantChipAt || (this._enchantChipAt = {}))[name] = at + 1; redraw(); }
+            return;
+        }
+        if (pressed('left')) {
+            const at = chipRow ? this.enchantChipCursor(name) : 0;
+            if (chipRow && at > 0) { this._enchantChipAt[name] = at - 1; redraw(); return; }
+            this._enchantColumn = 0;
+            redraw();
         }
     };
 
@@ -8603,7 +10426,13 @@
         let boundHTML = '';
         const chips = this.enchantChips();
         this.enchantBound().forEach((entry, i) => {
-            const spell = $dataSkills[entry._enchantSpellId];
+            const spell = entry._enchantSpellId ? $dataSkills[entry._enchantSpellId] : null;
+            const tagKeys = gearTagsOf(entry);
+            const ST = tagRegistry();
+            // What the piece holds: its spell, its tags, or both.
+            const holds = [];
+            if (entry._enchantSpellId) holds.push(spell ? tx(spell.name) : tr('lostSpell'));
+            if (tagKeys.length && ST) holds.push(tagKeys.map(k => ST.name(k)).join(', '));
             const row = slots.length + i;
             const onRow = this._enchantColumn === 0 && this._enchantSlotIndex === row;
             const chipHTML = chips.map((chip, ci) => {
@@ -8617,7 +10446,7 @@
             boundHTML += `
                 <div class="sm-skill-row sm-craft-entry ${onRow ? 'sm-craft-entry--cursor' : ''}">
                     <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(entry.iconIndex)}"></span><span class="sm-skill-name">${esc(entry.name)}</span></span>
-                    <span class="ui-chip sm-skill-badge">${esc(spell ? tx(spell.name) : tr('lostSpell'))}</span>
+                    <span class="ui-chip sm-skill-badge">${esc(holds.join(' + ') || tr('lostSpell'))}</span>
                     ${chipHTML}
                 </div>`;
         });
@@ -8643,6 +10472,16 @@
             <div id="enchant-bound-box" class="ui-list ui-scroll sm-forged-list sm-bench-split-list">
                 ${boundHTML}
             </div>`;
+
+        // A weapon or a piece of armour on the bench is enchanted on the form;
+        // a book is still the spell it is written with, picked off the list.
+        if (isGearKind(kind) && chosen) {
+            rightBox.innerHTML = this.renderEnchantFormHTML(knowledge);
+            if (this._enchantPreviewIcon && window.ItemInspect && window.ItemInspect.drawIcon) {
+                window.ItemInspect.drawIcon(this._enchantPreviewIcon, 'enchant-preview-canvas');
+            }
+            return;
+        }
 
         const spells = this.enchantSpells();
         let spellsHTML = '';
@@ -8676,6 +10515,12 @@
     };
 
     Proto.updateEnchantBenchInput = function () {
+        // The catalogue and the spell picker are modal: while one is up it
+        // reads the pad itself.
+        if (window.CCPick && window.CCPick.isOpen && window.CCPick.isOpen()) {
+            window.CCPick.pollInput();
+            return;
+        }
         const tabStep = (window.CCNav ? window.CCNav.railDir() : 0);
         if (tabStep !== 0) {
             const kinds = ['weapon', 'armor', 'book'];
@@ -8693,6 +10538,10 @@
             } else {
                 this.closeEnchantBench();
             }
+            return;
+        }
+        if (this._enchantColumn === 1 && isGearKind(this._enchantKind) && this._enchantChosen) {
+            this.updateEnchantFormInput();
             return;
         }
         const spells = this._enchantColumn === 1;
@@ -9776,6 +11625,9 @@
         if (!leftBox || !rightBox || !E || !actor) return;
         const K = SkillMaster.BenchKit;
         const d = E.draft(actor);
+        // ELSE only exists behind a branch: a draft without one (a branch
+        // taken off, or another character's bench) aims effects at THEN.
+        if (!d.branch && this._exprDestEffect === 'elseEffects') this._exprDestEffect = 'effects';
         const options = this.exprOptions();
         this._exprIndex = Math.max(0, Math.min(this._exprIndex || 0, options.length - 1));
 
@@ -9946,8 +11798,9 @@
             }
             return;
         }
-        if (Input.isTriggered('pageup')) { this.exprTurnTab(-1); return; }
-        if (Input.isTriggered('pagedown')) { this.exprTurnTab(1); return; }
+        // L1 / R1, PageUp / PageDown and Tab / Shift+Tab all turn the bench's tabs.
+        const exprTabStep = window.CCNav ? window.CCNav.railDir() : 0;
+        if (exprTabStep !== 0) { this.exprTurnTab(exprTabStep); return; }
         if (Input.isTriggered('shift')) { this.exprCycleDest(); return; }
 
         if (this._exprPane === 1) {
@@ -10405,9 +12258,10 @@
             return;
         }
         // Left and right walk the party, the same as the switcher tabs.
-        if (Input.isTriggered('left') || Input.isTriggered('right') ||
-            Input.isTriggered('pageup') || Input.isTriggered('pagedown')) {
-            const dir = (Input.isTriggered('left') || Input.isTriggered('pageup')) ? -1 : 1;
+        // The rail inputs (L1 / R1, PageUp / PageDown, Tab / Shift+Tab) do too.
+        const loboSideStep = Input.isTriggered('left') ? -1 : (Input.isTriggered('right') ? 1 : 0);
+        const dir = loboSideStep || (window.CCNav ? window.CCNav.railDir() : 0);
+        if (dir !== 0) {
             this._loboArmed = -1;
             this._loboIndex = 0;
             if (typeof this.cycleTeachActor === 'function') this.cycleTeachActor(dir);

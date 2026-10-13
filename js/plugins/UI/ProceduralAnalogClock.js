@@ -646,10 +646,18 @@
     // ── Scene integration ─────────────────────────────────────────────────────
     let currentClock = null;
 
+    // A clock is Graphics and up to a dozen PIXI.Text numerals, each with a
+    // canvas and a GPU texture of its own. Taken off the layer without being
+    // destroyed, every look at a clock left a whole face of them behind.
+    function disposeClock(clock) {
+        if (!clock) return;
+        if (clock.parent) clock.parent.removeChild(clock);
+        try { clock.destroy({ children: true }); } catch (e) { /* already gone */ }
+    }
+
     function hideClock() {
         if (currentClock) {
-            const s = SceneManager._scene;
-            if (s && s._clockLayer) s._clockLayer.removeChild(currentClock);
+            disposeClock(currentClock);
             currentClock = null;
         }
         $gameSystem._clockShowing = false;
@@ -691,7 +699,7 @@
     function showClockAt(mapId, x, y) {
         const scene = SceneManager._scene;
         if (!scene || !scene._clockLayer) return;
-        if (currentClock) scene._clockLayer.removeChild(currentClock);
+        if (currentClock) disposeClock(currentClock);
 
         currentClock   = new Sprite_ProceduralClock(mapId, x, y);
         currentClock.x = Graphics.width  / 2;

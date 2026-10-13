@@ -184,9 +184,22 @@
             g.position.set(x, baseY, baseZ); g.rotation.y = yaw; g._head = head; this.bodyGroup.add(g);
             this._headList.push(g); return g;
         }
+        // A wing spreads outward from its own shoulder. The shared builder fans
+        // its fingers toward -side, which crossed the wing over the back to the
+        // far flank, so a wing that comes back crossed is rebuilt from the other
+        // hand and keeps its own side.
         _tWing(side, p) {
             const mem = this._mat(p.bodyColor, 0.72, 0.6); mem.side = THREE.DoubleSide;
-            const g = this.buildDragonWing(mem, side, side * 0.5, 1.85, -0.35, { span: 1.7, fingers: 4 });
+            const opts = { span: 1.7, fingers: 4 };
+            let g = this.buildDragonWing(mem, side, side * 0.5, 1.85, -0.35, opts);
+            const tips = g._wingTips || [];
+            if (tips.length && tips[tips.length - 1].x * side < 0) {
+                this.bodyGroup.remove(g);
+                if (this._wings) { const i = this._wings.indexOf(g); if (i >= 0) this._wings.splice(i, 1); }
+                g.traverse(o => { if (o.geometry) o.geometry.dispose(); });
+                g = this.buildDragonWing(mem, -side, side * 0.5, 1.85, -0.35, opts);
+                g._side = side;
+            }
             return g;
         }
         _tLeg(mat, x) {
@@ -247,8 +260,9 @@
                 if (h._head) h._head.rotation.x = Math.sin(t * 2 + i) * 0.12 + (fast ? 0.2 : 0);
             });
             const beat = Math.sin(t * (fast ? 4 : 1.7));
-            if (this.lWing) this.lWing.rotation.z = 0.15 + beat * 0.22;
-            if (this.rWing) this.rWing.rotation.z = -0.15 - beat * 0.22;
+            // Hinged at the shoulder: + raises a wing on either side.
+            if (this.lWing) this.lWing.rotation.z = -(0.15 + beat * 0.22);
+            if (this.rWing) this.rWing.rotation.z = 0.15 + beat * 0.22;
             if (this.tail) this.tail.rotation.y = Math.sin(t * 1.0) * 0.22;
             if (this.leftLeg) this.leftLeg.rotation.x = Math.sin(t * 1.6) * 0.05;
             if (this.rightLeg) this.rightLeg.rotation.x = -Math.sin(t * 1.6) * 0.05;

@@ -29,6 +29,23 @@
    "unarmed": "2 free hands"
   }
  },
+ "ammo": {
+  "label": "Ammo",
+  "roundOne": "1 round",
+  "rounds": "{n} rounds",
+  "all": "The whole magazine",
+  "reload": "Refills the magazine",
+  "whip": "No AP cost when the magazine is empty",
+  "dry": "Needs {need} rounds loaded, {have} left",
+  "dryOne": "Needs a round loaded, the magazine is empty",
+  "full": "The magazine is already full",
+  "noMagazine": "This weapon has no magazine to reload",
+  "chip": {
+   "dry": "Out of rounds",
+   "full": "Magazine full",
+   "noMagazine": "No magazine"
+  }
+ },
  "discipline": {
   "basic": "Basic Discipline",
   "standard": "Standard Discipline"
@@ -38,20 +55,21 @@
   "incantation": "Incantation",
   "damage": "Damage",
   "skillEffects": "Skill Effects",
-  "training": "Training"
+  "training": "Training",
+  "special": "Special"
  },
  "role": {
   "offensive": {
    "name": "Offensive",
-   "description": "Skills that deal damage.\nStrike down your foes."
+   "description": "Skills that deal damage."
   },
   "healing": {
    "name": "Healing",
-   "description": "Restore HP and cure ailments.\nMend yourself and allies."
+   "description": "Restore HP and cure ailments."
   },
   "support": {
    "name": "Support",
-   "description": "Buffs, debuffs and utility.\nShift the tide of battle."
+   "description": "Buffs, debuffs and utility."
   }
  },
  "cmd": {
@@ -93,7 +111,7 @@
  },
  "empty": {
   "title": "Grimoire Codicil",
-  "hint": "Select a skill from the list on the left to see its element, cost and effects.",
+  "hint": "Select a skill to see its details.",
   "section": "[Empty]",
   "category": "[Empty]"
  },
@@ -107,8 +125,6 @@
    "damage": "Damage",
    "damageCategory": "Damage Class",
    "statReq": "Requires",
-   "statHeld": "Base held",
-   "statCounts": "What counts",
    "grantedBy": "Granted by",
    "range": "Range"
   },
@@ -133,7 +149,7 @@
   "random": "Random",
   "bestApplied": "Synced the {n} most useful skills.",
   "randomApplied": "Synced {n} random skills.",
-  "statLocked": "{name} needs {stat} base; this one has {value}."
+  "statLocked": "{name} needs {stat} base; this character has {value}."
  },
  "tag": {
   "field": "Field"
@@ -174,11 +190,11 @@
     },
     "loadout": {
      "name": "Loadout",
-     "text": "The nine skills carried into battle. Only these can be cast in a fight; Best and Random fill the strip for you."
+     "text": "The nine skills usable in battle. Best and Random fill it for you."
     },
     "sync": {
      "name": "Sync and Desync",
-     "text": "Sync puts the selected skill in the loadout, Desync takes it out. Some skills are always carried and spend no slot."
+     "text": "Sync puts the selected skill in the loadout, Desync takes it out. Some skills are always synced and use no slot."
     },
     "card": {
      "name": "Skill card",
@@ -199,7 +215,7 @@
    "items": {
     "list": {
      "name": "Skills",
-     "text": "The skills this character carries into battle. Pick one to cast it."
+     "text": "This character's synced skills. Pick one to cast it."
     },
     "cost": {
      "name": "Cost",
@@ -211,7 +227,7 @@
     },
     "target": {
      "name": "Target",
-     "text": "A skill aimed at an ally asks who it lands on after being picked."
+     "text": "Ally skills ask for a target after you pick them."
     },
     "help": {
      "name": "? Help",
@@ -219,5 +235,139 @@
     }
    }
   }
+ },
+ "special": {
+  "mcLoop": "Makes the foe repeat its last action for 1 to 3 turns",
+  "mcSeal": "Seals the foe's last skill",
+  "mcRebound": "Throws the next enemy skill back at its caster",
+  "mcPuppet": "The user picks the foe's next move, aimed at its own side",
+  "mcTurncoat": "Turns the foe's next action on its own side",
+  "mcEcho": "The user's next skill fires twice, the second time free",
+  "mcMindRead": "Reveals the foe's next action and holds it to it",
+  "reaction": {
+   "generic": "Sets off a foe's {state}",
+   "Electrocute": "Paralyses a Wet foe and dries it",
+   "FlashFreeze": "May freeze a Wet foe solid",
+   "Ignite": "Sets an Oily foe Burned, leaping to oily neighbours",
+   "Shatter": "Shatters a Frozen or Brittle foe for 50 to 60% more damage",
+   "Thaw": "Thaws a Frozen foe to Wet and melts a Brittle foe's rime",
+   "Steam": "Turns a Hot foe's aura to blinding steam",
+   "Extinguish": "Puts out a Burned foe",
+   "Fanned": "Fans a Burned foe's flames onto its neighbours",
+   "Fumes": "Boils a Poisoned foe's venom into Nausea fumes",
+   "Detonate": "Detonates a Volatile foe for double damage",
+   "Spark": "Sparks a Volatile foe for 50% more damage"
+  },
+  "lifeLinkAllies": "Links the party: HP damage is shared evenly",
+  "lifeLinkFoes": "Links the foes: a blow on one spreads to the rest",
+  "guardianSelf": "The user takes half of each ally's HP damage",
+  "guardian": "Takes half of each ally's HP damage",
+  "spendsState": "Spends the user's {state}",
+  "buildsStack": "Adds {count} to {stack} (max {max})",
+  "buildsStackOnKill": "Each foe it fells adds 1 to {stack} (max {max})",
+  "spendsStacks": "Spends all {stack}",
+  "scalesWithStacks": "Stronger with more {stack}",
+  "aimedTargetPart": "Aims at the {part}",
+  "aimedPartOr": " or ",
+  "aimedAimable": "Choose the body part to strike with Aim",
+  "aimedAimRider": "A struck {part} leaves the foe {state}",
+  "aimedPart": {"head": "head", "eye": "eye", "neck": "neck", "heart": "heart", "hand": "hand", "arm": "arm", "foot": "foot", "leg": "leg", "wing": "wing", "tail": "tail", "torso": "torso", "vital": "vital organs"},
+  "expireDamage": "{state} comes due after {turns} turns and strikes the holder",
+  "expireDamageArea": "{state} detonates after {turns} turns: hits the holder and all its allies",
+  "expireHeal": "{state} heals the holder when it ends, after {turns} turns",
+  "expireSkill": "{state} casts {skill} on the holder when it ends, after {turns} turns",
+  "expireSkillArea": "{state} casts {skill} on the holder's whole side when it ends, after {turns} turns",
+  "ammoCostOne": "Spends 1 round; needs it loaded",
+  "ammoCost": "Spends {n} rounds; needs them loaded",
+  "ammoAll": "Empties the magazine: one hit per round spent",
+  "ammoReload": "Reloads the magazine; not with it full",
+  "ammoWhip": "Free when the magazine is empty",
+  "selfState": "Grants the user {state}",
+  "bulletHell": "Cast by a foe: starts a dodge phase, damage scales with hits taken",
+  "psiDodge": "Starts a dodge phase flown by the user",
+  "slowsDodge": "Slows the dodge pattern",
+  "shrinksHitbox": "Shrinks the craft in a dodge phase",
+  "selfStateChance": "{chance}% chance to put {state} on the user",
+  "drainRate": "Heals the user for {pct}% of the damage",
+  "drainMp": "Steals MP worth {pct}% of the damage",
+  "oncePerDay": "Once per day",
+  "hpCost": "Costs {amount} of the user's HP",
+  "bonusVsState": "Stronger against a foe with {state}",
+  "bonusWhileState": "Stronger while the user has {state}",
+  "bonusVsWounded": "Stronger against a wounded foe",
+  "bonusWhileWounded": "Stronger the more the user is wounded",
+  "scalesWithAp": "Grows with the user's AP",
+  "usesTargetPower": "Turns the target's own power against it",
+  "ignoresDefence": "Ignores defence",
+  "stance": "{state}: every blow lands as {type}",
+  "drill": "{state}: raises weapon proficiency",
+  "actionFail": "{state}: the foe may stumble ({pct}%)",
+  "taunt": "Taunts the foe into attacking the user"
+ },
+ "specialName": {
+  "mcLoop": "Loop",
+  "mcSeal": "Seal",
+  "mcRebound": "Rebound",
+  "mcPuppet": "Puppet",
+  "mcTurncoat": "Turncoat",
+  "mcEcho": "Echo",
+  "mcMindRead": "Mind Read",
+  "reaction": {
+   "generic": "Reaction",
+   "Electrocute": "Electrocute",
+   "FlashFreeze": "Flash Freeze",
+   "Ignite": "Ignite",
+   "Shatter": "Shatter",
+   "Thaw": "Thaw",
+   "Steam": "Steam",
+   "Extinguish": "Extinguish",
+   "Fanned": "Fan the Flames",
+   "Fumes": "Fumes",
+   "Detonate": "Detonate",
+   "Spark": "Spark"
+  },
+  "lifeLinkAllies": "Life Link",
+  "lifeLinkFoes": "Life Link",
+  "guardianSelf": "Guardian",
+  "guardian": "Guardian",
+  "spendsState": "Spend {state}",
+  "buildsStack": "+{count} {stack}",
+  "buildsStackOnKill": "{stack} on Kill",
+  "spendsStacks": "Spend {stack}",
+  "scalesWithStacks": "{stack} Scaling",
+  "aimedTargetPart": "Aimed",
+  "aimedAimable": "Aimable",
+  "aimedAimRider": "Crippling Aim",
+  "expireDamage": "Delayed Blow",
+  "expireDamageArea": "Delayed Blast",
+  "expireHeal": "Delayed Heal",
+  "expireSkill": "Delayed Cast",
+  "expireSkillArea": "Delayed Wave",
+  "ammoCostOne": "1 Round",
+  "ammoCost": "{n} Rounds",
+  "ammoAll": "Mag Dump",
+  "ammoReload": "Reload",
+  "ammoWhip": "Pistol Whip",
+  "selfState": "Self: {state}",
+  "selfStateChance": "Self: {state}",
+  "bulletHell": "Bullet Hell",
+  "psiDodge": "Psi Dodge",
+  "slowsDodge": "Slow Time",
+  "shrinksHitbox": "Small Target",
+  "drainRate": "Lifesteal",
+  "drainMp": "Mana Steal",
+  "oncePerDay": "Daily",
+  "hpCost": "Blood Price",
+  "bonusVsState": "Exploit {state}",
+  "bonusWhileState": "Empowered by {state}",
+  "bonusVsWounded": "Executioner",
+  "bonusWhileWounded": "Desperation",
+  "scalesWithAp": "AP Scaling",
+  "usesTargetPower": "Turnabout",
+  "ignoresDefence": "Pierce",
+  "stance": "Stance: {type}",
+  "drill": "Drill",
+  "actionFail": "Stumble",
+  "taunt": "Taunt"
  }
 }

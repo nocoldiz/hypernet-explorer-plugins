@@ -107,6 +107,26 @@
 
     const pluginName = 'RealEstateMarket';
 
+    // Rental income in euros as the parchment prints money everywhere else
+    // (MoneyFormatter.js), from an amount in gold.
+    function rentalIncomeText(goldIncome) {
+        const MF = window.MoneyFormatter;
+        return (MF && typeof MF.format === 'function')
+            ? MF.format(goldIncome)
+            : (Math.round(Number(goldIncome) || 0) / 100).toFixed(2);
+    }
+
+    // Rent that arrives while the party is out walking is announced on the
+    // parchment, the same way a shop's day is (ShopManagement.js): money that
+    // appears with no line to explain it reads as a bug.
+    function announceRentalIncome(goldIncome) {
+        if (!(goldIncome > 0) || !window.ParchmentToast || !window.ParchmentToast.show) return;
+        window.ParchmentToast.show(
+            t('dailyIncomeMsg', { income: rentalIncomeText(goldIncome) }),
+            { title: t('dailyIncome') }
+        );
+    }
+
     // --- Helper Function to Parse Game Date from Variable 113 ---
     function getGameDateFromVariable() {
         const dateStr = (typeof $gameVariables !== 'undefined' && $gameVariables ? $gameVariables.value(113) : null) || '01 JAN 2001 12:00';
@@ -682,7 +702,11 @@
             // processDailyUpdate() once per new day. Nothing to schedule here.
         }
 
-        processDailyUpdate() {
+        // `quiet` is the catch-up after days that passed with no update (a
+        // long sleep, a fast travel, a save loaded before the register was
+        // opened): each day is still paid, and the caller announces the sum
+        // once instead of one toast per day. Answers the gold paid.
+        processDailyUpdate(quiet) {
             this.dailyIncome = 0;
 
             // Update market trends
@@ -718,12 +742,7 @@
             // Rent that arrives while the party is out walking is announced on
             // the parchment, the same way a shop's day is (ShopManagement.js):
             // money that appears with no line to explain it reads as a bug.
-            if (this.dailyIncome > 0 && window.ParchmentToast && window.ParchmentToast.show) {
-                window.ParchmentToast.show(
-                    t('dailyIncomeMsg', { income: this.dailyIncome, gold: goldIncome }),
-                    { title: t('dailyIncome') }
-                );
-            }
+            if (!quiet) announceRentalIncome(goldIncome);
 
             // Company share prices are the stock terminal's to move (its hourly
             // engine, driven by the society): this register only keeps the
@@ -731,6 +750,7 @@
 
             // Save the update
             this.save();
+            return goldIncome;
         }
 
         updateOccupancy(property) {
@@ -2730,31 +2750,94 @@
         return sp === -1 ? dayKey : dayKey.slice(sp + 1);
     }
 
+    // "01 JAN 2001" as a day number and "JAN 2001" as a month number, so the
+    // days and months that went by between two checks can be counted. Null
+    // when the key cannot be read (it is then treated as one step).
+    const RE_MONTHS_EN = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const RE_MONTHS_IT = ['GEN', 'FEB', 'MAR', 'APR', 'MAG', 'GIU', 'LUG', 'AGO', 'SET', 'OTT', 'NOV', 'DIC'];
+    function realEstateMonthIndex(token) {
+        const m = String(token || '').toUpperCase();
+        let i = RE_MONTHS_EN.indexOf(m);
+        if (i < 0) i = RE_MONTHS_IT.indexOf(m);
+        return i;
+    }
+    function realEstateDayNumber(dayKey) {
+        const p = String(dayKey || '').split(' ').filter(Boolean);
+        const d = parseInt(p[0], 10), mo = realEstateMonthIndex(p[1]), y = parseInt(p[2], 10);
+        if (!(d > 0) || mo < 0 || !Number.isFinite(y)) return null;
+        return Math.round(Date.UTC(y, mo, d) / 86400000);
+    }
+    function realEstateMonthNumber(monthKey) {
+        const p = String(monthKey || '').split(' ').filter(Boolean);
+        const mo = realEstateMonthIndex(p[0]), y = parseInt(p[1], 10);
+        if (mo < 0 || !Number.isFinite(y)) return null;
+        return y * 12 + mo;
+    }
+    // How many steps lie between two keys: at least one (they differ), at
+    // most `cap`, so a clock that jumped years settles in bounded work.
+    function realEstateStepsBetween(from, to, cap) {
+        if (from === null || to === null) return 1;
+        const n = to - from;
+        if (!(n > 0)) return 1;
+        return Math.min(n, cap);
+    }
+    const RE_MAX_CATCHUP_DAYS = 366;
+    const RE_MAX_CATCHUP_MONTHS = 24;
+
+    // Whether this savegame holds anything the clock pays or charges on. The
+    // register is built lazily (the first menu that asks for it), and after a
+    // load it stands empty until then: rent was neither collected on the
+    // deeds nor charged on the tenancies for as long as nobody opened the
+    // Assets or Real Estate pages.
+    function realEstateHasHoldings() {
+        const data = $gameSystem && $gameSystem.realEstateData;
+        if (!data) return false;
+        return (Array.isArray(data.ownedProperties) && data.ownedProperties.length > 0) ||
+            (Array.isArray(data.rentedProperties) && data.rentedProperties.length > 0) ||
+            (Array.isArray(data.properties) && data.properties.some(p => p && (p.isOwned || p.isRentedByPlayer)));
+    }
+
     let _realEstateFrameTick = 0;
     const _Scene_Map_update_RealEstate = Scene_Map.prototype.update;
     Scene_Map.prototype.update = function () {
         _Scene_Map_update_RealEstate.call(this);
-        if (!$realEstateManager) return;
         // The in-game day changes far slower than once a second; throttle the
         // day-boundary check to every 60 frames.
         if (++_realEstateFrameTick < 60) return;
         _realEstateFrameTick = 0;
+        realEstateClockTick();
+    };
+
+    function realEstateClockTick() {
+        if (!$gameSystem) return;
         const key = realEstateDayKey();
-        if ($gameSystem._realEstateLastDayKey === undefined) {
+        const monthKey = realEstateMonthKey();
+        if (!$realEstateManager && realEstateHasHoldings()) ensureRealEstateManager();
+        // With nothing to pay on, the markers still follow the clock, so the
+        // first deed signed is never paid for the days before it was bought.
+        if (!$realEstateManager || $gameSystem._realEstateLastDayKey === undefined) {
             $gameSystem._realEstateLastDayKey = key;
-            $gameSystem._realEstateLastMonthKey = realEstateMonthKey();
+            $gameSystem._realEstateLastMonthKey = monthKey;
             return;
         }
         if ($gameSystem._realEstateLastDayKey !== key) {
+            // Every day that went by is paid, not just the one the check
+            // happened to land on (a night's sleep or a long journey can
+            // cross several).
+            const days = realEstateStepsBetween(
+                realEstateDayNumber($gameSystem._realEstateLastDayKey), realEstateDayNumber(key), RE_MAX_CATCHUP_DAYS);
             $gameSystem._realEstateLastDayKey = key;
-            $realEstateManager.processDailyUpdate();
+            let paid = 0;
+            for (let i = 0; i < days; i++) paid += $realEstateManager.processDailyUpdate(true) || 0;
+            announceRentalIncome(paid);
         }
-        const monthKey = realEstateMonthKey();
         if ($gameSystem._realEstateLastMonthKey !== monthKey) {
+            const months = realEstateStepsBetween(
+                realEstateMonthNumber($gameSystem._realEstateLastMonthKey), realEstateMonthNumber(monthKey), RE_MAX_CATCHUP_MONTHS);
             $gameSystem._realEstateLastMonthKey = monthKey;
-            $realEstateManager.processMonthlyRent();
+            for (let i = 0; i < months; i++) $realEstateManager.processMonthlyRent();
         }
-    };
+    }
 
 
     // ========================================================================
@@ -2850,7 +2933,7 @@
         if (!window.HypernetOS) return false;
         window.HypernetOS.registerApp({
             id: 'app-real-estate',
-            name: T('RealEstate.ui.appName'),
+            name: () => T('RealEstate.ui.appName'),
             icon: 84,
             launchFn: function () {
                 ensureRealEstateManager();
@@ -2877,7 +2960,7 @@
         const goldIncome = Math.round(income * 100);
         if (window.ParchmentToast) {
           window.ParchmentToast.report([
-            t('dailyIncomeMsg', { income: income, gold: goldIncome }),
+            t('dailyIncomeMsg', { income: rentalIncomeText(goldIncome) }),
             t('propertiesOwnedMsg', { count: $realEstateManager.getOwnedCount() })
           ], {
             severity: 'info'

@@ -4,11 +4,22 @@
     "title": "AUGMENTS",
     "tab": {
       "fitted": "FITTED ({count})",
-      "catalogue": "CATALOGUE ({count})"
+      "all": "ALL ({count})",
+      "region": "{name} ({count})"
     },
-    "noneFitted": "NOBODY IN DA PARTY IZ CARRYIN' AN AUGMENT!",
+    "region": {
+      "head": "HEAD",
+      "senses": "SENSES",
+      "torso": "TORSO",
+      "organs": "ORGANS",
+      "arms": "ARMS",
+      "legs": "LEGS",
+      "appendages": "APPENDAGES",
+      "other": "OTHER"
+    },
+    "noneFitted": "NO AUGMENTS FITTED.",
     "noCatalogue": "NO AUGMENT CATALOGUE IZ LOADED!",
-    "noneSelected": "PICK AN AUGMENT TA READ ITS DOSSIER!",
+    "noneSelected": "SELECT AN AUGMENT.",
     "wornBy": "{actor} · {part}",
     "type": {
       "biological": "BIOLOGICAL",
@@ -17,24 +28,23 @@
     },
     "damagedHost": "HOST PART DAMAGED",
     "effects": "EFFECTS",
-    "noStatChange": "NO CHANGE TA ANY PARAMETER!",
+    "noStatChange": "NO STAT CHANGES.",
     "grantedSkill": "ABILITY GRANTED",
-    "alwaysCarried": "CARRIED INTO EVERY FIGHT; IT SPENDS NO SKILL SLOT!",
-    "sockets": "SOCKETS IT FITS",
-    "noSocket": "NO SOCKET ACCEPTS IT.",
-    "noSocketShort": "NO SOCKET",
-    "moreSockets": "+{count}",
+    "alwaysCarried": "ALWAYS SYNCED.",
+    "sockets": "SOCKETS",
+    "noSocket": "FITS NO SOCKET.",
     "capacity": "CAPACITY",
     "capacityValue": "{fitted} OF {max} SOCKETS",
     "fittedTo": "FITTED TA",
-    "damagedWarning": "DA PART IT SITS IN IZ RUINED. DA AUGMENT STILL WORKS, BUT DA LIMB DOES NO!",
-    "severWarning": "SEVERIN' DA PART TAKES DA AUGMENT WIT IT!",
+    "damagedWarning": "HOST PART RUINED. DA AUGMENT WORKS, DA LIMB NO!",
+    "severWarning": "LOSIN' DA PART LOSES DA AUGMENT!",
     "need": {
       "halted": "NEVER DEPLETES",
       "slowed": "DRAINS {pct}% SLOWER",
       "hastened": "DRAINS {pct}% FASTER",
-      "restores": "REFILLS AT {pct}% OF DA USUAL RATE"
+      "restores": "REFILLS AT {pct}% SPEED"
     },
-    "searchPlaceholder": "SEARCH AUGMENTS…"
+    "searchPlaceholder": "SEARCH AUGMENTS…",
+    "price": "PRICE"
   }
 }

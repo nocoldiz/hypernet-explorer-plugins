@@ -381,27 +381,102 @@ Imported.DialogueSystem = true;
     // -------------------------------------------------------------------------
     // Speaker models: a speaker with a 3D body is shown by it
     // -------------------------------------------------------------------------
-    // An NPC whose body is a model (a creature, an animal) and a party member
-    // who picked the 3D Model portrait at creation stand in the bust slot as
-    // that model, not as the bust their sprite carries. A dossier that ships a
-    // model (Em) keeps her painted bust here. Which model is
-    // window.NPCPortraitModel's answer (NPCEmpathizeUI.js), so the message box and the Empathize panel always
-    // show the same body. The model is rendered into a Bitmap on one offscreen
-    // WebGL context kept for the session, and that Bitmap walks in exactly as a
-    // bust does: the slide, the side and the fallback never learn the
-    // difference. A model that cannot be built fails its Bitmap, and the bust
-    // it was standing in for is shown instead.
+    // An NPC whose body is a model (a creature, an animal), a party member who
+    // picked the 3D Model portrait at creation, a recruited or promoted
+    // monster and a dossier that ships a model (Em) all stand in the bust slot
+    // as that model, story scenes included. Which model is
+    // window.NPCPortraitModel's answer (NPCEmpathizeUI.js), so the message box
+    // and the Empathize panel always show the same body. The model is rendered
+    // into a Bitmap on one offscreen WebGL context kept for the session, and
+    // that Bitmap walks in exactly as a bust does: the slide, the side and the
+    // fallback never learn the difference. A model that cannot be built fails
+    // its Bitmap, and the bust it was standing in for is shown instead.
+    //
+    // A portrait on screen is alive: tick() re-renders it every other frame,
+    // a rigged figure plays its `talk` loop while it is the one speaking and
+    // one of its talking gestures on every line (speak), and stands at idle
+    // while it listens. A person is framed head and shoulders, the way the
+    // painted busts are cut; a creature is framed whole.
     const SpeakerModels = (() => {
         const CACHE_MAX = 12;
         // Frames re-rendered after the model lands, so a texture that arrives
         // a moment late still makes it onto the portrait.
         const BURST = 30;
+        // How often a live portrait is redrawn, in seconds.
+        const LIVE_STEP = 1 / 30;
+        // A person's portrait, measured from the base of the neck: the frame
+        // runs from the top of the model (hat and all) down this share of the
+        // head's own height below the neck, which is where the busts are cut.
+        const BUST_BELOW_NECK = 0.45;
+        // The air left above the head, all of it spent over the hair: the
+        // painted busts start their heads well under the top of the file, and
+        // a model filling its frame stood a head taller than they do.
+        const BUST_HEADROOM   = 1.18;
+        // A person with no skeleton to measure is cut at this share of their
+        // height, from the top.
+        const BUST_CROP = 0.3;
+        // A creature with a roar or a cast may use it for a line now and then.
+        const CREATURE_ACTS = ['roar', 'cast'];
+        const CREATURE_ACT_CHANCE = 0.3;
+        // The lights a portrait starts under, the status sheet's own. Each
+        // portrait is then exposed to EXPOSURE_TARGET (mean brightness of the
+        // figure, 0 to 1): a pale face, a dark coat or a tint left one model
+        // washed out and the next one murky under a fixed rig.
+        const LIGHTS = [
+            { kind: 'ambient', color: 0xffffff, intensity: 0.6 },
+            { kind: 'directional', color: 0xfff2d0, intensity: 0.85, at: [3, 5, 4] },
+            { kind: 'directional', color: 0xbcd4ff, intensity: 0.35, at: [-3, -2, 2] }
+        ];
+        const EXPOSURE_TARGET = 0.46;
+        const EXPOSURE_MIN = 0.25;
+        const EXPOSURE_MAX = 2.4;
+        // Frames of the burst between two exposure readings, so a texture
+        // that lands late is measured again.
+        const EXPOSURE_EVERY = 8;
+        // Draw-and-measure rounds per reading.
+        const EXPOSURE_PASSES = 4;
         const cache = new Map(); // "specId|WxH" -> Bitmap, oldest first
         let gl = null;
         let queue = Promise.resolve();
 
         function available() {
             return typeof THREE !== 'undefined' && !!window.NPCPortraitModel?.build && !!window.ActorModel3D?.framing;
+        }
+
+        // A dossier figure is built as its own copy (ActorModel3D.figure): the
+        // portrait GLB the status sheet shows is one shared scene, and a
+        // portrait that keeps posing its bones must never be found mid-gesture
+        // by another screen. Anything else is built the way the panel builds it.
+        function build(spec) {
+            const AM = window.ActorModel3D;
+            if (spec.info && spec.info.kind === 'glb' && AM && AM.figure) {
+                return Promise.resolve(AM.figure(spec.info.path)).then((fig) => {
+                    if (!fig || !fig.model) return window.NPCPortraitModel.build(spec);
+                    if (spec.info.colours && AM.tint) AM.tint(fig.model, spec.info.colours);
+                    return { model: fig.model, rig: fig.rig || null, update(dt) { if (fig.rig) fig.rig.update(dt); } };
+                });
+            }
+            return Promise.resolve(window.NPCPortraitModel.build(spec));
+        }
+
+        // Head and shoulders, measured off the skeleton: from the top of the
+        // model to just under the neck, centred on the head.
+        function bustFraming(battler, camera) {
+            const rig = battler.rig;
+            const neck = rig && rig.entries && (rig.entries.neck || rig.entries.head);
+            if (!neck || !neck.bone || typeof THREE.Box3 !== 'function') return null;
+            battler.model.updateMatrixWorld(true);
+            const box = new THREE.Box3().setFromObject(battler.model);
+            if (!box || !box.max || !isFinite(box.max.y)) return null;
+            const neckAt = neck.bone.getWorldPosition(new THREE.Vector3());
+            const headAt = (rig.entries.head || neck).bone.getWorldPosition(new THREE.Vector3());
+            const span = box.max.y - neckAt.y;
+            if (!(span > 0)) return null;
+            const bottom = neckAt.y - span * BUST_BELOW_NECK;
+            const height = (box.max.y - bottom) * BUST_HEADROOM;
+            const vHalf = (camera.fov * Math.PI / 180) / 2;
+            const center = new THREE.Vector3(headAt.x, bottom + height / 2, headAt.z);
+            return { center, distance: Math.max((height / 2) / Math.tan(vHalf), 0.1) };
         }
 
         function context(width, height) {
@@ -436,17 +511,23 @@ Imported.DialogueSystem = true;
 
         function render(spec, bitmap) {
             const state = bitmap._speakerModel;
-            return Promise.resolve(window.NPCPortraitModel.build(spec)).then((battler) => {
+            return build(spec).then((battler) => {
                 if (!battler || !battler.model || state.disposed) { state.failed = true; return null; }
                 const ctx = context(bitmap.width, bitmap.height);
                 if (!ctx) { state.failed = true; return null; }
                 const scene = new THREE.Scene();
-                scene.add(new THREE.AmbientLight(0xffffff, 1.1));
-                const keyLight = new THREE.DirectionalLight(0xfff2d0, 1.4); keyLight.position.set(3, 5, 4); scene.add(keyLight);
-                const fillLight = new THREE.DirectionalLight(0xbcd4ff, 0.7); fillLight.position.set(-3, -2, 2); scene.add(fillLight);
+                const lights = addLights(scene);
                 const camera = new THREE.PerspectiveCamera(40, bitmap.width / bitmap.height, 0.05, 300);
+                // A figure is measured standing at rest, not in the T-pose
+                // it was exported in.
+                if (battler.rig && battler.rig.play) battler.rig.play('idle');
                 try { battler.update(1 / 60); } catch (e) { /* a still pose is enough */ }
-                const fit = window.ActorModel3D.framing(battler, camera, 1.05);
+                // A person is cut at the collar like every painted bust; with
+                // no skeleton to measure, at a fixed share of their height.
+                const asBust = !!battler.rig || spec.frame === 'bust';
+                if (asBust && !battler.rig && !battler.portraitCrop) battler.portraitCrop = BUST_CROP;
+                const fit = (battler.rig && bustFraming(battler, camera))
+                    || window.ActorModel3D.framing(battler, camera, 1.05);
                 if (!fit) { state.failed = true; return null; }
                 const holder = new THREE.Group();
                 holder.position.copy(fit.center).multiplyScalar(-1);
@@ -455,10 +536,10 @@ Imported.DialogueSystem = true;
                 scene.add(holder);
                 // A bust stands on the bottom edge of the screen, so a whole
                 // body does too: the camera is lifted until the feet sit on the
-                // frame's floor. A model framed as a bust (portraitCrop) is
-                // already cut the way the art is.
+                // frame's floor. A model framed as a bust is already cut the
+                // way the art is.
                 let lift = 0;
-                if (!battler.portraitCrop) {
+                if (!asBust && !battler.portraitCrop) {
                     const box = new THREE.Box3().setFromObject(holder);
                     const halfView = Math.tan((camera.fov * Math.PI / 180) / 2) * fit.distance;
                     lift = Math.max(0, halfView + box.min.y);
@@ -471,13 +552,17 @@ Imported.DialogueSystem = true;
                     else ctx.renderer.render(scene, camera);
                     copyInto(bitmap, ctx.canvas);
                 };
+                state.live = { scene, battler, holder, draw, lights, gain: 1, acc: 0, bob: -1, baseRotX: holder.rotation ? holder.rotation.x : 0 };
+                applyMood(state);
                 draw();
+                expose(state.live, bitmap);
                 state.ready = true;
                 return new Promise((resolve) => {
                     let left = BURST;
                     const tick = () => {
-                        if (state.disposed || --left <= 0) { disposeScene(scene); resolve(null); return; }
+                        if (state.disposed || --left <= 0) { resolve(null); return; }
                         draw();
+                        if (left % EXPOSURE_EVERY === 0 || left === 1) expose(state.live, bitmap);
                         requestAnimationFrame(tick);
                     };
                     requestAnimationFrame(tick);
@@ -485,14 +570,70 @@ Imported.DialogueSystem = true;
             }).catch(() => { state.failed = true; return null; });
         }
 
-        // The oldest portraits go once the cache is full, except the one on
+        function addLights(scene) {
+            return LIGHTS.map((l) => {
+                const light = l.kind === 'ambient'
+                    ? new THREE.AmbientLight(l.color, l.intensity)
+                    : new THREE.DirectionalLight(l.color, l.intensity);
+                if (l.at && light.position) light.position.set(l.at[0], l.at[1], l.at[2]);
+                scene.add(light);
+                return { light, base: l.intensity };
+            });
+        }
+
+        // Mean brightness of the figure's own pixels, transparent ones left
+        // out, or null when the frame cannot be read.
+        function meanBrightness(bitmap) {
+            const ctx = bitmap.context;
+            if (!ctx || !ctx.getImageData) return null;
+            let data;
+            try { data = ctx.getImageData(0, 0, bitmap.width, bitmap.height).data; } catch (e) { return null; }
+            if (!data) return null;
+            const step = 4 * 4;
+            let sum = 0;
+            let count = 0;
+            for (let i = 0; i < data.length; i += step) {
+                if (data[i + 3] < 128) continue;
+                sum += (0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]) / 255;
+                count++;
+            }
+            return count >= 64 ? sum / count : null;
+        }
+
+        // Scales the portrait's lights until the figure reads at
+        // EXPOSURE_TARGET. Light adds up in linear space and the frame is
+        // read gamma encoded, so the ratio is raised to bring it back to
+        // light; each reading moves at most by half or double.
+        function expose(live, bitmap) {
+            if (!live || !live.lights) return;
+            for (let pass = 0; pass < EXPOSURE_PASSES; pass++) {
+                const mean = meanBrightness(bitmap);
+                if (mean === null) return;
+                const ratio = Math.pow(EXPOSURE_TARGET / Math.max(mean, 0.02), 1.8);
+                const step = Math.min(2, Math.max(0.5, ratio));
+                const gain = Math.min(EXPOSURE_MAX, Math.max(EXPOSURE_MIN, live.gain * step));
+                if (Math.abs(gain - live.gain) < 0.02) return;
+                live.gain = gain;
+                live.lights.forEach((l) => { l.light.intensity = l.base * gain; });
+                live.draw();
+            }
+        }
+
+        function release(bitmap) {
+            const state = bitmap && bitmap._speakerModel;
+            if (!state) return;
+            state.disposed = true;
+            if (state.live) { disposeScene(state.live.scene); state.live = null; }
+        }
+
+        // The oldest portraits go once the cache is full, except the ones on
         // screen right now.
         function evict(inUse) {
             for (const [key, bitmap] of cache) {
                 if (cache.size <= CACHE_MAX) break;
                 if (inUse && inUse(bitmap)) continue;
                 cache.delete(key);
-                bitmap._speakerModel.disposed = true;
+                release(bitmap);
                 try { bitmap.destroy(); } catch (e) { /* already gone */ }
             }
         }
@@ -512,7 +653,7 @@ Imported.DialogueSystem = true;
                 return hit;
             }
             const bitmap = new Bitmap(w, h);
-            bitmap._speakerModel = { ready: false, failed: false, disposed: false };
+            bitmap._speakerModel = { ready: false, failed: false, disposed: false, talking: false, gesture: false, live: null };
             bitmap.isReady = function () { return this._speakerModel.ready; };
             bitmap.isError = function () { return this._speakerModel.failed; };
             cache.set(key, bitmap);
@@ -521,7 +662,83 @@ Imported.DialogueSystem = true;
             return bitmap;
         }
 
-        return { bitmapFor, available };
+        // The speaker's mood carried onto the body: the talk loop and a fresh
+        // gesture for the one speaking, idle for the one listening. Recorded on
+        // the state first, so a line spoken while the model is still loading
+        // is acted out the moment it lands.
+        function applyMood(state) {
+            const live = state.live;
+            if (!live) return;
+            const battler = live.battler;
+            const rig = battler.rig;
+            if (rig && rig.play) {
+                rig.play(state.talking ? 'talk' : 'idle');
+                if (state.gesture) {
+                    const pool = (window.ActorModel3D?.talkGestures?.() || []).filter((g) => !rig.has || rig.has(g));
+                    if (pool.length) rig.play(pool[Math.floor(Math.random() * pool.length)]);
+                }
+            } else if (state.gesture) {
+                // A body with no skeleton to gesture with nods as a whole, and
+                // a creature that can roar or cast does so now and then.
+                live.bob = 0;
+                const acts = CREATURE_ACTS.filter((a) => battler.hasAnimation && battler.hasAnimation(a));
+                if (acts.length && battler.playAnimation && Math.random() < CREATURE_ACT_CHANCE) {
+                    try {
+                        battler.playAnimation(acts[Math.floor(Math.random() * acts.length)], false, () => {
+                            if (battler.playIdleAnimation) battler.playIdleAnimation();
+                        });
+                    } catch (e) { /* the bob is enough */ }
+                }
+            }
+            state.gesture = false;
+        }
+
+        // One line begins: `bitmap` is the one saying it.
+        function speak(bitmap) {
+            const state = bitmap && bitmap._speakerModel;
+            if (!state || state.disposed) return;
+            state.talking = true;
+            state.gesture = true;
+            applyMood(state);
+        }
+
+        function listen(bitmap) {
+            const state = bitmap && bitmap._speakerModel;
+            if (!state || state.disposed || !state.talking) return;
+            state.talking = false;
+            applyMood(state);
+        }
+
+        // Advances and redraws every portrait standing on screen.
+        function tick(dt, bitmaps) {
+            if (!bitmaps || !bitmaps.length) return;
+            for (const bitmap of bitmaps) {
+                const state = bitmap && bitmap._speakerModel;
+                const live = state && !state.disposed && state.live;
+                if (!live) continue;
+                live.acc += dt;
+                if (live.acc < LIVE_STEP) continue;
+                const step = live.acc;
+                live.acc = 0;
+                try { live.battler.update(step); } catch (e) { /* hold the last pose */ }
+                if (live.bob >= 0 && live.holder.rotation) {
+                    live.bob += step;
+                    const k = Math.min(1, live.bob / 0.6);
+                    live.holder.rotation.x = live.baseRotX + 0.08 * Math.sin(k * Math.PI * 2) * (1 - k);
+                    if (k >= 1) live.bob = -1;
+                }
+                try { live.draw(); } catch (e) { /* the last frame stays up */ }
+            }
+        }
+
+        // Builds a speaker's portrait ahead of their first line, so it walks
+        // in the moment it is asked for instead of after the model has loaded.
+        function preload(spec, width, height) {
+            if (!spec || !available()) return null;
+            return bitmapFor(spec, width, height, (b) => !!(b && b._speakerModel && b._speakerModel.talking));
+        }
+
+        return { bitmapFor, available, speak, listen, tick, preload, _expose: expose };
     })();
 
     // -------------------------------------------------------------------------
@@ -621,15 +838,7 @@ Imported.DialogueSystem = true;
                 sprite.opacity  = bustOpacity;
                 sprite.storyKey = entry.key;
                 sprite.storySide = sides[i];
-                const path      = this.resolveBustPath(entry.imageName);
-                try {
-                    const bitmap = ImageManager.loadBitmap('img/', path);
-                    sprite.bitmap = bitmap;
-                    bitmap.addLoadListener(() => this.layoutStoryCast());
-                } catch (err) {
-                    console.warn('Failed to load story bust:', path, err);
-                    sprite.bitmap = this._loadFallback();
-                }
+                this._dressStorySlot(sprite, entry.imageName, entry.modelSpec);
                 if (scene) addBustToScene(sprite, scene);
                 return sprite;
             });
@@ -663,14 +872,20 @@ Imported.DialogueSystem = true;
             if (pending.some(sprite => !this._bitmapReady(sprite.bitmap)
                 && !this._bitmapFailed(sprite.bitmap) && sprite.bitmap)) return;
 
-            // One of them has no portrait to show: it stands in the fallback and
-            // waits on that the same way, once.
+            // One of them has no portrait to show: a model that could not be
+            // built hands over to the painted bust, a bust to the fallback, and
+            // either is waited on the same way, once.
             let swapped = false;
             for (const sprite of pending) {
                 if (sprite.bitmap && !this._bitmapFailed(sprite.bitmap)) continue;
                 if (sprite._bustFallbackTried) continue;
-                sprite._bustFallbackTried = true;
-                sprite.bitmap = this._loadFallback();
+                if (sprite._paintedBust) {
+                    sprite.bitmap = sprite._paintedBust;
+                    sprite._paintedBust = null;
+                } else {
+                    sprite._bustFallbackTried = true;
+                    sprite.bitmap = this._loadFallback();
+                }
                 swapped = true;
             }
             if (swapped) return;
@@ -751,24 +966,69 @@ Imported.DialogueSystem = true;
         // in place. The slot keeps its mark, so nobody walks off and back on
         // when the turn passes between two people who share a side (Em and
         // Bubba answering each other in front of the same NPC).
-        replaceStorySlot(side, key, imageName) {
+        replaceStorySlot(side, key, imageName, modelSpec) {
             const want = side === 'right' ? 'right' : 'left';
             const slot = (this.storySlots || []).find(s => s.storySide === want);
             if (!slot) return false;
             if (slot.storyKey === key) return true;
             slot.storyKey           = key;
             slot._bustFallbackTried = false;
-            const path = this.resolveBustPath(imageName);
-            try {
-                const bitmap = ImageManager.loadBitmap('img/', path);
-                slot.bitmap = bitmap;
-                bitmap.addLoadListener(() => this.layoutStoryCast());
-            } catch (err) {
-                console.warn('Failed to load story bust:', path, err);
-                slot.bitmap = this._loadFallback();
-            }
+            // Somebody stepping onto a slot mid-scene shows their painted bust
+            // while their model is still loading, and the model takes over
+            // the moment it lands (_updateStorySlotModels).
+            this._dressStorySlot(slot, imageName, modelSpec, true);
             this.layoutStoryCast();
             return true;
+        }
+
+        // Puts a cast member's portrait on their slot: their 3D body when
+        // they have one, with the painted bust kept to stand in if it cannot
+        // be built, or the painted bust alone. `modelSpec` undefined means
+        // "work it out from the portrait's name".
+        _dressStorySlot(sprite, imageName, modelSpec, paintedWhileLoading) {
+            const path = this.resolveBustPath(imageName);
+            let painted = null;
+            try {
+                painted = ImageManager.loadBitmap('img/', path);
+                painted.addLoadListener(() => this.layoutStoryCast());
+            } catch (err) {
+                console.warn('Failed to load story bust:', path, err);
+            }
+            const spec  = modelSpec === undefined ? this._modelSpecForImage(imageName) : modelSpec;
+            const layout = this.storyLayout();
+            const model = spec ? SpeakerModels.bitmapFor(spec, layout.width, layout.height,
+                (bitmap) => this._bitmapOnStage(bitmap)) : null;
+            sprite._modelBust = null;
+            if (model && !this._bitmapFailed(model)) {
+                if (paintedWhileLoading && painted && !this._bitmapReady(model)) {
+                    sprite.bitmap       = painted;
+                    sprite._modelBust   = model;
+                    sprite._paintedBust = null;
+                } else {
+                    sprite.bitmap       = model;
+                    sprite._paintedBust = painted;
+                }
+            } else {
+                sprite.bitmap       = painted || this._loadFallback();
+                sprite._paintedBust = null;
+            }
+        }
+
+        // A model still loading behind a painted bust takes the slot over the
+        // moment it lands; one that never will is forgotten.
+        _updateStorySlotModels() {
+            const slots = this.storySlots;
+            if (!slots || !slots.length || this._castPending) return;
+            for (const sprite of slots) {
+                const model = sprite._modelBust;
+                if (!model) continue;
+                if (this._bitmapFailed(model)) { sprite._modelBust = null; continue; }
+                if (!this._bitmapReady(model)) continue;
+                sprite._paintedBust = sprite.bitmap;
+                sprite.bitmap       = model;
+                sprite._modelBust   = null;
+                this.layoutStoryCast();
+            }
         }
 
         // The cast stands beside the box, not over it: one portrait against the
@@ -1254,14 +1514,18 @@ Imported.DialogueSystem = true;
 
         // `modelSpec` is the speaker's 3D body when the caller knows who is
         // talking (an exchange hands the NPC's in); a party member named as
-        // the speaker is looked up here. Story scenes keep their painted cast.
+        // the speaker, or whoever the portrait belongs to, is looked up here.
+        // A story scene's cast is already standing (its slots carry their
+        // models, see _dressStorySlot) and is keyed by portrait name.
         showCustomBust(imageName, characterName, side, modelSpec) {
             if (!imageName) return;
-            const spec = this.storyMode ? null
-                : (modelSpec || this._actorModelSpec(this._partyMemberNamed(characterName)));
+            const staged = this.storyMode && (this.storySlots || []).length > 0;
+            const spec = staged ? null
+                : (modelSpec || this._actorModelSpec(this._partyMemberNamed(characterName))
+                    || this._modelSpecForImage(imageName));
             const model        = this._modelBitmap(spec);
             const path         = this.resolveBustPath(imageName);
-            const key          = model ? `model_${spec.id}` : `custom_${imageName}`;
+            const key          = model && !this.storyMode ? `model_${spec.id}` : `custom_${imageName}`;
             const fallback     = this._loadFallback();
 
             if (this.nameWindow) {
@@ -1391,10 +1655,17 @@ Imported.DialogueSystem = true;
             const ev = eventId ? $gameMap.event(eventId) : null;
             if (!ev) return null;
             try {
-                if (this._authoredBustForEvent(ev)) return null;
+                const PM = window.NPCPortraitModel;
                 const sheet = typeof ev.characterName === 'function' ? ev.characterName() : '';
                 if (sheet && window.GalaxySim?.EVA?.bustForSheet?.(sheet)) return null;
-                return window.NPCPortraitModel.specForEvent(ev) || null;
+                // A dossier that ships a model (Em) speaks as it, whether her
+                // face is written on the event or worn on her sheet.
+                const authored = this._authoredBustForEvent(ev);
+                if (authored) return PM.specForBust?.(window.BustPath?.resolve?.(authored) || authored) || null;
+                const index = typeof ev.characterIndex === 'function' ? ev.characterIndex() : 0;
+                const dossierBust = sheet ? this.getPresetBustForSprite(sheet, index) : null;
+                const dossier = dossierBust ? PM.specForBust?.(dossierBust) : null;
+                return dossier || PM.specForEvent(ev) || null;
             } catch (err) { return null; }
         }
 
@@ -1415,10 +1686,88 @@ Imported.DialogueSystem = true;
             } catch (err) { return null; }
         }
 
+        // The model of whoever speaks behind this portrait, when one of the
+        // party (or the dossier it belongs to) wears it: what a story cast
+        // and a box that names nobody fall back on.
+        _modelSpecForImage(imageName) {
+            if (!imageName || !SpeakerModels.available()) return null;
+            const wanted = String(imageName).replace(/^busts\//, '');
+            // A story beat can name its speaker where a portrait would go
+            // ("Bubba"), which BustPath turns into the portrait it means.
+            let resolved = wanted;
+            try { resolved = window.BustPath?.resolve?.(wanted) || wanted; } catch (err) { /* as written */ }
+            const low = wanted.trim().toLowerCase();
+            try {
+                const members = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [];
+                for (const actor of members) {
+                    if (!actor) continue;
+                    const bust = actorBustName(actor);
+                    const named = actor.name && String(actor.name()).trim().toLowerCase() === low;
+                    if (bust === wanted || bust === resolved || named) return this._actorModelSpec(actor);
+                }
+            } catch (err) { /* no party yet */ }
+            try {
+                return window.NPCPortraitModel.specForBust?.(resolved)
+                    || window.NPCPortraitModel.specForBust?.(wanted) || null;
+            } catch (err) { return null; }
+        }
+
         _modelBitmap(spec) {
             if (!spec) return null;
             return SpeakerModels.bitmapFor(spec, getBustWidth(), getBustHeight(),
-                (bitmap) => this.characterBust && this.characterBust.bitmap === bitmap);
+                (bitmap) => this._bitmapOnStage(bitmap));
+        }
+
+        // Every portrait bitmap standing on screen right now.
+        _stageBitmaps() {
+            const out = [];
+            const s = this.characterBust;
+            if (s && s.parent && s.bitmap && s.opacity > 0) out.push(s.bitmap);
+            for (const slot of (this.storySlots || [])) {
+                if (slot.parent && slot.bitmap) out.push(slot.bitmap);
+            }
+            for (const slot of (this._retiringSlots || [])) {
+                if (slot.parent && slot.bitmap) out.push(slot.bitmap);
+            }
+            return out;
+        }
+
+        _bitmapOnStage(bitmap) {
+            if (!bitmap) return false;
+            if (this.characterBust && this.characterBust.bitmap === bitmap) return true;
+            return (this.storySlots || []).some(s => s.bitmap === bitmap || s._modelBust === bitmap);
+        }
+
+        // A line begins: whoever says it acts it out and everybody else on
+        // stage listens. Called once per box, after the box has staged its
+        // speaker (Window_Message.startMessage).
+        cueSpeaker() {
+            let lit = null;
+            const others = [];
+            if (this.storyMode && (this.storySlots || []).length) {
+                for (const slot of this.storySlots) {
+                    const bmp = slot._modelBust || slot.bitmap;
+                    if (this._storyActiveKey && slot.storyKey === this._storyActiveKey) lit = bmp;
+                    else others.push(bmp);
+                }
+            } else if (this.bustIsVisible && this.characterBust) {
+                lit = (this._pendingBust && this._pendingBust.bitmap) || this.characterBust.bitmap;
+            }
+            others.forEach(b => SpeakerModels.listen(b));
+            if (lit) SpeakerModels.speak(lit);
+        }
+
+        // Builds the 3D portraits of the party ahead of their first line, at
+        // the size a line would ask for them.
+        preloadSpeakerModels() {
+            if (!SpeakerModels.available()) return;
+            let members = [];
+            try { members = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : []; }
+            catch (err) { return; }
+            for (const actor of members) {
+                const spec = this._actorModelSpec(actor);
+                if (spec) SpeakerModels.preload(spec, getBustWidth(), getBustHeight());
+            }
         }
 
         hideBusts() {
@@ -1510,7 +1859,9 @@ Imported.DialogueSystem = true;
             this.refreshLayout(false);
             this._updatePendingBust();
             this._updatePendingStoryCast();
+            this._updateStorySlotModels();
             this.updateStorySlots();
+            SpeakerModels.tick(1 / 60, this._stageBitmaps());
             const s = this.characterBust;
             if (s._slideDuration > 0) {
                 s.x += (s._slideTarget - s.x) / s._slideDuration;
@@ -1541,6 +1892,10 @@ Imported.DialogueSystem = true;
         _Scene_Map_start.call(this);
         this._bustManager = new BustManager();
         this._bustManager.initialize();
+        // The party's 3D portraits are built while the map is quiet, so the
+        // first line anybody says is not spent waiting on a model.
+        const bm = this._bustManager;
+        setTimeout(() => { try { bm.preloadSpeakerModels(); } catch (err) { /* drawn on demand */ } }, 0);
     };
 
     const _Scene_Map_update = Scene_Map.prototype.update;
@@ -1988,7 +2343,9 @@ Imported.DialogueSystem = true;
     // walking as stands on the LEFT and the others on the RIGHT: walking as
     // Em, Bubba and Eris answer her from the right; walking as Bubba, he takes
     // the left and Em and Eris the right. Anybody else at the head of the
-    // party leaves Em on the left, where the story always puts her.
+    // party leaves Em on the left, where the story always puts her. Eris is
+    // the exception: she always stands right, and once she is up Em and
+    // Bubba both answer her from the left.
     //
     // Any other party member is read only in story mode (switch 100) and
     // stands on the left; outside it a box carrying their name is left exactly
@@ -2026,11 +2383,22 @@ Imported.DialogueSystem = true;
         } catch (err) { return ''; }
     }
 
-    // The end of the box a prefixed speaker stands on. The one being walked
-    // as is on the left; of the cast, Em is on the left whenever nobody else
-    // of the cast is leading.
+    // True while Eris holds the right end of this event's stage.
+    function erisOnPrefixStage() {
+        if (!_prefixStage || !_prefixStage.right) return false;
+        const eventId = $gameMap && $gameMap._interpreter ? $gameMap._interpreter._eventId : null;
+        return _prefixStage.eventId === eventId
+            && _prefixStage.right.key === `custom_${PREFIX_VOICE_CAST.Eris}`;
+    }
+
+    // The end of the box a prefixed speaker stands on. Eris always faces the
+    // party from the right, and while she stands there Em and Bubba share the
+    // left. Otherwise the one being walked as is on the left; of the cast, Em
+    // is on the left whenever nobody else of the cast is leading.
     function prefixSide(castName) {
         if (!castName) return 'left';
+        if (castName === 'Eris') return 'right';
+        if (erisOnPrefixStage()) return 'left';
         const leader = voiceCastName(prefixLeaderName());
         if (leader) return castName === leader ? 'left' : 'right';
         return castName === 'Em' ? 'left' : 'right';
@@ -2040,13 +2408,14 @@ Imported.DialogueSystem = true;
     // is only walking through. Matched on the name as it is printed, so a
     // translated roster answers to its own names.
     function actorNamedForPrefix(name) {
-        const wanted = String(name || '').trim();
+        // Case-blind, the way voiceCastName matches: Naguka prints "HENDRIX:".
+        const wanted = String(name || '').trim().toLowerCase();
         if (!wanted) return null;
         try {
             const members = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [];
-            const inParty = members.find(a => a && a.name && a.name().trim() === wanted);
+            const inParty = members.find(a => a && a.name && a.name().trim().toLowerCase() === wanted);
             if (inParty) return inParty;
-            const data = (window.$dataActors || []).find(a => a && String(a.name).trim() === wanted);
+            const data = (window.$dataActors || []).find(a => a && String(a.name).trim().toLowerCase() === wanted);
             if (data && window.$gameActors) return $gameActors.actor(data.id);
         } catch (err) { /* no party or database yet */ }
         return null;
@@ -2070,7 +2439,7 @@ Imported.DialogueSystem = true;
         const painted = cast ? PREFIX_VOICE_CAST[cast] : null;
         const image = painted || (actor ? actorBustName(actor) : '7');
         const name  = actor ? actor.name() : cast;
-        return { name, image, side: prefixSide(cast) };
+        return { name, image, side: prefixSide(cast), actor };
     }
 
     // The portrait of the event the party is talking to, or null when it has
@@ -2109,10 +2478,11 @@ Imported.DialogueSystem = true;
     function seatOnPrefixStage(bm, side, who, rebuild) {
         const had = _prefixStage[side];
         _prefixStage[side] = who;
-        if (!rebuild && had && bm.replaceStorySlot(side, who.key, who.image)) return;
+        if (!rebuild && had && bm.replaceStorySlot(side, who.key, who.image, who.modelSpec)) return;
         const cast = ['left', 'right']
             .filter(s => _prefixStage[s])
-            .map(s => ({ key: _prefixStage[s].key, imageName: _prefixStage[s].image, side: s }));
+            .map(s => ({ key: _prefixStage[s].key, imageName: _prefixStage[s].image, side: s,
+                         modelSpec: _prefixStage[s].modelSpec }));
         bm.setStoryCast(cast);
     }
 
@@ -2138,15 +2508,19 @@ Imported.DialogueSystem = true;
         const npcImage = prefixNpcBust(bm);
         const npcKey   = npcImage ? `custom_${npcImage}` : null;
         const eventId  = $gameMap._interpreter ? $gameMap._interpreter._eventId : null;
+        // Each of them is shown by their 3D body when they have one; with no
+        // actor behind the name the portrait itself is asked (undefined).
+        const modelSpec = (speaker.actor && bm._actorModelSpec(speaker.actor)) || undefined;
 
         bm.setStoryMode(true);
         const fresh = !_prefixStage || _prefixStage.eventId !== eventId
             || _prefixStage.npcKey !== npcKey || !(bm.storySlots || []).length;
         if (fresh) {
-            _prefixStage = { eventId, npcKey, npcImage, left: null,
-                             right: npcKey ? { key: npcKey, image: npcImage } : null };
+            const npcModel = npcKey ? bm._eventModelSpec(eventId) : null;
+            _prefixStage = { eventId, npcKey, npcImage, npcModel, left: null,
+                             right: npcKey ? { key: npcKey, image: npcImage, modelSpec: npcModel } : null };
         }
-        seatOnPrefixStage(bm, speaker.side, { key, image: speaker.image }, fresh);
+        seatOnPrefixStage(bm, speaker.side, { key, image: speaker.image, modelSpec }, fresh);
         signPrefixLine(bm, key, speaker.name, eventId);
         return true;
     }
@@ -2158,7 +2532,8 @@ Imported.DialogueSystem = true;
         if (!_prefixStage || !_prefixStage.npcKey) return false;
         const eventId = $gameMap._interpreter ? $gameMap._interpreter._eventId : null;
         if (eventId !== _prefixStage.eventId) return false;
-        seatOnPrefixStage(bm, 'right', { key: _prefixStage.npcKey, image: _prefixStage.npcImage }, false);
+        seatOnPrefixStage(bm, 'right', { key: _prefixStage.npcKey, image: _prefixStage.npcImage,
+                                         modelSpec: _prefixStage.npcModel }, false);
         signPrefixLine(bm, _prefixStage.npcKey, bm.getCharacterDisplayName(eventId), eventId);
         return true;
     }
@@ -2238,6 +2613,7 @@ Imported.DialogueSystem = true;
         const scene = SceneManager._scene;
         if (!prefixStaged && scene && scene._bustManager && !scene._bustManager.exchangeMode &&
             !facelessIsRunning()) scene._bustManager.showBusts();
+        if (scene && scene._bustManager && scene._bustManager.cueSpeaker) scene._bustManager.cueSpeaker();
     };
 
     const _WM_terminateMessage = Window_Message.prototype.terminateMessage;
@@ -2882,7 +3258,13 @@ Imported.DialogueSystem = true;
 
     // Teach every [Keyword] in `text` to the whole party, and hand back only
     // the ones nobody knew yet, so a topic is announced once and never again.
+    // A lesson read out between other things (the combat walkthrough) still
+    // paints its terms gold but files none of them: while this is raised the
+    // party is shown a topic without being taught it.
+    let _quietTopics = false;
+
     function teachKeyword(keyword) {
+        if (_quietTopics) return false;
         if (!keyword || typeof $gameParty === 'undefined' || !$gameParty) return false;
         let isNew = false;
         $gameParty.members().forEach(actor => {
@@ -3056,7 +3438,11 @@ Imported.DialogueSystem = true;
 
     function vary(text) {
         if (typeof text !== 'string' || text.indexOf('{') < 0) return text;
-        let out = text;
+        // The social banks write gender agreement as {g:m|f|nb}: resolved
+        // first (NPCEmpathize's subject, set by the builders below), so the
+        // pass that follows never reads it as an {a|b} choice.
+        const agree = window.NPCEmpathize?._helpers?._agreeSubject;
+        let out = agree ? agree(text) : text;
         let guard = 0;
         while (guard++ < 64) {
             const next = out.replace(/\{([^{}]*\|[^{}]*)\}/g, (m, body) => {
@@ -3373,6 +3759,18 @@ Imported.DialogueSystem = true;
     // commands.
     let _npcExchangeQueue = [];
 
+    // The stage seats two, so a third voice (Bubba speaking up while Em faces
+    // Eris) steps onto the end of their own side in place of whoever stood
+    // there, and the light and the name tag follow them onto it.
+    function seatExchangeSpeaker(bm, step) {
+        const slots = bm.storyMode ? (bm.storySlots || []) : [];
+        if (!slots.length || !step.imageName) return;
+        const key = `custom_${step.imageName}`;
+        if (slots.some(s => s.storyKey === key)) return;
+        const modelSpec = 'modelSpec' in step ? (step.modelSpec || null) : undefined;
+        bm.replaceStorySlot(step.side === 'right' ? 'right' : 'left', key, step.imageName, modelSpec);
+    }
+
     function advanceNPCExchange() {
         const scene = SceneManager._scene;
         const bm    = scene && scene._bustManager;
@@ -3385,6 +3783,7 @@ Imported.DialogueSystem = true;
             return;
         }
         const step = _npcExchangeQueue.shift();
+        seatExchangeSpeaker(bm, step);
         bm.showCustomBust(step.imageName, step.displayName, step.side, step.modelSpec || null);
         $gameMessage.setBackground(0);
         $gameMessage.setPositionType(2);
@@ -3402,6 +3801,7 @@ Imported.DialogueSystem = true;
     // of the same terminateMessage the exchange is dealt out of, with no
     // portrait and no name tag drawn over the field.
     let _facelessQueue = [];
+    let _facelessQuiet = false;
 
     function facelessIsRunning() {
         return _facelessQueue.length > 0;
@@ -3413,18 +3813,25 @@ Imported.DialogueSystem = true;
         $gameMessage.setBackground(0);
         $gameMessage.setPositionType(2);
         window.skipLocalization = true;
-        $gameMessage.add(markSpokenLine(text));
-        window.skipLocalization = false;
+        _quietTopics = _facelessQuiet;
+        try {
+            $gameMessage.add(markSpokenLine(text));
+        } finally {
+            _quietTopics = false;
+            window.skipLocalization = false;
+        }
         return true;
     }
 
     // Every line is dealt out over as many boxes as it needs, the same way a
     // story step is.
-    function sayFaceless(lines) {
+    // `quiet` reads the lines without teaching the topics they name.
+    function sayFaceless(lines, quiet) {
         const list = (Array.isArray(lines) ? lines : [lines])
             .map(line => resolveStoryKeys(line))
             .filter(line => String(line || '').trim().length > 0);
         if (!list.length) return false;
+        _facelessQuiet = !!quiet;
         _facelessQueue = list.reduce((all, line) => all.concat(paginateMessage(line)), []);
         return advanceFacelessMessage();
     }
@@ -3449,7 +3856,10 @@ Imported.DialogueSystem = true;
     // portrait under. A scene with more than two voices falls back to the order
     // they first speak in, since sides cannot seat three.
     function exchangeCast(steps) {
-        const keyed = step => ({ key: `custom_${step.imageName}`, imageName: step.imageName, side: step.side });
+        // A step that knows its speaker's model hands it on (null included:
+        // "no model"); one that does not leaves the slot to ask the portrait.
+        const keyed = step => ({ key: `custom_${step.imageName}`, imageName: step.imageName, side: step.side,
+                                 modelSpec: 'modelSpec' in step ? (step.modelSpec || null) : undefined });
         const uniq  = [];
         for (const step of steps) {
             const entry = keyed(step);
@@ -3790,6 +4200,7 @@ Imported.DialogueSystem = true;
         const EM = window.NPCEmpathize;
         const H  = EM && EM._helpers;
         if (!H || !H._socialLines || !H._rand) return null;
+        H._setSubjectGender?.(profile?.gender);
 
         const actor   = $gameParty.leader();
         const actorId = actor && actor.actorId();
@@ -3888,6 +4299,7 @@ Imported.DialogueSystem = true;
         const EM = window.NPCEmpathize;
         const H  = EM && EM._helpers;
         if (!H || !H._socialLines || !H._rand) return null;
+        H._setSubjectGender?.(profile?.gender);
 
         const actor   = $gameParty.leader();
         const actorId = actor && actor.actorId();
@@ -4319,14 +4731,18 @@ Imported.DialogueSystem = true;
     function parseStorySpeaker(raw) {
         const parts = String(raw || '').split(/\s+-\s+/);
         const name  = parts[0].trim();
-        const bust  = (parts[1] || '').trim() || name;
+        // Eris speaks behind the same portrait a prefixed box gives her.
+        const cast  = voiceCastName(name) === 'Eris' ? PREFIX_VOICE_CAST.Eris : null;
+        const bust  = (parts[1] || '').trim() || cast || name;
         return { name, bust };
     }
 
     function storySide(name) {
         const bm = SceneManager._scene && SceneManager._scene._bustManager;
         if (String(name).trim() === STORY_PROTAGONIST) return 'left';
-        if (bm && bm.sideForSpeaker(name) === 'left') return 'left';
+        // Bubba is the party's other voice, walking with Em or not.
+        if (voiceCastName(name) === STORY_ASK_BUBBA) return 'left';
+        if (bm &&bm.sideForSpeaker(name) === 'left') return 'left';
         // The protagonist keeps the left slot even in a scene played before she
         // is walking with anybody, when the party lookup has nobody to match.
         try {
@@ -4362,6 +4778,21 @@ Imported.DialogueSystem = true;
         QUICKLOAD:   { keyboard: 'F10',         pad: 'F10'         },
     };
     const STORY_KEY_TOKEN = /\[([A-Z]+)\]/g;
+    // The faces that are words rather than letters printed on a key are read
+    // in the player's language when the line is built.
+    const STORY_KEY_FACE_I18N = { // i18n-ignore: face -> i18n key
+        'SCROLLWHEEL': 'Dialogue.keyFaces.scrollWheel',
+        'RIGHT STICK': 'Dialogue.keyFaces.rightStick',
+        'LEFT STICK':  'Dialogue.keyFaces.leftStick',
+        'D-PAD':       'Dialogue.keyFaces.dpad',
+    };
+
+    function storyKeyFace(face) {
+        const key = STORY_KEY_FACE_I18N[face];
+        if (!key || typeof T !== 'function') return face;
+        const shown = T(key);
+        return (shown && shown !== key) ? shown : face;
+    }
 
     function resolveStoryKeys(text) {
         const pad = (typeof Input !== 'undefined' && Input.lastInputDevice
@@ -4370,7 +4801,7 @@ Imported.DialogueSystem = true;
             const entry = STORY_KEYS[token];
             // A key name is printed in the same gold a keyword gets, so the
             // button to press stands out of the line at a glance.
-            return entry ? NAME_OPEN + (pad ? entry.pad : entry.keyboard) + NAME_CLOSE : whole;
+            return entry ? NAME_OPEN + storyKeyFace(pad ? entry.pad : entry.keyboard) + NAME_CLOSE : whole;
         });
         return resolved.replace(/<gold>([\s\S]*?)<\/gold>/gi, (_m, inner) => NAME_OPEN + inner + NAME_CLOSE);
     }
@@ -4504,7 +4935,20 @@ Imported.DialogueSystem = true;
         return steps;
     }
 
+    // Bubba lost on the story's Blood and Oil (window.StoryDeath): every story
+    // scene is one box of Em missing him instead, a line picked at random.
+    function missingBubbaSteps() {
+        const SD = window.StoryDeath;
+        if (!SD || !SD.bubbaLost()) return null;
+        const lines = (T.list ? T.list('Dialogue.story.missBubba') : []).filter(Boolean);
+        if (!lines.length) return null;
+        const line = lines[Math.floor(Math.random() * lines.length)];
+        return [storyStep(parseStorySpeaker(STORY_PROTAGONIST), line)];
+    }
+
     function playStoryScript(fileName, sceneName) {
+        const missing = missingBubbaSteps();
+        if (missing) return startNPCExchange(missing, true);
         const label = sceneName ? `${fileName}#${sceneName}` : fileName;
         const text  = storySceneText(fileName, sceneName);
         if (!text) { console.warn(`Story script not found: ${label}`); return false; }
@@ -4991,7 +5435,7 @@ Imported.DialogueSystem = true;
         const choices = [T('Dialogue.combat.yes'), T('Dialogue.combat.no')];
         $gameMessage.setChoices(choices, 0, 1);
         $gameMessage.setChoiceCallback(choice => {
-            if (choice === 0) sayFaceless(lines);
+            if (choice === 0) sayFaceless(lines, true);
         });
         return true;
     }
@@ -5189,6 +5633,7 @@ Imported.DialogueSystem = true;
         socialRoll(actor, targetName, profile) {
             const H = window.NPCEmpathize?._helpers;
             if (!H || !H._socialLines || !H._rand) return null;
+            H._setSubjectGender?.(profile?.gender);
             const cat = socialCatalog(H._socialLines());
             if (!cat.length) return null;
             const move = cat[Math.floor(Math.random() * cat.length)];

@@ -6,12 +6,12 @@
     "trained": "TRAINED",
     "all": "ALL",
     "noneTrained": "NO SPECIALIZATIONS TRAINED YET!",
-    "noMatches": "NOTHIN' UNDER DAT NAME.",
+    "noMatches": "NO MATCHES.",
     "untrained": "UNTRAINED",
     "noneSelected": "NO SPECIALIZATION SELECTED!",
     "towards": "TOWARDS {level}",
     "pointsToNext": "{points} MORE POINTS TA {level}",
-    "mastered": "FULLY MASTERED. NOTHIN' LEFT TA LEARN!",
+    "mastered": "FULLY MASTERED.",
     "governingStat": "GOVERNIN' STAT: {stat}",
     "statLabel": "GOVERNIN' STAT",
     "category": "CATEGORY",
@@ -19,7 +19,7 @@
     "notImplemented": "NO IMPLEMENTED",
     "purse": "UNSPENT POINTS",
     "spendPoint": "SPEND A POINT: {level}",
-    "spendBlocked": "NOTHIN' LEFT TA BUY HERE"
+    "spendBlocked": "NUTTIN' LEFT TA BUY HERE"
   },
   "rankNames": [
     "UNTRAINED",

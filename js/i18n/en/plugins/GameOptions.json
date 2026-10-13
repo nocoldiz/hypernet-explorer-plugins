@@ -15,7 +15,7 @@
   "inactive2": "Inactive",
   "toAdjust": "◀ / ▶ to adjust",
   "okOrToToggle": "OK or ◀ / ▶ to toggle",
-  "requiresRestartToApply": "⟳ Requires restart to apply",
+  "requiresRestartToApply": "⟳ Restart to apply",
   "currentValue": "Current Value",
   "controls": "Controls",
   "howItWorks": "How It Works",
@@ -31,10 +31,10 @@
     "voiceVolume": "Voice Volume",
     "masterVolume": "Master Volume",
     "language": "Language",
-    "muteBgm": "Mute BGM",
+    "muteBgm": "Mute Music",
     "footstepsVolume": "Footsteps Volume",
     "weatherVolume": "Weather Volume",
-    "enemyBattlers": "Enemy Battlers",
+    "enemyBattlers": "Enemy Graphics",
     "runInBackground": "Run In Background",
     "showFps": "Show FPS Counter",
     "interactIcon": "Interact Icon",
@@ -45,6 +45,7 @@
     "mapBattle": "Battle Mode",
     "battleMode": "Battle Mode",
     "mapStreaming": "Map Streaming",
+    "fogOfWar": "Fog of War",
     "shaderStyle": "Shader Style",
     "renderResolution": "Render Resolution",
     "dithering": "Dithering",
@@ -76,10 +77,10 @@
     "voxelVR": "VR Headset"
   },
   "warn": {
-    "language": "⚠ Work in progress: only English is fully translated. Any other language leaves large parts of the game untranslated.",
+    "language": "⚠ Work in progress: only English is fully translated.",
     "mapBattleMode": "⚠ Replaces the standard battle scene.",
-    "markovLlmModel": "⚠ The model runs on the processor and wants a few gigabytes of memory. It writes English, and the first line of a session waits for the model to load.",
-    "asciiModeEnabled": "⚠ While ASCII mode is on it takes over the theme; switching it off gives the previous theme back."
+    "markovLlmModel": "⚠ Runs on the CPU and needs a few GB of memory. English only. The first reply is slow.",
+    "asciiModeEnabled": "⚠ ASCII mode overrides the theme until turned off."
   },
   "titleBackground": [
     "Random",
@@ -107,55 +108,55 @@
     "2D"
   ],
   "enemyBattlerToast": {
-    "model3d": "3D enabled (enemies)",
-    "sprites": "Sprites enabled (enemies)",
-    "battlers2d": "2D battlers enabled (enemies)"
+    "model3d": "Enemies shown in 3D",
+    "sprites": "Enemies shown as sprites",
+    "battlers2d": "Enemies shown in 2D"
   },
   "languageProgress": "{name} 1% done",
   "settingsInSection": "{count} settings in this section.",
   "desc": {
-    "ctrlNoclip": "Holding CTRL walks the party straight through walls, events and encounters. Turn it off if you would rather CTRL did nothing on the map.",
-    "mapBattleMode": "Battle presentation. Turn Battle plays fights in the classic turn-based scene. Strategic Battle plays tactical fights on the live map grid.",
-    "battleMode": "Battle presentation. Turn Battle plays fights in the classic turn-based scene. Strategic Battle plays tactical fights on the live map grid.",
-    "mapStreaming": "Stitches neighbouring procedural squares into one seamless map you can walk straight across. Off loads one square at a time and pans the screen to the next when you reach a border.",
-    "runInBackground": "Keeps the game running while its window is not focused, so you can alt tab away without it pausing.",
+    "ctrlNoclip": "Hold CTRL to walk through walls, events and encounters.",
+    "mapBattleMode": "Turn Battle: classic turn-based scene. Strategic Battle: tactical fights on the map grid.",
+    "battleMode": "Turn Battle: classic turn-based scene. Strategic Battle: tactical fights on the map grid.",
+    "mapStreaming": "Joins neighbouring procedural squares into one seamless map. Off loads one square at a time.",
+    "runInBackground": "Keeps the game running when its window is not focused.",
     "weatherVolume": "Volume of outdoor ambience: rain, storms, wind and biome sounds. Interiors are unaffected.",
-    "musicArtistDisplay": "Whether the game tells you what music is playing and who made it.",
-    "battleMusicMode": "How battle music is chosen. Biome, the default, plays the battle theme of the place you are fighting in. Selected Track plays the track picked below. Random draws a different track every battle. None fights in silence.",
-    "battleMusicName": "The track Selected Track plays when a fight starts.",
-    "markovLlmModel": "Which GGUF language model writes generated dialogue. Off leaves every generated line to the Markov chains. Drop a .gguf file into the game's models folder and it is listed here.",
-    "dialogueMode": "How an NPC with nothing scripted to say responds when you talk to them. Empathize plays out a Socialize action from their personality, falling back to a flavour rumour. Markovian generates a fresh line from the NPC's own word bank instead.",
-    "mapTooltips": "Real-time tutorial messages, compass quest targets and written context tips while you walk the map.",
-    "dialogueVoices": "Each letter of a typed dialogue line is chattered with a short vowel or consonant blip. The pitch is the speaker's own; a gold keyword is spoken higher.",
-    "dialogueVoicesVolume": "How loud the letter blips under a dialogue line are, apart from the other sound effects.",
-    "battleLogPosition": "Which corner of the screen the running battle commentary hangs in.",
-    "battleCommandPosition": "Which side of the screen the battle command list, the skill page and the backpack stand on.",
-    "interactIcon": "Shows a question mark over the party leader when they stand next to something hidden they can interact with.",
-    "lowModelDetail": "Builds procedural weapons and items with fewer segments. Helps on slower machines; the models read blockier.",
-    "hyperverseInvertX": "Turns the Hyperverse title camera the other way when you drag it sideways or push the right stick left and right.",
-    "starMapInvertY": "Tilts the star map camera the other way when you drag it up and down or push the right stick up and down.",
-    "simulationLog": "Every decision taken on the map by a party member, a monster or an NPC pops up as a notification. Busy maps produce a lot of them.",
-    "voxelVR": "Lets the 3D world be seen through a WebXR headset. While it is on, an Enter VR button appears in the 3D world whenever a headset is connected; your head looks around and the usual controls still move you. Takes effect the next time you enter the 3D world."
+    "musicArtistDisplay": "Shows the current track and artist.",
+    "battleMusicMode": "Biome: the local battle theme. Selected Track: the track below. Random: a new track each battle. None: no music.",
+    "battleMusicName": "Track used by Selected Track.",
+    "markovLlmModel": "GGUF model used for generated dialogue. Off uses Markov chains. Put .gguf files in the game's models folder.",
+    "dialogueMode": "How NPCs without scripted lines reply. Empathize: a Socialize action based on personality. Markovian: a generated line from the NPC's word bank.",
+    "mapTooltips": "Tutorial messages, quest targets and context tips on the map.",
+    "dialogueVoices": "Plays a short blip for each letter of dialogue, pitched to the speaker.",
+    "dialogueVoicesVolume": "Volume of the dialogue blips.",
+    "battleLogPosition": "Screen corner for the battle log.",
+    "battleCommandPosition": "Screen side for battle commands, skills and backpack.",
+    "interactIcon": "Shows a question mark over the leader when next to something hidden.",
+    "lowModelDetail": "Fewer polygons on procedural weapons and items. Faster on slow machines, but blockier.",
+    "hyperverseInvertX": "Inverts horizontal camera control on the Hyperverse title screen.",
+    "starMapInvertY": "Inverts vertical camera control on the star map.",
+    "simulationLog": "Shows a notification for every decision by party members, monsters and NPCs on the map. Busy maps get noisy.",
+    "voxelVR": "View the 3D world through a WebXR headset. An Enter VR button appears when a headset is connected. Applies next time you enter the 3D world."
   },
   "descState": {
     "musicArtistDisplay": [
-      "First time: announced only the first time you hear a track. Changing this setting resets what it remembers.",
-      "Every time: a labelled tape slides in whenever the track returns. Never in battle, never twice within five minutes.",
+      "First time: only the first time you hear a track. Changing this resets it.",
+      "Every time: a tape slides in whenever a track plays. Not in battle, and not twice within five minutes.",
       "Minimal: track and artist in the usual corner notification.",
       "Off: no announcement."
     ],
     "shaderStyle": [
-      "Off: plain three.js. Models are drawn clean, with no wobble, banding or downsampling.",
-      "SnapVertex: the first-gen console look. Vertices snap to a coarse grid, colours band and the picture is rendered below full resolution.",
+      "Off: clean models, no wobble, banding or downsampling.",
+      "SnapVertex: retro console look with wobbly vertices, colour banding and low resolution.",
       "Pixel Art: the sprite look. Flat cel bands, chunky pixels and an optional limited palette."
     ],
     "battleLogPosition": [
-      "Bottom Left: the log stands on the floor of the left and grows upward.",
-      "Top Right: the log hangs from the top of the right and grows downward."
+      "Bottom Left: grows upward.",
+      "Top Right: grows downward."
     ],
     "battleCommandPosition": [
-      "Left: the command list, skills and backpack stand on the left of the screen.",
-      "Right: they stand on the right, clear of the weapon in hand."
+      "Left: commands, skills and backpack on the left.",
+      "Right: commands, skills and backpack on the right."
     ]
   },
   "shaderMode": {

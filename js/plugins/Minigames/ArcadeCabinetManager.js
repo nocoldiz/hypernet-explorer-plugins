@@ -231,7 +231,8 @@
             coin: 'COIN',
             coins_plural: 'COINS',
             pressStart: 'PRESS START',
-            gameSelect: 'GAME SELECT'
+            gameSelect: 'GAME SELECT',
+            freePlay: 'FREE PLAY'
         },
         it: {
             coins: 'GETTONI',
@@ -249,7 +250,8 @@
             coin: 'GETTONE',
             coins_plural: 'GETTONI',
             pressStart: 'PREMI START',
-            gameSelect: 'SELEZIONE GIOCO'
+            gameSelect: 'SELEZIONE GIOCO',
+            freePlay: 'GIOCO GRATUITO'
         }
     };
     
@@ -671,7 +673,7 @@
                 const coinText = coinsPerPlay === 1 ? 
                     ArcadeManager.getText('coin') : 
                     ArcadeManager.getText('coins_plural');
-                const text = ArcadeManager.isFreePlay() ? "FREE PLAY" : `${coinsPerPlay} ${coinText} ${ArcadeManager.getText('toPlay')}`;
+                const text = ArcadeManager.isFreePlay() ? ArcadeManager.getText('freePlay') : `${coinsPerPlay} ${coinText} ${ArcadeManager.getText('toPlay')}`;
                 this._infoSprite.bitmap.drawText(text, 0, 20, Graphics.width, 40, 'center');
             }
         }
@@ -694,6 +696,16 @@
                 }
             }
             
+            // The attract loop is broken by any press, whether or not its cart
+            // reported a running game: a cart that never calls startGame()
+            // (Bubble Pop) used to leave the demo with no title, no game and
+            // no key that did anything.
+            if (ArcadeManager._demoMode && !this._gameActive &&
+                (Input.isTriggered('ok') || Input.isTriggered('cancel') || Input.isTriggered('escape'))) {
+                this.exitToTitle();
+                return;
+            }
+
             if (this._gameActive && (Input.isTriggered('cancel') || Input.isTriggered('escape'))) {
                 this.exitToTitle();
                 return;
@@ -705,6 +717,10 @@
             
             if (this._onTitleScreen && Input.isTriggered('cancel') && !this._gameActive) {
                 ArcadeManager.playSound('close');
+                // Free play belongs to the visit, not to one scene: the high
+                // score screens replace this scene and rebuild it on the way
+                // back, so it is only given up when the cabinet is walked away from.
+                ArcadeManager.setFreePlay(false);
                 this.popScene();
             }
         }
@@ -796,7 +812,14 @@
             ArcadeManager._demoMode = false;
 
             this._stopCurrentCart();
-            this._gameContainer.removeChildren();
+            // Destroyed, not only detached: every PIXI.Text a cart draws owns a
+            // canvas filed in PIXI's texture cache, so a board merely removed
+            // here (a run cancelled, every attract loop) stayed in memory for
+            // the rest of the session. Text frees its own canvas; shared
+            // sprite textures are left alone.
+            for (const child of this._gameContainer.removeChildren()) {
+                try { child.destroy({ children: true }); } catch (e) { /* already gone */ }
+            }
 
             this._titleSprite.visible = true;
             this.showTitleScreen();
@@ -809,7 +832,6 @@
             ArcadeManager._scene = null;
             ArcadeManager._currentGame = null;
             ArcadeManager._demoMode = false;
-            ArcadeManager.setFreePlay(false);
         }
     }
     
@@ -930,10 +952,10 @@
             const endIndex = this._letters.length + 1;
             
             this._letterSprite.bitmap.textColor = this._letterIndex === delIndex ? '#ffd700' : '#ffffff'; // Golden
-            this._letterSprite.bitmap.drawText('DEL', (delIndex % cols) * cellWidth, Math.floor(delIndex / cols) * cellHeight, cellWidth, cellHeight, 'center');
+            this._letterSprite.bitmap.drawText(T('Arcade.hud.del'), (delIndex % cols) * cellWidth, Math.floor(delIndex / cols) * cellHeight, cellWidth, cellHeight, 'center');
             
             this._letterSprite.bitmap.textColor = this._letterIndex === endIndex ? '#ffd700' : '#ffffff'; // Golden
-            this._letterSprite.bitmap.drawText('END', (endIndex % cols) * cellWidth, Math.floor(endIndex / cols) * cellHeight, cellWidth, cellHeight, 'center');
+            this._letterSprite.bitmap.drawText(T('Arcade.hud.end'), (endIndex % cols) * cellWidth, Math.floor(endIndex / cols) * cellHeight, cellWidth, cellHeight, 'center');
         }
         
         update() {

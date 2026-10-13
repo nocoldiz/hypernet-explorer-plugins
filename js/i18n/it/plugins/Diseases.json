@@ -46,7 +46,7 @@
       "desc": "Un'infezione fungina dei polmoni, di solito in chi ha già una malattia polmonare o un sistema immunitario indebolito. Tosse persistente e respiro sibilante mentre le spore colonizzano le vie aeree."
     },
     "asphalt-cough": {
-      "name": "Tosse d'Asfalto",
+      "name": "Tosse d'asfalto",
       "desc": "Asma professionale scatenata da un'esposizione prolungata a irritanti aerodispersi sul lavoro. Le vie aeree si restringono e si infiammano ogni volta che si incontra il fattore scatenante."
     },
     "asthma": {
@@ -66,8 +66,8 @@
       "desc": "Un parassita trasmesso da zecche che infetta i globuli rossi, simile alla malaria. Febbre e anemia emolitica seguono la distruzione delle cellule infette da parte del parassita."
     },
     "bedbugs": {
-      "name": "Cimici da Letto",
-      "desc": "Piccoli insetti ematofagi che si nascondono nella biancheria da letto e si nutrono di notte. I loro morsi sollevano ponfoli pruriginosi e disturbano il sonno."
+      "name": "Cimici da letto",
+      "desc": "Piccoli insetti ematofagi che si nascondono nella biancheria da letto e si nutrono di notte. I loro morsi sollevano ponfoli pruriginosi, spesso in una fila rivelatrice, e disturbano il sonno."
     },
     "bells-palsy": {
       "name": "Paralisi di Bell",
@@ -122,7 +122,7 @@
       "desc": "Infezione primaria da virus varicella-zoster. Un'eruzione pruriginosa e vescicolare si diffonde dal tronco verso l'esterno, formando croste in una o due settimane."
     },
     "chigoe": {
-      "name": "Pulce Penetrante",
+      "name": "Pulce penetrante",
       "desc": "Una pulce scavatrice che si conficca nella pelle, di solito del piede, per nutrirsi e gonfiarsi di uova. Una lesione dolorosa e pruriginosa si forma intorno all'insetto sepolto."
     },
     "chikungunya": {
@@ -138,7 +138,7 @@
       "desc": "Infezione intestinale acuta da Vibrio cholerae. Una diarrea acquosa abbondante può causare disidratazione fatale in poche ore senza reidratazione."
     },
     "chronic-lyme": {
-      "name": "Lyme Disseminata Tardiva",
+      "name": "Lyme disseminata tardiva",
       "desc": "Malattia di Lyme lasciata senza cura finché i batteri non si diffondono ampiamente. Artrite, danno nervoso e paralisi facciale si sviluppano quando l'infezione raggiunge articolazioni e nervi."
     },
     "chrono-ague": {
@@ -146,7 +146,7 @@
       "desc": "L'esposizione a campi temporali instabili causa un invecchiamento localizzato incoerente con il tempo trascorso. Chi ne soffre vive brevi scarti in cui tempo percepito e tempo fisico divergono."
     },
     "cirrhosis": {
-      "name": "Cirrosi Epatica",
+      "name": "Cirrosi epatica",
       "desc": "Cicatrizzazione irreversibile del fegato da malattia cronica. Il tessuto sano viene sostituito da noduli fibrosi, e ittero e ritenzione di liquidi seguono il cedimento della funzione."
     },
     "cjd": {
@@ -186,7 +186,7 @@
       "desc": "Un pidocchio che vive nei peli pubici, trasmesso per contatto ravvicinato. Prurito persistente e piccole macchie bluastre da morso compaiono dove i pidocchi si sono nutriti."
     },
     "crimean-congo": {
-      "name": "Febbre Emorragica Crimea-Congo",
+      "name": "Febbre emorragica Crimea-Congo",
       "desc": "Una febbre emorragica virale trasmessa da zecche, con un alto tasso di mortalità nei casi gravi. Febbre e lividi progrediscono in emorragie sottocutanee entro due settimane dall'esposizione."
     },
     "crohns": {
@@ -226,8 +226,8 @@
       "desc": "Insulino-resistenza combinata a una relativa carenza di insulina. Sete persistente, minzione frequente e ferite che guariscono lentamente compaiono con la glicemia costantemente elevata."
     },
     "diabetic-neuropathy": {
-      "name": "Neuropatia Diabetica",
-      "desc": "Danno nervoso da glicemia elevata prolungata, più comune nei piedi e nelle gambe. L'intorpidimento avanza finché lesioni e ulcere non passano più inosservate."
+      "name": "Neuropatia diabetica",
+      "desc": "Danno nervoso da glicemia elevata prolungata, più comune nei piedi e nelle gambe. L'intorpidimento avanza al punto che lesioni e ulcere passano inosservate."
     },
     "diphtheria": {
       "name": "Difterite",
@@ -251,14 +251,14 @@
     },
     "elephantiasis": {
       "name": "Filariosi linfatica",
-      "desc": "Filariasi linfatica, causata da vermi parassiti filiformi annidati nei vasi linfatici. L'ostruzione cronica causa un gonfiore imponente degli arti, chiamato elefantiasi."
+      "desc": "Filariosi linfatica, causata da vermi parassiti filiformi annidati nei vasi linfatici. L'ostruzione cronica causa un gonfiore imponente degli arti, chiamato elefantiasi."
     },
     "encephalitis-lethargica": {
       "name": "Malattia del sonno del cervello",
       "desc": "Una rara infiammazione cerebrale di origine virale incerta. Tremore e visione doppia possono evolvere in un'immobilità simile a una statua, senza risposta."
     },
     "endocarditis": {
-      "name": "Endocardite Infettiva",
+      "name": "Endocardite infettiva",
       "desc": "Un'infezione batterica della superficie interna del cuore, di solito su una valvola. Febbre e un nuovo soffio cardiaco possono precedere complicazioni emboliche altrove nel corpo."
     },
     "epilepsy": {
@@ -270,7 +270,7 @@
       "desc": "Una forma di malattia psicogena di massa in cui gli svenimenti si diffondono in un gruppo. Nausea e vertigini precedono ogni collasso, senza infezione a spiegarli."
     },
     "familiar-fever": {
-      "name": "Febbre del Famiglio",
+      "name": "Febbre del famiglio",
       "desc": "Un'infiltrazione febbrile degli istinti di un famiglio legato nel corpo del suo padrone. Fame e riflessi si spostano verso la natura del famiglio mentre la febbre culmina di notte."
     },
     "fatal-insomnia": {
@@ -282,7 +282,7 @@
       "desc": "Un'infezione lieve da parvovirus B19, riconoscibile soprattutto per l'eruzione rosso vivo che lascia sulle guance. Dolore articolare può seguire nei bambini più grandi e negli adulti."
     },
     "fleas": {
-      "name": "Infestazione di Pulci",
+      "name": "Infestazione di pulci",
       "desc": "Piccoli insetti saltatori che vivono del sangue di un ospite. Morsi ripetuti sollevano ponfoli pruriginosi e lasciano la pelle irrequieta e irritata."
     },
     "gangrene": {
@@ -322,7 +322,7 @@
       "desc": "Una condizione neurologica che produce un campo costante di puntini statici sfarfallanti nel campo visivo. Acufeni e fotofobia spesso l'accompagnano."
     },
     "grimoire-tinnitus": {
-      "name": "Acufene del Grimorio",
+      "name": "Acufene del grimorio",
       "desc": "Un ronzio persistente lasciato da un'esposizione prolungata a incantesimi recitati. Frammenti di testo recitato si intromettono nel pensiero e disturbano il sonno ben oltre la fine della lettura."
     },
     "guinea-worm": {
@@ -330,7 +330,7 @@
       "desc": "Un parassita contratto bevendo acqua contenente copepodi infetti. Il verme adulto migra sotto la pelle per un anno prima di emergere attraverso una vescica bruciante."
     },
     "hand-foot-mouth": {
-      "name": "Malattia Mani-Piedi-Bocca",
+      "name": "Malattia mani-piedi-bocca",
       "desc": "Un'infezione da enterovirus comune nei bambini piccoli. La febbre precede dolorose ulcere in bocca e vescicole su palmi e piante dei piedi."
     },
     "hantavirus": {
@@ -366,11 +366,11 @@
       "desc": "Un retrovirus che infetta e riduce le cellule immunitarie CD4. Senza trattamento, il progressivo collasso immunitario espone il corpo a infezioni opportunistiche."
     },
     "hollow-shell": {
-      "name": "Il Guscio Vuoto",
+      "name": "Il guscio vuoto",
       "desc": "Uno stadio avanzato di rescissione dal sé, in cui il corpo persiste senza i suoi consueti segni di presenza. Non proietta riflesso, non proietta ombra, e la voce che parla non è riconoscibile come propria."
     },
     "hollowing": {
-      "name": "Lo Svuotamento",
+      "name": "Lo svuotamento",
       "desc": "Una lenta rescissione tra corpo e sé, di origine incerta. Sensazione e memoria sfumano insieme mentre il legame si assottiglia, lasciando dietro di sé una pelle fredda e senza risposta."
     },
     "hookworm": {
@@ -402,7 +402,7 @@
       "desc": "Una maledizione che appesantisce il respiro come se i polmoni si riempissero lentamente di metallo. Un persistente sapore metallico accompagna ogni inspirazione affaticata."
     },
     "japanese-encephalitis": {
-      "name": "Encefalite Virale",
+      "name": "Encefalite virale",
       "desc": "Un virus trasmesso da zanzare che occasionalmente attraversa la barriera cerebrale. La maggior parte delle infezioni passa inosservata, ma la minoranza che infiamma il cervello porta convulsioni e paralisi."
     },
     "kuru": {
@@ -418,7 +418,7 @@
       "desc": "Una febbre emorragica virale trasmessa dai roditori, endemica nell'Africa occidentale. La maggior parte delle infezioni è silente, ma i casi gravi portano febbre, emorragie e sordità permanente."
     },
     "laughing-pox": {
-      "name": "Vaiolo del riso",
+      "name": "Vaiolo della risata",
       "desc": "Un disturbo neurologico che produce risate o pianti improvvisi e incontrollabili, slegati dall'umore reale. Le pustole segnano la pelle dove è passata la febbre."
     },
     "laughter-epidemic": {
@@ -426,7 +426,7 @@
       "desc": "Un'epidemia documentata di isteria di massa segnata da episodi di risate incontrollabili diffuse in una comunità, senza alcun agente infettivo coinvolto."
     },
     "leeches": {
-      "name": "Infestazione di Sanguisughe",
+      "name": "Infestazione di sanguisughe",
       "desc": "Vermi anellidi ematofagi che si attaccano con una ventosa e rilasciano un anticoagulante mentre si nutrono. I morsi sanguinano più del previsto e possono prudere per giorni dopo il distacco."
     },
     "legionnaires": {
@@ -458,15 +458,15 @@
       "desc": "Un'infezione batterica alimentare, pericolosa soprattutto per immunodepressi, neonati e anziani. Febbre e rigidità del collo possono segnalare il coinvolgimento del sistema nervoso."
     },
     "liver-abscess": {
-      "name": "Ascesso Epatico Amebico",
+      "name": "Ascesso epatico amebico",
       "desc": "Una cavità piena di pus nel fegato causata da infezione amebica. Dolore al fianco destro e febbre si sviluppano mentre il parassita distrugge il tessuto epatico dall'interno."
     },
     "liver-fluke": {
-      "name": "Distoma Epatico",
-      "desc": "Un verme piatto parassita contratto da piante acquatiche contaminate, che migra verso i dotti biliari del fegato. Dolore al fianco destro e ittero seguono l'insediamento della cercaria."
+      "name": "Distoma epatico",
+      "desc": "Un verme piatto parassita contratto da piante acquatiche contaminate, che migra verso i dotti biliari del fegato. Dolore al fianco destro e ittero seguono l'insediamento del parassita."
     },
     "loop-amnesia": {
-      "name": "Amnesia del Ciclo",
+      "name": "Amnesia del ciclo",
       "desc": "Amnesia anterograda: l'incapacità di formare nuovi ricordi dopo l'evento scatenante. I ricordi lontani nel tempo restano intatti mentre il presente sfugge senza lasciare traccia."
     },
     "lupus": {
@@ -482,7 +482,7 @@
       "desc": "Un'infezione da Borrelia trasmessa da zecche. Un'eruzione a bersaglio in espansione è spesso il primo segno, seguita da dolori articolari e stanchezza se non trattata."
     },
     "mad-cow": {
-      "name": "Encefalopatia Spongiforme Bovina",
+      "name": "Encefalopatia spongiforme bovina",
       "desc": "Una malattia da prioni del bestiame che può passare all'uomo tramite tessuto contaminato. Comportamento anomalo e perdita di coordinazione progrediscono mentre il tessuto cerebrale diventa spugnoso."
     },
     "malaria": {
@@ -491,10 +491,10 @@
     },
     "mana-plague": {
       "name": "Peste di mana",
-      "desc": "Una corruzione trasmissibile del canale arcano del corpo, che provoca scariche incontrollate. Febbre e spell misfire involontari seguono la perdita di contenimento del canale."
+      "desc": "Una corruzione trasmissibile del canale arcano del corpo, che provoca scariche incontrollate. Febbre e incantesimi che falliscono involontariamente seguono la perdita di contenimento del canale."
     },
     "mange": {
-      "name": "Rogna Sarcoptica",
+      "name": "Rogna sarcoptica",
       "desc": "Un'infestazione cutanea da acari scavatori, più comune negli animali ma trasmissibile all'uomo. Pelle crostosa, perdita di pelo e prurito incessante seguono lo scavo degli acari."
     },
     "marburg": {
@@ -518,7 +518,7 @@
       "desc": "Un disturbo neurologico che causa mal di testa ricorrenti, spesso unilaterali. Nausea e sensibilità a luce e suoni accompagnano gli episodi peggiori."
     },
     "miliary-tuberculosis": {
-      "name": "Tubercolosi Miliare",
+      "name": "Tubercolosi miliare",
       "desc": "Una forma di tubercolosi ampiamente disseminata che diffonde piccole lesioni nel flusso sanguigno verso più organi. Deperimento e febbre accompagnano il cedimento degli organi coinvolti."
     },
     "mirror-sickness": {
@@ -526,7 +526,7 @@
       "desc": "Un'affezione dissociativa in cui il proprio riflesso sembra restare indietro rispetto al movimento reale. Chi ne soffre riferisce un crescente distacco dalle proprie azioni mentre il ritardo si allarga."
     },
     "monkeypox": {
-      "name": "Vaiolo delle Scimmie",
+      "name": "Vaiolo delle scimmie",
       "desc": "Una malattia virale imparentata con il vaiolo, trasmessa per contatto ravvicinato. Un'eruzione vescicolare e crostosa accompagna febbre e linfonodi gonfi, di solito risolvendosi in settimane."
     },
     "mononucleosis": {
@@ -550,7 +550,7 @@
       "desc": "Infezione virale delle ghiandole salivari. Febbre e malessere lasciano il posto a un doloroso gonfiore delle ghiandole parotidi lungo la mascella."
     },
     "myiasis": {
-      "name": "Miasi da Dermatobia",
+      "name": "Miasi da dermatobia",
       "desc": "Infestazione del tessuto vivente da larve di mosca, che scavano e si nutrono mentre crescono. Un rigonfiamento mobile sotto la pelle spesso segna dove una larva si è insediata."
     },
     "name-theft-panic": {
@@ -562,7 +562,7 @@
       "desc": "Un disturbo della regolazione cerebrale del sonno. Improvvisi attacchi di sonno diurno e, in alcuni casi, un crollo del tono muscolare colpiscono senza preavviso."
     },
     "night-blindness": {
-      "name": "Carenza di Vitamina A",
+      "name": "Carenza di vitamina A",
       "desc": "Carenza di vitamina A che compromette la capacità della retina di adattarsi alla scarsa luce. La difficoltà a vedere al crepuscolo è spesso il primo segno, prima che la vista diurna ne risenta."
     },
     "nipah": {
@@ -586,7 +586,7 @@
       "desc": "Un disturbo di pensieri intrusivi e indesiderati, alleviati solo da un comportamento rituale ripetuto. La compulsione offre un sollievo breve prima che l'ossessione ritorni."
     },
     "packet-fever": {
-      "name": "Febbre dei Pacchetti",
+      "name": "Febbre dei pacchetti",
       "desc": "Una fissazione ossessiva per la congestione di rete e le connessioni interrotte. Frustrazione e irrequietezza crescono al ritmo di ogni pacchetto perso."
     },
     "parkinsons": {
@@ -598,11 +598,11 @@
       "desc": "Carenza di niacina che danneggia pelle, intestino e cervello. Non trattata, progredisce attraverso la classica triade di dermatite, diarrea e demenza."
     },
     "pelvic-inflammatory": {
-      "name": "Malattia Infiammatoria Pelvica",
+      "name": "Malattia infiammatoria pelvica",
       "desc": "Un'infezione batterica ascendente del tratto riproduttivo femminile superiore, spesso silente all'inizio. Non trattata, può cicatrizzare le tube di Falloppio e causare infertilità."
     },
     "petro-lung": {
-      "name": "Polmone di Petrolio",
+      "name": "Polmone di petrolio",
       "desc": "Pneumoconiosi: cicatrizzazione interstiziale dei polmoni da anni di particolato fine inalato. Il respiro si fa più corto e superficiale ben dopo la fine dell'esposizione che l'ha causata."
     },
     "phantom-gasser": {
@@ -634,7 +634,7 @@
       "desc": "Uno stato alterato in cui il controllo di parola e movimento sembra passare a una presenza del tutto diversa. Il corpo agisce e parla in modi che chi ne soffre non riconosce come propri."
     },
     "post-viral-syndrome": {
-      "name": "Sindrome Post-Virale",
+      "name": "Sindrome post-virale",
       "desc": "Una stanchezza invalidante che persiste ben oltre la guarigione dall'infezione scatenante. Lo sforzo, anche minimo, porta a un netto peggioramento che può durare giorni."
     },
     "psoriasis": {
@@ -654,11 +654,11 @@
       "desc": "Un'encefalite virale quasi sempre fatale, trasmessa dal morso di un animale infetto. Agitazione, spasmi muscolari e idrofobia segnano lo stadio terminale."
     },
     "recursion-sickness": {
-      "name": "Male della Ricorsione",
+      "name": "Male della ricorsione",
       "desc": "Uno sforzo cognitivo nel seguire un processo che richiama sé stesso senza una fine chiara. Il pensiero si blocca sullo stesso passaggio irrisolto finché non collassa sotto il proprio peso."
     },
     "rheumatic-fever": {
-      "name": "Febbre Reumatica",
+      "name": "Febbre reumatica",
       "desc": "Una malattia infiammatoria scatenata da un'infezione streptococcica alla gola non trattata. Può infiammare cuore, articolazioni, pelle e cervello nelle settimane successive alla guarigione dell'infezione originale."
     },
     "rheumatoid": {
@@ -718,7 +718,7 @@
       "desc": "Un disturbo del pensiero e della percezione disorganizzati. Allucinazioni e deliri si sviluppano gradualmente, tipicamente durante la prima età adulta."
     },
     "scrapie": {
-      "name": "Contatto con la Scrapie",
+      "name": "Contatto con la scrapie",
       "desc": "Una malattia da prioni di pecore e capre, non nota per trasmettersi all'uomo. Prurito incessante e andatura vacillante ne segnano la progressione negli animali colpiti."
     },
     "scurvy": {
@@ -738,7 +738,7 @@
       "desc": "Riattivazione del virus varicella-zoster rimasto latente nel tessuto nervoso. Un'eruzione dolorosa e vescicolare compare a fascia su un solo lato del corpo."
     },
     "sigil-blight": {
-      "name": "Ruggine dei Sigilli",
+      "name": "Ruggine dei sigilli",
       "desc": "Degrado dei sigilli di protezione incisi sulla pelle, che li fa sbavare e funzionare male. Le protezioni si leggono in modo errato e il prurito si diffonde sui palmi colpiti."
     },
     "sleeping-sickness": {
@@ -754,23 +754,23 @@
       "desc": "Una malattia da Orthopoxvirus, ormai eradicata, un tempo devastante. La febbre precedeva un'eruzione di pustole piene di liquido che lasciava cicatrici permanenti."
     },
     "soul-sickness": {
-      "name": "Malattia dell'Anima",
+      "name": "Malattia dell'anima",
       "desc": "Un logoramento del sé a un livello più profondo del corpo, di meccanismo incerto. Il lutto e l'attaccamento sfumano per primi, seguiti da un assottigliarsi della propria ombra e del proprio nome."
     },
     "spanish-flu": {
       "name": "Grande influenza",
-      "desc": "Un ceppo influenzale H1N1 grave, responsabile di una pandemia globale. Un rapido esordio di febbre alta ed edema polmonare cianotizzo labbra e pelle."
+      "desc": "Un ceppo influenzale H1N1 grave, responsabile di una pandemia globale. Un rapido esordio di febbre alta ed edema polmonare rendeva cianotiche labbra e pelle."
     },
     "sporotrichosis": {
       "name": "Sporotricosi",
-      "desc": "Un'infezione fungina introdotta attraverso una puntura cutanea, spesso maneggiando piante o terra. Noduli fermi si formano lungo i vasi linfatici e in seguito ulcerano."
+      "desc": "Un'infezione fungina introdotta attraverso una puntura cutanea, spesso maneggiando piante o terra. Noduli duri si formano lungo i vasi linfatici e in seguito ulcerano."
     },
     "star-madness": {
       "name": "Follia stellare",
-      "desc": "L'esposizione prolungata a geometrie cosmiche non euclidee sopraffa il ragionamento spaziale della mente. Visioni persistenti e angoscia seguono, spesso superando in durata l'esposizione stessa."
+      "desc": "L'esposizione prolungata a geometrie cosmiche non euclidee sopraffà il ragionamento spaziale della mente. Visioni persistenti e angoscia seguono, spesso superando in durata l'esposizione stessa."
     },
     "static-communion": {
-      "name": "Comunione di Statica",
+      "name": "Comunione di statica",
       "desc": "Una fissazione per i fenomeni vocali elettronici, i deboli pattern che alcuni percepiscono come voci dentro il rumore statico registrato. Lunghe sessioni di ascolto lasciano un ronzio nelle orecchie."
     },
     "stone-flesh": {
@@ -794,7 +794,7 @@
       "desc": "Una forma storica di isteria di massa un tempo attribuita al morso di un ragno, segnata da danze frenetiche pensate per far sudare via il veleno. Sudorazione e malinconia si alternano agli attacchi."
     },
     "tertiary-syphilis": {
-      "name": "Sifilide Terziaria",
+      "name": "Sifilide terziaria",
       "desc": "Lo stadio tardivo e non trattato della sifilide, anni dopo l'infezione originale. Gomme, demenza e danni a cuore e midollo spinale segnano il coinvolgimento sistemico degli organi."
     },
     "tetanus": {
@@ -802,11 +802,11 @@
       "desc": "La tossina del Clostridium tetani, entrata attraverso una ferita, causa una rigidità muscolare progressiva che inizia dalla mascella e si diffonde al resto del corpo."
     },
     "the-quiet": {
-      "name": "La Quiete",
+      "name": "La quiete",
       "desc": "Una rara affezione cosmica che erode la capacità di chi ne soffre di afferrare linguaggio e significato. Le parole perdono i loro referenti una a una, lasciando un affetto piatto e uno sguardo vuoto."
     },
     "ticks": {
-      "name": "Infestazione di Zecche",
+      "name": "Infestazione di zecche",
       "desc": "Aracnidi ematofagi che si attaccano per pasti prolungati, gonfiandosi man mano che si riempiono. Eritema locale e stanchezza possono seguire, insieme a qualsiasi patogeno trasportato dalla zecca."
     },
     "tower-vertigo": {
@@ -819,7 +819,7 @@
     },
     "trachoma": {
       "name": "Tracoma",
-      "desc": "Un'infezione oculare da clamidia è la principale causa infettiva di cecità al mondo. Infezioni ripetute cicatrizzano la palpebra, rivoltando le ciglia contro la cornea."
+      "desc": "Un'infezione oculare da clamidia e la principale causa infettiva di cecità al mondo. Infezioni ripetute cicatrizzano la palpebra, rivoltando le ciglia contro la cornea."
     },
     "trichinosis": {
       "name": "Trichinosi",
@@ -835,7 +835,7 @@
     },
     "typhus": {
       "name": "Tifo epidemico",
-      "desc": "Un'infezione da Rickettsia trasmessa dai pidocchi, che si diffonde più rapidamente in condizioni affollate e poco igieniche. Febbre alta e stupore seguono la comparsa di un'eruzione diffusa."
+      "desc": "Un'infezione da Rickettsia trasmessa dai pidocchi, che si diffonde più rapidamente in condizioni affollate e poco igieniche. Febbre alta e stato stuporoso seguono la comparsa di un'eruzione diffusa."
     },
     "ulcer": {
       "name": "Ulcera peptica",
@@ -867,7 +867,7 @@
     },
     "whooping-cough": {
       "name": "Pertosse",
-      "desc": "Un'infezione molto contagiosa da Bordetella pertussis. I sintomi simil-influenzali lasciano il posto a settimane di violenti accessi di tosse che terminano con un caratteristico urlo inspiratorio."
+      "desc": "Un'infezione molto contagiosa da Bordetella pertussis. I sintomi simili a un raffreddore lasciano il posto a settimane di violenti accessi di tosse che terminano con un caratteristico urlo inspiratorio."
     },
     "windscreen-pitting": {
       "name": "Delirio dei parabrezza scheggiati",
@@ -985,7 +985,7 @@
     },
     "mana-burn-scars": {
       "name": "Cicatrici da ustione di mana",
-      "desc": "Danno tissutale permanente da un canale arcano che si è sovraccaricato ed è scaricato attraverso il corpo. La cicatrice è inerte ma segna dove è passata la bruciatura."
+      "desc": "Danno tissutale permanente da un canale arcano che si è sovraccaricato e si è scaricato attraverso il corpo. La cicatrice è inerte ma segna dove è passata la bruciatura."
     },
     "cursed-brand": {
       "name": "Marchio maledetto",
@@ -1084,7 +1084,7 @@
     "deafness": "sordità",
     "deformity": "deformità",
     "dehydration": "disidratazione",
-    "deja vu": "deja vu",
+    "deja vu": "déjà vu",
     "delirium": "delirio",
     "delusions": "deliri",
     "dementia": "demenza",
@@ -1111,7 +1111,7 @@
     "emboli": "emboli",
     "emerging worm": "verme che emerge",
     "encephalitis": "encefalite",
-    "engorged bites": "morsi ingorgati",
+    "engorged bites": "morsi gonfi",
     "euphoria": "euforia",
     "exhaustion": "spossatezza",
     "exophthalmos": "esoftalmo",
@@ -1261,7 +1261,7 @@
     "resistant infection": "infezione resistente",
     "restlessness": "irrequietezza",
     "retinopathy": "retinopatia",
-    "retry loops": "cicli di ritentativo",
+    "retry loops": "tentativi a ripetizione",
     "right-sided pain": "dolore al fianco destro",
     "rigidity": "rigidità",
     "ring rash": "eritema anulare",
@@ -1298,7 +1298,7 @@
     "stiffness": "rigidità",
     "strawberry tongue": "lingua a fragola",
     "stumbling": "inciampi",
-    "stupor": "stupore",
+    "stupor": "stato stuporoso",
     "stutter": "balbuzie",
     "suspicion": "sospettosità",
     "sweating": "sudorazione",
@@ -1345,22 +1345,22 @@
   "toast": {
     "cured": "{actor} è guarito da {disease}",
     "dosed": "{actor} ha preso {item} per {disease}",
-    "dosedManage": "{actor} ha preso {item} per tenere a bada {disease}",
+    "dosedManage": "{actor} ha preso {item} per controllare {disease}",
     "needsMedicine": "A {actor} serve {item} per curare {disease}",
     "needsMedicinePriced": "A {actor} serve {item} ({price}) per curare {disease}",
-    "courseLost": "{actor} ha saltato troppe dosi: il ciclo contro {disease} riparte da capo",
+    "courseLost": "{actor} ha saltato troppe dosi. La cura per {disease} riparte",
     "progressed": "{from} di {actor} è diventata {to}"
   },
   "ui": {
-    "healthy": "Non ha proprio niente.",
+    "healthy": "In salute.",
     "conditions": "Condizioni permanenti",
     "recovered": "Guarito da",
-    "remedies": "Cosa la cura",
-    "noRemedy": "Niente al mondo la cura.",
+    "remedies": "Cure",
+    "noRemedy": "Nessuna cura nota.",
     "held": "x{count}",
     "courseDays": "{days} dosi giornaliere",
-    "suppressive": "tenuta a bada",
-    "carriedFor": "Portata da",
+    "suppressive": "sotto controllo",
+    "carriedFor": "Malato da",
     "course": "Ciclo",
     "courseProgress": "{done} dosi su {need}",
     "selfCure": "Passa da sola tra",
@@ -1374,20 +1374,20 @@
     "treatment": "Trattamento",
     "curableIn": "curabile, {days} dosi giornaliere",
     "incurable": "incurabile",
-    "incurableManaged": "incurabile, si può tenere a bada",
+    "incurableManaged": "incurabile, controllabile",
     "generic": "Rimedio generico",
     "category": "Tipo",
     "severity": "Gravità",
     "spread": "Si trasmette per",
     "incubation": "Incubazione",
-    "windowPeriod": "Periodo finestra",
-    "mostInfectious": "Più contagiosa",
+    "windowPeriod": "Non rilevabile per",
+    "mostInfectious": "Massimo contagio",
     "peakBetween": "giorni da {from} a {to}",
     "peakOngoing": "dal giorno {from} in poi",
     "runsFor": "Dura",
     "symptoms": "Sintomi",
     "undiagnosed": "non diagnosticata",
-    "undiagnosedDesc": "Qualcosa non va, e ancora niente dice cosa.",
+    "undiagnosedDesc": "Non ancora diagnosticata.",
     "unknownIllness": "Malattia senza nome",
     "incubating": "in incubazione",
     "peakInfectious": "molto contagiosa",
@@ -1455,12 +1455,12 @@
   "param": {
     "mhp": "HP",
     "mmp": "MP",
-    "atk": "ATT",
-    "def": "DIF",
-    "mat": "M.ATT",
-    "mdf": "M.DIF",
-    "agi": "AGI",
-    "luk": "FOR"
+    "atk": "FRZ",
+    "def": "COS",
+    "mat": "INT",
+    "mdf": "SAG",
+    "agi": "DES",
+    "luk": "PSI"
   },
   "drug": {
     "generic": "Rimedio generico",
@@ -1510,9 +1510,9 @@
     "toast": {
       "mild": "{actor} reagisce a {source}: orticaria e prurito.",
       "mildVomit": "{actor} reagisce a {source} e lo vomita.",
-      "severe": "{actor} va in shock anafilattico dopo {source}! Serve subito un antistaminico o una pozione di cura.",
+      "severe": "{actor} va in shock anafilattico per {source}! Usa un antistaminico o una pozione di cura.",
       "held": "L'antistaminico di {actor} blocca una reazione a {source}.",
-      "guard": "Le allergie di {actor} sono tenute a bada per {hours} ore.",
+      "guard": "Le allergie di {actor} sono sotto controllo per {hours} ore.",
       "pollen": "Polline nell'aria: {actor} ha un attacco di febbre da fieno."
     }
   }

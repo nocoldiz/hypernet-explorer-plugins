@@ -1,9 +1,16 @@
 {
   "anItem": "an item",
+  "noSoulNearby": "Nobody nearby.",
   "mapFallback": "Map {id}",
   "homePool": {
     "houses": "house",
     "skyscrapers": "high-rise"
+  },
+  "home": {
+    "homeless": "Homeless",
+    "frontierSettlement": "Frontier Settlement",
+    "door": "Door ({x}, {y})",
+    "floor": "Floor {n}"
   },
   "log": {
     "swam": "went for a swim",

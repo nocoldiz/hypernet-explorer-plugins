@@ -15,8 +15,8 @@
   "statusScanning": "LASER SCANNING{dots}   [ν = {shift} cm⁻¹]",
   "statusRendering": "RENDERING SPECTRUM{dots}",
   "msgHeader": "\\C[8][ RAMAN SCANNER ]\\C[0]",
-  "msgNoMaterial": "No spectrally active material detected in scan area.",
-  "msgHint": "Target must be a statue, painting, or library object within 1m.",
+  "msgNoMaterial": "Nothing to analyze here.",
+  "msgHint": "Face a statue, painting or bookcase.",
   "choices": [
     "Look",
     "Analyze",

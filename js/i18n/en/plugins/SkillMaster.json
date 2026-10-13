@@ -54,7 +54,7 @@
   "youHold": "you hold",
   "dominant": "Dominant:",
   "recessive": "Recessive:",
-  "theDominantDefinesDamageAnd": "The dominant spell decides the damage and the targets. The recessive part decides whether you get a spell or a skill. Both parts are forgotten, but you can split the result back into them later.",
+  "theDominantDefinesDamageAnd": "Both parents are read as tags: keep the ones you want, the dominant's first where only one fits. Recessive: makes it a spell or a skill. Both parts are consumed; split the result to get them back.",
   "training": "Training",
   "fusedSkillDesc": "A procedural skill fused from {parts} (dominant: {dominant}).",
   "fusedSpellDesc": "A procedural spell fused from {parts} (dominant: {dominant}).",
@@ -77,7 +77,7 @@
   "category": {
     "All": "All"
   },
-  "forgeBlurb": "Combine two of {actor}'s abilities into a new one. The dominant spell decides what it does; the recessive spell or skill decides whether the result is a spell or a skill. Both parts are forgotten. You have {knowledge} KP.",
+  "forgeBlurb": "Fuse two of {actor}'s abilities into one. Dominant sets the effect; recessive makes it a spell or a skill. Both parts are consumed. You have {knowledge} KP.",
   "kpMultiplier3x": "3.0X KP",
   "kpMultiplier15x": "1.5X KP",
   "foreignSchool": "Self-taught",
@@ -87,9 +87,9 @@
     "hint": "Select a system to see its spells and the classes that use it",
     "empty": "Choose a system from the wheel",
     "classesHeading": "Classes",
-    "noClasses": "No known class draws on this system yet.",
+    "noClasses": "No class uses this system yet.",
     "spellsHeading": "Spells",
-    "noSpells": "No spells belong to this system yet.",
+    "noSpells": "No spells in this system yet.",
     "knownFraction": "{known} / {total} known ({pct}%)",
     "yourSystem": "Your class's system",
     "systems": {
@@ -125,7 +125,7 @@
       },
       "Pataphysic": {
         "name": "Pataphysic",
-        "desc": "Magic that answers to no consistent law.",
+        "desc": "Magic with no consistent laws.",
         "lore": "The pataphysician studies the laws governing exceptions, and the field returns the courtesy by having none. A working that opened a door on Tuesday makes a door open the pataphysician on Thursday. Notes are kept, and they are always about a magic that no longer exists. Practitioners describe it as a joke told by something with no sense of humour and infinite patience."
       },
       "Natural": {
@@ -160,41 +160,43 @@
     "lockedBy": "Unlocked by: {skills}",
     "lockedByCount": "Needs {need} more of: {skills}",
     "lockedHint": "Learn a connected skill first to unlock this one.",
-    "lockedToast": "{skill} does not border anything this pupil knows.",
+    "lockedToast": "{skill} is not connected to a known skill.",
     "lockedEsotericLevel": "Esoteric knowledge: level {level} or above.",
     "lockedForbiddenLevel": "Forbidden knowledge: level {level} or above.",
-    "lockedCultist": "A Cultist learns nothing here: only grimoires and skill books will teach them."
+    "lockedCultist": "Cultists can only learn from grimoires and skill books."
   },
   "atlas": {
     "progress": "{learned} of {total} learned",
     "kp": "{kp} KP",
     "schoolOf": "{index} / {total}",
     "held": "You hold {knowledge} KP",
-    "hint": "Drag to pan, wheel to zoom"
+    "hint": "Drag to pan, wheel to zoom",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
   },
   "tag": {
     "esoteric": "Esoteric",
     "forbidden": "Forbidden"
   },
   "carry": {
-    "take": "Carry into battle",
-    "drop": "Leave on the bench",
-    "locked": "Always carried",
+    "take": "Add to loadout",
+    "drop": "Remove from loadout",
+    "locked": "Always equipped",
     "full": "Loadout full",
-    "takenToast": "{skill} is carried into battle.",
-    "droppedToast": "{skill} is left on the bench.",
-    "fullToast": "The loadout already carries {max}. Bench something first.",
-    "lockedToast": "{skill} is always carried and spends no slot."
+    "takenToast": "{skill} added to loadout.",
+    "droppedToast": "{skill} removed from loadout.",
+    "fullToast": "Loadout full ({max}). Remove a skill first.",
+    "lockedToast": "{skill} is always equipped and uses no slot."
   },
   "fusion": {
     "rename": "Rename",
     "delete": "Unmake",
     "confirm": "Save",
-    "confirmDelete": "Unmake {skill}? Its components are already spent. Press again to confirm.",
+    "confirmDelete": "Unmake {skill}? Components are not refunded. Press again to confirm.",
     "deleted": "{skill} is unmade."
   },
   "fusionCritical": "★ \\DIE[20] CRITICAL SUCCESS! ★\n{result}\nEmpowered with -20% MP cost and +25% potency!",
-  "fusionFailed": "☠ ARCANE FUSION FAILED (DC {dc}) ☠\nThe spell fusion destabilised in a violent magical backlash!\nThe component spells ({components}) were destroyed!",
+  "fusionFailed": "☠ ARCANE FUSION FAILED (DC {dc}) ☠\nMagical backlash!\nComponent spells ({components}) destroyed!",
   "primarySchool": "Primary",
   "secondarySchool": "Secondary",
   "rename": "Rename",
@@ -202,7 +204,7 @@
   "renamePrompt": "Enter a new name for this spell:",
   "dissolveConfirm": "Dissolve {name} back into knowledge?",
   "pupil": "Pupil",
-  "chaosLevelSkill": "{actor} picks up {skill} out of nowhere.",
+  "chaosLevelSkill": "{actor} suddenly learned {skill}.",
   "craft": {
     "buttonSpell": "Craft Spell",
     "buttonSkill": "Craft Skill",
@@ -219,7 +221,7 @@
       "description": "Write its description",
       "lore": "Write its lore",
       "incantation": "Write its incantation",
-      "hint": "Enter saves a name, Escape closes. Shift and Enter break a line."
+      "hint": "Enter: save. Esc: close. Shift+Enter: new line."
     },
     "rewriteDesc": "Rewrite Description",
     "rewriteLore": "Rewrite Lore",
@@ -232,7 +234,7 @@
     "unwritten": "Unwritten",
     "knowledge": "Knowledge",
     "cxShort": "CX",
-    "nothingToBuy": "Nothing on this shelf",
+    "nothingToBuy": "Nothing to buy",
     "noneYet": "Nothing written yet",
     "yourSpells": "Your Spells",
     "yourSkills": "Your Skills",
@@ -255,8 +257,7 @@
     "occasionLabel": "Usable",
     "anywhere": "Anywhere",
     "battleOnly": "Battle only",
-    "riderCount": "Riders",
-    "benchBlurb": "Buy each part once with KP, then reuse it in everything you write here. Complexity raises the MP of every cast and the {stat} needed to use it.",
+    "benchBlurb": "Every tag is bought with KP when the entry is written. The MP or AP it costs and the {stat} it asks for are what the shipped book charges for the same power.",
     "writtenResult": "\\C[3]{name}\\C[0] is written. {cost} KP spent, {left} KP left.",
     "rewrittenResult": "\\C[3]{name}\\C[0] is rewritten. {cost} KP spent, {left} KP left.",
     "row": {
@@ -266,380 +267,870 @@
       "incantation": "Incantation",
       "icon": "Icon",
       "animation": "Animation",
-      "core": "Core",
-      "power": "Amplifier",
-      "scope": "Shape",
-      "riders": "Riders",
-      "refines": "Refinements",
       "create": "Write",
-      "randomize": "Roll"
+      "randomize": "Roll",
+      "catalogue": "Add Tag",
+      "core": "Core",
+      "element": "Element",
+      "power": "Amplifier",
+      "shape": "Shape",
+      "rider": "Riders",
+      "refine": "Refinements",
+      "payoff": "Payoffs",
+      "mechanic": "Mechanics"
     },
     "pick": {
       "core": "Choose a Core",
+      "element": "Choose an Element",
       "power": "Choose an Amplifier",
-      "scope": "Choose a Shape",
-      "riders": "Buy Riders",
-      "refines": "Buy Refinements",
+      "shape": "Choose a Shape",
+      "rider": "Add a Rider",
+      "refine": "Add a Refinement",
+      "payoff": "Add a Payoff",
+      "mechanic": "Add a Mechanic",
+      "catalogue": "Tag Catalogue",
       "icon": "Choose an Icon",
       "animation": "Choose an Animation"
     },
     "blocked": {
-      "incomplete": "The build is not finished.",
-      "mismatch": "That core cannot be aimed that way.",
+      "incomplete": "Build incomplete: it needs a core and a shape.",
+      "invalid": "A tag does not fit: {why}",
+      "overload": "Over 100 AP: lighten the build.",
       "knowledge": "Not enough knowledge.",
-      "stat": "Needs {stat} {need}, you hold {have}.",
-      "full": "The bench holds {max} already. Unmake one first."
-    },
-    "dmgType": {
-      "0": "No damage",
-      "1": "HP damage",
-      "2": "MP damage",
-      "3": "HP recovery",
-      "4": "MP recovery",
-      "5": "HP drain",
-      "6": "MP drain"
-    },
-    "comp": {
-      "core": {
-        "fire": {
-          "name": "Kindling",
-          "desc": "Fire damage. The cheapest thing that burns."
-        },
-        "ice": {
-          "name": "Rime",
-          "desc": "Ice damage, a shade gentler than fire and steadier."
-        },
-        "thunder": {
-          "name": "Arc",
-          "desc": "Thunder damage that cuts through part of the guard."
-        },
-        "water": {
-          "name": "Torrent",
-          "desc": "Water damage. Blunt, and the easiest to draw."
-        },
-        "stone": {
-          "name": "Shard",
-          "desc": "Petro damage. Heavy, and slow to be turned aside."
-        },
-        "gale": {
-          "name": "Draught",
-          "desc": "Wind damage. Light, quick and cheap to hold."
-        },
-        "sacred": {
-          "name": "Halo",
-          "desc": "Sacred damage that most guards barely blunt."
-        },
-        "cursed": {
-          "name": "Blight",
-          "desc": "Cursed damage. The hardest thing here to stand in front of."
-        },
-        "arcane": {
-          "name": "Sigil",
-          "desc": "Elementless damage nothing on the field resists."
-        },
-        "mend": {
-          "name": "Suture",
-          "desc": "Heals HP off the caster's own learning."
-        },
-        "etherFlow": {
-          "name": "Conduit",
-          "desc": "Gives MP back to whoever it lands on."
-        },
-        "siphon": {
-          "name": "Leech",
-          "desc": "Damage that returns as HP to the caster."
-        },
-        "mindBurn": {
-          "name": "Static",
-          "desc": "Burns MP out of the target instead of blood."
-        },
-        "ward": {
-          "name": "Empty Frame",
-          "desc": "No damage at all. A shell for riders to sit on."
-        },
-        "strike": {
-          "name": "Strike",
-          "desc": "A plain blow off the arm that swings it."
-        },
-        "cleave": {
-          "name": "Cleave",
-          "desc": "A heavier swing that the guard still answers in full."
-        },
-        "thrust": {
-          "name": "Thrust",
-          "desc": "A narrower blow that most of the guard misses."
-        },
-        "brawl": {
-          "name": "Grapple",
-          "desc": "Close work. Nothing fancy, nothing wasted."
-        },
-        "marksman": {
-          "name": "Aimed Shot",
-          "desc": "A shot that cannot be evaded."
-        },
-        "venomEdge": {
-          "name": "Foul Edge",
-          "desc": "A cursed blade rather than a clean one."
-        },
-        "bandage": {
-          "name": "Field Dressing",
-          "desc": "Patches HP without a word of magic."
-        },
-        "secondWind": {
-          "name": "Second Wind",
-          "desc": "A blow that gives back what it takes."
-        },
-        "rally": {
-          "name": "Empty Stance",
-          "desc": "No damage at all. A shell for riders to sit on."
-        }
-      },
-      "power": {
-        "plain": {
-          "name": "Plain",
-          "desc": "The core as written. Costs nothing."
-        },
-        "focused": {
-          "name": "Focused",
-          "desc": "A quarter again as strong."
-        },
-        "potent": {
-          "name": "Potent",
-          "desc": "Half again as strong, and much heavier to hold."
-        },
-        "ruinous": {
-          "name": "Ruinous",
-          "desc": "Twice over. Only a trained mind carries this."
-        }
-      },
-      "scope": {
-        "oneEnemy": {
-          "name": "One Enemy",
-          "desc": "A single target across the field."
-        },
-        "twoRandom": {
-          "name": "Two at Random",
-          "desc": "Twice, wherever it lands."
-        },
-        "threeRandom": {
-          "name": "Three at Random",
-          "desc": "Three times, wherever it lands."
-        },
-        "allEnemies": {
-          "name": "All Enemies",
-          "desc": "The whole opposing line at once."
-        },
-        "oneAlly": {
-          "name": "One Ally",
-          "desc": "A single companion."
-        },
-        "allAllies": {
-          "name": "All Allies",
-          "desc": "The whole party at once."
-        },
-        "theUser": {
-          "name": "The Writer",
-          "desc": "Yourself and nobody else. Costs nothing."
-        },
-        "everyone": {
-          "name": "Everyone",
-          "desc": "Both lines, friend and enemy alike."
-        }
-      },
-      "riders": {
-        "poison": {
-          "name": "Venom",
-          "desc": "Often leaves the target poisoned."
-        },
-        "blind": {
-          "name": "Cinders",
-          "desc": "Often blinds the target."
-        },
-        "silence": {
-          "name": "Gag",
-          "desc": "Sometimes silences the target."
-        },
-        "confusion": {
-          "name": "Muddle",
-          "desc": "Sometimes confuses the target."
-        },
-        "sleep": {
-          "name": "Lullaby",
-          "desc": "Sometimes puts the target to sleep."
-        },
-        "freeze": {
-          "name": "Hoarfrost",
-          "desc": "Sometimes freezes the target."
-        },
-        "paralysis": {
-          "name": "Locking Nerve",
-          "desc": "Sometimes paralyses the target."
-        },
-        "stun": {
-          "name": "Concussion",
-          "desc": "Often stuns the target."
-        },
-        "deathMark": {
-          "name": "Death Mark",
-          "desc": "Rarely marks the target for death. Expensive, and it should be."
-        },
-        "provoke": {
-          "name": "Insult",
-          "desc": "Almost always provokes the target into answering you."
-        },
-        "sapAtk": {
-          "name": "Sap Strength",
-          "desc": "Weakens the target's attack."
-        },
-        "sapDef": {
-          "name": "Sap Guard",
-          "desc": "Weakens the target's defence."
-        },
-        "sapMat": {
-          "name": "Sap Mind",
-          "desc": "Weakens the target's magic."
-        },
-        "sapAgi": {
-          "name": "Sap Step",
-          "desc": "Weakens the target's speed."
-        },
-        "stripBuffs": {
-          "name": "Unwrite",
-          "desc": "Strips the buffs the target is standing behind."
-        },
-        "regenHP": {
-          "name": "Slow Knit",
-          "desc": "Leaves HP regeneration behind."
-        },
-        "regenMP": {
-          "name": "Slow Spring",
-          "desc": "Leaves MP regeneration behind."
-        },
-        "regenAP": {
-          "name": "Slow Breath",
-          "desc": "Leaves AP regeneration behind."
-        },
-        "protect": {
-          "name": "Aegis",
-          "desc": "Leaves the target protected."
-        },
-        "counter": {
-          "name": "Riposte",
-          "desc": "Leaves the target answering blows in kind."
-        },
-        "inspired": {
-          "name": "Kind Word",
-          "desc": "Leaves the target inspired."
-        },
-        "arcaneSurge": {
-          "name": "Surge",
-          "desc": "Leaves an arcane surge on the target."
-        },
-        "divineShield": {
-          "name": "Divine Shield",
-          "desc": "Rarely leaves a divine shield. The dearest thing on the shelf."
-        },
-        "shadowVeil": {
-          "name": "Shadow Veil",
-          "desc": "Leaves the target veiled."
-        },
-        "wardAilments": {
-          "name": "Charm Against Harm",
-          "desc": "Leaves the target blocking status ailments."
-        },
-        "braceAtk": {
-          "name": "Brace Strength",
-          "desc": "Raises the target's attack."
-        },
-        "braceDef": {
-          "name": "Brace Guard",
-          "desc": "Raises the target's defence."
-        },
-        "braceMat": {
-          "name": "Brace Mind",
-          "desc": "Raises the target's magic."
-        },
-        "braceAgi": {
-          "name": "Brace Step",
-          "desc": "Raises the target's speed."
-        },
-        "cleanse": {
-          "name": "Clean Slate",
-          "desc": "Lifts poison, blindness, silence and the rest."
-        },
-        "firstAid": {
-          "name": "Salve",
-          "desc": "Gives back a slice of HP on top of everything else."
-        },
-        "etherSplash": {
-          "name": "Draught",
-          "desc": "Gives back a slice of MP on top of everything else."
-        },
-        "apSurge": {
-          "name": "Adrenaline",
-          "desc": "Hands the target AP outright."
-        }
-      },
-      "refines": {
-        "certain": {
-          "name": "Unerring",
-          "desc": "Never misses, whatever stands in the way."
-        },
-        "twinCast": {
-          "name": "Twinned",
-          "desc": "Lands twice."
-        },
-        "tripleCast": {
-          "name": "Thrice-Written",
-          "desc": "Lands three times. The heaviest thing on the shelf."
-        },
-        "swift": {
-          "name": "Swift",
-          "desc": "Goes earlier in the round."
-        },
-        "precise": {
-          "name": "Precise",
-          "desc": "Never fumbles its own success roll."
-        },
-        "stable": {
-          "name": "Stable",
-          "desc": "Always the same number."
-        },
-        "wild": {
-          "name": "Wild",
-          "desc": "Wildly variable. Cheap, and honest about it."
-        },
-        "keenEdge": {
-          "name": "Keen",
-          "desc": "Can land a critical."
-        },
-        "guardBreak": {
-          "name": "Guard Break",
-          "desc": "Halves the defence counted against it."
-        },
-        "efficient": {
-          "name": "Efficient",
-          "desc": "Costs less to cast, and adds no complexity of its own."
-        },
-        "menuCast": {
-          "name": "Everyday",
-          "desc": "Usable outside battle as well as in it."
-        },
-        "apReturn": {
-          "name": "Feedback",
-          "desc": "Gives the user AP back on use."
-        }
-      }
+      "stat": "Needs {stat} {need}, you have {have}.",
+      "full": "Max {max} entries. Unmake one first.",
+      "beyond": "Stronger than anything in the book: lighten the build."
     },
     "randomize": "Roll it",
     "identity": "Identity",
     "chipInfo": "{name}: {desc} ({kp} KP, complexity {cx})",
-    "pickUpTo": "Pick up to {max}. Hover or move onto a chip to read it.",
     "camel": {
-      "title": "That is not a spell name",
-      "body": "A spell is named as one word in CamelCase, with no spaces: FireBolt, not fire bolt. {name} is kept as written if you want it.",
-      "rename": "Name it again",
+      "title": "Invalid spell name",
+      "body": "Spell names are one CamelCase word: FireBolt, not fire bolt. You can still keep {name}.",
+      "rename": "Rename",
       "keep": "Keep it"
+    },
+    "tags": {
+      "bolt": {
+        "name": "Bolt",
+        "desc": "Magical HP damage off INT. Give it an element."
+      },
+      "physical": {
+        "name": "Physical",
+        "desc": "Physical element: armour and guard count in full."
+      },
+      "bleeding": {
+        "name": "Open Vein",
+        "desc": "Often leaves the target Bleeding."
+      },
+      "burned": {
+        "name": "Scorch",
+        "desc": "Often leaves the target Burned."
+      },
+      "vulnerable": {
+        "name": "Expose",
+        "desc": "Often leaves the target Vulnerable."
+      },
+      "unbalanced": {
+        "name": "Trip",
+        "desc": "May leave the target Unbalanced: its actions can stumble."
+      },
+      "concussed": {
+        "name": "Ring the Bell",
+        "desc": "May leave the target Concussed."
+      },
+      "guardBroken": {
+        "name": "Pry Open",
+        "desc": "May inflict Guard Broken: defence halved."
+      },
+      "hobbled": {
+        "name": "Hobble",
+        "desc": "May inflict Hobbled: slower and easier to hit."
+      },
+      "disarmed": {
+        "name": "Numb Hand",
+        "desc": "May inflict Disarmed: weaker blows."
+      },
+      "wet": {
+        "name": "Soak",
+        "desc": "Often leaves the target Wet: Thunder electrocutes it, Ice freezes it."
+      },
+      "oily": {
+        "name": "Slick",
+        "desc": "Often leaves the target Oily: the next Fire hit sets it alight."
+      },
+      "brittle": {
+        "name": "Embrittle",
+        "desc": "May leave the target Brittle: the next physical blow shatters it."
+      },
+      "volatile": {
+        "name": "Prime",
+        "desc": "May leave the target Volatile: Fire or Thunder detonates it."
+      },
+      "doom": {
+        "name": "Sentence",
+        "desc": "May inflict Doom: when it runs out the target takes heavy Cursed damage."
+      },
+      "litFuse": {
+        "name": "Fuse",
+        "desc": "May plant a Lit Fuse: when it runs out it blasts the target and its allies."
+      },
+      "looped": {
+        "name": "Loop",
+        "desc": "May inflict Looped: the target repeats its last action."
+      },
+      "mindSealed": {
+        "name": "Seal",
+        "desc": "May inflict Mind Sealed: its last skill is sealed."
+      },
+      "puppeted": {
+        "name": "Strings",
+        "desc": "May inflict Puppeted: its next move is not its own."
+      },
+      "turncoat": {
+        "name": "Turn Coat",
+        "desc": "May inflict Turncoat: it turns on its own side."
+      },
+      "mindRead": {
+        "name": "Read",
+        "desc": "Almost always inflicts Mind Read: its next action is known."
+      },
+      "dawnVow": {
+        "name": "Dawn Vow",
+        "desc": "Grants Dawn Vow: help arrives when it runs out."
+      },
+      "rebound": {
+        "name": "Rebound",
+        "desc": "Grants Rebound: the next skill aimed at them is thrown back."
+      },
+      "echo": {
+        "name": "Echo",
+        "desc": "Grants Echo: their next skill fires twice."
+      },
+      "bladeDrill": {
+        "name": "Blade Drill",
+        "desc": "Grants Blade Drill: swords and knives answer better."
+      },
+      "gunDrill": {
+        "name": "Gun Drill",
+        "desc": "Grants Gun Drill: firearms answer better."
+      },
+      "drilled": {
+        "name": "Drill",
+        "desc": "Grants Drilled: any weapon answers a little better."
+      },
+      "edgeStance": {
+        "name": "Edge Stance",
+        "desc": "Grants Edge Stance: blows deal Cutting damage. On a weapon: cuts."
+      },
+      "mercifulStance": {
+        "name": "Merciful Stance",
+        "desc": "Grants Merciful Stance: blows deal Blunt damage. On a weapon: bludgeons."
+      },
+      "spearpointStance": {
+        "name": "Spearpoint Stance",
+        "desc": "Grants Spearpoint Stance: blows deal Piercing damage. On a weapon: pierces."
+      },
+      "bulletTime": {
+        "name": "Bullet Time",
+        "desc": "Grants Bullet Time: blows are slipped and a dodge phase slows down."
+      },
+      "foresight": {
+        "name": "Foresight",
+        "desc": "Grants Foresight: spells are sidestepped and the dodge craft shrinks."
+      },
+      "guardianBond": {
+        "name": "Guardian Bond",
+        "desc": "Grants Guardian Bond: the user takes half the HP damage dealt to each ally. The user only."
+      },
+      "lifeLink": {
+        "name": "Life Link",
+        "desc": "Inflicts Life Link: HP damage is split among everyone linked. Either side."
+      },
+      "consumeCombo": {
+        "name": "Combo Finisher",
+        "desc": "Doubled while the user has Combo Ready, which it spends."
+      },
+      "consumeLockOn": {
+        "name": "Locked Shot",
+        "desc": "Doubled while the user is Locked On, which it spends."
+      },
+      "consumeFocus": {
+        "name": "Focused Release",
+        "desc": "Doubled under Perfect Focus, which it spends."
+      },
+      "consumeHide": {
+        "name": "From Hiding",
+        "desc": "Doubled while the user is Hidden, which it spends."
+      },
+      "vsWet": {
+        "name": "Conductor",
+        "desc": "Doubled against a Wet target."
+      },
+      "vsOily": {
+        "name": "Kindler",
+        "desc": "Doubled against an Oily target."
+      },
+      "vsBrittle": {
+        "name": "Shatterer",
+        "desc": "Doubled against a Brittle target."
+      },
+      "vsBurned": {
+        "name": "Searer",
+        "desc": "Doubled against a Burned target."
+      },
+      "vsPoison": {
+        "name": "Toxic Spite",
+        "desc": "Doubled against a Poisoned target."
+      },
+      "vsGrappled": {
+        "name": "Pinning Blow",
+        "desc": "Doubled against a Grappled target."
+      },
+      "vsConcussed": {
+        "name": "Follow-Through",
+        "desc": "Doubled against a Concussed target."
+      },
+      "vsUnbalanced": {
+        "name": "Topple",
+        "desc": "Doubled against an Unbalanced target."
+      },
+      "vsVital": {
+        "name": "Vital Strike",
+        "desc": "Doubled against a target with a Vital Exposed."
+      },
+      "whileRage": {
+        "name": "Fury",
+        "desc": "Half again as strong while the user has Rage."
+      },
+      "whileBerserk": {
+        "name": "Frenzy",
+        "desc": "Half again as strong while the user is Berserk."
+      },
+      "whileInspired": {
+        "name": "Muse",
+        "desc": "Half again as strong while the user is Inspired."
+      },
+      "whileSurge": {
+        "name": "Overflow",
+        "desc": "Half again as strong under Arcane Surge."
+      },
+      "whileFlow": {
+        "name": "In the Flow",
+        "desc": "Half again as strong while the user is in Flow State."
+      },
+      "execute": {
+        "name": "Execute",
+        "desc": "Doubled against a foe under 30% HP."
+      },
+      "desperation": {
+        "name": "Desperation",
+        "desc": "Grows with the HP the user has lost."
+      },
+      "spendChi": {
+        "name": "Release Chi",
+        "desc": "Grows a quarter with every chi stack, then spends them."
+      },
+      "spendFaith": {
+        "name": "Release Faith",
+        "desc": "Grows a quarter with every faith stack, then spends them."
+      },
+      "spendSouls": {
+        "name": "Release Souls",
+        "desc": "Grows a quarter with every soul stack, then spends them."
+      },
+      "selfCombo": {
+        "name": "Set Up",
+        "desc": "Half the time leaves the user with Combo Ready."
+      },
+      "selfLockOn": {
+        "name": "Sight In",
+        "desc": "Leaves the user Locked On."
+      },
+      "selfFocus": {
+        "name": "Centre",
+        "desc": "Leaves the user in Perfect Focus."
+      },
+      "selfDodge": {
+        "name": "Light Feet",
+        "desc": "Leaves the user ready to Dodge."
+      },
+      "selfFlow": {
+        "name": "Find the Flow",
+        "desc": "Leaves the user in Flow State."
+      },
+      "selfCounter": {
+        "name": "Riposte Stance",
+        "desc": "Leaves the user ready to Counter Attack."
+      },
+      "selfGuard": {
+        "name": "Cover",
+        "desc": "Leaves the user on Guard."
+      },
+      "selfHide": {
+        "name": "Fade",
+        "desc": "Leaves the user Hidden."
+      },
+      "selfChiBurn": {
+        "name": "Chi Burn",
+        "desc": "Drawback: leaves the user with Chi Burn. Cheaper to cast."
+      },
+      "selfUnbalanced": {
+        "name": "Overreach",
+        "desc": "Drawback: leaves the user Unbalanced. Cheaper to cast."
+      },
+      "selfWinded": {
+        "name": "All Out",
+        "desc": "Drawback: leaves the user Winded. Cheaper to cast."
+      },
+      "selfVulnerable": {
+        "name": "Open Guard",
+        "desc": "Drawback: leaves the user Vulnerable. Cheaper to cast."
+      },
+      "drainGentle": {
+        "name": "Thin Draw",
+        "desc": "A drain returns only half of what it takes. Cheaper."
+      },
+      "drainDeep": {
+        "name": "Deep Draw",
+        "desc": "A drain returns half again what it takes."
+      },
+      "manaSap": {
+        "name": "Mana Sap",
+        "desc": "Takes MP worth 30% of the damage and gives it to the user."
+      },
+      "stackChi": {
+        "name": "Gather Chi",
+        "desc": "Builds a chi stack on every use, up to 5."
+      },
+      "stackFaith": {
+        "name": "Gather Faith",
+        "desc": "Builds a faith stack on every use, up to 5."
+      },
+      "soulsOnKill": {
+        "name": "Reap Souls",
+        "desc": "Gains a soul stack for every foe it fells, up to 5."
+      },
+      "aimHead": {
+        "name": "Go for the Head",
+        "desc": "Aims for the head."
+      },
+      "aimArm": {
+        "name": "Go for the Arm",
+        "desc": "Aims for the hand or the arm."
+      },
+      "aimLeg": {
+        "name": "Go for the Legs",
+        "desc": "Aims for the legs."
+      },
+      "aimable": {
+        "name": "Follow the Aim",
+        "desc": "Goes where the user's Aim points."
+      },
+      "ammo2": {
+        "name": "Double Tap",
+        "desc": "Spends 2 rounds. A gun's burst."
+      },
+      "ammo4": {
+        "name": "Burst",
+        "desc": "Spends 4 rounds. A gun's burst."
+      },
+      "ammoAll": {
+        "name": "Mag Dump",
+        "desc": "Empties the magazine; hits scale with the rounds spent."
+      },
+      "reload": {
+        "name": "Reload",
+        "desc": "Refills the magazine. Needs an empty stance on the user."
+      },
+      "bulletHell": {
+        "name": "Dodge Phase",
+        "desc": "Opens a dodge phase flown by the user. Elsewhere a plain hit."
+      },
+      "fire": {
+        "name": "Kindling",
+        "desc": "Fire damage. Cheapest element."
+      },
+      "ice": {
+        "name": "Rime",
+        "desc": "Ice damage. Slightly weaker than fire, more stable."
+      },
+      "thunder": {
+        "name": "Arc",
+        "desc": "Thunder damage that cuts through part of the guard."
+      },
+      "water": {
+        "name": "Torrent",
+        "desc": "Water damage. Cheap and blunt."
+      },
+      "stone": {
+        "name": "Shard",
+        "desc": "Petro damage. Heavy and hard to resist."
+      },
+      "gale": {
+        "name": "Draught",
+        "desc": "Wind damage. Light and cheap."
+      },
+      "sacred": {
+        "name": "Halo",
+        "desc": "Sacred damage. Most defences barely reduce it."
+      },
+      "cursed": {
+        "name": "Blight",
+        "desc": "Cursed damage. The strongest core."
+      },
+      "mend": {
+        "name": "Suture",
+        "desc": "Heals HP off the caster's own learning."
+      },
+      "etherFlow": {
+        "name": "Conduit",
+        "desc": "Gives MP back to whoever it lands on."
+      },
+      "siphon": {
+        "name": "Leech",
+        "desc": "Damage that returns as HP to the caster."
+      },
+      "mindBurn": {
+        "name": "Static",
+        "desc": "Burns MP out of the target instead of blood."
+      },
+      "ward": {
+        "name": "Empty Frame",
+        "desc": "No damage. A base for riders."
+      },
+      "strike": {
+        "name": "Strike",
+        "desc": "A plain physical attack."
+      },
+      "cleave": {
+        "name": "Cleave",
+        "desc": "A heavier hit. Full defence applies."
+      },
+      "thrust": {
+        "name": "Thrust",
+        "desc": "Ignores most of the defence."
+      },
+      "brawl": {
+        "name": "Grapple",
+        "desc": "A basic close-range attack."
+      },
+      "marksman": {
+        "name": "Aimed Shot",
+        "desc": "A shot that cannot be evaded."
+      },
+      "venomEdge": {
+        "name": "Foul Edge",
+        "desc": "Cursed physical damage."
+      },
+      "bandage": {
+        "name": "Field Dressing",
+        "desc": "Heals HP without magic."
+      },
+      "secondWind": {
+        "name": "Second Wind",
+        "desc": "Damage that heals the user."
+      },
+      "rally": {
+        "name": "Empty Stance",
+        "desc": "No damage. A base for riders."
+      },
+      "focused": {
+        "name": "Focused",
+        "desc": "+25% power."
+      },
+      "potent": {
+        "name": "Potent",
+        "desc": "+50% power. Much more complex."
+      },
+      "ruinous": {
+        "name": "Ruinous",
+        "desc": "Double power. Needs a high stat."
+      },
+      "oneEnemy": {
+        "name": "One Enemy",
+        "desc": "One enemy."
+      },
+      "twoRandom": {
+        "name": "Two at Random",
+        "desc": "Hits two random targets."
+      },
+      "threeRandom": {
+        "name": "Three at Random",
+        "desc": "Hits three random targets."
+      },
+      "allEnemies": {
+        "name": "All Enemies",
+        "desc": "All enemies."
+      },
+      "oneAlly": {
+        "name": "One Ally",
+        "desc": "One ally."
+      },
+      "allAllies": {
+        "name": "All Allies",
+        "desc": "The whole party."
+      },
+      "theUser": {
+        "name": "The Writer",
+        "desc": "Yourself only. Free."
+      },
+      "everyone": {
+        "name": "Everyone",
+        "desc": "All allies and enemies."
+      },
+      "poison": {
+        "name": "Venom",
+        "desc": "Often leaves the target poisoned."
+      },
+      "blind": {
+        "name": "Cinders",
+        "desc": "Often blinds the target."
+      },
+      "silence": {
+        "name": "Gag",
+        "desc": "Sometimes silences the target."
+      },
+      "confusion": {
+        "name": "Muddle",
+        "desc": "Sometimes confuses the target."
+      },
+      "sleep": {
+        "name": "Lullaby",
+        "desc": "Sometimes puts the target to sleep."
+      },
+      "freeze": {
+        "name": "Hoarfrost",
+        "desc": "Sometimes freezes the target."
+      },
+      "paralysis": {
+        "name": "Locking Nerve",
+        "desc": "Sometimes paralyses the target."
+      },
+      "stun": {
+        "name": "Concussion",
+        "desc": "Often stuns the target."
+      },
+      "deathMark": {
+        "name": "Death Mark",
+        "desc": "Rarely marks the target for death. Expensive."
+      },
+      "provoke": {
+        "name": "Insult",
+        "desc": "Almost always provokes the target."
+      },
+      "sapAtk": {
+        "name": "Sap Strength",
+        "desc": "Weakens the target's attack."
+      },
+      "sapDef": {
+        "name": "Sap Guard",
+        "desc": "Weakens the target's defence."
+      },
+      "sapMat": {
+        "name": "Sap Mind",
+        "desc": "Weakens the target's magic."
+      },
+      "sapAgi": {
+        "name": "Sap Step",
+        "desc": "Weakens the target's speed."
+      },
+      "stripBuffs": {
+        "name": "Unwrite",
+        "desc": "Removes the target's buffs."
+      },
+      "regenHP": {
+        "name": "Slow Knit",
+        "desc": "Grants HP regeneration."
+      },
+      "regenMP": {
+        "name": "Slow Spring",
+        "desc": "Grants MP regeneration."
+      },
+      "regenAP": {
+        "name": "Slow Breath",
+        "desc": "Grants AP regeneration."
+      },
+      "protect": {
+        "name": "Aegis",
+        "desc": "Protects the target."
+      },
+      "counter": {
+        "name": "Riposte",
+        "desc": "Grants counterattack."
+      },
+      "inspired": {
+        "name": "Kind Word",
+        "desc": "Inspires the target."
+      },
+      "arcaneSurge": {
+        "name": "Surge",
+        "desc": "Grants an arcane surge."
+      },
+      "divineShield": {
+        "name": "Divine Shield",
+        "desc": "Rarely grants a divine shield. Most expensive rider."
+      },
+      "shadowVeil": {
+        "name": "Shadow Veil",
+        "desc": "Veils the target."
+      },
+      "wardAilments": {
+        "name": "Charm Against Harm",
+        "desc": "Blocks status ailments."
+      },
+      "braceAtk": {
+        "name": "Brace Strength",
+        "desc": "Raises the target's attack."
+      },
+      "braceDef": {
+        "name": "Brace Guard",
+        "desc": "Raises the target's defence."
+      },
+      "braceMat": {
+        "name": "Brace Mind",
+        "desc": "Raises the target's magic."
+      },
+      "braceAgi": {
+        "name": "Brace Step",
+        "desc": "Raises the target's speed."
+      },
+      "cleanse": {
+        "name": "Clean Slate",
+        "desc": "Cures poison, blindness, silence and other ailments."
+      },
+      "firstAid": {
+        "name": "Salve",
+        "desc": "Also restores some HP."
+      },
+      "etherSplash": {
+        "name": "Draught",
+        "desc": "Also restores some MP."
+      },
+      "apSurge": {
+        "name": "Adrenaline",
+        "desc": "Gives the target AP."
+      },
+      "certain": {
+        "name": "Unerring",
+        "desc": "Never misses."
+      },
+      "twinCast": {
+        "name": "Twinned",
+        "desc": "Lands twice."
+      },
+      "tripleCast": {
+        "name": "Thrice-Written",
+        "desc": "Lands three times. Most complex refinement."
+      },
+      "swift": {
+        "name": "Swift",
+        "desc": "Goes earlier in the round."
+      },
+      "precise": {
+        "name": "Precise",
+        "desc": "Never fails its success roll."
+      },
+      "stable": {
+        "name": "Stable",
+        "desc": "No damage variance."
+      },
+      "wild": {
+        "name": "Wild",
+        "desc": "High variance. Cheap."
+      },
+      "keenEdge": {
+        "name": "Keen",
+        "desc": "Can land a critical."
+      },
+      "guardBreak": {
+        "name": "Guard Break",
+        "desc": "Halves the defence counted against it."
+      },
+      "efficient": {
+        "name": "Efficient",
+        "desc": "Lower cast cost. Adds no complexity."
+      },
+      "menuCast": {
+        "name": "Everyday",
+        "desc": "Usable outside battle too."
+      },
+      "apReturn": {
+        "name": "Feedback",
+        "desc": "Gives the user AP back on use."
+      },
+      "freshMagazine": {
+        "name": "Fresh Magazine",
+        "desc": "Grants Fresh Magazine: the next shot lands surer and crits more often."
+      }
+    },
+    "group": {
+      "core": "Core",
+      "element": "Element",
+      "power": "Amplifier",
+      "shape": "Shape",
+      "rider": "Riders",
+      "refine": "Refinements",
+      "payoff": "Payoffs",
+      "mechanic": "Mechanics"
+    },
+    "groupHint": {
+      "core": "What it is. One, required.",
+      "element": "The element it strikes with. One at most.",
+      "power": "Raises its power. One at most.",
+      "shape": "Who it lands on. One, required.",
+      "rider": "States and effects it lands. Up to {max}.",
+      "refine": "Changes to its fields. Up to {max}.",
+      "payoff": "Conditions written into its formula. Up to {max}.",
+      "mechanic": "Battle mechanics on its note. Up to {max}."
+    },
+    "why": {
+      "unknown": "Unknown tag.",
+      "bench": "Not for this bench.",
+      "have": "Already on the build.",
+      "full": "Group full: {max} at most.",
+      "slot": "Only one of its kind: {other} is on.",
+      "clash": "Undone by {other}.",
+      "shape": "The shape points at the wrong side.",
+      "strands": "{other} could no longer reach its target.",
+      "side": "The shape cannot reach its side.",
+      "missing": "Needs a {group}.",
+      "needs": {
+        "damage": "Needs a damaging core.",
+        "hpHit": "Needs an HP damage core.",
+        "drain": "Needs a draining core.",
+        "oneFoe": "Needs the One Enemy shape.",
+        "foeSide": "Needs a shape aimed at enemies.",
+        "notFoe": "Not on a damaging core.",
+        "userShape": "Needs The Writer shape.",
+        "marksman": "Guns only: needs the Aimed Shot core.",
+        "multiHit": "Needs Twinned or Thrice-Written.",
+        "emptyUser": "Needs the Empty Stance core on The Writer."
+      }
+    },
+    "auto": {
+      "comma": ", ",
+      "and": " and ",
+      "stateN": "state {id}",
+      "target": {
+        "oneEnemy": "one enemy",
+        "twoRandom": "two random enemies",
+        "threeRandom": "three random enemies",
+        "allEnemies": "all enemies",
+        "oneAlly": "one ally",
+        "allAllies": "all allies",
+        "theUser": "the user",
+        "everyone": "everyone"
+      },
+      "weight": {
+        "minor": "minor ",
+        "light": "light ",
+        "normal": "",
+        "heavy": "heavy ",
+        "massive": "massive "
+      },
+      "el": {
+        "1": "Physical ",
+        "2": "Fire ",
+        "3": "Ice ",
+        "4": "Thunder ",
+        "5": "Water ",
+        "6": "Petro ",
+        "7": "Wind ",
+        "8": "Sacred ",
+        "9": "Cursed "
+      },
+      "times": {
+        "2": " twice",
+        "3": " three times"
+      },
+      "lead": {
+        "1": "deals {weight}{element}damage to {target}",
+        "2": "burns MP out of {target}",
+        "3": "restores HP to {target}",
+        "4": "restores MP to {target}",
+        "5": "drains {weight}{element}damage from {target} as HP",
+        "6": "drains MP from {target}",
+        "inflict": "inflicts {states} on {target}",
+        "grant": "grants {states} to {target}",
+        "acts": "works on {target}",
+        "empty": "does nothing yet"
+      },
+      "inflicts": "inflicts {states}",
+      "grants": "grants {states}",
+      "rider": {
+        "sapAtk": "lowers their STR",
+        "sapDef": "lowers their CON",
+        "sapMat": "lowers their INT",
+        "sapAgi": "lowers their DEX",
+        "stripBuffs": "strips their buffs",
+        "braceAtk": "raises their STR",
+        "braceDef": "raises their CON",
+        "braceMat": "raises their INT",
+        "braceAgi": "raises their DEX",
+        "cleanse": "cures their ailments",
+        "firstAid": "restores some HP",
+        "etherSplash": "restores some MP",
+        "apSurge": "gives them AP"
+      },
+      "self": "Leaves the user with {state}.",
+      "selfMaybe": "May leave the user with {state}.",
+      "selfCost": "Leaves the user with {state} as its price.",
+      "consume": "Doubled with {state} ready, which it spends.",
+      "versus": "Doubled against a target with {state}.",
+      "whileHeld": "Half again as strong while the user has {state}.",
+      "spend": "Grows with every {stack} stack, which it spends.",
+      "stack": "Builds a {stack} stack.",
+      "stackOnKill": "Gains a {stack} stack for every foe it fells.",
+      "aim": "Aims for the {part}.",
+      "ammo": "Spends {n} rounds.",
+      "ammoAll": "Empties the magazine.",
+      "part": {
+        "head": "head",
+        "arm": "arm",
+        "leg": "legs"
+      },
+      "tag": {
+        "execute": "Doubled against a foe under 30% HP.",
+        "desperation": "Grows with the HP the user has lost.",
+        "drainGentle": "Returns half the HP it drains.",
+        "drainDeep": "Returns half again the HP it drains.",
+        "manaSap": "Saps MP worth 30% of the damage.",
+        "aimable": "Follows the user's aim.",
+        "reload": "Reloads the gun.",
+        "bulletHell": "Opens a dodge phase flown by the user.",
+        "certain": "Never misses.",
+        "keenEdge": "Can crit.",
+        "menuCast": "Usable outside battle.",
+        "guardBreak": "Halves the defence against it.",
+        "apReturn": "Gives the user AP back."
+      },
+      "first": "Strikes first.",
+      "lands": "Lands {pct}% of the time.",
+      "stackName": {
+        "chi": "chi",
+        "faith": "faith",
+        "souls": "soul"
+      }
+    },
+    "catalogue": "Add Tag",
+    "addChip": "+ Add",
+    "swapChip": "Swap",
+    "addHint": "Open the catalogue of {group} tags.",
+    "chipSwap": "OK to swap it.",
+    "chipRemove": "OK to take it off.",
+    "tagCost": "{kp} KP, complexity {cx}",
+    "autoWritten": "Written from its tags",
+    "powerLabel": "Power / Price buys",
+    "offCurve": "Support",
+    "tagCount": "Tags",
+    "dropped": "Taken off: {tags}.",
+    "fuse": {
+      "keep": "Kept Tags",
+      "keepNote": "Pick which tags the fused entry keeps. Greyed tags do not fit with the rest.",
+      "lost": "{n} parts of the parents have no tag and are lost.",
+      "becomes": "Becomes a {kind}",
+      "none": "No tag could be read off these two."
     }
   },
   "fusionRollAction": "Arcane Fusion: {parts}",
@@ -648,8 +1139,8 @@
     "buttonArmor": "Enchant Equipment",
     "titleWeapon": "Weapon Enchanting",
     "titleArmor": "Equipment Enchanting",
-    "blurbWeapon": "The weapon casts the bound spell for free every time it lands a critical hit. Only attack and status spells can be bound.",
-    "blurbArmor": "Once per battle, when the wearer takes a critical hit, this piece casts the bound spell for free. Only protective spells can be bound.",
+    "blurbWeapon": "Bind a spell, give the weapon special properties, or both. A bound spell is cast for free on every critical hit; attack and status spells only.",
+    "blurbArmor": "Bind a spell, give the piece special properties, or both. A bound spell is cast for free when the wearer takes a critical hit, once per battle; protective spells only.",
     "back": "Back",
     "chooseGear": "Choose a Piece",
     "boundSoFar": "Bound So Far",
@@ -660,39 +1151,95 @@
     "unmake": "Unmake",
     "bound": "{item} is bound.",
     "lostSpell": "Spell lost",
-    "noGear": "Nothing here can take a binding.",
+    "noGear": "No items can be enchanted.",
     "noneBound": "Nothing bound yet",
-    "noSpells": "Nobody in the party knows a spell this bench will take.",
+    "noSpells": "No party member knows a valid spell.",
     "weaponName": "{base} of {spell}",
     "armorName": "{base} of {spell}",
-    "weaponDesc": "A unique artifact. It casts {spell} on every critical hit it lands, and costs no MP to do it.",
-    "armorDesc": "A unique artifact. It answers the first critical hit you take each battle with {spell}, and costs no MP to do it.",
+    "weaponDesc": "Unique artifact. Casts {spell} for free on every critical hit.",
+    "armorDesc": "Unique artifact. Casts {spell} for free on the first critical hit you take each battle.",
     "log": {
       "fires": "The binding answers: {spell}!",
       "burned": "{book} burns away."
     },
     "buttonBook": "Enchant Book",
     "titleBook": "Book Enchanting",
-    "blurbBook": "Reading the book aloud casts the bound spell for free, in battle or on the map. Any spell can be bound, but every reading may burn the book.",
-    "bookDesc": "A unique artifact. Read it out to cast {spell} for nothing. Every reading may burn it.",
+    "blurbBook": "Read the book to cast the bound spell for free, in battle or on the map. Any spell works, but each reading may burn it.",
+    "bookDesc": "Unique artifact. Read it to cast {spell} for free. May burn on each reading.",
     "bookFallbackName": "Bound Grimorie of {spell}",
     "rename": "Rename",
-    "recover": "Cover"
+    "recover": "Cover",
+    "weaponNameTags": "{base} of {tag}",
+    "armorNameTags": "{base} of {tag}",
+    "weaponDescTags": "Unique artifact. Enchanted with {tags}.",
+    "armorDescTags": "Unique artifact. Enchanted with {tags}.",
+    "weaponDescBoth": "Unique artifact. Enchanted with {tags}, and casts {spell} for free on every critical hit.",
+    "armorDescBoth": "Unique artifact. Enchanted with {tags}, and casts {spell} for free on the first critical hit you take each battle.",
+    "formTitle": "Enchantment",
+    "spellRow": "Bound Spell",
+    "noSpell": "No spell",
+    "pickSpell": "Choose a Spell to Bind",
+    "spellOptional": "Optional: a piece may carry special properties alone.",
+    "ownSkill": "This piece already casts a skill of its own.",
+    "addChip": "+ Add",
+    "addHint": "Add a property to the {group} row.",
+    "chipInfo": "{line} ({kp} KP). Press to take it off.",
+    "groupHint": "Press + to add a property.",
+    "pick": "Add a Special Property",
+    "tagCost": "Costs {kp} KP",
+    "spellPrice": "Spell",
+    "tagsPrice": "Properties",
+    "price": "Price",
+    "complexity": "Complexity",
+    "enchantIt": "Enchant",
+    "dropped": "Taken off: {tags}.",
+    "blocked": {
+      "noBase": "This piece cannot be enchanted.",
+      "empty": "Bind a spell or add at least one property.",
+      "spell": "That spell does not belong on this bench.",
+      "ownSkill": "This piece already casts a skill of its own: properties only.",
+      "tags": "Not on this piece: {why}",
+      "knowledge": "Not enough Knowledge: {cost} KP needed."
+    },
+    "gear": {
+      "line": "{name}: {effect}",
+      "and": ", ",
+      "attackElement": "strikes with {element}",
+      "resistElement": "takes {pct}% less {element} damage",
+      "attackState": "{pct}% chance to inflict {state} on a hit",
+      "resistState": "immune to {state}",
+      "speed": "acts earlier in the round (+{value})",
+      "extraHit": "+{n} strike per attack",
+      "paramRate": "+{pct}% {stat}",
+      "hit": "+{pct}% accuracy",
+      "crit": "+{pct}% critical chance",
+      "damageType": "blows deal {type} damage",
+      "onCrit": "Casts {spell} on every critical hit",
+      "onCritTaken": "Casts {spell} when the wearer takes a critical hit, once per battle",
+      "damageTypes": {
+        "Cutting": "Cutting",
+        "Blunt": "Blunt",
+        "Piercing": "Piercing"
+      },
+      "regenHP": "regains {pct}% HP each turn",
+      "regenMP": "regains {pct}% MP each turn",
+      "regenAP": "regains {pct}% AP each turn"
+    }
   },
   "write": {
     "buttonSkillBook": "Write Skill Book",
     "buttonGrimorie": "Write Grimorie",
     "titleSkillBook": "Writing a Skill Book",
     "titleGrimorie": "Writing a Grimorie",
-    "blurbSkillBook": "Copy skills the party knows into a book. Each page teaches one skill to whoever it is read to; the book lasts until every page has been read.",
-    "blurbGrimorie": "Copy spells the party knows into a grimorie. Each page teaches one spell to whoever it is read to; the book lasts until every page has been read.",
+    "blurbSkillBook": "Copy known skills into a book. Each page teaches one skill. The book is used up once every page is read.",
+    "blurbGrimorie": "Copy known spells into a grimorie. Each page teaches one spell. The book is used up once every page is read.",
     "sourceSkillBook": "Abilities the Party Knows",
     "sourceGrimorie": "Spells the Party Knows",
     "back": "Back",
     "knowledge": "Knowledge",
     "chosenPages": "Pages Chosen ({count}/{max})",
     "nothingChosen": "No pages chosen yet",
-    "nothingToCopy": "Nobody in the party knows anything this bench will copy.",
+    "nothingToCopy": "Nothing to copy.",
     "writeIt": "Write It",
     "writtenSoFar": "Written So Far",
     "noneWritten": "Nothing written yet",
@@ -701,8 +1248,8 @@
     "recover": "Cover",
     "unmake": "Unmake",
     "written": "{book} is written.",
-    "skillBookDesc": "A volume written by hand, holding {count} abilities. Every one of them must be read out before it closes.",
-    "grimorieDesc": "A volume written by hand, holding {count} spells. Every one of them must be read out before it closes.",
+    "skillBookDesc": "Handwritten book with {count} abilities. Used up once every page is read.",
+    "grimorieDesc": "Handwritten book with {count} spells. Used up once every page is read.",
     "skillBookFallbackName": "Notebook of {first}",
     "grimorieFallbackName": "Grimorie of {first}",
     "statPages": "Pages",
@@ -735,11 +1282,11 @@
     "not": "NOT",
     "remove": "Remove",
     "potency": "Power {pct}%.",
-    "once": "Fires once per battle, or once a day out in the world.",
+    "once": "Once per battle, or once a day outside battle.",
     "finalize": "Finalize ({kp} KP)",
     "finalized": "Finalized: {power}",
     "noneFinalized": "Nothing finalized yet.",
-    "alwaysFires": "A finalized Expression always fires as finalized, even if the stats it asked for are lost.",
+    "alwaysFires": "A finalized Expression keeps working even if stats drop.",
     "finalizedToast": "{name}'s Expression is finalized.",
     "needs": "Needs {stat} {req}.",
     "needsBranch": "Set a branch first.",
@@ -747,30 +1294,30 @@
     "bindTo": "Bind {name} to:",
     "refusal": {
       "incomplete": "Pick a trigger and at least one Then effect.",
-      "beyondStats": "A piece of the draft is beyond this character's stats now: take it off.",
+      "beyondStats": "A piece needs higher stats. Remove it.",
       "unchanged": "This is already the finalized power.",
       "kp": "Not enough knowledge: {kp} KP needed.",
-      "locked": "This character's stats do not reach that piece.",
+      "locked": "Stats too low for this piece.",
       "needsBranch": "Set a branch first.",
       "needsArg": "Choose what to bind it to.",
       "missing": "That piece cannot go there.",
-      "neverFires": "These limitations rule each other out, or rule out the trigger: the power could never be used."
+      "neverFires": "These limitations conflict with each other or the trigger. The power could never fire."
     },
     "limitations": "Limitations",
-    "limitNone": "No limitations: the power costs its full price and asks its full requirements.",
-    "limitSummary": "Bound by {n} vow points: it costs {pct}% less KP and every stat requirement is {leeway} lower.",
+    "limitNone": "No limitations: full KP cost and full requirements.",
+    "limitSummary": "{n} vow points: -{pct}% KP, stat requirements -{leeway}.",
     "limitWeight": "Weight {n}",
     "limitGives": "-{pct}% KP",
     "limitWeightLabel": "Weight",
     "limitGivesLabel": "Gives back",
-    "limitGivesValue": "{pct}% off the KP, every requirement {leeway} lower",
+    "limitGivesValue": "-{pct}% KP, requirements -{leeway}",
     "reqLowered": "{stat} {have}/{req} (was {base})"
   },
   "hexorcize": {
     "button": "Hexorcize",
     "title": "Hexorcizing",
     "detailTitle": "The Piece",
-    "blurb": "Break down a magical weapon or piece of equipment to get Knowledge (KP) back. Equipped pieces must be taken off first.",
+    "blurb": "Break down magical gear for Knowledge (KP). Unequip it first.",
     "back": "Back",
     "one": "Unmake",
     "all": "Unmake All",
@@ -779,15 +1326,15 @@
     "bindingHeld": "Binding",
     "knowledge": "Knowledge",
     "pickPiece": "Choose a piece on the left.",
-    "totalHere": "Everything here is worth {kp} KP.",
-    "nothing": "Nothing magical is being carried.",
+    "totalHere": "Total: {kp} KP.",
+    "nothing": "No magical gear in inventory.",
     "unmade": "{item} is unmade for {kp} KP."
   },
   "lobotomagic": {
     "button": "Lobotomagic",
     "title": "Lobotomagic",
     "detailTitle": "{name}'s Mind",
-    "blurb": "Cut a learned skill or spell out of a party member's mind and get back {pct}% of what teaching it would cost in Knowledge (KP). Skills granted by traits or gear cannot be cut.",
+    "blurb": "Remove a learned skill or spell and refund {pct}% of its KP cost. Skills from traits or gear can't be removed.",
     "back": "Back",
     "forget": "Forget",
     "confirm": "Sure?",
@@ -795,8 +1342,8 @@
     "relearn": "To relearn",
     "school": "School",
     "pickSkill": "Choose a skill on the left.",
-    "nothing": "Nothing learned can be cut from this mind.",
-    "warning": "{name} will forget it for good. Learning it again costs the full price.",
+    "nothing": "No removable skills.",
+    "warning": "{name} forgets it for good. Relearning costs full price.",
     "cut": "{name} forgets {skill} for {kp} KP."
   },
   "tips": {
@@ -853,7 +1400,7 @@
         },
         "detail": {
           "name": "Skill card",
-          "text": "The selected skill's cost, effect and description. From here you can learn it, preview it, or choose whether it is carried into battle."
+          "text": "The selected skill's cost, effect and description. Learn it, preview it, or add it to the battle loadout."
         },
         "member": {
           "name": "Companion tabs",
@@ -961,7 +1508,7 @@
         },
         "write": {
           "name": "Write it",
-          "text": "Writes the book. It can be read until every page has been read once."
+          "text": "Writes the book. Each page can be read once."
         },
         "written": {
           "name": "Written so far",
@@ -1003,7 +1550,7 @@
         },
         "refund": {
           "name": "Gives back",
-          "text": "The KP each skill gives back when forgotten, part of what teaching it would cost."
+          "text": "KP refunded when the skill is forgotten."
         },
         "forget": {
           "name": "Forget",
@@ -1049,11 +1596,11 @@
       "items": {
         "pieces": {
           "name": "Pieces",
-          "text": "Each tab holds one kind of piece: the trigger that sets the power off, the conditions it waits for, what it does, the shape it takes and the limitations it is bound by. Confirm a card to fit it."
+          "text": "Each tab holds one kind of piece: trigger, conditions, effects, form and limitations. Confirm a card to fit it."
         },
         "limits": {
           "name": "Limitations",
-          "text": "Vows the power must keep: a day it cannot be used, the only kind of creature it works on, a price paid each time. The more it is bound, the less it costs, and the further it can reach beyond this character's stats."
+          "text": "Restrictions on the power, like a day it can't be used or a cost per use. More limitations lower the KP cost and stat requirements."
         },
         "blueprint": {
           "name": "Blueprint",
@@ -1061,7 +1608,7 @@
         },
         "finalize": {
           "name": "Finalize",
-          "text": "Spends knowledge on every new piece and makes the power real. A finalized power keeps working even if the stats it asked for are lost."
+          "text": "Spends KP on new pieces and activates the power. It keeps working even if stats drop."
         },
         "help": {
           "name": "? Help",

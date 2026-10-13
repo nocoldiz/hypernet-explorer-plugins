@@ -2865,7 +2865,10 @@
       const classRng = { nextInt: (lo, hi) => lo + Math.floor(rng.next() * Math.max(1, hi - lo)) };
       const classId = window.NPCCreature?.rollHumanoidClassId?.(classRng) ?? null;
       try {
-        profile = Reg.ensureProfile(name, classId, group, mapId ?? undefined, { initSpec: { age: String(age) } }) || null;
+        // An office holder is a person: `person` keeps the creature roll off
+        // the name, which would otherwise leave a beast carrying it.
+        profile = Reg.ensureProfile(name, classId, group, mapId ?? undefined,
+          { initSpec: { age: String(age) }, person: true }) || null;
       } catch (e) {
         console.error("[NPCPolitics] could not make a person of " + name, e);
         profile = null;
@@ -2995,6 +2998,7 @@
     // 1. The people already made: deaths either way, and the office they hold
     //    today (won, lost, promoted, sent back to the benches).
     let active = 0;
+    const activeBy = new Map();   // "kind:polity" -> office holders already people
     for (const [name, entry] of Object.entries(reg)) {
       if (!entry || entry.gone) continue;
       const polity = polityByKind(state, entry.kind, entry.polity);
@@ -3008,7 +3012,11 @@
       // governments) keeps its people, out of office.
       const role = live.has(polity) ? (rolesOf(polity).get(pol.id) || null) : null;
       applyOffice(state, name, entry, role, polity, minute);
-      if (role) active++;
+      if (role) {
+        active++;
+        const key = polity.kind + ":" + polity.name;
+        activeBy.set(key, (activeBy.get(key) || 0) + 1);
+      }
     }
 
     // 2. The office holders nobody has made yet, heads first everywhere.
@@ -3016,8 +3024,14 @@
     const wanted = [];
     for (const polity of live) {
       const holders = officeHoldersOf(polity).filter(h => !isMainPlayer(h.pol)).slice(0, REAL_POL.PER_POLITY);
+      // The cap counts the people already made: a holder who slipped down the
+      // order still holds an office, so a newcomer to the top does not make
+      // the polity's people one more than the cap.
+      let room = REAL_POL.PER_POLITY - (activeBy.get(polity.kind + ":" + polity.name) || 0);
       holders.forEach((h, rank) => {
-        if (!h.pol.npcName && !h.pol._npcBlocked) wanted.push({ polity, pol: h.pol, role: h.role, rank });
+        if (room <= 0 || h.pol.npcName || h.pol._npcBlocked) return;
+        room--;
+        wanted.push({ polity, pol: h.pol, role: h.role, rank });
       });
     }
     wanted.sort((a, b) => (a.rank - b.rank) ||
@@ -4670,7 +4684,8 @@
     });
 
     PluginManager.registerCommand(pluginName, "PoliticsNPC", args => {
-      const name = String(args.eventName || "").trim();
+      // Cast from the menu, no event is named: the person nearest the leader is read.
+      const name = window.NPCShared ? window.NPCShared.soulName(args.eventName) : String(args.eventName || "").trim();
       if (name) {
         window.skipLocalization = true;
         $gameMessage.add(buildNPCProfile(name));

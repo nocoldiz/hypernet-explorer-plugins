@@ -172,9 +172,9 @@
       "name": "Dargos"
     },
     "humanoid_roguelite": {
-      "name": "Humanoid",
+      "name": "Umanoide",
       "head": {
-        "name": "Head"
+        "name": "Testa"
       },
       "torso": {
         "name": "Torso",
@@ -197,8 +197,8 @@
         "msg": "Gamba destra tagliata!"
       },
       "brain": {
-        "name": "Brain",
-        "msg": "Concussione cerebrale!"
+        "name": "Cervello",
+        "msg": "Commozione cerebrale!"
       },
       "left_eye": {
         "name": "Occhio sinistro",
@@ -209,7 +209,7 @@
         "msg": "Occhio destro gonfio!"
       },
       "nose": {
-        "name": "Nose",
+        "name": "Naso",
         "msg": "Naso rotto!"
       },
       "left_ear": {
@@ -221,19 +221,19 @@
         "msg": "Orecchio destro che fischia!"
       },
       "mouth": {
-        "name": "Mouth",
+        "name": "Bocca",
         "msg": "Mascella lussata!"
       },
       "teeth": {
-        "name": "Teeth",
+        "name": "Denti",
         "msg": "Denti divelti!"
       },
       "genitals": {
-        "name": "Genitals",
+        "name": "Genitali",
         "msg": "Genitali danneggiati!"
       },
       "heart": {
-        "name": "Heart",
+        "name": "Cuore",
         "msg": "Cuore danneggiato!"
       },
       "left_lung": {
@@ -245,19 +245,19 @@
         "msg": "Polmone destro collassato!"
       },
       "liver": {
-        "name": "Liver",
+        "name": "Fegato",
         "msg": "Fegato lacerato!"
       },
       "stomach": {
-        "name": "Stomach",
+        "name": "Stomaco",
         "msg": "Stomaco lacerato!"
       },
       "spleen": {
-        "name": "Spleen",
+        "name": "Milza",
         "msg": "Milza lacerata!"
       },
       "intestines": {
-        "name": "Intestines",
+        "name": "Intestino",
         "msg": "Intestino perforato!"
       },
       "left_hand": {
@@ -266,7 +266,7 @@
       },
       "left_fingers": {
         "name": "Dita della mano sinistra",
-        "msg": "Dita sinistre rotte!"
+        "msg": "Dita della mano sinistra rotte!"
       },
       "right_hand": {
         "name": "Mano destra",
@@ -274,7 +274,7 @@
       },
       "right_fingers": {
         "name": "Dita della mano destra",
-        "msg": "Dita destre rotte!"
+        "msg": "Dita della mano destra rotte!"
       },
       "left_foot": {
         "name": "Piede sinistro",
@@ -752,9 +752,9 @@
         "brokenMsg": "Zanne Velenifere con crepe!"
       },
       "spinnerets": {
-        "name": "Filieri",
-        "msg": "Filieri via di netto!",
-        "brokenMsg": "Filieri fuori uso!"
+        "name": "Filiere",
+        "msg": "Filiere via di netto!",
+        "brokenMsg": "Filiere fuori uso!"
       },
       "left_leg": {
         "name": "Zampa Anteriore Sinistra",
@@ -1368,9 +1368,9 @@
         "brokenMsg": "Tentacolo del Vuoto 2 a brandelli!"
       },
       "core": {
-        "name": "Frammento Nucleare",
-        "msg": "Frammento Nucleare a pezzi!",
-        "brokenMsg": "Frammento Nucleare fuori uso!"
+        "name": "Frammento del Nucleo",
+        "msg": "Frammento del Nucleo a pezzi!",
+        "brokenMsg": "Frammento del Nucleo fuori uso!"
       },
       "name": "Creatura del Vuoto"
     },
@@ -1688,9 +1688,9 @@
         "brokenMsg": "Coscia Sinistra fuori uso!"
       },
       "left_shin": {
-        "name": "Gamba Sinistra Bassa",
-        "msg": "Gamba Sinistra Bassa via di netto!",
-        "brokenMsg": "Gamba Sinistra Bassa fuori uso!"
+        "name": "Stinco Sinistro",
+        "msg": "Stinco Sinistro via di netto!",
+        "brokenMsg": "Stinco Sinistro fuori uso!"
       },
       "left_foot": {
         "name": "Piede Sinistro",
@@ -1703,9 +1703,9 @@
         "brokenMsg": "Coscia Destra fuori uso!"
       },
       "right_shin": {
-        "name": "Gamba Destra Bassa",
-        "msg": "Gamba Destra Bassa via di netto!",
-        "brokenMsg": "Gamba Destra Bassa fuori uso!"
+        "name": "Stinco Destro",
+        "msg": "Stinco Destro via di netto!",
+        "brokenMsg": "Stinco Destro fuori uso!"
       },
       "right_foot": {
         "name": "Piede Destro",
@@ -1724,9 +1724,9 @@
         "brokenMsg": "Torso fuori uso!"
       },
       "nose": {
-        "name": "Nose",
-        "msg": "Nose via di netto!",
-        "brokenMsg": "Nose con crepe!"
+        "name": "Naso",
+        "msg": "Naso via di netto!",
+        "brokenMsg": "Naso con crepe!"
       }
     },
     "crustacean": {
@@ -2417,9 +2417,9 @@
         "brokenMsg": "Testa fuori uso!"
       },
       "arm_cannon": {
-        "name": "Cannone Braccio",
-        "msg": "Cannone Braccio via di netto!",
-        "brokenMsg": "Cannone Braccio in avaria!"
+        "name": "Cannone da Braccio",
+        "msg": "Cannone da Braccio via di netto!",
+        "brokenMsg": "Cannone da Braccio in avaria!"
       },
       "torso": {
         "name": "Torace",
@@ -2433,7 +2433,7 @@
       },
       "sensors": {
         "name": "Sensori",
-        "msg": "Sensori perduto per sempre!",
+        "msg": "Sensori perduti per sempre!",
         "brokenMsg": "Sensori fuori uso!"
       },
       "name": "Difensore Robotico",
@@ -2456,7 +2456,7 @@
       },
       "sensor_array": {
         "name": "Sensori",
-        "msg": "Sensori perduto per sempre!",
+        "msg": "Sensori perduti per sempre!",
         "brokenMsg": "Sensori fuori uso!"
       },
       "rotation_mech": {
@@ -2734,9 +2734,9 @@
         "brokenMsg": "Braccia Spinose con crepe!"
       },
       "gear_legs": {
-        "name": "Gambe Ingranaggio",
-        "msg": "Gambe Ingranaggio in avaria totale!",
-        "brokenMsg": "Gambe Ingranaggio in avaria!"
+        "name": "Gambe a Ingranaggi",
+        "msg": "Gambe a Ingranaggi in avaria totale!",
+        "brokenMsg": "Gambe a Ingranaggi in avaria!"
       },
       "name": "Elementale del Metallo",
       "jaws": {
@@ -2952,9 +2952,9 @@
         "brokenMsg": "Cuore in sofferenza!"
       },
       "bow": {
-        "name": "Setto nasale",
-        "msg": "Setto nasale via di netto!",
-        "brokenMsg": "Setto nasale fuori uso!"
+        "name": "Arco",
+        "msg": "Arco via di netto!",
+        "brokenMsg": "Arco fuori uso!"
       },
       "robe": {
         "name": "Veste",
@@ -3272,9 +3272,9 @@
     },
     "spiderhumanhybrid": {
       "body": {
-        "name": "Corpo Ragno",
-        "msg": "Corpo Ragno a pezzi!",
-        "brokenMsg": "Corpo Ragno fuori uso!"
+        "name": "Corpo di Ragno",
+        "msg": "Corpo di Ragno a pezzi!",
+        "brokenMsg": "Corpo di Ragno fuori uso!"
       },
       "torso": {
         "name": "Torso Umano",

@@ -1,7 +1,7 @@
 {
   "planets": {
     "sub_mercurian": {
-      "description": "Mondo roccioso essenziale, crosta sottile, atmosfera minima."
+      "description": "Mondo roccioso spoglio, crosta sottile, atmosfera minima."
     },
     "mercurian": {
       "description": "Simile a Mercurio, senza atmosfera, craterizzato, ricco di ferro."
@@ -52,7 +52,7 @@
       "description": "Lontano dalla sua stella, atmosfera profonda e gelida."
     },
     "ice_giant": {
-      "description": "Ricco di volatili come acqua e ammoniaca; spesso mantello ghiacciato."
+      "description": "Ricco di sostanze volatili come acqua e ammoniaca; spesso mantello ghiacciato."
     },
     "ringed_gas_giant": {
       "description": "Anelli imponenti, decine di lune."
@@ -64,7 +64,7 @@
       "description": "Nucleo di gigante gassoso denudato, vulcanico, ricco di metalli."
     },
     "mega_iron": {
-      "description": "Quasi puro ferro/nichel, densità elevata, magnetico."
+      "description": "Ferro/nichel quasi puro, densità elevata, magnetico."
     },
     "carbon": {
       "description": "Dominano grafite e idrocarburi; mari simili a catrame."

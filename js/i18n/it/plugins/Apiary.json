@@ -42,7 +42,7 @@
   "ui": {
     "back": "Indietro",
     "apiary": "Apiario",
-    "crossSection": "Sezione Trasversale",
+    "crossSection": "Sezione trasversale",
     "colony": "Colonia",
     "state": "Stato",
     "mood": "Umore",
@@ -65,5 +65,28 @@
   },
   "toast": {
     "swarmed": "L'alveare ha sciamato: {bees} api se ne sono andate con la vecchia regina."
+  },
+  "weather": {
+    "sunny": "Soleggiato",
+    "cloudy": "Nuvoloso",
+    "rainy": "Piovoso",
+    "stormy": "Tempestoso",
+    "windy": "Ventoso"
+  },
+  "state": {
+    "thriving": "Prospera",
+    "stable": "Stabile",
+    "struggling": "In difficoltà",
+    "swarming": "In sciamatura",
+    "supersedure": "Sostituzione della regina",
+    "dormant": "Dormiente"
+  },
+  "threat": {
+    "varroa": "Varroa",
+    "nosema": "Nosema",
+    "foulbrood": "Peste americana",
+    "waxmoth": "Tarma della cera",
+    "wasps": "Vespe",
+    "bears": "Orsi"
   }
 }

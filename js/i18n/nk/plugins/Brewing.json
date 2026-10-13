@@ -27,6 +27,8 @@
   "missingLine": "{item} ×{need} (HAB {have})",
   "missing": "MISSIN': {list}",
   "started": "BREWIN' STARTED: {recipe}",
+  "harvested": "HARVESTED: {list}",
+  "have": "(HAB {have})",
   "itemNumbered": "ITEM#{id} ×{qty}",
   "units": "{min}-{max} UNITS",
   "stage": {
@@ -42,7 +44,7 @@
     "status": "HOW ME DOIN'",
     "state": "STATE",
     "empty": "EMPTY",
-    "selectRecipeHint": "SELECT A RECIPE ON DA LEFT AN' PRESS OK TA BEGIN BREWIN'!",
+    "selectRecipeHint": "PICK A RECIPE AN' PRESS OK TA BREW!",
     "beginBrewing": "BEGIN BREWIN'",
     "exit": "RUN AWAY",
     "harvest": "HARVEST",
@@ -66,7 +68,7 @@
     },
     "honey_mead": {
       "name": "HONEY MEAD",
-      "description": "WILD HONEY DISSOLVED IN SPRIN' WATER AN' LEFT TA FERMENT IN DA DARK. DA OLDEST BREW KNOWN!",
+      "description": "WILD HONEY DISSOLVED IN SPRING WATER AN' LEFT TA FERMENT IN DA DARK. DA OLDEST BREW KNOWN!",
       "outputPreview": "2-5X HONEY MEAD"
     },
     "nun_beer": {
@@ -92,11 +94,11 @@
   },
   "grange": {
     "appName": "GRANGE",
-    "subtitle": "BARRELS, HIVES, FIELDS AN' LIVESTOCK, VIEWABLE FROM ANYWHERE!",
-    "readOnly": "READIN' ONLY. DA WORK IZ STILL DONE ON DA SPOT!",
+    "subtitle": "BARRELS, HIVES, FIELDS AN' LIVESTOCK AT A GLANCE!",
+    "readOnly": "VIEW ONLY. WORK IZ DONE ON SITE!",
     "seasonLabel": "SEASON:",
     "season": {
-      "spring": "SPRIN'",
+      "spring": "SPRING",
       "summer": "SUMMER",
       "autumn": "AUTUMN",
       "winter": "WINTER"
@@ -108,12 +110,12 @@
       "fields": "FIELDS",
       "livestock": "LIVESTOCK"
     },
-    "overviewTitle": "DA HOLDINGS AT A GLANCE",
+    "overviewTitle": "HOLDINGS",
     "waitingOnYou": "{n} WAITIN' ON YOU",
-    "nothingWaiting": "NOTHIN' WAITIN'",
-    "needsYou": "WANTS YOU IN PERSON",
-    "allQuiet": "EVERYTHIN' IZ COMIN' ALONG. NOTHIN' NEEDS A JOURNEY TODAY!",
-    "projectionNote": "FIELDS AN' BARRELS IZ PROJECTED FROM DA LAST VISIT, ASSUMIN' FAIR WEATHER IN OPEN GROUND. GREENHOUSE CROPS FINISH SOONER DEN SHOWN!",
+    "nothingWaiting": "NUTTIN' WAITIN'",
+    "needsYou": "NEEDS YOU ON SITE",
+    "allQuiet": "NUTTIN' NEEDS YOU TODAY.",
+    "projectionNote": "ESTIMATED FROM YA LAST VISIT, ASSUMIN' FAIR WEATHER. GREENHOUSE CROPS FINISH SOONER!",
     "tile": {
       "barrels": "BARRELS GOING",
       "barrelsReady": "READY TA BOTTLE",
@@ -130,7 +132,7 @@
       "crop": "{name} IZ RIPE AT {where}.",
       "produce": "{animal} AT {where} IZ HOLDIN' {what}.",
       "hiveUnhappy": "DA COLONY IZ UNSETTLED (MOOD {mood})!",
-      "outOfSeason": "{name} AT {where} IZ OUT OF SEASON AN' STANDIN' STILL!"
+      "outOfSeason": "{name} AT {where} IZ OUT OF SEASON."
     },
     "colBrew": "BREW",
     "colWhere": "WHERE",
@@ -146,15 +148,15 @@
     "outOfSeason": "OUT OF SEASON",
     "daysLeft": "{n} DAYS",
     "grown": "GROWN",
-    "noProduce": "GIVES NOTHIN'",
-    "noBarrels": "NO BARREL ANYWHERE IZ WORKIN'. FILL ONE AN' IT SHOWS UP HERE!",
-    "noHive": "NO COLONY HAB BEEN FOUNDED YET!",
-    "noPlots": "NOTHIN' IZ PLANTED. A TILLED PLOT APPEARS HERE DA MOMENT A SEED GOES IN!",
+    "noProduce": "GIVES NUTTIN'",
+    "noBarrels": "NO BARRELS BREWIN'.",
+    "noHive": "NO COLONY HAB BIN FOUNDED YET!",
+    "noPlots": "NUTTIN' PLANTED.",
     "noAnimals": "DA PARTY OWNS NO STOCK.",
-    "cellarNote": "BOTTLIN' IZ DONE AT DA BARREL. A BREW LEFT PAST ITS TIME DOES NO SPOIL, BUT DOES NO IMPROVE EITHER!",
-    "hiveNote": "SMOKIN', HARVESTIN' AN' SPLITTIN' A COLONY IZ DONE AT DA HIVE!",
-    "fieldsNote": "A PLOT OUT OF SEASON IZ NO DEAD, IT IZ WAITIN' FOR ITS GROWIN' MONTHS!",
-    "livestockNote": "FEEDIN', PETTIN' AN' COLLECTIN' IZ DONE IN DA FIELD!",
+    "cellarNote": "BOTTLE AT DA BARREL. FINISHED BREWS NO SPOIL OR IMPROVE!",
+    "hiveNote": "SMOKE, HARVEST AN' SPLIT COLONIES AT DA HIVE!",
+    "fieldsNote": "OUT-OF-SEASON PLOTS RESUME IN DEY GROWIN' MONTHS!",
+    "livestockNote": "FEED, PET AN' COLLECT IN DA FIELD!",
     "queen": "DA QUEEN",
     "queenAlive": "ALIVE, HEALTH {health}, {eggs} EGGS LAID!",
     "queenDead": "NO QUEEN. DA COLONY IZ RUNNIN' DOWN!",

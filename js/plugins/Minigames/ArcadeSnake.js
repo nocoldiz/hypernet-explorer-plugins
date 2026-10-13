@@ -93,6 +93,9 @@
             this.speed = BASE_SPEED;
             this.boostTimer = 0;
             this.boostActive = false;
+            // Ten an apple, the way every other cart in the cabinet counts:
+            // a run that always reported 0 could never reach the score table.
+            this.score = 0;
             this.initGrid();
             this.initStaticBG();
             this.spawnApple();
@@ -190,7 +193,7 @@
             if (inp.left && this.player.dir.x !== 1) this.player.dir = { x: -1, y: 0 };
             if (inp.right && this.player.dir.x !== -1) this.player.dir = { x: 1, y: 0 };
             const nextP = { x: this.player.head().x + this.player.dir.x, y: this.player.head().y + this.player.dir.y };
-            if (this.isCollision(nextP, this.player)) return this.endGame(0);
+            if (this.isCollision(nextP, this.player)) return this.endGame(this.score);
             if (this.powerup && nextP.x === this.powerup.x && nextP.y === this.powerup.y) {
                 this.speed = BASE_SPEED * BOOST_MULTIPLIER;
                 this.boostActive = true;
@@ -199,6 +202,7 @@
             }
             if (nextP.x === this.apple.x && nextP.y === this.apple.y) {
                 this.player.grow(nextP);
+                this.score += 10;
                 this.spawnApple();
             } else {
                 this.player.move(nextP);

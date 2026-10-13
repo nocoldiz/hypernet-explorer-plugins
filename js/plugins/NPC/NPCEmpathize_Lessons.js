@@ -53,6 +53,10 @@
 //                 the same two lessons for a specialization, one tier a
 //                 session, never past the teacher's own tier (see the
 //                 Specializations block below).
+//   Between party members
+//                 on a member's own page, another member teaches them a skill
+//                 or a specialization tier under the same gates, for nothing,
+//                 in at most 12 hours (see Between party members below).
 //
 // Children and the non-sentient (window.NPCCreature) are never taught and
 // never teach. Em and Bubba have lines of their own on both sides of every
@@ -816,16 +820,137 @@
     }
     // Exactly what is left of the member's current tier: one tier, and so
     // never past the NPC's own (the row only exists below it).
-    const need = Math.max(0, ((S.expToNext && S.expToNext(row.fromTier, spec)) || 0) -
-      (o.actor.specializationExp ? (Number(o.actor.specializationExp(spec.id)) || 0) : 0));
-    let gained = 0;
-    if (need > 0 && o.actor.gainSpecializationExp) gained = o.actor.gainSpecializationExp(spec.id, need) || 0;
-    if (gained) {
-      const XP = window.SpecializationXP;
-      try { if (XP && XP.announce) XP.announce({ actor: o.actor, spec, level: gained }); } catch (e) { /* toast only */ }
-    }
+    const gained = liftActorSpec(S, o.actor, spec, row.fromTier);
     passHours(row.hours, o);
     return { ok: true, hours: row.hours, price, free: row.free, toTier: row.toTier, toName: row.toName, gained };
+  }
+
+  // Lift a party member one tier out of `fromTier`: exactly the xp left of it,
+  // through the actor's own gainSpecializationExp, announced like any other
+  // tier won. Answers the new tier, or 0.
+  function liftActorSpec(S, actor, spec, fromTier) {
+    const need = Math.max(0, ((S.expToNext && S.expToNext(fromTier, spec)) || 0) -
+      (actor.specializationExp ? (Number(actor.specializationExp(spec.id)) || 0) : 0));
+    let gained = 0;
+    if (need > 0 && actor.gainSpecializationExp) gained = actor.gainSpecializationExp(spec.id, need) || 0;
+    if (gained) {
+      const XP = window.SpecializationXP;
+      try { if (XP && XP.announce) XP.announce({ actor, spec, level: gained }); } catch (e) { /* toast only */ }
+    }
+    return gained;
+  }
+
+  // ── Between party members ────────────────────────────────────────────────
+  // On a member's own page (actor mode) another member of the party can teach
+  // them a skill or train them one tier in a specialization. The same gates
+  // as every other lesson, never a parallel set:
+  //   skills    requirementBlock on the learner (nature, Cultist, level floor,
+  //             calling, prerequisites), and a skill they already hold is not
+  //             offered at all
+  //   specs     a tier the teacher holds above the learner's, one tier a
+  //             session, greyed when the game does nothing with it yet
+  //   who       lessonBlock on both sides: a creature member neither teaches
+  //             nor is taught, as with an NPC
+  // Nothing is paid and no standing moves: they travel together. A session
+  // takes the hours an NPC lesson would, scaled onto a 12 hour day: the same
+  // climb with difficulty, never more than PEER_HOURS_CAP.
+  const PEER_HOURS_CAP = 12;
+  function peerHours(hours) {
+    const h = Number(hours) || 1;
+    return Math.max(1, Math.min(PEER_HOURS_CAP, Math.round(h * PEER_HOURS_CAP / HOURS_CAP)));
+  }
+  function peerSkillHours(skill) { return peerHours(lessonHours(skill)); }
+  function peerSpecHours(fromTier, gap) { return peerHours(specHours(fromTier, gap)); }
+
+  function sameActor(a, b) {
+    if (!a || !b) return false;
+    if (a === b) return true;
+    try { return !!(a.actorId && b.actorId && a.actorId() === b.actorId()); } catch (e) { return false; }
+  }
+
+  // The teacher's skills the learner does not hold yet, open or greyed.
+  function peerTeachOptions(teacher, learner) {
+    if (!teacher || !learner || sameActor(teacher, learner)) return [];
+    const from = learnerOfActor(teacher);
+    const to = learnerOfActor(learner);
+    if (lessonBlock(from) || lessonBlock(to)) return [];
+    const rows = [];
+    for (const id of from.skillIds) {
+      const skill = skillAt(id);
+      if (!isLessonSkill(skill) || to.skillIds.includes(id)) continue;
+      rows.push(skillRow(skill, requirementBlock(to, skill), { hours: peerSkillHours(skill), fee: 0 }));
+    }
+    return rows.sort(byOpenThenName);
+  }
+
+  // The teacher's specializations above the learner's tier, open or greyed.
+  function peerSpecOptions(teacher, learner) {
+    const S = specTable();
+    if (!S || !teacher || !learner || sameActor(teacher, learner)) return [];
+    if (lessonBlock(learnerOfActor(teacher)) || lessonBlock(learnerOfActor(learner))) return [];
+    const rows = [];
+    for (const spec of S.list) {
+      if (!spec || spec.id == null) continue;
+      const mine = actorSpecLevel(teacher, spec.id);
+      if (mine <= 1) continue;
+      const from = actorSpecLevel(learner, spec.id);
+      if (from >= mine) continue;
+      const block = (S.isImplemented && !S.isImplemented(spec)) ? { code: 'unimplemented', params: {} } : null;
+      rows.push(specRow(S, spec, from, mine, block, { hours: peerSpecHours(from, mine - from), fee: 0 }));
+    }
+    return rows.sort(byOpenThenName);
+  }
+
+  // Every other member present, as a possible teacher of `learner`: how many
+  // lessons of the asked kind ('skill' or 'spec') they could give, greyed with
+  // why when none. A creature member is greyed as a beast.
+  function peerTeachers(learner, kind, members) {
+    const out = [];
+    for (const m of (members || partyMembers())) {
+      if (!m || sameActor(m, learner)) continue;
+      const who = lessonBlock(learnerOfActor(m));
+      const rows = who ? [] : (kind === 'spec' ? peerSpecOptions(m, learner) : peerTeachOptions(m, learner));
+      const open = rows.filter(r => !r.disabled).length;
+      const block = who ? { code: who, params: {} } : (!open ? { code: 'nothingToTeach', params: {} } : null);
+      out.push({ actor: m, name: typeof m.name === 'function' ? m.name() : String(m.name || ''),
+        open, disabled: !!block, reason: block ? block.code : null, reasonText: reasonText(block) });
+    }
+    return out;
+  }
+
+  // Teach one skill member to member. opts: { teacher, learner, skillId,
+  // passTime(minutes) }. Answers { ok, reason, hours }.
+  function applyPeerTeach(opts) {
+    const o = opts || {};
+    const skill = skillAt(o.skillId);
+    const row = peerTeachOptions(o.teacher, o.learner).find(r => r.skillId === o.skillId);
+    if (!skill || !row) {
+      const held = o.learner && o.learner.isLearnedSkill && o.learner.isLearnedSkill(o.skillId);
+      return { ok: false, reason: held ? 'known' : 'beast' };
+    }
+    if (row.disabled) return { ok: false, reason: row.reason, reasonText: row.reasonText };
+    o.learner.learnSkill(skill.id);
+    try {
+      if (window.SkillGraph && window.SkillGraph.invalidate) window.SkillGraph.invalidate();
+      const atlas = window.SkillMaster && window.SkillMaster.SkillAtlas;
+      if (atlas && atlas.invalidate) atlas.invalidate();
+    } catch (e) { /* caches only */ }
+    passHours(row.hours, o);
+    return { ok: true, hours: row.hours };
+  }
+
+  // Train one tier member to member. opts: { teacher, learner, specId,
+  // passTime(minutes) }. Answers { ok, reason, hours, toTier, toName, gained }.
+  function applyPeerSpec(opts) {
+    const o = opts || {};
+    const S = specTable();
+    const spec = S && S.byId.get(o.specId);
+    const row = peerSpecOptions(o.teacher, o.learner).find(r => r.specId === o.specId);
+    if (!spec || !row) return { ok: false, reason: 'beast' };
+    if (row.disabled) return { ok: false, reason: row.reason, reasonText: row.reasonText };
+    const gained = liftActorSpec(S, o.learner, spec, row.fromTier);
+    passHours(row.hours, o);
+    return { ok: true, hours: row.hours, toTier: row.toTier, toName: row.toName, gained };
   }
 
   window.NPCEmpathizeLessons = {
@@ -840,6 +965,8 @@
     teachOptions, learnOptions, learnTerms, applyTeach, applyLearn,
     specHours, specFee, npcSpecLevels, specTrainOptions, specLearnOptions, specLearnTerms,
     applySpecTrain, applySpecLearn,
+    PEER_HOURS_CAP, peerHours, peerSkillHours, peerSpecHours,
+    peerTeachOptions, peerSpecOptions, peerTeachers, applyPeerTeach, applyPeerSpec,
   };
   if (window.NPCEmpathize) window.NPCEmpathize.Lessons = window.NPCEmpathizeLessons;
 

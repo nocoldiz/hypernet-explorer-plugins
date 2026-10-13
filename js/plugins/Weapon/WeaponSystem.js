@@ -880,7 +880,10 @@
   Game_Action.prototype.apply = function (target) {
     const subject = this.subject();
 
-    if (this.isAttack() && subject.isActor()) {
+    // The magazine is the main hand's: an off-hand follow-up swing
+    // (ItemSystemEquipment, "Both hands swing") spends none of it.
+    const offHand = typeof this.nextSwingHand === "function" && this.nextSwingHand(target) > 0;
+    if (this.isAttack() && subject.isActor() && !offHand) {
       // Out of bullets: Attack is now Bash, an ordinary strike with whatever
       // is in hand rather than a shot, so it still lands and costs no ammo.
       if (subject.canAttackWithBullets()) {
@@ -896,7 +899,13 @@
     const subject = this.subject();
 
     if (this.isAttack() && subject && subject.isActor()) {
-      let repeats = _Game_Action_numRepeats.call(this);
+      // The follow-up swings of the other hands (ItemSystemEquipment, "Both
+      // hands swing") spend no ammunition: the fire rate, the magazine and
+      // the Bash below are the main hand's alone, and the extra swings are
+      // added back after them.
+      const extra = typeof this.handExtraSwings === "function"
+        ? Math.max(0, this.handExtraSwings() || 0) : 0;
+      let repeats = Math.max(1, _Game_Action_numRepeats.call(this) - extra);
       // The trigger held down: every extra round of the burst is a repeat of
       // its own, so it gets its own motion, its own damage and its own report.
       // The Attack Times trait a firearm carries says the same thing the fire
@@ -907,10 +916,10 @@
       const current = subject.getCurrentBullets();
       // A full or partial magazine still caps the repeat count at what's
       // left; an empty one no longer caps it at zero hits, that's the Bash.
-      if (current !== null && current > 0) return Math.min(repeats, current);
+      if (current !== null && current > 0) return Math.min(repeats, current) + extra;
       // Dry: the Bash is one swing of the thing itself, never a burst of them.
-      if (current !== null) return 1;
-      return repeats;
+      if (current !== null) return 1 + extra;
+      return repeats + extra;
     }
 
     return _Game_Action_numRepeats.call(this);
@@ -965,12 +974,275 @@
     // its own rather than on top of what a shot would have been worth.
     if (subject.isOutOfBullets()) return Math.round(value * BASH_DAMAGE_RATE);
     const firearm = weapon.wtypeId === FIREARM_WTYPE ? FIREARM_DAMAGE_RATE : 1;
-    return Math.round(value * firearm * burstDamageRate(subject.fireRate()));
+    // An off-hand gun follows up with one shot, never a burst, so it pays no
+    // burst share (weapons() reads the swinging hand's weapon here).
+    const offHand = typeof this.isOffHandSwing === "function" && this.isOffHandSwing();
+    return Math.round(value * firearm * (offHand ? 1 : burstDamageRate(subject.fireRate())));
   };
 
   window.WeaponDamageRates = {
     bash: BASH_DAMAGE_RATE, burst: burstDamageRate, firearm: FIREARM_DAMAGE_RATE,
   };
+
+  // ===== AmmoBursts: skills that spend, refill or ignore the magazine =====
+  //
+  // SKILL NOTE TAGS:
+  // <AmmoCost: n>   the skill fires n rounds out of the magazine. It cannot be
+  //                 used with fewer than n left (a gun whose whole magazine is
+  //                 smaller than n needs it full instead), and a burst of
+  //                 several hits lands no more hits, and no more random
+  //                 targets, than the rounds it actually spent.
+  // <AmmoCost: all> empties whatever is left (one round at least); the hits
+  //                 scale with the rounds spent, up to the skill's own repeats.
+  // <Reload>        refills the magazine when it is used. Unusable with a full
+  //                 magazine, or with a weapon that carries none.
+  // <PistolWhip>    a blow struck with the gun, never a shot: it costs no AP
+  //                 while the magazine is empty.
+  //
+  // A weapon with no magazine at all (a bow with no <Bullets:>, the vector
+  // gun, an enemy) pays nothing and is refused nothing: these rules are the
+  // magazine's, and only a magazine can enforce them. The skill pays its
+  // rounds once per action (applyGlobal), never once per target or per hit,
+  // so Scene_Battle, IndividualBattleTurns and MapBattleMode, which all run an
+  // action through BattleManager.startAction, read it the same way.
+  //
+  // Fresh Magazine (state 85), granted by the reload skills, is spent by the
+  // next shot: it is lifted when that action ends (BattleManager.endAction).
+  const FRESH_MAGAZINE_STATE = 85;
+  const ammoProfileCache = new WeakMap();
+
+  /** What a skill asks of the magazine: { cost, all, reload, whip }. */
+  function ammoProfileOf(skill) {
+    if (!skill || typeof skill !== "object") return { cost: 0, all: false, reload: false, whip: false };
+    const cached = ammoProfileCache.get(skill);
+    if (cached) return cached;
+    const note = String(skill.note || "");
+    const m = /<AmmoCost:\s*(all|\d+)\s*>/i.exec(note);
+    const all = !!m && /^all$/i.test(m[1]);
+    const profile = {
+      cost: m ? (all ? 1 : Math.max(0, parseInt(m[1], 10) || 0)) : 0,
+      all,
+      reload: /<Reload>/i.test(note),
+      whip: /<PistolWhip>/i.test(note),
+    };
+    ammoProfileCache.set(skill, profile);
+    return profile;
+  }
+
+  const isSkillObject = (item) => !!item && item.stypeId !== undefined &&
+    (typeof $dataSkills === "undefined" || !$dataSkills || $dataSkills[item.id] === item);
+
+  /** The magazine in the battler's leading hand, or null when it has none. */
+  function magazineOf(battler) {
+    if (!battler || typeof battler.isActor !== "function" || !battler.isActor()) return null;
+    if (typeof battler.getWeaponBulletConfig !== "function") return null;
+    const config = battler.getWeaponBulletConfig();
+    if (!config) return null;
+    const current = battler.getCurrentBullets();
+    return { current: Math.max(0, Number(current) || 0), max: config.max };
+  }
+
+  /** The fewest rounds this battler must have loaded to use the skill. */
+  function roundsNeeded(battler, skill) {
+    const profile = ammoProfileOf(skill);
+    if (!profile.cost) return 0;
+    const mag = magazineOf(battler);
+    if (!mag) return 0;
+    return profile.all ? 1 : Math.min(profile.cost, mag.max);
+  }
+
+  /** How many rounds using the skill right now would spend, or null. */
+  function roundsToSpend(battler, skill) {
+    const profile = ammoProfileOf(skill);
+    if (!profile.cost) return null;
+    const mag = magazineOf(battler);
+    if (!mag) return null;
+    return profile.all ? mag.current : Math.min(profile.cost, mag.current);
+  }
+
+  const ammoText = (key, params) =>
+    (typeof window.T === "function" ? window.T("SkillsMenu.ammo." + key, params) : key);
+
+  /**
+   * Why the magazine refuses this skill, as a key ('dry', 'full',
+   * 'noMagazine'), or '' when it does not.
+   */
+  function blockKind(battler, skill) {
+    if (!battler || !skill) return "";
+    const profile = ammoProfileOf(skill);
+    if (profile.reload) {
+      const mag = magazineOf(battler);
+      if (!mag) return (battler.isActor && battler.isActor()) ? "noMagazine" : "";
+      if (mag.current >= mag.max) return "full";
+    }
+    if (profile.cost) {
+      const mag = magazineOf(battler);
+      if (mag && mag.current < roundsNeeded(battler, skill)) return "dry";
+    }
+    return "";
+  }
+
+  /** The sentence the help box shows for a refused skill, or ''. */
+  function blockReason(battler, skill) {
+    const kind = blockKind(battler, skill);
+    if (!kind) return "";
+    if (kind !== "dry") return ammoText(kind);
+    const need = roundsNeeded(battler, skill);
+    const mag = magazineOf(battler);
+    return ammoText(need === 1 ? "dryOne" : "dry", { need, have: mag ? mag.current : 0 });
+  }
+
+  /** The short chip the skill row carries for a refused skill, or ''. */
+  function blockChip(battler, skill) {
+    const kind = blockKind(battler, skill);
+    return kind ? ammoText("chip." + kind) : "";
+  }
+
+  /** Inspect panel rows ({ label, val }) for what the skill does to the magazine. */
+  function specsOf(skill) {
+    const profile = ammoProfileOf(skill);
+    const rows = [];
+    const label = ammoText("label");
+    if (profile.all) rows.push({ label, val: ammoText("all") });
+    else if (profile.cost === 1) rows.push({ label, val: ammoText("roundOne") });
+    else if (profile.cost > 1) rows.push({ label, val: ammoText("rounds", { n: profile.cost }) });
+    if (profile.reload) rows.push({ label, val: ammoText("reload") });
+    if (profile.whip) rows.push({ label, val: ammoText("whip") });
+    return rows;
+  }
+
+  // The magazine gate: every menu, the battle list, the hotbar, the CPU's
+  // pick and BattleManager's own isValid() all ask canUse(), and canUse()
+  // asks this.
+  if (typeof Game_BattlerBase !== "undefined" && Game_BattlerBase.prototype.meetsSkillConditions) {
+    const _meetsSkillConditions_ammo = Game_BattlerBase.prototype.meetsSkillConditions;
+    Game_BattlerBase.prototype.meetsSkillConditions = function (skill) {
+      if (!_meetsSkillConditions_ammo.call(this, skill)) return false;
+      return !blockKind(this, skill);
+    };
+  }
+
+  // A pistol whip swung with an empty gun is the one thing it is still good
+  // for, so it costs nothing then.
+  if (typeof Game_BattlerBase !== "undefined" && Game_BattlerBase.prototype.skillTpCost) {
+    const _skillTpCost_ammo = Game_BattlerBase.prototype.skillTpCost;
+    Game_BattlerBase.prototype.skillTpCost = function (skill) {
+      if (ammoProfileOf(skill).whip && typeof this.isOutOfBullets === "function" &&
+          this.isOutOfBullets()) {
+        return 0;
+      }
+      return _skillTpCost_ammo.call(this, skill);
+    };
+  }
+
+  /**
+   * The rounds this action fires: fixed once they are spent, live before that
+   * (the targets are rolled before the cost is paid). null when the action
+   * spends no ammunition.
+   */
+  Game_Action.prototype.ammoRounds = function () {
+    if (this._ammoRounds !== undefined && this._ammoRounds !== null) return this._ammoRounds;
+    const item = this.item();
+    if (!isSkillObject(item)) return null;
+    return roundsToSpend(this.subject(), item);
+  };
+
+  const _Game_Action_numRepeats_ammo = Game_Action.prototype.numRepeats;
+  Game_Action.prototype.numRepeats = function () {
+    const repeats = _Game_Action_numRepeats_ammo.call(this);
+    const rounds = this.ammoRounds();
+    if (rounds === null) return repeats;
+    return Math.max(1, Math.min(repeats, rounds));
+  };
+
+  if (Game_Action.prototype.numTargets) {
+    const _Game_Action_numTargets_ammo = Game_Action.prototype.numTargets;
+    Game_Action.prototype.numTargets = function () {
+      const targets = _Game_Action_numTargets_ammo.call(this);
+      if (!targets) return targets;
+      const rounds = this.ammoRounds();
+      if (rounds === null) return targets;
+      return Math.max(1, Math.min(targets, rounds));
+    };
+  }
+
+  const isShotAction = (action) => {
+    const subject = action.subject();
+    if (!subject || !subject.isActor || !subject.isActor()) return false;
+    if (action.isAttack()) {
+      const weapon = subject.weapons()[0];
+      return !!weapon && RANGED_WTYPES.includes(weapon.wtypeId);
+    }
+    return action.isSkill() && isFiredSkill(subject, action.item());
+  };
+
+  // Paid once per action, after the cost and before the first target is hit.
+  const _Game_Action_applyGlobal_ammo = Game_Action.prototype.applyGlobal;
+  Game_Action.prototype.applyGlobal = function () {
+    const subject = this.subject();
+    const item = this.item();
+    if (subject && isSkillObject(item) && !this._ammoPaid) {
+      this._ammoPaid = true;
+      const profile = ammoProfileOf(item);
+      const rounds = roundsToSpend(subject, item);
+      if (rounds !== null) {
+        this._ammoRounds = rounds;
+        const mag = magazineOf(subject);
+        if (mag) subject.setCurrentBullets(mag.current - rounds);
+      }
+      if (profile.reload && magazineOf(subject)) subject.reloadBullets();
+    }
+    // The shot the fresh magazine was loaded for spends it.
+    if (subject && subject.isStateAffected && subject.isStateAffected(FRESH_MAGAZINE_STATE) &&
+        !ammoProfileOf(item).reload && isShotAction(this)) {
+      this._spendsFreshMagazine = true;
+    }
+    _Game_Action_applyGlobal_ammo.call(this);
+  };
+
+  if (typeof BattleManager !== "undefined" && typeof BattleManager.endAction === "function") {
+    const _BattleManager_endAction_ammo = BattleManager.endAction;
+    BattleManager.endAction = function () {
+      const subject = this._subject;
+      const action = this._action;
+      if (subject && action && action._spendsFreshMagazine && subject.removeState) {
+        action._spendsFreshMagazine = false;
+        subject.removeState(FRESH_MAGAZINE_STATE);
+      }
+      _BattleManager_endAction_ammo.call(this);
+    };
+  }
+
+  /** The skill card's Special tags (SkillDetails.registerSpecial). */
+  function specialsOf(skill) {
+    const profile = ammoProfileOf(skill);
+    const out = [];
+    const tr = (bank, key, params) =>
+      (typeof window.T === "function" ? window.T("SkillsMenu." + bank + "." + key, params) : key);
+    const t = (key, params) => ({ name: tr("specialName", key, params), desc: tr("special", key, params) });
+    if (profile.all) out.push(t("ammoAll"));
+    else if (profile.cost === 1) out.push(t("ammoCostOne"));
+    else if (profile.cost > 1) out.push(t("ammoCost", { n: profile.cost }));
+    if (profile.reload) out.push(t("ammoReload"));
+    if (profile.whip) out.push(t("ammoWhip"));
+    return out;
+  }
+  if (window.SkillDetails && typeof window.SkillDetails.registerSpecial === "function") {
+    window.SkillDetails.registerSpecial(specialsOf);
+  }
+
+  window.AmmoBursts = {
+    specialsOf,
+    FRESH_MAGAZINE_STATE,
+    profileOf: ammoProfileOf,
+    roundsNeeded,
+    roundsToSpend,
+    blockKind,
+    blockReason,
+    blockChip,
+    specsOf,
+  };
+  // ===== end AmmoBursts =====
 
   //=============================================================================
   // Window_BattleLog - Weapon Sounds
@@ -986,6 +1258,10 @@
    */
   function isFiredSkill(subject, skill) {
     if (!skill) return false;
+    // A reload and a pistol whip are done with the gun, not fired from it
+    // (AmmoBursts above).
+    const ammo = ammoProfileOf(skill);
+    if (ammo.reload || ammo.whip) return false;
     if (window.SkillWeaponReq && window.SkillWeaponReq.needOf(skill) === "ranged") return true;
     if (!window.SkillWeaponReq && /<category:\s*Firearms\s*>/i.test(skill.note || "")) return true;
     const cls = subject && typeof subject.currentClass === "function" ? subject.currentClass() : null;
@@ -1051,7 +1327,17 @@
         // the sword's motion whatever the skill is called.
         const throwsHands = !!(skill && skill.handAnimation) && !weapons[hand];
 
-        if (fired) {
+        // Folded into any form, the vector gun casts a spell held still: only
+        // the base gun shape plays an attack motion for one.
+        const castsStill = !!(window.VectorGun && window.VectorGun.castsStill &&
+          window.VectorGun.castsStill(subject, skill));
+
+        if (castsStill) {
+          this._lastAttacker = null;
+          this._multiAttackHitCount = 0;
+          this._skillAnimations = null;
+          debugLog(`Skill ${skill.name} is cast with the vector gun folded, no motion`);
+        } else if (fired) {
           this._lastAttacker = subject;
           this._multiAttackHitCount = 0;
           // null: its own shot, not whatever movement the skill named.
@@ -1137,6 +1423,10 @@
         // motion, the model that moves, the hit mark and the sound all follow
         // this index.
         weaponIndex = this._skillWeaponIndex;
+      } else if (isDualWielding && typeof target.result().handIndex === "number") {
+        // The hand that actually struck this blow, recorded as it landed
+        // (ItemSystemEquipment, "Both hands swing").
+        weaponIndex = Math.min(weapons.length - 1, target.result().handIndex);
       } else if (isDualWielding) {
         this._multiAttackHitCount = this._multiAttackHitCount || 0;
         const weapon1Repeats = weapons[0] ? actor.attackTimesAdd() + 1 : 1;
@@ -1203,8 +1493,9 @@
         if (this._multiAttackHitCount === 0 || !noMultiSound) {
           // The hand the school asked for, when it asked for one: the sound
           // follows the model that moved rather than the leading hand.
+          // An off-hand follow-up is heard as the off-hand weapon.
           const skillHand = (this._skillWeaponIndex !== null &&
-            this._skillWeaponIndex !== undefined) ? heldWeapon : null;
+            this._skillWeaponIndex !== undefined) || weaponIndex > 0 ? heldWeapon : null;
           actor.playWeaponSound(skillHand);
         }
       }

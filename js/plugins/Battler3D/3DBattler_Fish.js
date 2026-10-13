@@ -88,7 +88,12 @@
         // eel splits
         fsh_deepfrosteel:        { variant: 'eel',       scale: 2.6, texturePool: 'water', bodyColor: 0x5a8ab0, accent: 0xd0f0ff, hue: [0.56, 0.08], sat: [0.40, 0.12], lit: [0.55, 0.10] },
         fsh_lakelurkerserpent:   { variant: 'seaserpent', scale: 3.0, texturePool: 'water', bodyColor: 0x3a5a4a, accent: 0x7fbf6a, hue: [0.38, 0.12], sat: [0.45, 0.12], lit: [0.36, 0.08] },
-        fsh_umbilicalstrangler:  { variant: 'seaserpent', scale: 2.8, texturePool: 'water', bodyColor: 0x8a5a6a, accent: 0xd08a9a, hue: [0.96, 0.08], sat: [0.35, 0.12], lit: [0.42, 0.08] }
+        fsh_umbilicalstrangler:  { variant: 'seaserpent', scale: 2.8, texturePool: 'water', bodyColor: 0x8a5a6a, accent: 0xd08a9a, hue: [0.96, 0.08], sat: [0.35, 0.12], lit: [0.42, 0.08] },
+        // ── Level 1-5 starter roster (bespoke, one builder each) ─────────────
+        lv_riverminnow:          { variant: 'minnow',      scale: 1.3, texturePool: 'water', bodyColor: 0xa8b0a0, accent: 0xc83a2a, hue: [0.20, 0.10], sat: [0.12, 0.08], lit: [0.58, 0.08] },
+        lv_escapedgoldfish:      { variant: 'goldfish',    scale: 1.8, texturePool: 'fire',  bodyColor: 0xf07a1a, accent: 0xfff0d8, hue: [0.07, 0.03], sat: [0.80, 0.10], lit: [0.52, 0.06] },
+        lv_riverstickleback:     { variant: 'stickleback', scale: 1.3, texturePool: 'water', bodyColor: 0x5a6a3a, accent: 0xd0302a, hue: [0.22, 0.06], sat: [0.30, 0.10], lit: [0.34, 0.06] },
+        lv_spinypuffling:        { variant: 'puffling',    scale: 1.4, texturePool: 'water', bodyColor: 0xc8b878, accent: 0xf4f0e0, hue: [0.13, 0.04], sat: [0.40, 0.10], lit: [0.60, 0.06] }
     };
 
     class FishBattler3D extends Base {
@@ -147,6 +152,10 @@
                 case 'anemone':   this._buildAnemone(); break;
                 case 'nightjelly': this._buildNightmareJelly(); break;
                 case 'seaserpent': this._buildSeaSerpent(); break;
+                case 'minnow':     this._buildMinnow(); break;
+                case 'goldfish':   this._buildGoldfish(); break;
+                case 'stickleback': this._buildStickleback(); break;
+                case 'puffling':   this._buildPuffling(); break;
                 default:          this._buildShark(); break;
             }
             this.model = this.bodyGroup;
@@ -213,7 +222,9 @@
             for (const fx of [-0.06, 0.06]) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.1, 4), this._mat(0xfff0e0, 1.0, 0.4)); f.position.set(fx, -0.06, 0.2); f.rotation.x = Math.PI; this.head.add(f); }
             this._eye(this.head, -0.11, 0.05, 0.14, 0.05, p.accent, true);
             this._eye(this.head, 0.11, 0.05, 0.14, 0.05, p.accent, true);
-            this.head.position.set(0.95, 1.0, 0); this.head.rotation.y = Math.PI / 2; this.bodyGroup.add(this.head);
+            // Head carried a little above the line of the body, the way an eel lifts
+            // it to strike, never level with or under its own fin crest.
+            this.head.position.set(0.95, 1.1, 0); this.head.rotation.y = Math.PI / 2; this.bodyGroup.add(this.head);
             let x = 0.7, r = 0.21;
             for (let i = 0; i < 7; i++) {
                 const seg = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 10), skin); seg.scale.set(1.25, 1, 1);
@@ -475,10 +486,10 @@
             const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.05, 0.14), this._mat(0x190d0d, 1.0, 0.6)); mouth.position.set(0, -0.1, 0.34); this.head.add(mouth);
             this._eye(this.head, -0.16, 0.06, 0.14, 0.045, 0x111111, false);
             this._eye(this.head, 0.16, 0.06, 0.14, 0.045, 0x111111, false);
-            this.head.position.set(0, 1.05, 0.8); this.bodyGroup.add(this.head);
+            this.head.position.set(0, 1.09, 0.8); this.bodyGroup.add(this.head);
             this.dorsalFin = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.6, 3), finMat); this.dorsalFin.position.set(0, 1.5, 0.1); this.dorsalFin.scale.set(0.34, 1, 1.3); this.bodyGroup.add(this.dorsalFin);
             const tip = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), this._mat(0x141414, 1.0, 0.5)); tip.position.y = 0.32; this.dorsalFin.add(tip);
-            this.tailFin = new THREE.Mesh(new THREE.ConeGeometry(0.38, 0.8, 3), finMat); this.tailFin.scale.set(1, 1, 0.1); this.tailFin.position.set(0, 1.05, -1.1); this.tailFin.rotation.x = 0.2; this.bodyGroup.add(this.tailFin);
+            this.tailFin = new THREE.Mesh(new THREE.ConeGeometry(0.38, 0.8, 3), finMat); this.tailFin.scale.set(1, 1, 0.1); this.tailFin.position.set(0, 1.05, -0.88); this.tailFin.rotation.x = 0.2; this.bodyGroup.add(this.tailFin);
             this.tail = this.tailFin;
             this.lPec = this._pec(finMat, -1, 0.35); this.rPec = this._pec(finMat, 1, 0.35);
             this._wireFish();
@@ -535,9 +546,9 @@
             const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.05, 0.14), this._mat(0x190d0d, 1.0, 0.6)); mouth.position.set(0, -0.12, 0.24); this.head.add(mouth);
             this._eye(this.head, -0.52, 0.02, 0.06, 0.07, 0x111111, false);
             this._eye(this.head, 0.52, 0.02, 0.06, 0.07, 0x111111, false);
-            this.head.position.set(0, 1.05, 0.85); this.bodyGroup.add(this.head);
+            this.head.position.set(0, 1.09, 0.85); this.bodyGroup.add(this.head);
             this.dorsalFin = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.6, 3), finMat); this.dorsalFin.scale.set(0.4, 1, 1.4); this.dorsalFin.position.set(0, 1.55, 0.0); this.bodyGroup.add(this.dorsalFin);
-            this.tailFin = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.75, 3), finMat); this.tailFin.scale.set(1, 1, 0.12); this.tailFin.position.set(0, 1.05, -1.0); this.bodyGroup.add(this.tailFin);
+            this.tailFin = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.75, 3), finMat); this.tailFin.scale.set(1, 1, 0.12); this.tailFin.position.set(0, 1.05, -0.86); this.bodyGroup.add(this.tailFin);
             this.tail = this.tailFin;
             this.lPec = this._pec(finMat, -1, 0.3); this.rPec = this._pec(finMat, 1, 0.3);
             this._wireFish();
@@ -585,7 +596,7 @@
             this.dorsalFin = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.7, 3), finMat); this.dorsalFin.scale.set(0.14, 1, 1.2); this.dorsalFin.position.set(0, 1.6, 0.1); this.bodyGroup.add(this.dorsalFin);
             this.tailFin = new THREE.Group();
             for (const s of [-1, 1]) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.55, 3), finMat); f.scale.set(1, 1, 0.1); f.position.set(0, s * 0.24, 0); f.rotation.z = s * 0.5; this.tailFin.add(f); }
-            this.tailFin.position.set(0, 1.1, -1.05); this.bodyGroup.add(this.tailFin);
+            this.tailFin.position.set(0, 1.1, -0.8); this.bodyGroup.add(this.tailFin);
             this.tail = this.tailFin;
             this.lPec = this._pec(finMat, -1, 0.4); this.rPec = this._pec(finMat, 1, 0.4);
             this._partMeshMap = { BODY: this.body, TORSO: this.body, CORE: this.body, HEAD: this.head, BILL: this.head, TAIL: this.tailFin, TAIL_FIN: this.tailFin, DORSAL_FIN: this.dorsalFin, LEFT_PECTORAL_FIN: this.lPec, RIGHT_PECTORAL_FIN: this.rPec };
@@ -609,12 +620,12 @@
             const snout = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.6, 12), skin); snout.rotation.x = Math.PI / 2; snout.position.z = 0.2; this.head.add(snout);
             this._eye(this.head, -0.18, 0.06, 0.05, 0.07, 0x111111, false);
             this._eye(this.head, 0.18, 0.06, 0.05, 0.07, 0x111111, false);
-            this.head.position.set(0, 1.1, 0.85); this.bodyGroup.add(this.head);
+            this.head.position.set(0, 1.14, 0.85); this.bodyGroup.add(this.head);
             this.dorsalFin = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.5, 3), finMat); this.dorsalFin.scale.set(0.14, 1, 1.2); this.dorsalFin.position.set(0, 1.55, 0.2); this.bodyGroup.add(this.dorsalFin);
             for (let i = 0; i < 4; i++) { const fl = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.12, 3), finMat); fl.scale.set(0.4, 1, 1); fl.position.set(0, 1.45, -0.3 - i * 0.15); this.bodyGroup.add(fl); }
             this.tailFin = new THREE.Group();
             for (const s of [-1, 1]) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.5, 3), finMat); f.scale.set(1, 1, 0.1); f.position.set(0, s * 0.22, 0); f.rotation.z = s * 0.6; this.tailFin.add(f); }
-            this.tailFin.position.set(0, 1.1, -1.0); this.bodyGroup.add(this.tailFin);
+            this.tailFin.position.set(0, 1.1, -0.86); this.bodyGroup.add(this.tailFin);
             this.tail = this.tailFin;
             this.lPec = this._pec(finMat, -1, 0.35); this.rPec = this._pec(finMat, 1, 0.35);
             this._wireFish();
@@ -671,7 +682,9 @@
             for (let i = 0; i < 10; i++) {
                 const branch = new THREE.Mesh(new THREE.ConeGeometry(0.05 + this.idRand() * 0.05, 0.2 + this.idRand() * 0.2, 4), coralMat);
                 const a = this.idRand() * Math.PI * 2;
-                branch.position.set(Math.cos(a) * 0.24, 1.4 + this.idRand() * 0.5, Math.sin(a) * 0.2);
+                // Branches are rooted on the torso, so they are placed in its own space
+                // (it stands at y 1.55); body-space heights hung them over the head.
+                branch.position.set(Math.cos(a) * 0.24, -0.15 + this.idRand() * 0.5, Math.sin(a) * 0.2);
                 branch.rotation.set(this.idRand() * 1.2 - 0.6, a, this.idRand() * 1.2 - 0.6);
                 this.body.add(branch);
             }
@@ -711,7 +724,7 @@
             const column = this._mat(p.bodyColor, 0.85, 0.5);
             this.body = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.5, 0.7, 14), column); this.body.position.set(0, 0.85, 0); this.bodyGroup.add(this.body);
             this.head = this.body;
-            const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.36, 0.12, 14), column); disc.position.set(0, 1.22, 0); this.body.add(disc);
+            const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.36, 0.12, 14), column); disc.position.set(0, 0.37, 0); this.body.add(disc); // oral disc, in the column's own space
             this.tentacles = new THREE.Group(); this._tents = [];
             const tMat = this._mat(p.accent, 0.9, 0.3, p.accent); tMat.emissiveIntensity = 0.4;
             for (let i = 0; i < 24; i++) {
@@ -736,7 +749,9 @@
             this.body = new THREE.Mesh(new THREE.SphereGeometry(0.7, 20, 14, 0, Math.PI * 2, 0, Math.PI * 0.6), bellMat);
             this.body.scale.set(1, 1.05, 1); this.body.position.set(0, 1.6, 0); this.bodyGroup.add(this.body);
             this.head = this.body;
-            for (let i = 0; i < 4; i++) { const ring = new THREE.Mesh(new THREE.TorusGeometry(0.28 + i * 0.14, 0.02, 6, 24), this._mat(p.accent, 0.7, 0.2, p.accent)); ring.material.emissiveIntensity = 0.8; ring.rotation.x = Math.PI / 2; ring.position.set(0, 1.55 - i * 0.02, 0); this.body.add(ring); }
+            // Pattern rings painted on the bell, in its own space: each sits where the
+            // dome of radius 0.7 is that wide.
+            for (let i = 0; i < 4; i++) { const rr = 0.28 + i * 0.14; const ring = new THREE.Mesh(new THREE.TorusGeometry(rr, 0.02, 6, 24), this._mat(p.accent, 0.7, 0.2, p.accent)); ring.material.emissiveIntensity = 0.8; ring.rotation.x = Math.PI / 2; ring.position.set(0, Math.sqrt(Math.max(0, 0.49 - rr * rr)), 0); this.body.add(ring); }
             this.rim = new THREE.Mesh(new THREE.TorusGeometry(0.68, 0.05, 8, 26), this._mat(p.accent, 0.85, 0.3, p.accent)); this.rim.rotation.x = Math.PI / 2; this.rim.position.set(0, 1.6, 0); this.bodyGroup.add(this.rim);
             this.tentacles = new THREE.Group(); this._tents = [];
             for (let i = 0; i < 12; i++) {
@@ -766,7 +781,7 @@
             const crest = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.4, 3), this._mat(p.accent, 0.8, 0.5)); crest.scale.set(0.1, 1, 1.2); crest.position.set(0, 0.28, -0.05); this.head.add(crest);
             this._eye(this.head, -0.14, 0.08, 0.2, 0.06, p.accent, true);
             this._eye(this.head, 0.14, 0.08, 0.2, 0.06, p.accent, true);
-            this.head.position.set(1.2, 1.0, 0); this.head.rotation.y = Math.PI / 2; this.bodyGroup.add(this.head);
+            this.head.position.set(1.2, 1.2, 0); this.head.rotation.y = Math.PI / 2; this.bodyGroup.add(this.head); // reared above the crest
             this._segments = [];
             let x = 0.85, r = 0.3;
             for (let i = 0; i < 9; i++) {
@@ -787,6 +802,170 @@
                 { gone: ['HEAD', 'SKULL'], hide: [this.head] },
                 { gone: ['TAIL'], hide: [this.tail] },
             ];
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // Level 1-5 starter roster: one bespoke fish per enemy (lv_ keys).
+        // ════════════════════════════════════════════════════════════════════
+        _dk(hex, k) { return new THREE.Color(hex).multiplyScalar(k).getHex(); }
+        // A flat fin (a three-sided cone pressed thin in its local x) whose root
+        // sits at `root` and which points along `dir`, in the parent's space.
+        _finAt(parent, mat, root, dir, r, len, thin) {
+            const d = dir.clone().normalize();
+            const f = new THREE.Mesh(new THREE.ConeGeometry(r, len, 3), mat);
+            f.scale.set(thin || 0.12, 1, 1);
+            f.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
+            f.position.copy(root).addScaledVector(d, len * 0.45);
+            parent.add(f); return f;
+        }
+        // AquaticFish part map + cascade for the roster fish.
+        _wireLvFish() {
+            this._partMeshMap = { BODY: this.body, TORSO: this.body, CORE: this.body, HEAD: this.head, MOUTH: this.mouth, TAIL_FIN: this.tailFin, TAIL: this.tailFin, DORSAL_FIN: this.dorsalFin, LEFT_PECTORAL_FIN: this.lPec, RIGHT_PECTORAL_FIN: this.rPec };
+            this._cascadeRules = [
+                { gone: ['BODY', 'TORSO', 'CORE'], hide: [this.body, this.head, this.tailFin, this.dorsalFin, this.lPec, this.rPec, ...(this._lvExtra || [])].filter(Boolean) },
+                { gone: ['HEAD'], hide: [this.head] },
+                { gone: ['MOUTH'], hide: [this.mouth] },
+                { gone: ['TAIL_FIN', 'TAIL'], hide: [this.tailFin] },
+                { gone: ['DORSAL_FIN'], hide: [this.dorsalFin] },
+                { gone: ['LEFT_PECTORAL_FIN'], hide: [this.lPec] },
+                { gone: ['RIGHT_PECTORAL_FIN'], hide: [this.rPec] },
+            ];
+        }
+
+        // ── River Minnow: slim silver dart, dark lateral stripe, red throat,
+        // an eye too big for its nerves ─────────────────────────────────────
+        _buildMinnow() {
+            const p = this.profile, V = (x, y, z) => new THREE.Vector3(x, y, z);
+            const skin = this._skinMat(p.bodyColor, 0.3);
+            const back = this._mat(this._dk(p.bodyColor, 0.55), 1, 0.5);
+            const fin = this._mat(0xd8d0b0, 0.7, 0.5);
+            this.body = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), skin); this.body.scale.set(0.7, 0.85, 2.6); this.body.position.set(0, 0.9, 0); this.bodyGroup.add(this.body);
+            const saddle = new THREE.Mesh(new THREE.SphereGeometry(0.205, 8, 3, 0, Math.PI * 2, 0, Math.PI * 0.32), back); this.body.add(saddle);
+            const stripe = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 4), this._mat(0x2a2a26, 1, 0.5)); stripe.scale.set(0.72, 0.1, 2.45); stripe.position.set(0, 0.89, -0.02); this.bodyGroup.add(stripe);
+            this.head = new THREE.Group(); this.head.position.set(0, 0.92, 0.44); this.bodyGroup.add(this.head);
+            const snout = new THREE.Mesh(new THREE.SphereGeometry(0.12, 7, 5), skin); snout.scale.set(0.95, 1, 1.3); this.head.add(snout);
+            this._eye(this.head, -0.085, 0.035, 0.05, 0.062, 0x111111, false);
+            this._eye(this.head, 0.085, 0.035, 0.05, 0.062, 0x111111, false);
+            const throat = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 4), this._mat(p.accent, 1, 0.5)); throat.scale.set(1, 0.55, 1.4); throat.position.set(0, -0.08, 0.0); this.head.add(throat);
+            this.mouth = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.018, 0.03), this._mat(0x1a1010, 1, 0.6)); this.mouth.position.set(0, -0.025, 0.155); this.head.add(this.mouth);
+            this.dorsalFin = this._finAt(this.bodyGroup, fin, V(0, 1.05, 0.02), V(0, 1, -0.6), 0.07, 0.18);
+            this.lPec = this._finAt(this.bodyGroup, fin, V(-0.12, 0.84, 0.28), V(-1, -0.4, -0.6), 0.05, 0.14, 0.15);
+            this.rPec = this._finAt(this.bodyGroup, fin, V(0.12, 0.84, 0.28), V(1, -0.4, -0.6), 0.05, 0.14, 0.15);
+            this._lvExtra = [stripe, this._finAt(this.bodyGroup, fin, V(0, 0.76, -0.22), V(0, -1, -0.7), 0.05, 0.12)];
+            this.tailFin = new THREE.Group(); this.tailFin.position.set(0, 0.9, -0.48); this.bodyGroup.add(this.tailFin);
+            this._finAt(this.tailFin, fin, V(0, 0.01, 0), V(0, 0.6, -1), 0.08, 0.26);
+            this._finAt(this.tailFin, fin, V(0, -0.01, 0), V(0, -0.6, -1), 0.08, 0.26);
+            this._wireLvFish();
+        }
+
+        // ── Escaped Goldfish: a flushed pet grown fat and furious: egg body,
+        // bubble-eye sacs, a scowl and a long veil tail ─────────────────────
+        _buildGoldfish() {
+            const p = this.profile, V = (x, y, z) => new THREE.Vector3(x, y, z);
+            const skin = this._skinMat(p.bodyColor, 0.35);
+            const veil = this._mat(0xf8a050, 0.62, 0.4);
+            this.body = new THREE.Mesh(new THREE.SphereGeometry(0.42, 8, 6), skin); this.body.scale.set(0.72, 0.92, 1.1); this.body.position.set(0, 1.0, 0); this.bodyGroup.add(this.body);
+            const paunch = new THREE.Mesh(new THREE.SphereGeometry(0.33, 7, 5), skin); paunch.position.set(0, 0.86, 0.04); paunch.scale.set(0.85, 0.9, 1.1); this.bodyGroup.add(paunch);
+            // Pale patches, and one grey-green sewer stain it never lost.
+            [[0.29, 0.1, 0.05, p.accent], [-0.28, 0.04, -0.12, p.accent], [0.22, -0.18, -0.2, 0x7a8a6a]].forEach(([x, y, z, c]) => {
+                const pt = new THREE.Mesh(new THREE.SphereGeometry(0.09, 5, 4), this._mat(c, 1, 0.5)); pt.scale.set(0.3, 1, 1.3); pt.position.set(x / 0.72, y / 0.92, z / 1.1); this.body.add(pt);
+            });
+            this.head = new THREE.Group(); this.head.position.set(0, 1.02, 0.38); this.bodyGroup.add(this.head);
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.24, 8, 6), skin); dome.scale.set(1.05, 0.95, 1); this.head.add(dome);
+            for (const s of [-1, 1]) {
+                this._eye(this.head, s * 0.18, 0.07, 0.12, 0.055, 0x111111, false);
+                const sac = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 5), this._mat(0xffe8a0, 0.6, 0.15)); sac.position.set(s * 0.19, -0.05, 0.12); this.head.add(sac);
+                const brow = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.026, 0.035), this._mat(0x7a2a0a, 1, 0.6)); brow.position.set(s * 0.15, 0.14, 0.17); brow.rotation.z = s * 0.4; this.head.add(brow);
+            }
+            this.mouth = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.022, 4, 8), this._mat(0xe86a3a, 1, 0.4)); this.mouth.position.set(0, -0.04, 0.24); this.head.add(this.mouth);
+            this.dorsalFin = this._finAt(this.bodyGroup, veil, V(0, 1.34, 0.05), V(0, 1, -0.5), 0.14, 0.38, 0.1);
+            this.lPec = this._finAt(this.bodyGroup, veil, V(-0.24, 0.82, 0.22), V(-1, -0.6, -0.4), 0.08, 0.2, 0.12);
+            this.rPec = this._finAt(this.bodyGroup, veil, V(0.24, 0.82, 0.22), V(1, -0.6, -0.4), 0.08, 0.2, 0.12);
+            this._lvExtra = [paunch];
+            // Double veil tail: four long drooping lobes off the peduncle.
+            this.tailFin = new THREE.Group(); this.tailFin.position.set(0, 1.0, -0.44); this.bodyGroup.add(this.tailFin);
+            for (const s of [-1, 1]) {
+                this._finAt(this.tailFin, veil, V(s * 0.03, 0.02, 0), V(s * 0.3, 0.3, -1), 0.17, 0.62, 0.1);
+                this._finAt(this.tailFin, veil, V(s * 0.03, -0.02, 0), V(s * 0.3, -0.55, -1), 0.17, 0.7, 0.1);
+            }
+            this._wireLvFish();
+        }
+
+        // ── River Stickleback: a tiny armoured fish, three spines up, bony
+        // side plates, red throat and electric blue eyes ─────────────────────
+        _buildStickleback() {
+            const p = this.profile, V = (x, y, z) => new THREE.Vector3(x, y, z);
+            const skin = this._skinMat(p.bodyColor, 0.4);
+            const plate = this._mat(0x9aa890, 1, 0.25);
+            const spineMat = this._mat(0xe8e0c8, 1, 0.3);
+            const fin = this._mat(this._dk(p.bodyColor, 1.3), 0.65, 0.5);
+            this.body = new THREE.Mesh(new THREE.SphereGeometry(0.24, 8, 6), skin); this.body.scale.set(0.6, 0.9, 2.0); this.body.position.set(0, 0.9, 0); this.bodyGroup.add(this.body);
+            const belly = new THREE.Mesh(new THREE.SphereGeometry(0.14, 6, 4), this._mat(p.accent, 1, 0.5)); belly.scale.set(0.95, 0.5, 1.5); belly.position.set(0, 0.76, 0.16); this.bodyGroup.add(belly);
+            for (const s of [-1, 1]) for (const z of [0.25, 0.15, 0.05, -0.05, -0.15, -0.25]) {
+                const w = 0.144 * Math.sqrt(1 - (z / 0.48) * (z / 0.48));
+                const pl = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.1, 0.07), plate); pl.position.set(s * w, 0.88, z); this.bodyGroup.add(pl);
+            }
+            // Three erect dorsal spines; they bristle on a strike.
+            this.dorsalFin = new THREE.Group(); this.bodyGroup.add(this.dorsalFin);
+            this._spines = [];
+            [[0.18, 0.24], [0.02, 0.22], [-0.13, 0.11]].forEach(([z, h]) => {
+                const top = 0.9 + 0.216 * Math.sqrt(1 - (z / 0.48) * (z / 0.48));
+                const sp = new THREE.Mesh(new THREE.ConeGeometry(0.02, h, 4), spineMat); sp.position.set(0, top + h / 2 - 0.03, z); sp.rotation.x = -0.15;
+                this.dorsalFin.add(sp); this._spines.push(sp);
+            });
+            this._finAt(this.dorsalFin, fin, V(0, 1.07, -0.22), V(0, 0.8, -1), 0.06, 0.18);
+            for (const s of [-1, 1]) { const ps = new THREE.Mesh(new THREE.ConeGeometry(0.016, 0.16, 4), spineMat); ps.position.set(s * 0.1, 0.72, 0.1); ps.rotation.z = s * 2.4; this.bodyGroup.add(ps); this._spines.push(ps); }
+            this.head = new THREE.Group(); this.head.position.set(0, 0.92, 0.42); this.bodyGroup.add(this.head);
+            const snout = new THREE.Mesh(new THREE.SphereGeometry(0.13, 7, 5), skin); snout.scale.set(0.9, 1, 1.3); this.head.add(snout);
+            this._eye(this.head, -0.08, 0.04, 0.07, 0.055, 0x3ac8ff, true);
+            this._eye(this.head, 0.08, 0.04, 0.07, 0.055, 0x3ac8ff, true);
+            this.mouth = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.016, 0.03), this._mat(0x1a1010, 1, 0.6)); this.mouth.position.set(0, -0.035, 0.165); this.mouth.rotation.x = -0.3; this.head.add(this.mouth);
+            this.lPec = this._finAt(this.bodyGroup, fin, V(-0.12, 0.86, 0.26), V(-1, -0.2, -0.6), 0.06, 0.13, 0.15);
+            this.rPec = this._finAt(this.bodyGroup, fin, V(0.12, 0.86, 0.26), V(1, -0.2, -0.6), 0.06, 0.13, 0.15);
+            this.tailFin = new THREE.Group(); this.tailFin.position.set(0, 0.9, -0.44); this.bodyGroup.add(this.tailFin);
+            const ped = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.18, 4), skin); ped.rotation.x = -Math.PI / 2; ped.position.z = -0.05; this.tailFin.add(ped);
+            const fan = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.22, 3), fin); fan.scale.set(0.1, 1, 1); fan.rotation.x = Math.PI / 2; fan.position.z = -0.2; this.tailFin.add(fan);
+            this._lvExtra = [belly];
+            this._wireLvFish();
+        }
+
+        // ── Spiny Puffling: a small round worrier in neat rows of spines, a
+        // little beak, wide eyes rolled up under anxious brows; it puffs up ───
+        _buildPuffling() {
+            const p = this.profile, V = (x, y, z) => new THREE.Vector3(x, y, z);
+            const skin = this._skinMat(p.bodyColor, 0.5);
+            const spineMat = this._mat(0xeee6c8, 1, 0.4);
+            const fin = this._mat(this._dk(p.bodyColor, 1.1), 0.7, 0.5);
+            this.body = new THREE.Mesh(new THREE.SphereGeometry(0.34, 8, 6), skin); this.body.position.set(0, 0.9, 0); this.bodyGroup.add(this.body);
+            const belly = new THREE.Mesh(new THREE.SphereGeometry(0.345, 8, 3, 0, Math.PI * 2, Math.PI * 0.62, Math.PI * 0.38), this._mat(p.accent, 1, 0.5)); this.body.add(belly);
+            // Spines in neat latitude rows, kept off the face. Children of the
+            // body, so they ride its surface when it inflates.
+            const up = V(0, 1, 0);
+            [0.45, 0.8, 1.15, 1.5, 1.85, 2.2, 2.55].forEach((th, row) => {
+                for (let k = 0; k < 9; k++) {
+                    const ph = (k + (row % 2) * 0.5) / 9 * Math.PI * 2;
+                    const n = V(Math.sin(th) * Math.sin(ph), Math.cos(th), Math.sin(th) * Math.cos(ph));
+                    if (n.z > 0.55 && Math.abs(n.y) < 0.6) continue;
+                    const sp = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.1, 3), spineMat);
+                    sp.position.copy(n).multiplyScalar(0.36); sp.quaternion.setFromUnitVectors(up, n); this.body.add(sp);
+                }
+            });
+            for (let i = 0; i < 6; i++) { const a = i * 1.1 + 0.4, b = 0.5 + (i % 3) * 0.3; const sp = new THREE.Mesh(new THREE.SphereGeometry(0.04, 4, 3), this._mat(this._dk(p.bodyColor, 0.45), 1, 0.6)); sp.scale.set(1, 1, 0.3); const n = V(Math.sin(b) * Math.sin(a), Math.cos(b), Math.sin(b) * Math.cos(a)); sp.position.copy(n).multiplyScalar(0.335); sp.lookAt(n.clone().multiplyScalar(2)); this.body.add(sp); }
+            // Face: the HEAD part, riding the body.
+            this.head = new THREE.Group(); this.body.add(this.head);
+            for (const s of [-1, 1]) {
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.09, 7, 5), this._mat(0xffffff, 1, 0.2)); eye.position.set(s * 0.14, 0.13, 0.26); this.head.add(eye);
+                const pup = new THREE.Mesh(new THREE.SphereGeometry(0.04, 5, 4), this._mat(0x111111, 1, 0.2)); pup.position.set(-s * 0.01, 0.035, 0.075); eye.add(pup);
+                const brow = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.022, 0.03), this._mat(this._dk(p.bodyColor, 0.4), 1, 0.6)); brow.position.set(s * 0.13, 0.22, 0.24); brow.rotation.z = -s * 0.45; this.head.add(brow);
+            }
+            this.mouth = new THREE.Group(); this.mouth.position.set(0, -0.04, 0.33); this.head.add(this.mouth);
+            for (const y of [0.018, -0.018]) { const bk = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.03, 0.05), this._mat(0xf4f0e8, 1, 0.3)); bk.position.y = y; this.mouth.add(bk); }
+            this.lPec = this._finAt(this.body, fin, V(-0.31, -0.02, 0.08), V(-1, 0.1, -0.3), 0.06, 0.13, 0.15);
+            this.rPec = this._finAt(this.body, fin, V(0.31, -0.02, 0.08), V(1, 0.1, -0.3), 0.06, 0.13, 0.15);
+            this.dorsalFin = this._finAt(this.body, fin, V(0, 0.3, -0.16), V(0, 0.7, -1), 0.06, 0.12);
+            this.tailFin = new THREE.Group(); this.tailFin.position.set(0, 0, -0.33); this.body.add(this.tailFin);
+            const fan = new THREE.Mesh(new THREE.SphereGeometry(0.1, 5, 4), fin); fan.scale.set(0.15, 1, 1.1); fan.position.z = -0.08; this.tailFin.add(fan);
+            this._wireLvFish();
         }
 
         animatePose(deltaTime) {
@@ -836,8 +1015,10 @@
                     this.model.position.y = this._baseY + Math.sin(t * 1.5) * 0.06 * this.scale;
                     if (this.tail && this.tail.visible) this.tail.rotation.z = Math.sin(t * (fast ? 5 : 2.2)) * 0.25;
                     const wave = fast ? Math.sin(t * 6) * 0.4 : Math.sin(t * 1.8) * 0.18;
-                    if (this.leftArm) this.leftArm.rotation.z = 0.5 + wave;
-                    if (this.rightArm) this.rightArm.rotation.z = -0.5 - wave;
+                    // Same sign as _arm built them (side * 0.5): the old flipped sign
+                    // swung both arms in through the torso every idle frame.
+                    if (this.leftArm) this.leftArm.rotation.z = -0.5 - wave;
+                    if (this.rightArm) this.rightArm.rotation.z = 0.5 + wave;
                     if (this.head && this.head.visible) this.head.rotation.z = Math.sin(t * 1.4) * 0.06;
                     break;
                 }
@@ -906,6 +1087,20 @@
                     this._tents.forEach((g, i) => { if (g.visible) { g.rotation.x = Math.sin(t * 2 + i) * 0.25; g.rotation.z = Math.cos(t * 2 + i) * 0.25; } });
                     break;
                 }
+                case 'minnow':
+                case 'goldfish':
+                case 'stickleback':
+                case 'puffling': {
+                    const slow = this.variant === 'goldfish' ? 0.6 : 1;
+                    this.model.position.y = this._baseY + Math.sin(t * 2.4 * slow) * 0.05 * this.scale;
+                    // The minnow darts: a nervous sideways twitch now and then.
+                    if (this.variant === 'minnow') this.model.position.x = baseX + ((Math.sin(t * 7.3) > 0.85 ? 0.05 : 0) + Math.sin(t * 2.1) * 0.02) * this.scale;
+                    if (this.variant === 'goldfish') this.model.rotation.y = Math.sin(t * 1.4) * 0.08;
+                    if (this.tailFin && this.tailFin.visible) this.tailFin.rotation.y = Math.sin(t * (fast ? 14 : 7) * slow) * (this.variant === 'goldfish' ? 0.3 : 0.45);
+                    if (this._spines) this._spines.forEach(s => { s.scale.y = fast ? 1 + Math.abs(Math.sin(t * 8)) * 0.3 : 1; });
+                    if (this.variant === 'puffling' && this.body) this.body.scale.setScalar(fast ? 1 + Math.abs(Math.sin(t * 3)) * 0.3 : 1 + Math.sin(t * 2) * 0.03);
+                    break;
+                }
                 case 'seaserpent': {
                     const speed = fast ? 7 : 3.5;
                     this._segments.forEach((s, i) => { if (s.visible) s.position.z = Math.sin(t * speed - i * 0.6) * 0.22; });
@@ -972,6 +1167,10 @@
     reg('fsh_deepfrosteel',        { aliases: ['fsh_deepfrosteel'],        scale: S.fsh_deepfrosteel.scale, weapon: 0, create: make });
     reg('fsh_lakelurkerserpent',   { aliases: ['fsh_lakelurkerserpent'],   scale: S.fsh_lakelurkerserpent.scale, weapon: 0, create: make });
     reg('fsh_umbilicalstrangler',  { aliases: ['fsh_umbilicalstrangler'],  scale: S.fsh_umbilicalstrangler.scale, weapon: 0, create: make });
+    reg('lv_riverminnow',          { aliases: ['lv_riverminnow'],          scale: S.lv_riverminnow.scale, weapon: 0, create: make });
+    reg('lv_escapedgoldfish',      { aliases: ['lv_escapedgoldfish'],      scale: S.lv_escapedgoldfish.scale, weapon: 0, create: make });
+    reg('lv_riverstickleback',     { aliases: ['lv_riverstickleback'],     scale: S.lv_riverstickleback.scale, weapon: 0, create: make });
+    reg('lv_spinypuffling',        { aliases: ['lv_spinypuffling'],        scale: S.lv_spinypuffling.scale, weapon: 0, create: make });
 
     //=========================================================================
     // Name assignments (AquaticFish-tagged enemies; registerNamed outranks the
@@ -1014,6 +1213,10 @@
         fsh_deepfrosteel: ["Deep Frost Eel"],
         fsh_lakelurkerserpent: ["Lake Lurker Serpent"],
         fsh_umbilicalstrangler: ["Umbilical Strangler"],
+        lv_riverminnow: ["River Minnow"],
+        lv_escapedgoldfish: ["Escaped Goldfish"],
+        lv_riverstickleback: ["River Stickleback"],
+        lv_spinypuffling: ["Spiny Puffling"],
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

@@ -476,6 +476,9 @@
         spriteKey = window.SpriteCatalog
           ? window.SpriteCatalog.pickNpcKey(rngV.next())
           : null;
+        // A known person never wears a beast's sheet: the flat list below
+        // holds none.
+        if (spriteKey && options && options.person === true && NC && NC.isCreatureSheet(spriteKey)) spriteKey = null;
         if (!spriteKey) {
           // Catalogue-less fallback. It still keeps the Varlenian faces off
           // everybody who is not standing in Varlenia, the one rule that would
@@ -538,7 +541,11 @@
         // or Animals/ halves makes this a creature (the class dealt above says
         // whether it is a talking one); anything else is a person.
         if (NC && NC.isCreatureSheet(pinnedSprite)) creature = { spriteKey, bustIndex };
-      } else if (NC) {
+      } else if (NC && !(options && options.person === true)) {
+        // `options.person` is a caller that already knows this name is a
+        // person (an office holder of NPCPolitics): the roll stands down, or a
+        // minister's name would be minted onto a pigeon and the beast would
+        // carry it for life.
         const rngC = new SeededRng(nameToSeed(eventName + "_creature" + worldSeed));
         if (rngC.next() < NC.creatureChance()) {
           // A stray dog belongs on the street, not the landing of somebody's
@@ -1067,6 +1074,7 @@
     // this NPC is already known to wear, for a caller that dealt the sprite
     // before the profile existed. See ProfileGenerator.generate: it is what
     // keeps the creature roll from minting a beast inside somebody's clothes.
+    // `options.person` says the name is a person's: no creature roll at all.
     ensureProfile(eventName, classId, homeGroupName, mapId, options) {
       if (!DataLoader.isReady || !eventName || !$gameSystem) return null;
       if (!$gameSystem._npcSociety) $gameSystem._npcSociety = {};

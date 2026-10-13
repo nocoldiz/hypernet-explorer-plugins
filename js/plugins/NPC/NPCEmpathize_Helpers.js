@@ -31,24 +31,35 @@
   // SECTION 1, PERSONALITY → MARKOV DB MAP  (built from js/db/Health/PersonalityData.json)
   // ============================================================================
 
-  let PERSONALITY_DB_MAP = {};
-  (() => {
-    try {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', 'js/db/Health/PersonalityData.json', false);
-      xhr.send();
-      if (xhr.status === 200 || xhr.status === 0) {
-        const data = JSON.parse(xhr.responseText);
-        // PersonalityData.json may be a bare array (legacy) or { list:[...] } (current).
-        const arr = Array.isArray(data) ? data : (data.list || []);
-        for (const p of arr) {
-          if (p.name && p.markovDbs) PERSONALITY_DB_MAP[p.name] = p.markovDbs;
-        }
+  // Built on first use rather than at plugin load: DataService already holds
+  // the file (window.Health.PersonalityData, the copy NPCSociety reads its
+  // personalities off), so reading it again over a synchronous request at boot
+  // only stalled the load. The request stays as the fallback for a page with
+  // no DataService.
+  let _personalityDbMap = null;
+  function _personalityMarkovDbs() {
+    if (_personalityDbMap) return _personalityDbMap;
+    const map = {};
+    let data = null;
+    try { data = window.Health?.PersonalityData || null; } catch (e) { data = null; }
+    if (!data) {
+      try {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'js/db/Health/PersonalityData.json', false);
+        xhr.send();
+        if (xhr.status === 200 || xhr.status === 0) data = JSON.parse(xhr.responseText);
+      } catch (e) {
+        console.warn('[NPCEmpathize] Could not load PersonalityData.json:', e);
       }
-    } catch (e) {
-      console.warn('[NPCEmpathize] Could not load PersonalityData.json:', e);
     }
-  })();
+    // PersonalityData.json may be a bare array (legacy) or { list:[...] } (current).
+    const arr = Array.isArray(data) ? data : (data?.list || []);
+    for (const p of arr) {
+      if (p?.name && p.markovDbs) map[p.name] = p.markovDbs;
+    }
+    _personalityDbMap = map;
+    return map;
+  }
 
   // ============================================================================
   // SECTION 2, I18N LOADER
@@ -100,7 +111,32 @@
   // global resolver with it.
   const _T_PASSTHROUGH = ['has', 'list', 'pool', 'obj', 'n', 'param', 'language'];
 
+  // Gender agreement with whoever the panel is about. A language that agrees
+  // participles and adjectives writes the forms inline as
+  // {g:masculine|feminine|plural} (the plural is the non-binary form, as in
+  // NPCSociety's bios), and every string read through _getT() is resolved
+  // against the subject the panel last drew (_setSubjectGender, set by
+  // _render). English carries no {g:} and passes through untouched.
+  let _subjectGi = 0;
+  function _setSubjectGender(gender) {
+    const g = Number(gender);
+    _subjectGi = g === 1 ? 1 : g >= 2 ? 2 : 0;
+  }
+  function _agreeSubject(text) {
+    if (typeof text !== 'string' || text.indexOf('{g:') < 0) return text;
+    return text.replace(/\{g:([^{}]*)\}/g, (whole, forms) => {
+      const list = forms.split('|');
+      return list[Math.min(_subjectGi, list.length - 1)];
+    });
+  }
+
   const _tAccessor = new Proxy(function (key, params) { return window.T(key, params); }, {
+    // Called as T('Empathize.x', params): the panel's own copy agrees with the
+    // subject too; anybody else's key is handed back as it stands.
+    apply(_target, _this, args) {
+      const out = window.T(args[0], args[1]);
+      return String(args[0] || '').indexOf('Empathize.') === 0 ? _agreeSubject(out) : out;
+    },
     get(_target, key) {
       if (typeof key !== 'string') return undefined;
       if (_T_PASSTHROUGH.indexOf(key) >= 0) return window.T[key].bind(window.T);
@@ -110,16 +146,16 @@
         return (...args) => {
           const p = {};
           params.forEach((name, i) => { p[name] = args[i] ?? ''; });
-          return window.T(full, p);
+          return _agreeSubject(window.T(full, p));
         };
       }
       if (!window.T.has(full)) return undefined;
       // A bank key resolves to its pool, a grouped key to its subtree, so the
       // call sites that expect an array or an object keep getting one.
       const value = window.T.obj(full);
-      if (Array.isArray(value)) return window.T.pool(full);
+      if (Array.isArray(value)) return window.T.pool(full).map(_agreeSubject);
       if (value && typeof value === 'object') return value;
-      return window.T(full);
+      return _agreeSubject(window.T(full));
     },
   });
 
@@ -158,8 +194,8 @@
     }
     if (profile?.personalityIndex != null && window._NPCSocietyDataLoader?.personalities) {
       const pers = window._NPCSocietyDataLoader.personalities[profile.personalityIndex];
-      if (pers?.name && PERSONALITY_DB_MAP[pers.name]) {
-        const dbs = PERSONALITY_DB_MAP[pers.name];
+      const dbs = pers?.name ? _personalityMarkovDbs()[pers.name] : null;
+      if (dbs) {
         return Array.isArray(dbs) ? dbs[Math.floor(Math.random() * dbs.length)] : dbs;
       }
     }
@@ -671,6 +707,21 @@
     return unique;
   }
 
+  // Whether `word` stands in `said` as a word of its own, read the way a \b
+  // regex reads it (ASCII word characters) without building one per surname
+  // per typed line. A surname is data, and one carrying a bracket used to
+  // throw out of the RegExp, which lost every topic the line named.
+  function _llmSaysWord(said, word) {
+    if (!word) return false;
+    const isWord = ch => ch !== undefined && /[A-Za-z0-9_]/.test(ch);
+    const headWord = isWord(word[0]);
+    const tailWord = isWord(word[word.length - 1]);
+    for (let at = said.indexOf(word); at >= 0; at = said.indexOf(word, at + 1)) {
+      if (isWord(said[at - 1]) !== headWord && isWord(said[at + word.length]) !== tailWord) return true;
+    }
+    return false;
+  }
+
   // What this world says about one leader, cut to what the year has reached.
   function _llmLeaderFact(name, year) {
     const record = window.LeaderPersona?.recordFor?.(name)
@@ -778,7 +829,7 @@
     if (hits.length < 3) {
       for (const [surname, entry] of _llmTopicSurnames()) {
         if (hits.length >= 3) break;
-        if (new RegExp('\\b' + surname + '\\b').test(said)) take(entry);
+        if (_llmSaysWord(said, surname)) take(entry);
       }
     }
     const facts = hits.map(entry =>
@@ -928,21 +979,27 @@
   // Replace strings and string arrays, recurse objects, leave numbers alone. An
   // entry the overlay does not carry keeps whatever the db said, so a partial
   // translation falls back line-bank by line-bank rather than all at once.
-  function _mergeLines(base, over) {
-    if (!over || !base) return;
+  //
+  // Copy on write: `base` itself is never touched. What comes back is a fresh
+  // object wherever `over` writes into it and the very same `base` wherever it
+  // writes nothing, so the shipped db (shared with everything else that reads
+  // it) is never changed and the parts no translation reaches are not copied.
+  function _overLines(base, over) {
+    if (!over || !base) return base;
+    const out = Array.isArray(base) ? base.slice() : Object.assign({}, base);
     for (const k of Object.keys(over)) {
       const o = over[k];
-      if (Array.isArray(o)) base[k] = o.slice();
+      if (Array.isArray(o)) out[k] = o.slice();
       else if (o && typeof o === 'object') {
-        if (!base[k] || typeof base[k] !== 'object') base[k] = {};
-        _mergeLines(base[k], o);
-      } else if (typeof o === 'string') base[k] = o;
+        out[k] = _overLines(out[k] && typeof out[k] === 'object' ? out[k] : {}, o);
+      } else if (typeof o === 'string') out[k] = o;
     }
+    return out;
   }
   // The db lists these as arrays of entries carrying their own `id`.
-  function _mergeById(list, over) {
-    if (!Array.isArray(list) || !over) return;
-    list.forEach(entry => _mergeLines(entry, over[entry.id]));
+  function _overById(list, over) {
+    if (!Array.isArray(list) || !over) return list;
+    return list.map(entry => _overLines(entry, over[entry.id]));
   }
   let _socialLinesDb = null;
   let _socialLinesLang = null;
@@ -950,23 +1007,29 @@
     const lang = ConfigManager.language || 'en';
     if (_socialLinesDb && _socialLinesLang === lang) return _socialLinesDb;
     _socialLinesLang = lang;
-    const db = (window.NPC && window.NPC.SocialLines)
-      ? JSON.parse(JSON.stringify(window.NPC.SocialLines))
-      : _readJson('js/db/NPC/SocialLines.json');
-    if (!db) {
+    // A shallow copy of the shipped db is all the language is laid over: the
+    // merge copies only what it writes into (_overLines), where a JSON round
+    // trip of the whole db used to stall the first social move.
+    const src = (window.NPC && window.NPC.SocialLines) || _readJson('js/db/NPC/SocialLines.json');
+    if (!src) {
       console.warn('[NPCEmpathize] failed to load SocialLines.json');
       _socialLinesDb = { interactions: [], performances: {}, jokes: {} };
       return _socialLinesDb;
     }
+    const db = Object.assign({}, src);
     const over = _readJson(`js/i18n/${lang}/conversations/SocialLines.json`);
+    // A bank the db does not carry stays missing rather than turning up as a
+    // key holding undefined.
+    const lay = (obj, key, merged) => { if (merged !== obj[key]) obj[key] = merged; };
     if (over) {
-      _mergeById(db.interactions, over.interactions);
-      if (over.romance) {
-        _mergeById(db.romance && db.romance.actions, over.romance.actions);
-        if (db.romance) _mergeLines(db.romance.rejection, over.romance.rejection);
-        if (db.romance) _mergeLines(db.romance.propose, over.romance.propose);
+      lay(db, 'interactions', _overById(db.interactions, over.interactions));
+      if (over.romance && db.romance && typeof db.romance === 'object') {
+        const romance = db.romance = Object.assign({}, db.romance);
+        lay(romance, 'actions', _overById(romance.actions, over.romance.actions));
+        lay(romance, 'rejection', _overLines(romance.rejection, over.romance.rejection));
+        lay(romance, 'propose', _overLines(romance.propose, over.romance.propose));
       }
-      ['performances', 'jokes', 'em', 'bubba'].forEach(s => _mergeLines(db[s], over[s]));
+      ['performances', 'jokes', 'em', 'bubba'].forEach(s => lay(db, s, _overLines(db[s], over[s])));
       // The signature banks are prose only: the db carries no skeleton for
       // them, so the language's own block is taken whole.
       if (over.signature) db.signature = over.signature;
@@ -985,10 +1048,12 @@
     if (!db._byId) { db._byId = {}; (db.interactions || []).forEach(i => (db._byId[i.id] = i)); }
     return db._byId;
   }
-  const _rand = arr => (arr && arr.length ? arr[Math.floor(Math.random() * arr.length)] : '');
+  // A line drawn from a bank agrees with the panel's subject on the way out
+  // ({g:...}, see _agreeSubject), so no {a|b} pass can mistake it for a choice.
+  const _rand = arr => (arr && arr.length ? _agreeSubject(arr[Math.floor(Math.random() * arr.length)]) : '');
   function vary(text) {
     if (typeof text !== 'string' || text.indexOf('{') < 0) return text;
-    let out = text;
+    let out = _agreeSubject(text);
     let guard = 0;
     while (guard++ < 64) {
       const next = out.replace(/\{([^{}]*\|[^{}]*)\}/g, (m, body) => _rand(body.split('|')));
@@ -1738,7 +1803,7 @@
     _animalJoinChance, _buildBattleFace, _bustNameFromEvent, _bustUrl, _chatOpinionShift,
     _countRecentInteractions, _diseaseVialId, _diseaseVialItems, _eventCommentLines,
     _extractClassId, _extractContacts, _findEventByName, _forceHighJoinChance, _genJoke,
-    _getNPCName, _getProfile, _getT, _hasJoinPartyCommand, _hasSelfSwitchAPage, _infectChance,
+    _getNPCName, _getProfile, _getT, _setSubjectGender, _agreeSubject, _hasJoinPartyCommand, _hasSelfSwitchAPage, _infectChance,
     _isStoryNpc, _joinChance, _joinLevelNeeded, _joinLevelOk, _lastInteractionDay, _llmCharacterSheet, _llmLifeFor, _llmWorkplaceLine,
     _llmPartyLine, _llmRelationLine, _llmSafe, _llmTopicsLine, _llmWhereabouts, _llmWorldLine,
     _partyMedianLevel, _presetFromEvent, _rand, _recruitAnimalAsMember, _recruitAnimalAsPet,

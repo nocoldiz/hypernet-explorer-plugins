@@ -238,6 +238,30 @@
   const BACKGROUND_CHUNK = 60;
   let _chunkOffset = 0;
 
+  // The hour's thoughts are the tick's dearest part: every person on the map
+  // and a quarter of the chunk pick a line, and picking one reads their whole
+  // life (LifeTalk). Written in the tick's own frame that was a hitch each
+  // time the hour turned on a busy map, so the names are queued here and
+  // thought a few a frame, alongside the dispatch queue below.
+  const THOUGHTS_PER_FRAME = 2;
+  const _thoughtQueue = new Set();
+  function drainThoughtQueue(society) {
+    if (!_thoughtQueue.size) return;
+    // A frame that has just sent somebody on their errand (the dispatch queue
+    // below, drained first) has paid for a route already: the thoughts wait
+    // for the next frame rather than landing on the same one. The dispatch
+    // queue is only filled on the hour, so they are held a few frames at most.
+    if (_sentThisFrame > 0) return;
+    let done = 0;
+    for (const name of _thoughtQueue) {
+      _thoughtQueue.delete(name);
+      const profile = society?.[name];
+      if (!profile) continue;
+      ThoughtGenerator.generate(profile);
+      if (++done >= THOUGHTS_PER_FRAME) break;
+    }
+  }
+
   // The tick runs once a game hour (see the Game_Map.update hook): an NPC is
   // given their need for the hour and the activity it sends them on, and keeps
   // at it until the next hour turns. Sending every controller on the map off
@@ -248,7 +272,9 @@
   // run (sleep, fast travel).
   const DISPATCH_PER_FRAME = 3;
   const _dispatchQueue = new Set();
+  let _sentThisFrame = 0;
   function drainDispatchQueue(society) {
+    _sentThisFrame = 0;
     if (!_dispatchQueue.size) return;
     let sent = 0;
     for (const ctrl of _dispatchQueue) {
@@ -257,7 +283,8 @@
       const profile = society?.[ctrl.eventName];
       if (!profile) continue;
       BehaviorDispatcher.dispatch(ctrl, profile);
-      if (++sent >= DISPATCH_PER_FRAME) break;
+      _sentThisFrame = ++sent;
+      if (sent >= DISPATCH_PER_FRAME) break;
     }
   }
 
@@ -474,7 +501,9 @@
 
       for (const name of chunkNames) {
         const profile = society[name];
-        if (!profile) continue;
+        // The dead live no more hours: no needs, no pay, no shift dealt
+        // again to them (NPCLifeSim.killNpc keeps their profile for the body).
+        if (!profile || profile._killed) continue;
         if (towerIdle && !onMapSet.has(name) && towerIdle.group(profile._homeGroupName)) continue;
         ensureSimFields(profile, name);
 
@@ -501,7 +530,7 @@
         // per-name offset so they don't all land on the same tick.
         // One tick is a game hour: on the map that is one thought each, off it
         // one hour in four, staggered by name.
-        if (onMapSet.has(name) || (hourIndex + nameHash(name)) % 4 === 0) ThoughtGenerator.generate(profile);
+        if (onMapSet.has(name) || (hourIndex + nameHash(name)) % 4 === 0) _thoughtQueue.add(name);
 
         // Wealth → home pool upgrade when money crosses tier thresholds
         WealthManager.maybeUpgrade(profile);
@@ -528,7 +557,7 @@
       // Always process on-map NPCs (regardless of chunk)
       for (const name of onMapSet) {
         const profile = society[name];
-        if (!profile || chunkSet.has(name)) continue; // already processed
+        if (!profile || profile._killed || chunkSet.has(name)) continue; // already processed, or dead
         ensureSimFields(profile, name);
         NeedManager.update(profile, delta);
         Gear.eatFromHand(profile, name);
@@ -538,7 +567,7 @@
         Addictions.tick(profile, name, true, currentMinute);
         if (profile.currentJobId === null) JobManager.assignJob(profile);
         _workPay(profile, name, currentMinute, true);
-        ThoughtGenerator.generate(profile);
+        _thoughtQueue.add(name);
       }
 
       // Log NPC social meetings, and queue the on-map controllers to be sent
@@ -571,7 +600,11 @@
     fixtureKind: fixtureKindOfName,
     fixtureNeeds,
     // Sends the queued on-map controllers on their need, a few a frame.
-    drainDispatch() { drainDispatchQueue($gameSystem?._npcSociety); },
+    // ...and the hour's queued thoughts, a few a frame too.
+    drainDispatch() {
+      drainDispatchQueue($gameSystem?._npcSociety);
+      drainThoughtQueue($gameSystem?._npcSociety);
+    },
     DISPATCH_PER_FRAME,
     NeedManager,
     ScheduleManager,

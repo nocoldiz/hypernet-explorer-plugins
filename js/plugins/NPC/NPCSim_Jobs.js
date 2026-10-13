@@ -48,6 +48,13 @@
       // Nor an office of a nation or a bloc: NPCPolitics pins the appointed
       // job onto whoever holds it and takes it back when they leave.
       if (profile._politicsOffice) return;
+      // Nor somebody dead: jobless for good, so no roster deals them again.
+      if (profile._killed) {
+        profile.currentJobId = 0;
+        profile.workMapId = null;
+        profile.workShift = null;
+        return;
+      }
 
       // A beast holds no trade. 0 is "jobless" rather than null, so nothing
       // comes back later to deal it a shift it has no hands for. The player's
@@ -814,7 +821,7 @@
     isShopAbandoned(mapId, evId, salt) {
       if (!this._isZombieWorld()) return false;
       const worldSeed = window.HistoryManager ? window.HistoryManager.getSeed() : 19002001;
-      const h = (nameHash(`${mapId}_${evId}_shopAbandoned`) ^ worldSeed ^ ((salt || 0) >>> 0)) >>> 0;
+      const h = (nameHash(`${mapId}_${evId}_shopAbandoned`) ^ worldSeed ^ ((salt || 0) >>> 0)) >>> 0; // i18n-ignore: rng seed key
       return (h % 1000) / 1000 < this.ZOMBIE_ABANDONED_SHARE;
     },
 
@@ -1782,6 +1789,8 @@
         .filter(name => {
           const p = society[name];
           if (!p || p._officer || p._politicsOffice) return false;
+          // The dead hold no shift: theirs was handed back (releaseSlot).
+          if (p._killed) return false;
           // A child takes no shift (SECTION 11b4).
           if (Children.isMinor(p, name)) return false;
           // A beast takes one only where beasts work (NPCCreature.mayWork).
@@ -1897,7 +1906,7 @@
       const profile = $gameSystem?._npcSociety?.[name];
       if (!profile || !groupName) return null;
       const NC = window.NPCCreature;
-      if (profile._officer || profile._politicsOffice || Children.isMinor(profile, name) || NC?.isNonSentientProfile?.(profile)) return null;
+      if (profile._killed || profile._officer || profile._politicsOffice || Children.isMinor(profile, name) || NC?.isNonSentientProfile?.(profile)) return null;
       $gameSystem._npcJobAssignments = $gameSystem._npcJobAssignments || {};
       const fits = (s) => !want || ((want.mapId == null || s.mapId === Number(want.mapId)) &&
         (want.jobId == null || s.jobId === Number(want.jobId)) && (want.shift == null || s.shift === Number(want.shift)));

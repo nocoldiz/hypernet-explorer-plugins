@@ -1,9 +1,9 @@
 {
   "name": "Tecnomagia",
-  "blurb": "Magia ingegnerizzata come hardware: ogni nodo ha una costruzione, un test e una firma, calibrati sulle piane morte.",
+  "blurb": "Magia ingegnerizzata come hardware.",
   "nodes": {
     "tm_leyline_tap": {
-      "name": "Il Rubinetto della Leyline",
+      "name": "La Presa sulla Leyline",
       "desc": "Un'asta messa a terra e infissa per tre metri in una linea rilevata, con la corrente indotta prelevata da una bobina di rame di circa quattrocento spire. L'uscita è la prima alimentazione arcana su cui ci sia un numero: si può misurare, registrare in funzione dell'ora e confrontare fra siti diversi. È anche non regolata, forma archi ai morsetti oltre un quarto della corrente nominale e varia di un fattore tre sul ciclo di marea. Ogni stadio successivo della catena esiste per mettere una specifica fra quest'asta e una bacchetta."
     },
     "tm_sanctified_microchip": {

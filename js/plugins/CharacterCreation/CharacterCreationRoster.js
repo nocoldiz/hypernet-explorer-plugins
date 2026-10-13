@@ -29,6 +29,8 @@
 
   const {
     ccT,
+    ccEsc,
+    refundNamingGold,
     ccTp,
     resolveTraitName,
     selectedTraitObjects,
@@ -80,8 +82,10 @@
       const container = this._dndContainer || document.getElementById("character-creation-container");
       if (!container) { onAccept(); return; }
 
+      // A sheet already up is closed through its own close, so its keydown
+      // listener goes with it instead of answering every Enter from then on.
       const existing = container.querySelector(".cc-modal-veil");
-      if (existing) existing.remove();
+      if (existing) { if (existing._ccClose) existing._ccClose(); else existing.remove(); }
 
       const veil = document.createElement("div");
       veil.className = "cc-modal-veil";
@@ -100,6 +104,7 @@
         this._ccModalState = null;
         veil.remove();
       };
+      veil._ccClose = close;
       // Enter and Escape are read as ok / cancel by _ccModalPollInput rather
       // than by a keydown listener of the sheet’s own: a listener closes the
       // veil before the frame’s press is polled, and the board behind it then
@@ -225,8 +230,10 @@
       const container = this._dndContainer || document.getElementById("character-creation-container");
       if (!container) return;
 
+      // A sheet already up is closed through its own close, so its keydown
+      // listener goes with it instead of answering every Enter from then on.
       const existing = container.querySelector(".cc-modal-veil");
-      if (existing) existing.remove();
+      if (existing) { if (existing._ccClose) existing._ccClose(); else existing.remove(); }
 
       const esc = (s) => String(s == null ? "" : s)
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -319,7 +326,8 @@
         slotButtons.forEach((b, i) => {
           const slot = slots[i];
           b.textContent = slot && slot.digits ? slot.digits : "-"; // i18n-ignore: an empty box
-          b.classList.toggle("cc-nav-focus", i === slotIndex);
+          // "selected", not the ring: the ring is the pad cursor's (below).
+          b.classList.toggle("selected", i === slotIndex);
         });
       };
       if (padKeys) paintSlots();
@@ -351,8 +359,10 @@
 
       const close = () => {
         document.removeEventListener("keydown", onKey, true);
+        if (this._ccModalState && this._ccModalState.veil === veil) this._ccModalState = null;
         veil.remove();
       };
+      veil._ccClose = close;
 
       // The saved list, redrawn from scratch every time something is written
       // down. Picking a row is the whole choice the sheet is asking for, so a
@@ -491,6 +501,34 @@
       document.addEventListener("keydown", onKey, true);
 
       container.appendChild(veil);
+      // The pad's cursor: every button on the sheet in reading order, walked by
+      // _ccModalPollInput. Without it the sheet was not modal for a pad: OK and
+      // Cancel went to the board behind the veil, and the keypad meant for the
+      // pad could not be reached at all.
+      const padButtons = () => Array.from(veil.querySelectorAll("button"));
+      const paintCursor = () => {
+        const st = this._ccModalState;
+        if (!st || st.veil !== veil) return;
+        const list = padButtons();
+        if (st.index >= list.length) st.index = list.length - 1;
+        list.forEach((b, i) => b.classList.toggle("cc-nav-focus", i === st.index));
+        const cur = list[st.index];
+        if (cur && cur.scrollIntoView && st.padMoved) cur.scrollIntoView({ block: "nearest" });
+      };
+      // Held only with a pad in hand: a keyboard answers through onKey, and
+      // a second reader of its Enter would press a button as well.
+      if (padKeys) this._ccModalState = {
+        veil, buttons: padButtons, index: 0,
+        close: () => close(),
+        press: () => {
+          const st = this._ccModalState;
+          const cur = padButtons()[st ? st.index : -1];
+          if (cur) cur.click();
+          paintCursor();
+        },
+        paint: () => { if (this._ccModalState) this._ccModalState.padMoved = true; paintCursor(); },
+      };
+      if (padKeys) paintCursor();
       if (!padKeys && input && input.focus) input.focus();
       // A line that came prefilled is selected, not just filled: Confirm takes
       // it as it stands, and typing replaces it without having to clear it.
@@ -510,7 +548,7 @@
         SoundManager.playBuzzer();
         return;
       }
-      const name = targetActor ? targetActor.name() : ccT('CharCreate.unnamed');
+      const name = ccEsc(targetActor ? targetActor.name() : ccT('CharCreate.unnamed'));
 
       this._ccConfirm({
         title: ccT('CharCreate.removeMemberTitle'),
@@ -530,6 +568,7 @@
       // back with the next recruit and froze it on the Preset type. The lock is
       // dropped here, which also returns the dossier to the world's pool.
       if (this._clearPresetLock) this._clearPresetLock(targetActor);
+      if (refundNamingGold) refundNamingGold(targetActor);
       $gameParty.removeActor(actorId);
       targetActor._isCreatureActor = false;
 
@@ -680,7 +719,11 @@
         $gameSystem._ccOriginSymbol = "origin_train";
       }
 
-      if ($gameSystem._partyPet && window.PetSystem && window.PetSystem.recruitPet) {
+      // Once per wizard: a scenario that asks a question first (the patron
+      // coordinates, a blank custom scenario) hands the board back when it is
+      // cancelled, and Embark pressed again used to recruit a second copy.
+      if ($gameSystem._partyPet && !this._ccPetRecruited && window.PetSystem && window.PetSystem.recruitPet) {
+        this._ccPetRecruited = true;
         const traits = this._petTraits();
         const recruited = window.PetSystem.recruitPet({
           id: $gameSystem._partyPet.id,
@@ -749,7 +792,6 @@
       const entry = window.BiologicLab ? window.BiologicLab.conceive(actor, lab) : null;
       if (!entry) releaseLabSeat(actor);
       restoreLabAudio(lab);
-      SoundManager.playOk();
       this.popScene();
     }
 
@@ -881,7 +923,7 @@
           <div class="cc-party-card ${isEditing ? 'active' : ''}">
             <div class="cc-party-card-badge">${badgeText}</div>
             <div class="cc-party-card-header">
-              <div class="cc-party-card-name">${nameText}</div>
+              <div class="cc-party-card-name">${ccEsc(nameText)}</div>
               <div class="cc-party-card-class">${mClassName} (${mGenderLabel})</div>
             </div>
             <div class="cc-party-card-body">

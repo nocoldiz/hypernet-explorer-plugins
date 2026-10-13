@@ -10,10 +10,10 @@
   "timeUp": "Tempo scaduto!",
   "seized": "Il cilindro si è inceppato!",
   "abandoned": "Grimaldello ritirato...",
-  "usedSkeletonKey": "Usato Grimaldello Universale!",
+  "usedSkeletonKey": "Usato il Passepartout!",
   "noLockpicks": "Non hai grimaldelli",
-  "craftOffer": "Niente grimaldelli, ma c'è abbastanza per piegarne uno: {materials}. Fabbricare un {item}?",
-  "craftYes": "Piegane uno adesso",
-  "craftNo": "Lascia stare",
-  "craftedOne": "Piegato un {item} davanti alla porta"
+  "craftOffer": "Niente grimaldelli. Fabbricare un {item} con {materials}?",
+  "craftYes": "Fabbrica",
+  "craftNo": "Annulla",
+  "craftedOne": "Fabbricato un {item}"
 }

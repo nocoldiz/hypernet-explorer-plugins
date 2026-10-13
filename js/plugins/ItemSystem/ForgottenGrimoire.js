@@ -156,6 +156,8 @@
     // ---------------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------------
+    const escHtml = (s) => String(s == null ? "" : s)
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     const prettify = (s) => String(s || "").replace(/([a-z])([A-Z])/g, "$1 $2");
     const isRealSkill = (s) => s && s.name && !s.name.startsWith("<") && !s.name.startsWith("ESK");
 
@@ -230,6 +232,15 @@
             const seed = Math.floor(Math.random() * 0xFFFFFFFF);
             books[key] = { seed: seed, owned: owned, offers: [], title: "" };
             return seed;
+        },
+        // The pages this copy already showed, or null when it has none yet.
+        // The seed alone is not enough: the shelf it is drawn against changes
+        // with who is in the party (what they know, their MP), so swapping a
+        // member in and reopening would otherwise turn up different pages.
+        pages(key, itemId) {
+            const entry = this.books()[key];
+            if (!entry || entry.owned !== this.owned(itemId)) return null;
+            return Array.isArray(entry.offers) && entry.offers.length ? entry.offers.slice() : null;
         },
         // What the book showed this time, kept both against the book and at the
         // top of the ledger.
@@ -393,7 +404,9 @@
         if (this._custom) return this._entries.map(id => $dataSkills[id]).filter(isRealSkill);
         const all = $dataSkills.filter(isRealSkill);
         if (this._mode === "forbidden") {
-            return all.filter(s => s.meta && s.meta.Esoteric && s.meta.Forbidden);
+            // Forbidden on its own: a forbidden battle spell is not <Esoteric>
+            // (that tag is for workings on the world) and still belongs here.
+            return all.filter(s => s.meta && s.meta.Forbidden);
         }
         if (this._mode === "grimoire" && (!this._category || this._category === "Random")) {
             return all.filter(s => s.meta && s.meta.Esoteric);
@@ -454,11 +467,21 @@
             if (this._spellIdx >= this._offered.length) this._spellIdx = 0;
             return;
         }
+        // Pages this copy has already shown come back exactly as they were.
+        const seed = GrimoireMemory.seed(this._bookKey, this._itemId);
+        const kept = GrimoireMemory.pages(this._bookKey, this._itemId);
+        if (kept) {
+            this._offered = kept.map(id => $dataSkills[id]).filter(isRealSkill);
+            if (this._offered.length) {
+                if (this._spellIdx >= this._offered.length) this._spellIdx = 0;
+                return;
+            }
+        }
         const members = $gameParty.members();
         const affordable = this._pool.filter(s => members.some(a => this.canSurface(a, s)));
         // The same seed against the same shelf gives the same five pages back,
         // so the book is not a slot machine that is re-pulled by closing it.
-        const rng = mulberry32(GrimoireMemory.seed(this._bookKey, this._itemId));
+        const rng = mulberry32(seed);
         const forb = affordable.filter(s => s.meta && s.meta.Forbidden);
         const norm = affordable.filter(s => !(s.meta && s.meta.Forbidden));
         const chance = forbiddenChance();
@@ -569,7 +592,14 @@
         this._learnedIdx = i;
         const card = this._dom && this._dom.querySelectorAll(".grim-card")[i];
         if (card) card.classList.add("learned");
-        setTimeout(() => this.popScene(), LEARN_HOLD_MS);
+        setTimeout(() => this.closeAfterHold(), LEARN_HOLD_MS);
+    };
+
+    // The hold after a spell is learned can be cut short by the Back button,
+    // so the timer only closes the book if the book is still what is open:
+    // otherwise it would pop whatever scene came next (on the map, the game).
+    Scene_ForgottenGrimoire.prototype.closeAfterHold = function () {
+        if (SceneManager._scene === this && !SceneManager.isSceneChanging()) this.popScene();
     };
 
     // ----- DOM -----
@@ -596,7 +626,7 @@
         members.forEach((a, idx) => {
             const sel = (this._focus === "party" && idx === this._actorIdx) ? "sel" : "";
             actorsHTML += `<div class="grim-actor focusable ${sel}" onclick="SceneManager._scene.selectActor(${idx})">
-                <span>${a.name()}</span><span class="grim-mp">${a.mp}/${a.mmp} MP</span></div>`;
+                <span>${escHtml(a.name())}</span><span class="grim-mp">${a.mp}/${a.mmp} MP</span></div>`;
         });
 
         const leftHTML = `
@@ -638,7 +668,7 @@
                 // can take the spell) so syncOffers can rewrite it in place.
                 const req = this.requirementLabel(s);
                 cardsHTML += `<div class="grim-card focusable ${sel} ${learned} ${blocked} ${arcane}" onclick="SceneManager._scene.chooseSpell(${idx})">
-                    <div class="grim-name"><span>${s.name}</span><span class="grim-mp">${s.mpCost} MP</span></div>
+                    <div class="grim-name"><span>${escHtml(s.name)}</span><span class="grim-mp">${s.mpCost} MP</span></div>
                     ${forb}<span class="grim-blocked">${this.blockedLabel(s)}</span>
                     ${req ? `<div class="grim-req">${req}</div>` : ""}
                     <div class="grim-desc">${desc}</div>
@@ -700,7 +730,7 @@
             this._busy = true;
             this._spent = true;
             this._learnedIdx = i;
-            setTimeout(() => this.popScene(), LEARN_HOLD_MS);
+            setTimeout(() => this.closeAfterHold(), LEARN_HOLD_MS);
         }
     };
 

@@ -39,18 +39,22 @@
       const container = scene._dndContainer;
       if (!container) return;
       const page = scene._page || { title: "", brief: "", kind: scene._viewState };
+      // The augment shelf is the augments register's page (PartyAugmentsMenu.js):
+      // a three-across grid of slots with a rarity stripe and a kind icon, and
+      // the inspect card on the right page.
+      const shelf = this.isAugmentShelf(page);
 
       container.innerHTML = `
-        <div class="book-spread">
+        <div class="book-spread${shelf ? ' inspect-pockets' : ''}">
           <div class="left-page">
             <div class="page-header-bar">
               <div class="back-button focusable" onclick="SceneManager._scene.onUICancel()">${T('Prosthetics.back')}</div>
               <h2 class="title">${esc(page.title)}</h2>
             </div>
             <p class="ui-prose pshop-brief">${esc(page.brief)}</p>
-            <div class="ui-list ui-scroll pshop-list">${this.rows(scene, page)}</div>
+            <div class="${shelf ? 'backpack-grid' : 'ui-list ui-scroll'} pshop-list">${this.rows(scene, page)}</div>
           </div>
-          <div class="right-page">${this.dossier(scene, scene._selectedActor)}</div>
+          <div class="right-page">${this.dossier(scene, scene._selectedActor, shelf)}</div>
         </div>
       `;
 
@@ -73,6 +77,12 @@
         }
         scene.onUIFocusChange(nav.focusedRow());
       }
+    },
+
+    // The step where an augment is picked for a socket, drawn as a shelf. It
+    // needs the register's card to be loaded; without it the plain list stays.
+    isAugmentShelf(page) {
+      return !!(page && page.kind === 'implant_select_prosthetic' && window.AugmentCard);
     },
 
     // ------------------------------------------------------------------
@@ -173,6 +183,8 @@
           : (item.blockedReason || t.price(item.cost));
       }
 
+      if (item.isProsthetic && window.AugmentCard) return this.augmentSlot(item, idx, blocked, value);
+
       const click = item.isArchetypeChoice
         ? `SceneManager._scene.chooseArchetype('${item.key}')`
         : `SceneManager._scene.selectListItem(${idx})`;
@@ -188,10 +200,34 @@
       `;
     },
 
+    // An augment on the shelf, the register's slot: rarity stripe, kind icon,
+    // name, and its kind with the price or the badge under it. What it does
+    // is read on the card, so the slot carries nothing else.
+    augmentSlot(item, idx, blocked, value) {
+      const card = window.AugmentCard;
+      const p = item.prosthetic;
+      return `
+        <div class="item-slot focusable${blocked ? ' pshop-row--blocked' : ''}" data-row="${idx}" onclick="SceneManager._scene.selectListItem(${idx})">
+          <div class="item-rarity-bar" style="background:${card.rarity(p).color};"></div>
+          <div class="item-slot-icon"><span class="aug-icon" style="${card.iconStyle(p)}"></span></div>
+          <div class="item-slot-info">
+            <div class="item-slot-name">${esc(item.name)}</div>
+            <div class="item-slot-meta">
+              <span>${T('Augments.ui.type.' + (p.type || "biological"))}</span>
+              <span class="item-slot-count">${value}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    },
+
     // ------------------------------------------------------------------
     // The right page: the patient, read the same way on every step
     // ------------------------------------------------------------------
-    dossier(scene, actor) {
+    // On the augment shelf the patient keeps the head of the page and the card
+    // takes the rest: the abilities and the body are what the socket step
+    // already showed.
+    dossier(scene, actor, shelf) {
       if (!actor) {
         return `
           <div class="ui-detail">
@@ -259,7 +295,7 @@
             </div>
           </div>
 
-          <div class="ui-detail-scroll ui-scroll">
+          ${shelf ? "" : `<div class="ui-detail-scroll ui-scroll">
             <h3 class="inspect-section-title">${T('Prosthetics.abilities')}</h3>
             <div class="inspect-spec-grid">
               ${ability('str', 2)}${ability('con', 3)}${ability('dex', 6)}
@@ -274,9 +310,9 @@
 
             <h3 class="inspect-section-title">${T('Prosthetics.biologicalSystemsStatus')}</h3>
             <div class="inspect-spec-grid">${systems}</div>
-          </div>
+          </div>`}
 
-          <div class="pshop-briefing"></div>
+          <div class="pshop-briefing${shelf ? ' pshop-briefing--card ui-scroll' : ''}"></div>
         </div>
       `;
     },
@@ -332,7 +368,17 @@
             <span class="inspect-spec-value">${esc(model.ledger.funds)}</span>
           </div>`;
 
+      // An augment about to go in wears the register's inspect card over the
+      // operation: what it is, what it does and where else it fits.
+      const card = item && item.isProsthetic && window.AugmentCard
+        ? `<div class="item-inspect">
+             ${window.AugmentCard.header(item.prostheticKey, item.prosthetic, model.costText)}
+             <div class="inspect-lore">${window.AugmentCard.sections(item.prostheticKey, item.prosthetic)}</div>
+           </div>`
+        : "";
+
       box.innerHTML = `
+        ${card}
         <h3 class="inspect-section-title">${esc(model.title)}</h3>
         <p class="ui-prose pshop-note">${esc(model.desc)}</p>
         ${model.warning ? `<p class="ui-prose pshop-warning">${esc(model.warning)}</p>` : ""}

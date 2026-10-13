@@ -122,6 +122,9 @@
  *
  * Plugin Commands:
  * - Start Trial: Begins the trial sequence
+ * - Start Eris Boss Battle: Eris offers a deal. Fighting and beating her
+ *   makes the party justice itself: every crime on record is self pardoned
+ *   and no new crime ever adds a bounty again
  * - Skip to Jail: Teleports directly to jail and serves sentence, skipping trial
  * - Auto-Serve Sentence: Instantly settles the bounty as served and teleports
  *   back to the saved location, skipping both the trial and the wait in a cell
@@ -133,6 +136,10 @@
  * @command startTrial
  * @text Start Trial
  * @desc Begin the trial with Eris
+ *
+ * @command startErisBoss
+ * @text Start Eris Boss Battle
+ * @desc Eris asks "Deal?": DEAL fights her (win = justice is yours, crimes pardoned), DATE? starts a date, ARREST ME starts the trial
  *
  * @command skipToJail
  * @text Skip to Jail
@@ -151,6 +158,13 @@
   "use strict";
 
   const pluginName = "TrialSystem";
+
+  // A defendant, a lawyer and a judge are people with generated names, and
+  // what they say is written with those names in it: every line and label the
+  // court prints is text, escaped before it reaches innerHTML, and only then
+  // are its newlines turned into breaks.
+  const trialEsc = (s) => window.NPCShared.escapeHtml(s);
+  const trialHtml = (s) => trialEsc(s).replace(/\r?\n/g, '<br>');
   // The name this plugin carried before it held more than one court.
   const LEGACY_PLUGIN_NAME = "ErisTrial";
   const parameters = PluginManager.parameters(pluginName);
@@ -212,6 +226,15 @@
 
   function moodIconHTML(mood, size = 20) {
     return erisIconHTML(MOOD_ICONS[mood] || MOOD_ICON_DEFAULT, size);
+  }
+
+  // Her mood as the chip prints it. The mood is an id ("benevolent"), and the
+  // chip used to print the id itself: lower case, and English in every
+  // language. The words are the ones the reverse trial already labels it with.
+  function moodLabel(mood) {
+    if (!mood) return '';
+    const labels = trialBank('ErisTrial.reverseMoodLabels');
+    return (labels && typeof labels[mood] === 'string' && labels[mood]) || mood;
   }
 
   // Check language
@@ -306,6 +329,14 @@
       // A fixed term is served by the clock, so the bounty is never ground down
       // inside the cell: releasePrisoner writes it off once the time is done.
       this._servedSentence = this._sentenceReleaseTime !== null;
+      // The term is written into the savegame. The manager itself is not saved,
+      // so a game loaded in the cell used to fall back to grinding the bounty
+      // down a second at a time: a month's sentence was over in minutes, and a
+      // term with nothing owed opened the door at once.
+      if ($gameSystem) {
+        if (this._sentenceReleaseTime !== null) $gameSystem._prisonReleaseMinute = this._sentenceReleaseTime;
+        else delete $gameSystem._prisonReleaseMinute;
+      }
       this._refresh(initialBounty);
     }
 
@@ -468,6 +499,7 @@
       this._sentenceReleaseTime = null;
       this._servedSentence = false;
       this._tickFrame = 0;
+      if ($gameSystem) delete $gameSystem._prisonReleaseMinute;
     }
 
     update() {
@@ -507,7 +539,7 @@
 
   //=============================================================================
   // ErisChallengeBattle - Gimmicky battle script for the Eris challenge
-  // (troop 1342, which contains Eris = enemy 1343).
+  // (the troop "Boss Eris, Judgment of Discord").
   //
   // Phase 1 (turns 1-9): Eris fully heals the party every 3rd turn while
   // mocking them. Combined with the BattleSystemEnhancedMechanics tweak, nobody
@@ -515,7 +547,29 @@
   // Phase 2 (turn 10+): she stops babysitting, fully heals HERSELF, and the
   // real, lethal battle begins.
   //=============================================================================
-  const ERIS_TROOP_ID = 1342;
+  // Her troop is found by the boss it fields, never by a literal id: the
+  // database has been renumbered under her before, and a stale id left the
+  // whole script asleep while a level 92 boss wiped the party on turn one.
+  const ERIS_TROOP_FALLBACK_ID = 1304;
+  let _erisTroopId = 0;
+  function erisTroopId() {
+    if (_erisTroopId) return _erisTroopId;
+    const troops = (typeof $dataTroops !== "undefined" && $dataTroops) || [];
+    const enemies = (typeof $dataEnemies !== "undefined" && $dataEnemies) || [];
+    for (const troop of troops) {
+      if (!troop || !troop.members || troop.members.length !== 1) continue;
+      const enemy = enemies[troop.members[0].enemyId];
+      const note = (enemy && enemy.note) || "";
+      if (/<Boss>/i.test(note) && /<Battler3D:\s*eris\s*>/i.test(note)) {
+        _erisTroopId = troop.id;
+        return _erisTroopId;
+      }
+    }
+    if (troops.length) _erisTroopId = ERIS_TROOP_FALLBACK_ID;
+    return ERIS_TROOP_FALLBACK_ID;
+  }
+  // The switch the tower event flips once she is beaten.
+  const TOWER_CLIMBED_SWITCH = 200;
   // Her battle portrait: the wasteland DJ, tagged with her own name.
   const ERIS_BUST_IMAGE = "WastelandDJ";
 
@@ -531,6 +585,20 @@
                 $gameSystem._erisBountyImmunity);
     },
 
+    troopId() {
+      return erisTroopId();
+    },
+
+    // Whoever beats her takes the scales: justice answers to them now. The
+    // world-scoped immunity zeroes every bounty a new crime would add
+    // (CrimeSystem), and the record they carry in is pardoned by their own
+    // hand on the spot, manhunt and all.
+    crown() {
+      $gameSystem._erisBountyImmunity = true;
+      forgiveBounty();
+      $gameSwitches.setValue(TOWER_CLIMBED_SWITCH, true);
+    },
+
     reset() {
       this._lastTurn = -1;
       // A fresh fight, a fresh body: she rolls a new one and starts
@@ -539,7 +607,26 @@
     },
 
     isErisBattle() {
-      return $gameParty.inBattle() && $gameTroop._troopId === ERIS_TROOP_ID;
+      return $gameParty.inBattle() && $gameTroop._troopId === erisTroopId();
+    },
+
+    // Phase 1: she is only playing, and nobody may die before turn 10.
+    isToying() {
+      return this.isErisBattle() && $gameTroop.turnCount() < 10;
+    },
+
+    // Anyone who went down anyway (an instant kill, a destroyed organ, a
+    // whole party wiped in one round) is raised on the spot, mockingly.
+    // Returns true when somebody had to be brought back.
+    rescueFallen() {
+      if (!this.isToying()) return false;
+      const fallen = $gameParty.members().filter(a => a.isDead() || a.hp <= 0);
+      if (!fallen.length) return false;
+      fallen.forEach(a => a.recoverAll());
+      if (!$gameMessage.isBusy()) {
+        this._say(this._pick(T.pool('ErisTrial.bank.onTurnEnd.lines')));
+      }
+      return true;
     },
 
     // Her portrait slides in beside the line, name on the tag, the same
@@ -620,7 +707,9 @@
         // turn: skin, hair, eyes and clothes all re-roll where they can
         // see it happen.
         if (window.ErisAppearance) window.ErisAppearance.shift();
-        if (turn % 3 === 0) {
+        if (this.rescueFallen()) {
+          // Somebody fell: she has already raised them and said so.
+        } else if (turn % 3 === 0) {
           // Heal the whole party to 100%, mockingly.
           this._fullHealParty();
           this._say(this._pick(T.pool('ErisTrial.bank.onTurnEnd.lines')));
@@ -644,9 +733,36 @@
   const _BattleManager_setup_Eris = BattleManager.setup;
   BattleManager.setup = function (troopId, canEscape, canLose) {
     _BattleManager_setup_Eris.call(this, troopId, canEscape, canLose);
-    if (troopId === ERIS_TROOP_ID && window.ErisChallengeBattle) {
+    if (troopId === erisTroopId() && window.ErisChallengeBattle) {
       window.ErisChallengeBattle.reset();
     }
+  };
+
+  // While she toys with them the death state never lands on the party, by
+  // whatever route it comes (instant kill skills, organ failure): the hit
+  // leaves them on 1 HP instead.
+  // Game_Actor has no addState of its own: the battler one is read at call
+  // time so plugins loaded after this one still wrap it.
+  const _Game_Actor_addState_Eris =
+    Object.prototype.hasOwnProperty.call(Game_Actor.prototype, "addState")
+      ? Game_Actor.prototype.addState : null;
+  Game_Actor.prototype.addState = function (stateId) {
+    const eris = window.ErisChallengeBattle;
+    if (stateId === this.deathStateId() && eris && eris.isToying()) {
+      if (this.hp <= 0) this.setHp(1);
+      return;
+    }
+    (_Game_Actor_addState_Eris || Game_Battler.prototype.addState).call(this, stateId);
+  };
+
+  // A party wiped in phase 1 is never a defeat: she brings them back.
+  const _BattleManager_checkBattleEnd_Eris = BattleManager.checkBattleEnd;
+  BattleManager.checkBattleEnd = function () {
+    const eris = window.ErisChallengeBattle;
+    if (this._phase && eris && $gameParty.isAllDead() && eris.rescueFallen()) {
+      return false;
+    }
+    return _BattleManager_checkBattleEnd_Eris.call(this);
   };
 
   // Backup trigger: fire the turn logic whenever the troop turn advances, in
@@ -734,7 +850,13 @@
         // are walked straight back out. Time still owed picks the open-ended
         // sentence back up instead of leaving the countdown dead.
         const bounty = $gameVariables.value(bountyVariableId) || 0;
-        if (bounty <= 0) {
+        // A fixed term written into the savegame is served out to the minute
+        // it was set to end, whatever is owed.
+        const until = $gameSystem && $gameSystem._prisonReleaseMinute;
+        const now = $gameVariables.value(114) || 0;
+        if (typeof until === 'number' && until > now) {
+          window.prisonManager.startPrisonTime(bounty, until - now);
+        } else if (typeof until === 'number' || bounty <= 0) {
           window.prisonManager.releasePrisoner();
         } else {
           window.prisonManager.startPrisonTime(bounty, 0);
@@ -745,11 +867,11 @@
     // The player defeated Eris in the challenge battle: her court stands empty.
     if ($gameTemp._erisChallengeWon) {
       $gameTemp._erisChallengeWon = false;
-      const it = ConfigManager.language === "it";
       const msg = T('ErisTrial.line.theCourtIsEmpty');
       window.skipLocalization = true;
       $gameMessage.setBackground(2);
       $gameMessage.add("\\C[8]" + msg + "\\C[0]");
+      $gameMessage.add(T('ErisTrial.boss.crowned'));
       window.skipLocalization = false;
     }
   };
@@ -1855,10 +1977,10 @@
 
     _renderBook() {
       const crimesHTML = this.crimes.length > 0
-        ? this.crimes.map(c => `<div class="inspect-spec-row"><span class="inspect-spec-label">${c.name}</span><span class="inspect-spec-value">${this.formatEuros(c.bounty)}</span></div>`).join('')
+        ? this.crimes.map(c => `<div class="inspect-spec-row"><span class="inspect-spec-label">${trialEsc(c.name)}</span><span class="inspect-spec-value">${this.formatEuros(c.bounty)}</span></div>`).join('')
         : `<div class="ui-empty-text">${T('ErisTrial.line.noCrimesOnRecord')}</div>`;
       const logHTML = this._dialogueLog.map(e => {
-        const body = String(e.text).replace(/\r?\n/g, '<br>');
+        const body = trialHtml(e.text);
         if (e.who === 'narrator') return `<div class="eris-dialogue-entry narrator">${body}</div>`;
         const speaker = e.who === 'eris' ? 'Eris' : (T('ErisTrial.line.you'));
         return `<div class="eris-dialogue-entry ${e.who}"><span class="eris-speaker">${speaker}</span>${body}</div>`;
@@ -1873,7 +1995,7 @@
           <div class="right-page page-top">
             <div class="page-header-bar"><h2 class="title">Eris</h2></div>
             <div class="ui-chip-row">
-              <span class="ui-chip">${moodIconHTML(this.mood)} ${this.mood}</span>
+              <span class="ui-chip">${moodIconHTML(this.mood)} ${moodLabel(this.mood)}</span>
             </div>
             <h3 class="inspect-section-title">${T('ErisTrial.line.charges')}</h3>
             <div class="eris-rows">${crimesHTML}</div>
@@ -1932,7 +2054,7 @@
         const entry = document.createElement('div');
         entry.className = `eris-dialogue-entry ${who}`;
         // Render explicit newlines as line breaks (innerHTML collapses raw \n to spaces).
-        const html = clean.replace(/\r?\n/g, '<br>');
+        const html = trialHtml(clean);
         const speaker = who === 'narrator' ? '' :
           `<span class="eris-speaker">${who === 'player' ? (T('ErisTrial.line.you')) : 'Eris'}</span>`;
         entry.innerHTML = `${speaker}${html}`;
@@ -2209,7 +2331,7 @@
             <div class="page-header-bar"><h2 class="title">${T('ErisTrial.line.theDefence')}</h2></div>
             <div class="ui-prose">${T('ErisTrial.line.erisSCourtHasNever')}</div>
             <div class="ui-chip-row">
-              <span class="ui-chip">${moodIconHTML(this.mood)} ${this.mood}</span>
+              <span class="ui-chip">${moodIconHTML(this.mood)} ${moodLabel(this.mood)}</span>
               <span class="ui-chip">${T('ErisTrial.line.funds')}: ${this.formatEuros(gold())}</span>
             </div>
             <div class="eris-choices-panel" id="eris-lawyer-list">${listHTML}</div>
@@ -2830,7 +2952,14 @@
 
     _startErisBattle() {
       // canEscape = true (flee -> prison), canLose = false (death -> game over).
-      BattleManager.setup(1342, true, false);
+      // Started as a deliberate fight: the trial's own dialogue is still on
+      // screen, which would have the ambient battle guard refuse it.
+      const bse = window.BattleSystemEnhanced;
+      if (bse && bse.Functions && bse.Functions.setupDeliberateBattle) {
+        bse.Functions.setupDeliberateBattle(erisTroopId(), true, false);
+      } else {
+        BattleManager.setup(erisTroopId(), true, false);
+      }
       if (BattleManager.setBattleTest) BattleManager.setBattleTest(false);
       if (BattleManager.setArenaMode) BattleManager.setArenaMode(false);
       if (BattleManager.setGauntletMode) BattleManager.setGauntletMode(false);
@@ -2843,7 +2972,7 @@
       if (result === 0) {
         // Victory: Eris is gone, the court stands empty, and the bounty system
         // will never grow from new crimes again.
-        $gameSystem._erisBountyImmunity = true;
+        window.ErisChallengeBattle.crown();
         $gameTemp._erisChallengeWon = true;
 
         const mapId = $gameVariables.value(returnMapVariable) || 1;
@@ -3233,9 +3362,10 @@
         const innocentChance = Math.round((1 - guiltyChance) * 100);
         if (window.Dice3D) {
           const res = await window.Dice3D.rollPercentage(innocentChance, {
-            actionName: "Eris Court Verdict",
-            statName: "PSI (Charisma)",
-            modifier: psiMod
+            actionName: T('ErisTrial.line.verdictRoll'),
+            statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(7) : '',
+            modifier: psiMod,
+            force3D: true
           });
           this.verdict = res.success ? "innocent" : "guilty";
         } else {
@@ -3627,12 +3757,12 @@
 
     _renderBook() {
       const chargesHTML = this.charges.length > 0
-        ? this.charges.map(c => `<div class="inspect-spec-row"><span class="inspect-spec-label">${c.text}</span><span class="inspect-spec-value">${c.severity}/100</span></div>`).join('')
+        ? this.charges.map(c => `<div class="inspect-spec-row"><span class="inspect-spec-label">${trialEsc(c.text)}</span><span class="inspect-spec-value">${c.severity}/100</span></div>`).join('')
         : `<div class="ui-empty-text">${T('ErisTrial.line.noCharges')}</div>`;
       const logHTML = this._dialogueLog.map(e => {
         const cls = this._entryClass(e.who);
-        const speaker = this._speakerLabel(e.who);
-        const body = String(e.text).replace(/\r?\n/g, '<br>');
+        const speaker = trialEsc(this._speakerLabel(e.who));
+        const body = trialHtml(e.text);
         const head = speaker ? `<span class="eris-speaker">${speaker}</span>` : '';
         return `<div class="eris-dialogue-entry ${cls}">${head}${body}</div>`;
       }).join('');
@@ -3652,7 +3782,7 @@
             <div class="page-header-bar"><h2 class="title">${T('ErisTrial.line.defendant')}</h2></div>
             <div class="ui-chip-row">
               ${moodBadge}
-              <span class="ui-chip">${this.defendantName}</span>
+              <span class="ui-chip">${trialEsc(this.defendantName)}</span>
               ${personality ? `<span class="ui-chip">${personality}</span>` : ''}
             </div>
             <h3 class="inspect-section-title">${T('ErisTrial.line.charges')}</h3>
@@ -3701,8 +3831,8 @@
       if (log) {
         const entry = document.createElement('div');
         entry.className = `eris-dialogue-entry ${this._entryClass(role)}`;
-        const html = clean.replace(/\r?\n/g, '<br>');
-        const speaker = this._speakerLabel(role);
+        const html = trialHtml(clean);
+        const speaker = trialEsc(this._speakerLabel(role));
         entry.innerHTML = `${speaker ? `<span class="eris-speaker">${speaker}</span>` : ''}${html}`;
         log.appendChild(entry);
         log.scrollTop = log.scrollHeight;
@@ -4177,8 +4307,8 @@
       if (log) {
         const entry = document.createElement('div');
         entry.className = 'eris-dialogue-entry ' + (role === 'judge' ? 'eris rota-latin' : role === 'interpreter' ? 'eris rota-interpreter' : role);
-        const speaker = role === 'narrator' ? '' : '<span class="eris-speaker">' + this._speakerName(role) + '</span>';
-        entry.innerHTML = speaker + clean.replace(/\r?\n/g, '<br>');
+        const speaker = role === 'narrator' ? '' : '<span class="eris-speaker">' + trialEsc(this._speakerName(role)) + '</span>';
+        entry.innerHTML = speaker + trialHtml(clean);
         log.appendChild(entry);
         log.scrollTop = log.scrollHeight;
       }
@@ -4198,13 +4328,13 @@
 
     _renderBook() {
       const crimesHTML = this.crimes.length > 0
-        ? this.crimes.map(c => `<div class="inspect-spec-row"><span class="inspect-spec-label">${c.name}</span><span class="inspect-spec-value">${this.formatEuros(c.bounty)}</span></div>`).join('')
+        ? this.crimes.map(c => `<div class="inspect-spec-row"><span class="inspect-spec-label">${trialEsc(c.name)}</span><span class="inspect-spec-value">${this.formatEuros(c.bounty)}</span></div>`).join('')
         : `<div class="ui-empty-text">${T('ErisTrial.line.noCrimesOnRecord')}</div>`;
       const logHTML = this._dialogueLog.map(e => {
-        const body = String(e.text).replace(/\r?\n/g, '<br>');
+        const body = trialHtml(e.text);
         if (e.who === 'narrator') return `<div class="eris-dialogue-entry narrator">${body}</div>`;
         const cls = e.who === 'judge' ? 'eris rota-latin' : e.who === 'interpreter' ? 'eris rota-interpreter' : e.who;
-        return `<div class="eris-dialogue-entry ${cls}"><span class="eris-speaker">${this._speakerName(e.who)}</span>${body}</div>`;
+        return `<div class="eris-dialogue-entry ${cls}"><span class="eris-speaker">${trialEsc(this._speakerName(e.who))}</span>${body}</div>`;
       }).join('');
       const tariff = rotaSentenceAt(rotaTariffStep(this.bounty));
       this._container.innerHTML = `
@@ -4323,7 +4453,10 @@
         let carried;
         if (window.Dice3D && window.Dice3D.rollPercentage) {
           const res = await window.Dice3D.rollPercentage(chance, {
-            actionName: T('RotaTrial.line.defenceRoll'), statName: 'WIS', modifier: 0
+            actionName: T('RotaTrial.line.defenceRoll'),
+            statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(5) : '',
+            modifier: 0,
+            force3D: true
           });
           carried = !!res.success;
         } else {
@@ -4377,6 +4510,12 @@
   }
 
   registerTrialCommand("startTrial", (args) => {
+    // Justice does not stand trial before itself.
+    if (window.ErisChallengeBattle.isErisDefeated()) {
+      forgiveBounty();
+      $gameMessage.add(T('ErisTrial.boss.gone'));
+      return;
+    }
     if (!$gameVariables.value(returnMapVariable)) {
       $gameVariables.setValue(returnMapVariable, $gameMap.mapId());
       $gameVariables.setValue(returnXVariable, $gamePlayer.x);
@@ -4386,6 +4525,64 @@
     // Inside the Holy Vatican Empire the Rota sits instead of Eris.
     const trial = rotaHasJurisdiction() ? new RotaTrial() : new ErisTrial();
     trial.startTrial();
+  });
+
+  // The Eris boss offer, written once here instead of in every event that
+  // reaches her: "Deal?" with four ways to say yes, a date, or a surrender.
+  // It runs as a child of the calling event, the same commands an authored
+  // event would hold, so the battle, the date and the trial each take the
+  // screen in turn exactly as they do from the map. Win crowns the party;
+  // fleeing earns her scorn; losing is allowed and simply ends the offer.
+  function erisBossOfferList() {
+    const troopId = erisTroopId();
+    const say = (indent, text) => [
+      { code: 101, indent, parameters: ["", 0, 0, 2, ""] },
+      { code: 401, indent, parameters: [text] }
+    ];
+    const end = (indent) => ({ code: 0, indent, parameters: [] });
+    const fight = (indent) => [
+      { code: 301, indent, parameters: [0, troopId, true, true] },
+      { code: 601, indent, parameters: [] },
+      { code: 355, indent: indent + 1, parameters: ["window.ErisChallengeBattle.crown();"] },
+      ...say(indent + 1, T('ErisTrial.line.theCourtIsEmpty')),
+      { code: 401, indent: indent + 1, parameters: [T('ErisTrial.boss.crowned')] },
+      end(indent + 1),
+      { code: 602, indent, parameters: [] },
+      ...say(indent + 1, T('ErisTrial.boss.coward')),
+      end(indent + 1),
+      { code: 603, indent, parameters: [] },
+      end(indent + 1),
+      { code: 604, indent, parameters: [] }
+    ];
+    const plugin = (indent, name, command) =>
+      ({ code: 357, indent, parameters: [name, command, "", {}] });
+    const deal = T('ErisTrial.boss.choiceDeal');
+    const branches = [
+      [deal, fight(1)],
+      [deal, fight(1)],
+      [deal, fight(1)],
+      [T('ErisTrial.boss.choiceDate'), [plugin(1, "ErisDateSystem", "startDate")]],
+      [deal, fight(1)],
+      [T('ErisTrial.boss.choiceArrest'), [plugin(1, pluginName, "startTrial")]]
+    ];
+    const list = say(0, T('ErisTrial.boss.deal'));
+    // Window, right, default the first, cancel on ARREST ME.
+    list.push({ code: 102, indent: 0, parameters: [branches.map(b => b[0]), 5, 0, 2, 0] });
+    branches.forEach(([label, body], i) => {
+      list.push({ code: 402, indent: 0, parameters: [i, label] }, ...body, end(1));
+    });
+    list.push({ code: 404, indent: 0, parameters: [] }, end(0));
+    return list;
+  }
+
+  registerTrialCommand("startErisBoss", function () {
+    // She is already beaten in this world: nobody sits in the court to deal.
+    if (window.ErisChallengeBattle.isErisDefeated()) {
+      $gameMessage.add(T('ErisTrial.boss.gone'));
+      this.setWaitMode("message");
+      return;
+    }
+    this.setupChild(erisBossOfferList(), this._eventId);
   });
 
   registerTrialCommand("skipToJail", (args) => {
@@ -4450,5 +4647,6 @@
     isRotaJurisdiction: rotaHasJurisdiction,
     rotaTariffStep,
     rotaDefenceChance,
+    erisBossOfferList,
   };
 })();

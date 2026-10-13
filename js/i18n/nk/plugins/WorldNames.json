@@ -55,7 +55,7 @@
     "netherlands": "NETHERLANDS",
     "northmacedonia": "NORTH MACEDONIA",
     "norway": "NORWAY",
-    "omegatower": "OMEGATOWER",
+    "omegatower": "OmegaTower",
     "paraguay": "PARAGUAY",
     "peru": "PERU",
     "poland": "POLAND",
@@ -637,7 +637,7 @@
     "spellweavermira": "SPELLWEAVER MIRA",
     "spymastercipher": "SPYMASTER CIPHER",
     "spymasterhakanthesilent": "SPYMASTER HAKAN DA SILENT",
-    "squadronleadermacleod": "SQUADRON LEADER MACLEOD",
+    "squadronleadermacleod": "SQUADRON LEADER MacLeod",
     "steamwizardisadora": "STEAM WIZARD ISADORA",
     "steelmistressclara": "STEEL MISTRESS CLARA",
     "sultanosmanvi": "SULTAN OSMAN VI",
@@ -697,5 +697,6 @@
     "yuriandropov": "YURI ANDROPOV",
     "zeusthethunderer": "ZEUS DA THUNDERER",
     "zog": "ZOG"
-  }
+  },
+  "where": {}
 }

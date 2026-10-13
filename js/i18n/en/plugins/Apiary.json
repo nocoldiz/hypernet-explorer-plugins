@@ -65,5 +65,28 @@
   },
   "toast": {
     "swarmed": "The hive swarmed: {bees} bees left with the old queen."
+  },
+  "weather": {
+    "sunny": "Sunny",
+    "cloudy": "Cloudy",
+    "rainy": "Rainy",
+    "stormy": "Stormy",
+    "windy": "Windy"
+  },
+  "state": {
+    "thriving": "Thriving",
+    "stable": "Stable",
+    "struggling": "Struggling",
+    "swarming": "Swarming",
+    "supersedure": "Supersedure",
+    "dormant": "Dormant"
+  },
+  "threat": {
+    "varroa": "Varroa mites",
+    "nosema": "Nosema",
+    "foulbrood": "Foulbrood",
+    "waxmoth": "Wax moth",
+    "wasps": "Wasps",
+    "bears": "Bears"
   }
 }

@@ -2273,7 +2273,7 @@
             window.ParchmentToast.show(T('Crime.law.notRecognised'), {
                 severity: 'info',
                 duration: displayDuration,
-                key: 'crimeNotRecognised'
+                key: 'crimeNotRecognised'  // i18n-ignore  toast dedupe key
             });
         }
 
@@ -2362,7 +2362,7 @@
             if (window.Dice3D && typeof window.Dice3D.rollD20 === 'function') {
                 return window.Dice3D.rollD20({
                     actionName: T('Crime.bribe.action', { name: officerName, cost: this.goldToEuros(terms.cost) }),
-                    statName: 'PSI',
+                    statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(7) : '',
                     modifier,
                     dc: terms.dc,
                     actor,

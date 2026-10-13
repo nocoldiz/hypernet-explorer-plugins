@@ -262,7 +262,7 @@
         "That postcard rack is unguarded... No. Tourists pay. It says so in the book.",
         "I could lift that {wallet|handbag|car} with gravity alone. I will lift my hat to it instead.",
         "The souvenir is so small and the shop so busy. I put it back. Twice.",
-        "Stealing is a human tradition on television. But not in real life, I think.",
+        "Stealing is a human tradition on television. Real life has police, I think.",
         "An Analyzer would just take the parking meter apart. I am not an Analyzer.",
         "The goddess with the bounties is always watching. I read about it. I behave.",
         "I want that road sign for the monument. Perhaps I could ask the council.",
@@ -349,14 +349,14 @@
         "The other Wanderers have gone to see the cathedral. I am lonely and also lost.",
         "Humans go to the pub to talk. I will go to the pub to listen.",
         "My pen pal in Lisbon has not written back. Perhaps the pigeon got lost.",
-        "A Pale Warper thought at me this morning. It was nice, but it is not chatting.",
+        "A Pale Warper thought at me this morning. It was nice. Chatting needs a mouth, though.",
         "I would like to be invited to a human birthday. I have practised the song.",
         "Nobody has asked me about Zeta today. I have prepared {nine|twelve|twenty} facts.",
         "I miss the sound of a human laughing at something I said wrong.",
         "Lonely. I will ring the speaking clock. She is always polite.",
         "There is a quiz night at the pub. I need a team. I need a human team.",
         "I said hello to everyone on the street. Some said it back. My day is made.",
-        "The home sphere sends a message every week. I want humans, not messages.",
+        "The home sphere sends a message every week. I want humans in the flesh.",
         "Talking to the television is not the same. I asked. It did not answer.",
         "A human friend, a cup of tea, and an argument about the weather. My dream."
       ]
@@ -574,7 +574,7 @@
         "I have a savings book now. Small numbers growing slowly, like a plant.",
         "Not rich, not poor. Just enough to buy postcards without counting. Nearly.",
         "I subscribed to the television guide. Every week it comes. Every week I cry a little.",
-        "I take the tram, not the walk. I am doing well in life.",
+        "I take the tram now, no more long walks. I am doing well in life.",
         "A good pair of shoes and a good umbrella. The human definition of comfortable.",
         "Dinner out once a week. I order something I cannot pronounce. Adventure, budgeted.",
         "My photo albums now fill a whole shelf. A comfortable shelf.",
@@ -611,7 +611,7 @@
       "The adventurers are back. Previously on 'the adventurers': they were here.",
       "I nearly know them. Like the weatherman. A friend who does not know me.",
       "That one in front always frowns at my camera. I will catch a smile one day.",
-      "Same party, same street, same me. A loop? No, just a small town.",
+      "Same party, same street, same me. A time loop? Maybe it is just a small town.",
       "They look like people who have seen the inside of a tower. I want to hear everything.",
       "I counted. This is the {fifth|eighth|tenth} time. We are basically neighbours.",
       "I trust those travellers. They have kind boots.",
@@ -713,7 +713,7 @@
         "Humans ask what the monument looks like. Like applause, I say, if applause had a shape.",
         "My photographs will hang on the monument one day. Mine! A small grey contribution.",
         "The monument faces Earth, so it can wave. It does not wave. It is a monument. But in spirit.",
-        "We put a statue of an ordinary human in the middle. Not a king. A man waiting for a bus.",
+        "We put a statue of an ordinary human in the middle: a man waiting for a bus.",
         "The monument took longer to build than a Dyson sphere. Love is more complicated than gravity.",
         "One day humans will visit the monument. We have built a very long queue for them. They will like it.",
         "Inside the monument it is always a quarter to four, teatime. A tribute.",
@@ -737,7 +737,7 @@
         "The Sun mirror was meant as a gift. Now it is a lesson. Wrap your gifts better.",
         "Since low orbit closed, we have tried {every week|every month|every single day}. Persistence is our one skill outside physics.",
         "Somewhere in the debris is a piece of the old Father god, they say. We fly very politely around him.",
-        "I am not a pilot. I am a Wanderer. But I would help clean the sky if they gave me a broom.",
+        "Looking is my trade, as a Wanderer. Still, I would help clean the sky if they gave me a broom.",
         "We are sorry about the extra debris from our crashed sweepers. We are working on it. Badly.",
         "A human engineer gave us a tip about the debris. Best idea in years. She refused a photograph.",
         "When the sky is clean, we will try the mirror again. Painted a nicer colour.",
@@ -811,7 +811,7 @@
         "We spent the years before 1999 studying how to greet you. Our final plan was 'a nice biscuit'.",
         "The Mages' Guild greeted our first diplomats very formally. Our diplomats brought a cake. It went well.",
         "In 1975 a scholar saw your first broadcast and fell off her chair. We call that day 'the Fall'.",
-        "We did not come to conquer. We came to visit. Possibly forever. Is that allowed?",
+        "We came to visit, with the best intentions. Possibly forever. Is that allowed?",
         "Old human films show us invading. We watched them in horror. Then we bought the sequels.",
         "My grandmother remembers 1975. She says everyone on Zeta went outside and looked at the sky, at you.",
         "Humans were afraid of us at first. Now they are only mildly startled. Progress!",
@@ -1140,7 +1140,7 @@
       [
         [
           0,
-          "*points camera* {b}, smile! No, a real smile. Yes! That one."
+          "*points camera* {b}, smile! A real smile, please. Yes! That one."
         ],
         [
           1,
@@ -1210,7 +1210,7 @@
         ],
         [
           0,
-          "I am not a balloon. I am a guest. Please explain this to the dog."
+          "I am a guest, and there is not a drop of helium in me. Please explain this to the dog."
         ]
       ],
       [
@@ -1242,7 +1242,7 @@
         ],
         [
           0,
-          "I said I am good at gravity. Cars are not gravity. I told you."
+          "I said I am good at gravity. Cars are another matter. I told you."
         ]
       ],
       [
@@ -1386,7 +1386,7 @@
         ],
         [
           0,
-          "That is not an inspector, {b}. That is a Tuesday for them. I am so sorry."
+          "For them, taking a till apart is an ordinary Tuesday, {b}. I am so sorry."
         ],
         [
           1,
@@ -1558,7 +1558,7 @@
         ],
         [
           0,
-          "Where do the locals eat? Not the guidebook places. The real ones."
+          "Where do the locals eat? The real places, the ones the guidebook does not know."
         ],
         [
           1,
@@ -2119,7 +2119,7 @@
           ],
           [
             1,
-            "I don't want to see every shop, {a}. I want to get home."
+            "I want to get home, {a}. The shops can wait."
           ]
         ]
       },
@@ -2212,7 +2212,7 @@
           ],
           [
             0,
-            "I fly. Parking is not my struggle. Character is all I see."
+            "I fly. Parking is somebody else's struggle. Character is all I see."
           ]
         ]
       },

@@ -293,6 +293,30 @@
     return ($gameWeather && $gameWeather.currentWeatherType) || "none";
   }
 
+  // What the pages print for a season, a weather or a plant. The ids are
+  // lookup keys and are never shown as written: the season is the calendar's
+  // own word (Weather.app.seasons), the weather is WeatherNames' label, and a
+  // plant is named out of PlantGrowth.plantName, falling back on the
+  // (translated) name of the crop it yields.
+  const WEATHER_NAME_ID = { none: "Clear", rain: "Rain", storm: "Storm", snow: "Snow" };   // i18n-ignore: weather ids
+  function seasonLabel(season) {
+    const key = "Weather.app.seasons." + String(season || "").toLowerCase();
+    return (window.T && T.has(key)) ? T(key) : String(season || "");
+  }
+  function weatherLabel(type) {
+    const id = WEATHER_NAME_ID[type] || "Unknown";   // i18n-ignore: weather id
+    if (window.WeatherNames) return window.WeatherNames.label(id);
+    const key = "Weather.name." + id;
+    return (window.T && T.has(key)) ? T(key) : String(type || "");
+  }
+  function plantLabel(plantId) {
+    const key = "PlantGrowth.plantName." + plantId;
+    if (window.T && T.has(key)) return T(key);
+    const def = PLANT_DB[plantId];
+    const item = def && typeof $dataItems !== "undefined" && $dataItems ? $dataItems[def.itemId] : null;
+    return (item && item.name) || String(plantId || "");
+  }
+
   function isGreenhouse() {
     return !!($dataMap && $dataMap.note && $dataMap.note.includes("<Greenhouse>"));
   }
@@ -1028,7 +1052,7 @@
     if (procTileForEvent(mapId, eventId)) procFlush();
     const ev = $gameMap.event(eventId);
     if (ev) applySprite(ev, getRecord(mapId, eventId));
-    if (window.Diary) window.Diary.onSown(PLANT_DB[plantId].name || plantId);
+    if (window.Diary) window.Diary.onSown(plantLabel(plantId));
   });
 
   PluginManager.registerCommand(pluginName, "HarvestPlant", function () {
@@ -1250,6 +1274,9 @@
 
     _onHarvest() {
       if (!this._hasPlant()) return;
+      // The greyed-out Harvest on a young plant still takes OK and clicks:
+      // it must refuse, not pull the crop up for nothing.
+      if (!(this._rec.stage >= 2)) { SoundManager.playBuzzer(); return; }
       const rec = this._rec;
       const def = PLANT_DB[rec.plantId];
       const item = $dataItems[def.itemId];
@@ -1366,7 +1393,7 @@
           <div class="pgrow-hero">
             <canvas id="plant-sprite-canvas" width="96" height="96"></canvas>
             <div class="pgrow-hero-text">
-              <div class="pgrow-hero-name">${rec.plantId}</div>
+              <div class="pgrow-hero-name">${plantLabel(rec.plantId)}</div>
               <div class="pgrow-hero-sub">${T('PlantGrowth.stageLine', { name: stageName(rec.stage), n: rec.stage })}</div>
             </div>
           </div>
@@ -1394,7 +1421,7 @@
           <div class="pgrow-rows">
             <div class="pgrow-row">
               <span class="pgrow-lbl">${T('PlantGrowth.seasonLabel')}</span>
-              <span class="pgrow-val">${curSeason}</span>
+              <span class="pgrow-val">${seasonLabel(curSeason)}</span>
             </div>
             <div class="pgrow-row">
               <span class="pgrow-lbl">${T('PlantGrowth.greenhouseLabel')}</span>
@@ -1402,7 +1429,7 @@
             </div>
             <div class="pgrow-row">
               <span class="pgrow-lbl">${T('PlantGrowth.weatherLabel')}</span>
-              <span class="pgrow-val">${currentWeather().toUpperCase()} (${speedMult.toFixed(1)}x)</span>
+              <span class="pgrow-val">${weatherLabel(currentWeather())} (${speedMult.toFixed(1)}x)</span>
             </div>
             <div class="pgrow-row">
               <span class="pgrow-lbl">${T('PlantGrowth.growthSpeed')}</span>
@@ -1565,7 +1592,7 @@
         this._previewTimer = 0;
 
         const titleEl = document.getElementById("preview-seed-name");
-        if (titleEl) titleEl.innerText = plantId;
+        if (titleEl) titleEl.innerText = plantLabel(plantId);
 
         const stageLbl = document.getElementById("preview-stage-name");
         if (stageLbl) stageLbl.innerText = T('PlantGrowth.stageLine', { name: stageName(0), n: 0 });
@@ -1574,7 +1601,7 @@
         if (def) {
           const detailEl = document.getElementById("preview-seed-details");
           if (detailEl) {
-            const seasonText = def.seasons.join(", ");
+            const seasonText = def.seasons.map(seasonLabel).join(", ");
             detailEl.innerHTML = `
               <div class="pgrow-row">
                 <span class="pgrow-lbl">${T('Plant.ui.growingSeasons')}</span>
@@ -1642,11 +1669,11 @@
       if (window.ParchmentToast) {
         const seedItem = $dataItems[def.itemId];
         window.ParchmentToast.show(
-          T('PlantGrowth.planted', { plant: def.name || plantId }),
+          T('PlantGrowth.planted', { plant: plantLabel(plantId) }),
           { severity: "good", icon: seedItem ? seedItem.iconIndex : undefined }
         );
       }
-      if (window.Diary) window.Diary.onSown((PLANT_DB[plantId] || {}).name || plantId);
+      if (window.Diary) window.Diary.onSown(plantLabel(plantId));
       this.popScene();
     }
 
@@ -1655,7 +1682,7 @@
 
       const curSeason = currentSeason();
       const greenhouse = isGreenhouse();
-      const weather = currentWeather().toUpperCase();
+      const weather = weatherLabel(currentWeather());
 
       let seedListHTML = "";
       for (const [id, def] of Object.entries(PLANT_DB)) {
@@ -1665,7 +1692,7 @@
         seedListHTML += `
           <div class="pgrow-seed focusable${canAfford ? '' : ' unaffordable'}" data-plant="${id}" onclick="SceneManager._scene.onPlantSeedClick('${id}')">
             <span class="pgrow-seed-dot ${inSeason ? 'in-season' : 'out-of-season'}"></span>
-            <span class="pgrow-seed-name">${id}</span>
+            <span class="pgrow-seed-name">${plantLabel(id)}</span>
             <span class="pgrow-seed-days">${T('Plant.ui.days', { count: def.growthDays })}</span>
             <span class="pgrow-seed-cost ${canAfford ? 'ok' : 'bad'}">${priceText}</span>
           </div>
@@ -1679,7 +1706,7 @@
           <button class="pgrow-close focusable" type="button" tabindex="0" onclick="SceneManager._scene.popScene()">✕</button>
         </div>
         <div class="pgrow-conditions">
-          <span>${T('PlantGrowth.seasonLabel')} <strong>${curSeason}</strong></span>
+          <span>${T('PlantGrowth.seasonLabel')} <strong>${seasonLabel(curSeason)}</strong></span>
           <span>${T('PlantGrowth.weatherLabel')} <strong>${weather}</strong></span>
           <span>${T('PlantGrowth.greenhouseLabel')} <strong>${greenhouse ? T('PlantGrowth.yes') : T('PlantGrowth.no')}</strong></span>
         </div>

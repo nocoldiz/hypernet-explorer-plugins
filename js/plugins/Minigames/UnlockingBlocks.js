@@ -706,7 +706,13 @@ UnlockingBlocks.version = 3.0;
                 if (this.currentEventId > 0 && ['A', 'B', 'C', 'D'].includes(successSelfSwitch)) {
                     $gameSelfSwitches.setValue([this.currentMapId, this.currentEventId, successSelfSwitch], true);
                 }
-                if (this.crimeKey) this.pendingCrimeKey = this.crimeKey;
+                // No scene is left here, so the crime is filed now: deferred to
+                // the next Scene_Map.start it waited for a menu or a transfer,
+                // and a trip to the title could hand it to another save.
+                if (this.crimeKey) {
+                    if (window.CrimeSystem) window.CrimeSystem.addPresetCrime(this.crimeKey);
+                    else this.pendingCrimeKey = this.crimeKey;
+                }
                 return;
             }
 
@@ -1571,6 +1577,9 @@ UnlockingBlocks.version = 3.0;
 
             if (window.PSXHud) {
                 window.PSXHud.onFontReady(() => {
+                    // The font can land after the player has left: the panels are
+                    // gone by then and a repaint would throw from the timer.
+                    if (SceneManager._scene !== this) return;
                     if (!this._header) return;
                     this._header.refresh();
                     this._clock.refresh();
@@ -1781,7 +1790,7 @@ UnlockingBlocks.version = 3.0;
             LOCK_DOMS = [];
             if (this._viewSprite && this._threeReady) {
                 if (this._viewSprite.parent) this._viewSprite.parent.removeChild(this._viewSprite);
-                this._viewSprite.destroy();
+                this._viewSprite.destroy({ texture: true, baseTexture: true });
             }
             this._viewSprite = null;
             if (this._view) {
@@ -1842,6 +1851,25 @@ UnlockingBlocks.version = 3.0;
             window.CrimeSystem.addPresetCrime(key);
         }
     };
+
+    // What is waiting for the map belongs to the game it was raised in: a
+    // new game or a loaded save starts with nothing pending.
+    const clearPending = () => {
+        UnlockingBlocks.pendingCrimeKey = null;
+        UnlockingBlocks.pendingLaunch = false;
+    };
+    if (typeof DataManager !== 'undefined') {
+        const _DataManager_setupNewGame = DataManager.setupNewGame;
+        DataManager.setupNewGame = function () {
+            clearPending();
+            return _DataManager_setupNewGame ? _DataManager_setupNewGame.apply(this, arguments) : undefined;
+        };
+        const _DataManager_extractSaveContents = DataManager.extractSaveContents;
+        DataManager.extractSaveContents = function () {
+            clearPending();
+            return _DataManager_extractSaveContents ? _DataManager_extractSaveContents.apply(this, arguments) : undefined;
+        };
+    }
 
     const _Scene_Map_update = Scene_Map.prototype.update;
     Scene_Map.prototype.update = function () {

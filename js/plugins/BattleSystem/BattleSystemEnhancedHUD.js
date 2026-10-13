@@ -706,15 +706,9 @@
                      .replace(/\\P\[\d+\]/gi, '')
                      .replace(/\\G/gi, '');
 
-          // Convert \I[n] icon codes into inline iconset spans so element
-          // icons render to the left of their name in the help box.
-          text = text.replace(/\\I\[(\d+)\]/gi, function (m, n) {
-              return `<span class="cc-rpg-icon bse-help-icon" style="${window.CCArt.icon(Number(n), 32)}"></span>`;
-          });
-
           // Wrap in a single block child so the flex-column root does not
           // stack the inline icon span as its own row above the element name.
-          const formattedText = '<div>' + text.replace(/\n/g, '<br/>') + '</div>';
+          const formattedText = '<div>' + _hudHelpMarkup(text) + '</div>';
           if (this._htmlHelpRoot.innerHTML !== formattedText) {
               this._htmlHelpRoot.innerHTML = formattedText;
           }
@@ -1152,11 +1146,17 @@
               paintIcon(iconSpan, iconIndex);
               el.appendChild(iconSpan);
 
+              // The category is an id ("General" is the bag's own); a DOM row
+              // never reaches the draw-time translation, so it is put into
+              // the player's language here.
+              const catLabel = item === "General"
+                  ? window.T('Battle.hud.itemCategoryGeneral')
+                  : (window.translateText ? window.translateText(item) : item);
               const nameSpan = document.createElement('span');
-              nameSpan.textContent = item;
+              nameSpan.textContent = catLabel;
               leftDiv.appendChild(nameSpan);
               el.appendChild(leftDiv);
-              el.title = item;
+              el.title = catLabel;
 
               // Right side: Item count in this category
               const rightDiv = document.createElement('div');
@@ -1188,11 +1188,14 @@
               paintIcon(iconSpan, iconIndex);
               el.appendChild(iconSpan);
 
+              // Database names are translated at draw time, which a DOM row
+              // never reaches.
+              const itemName = window.translateText ? window.translateText(item.name) : item.name;
               const nameSpan = document.createElement('span');
-              nameSpan.textContent = item.name;
+              nameSpan.textContent = itemName;
               leftDiv.appendChild(nameSpan);
               el.appendChild(leftDiv);
-              el.title = item.name;
+              el.title = itemName;
 
               // Right side: Quantity / Number
               const rightDiv = document.createElement('div');
@@ -1204,8 +1207,10 @@
               rightDiv.appendChild(countSpan);
               el.appendChild(rightDiv);
 
-              // Enable/disable based on whether party can use the item in battle
-              const isEnabled = $gameParty.canUse(item);
+              // Enabled the way the window itself answers it: the item list
+              // asks whether the party can use it, the Throw list only
+              // whether there is one left to hurl.
+              const isEnabled = self.isEnabled(item);
               if (!isEnabled) {
                   el.classList.add('bse-item-cell--spent');
               }
@@ -1564,7 +1569,7 @@
     this.bitmap.outlineWidth = 0;
 
     const level = b.level ? ` L.${b.level}` : "";
-    overlay.addText(b.name() + level, 0, y, w, "left", 12, "#ffd700", false, null, 0, "monospace", lineHeight);
+    overlay.addText(_hudEsc(b.name() + level), 0, y, w, "left", 12, "#ffd700", false, null, 0, "monospace", lineHeight);
     y += lineHeight;
 
     const gauge = (rate, glyph) => {
@@ -1711,8 +1716,8 @@
       // trailing off one end of the gauges.
       const nameEl = this._htmlOverlay.addText(
         level
-          ? `<span>${rawName}</span><span class="bse-mini-level" style="--hud-ink:${enemyLevelColor(b)}">${level}</span>`
-          : rawName,
+          ? `<span>${_hudEsc(rawName)}</span><span class="bse-mini-level" style="--hud-ink:${enemyLevelColor(b)}">${level}</span>`
+          : _hudEsc(rawName),
         geo.x - MINI.ang,
         -2,
         nameBoxW,
@@ -2129,6 +2134,27 @@
     if (!_hudMeasureCtx) _hudMeasureCtx = document.createElement('canvas').getContext('2d');
     _hudMeasureCtx.font = `bold ${px}px 'Bitter', serif`;
     return _hudMeasureCtx.measureText(String(text || '')).width;
+  }
+
+  // An enemy name can be procedural (a petrodemon, a rarity), and an actor
+  // name is typed by the player: either goes into addText, which writes
+  // innerHTML, so it is escaped first.
+  function _hudEsc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+  }
+
+  // The battle help text as markup. The text (a skill, item or enemy name and
+  // its description) is escaped FIRST, so a name cannot open a tag; only then
+  // are the \I[n] codes turned into inline iconset spans, so element icons
+  // still render to the left of their name, and line breaks into <br/>.
+  function _hudHelpMarkup(text) {
+    return _hudEsc(text)
+      .replace(/\\I\[(\d+)\]/gi, function (m, n) {
+        return `<span class="cc-rpg-icon bse-help-icon" style="${window.CCArt.icon(Number(n), 32)}"></span>`;
+      })
+      .replace(/\n/g, '<br/>');
   }
 
   function _enemyTargetName(enemy) {
@@ -2664,12 +2690,18 @@
     height = height || ImageManager.faceHeight;
     
     let bitmap = ImageManager.loadBitmap("img/busts/", faceName);
+    // The bust may still be loading when the window is closed or redrawn: a
+    // destroyed window's contents have no canvas left to draw on, and a
+    // rebuilt one has moved on to other contents. Only the page the face was
+    // asked for is drawn on.
+    const target = this.contents;
     const drawClippedFace = () => {
+      if (!target || this.contents !== target || !target._context) return;
       const sw = bitmap.width * 0.6;
       const sh = bitmap.width * 0.6;
       const sx = (bitmap.width - sw) / 2;
       const sy = bitmap.height * 0.05; // Upper bust face area
-      this.contents.blt(bitmap, sx, sy, sw, sh, x, y, width, height);
+      target.blt(bitmap, sx, sy, sw, sh, x, y, width, height);
     };
 
     bitmap.addLoadListener(() => {

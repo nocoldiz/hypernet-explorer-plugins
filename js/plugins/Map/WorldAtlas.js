@@ -913,10 +913,21 @@
             show(d.americas, t <= 0);
             show(d.canadafrica, t >= 1);
             show(d.landMorph, t > 0 && t < 1);
+            // Outside the years the world was remade in, t sits at 0 or 1 and
+            // every outline and label is already where it belongs: the slider
+            // fires on every step of a drag, and rewriting every nation's path
+            // for a year that moves nothing was most of what it cost. The node
+            // set is part of the check, so a rebuilt page is always drawn.
+            const nodes = this._countryNodes || {};
+            const last = this._eraDrawn;
+            if (last && last.t === t && last.nodes === this._countryNodes && last.labels === this._labelNodes) {
+                this._eraTail();
+                return;
+            }
+            this._eraDrawn = { t, nodes: this._countryNodes, labels: this._labelNodes };
             if (d.landMorph && t > 0 && t < 1 && this._geo.landMorph) {
                 d.landMorph.setAttribute("d", morphPath(this._geo.landMorph, t));
             }
-            const nodes = this._countryNodes || {};
             Object.keys(nodes).forEach((name) => {
                 nodes[name].setAttribute("d", this._outlineOf(name));
             });
@@ -926,6 +937,13 @@
                 node.setAttribute("x", a[0].toFixed(2));
                 node.setAttribute("y", (-a[1]).toFixed(2));
             });
+            this._eraTail();
+        }
+
+        // The year's own readouts, which move with every step even when the
+        // world under them does not.
+        _eraTail() {
+            const d = this._dom;
             if (d.readout) d.readout.textContent = String(this._year);
             if (d.eraLabel) d.eraLabel.textContent = this._eraLabel();
             if (d.slider && Number(d.slider.value) !== this._year) d.slider.value = String(this._year);
@@ -983,12 +1001,24 @@
             if (node) node.classList.toggle(cls, on);
         }
 
+        // Both panels are rebuilt as a string on every year step, and most
+        // steps leave them as they were: the string is compared with the one
+        // last written into that same node, so an unchanged panel keeps its
+        // markup (and its scroll) instead of being thrown away and reparsed.
+        _writePanel(slot, node, html) {
+            const last = this._panelHTML && this._panelHTML[slot];
+            if (last && last.node === node && last.html === html) return;
+            node.innerHTML = html;
+            if (!this._panelHTML) this._panelHTML = {};
+            this._panelHTML[slot] = { node, html };
+        }
+
         _refreshDossier() {
-            if (this._dom && this._dom.dossier) this._dom.dossier.innerHTML = this._dossier();
+            if (this._dom && this._dom.dossier) this._writePanel("dossier", this._dom.dossier, this._dossier());
         }
 
         _refreshLegend() {
-            if (this._dom && this._dom.legend) this._dom.legend.innerHTML = this._legend();
+            if (this._dom && this._dom.legend) this._writePanel("legend", this._dom.legend, this._legend());
         }
 
         _hover(name) {

@@ -1078,7 +1078,9 @@
                 const ang = angMin + (angMax - angMin) * t;
                 const len = span * (1.0 - t * 0.32);
                 const tip = new THREE.Vector3(0, len, 0);
-                tip.applyAxisAngle(new THREE.Vector3(0, 0, 1), side * ang);
+                // A turn about +Z carries +y toward -x, so the right wing
+                // (side 1) turns the negative way to splay out to +x.
+                tip.applyAxisAngle(new THREE.Vector3(0, 0, 1), -side * ang);
                 tip.add(knuckle);
                 tips.push(tip);
                 this.addStrut(g, boneMat, knuckle, tip, 0.035, 0.02);
@@ -2209,7 +2211,18 @@
             if (!value || depth > 3 || typeof value !== 'object') return;
             if (seen.has(value)) return;
             seen.add(value);
-            if (value.isObject3D) { out.add(value); return; }
+            if (value.isObject3D) {
+                out.add(value);
+                // A family may hang a limb's own pieces off the limb itself
+                // (arm._fore, arm._weapon) and pose them through it; those are
+                // as reachable as a field and stay protected the same way.
+                for (const k of Object.keys(value)) {
+                    if (k.charCodeAt(0) !== 95) continue;              // '_' own props only
+                    const v = value[k];
+                    if (v && typeof v === 'object' && (v.isObject3D || Array.isArray(v))) visit(v, depth + 1);
+                }
+                return;
+            }
             if (Array.isArray(value)) { for (const v of value) visit(v, depth + 1); return; }
             if (value instanceof Map) { value.forEach(v => visit(v, depth + 1)); return; }
             if (value instanceof Set) { value.forEach(v => visit(v, depth + 1)); return; }
@@ -2226,6 +2239,44 @@
         return out;
     }
 
+    // A family that poses a group's members one by one (this.wings.children
+    // .forEach(w => w.rotation.x = ...)) reaches those members through the
+    // group, not through a field, so the field scan cannot see them. Merged,
+    // the four wings of a dragonfly become ONE child and the flap turns the
+    // whole baked set a further quarter turn: the wings stand up off the side
+    // of the body. The family's own source says which groups it walks, read
+    // once per class: every `name.children` in its methods names a field whose
+    // direct children must stay as they were built.
+    const _childrenFieldsByClass = new WeakMap();
+    function animatedChildrenFields(battlerModel) {
+        const ctor = battlerModel && battlerModel.constructor;
+        if (!ctor) return [];
+        if (_childrenFieldsByClass.has(ctor)) return _childrenFieldsByClass.get(ctor);
+        const names = new Set();
+        const re = /\b([A-Za-z_$][\w$]*)\.children\b/g;
+        for (let proto = ctor.prototype; proto && proto !== Object.prototype; proto = Object.getPrototypeOf(proto)) {
+            for (const key of Object.getOwnPropertyNames(proto)) {
+                const desc = Object.getOwnPropertyDescriptor(proto, key);
+                if (!desc || typeof desc.value !== 'function') continue;
+                let src = '';
+                try { src = Function.prototype.toString.call(desc.value); } catch (e) { continue; }
+                let m;
+                while ((m = re.exec(src))) names.add(m[1]);
+            }
+        }
+        const list = [...names];
+        _childrenFieldsByClass.set(ctor, list);
+        return list;
+    }
+    function collectAnimatedChildren(battlerModel, out) {
+        for (const name of animatedChildrenFields(battlerModel)) {
+            const node = battlerModel[name];
+            if (!node || !node.isObject3D || node === battlerModel.model) continue;
+            for (const child of node.children) out.add(child);
+        }
+        return out;
+    }
+
     // The meshes the flash, the dismemberment cascade and the family's own
     // animations reach by reference.
     function collectProtectedMeshes(battlerModel) {
@@ -2236,6 +2287,7 @@
             for (const m of (rule.hide || [])) if (m) out.add(m);
         }
         collectReferencedNodes(battlerModel, out);
+        collectAnimatedChildren(battlerModel, out);
         // Each of those nodes is protected in ITSELF, and not down its subtree,
         // because nothing here needs its descendants to stay loose:
         //   - the hit flash repaints _partMeshMap[key].material by reference, so
@@ -2531,12 +2583,19 @@
     // each call rather than left on, because THREE belongs to the whole game and
     // a battler's budget is not a map prop's or a weapon's.
     function buildArchetypeModel(def, scale, offsetY, battler, weaponType, key) {
-        const model = _onFacetBudget(() => def.create(scale, offsetY, battler, weaponType, key));
+        const handed = new Set();
+        const model = _onFacetBudget(() => def.create(scale, offsetY, battler, weaponType, key), handed);
+        _claimInternedGeometry(model, handed);
         if (!model || typeof model.load !== 'function' || model._facetBudgeted) return model;
         model._facetBudgeted = true;
         const inner = model.load;
         model.load = function (...args) {
-            return _onFacetBudget(() => inner.apply(this, args));
+            const built = new Set();
+            try {
+                return _onFacetBudget(() => inner.apply(this, args), built);
+            } finally {
+                _claimInternedGeometry(this, built);
+            }
         };
         return model;
     }
@@ -2562,6 +2621,10 @@
         'TetrahedronGeometry'
     ];
     const _geometryIntern = new Map();
+
+    // Which shared buffers the build in progress was handed (see _onFacetBudget).
+    // Null outside a build, so nothing is attributed to a caller that is not one.
+    let _internCollector = null;
 
     // A shared buffer must outlive any one battler that happens to be torn down
     // first, so its dispose() is neutralised the way the weapon model cache
@@ -2596,8 +2659,10 @@
                 let geo = _geometryIntern.get(key);
                 if (!geo) {
                     geo = _protectSharedGeometry(new Current(...args));
+                    geo._b3dInternKey = key;
                     _geometryIntern.set(key, geo);
                 }
+                if (_internCollector) _internCollector.add(geo);
                 return geo;
             };
             Interned.prototype = Current.prototype;
@@ -2623,17 +2688,68 @@
         _geometryIntern.clear();
     }
 
+    // ---- who is holding a shared buffer --------------------------------------
+    //
+    // Every fight rolls its own look seed (see _battleLookSeed below), and the
+    // seed decides a creature's proportions, so the primitives a troop is built
+    // from are new numbers almost every battle. Interned for good, each fight
+    // left its whole troop's worth of buffers in the cache, CPU arrays and GPU
+    // copies alike, and nothing ever took them out: a dozen more per battle, for
+    // the rest of the session.
+    //
+    // So each built model remembers which shared buffers it was handed, and a
+    // buffer is held by the models that were. When the battle field lets its
+    // models go (Battle3DScene.removeModel / dispose) they hand their claim back,
+    // and a buffer nobody holds any more leaves the cache and is freed. Anything
+    // that builds a creature and keeps it (the bestiary, the voxel world, the
+    // status sheet) never hands its claim back, so what it draws stays shared
+    // exactly as before.
+    function _claimInternedGeometry(owner, handed) {
+        if (!owner || typeof owner !== 'object' || !handed || !handed.size) return;
+        let own = owner._internedGeos;
+        if (!own) own = owner._internedGeos = new Set();
+        for (const geo of handed) {
+            if (own.has(geo)) continue;
+            own.add(geo);
+            geo._b3dUsers = (geo._b3dUsers || 0) + 1;
+        }
+    }
+
+    function _releaseInternedGeometry(owner) {
+        const own = owner && owner._internedGeos;
+        if (!own) return 0;
+        owner._internedGeos = null;
+        let freed = 0;
+        for (const geo of own) {
+            geo._b3dUsers = Math.max(0, (geo._b3dUsers || 0) - 1);
+            if (geo._b3dUsers > 0) continue;
+            const key = geo._b3dInternKey;
+            if (key && _geometryIntern.get(key) === geo) _geometryIntern.delete(key);
+            if (geo._realDispose) {
+                geo.dispose = geo._realDispose;
+                geo._realDispose = null;
+            }
+            geo._battlerShared = false;
+            if (typeof geo.dispose === 'function') geo.dispose();
+            freed++;
+        }
+        return freed;
+    }
+
     // Run fn with the battler geometry budget in force. Every family's load() is
     // declared async but there is not one `await` in the whole roster, so the
     // geometry is all built before fn returns and the budget never outlives it.
     // The intern patch is applied over the budget one, so what gets shared is
     // the geometry as the budget left it.
-    function _onFacetBudget(fn) {
+    function _onFacetBudget(fn, collect) {
         const undoBudget = _patchFacetBudget();
         const undoIntern = _patchGeometryIntern();
+        const prevCollector = _internCollector;
+        _internCollector = collect || null;
         try {
             return fn();
         } finally {
+            _internCollector = prevCollector;
             undoIntern();
             undoBudget();
         }
@@ -2823,6 +2939,23 @@
     // back at all): there is only ever one.
     let _sharedRenderer = null;
 
+    // create3DSprite wraps the battle canvas with PIXI.Texture.from, which files
+    // the texture in PIXI's global cache under that canvas for good (that is
+    // what lets every fight reuse the one upload). A replaced context brings a
+    // NEW canvas, so the old canvas, its texture and its GPU copy would sit in
+    // that cache for the rest of the session. Let them go with the context.
+    function releaseBattleCanvasTexture(canvas) {
+        if (!canvas || typeof PIXI === 'undefined') return;
+        const id = canvas._pixiId;
+        const cache = PIXI.utils && PIXI.utils.TextureCache;
+        const tex = id && cache ? cache[id] : null;
+        if (!tex || typeof tex.destroy !== 'function') return;
+        try { tex.destroy(true); } catch (e) { /* PIXI already let it go */ }
+        if (cache[id] === tex) delete cache[id];
+        const baseCache = PIXI.utils.BaseTextureCache;
+        if (baseCache && baseCache[id]) delete baseCache[id];
+    }
+
     function acquireBattleRenderer() {
         if (_sharedRenderer) {
             // A context can still be lost (driver reset, tab eviction). A lost one
@@ -2833,9 +2966,11 @@
                 lost = !gl || (gl.isContextLost && gl.isContextLost());
             } catch (e) { lost = true; }
             if (!lost) return _sharedRenderer;
+            const deadCanvas = _sharedRenderer.domElement;
             try { _sharedRenderer.dispose(); } catch (e) { /* already gone */ }
             _sharedRenderer = null;
             resetProgramKeepAlive();
+            releaseBattleCanvasTexture(deadCanvas);
         }
         // Antialias defaults OFF: MSAA is one of the most expensive things a
         // software rasterizer does, and the game already targets a low-fi
@@ -3371,7 +3506,7 @@
         // GLB still chains off its promise the way it always did.
         addModel(key, battlerModel, x, y, z) {
             debugLog(`Adding model: ${key} at position (${x}, ${y}, ${z})`);
-            if (this._disposed || !this.scene) return; // scene torn down before this ran
+            if (this._disposed || !this.scene) { this._discardModel(battlerModel); return; } // scene torn down before this ran
             const actualY = y + battlerModel.offsetY / 100;
             try {
                 if (battlerModel.loaded) {
@@ -3389,17 +3524,30 @@
                     this._finishModel(key, battlerModel, x, actualY, z);
                 }).catch((error) => {
                     console.error(`Failed to add model ${key}:`, error);
+                    this._discardModel(battlerModel);
                 });
             } catch (error) {
                 console.error(`Failed to add model ${key}:`, error);
+                this._discardModel(battlerModel);
             }
+        }
+
+        // A body that will never stand on this field: the fight ended while it
+        // was still loading, or its build came back empty. It was never added,
+        // so dispose() will not see it; it is let go of here instead.
+        _discardModel(battlerModel) {
+            if (!battlerModel) return;
+            try {
+                if (battlerModel.model) disposeObject3DResources(battlerModel.model);
+            } catch (e) { /* half-built: nothing more to free */ }
+            _releaseInternedGeometry(battlerModel);
         }
 
         _finishModel(key, battlerModel, x, actualY, z) {
             try {
                 // load() may have awaited: the scene may have been disposed meanwhile.
-                if (this._disposed || !this.scene) return;
-                if (!battlerModel.model) return;
+                if (this._disposed || !this.scene) { this._discardModel(battlerModel); return; }
+                if (!battlerModel.model) { this._discardModel(battlerModel); return; }
 
                 // Non-bipedal models face slightly left: reparent their content
                 // into a yawed wrapper so the family's own animations (which run
@@ -3442,6 +3590,13 @@
                 }
             } catch (error) {
                 console.error(`Failed to add model ${key}:`, error);
+                // Failed before it was registered: nothing else will ever free
+                // it, and a half-finished body must not stay drawn untracked.
+                if (this.models.get(key) !== battlerModel) {
+                    const root = battlerModel && battlerModel.model;
+                    if (root && root.parent) root.parent.remove(root);
+                    this._discardModel(battlerModel);
+                }
             }
         }
 
@@ -3450,6 +3605,7 @@
             if (model && model.model) {
                 this.scene.remove(model.model);
                 disposeObject3DResources(model.model);
+                _releaseInternedGeometry(model);
                 this.models.delete(key);
                 debugLog(`Model removed: ${key}`);
             }
@@ -3520,6 +3676,9 @@
                     if (this.scene) this.scene.remove(model.model);
                     disposeObject3DResources(model.model);
                 }
+                // After the traversal above, which skips shared buffers: a buffer
+                // this battler was the last holder of is freed here.
+                _releaseInternedGeometry(model);
             });
             this.models.clear();
             if (this.lighting) { this.lighting.dispose(); this.lighting = null; }
@@ -3679,6 +3838,8 @@
     // Exposed so the perf harness can assert the warm-up exists and runs once.
     window.Battler3D.warmShaders = warmBattleShaders;
     window.Battler3D.flatShadeModel = flatShadeBattlerModel;
+    // How many primitives the battler geometry cache is holding (tests, profiling).
+    window.Battler3D.internedGeometryCount = function () { return _geometryIntern.size; };
     // The floor under each segment count the budget governs, by slot name. A
     // type absent here is not on the budget at all (a box has no curvature to
     // spend segments on), so nothing should read a floor into one.
@@ -4267,8 +4428,19 @@
 
     Spriteset_Battle.prototype.create3DScene = function() {
         debugLog('Creating 3D scene');
-        this._battle3DScene = new Battle3DScene();
-        this._battle3DScene.initialize(Graphics.width, Graphics.height);
+        const scene3d = new Battle3DScene();
+        try {
+            scene3d.initialize(Graphics.width, Graphics.height);
+        } catch (e) {
+            // No WebGL context to be had (driver blacklisted, context cap, a
+            // lost GPU). The fight goes on with the sprite battlers: with no
+            // scene, create3DEnemies leaves every 2D sprite up.
+            console.warn('[3D Battler] 3D layer unavailable, using sprite battlers', e);
+            try { scene3d.dispose(); } catch (e2) { /* nothing was built */ }
+            this._battle3DScene = null;
+            return;
+        }
+        this._battle3DScene = scene3d;
         debugLog('3D scene created');
     };
 
@@ -4490,10 +4662,9 @@
                 sprite.hide();
                 debugLog(`Enemy sprite ${i} hidden`);
 
-                // Everything above is bookkeeping, and cheap. The body itself
-                // is the cost, so it is queued as a job for runStaggeredBuilds
-                // to spend its frame budget on.
-                jobs.push(() => {
+                // The body itself, built and put on the field. Everything above is
+                // bookkeeping, and cheap; this is the cost.
+                const buildEnemyModel = () => {
                     let battlerModel;
                     if (def) {
                         debugLog(`Configuring procedural ${archetypeKey} enemy`);
@@ -4523,6 +4694,30 @@
                         battlerModel = new BattlerModel3D(filename, scale, offsetY);
                     }
                     return this._battle3DScene.addModel(`enemy_${i}`, battlerModel, posX, posY, posZ);
+                };
+
+                // Queued as a job for runStaggeredBuilds to spend its frame
+                // budget on.
+                jobs.push(() => {
+                    // The 2D sprite was hidden above on the promise of a body. A
+                    // generator that throws, or a body that comes back empty or
+                    // fails to load, would leave the troop member invisible for
+                    // the whole fight, so it gets its sprite back instead.
+                    const modelKey = `enemy_${i}`;
+                    const scene3d = this._battle3DScene;
+                    const fallBackToSprite = () => {
+                        if (scene3d && !scene3d._disposed && !scene3d.getModel(modelKey)) sprite.show();
+                    };
+                    let added;
+                    try {
+                        added = buildEnemyModel();
+                    } catch (e) {
+                        fallBackToSprite();
+                        throw e;
+                    }
+                    if (added && typeof added.then === 'function') return added.then(fallBackToSprite);
+                    fallBackToSprite();
+                    return added;
                 });
             }
         }

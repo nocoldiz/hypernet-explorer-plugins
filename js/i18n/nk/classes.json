@@ -1,0 +1,212 @@
+{
+  "1": {
+    "name": "FREELANCER"
+  },
+  "2": {
+    "name": "WITCH"
+  },
+  "3": {
+    "name": "NUN"
+  },
+  "4": {
+    "name": "KNIGHT"
+  },
+  "5": {
+    "name": "CONVOKER"
+  },
+  "6": {
+    "name": "CEO"
+  },
+  "7": {
+    "name": "VAMPIRE"
+  },
+  "8": {
+    "name": "CULTIST"
+  },
+  "9": {
+    "name": "COMBAT MEDIC"
+  },
+  "10": {
+    "name": "ELEMENTALIST"
+  },
+  "11": {
+    "name": "MARTIAL ARTIST"
+  },
+  "12": {
+    "name": "ENCHANTER"
+  },
+  "13": {
+    "name": "BERSERKER"
+  },
+  "14": {
+    "name": "ACROBAT"
+  },
+  "15": {
+    "name": "MONK"
+  },
+  "16": {
+    "name": "GUNMANCER"
+  },
+  "17": {
+    "name": "BOXER"
+  },
+  "18": {
+    "name": "PRO WRESTLER"
+  },
+  "19": {
+    "name": "FIRE MAGE"
+  },
+  "20": {
+    "name": "ICE MAGE"
+  },
+  "21": {
+    "name": "ROGUE"
+  },
+  "22": {
+    "name": "PALADIN"
+  },
+  "23": {
+    "name": "WARLOCK"
+  },
+  "24": {
+    "name": "RANGER"
+  },
+  "25": {
+    "name": "CLERIC"
+  },
+  "26": {
+    "name": "SAMURAI"
+  },
+  "27": {
+    "name": "ARCHMAGE"
+  },
+  "28": {
+    "name": "SCOUT"
+  },
+  "29": {
+    "name": "ORACLE"
+  },
+  "30": {
+    "name": "GLADIATOR"
+  },
+  "31": {
+    "name": "NECROMANCER"
+  },
+  "32": {
+    "name": "COMMANDER"
+  },
+  "33": {
+    "name": "GUARDIAN"
+  },
+  "34": {
+    "name": "SPELLBLADE"
+  },
+  "35": {
+    "name": "BARD"
+  },
+  "36": {
+    "name": "ILLUSIONIST"
+  },
+  "37": {
+    "name": "BATTLEMAGE"
+  },
+  "38": {
+    "name": "MERCENARY"
+  },
+  "39": {
+    "name": "SAGE"
+  },
+  "40": {
+    "name": "BARBARIAN"
+  },
+  "41": {
+    "name": "DOCTOR"
+  },
+  "42": {
+    "name": "SCIENTIST"
+  },
+  "43": {
+    "name": "FIREFIGHTER"
+  },
+  "44": {
+    "name": "POLICE OFFICER"
+  },
+  "45": {
+    "name": "CHEF"
+  },
+  "46": {
+    "name": "JOURNALIST"
+  },
+  "47": {
+    "name": "CONSTRUCTION WORKER"
+  },
+  "48": {
+    "name": "ACADEMIC"
+  },
+  "49": {
+    "name": "PSYKER"
+  },
+  "50": {
+    "name": "ARCHAEOLOGIST"
+  },
+  "51": {
+    "name": "NURSE"
+  },
+  "52": {
+    "name": "HUNTER-GATHERER"
+  },
+  "53": {
+    "name": "TECHNOMAGE"
+  },
+  "54": {
+    "name": "MECHANIC"
+  },
+  "55": {
+    "name": "SHOPKEEPER"
+  },
+  "56": {
+    "name": "PLANT MAGE"
+  },
+  "57": {
+    "name": "LUMBERJACK"
+  },
+  "58": {
+    "name": "METEOARCANIST"
+  },
+  "59": {
+    "name": "PRIEST"
+  },
+  "60": {
+    "name": "ENTERTAINER"
+  },
+  "61": {
+    "name": "DEMIGOD"
+  },
+  "62": {
+    "name": "WRETCH"
+  },
+  "63": {
+    "name": "FERAL"
+  },
+  "64": {
+    "name": "MIMIC"
+  },
+  "65": {
+    "name": "MONSTER"
+  },
+  "66": {
+    "name": "MANA CYBORG"
+  },
+  "67": {
+    "name": "GHOST"
+  },
+  "68": {
+    "name": "ZOMBIE"
+  },
+  "69": {
+    "name": "MUTANT"
+  },
+  "70": {
+    "name": "DRONE"
+  }
+}

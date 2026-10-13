@@ -1,6 +1,6 @@
 {
   "options": {
-    "cameraSpeed": "Velocita telecamera",
+    "cameraSpeed": "Velocità telecamera",
     "invertY": "Inverti asse Y telecamera"
   },
   "verbs": {
@@ -10,7 +10,7 @@
       "accetta",
       "applica",
       "fatto",
-      "si",
+      "sì",
       "avvia",
       "seleziona"
     ],

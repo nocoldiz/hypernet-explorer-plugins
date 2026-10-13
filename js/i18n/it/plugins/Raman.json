@@ -13,10 +13,10 @@
   "statusAnalyzing": "ANALISI DELLA FIRMA SPETTRALE...",
   "statusComplete": "█ SCANSIONE COMPLETA - LASER 532nm CW  |  RIS: 2 cm⁻¹  |  SNR: 84 dB",
   "statusScanning": "SCANSIONE LASER{dots}   [ν = {shift} cm⁻¹]",
-  "statusRendering": "RESA DELLO SPETTRO{dots}",
+  "statusRendering": "ELABORAZIONE DELLO SPETTRO{dots}",
   "msgHeader": "\\C[8][ SCANNER RAMAN ]\\C[0]",
-  "msgNoMaterial": "Nessun materiale spettralmente attivo rilevato nell'area di scansione.",
-  "msgHint": "Il bersaglio deve essere una statua, un dipinto o un oggetto di biblioteca entro 1 m.",
+  "msgNoMaterial": "Niente da analizzare qui.",
+  "msgHint": "Mettiti davanti a una statua, un dipinto o una libreria.",
   "choices": [
     "Guarda",
     "Analizza",
@@ -27,7 +27,7 @@
     "fossil": "fossile",
     "statue": "statua",
     "painting": "dipinto",
-    "library": "biblioteca",
+    "library": "libreria",
     "mask": "maschera",
     "surface": "superficie"
   },
@@ -58,7 +58,7 @@
     },
     "malachite": {
       "name": "Cu₂(CO₃)(OH)₂",
-      "subname": "Pigmento malachite"
+      "subname": "Pigmento di malachite"
     },
     "lead_white": {
       "name": "2PbCO₃·Pb(OH)₂",
@@ -106,7 +106,7 @@
     },
     "gold": {
       "name": "Au  Strato di ossido superficiale",
-      "subname": "Oro (dorato)"
+      "subname": "Oro (doratura)"
     },
     "silver": {
       "name": "Ag₂S + AgCl  Ossidazione",

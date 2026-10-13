@@ -15898,86 +15898,6 @@
    },
    "interior": {}
   },
-  "AlienEarthLike": {
-   "themes": [
-    "green"
-   ],
-   "exterior": {
-    "Baskets/Baskets": 0.2,
-    "Benches/Benches": 0.2,
-    "Bridges/Bridges": 0.15,
-    "Camping/Camping": 0.3,
-    "Camping/Fires": 0.3,
-    "Camping/Packs": 0.15,
-    "Columns/Posts": 0.1,
-    "Farming/Crops": 0.55,
-    "Farming/Farming": 0.55,
-    "Fences/Fences": 0.4,
-    "Flowers/Flowers": 0.55,
-    "Grass/Grass": 0.7,
-    "Mushrooms/Mushrooms": 0.25,
-    "Outside/Outside": 0.45,
-    "Plants/Bushes": 0.9,
-    "Plants/Plants": 0.8,
-    "Plants/Seedlings": 0.3,
-    "Rocks/Rocks": 0.3,
-    "Tents/Tents": 0.2,
-    "Terrain/Dirt": 0.35,
-    "Terrain/Terrain": 0.3,
-    "Trees/Conifers": 0.4,
-    "Trees/Trees": 1.1,
-    "TreeStumps/TreeStumps": 0.3,
-    "Vehicles/Carts": 0.15,
-    "Vines/Vines": 0.35,
-    "Water/Ponds": 0.15,
-    "Water/Water": 0.1,
-    "Wood/Logs": 0.45,
-    "Wood/Sticks": 0.3,
-    "Wood/Wood": 0.35,
-    "Misc/Misc": 0.06
-   },
-   "interior": {}
-  },
-  "AlienSuperEarth": {
-   "themes": [
-    "green"
-   ],
-   "exterior": {
-    "Baskets/Baskets": 0.2,
-    "Benches/Benches": 0.2,
-    "Bridges/Bridges": 0.15,
-    "Camping/Camping": 0.3,
-    "Camping/Fires": 0.3,
-    "Camping/Packs": 0.15,
-    "Columns/Posts": 0.1,
-    "Farming/Crops": 0.55,
-    "Farming/Farming": 0.55,
-    "Fences/Fences": 0.4,
-    "Flowers/Flowers": 0.55,
-    "Grass/Grass": 0.7,
-    "Mushrooms/Mushrooms": 0.25,
-    "Outside/Outside": 0.45,
-    "Plants/Bushes": 0.9,
-    "Plants/Plants": 0.8,
-    "Plants/Seedlings": 0.3,
-    "Rocks/Rocks": 0.3,
-    "Tents/Tents": 0.2,
-    "Terrain/Dirt": 0.35,
-    "Terrain/Terrain": 0.3,
-    "Trees/Conifers": 0.4,
-    "Trees/Trees": 1.1,
-    "TreeStumps/TreeStumps": 0.3,
-    "Vehicles/Carts": 0.15,
-    "Vines/Vines": 0.35,
-    "Water/Ponds": 0.15,
-    "Water/Water": 0.1,
-    "Wood/Logs": 0.45,
-    "Wood/Sticks": 0.3,
-    "Wood/Wood": 0.35,
-    "Misc/Misc": 0.06
-   },
-   "interior": {}
-  },
   "AlienMiniNeptune": {
    "themes": [
     "barren"
@@ -16656,46 +16576,6 @@
     "Terrain/Sand": 0.3,
     "Terrain/Snow": 0.8,
     "Terrain/Terrain": 0.6,
-    "Misc/Misc": 0.06
-   },
-   "interior": {}
-  },
-  "AlienHabitable": {
-   "themes": [
-    "green"
-   ],
-   "exterior": {
-    "Baskets/Baskets": 0.2,
-    "Benches/Benches": 0.2,
-    "Bridges/Bridges": 0.15,
-    "Camping/Camping": 0.3,
-    "Camping/Fires": 0.3,
-    "Camping/Packs": 0.15,
-    "Columns/Posts": 0.1,
-    "Farming/Crops": 0.55,
-    "Farming/Farming": 0.55,
-    "Fences/Fences": 0.4,
-    "Flowers/Flowers": 0.55,
-    "Grass/Grass": 0.7,
-    "Mushrooms/Mushrooms": 0.25,
-    "Outside/Outside": 0.45,
-    "Plants/Bushes": 0.9,
-    "Plants/Plants": 0.8,
-    "Plants/Seedlings": 0.3,
-    "Rocks/Rocks": 0.3,
-    "Tents/Tents": 0.2,
-    "Terrain/Dirt": 0.35,
-    "Terrain/Terrain": 0.3,
-    "Trees/Conifers": 0.4,
-    "Trees/Trees": 1.1,
-    "TreeStumps/TreeStumps": 0.3,
-    "Vehicles/Carts": 0.15,
-    "Vines/Vines": 0.35,
-    "Water/Ponds": 0.15,
-    "Water/Water": 0.1,
-    "Wood/Logs": 0.45,
-    "Wood/Sticks": 0.3,
-    "Wood/Wood": 0.35,
     "Misc/Misc": 0.06
    },
    "interior": {}

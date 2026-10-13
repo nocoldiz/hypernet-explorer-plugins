@@ -264,8 +264,8 @@
 
         if (window.Dice3D) {
             rollRes = await window.Dice3D.rollD20({
-                actionName: `Arcane Fusion: ${components.map(c => c.name).join(' + ')}`,
-                statName: 'INT',
+                actionName: T('SkillMaster.fusionRollAction', { parts: components.map(c => c.name).join(' + ') }),
+                statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(4) : '',
                 modifier: intMod,
                 dc: dc,
                 force3D: true
@@ -401,7 +401,7 @@
                 typeBadge = `<span class="spellforge-badge spellforge-badge--inline">${bLabel}</span>`;
             }
             const inner = skill
-                ? `<div class="spellforge-slot-filled"><div class="cc-rpg-icon spellforge-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></div><span class="spellforge-slot-name">${skill.name}</span><span class="spellforge-slot-cost">MP ${skill.mpCost} · AP ${skill.tpCost}</span></div>`
+                ? `<div class="spellforge-slot-filled"><div class="cc-rpg-icon spellforge-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></div><span class="spellforge-slot-name">${window.NPCShared.escapeHtml(skill.name)}</span><span class="spellforge-slot-cost">MP ${skill.mpCost} · AP ${skill.tpCost}</span></div>`
                 : `<span class="spellforge-slot-empty">${typeof T === 'function' ? T('SkillMaster.emptyPressToChoose') : '[ Empty - Click to choose ]'}</span>`;
             slotsHTML += `
                 <div class="focusable spellforge-slot ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorFocusSlot(${i})">
@@ -442,7 +442,7 @@
             const focused = !animPicking && this._editorFocus === focusIdx;
             fusedListHTML += `
                 <div class="focusable spellforge-row ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorSplit(${s.id})">
-                    <span class="spellforge-row-name"><div class="cc-rpg-icon spellforge-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></div>${s.name}</span>
+                    <span class="spellforge-row-name"><div class="cc-rpg-icon spellforge-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></div>${window.NPCShared.escapeHtml(s.name)}</span>
                     <span class="spellforge-split-tag">${typeof T === 'function' ? T('SkillMaster.split') : 'Split'}</span>
                 </div>`;
         });
@@ -475,7 +475,7 @@
                 const focused = this._editorPickIndex === k;
                 candHTML += `
                     <div class="focusable spellforge-row spellforge-row--plain ${focused ? 'focused' : ''}" onclick="SceneManager._scene.editorPickCandidate(${k})">
-                        <span class="spellforge-row-name spellforge-row-name--quiet"><div class="cc-rpg-icon spellforge-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></div>${s.name}</span>
+                        <span class="spellforge-row-name spellforge-row-name--quiet"><div class="cc-rpg-icon spellforge-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></div>${window.NPCShared.escapeHtml(s.name)}</span>
                         <span class="spellforge-row-cost">MP ${s.mpCost} · AP ${s.tpCost}</span>
                     </div>`;
             });
@@ -554,7 +554,7 @@
                     <div class="spellforge-preview spellforge-preview--roomy">
                         <div class="cc-rpg-icon spellforge-crest" style="${SkillMaster.getCategoryIconStyle('All')}"></div>
                         <h3 class="cc-header-gothic spellforge-preview-head">${typeof T === 'function' ? T('SkillMaster.fuseSpells3') : 'Spell Fusion'}</h3>
-                        <div class="spellforge-preview-note spellforge-preview-note--lead">${typeof T === 'function' ? T('SkillMaster.forgeBlurb', { actor: actor.name(), knowledge: knowledge }) : `Combine two known abilities into a unique spell for ${actor.name()}.`}</div>
+                        <div class="spellforge-preview-note spellforge-preview-note--lead">${typeof T === 'function' ? T('SkillMaster.forgeBlurb', { actor: window.NPCShared.escapeHtml(actor.name()), knowledge: knowledge }) : `Combine two known abilities into a unique spell for ${window.NPCShared.escapeHtml(actor.name())}.`}</div>
                     </div>`;
             }
         }

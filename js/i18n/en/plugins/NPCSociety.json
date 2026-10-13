@@ -94,7 +94,7 @@
     "quiet"
   ],
   "bio": {
-    "uncertainTimes": "uncertain times",
+    "uncertainTimes": "Uncertain times ahead",
     "wildsNear": "in the wilds near {city}",
     "inCountry": "in {place}",
     "inTown": "in {place}",
@@ -110,11 +110,11 @@
       "easternseaboard": "on the {place}"
     },
     "later": [
-      "Later, {sub} {was} there too when {event}.",
-      "Years on, {sub} {was} close enough to see when {event}.",
-      "Then came the season when {event}.",
-      "Not long after, {sub} {had} to learn what it means when {event}.",
-      "{cap} {remembers} the week when {event}, and says little about it."
+      "Later, {sub} {was} there too, the year the papers ran “{event}”.",
+      "Years on, {sub} {was} close enough to watch it happen: “{event}”.",
+      "Then came the season the headlines read “{event}”.",
+      "Not long after came “{event}”, and {sub} {had} to learn what that meant.",
+      "{cap} {remembers} the week of “{event}”, and {has} little to say about it."
     ],
     "moral": {
       "high": [
@@ -144,34 +144,34 @@
       ]
     },
     "creature": [
-      "{born} {placeIn}, {sub} came into the world far from human cities, a {adj} creature shaped by the season when {event}. {later} {moral}",
-      "No city ever had a claim on {obj}: born {placeIn}, a {adj} creature that still remembers when {event}. {later} {moral}",
-      "No register holds {pos} birth. {cap} {was} simply there, {placeIn}, a {adj} thing already grown by the time {event}. {later} {moral}",
-      "{born} {placeIn} and owned by nobody, a {adj} creature old enough to understand when {event}. {later} {moral}"
+      "{born} {placeIn}, far from human cities, {sub} {was} a {adj} creature already grown when the news reached even the wilds: “{event}”. {later} {moral}",
+      "No city ever had a claim on {obj}: born {placeIn}, a {adj} creature that still remembers the season of “{event}”. {later} {moral}",
+      "No register holds {pos} birth. {cap} {was} simply there, {placeIn}, a {adj} thing already grown by the time the news came: “{event}”. {later} {moral}",
+      "{born} {placeIn} and owned by nobody, a {adj} creature old enough to understand the news when it came: “{event}”. {later} {moral}"
     ],
     "turbulent": [
-      "{born} in {year} {placeIn}, into an age that would not sit still: {sub} {wasChild} when {event}. {later} {moral}",
-      "{born} {placeIn} in {year}, {sub} {has} one first clear memory, the year when {event}. {later} {moral}",
-      "{born} {placeIn} in {year}, a {adj} child of a century that opened badly, {sub} {had} barely started school when {event}. {later} {moral}",
-      "The {year} registers {placeIn} carry {pos} name. {cap} {has} never said much about the day when {event}. {later} {moral}"
+      "{born} in {year} {placeIn}, into an age that would not sit still, {sub} {wasChild} when the papers ran “{event}”. {later} {moral}",
+      "{born} {placeIn} in {year}, {sub} {has} one first clear memory, the year of “{event}”. {later} {moral}",
+      "{born} {placeIn} in {year}, a {adj} child of a century that opened badly, {sub} {had} barely started school when the news came: “{event}”. {later} {moral}",
+      "The {year} registers {placeIn} carry {pos} name. {cap} {has} never said much about the day the headline read “{event}”. {later} {moral}"
     ],
     "warYears": [
-      "{born} in the war years {placeIn}, {sub} {wasChild} when {event}. {later} {moral}",
-      "{cap} {grewUp} {placeIn} with the sirens going, and {saw} the morning when {event}. {later} {moral}",
-      "{born} in {year}, {sub} {grewUp} {placeIn} while {event}. {later} {moral}",
-      "A childhood {placeIn} of rationed things, and then the week when {event}. {later} {moral}"
+      "{born} in the war years {placeIn}, {sub} {wasChild} when the radio announced “{event}”. {later} {moral}",
+      "{cap} {grewUp} {placeIn} with the sirens going, and {saw} the morning of “{event}”. {later} {moral}",
+      "{born} in {year}, {sub} {grewUp} {placeIn} in the years of “{event}”. {later} {moral}",
+      "A childhood {placeIn} of rationed things, and then the winter of “{event}”. {later} {moral}"
     ],
     "postwar": [
-      "{born} in {year} {placeIn}, {sub} {is} a {adj} soul who came of age around the time when {event}. {later} {moral}",
-      "{cap} {grewUp} {placeIn} in a country being rebuilt, {adj} and impatient, and {saw} it all first hand when {event}. {later} {moral}",
-      "{born} {placeIn} in {year}, {sub} {has} told the story a hundred times: how {event}. {later} {moral}",
-      "A {adj} product of {year} {placeIn}, {sub} {had} an ordinary shift like any other on the day when {event}. {later} {moral}"
+      "{born} in {year} {placeIn}, {sub} {is} a {adj} soul who came of age around the time of “{event}”. {later} {moral}",
+      "{cap} {grewUp} {placeIn} in a country being rebuilt, {adj} and impatient, and {saw} it all first hand: “{event}”. {later} {moral}",
+      "{born} {placeIn} in {year}, {sub} {has} told the story a hundred times, the one that begins “{event}”. {later} {moral}",
+      "A {adj} product of {year} {placeIn}, {sub} {had} an ordinary shift like any other on the day of “{event}”. {later} {moral}"
     ],
     "modern": [
-      "{born} {placeIn} as the world grew strange, {sub} {has} never forgotten when {event}. {later} {moral}",
-      "{born} in {year} {placeIn}, {sub} {grewUp} hearing how {event}. {later} {moral}",
-      "{cap} {is} a {adj} soul of the late century, born {placeIn} and still marked by the year when {event}. {later} {moral}",
-      "{born} {placeIn} in {year}, into screens and static: {sub} {was} watching when {event}. {later} {moral}"
+      "{born} {placeIn} as the world grew strange, {sub} {has} never forgotten the day of “{event}”. {later} {moral}",
+      "{born} in {year} {placeIn}, {sub} {grewUp} hearing the story of “{event}”. {later} {moral}",
+      "{cap} {is} a {adj} soul of the late century, born {placeIn} and still marked by the year of “{event}”. {later} {moral}",
+      "{born} {placeIn} in {year}, into screens and static, {sub} {was} watching when the broadcast said “{event}”. {later} {moral}"
     ],
     "bornMeta": "Born {year} · {place}",
     "classOrigin": {
@@ -192,7 +192,7 @@
       ],
       "archmage": [
         "Forty years of study, two expulsions and one thesis that three academies refused to publish.",
-        "{cap} was the youngest in the tower and is now the only one left who remembers it standing.",
+        "{cap} {was} the youngest in the tower and {is} now the only one left who remembers it standing.",
         "{cap} {has} forgotten more theory than most practitioners are taught."
       ],
       "barbarian": [
@@ -208,11 +208,11 @@
       "battlemage": [
         "The academy was requisitioned in {pos} second year and the curriculum changed overnight.",
         "{cap} learned theory in a lecture hall and application in a trench, three months apart.",
-        "Robes do not stop shrapnel, which is why {sub} wears plate over them."
+        "Robes do not stop shrapnel, which is why {sub} {has} worn plate over them ever since."
       ],
       "berserker": [
         "The first time the red came down {sub} woke up unhurt in a room where nobody else was.",
-        "{cap} was taught to let it out rather than swallow it, which saved {pos} life and ended others.",
+        "{cap} {was} taught to let it out rather than swallow it, which saved {pos} life and ended others.",
         "It runs in the blood, and every generation of {pos} family has a story about it."
       ],
       "boxer": [
@@ -226,7 +226,7 @@
         "{cap} started with a stall, a spreadsheet and no scruples worth mentioning."
       ],
       "chef": [
-        "{cap} started washing dishes at fourteen and was running a pass by twenty-two.",
+        "{cap} started washing dishes at fourteen and {was} running a pass by twenty-two.",
         "A grandmother, a notebook of recipes, and a temper that turned out to be professionally useful.",
         "{cap} {has} burned {pos} hands so often that {sub} {has} stopped noticing hot plates."
       ],
@@ -236,7 +236,7 @@
         "{cap} {is} in it for the people rather than the theology, and the theology has made its peace with that."
       ],
       "combatmedic": [
-        "{cap} qualified as a nurse and was handed a rifle on the same afternoon.",
+        "{cap} qualified as a nurse and {was} handed a rifle on the same afternoon.",
         "Two tours taught {obj} to stitch a wound while being shouted at, which no hospital had managed.",
         "{cap} kept dragging people out of the line until somebody made it {pos} official job."
       ],
@@ -253,17 +253,17 @@
       "convoker": [
         "{cap} read a name aloud that should have stayed on the page, and something on the other side read {obj} back.",
         "The circle was chalk, the candle was cheap, and the thing that came through kept the appointment anyway.",
-        "{cap} {has} been trading favours with things that have no faces since {sub} was nineteen."
+        "{cap} {has} been trading favours with things that have no faces since {sub} {was} nineteen."
       ],
       "cultist": [
-        "They were the first people who ever said {pos} name like it mattered, and the price came later.",
+        "The cult was the first to say {pos} name like it mattered, and the price came later.",
         "{cap} joined for the free meals and stayed for the revelation.",
-        "A pamphlet, a basement, a chant: three steps and {sub} was somebody else's."
+        "A pamphlet, a basement, a chant: three steps and {sub} {was} somebody else's."
       ],
       "demigod": [
         "One of {pos} parents was never photographed, never aged and never explained.",
-        "{cap} found out what {sub} was at nineteen, in the worst possible way, in front of witnesses.",
-        "The temple that should have claimed {obj} burned down a century before {sub} was born."
+        "{cap} found out what {sub} {was} at nineteen, in the worst possible way, in front of witnesses.",
+        "The temple that should have claimed {obj} burned down a century before {sub} {was} born."
       ],
       "doctor": [
         "Six years of medicine, two of residency, and one night that taught {obj} more than all eight.",
@@ -291,7 +291,7 @@
       "entertainer": [
         "{cap} discovered at eleven that a room will forgive anything if it is laughing.",
         "Clubs, weddings, one television spot and a long quiet stretch afterwards.",
-        "{cap} {has} worked every kind of stage there is and still gets sick before each one."
+        "{cap} {has} worked every kind of stage there is, and the nerves before each one have never gone away."
       ],
       "feral": [
         "Nothing ever tamed it. It was whelped in a hedgerow and raised itself on what it could run down.",
@@ -303,7 +303,7 @@
       ],
       "firefighter": [
         "{cap} walked into a burning stairwell once as a bystander, and the brigade recruited {obj} the same week.",
-        "Eleven years of shifts and one building {sub} still dreams about.",
+        "Eleven years of shifts and one building that still turns up in {pos} dreams.",
         "{cap} {is} the calmest person in any room that is on fire, and the twitchiest in one that is not."
       ],
       "firemage": [
@@ -325,13 +325,13 @@
         "It was buried properly, in the wrong ground, and came back to the right one."
       ],
       "gladiator": [
-        "{cap} was sold to a pit at nineteen and bought {pos} own contract back at twenty-six.",
+        "{cap} {was} sold to a pit at nineteen and bought {pos} own contract back at twenty-six.",
         "Sand, a crowd and a gate that only opens one way: that was {pos} whole education.",
         "{cap} {is} famous in four towns and wanted in one of them."
       ],
       "guardian": [
-        "{cap} was posted at a door at twenty and discovered that {sub} was extremely hard to move.",
-        "Somebody {sub} was supposed to protect died, and {sub} {has} been overcorrecting ever since.",
+        "{cap} {was} posted at a door at twenty and discovered that {sub} {was} extremely hard to move.",
+        "Somebody {sub} {was} supposed to protect died, and {sub} {has} been overcorrecting ever since.",
         "The shield was {pos} grandfather's, and so was the habit of standing in front of people."
       ],
       "gunmancer": [
@@ -341,11 +341,11 @@
       ],
       "huntergatherer": [
         "{cap} grew up where the shops were a day away and the woods were not.",
-        "{cap} {has} eaten nothing {sub} did not catch, dig or recognise since {sub} was a child.",
+        "{cap} {has} eaten nothing {sub} did not catch, dig or recognise since {sub} {was} a child.",
         "A family that never quite joined the century, and a child who saw no reason to."
       ],
       "icemage": [
-        "{cap} was found alive in a drift that should have killed {obj}, and something had changed.",
+        "{cap} {was} found alive in a drift that should have killed {obj}, and something had changed.",
         "A winter that lasted fourteen months taught {obj} the shape of the cold from the inside.",
         "{cap} took up the discipline because it was the only thing that would slow {pos} temper down."
       ],
@@ -360,7 +360,7 @@
         "{cap} {has} been sued twice, both times by people who settled quietly."
       ],
       "knight": [
-        "A minor house needed a sword it could afford and {sub} was cheap, young and stubborn.",
+        "A minor house needed a sword it could afford and {sub} {was} cheap, young and stubborn.",
         "{cap} carried another knight's shield for six years before anyone let {obj} carry {pos} own.",
         "The oath was sworn to a lord who died a month later, and {sub} kept it anyway."
       ],
@@ -378,13 +378,13 @@
         "It runs on a charge it cannot explain and has never once been allowed to run dry."
       ],
       "martialartist": [
-        "{cap} was sent to the dojo to burn off a temper and found a discipline instead.",
+        "{cap} {was} sent to the dojo to burn off a temper and found a discipline instead.",
         "Twelve years of the same four movements, until they stopped being movements at all.",
         "{cap} lost the first fight badly enough to spend a decade making sure of the second."
       ],
       "mechanic": [
         "{cap} rebuilt {pos} first engine out of two broken ones and a manual in the wrong language.",
-        "A garage, a father who did not explain things, and a daughter who worked them out anyway.",
+        "A garage, a father who did not explain things, and a child who worked them out anyway.",
         "{cap} {has} never met a machine {sub} could not argue into running."
       ],
       "mercenary": [
@@ -403,7 +403,7 @@
         "It grew up in a vault among real chests and copied them the way a chick copies a hen.",
         "Something in a cellar taught it that patience is a hunting method.",
         "It has been the wrong piece of furniture in nine different houses.",
-        "It does not imitate to deceive. Imitation is simply the only shape it has ever had."
+        "Its imitation is innocent: simply the only shape it has ever had."
       ],
       "monk": [
         "{cap} gave away everything {sub} owned in one afternoon and {has} never once regretted the arithmetic.",
@@ -444,10 +444,10 @@
       "oracle": [
         "The dreams started before {sub} had words for them, and they have never once been wrong or kind.",
         "A fever at eleven left {obj} with a sense of what tomorrow smells like.",
-        "{cap} {has} stopped warning people, because they never listen until it is the day."
+        "{cap} {has} stopped warning people, because people never listen until it is the day."
       ],
       "paladin": [
-        "{cap} was ordained on a battlefield by a priest who died before the blessing finished.",
+        "{cap} {was} ordained on a battlefield by a priest who died before the blessing finished.",
         "The vow came first and the faith caught up with it, years later, on a bad road.",
         "{cap} {has} carried the same oath through three wars and never once put it down."
       ],
@@ -462,12 +462,12 @@
         "{cap} took the badge because {pos} family expected it and kept it for reasons of {pos} own."
       ],
       "priest": [
-        "{cap} was ordained in a parish that had lost two priests in five years and did not ask why.",
+        "{cap} {was} ordained in a parish that had lost two priests in five years and did not ask why.",
         "A calling that arrived late, loudly, and at a very inconvenient moment.",
         "{cap} {has} buried more of {pos} congregation than {sub} {has} married."
       ],
       "prowrestler": [
-        "The crowd wanted a villain that season, and {sub} found out {sub} was very good at being one.",
+        "The crowd wanted a villain that season, and {sub} found out {sub} {was} very good at being one.",
         "{cap} learned the falls first, the promos second, and the business somewhere in between.",
         "Every scar has a date, a town and a gate receipt attached to it."
       ],
@@ -482,9 +482,9 @@
         "{cap} {has} walked more of the map than most people have read about."
       ],
       "rogue": [
-        "{cap} was good at doors before {sub} was good at anything else, and nobody offered a second option.",
+        "{cap} {was} good at doors before {sub} {was} good at anything else, and nobody offered a second option.",
         "A pickpocket with a conscience is just a slow pickpocket, and {sub} learned that early.",
-        "{cap} {has} been arrested twice and charged never, which {sub} considers a professional record."
+        "{cap} {has} been arrested twice and charged never, which counts as a professional record."
       ],
       "sage": [
         "{cap} answered a question for a stranger, correctly, and spent the next thirty years being asked more.",
@@ -492,7 +492,7 @@
         "{cap} {has} no title, no chair and no doubts about any of the three."
       ],
       "samurai": [
-        "{cap} was placed in a school at seven and handed a live blade at twelve.",
+        "{cap} {was} placed in a school at seven and handed a live blade at twelve.",
         "The house {sub} served no longer exists, and {sub} {has} kept its forms out of stubbornness.",
         "One duel, badly won, taught {obj} what the whole code had been trying to say."
       ],
@@ -539,12 +539,12 @@
       "wretch": [
         "Everything {sub} had was taken in one season, and nobody has offered any of it back.",
         "{cap} {has} slept in more doorways than beds and {has} stopped counting either.",
-        "There was a life before this one; {sub} does not discuss it."
+        "There was a life before this one, and it is not discussed."
       ],
       "zombie": [
         "A fever went through the district and this one got up three days after it stopped breathing.",
         "It was raised on purpose, by somebody who needed labour and did not care whose.",
-        "The curse was laid on a family, not a person, and it arrived four generations late.",
+        "The curse was laid on a whole family, and it arrived four generations late.",
         "It drank from a well that a war had poisoned, and the poison was not entirely chemical.",
         "It was bitten, it died of the bite, and then the bite went on without it.",
         "A rite meant to bring back one specific person brought back this one instead."
@@ -552,15 +552,15 @@
     },
     "beast": [
       "Found {placeIn}, and no older account of it than that. {classOrigin} {moral}",
-      "{classOrigin} It keeps to the country {placeIn}, a {adj} thing the years have not much changed. {moral}",
+      "{classOrigin} It keeps to the open country {placeIn}, a {adj} thing the years have not much changed. {moral}",
       "Born to no year and no country anybody wrote down: only a range, {placeIn}. {classOrigin} {moral}",
       "{classOrigin} It has been {placeIn} for as long as anyone has bothered to notice. {moral}"
     ],
     "drone": [
-      "{classOrigin} It was brought online {placeIn} in {year}, and its conditions were first met the season {event}. {later} {moral}",
-      "{classOrigin} Registered {placeIn} in {year}; its behaviour set fired the week {event}. {later} {moral}",
-      "{classOrigin} It has no childhood, only a build date: {year}, {placeIn}. Its log opens on the day {event}. {later} {moral}",
-      "{classOrigin} Nothing of it is remembered and all of it is recorded: since {year}, {placeIn}, it has answered every time {event}. {later} {moral}"
+      "{classOrigin} It was brought online {placeIn} in {year}, and its conditions were first met the season of “{event}”. {later} {moral}",
+      "{classOrigin} Registered {placeIn} in {year}; its behaviour set first fired on “{event}”. {later} {moral}",
+      "{classOrigin} It has no childhood, only a build date: {year}, {placeIn}. Its log opens on “{event}”. {later} {moral}",
+      "{classOrigin} Nothing of it is remembered and all of it is recorded: since {year}, {placeIn}, it has answered every headline, beginning with “{event}”. {later} {moral}"
     ]
   },
   "animalBio": {

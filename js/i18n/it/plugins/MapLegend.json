@@ -6,8 +6,8 @@
     "holdShift": "Tieni premuto Shift",
     "hotbarCycle": "Cambia oggetto della barra",
     "hotbarUse": "Usa l'oggetto della barra",
-    "leadSwap": "Cambia membro del gruppo",
-    "interact": "Interagisci con un oggetto o smontalo",
+    "leadSwap": "Cambia membro del Party",
+    "interact": "Interagisci o smonta",
     "leftClick": "Clic sinistro",
     "rightClick": "Clic destro",
     "menu": "Menu",
@@ -28,303 +28,303 @@
   },
   "areas": {
     "m721_zone": {
-      "title": "Hydroponic",
-      "text": "We can use this hydroponic room to grow Earth food in the depths of space."
+      "title": "Idroponica",
+      "text": "Possiamo usare questa sala idroponica per coltivare cibo terrestre nelle profondità dello spazio."
     },
     "storyModeWaterfall": {
-      "title": "Secret caves",
-      "text": "We should check behind every waterfall: statistically speaking, about 30% of them have a secret cave behind them."
+      "title": "Grotte segrete",
+      "text": "Dovremmo controllare dietro ogni cascata: statisticamente parlando, circa il 30% nasconde una grotta segreta."
     },
     "m1006_zone": {
-      "title": "Horse betting",
-      "text": "Are you feeling your ludopathy coming back? That's a good sign that your memories are returning, Em! Why don't you bet on horses? Maybe something else will resurface!"
+      "title": "Scommesse sui cavalli",
+      "text": "Senti tornare la tua ludopatia? È un buon segno, vuol dire che i ricordi stanno riaffiorando, Em! Perché non scommetti sui cavalli? Magari riaffiora qualcos'altro!"
     },
     "m1006_zone2": {
-      "title": "Monster tournament",
-      "text": "Use this terminal to watch and bet on monster fights. I don't really know if they are real monsters fighting for their lives or simulated battles; maybe it's best to just not know."
+      "title": "Torneo dei mostri",
+      "text": "Usa questo terminale per guardare gli scontri tra mostri e scommetterci sopra. Non so bene se siano mostri veri che lottano per la vita o battaglie simulate; forse è meglio non saperlo."
     },
     "m1006_zone3": {
-      "title": "Coin conversion",
-      "text": "Use this machine to convert euros to tokens used for minigames and slot machines. You also have a [Hyperdeck] app for that."
+      "title": "Cambio gettoni",
+      "text": "Usa questa macchina per convertire gli euro in gettoni per i minigiochi e le slot machine. Per questo hai anche un'app sull'[Hyperdeck]."
     },
     "m1006_zone4": {
       "title": "Slot machine",
-      "text": "I heard rumors of a cursed slot in this casino."
+      "text": "Ho sentito voci su una slot maledetta in questo casinò."
     },
     "m1023_zone": {
-      "title": "Ghent Hospital",
-      "text": "Visit hospitals to get our diseases diagnosed, install augments, change body parts and access the [Fertility database]. I don't exactly picture you as a mother figure, but if you want to help repopulate the Earth, go ahead!"
+      "title": "Ospedale di Ghent",
+      "text": "Vai negli ospedali per farci diagnosticare le malattie, installare innesti, cambiare parti del corpo e accedere al [Database della fertilità]. Non ti vedo proprio come una figura materna, ma se vuoi aiutare a ripopolare la Terra, fai pure!"
     },
     "m1414_zone": {
-      "title": "Inn",
-      "text": "Are you feeling tired, Em? Or do you need to hire some muscle to support your hexing? Visit inns and taverns to rent a room and talk to other adventurers."
+      "title": "Locanda",
+      "text": "Sei stanca, Em? O ti serve qualche muscolo che ti copra mentre lanci maledizioni? Passa da locande e taverne per affittare una stanza e parlare con altri avventurieri."
     },
     "m1414_zone2": {
-      "title": "Hypermetro trains",
-      "text": "We can move between hub cities using the hypermetro! Our final destination is the Omega Tower, but we should stop at Ghent to stock up on items. Don't worry, darlin', if we leave our [Camper] behind: it can be summoned by using our [Liminal cuffs]."
+      "title": "Treni Hypermetro",
+      "text": "Possiamo spostarci tra le città principali con l'Hypermetro! La nostra destinazione finale è la Torre Omega, ma dovremmo fermarci a Ghent per fare scorta di oggetti. \nNon preoccuparti, tesoro, se lasciamo indietro il nostro [Camper]: possiamo evocarlo unendo le nostre [Manette liminali]."
     },
     "m1414_zone3": {
-      "title": "Crafting",
-      "text": "In this shack we can find some materials. It belongs to Xor the trash goblin; I'll repay him later if we take something from here.\nYou can use the [Thinker] option in [Menu] to assemble anything you have the technical skills for."
+      "title": "Assemblaggio",
+      "text": "In questa baracca possiamo trovare dei materiali. Appartiene a Xor, il goblin della spazzatura; se prendiamo qualcosa lo ripagherò più avanti.\nPuoi usare l'opzione [Assembla] nel [Menu] per montare qualsiasi cosa per cui hai le competenze tecniche."
     },
     "m1414_zone4": {
-      "title": "Farming plots",
-      "text": "We can use farming plots to grow our own plants, or just take what we find. Just make sure to pay the owner of the plot back, ok?"
+      "title": "Orti",
+      "text": "Possiamo usare gli orti per coltivare le nostre piante, o prenderci semplicemente quello che troviamo. \nAssicurati solo di ripagare il proprietario dell'orto, ok?"
     },
     "m1414_zone5": {
-      "title": "High level enemies",
-      "text": "Darlin', these piles of sentient trash are too strong even for a wannabe witch like you. May I suggest you just ignore them until you can call yourself a proper witch?"
+      "title": "Nemici di alto livello",
+      "text": "Tesoro, questi mucchi di spazzatura senziente sono troppo forti persino per un'aspirante strega come te. Posso suggerirti di ignorarli finché non potrai definirti una strega vera?"
     },
     "m1414_zone7": {
       "title": "Dungeon",
-      "text": "This dungeon should be a proper challenge to relearn your combat skills! Did I mention that you can modify your [Vector gun] in the [Menu]? You can adapt its alternate form or element to prepare for any situation, and in this dungeon fire damage will help!"
+      "text": "Questo dungeon dovrebbe essere una bella sfida per riprendere la mano col combattimento! Ti ho detto che puoi modificare la tua [Vector Gun] dal [Menu]? Puoi adattarne la forma alternativa o l'elemento a ogni situazione, e in questo dungeon il danno da fuoco ti farà comodo!"
     },
     "m1414_zone10": {
-      "title": "Apiary",
-      "text": "\"If the bee disappeared off the surface of the noosphere, then man would only have four years of life left.\" Aleister Crowley said that."
+      "title": "Apiario",
+      "text": "\"Se l'ape scomparisse dalla faccia della noosfera, all'uomo resterebbero soltanto quattro anni di vita.\" \nL'ha detto il buon vecchio Aleister Crowley."
     },
     "m1414_zone11": {
-      "title": "Farm",
-      "text": "We can take over this abandoned farm: its owner was recently killed by satellite debris and nobody has claimed it yet.\nUse the [Build] option in the pause menu to buy some animals, but do this only if you want to actually care about them! Do you remember what the Archivists did to our sheep Dolly? I will never forgive them for that!"
+      "title": "Fattoria",
+      "text": "Possiamo prenderci questa fattoria abbandonata: il proprietario è stato ucciso da poco da un detrito satellitare e nessuno l'ha ancora reclamata.\nUsa l'opzione [Costruisci] nel menu di pausa per comprare qualche animale, ma fallo solo se hai davvero voglia di prendertene cura! Ti ricordi cosa hanno fatto gli Archivisti alla nostra pecora Dolly? Non glielo perdonerò mai!"
     },
     "m1414_zone9": {
-      "title": "Library",
-      "text": "Libraries are a great place to find new grimories, hunting them was your primary hobby before your mind got wiped."
+      "title": "Biblioteca",
+      "text": "Le biblioteche sono un ottimo posto per trovare nuovi grimori: dar loro la caccia era il tuo hobby principale prima che ti cancellassero la mente."
     },
     "m1414_zone12": {
-      "title": "Clinic",
-      "text": "If you don't feel well, darlin', head to a clinic: there you can get a proper diagnosis and treatment. And if you need a literal hand, you can get new body parts installed and also augments for your body."
+      "title": "Clinica",
+      "text": "Se non ti senti bene, tesoro, vai in una clinica: lì puoi avere una diagnosi seria e le cure giuste. E se ti serve letteralmente una mano, puoi farti installare nuove parti del corpo e anche degli innesti."
     },
     "m1416_zone": {
       "title": "PC",
-      "text": "Use this public PC to access Hypernet, you can also use the [Hyperdeck] if you don't trust putting your credentials in public PCs."
+      "text": "Usa questo PC pubblico per accedere a Hypernet; puoi anche usare l'[Hyperdeck] se non ti fidi a inserire le tue credenziali su un PC pubblico."
     },
     "m1416_zone2": {
-      "title": "Quest board",
-      "text": "You can use the quest board to accept quests, and you can even write your own to be completed by other adventurers."
+      "title": "Bacheca delle missioni",
+      "text": "Puoi usare la bacheca per accettare missioni, e puoi persino scriverne di tue da far completare ad altri avventurieri."
     },
     "m1416_zone3": {
-      "title": "Bowling alley",
-      "text": "Let's go bowling, Em!"
+      "title": "Bowling",
+      "text": "Andiamo a giocare a bowling, Em!"
     },
     "m1416_zone4": {
-      "title": "Bathroom",
-      "text": "Use bathrooms to wash and raise your hygiene. Hygiene matters when you talk to someone, unless they do not care about it."
+      "title": "Bagno",
+      "text": "Usa i bagni per lavarti e alzare la tua igiene. L'igiene conta quando parli con qualcuno, a meno che a quel qualcuno non importi."
     },
     "m1416_zone5": {
-      "title": "Innkeeper",
-      "text": "Talk to the innkeeper to rent a room, buy food or recruit troops. Yes, you heard right! We can raise an army if we have the funds, and inns are a good place to start. Let's have a beer to our future independent sovereign nation!"
+      "title": "Locandiere",
+      "text": "Parla con il locandiere per affittare una stanza, comprare cibo o reclutare truppe. Sì, hai sentito bene! Possiamo mettere in piedi un esercito se abbiamo i fondi, e le locande sono un buon punto di partenza. Brindiamo con una birra alla nostra futura nazione sovrana e indipendente!"
     },
     "m1416_zone15": {
-      "title": "Bathroom",
-      "text": "Use bathrooms to wash and raise your hygiene. Hygiene matters when you talk to someone, unless they do not care about it."
+      "title": "Bagno",
+      "text": "Usa i bagni per lavarti e alzare la tua igiene. L'igiene conta quando parli con qualcuno, a meno che a quel qualcuno non importi."
     },
     "m1416_zone19": {
-      "title": "Minigames",
-      "text": "We can increase our mood by playing games. Some will need game tokens, and we can use this converter or the [Hyperdeck] app to buy them."
+      "title": "Minigiochi",
+      "text": "Possiamo migliorare l'umore giocando. Alcuni giochi richiedono i gettoni, e possiamo comprarli con questo convertitore o con l'app dell'[Hyperdeck]."
     },
     "m1416_zone10": {
-      "title": "Renting",
-      "text": "Interact with the door or talk to the innkeeper to rent a room. Not sleeping will make you start losing MP and then going insane, so make sure to rest!"
+      "title": "Affitto",
+      "text": "Interagisci con la porta o parla con il locandiere per affittare una stanza. Se non dormi inizierai a perdere MP e poi a impazzire, quindi assicurati di riposare!"
     },
     "m136_zone": {
-      "title": "Omega Tower Entrance",
-      "text": "Here we are, Em! This is the entrance of the [Omega Tower]: here you have total immunity for your accidental deicide."
+      "title": "Ingresso della Torre Omega",
+      "text": "Eccoci, Em! Questo è l'ingresso della [Torre Omega]: qui hai l'immunità totale per il tuo deicidio accidentale."
     },
     "m169_zone": {
-      "title": "Abandoned Farm",
-      "text": "Instead of going to the Omega Tower for immunity, we can also just take over this abandoned farm and stay there until things calm down. We can actually claim any abandoned house we encounter and start placing structures with the [Build] option of the pause menu."
+      "title": "Fattoria abbandonata",
+      "text": "Invece di andare alla Torre Omega per l'immunità, possiamo anche prenderci questa fattoria abbandonata e restarci finché le acque non si calmano. In realtà possiamo reclamare qualsiasi casa abbandonata che troviamo e iniziare a piazzare strutture con l'opzione [Costruisci] del menu di pausa."
     },
     "m169_zone2": {
-      "title": "Trash",
-      "text": "Ah! Trashdiving! The lottery of the brave! We can find truly marvelous gems that survived the Y2K event buried in trash. I think the trash shielded them from the [EHI] eruption and preserved most of the circuits. Make sure to wash yourself, because being [Oily] makes you vulnerable to fire attacks."
+      "title": "Spazzatura",
+      "text": "Ah! Il tuffo nella spazzatura! La lotteria dei coraggiosi! \nNei rifiuti possiamo trovare gemme davvero meravigliose sopravvissute all'Y2K. \nCredo che la spazzatura le abbia schermate dall'eruzione [EHI] e abbia preservato gran parte dei circuiti. \nMa ricordati di lavarti, perché lo stato [Oleoso] ti rende vulnerabile agli attacchi di fuoco."
     },
     "m169_zone3": {
-      "title": "Chaos",
+      "title": "Caos",
       "text": "Dobbiamo levarci da qui, hexo, Em! La [Quinta dimensione | Fifth dimension] sta colando dai buchi nella realtà, e ci vuole poco a caderci dentro e finire nel [Deserto bianco | White desert].\nNon è un bel posto, Em. Ci sono rimasta intrappolata per eoni nel 1997, prima che tu infrangessi le leggi dello spaziotempo per salvarmi."
     },
     "m169_zone6": {
-      "title": "Sacrificial altar",
-      "text": "This place reeks of gasoline, something powerful is buried there."
+      "title": "Altare sacrificale",
+      "text": "Questo posto puzza di benzina, qualcosa di potente è sepolto lì sotto."
     },
     "m169_zone7": {
-      "title": "Goblins",
-      "text": "Trust me, Em, just leave Nakuga Goblins alone. Let them do their thing and just avoid them if they try to engage in battle. We share a common ancestor and most of our DNA with them, so they are our psionic black metal loving brothers.\nVerden Goblins, instead, are a totally different alien species that just happens to look like Earth goblins due to the genetic lottery. They are chill and totally integrated with human society; most goblins you see in town are Verden goblins."
+      "title": "Goblin",
+      "text": "Fidati, Em, lascia stare i Goblin Nakuga. Lasciali fare le loro cose ed evitali se provano a ingaggiare battaglia. \nAbbiamo un antenato comune e gran parte del DNA in comune con loro, quindi sono i nostri fratelli psionici amanti del black metal.\nI Goblin Verden, invece, sono una specie aliena completamente diversa che per pura lotteria genetica somiglia ai goblin terrestri. Sono tranquilli e del tutto integrati nella società umana; la maggior parte dei goblin che vedi in città sono goblin Verden."
     },
     "m169_zone8": {
-      "title": "Block pushing puzzle",
-      "text": "Try to solve this simple block pushing puzzle and let me evaluate your mental skills after your memory wipe.\nMove toward that boulder to push it and hold [Shift] to drag it with you"
+      "title": "Rompicapo dei blocchi",
+      "text": "Prova a risolvere questo semplice rompicapo coi blocchi e lasciami valutare le tue capacità mentali dopo la cancellazione della memoria.\nMuoviti verso quel macigno per spingerlo e tieni premuto [ACTION] per trascinarlo con te"
     },
     "m689_zone": {
-      "title": "Hardware stores",
-      "text": "You can upgrade your [Hyperdeck] by finding new components in hardware stores."
+      "title": "Negozi di ferramenta",
+      "text": "Puoi potenziare il tuo [Hyperdeck] trovando nuovi componenti nei negozi di ferramenta, e qui possiamo trovare anche ogni sorta di attrezzi utili."
     },
     "m689_zone2": {
-      "title": "Tavern",
+      "title": "Taverna",
       "text": ""
     },
     "m689_zone3": {
       "title": "Garage",
-      "text": "We can buy new vehicles in garages, like cars, boats or even a broomstick!"
+      "text": "Nei garage possiamo comprare nuovi veicoli, come auto, barche o persino una scopa volante!"
     },
     "m689_zone4": {
-      "title": "Bowling alley",
-      "text": "Wanna go bowling Em?"
+      "title": "Bowling",
+      "text": "Ti va un bowling, Em?"
     },
     "m689_zone5": {
-      "title": "Mages Guild",
-      "text": "It's a bit hidden, but this is the entrance to the Ghent mages guild. They don't easily take new associates, but you are already one, so you are free to enter."
+      "title": "Gilda dei Maghi",
+      "text": "È un po' nascosto, ma questo è l'ingresso della gilda dei maghi di Ghent. \nNon accettano facilmente nuovi associati, ma tu lo sei già, quindi puoi entrare liberamente.\nGiusto un avvertimento: non ti sopportano PER NIENTE."
     },
     "m689_zone6": {
-      "title": "Shop tunnel",
-      "text": "There are many stores below this tunnel, and it is connected with the other side of the city."
+      "title": "Tunnel dei negozi",
+      "text": "Sotto questo tunnel ci sono un sacco di negozi, ed è collegato all'altro lato della città."
     },
     "m704_zone": {
-      "title": "Clocktower dungeon",
-      "text": "We actually already beat this dungeon some years ago, but since it has been reset countless times, it can be good practice to regain some dungeon sense!"
+      "title": "Dungeon della torre dell'orologio",
+      "text": "A dire il vero questo dungeon l'abbiamo già battuto qualche anno fa, ma visto che è stato resettato innumerevoli volte, può essere un buon allenamento per ritrovare il fiuto da dungeon!"
     },
     "m704_zone2": {
-      "title": "Training center",
-      "text": "It's a training center, but who needs it honestly? I can be a better tutor than those [Archivist] nerds. Did you know they stole my original drawing sheet for the [Liminal Engine] and sent me a photocopy? They work exactly like the [Great Alexandria Library]: they keep the originals and send you washed out copies!"
+      "title": "Centro di addestramento",
+      "text": "È un centro di addestramento, ma a chi serve, sinceramente? Posso essere un'insegnante migliore di quei secchioni degli [Archivisti]. Lo sai che mi hanno rubato il disegno originale del [Motore liminale] e mi hanno mandato una fotocopia? Fanno esattamente come la [Grande Biblioteca di Alessandria]: si tengono gli originali e ti spediscono copie sbiadite!"
     },
     "m704_zone3": {
-      "title": "Bus stop",
-      "text": "We can use bus stops to move between any locations in the world."
+      "title": "Fermata dell'autobus",
+      "text": "Possiamo usare le fermate dell'autobus per spostarci tra qualsiasi luogo del mondo."
     },
     "m704_zone4": {
-      "title": "Fairy maze",
-      "text": "Fairies are dangerous, Em! They are living infohazards, and you can't just ignore them like the people on TV. You need to respond to them, be polite and never EVER accept something from them, just refuse... POLITELY!"
+      "title": "Labirinto delle fate",
+      "text": "Le fate sono pericolose, Em! Sono infopericoli viventi, e non puoi semplicemente ignorarle come la gente in TV. Devi risponder loro, essere educata e non accettare MAI E POI MAI niente da loro, rifiuta e basta... CON EDUCAZIONE!"
     },
     "m708_zone": {
-      "title": "Wilderness",
-      "text": "Going ahead you can choose to return to the world map or explore the wilderness around Ghent."
+      "title": "Terre selvagge",
+      "text": "Proseguendo puoi scegliere se tornare alla mappa del mondo o esplorare le terre selvagge intorno a Ghent."
     },
     "m1414_zone13": {
-      "title": "Diving",
-      "text": "I spotted a treasure under this pond; you can dive to reach it. Remember that when fighting in water, you and the enemies take extra damage from electrical attacks."
+      "title": "Immersione",
+      "text": "Ho avvistato un tesoro sotto questo stagno; puoi tuffarti per raggiungerlo. Ricorda che quando combatti in acqua, tu e i nemici subite danni extra dagli attacchi elettrici."
     },
     "m1414_zone15": {
-      "title": "Esoteric Shop",
-      "text": "In [Esoteric shops] you can buy magical equipment, alchemistry kits and reagents. Did you know that the owner of this shop worked at [Cern]?"
+      "title": "Negozio esoterico",
+      "text": "Nei [Negozi esoterici] puoi comprare equipaggiamento magico, kit di alchimica e reagenti. Lo sapevi che il proprietario di questo negozio lavorava al [Cern]?"
     },
     "m1414_zone16": {
-      "title": "Armory shop",
-      "text": "Visit armories and gun shops to buy new weapons and gear that you can equip in the [Equip] section of [Menu]."
+      "title": "Armeria",
+      "text": "Passa dalle armerie e dai negozi di armi per comprare nuove armi ed equipaggiamento da indossare nella sezione [Equip.] del [Menu]."
     },
     "m1414_zone17": {
-      "title": "Wilderness",
-      "text": "Going ahead you can choose to return to the world map or explore the wilderness around Icebush."
+      "title": "Terre selvagge",
+      "text": "Proseguendo puoi scegliere se tornare alla mappa del mondo o esplorare le terre selvagge intorno a Icebush."
     },
     "m1414_zone18": {
-      "title": "Wilderness",
-      "text": "Going ahead you can choose to return to the world map or explore the wilderness around Icebush."
+      "title": "Terre selvagge",
+      "text": "Proseguendo puoi scegliere se tornare alla mappa del mondo o esplorare le terre selvagge intorno a Icebush."
     },
     "m1414_zone19": {
-      "title": "Wilderness",
-      "text": "Going ahead you can choose to return to the world map or explore the wilderness around Icebush."
+      "title": "Terre selvagge",
+      "text": "Proseguendo puoi scegliere se tornare alla mappa del mondo o esplorare le terre selvagge intorno a Icebush."
     },
     "m1414_zone20": {
-      "title": "Slimes",
-      "text": "Every slime has a particular elemental weakness and resists physical attacks."
+      "title": "Melme",
+      "text": "Ogni melma ha una debolezza elementale particolare e resiste agli attacchi fisici.\nSecondo la tua scheda di classe, dovresti riimparare presto qualche incantesimo elementale."
     },
     "m1414_zone21": {
-      "title": "Block pushing puzzle",
-      "text": "Ohh another block pushing puzzle!\nMove toward that boulder to push it and hold [Shift] to drag it with you."
+      "title": "Rompicapo dei blocchi",
+      "text": "Ohh, un altro rompicapo coi blocchi!\nMuoviti verso quel macigno per spingerlo e tieni premuto [Shift] per trascinarlo con te."
     },
     "m1415_zone": {
-      "title": "Block pushing puzzle",
-      "text": "A block pushing puzzle PLUS an ice floor! Can you solve it for me, Em? I need to test your puzzle solving skills to determine how much of you is left in your soul.\nMove toward that boulder to push it and hold [Shift] to drag it with you"
+      "title": "Rompicapo dei blocchi",
+      "text": "Un rompicapo coi blocchi CON IN PIÙ il pavimento ghiacciato! Me lo risolvi, Em? Devo mettere alla prova le tue capacità di risolvere enigmi per capire quanto di te è rimasto nella tua anima.\nMuoviti verso quel macigno per spingerlo e tieni premuto [OK] per trascinarlo con te"
     },
     "m1415_zone2": {
-      "title": "Pre Y2K Cache",
-      "text": "This is a cache of items locked since the Y2K! Let's loot everything, and be careful not to be overencumbered by all the loot. Carrying capacity increases with your [COS] and with more party members following."
+      "title": "Deposito pre Y2K",
+      "text": "Questo è un deposito di oggetti sigillato dai tempi dell'Y2K! Saccheggiamo tutto, ma attenta a non finire sovraccarica con tutto il bottino. La capacità di carico aumenta con la tua [COS] e con più membri del Party al seguito."
     },
     "m1415_zone3": {
-      "title": "Unfinished puzzle",
-      "text": "I think the guy who built this dungeon ran out of funds when building this room, but it was very promising."
+      "title": "Rompicapo incompiuto",
+      "text": "Credo che il tizio che ha costruito questo dungeon sia rimasto senza fondi mentre faceva questa stanza, eppure prometteva benissimo."
     },
     "m1415_zone4": {
-      "title": "Ice block puzzle",
-      "text": "Solving this other puzzle should give me a baseline reading of your puzzle solving skills, if you want more complex puzzles to solve we can head to the [Trick castle]."
+      "title": "Rompicapo dei blocchi di ghiaccio",
+      "text": "Risolvere quest'altro rompicapo dovrebbe darmi una misura di base delle tue capacità di risolvere enigmi; se vuoi rompicapi più complessi possiamo andare al [Castello ingannevole]."
     },
     "m1415_zone5": {
-      "title": "High level enemies",
-      "text": "There is a swarm of cryodrones trapped in this cave. They are above our current combat level, so we should move past them and run if we end up in battle with them. You don't want to get frozen solid, and neither do I."
+      "title": "Nemici di alto livello",
+      "text": "In questa grotta è intrappolato uno sciame di criodroni. Sono sopra il nostro livello di combattimento attuale, quindi dovremmo superarli e scappare se finiamo in battaglia con loro. Non vuoi finire congelata, e nemmeno io."
     },
     "m1415_zone6": {
-      "title": "Fog of war",
-      "text": "You can activate the [Fog of war] in [Options] to remove your glasses and have your vision limited. It's your choice, really."
+      "title": "Nebbia di guerra",
+      "text": "Puoi attivare la [Nebbia di guerra] nelle [Preferenze] per toglierti gli occhiali e avere la vista limitata. Davvero, decidi tu."
     },
     "m503_zone": {
-      "title": "Underground Arena",
-      "text": "We can earn some serious euros by fighting in the arena: we can bring our own equipment or borrow weapons from the arena stash."
+      "title": "Arena sotterranea",
+      "text": "Possiamo guadagnare un bel po' di euro combattendo nell'arena: possiamo portare il nostro equipaggiamento o prendere in prestito le armi dalla scorta dell'arena."
     },
     "m635_zone": {
-      "title": "Dungeon entrance",
-      "text": "This is the main staircase. Above us are 92 floors robbed from 92 different dimensions and skewered on the tower.\nAnd under us there are another 92 underground floors, even more brutal than the upper ones."
+      "title": "Ingresso del dungeon",
+      "text": "Questa è la scalinata principale. Sopra di noi ci sono 92 piani rubati a 92 dimensioni diverse e infilzati sulla torre.\nE sotto di noi ci sono altri 92 piani sotterranei, ancora più brutali di quelli di sopra."
     },
     "m635_zone2": {
-      "title": "The hall",
-      "text": "Inactive party members will just chill out here if you don't assign them to owned buildings or bases in the [Dynamics] menu. You can ask them to join our party if you have a free spot."
+      "title": "La sala",
+      "text": "I membri inattivi del Party se ne staranno qui a rilassarsi se non li assegni a edifici o basi di tua proprietà nel menu [Dinamiche]. Puoi chiedere loro di unirsi al Party se hai un posto libero."
     },
     "m1073_zone": {
-      "title": "Platforming",
-      "text": "This tower has a dimensional anomaly caused by the [Squishing]. I'm feeling very bidimensional."
+      "title": "Piattaforme",
+      "text": "Questa torre ha un'anomalia dimensionale causata dallo [Squishing]. Mi sento molto bidimensionale."
     },
     "m1074_zone": {
-      "title": "Bowling alley",
-      "text": "Let's go bowling!!!"
+      "title": "Bowling",
+      "text": "Andiamo a giocare a bowling!!!"
     },
     "m689_zone7": {
-      "title": "Casino",
-      "text": "This is the Ghent casino, Em! You loved gambling here before your mind got wiped. I think the whole deicide spell backfiring cured you of your ludopathy."
+      "title": "Casinò",
+      "text": "Questo è il casinò di Ghent, Em! \nAdoravi giocare d'azzardo qui prima che ti cancellassero la mente. \nCredo che il ritorno di fiamma dell'incantesimo di deicidio ti abbia guarita dalla ludopatia."
     },
     "m708_zone2": {
-      "title": "Explorers bar",
-      "text": "I love this little bar. The owner is undead and is cursed to serve here for all eternity... well, at least until 2012, when there will be no Earth anymore. He maintains the Neapolitan tradition of the suspended coffee."
+      "title": "Bar degli esploratori",
+      "text": "Adoro questo baretto. Il proprietario è un non morto, maledetto a servire qui per l'eternità... beh, almeno fino al 2012, quando la Terra non ci sarà più. Porta avanti la tradizione napoletana del caffè sospeso."
     },
     "m714_zone": {
-      "title": "Hypermodern art",
-      "text": "It may seem like a heist, but it's just hypermodern art."
+      "title": "Arte ipermoderna",
+      "text": "Può sembrare una rapina, ma è solo arte ipermoderna."
     },
     "m721_zone2": {
-      "title": "Returning temple",
-      "text": "Ring the gong to return to the Omega Tower, no matter how distant we are from Earth."
+      "title": "Tempio del ritorno",
+      "text": "Suona il gong per tornare alla Torre Omega, non importa quanto siamo lontani dalla Terra."
     },
     "m721_zone3": {
-      "title": "Space exploration",
-      "text": "Here we are, Em! The final frontier! Open the [Star Map] to plot our next course. I talked with commander Hack; he trusts me enough to pilot this thing."
+      "title": "Esplorazione spaziale",
+      "text": "Eccoci, Em! L'ultima frontiera! Premi [OK] davanti alla console della [Mappa stellare] per tracciare la prossima rotta. \nHo parlato con il comandante Hack; si fida abbastanza da lasciarmi pilotare questo coso.\nE siamo autorizzati a usare il teletrasporto, così non dobbiamo attraversare il campo di Kessler rischiando la vita per niente."
     },
     "m1036_zone": {
-      "title": "Stock options",
-      "text": "Buying Lime corp stocks is a good starting point if you want to start investing. You can buy and sell in the stocks [Hyperdeck] app."
+      "title": "Azioni in borsa",
+      "text": "Comprare azioni della Lime corp è un buon punto di partenza se vuoi iniziare a investire. \nPuoi comprare e vendere nell'app delle azioni sull'[Hyperdeck].\nI prezzi delle varie azioni influenzano il prezzo giornaliero di ogni oggetto che possiamo comprare nei negozi."
     },
     "m1036_zone2": {
-      "title": "Crime and punishment",
-      "text": "Remember, Em: the police serve Justice, so they automatically serve Eris, my ex-wife. If you commit a crime and they catch you, please pay your bounty or go to prison; never face Eris directly. She hates your guts."
+      "title": "Delitto e castigo",
+      "text": "Ricorda, Em: la polizia serve la Giustizia, quindi serve automaticamente Eris, la mia ex moglie. Se commetti un crimine e ti beccano, per favore paga la taglia o vai in prigione; non affrontare mai Eris di persona. Ti odia a morte."
     },
     "m1036_zone3": {
-      "title": "Helicopter ride",
-      "text": "We can book a helicopter ride to the Omega tower from this helicopter pad."
+      "title": "Giro in elicottero",
+      "text": "Da questa piazzola possiamo prenotare un giro in elicottero fino alla Torre Omega."
     },
     "m1039_zone": {
-      "title": "Cursing temple",
-      "text": "I read in the Ghent tourist guide that if you even put a foot in this temple you will be cursed. The guide doesn't state the nature of the curse."
+      "title": "Tempio delle maledizioni",
+      "text": "Ho letto nella guida turistica di Ghent che se metti anche solo un piede in questo tempio verrai maledetta. \nLa guida non specifica la natura della maledizione."
     },
     "m1415_zone7": {
-      "title": "Locked doors",
-      "text": "These types of doors are fueled directly by the leyline and cannot be opened without a [Dungeon key].\nThe good thing is that we can use any dungeon key with any of these doors in any place in the universe."
+      "title": "Porte sigillate",
+      "text": "Questo tipo di porte è alimentato direttamente dalla leyline e non si può aprire senza una [Chiave del dungeon].\nLa cosa bella è che qualsiasi chiave del dungeon funziona con qualsiasi porta di questo tipo, in qualsiasi luogo dell'universo."
     },
     "m1415_zone8": {
-      "title": "Inner waterfall",
-      "text": "I told you, Em! There was a secret cave and an even secreter waterfall all along!"
+      "title": "Cascata interna",
+      "text": "Te l'avevo detto, Em! C'era una grotta segreta e una cascata ancora più segreta, per tutto questo tempo!"
     },
     "m1415_zone9": {
-      "title": "Bear mauling cave",
+      "title": "Grotta dell'orso sbranatore",
       "text": "Porco hexo, ci sta sbranando un orso, come ti avevo detto!!! SCAPPA!"
     },
     "m1415_zone10": {
-      "title": "Bosses",
+      "title": "Boss",
       "text": ""
     },
     "m169_zone5": {
@@ -332,74 +332,74 @@
       "text": "Non dobbiamo per forza fare nuovi buchi in ogni nemico che incontriamo, Em: usa l'opzione [Parla] in battaglia per tentare la diplomazia."
     },
     "m721_zone4": {
-      "title": "Shuttle bay",
-      "text": "If we need to abandonship or we want to return to Earth with style.\n"
+      "title": "Hangar della navetta",
+      "text": "Se dobbiamo abbandonare la nave o vogliamo tornare sulla Terra con stile.\n"
     },
     "m721_zone5": {
-      "title": "Television",
-      "text": "This television has prerecorded episodes because once we are far from Earth the signal can't reach us. Remember Em, we don't know exactly the nature of your infohazard so don't respond even to prerecorded footage ok?"
+      "title": "Televisione",
+      "text": "Questa televisione trasmette episodi preregistrati, perché quando siamo lontani dalla Terra il segnale non ci raggiunge. Ricorda, Em, non sappiamo di preciso di che natura sia il tuo infopericolo, quindi non rispondere neanche alle registrazioni, ok?"
     },
     "m1006_zone5": {
-      "title": "Pool table",
-      "text": "Wanna play pool, Em? I do."
+      "title": "Tavolo da biliardo",
+      "text": "Ti va una partita a biliardo, Em? A me sì."
     },
     "m1414_zone6": {
       "title": "Icebush",
-      "text": "Use the [Empathize] option."
+      "text": "Usa l'opzione [Empatizza] quando parli con le persone per farti nuovi amici, nemici, amanti o... amici-nemici???\nMa aspetta, c'è dell'altro.\nPuoi influenzare l'opinione politica della gente, giocarci a carte, borseggiarla, tutto ciò che è socialmente accettabile e non dovrebbe esserci,"
     },
     "m1414_zone8": {
-      "title": "Quick check",
-      "text": "Before we continue our adventure Em, make sure to check the [Equip] options and [Skill] option in [Menu] to change your equipment and skills you carry in battle.\nYou can have up to 9 skills and spells in battle."
+      "title": "Controllo rapido",
+      "text": "Prima di continuare la nostra avventura, Em, facciamo qualche controllo rapido.\nPer prima cosa controlla le opzioni [Equip.] e [Abilità] nel [Menu] per cambiare l'equipaggiamento e le abilità che porti in battaglia.\nIn battaglia puoi avere fino a 9 abilità e incantesimi."
     },
     "m635_zone3": {
-      "title": "Missile launch railgun",
-      "text": "If we prove our worthiness by surviving an orbital ascent through the Kessler field, we gain the right to teleport directly to the ESA ship orbiting outside the belt. I'm a big fan of [Director Hack], who is the head of [ESA]. Did you know that she is still an atheist even though the existence of multiple gods has been confirmed? She is so badass!"
+      "title": "Railgun di lancio missilistico",
+      "text": "Se dimostriamo di esserne degni sopravvivendo a un'ascesa orbitale attraverso il campo di Kessler, otteniamo il diritto di teletrasportarci direttamente sulla nave dell'ESA in orbita oltre la fascia. Sono una grande fan della [Direttrice Hack], a capo dell'[ESA]. Lo sai che è ancora atea anche se l'esistenza di più dèi è stata confermata? È una tosta!"
     },
     "m635_zone4": {
-      "title": "Elevator",
-      "text": "We can use the elevator to return to any floor we first reached on foot, plus the Hypermetro station and Omega City many floors down. The elevator is sentient: it can recognize faces and lock floors based on who visits."
+      "title": "Ascensore",
+      "text": "Possiamo usare l'ascensore per tornare a qualsiasi piano raggiunto prima a piedi, più la stazione Hypermetro e Omega City molti piani più in basso. L'ascensore è senziente: riconosce i volti e può bloccare i piani in base a chi li visita."
     },
     "m635_zone5": {
-      "title": "Hypermetro stairs",
-      "text": "Use these stairs to reach the Hypermetro station."
+      "title": "Scale dell'Hypermetro",
+      "text": "Usa queste scale per raggiungere la stazione Hypermetro."
     },
     "m102_zone": {
-      "title": "Elevator",
-      "text": "This is the main elevator, we can use it to reach any discovered floor of this tower."
+      "title": "Ascensore",
+      "text": "Questo è l'ascensore principale, possiamo usarlo per raggiungere qualsiasi piano scoperto di questa torre."
     },
     "m102_zone2": {
-      "title": "Training center",
-      "text": "Did you see the training center at Ghent? In reality it's a fake building that, on entry, transports you to the interior of this training center. I was hired to design the mechanism; it's not magical, it's pure physics!"
+      "title": "Centro di addestramento",
+      "text": "Hai visto il centro di addestramento a Ghent? In realtà è un edificio finto che, quando entri, ti trasporta all'interno di questo centro. Mi hanno ingaggiata per progettare il meccanismo; è fisica pura!"
     },
     "m1414_zone14": {
       "title": "Camper",
-      "text": "Here is our RV, the [Beast]!\nWe can use it to go anywhere we want, in any planet, in any dimension.\nI have some upgrades pending, like insulating it to make it go underwater, you can upgrade the camper from [Menu] and [Vehicles].\nAnd if we leave it behind we can summon it together by joining our liminal cuffs."
+      "text": "Ecco il nostro camper, la [Bestia]!\nPossiamo usarla per andare ovunque vogliamo, su qualsiasi pianeta, in qualsiasi dimensione.\nHo qualche miglioria in sospeso, tipo isolarla per farla andare sott'acqua; puoi potenziare il camper da [Menu] e [Veicoli].\nE se la lasciamo indietro possiamo evocarla insieme unendo le nostre manette liminali."
     },
     "m1414_zone22": {
-      "title": "Bear mauling cave",
-      "text": "This is the famous [Bear mauling cave], we should probably avoid it."
+      "title": "Grotta dell'orso sbranatore",
+      "text": "Questa è la famosa [Grotta dell'orso sbranatore], meglio evitarla."
     }
   },
   "tips": {
     "findTheInn": {
-      "title": "Somewhere to sleep",
-      "text": "The inn stands at the middle of the station. Follow the lit windows and ask the landlord for a bed."
+      "title": "Un posto per dormire",
+      "text": "La locanda sta al centro della stazione. Segui le finestre illuminate e chiedi un letto al locandiere."
     },
     "seeTheDoctor": {
-      "title": "See the doctor",
-      "text": "The clinic is the low building with the white door. Whatever is broken gets set in there."
+      "title": "Vai dal dottore",
+      "text": "La clinica è l'edificio basso con la porta bianca. Fatti curare lì."
     },
     "searchTheWagons": {
-      "title": "Search the wagons",
-      "text": "The siding has not been picked clean. Open every crate before the light goes."
+      "title": "Fruga nei vagoni",
+      "text": "Il binario morto non è stato ripulito del tutto. Apri ogni cassa prima che faccia buio."
     },
     "intoTheCaves": {
-      "title": "Into the caves",
-      "text": "The mouth in the hill runs deeper than it looks. Take a light, and something to swing."
+      "title": "Nelle grotte",
+      "text": "L'apertura nella collina va più in profondità di quanto sembri. Porta una luce, e qualcosa da brandire."
     },
     "headOutside": {
-      "title": "Head outside",
-      "text": "There is nothing more for you indoors. Step out and take the road."
+      "title": "Esci fuori",
+      "text": "Al chiuso non c'è più niente per te. Esci e mettiti in cammino."
     }
   }
 }

@@ -257,6 +257,7 @@
     detach(scene) {
       if (scene && this._scene && scene !== this._scene) return;
       this.clearRing();
+      if (this._mo) { this._mo.disconnect(); this._mo = null; this._moRoot = null; }
       this._scene = null;
       this._root = null;
       this._key = null;
@@ -412,6 +413,46 @@
       const lit = this._root.querySelectorAll(".cc-nav-focus");
       for (let i = 0; i < lit.length; i++) lit[i].classList.remove("cc-nav-focus");
       this._painted = false;
+      this._litEl = null;
+    },
+
+    // Has anything on the page changed since the ring was last painted? The
+    // ring is asked for once a frame, and answering it walks and measures every
+    // control on the page; a page nobody touched has its ring where it was.
+    // Mutations are read synchronously (takeRecords), since the redraw that
+    // matters happens in the same frame as the paint. A write that left an
+    // attribute as it was (a class added that was already there, which the
+    // panel does every frame) is not a change.
+    _pageTouched() {
+      if (!this._mo || this._moRoot !== this._root) return true;
+      const records = this._mo.takeRecords();
+      for (let i = 0; i < records.length; i++) {
+        const r = records[i];
+        if (r.type !== "attributes") return true;
+        const now = r.target.getAttribute ? r.target.getAttribute(r.attributeName) : null;
+        if (now !== r.oldValue) return true;
+      }
+      return false;
+    },
+
+    // Starts (or re-aims) the watch _pageTouched reads, and forgets what it
+    // has seen so far, which includes the ring's own mark.
+    _watchPage() {
+      if (typeof MutationObserver === "undefined" || !this._root) { this._mo = null; return; }
+      if (!this._mo || this._moRoot !== this._root) {
+        if (this._mo) this._mo.disconnect();
+        this._mo = new MutationObserver(() => {});
+        // Style is left out: the walking sprites restyle themselves every few
+        // frames and never move a control.
+        this._mo.observe(this._root, {
+          childList: true, subtree: true, characterData: true,
+          attributes: true, attributeOldValue: true,
+          attributeFilter: ["class", "onclick", "disabled", "hidden", "aria-hidden",
+            "data-nav", "data-nav-key", "data-nav-skip", "tabindex"],
+        });
+        this._moRoot = this._root;
+      }
+      this._mo.takeRecords();
     },
 
     // A modal has taken the page over: it reads the keyboard itself (Escape,
@@ -439,12 +480,24 @@
       // Nothing lit and nothing to light: the common case, once a frame, and
       // it must not cost a walk of the whole page.
       if (!this._active) { if (this._painted) this.clearRing(); return; }
+      // Same control asked for, still lit and still on a page nobody changed:
+      // there is nothing to walk the page for.
+      const lit = this._litEl;
+      if (lit && lit.isConnected !== false && this._litKey === this._key &&
+          this._litNth === this._keyNth && lit.classList.contains("cc-nav-focus") &&
+          !this._pageTouched()) {
+        return;
+      }
       this.clearRing();
       const el = this.focused();
       if (!el) { this._active = false; return; }
       el.classList.add("cc-nav-focus");
       this._painted = true;
       this.scrollIntoView(el);
+      this._litEl = el;
+      this._litKey = this._key;
+      this._litNth = this._keyNth;
+      this._watchPage();
     },
 
     // Nudge the pane holding the focused control so the ring is on screen.

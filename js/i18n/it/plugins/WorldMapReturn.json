@@ -18,9 +18,9 @@
   "visit": "Visita {place}",
   "explorePlace": "Esplora {place}",
   "investigatePlace": "Indaga su {place}",
-  "freeWalk": "Passeggiata liminale",
-  "forage": "Foraggia",
-  "makeCamp": "Monta il campo",
+  "freeWalk": "Passeggiata liminale (WIP)",
+  "forage": "Cerca cibo",
+  "makeCamp": "Monta un accampamento",
   "returnDisabledHere": "Non puoi tornare alla mappa del mondo da qui",
   "icebushBlocked": "I campi intorno a Icebush sono infestati da Petrodemoni e Neuronebbia, perché non prendi l'Ipermetro come qualsiasi essere umano sano di mente",
   "stop": "Fermati",
@@ -32,5 +32,5 @@
   "squareBare": "({x} {y})",
   "atTile": "a {x},{y}",
   "lockedPlace": "{place} è intrappolata in una bolla di spazio e tempo",
-  "lockedAhead": "C'è una bolla spaziotemporale davanti a te, non puoi proseguire"
+  "lockedAhead": "Una bolla spaziotemporale blocca la strada"
 }

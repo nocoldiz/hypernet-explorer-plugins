@@ -126,9 +126,6 @@
     return nature === "magical" ? T('Shop.natureMagical') : T('Shop.natureMundane');
   };
 
-  const loreOf = (item) =>
-    safe("loreFor", () => (utils.loreFor ? utils.loreFor(item) : ""), "") || "";
-
   // What an item is medicine for. Null for everything that is not: a healing
   // potion restores HP and cures nothing.
   const medicineOf = (item) =>
@@ -168,13 +165,17 @@
                   ${body}
               </div>`;
 
-  // A handful of short figures (nutrition, needs restored, cravings fed, a
-  // weapon's parameters) set on one wrapping line, not a row apiece: three
-  // numbers about a cup of tea do not need three lines of the page.
-  const statLineHTML = (pairs) => `
-                  <div class="shop-stat-line">${pairs.map((p) => `
-                      <span class="shop-stat"><span class="shop-stat-key">${esc(p.key)}</span><span class="shop-stat-val" style="color:${p.color};">${esc(p.value)}</span></span>`).join("")}
-                  </div>`;
+  // Every fact on the panel is a tag in the backpack's pill style (the same
+  // .inspect-pill the inspect card wears): the label muted, the value bright.
+  // `valHTML` is markup; callers escape plain text first.
+  const pillHTML = (label, valHTML, valStyle) =>
+    `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${esc(String(label).replace(/\s*:\s*$/, ""))}:</span> ` +
+    `<span class="inspect-meta-val inspect-pill-val"${valStyle ? ` style="${valStyle}"` : ""}>${valHTML}</span></div>`;
+  const pillTextHTML = (text) =>
+    `<div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${esc(text)}</span></div>`;
+  const pillBlockHTML = (inner) => `<div class="inspect-quick-pills">${inner}</div>`;
+  const statLineHTML = (pairs) =>
+    pillBlockHTML(pairs.map((p) => pillHTML(p.key, esc(p.value), p.color ? `color:${p.color};` : "")).join(""));
 
   const translate = (text) =>
     safe("translateText", () => {
@@ -447,18 +448,6 @@
         y += lineHeight;
       }
       y += 16;
-    }
-
-    // Procedural lore (resolves {nation}/{leader}/... tokens) in grey flavor.
-    if (!isInShop) {
-      const loreText = loreOf(item);
-      if (loreText) {
-        for (const line of this.wrapText(loreText, contentWidth - 4)) {
-          this.drawTextEx("\\c[8]" + line, 0, y, contentWidth);
-          y += lineHeight;
-        }
-        y += 16;
-      }
     }
 
     if (DataManager.isItem(item)) {
@@ -1807,7 +1796,9 @@
         // inside its own catch would only nest the failure.
         safe("rebuild overlay", () => {
           this.initUIShopDOM();
-          this._lastShopStateHash = null;
+          // Fresh markup holds none of what the section caches say is drawn:
+          // forget all of them, or the rebuilt page stays blank at 0 euros.
+          this.resetUIShopCaches();
         }, null);
       } else {
         console.error("[ItemSystemShop] overlay cannot be drawn, closing the shop.", e);
@@ -2049,80 +2040,48 @@
         // line that also carried its own weight and its own two counts read as
         // four numbers where one was wanted.
         const ownedHere = $gameParty.numItems(selectedItem);
-        let countBadgesHTML = `
-            <div class="detail-spec-badge">
-                <span class="badge-lbl">${esc(T('Shop.ui.owned'))}</span>
-                <span class="badge-val">${ownedHere}</span>
-            </div>
-        `;
+        let countBadgesHTML = pillHTML(T('Shop.ui.owned'), esc(ownedHere));
         if (isBuyMode) {
           const shelfStock = this.getStock(selectedItem);
-          countBadgesHTML += `
-            <div class="detail-spec-badge">
-                <span class="badge-lbl">${esc(T('Shop.ui.stock'))}</span>
-                <span class="badge-val">${shelfStock === UNLIMITED_STOCK ? "∞" : shelfStock}</span>
-            </div>
-          `;
+          countBadgesHTML += pillHTML(T('Shop.ui.stock'), `${shelfStock === UNLIMITED_STOCK ? "∞" : shelfStock}`);
         }
 
         let scaleBadgeHTML = "";
         if (DataManager.isWeapon(selectedItem) && this._itemDetailWindow) {
           const scaling = this._itemDetailWindow.getWeaponScalingStats(selectedItem);
           if (scaling.length) {
-            scaleBadgeHTML = `
-              <div class="detail-spec-badge detail-spec-badge--scaling">
-                  <span class="badge-lbl">${esc(T('Shop.ui.scale'))}</span>
-                  <span class="badge-val">${window.WeaponScaling.chipsHTML(scaling)}</span>
-              </div>
-            `;
+            scaleBadgeHTML = pillHTML(T('Shop.ui.scale'), window.WeaponScaling.chipsHTML(scaling));
           }
         }
 
         let damageTypeBadgeHTML = "";
         const dt = (selectedItem.meta && selectedItem.meta.DamageType) ||
             (selectedItem.note && (selectedItem.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-        if (dt) {
-          damageTypeBadgeHTML = `
-            <div class="detail-spec-badge">
-                <span class="badge-lbl">${esc(T('Inventory.spec.label.damageCategory') || 'Damage Type')}</span>
-                <span class="badge-val" style="color:var(--text-secondary-active); font-weight:bold;">${esc(String(dt).trim())}</span>
-            </div>
-          `;
+        if (dt && !/^none$/i.test(String(dt).trim())) {
+          const dtRaw = String(dt).trim();
+          const dtKey = 'VectorGun.damageType.' + dtRaw;
+          const dtName = (typeof T.has === 'function' && T.has(dtKey)) ? T(dtKey) : dtRaw;
+          damageTypeBadgeHTML = pillHTML(T('Inventory.spec.label.damageCategory'), esc(dtName),"color:var(--text-secondary-active); font-weight:bold;");
         }
 
         let slotBadgeHTML = "";
         if (DataManager.isWeapon(selectedItem) || DataManager.isArmor(selectedItem)) {
           const slotName = translate(equipTypeName(selectedItem.etypeId));
-          slotBadgeHTML = `
-            <div class="detail-spec-badge">
-                <span class="badge-lbl">${esc(T('Shop.slot'))}</span>
-                <span class="badge-val">${esc(slotName || T('Shop.equipSlot'))}</span>
-            </div>
-          `;
+          slotBadgeHTML = pillHTML(T('Shop.slot'), esc(slotName || T('Shop.equipSlot')));
         }
 
         // Clothes, robe or armour: the kind of body piece, which decides the
         // body slot it goes in, read off the armour type.
         const kindName = safe("armorTypeName", () => utils.armorTypeName(selectedItem), "");
         if (kindName) {
-          slotBadgeHTML += `
-            <div class="detail-spec-badge">
-                <span class="badge-lbl">${esc(T('Inventory.spec.label.armorType'))}</span>
-                <span class="badge-val">${esc(kindName)}</span>
-            </div>
-          `;
+          slotBadgeHTML += pillHTML(T('Inventory.spec.label.armorType'), esc(kindName));
         }
 
         // What it holds that somebody may be allergic to, the same rows the
         // backpack's inspect card shows.
         const allergyRows = safe("allergenRows", () => utils.allergenRows(selectedItem), []);
         for (const [label, val] of allergyRows) {
-          slotBadgeHTML += `
-            <div class="detail-spec-badge">
-                <span class="badge-lbl">${esc(label)}</span>
-                <span class="badge-val">${esc(val)}</span>
-            </div>
-          `;
+          slotBadgeHTML += pillHTML(label, esc(val));
         }
 
         // With a pile on the counter the page's own button settles the pile, not
@@ -2170,10 +2129,6 @@
         if (selectedItem.description) {
           descHTML = `<div class="detail-desc">${esc(translate(selectedItem.description))}</div>`;
         }
-
-        // Procedural lore (resolves {nation}/{leader}/... tokens) shown below the description.
-        const loreText = loreOf(selectedItem);
-        if (loreText) descHTML += `<div class="detail-lore">${esc(loreText)}</div>`;
 
         // Params
         const baseParams = [2, 3, 4, 5, 6, 7];
@@ -2232,12 +2187,8 @@
         const medicine = medicineOf(selectedItem);
         if (medicine) {
           const rows = medicineLines(medicine, 10)
-            .map(r => `
-                  <div class="shop-med-row">
-                      <span class="shop-med-key">${esc(r.label)}</span>
-                      <span class="shop-med-val">${esc(r.value)}</span>
-                  </div>`).join("");
-          needsSectionHTML += detailSectionHTML(T('Shop.medicineClass') + ": " + medicine.label, rows);
+            .map(r => pillHTML(r.label, esc(r.value))).join("");
+          needsSectionHTML += detailSectionHTML(T('Shop.medicineClass') + ": " + medicine.label, pillBlockHTML(rows));
         }
 
         // Cravings fed (nicotine, drink, caffeine, narcotics, a bet)
@@ -2268,7 +2219,7 @@
         if (typeof utils.handLines === "function") effectLines.push(...utils.handLines(selectedItem));
 
         const effectsHTML = effectLines
-          .map(line => `<span class="detail-effect-chip">${esc(line)}</span>`)
+          .map(pillTextHTML)
           .join("");
 
         let effectsSectionHTML = "";
@@ -2276,9 +2227,7 @@
           effectsSectionHTML = `
             <div class="gauges-section">
                 <div class="card-lbl shop-sec-hdr">${esc(T('Shop.signalsChemicalProperties'))}</div>
-                <div class="detail-effect-chips">
-                    ${effectsHTML}
-                </div>
+                ${pillBlockHTML(effectsHTML)}
             </div>
           `;
         }
@@ -2305,13 +2254,7 @@
             const trained = level >= prof.PROFICIENT_LEVEL;
             const tier = (specs && specs.ready) ? specs.levelName(level) : "";
             const color = trained ? "var(--text-cost-ok)" : "var(--text-disabled)";
-
-            rows += `
-              <div style="display:flex; align-items:baseline; gap:8px; font-size:16px; color:${color}; font-weight:${trained ? 'bold' : 'normal'};">
-                  <span style="flex:1 1 auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(actorLabel(actor))}</span>
-                  <span style="font-size:14px;">${esc(tier)}</span>
-              </div>
-            `;
+            rows += pillHTML(actorLabel(actor), esc(tier), `color:${color};`);
           });
 
           proficiencyHTML = `
@@ -2320,9 +2263,7 @@
                     <span>${esc(T('Shop.proficiency'))}</span>
                     <span style="font-weight:normal;">${esc(specName)}</span>
                 </div>
-                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px 18px; padding-left:4px;">
-                    ${rows}
-                </div>
+                ${pillBlockHTML(rows)}
             </div>
           `;
         }
@@ -2357,15 +2298,9 @@
 
               ${previewHTML}
 
-              <div class="detail-spec-grid">
-                  <div class="detail-spec-badge">
-                      <span class="badge-lbl">${esc(T('Shop.ui.type'))}</span>
-                      <span class="badge-val">${esc(category)}</span>
-                  </div>
-                  <div class="detail-spec-badge">
-                      <span class="badge-lbl">${esc(T('Shop.ui.weight'))}</span>
-                      <span class="badge-val">${esc(weight)}</span>
-                  </div>
+              <div class="inspect-quick-pills">
+                  ${pillHTML(T('Shop.ui.type'), esc(category))}
+                  ${pillHTML(T('Shop.ui.weight'), esc(weight))}
                   ${countBadgesHTML}
                   ${scaleBadgeHTML}
                   ${damageTypeBadgeHTML}
@@ -2400,8 +2335,12 @@
             safe("action button", () => {
               if (bulkDeal) {
                 this.settleCart(isBuyMode);
+                // The button is rebuilt in place as a plain Buy / Sell: the
+                // second click of a double-click must not open a single deal.
+                this._bulkDealSettledAt = Date.now();
                 return;
               }
+              if (this._bulkDealSettledAt && Date.now() - this._bulkDealSettledAt < 500) return;
               const win = isBuyMode ? this._buyWindow : this._sellWindow;
               win.processOk();
             }, null);
@@ -2565,6 +2504,11 @@
   };
 
   Scene_Shop.prototype.refreshUIShop = function () {
+    this.resetUIShopCaches();
+    this.syncUIShopState();
+  };
+
+  Scene_Shop.prototype.resetUIShopCaches = function () {
     this._lastShopStateHash = null;
     this._renderedIsBuyMode = null;
     this._renderedChipHash = null;
@@ -2578,7 +2522,6 @@
     this._renderedQuantityActive = null;
     this._renderedQuantityNumber = null;
     this._renderedQuantityMax = null;
-    this.syncUIShopState();
   };
 
   Scene_Shop.prototype._updateQuantityModalNumber = function () {
@@ -3401,6 +3344,16 @@
 
   const _Scene_Shop_doBuy = Scene_Shop.prototype.doBuy;
   Scene_Shop.prototype.doBuy = function (number) {
+    // The till never takes more than the purse holds, the bag has room for or
+    // a one-per-party piece allows (maxBuy). A stale enabled line or a modal
+    // forced to a minimum of one used to hand an unaffordable item over for
+    // whatever gold was left, the purse clamping at zero.
+    const allowed = safe("maxBuy", () => this.maxBuy(), 0);
+    number = Math.min(number, Number.isFinite(allowed) ? Math.max(0, allowed) : 0);
+    if (!(number > 0)) {
+      SoundManager.playBuzzer();
+      return;
+    }
     this._shopStockRevision = (this._shopStockRevision || 0) + 1;
     const spent = number * this.buyingPrice();
     _Scene_Shop_doBuy.call(this, number);
@@ -3425,6 +3378,13 @@
 
   const _Scene_Shop_doSell = Scene_Shop.prototype.doSell;
   Scene_Shop.prototype.doSell = function (number) {
+    // Only the copies the party may hand over: conjured ones never reach the
+    // till, whichever path (single modal or bulk) asked.
+    number = Math.min(number, sellableCount(this._item));
+    if (!(number > 0)) {
+      SoundManager.playBuzzer();
+      return;
+    }
     this._shopStockRevision = (this._shopStockRevision || 0) + 1;
     const earned = number * this.sellingPrice();
     // What is sold over a counter stays on it: a keepsake handed in is the
@@ -3434,6 +3394,13 @@
     // The copies sold are the bought ones: the conjured count stays put.
     if ($gameParty.keepConjured) $gameParty.keepConjured(() => _Scene_Shop_doSell.call(this, number));
     else _Scene_Shop_doSell.call(this, number);
+    // Selling the last copy takes the line out of the bag, so the cursor may
+    // now be past the end of a shorter list (the mirror of doBuy).
+    if (this._sellWindow) {
+      this._sellWindow.refresh();
+      const last = this._sellWindow.maxItems() - 1;
+      if (this._sellWindow.index() > last) this._sellWindow.select(Math.max(0, last));
+    }
     awardTradeXp('Appraising', earned);  // i18n-ignore  Specialization.json id
   };
 
@@ -3735,6 +3702,9 @@
     if (bought > 0) SoundManager.playShop();
 
     if (this._buyWindow) {
+      // The shelf greys out what the purse cannot cover off its own copy of
+      // the gold; after a basket that copy is stale until it is told.
+      if (typeof this._buyWindow.setMoney === "function") this._buyWindow.setMoney(this.money());
       this._buyWindow.refresh();
       const last = this._buyWindow.maxItems() - 1;
       if (last < 0) this._buyWindow.select(-1);
@@ -3929,7 +3899,10 @@
     this._chipFocus = false;
     if (buying) {
       this._buyWindow.refresh();
-      this._buyWindow.select(Math.min(this._buyWindow.index(), Math.max(0, this._buyWindow.maxItems() - 1)));
+      // From the chips the index is -1; the list starts at its first line, as
+      // the sell side does, so Down has somewhere to go.
+      const lastBuy = this._buyWindow.maxItems() - 1;
+      this._buyWindow.select(lastBuy < 0 ? -1 : Math.min(Math.max(0, this._buyWindow.index()), lastBuy));
       this._buyWindow.activate();
     } else {
       this._sellWindow.refresh();
@@ -4228,7 +4201,19 @@
       this.sellSelectedItems();
       return;
     }
+    const item = this._sellWindow ? this._sellWindow.item() : null;
+    if (item && sellableCount(item) <= 0) {
+      SoundManager.playBuzzer();
+      this._sellWindow.activate();
+      return;
+    }
     _Scene_Shop_onSellOk.call(this);
+  };
+
+  // The quantity modal offers what may be sold, not every copy in the bag.
+  const _Scene_Shop_maxSell = Scene_Shop.prototype.maxSell;
+  Scene_Shop.prototype.maxSell = function () {
+    return Math.min(_Scene_Shop_maxSell.call(this), sellableCount(this._item));
   };
 
   const _Scene_Shop_onBuyOk = Scene_Shop.prototype.onBuyOk;
@@ -4236,6 +4221,20 @@
     if (this.buyCart().size > 0) {
       this.buySelectedItems();
       return;
+    }
+    // Nothing affordable, no room or a one-per-party piece already held: the
+    // modal is not opened at all (its minimum of one would otherwise sell it).
+    const item = this._buyWindow ? this._buyWindow.item() : null;
+    if (item) {
+      const previous = this._item;
+      this._item = item;
+      const allowed = safe("maxBuy", () => this.maxBuy(), 0);
+      this._item = previous;
+      if (!(allowed > 0)) {
+        SoundManager.playBuzzer();
+        this._buyWindow.activate();
+        return;
+      }
     }
     _Scene_Shop_onBuyOk.call(this);
   };

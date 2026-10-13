@@ -246,14 +246,19 @@
             }
 
             // If items are the same, use a random adjective
+            // The word order is the language's: English puts the adjective
+            // first, Italian after the dish as an invariable phrase.
             if (item1 === item2) {
-                return this.getRandomAdjectiveForSameItem(item1) + " " + tr(item1.name);
+                return _ci18n('names.sameItem', {
+                    adjective: this.getRandomAdjectiveForSameItem(item1), name: tr(item1.name)
+                });
             }
-            // Otherwise combine names as before
-
-            const firstWord = tr(item1.name).split(' ')[0];
-            const lastWord = tr(item2.name).split(' ').pop();
-            return firstWord + " " + lastWord;
+            // Otherwise splice the two names. English heads a name with its
+            // modifiers (first word of one, last word of the other); Italian
+            // heads it with the noun, so it reaches for both first words.
+            const name1 = tr(item1.name).split(' ');
+            const name2 = tr(item2.name).split(' ');
+            return _ci18n('names.combo', { first: name1[0], last: name2[name2.length - 1], head: name2[0] });
         },
 
         // Deterministic pseudo-random in [0,1) so the cook preview matches the
@@ -404,7 +409,7 @@
                 try {
                     const shown = await window.Dice3D.rollD20({
                         actionName: _ci18n('roll.action', { dish: dishName }),
-                        statName: 'WIS',  // i18n-ignore  ability id
+                        statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(5) : '',
                         modifier: wisMod,
                         dc: 12,
                         forcedRoll: cookRoll,
@@ -464,13 +469,107 @@
         // Every dish in the book, sorted by the name the player reads.
         recipes: function () {
             const db = (typeof $dataItems !== 'undefined' && $dataItems) ? $dataItems : [];
-            if (this._recipeList && this._recipeListDb === db) return this._recipeList;
+            const pizzas = this.pizzaDishes();
+            if (this._recipeList && this._recipeListDb === db && this._recipeListPizzas === pizzas) return this._recipeList;
             const list = db.filter(item => item && item.name && this.recipeOf(item))
-                .filter(item => !window.MagicNature || !window.MagicNature.allowsData || window.MagicNature.allowsData(item));
+                .filter(item => !window.MagicNature || !window.MagicNature.allowsData || window.MagicNature.allowsData(item))
+                .concat(pizzas);
             list.sort((a, b) => this._tr(a.name).localeCompare(this._tr(b.name)));
             this._recipeList = list;
             this._recipeListDb = db;
+            this._recipeListPizzas = pizzas;
             return list;
+        },
+
+        //---------------------------------------------------------------------
+        // Pizzas. A pizza designed at the 3D table (Minigames/PizzaMaker3D.js)
+        // or in the star map's galley is kept in one book, the one
+        // GalaxySim_PizzaDelivery.js holds, and the kitchen reads it here as a
+        // dish like any other: one of each topping goes in, and the whole
+        // party eats it at once instead of it going into the pack.
+        //---------------------------------------------------------------------
+        PIZZA_PREFIX: 'pizza:',  // i18n-ignore  dish id prefix
+        PIZZA_ICON_ITEM: 536,
+        // Every pizza goes on a base: bought ready or made here off its own
+        // recipe (flour, water, oil).
+        PIZZA_BASE_ITEM: 2113,
+
+        pizzaBook: function () {
+            const GS = window.GalaxySim;
+            const book = GS && GS.PizzaDelivery;
+            if (!book || typeof $gameSystem === 'undefined' || !$gameSystem) return [];
+            try { return book.recipes().filter(r => !r.builtin); } catch (e) { return []; }
+        },
+
+        // The book's custom pizzas as dishes. Rebuilt only when the book
+        // changes, so the recipe list keeps one array to compare against.
+        pizzaDishes: function () {
+            const book = this.pizzaBook();
+            const sig = book.map(r => r.id + '=' + r.name + ':' + r.toppings.join('+')).join('|');
+            if (this._pizzaDishes && this._pizzaSig === sig) return this._pizzaDishes;
+            this._pizzaSig = sig;
+            this._pizzaDishes = book.map(r => this.pizzaDish(r)).filter(Boolean);
+            return this._pizzaDishes;
+        },
+
+        // A dish built off a pizza recipe: a base and its toppings. Its
+        // nutrition is what went into it, a little more for the baking, and its
+        // level grows with its toppings.
+        pizzaDish: function (rec) {
+            const db = (typeof $dataItems !== 'undefined' && $dataItems) ? $dataItems : [];
+            const tops = (rec.toppings || []).filter(id => db[id] && db[id].name && id !== this.PIZZA_BASE_ITEM);
+            if (!tops.length) return null;
+            const bill = db[this.PIZZA_BASE_ITEM] ? [this.PIZZA_BASE_ITEM].concat(tops) : tops;
+            let cal = 0, prot = 0, fat = 0;
+            for (const id of bill) {
+                const n = this.getRecoveryValues(db[id]);
+                cal += n.hunger; prot += n.tp; fat += n.mp;
+            }
+            cal = Math.round(cal * 1.1); prot = Math.round(prot * 1.1); fat = Math.round(fat * 1.1);
+            const level = Math.min(3, 1 + Math.floor(tops.length / 2));
+            const icon = db[this.PIZZA_ICON_ITEM] ? db[this.PIZZA_ICON_ITEM].iconIndex : 0;
+            // i18n-ignore-start  note tags
+            const note = '<category:Food>\n<calories:' + cal + '>\n<protein:' + prot + '>\n<fat:' + fat + '>\n' +
+                '<Recipe: ' + bill.map(id => id + 'x1').join(', ') + '>\n<CookLevel: ' + level + '>';
+            // i18n-ignore-end
+            return {
+                id: this.PIZZA_PREFIX + rec.id,
+                name: rec.name,
+                iconIndex: icon,
+                description: '',
+                note,
+                meta: { category: 'Food', calories: String(cal), protein: String(prot), fat: String(fat), CookLevel: String(level) },  // i18n-ignore  meta keys
+                _pizza: rec.id
+            };
+        },
+
+        isPizzaDish: function (dish) {
+            return !!(dish && dish._pizza);
+        },
+
+        // The pizza the kitchen should open on, once, after the 3D table saved it.
+        _openOnPizza: null,
+        focusPizzaNextOpen: function (recipeId) { this._openOnPizza = recipeId || null; },
+        takeOpenPizza: function () { const id = this._openOnPizza; this._openOnPizza = null; return id; },
+
+        openPizzaMaker: function () {
+            const PM = window.PizzaMaker3D;
+            if (!PM || typeof PM.open !== 'function') { SoundManager.playBuzzer(); return false; }
+            SoundManager.playOk();
+            PM.open({ mode: 'kitchen' });  // i18n-ignore  mode id
+            return true;
+        },
+
+        // Every member at the table eats their share of the pizzas that came
+        // out of the oven, the same way the free pot is served.
+        servePizza: function (dish, made, cook) {
+            const nut = this.getRecoveryValues(dish);
+            const cookSkill = window.SpecializationXP
+                ? window.SpecializationXP.multiplierFor(cook, 'Cooking', 0.10) : 1;  // i18n-ignore  Specialization.json id
+            const worth = this.hungerWorthOf(nut.hunger * made, nut.tp * made, nut.mp * made) * cookSkill;
+            const { report } = this.serveToParty(worth);
+            this.feedAllergens((this.recipeOf(dish) || []).map(b => b.item), this._tr(dish.name));
+            if (window.PartyMeal && report) window.PartyMeal.announce(report, { title: this._tr(dish.name) });
         },
 
         cookLevelOf: function (dish) {
@@ -607,7 +706,11 @@
             const spoiled = !!roll.nat1 || Math.random() < this.spoilChance(dish, cook);
             let made = spoiled ? 0 : (roll.nat20 ? 2 : 1);
             if (made > 0 && kit.bonus > 0 && Math.random() < kit.bonus / 100) made++;
-            if (made > 0) $gameParty.gainItem(dish, made);
+            const pizza = this.isPizzaDish(dish);
+            if (made > 0) {
+                if (pizza) this.servePizza(dish, made, cook);
+                else $gameParty.gainItem(dish, made);
+            }
             const ruin = spoiled ? this.spoiledDish() : null;
             if (ruin) $gameParty.gainItem(ruin, 1);
             if (window.Diary && made > 0) window.Diary.onCrafted('cook', name, made);
@@ -619,7 +722,7 @@
                 : [];
             if (window.ParchmentToast) {
                 const line = made > 0
-                    ? _ci18n('messages.recipePrepared', { name, count: made })
+                    ? _ci18n(pizza ? 'messages.pizzaShared' : 'messages.recipePrepared', { name, count: made })
                     : _ci18n('messages.recipeSpoiled', { name });
                 window.ParchmentToast.group([
                     () => window.ParchmentToast.show(line, {
@@ -1029,6 +1132,12 @@
         this._kitchenTab = 'combine';  // i18n-ignore  tab id
         this._recipeIndex = 0;
         this._allergyArmed = null;
+        const pizza = CookingSystem.takeOpenPizza();
+        if (pizza) {
+            this._kitchenTab = 'recipes';  // i18n-ignore  tab id
+            const at = this.recipeList().findIndex(d => d._pizza === pizza);
+            if (at >= 0) this._recipeIndex = at;
+        }
         // Name the skill this menu runs on, and whose hands are on it. The badge
         // and the switcher are decorations owned by other plugins: neither is
         // allowed to stop the kitchen from being built.
@@ -1509,6 +1618,7 @@
                 this.popScene();
                 return;
             }
+            if (Input.isTriggered('shift')) { CookingSystem.openPizzaMaker(); return; }
             if (!recipes.length) return;
             if (Input.isRepeated('down') || Input.isRepeated('up')) {
                 const step = Input.isRepeated('down') ? 1 : -1;
@@ -1867,7 +1977,7 @@
                 const sel = idx === (this._cookActorIndex || 0) ? "selected" : "";
                 // Optional-chained: a tab clicked on the frame the scene is torn
                 // down would otherwise call into whatever scene took its place.
-                tabs += `<div class="companion-tab ${sel}" onclick="SceneManager._scene?.selectCookActor?.(${idx})">${m.name()}</div>`;
+                tabs += `<div class="companion-tab ${sel}" onclick="SceneManager._scene?.selectCookActor?.(${idx})">${_esc(m.name())}</div>`;
             });
             compRow.innerHTML = window.CharSwitcher.inner(
                 `<div class="companion-tabs-row">${tabs}</div>`, members.length);
@@ -2322,10 +2432,13 @@
             `<div class="backpack-tab focusable ${this._kitchenTab === id ? 'active' : ''}" data-tab="${id}">${_esc(label)}</div>`;
         el.innerHTML = `<div class="backpack-tabs"><div class="backpack-tabs-row">` +
             chip('combine', _ci18n('tabs.combine')) + chip('recipes', _ci18n('tabs.recipes')) +  // i18n-ignore  tab ids
+            (window.PizzaMaker3D ? chip('pizza', _ci18n('tabs.pizza')) : '') +  // i18n-ignore  tab id
             `</div></div>`;
         el.querySelectorAll(".backpack-tab").forEach(node => {
             node.addEventListener("click", (e) => {
                 if (e && e.stopPropagation) e.stopPropagation();
+                // The pizza chip is a door, not a tab: it opens the 3D table.
+                if (node.getAttribute("data-tab") === 'pizza') { CookingSystem.openPizzaMaker(); return; }  // i18n-ignore  tab id
                 this.setKitchenTab(node.getAttribute("data-tab"));
             });
         });
@@ -2436,11 +2549,19 @@
                     ${row(_ci18n('recipes.reward'), _ci18n('recipes.points', { points: CookingSystem.RECIPE_POINTS }), 'inspect-spec-value--gain')}
                 </div>
                 ${this.allergyBlockHTML([dish])}
-                <div class="cook-kit-line">${_esc(_ci18n('recipes.keeps'))}</div>
+                <div class="cook-kit-line">${_esc(_ci18n(CookingSystem.isPizzaDish(dish) ? 'recipes.pizzaEaten' : 'recipes.keeps'))}</div>
             </div>
             <div class="inspect-actions">
                 <div class="inspect-btn focusable${ready ? '' : ' unusable'}" id="prepare-btn">${_esc(armed ? _ci18n('recipes.prepareAnyway') : _ci18n('recipes.prepareButton'))}</div>
+                ${window.PizzaMaker3D ? `<div class="inspect-btn focusable" id="pizza-maker-btn">${_esc(_ci18n('recipes.designPizza'))}</div>` : ''}
             </div>`;
+        const maker = pane.querySelector("#pizza-maker-btn");
+        if (maker) {
+            maker.addEventListener("click", (e) => {
+                if (e && e.stopPropagation) e.stopPropagation();
+                CookingSystem.openPizzaMaker();
+            });
+        }
         const btn = pane.querySelector("#prepare-btn");
         if (btn) {
             btn.addEventListener("click", (e) => {
@@ -2456,6 +2577,7 @@
             this.popScene();
             return;
         }
+        if (Input.isTriggered('shift')) { CookingSystem.openPizzaMaker(); return; }
         const list = this.recipeList();
         if (!list.length) return;
         const gridEl = document.querySelector(".recipe-list");

@@ -1,6 +1,6 @@
 {
   "name": "Social Sciences",
-  "blurb": "People, markets and crowds as measured objects, the era's mistaken studies included.",
+  "blurb": "People, markets and crowds, mistaken studies included.",
   "nodes": {
     "soc_asymmetric": {
       "name": "Markets with Asymmetric Information",

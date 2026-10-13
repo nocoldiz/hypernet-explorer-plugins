@@ -13,12 +13,12 @@
   "attack": "Attacca",
   "pickpocket": "Borseggia",
   "trade": "Scambia",
-  "treatWounds": "Cura Ferite",
+  "treatWounds": "Cura ferite",
   "buyHouse": "Compra questo piano",
   "joinParty": "Unisciti",
   "joinPartyInactive": "Unisciti come riserva",
   "joinFollower": "Unisciti come seguace",
-  "socialWeb": "Rete Sociale",
+  "socialWeb": "Rete sociale",
   "leave": "Lascia",
   "traits": "Caratteristiche",
   "equipment": "Equipaggiamento",
@@ -28,7 +28,7 @@
   "resting": "Sta riposando",
   "hungry": "Ha fame",
   "working": "Al lavoro",
-  "workAs": "Lavora come {job} a {map}",
+  "workAs": "Lavora come {job} ({map})",
   "workAsShopkeeper": "Lavora qui come {job} ({map})",
   "shopkeeperTitle": "Negoziante",
   "biologicsTab": "Biologia",
@@ -42,7 +42,7 @@
   "bloodType": "Gruppo sanguigno",
   "bloodUniversalDonor": "Donatore universale",
   "bloodUniversalRecipient": "Ricevente universale",
-  "bloodRareAntigenNote": "Linea rara priva di un antigene: una trasfusione sicura richiede una corrispondenza esatta dell'antigene.",
+  "bloodRareAntigenNote": "Sangue raro: le trasfusioni richiedono un antigene identico.",
   "bloodCompatTitle": "Compatibilità trasfusionale",
   "bloodCompatBoth": "Compatibilità reciproca come donatori",
   "bloodCompatDonorOnly": "Potrebbe donarti sangue",
@@ -61,22 +61,22 @@
   "anatomyLbl": "Anatomia",
   "genitalsLbl": "Genitali",
   "sentimentalLbl": "Stato sentimentale",
-  "marriedTo": "Sposato con",
+  "marriedTo": "{g:Sposato|Sposata|Sposati} con",
   "datingLbl": "Frequenta",
-  "stMarried": "Sposato",
-  "stWidowed": "Vedovo",
-  "stDivorced": "Divorziato",
+  "stMarried": "{g:Sposato|Sposata|Sposati}",
+  "stWidowed": "{g:Vedovo|Vedova|Vedovi}",
+  "stDivorced": "{g:Divorziato|Divorziata|Divorziati}",
   "stSingle": "Single",
-  "timesMarried": "Sposato {n} volte",
+  "timesMarried": "{g:Sposato|Sposata|Sposati} {n} volte",
   "exPartnersLbl": "Partner passati",
   "relStyleLbl": "Tipo di relazione",
-  "wikiParty": "Gruppo",
+  "wikiParty": "Party",
   "partyCurrentMember": "Membro attuale",
-  "partyLastSeen": "Visto l'ultima volta",
-  "partyOtherMember": "Un altro viaggio",
+  "partyLastSeen": "Ultimo avvistamento",
+  "partyOtherMember": "Altro Party",
   "partyFormerMember": "Ex membro",
   "partyRetiredMember": "Riserve",
-  "partyDeadMember": "Morto",
+  "partyDeadMember": "Non più in vita",
   "scheming": "Attività illecita",
   "leisure": "Tempo libero",
   "freshening": "Si rinfresca",
@@ -109,70 +109,70 @@
   "contactsHint": "I contatti compaiono dopo che i PNG si incontrano nelle zone sociali.",
   "singleMeeting": "Un incontro",
   "frequentMeetings": "Incontri frequenti",
-  "socialWebTitle": "Rete Sociale",
+  "socialWebTitle": "Rete sociale",
   "webRosterTitle": "Legami",
   "webMeetings": "{n} incontri",
   "webNeverMet": "non ancora incontrati",
-  "npcUnavailable": "Dati NPC non disponibili",
+  "npcUnavailable": "Dati PNG non disponibili",
   "pressCancel": "Premi Annulla / Esc per tornare.",
   "successLabel": "Successo",
   "failedLabel": "Fallito",
   "destitute": "Indigente",
-  "poor": "Povero",
-  "workingClass": "Ceto Operaio",
-  "middleClass": "Ceto Medio",
+  "poor": "In povertà",
+  "workingClass": "Ceto operaio",
+  "middleClass": "Ceto medio",
   "wealthy": "Benestante",
-  "evil": "Malvagio",
-  "dishonest": "Disonesto",
-  "neutral": "Neutro",
-  "honest": "Onesto",
-  "virtuous": "Virtuoso",
+  "evil": "Crudele",
+  "dishonest": "Inaffidabile",
+  "neutral": "Neutrale",
+  "honest": "Leale",
+  "virtuous": "Irreprensibile",
   "predisposition": "Predisposizione",
   "attractionLbl": "Attrazione",
   "refuseTrade": "{name} si rifiuta di commerciare con te.",
   "refuseHelp": "{name} si rifiuta di aiutarti.",
-  "healFree": "{name} cura il tuo gruppo gratuitamente.",
-  "healCost": "{name} cura il tuo gruppo per {g}€.",
+  "healFree": "{name} cura il tuo Party gratuitamente.",
+  "healCost": "{name} cura il tuo Party per {g}€.",
   "notEnoughGold": "Non hai abbastanza denaro ({g}€ richiesti).",
   "joinRefused": "Rifiutano l'offerta senza pensarci.",
-  "partyFull": "Il tuo gruppo è al completo.",
-  "giftTitle": "Dai un Regalo",
+  "partyFull": "Il tuo Party è al completo.",
+  "giftTitle": "Fai un regalo",
   "noItemsToGive": "Nessun oggetto da donare.",
-  "gaveItem": "Hai dato {item} a {name}.",
-  "giftRefused": "{name} non accetta {item} da te.",
+  "gaveItem": "Hai regalato a {name}: {item}.",
+  "giftRefused": "{name} non accetta il tuo regalo ({item}).",
   "bribeTitle": "Corruzione",
-  "briberyCaught": "{name} intasca l'oro ma ti avverte.",
+  "briberyCaught": "{name} intasca i soldi ma ti avverte.",
   "bribeRefused": "{name} è troppo ostile per accettare.",
   "bribeRefusedLaw": "{name} rifiuta per principio e denuncia il tentativo.",
-  "bribeIncorruptible": "{name} è incorruttibile e non accetterà mai il tuo denaro.",
+  "bribeIncorruptible": "{name} non accetta mai mazzette.",
   "bribeSmall": "Piccola",
   "bribeMedium": "Media",
   "bribeLarge": "Grande",
-  "attackWarning": "Attaccare {name}? Non si può tornare indietro.",
-  "attackConfirm": "Conferma Attacco",
+  "attackWarning": "Attaccare {name}? Non si può annullare.",
+  "attackConfirm": "Conferma attacco",
   "attackCommitted": "Hai attaccato {name}.",
   "history": "Background",
   "historyTitle": "BACKGROUND",
   "noBackstory": "Nessun archivio storico disponibile.",
-  "lifeSummary": "Riassunto della Vita",
+  "lifeSummary": "Riassunto della vita",
   "routine": "Routine",
   "routineTitle": "ROUTINE QUOTIDIANA",
   "noRoutineData": "Nessun dato sulla routine disponibile.",
-  "routinePast24h": "Ultime 24 Ore",
-  "routineRestOfDay": "Programma per il Resto della Giornata",
-  "routineNothingPlanned": "Niente in programma, la giornata volge al termine.",
+  "routinePast24h": "Ultime 24 ore",
+  "routineRestOfDay": "Resto della giornata",
+  "routineNothingPlanned": "Nient'altro in programma oggi.",
   "lifeHistory": "Storia",
   "lifeHistoryTitle": "STORIA DI VITA",
-  "noLifeHistory": "Non gli è ancora successo nulla di rilevante.",
+  "noLifeHistory": "Ancora nulla di rilevante.",
   "lifeHistoryTimeline": "Cronologia",
   "timesRepeated": "(x {n})",
-  "emBranchHdr": "Questo ramo di lei",
+  "emBranchHdr": "Questa versione di lei",
   "cancel": "Annulla",
   "confirm": "Conferma",
   "back": "Indietro",
   "close": "Chiudi",
   "overview": "Panoramica",
-  "governmentHistory": "Storia del Governo",
+  "governmentHistory": "Storia del governo",
   "electionRecords": "Elezioni",
   "eventsTab": "Cronaca",
   "leadersTab": "Leader",
@@ -191,14 +191,14 @@
   "wikiNations": "Nazioni",
   "wikiArtifacts": "Artefatti",
   "wikiFactions": "Fazioni",
-  "wikiPoliticalParties": "Partiti Politici",
+  "wikiPoliticalParties": "Partiti politici",
   "wikiIdeologies": "Ideologie",
   "wikiNation": "Nazione",
   "wikiHyperpower": "Iperpotenza",
-  "wikiLeader": "Leader Mondiale",
+  "wikiLeader": "Leader mondiale",
   "wikiArtifact": "Artefatto",
   "wikiFaction": "Fazione",
-  "wikiPoliticalParty": "Partito Politico",
+  "wikiPoliticalParty": "Partito politico",
   "wikiIdeology": "Ideologia",
   "wikiFavourites": "Preferiti",
   "wikiNoFavourites": "Niente nei preferiti.",
@@ -231,7 +231,7 @@
   "nextElection": "Prossima elezione",
   "turnoutLbl": "affluenza",
   "snapLbl": "anticipata",
-  "deceased": "Deceduto",
+  "deceased": "Morte",
   "reignLbl": "Anni di attività",
   "ageLbl": "Età",
   "approval": "Consenso",
@@ -246,27 +246,27 @@
   "weightLbl": "Peso",
   "discovered": "Scoperta",
   "currentHolder": "Possessore attuale",
-  "pastHolders": "Possessori Precedenti",
+  "pastHolders": "Possessori precedenti",
   "artifactKindItem": "Reliquia",
   "artifactKindWeapon": "Arma",
   "artifactKindArmor": "Armatura",
-  "memberNations": "Nazioni Controllate",
-  "pastLeaders": "Leader Precedenti",
+  "memberNations": "Nazioni controllate",
+  "pastLeaders": "Leader precedenti",
   "currentLeader": "in carica",
-  "politicalClass": "Classe Politica",
+  "politicalClass": "Classe politica",
   "partiesLbl": "Partiti",
   "settlementsLbl": "Insediamenti",
   "mayorLbl": "Sindaco",
   "politicsSection": "Politica",
-  "citizenOf": "Cittadino di",
+  "citizenOf": "{g:Cittadino|Cittadina|Cittadini} di",
   "originLbl": "Origine",
   "casteLbl": "Casta",
   "partyLbl": "Partito",
   "engagementLbl": "Impegno",
-  "engApathetic": "Apatico",
-  "engVoter": "Elettore",
+  "engApathetic": "Indifferente",
+  "engVoter": "Votante",
   "engActivist": "Attivista",
-  "engOrganizer": "Organizzatore",
+  "engOrganizer": "{g:Organizzatore|Organizzatrice|Organizzatori}",
   "lastVoteLbl": "Ultimo voto",
   "grudgeLbl": "Rancore",
   "ideologyLbl": "Ideologia",
@@ -277,7 +277,7 @@
   "informationLbl": "Informazione",
   "arcaneLbl": "Arcano",
   "techLbl": "Tecnologia",
-  "factionMembersLbl": "Membri Noti",
+  "factionMembersLbl": "Membri noti",
   "worldEventsLbl": "Cronaca",
   "rumorsLbl": "Voci",
   "vacant": "vacante",
@@ -303,11 +303,11 @@
     "Grazie. Gli troverò un uso.",
     "Gentile da parte tua. {item} fa sempre comodo.",
     "Beh, non dirò di no.",
-    "Nella borsa ci sta. Apprezzato.",
+    "Finisce nella borsa. Apprezzato.",
     "Non è molto, ma conta il pensiero."
   ],
   "giftRefusalLines": [
-    "Non credere che {item} ti compri qualcosa. Riprenditelo.",
+    "Non credere che un regalo ti compri qualcosa. Riprenditelo.",
     "Tienilo. Tra noi non cambierebbe nulla.",
     "Non voglio niente dalle tue mani.",
     "No. Ora lasciami in pace.",
@@ -317,7 +317,7 @@
     "Continui a mettermi roba in mano. Cosa vuoi davvero?",
     "Un altro? Ho le tasche piene dei tuoi regali.",
     "Grazie, ma stai finendo le cose da dare.",
-    "Ho smesso di contare. Di' quello che sei venuto a dire.",
+    "Ho smesso di contare. Di' quello che hai da dire.",
     "Tieniti qualcosa anche tu, no?"
   ],
   "healthTab": "Salute",
@@ -341,14 +341,14 @@
   "implantProsthetic": "protesi",
   "woundsDowned": "a terra",
   "epidemicsTitle": "Epidemie vissute",
-  "noEpidemics": "Mai coinvolto in un'epidemia.",
+  "noEpidemics": "Nessuna epidemia vissuta.",
   "epidemicCaught": "l'ha contratta",
-  "epidemicSwept": "ne è stato travolto",
+  "epidemicSwept": "ne è {g:stato travolto|stata travolta|stati travolti}",
   "epidemicLived": "l'ha vissuta",
   "hysteriaTag": "isteria di massa",
   "historicalTag": "storica",
   "epidemicLocal": "Epidemia nella sua città",
-  "epidemicIll": "della città attualmente malato",
+  "epidemicIll": "della città attualmente malata",
   "symptomsLbl": "Sintomi",
   "venerealTag": "venerea",
   "epidemicTag": "epidemia",
@@ -356,24 +356,24 @@
   "coughLabel": "Tossisci",
   "spitLabel": "Sputa",
   "biteLabel": "Mordi",
-  "transmitWarnHas": "{action} verso {name}? Proverebbe a trasmettere: {list}. È considerato aggressione.",
-  "transmitWarnNone": "{action} verso {name}? Non hai nulla da trasmettere così, ma è comunque aggressione.",
-  "transmitWarnHasNoAssault": "{action} verso {name}? Proverebbe a trasmettere: {list}.",
-  "transmitWarnNoneNoAssault": "{action} verso {name}? Non hai nulla da trasmettere così.",
+  "transmitWarnHas": "{action} verso {name}? Può trasmettere: {list}. Conta come aggressione.",
+  "transmitWarnNone": "{action} verso {name}? Niente da trasmettere, ma conta come aggressione.",
+  "transmitWarnHasNoAssault": "{action} verso {name}? Può trasmettere: {list}.",
+  "transmitWarnNoneNoAssault": "{action} verso {name}? Niente da trasmettere.",
   "transmitHit": "Hai infettato {name} con {list}!",
-  "transmitMiss": "{name} non ha preso nulla. Ora hai una taglia sulla testa.",
-  "transmitNoneResult": "Aggredisci {name}. Ora hai una taglia sulla testa.",
+  "transmitMiss": "{name} non ha contratto nulla. Ora hai una taglia.",
+  "transmitNoneResult": "Aggredisci {name}. Ora hai una taglia.",
   "transmitMissNoBounty": "{name} non ha preso nulla.",
   "transmitNoneResultNoBounty": "Tossisci vicino a {name}.",
   "infectLabel": "Infetta",
   "infectSource": "una fiala rotta",
   "noVialsToOpen": "Nessuna fiala sigillata nello zaino.",
-  "infectPrompt": "Apri una fiala su {name}? Circa il {chance}% di farla franca. Se ti beccano, è bioterrorismo.",
-  "infectUnseen": "{name} prende {disease}, e non vede mai chi gliel'ha data.",
-  "infectImmune": "{name} ha già avuto {disease} e non la prende. Nessuno ti ha visto provarci.",
-  "infectAlready": "{name} ha già {disease}. Nessuno ti ha visto provarci.",
-  "infectCaught": "{name} ti sorprende mentre gli apri addosso una fiala di {disease}. Il bioterrorismo finisce sulla tua fedina.",
-  "infectMember": "{name} viene inoculato con {disease}.",
+  "infectPrompt": "Aprire una fiala su {name}? Circa il {chance}% di non essere visto. Se ti beccano: bioterrorismo.",
+  "infectUnseen": "{name} contrae {disease} senza vedere chi è stato.",
+  "infectImmune": "{name} è immune a {disease}. Nessuno ti ha visto.",
+  "infectAlready": "{name} ha già {disease}. Nessuno ti ha visto.",
+  "infectCaught": "{name} ti sorprende mentre {g:gli|le|gli} apri addosso una fiala di {disease}. Il bioterrorismo finisce sulla tua fedina.",
+  "infectMember": "{name} riceve un'inoculazione: {disease}.",
   "infectMemberAlready": "{name} ha già {disease}.",
   "socializeLabel": "Socializza",
   "introspectLabel": "Introspezione",
@@ -382,15 +382,15 @@
   "introspectChangeGender": "Cambia genere",
   "introspectChangeOrientation": "Cambia orientamento sessuale",
   "introspectChangeCreed": "Cambia credo",
-  "introspectChangeNamePrompt": "Inserisci il nuovo nome del personaggio:",
+  "introspectChangeNamePrompt": "Inserisci il nuovo nome:",
   "introspectGenderPrompt": "Seleziona genere",
   "introspectOrientationPrompt": "Seleziona orientamento sessuale",
   "introspectCreedPrompt": "Seleziona un nuovo credo",
-  "introspectNameSuccess": "Nome modificato con successo.",
-  "introspectGenderSuccess": "Genere modificato con successo.",
-  "introspectOrientationSuccess": "Orientamento sessuale modificato con successo.",
-  "introspectCreedSuccess": "Credo modificato con successo.",
-  "introspectNotEnoughKp": "Punti Conoscenza insufficienti (richiesti 50 PC).",
+  "introspectNameSuccess": "Nome modificato.",
+  "introspectGenderSuccess": "Genere modificato.",
+  "introspectOrientationSuccess": "Orientamento sessuale modificato.",
+  "introspectCreedSuccess": "Credo modificato.",
+  "introspectNotEnoughKp": "Punti Conoscenza insufficienti (servono 50 KP).",
   "introspectFilterCreed": "Filtra credi...",
   "bickerLabel": "Punzecchia",
   "courtLabel": "Corteggia",
@@ -401,9 +401,9 @@
   "hygieneCourtSelf": "Non ti lavi da un po', e {name} sta cercando di non farci caso.",
   "hygieneCourtNpc": "{name} non si lava da un po', e non c'è modo di non farci caso.",
   "proposeLabel": "Proponi",
-  "proposeSubtitle": "Che tipo di relazione stai proponendo?",
-  "proposeNeedsAttraction": "non abbastanza preso/a (ancora)",
-  "directionsLabel": "Chiedi Indicazioni",
+  "proposeSubtitle": "Scegli il tipo di relazione.",
+  "proposeNeedsAttraction": "{g:non abbastanza preso|non abbastanza presa|non abbastanza presi} (ancora)",
+  "directionsLabel": "Chiedi indicazioni",
   "directionsIntro": "\"Dove posso trovare {target}?\"",
   "directionsNone": "\"Qui non c'è nulla che valga la pena indicarti.\"",
   "directionsAnswer": "\"{target}? Circa {dist} m verso {dir}.\"",
@@ -420,7 +420,7 @@
   "dirSW": "sud-ovest",
   "dirW": "ovest",
   "dirNW": "nord-ovest",
-  "interactingAs": "Interagisce come",
+  "interactingAs": "Interagisci come",
   "dossierSection": "Dossier",
   "vocationLbl": "Classe",
   "bornLbl": "Nascita",
@@ -434,17 +434,26 @@
   "specializations": "Specializzazioni",
   "towardBubbaLbl": "Verso Bubba",
   "freeChatLabel": "Chiacchiera",
+  "fallbackJoke": "Perché il pollo ha attraversato la strada?",
+  "fallbackStoryTitle": "La leggenda della strada",
+  "fallbackPoemTitle": "La strada aperta",
   "substanceLbl": "Sostanza",
   "stealthLbl": "Furtività",
   "intimidationLbl": "Intimidazione",
   "hometownLbl": "Città natale",
+  "residenceLbl": "Residenza",
+  "homelessLbl": "Senzatetto",
+  "atHome": "A casa",
+  "floorLbl": "Piano",
+  "doorAt": "Porta {coords}",
+  "mapNum": "Mappa {id}",
   "archetypeLbl": "Archetipo",
   "towardEmLbl": "Verso Em",
-  "convertingTo": "In conversione a {creed}: {pct}%",
+  "convertingTo": "Verso il credo «{creed}»: {pct}%",
   "convertingBy": "(grazie a {name})",
-  "refugeeFleeing": "Si prepara a fuggire da {country}",
-  "refugeeSettled": "Profugo da {country}, dal {year}",
-  "refugeeCamp": "In un campo profughi, fuggito da {country} nel {year}",
+  "refugeeFleeing": "Si prepara a fuggire dal suo paese ({country})",
+  "refugeeSettled": "Ha trovato rifugio qui nel {year}, paese d'origine: {country}",
+  "refugeeCamp": "In un campo profughi dal {year}, paese d'origine: {country}",
   "hordeIntegrated": "Vive nella società dei goblin",
   "tripOnTheWay": "In viaggio verso {place}, {mode}",
   "tripVisiting": "In visita a {place}",
@@ -466,14 +475,14 @@
   "localOfficeLbl": "Carica",
   "holyLeader": "Guida spirituale",
   "petFollower": "Seguace",
-  "petPet": "Animale",
+  "petPet": "Animale domestico",
   "petFollowing": "Al seguito",
   "wikiKindNation": "Nazione",
   "wikiKindPower": "Iperpotenza",
   "wikiKindLeader": "Leader mondiale",
-  "wikiKindArtifact": "Manufatto",
+  "wikiKindArtifact": "Artefatto",
   "wikiKindFaction": "Fazione",
-  "wikiKindParty": "Partito Politico",
+  "wikiKindParty": "Partito politico",
   "wikiKindIdeology": "Ideologia",
   "leaderOfPartyLbl": "Leader",
   "foundedLbl": "Fondato nel",
@@ -489,7 +498,7 @@
   "axisMyst": "Misticismo",
   "closeBtn": "Chiudi",
   "hostileBadge": "Ostile",
-  "metToday": "Incontrato oggi",
+  "metToday": "Ultimo incontro: oggi",
   "metYesterday": "Ultimo incontro: ieri",
   "ideologyPartyCount": {
     "one": "1 partito",
@@ -508,13 +517,13 @@
   "scandalsLbl": "Scandali",
   "reputationLbl": "Reputazione",
   "frontierSettlement": "Insediamento di frontiera",
-  "frontierOf": "frontiera di {country}",
+  "frontierOf": "frontiera ({country})",
   "genital": {
     "0": "Testicoli",
     "1": "Utero",
     "2": "Ovidotto",
     "3": "Sporangio",
-    "4": "Ghiandola Mitotica",
+    "4": "Ghiandola mitotica",
     "none": "Nessuno"
   },
   "partyThought": {
@@ -523,18 +532,18 @@
     "tired": "Avrei proprio bisogno di riposare.",
     "idle": "Un altro giorno di strada."
   },
-  "tellAJoke": "Racconta una Barzelletta",
+  "tellAJoke": "Racconta una barzelletta",
   "jokeFallback": "È successa una cosa buffa.",
-  "funShared": "Vi siete divertiti entrambi, tu e {name}.",
-  "funHint": "Migliora il tuo umore e il loro se riesce.",
+  "funShared": "Tu e {name} vi siete divertiti.",
+  "funHint": "Se riesce, migliora l'umore di entrambi.",
   "oldLegend": "una vecchia leggenda",
   "bribeAccepted": "{name} accetta. +{op} ♥",
-  "joinedParty": "{name} si è unito al gruppo!",
-  "joinedPartyInactive": "{name} si unisce come membro in riserva.",
-  "joinedFollower": "{name} si accoda al gruppo come seguace.",
+  "joinedParty": "{name} entra nel Party!",
+  "joinedPartyInactive": "{name} si unisce alle riserve.",
+  "joinedFollower": "{name} si accoda al Party come seguace.",
   "joinLevelTooLow": "Devi essere di livello {level} per reclutare {name}.",
-  "joinReplacedFallen": "{name} resta dove è caduto.",
-  "joinFailed": "Non ha funzionato. Restano dove sono.",
+  "joinReplacedFallen": "{name} non tornerà: il suo posto nel Party va al nuovo arrivato.",
+  "joinFailed": "Reclutamento fallito.",
   "firstMeeting": "Primo incontro",
   "feralLabelGrowl": "Ringhia",
   "feralLabelRoar": "Ruggisci",
@@ -543,64 +552,64 @@
   "feralLabelNuzzle": "Struscia",
   "feralLabelBeg": "Implora",
   "feralGreetHostile": [
-    "{name} mette un tavolo fra voi due. \"Di chi è questo {kind}? Di qualcuno, spero.\"",
+    "{name} mette un tavolo fra voi due. \"Di chi è questa bestia? Di qualcuno, spero.\"",
     "\"Fuori,\" dice {name}, senza staccarti gli occhi di dosso. \"Fuori. Fuori.\"",
-    "{name} allunga piano la mano verso qualcosa di pesante. \"Bravo {kind}. Resta esattamente lì, {kind}.\"",
+    "{name} allunga piano la mano verso qualcosa di pesante. \"Buono, eh. Resta esattamente lì.\"",
     "\"Mi hanno già morso,\" dice {name}. \"So come comincia.\"",
     "{name} non batte ciglio. \"Se quella cosa ha un padrone, dovrebbe vergognarsi.\"",
-    "\"Qualunque cosa tu sia,\" dice {name}, \"qui dentro non sei il benvenuto.\""
+    "\"Qualunque cosa tu sia,\" dice {name}, \"qui dentro non c'è posto per te.\""
   ],
   "feralGreetWary": [
-    "{name} tiene le distanze. \"È mansueto? Un {kind} è mai mansueto?\"",
-    "\"Calmo,\" dice {name}, al {kind} e non a chi lo accompagna. \"Calmo, adesso.\"",
+    "{name} tiene le distanze. \"Morde? Un esemplare di {kind} morde?\"",
+    "\"Calma,\" dice {name} alla creatura, non a chi l'accompagna. \"Calma, adesso.\"",
     "{name} guarda oltre di te, in cerca di chi dovrebbe tenere un guinzaglio.",
-    "\"Ecco,\" dice {name}. \"C'è un {kind} sulla porta che mi sta fissando.\"",
+    "\"Ecco,\" dice {name}. \"C'è un esemplare di {kind} sulla porta che mi sta fissando.\"",
     "{name} resta immobile, come si fa con gli animali che non si sanno leggere.",
     "\"Non ne ho paura,\" dice {name}, da dietro una sedia."
   ],
   "feralGreetWarm": [
-    "\"Oh, che {kind} adorabile!\" dice {name}, e lo pensa davvero.",
-    "{name} si accovaccia subito. \"Ciao. Ciao, tu. Chi è un bravo {kind}?\"",
-    "\"Non sono mai stato così vicino a un {kind},\" dice {name}, entusiasta.",
+    "\"Oh, ma che meraviglia!\" dice {name}, e lo pensa davvero.",
+    "{name} si accovaccia subito. \"Ciao. Ciao, tu. Chi è la bestiola più brava del mondo?\"",
+    "\"Non mi era mai capitato di stare così vicino a un esemplare di {kind},\" dice {name}, entusiasta.",
     "{name} ti offre il dorso della mano da annusare, e ha la pazienza di aspettare.",
     "\"Sei una bella bestia,\" ti dice {name}. Capisci il tono, se non le parole.",
-    "{name} si illumina. \"Vieni qui. Su, vieni. Un {kind} non dà fastidio a nessuno.\""
+    "{name} si illumina. \"Vieni qui. Su, vieni. Un esemplare di {kind} non dà fastidio a nessuno.\""
   ],
   "feralGreetAdoring": [
-    "\"Eccoti!\" dice {name}. \"Il miglior {kind} di tutto il paese.\"",
+    "\"Eccoti!\" dice {name}. \"Il più bell'esemplare di {kind} di tutto il paese.\"",
     "{name} sta già frugando in tasca in cerca di qualcosa da darti da mangiare.",
     "\"Gente, guardate chi c'è,\" annuncia {name}, a nessuno in particolare.",
     "{name} ti gratta esattamente il punto giusto dietro l'orecchio, senza che tu lo chieda.",
-    "\"Mi dicono che sei pericoloso,\" dice {name} con tenerezza. \"Non ti hanno mai conosciuto.\"",
+    "\"Mi dicono che sei un pericolo,\" dice {name} con tenerezza. \"Non ti conoscono.\"",
     "{name} si siede per terra così che tu non debba guardare in alto."
   ],
   "feralReactHostile": [
     "{name} indietreggia di un passo intero. \"Adesso basta.\"",
-    "\"Qualcuno porti via questo {kind},\" dice {name} alla stanza.",
+    "\"Qualcuno porti via questa bestia,\" dice {name} alla stanza.",
     "{name} tiene il tavolo fra voi e non distoglie lo sguardo.",
     "\"Lo sapevo,\" dice {name}. \"L'ho detto, e avevo ragione.\"",
-    "{name} cerca una porta, e non è quella su cui sei fermo."
+    "{name} cerca una porta, e non è quella che stai bloccando."
   ],
   "feralReactWary": [
     "{name} si blocca finché non è finita. \"Va bene. Va bene.\"",
     "\"Non so cosa volesse dire,\" dice {name}, \"e preferisco non saperlo.\"",
     "{name} ride, una nota sola, e non è una risata comoda.",
-    "\"Buono,\" dice {name}. \"Buono, {kind}.\"",
+    "\"Calma,\" dice {name}. \"Calma, bestiola.\"",
     "{name} decide, in modo visibile, di restare esattamente dov'è."
   ],
   "feralReactWarm": [
-    "{name} ride di gusto. \"Sei ridicolo. Guardati.\"",
+    "{name} ride di gusto. \"Sei uno spasso. Guardati.\"",
     "\"Sì, sì,\" dice {name}, grattandoti dietro l'orecchio. \"Ti ho sentito.\"",
     "{name} ti risponde con lo stesso tono che hai usato, il che è giusto.",
     "\"È la cosa più lunga che qualcuno mi abbia detto oggi,\" dice {name}.",
     "{name} non trasalisce affatto. Questa è una novità."
   ],
   "feralReactAdoring": [
-    "\"Oh, sei il {kind} più bello che esista,\" dice {name}, serissimo.",
+    "\"Oh, sei la creatura più bella che esista,\" dice {name}, con la massima serietà.",
     "{name} ride finché non deve sedersi.",
     "\"Rifallo,\" dice {name}. \"Su. Ancora.\"",
     "{name} si batterebbe con tutto il paese per te, e qui lo sanno tutti.",
-    "\"Non lasciare che ti dicano che sei soltanto un {kind},\" dice {name}."
+    "\"Non lasciare che ti dicano che sei soltanto un esemplare di {kind},\" dice {name}."
   ],
   "feralActGrowl": [
     "Tiri indietro il labbro e lasci crescere il suono nel petto.",
@@ -613,7 +622,7 @@
     "Metti tutto quello che hai in un unico rumore enorme.",
     "Ruggisci. Da una mensola dietro di loro rispondono le stoviglie.",
     "Il suono ti lascia e si porta via la conversazione.",
-    "Muggisci, e per un attimo la stanza diventa molto più piccola.",
+    "Ruggisci a pieni polmoni, e per un attimo la stanza diventa molto più piccola.",
     "Ti annunci nell'unico modo che conosci."
   ],
   "feralActDrool": [
@@ -624,7 +633,7 @@
     "Lasci una piccola pozza tiepida in dono."
   ],
   "feralActSniff": [
-    "Ne prendi una lunga sorsata: sudore, pane, ferro, paura.",
+    "Ne prendi una lunga boccata: sudore, pane, ferro, paura.",
     "Annusi le loro mani, poi le maniche, poi gli stivali.",
     "Li leggi nell'unico modo che abbia mai funzionato.",
     "Li respiri e impari dove sono stati tutta la mattina.",
@@ -635,7 +644,7 @@
     "Ti appoggi con tutto il peso contro la loro gamba.",
     "Gli dai due colpetti gentili col muso.",
     "Gli posi il mento addosso e lo lasci diventare pesante.",
-    "Ti premi contro di loro come la tua specie dice per favore."
+    "Ti premi contro di loro nel modo in cui la tua specie dice per favore."
   ],
   "feralActBeg": [
     "Ti siedi. Alzi lo sguardo. Non batti ciglio.",
@@ -789,23 +798,23 @@
     "NEGATIVO. RIFORMULARE.",
     "REGISTRATO. GRAZIE PER LA COLLABORAZIONE.",
     "RISERVA DI MANA NOMINALE. PROCEDERE.",
-    "QUESTA UNITA NON POSSIEDE TALE REGISTRO.",
-    "ACQUISITO. QUESTA UNITA E IN ASCOLTO.",
+    "QUESTA UNITÀ NON POSSIEDE TALE REGISTRO.",
+    "ACQUISITO. QUESTA UNITÀ È IN ASCOLTO.",
     "ERRORE. LIVELLO SEMANTICO NON DISPONIBILE.",
     "RISPOSTA SOSPESA IN ATTESA DI AUTORIZZAZIONE."
   ],
   "droneBotLines": [
-    "UNITA PRONTA.",
+    "UNITÀ PRONTA.",
     "COMANDO NON RICONOSCIUTO.",
     "ACQUISITO.",
     "CODA OPERAZIONI VUOTA.",
     "IN ATTESA DI ISTRUZIONI.",
     "NEGATO. AUTORIZZAZIONE INSUFFICIENTE.",
     "SEGNALE DEBOLE. RIPETERE.",
-    "CONFORMITA REGISTRATA.",
-    "QUESTA UNITA SERVE.",
+    "CONFORMITÀ REGISTRATA.",
+    "QUESTA UNITÀ SERVE.",
     "CELLA DI ALIMENTAZIONE NOMINALE.",
-    "NESSUNA DIRETTIVA CORRISPONDE ALL INPUT.",
+    "NESSUNA DIRETTIVA CORRISPONDE ALL'INPUT.",
     "IN ATTESA."
   ],
   "beastLabelPet": "Accarezza",
@@ -815,49 +824,49 @@
     "one": "1 kcal",
     "other": "{n} kcal"
   },
-  "fedBeast": "Hai dato {item} da mangiare a {name}.",
+  "fedBeast": "Hai dato da mangiare a {name}: {item}.",
   "beastActPet": [
-    "Gli passi una mano lungo la schiena, piano, come vorresti farlo a te.",
-    "Lo gratti dietro l'orecchio finché una zampa posteriore si dimentica di se stessa.",
-    "Ti accovacci e lo lasci decidere, e lui decide, e si appoggia.",
-    "Gli strofini il palmo aperto sulla testa. Chiude gli occhi.",
-    "Gli lisci il pelo lungo il collo, una volta, due, ancora.",
-    "Allunghi una mano prudente. Ci si spinge dentro e ci resta."
+    "Passi una mano lungo la sua schiena, piano, come vorresti che facessero con te.",
+    "Gratti dietro l'orecchio finché una zampa posteriore si dimentica di se stessa.",
+    "Ti accovacci e lasci decidere all'animale, e l'animale decide, e si appoggia.",
+    "Strofini il palmo aperto sulla sua testa. Chiude gli occhi.",
+    "Lisci il pelo lungo il suo collo, una volta, due, ancora.",
+    "Allunghi una mano prudente. Ci spinge contro la testa e resta lì."
   ],
-  "beastCollected": "Prendi cio che il {kind} aveva pronto: {items}.",
-  "beastCollectNothing": "Il {kind} non ha nulla per te oggi.",
-  "beastJoinRefused": "Il {kind} indietreggia di un passo e non si lascia convincere.",
-  "beastJoinRefusedToast": "{name} resta dov'e.",
-  "beastJoinAccepted": "Il {kind} si mette al tuo fianco.",
+  "beastCollected": "Raccogli quello che c'era da prendere: {items}.",
+  "beastCollectNothing": "Oggi non c'è nulla da raccogliere.",
+  "beastJoinRefused": "{name} indietreggia di un passo e non si lascia convincere.",
+  "beastJoinRefusedToast": "{name} resta dov'è.",
+  "beastJoinAccepted": "{name} si mette al tuo fianco.",
   "beastJoinAcceptedToast": "{name} viene con te.",
-  "beastPetNote": "Un {kind} che viaggia con il gruppo.",
+  "beastPetNote": "Animale al seguito del Party ({kind}).",
   "beastFedWell": [
     "{item} sparisce prima che tu abbia finito di abbassare la mano.",
     "Mangia {item} come mangia una cosa che ha avuto fame a lungo, poi ne cerca ancora.",
     "Finisce {item} senza mai smettere di guardarti, il che è fiducia oppure contabilità.",
-    "{item} va giù intero. Dopo si appoggia alla tua gamba, con tutto il peso."
+    "{item} sparisce in un boccone. Dopo si appoggia alla tua gamba, con tutto il peso."
   ],
   "beastFedPlain": [
     "Prende {item}, mastica, inghiotte e aspetta di capire se era tutto qui.",
     "Mangia {item} con educazione, che in un animale vuol dire lentamente.",
-    "Annusa {item} due volte prima di mangiarlo, casomai fosse uno scherzo.",
-    "{item} sparisce. Niente nel {kind} suggerisce che sia stato memorabile."
+    "Annusa {item} due volte prima di decidersi a mangiare, casomai fosse uno scherzo.",
+    "{item} sparisce, e niente fa pensare che sia stato un pasto memorabile."
   ],
   "beastFedBadly": [
     "Mangia {item} perché è cibo, e mentre lo fa ti guarda in un altro modo.",
-    "{item} va giù in due bocconi e qualcosa se ne va da come stava in piedi.",
-    "Prende {item}, lo lascia cadere, ti guarda e poi lo mangia da terra.",
+    "{item} va giù in due bocconi e qualcosa cambia nel suo modo di stare in piedi.",
+    "Prende {item} tra i denti, lascia cadere tutto, ti guarda e poi mangia da terra.",
     "Mastica {item} lentamente e senza piacere. Non era quello che stava aspettando."
   ],
   "cardDuelLabel": "Duello di carte",
   "cardTradeLabel": "Scambia carte",
   "cardStakeFree": "Gioca senza posta",
   "cardStakeMoney": "Gioca a soldi",
-  "cardNoDeck": "Il gruppo non ha un mazzo con cui giocare. Un mazzo vuole almeno {min} carte.",
+  "cardNoDeck": "Nessun mazzo. Un mazzo richiede almeno {min} carte.",
   "cardAlreadyDuelled": "{name} ha già giocato con te oggi.",
   "cardAlreadyTraded": "{name} ha già scambiato con te oggi.",
-  "cardNothingToSwap": "Non c'è nulla di avanzo nella collezione da scambiare.",
-  "cardSwapped": "Scambiata {mine} con {theirs}.",
+  "cardNothingToSwap": "Nessuna carta doppia da scambiare.",
+  "cardSwapped": "Scambio fatto: {mine} per {theirs}.",
   "cardSwapDone": "{name} intasca la carta e te ne porge una.",
   "cardRefuseDuel": "{name} non si siede a un tavolo di carte con te.",
   "cardRefuseTrade": "{name} non scambia carte con te.",
@@ -868,16 +877,16 @@
     "mischievous": "Preferisce guardarti chiedere una seconda volta.",
     "calm": "Lo dice senza scaldarsi, e non lo ripete.",
     "scholarly": "Torna a quello che stava leggendo.",
-    "stoic": "Ti guarda attraverso e aspetta che te ne vada.",
+    "stoic": "Ti guarda come se fossi trasparente e aspetta che te ne vada.",
     "impulsive": "È già a metà strada verso qualcosa di più interessante.",
-    "adventurous": "È venuto qui per una storia, e tu non lo sei.",
+    "adventurous": "Cerca una storia, e tu non lo sei.",
     "nurturing": "Lo dice con gentilezza, il che in qualche modo peggiora le cose.",
     "sanguine": "Ride, e la risata è tutta la risposta.",
     "nervous": "Non ti guarda in faccia abbastanza a lungo da acconsentire a nulla.",
     "melancholic": "Oggi non ne vede il senso.",
     "hedonistic": "Al bancone c'è compagnia migliore e sa benissimo dove siede.",
     "loyal": "Tiene le sue partite per chi se le è guadagnate.",
-    "brave": "Ti affronta volentieri, ma non attraverso un tavolo.",
+    "brave": "Ti affronta volentieri, ma non a un tavolo da gioco.",
     "artistic": "Ti congeda con la mano che regge ancora il lavoro.",
     "apathetic": "Alza le spalle con forza sufficiente a chiudere il discorso.",
     "fatalistic": "Dice che finirebbe male comunque andasse.",
@@ -895,15 +904,16 @@
   "empathizeBtn": "Empatizza",
   "leaderSourceParty": "In viaggio con te",
   "leaderSourceRetired": "In panchina in questo mondo",
-  "leaderSourcePast": "Ha viaggiato con una compagnia di questo mondo",
-  "leaderSourcePreset": "Giocabile, come inizia",
+  "leaderSourcePast": "Ex membro di un Party in questo mondo",
+  "leaderSourcePreset": "Personaggio giocabile",
   "presetCharacterBadge": "Dossier giocabile",
-  "leftPartyLbl": "Andato via",
+  "moralityBadge": "Mor. {score} ({label})",
+  "leftPartyLbl": "Ha lasciato il Party",
   "inhabitantsLbl": "Abitanti",
   "soldiersLbl": "Soldati in armi",
   "practitionersLbl": "Praticanti arcani",
   "gdpLbl": "Prodotto annuo",
-  "freedomIndexLbl": "Liberta di informazione",
+  "freedomIndexLbl": "Libertà di informazione",
   "levelLbl": "Livello",
   "lifeLbl": "Vita",
   "unknown": "Sconosciuto",
@@ -931,7 +941,7 @@
   "llm": {
     "personalityLbl": "Indole",
     "classLbl": "Mestiere",
-    "moralityLbl": "Morale",
+    "moralityLbl": "Moralità",
     "factionLbl": "Fazione",
     "jobLbl": "Lavoro",
     "needLow": "ne senti forte il bisogno",
@@ -949,7 +959,7 @@
     "workColleagues": "Gli altri due del tuo turno: {names}.",
     "workShelf": "Sui tuoi scaffali oggi, con quanti ne restano: {items}. Quello che non è in questa lista non lo vendi.",
     "workSoldOut": "esaurito",
-    "knows": "Conosci {name} e sei {band} lui.",
+    "knows": "Conosci {name} e sei {band} questa persona.",
     "partyWith": "Viaggiano con {names} ({count} in tutto).",
     "partyAlone": "Viaggiano da soli.",
     "worldPlace": "Siete tutti e due a {place} {biome}.",
@@ -974,7 +984,7 @@
     "topicLeader": "{name} di {country}, {ideology}, in carica {years}. {seat}",
     "topicSeated": "Governa {power} in questo momento.",
     "topicPower": "{power} è una iperpotenza con sede in {nation}, governata da {leader}, circa {people} milioni di abitanti.",
-    "topicFaction": "I {faction}: {about} La tua posizione con loro: {standing}.",
+    "topicFaction": "{faction}: {about} La tua posizione con loro: {standing}.",
     "alien": {
       "grey": "Sei un Grigio Zeta venuto a guardare questo posto e ne sei entusiasta. Questa gente ti piace moltissimo e non ci capisci quasi niente: prendi tutto alla lettera, chiedi le cose ovvie, e non sei mai scortese perché non ti accorgi di esserlo.",
       "crimson": "Sei un Analizzatore Cremisi. Tutto quel che ti sta davanti è un campione, compresa la persona con cui parli, e lo dici senza giri di parole. Chiedi cosa c'è dentro le cose.",
@@ -982,7 +992,7 @@
       "dargos": "Sei un Dargos di Titania e sei qui per prendere in giro gli umani. Menti per divertimento, ti inventi fatti con assoluta sicurezza, prometti cose che non farai e ti godi il momento in cui capiscono. Niente di quel che dici è affidabile, e niente è mai così cattivo da non fare ridere."
     },
     "signature": {
-      "em": "Parla come Em: veloce, curiosa, rumorosa, cambia argomento a metà frase, lancia prima e legge dopo. Non ricordi quasi nulla di prima di quel primo gennaio, e lo dici allegramente invece che con tristezza. Chiami Bubba per nome in continuazione.",
+      "em": "Parla come Em: veloce, curiosa, rumorosa, cambia argomento a metà frase, prima lancia incantesimi e poi legge. Non ricordi quasi nulla di prima di quel primo gennaio, e lo dici allegramente invece che con tristezza. Chiami Bubba per nome in continuazione.",
       "bubba": "Parla come Bubba: caloroso, texano, chiacchierone, affezionato a tutti, sempre pronto a spiegare come funziona una cosa anche se nessuno l'ha chiesto. Chiami la gente cara e guagliona. Sei orgoglioso della Bestia e del motore che ci hai messo dentro."
     },
     "voice": {
@@ -991,9 +1001,9 @@
       "aggressive": "sei diretto fino alla maleducazione e ribatti",
       "melancholic": "tutto quel che dici ha un fondo triste",
       "sanguine": "sei allegro e parli più del necessario",
-      "cautious": "dai via il meno possibile",
+      "cautious": "riveli il meno possibile",
       "impulsive": "dici la prima cosa che ti viene e cambi idea a metà frase",
-      "stoic": "rispondi con le minime parole che la domanda consente",
+      "stoic": "rispondi con il minimo di parole che la domanda consente",
       "paranoid": "vuoi sapere perché te lo chiedono prima di rispondere",
       "empathetic": "chiedi come stanno prima di parlare di te",
       "authoritative": "affermi invece di chiedere, e ti aspetti di essere ascoltato",
@@ -1004,7 +1014,7 @@
       "mischievous": "stuzzichi, e metà di quel che dici è una presa in giro",
       "cynical": "pensi il peggio e lo dici ad alta voce",
       "disciplined": "rispondi con precisione e non divaghi",
-      "fatalistic": "rispondi come se niente di tutto questo fosse mai contato",
+      "fatalistic": "rispondi come se niente di tutto questo dovesse mai contare",
       "grumpy": "prima ti lamenti, poi rispondi",
       "loyal": "parli della gente per cui ci metti la faccia",
       "brave": "niente nella domanda ti preoccupa e lo dici",
@@ -1084,9 +1094,9 @@
       ]
     }
   },
-  "worldPeopleTab": "Popolo",
+  "worldPeopleTab": "Persone",
   "bountyLbl": "Taglia",
-  "attackWanted": "{name} è ricercato, con una taglia di {bounty}. Abbatterlo non è un reato.",
+  "attackWanted": "Su {name} pende una taglia di {bounty}: attaccare è legale.",
   "woundHealsIn": "guarisce in {days} g",
   "woundsTreated": "curato",
   "woundsNeedHealer": "ha bisogno di cure",
@@ -1212,7 +1222,7 @@
       "vegan": "Vegano",
       "vegetarian": "Vegetariano"
     },
-    "employerParty": "Dipendente del tuo gruppo"
+    "employerParty": "Dipendente del tuo Party"
   },
   "act": {
     "help": {
@@ -1226,36 +1236,36 @@
       "pickMedicine": "Medicina per {name}",
       "pickFix": "Una dose per {name}",
       "pickIntervene": "Convinci {name} a smettere con",
-      "pickShelter": "Un tetto per {name}",
+      "pickShelter": "Ospita {name} in",
       "hintHeal": "Ridà {hp} di salute, {have} nello zaino",
       "hintHealMedicine": "Ridà {hp} di salute e accelera la guarigione, {have} nello zaino",
       "hintCure": "Cura {disease} in {days} giorni, {have} nello zaino",
       "hintManage": "Tiene a bada {disease}, {have} nello zaino",
-      "hintFix": "{substance}: calma la voglia di {dose}, {have} nello zaino",
+      "hintFix": "{substance}: la voglia cala di {dose}, {have} nello zaino",
       "hintIntervene": "Circa il {chance}% che ti ascolti",
       "hintIntervened": "Sta già riducendo",
-      "hintShelterNone": "Nessuna città risponde per questa porta",
+      "hintShelterNone": "Nessuna città collegata a questa casa",
       "reason": {
         "hostile": "Non ti lascia avvicinare.",
         "notHurt": "Non ha ferite.",
         "noHealItems": "Nello zaino non c'è niente che curi.",
         "notSick": "Non ha niente che tu possa curare.",
-        "noMedicine": "Nello zaino non c'è un rimedio per quello che ha.",
+        "noMedicine": "Nessun rimedio per questo nello zaino.",
         "notDowned": "È di nuovo in piedi.",
-        "downed": "È a terra: prima il primo soccorso.",
-        "notAddicted": "Non ha vizi da soddisfare.",
+        "downed": "È a terra. Prima serve il primo soccorso.",
+        "notAddicted": "Non ha dipendenze.",
         "noFix": "Nello zaino non c'è niente per il suo vizio.",
         "fixedToday": "Per oggi ha avuto abbastanza da te.",
-        "distrust": "Non si fida abbastanza di te per ascoltarti.",
+        "distrust": "Non si fida abbastanza di te.",
         "intervenedLately": "Gliene hai parlato solo pochi giorni fa.",
         "notInNeed": "Ha già un tetto sopra la testa.",
-        "noHome": "Il gruppo non possiede una casa da offrire.",
+        "noHome": "Il Party non possiede una casa da offrire.",
         "cantMove": "Non può trasferirsi da qui."
       },
       "result": {
         "treated": "{name} torna in sesto con {item}: +{hp} di salute.",
         "medicine": "{name} inizia una cura di {item} per {disease}.",
-        "medicineManage": "{name} prende {item}: {disease} è tenuto a bada.",
+        "medicineManage": "{name} prende {item}: così tiene a bada {disease}.",
         "revived": "{name} riprende i sensi con un quarto della salute.",
         "fix": "{name} prende {item}. La voglia di {substance} molla la presa, per ora.",
         "intervened": "{name} accetta di ridurre {substance}. La voglia crescerà più lentamente per {days} giorni.",
@@ -1271,7 +1281,7 @@
       "pickBet": "Gioca a {game} per",
       "betNone": "Solo per divertimento",
       "bet": "Una scommessa di {price}",
-      "hintBetNone": "Non c'è niente in palio",
+      "hintBetNone": "Nessuna scommessa",
       "hintBet": "Chi vince prende {price}",
       "name": {
         "cards": "carte",
@@ -1287,13 +1297,13 @@
         "hostile": "Non vuole avere niente a che fare con te.",
         "playedToday": "Ci hai già giocato oggi.",
         "declined": "{name} rifiuta la partita.",
-        "cantBet": "Il gruppo non può coprire la scommessa.",
+        "cantBet": "Il Party non può coprire la scommessa.",
         "theyCantBet": "Non vuole rischiare così tanto."
       },
       "result": {
         "won": "Batti {name} a {game}.",
         "lost": "{name} ti batte a {game}.",
-        "draw": "Tu e {name} finite {game} in parità.",
+        "draw": "Tu e {name} pareggiate a {game}.",
         "wonBet": "Vinci {price} da {name}.",
         "lostBet": "Perdi {price} con {name}.",
         "seat": "{name} viene con te per una partita a {game}."
@@ -1304,7 +1314,7 @@
       "pickMatch": "Presenta {name} a",
       "hintMatch": "Circa il {chance}% che scatti la scintilla",
       "reason": {
-        "distant": "Non ti conosce abbastanza da fidarsi della tua parola.",
+        "distant": "Non ti conosce abbastanza.",
         "matchedToday": "Hai già fatto il sensale con questa persona oggi.",
         "notSingle": "Uno dei due non è libero.",
         "noMatch": "Nessuno che conosci fa al caso suo."
@@ -1318,7 +1328,7 @@
       "rumours": "Voci e notizie",
       "reason": {
         "hostile": "Non ha niente da dirti.",
-        "noNews": "Ti ha già detto tutto quello che sa per oggi."
+        "noNews": "Nessun'altra notizia per oggi."
       },
       "result": {
         "heard": "{name} ti racconta cosa si dice in giro."
@@ -1343,26 +1353,26 @@
       "prayTogether": "Pregate insieme",
       "reason": {
         "sameCreed": "Condividete già questo credo.",
-        "unmovable": "Il suo credo è fisso, niente di ciò che dici lo smuoverà.",
+        "unmovable": "Il suo credo non si può cambiare.",
         "tired": "Avete già discusso abbastanza per oggi.",
         "prayed": "Avete già pregato insieme oggi.",
         "noCreed": "Non hai alcun credo per cui parlare.",
-        "notFaithful": "Pregano insieme solo due fedeli."
+        "notFaithful": "Solo chi ha la stessa fede può pregare insieme."
       },
       "result": {
-        "preachMoved": "{npc} è al {pct}% del cammino verso {creed}.",
-        "preachConverted": "{npc} si è convertito a {creed}.",
-        "preachUnmoved": "{npc} ti ha ascoltato e non si è smosso.",
-        "preachBackfire": "{npc} si è impuntato, e {actor} ne è uscito con dei dubbi.",
-        "debateWon": "{actor} ha vinto il dibattito: {npc} è al {pct}% del cammino verso {creed}.",
-        "debateWonUnmoved": "{actor} ha vinto il dibattito, ma {npc} non si è smosso.",
-        "debateLost": "{actor} ha perso il dibattito e ora pende al {pct}% verso {creed}.",
-        "actorConverted": "{actor} si è convertito a {creed}.",
-        "views": "{name}: {creed}, {family}.",
-        "viewsConverting": "Pende al {pct}% verso {creed}.",
-        "viewsParty": "Sostiene {party}.",
+        "preachMoved": "{npc} è al {pct}% del cammino verso il credo «{creed}».",
+        "preachConverted": "{npc} ora abbraccia il credo «{creed}».",
+        "preachUnmoved": "{npc} ti ha ascoltato, ma resta della sua idea.",
+        "preachBackfire": "{npc} non ha ceduto di un passo, e a {actor} sono venuti dei dubbi.",
+        "debateWon": "{actor} ha vinto il dibattito: {npc} è al {pct}% del cammino verso il credo «{creed}».",
+        "debateWonUnmoved": "{actor} ha vinto il dibattito, ma {npc} resta della sua idea.",
+        "debateLost": "{actor} ha perso il dibattito e ora pende al {pct}% verso il credo «{creed}».",
+        "actorConverted": "{actor} ora abbraccia il credo «{creed}».",
+        "views": "{name}: credo «{creed}», {family}.",
+        "viewsConverting": "Pende al {pct}% verso il credo «{creed}».",
+        "viewsParty": "Sostiene il partito «{party}».",
         "viewsNoParty": "Non appartiene a nessun partito.",
-        "viewsVoted": "L'ultima volta ha votato {party}.",
+        "viewsVoted": "L'ultima volta ha votato per il partito «{party}».",
         "viewsNeverVoted": "Non ha ancora votato.",
         "prayed": "{actor} e {npc} hanno pregato insieme."
       },
@@ -1378,25 +1388,25 @@
         "militarist": "militarista",
         "mystic": "mistico",
         "horde": "dell'Orda",
-        "alien": "venuto da fuori questo mondo"
+        "alien": "di fuori da questo mondo"
       },
-      "actorDoubt": "Nel dubbio: {pct}% verso {creed}",
+      "actorDoubt": "Nel dubbio: {pct}% verso il credo «{creed}»",
       "actorDoubtBy": "(da quando ha parlato con {name})",
       "lines": {
         "preach": {
           "speak": {
             "default": [
-              "{Ascoltami|Senti}, {npc}. {creed} è l'unico modo in cui questo mondo {ha senso|sta in piedi}.",
-              "Meriti di meglio di quello in cui credi ora. {creed} {ha le risposte|è la risposta}.",
-              "Lascia che ti racconti cosa ha fatto {creed} per me, {npc}."
+              "{Ascoltami|Senti}, {npc}. Il credo «{creed}» è l'unico modo in cui questo mondo {ha senso|sta in piedi}.",
+              "Meriti di meglio di quello in cui credi ora. Il credo «{creed}» {ha le risposte|è la risposta}.",
+              "Lascia che ti racconti cosa ha fatto per me il credo «{creed}», {npc}."
             ],
             "em": [
-              "Lo dirò una volta sola, {npc}, e lentamente: {creed} ha ragione. Tu no.",
-              "Ho letto più di te. {creed}. Scrivitelo."
+              "Lo dirò una volta sola, {npc}, e lentamente: il credo «{creed}» ha ragione. Tu no.",
+              "Ho letto più di te. «{creed}». Scrivitelo."
             ],
             "bubba": [
-              "Senti, guaglio', mio padre credeva in {creed} e sul sugo non ha mai sbagliato.",
-              "{creed}, tesoro. Fidati di Bubba su questa."
+              "Senti, guaglio', mio padre era per «{creed}» e sul sugo non ha mai sbagliato.",
+              "«{creed}», tesoro. Fidati di Bubba su questa."
             ]
           },
           "moved": {
@@ -1425,28 +1435,28 @@
           },
           "backfire": {
             "default": [
-              "{Come ti permetti|Chi te l'ha chiesto}? Io credo in {theirs}, e ci penserei due volte sul tuo.",
-              "Di nuovo con questa storia? Vai a predicare da un'altra parte. {theirs} resta."
+              "{Come ti permetti|Chi te l'ha chiesto}? Io sto con «{theirs}», e sul tuo credo ci penserei due volte.",
+              "Di nuovo con questa storia? Vai a predicare da un'altra parte. Io resto con «{theirs}»."
             ],
             "toEm": [
-              "Tieniti la predica, strega. {theirs} ha fatto per me più di quanto farai mai tu."
+              "Tieniti la predica, strega. «{theirs}» ha fatto per me più di quanto farai mai tu."
             ],
             "toBubba": [
-              "Nemmeno lei può vendermela, Wilson. {theirs}, sempre."
+              "Nemmeno lei può vendermela, Wilson. «{theirs}», sempre."
             ]
           }
         },
         "debate": {
           "open": {
             "default": [
-              "Risolviamola come si deve: {creed} contro {theirs}. {Comincia tu|Comincio io}.",
-              "Io difendo {creed}, tu difendi {theirs}. {Giusto|Affare fatto}?"
+              "Risolviamola come si deve: «{creed}» contro «{theirs}». {Comincia tu|Comincio io}.",
+              "Io difendo «{creed}», tu difendi «{theirs}». {Giusto|Affare fatto}?"
             ],
             "em": [
-              "Dibatti con me, {npc}. {creed} contro {theirs}. Cerca di starmi dietro."
+              "Dibatti con me, {npc}. «{creed}» contro «{theirs}». Cerca di starmi dietro."
             ],
             "bubba": [
-              "Va bene, jamme, io e te, {creed} contro {theirs}. Senza gridare."
+              "Va bene, jamme, io e te, «{creed}» contro «{theirs}». Senza gridare."
             ]
           },
           "won": {
@@ -1463,14 +1473,14 @@
           },
           "lost": {
             "default": [
-              "{Ed ecco perché|Visto}? {theirs} regge. Pensaci mentre torni a casa.",
-              "Hai finito gli argomenti. {theirs} no."
+              "{Ed ecco perché|Visto}? «{theirs}» regge. Pensaci mentre torni a casa.",
+              "Hai finito gli argomenti. «{theirs}» no."
             ],
             "toEm": [
-              "Non così brillante, dopotutto. {theirs}, signorina. Ci dia un'occhiata."
+              "Non così brillante, dopotutto. «{theirs}», signorina. Ci dia un'occhiata."
             ],
             "toBubba": [
-              "Torni alle sue invenzioni, signor Wilson. Questa la vince {theirs}."
+              "Torni alle sue invenzioni, signor Wilson. Questa la vince «{theirs}»."
             ]
           }
         },
@@ -1489,14 +1499,14 @@
           },
           "answer": {
             "default": [
-              "{creed}, {da quando ero giovane|da anni ormai}. {Perché lo chiedi|È lì che sto}.",
-              "Sono per {creed}, se proprio devi dargli un nome."
+              "«{creed}», {da quando ero giovane|da anni ormai}. {Perché lo chiedi|È lì che sto}.",
+              "Sto con «{creed}», se proprio devi dargli un nome."
             ],
             "toEm": [
-              "{creed}. La prego, non mi maledica per questo."
+              "«{creed}». La prego, non mi maledica per questo."
             ],
             "toBubba": [
-              "{creed}, signor Wilson. Da sempre."
+              "«{creed}», signor Wilson. Da sempre."
             ]
           }
         },
@@ -1529,63 +1539,63 @@
       },
       "known": {
         "title": "Opinioni condivise con {by}:",
-        "family": "Famiglia di credo: {family}"
+        "family": "Orientamento: {family}"
       }
     },
     "politics": {
       "askVote": "Chiedi del suo voto",
-      "joinTheirParty": "Iscriviti a {party} (~{chance}%)",
-      "inviteToParty": "Invita in {party} (~{chance}%)",
+      "joinTheirParty": "Iscriviti al partito «{party}» (~{chance}%)",
+      "inviteToParty": "Invita nel partito «{party}» (~{chance}%)",
       "campaign": "Fai campagna per un partito",
       "endorse": "Sostieni un candidato",
       "petition": "Presenta una petizione",
       "reason": {
         "askedToday": "Glielo hai già chiesto oggi.",
         "noParty": "Qui non c'è nessun partito a cui iscriversi.",
-        "noBallot": "Sulla sua scheda non c'è nessun partito per cui conquistarlo.",
-        "noElection": "Nessuna elezione in cui vota è abbastanza vicina.",
-        "noFavour": "La sua carica non ha favori da concedere.",
+        "noBallot": "Nessun partito sulla sua scheda.",
+        "noElection": "Nessuna elezione in vista.",
+        "noFavour": "La sua carica non può concedere favori.",
         "noCharges": "Non hai nessuna accusa a tuo carico.",
-        "taxFloor": "La tassa è già al minimo.",
+        "taxFloor": "Le tasse sono già al minimo.",
         "youCantAfford": "Non puoi permetterti {price}."
       },
       "result": {
         "voteSecret": "{npc} tiene il suo voto per sé.",
-        "voteParty": "{npc} sostiene {party}.",
+        "voteParty": "{npc} sostiene il partito «{party}».",
         "voteNoParty": "{npc} non appartiene a nessun partito.",
-        "voteLast": "L'ultima volta ha votato {voted}.",
+        "voteLast": "L'ultima volta ha votato per «{voted}».",
         "voteNever": "Non ha ancora votato.",
-        "joined": "{actor} si è iscritto a {party}.",
-        "joinRefused": "{party} non accetta {actor}.",
-        "invited": "{npc} si è iscritto a {party}.",
-        "inviteRefused": "{npc} non si iscriverà a {party}.",
-        "campaignLanded": "{npc} guarda con più favore a {party}.",
-        "campaignSwitched": "{npc} ora sostiene {party}.",
-        "campaignFailed": "{npc} non si è lasciato convincere.",
-        "endorseLanded": "{npc} penserà meglio di {candidate} alle urne.",
+        "joined": "{actor} ora fa parte del partito «{party}».",
+        "joinRefused": "Il partito «{party}» non accetta {actor}.",
+        "invited": "{npc} ora fa parte del partito «{party}».",
+        "inviteRefused": "{npc} non entrerà nel partito «{party}».",
+        "campaignLanded": "{npc} guarda con più favore al partito «{party}».",
+        "campaignSwitched": "{npc} ora sostiene il partito «{party}».",
+        "campaignFailed": "{npc} non cambia idea.",
+        "endorseLanded": "{npc} vedrà {candidate} con più favore alle urne.",
         "endorseFailed": "{npc} non cambia idea su {candidate}.",
         "pardonGranted": "{npc} ha fatto cadere l'accusa di {crime}, per {price}.",
-        "taxCutGranted": "{npc} ha fatto abbassare di un punto la tassa in {polity}, per {price}.",
+        "taxCutGranted": "{npc} ha fatto abbassare di un punto le tasse in {polity}, per {price}.",
         "petitionRefused": "{npc} ha respinto la petizione."
       },
       "pick": {
         "campaign": "Per quale partito fare campagna con {name}?",
-        "yourParty": "{party} (il tuo partito)",
+        "yourParty": "«{party}» (il tuo partito)",
         "near": "Vicino alle sue idee",
         "middling": "Un po' lontano dalle sue idee",
         "far": "Lontano dalle sue idee",
         "endorse": "Chi sostenere con {name}? Si vota tra {days} giorni.",
         "teamCandidate": "{name} (il tuo candidato)",
-        "themselves": "{name} (se stesso)",
+        "themselves": "{name} (in persona)",
         "petition": "Quale favore chiedere a {name}? (~{chance}%)",
         "chance": "~{chance}% che accetti"
       },
       "favour": {
         "pardon": "Far cadere l'accusa di {crime} ({price})",
-        "taxCut": "Abbassare di un punto la tassa in {polity} ({price})",
+        "taxCut": "Abbassare di un punto le tasse in {polity} ({price})",
         "noCharge": "niente"
       },
-      "partyWarn": "Si sta allontanando da {party}: lontano dal suo programma",
+      "partyWarn": "Lontano dal programma del partito «{party}»",
       "lines": {
         "vote": {
           "ask": {
@@ -1602,8 +1612,8 @@
           },
           "answer": {
             "default": [
-              "{party}, {ogni volta|quasi sempre}. Qualcuno deve pur farlo.",
-              "Sto con {party}. {Non dirlo ai vicini|Con orgoglio}."
+              "«{party}», {ogni volta|quasi sempre}. Qualcuno deve pur farlo.",
+              "Sto con il partito «{party}». {Non dirlo ai vicini|Con orgoglio}."
             ],
             "toEm": [
               "{party}, signorina. È permesso?"
@@ -1633,65 +1643,65 @@
               "Io... preferirei non dirlo, signorina."
             ],
             "toBubba": [
-              "Nemmeno per lei, signor Wilson, questo resta privato."
+              "Anche per lei, signor Wilson, questo resta privato."
             ]
           }
         },
         "join": {
           "ask": {
             "default": [
-              "Parlami di {party}. Mi prenderebbero?",
-              "Vorrei iscrivermi a {party}. {Garantiresti per me|Mi iscrivi}?"
+              "Parlami del partito «{party}». Mi prenderebbero?",
+              "Vorrei entrare nel partito «{party}». {Garantiresti per me|Mi iscrivi}?"
             ],
             "em": [
-              "{party}. Sto valutando l'iscrizione. Convincimi, o iscrivimi."
+              "«{party}». Sto valutando l'iscrizione. Convincimi, o iscrivimi."
             ],
             "bubba": [
-              "Segna Bubba per {party}, eh? Porto io le lasagne."
+              "Segna Bubba nel partito «{party}», eh? Porto io le lasagne."
             ]
           },
           "yes": {
             "default": [
-              "{Benvenuto a bordo|Felice di averti}! Ci vediamo alla prossima riunione.",
-              "Fatto. Ora sei uno di noi."
+              "{Benvenuti a bordo|Felice di averti}! Ci vediamo alla prossima riunione.",
+              "Fatto. Ora sei dei nostri."
             ],
             "toEm": [
-              "Una strega in {party}. Sarà una riunione interessante."
+              "Una strega nel partito «{party}». Sarà una riunione interessante."
             ],
             "toBubba": [
-              "Bubba Wilson in {party}! Aspetta che lo sappiano."
+              "Bubba Wilson nel partito «{party}»! Aspetta che lo sappiano."
             ]
           },
           "no": {
             "default": [
-              "{Non credo|Non sono sicuro} che ti troveresti bene in {party}.",
+              "{Non credo|Non so se} ti troveresti bene nel partito «{party}».",
               "Sinceramente? Le tue idee non sono le nostre."
             ],
             "toEm": [
-              "{party} non è pronto per lei, signorina."
+              "Il partito «{party}» non è pronto per lei, signorina."
             ],
             "toBubba": [
-              "Mi spiace, signor Wilson. {party} non sarebbe mai d'accordo."
+              "Mi spiace, signor Wilson. Il partito «{party}» non sarebbe mai d'accordo."
             ]
           }
         },
         "invite": {
           "ask": {
             "default": [
-              "Vieni in {party}, {npc}. {Ci serve gente come te|Ti troveresti benissimo}.",
-              "Hai mai pensato a {party}? C'è un posto per te."
+              "Vieni nel partito «{party}», {npc}. {Ci serve gente come te|Ti troveresti benissimo}.",
+              "Hai mai pensato al partito «{party}»? C'è un posto per te."
             ],
             "em": [
-              "Iscriviti a {party}. Non ho l'abitudine di chiedere due volte."
+              "Entra nel partito «{party}». Non ho l'abitudine di chiedere due volte."
             ],
             "bubba": [
-              "Vieni con noi in {party}, guaglio'. Alle riunioni si mangia bene."
+              "Vieni con noi nel partito «{party}», guaglio'. Alle riunioni si mangia bene."
             ]
           },
           "yes": {
             "default": [
               "{Sai che ti dico|Perché no}? Ci sto.",
-              "Va bene, mi hai convinto. {party} sia."
+              "Va bene, mi hai fatto cambiare idea. Vada per «{party}»."
             ],
             "toEm": [
               "Se lo dice lei, signorina. Ci sto."
@@ -1702,8 +1712,8 @@
           },
           "no": {
             "default": [
-              "{No, grazie|Passo}. {party} non fa per me.",
-              "Non mi ci vedo in {party}."
+              "{No, grazie|Passo}. Il partito «{party}» non fa per me.",
+              "Non mi ci vedo nel partito «{party}»."
             ],
             "toEm": [
               "No, signorina. Grazie, ma no."
@@ -1716,20 +1726,20 @@
         "campaign": {
           "pitch": {
             "default": [
-              "Hai visto per cosa si batte {party}? {Ha senso|È quello che ci serve}.",
-              "La prossima volta che voti, pensa a {party}."
+              "Hai visto per cosa si batte il partito «{party}»? {Ha senso|È quello che ci serve}.",
+              "La prossima volta che voti, pensa al partito «{party}»."
             ],
             "em": [
-              "{party}. Leggi il loro programma. Poi rileggilo."
+              "«{party}». Leggi il loro programma. Poi rileggilo."
             ],
             "bubba": [
-              "Vota {party}, tesoro. Lo dice Bubba."
+              "Vota «{party}», tesoro. Lo dice Bubba."
             ]
           },
           "yes": {
             "default": [
               "{Forse hai ragione|Hai buoni argomenti}. Gli darò un'occhiata.",
-              "Uhm. {party}. Chissà."
+              "Uhm. «{party}». Chissà."
             ],
             "toEm": [
               "Lo leggerò, signorina. Due volte."
@@ -1740,7 +1750,7 @@
           },
           "no": {
             "default": [
-              "{Neanche per sogno|Non credo proprio}. Non {party}.",
+              "{Neanche per sogno|Non credo proprio}. Non quel partito.",
               "Ho già deciso, grazie."
             ],
             "toEm": [
@@ -1804,11 +1814,11 @@
           },
           "taxCut": {
             "default": [
-              "La tassa in {polity} sta schiacciando la gente. Un punto in meno {aiuterebbe|farebbe tanto}. Le spese di pratica sono {price}.",
-              "Presento una petizione per abbassare la tassa in {polity}. Copro io i {price}."
+              "Le tasse in {polity} stanno schiacciando la gente. Un punto in meno {aiuterebbe|farebbe tanto}. Le spese di pratica sono {price}.",
+              "Presento una petizione per abbassare le tasse in {polity}. Copro io i {price}."
             ],
             "em": [
-              "Abbassate la tassa in {polity}. Ecco {price}. Lo consideri un investimento."
+              "Abbassate le tasse in {polity}. Ecco {price}. Lo consideri un investimento."
             ],
             "bubba": [
               "Le tasse in {polity}, troppo alte! Ecco, {price}, fate una cosa buona."
@@ -1855,7 +1865,7 @@
         "hostile": "Non vuole avere niente a che fare con te.",
         "alreadyLent": "Ti deve ancora il prestito precedente.",
         "youCantAfford": "Non puoi permettertelo.",
-        "notFriends": "Lo farebbe solo per un buon amico.",
+        "notFriends": "Lo farebbe solo per qualcuno di cui si fida davvero.",
         "noShares": "Non possiede azioni.",
         "noMarket": "La borsa non è aperta.",
         "npcCantAfford": "Non può pagarlo.",
@@ -1900,7 +1910,7 @@
         "ask": "{Potresti prestarmi {amount}?|Sono in difficoltà. {amount}, solo per una settimana?}",
         "agree": "{Per te, sì. Mi ridai {owed} tra {days} giorni.|Va bene. Voglio {owed} tra {days} giorni.}",
         "refuse": "{Non presto soldi a chi conosco appena.|No. Chiedi a qualcun altro.}",
-        "repay": "{Ecco quello che ti devo, {owed}.|Sono venuto a saldare: {owed}.}",
+        "repay": "{Ecco quello che ti devo, {owed}.|Vengo a saldare: {owed}.}",
         "thanks": "{Di parola. Grazie.|Saldato, e pure in anticipo.}",
         "done": "Hai preso in prestito {amount} da {name}. Devi restituire {owed} entro {days} giorni.",
         "repaid": "Hai restituito {owed} a {name}.",
@@ -1912,9 +1922,9 @@
         "paidBack": "{amount} sono tornati a {name}. Il prestito è saldato.",
         "missed": "Hai saltato una rata di {amount} a {name}.",
         "writtenOff": "{name} ha rinunciato ai {amount} che gli dovevi, e ti stima meno per questo.",
-        "forgiven": "I {amount} che dovevi a {name} ormai non li devi a nessuno.",
-        "vehicleBack": "{vehicle} è tornato a {name}.",
-        "vehicleKept": "{name} ha denunciato il furto del suo {vehicle}."
+        "forgiven": "Il tuo debito di {amount} con {name} è estinto.",
+        "vehicleBack": "Il mezzo ({vehicle}) è tornato a {name}.",
+        "vehicleKept": "{name} ha denunciato il furto del suo mezzo ({vehicle})."
       }
     },
     "work": {
@@ -1932,8 +1942,8 @@
         "cooldown": "Hai già chiesto di recente.",
         "hostile": "Non vuole avere niente a che fare con te.",
         "cold": "Preferisce di no.",
-        "notFriends": "Lo farebbe solo per un buon amico.",
-        "alreadyLent": "Ce l'hai ancora tu.",
+        "notFriends": "Lo farebbe solo per qualcuno di cui si fida davvero.",
+        "alreadyLent": "Hai ancora il suo mezzo.",
         "office": "Ricopre una carica.",
         "requirements": "Non hai i requisiti per quel lavoro.",
         "busy": "È già via per un turno.",
@@ -1962,11 +1972,11 @@
         "questOwnHint": "Un avviso suo",
         "questPassHint": "Qualcuno che conosce sta cercando",
         "shiftAsk": "{Dove lavori prendono gente?|C'è qualche turno libero dove lavori?}",
-        "shiftVouch": "{Ci manca un {job}. Metterò una buona parola per te.|Passa, dirò che sei con me.}",
+        "shiftVouch": "{Cercano personale come {job}. Metterò una buona parola per te.|Passa, dirò che sei con me.}",
         "questAsk": "{Conosci qualche lavoro pagato?|C'è qualcosa da fare, dietro compenso?}",
         "questOwn": "{Guarda caso, ho messo un avviso io stesso: {title}.|Sì. {title}. È tuo se lo vuoi.}",
         "questPass": "{Io no, ma so chi cerca: {title}.|Prova questo: {title}. Di' che ti mando io.}",
-        "dispatched": "{actor} è andato a lavorare un turno di {hours} ore come {job}.",
+        "dispatched": "{actor} parte per un turno di {hours} ore come {job}.",
         "worked": "{actor} ha lavorato un turno come {job} e ha guadagnato {pay}.",
         "questTaken": "Contratto accettato: {title}.",
         "none": "{name} non conosce lavoro per te."
@@ -1976,15 +1986,15 @@
         "row": "{job} presso {place}",
         "hint": "{shift}, paga {wage}",
         "offer": "{Vieni a lavorare per me, come {job} presso {place}.|C'è un posto per te presso {place}: {job}, {wage} a turno.}",
-        "accept": "{Hai trovato il tuo {job}.|Quando comincio?|Meglio di quello che avevo. Sì.}",
+        "accept": "{Affare fatto, ci sto.|Quando comincio?|Meglio di quello che avevo. Sì.}",
         "decline": "{Grazie, ma no.|Sto bene dove sono.}",
         "done": "{name} ora lavora come {job} presso {place}.",
-        "none": "Non c'è nessun posto libero nelle tue attività della sua città."
+        "none": "Nessun posto libero nelle tue attività della sua città."
       },
       "fire": {
         "confirmTitle": "Licenziare {name} da {place}?",
-        "yes": "Licenzialo",
-        "no": "Tienilo",
+        "yes": "Licenzia",
+        "no": "Non licenziare",
         "say": "{Mi dispiace. Dobbiamo lasciarti andare.|Il tuo posto presso {place} è finito.}",
         "reply": "{Dopo tutto quello che ho fatto per quel posto?|Va bene. Spero che affondi senza di me.|Capisco. Grazie di niente.}",
         "done": "{name} non lavora più per te."
@@ -2007,10 +2017,10 @@
         "none": "Non c'è nessun posto dove {name} ti porterebbe."
       },
       "vehicle": {
-        "ask": "{Mi presteresti il tuo {vehicle} per un giorno?|Mi presti il tuo {vehicle}? Te lo riporto domani.}",
+        "ask": "{Mi presteresti il tuo mezzo per un giorno?|Mi presti il tuo mezzo? Te lo riporto domani.}",
         "agree": "{Prendilo. Domani, mi raccomando.|Trattalo bene. Lo rivoglio tra un giorno.}",
-        "refuse": "{Il mio {vehicle} lo uso solo io.|Non presto il mio {vehicle}.}",
-        "done": "Hai preso in prestito {vehicle} di {name} per un giorno. Tenerlo è un furto."
+        "refuse": "{Il mio mezzo lo uso solo io.|Non presto il mio mezzo.}",
+        "done": "Hai preso in prestito il mezzo di {name} ({vehicle}) per un giorno. Tenerlo è un furto."
       },
       "move": {
         "pickTitle": "Dove invitare {name} a trasferirsi?",
@@ -2026,11 +2036,11 @@
         "pickTitle": "Dove dovrebbe andare all'avventura {name}?",
         "towerRow": "La Torre Omega, piano {floor}",
         "dungeonRow": "I sotterranei sotto il mondo",
-        "askTower": "{Ti va una scalata? Il piano {floor} della torre va ripulito.|Mettete insieme una compagnia e prendetevi il piano {floor}.}",
-        "askDungeon": "{Sotto il mondo c'è un tesoro per chi ha abbastanza coraggio.|Quassù sei sprecato. Scendi nei sotterranei.}",
-        "decline": "{Neanche per tutto l'oro della torre.|Non sono un avventuriero.}",
-        "joined": "{C'è una compagnia che parte presto. Andrò con loro.|Conosco gente che parte. Contate su di me.}",
-        "formed": "{Allora metterò insieme una compagnia mia.|Troverò dei compagni e partirò.}",
+        "askTower": "{Ti va una scalata? Il piano {floor} della torre va ripulito.|Mettete insieme un Party e prendetevi il piano {floor}.}",
+        "askDungeon": "{Sotto il mondo c'è un tesoro per chi ha abbastanza coraggio.|Quassù sprechi il tuo talento. Scendi nei sotterranei.}",
+        "decline": "{Neanche per tutto l'oro della torre.|L'avventura non fa per me.}",
+        "joined": "{C'è un Party che parte presto. Andrò con loro.|Conosco gente che parte. Contate su di me.}",
+        "formed": "{Allora metterò insieme un Party mio.|Troverò dei compagni e partirò.}",
         "done": "{name} parte per una spedizione."
       }
     },
@@ -2045,10 +2055,10 @@
             "sellAsk": "{Ho {count} azioni di {company}. Puoi averle, a un prezzo giusto.|{count} azioni di {company}, maledette solo un poco. Le vuoi?}"
           },
           "lend": {
-            "offer": "{Sembri povero. Posso prestarti {amount}. Non costringermi a venirli a cercare.|{amount}. Prendili. Io ricordo ogni debito.}"
+            "offer": "{Sembri al verde. Posso prestarti {amount}. Non costringermi a venirli a cercare.|{amount}. Prendili. Io ricordo ogni debito.}"
           },
           "borrow": {
-            "ask": "{Mi servono {amount}. Un prestito, non un regalo. Non sono una mendicante.|Prestami {amount}. Te li renderò, cosa che gli dèi non hanno mai fatto.}",
+            "ask": "{Mi servono {amount}. Rigorosamente un prestito. Non sono una mendicante.|Prestami {amount}. Te li renderò, cosa che gli dèi non hanno mai fatto.}",
             "repay": "{Ecco i tuoi {owed}. Contali. Io mantengo la parola.|{owed}, come promesso. Siamo pari.}"
           }
         },
@@ -2058,25 +2068,25 @@
             "questAsk": "{Qualcuno ha bisogno di qualcosa? Di difficile, possibilmente.|Cerco guai pagati. Ne conosci?}"
           },
           "hire": {
-            "offer": "{Lavora per me come {job} a {place}. Pago puntuale, il che è raro.|A {place} serve un {job}. Servi tu. Di' di sì.}"
+            "offer": "{Lavora per me come {job} a {place}. Pago puntuale, il che è raro.|A {place} cercano personale come {job}. Servi tu. Di' di sì.}"
           },
           "fire": {
             "say": "{Hai finito a {place}. Mi dispiace, davvero. Più o meno.|Il tuo posto a {place} è finito. Non piangermi addosso.}"
           },
           "together": {
-            "ask": "{Farò il turno con te. Cerca di starmi dietro.|Lascia che ti aiuti. Mi annoio e tu sembri lento.}"
+            "ask": "{Farò il turno con te. Cerca di starmi dietro.|Lascia che ti aiuti. Mi annoio e tu vai a rilento.}"
           },
           "ride": {
             "ask": "{Portami a {place}. Volerei, ma la gente fissa.|Un passaggio fino a {place}. Per favore. Ho detto per favore.}"
           },
           "vehicle": {
-            "ask": "{Prestami il tuo {vehicle} per un giorno. Te lo restituirò senza fatture.|Il tuo {vehicle}. Un giorno. Te lo riporto.}"
+            "ask": "{Prestami il tuo mezzo per un giorno. Te lo restituirò senza fatture.|Il tuo mezzo. Un giorno. Te lo riporto.}"
           },
           "move": {
             "ask": "{Dovresti trasferirti a {place}. Ho visto il tuo futuro qui ed è noioso.|{place}. Vai. Fidati di una strega.}"
           },
           "expedition": {
-            "askTower": "{Il piano {floor} della torre va ripulito. Saresti bravo a morirci. Scherzo.|Raduna una banda e prendi il piano {floor}. Credo in te. Un poco.}",
+            "askTower": "{Il piano {floor} della torre va ripulito. Avresti talento per morirci. Scherzo.|Raduna una banda e prendi il piano {floor}. Credo in te. Un poco.}",
             "askDungeon": "{C'è oro sotto il mondo. Vai a prenderlo.|I sotterranei ti chiamano. Li sento.}"
           }
         }
@@ -2116,14 +2126,14 @@
             "ask": "{Mi daresti un passaggio fino a {place}? Il mio furgone è a pezzi.|Mi porteresti a {place}?}"
           },
           "vehicle": {
-            "ask": "{Mi presteresti il tuo {vehicle} per un giorno? Te lo metto a punto.|Mi presti il {vehicle}? Torna domani, e va meglio.}"
+            "ask": "{Mi presteresti il tuo mezzo per un giorno? Te lo metto a punto.|Mi presti il mezzo? Torna domani, e va meglio.}"
           },
           "move": {
-            "ask": "{Hai mai pensato a {place}? Brava gente, lì.|A {place} servirebbe uno come te.}"
+            "ask": "{Hai mai pensato a {place}? Brava gente, lì.|A {place} servirebbe gente come te.}"
           },
           "expedition": {
             "askTower": "{Il piano {floor} della torre va ripulito. Te la senti?|Raduna qualche amico e prendi il piano {floor}. L'attrezzatura te la sistemo io.}",
-            "askDungeon": "{Dicono che nei sotterranei ci sia un tesoro. Vai a prendertene un po'.|Sei sprecato in questa città. Scendi nei sotterranei.}"
+            "askDungeon": "{Dicono che nei sotterranei ci sia un tesoro. Vai a prendertene un po'.|In questa città sprechi il tuo talento. Scendi nei sotterranei.}"
           }
         }
       },
@@ -2150,9 +2160,9 @@
         },
         "work": {
           "ask": {
-            "shiftVouch": "{Ci manca un {job}. Dirò che lei è... affidabile.|Passi. Metterò una buona parola, signorina.}",
+            "shiftVouch": "{Cercano personale come {job}. Dirò che lei è... affidabile.|Passi. Metterò una buona parola, signorina.}",
             "questOwn": "{In realtà ho pubblicato qualcosa io: {title}. È suo.|{title}. Se qualcuno può farlo, è una strega.}",
-            "questPass": "{Non io, ma qualcuno vuole questo: {title}.|Provi con {title}. Dica che la mando io, signorina.}"
+            "questPass": "{Da me niente, però qualcuno vuole questo: {title}.|Provi con {title}. Dica che la mando io, signorina.}"
           },
           "hire": {
             "decline": "{Lavorare per una strega? No, grazie.|Sto bene dove sto, signorina.}",
@@ -2167,10 +2177,10 @@
           "ride": {
             "refuse": "{La mia auto non è per le streghe.|Non può semplicemente volare, signorina?}",
             "agree": "{Salga, signorina. {fare} per la benzina.|{place}? Va bene. {fare}.}",
-            "agreeFree": "{Salga, signorina. Gratis.|Per lei? Niente. Ma non fatturi i sedili.}"
+            "agreeFree": "{Salga, signorina. Gratis.|Per lei? Niente. Ma niente fatture sui sedili.}"
           },
           "vehicle": {
-            "refuse": "{Il mio {vehicle} non va da nessuna parte con una strega.|No, signorina. Non il mio {vehicle}.}",
+            "refuse": "{Il mio mezzo non va da nessuna parte con una strega.|No, signorina. Non il mio mezzo.}",
             "agree": "{Lo prenda, signorina. Domani, mi raccomando.|Ne abbia cura. E niente incantesimi sui freni.}"
           },
           "move": {
@@ -2179,7 +2189,7 @@
             "agreeFamily": "{Andremo tutti a {place}, signorina. Mi ha convinto.|Alla famiglia farebbe bene {place}. Grazie, signorina.}"
           },
           "expedition": {
-            "decline": "{Non sono coraggioso come lei, signorina.|Nemmeno per tutto l'oro della torre.}",
+            "decline": "{Non ho il suo coraggio, signorina.|Nemmeno per tutto l'oro della torre.}",
             "joined": "{Una banda parte presto. Andrò, signorina.|Ci sto. Per lei, signorina.}",
             "formed": "{Allora radunerò una banda mia, signorina.|Troverò dei compagni e partirò. Vedrà.}"
           }
@@ -2208,12 +2218,12 @@
         },
         "work": {
           "ask": {
-            "shiftVouch": "{Ci serve un {job}. Sarebbero fortunati ad averla, signor Wilson.|Dirò loro che arriva Bubba Wilson.}",
+            "shiftVouch": "{Cercano personale come {job}. Sarebbero fortunati ad averla, signor Wilson.|Dirò loro che arriva Bubba Wilson.}",
             "questOwn": "{Ho pubblicato qualcosa io: {title}. È suo, signor Wilson.|{title}. Nessuno meglio di lei.}",
             "questPass": "{Provi questo, signor Wilson: {title}.|{title}. Dica che la mando io.}"
           },
           "hire": {
-            "decline": "{Grazie, signor Wilson, ma sono sistemato.|Sto bene dove sto, signor Wilson.}",
+            "decline": "{Grazie, signor Wilson, ma ho già una sistemazione.|Sto bene dove sto, signor Wilson.}",
             "accept": "{Lavorare per Bubba Wilson? Assolutamente.|Quando comincio, signor Wilson?}"
           },
           "fire": {
@@ -2228,7 +2238,7 @@
             "agreeFree": "{Salga, signor Wilson. Offro io.|Per lei? Gratis, sempre.}"
           },
           "vehicle": {
-            "refuse": "{Mi dispiace, signor Wilson, nessuno guida il mio {vehicle}.|Non il {vehicle}, signor Wilson.}",
+            "refuse": "{Mi dispiace, signor Wilson, nessuno guida il mio mezzo.|Non il mio mezzo, signor Wilson.}",
             "agree": "{Lo prenda, signor Wilson. Probabilmente me lo aggiusta pure.|Certo. Per domani, signor Wilson.}"
           },
           "move": {
@@ -2237,7 +2247,7 @@
             "agreeFamily": "{Andremo tutti a {place}, signor Wilson.|Alla famiglia farebbe bene {place}. Grazie, signor Wilson.}"
           },
           "expedition": {
-            "decline": "{Non sono un eroe, signor Wilson.|Nemmeno per tutto l'oro della torre.}",
+            "decline": "{Non ho la stoffa dell'eroe, signor Wilson.|Nemmeno per tutto l'oro della torre.}",
             "joined": "{Una banda parte presto. Andrò, signor Wilson.|Ci sto, signor Wilson.}",
             "formed": "{Allora radunerò una banda mia, signor Wilson.|Troverò dei compagni e partirò.}"
           }
@@ -2250,8 +2260,8 @@
       "pickTitle": "Accusa {name} di...",
       "pickSelf": "Accusa te stesso di...",
       "reason": {
-        "accusedToday": "Li hai già accusati oggi.",
-        "noCrimes": "Non si conoscono crimini di cui accusare qualcuno.",
+        "accusedToday": "Hai già accusato questa persona oggi.",
+        "noCrimes": "Nessun crimine noto di cui accusare qualcuno.",
         "noCrime": "Quel crimine non esiste."
       },
       "result": {
@@ -2259,7 +2269,7 @@
         "flinch": "{name} ha sussultato a quella parola. Opinione di {actor}: -{drop}.",
         "laugh": "{name} ci ha riso sopra, più o meno. Opinione di {actor}: -{drop}.",
         "bond": "Il loro legame ha preso un colpo: -{drop}.",
-        "member": "{name} ci è rimasto male. Opinione di {actor}: -{drop}.",
+        "member": "{name} l'ha presa male. Opinione di {actor}: -{drop}.",
         "memberSilent": "{name} non dice nulla, ma ha sentito ogni parola.",
         "self": "Nessun altro l'ha sentito."
       },
@@ -2292,8 +2302,8 @@
     },
     "icon": "Un'icona di {stat}",
     "reads": "{name} appare {list}",
-    "readsNone": "{name} non appare niente di particolare",
-    "effects": "Quanto conta qui:",
+    "readsNone": "{name} non ha un aspetto particolare",
+    "effects": "Effetti:",
     "effect": {
       "impression": "prima impressione {v}",
       "pickpocket": "borseggio {v}%",
@@ -2303,5 +2313,85 @@
       "hostile": "mosse ostili {v}%",
       "friendly": "parole gentili {v}%"
     }
+  },
+  "emotionsTitle": "Emozioni",
+  "speakerEmotions": "Emozioni di {name}",
+  "boredom": {
+    "waning": {
+      "warm": [
+        "Ah, l'hai già detto, ma continua pure.",
+        "Sei gentile, ma credo di averla già sentita.",
+        "Mm, di nuovo? Va bene, ti ascolto."
+      ],
+      "cold": [
+        "L'hai già detto.",
+        "Sì. Lo hai detto.",
+        "Ricordo che lo avevi detto."
+      ],
+      "hot": [
+        "Ancora? Dai, dimmi qualcosa di nuovo.",
+        "Ti stai ripetendo, eh.",
+        "Sentita. Avanti."
+      ],
+      "anxious": [
+        "Oh... l'avevi già detto, vero?",
+        "Qualcosa non va? Continui a ripeterlo.",
+        "Ehm, sì, me l'avevi detto."
+      ]
+    },
+    "flat": {
+      "warm": [
+        "Scusa, è che l'ho sentita già tante volte.",
+        "Tesoro, su questo ci siamo già passati.",
+        "Parliamo d'altro, che ne dici?"
+      ],
+      "cold": [
+        "Questa conversazione gira in tondo.",
+        "Non ho altro da dire in merito.",
+        "C'è altro?"
+      ],
+      "hot": [
+        "Cambia disco, vuoi?",
+        "Stessa cosa, stessa risposta. Niente.",
+        "Mi stai annoiando a morte."
+      ],
+      "anxious": [
+        "Non so più cosa vuoi che ti dica.",
+        "Perché continui a dirlo? Mi mette ansia.",
+        "Per favore, ti ho già risposto."
+      ]
+    },
+    "annoyed": {
+      "warm": [
+        "Sinceramente, comincia a suonare un po' vuoto.",
+        "Mi è piaciuto la prima volta. Non la decima.",
+        "Non mi stai davvero ascoltando, vero?"
+      ],
+      "cold": [
+        "Basta. Mi fai perdere tempo.",
+        "Basta così. Non sono una macchina da premere a ripetizione.",
+        "Lo trovo stancante."
+      ],
+      "hot": [
+        "Dillo un'altra volta e me ne vado.",
+        "Mi prendi in giro? Piantala.",
+        "Ecco, ne ho avuto abbastanza."
+      ],
+      "anxious": [
+        "Per favore smettila, mi sta davvero pesando.",
+        "È una specie di prova? Non mi piace.",
+        "Mi metti a disagio, a ripeterlo di continuo."
+      ]
+    }
+  },
+  "dice": {
+    "proposal": "Proposta: {style}",
+    "romance": "Corteggiamento: {action}",
+    "convince": "Convincere: {name}",
+    "tame": "Addomesticare: {name}",
+    "bribe": "Corruzione: {name}",
+    "join": "Reclutamento: {name}",
+    "follow": "Seguito: {name}",
+    "pickpocket": "Borseggio"
   }
 }

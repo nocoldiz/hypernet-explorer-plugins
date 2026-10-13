@@ -1,5 +1,15 @@
 {
   "knowledgeTitle": "Something learned",
+  "choiceRead": "Read",
+  "choiceTake": "Take",
+  "choiceAnalyze": "Analyze",
+  "choiceCancel": "Cancel",
+  "choicePutBook": "Put book",
+  "byAuthor": "by {author}.",
+  "obtained": "Obtained {item}!",
+  "shelfOccupied": "There is already a special book in this library.",
+  "noBooksToPlace": "You do not have any books to place.",
+  "placedInLibrary": "Placed {item} in the library.",
   "titlePrefixes": [
     "The",
     "A",

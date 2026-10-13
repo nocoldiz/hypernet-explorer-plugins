@@ -26,12 +26,12 @@
   "notDownloaded": "Not downloaded yet",
   "statusInstalled": "Installed",
   "statusDownloading": "Downloading {pct}%",
-  "statusPending": "Waiting for Steam to download it",
+  "statusPending": "Waiting for Steam",
   "statusUpdate": "Update queued",
   "publishing": "Uploading to the Workshop... {pct}%",
   "published": "Published to the Workshop as Private. Make it public from its page.",
   "updated": "Workshop item updated.",
   "publishFailed": "Workshop request failed: {error}",
-  "agreement": "Accept the Steam Workshop agreement, or nobody else can see the mod.",
-  "unsubscribed": "Unsubscribed. Steam removes the files when the game closes."
+  "agreement": "Accept the Steam Workshop agreement to make the mod visible.",
+  "unsubscribed": "Unsubscribed. Files are removed when the game closes."
 }

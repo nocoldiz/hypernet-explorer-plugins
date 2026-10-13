@@ -1,9 +1,16 @@
 {
   "anItem": "AN ITEM",
+  "noSoulNearby": "NOBODY NEARBY.",
   "mapFallback": "MAP {id}",
   "homePool": {
     "houses": "HOUSE",
     "skyscrapers": "HIGH-RISE"
+  },
+  "home": {
+    "homeless": "HOMELESS",
+    "frontierSettlement": "FRONTIER SETTLEMENT",
+    "door": "DOOR ({x}, {y})",
+    "floor": "FLOOR {n}"
   },
   "log": {
     "swam": "WENT FOR A SWIM",
@@ -62,9 +69,9 @@
   },
   "tend": {
     "waterFriend": "DA {plant} LOOKED THIRSTY. LEAST ME CAN DO FOR MATES!",
-    "feedFriend": "GAVE DA {animal} SOMETHIN' TA EAT. MATES LOOK AFTER EACH OTHER'S ANIMALS!",
+    "feedFriend": "GAVE DA {animal} SOMETINK TA EAT. MATES LOOK AFTER EACH OTHER'S ANIMALS!",
     "hiveFriend": "TOPPED UP DA WATER AT DEY HIVE. BEES GET THIRSTY TOO!",
-    "barrelFriend": "GAVE DEY BARREL OF {brew} A LOOK. MATES KEEP AN EYE ON EACH OTHER'S THINGS!"
+    "barrelFriend": "GAVE DEY BARREL OF {brew} A LOOK. MATES KEEP AN EYE ON EACH OTHER'S TINKZ!"
   },
   "minigame": {
     "arcade": "AN ARCADE CABINET",
@@ -96,7 +103,7 @@
     "familiarFace": "CONSIDERS DA PLAYER A FAMILIAR FACE",
     "spokenBefore": "HAB SPOKEN TA DA PLAYER BEFORE",
     "summary": "{name}: {list}.",
-    "quiet": "{name} HAB BEEN LIVIN' QUIETLY."
+    "quiet": "{name} HAB BIN LIVIN' QUIETLY."
   },
   "unknownDate": "UNKNOWN",
   "work": {
@@ -104,7 +111,7 @@
       "HERE YOU IZ, {name}.",
       "NEXT! AH, {name}. DA USUAL?",
       "DERE YOU GO, {name}. MIND HOW YOU GO!",
-      "ANYTHIN' ELSE, {name}?",
+      "ANYTINK ELSE, {name}?",
       "MORNIN', {name}. WHAT CAN ME GET YOU?",
       "SAME AS LAST TIME, {name}?",
       "WRAPPED OR IN DA BAG, {name}?",
@@ -141,7 +148,7 @@
       "CHEERS, {name}. YOU STASHED ME EVENIN'!",
       "GRAND, {name}. TAKE CARE.",
       "THANK YOU KINDLY, {name}.",
-      "THANKS, {name}. AN' SORRY ABOUT DA COINS!",
+      "THANKS, {name}. AN' SORRY 'BOUT DA COINS!",
       "PERFECT, {name}. HAB A GOOD ONE!"
     ],
     "idle": [
@@ -174,7 +181,7 @@
       "ENOUGH SELLIN' FOR ONE DAY!",
       "SHIFT'S OVER. SUPPER, DEN BED!",
       "DA SHELVES IZ SOMEBODY ELSE'S PROBLEM NOW!",
-      "OFF DA CLOCK. DO NO ASK ME FOR ANYTHIN'!"
+      "OFF DA CLOCK. DO NO ASK ME FOR ANYTINK!"
     ]
   },
   "addiction": {

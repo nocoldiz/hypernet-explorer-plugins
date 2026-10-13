@@ -3230,7 +3230,7 @@
                         hostsHTML += `
                             <div class="node-card ${focused ? 'focused' : ''}" data-player-id="${id}" data-idx="${index}">
                                 <div class="node-info">
-                                    <span class="node-name">${player.name || T('Multiplayer.playerNumbered', { id: id })}</span>
+                                    <span class="node-name">${window.NPCShared.escapeHtml(player.name || T('Multiplayer.playerNumbered', { id: id }))}</span>
                                     <span class="node-subtitle">${T('Multiplayer.mapLabel')} ${player.mapId || 1}</span>
                                 </div>
                                 <span class="node-badge ${inParty ? 'badge-ok' : ''}">${badge}</span>
@@ -3249,7 +3249,7 @@
                     hostsHTML += `
                         <div class="node-card ${focused ? 'focused' : ''}" data-idx="${index}">
                             <div class="node-info">
-                                <span class="node-name">${host.hostName || host.address}</span>
+                                <span class="node-name">${window.NPCShared.escapeHtml(host.hostName || host.address)}</span>
                                 <span class="node-subtitle">${host.address}:${host.port}${host.world ? ' | ' + host.world : ''}</span>
                             </div>
                             <span class="node-badge">${seats || T('Multiplayer.lan.join')}</span>
@@ -3278,7 +3278,7 @@
                             </div>
                             <div class="console-row">
                                 <span class="row-lbl">${T('Multiplayer.lan.world')}</span>
-                                <span class="row-val">${(window.WorldManager && window.WorldManager.activeWorldName) || '-'}</span>
+                                <span class="row-val">${window.NPCShared.escapeHtml((window.WorldManager && window.WorldManager.activeWorldName) || '-')}</span>
                             </div>
                         </div>
 
@@ -3286,7 +3286,7 @@
                             ${buttonsHTML}
                         </div>
 
-                        <div class="console-log" ${this._isError ? 'style="color:var(--text-cost-bad);"' : ''}>${this._statusMessage}</div>
+                        <div class="console-log" ${this._isError ? 'style="color:var(--text-cost-bad);"' : ''}>${window.NPCShared.escapeHtml(this._statusMessage)}</div>
                     </div>
 
                     <div class="right-page" style="justify-content:flex-start;gap:0;">
@@ -3672,8 +3672,8 @@
                                 <div class="node-card ${isFocused ? 'focused' : ''}" data-idx="${index}">
                                     ${this.drawNodeAvatarHTML(player.info.faceName, player.info.faceIndex)}
                                     <div class="node-info">
-                                        <span class="node-name">${player.info.name}</span>
-                                        <span class="node-subtitle">Map: ${player.info.mapId}</span>
+                                        <span class="node-name">${window.NPCShared.escapeHtml(player.info.name)}</span>
+                                        <span class="node-subtitle">Map: ${window.NPCShared.escapeHtml(player.info.mapId)}</span>
                                     </div>
                                     <span class="node-badge">${T('Multiplayer.ui.invite')}</span>
                                 </div>
@@ -3694,8 +3694,8 @@
                                     <div class="node-card" style="cursor:default;">
                                         ${this.drawNodeAvatarHTML(player.faceName, player.faceIndex)}
                                         <div class="node-info">
-                                            <span class="node-name">${player.name}</span>
-                                            <span class="node-subtitle">Map: ${player.mapId}</span>
+                                            <span class="node-name">${window.NPCShared.escapeHtml(player.name)}</span>
+                                            <span class="node-subtitle">Map: ${window.NPCShared.escapeHtml(player.mapId)}</span>
                                         </div>
                                         <span class="node-badge">${label}</span>
                                     </div>
@@ -3738,8 +3738,8 @@
                             <div class="node-card" style="cursor:default;">
                                 ${this.drawNodeAvatarHTML(player.info.faceName, player.info.faceIndex)}
                                 <div class="node-info">
-                                    <span class="node-name">${player.info.name}</span>
-                                    <span class="node-subtitle">${player.info.className || T('Multiplayer.adventurer')} | ${T('Multiplayer.mapLabel')} ${player.info.mapId || T('Multiplayer.unknownMap')}</span>
+                                    <span class="node-name">${window.NPCShared.escapeHtml(player.info.name)}</span>
+                                    <span class="node-subtitle">${window.NPCShared.escapeHtml(player.info.className || T('Multiplayer.adventurer'))} | ${T('Multiplayer.mapLabel')} ${window.NPCShared.escapeHtml(player.info.mapId || T('Multiplayer.unknownMap'))}</span>
                                 </div>
                                 <span class="node-badge">${roleLabel}</span>
                             </div>
@@ -3769,7 +3769,7 @@
                             ${actionBtnsHTML}
                         </div>
 
-                        <div class="console-log">${this._statusMessage}</div>
+                        <div class="console-log">${window.NPCShared.escapeHtml(this._statusMessage)}</div>
                     </div>
 
                     <div class="right-page" style="justify-content:flex-start;gap:0;">
@@ -3900,7 +3900,9 @@
 
         drawNodeAvatarHTML(faceName, faceIndex) {
             if (!faceName) return '<div class="node-avatar" style="background:var(--border-subtle);"></div>';
-            const path = `img/busts/${faceName}.png`;
+            // A peer's face name arrives over the wire: it is kept to the
+            // characters a file name can hold before it reaches the style.
+            const path = `img/busts/${encodeURIComponent(String(faceName))}.png`;
             return `
                 <div class="node-avatar" style="
                     background-image: url('${path}');

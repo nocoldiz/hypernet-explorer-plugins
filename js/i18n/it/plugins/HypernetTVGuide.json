@@ -1,7 +1,7 @@
 {
   "title": "Guida TV",
   "status": "{channels} canali  |  Mappa studio {map}  |  {slots} fasce giornaliere",
-  "noSignal": "Nessun segnale di trasmissione. (RandomTVTransmissionGenerator non caricato?)",
+  "noSignal": "Nessun segnale.",
   "endOfTransmission": "- fine della trasmissione -",
   "narrator": "Narratore",
   "format": "Formato:",
@@ -198,7 +198,7 @@
         "title": "Chi se lo Ricorda Ancora?"
       },
       "signal_bleed": {
-        "title": "Trasudazione di Segnale"
+        "title": "Interferenze sul Segnale"
       },
       "carrier_wave": {
         "title": "Onda Portante"
@@ -619,5 +619,10 @@
         "title": "La Scuola della Settimana"
       }
     }
-  }
+  },
+  "programCount": {
+    "one": "{count} programma",
+    "other": "{count} programmi"
+  },
+  "noTransmissions": "Nessuna trasmissione trovata. Impossibile caricare {path}."
 }

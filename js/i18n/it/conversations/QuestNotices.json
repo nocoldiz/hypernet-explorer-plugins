@@ -10,7 +10,7 @@
     "una lettera cortese senza timbro postale e senza ombra",
     "un ordine di lavoro con la carta intestata ritagliata via",
     "un messaggio a gessetto che si riscrive all'alba",
-    "una ricevuta con l'incarico scritto sul retro",
+    "una ricevuta con la missione scritta sul retro",
     "una mano di carte, le condizioni scritte a inchiostro sulle figure",
     "un telegramma consegnato con undici giorni di ritardo e una parola in meno",
     "un cilindro di cera che nessuno sa riprodurre, trascritto da un impiegato annoiato",
@@ -109,10 +109,10 @@
     "Ci dicono che siete il tipo affidabile.",
     "Qualcuno di competente, possibilmente oggi.",
     "Lavoro onesto, abbastanza onesto.",
-    "Non prestigioso. Pagato.",
+    "Pagato, e basta.",
     "Leggetelo due volte. Noi lo abbiamo scritto una sola.",
     "Una faccenda da poco, finora gestita male.",
-    "Un incarico, nessuna catena di comando.",
+    "Una missione, nessuna catena di comando.",
     "L'impiegato che ha scritto questo si è nel frattempo dimesso.",
     "Approvato da una commissione, ed è per questo che è in ritardo.",
     "Scritto di fretta, inteso sinceramente.",
@@ -167,7 +167,7 @@
     "Negheremo che questo avviso sia mai esistito.",
     "Non accettate aiuto da nulla che parli in CamelCase.",
     "Se la strada ronza, aspettate che smetta di ronzare.",
-    "Non percorretela in vettura. Percorretela a piedi.",
+    "Percorretela a piedi.",
     "Assicurato fino a, ed escluse, le parti interessanti.",
     "Assicurato contro il furto, non contro l'ironia.",
     "Il pagamento è alla consegna, non allo sforzo.",
@@ -189,7 +189,7 @@
     "Il pagamento è in moneta, quindi portate qualcosa in cui metterla.",
     "Non possiamo prestare un carro. Lo chiedono tutti.",
     "Se piove, aspettate un giorno. Qui non c'è nulla per cui valga la pena annegare.",
-    "Non contrattate sull'uscio. Contrattate adesso, per iscritto, o niente.",
+    "Si contratta adesso, per iscritto, o niente.",
     "Indossate qualcosa che non vi dispiaccia rovinare.",
     "Chiedete indicazioni alla locanda, non ai bambini.",
     "Il cane della seconda fattoria morde. Tutto il resto è amichevole.",
@@ -442,15 +442,15 @@
     "Un anno fa il sito era normale. Ci sono persone vive che lo coltivavano.",
     "Qualunque cosa lo uccida dovrà farlo in un solo scontro. Non resta ferito.",
     "I suoi resti, se ne farete, valgono anch'essi denaro. Portate via quel che riuscite.",
-    "Non accampatevi a vista della coordinata. Due squadre hanno commesso esattamente quell'errore.",
+    "Non accampatevi a vista della coordinata. Due Party hanno commesso esattamente quell'errore.",
     "L'avvicinamento è terreno scoperto per quattrocento passi. Mettete in conto di essere visti per tutto il tragitto.",
     "Ignora del tutto gli animali, che è l'unico motivo per cui là fuori vive ancora qualcosa."
   ],
   "voiceFamilies": {
     "clinical": {
       "openers": [
-        "Avviso di incarico. {Leggere per intero.|Conservarne copia.|Non annotare.}",
-        "Classificato come incarico sul campo {ordinario|non anomalo|a bassa priorità}.",
+        "Avviso di missione. {Leggere per intero.|Conservarne copia.|Non annotare.}",
+        "Classificata come missione sul campo {ordinaria|non anomala|a bassa priorità}.",
         "Questa richiesta è stata {approvata|registrata|riscontrata} e non è negoziabile.",
         "Oggetto: manodopera a contratto. Priorità: {moderata|elevata|nominale}.",
         "Quanto segue è {accurato|completo} nei limiti consentiti."
@@ -471,7 +471,7 @@
       ],
       "titlePrefix": [
         "FASCICOLO",
-        "INCARICO",
+        "MISSIONE",
         "REQUISIZIONE"
       ]
     },
@@ -509,7 +509,7 @@
         "Il margine su questa è {sottile|osceno|affar nostro}. Muovetevi in fretta.",
         "Si è aperta una posizione. Perdita di qualcun altro, compenso vostro.",
         "Il tempo è l'unica merce che non possiamo vendere allo scoperto.",
-        "Abbiamo prezzato questo incarico tre volte e rende ancora."
+        "Abbiamo prezzato questa missione tre volte e rende ancora."
       ],
       "caveats": [
         "I costi sostenuti sono vostri. Il valore creato è nostro. È questo l'accordo.",
@@ -537,7 +537,7 @@
         "Esigenza operativa. Volontari ammessi, competenza obbligatoria.",
         "Il distaccamento regolare è {altrove|ridotto|in rifiuto}. Da cui questo avviso.",
         "Briefing breve. Pazienza più breve.",
-        "Incarico permanente, aperto a civili di saldi nervi."
+        "Missione permanente, aperta a civili di saldi nervi."
       ],
       "caveats": [
         "Gli orari non sono suggerimenti.",
@@ -551,11 +551,11 @@
         "Pagamento previa conferma dell'ufficiale di picchetto.",
         "Muovetevi appena pronti. Preferibilmente ieri.",
         "Prima la disciplina, la gloria è facoltativa.",
-        "Questo è l'incarico. Eseguitelo."
+        "Questa è la missione. Eseguitela."
       ],
       "titlePrefix": [
         "ORDINI",
-        "INCARICO",
+        "MISSIONE",
         "OPERAZIONE"
       ]
     },
@@ -583,7 +583,7 @@
       ],
       "titlePrefix": [
         "APPELLO",
-        "INCARICO",
+        "MISSIONE",
         "COMMISSIONE"
       ]
     },
@@ -702,7 +702,7 @@
     },
     "soviet": {
       "openers": [
-        "Compagno. Un incarico, assegnato equamente.",
+        "Compagno. Una missione, assegnata equamente.",
         "La quota non si cura del vostro fine settimana, e nemmeno noi, ufficialmente.",
         "Bisogno collettivo, stivali individuali.",
         "Approvato dal comitato, che si è riunito per nove ore.",
@@ -711,7 +711,7 @@
       "caveats": [
         "Riferite cifre reali. Le cifre ottimistiche sono considerate sabotaggio.",
         "L'attrezzatura è fornita in teoria.",
-        "Non discutete l'incarico con stranieri, turisti o l'Archivio.",
+        "Non discutete la missione con stranieri, turisti o l'Archivio.",
         "Iniziativa personale soltanto entro il piano.",
         "Il piano si adempie o il piano si rivede. Entrambe le cose vi riguardano."
       ],
@@ -739,7 +739,7 @@
       "caveats": [
         "Comportatevi come se foste osservati, perché lo siete.",
         "L'insolenza verso i funzionari è detratta dal compenso.",
-        "La corruzione è una tradizione, non un diritto.",
+        "La corruzione è una tradizione, e le tradizioni hanno dei limiti.",
         "Il percorso potrebbe essere ispezionato. Il vostro bagaglio certamente.",
         "La discrezione è la moneta del regno, e il regno è a corto di moneta."
       ],
@@ -787,7 +787,7 @@
     "spooky": {
       "openers": [
         "C'è un piccolo buco nel mondo e ci piacerebbe fosse colmato.",
-        "Qualcosa è dovuto. Non è stato pattuito, ma è dovuto.",
+        "Qualcosa è dovuto, pattuito o no.",
         "Scritto da una mano che non ha ancora finito di essere una mano.",
         "La scadenza di questa commissione cade con la luce.",
         "È da un po' che pensate a questo avviso."
@@ -885,7 +885,7 @@
     "streetwise": {
       "openers": [
         "Si dice che accetti lavori e stia zitto. Di solito si dice male.",
-        "Non è un annuncio. È una conversazione, per iscritto.",
+        "È una conversazione, per iscritto.",
         "Qualcuno ha bisogno che una cosa venga spostata, trovata o dimenticata.",
         "Leggilo e staccalo. La puntina è la ricevuta.",
         "Questo non te l'ha dato nessuno."
@@ -1148,7 +1148,7 @@
       "STRADA BLOCCATA a ([X], [Y]), [N] {tronchi|massi} di mezzo"
     ],
     "bounty_criminal": [
-      "MANDATO: [ENEMY], visto l'ultima volta a ([X], [Y])",
+      "MANDATO: [ENEMY], ultimo avvistamento a ([X], [Y])",
       "RICERCATO: il fuorilegge [ENEMY]",
       "AVVISO DI LATITANZA: [ENEMY]",
       "{PREZZO|TAGLIA} SU [ENEMY], Liv [LVL]",
@@ -1158,7 +1158,7 @@
     "bounty_monster": [
       "STERMINIO: [ENEMY] a ([X], [Y])",
       "CONTRATTO SU BESTIA: [ENEMY]",
-      "PERICOLO RAVVICINATO: [ENEMY] annida a ([X], [Y])",
+      "PERICOLO RAVVICINATO: [ENEMY] si annida a ([X], [Y])",
       "CONTROLLO {INFESTANTI|PREDATORI}: [ENEMY], ([X], [Y])",
       "SI È MANGIATO L'ULTIMO INCARICATO: [ENEMY] a ([X], [Y])",
       "PROBLEMA DI LIV [LVL] a ([X], [Y])"
@@ -1238,42 +1238,42 @@
     ],
     "elite_hunt": [
       "{UCCISIONE AUTORIZZATA|TAGLIA PERMANENTE}: [ENEMY], Liv [LVL]",
-      "È ANCORA VIVO A ([X], [Y]): [ENEMY]",
+      "RESPIRA ANCORA A ([X], [Y]): [ENEMY]",
       "MINACCIA {ALTA|ESTREMA}: [ENEMY] (Liv [LVL]) a ([X], [Y])",
       "DA ([X], [Y]) NON È TORNATO NESSUNO",
       "CONTRATTO {DEFINITIVO|APERTO}: [ENEMY], Liv [LVL]",
       "[ENEMY]. Liv [LVL]. ([X], [Y]). L'avviso è tutto qui."
     ],
     "pet": [
-      "CERCASI VIVO E DOCILE: un [ENEMY]",
-      "RICHIESTA DI {ADOZIONE|COMPAGNIA}: un [ENEMY] addomesticato",
-      "CATTURA VIVA: [ENEMY], Liv [LVL], {illeso|tutto intero|e di buon umore}",
-      "CERCO UN [ENEMY] A CUI PIACCIA LA GENTE",
-      "COMMISSIONE PER {ANIMALE|MASCOTTE|BESTIA}: un [ENEMY]",
-      "NIENTE CADAVERI: portatemi un [ENEMY] vivo"
+      "CERCASI VIVO E DOCILE: un esemplare di [ENEMY]",
+      "RICHIESTA DI {ADOZIONE|COMPAGNIA}: un esemplare di [ENEMY] addomesticato",
+      "CATTURA VIVA: [ENEMY], Liv [LVL], {senza un graffio|in un pezzo solo|e di buon umore}",
+      "CERCO UN ESEMPLARE DI [ENEMY] A CUI PIACCIA LA GENTE",
+      "COMMISSIONE PER {ANIMALE|MASCOTTE|BESTIA}: un esemplare di [ENEMY]",
+      "NIENTE CADAVERI: portatemi un esemplare di [ENEMY] vivo"
     ]
   },
   "bodies": {
     "courier": [
-      "{Portate|Scortate|Trasportate} questo {pacco|carico|contenitore} alla bacheca degli incarichi di [DEST]. {È più leggero di quanto sembri.|Non apritelo.|Ticchetta, ma con garbo.|Il contenuto è assicurato contro tutto tranne la curiosità.}",
+      "{Portate|Scortate|Trasportate} questo {pacco|carico|contenitore} alla bacheca delle missioni di [DEST]. {È più leggero di quanto sembri.|Non apritelo.|Ticchetta, ma con garbo.|Il contenuto è assicurato contro tutto tranne la curiosità.}",
       "Un {pacco|fagotto|tubo} in uscita da [HERE], una firma a [DEST]. {Quel che sta in mezzo non vi riguarda.|Ciò che accade fra i due è affar vostro e rischio vostro.}",
-      "{La staffetta|Il corriere abituale|Il solito ragazzo} è {malato|scomparso|ubriaco|in ritardo di tre giorni}, quindi la bacheca di [DEST] aspetta una consegna che nessuno ha fatto. {Portatecela voi.|Consegnatela di persona o niente.}",
+      "{Il fattorino|Il corriere abituale|Il solito ragazzo} è {malato|scomparso|ubriaco|in ritardo di tre giorni}, quindi la bacheca di [DEST] aspetta una consegna che nessuno ha fatto. {Portatecela voi.|Consegnatela di persona o niente.}",
       "{Una piccola cassa|Una scatola piatta di legno|Un grimorio rilegato} deve arrivare a [DEST] {intatto|non aperto|a mano}. {Abbiamo scelto la strada invece dei piccioni di proposito.|I piccioni si sono rifiutati per questo.}"
     ],
     "smuggle": [
       "Una {cassa|sacca|fusto} deve arrivare a [DEST] senza comparire su alcun manifesto, grimorio o pubblicazione dell'Archivio. {Prendete le strade secondarie.|Se a un posto di blocco chiedono, sono aringhe marinate.|I sigilli sono in Fantablack, non graffiateli.}",
       "Niente di illegale, {solo non registrato|solo non protocollato|solo non documentato}. Portatelo a [DEST] e dimenticate il peso. {Questo mese la dogana conta le casse.|L'Archivio torna a pubblicare i manifesti, quindi state fuori dall'autostrada.}",
-      "C'è un {carico|pacco|barile} che deve arrivare a [DEST] senza arrivarci ufficialmente. {Non apritelo per scoprire perché.|Vi si paga il silenzio, non la distanza.}",
+      "C'è un {carico|pacco|barile} che deve arrivare a [DEST] senza arrivarci ufficialmente. {Non apritelo per scoprire perché.|Vi si paga il silenzio.}",
       "{La strada breve|L'autostrada|La strada a pedaggio} è sorvegliata. Prendete {la via lunga|la vecchia via|la via dei contrabbandieri} per [DEST] con questo e nessuno deve protocollare nulla. {Ai posti di blocco non leggono con attenzione le etichette delle aringhe marinate.}"
     ],
     "supply": [
-      "{Noi|Il sottoscritto} pagheremo per [QTY]x [ITEM], consegnati a qualsiasi bacheca. {La qualità è negoziabile, la quantità no.|Nessuna domanda in ogni caso.|Pesati su bilance oneste.}",
+      "{Noi pagheremo|Il sottoscritto pagherà} per [QTY]x [ITEM], con consegna a qualsiasi bacheca. {La qualità è negoziabile, la quantità no.|Nessuna domanda in ogni caso.|Tutto pesato su bilance oneste.}",
       "La nostra scorta di [ITEM] {è finita|è stata rubata|non è mai arrivata|è stata requisita}. [QTY] unità, qualsiasi bacheca, {contanti sul tavolo|pagamento immediato}.",
-      "Compriamo [QTY]x [ITEM] sopra il prezzo corrente {perché siamo disperati|perché nessun altro vende|perché il carico è affondato}. {Portateli tutti insieme, non lo faremo due volte.}",
+      "Compriamo [QTY]x [ITEM] sopra il prezzo corrente {perché siamo disperati|perché nessun altro vende|perché il carico è affondato}. {Portate tutto in una volta, non lo faremo due volte.}",
       "Cercasi [QTY]x [ITEM]. {Procurati come preferite.|Non chiediamo da dove vengano i materiali, solo se siano asciutti.}"
     ],
     "catering": [
-      "{La cucina|La mensa|Il comitato del banchetto} è a corto di [QTY]x [ITEM] e {il banchetto|la veglia|la festa|il cambio turno} non aspetterà. {Freschi preferibili, commestibili obbligatori.|L'ultimo corriere si è mangiato il carico. Non siate l'ultimo corriere.}",
+      "{La cucina|La mensa|Il comitato del banchetto} è a corto di [QTY]x [ITEM] e {il banchetto|la veglia|la festa|il cambio turno} non aspetterà. {Freschezza gradita, commestibilità obbligatoria.|L'ultimo corriere si è mangiato il carico. Non siate l'ultimo corriere.}",
       "[QTY]x [ITEM], {prima che arrivino gli ospiti|prima che le pentole si raffreddino|entro il secondo turno}. {Col cuoco non si ragiona più.|Il cuoco ha già tirato una padella.}",
       "Quaranta bocche, un ingrediente mancante: [QTY]x [ITEM]. {Portatelo e mangiate gratis.|Portatelo e nessuno deve sapere quanto ci siamo andati vicino.}",
       "{Un matrimonio|Una veglia|Una cena di gilda} è stato programmato per mesi e approvvigionato in un pomeriggio. Ci servono [QTY]x [ITEM]. {Non sostituite. Ce ne accorgiamo.}"
@@ -1317,18 +1317,18 @@
       "Il diritto di passaggio a ([X], [Y]) è bloccato {di nuovo|come al solito|da qualunque cosa sia caduta la settimana scorsa}. Rimuovete [N] ostacoli. {La legna da ardere è vostra.}"
     ],
     "bounty_criminal": [
-      "{È stato emesso un mandato per|La magistratura di Eris ricerca|Pende ora una taglia su} [ENEMY], {livello [LVL], armato e loquace|un volto noto di livello [LVL]}, visto l'ultima volta a presidiare ([X], [Y]). {Morto salda il conto.|La corte non accetta scuse, solo risultati.}",
-      "[ENEMY] (Liv [LVL]) {deruba i corrieri|estorce ai villaggi|riscuote un pedaggio suo} partendo da ([X], [Y]) da {una stagione|un anno|più tempo di quanto chiunque ammetta}. {Il mandato non specifica in quali condizioni consegnarlo.}",
-      "Abbiamo provato a {ragionare con|pagare|arrestare} [ENEMY]. Quel che resta è una taglia. Liv [LVL], a ([X], [Y]). {Portate prove, non storie.}"
+      "{È stato emesso un mandato per|La magistratura di Eris ricerca|Pende ora una taglia su} [ENEMY], {livello [LVL], armi in pugno e lingua lunga|un volto noto di livello [LVL]}, con l'ultimo avvistamento a presidiare ([X], [Y]). {Morto salda il conto.|La corte non accetta scuse, solo risultati.}",
+      "[ENEMY] (Liv [LVL]) {deruba i corrieri|estorce ai villaggi|riscuote un pedaggio suo} partendo da ([X], [Y]) da {una stagione|un anno|più tempo di quanto chiunque ammetta}. {Il mandato non specifica in quali condizioni consegnare il ricercato.}",
+      "Abbiamo provato {a ragionare con|a pagare|ad arrestare} [ENEMY]. Quel che resta è una taglia. Liv [LVL], a ([X], [Y]). {Portate prove.}"
     ],
     "bounty_monster": [
-      "{Qualcosa|Un [ENEMY]} {si è preso|ha nidificato a|trascina i viandanti verso} le coordinate ([X], [Y]). {Non tratta.|Non è originario di quel terreno, cosa che preoccupa i locali ancora di più.|Livello [LVL]. Portate degli amici.}",
-      "Un [ENEMY] di circa livello [LVL] {ha la tana|si nutre|si riproduce} a ([X], [Y]). {Lì non pascola più nessuno.|La strada che ci passa accanto è ormai una diceria.}",
+      "{Qualcosa|Un esemplare di [ENEMY]} {si è preso|ha fatto il nido presso|trascina i viandanti verso} le coordinate ([X], [Y]). {Non tratta.|Non è originario di quel terreno, cosa che preoccupa i locali ancora di più.|Livello [LVL]. Portate degli amici.}",
+      "Un esemplare di [ENEMY], di circa livello [LVL], {ha la tana|si nutre|si riproduce} a ([X], [Y]). {Lì non pascola più nessuno.|La strada che ci passa accanto è ormai una diceria.}",
       "Ciò che si trova a ([X], [Y]) è stato descritto da tre testimoni come tre animali diversi. Il nostro registro lo chiama [ENEMY], Liv [LVL]. {Uccidetelo e chiudete la discussione.}"
     ],
     "survey": [
       "Percorrete il terreno alle coordinate ([X], [Y]) e tornate tutti interi. {È tutto qui il lavoro.|La vostra presenza lì è il risultato richiesto.|Se le coordinate non ci sono più, segnalate anche quello.}",
-      "State in piedi a ([X], [Y]). {Guardatevi intorno. Andatevene.|È tutto. Davvero.|Ci serve un testimone, non un rapporto.}",
+      "State in piedi a ([X], [Y]). {Guardatevi intorno. Andatevene.|È tutto. Davvero.|Ci serve un testimone. Niente di scritto.}",
       "Le mappe dicono una cosa su ([X], [Y]) e l'ultimo viandante ne ha detta un'altra. {Andate a sciogliere il pareggio.|Qualcuno deve essere lì di persona.}"
     ],
     "survey_dest": [
@@ -1342,8 +1342,8 @@
       "Raggiungete [DEST] a piedi se ce la fate. {La distanza è il punto.|Nessuno controlla come, ma la strada lo sa.}"
     ],
     "interview": [
-      "Trovate un qualsiasi cittadino di [DEST] e {ascoltatelo per bene|registrate le sue parole|entrate in empatia, in senso tecnico}. {Preferibili appunti pronti per la stampa.|La Fondazione paga per le voci, non per le opinioni.}",
-      "Una conversazione a [DEST], condotta {onestamente|con pazienza|senza suggerire le risposte}. {Paghiamo per ciò che dicono loro, non per ciò che pensate voi.}",
+      "Trovate un qualsiasi cittadino di [DEST] e {ascoltatelo per bene|registrate le sue parole|entrate in empatia, in senso tecnico}. {Preferibili appunti pronti per la stampa.|La Fondazione paga per le voci.}",
+      "Una conversazione a [DEST], condotta {onestamente|con pazienza|senza suggerire le risposte}. {Paghiamo per ciò che dicono loro.}",
       "Qualcuno a [DEST] sa qualcosa e non sa di saperlo. {Parlate con chiunque. Cominciate da lì.}"
     ],
     "offworld": [
@@ -1367,14 +1367,14 @@
       "Qualcuno ha bisogno che il registro mostri [N] azioni di greggio in mani {amiche|private|non affiliate}. {Le vostre andranno bene.}"
     ],
     "expedition": [
-      "Raggiungete le coordinate ([X], [Y]), recuperate il deposito che vi attende, poi presentatevi alla bacheca degli incarichi di [DEST]. {Tre tratte, un contratto.|Il percorso è la parte facile. Probabilmente.}",
+      "Raggiungete le coordinate ([X], [Y]), recuperate il deposito che vi attende, poi presentatevi alla bacheca delle missioni di [DEST]. {Tre tratte, un contratto.|Il percorso è la parte facile. Probabilmente.}",
       "Andata a ([X], [Y]), raccolta, poi ritorno a [DEST]. {Non saltate il passaggio di mezzo, la scatola è il lavoro.|Un viaggio, tre firme.}",
       "Il deposito a ([X], [Y]) deve finire su una scrivania a [DEST]. {Portatelo voi per tutto il tragitto.|Le staffette perdono le cose, e noi abbiamo perso abbastanza.}"
     ],
     "purge": [
       "Qualcosa a ([X], [Y]) si frappone fra noi e un {caveau|deposito|magazzino}. Uccidetelo, poi portate fuori ciò che sorvegliava. {In quest'ordine, per favore.}",
       "C'è un {guardiano|abusivo|inquilino} a ([X], [Y]) senza contratto e con denti considerevoli. {Sfrattatelo, poi svuotate il magazzino che ha dietro.}",
-      "La nostra proprietà a ([X], [Y]) è attualmente abitata. {Occupatevi dell'abitante. Poi raccogliete.|Vogliamo il contenuto. L'occupante è un ostacolo, non una trattativa.}"
+      "La nostra proprietà a ([X], [Y]) è attualmente abitata. {Occupatevi dell'abitante. Poi raccogliete.|Vogliamo il contenuto. L'occupante è un ostacolo.}"
     ],
     "grand_tour": [
       "Fate il giro: presentatevi a ciascun insediamento elencato, in qualsiasi ordine. {La Società tiene oneste le sue mappe grazie a stivali come i vostri.|Timbrate il cartellino a ogni bacheca.}",
@@ -1382,16 +1382,16 @@
       "Un giro completo degli insediamenti qui sotto, {al vostro ritmo|nell'ordine che il tempo consente}. {Ogni arrivo conta una volta sola.}"
     ],
     "elite_hunt": [
-      "SOGGETTO: [ENEMY]. LIVELLO STIMATO: [LVL]. POSIZIONE: ([X], [Y]), e non si è mosso da {settimane|mesi|da quando qualcuno ha iniziato a contare}. È arrivato {senza preavviso|durante le tempeste|la settimana in cui chiuse la strada|da una direzione dove non c'è alcuna strada} e si è insediato sul sito come se gli fosse stato promesso. {Prima è toccato al bestiame, poi alle dipendenze, poi a chi è andato a vedere le dipendenze.|Tutto nel raggio di un miglio se n'è andato o ha smesso di muoversi.|Tre famiglie hanno abbandonato poderi che coltivavano da quattro generazioni pur di non dividere una valle con lui.} Ciò che sappiamo è poco e costato caro: {non dorme|non sanguina come sanguinano le cose|sente l'intenzione prima dei passi|è paziente, che è la cosa peggiore}, e {ogni tentativo a distanza è stato sprecato|colma la distanza più in fretta di quanto dicessero i rapporti|le armature non hanno fatto differenza misurabile}. Il compito è ucciderlo. {Non c'è obiettivo secondario, nessun campione da riportare, nessun rapporto da compilare.|Nient'altro di quel sito conta e nient'altro sarà pagato.} {Il compenso è quello che è perché l'aritmetica è quella che è.|La somma qui sotto è stata alzata due volte e ritirata zero volte.}",
-      "Questo contratto è aperto da {la primavera|l'inverno scorso|prima che assumessero l'impiegato attuale} e abbiamo smesso di fingere che sia ordinario. Il bersaglio è [ENEMY], livello [LVL], che presidia ([X], [Y]). {Quattro|Cinque|Sei|Sette} squadre lo hanno accettato prima di voi. {Nessuna è tornata.|Due sono tornate, nessuna intera, nessuna loquace.|Una è tornata sola e da allora non parla.} Da quel che quei ritorni ci hanno detto: {combatte allo scoperto per scelta|non difende una tana, difende un raggio|è più forte dopo il buio, o crede di esserlo, che è lo stesso|vi lascerà avvicinare, e non è clemenza}. {Portate tutto.|Portate il meglio che avete, e in quantità maggiore di quanto vi sembri ragionevole.|Portate una squadra, non un piano.} {Paghiamo su prova, e la prova è la sua assenza da quella coordinata.|Il pagamento è immediato, per intero, e francamente un sollievo di cui liberarsi.} {Se decidete di lasciar perdere, staccate l'avviso e lasciate che lo legga qualcuno più coraggioso.|Se leggete questo e ve ne andate, qui nessuno vi stimerà meno.}",
-      "È stata completata una valutazione formale della minaccia su [ENEMY] a ([X], [Y]) e la conclusione è che nessuna forza schierabile da noi è adeguata. Livello stimato: [LVL]. {La valutazione ha richiesto undici giorni. Nove sono stati spesi a litigare sul numero.|Il valutatore ha chiesto di essere trasferito a lavoro concluso ed è stato accontentato.} Comportamento: {non vaga, si accresce|raccoglie i resti di ciò che uccide e li dispone|reagisce al rumore, alla luce e al fatto che se ne parli nelle vicinanze|sembra attendere qualcosa di preciso}. Struttura: {le armi convenzionali sono state provate e registrate come inefficaci|è sopravvissuto al fuoco, all'acqua e a un crollo controllato|due delle sue ferite della scorsa stagione si sono richiuse}. Il contratto è un ordine di uccisione e nient'altro. {Non tentate la cattura.|Non tentate la comunicazione, qualunque cosa sembri offrire.|Non portate nulla che vi dispiaccia perdere, persone comprese.} {Il compenso riflette la valutazione più che lo sforzo.|Stiamo pagando per un risultato che nessuno ha ancora prodotto.}",
+      "SOGGETTO: [ENEMY]. LIVELLO STIMATO: [LVL]. POSIZIONE: ([X], [Y]), e non si è mosso da {settimane|mesi|quando qualcuno ha iniziato a contare}. È arrivato {senza preavviso|durante le tempeste|la settimana in cui chiuse la strada|da una direzione dove non c'è alcuna strada} e si è insediato sul sito come se gli fosse stato promesso. {Prima è toccato al bestiame, poi alle dipendenze, poi a chi è andato a vedere le dipendenze.|Tutto nel raggio di un miglio se n'è andato o ha smesso di muoversi.|Tre famiglie hanno abbandonato poderi che coltivavano da quattro generazioni pur di non dividere una valle con lui.} Ciò che sappiamo è poco e costato caro: {non dorme|non sanguina come sanguinano le cose|sente l'intenzione prima dei passi|è paziente, che è la cosa peggiore}, e {ogni tentativo a distanza è stato sprecato|colma la distanza più in fretta di quanto dicessero i rapporti|le armature non hanno fatto differenza misurabile}. Il compito è ucciderlo. {Non c'è obiettivo secondario, nessun campione da riportare, nessun rapporto da compilare.|Nient'altro di quel sito conta e nient'altro sarà pagato.} {Il compenso è quello che è perché l'aritmetica è quella che è.|La somma qui sotto è stata alzata due volte e ritirata zero volte.}",
+      "Questo contratto è aperto da {la primavera|l'inverno scorso|prima che assumessero l'impiegato attuale} e abbiamo smesso di fingere che sia ordinario. Il bersaglio è [ENEMY], livello [LVL], che presidia ([X], [Y]). {Quattro|Cinque|Sei|Sette} Party lo hanno accettato prima di voi. {Nessuno è tornato.|Due sono tornati, nessuno intero, nessuno loquace.|Uno è tornato solo e da allora non parla.} Da quel che quei ritorni ci hanno detto: {combatte allo scoperto per scelta|difende un raggio intorno a sé|è più forte dopo il buio, o crede di esserlo, che è lo stesso|vi lascerà avvicinare, e non è clemenza}. {Portate tutto.|Portate il meglio che avete, e in quantità maggiore di quanto vi sembri ragionevole.|Portate un Party. Portate tutti.} {Paghiamo su prova, e la prova è la sua assenza da quella coordinata.|Il pagamento è immediato, per intero, e francamente un sollievo di cui liberarsi.} {Se decidete di lasciar perdere, staccate l'avviso e lasciate che lo legga qualcuno più coraggioso.|Se leggete questo e ve ne andate, qui nessuno vi stimerà meno.}",
+      "È stata completata una valutazione formale della minaccia su [ENEMY] a ([X], [Y]) e la conclusione è che nessuna forza schierabile da noi è adeguata. Livello stimato: [LVL]. {La valutazione ha richiesto undici giorni. Nove sono stati spesi a litigare sul numero.|Il valutatore ha chiesto di essere trasferito a lavoro concluso ed è stato accontentato.} Comportamento: {resta fermo e si accresce|raccoglie i resti di ciò che uccide e li dispone|reagisce al rumore, alla luce e al fatto che se ne parli nelle vicinanze|sembra attendere qualcosa di preciso}. Struttura: {le armi convenzionali sono state provate e registrate come inefficaci|è sopravvissuto al fuoco, all'acqua e a un crollo controllato|due delle sue ferite della scorsa stagione si sono richiuse}. Il contratto è un ordine di uccisione e nient'altro. {Non tentate la cattura.|Non tentate la comunicazione, qualunque cosa sembri offrire.|Non portate nulla che vi dispiaccia perdere, persone comprese.} {Il compenso riflette la valutazione più che lo sforzo.|Stiamo pagando per un risultato che nessuno ha ancora prodotto.}",
       "Leggete l'avviso per intero prima di decidere, perché la versione breve ha già ucciso delle persone. [ENEMY], livello [LVL], a ([X], [Y]). {È lì da abbastanza tempo che le mappe sono state ridisegnate intorno a lui.|La strada oltre quella coordinata è ora segnata come impraticabile, che è un modo garbato di dirlo.|Due insediamenti hanno silenziosamente riorganizzato l'intero anno pur di non avvicinarsi.} {Nessuno sa da dove venga e tutti hanno una teoria.|Le teorie non valgono nulla. Il conto dei morti sì.} Dettagli pratici, per quel che ne abbiamo: {avvicinatevi dal terreno scoperto, non dal limitare del bosco|non dividetevi, lui conta|è lento a partire e impossibile da fermare|qualunque cosa faccia per prima non è quella che fa per seconda}. {Uccidetelo e la coordinata torna a essere un campo.|Ponete fine a questo e mezzo quartiere potrà tornare a casa.} {Il denaro è accantonato da un anno e aspettando non diminuisce.|La borsa è sigillata e testimoniata. È vostra nell'ora in cui muore.}"
     ],
     "pet": [
-      "Vogliamo un [ENEMY], Liv [LVL], {vivo|che respiri|tutto intero} e disposto a seguire qualcuno a casa. {Convincetelo, non pestatelo.|Ucciderne uno è facile e qui non paga nulla.} Consegnatelo a qualsiasi bacheca e diventa nostro.",
-      "Là fuori c'è un [ENEMY] che si potrebbe convincere a fare {il compagno|la mascotte|l'animale di qualcuno} invece del problema. {Convincetelo.|È tutto qui il lavoro: fatevi un amico, poi regalate l'amico.} Consegnatelo a qualsiasi bacheca.",
-      "Portateci un [ENEMY] addomesticato. {Ci dicono si possa fare con pazienza e col giusto tono di voce.|Prima parlate. Combattete solo se il parlare è chiaramente finito.} Smette di essere vostro nel momento in cui incassate il compenso.",
-      "Si cerca un [ENEMY] vivo (Liv [LVL]) come {compagno|curiosità|animale da lavoro}. {Addomesticatelo, portatelo qui, cedetelo.|Niente gabbie, niente ferite, niente sostituzioni.}"
+      "Vogliamo un esemplare di [ENEMY], Liv [LVL], {vivo|che respiri|tutto intero} e disposto a seguire qualcuno a casa. {Convincetelo, non pestatelo.|Ucciderne uno è facile e qui non paga nulla.} Consegnatelo a qualsiasi bacheca e diventa nostro.",
+      "Là fuori c'è un esemplare di [ENEMY] che si potrebbe convincere a fare {il compagno|la mascotte|l'animale di qualcuno} invece del problema. {Convincetelo.|È tutto qui il lavoro: fatevi un amico, poi regalate l'amico.} Consegnatelo a qualsiasi bacheca.",
+      "Portateci un esemplare di [ENEMY] addomesticato. {Ci dicono si possa fare con pazienza e col giusto tono di voce.|Prima parlate. Combattete solo se il parlare è chiaramente finito.} Smette di essere vostro nel momento in cui incassate il compenso.",
+      "Si cerca un esemplare di [ENEMY] vivo (Liv [LVL]) come {compagno|curiosità|animale da lavoro}. {Addomesticatelo, portatelo qui, cedetelo.|Niente gabbie, niente ferite, niente sostituzioni.}"
     ],
     "research": [
       "Prima esaminate le statue a ([X], [Y]), poi intervistate un cittadino di [DEST] su ciò che avete visto. {Il metodo conta: prima le pietre, poi le persone.|La monografia vi citerà in una nota a piè di pagina.}",
@@ -1412,7 +1412,7 @@
     "1": {
       "openers": [
         "Archive Foundation, requisizione sul campo. L'osservanza è data per scontata.",
-        "A questo incarico è stato assegnato un numero di riferimento che non vi sarà mai comunicato."
+        "A questa missione è stato assegnato un numero di riferimento che non vi sarà mai comunicato."
       ],
       "caveats": [
         "I risultati diventano proprietà della Fondazione nel momento dell'osservazione.",
@@ -1529,7 +1529,7 @@
     },
     "12": {
       "openers": [
-        "Esercito di Northpoint, incarico ausiliario."
+        "Esercito di Northpoint, missione ausiliaria."
       ],
       "signoffs": [
         "Northpoint paga puntualmente."
@@ -1600,7 +1600,7 @@
     },
     "19": {
       "openers": [
-        "Consiglio Supremo degli Archivisti, incarico ratificato."
+        "Consiglio Supremo degli Archivisti, missione ratificata."
       ],
       "signoffs": [
         "Il Consiglio ha parlato e non si ripeterà."
@@ -1821,7 +1821,7 @@
     },
     "38": {
       "openers": [
-        "Divisione Fucilieri, incarico esterno ordinario."
+        "Divisione Fucilieri, missione esterna ordinaria."
       ],
       "signoffs": [
         "Stivali a terra, moneta in mano."
@@ -1962,7 +1962,7 @@
         "L'apparato siete voi. Vi preghiamo di comportarvi in modo riproducibile."
       ],
       "signoffs": [
-        "Risultati, non aneddoti."
+        "Solo risultati."
       ],
       "family": "clinical"
     }
@@ -2124,7 +2124,7 @@
       ],
       "openers": [
         "Messo a gara sul parterre della borsa del Seaboard e aperto a ogni latore qualificato.",
-        "Questo è uno strumento commerciale, non un favore. Leggilo come tale.",
+        "Questo è uno strumento commerciale. Leggilo come tale.",
         "La seduta ha aperto {alle nove|alla campana} e questo era in lista entro {le dieci|mezzogiorno}."
       ],
       "caveats": [
@@ -2161,12 +2161,12 @@
       "family": "clinical",
       "titlePrefix": [
         "FASCICOLO",
-        "INCARICO",
+        "MISSIONE",
         "REQUISIZIONE"
       ],
       "transform": "redacted",
       "openers": [
-        "Incarico emesso per autorità permanente della Fondazione. Non conservare copia.",
+        "Missione emessa per autorità permanente della Fondazione. Non conservare copia.",
         "Questo documento è la versione accurata più breve della richiesta.",
         "Incrociato con {tre|undici} incidenti precedenti. Procedere."
       ],
@@ -2209,7 +2209,7 @@
       ],
       "transform": "shout",
       "openers": [
-        "È stato deciso. Ti viene comunicato, non chiesto.",
+        "È stato deciso. Ti viene solo comunicato.",
         "Si vuole una piccola cosa, e la vuole qualcosa di molto grande.",
         "Questo era scritto prima che tu lo leggessi e sarà vero dopo."
       ],
@@ -2278,7 +2278,7 @@
       ],
       "caveats": [
         "Fa' il lavoro nel giorno indicato. Un giorno prima è inutile quanto un giorno dopo.",
-        "Il sangue non è richiesto. È soltanto tradizionale, e le tradizioni si possono derogare."
+        "Il sangue è soltanto tradizionale, e le tradizioni si possono derogare."
       ],
       "signoffs": [
         "Segnato nel lungo computo accanto al tuo nome, con favore.",
@@ -2298,7 +2298,7 @@
         "Diramato per immediata ed entusiastica esecuzione."
       ],
       "caveats": [
-        "L'incarico risulta già completato. Non mettere in imbarazzo il rapporto.",
+        "La missione risulta già completata. Non mettere in imbarazzo il rapporto.",
         "Le domande possono essere presentate per iscritto, e saranno archiviate."
       ],
       "signoffs": [
@@ -2315,7 +2315,7 @@
       ],
       "openers": [
         "Assegnato dal Direttorio alla {quarta|undicesima} seduta, senza discussione.",
-        "Una voce di un elenco molto lungo. L'elenco è affare del Direttorio, non tuo.",
+        "Una voce di un elenco molto lungo. L'elenco è affare del Direttorio.",
         "Archiviato, numerato e rilasciato alle bacheche nei tempi previsti."
       ],
       "caveats": [
@@ -2332,12 +2332,12 @@
       "titlePrefix": [
         "ORDINI",
         "CAVALCATA",
-        "INCARICO"
+        "MISSIONE"
       ],
       "openers": [
         "I cavalieri del Khan non possono essere ovunque. Oggi non sono qui.",
         "Mandato con i corrieri a cavallo e inchiodato dove i cavalli si fermano.",
-        "Un incarico dalla steppa, che non scrive annunci lunghi."
+        "Una missione dalla steppa, che non scrive annunci lunghi."
       ],
       "caveats": [
         "Cavalca, fallo, torna. A nessuno interessa la parte in mezzo.",
@@ -2362,7 +2362,7 @@
       ],
       "caveats": [
         "Dal latore si attende saggezza. Purtroppo non viene fornita.",
-        "Riporta la cosa stessa, non un resoconto di essa."
+        "Riporta la cosa stessa."
       ],
       "signoffs": [
         "Sigillato con l'anello. L'anello non è una metafora.",
@@ -2458,16 +2458,16 @@
       "titlePrefix": [
         "ORDINI",
         "OPERAZIONE",
-        "INCARICO"
+        "MISSIONE"
       ],
       "openers": [
         "Northpoint ha il terreno e non gli uomini. Questa è la differenza.",
         "Emesso dalla {stazione sul ghiaccio|linea nord}, dove gli annunci sono corti perché l'inchiostro gela.",
-        "Incarico operativo, rilasciato ad appaltatori civili secondo prassi."
+        "Missione operativa, rilasciata ad appaltatori civili secondo prassi."
       ],
       "caveats": [
         "Il freddo uccide più in fretta di qualunque cosa sull'elenco obiettivi. Vestiti per il primo problema.",
-        "Riferisci quel che hai visto, non quel che pensi significasse."
+        "Riferisci solo quel che hai visto."
       ],
       "signoffs": [
         "Pagato al rientro sulla linea. Sul campo non si paga nessuno.",
@@ -2481,7 +2481,7 @@
         "La classificazione della minaccia supera ogni livello di risposta disponibile. Autorizzato appaltatore esterno."
       ],
       "caveats": [
-        "La sopravvivenza non figura fra i risultati richiesti. È soltanto preferibile."
+        "La sopravvivenza è soltanto preferibile."
       ],
       "signoffs": [
         "Se riuscirete, il fascicolo sarà emendato. Altrimenti no."
@@ -2853,7 +2853,7 @@
     },
     "19": {
       "openers": [
-        "Consiglio Supremo degli Archivisti, incarico riservato. Il soggetto ha modificato tre dei nostri registri dall'esterno dell'edificio."
+        "Consiglio Supremo degli Archivisti, missione riservata. Il soggetto ha modificato tre dei nostri registri dall'esterno dell'edificio."
       ],
       "signoffs": [
         "Il Consiglio dissigillerà un fascicolo a vostra scelta. Ponderatelo con attenzione."
@@ -2869,7 +2869,7 @@
     },
     "21": {
       "openers": [
-        "Divisione Conservazione della Conoscenza: sta cancellando delle cose. Non bruciando. Cancellando."
+        "Divisione Conservazione della Conoscenza: sta cancellando delle cose, senza una sola fiamma."
       ],
       "signoffs": [
         "Preservateci da esso e noi preserveremo il vostro nome come si deve."
@@ -3104,7 +3104,7 @@
         "Comando Scientifico. L'esemplare ha smesso di essere un esemplare e ha iniziato a essere un problema."
       ],
       "signoffs": [
-        "Risultati, non aneddoti, e un finanziamento di ricerca osceno."
+        "Solo risultati, e un finanziamento di ricerca osceno."
       ]
     }
   },
@@ -3269,7 +3269,7 @@
         "Problema a forma di nota a piè di pagina, soluzione a forma di stivale."
       ],
       "caveats": [
-        "Registrate ciò che vedete, non ciò che vi aspettate di vedere.",
+        "Registrate solo ciò che vedete davvero.",
         "Non riordinate il sito. Il disordine è prova."
       ],
       "signoffs": [
@@ -3344,7 +3344,7 @@
       ],
       "signoffs": [
         "Soldi, poi arrivederci.",
-        "Non aspettatevi gratitudine. Aspettatevi il compenso."
+        "Aspettatevi il compenso, e nient'altro."
       ]
     },
     "Disciplined": {

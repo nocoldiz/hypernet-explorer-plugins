@@ -105,7 +105,7 @@
     "beats": [
       "Three weeks, one crew, and a route that ordinary bulletins {do not|don't} have the budget to reach.",
       "The border at {place} takes six hours to cross if {you are|you're} expected and two days if you are not.",
-      "Our correspondent films the queue because the queue is the story and the officials are not.",
+      "Our correspondent films the queue because the queue is the story.",
       "What people there want to talk about {is not|isn't} what the wire says they want to talk about.",
       "{news}",
       "A local reporter we {cannot|can't} name arranged all of this and {will not|won't} appear on camera.",
@@ -469,13 +469,13 @@
   },
   "first_spell": {
     "lead": [
-      "Wands down. You {will not|won't} need a wand. {You will|You'll} need to spell correctly."
+      "Wands down. {You will|You'll} need to spell correctly, and that is all."
     ],
     "tail": [
       "One word. Big letters inside. {Off you go|Away you go|Go on then}. Slowly."
     ],
     "beats": [
-      "Wands down. You {will not|won't} need a wand. {You will|You'll} need to spell correctly.",
+      "Wands down. {You will|You'll} need to spell correctly, and that is all.",
       "Your first spell is small and safe and it will still hurt you if you rush it.",
       "One word. Capitals inside. Say it in your head before you say it out loud.",
       "{We are|We're} doing this on dead ground. Dead ground is boring and {that is|that's} the point.",
@@ -525,7 +525,7 @@
       "Today's field trip is to a leyline near {place}. {We are|We're} going to LOOK at it. That's all!",
       "Never cast on a line to show off. That's how a whole town loses its magic!",
       "Broken ground is very quiet. You can feel it. {Some of you|A few of you|Some among you} already have.",
-      "Grown-up mages spend most of their time reading MAPS. Not fighting! Maps!",
+      "Grown-up mages spend most of their time reading MAPS. Lots and lots of maps!",
       "Homework: find the nearest line, mark it on paper, and do absolutely NOTHING ELSE!"
     ]
   },
@@ -816,7 +816,7 @@
       "Hymns for a quiet heaven, sung by nine people in a room with a good ceiling.",
       "No organ {tonight|this evening|at this hour}. The organ at {place} has been silent since the roof came down.",
       "This one was written for a congregation that {no longer exists|does not exist any more|is gone}, and {it is|it's} still sung weekly.",
-      "The voices {are not|aren't} trained. That {is not|isn't} an apology, it is a description.",
+      "The voices {are not|aren't} trained. That is simply a description.",
       "A setting from {year}, sung slowly, because it was written to be sung slowly.",
       "Between the hymns {there is|there's} silence and the silence is left in the broadcast.",
       "The last verse is unaccompanied and the recording keeps the breath before it.",
@@ -939,7 +939,7 @@
     "beats": [
       "A BOUNDARY IS FORECAST NEAR {place}! OUR WAREHOUSE IS ON THE WRONG SIDE OF IT!",
       "EVERYTHING MUST TRAVEL TONIGHT! {item} AT {price}! THAT IS A PANIC PRICE!",
-      "Tom: I want to be clear that we {are not|aren't} profiting from an advisory. We are RESPONDING to one.",
+      "Tom: I want to be clear that we are RESPONDING to an advisory.",
       "THE DRIVERS ARE LOADING WHILE I SPEAK! YOU CAN HEAR THEM! THAT IS NOT AN EFFECT!",
       "IF THE ADVISORY LIFTS, THE PRICE GOES BACK UP! THAT IS HOW ADVISORIES WORK!",
       "ORDER NOW AND IT SHIPS BEFORE THE CORDON! ORDER LATER AND IT SHIPS EVENTUALLY!",
@@ -963,7 +963,7 @@
       "The ruling houses of the day called it an accident. Their own grimories call it a purchase.",
       "{I am|I'm} obliged to note that the Archive's copy has been corrected twice, in two different hands.",
       "The people in this century {did not|didn't} know they were in it. Neither do you.",
-      "What survives is what {somebody|someone} thought worth carrying. {That is|That's} a bias, not a record."
+      "What survives is what {somebody|someone} thought worth carrying. {That is|That's} a bias."
     ]
   },
   "this_week_in_history": {
@@ -978,7 +978,7 @@
       "Also {this week|this past week|over the week}, in a year the Archive lists three times: {event} at {place}.",
       "A quieter anniversary: a treaty {nobody|no one} kept, signed by people nobody misses.",
       "Vance's favourite entry {this week|this past week|over the week} is a receipt. It settles an argument two centuries old.",
-      "This week is unusually crowded. Historians suspect the calendar, not the century.",
+      "This week is unusually crowded. Historians suspect the calendar.",
       "We mark it because marking {it is|it's} the whole job. Nothing else keeps a date alive.",
       "The anniversary falls {inside a bubble|inside a loop bubble|inside one of the bubbles} this year, so the commemoration will be late and sincere.",
       "One correction from last week's {programme|show|broadcast}, which we make gladly and at length."
@@ -999,7 +999,7 @@
       "Vane's position, and {it is|it's} only a position: something was built, and something else arrived.",
       "The oldest structure we can date near {place} is aligned to a horizon that {no longer exists|does not exist any more|is gone}.",
       "{hist}",
-      "What we lost {was not|wasn't} the buildings. It was the assumption that the sky stayed where it was."
+      "What we lost was the assumption that the sky stayed where it was."
     ]
   },
   "ninety_two": {
@@ -1090,7 +1090,7 @@
       "{hist}",
       "If the spade and the grimorie disagree, one of them was written by {somebody|someone} with an interest.",
       "Colm's finds this season are unfashionable, which historically means {they are|they're} correct.",
-      "Vane would like it noted that stratigraphy {is not|isn't} an argument, merely {a very|an extremely|a genuinely} heavy hint."
+      "Vane would like it noted that stratigraphy is merely {a very|an extremely|a genuinely} heavy hint."
     ]
   },
   "footnotes": {
@@ -1180,7 +1180,7 @@
       "{hist}",
       "The haulers in this reconstruction are real haulers. They asked to keep their own trucks.",
       "{There is|There's} a stretch near {place} that {has never once been|has not once been|has never yet been} mapped the same way twice.",
-      "The people who kept it open {were not|weren't} heroes. They were paid, badly, and they kept it open."
+      "The people who kept it open were paid, badly, and they kept it open anyway."
     ]
   },
   "archive_reading": {
@@ -1336,7 +1336,7 @@
     ],
     "beats": [
       "The observatory at {place} has published, and the publication is causing arguments.",
-      "Renner: this is a measurement, not a meaning. The meaning takes another decade.",
+      "Renner: this is only a measurement. The meaning takes another decade.",
       "Three teams ran the same experiment. Two got the same answer. {That is|That's} a good week.",
       "The instrument was built before {year} and {nobody|no one} alive fully understands the calibration.",
       "What we can say: the readings have drifted, slowly, in one direction, for a long time.",
@@ -1376,7 +1376,7 @@
       "{Do not|Don't} cast in the affected district. Not for light, not for heat, not for anything.",
       "Keep to under eighty. If {you are|you're} already inside, you know the other rule.",
       "Water is being brought to three points, and the points are listed after this advisory.",
-      "If your neighbour is elderly or alone, knock. {That is|That's} an instruction, not a suggestion.",
+      "If your neighbour is elderly or alone, knock. {That is|That's} an instruction.",
       "We have no casualty figures and {will not|won't} speculate about casualty figures.",
       "The advisory covers {tonight|this evening|at this hour}. It will be reviewed at {hour} and {probably|most likely|in all likelihood} extended."
     ]
@@ -1444,7 +1444,7 @@
     ],
     "beats": [
       "The main route out of {place} is open and slow, which is the best sentence in this bulletin.",
-      "Halloran: I drove this for twenty-two years. {I am|I'm} not reading a map to you, I am reading a memory.",
+      "Halloran: I drove this for twenty-two years. {I am|I'm} reading you a memory.",
       "Diversion in force at the junction. The diversion adds an hour and avoids a boundary. Take it.",
       "Depot queues are long at {place} and the canteen there is, as ever, better than it needs to be.",
       "Under eighty on the open stretches. I say it every night because every night {somebody|someone} doesn't.",
@@ -1591,7 +1591,7 @@
       "This is a tone. {It has been|It's been} this tone since the transmitter was commissioned.",
       "The tone drops by one step every {n} hours and {nobody|no one} has authorised that.",
       "Engineering at {place} monitors the carrier and files a report {nobody|no one} reads.",
-      "If {you are|you're} hearing words, they {are not|aren't} in the signal. They are in the room.",
+      "If {you are|you're} hearing words, the room is supplying them.",
       "The carrier is what is left when a station has nothing to say and says it anyway.",
       "{We are|We're} told the wave is unmodulated. The oscilloscope has opinions.",
       "Somewhere a set is switched on with {nobody|no one} in front of it. That set is the audience.",
@@ -1631,7 +1631,7 @@
       "Three of my previous claims have since been confirmed. {Nobody|No one} has apologised.",
       "Ask yourself who benefits, then ask yourself who owns the road to where they benefit.",
       "I have a caller who worked in that building and will only speak with the pitch shifted.",
-      "{I am|I'm} not telling you what to think. I am telling you what I {could not|couldn't} stop noticing."
+      "{I am|I'm} only telling you what I {could not|couldn't} stop noticing."
     ]
   },
   "flatmates": {
@@ -1647,7 +1647,7 @@
       "The landlady, Hilda, arrives to discuss the rent and the scorch marks, in that order.",
       "Fennwick has invented a spell for washing up. It takes longer than washing up.",
       "Marlo's parents are visiting from {place} and {do not|don't} know about the leyline.",
-      "The upstairs neighbour complains about the humming. The humming is the flat, not the mages.",
+      "The upstairs neighbour complains about the humming. The humming is the flat itself.",
       "Hilda: I have let this flat eleven times. I have let it to two of you twice.",
       "They resolve it, badly, over tea, which is how {it is|it's} resolved every week."
     ]
@@ -1916,7 +1916,7 @@
       "Tolliver: the temperature down here {has not|hasn't} changed since {year} and I {have never|have not once|have at no point} had to make it so.",
       "{There is|There's} a barrel at the back that came from {place} and predates the licence.",
       "You can tell a landlord's whole character by how the lines are cleaned.",
-      "A cellar remembers. Not magically. Practically. The smell is thirty years of decisions.",
+      "A cellar remembers, in a practical way. The smell is thirty years of decisions.",
       "We found a grimorie behind the crates listing debts settled in {year}, mostly in favours.",
       "Something taps in the wall on the hour. Tolliver has stopped investigating and started nodding at it.",
       "Last one down bolts the hatch. That rule is older than the tavern and {nobody|no one} questions it."
@@ -1973,7 +1973,7 @@
       "{news}",
       "Blackwood: I have interviewed forty people about this and thirty-eight mention the cold.",
       "We disagree about it on air, at length, {which is why|which is the reason|and that is why} the {programme|show|broadcast} still exists.",
-      "The daytime desk {would not|wouldn't} run this item. That {is not|isn't} a criticism. It is a schedule."
+      "The daytime desk {would not|wouldn't} run this item. Purely a matter of schedule."
     ]
   },
   "long_haul_lines": {
@@ -2023,7 +2023,7 @@
       "The route out of {place} bends for no geographical reason. {There is|There's} no hill. I have walked it.",
       "Roadworks that last nine years {are not|aren't} roadworks.",
       "I have the survey. I have the second survey. The second survey has fewer pages.",
-      "Vell: {I am|I'm} not saying {there is|there's} a facility. I am saying there is a gap in the paperwork shaped like one.",
+      "Vell: there is a gap in the paperwork shaped like a facility. That is all {I am|I'm} saying.",
       "Three haulage firms {will not|won't} take that stretch at night and none will say so on record.",
       "{news}",
       "{Somebody|Someone} resurfaced eleven kilometres of nothing, at expense, in a year with no budget for it.",
@@ -2169,7 +2169,7 @@
       "Chapter four is the difficult one and we {are not|aren't} going to skip it because it {is difficult|is hard|is no easy thing}.",
       "Finch: she wrote this in a kitchen at {place}, which is where most scripture is actually written.",
       "{There is|There's} a passage here about waiting that has kept more people alive than any miracle in the book.",
-      "The Church added the headings. The headings are the Church's opinion, not Margaret's.",
+      "The Church added the headings. The headings are the Church's opinion.",
       "She says plainly that she {does not|doesn't} know. Three later editions removed that sentence.",
       "{hist}",
       "Read it slowly. It was written by {somebody|someone} who had time and very little else."
@@ -2423,7 +2423,7 @@
       "One of these was in a district at {place} that {has not|hasn't} been the same shape since!",
       "IS IT SAFE? IT IS SAFER SOLD! THAT IS A FORM OF SAFE!",
       "The insurers have {withdrawn|lifted|stood down}. {That is|That's} why {you are|you're} getting this price!",
-      "Buy two and keep them in different rooms. {That is|That's} manufacturer guidance, not a joke.",
+      "Buy two and keep them in different rooms. {That is|That's} manufacturer guidance.",
       "WHEN THEY ARE GONE THEY ARE GONE! SOME OF THEM HAVE ALREADY GONE!"
     ]
   },
@@ -2519,7 +2519,7 @@
   },
   "customer_lines": {
     "lead": [
-      "Customer lines are open forever. That {is not|isn't} a slogan. {Nobody|No one} can find the switch."
+      "Customer lines are open forever. Literally. {Nobody|No one} can find the switch."
     ],
     "tail": [
       "The lines remain open. Verity remains at the desk. The desk remains, {regrettably|sadly|unfortunately}, staffed."
@@ -2802,7 +2802,7 @@
       "Anthony Ritchie produces this. Ritchie produces everything. Ritchie may BE the network.",
       "A weather forecaster at {place} is defeated, live, by a map that {will not|won't} stay on the wall.",
       "GUBBIBO IS IN THIS ONE! Gubbibo has knocked over a set! The set was expensive!",
-      "Compilation of people walking into glass doors! It {is not|isn't} clever! It is UNDEFEATED!",
+      "Compilation of people walking into glass doors! It is UNDEFEATED!",
       "A cooking {programme|show|broadcast} catches fire, mildly, and the chef finishes the recipe anyway. RESPECT.",
       "Our slow motion department has slowed this down four times. It gets funnier and then sad.",
       "Ritchie: the outtake is the truth. The {programme|show|broadcast} is what they wanted. The outtake is what happened."

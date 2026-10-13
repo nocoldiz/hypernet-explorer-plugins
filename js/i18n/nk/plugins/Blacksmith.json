@@ -5,12 +5,12 @@
   "trades": "TRADES",
   "methods": "PRODUCTION METHODS",
   "tooComplex": "TOO COMPLEX",
-  "tooComplexShort": "BEYOND DEZE HANDS",
+  "tooComplexShort": "TOO HARD",
   "materials": "MATERIALS",
   "forge": "FORGE",
   "forged": "FORGED!",
   "noMaterials": "NO ENOUGH MATERIALS",
-  "noRecipes": "NOTHIN' HERE...",
+  "noRecipes": "NUTTIN' HERE...",
   "back": "GO BACK",
   "close": "SHUT IT",
   "needs": "{trade}, {level}",
@@ -26,16 +26,19 @@
   "yes": "YAH!",
   "searchPlaceholder": "SEARCH PIECES…",
   "forgedTab": "FORGED",
-  "alreadyForged": "ALREADY OFF DA ANVIL",
+  "alreadyForged": "ALREADY FORGED",
   "finish": "FINISH",
   "finishStrange": "STRANGE",
-  "finishAuto": "AS IT FALLS",
+  "finishAuto": "RANDOM",
   "smeltNone": "NONE TA SMELT",
-  "smelted": "BACK INTO DA CRUCIBLE",
-  "madeBy": "BEATEN OUT BY {smith}",
+  "smelted": "SMELTED",
+  "madeBy": "MADE BY {smith}",
   "forgedName": "{smith}'S {name}",
   "forgedNameNumbered": "{smith}'S {name} {mark}",
-  "forgedDesc": "FORGED BY {smith}. {quality} WORK, AN' ONE OF A KIND!",
+  "forgedDesc": "FORGED BY {smith}. {quality} WORK, UNIQUE!",
+  "forgedNameTier": "{smith}'S {name} ({quality})",
+  "forgedNameNumberedTier": "{smith}'S {name} {mark} ({quality})",
+  "forgedDescTier": "FORGED BY {smith}. {quality} WORK.",
   "nameHeader": "NAME",
   "namePlaceholder": "NAME DIS PIECE…",
   "nameReroll": "ROLL ANOTHER NAME",
@@ -242,31 +245,31 @@
   "readyCount": "{n} READY",
   "tradeHint": "{known} OF {total} FORMULAS KNOWN",
   "pieceCount": "{n} PIECES",
-  "pickHint": "PICK A PIECE TA SEE WHAT IT TAKES TA MAKE!",
+  "pickHint": "PICK A PIECE TA SEE ITS RECIPE!",
   "smelt": "SMELT",
   "qtyMax": "MAX",
   "batchCount": "X{n}",
   "autoSmith": "AUTO",
-  "autoSmithHint": "EACH PIECE IZ CRAFTED BY DA PARTY MEMBER BEST AT IT",
-  "modelEdit": "EDIT MODEL",
-  "modelEditFitted": "EDIT MODEL ({n} FITTED)",
+  "autoSmithHint": "DA BEST MEMBER CRAFTS EACH PIECE",
+  "modelEdit": "EDIT MODEL (WIP)",
+  "modelEditFitted": "EDIT MODEL ({n} FITTED) (WIP)",
   "sculpt": {
-    "title": "MODEL EDITOR",
-    "hint": "DRAG DA BACKGROUND TA TURN DA PIECE. PICK A FITTED PART TA MOVE, TURN OR SIZE IT!",
+    "title": "MODEL EDITOR (WIP)",
+    "hint": "DRAG DA BACKGROUND TA ROTATE. CLICK A FITTED PART TA SELECT IT, DEN DRAG TA MOVE, TURN OR SIZE IT!",
     "thePiece": "DA PIECE",
     "fitted": "FITTED PARTS",
-    "noneFitted": "NOTHIN' FITTED YET",
+    "noneFitted": "NUTTIN' FITTED YET",
     "kept": "KEPT",
     "removed": "TAKEN OFF",
     "remove": "TAKE DIS PART OFF",
-    "pickHint": "PICK A FITTED PART, OR TAKE ONE FROM ANOTHER WEAPON SHOWN ALONGSIDE!",
+    "pickHint": "PICK A PART FROM DA SHELF TA FIT IT!",
     "search": "SEARCH WEAPONS",
     "noDonors": "NO WEAPON MATCHES",
     "undo": "UNDO",
     "redo": "REDO",
     "revert": "REVERT",
     "done": "DONE",
-    "tooMany": "A PIECE CARRIES AT MOST {n} FITTED PARTS",
+    "tooMany": "MAX {n} PARTS PER PIECE",
     "partName": "{name} ({band})",
     "band": {
       "head": "HEAD",
@@ -285,13 +288,42 @@
     "turn": "TURN",
     "tilt": "TILT",
     "roll": "ROLL",
-    "size": "SIZE"
+    "size": "SIZE",
+    "selectHint": "PICK A FITTED PART TA MOVE, TURN OR SIZE IT!",
+    "parts": "PARTS FROM OTHER WEAPONS",
+    "finish": "FINISH",
+    "resetPart": "RESET PART",
+    "discard": "DISCARD CHANGES",
+    "stackNote": "APPLIES TA DA WHOLE STACK",
+    "noStage": "NO 3D VIEW HERE. CHANGES STILL APPLY!",
+    "noModel": "NO 3D MODEL FOR DIS PIECE. CHANGES STILL APPLY!",
+    "showMore": "SHOW MORE ({n})",
+    "less": "LESS {what}",
+    "more": "MORE {what}",
+    "minus": "-",
+    "plus": "+",
+    "degrees": "{n}°",
+    "view": {
+      "left": "TURN LEFT",
+      "right": "TURN RIGHT",
+      "up": "TILT UP",
+      "down": "TILT DOWN",
+      "in": "CLOSER",
+      "out": "FARTHER",
+      "reset": "RESET VIEW"
+    },
+    "armourBand": {
+      "head": "TOP",
+      "shaft": "MIDDLE",
+      "grip": "BOTTOM",
+      "whole": "WHOLE PIECE"
+    }
   },
   "backToBoard": "BACK TA DA BOARD",
-  "appearanceHeader": "HOW IT COMES OUT",
-  "detailsHeader": "WHAT IT IZ",
+  "appearanceHeader": "LOOK",
+  "detailsHeader": "DETAILS",
   "carrying": "CARRYIN' {n}",
-  "fixedPattern": "MADE TA ONE PATTERN: DIS FRAME IZ NO A SMITH’S TA RE-CUT!",
+  "fixedPattern": "DIS PIECE NO CAN BE RESHAPED!",
   "nameEdit": "WRITE DA NAME",
   "tips": {
     "pick": "PICK",
@@ -305,7 +337,8 @@
     "sculpt": "MOVE PART",
     "mode": "HANDLE",
     "fitting": "FITTIN'",
-    "done": "DONE"
+    "done": "DONE",
+    "cursor": "MOVE CURSOR"
   },
   "npcUnique": {
     "name": "{{owner}'S {adjective} {base}|DA {adjective} {base} OF {owner}}",
@@ -346,8 +379,8 @@
         "SUNDAY-BEST"
       ]
     },
-    "madeFor": "CUSTOMISED BY {maker} FOR {owner}.",
-    "madeOwn": "CUSTOMISED BY {owner} FOR DEY OWN HAND!",
+    "madeFor": "MADE BY {maker} FOR {owner}.",
+    "madeOwn": "MADE BY {owner} FOR THEMSELVES.",
     "history": "SINCE DEN: {chain}.",
     "how": {
       "crafted": "MADE BY {holder}",
@@ -357,17 +390,17 @@
       "seized": "TAKEN BY {holder}",
       "returned": "GIVEN BACK TA {holder}",
       "acquired": "PASSED TA {holder}",
-      "recruited": "BROUGHT INTO DA PARTY BY {holder}",
+      "recruited": "RECRUITED BY {holder}",
       "sold": "SOLD TA {holder}",
-      "soldAt": "SOLD OVER A COUNTER IN {holder}"
+      "soldAt": "SOLD AT A SHOP IN {holder}"
     },
-    "tip": "ONE OF A KIND. CUSTOMISED BY {maker} FOR {owner}!",
-    "tipHeld": "ONE OF A KIND. CUSTOMISED BY {maker} FOR {owner}, NOW CARRIED BY {holder}!"
+    "tip": "UNIQUE. MADE BY {maker} FOR {owner}.",
+    "tipHeld": "UNIQUE. MADE BY {maker} FOR {owner}. NOW OWNED BY {holder}!"
   },
   "help": {
     "board": {
       "title": "DA WORKSHOP",
-      "intro": "PICK A TRADE ON DA LEFT, DEN A PIECE ON DA RIGHT TA SEE WHAT IT TAKES TA MAKE!",
+      "intro": "PICK A TRADE ON DA LEFT, DEN A PIECE ON DA RIGHT!",
       "items": {
         "back": {
           "name": "GO BACK",
@@ -375,11 +408,11 @@
         },
         "trades": {
           "name": "PRODUCTION METHODS",
-          "text": "DA TRADES DA PARTY WORKS IN, WIT HOW MANY OF EACH TRADE'S FORMULAS IZ KNOWN. PICKIN' ONE NARROWS DA PIECES ON DA RIGHT PAGE TA DAT TRADE!"
+          "text": "DA PARTY'S TRADES AN' HOW MANY FORMULAS EACH HAB KNOWN. PICK ONE TA FILTER DA LIST!"
         },
         "member": {
           "name": "COMPANION TABS",
-          "text": "WHOSE HANDS IZ AT DA BENCH. AUTO HANDS EVERY PIECE TA DA MEMBER BEST AT MAKIN' IT; A NAME MAKES DAT MEMBER CRAFT EVERYTHIN'!"
+          "text": "WHO CRAFTS. AUTO PICKS DA BEST MEMBER FOR EACH PIECE; A NAME MAKES DAT MEMBER CRAFT EVERYTINK!"
         },
         "search": {
           "name": "SEARCH",
@@ -387,15 +420,15 @@
         },
         "status": {
           "name": "STATE TABS",
-          "text": "SORT DA PIECES BY WHAT CAN BE DONE WIT DEM: READY TA MAKE, MISSIN' MATERIALS, BEYOND DA SMITH'S TRAININ', ALREADY CARRIED OR ALREADY FORGED!"
+          "text": "FILTER PIECES BY STATE: READY, MISSIN' MATERIALS, UNTRAINED, CARRIED OR FORGED!"
         },
         "context": {
           "name": "SUMMARY LINE",
-          "text": "DA TRADE AN' STATE BEING SHOWN AN' HOW MANY PIECES MATCH DEM!"
+          "text": "CURRENT TRADE, STATE AN' NUMBER OF MATCHES!"
         },
         "list": {
           "name": "PIECES",
-          "text": "EVERYTHIN' DAT MATCHES. OPEN A PIECE TA SEE ITS MATERIALS, ITS LOOK AN' ITS STATS, AN' TA MAKE IT!"
+          "text": "MATCHIN' PIECES. OPEN ONE TA SEE MATERIALS, LOOK AN' STATS, AN' TA CRAFT IT!"
         },
         "help": {
           "name": "? HELP",
@@ -411,24 +444,24 @@
           "text": "RETURNS TA DA LIST OF PIECES!"
         },
         "look": {
-          "name": "HOW IT COMES OUT",
-          "text": "A PREVIEW OF DA FINISHED PIECE. EDIT MODEL OPENS DA MODEL EDITOR, WHERE FITTED PARTS CAN BE MOVED, TURNED AN' SIZED!"
+          "name": "LOOK",
+          "text": "PREVIEW OF DA FINISHED PIECE. EDIT MODEL OPENS DA EDITOR TA MOVE, TURN AN' SIZE FITTED PARTS!"
         },
         "details": {
-          "name": "WHAT IT IZ",
-          "text": "TYPE, SLOT, RARITY, VALUE, WEIGHT AN' BONUSES OF DA PIECE, AN' DA MATERIALS IT TAKES AGAINST WHAT DA PARTY CARRIES!"
+          "name": "DETAILS",
+          "text": "TYPE, SLOT, RARITY, VALUE, WEIGHT, BONUSES AN' REQUIRED MATERIALS!"
         },
         "name": {
           "name": "NAME",
-          "text": "WHAT DA PIECE WILL BE CALLED. TYPE YA OWN NAME OR ROLL A NEW ONE!"
+          "text": "DA PIECE'S NAME. TYPE ONE OR ROLL A NEW ONE!"
         },
         "batch": {
           "name": "QUANTITY",
-          "text": "HOW MANY TA MAKE IN ONE GO, CAPPED BY DA MATERIALS IN HAND!"
+          "text": "HOW MANY TA MAKE AT ONCE, LIMITED BY MATERIALS!"
         },
         "forge": {
           "name": "FORGE AN' SMELT",
-          "text": "FORGE MAKES DA PIECE AN' SPENDS DA MATERIALS. SMELT BREAKS A CARRIED COPY BACK DOWN!"
+          "text": "FORGE CRAFTS DA PIECE AN' USES DA MATERIALS. SMELT BREAKS DOWN A CARRIED COPY!"
         },
         "help": {
           "name": "? HELP",
@@ -440,9 +473,19 @@
   "finishMine": "YA PICTURES",
   "finishMineTitle": "ONE OF YA PICTURES AS DA FINISH",
   "salvageAll": "DISASSEMBLE ALL ({n})",
-  "salvageAllTitle": "DISASSEMBLE EVERYTHIN'",
+  "salvageAllTitle": "DISASSEMBLE EVERYTINK",
   "salvageAllBody": "TAKE APART ALL {n} UNEQUIPPED PIECES ON DIS SHELF?",
   "salvageAllConfirm": "DISASSEMBLE",
   "salvageWorker": "{name}: {n}",
-  "salvageMore": "...AN' {n} MORE"
+  "salvageMore": "...AN' {n} MORE",
+  "dice": {
+    "forging": "ANVIL FORGIN'"
+  },
+  "tagsHeader": "SPECIAL PROPERTIES",
+  "tagsAdd": "+ ADD PROPERTY",
+  "tagsPick": "ADD A SPECIAL PROPERTY",
+  "tagsNone": "NONE: A PLAIN PIECE.",
+  "tagsNeed": "WIT ITS PROPERTIES",
+  "tagHint": "+{units} MATERIALS, NEEDS {level}",
+  "tagsDesc": "FORGED WIT {tags}."
 }

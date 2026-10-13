@@ -138,12 +138,12 @@
       [
         "We have not talked properly in weeks.",
         "We are talking now.",
-        "This is not talking. This is walking with noise."
+        "This is walking with noise."
       ],
       [
         "What would you be doing right now, if none of this had happened?",
         "Something with fewer hills in it.",
-        "That is not an answer. That is a complaint with a hat on."
+        "That is a complaint with a hat on."
       ],
       [
         "You have not asked me a single question about myself in a month.",
@@ -577,7 +577,7 @@
       ],
       [
         "Nothing has happened for two days and I am uneasy about it.",
-        "Enjoy it. Being uneasy about peace is a habit, not a warning."
+        "Enjoy it. Being uneasy about peace is only a habit."
       ],
       [
         "What do you think about when there is nothing to think about?",
@@ -698,7 +698,7 @@
       ],
       [
         "Some of the dimensions are already gone, they say.",
-        "Not gone. Emptied. The people came here. That is why the roads are busy."
+        "Emptied. The people came here. That is why the roads are busy."
       ],
       [
         "Where do you think the goblins actually came from?",
@@ -838,7 +838,7 @@
       [
         "Nobody out here says thank you enough.",
         "Thank you.",
-        "Not to me. Generally.",
+        "I meant generally.",
         "Generally, thank you."
       ],
       [
@@ -938,7 +938,7 @@
       ],
       [
         "Keep talking. It makes the hill shorter.",
-        "It does not make the hill shorter. It makes it possible, which is better."
+        "It makes it possible, which is better."
       ],
       [
         "I have run out of things to say.",
@@ -1034,7 +1034,7 @@
       ],
       [
         "Tell me the plan out loud so I can hear how bad it is.",
-        "There is no plan. There is a direction and some food."
+        "There is a direction and some food. That is the plan."
       ],
       [
         "That is the second time you have said that today.",
@@ -1055,7 +1055,7 @@
       ],
       [
         "You fold the map the wrong way every single morning.",
-        "There is no right way. There is only your way, and you have made it a religion.",
+        "There is only your way, and you have made it a religion.",
         "It is a religion with fewer tears in it."
       ],
       [
@@ -1064,7 +1064,7 @@
       ],
       [
         "I can pitch the tent in the dark now without swearing.",
-        "Not without swearing. Only more quietly."
+        "You still swear. Only more quietly."
       ],
       [
         "Your turn to fetch water.",
@@ -1092,7 +1092,7 @@
       ],
       [
         "I know your snoring well enough to tell when you are pretending.",
-        "I never pretend. I snore with complete sincerity."
+        "I snore with complete sincerity, always."
       ],
       [
         "{other}, you put the salt in the left pocket again.",
@@ -1135,7 +1135,7 @@
       ],
       [
         "I miss school bells. Is that not strange?",
-        "Not strange. Somebody told you when things ended. Nobody does that out here."
+        "It makes sense. Somebody told you when things ended. Nobody does that out here."
       ],
       [
         "Once I ran away from home for a whole afternoon.",
@@ -1210,12 +1210,12 @@
       [
         "You put sugar in tomato sauce.",
         "A pinch. To calm the tomatoes.",
-        "That is not a recipe. That is a bribe."
+        "That is a bribe."
       ],
       [
         "Name one food you could eat every day forever.",
         "Oranges. Peeled in one go, the skin in one long curl.",
-        "That is not a food. That is a performance.",
+        "That is a performance.",
         "It is both, and I am very good at it."
       ],
       [
@@ -1541,7 +1541,7 @@
       ],
       [
         "You tie your bootlaces in a double knot and then a third for luck.",
-        "The third one is not for luck. It is for the hill outside the last town."
+        "The third one is for the hill outside the last town."
       ],
       [
         "The heater only works if somebody kicks it.",
@@ -1559,7 +1559,7 @@
       ],
       [
         "The camper makes a new noise. Left side, behind the sink.",
-        "That is not new. That is the old noise, louder.",
+        "That is the old noise, louder.",
         "Is that better or worse?",
         "It means it trusts us enough to complain."
       ],
@@ -1649,7 +1649,7 @@
       ],
       [
         "The train was forty minutes late and they apologised for the inconvenience.",
-        "Forty minutes is not an inconvenience. It is a short holiday on a bench."
+        "Forty minutes is a short holiday on a bench."
       ],
       [
         "Did you see the evening news?",
@@ -1700,7 +1700,7 @@
       [
         "What game did you play most, as a child?",
         "Hide and seek. I had a gift. Once nobody found me until supper.",
-        "That is not winning. That is being forgotten."
+        "That is being forgotten."
       ],
       [
         "I was terrible at mathematics at school.",
@@ -1833,7 +1833,7 @@
       [
         "Do you want children, one day?",
         "I want to be the relative who turns up with presents and leaves before bedtime.",
-        "That is not having children. That is having an audience."
+        "That is having an audience."
       ],
       [
         "When we are old, will we still talk like this?",
@@ -1965,7 +1965,7 @@
       [
         "There was a horse on my uncle's farm that only liked me.",
         "Lucky.",
-        "Not luck. I was the one carrying the apples."
+        "Hardly. I was the one carrying the apples."
       ],
       [
         "That cat at the campsite followed you for a kilometre.",
@@ -2146,7 +2146,7 @@
         "There is, and it is the only good news of the day."
       ],
       [
-        "I am not being brave, I am being slow.",
+        "I am only being slow.",
         "That is allowed. Slow gets there."
       ],
       [
@@ -2208,7 +2208,7 @@
         "Then find us a town and the talking will start again by itself."
       ],
       [
-        "This is how parties disappear. Not battles. This.",
+        "This is how parties really disappear.",
         "I know. Find us somewhere. I am not too proud to ask."
       ],
       [
@@ -2237,7 +2237,7 @@
       ],
       [
         "I have started dreaming about food while awake.",
-        "That is not dreaming. That is planning, and it is a good sign."
+        "That is planning, and it is a good sign."
       ],
       [
         "Who is holding this party together?",
@@ -2479,7 +2479,7 @@
           "Something did. We stepped over it."
         ],
         [
-          "I want water. Not to drink. To stand in.",
+          "I want water to stand in.",
           "The next river we cross, we stop. I promise."
         ],
         [
@@ -2990,7 +2990,7 @@
       "ice": [
         [
           "I cannot feel the ends of my fingers.",
-          "Then keep them moving. Numb is the warning, not the injury."
+          "Then keep them moving. Numb is the warning sign."
         ],
         [
           "Snow covers everything. Tracks, holes, whatever is under the crust.",
@@ -3108,7 +3108,7 @@
         ],
         [
           "There is snow on that face in high summer.",
-          "That is not snow. That is what is left of a glacier, and it is embarrassed."
+          "That is what is left of a glacier, and it is embarrassed."
         ],
         [
           "My ears will not clear.",
@@ -3263,7 +3263,7 @@
           "Then it is more frightened than you are. Walk on."
         ],
         [
-          "This ground is not ground. It is a suggestion.",
+          "This ground is only a suggestion.",
           "Then follow the reeds. Reeds grow where there is a bottom."
         ],
         [
@@ -3382,7 +3382,7 @@
         ],
         [
           "Listen. Water, a long way down.",
-          "That is not down. That is behind the wall. Move away from the wall."
+          "That is behind the wall. Move away from the wall."
         ],
         [
           "This is somebody's grave. All of it, the whole system.",
@@ -3444,7 +3444,7 @@
           "Leave it there. It is the only thing left of somebody."
         ],
         [
-          "Nothing has burned here. It was left, not destroyed.",
+          "Nothing has burned here. It was simply left.",
           "That is worse. Burning is quick."
         ],
         [
@@ -3489,7 +3489,7 @@
         ],
         [
           "It is very quiet for a village.",
-          "It is not a village any more. That is the quiet you are hearing."
+          "It stopped being a village. That is the quiet you are hearing."
         ],
         [
           "The doorways are all standing and nothing else is.",
@@ -3668,7 +3668,7 @@
         ],
         [
           "There are fresh chippings and no roller marks.",
-          "Then it was done by hand. That is a village, not a government."
+          "Then it was done by hand. That is a village at work."
         ]
       ],
       "industrial": [
@@ -3979,7 +3979,7 @@
         ],
         [
           "{ev_gold} for that. After all of it.",
-          "It is not what it was worth. It is what it paid."
+          "That is what it paid. What it was worth is another matter."
         ],
         [
           "I did not think we were coming out of that one.",
@@ -4061,7 +4061,7 @@
         ],
         [
           "It spoke, at the end.",
-          "It did not speak. It made a sound in a language and we are not going to discuss which."
+          "That was a sound, in a language we are not going to discuss."
         ],
         [
           "Should we have killed it?",
@@ -4152,7 +4152,7 @@
         ],
         [
           "Do we tell anyone?",
-          "We tell nobody, and not because of pride. Because of who listens."
+          "We tell nobody, because of who listens."
         ]
       ],
       "battle_fled": [
@@ -4186,7 +4186,7 @@
         ],
         [
           "I do not like the way I ran.",
-          "There is no good way. There is only far enough."
+          "There is only far enough."
         ],
         [
           "Is it following?",
@@ -4239,7 +4239,7 @@
           "I saw what he was paying out. We were the cheap option."
         ],
         [
-          "It is not fighting. It is a performance with consequences.",
+          "It is a performance with consequences.",
           "The consequences are what makes it a performance worth watching. Ask the crowd."
         ],
         [
@@ -4407,7 +4407,7 @@
         ],
         [
           "Are we going to keep going?",
-          "Yes. That is not courage. There is nowhere else to be."
+          "Yes. There is nowhere else to be."
         ],
         [
           "Somebody should say something proper.",
@@ -4463,7 +4463,7 @@
         ],
         [
           "{ev_name} is not the person we picked up.",
-          "Nobody is. That is the road, not the levels."
+          "Nobody is. That is the road's doing."
         ],
         [
           "Did you see what they did at the end of it?",
@@ -4701,7 +4701,7 @@
         ],
         [
           "{ev_hours} hours and I dreamed about walking.",
-          "That is not sleep. That is unpaid overtime."
+          "That is unpaid overtime."
         ],
         [
           "Everybody looks better. Genuinely.",
@@ -4798,7 +4798,7 @@
         ],
         [
           "It is quieter down here than up there.",
-          "That is not quiet. That is something further off than we can hear."
+          "That quiet is something further off than we can hear."
         ],
         [
           "I want to go up. I am saying it now, calmly.",
@@ -4917,7 +4917,7 @@
         ],
         [
           "Can you feel through it?",
-          "Not feel. Something else. There is no word yet and I have tried to find one."
+          "Something else. There is no word yet and I have tried to find one."
         ],
         [
           "Whoever made that was good at their work.",
@@ -4947,7 +4947,7 @@
       "crime_committed": [
         [
           "That was {ev_bounty} on our heads for nothing.",
-          "Not for nothing. For {ev_crime}. Say it properly."
+          "For {ev_crime}. Say it properly."
         ],
         [
           "Are we the sort who do that now?",
@@ -5001,7 +5001,7 @@
         ],
         [
           "{ev_quest}. In writing?",
-          "There is no writing. There is a handshake and a name I did not catch."
+          "There is a handshake and a name I did not catch."
         ],
         [
           "Did anybody ask what happened to the last party they sent?",
@@ -5031,7 +5031,7 @@
       "quest_completed": [
         [
           "{ev_quest}. Done, finished, off the list.",
-          "Do not say finished. Say finished for now."
+          "Say finished for now."
         ],
         [
           "That is one thing that went the way it was meant to.",
@@ -5922,7 +5922,7 @@
         [
           "Whatever is waiting up there, I am walking back out with you.",
           "Do not promise that.",
-          "I am not promising. I am telling you what I intend."
+          "I am only telling you what I intend."
         ],
         [
           "You carried me the last mile, did you not.",
@@ -6837,7 +6837,7 @@
       ],
       [
         "I will do the washing up if somebody else does the water.",
-        "That is not a division of labour. That is the whole of it in two halves."
+        "That is the whole of it in two halves."
       ],
       [
         "I can hear the engine cooling.",
@@ -6880,7 +6880,7 @@
         ],
         [
           "If the {illness} takes me out here, bury me somewhere with a view.",
-          "You are not dying. You are being dramatic in a blanket.",
+          "You are being dramatic in a blanket.",
           "Both can be true."
         ],
         [
@@ -6943,7 +6943,7 @@
         ],
         [
           "I heard something go crack in my {part} and I have been pretending I did not.",
-          "That is not a plan, {name}. That is a hope with a limp."
+          "That is a hope with a limp, {name}."
         ],
         [
           "How long does a {part} take to knit, do you think?",
@@ -7039,7 +7039,7 @@
         ],
         [
           "Do not help me with the strap. I need to do it myself.",
-          "I was not going to help. I was going to watch and look supportive.",
+          "I was only going to watch and look supportive.",
           "That is worse.",
           "I know."
         ],
@@ -7055,7 +7055,7 @@
         ],
         [
           "You can stop walking on my bad side, {other}.",
-          "I am not walking here for you, {name}. The view is better."
+          "I walk here for the view, {name}."
         ],
         [
           "I was afraid you would all leave me at the next town.",
@@ -7120,7 +7120,7 @@
           "Then you woke up clean. That is the part that counts."
         ],
         [
-          "I am not angry with you. I am angry with everything.",
+          "I am angry with everything else.",
           "I know. Be angry. Just be angry here, with us.",
           "Here is very boring.",
           "Boring is safe, {name}. For tonight."
@@ -7166,7 +7166,7 @@
       ],
       "drunk": [
         [
-          "I am not drunk. I am exactly the right amount of happy.",
+          "I am exactly the right amount of happy.",
           "You called a lamppost madam, {name}.",
           "She was very elegant."
         ],
@@ -7223,7 +7223,7 @@
         ],
         [
           "Everyone is so far away and so loud.",
-          "Nobody is talking, {name}. That is your heart.",
+          "That is your heart talking, {name}.",
           "It is very dramatic, my heart."
         ],
         [
@@ -7332,7 +7332,7 @@
         [
           "I would kill for pickled herring and jam.",
           "Together?",
-          "Do not judge me. Judge the baby."
+          "Judge the baby."
         ],
         [
           "What if it comes early, out here in the {biome}?",
@@ -7366,7 +7366,7 @@
         [
           "I am frightened of the road now. I was never frightened before.",
           "Being frightened is a sign you are paying attention, {name}.",
-          "I do not want to pay attention. I want a house."
+          "What I want is a house."
         ],
         [
           "Do not carry my pack. Well. Carry half.",
@@ -7433,8 +7433,8 @@
           "You stopped tripping on tree roots. It shows, {name}."
         ],
         [
-          "That fight felt slow. Not because it was easy. Because I was quick.",
-          "Do not let it go to your head. Let it go to your feet."
+          "That fight felt slow, because I was quick.",
+          "Let it go to your feet, where it is useful."
         ],
         [
           "I can lift the full pack now without groaning.",
@@ -7493,7 +7493,7 @@
           "Do not say that where it can hear you."
         ],
         [
-          "I want a proper mattress. Not a good one. Just one that is not the ground.",
+          "I want a proper mattress. Any one that is not the ground.",
           "Dream bigger. We are rich, for about a week."
         ],
         [
@@ -7573,7 +7573,7 @@
         ],
         [
           "When I was a child we ate soup made from the bones of the soup before.",
-          "That is not a recipe. That is a family history.",
+          "That is a family history.",
           "It got us through winters. It can get us through {place}."
         ],
         [
@@ -7820,7 +7820,7 @@
           "Something is moving out there.",
           "A fox. Or an owl. Or something we will meet in the morning.",
           "That is not as comforting as you think.",
-          "It was not meant to comfort. It was meant to be accurate."
+          "It was meant to be accurate."
         ],
         [
           "Tell me something. Anything. Keep me awake.",
@@ -7861,7 +7861,7 @@
           "Good for them. Somebody should be dancing."
         ],
         [
-          "I miss my bed. Not any bed. Mine, with the dip in the middle.",
+          "I miss my bed. Mine, with the dip in the middle.",
           "You will find another dip. The world is full of bad mattresses."
         ],
         [
@@ -8064,7 +8064,7 @@
           ],
           [
             "Is it bad that I like storms?",
-            "Not bad. Just worrying in a travelling companion."
+            "Only worrying in a travelling companion."
           ],
           [
             "The power is out all over {place}.",
@@ -8645,7 +8645,7 @@
         ],
         [
           "My bones hurt in places I did not know had bones.",
-          "You need sleep, not an inventory."
+          "What you need is sleep."
         ],
         [
           "If I drop my pack in the next hour, just leave it. And me.",
@@ -8973,7 +8973,7 @@
         "Nobody is going to starve over that.",
         "Good. Now put it somewhere you will find it in the dark.",
         "You thought about it and then you did it. That is how it should go.",
-        "It is a purchase, not a wound.",
+        "It is only a purchase.",
         "Good. That is one fewer thing to think about.",
         "It will be useful or it will be ballast. Either is survivable."
       ],
@@ -9303,7 +9303,7 @@
         "May I carry {item}? I promise to be careful with it. I am careful with everything.",
         "A sensible purchase. I would have hesitated, and hesitating is a luxury we lost in ninety-two.",
         "The shopkeeper counted the change so quickly. I could watch that all afternoon.",
-        "{item}. I will want to know how it works. Not now. Tonight, by the lamp.",
+        "{item}. I will want to know how it works. Tonight, by the lamp.",
         "We paid {price} and nobody bargained. My grandmother would have been mortified.",
         "Did you hear the till ring? A little bell, every time. Your people think of everything.",
         "I have written {item} in my notes, with the date. I write everything down since we left home.",
@@ -9542,7 +9542,7 @@
       "I keep the names in order. It is the only thing I keep in order.",
       "This is a beautiful place and I am too tired to receive it.",
       "Somebody stood exactly here once and thought they had time.",
-      "I do not want to talk about it. I want somebody to know it is there.",
+      "I only want somebody to know it is there.",
       "The road only ever goes forward. That is the cruel part of it.",
       "Twelve years since the sky changed and we still walk under it like it is normal.",
       "I miss people I never liked. Explain that to me."
@@ -9613,7 +9613,7 @@
       "I have been hungrier and further from help.",
       "Whatever is over the hill will still be over the hill if we sit down.",
       "Feet first. Feelings when we stop.",
-      "It is not a hard day. It is only a long one."
+      "It is only a long day."
     ],
     "paranoid": [
       "Do not turn round. Two behind us since the last corner.",
@@ -9640,7 +9640,7 @@
       "Nobody here is going to think less of you for saying it.",
       "You have not slept and you have not said why.",
       "That thing back there landed on you harder than on the rest of us.",
-      "I am not asking you to be fine. I am asking you to be honest.",
+      "I am only asking you to be honest.",
       "You went quiet at the exact moment the town came into view.",
       "Whatever you are carrying, you are carrying it uphill and alone.",
       "It is only us out here. Nothing you say leaves the road.",
@@ -9662,7 +9662,7 @@
       "Nobody spends from the fund without saying it out loud first.",
       "You will not like the next hour. You will do it anyway.",
       "Report. Water, feet, ammunition, in that order.",
-      "I am not asking anyone to agree. I am asking everyone to move.",
+      "I am only asking everyone to move.",
       "Two of you on the flanks. I do not care which two.",
       "We are late because nobody said we were late. That stops today."
     ],
@@ -9671,7 +9671,7 @@
       "I have been keeping notes. Do you want to hear them or shall I stop?",
       "There is a pattern to where we keep finding these. I am nearly sure of it.",
       "That masonry is pre-Squishing and the mortar is not. Somebody repaired it recently.",
-      "Three of these markers now. Three is a pattern, not luck.",
+      "Three of these markers now. Three is a pattern.",
       "The dialect changed about a kilometre back. We crossed something older than the border.",
       "Say the spell name properly or do not say it at all. CamelCase, one breath.",
       "A leyline runs under this valley. You can hear it in how badly the compass behaves.",
@@ -9713,7 +9713,7 @@
       "Every good story we own started with somebody saying this was a bad idea.",
       "That door has not been opened since before the Squishing. Let us fix that.",
       "Turn-offs on the Encompassing Road do not repeat. This one is once only.",
-      "I am not tired. I am the opposite of tired and it is inconvenient.",
+      "I am the opposite of tired and it is inconvenient.",
       "Come and look at this before I decide to climb it alone.",
       "The long way round is the one with things on it."
     ],
@@ -9789,7 +9789,7 @@
       "It will go the way it goes. It always has.",
       "One of us is not going to make it out of this. Statistically speaking.",
       "I stopped planning a long time ago and I have been happier.",
-      "One of us is not walking out of this year. That is arithmetic, not gloom.",
+      "One of us is not walking out of this year. That is plain arithmetic.",
       "The paradox finishes in eleven years. Nothing we do out here changes that.",
       "I stopped making plans and I have been sleeping better.",
       "The road decides. We only choose the pace.",
@@ -9858,7 +9858,7 @@
       "I do not want to be difficult, but I do not like this at all.",
       "Is it all right if I say I am frightened?",
       "Could I walk in the middle? Only for this bit.",
-      "I do not want to be difficult. I want to be somewhere else.",
+      "I only want to be somewhere else.",
       "Is it all right if I say I am frightened out loud?",
       "Please do not send me in first. Please.",
       "I will do it. I only need a moment before I do it.",
@@ -9868,7 +9868,7 @@
       "I would rather carry twice as much and stay at the back.",
       "Sorry. I know I have asked. How far is it now?",
       "Could somebody hold the lamp so it points at the corners?",
-      "I am not brave. I am here. I hope that is worth something."
+      "I am scared, but I am here. I hope that is worth something."
     ],
     "hedonistic": [
       "The first thing I want in that town is a table and something hot on it.",
@@ -9883,7 +9883,7 @@
       "I am not walking past an inn. I am simply not doing it.",
       "The world is ending in eleven years. Order the better wine.",
       "Somebody sing something. Anything with a chorus.",
-      "Comfort is not weakness. It is maintenance.",
+      "Comfort is maintenance.",
       "There is one bottle left and I am proposing a use for it.",
       "Whatever today asks, it can ask after we have eaten."
     ],
@@ -10033,7 +10033,7 @@
       "You hungry? I'm hungry. Just checking we're on the same side.",
       "Here's a thought. Why do mountains always look closer than they are?",
       "Kids keep staring at my tusks. I stare back. Somebody always blinks first.",
-      "I miss my old job. Not the work. The free soup.",
+      "I miss my old job. Well, the free soup.",
       "What's the plan? Simple words, please. I like plans I can punch.",
       "My knuckles are itching. That's either a fight coming or a rash.",
       "Somebody asked me in the last town if orcs eat people. I said only on Fridays.",
@@ -10086,7 +10086,7 @@
       "Why do humans hum? I started doing it and now I cannot stop. Mmm-mm.",
       "My guidebook has a whole page on this region and it is mostly about cheese. I am thrilled.",
       "Is it lunch yet? I have learned that asking this is a very human ritual.",
-      "The sky here is the wrong colour. Not wrong. Different. Beautifully wrong.",
+      "The sky here is the wrong colour. Different, I mean. Beautifully wrong.",
       "Somebody speak, please. On television, long silences mean the advertisements are coming.",
       "I would like us all to hold hands, like in the family programmes. No? Later, then.",
       "Do you know how far thirty-nine light years is? Neither do I, really. Only that it is a long way to post a letter.",
@@ -10197,7 +10197,7 @@
       "You have a very believable face. That is a compliment where I come from. And a warning.",
       "Shall we talk about the Squishing? I am told it is very serious. I find it very funny.",
       "Pop quiz. Which moon of Uranus is the prettiest? Correct. Titania. You are learning.",
-      "I left something in the last town. Not by accident. You will hear about it.",
+      "I left something in the last town. On purpose. You will hear about it.",
       "Do you think anyone would notice if this road was two metres to the left tomorrow?",
       "Remind me, which one of you is the gullible one? I keep a list, but I like hearing you argue about it."
     ],
@@ -10218,7 +10218,7 @@
       "My grandmother kept the accounts for a pirate crew. She said the cannons were easy, the rum was the hard sum.",
       "Look, look, look. A drainage grate with a hinge. Somebody in this town cares.",
       "Do you suppose the Mages' Guild keeps proper accounts? Three pillars and not one of them an accountant.",
-      "Can I borrow your shoulder? Not to cry on. To stand on. I want to see over that wall.",
+      "Can I borrow your shoulder? To stand on, I mean. I want to see over that wall.",
       "I have invented a new knot. It has no use whatsoever, and I am very proud of it.",
       "Tell me honestly. Is it charming or annoying when I correct the distances on the road signs?",
       "Gaskets! I have just realised I never asked what you did for a living. Before all this, I mean.",
@@ -10254,7 +10254,7 @@
       "Then we work with that. It is not the worst hand we have held.",
       "Nobody has to solve it in the next hour.",
       "I hear you, and the road is still the road.",
-      "You are not wrong. You are only loud about it.",
+      "You are right, only loud about it.",
       "Sit down. It will hold together while you do.",
       "Good. Now the version without the anger in it.",
       "We will know more in a day. Let us not decide on less.",
@@ -10272,7 +10272,7 @@
       "We are too soft with people who would sell us for a tank of fuel.",
       "Next time I go in first and you can be diplomatic afterwards.",
       "Good. Let them try it while I am awake.",
-      "I am not angry. I am ready, and you are confusing the two.",
+      "I am ready, and you are mistaking it for anger.",
       "If it comes back, it does not get a second conversation.",
       "That is a lot of words for we should have hit them.",
       "Fine. But I am walking at the front.",
@@ -10291,7 +10291,7 @@
       "That is the third time somebody has said that to me and meant it differently.",
       "It was better before. I could not tell you when before was.",
       "We will remember today wrongly and fondly. That is how it works.",
-      "I am not sad about it. I am just not surprised.",
+      "I am just not surprised.",
       "Somebody said almost exactly that to me years ago. They are not here.",
       "Yes. And in eleven years none of it is anywhere.",
       "Let me have the quiet for a minute. Then I will be useful."
@@ -10394,7 +10394,7 @@
       "You have looked after everybody but yourself since the border.",
       "Whatever you need it to be, I will call it that.",
       "That took something to say. I noticed.",
-      "You are not being difficult. You are being tired in public.",
+      "You are being tired in public.",
       "Say it once more and I will stop asking.",
       "Nobody out here expects you to be well."
     ],
@@ -10576,7 +10576,7 @@
       "I will disagree with you later, in private, and still be there.",
       "Nobody in this party goes alone. Least of all for that.",
       "Say what you need and it is done.",
-      "I do not care who is right. I care who is left standing.",
+      "I care who is left standing.",
       "You have never asked me for anything unreasonable. Twice.",
       "Then we are all in it. That is how it has always worked.",
       "I am not going to be the one who let you go on your own.",
@@ -10797,7 +10797,7 @@
       "Agreed. Shake on it. Mind the grip.",
       "Could argue. Won't. Too warm for arguing.",
       "You sound like a priest I worked for. Nice man. Never stopped talking.",
-      "Yeah? Prove it. Not now. Later. After food.",
+      "Yeah? Prove it. Later. After food.",
       "Ha. You'd make a decent orc. Bit short in the tusk.",
       "Fine. You win this one. I'm keeping score.",
       "Nope. Lost me at the second word.",
@@ -10822,7 +10822,7 @@
       "*nods enthusiastically, slightly out of rhythm*",
       "I would like to put that sentence in the monument. Next to the toaster.",
       "Ha! Ha ha! That was funny, yes? I laughed at the right time?",
-      "I was not listening. I was photographing a beetle. Please repeat, with the beetle in mind.",
+      "I was photographing a beetle. Please repeat, with the beetle in mind.",
       "That is a lovely thought. I will think it as well, if you do not mind sharing.",
       "A Pale Warper would answer you without speaking. I will answer you with my eyebrows. Oh. I have none.",
       "Correct! Ding ding ding! That is the noise for correct.",
@@ -10887,7 +10887,7 @@
       "By my beard, that is the truest thing said all week.",
       "Wrong. But wrong in a way I respect.",
       "Aye, aye. Measure twice, then say it again.",
-      "That goes in the grudge book. Not against you. Against the idea.",
+      "That goes in the grudge book. Against the idea, mind.",
       "Mm. Pass me the flask and say that again, slower.",
       "Good. Agreed. Now let us never speak of it again, like proper folk.",
       "My uncle would have argued that for three days. I am tired, so: aye.",
@@ -10926,7 +10926,7 @@
       "Lovely. Say that to the Guild. They need cheering up.",
       "You may be right. Let me rearrange the facts until you are not.",
       "Absolutely. One hundred percent. Rounded up from eleven.",
-      "I am going to remember you said that. Not now. At the worst possible moment.",
+      "I am going to remember you said that. At the worst possible moment.",
       "Mm hm. Mm hm. Keep going. You are nearly at the funny part.",
       "Fair. Unfair. Both. The answer is always both.",
       "And you would swear to that? In front of witnesses? Good. I have witnesses.",
@@ -11018,7 +11018,7 @@
       "It was better before. Whatever it was.",
       "We will not remember this conversation and that is the pity of it.",
       "Come on then. The road is patient with us.",
-      "I will be all right. Not now, but generally.",
+      "I will be all right. Eventually.",
       "Somebody should write our names down somewhere.",
       "Another day gone into the pile.",
       "Yes. Let us go and keep leaving things behind.",
@@ -11396,7 +11396,7 @@
       "Let us hit the road, as you say. Gently. The road has done nothing wrong.",
       "To be continued! I have always wanted to say that.",
       "Thank you for the conversation. I will treasure it. Possibly in a small jar.",
-      "Off we go, into the sunset. It is not sunset. Into the general direction of sunset.",
+      "Off we go, into the sunset. Well, the general direction of sunset.",
       "Right. I have photographed everything here twice. Next place, please.",
       "Walk now, talk later. Humans say that. Or I said it first. Either way.",
       "Let us go before I fall in love with this spot too.",
@@ -11779,7 +11779,7 @@
       "Is anyone likely to shout at us here?"
     ],
     "hedonistic": [
-      "Where is the best food in this place? Not the cheapest. The best.",
+      "Where is the best food in this place? The best, whatever it costs.",
       "Is there anywhere warm to eat nearby?",
       "What do you make here that is worth drinking?",
       "Which inn has the good beds and which has the cheap ones?",
@@ -11886,7 +11886,7 @@
       "Seen any goblins pass this way? Asking for safety, not family.",
       "Evening. Where's a decent bar? Decent meaning cheap.",
       "Hello. We're only passing through. Promise.",
-      "Is there a doctor around? Not for me. For whoever starts something.",
+      "Is there a doctor around? For whoever starts something.",
       "Which way to the next town? Short answer is fine.",
       "OI, you there. Sorry. Excuse me, you there.",
       "Any work going around here? I can lift things. Big things.",
@@ -11897,7 +11897,7 @@
       "Any orcs living round here? I like to say hello.",
       "How are the roads ahead? Any time bubbles we should know about?",
       "Sorry about the boots. They're loud. So am I.",
-      "Is there a church? I'm not religious. I just like the cool air inside.",
+      "Is there a church? I just like the cool air inside.",
       "Excuse me. Where do you lot buy your bread? Smells good from here.",
       "You staring at my tusks? It's fine. Everyone does. They're quite good.",
       "We mean no trouble. Trouble usually means us, though. Funny that.",
@@ -11924,7 +11924,7 @@
       "Where can we fill a bottle? Water, please. Not the fizzy kind. The fizzy kind tickles.",
       "Excuse me, can you recommend a souvenir? Something small. Or something large. I have a ship.",
       "Hello. You look like a man from the evening news. Are you? You can tell me.",
-      "Are there any time bubbles near here? Not to avoid. To look at. From a safe distance.",
+      "Are there any time bubbles near here? To look at. From a safe distance.",
       "Please tell me the name of this street. I am writing every name down. All of them.",
       "Hello! Do not be alarmed by the eyes. They are only big because there is so much to see.",
       "Is it true people here say good evening even to strangers? Good evening. There. I did it.",
@@ -11944,7 +11944,7 @@
     ],
     "elf": [
       "Good evening. Do not stare at the ears, they are quite real and quite sensitive.",
-      "Greetings. We are travellers, not tourists. The difference is mostly posture.",
+      "Greetings. We are travellers. You can tell by the posture.",
       "Pardon me. Is there anywhere in this town that serves wine older than its owner?",
       "Good day. You have a lovely garden. Your hydrangeas are thirsty, though.",
       "Well met. Yes, an elf. No, I do not know your grandmother. Unless I do.",
@@ -11990,7 +11990,7 @@
       "Good day. Would you describe yourself as a reliable witness?",
       "Hello, friend. Where would someone go around here if they wanted to be very alone?",
       "Excuse me. Do you know a night watchman called Zanfretta? He knows me.",
-      "Do not worry, I am with the Embassy. That is not reassuring, I know. That is the point.",
+      "Do not worry, I am with the Embassy. Unsettling, I know. That is the point.",
       "Lovely hat. Would you mind if I borrowed it until tomorrow? You will find it on the church roof.",
       "Where is the nearest inn? And how thin are its walls?",
       "Hello. You have nothing to fear from us. Say that back to me. Louder. Now do you believe it?",
@@ -12077,7 +12077,7 @@
         "Whoever is behind us can keep being behind us. For now.",
         "Words, words. Nothing settles like the other thing.",
         "The goblins attack on sight. At least they are honest about it.",
-        "I am not angry. I am simply ready and nobody needs me.",
+        "I am simply ready and nobody needs me.",
         "My hands want something to do and it is not carrying."
       ],
       "melancholic": [
@@ -12186,7 +12186,7 @@
         "Somebody here is not all right and is hiding it well.",
         "I should ask. Later, when it is quieter.",
         "Everyone is carrying more than the packs.",
-        "That was not anger. That was fear wearing a coat.",
+        "That was fear wearing a coat.",
         "They have not eaten and they are pretending they have.",
         "I will take the watch so somebody else can sleep through the bad hours.",
         "Nobody has said the name in three days. Somebody should.",
@@ -12210,7 +12210,7 @@
         "If I do not decide, three people will decide differently.",
         "They will resent it tonight and thank me at the border.",
         "One voice at the checkpoint. Mine.",
-        "This is not a democracy. It is a distance.",
+        "Command is a distance.",
         "I am not liked today. I am not required to be.",
         "Nobody has counted heads since the ford. I will.",
         "This party is drifting and drifting is how parties end.",
@@ -12226,7 +12226,7 @@
         "The dialect shifted a kilometre back. That is older than any border.",
         "If I had a week here I would come back with something nobody knows.",
         "Names are power, and this valley has been renamed twice.",
-        "Post-Squishing geology is not geology. It is bookkeeping.",
+        "Post-Squishing geology is bookkeeping.",
         "I should date this properly before the memory rounds it off.",
         "Six explanations. One of them is boring and therefore likely.",
         "That stone was cut with a tool nobody uses now.",
@@ -12345,7 +12345,7 @@
         "The gods are at war and we are weather.",
         "It was going to be a road like this one, eventually.",
         "Whatever is waiting has been waiting longer than I have been walking.",
-        "I do not fear it. I have simply stopped arguing with it.",
+        "I have simply stopped arguing with it.",
         "If today, today.",
         "The end has the same shape from every direction.",
         "Whatever is waiting has waited longer than I have walked.",
@@ -12393,7 +12393,7 @@
         "Whatever is up that stair does not get to choose the moment.",
         "I will take the front. I am poor at following.",
         "Better it meets me than either of them.",
-        "There is no safe version. There is only the one we walk.",
+        "The only version is the one we walk.",
         "I have been afraid on worse ground and it went well enough.",
         "Standing still is the only thing that actually frightens me.",
         "Lamp, corner, go.",
@@ -12608,7 +12608,7 @@
         "Can't hear the goblin head out here. Too many birds. Good birds.",
         "Wonder if there's an orc bar in the next town. There's always one if you look.",
         "Little one in the last village asked if my tusks hurt. Only when I laugh.",
-        "I'm not angry. I just look angry. Face came that way.",
+        "I just look angry. Face came that way.",
         "Feels like a fight's coming. Or a storm. Same smell.",
         "Stretch. Crack. There. Back's back."
       ],
@@ -12656,7 +12656,7 @@
         "If I had stayed home I would be watching this on a screen, thirty-nine years late. I am here instead. Live!",
         "I must remember to buy a hat. Everyone in the costume dramas has a hat when things go wrong.",
         "The ambassadors in 1999 told us to blend in. I am doing my best. I am very grey and very cheerful.",
-        "Somewhere a human is making soup. I can feel it. That is not psionics, that is hope.",
+        "Somewhere a human is making soup. I can feel it. That is hope.",
         "I will never understand why the toast always lands on the buttered side. Gravity is my field and even I am stumped."
       ],
       "elf": [
@@ -12715,7 +12715,7 @@
         "I have been on this planet longer than its words. Still have not found a better hobby.",
         "The Embassy has missed another summons. I am so proud of them.",
         "The Tourists are probably filming something boring right now. Amateurs.",
-        "Thinking about crop circles. Not making one. Thinking. Mostly.",
+        "Thinking about crop circles. Only thinking. Mostly.",
         "The Rule of 80. A whole planet that cannot go past eighty without falling into yesterday. And we are the joke?",
         "Humans fold their socks. Every single day. I do not know what to do with that information.",
         "Someone in the party snores in waltz time. I am composing around it.",
@@ -12751,7 +12751,7 @@
         "I am very relaxed right now. That should frighten everyone, and it does not. Disappointing.",
         "There is a tower holding ninety-two dimensions together, and nobody can move it. Funniest architecture in the multiverse.",
         "The trick is to leave one detail that nobody can explain. Just one. Then walk away.",
-        "I am not lost. I am conducting a survey of where we are not.",
+        "I am conducting a survey of where we are not.",
         "My feet are cold. Titania cold. Good. Feels like home.",
         "Everyone asks what we want from Earth. Nothing. We already have the reaction. It is perfect.",
         "If a tree falls in a forest and nobody believes it, that is my tree."
@@ -12768,7 +12768,7 @@
         "I wonder what the moon would cost in euros, if it were cheese, at Swiss prices.",
         "Being small is a strategy. Nobody aims low.",
         "My pockets are perfectly organised and I still cannot find the tiny screwdriver. It is in the other trousers.",
-        "That cloud looks like a differential gear. No, it is not an obsession. A little one.",
+        "That cloud looks like a differential gear. Yes, it is an obsession. A little one.",
         "If magic gets less rational the more you study it, why does mine get more fun?",
         "Mental tally: two rivers, one bridge, nine cows, and a goat I have doubts about.",
         "Somewhere, a gnome is inventing something I wanted to invent. I can feel it. Hurry, brain.",
@@ -12999,7 +12999,7 @@
       "tourist": [
         "Someone made this by hand. With fingers! I must photograph the fingerprints.",
         "How old is this? Older than our first broadcast? Older than television itself? Thrilling.",
-        "*circles it slowly, camera raised* Do not move. Not you. The object.",
+        "*circles it slowly, camera raised* Do not move. The object, I mean.",
         "My guidebook does not mention this. That makes it twice as exciting.",
         "A Crimson Analyzer would open this up. I will only look at it very hard.",
         "What is it for? Do not tell me. I want to have a theory first. My theory is: soup.",
@@ -13009,7 +13009,7 @@
         "The gravity around this is completely normal. I checked. I always check. It is a habit.",
         "This deserves a plaque. Here stood a thing, and a Tourist looked at it, and was happy.",
         "Is it valuable? To me, yes. To the market, I cannot tell. The market never asks me.",
-        "Do not touch it. Not because of danger. Because of respect. And also maybe danger.",
+        "Do not touch it. Out of respect. And also maybe danger.",
         "The carving on it is beautiful. I do not know what it says. I will say it says welcome.",
         "I want to send a photograph of this to the monument. It deserves to be in a display case.",
         "*squints* Is this magic? It smells of magic. Or of old cupboard. Magic often smells of old cupboard.",
@@ -13076,13 +13076,13 @@
         "The Tourists would have photographed this from every angle. I prefer to just make it slightly crooked.",
         "It is older than the road. I am older than the hill. Neither of us is impressed.",
         "Hm. Someone tried to explain this with a plaque. Bless them.",
-        "Do not touch that. Not because it is dangerous. Because I want to see who does it first.",
+        "Do not touch that. I want to see who does it first.",
         "That has the shape of a thing somebody believed in. Look at the wear on the edges.",
         "Very nice. I would add a second shadow.",
         "This is the sort of thing a farmer finds and nobody believes. I approve on principle.",
         "Someone left this here on purpose. I can tell. It is what I would have done.",
         "*walks around it slowly, then walks around it the other way, just to be fair*",
-        "Worth nothing. Worth everything, if you tell the right story about it.",
+        "Worth everything, if you tell the right story about it.",
         "The Guild would put this in a glass case with a long label. I would put it on someone's pillow.",
         "I have seen better on Titania. Frozen. And nobody could visit it. That was the joke.",
         "Hm. A marking. Could be a star chart. Could be a shopping list. I hope it is both.",
@@ -13109,7 +13109,7 @@
         "Old alchemy stains on the base. Somebody brewed something here and left in a hurry.",
         "Look at the gear teeth on this. Hand filed, every one. My eyes are watering.",
         "I would put it at around three hundred euros, or one very good afternoon of looking at it.",
-        "Oh, it is not broken. It is only waiting for the right small hands."
+        "Oh, it is only waiting for the right small hands."
       ]
     },
     "rest": {
@@ -13182,7 +13182,7 @@
         "The grass is warm. I may grow roots if nobody calls me.",
         "Let me sit a moment. I am slower than I look, and I look quite slow.",
         "A rock, a bit of shade, and a view. What more did anyone ever need?",
-        "I shall rest my eyes. Not sleep. Verden do not sleep on duty. Much.",
+        "I shall rest my eyes. Only my eyes. Verden do not sleep on duty. Much.",
         "Sit with me. You need not talk. Sitting is enough.",
         "The soil here is good. I can feel it through my trousers, which is an odd thing to admit.",
         "I have taken off my boots. Forgive me, it is a gardener's habit.",
@@ -13208,7 +13208,7 @@
         "Sit. Rock. Good rock. Best chair in Europe.",
         "Five minutes. Nobody poke the orc.",
         "Boots off. Feet out. Sorry about the smell.",
-        "Not tired. Just checking the ground's still here. It is.",
+        "Just checking the ground's still here. It is.",
         "Shade. Lovely shade. I'm not moving.",
         "*leans back against a tree, which creaks*",
         "Back aches. Carrying everyone's stuff does that.",
@@ -13248,7 +13248,7 @@
         "I am resting my eyes. All of the eye. It takes a while, they are big.",
         "Ah. The ground is warm. Humans are so lucky with their ground.",
         "In the films, this is where someone sits down and tells their life story. Anyone? No? I will wait.",
-        "I am not tired. I am savouring. There is a difference and I learned it yesterday.",
+        "I am savouring. It is different from tired and I learned it yesterday.",
         "*takes off a shoe, looks at it in wonder, puts it back on*",
         "Let me sit here and listen to the countryside. It sounds like the quiet bit before the theme tune.",
         "My people do not have a word for a nice sit-down. I am going to bring one home.",
@@ -13279,7 +13279,7 @@
         "Mortals tire so quickly. It is rather endearing, like puppies.",
         "Five minutes, you say. I once rested for a whole summer and called it a short break.",
         "Lie back and look at the clouds. They are the slowest show in the world. My favourite.",
-        "My feet are not tired. My feet are bored. There is a difference.",
+        "My feet are bored, which is different from tired.",
         "Let us rest, and I shall hum something from before your great-grandparents were born.",
         "The grass here is soft. I will allow it to hold me for a while.",
         "A pause is a kind of poem. Short, if you insist.",
@@ -13303,7 +13303,7 @@
         "Let the young ones run about. I am a mountain today."
       ],
       "dargos": [
-        "Sitting down. Not because I am tired. Because I want you all to wonder why.",
+        "Sitting down. I want you all to wonder why.",
         "Five minutes. Count them for me. I will tell you that you counted wrong.",
         "*lies flat on the grass and stares up as if expecting a lift home*",
         "Resting. Do not watch me rest. Watching is my job.",
@@ -13363,7 +13363,7 @@
         "Two seconds. Two.",
         "I was looking at something. It does not matter.",
         "Which way did they go? Never mind, I see them.",
-        "I am not lost. I am behind.",
+        "I am only behind.",
         "Somebody wait at the corner.",
         "Yes. Yes, I heard.",
         "Hold on, my strap has gone.",
@@ -13426,7 +13426,7 @@
         "One moment. I was taking a cutting. It will be worth it, I promise.",
         "Coming! I only wanted to see how the gate latch worked.",
         "Ah, there you are. I thought you were where I was.",
-        "I am here. I was not lost, I was merely studying.",
+        "I am here. I was merely studying.",
         "Wait! There was a telephone box and I had to look inside. I am done now.",
         "Coming. My apologies. The hedges here are extraordinary.",
         "Yes, I heard you the first time. I was finishing a thought.",
@@ -13521,7 +13521,7 @@
         "Here I am. I picked some elderflowers, since you were all in such a hurry.",
         "One moment. I was correcting the posture of a young sapling.",
         "Right behind you, and still the best-dressed one here.",
-        "I was not lost. I was lingering. Elves do not get lost.",
+        "I was lingering. Elves do not get lost.",
         "Coming. A song came into my head and it would have been rude to interrupt it.",
         "You walk as if the world will end tomorrow. With the Squishing, I suppose it might."
       ],
@@ -13931,7 +13931,7 @@
           "ME EYES HEAVY LIKE CITADEL STONE. GOODNIGHT. GRRR.",
           "SLEPT. WOKE UP. FORGOT WHERE ME WAZ. BIT PILLOW. OKAY NOW.",
           "DREAMT OF HIERONYMUS. HE SAY SOMETHIN' SMART. ME FORGET IT. TYPICAL.",
-          "ROOF OVER ME. NOT CITY, BUT ROOF. ROOF IZ ENOUGH.",
+          "ROOF OVER ME. JUST ROOF. ROOF IZ ENOUGH.",
           "ME FEEL NEW. ME FEEL LIKE HATCHLING. LOUD AN' READY.",
           "ME SLEEP WIT ONE EYE OPEN. DAT EYE ALSO SLEEP. TRAITOR EYE.",
           "NO WAKE ME FOR PRIEST. PRIEST CAN WAIT. PRIEST ALWAYS WAIT.",
@@ -14055,7 +14055,7 @@
           "My eyes are very large, so closing them takes a while. There. Goodnight.",
           "The pillow smells of somebody else's soap. Very human. Very cosy.",
           "I dreamed of the monument back home and all of you were in it. You were very tall and very polished.",
-          "Snoring? That was not snoring. That was me humming a theme tune in my sleep.",
+          "Snoring? That was me humming a theme tune in my sleep.",
           "Eight hours! The full human dose! I feel recommended by doctors.",
           "Night is so quiet here. No broadcasts, no static. Just crickets. Crickets are the night's radio.",
           "*yawns, studies the yawn, yawns again to be sure*",
@@ -14472,7 +14472,7 @@
         ],
         "gnome": [
           "Washed! There was grease on me in places I did not know I had.",
-          "The tub was so deep I had to swim. I am not complaining, it was marvellous.",
+          "The tub was so deep I had to swim. It was marvellous.",
           "Clean hands at last. You cannot do fine work with dirty hands. The dirt gets in the threads.",
           "Combed, scrubbed and waxed. Presentable to nobility again. Which is lucky, my aunt is nobility.",
           "I smell of soap instead of solder. It is strange, but I will get used to it.",
@@ -14591,7 +14591,7 @@
           "Kids asked a hundred questions. Answered ninety. Lied about ten.",
           "Somebody asked my name instead of what I am. Nice change.",
           "Was getting lonely. Didn't know till now.",
-          "Had a proper chat. Not grunts. Words. Lots of them.",
+          "Had a proper chat. Words. Lots of them.",
           "People are good. Most people. Some people. Today's people.",
           "Arm wrestled a farmer. Let him win. He knew. Still happy.",
           "The goblin side wants a crowd. The human side wants one friend. Got both.",
@@ -14806,7 +14806,7 @@
           "A goblin up north would have thrown the board across the room by now. I did not. Progress.",
           "I spent my euros on tokens and my tokens on joy. A fair exchange.",
           "My hands still tingle from the buttons. What a wonderful feeling.",
-          "Leisure is not idleness. It is the fallow field that makes next year's harvest.",
+          "Leisure is the fallow field that makes next year's harvest.",
           "I listened to a whole cassette, both sides. I turned it over myself.",
           "A little play and the road looks friendlier.",
           "I watched television for an hour. Mostly the advertisements. They are my favourite part.",
@@ -14850,7 +14850,7 @@
           "My face hurts from smiling. Tusks in the way.",
           "Played the arcade. Machine was too small for my hands. Won anyway.",
           "Shouted a lot. Allowed to. It was a game.",
-          "Lost track of time. Not in a bubble way. In a good way.",
+          "Lost track of time. The good way.",
           "Should do that more. Life's not all carrying bags.",
           "Heard music, sat down, stayed two hours. Worth it.",
           "Feel ten years younger. Knees disagree.",
@@ -14938,7 +14938,7 @@
         ],
         "dwarf": [
           "Again! I was just getting the measure of it.",
-          "That was fun. Not useful. Fun. I am allowed.",
+          "That was fun. Just fun. I am allowed.",
           "Played for an hour and did not think about iron once. A miracle.",
           "Hah! My grandfather never played anything but the hammer. His loss.",
           "One more round. Then a beer. Then one more round.",
@@ -15056,7 +15056,7 @@
       "maimed": [
         "Still reaching with something that is not there.",
         "The fitting rubs. Pad it again tonight.",
-        "Different, not less. Different, not less.",
+        "Different. Still enough. Different. Still enough.",
         "Oil the joint before the rain does it for me.",
         "Children stare. Fair enough. I would too.",
         "It aches where nothing is left. Strange arithmetic.",
@@ -15118,7 +15118,7 @@
         "Names. I still have no names.",
         "Every bump in the road, I count to ten.",
         "Somebody hand me something salty. And sweet. Both.",
-        "I am not slow. I am carrying luggage.",
+        "Slow? I am carrying luggage.",
         "Hush now. We are almost there. Wherever there is.",
         "Will you have my nose, I wonder.",
         "Brave for two. That is the job now."
@@ -15336,7 +15336,7 @@
         "Never mind the panel. Is anyone shaken? Properly shaken?",
         "You are white as a sheet. Come and sit at the back for a while.",
         "Nobody is blaming you. Look at me. Nobody is blaming you.",
-        "It was not your driving. It was a road with a hole in it.",
+        "Blame the road. It had a hole in it.",
         "Take ten minutes before you get back behind that wheel.",
         "You are shaking. That is what bodies do. It passes.",
         "Whoever was asleep just woke up badly. Somebody sit with them.",
@@ -15949,7 +15949,7 @@
         "I have kept the last of the warm drink for whoever drives.",
         "You are not to wake up and take over early. I will know.",
         "Both of you sleep. I have done this on less.",
-        "Head on the pack, not the window. The window will hurt you.",
+        "Head on the pack. The window will hurt you.",
         "Blanket behind the seat. Use it.",
         "Eat something before you sleep or you wake worse."
       ],
@@ -16041,7 +16041,7 @@
         "Please do not ask me to drive next. Please.",
         "I will keep you company. I am not sleeping anyway.",
         "Could somebody else take mine? I will do two of anything else.",
-        "I do not mind being awake. I mind being responsible.",
+        "It is being responsible that I mind.",
         "If I drive, will somebody sit at the front with me?",
         "I would rather do the watch on foot than the wheel.",
         "You are very calm about all this. I am taking notes.",
@@ -16196,7 +16196,7 @@
         "You may sleep. I will narrate the scenery quietly to myself. Very quietly. Mostly.",
         "Hands at the wheel, eyes on the road, heart on the countryside. I am ready.",
         "Thank you for driving. I am a much better passenger than driver. I point at things.",
-        "I will drive slowly. Not because of the Rule of 80. Because of the view.",
+        "I will drive slowly, for the view.",
         "Moving the seat forward. Further. Further. There. Now I can see over the wheel.",
         "Is that a speed camera? I will wave at it. Every camera deserves a wave.",
         "Nap time for you, driving time for me. This is teamwork. I saw it on a sports programme.",
@@ -16583,7 +16583,7 @@
         "Whatever is on that road between here and the pump, I will manage.",
         "Right. I am going. Somebody hold the lamp until I am out of sight.",
         "I will walk ahead and bring a can back.",
-        "It is a long walk, not a fight."
+        "It is only a long walk."
       ],
       "timid": [
         "Can we not just stop somewhere safe until we know?",
@@ -16607,7 +16607,7 @@
         "Right. Nearest pump with a roof and a stove.",
         "I will pay the extra myself if the place is decent.",
         "If we stop, let it be somewhere with a kitchen.",
-        "Stopping is not a crisis. It is an opportunity."
+        "Stopping is an opportunity."
       ],
       "apathetic": [
         "It will stop or it will not.",
@@ -16802,7 +16802,7 @@
         "The needle is on the red. It looks very sure of itself. I respect that.",
         "If we run dry, I will push. Not with my hands.",
         "The Tourists give away free fuel at Zeta Reticuli. That is thirty-nine light years. Bring a sandwich.",
-        "Low fuel. Lovely. Now every station we pass will be closed. That is not me. That is the universe.",
+        "Low fuel. Lovely. Now every station we pass will be closed. Blame the universe.",
         "*taps the gauge, and the needle twitches the wrong way*",
         "We are low on fuel and high on spirits. Mostly mine.",
         "Fuel costs euros. Euros cost work. I prefer my vehicles to run on astonishment.",
@@ -16811,7 +16811,7 @@
         "On Titania we travel by being somewhere else. No pumps. No queues. No receipts.",
         "The engine is thirsty. Like a sceptic at a sighting conference.",
         "Next station, I will fill it. And I will clean the windscreen in a faintly spiral pattern.",
-        "Drive gently. Not for the fuel. Because gentle driving makes people nervous.",
+        "Drive gently. Gentle driving makes people nervous.",
         "We are running on fumes. I can see them. They are shaped like a question mark.",
         "Fuel is low. Morale is fine. My plans for the pump attendant are excellent.",
         "Do not panic. If we stop, I will flag down a lorry and tell the driver something he never forgets.",
@@ -16842,7 +16842,7 @@
         "The engine's cough has changed. That is its hungry cough. I know all its coughs.",
         "Shall I estimate the price at the next pump? I estimate one euro nine. Write it down.",
         "Hm. The fuel gauge lies by about a fifth. I have noted it. It knows I know.",
-        "If we push, I will steer. Not out of laziness. Out of physics."
+        "If we push, I will steer. Purely out of physics."
       ]
     }
   },
@@ -17115,7 +17115,7 @@
         "Nobody wanders off alone here. Not in a place we do not know.",
         "If one of us is not welcome, none of us go in.",
         "Same party, new dirt. That is all a border is.",
-        "I do not care whose country it is. I care who is standing next to me in it.",
+        "I care who is standing next to me in it.",
         "We cross together and we leave together.",
         "Anyone asks about any of us, they get the same answer from all of us.",
         "Their laws are their business. You are mine.",
@@ -17354,7 +17354,7 @@
         "Different language. Same expression when the lights come down over the field.",
         "Another country. I have probably been here. I have probably moved a church.",
         "The customs officer looked at me for a long time. I looked back for longer. He let us through.",
-        "New land, new farms, new cows. I am not saying anything. I am just counting the cows.",
+        "New land, new farms, new cows. I am just counting the cows.",
         "*sniffs the air across the border and smiles thinly*",
         "Every country has its sighting. I would like to know who did theirs. Professional curiosity.",
         "A new country. A clean slate. Not for long.",
@@ -17397,7 +17397,7 @@
   },
   "craft": {
     "opener": [
-      "{item}. Made, not bought. There is a difference and I intend to enjoy it.",
+      "{item}. Made with our own hands, and I intend to enjoy that.",
       "That is {item} finished. My hands are ruined and I am pleased.",
       "We made {item} out of things we were carrying anyway.",
       "{item}, off the bench and into the pack.",
@@ -17569,7 +17569,7 @@
         "Ugly. Strong. Like me. Perfect.",
         "Goblin half wanted spikes on it. Human half said no. Added one spike.",
         "Hit it to test it. Didn't break. Done.",
-        "Not pretty. Works. Pretty's for elves.",
+        "Ugly. Works. Pretty's for elves.",
         "*holds it up proudly, slightly crooked*",
         "Took three tries. Third time it stopped fighting me.",
         "Mum would put this on the mantel. Then hide it when guests came.",
@@ -17929,7 +17929,7 @@
       "adventurous": [
         "Good. A base means we can go further out.",
         "Now we can reach the part of the map I have been quiet about.",
-        "Right. It is a starting point, not a destination."
+        "Right. It is a starting point."
       ],
       "nurturing": [
         "There is somewhere warm now. That changes everything.",
@@ -18022,7 +18022,7 @@
         "Somewhere to come back to. Good. Every orc needs one.",
         "Carried every plank. Proud of my back.",
         "Doorway's tall enough. Checked. Built it myself.",
-        "Not a castle. Castles start small. Probably.",
+        "A small castle. Castles start small. Probably.",
         "Good corner for a chair. My chair. Big chair.",
         "Stands straight. Straighter than me after a long day.",
         "Nice work, everyone. Beer's on whoever built the least."

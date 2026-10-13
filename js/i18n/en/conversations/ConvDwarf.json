@@ -66,7 +66,7 @@
       "Who built that balcony? It is held up by hope and two nails.",
       "My beard has a knot in it. I will not rest until it is out.",
       "My forge was cold this morning. I took it personally.",
-      "A good door should shut with one sound, not three.",
+      "A good door shuts with one sound. This one makes three.",
       "{Granite|Basalt|Marble} on the church steps. Somebody here once had taste.",
       "I have been chewing on this problem for {three days|a week|eleven years}. It is nearly soft.",
       "Tall folk keep patting my head. I keep a list.",
@@ -170,7 +170,7 @@
         "A low ceiling and a thick wall. That is all comfort is.",
         "This room is too {draughty|tall|bright}. Give me a cellar.",
         "A warm fire and boots off. Is that so much to ask?",
-        "My back wants a proper bench, not this wobbly elf-built thing."
+        "My back wants a proper bench. This wobbly thing was built by elves."
       ],
       "social": [
         "Nobody to argue with for {two days|a week|too long}. I am going soft.",
@@ -291,10 +291,10 @@
       "comfortable": [
         "Enough for coal, enough for ale, a little for the good beard oil. Plenty.",
         "Steady work, steady pay. Like a steady hammer.",
-        "Bought new tongs. Not needed. Wanted. That is comfort.",
+        "Bought new tongs, simply because I wanted them. That is comfort.",
         "Rent paid, larder full, grudges up to date. A good month.",
         "Put a little aside for {a new anvil|my nephew's apprenticeship|a barrel of good ale}.",
-        "Not rich. Not poor. Solid. Like a good wall."
+        "Solid accounts. Like a good wall."
       ],
       "rich": [
         "Commissioned a gold-inlaid tankard. For myself. Every dwarf deserves one.",
@@ -302,7 +302,7 @@
         "Rich enough to pay off my grudges. Not going to. Grudges are not for sale.",
         "My vault door is a metre of steel. I forged it myself. Twice.",
         "Bought a round for the whole tavern. {Twice|Three times|All night}.",
-        "Varlenia folk keep inviting me to dinner. They want my vault door, not my company."
+        "Varlenia folk keep inviting me to dinner. They are after my vault door. My company barely interests them."
       ]
     },
     "familiar": [
@@ -320,7 +320,7 @@
     "hordeGround": [
       "Horde ground. They have pulled down good stone walls to build ugly ones.",
       "Goblin banners on a dwarf-built bridge. My grandfather would weep.",
-      "The Horde does not keep grudges. It keeps everything else.",
+      "The Horde keeps everything except grudges.",
       "Horde land. Hammer close, mouth shut, eyes open.",
       "I am writing every goblin I see into the book. I will need a bigger book.",
       "Their forges burn too hot and too fast. Everything they make cracks by spring.",
@@ -365,7 +365,7 @@
       "grudges": [
         "My family's grudge book runs to {eleven|fourteen|twenty} volumes. Volume one is mostly about a goat.",
         "A grudge is crossed out only when the debt is paid. Some of the ink is three hundred years old.",
-        "We do not hate. We remember precisely. It is different.",
+        "We remember precisely. That is all. Calling it hate is a mismeasurement.",
         "Grandfather held a grudge against a bridge for forty years. The bridge fell first.",
         "There is a page in the book for the Horde. It is a very long page.",
         "Forgiving is allowed. Forgetting is not. That is the whole rule.",
@@ -390,7 +390,7 @@
         "Beard oil recipes are family secrets. Ours has juniper and something we do not name.",
         "Clean-shaven dwarves exist. We are polite about it. Mostly.",
         "Tuck your beard near machines. Every dwarf learns this exactly once.",
-        "A grey beard is not old. A grey beard is seasoned, like good timber."
+        "A grey beard is seasoned, like good timber."
       ],
       "squishing": [
         "Varlenia appeared in one night in January. Nothing built in a night can be trusted. Not even a continent.",
@@ -543,7 +543,7 @@
         ],
         [
           1,
-          "It's a fence, not a cathedral."
+          "It's just a fence."
         ],
         [
           0,
@@ -789,7 +789,7 @@
         ],
         [
           0,
-          "Closed. Hmph. Nothing is ever finished with a mountain, only interrupted."
+          "Closed. Hmph. With a mountain you can only ever take a break."
         ]
       ],
       [

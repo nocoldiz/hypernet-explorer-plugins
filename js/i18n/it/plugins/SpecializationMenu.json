@@ -2,8 +2,8 @@
   "someone": "Qualcuno",
   "weapon": {
     "title": "Competenza con l'arma",
-    "trains": "Si allena vincendo battaglie con un'arma del genere equipaggiata.",
-    "cut": "Le statistiche delle armi {weapon} sono ridotte al {pct}% fino a Intermediate.",
+    "trains": "Si allena vincendo battaglie con questo tipo di arma equipaggiato.",
+    "cut": "Le statistiche delle armi {weapon} sono ridotte al {pct}% fino a Intermedio.",
     "raised": "Le statistiche delle armi {weapon} salgono al {pct}%.",
     "full": "Le statistiche delle armi {weapon} valgono per intero."
   }

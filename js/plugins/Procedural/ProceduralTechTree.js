@@ -1235,7 +1235,7 @@
     if (window.HypernetOS && window.HypernetOS.registerApp) {
         window.HypernetOS.registerApp({
             id: LYC_APP_ID,
-            name: T('TechTree.lyceum.appName'),
+            name: () => T('TechTree.lyceum.appName'),
             icon: LYC_ICON,
             category: 'reference',
             launchFn: function () { window.Lyceum.launch(); },

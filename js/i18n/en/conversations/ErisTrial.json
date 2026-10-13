@@ -255,7 +255,7 @@
     "You have been {lucky|unlucky} an improbable number of times lately. Improbable is my department.",
     "Every door that stuck. Every coin that landed wrong. Every train you just missed. Hello.",
     "I bent the odds on you again last {Tuesday|month|winter}. Did you notice? I hope you noticed.",
-    "It isn't jealousy. It is {jurisdiction|policy|housekeeping}. ...It is jealousy.",
+    "It is {jurisdiction|policy|housekeeping}. ...Fine. It is jealousy.",
     "You sleep three metres from the only thing I ever wanted. And you snore.",
     "I could make you {guilty|innocent|a toad} without touching the evidence. I want you to know that.",
     "Do you ever wonder why your life is like this? Look up. Wave."
@@ -470,7 +470,7 @@
     [
       "*she looks at the advocate for a long, unblinking moment*",
       "You have a {clever|honest|expensive} face and I am not in the mood for any of the three.",
-      "Dismissed. Not the case. You."
+      "Dismissed. You, I mean."
     ]
   ],
   "lawyerObjections": [
@@ -479,7 +479,7 @@
     "\"With respect, the court cited a case it decided by coin toss.\"",
     "\"The charge sheet is dated {tomorrow|the wrong century|in pencil}.\"",
     "\"I would ask the bench to note that my client has been sitting quietly for the entire hearing.\"",
-    "\"There is no complainant. There is no witness. There is a pigeon.\"",
+    "\"The complainant, the witness and the evidence are all one pigeon.\"",
     "\"The bounty was calculated by a system the court itself has called insane.\"",
     "\"My client pleads context, Your Honour. Enormous amounts of context.\"",
     "\"Every element of this offence requires intent. My client rarely has any.\"",
@@ -631,7 +631,7 @@
     "Please. I have people waiting for me.",
     "Do what you want. You always do.",
     "I am ready, Your Honor.",
-    "This is not justice. It is theatre.",
+    "This is theatre.",
     "May the gods judge you as you judge me."
   ],
   "reversePartingLines": [
@@ -2098,7 +2098,8 @@
     "lawyerEscortedOut": "{name} is escorted out. The defence bench is empty again.",
     "bubbaBountyWaived": "There is a bounty of {bounty} on you here. {It isn't any more.|Not any more there isn't.|I have just {lost|mislaid|filed} it.}",
     "impartialityScore": "Eris impartiality score: {score}/100, {rank}",
-    "emDeathSentence": "This court sentences Em to death. {sentence}."
+    "emDeathSentence": "This court sentences Em to death. {sentence}.",
+    "verdictRoll": "Court Verdict"
   },
   "log": {
     "acquittal": "won an acquittal before Eris",
@@ -2116,5 +2117,14 @@
     "truth": "In truth, {name} was {verdict} all along.",
     "guilty": "guilty",
     "innocent": "innocent"
+  },
+  "boss": {
+    "deal": "Deal?",
+    "choiceDeal": "DEAL",
+    "choiceDate": "DATE?",
+    "choiceArrest": "ARREST ME",
+    "coward": "YOU COWARD!!!",
+    "crowned": "The scales are yours now. No court will ever read your name again.",
+    "gone": "The court is empty..."
   }
 }

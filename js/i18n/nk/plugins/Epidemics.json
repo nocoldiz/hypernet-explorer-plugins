@@ -12,7 +12,7 @@
   "toast": {
     "threshold": "OUTBREAK ALERT: {disease} HAB REACHED {count} CASES!"
   },
-  "discovered": "OUTBREAK OF {disease} OFFICIALLY DISCOVERED IN {place}!",
+  "discovered": "OUTBREAK OF {disease} CONFIRMED IN {place}!",
   "news": {
     "hysteria": "{disease} SPREADS THROUGH {place}; OFFICIALS APPEAL FOR CALM!",
     "medical": "OUTBREAK OF {disease} CONFIRMED IN {place}. EURODEMICS RAISES DA ALERT!",

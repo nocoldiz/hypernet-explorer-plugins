@@ -10,8 +10,8 @@
   "noMaterials": "Nessun materiale in deposito.",
   "freeBuild": "Costruzione gratuita",
   "illegal": {
-    "warning": "Questa terra non è tua. Tutto ciò che posi qui è costruzione abusiva, e la n€polizia te lo addebiterà.",
-    "charge": "Costruzione Abusiva"
+    "warning": "Questa terra non è tua. Costruire qui è abusivo e la N€police ti multerà.",
+    "charge": "Costruzione abusiva"
   },
   "cannotAfford": {
     "gold": "Soldi insufficienti: costa %1.",
@@ -23,7 +23,7 @@
   "confirmQ": "Confermi?",
   "piecesShown": "Pezzi mostrati",
   "closeEsc": "Chiudi (Esc)",
-  "truncated": "Mostrati i primi {shown} pezzi costruibili (+{more} altri). Cerca o scegli una categoria per restringere.",
+  "truncated": "Mostrati {shown} pezzi (+{more} altri). Cerca o scegli una categoria.",
   "door": {
     "inn": "Locanda",
     "shop": "Negozio",
@@ -38,7 +38,7 @@
     "features": "Elementi",
     "animals": "Animali",
     "prefabs": "Prefabbricati",
-    "town": "Citta",
+    "town": "Città",
     "stock": "Giacenza"
   },
   "empty": {
@@ -51,7 +51,7 @@
     "cannotAfford": "Al momento non puoi permetterti alcun arredo.",
     "cannotBuild": "Con i materiali attuali non puoi costruire nulla.",
     "category": "Nessun arredo in questa categoria.",
-    "prefabs": "Nessun prefabbricato appartiene a questo bioma.",
+    "prefabs": "Nessun prefabbricato per questo bioma.",
     "stock": "Giacenza vuota. Ordina dal catalogo Homely sull'hyperdeck."
   },
   "tip": {
@@ -61,12 +61,12 @@
     "purchasePrice": "Prezzo d'acquisto",
     "dragToPlace": "Posalo sulla mappa",
     "cannotAfford": "Non puoi permettertelo",
-    "clearAll": "Elimina tutto quello che hai costruito su questa mappa e restituisce i materiali",
+    "clearAll": "Elimina tutto ciò che è costruito su questa mappa e rimborsa i materiali",
     "clearAllConfirm": "Clicca di nuovo per confermare",
     "cycleVariants": "Altre varianti di colore disponibili",
     "backToCategories": "Torna all’elenco delle cartelle",
-    "stock": "Già ordinato e pagato. Posarlo ne consuma una.",
-    "mirror": "Ribalta il pezzo da sinistra a destra (non per porte, muri, tetti o terreno)"
+    "stock": "Già pagato. Posarlo ne consuma uno.",
+    "mirror": "Ribalta in orizzontale (non porte, muri, tetti o terreno)"
   },
   "category": {
     "Ads": "Insegne",
@@ -212,25 +212,25 @@
     "cannotAfford": "Non puoi ancora permettertelo",
     "noMoney": "Denaro insufficiente",
     "noMaterials": "Materiali insufficienti",
-    "idle": "Niente in mano."
+    "idle": "Niente selezionato."
   },
   "selection": "Selezione",
   "backToCategories": "Torna alle cartelle",
   "homely": {
     "appName": "Homely",
-    "subtitle": "Ordina mobili per posta. I pezzi consegnati sono pronti da piazzare.",
+    "subtitle": "Ordina mobili per posta. I pezzi consegnati sono pronti da posare.",
     "hint": "I pezzi ordinati compaiono nella scheda Giacenza del pannello di costruzione.",
     "search": "Cerca nel catalogo",
     "yourStock": "La tua giacenza",
-    "stockBlurb": "Ogni pezzo ordinato puo essere piazzato {n} volte. Una volta rotto sparisce e va riordinato.",
+    "stockBlurb": "Ogni pezzo ordinato si può posare {n} volte. Se si rompe sparisce e va riordinato.",
     "stockEmpty": "Niente in ordine. Scegli un reparto e compra qualcosa.",
     "delivered": "consegnato",
     "leftInStock": "{n} pose rimaste",
     "order": "Ordinane uno",
     "ordered": "{item} ordinato per {price}. {n} pose in giacenza.",
-    "cannotAfford": "La borsa non basta, consegna compresa.",
+    "cannotAfford": "Soldi insufficienti (consegna inclusa).",
     "unknownPiece": "Il catalogo non ha questo pezzo.",
-    "searchResults": "Tutto quel che si chiama \"{q}\"",
+    "searchResults": "Risultati per \"{q}\"",
     "nothingHere": "Niente in questo reparto.",
     "pageOf": "Pagina {page} di {pages}",
     "prev": "Pagina precedente",
@@ -239,12 +239,12 @@
   "stockLeft": "{n} rimaste",
   "mirror": "Specchia",
   "painting": {
-    "pickTitle": "Quale immagine contiene?",
-    "none": "Così com'è"
+    "pickTitle": "Scegli un'immagine",
+    "none": "Lascia com'è"
   },
   "use": {
     "rest": "Riposa accanto al fuoco",
     "cook": "Cucina",
-    "contentsReturned": "{n} oggetti riposti di nuovo nello zaino"
+    "contentsReturned": "{n} oggetti tornati nello zaino"
   }
 }

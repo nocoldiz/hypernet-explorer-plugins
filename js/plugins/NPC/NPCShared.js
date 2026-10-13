@@ -25,6 +25,7 @@
  *   ideologyAxes(creed|profile|id)  its five-axis position, econ/auth/trad/mil/myst
  *   ideologyDistance(a, b)     mean axis distance, 0 (same creed) .. 200
  *   nearestIdeologies(x, opts) the creeds standing closest to a position
+ *   nearbySoul(), soulName(n)  the person a menu-cast spell reaches (faced, else nearest)
  *   isForbiddenItem(id)        an item no NPC may hold (the Liminal cuffs)
  *   isCarKeys(id), grantCarKeys(profile)  the RoadCarAI car keys in a hand
  *   WorldModes                 what the simulation does in each world creation
@@ -662,7 +663,48 @@
     return towerTests(TW);
   }
 
+  // The person a spell cast from the menu reaches. A menu cast has no event of
+  // its own, so it lands on the person the leader is facing, else on the
+  // nearest one within SOUL_REACH tiles. A Game_Event, or null.
+  const SOUL_REACH = 6;
+  function isPersonEvent(ev) {
+    if (!ev || ev._erased || typeof ev.event !== "function" || !ev.event()) return false;
+    const note = ev.event().note || "";
+    if (/(^|[^\w])Hidden([^\w]|$)/.test(note)) return false;
+    const NS = window.NPCSystem;
+    return !!(NS && typeof NS.isNPCEvent === "function" && NS.isNPCEvent(note));
+  }
+  function nearbySoul(reach = SOUL_REACH) {
+    if (typeof $gameMap === "undefined" || !$gameMap || typeof $gamePlayer === "undefined" || !$gamePlayer) return null;
+    const d = $gamePlayer.direction();
+    const fx = $gameMap.roundXWithDirection($gamePlayer.x, d);
+    const fy = $gameMap.roundYWithDirection($gamePlayer.y, d);
+    const faced = $gameMap.eventsXy(fx, fy).find(isPersonEvent);
+    if (faced) return faced;
+    let best = null, bestD = Infinity;
+    for (const ev of $gameMap.events()) {
+      if (!isPersonEvent(ev)) continue;
+      const dist = Math.abs(ev.x - $gamePlayer.x) + Math.abs(ev.y - $gamePlayer.y);
+      if (dist <= reach && dist < bestD) { best = ev; bestD = dist; }
+    }
+    return best;
+  }
+  // The event name a plugin command keys its person by: the one it was handed,
+  // else the nearby soul's. Empty, with a toast saying so, when nobody is near.
+  function soulName(given) {
+    const name = String(given || "").trim();
+    if (name) return name;
+    const ev = nearbySoul();
+    const found = ev ? String(ev.event().name || "").trim() : "";
+    if (!found && window.ParchmentToast && window.T) {
+      window.ParchmentToast.show(window.T("NPCSim.noSoulNearby"), { severity: "info", key: "no-soul-nearby" });
+    }
+    return found;
+  }
+
   window.NPCShared = {
+    nearbySoul,
+    soulName,
     towerIdle,
     towerTime,
     CIVIC_V,

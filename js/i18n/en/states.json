@@ -71,10 +71,10 @@
   },
   "11": {
     "name": "Freeze",
-    "message1": "%1 is freezed solid and can’t move!",
-    "message2": "%1 is freezed solid!",
-    "message3": "%1 is freezed and can’t move!",
-    "message4": "%1 is no longer freezed!"
+    "message1": "%1 is frozen solid and can’t move!",
+    "message2": "%1 is frozen solid!",
+    "message3": "%1 is frozen and can’t move!",
+    "message4": "%1 is no longer frozen!"
   },
   "12": {
     "name": "Paralysis",
@@ -93,7 +93,7 @@
   "14": {
     "name": "Locked on",
     "message1": "%1 is locked on!",
-    "message2": "%1 is locked on",
+    "message2": "%1 is locked on!",
     "message3": "%1 is locked on!",
     "message4": "%1's focus subsides!"
   },
@@ -133,11 +133,11 @@
     "message4": ""
   },
   "20": {
-    "name": "Provoke",
-    "message1": "%1 became easier to hit!",
-    "message2": "",
+    "message1": "%1 draws the enemy's eye!",
+    "message2": "%1 is provoked!",
     "message3": "",
-    "message4": ""
+    "message4": "",
+    "name": "Provoke"
   },
   "21": {
     "name": "Hide",
@@ -176,8 +176,8 @@
   },
   "26": {
     "name": "Cold",
-    "message1": "%1 is now enveloped in an freezing aura.",
-    "message2": "%1 is now enveloped in an freezing aura.",
+    "message1": "%1 is now enveloped in a freezing aura.",
+    "message2": "%1 is now enveloped in a freezing aura.",
     "message3": "",
     "message4": ""
   },
@@ -211,8 +211,8 @@
   },
   "31": {
     "name": "Berserk",
-    "message1": "%1 is berserked!",
-    "message2": "%1 is berserked!",
+    "message1": "%1 goes berserk!",
+    "message2": "%1 goes berserk!",
     "message3": "%1 is consumed by bloodlust!",
     "message4": "%1's bloodlust subsides!"
   },
@@ -266,11 +266,11 @@
     "message4": "%1 regains proper balance."
   },
   "39": {
-    "name": "Life Link",
-    "message1": "%1 is linked to the party's life force!",
-    "message2": "%1 is linked to the party's life force!",
+    "message1": "%1 is bound into the life link!",
+    "message2": "%1 is bound into the life link!",
     "message3": "%1 maintains the life link...",
-    "message4": "The life link with %1 is severed."
+    "message4": "The life link with %1 is severed.",
+    "name": "Life Link"
   },
   "40": {
     "name": "Vulnerability",
@@ -322,11 +322,11 @@
     "message4": "%1 is no longer invisible!"
   },
   "47": {
-    "name": "Oily",
     "message1": "%1 is now covered in oil",
-    "message2": "%1 is now covered il oil",
+    "message2": "%1 is now covered in oil.",
     "message3": "",
-    "message4": ""
+    "message4": "The oil on %1 is gone.",
+    "name": "Oily"
   },
   "48": {
     "name": "Bleeding",
@@ -439,5 +439,173 @@
     "message2": "%1 starts sneezing!",
     "message3": "",
     "message4": "%1 stops sneezing."
+  },
+  "64": {
+    "message1": "%1 falls into the blade drill!",
+    "message2": "%1 falls into the blade drill!",
+    "message3": "",
+    "message4": "%1 loses the rhythm of the blade.",
+    "name": "Blade Drill"
+  },
+  "65": {
+    "message1": "%1 falls into the gun drill!",
+    "message2": "%1 falls into the gun drill!",
+    "message3": "",
+    "message4": "%1 loses the rhythm of the drill.",
+    "name": "Gun Drill"
+  },
+  "66": {
+    "message1": "%1 is drilled!",
+    "message2": "%1 is drilled!",
+    "message3": "",
+    "message4": "%1 forgets the drill.",
+    "name": "Drilled"
+  },
+  "67": {
+    "message1": "%1 is caught in a loop!",
+    "message2": "%1 is caught in a loop!",
+    "message3": "",
+    "message4": "%1 breaks out of the loop.",
+    "name": "Looped"
+  },
+  "68": {
+    "message1": "%1's last move is sealed away!",
+    "message2": "%1's last move is sealed away!",
+    "message3": "",
+    "message4": "%1 remembers how to move again.",
+    "name": "Mind Sealed"
+  },
+  "69": {
+    "message1": "%1 raises a psychic rebound!",
+    "message2": "%1 raises a psychic rebound!",
+    "message3": "",
+    "message4": "%1's rebound fades.",
+    "name": "Rebound"
+  },
+  "70": {
+    "message1": "%1 dances on psychic strings!",
+    "message2": "%1 dances on psychic strings!",
+    "message3": "",
+    "message4": "%1's strings are cut.",
+    "name": "Puppeted"
+  },
+  "71": {
+    "message1": "%1 turns against their own side!",
+    "message2": "%1 turns against their own side!",
+    "message3": "",
+    "message4": "%1 comes back to their senses.",
+    "name": "Turncoat"
+  },
+  "72": {
+    "message1": "%1's mind starts to echo.",
+    "message2": "%1's mind starts to echo.",
+    "message3": "",
+    "message4": "%1's echo fades.",
+    "name": "Echo"
+  },
+  "73": {
+    "message1": "%1's thoughts lie open!",
+    "message2": "%1's thoughts lie open!",
+    "message3": "",
+    "message4": "%1's thoughts close again.",
+    "name": "Mind Read"
+  },
+  "77": {
+    "message1": "%1 is rimed with brittle frost!",
+    "message2": "%1 is rimed with brittle frost!",
+    "message3": "",
+    "message4": "The rime on %1 is gone.",
+    "name": "Brittle"
+  },
+  "78": {
+    "message1": "%1 is soaked in a volatile reagent!",
+    "message2": "%1 is soaked in a volatile reagent!",
+    "message3": "",
+    "message4": "The reagent on %1 has gone inert.",
+    "name": "Volatile"
+  },
+  "80": {
+    "message1": "%1 is hobbled!",
+    "message2": "%1 is hobbled!",
+    "message3": "%1 limps on...",
+    "message4": "%1 finds its footing again.",
+    "name": "Hobbled"
+  },
+  "81": {
+    "message1": "%1 is disarmed!",
+    "message2": "%1 is disarmed!",
+    "message3": "%1's arm hangs useless...",
+    "message4": "%1 gets a grip again.",
+    "name": "Disarmed"
+  },
+  "82": {
+    "message1": "%1 turns the edge to the foe!",
+    "message2": "%1 turns the edge to the foe!",
+    "message3": "",
+    "message4": "%1 lets the edge drop.",
+    "name": "Edge Stance"
+  },
+  "83": {
+    "message1": "%1 strikes to spare!",
+    "message2": "%1 strikes to spare!",
+    "message3": "",
+    "message4": "%1 stops holding back.",
+    "name": "Merciful Stance"
+  },
+  "84": {
+    "message1": "%1 lowers the point!",
+    "message2": "%1 lowers the point!",
+    "message3": "",
+    "message4": "%1 raises the point.",
+    "name": "Spearpoint Stance"
+  },
+  "85": {
+    "message1": "%1 slams in a fresh magazine!",
+    "message2": "%1 slams in a fresh magazine!",
+    "message3": "",
+    "message4": "%1's fresh magazine is spent.",
+    "name": "Fresh Magazine"
+  },
+  "87": {
+    "message1": "%1 is marked by Doom!",
+    "message2": "%1 is marked by Doom!",
+    "message3": "%1 hears the count fall...",
+    "message4": "The Doom over %1 is lifted.",
+    "name": "Doom"
+  },
+  "88": {
+    "message1": "A fuse is lit on %1!",
+    "message2": "A fuse is lit on %1!",
+    "message3": "The fuse on %1 hisses...",
+    "message4": "The fuse on %1 is snuffed out.",
+    "name": "Lit Fuse"
+  },
+  "89": {
+    "message1": "A vow is sworn over %1!",
+    "message2": "A vow is sworn over %1!",
+    "message3": "The vow over %1 waits for the dawn...",
+    "message4": "The vow over %1 is broken.",
+    "name": "Dawn Vow"
+  },
+  "90": {
+    "message1": "%1 slips into bullet time!",
+    "message2": "%1 slips into bullet time!",
+    "message3": "",
+    "message4": "%1 falls back into real time.",
+    "name": "Bullet Time"
+  },
+  "91": {
+    "message1": "%1 sees what comes next!",
+    "message2": "%1 sees what comes next!",
+    "message3": "",
+    "message4": "%1 loses sight of what comes next.",
+    "name": "Foresight"
+  },
+  "92": {
+    "message1": "%1 stands guard over the others!",
+    "message2": "%1 stands guard over the others!",
+    "message3": "%1 keeps the guard...",
+    "message4": "%1 lowers the guard.",
+    "name": "Guardian Bond"
   }
 }

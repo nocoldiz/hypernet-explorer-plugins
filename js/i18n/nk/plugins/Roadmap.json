@@ -1,0 +1,890 @@
+{
+  "title": "ROADMAP",
+  "details": "DETAILS",
+  "close": "SHUT IT",
+  "fullscreenTitle": "ROADMAP",
+  "omegaTower": "OMEGA TOWER LEVELS",
+  "destinations": "KEY DESTINATIONS",
+  "bevyRework": "BEVY ECS REWORK",
+  "bevyReworkNote": "A PARALLEL BUILD DAT WILL REPLACE DA ALPHA VERSION",
+  "storyMode": "STORY MODE",
+  "textRewrite": "COMPLETE TEXT REWRITE AN' MANUAL CHECK",
+  "textRewriteNote": "AI GENERATED TEXT BANKS REPLACED WIT HANDWRITTEN ONES. DIS WILL TAKE A LONG TIME, GIVEN DA SHEER AMOUNT OF TEXT BANKS ALREADY IN DA GAME",
+  "ggufModels": "LOCAL GGUF MODELS INTEGRATION",
+  "ggufModelsNote": "LONG TERM GOAL: A LOCAL TEXT MODEL CONTROLLIN' DA SIMULATION AS ITS DIRECTOR",
+  "asciiMode": "ASCII MODE",
+  "balancing": "BALANCIN'",
+  "balancingNote": "BAD 'UN LEVELS RISE WIT DISTANCE FROM DA OMEGA TOWER, LOOT FOLLOWS DA PARTY'S LEVEL, AN' ARMOUR, WEAPONS AN' BETTIN' ODDS COME FROM GENERATORS CHECKED BY BALANCE TESTS. LONG TERM GOAL: GATHER PLAYER EXPERIENCE TA BALANCE IT EVEN FURTHER",
+  "skyscraperInteriors": "SKYSCRAPER INTERIORS",
+  "skyscraperInteriorsNote": "LOBBIES AN' FLOORS IZ LAID OUT. LONG TERM GOAL: POPULATE DEM",
+  "shopInteriors": "SHOP INTERIORS",
+  "shopInteriorsNote": "ALL DA BASIC SHOP TYPES IZ DEFINED. LONG TERM GOAL: MORE VARIATION AN' NEW SHOP TYPES",
+  "patronContent": "PATRON CONTENT",
+  "patronContentNote": "PATREON STARS AN' VAULTS IZ IN, AN' DA VAULTS WILL BE UNLOCKED IN STORY MODE FOR NON PATRONS. LONG TERM GOAL: MORE EXCLUSIVE PATREON LOCATIONS",
+  "searchPlaceholder": "FILTER...",
+  "allCategories": "ALL",
+  "doneHeader": "DONE",
+  "selectFeature": "SELECT A SYSTEM TA SEE WHAT IZ DONE!",
+  "goalsHeader": "LONG TERM GOALS",
+  "categories": {
+    "core": "CORE",
+    "combat": "COMBAT",
+    "npcs": "SOCIETY",
+    "economy": "ECONOMY",
+    "vehicles": "VEHICLES",
+    "hypernet": "HYPERNET",
+    "galaxy": "SPACE",
+    "health": "HEALTH",
+    "crafting": "CRAFTIN'",
+    "cards": "LIL' GAMES",
+    "world": "WORLD",
+    "multiplayer": "MULTIPLAYER"
+  },
+  "goals": {
+    "core": [
+      "WORLDS DAT RUN FOR CENTURIES, EVERY SAVEGAME READIN' DA SAME LIVIN' HISTORY",
+      "AN ORIGINAL SOUNDTRACK COMPOSED BY DA DEVELOPER FOR DA WHOLE GAME"
+    ],
+    "combat": [
+      "EVERY CLASS, SKILL AN' BAD 'UN BALANCED ACROSS DA WHOLE LEVEL RANGE",
+      "LARGE BATTLES MIXIN' DA PARTY, ARMIES AN' SUMMONS ON ONE FIELD"
+    ],
+    "npcs": [
+      "WHOLE CITIES OF PEOPLE WHO REMEMBER DA PARTY AN' SHAPE EACH OTHER'S LIVES",
+      "GENERATED CHARACTERS WIT STORIES AS DEEP AS DA WRITTEN ONES"
+    ],
+    "economy": [
+      "A CONTINENTAL ECONOMY WHERE PRICES FOLLOW SUPPLY, WARS AN' HARVESTS"
+    ],
+    "vehicles": [
+      "TRAINS, SHIPS AN' AIRCRAFT TA LIVE AN' WORK ABOARD"
+    ],
+    "hypernet": [
+      "A HYPERNET OF HUNDREDS OF SITES WRITTEN BY DA WORLD'S OWN PEOPLE AN' FACTIONS",
+      "NETWORKS BETWEEN HyperDecks, WIT HACKIN' AN' SHARED FILES"
+    ],
+    "galaxy": [
+      "COLONIES AN' STATIONS DAT TRADE, GROW AN' FIGHT AMONG DA STARS",
+      "EVERY LANDABLE WORLD WIT ITS OWN LIFE, SETTLEMENTS AN' QUESTS",
+      "ADVANCED SPACE COLONIZATION AS DA ENDGAME, SETTLIN' AN' SHAPIN' WHOLE WORLDS"
+    ],
+    "health": [
+      "HOSPITALS, DOCTORS AN' SURGERY RUN BY NPCS",
+      "MIND, AGEIN' AN' OLD WOUNDS WEIGHIN' ON DA PARTY FOR LIFE"
+    ],
+    "crafting": [
+      "HOMES AN' BASES BUILT BLOCK BY BLOCK, ON DA MAP AN' IN DA 3D WORLD",
+      "FARMS AN' WORKSHOPS LARGE ENOUGH TA SUPPLY A WHOLE TOWN"
+    ],
+    "cards": [
+      "LEAGUES AN' TOURNAMENTS FOR EVERY GAME, WIT NPC CHAMPIONS",
+      "EVERY MINIGAME PLAYABLE AGAINST OTHER PLAYERS"
+    ],
+    "world": [
+      "A MAIN STORY WIT SEVERAL ENDINGS, FROM DA FIRST SQUARE TA DA TOP OF DA OMEGA TOWER",
+      "EVERY EUROPEAN COUNTRY WIT ITS OWN LANDMARKS, TRADITIONS AN' QUEST CHAINS",
+      "92 WORLD MAPS, ONE FOR EACH DIMENSION DA OMEGA TOWER PIERCES, EACH REACHED FROM ITS OWN FLOOR, WIT DA TOWER AS DA HUB BETWEEN WORLDS",
+      "EACH BIOME POPULATED WIT THOUSANDS OF HANDCRAFTED PREFABS AN' MAP PIECES"
+    ],
+    "multiplayer": [
+      "SHARED PERSISTENT WORLDS WHERE PARTIES MEET, TRADE AN' FIGHT",
+      "DA WHOLE STORY PLAYABLE TOGETHER BY UP TA EIGHT PLAYERS"
+    ]
+  },
+  "features": {
+    "worldPersistence": {
+      "name": "WORLDZ",
+      "desc": "WORLDS DAT OUTLIVE A SINGLE SAVEGAME, WIT EVERYTINK DAT HAPPENED IN DEM!",
+      "done": [
+        "WORLD FOLDERS SHARED BY EVERY SAVEGAME OF DA SAME WORLD",
+        "WORLDS SCREEN ON DA TITLE MENU",
+        "WORLD AN' HISTORY GENERATED FROM DA WORLD SEED",
+        "AUTOSAVE ON EVERY MAP TRANSITION",
+        "OPENED CHESTS KEPT PER WORLD",
+        "DUG VOXELS AN' FELLED TREES KEPT PER WORLD",
+        "PARTY DIARY WRITTEN AS IT HAPPENS, KEPT IN DA WORLD FOLDER",
+        "TRAVEL JOURNAL STASHED AS A TEXT FILE PER SLOT",
+        "LETTERS BETWEEN PARTIES ACROSS WORLDS, WIT MONEY AN' GOODS ENCLOSED"
+      ]
+    },
+    "timeSleepClock": {
+      "name": "CALENDAR",
+      "desc": "A LIVIN' CLOCK AN' CALENDAR DA WHOLE WORLD RUNS ON!",
+      "done": [
+        "CLOCK AN' CALENDAR WIT DAY AN' NIGHT TINTS",
+        "SLEEP MENU, BEDS, SLEEP DEBT AN' EXHAUSTION",
+        "SEASONS, WEATHER AN' TEMPERATURE",
+        "PUBLIC HOLIDAYS AN' GATHERINGS",
+        "MOON PHASES, WIT TWO EXTRA MOONS ON FRIDAYS",
+        "ANALOG CLOCK WIDGET"
+      ]
+    },
+    "hungerNutrition": {
+      "name": "NUTRITION",
+      "desc": "WHAT DA PARTY EATS, AN' WHAT IT DOES TA DEM!",
+      "done": [
+        "HUNGER, SATIETY AN' OVEREATIN'",
+        "CALORIES, FAT, PROTEIN AN' CAFFEINE TRACKED PER MEAL",
+        "CONSUMABLES DAT RESTORE SPECIFIC NEEDS",
+        "RAW INGREDIENTS EDIBLE ON DEY OWN",
+        "FOOD SPOILIN' OVER TIME"
+      ]
+    },
+    "inputControls": {
+      "name": "CONTROLS",
+      "desc": "KEYBOARD, MOUSE AN' GAMEPAD, REMAPPABLE EVERYWHERE!",
+      "done": [
+        "KEYBOARD, MOUSE AN' GAMEPAD SUPPORT",
+        "FULL KEY REMAPPIN'",
+        "ANALOG STICK MOVEMENT",
+        "MOUSE CONTROLS AN' MAP PANNIN'",
+        "HOTKEYS AN' DA SHARED QUICK BAR",
+        "PARTY CYCLIN'",
+        "SEARCH BARS AN' LONG LISTS IN EVERY MENU",
+        "FIDDLY BITS MENU WIT EVERY FIDDLY BIT IN TABS",
+        "FULLSCREEN, 16:9 AN' PIXEL PERFECT SCALIN'"
+      ]
+    },
+    "audioMusic": {
+      "name": "NOISES",
+      "desc": "GENERATED AN' RECORDED MUSIC, RADIO AN' FOOTSTEPS!",
+      "done": [
+        "CUSTOM AUDIO ENGINE",
+        "PROCEDURAL MUSIC GENERATED LIVE",
+        "BATTLE MUSIC PICKER IN DA FIDDLY BITS",
+        "TRACK AN' ARTIST ANNOUNCED AS A TOAST OR A CASSETTE",
+        "MAP MUSIC CHOSEN BY NATION, WIT DAY AN' NIGHT POOLS",
+        "IN WORLD RADIO WIT TUNABLE STATIONS",
+        "FOOTSTEPS DAT CHANGE WIT DA GROUND",
+        "RANDOM MAP MUSIC WIT RANDOM PITCH"
+      ]
+    },
+    "modManager": {
+      "name": "BOLT-ONS",
+      "desc": "LOAD COMMUNITY PLUGINS FROM DA MODS FOLDER!",
+      "done": [
+        "MOD LOADER READIN' DA MODS FOLDER",
+        "LOAD ORDER AN' PER MOD TOGGLES",
+        "MODS SCREEN ON DA TITLE MENU",
+        "ASSET PATHS RESOLVED REGARDLESS OF LETTER CASE"
+      ]
+    },
+    "battleEngine": {
+      "name": "BATTLE SYSTEM",
+      "desc": "TURN BASED BATTLES WHERE FASTER BATTLERS ACT FIRST!",
+      "done": [
+        "ONE ACTION PER BATTLER PER ROUND, ORDERED BY AGILITY",
+        "HP CARRIED BETWEEN FIGHTS",
+        "DANGER WARNINGS AN' HEALTH PROTECTION",
+        "GRAVESTONES, RESPAWN, PERMADEATH AN' RESTORE",
+        "CORPSES AN' BATTLE REWARDS",
+        "ENCOUNTERS DAT CHANGE WIT DA TIME OF DAY",
+        "BAD 'UN LEVELS RISIN' WIT DISTANCE FROM DA OMEGA TOWER",
+        "BATTLE COMMAND WINDOW AN' SCROLLIN' BATTLE LOG",
+        "PEACEFUL MODE WIT DA TALK COMMAND",
+        "TALKIN' TA BAD 'UNS IN BATTLE",
+        "THROWIN' ITEMS",
+        "GUARANTEED ESCAPE"
+      ]
+    },
+    "battlers3D": {
+      "name": "3D BATTLERS",
+      "desc": "EVERY BAD 'UN IZ A 3D MODEL BUILT FOR IT ALONE!",
+      "done": [
+        "A BESPOKE 3D MODEL FOR EVERY BAD 'UN",
+        "FAMILIES OF BEASTS, BIRDS, BOSSES, DRAGONS, HUMANOIDS, OOZES AN' SPIRITS",
+        "WALKIN', RUNNIN', FLYIN' AN' SWIMMIN' GAITS",
+        "BODY PARTS DAT CAN BE LOST, WIT BLOOD",
+        "SHARED HAIR STYLES FOR PEOPLE AN' FOLK",
+        "SEEDED VARIATIONS WITHIN A SPECIES",
+        "SnapVertex AN' PIXEL ART RETRO LOOKS",
+        "ANIMATED BATTLE BACKGROUNDS WIT MOON PHASES",
+        "EFFECT ANIMATIONS FOR EVERY SKILL"
+      ]
+    },
+    "skillsLoadouts": {
+      "name": "TRICKS",
+      "desc": "HUNDREDS OF SKILLS AN' SPELLS, TRAINED, FUSED AN' SPECIALIZED!",
+      "done": [
+        "ROLE TABBED SKILL MENU AN' NINE SKILL BATTLE LOADOUT",
+        "ACTIVE SKILLS AN' A SIGNATURE PASSIVE FOR EVERY CLASS",
+        "SPECIALIZATION TIERS DAT GROW WIT WHAT YOU DO",
+        "SKILL ENCYCLOPEDIA, TRAININ' AN' SPELL FUSION",
+        "289 ESOTERIC SPELLS ACROSS 23 SCHOOLS",
+        "TRAINABLE WEAPON PROFICIENCIES",
+        "EXPRESSION POWERS BUILT FROM TRIGGERS, CONDITIONS AN' EFFECTS",
+        "MIMIC TRANSFORMATION SKILLS",
+        "STATE ENCYCLOPEDIA WIT HOW EACH STATE ENDS"
+      ]
+    },
+    "arenaBattles": {
+      "name": "ARENA",
+      "desc": "GAUNTLETS AN' TRIALS WIT GROWIN' REWARDS!",
+      "done": [
+        "ARENA GAUNTLETS AN' SINGLE FIGHTS",
+        "BIOME TRIALS",
+        "WIN STREAK REWARDS IN GOLD AN' ITEMS",
+        "ARENA MENUS AN' RESULTS SCREEN"
+      ]
+    },
+    "summonsSpirits": {
+      "name": "SUMMONS",
+      "desc": "ALLIES CALLED INTO BATTLE FOR A FIGHT!",
+      "done": [
+        "SUMMONS TAKIN' DA FOURTH PARTY SLOT",
+        "SPIRIT BATTLERS",
+        "RECRUITS AN' FAMILIARS FIGHTIN' WIT DEY OWN HANDS IN FIRST PERSON"
+      ]
+    },
+    "mapBattles": {
+      "name": "MAP BATTLES",
+      "desc": "FIGHTS DAT HAPPEN RIGHT WHERE YOU STAND!",
+      "done": [
+        "FIGHTS PLAYED OUT ON DA LIVE MAP",
+        "REAL TIME COMBAT IN DA 3D WORLD",
+        "STREET FIGHTS BETWEEN PEOPLE AN' MONSTERS, WIT FLEEIN'",
+        "DOWNED BODIES, LOOTIN', FINISHIN' BLOWS AN' RECOVERY"
+      ]
+    },
+    "bulletHell": {
+      "name": "BULLET HELL",
+      "desc": "DODGE BAD 'UN ATTACKS BY HAND!",
+      "done": [
+        "BULLET PATTERNS DODGED DURIN' BAD 'UN ATTACKS",
+        "DODGIN' TIED INTO REGULAR BATTLES"
+      ]
+    },
+    "npcLife": {
+      "name": "NPC LIVES",
+      "desc": "EVERY PERSON HAB A DAY, A HOME, A FAMILY AN' A FUTURE!",
+      "done": [
+        "SCHEDULES, JOBS AN' SHIFTS",
+        "HUNGER, SLEEP, HYGIENE, SOCIAL AN' LEISURE NEEDS",
+        "HOMES AN' MOVIN' OUT",
+        "COUPLES, BREAKUPS, PREGNANCY, ADOPTION AN' CHILDREN",
+        "TRIPS, RELOCATION AN' TRAVELLERS ON DA ROADS",
+        "AGEIN' AN' DEATH, WIT DA WORLD AGED BEFORE YOU ARRIVE",
+        "EXPERIENCE AN' SPECIALIZATIONS",
+        "ADDICTIONS, CRAVINGS AN' DA CASINO",
+        "GEAR, IMPLANTS, VEHICLES AN' FOOD IN HAND",
+        "PLANTS, ANIMALS, HIVES AN' BARRELS LOOKED AFTER",
+        "PETTY CRIME AN' STREET CRIME",
+        "ADVENTURIN' BANDS",
+        "HORDE CONQUESTS AN' REFUGEE CAMPS",
+        "ZOMBIE APOCALYPSE"
+      ]
+    },
+    "dialogueBusts": {
+      "name": "DIALOGUE",
+      "desc": "CONVERSATIONS WIT BUSTS, KEYWORDS AN' ENDLESS CHATTER!",
+      "done": [
+        "PARCHMENT DIALOGUE WIT CHOICES AN' KEYWORDS",
+        "VISUAL NOVEL BUSTS AN' PORTRAITS",
+        "SPEAKER NAMES DAT STAGE BUSTS AUTOMATICALLY",
+        "NPC TA NPC TALK, AMBIENT CHATTER AN' THOUGHT BUBBLES",
+        "CREATURES SPEAKIN' IN DEY OWN SPECIES VOICE",
+        "GENERATED CHAT IN EACH NPC'S OWN STYLE",
+        "PARTY BANTER DAT FITS DA SITUATION",
+        "EMPATHIZE PANEL: CHAT, DOSSIER, WIKI, TALK 'BOUT, TEACH AN' LEARN"
+      ]
+    },
+    "creatureSystem": {
+      "name": "COMPANIONS",
+      "desc": "RECRUIT PEOPLE AN' CREATURES INTO DA PARTY!",
+      "done": [
+        "RECRUITIN' NPCS INTO DA PARTY",
+        "ROSTER HISTORY, BENCH AN' RECALL",
+        "CREATURE CHARACTERS WIT DEY OWN VOICES",
+        "CREATURES KEPT APART FROM PEOPLE: NO JOBS, MONEY OR FACTION",
+        "PET FOLLOWER TRAILIN' DA PARTY"
+      ]
+    },
+    "factionsReputation": {
+      "name": "FACTIONS",
+      "desc": "EIGHTEEN FACTIONS AN' DA ARMIES DEY FIELD!",
+      "done": [
+        "EIGHTEEN FACTIONS WIT REPUTATION FROM -100 TA +100",
+        "EACH PARTY MEMBER'S OWN REPUTATION WIT EVERY NPC",
+        "FACTION ARMIES ON DA WORLD MAP",
+        "TROOP RECRUITMENT UP TA 100 TROOPS",
+        "FIELD BATTLES BETWEEN ARMIES"
+      ]
+    },
+    "onuAssembly": {
+      "name": "POLITICS",
+      "desc": "GOVERNMENTS, ELECTIONS AN' DA WORLD ASSEMBLY!",
+      "done": [
+        "HYPERPOWER GOVERNMENTS, ELECTIONS AN' PARTIES",
+        "SEAT AT DA ONU ASSEMBLY: DEBATE, VOTE AN' VETO",
+        "POLITICS SCREEN IN DA MAIN MENU",
+        "WORLDVIEWS DAT SHIFT AN' CONVERT OVER TIME"
+      ]
+    },
+    "bankingSystem": {
+      "name": "BANKIN'",
+      "desc": "DEPOSITS, INTEREST, LOANS AN' A FULL PORTFOLIO!",
+      "done": [
+        "DEPOSITS AN' WITHDRAWALS",
+        "INTEREST AN' LOANS",
+        "PORTFOLIO OF PROPERTIES, STOCKS, SAVINGS, LOANS AN' LIVESTOCK",
+        "ALL MONEY SHOWN IN EUROS"
+      ]
+    },
+    "shopManagement": {
+      "name": "SHOPS",
+      "desc": "BUY, SELL, AN' RUN A SHOP OF YA OWN!",
+      "done": [
+        "OWNIN' SHOPS, WIT STAFF, PRODUCTION AN' DELIVERIES",
+        "STOCKBUSTERS MARKETPLACE: LOTS, LOUDNESS PRICIN', CART AN' COURIERS",
+        "SHOP COUNTER FOR EVERY VENDOR",
+        "DAILY SHOPS WIT STOCK REROLLED EVERY DAY",
+        "VENDIN' MACHINES",
+        "TOKEN EXCHANGE FOR DA ARCADE"
+      ]
+    },
+    "realEstateRentals": {
+      "name": "PROPERTY",
+      "desc": "BUY PLACES, RENT DEM, AN' FILL DEM!",
+      "done": [
+        "BUYIN' AN' SELLIN' PROPERTY",
+        "RENTIN' A PLACE FOR 24 REAL HOURS",
+        "FURNISHIN' WHAT YOU OWN"
+      ]
+    },
+    "stockMarket": {
+      "name": "STOCK MARKET",
+      "desc": "TRADE SHARES FROM A TERMINAL!",
+      "done": [
+        "TRADIN' TERMINAL",
+        "MOVIN' PRICES",
+        "HOLDINGS LISTED IN DA PORTFOLIO"
+      ]
+    },
+    "crimeBounties": {
+      "name": "CRIME",
+      "desc": "STEAL, GET CAUGHT, AN' FACE DA COURT!",
+      "done": [
+        "BOUNTY, HEAT AN' POLICE ATTENTION",
+        "STEALIN' FROM SHOPS",
+        "TRIALS AN' PRISON SENTENCES",
+        "ERIS AN' DA ARCHMAGISTRATE OF DA HOLY VATICAN EMPIRE",
+        "N€POLICE SITE WIT BOUNTIES, CUSTODY AN' HEARINGS",
+        "ERIS ROMANCE AN' OPINION"
+      ]
+    },
+    "vehiclesGarage": {
+      "name": "VEHICLES",
+      "desc": "A CAMPER TA LIVE IN AN' A GARAGE TA KEEP IT RUNNIN'!",
+      "done": [
+        "CAMPER, CAR, BIKE, BOAT, BROOM AN' STARSHIP",
+        "MODULAR CAMPER WIT UPGRADES",
+        "CREW ABOARD: WHO DRIVES AN' WHO RESTS",
+        "FUEL AN' DAMAGE TA CRITICAL PARTS",
+        "VEHICLES STAY WHERE YOU LEFT DEM",
+        "FLYIN' LIKE AN AIRSHIP",
+        "CARGO HOLDS SIZED TA EACH VEHICLE"
+      ]
+    },
+    "fastTravel": {
+      "name": "FAST TRAVEL",
+      "desc": "TWENTY EIGHT WAYS TA CROSS EUROPE!",
+      "done": [
+        "28 TRANSPORT MODES",
+        "BUS STOPS AN' TRAVEL COSTS",
+        "WORLD MAP WIT ZOOM, PAN AN' CITY LABELS",
+        "MINIMAP"
+      ]
+    },
+    "voxelWorld": {
+      "name": "VOXEL WORLD",
+      "desc": "DA 3D WORLD YOU DRIVE ACROSS AN' DIG INTO!",
+      "done": [
+        "DESTRUCTIBLE VOXEL GROUND",
+        "DRIVIN' DA CAMPER AN' WALKIN' ON FOOT",
+        "FIRST AN' THIRD PERSON",
+        "CAVES, SEWERS, ISLANDS AN' RIVERS",
+        "TOWNS, VILLAGES, FARMS AN' LONE HOUSES WIT INTERIORS",
+        "ABANDONED STRUCTURES, DUNGEONS AN' GROTTOES",
+        "DIGGIN' WIT DA PICK, WIT ORE DROPS",
+        "ROADSIDE WILDLIFE, CROWDS AN' PARKED VEHICLES",
+        "SKY, WEATHER AN' DA SEA",
+        "REAL TIME COMBAT",
+        "SPLIT SCREEN"
+      ]
+    },
+    "roadTraffic": {
+      "name": "ROAD TRAFFIC",
+      "desc": "CARS, WALKERS AN' BROOMS SHARIN' DA ROADS!",
+      "done": [
+        "NPC CARS WIT COLLISIONS, ROADKILL AN' THEFT",
+        "FULL SCALE TRAFFIC IN DA 3D WORLD",
+        "WALKERS, BIKES AN' BROOMS ON DA ROADS",
+        "ROAD AUTOPILOT"
+      ]
+    },
+    "hypernetOS": {
+      "name": "ARCHWAYS XP",
+      "desc": "A WHOLE DESKTOP OPERATIN' SYSTEM INSIDE DA GAME!",
+      "done": [
+        "DESKTOP, TASKBAR AN' WINDOWS",
+        "PROCESS KERNEL",
+        "FILE SYSTEM AN' REGISTRY",
+        "ME COMPUTER AN' ME DOCUMENTS",
+        "CONTROL PANEL AN' WALLPAPERS",
+        "MOUSE, KEYBOARD AN' GAMEPAD NAVIGATION"
+      ]
+    },
+    "hyperDeck": {
+      "name": "HyperDeck",
+      "desc": "DA HANDHELD YOU BUILD PART BY PART!",
+      "done": [
+        "ASSEMBLED FROM COMPONENT ITEMS",
+        "COMPONENT GRID",
+        "PROCEDURAL 3D CASES",
+        "POWER ON SELF TEST AN' BOOT",
+        "FITTED PARTS SHOWN AS HARDWARE SPECS"
+      ]
+    },
+    "hypernetApps": {
+      "name": "DESKTOP APPS",
+      "desc": "DA PROGRAMS DAT RUN ON ARCHWAYS XP!",
+      "done": [
+        "NOTEPAD",
+        "TV GUIDE",
+        "N€POLICE",
+        "EURODEMICS EPIDEMIC OBSERVATORY",
+        "ARTIFACT ANALYZER",
+        "TOKEN EXCHANGE",
+        "HYPER CARD ARENA AN' CADD TRADER",
+        "HyperAmp, WHETHER, INCANTA AN' PAIN",
+        "WYRD, HEXCEL AN' BOBNZI",
+        "CALENDAR WIT EVERY NATION'S HOLIDAYS"
+      ]
+    },
+    "hypernetBrowser": {
+      "name": "BROWSER",
+      "desc": "HYPERNET EXPLORER AN' DA SITES IT OPENS!",
+      "done": [
+        "HYPERNET EXPLORER BROWSER",
+        "OBJECT INDEX OF EVERY CATALOGUED ITEM",
+        "STOCKBUSTERS MARKETPLACE"
+      ]
+    },
+    "galaxyCosmos": {
+      "name": "STAR MAP",
+      "desc": "A 3D GALAXY TA FLY ACROSS!",
+      "done": [
+        "3D STAR MAP",
+        "ORBIT AN' FREE FLY CAMERA",
+        "VIEWS FROM PLANET SCALE UP TA DA COSMOS",
+        "FAMOUS NEBULAE",
+        "BLACK HOLES",
+        "21 EXOTIC STAR TYPES",
+        "ANOMALIES WIT BRANCHIN' ENCOUNTERS",
+        "SHIP TRAVEL BETWEEN SYSTEMS"
+      ]
+    },
+    "galaxyPhysics": {
+      "name": "PLANETS",
+      "desc": "STAR SYSTEMS WIT WORLDS YOU CAN LAND ON!",
+      "done": [
+        "STAR SYSTEMS WIT ORBITIN' BODIES",
+        "DA SOLAR SYSTEM WIT ITS MOONS, BELTS AN' DEBRIS",
+        "LANDIN' ON 40 ALIEN BIOMES, ONE SET PER PLANET TYPE",
+        "ALIEN SKIES TINTED BY DEY STAR",
+        "DAY LENGTH SET BY DA PLANET'S ROTATION"
+      ]
+    },
+    "galaxyShips": {
+      "name": "STARSHIPS",
+      "desc": "YA OWN PROCEDURAL SHIP, AN' DA SKY ABOVE!",
+      "done": [
+        "PROCEDURAL STARSHIP GENERATOR",
+        "SHIP APPEARANCE EDITOR",
+        "LIVE GALAXY BEHIND EVERY SPACE MAP",
+        "NIGHT SKY CHART WIT CONSTELLATIONS"
+      ]
+    },
+    "limbDamage": {
+      "name": "WOUNDS",
+      "desc": "DAMAGE DAT LANDS ON LIMBS AN' ORGANS!",
+      "done": [
+        "LIMB AN' ORGAN DAMAGE FOR DA PARTY",
+        "DA SAME FOR BAD 'UNS, WIT TARGETED ATTACKS",
+        "LOST BODY PARTS IN BATTLE, WIT BLOOD",
+        "BLOOD SPLATTERS"
+      ]
+    },
+    "medicineSystem": {
+      "name": "DISEASES",
+      "desc": "ILLNESS DAT SPREADS ACROSS DA CONTINENT!",
+      "done": [
+        "228 DISEASES",
+        "TREATMENTS",
+        "CONTINENTAL EPIDEMICS",
+        "EURODEMICS OBSERVATORY"
+      ]
+    },
+    "cybernetics": {
+      "name": "AUGMENTS",
+      "desc": "REPLACE WHAT YOU LOSE, IMPROVE WHAT YOU KEEP!",
+      "done": [
+        "PROSTHETIC SHOP AN' FITTIN'",
+        "AUGMENTS REGISTER WIT DA WHOLE CATALOGUE",
+        "IMPLANTS AN' PROSTHETICS ON NPCS"
+      ]
+    },
+    "biologicSim": {
+      "name": "BIOLOGY",
+      "desc": "BLOOD, ORGANS AN' NEEDS UNDER DA SKIN!",
+      "done": [
+        "BLOOD SIMULATION",
+        "ORGAN SIMULATION",
+        "NEEDS DRIVEN BY DA BODY"
+      ]
+    },
+    "cookingSystem": {
+      "name": "COOKIN'",
+      "desc": "COMBINE INGREDIENTS INTO MEALS!",
+      "done": [
+        "COMBININ' FOOD ITEMS INTO DISHES",
+        "COOKIN' RECIPES",
+        "COOKIN' LEVEL AN' SPOILED DISHES",
+        "NUTRITION OF EVERY DISH"
+      ]
+    },
+    "forgottenGrimoires": {
+      "name": "GRIMOIRES",
+      "desc": "ANCIENT BOOKS DAT TEACH A SPELL!",
+      "done": [
+        "ONE SPELL LEARNED OUT OF FIVE RANDOM OFFERS",
+        "READABLE BOOKS WIT PAGE FLIP",
+        "SEEDED BOOK TITLES"
+      ]
+    },
+    "alchemistry": {
+      "name": "ALCHEMISTRY",
+      "desc": "RECIPES, PROJECTS AN' DA WORKSHOP!",
+      "done": [
+        "ALCHEMISTRY RECIPES AN' PROJECTS",
+        "SKILL CHECKS",
+        "WORKSHOP: DA THINKER'S BENCH AN' DA FORGE",
+        "EVERY WEAPON AN' ARMOUR RECIPE, GATED BY TRADE",
+        "PERIODIC TABLE OF ESOTERIC ELEMENTS"
+      ]
+    },
+    "proceduralArtifacts": {
+      "name": "ARTIFACTS",
+      "desc": "ITEMS GENERATED WIT DEY OWN STORY!",
+      "done": [
+        "PROCEDURAL ITEMS, WEAPONS AN' ARMOUR",
+        "MODIFIERS ON WEAPONS AN' ARMOUR",
+        "ARTIFACT ANALYZER",
+        "LOOT SCALED ON DA PARTY'S LEVEL",
+        "HIDDEN TREASURE ROOMS",
+        "PROCEDURAL 3D WEAPON MODELS",
+        "ITEM DESCRIPTIONS DAT CHANGE EVERY TIME"
+      ]
+    },
+    "furnitureBuilding": {
+      "name": "FURNITURE",
+      "desc": "PLACE FURNITURE AN' ANIMALS ANYWHERE YOU OWN!",
+      "done": [
+        "BUYIN' AN' PLACIN' FURNITURE AN' ANIMALS",
+        "CATALOGUE SORTED BY BIOME",
+        "PROCEDURAL INTERIORS FURNISHED ROOM BY ROOM",
+        "BREAKIN' AN' DIGGIN' WALLS",
+        "CONTAINERS, PHYSICAL AN' EXTRADIMENSIONAL"
+      ]
+    },
+    "farmingAgriculture": {
+      "name": "FARMIN'",
+      "desc": "CROPS DAT GROW WIT DA SEASONS!",
+      "done": [
+        "PLANT LIFECYCLE BY SEASON, WEATHER AN' STAGE",
+        "FELLIN', MININ' AN' FORAGIN'",
+        "NPCS LOOKIN' AFTER DEY OWN PLANTS"
+      ]
+    },
+    "livestockBrewing": {
+      "name": "HUSBANDRY",
+      "desc": "ANIMALS, BEES AN' BARRELS!",
+      "done": [
+        "ANIMAL LIFECYCLE, PRODUCE AN' OWNERSHIP",
+        "ANIMALS AGEIN', BREEDIN' AN' DYING",
+        "BEE COLONIES WIT CASTES AN' HONEY",
+        "BARREL BREWIN' AN' FERMENTATION"
+      ]
+    },
+    "arcadeCabinets": {
+      "name": "ARCADE",
+      "desc": "CABINETS WIT REAL GAMES INSIDE!",
+      "done": [
+        "SNAKE, FROGGER, MANPAC AN' ASTEROIDS",
+        "BREAKOUT, CENTIPEDE, SPACE INVADERS AN' BUBBLE POP",
+        "CABINET BOOT SEQUENCE",
+        "ARCADE TOKENS"
+      ]
+    },
+    "cardGame": {
+      "name": "CARD GAME",
+      "desc": "A FULL COLLECTIBLE CARD GAME!",
+      "done": [
+        "CARD CATALOGUE ON A 0 TA 13 STAT SCALE",
+        "3X3 BOARD DUELS",
+        "HYPER CARD ARENA: CPU MATCHES AN' BRACKETS",
+        "COLLECTION, DECK BUILDER AN' BOOSTER OPENIN'",
+        "CADD TRADER AN' DA CARD MARKET"
+      ]
+    },
+    "sports3D": {
+      "name": "SPORTS",
+      "desc": "LOW POLY 3D TABLE AN' BALL GAMES!",
+      "done": [
+        "CHESS",
+        "POOL",
+        "BOWLIN'",
+        "BASKETBALL"
+      ]
+    },
+    "gamblingCasino": {
+      "name": "CASINO",
+      "desc": "BET ON ANYTINK DAT MOVES.",
+      "done": [
+        "HORSE RACIN'",
+        "SLOT MACHINES",
+        "SCRATCH CARDS",
+        "TAROT READIN'",
+        "BETTIN' ON REAL MONSTER BATTLES",
+        "ODDS WORKED OUT FROM DA GAMES THEMSELVES"
+      ]
+    },
+    "interactivePastimes": {
+      "name": "PASTIMES",
+      "desc": "FISHIN', SURFIN' AN' MORE!",
+      "done": [
+        "3D FISHIN'",
+        "SURFIN'",
+        "SHOOTIN' RANGE",
+        "PLAYABLE THREE OCTAVE PIANO",
+        "LOCKPICKIN' BLOCK PUZZLE",
+        "HyperTamer VIRTUAL PET",
+        "RAMAN SCANNER FOR STATUES AN' PAINTINGS",
+        "3D PIZZA TABLE WIT CUSTOMER ORDERS"
+      ]
+    },
+    "monsterBestiary": {
+      "name": "BESTIARY",
+      "desc": "EVERY MONSTER YOU HAB MET!",
+      "done": [
+        "MONSTER COLLECTION ON A PARCHMENT SPREAD",
+        "DESCRIPTIONS DAT CHANGE EVERY TIME"
+      ]
+    },
+    "historySimulator": {
+      "name": "HISTORY",
+      "desc": "AN ALTERNATE EUROPE FROM 1900 TA 2001!",
+      "done": [
+        "ALTERNATE HISTORY WIT COUPS, WARS AN' ELECTIONS",
+        "HISTORICAL ARCHIVE VIEWER",
+        "IN WORLD NEWS",
+        "TV CHANNELS WIT WEEKLY SCHEDULES AN' TELETEXT"
+      ]
+    },
+    "proceduralBiomes": {
+      "name": "PROCEDURAL WORLD",
+      "desc": "EUROPE GENERATED SQUARE BY SQUARE!",
+      "done": [
+        "BIOME MAPS WIT ROADS, RIVERS AN' BEACHES",
+        "WEATHER AN' TEMPERATURE",
+        "FOG OF WAR",
+        "BIOME PANORAMAS BEHIND DA TILES",
+        "BOLOGNA REBUILT FROM REAL MAP DATA",
+        "ENDLESS DREAM WORLDS",
+        "BRANCHIN' ENCOUNTERS ON EARTH AN' ALIEN BIOMES"
+      ]
+    },
+    "proceduralStructures": {
+      "name": "SETTLEMENTS",
+      "desc": "VILLAGES AN' CITIES FULL OF PEOPLE!",
+      "done": [
+        "VILLAGES, CITIES AN' A CATALOGUE OF STRUCTURES",
+        "MULTI FLOOR BUILDINGS",
+        "PREFAB MAPS PLACED BY COORDINATES",
+        "SIGNPOSTS, BUS STOPS AN' PARKS",
+        "RESIDENTS GENERATED FOR EVERY SETTLEMENT",
+        "A WORLD SQUARE FOR EVERY PATRON"
+      ]
+    },
+    "proceduralQuests": {
+      "name": "QUESTS",
+      "desc": "QUESTS WRITTEN FOR WHEREVER YOU IZ!",
+      "done": [
+        "STEP BASED QUEST ENGINE",
+        "QUEST BOARD WIT NOTICES IN DA POSTER'S VOICE",
+        "QUEST LOG",
+        "JOB OFFERS BY LOCATION",
+        "WORK FOR MONEY AN' EXPERIENCE"
+      ]
+    },
+    "dungeonFloors": {
+      "name": "DUNGEONS",
+      "desc": "FLOORS, PUZZLES AN' DA OMEGA TOWER!",
+      "done": [
+        "MULTI FLOOR DUNGEONS WIT STAIRS",
+        "FLOOR SELECTOR",
+        "OMEGA TOWER LEVELS",
+        "92 FLOORS BELOW DA TOWER",
+        "DUNGEONS, CRYPTS AN' SEWERS",
+        "ROCKS, ICE, PRESSURE PLATES, CRYSTAL SWITCHES AN' TORCHES",
+        "SECRET DOORS"
+      ]
+    },
+    "splitScreenLocal": {
+      "name": "SPLIT SCREEN",
+      "desc": "PLAY SIDE BY SIDE ON ONE SCREEN!",
+      "done": [
+        "LOCAL SPLIT SCREEN WIT GAMEPADS",
+        "HOT SEAT MINIGAMES",
+        "SPLIT SCREEN IN DA 3D WORLD"
+      ]
+    },
+    "multiplayerOnline": {
+      "name": "ONLINE PLAY",
+      "desc": "UP TA EIGHT PLAYERS TOGETHER!",
+      "done": [
+        "SERVER AN' STEAM MULTIPLAYER FOR UP TA 8 PLAYERS",
+        "STEAM ACHIEVEMENTS"
+      ]
+    },
+    "characterCreation": {
+      "name": "CHARACTER CREATION",
+      "desc": "BUILD DA PARTY FROM SCRATCH, ONE SHEET AT A TIME!",
+      "done": [
+        "CREATION WIZARD WIT CLASSES GROUPED BY SKILL CATEGORY",
+        "ORIGINS WIT DEY OWN SUPPLIES, MONEY AN' STARTIN' PLACE",
+        "CREATURE CHARACTERS",
+        "DETAILED MODE EDITIN' DA WHOLE SHEET",
+        "PREMADE DOSSIERS, STASHED AN' LOADED",
+        "3D MODEL EDITOR MIXIN' PARTS FROM ANY CREATURE",
+        "SPRITE AN' BUST PICKER",
+        "TRAIT POINTS",
+        "3D POLITICAL COMPASS"
+      ]
+    },
+    "interface": {
+      "name": "INTERFACE",
+      "desc": "MENUS, HUDS AN' NOTICES DRAWN ON PARCHMENT!",
+      "done": [
+        "PARCHMENT MAIN MENU WIT DA DYNAMICS HUB",
+        "QUICK MENU WHEEL HELD OPEN ON DA FIELD",
+        "STATUS SCREEN",
+        "HELP CODEX",
+        "PARTY HUDS",
+        "NOTIFICATIONS FOR EVERY EVENT",
+        "MAP LEGEND WIT CONTROLS AN' LOCAL NOTICES",
+        "3D D20 DICE FOR STAT CHECKS"
+      ]
+    },
+    "visuals": {
+      "name": "VISUALS",
+      "desc": "LIGHT, DEPTH AN' DA LOOK OF EVERY SCENE!",
+      "done": [
+        "DYNAMIC LIGHTS",
+        "PARALLAX LAYERS WIT SCALIN' AN' LOOPIN'",
+        "ANIMATED PORTRAITS",
+        "BIOME PANORAMAS BEHIND DA TILES"
+      ]
+    },
+    "sandbox": {
+      "name": "MUD PIT",
+      "desc": "TOOLS TA BEND DA WORLD TA YA WILL!",
+      "done": [
+        "SANDBOX MENU",
+        "WISHIN' SYSTEM",
+        "TELEPORT TA ANY MAP",
+        "PIXEL ART EDITOR",
+        "PICTURES OF A WHOLE MAP"
+      ]
+    },
+    "equipment": {
+      "name": "GEAR",
+      "desc": "WHAT DA PARTY CARRIES AN' WEARS!",
+      "done": [
+        "BACKPACK WIT CATEGORIES AN' SEARCH",
+        "EQUIP MENU WIT CHARACTER SWITCHIN'",
+        "MODIFIERS ON WEAPONS AN' ARMOUR",
+        "FAVOURITE ITEMS ON DA QUICK BAR",
+        "A 3D MODEL FOR EVERY ITEM",
+        "ARMOUR DEFENCE WORKED OUT FROM MATERIAL AN' SLOT"
+      ]
+    },
+    "weapons": {
+      "name": "WEAPONS",
+      "desc": "EVERY WEAPON HELD, SWUNG AN' FIRED IN FIRST PERSON!",
+      "done": [
+        "FIRST PERSON WEAPON OVERLAY",
+        "PROCEDURAL 3D MODELS FOR EVERY WEAPON TYPE",
+        "ATTACKS GENERATED FROM EACH WEAPON'S LENGTH AN' WEIGHT",
+        "FIREARMS WIT WORKIN' PARTS AN' AMMO",
+        "WEAPON SOUNDS",
+        "HIT EFFECTS FOR PLAIN ATTACKS",
+        "EM'S VECTOR GUN WIT ITS MODES"
+      ]
+    },
+    "hexphone": {
+      "name": "HEXPHONE",
+      "desc": "DA PHONE IN DA PARTY'S POCKET!",
+      "done": [
+        "CREDIT, CALLS AN' MESSAGES",
+        "GAMES ON DA PHONE",
+        "PAYPHONES SHARIN' DA SAME GRIMORIE"
+      ]
+    },
+    "spaceTrade": {
+      "name": "SPACE TRADE",
+      "desc": "BULK TRADE BETWEEN DA WORLDS!",
+      "done": [
+        "TRADIN' CONSOLE WIT DA FACTIONS OF EARTH, ZETA RETICULI AN' TITANIA",
+        "PRICES DRIVEN BY DA STOCK MARKET",
+        "PIZZA MARKET WIT ITS GALLEY",
+        "DAILY ROUTES",
+        "CARGO CARRIED IN DA STARSHIP'S BAY"
+      ]
+    },
+    "rocketLaunch": {
+      "name": "ROCKET LAUNCH",
+      "desc": "FROM DA COILGUN PAD UP TA DA STARSHIP!",
+      "done": [
+        "LAUNCH CINEMATIC: COUNTDOWN, MAGNETIC RELEASE AN' DA BURN",
+        "SPACEPORTS WIT DEY TOWERS AN' TOWNS",
+        "CROSSIN' DA KESSLER BELT",
+        "DOCKIN' WIT DA STARSHIP",
+        "SUBORBITAL HOPS BETWEEN PADS"
+      ]
+    },
+    "research": {
+      "name": "RESEARCH",
+      "desc": "DISCOVERIES DA WHOLE WORLD SHARES!",
+      "done": [
+        "SEVEN TABBED TREES OF SCIENCE AN' MAGIC",
+        "DISCOVERIES SHARED BY EVERY SAVEGAME OF A WORLD",
+        "RESEARCH PROJECTS"
+      ]
+    },
+    "exploration": {
+      "name": "EXPLORATION",
+      "desc": "EVERY WAY TA GET ACROSS A MAP!",
+      "done": [
+        "SWIMMIN', CLIMBIN' AN' LAYERED BRIDGES",
+        "FISHIN' SPOTS",
+        "PLATFORMER MAPS",
+        "PEEK AHEAD BEFORE A TRANSFER",
+        "TELEPORT CUTSCENE",
+        "DA CPU EXPLORIN' FOR AN IDLE PLAYER",
+        "LOOSE PARTY FORMATION",
+        "POLITICAL WORLD ATLAS"
+      ]
+    }
+  }
+}

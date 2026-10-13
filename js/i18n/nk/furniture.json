@@ -1,0 +1,1268 @@
+{
+  "furniture": {
+    "wooden_chair": {
+      "name": "WOODEN CHAIR",
+      "description": "A SIMPLE WOODEN CHAIR WIT CLOTH CUSHION!"
+    },
+    "category": {
+      "seating": "SEATIN'",
+      "tables": "TABLES",
+      "storage": "STORAGE",
+      "beds": "BEDS",
+      "lighting": "LIGHTIN'",
+      "workstations": "WORKSTATIONS",
+      "decoration": "DECORATION",
+      "appliances": "APPLIANCES",
+      "entertainment": "ENTERTAINMENT",
+      "nature": "NATURE",
+      "structures": "STRUCTURES",
+      "dungeon": "DUNGEON",
+      "farm": "FARM",
+      "industrial": "INDUSTRIAL",
+      "camping": "CAMPIN'",
+      "beach": "BEACH",
+      "supermarket": "SUPERMARKET",
+      "gym": "GYM"
+    },
+    "leather_armchair": {
+      "name": "LEATHER ARMCHAIR",
+      "description": "A COMFORTABLE LEATHER ARMCHAIR!"
+    },
+    "tech_chair": {
+      "name": "TECH CHAIR",
+      "description": "AN ERGONOMIC HIGH-TECH CHAIR WIT AUTO-ADJUSTMENT!"
+    },
+    "crystal_throne": {
+      "name": "CRYSTAL THRONE",
+      "description": "A MAJESTIC THRONE MADE OF MAGICAL CRYSTALS!"
+    },
+    "wooden_bench": {
+      "name": "WOODEN BENCH",
+      "description": "A SIMPLE WOODEN BENCH FOR TWO!"
+    },
+    "wooden_table": {
+      "name": "WOODEN TABLE",
+      "description": "A STURDY WOODEN TABLE."
+    },
+    "glass_table": {
+      "name": "GLASS TABLE",
+      "description": "A MODERN GLASS TABLE WIT STEEL FRAME!"
+    },
+    "tech_desk": {
+      "name": "TECH DESK",
+      "description": "A HIGH-TECH DESK WIT INTEGRATED DISPLAYS!"
+    },
+    "alchemy_table": {
+      "name": "ALCHEMY TABLE",
+      "description": "A TABLE EQUIPPED FOR ALCHEMICAL EXPERIMENTS!"
+    },
+    "dining_table": {
+      "name": "DININ' TABLE",
+      "description": "A LARGE DININ' TABLE FOR FAMILY MEALS!"
+    },
+    "wooden_chest": {
+      "name": "WOODEN CHEST",
+      "description": "A WOODEN CHEST FOR STORIN' ITEMS!"
+    },
+    "metal_locker": {
+      "name": "METAL LOCKER",
+      "description": "A SECURE METAL STORAGE LOCKER!"
+    },
+    "quantum_storage": {
+      "name": "QUANTUM STORAGE UNIT",
+      "description": "USES QUANTUM TECHNOLOGY FOR MASSIVE STORAGE!"
+    },
+    "bookshelf": {
+      "name": "BOOKSHELF",
+      "description": "A TALL BOOKSHELF FOR ORGANIZIN' BOOKS AN' ITEMS!"
+    },
+    "crystal_display": {
+      "name": "CRYSTAL DISPLAY CASE",
+      "description": "DISPLAY CASE DAT PRESERVES MAGICAL ITEMS!"
+    },
+    "simple_bed": {
+      "name": "SIMPLE BED",
+      "description": "A BASIC BED FOR RESTIN'."
+    },
+    "luxury_bed": {
+      "name": "LUXURY BED",
+      "description": "A LUXURIOUS KING-SIZE BED!"
+    },
+    "tech_pod": {
+      "name": "SLEEP POD",
+      "description": "HIGH-TECH SLEEPIN' POD WIT HEALTH MONITORIN'!"
+    },
+    "wooden_torch": {
+      "name": "WOODEN TORCH STAND",
+      "description": "A SIMPLE TORCH STAND FOR BASIC LIGHTIN'!"
+    },
+    "crystal_lamp": {
+      "name": "CRYSTAL LAMP",
+      "description": "A MAGICAL LAMP POWERED BY CRYSTALS!"
+    },
+    "neon_light": {
+      "name": "NEON LIGHT PANEL",
+      "description": "MODERN NEON LIGHTIN' PANEL!"
+    },
+    "chandelier": {
+      "name": "CRYSTAL CHANDELIER",
+      "description": "AN ELEGANT CRYSTAL CHANDELIER!"
+    },
+    "crafting_bench": {
+      "name": "CRAFTIN' BENCH",
+      "description": "BASIC WORKBENCH FOR CRAFTIN' FURNITURE!"
+    },
+    "tech_workstation": {
+      "name": "TECH WORKSTATION",
+      "description": "ADVANCED WORKSTATION FOR TECH CRAFTIN'!"
+    },
+    "arcane_altar": {
+      "name": "ARCANE ALTAR",
+      "description": "ALTAR FOR MAGICAL FURNITURE ENCHANTMENTS!"
+    },
+    "chemistry_station": {
+      "name": "CHEMISTRY STATION",
+      "description": "STATION FOR CHEMICAL PROCESSIN'!"
+    },
+    "plant_pot": {
+      "name": "PLANT POT",
+      "description": "A DECORATIVE PLANT IN A POT!"
+    },
+    "holographic_display": {
+      "name": "HOLOGRAPHIC DISPLAY",
+      "description": "PROJECTS HOLOGRAPHIC IMAGES!"
+    },
+    "statue": {
+      "name": "STONE STATUE",
+      "description": "AN ARTISTIC STONE STATUE."
+    },
+    "aquarium": {
+      "name": "AQUARIUM",
+      "description": "A DECORATIVE AQUARIUM."
+    },
+    "mirror": {
+      "name": "WALL MIRROR",
+      "description": "A LARGE WALL-MOUNTED MIRROR!"
+    },
+    "rug": {
+      "name": "DECORATIVE RUG",
+      "description": "A COMFORTABLE DECORATIVE RUG!"
+    },
+    "refrigerator": {
+      "name": "REFRIGERATOR",
+      "description": "KEEPS FOOD FRESH AN' PRESERVED!"
+    },
+    "cooking_stove": {
+      "name": "COOKIN' STOVE",
+      "description": "ESSENTIAL FOR COOKIN' MEALS!"
+    },
+    "recycler": {
+      "name": "MATERIAL RECYCLER",
+      "description": "BREAKS DOWN ITEMS INTO BASE MATERIALS!"
+    },
+    "teleporter": {
+      "name": "QUANTUM TELEPORTER",
+      "description": "INSTANT TRANSPORTATION BETWEEN LINKED TELEPORTERS!"
+    },
+    "television": {
+      "name": "FLAT SCREEN TV",
+      "description": "HIGH-DEFINITION TELEVISION FOR ENTERTAINMENT!"
+    },
+    "arcade_machine": {
+      "name": "ARCADE CABINET",
+      "description": "CLASSIC ARCADE GAMES FOR ENDLESS FUN!"
+    },
+    "pool_table": {
+      "name": "POOL TABLE",
+      "description": "A PREMIUM POOL TABLE FOR RECREATION!"
+    },
+    "ping_pong_table": {
+      "name": "PING PONG TABLE",
+      "description": "A COMPETITIVE PING PONG TABLE!"
+    },
+    "dartboard": {
+      "name": "DARTBOARD",
+      "description": "A CLASSIC DARTBOARD GAME."
+    },
+    "jukebox": {
+      "name": "JUKEBOX",
+      "description": "PLAY YA FAVORITE MUSIC ANYTIME!"
+    },
+    "billiards_balls_set": {
+      "name": "BILLIARDS BALL SET",
+      "description": "SET OF BILLIARD BALLS FOR POOL GAMES!"
+    },
+    "gaming_console": {
+      "name": "GAMIN' CONSOLE",
+      "description": "LATEST GAMIN' CONSOLE FOR ENTERTAINMENT!"
+    },
+    "virtual_reality_headset": {
+      "name": "VR HEADSET STATION",
+      "description": "IMMERSIVE VIRTUAL REALITY EXPERIENCE!"
+    },
+    "foosball_table": {
+      "name": "FOOSBALL TABLE",
+      "description": "TABLE FOOTBALL FOR QUICK MATCHES!"
+    },
+    "blackjack_table": {
+      "name": "BLACKJACK TABLE",
+      "description": "PROFESSIONAL BLACKJACK GAMIN' TABLE!"
+    },
+    "roulette_table": {
+      "name": "ROULETTE TABLE",
+      "description": "LUXURIOUS ROULETTE GAMIN' TABLE!"
+    },
+    "slot_machine": {
+      "name": "SLOT MACHINE",
+      "description": "CLASSIC SLOT MACHINE FOR GAMBLIN' ENTERTAINMENT!"
+    },
+    "karaoke_machine": {
+      "name": "KARAOKE SYSTEM",
+      "description": "SING YA FAVORITE SONGS WIT PROFESSIONAL QUALITY!"
+    },
+    "movie_projector": {
+      "name": "MOVIE PROJECTOR",
+      "description": "PROJECT MOVIES ON ANY WALL!"
+    },
+    "dance_floor": {
+      "name": "DANCE FLOOR",
+      "description": "DISCO-STYLE DANCE FLOOR WIT LIGHTS!"
+    },
+    "bowling_lane": {
+      "name": "BOWLIN' LANE SET",
+      "description": "FULL BOWLIN' LANE SETUP."
+    },
+    "plant": {
+      "name": "PLANT",
+      "description": "A POTTED DECORATIVE PLANT!"
+    },
+    "flowers": {
+      "name": "FLOWER BED",
+      "description": "A BED OF COLORFUL FLOWERS!"
+    },
+    "tree": {
+      "name": "TREE",
+      "description": "A LARGE DECORATIVE TREE."
+    },
+    "rock": {
+      "name": "ROCK",
+      "description": "A LARGE DECORATIVE ROCK."
+    },
+    "pile_of_bones": {
+      "name": "PILE OF BONES",
+      "description": "A CREEPY PILE OF BONES."
+    },
+    "fence": {
+      "name": "FENCE",
+      "description": "A WOODEN FENCE SECTION."
+    },
+    "bridge": {
+      "name": "BRIDGE",
+      "description": "A WOODEN BRIDGE CROSSIN'."
+    },
+    "stairs": {
+      "name": "STAIRS",
+      "description": "A SET OF WOODEN STAIRS."
+    },
+    "ladder": {
+      "name": "LADDER",
+      "description": "A WOODEN LADDER FOR CLIMBIN'!"
+    },
+    "rails": {
+      "name": "RAILS",
+      "description": "METAL SAFETY RAILS."
+    },
+    "window_1x1": {
+      "name": "WINDOW (1X1)",
+      "description": "A LIL' WINDOW."
+    },
+    "window_2x1": {
+      "name": "WINDOW (2X1)",
+      "description": "A MEDIUM WINDOW."
+    },
+    "window_2x2": {
+      "name": "WINDOW (2X2)",
+      "description": "A LARGE WINDOW."
+    },
+    "sign": {
+      "name": "SIGN",
+      "description": "A WOODEN DIRECTIONAL SIGN!"
+    },
+    "vase": {
+      "name": "VASE",
+      "description": "A DECORATIVE VASE."
+    },
+    "clock": {
+      "name": "WALL CLOCK",
+      "description": "A MECHANICAL WALL CLOCK."
+    },
+    "grandfather_clock": {
+      "name": "GRANDFATHER CLOCK",
+      "description": "AN ELEGANT GRANDFATHER CLOCK!"
+    },
+    "world_globe": {
+      "name": "WORLD GLOBE",
+      "description": "A ROTATIN' WORLD GLOBE."
+    },
+    "world_map": {
+      "name": "WORLD MAP",
+      "description": "A FRAMED WORLD MAP."
+    },
+    "prayer_rug": {
+      "name": "PRAYER RUG",
+      "description": "A DECORATIVE PRAYER RUG."
+    },
+    "trash_pile": {
+      "name": "TRASH PILE",
+      "description": "A PILE OF DISCARDED TRASH!"
+    },
+    "barrel": {
+      "name": "DUNGEON BARREL",
+      "description": "A BARREL FOR STORIN' SUPPLIES!"
+    },
+    "pile_of_books": {
+      "name": "PILE OF BOOKS",
+      "description": "A STACK OF OLD BOOKS."
+    },
+    "candle": {
+      "name": "CANDLE",
+      "description": "A LIT DECORATIVE CANDLE."
+    },
+    "pentagram": {
+      "name": "PENTAGRAM FLOOR",
+      "description": "A MYSTICAL PENTAGRAM DRAWN ON DA FLOOR!"
+    },
+    "stage_lights": {
+      "name": "STAGE LIGHTS",
+      "description": "PROFESSIONAL STAGE LIGHTIN' RIG!"
+    },
+    "pipe": {
+      "name": "PIPE",
+      "description": "AN INDUSTRIAL METAL PIPE."
+    },
+    "motor_engine": {
+      "name": "BIG MOTOR ENGINE",
+      "description": "A LARGE INDUSTRIAL MOTOR ENGINE!"
+    },
+    "piano": {
+      "name": "PIANO",
+      "description": "A GRAND PIANO FOR MUSICAL PERFORMANCES!"
+    },
+    "guitar": {
+      "name": "ACOUSTIC GUITAR",
+      "description": "AN ACOUSTIC GUITAR FOR PLAYIN'!"
+    },
+    "electric_guitar": {
+      "name": "ELECTRIC GUITAR",
+      "description": "A MODERN ELECTRIC GUITAR."
+    },
+    "harp": {
+      "name": "HARP",
+      "description": "A BEAUTIFUL GOLDEN HARP."
+    },
+    "crib": {
+      "name": "BABY CRIB",
+      "description": "A COMFORTABLE BABY CRIB."
+    },
+    "radio": {
+      "name": "RADIO",
+      "description": "AN OLD RADIO FOR MUSIC AN' NEWS!"
+    },
+    "wc": {
+      "name": "TOILET",
+      "description": "A FUNCTIONAL TOILET."
+    },
+    "shower": {
+      "name": "SHOWER",
+      "description": "A SHOWER STALL FOR BATHIN'!"
+    },
+    "pc": {
+      "name": "COMPUTER",
+      "description": "A HIGH-PERFORMANCE DESKTOP COMPUTER!"
+    },
+    "christmas_tree": {
+      "name": "CHRISTMAS TREE",
+      "description": "A FESTIVE DECORATED CHRISTMAS TREE!"
+    },
+    "warrior_statue": {
+      "name": "WARRIOR MONK STATUE",
+      "description": "A STATUE OF A MIGHTY WARRIOR MONK!"
+    },
+    "baseball_bat": {
+      "name": "BASEBALL BAT",
+      "description": "A WOODEN BASEBALL BAT."
+    },
+    "crt_monitor": {
+      "name": "CRT MONITOR",
+      "description": "A BULKY CRT COMPUTER MONITOR (2001 ERA)!"
+    },
+    "desktop_computer_2001": {
+      "name": "DESKTOP PC (2001)",
+      "description": "A CHUNKY DESKTOP COMPUTER FROM 2001!"
+    },
+    "keyboard_mouse": {
+      "name": "KEYBOARD & MOUSE",
+      "description": "COMPUTER KEYBOARD AN' MOUSE COMBO!"
+    },
+    "dial_up_modem": {
+      "name": "DIAL-UP MODEM",
+      "description": "DIAL-UP INTERNET MODEM (SCREECH AN' SQUEAL INCLUDED)!"
+    },
+    "landline_phone": {
+      "name": "LANDLINE PHONE",
+      "description": "A CORDED LANDLINE TELEPHONE!"
+    },
+    "printer_inkjet": {
+      "name": "INKJET PRINTER",
+      "description": "AN INKJET PRINTER (LOUD AN' SLOW)!"
+    },
+    "fax_machine": {
+      "name": "FAX MACHINE",
+      "description": "A STANDALONE FAX MACHINE."
+    },
+    "vcr_player": {
+      "name": "VCR PLAYER",
+      "description": "VCR FOR PLAYIN' VHS TAPES!"
+    },
+    "dvd_player": {
+      "name": "DVD PLAYER",
+      "description": "NEW DVD PLAYER (STATE OF DA ART IN 2001)!"
+    },
+    "cable_box": {
+      "name": "CABLE BOX",
+      "description": "CABLE TELEVISION BOX WIT REMOTE CONTROL!"
+    },
+    "game_console_ps1": {
+      "name": "BATTLESTATION 1",
+      "description": "SONIC StationPlay CONSOLE (2001 ERA)!"
+    },
+    "game_console_n64": {
+      "name": "TINTENDON 666",
+      "description": "CURSANDO 64 GAMIN' CONSOLE!"
+    },
+    "dreamcast_console": {
+      "name": "MASTERCAST CONSOLE",
+      "description": "SAGA DREAMCHASER GAMIN' CONSOLE!"
+    },
+    "crt_television": {
+      "name": "CRT TELEVISION",
+      "description": "LARGE CRT TELEVISION SET."
+    },
+    "stereo_boombox": {
+      "name": "STEREO BOOMBOX",
+      "description": "STEREO BOOMBOX WIT CASSETTE AN' CD PLAYER!"
+    },
+    "zip_drive": {
+      "name": "ZIP DRIVE",
+      "description": "IOMEGA ZIP DRIVE (100MB STORAGE)!"
+    },
+    "beanbag_chair": {
+      "name": "BEANBAG CHAIR",
+      "description": "A COMFORTABLE BEANBAG CHAIR (2001 STYLE)!"
+    },
+    "futon": {
+      "name": "FUTON",
+      "description": "A FUTON COUCH/BED COMBO."
+    },
+    "metal_shelving": {
+      "name": "METAL SHELVIN' UNIT",
+      "description": "INDUSTRIAL METAL SHELVIN' UNIT!"
+    },
+    "loft_bed": {
+      "name": "LOFT BED",
+      "description": "A LOFT BED FOR LIL' SPACES!"
+    },
+    "bunk_bed": {
+      "name": "BUNK BED",
+      "description": "A BUNK BED FOR TWO SLEEPERS!"
+    },
+    "water_cooler": {
+      "name": "WATER COOLER",
+      "description": "OFFICE WATER COOLER FOR GOSSIP AN' HYDRATION!"
+    },
+    "desk_lamp": {
+      "name": "DESK LAMP",
+      "description": "A SIMPLE DESK LAMP."
+    },
+    "floor_lamp": {
+      "name": "FLOOR LAMP",
+      "description": "A TALL FLOOR LAMP."
+    },
+    "lava_lamp": {
+      "name": "LAVA LAMP",
+      "description": "A GROOVY LAVA LAMP (2001 ESSENTIAL)!"
+    },
+    "movie_poster": {
+      "name": "MOVIE POSTER",
+      "description": "A MOVIE POSTER FROM 2001."
+    },
+    "band_poster": {
+      "name": "BAND POSTER",
+      "description": "A BAND POSTER ON DA WALL."
+    },
+    "sports_poster": {
+      "name": "SPORTS POSTER",
+      "description": "A SPORTS TEAM POSTER."
+    },
+    "neon_sign": {
+      "name": "NEON SIGN",
+      "description": "A NEON SIGN FOR COOL VIBES!"
+    },
+    "string_lights": {
+      "name": "STRING LIGHTS",
+      "description": "DECORATIVE STRING LIGHTS."
+    },
+    "tapestry": {
+      "name": "TAPESTRY",
+      "description": "A DECORATIVE TAPESTRY ON DA WALL!"
+    },
+    "picture_frame": {
+      "name": "PICTURE FRAME",
+      "description": "A FRAMED PHOTO ON DA WALL!"
+    },
+    "cubicle_divider": {
+      "name": "CUBICLE DIVIDER",
+      "description": "OFFICE CUBICLE PARTITION."
+    },
+    "filing_cabinet": {
+      "name": "FILIN' CABINET",
+      "description": "METAL FILIN' CABINET FOR DOCUMENTS!"
+    },
+    "office_desk": {
+      "name": "OFFICE DESK",
+      "description": "A TYPICAL OFFICE DESK."
+    },
+    "office_chair": {
+      "name": "OFFICE CHAIR",
+      "description": "A ROLLIN' OFFICE CHAIR."
+    },
+    "bulletin_board": {
+      "name": "BULLETIN BOARD",
+      "description": "CORK BULLETIN BOARD FOR NOTES AN' MEMOS!"
+    },
+    "whiteboard": {
+      "name": "WHITEBOARD",
+      "description": "WHITEBOARD FOR SKETCHIN' AN' PLANNIN'!"
+    },
+    "bathtub": {
+      "name": "BATHTUB",
+      "description": "A RELAXIN' BATHTUB."
+    },
+    "sink": {
+      "name": "SINK",
+      "description": "A FUNCTIONAL BATHROOM/KITCHEN SINK!"
+    },
+    "cabinet": {
+      "name": "CABINET",
+      "description": "KITCHEN OR BATHROOM CABINET!"
+    },
+    "counter": {
+      "name": "COUNTER",
+      "description": "KITCHEN COUNTER."
+    },
+    "microwave": {
+      "name": "MICROWAVE",
+      "description": "MICROWAVE OVEN."
+    },
+    "dishwasher": {
+      "name": "DISHWASHER",
+      "description": "AUTOMATIC DISHWASHER."
+    },
+    "washing_machine": {
+      "name": "WASHIN' MACHINE",
+      "description": "WASHIN' MACHINE FOR LAUNDRY!"
+    },
+    "dryer": {
+      "name": "DRYER",
+      "description": "ELECTRIC CLOTHES DRYER."
+    },
+    "vhs_collection": {
+      "name": "VHS COLLECTION",
+      "description": "STACK OF VHS TAPES."
+    },
+    "dvd_collection": {
+      "name": "DVD COLLECTION",
+      "description": "STACK OF DVD CASES."
+    },
+    "cd_collection": {
+      "name": "CD COLLECTION",
+      "description": "COLLECTION OF CDS IN CASES!"
+    },
+    "comic_book_stack": {
+      "name": "COMIC BOOK STACK",
+      "description": "STACK OF COMIC BOOKS."
+    },
+    "magazine_rack": {
+      "name": "MAGAZINE RACK",
+      "description": "RACK FOR MAGAZINES AN' NEWSPAPERS!"
+    },
+    "incense_burner": {
+      "name": "INCENSE BURNER",
+      "description": "INCENSE BURNER FOR AROMATHERAPY!"
+    },
+    "terrarium": {
+      "name": "TERRARIUM",
+      "description": "A TERRARIUM WIT TINY PLANTS!"
+    },
+    "pinball_machine": {
+      "name": "PINBALL MACHINE",
+      "description": "CLASSIC PINBALL MACHINE."
+    },
+    "floor_cushion": {
+      "name": "FLOOR CUSHION",
+      "description": "A COMFORTABLE FLOOR CUSHION!"
+    },
+    "floor_pillow_stack": {
+      "name": "FLOOR PILLOW STACK",
+      "description": "STACK OF FLOOR PILLOWS."
+    },
+    "glass_shelves": {
+      "name": "GLASS SHELVES",
+      "description": "MODERN GLASS SHELVIN' DISPLAY!"
+    },
+    "low_table": {
+      "name": "LOW TABLE",
+      "description": "LOW MINIMALIST TABLE."
+    },
+    "stereo_speaker": {
+      "name": "STEREO SPEAKER",
+      "description": "HIGH-QUALITY STEREO SPEAKER!"
+    },
+    "barn": {
+      "name": "BARN",
+      "description": "A LARGE BARN FOR STORAGE AN' ANIMAL HOUSIN'!"
+    },
+    "windmill": {
+      "name": "WINDMILL",
+      "description": "A FUNCTIONAL WINDMILL FOR GRINDIN' GRAIN!"
+    },
+    "silo": {
+      "name": "SILO",
+      "description": "A TALL STORAGE SILO FOR GRAIN AN' CROPS!"
+    },
+    "chicken_coop": {
+      "name": "CHICKEN COOP",
+      "description": "A COOP FOR RAISIN' CHICKENS AN' COLLECTIN' EGGS!"
+    },
+    "pig_pen": {
+      "name": "PIG PEN",
+      "description": "AN ENCLOSURE FOR RAISIN' PIGS!"
+    },
+    "stable": {
+      "name": "STABLE",
+      "description": "A STABLE FOR KEEPIN' HORSES AN' OTHER LIVESTOCK!"
+    },
+    "beehive": {
+      "name": "BEEHIVE",
+      "description": "A BEEHIVE FOR PRODUCIN' HONEY!"
+    },
+    "vegetable_garden": {
+      "name": "VEGETABLE GARDEN",
+      "description": "A TENDED GARDEN FOR GROWIN' VEGETABLES!"
+    },
+    "hay_bales": {
+      "name": "HAY BALES",
+      "description": "BUNDLED HAY BALES FOR ANIMAL FEED STORAGE!"
+    },
+    "water_trough": {
+      "name": "WATER TROUGH",
+      "description": "A TROUGH FOR WATERIN' LIVESTOCK!"
+    },
+    "scarecrow": {
+      "name": "SCARECROW",
+      "description": "A SCARECROW TA PROTECT CROPS FROM BIRDS!"
+    },
+    "farm_fence": {
+      "name": "FARM FENCE",
+      "description": "A SIMPLE WOODEN FENCE FOR FARM BOUNDARIES!"
+    },
+    "crop_field": {
+      "name": "CROP FIELD",
+      "description": "A FIELD PLANTED WIT CROPS!"
+    },
+    "fruit_tree": {
+      "name": "FRUIT TREE",
+      "description": "A FRUIT-BEARIN' TREE FOR DA FARM!"
+    },
+    "garden_shed": {
+      "name": "GARDEN SHED",
+      "description": "A LIL' SHED FOR STORIN' FARM TOOLS!"
+    },
+    "milking_station": {
+      "name": "MILKIN' STATION",
+      "description": "A STATION EQUIPPED FOR MILKIN' DAIRY ANIMALS!"
+    },
+    "feed_trough": {
+      "name": "FEED TROUGH",
+      "description": "A TROUGH FOR STORIN' AN' DISPENSIN' ANIMAL FEED!"
+    },
+    "irrigation_system": {
+      "name": "IRRIGATION SYSTEM",
+      "description": "AN AUTOMATED SYSTEM FOR IRRIGATION!"
+    },
+    "factory_furnace": {
+      "name": "INDUSTRIAL FURNACE",
+      "description": "A HIGH-TEMPERATURE FURNACE FOR METAL SMELTIN'!"
+    },
+    "assembly_line": {
+      "name": "ASSEMBLY LINE",
+      "description": "AN AUTOMATED ASSEMBLY LINE FOR MANUFACTURIN'!"
+    },
+    "conveyor_belt": {
+      "name": "CONVEYOR BELT",
+      "description": "A MOTORIZED BELT FOR TRANSPORTIN' MATERIALS!"
+    },
+    "industrial_crane": {
+      "name": "INDUSTRIAL CRANE",
+      "description": "A HEAVY-DUTY CRANE FOR LIFTIN' LOADS!"
+    },
+    "hydraulic_press": {
+      "name": "HYDRAULIC PRESS",
+      "description": "A HIGH-PRESSURE HYDRAULIC PRESS FOR SHAPIN' METAL!"
+    },
+    "storage_tank": {
+      "name": "STORAGE TANK",
+      "description": "A LARGE TANK FOR STORIN' LIQUIDS AN' MATERIALS!"
+    },
+    "refinery_tower": {
+      "name": "REFINERY TOWER",
+      "description": "A DISTILLATION TOWER FOR REFININ' MATERIALS!"
+    },
+    "heavy_machinery": {
+      "name": "HEAVY MACHINERY",
+      "description": "COMPLEX HEAVY MACHINERY FOR INDUSTRIAL PROCESSIN'!"
+    },
+    "electric_generator": {
+      "name": "ELECTRIC GENERATOR",
+      "description": "A GENERATOR FOR PRODUCIN' ELECTRICAL POWER!"
+    },
+    "air_compressor": {
+      "name": "AIR COMPRESSOR",
+      "description": "COMPRESSES AIR FOR PNEUMATIC SYSTEMS!"
+    },
+    "control_panel": {
+      "name": "CONTROL PANEL",
+      "description": "A CONTROL PANEL FOR MANAGIN' MACHINERY SYSTEMS!"
+    },
+    "safety_barrier": {
+      "name": "SAFETY BARRIER",
+      "description": "A PROTECTIVE BARRIER FOR HAZARDOUS AREAS!"
+    },
+    "chemical_vat": {
+      "name": "CHEMICAL VAT",
+      "description": "A CHEMICAL PROCESSIN' VAT FOR REACTIONS!"
+    },
+    "robotic_arm": {
+      "name": "ROBOTIC ARM",
+      "description": "AN AUTOMATED ROBOTIC ARM FOR PRECISE TASKS!"
+    },
+    "welding_station": {
+      "name": "WELDIN' STATION",
+      "description": "EQUIPMENT FOR WELDIN' METAL STRUCTURES!"
+    },
+    "laser_cutter": {
+      "name": "LASER CUTTER",
+      "description": "A PRECISION LASER CUTTER FOR DETAILED WORK!"
+    },
+    "3d_printer": {
+      "name": "3D PRINTER",
+      "description": "A 3D PRINTER FOR MANUFACTURIN' OBJECTS!"
+    },
+    "industrial_oven": {
+      "name": "INDUSTRIAL OVEN",
+      "description": "A LARGE INDUSTRIAL OVEN FOR HEAT TREATMENT!"
+    },
+    "sorting_machine": {
+      "name": "SORTIN' MACHINE",
+      "description": "AUTOMATICALLY SORTS AN' CATEGORIZES MATERIALS!"
+    },
+    "vacuum_chamber": {
+      "name": "VACUUM CHAMBER",
+      "description": "A CHAMBER FOR VACUUM PROCESSIN'!"
+    },
+    "packaging_unit": {
+      "name": "PACKAGIN' UNIT",
+      "description": "AUTOMATED EQUIPMENT FOR PACKAGIN' PRODUCTS!"
+    },
+    "quality_scanner": {
+      "name": "QUALITY SCANNER",
+      "description": "INSPECTS PRODUCTS FOR QUALITY CONTROL!"
+    },
+    "industrial_duct": {
+      "name": "INDUSTRIAL DUCT",
+      "description": "DUCTWORK FOR AIR AN' MATERIAL FLOW!"
+    },
+    "power_distribution": {
+      "name": "POWER DISTRIBUTION BOX",
+      "description": "DISTRIBUTES ELECTRICAL POWER TA EQUIPMENT!"
+    },
+    "tent": {
+      "name": "TENT",
+      "description": "A PORTABLE TENT FOR CAMPIN' OVERNIGHT!"
+    },
+    "campfire": {
+      "name": "CAMPFIRE",
+      "description": "A COZY CAMPFIRE FOR WARMTH AN' COOKIN'!"
+    },
+    "sleeping_bag": {
+      "name": "SLEEPIN' BAG",
+      "description": "A COMFORTABLE SLEEPIN' BAG FOR REST!"
+    },
+    "camping_lantern": {
+      "name": "CAMPIN' LANTERN",
+      "description": "A LANTERN FOR OUTDOOR LIGHTIN'!"
+    },
+    "camping_stove": {
+      "name": "CAMPIN' STOVE",
+      "description": "A PORTABLE CAMPIN' STOVE FOR COOKIN'!"
+    },
+    "camping_chair": {
+      "name": "CAMPIN' CHAIR",
+      "description": "A LIGHTWEIGHT CAMPIN' CHAIR!"
+    },
+    "cooler": {
+      "name": "COOLER",
+      "description": "AN INSULATED COOLER FOR STORIN' FOOD!"
+    },
+    "picnic_table": {
+      "name": "PICNIC TABLE",
+      "description": "A STURDY TABLE FOR OUTDOOR DININ'!"
+    },
+    "camping_backpack": {
+      "name": "CAMPIN' BACKPACK",
+      "description": "A LARGE BACKPACK FOR CARRYIN' GEAR!"
+    },
+    "water_container": {
+      "name": "WATER CONTAINER",
+      "description": "A CONTAINER FOR CARRYIN' WATER!"
+    },
+    "bedroll": {
+      "name": "BEDROLL",
+      "description": "A ROLLED-UP BEDDIN' FOR CAMPIN'!"
+    },
+    "hammock": {
+      "name": "BEACH HAMMOCK",
+      "description": "A HAMMOCK STRUNG BETWEEN POLES!"
+    },
+    "tent_cabin": {
+      "name": "TENT CABIN",
+      "description": "A LARGE TENT WIT CABIN-LIKE STRUCTURE!"
+    },
+    "camping_rope": {
+      "name": "CAMPIN' ROPE",
+      "description": "ROPE FOR SECURIN' TENTS AN' GEAR!"
+    },
+    "campsite_marker": {
+      "name": "CAMPSITE MARKER",
+      "description": "A MARKER FLAG FOR DA CAMPSITE!"
+    },
+    "food_storage": {
+      "name": "FOOD STORAGE BOX",
+      "description": "A SECURE BOX FOR STORIN' FOOD SUPPLIES!"
+    },
+    "camping_tent_dome": {
+      "name": "DOME TENT",
+      "description": "A DURABLE DOME-SHAPED TENT!"
+    },
+    "camping_cot": {
+      "name": "CAMPIN' COT",
+      "description": "AN ELEVATED COT FOR SLEEPIN' OFF DA GROUND!"
+    },
+    "camping_grill": {
+      "name": "CAMPIN' GRILL",
+      "description": "A PORTABLE GRILL FOR COOKIN'!"
+    },
+    "camping_lantern_led": {
+      "name": "LED CAMPIN' LANTERN",
+      "description": "A MODERN LED LANTERN WIT BATTERY POWER!"
+    },
+    "camping_shelter": {
+      "name": "POP-UP SHELTER",
+      "description": "A QUICK POP-UP SHELTER FOR PROTECTION!"
+    },
+    "shopping_cart": {
+      "name": "SHOPPIN' CART",
+      "description": "A METAL SHOPPIN' CART FOR CUSTOMERS!"
+    },
+    "shopping_basket": {
+      "name": "SHOPPIN' BASKET",
+      "description": "A HAND-HELD SHOPPIN' BASKET!"
+    },
+    "checkout_counter": {
+      "name": "CHECKOUT COUNTER",
+      "description": "A COUNTER FOR PROCESSIN' CUSTOMER PURCHASES!"
+    },
+    "cash_register": {
+      "name": "CASH REGISTER",
+      "description": "A REGISTER FOR PROCESSIN' TRANSACTIONS!"
+    },
+    "display_shelf": {
+      "name": "DISPLAY SHELF",
+      "description": "A SHELF FOR DISPLAYIN' PRODUCTS!"
+    },
+    "refrigerated_display": {
+      "name": "REFRIGERATED DISPLAY CASE",
+      "description": "A REFRIGERATED CASE FOR PERISHABLE ITEMS!"
+    },
+    "freezer_unit": {
+      "name": "FREEZER UNIT",
+      "description": "A COMMERCIAL FREEZER FOR FROZEN ITEMS!"
+    },
+    "product_display_stand": {
+      "name": "PRODUCT DISPLAY STAND",
+      "description": "A STAND FOR DISPLAYIN' PROMOTIONAL ITEMS!"
+    },
+    "price_sign": {
+      "name": "PRICE SIGN",
+      "description": "A SIGN FOR DISPLAYIN' PRODUCT PRICES!"
+    },
+    "shopping_aisle": {
+      "name": "SHOPPIN' AISLE",
+      "description": "AN AISLE MARKER IN DA SUPERMARKET!"
+    },
+    "automatic_door": {
+      "name": "AUTOMATIC DOOR",
+      "description": "AN AUTOMATIC SLIDIN' DOOR ENTRANCE!"
+    },
+    "customer_service_desk": {
+      "name": "CUSTOMER SERVICE DESK",
+      "description": "A DESK FOR CUSTOMER INQUIRIES AN' SERVICE!"
+    },
+    "mannequin_display": {
+      "name": "MANNEQUIN DISPLAY",
+      "description": "A MANNEQUIN FOR DISPLAYIN' CLOTHIN'!"
+    },
+    "department_sign": {
+      "name": "DEPARTMENT SIGN",
+      "description": "A SIGN MARKIN' DIFFERENT DEPARTMENTS!"
+    },
+    "stocking_shelf": {
+      "name": "STOCKIN' SHELF",
+      "description": "A SHELF FOR STORIN' LOOT SACK!"
+    },
+    "security_gate": {
+      "name": "SECURITY GATE",
+      "description": "A SECURITY GATE AT DA STORE ENTRANCE!"
+    },
+    "produce_stand": {
+      "name": "PRODUCE STAND",
+      "description": "A STAND FOR DISPLAYIN' FRESH PRODUCE!"
+    },
+    "deli_counter": {
+      "name": "DELI COUNTER",
+      "description": "A COUNTER FOR DELI AN' PREPARED FOODS!"
+    },
+    "bakery_display": {
+      "name": "BAKERY DISPLAY CASE",
+      "description": "A DISPLAY CASE FOR BAKED GOODS!"
+    },
+    "conveyor_checkout": {
+      "name": "CONVEYOR CHECKOUT BELT",
+      "description": "A MOTORIZED CONVEYOR BELT FOR CHECKOUT!"
+    },
+    "store_directory": {
+      "name": "STORE DIRECTORY",
+      "description": "A DIRECTORY SHOWIN' STORE LAYOUT!"
+    },
+    "lighting_fixture": {
+      "name": "STORE LIGHTIN' FIXTURE",
+      "description": "OVERHEAD LIGHTIN' FOR DA STORE!"
+    },
+    "dungeon_torch": {
+      "name": "DUNGEON TORCH",
+      "description": "A TORCH FOR LIGHTIN' DARK DUNGEONS!"
+    },
+    "stone_pillar": {
+      "name": "STONE PILLAR",
+      "description": "A TALL STONE PILLAR FOR STRUCTURAL SUPPORT!"
+    },
+    "iron_bars": {
+      "name": "IRON BARS",
+      "description": "IRON BARS FOR PRISON CELLS AN' CAGES!"
+    },
+    "wooden_door": {
+      "name": "WOODEN DOOR",
+      "description": "A REINFORCED WOODEN DUNGEON DOOR!"
+    },
+    "iron_door": {
+      "name": "IRON DOOR",
+      "description": "A HEAVY IRON DUNGEON DOOR!"
+    },
+    "prison_cell": {
+      "name": "PRISON CELL",
+      "description": "A CELL FOR IMPRISONIN' CAPTIVES!"
+    },
+    "torture_rack": {
+      "name": "TORTURE RACK",
+      "description": "A MEDIEVAL TORTURE DEVICE!"
+    },
+    "iron_chain": {
+      "name": "IRON CHAIN",
+      "description": "HEAVY CHAINS FOR BINDIN' PRISONERS!"
+    },
+    "skull_pile": {
+      "name": "SKULL PILE",
+      "description": "A PILE OF SKULLS."
+    },
+    "bone_altar": {
+      "name": "BONE ALTAR",
+      "description": "AN ALTAR MADE OF BONES FOR DARK RITUALS!"
+    },
+    "spikes": {
+      "name": "SPIKE TRAP",
+      "description": "SPIKES AS A TRAP OR DECORATION!"
+    },
+    "stone_grate": {
+      "name": "STONE GRATE",
+      "description": "A STONE GRATE FOR FLOOR DRAINAGE!"
+    },
+    "stone_statue": {
+      "name": "STONE STATUE",
+      "description": "AN EERIE STONE STATUE."
+    },
+    "dark_altar": {
+      "name": "DARK ALTAR",
+      "description": "A DARK ALTAR FOR ARCANE RITUALS!"
+    },
+    "treasure_chest": {
+      "name": "TREASURE CHEST",
+      "description": "A TREASURE CHEST FOR STORIN' VALUABLES!"
+    },
+    "stone_coffin": {
+      "name": "STONE COFFIN",
+      "description": "A STONE COFFIN CONTAININ' REMAINS!"
+    },
+    "dungeon_chest": {
+      "name": "DUNGEON CHEST",
+      "description": "A CHEST LOCKED IN DA DUNGEON!"
+    },
+    "stone_wall": {
+      "name": "STONE WALL",
+      "description": "A SOLID STONE WALL."
+    },
+    "hanging_chains": {
+      "name": "HANGIN' CHAINS",
+      "description": "HEAVY CHAINS HANGIN' FROM DA CEILING!"
+    },
+    "sword_rack": {
+      "name": "SWORD RACK",
+      "description": "A RACK FOR DISPLAYIN' WEAPONS!"
+    },
+    "shield_wall": {
+      "name": "SHIELD WALL",
+      "description": "A WALL DISPLAYIN' SHIELDS!"
+    },
+    "dungeon_banner": {
+      "name": "DUNGEON BANNER",
+      "description": "A DARK BANNER FOR DUNGEON DECORATION!"
+    },
+    "treadmill": {
+      "name": "TREADMILL",
+      "description": "AN ELECTRIC TREADMILL FOR CARDIO TRAININ'!"
+    },
+    "weight_bench": {
+      "name": "WEIGHT BENCH",
+      "description": "A BENCH FOR WEIGHT TRAININ' EXERCISES!"
+    },
+    "dumbbell_rack": {
+      "name": "DUMBBELL RACK",
+      "description": "A RACK FOR STORIN' DUMBBELLS AN' WEIGHTS!"
+    },
+    "barbell_rack": {
+      "name": "BARBELL RACK",
+      "description": "A RACK FOR STORIN' BARBELLS AN' PLATES!"
+    },
+    "squat_rack": {
+      "name": "SQUAT RACK",
+      "description": "A RACK FOR BARBELL SQUATS AN' LIFTIN'!"
+    },
+    "cable_machine": {
+      "name": "CABLE MACHINE",
+      "description": "A MULTI-PURPOSE CABLE EXERCISE MACHINE!"
+    },
+    "leg_press": {
+      "name": "LEG PRESS MACHINE",
+      "description": "A LEG PRESS MACHINE FOR LOWER BODY TRAININ'!"
+    },
+    "chest_press": {
+      "name": "CHEST PRESS MACHINE",
+      "description": "A CHEST PRESS MACHINE FOR UPPER BODY TRAININ'!"
+    },
+    "lat_pulldown": {
+      "name": "LAT PULLDOWN MACHINE",
+      "description": "A LAT PULLDOWN MACHINE FOR BACK TRAININ'!"
+    },
+    "leg_extension": {
+      "name": "LEG EXTENSION MACHINE",
+      "description": "A LEG EXTENSION MACHINE FOR QUADRICEPS TRAININ'!"
+    },
+    "ab_crunch_machine": {
+      "name": "AB CRUNCH MACHINE",
+      "description": "A MACHINE FOR ABDOMINAL CRUNCHES!"
+    },
+    "rowing_machine": {
+      "name": "ROWIN' MACHINE",
+      "description": "A ROWIN' MACHINE FOR FULL-BODY CARDIO!"
+    },
+    "stationary_bike": {
+      "name": "STATIONARY BIKE",
+      "description": "A STATIONARY BIKE FOR CARDIO TRAININ'!"
+    },
+    "elliptical_machine": {
+      "name": "ELLIPTICAL MACHINE",
+      "description": "AN ELLIPTICAL MACHINE FOR LOW-IMPACT CARDIO!"
+    },
+    "punching_bag": {
+      "name": "PUNCHIN' BAG",
+      "description": "A HEAVY PUNCHIN' BAG FOR BOXIN' TRAININ'!"
+    },
+    "speed_bag": {
+      "name": "SPEED BAG",
+      "description": "A SPEED BAG FOR REFLEX TRAININ'!"
+    },
+    "pull_up_bar": {
+      "name": "PULL-UP BAR",
+      "description": "A BAR FOR PULL-UP AN' CHIN-UP EXERCISES!"
+    },
+    "parallel_bars": {
+      "name": "PARALLEL BARS",
+      "description": "PARALLEL BARS FOR DIPS AN' CORE TRAININ'!"
+    },
+    "gym_mat": {
+      "name": "GYM MAT",
+      "description": "A PROTECTIVE MAT FOR FLOOR EXERCISES!"
+    },
+    "gym_mirror": {
+      "name": "GYM MIRROR",
+      "description": "A LARGE MIRROR FOR FORM CHECKIN'!"
+    },
+    "gym_locker": {
+      "name": "GYM LOCKER",
+      "description": "A LOCKER FOR STORIN' GYM BELONGINGS!"
+    },
+    "shower_stall": {
+      "name": "SHOWER STALL",
+      "description": "A SHOWER STALL FOR POST-WORKOUT CLEANIN'!"
+    },
+    "gym_bleachers": {
+      "name": "GYM BLEACHERS",
+      "description": "BLEACHERS FOR SPECTATORS OR REST!"
+    },
+    "foam_roller": {
+      "name": "FOAM ROLLER STAND",
+      "description": "A STAND FOR FOAM ROLLERS AN' RECOVERY TOOLS!"
+    },
+    "resistance_bands_rack": {
+      "name": "RESISTANCE BANDS RACK",
+      "description": "A RACK FOR ORGANIZIN' RESISTANCE BANDS!"
+    },
+    "medicine_ball_rack": {
+      "name": "MEDICINE BALL RACK",
+      "description": "A RACK FOR STORIN' MEDICINE BALLS!"
+    },
+    "gym_clock": {
+      "name": "GYM CLOCK",
+      "description": "A WALL-MOUNTED CLOCK FOR INTERVAL TRAININ'!"
+    },
+    "beach_umbrella": {
+      "name": "BEACH UMBRELLA",
+      "description": "A COLORFUL UMBRELLA FOR SUN PROTECTION!"
+    },
+    "beach_chair": {
+      "name": "BEACH CHAIR",
+      "description": "A COMFORTABLE CHAIR FOR RELAXIN' ON DA BEACH!"
+    },
+    "sand_castle": {
+      "name": "SAND CASTLE",
+      "description": "A SAND CASTLE FOR DECORATION!"
+    },
+    "sailboat": {
+      "name": "SAILBOAT",
+      "description": "A WOODEN SAILBOAT FOR BEACH EXPLORATION!"
+    },
+    "beach_hut": {
+      "name": "BEACH HUT",
+      "description": "A LIL' BEACH HUT FOR SHELTER!"
+    },
+    "surfboard": {
+      "name": "SURFBOARD",
+      "description": "A SURFBOARD FOR RIDIN' WAVES!"
+    },
+    "beach_ball": {
+      "name": "BEACH BALL",
+      "description": "AN INFLATABLE BEACH BALL."
+    },
+    "beach_towel_rack": {
+      "name": "BEACH TOWEL RACK",
+      "description": "A RACK FOR HANGIN' BEACH TOWELS!"
+    },
+    "beach_cooler": {
+      "name": "BEACH COOLER",
+      "description": "A COOLER FOR COLD DRINKS ON DA BEACH!"
+    },
+    "lifeguard_stand": {
+      "name": "LIFEGUARD STAND",
+      "description": "A TALL STAND FOR BEACH LIFEGUARDS!"
+    },
+    "beach_sign": {
+      "name": "BEACH SIGN",
+      "description": "A SIGN FOR BEACH WARNINGS AN' INFORMATION!"
+    },
+    "beach_anchor": {
+      "name": "ANCHOR",
+      "description": "A SHIP ANCHOR FOR MOORIN'!"
+    },
+    "wooden_dock": {
+      "name": "WOODEN DOCK",
+      "description": "A WOODEN DOCK FOR MOORIN' BOATS!"
+    },
+    "beach_pier": {
+      "name": "BEACH PIER",
+      "description": "A LARGE PIER EXTENDIN' INTO DA WATER!"
+    },
+    "buoy": {
+      "name": "BUOY",
+      "description": "A BUOY FOR MARKIN' WATER ZONES!"
+    },
+    "beach_lounge": {
+      "name": "BEACH LOUNGER",
+      "description": "A LUXURIOUS LOUNGER FOR RELAXATION!"
+    },
+    "sand_bucket": {
+      "name": "SAND BUCKET",
+      "description": "A BUCKET FOR SAND AN' WATER PLAY!"
+    },
+    "sand_shovel": {
+      "name": "SAND SHOVEL",
+      "description": "A SHOVEL FOR DIGGIN' IN DA SAND!"
+    },
+    "beach_shower": {
+      "name": "BEACH SHOWER",
+      "description": "AN OUTDOOR SHOWER FOR RINSIN' OFF SAND!"
+    },
+    "beach_bar": {
+      "name": "BEACH BAR",
+      "description": "A BAR COUNTER FOR BEACH REFRESHMENTS!"
+    },
+    "tiki_torch": {
+      "name": "TIKI TORCH",
+      "description": "A TIKI TORCH FOR EVENIN' BEACH LIGHTIN'!"
+    },
+    "palm_tree": {
+      "name": "PALM TREE",
+      "description": "A TROPICAL PALM TREE."
+    },
+    "beach_volleyball_net": {
+      "name": "VOLLEYBALL NET",
+      "description": "A NET FOR BEACH VOLLEYBALL!"
+    },
+    "beach_cabana": {
+      "name": "BEACH CABANA",
+      "description": "A LUXURIOUS CABANA FOR PRIVACY ON DA BEACH!"
+    },
+    "rowboat": {
+      "name": "ROWBOAT",
+      "description": "A LIL' ROWBOAT FOR WATER EXPLORATION!"
+    }
+  }
+}

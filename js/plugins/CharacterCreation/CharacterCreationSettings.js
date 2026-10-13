@@ -92,10 +92,11 @@
 
       const cleanDesc = (s) => (s || '').replace(/\\C\[\d+\]/gi, '').replace(/\\C/gi, '');
 
-      // Story mode's difficulty is picked on Em's Bio tab (Roguelike or Blood
-      // and Oil), so this row is dropped and anything else falls to roguelite.
+      // Story mode's difficulty is picked on Em's Bio tab (Peaceful, Roguelike,
+      // Hardcore or Blood and Oil), so this row is dropped and anything else
+      // falls to roguelite.
       const storyMode = !!(typeof Scene_CharacterCreation !== 'undefined' && Scene_CharacterCreation._storyMode);
-      if (storyMode && window.$gameSystem && !$gameSystem._bloodAndOilMode) {
+      if (storyMode && window.$gameSystem && !$gameSystem._bloodAndOilMode && !$gameSystem._peacefulMode) {
         $gameSystem._difficultyMode = 'roguelite';
         $gameSystem._bloodAndOilMode = false;
         $gameSystem._peacefulMode = false;
@@ -136,6 +137,9 @@
             // Rebuild the rows so every label/description re-translates live.
             scene._settingsRows = scene._buildSettingsRows();
             scene._lastSettingsHash = null;
+            // Same rows, new words: the list is redrawn whole, or the row names
+            // stayed in the language just left (only values are patched).
+            scene._settingsWordsStale = true;
           },
           next() { this._changeBy(1); },
           prev() { this._changeBy(-1); },
@@ -615,7 +619,9 @@
       //     row's value, is what changed.
       const listEl = spread.querySelector(".cc-settings-list");
       const rowEls = listEl ? listEl.children : null;
-      const structureStale = !rowEls || rowEls.length !== rows.length;
+      const wordsStale = !!this._settingsWordsStale;
+      this._settingsWordsStale = false;
+      const structureStale = wordsStale || !rowEls || rowEls.length !== rows.length;
       const previewKey = `${rowIdx}:${currentRow.currentIndex}`;
       const innerOf = (html) => html.replace(/^\s*<div[^>]*>/, "").replace(/<\/div>\s*$/, "");
 
@@ -623,6 +629,8 @@
         spread.innerHTML = `${leftHtml}${rightHtml}`;
         this._drawSettingsIcons();
         this._lastPreviewKey = previewKey;
+        // The tab strip above the spread is written in the language too.
+        if (wordsStale && this._refreshTopFolderTabs) this._refreshTopFolderTabs();
         return;
       }
 
@@ -638,7 +646,9 @@
       if (this._lastPreviewKey !== previewKey) {
         this._lastPreviewKey = previewKey;
         const rightPage = spread.querySelector(".cc-page-right");
-        if (rightPage) rightPage.innerHTML = innerOf(rightHtml);
+        // Patched, so a preview plate that did not change is not reloaded.
+        if (rightPage && window.CCMorph) window.CCMorph.inner(rightPage, innerOf(rightHtml));
+        else if (rightPage) rightPage.innerHTML = innerOf(rightHtml);
       }
     }
 

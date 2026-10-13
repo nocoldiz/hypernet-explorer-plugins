@@ -130,12 +130,12 @@
     "name": ""
   },
   "Buy real estate": {
-    "val": "Acquistare immobili",
+    "val": "Acquista immobili",
     "excluded": "",
     "name": ""
   },
   "Use": {
-    "val": "Utilizzo",
+    "val": "Usa",
     "excluded": "",
     "name": ""
   },
@@ -190,7 +190,7 @@
     "name": ""
   },
   "Sleep": {
-    "val": "Sonno",
+    "val": "Dormi",
     "excluded": "",
     "name": ""
   },
@@ -200,7 +200,7 @@
     "name": ""
   },
   "Manage party": {
-    "val": "Gestisci il party",
+    "val": "Gestisci il Party",
     "excluded": "",
     "name": ""
   },
@@ -210,27 +210,27 @@
     "name": ""
   },
   "8 Hours": {
-    "val": "8 Ore",
+    "val": "8 ore",
     "excluded": "",
     "name": ""
   },
   "7 Hours": {
-    "val": "7 Ore",
+    "val": "7 ore",
     "excluded": "",
     "name": ""
   },
   "6 Hours": {
-    "val": "6 Ore",
+    "val": "6 ore",
     "excluded": "",
     "name": ""
   },
   "5 Hours": {
-    "val": "5 Ore",
+    "val": "5 ore",
     "excluded": "",
     "name": ""
   },
   "4 Hours": {
-    "val": "4 Ore",
+    "val": "4 ore",
     "excluded": "",
     "name": ""
   },
@@ -240,7 +240,7 @@
     "name": ""
   },
   "Dream": {
-    "val": "Sogno",
+    "val": "Sogna",
     "excluded": "",
     "name": ""
   },
@@ -250,12 +250,12 @@
     "name": ""
   },
   "Kick out \\N[2]": {
-    "val": "Espellere \\N[2]",
+    "val": "Espelli \\N[2]",
     "excluded": "",
     "name": ""
   },
   "Kick out \\N[3]": {
-    "val": "Espellere \\N[3]",
+    "val": "Espelli \\N[3]",
     "excluded": "",
     "name": ""
   },
@@ -285,7 +285,7 @@
     "name": ""
   },
   "Drink": {
-    "val": "Bere",
+    "val": "Bevi",
     "excluded": "",
     "name": ""
   },
@@ -295,7 +295,7 @@
     "name": ""
   },
   "Take a shower": {
-    "val": "Fare una doccia",
+    "val": "Fatti una doccia",
     "excluded": "",
     "name": ""
   },
@@ -345,7 +345,7 @@
     "name": ""
   },
   "Stop camping": {
-    "val": "Smetti di campeggiare",
+    "val": "Smonta l'accampamento",
     "excluded": "",
     "name": ""
   },
@@ -355,7 +355,7 @@
     "name": ""
   },
   "Yes?": {
-    "val": "Si?",
+    "val": "Sì?",
     "excluded": "",
     "name": ""
   },
@@ -410,7 +410,7 @@
     "name": ""
   },
   "We've deployed probes for over a\nthousand floors in both directions. \nNo confirmed top...or bottom.": {
-    "val": "Abbiamo posizionato sonde su oltre\nmille piani in entrambe le direzioni.\nNessun punto in alto...né in basso confermato.",
+    "val": "Abbiamo posizionato sonde su oltre\nmille piani in entrambe le direzioni.\nNessuna cima confermata...né un fondo.",
     "excluded": "",
     "name": ""
   },
@@ -470,7 +470,7 @@
     "name": ""
   },
   "The Hypernet": {
-    "val": "l’Hypernet",
+    "val": "L’Hypernet",
     "excluded": "",
     "name": ""
   },
@@ -515,7 +515,7 @@
     "name": ""
   },
   "The Hypernet isn’t what it used to be.": {
-    "val": "L’Hypernet non è più quello di una volta",
+    "val": "L’Hypernet non è più quello di una volta.",
     "excluded": "",
     "name": ""
   },
@@ -530,7 +530,7 @@
     "name": ""
   },
   "The Hypernet couldn’t survive full transparency.": {
-    "val": "L’Iperrete non poteva sopravvivere alla piena\ntrasparenza.",
+    "val": "L’Hypernet non poteva sopravvivere alla piena\ntrasparenza.",
     "excluded": "",
     "name": ""
   },
@@ -560,7 +560,7 @@
     "name": ""
   },
   "Yound the remains of an adventurer, what do you want\nto do?": {
-    "val": "Cercando i resti di un avventuriero, cosa vuoi\nfare?",
+    "val": "Hai trovato i resti di un avventuriero, cosa vuoi\nfare?",
     "excluded": "",
     "name": ""
   },
@@ -600,7 +600,7 @@
     "name": ""
   },
   "Green Witch Space Center": {
-    "val": "Centro spaziale della strega verde",
+    "val": "Centro spaziale di Greenwitch",
     "excluded": "",
     "name": ""
   },
@@ -620,12 +620,12 @@
     "name": ""
   },
   "Initialize": {
-    "val": "Inizializzare",
+    "val": "Inizializza",
     "excluded": "",
     "name": ""
   },
   "Add items/Money": {
-    "val": "Aggiungi articoli/Denaro",
+    "val": "Aggiungi oggetti/denaro",
     "excluded": "",
     "name": ""
   },
@@ -660,7 +660,7 @@
     "name": ""
   },
   "Spawn vehicle": {
-    "val": "Genera veicolo",
+    "val": "Evoca veicolo",
     "excluded": "",
     "name": ""
   },
@@ -710,7 +710,7 @@
     "name": ""
   },
   "Change Weather": {
-    "val": "Cambia Meteo",
+    "val": "Cambia meteo",
     "excluded": "",
     "name": ""
   },
@@ -755,12 +755,12 @@
     "name": ""
   },
   "Hyperhard": {
-    "val": "Iperduro",
+    "val": "Iperdifficile",
     "excluded": "",
     "name": ""
   },
   "Stop working": {
-    "val": "Smettere di lavorare",
+    "val": "Smetti di lavorare",
     "excluded": "",
     "name": ""
   },
@@ -780,7 +780,7 @@
     "name": ""
   },
   "Rider": {
-    "val": "Cavaliere",
+    "val": "Fattorino",
     "excluded": "",
     "name": ""
   },
@@ -835,7 +835,7 @@
     "name": ""
   },
   "Go to trial": {
-    "val": "Vai alla prova",
+    "val": "Vai a processo",
     "excluded": "",
     "name": ""
   },
@@ -845,7 +845,7 @@
     "name": ""
   },
   "Resist arrest": {
-    "val": "Resistere all'arresto",
+    "val": "Resisti all'arresto",
     "excluded": "",
     "name": ""
   },
@@ -865,7 +865,7 @@
     "name": ""
   },
   "Steal": {
-    "val": "Rubare",
+    "val": "Ruba",
     "excluded": "",
     "name": ""
   },
@@ -945,7 +945,7 @@
     "name": ""
   },
   "Repair": {
-    "val": "Riparazione",
+    "val": "Ripara",
     "excluded": "",
     "name": ""
   },
@@ -965,7 +965,7 @@
     "name": ""
   },
   "You donated sperm \\V[102] times and you have\ngiven birth to \\V[103] children.": {
-    "val": "Hai donato lo sperma \\V[102] volte e hai\npartorito \\V[103] figli.",
+    "val": "Hai donato sperma \\V[102] volte e hai\npartorito \\V[103] figli.",
     "excluded": "",
     "name": ""
   },

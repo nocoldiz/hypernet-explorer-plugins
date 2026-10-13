@@ -402,10 +402,10 @@
 
         // A spell is a lesson: one is all there is to buy.
         clampQty: function (entry, qty) {
-            const cap = Stock.available(entry);
+            const cap = Math.min(Stock.available(entry), Stock.room(entry));
             let n = Math.floor(Number(qty) || 0);
             if (!Number.isFinite(n) || n < 1) n = 1;
-            return Math.min(n, cap);
+            return Math.max(0, Math.min(n, cap));
         },
 
         // What a line of `qty` units of `entry` costs, volume cut included.
@@ -460,7 +460,7 @@
         maxAffordable: function (entry, gold, limited) {
             if (!entry) return 0;
             const unit = this.unit(entry, limited);
-            if (unit <= 0) return Stock.available(entry);
+            if (unit <= 0) return Math.max(0, Math.min(Stock.available(entry), Stock.room(entry)));
             const bands = [{ min: 1, off: 0 }].concat(BULK_TIERS.slice().sort((a, b) => a.min - b.min));
             let best = 0;
             for (let i = 0; i < bands.length; i++) {
@@ -474,7 +474,7 @@
                 while (qty >= band.min && this.lineTotal(entry, qty, limited) > gold) qty--;
                 if (qty >= band.min && qty > best) best = qty;
             }
-            return Math.min(best, Stock.available(entry));
+            return Math.max(0, Math.min(best, Stock.available(entry), Stock.room(entry)));
         }
     };
 
@@ -490,14 +490,56 @@
         available: function (entry) {
             if (!entry) return 0;
             if (isSkillEntry(entry)) return 1;
-            if (DailyLots.isRarity(entry)) return 1;
+            // The one that exists: once bought it is gone for the day.
+            if (DailyLots.isRarity(entry)) return DailyLots.isSold(entry) ? 0 : 1;
             return this.UNLIMITED;
+        },
+
+        // How many more units the pack can take of a ware, counting what a
+        // courier is already bringing. A stack stops at maxItems and gainItem
+        // drops the rest, so an order past this was paid for and lost.
+        room: function (entry) {
+            if (!entry || isSkillEntry(entry)) return this.UNLIMITED;
+            if (typeof $gameParty === "undefined" || !$gameParty || typeof $gameParty.maxItems !== "function") {
+                return this.UNLIMITED;
+            }
+            const kind = kindOf(entry);
+            const onTheWay = DeliveryManager.getOrderedItems()
+                .filter(o => o && o.kind === kind && o.id === entry.id)
+                .reduce((sum, o) => sum + Math.max(1, Math.floor(o.qty || 1)), 0);
+            return Math.max(0, $gameParty.maxItems(entry) - $gameParty.numItems(entry) - onTheWay);
+        },
+
+        // Lines that cannot be filled as asked: a rarity already sold, or more
+        // units than the pack has room for (lines of the same lot added up).
+        unfillable: function (lines) {
+            const asked = new Map();
+            for (const line of (lines || [])) {
+                if (!line.entry || isSkillEntry(line.entry)) continue;
+                const key = kindOf(line.entry) + ":" + line.entry.id;
+                asked.set(key, (asked.get(key) || 0) + Math.max(1, Math.floor(line.qty || 1)));
+            }
+            return (lines || []).filter(line => {
+                if (!line.entry || isSkillEntry(line.entry)) return false;
+                if (this.available(line.entry) <= 0) return true;
+                return asked.get(kindOf(line.entry) + ":" + line.entry.id) > this.room(line.entry);
+            });
         },
 
         isUnlimited: function (entry) {
             return this.available(entry) >= this.UNLIMITED;
         }
     };
+
+    function warnUnfillable(lines) {
+        SoundManager.playBuzzer();
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(T('Stockbusters.text.cannotFill', {
+                items: lines.map(line => itemNameOf(line.entry)).join(', ')
+            }), { severity: "warning", icon: lines[0].entry.iconIndex });
+        }
+    }
+
 
     //=========================================================================
     // Listing flavour
@@ -672,9 +714,29 @@
             return lots;
         },
 
-        // Today's rarities as database entries, in listing order.
+        // Today's rarities as database entries, in listing order. A lot that
+        // has been bought is off the shelf until tomorrow's roll.
         entries: function () {
-            return this.refresh().map(lot => this.entryOf(lot)).filter(Boolean);
+            return this.refresh().filter(lot => !lot.sold).map(lot => this.entryOf(lot)).filter(Boolean);
+        },
+
+        _lotOf: function (entry) {
+            if (!entry) return null;
+            const state = this.state();
+            if (!state || !Array.isArray(state.lots)) return null;
+            const kind = kindOf(entry);
+            return state.lots.find(l => l.kind === kind && l.id === entry.id &&
+                l.data && l.data.name === entry.name) || null;
+        },
+
+        isSold: function (entry) {
+            const lot = this._lotOf(entry);
+            return !!(lot && lot.sold);
+        },
+
+        markSold: function (entry) {
+            const lot = this._lotOf(entry);
+            if (lot) lot.sold = true;
         },
 
         isRarity: function (entry) {
@@ -1359,6 +1421,20 @@
     // visit: its shelf is not the warehouse's.
     const SharedBasket = new Basket();
 
+    // The basket belongs to the session it was filled in: a new game or a
+    // loaded save starts with it empty rather than checking out lines (and
+    // procedural ids) picked in another savegame.
+    const _DataManager_setupNewGame_sb = DataManager.setupNewGame;
+    DataManager.setupNewGame = function () {
+        SharedBasket.clear();
+        return _DataManager_setupNewGame_sb.apply(this, arguments);
+    };
+    const _DataManager_extractSaveContents_sb = DataManager.extractSaveContents;
+    DataManager.extractSaveContents = function () {
+        SharedBasket.clear();
+        return _DataManager_extractSaveContents_sb.apply(this, arguments);
+    };
+
     //=========================================================================
     // Site chrome
     //=========================================================================
@@ -1681,7 +1757,15 @@
         this._onKeyDown = (event) => {
             if (!event.target || !event.target.matches) return;
             if (!event.target.matches('input')) return;
-            if (event.key === 'Escape') return;
+            // Escape steps out of the box: the site ignores every key while a
+            // box has focus, so passing it on left Back unreachable from the
+            // keyboard. A second Escape then goes back as usual.
+            if (event.key === 'Escape') {
+                event.stopPropagation();
+                event.preventDefault();
+                event.target.blur();
+                return;
+            }
             event.stopPropagation();
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -1936,6 +2020,10 @@
     Scene_SearchableShop.prototype.addToBasket = function () {
         const entry = this._selected;
         if (!entry) return;
+        if (Pricing.clampQty(entry, this._qty) <= 0) {
+            warnUnfillable([{ entry: entry }]);
+            return;
+        }
         this._basket.add(entry, this._qty, isSkillEntry(entry) ? this._learnerId : 0);
         SoundManager.playOk();
         if (window.ParchmentToast) {
@@ -2030,6 +2118,11 @@
         // An order placed, in the party's own diary (Diary.js). A bazaar hands
         // the goods over at once; everything else is a courier on the way.
         if (window.Diary) window.Diary.onOrderPlaced(names, totals.total, !limited);
+        // A rarity is the one that exists: after the courier has its snapshot,
+        // it leaves the shelf for the day.
+        for (const line of priced) {
+            if (DailyLots.isRarity(line.entry)) DailyLots.markSold(line.entry);
+        }
         return totals;
     }
 
@@ -2056,6 +2149,14 @@
         const blocked = untrainableLines(lines);
         if (blocked.length) {
             warnUntrainable(blocked);
+            this._confirm = null;
+            this.render();
+            return;
+        }
+
+        const unfillable = Stock.unfillable(lines);
+        if (unfillable.length) {
+            warnUnfillable(unfillable);
             this._confirm = null;
             this.render();
             return;
@@ -2893,7 +2994,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: 'app-hypernet-shop',
-            name: T('Stockbusters.ui.appName'),
+            name: () => T('Stockbusters.ui.appName'),
             icon: APP_ICON,
             launchFn: function (params) {
                 window.HypercapitalisEmporiumApp.launch(params);
@@ -3039,6 +3140,10 @@
                 learner: first ? first.actorId() : 0 }];
             if (untrainableLines(lines).length) {
                 warnUntrainable(lines);
+                return false;
+            }
+            if (n <= 0 || Stock.unfillable(lines).length) {
+                warnUnfillable(lines);
                 return false;
             }
             if (Pricing.basket(lines, false).total > $gameParty.gold()) {

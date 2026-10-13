@@ -10,32 +10,49 @@
   "askGroupHere": "Qui",
   "askGroupAgain": "Insegnami di nuovo",
   "askCombat": "Combattimento",
+  "keyFaces": {
+    "scrollWheel": "ROTELLINA",
+    "rightStick": "LEVETTA DESTRA",
+    "leftStick": "LEVETTA SINISTRA",
+    "dpad": "CROCE DIREZIONALE"
+  },
   "combat": {
     "offer": "Bubba: Aspetta, tesoro. Prima di menare fendenti a qualcuno, vuoi che ti rispieghi i comandi?",
     "yes": "Rispiegami tutto",
     "no": "Me la cavo da sola",
     "normal": [
-      "Bubba: In combattimento andiamo a turni in ordine di [velocita']. Scegli un comando e premi [CONTINUE].",
-      "Bubba: [Attacco] colpisce il nemico con la tua [arma] equipaggiata. E' sempre pronto all'uso.",
-      "Bubba: [Abilita'] sono i tuoi attacchi speciali e magie. Usarli consuma [MP] o [AP].",
+      "Bubba: In combattimento andiamo a turni in ordine di [velocità]. Scegli un comando e premi [CONTINUE].",
+      "Bubba: [Attacco] colpisce il nemico con la tua [arma] equipaggiata. È sempre pronto all'uso.",
+      "Bubba: le [Abilità] sono i tuoi attacchi speciali e i tuoi incantesimi. Usarle consuma [MP] o [AP].",
       "Bubba: [Difesa] ti protegge e riduce i [danni] subiti per il turno.",
       "Bubba: [Ricarica] appare se impugni una pistola. Riempie i [proiettili] e ti copre le spalle.",
       "Bubba: [Cambia] ti fa trasformare la tua [vector gun] nell'altra forma senza consumare [nessun turno].",
       "Bubba: [Zaino] ti permette di usare gli [oggetti] che porti con te, come medicine o cibo.",
       "Bubba: [Azioni] contiene mosse extra come [Mira] alle parti del corpo, [Lancia] e [Lotta].",
       "Bubba: [Parla] prova prima con le parole. Alcuni nemici possono essere convinti a fermarsi.",
-      "Bubba: [Fuga] porta via tutto il gruppo. Funziona sempre quando hai bisogno di [fuggire]."
+      "Bubba: [Fuga] porta via tutto il Party. Funziona sempre quando hai bisogno di [fuggire]."
     ],
     "map": [
-      "Bubba: Questo scontro si svolge direttamente sulla mappa. Andiamo a turni in ordine di [velocita'].",
+      "Bubba: Questo scontro si svolge direttamente sulla mappa. Andiamo a turni in ordine di [velocità].",
       "Bubba: [Muovi] ti sposta sulle caselle prima di agire. La distanza dipende dalla tua [DES].",
       "Bubba: [Attacco] ha una [gittata] in caselle. Assicurati di essere a portata prima di colpire.",
-      "Bubba: [Abilita'] sono mosse speciali e magie indirizzate a una casella specifica.",
+      "Bubba: le [Abilità] sono mosse speciali e incantesimi indirizzati a una casella specifica.",
       "Bubba: [Zaino] ti permette di usare gli [oggetti] del tuo inventario sul campo.",
       "Bubba: [Azioni] include mosse come [Mira], [Lancia] e [Lotta] puntate su una casella.",
       "Bubba: Sposta il [cursore] sulla casella del bersaglio e premi [CONTINUE].",
-      "Bubba: [Fuga] guida via tutto il gruppo per [scappare] dalla battaglia."
+      "Bubba: [Fuga] guida via tutto il Party per [scappare] dalla battaglia."
     ],
     "rearm": "Bubba: Nessun problema tesoro, non sono un esperto di magia ma posso rispiegarti come si spara con la pistola! Il resto lo devi capire da sola"
+  },
+  "story": {
+    "missBubba": [
+      "Bubba avrebbe saputo cosa dire, qui. Continuo a girarmi per raccontargli le cose.",
+      "Che silenzio senza le sue battute idiote. Darei qualsiasi cosa per sentirne un'altra.",
+      "Bubba, testone. Dovevi vederlo con me.",
+      "La mattina preparo ancora due tazze. Vecchie abitudini.",
+      "Ogni strada che avevamo progettato insieme, ora la percorro da sola.",
+      "Mi avrebbe presa in giro per le lacrime. Quindi niente lacrime. Non qui.",
+      "Le profezie sono libere e io no. Mi manchi, Bubba."
+    ]
   }
 }

@@ -21,8 +21,9 @@
 * page lists every journal page, the left page is a textbox you type into to
 * edit the selected page.
 *
-* Pages are persisted to disk as plain TXT files, one file per page, with the
-* current save-slot number baked into the filename:
+* Pages live in the savegame and are copied to disk as plain TXT files, one
+* file per page, with the current save-slot number baked into the filename
+* (the copy is written, never read back):
 *
 *     save/journal/journal_slot<N>_page<index>.txt
 *
@@ -89,36 +90,26 @@ const TravelJournalManager = {
 
     // ---- Load / persist ----------------------------------------------------
 
+    // The pages are read out of the savegame, never off the TXT files. A slot
+    // number is reused: a new playthrough bound to the slot of a deleted or
+    // overwritten save would otherwise open that old run's notebook, and a
+    // session not bound to a slot yet (getSlot falls back to 1) would read and
+    // then overwrite slot 1's. Everything in $gameSystem belongs to this run,
+    // so its mirror is the only source; the TXT files are its readable copy.
     load() {
         const slot = this.getSlot();
         this._slot  = slot;
         this._pages = [];
 
-        const dir = this._dir();
-        if (dir) {
-            const prefix = this._prefix(slot);
-            const files = fs.readdirSync(dir)
-                .filter(f => f.startsWith(prefix) && f.endsWith('.txt'))
-                .map(f => ({
-                    file:  f,
-                    index: parseInt(f.slice(prefix.length, -4), 10)
-                }))
-                .filter(o => !isNaN(o.index))
-                .sort((a, b) => a.index - b.index);
-
-            for (const o of files) {
-                try {
-                    this._pages.push(fs.readFileSync(path.join(dir, o.file), 'utf8'));
-                } catch (e) {
-                    this._pages.push('');
-                }
-            }
-        } else {
-            // Browser fallback: pull from the save state.
-            const store = (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._travelJournal) || {};
-            const arr = store[slot];
-            if (Array.isArray(arr)) this._pages = arr.slice();
+        const store = (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._travelJournal) || {};
+        let arr = store[slot];
+        // Pages written before this run was bound to its slot sit under the
+        // slot number it had then: still this run's notebook.
+        if (!Array.isArray(arr)) {
+            const other = Object.keys(store).map(k => store[k]).filter(Array.isArray);
+            arr = other.length ? other[other.length - 1] : null;
         }
+        if (Array.isArray(arr)) this._pages = arr.map(p => String(p == null ? '' : p));
 
         if (this._pages.length === 0) this._pages.push('');
         return this._pages;

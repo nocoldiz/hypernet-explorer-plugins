@@ -1538,6 +1538,10 @@
     g.fillRect(0, 0, 64, 64);
     const tex = new THREE.CanvasTexture(c);
     tex.minFilter = THREE.LinearFilter;
+    // Shared by every burst: a finished one is torn down through
+    // disposeWeaponObject3D, which frees any texture not flagged as cached, so
+    // without this every hit threw the upload away and the next one redid it.
+    tex._weaponSharedCache = true;
     fxTextures[kind] = tex;
     return tex;
   }

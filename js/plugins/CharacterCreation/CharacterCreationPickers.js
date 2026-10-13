@@ -30,6 +30,7 @@
 
   const {
     ccT,
+    ccEsc,
     STEP,
     creatureArchetypeKeys,
     archetypeDisplayName,
@@ -150,8 +151,11 @@
       const choices = (stepData && stepData.choices) || [];
       // With a pad in hand there is no strip to type into, so the board filters
       // on nothing and shows the whole roster (CCSearch).
-      const query = window.CCSearch.query(Scene_CharacterCreation._classSearchQuery)
-        .toLowerCase().trim();
+      // The field shows exactly what was typed; only the filter is folded. The
+      // field is rebuilt on every keystroke, so a trimmed value ate the space
+      // before a second word and a two-word class could never be searched.
+      const typed = window.CCSearch.query(Scene_CharacterCreation._classSearchQuery);
+      const query = typed.toLowerCase().trim();
       const actor = Scene_CharacterCreation.getCurrentActor();
       const currentClassId = actor ? actor._classId : 0;
 
@@ -194,7 +198,7 @@
           ${window.CCSearch.html({
             className: "cc-bio-select cc-class-search",
             placeholder: ccT('CharCreate.search'),
-            value: query,
+            value: typed,
             oninput: "SceneManager._scene.onClassSearch(this.value)",
           })}
           <div class="cc-select-grid cc-compact cc-two-col cc-class-grid">
@@ -378,7 +382,13 @@
       const activeIndex = this._gridWindow ? this._gridWindow.index() : 0;
       const fresh = this._ccSwapPage(leftPage, this._classPickerLeftHtml(this.currentStepData(), activeIndex));
       const input = fresh && fresh.querySelector(".cc-class-search");
-      if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+      // The page is patched where it stands, so the field usually still has
+      // the caret, wherever in the word it was; it is only handed back when
+      // the field had to be drawn new.
+      if (input && document.activeElement !== input) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
     }
 
     // The class dossier follows the PICK, never the pointer: the right page
@@ -478,6 +488,70 @@
       }).join("");
     }
 
+    // The Body parts tab: the body the member actually has (both halves of a
+    // spliced pair, plus anything grafted in the 3D editor), part by part,
+    // with the skills each part teaches. HealthCore.partSkillRows is the one
+    // reading of it; the detailed editor prints the same list.
+    _anatomyPageHtml() {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return `<div class="cc-page cc-page-full"></div>`;
+      const HC = window.HealthCore;
+      const keys = actorArchetypeKeys(actor);
+      const title = keys.length
+        ? keys.map((key) => archetypeDisplayName(key)).join(" + ")
+        : archetypeDisplayName("Humanoid"); // i18n-ignore: Archetypes.json key
+      const rows = (HC && HC.partSkillRows) ? HC.partSkillRows(actor) : [];
+      const spliced = keys.length > 1;
+      // The status screen's anatomy grid (.anatomy-grid): a cell per part with
+      // its hit points over a gauge, plus the skills it teaches when it
+      // teaches any. A part that teaches nothing just has no skill line.
+      const bodyParts = actor._bodyParts || {};
+      const rowsHtml = !rows.length
+        ? `<p class="cc-text-desc cc-text-desc--body">${ccT('CharCreate.noAnatomicalOrgansDefined')}</p>`
+        : `<div class="anatomy-grid cc-anatomy-grid">${rows.map((row) => {
+          const part = bodyParts[row.key] || {};
+          const badge = !spliced ? "" : (row.fromArchetype === 1
+            ? `<span class="cc-role-badge secondary">${ccT('CharCreate.secondary')}</span>`
+            : `<span class="cc-role-badge primary">${ccT('CharCreate.primary')}</span>`);
+          const maxHp = Number(part.maxHp) || 0;
+          const curHp = Math.max(0, Number(part.currentHp) || 0);
+          const hpText = maxHp > 0 ? `${curHp}/${maxHp}` : `${row.hpPercent}%`;
+          const barWidth = maxHp > 0 ? Math.round(Math.min(1, curHp / maxHp) * 100) : 100;
+          const skills = row.skills.map((id) => {
+            const skill = $dataSkills[id];
+            const name = window.CCDbName ? window.CCDbName(skill) : skill.name;
+            return `<span class="cc-anatomy-skill">${this._ccIconHtml(skill.iconIndex, 16)} ${ccEsc(name)}</span>`;
+          }).join("");
+          return `
+            <div class="anatomy-cell cc-anatomy-cell">
+              <div class="anatomy-cell-top">
+                <span class="bodypart-name">${ccEsc(row.name)}${badge}</span>
+                <span class="bodypart-hp-val">${hpText}</span>
+              </div>
+              <div class="status-gauge-bar-outer anatomy-cell-bar">
+                <div class="status-gauge-bar-inner bodypart-bar" style="width:${barWidth}%"></div>
+              </div>
+              ${skills ? `<div class="cc-anatomy-skills">${skills}</div>` : ""}
+            </div>
+          `;
+        }).join("")}</div>`;
+
+      return `
+        <div class="cc-page cc-page-full cc-col">
+          <div class="cc-row-centered cc-title-band">
+            <div class="cc-header-gothic cc-title-display cc-title-display--sm">
+              ${ccEsc(actor.name())} · ${ccEsc(title)}
+            </div>
+          </div>
+          <p class="cc-text-desc cc-text-desc--intro">${ccT('CharCreate.anatomyHint')}</p>
+          <div class="cc-dossier-card cc-card-padded cc-scroll-pane">
+            <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.anatomy')}</h3>
+            ${rowsHtml}
+          </div>
+        </div>
+      `;
+    }
+
     _archetypeStepRightHtml() {
       const actor = Scene_CharacterCreation.getCurrentActor();
       if (!actor) return `<div class="cc-page cc-page-right"></div>`;
@@ -547,9 +621,9 @@
           .replace(/^\s*<div class="cc-page[^>]*>/, "")
           .replace(/<\/div>\s*$/, "");
         const leftPage = container.querySelector(".cc-page-left");
-        if (leftPage) leftPage.innerHTML = strip(this._archetypeStepLeftHtml());
+        if (leftPage) this._ccMorphInner(leftPage, strip(this._archetypeStepLeftHtml()));
         const rightPage = container.querySelector(".cc-page-right");
-        if (rightPage) rightPage.innerHTML = strip(this._archetypeStepRightHtml());
+        if (rightPage) this._ccMorphInner(rightPage, strip(this._archetypeStepRightHtml()));
       }
       // The archetype picks also live on the Bio tab now, for a person as much
       // as for a creature: repaint it too, so a primary pick that collapses the
@@ -563,10 +637,10 @@
         if (rightPage) this._ccSwapPage(rightPage, this._bioPickerRightHtml());
       }
       const sidebarSlot = container.querySelector(".cc-sidebar-slot");
-      if (sidebarSlot) sidebarSlot.innerHTML = this._renderCompactSidebarHtml();
+      if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._renderCompactSidebarHtml());
       else {
         const sidebar = container.querySelector(".cc-compact-sidebar");
-        if (sidebar) sidebar.outerHTML = this._renderCompactSidebarHtml();
+        if (sidebar) this._ccMorphOuter(sidebar, this._renderCompactSidebarHtml());
       }
       this._refreshTopFolderTabs();
     }
@@ -647,7 +721,7 @@
           .filter(Boolean)
           .map((skill) => window.CCDbName(skill))
           .join(", ");
-        const who = members[index] ? members[index].name() : String(index + 1);
+        const who = members[index] ? ccEsc(members[index].name()) : String(index + 1);
         rows.push(row(who, names));
       });
       return rows;

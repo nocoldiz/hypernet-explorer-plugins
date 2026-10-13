@@ -392,6 +392,7 @@
                Input.isTriggered('menu') || TouchInput.isCancelled()) {
       SoundManager.playCancel();
       closeTargetPicker();
+      swallowMenuPress();
     }
     return true;
   }
@@ -422,6 +423,19 @@
     _suppressActionFrame = Graphics.frameCount;
     Input.update();
   }
+
+  // The Escape / B that backs out of the card or the armed bar is spent on
+  // that: the map reads the same press as "open the main menu" later in the
+  // same frame (Escape counts as 'menu'), which opened it behind the player.
+  let _menuSwallowFrame = -1;
+  function swallowMenuPress() {
+    _menuSwallowFrame = Graphics.frameCount;
+  }
+  const _Scene_Map_isMenuCalled_hotbar = Scene_Map.prototype.isMenuCalled;
+  Scene_Map.prototype.isMenuCalled = function () {
+    if (_menuSwallowFrame === Graphics.frameCount) return false;
+    return _Scene_Map_isMenuCalled_hotbar.call(this);
+  };
 
   const _mapBar = new HotbarUI({
     id: 'html-item-hotbar-overlay',
@@ -569,7 +583,9 @@
     }
     if (Input.isTriggered('cancel') || Input.isTriggered('menu') || Input.dir4 !== 0) {
       // Walking away, or backing out, means the bar was not what you wanted.
+      const backedOut = Input.dir4 === 0;
       disarmMapBar();
+      if (backedOut) swallowMenuPress();
       return;
     }
     if (++_mapIdle > IDLE_DISARM_FRAMES) disarmMapBar();

@@ -675,6 +675,15 @@
         return dx * dx + dy * dy > reach * reach;
     }
 
+    // The footsteps slider as a factor. 0 is a real setting (silent), so only
+    // an unset or unreadable value falls back to the 30% default; the old
+    // `|| 30` read a slider pulled all the way down as 30%.
+    function footstepsVolumeScale() {
+        const v = Number(ConfigManager.footstepsVolume);
+        if (ConfigManager.footstepsVolume == null || !Number.isFinite(v)) return 0.3;
+        return Math.max(0, Math.min(100, v)) / 100;
+    }
+
     // ====== Footstep sound playback function ======
     // stepSound: the config the caller already looked up for this step, so it
     // is not looked up a second time.
@@ -771,7 +780,8 @@
             const pitch = Math.floor(Math.random() * (stepSound.pitchMax - stepSound.pitchMin + 1)) + stepSound.pitchMin;
 
             // Get footsteps volume from ConfigManager (default 30%)
-            const footstepsVolumeMultiplier = (ConfigManager.footstepsVolume || 30) / 100;
+            const footstepsVolumeMultiplier = footstepsVolumeScale();
+            if (footstepsVolumeMultiplier <= 0) return;
             let volume = stepSound.volume * footstepsVolumeMultiplier;
 
             // If it's an event, reduce volume based on distance
@@ -980,6 +990,9 @@
             return table ? materialAt(table, x, y) : null;
         },
 
+        // The footsteps slider as a 0..1 factor.
+        volumeScale: footstepsVolumeScale,
+
         // Is there a sound for this material name?
         has(material) {
             const data = getMaterialData();
@@ -992,7 +1005,7 @@
             const def = data.materials[material];
             if (!def || !def.sounds || !def.sounds.length) return false;
             const o = opts || {};
-            const mul = (ConfigManager.footstepsVolume == null ? 30 : ConfigManager.footstepsVolume) / 100;
+            const mul = footstepsVolumeScale();
             const base = (o.volume == null ? (def.volume || 85) : o.volume);
             const volume = Math.max(0, Math.min(100, base * mul));
             if (volume <= 0) return false;

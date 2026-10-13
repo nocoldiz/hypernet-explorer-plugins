@@ -2177,6 +2177,36 @@
 
         current() { return this._options[this._index]; }
 
+        // Top of option row i, in the card's own (unscaled) pixels. refresh()
+        // and optionAt() both read it, so the drawn rows and the clickable
+        // rows can never drift apart.
+        rowTop(i) {
+            return 30 + (this._subtitle ? 12 : 0) + 6 + i * 13 - 1;
+        }
+
+        // The option under a screen point, or -1.
+        optionAt(screenX, screenY) {
+            if (!this.visible || !this._options.length) return -1;
+            const sx = this.scale.x || 1, sy = this.scale.y || 1;
+            const lx = (screenX - this.x) / sx;
+            const ly = (screenY - this.y) / sy;
+            if (lx < 6 || lx >= this._vw - 6) return -1;
+            for (let i = 0; i < this._options.length; i++) {
+                const top = this.rowTop(i);
+                if (ly >= top && ly < top + 12) return i;
+            }
+            return -1;
+        }
+
+        // A left click on an option makes it current; true when one was hit.
+        pickTouched() {
+            if (!TouchInput.isTriggered()) return false;
+            const i = this.optionAt(TouchInput.x, TouchInput.y);
+            if (i < 0) return false;
+            if (i !== this._index) { this._index = i; this.refresh(); }
+            return true;
+        }
+
         refresh() {
             const H = HUD();
             if (!H || !this.visible) return;
@@ -2362,6 +2392,9 @@
 
             if (window.PSXHud) {
                 window.PSXHud.onFontReady(() => {
+                    // The font can land after the player has left: the panels are
+                    // gone by then and a repaint would throw from the timer.
+                    if (SceneManager._scene !== this) return;
                     if (!this._header) return;
                     this._header.refresh();
                     this._log.refresh();
@@ -2446,10 +2479,10 @@
         updateModeChoice() {
             if (Input.isTriggered('up')) this._card.move(-1);
             if (Input.isTriggered('down')) this._card.move(1);
-            if (Input.isTriggered('ok')) {
+            if (Input.isTriggered('ok') || this._card.pickTouched()) {
                 se('pick');
                 this.startGame(this._card.current().value);
-            } else if (Input.isTriggered('cancel')) {
+            } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                 SoundManager.playCancel();
                 this.popScene();
             }
@@ -2591,13 +2624,13 @@
         updatePromotion() {
             if (Input.isTriggered('up')) this._card.move(-1);
             if (Input.isTriggered('down')) this._card.move(1);
-            if (Input.isTriggered('ok')) {
+            if (Input.isTriggered('ok') || this._card.pickTouched()) {
                 const move = this._card.current().value;
                 this._card.close();
                 this._pendingPromotion = null;
                 se('promote');
                 this.playPlayerMove(move);
-            } else if (Input.isTriggered('cancel')) {
+            } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
                 this._card.close();
                 this._pendingPromotion = null;
                 this._state = STATE.PLAYER;
@@ -2800,7 +2833,7 @@
             CHESS_DOMS = [];
             if (this._boardSprite) {
                 if (this._boardSprite.parent) this._boardSprite.parent.removeChild(this._boardSprite);
-                this._boardSprite.destroy();
+                this._boardSprite.destroy({ texture: true, baseTexture: true });
                 this._boardSprite = null;
             }
             if (this._board) {

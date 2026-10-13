@@ -1,23 +1,26 @@
 {
   "ui": {
-    "skillTrainer": "Maestro d'Armi",
-    "spellTrader": "Scuola di Magia",
-    "soldOut": "Venduto",
+    "skillTrainer": "Maestro d'armi",
+    "spellTrader": "Scuola di magia",
+    "soldOut": "Esaurito",
     "noPupil": "Nessun allievo",
     "alreadyKnown": "Già appreso",
     "beyondMpReach": "MP insufficienti",
-    "notEnoughGold": "Oro insufficiente",
+    "tooLowLevel": "Livello troppo basso",
+    "statTooLow": "Statistica insufficiente",
+    "notEnoughGold": "Denaro insufficiente",
     "back": "Indietro",
-    "theSchoolsOnDisplayRotate": "Le scuole esposte cambiano ogni giorno. Scegli un allievo, poi acquista un incantesimo.",
-    "theDisciplinesTaughtRotateEvery": "Le discipline insegnate cambiano ogni giorno. Scegli un allievo, poi acquista una tecnica.",
+    "theSchoolsOnDisplayRotate": "Le scuole cambiano ogni giorno. Scegli un allievo, poi compra un incantesimo.",
+    "theDisciplinesTaughtRotateEvery": "Le discipline cambiano ogni giorno. Scegli un allievo, poi compra una tecnica.",
     "pupil": "Allievo",
     "todaySSchools": "Scuole di oggi",
     "todaySDisciplines": "Discipline di oggi",
     "gold": "Euro",
+    "price": "{value} €",
     "nothingToTeachToday": "Nulla da insegnare oggi.",
     "forbidden": "Proibito",
-    "spellsForSale": "Incantesimi in Vendita",
-    "techniquesForSale": "Tecniche in Vendita"
+    "spellsForSale": "Incantesimi in vendita",
+    "techniquesForSale": "Tecniche in vendita"
   },
   "shopType": {
     "generalStore": "Emporio",
@@ -81,6 +84,6 @@
     "junkShop": "Rigattiere",
     "academy": "Libreria accademica",
     "grimoire": "Emporio di grimori",
-    "doctor": "Studio Medico"
+    "doctor": "Studio medico"
   }
 }

@@ -28,13 +28,67 @@
     "sandboxScramble": "SCRAMBLE",
     "sandboxGather": "GATHER",
     "sandboxShuffled": "DA DECK IZ SHUFFLED.",
-    "sandboxDrawn": "{name} COMES OFF DA TOP OF DA DECK!",
-    "sandboxDeckEmpty": "DERE IZ NOTHIN' LEFT IN DA DECK!",
-    "sandboxScrambled": "{count} CARDS, FACE DOWN, ALL OVER DA CLOTH!",
-    "sandboxGathered": "EVERY CARD IZ BACK IN DA DECK!",
-    "sandboxCastleFew": "TOO FEW CARDS ON DA TABLE TA BUILD ANYTHIN'!",
-    "sandboxCutDone": "DA DECK IZ CUT AN' SET BACK DOWN!",
-    "sandboxCastleBuilt": "A HOUSE OF {levels} STOREYS, {cards} CARDS!"
+    "sandboxDrawn": "DREW {name}.",
+    "sandboxDeckEmpty": "DA DECK IZ EMPTY.",
+    "sandboxScrambled": "{count} CARDS SCATTERED FACE DOWN!",
+    "sandboxGathered": "ALL CARDS BACK IN DA DECK!",
+    "sandboxCastleFew": "TOO FEW CARDS TA BUILD.",
+    "sandboxCutDone": "DECK CUT.",
+    "sandboxCastleBuilt": "A HOUSE OF CARDS, {levels} STOREYS, {cards} CARDS!",
+    "noThree": "THREE.JS IZ NO LOADED",
+    "psi": "PSI",
+    "psiValue": "PSI {value}",
+    "reader": "READER {name}",
+    "nobody": "NOBODY",
+    "shuffling": "SHUFFLIN' DA ARCANA",
+    "deckCut": "DA DECK IZ CUT",
+    "layingSpread": "LAYIN' DA SPREAD",
+    "turnCards": "TURN DA CARDS",
+    "spreadCards": "{count} CARDS",
+    "reversedShort": "R",
+    "turned": "TURNED",
+    "faceDownTitle": "FACE DOWN",
+    "faceDownLine1": "DA CARD LIES FACE DOWN.",
+    "faceDownLine2": "NUTTIN' IZ DECIDED UNTIL IT IZ SEEN!",
+    "readingFor": "READIN' FOR {name}",
+    "trueCount": "{n} / 3 TRUE",
+    "resonance": "RESONANCE",
+    "verdict3": "A TRUE SEER",
+    "verdict2": "MOSTLY TRUE",
+    "verdict1": "HALF HEARD",
+    "verdict0": "DA SPIRITS WAZ QUIET",
+    "meaningsTrue": "{n} OF 3 MEANINGS READ TRUE",
+    "asciiHeader": "== {title} ==",
+    "asciiCorrect": "CORRECT: {n} / 3",
+    "toneAgainst": "DA SPREAD RUNS AGAINST YOU",
+    "toneDivided": "DA SPREAD IZ DIVIDED",
+    "toneClean": "DA SPREAD RUNS CLEAN",
+    "toneWith": "DA SPREAD RUNS WIT YOU",
+    "synthesis": "{tone}. IT HINGES ON {key}.",
+    "keywords": [
+      "BEGINNIN'",
+      "WILL",
+      "SECRECY",
+      "ABUNDANCE",
+      "ORDER",
+      "TRADITION",
+      "UNION",
+      "RESOLVE",
+      "COURAGE",
+      "SOLITUDE",
+      "FATE",
+      "BALANCE",
+      "SUSPENSION",
+      "ENDIN'",
+      "MEASURE",
+      "BONDAGE",
+      "RUPTURE",
+      "HOPE",
+      "ILLUSION",
+      "CLARITY",
+      "RECKONIN'",
+      "COMPLETION"
+    ]
   },
   "cards": {
     "The Fool": {
@@ -154,7 +208,7 @@
         "LACK OF DIRECTION SCATTERS YA ENERGY INEFFECTIVELY!",
         "AGGRESSION AN' FORCE CREATE UNNECESSARY CONFLICT!",
         "LOSS OF CONTROL DERAILS YA CAREFULLY LAID PLANS!",
-        "OPPOSITION SEEMS INSURMOUNTABLE WITHOUT PROPER STRATEGY!"
+        "OPPOSITION SEEMS INSURMOUNTABLE WITOUT PROPER STRATEGY!"
       ]
     },
     "Strength": {
@@ -181,7 +235,7 @@
         "WITHDRAWAL FROM CHAOS ALLOWS DEEP CONTEMPLATION!"
       ],
       "reversed": [
-        "ISOLATION BECOMES LONELINESS WITHOUT PURPOSE OR GROWTH!",
+        "ISOLATION BECOMES LONELINESS WITOUT PURPOSE OR GROWTH!",
         "EXCESSIVE WITHDRAWAL CREATES DISCONNECTION FROM REALITY!",
         "FEAR OF EXAMINATION PREVENTS NECESSARY SELF-REFLECTION!",
         "STUBBORN RECLUSIVENESS BLOCKS HELPFUL CONNECTIONS!"
@@ -227,7 +281,7 @@
       ],
       "reversed": [
         "STUBBORN RESISTANCE PROLONGS UNNECESSARY SUFFERIN'!",
-        "MARTYRDOM WITHOUT PURPOSE DRAINS VITAL ENERGY!",
+        "MARTYRDOM WITOUT PURPOSE DRAINS VITAL ENERGY!",
         "STAGNATION RESULTS FROM FEAR OF NECESSARY CHANGE!",
         "INDECISION PARALYZES FORWARD MOVEMENT!"
       ]
@@ -362,7 +416,7 @@
       ],
       "reversed": [
         "INCOMPLETE VENTURES REQUIRE ADDITIONAL EFFORT!",
-        "EXTERNAL SUCCESS FEELS EMPTY WITHOUT INNER FULFILLMENT!",
+        "EXTERNAL SUCCESS FEELS EMPTY WITOUT INNER FULFILLMENT!",
         "SHORTCUTS PREVENT GENUINE ACCOMPLISHMENT!",
         "LIMITED PERSPECTIVE RESTRICTS FULL POTENTIAL!"
       ]

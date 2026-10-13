@@ -12,8 +12,8 @@
     "none": "Nessuna"
   },
   "noMusic": "Nessuna musica durante le battaglie.",
-  "randomEachBattle": "A ogni battaglia viene estratto un brano diverso.",
-  "continueMap": "Continua a suonare la BGM della mappa attuale.",
+  "randomEachBattle": "Brano casuale a ogni battaglia.",
+  "continueMap": "Mantiene la musica della mappa.",
   "biomeEachBattle": "Ogni bioma suona il proprio brano di battaglia.",
   "playingAsBattle": "In riproduzione come musica di sottofondo delle battaglie.",
   "composer": "Compositore",

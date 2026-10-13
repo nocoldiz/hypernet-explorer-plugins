@@ -18,10 +18,10 @@
   "visit": "VISIT {place}",
   "explorePlace": "EXPLORE {place}",
   "investigatePlace": "INVESTIGATE {place}",
-  "freeWalk": "LIMINAL WALK",
+  "freeWalk": "LIMINAL WALK (WIP)",
   "forage": "FORAGE",
   "makeCamp": "MAKE A CAMP",
-  "returnDisabledHere": "YOU NO CAN RETURN TA WORLD MAP FROM HERE",
+  "returnDisabledHere": "YOU NO CAN RETURN TA DA WORLD MAP FROM HERE",
   "icebushBlocked": "DA FIELDS AROUND ICEBUSH IZ INFESTED WIT PETRODEMONS AN' NEUROFOG, WHY NO YOU TAKE DA HYPERMETRO LIKE ANY SANE HUMAN BEING",
   "stop": "STOP",
   "worldMapMenu": "WORLD MAP",
@@ -32,5 +32,5 @@
   "squareBare": "({x} {y})",
   "atTile": "AT {x},{y}",
   "lockedPlace": "{place} IZ TRAPPED IN A SPACE AN' TIME BUBBLE",
-  "lockedAhead": "DERE IZ A SPACETIME BUBBLE AHEAD, YOU NO CAN PROCEED"
+  "lockedAhead": "A SPACETIME BUBBLE BLOCKS DA WAY"
 }

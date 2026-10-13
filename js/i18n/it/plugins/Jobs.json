@@ -11,7 +11,7 @@
   "faction": "Fazione"
  },
  "1": {
-  "name": "Operaio di Magazzino",
+  "name": "Operaio di magazzino",
   "description": "Carica e scarica merci nel distretto dei magazzini.",
   "outcome": {
    "success": [
@@ -45,7 +45,7 @@
   }
  },
  "2": {
-  "name": "Bracciante Agricolo",
+  "name": "Bracciante agricolo",
   "description": "Lavora nei campi, cura i raccolti e il bestiame.",
   "outcome": {
    "success": [
@@ -113,7 +113,7 @@
   }
  },
  "4": {
-  "name": "Artista di Strada",
+  "name": "Artista di strada",
   "description": "Intrattieni la folla con spettacoli per mance.",
   "outcome": {
    "success": [
@@ -147,7 +147,7 @@
   }
  },
  "5": {
-  "name": "Assistente Fabbro",
+  "name": "Assistente fabbro",
   "description": "Aiuta il fabbro a forgiare armi e attrezzi.",
   "outcome": {
    "success": [
@@ -181,7 +181,7 @@
   }
  },
  "6": {
-  "name": "Raccoglitore di Componenti",
+  "name": "Raccoglitore di componenti per incantesimi",
   "description": "Raccogli ingredienti magici rari in zone pericolose.",
   "outcome": {
    "success": [
@@ -215,7 +215,7 @@
   }
  },
  "7": {
-  "name": "Assistente Alchimista",
+  "name": "Assistente alchimista",
   "description": "Mescola pozioni e gestisci il laboratorio dell'alchimista.",
   "outcome": {
    "success": [
@@ -249,7 +249,7 @@
   }
  },
  "8": {
-  "name": "Restauratore di Artefatti",
+  "name": "Restauratore di artefatti",
   "description": "Ripara e restaura oggetti magici danneggiati.",
   "outcome": {
    "success": [
@@ -283,7 +283,7 @@
   }
  },
  "9": {
-  "name": "Guardia Carovaniera",
+  "name": "Guardia carovaniera",
   "description": "Proteggi le carovane mercantili da banditi e mostri.",
   "outcome": {
    "success": [
@@ -317,7 +317,7 @@
   }
  },
  "10": {
-  "name": "Combattente d'Arena",
+  "name": "Combattente d'arena",
   "description": "Combatti nell'arena per denaro e gloria.",
   "outcome": {
    "success": [
@@ -351,7 +351,7 @@
   }
  },
  "11": {
-  "name": "Sterminatore di Mostri",
+  "name": "Sterminatore di mostri",
   "description": "Elimina infestazioni di mostri dalle aree civili.",
   "outcome": {
    "success": [
@@ -359,7 +359,7 @@
     "Non è scappato un solo mostro.",
     "Gli abitanti festeggiano il tuo successo.",
     "Lavoro professionale ed efficiente.",
-    "Un'altra derattizzazione pulita."
+    "Un'altra disinfestazione pulita."
    ],
    "partial": [
     "Elimini quasi tutti i mostri, ma qualcuno scappa.",
@@ -453,7 +453,7 @@
   }
  },
  "14": {
-  "name": "Furto con Scasso",
+  "name": "Furto con scasso",
   "description": "Entra con scasso in un edificio e ruba oggetti di valore.",
   "outcome": {
    "success": [
@@ -521,7 +521,7 @@
   }
  },
  "16": {
-  "name": "Fabbro di Serrature",
+  "name": "Fabbro di serrature",
   "description": "Crea e ripara serrature per i clienti.",
   "outcome": {
    "success": [
@@ -602,7 +602,7 @@
    "partial": [
     "L'accordo si chiude, ma brontolano tutti e due.",
     "Le trattative si trascinano allo sfinimento.",
-    "Un compromesso più che una vittoria.",
+    "Un compromesso. Nessuno ha vinto davvero.",
     "Porti a casa un risultato accettabile.",
     "La politica è più sporca del previsto."
    ],
@@ -691,8 +691,8 @@
   }
  },
  "100": {
-  "name": "Ispettore Permessi",
-  "description": "Ispeziona praticanti magici per permessi e licenze appropriate.",
+  "name": "Ispettore dei permessi",
+  "description": "Controlla che i praticanti di magia abbiano permessi e licenze in regola.",
   "outcome": {
    "success": [
     "Scovi diverse violazioni sui permessi ed elevi le multe.",
@@ -725,7 +725,7 @@
   }
  },
  "101": {
-  "name": "Supervisore Rituali",
+  "name": "Supervisore dei rituali",
   "description": "Assicura che i rituali magici seguano esattamente i protocolli della Gilda.",
   "outcome": {
    "success": [
@@ -759,7 +759,7 @@
   }
  },
  "102": {
-  "name": "Applicatore Anti-Tecnologia",
+  "name": "Agente antitecnologia",
   "description": "Cerca e distruggi dispositivi illegali di fusione tecno-magica.",
   "outcome": {
    "success": [
@@ -819,7 +819,7 @@
    ],
    "disaster": [
     "Il congegno magitecnico esplode violentemente!",
-    "Un anello di ritorno magico per poco non ti uccide!",
+    "Una retroazione magica fuori controllo per poco non ti uccide!",
     "L'intero laboratorio viene distrutto!",
     "Anni di ricerca vanno in fumo!",
     "Ti vietano ogni lavoro sperimentale!"
@@ -827,8 +827,8 @@
   }
  },
  "104": {
-  "name": "Impiegato Categorizzazione Incantesimi",
-  "description": "Categorizza meticolosamente gli incantesimi nelle 92 scuole distinte.",
+  "name": "Classificatore di incantesimi",
+  "description": "Classifica con cura gli incantesimi nelle 92 scuole.",
   "outcome": {
    "success": [
     "Ogni incantesimo classificato e archiviato come si deve.",
@@ -861,7 +861,7 @@
   }
  },
  "105": {
-  "name": "Oscuratore di Documenti",
+  "name": "Censore di documenti",
   "description": "Rimuovi conoscenza pericolosa dai testi storici.",
   "outcome": {
    "success": [
@@ -874,7 +874,7 @@
    "partial": [
     "Quasi tutte le informazioni pericolose sono state rimosse.",
     "Certi testi sono difficili da censurare in modo pulito.",
-    "La mano ti si accartoccia su quel lavoro meticoloso.",
+    "Ti viene un crampo alla mano per quel lavoro meticoloso.",
     "Censura eseguita in modo adeguato.",
     "La monotonia ti annebbia il cervello."
    ],
@@ -895,7 +895,7 @@
   }
  },
  "106": {
-  "name": "Ladro di Artefatti",
+  "name": "Ladro di artefatti",
   "description": "Ruba artefatti storici per la collezione della Fondazione.",
   "outcome": {
    "success": [
@@ -929,7 +929,7 @@
   }
  },
  "107": {
-  "name": "Bibliotecario Silenzioso",
+  "name": "Bibliotecario silenzioso",
   "description": "Mantieni gli archivi e zittisci permanentemente i visitatori rumorosi.",
   "outcome": {
    "success": [
@@ -963,7 +963,7 @@
   }
  },
  "108": {
-  "name": "Scrittore di Propaganda",
+  "name": "Scrittore di propaganda",
   "description": "Crea disinformazione convincente per il consumo pubblico.",
   "outcome": {
    "success": [
@@ -982,7 +982,7 @@
    ],
    "failure": [
     "Le bugie sono palesemente trasparenti.",
-    "Il pubblico vede attraverso la propaganda.",
+    "Il pubblico non si beve la propaganda.",
     "La tua narrazione crolla al primo esame.",
     "La Fondazione non è contenta.",
     "La verità ti sfugge tra le maglie della censura."
@@ -997,7 +997,7 @@
   }
  },
  "109": {
-  "name": "Investigatore Interno",
+  "name": "Investigatore interno",
   "description": "Scova perdite di informazioni all'interno della Fondazione.",
   "outcome": {
    "success": [
@@ -1031,8 +1031,8 @@
   }
  },
  "110": {
-  "name": "Manipolatore di Mercato",
-  "description": "Manipola i mercati per profitto con qualsiasi mezzo necessario.",
+  "name": "Manipolatore di mercato",
+  "description": "Manipola i mercati per profitto, con ogni mezzo.",
   "outcome": {
    "success": [
     "Il mercato si piega alla tua volontà.",
@@ -1065,8 +1065,8 @@
   }
  },
  "111": {
-  "name": "Supervisore Estrazione Petrolio",
-  "description": "Massimizza l'efficienza dell'estrazione petrolifera attraverso ottimizzazione infernale.",
+  "name": "Supervisore all'estrazione petrolifera",
+  "description": "Massimizza l'estrazione di petrolio con un'ottimizzazione infernale.",
   "outcome": {
    "success": [
     "I tassi di estrazione toccano il record!",
@@ -1099,8 +1099,8 @@
   }
  },
  "112": {
-  "name": "Corriere ad Alta Velocità",
-  "description": "Consegna pacchi a velocità folle, adorando la velocità.",
+  "name": "Corriere ad alta velocità",
+  "description": "Consegna pacchi a rotta di collo, nel culto della velocità.",
   "outcome": {
    "success": [
     "Batti il tuo record personale di velocità!",
@@ -1133,8 +1133,8 @@
   }
  },
  "113": {
-  "name": "Applicatore Monopolio Carburante",
-  "description": "Assicura che le Sette Sorelle mantengano il controllo totale del mercato carburante.",
+  "name": "Agente del monopolio dei carburanti",
+  "description": "Assicura che le Sette Sorelle mantengano il controllo totale del mercato dei carburanti.",
   "outcome": {
    "success": [
     "I concorrenti vengono eliminati con efficienza.",
@@ -1167,7 +1167,7 @@
   }
  },
  "114": {
-  "name": "Agente del Caos Divino",
+  "name": "Agente del caos divino",
   "description": "Diffondi discordia e disordine nel nome della Dea del Caos.",
   "outcome": {
    "success": [
@@ -1201,7 +1201,7 @@
   }
  },
  "124": {
-  "name": "Scriba Vaticano",
+  "name": "Scriba vaticano",
   "description": "Trascrivi e mantieni testi sacri e documenti della chiesa.",
   "outcome": {
    "success": [
@@ -1213,7 +1213,7 @@
    ],
    "partial": [
     "Quasi tutti i testi sono trascritti correttamente.",
-    "La mano ti si accartoccia a forza di scrivere.",
+    "Ti viene un crampo alla mano a forza di scrivere.",
     "Ti sfugge qualche piccolo errore.",
     "Servizio adeguato alla Chiesa.",
     "Un lavoro tedioso, ma santo."
@@ -1235,7 +1235,7 @@
   }
  },
  "127": {
-  "name": "Allieva Suora da Battaglia",
+  "name": "Allieva suora guerriera",
   "description": "Addestrati sia nelle scritture che nel combattimento come operativa delle forze speciali vaticane.",
   "outcome": {
    "success": [
@@ -1269,7 +1269,7 @@
   }
  },
  "128": {
-  "name": "Guardiano Notturno",
+  "name": "Guardiano notturno",
   "description": "Sorveglia proprietà durante le pericolose ore notturne.",
   "outcome": {
    "success": [
@@ -1304,7 +1304,7 @@
  },
  "129": {
   "name": "Pescatore",
-  "description": "Pesca pesce per venderlo al mercato.",
+  "description": "Pesca e vendi il pesce al mercato.",
   "outcome": {
    "success": [
     "Le reti sono piene!",
@@ -1397,7 +1397,7 @@
    ],
    "disaster": [
     "Un cliente furioso mette a soqquadro il locale!",
-    "La cassa risulta ammanchi enormi!",
+    "In cassa risultano ammanchi enormi!",
     "Il personale se ne va a metà turno!",
     "Un'ispezione ti coglie in contropiede!",
     "La tua reputazione di responsabile ne esce ammaccata!"
@@ -1440,7 +1440,7 @@
  },
  "133": {
   "name": "Cuoco",
-  "description": "Prepara pasti in una cucina indaffarata.",
+  "description": "Prepara pasti in una cucina affollata.",
   "outcome": {
    "success": [
     "Ogni piatto esce dalla cucina perfetto.",
@@ -1473,13 +1473,13 @@
   }
  },
  "134": {
-  "name": "Curatore di Museo",
+  "name": "Curatore di museo",
   "description": "Cataloga le esposizioni e guida i visitatori nel museo.",
   "outcome": {
    "success": [
     "I visitatori restano rapiti dalla tua competenza.",
     "La nuova mostra è un trionfo.",
-    "Catalogui ogni reperto senza una sbavatura.",
+    "Cataloghi ogni reperto senza una sbavatura.",
     "Un donatore facoltoso resta colpito dalla tua visita guidata.",
     "Un'altra giornata di arricchimento culturale ben spesa."
    ],
@@ -1643,7 +1643,7 @@
   }
  },
  "139": {
-  "name": "Avvocato Difensore",
+  "name": "Avvocato difensore",
   "description": "Difendi gli imputati davanti alla Dea della Giustizia, che non riconosce alcun ordine forense.",
   "outcome": {
    "success": [
@@ -1678,7 +1678,7 @@
  },
  "140": {
   "name": "Agente di stazione",
-  "description": "Tieni in movimento i binari, rispondi ai viaggiatori e fai partire i treni in orario.",
+  "description": "Gestisci i binari, rispondi ai viaggiatori e fai partire i treni in orario.",
   "outcome": {
    "success": [
     "Ogni treno parte al minuto esatto.",
@@ -1756,7 +1756,7 @@
  },
  "143": {
   "name": "Medico",
-  "description": "Fai diagnosi, prescrivi e operi quando nessun altro lo farebbe.",
+  "description": "Diagnostichi, prescrivi e operi quando nessun altro lo fa.",
   "outcome": {
    "success": [
     "Una diagnosi che nessuno aveva visto, ed è giusta.",
@@ -1795,7 +1795,7 @@
     "Un cliente discute sul prezzo per un'ora."
    ],
    "failure": [
-    "Consegni il dosaggio sbagliato e devi richiamarlo.",
+    "Consegni il dosaggio sbagliato e devi richiamare il cliente.",
     "La bilancia era starata tutto il pomeriggio.",
     "Un ispettore trova i tuoi registri in disordine."
    ],
@@ -1890,7 +1890,7 @@
   "outcome": {
    "success": [
     "Le strade restano tranquille durante il tuo turno.",
-    "Una deposizione fa saltare il caso.",
+    "Una deposizione fa svoltare il caso.",
     "Un bambino ti saluta da una finestra."
    ],
    "partial": [
@@ -2119,7 +2119,7 @@
   }
  },
  "157": {
-  "name": "Carroattrezzi",
+  "name": "Autista di carro attrezzi",
   "description": "Riporti in deposito i guasti e i parcheggiati male, con qualsiasi tempo.",
   "outcome": {
    "success": [
@@ -2464,7 +2464,7 @@
     "La stampa ti ha descritto come un segnaposto."
    ],
    "disaster": [
-    "Ti sei dimesso, poi ti hanno detto che non erano accettate, poi ti hanno licenziato.",
+    "Ti sei dimesso, poi ti hanno detto che le dimissioni non erano accettate, poi ti hanno licenziato.",
     "Un'auto del ministero è stata trovata dove non doveva essere.",
     "Il revisore ha aperto il tuo dicastero ed è svenuto.",
     "Una voce di bilancio è stata spesa due volte senza consegnare nulla.",
@@ -2508,7 +2508,7 @@
  },
  "171": {
   "name": "Legislatore",
-  "description": "Siedi in aula o nel collegio elettorale: leggi le leggi, esprimi il voto, conserva il seggio.",
+  "description": "Siedi in aula o nel collegio elettorale: leggi i disegni di legge, esprimi il voto, conserva il seggio.",
   "outcome": {
    "success": [
     "Il tuo emendamento è sopravvissuto intatto a tre letture.",
@@ -2536,7 +2536,7 @@
     "I tuoi rimborsi spese sono stati letti ad alta voce in aula.",
     "Una legge che hai scritto faceva l'esatto contrario del suo titolo.",
     "Sei stato espulso dalla seduta per un commento sul cappello di un collega.",
-    "L'aula ti ha censurato all'unanimità, compreso tu."
+    "L'aula ti ha censurato all'unanimità, te compreso."
    ]
   }
  }

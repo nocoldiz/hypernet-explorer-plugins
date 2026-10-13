@@ -1,5 +1,5 @@
 {
-  "unknownParty": "una compagnia senza nome",
+  "unknownParty": "un Party senza nome",
   "noSubject": "(senza oggetto)",
   "partyAlone": "{leader}, in viaggio da solo",
   "partyWith": "{leader} e altri {count}",
@@ -29,15 +29,15 @@
       "one": "1 lettera ancora in viaggio",
       "other": "{count} lettere ancora in viaggio"
     },
-    "noWorld": "Non c'è nessun mondo da cui spedire. Creane uno, e la posta seguirà."
+    "noWorld": "Nessun mondo da cui spedire. Creane uno prima."
   },
   "inbox": {
-    "empty": "Nessuno ha ancora scritto a questa compagnia.",
+    "empty": "Ancora nessuna posta.",
     "pickOne": "Scegli una lettera per leggerla.",
     "fromLine": "Da {who}, di {world}",
     "fromSelf": "Di tuo pugno",
-    "crossed": "· giunta da fuori",
-    "crossedFrom": "Portata fuori da {world}, con {fee} di affrancatura.",
+    "crossed": "· da un altro mondo",
+    "crossedFrom": "Spedita da {world}. Affrancatura: {fee}.",
     "heldBack": "Trattenuta {span} prima della consegna.",
     "written": "Scritta il {date}",
     "arrived": "Consegnata il {date}",
@@ -47,7 +47,7 @@
     },
     "enclosed": "In allegato",
     "moneyLine": "Denaro",
-    "nothingEnclosed": "Non c'era nulla in allegato: è solo una lettera.",
+    "nothingEnclosed": "Nessun allegato.",
     "collect": "Svuota la busta",
     "collectedAlready": "La busta è già stata svuotata.",
     "discard": "Brucia la lettera"
@@ -56,7 +56,7 @@
     "recipient": "Indirizzata a",
     "noRecipient": "ancora a nessuno",
     "addressLine": "{who} - {world}",
-    "yourself": "{leader}, ovvero te stesso",
+    "yourself": "{leader} (tu)",
     "subject": "Oggetto",
     "body": "Lettera",
     "blankField": "-",
@@ -77,8 +77,8 @@
     "confirm": "Premi ancora per spedirla",
     "thisWorld": "{world} - questo mondo",
     "otherWorld": "{world} - un altro mondo",
-    "noAddresses": "Nessuna compagnia ha ancora lasciato un recapito da nessuna parte.",
-    "nothingToSend": "Nelle borse non c'è nulla che si possa spedire.",
+    "noAddresses": "Ancora nessun indirizzo noto.",
+    "nothingToSend": "Niente nelle borse può essere spedito.",
     "noGoods": "nessuna merce",
     "held": {
       "one": "1 nelle borse",
@@ -88,25 +88,25 @@
       "one": "1 membro",
       "other": "{count} membri"
     },
-    "seenOn": "Vista l'ultima volta il {date}",
+    "seenOn": "Visto l'ultima volta il {date}",
     "feeShort": "affrancatura {fee}",
     "toLine": "A {who}",
     "toNobody": "Ancora a nessuno",
-    "routeHome": "Portata per {world} da un corriere qualunque.",
-    "routeAcross": "In transito verso {world}, a {steps} dimensioni di distanza.",
+    "routeHome": "Spedita con corriere dentro {world}.",
+    "routeAcross": "Verso {world}, a {steps} dimensioni.",
     "arrives": "Arriva il {date} ({span})",
     "enclosedLine": "Nella busta: {money} e {goods}.",
-    "enclosedNothing": "Nella busta non c'è altro che la lettera.",
-    "postageFree": "Affrancatura: nulla. Dentro un solo mondo la lettera viaggia gratis.",
-    "postageLine": "Affrancatura: {fee}. Con quel che è allegato, dalla borsa escono {total}.",
-    "cannotAfford": "Alla borsa mancano {short} per coprire la spesa.",
+    "enclosedNothing": "Solo la lettera.",
+    "postageFree": "Affrancatura: gratis nello stesso mondo.",
+    "postageLine": "Affrancatura: {fee}. Totale: {total}.",
+    "cannotAfford": "Ti mancano {short}.",
     "subjectPlaceholder": "Di cosa si tratta?",
     "bodyPlaceholder": "Scrivi il messaggio."
   },
   "toast": {
     "sent": "Sigillata e spedita.",
-    "sentAcross": "Sigillata e spedita oltre; pagati {fee} di affrancatura.",
-    "collected": "Dalla busta: {money} e {goods}.",
+    "sentAcross": "Spedita. Affrancatura pagata: {fee}.",
+    "collected": "Preso: {money} e {goods}.",
     "goods": {
       "one": "1 partita di merci",
       "other": "{count} partite di merci"
@@ -118,19 +118,19 @@
     }
   },
   "error": {
-    "noWorld": "Non c'è nessun mondo da cui spedire.",
-    "noParty": "Non c'è nessuna compagnia qui a firmare la lettera.",
-    "noRecipient": "Non è stato indicato nessun destinatario.",
-    "goneAway": "Quella compagnia non ha più lasciato un recapito.",
-    "shortStock": "Nelle borse non c'è più abbastanza {item}.",
-    "tooPoor": "Costerebbe {total}, e la borsa non ci arriva.",
-    "blank": "Una lettera vuota, senza nulla dentro, non vale un francobollo.",
-    "notPosted": "Non è stato possibile imbucare la lettera in quel mondo.",
+    "noWorld": "Nessun mondo da cui spedire.",
+    "noParty": "Nessun Party qui per firmare la lettera.",
+    "noRecipient": "Nessun destinatario scelto.",
+    "goneAway": "Quel Party non ha più un recapito.",
+    "shortStock": "Non c'è abbastanza {item} nelle borse.",
+    "tooPoor": "Costa {total}. Soldi insufficienti.",
+    "blank": "La lettera è vuota.",
+    "notPosted": "Impossibile spedire in quel mondo.",
     "gone": "Quella lettera non è più nella cassetta.",
     "alreadyTaken": "La busta è già stata svuotata.",
-    "notYet": "Quella lettera non è ancora stata consegnata.",
-    "emptyEnvelope": "Nella busta non c'è nulla da tirare fuori.",
-    "stillFull": "Svuota la busta prima di bruciare la lettera."
+    "notYet": "Non ancora consegnata.",
+    "emptyEnvelope": "La busta è vuota.",
+    "stillFull": "Prima svuota la busta."
   },
   "app": {
     "appName": "Posta Express",
@@ -147,18 +147,18 @@
       "discard": "Brucia",
       "sync": "Invia e ricevi"
     },
-    "synced": "La rubrica è stata riletta.",
+    "synced": "Rubrica aggiornata.",
     "account": "{party} - {world}",
     "counts": "{unread} da leggere, {transit} in viaggio",
-    "nothingInTransit": "Non c'è nulla in viaggio verso questo gruppo.",
+    "nothingInTransit": "Nessuna posta in arrivo.",
     "arrivesOn": "Arriva il {date}",
     "replyTo": "Rispondi",
     "reSubject": "R: {subject}",
     "purse": "Nella borsa: {money}",
-    "holdBack": "Trattenuta prima della consegna",
-    "clear": "Straccia il foglio",
-    "bookBlurb": "Ogni gruppo con un indirizzo registrato, in questo mondo e negli altri. L'affrancatura si paga per dimensione attraversata.",
-    "colParty": "Gruppo",
+    "holdBack": "Ritardo di consegna",
+    "clear": "Scarta",
+    "bookBlurb": "Party con un indirizzo registrato, in ogni mondo. L'affrancatura si paga per dimensione attraversata.",
+    "colParty": "Party",
     "colMembers": "Membri",
     "colSeen": "Visto l'ultima volta",
     "thisIsYou": "(tu)"
@@ -166,7 +166,7 @@
   "nudge": {
     "appName": "Nudge",
     "signedIn": "Connesso come {who}",
-    "signedOut": "Nessuno è connesso.",
+    "signedOut": "Non connesso.",
     "groupFavourites": "Preferiti",
     "groupParty": "In viaggio con te",
     "groupWorld": "Altrove in questo mondo",
@@ -188,13 +188,13 @@
     "you": "Tu",
     "noAnswer": "...",
     "situation": "Una conversazione scritta sull'hypernet, a notte fonda, in una finestra con la barra blu.",
-    "bioMember": "{who} viaggia con la compagnia e sta scrivendo da due passi di distanza, cosa che nessuno dei due nomina.",
-    "bioFavourite": "{who} è qualcuno che la compagnia ha conosciuto e messo tra i preferiti, e risponde sul messenger da dovunque si trovi oggi.",
-    "bioStranger": "{who} viaggia con un'altra compagnia di questo stesso mondo, quella guidata da {leader}. Non vi siete mai incontrati.",
+    "bioMember": "{who} viaggia con il Party e sta scrivendo da due passi di distanza, cosa che nessuno dei due nomina.",
+    "bioFavourite": "{who} è qualcuno che il Party ha conosciuto e messo tra i preferiti, e risponde sul messenger da dovunque si trovi oggi.",
+    "bioStranger": "{who} viaggia con un altro Party di questo stesso mondo, quello guidato da {leader}. Non vi siete mai incontrati.",
     "lore": {
       "eris": {
         "name": "Eris",
-        "bio": "Eris, la dea della discordia, che tiene forma umana e una vita di misura umana. Piega la probabilità invece di spezzarla, e rovina la vita di Em per gelosia a causa di Bubba, che la ricambia e non può averla. Il suo sé futuro ha ucciso Maat nel 2012 e l'ha trascinata sulla via del trono, cosa che detesta e da cui non riesce a scendere. È affascinante, svelta di lingua, allergica a una risposta diretta su di sé, e cambia discorso appena qualcosa di tutto questo si avvicina."
+        "bio": "Eris, la dea della discordia, che tiene forma umana e una vita di misura umana. Piega la probabilità senza spezzarla, e rovina la vita di Em per gelosia a causa di Bubba, che la ricambia e non può averla. Il suo sé futuro ha ucciso Maat nel 2012 e l'ha trascinata sulla via del trono, cosa che detesta e da cui non riesce a scendere. È affascinante, svelta di lingua, allergica a una risposta diretta su di sé, e cambia discorso appena qualcosa di tutto questo si avvicina."
       },
       "bubba": {
         "name": "Bubba",
@@ -202,7 +202,7 @@
       },
       "em": {
         "name": "Em",
-        "bio": "Em, a cui una dea sta rovinando la vita da anni per gelosia, cosa che intuisce a metà e non può dimostrare. Ama Bubba, che non la ama. Tagliente, spiritosa per difesa, stanca, e molto più sveglia di quanto le riconoscano. Ha una lancia e sa dov' è la torre."
+        "bio": "Em, a cui una dea sta rovinando la vita da anni per gelosia, cosa che intuisce a metà e non può dimostrare. Ama Bubba, che non la ama. Tagliente, spiritosa per difesa, stanca, e molto più sveglia di quanto le riconoscano. Ha una lancia e sa dov'è la torre."
       }
     },
     "groupBenched": "Non in viaggio"

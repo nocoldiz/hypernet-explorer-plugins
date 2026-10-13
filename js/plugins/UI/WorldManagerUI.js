@@ -23,6 +23,10 @@
  *   - History , opens Scene_History, the full archive, for this world.
  *   - Balance , every hyperpower's military and economy, strongest first.
  *   - Diaries , every diary the world holds, whichever savegame kept it.
+ *   - Inactive, the world's benched party members, each of whom can be
+ *               moved to another world's bench or written out as a QR card.
+ *   - Export  , the party of every savegame, written out whole or one member
+ *               at a time as QR cards in characters/ (CharacterExport).
  * The create form and the delete confirmation are Shape B: .ui-overlay over
  * .ui-panel. Nothing here sets a style; the classes above are inked in
  * css/theme.css under WORLD MANAGER.
@@ -43,6 +47,12 @@
 
     function tr(en, it) {
         return ConfigManager.language === "it" ? it : en;
+    }
+
+    // A world name handed to an inline onclick as a quoted JS string: the
+    // JS quoting first, then the HTML attribute escaping over it.
+    function worldArg(name) {
+        return escapeHtml(String(name == null ? "" : name).replace(/\\/g, "\\\\").replace(/'/g, "\\'"));
     }
 
     function escapeHtml(str) {
@@ -326,7 +336,7 @@
 
     // "history" does not switch tab content: pressing OK on it pushes
     // Scene_History, the full archive, so it never becomes _rightTab.
-    const RIGHT_TABS = ["info", "history", "balance", "diaries"];
+    const RIGHT_TABS = ["info", "history", "balance", "diaries", "bench", "export"];
 
     const WorldManageInputManager = {
         _scene: null,
@@ -578,8 +588,32 @@
             this._mode = mode || "manage";
         }
 
+        // Shows another world's timeline in Scene_History, keeping what the
+        // active world held so returnHistory can put it back untouched.
+        static lendHistory(history) {
+            const WM = window.WorldManager;
+            if (!this._lentHistory) {
+                this._lentHistory = {
+                    events: WM.getField("history", "events"),
+                    hyperpowers: WM.getField("history", "hyperpowers")
+                };
+            }
+            WM.setField("history", "events", (history && history.events) || []);
+            WM.setField("history", "hyperpowers", (history && history.hyperpowers) || {});
+        }
+
+        static returnHistory() {
+            const held = this._lentHistory;
+            if (!held) return;
+            this._lentHistory = null;
+            const WM = window.WorldManager;
+            WM.setField("history", "events", held.events);
+            WM.setField("history", "hyperpowers", held.hyperpowers);
+        }
+
         create() {
             super.create();
+            Scene_WorldManage.returnHistory();
             const WM = window.WorldManager;
             const worlds = WM ? WM.listWorlds() : [];
             const active = WM && WM.activeWorldName;
@@ -899,6 +933,9 @@
                     e.stopPropagation();
                     e.preventDefault();
                     const scene = SceneManager._scene;
+                    // A world being built has to finish first, the same
+                    // refusal the keyboard and the pad already get.
+                    if (scene && scene._busy) return;
                     if (scene && scene._creatingWorld) {
                         scene.closeCreateModal();
                         return;
@@ -961,7 +998,7 @@
                 return `
                     <div class="item-slot wm-world-row ${isSelected ? "selected" : ""}"
                          data-world-name="${escapeHtml(world.name)}"
-                         onclick="SceneManager._scene.onSelectWorld('${world.name.replace(/'/g, "\\'")}')">
+                         onclick="SceneManager._scene.onSelectWorld('${worldArg(world.name)}')">
                         <div class="item-slot-info">
                             <div class="item-slot-name wm-world-name">${escapeHtml(world.name)}</div>
                             ${isActive ? `<div class="item-slot-meta wm-active-badge">${T('WorldManagerUI.active')}</div>` : ""}
@@ -1003,7 +1040,7 @@
                     <div class="left-page">
                         <div class="page-header-bar">
                             <div class="back-button" id="wm-back-btn"
-                                 onclick="SoundManager.playCancel(); SceneManager._scene.popScene();">${T('WorldManagerUI.back')}</div>
+                                 onclick="if (!SceneManager._scene._busy) { SoundManager.playCancel(); SceneManager._scene.popScene(); }">${T('WorldManagerUI.back')}</div>
                             <h2 class="title">${T('WorldManagerUI.worlds')}</h2>
                         </div>
                         <div class="ui-list ui-scroll wm-list" id="wm-world-list">
@@ -1168,8 +1205,10 @@
             this._setFocus("create", 0);
         }
 
+        // Refused while a world is being built: closing it and walking away
+        // let New Game start on a half-built world.
         closeCreateModal() {
-            if (!this._creatingWorld) return;
+            if (!this._creatingWorld || this._busy) return;
             const worlds = window.WorldManager ? window.WorldManager.listWorlds() : [];
             if (worlds.length === 0) return; // nothing to fall back to
             SoundManager.playCancel();
@@ -1216,6 +1255,8 @@
                     ${tab(T('WorldManagerUI.history'), "history")}
                     ${tab(T('WorldManagerUI.balance'), "balance")}
                     ${tab(T('Diary.worlds.tab'), "diaries")}
+                    ${tab(T('WorldManagerUI.bench.tab'), "bench")}
+                    ${tab(T('WorldManagerUI.export.tab'), "export")}
                 </div>
             `;
 
@@ -1223,6 +1264,8 @@
             switch (this._rightTab) {
                 case "balance": body = this.renderBalanceTab(world); break;
                 case "diaries": body = this.renderDiariesTab(world); break;
+                case "bench":   body = this.renderBenchTab(world); break;
+                case "export":  body = this.renderExportTab(world); break;
                 default:        body = this.renderInfoTab(world, active); break;
             }
 
@@ -1313,7 +1356,7 @@
                 </div>
                 <div class="inspect-actions">
                     <div class="inspect-btn ${isActive ? "disabled" : ""}" role="button" tabindex="0"
-                        onclick="SceneManager._scene.onActivateWorld('${world.name.replace(/'/g, "\\'")}')">
+                        onclick="SceneManager._scene.onActivateWorld('${worldArg(world.name)}')">
                         ${T('WorldManagerUI.setActive')}
                     </div>
                     ${isDefault ? `
@@ -1322,7 +1365,7 @@
                         ${T('WorldManagerUI.regenerate')}
                     </div>` : `
                     <div class="inspect-btn inspect-btn--secondary" role="button" tabindex="0"
-                        onclick="SceneManager._scene.onDeleteWorld('${world.name.replace(/'/g, "\\'")}')">
+                        onclick="SceneManager._scene.onDeleteWorld('${worldArg(world.name)}')">
                         ${T('WorldManagerUI.delete')}
                     </div>`}
                 </div>
@@ -1349,7 +1392,7 @@
                 // A button rather than a card, so the pockets' own keyboard and
                 // controller walk ("actions") reaches every diary for free.
                 return `
-                    <button type="button" class="inspect-btn wm-diary-row" onclick="${call}">
+                    <button type="button" class="inspect-btn wm-diary-row" onclick="${escapeHtml(call)}">
                         <span class="wm-diary-names">${escapeHtml(names)}</span>
                         <span class="wm-diary-meta">${escapeHtml(meta)}</span>
                     </button>`;
@@ -1365,6 +1408,268 @@
             SoundManager.playOk();
             window.Scene_Diary.prepare(worldName, diaryId);
             SceneManager.push(window.Scene_Diary);
+        }
+
+        // The world's inactive party members. Picking one turns the list into
+        // the worlds they can be sent to; picking a world asks before moving.
+        renderBenchTab(world) {
+            const WM = window.WorldManager;
+            const members = WM.listInactiveMembers ? WM.listInactiveMembers(world.name) : [];
+            const picked = members.find(p => p.id === this._benchPick);
+            if (!picked) {
+                this._benchPick = null;
+                if (!members.length) {
+                    return `<div class="wm-empty">${escapeHtml(T('WorldManagerUI.bench.none'))}</div>`;
+                }
+                const rows = members.map(p => {
+                    const meta = T(p.retiredDate ? 'WorldManagerUI.bench.metaDated' : 'WorldManagerUI.bench.meta', {
+                        role: p.retiredClassName || T('WorldManagerUI.bench.companion'),
+                        level: p.level || 1,
+                        date: p.retiredDate || ""
+                    });
+                    return `
+                    <button type="button" class="inspect-btn wm-diary-row"
+                            onclick="SceneManager._scene.onPickBenchMember(${Number(p.id)})">
+                        <span class="wm-diary-names">${escapeHtml(p.name || "?")}</span>
+                        <span class="wm-diary-meta">${escapeHtml(meta)}</span>
+                    </button>`;
+                }).join("");
+                return `
+                    <div class="inspect-section-title">${escapeHtml(T('WorldManagerUI.bench.title'))}</div>
+                    <div class="inspect-actions wm-diary-list">${rows}</div>`;
+            }
+
+            const others = WM.listWorlds().filter(w => w.name !== world.name);
+            const rows = others.map(w => `
+                    <button type="button" class="inspect-btn wm-diary-row"
+                            onclick="SceneManager._scene.onMoveBenchMember('${worldArg(w.name)}')">
+                        <span class="wm-diary-names">${escapeHtml(w.name)}</span>
+                    </button>`).join("");
+            return `
+                <div class="inspect-section-title">${escapeHtml(T('WorldManagerUI.bench.moveTo', { name: picked.name || "?" }))}</div>
+                ${others.length ? "" : `<div class="wm-empty">${escapeHtml(T('WorldManagerUI.bench.noOtherWorld'))}</div>`}
+                <div class="inspect-actions wm-diary-list">
+                    <button type="button" class="inspect-btn"
+                            onclick="SceneManager._scene.onExportBenchMember()">${escapeHtml(T('WorldManagerUI.export.asQr'))}</button>
+                    ${rows}
+                    <button type="button" class="inspect-btn inspect-btn--secondary"
+                            onclick="SceneManager._scene.onPickBenchMember(null)">${escapeHtml(T('WorldManagerUI.cancel'))}</button>
+                </div>`;
+        }
+
+        _refreshBenchTab() {
+            const WM = window.WorldManager;
+            this._patchRightPage(WM.listWorlds(), WM.activeWorldName);
+            this._setFocus("actions", 0);
+        }
+
+        onPickBenchMember(id) {
+            if (this._busy || this._confirmOverlay) return;
+            if (id == null) SoundManager.playCancel();
+            else SoundManager.playOk();
+            this._benchPick = id;
+            this._refreshBenchTab();
+        }
+
+        onMoveBenchMember(toName) {
+            if (this._busy || this._confirmOverlay) return;
+            const WM = window.WorldManager;
+            const fromName = this._selectedWorld;
+            const picked = WM.listInactiveMembers(fromName).find(p => p.id === this._benchPick);
+            if (!picked) return;
+            this._showConfirm({
+                title: T('WorldManagerUI.bench.confirmTitle'),
+                message: T('WorldManagerUI.bench.confirmMove', { name: picked.name || "?", world: toName }),
+                confirmLabel: T('WorldManagerUI.bench.move'),
+                cancelLabel: T('WorldManagerUI.cancel'),
+                onConfirm: () => {
+                    const result = WM.moveInactiveMember(fromName, picked.id, toName);
+                    if (!result.ok) {
+                        SoundManager.playBuzzer();
+                        this.setStatus(T('WorldManagerUI.bench.moveFailed'));
+                        return;
+                    }
+                    SoundManager.playSave();
+                    this._benchPick = null;
+                    this.setStatus(T('WorldManagerUI.bench.moved', { name: picked.name || "?", world: toName }));
+                    this._refreshBenchTab();
+                }
+            });
+        }
+
+        onExportBenchMember() {
+            if (this._busy || this._confirmOverlay) return;
+            const CE = window.CharacterExport;
+            const picked = window.WorldManager.listInactiveMembers(this._selectedWorld)
+                .find(p => p.id === this._benchPick);
+            if (!picked || !CE || !CE.characterToQr) { SoundManager.playBuzzer(); return; }
+            this._exportQr(picked.name, () => CE.characterToQr(picked));
+        }
+
+        // ---- export: savegame parties as QR cards ---------------------------
+
+        // The parties of a world's savegames are read once per visit, off the
+        // files themselves, and kept while the same world stays selected.
+        _loadSaveParties(world) {
+            const WM = window.WorldManager;
+            const CE = window.CharacterExport;
+            this._saveParties = { world: world.name, loading: true, list: [] };
+            const slots = WM.listSaveSlots ? WM.listSaveSlots(world.name) : [];
+            if (!slots.length || !CE || !CE.partyFromSaveContents) {
+                this._saveParties.loading = false;
+                return;
+            }
+            // Describing a member reads the game objects the sheet expects.
+            if (!$gameSystem) DataManager.setupNewGame();
+            const held = this._saveParties;
+            Promise.all(slots.map(slot => WM.readSaveContents(world.name, slot).then(contents => {
+                let party = null;
+                try {
+                    party = contents ? CE.partyFromSaveContents(contents) : null;
+                } catch (e) {
+                    console.error("[WorldManagerUI] A savegame party could not be read", e);
+                }
+                return party ? { slot, party } : null;
+            }))).then(found => {
+                held.list = found.filter(Boolean);
+                held.loading = false;
+                if (this._saveParties === held && this._rightTab === "export" &&
+                    this._selectedWorld === held.world && this._container) {
+                    const WMa = window.WorldManager;
+                    this._patchRightPage(WMa.listWorlds(), WMa.activeWorldName);
+                    this._applyFocusHighlight();
+                }
+            });
+        }
+
+        renderExportTab(world) {
+            if (!this._saveParties || this._saveParties.world !== world.name) this._loadSaveParties(world);
+            const held = this._saveParties;
+            if (held.loading) {
+                return `<div class="wm-empty">${escapeHtml(T('WorldManagerUI.export.reading'))}</div>`;
+            }
+            if (!held.list.length) {
+                return `<div class="wm-empty">${escapeHtml(T('WorldManagerUI.export.none'))}</div>`;
+            }
+            const picked = held.list.find(e => e.slot === this._exportPick);
+            if (!picked) {
+                this._exportPick = null;
+                const rows = held.list.map(e => `
+                    <button type="button" class="inspect-btn wm-diary-row"
+                            onclick="SceneManager._scene.onPickExportSave(${Number(e.slot)})">
+                        <span class="wm-diary-names">${escapeHtml(e.party.name)}</span>
+                        <span class="wm-diary-meta">${escapeHtml(T('WorldManagerUI.export.slot', { slot: e.slot }))}</span>
+                    </button>`).join("");
+                return `
+                    <div class="inspect-section-title">${escapeHtml(T('WorldManagerUI.export.title'))}</div>
+                    <div class="inspect-actions wm-diary-list">${rows}</div>`;
+            }
+            const members = picked.party.members.map((m, i) => `
+                    <button type="button" class="inspect-btn wm-diary-row"
+                            onclick="SceneManager._scene.onExportSaveMember(${i})">
+                        <span class="wm-diary-names">${escapeHtml(m.name || "?")}</span>
+                        <span class="wm-diary-meta">${escapeHtml(T('WorldManagerUI.bench.meta', {
+                            role: ($dataClasses && $dataClasses[m.classId] && $dataClasses[m.classId].name)
+                                || T('WorldManagerUI.bench.companion'),
+                            level: m.level || 1
+                        }))}</span>
+                    </button>`).join("");
+            return `
+                <div class="inspect-section-title">${escapeHtml(picked.party.name)}</div>
+                <div class="inspect-actions wm-diary-list">
+                    <button type="button" class="inspect-btn"
+                            onclick="SceneManager._scene.onExportSaveParty()">${escapeHtml(T('WorldManagerUI.export.wholeParty'))}</button>
+                    ${members}
+                    <button type="button" class="inspect-btn inspect-btn--secondary"
+                            onclick="SceneManager._scene.onPickExportSave(null)">${escapeHtml(T('WorldManagerUI.back'))}</button>
+                </div>`;
+        }
+
+        _pickedSaveParty() {
+            const held = this._saveParties;
+            const entry = held && held.list.find(e => e.slot === this._exportPick);
+            return entry ? entry.party : null;
+        }
+
+        onPickExportSave(slot) {
+            if (this._busy || this._confirmOverlay) return;
+            if (slot == null) SoundManager.playCancel();
+            else SoundManager.playOk();
+            this._exportPick = slot;
+            const WM = window.WorldManager;
+            this._patchRightPage(WM.listWorlds(), WM.activeWorldName);
+            this._setFocus("actions", 0);
+        }
+
+        onExportSaveParty() {
+            if (this._busy || this._confirmOverlay) return;
+            const CE = window.CharacterExport;
+            const party = this._pickedSaveParty();
+            if (!party || !CE || !CE.partyToQr) { SoundManager.playBuzzer(); return; }
+            this._exportQr(party.name, () => CE.partyToQr(party));
+        }
+
+        onExportSaveMember(index) {
+            if (this._busy || this._confirmOverlay) return;
+            const CE = window.CharacterExport;
+            const party = this._pickedSaveParty();
+            const member = party && party.members[index];
+            if (!member || !CE || !CE.characterToQr) { SoundManager.playBuzzer(); return; }
+            this._exportQr(member.name, () => CE.characterToQr(member));
+        }
+
+        // Writes the card and shows the code it holds, with where it went.
+        _exportQr(name, write) {
+            let result = null;
+            try {
+                result = write();
+            } catch (e) {
+                console.error("[WorldManagerUI] The QR card could not be written", e);
+            }
+            if (!result || !result.canvas) {
+                SoundManager.playBuzzer();
+                this.setStatus(T('WorldManagerUI.export.failed'));
+                return;
+            }
+            SoundManager.playSave();
+            const where = result.file
+                ? T('WorldManagerUI.export.written', { file: result.file })
+                : T('WorldManagerUI.export.notWritten');
+            this.setStatus(where);
+            this._showQr(T('WorldManagerUI.export.qrTitle', { name: name || "?" }),
+                result.canvas.toDataURL("image/png"), where);
+        }
+
+        // The code on screen, so a phone can take it straight off the page.
+        // Shares the confirmation window's slot: OK or Escape closes it.
+        _showQr(title, imageUrl, message) {
+            if (!this._container) return;
+            this._closeConfirm();
+            const overlay = document.createElement("div");
+            overlay.className = "ui-overlay wm-modal-overlay";
+            overlay.innerHTML = `
+                <div class="ui-panel wm-modal" role="dialog" aria-modal="true">
+                    <h3 class="title wm-modal-title">${escapeHtml(title)}</h3>
+                    <img class="wm-qr-image" alt="" src="${escapeHtml(imageUrl)}">
+                    <div class="wm-modal-message">${escapeHtml(message)}</div>
+                    <div class="inspect-actions wm-modal-buttons">
+                        <button type="button" class="inspect-btn wm-modal-confirm">${escapeHtml(T('WorldManagerUI.export.close'))}</button>
+                    </div>
+                </div>
+            `;
+            overlay.querySelector(".wm-modal-confirm").addEventListener("click", () => this._confirmConfirm());
+            overlay.addEventListener("click", e => {
+                if (e.target === overlay) this._closeConfirm();
+            });
+            overlay.addEventListener("contextmenu", e => {
+                e.preventDefault();
+                e.stopPropagation();
+                this._closeConfirm();
+            });
+            this._container.appendChild(overlay);
+            this._confirmOverlay = overlay;
+            this._confirmCallback = null;
+            if (window.UINav) window.UINav.swallowHeld();
         }
 
         renderBalanceTab(world) {
@@ -1407,6 +1712,8 @@
             SoundManager.playCursor();
             this._selectedWorld = this._selectedWorld === name ? null : name;
             this._rightTab = "info";
+            this._benchPick = null;
+            this._exportPick = null;
 
             // Toggle selected class on rows without rebuilding the left page.
             this._container.querySelectorAll(".wm-world-row").forEach(row => {
@@ -1423,10 +1730,17 @@
             // world's data rather than a second, smaller copy of the timeline.
             if (tab === "history") {
                 if (!this._selectedWorld || !window.Scene_History) return;
-                const history = window.WorldManager.readWorldFile(this._selectedWorld, "history") || {};
-                if (!$gameSystem) DataManager.setupNewGame();
-                $gameSystem._historicalEvents     = history.events     || [];
-                $gameSystem._historicalHyperpowers = history.hyperpowers || {};
+                const WM = window.WorldManager;
+                // The two $gameSystem fields are accessors onto the ACTIVE
+                // world's history file, so another world's timeline is only
+                // lent to the archive: the active world's own values are kept
+                // and handed back when this screen is built again, or the next
+                // flush would write the other world's history over its own.
+                if (this._selectedWorld !== WM.activeWorldName) {
+                    const history = WM.readWorldFile(this._selectedWorld, "history") || {};
+                    if (!$gameSystem) DataManager.setupNewGame();
+                    Scene_WorldManage.lendHistory(history);
+                }
                 SoundManager.playOk();
                 SceneManager.push(Scene_History);
                 return;

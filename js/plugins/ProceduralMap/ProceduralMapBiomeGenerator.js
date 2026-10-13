@@ -1749,9 +1749,7 @@
         biome.name,
         {
           worldCoords,
-          diagonalBiomes: cache
-            ? checkDiagonalMapBiomesFromCache(worldCoords?.x || 0, worldCoords?.y || 0, cache)
-            : null,
+          diagonalBiomes: squareDiagonals(worldCoords?.x || 0, worldCoords?.y || 0, cache),
         }
       );
     }
@@ -2867,9 +2865,7 @@
         biome.name,
         {
           worldCoords,
-          diagonalBiomes: cache
-            ? checkDiagonalMapBiomesFromCache(worldCoords?.x || 0, worldCoords?.y || 0, cache)
-            : null,
+          diagonalBiomes: squareDiagonals(worldCoords?.x || 0, worldCoords?.y || 0, cache),
         }
       );
     }
@@ -3491,6 +3487,37 @@
 
   // True for one of the ten underground biomes above. They are the only biome
   // names in the game that begin "AlienUnder", which is the whole test.
+  // ==========================================================================
+  // Earthlike worlds
+  // --------------------------------------------------------------------------
+  // An earthlike world's landing grid is not one biome: every square is one of
+  // Earth's own outdoor biomes, and GalaxySim owns which (GalaxySim_Core
+  // "Earthlike worlds"). Its squares are then built by Earth's own generators,
+  // so they need what those read: the square's neighbours, out of the planet's
+  // map rather than Earth's coordinate cache, whose numbers mean somewhere on
+  // Earth.
+  // ==========================================================================
+  function earthGridNow() {
+    const pg = $gameSystem && $gameSystem._procGenData;
+    return !!(pg && pg.alienGrid && pg.alienGrid.earthlike);
+  }
+
+  // { adjacentBiomes, cacheInfo, diagonalBiomes } for a square of the
+  // earthlike world underfoot, or null anywhere else.
+  function earthGridNeighbours(worldX, worldY) {
+    if (!earthGridNow()) return null;
+    const GS = window.GalaxySim;
+    return (GS && GS.currentGridAdjacency) ? GS.currentGridAdjacency(worldX, worldY) : null;
+  }
+
+  // The four corners of a square: the planet's own on an earthlike world,
+  // Earth's coordinate cache on Earth, nothing on any other world.
+  function squareDiagonals(worldX, worldY, cache) {
+    const earth = earthGridNeighbours(worldX, worldY);
+    if (earth) return earth.diagonalBiomes;
+    return cache ? checkDiagonalMapBiomesFromCache(worldX, worldY, cache) : null;
+  }
+
   function isAlienUndergroundBiome(biomeName) {
     return typeof biomeName === "string" && biomeName.indexOf("AlienUnder") === 0;
   }
@@ -4124,6 +4151,10 @@
       isWaterBiome(name) || isRoadBiome(name) || /seabed|ocean/i.test(name)
     ) return;
 
+    // Earth's river map is in Earth's coordinates; a planet's square at the same
+    // numbers has nothing to do with it (an earthlike world has River squares
+    // of its own instead).
+    if ($gameSystem && $gameSystem._procGenData && $gameSystem._procGenData.alienGrid) return;
     const R = ($gameSystem && $gameSystem._procGenData && $gameSystem._procGenData.riverCoordMap) || null;
     if (!R) return;
     const wx = worldCoords.x, wy = worldCoords.y;
@@ -4347,8 +4378,10 @@
     // Alien-surface terrain: route by the planet's texture-painter family so
     // the ground matches what the landing-grid picker shows. Only fires with
     // $gameSystem._procGenData.alienGrid set, i.e. never for Earth biomes
-    // (map 636 is reused for both).
-    if ($gameSystem && $gameSystem._procGenData && $gameSystem._procGenData.alienGrid) {
+    // (map 636 is reused for both). An earthlike world's squares are Earth
+    // biomes and go to Earth's own generators below, never through here.
+    if ($gameSystem && $gameSystem._procGenData && $gameSystem._procGenData.alienGrid &&
+        /^Alien/.test(String(biome.name || ""))) {
       const alienRoute = resolveAlienRoute(biome, worldCoords);
       let alienData = null;
       if (alienRoute === "terrestrial") {
@@ -4573,9 +4606,7 @@
         biome.name,
         {
           worldCoords,
-          diagonalBiomes: cache
-            ? checkDiagonalMapBiomesFromCache(worldCoords?.x || 0, worldCoords?.y || 0, cache)
-            : null,
+          diagonalBiomes: squareDiagonals(worldCoords?.x || 0, worldCoords?.y || 0, cache),
         }
       );
     }
@@ -5143,9 +5174,9 @@
     if (alienGrid && onWorldMap) {
       this._procGenData.alienGrid = null;
       alienGrid = null;
-      if (/^Alien/.test(String(this._procGenData.currentBiome || ""))) {
-        this._procGenData.currentBiome = null;
-      }
+      // The square was another world's, whatever it was called: an earthlike
+      // world's carry Earth names.
+      this._procGenData.currentBiome = null;
     }
 
     // Off map 315 the coordinate cache is the ONLY record of what the world
@@ -5174,7 +5205,12 @@
       roadDirection = bridgeDirection;
       log(`[ProceduralMap] Bridge (${bridgeDirection}) at (${originX}, ${originY})`);
     } else if (alienGrid) {
-      biomeName = alienGrid.biome;
+      // An earthlike world names its own biome square by square.
+      const GS = window.GalaxySim;
+      const cellBiome = (alienGrid.earthlike && GS && GS.currentGridCellBiome)
+        ? GS.currentGridCellBiome(originX, originY) : null;
+      biomeName = cellBiome || alienGrid.biome;
+      if (cellBiome) alienGrid.biome = cellBiome;
     } else if (hardcodedOverride) {
       // Use hardcoded biome and optional road direction
       biomeName = hardcodedOverride.biome;
@@ -5335,6 +5371,15 @@
 
     if (onWorldMap && !alienGrid) {
       adjacentBiomes = getAdjacentBiomesOnWorldMap(originX, originY);
+    }
+
+    // An earthlike world's neighbours are its own squares, so its coasts,
+    // beaches and rivers form against them just as Earth's do.
+    const earthNeighbours = alienGrid ? earthGridNeighbours(originX, originY) : null;
+    if (earthNeighbours) {
+      adjacentBiomes = earthNeighbours.adjacentBiomes;
+      cacheInfo = earthNeighbours.cacheInfo;
+      diagonalBiomes = earthNeighbours.diagonalBiomes;
     }
 
     if (hasCoordCache) {
@@ -6444,6 +6489,121 @@
     return true;
   }
 
+  // ---- the self switches of the square's own template events ----------------
+  //
+  // Map 636 is ONE map reused for every world square, so a self switch is not
+  // per place: [636, 54, "A"] is the same switch on every square event 54 is
+  // dealt onto. The key chest, the locked door and the spike trap all keep their
+  // state in self switches, so a key chest emptied in one dungeon stood open and
+  // empty in every dungeon after it, a door unlocked once stood open in every
+  // structure that dealt the same template, and a sprung trap stayed sprung.
+  // (The loot chests have the same problem and ChestWorldState answers it for
+  // them.) Every switch these templates raise is therefore written down against
+  // the square and the tile the event stood on, and every placement pass puts
+  // the record back: nothing left over from the square before, everything the
+  // party did to THIS square still there when they come back to it.
+  const SQUARE_SWITCH_EVENT_NAMES = ["Key Chest", "Dungeon door", "Spike trap"]; // i18n-ignore  Map636 event names
+  const SQUARE_SWITCH_CHANNELS = ["A", "B", "C", "D"];
+  let applyingSquareSwitches = false;
+
+  function isSquareSwitchEvent(eventId) {
+    const data = $dataMap && $dataMap.events && $dataMap.events[eventId];
+    return !!(data && SQUARE_SWITCH_EVENT_NAMES.includes(data.name));
+  }
+
+  // The square being populated: FurnitureSystem's key (biome + coordinate +
+  // depth + entrance salt) when it has one, so a door is filed exactly where a
+  // chest or a piece of furniture on the same square is.
+  function squareSwitchPlaceKey() {
+    const F = window.FurnitureSystem;
+    if (F && typeof F.furnitureMapKey === "function") {
+      try {
+        const key = F.furnitureMapKey();
+        if (key != null && String(key) !== String(PROC_MAP_ID)) return String(key);
+      } catch (e) { /* fall back to the coordinate */ }
+    }
+    const pg = $gameSystem && $gameSystem._procGenData;
+    if (!pg) return null;
+    const depth = pg.biomeLayerStack ? pg.biomeLayerStack.length : 0;
+    return (pg.currentBiome || "") + "@" + $gameVariables.value(43) + "," +
+      $gameVariables.value(44) + ":" + depth;
+  }
+
+  function squareSwitchRecord() {
+    if (!$gameSystem) return null;
+    if (!$gameSystem._procSquareSwitches) $gameSystem._procSquareSwitches = {};
+    return $gameSystem._procSquareSwitches;
+  }
+
+  function squareSwitchTileKey(eventId, x, y) {
+    return $dataMap.events[eventId].name + "@" + x + "," + y;
+  }
+
+  // Positions are final: raise exactly what the record says for each placed
+  // template, and lower everything else, the parked ones included.
+  function applySquareSwitches(events) {
+    if (!$gameSelfSwitches || !$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return;
+    const place = squareSwitchRecord() && squareSwitchRecord()[squareSwitchPlaceKey()];
+    applyingSquareSwitches = true;
+    try {
+      for (const ev of events || []) {
+        if (!ev || !isSquareSwitchEvent(ev._eventId)) continue;
+        const placed = ev.x > 0 || ev.y > 0;
+        const raised = placed && place ? (place[squareSwitchTileKey(ev._eventId, ev.x, ev.y)] || "") : "";
+        for (const ch of SQUARE_SWITCH_CHANNELS) {
+          $gameSelfSwitches.setValue([PROC_MAP_ID, ev._eventId, ch], raised.indexOf(ch) >= 0);
+        }
+      }
+    } finally {
+      applyingSquareSwitches = false;
+    }
+  }
+
+  // The event's tile as the square counts tiles (see ChestWorldState's
+  // procChestTile): inside a stitched window the loaded map is wider than one
+  // square, and the placement pass deals square-local tiles.
+  function squareSwitchEventTile(ev) {
+    const S = window.ProcStitch;
+    if (S && typeof S.localToParty === "function") {
+      try {
+        const tile = S.localToParty(ev.x, ev.y);
+        if (tile) return tile;
+      } catch (e) { /* fall back to the raw position */ }
+    }
+    return { x: ev.x, y: ev.y };
+  }
+
+  function noteSquareSwitch(key, value) {
+    if (applyingSquareSwitches || !Array.isArray(key) || key[0] !== PROC_MAP_ID) return;
+    if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return;
+    if (!isSquareSwitchEvent(key[1]) || SQUARE_SWITCH_CHANNELS.indexOf(key[2]) < 0) return;
+    const ev = $gameMap.event(key[1]);
+    if (!ev || (ev.x <= 0 && ev.y <= 0)) return;
+    const placeKey = squareSwitchPlaceKey();
+    const record = squareSwitchRecord();
+    if (!placeKey || !record) return;
+    const tile = squareSwitchEventTile(ev);
+    const tileKey = squareSwitchTileKey(key[1], tile.x, tile.y);
+    const place = record[placeKey] || (record[placeKey] = {});
+    let raised = (place[tileKey] || "").replace(key[2], "");
+    if (value) raised += key[2];
+    if (raised) place[tileKey] = raised;
+    else delete place[tileKey];
+    if (!Object.keys(place).length) delete record[placeKey];
+  }
+
+  if (typeof Game_SelfSwitches !== "undefined" && Game_SelfSwitches.prototype) {
+    const _Game_SelfSwitches_setValue_square = Game_SelfSwitches.prototype.setValue;
+    Game_SelfSwitches.prototype.setValue = function(key, value) {
+      _Game_SelfSwitches_setValue_square.call(this, key, value);
+      try {
+        noteSquareSwitch(key, value);
+      } catch (e) {
+        console.error("[ProcGen] could not record a template self switch", e);
+      }
+    };
+  }
+
   /**
    * Place Spike Trap hazards (map 636 template events named "Spike trap").
    * Only active in Dungeon / Crypt / Sewer biomes; parked at (0,0) and hidden
@@ -6460,6 +6620,7 @@
 
     if (!isCurrentBiomeDungeonType(procGenData.currentBiome)) {
       trapEvents.forEach((ev) => { ev.setPosition(0, 0); ev.setOpacity(0); });
+      applySquareSwitches(trapEvents);
       return;
     }
 
@@ -6480,6 +6641,9 @@
       const j = Math.floor(rng() * (i + 1));
       [order[i], order[j]] = [order[j], order[i]];
     }
+    // Park the whole set first, for the same reason the chests are: a trap
+    // still on its own seeded tile would make that tile read as taken.
+    for (const event of order) event.setPosition(0, 0);
 
     const pickTile = (srng) => {
       for (let attempt = 0; attempt < 20; attempt++) {
@@ -6504,6 +6668,7 @@
         event.setOpacity(0);
       }
     });
+    applySquareSwitches(trapEvents);
   }
 
   /**
@@ -6526,6 +6691,7 @@
 
     if (!hints.length) {
       doorEvents.forEach((ev) => { ev.setPosition(0, 0); ev.setOpacity(0); });
+      applySquareSwitches(doorEvents);
       return;
     }
 
@@ -6551,6 +6717,7 @@
         event.setOpacity(0);
       }
     });
+    applySquareSwitches(doorEvents);
   }
 
   /**
@@ -6573,6 +6740,7 @@
 
     if (!eligible) {
       keyChestEvents.forEach((ev) => { ev.setPosition(0, 0); ev.setOpacity(0); });
+      applySquareSwitches(keyChestEvents);
       return;
     }
 
@@ -6608,6 +6776,11 @@
       [order[i], order[j]] = [order[j], order[i]];
     }
 
+    // Park the whole set first: a chest still standing on the tile its own seed
+    // is about to pick (a savegame restored on the square brings it back there)
+    // would make pickTile reject that tile and deal it somewhere else.
+    for (const event of order) event.setPosition(0, 0);
+
     order.forEach((event, i) => {
       if (i < numChests) {
         const srng = Utils2.createSeededRandom(baseSeed + event._eventId * 61);
@@ -6619,6 +6792,7 @@
         event.setOpacity(0);
       }
     });
+    applySquareSwitches(keyChestEvents);
   }
 
   /**
@@ -6883,9 +7057,12 @@
     if (alienGrid) {
       // A planet's landing grid is planet-local and small, so its (gx, gy) can
       // coincidentally match a real Earth coordinate: none of Earth's caches,
-      // markers or overrides may be consulted for it. The whole planet is one
-      // biome anyway.
-      surfaceName = alienGrid.biome;
+      // markers or overrides may be consulted for it. An alien planet is one
+      // biome; an earthlike one names its own, square by square.
+      const GS = window.GalaxySim;
+      const cellBiome = (alienGrid.earthlike && GS && GS.currentGridCellBiome)
+        ? GS.currentGridCellBiome(worldX, worldY) : null;
+      surfaceName = cellBiome || alienGrid.biome;
     } else {
       bridgeDirection = $gameSystem.getBridgeDirectionAt
         ? $gameSystem.getBridgeDirectionAt(worldX, worldY)
@@ -6935,7 +7112,15 @@
     // Adjacency. On an alien planet every neighbour is the same biome; on Earth
     // it is the live tile column where that is readable and the cache otherwise.
     let adjacentBiomes = null, cacheInfo = null, diagonalBiomes = null;
-    if (alienGrid) {
+    const earthNeighbours = (alienGrid && alienGrid.earthlike)
+      ? ((window.GalaxySim && window.GalaxySim.currentGridAdjacency)
+        ? window.GalaxySim.currentGridAdjacency(worldX, worldY) : null)
+      : null;
+    if (earthNeighbours) {
+      adjacentBiomes = earthNeighbours.adjacentBiomes;
+      cacheInfo = earthNeighbours.cacheInfo;
+      diagonalBiomes = earthNeighbours.diagonalBiomes;
+    } else if (alienGrid) {
       const n = normalizeBiomeForEdge(surfaceName);
       adjacentBiomes = { north: n, south: n, east: n, west: n };
     } else {
@@ -6959,7 +7144,9 @@
       }
     }
 
-    const displayAsBeach = alienGrid ? false : shouldDisplayAsBeach(surfaceName, adjacentBiomes, diagonalBiomes);
+    // A one-biome alien planet has no coastline; an earthlike one has Earth's.
+    const homogeneous = !!alienGrid && !earthNeighbours;
+    const displayAsBeach = homogeneous ? false : shouldDisplayAsBeach(surfaceName, adjacentBiomes, diagonalBiomes);
 
     // Underground: the square is built from the surface biome's lower layer, and
     // the neighbours it is blended against stay SURFACE names (that is what the
@@ -6997,8 +7184,8 @@
       alien: !!alienGrid,
       // A homogeneous planet has no coastline, so beach/island substitution
       // (which only means anything at a biome transition) never applies.
-      displayAsBeach: alienGrid ? false : (depth > 0 ? false : displayAsBeach),
-      displayAsIsland: alienGrid ? false : (shouldDisplayAsIsland ? shouldDisplayAsIsland(biomeName, adjacentBiomes) : false),
+      displayAsBeach: homogeneous ? false : (depth > 0 ? false : displayAsBeach),
+      displayAsIsland: homogeneous ? false : (shouldDisplayAsIsland ? shouldDisplayAsIsland(biomeName, adjacentBiomes) : false),
       seed: procMapSeed(worldX, worldY, depth),
       dayTemperature: (biome && biome.dayTemperature) || 20,
       nightTemperature: (biome && biome.nightTemperature) || 10,
@@ -7020,8 +7207,12 @@
       const pg = $gameSystem && $gameSystem._procGenData;
       alienGrid = pg ? pg.alienGrid : null;
     }
-    return getWorldSeed() + ":" + depth + ":" + worldX + "," + worldY +
-      (alienGrid ? ":a:" + alienGrid.biome : "");
+    // An alien planet is one biome, which names it well enough; an earthlike
+    // one is many, so it is named by its own salt (GalaxySim enterPlanetSurface).
+    const world = alienGrid
+      ? ":a:" + (alienGrid.earthlike ? "e" + (alienGrid.salt || 0) : alienGrid.biome)
+      : "";
+    return getWorldSeed() + ":" + depth + ":" + worldX + "," + worldY + world;
   }
 
   // A hit refreshes the square's place, so eviction drops the square least

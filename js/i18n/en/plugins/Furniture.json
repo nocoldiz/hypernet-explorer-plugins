@@ -10,7 +10,7 @@
   "noMaterials": "No materials stored.",
   "freeBuild": "Free build",
   "illegal": {
-    "warning": "This land is not yours. Anything you put down here is illegal construction, and the n€police will bill you for it.",
+    "warning": "This land isn't yours. Building here is illegal and the n€police will fine you.",
     "charge": "Illegal Construction"
   },
   "cannotAfford": {
@@ -23,7 +23,7 @@
   "confirmQ": "Confirm?",
   "piecesShown": "Pieces shown",
   "closeEsc": "Close (Esc)",
-  "truncated": "Showing the first {shown} buildable pieces (+{more} more). Search or pick a category to narrow it down.",
+  "truncated": "Showing {shown} pieces (+{more} more). Search or pick a category.",
   "door": {
     "inn": "Inn",
     "shop": "Shop",
@@ -65,8 +65,8 @@
     "clearAllConfirm": "Click again to confirm",
     "cycleVariants": "Other colourways available",
     "backToCategories": "Back to the folder list",
-    "stock": "Already ordered and paid for. Setting it down spends one.",
-    "mirror": "Flip the piece left to right (not for doors, walls, roofs or terrain)"
+    "stock": "Already paid for. Placing it uses one.",
+    "mirror": "Flip left to right (not doors, walls, roofs or terrain)"
   },
   "category": {
     "Ads": "Ads",
@@ -101,7 +101,7 @@
     "City": "City",
     "Clocks": "Clocks",
     "Clothes": "Clothes",
-    "ClothingStore": "ClothingStore",
+    "ClothingStore": "Clothing Store",
     "Columns": "Columns",
     "Containers": "Containers",
     "Couches": "Couches",
@@ -125,7 +125,7 @@
     "Graffiti": "Graffiti",
     "Grass": "Grass",
     "Graves": "Graves",
-    "GroceryStore": "GroceryStore",
+    "GroceryStore": "Grocery Store",
     "Gym": "Gym",
     "Holes": "Holes",
     "Hospital": "Hospital",
@@ -137,7 +137,7 @@
     "Libraries": "Libraries",
     "Lights": "Lights",
     "Liquids": "Liquids",
-    "LivingRoom": "LivingRoom",
+    "LivingRoom": "Living Room",
     "Magic": "Magic",
     "Mailboxes": "Mailboxes",
     "Mannequins": "Mannequins",
@@ -157,7 +157,7 @@
     "Plants": "Plants",
     "Poles": "Poles",
     "Potions": "Potions",
-    "PottedPlants": "PottedPlants",
+    "PottedPlants": "Potted Plants",
     "Rails": "Rails",
     "Rocks": "Rocks",
     "Roofs": "Roofs",
@@ -165,7 +165,7 @@
     "School": "School",
     "Sheets": "Sheets",
     "Shelves": "Shelves",
-    "ShoppingCarts": "ShoppingCarts",
+    "ShoppingCarts": "Shopping Carts",
     "Signs": "Signs",
     "Sport": "Sport",
     "Sports": "Sports",
@@ -181,24 +181,24 @@
     "Tilesets": "Tilesets",
     "Tombs": "Tombs",
     "Tools": "Tools",
-    "TrafficCones": "TrafficCones",
+    "TrafficCones": "Traffic Cones",
     "Trash": "Trash",
     "Treasures": "Treasures",
-    "TreeStumps": "TreeStumps",
+    "TreeStumps": "Tree Stumps",
     "Trees": "Trees",
     "Tunnels": "Tunnels",
     "Underwater": "Underwater",
     "Vases": "Vases",
     "Vehicles": "Vehicles",
-    "VehiclesInterior": "VehiclesInterior",
+    "VehiclesInterior": "Vehicle Interiors",
     "Vines": "Vines",
     "Wall": "Wall",
-    "WaterItems": "WaterItems",
+    "WaterItems": "Water Items",
     "Weapons": "Weapons",
     "Wells": "Wells",
     "Windows": "Windows",
     "Wood": "Wood",
-    "WorldMap": "WorldMap"
+    "WorldMap": "World Map"
   },
   "freeBadge": "FREE",
   "buildMode": "Build Mode",
@@ -212,7 +212,7 @@
     "cannotAfford": "Cannot afford it yet",
     "noMoney": "Not enough money",
     "noMaterials": "Not enough materials",
-    "idle": "Nothing in hand."
+    "idle": "Nothing selected."
   },
   "selection": "Selection",
   "backToCategories": "Back to the folders",
@@ -225,26 +225,26 @@
     "stockBlurb": "Each ordered piece can be placed {n} times. Once broken it is gone and must be reordered.",
     "stockEmpty": "Nothing on order. Pick a department and buy something.",
     "delivered": "delivered",
-    "leftInStock": "{n} settings-down left",
+    "leftInStock": "{n} placements left",
     "order": "Order one",
-    "ordered": "{item} ordered for {price}. {n} settings-down waiting in stock.",
-    "cannotAfford": "The purse will not cover it, delivery included.",
+    "ordered": "{item} ordered for {price}. {n} placements in stock.",
+    "cannotAfford": "Not enough money (delivery included).",
     "unknownPiece": "The catalogue has no such piece.",
-    "searchResults": "Anything called \"{q}\"",
+    "searchResults": "Results for \"{q}\"",
     "nothingHere": "Nothing in this department.",
     "pageOf": "Page {page} of {pages}",
-    "prev": "Back a page",
-    "next": "On a page"
+    "prev": "Previous page",
+    "next": "Next page"
   },
   "stockLeft": "{n} left",
   "mirror": "Mirror",
   "painting": {
-    "pickTitle": "Which picture does it hold?",
-    "none": "As it is"
+    "pickTitle": "Choose a picture",
+    "none": "Keep current"
   },
   "use": {
     "rest": "Rest by the fire",
     "cook": "Cook",
-    "contentsReturned": "{n} stored items back in the pack"
+    "contentsReturned": "{n} stored items returned to the pack"
   }
 }

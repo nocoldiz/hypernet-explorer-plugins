@@ -133,12 +133,11 @@
     ];
 
     // One keyword per arcana, used to compose the closing synthesis line.
-    const KEYWORD = [
-        'BEGINNING', 'WILL', 'SECRECY', 'ABUNDANCE', 'ORDER', 'TRADITION', 'UNION',
-        'RESOLVE', 'COURAGE', 'SOLITUDE', 'FATE', 'BALANCE', 'SUSPENSION', 'ENDING',
-        'MEASURE', 'BONDAGE', 'RUPTURE', 'HOPE', 'ILLUSION', 'CLARITY', 'RECKONING',
-        'COMPLETION'
-    ];
+    // The words live in AnimatedTarotReading.ui.keywords, indexed by arcana.
+    const KEYWORD = (arcana) => {
+        const list = T.list('AnimatedTarotReading.ui.keywords');
+        return (Array.isArray(list) && list[arcana]) || '';
+    };
 
     const cardName = (arcana) => {
         const data = _tarotCardData(tarotKeys[arcana]);
@@ -1307,7 +1306,7 @@
 
             if (!this._threeReady) {
                 this.createHudLayer();
-                this._fatal = 'THREE.JS IS NOT LOADED';
+                this._fatal = uiText('noThree');
                 return;
             }
             this.createTable();
@@ -1525,7 +1524,7 @@
             const h = 28;
             const psi = this.medianPartyPsi();
             plate(bmp, x, y, w, h, {
-                title: 'PSI', titleRight: String(psi), headerH: 11, hairline: false, step: 1
+                title: uiText('psi'), titleRight: String(psi), headerH: 11, hairline: false, step: 1
             });
             const H = HUD();
             if (H) H.decoBar(bmp, x + 4, y + 15, w - 8, 9, clamp(psi / 20, 0, 1), { color: VIOLET });
@@ -1557,7 +1556,7 @@
             }
             if (this._tableSprite) {
                 if (this._tableSprite.parent) this._tableSprite.parent.removeChild(this._tableSprite);
-                this._tableSprite.destroy();
+                this._tableSprite.destroy({ texture: true, baseTexture: true });
                 this._tableSprite = null;
             }
             if (this._table) {
@@ -1630,7 +1629,7 @@
             this._shuffleT = 0;
             this._cut = false;
             this._cutT = 0;
-            this.setBanner('SHUFFLING THE ARCANA', 1.6);
+            this.setBanner(uiText('shuffling'), 1.6);
             playSe('Book1', 90, 60);
         }
 
@@ -1648,7 +1647,7 @@
                 this._cut = true;
                 this._cutT = 0.001;
                 playSe('Book2', 120, 70);
-                this.setBanner('THE DECK IS CUT', 1.2);
+                this.setBanner(uiText('deckCut'), 1.2);
                 this._table.shake(0.6);
             }
             if (this._cut) this._cutT = Math.min(1, this._cutT + dt * 3);
@@ -1671,7 +1670,7 @@
             this._table.beginDeal();
             this._phase = 'deal';
             this._focusIndex = 0;
-            this.setBanner('LAYING THE SPREAD', 1.4);
+            this.setBanner(uiText('layingSpread'), 1.4);
         }
 
         updateDeal() {
@@ -1682,7 +1681,7 @@
             }
             if (this._table.isDealt()) {
                 this._phase = 'read';
-                this.setBanner('TURN THE CARDS', 1.6);
+                this.setBanner(uiText('turnCards'), 1.6);
             }
         }
 
@@ -1824,7 +1823,7 @@
                 if (on && H) H.decoSelect(bmp, px + 3, y - 1, pw - 6, rowH - 2, GOLD);
                 if (on) hudText(bmp, '>', px + 7, y + 1, 10, 'left', GOLD_HI, 8, { raw: true });
                 hudText(bmp, spread.name, px + 17, y + 1, pw - 66, 'left', on ? INK : DIMINK, 8);
-                hudText(bmp, spread.count + ' CARDS', px + 17, y + 1, pw - 24, 'right',
+                hudText(bmp, T('AnimatedTarotReading.ui.spreadCards', { count: spread.count }), px + 17, y + 1, pw - 24, 'right',
                     on ? GOLD_HI : GOLD_LO, 8);
                 const blurb = wrapLines(bmp, spread.blurb, pw - 30, 8);
                 for (let l = 0; l < Math.min(2, blurb.length); l++) {
@@ -1835,8 +1834,8 @@
 
             const fy = py + ph - 20;
             rule(bmp, px + 6, fy, pw - 12, GOLD_LO);
-            hudText(bmp, 'PSI ' + this.medianPartyPsi(), px + 6, fy + 4, pw - 12, 'left', GOLD_DIM, 8);
-            hudText(bmp, 'READER  ' + ($gameParty.leader() ? $gameParty.leader().name() : 'NOBODY'),
+            hudText(bmp, T('AnimatedTarotReading.ui.psiValue', { value: this.medianPartyPsi() }), px + 6, fy + 4, pw - 12, 'left', GOLD_DIM, 8);
+            hudText(bmp, T('AnimatedTarotReading.ui.reader', { name: $gameParty.leader() ? $gameParty.leader().name() : uiText('nobody') }),
                 px + 6, fy + 4, pw - 12, 'right', VIOLET, 8);
 
             this.drawControls(bmp);
@@ -1894,7 +1893,7 @@
                     lw - nameX - rGutter, 'left',
                     card.revealed ? (on ? INK : DIMINK) : FAINT, nameSize);
                 if (card.revealed && card.reversed) {
-                    hudText(bmp, 'R', 8, y, lw - 15, 'right', RED, 8);
+                    hudText(bmp, uiText('reversedShort'), 8, y, lw - 15, 'right', RED, 8);
                 }
             });
 
@@ -1905,7 +1904,7 @@
 
             const turned = cards.filter(c => c.revealed).length;
             plate(bmp, rx, ly + 32, rw, 28, {
-                title: 'TURNED', titleRight: turned + '/' + cards.length, headerH: 11, hairline: false, step: 1
+                title: uiText('turned'), titleRight: turned + '/' + cards.length, headerH: 11, hairline: false, step: 1
             });
             HUD().decoBar(bmp, rx + 4, ly + 47, rw - 8, 9,
                 cards.length ? turned / cards.length : 0, { color: GOLD });
@@ -1934,11 +1933,11 @@
 
             if (!card.revealed) {
                 plate(bmp, 3, by, w - 6, bh, {
-                    title: card.label, titleRight: 'FACE DOWN', headerH: 11, accent: GOLD_LO
+                    title: card.label, titleRight: uiText('faceDownTitle'), headerH: 11, accent: GOLD_LO
                 });
-                hudText(bmp, 'THE CARD LIES FACE DOWN.',
+                hudText(bmp, uiText('faceDownLine1'),
                     8, by + 20, w - 16, 'left', DIMINK, 8);
-                hudText(bmp, 'NOTHING IS DECIDED UNTIL IT IS SEEN.',
+                hudText(bmp, uiText('faceDownLine2'),
                     8, by + 32, w - 16, 'left', FAINT, 8);
                 return;
             }
@@ -1974,17 +1973,17 @@
             const line = (s) => bmp.drawText(s, 12, ch * row++, Graphics.width - 24, ch, 'left');
 
             if (this._phase === 'select') {
-                line('== TAROT READING ==');
+                line(T('AnimatedTarotReading.ui.asciiHeader', { title: uiText('title').toUpperCase() }));
                 SPREADS.forEach((s, i) => {
                     line((i === this._menuIndex ? ' > ' : '   ') + s.name + '  (' + s.count + ')');
                 });
                 return;
             }
-            line('== ' + this._spread.name + ' ==');
+            line(T('AnimatedTarotReading.ui.asciiHeader', { title: this._spread.name }));
             this._table.cards.forEach((c, i) => {
                 const mark = i === this._focusIndex ? '>' : ' ';
                 const name = c.revealed
-                    ? cardName(c.arcana) + (c.reversed ? ' (R)' : '')
+                    ? cardName(c.arcana) + (c.reversed ? ' (' + uiText('reversedShort') + ')' : '')
                     : T('AnimatedTarotReading.ui.faceDown');
                 line(mark + ' ' + c.label + ': ' + name);
             });
@@ -2039,7 +2038,7 @@
             if (this._fatal) return;
             this._spread = SPREADS[0];
             this._table.setSpread(this._spread);
-            this.setBanner('READING FOR ' + String(this._npcData.name).toUpperCase(), 2.0);
+            this.setBanner(T('AnimatedTarotReading.ui.readingFor', { name: String(this._npcData.name).toUpperCase() }), 2.0);
             playSe('Book1', 90, 60);
         }
 
@@ -2063,7 +2062,7 @@
                 this._table.createCards(this._draws);
                 this._table.beginDeal();
                 this._phase = 'deal';
-                this.setBanner('LAYING THE SPREAD', 1.2);
+                this.setBanner(uiText('layingSpread'), 1.2);
             }
         }
 
@@ -2219,12 +2218,12 @@
             const w = hudW();
             this.drawTitlePlate(bmp,
                 T('AnimatedTarotReading.ui.npcTitle', { name: String(this._npcData.name) }),
-                this._correct + ' / 3 TRUE');
+                T('AnimatedTarotReading.ui.trueCount', { n: this._correct }));
 
             // Score column.
             const rw = Math.min(88, Math.floor(w * 0.24));
             const rx = w - rw - 3;
-            plate(bmp, rx, 22, rw, 28, { title: 'RESONANCE', headerH: 11, hairline: false, step: 1 });
+            plate(bmp, rx, 22, rw, 28, { title: uiText('resonance'), headerH: 11, hairline: false, step: 1 });
             HUD().decoBar(bmp, rx + 4, 37, rw - 8, 9, this._correct / 3, { color: GOLD });
             this.drawPsiBox(bmp, rx, 54, rw);
 
@@ -2292,18 +2291,15 @@
                 H.decoSunburst(bmp, px + pw - 2, py + 13, 12, GOLD_LO, { from: Math.PI, span: -Math.PI / 2, rays: 5, dashed: false });
             }
 
-            const verdict = this._correct === 3 ? 'A TRUE SEER'
-                : this._correct === 2 ? 'MOSTLY TRUE'
-                    : this._correct === 1 ? 'HALF HEARD'
-                        : 'THE SPIRITS WERE QUIET';
+            const verdict = uiText('verdict' + Math.max(0, Math.min(3, this._correct)));
             hudText(bmp, verdict, px, py + 18, pw, 'center', GOLD_HI, 8);
-            hudText(bmp, this._correct + ' OF 3 MEANINGS READ TRUE', px, py + 30, pw, 'center', DIMINK, 8);
+            hudText(bmp, T('AnimatedTarotReading.ui.meaningsTrue', { n: this._correct }), px, py + 30, pw, 'center', DIMINK, 8);
             rule(bmp, px + 8, py + 44, pw - 16, GOLD_LO);
 
             this._table.cards.forEach((card, i) => {
                 const y = py + 50 + i * 11;
                 hudText(bmp, card.label, px + 9, y, pw - 18, 'left', DIMINK, 8);
-                hudText(bmp, cardName(card.arcana).toUpperCase() + (card.reversed ? ' (R)' : ''),
+                hudText(bmp, cardName(card.arcana).toUpperCase() + (card.reversed ? ' (' + uiText('reversedShort') + ')' : ''),
                     px + 9, y, pw - 18, 'right', INK, 8);
             });
         }
@@ -2315,12 +2311,12 @@
             const ch = 18;
             let row = 1;
             const line = (s) => bmp.drawText(s, 12, ch * row++, Graphics.width - 24, ch, 'left');
-            line('== READING FOR ' + this._npcData.name + ' ==');
-            line('CORRECT: ' + this._correct + ' / 3');
+            line(T('AnimatedTarotReading.ui.asciiHeader', { title: T('AnimatedTarotReading.ui.readingFor', { name: this._npcData.name }) }));
+            line(T('AnimatedTarotReading.ui.asciiCorrect', { n: this._correct }));
             line('');
             if (this._phase === 'quiz') {
                 const card = this._table.cards[this._cardIndex];
-                line(cardName(card.arcana) + (card.reversed ? ' (Reversed)' : ''));
+                line(cardName(card.arcana) + (card.reversed ? ' (' + uiText('reversed') + ')' : ''));
                 this._choices.forEach((c, i) => {
                     line((i === this._choiceIndex ? ' > ' : '   ') + c.slice(0, 60));
                 });
@@ -2353,13 +2349,13 @@
         const reversed = cards.filter(c => c.reversed).length;
         const ratio = reversed / Math.max(1, cards.length);
         const anchor = cards[cards.length - 1];
-        const key = KEYWORD[anchor.arcana];
+        const key = KEYWORD(anchor.arcana);
         let tone;
-        if (ratio >= 0.66) tone = 'THE SPREAD RUNS AGAINST YOU';
-        else if (ratio >= 0.34) tone = 'THE SPREAD IS DIVIDED';
-        else if (reversed === 0) tone = 'THE SPREAD RUNS CLEAN';
-        else tone = 'THE SPREAD RUNS WITH YOU';
-        return tone + '. IT TURNS ON ' + key + '.';
+        if (ratio >= 0.66) tone = 'toneAgainst';
+        else if (ratio >= 0.34) tone = 'toneDivided';
+        else if (reversed === 0) tone = 'toneClean';
+        else tone = 'toneWith';
+        return T('AnimatedTarotReading.ui.synthesis', { tone: uiText(tone), key: key });
     }
 
     //=========================================================================

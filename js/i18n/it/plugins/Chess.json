@@ -26,17 +26,17 @@
     "finished": "Partita finita",
     "level": "Pari",
     "material": "Materiale {value}",
-    "yourMove": "Prendi un pezzo. SHIFT spende il contatore da baro pieno.",
+    "yourMove": "Scegli un pezzo. SHIFT usa il contatore da baro pieno.",
     "opponentThinking": "Il Nero sta pensando...",
     "chooseMode": "SCACCHI",
-    "chooseModeHint": "Seleziona una modalita di gioco.",
+    "chooseModeHint": "Scegli una modalità di gioco.",
     "promote": "PROMOZIONE",
-    "promoteHint": "Il pedone ha raggiunto l'ultima traversa. Scegli in cosa si trasforma.",
+    "promoteHint": "Scegli la promozione.",
     "victory": "VITTORIA",
     "defeat": "SCONFITTA",
     "drawn": "PATTA",
-    "pressToLeave": "Premi per lasciare la scacchiera",
-    "noThree": "Non è stato possibile allestire la scacchiera 3D su questa macchina."
+    "pressToLeave": "Premi per uscire",
+    "noThree": "Scacchiera 3D non supportata su questa macchina."
   },
   "san": {
     "1": "P",
@@ -60,10 +60,10 @@
   },
   "end": {
     "checkmate": "Scacco matto.",
-    "stalemate": "Stallo: chi deve muovere non ha mosse legali e non è sotto scacco.",
+    "stalemate": "Stallo: nessuna mossa legale.",
     "fiftyMove": "Patta per la regola delle cinquanta mosse.",
     "repetition": "Patta per triplice ripetizione.",
-    "material": "Patta: a nessuno dei due resta abbastanza per dare matto.",
+    "material": "Patta: materiale insufficiente.",
     "whiteWiped": "Tutti i pezzi bianchi sono spariti. Vince il Nero!",
     "blackWiped": "Tutti i pezzi neri sono spariti. Vince il Bianco!"
   },
@@ -74,8 +74,8 @@
     "snail": "una Lumaca Sushi",
     "burger": "un Panino Armato",
     "turnip": "una Rapa Squittente",
-    "hairball": "un Boccolo di Pelo",
-    "dumpster": "un Testa di Cassonetto",
+    "hairball": "una Palla di Pelo",
+    "dumpster": "una Testa di Cassonetto",
     "paperwork": "delle Scartoffie",
     "meme": "un Meme Senziente",
     "kazoo": "un Folletto col Kazoo",
@@ -121,7 +121,7 @@
       "\"Venerdì del pezzo gratis!\" Il Nero sogghigna mentre appare un {piece}! \"Uno preso, uno in regalo!\""
     ],
     "spawnChaos": [
-      "\"Ti presento un amico!\" Il Nero evoca {piece} in {square}! \"È addestrato in casa!\"",
+      "\"Ti presento un amico!\" Il Nero evoca {piece} in {square}! \"Non sporca in casa!\"",
       "\"Io li colleziono!\" Il Nero piazza {piece} sulla scacchiera con orgoglio! \"Edizione limitata!\"",
       "\"Pezzo di supporto emotivo!\" Il Nero introduce {piece}! \"Per quando i pezzi normali non bastano!\"",
       "\"Perché essere noiosi?\" Il Nero fa comparire {piece} con un gesto plateale! \"Gli scacchi hanno bisogno di personalità!\"",

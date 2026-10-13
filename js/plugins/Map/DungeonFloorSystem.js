@@ -76,7 +76,7 @@
  * ===========================================================================
  * @param demoMode
  * @text Demo Mode
- * @desc If true, only floors 1 (map 101) and 2 of the tower and floor -1 below it can be visited. No stairs lead past them.
+ * @desc If true, only floor 1 of the tower (map 101, also by the secret way) and floor -1 below it can be visited. No stairs lead past them.
  * @type boolean
  *
  *
@@ -163,6 +163,12 @@
  * @desc World switch turned ON once the world's dungeon layout has been generated.
  * @type switch
  * @default 2
+ *
+ * @param demoModeSwitch
+ * @text Demo Mode Switch
+ * @desc Switch turned ON at the start of every new game (story mode and new party alike) while Demo Mode is on.
+ * @type switch
+ * @default 8
  *
  * @command generateDungeon
  * @text Generate Dungeon
@@ -259,13 +265,14 @@
     ],
     elevatorMaps: [112,113,114,115,116,117,118,119],
     demoMode: String(parameters.demoMode) === "true",
-    // Demo mode: floor 1 and floor 2 above ground, floor -1 below it. The
-    // last floor of each half shows no staircase onward.
-    demoMaxFloor: 2,
+    // Demo mode: floor 1 (The Great Divide, also reached the secret way)
+    // above ground, floor -1 below it. The last floor of each half shows no
+    // staircase onward.
+    demoMaxFloor: 1,
     demoDeepestFloor: -1,
-    // Floors past demoMaxFloor the demo still opens: floor 10, the first lift
-    // hall, reached by the elevator only. Open from the start, like 1 and 2.
-    demoExtraFloors: [10],
+    // Floors past demoMaxFloor the demo still opens, reached by the elevator
+    // only. None at present.
+    demoExtraFloors: [],
     // Floors that are the same in every world and every mode: the map group
     // they hold and where their two staircases stand. Arriving from below
     // lands on the downstairs, arriving from above on the upstairs.
@@ -297,6 +304,7 @@
     elevatorFloorVariable: parseInt(parameters.elevatorFloorVariable || 17),
     arenaToggleSwitch: parseInt(parameters.arenaToggleSwitch || 5),
     dungeonGeneratedSwitch: parseInt(parameters.dungeonGeneratedSwitch || 2),
+    demoModeSwitch: parseInt(parameters.demoModeSwitch || 8),
   };
 
   const params = window.DungeonFloorSystemParams;
@@ -370,6 +378,17 @@
   //=============================================================================
   // Game_System additions for dungeon data
   //=============================================================================
+
+  // A demo build starts every new game, story mode and new party alike, with
+  // the DemoMode switch on, so events can tell the demo apart from the full
+  // game. Both runs (and every other start) go through setupNewGame.
+  const _DFS_DataManager_setupNewGame = DataManager.setupNewGame;
+  DataManager.setupNewGame = function () {
+    if (_DFS_DataManager_setupNewGame) _DFS_DataManager_setupNewGame.apply(this, arguments);
+    if (params.demoMode && params.demoModeSwitch > 0 && typeof $gameSwitches !== "undefined" && $gameSwitches) {
+      $gameSwitches.setValue(params.demoModeSwitch, true);
+    }
+  };
 
   const _Game_System_initialize = Game_System.prototype.initialize;
   Game_System.prototype.initialize = function () {
@@ -787,7 +806,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     this._dungeonFloors[0] = $gameSwitches.value(params.arenaToggleSwitch)
       ? params.arenaMapId
       : params.townMapId;
-    // Demo mode structure: the dungeon ends at floor 2.
+    // Demo mode structure: the dungeon ends at demoMaxFloor.
       if (params.demoMode) {
         // Floor 0: map 1 (already set above)
         // Floor 1: map 101
@@ -3533,6 +3552,9 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     bandFloor: bandFloorHere,
     bandMembers,
     spawnBands: bandSpawnFloor,
+    bandsOnMapLoaded: bandsOnMapLoaded,
+    shouldFadeInOnArrival: shouldFadeInOnArrival,
+    applyDungeonSaveAccess: applyDungeonSaveAccess,
     stepBands: bandUpdateMovement,
     fightBands: bandUpdateCombat,
     updateBands: bandUpdate,
@@ -3732,6 +3754,19 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     }
   }
 
+  // Can the party stand on (x, y)? isPassable takes a DIRECTION, and the
+  // direction this used to ask about was 0, which the engine turns into an
+  // empty bit mask: every tile, walls and water included, answered "passable",
+  // so the party was always put on the tile below the staircase whatever stood
+  // there. A tile is standable when it can be left in at least one direction
+  // and no solid event holds it.
+  function isStandableAdjacentTile(x, y) {
+    if (!$gameMap.isValid(x, y)) return false;
+    if (![2, 4, 6, 8].some((d) => $gameMap.isPassable(x, y, d))) return false;
+    const blocking = $gameMap.eventsXyNt(x, y).some((ev) => ev.isNormalPriority());
+    return !blocking;
+  }
+
   function teleportToAdjacentTile(targetX, targetY) {
     const directions = [
       { dx: 0, dy: 1 },
@@ -3747,7 +3782,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     for (const dir of directions) {
       const checkX = targetX + dir.dx;
       const checkY = targetY + dir.dy;
-      if ($gameMap.isPassable(checkX, checkY, 0)) {
+      if (isStandableAdjacentTile(checkX, checkY)) {
         $gamePlayer.locate(checkX, checkY);
         $gameScreen.startFlash([0, 0, 0, 128], 30);
         return;
@@ -3869,13 +3904,50 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     return false;
   }
 
+  // Bands are dealt once per visit. A scene rebuilt without a transfer (a
+  // menu, a battle) is the same visit, whatever is left standing on the floor:
+  // re-rolling then put fresh adventurers (and their loot) on a floor whose
+  // bands had all fallen, or on one that rolled nobody. The visit is the map
+  // the party last arrived on, kept in the save so a load is the same visit.
+  function bandsOnMapLoaded(arriving) {
+    const mapId = $gameMap.mapId();
+    if (!arriving && $gameSystem._bandVisitMapId === mapId) return 0;
+    $gameSystem._bandVisitMapId = mapId;
+    return bandSpawnFloor();
+  }
+
+  // The screen is faded back in only where something left it dark for the
+  // trip: the floor changes here (and every event that fades out before a
+  // stair or treasure-room command) and a respawn all count on it. A menu or
+  // a battle closing is no trip, and neither is a screen kept dark on purpose.
+  function shouldFadeInOnArrival(arriving) {
+    if (!arriving || typeof $gameScreen === "undefined" || !$gameScreen) return false;
+    return $gameScreen.brightness() < 255 || $gameScreen._fadeOutDuration > 0;
+  }
+
+  // Saving is shut on a dungeon floor and opened again on the way out, but only
+  // if it was this plugin that shut it: anything else that disabled saving
+  // keeps it disabled.
+  function applyDungeonSaveAccess(mapId) {
+    if (isDungeonMap(mapId)) {
+      if ($gameSystem.isSaveEnabled()) {
+        $gameSystem.disableSave();
+        $gameSystem._dungeonSaveLock = true;
+      }
+    } else if ($gameSystem._dungeonSaveLock) {
+      $gameSystem._dungeonSaveLock = false;
+      $gameSystem.enableSave();
+    }
+  }
+
   const _Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
   Scene_Map.prototype.onMapLoaded = function () {
+    const arriving = !!($gamePlayer && $gamePlayer.isTransferring());
     // Before anything reads the map: a scene rebuilt without a transfer (a
     // menu, the status screen) has just reloaded $dataMap from disk, and every
     // band member standing on the floor would be an event with no data behind
     // it. A transfer is the other case, and it rebuilds the events anyway.
-    if (!($gamePlayer && $gamePlayer.isTransferring())) bandRestoreEventData();
+    if (!arriving) bandRestoreEventData();
     _Scene_Map_onMapLoaded.call(this);
     // The procedural map answers to the lower tower's rules, never to the
     // hand-made floors': its NextFloor / PrevFloor / Elevator events belong to
@@ -3886,23 +3958,17 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       repositionStairEvents();
     }
 
-    // Disable saving in dungeon maps, enable it outside
-    const currentMapId = $gameMap.mapId();
-    if (isDungeonMap(currentMapId)) {
-      $gameSystem.disableSave();
-    } else {
-      $gameSystem.enableSave();
-    }
+    applyDungeonSaveAccess($gameMap.mapId());
 
     // The other climbers are dealt once the floor is standing: the spriteset
     // exists by now, so each of them is handed its sprite as it is put down.
     try {
-      bandSpawnFloor();
+      bandsOnMapLoaded(arriving);
     } catch (e) {
       console.error("[DungeonFloorSystem] could not put this floor's bands down", e);
     }
 
-    $gameScreen.startFadeIn(15);
+    if (shouldFadeInOnArrival(arriving)) $gameScreen.startFadeIn(15);
   };
 
   // The bands walk and fight on the map's own frames, never in a battle, a

@@ -1,6 +1,6 @@
 {
   "name": "Physics",
-  "blurb": "Matter, energy and spacetime under measurement. Precision depends on the apparatus you can build.",
+  "blurb": "Matter, energy and spacetime. Precision depends on your apparatus.",
   "nodes": {
     "phys_attosecond": {
       "name": "Attosecond Light Pulses",

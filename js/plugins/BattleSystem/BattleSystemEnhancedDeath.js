@@ -320,6 +320,8 @@
     BSE.Functions.revivePartyOnRespawn = revivePartyOnRespawn;
 
     Game_Actor.prototype.processMapDeath = function() {
+        // The story's Blood and Oil: Em's death is her own game over.
+        if (storyEmFalls(this)) return;
         if (this !== $gameParty.members()[0]) return;
 
         // A leader going down is not the party going down. The battle system has
@@ -384,6 +386,12 @@
     // ========================================================================
 
     Scene_Map.prototype.handleActor1Respawn = function() {
+        // Em fell on the story's Blood and Oil: her game over decides what
+        // happens next, never a respawn.
+        if (storyEmFallen()) {
+            BSE.State.needsRespawn = false;
+            return;
+        }
         // Hardcore / Blood and Oil: a full party wipe ends the run with a
         // Game Over screen instead of respawning.
         if (isTerminalDeath()) {
@@ -461,12 +469,15 @@
         window.skipLocalization = true;
         $gameMessage.add(T('Battle.actorDied', { actor: actorName }));
         window.skipLocalization = false;
+        noteStoryRemoved(actor);
     };
 
-    // Story mode: every fallen member who is not Em or Bubba is gone for good.
-    // Run before anything revives the party (a wipe's respawn, a knockout
-    // coming round), so they are buried rather than stood back up. A party with
-    // nobody immortal left in it is never emptied: the respawn needs someone.
+    // Story mode: every fallen member who is not Em or Bubba is gone for good,
+    // and on the story's Blood and Oil Bubba too. Run before anything revives
+    // the party (a wipe's respawn, a knockout coming round), so they are buried
+    // rather than stood back up. A party with nobody immortal left in it is
+    // never emptied: the respawn needs someone. Em down on the story's Blood
+    // and Oil is her game over, once the others are buried.
     function removeStoryFallen() {
         if (!$gameSwitches.value(100) || !window.$gameParty) return;
         const members = $gameParty.members();
@@ -475,6 +486,8 @@
         for (const member of fallen) {
             Scene_Map.prototype.handlePartyMemberDeath.call(SceneManager._scene, member, member.name());
         }
+        const em = members.find(m => BSE.Helpers.isStoryEm(m));
+        if (em) storyEmFalls(em);
     }
 
     BSE.Functions.removeStoryFallen = removeStoryFallen;
@@ -566,6 +579,184 @@
 
     BSE.Helpers.KO_WAKE_MINUTES = KO_WAKE_MINUTES;
     BSE.Helpers.updateKnockoutWake = updateKnockoutWake;
+
+    // ========================================================================
+    // 8. The story's Blood and Oil: Em and Bubba are mortal
+    // ========================================================================
+    // The story mode's third difficulty. Bubba lost is lost for the rest of the
+    // run: Em takes it as clinical depression, the BubbaInParty switch (49,
+    // which also runs the map legend and the combat tutorial) goes down and
+    // stays down, and nothing seats him again. Only a new story brings him
+    // back, because all of it lives on $gameSystem.
+    //
+    // Em down is the story's own game over (SaveSystem.triggerStoryGameOver):
+    // give up, and the story's saves are erased, or "Witches never die!", and
+    // she is stood up on a random square of the world map that is no town,
+    // sea or mountain, with whoever was still walking with her.
+
+    const BUBBA_SWITCH = 49;
+    const STORY_DEPRESSION = 'depression';  // i18n-ignore: Diseases.json id
+    const WORLD_MAP_ID = (window.WorldMapReturn && window.WorldMapReturn.worldMapId) || 315;
+    // Squares Em is never put down on: water, mountains, towns, roads.
+    const NO_RESPAWN_BIOME = /^(Ocean|SeaBed|SeaGrotto|Lake|Volcano)$|Mountain|^(City|Burg|Village)|Road|River|Bridge|\s/; // i18n-ignore: biome ids
+    let _emFallen = false;
+
+    function storyBubbaLost() {
+        return !!(window.$gameSystem && $gameSystem._storyBubbaLost);
+    }
+
+    function storyEmFallen() {
+        return _emFallen;
+    }
+
+    // Em down on the story's Blood and Oil: opens her game over, once. True
+    // when it did, so the caller stands back.
+    function storyEmFalls(actor) {
+        if (!BSE.Helpers.isStoryMortal() || !BSE.Helpers.isStoryEm(actor)) return false;
+        if (!actor.isDead()) return false;
+        if (_emFallen) return true;
+        _emFallen = true;
+        BSE.State.needsRespawn = false;
+        if (window.SaveSystem && window.SaveSystem.triggerStoryGameOver) {
+            window.SaveSystem.triggerStoryGameOver();
+        }
+        return true;
+    }
+
+    // A member just taken out of the party for good.
+    function noteStoryRemoved(actor) {
+        if (BSE.Helpers.isStoryMortal() && BSE.Helpers.isStoryBubba(actor)) loseStoryBubba();
+    }
+
+    function storyEm() {
+        if (!window.$gameParty) return null;
+        return $gameParty.members().find(m => BSE.Helpers.isStoryEm(m)) || null;
+    }
+
+    function loseStoryBubba() {
+        if (!window.$gameSystem || storyBubbaLost()) return;
+        $gameSystem._storyBubbaLost = true;
+        $gameSwitches.setValue(BUBBA_SWITCH, false);
+        // The fight he was going to explain is never offered.
+        $gameSystem._combatTutorialArmed = false;
+        $gameSystem._combatTutorialSeen = true;
+        const em = storyEm();
+        if (em) {
+            const DS = window.DiseaseSystem;
+            if (DS && DS.infectActor) {
+                DS.infectActor(em, STORY_DEPRESSION, null, null, { diagnosed: true, silent: true });
+            }
+            if (em.reduceLeisure) em.reduceLeisure(100);
+        }
+        if (window.ParchmentToast && typeof window.ParchmentToast.show === 'function') {
+            window.ParchmentToast.show(T('Battle.story.bubbaLost'), { severity: 'danger' });
+        }
+    }
+
+    // Nothing turns BubbaInParty back on once he is gone: not an event, not a
+    // story beat, not a dossier being stamped.
+    const _Game_Switches_setValue_storyBubba = Game_Switches.prototype.setValue;
+    Game_Switches.prototype.setValue = function(switchId, value) {
+        if (switchId === BUBBA_SWITCH && value && storyBubbaLost()) value = false;
+        _Game_Switches_setValue_storyBubba.call(this, switchId, value);
+    };
+
+    // The world-map squares by biome: the live cache when the world map has
+    // been walked, the shipped snapshot otherwise.
+    function worldBiomeCache() {
+        const pg = window.$gameSystem && $gameSystem._procGenData;
+        if (pg && pg.biomeCoordinateCache && Object.keys(pg.biomeCoordinateCache).length) {
+            return pg.biomeCoordinateCache;
+        }
+        const PU = window.ProcGenUtils;
+        const loaded = PU && PU.loadBiomesMapFromFile ? PU.loadBiomesMapFromFile() : null;
+        return (loaded && loaded.biomeCoordinateCache) || null;
+    }
+
+    // A square some destination stands on: a town's footprint or a door.
+    function isDestinationSquare(x, y) {
+        const PU = window.ProcGenUtils;
+        if (!PU) return false;
+        try {
+            if (PU.getDestinationForcedBiome && PU.getDestinationForcedBiome(x, y)) return true;
+            const d = PU.getNonProceduralDestination ? PU.getNonProceduralDestination(x, y) : null;
+            return !!(d && d.exists);
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function randomStorySpawn(random) {
+        const rnd = typeof random === 'function' ? random : Math.random;
+        const cache = worldBiomeCache();
+        if (!cache) return null;
+        const pool = [];
+        for (const name of Object.keys(cache)) {
+            if (NO_RESPAWN_BIOME.test(name)) continue;
+            for (const c of cache[name] || []) if (c) pool.push(c);
+        }
+        for (let tries = 0; tries < 200 && pool.length; tries++) {
+            const c = pool[Math.floor(rnd() * pool.length)];
+            if (!isDestinationSquare(c.x, c.y)) return { mapId: WORLD_MAP_ID, x: c.x, y: c.y, proc: null };
+        }
+        return null;
+    }
+
+    // "Witches never die!": Em and whoever still walks with her stand up again
+    // somewhere out in the open.
+    function witchesNeverDie() {
+        _emFallen = false;
+        releaseRespawn();
+        for (const member of $gameParty.members()) {
+            if (!member) continue;
+            member._koDownedAtMinutes = null;
+            if (member.isDead()) member.removeState(member.deathStateId());
+            member.recoverAll();
+            if (window.HealthCore && window.HealthCore.restoreAllBodyParts) {
+                window.HealthCore.restoreAllBodyParts(member);
+            }
+            member.refresh();
+        }
+        $gameSystem.setActor1Died(false);
+        if ($gameSystem.setActor2Died) $gameSystem.setActor2Died(false, '');
+        if ($gameSystem.setActor3Died) $gameSystem.setActor3Died(false, '');
+        if ($gameSystem.setBattleEnded) $gameSystem.setBattleEnded(false);
+        if ($gameSystem.setFullPartyWipe) $gameSystem.setFullPartyWipe(false);
+        BSE.State.needsRespawn = false;
+
+        const WMT = window.WorldMapTransfer;
+        let dest = (WMT && WMT.earthLost && WMT.earthLost()) ? WMT.towerLanding() : randomStorySpawn();
+        if (!dest) dest = Object.assign({}, SAFE_FALLBACK);
+        dest = prepareRespawnDestination(Object.assign({ proc: null }, dest));
+        $gamePlayer._priorityType = 1;
+        $gamePlayer.setThrough(false);
+        $gamePlayer.reserveTransfer(dest.mapId, dest.x, dest.y, dest.dir || 2, 0);
+        SceneManager.goto(Scene_Map);
+        return dest;
+    }
+
+    // "Give up": the story's saves go, quicksaves included, and the title
+    // screen is all that is left.
+    function giveUpStory() {
+        _emFallen = false;
+        const SS = window.SaveSystem;
+        const erase = (SS && SS.eraseStoryBand) ? SS.eraseStoryBand({ quicksaves: true }) : null;
+        return Promise.resolve(erase).catch((e) => {
+            console.error('BattleSystemEnhancedDeath: the story saves could not be erased', e);
+        }).then(() => SceneManager.goto(Scene_Title));
+    }
+
+    window.StoryDeath = {
+        mortal: () => BSE.Helpers.isStoryMortal(),
+        bubbaLost: storyBubbaLost,
+        emFallen: storyEmFallen,
+        emFalls: storyEmFalls,
+        loseBubba: loseStoryBubba,
+        noteRemoved: noteStoryRemoved,
+        randomSpawn: randomStorySpawn,
+        witchesNeverDie,
+        giveUp: giveUpStory
+    };
 
     // ========================================================================
     // 7. Game_Player - performTransfer

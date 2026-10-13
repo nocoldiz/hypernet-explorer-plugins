@@ -6,13 +6,13 @@
       "{Casa|Il letto|Una stanza silenziosa} mi sta chiamando {a gran voce|da un pezzo|forte}.",
       "Ancora {quattro passi|due vie|cinque minuti} e poi {crollo|mi stendo|mi fermo}.",
       "Prima {il letto|dormire|il riposo}. {Il resto può aspettare|Tutto il resto dopo|Il resto si vedrà}.",
-      "Sono {in piedi|sveglio|in giro} da {prima dell'alba|stanotte|troppe ore}.",
+      "Sono {in piedi|{g:sveglio|sveglia|sveglio}|in giro} da {prima dell'alba|stanotte|troppe ore}.",
       "{Il cuscino|Il materasso|Il mio letto} {ha la mia forma|mi aspetta|mi conosce} e {mi manca|lo voglio|sto arrivando}.",
-      "{Via le scarpe|Via gli stivali|Via il cappotto}, {lampada spenta|porta sprangata|tende chiuse}, e {niente|anima viva|nessuno} fino al {mattino|l'alba|la campana}.",
-      "{Sbadiglio|Sbatto le palpebre|Inciampo} {come uno sciocco|per tutta la strada|a ogni angolo}.",
+      "{Via le scarpe|Via gli stivali|Via il cappotto}, {lampada spenta|porta sprangata|tende chiuse}, e {niente|anima viva|nessuno} fino {al mattino|all'alba|alla campana}.",
+      "{Sbadiglio|Sbatto le palpebre|Inciampo} {come {g:uno sciocco|una sciocca|uno sciocco}|per tutta la strada|a ogni angolo}.",
       "{Qualunque cosa sia|Chiunque mi cerchi|Tutto il resto}, {può aspettare domani|domani|chiedetemelo domattina}.",
-      "{Un'altra ora|Un'ora|Un minuto ancora} {sveglio|in piedi|così} e {cado|sono inutile|comincio a dire sciocchezze}.",
-      "{Dormire|Un lungo sonno|Dieci ore} {e poi|e dopo|prima, poi} {penserò|sarò gentile|tornerò umano}."
+      "{Un'altra ora|Un'ora|Un minuto ancora} {{g:sveglio|sveglia|sveglio}|in piedi|così} e {cado|sono da buttare|comincio a dire sciocchezze}.",
+      "{Dormire|Un lungo sonno|Dieci ore} {e poi|e dopo|prima, poi} {penserò|sarò gentile|tornerò {g:umano|umana|umano}}."
     ],
     "hunger": [
       "Lo stomaco mi sta {facendo una serenata|brontolando|rimproverando}...",
@@ -22,10 +22,10 @@
       "{Pane|Una zuppa|Qualcosa di caldo} e sarei a posto. {Qualsiasi cosa|Davvero qualsiasi cosa|Anche poco}.",
       "Continuo a {sentire odore di|pensare al|immaginare il} {pane|fritto|brodo}.",
       "{Pane caldo|Cipolle fritte|Castagne arrosto}. {Qualcuno sta cucinando|Qui vicino|Quell'odore}. {Crudele|Meraviglioso|Seguilo}.",
-      "{Saltato la colazione|Niente pranzo|Dimenticato di mangiare}, {e ora|e sono|quindi} {la pago|di cattivo umore|vuoto}.",
+      "{Saltata la colazione|Niente pranzo|Mi sono {g:dimenticato|dimenticata|dimenticato} di mangiare}, e {adesso la pago|sono di cattivo umore|ho lo stomaco vuoto}.",
       "{Un piatto|Una ciotola|Una pagnotta} di {qualsiasi cosa|qualcosa di caldo|qualcosa che riempia}, {e in fretta|presto|per favore}.",
       "{Il pasto più economico|La cosa più vicina|La bancarella più veloce} {che c'è|in vista|che trovo}. {Il gusto è facoltativo|Va bene|Qualsiasi}.",
-      "{Divento nervoso|Divento stupido|Divento triste} quando ho {così fame|lo stomaco vuoto|saltato i pasti}. {Prima mangio|Cibo, poi parliamo|Dammi da mangiare, poi chiedi}.",
+      "{Divento {g:nervoso|nervosa|nervoso}|Divento {g:stupido|stupida|stupido}|Divento triste} quando ho {così fame|lo stomaco vuoto|saltato i pasti}. {Prima mangio|Cibo, poi parliamo|Dammi da mangiare, poi chiedi}.",
       "{Cosa c'è in dispensa|C'è pane a casa|Ho lasciato qualcosa in pentola}? {Probabilmente no|Niente|Spero}."
     ],
     "work": [
@@ -36,10 +36,10 @@
       "Prima {il dovere|il lavoro|il turno}. {Come sempre|Sempre così|È l'accordo}.",
       "{Il grimorio|Il bancone|Il banco} non si {sistema da solo|tiene da solo|riordina da sé}.",
       "{Il caposquadra|Il capo|Il padrone} {conta i minuti|guarda la porta|tiene un registro dei ritardatari}. {Sbrigati|Muoviti|Corri}.",
-      "{Mani occupate|Testa bassa|Un compito alla volta}, e {le ore|la giornata|il turno} {passano|se ne va|scorre}.",
-      "{Il giorno di paga|Venerdì|La fine del mese} è {vicino|in arrivo|così lontano}.",
-      "{Sono bravo in questo|Conosco questo lavoro|Nessuno lo fa meglio}, {qualunque cosa dicano|anche se nessuno se ne accorge|e lo sanno}.",
-      "{Lo stesso banco|Gli stessi attrezzi|Le stesse facce} {ogni giorno|da anni|da quando ero giovane}. {Sicuro|Noioso|Mio}.",
+      "{Mani occupate|Testa bassa|Un compito alla volta}, e {le ore passano|la giornata se ne va|il turno scorre}.",
+      "{Il giorno di paga|Venerdì|La fine del mese} è {a un passo|in arrivo|ancora lontanissimo}.",
+      "{Questo lavoro lo so fare|Conosco questo mestiere|Nessuno lo fa meglio}, {qualunque cosa dicano|anche se nessuno se ne accorge|e lo sanno}.",
+      "{Lo stesso banco|Gli stessi attrezzi|Le stesse facce} {ogni giorno|da anni|da quando ero giovane}. {Una certezza|Che noia|Roba mia}.",
       "{Fallo bene|Fallo una volta|Fallo come si deve} e {nessuno urla|regge|torno a casa in orario}."
     ],
     "leisure": [
@@ -49,11 +49,11 @@
       "Ho del tempo libero e {non so cosa farmene|qualche idea ce l'ho|nessuno mi cerca}.",
       "Nessuno mi {vuole|cerca|aspetta} per {un'ora|un po'|tutto il pomeriggio}.",
       "{Del vino|Due passi|Una canzone} e {un'ora|una serata|niente} da riempire.",
-      "{Il parco|La piazza|Il ponte} è {bello a quest'ora|pieno di piccioni|tranquillo}. {Siediti e basta|Resta un po'|Respira}.",
+      "{Al parco|In piazza|Sul ponte} {si sta bene a quest'ora|è pieno di piccioni|c'è pace}. {Siediti e basta|Resta un po'|Respira}.",
       "{Una partita a carte|Un giro in sala giochi|Una canzone o due}, {perché no|nessuno mi ferma|me lo sono meritato}.",
       "{Guardare la gente|Guardare le barche|Guardare le nuvole} è {gratis|sottovalutato|lo spettacolo migliore della città}.",
       "{Niente lista|Niente commissioni|Niente turno} oggi. {Strana sensazione|Bellissimo|Non so cosa fare con le mani}.",
-      "{Il cinema|Il radiodramma|Lo spettacolo ambulante} {c'è stasera|ne ha uno nuovo|è in città}. {Forse|Magari|Allettante}.",
+      "{Il cinema ha un film nuovo|Il radiodramma ha una puntata nuova stasera|Lo spettacolo ambulante è in città}. {Forse|Magari|Allettante}.",
       "{Gironzolare|Lasciarsi portare|Passeggiare} {e vedere|ovunque|finché succede qualcosa}. {Questo è un piano|Basta così|Va bene}."
     ],
     "crime": [
@@ -64,7 +64,7 @@
       "{Un errore|Una distrazione|Un secondo di troppo} e finisco {in cella|male|sulla lista}.",
       "{Prendilo|Fallo|Vai} e {non correre|cammina normale|tieni ferme le mani}.",
       "{Strada affollata|Mercato pieno|Negoziante distratto}. {Bene|Perfetto|Utile}.",
-      "{Sorridi|Fai l'annoiato|Fai finta di essere di qui}. {Nessuno sospetta di un sorriso|L'annoiato è invisibile|Sembrare di casa è tutto}.",
+      "{Sorridi|{g:Fai l'annoiato|Fai l'annoiata|Fai l'annoiato}|Fai finta di essere di qui}. {Nessuno sospetta di un sorriso|Chi si annoia è invisibile|Sembrare di casa è tutto}.",
       "{La guardia|Il guardiano|Quel poliziotto} {ha appena girato l'angolo|sta mangiando|guarda dall'altra parte}.",
       "{Sono assicurati|Non gli mancherà|Fanno pagare troppo comunque}. {Probabilmente|Sicuramente|È quello che mi dico}.",
       "{Mia madre|Il mio vecchio maestro|Il prete} {piangerebbe|non mi riconoscerebbe|direbbe una preghiera}. {Non è qui|Non adesso|Dopo}.",
@@ -72,13 +72,13 @@
     ],
     "hygiene": [
       "Ho proprio bisogno di {lavarmi|una sciacquata|acqua pulita}.",
-      "Mi sento {appiccicoso|sporco|un fosso}, dov'è {il lavandino|la fontana|il bagno} più vicino?",
+      "Mi sento {{g:appiccicoso|appiccicosa|appiccicoso}|{g:sporco|sporca|sporco}|uno straccio}, dov'è {il lavandino|la fontana|il bagno} più vicino?",
       "Una tappa {in bagno|alla fontana|dal barbiere} non guasterebbe.",
       "Datemi cinque minuti e {un po' d'acqua|del sapone|una bacinella}.",
       "{Sapone|Acqua calda|Una camicia pulita}. {Chiedo tanto|È troppo|Solo quello}?",
       "{Fango|Polvere|Grasso} {fino ai gomiti|nei capelli|ovunque}. {Bellissimo|Delizioso|Ovviamente}.",
-      "{La pompa|I bagni pubblici|Il fiume} {non è lontana|sono di strada|è abbastanza vicino}.",
-      "{Una faccia pulita|Mani pulite|Capelli puliti} e {mi sento umano|la giornata ricomincia|posso guardare la gente negli occhi}.",
+      "{Alla pompa|Ai bagni pubblici|Al fiume} ci arrivo {in un attimo|di passaggio|in due passi}.",
+      "{Una faccia pulita|Mani pulite|Capelli puliti} e {torno a sentirmi una persona|la giornata ricomincia|posso guardare la gente negli occhi}.",
       "{Se n'è accorto qualcuno|La gente lo sente|Si nota}? {Probabilmente|Sicuramente|Spero di no}.",
       "{L'acqua calda|Il sapone vero|Un asciugamano} è {un lusso|un piccolo miracolo|una cosa meravigliosa}.",
       "{Strofina|Sciacqua|Lava}, {asciuga|cambiati|pettinati}, e {di nuovo fuori|si ricomincia|riprova}.",
@@ -95,19 +95,19 @@
       "{Lavoretti|Qualsiasi lavoro|Una giornata di fatica}, {qualcosa c'è|chi assume|lo prendo}.",
       "{Pane o candele|Affitto o carbone|Scarpe o minestra}. {Scegline uno|Non tutti e due|Mai tutti e due}.",
       "{Un prestito|Credito|Un favore} da {un amico|il negozio|mio cugino}? {Di nuovo|Ancora una volta|Odio chiedere}.",
-      "{Ogni moneta|Ciascuna moneta|Tutto} {ha già un nome sopra|è già impegnato|va da qualche parte prima che io lo veda}.",
+      "{Ogni moneta|Ogni spicciolo|Tutto quello che entra} {ha già un nome sopra|ha già una destinazione|se ne va prima ancora di arrivare}.",
       "{La banca|Il banco dei pegni|L'usuraio} {sorride|aspetta|sa il mio nome}. {Non mi piace|Brutto segno|Mmh}."
     ],
     "safety": [
       "Per un po' conviene {stare buoni|sparire|non farsi vedere}.",
-      "Meglio {mettere questa roba al sicuro|nasconderla|toglierla dalle mani}.",
+      "Meglio {mettere questa roba al sicuro|nascondere la roba|levarmi la roba dalle mani}.",
       "Adesso non voglio {grane|risse|domande}, davvero.",
       "Sto sotto traccia finché {non si calmano le acque|non passa|non si stancano}.",
-      "{Qualcuno|Una guardia|Un tipo} {sorveglia|fa domande|gira per} {questa via|di me|il quartiere}.",
+      "{Qualcuno sorveglia questa via|Una guardia fa domande su di me|Un tipo gira per il quartiere}.",
       "{Strade secondarie|Vie laterali|Vicoli} {soltanto|per un po'|d'ora in poi}. {Niente piazza principale|Evita il mercato|Lontano dal corso}.",
       "{Un cappotto nuovo|Un cappello|Un'andatura diversa}, {e non mi riconosceranno|forse|potrebbe aiutare}.",
       "{A chi l'ho detto|Chi mi ha visto|Chi parla}? {Troppi|Qualcuno|Ne basta uno}.",
-      "{Ogni colpo alla porta|Ogni passo|Ogni divisa} {mi fa sobbalzare|è per me|potrebbero essere loro}.",
+      "{Ogni colpo alla porta|Ogni passo|Ogni divisa} {mi fa sobbalzare|sembra venire per me|potrebbe essere uno di loro}.",
       "{Fuori città|Da mio cugino|In un posto tranquillo} per {una settimana|un po'|la stagione}. {Solo finché|Solo fino a quando|Finché} non {si calma|passa|viene dimenticato}.",
       "{Porte chiuse|Imposte abbassate|Lampada bassa}, e {nessuno in casa|neanche un suono|aspetta}.",
       "{Non fidarti di nessuno|Non dire niente|Non dovere niente a nessuno} {per ora|questa settimana|finché non finisce}."
@@ -115,12 +115,12 @@
     "comfort": [
       "Mi meriterei {un posto un po' più decente|una stanza con la finestra|un tetto che tiene}.",
       "Forse è ora di {cambiare sistemazione|traslocare|smetterla di vivere così}.",
-      "Un {letto vero|stanza calda|pavimento asciutto}, per una volta, non sarebbe male.",
+      "{Un letto vero|Una stanza calda|Un pavimento asciutto}, per una volta, non sarebbe male.",
       "Ho messo da parte abbastanza, perché non {viziarmi un po'|concedermelo|farmi un regalo}?",
       "{Il caldo|Una poltrona|Una coperta buona} non è {chiedere troppo|un lusso|pretendere}.",
       "{Lo spiffero|L'umidità|Il pavimento freddo} {entra dappertutto|non si ferma mai|sta vincendo}.",
       "{Un tappeto|Una tenda|Una stufa che tira} {cambierebbe tutto|ne farebbe una casa|basterebbe}.",
-      "{I vicini|La strada|I treni} {non smettono mai|sono sempre rumorosi|fanno tremare i vetri}. {Un posto più tranquillo|Una strada migliore|Più in periferia}.",
+      "{Con i vicini|Con la strada|Con i treni} qui {non si dorme|c'è sempre chiasso|tremano i vetri}. {Un posto più tranquillo|Una strada migliore|Più in periferia}.",
       "{Due stanze|Un giardino|Una cucina tutta mia}. {Immagina|Un giorno|È chiedere troppo}.",
       "{Una poltrona morbida|Un bagno caldo|Lenzuola pulite} {a fine giornata|stasera|una volta a settimana}. {Questo è il sogno|Semplice|Non è molto}.",
       "{Guardare stanze|Chiedere degli affitti|Leggere gli annunci} {questa settimana|domani|dopo il lavoro}.",
@@ -136,8 +136,8 @@
       "{Parlare di qualsiasi cosa|Parlare del tempo|Parlare di niente}, {parlare e basta|non mi importa|con chiunque}.",
       "{Il mio vecchio amico|Quel vicino|Mio cugino} {non scrive mai|è sempre occupato|si è trasferito}. {Peccato|Che peccato|Comunque}.",
       "{Un ballo|Un gioco|Un tavolo da carte} {ha bisogno di gente|è meglio in compagnia|da soli non è divertente}.",
-      "{Troppo silenzio|Troppo tempo|Troppe sere} {a casa|da solo|per conto mio} {ultimamente|questo mese|di nuovo}.",
-      "{Saluta|Sorridi|Fai un cenno} {per primo|stavolta|per una volta}. {Cosa può succedere|Dai|Coraggio}.",
+      "{Troppo silenzio|Troppo tempo|Troppe sere} {a casa|{g:da solo|da sola|da solo}|per conto mio} {ultimamente|questo mese|di nuovo}.",
+      "{Saluta|Sorridi|Fai un cenno} {{g:per primo|per prima|per primo}|stavolta|per una volta}. {Cosa può succedere|Dai|Coraggio}.",
       "{Qualcuno con cui ridere|Una spalla|Qualcuno che ascolti}, {tutto qui|basterebbe|solo uno}."
     ],
     "null": [
@@ -152,20 +152,20 @@
       "{Tu tu tu|La la|Mm mm mm}...",
       "{Sto solo|Semplicemente|Soltanto} {passando|camminando|pensando}.",
       "{Come sempre|Il solito|Un altro giorno}.",
-      "{Tranquillo|Calmo|Silenzioso} {oggi|qui fuori|per una volta}."
+      "{Tutto tranquillo|Tutto calmo|Che silenzio} {oggi|qui fuori|per una volta}."
     ]
   },
   "needDire": {
     "sleep": [
-      "{La strada|Il terreno|Tutto} {si inclina|ondeggia|si muove da solo}. {Quando ho dormito l'ultima volta|Da quanto sono sveglio|Che giorno è}?",
-      "Ho appena {letto lo stesso cartello|contato la stessa moneta|detto la stessa parola} {tre volte|quattro volte|due volte} e {non me ne sono accorto|non significava niente|l'ho dimenticato}.",
-      "{Un portone|Una panchina|Il marciapiede} {andrebbe bene|sembra morbido|comincia a sembrare un letto}.",
+      "{La strada|Il terreno|Tutto} {si inclina|ondeggia|si muove da solo}. {Quando ho dormito l'ultima volta|Da quanto sono {g:sveglio|sveglia|sveglio}|Che giorno è}?",
+      "Ho appena {letto lo stesso cartello|contato la stessa moneta|detto la stessa parola} {tre volte|quattro volte|due volte} e {non me ne sono {g:accorto|accorta|accorto}|non significava niente|l'ho dimenticato}.",
+      "{Un portone|Una panchina|Il marciapiede} {andrebbe bene|sembra quasi un materasso|comincia a sembrare un letto}.",
       "Gli occhi {si chiudono da soli|continuano a chiudersi|sono pieni di sabbia} e {il buio|i sogni|le voci} cominciano prima che {mi sieda|arrivi al muro|smetta di camminare}.",
-      "{Se qualcuno mi parla|Ancora una domanda|Ancora una commissione} e {crollo|piango|mi stendo dove sono}.",
-      "{Giorni|Due giorni|Troppo tempo} senza {dormire|un letto|chiudere occhio}. {Le mani|Il cuore|La testa} {non smettono di tremare|corre|è piena di api}.",
+      "{Una parola in più|Ancora una domanda|Ancora una commissione} e {crollo|scoppio a piangere|mi stendo dove sono}.",
+      "{Giorni|Due giorni|Troppo tempo} senza {dormire|un letto|chiudere occhio}. {Le mani non smettono di tremare|Il cuore corre|La testa è piena di api}.",
       "{Stenditi|Dormi|Fermati}. {Ovunque|Adesso|Fermati e basta}. {Tutto il resto può bruciare|Lascia perdere tutto|Non m'importa quanto costa}.",
       "{Era un gatto|Si è mosso quel muro|Chi l'ha detto}? {Nessuno|Niente|Non c'è nessuno}. {Devo dormire|Ho le visioni|A dormire, subito}.",
-      "Mi sono {addormentato|appisolato|spento} {in piedi|reggendomi da solo|a metà passo} proprio ora. {Questa è nuova|Brutto segno|Meraviglioso}.",
+      "Mi sono {{g:addormentato|addormentata|addormentato}|{g:appisolato|appisolata|appisolato}|{g:spento|spenta|spento}} {in piedi|senza appoggio|a metà passo} proprio ora. {Questa è nuova|Brutto segno|Meraviglioso}.",
       "{Dieci minuti|Cinque minuti|Un minuto} a occhi chiusi e {darei|pagherei|scambierei} {qualsiasi cosa|una settimana di paga|gli stivali}."
     ],
     "hunger": [
@@ -175,22 +175,22 @@
       "{L'odore|Ogni odore|Un odore} da {quella cucina|quella bancarella|quella finestra} è {una tortura|una crudeltà|una coltellata}.",
       "{Giorni|Due giorni|Tre giorni} ad {acqua|niente|briciole}. {Non riesco a pensare|Non riesco a lavorare|Non reggo ancora a lungo}.",
       "{Rubarlo|Mendicarlo|Chiederlo}, non m'importa come. {Cibo|Pane|Qualcosa}, {adesso|oggi|prima che crolli}.",
-      "{La cintura|I pantaloni|Il cappotto} {ha un buco nuovo|mi cadono di dosso|mi sta come un sacco} ormai.",
+      "{La cintura ha un buco nuovo|I pantaloni mi cadono di dosso|Il cappotto mi sta come un sacco} ormai.",
       "{I piccioni|I topi|I cani} in strada {mangiano meglio di me|mi sembrano grassi|cominciano a sembrarmi una cena}.",
       "{Vi prego|Vi prego, qualunque cosa|Qualcuno}, {una crosta|una moneta|una ciotola di qualsiasi cosa}.",
-      "{I crampi|Il dolore|Il vuoto} {non si fermano|è peggio da sdraiato|mi sveglia di notte}."
+      "{I crampi non si fermano|Il dolore peggiora quando mi stendo|Il vuoto mi sveglia di notte}."
     ],
     "hygiene": [
       "{La gente|Tutti|Perfino i cani} {si allontanano da me|cambiano marciapiede|arricciano il naso}. {Lo so|Non li biasimo|Lo farei anch'io}.",
       "{Ho prurito|Prude tutto|Mi formicola la testa} e {non voglio sapere perché|non riesco a smettere di grattarmi|ho paura di guardare}.",
       "{Un fiume|Un abbeveratoio|Un barile di pioggia}, {qualsiasi cosa|non m'importa|acqua qualsiasi}. {Adesso|Oggi|Prima che qualcun altro mi senta}.",
       "{Mi sento puzzare|Il mio stesso odore|Il tanfo} {da qui|più forte della strada|più forte del mercato del pesce}.",
-      "{Questi vestiti|Questa camicia|I calzini} potrebbero {stare in piedi da soli|tornare a casa senza di me|essere bruciati}.",
+      "{Questi vestiti potrebbero stare in piedi da soli|Questa camicia potrebbe tornare a casa senza di me|I calzini andrebbero bruciati}.",
       "{Nessun negozio|Nessuno|Nessuna locanda} {mi farà entrare|mi servirà|mi guarderà} così.",
       "{Settimane|Troppo tempo|Dal disgelo} senza {lavarmi come si deve|sapone|acqua calda}. {Mi vergogno|Sono una vergogna|Non me ne accorgo più, ed è peggio}.",
       "{Le mosche|Tutte le mosche|Ogni mosca della città} {mi seguono|mi hanno trovato|pensano che io sia la cena}.",
-      "{Le piaghe|La pelle|Le mani} {si screpolano|sono a vivo|bruciano}. {Lavarsi|Acqua pulita|Una bacinella}, {ti prego|presto|adesso}.",
-      "{Un bambino|Una donna|Un vecchio} si è appena {tappato il naso|messo a indicarmi|messo a dire qualcosa su di me}. {Giusto|Ci sta|Ha ragione}."
+      "{Le piaghe bruciano|La pelle si screpola|Le mani sono a vivo}. {Lavarsi|Acqua pulita|Una bacinella}, {ti prego|presto|adesso}.",
+      "{Un bambino|Un vecchio|Un passante} si è appena {tappato il naso|messo a indicarmi|messo a dire qualcosa su di me}. {Giusto|Ci sta|Ha ragione}."
     ],
     "social": [
       "{Giorni|Una settimana|Settimane} e {neanche una parola|nessuno ha detto il mio nome|neanche una parola gentile}. {Nessuna|Niente|Zero}.",
@@ -199,22 +199,22 @@
       "{Chiunque|Qualcuno|Proprio chiunque}. {Solo per parlare|Solo un saluto|Solo una voce}. {Vi prego|Chiunque|Tutto qui}.",
       "{Il silenzio|La quiete|Questa stanza vuota} è {assordante|pesante|la cosa più rumorosa della casa}.",
       "Ogni {risata|voce|coppia} per strada {sembra rivolta a me|mi passa da parte a parte|appartiene a qualcun altro}.",
-      "{Starei seduto|Ascolterei|Starei} con {un noioso|un ubriaco|uno sconosciuto} {per un'ora|tutta la sera|volentieri} pur di {sentirmi parlare|avere compagnia|sentire una voce}.",
-      "{Solo|Così solo|Solitudine} è {una parola|la parola sbagliata|una parola troppo piccola} per questo.",
+      "{Starei {g:seduto|seduta|seduto}|Ascolterei|Starei} con {un seccatore|un ubriaco|uno sconosciuto} {per un'ora|tutta la sera|volentieri} pur di {sentirmi parlare|avere compagnia|sentire una voce}.",
+      "{{g:Solo|Sola|Solo}|Così {g:solo|sola|solo}|Solitudine} è {una parola|la parola sbagliata|una parola troppo piccola} per questo.",
       "{Persino il negoziante|Persino il fornaio|Persino il postino} {non ha alzato lo sguardo|non ha detto niente|ha dimenticato la mia faccia}.",
       "{Una lettera|Un colpo alla porta|Un viso amico}. {Piangerei|Non saprei cosa dire|Mi ci aggrapperei}."
     ],
     "leisure": [
-      "{Se non mi fermo|Se non ho un'ora|Un altro giorno così} e {rompo qualcosa|urlo|cammino dritto in mare}.",
+      "{Se non mi fermo|Se non ho un'ora per me|Ancora un giorno così} {finisce che rompo qualcosa|mi metto a urlare|cammino dritto in mare}.",
       "{Lavoro|Sonno|Ancora lavoro}, {lavoro|mangiare|dormire}, e {nient'altro|niente in mezzo|niente aria}. {Da mesi|Da un anno|Per sempre}.",
       "{Non ricordo|Ho dimenticato|Non so più} {l'ultima volta che ho riso|cosa mi piaceva fare|come si sta in un pomeriggio libero}.",
       "{Tutto|Ogni faccia|Ogni suono} {irrita|graffia|è troppo forte}. {Devo uscire|Mi serve aria|Mi serve un'ora di niente}.",
       "{Una canzone|Un gioco|Una passeggiata sull'acqua}, {qualsiasi cosa|una volta sola|una cosa} che sia {mia|non un dovere|non per qualcun altro}.",
       "{Grigio|Piatto|Spento}. {Ogni giorno|Tutta la settimana|Tutto} è {grigio|dello stesso colore|lo stesso giorno}.",
-      "Oggi {ho risposto male a|ho urlato contro|sono stato crudele con} {un bambino|un amico|il fornaio}. {Non sono io|Ho bisogno di riposo|Qualcosa deve cedere}.",
+      "Oggi {ho risposto male a|ho urlato contro|sono {g:stato crudele|stata crudele|stato crudele} con} {un bambino|un amico|una vicina}. {Non sono io|Ho bisogno di riposo|Qualcosa deve cedere}.",
       "{Scappare|Lasciare la città|Andarmene} e {non tornare più|non dire dove|lasciare la chiave}. {Allettante|Molto allettante|Troppo allettante}.",
-      "{La mascella|Le spalle|Il collo} {è serrata|sono attaccate alle orecchie|è un nodo} e {lo è da giorni|non si scioglie|fa male}.",
-      "{Un pomeriggio|Una sera|Un giorno intero} {libero|per me|di niente}. {È chiedere troppo|Solo questo|Pagherei per averlo}."
+      "{La mascella è serrata|Le spalle sono attaccate alle orecchie|Il collo è un nodo} e {così da giorni|non si scioglie|fa male}.",
+      "{Un pomeriggio|Una sera|Un giorno intero} {per me|tutto per me|di niente}. {È chiedere troppo|Solo questo|Pagherei per averlo}."
     ],
     "bladder": [
       "{Adesso|Subito|In questo istante}. {Non tra un minuto|Non dietro l'angolo|Adesso}.",
@@ -226,28 +226,28 @@
       "{Qualcuno|Chiunque|Vi prego}, {una chiave|una porta|un secchio}, {vi supplico|pago io|qualunque cosa}.",
       "{Il fiume|Quella fontana|La pioggia sul tetto} è {il suono più crudele|insopportabile|una presa in giro} adesso.",
       "{Tieni|Trattieni|Resisti}. {Altri dieci passi|Altri cinque passi|Altri due passi}. {Tieni|Trattieni|Resisti e basta}.",
-      "{Mai più|Mai in vita mia|Mai} {berrò prima di una passeggiata|prenderò la terza tazza|uscirò senza esserci andato prima}."
+      "{Mai più|Mai in vita mia|Mai} {berrò prima di una passeggiata|prenderò la terza tazza|uscirò senza esserci {g:andato|andata|andato} prima}."
     ]
   },
   "needMild": {
     "sleep": [
       "{Stasera a letto presto|Una serata breve|Presto a letto} stasera, credo.",
-      "Uno {sbadiglio|stiramento|battito di ciglia lungo} o due. {Niente che un pisolino non sistemi|Niente di grave|È il pomeriggio}.",
-      "{Un po' lento|Con le palpebre un po' pesanti|Non del tutto sveglio} oggi.",
-      "{Quel letto|Il cuscino|La coperta} {mi farà bene|sarà benvenuto|sarà bellissimo} più tardi.",
+      "{Uno sbadiglio|Uno stiramento|Un lungo battito di ciglia} o due. {Niente che un pisolino non sistemi|Niente di grave|È il pomeriggio}.",
+      "{Un po' {g:lento|lenta|lento}|Con le palpebre un po' pesanti|Non del tutto {g:sveglio|sveglia|sveglio}} oggi.",
+      "{Quel letto|Il cuscino|La coperta} {mi farà bene|sarà una benedizione|sarà una meraviglia} più tardi.",
       "{Un caffè|Un'altra tazza|Un po' d'aria} {aiuterebbe|mi sveglierebbe|basterebbe}.",
-      "{Ho dormito male|Mi sono svegliato troppo presto|Mi sono girato e rigirato} stanotte. {Me lo farà pagare|Lo sentirò dopo|Pazienza}.",
-      "{Sedersi un attimo|Una panchina|Cinque minuti seduto} {non guasterebbe|suona bene|è una tentazione}.",
+      "{Ho dormito male|Mi sono {g:svegliato|svegliata|svegliato} troppo presto|Mi sono {g:girato|girata|girato} e {g:rigirato|rigirata|rigirato}} stanotte. {Me lo farà pagare|Lo sentirò dopo|Pazienza}.",
+      "{Sedersi un attimo|Una panchina|Cinque minuti {g:seduto|seduta|seduto}} {non guasterebbe|suona bene|è una tentazione}.",
       "{Il sole|Questo tepore|La quiete} mi fa venire {sonno|la sonnolenza|voglia di cuscino}.",
-      "{Non stanco|Non sfinito|Bene}, solo {pronto per la sera|a contare le ore|desideroso del letto}.",
+      "{Non {g:stanco|stanca|stanco}|Non {g:sfinito|sfinita|sfinito}|Sto bene}, {ho solo voglia di sera|conto solo le ore|ho solo voglia di letto}.",
       "{A letto|A dormire|Luci spente} {a un'ora decente|in orario|prima di mezzanotte}, {per una volta|stavolta|me lo prometto}."
     ],
     "hunger": [
       "{Un boccone|Qualcosa di piccolo|Uno spuntino} {sarebbe gradito|presto|più tardi}.",
       "{Cosa c'è|Cosa prendo|Cosa si mangia} per {cena|pranzo|stasera}, chissà.",
       "{Quel forno|Quella bancarella|La vetrina di quel posto} {ha un buon profumo|ha un bell'aspetto|mi chiama}.",
-      "{Un languorino|Un po' di vuoto|Pronto per mangiare}, {non affamato|niente di urgente|nessuna fretta}.",
-      "{Una mela|Un panino|Un po' di formaggio} in tasca {sarebbe perfetto|farebbe comodo|è quello che serve}.",
+      "{Un languorino|Un po' di vuoto|Mangerei volentieri}, {niente di serio|niente di urgente|nessuna fretta}.",
+      "{Una mela|Un panino|Un po' di formaggio} in tasca {sarebbe l'ideale|farebbe comodo|è quello che serve}.",
       "{Minestra|Stufato|Arrosto} {stasera|più tardi|per cena}, se c'è {tempo|denaro|qualcosa in casa}.",
       "Lo stomaco {ha fatto un rumorino|ha brontolato una volta|me l'ha ricordato}. {Ricevuto|Giusto|Presto}.",
       "{Dovrei|Potrei|Che dici,} {fermarmi per qualcosa|prendere un boccone|mangiare presto}? {Forse|Magari|Perché no}.",
@@ -256,12 +256,12 @@
     ],
     "hygiene": [
       "{Una lavata veloce|Uno spruzzo d'acqua|Mani pulite} {più tardi|prima di cena|quando rientro}.",
-      "{Il colletto|Questi polsini|Gli stivali} {avrebbero bisogno di una strofinata|vorrebbero una spazzolata|potrebbero essere più puliti}.",
-      "{Impolverato|Un po' sporco|Sudato} per {la strada|la giornata|il lavoro}. {Niente che una bacinella non risolva|Capita|Dopo}.",
+      "{Il colletto avrebbe bisogno di una strofinata|Questi polsini vorrebbero una spazzolata|Gli stivali potrebbero essere più puliti}.",
+      "{{g:Impolverato|Impolverata|Impolverato}|Un po' {g:sporco|sporca|sporco}|{g:Sudato|Sudata|Sudato}} per {la strada|la giornata|il lavoro}. {Niente che una bacinella non risolva|Capita|Dopo}.",
       "{Pettinarmi|Cambiare camicia|Lavarmi la faccia} prima di {vedere qualcuno|stasera|uscire}.",
-      "{Acqua calda|Un bagno|Una lunga lavata} {stasera|a fine settimana|presto} sarebbe {un piacere|bello|delizioso}.",
+      "{Acqua calda|Un bagno|Una lunga lavata} {stasera|a fine settimana|presto} sarebbe {un piacere|una bellezza|una delizia}.",
       "{Fango sull'orlo|Inchiostro sulle dita|Fuliggine sulla guancia}, {immagino|probabilmente|senza dubbio}.",
-      "{Giorno di bucato|Il bucato|Il lavaggio} {domani|tocca|non può aspettare ancora molto}.",
+      "{Giorno di bucato domani|Il bucato tocca a me|Il bucato non può aspettare ancora molto}.",
       "{Vestiti|Biancheria|Calzini} {freschi|puliti|in ordine} {domani|la prossima volta|per domattina}, {credo|forse|sicuramente}.",
       "{Un sentore|Un accenno|Una traccia} di {stalla|cucina|mercato} addosso. {Mmh|Va bene|Dopo}.",
       "{Lavarmi|Radermi|Tagliarmi le unghie} {quando ho un minuto|dopo questo|stasera}."
@@ -272,32 +272,32 @@
       "{Dovrei scrivere a|Dovrei andare a trovare|Devo una visita a} {mia sorella|un vecchio amico|i vicini}.",
       "{Un bicchiere|Un caffè|Una partita a carte} con {qualcuno|compagnia|un amico} {questa settimana|presto|stasera}, magari.",
       "{Giornata tranquilla|Poche facce|Poca gente} {oggi|finora|in giro}. {Va bene|Abbastanza piacevole|Ci sta}.",
-      "{Forse|Magari|Potrei} {la taverna|la piazza|il mercato} {più tardi|stasera|dopo questo}. {Vedere chi c'è|Per la compagnia|Per il chiasso}.",
+      "{Forse|Magari|Quasi quasi} {un salto in taverna|un giro in piazza|due passi al mercato} {più tardi|stasera|dopo questo}. {Vedere chi c'è|Per la compagnia|Per il chiasso}.",
       "{È da un po'|È parecchio|Sono alcuni giorni} che non {sento una bella storia|rido con qualcuno|ho compagnia vera}.",
-      "{Una faccia amica|Un saluto con la mano|Un ciao} {rallegrerebbe le cose|sarebbe gradito|basterebbe}.",
+      "{Una faccia amica|Un saluto con la mano|Un ciao} {rallegrerebbe le cose|farebbe piacere|basterebbe}.",
       "{Notizie|Pettegolezzi|Novità}, {chissà|qualcuno|chi ne ha}?",
       "{Al prossimo mercato|Alla festa|Domenica} {parlerò con più gente|saluterò come si deve|non mi nasconderò in un angolo}."
     ],
     "leisure": [
-      "{Un'ora|Un pomeriggio|Un po' di tempo} {libero|libera|per me} {sarebbe bello|suona meraviglioso|è dovuto}.",
-      "{Il lavoro|La giornata|Questa settimana} {pesa|si trascina|è lunga}, ma {non insopportabile|niente di nuovo|si regge}.",
+      "{Un'ora libera|Un pomeriggio libero|Un po' di tempo per me} {sarebbe un sogno|suona meraviglioso|ci vorrebbe proprio}.",
+      "{Il lavoro|La giornata|Questa settimana} {pesa|si trascina|è lunga}, ma {si sopporta|niente di nuovo|si regge}.",
       "{Una passeggiata|Una canzone|Una partita} {più tardi|stasera|nel fine settimana}, {forse|magari|spero}.",
-      "{La sala giochi|Il parco|Il fiume} {sarebbe bello|chiama un pochino|sembra una buona idea} {più tardi|dopo questo|stasera}.",
+      "{La sala giochi|Il parco|Il fiume} {sarebbe un'idea|chiama un pochino|sembra una buona idea} {più tardi|dopo questo|stasera}.",
       "{Un libro|Una canzone nuova|Un rompicapo} {da aspettare|che mi attende a casa|per la sera}. {Bene|Bello|Aiuta}.",
       "{Il fine settimana|Sabato|Il mio giorno libero} {non arriva mai abbastanza presto|è vicino|è il pensiero che mi fa andare avanti}.",
       "{Mi serve|Mi farebbe bene|Voglio} {un cambio di scena|un po' d'aria|qualcosa di diverso}. {Non subito|Presto|Un giorno}.",
       "{Stare al sole|Guardare le barche|Dare da mangiare alle anatre}, {questo è il piano|forse|se ne ho l'occasione}.",
-      "{Un po' annoiato|Un tantino irrequieto|Leggermente agitato} oggi. {Niente che una partita non sistemi|Passerà|Mmh}.",
+      "{Un po' {g:annoiato|annoiata|annoiato}|Un tantino {g:irrequieto|irrequieta|irrequieto}|Leggermente {g:agitato|agitata|agitato}} oggi. {Niente che una partita non sistemi|Passerà|Mmh}.",
       "{Concedermi|Viziarmi con|Premiarmi con} qualcosa {più tardi|stasera|nel fine settimana}. {Piccole cose|Una cosa piccola|Niente di che}."
     ],
     "bladder": [
       "{Il bagno|Un gabinetto|Il bagno} {alla prossima fermata|prima di uscire|quando ho un minuto}.",
       "{Quel tè|Quella birra|Quel caffè} {si sta facendo sentire|sta facendo il suo corso|ha le sue idee}.",
-      "{Dovrei|Sarebbe meglio|Meglio} {andare adesso|andare prima della coda|trovare un bagno} {finché ci penso|per sicurezza|tanto per stare tranquillo}.",
+      "{Dovrei|Sarebbe meglio|Meglio} {andare adesso|andare prima della coda|trovare un bagno} {finché ci penso|per sicurezza|tanto per stare {g:tranquillo|tranquilla|tranquillo}}.",
       "{Nessuna fretta|Non è urgente|Non ancora}, ma {presto|tra un po'|prima di tornare a casa}.",
       "{Dov'è|Da che parte è|C'è} {il bagno|la toilette|un gabinetto} {qui dentro|qui intorno|a questo piano}?",
       "{Ricordati|Nota per me|Non dimenticare}: {andare prima dell'autobus|usare il bagno prima di uscire|meno tazze}.",
-      "{Un po'|Leggermente|Appena} {a disagio|di fretta|pieno}. {Niente di drammatico|Può aspettare|Dopo}.",
+      "{Un po'|Leggermente|Appena} {a disagio|di fretta|{g:pieno|piena|pieno}}. {Niente di drammatico|Può aspettare|Dopo}.",
       "{Un'altra commissione|Un altro negozio|Finisco questo} e poi {il bagno|una sosta|la toilette}.",
       "{Il freddo|Il tempo|Questa pioggia} {fa sempre così|peggiora le cose|mi fa correre}.",
       "{Ultima tazza|Era l'ultima tazza|Basta tè} {per un po'|stamattina|fino a pranzo}."
@@ -305,80 +305,80 @@
   },
   "activity": {
     "shopwork": [
-      "{Mattinata|Pomeriggio|Turno} {tranquillo|lento|morto} al banco.",
+      "{Mattinata tranquilla|Pomeriggio lento|Turno morto} al banco.",
       "{Contare la cassa|Pulire il banco|Sistemare lo scaffale}, e poi {rifarlo|ricontare|aspettare}.",
       "C'è sempre qualcuno che vuole {proprio la cosa|esattamente quello|l'unica cosa} che {abbiamo appena finito|non teniamo mai|ho venduto stamattina}.",
       "{Sorridi|Sii gentile|Annuisci}. {Pagano loro|È il lavoro|Il cliente è lo stipendio}.",
       "I piedi {non mi parlano più|mi fanno male a forza di stare in piedi|sono diventati di legno un'ora fa}.",
       "{Il campanello|La porta|La cassa} {suona|squilla|sbatte} e il cuore {mi cade|si alza|non fa proprio niente}.",
-      "{I prezzi|Il listino|L'inventario} {sono saliti di nuovo|è cambiato in una notte|non ha senso per me}, e sono io quello che {lo deve dire|si prende le occhiate|deve spiegarlo}.",
+      "{I prezzi sono saliti di nuovo|Il listino è cambiato in una notte|L'inventario non ha senso}, e sono io {g:quello|quella|quello} che {lo deve dire|si prende le occhiate|deve spiegarlo}.",
       "{Moneta giusta|Spiccioli sul banco|Una banconota troppo grossa da cambiare}. {Che bravi|Ogni volta|Ovviamente}.",
       "Conosco {ogni cliente fisso|mezza strada|tutto l'isolato} da {quello che compra|come paga|come tossisce}.",
       "{Altre due ore|Mancano tre ore|Manca poco} dietro {questo banco|la cassa|questo legno}.",
       "Se un altro mi chiede {di segnare|se altrove costa meno|del titolare}, {rido|urlo|divento io il titolare}.",
-      "{Il magazzino|Lo scaffale dietro|La cantina} va {riordinato|contato|spazzato} e nessuno lo farà tranne me.",
-      "{Una bella vendita|Un ordine grosso|Un cliente vero} e tutto {il turno|il giorno|la settimana} sembra {più leggero|valerne la pena|pagato}.",
+      "{Il magazzino va riordinato|Lo scaffale dietro va contato|La cantina va spazzata} e nessuno lo farà tranne me.",
+      "{Una bella vendita|Un ordine grosso|Un cliente vero} e {tutto il turno|tutto il giorno|tutta la settimana} sembra {valerne la pena|meno pesante|un regalo}.",
       "{Occhio alla porta|Occhio alle mani|Occhio alle tasche}. {Non tutti pagano|Alcuni sono svelti|Mi hanno già fregato}.",
       "{Batti lo scontrino|Incartalo|Mettilo nel sacchetto}, {sorridi|di' grazie|il prossimo}, {e ancora|e ancora|e ancora}."
     ],
     "shopping": [
       "{Una lista|La mia lista|La lista} in testa e {niente|metà|neanche una cosa} scritta da qualche parte.",
-      "{Pane|Sapone|Candele}, {olio|sale|filo}, e qualcosa che {dimenticherò|ero venuto a prendere e ho perso|sia bello se costa poco}.",
+      "{Pane|Sapone|Candele}, {olio|sale|filo}, e qualcosa che {dimenticherò|ero {g:venuto|venuta|venuto} a prendere e ho perso|sia bello se costa poco}.",
       "{Guardo e basta|Do solo un'occhiata|Non compro niente}. {Lo dico sempre|Ultime parole famose|Più o meno}.",
       "{L'altro negozio|La bancarella all'angolo|Il posto vicino alla stazione} lo aveva {a meno|più economico|in offerta} la settimana scorsa.",
       "{Dovrei|Sarebbe il caso di|Devo proprio} {confrontare i prezzi|controllare il peso|contare il resto} stavolta.",
-      "{Un piccolo sfizio|Una cosetta|Una cosa sola} per me. {Solo una|Me la sono meritata|Nessuno lo saprà}.",
+      "{Un piccolo sfizio|Una cosetta|Una cosa sola} per me. {Ogni tanto ci vuole|Me lo merito|Nessuno lo saprà}.",
       "{Borse pesanti|Braccia piene|Due ceste} e {una lunga strada a casa|le scale alla fine|nessuna mano libera per la porta}.",
       "{Tutto|Il pane|Persino il sale} costa più {del mese scorso|che in primavera|di quanto lo pagasse mia madre}.",
       "{La coda|La fila|La ressa} alla cassa è {lunghissima|ferma|piena di chiacchieroni}.",
-      "{Frutta|Pesce|Pane} {fresco|maturo|come si deve} oggi, {per una volta|finalmente|se mi sbrigo}.",
-      "Ero entrato per {una cosa|il pane|i fiammiferi} ed esco con {cinque|una cesta piena|i rimorsi}.",
+      "{Frutta fresca|Pesce fresco|Pane come si deve} oggi, {per una volta|finalmente|se mi sbrigo}.",
+      "Ero {g:entrato|entrata|entrato} per {una cosa|il pane|i fiammiferi} ed esco con {cinque|una cesta piena|i rimorsi}.",
       "{Mi bastano|Ci arrivo|C'è abbastanza nel borsellino} per {tutto|quello buono|tutti e due}?",
       "{Il negoziante|Quel commesso|La signora alla cassa} {mi conosce|si ricorda di me|mi dà sempre quelli ammaccati}.",
       "{Giorno di mercato|Strada affollata|Tutte le bancarelle aperte}, e {ogni voce|ogni venditore|mezza città} che grida {prezzi|affari|il mio nome sbagliato}."
     ],
     "home": [
       "{Casa|Le mie quattro mura|La cucina}, e {nessun posto dove andare|nessuno a cui rendere conto|il bollitore sul fuoco}.",
-      "{Il pavimento|I piatti|La finestra} non {si pulisce da solo|si lavano da soli|si pulisce da sola}, purtroppo.",
+      "{Il pavimento non si pulisce da solo|I piatti non si lavano da soli|La finestra non si pulisce da sola}, purtroppo.",
       "{Una giornata tranquilla in casa|Un giorno a casa|Restare dentro}. {Potrei abituarmici|Non è poi male|Nessuno deve saperlo}.",
-      "{Il tetto|Il rubinetto|Il cardine} {gocciola|cigola|si è arreso} di nuovo. {Dopo|Domani|Un giorno}.",
+      "{Il tetto gocciola|Il cardine cigola|Il rubinetto si è arreso} di nuovo. {Dopo|Domani|Un giorno}.",
       "{Rammendare la camicia|Sistemare il cassetto|Scrivere la lettera} che {rimando|volevo fare|evito} da {una settimana|un mese|secoli}.",
-      "{Il piccolo|Il bambino|La piccola} è {finalmente tranquillo|addormentato, finalmente|a giocare sul pavimento}. {Non respirare|In punta di piedi|Neanche un rumore}.",
+      "{Il piccolo è finalmente tranquillo|Il bambino si è addormentato, finalmente|La piccola gioca sul pavimento}. {Non respirare|In punta di piedi|Neanche un rumore}.",
       "{La minestra sul fuoco|Il pane che lievita|Qualcosa in pentola}, {e la casa ha il profumo giusto|e basta così|e va tutto bene}.",
       "{Chi è alla porta|Era la posta|Ha bussato qualcuno}? {Probabilmente niente|Che bussino|Non ci sono}.",
       "{La radio|L'orologio|Il vicino} {ronza|ticchetta|canta male} attraverso il muro e {non mi dà fastidio|quasi mi piace|non lo sento più}.",
-      "{Le solite quattro mura|Ancora questa stanza|La solita sedia}. {Comoda|Sicura|Mia}, almeno.",
-      "{Il bucato|Il lavaggio|Lenzuola bagnate} {steso fuori|su ogni sedia|sulla stufa} e {sta per piovere|niente sole|nessuno spazio}.",
+      "{Le solite quattro mura|Ancora questa stanza|La solita sedia}. Almeno {si sta comodi|qui sto al sicuro|è roba mia}.",
+      "{Il bucato steso fuori|Panni stesi su ogni sedia|Lenzuola bagnate sulla stufa} e {sta per piovere|niente sole|nessuno spazio}.",
       "{Un giorno libero|Niente turno oggi|Nessun impegno}, e lo passo a {riordinare|preoccuparmi|fissare il soffitto}. {Tipico|Ovviamente|Come sempre}."
     ],
     "bladder": [
       "{Dov'è|C'è|Mi serve} {un bagno|un gabinetto|il bagno} {qui intorno|vicino|subito}?",
-      "{L'ultima tazza|Il secondo caffè|Tutto quel tè} è stato {un errore|una pessima idea|un piano terribile}.",
+      "{L'ultima tazza è stata|Il secondo caffè è stato|Tutto quel tè è stato} {un errore|una pessima idea|un piano terribile}.",
       "{Cammina|Cammina più veloce|Non correre}. {Pensa al deserto|Pensa ad altro|Non pensare ai fiumi}.",
       "Ogni {passo|ciottolo|pozzanghera} {è|sembra} {un insulto personale|una piccola tortura|una prova di carattere}.",
       "{Non adesso|Ti prego non adesso|Proprio ora}, {non in mezzo alla strada|non con tutti che guardano|non così lontano da casa}.",
       "{Qualcuno|Qualche idiota|Una famiglia intera} è {lì dentro|se la prende comoda|lì dentro a leggere il giornale}, lo so.",
       "{Dovevo andarci|Volevo andarci|Stavo per andarci} {prima di uscire|nell'altro posto|un'ora fa}.",
-      "{Incrocia le gambe|Stai fermo|Respira}. {Passa|Passerà|Deve passare}.",
+      "{Incrocia le gambe|Stai {g:fermo|ferma|fermo}|Respira}. {Passa|Passerà|Deve passare}.",
       "{Una moneta per il custode|La coda al bagno|Una porta chiusa a chiave}. {Ovviamente|Naturalmente|Meraviglioso}.",
-      "{Quasi arrivato|Altre due porte|Dietro l'angolo}. {Resisti|Calma|Ci siamo quasi}.",
-      "{La fontana|Il fiume|La pioggia} {non aiuta|è rumorosissima oggi|è crudele di proposito}.",
-      "{Il sollievo|La beatitudine|La pace} è {a una porta di distanza|così vicina|questione di minuti}."
+      "{Quasi {g:arrivato|arrivata|arrivato}|Altre due porte|Dietro l'angolo}. {Resisti|Calma|Ci siamo quasi}.",
+      "{La fontana|Il fiume|La pioggia} {non aiuta|fa un chiasso tremendo oggi|lo fa apposta}.",
+      "{Il sollievo|La beatitudine|La pace} è {lì, dietro una porta|a un passo|questione di minuti}."
     ],
     "school": [
       "Ancora {i conti|il dettato|le tabelline}. {Perché|A cosa servono|Chi ne ha bisogno}?",
       "La maestra {ha gli occhi dietro la testa|mi ha visto|sa tutto}. {Proprio tutto|Giuro|Non è giusto}.",
       "{Quando c'è la ricreazione|È già ricreazione|Quanto manca alla ricreazione}?",
       "Ho {dimenticato|perso|lasciato} {i compiti|la matita|il libro di lettura} {a casa|sull'autobus|da qualche parte}.",
-      "{Non guardare fuori dalla finestra|Guarda la lavagna|Stai attento}. {Ma i piccioni sono più interessanti|Ma la finestra|Ci sto provando}.",
+      "{Non guardare fuori dalla finestra|Guarda la lavagna|Stai {g:attento|attenta|attento}}. {Ma i piccioni sono più interessanti|Ma la finestra|Ci sto provando}.",
       "{Il mio migliore amico|Il bambino nuovo|Quello dietro di me} {mi ha passato un bigliettino|continua a calciare la sedia|ha copiato le mie risposte}.",
       "{Una stellina d'oro|Un bel voto|Dieci}! {Aspetta che lo dico|Lo racconto|Lo vedrà la mamma}.",
-      "{La carta del mondo|Il mappamondo|Lo scheletro nell'angolo} è la cosa {più bella|unica buona|più interessante} di quest'aula.",
+      "{La carta del mondo|Il mappamondo|Lo scheletro nell'angolo} è {la cosa più bella|l'unica cosa buona|la cosa più interessante} di quest'aula.",
       "{La polvere di gesso|Il termosifone|L'inchiostro} ha un odore {strano|di inverno|di scuola}.",
-      "{Se mi chiama|Se devo leggere ad alta voce|Se tocca a me}, {muoio|mi nascondo sotto il banco|divento rosso}.",
+      "{Se mi chiama|Se devo leggere ad alta voce|Se tocca a me}, {muoio|mi nascondo sotto il banco|divento {g:rosso|rossa|rosso}}.",
       "{Un compito|Il dettato|La verifica} {oggi|domani|venerdì}. {Nessuno me l'ha detto|Lo sapevo|Credo}.",
       "{Cosa c'è a pranzo|È ora di pranzo|Sento odore di pranzo}? {Speriamo non cavolo|Spero pasta|Tutto tranne il pesce}.",
-      "Da grande farò {il pilota|l'esploratore|il mago} e {non farò mai conti|nessuno mi farà stare fermo|non mi servirà il dettato}.",
+      "Da grande farò {{g:il pilota|la pilota|il pilota}|{g:l'esploratore|l'esploratrice|l'esploratore}|{g:il mago|la maga|il mago}} e {non farò mai conti|nessuno mi farà stare {g:fermo|ferma|fermo}|non mi servirà il dettato}.",
       "{La campanella|L'ora di uscita|L'ultima campanella}! {Corri|Finalmente|Libertà}!"
     ],
     "play": [
@@ -387,33 +387,33 @@
       "Ho trovato {un bastone|uno scarabeo|un sasso luccicante} ed è {il più bello|mio|magico}.",
       "{La pozzanghera|Quel muro|Il grande albero} oggi è {il castello|la nave|la tana del drago}.",
       "{Facciamo a gara|Scommetto che sono più veloce|Il primo all'angolo} {fino al cancello|fino alla fontana|vince}!",
-      "{Il ginocchio|Il gomito|La mano} {sanguina|è sbucciato|è sporca}. {Non fa male|Sto bene|Non dirlo}.",
+      "{Il ginocchio sanguina|Il gomito è sbucciato|La mano è tutta sporca}. {Non fa male|Sto bene|Non dirlo}.",
       "{Se pesto una crepa|Se esco dalla riga|Se tocco terra} {il pavimento è lava|il mostro mi prende|ho perso}.",
-      "{La palla|L'aquilone|La mia biglia} è finita {oltre il muro|nel fiume|sotto il carretto}. {Oh no|Di nuovo|Qualcuno la prenda}.",
+      "{La palla|La mia biglia|La trottola} è finita {oltre il muro|nel fiume|sotto il carretto}. {Oh no|Di nuovo|Qualcuno la prenda}.",
       "{Nessuno|Nessuno mai|Loro non} {mi fa fare il capitano|mi sceglie per primo|mi fa vincere}. {Non è giusto|Ogni volta|Un giorno}.",
       "{Sono un cavaliere|Sono un gigante|Sono il cavallo più veloce}. {Inchinatevi|Scappate tutti|Iiih}!",
-      "{Gesso sul marciapiede|Le caselle del campana|Il disegno di un cane}, ed è {perfetto|il più bello finora|quasi un cane}.",
-      "{La mamma ha detto|Papà ha detto|La nonna ha detto} {a casa prima di buio|resta in strada|niente arrampicate}. {Lo so|Non è ancora buio|Non mi arrampico, mi siedo in alto}.",
+      "{Col gesso sul marciapiede viene tutto perfetto|Le caselle della campana sono le più belle finora|Ho disegnato un cane, ed è quasi un cane}.",
+      "{La mamma ha detto|Papà ha detto|La nonna ha detto} {a casa prima di buio|resta in strada|niente arrampicate}. {Lo so|Non è ancora buio|Mi siedo solo un po' in alto}.",
       "{Facciamo cambio|Ti scambio|Vuoi scambiare} {la mia biglia rossa|questa figurina|due caramelle} con {la tua|quella|quella blu}?",
       "{Splash|Guarda|Guardami}! {Più grande|Più in alto|Più forte} {dell'altra volta|del tuo|di tutti}!",
       "{Torte di fango|Castelli di sabbia|Barchette di carta} per {tutta la strada|tutti|la regina}. {Gratis|Una moneta|Due caramelle} l'una."
     ],
     "childHome": [
-      "{La mamma|Papà|Il nonno} è {occupato|ai fornelli|arrabbiato}, così sto {buono|zitto|disegnando}.",
+      "{La mamma ha da fare|Papà è ai fornelli|Il nonno è arrabbiato}, così {faccio {g:il bravo|la brava|il bravo}|sto {g:zitto|zitta|zitto}|disegno}.",
       "{Posso uscire|Posso giocare fuori|È ora di uscire}? {Per favore|Ti preeego|Solo un pochino}?",
-      "{I miei soldatini|La mia bambola|Il cavallo di legno} {fanno la guerra|prende il tè|parte per un lungo viaggio}.",
+      "{I miei soldatini fanno la guerra|La mia bambola prende il tè|Il cavallo di legno parte per un lungo viaggio}.",
       "{Mi annoio|Non c'è niente da fare|È tutto noioso}. {Noia noia noia|Che noia|Noooia}.",
       "{Sotto il tavolo|Dietro la tenda|Nell'armadio} c'è {il mio forte|la mia caverna segreta|il nascondiglio migliore}.",
-      "{Posso aiutare|Posso mescolare|Posso leccare il cucchiaio}? {Starò attento|Non rovescio niente|Promesso}.",
+      "{Posso aiutare|Posso mescolare|Posso leccare il cucchiaio}? {Starò {g:attento|attenta|attento}|Non rovescio niente|Promesso}.",
       "{Il gatto|Il cane|Il mio fratellino} {non vuole giocare con me|mi ha graffiato|mi ha preso il cucchiaio}.",
-      "{Piove|Fa troppo freddo|Non mi fanno uscire}, quindi {le scale|il corridoio|il letto} {sono una montagna|è un fiume|è una nave}.",
+      "{Piove|Fa troppo freddo|Non mi fanno uscire}, quindi {le scale sono una montagna|il corridoio è un fiume|il letto è una nave}.",
       "{È già ora di cena|Quando si cena|Cosa c'è per cena}? {Ho una fame|Mi fa male la pancia|Mangerei un cavallo}.",
-      "Ho {disegnato|fatto|costruito} {una casa|un mostro|una torre} e {nessuno l'ha guardata|è la più bella|è caduta}.",
+      "Ho {disegnato|fatto|costruito} {una casa|una torre|una nave} e {nessuno l'ha guardata|è la più bella|è caduta}.",
       "{L'orologio|Il rubinetto|La finestra} {ticchetta|gocciola|sbatte} e io conto {fino a cento|i tic|finché non me lo scordo}.",
       "{Una storia|Leggimi una storia|Raccontami quella del lupo}, {per favore|ancora|quella che fa paura}."
     ],
     "childBedtime": [
-      "{Non sono stanco|Non ho sonno|Non sto neanche sbadigliando}. {Ahh|Mmh|Va bene, forse un pochino}.",
+      "{Non sono {g:stanco|stanca|stanco}|Non ho sonno|Non sto neanche sbadigliando}. {Ahh|Mmh|Va bene, forse un pochino}.",
       "{Lascia la porta aperta|Lascia la luce|Lascia la candela}, {per favore|solo uno spiraglio|solo stanotte}.",
       "{Cos'era quel rumore|C'è qualcosa sotto il letto|Chi c'è nell'armadio}?",
       "{Altri cinque minuti|Un'altra storia|Solo un'altra pagina}. {Per favore|Ti prego ti prego|Poi dormo}.",
@@ -428,48 +428,48 @@
     ],
     "recovering": [
       "{Ogni respiro|Ogni passo|Girarmi} {fa male|tira i punti|me lo ricorda}.",
-      "{Riposo|Stai fermo|Non fare niente}, ha detto il dottore. {Facile per lui|Come se potessi|Ci provo}.",
+      "{Riposo|Stai {g:fermo|ferma|fermo}|Non fare niente}, ha detto il dottore. {Facile per lui|Come se potessi|Ci provo}.",
       "{La fasciatura|La medicazione|La stecca} {prude|puzza|va cambiata} e {non devo toccarla|non ci arrivo|la tocco lo stesso}.",
       "{Un po' meglio|Meglio di ieri|Non peggio} oggi. {Lo prendo|Conta|Piccole grazie}.",
       "{Continuo a|Non smetto di|Sto ancora} {vederlo succedere|sentire il colpo|sentire la caduta}.",
       "{Brodo|Pane e latte|Qualcosa di morbido}, e {dormire|dormire ancora|un lungo sonno}. {Ordini del dottore|Questa è la cura|A quanto pare}.",
-      "{Chi farà|Chi si occuperà di|Nessun altro farà} {il mio lavoro|l'affitto|da mangiare agli animali} mentre sto qui sdraiato?",
-      "{Una cicatrice|Una zoppia|Una storia} da raccontare, {almeno|se non altro|da mostrare}.",
+      "{Chi farà|Chi si occuperà di|Nessun altro farà} {il mio lavoro|l'affitto|da mangiare agli animali} mentre sto qui {g:sdraiato|sdraiata|sdraiato}?",
+      "{Una cicatrice|Una zoppia|Una storia} da raccontare, {almeno|se non altro|e qualcosa da mostrare}.",
       "{Piano|Con cautela|Un gradino alla volta}. {Non fare l'eroe|Nessuna fretta|Il corpo lo sa}.",
-      "{Il dolore|Il pulsare|La rigidità} è {peggio di notte|peggio con la pioggia|mai del tutto sparito}.",
-      "{Sono stato fortunato|Me la sono cavata con poco|Dovrei essere morto}, {continuano a dirmi|dicono tutti|a quanto pare}.",
+      "{Il dolore|Il pulsare|La rigidità} è {peggio di notte|peggio con la pioggia|sempre lì}.",
+      "{Sono {g:stato fortunato|stata fortunata|stato fortunato}|Me la sono cavata con poco|Dovrei essere {g:morto|morta|morto}}, {continuano a dirmi|dicono tutti|a quanto pare}.",
       "{La prossima volta|Mai più|D'ora in poi} {scappo|resto a casa|guardo dove metto i piedi}."
     ],
     "fishing": [
       "{Acqua tranquilla|Acqua ferma|Una bella riva}, {un buon posto|l'ora giusta|nessuno in giro}.",
       "{Lancia|Aspetta|Guarda il galleggiante}. {Pazienza|Respira|Non muoverti}.",
-      "{Il galleggiante|La lenza|La punta della canna} {ha tremato|è scesa|si è mossa}. {Aspetta|Non ancora|Calma}.",
+      "{Il galleggiante|La lenza|La punta della canna} {ha tremato|ha dato uno strattone|ha vibrato}. {Aspetta|Non ancora|Calma}.",
       "{Vermi|Pasta di pane|Larve} {di nuovo|oggi|come sempre}. {I pesci non sono schizzinosi|Il vecchio affidabile|Non sbaglia mai}.",
       "{Quello che è scappato|Quello grosso|La carpa leggendaria} è {ancora lì dentro|che ride di me|là fuori da qualche parte}.",
       "{Niente|Neanche un'abboccata|Nemmeno un assaggio} per tutta {la mattina|l'ora|il pomeriggio}. {Bellissimo|Perfetto|Sempre meglio che lavorare}.",
       "{La cena|Il pasto|La padella di stasera}, {se collaborano|con un po' di fortuna|se Dio vuole}.",
       "{Un airone|Un martin pescatore|Un ragazzino con la rete} {fa meglio di me|si mette in mostra|mi ruba i pesci}.",
-      "{La lenza|L'amo|Il nodo} {si è aggrovigliata|ha preso un'alga|ha preso la manica}. {Di nuovo|Ovviamente|Meraviglioso}.",
+      "{La lenza si è aggrovigliata|L'amo ha preso un'alga|Il nodo si è impigliato nella manica}. {Di nuovo|Ovviamente|Meraviglioso}.",
       "{L'acqua|La luce sull'acqua|Il fiume} {non dice niente|va avanti|se ne infischia} ed è {proprio questo il punto|per questo vengo|tutta la cura}.",
       "{Thermos|Borraccia|Bottiglia} di {tè|caffè|qualcosa di più forte} e {uno sgabello pieghevole|tutto il pomeriggio|nessuno a cui rendere conto}.",
       "{Piccolo|Pesciolino|Troppo piccolo}. {Torna giù|Prima cresci|L'anno prossimo, amico}."
     ],
     "swimming": [
       "{Freddo|Gelida|Che bella}! {Freddo freddo freddo|Non pensarci|Continua a muoverti}!",
-      "{Gambe|Bracciata|Respira}, {gambe|bracciata|respira}. {Tranquillo|Quasi|Ecco}.",
+      "{Gambe|Bracciata|Respira}, {gambe|bracciata|respira}. {{g:Tranquillo|Tranquilla|Tranquillo}|Quasi|Ecco}.",
       "{Qualcosa|Un'alga|Un pesce} {mi ha toccato il piede|mi ha sfiorato la gamba|è laggiù}. {Niente panico|Non è niente|È un pesce}.",
       "{Galleggia|Stenditi|Lasciati andare}, e {il cielo|l'acqua|il mondo intero} fa {il resto|il lavoro|proprio niente}.",
       "{Fino allo scoglio|Fino all'altra riva|Andata e ritorno} e {ho vinto|poi riposo|poi a casa}.",
       "{Acqua nel naso|Ho bevuto mezzo fiume|Alghe tra i denti}. {Elegante|Molto aggraziato|Ne vale la pena}.",
       "{La corrente|L'acqua|La marea} {tira|strattona|ha le sue idee} {più di quanto sembri|oggi|da questa parte}.",
-      "{Più pulito|Più leggero|Più giovane} già adesso, {e più infreddolito|e più bagnato|e non m'importa}.",
+      "{Più {g:pulito|pulita|pulito}|Più {g:leggero|leggera|leggero}|Più giovane} già adesso, {e più {g:infreddolito|infreddolita|infreddolito}|e più {g:bagnato|bagnata|bagnato}|e non m'importa}.",
       "{Dove ho lasciato|Chi sta guardando|C'è qualcuno vicino a} {i vestiti|gli stivali|il borsellino}?",
       "{Asciugarsi|Scaldarsi|Uscire} {presto|prima che diventino blu le labbra|tra un minuto}. {Ancora una vasca|Non ancora|Quasi}.",
       "{Sotto|Giù|In fondo}, {occhi aperti|trattenendo il fiato|contando}, e {il mondo tace|niente mi raggiunge|è tutto verde e immobile}.",
-      "{Non così giovane|Non così veloce|Non così coraggioso} come {ero|l'estate scorsa|pensavo}. {Galleggio ancora|Ancora qui|Nuoto ancora}."
+      "{Non così giovane|Non così veloce|Non così {g:coraggioso|coraggiosa|coraggioso}} come {ero|l'estate scorsa|pensavo}. {Galleggio ancora|Ancora qui|Nuoto ancora}."
     ],
     "fighting": [
-      "{Tieni|Resta|Mantieni} {la posizione|fermo|la linea}! {Non scappare|Neanche un passo indietro|Affrontalo}!",
+      "{Tieni|Resta|Mantieni} {la posizione|{g:fermo|ferma|fermo}|la linea}! {Non scappare|Neanche un passo indietro|Affrontalo}!",
       "{Colpiscilo|Colpisci|Mira alle gambe}, {colpiscilo ancora|adesso|prima che si giri}!",
       "{Le mani|Le braccia|Le ginocchia} {tremano|non si fermano|sembrano d'acqua}, {vai avanti|colpisci lo stesso|non importa}.",
       "{Non oggi|Non qui|Non nella mia strada}, {bruto|bestia|mostro}!",
@@ -486,124 +486,124 @@
       "{Corri|Corri corri corri|Via via via}! {Non voltarti|Non fermarti|Più veloce}!",
       "{Ce l'ho dietro|Sta arrivando|Lo sento}, {lo sento respirare|sento i suoi passi|è vicino}!",
       "{Una porta|Una porta qualsiasi|La chiesa|Una cantina}, {ovunque ci sia una porta|ovunque ci sia una serratura|ovunque}!",
-      "{I polmoni|Le gambe|Il petto} {bruciano|non reggeranno|scoppia}. {Vai avanti|Non fermarti|Solo fino all'angolo}.",
+      "{I polmoni bruciano|Le gambe non reggeranno|Il petto scoppia}. {Vai avanti|Non fermarti|Solo fino all'angolo}.",
       "{Aiuto|Qualcuno mi aiuti|Aiutatemi}! {Vi prego|Chiunque|C'è qualcuno}!",
       "{A sinistra|A destra|Oltre il muro}, {seminalo nei vicoli|attraverso il mercato|tra la folla}.",
       "Ho {fatto cadere|lasciato|perso} {la borsa|tutto|una scarpa}. {Lascia stare|Non importa|Adesso non conta}!",
       "{Non cadere|Non inciampare|Attento ai ciottoli}, {non cadere|non adesso|ti prego non adesso}.",
-      "{Nasconditi|Stai giù|Stai fermo}. {Non respirare|Neanche un suono|Passerà}.",
+      "{Nasconditi|Stai giù|Stai {g:fermo|ferma|fermo}}. {Non respirare|Neanche un suono|Passerà}.",
       "{L'ho seminato|Se n'è andato|È ancora lì}? {Non guardare|Guarda una volta|Continua a correre comunque}.",
       "{Non io|Non così|Non qui}, {non io|non oggi|ti prego}.",
-      "{Qualcuno avverta|Dite alla|Svegliate} {la strada|gli altri|la guardia}! {È libero|C'è un mostro|È in città}!"
+      "{Qualcuno avverta la strada|Ditelo agli altri|Svegliate la guardia}! {È libero|C'è un mostro|È in città}!"
     ],
     "downed": [
       "{Non riesco|Non ce la faccio|Non riesco proprio} {ad alzarmi|a sentire le gambe|a vedere bene}...",
       "{Qualcuno|Chiunque|Vi prego}... {aiuto|un dottore|acqua}...",
       "{Che freddo|Il terreno è freddo|Si fa buio}...",
-      "{Resta sveglio|Tieni gli occhi aperti|Non dormire}. {Resta sveglio|Non farlo|Non ancora}.",
+      "{Resta {g:sveglio|sveglia|sveglio}|Tieni gli occhi aperti|Non dormire}. {Resta {g:sveglio|sveglia|sveglio}|Non farlo|Non ancora}.",
       "{Diteglielo|Dite alla mia famiglia|Ditele}... {che ci ho provato|che mi dispiace|che stavo tornando a casa}...",
       "{Fa male|Mi fa male|Fa male tutto}... {tantissimo|ovunque|meno adesso, ed è un brutto segno}...",
-      "{Se n'è andato|È andato via|È ancora qui}? {Non muoverti|Stai fermo|Fingiti morto}...",
+      "{Se n'è andato|È andato via|È ancora qui}? {Non muoverti|Stai {g:fermo|ferma|fermo}|Fingiti {g:morto|morta|morto}}...",
       "{Madre|Mamma|Casa}...",
-      "{Il cielo|Le pietre|La pioggia} {è vicinissimo|sembrano enormi|è calda, stranamente}...",
+      "{Il cielo è vicinissimo|Le pietre sembrano enormi|La pioggia è calda, stranamente}...",
       "{Respira|Dentro e fuori|Respiri piccoli}. {Qualcuno verrà|Qualcuno ha visto|Verranno}...",
       "{Passi|Voci|Qualcuno che corre}... {qui|da questa parte|vi prego, qui}...",
       "{Non ancora|Non così|Non qui}... {non ancora|vi prego|non oggi}..."
     ]
   },
   "crimeIntent": [
-    "{item} starebbe {molto meglio|proprio bene|benissimo} nella mia tasca...",
-    "Lo voglio, quel {item}. {Lo voglio proprio|Da stamattina|E non smetto di guardarlo}.",
-    "Chi vuoi che {senta la mancanza di|conti|noti} un {item}?",
-    "Se sono {svelto|attento|furbo}, quel {item} è {mio|già andato|in tasca}.",
-    "Un {item} solo. {Manco se ne accorgono|Nessuno li conta|Chi li conta}.",
-    "{Ne hanno|Loro hanno|Il padrone ha} {uno scaffale|una cassa|fin troppi} di {item}.",
-    "Prendo {il {item}|quel {item}|un {item}} ed esco {normale|senza fretta|come se niente fosse}."
+    "Nella mia tasca ci starebbe {molto meglio|proprio bene|benissimo}: {item}...",
+    "{item}. {Mi serve proprio|Ci penso da stamattina|Non riesco a togliere gli occhi da lì}.",
+    "{item}? Chi vuoi che {se ne accorga|ci faccia caso|conti la merce}?",
+    "Se {faccio in fretta|mi muovo piano|gioco bene le mie carte}, esco con {item} in tasca.",
+    "{item}, e basta. {Manco se ne accorgono|Nessuno conta la merce|Chi vuoi che conti}.",
+    "{Ne hanno uno scaffale pieno|Ne hanno una cassa intera|Il padrone ne ha a bizzeffe}, di {item}.",
+    "Infilo in tasca {item} ed esco {come se niente fosse|senza fretta|a passo tranquillo}."
   ],
   "crimeSuccess": [
-    "Preso il {item}. {Cammina normale. Cammina normale|Non correre|Non voltarti}.",
-    "Un {item}, {gentilmente offerto dalla casa|gratis|a spese loro}.",
+    "Fatto: {item}. {Cammina normale. Cammina normale|Non correre|Non voltarti}.",
+    "{item}, {gentile omaggio della casa|gratis|a spese loro}.",
     "È stato {quasi troppo facile|più facile del previsto|uno scherzo}.",
-    "Questo {item} adesso {ha un nuovo proprietario|è mio|viene a casa con me}.",
+    "{item}: {nuovo proprietario|adesso è roba mia|viene a casa con me}.",
     "{Mani ferme|Faccia normale|Respira piano}. {Ancora due passi|Manca l'angolo|Cammina}.",
     "{Nessuno ha gridato|Nessun fischio|Nessuno mi ha seguito}. {Facile|Pulito|Fatto}.",
-    "{Il cuore a mille|Le mani che tremano|Sorrido come uno sciocco}, {e un {item} nel cappotto|con il {item}|e il {item} è mio}.",
-    "{Dietro l'angolo|In mezzo alla folla|Giù per il vicolo}, {e sparito|e respira|e cammina}.",
-    "{Conteranno|Se ne accorgeranno|Cercheranno} {stasera|domani|prima o poi}. {Troppo tardi|Per allora sarò lontano|Che facciano}.",
-    "{Vendere il {item}|Tenere il {item}|Nascondere il {item}}, {stanotte|prima di domattina|in un posto sicuro}.",
+    "{Il cuore a mille|Le mani che tremano|Sorrido come {g:uno sciocco|una sciocca|uno sciocco}}, e nel cappotto {item}.",
+    "{Dietro l'angolo|In mezzo alla folla|Giù per il vicolo}, {e via|e respira|e cammina}.",
+    "{Conteranno|Se ne accorgeranno|Cercheranno} {stasera|domani|prima o poi}. {Troppo tardi|Per allora sarò {g:lontano|lontana|lontano}|Che facciano}.",
+    "{item}: {da vendere|da tenere|da nascondere} {stanotte|prima di domattina|in un posto sicuro}.",
     "{Dovrei sentirmi peggio|Dovrei sentirmi in colpa|Senso di colpa}? {Dopo|Forse|Non ancora}.",
-    "{Liscio|Silenzioso|Veloce}, {come un gatto|come il fumo|come se non ci fossi mai stato}."
+    "{Liscio|Silenzioso|Veloce}, {come un gatto|come il fumo|come se non ci fossi mai {g:stato|stata|stato}}."
   ],
   "crimeCaught": [
-    "Mi hanno {visto|beccato|guardato} prendere il {item}...",
-    "Non {dovevo toccarlo|dovevo allungare la mano su|potevo lasciar stare}, quel {item}.",
+    "Mi hanno {visto|beccato|guardato} mentre prendevo {item}...",
+    "{item}. {Non dovevo toccare niente|Non dovevo allungare la mano|Potevo lasciar stare}.",
     "{Perfetto|Benissimo|Ci mancava}. Adesso ho pure {una taglia sulla testa|il nome su una lista|le guardie addosso}.",
     "{Sotto traccia|Cammina|Nega tutto}. {Sotto traccia|Non dire niente|Nega tutto}.",
-    "Un {item} del cavolo e {ho rovinato il mese|mi sono giocato tutto|mi sono guadagnato una cella}.",
-    "{Una mano sulla spalla|Un grido|Un fischio}, e {ecco fatto|è finita|mi si chiude lo stomaco}.",
+    "Tutto per {item}, e {ho rovinato il mese|mi sono {g:giocato|giocata|giocato} tutto|adesso mi aspetta una cella}.",
+    "{Una mano sulla spalla|Un grido|Un fischio}, e {ecco fatto|tutto finito|mi si chiude lo stomaco}.",
     "{Mia madre|La mia famiglia|Tutta la strada} {lo saprà|lo saprà per cena|non me lo farà mai dimenticare}.",
-    "{Una multa|Una notte in cella|La fedina sporca}, per {un {item}|un solo {item}|quel {item}}. {Ne valeva la pena|Non ne valeva la pena|Idiota}.",
-    "{Stavo per pagare|È caduto nella borsa|Mi ero scordato di averlo}. {Nessuno ci crede|Non ci credono mai|Tentare non nuoce}.",
-    "{Quel negoziante|Quel commesso|Quella vecchia} {ha visto tutto|era più svelta di quanto sembrasse|non ha battuto ciglio}.",
-    "{Mani in alto|Non scappare|Stai calmo}. {Scappare peggiora le cose|Conoscono la mia faccia|Stai fermo e basta}.",
+    "{Una multa|Una notte in cella|La fedina sporca}, e tutto per {item}. {Ne valeva la pena|Non ne valeva la pena|Idiota}.",
+    "{Stavo per pagare|Giuro che volevo pagare|Era una svista}. {Nessuno ci crede|Non ci credono mai|Tentare non nuoce}.",
+    "{Quel negoziante|Quel commesso|Quella vecchia} {ha visto tutto|aveva occhi dappertutto|non ha battuto ciglio}.",
+    "{Mani in alto|Non scappare|Stai {g:calmo|calma|calmo}}. {Scappare peggiora le cose|Conoscono la mia faccia|Stai {g:fermo|ferma|fermo} e basta}.",
     "{Mai più|Mai e poi mai|È l'ultima volta}, {lo giuro|lo prometto|stavolta sul serio}."
   ],
   "itemBuy": {
     "cheap": [
-      "Un {bel|discreto|onesto} {item}, e mi è costato {due spiccioli|una sciocchezza|quasi niente}.",
-      "Questo {item} {fa proprio al caso mio|andrà benissimo|mi basta}.",
-      "Con un {item} a questo prezzo non si sbaglia.",
-      "{Contento|Soddisfatto|A posto} del mio {item}.",
-      "Ecco, mi mancava giusto un {item}.",
-      "Un {item} a quel prezzo? {Lo prendo e scappo|Ne prendo due|Affare fatto}."
+      "{item}, per {due spiccioli|una sciocchezza|quasi niente}. {Bell'affare|Niente male|Ottimo}.",
+      "{item}: {proprio quello che mi serviva|perfetto per me|tanto basta}.",
+      "A questo prezzo non si sbaglia: {item}.",
+      "{Che soddisfazione|Bella spesa|Affare fatto}: {item}.",
+      "Ecco, mi mancava giusto questo: {item}.",
+      "{item} a quel prezzo? {Prendo e scappo|Ne prendo due|Affare fatto}."
     ],
     "pricey": [
-      "Questo {item} mi è costato, ma {se lo merita|ne vale la pena|non me ne pento}.",
-      "Un {item} così non lo trovi {mica in saldo|tutti i giorni|due volte}.",
-      "Mi sono {sfondato|svenato|prosciugato} per un {item}. {Zero rimpianti|Nessun rimpianto|Non chiedermelo}.",
-      "{item} di {qualità|fattura vera|buona mano}. Chi più spende meno spende.",
-      "Un {item} caro, ma {me lo sono guadagnato|me lo merito|me lo godrò}.",
-      "Un {item} buono batte {cinque scarsi|uno scaffale di robaccia|qualsiasi offerta}."
+      "Ho speso parecchio per {item}, ma {ne valeva la pena|me lo merito|non me ne pento}.",
+      "Roba così non la trovi {mica in saldo|tutti i giorni|due volte}: {item}.",
+      "{Mi sono {g:svenato|svenata|svenato}|Ho svuotato il portafoglio|Ho dato fondo ai risparmi} per {item}. {Zero rimpianti|Nessun rimpianto|Non chiedermelo}.",
+      "{item}: {roba di qualità|fattura vera|lavoro di buona mano}. Chi più spende meno spende.",
+      "{item}, roba cara, ma {me la sono meritata|me la merito|me la godrò}.",
+      "Meglio {item} di qualità che {cinque cose scarse|uno scaffale di robaccia|qualsiasi offerta}."
     ]
   },
   "itemBrowse": {
     "cheap": [
-      "Questo {item} costa così poco che {mi sta tentando|è quasi un peccato lasciarlo|mi tenta}.",
-      "Un {item}, {mah|hm|beh}. {Magari un'altra volta|Non oggi|Forse dopo}.",
-      "{Non è male|È decente|È meglio di come sembra}, questo {item}.",
-      "Un {item} così mi {tornerebbe utile|servirebbe|farebbe comodo}.",
-      "Quel {item} {mi ha fatto l'occhiolino|continuo a guardarlo|è ben fatto per il prezzo}."
+      "{item} a così poco: {mi sta tentando|quasi quasi|che tentazione}.",
+      "{item}? {Mah|Hm|Beh}. {Magari un'altra volta|Non oggi|Forse dopo}.",
+      "{Niente male|Roba decente|Meglio di come sembra}: {item}.",
+      "{item}: {roba utile|proprio quello che serve in casa|una bella comodità}.",
+      "{Lo scaffale|La vetrina|Il banco} con {item} {mi fa l'occhiolino|mi chiama|continua ad attirarmi}."
     ],
     "pricey": [
-      "Quel {item} è fuori dalla mia portata, {e di parecchio|di molto|proprio}.",
-      "Un {item} a questo prezzo? {Ma è rapina a mano armata|Roba da denuncia|Stanno scherzando}.",
-      "Un {item} così io posso solo {guardarlo|sognarmelo|ammirarlo}.",
-      "{Bello|Splendido|Fine} il {item}, {peccato per il cartellino|ma è per altre tasche|e il prezzo pure}.",
-      "Ma chi se lo permette un {item}, {di questi tempi|a quel prezzo|adesso}?"
+      "{item}? Fuori dalla mia portata, {e di parecchio|di molto|proprio}.",
+      "{item} a questo prezzo? {Ma è rapina a mano armata|Roba da denuncia|Stanno scherzando}.",
+      "{item}: roba da {guardare e basta|sognare|ammirare da lontano}.",
+      "{Bella roba|Roba splendida|Roba fine}, {item}, {peccato per il cartellino|ma è per altre tasche|e il prezzo pure}.",
+      "Ma chi se lo può permettere, {item}, {di questi tempi|a quel prezzo|adesso}?"
     ]
   },
   "itemDisposition": {
     "greedy": [
-      "Ne voglio {ancora|un altro|tutti}.",
-      "{Mio, tutto mio|Mio e basta|E mio resta}.",
-      "Non è {mai|mai stato|mai abbastanza} abbastanza.",
-      "Uno è {solo l'inizio|il primo di tanti|mai l'ultimo}.",
+      "Ne voglio {ancora|di più|a scatoloni}.",
+      "{Roba mia e basta|Tutto mio|Guai a chi tocca}.",
+      "{Non basta mai|Non è mai abbastanza|Mai abbastanza}.",
+      "Il primo acquisto {è solo l'inizio|è il primo di tanti|non è mai l'ultimo}.",
       "{Due sarebbero meglio|Dovevo prenderne due|Perché non tutto lo scaffale}.",
-      "{Nessun altro|Neanche un'anima|Nessuno} {lo tocca|lo avrà|lo guarda nemmeno}.",
-      "{Il prossimo|La prossima volta|Domani}, {quello più grande|quello più caro|quello migliore}.",
-      "{Collezionarli tutti|Averne uno di ognuno|Riempire lo scaffale}. {Questo è il piano|Perché no|Ovviamente}.",
-      "{Nasconderlo|Chiuderlo a chiave|Tenerlo vicino} {prima che qualcuno chieda|ai vicini|alla famiglia}.",
-      "{Un affare|Un furto|Praticamente gratis}. {Dovrei tornare a prenderne altri|Comprane altri|Prendine un altro}.",
-      "{Condividerlo|Prestarlo|Regalarlo}? {No|Mai|Ah}.",
+      "{Nessun altro|Neanche un'anima|Nessuno} {ci mette le mani|ci si avvicina|ci prova nemmeno}.",
+      "{La prossima volta|Domani|Al prossimo giro}, {roba più grande|roba più cara|il meglio del meglio}.",
+      "{Fare la collezione completa|Averne di ogni tipo|Riempire lo scaffale}. {Questo è il piano|Perché no|Ovviamente}.",
+      "{Tutto sotto chiave|Al sicuro in casa|Sempre a portata di mano}, {prima che qualcuno chieda|lontano dai vicini|lontano dalla famiglia}.",
+      "{Un affare|Un furto|Praticamente gratis}. {Dovrei tornare a prenderne ancora|Comprane ancora|Fai scorta}.",
+      "{Condividere|Prestare|Regalare}? {No|Mai|Ah}.",
       "{Di più|Più grande|Migliore} è {meglio|il punto|l'unica regola}."
     ],
     "frugal": [
       "Però dovrei {mettere da parte|risparmiare|tenermeli}.",
       "Ma mi serve {davvero|poi|proprio}?",
       "{Chi risparmia guadagna due volte|Ogni moneta conta|I soldi messi via non fanno rumore}.",
-      "Sono {una settimana di pane|due notti d'affitto|soldi che rivorrò}.",
-      "{Lo farò durare|Deve durare|Durerà} {anni|una vita|finché non cade a pezzi}.",
-      "{Potevo riparare quello vecchio|Quello vecchio andava bene|Ne avevo già uno}? {Probabilmente|Forse|Mmh}.",
+      "Con quei soldi {ci mangiavo una settimana|pagavo due notti d'affitto|ci facevo altro}.",
+      "{Dovrà durare|Deve durare|Che duri} {anni|una vita|finché non cade a pezzi}.",
+      "{Potevo aggiustare le cose vecchie|Le vecchie cose andavano bene|In casa c'era già qualcosa di simile}? {Probabilmente|Forse|Mmh}.",
       "{Tieni lo scontrino|Tieni la scatola|Tieni la carta}. {Non si sa mai|Per sicurezza|Per il cambio}.",
       "{Di seconda mano|Al mercato|Da un vicino} sarebbe costato {la metà|un terzo|meno}.",
       "{Pane per una settimana|Carbone per un mese|La bolletta del gas}, {sparito|speso|uscito dalla porta}.",
@@ -616,40 +616,40 @@
       "{L'apparenza conta, diciamocelo|Si guarda anche l'occhio|La gente nota}.",
       "Per me solo {il meglio|il meglio del meglio|roba fine}.",
       "Che {guardino|mormorino|dicano pure}.",
-      "{Lo specchio|Il mio riflesso|La vetrina} {lo adorerà|è d'accordo|approva}.",
-      "{Indossarlo|Mostrarlo|Portarlo} {in piazza|domenica|dove tutti possano vederlo}.",
-      "{Nessuno|Neanche un'anima|Nessuno di loro} {in questa strada|in questa città|che conosco} ne ha {uno uguale|uno simile|il gusto}.",
+      "{Lo specchio|Il mio riflesso|La vetrina} {farà festa|è d'accordo|approva}.",
+      "{Da sfoggiare|Da mostrare|Da portare in giro} {in piazza|domenica|dove tutti possano vedere}.",
+      "{Nessuno|Neanche un'anima|Nessuno di loro} {in questa strada|in questa città|che conosco} ha {niente di uguale|niente di simile|il mio gusto}.",
       "{Mi sta bene|È proprio da me|Si intona ai miei occhi}. {Ovviamente|Certo|Naturalmente}.",
       "{Complimenti|Invidia|Sussurri} entro {stasera|domani|fine settimana}. {Garantito|Vedrai|Contaci}.",
       "{Lo stile|Il gusto|L'eleganza} {costa|vale la spesa|non è mai a buon mercato}.",
       "{Un cappello abbinato|Scarpe che ci stiano|Anche i guanti}, {la prossima volta|ovviamente|certo}.",
-      "{Chi lo vedrà per primo|Che mi vedano|Dove lo indosso}? {Tutti|Tutta la piazza|Ognuno di loro}."
+      "{Chi mi vedrà per primo|Che mi vedano|Dove vado a farmi vedere}? {Tutti|Tutta la piazza|Ognuno di loro}."
     ],
     "generous": [
-      "Magari lo {regalo a qualcuno|passo a qualcun altro|do via}.",
-      "{Dare è già una ricompensa|Meglio in due|Da solo non mi serve}.",
+      "Magari {ne faccio un regalo|faccio un pensiero a qualcuno|a qualcuno serve più che a me}.",
+      "{Dare è già una ricompensa|In due è meglio|Le cose belle vanno condivise}.",
       "A qualcuno servirà {più che a me|di sicuro|eccome}.",
       "So {già a chi|esattamente a chi|a chi si illuminerebbe la faccia}.",
       "{Il figlio del vicino|La vecchia signora Rossi|L'uomo all'angolo} {adorerebbe|potrebbe usare|sorriderebbe per} questo.",
-      "{Un regalo|Una sorpresa|Un pensierino}, {incartato|con un nastro|nella carta marrone}. {Perfetto|Bellissimo|Sì}.",
-      "{Uno per me|Uno per loro|Uno per casa}, {e uno da regalare|e uno di scorta|e uno per chi ne ha bisogno}.",
+      "{Un regalo|Una sorpresa|Un pensierino}, {con la carta bella|con un nastro|nella carta marrone}. {Perfetto|Bellissimo|Sì}.",
+      "{Un po' per me|Un po' per loro|Un po' per casa}, {e un po' da regalare|e un po' di scorta|e un po' per chi ne ha bisogno}.",
       "{Le cose|Le monete|Le cose belle} sono {fatte per passare di mano|fatte per muoversi|meglio regalate}.",
-      "{Chi ne ha più bisogno|Chi potrebbe usarlo|Chi non ha niente del genere}? {So io chi|Qualcuno sì|Chiederò}.",
-      "{Ne ho presi due|Uno in più|Un altro}, {non si sa mai|per un amico|per chiunque}.",
-      "{La loro faccia|L'espressione|La sorpresa} {quando lo regalerò|varrà la pena|è la parte migliore}.",
+      "{Chi ne ha più bisogno|Chi ne farebbe buon uso|Chi non ha niente del genere}? {So io chi|Qualcuno sì|Chiederò}.",
+      "{Ne ho preso di più|Un po' in più|Qualcosa in più}, {non si sa mai|per un amico|per chiunque}.",
+      "{La loro faccia|L'espressione|La sorpresa} {al momento del regalo|varrà la pena|è la parte migliore}.",
       "{Dare|Un regalo|Condividere} {non mi ha mai|quasi mai mi ha|raramente mi ha} {reso più povero|fatto spendere quanto sembra|fatto sentire in perdita}."
     ]
   },
   "familiar": [
-    "Chissà se {lo rivedo|la rivedo|ci ricapitiamo}, quel {viandante|forestiero|tipo}.",
+    "Chissà se {lo rivedo|lo rincontro|lo ritrovo}, quel {viandante|forestiero|tipo}.",
     "Quella persona ultimamente si vede {spesso|di continuo|troppo} da queste parti.",
     "Ho quasi l'impressione di {conoscerla|averci parlato|essere amici}.",
     "{Strano|Buffo|Curioso} come continuiamo a {incrociarci|ritrovarci|finire nelle stesse vie}.",
     "Di {lui|lei|loro} mi fido {più che della media degli sconosciuti|abbastanza|più del solito}.",
     "Prima o poi dovrei {chiedere il nome|dire qualcosa|smetterla di fissare e parlare}.",
-    "{Quello|Quella persona|Lo straniero} mi ha {salutato|fatto un cenno|sorriso} {l'ultima volta|una volta|ieri}. {Credo|Ne sono sicuro|O così mi è sembrato}.",
-    "{La gente|I vicini|Tutti} {parlano di|hanno storie su|continuano a nominare} {quel viaggiatore|quegli stranieri|quella compagnia}.",
-    "{I guai|La fortuna|Qualcosa} {li segue|cammina con loro|arriva dietro di loro}, {lo giurerei|ne sono sicuro|sempre}.",
+    "{Quello|Quella persona|Lo straniero} mi ha {salutato|fatto un cenno|sorriso} {l'ultima volta|una volta|ieri}. {Credo|Ne sono {g:sicuro|sicura|sicuro}|O così mi è sembrato}.",
+    "{Tutti|I vicini|In paese tutti} {parlano di|hanno storie su|continuano a nominare} {quel viaggiatore|quegli stranieri|quel Party}.",
+    "{I guai li seguono|La fortuna cammina con loro|Qualcosa arriva sempre dietro di loro}, {lo giurerei|ne sono {g:sicuro|sicura|sicuro}|sempre}.",
     "{Vorrei sentire|Mi chiedo|Ascolterei} {dove sono stati|le loro storie|cosa hanno visto}.",
     "{Brava gente|Gente perbene|Non i peggiori}, {credo|tutto sommato|per quanto ne so}.",
     "{Hanno aiutato|Sono stati gentili con|Hanno difeso} {il mio vicino|uno che conosco|un mio amico}, {ho sentito|dicono|una volta}.",
@@ -663,7 +663,7 @@
       "Dovrei {farlo più spesso|continuare così|cucinare di più}.",
       "{Bruciato|Abbrustolito|Croccante} da un lato, {crudo|freddo|perfetto} dall'altro. {Progressi|Quasi|Lo mangio lo stesso}.",
       "{La ricetta di mia madre|Alla vecchia maniera|Un po' più di sale}, e {ha quasi il sapore giusto|ci siamo quasi|eccolo}.",
-      "{Lavare i piatti|Le pentole|La pentola unta} {è il prezzo|viene dopo|è la parte peggiore}."
+      "{Lavare i piatti|Lavare le pentole|Grattare la pentola unta} {è il prezzo|viene dopo|è la parte peggiore}."
     ],
     "container": [
       "{Chi trova, tiene|Chi trova tiene, si sa|Nessuno l'ha reclamato}.",
@@ -678,11 +678,11 @@
       "Vale {ogni euro|il prezzo|l'affitto}, una notte {dormita bene|intera|tranquilla}.",
       "{Ne avevo bisogno, di quel riposo|Ho dormito come un sasso|Mi ero scordato cosa fosse dormire}.",
       "{Lenzuola pulite|Una serratura alla porta|Acqua calda}, {per una volta|finalmente|che benedizione}.",
-      "{L'oste|La padrona|Il portiere} {è stato gentile|non ha fatto domande|non ha gonfiato il prezzo}. {Raro|Ricordati il posto|Bene}.",
+      "{L'oste|Il padrone|Il portiere} {è stato gentile|non ha fatto domande|non ha gonfiato il prezzo}. {Raro|Ricordati il posto|Bene}.",
       "{Muri sottili|Russare accanto|Un pavimento che cigola}, {ma un letto|ma caldo|ma mio per stanotte}."
     ],
     "apiary": [
-      "Le arnie quest'anno stanno {andando alla grande|rendendo|piene}.",
+      "Le arnie quest'anno {vanno alla grande|rendono bene|sono piene}.",
       "Il miele {si vende sempre|non resta mai fermo|paga l'inverno}.",
       "Le api sono {un buon affare|lavoratrici pazienti|compagnia migliore di tanti}.",
       "{Punto|Punto due volte|Punto solo una volta}. {Ne valeva la pena|Fa parte del lavoro|Le perdono}.",
@@ -699,11 +699,11 @@
     ],
     "real_estate_office": [
       "Il mattone {si ripaga da solo|rende mentre dormo|è l'unica cosa furba che ho fatto}.",
-      "Un altro {mese|trimestre|stagione}, un altro affitto incassato.",
+      "Un altro {mese|trimestre|anno}, un altro affitto incassato.",
       "{Comprare quella terra|Firmare quell'atto|Prendere quella casa} è stata la mossa più {furba|azzeccata|redditizia} della mia vita.",
       "{Inquilini|Riparazioni|Il tetto} {di nuovo|sempre|ogni mese}. {Possedere è un lavoro anche quello|Niente è gratis|Ne vale comunque la pena}.",
-      "{I mattoni|La terra|I muri} {non scappano|restano dove li lasci|non mentono}. {A differenza della gente|A differenza delle azioni|Bene}.",
-      "{Ancora una|Un'altra|La prossima} {casa|proprietà|lotto} e {poi smetto|basta così|vado in pensione}. {Probabilmente|Forse|Ah}."
+      "{I mattoni|I terreni|I muri} {non scappano|restano dove li lasci|non mentono}. {A differenza della gente|A differenza delle azioni|Bene}.",
+      "{Ancora una|Un'altra|La prossima} {casa|proprietà|palazzina} e {poi smetto|basta così|vado in pensione}. {Probabilmente|Forse|Ah}."
     ],
     "stock_exchange": [
       "{Come sono venuti, se ne sono andati|Su un giorno, giù il giorno dopo|È il gioco}.",
@@ -726,13 +726,13 @@
       "Sono {le belle cose|i piccoli comfort|una buona sedia} a fare di quattro muri una casa.",
       "Ecco, già così è {tutta un'altra storia|molto meglio|quasi giusto}.",
       "{Schegge|Un pollice martellato|Una gamba traballante}, ma {sta in piedi|è mio|l'ho fatto io}.",
-      "{Uno scaffale|Una sedia|Un tavolo} {dove non c'era niente|per l'angolo|finalmente}. {Meglio|Orgoglioso|Bene}.",
+      "{Uno scaffale|Una sedia|Un tavolo} {dove non c'era niente|per l'angolo|finalmente}. {Meglio|{g:Orgoglioso|Orgogliosa|Orgoglioso}|Bene}.",
       "{Spostalo a sinistra|No, a destra|Dov'era prima}. {Perfetto|Mmh|Di nuovo}."
     ],
     "arcade": [
       "Ancora {un gettone|una partita|una moneta} e {ce la faccio|batto quel record|smetto, giuro}.",
       "Le mie iniziali {finiranno su quella classifica|sono ancora lassù|sono lassù da qualche parte}, lo giuro.",
-      "{Quei fantasmi|Quell'ultimo livello|Il boss finale} {bara|ce l'ha con me|è truccato}.",
+      "{Quei fantasmi barano|Quell'ultimo livello ce l'ha con me|Il boss finale è truccato}.",
       "{Bip|Luci|Musica} {in testa|dietro gli occhi|fino a casa}.",
       "{Finiti i gettoni|Finite le monete|Finita la fortuna}, {di nuovo|già|come sempre}.",
       "{Quel ragazzino|Un bambino|Una ragazza col berretto} {ha battuto il mio punteggio|mi ha visto perdere|l'ha fatto sembrare facile}."
@@ -750,20 +750,20 @@
       "{Per una narice|Per una lunghezza|Sul palo}, e {il mio|non il mio|quello sbagliato} l'ha spuntata.",
       "La forma diceva {una cosa|il favorito|niente di utile}, la corsa {un'altra|l'outsider|tutto}.",
       "{Il fantino|Quel cavallo|Lo starter} {dormiva|aveva altri piani|non ci ha provato}.",
-      "{Gridare|Fare il tifo|Urlare} {a squarciagola|come uno sciocco|a un cavallo} {per un minuto|per niente|per due soldi}.",
+      "{Gridare|Fare il tifo|Urlare} {a squarciagola|come {g:uno sciocco|una sciocca|uno sciocco}|a un cavallo} {per un minuto|per niente|per due soldi}.",
       "{La prossima corsa|La quarta|Il programma di domani}, {ho un presentimento|di sicuro|quello}."
     ],
     "tournament": [
-      "{Il mio|La mia scelta|Quella bestia su cui ho puntato} {è caduto al primo turno|ha lottato come un diavolo|non aveva il diritto di vincere}.",
+      "{Il mio|Il mio favorito|Il combattente su cui ho puntato} {è caduto al primo turno|ha lottato come un diavolo|non aveva il diritto di vincere}.",
       "I grossi {vincono sempre|non vincono mai quando punto io|vincono finché non perdono}.",
       "{Sangue sulla sabbia|Che incontro|Che serata}, e {soldi in tasca|tasche più leggere|niente in mano}.",
-      "{La folla|Il boato|L'odore dell'arena} {mi è entrato dentro|mi resterà addosso|era qualcosa}.",
+      "{La folla|Il boato|L'odore dell'arena} {mi entra dentro|mi resterà addosso|era qualcosa}.",
       "{Povera bestia|Poverina|Lo sconfitto}. {Comunque|Eppure|Mmh}, {che combattimento|i soldi sono soldi|l'ha scelto, no}.",
       "{Il prossimo incontro|La finale|Domani}, {punto sul grosso|punto sullo sfavorito|mi tengo le monete}."
     ],
     "cards": [
-      "{Bella mano|Pescata storta|Tavolo stretto}. {Li avevo in pugno|Mi avevano in pugno|Partita aperta} dalla {prima carta|metà|ultima zuffa}.",
-      "{La prossima volta|Un giorno|Domani} porto un {mazzo migliore|mazzo degno del nome|carta più rara}.",
+      "{Bella mano|Pescata storta|Tavolo stretto}. {Li avevo in pugno|Mi avevano in pugno|Partita aperta} {dalla prima carta|da metà partita|fino all'ultima mano}.",
+      "{La prossima volta|Un giorno|Domani} porto {un mazzo migliore|un mazzo degno del nome|una carta più rara}.",
       "Lo scontro {è andato a me|è andato a loro|ha spazzato via il tavolo}.",
       "{Una rara|Una lucida|Una carta che volevo da mesi}, {vinta|scambiata|finalmente}. {Mia|Bellissima|Sì}.",
       "{Mescola|Pesca|Gioca}, {e prega|e spera|e pensa}. {Come la vita|Semplice|Non semplice}.",
@@ -774,15 +774,15 @@
       "{Qualcuno|Un fortunato|Il cugino di un cugino} ha vinto grosso con uno di questi, {dicono|pare|una volta}.",
       "{Gratta|Raschia|Strofina}, {spera|prega|sospira}, {cestino|ripeti|comprane un altro}.",
       "{Polvere d'argento|Scaglie grigie|Grattature} {sotto le unghie|sulla manica|dappertutto}. {E niente|Per niente|Di nuovo}.",
-      "{Una piccola vincita|Rimborsato|Un biglietto gratis}. {Lo prendo|Fortunato|Conta}.",
+      "{Una piccola vincita|Rimborsato|Un biglietto gratis}. {Lo prendo|{g:Fortunato|Fortunata|Fortunato}|Conta}.",
       "{L'ultimo|Solo un altro|Uno per la fortuna}, {lo prometto|davvero|poi a casa}."
     ],
     "bowling": [
       "{Strike|Spare|Dritto nel canale}, {e me lo prendo|ecco la mia serata|tipico}.",
-      "{La pista|La palla|Il rimettibirilli} {tira a sinistra|ce l'ha con me|è scivolosa stasera}.",
+      "{La pista|La palla|La boccia} {tira a sinistra|ce l'ha con me|è scivolosa stasera}.",
       "{Scarpe|Scarpe a noleggio|Quelle scarpe} {di due numeri sbagliate|ancora calde|che sanno del cliente prima}, e comunque {una bella partita|ho giocato|una vittoria}.",
-      "{I birilli|La boccia|La pista} {e io|e me|e la canaletta} {ci parliamo|siamo vecchi amici|non andiamo d'accordo}.",
-      "{Il foglio dei punti|I punteggi|Il mio totale} {dice una cosa|non dice niente di bello|dice che ho perso}. {Il cuore ne dice un'altra|Mi sono divertito|Chi se ne importa}.",
+      "{I birilli e io|La boccia e io|La pista e io} {ci parliamo|siamo vecchi amici|non andiamo d'accordo}.",
+      "{Il foglio dei punti|Il tabellone|Il mio totale} {dice una cosa|non dice niente di bello|dice che ho perso}. {Il cuore ne dice un'altra|Mi sono {g:divertito|divertita|divertito}|Chi se ne importa}.",
       "{Il braccio|La spalla|La schiena} {fa male|farà male|si lamenta} {già|domani|adesso}."
     ],
     "pool": [
@@ -796,29 +796,29 @@
     "basketball": [
       "{Solo rete|Sul ferro|Tabellone e dentro}.",
       "{Nessuno|Neanche uno|Nessuno di loro} {difende l'area|tagliafuori|torna in difesa} qui.",
-      "{Ancora qualche|Altri dieci|Solo un altro} tiro e la chiamo {giornata|serata|vittoria}.",
-      "{Senza fiato|Sudato|Gambe finite}, {ma segno|ma contento|e sorridente}.",
+      "{Ancora qualche tiro|Altri dieci tiri|Solo un altro tiro} e la chiamo {giornata|serata|vittoria}.",
+      "{Senza fiato|{g:Sudato|Sudata|Sudato}|Gambe finite}, {ma segno|ma {g:contento|contenta|contento}|e sorridente}.",
       "{Tiro libero|Tiro da tre|Terzo tempo}, {sbagliato|dentro|sul ferro}, {la storia della mia vita|bellissimo|quasi}.",
-      "{Il canestro|Il ferro|La retina} è {più basso|più alto|storto} {di quanto sembri|del regolamento|di ieri}."
+      "{Il canestro|Il ferro|Il tabellone} è {più basso|più alto|storto} {di quanto sembri|del regolamento|di ieri}."
     ],
     "target": [
       "Rosata {più stretta|migliore|più larga} {dell'ultima volta|di quanto pensassi|a ogni serie}.",
       "{Espira|Premi, non strappare|Fermo}, e {il bersaglio cade|il piattello si rompe|è andato}.",
-      "{Le orecchie|La spalla|Il polso} {me lo ricorderanno domani|se lo ricorderanno|fischieranno tutta la notte}.",
+      "{Le orecchie fischieranno tutta la notte|La spalla me lo ricorderà domani|Il polso se lo ricorderà}.",
       "{Centro perfetto|Centro|Anello interno}, {una volta|due volte|finalmente}. {Non male|Bene|Ancora}.",
       "{Il vento|Il respiro|Il battito} {lo devia|lo sposta|è il nemico}.",
-      "{Calmo|Fermo|Concentrato} {per una volta|finalmente|per un minuto}. {Questo è il vero premio|Bello|Bene}."
+      "{{g:Calmo|Calma|Calmo}|{g:Fermo|Ferma|Fermo}|{g:Concentrato|Concentrata|Concentrato}} {per una volta|finalmente|per un minuto}. {Questo è il vero premio|Bello|Bene}."
     ],
     "piano": [
       "{Scordato|Tasti che si incollano|Una nota incrinata} e comunque {canta|che bello|ne vale la pena}.",
       "Le mie {dita|mani|mano sinistra} {ricordano più di me|fanno di testa loro|sono fuori allenamento}.",
       "{Solo una canzone|Solo il ritornello|Solo l'inizio}, {poi|e poi|forse} smetto.",
-      "{Un valzer|Un inno|Una canzone da osteria}, {ricordato a metà|suonato male|con sentimento}.",
+      "{Un valzer|Un inno|Una canzone da osteria}, {a memoria, più o meno|con qualche stonatura|con sentimento}.",
       "{Qualcuno ha ascoltato|Qualcuno ha applaudito|Un bambino si è fermato ad ascoltare}. {Bello|Bellissimo|È stato bello}.",
       "{Esercitarmi|Lezioni|Scale} {ogni giorno|di nuovo|quando posso}, {lo giuro|stavolta|un giorno}."
     ],
     "tarot": [
-      "{La Torre|La Morte|Il Matto} di nuovo. {Vuol dire cambiamento, non morte|Non sono preoccupato|Va bene, va tutto bene}.",
+      "{La Torre|La Morte|Il Matto} di nuovo. {Vuol dire cambiamento, si sa|Non sono {g:preoccupato|preoccupata|preoccupato}|Va bene, va tutto bene}.",
       "Le carte {non mentono mai|dicono quello che sai già|sono solo cartone}, {dicono|per lo più|di sicuro}.",
       "{Dritta|Rovesciata|Incrociata}, {è un buon segno|è un cattivo segno|non è un segno di niente}.",
       "{La Stella|Il Sole|Gli Amanti}, {finalmente|per una volta|alla buon'ora}. {Bene|Forse|Lo prendo}.",
@@ -829,22 +829,22 @@
   "greetFriend": [
     "{Ehi|Oh|Guarda chi c'è}, {name}!",
     "{Buonasera|Buongiorno|Ciao}, {name}.",
-    "{name}! {Che piacere|Ma guarda|Ancora vivo allora}.",
+    "{name}! {Che piacere|Ma guarda|Ancora in giro, allora}.",
     "{name}, {eccoti|finalmente|proprio la persona giusta}!",
     "{Beh|Oh|Ah}, {ma guarda chi c'è|guarda un po'|è} {name}!",
     "{Ciao|Salve|Ehi}, {name}! {Come va|Tutto bene|Stai lontano dai guai}?",
     "{name}! {Vieni qui|Di qua|Aspettami}!",
     "{Che piacere vederti|Bello vedere una faccia amica|Che fortuna}, {name}.",
-    "{name}, {vecchio amico|amico mio|briccone}!",
+    "{name}, {che bello vederti|che sorpresa|eccoti qua}!",
     "{Buon pomeriggio|Buongiorno|Buondì}, {name}. {Che bello vederti|In giro anche tu|Bella giornata}.",
     "{name}! {Stavo proprio pensando a te|Mi hai letto nel pensiero|Parli del diavolo}.",
-    "{Ehi|Oh|Ohi}, {name}! {Da quanto tempo|Dove sei stato|Ancora vivo}?"
+    "{Ehi|Oh|Ohi}, {name}! {Da quanto tempo|Che fine avevi fatto|Come te la passi}?"
   ],
   "water": {
     "swim": {
       "wash": [
         "{Niente|Nessun sapone} {batte|vale} un {tuffo|bagno|bel risciacquo} per {lavarsi via la giornata|ripulirsi|darsi una lavata}.",
-        "{Bene|Allora}, {dentro|si va}. {È fredda|Brr|Che frescura}, ma {avevo bisogno di lavarmi|ero sporco|puzzavo}."
+        "{Bene|Allora}, {dentro|si va}. {È fredda|Brr|Che frescura}, ma {avevo bisogno di lavarmi|ero {g:sporco|sporca|sporco}|puzzavo}."
       ],
       "escape": [
         "{Non può|Non riuscirà a|Che provi a} seguirmi {qui dentro|in acqua|fin qui}!",
@@ -855,8 +855,8 @@
         "{Ahh|Oh|Mm}, l'acqua è {splendida|proprio giusta|perfetta} {oggi|a quest'ora}."
       ],
       "group": [
-        "{Aspettami|Arrivo|Tienimi il posto}! {L'ultimo che entra|Sono subito dietro di te}!",
-        "{Facciamo a gara|Scommetto che nuoto più veloce di te|C'è posto per un altro}?"
+        "{Aspettami|Arrivo|Tienimi il posto}! {L'ultimo che entra paga da bere|Sono subito dietro di te}!",
+        "{Facciamo a gara|Vediamo chi nuota più veloce|C'è posto per un altro}?"
       ]
     },
     "swimming": [
@@ -874,12 +874,12 @@
         "*{osserva il galleggiante|tira piano la lenza|sbadiglia guardando l'acqua}*"
       ],
       "catch": [
-        "{Preso|Catturato|Abboccato}! Un {fish}, {ed è pure bello|mica male|la cena è servita}.",
-        "{Guarda qui|Ah|Ecco fatto}, un {fish}! {Nella borsa|Questa è la cena|Valeva l'attesa}."
+        "{Preso|Ci siamo|Ha abboccato}! {fish}, {e che esemplare|mica male|la cena è servita}.",
+        "{Guarda qui|Ah|Ecco fatto}: {fish}! {Nella borsa|Questa è la cena|Valeva l'attesa}."
       ],
       "release": [
-        "Un {fish}? {Torna in acqua|Via di qui|Non oggi}, {piccolo|amico|poverino}.",
-        "*slama il {fish} e lo ributta in acqua* {Vai|Nuota via|Alla prossima}."
+        "{fish}? {Torna in acqua|Via di qui|Non oggi}. {Cresci ancora un po'|Alla prossima|Sarà per un'altra volta}.",
+        "*rimette in acqua {fish} con delicatezza* {Vai|Nuota via|Alla prossima}."
       ],
       "nothing": [
         "{Niente|Proprio niente|Amo vuoto}. {Forse domani|I pesci dormono|Esca sbagliata di nuovo}.",
@@ -939,14 +939,14 @@
       "Solo una, poi per oggi basta. {Come sempre|Giuro|Davvero}.",
       "Qualcuno ha un accendino? {Qualcuno? Chiunque|Nessuno|Per favore}?",
       "Le mani hanno ricominciato a {fare quella cosa lì|tremare|cercare una tasca vuota}.",
-      "In questa giacca c'era un pacchetto. {Ci giurerei|Ne sono certo|Sicurissimo} che c'era un pacchetto."
+      "In questa giacca c'era un pacchetto. {Ci giurerei|Ne sono {g:certo|certa|certo}|{g:Sicurissimo|Sicurissima|Sicurissimo}} che c'era un pacchetto."
     ],
     "alcohol": [
-      "È {quasi|ormai quasi|praticamente} tardi abbastanza per chiamarlo aperitivo.",
+      "È {quasi|ormai|praticamente} ora dell'aperitivo.",
       "Un bicchiere. {Per calmarmi|Per fermare le mani|Per smussare}. Poi basta.",
       "Sarà ancora aperto {quel bar|l'osteria|quel posto all'angolo} a quest'ora?",
       "Ho la bocca secca in un modo che {l'acqua non risolve|l'acqua non tocca|niente di onesto risolve}.",
-      "Continuo a {sentire bottiglie|sentire vetro|annusare la cantina} che non {ci sono|c'è|nota nessun altro}."
+      "Continuo a {sentire bottiglie che non ci sono|sentire un tintinnio di vetro che non c'è|annusare una cantina che nessun altro sente}."
     ],
     "caffeine": [
       "Prima del caffè non {rispondo di me e nemmeno alle domande|sono una persona|parlo}.",
@@ -958,8 +958,8 @@
     "narcotic": [
       "Sta {passando|calando|finendo}. Sento {esattamente il punto dove finisce|il bordo|dove si spegne}.",
       "Avevo detto {stasera|al buio|dopo}. Non è ancora {stasera|buio|dopo}.",
-      "{I bordi|Gli angoli|Le parti dure} delle cose sono {tornati|riemersi|di nuovo lì}.",
-      "Solo quanto basta per {stare dritto|reggermi|essere normale}. Non per {stare su|volare|sparire}.",
+      "{I bordi|Gli angoli|Le parti dure} delle cose sono {di nuovo al loro posto|di nuovo taglienti|di nuovo lì}.",
+      "Solo quanto basta per {stare {g:dritto|dritta|dritto}|reggermi|essere normale}. Non per {stare su|volare|sparire}.",
       "So dove andare. {Vorrei non saperlo|Preferirei non saperlo|Non dovrei saperlo}."
     ],
     "gambling": [
@@ -986,7 +986,7 @@
     "caffeine": [
       "Ho un {chiodo|ferro|filo rovente} che entra dietro l'occhio e non si ferma.",
       "Non servo a {niente e a nessuno|nulla|niente}. {Proprio a niente|Non oggi|Per niente}.",
-      "Sono sveglio da ore e {ho dormito per tutto il tempo|non c'ero mai|non ero presente}.",
+      "Sono {g:sveglio|sveglia|sveglio} da ore e {ho dormito per tutto il tempo|non c'ero mai|non ero presente}.",
       "{Mettetemi un caffè in mano|Portatemi qualcosa|Trovatemi una tazza} prima che dica qualcosa di brutto."
     ],
     "narcotic": [
@@ -996,7 +996,7 @@
       "L'orologio si è {fermato|bloccato|arreso}. L'ho controllato {quattro volte|due volte in un minuto|troppe volte}."
     ],
     "gambling": [
-      "Non riesco a {stare fermo|starmene seduto|reggere questa sedia} e non posso dire {ad alta voce|a nessuno|neanche a me stesso} perché.",
+      "Non riesco a {stare {g:fermo|ferma|fermo}|starmene {g:seduto|seduta|seduto}|reggere questa sedia} e non posso dire {ad alta voce|a nessuno|neanche a me {g:stesso|stessa|stesso}} perché.",
       "Ho contato i soldi in tasca {undici volte|una dozzina di volte|più di quanto ammetterò}.",
       "C'è una {corsa|partita|mano} che parte adesso e io non ci sono dentro.",
       "Vado alla ricevitoria. {È già deciso|L'ho deciso da un pezzo|L'ho deciso ore fa}."
@@ -1004,7 +1004,7 @@
   },
   "season": {
     "SPRING": [
-      "{Tutto sta tornando|Si sveglia tutto|È di nuovo tutto verde} e io {mi sento ancora d'inverno|non mi sono ancora scongelato|sono mezzo addormentato}.",
+      "{Tutto sta tornando|Si sveglia tutto|È di nuovo tutto verde} e io {mi sento ancora d'inverno|non mi sono ancora {g:scongelato|scongelata|scongelato}|sono {g:mezzo addormentato|mezza addormentata|mezzo addormentato}}.",
       "{Il disgelo|La prima settimana calda|Il fango} fa durare {il lavoro|tutto|la giornata} il doppio.",
       "{Agnelli|Vitelli|Pulcini} e affitto, {agnelli|rumore|casino} e affitto. {La primavera è questa|Primavera, in due parole|Ogni anno uguale}.",
       "{Primi fiori|Primo verde|Prima mattina tiepida} dell'anno. {Ci faccio sempre caso|Non me lo perdo mai|Mi segno il giorno}.",
@@ -1012,15 +1012,15 @@
       "{Tempo di semina|Tempo da semina|Finalmente terra buona}. {La schiena lo sa|Le mani lo sanno|Il dolore comincia oggi}.",
       "{Finestre aperte|Porte aperte|Imposte spalancate} per la prima volta {dall'autunno|da mesi|quest'anno}.",
       "{Le pulizie di primavera|Battere i tappeti|Arieggiare i letti}, {e tutti i vicini fanno lo stesso|e polvere dappertutto|che mi piaccia o no}.",
-      "{Il canto degli uccelli|Le rondini|Il merlo} {all'alba|fuori dalla finestra|sul tetto}, {bellissimo|troppo presto|ogni santa mattina}.",
+      "{Il canto degli uccelli|Le rondini|Il merlo} {all'alba|fuori dalla finestra|sul tetto}, {che bellezza|troppo presto|ogni santa mattina}.",
       "{Acquazzoni|Pioggia di aprile|Pioggia improvvisa} e {sole|bel tempo|cielo azzurro} {nella stessa ora|a turno|tutto il giorno}. {Deciditi|Tipico|Primavera}.",
-      "{La Pasqua|La fiera di primavera|Il primo mercato} {sta arrivando|è vicina|c'è}, e {la città si sveglia|tutti sono fuori|la piazza si riempie}.",
+      "{La Pasqua|La fiera di primavera|Il primo mercato} {sta arrivando|è alle porte|c'è}, e {la città si sveglia|tutti sono fuori|la piazza si riempie}.",
       "{Il naso|Gli occhi|La gola} {e il polline|e i fiori|e l'erba} sono {di nuovo in guerra|nemici|vecchi rivali}."
     ],
     "SUMMER": [
       "{Troppo caldo|Fa troppo caldo|Insopportabile} per pensare, e pensare è {la parte facile|l'unica cosa che devo fare|quasi tutto il mio lavoro}.",
-      "{Il pozzo|La cisterna|La botte dell'acqua} è di nuovo {basso|più basso dell'anno scorso|quasi a fango}.",
-      "{Le giornate lunghe|Queste sere lunghe|La luce} sono {l'unica|la sola|la sola} cosa che salva la stagione.",
+      "{Nel pozzo|Nella cisterna|Nella botte} l'acqua è di nuovo {bassa|più bassa dell'anno scorso|quasi fango}.",
+      "{Le giornate lunghe sono|Queste sere lunghe sono|La luce è} {l'unica|la sola} cosa che salva la stagione.",
       "Con questo caldo va tutto a male entro mezzogiorno. {Ho smesso di comprare carne|Non si conserva niente|Non dura niente}.",
       "{Stagione di feste|Stagione di mercati|La stagione dei viaggi}. {Sconosciuti dappertutto|Metà sono forestieri|La strada è piena di forestieri}.",
       "{Acqua fresca|Ombra|Una cantina} e {un'ora per me|niente da fare|nessuno che mi chieda niente}. Non voglio altro.",
@@ -1032,28 +1032,28 @@
       "{Mezza città|Tutti|I ricchi} {sono via|sono andati al mare|sono in vacanza}, e {le strade sono vuote|i negozi chiusi|c'è silenzio}."
     ],
     "AUTUMN": [
-      "{Il raccolto è dentro|Il raccolto è finito|Ce l'abbiamo fatta a raccogliere} e {non basterà|è più magro dell'anno scorso|copre a stento l'anno}.",
+      "{Il raccolto è dentro|Il raccolto è finito|Il raccolto è al sicuro} e {non basterà|è più magro dell'anno scorso|copre a stento l'anno}.",
       "{La luce se ne va|Il buio arriva|La giornata finisce} sempre prima, e alla gente {fa qualcosa|cambia l'umore|si vede in faccia}.",
       "{Si mette via|Si sala|Si conserva} per l'inverno. {Metà andrà a male|Qualcosa va sempre a male|Non dura mai quanto speri}.",
       "{Bel tempo per dormire|Tempo buono per dormire|Il mese migliore per dormire}, {almeno quello|se non altro|non fosse altro}.",
       "{Sa tutto di|Tutta la strada sa di|L'aria sa di} {fumo|legna bruciata|marcio e fumo} adesso.",
       "{I debiti|Gli affitti|I conti} scadono in autunno. {È sempre così|È sempre stato così|Qualcuno l'ha deciso apposta}.",
       "{Foglie|Foglie bagnate|Castagne} {ovunque|su ogni gradino|sotto i piedi}. {Scivoloso|Bello|Entrambi}.",
-      "{I cappotti|Le sciarpe|Le coperte} {tornano fuori|sono tornati|sanno di armadio}.",
+      "{I cappotti|Le sciarpe|Le coperte} {tornano fuori|escono dai bauli|sanno di armadio}.",
       "{Funghi|Mele|Vino nuovo} {al mercato|nei boschi|ovunque}. {L'unica cosa buona|Qualcosa che piace|Non male}.",
       "{Nebbia|Foschia|Grigio} {la mattina|sul fiume|fino a mezzogiorno}, e {nessuno vede niente|tutto sembra più vicino|entra nelle ossa}.",
       "{La scuola|Il lavoro|L'anno} {ricomincia|riparte sul serio|riprende}, e {le vacanze sembrano di anni fa|l'estate è finita|anche la pazienza}.",
       "{Il primo fuoco|La prima brina|La prima notte fredda} {dell'anno|questa settimana|già}. {Ci siamo|Così presto|Ogni anno prima}."
     ],
     "WINTER": [
-      "{La legna|Il combustibile|Il carbone} costa {di più|più del cibo|il doppio di prima} e la brucio più in fretta di quanto guadagni.",
+      "{La legna|La torba|La carbonella} costa {di più|più del cibo|il doppio di prima} e la brucio più in fretta di quanto guadagni.",
       "{Nessuno|Non passa nessuno|Non viene nessuno} d'inverno. {Mi sta bene|Mi va benissimo|Mi dispiace meno di quanto dovrebbe}.",
       "Il freddo entra {nelle giunture|nelle mani|nella vecchia frattura} e {ci resta|non se ne va|sta lì fino a primavera}.",
       "{Notti lunghe|Queste notti|Il buio} per {pensare|ricordare|rivangare}, che io lo voglia o no.",
       "{Ancora un mese|Ancora due mesi|Ancora qualche settimana} e poi {torna la luce|gira|le giornate si allungano}.",
       "{Zuppa|Brodo|Qualcosa di caldo} e {la porta chiusa|un uscio chiuso|il fuoco coperto}. {Il piano è tutto qui|Tutto il piano|Niente di più ambizioso}.",
       "{Ghiaccio dentro|Brina dentro|Fiato che appanna} {la finestra|il vetro|la stanza}. {Che bello|Delizioso|Lo chiamano accogliente}.",
-      "{Il Natale|Le feste|Il Capodanno} {costa|si mangia|inghiotte} {un mese di paga|tutto|i risparmi}, {ogni anno|di nuovo|come sempre}.",
+      "{Il Natale|Il cenone|Il Capodanno} {costa|si mangia|inghiotte} {un mese di paga|tutto|i risparmi}, {ogni anno|di nuovo|come sempre}.",
       "{Neve|Fanghiglia|Ghiaccio nero} {su ogni gradino|per tutta la strada|all'angolo}. {Piano|Un passo alla volta|Tieniti al corrimano}.",
       "{Buio alle quattro|Buio alle cinque|Buio tutto il giorno}. {Mi manca il sole|Dov'è finita la giornata|È appena cominciata}.",
       "{Castagne sulla stufa|Vin brulè|Un mattone caldo nel letto}. {L'inverno ha i suoi momenti|Non tutto male|Piccole grazie}.",
@@ -1063,17 +1063,17 @@
   "wealth": {
     "poor": [
       "{L'affitto|Prima l'affitto|Quello che devo} prima, poi {il cibo|mangiare|il resto}, e il poi non arriva mai.",
-      "Ho {contato questi soldi|contato|guardato nel borsellino} tre volte e {tornano uguali|non crescono|dicono la stessa cosa}.",
-      "{Una settimana storta|Una sola settimana storta|Una settimana vuota} e {finisco in strada|sono finito|è finita}.",
+      "{Ho contato questi soldi tre volte|Li ho contati tre volte|Ho rovistato nel borsellino tre volte} e {sono sempre quelli|non crescono|dicono la stessa cosa}.",
+      "{Una settimana storta|Una sola settimana storta|Una settimana vuota} e {finisco in strada|sono {g:finito|finita|finito}|è finita}.",
       "{La chiamano|La gente la chiama|La parola che usano è} prudenza. {Non lo è|Non è quella|Ha un altro nome}.",
       "Potrei {lavorare il doppio|prendere un altro turno|non dormire proprio} e verrebbe fuori {lo stesso|la stessa cifra|poco o niente}.",
-      "{Qualcuno|C'è sempre qualcuno|Uno} viene {pagato prima di me|pagato per primo|prima di me in fila}.",
+      "{Qualcuno|Uno|Qualcun altro} viene {pagato prima di me|pagato per primo|prima di me in fila}.",
       "{Scarpe|Stivali|Suole} con {i buchi|il cartone dentro|il giornale dentro}, {di nuovo|quest'inverno|e nessuno se ne accorge}.",
       "{Pane e strutto|Minestra lunga|Patate} {di nuovo|ogni sera|questa settimana}. {Riempie|È cibo|Andrà bene}.",
-      "{I bambini|I piccoli|Mio figlio} {hanno bisogno di|vogliono|chiedono} {stivali|un cappotto|un libro} e io {dico il mese prossimo|dico presto|non dico niente}.",
+      "{I bambini|I piccoli|I ragazzi} {hanno bisogno di|vogliono|chiedono} {stivali|un cappotto|un libro} e io {dico il mese prossimo|dico presto|non dico niente}.",
       "{A piedi|A piedi ovunque|Risparmio il biglietto}. {Il tram è per gli altri|Le gambe sono gratis|Le scarpe costano meno dei biglietti}.",
       "{Un pasto vero|Un cappotto vero|Un giorno senza conti}. {Prima o poi|Un giorno|Non quest'anno}.",
-      "{La vetrina|Quel forno|Quegli stivali} {li guardo|guardo e basta|guardare è gratis}. {Guardare è gratis|Tutto qui|Solo guardare}."
+      "{La vetrina del forno|Quegli stivali|Il banco del macellaio}, da fuori. {Guardare è gratis|Tutto qui|Solo guardare}."
     ],
     "comfortable": [
       "{Basta|Basta così|Per ora basta}, e so benissimo quanto {in fretta|presto|facilmente} può cambiare.",
@@ -1081,54 +1081,54 @@
       "{Mi ricordo|Non ho dimenticato|Ricordo ancora} quando {avevo fame|ero al verde|non avevo niente}. {Mi tiene onesto|È quello che mi tiene attento|Per questo conto tutto}.",
       "{Niente di grandioso|Niente di sfarzoso|Nessun lusso}, ma {il tetto tiene|la porta chiude|il fuoco è acceso}.",
       "Un {anno buono|anno solido|anno tranquillo} e potrei {comprarmi la bottega|prendere il contratto|farlo come si deve}.",
-      "{Un cappotto nuovo|Stivali buoni|Scarpe come si deve} {quest'anno|per l'inverno|finalmente}, e {senza sensi di colpa|pagati|senza debiti}.",
+      "{Un cappotto nuovo|Stivali buoni|Scarpe come si deve} {quest'anno|per l'inverno|finalmente}, e {senza sensi di colpa|tutto pagato|senza debiti}.",
       "{Carne la domenica|Una torta per il compleanno|Una bottiglia a Natale}. {Non ogni settimana|Non molto|Abbastanza}.",
-      "{L'affitto|Le bollette|Il droghiere} {pagato in tempo|saldate|sistemato}. {Bella sensazione|Soddisfazione tranquilla|Un piccolo orgoglio}.",
+      "{L'affitto pagato in tempo|Le bollette saldate|Il conto del droghiere sistemato}. {Bella sensazione|Soddisfazione tranquilla|Un piccolo orgoglio}.",
       "{Una vacanza|Un viaggio|Una settimana al mare} {la prossima estate|se l'anno è buono|forse}.",
-      "{Non ricco|Non povero|Nel mezzo}. {Come quasi tutti|Mi va bene|Va bene così}.",
+      "{Non {g:ricco|ricca|ricco}|Non {g:povero|povera|povero}|Nel mezzo}. {Come quasi tutti|Mi va bene|Va bene così}.",
       "{Qualcosa|Un po'|Qualche moneta} {per la cassetta della chiesa|per il mendicante|per il bambino all'angolo}, {perché posso|perché no|mi costa poco}.",
       "{Il salvadanaio|Il conto|Il barattolo} {cresce|sale piano|si riempie} {lentamente|un pochino|settimana dopo settimana}. {Bene|Pazienza|Costante}."
     ],
     "rich": [
-      "{I soldi|Adesso|Il denaro} si fanno da soli. {Questa parte non te la dice nessuno|Nessuno ti avverte di questa parte|È la parte strana}.",
-      "{Tutti|Tutti quanti|Mezza strada} sono {gentili|gentilissimi|affascinanti} con me e ho smesso di {crederci|prenderlo sul serio|lusingarmi}.",
-      "Potrei {comprarmi questa strada|comprarmene metà|comprare tutto} e dormirei {male lo stesso|uguale|sveglio alle quattro} comunque.",
+      "{I soldi si fanno da soli|Adesso i soldi si fanno da soli|Il denaro si moltiplica da solo}. {Questa parte non te la dice nessuno|Nessuno ti avverte di questa parte|È la parte strana}.",
+      "{Tutti|Tutti quanti|I vicini} sono {gentili|gentilissimi|affascinanti} con me e ho smesso di {crederci|prenderlo sul serio|lusingarmi}.",
+      "Potrei {comprarmi questa strada|comprarmene metà|comprare tutto} e {dormirei male lo stesso|non dormirei meglio|alle quattro sarei ancora {g:sveglio|sveglia|sveglio}}.",
       "{Il trucco|Tutto il trucco|L'unico trucco} è {sembrare che non stai contando|non dare mai l'idea di contare|contare dove non ti vede nessuno}.",
       "{Qualcuno|Uno|Un cugino} vuole {un favore|soldi|una presentazione}. {C'è sempre qualcuno|Ce n'è sempre uno|Ne spunta uno a settimana}.",
       "{Il sarto|Il gioielliere|Il mercante di vini} {conosce il mio nome|viene a trovarmi|mi manda un biglietto}. {Ovviamente|Che carino|Naturalmente}.",
       "{Una casa in città|Una casa in campagna|Un'altra proprietà}. {Perché no|È un investimento|Una in più}.",
       "{Soldi vecchi|Soldi nuovi|I miei soldi} {parlano|non stanno mai zitti|dicono più di me}.",
-      "{La servitù|Il personale|Il mio uomo} {se ne occupano|ci penserà|se ne occupa}. {Non chiedo come|Non devo saperlo|Costi quel che costi}.",
-      "{I poveri|Quella gente|La strada} mi {guardano|fissano|osservano} come se {gli dovessi qualcosa|fossi una vetrina|fossi il tempo che fa}.",
-      "{Una cena di beneficenza|Un gala|Un altro ricevimento} {stasera|questa settimana|di nuovo}. {Sorridi|Firma un assegno|Fatti vedere}.",
+      "{La servitù se ne occupa|Il personale ci penserà|Il maggiordomo se ne occupa}. {Non chiedo come|Non devo saperlo|Costi quel che costi}.",
+      "{I poveri|Quei disgraziati|I passanti} mi {guardano|fissano|osservano} come se {gli dovessi qualcosa|fossi una vetrina|fossi il tempo che fa}.",
+      "{Una cena di beneficenza|Un gala|Un altro ricevimento} {stasera|questa settimana|anche domani}. {Sorridi|Firma un assegno|Fatti vedere}.",
       "{Cosa voglio davvero|C'è ancora qualcosa da comprare|Cosa mi renderebbe felice}? {Lo sapevo una volta|Mmh|Bella domanda}."
     ]
   },
   "addiction": {
     "buy": {
       "nicotine": [
-        "Un {pacchetto|pacco|astuccio} nuovo di {item}. {Adesso sì|Già va meglio|Ecco qua}.",
-        "{Solo uno|Uno solo|Soltanto uno}: {item}. Per {dopo|le emergenze|la strada di casa}.",
+        "Scorta fresca: {item}. {Adesso sì|Già va meglio|Ecco qua}.",
+        "{Solo questo|Soltanto questo|Questo e basta}: {item}. Per {dopo|le emergenze|la strada di casa}.",
         "Non {guardarmi così|giudicarmi|dire una parola}, è solo {item}."
       ],
       "alcohol": [
         "{item}, per {stasera|dopo|quando la giornata è finita}. {Puramente medicinale|Solo per gli ospiti|Nessuno deve saperlo}.",
-        "Una bottiglia di {item}. {Una|Una sola|Soltanto una}. È {ragionevole|moderato|praticamente niente}.",
+        "{item}. {Una bottiglia|Una sola bottiglia|Soltanto una}. {Ragionevole|Con moderazione|Praticamente niente}.",
         "{Incartala|Mettila nella borsa|Passamela} in fretta, {per favore|se non le dispiace|prima che cambi idea}."
       ],
       "caffeine": [
         "{item}. {Grazie a tutti i santi|Grazie al cielo|Finalmente}.",
-        "Prendo {item}, e {un altro subito dopo|un secondo da portare via|nient'altro conta}.",
-        "{Mettimelo in mano|Dammelo|Passamelo} prima che {mi addormenti in piedi|dimentichi il mio nome|smetta di funzionare}."
+        "Prendo {item}, e {il bis subito dopo|un secondo giro da portare via|nient'altro conta}.",
+        "{Dammi qua|Qua, presto|Passa qua} prima che {mi addormenti in piedi|dimentichi il mio nome|smetta di funzionare}."
       ],
       "narcotic": [
         "Nessuno ha visto. {Nessuno|Neanche un'anima|Proprio nessuno} mi ha visto comprare {item}.",
-        "{item}. Quanto basta per tornare {in equilibrio|stabile|me stesso}.",
+        "{item}. Quanto basta per tornare {in equilibrio|in piedi|me {g:stesso|stessa|stesso}}.",
         "So {cosa sto facendo|benissimo cosa sto facendo}. {Quasi sempre|Più o meno|Quasi}."
       ],
       "gambling": [
-        "{item}. {È questo quello buono|Me lo sento in questo|Oggi la fortuna gira}.",
-        "Solo {un|un solo} {item}. {Per divertimento|Per il brivido|Per tenermi in allenamento}.",
+        "{item}. {È questo quello buono|Questa è la volta buona|Oggi la fortuna gira}.",
+        "{Solo questo|Questo e basta|Solo stavolta}: {item}. {Per divertimento|Per il brivido|Per tenermi in allenamento}.",
         "Le {probabilità|cifre|stelle} dicono che {item} pagherà. {Sarà meglio|Me lo devono|Deve essere così}."
       ]
     },
@@ -1136,7 +1136,7 @@
       "nicotine": [
         "*accende {una sigaretta|il fuoco|una}* {Ahh|Ecco|Finalmente}. {Meglio|Molto meglio|Questa sì che è roba}.",
         "*soffia fuori {un lungo pennacchio|fumo lento|un nastro grigio}* {Adesso posso pensare|Il mondo è più quieto|Bene}.",
-        "{item}. Le {mani|dita|nervature} smettono finalmente di {tremare|agitarsi|lamentarsi}."
+        "{item}. Le {mani|dita|gambe} smettono finalmente di {tremare|agitarsi|lamentarsi}."
       ],
       "alcohol": [
         "*beve {un lungo sorso|una bella sorsata|un sorso lento} di {item}* {Ahh|Meglio|Ecco qua}.",
@@ -1145,12 +1145,12 @@
       ],
       "caffeine": [
         "*manda giù {item}* {Ed eccomi|Adesso sono|Questo mi rende} di nuovo una {persona|creatura umana|cittadina}.",
-        "{Oh|Sì|Ecco}. La {nebbia|emicrania|foschia} se ne {va|sta andando|dirada}.",
+        "{Oh|Sì|Ecco}. {La nebbia se ne va|L'emicrania se ne sta andando|La foschia si dirada}.",
         "*beve {item}* {Bene|Ottimo|Perfetto}. Cosa stavo {facendo|per fare|cercando}?"
       ],
       "narcotic": [
         "*{rabbrividisce|sospira|si immobilizza}* {Ecco|Così|Di nuovo in equilibrio}. {Tutto è piano|Niente fa male|Finalmente quiete}.",
-        "Il {mondo|la stanza|la strada} smette di {premermi addosso|spingermi|urlarmi contro}.",
+        "{Il mondo|La stanza|La strada} smette di {premermi addosso|spingermi|urlarmi contro}.",
         "{Quanto basta|Solo quanto serve|Una piccola}. {Nessuno|Neanche un'anima} deve saperlo."
       ],
       "gambling": [
@@ -1162,23 +1162,23 @@
     "relief": {
       "nicotine": [
         "Il {peggio|tremore|annebbiamento} è {passato|finito|svanito}. Posso di nuovo {respirare|pensare|sentire}.",
-        "{Ahh|Finalmente|Alla buon'ora}. Sono di nuovo {me stesso|umano|buona compagnia}.",
+        "{Ahh|Finalmente|Alla buon'ora}. Sono di nuovo {me {g:stesso|stessa|stesso}|{g:umano|umana|umano}|buona compagnia}.",
         "È stata {dura|troppo lunga|pesante}. {Mai più|Non di nuovo|Lo dico ogni volta}."
       ],
       "alcohol": [
         "Il {tremore|tremito|sudore} si è {fermato|calmato|placato}. {Per ora|Per oggi|Grazie al cielo}.",
-        "Riesco a tenere in mano una {tazza|bicchiere|penna} senza {rovesciarla|tremare|fare figuracce}.",
+        "Riesco a tenere in mano {una tazza|un bicchiere|una penna} {senza rovesciare niente|senza tremare|senza fare figuracce}.",
         "{Stabile|Più stabile|Meglio}. Domani {diminuisco|starò attento|ci vado piano}. {Davvero|Sul serio|Lo giuro}."
       ],
       "caffeine": [
         "Il {mal di testa|chiodo dietro l'occhio|martellare} è {sparito|in calo|finalmente passato}.",
-        "Sono sveglio. {Davvero|Sul serio|Veramente} sveglio. {Che sensazione|Finalmente|Alleluia}.",
+        "Sono {g:sveglio|sveglia|sveglio}. {Davvero|Sul serio|Veramente} {g:sveglio|sveglia|sveglio}. {Che sensazione|Finalmente|Alleluia}.",
         "{Bene|Ottimo|D'accordo}. Posso tornare a essere {utile|educato|piacevole}."
       ],
       "narcotic": [
         "Le mie {ossa|articolazioni|mani} {hanno smesso di litigare|tacciono|sono di nuovo mie}.",
-        "Di nuovo {al caldo|calmo|in equilibrio}. Il {freddo|brivido|terrore} {se ne è andato|è passato|ha mollato la presa}.",
-        "{Ce l'ho fatta|Ne sono fuori|Sono sopravvissuto}. {A malapena|Appena|In qualche modo}."
+        "Di nuovo {al caldo|{g:calmo|calma|calmo}|in equilibrio}. Il {freddo|brivido|terrore} {se ne è andato|è passato|ha mollato la presa}.",
+        "{Ce l'ho fatta|Ne sono fuori|Sono {g:sopravvissuto|sopravvissuta|sopravvissuto}}. {A malapena|Appena|In qualche modo}."
       ],
       "gambling": [
         "Il {prurito|nervosismo|richiamo} si è {calmato|zittito|placato}. {Per stasera|Per ora|Per oggi}.",
@@ -1189,11 +1189,11 @@
     "gamble": {
       "casino": [
         "{Stasera|Questa sera|Adesso} è la notte giusta. {Me lo sento|I tavoli mi chiamano|La fortuna me ne deve una}.",
-        "Solo una {puntatina|visita|partitina} al {casinò|tavolo|la roulette}. {Entro ed esco|Un'ora al massimo|Niente di che}.",
-        "La {roulette|i tavoli|le macchinette} {mi aspetta|non aspettano|sono calde stasera}. {Vado|Arrivo|Andiamo}."
+        "Solo una {puntatina|visita|partitina} {al casinò|al tavolo|alla roulette}. {Entro ed esco|Un'ora al massimo|Niente di che}.",
+        "{La roulette mi aspetta|I tavoli non aspettano|Le macchinette sono calde stasera}. {Vado|Arrivo|Andiamo}."
       ],
       "bet": [
-        "{Tutto sul|Il tutto sul|Tutto quanto sul} {rosso|favorito|numero sette}. {Non|No, non|Non si} torna indietro.",
+        "{Tutto sul|Il tutto sul|Tutto quanto sul} {rosso|favorito|numero sette}. {Indietro non si torna|Niente ripensamenti|Fatto}.",
         "*{posa la puntata|mette giù le fiches|piazza la scommessa}* {Dai|Fallo per me|Ti prego, ti prego}.",
         "{Un po' di più|Solo un pochino di più|Raddoppio} stavolta. {La sorte sta girando|Mi spetta|Deve arrivare}."
       ],
@@ -1204,7 +1204,7 @@
       ],
       "lost": [
         "{Persi|Andati|Sotto di} {amount}. {Pazienza|Non importa|Così va la vita}.",
-        "{Il banco|La roulette|Quella macchinetta} {vince ancora|è truccata|mi odia}. {Tipico|Ovvio|Come sempre}.",
+        "{Il banco vince ancora|La roulette è truccata|Quella macchinetta mi odia}. {Tipico|Ovvio|Come sempre}.",
         "{amount} in meno. {Mi fermo qui|Basta per stasera|Ora di tornare a casa}. {Forse|Magari|Credo}."
       ],
       "chase": [
@@ -1215,7 +1215,7 @@
       "broke": [
         "{Quello era|Ecco che se ne va} {l'ultimo|l'affitto|l'ultimo spicciolo}. {Oh no|Cosa ho fatto|Non di nuovo}.",
         "*rovescia {le tasche vuote|un borsellino vuoto|la fodera di una tasca}* {Niente|Neanche una moneta|Sparito tutto}.",
-        "{Come|Come faccio a|Cosa} {lo dico a casa|lo spiego|pago l'affitto} adesso?"
+        "{Come lo dico a casa|Come lo spiego|Come pago l'affitto} adesso?"
       ]
     }
   },
@@ -1229,7 +1229,7 @@
     "hiveTreat": [
       "{Di nuovo gli acari|Ancora la varroa|Quegli acari}. {Non nel mio alveare|Fuori di qui|Non finché ci sono io}.",
       "Un {trattamento|po' di polvere|dosaggio} contro {gli acari|il marciume|la tarma}, e {ce la faranno|staranno bene|mi ringrazieranno}.",
-      "{C'è qualcosa che non va|Stanno male|Questo alveare è malato}. {Meno male che sono passato|Meglio ora che mai|Preso in tempo}."
+      "{C'è qualcosa che non va|Stanno male|Questo alveare è malato}. {Meno male che sono {g:passato|passata|passato}|Meglio ora che mai|Preso in tempo}."
     ],
     "hiveSuper": [
       "{Non hanno più spazio|Sono pieni fino al coperchio|Stanno scoppiando}. {Un'altra cassa|Un melario nuovo|Un altro piano} sopra.",
@@ -1242,9 +1242,9 @@
       "{Vasetti|Barattoli|Orci} di {miele|miele fresco|miele in favo} per {{owner}|il padrone|la casa}."
     ],
     "barrelCheck": [
-      "{Lavora ancora|Borbotta ancora|È ancora viva}. {Bene|Lasciamola stare|Pazienza}.",
+      "{Fermenta ancora|Borbotta ancora|Lavora ancora}. {Bene|Lasciamo fare|Pazienza}.",
       "{Un colpetto sul fianco|Bussare sulle doghe|Ascoltare al tappo}. {Suona giusto|Suona quasi giusto|Ci siamo quasi}.",
-      "{{brew}|La fermentazione|Il lotto} {vuole altro tempo|non è ancora pronto|se la prende comoda}. {Anch'io|Giusto|Nessuna fretta}."
+      "{{brew}|La fermentazione|Il lotto} {vuole altro tempo|ha bisogno di qualche giorno|se la prende comoda}. {Anch'io|Giusto|Nessuna fretta}."
     ],
     "barrelCare": [
       "Una {mescolata|bella mescolata|mescolata lenta} per {svegliare il lievito|farla girare|renderla uniforme}.",
@@ -1252,13 +1252,13 @@
       "{Tappo pulito|Un panno fresco sul tappo|Pulire il bordo}, {niente mosche qui|non entra niente|l'ordine è sicurezza}."
     ],
     "barrelBottle": [
-      "{Pronta|Fatto|Finita} finalmente. {Fuori le bottiglie|Prendete le bottiglie|Imbottigliamo}.",
-      "{Limpida|Brillante|Dorata} {come si deve|e bellissima|e pronta}. {Nelle bottiglie|Imbottigliamo|Via}.",
+      "{Ci siamo|Fatto|È ora}, finalmente. {Fuori le bottiglie|Prendete le bottiglie|Imbottigliamo}.",
+      "{Colore limpido|Colore brillante|Un bel dorato}, {come si deve|bellissimo|al punto giusto}. {Nelle bottiglie|Imbottigliamo|Via}.",
       "Ecco {{brew}|un lotto|un buon lotto} per {{owner}|il padrone|la cantina}."
     ],
     "barrelStart": [
       "{Botte vuota|Una botte vuota|Niente qui dentro}? {Non per molto|Così non va|Rimediamo}.",
-      "{Un lotto nuovo|Una cotta fresca|Un'altra cotta} di {{brew}|qualcosa di buono|quella solita}. {Ci vediamo tra qualche giorno|Ora si aspetta|Pazienza adesso}."
+      "{Un lotto nuovo|Una cotta fresca|Un'altra cotta} di {{brew}|qualcosa di buono|roba buona}. {Ci vediamo tra qualche giorno|Ora si aspetta|Pazienza adesso}."
     ],
     "taste": [
       "{Solo un assaggio|Una goccia sulla lingua|Un sorso}. {Per la qualità|Per puro mestiere|Qualcuno deve pur farlo}.",
@@ -1282,11 +1282,11 @@
     ],
     "friendHive": [
       "{Le loro api|Le api} {avevano sete|avevano bisogno di una mano|andavano accudite}. {È il minimo|Tra amici ci si aiuta|Nessun disturbo}.",
-      "{Ho dato un'occhiata al|Ho controllato il|Ho tenuto d'occhio il} {loro alveare|loro sciame|l'alveare del gruppo}. {Farebbero lo stesso|Tra amici si fa|Con piacere}."
+      "{Ho dato un'occhiata al loro alveare|Ho controllato il loro sciame|Ho tenuto d'occhio l'alveare del Party}. {Farebbero lo stesso|Tra amici si fa|Con piacere}."
     ],
     "friendBarrel": [
       "{La loro|La} {botte|cotta} {si sentiva sola|andava controllata|voleva un po' di cura}. {Aiutare non fa male|Tra amici ci si aiuta|Con piacere}.",
-      "{Ho dato|Ho fatto} {un'occhiata|una mescolata|un controllo} alla {loro botte|botte del gruppo}. {Senza toccarne una goccia, eh|Non tocca a me imbottigliare|Guardo e basta}."
+      "{Ho dato un'occhiata|Ho dato una mescolata|Ho fatto un controllo} alla {loro botte|botte del Party}. {Senza toccarne una goccia, eh|Non tocca a me imbottigliare|Guardo e basta}."
     ]
   }
 }

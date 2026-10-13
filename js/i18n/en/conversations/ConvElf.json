@@ -109,7 +109,7 @@
         "Bed. Before I say something unkind about someone's taste in curtains."
       ],
       "hunger": [
-        "I could eat. Something with herbs in it, please, not something with a wrapper.",
+        "I could eat. Something with herbs in it, please. Nothing in a wrapper.",
         "A pear, a little cheese, a glass of white wine. Is that so much to ask of a city?",
         "Hungry. It is so undignified. My stomach has no sense of occasion.",
         "The smell from that {bakery|kitchen|market stall} has quite undone my composure.",
@@ -167,7 +167,7 @@
       "comfort": [
         "A velvet chair, a fire, a good vintage. I have earned them several times over.",
         "My rooms are too small for my furniture, and my furniture is too old for this century.",
-        "I miss the garden terrace at my mother's house. Not the house. The terrace.",
+        "I miss the garden terrace at my mother's house. The house, much less.",
         "Silk cushions. Is it vain to want silk cushions? It is. I want them anyway.",
         "A quiet room that faces east. That is all an elf needs. And a harp. And a view.",
         "This bench is very hard and very modern. Two qualities I distrust."
@@ -244,7 +244,7 @@
         "Night. I see well enough in it. Mortals carry little lights and still trip over things.",
         "The owls are out. They talk such nonsense, but in such lovely voices.",
         "Midnight, and the stars have shifted again. Since the Squishing they do not stay where I left them.",
-        "I do not need much sleep. I need much night. There is a difference.",
+        "A little sleep is enough for me. Night, though, I want plenty of.",
         "Moonlight on the rooftops. Silver everywhere and nobody awake to steal it.",
         "The city sleeps. I can hear every clock in it, ticking out mortal lives."
       ]
@@ -289,7 +289,7 @@
         "A long life has its lean decades. This is one. I shall sing through it."
       ],
       "comfortable": [
-        "Enough to live gracefully, not enough to be vulgar. The ideal balance.",
+        "Enough to live gracefully, too little to be vulgar. The ideal balance.",
         "A good flat, a good harp, a good wine on Sundays. I need nothing from Varlenia.",
         "My savings have grown since {1820|1868|1904}. Compound interest is mortal patience, borrowed.",
         "I could afford the opera every week. I go every month, to keep it special.",
@@ -348,7 +348,7 @@
         "People ask the secret of a long life. Patience, beauty and never driving over eighty.",
         "I outlived my first love, my second, and my fourth. The third is still writing to me. From Lisbon.",
         "A mortal friend just turned eighty. I bought her flowers I first saw bloom in her grandmother's garden.",
-        "The hard part of a long life is not the years. It is the goodbyes.",
+        "The hard part of a long life is the goodbyes.",
         "My passport says born in {1612|1588|1640}. The clerk read it, looked at me, and went for a coffee.",
         "Mortals measure life in years. We measure it in oaks. I am about two oaks old."
       ],
@@ -363,7 +363,7 @@
         "Is Varlenia from another dimension, or the gods' locked room? Nobody there asks, while rents rise."
       ],
       "beauty": [
-        "Beauty is not vanity. Vanity is not caring when beauty is gone. I care enormously.",
+        "Vanity is not caring for beauty when it fades. I care enormously.",
         "A well-cut stone holds light the way a good song holds silence.",
         "Every century has one perfect building. This one is still undecided.",
         "I set emeralds for an empress once. Her neck was shorter than the necklace. We adjusted the empire.",
@@ -847,7 +847,7 @@
           ],
           [
             0,
-            "They talk about the same thing. That is not conversation, that is an echo."
+            "They all talk about the same thing. That is called an echo."
           ],
           [
             1,
@@ -860,7 +860,7 @@
         "lines": [
           [
             0,
-            "The old elm in the square should be protected, not cut down for parking."
+            "The old elm in the square should be protected. Cutting it down for parking would be a crime."
           ],
           [
             1,

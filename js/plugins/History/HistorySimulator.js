@@ -115,6 +115,15 @@
         const WMo = worldModes();
         return !WMo || typeof WMo.hordeExists !== 'function' || !!WMo.hordeExists();
     }
+    // The Horde's homeland: Scandinavia, held from the first day of the
+    // century beside its Iceland seat. Until HORDE_HOLD_UNTIL its borders are
+    // exactly that ground: nobody takes a nation off it, it takes nothing,
+    // and no war or coup moves the line. From that month on it expands, its
+    // war declarations weighted by HORDE_EXPANSION_DRIVE. A goblin world
+    // (hordeIsNormalOrder) is the Horde's from the start and is not held.
+    const HORDE_HOMELAND = ['Norway', 'Sweden', 'Denmark'];  // i18n-ignore  country ids
+    const HORDE_HOLD_UNTIL = '2006-01';
+    const HORDE_EXPANSION_DRIVE = 2;
     const AUTO_RUN = params.autoRunOnNewGame === "true";
     const CANON_END_YEAR = 2001; // The true end year of the canon timeline
 
@@ -351,8 +360,8 @@
         'Bulgaria': { controller: 'Neutral', faction: 'Neutral' },
         'Yugoslavia': { controller: 'Neutral', faction: 'Neutral' },
         'Greece': { controller: 'Neutral', faction: 'Neutral' },
-        'Denmark': { controller: 'Neutral', faction: 'Neutral' },
-        'Sweden': { controller: 'Neutral', faction: 'Neutral' },
+        'Denmark': { controller: 'Goblin Horde', faction: 'Neutral' },
+        'Sweden': { controller: 'Goblin Horde', faction: 'Neutral' },
         'Finland': { controller: 'Neutral', faction: 'Neutral' },
         'Ireland': { controller: 'Neutral', faction: 'Neutral' },
         'Albania': { controller: 'Neutral', faction: 'Neutral' },
@@ -728,6 +737,26 @@
     // artifact by record rather than by the name it happened to carry when the
     // century was simulated. The stored name is the fallback for a database
     // that no longer holds it.
+    // The world's artifacts take the reserved historyArtifact band of
+    // window.RuntimeItemIds (ItemSystemUtils.js), never an authored row.
+    const ARTIFACT_COUNT = 13;
+    // RuntimeItemIds (ItemSystemUtils) loads first in the game; a harness that
+    // skips it would silently give every artifact id 0, so say so once.
+    let _warnedNoRuntimeIds = false;
+    function artifactRowId(i) {
+        const R = window.RuntimeItemIds;
+        if (R) return R.id('historyArtifact', i);
+        if (!_warnedNoRuntimeIds) {
+            _warnedNoRuntimeIds = true;
+            console.warn('[HistorySimulator] window.RuntimeItemIds is missing: history artifacts get no item rows.');  // i18n-ignore  console diagnostic
+        }
+        return 0;
+    }
+    function placeArtifact(table, entry) {
+        const R = window.RuntimeItemIds;
+        return !!R && R.place(table, entry);
+    }
+
     function AR(kind, id, name) { return { $art: kind + ':' + id, $n: name }; }
     function isAR(v) { return !!v && typeof v === 'object' && typeof v.$art === 'string'; }
     function renderAR(v) {
@@ -1071,10 +1100,11 @@
                 return obj;
             }
 
-            for (let i = 0; i < 13; i++) {
-                generated.items.push(createArtifact(1501 + i, itemNouns, false, false));
-                generated.weapons.push(createArtifact(1501 + i, weaponNouns, true, false));
-                generated.armors.push(createArtifact(1501 + i, armorNouns, false, true));
+            for (let i = 0; i < ARTIFACT_COUNT; i++) {
+                const id = artifactRowId(i);
+                generated.items.push(createArtifact(id, itemNouns, false, false));
+                generated.weapons.push(createArtifact(id, weaponNouns, true, false));
+                generated.armors.push(createArtifact(id, armorNouns, false, true));
             }
 
             generated.lang = currentLang();
@@ -1129,19 +1159,29 @@
             });
         }
 
+        // The first ARTIFACT_COUNT entries of each list are the composed set,
+        // and their id is a function of their position exactly as their name
+        // is a function of the seed. Anything after them (an anomaly's relic)
+        // keeps the id it was minted with. Every row goes in through
+        // RuntimeItemIds.place, which never writes over an authored row.
         injectArtifacts(generated) {
             if (!generated) return;
             this.repairArtifacts(generated);
             this.relocalizeArtifacts(generated);
-            if (typeof $dataItems !== 'undefined' && generated.items) {
-                generated.items.forEach(a => $dataItems[a.id] = a);
-            }
-            if (typeof $dataWeapons !== 'undefined' && generated.weapons) {
-                generated.weapons.forEach(a => $dataWeapons[a.id] = a);
-            }
-            if (typeof $dataArmors !== 'undefined' && generated.armors) {
-                generated.armors.forEach(a => $dataArmors[a.id] = a);
-            }
+            const tables = {
+                items: typeof $dataItems !== 'undefined' ? $dataItems : null,
+                weapons: typeof $dataWeapons !== 'undefined' ? $dataWeapons : null,
+                armors: typeof $dataArmors !== 'undefined' ? $dataArmors : null
+            };
+            Object.keys(tables).forEach(kind => {
+                const table = tables[kind];
+                if (!table || !Array.isArray(generated[kind])) return;
+                generated[kind].forEach((a, i) => {
+                    if (!a) return;
+                    if (i < ARTIFACT_COUNT) a.id = artifactRowId(i);
+                    placeArtifact(table, a);
+                });
+            });
         }
 
         runSimulation(years = null) {
@@ -1388,6 +1428,13 @@
                 const seat = hp && hp.homeNation && (this._currentCountries || {})[hp.homeNation];
                 if (seat) seat.controller = power;
             }
+            // The Horde starts in Scandinavia, whatever the table says.
+            if (this._currentHyperpowers[HORDE_POWER]) {
+                for (const nation of HORDE_HOMELAND) {
+                    const info = (this._currentCountries || {})[nation];
+                    if (info) info.controller = HORDE_POWER;
+                }
+            }
             for (const [name, info] of Object.entries(this._currentCountries || {})) {
                 const controller = info.controller || 'Neutral';  // i18n-ignore  controller id
                 const govId = this.governmentIdFor(controller, name);
@@ -1561,6 +1608,24 @@
             return null;
         }
 
+        // Whether the Horde is still held to its homeland on `date` (see
+        // HORDE_HOMELAND): a month before HORDE_HOLD_UNTIL, in a world that
+        // has a Horde and is not a goblin world.
+        hordeHeld(date) {
+            if (!this._currentHyperpowers || !this._currentHyperpowers[HORDE_POWER]) return false;
+            if (hordeIsNormalOrder()) return false;
+            return monthStr(date) < HORDE_HOLD_UNTIL;
+        }
+
+        // A nation no roll or war may move while the Horde is held: anything
+        // it holds, and its homeland whoever holds it.
+        hordeLocksNation(nation, date) {
+            if (!this.hordeHeld(date)) return false;
+            if (HORDE_HOMELAND.includes(nation)) return true;
+            const info = (this._currentCountries || {})[nation];
+            return !!(info && info.controller === HORDE_POWER);
+        }
+
         // Monthly chance that one nation changes hands: a hyperpower annexes /
         // conquers it (its government becomes the conqueror's archetype), or a
         // controlled nation wins independence and restores its own government.
@@ -1575,7 +1640,7 @@
             const nation = nations[Math.floor(this._rand() * nations.length)];
             // A power's own seat is not on the table: Ireland is the Mages
             // Guild's and stays theirs, in every century this rolls.
-            if (this.homeNationOwner(nation)) return;
+            if (this.homeNationOwner(nation) || this.hordeLocksNation(nation, date)) return;
             const info = this._currentCountries[nation];
             const current = info.controller || 'Neutral';  // i18n-ignore  controller id
             const dateStr = dayStr(date);
@@ -1605,7 +1670,8 @@
             const region = this.regionOfNation(nation);
             const candidates = powers.filter(p => p !== current
                 && !this.isSecludedPower(p) && this.powerExists(p, date)
-                && this.powerReaches(p, region));
+                && this.powerReaches(p, region)
+                && !(p === HORDE_POWER && this.hordeHeld(date)));
             if (!candidates.length) return;
             let total = 0;
             const weights = candidates.map(p => {
@@ -1649,7 +1715,8 @@
             if (!nations.length || !powers.length) return;
             if (this._rand() > LIVE_UNREST_CHANCE) return;
             const nation = nations[Math.floor(this._rand() * nations.length)];
-            if (this.homeNationOwner(nation) || this.nationAtWar(nation)) return;
+            if (this.homeNationOwner(nation) || this.nationAtWar(nation) ||
+                this.hordeLocksNation(nation, date)) return;
             const info = this._currentCountries[nation];
             const current = info.controller || 'Neutral';  // i18n-ignore  controller id
             const dateStr = dayStr(date);
@@ -1677,7 +1744,8 @@
             const region = this.regionOfNation(nation);
             const candidates = powers.filter(p => p !== current
                 && !this.isSecludedPower(p) && this.powerExists(p, date)
-                && this.powerReaches(p, region));
+                && this.powerReaches(p, region)
+                && !(p === HORDE_POWER && this.hordeHeld(date)));
             if (!candidates.length) return;
             let total = 0;
             const weights = candidates.map(p => {
@@ -3942,6 +4010,8 @@
         if (!worldHasWars()) return null;
         const pool = (goals && goals.length ? goals : this.warGoals(attacker, defender)).slice();
         if (!pool.length || attacker === defender) return null;
+        // A Horde still held to its homeland neither fights nor is fought.
+        if ((attacker === HORDE_POWER || defender === HORDE_POWER) && this.hordeHeld(date)) return null;
         // The claim is a seeded handful of what is on offer.
         for (let i = pool.length - 1; i > 0; i--) {
             const j = Math.floor(this._rand() * (i + 1));
@@ -3975,17 +4045,21 @@
             .filter(p => !this.isSecludedPower(p) && this.powerExists(p, date))
             .sort();
         const holdings = this._warHoldings();
+        const hordeHeld = this.hordeHeld(date);
         const offers = [];
         let total = 0;
         for (const a of powers) {
             if (busy.has(a)) continue;
             for (const d of powers) {
                 if (d === a || busy.has(d) || !holdings[d]) continue;
+                if (hordeHeld && (a === HORDE_POWER || d === HORDE_POWER)) continue;
                 if (!this.powersMayInteract(a, d) || this._inTruce(a, d, date)) continue;
                 const goals = this.warGoals(a, d, holdings);
                 if (!goals.length) continue;
-                const chance = this.warDeclarationChance(a, d);
+                let chance = this.warDeclarationChance(a, d);
                 if (chance <= 0) continue;
+                // Out of its homeland, the Horde is expanding.
+                if (a === HORDE_POWER && !hordeHeld) chance *= HORDE_EXPANSION_DRIVE;
                 offers.push({ a, d, goals, chance });
                 total += chance;
             }
@@ -5533,7 +5607,15 @@
         const varId = Number(args.variableId);
         const year = Number(args.year);
         const fact = manager.getHistoricalFact(year);
-        $gameVariables.setValue(varId, fact);
+        // Handed a variable, the fact is stored there for the event to use;
+        // cast as a spell (AgeWhisper) with none, it is read out instead.
+        if (varId > 0) {
+            $gameVariables.setValue(varId, fact);
+        } else {
+            window.skipLocalization = true;
+            $gameMessage.add(fact);
+            window.skipLocalization = false;
+        }
     });
 
     PluginManager.registerCommand(pluginName, "showHistoryLog", args => {

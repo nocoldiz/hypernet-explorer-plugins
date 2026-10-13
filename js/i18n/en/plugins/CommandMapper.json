@@ -7,8 +7,8 @@
   "selectCommand": "Select a command to remap. Press ESC to go back.",
   "selectCommandGamepad": "Select a command to remap. Press B to go back.",
   "resetToDefault": "Reset to Default",
-  "keysReset": "Key mappings have been reset to default.",
-  "gamepadReset": "Gamepad mappings have been reset to default.",
+  "keysReset": "Keys reset to default.",
+  "gamepadReset": "Gamepad reset to default.",
   "commandNames": {
     "ok": "OK/Confirm",
     "cancel": "Cancel",

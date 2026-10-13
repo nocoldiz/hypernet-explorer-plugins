@@ -2681,11 +2681,18 @@
             adj = (T.pool ? T.pool('Dream.name.adj') : []) || [];
             noun = (T.pool ? T.pool('Dream.name.noun') : []) || [];
         } catch (e) { /* i18n not up yet */ }
+        // Word order is the language's: "{adj} {noun}" in English, the noun
+        // first in Italian ("Corridoio sepolto").
+        let fmt = '';
+        try { if (T.has && T.has('Dream.name.format')) fmt = String(T('Dream.name.format') || ''); } catch (e) { fmt = ''; }
         const out = [];
         for (let i = 0; i < count; i++) {
             const a = adj.length ? adj[Math.floor(rnd() * adj.length)] : '';
             const n = noun.length ? noun[Math.floor(rnd() * noun.length)] : '';
-            out.push((a + ' ' + n).trim() || ('#' + (i + 1)));
+            const joined = (a && n && fmt)
+                ? fmt.replace('{adj}', a).replace('{noun}', n)
+                : (a + ' ' + n);
+            out.push(joined.trim() || ('#' + (i + 1)));
         }
         return out;
     }
@@ -6515,7 +6522,14 @@
         },
 
         // Player walked into a dream entity -> flash and fall into another dream.
-        collideShift() { this.changeDream(); },
+        // Every in-dream trigger raises the scene's _transitioning flag itself
+        // (so a second touch on the next frame cannot fire again) and only then
+        // calls here. changeDream reads that very flag as "a shift is already
+        // running", so it is lowered first: the trigger IS the shift.
+        collideShift() {
+            if (this._scene) this._scene._transitioning = false;
+            this.changeDream();
+        },
 
         stop() {
             DreamWeapon.end();

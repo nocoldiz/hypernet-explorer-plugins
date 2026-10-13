@@ -3113,7 +3113,9 @@
       [trait.positive, trait.negative].forEach((stats) => {
         Object.keys(stats || {}).forEach((param) => {
           const index = TRAIT_PARAM_INDEX[param];
-          if (typeof index === "number") actor._paramPlus[index] += stats[param];
+          // Scaled as the badges print it: HP and MP are worth ten a point.
+          const value = window.TraitParams ? window.TraitParams.scale(param, stats[param]) : stats[param];
+          if (typeof index === "number") actor._paramPlus[index] += value;
         });
       });
       (trait.skills || []).forEach((skillId) => {
@@ -3184,7 +3186,10 @@
       portraitMode: actor.portraitMode ? (actor.portraitMode() || undefined) : undefined,
       isCreature,
       characterType: isCreature ? "creature" : "humanoid", // i18n-ignore: preset field value
-      archetypes: isCreature ? creatureArchetypeKeys(actor) : undefined,
+      // A person keeps theirs only once a second archetype was spliced on
+      // (wings on a human): a plain Humanoid body needs no record.
+      archetypes: (isCreature || (actor._creatureArchetypes || []).length > 1)
+        ? creatureArchetypeKeys(actor) : undefined,
       gender: actor.gender ? actor.gender() : 0,
       jobId,
       birthDate,
@@ -3266,6 +3271,11 @@
       } else if (typeof window.changeArchetypeForActor === "function") {
         try { window.changeArchetypeForActor(actor, archetypes[0]); } catch (e) { /* anatomy layer not up */ }
       }
+    } else if (!actor._isCreatureActor && archetypes.length >= 2 &&
+               typeof window.applyArchetypesToActor === "function") {
+      // A person with a second archetype gets its parts (and their skills)
+      // back the same way the Bio sheet put them on.
+      window.applyArchetypesToActor(actor, archetypes);
     }
 
     applyTraitSheet(actor, record.traits);
@@ -4980,6 +4990,12 @@
 
   // The dossier a file in the folder holds, or null when it holds none.
   function exportReadFile(full) {
+    const payload = exportReadPayload(full);
+    return payload && payload.kind === "character" && payload.character ? payload : null;
+  }
+
+  // Whatever a file in the folder carries: a character or a whole party.
+  function exportReadPayload(full) {
     const io = exportFs();
     if (!io) return null;
     const lower = full.toLowerCase();
@@ -4993,7 +5009,10 @@
     if (!text) return null;
     try {
       const payload = JSON.parse(text);
-      return payload && payload.kind === "character" && payload.character ? payload : null;
+      if (payload && payload.kind === "character" && payload.character) return payload;
+      if (payload && payload.kind === "party" && payload.party && // i18n-ignore: payload tag
+          Array.isArray(payload.party.members) && payload.party.members.length) return payload;
+      return null;
     } catch (e) {
       return null;
     }
@@ -5126,6 +5145,12 @@
     return found;
   }
 
+  // Whether the person on a card is already one of the player's own templates.
+  function exportIsPlayerTemplate(character) {
+    const mine = exportFingerprint(character);
+    return getPlayerPresets().some((entry) => entry && exportFingerprint(entry) === mine);
+  }
+
   // Whether this game already holds the person in a file: only a dossier that
   // matches them in every field counts, so importing twice never doubles
   // anybody, while a namesake of the same class is still somebody new.
@@ -5229,8 +5254,12 @@
     } catch (e) {
       return [];
     }
+    // Only a copy already filed among the player's own templates hides the
+    // card: a benched or written dossier that matches it is spent once per
+    // world, and the card must stay playable as many times as anybody likes.
     return found
-      .filter((entry) => entry && !entry.known && entry.payload && entry.payload.character)
+      .filter((entry) => entry && entry.payload && entry.payload.character &&
+        !exportIsPlayerTemplate(entry.payload.character))
       .map((entry) => {
         const preset = Object.assign({}, entry.payload.character, {
           id: folderPresetId(entry.fingerprint || entry.uid),
@@ -5594,7 +5623,7 @@
    * @returns {array} Array of party records
    */
   function getPartyPresets() {
-    return PARTY_PRESETS.concat(getPlayerPartyPresets());
+    return getFolderPartyPresets().concat(PARTY_PRESETS, getPlayerPartyPresets());
   }
 
   /**
@@ -5616,6 +5645,7 @@
    * @returns {string} Description, or ""
    */
   function getPartyPresetLore(party) {
+    if (party && party.fromFolder) return T('CharPresets.partyFromFolder');
     if (!party || party.playerMade) return "";
     const key = "CharPresets.party." + party.key + ".desc";
     return T.has(key) ? T(key) : "";
@@ -5627,7 +5657,7 @@
    * @returns {boolean} True for a saved party
    */
   function isPlayerPartyPreset(party) {
-    return !!(party && party.playerMade);
+    return !!(party && party.playerMade && !party.fromFolder);
   }
 
   function getNextPartyPresetId() {
@@ -5694,6 +5724,261 @@
     return true;
   }
 
+  //=============================================================================
+  // Party cards
+  //=============================================================================
+  // A whole party written out as one QR card: every member's full record
+  // (sheet, skills learned, equipment) plus what the party holds together, its
+  // purse, its stock, its Knowledge Points and its vehicles with their holds.
+  // Bounties stay behind: a crime belongs to the world it was committed in.
+  //
+  // The Worlds screen writes them off a savegame; any party card sitting in
+  // characters/ is offered on the party board, above the written crews, and is
+  // never spent, so it can be taken as many times as anybody likes.
+  const FOLDER_PARTY_ID_BASE = 5000000;
+  const VEHICLE_HOLD_PREFIX = "vehicle_"; // i18n-ignore: container id prefix (VehicleStorage.js)
+
+  const exportClone = (value) => (value === undefined || value === null)
+    ? value : JSON.parse(JSON.stringify(value));
+
+  // What a party holds together, read off a savegame's contents.
+  function partyStockFromContents(contents) {
+    const party = (contents && contents.party) || {};
+    const sys = (contents && contents.system) || {};
+    const containers = (sys._containerData && sys._containerData.containers) || {};
+    const holds = {};
+    Object.keys(containers).forEach((id) => {
+      if (id.indexOf(VEHICLE_HOLD_PREFIX) === 0) holds[id] = exportClone(containers[id]);
+    });
+    return {
+      gold: Number(party._gold) || 0,
+      items: exportClone(party._items || {}),
+      weapons: exportClone(party._weapons || {}),
+      armors: exportClone(party._armors || {}),
+      knowledge: Number(sys._knowledgePoints) || 0,
+      vehicles: {
+        holds,
+        goods: exportClone(sys._vehicleGoods || {}),
+        upgrades: exportClone(sys._vehicleUpgrades),
+        camperUpgrades: exportClone(sys._camperUpgrades),
+        health: exportClone(sys._vehicleHealth),
+        fuel: exportClone(sys._vehicleFuelData),
+        boatType: sys._boatType || null
+      }
+    };
+  }
+
+  /**
+   * The party of a savegame, as a party record: its members in party order and
+   * its shared stock. The contents are only read, never loaded into the game.
+   * @param {object} contents - What the savegame file holds
+   * @param {string} [name] - What to call the party; the members' names otherwise
+   * @returns {object|null} { name, members, stock }, or null for an empty party
+   */
+  function partyFromSaveContents(contents, name) {
+    const actors = (contents && contents.actors && contents.actors._data) || [];
+    const ids = (contents && contents.party && contents.party._actors) || [];
+    const members = [];
+    ids.forEach((id) => {
+      const actor = actors[id];
+      if (!actor) return;
+      try {
+        const record = capturePerson(actor);
+        // The body lives on the actor; CC3DModel would read the live seat.
+        record.model3d = actor._cc3DModel ? exportClone(actor._cc3DModel) : undefined;
+        delete record.id;
+        members.push(record);
+      } catch (e) {
+        console.error("CharacterExport: a party member could not be described", e);
+      }
+    });
+    if (!members.length) return null;
+    return {
+      name: String(name || "").trim() || members.map((m) => m.name).join(", "),
+      members,
+      stock: partyStockFromContents(contents)
+    };
+  }
+
+  function exportPartyPayload(party) {
+    return {
+      format: EXPORT_FORMAT,
+      kind: "party", // i18n-ignore: payload tag
+      game: "Hypernet Explorer", // i18n-ignore: payload tag
+      party: {
+        name: party.name,
+        members: (party.members || []).map((m) => {
+          const copy = exportClone(m);
+          delete copy.id;
+          delete copy.retired;
+          return copy;
+        }),
+        stock: exportClone(party.stock || null)
+      }
+    };
+  }
+
+  // The code itself: the whole party when it fits, then the members without
+  // their sheets, then the members alone. The PNG always carries all of it.
+  function exportPartyQrCode(party) {
+    const utf8 = (text) => unescape(encodeURIComponent(text));
+    const full = exportPartyPayload(party);
+    const slim = exportClone(full);
+    slim.compact = true;
+    slim.party.members = slim.party.members.map((m) => {
+      const c = exportCompactPayload({ character: m }).character;
+      delete c.sheet;
+      return c;
+    });
+    const bare = exportClone(slim);
+    delete bare.party.stock;
+    for (const payload of [full, slim, bare]) {
+      const text = JSON.stringify(payload);
+      if (qrVersionFor(utf8(text).length)) return qrEncodeText(text);
+    }
+    const names = bare.party.members.map((m) => ({ name: m.name, classId: m.classId, level: m.level }));
+    return qrEncodeText(JSON.stringify(Object.assign({}, bare, { party: { name: party.name, members: names } })));
+  }
+
+  /**
+   * Write a party out as a QR card in the characters folder.
+   * @param {object} party - { name, members, stock }
+   * @returns {object} { file, canvas }; file is "" without a filesystem
+   */
+  function exportPartyToQr(party) {
+    const canvas = qrCanvas(exportPartyQrCode(party), 6);
+    const png = dataUrlToBytes(canvas.toDataURL("image/png"));
+    const payload = exportPartyPayload(party);
+    const withText = pngWithText(png, JSON.stringify(payload));
+    const io = exportFs();
+    const dir = exportFolder();
+    const slug = exportSlug(party.name);
+    const ext = ".party.qr.png"; // i18n-ignore: file extension
+    let fileName = slug + ext;
+    if (io && dir) {
+      // The same party written again overwrites its own card.
+      const mine = exportCanonical(payload.party);
+      for (let n = 1; n < 1000; n++) {
+        fileName = slug + (n > 1 ? "_" + n : "") + ext;
+        const full = io.path.join(dir, fileName);
+        if (!io.fs.existsSync(full)) break;
+        const held = exportReadPayload(full);
+        if (!held || (held.party && exportCanonical(held.party) === mine)) break;
+      }
+    }
+    const file = exportWrite(fileName, withText);
+    folderPartyCache = null;
+    return { file, canvas };
+  }
+
+  /**
+   * Write one character dossier out as a QR card and hand back the code too,
+   * so a screen can show what it wrote.
+   * @param {object} preset - Dossier
+   * @returns {object} { file, canvas }
+   */
+  function exportCharacterToQr(preset) {
+    return { file: exportToQr(preset), canvas: qrCanvas(exportQrCode(preset), 6) };
+  }
+
+  // Every party card in the folder, one per distinct party.
+  function exportScanParties() {
+    const io = exportFs();
+    const dir = exportFolder();
+    if (!io || !dir) return [];
+    let names = [];
+    try {
+      names = io.fs.readdirSync(dir);
+    } catch (e) {
+      return [];
+    }
+    const seen = new Set();
+    const found = [];
+    names.forEach((file) => {
+      const payload = exportReadPayload(io.path.join(dir, file));
+      if (!payload || !payload.party) return;
+      const fingerprint = exportCanonical(payload.party);
+      if (seen.has(fingerprint)) return;
+      seen.add(fingerprint);
+      found.push({ file, payload, fingerprint });
+    });
+    return found;
+  }
+
+  let folderPartyCache = null;
+  let folderPartyAt = 0;
+
+  /**
+   * The party cards waiting in the folder, as records the party board offers
+   * first. They are templates: picking one never spends the card.
+   * @returns {array} Party records, empty outside NW.js
+   */
+  function getFolderPartyPresets() {
+    if (folderPartyCache && Date.now() - folderPartyAt < EXPORT_SCAN_HOLD_MS) return folderPartyCache;
+    folderPartyCache = exportScanParties().map((entry) => {
+      const party = exportClone(entry.payload.party);
+      // A template says who they are, not where another world left them.
+      (party.members || []).forEach((m) => {
+        m.switches = [];
+        delete m.mapId;
+        delete m.x;
+        delete m.y;
+      });
+      return Object.assign(party, {
+        id: FOLDER_PARTY_ID_BASE + (folderPresetId(entry.fingerprint) - FOLDER_PRESET_ID_BASE),
+        playerMade: true,
+        fromFolder: true,
+        folderFile: entry.file
+      });
+    }).filter((party) => Array.isArray(party.members) && party.members.length);
+    folderPartyAt = Date.now();
+    return folderPartyCache;
+  }
+
+  /**
+   * Hand a party card's shared stock to the party being founded: the purse,
+   * the backpack, the Knowledge Points and the vehicles with their holds. An
+   * item this world's database does not hold (a generated artifact of another
+   * world) is left behind.
+   * @param {object} stock - What partyStockFromContents returned
+   * @returns {boolean} Whether anything was applied
+   */
+  function applyPartyStock(stock) {
+    if (!stock || typeof $gameParty === "undefined" || !$gameParty) return false;
+    $gameParty.initAllItems();
+    $gameParty.gainGold(-$gameParty.gold());
+    $gameParty.gainGold(Number(stock.gold) || 0);
+    const fill = (held, into, db) => {
+      Object.keys(held || {}).forEach((id) => {
+        const amount = Number(held[id]) || 0;
+        if (amount > 0 && db && db[Number(id)]) into[id] = amount;
+      });
+    };
+    fill(stock.items, $gameParty._items, $dataItems);
+    fill(stock.weapons, $gameParty._weapons, $dataWeapons);
+    fill(stock.armors, $gameParty._armors, $dataArmors);
+    if (typeof $gameSystem !== "undefined" && $gameSystem) {
+      $gameSystem._knowledgePoints = Number(stock.knowledge) || 0;
+      const v = stock.vehicles || {};
+      const CM = window.ContainerManager;
+      if (CM && typeof CM.getContainer === "function") {
+        Object.keys(v.holds || {}).forEach((id) => {
+          if (id.indexOf(VEHICLE_HOLD_PREFIX) !== 0) return;
+          const bag = CM.getContainer(id);
+          Object.keys(bag).forEach((k) => delete bag[k]);
+          Object.assign(bag, exportClone(v.holds[id]));
+        });
+      }
+      $gameSystem._vehicleGoods = exportClone(v.goods || {});
+      if (v.upgrades) $gameSystem._vehicleUpgrades = exportClone(v.upgrades);
+      if (v.camperUpgrades) $gameSystem._camperUpgrades = exportClone(v.camperUpgrades);
+      if (v.health) $gameSystem._vehicleHealth = exportClone(v.health);
+      if (v.fuel) $gameSystem._vehicleFuelData = exportClone(v.fuel);
+      if (v.boatType) $gameSystem._boatType = v.boatType;
+    }
+    return true;
+  }
+
   window.CharacterExport = {
     folder: exportFolder,
     payloadFromActor: exportPayloadFromActor,
@@ -5712,6 +5997,13 @@
     isKnown: exportIsKnown,
     importOne: exportImport,
     importAll: exportImportAll,
+    partyPayload: exportPartyPayload,
+    partyQrCode: exportPartyQrCode,
+    partyToQr: exportPartyToQr,
+    characterToQr: exportCharacterToQr,
+    partyFromSaveContents,
+    partyStockFromContents,
+    scanParties: exportScanParties,
     // The encoder itself, for anything else that wants a code on screen.
     qr: {
       encodeBytes: qrEncodeBytes,
@@ -5798,6 +6090,8 @@
     getFolderPresets,
     isFolderPreset,
     getPartyPresets,
+    getFolderPartyPresets,
+    applyPartyStock,
     getPlayerPartyPresets,
     getPartyPresetName,
     getPartyPresetLore,

@@ -659,6 +659,7 @@
   },
   "Bologna": {
     "name": "Bologna",
+    "wip": true,
     "picture": "destinations/Bologna",
     "biome": "City",
     "country": "Italy",

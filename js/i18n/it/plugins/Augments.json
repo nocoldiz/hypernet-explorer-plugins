@@ -4,11 +4,22 @@
     "title": "Innesti",
     "tab": {
       "fitted": "Installati ({count})",
-      "catalogue": "Catalogo ({count})"
+      "all": "Tutti ({count})",
+      "region": "{name} ({count})"
     },
-    "noneFitted": "Nessuno nel gruppo porta un innesto.",
+    "region": {
+      "head": "Testa",
+      "senses": "Sensi",
+      "torso": "Torso",
+      "organs": "Organi",
+      "arms": "Braccia",
+      "legs": "Gambe",
+      "appendages": "Appendici",
+      "other": "Altro"
+    },
+    "noneFitted": "Nessun innesto montato.",
     "noCatalogue": "Nessun catalogo di innesti caricato.",
-    "noneSelected": "Scegli un innesto per leggerne il dossier.",
+    "noneSelected": "Seleziona un innesto.",
     "wornBy": "{actor} · {part}",
     "type": {
       "biological": "Biologico",
@@ -17,24 +28,23 @@
     },
     "damagedHost": "parte ospite danneggiata",
     "effects": "Effetti",
-    "noStatChange": "Nessuna modifica ai parametri.",
+    "noStatChange": "Nessuna modifica alle statistiche.",
     "grantedSkill": "Abilità concessa",
-    "alwaysCarried": "Portata in ogni battaglia; non occupa uno slot abilità.",
-    "sockets": "Innesti compatibili",
-    "noSocket": "Nessuna sede lo accetta.",
-    "noSocketShort": "nessuna sede",
-    "moreSockets": "+{count}",
+    "alwaysCarried": "Sempre sincronizzato.",
+    "sockets": "Alloggiamenti",
+    "noSocket": "Non entra in nessun alloggiamento.",
     "capacity": "Capienza",
     "capacityValue": "{fitted} su {max} alloggiamenti",
     "fittedTo": "Installato su",
-    "damagedWarning": "La parte in cui si trova è rovinata. L'innesto funziona ancora, l'arto no.",
-    "severWarning": "Amputare la parte porta via anche l'innesto.",
+    "damagedWarning": "Parte ospite rovinata. L'innesto funziona, l'arto no.",
+    "severWarning": "Se perdi la parte, perdi l'innesto.",
     "need": {
       "halted": "Non si esaurisce mai",
       "slowed": "Cala del {pct}% più lentamente",
       "hastened": "Cala del {pct}% più in fretta",
-      "restores": "Si ricarica al {pct}% del ritmo abituale"
+      "restores": "Si ricarica al {pct}% della velocità"
     },
-    "searchPlaceholder": "Cerca innesti…"
+    "searchPlaceholder": "Cerca innesti…",
+    "price": "Prezzo"
   }
 }

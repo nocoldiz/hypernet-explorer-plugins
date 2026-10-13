@@ -42,6 +42,41 @@
     return keys;
   }
 
+  // getWanderDir's facings, and the scratch its weights are written into.
+  const _WANDER_DIRS = [2, 4, 6, 8];
+  const _wanderWeights = new Float64Array(4);
+
+  // decideNextGoal's trait pulls on the wander and socialize weights, read
+  // off the trait's lower-cased name, in this order.
+  const _TRAIT_GOAL_MODS = Object.entries({
+    shy:         { s: -20, w:   0 },
+    introverted: { s: -15, w:   0 },
+    social:      { s: +30, w: -10 },
+    extroverted: { s: +25, w:   0 },
+    aggressive:  { s:   0, w: +20 },
+    violent:     { s:   0, w: +15 },
+    lazy:        { s: +10, w: -10 },
+  });
+
+  // What one trait adds to the two weights, summed once per trait object
+  // (the name is lower-cased and matched against every pull only the first
+  // time that trait is met, not on every decision of everybody who has it).
+  const _traitPulls = new WeakMap();
+  function _traitGoalPull(t) {
+    let pull = _traitPulls.get(t);
+    if (pull) return pull;
+    pull = { w: 0, s: 0 };
+    const name = (t.name || '').toLowerCase();
+    for (const [key, mod] of _TRAIT_GOAL_MODS) {
+      if (name.includes(key)) {
+        pull.w += mod.w;
+        pull.s += mod.s;
+      }
+    }
+    _traitPulls.set(t, pull);
+    return pull;
+  }
+
   // The working loop's pace (NPCController.updateWorking), in real time.
   const NPC_WORK = {
     CHECK_MS: 1000,                 // how often the shift is asked whether it is over
@@ -188,8 +223,17 @@
       if (!this.event || this.event._erased) return;
       const eid = this.event.eventId();
       if (eid == null) return;
-      const key = [$gameMap.mapId(), eid, 'A'];
-      if (!$gameSelfSwitches?.value(key)) return;
+      // Read every update of every controller: the switch's key is spelled
+      // once per slot (the string Game_SelfSwitches files an array key under)
+      // rather than built and joined afresh each time.
+      const mapId = $gameMap.mapId();
+      if (this._hideKeyMap !== mapId || this._hideKeyEid !== eid) {
+        this._hideKeyMap = mapId;
+        this._hideKeyEid = eid;
+        this._hideKeyStr = mapId + ',' + eid + ',A';
+      }
+      if (!$gameSelfSwitches?.value(this._hideKeyStr)) return;
+      const key = [mapId, eid, 'A'];
       if ($gameParty?.members().some(a => a?.name?.() === this.eventName)) return;
       // A switch the world itself set is not a stale one: this person was
       // recruited or killed, and the party they left with may be another
@@ -637,25 +681,12 @@
       // Trait-driven weight modifiers
       if (profile?.traitIds?.length) {
         const traitsById = _getTraitsById();
-        const TRAIT_MODS = {
-          shy:         { s: -20, w:   0 },
-          introverted: { s: -15, w:   0 },
-          social:      { s: +30, w: -10 },
-          extroverted: { s: +25, w:   0 },
-          aggressive:  { s:   0, w: +20 },
-          violent:     { s:   0, w: +15 },
-          lazy:        { s: +10, w: -10 },
-        };
         for (const id of profile.traitIds) {
           const t = traitsById.get(id);
           if (!t) continue;
-          const name = (t.name || '').toLowerCase();
-          for (const [key, mod] of Object.entries(TRAIT_MODS)) {
-            if (name.includes(key)) {
-              wanderW    += mod.w;
-              socializeW += mod.s;
-            }
-          }
+          const pull = _traitGoalPull(t);
+          wanderW    += pull.w;
+          socializeW += pull.s;
         }
       }
 
@@ -698,7 +729,7 @@
         this.calculatePath();
       }
       window.SimLog?.decide("npc", this.eventName,
-        "ParchmentToast.simLog.npc.goal." + (this.state === "goingToZone" ? "socialize" : "wander"),
+        "ParchmentToast.simLog.npc.goal." + (this.state === "goingToZone" ? "socialize" : "wander"), // i18n-ignore: i18n key
         { name: this.eventName });
       const speed = type === "wander" && Math.random() < 0.7 ? 3 : 4;
       if (this.event) this.event.setMoveSpeed(this._speedCap != null ? Math.min(this._speedCap, speed) : speed);
@@ -771,23 +802,30 @@
     getWanderDir() {
       const mapW = $gameMap.width();
       const occupied = _occupiedThisFrame(mapW);
-      const dirs = [2, 4, 6, 8], weights = [];
-      for (const dir of dirs) {
-        const nx = $gameMap.roundXWithDirection(this.event.x, dir), ny = $gameMap.roundYWithDirection(this.event.y, dir);
+      // Asked on every wander step of every walker: the four weights go into
+      // one scratch array rather than a fresh list and its closures each time.
+      const weights = _wanderWeights;
+      const ex = this.event.x, ey = this.event.y;
+      let tw = 0;
+      for (let i = 0; i < 4; i++) {
+        const dir = _WANDER_DIRS[i];
+        const nx = $gameMap.roundXWithDirection(ex, dir), ny = $gameMap.roundYWithDirection(ey, dir);
         // Never wander onto water (region 99 or terrain tag 3): NPCs would
         // appear to drown (#121). Terrain tag 7 is barred alongside it.
-        const blocked = $gameMap.regionId(nx, ny) === 99 || Utils.isBlockedTerrain(nx, ny);
-        let w = (!blocked && this.event.canPass(this.event.x, this.event.y, dir)) ? 1 : 0;
+        const region = $gameMap.regionId(nx, ny);
+        const blocked = region === 99 || Utils.isBlockedTerrain(nx, ny);
+        let w = (!blocked && this.event.canPass(ex, ey, dir)) ? 1 : 0;
         if (w > 0) {
-          if ($gameMap.regionId(nx, ny) === Config.Zones.SOCIAL) w *= 1.5;
+          if (region === Config.Zones.SOCIAL) w *= 1.5;
           if (occupied.has(nx + ny * mapW)) w *= 0.3;
         }
-        weights.push(w);
+        weights[i] = w;
+        tw += w;
       }
-      const tw = weights.reduce((a, b) => a + b, 0);
       if (!tw) return null;
       let r = Math.random() * tw;
-      return dirs[weights.findIndex(w => (r -= w) <= 0)];
+      for (let i = 0; i < 4; i++) if ((r -= weights[i]) <= 0) return _WANDER_DIRS[i];
+      return undefined;
     }
 
     turnToward(char) {

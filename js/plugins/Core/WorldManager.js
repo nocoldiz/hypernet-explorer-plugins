@@ -630,7 +630,11 @@
             _animalPlacements: { prop: "placements", merge: mergeMapOf(mergeRecordList("uid")) },
             // The id counter behind them, so no two savegames of the world
             // ever hand the same number to two different animals.
-            _animalPlacementUid: { prop: "placementUid", merge: mergeMax }
+            _animalPlacementUid: { prop: "placementUid", merge: mergeMax },
+            // Which procedural farm squares have had their herd dealt
+            // (spawnFarmsteadAnimals): dealt once for the world, or every
+            // savegame stacked another herd on the same pasture.
+            _animalFarmsteads: { prop: "farmsteads", merge: mergeByKey }
         },
         // What the world's counters have left. The catalogue on a shelf is
         // seeded (RandomDailyShop rolls it from the world seed, the shop's own
@@ -865,8 +869,11 @@
                 if (!this.worldExists(name)) return name;
             }
             // Fall back to a two-word name if single words are exhausted.
+            // The language owns the word order: "Crimson Frontier", "Confine Cremisi".
+            const fmt = (T.has && T.has("WorldManager.randomName.format"))
+                ? String(T("WorldManager.randomName.format")) : "{adj} {noun}";
             for (let tries = 0; tries < 40; tries++) {
-                const name = `${pick(adjectives)} ${pick(nouns)}`;
+                const name = fmt.replace("{adj}", pick(adjectives)).replace("{noun}", pick(nouns));
                 if (name.length <= 40 && !this.worldExists(name)) return name;
             }
             // Fallback: guarantee uniqueness with a numeric suffix.
@@ -1019,6 +1026,96 @@
                 console.error(`[WorldManager] Failed to write '${fileKey}' for world '${name}'`, e);
                 return false;
             }
+        },
+
+        // --- inactive party members, across worlds ------------------------------
+        //
+        // A benched companion is a dossier in world.json "retiredCharacters"
+        // (CharacterCreationPresets.js). The Worlds screen can send one to
+        // another world, where they wait on that world's bench instead. The
+        // active world is read through its cache, which may hold a bench
+        // newer than its file; any other world straight off disk.
+        _worldFileOf(name, fileKey) {
+            if (name === this.activeWorldName) return this.getFile(fileKey);
+            return this.readWorldFile(name, fileKey) || {};
+        },
+
+        // The dossiers a world can still call back: one already played, or
+        // already recalled, is spent and stays where it is.
+        listInactiveMembers(name) {
+            if (!name || !this.worldExists(name)) return [];
+            const info = this._worldFileOf(name, "world");
+            const used = Array.isArray(info.usedCharacterPresets) ? info.usedCharacterPresets : [];
+            const held = Array.isArray(info.retiredCharacters) ? info.retiredCharacters : [];
+            return held.filter(p => p && used.indexOf(p.id) < 0);
+        },
+
+        // Moves one inactive member from a world's bench to another's. The
+        // source files the id as spent, exactly as a recall does, so it is
+        // never dealt to a later retirement there; the destination deals them
+        // a fresh id from its own 1000+ band, so they never share one with
+        // somebody already waiting in it.
+        moveInactiveMember(fromName, presetId, toName) {
+            if (!fromName || !toName) return { ok: false, reason: "noWorld" };
+            if (fromName === toName) return { ok: false, reason: "sameWorld" };
+            if (!this.worldExists(fromName) || !this.worldExists(toName)) {
+                return { ok: false, reason: "noWorld" };
+            }
+            const preset = this.listInactiveMembers(fromName).find(p => p.id === presetId);
+            if (!preset) return { ok: false, reason: "notFound" };
+
+            const dest = this._worldFileOf(toName, "world");
+            const destHeld = Array.isArray(dest.retiredCharacters) ? dest.retiredCharacters : [];
+            const destUsed = Array.isArray(dest.usedCharacterPresets) ? dest.usedCharacterPresets : [];
+            const nextId = Math.max(1000,
+                ...destHeld.map(p => (p && p.id) || 0),
+                ...destUsed.filter(id => id >= 1000)) + 1;
+            const moved = Object.assign(JsonEx.makeDeepCopy(preset), { id: nextId, movedFrom: fromName });
+            dest.retiredCharacters = destHeld.concat(moved);
+            if (!this.writeWorldFile(toName, "world", dest)) return { ok: false, reason: "writeFailed" };
+
+            const src = this._worldFileOf(fromName, "world");
+            src.retiredCharacters = (src.retiredCharacters || []).filter(p => !p || p.id !== presetId);
+            src.usedCharacterPresets = (Array.isArray(src.usedCharacterPresets) ? src.usedCharacterPresets : [])
+                .concat(presetId);
+            if (!this.writeWorldFile(fromName, "world", src)) return { ok: false, reason: "writeFailed" };
+            return { ok: true, preset: moved };
+        },
+
+        // The savegames a world holds, by slot number, oldest slot first. NW.js
+        // only: the browser backend keeps no folder to list.
+        listSaveSlots(name) {
+            if (!isNwjs || !name) return [];
+            const dir = Backend.savesDir(name);
+            try {
+                if (!Backend._fs.existsSync(dir)) return [];
+                return Backend._fs.readdirSync(dir)
+                    .map(f => /^file(\d+)\.rmmzsave$/.exec(f))
+                    .filter(Boolean)
+                    .map(m => Number(m[1]))
+                    .sort((a, b) => a - b);
+            } catch (e) {
+                return [];
+            }
+        },
+
+        // What one savegame of any world holds, decoded but never loaded into
+        // the game: the Worlds screen reads a party out of it to export.
+        readSaveContents(name, slot) {
+            if (!isNwjs || !name) return Promise.resolve(null);
+            const file = Backend._path.join(Backend.savesDir(name), `file${Number(slot)}.rmmzsave`);
+            let zip;
+            try {
+                zip = Backend._fs.readFileSync(file, { encoding: "utf8" });
+            } catch (e) {
+                return Promise.resolve(null);
+            }
+            return StorageManager.zipToJson(zip)
+                .then(json => JsonEx.parse(json))
+                .catch(e => {
+                    console.error(`[WorldManager] Savegame ${slot} of '${name}' could not be read`, e);
+                    return null;
+                });
         },
 
         // --- the default world shipped in the game folder ---------------------

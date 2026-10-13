@@ -9,7 +9,7 @@
   "byLine": "BY {artist}",
   "artist": {
     "custom": "YA OWN TAPE",
-    "procedural": "GENERATED ON DA SPOT",
+    "procedural": "PROCEDURAL",
     "unknown": "ARTIST UNKNOWN"
   },
   "cassette": {

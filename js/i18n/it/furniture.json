@@ -490,7 +490,7 @@
     },
     "lava_lamp": {
       "name": "Lampada Lava",
-      "description": "Una lampada lava scatenata (irrinunciabile nel 2001)."
+      "description": "Una psichedelica lampada lava (irrinunciabile nel 2001)."
     },
     "movie_poster": {
       "name": "Poster di un Film",
@@ -678,7 +678,7 @@
     },
     "crop_field": {
       "name": "Campo Coltivato",
-      "description": "Un campo seminato a coltura."
+      "description": "Un campo seminato."
     },
     "fruit_tree": {
       "name": "Albero da Frutto",
@@ -750,7 +750,7 @@
     },
     "chemical_vat": {
       "name": "Vasca Chimica",
-      "description": "Una vasca per la lavorazione chimica delle reazioni."
+      "description": "Una vasca di lavorazione chimica per le reazioni."
     },
     "robotic_arm": {
       "name": "Braccio Robotico",
@@ -853,7 +853,7 @@
       "description": "Corda per fissare tende e attrezzatura."
     },
     "campsite_marker": {
-      "name": "Segnaposto del Campo",
+      "name": "Bandierina del Campo",
       "description": "Una bandierina che segnala il campeggio."
     },
     "food_storage": {
@@ -1122,7 +1122,7 @@
     },
     "pull_up_bar": {
       "name": "Sbarra per Trazioni",
-      "description": "Una sbarra per le trazioni alla sbarra."
+      "description": "Una sbarra per trazioni a presa prona e supina."
     },
     "parallel_bars": {
       "name": "Parallele",

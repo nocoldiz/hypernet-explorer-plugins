@@ -5,7 +5,7 @@
     "mar",
     "apr",
     "mag",
-    "giù",
+    "giu",
     "lug",
     "ago",
     "set",
@@ -27,6 +27,8 @@
   "missingLine": "{item} ×{need} (ne hai {have})",
   "missing": "Mancano: {list}",
   "started": "Fermentazione avviata: {recipe}",
+  "harvested": "Raccolto: {list}",
+  "have": "(ne hai {have})",
   "itemNumbered": "Oggetto#{id} ×{qty}",
   "units": "{min}-{max} unità",
   "stage": {
@@ -42,7 +44,7 @@
     "status": "Stato",
     "state": "Stato",
     "empty": "Vuota",
-    "selectRecipeHint": "Seleziona una ricetta a sinistra e premi OK per iniziare la fermentazione.",
+    "selectRecipeHint": "Scegli una ricetta e premi OK per fermentare.",
     "beginBrewing": "Inizia la fermentazione",
     "exit": "Esci",
     "harvest": "Raccogli",
@@ -66,7 +68,7 @@
     },
     "honey_mead": {
       "name": "Idromele",
-      "description": "Miele selvatico sciolto in acqua di sorgente e lasciato fermentare al buio. Il distillato più antico che si conosca.",
+      "description": "Miele selvatico sciolto in acqua di sorgente e lasciato fermentare al buio. La bevanda fermentata più antica che si conosca.",
       "outputPreview": "2-5x Idromele"
     },
     "nun_beer": {
@@ -92,8 +94,8 @@
   },
   "grange": {
     "appName": "Grange",
-    "subtitle": "Botti, arnie, campi e bestiame, consultabili da ovunque.",
-    "readOnly": "Sola lettura. Il lavoro si fa ancora sul posto.",
+    "subtitle": "Botti, arnie, campi e bestiame a colpo d'occhio.",
+    "readOnly": "Sola lettura. Il lavoro si fa sul posto.",
     "seasonLabel": "Stagione:",
     "season": {
       "spring": "Primavera",
@@ -102,18 +104,18 @@
       "winter": "Inverno"
     },
     "tab": {
-      "overview": "Quadro",
+      "overview": "Panoramica",
       "cellar": "Cantina",
       "apiary": "Apiario",
       "fields": "Campi",
       "livestock": "Bestiame"
     },
-    "overviewTitle": "I possedimenti a colpo d'occhio",
+    "overviewTitle": "Possedimenti",
     "waitingOnYou": "{n} ASPETTANO TE",
     "nothingWaiting": "NULLA IN ATTESA",
     "needsYou": "Richiede la tua presenza",
-    "allQuiet": "Procede tutto. Oggi non serve mettersi in viaggio.",
-    "projectionNote": "Campi e botti sono stimati dall'ultima visita, con bel tempo in campo aperto. Le colture in serra maturano prima di quanto indicato.",
+    "allQuiet": "Oggi non serve nulla.",
+    "projectionNote": "Stima dall'ultima visita, con bel tempo. Le colture in serra maturano prima.",
     "tile": {
       "barrels": "Botti in opera",
       "barrelsReady": "Pronte da imbottigliare",
@@ -130,7 +132,7 @@
       "crop": "{name} è maturo a {where}.",
       "produce": "{animal} a {where} ha {what} da raccogliere.",
       "hiveUnhappy": "La colonia è inquieta (umore {mood}).",
-      "outOfSeason": "{name} a {where} è fuori stagione e sta fermo."
+      "outOfSeason": "{name} a {where} è fuori stagione."
     },
     "colBrew": "Fermentato",
     "colWhere": "Dove",
@@ -147,14 +149,14 @@
     "daysLeft": "{n} giorni",
     "grown": "Adulto",
     "noProduce": "Non produce nulla",
-    "noBarrels": "Nessuna botte sta lavorando. Riempine una e comparirà qui.",
+    "noBarrels": "Nessuna botte in fermentazione.",
     "noHive": "Nessuna colonia è stata fondata.",
-    "noPlots": "Non c'è nulla di piantato. Un appezzamento compare qui appena ci va un seme.",
-    "noAnimals": "La compagnia non possiede bestiame.",
-    "cellarNote": "L'imbottigliamento si fa alla botte. Una bevanda lasciata oltre il tempo non si rovina, ma non migliora.",
-    "hiveNote": "Affumicare, raccogliere e dividere una colonia si fanno all'arnia.",
-    "fieldsNote": "Un appezzamento fuori stagione non e morto, sta aspettando i suoi mesi di crescita.",
-    "livestockNote": "Nutrire, accarezzare e raccogliere si fanno sul campo.",
+    "noPlots": "Niente di piantato.",
+    "noAnimals": "Il Party non possiede bestiame.",
+    "cellarNote": "Imbottiglia alla botte. Le bevande pronte non si rovinano né migliorano.",
+    "hiveNote": "Affumica, raccogli e dividi le colonie all'arnia.",
+    "fieldsNote": "Gli appezzamenti fuori stagione riprendono nei mesi di crescita.",
+    "livestockNote": "Nutri, accarezza e raccogli sul campo.",
     "queen": "La regina",
     "queenAlive": "Viva, salute {health}, {eggs} uova deposte.",
     "queenDead": "Nessuna regina. La colonia si sta spegnendo.",

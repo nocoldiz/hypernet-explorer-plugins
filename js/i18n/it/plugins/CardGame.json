@@ -45,7 +45,7 @@
     "forfeitAsk": "Lasciare il tavolo? La posta va persa.",
     "forfeitYes": "Rinuncia",
     "forfeitNo": "Resta",
-    "forfeitBracketAsk": "Lasciare il tavolo? Il torneo finisce qui, e la quota d'iscrizione resta pagata."
+    "forfeitBracketAsk": "Lasciare il tavolo? Esci dal torneo. La quota d'iscrizione non è rimborsata."
   },
   "col": {
     "title": "Collezione di carte",
@@ -57,7 +57,7 @@
       "armor": "Armature",
       "effects": "Effetti"
     },
-    "empty": "Ancora niente sullo scaffale. Apri un pacchetto.",
+    "empty": "Ancora nessuna carta. Apri un pacchetto.",
     "pickACard": "Scegli una carta per leggerla.",
     "saveDeck": "Salva mazzo",
     "newDeck": "Nuovo mazzo",
@@ -69,9 +69,9 @@
     "deckName": "Mazzo {n}",
     "unsavedDeck": "Mazzo non salvato",
     "deckLegal": "Mazzo valido.",
-    "deckTooFew": "Un mazzo vuole almeno {min} carte.",
-    "deckTooMany": "Un mazzo tiene al massimo {max} carte.",
-    "deckNotOwned": "Questo mazzo elenca carte che il gruppo non possiede più.",
+    "deckTooFew": "Un mazzo deve avere almeno {min} carte.",
+    "deckTooMany": "Un mazzo può avere al massimo {max} carte.",
+    "deckNotOwned": "Questo mazzo contiene carte che non possiedi più.",
     "deckEmpty": "Nessuna carta in questo mazzo.",
     "statsHeading": "Statistiche",
     "powerLabel": "Potenza",
@@ -88,7 +88,7 @@
     "sortPower": "Potenza",
     "sortValue": "Valore",
     "anyRarity": "Qualsiasi rarità",
-    "noResults": "Nessuna carta corrisponde.",
+    "noResults": "Nessuna carta trovata.",
     "page": "Pagina {n} di {of}, {total} carte",
     "showing": "{n} carte",
     "prevPage": "Pagina precedente",
@@ -110,24 +110,24 @@
     "title": "Pacchetto di carte",
     "sealed": "SIGILLATO",
     "newCard": "NUOVA",
-    "summary": "Pezzo migliore: {best}. Nuove in collezione: {fresh}."
+    "summary": "Carta migliore: {best}. Nuove in collezione: {fresh}."
   },
   "effect": {
     "halve": {
       "name": "Marciume",
-      "desc": "Su una creatura: ogni statistica dimezzata, di chiunque sia. Su terreno nudo: la casella è maledetta e la prossima creatura che vi sale arriva dimezzata."
+      "desc": "Su una creatura: dimezza ogni statistica, di entrambe le parti. Su una casella vuota: la maledice e dimezza la prossima creatura piazzata lì."
     },
     "double": {
       "name": "Doratura",
-      "desc": "Su una creatura: ogni statistica raddoppiata, di chiunque sia. Su terreno nudo: la casella è benedetta e la prossima creatura che vi sale arriva raddoppiata."
+      "desc": "Su una creatura: raddoppia ogni statistica, di entrambe le parti. Su una casella vuota: la benedice e raddoppia la prossima creatura piazzata lì."
     },
     "cull": {
       "name": "Falcidia",
-      "desc": "Su una creatura: viene distrutta dov'è, di chiunque sia. Su terreno nudo: una trappola, e la prossima creatura che vi sale muore all'istante."
+      "desc": "Su una creatura: la distrugge, di entrambe le parti. Su una casella vuota: una trappola che uccide la prossima creatura piazzata lì."
     },
     "swap": {
       "name": "Traslazione",
-      "desc": "Scegli una creatura, poi una seconda casella: le due si scambiano di posto, con equipaggiamento e maledizioni. La seconda casella può essere vuota, e la creatura semplicemente vi si sposta."
+      "desc": "Scegli una creatura, poi una seconda casella: si scambiano di posto, con equipaggiamento e maledizioni. Se la casella è vuota, la creatura vi si sposta."
     },
     "ward": {
       "name": "Egida",
@@ -138,8 +138,8 @@
     "bound": "{name} viene vincolato in una carta e cade.",
     "boundNew": "{name} viene vincolato in una carta, la prima del suo genere, e cade.",
     "failed": "{name} si sottrae al vincolo. (serviva {chance}%)",
-    "tooStrong": "{name} è di livello {level} e non si lascia vincolare da un gruppo di {median}.",
-    "noCard": "Non esiste carta che {name} possa mai essere."
+    "tooStrong": "{name} è di livello {level}, troppo forte per un Party di livello {median}.",
+    "noCard": "{name} non ha una carta."
   },
   "trader": {
     "title": "Cadd Trader",
@@ -153,14 +153,14 @@
     "left": "ne restano {n}",
     "soldOut": "Esaurito",
     "owned": "ne hai {n}",
-    "hint": "Nuovi lotti vengono messi in vendita ogni giorno. I lotti venduti non vengono rimpiazzati.",
-    "hintSell": "Il sito paga meno di quanto chiede. Quella differenza è il suo guadagno.",
+    "hint": "Nuovi lotti ogni giorno. I lotti venduti non tornano.",
+    "hintSell": "I prezzi di vendita sono più bassi di quelli d'acquisto.",
     "emptyStock": "Oggi non c'è nulla in lista.",
     "emptyShelf": "Non hai carte da vendere.",
     "bought": "Comprata {name} per {price}.",
     "sold": "Venduta {name} per {price}.",
-    "tooDear": "Non riesci a coprire {price}.",
-    "cannotSell": "Quella carta non è merce."
+    "tooDear": "Denaro insufficiente ({price}).",
+    "cannotSell": "Questa carta non si può vendere."
   },
   "arena": {
     "title": "Hyper Card Arena",
@@ -170,8 +170,8 @@
     "deckOwn": "Il mio mazzo",
     "deckRandom": "Un mazzo estratto",
     "deckOwnNote": "Il tuo mazzo: {n} carte.",
-    "deckOwnShort": "Non hai un mazzo valido (almeno {min} carte), quindi te ne verrà prestato uno.",
-    "deckRandomNote": "Un mazzo casuale estratto dall'intero catalogo, come quelli usati dalla macchina.",
+    "deckOwnShort": "Nessun mazzo valido (min {min} carte). Te ne verrà prestato uno.",
+    "deckRandomNote": "Un mazzo casuale dall'intero catalogo, come quelli della CPU.",
     "levelHeading": "Avversario",
     "levelFallback": "Livello {n}",
     "levels": [
@@ -179,16 +179,16 @@
       "Dilettante",
       "Classificato",
       "Maestro",
-      "Gran Maestro"
+      "Gran maestro"
     ],
     "modeHeading": "Stasera",
     "modeMatch": "Una partita",
     "modeBracket": "Torneo",
     "feeTag": "iscrizione {amount}",
     "summaryMatch": "Una partita contro una macchina di livello {level}. Non si punta nulla.",
-    "summaryBracket": "{entrants} iscritti, {rounds} turni, eliminazione diretta. Iscrizione {fee}, e l'intero percorso paga {purse} più un premio.",
+    "summaryBracket": "{entrants} iscritti, {rounds} turni, eliminazione diretta. Iscrizione {fee}. La vittoria paga {purse} più un premio.",
     "start": "SIEDITI",
-    "cannotAfford": "L'iscrizione costa {amount}, e non ce l'hai.",
+    "cannotAfford": "L'iscrizione costa {amount}. Denaro insufficiente.",
     "rounds": [
       "i quarti",
       "la semifinale",
@@ -212,7 +212,7 @@
     "rivalFallback": "Avversario {n}",
     "roundOpens": "{round}: {rival} si siede dall'altra parte.",
     "roundWon": "Ti prendi {round} e {amount}.",
-    "knockedOut": "Eliminato a {round}.",
+    "knockedOut": "Eliminato durante {round}.",
     "championed": "Campione {level}: {amount} e {item}.",
     "noPrize": "nessun premio"
   }

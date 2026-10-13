@@ -448,6 +448,49 @@
     return text.trim() || place;
   }
 
+  // Where a stop is, preposition and article included, for a language that
+  // inflects them ("a Bologna", "ad Ancona", "nella foresta presso Bologna",
+  // "in località Foresta a (48 132)"). Only templates that ask for {placeIn}
+  // read it, and only a language that ships NPCLife.placeIn has one; anything
+  // else is handed the bare label.
+  function stopIn(stop) {
+    if (!stop) return "";
+    const s = typeof stop === "string" ? { place: stop } : stop;
+    const label = stopLabel(s);
+    if (!T.has("NPCLife.placeIn.town")) return label;
+    if (s.wild && T.has("NPCLife.wildIn." + s.wild) && T.has("NPCLife.placeIn.wild")) {
+      return T("NPCLife.placeIn.wild", { biomeIn: T("NPCLife.wildIn." + s.wild), city: placeLabel(s.place) });
+    }
+    if ((s.wild || /^Proc:/i.test(String(s.place ?? ""))) && T.has("NPCLife.placeIn.square")) {
+      return T("NPCLife.placeIn.square", { place: label });
+    }
+    if (/^a/i.test(label) && T.has("NPCLife.placeIn.townA")) return T("NPCLife.placeIn.townA", { place: label });
+    return T("NPCLife.placeIn.town", { place: label });
+  }
+
+  // Gender agreement for a language that needs it: a line writes the forms
+  // inline as {g:masculine|feminine|plural} (the plural is the non-binary
+  // form, as in NPCSociety's bios) and the subject's gender picks one. English
+  // lines carry none and pass through untouched. `gi` is 0, 1 or 2.
+  function agreeGender(text, gi) {
+    if (typeof text !== "string" || text.indexOf("{g:") < 0) return text;
+    const i = Math.min(Math.max(gi | 0, 0), 2);
+    return text.replace(/\{g:([^{}]*)\}/g, (whole, forms) => {
+      const list = forms.split("|");
+      return list[Math.min(i, list.length - 1)];
+    });
+  }
+
+  // Which of those forms a life takes: an animal by its sex, a person by the
+  // gender on their profile (non-binary and cocoon both read plural).
+  function genderIndexOf(name, record) {
+    const rec = record || (name ? getRecords()?.[name] : null);
+    const sex = rec?.animal?.sex;
+    if (sex) return sex === "f" ? 1 : 0; // i18n-ignore: sex id
+    const g = Number(getProfile(name)?.gender);
+    return g === 1 ? 1 : g >= 2 ? 2 : 0;
+  }
+
   // Whether this NPC is one of the non-sentient creatures (NPCCreature). Such
   // a life has no savings, no move up the housing ladder and no address, only
   // a range it has drifted around.
@@ -461,7 +504,7 @@
 
   // A life event as a sentence. Records written before the log was keyed hold
   // a finished English string, which is returned as it stands.
-  function lifeEventText(entry) {
+  function lifeEventText(entry, who) {
     if (!entry) return "";
     if (typeof entry === "string") return entry;
     if (!entry.key || !T.has(entry.key)) return entry.desc || "";
@@ -475,6 +518,7 @@
     if (params.creed != null) values.creed = creedLabel(params.creed);
     if (params.place != null) {
       values.place = stopLabel({ place: params.place, wild: params.wild || null });
+      values.placeIn = stopIn({ place: params.place, wild: params.wild || null });
     }
     // An augment and the part it went in are logged by their catalogue keys.
     if (params.augment != null) values.augment = window.NPCSim?.Implants?.label?.(params.augment) || params.augment;
@@ -484,9 +528,12 @@
     // An animal's place is logged as a map-group key or a farm owner, and
     // written out here (NPCLife_Animals).
     if (params.whereKey != null || params.whereOwner != null) values.where = animalWhereText(params);
-    // A line may carry {a|b} alternatives: chosen off the entry itself, so the
-    // same event always reads the same way.
-    return resolveAlternation(T(entry.key, values), nameHash(String(entry.key) + ":" + (entry.minute | 0)));
+    // Agreement first, off whoever the log belongs to (`who`, a name), so a
+    // {g:...} form is never mistaken for an {a|b} choice. A line may carry
+    // {a|b} alternatives: chosen off the entry itself, so the same event
+    // always reads the same way.
+    const agreed = agreeGender(T(entry.key, values), who ? genderIndexOf(who) : 0);
+    return resolveAlternation(agreed, nameHash(String(entry.key) + ":" + (entry.minute | 0)));
   }
 
   // "{a|b|c}" groups (after the {name} placeholders are filled) resolved to
@@ -511,7 +558,10 @@
   // wild" when nothing is known.
   function animalWhereText(params) {
     if (params.whereOwner) return T("NPCLife.animal.onFarm", { owner: params.whereOwner });
-    if (params.whereKey) return T("NPCLife.animal.inPlace", { place: stopLabel({ place: params.whereKey, wild: params.whereWild || null }) });
+    if (params.whereKey) {
+      const stop = { place: params.whereKey, wild: params.whereWild || null };
+      return T("NPCLife.animal.inPlace", { place: stopLabel(stop), placeIn: stopIn(stop) });
+    }
     return T("NPCLife.animal.inWild");
   }
 
@@ -1708,13 +1758,14 @@
     const nowMinute = $gameVariables ? ($gameVariables.value(114) || 0) : 0;
     const age = ageAt(record, nowMinute);
     const lines = [];
+    const gi = genderIndexOf(name, record);
 
     // Every place on a life reads through stopLabel, so a beast's whole path
     // comes out as the country it ranged over ("Forest near Bologna") while a
     // person's is unchanged.
     const birthStop = { place: record.birthplace, wild: record.birthWild || null };
     lines.push(T('NPCLife.bio.header', {
-      name: name, age: age, date: record.birthDate, place: stopLabel(birthStop),
+      name: name, age: age, date: record.birthDate, place: stopLabel(birthStop), placeIn: stopIn(birthStop),
     }));
 
     const stops = record.locationHistory || [];
@@ -1723,11 +1774,11 @@
       const lastMove = stops[stops.length - 1];
       if (lastMove.reason && lastMove.reason !== BORN_HERE) {
         lines.push(T('NPCLife.bio.settledIn', {
-          place: stopLabel(lastMove), year: lastMove.fromYear, reason: moveReasonLabel(lastMove.reason),
+          place: stopLabel(lastMove), placeIn: stopIn(lastMove), year: lastMove.fromYear, reason: moveReasonLabel(lastMove.reason),
         }));
       }
     } else {
-      lines.push(T('NPCLife.bio.neverLeft', { place: stopLabel(birthStop) }));
+      lines.push(T('NPCLife.bio.neverLeft', { place: stopLabel(birthStop), placeIn: stopIn(birthStop) }));
     }
 
     const openJob = (record.careerHistory || []).find(seg => seg.toYear === null);
@@ -1791,7 +1842,7 @@
       }
     }
     lines.push(T('NPCLife.bio.standing', { value: Math.round(record.socialStanding) }));
-    return lines.join("\n");
+    return agreeGender(lines.join("\n"), gi);
   }
 
   // ==========================================================================
@@ -1814,7 +1865,7 @@
     nameHash, pairNewlyweds, PARTNER_NAME_BANK, placeCoords, placeLabel, placeOfGroup,
     pushLifeEvent, RATES, recordCrime, resolveCrime, resolveRelationships, sampleCount, setKin,
     syncCoupleOpinions, worldSeed, yearFloatOf, yearOf,
-    animalWhereText, resolveAlternation, stopLabel,
+    animalWhereText, resolveAlternation, stopLabel, stopIn, agreeGender, genderIndexOf,
   });
   // Live state other modules read or reset: always the binding itself, never a copy.
   Object.defineProperty(window.NPCLifeSim._internal, "_populationCache", { get: () => _populationCache, set: (v) => { _populationCache = v; }, enumerable: true });
@@ -1837,7 +1888,8 @@
 
   if (typeof PluginManager !== "undefined") {
     PluginManager.registerCommand(pluginName, "NPCLife", args => {
-      const name = String(args.eventName || "").trim();
+      // Cast from the menu, no event is named: the person nearest the leader is read.
+      const name = window.NPCShared ? window.NPCShared.soulName(args.eventName) : String(args.eventName || "").trim();
       if (!name) return;
       window.skipLocalization = true;
       $gameMessage.add(buildBiography(name));

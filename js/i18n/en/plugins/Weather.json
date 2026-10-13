@@ -23,7 +23,7 @@
     "kmh": "{n} km/h",
     "outlook": "Five-day outlook",
     "precip": "{n}% precip.",
-    "disclaimer": "Outlooks are rolled from the season tables and the calendar. The sky owes them nothing.",
+    "disclaimer": "Forecasts may be wrong.",
     "months": [
       "Jan",
       "Feb",

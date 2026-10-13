@@ -365,10 +365,13 @@
             this.refresh();
         }
         
-        refresh() {
-            this.contents.clear();
-            this.drawText(this._message, 0, 0, this.innerWidth, 'center');
-            super.refresh();
+        // The question is drawn with the commands rather than before the
+        // refresh: Window_Selectable.paint() clears the contents first, so a
+        // message drawn ahead of super.refresh() was wiped every time and the
+        // player only ever saw Yes / No.
+        drawAllItems() {
+            if (this._message) this.drawText(this._message, 0, 0, this.innerWidth, 'center');
+            super.drawAllItems();
         }
 
         itemRect(index) {

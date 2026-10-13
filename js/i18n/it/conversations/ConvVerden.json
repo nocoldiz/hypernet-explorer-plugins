@@ -1,57 +1,57 @@
 {
-  "_comment": "La voce Verden (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo e' sempre Verden.",
+  "_comment": "La voce Verden (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo è sempre Verden.",
   "voice": {
     "openers": [
-      "Come si diceva a casa,",
-      "Se mi è permesso,",
-      "Perdonatemi, ma",
-      "Nei Campi avremmo detto che",
-      "A dirla con pazienza,",
-      "Lo confesso,",
-      "Curiosamente,",
-      "Con rispetto,",
+      "Lo dicevamo sempre, a casa.",
+      "Se mi è concesso dirlo.",
+      "Perdonatemi.",
+      "Nei Campi lo avremmo detto così.",
+      "Con pazienza, allora.",
+      "Lo confesso.",
+      "Curioso, davvero.",
+      "Con rispetto parlando.",
       "Mm. Vediamo.",
-      "Ebbene,",
-      "Per essere precisi,",
-      "Con garbo, dunque:",
-      "Come ci insegnavano i vecchi giardinieri,",
-      "Se concedete l'opinione di un forestiero,",
-      "Ho notato che",
+      "Ebbene, ecco qua.",
+      "Siamo precisi.",
+      "Con garbo, dunque.",
+      "Ce lo insegnavano i vecchi giardinieri.",
+      "Concedete un parere a chi viene da fuori.",
+      "Ho notato una cosa.",
       "Strano mondo, questo.",
       "Ah.",
-      "Perdonate l'osservazione, ma",
+      "Perdonate l'osservazione.",
       "Come dire?",
-      "Secondo i miei calcoli,",
-      "Nel mio modesto studio,",
-      "Detto tra noi,",
-      "L'avevo previsto, ma",
-      "Il baccello di mia nonna direbbe che",
+      "Ho fatto i miei calcoli.",
+      "Ho studiato la faccenda, modestamente.",
+      "Che resti tra noi.",
+      "L'avevo previsto.",
+      "Lo direbbe anche il baccello di mia nonna.",
       "Piano, adesso.",
-      "Qui si impara che",
+      "Qui si impara in fretta.",
       "Mm, sì.",
-      "Se la memoria non m'inganna,",
-      "Permettetemi una piccola osservazione:",
-      "Per quanto ne so,",
-      "Davvero,",
-      "Sotto questo sole,",
-      "A pensarci bene,",
-      "Credo proprio che",
-      "Da ospite di questo mondo,",
+      "Se la memoria non m'inganna...",
+      "Permettetemi una piccola osservazione.",
+      "Per quel poco che ne so...",
+      "Sul serio.",
+      "Sotto questo sole tutto è nuovo.",
+      "Ci ho pensato bene.",
+      "Credo proprio di sì.",
+      "Parlo da ospite di questo mondo.",
       "Oh, che bello.",
-      "Siamo onesti:",
+      "Siamo onesti.",
       "Mm. Con calma.",
-      "Con tutta la cortesia,",
-      "Prima i semi e poi i frutti, ma",
-      "Una piccolezza, ma",
-      "L'ho letto nella quiete:",
+      "Con tutta la cortesia possibile.",
+      "Prima i semi e poi i frutti.",
+      "Una piccolezza.",
+      "L'ho letto nella quiete.",
       "È una meraviglia, davvero.",
-      "Scusate i miei modi,",
-      "Tanto tempo fa, nei Campi,",
+      "Scusate i miei modi.",
+      "Mi tornano in mente i Campi, tanto tempo fa.",
       "Bene. Mm.",
-      "Se non sbaglio,",
-      "In parole semplici,",
-      "Povero me,",
-      "Sapete,"
+      "Se non sbaglio...",
+      "Lo dico in parole semplici.",
+      "Ahimè!",
+      "Sapete una cosa?"
     ],
     "closers": [
       "Come si diceva a casa.",
@@ -71,12 +71,12 @@
       "Lo trovo piuttosto grazioso.",
       "Si impara.",
       "Non ditelo ai miei anziani.",
-      "O non sono un giardiniere.",
+      "O non sono {g:un giardiniere|una giardiniera}.",
       "Questa è la mia modesta opinione.",
       "Proprio così.",
       "La terra ricorda.",
       "Meraviglioso, davvero.",
-      "Prima dello Schiacciamento, comunque.",
+      "Prima dello Squishing, comunque.",
       "Se posso dirlo.",
       "Ma che ne so io.",
       "Molto umano.",
@@ -85,7 +85,7 @@
       "Lo leggo chiaramente.",
       "Con delicatezza.",
       "Una lezione di pazienza.",
-      "Perdonate un vecchio esule.",
+      "Perdonate {g:un vecchio esule|una vecchia esule}.",
       "Curiosissimo.",
       "Come dicono le spore.",
       "Staremo a vedere.",
@@ -109,9 +109,9 @@
   "thought": {
     "generic": [
       "La campanella del tram ha suonato due volte stamattina. {Le ho contate|Ho ascoltato|Ho sorriso}. Piccole gioie di un mondo nuovo.",
-      "Ho dato una moneta al distributore e mi ha dato {una bibita|una barretta|delle patatine}. Puro incanto, senza una sola runa.",
+      "Ho infilato una moneta nel distributore e mi ha dato {una bibita|una barretta|delle patatine}. Puro incanto, senza una sola runa.",
       "Il mio baccello di spore è al {secondo|terzo|undicesimo} mese. Pazienza, piccoli.",
-      "La radio ha trasmesso qualcosa di triste oggi. {Sono rimasto immobile|Ho ascoltato fino alla fine|Mi sono annotato il titolo}.",
+      "La radio ha trasmesso qualcosa di triste oggi. {Non ho mosso un muscolo|Ho ascoltato fino alla fine|Ho annotato il titolo}.",
       "Gli umani {si affrettano|corrono|scappano} ovunque. Nei Campi camminavamo, e arrivavamo lo stesso.",
       "Devo annaffiare {la serra|le piantine|la fioriera} prima che faccia buio.",
       "Una lavatrice gira come un piccolo pianeta. Potrei guardarla per ore. L'ho fatto, in effetti.",
@@ -135,42 +135,42 @@
       "Devo al fornaio {un sorriso|un grazie|due euro}. Devo ricordarmelo.",
       "Qui tutto ha una spina. Tutto vuole essere nutrito.",
       "Una buona giornata è una giornata in cui niente appassisce.",
-      "Ho provato a spiegare lo Schiacciamento a una vicina. Lei mi ha offerto una torta. Donna saggia.",
+      "Ho provato a spiegare lo Squishing a una vicina. Mi ha offerto una fetta di torta, invece. Donna saggia.",
       "Le mie scarpe non vanno bene per questo marciapiede. Nei Campi camminavamo scalzi sul muschio.",
       "C'è {una lampada|una luce|un'insegna} che lampeggia fuori dalla mia finestra. Le ho dato un nome.",
       "Dovrei scrivere a mia cugina a {Oslo|Torino|Lione}. Le lettere di carta sono un tale dono.",
       "La biblioteca odora come il vecchio archivio di casa. Polvere e pazienza.",
-      "Mi dicono che un'auto può fare cento chilometri in un'ora. Perché mai uno dovrebbe volerlo?",
-      "Gli umani tengono le piante in vasi di plastica e si chiedono perché tengano il broncio.",
+      "Mi dicono che un'auto può fare cento chilometri in un'ora. Perché mai qualcuno dovrebbe volerlo?",
+      "Gli umani tengono le piante in vasi di plastica e poi si stupiscono se mettono il broncio.",
       "Ho rinvasato {la felce|il basilico|il limone}. Mi ha ringraziato a modo suo.",
       "Il lavoro {lento|costante|tranquillo} è comunque lavoro. Me lo ripeto ogni sera.",
-      "Un uomo mi ha chiesto se fossi {del circo|un attore|infreddolito}. Ho detto che venivo da molto lontano.",
+      "Un uomo mi ha chiesto se {fossi del circo|recitassi in teatro|avessi freddo}. Ho detto che venivo da molto lontano.",
       "Il cielo qui è un po' storto dal 1992. Ci si abitua.",
       "Vorrei una tazza di qualcosa di caldo e una sedia vicino a una finestra.",
       "I lampioni si accendono tutti insieme. Chi lo decide? Devo scoprirlo.",
       "I miei anziani dicono che le macchine fanno dimenticare a un popolo come si aspetta. Io aspetto l'autobus ogni giorno.",
       "Oggi al mercato c'è miele. Miele {buono|vero|genuino}.",
-      "Continuo a pensare {ai Campi|a casa|ai vecchi frutteti}. Non con tristezza. Solo spesso.",
-      "Una fotocopiatrice ha fatto due copie della mia lettera. Mi sono quasi spaventato.",
+      "Continuo a pensare {ai Campi|a casa|ai vecchi frutteti}. Spesso, e con dolcezza.",
+      "Una fotocopiatrice ha fatto due copie della mia lettera. Mi è quasi venuto un colpo.",
       "Qualcuno ha lasciato un giornale sulla panchina. L'ho letto tutto, anche le pubblicità.",
       "La terra di questo cortile è stanca. Ha bisogno di {riposo|trifoglio|una mano gentile}.",
       "Oggi ho fatto un piccolo incanto {riscaldante|riparatore|calmante}. Nessuno se n'è accorto. Bene.",
       "Qui la gente dice 'ci vediamo' e poi ci si vede davvero. È bellissimo.",
       "Tutti hanno tanta fretta di arrivare. Nessuno ha fretta di esserci.",
-      "Ho comprato {un bollitore|una lampada|una radiosveglia} e ne sono assurdamente fiero.",
+      "Ho comprato {un bollitore|una lampada|una radiosveglia} e mi riempie di un orgoglio assurdo.",
       "È una giornata gentile. Intendo lasciarla così.",
       "Il cane del vicino ha deciso che sono un cespuglio. Lo prendo come un complimento.",
       "Non riuscivo a dormire, così ho contato i semi di una melagrana.",
       "Come fanno a far stare tutta l'orchestra dentro la radio? Ho smesso di chiederlo ad alta voce.",
       "Intendo imparare ad andare in bicicletta {questa primavera|prima dell'inverno|un giorno}. Con calma.",
-      "I treni arrivano in orario più spesso degli dei.",
-      "Certi giorni i Campi sembrano un libro letto una volta. Altri, come stamattina.",
+      "I treni arrivano in orario più spesso degli dèi.",
+      "Certi giorni i Campi sembrano un libro letto tanto tempo fa. Altri giorni, mi sembra di averli lasciati stamattina.",
       "Il postino ora conosce il mio nome. Mi sento quasi del posto.",
       "Scambierei una settimana di studio per un bel pomeriggio di pioggia.",
       "La mia talea ha messo radici nel barattolo. {Tre|Cinque|Sette} fili bianchi. Potrei piangere.",
       "Un semaforo è una macchina molto educata. Dice a tutti quando aspettare.",
       "Ho assaggiato un hamburger. Capisco perché la gente ne parli con tanto sentimento.",
-      "Nessuno qui guarda il muschio sui muri. Che spreco di una cosa così bella.",
+      "Nessuno qui guarda il muschio sui muri. Che spreco, una cosa così bella.",
       "Oggi ho contato {tre|quattro|cinque} lingue in una sola strada. Ognuna è musica.",
       "Vecchia saggezza Verden: mai litigare con un rampicante. Ha più tempo di te.",
       "Il mio cappotto ha ancora una cucitura dei Campi. Non permetterò a nessuno di rammendarla.",
@@ -181,9 +181,9 @@
       "Ho {tre|quattro|fin troppi} libri non letti sul comodino e ne sto comprando un altro.",
       "Un buon vicino vale un frutteto intero.",
       "Ho lasciato la finestra aperta per {la pioggia|la brezza|l'aria della notte}. Vecchia abitudine.",
-      "Hanno messo tutto il cielo notturno in un planetario. Ci sono andato due volte.",
+      "Hanno messo tutto il cielo notturno in un planetario. L'ho visitato due volte.",
       "Gli umani salutano la cassiera e dimenticano l'albero fuori. Io saluto entrambi.",
-      "Domani sarò più coraggioso con la scala mobile.",
+      "Domani affronterò la scala mobile con più coraggio.",
       "Ogni strada qui ha una storia. Intendo impararne {qualcuna|alcune|tutte}.",
       "Meglio un piccolo giardino ben curato che uno grande dimenticato.",
       "Da qualche parte sta fischiando un bollitore. Quasi sento il sapore del tè.",
@@ -191,11 +191,11 @@
     ],
     "need": {
       "sleep": [
-        "Sto appassendo come {una felce|una piantina|un fiore reciso} lasciato al sole. A letto, per favore.",
+        "Sto appassendo come {una felce|una piantina|un fiore reciso} sotto il sole. A letto, per favore.",
         "Mi si chiudono gli occhi. Anche le rune si confondono.",
         "Nei Campi dormivamo quando il muschio si chiudeva. Qui niente si chiude, quindi devo decidere io.",
         "{Un cuscino|Una coperta|Una stanza tranquilla} adesso sarebbe una meraviglia più grande di qualunque televisione.",
-        "Sono sveglio {dall'alba|da troppo tempo|da quasi due giorni}. Anche un rampicante riposa di notte.",
+        "Non chiudo occhio {dall'alba|da troppo tempo|da quasi due giorni}. Anche un rampicante riposa di notte.",
         "Prima il sonno. Il mondo sarà strano anche domani.",
         "Stavo per addormentarmi sul tram. Il dondolio è troppo gentile.",
         "I miei pensieri sono lenti come la linfa d'inverno. Ho bisogno di riposo.",
@@ -225,14 +225,14 @@
         "La friggitoria mi chiama. Sto cercando di non ascoltare."
       ],
       "work": [
-        "Torno al lavoro. {Le casse|Le scorte|Gli ordini} non si sistemano da soli.",
+        "Torno al lavoro. {Le casse|Le scorte|Gli ordini} non si sistemano da sé.",
         "Il mio turno comincia presto. Mi piace arrivare in anticipo e salutare le macchine.",
         "Lavoro onesto, euro onesti. I Campi approverebbero la prima parte.",
-        "Non devo fare tardi. Il mio datore di lavoro pensa già che io sia troppo lento.",
-        "Lento e giusto è meglio che veloce e due volte. Continuo a dirglielo.",
+        "Non devo fare tardi. Il mio datore di lavoro pensa già che io ci metta troppo.",
+        "Meglio piano e fatto bene che in fretta e da rifare. Continuo a dirglielo.",
         "La cassa è una cosa meravigliosa. Fa le somme senza mai stancarsi.",
         "Oggi il lavoro, domani {l'orto|lo studio|il riposo}. È questo il patto.",
-        "Ero uno studioso di magia delle radici. Ora impilo {lattine|scatole|scaffali}. Entrambe le cose richiedono cura.",
+        "Studiavo la magia delle radici. Ora impilo {lattine|scatole|scaffali}. Entrambe le cose richiedono cura.",
         "Il capo mi chiama 'il blu'. Ho deciso che è affetto.",
         "C'è ancora così tanto da fare prima della chiusura.",
         "Mani occupate, mente tranquilla. Una buona giornata di lavoro.",
@@ -244,7 +244,7 @@
       "leisure": [
         "Un pomeriggio senza niente da fare. Nei Campi la chiamavano saggezza.",
         "Voglio sedermi nel parco a guardare {i piccioni|le nuvole|i bambini con gli aquiloni}.",
-        "La sala giochi! Tutte quelle luci e quelle musichette. Sono negato e la adoro.",
+        "La sala giochi! Tutte quelle luci e quelle musichette. Non ci so giocare e la adoro.",
         "Forse un film. Rimango ancora senza fiato davanti al grande schermo.",
         "Mi farebbe bene una partita a {carte|scacchi|freccette}, anche se perdo.",
         "Troppo lavoro e le radici si seccano. È ora di giocare.",
@@ -271,9 +271,9 @@
         "La cassa è aperta. La mia coscienza no.",
         "Se mi prendono diranno 'quel goblin'. E intenderanno tutti noi.",
         "Potrei restituirlo dopo. Potrei. Probabilmente.",
-        "La polizia qui è lenta. Non è una ragione. È una tentazione.",
+        "La polizia qui è lenta. Ecco una tentazione bella e buona.",
         "Facile bottino, direbbe un Naguka. Io non sono un Naguka.",
-        "Una mano veloce e l'affitto è pagato. Una mano veloce e sono un ladro."
+        "Una mano veloce e l'affitto è pagato. Una mano veloce e la coscienza resta sporca per sempre."
       ],
       "hygiene": [
         "Odoro un po' troppo di compost. Anche per me.",
@@ -290,7 +290,7 @@
         "Ho lavorato nella serra tutto il giorno e si vede.",
         "Sapone che profuma di lavanda. Certe cose gli umani le capiscono alla perfezione.",
         "Dovrei cambiarmi la camicia prima di vedere qualcuno che rispetto.",
-        "Polvere della strada, polvere dei libri. Allora, una lavata."
+        "Polvere della strada, polvere dei libri. Ci vuole una lavata."
       ],
       "money": [
         "{Dodici|Venti|Sette} euro fino alla fine del mese. Una stagione magra.",
@@ -313,11 +313,11 @@
         "C'è qualcosa che non va in questa strada. Lo sento nelle radici.",
         "Preferirei camminare dove ci sono le luci.",
         "Una banda di Naguka sta per spuntare da quell'angolo. L'ho letto. Dovrei andarmene.",
-        "Lo Schiacciamento mi ha già tolto una casa. Non ne perderò una seconda in un vicolo.",
+        "Lo Squishing mi ha già tolto una casa. Non ne perderò una seconda in un vicolo.",
         "Quegli uomini mi osservano da un po'. Continua a camminare, con calma.",
         "Mi serve un posto con una porta chiusa a chiave e un bollitore.",
         "Di nuovo mostri in periferia. Meglio stare al chiuso.",
-        "Il cuore mi batte forte. Non sono un combattente, sono un giardiniere.",
+        "Il cuore mi batte forte. Queste mani sanno solo zappare.",
         "Qualcuno ha gridato 'goblin' alle mie spalle. Non in modo amichevole.",
         "Conosco un incanto di protezione. Spero di non doverlo usare.",
         "La stazione di polizia è a due strade da qui. È bene saperlo.",
@@ -329,13 +329,13 @@
       "comfort": [
         "La mia sedia a casa ha un incavo con la mia forma esatta. Mi manca.",
         "Una coperta, una tazza di tè e un libro sui treni. È tutto ciò che chiedo.",
-        "Queste scarpe mi stringono da {mezzogiorno|colazione|il ponte}.",
+        "Queste scarpe mi stringono {da mezzogiorno|dalla colazione|da quando ho passato il ponte}.",
         "Il riscaldamento è rotto. Nei Campi era la terra stessa a essere calda.",
         "Ho nostalgia del tepore di una serra la sera.",
         "Un letto morbido è una delle opere più belle dell'umanità.",
         "Questa panchina è durissima, e molto onesta al riguardo.",
         "Vorrei le mie pantofole. Sì, adesso ho delle pantofole.",
-        "Le mie stanze sono fredde e il termosifone mi gorgoglia soltanto.",
+        "Le mie stanze sono fredde e il termosifone si limita a gorgogliare.",
         "Qualcosa di morbido, qualcosa di caldo, qualcosa di tranquillo. In qualunque ordine.",
         "Mi fa male la schiena per {il diserbo|le casse da sollevare|i sedili dell'autobus}.",
         "Un bagno caldo e una borsa dell'acqua calda. Desideri semplici, sentiti profondamente.",
@@ -351,11 +351,11 @@
         "Dovrei telefonare a mio cugino. La cabina telefonica mi aspetta.",
         "Una bella conversazione è meglio di un buon pasto. Quasi.",
         "Mi manca il suono degli altri Verden che ridono.",
-        "Fammi trovare {un amico|un volto familiare|qualcuno di gentile} con cui sedermi.",
+        "Vorrei trovare {un amico|un volto familiare|qualcuno di gentile} con cui sedermi.",
         "Gli umani sono timidi all'inizio, poi parlano tutta la notte. Mi piace.",
         "Potrei andare al caffè e fingere di leggere. La gente parla con chi legge.",
         "Anche un seme ha bisogno di vicini per crescere dritto.",
-        "È solitario essere l'unico volto blu della strada.",
+        "Ci si sente soli a essere l'unico volto blu della strada.",
         "Forse stasera si riunisce un circolo Verden. Tè e vecchie canzoni.",
         "In questo momento accoglierei volentieri persino le chiacchiere di un Naguka.",
         "Qualcuno, per favore, mi chieda come sto."
@@ -388,7 +388,7 @@
         "Un fulmine. Per un istante tutto il cielo aveva il colore dei vecchi portali dimensionali.",
         "Meglio al chiuso. Meglio con il tè. Meglio con la radio accesa.",
         "Il cavo della corrente ronza come un alveare agitato.",
-        "È lo Schiacciamento, o solo il tempo? Di questi tempi non ne sono mai sicuro.",
+        "È lo Squishing o solo maltempo? Ultimamente non so mai dirlo.",
         "Un temporale è il cielo che si schiarisce la gola. Una gola molto lunga, questa.",
         "I tram si sono fermati. Ma certo.",
         "Le mie finestre sbattono come vecchie ossa. Ho incantato la maniglia due volte.",
@@ -402,13 +402,13 @@
         "Ho preso un fiocco di neve sulla manica. Aveva sei braccia perfette. Chi l'ha progettato?",
         "Con il freddo la mia pelle diventa di un blu più scuro. I bambini lo trovano esilarante.",
         "Le radici dormono sotto tutto quel bianco. Dormite bene.",
-        "Neve sui binari del tram. Andrà ancora? Devo vedere.",
+        "Neve sui binari del tram. Passerà ancora? Vado a vedere.",
         "Mi servono guanti più pesanti. E forse anche sangue più denso.",
         "Impronte nella neve fresca: un intero diario di chi è andato dove.",
         "Stanotte la serra ha bisogno di un incanto riscaldante.",
         "I bambini si lanciano la neve. Una guerra bellissima e inutile.",
         "Castagne calde sotto la neve. Gli umani hanno fatto alcune cose proprio bene.",
-        "Sono scivolato sul ghiaccio e uno sconosciuto mi ha preso. La neve rende la gente gentile.",
+        "Il ghiaccio mi ha fatto scivolare e uno sconosciuto mi ha preso al volo. La neve rende la gente gentile.",
         "I baccelli non amano il freddo. Ho avvolto il mio nella lana.",
         "Tutto è {bianco|silenzioso|morbido} e nessuno ha fretta. Finalmente.",
         "Ho fatto un piccolo Verden di neve vicino alla porta. Sembra preoccupato."
@@ -417,7 +417,7 @@
         "Cielo sereno. Una bella giornata per {aprire le finestre|girare il compost|camminare fino al fiume}.",
         "Il sole qui è più piccolo del nostro, e per questo più gentile.",
         "Neanche una nuvola. Le piantine si allungheranno verso la luce tutto il giorno.",
-        "In giornate come questa dimentico, per un'ora, di essere lontano da casa.",
+        "In giornate come questa dimentico, per un'ora, quanto è lontana casa.",
         "Il sole è caldo sul viso. Mia nonna la chiamava una benedizione gratuita.",
         "Sono tutti fuori. Oggi l'intera città è un giardino.",
         "Luce viva, ombre lunghe, aria pulita. Potrei camminare per sempre.",
@@ -451,11 +451,11 @@
       ],
       "afternoon": [
         "Pomeriggio. Il sole si inclina e tutto rallenta.",
-        "Un po' assonnato dopo pranzo. Nei Campi adesso ci stenderemmo sotto le viti.",
+        "Un po' di sonno dopo pranzo. Nei Campi adesso ci stenderemmo sotto le viti.",
         "Metà giornata fatta. Metà orto diserbato. Un giusto equilibrio.",
         "Tra poco escono da scuola. Le strade si riempiranno di rumore e di panini con la marmellata.",
         "L'ora del tè. Un'usanza umana che ho adottato fin dal primo giorno.",
-        "La luce è dorata e pigra. Anch'io.",
+        "La luce è dorata e pigra. Come me, oggi.",
         "Ho {qualche commissione|lettere da spedire|semi da comprare} prima che chiudano i negozi.",
         "Le ombre si stiracchiano come gatti.",
         "Un lungo pomeriggio è un dono. Intendo aprirlo con calma.",
@@ -468,7 +468,7 @@
       ],
       "evening": [
         "Sera. I lampioni si accendono uno dopo l'altro, come fiori.",
-        "Cena, un libro e forse la televisione. Sto diventando molto umano.",
+        "Cena, un libro e forse la televisione. Sto prendendo abitudini molto umane.",
         "Qui il cielo diventa viola. A casa diventava verde. Mi piacciono entrambi.",
         "Tutti tornano a casa alla stessa ora. Una grande marea di persone.",
         "È ora di coprire le piantine per la notte.",
@@ -496,7 +496,7 @@
         "La notte è quando mi mancano di più i Campi. Brillavano dopo il buio.",
         "Stanotte il cielo ha tremolato di nuovo. Da qualche parte, una bolla temporale.",
         "La notte è fresca e la terra riposa. Dovrei farlo anch'io.",
-        "Una finestra accesa di fronte. Qualcun altro sveglio. Ciao, sconosciuto.",
+        "Una finestra accesa di fronte. Qualcun altro non dorme. Ciao, chiunque tu sia.",
         "Le strade non sono sicure così tardi. Prenderò la strada lunga e illuminata.",
         "Luce di luna sui vetri della serra. Vale la pena restare svegli."
       ]
@@ -528,10 +528,10 @@
       ],
       "AUTUMN": [
         "Autunno. Tempo di raccolto. Tutto nel suo cesto, finalmente.",
-        "Le foglie cambiano colore. Nei Campi diventavano blu. Qui, d'oro. Entrambe sono belle.",
+        "Le foglie cambiano colore. Nei Campi diventavano blu. Qui, d'oro. Sono belli tutti e due.",
         "È ora di conservare i semi per l'anno prossimo. La faccenda più piena di speranza che ci sia.",
         "Funghi nel parco. So quali sono amici.",
-        "Le giornate si accorciano. Mi servirà la lampada da lettura prima.",
+        "Le giornate si accorciano. Dovrò accendere prima la lampada da lettura.",
         "L'autunno è quando ho più nostalgia di casa, e più gratitudine.",
         "Mele, pere, mele cotogne. Le mie dispense sono piene, e anche il mio cuore.",
         "Adesso il vento morde. Sciarpe per tutti.",
@@ -557,7 +557,7 @@
         "Ho {tre|cinque|quattro} euro e un piano. Il piano non è un granché.",
         "Nei Campi nessuno era povero. Nessuno era niente: crescevamo e basta.",
         "Il mio cappotto è stato rammendato così tante volte che è quasi tutto rammendo.",
-        "Coltivo da solo i miei fagioli per potermi permettere l'autobus.",
+        "Mi coltivo i fagioli per potermi permettere l'autobus.",
         "Il distributore è un lusso che visito solo per ammirarlo.",
         "Gli esuli arrivano senza niente. Alcuni di noi stanno ancora arrivando.",
         "Ho venduto il mio ultimo {libro|amuleto|sacchetto di semi} di casa. Ha fatto più male della fame.",
@@ -574,20 +574,20 @@
         "Il giusto, come diceva mia nonna, è un banchetto.",
         "Questo mese ho mandato un po' di soldi al circolo Verden. È stato bello.",
         "Benestante è una bella parola. Suona come un cuscino.",
-        "Un abbonamento all'autobus per tutto il mese. Mi sento un signore.",
+        "Un abbonamento all'autobus per tutto il mese. Roba da signori.",
         "Metto da parte un po' ogni settimana. Come semi in un barattolo.",
         "Guanti nuovi quest'inverno, e non ho dovuto scegliere tra loro e la cena.",
         "La vita è modesta e costante. Come una buona siepe.",
-        "Mi sono concesso un biglietto del cinema. Valeva ogni centesimo."
+        "Ho fatto uno strappo alla regola: un biglietto del cinema. Valeva ogni centesimo."
       ],
       "rich": [
-        "Ho più euro di quanti sappia cosa farne. Così mi sono comprato una serra.",
+        "Ho più euro di quanti sappia cosa farne. Così ho comprato una serra.",
         "I miei antenati hanno buttato le più grandi macchine del multiverso. Io ho comprato una televisione. Siamo pari.",
         "La ricchezza è piacevole, ma non fa crescere più in fretta i fagioli.",
-        "Finanzio una piccola scuola per bambini Verden. Il denaro va piantato, non conservato.",
+        "Finanzio una piccola scuola per bambini Verden. Il denaro va piantato.",
         "Un'auto! Possiedo un'auto. La guido molto, molto lentamente.",
         "Gli umani della banca sono improvvisamente molto gentili con me.",
-        "Potrei comprare tutti i distributori di questo quartiere. Sono tentato, davvero.",
+        "Potrei comprare tutti i distributori di questo quartiere. La tentazione è forte, davvero.",
         "La ricchezza è un cappotto pesante. Caldo, ma pesante.",
         "Tengo un'intera stanza solo per {i baccelli|le piantine|le radio}. Stravagante, lo so.",
         "I miei anziani disapproverebbero tutto questo. Poi chiederebbero di vedere la lavatrice.",
@@ -597,7 +597,7 @@
     },
     "familiar": [
       "Ah, di nuovo quei viaggiatori. {Prevedevo|Speravo|Mi aspettavo quasi} di vederli oggi.",
-      "Quel gruppo cammina sempre come se la strada gli dovesse qualcosa. Mi piacciono.",
+      "Quel Party cammina sempre come se la strada gli dovesse qualcosa. Mi piacciono.",
       "La prossima volta dovrei portar loro {dei pomodori|del miele|del pane alle erbe}. I viaggiatori mangiano male.",
       "Mi hanno salutato per nome. In un mondo strano, non è poco.",
       "Quegli avventurieri hanno occhi gentili, sotto tutta quella polvere.",
@@ -608,8 +608,8 @@
       "Mi preoccupo per loro, là fuori sulle strade. Qualcuno deve pur farlo.",
       "Gli amici crescono piano, come le querce. Questi stanno venendo su bene.",
       "Hanno sempre una storia strana. Io ci credo sempre.",
-      "Di nuovo quello con {lo zaino pesante|la risata forte|gli stivali consumati}. Bentornato.",
-      "Affiderei a quel gruppo il mio baccello di spore. Questo dice tutto.",
+      "Ecco di nuovo {quello zaino pesante|quella risata forte|quegli stivali consumati}. Bentornati.",
+      "Affiderei a quel Party il mio baccello di spore. Questo dice tutto.",
       "Buffo quanto spesso le nostre strade si incrocino. Nemmeno io l'avevo previsto.",
       "Fanno sembrare questa città meno straniera.",
       "Devo chiedere loro dei loro viaggi. Davanti a un tè, come si deve.",
@@ -626,22 +626,22 @@
       "Vogliono che mi dipinga la faccia per la marcia. Ho rifiutato educatamente. Due volte.",
       "Cari cugini. Tanto cuore, così poca pazienza.",
       "Qui nessuno ha mai piantato niente di proposito. Ho cominciato un'aiuola di erbe. Continuano a calpestarla.",
-      "Il capo guerra mi ha chiesto di prevedere la prossima mossa degli umani. Gli ho detto che so leggere solo i goblin.",
+      "Il capoguerra mi ha chiesto di prevedere la prossima mossa degli umani. Gli ho detto che so leggere solo i goblin.",
       "Ho letto nel collettivo che la razzia andrà male. Non posso scriverci una sola parola per fermarli.",
       "Black metal all'alba, black metal al tramonto. Le mie orecchie si sono arrese.",
       "Un piccolo Naguka mi ha chiesto perché ho la pelle blu. Gli ho detto che il cielo mi voleva bene.",
       "Mangiano con le mani, con i gomiti e a volte con i piedi. Io porto un cucchiaio.",
       "Il santuario dei Junehem cresce ogni settimana. Per lo più ossa e cassette.",
-      "Qui sono quello strano e silenzioso che legge. Almeno è onesto.",
+      "Qui sono la creatura strana e silenziosa che legge. Almeno è onesto.",
       "Ho insegnato a un Naguka a fare un nodo. Era così fiero che si è dimenticato della guerra per un'ora intera.",
       "L'accampamento odora di fumo, sudore e {topo arrosto|porridge bruciato|pelo bagnato}. Ci si adatta.",
       "Qui mi chiamano 'Cugino Grande'. Speravo in 'Cugino Saggio'. Pazienza.",
       "So che gli esploratori torneranno affamati e imbronciati. Ho già messo su la zuppa.",
-      "Se capissero come funziona lo Schiacciamento, smetterebbero di marciare. Non vogliono capire.",
+      "Se capissero come funziona lo Squishing, smetterebbero di marciare. Non vogliono capire.",
       "Un accampamento dell'Orda non ha orologi. Il tempo si misura in risse e pisolini.",
       "Qualcuno ha riportato una televisione da una razzia. Senza corrente, ovviamente. La venerano comunque.",
       "Io curo le loro ferite e loro non curano niente. Una giusta divisione del lavoro, immagino.",
-      "Non sono malvagi. Sono giovani, rumorosi, e ascoltano gli dèi sbagliati.",
+      "Sono giovani e rumorosi, e ascoltano gli dèi sbagliati. Col tempo cresceranno.",
       "Sento tutta l'Orda voltare la testa insieme, come un campo d'erba al vento.",
       "La voce di Grissnack è in ogni sogno da queste parti. Dormo con il cotone nelle orecchie, per quel che serve.",
       "Gli umani sono fuggiti da questa città e l'Orda si è insediata. Io curo quello che gli umani hanno lasciato: le rose.",
@@ -654,30 +654,30 @@
       "La mia vicina mi ha insegnato a usare {il microonde|il videoregistratore|la segreteria telefonica}. Io le ho insegnato a innestare le rose.",
       "La gente fissa ancora, un pochino. Poi chiede del tempo. Qui questa è accettazione.",
       "Ho una tessera della biblioteca. Una tessera di plastica che apre la porta a ogni libro. Meraviglioso.",
-      "Alcuni bambini umani mi hanno chiesto se fossi un Naguka. Ho detto: un cugino, venuto da lontano.",
+      "Alcuni bambini umani mi hanno chiesto se fossi un Naguka. Ho detto: siamo parenti, alla lontana.",
       "Il telegiornale parla dell'Orda al nord. I miei colleghi mi guardano storto per un giorno o due.",
-      "Ho imparato a fare la coda, a lasciare la mancia e a lamentarmi dei treni. Sono quasi un cittadino.",
+      "Ho imparato a fare la coda, a lasciare la mancia e a lamentarmi dei treni. Ormai sono quasi di qui.",
       "Gli umani hanno costruito tutto questo in poche migliaia di anni. Noi ci abbiamo messo molto di più, e abbiamo buttato via tutto.",
       "Sono arrivati i miei documenti di residenza. Un timbro, una firma, e di nuovo appartengo a un posto.",
       "Coltivo erbe dei Campi sul balcone. I vicini mi chiedono le talee.",
-      "Alcuni dicono che siamo una quinta colonna dei goblin. Io dico che sono un giardiniere con l'abbonamento dell'autobus.",
+      "Alcuni dicono che siamo una quinta colonna dei goblin. Io dico che ho un orto e l'abbonamento dell'autobus.",
       "Ormai penso in MarkovSpeak. Ci sogno persino. Mi spaventa un po'.",
       "Gli umani hanno tanti dèi e così pochi giardini. Io farei il contrario.",
       "Una donna al mercato mi tiene da parte la frutta ammaccata. Sa che faccio la marmellata.",
       "Il circolo Verden si riunisce il giovedì sopra la lavanderia. Ci scambiamo notizie e semi.",
       "Questa città non era fatta per me. La sto adattando, una fioriera alla volta.",
-      "Un'umana mi ha chiesto da dove vengo. Le ho detto da un posto che non c'è più. Mi ha abbracciato.",
+      "Un'umana mi ha chiesto da dove vengo. Le ho detto da un posto che non c'è più. Mi ha dato un abbraccio.",
       "Ho aggiustato una radio per il vecchio del piano di sotto. Be', l'ho guardato aggiustarla. Io tenevo il cacciavite.",
       "Le feste umane sono rumorose, appiccicose e meravigliose.",
       "La polizia mi ha controllato di nuovo i documenti oggi. Educatamente. Di nuovo.",
       "Voglio che le mie spore crescano qui. Tra tram, panetterie e sconosciuti gentili.",
       "Gli umani vivono vite così brevi e le riempiono così tanto. Li invidio un po'.",
-      "Mi manca essere circondato dalla mia gente. Poi un vicino mi saluta, e mi manca meno.",
-      "Anche gli umani hanno paura dello Schiacciamento, solo che lo chiamano 'tutta questa faccenda strana'.",
+      "Mi manca avere intorno la mia gente. Poi un vicino mi saluta, e mi manca meno.",
+      "Anche gli umani hanno paura dello Squishing, solo che lo chiamano 'tutta questa faccenda strana'.",
       "Nessuno in questa città ha mai incontrato un Naguka in pace. Io sono la cosa più vicina che hanno.",
       "Il mio padrone di casa ha riparato la caldaia senza che glielo chiedessi. Potrei piangere.",
       "I bambini umani vogliono toccarmi le orecchie. Li lascio fare. È giusto: io tocco le loro radio.",
-      "Il consiglio comunale mi ha invitato a parlare dei Campi. Sono venute tre persone. Una si è addormentata. Un trionfo.",
+      "Il consiglio comunale mi ha chiesto di parlare dei Campi. Sono venute tre persone. Una si è addormentata. Un trionfo.",
       "Questo mondo non è nostro. Ma è abbastanza gentile da prestarsi.",
       "Ora appartengo a questo posto, più o meno. Il resto di me sta ancora disfacendo le valigie."
     ],
@@ -695,34 +695,34 @@
         "L'orto della mia madre di spora aveva un pero più vecchio della vostra città più antica.",
         "Nei Campi nessuno aveva fretta. Nessuno ne aveva bisogno.",
         "L'ultima volta che ho visto i Campi, l'orizzonte si piegava come una pagina bagnata.",
-        "Vivevamo in case cresciute dalle siepi. Una casa non si costruiva: si allevava.",
+        "Vivevamo in case cresciute dalle siepi. Una casa si allevava, come si alleva un figlio.",
         "Nei Campi non c'era l'inverno. Ho dovuto imparare la parola qui.",
         "Nei Campi una biblioteca era un boschetto. Si leggeva sotto l'albero che custodiva il libro.",
         "Casa era verde, silenziosa e infinita. Ora non è più niente di tutto questo.",
         "Ho portato una manciata di terra dei Campi attraverso il portale. È in un barattolo sul mio davanzale.",
         "La luce della sera nei Campi era verde e oro. Qui è arancione. Mi sto ancora abituando.",
         "Alcuni di noi sono rimasti nei Campi. Non ne parliamo spesso.",
-        "Se restavi fermo abbastanza a lungo nei Campi, l'erba cominciava a crescerti intorno ai piedi."
+        "Bastava non muoversi abbastanza a lungo, nei Campi, e l'erba cominciava a crescerti intorno ai piedi."
       ],
       "squishing": [
-        "Lo Schiacciamento schiaccia prima le dimensioni più alte. Noi eravamo la settantasette. Siamo stati tra i primi.",
+        "Lo Squishing comincia dalle dimensioni più alte. Noi eravamo la settantasette. Siamo stati tra i primi.",
         "È cominciato nel 1992. Il cielo sopra i Campi ha cominciato a raggrinzirsi come frutta vecchia.",
         "Qui dicono: mai andare oltre gli ottanta. Io dico: perché mai dovresti volerlo?",
         "Le bolle temporali sono sempre più frequenti. Anche questo mondo comincia a sfilacciarsi.",
-        "Siamo fuggiti da uno Schiacciamento. Mi chiedo dove fuggiremo dal prossimo.",
+        "Siamo fuggiti da uno Squishing. Mi chiedo dove fuggiremo dal prossimo.",
         "Gli studiosi dicono che questo mondo ha tempo fino al 2012. Abbastanza per far crescere parecchi orti.",
         "Una volta ho visto un'intera valle piegarsi in due. Gli uccelli continuavano a volarci dentro.",
         "La dimensione tre è in fondo alla lista. Ecco perché siamo venuti qui. In basso e lenti.",
         "Ogni volta che qui il cielo tremola, tutti i Verden della strada alzano lo sguardo insieme.",
-        "Dicono che lo Schiacciamento abbia a che fare con una torre e una dea. Preferisco non saperne di più.",
+        "Dicono che lo Squishing abbia a che fare con una torre e una dea. Preferisco non saperne di più.",
         "Ho visto i Campi diventare sottili come carta tenuta controluce.",
-        "Abbiamo preso semi, libri e baccelli. Tutto il resto lo abbiamo lasciato schiacciare.",
+        "Abbiamo preso semi, libri e baccelli. Tutto il resto l'abbiamo lasciato allo Squishing.",
         "Un treno è passato troppo veloce davanti alla stazione ed è tornato indietro. E ancora. Poverino.",
         "Gli umani la chiamano 'la faccenda strana'. Noi la chiamiamo per quello che è: la fine, che scende lungo i numeri.",
         "Cerco di non contare gli anni che restano. Conto invece le stagioni. Sono di più."
       ],
       "technology": [
-        "I miei antenati gettarono nel sole ogni macchina che avevano. Migliaia di anni dopo, io resto incantato davanti a un tostapane.",
+        "I miei antenati gettarono nel sole ogni macchina che avevano. Migliaia di anni dopo, un tostapane mi incanta ancora.",
         "Un distributore automatico è un negozio che non dorme mai e non si lamenta mai. Notevole.",
         "Nessuno sa perché abbiamo rinunciato alle nostre macchine. Nemmeno i più anziani lo dicono.",
         "Ho smontato un mangianastri per vedere dove vive la musica. Ho trovato solo il nastro. Misterioso.",
@@ -738,7 +738,7 @@
         "Alcuni giovani Verden vogliono ricostruire ciò che abbiamo buttato. Gli anziani impallidiscono al pensiero.",
         "Una lampadina. Solo una lampadina. Gli umani non ci pensano. Io non penso ad altro.",
         "Il fax manda una pagina attraverso un filo. Dove va la pagina nel frattempo?",
-        "Mi sono iscritto a un corso serale di riparazione radio. Sono l'unico studente blu.",
+        "Frequento un corso serale di riparazione radio. In classe, l'unica faccia blu è la mia.",
         "Qui le macchine si rompono e si aggiustano. Le nostre, dicono le storie, non si rompevano mai. Forse era quello il problema.",
         "Il computer della biblioteca ronza come un alveare pieno di numeri.",
         "Un mangiacassette tascabile! Musica in tasca, solo per te. Gli umani hanno reso portatile la solitudine.",
@@ -750,7 +750,7 @@
       ],
       "spores": [
         "Il mio baccello è al {quarto|nono|tredicesimo} mese. In tutto, ben più di quattrocento giorni.",
-        "Un Verden non nasce: un Verden matura.",
+        "Un Verden matura, come un frutto.",
         "Tengo il baccello al caldo e all'umido e gli parlo ogni sera. Dicono che aiuti.",
         "Più di quattrocento giorni in un baccello. Gli umani pensano che nove mesi siano tanti.",
         "Mia cugina ha perso un dito nella portiera di un'auto. L'ha piantato. Ora ha una nipote.",
@@ -758,12 +758,12 @@
         "Un baccello di spore che vibra nel buio è il suono più pieno di speranza che conosca.",
         "Il padrone di casa ha chiesto perché ci sia un grosso baccello verde nell'armadio caldo. Ho detto: famiglia.",
         "Quando il baccello si apre, i piccoli escono già parlando. Per lo più lamentandosi della luce.",
-        "Per noi la pazienza non è una virtù. È biologia.",
-        "Temo che lo Schiacciamento raggiunga questo mondo prima che il mio baccello maturi. Poi lo annaffio comunque.",
+        "Per noi la pazienza è pura biologia.",
+        "Temo che lo Squishing raggiunga questo mondo prima che il mio baccello maturi. Poi lo annaffio comunque.",
         "Un arto reciso, piantato con cura, fa crescere un nuovo Verden. Stiamo molto attenti con i coltelli.",
         "I medici umani sono sconcertati da noi. Uno mi ha chiesto se avessi bisogno di sole o di un veterinario.",
         "Le spore volano quando starnutisco. Mi scuso con chiunque sia sottovento.",
-        "Noi contiamo la famiglia in baccelli, non in generazioni.",
+        "Noi la famiglia la contiamo in baccelli.",
         "La mia madre di spora mi piantò sotto un pero. Mi piacciono ancora le pere più del ragionevole.",
         "Stagione degli sporangi. Ogni Verden del quartiere è un po' lunatico e molto caldo.",
         "Ho cantato al baccello nell'antica lingua. Ha vibrato in risposta. È così che si capisce che sta bene.",
@@ -776,7 +776,7 @@
         "Il nostro popolo rinunciò alle macchine per studiare la magia. A volte mi chiedo se ne valesse la pena.",
         "Un piccolo incanto riscaldante sulla serra. Nessuno lo vede. Tutto cresce.",
         "I maghi umani hanno sempre tanta fretta. Palle di fuoco e fulmini. Nessuna pazienza per un incanto di riparazione.",
-        "Mi sono esercitato con le rune sul retro di un biglietto dell'autobus. Hanno retto per un'intera fermata.",
+        "Ho fatto pratica con le rune sul retro di un biglietto dell'autobus. Hanno retto per un'intera fermata.",
         "Gli incantesimi migliori sono quelli che nessuno nota: una porta che si incastra meno, una pianta che si rianima.",
         "La Gilda dei Maghi qui voleva che mi iscrivessi. Ho detto che ci avrei pensato, per un decennio o due.",
         "La magia in questo mondo sembra più rarefatta, come l'aria in montagna.",
@@ -795,7 +795,7 @@
         "Gli umani mi chiedono di mettere un pensiero nel collettivo. Non posso. Nessuno può, tranne i Junehem.",
         "Fai del male a un Naguka e lo sa l'intera specie. Vedo la notizia propagarsi tra loro prima dei giornali.",
         "Leggere il collettivo è come origliare una cena di famiglia molto grande e molto rumorosa.",
-        "L'esercito mi ha chiesto di spiare per loro attraverso il collettivo. Ho detto che io leggo, non faccio rapporto.",
+        "L'esercito mi ha chiesto di spiare per loro attraverso il collettivo. Ho detto che io mi limito a leggere.",
         "Sapere cosa verrà e non poterlo cambiare. Questa è la condizione dei Verden.",
         "Il collettivo sogna caverne, un grande buco trivellato e la luce in cima.",
         "Oggi il collettivo è calmo. Da qualche parte, moltissimi Naguka stanno facendo un pisolino.",
@@ -829,19 +829,19 @@
       "integration": [
         "Questo mese ho compilato il mio settimo modulo. Gli umani amano i moduli quasi quanto le code.",
         "Il MarkovSpeak è una bella lingua. Mi dicono che lo parlo meglio di alcuni dei miei vicini.",
-        "Ho un lavoro, un appartamento, una tessera della biblioteca e una panchina preferita. Sono integrato.",
+        "Ho un lavoro, un appartamento, una tessera della biblioteca e una panchina preferita. Ormai faccio parte del posto.",
         "La settimana prossima il consiglio Verden incontra il sindaco per gli orti comunitari. Incrociamo le dita.",
         "Il mio datore di lavoro si era dimenticato che fossi un Verden, finché non ho portato un baccello alla festa d'ufficio.",
         "Alcuni umani ci chiamano 'i goblin educati'. Ci sono nomi peggiori.",
         "Pago le tasse. Niente nei Campi mi aveva preparato alle tasse.",
-        "I miei vicini umani mi hanno invitato per {Natale|un matrimonio|un compleanno}. Ho portato un limone in vaso.",
+        "I miei vicini umani mi hanno chiesto di festeggiare con loro {Natale|un matrimonio|un compleanno}. Ho portato un limone in vaso.",
         "Ho votato per la prima volta. Prima ho letto ogni parola di ogni manifesto.",
         "I giovani Verden qui parlano con lo slang umano. I loro anziani fingono di non capire.",
         "Adesso alla clinica c'è un medico Verden. E un insegnante Verden. Uno alla volta.",
         "L'integrazione è come un innesto: fatto bene, il punto d'unione sparisce in poche stagioni.",
-        "A volte dimentico di essere un rifugiato. Poi il telegiornale parla dello Schiacciamento.",
+        "A volte dimentico di essere in esilio. Poi il telegiornale parla dello Squishing.",
         "Gli umani ci hanno dato una casa senza farselo chiedere due volte. Non dovremmo mai dimenticarlo.",
-        "In casa sono Verden e in strada sono cittadino. Certi giorni i due vanno d'accordo."
+        "In casa sono Verden, in strada sono di questa città. Certi giorni le due cose vanno d'accordo."
       ]
     }
   },
@@ -900,7 +900,7 @@
         ],
         [
           1,
-          "Non ci credo! A che velocità sei andato?"
+          "Non ci credo! A che velocità sei {go:andato|andata}?"
         ],
         [
           0,
@@ -922,7 +922,7 @@
         ],
         [
           0,
-          "Allora siamo fortunati tutti e due."
+          "Allora la fortuna è di tutti e due."
         ]
       ],
       [
@@ -936,7 +936,7 @@
         ],
         [
           0,
-          "Una talea di un'erba dei Campi. Ci sopravviverà a tutti e due, se glielo permetti."
+          "Una talea di un'erba dei Campi. Sopravviverà a tutti e due, se glielo permetti."
         ]
       ],
       [
@@ -974,7 +974,7 @@
       [
         [
           0,
-          "{b}, sembri stanco. Siediti. Ho fatto {il tè|la zuppa|il pane al miele}."
+          "{b}, sembri {go:stanco|stanca}. Siediti. Ho fatto {il tè|la zuppa|il pane al miele}."
         ],
         [
           1,
@@ -1048,7 +1048,7 @@
       [
         [
           0,
-          "Grazie per avermi difeso ieri sul tram."
+          "Grazie per aver preso le mie difese ieri sul tram."
         ],
         [
           1,
@@ -1084,7 +1084,7 @@
         ],
         [
           0,
-          "L'ho letto due volte e poi sono andato in stazione solo per guardare una locomotiva."
+          "L'ho letto due volte e poi sono {g:andato|andata} in stazione solo per guardare una locomotiva."
         ],
         [
           1,
@@ -1094,7 +1094,7 @@
       [
         [
           0,
-          "Ti sei ricordato il mio nome, {b}. Quasi tutti ricordano solo il colore."
+          "Ricordi il mio nome, {b}. Quasi tutti ricordano solo il colore."
         ],
         [
           1,
@@ -1126,7 +1126,7 @@
       [
         [
           0,
-          "Il mio cugino Naguka ha finalmente detto 'per favore'. Ho aspettato tre anni per questo."
+          "Mio cugino Naguka ha finalmente detto 'per favore'. Ho aspettato tre anni per questo."
         ],
         [
           1,
@@ -1154,7 +1154,7 @@
       [
         [
           0,
-          "So leggere il collettivo, ma non avevo mai previsto un amico come te, {b}."
+          "So leggere il collettivo, ma non avevo mai previsto {go:un amico|un'amica} come te, {b}."
         ],
         [
           1,
@@ -1238,7 +1238,7 @@
       [
         [
           0,
-          "Sapevo che saresti arrivato in ritardo. Non mi serviva leggere nessun collettivo."
+          "Sapevo che saresti {go:arrivato|arrivata} in ritardo. Non mi serviva leggere nessun collettivo."
         ],
         [
           1,
@@ -1260,7 +1260,7 @@
         ],
         [
           0,
-          "Il problema non è la parola. È il tono."
+          "Il problema sta tutto nel tono."
         ]
       ],
       [
@@ -1288,7 +1288,7 @@
         ],
         [
           0,
-          "Ha funzionato per una canzone. Sono paziente, non sciocco."
+          "Ha funzionato per una canzone. La pazienza ha un limite."
         ],
         [
           1,
@@ -1330,11 +1330,11 @@
         ],
         [
           1,
-          "Lo sto ancora leggendo! Sei tu quello che dice sempre 'pazienza'."
+          "Lo sto ancora leggendo! Sei tu {go:quello|quella} che dice sempre 'pazienza'."
         ],
         [
           0,
-          "La pazienza è per i semi, {b}, non per chi prende in prestito."
+          "La pazienza è per i semi, {b}. Chi prende in prestito ha una scadenza."
         ]
       ],
       [
@@ -1356,7 +1356,7 @@
         ],
         [
           0,
-          "Sei stato tu, {b}. Non mi è servita la magia."
+          "Sei {go:stato|stata} tu, {b}. Non mi è servita la magia."
         ]
       ],
       [
@@ -1418,7 +1418,7 @@
       [
         [
           0,
-          "Continui a dire alla gente che lo Schiacciamento è una bufala."
+          "Continui a dire alla gente che lo Squishing è una bufala."
         ],
         [
           1,
@@ -1436,7 +1436,7 @@
         ],
         [
           1,
-          "Me ne sono dimenticato! Sta bene?"
+          "Me ne sono {g:dimenticato|dimenticata}! Sta bene?"
         ],
         [
           0,
@@ -1454,7 +1454,7 @@
         ],
         [
           0,
-          "Dar loro una coperta. Non i miei meloni."
+          "Dar loro una coperta. I miei meloni dovevano restare dov'erano."
         ],
         [
           1,
@@ -1472,7 +1472,7 @@
         ],
         [
           0,
-          "Per la mia esperienza, le promesse crescono sullo stesso albero delle scuse."
+          "Nella mia esperienza, le promesse crescono sullo stesso albero delle scuse."
         ]
       ]
     ],
@@ -1576,7 +1576,7 @@
         ],
         [
           0,
-          "Il conducente di una casa che si muove. Che famiglia da cui venire."
+          "Il conducente di una casa che si muove. Viene da una famiglia notevole, allora."
         ]
       ],
       [
@@ -1622,7 +1622,7 @@
         ],
         [
           1,
-          "Già... lo fanno."
+          "Già... fanno così."
         ]
       ],
       [
@@ -1650,7 +1650,7 @@
         ],
         [
           0,
-          "Un giardiniere saggio. Proverò la banana."
+          "Ha il pollice verde, si vede. Proverò la banana."
         ]
       ],
       [
@@ -1686,7 +1686,7 @@
         ],
         [
           0,
-          "Come le siepi. Dai loro tempo e chiudono il varco."
+          "Come le siepi. Basta dar loro tempo e chiudono il varco."
         ]
       ],
       [
@@ -1728,7 +1728,7 @@
         ],
         [
           0,
-          "Non intorno a me. Sono salito e sceso quattro volte."
+          "Non dalle mie parti. Ho fatto su e giù quattro volte."
         ]
       ],
       [
@@ -1860,7 +1860,7 @@
       [
         [
           0,
-          "Sembri perso, {b}. Posso aiutarti?"
+          "Sembri {go:perso|persa}, {b}. Posso aiutarti?"
         ],
         [
           1,
@@ -2058,7 +2058,7 @@
           ],
           [
             1,
-            "Aspetta qualche centinaio di anni. Poi richiedilo."
+            "Aspetta qualche centinaio di anni. Poi ne riparliamo."
           ]
         ]
       },
@@ -2079,7 +2079,7 @@
           ],
           [
             1,
-            "La maggior parte della gente non ha anni, {a}. Ha un martedì."
+            "La maggior parte della gente ha un martedì, {a}. Gli anni sono un lusso."
           ]
         ]
       },
@@ -2088,7 +2088,7 @@
         "lines": [
           [
             0,
-            "Un giorno l'Orda metterà radici. Sono giovani, non malvagi."
+            "Un giorno l'Orda metterà radici. Sono solo giovani."
           ],
           [
             1,
@@ -2109,7 +2109,7 @@
         "lines": [
           [
             0,
-            "I Junehem non sono dèi. Sono quattro uomini con chitarre molto rumorose."
+            "I Junehem sono quattro uomini con chitarre molto rumorose, e basta."
           ],
           [
             1,
@@ -2117,11 +2117,11 @@
           ],
           [
             0,
-            "È la fede a tenerli in vita. Questo li rende nutriti, non divini."
+            "È la fede a tenerli in vita. Li tiene ben nutriti, ecco tutto."
           ],
           [
             1,
-            "A me sembra proprio un dio."
+            "A me sembrano proprio dèi."
           ]
         ]
       },
@@ -2130,7 +2130,7 @@
         "lines": [
           [
             0,
-            "Lo Schiacciamento è il pericolo più grande che tutti noi corriamo."
+            "Lo Squishing è il pericolo più grande che tutti noi corriamo."
           ],
           [
             1,
@@ -2138,7 +2138,7 @@
           ],
           [
             0,
-            "Le guerre finiscono. Lo Schiacciamento cresce soltanto."
+            "Le guerre finiscono. Lo Squishing cresce soltanto."
           ],
           [
             1,
@@ -2151,7 +2151,7 @@
         "lines": [
           [
             0,
-            "Gli umani corrono attraverso tutto. Non assaporano niente."
+            "Gli umani attraversano tutto di corsa. Non assaporano niente."
           ],
           [
             1,
@@ -2239,11 +2239,11 @@
           ],
           [
             1,
-            "Meglio che preghino piuttosto che saccheggino."
+            "Meglio pregare che saccheggiare."
           ],
           [
             0,
-            "Vogliono un esercito, non una congregazione."
+            "Vogliono un esercito, e lo vogliono fatto di Naguka."
           ],
           [
             1,
@@ -2268,7 +2268,7 @@
           ],
           [
             1,
-            "Io me la rischio."
+            "Io corro il rischio."
           ]
         ]
       },
@@ -2394,7 +2394,7 @@
           ],
           [
             1,
-            "...Va bene, questo è giusto, però comunque."
+            "...D'accordo, su questo hai ragione. Ma comunque."
           ]
         ]
       },
@@ -2445,7 +2445,7 @@
         "lines": [
           [
             0,
-            "Conoscere il futuro è un peso, non un dono."
+            "Conoscere il futuro è un peso, e pesa ogni giorno."
           ],
           [
             1,
@@ -2457,7 +2457,7 @@
           ],
           [
             1,
-            "Almeno sarei pronto. È già qualcosa."
+            "Almeno sarei {g:pronto|pronta}. È già qualcosa."
           ]
         ]
       }
@@ -2496,7 +2496,7 @@
       [
         [
           0,
-          "Buonasera. Attento alla pozzanghera."
+          "Buonasera. {go:Attento|Attenta} alla pozzanghera."
         ],
         [
           1,
@@ -2566,7 +2566,7 @@
       [
         [
           0,
-          "Attento al ciclista."
+          "{go:Attento|Attenta} al ciclista."
         ],
         [
           1,
@@ -2776,7 +2776,7 @@
       [
         [
           0,
-          "Il caffè è aperto? Ho bisogno della loro meravigliosa macchina del caffè."
+          "Il bar è aperto? Ho bisogno della loro meravigliosa macchina del caffè."
         ],
         [
           1,
@@ -3006,7 +3006,7 @@
       [
         [
           0,
-          "Stai attento sulla strada stasera."
+          "Stai {go:attento|attenta} sulla strada stasera."
         ],
         [
           1,

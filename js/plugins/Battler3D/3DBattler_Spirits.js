@@ -64,7 +64,14 @@
         spr_sunkencharnelhound:{ variant: 'spr_sunkencharnelhound', scale: 2.4, texturePool: 'void', bodyColor: 0x4a5a48, accent: 0x88cc55, hue: [0.30, 0.08], sat: [0.40, 0.12], lit: [0.30, 0.08], front: true },
         spr_mummifiedmourner: { variant: 'spr_mummifiedmourner', scale: 2.2, texturePool: 'pale', bodyColor: 0xd8c9a0, accent: 0xe0b060, hue: [0.11, 0.05], sat: [0.30, 0.10], lit: [0.66, 0.08], front: true },
         spr_forgottenthrall:  { variant: 'spr_forgottenthrall',  scale: 2.2, texturePool: 'pale', bodyColor: 0x9aa8b0, accent: 0x6699bb, hue: [0.58, 0.06], sat: [0.18, 0.08], lit: [0.58, 0.08], front: true },
-        spr_plaguepallbearer: { variant: 'spr_plaguepallbearer', scale: 2.4, texturePool: 'void', bodyColor: 0x5a4a3a, accent: 0x9acc4a, hue: [0.28, 0.06], sat: [0.45, 0.12], lit: [0.34, 0.08], front: true }
+        spr_plaguepallbearer: { variant: 'spr_plaguepallbearer', scale: 2.4, texturePool: 'void', bodyColor: 0x5a4a3a, accent: 0x9acc4a, hue: [0.28, 0.06], sat: [0.45, 0.12], lit: [0.34, 0.08], front: true },
+        // ── Level 1-5 apparitions, each on its own bespoke build ──
+        lv_candlewisp:        { variant: 'lv_candlewisp',        scale: 1.6, texturePool: 'pale', bodyColor: 0xe8dcc0, accent: 0x88c8ff, hue: [0.11, 0.04], sat: [0.25, 0.08], lit: [0.80, 0.06], front: true },
+        lv_draughtyshade:     { variant: 'lv_draughtyshade',     scale: 2.0, texturePool: 'pale', bodyColor: 0xb8c8d8, accent: 0xe8f8ff, hue: [0.58, 0.05], sat: [0.18, 0.08], lit: [0.72, 0.08], front: true },
+        lv_creakypoltergeist: { variant: 'lv_creakypoltergeist', scale: 2.0, texturePool: 'pale', bodyColor: 0xc8d8d0, accent: 0x88ffcc, hue: [0.42, 0.05], sat: [0.18, 0.08], lit: [0.76, 0.08], front: true },
+        lv_mondaydread:       { variant: 'lv_mondaydread',       scale: 2.0, texturePool: 'void', bodyColor: 0x7a7a80, accent: 0xdddddd, hue: [0.62, 0.04], sat: [0.06, 0.04], lit: [0.46, 0.06], front: true },
+        lv_nightmarenibbler:  { variant: 'lv_nightmarenibbler',  scale: 1.7, texturePool: 'void', bodyColor: 0x3a2a4a, accent: 0xff4466, hue: [0.78, 0.05], sat: [0.35, 0.10], lit: [0.24, 0.06], front: true },
+        lv_bandagewraith:     { variant: 'lv_bandagewraith',     scale: 2.1, texturePool: 'pale', bodyColor: 0xd8c890, accent: 0xffcc44, hue: [0.12, 0.04], sat: [0.35, 0.08], lit: [0.70, 0.08], front: true }
     };
 
     class SpiritBattler3D extends Base {
@@ -157,6 +164,12 @@
                 case 'spr_mummifiedmourner':  this._buildSprMummifiedMourner(); break;
                 case 'spr_forgottenthrall':   this._buildSprForgottenThrall(); break;
                 case 'spr_plaguepallbearer':  this._buildSprPlaguePallbearer(); break;
+                case 'lv_candlewisp':         this._buildLvCandleWisp(); break;
+                case 'lv_draughtyshade':      this._buildLvDraughtyShade(); break;
+                case 'lv_creakypoltergeist':  this._buildLvCreakyPoltergeist(); break;
+                case 'lv_mondaydread':        this._buildLvMondayDread(); break;
+                case 'lv_nightmarenibbler':   this._buildLvNightmareNibbler(); break;
+                case 'lv_bandagewraith':      this._buildLvBandageWraith(); break;
                 default:                this._buildAnxiety(); break;
             }
             this.model = this.bodyGroup;
@@ -169,7 +182,9 @@
         _buildAnxiety() {
             const p = this.profile;
             this._ghostBase({ opacity: 0.62, eyeGlow: p.accent, eyeColor: p.accent });
-            this.darts = new THREE.Group();
+            // The darting eyes and the sweat drops hang around the wraith on
+            // purpose; the markers keep them off the loose-part audit.
+            this.darts = new THREE.Group(); this.darts.userData.float = true;
             for (let i = 0; i < 6; i++) {
                 const a = (i / 6) * Math.PI * 2;
                 const eye = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), this._mat(0xffffff, 0.9, 0.2));
@@ -178,7 +193,7 @@
             }
             this.bodyGroup.add(this.darts);
             // Sweat beads.
-            this.sweat = new THREE.Group();
+            this.sweat = new THREE.Group(); this.sweat.userData.float = true;
             for (let i = 0; i < 4; i++) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), this._mat(p.accent, 0.85, 0.2, p.accent)); s.position.set((this.idRand() - 0.5) * 0.7, 1.1, 0.4); s.scale.y = 1.4; s._t = this.idRand(); this.sweat.add(s); }
             this.bodyGroup.add(this.sweat);
         }
@@ -195,7 +210,7 @@
             const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), this._mat(0x000000, 1.0, 0.1)); pupil.position.z = 0.24; this.bigEye.add(pupil);
             this.bigEye.position.set(0, 0.95, 0.32); this.bodyGroup.add(this.bigEye);
             // Intake swirl ring drawing fear inward.
-            this.swirl = new THREE.Group();
+            this.swirl = new THREE.Group(); this.swirl.userData.orbit = true;
             for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; const w = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.4, 5), this._mat(p.accent, 0.6, 0.3, p.accent)); w.position.set(Math.cos(a) * 0.7, 0.5, Math.sin(a) * 0.7); w.rotation.z = a; w._a = a; this.swirl.add(w); }
             this.bodyGroup.add(this.swirl);
             this._partMeshMap.FACE = this.bigEye;
@@ -243,7 +258,7 @@
         _buildLostMemory() {
             const p = this.profile;
             this._ghostBase({ opacity: 0.5 });
-            this.photos = new THREE.Group();
+            this.photos = new THREE.Group(); this.photos.userData.orbit = true; // fragments drift around it by design
             for (let i = 0; i < 7; i++) {
                 const a = (i / 7) * Math.PI * 2;
                 const ph = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 0.14), this._mat(0xefe6d4, 0.8, 0.6));
@@ -252,7 +267,7 @@
             }
             this.bodyGroup.add(this.photos);
             // Glowing memory motes.
-            this.motes = new THREE.Group();
+            this.motes = new THREE.Group(); this.motes.userData.float = true;
             for (let i = 0; i < 8; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 6), this._mat(p.accent, 0.9, 0.2, p.accent)); m.position.set((this.idRand() - 0.5) * 1.2, 0.4 + this.idRand() * 1.0, (this.idRand() - 0.5) * 0.8); m._t = this.idRand(); this.motes.add(m); }
             this.bodyGroup.add(this.motes);
             this._cascadeRules[0].hide.push(this.photos, this.motes);
@@ -289,9 +304,14 @@
             // Shadow pool it rises from.
             this.pool = new THREE.Mesh(new THREE.CircleGeometry(0.7, 20), this._mat(0x050308, 0.85, 1.0));
             this.pool.rotation.x = -Math.PI / 2; this.pool.position.y = 0.02; this.bodyGroup.add(this.pool);
-            // Face floats on the wrist as glowing eyes.
-            this.face.position.set(0, 0.78, 0.16);
-            this._cascadeRules[0].hide.push(this.pool);
+            // The forearm rising out of the pool into the palm. Without it the
+            // hand hung over the pool with nothing holding it up; it reaches
+            // into the palm far enough to stay there while the hand rises.
+            this.forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.3, 0.88, 8), this._ghostMat);
+            this.forearm.position.y = 0.44; this.bodyGroup.add(this.forearm);
+            // Face sits on the wrist as glowing eyes.
+            this.face.position.set(0, 0.78, -0.23);
+            this._cascadeRules[0].hide.push(this.pool, this.forearm);
         }
 
         // ── Miasma Lantern: tarnished lantern with a sickly green flame face ─
@@ -446,7 +466,7 @@
             }
             this.bodyGroup.add(this.rags);
             // Reality-fraying shards orbiting the edges (thin warped planes).
-            this.fray = new THREE.Group();
+            this.fray = new THREE.Group(); this.fray.userData.orbit = true;
             for (let i = 0; i < 8; i++) {
                 const a = (i / 8) * Math.PI * 2;
                 const sh = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.3), this._mat(p.accent, 0.45, 0.3, p.accent));
@@ -631,7 +651,7 @@
             this.rightWisp.geometry.dispose(); this.rightWisp.geometry = new THREE.CylinderGeometry(0.015, 0.06, 1.1, 6);
             this.rightWisp.material = sinewMat; this.rightWisp.position.set(0.22, 0.35, 0); this.rightWisp.rotation.z = -0.4;
             // little dripping blood beads off the sinew tips.
-            this.drips = new THREE.Group();
+            this.drips = new THREE.Group(); this.drips.userData.float = true; // falling beads, free of the sinew by design
             for (const dx of [-0.4, 0.4]) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), this._mat(0x5a0c10, 1.0, 0.3, p.accent)); d.scale.y = 1.5; d.position.set(dx, -0.2, 0); d._t = this.idRand(); this.drips.add(d); }
             this.bodyGroup.add(this.drips);
             // Wire dismemberment: FACE -> eye, CORE -> gash. Root CORE hides all.
@@ -654,7 +674,7 @@
             const arch = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.14, 12, 1, false, 0, Math.PI), this._mat(0x5f6068, 1.0, 0.85)); arch.rotation.z = -Math.PI / 2; arch.position.set(0, 0.6, 0); this.tomb.add(arch);
             this.tomb.position.set(0, -0.05, -0.12); this.bodyGroup.add(this.tomb);
             // Draining vitality motes spiralling into the haunt.
-            this.motes = new THREE.Group();
+            this.motes = new THREE.Group(); this.motes.userData.orbit = true;
             for (let i = 0; i < 8; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 6), this._mat(p.accent, 0.85, 0.2, p.accent)); const a = (i / 8) * Math.PI * 2; m.position.set(Math.cos(a) * 0.75, 0.9, Math.sin(a) * 0.75); m._a = a; this.motes.add(m); }
             this.bodyGroup.add(this.motes);
             this._cascadeRules[0].hide.push(this.motes);
@@ -710,7 +730,7 @@
             this._ghostBase({ opacity: 0.4, eyeColor: p.accent, eyeGlow: p.accent });
             this.core.scale.set(0.95, 1.05, 0.95);
             // Fading fragments flickering off the body (barely-remembered self).
-            this.fragments = new THREE.Group();
+            this.fragments = new THREE.Group(); this.fragments.userData.orbit = true;
             for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const fr = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.14), this._mat(p.bodyColor, 0.3, 0.6)); fr.position.set(Math.cos(a) * 0.55, 0.9 + Math.sin(a * 2) * 0.35, Math.sin(a) * 0.4); fr.rotation.set(this.idRand() * 2, a, this.idRand() * 2); fr._a = a; this.fragments.add(fr); }
             this.bodyGroup.add(this.fragments);
             this._cascadeRules[0].hide.push(this.fragments);
@@ -727,10 +747,256 @@
             this.hood = new THREE.Mesh(new THREE.SphereGeometry(0.3, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.6), shroudMat); this.hood.position.set(0, 1.05, 0); this.bodyGroup.add(this.hood);
             this.face.children[2].visible = false; this.face.position.y = 0.92;
             // Rising rot spores.
-            this.spores = new THREE.Group();
+            this.spores = new THREE.Group(); this.spores.userData.float = true;
             for (let i = 0; i < 7; i++) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 6), this._mat(p.accent, 0.7, 0.3, p.accent)); s.position.set((this.idRand() - 0.5) * 1.0, 0.4 + this.idRand() * 0.9, (this.idRand() - 0.5) * 0.6); s._t = this.idRand(); this.spores.add(s); }
             this.bodyGroup.add(this.spores);
             this._cascadeRules[0].hide.push(this.coffin, this.hood, this.spores);
+        }
+
+        // ── Level 1-5 apparitions: helpers ──────────────────────────────────
+        // A rod from point a to point b (a stalk, a strand, a limb).
+        _lvBone(parent, a, b, r0, r1, mat, seg) {
+            const A = new THREE.Vector3(a[0], a[1], a[2]), d = new THREE.Vector3(b[0], b[1], b[2]).sub(A), len = d.length();
+            const m = new THREE.Mesh(new THREE.CylinderGeometry(r1, r0, len, seg || 5), mat);
+            m.position.copy(A).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+            parent.add(m); return m;
+        }
+        // Ghost part map: losing CORE hides the lot.
+        _lvGhostWire(extra) {
+            this._partMeshMap = { FACE: this.face, CORE: this.core, LEFT_WISP: this.leftWisp, RIGHT_WISP: this.rightWisp, MAW: this.maw };
+            this._cascadeRules = [
+                { gone: ['CORE'], hide: [this.core, this.face, this.leftWisp, this.rightWisp, this.maw, ...(extra || [])].filter(Boolean) },
+                { gone: ['FACE'], hide: [this.face] },
+                { gone: ['LEFT_WISP'], hide: [this.leftWisp] },
+                { gone: ['RIGHT_WISP'], hide: [this.rightWisp] },
+                { gone: ['MAW'], hide: [this.maw] },
+            ];
+        }
+
+        // ── Candle Wisp: the ghost of a candle flame still on its stub ──────
+        // A melted wax stub with drips down its side in a brass finger-loop
+        // dish, and on the wick a pale blue teardrop of a flame with a sad
+        // searching face, two curls of smoke rising off its shoulders.
+        _buildLvCandleWisp() {
+            const p = this.profile;
+            const wax = this._skinMat(p.bodyColor, 0.6), brass = this._mat(0xa88a3a, 1, 0.4);
+            const ghost = this._mat(p.accent, 0.7, 0.3, p.accent); this._ghostMat = ghost;
+            this.core = new THREE.Group();
+            const dish = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.26, 0.05, 9), brass); dish.position.y = 0.025; this.core.add(dish);
+            const loop = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.02, 4, 8), brass); loop.position.set(0.33, 0.07, 0); this.core.add(loop);
+            const stub = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.16, 0.5, 8), wax); stub.position.y = 0.3; this.core.add(stub);
+            const rim = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.035, 4, 9), wax); rim.rotation.x = Math.PI / 2; rim.position.y = 0.54; this.core.add(rim);
+            for (const [a, y, l] of [[0.4, 0.42, 0.16], [1.9, 0.38, 0.24], [3.3, 0.45, 0.12], [4.6, 0.36, 0.28]]) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.04, 5, 4), wax); d.scale.y = l / 0.08; d.position.set(Math.cos(a) * 0.15, y, Math.sin(a) * 0.15); this.core.add(d); }
+            const wick = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.015, 0.12, 4), this._mat(0x1a1410, 1, 0.8)); wick.position.y = 0.6; this.core.add(wick);
+            this.bodyGroup.add(this.core);
+            // The ghost flame, pivoting on the wick so it sways from its base.
+            this.flame = new THREE.Group(); this.flame.position.set(0, 0.64, 0);
+            const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.17, 8, 6), ghost); bulb.position.y = 0.16; this.flame.add(bulb);
+            const tip = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.42, 8), ghost); tip.position.y = 0.45; this.flame.add(tip);
+            const inner = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.24, 5), this._mat(0xffffff, 0.8, 0.2, 0xddeeff)); inner.position.y = 0.2; this.flame.add(inner);
+            this.face = new THREE.Group();
+            for (const sx of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.035, 5, 4), this._mat(0x1a2a4a, 1, 0.4)); e.scale.y = 1.4; e.position.set(sx * 0.06, 0.2, 0.15); this.face.add(e); }
+            this.flame.add(this.face);
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.01, 3, 6, Math.PI), this._mat(0x1a2a4a, 1, 0.4)); this.maw.position.set(0, 0.1, 0.165); this.flame.add(this.maw);
+            this.bodyGroup.add(this.flame);
+            // Smoke curls rising off the flame's sides.
+            const curl = (sx) => { const g = new THREE.Group(); g.position.set(sx * 0.15, 0.84, 0); const c = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.02, 3, 8, Math.PI * 1.2), this._mat(0xb8c0c8, 0.6, 0.8)); c.position.x = -0.1; g.add(c); if (sx > 0) g.rotation.y = Math.PI; this.bodyGroup.add(g); return g; };
+            this.leftWisp = curl(-1); this.rightWisp = curl(1);
+            this._lvGhostWire([this.flame]);
+        }
+
+        // ── Draughty Shade: a flat sulking draught that slides under doors ──
+        // A low pancake of cold air hovering just off the floor, its back edge
+        // torn into ragged flaps, half-lidded sulky eyes, a pursed mouth
+        // blowing a cone of frost, rime on its leading edge and two long
+        // streamers trailing off its ends.
+        _buildLvDraughtyShade() {
+            const p = this.profile;
+            const air = this._skinMat(p.bodyColor, 0.7); air.opacity = 0.75; this._ghostMat = air;
+            const frost = this._mat(p.accent, 0.85, 0.2, 0x99bbdd);
+            this.core = new THREE.Group();
+            const sheet = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 6), air); sheet.scale.set(1.3, 0.5, 0.75); sheet.position.y = 0.55; this.core.add(sheet);
+            this.flaps = [];
+            for (let i = 0; i < 5; i++) { const x = -0.44 + i * 0.22; const f = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.32, 4), air); f.scale.z = 0.35; f.position.set(x, 0.53, -0.4 + Math.abs(x) * 0.15); f.rotation.x = -Math.PI / 2; this.flaps.push(f); this.core.add(f); }
+            for (const x of [-0.5, -0.36, 0.38, 0.52]) { const c = new THREE.Mesh(new THREE.OctahedronGeometry(0.045, 0), frost); c.position.set(x, 0.57, 0.35 * Math.sqrt(1 - (x / 0.7) * (x / 0.7)) - 0.02); this.core.add(c); }
+            // A rolled curl of air over the eyes: the sulk.
+            const brow = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.62, 6), air); brow.rotation.z = Math.PI / 2; brow.position.set(0, 0.74, 0.27); this.core.add(brow);
+            this.bodyGroup.add(this.core);
+            this.face = new THREE.Group();
+            for (const sx of [-1, 1]) {
+                const e = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 4), this._mat(0xeef6ff, 1, 0.3)); e.position.set(sx * 0.15, 0.65, 0.33); this.face.add(e);
+                const pup = new THREE.Mesh(new THREE.SphereGeometry(0.025, 4, 3), this._mat(0x1a2433, 1, 0.3)); pup.position.set(sx * 0.15, 0.64, 0.385); this.face.add(pup);
+                const lid = new THREE.Mesh(new THREE.SphereGeometry(0.066, 6, 3, 0, Math.PI * 2, 0, Math.PI / 2), air); lid.position.set(sx * 0.15, 0.645, 0.33); lid.rotation.x = 0.35; this.face.add(lid);
+            }
+            this.bodyGroup.add(this.face);
+            this.maw = new THREE.Group();
+            const lips = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.014, 4, 8), this._mat(0x6a7a8a, 1, 0.6)); lips.position.set(0, 0.47, 0.36); this.maw.add(lips);
+            this.puff = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.3, 6, 1, true), frost); this.puff.rotation.x = -Math.PI / 2; this.puff.position.set(0, 0.47, 0.51); this.maw.add(this.puff);
+            this.bodyGroup.add(this.maw);
+            // Streamers trailing off both ends, pivoting where they leave the sheet.
+            const streamer = (sx) => { const g = new THREE.Group(); g.position.set(sx * 0.66, 0.55, 0); this._lvBone(g, [0, 0, 0], [sx * 0.3, 0.05, -0.15], 0.05, 0.035, air); this._lvBone(g, [sx * 0.3, 0.05, -0.15], [sx * 0.5, 0.16, -0.36], 0.035, 0.012, air); this.bodyGroup.add(g); return g; };
+            this.leftWisp = streamer(-1); this.rightWisp = streamer(1);
+            this._lvGhostWire();
+        }
+
+        // ── Creaky Poltergeist: a ghost up through a pried floorboard ───────
+        // Three old planks with nail heads, the middle one levered up, and out
+        // of the gap a grinning ghost waving a fork and a knife while spoons
+        // circle round it, ready to be flung.
+        _buildLvCreakyPoltergeist() {
+            const p = this.profile;
+            const ghost = this._skinMat(p.bodyColor, 0.7); ghost.opacity = 0.7; this._ghostMat = ghost;
+            const wood = this._mat(0x6a4a2a, 1, 0.9), iron = this._mat(0x3a3a3e, 1, 0.5), steel = this._mat(0xc8ccd4, 1, 0.3);
+            this.boards = new THREE.Group();
+            for (const x of [-0.25, 0.25]) { const pl = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 1.0), wood); pl.position.set(x, 0.025, 0); this.boards.add(pl); for (const z of [-0.4, 0.4]) { const n = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.012, 5), iron); n.position.set(x, 0.055, z); this.boards.add(n); } }
+            this.pried = new THREE.Group(); this.pried.position.set(0, 0.03, -0.5); this.pried.rotation.x = -0.45;
+            const plank = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 1.0), wood); plank.position.z = 0.5; this.pried.add(plank);
+            const bent = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.12, 4), iron); bent.position.set(0, -0.06, 0.9); this.pried.add(bent);
+            this.boards.add(this.pried); this.bodyGroup.add(this.boards);
+            this.core = new THREE.Group();
+            const torso = new THREE.Mesh(new THREE.SphereGeometry(0.32, 8, 6), ghost); torso.position.y = 0.88; this.core.add(torso);
+            const tail = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.7, 8), ghost); tail.rotation.x = Math.PI; tail.position.y = 0.42; this.core.add(tail);
+            this.bodyGroup.add(this.core);
+            this.face = new THREE.Group();
+            const eyeMat = this._mat(0x0a1a14, 1, 0.4);
+            const le = new THREE.Mesh(new THREE.SphereGeometry(0.06, 5, 4), eyeMat); le.position.set(-0.11, 0.97, 0.28); this.face.add(le);
+            const re = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.02), eyeMat); re.position.set(0.12, 0.98, 0.3); re.rotation.z = 0.25; this.face.add(re);
+            this.bodyGroup.add(this.face);
+            this.maw = new THREE.Group();
+            const grin = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.025, 4, 10, Math.PI), eyeMat); grin.rotation.z = Math.PI; grin.position.set(0, 0.86, 0.28); this.maw.add(grin);
+            const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.05, 0.02), steel); tooth.position.set(0.04, 0.73, 0.28); this.maw.add(tooth);
+            this.bodyGroup.add(this.maw);
+            // Arms, pivoting at the shoulders, each gripping a piece of cutlery.
+            const arm = (sx) => {
+                const g = new THREE.Group(); g.position.set(sx * 0.28, 0.92, 0);
+                this._lvBone(g, [0, 0, 0], [sx * 0.42, 0.22, 0.1], 0.08, 0.035, ghost);
+                const tool = new THREE.Group(); tool.position.set(sx * 0.42, 0.22, 0.1);
+                const handle = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.22, 0.015), steel); handle.position.y = 0.09; tool.add(handle);
+                if (sx < 0) { for (let i = -1; i <= 1; i++) { const tine = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.08, 0.008), steel); tine.position.set(i * 0.015, 0.24, 0); tool.add(tine); } }
+                else { const blade = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.16, 0.006), steel); blade.position.set(0.005, 0.28, 0); tool.add(blade); }
+                g.add(tool); this.bodyGroup.add(g); return g;
+            };
+            this.leftWisp = arm(-1); this.rightWisp = arm(1);
+            // Spoons circling it, waiting to be thrown: meant to hang in the air.
+            this.spoons = new THREE.Group(); this.spoons.userData.orbit = true;
+            for (let i = 0; i < 3; i++) { const a = (i / 3) * Math.PI * 2; const sp = new THREE.Group(); const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.04, 5, 4), steel); bowl.scale.set(1, 1.3, 0.4); sp.add(bowl); const h = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.14, 0.01), steel); h.position.y = -0.1; sp.add(h); sp.position.set(Math.cos(a) * 0.65, 1.05 + Math.sin(a) * 0.1, Math.sin(a) * 0.5); sp.rotation.z = a; this.spoons.add(sp); }
+            this.bodyGroup.add(this.spoons);
+            this._lvGhostWire([this.spoons]);
+        }
+
+        // ── Monday Dread: a grey slump with an alarm clock for a heart ──────
+        // A heavy sagging lump with no neck, heavy-lidded bagged eyes and a
+        // downturned mouth, an alarm clock with twin bells sunk in its chest,
+        // and two long arms dragging their knuckles on the floor.
+        _buildLvMondayDread() {
+            const p = this.profile;
+            const grey = this._skinMat(p.bodyColor, 0.9); this._ghostMat = grey;
+            const dark = this._mat(0x2a2a30, 1, 0.8), metal = this._mat(0x9a9aa0, 1, 0.4);
+            this.core = new THREE.Group();
+            const lump = new THREE.Mesh(new THREE.SphereGeometry(0.5, 9, 6), grey); lump.scale.set(1.15, 0.85, 1); lump.position.y = 0.45; this.core.add(lump);
+            const fold = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.12, 4, 12), grey); fold.rotation.x = Math.PI / 2; fold.scale.set(1.1, 1, 0.7); fold.position.y = 0.18; this.core.add(fold);
+            const crown = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 5), grey); crown.position.set(0, 0.82, 0.05); crown.scale.set(1.1, 0.8, 1); this.core.add(crown);
+            // The alarm clock sunk in its chest.
+            this.clock = new THREE.Group(); this.clock.position.set(0, 0.47, 0.5);
+            const caseM = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.1, 10), metal); caseM.rotation.x = Math.PI / 2; this.clock.add(caseM);
+            const dial = new THREE.Mesh(new THREE.CircleGeometry(0.14, 10), this._mat(0xf0ead8, 1, 0.6)); dial.position.z = 0.052; this.clock.add(dial);
+            this.hands = [];
+            for (const [l, w] of [[0.1, 0.018], [0.07, 0.025]]) { const h = new THREE.Group(); h.position.z = 0.056; const m = new THREE.Mesh(new THREE.BoxGeometry(w, l, 0.006), dark); m.position.y = l / 2; h.add(m); this.hands.push(h); this.clock.add(h); }
+            for (const sx of [-1, 1]) { const bell = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 3, 0, Math.PI * 2, 0, Math.PI / 2), metal); bell.position.set(sx * 0.1, 0.15, 0); bell.rotation.z = -sx * 0.5; this.clock.add(bell); }
+            const hammer = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.07, 0.02), metal); hammer.position.set(0, 0.2, 0); this.clock.add(hammer);
+            this.core.add(this.clock);
+            this.bodyGroup.add(this.core);
+            this.face = new THREE.Group();
+            for (const sx of [-1, 1]) {
+                const e = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 4), this._mat(0xe8e8e0, 1, 0.4)); e.position.set(sx * 0.12, 0.88, 0.28); this.face.add(e);
+                const pup = new THREE.Mesh(new THREE.SphereGeometry(0.025, 4, 3), dark); pup.position.set(sx * 0.12, 0.86, 0.345); this.face.add(pup);
+                const lid = new THREE.Mesh(new THREE.SphereGeometry(0.076, 6, 3, 0, Math.PI * 2, 0, Math.PI / 2), grey); lid.position.set(sx * 0.12, 0.875, 0.28); lid.rotation.x = 0.5; this.face.add(lid);
+                const bag = new THREE.Mesh(new THREE.SphereGeometry(0.06, 5, 3), this._mat(0x55505a, 1, 0.9)); bag.scale.set(1.2, 0.5, 0.6); bag.position.set(sx * 0.12, 0.8, 0.29); this.face.add(bag);
+            }
+            this.bodyGroup.add(this.face);
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.015, 3, 8, Math.PI), dark); this.maw.position.set(0, 0.7, 0.36); this.bodyGroup.add(this.maw);
+            // Long arms hanging from the shoulders, knuckles on the floor.
+            const arm = (sx) => { const g = new THREE.Group(); g.position.set(sx * 0.5, 0.55, 0.05); this._lvBone(g, [0, 0, 0], [sx * 0.18, -0.4, 0.22], 0.1, 0.07, grey); const fist = new THREE.Mesh(new THREE.DodecahedronGeometry(0.1, 0), grey); fist.position.set(sx * 0.19, -0.44, 0.24); g.add(fist); this.bodyGroup.add(g); return g; };
+            this.leftWisp = arm(-1); this.rightWisp = arm(1);
+            this._lvGhostWire();
+        }
+
+        // ── Nightmare Nibbler: a little wisp that is mostly mouth ───────────
+        // A dark ball split by a hinged toothy maw, a bitten crescent of dream
+        // moon caught in its teeth, two eyes of different sizes on wobbling
+        // stalks, tiny clawed hands and a smoky corkscrew tail.
+        _buildLvNightmareNibbler() {
+            const p = this.profile;
+            const skin = this._skinMat(p.bodyColor, 0.7); this._ghostMat = skin;
+            const tooth = this._mat(0xe8e0d0, 1, 0.3), gullet = this._mat(0x4a0a18, 1, 0.6, 0x220008);
+            this.core = new THREE.Group();
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.3, 9, 4, 0, Math.PI * 2, 0, Math.PI / 2), skin); dome.position.y = 0.98; this.core.add(dome);
+            const throat = new THREE.Mesh(new THREE.SphereGeometry(0.26, 8, 6), gullet); throat.position.y = 0.96; this.core.add(throat);
+            for (let i = 0; i < 7; i++) { const a = -1.1 + i * (2.2 / 6); const t = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.09, 4), tooth); t.position.set(Math.sin(a) * 0.27, 0.95, Math.cos(a) * 0.27); t.rotation.x = Math.PI; this.core.add(t); }
+            // Smoky corkscrew tail.
+            let prev = null;
+            for (let i = 0; i < 5; i++) { const a = i * 1.3, r = 0.12 - i * 0.02; const pt = [Math.cos(a) * 0.08, 0.72 - i * 0.1, Math.sin(a) * 0.08 - 0.05]; const s = new THREE.Mesh(new THREE.SphereGeometry(r, 5, 4), skin); s.position.set(pt[0], pt[1], pt[2]); this.core.add(s); prev = pt; }
+            this.bodyGroup.add(this.core);
+            // Lower jaw, hinged at the back.
+            this.maw = new THREE.Group(); this.maw.position.set(0, 0.96, -0.12);
+            const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.3, 9, 4, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), skin); jaw.position.z = 0.12; this.maw.add(jaw);
+            for (let i = 0; i < 6; i++) { const a = -1.0 + i * 0.4; const t = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.09, 4), tooth); t.position.set(Math.sin(a) * 0.27, 0.0, 0.12 + Math.cos(a) * 0.27); this.maw.add(t); }
+            const moon = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.035, 4, 9, Math.PI * 1.2), this._mat(0xf4e08a, 1, 0.4, 0x665a20)); moon.position.set(0.02, 0.0, 0.4); moon.rotation.set(0, 0, 0.6); this.maw.add(moon);
+            this.bodyGroup.add(this.maw);
+            // Eyes of two sizes on stalks.
+            this.face = new THREE.Group();
+            for (const [sx, r, h] of [[-1, 0.075, 0.26], [1, 0.045, 0.2]]) {
+                const base = [sx * 0.1, 1.24, 0.05], top = [sx * 0.2, 1.24 + h, 0.12];
+                this._lvBone(this.face, base, top, 0.025, 0.018, skin);
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(r, 6, 5), this._mat(0xfff4e0, 1, 0.3)); eye.position.set(top[0], top[1], top[2]); this.face.add(eye);
+                const pup = new THREE.Mesh(new THREE.SphereGeometry(r * 0.5, 4, 3), this._mat(p.accent, 1, 0.3, p.accent)); pup.position.set(top[0], top[1], top[2] + r * 0.7); this.face.add(pup);
+            }
+            this.bodyGroup.add(this.face);
+            // Tiny clawed hands, pivoting at the cheeks.
+            const hand = (sx) => { const g = new THREE.Group(); g.position.set(sx * 0.27, 0.9, 0.05); this._lvBone(g, [0, 0, 0], [sx * 0.16, -0.1, 0.1], 0.04, 0.025, skin); for (const k of [-1, 1]) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.015, 0.07, 3), tooth); c.position.set(sx * 0.18, -0.12, 0.12 + k * 0.02); c.rotation.x = 1.6; g.add(c); } this.bodyGroup.add(g); return g; };
+            this.leftWisp = hand(-1); this.rightWisp = hand(1);
+            this._lvGhostWire();
+        }
+
+        // ── Bandage Wraith: a hollow figure of old yellowed bandages ────────
+        // Nothing inside but dark: bands of bandage wound round an empty body
+        // and head, one glowing eye looking out through a gap, a faded red cross
+        // on the chest, a safety pin in the head wrap, arms unravelling into
+        // long trailing strips and a frayed hem of loose ends.
+        _buildLvBandageWraith() {
+            const p = this.profile;
+            const wrap = this._skinMat(p.bodyColor, 0.9); this._ghostMat = wrap;
+            const hollow = this._mat(0x0a0806, 1, 0.9), red = this._mat(0x8a2a22, 1, 0.8);
+            this.core = new THREE.Group();
+            const inner = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.12, 0.95, 7), hollow); inner.position.y = 1.0; this.core.add(inner);
+            for (let i = 0; i < 8; i++) { const band = new THREE.Mesh(new THREE.TorusGeometry(0.19 - Math.abs(i - 4) * 0.008, 0.05, 4, 10), wrap); band.position.y = 0.6 + i * 0.11; band.rotation.set(Math.PI / 2 + (this.idRand() - 0.5) * 0.5, 0, (this.idRand() - 0.5) * 0.4); this.core.add(band); }
+            for (const rz of [0.7, -0.7]) { const bar = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.14, 0.02), red); bar.position.set(0, 1.2, 0.235); bar.rotation.z = rz; this.core.add(bar); }
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.16, 6), hollow); neck.position.y = 1.47; this.core.add(neck);
+            const skull = new THREE.Mesh(new THREE.SphereGeometry(0.19, 7, 5), hollow); skull.position.y = 1.65; this.core.add(skull);
+            for (const [y, rx, rz] of [[1.58, 1.4, 0.2], [1.68, 1.75, -0.25], [1.76, 1.5, 0.1]]) { const hb = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.045, 4, 10), wrap); hb.position.y = y; hb.rotation.set(rx, 0, rz); this.core.add(hb); }
+            const pin = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.008, 3, 6, Math.PI * 1.6), this._mat(0xc8ccd4, 1, 0.3)); pin.position.set(-0.15, 1.72, 0.1); pin.rotation.y = -0.9; this.core.add(pin);
+            this.hem = [];
+            for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2 + 0.3; const g = new THREE.Group(); g.position.set(Math.cos(a) * 0.13, 0.56, Math.sin(a) * 0.13); const s = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.36 + (i % 2) * 0.12, 0.012), wrap); s.position.y = -0.2 - (i % 2) * 0.06; g.rotation.y = -a + Math.PI / 2; g.add(s); this.hem.push(g); this.core.add(g); }
+            this.bodyGroup.add(this.core);
+            this.face = new THREE.Group();
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(0.04, 5, 4), this._mat(p.accent, 1, 0.2, p.accent)); eye.position.set(0.06, 1.64, 0.17); this.face.add(eye);
+            this.bodyGroup.add(this.face);
+            this.maw = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.02), this._mat(0x000000, 1, 0.9)); this.maw.position.set(-0.02, 1.53, 0.175); this.bodyGroup.add(this.maw);
+            // Arms unravelling into strips: a chain of pivots so each length
+            // of bandage swings from the end of the one before.
+            this.strips = [];
+            const arm = (sx) => {
+                const g = new THREE.Group(); g.position.set(sx * 0.2, 1.32, 0);
+                let parent = g;
+                for (let i = 0; i < 4; i++) {
+                    const seg = new THREE.Group(); if (i) seg.position.y = -0.22; seg.rotation.z = i ? sx * 0.15 : sx * 0.55;
+                    const m = new THREE.Mesh(new THREE.BoxGeometry(0.08 - i * 0.012, 0.24, 0.012), wrap); m.position.y = -0.11; seg.add(m);
+                    seg._i = i; seg._sx = sx; this.strips.push(seg); parent.add(seg); parent = seg;
+                }
+                this.bodyGroup.add(g); return g;
+            };
+            this.leftWisp = arm(-1); this.rightWisp = arm(1);
+            this._lvGhostWire();
         }
 
         animatePose(deltaTime) {
@@ -886,6 +1152,53 @@
                     if (this.fragments) this.fragments.children.forEach((fr, i) => { fr.rotation.z = t * (fast ? 3 : 1) + i; fr.position.y = 0.9 + Math.sin(t * 2 + fr._a) * 0.35; });
                     break;
                 }
+                case 'lv_candlewisp': {
+                    this.model.position.y = this._baseY;
+                    if (this.flame) { this.flame.rotation.z = Math.sin(t * (fast ? 7 : 2.3)) * 0.15; this.flame.scale.set(1, 1 + Math.sin(t * 9) * 0.06, 1); }
+                    if (this.leftWisp) this.leftWisp.rotation.z = Math.sin(t * 1.5) * 0.15;
+                    if (this.rightWisp) this.rightWisp.rotation.z = Math.sin(t * 1.5 + 1) * 0.15;
+                    break;
+                }
+                case 'lv_draughtyshade': {
+                    if (this.core) this.core.rotation.z = Math.sin(t * 1.2) * 0.05;
+                    if (this.flaps) this.flaps.forEach((f, i) => { f.rotation.y = Math.sin(t * 3 + i) * 0.25; });
+                    if (this.leftWisp) this.leftWisp.rotation.set(0, Math.sin(t * 2) * 0.3, 0);
+                    if (this.rightWisp) this.rightWisp.rotation.set(0, -Math.sin(t * 2 + 0.6) * 0.3, 0);
+                    if (this.puff) this.puff.scale.setScalar(0.8 + Math.abs(Math.sin(t * (fast ? 8 : 2))) * 0.4);
+                    break;
+                }
+                case 'lv_creakypoltergeist': {
+                    this.model.position.y = this._baseY;
+                    if (this.leftWisp) this.leftWisp.rotation.z = Math.sin(t * (fast ? 9 : 2)) * 0.3;
+                    if (this.rightWisp) this.rightWisp.rotation.z = -Math.sin(t * (fast ? 9 : 2) + 1.5) * 0.3;
+                    if (this.spoons) this.spoons.rotation.y = t * (fast ? 3 : 1.2);
+                    if (this.pried) this.pried.rotation.x = -0.45 + Math.sin(t * 5) * 0.04;
+                    if (this.core) this.core.position.y = Math.sin(t * 1.4) * 0.03;
+                    break;
+                }
+                case 'lv_mondaydread': {
+                    this.model.position.y = this._baseY;
+                    const br = Math.sin(t * 0.9);
+                    if (this.core) this.core.scale.set(1 + br * 0.03, 1 - br * 0.02, 1 + br * 0.03);
+                    if (this.hands) { this.hands[0].rotation.z = -t * (fast ? 6 : 0.8); this.hands[1].rotation.z = -t * (fast ? 0.5 : 0.07); }
+                    if (this.leftWisp) this.leftWisp.rotation.z = Math.sin(t * 0.7) * 0.04;
+                    if (this.rightWisp) this.rightWisp.rotation.z = -Math.sin(t * 0.7) * 0.04;
+                    break;
+                }
+                case 'lv_nightmarenibbler': {
+                    if (this.maw) this.maw.rotation.x = Math.abs(Math.sin(t * (fast ? 13 : 4))) * 0.45;
+                    if (this.face) this.face.rotation.z = Math.sin(t * 2.6) * 0.06;
+                    if (this.leftWisp) this.leftWisp.rotation.set(Math.sin(t * 5) * 0.3, 0, 0);
+                    if (this.rightWisp) this.rightWisp.rotation.set(Math.sin(t * 5 + 1) * 0.3, 0, 0);
+                    break;
+                }
+                case 'lv_bandagewraith': {
+                    if (this.leftWisp) this.leftWisp.rotation.z = 0;
+                    if (this.rightWisp) this.rightWisp.rotation.z = 0;
+                    if (this.strips) this.strips.forEach(sg => { sg.rotation.z = (sg._i ? sg._sx * 0.15 : sg._sx * 0.55) + Math.sin(t * (fast ? 6 : 2) - sg._i * 0.8) * 0.18 * sg._sx; });
+                    if (this.hem) this.hem.forEach((h, i) => { h.rotation.x = Math.sin(t * 2.2 + i) * 0.15; });
+                    break;
+                }
                 case 'spr_plaguepallbearer': {
                     if (this.coffin) this.coffin.position.y = 0.5 + Math.sin(t * 1.4) * 0.03;
                     if (this.spores) this.spores.children.forEach(s => { s.position.y += 0.008; if (s.position.y > 1.5) s.position.y = 0.4; });
@@ -933,6 +1246,7 @@
     reg('spr_mummifiedmourner',   { aliases: ['spr_mummifiedmourner'],   scale: S.spr_mummifiedmourner.scale,   weapon: 0, create: make });
     reg('spr_forgottenthrall',    { aliases: ['spr_forgottenthrall'],    scale: S.spr_forgottenthrall.scale,    weapon: 0, create: make });
     reg('spr_plaguepallbearer',   { aliases: ['spr_plaguepallbearer'],   scale: S.spr_plaguepallbearer.scale,   weapon: 0, create: make });
+    ['lv_candlewisp', 'lv_draughtyshade', 'lv_creakypoltergeist', 'lv_mondaydread', 'lv_nightmarenibbler', 'lv_bandagewraith'].forEach(k => reg(k, { aliases: [k], scale: S[k].scale, weapon: 0, create: make }));
 
     const NAMED = {
         anxietyelem:     ["Anxiety Elemental"],
@@ -959,7 +1273,13 @@
         spr_sunkencharnelhound: ["Sunken Charnelhound"],
         spr_mummifiedmourner:   ["Mummified Mourner"],
         spr_forgottenthrall:    ["Forgotten Thrall"],
-        spr_plaguepallbearer:   ["Plague Pallbearer"]
+        spr_plaguepallbearer:   ["Plague Pallbearer"],
+        lv_candlewisp:          ["Candle Wisp"],
+        lv_draughtyshade:       ["Draughty Shade"],
+        lv_creakypoltergeist:   ["Creaky Poltergeist"],
+        lv_mondaydread:         ["Monday Dread"],
+        lv_nightmarenibbler:    ["Nightmare Nibbler"],
+        lv_bandagewraith:       ["Bandage Wraith"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

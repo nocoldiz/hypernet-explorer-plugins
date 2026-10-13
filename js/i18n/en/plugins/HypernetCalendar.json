@@ -48,14 +48,14 @@
     "appointments": "Appointments"
   },
   "none": {
-    "holidays": "An ordinary working day.",
-    "deadlines": "No contract falls due.",
-    "appointments": "Nothing written down."
+    "holidays": "No holidays.",
+    "deadlines": "No deadlines.",
+    "appointments": "No appointments."
   },
   "status": {
-    "added": "Appointment written down.",
-    "removed": "Appointment crossed out.",
-    "empty": "Write what the appointment is first."
+    "added": "Appointment added.",
+    "removed": "Appointment removed.",
+    "empty": "Enter a description first."
   },
   "toast": {
     "title": "Appointment",

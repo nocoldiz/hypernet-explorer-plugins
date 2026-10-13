@@ -32,7 +32,7 @@
       "{Whatever|Fine|Suppose so}. {It hardly matters|Same as it ever was|Not my business}."
     ],
     "radical": [
-      "Talk changes nothing. The {power} needs {fire|a reckoning|the whole thing torn down}, not another {election}.",
+      "Talk changes nothing. The {power} needs {fire|a reckoning|the whole thing torn down}; another {election} will never be enough.",
       "When the time comes, everyone will have to {pick a side|choose|stand somewhere}. I've picked mine.",
       "The {party} is the only thing standing between us and {the abyss|the dark|ruin}. {History will vindicate us|We will be proved right|Time will tell it}.",
       "They laughed at us in the {squares|streets|meeting halls}. They won't laugh {forever|much longer|when it comes}.",
@@ -101,7 +101,7 @@
         ],
         [
           0,
-          "My side? I vote on {principle|conscience|reason}, not habit!"
+          "My side? I vote on {principle|conscience|reason}, and habit has nothing to do with it!"
         ],
         [
           1,

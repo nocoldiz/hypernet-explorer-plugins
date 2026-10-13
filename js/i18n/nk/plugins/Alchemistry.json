@@ -9,12 +9,12 @@
   "requiredSkills": "REQUIRED SKILLS",
   "successChance": "CHANCE OF SUCCESS",
   "yieldLabel": "YIELD",
-  "duration": "TIME ON DA BENCH",
+  "duration": "TIME",
   "guaranteed": "CERTAIN",
   "failChance": "{pct}% TA RUIN",
   "yieldCount": "X{qty}",
   "steps": "PROCEDURE",
-  "noSteps": "NO STEPS RECORDED. COPY A RECIPE HERE, OR ADD ONE TA BEGIN DA PROCEDURE!",
+  "noSteps": "NO STEPS YET. ADD A STEP OR COPY A RECIPE!",
   "addStep": "ADD STEP",
   "execute": "START BATCH",
   "clearSteps": "CLEAR BENCH",
@@ -32,7 +32,7 @@
   "notEnough": "YOU NO HAB DA REAGENTS FOR DIS BATCH!",
   "stepAt": "AT",
   "stepFor": "FOR",
-  "empty": "SELECT A RECIPE OR A BENCH TA READ ITS FORMULA AN' PROCEDURE!",
+  "empty": "SELECT A RECIPE OR BENCH.",
   "actions": {
     "combine": "COMBINE",
     "heat": "HEAT",
@@ -47,14 +47,14 @@
     "hm": "{h}H {m}M"
   },
   "toast": {
-    "started": "{name} IZ ON DA BENCH, {time} TA GO.",
+    "started": "{name} STARTED, {time} LEFT.",
     "restarted": "{name} STARTED AGAIN, {time} TA GO.",
     "repeatStopped": "{name} STOPPED REPEATIN': NO REAGENTS LEFT!",
     "noReagents": "NO REAGENTS FOR {name}.",
     "completed": "ALCHEMISTRY: {item} X{qty}",
-    "completedPlain": "{name} CAME OFF DA BENCH.",
+    "completedPlain": "{name} IZ DONE.",
     "ruined": "{who} RUINED DA BATCH OF {name}.",
-    "failed": "{name} SPELLED OUT NOTHIN' DA BOOK KNOWS. DA BATCH IZ LOST!"
+    "failed": "{name} FAILED. BATCH LOST."
   },
   "projectName": "BENCH {n}",
   "successCreated": "ALCHEMISTRY SUCCESS! CREATED {item}",

@@ -1,0 +1,1525 @@
+{
+  "objectArchetypes": {
+    "chair": {
+      "name": "CHAIR",
+      "seat": {
+        "name": "SEAT",
+        "msg": "SEAT SPLINTERED!"
+      },
+      "backrest": {
+        "name": "BACKREST",
+        "msg": "BACKREST SNAPPED OFF!"
+      },
+      "front_legs": {
+        "name": "FRONT LEGS",
+        "msg": "FRONT LEGS BUCKLED!"
+      },
+      "rear_legs": {
+        "name": "REAR LEGS",
+        "msg": "REAR LEGS GAVE WAY!"
+      },
+      "joints": {
+        "name": "JOINTS",
+        "msg": "JOINTS CAME APART!"
+      }
+    },
+    "table": {
+      "name": "TABLE",
+      "tabletop": {
+        "name": "TABLETOP",
+        "msg": "TABLETOP SPLIT!"
+      },
+      "legs": {
+        "name": "LEGS",
+        "msg": "LEGS GAVE WAY!"
+      },
+      "apron": {
+        "name": "APRON",
+        "msg": "APRON CRACKED!"
+      },
+      "drawer": {
+        "name": "DRAWER",
+        "msg": "DRAWER SMASHED!"
+      },
+      "joints": {
+        "name": "JOINTS",
+        "msg": "JOINTS LOOSENED!"
+      }
+    },
+    "shelf": {
+      "name": "SHELF",
+      "uprights": {
+        "name": "UPRIGHTS",
+        "msg": "UPRIGHTS BUCKLED!"
+      },
+      "shelf_boards": {
+        "name": "SHELF BOARDS",
+        "msg": "SHELF BOARDS SNAPPED!"
+      },
+      "back_panel": {
+        "name": "BACK PANEL",
+        "msg": "BACK PANEL CAVED IN!"
+      },
+      "brackets": {
+        "name": "BRACKETS",
+        "msg": "BRACKETS TORE OUT!"
+      },
+      "wall_anchor": {
+        "name": "WALL ANCHOR",
+        "msg": "WALL ANCHOR PULLED FREE!"
+      }
+    },
+    "cabinet": {
+      "name": "CABINET",
+      "carcass": {
+        "name": "CARCASS",
+        "msg": "CARCASS SPLIT OPEN!"
+      },
+      "doors": {
+        "name": "DOORS",
+        "msg": "DOORS TORN OFF!"
+      },
+      "drawers": {
+        "name": "DRAWERS",
+        "msg": "DRAWERS SHATTERED!"
+      },
+      "inner_shelving": {
+        "name": "INNER SHELVIN'",
+        "msg": "INNER SHELVIN' COLLAPSED!"
+      },
+      "hinges": {
+        "name": "HINGES",
+        "msg": "HINGES SHEARED!"
+      },
+      "handles": {
+        "name": "HANDLES",
+        "msg": "HANDLES SNAPPED OFF!"
+      }
+    },
+    "bed": {
+      "name": "BED",
+      "mattress": {
+        "name": "MATTRESS",
+        "msg": "MATTRESS TORN OPEN!"
+      },
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME BUCKLED!"
+      },
+      "slats": {
+        "name": "SLATS",
+        "msg": "SLATS SNAPPED!"
+      },
+      "headboard": {
+        "name": "HEADBOARD",
+        "msg": "HEADBOARD SPLIT!"
+      },
+      "legs": {
+        "name": "LEGS",
+        "msg": "LEGS GAVE WAY!"
+      }
+    },
+    "curtain": {
+      "name": "CURTAIN",
+      "fabric": {
+        "name": "FABRIC",
+        "msg": "FABRIC SHREDDED!"
+      },
+      "rail": {
+        "name": "RAIL",
+        "msg": "RAIL TORN DOWN!"
+      },
+      "rings": {
+        "name": "RINGS",
+        "msg": "RINGS SCATTERED!"
+      },
+      "hem": {
+        "name": "HEM",
+        "msg": "HEM UNRAVELLED!"
+      }
+    },
+    "mirror": {
+      "name": "MIRROR",
+      "glass": {
+        "name": "GLASS",
+        "msg": "GLASS SHATTERED!"
+      },
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME CRACKED!"
+      },
+      "silvering": {
+        "name": "SILVERIN'",
+        "msg": "SILVERIN' FLAKED AWAY!"
+      },
+      "backing": {
+        "name": "BACKIN'",
+        "msg": "BACKIN' SPLIT!"
+      }
+    },
+    "lamp": {
+      "name": "LAMP",
+      "bulb": {
+        "name": "BULB",
+        "msg": "BULB BURST!"
+      },
+      "stem": {
+        "name": "STEM",
+        "msg": "STEM BENT DOUBLE!"
+      },
+      "base": {
+        "name": "BASE",
+        "msg": "BASE CRACKED!"
+      },
+      "wiring": {
+        "name": "WIRIN'",
+        "msg": "WIRIN' SHORTED OUT!"
+      },
+      "shade": {
+        "name": "SHADE",
+        "msg": "SHADE CRUMPLED!"
+      },
+      "switch": {
+        "name": "SWITCH",
+        "msg": "SWITCH JAMMED!"
+      }
+    },
+    "clock": {
+      "name": "CLOCK",
+      "movement": {
+        "name": "MOVEMENT",
+        "msg": "MOVEMENT SEIZED!"
+      },
+      "mainspring": {
+        "name": "MAINSPRIN'",
+        "msg": "MAINSPRIN' SNAPPED!"
+      },
+      "face": {
+        "name": "FACE",
+        "msg": "FACE CRACKED!"
+      },
+      "hands": {
+        "name": "HANDS",
+        "msg": "HANDS BENT OFF DEY SPINDLE!"
+      },
+      "case": {
+        "name": "CASE",
+        "msg": "CASE SPLIT!"
+      }
+    },
+    "barrel": {
+      "name": "BARREL",
+      "staves": {
+        "name": "STAVES",
+        "msg": "STAVES BURST APART!"
+      },
+      "hoops": {
+        "name": "HOOPS",
+        "msg": "HOOPS SPRANG LOOSE!"
+      },
+      "lid": {
+        "name": "LID",
+        "msg": "LID BLOWN OFF!"
+      },
+      "base": {
+        "name": "BASE",
+        "msg": "BASE STOVE IN!"
+      },
+      "bung": {
+        "name": "BUNG",
+        "msg": "BUNG KNOCKED OUT!"
+      }
+    },
+    "crate": {
+      "name": "CRATE",
+      "planks": {
+        "name": "PLANKS",
+        "msg": "PLANKS SPLINTERED!"
+      },
+      "lid": {
+        "name": "LID",
+        "msg": "LID PRISED OFF!"
+      },
+      "corner_braces": {
+        "name": "CORNER BRACES",
+        "msg": "CORNER BRACES TORE AWAY!"
+      },
+      "contents": {
+        "name": "CONTENTS",
+        "msg": "CONTENTS CRUSHED!"
+      },
+      "nails": {
+        "name": "NAILS",
+        "msg": "NAILS WORKED LOOSE!"
+      }
+    },
+    "dumpster": {
+      "name": "DUMPSTER",
+      "body": {
+        "name": "BODY",
+        "msg": "BODY STOVE IN!"
+      },
+      "refuse": {
+        "name": "REFUSE",
+        "msg": "REFUSE SPILLED EVERYWHERE!"
+      },
+      "lid": {
+        "name": "LID",
+        "msg": "LID RIPPED OFF!"
+      },
+      "wheels": {
+        "name": "WHEELS",
+        "msg": "WHEELS SHEARED OFF!"
+      },
+      "hinges": {
+        "name": "HINGES",
+        "msg": "HINGES BUCKLED!"
+      }
+    },
+    "cage": {
+      "name": "CAGE",
+      "bars": {
+        "name": "BARS",
+        "msg": "BARS BENT APART!"
+      },
+      "door": {
+        "name": "DOOR",
+        "msg": "DOOR WRENCHED OPEN!"
+      },
+      "lock": {
+        "name": "LOCK",
+        "msg": "LOCK BURST!"
+      },
+      "floor_plate": {
+        "name": "FLOOR PLATE",
+        "msg": "FLOOR PLATE BUCKLED!"
+      },
+      "welds": {
+        "name": "WELDS",
+        "msg": "WELDS CRACKED!"
+      }
+    },
+    "chest": {
+      "name": "CHEST",
+      "body": {
+        "name": "BODY",
+        "msg": "BODY SPLIT OPEN!"
+      },
+      "lid": {
+        "name": "LID",
+        "msg": "LID TORN OFF!"
+      },
+      "lock": {
+        "name": "LOCK",
+        "msg": "LOCK SMASHED!"
+      },
+      "banding": {
+        "name": "BANDIN'",
+        "msg": "IRON BANDIN' PEELED AWAY!"
+      },
+      "hinges": {
+        "name": "HINGES",
+        "msg": "HINGES SNAPPED!"
+      }
+    },
+    "locker": {
+      "name": "LOCKER",
+      "shell": {
+        "name": "SHELL",
+        "msg": "SHELL CAVED IN!"
+      },
+      "door": {
+        "name": "DOOR",
+        "msg": "DOOR BENT OFF ITS FRAME!"
+      },
+      "latch": {
+        "name": "LATCH",
+        "msg": "LATCH SPRANG!"
+      },
+      "vents": {
+        "name": "VENTS",
+        "msg": "VENTS CAVED IN!"
+      },
+      "hooks": {
+        "name": "HOOKS",
+        "msg": "HOOKS TORN OUT!"
+      },
+      "feet": {
+        "name": "FEET",
+        "msg": "FEET CRUMPLED!"
+      }
+    },
+    "safe": {
+      "name": "SAFE",
+      "door": {
+        "name": "DOOR",
+        "msg": "DOOR SPRUNG!"
+      },
+      "bolt_work": {
+        "name": "BOLT WORK",
+        "msg": "BOLT WORK SHEARED!"
+      },
+      "hardplate": {
+        "name": "HARDPLATE",
+        "msg": "HARDPLATE DRILLED THROUGH!"
+      },
+      "shell": {
+        "name": "SHELL",
+        "msg": "SHELL PEELED OPEN!"
+      },
+      "dial": {
+        "name": "DIAL",
+        "msg": "DIAL KNOCKED OFF!"
+      }
+    },
+    "refrigerator": {
+      "name": "REFRIGERATOR",
+      "compressor": {
+        "name": "COMPRESSOR",
+        "msg": "COMPRESSOR SEIZED!"
+      },
+      "door": {
+        "name": "DOOR",
+        "msg": "DOOR WRENCHED OFF!"
+      },
+      "coolant_line": {
+        "name": "COOLANT LINE",
+        "msg": "COOLANT LINE BURST!"
+      },
+      "condenser_coils": {
+        "name": "CONDENSER COILS",
+        "msg": "CONDENSER COILS CRUSHED!"
+      },
+      "shelves": {
+        "name": "SHELVES",
+        "msg": "SHELVES SHATTERED!"
+      },
+      "door_seal": {
+        "name": "DOOR SEAL",
+        "msg": "DOOR SEAL TORN AWAY!"
+      },
+      "interior_light": {
+        "name": "INTERIOR LIGHT",
+        "msg": "INTERIOR LIGHT POPPED!"
+      }
+    },
+    "oven": {
+      "name": "OVEN",
+      "cavity": {
+        "name": "CAVITY",
+        "msg": "CAVITY CAVED IN!"
+      },
+      "gas_line": {
+        "name": "GAS LINE",
+        "msg": "GAS LINE RUPTURED!"
+      },
+      "burners": {
+        "name": "BURNERS",
+        "msg": "BURNERS CRUSHED FLAT!"
+      },
+      "door_glass": {
+        "name": "DOOR GLASS",
+        "msg": "DOOR GLASS BLEW OUT!"
+      },
+      "thermostat": {
+        "name": "THERMOSTAT",
+        "msg": "THERMOSTAT GAVE OUT!"
+      },
+      "racks": {
+        "name": "RACKS",
+        "msg": "RACKS WARPED!"
+      }
+    },
+    "grill": {
+      "name": "GRILL",
+      "firebox": {
+        "name": "FIREBOX",
+        "msg": "FIREBOX SPLIT!"
+      },
+      "grate": {
+        "name": "GRATE",
+        "msg": "GRATE BUCKLED!"
+      },
+      "gas_bottle": {
+        "name": "GAS BOTTLE",
+        "msg": "GAS BOTTLE VENTED!"
+      },
+      "lid": {
+        "name": "LID",
+        "msg": "LID TORN OFF!"
+      },
+      "legs": {
+        "name": "LEGS",
+        "msg": "LEGS FOLDED!"
+      }
+    },
+    "washingmachine": {
+      "name": "WASHIN' MACHINE",
+      "drum": {
+        "name": "DRUM",
+        "msg": "DRUM JAMMED SOLID!"
+      },
+      "motor": {
+        "name": "MOTOR",
+        "msg": "MOTOR BURNED OUT!"
+      },
+      "hoses": {
+        "name": "HOSES",
+        "msg": "HOSES BURST!"
+      },
+      "door_glass": {
+        "name": "DOOR GLASS",
+        "msg": "DOOR GLASS SHATTERED!"
+      },
+      "drive_belt": {
+        "name": "DRIVE BELT",
+        "msg": "DRIVE BELT SNAPPED!"
+      },
+      "programmer": {
+        "name": "PROGRAMMER",
+        "msg": "PROGRAMMER STUCK!"
+      }
+    },
+    "kitchenmixer": {
+      "name": "KNEADIN' MACHINE",
+      "gearbox": {
+        "name": "GEARBOX",
+        "msg": "GEARBOX STRIPPED!"
+      },
+      "motor": {
+        "name": "MOTOR",
+        "msg": "MOTOR SEIZED!"
+      },
+      "bowl": {
+        "name": "BOWL",
+        "msg": "BOWL DENTED THROUGH!"
+      },
+      "dough_hook": {
+        "name": "DOUGH HOOK",
+        "msg": "DOUGH HOOK BENT!"
+      },
+      "guard": {
+        "name": "GUARD",
+        "msg": "GUARD TORN AWAY!"
+      }
+    },
+    "vendingmachine": {
+      "name": "VENDIN' MACHINE",
+      "cabinet": {
+        "name": "CABINET",
+        "msg": "CABINET FOLDED IN!"
+      },
+      "front_glass": {
+        "name": "FRONT GLASS",
+        "msg": "FRONT GLASS CAVED IN!"
+      },
+      "coil_racks": {
+        "name": "COIL RACKS",
+        "msg": "COIL RACKS JAMMED!"
+      },
+      "coin_mechanism": {
+        "name": "COIN MECHANISM",
+        "msg": "COIN MECHANISM JAMMED!"
+      },
+      "chiller": {
+        "name": "CHILLER",
+        "msg": "CHILLER PACKED UP!"
+      },
+      "stock": {
+        "name": "STOCK",
+        "msg": "STOCK SPILLED OUT!"
+      }
+    },
+    "television": {
+      "name": "TELEVISION",
+      "picture_tube": {
+        "name": "PICTURE TUBE",
+        "msg": "PICTURE TUBE BLEW!"
+      },
+      "screen": {
+        "name": "SCREEN",
+        "msg": "SCREEN IMPLODED!"
+      },
+      "chassis": {
+        "name": "CHASSIS",
+        "msg": "CHASSIS SHORTED OUT!"
+      },
+      "speaker": {
+        "name": "SPEAKER",
+        "msg": "SPEAKER BLOWN!"
+      },
+      "aerial": {
+        "name": "AERIAL",
+        "msg": "AERIAL SNAPPED OFF!"
+      },
+      "casing": {
+        "name": "CASIN'",
+        "msg": "CASIN' CRACKED OPEN!"
+      }
+    },
+    "computer": {
+      "name": "COMPUTER",
+      "motherboard": {
+        "name": "MOTHERBOARD",
+        "msg": "MOTHERBOARD FRIED!"
+      },
+      "tower": {
+        "name": "TOWER",
+        "msg": "TOWER CAVED IN!"
+      },
+      "monitor": {
+        "name": "MONITOR",
+        "msg": "MONITOR WENT DARK!"
+      },
+      "hard_disk": {
+        "name": "HARD DISK",
+        "msg": "HARD DISK CRASHED!"
+      },
+      "power_supply": {
+        "name": "POWER SUPPLY",
+        "msg": "POWER SUPPLY POPPED!"
+      },
+      "keyboard": {
+        "name": "KEYBOARD",
+        "msg": "KEYBOARD SMASHED!"
+      }
+    },
+    "telephone": {
+      "name": "TELEPHONE",
+      "line_card": {
+        "name": "LINE CARD",
+        "msg": "LINE CARD DEAD!"
+      },
+      "handset": {
+        "name": "HANDSET",
+        "msg": "HANDSET SMASHED!"
+      },
+      "keypad": {
+        "name": "KEYPAD",
+        "msg": "KEYPAD CAVED IN!"
+      },
+      "cord": {
+        "name": "CORD",
+        "msg": "CORD TORN OUT!"
+      },
+      "coin_box": {
+        "name": "COIN BOX",
+        "msg": "COIN BOX BURST OPEN!"
+      },
+      "bell": {
+        "name": "BELL",
+        "msg": "BELL CRACKED!"
+      }
+    },
+    "stereo": {
+      "name": "STEREO",
+      "amplifier": {
+        "name": "AMPLIFIER",
+        "msg": "AMPLIFIER FRIED!"
+      },
+      "speakers": {
+        "name": "SPEAKERS",
+        "msg": "SPEAKERS BLOWN!"
+      },
+      "cassette_deck": {
+        "name": "CASSETTE DECK",
+        "msg": "CASSETTE DECK CHEWED ITS TAPE!"
+      },
+      "cd_tray": {
+        "name": "CD TRAY",
+        "msg": "CD TRAY JAMMED SHUT!"
+      },
+      "tuner": {
+        "name": "TUNER",
+        "msg": "TUNER DRIFTED OFF STATION!"
+      },
+      "transformer": {
+        "name": "TRANSFORMER",
+        "msg": "TRANSFORMER BURNED OUT!"
+      }
+    },
+    "securitycamera": {
+      "name": "SECURITY CAMERA",
+      "sensor": {
+        "name": "SENSOR",
+        "msg": "SENSOR BLINDED!"
+      },
+      "lens": {
+        "name": "LENS",
+        "msg": "LENS SHATTERED!"
+      },
+      "housing": {
+        "name": "HOUSIN'",
+        "msg": "HOUSIN' CRUSHED!"
+      },
+      "mount": {
+        "name": "MOUNT",
+        "msg": "MOUNT TORN FROM DA WALL!"
+      },
+      "cable": {
+        "name": "CABLE",
+        "msg": "CABLE CUT!"
+      }
+    },
+    "gymmachine": {
+      "name": "GYM MACHINE",
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME BUCKLED!"
+      },
+      "motor": {
+        "name": "MOTOR",
+        "msg": "MOTOR BURNED OUT!"
+      },
+      "running_belt": {
+        "name": "RUNNIN' BELT",
+        "msg": "RUNNIN' BELT SHREDDED!"
+      },
+      "weight_stack": {
+        "name": "WEIGHT STACK",
+        "msg": "WEIGHT STACK CRASHED DOWN!"
+      },
+      "console": {
+        "name": "CONSOLE",
+        "msg": "CONSOLE WENT BLACK!"
+      },
+      "cables": {
+        "name": "CABLES",
+        "msg": "CABLES SNAPPED!"
+      }
+    },
+    "arcadecabinet": {
+      "name": "ARCADE CABINET",
+      "board": {
+        "name": "BOARD",
+        "msg": "BOARD FRIED!"
+      },
+      "monitor": {
+        "name": "MONITOR",
+        "msg": "MONITOR DIED!"
+      },
+      "control_panel": {
+        "name": "CONTROL PANEL",
+        "msg": "CONTROL PANEL TORN UP!"
+      },
+      "cabinet": {
+        "name": "CABINET",
+        "msg": "CABINET CAVED IN!"
+      },
+      "coin_door": {
+        "name": "COIN DOOR",
+        "msg": "COIN DOOR FORCED!"
+      },
+      "marquee": {
+        "name": "MARQUEE",
+        "msg": "MARQUEE CRACKED!"
+      }
+    },
+    "fuelpump": {
+      "name": "FUEL PUMP",
+      "pump_motor": {
+        "name": "PUMP MOTOR",
+        "msg": "PUMP MOTOR SEIZED!"
+      },
+      "nozzle": {
+        "name": "NOZZLE",
+        "msg": "NOZZLE SHEARED OFF!"
+      },
+      "hose": {
+        "name": "HOSE",
+        "msg": "HOSE SPLIT!"
+      },
+      "meter": {
+        "name": "METER",
+        "msg": "METER JAMMED!"
+      },
+      "breakaway_valve": {
+        "name": "BREAKAWAY VALVE",
+        "msg": "BREAKAWAY VALVE FAILED!"
+      },
+      "housing": {
+        "name": "HOUSIN'",
+        "msg": "HOUSIN' CAVED IN!"
+      }
+    },
+    "cashmachine": {
+      "name": "CASH MACHINE",
+      "vault": {
+        "name": "VAULT",
+        "msg": "VAULT PEELED OPEN!"
+      },
+      "cash_cassette": {
+        "name": "CASH CASSETTE",
+        "msg": "CASH CASSETTE BURST!"
+      },
+      "screen": {
+        "name": "SCREEN",
+        "msg": "SCREEN WENT BLANK!"
+      },
+      "keypad": {
+        "name": "KEYPAD",
+        "msg": "KEYPAD RIPPED OUT!"
+      },
+      "card_reader": {
+        "name": "CARD READER",
+        "msg": "CARD READER JAMMED!"
+      },
+      "dispenser": {
+        "name": "DISPENSER",
+        "msg": "DISPENSER JAMMED!"
+      }
+    },
+    "generator": {
+      "name": "GENERATOR",
+      "engine": {
+        "name": "ENGINE",
+        "msg": "ENGINE SEIZED!"
+      },
+      "alternator": {
+        "name": "ALTERNATOR",
+        "msg": "ALTERNATOR BURNED OUT!"
+      },
+      "fuel_tank": {
+        "name": "FUEL TANK",
+        "msg": "FUEL TANK HOLED!"
+      },
+      "control_box": {
+        "name": "CONTROL BOX",
+        "msg": "CONTROL BOX SHORTED!"
+      },
+      "exhaust": {
+        "name": "EXHAUST",
+        "msg": "EXHAUST BLEW APART!"
+      },
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME BENT!"
+      }
+    },
+    "sink": {
+      "name": "SINK",
+      "basin": {
+        "name": "BASIN",
+        "msg": "BASIN CRACKED THROUGH!"
+      },
+      "supply_pipes": {
+        "name": "SUPPLY PIPES",
+        "msg": "SUPPLY PIPES SPLIT!"
+      },
+      "tap": {
+        "name": "TAP",
+        "msg": "TAP SHEARED OFF!"
+      },
+      "trap": {
+        "name": "TRAP",
+        "msg": "TRAP BURST!"
+      },
+      "drain": {
+        "name": "DRAIN",
+        "msg": "DRAIN BLOCKED SOLID!"
+      }
+    },
+    "bathtub": {
+      "name": "BATHTUB",
+      "tub_shell": {
+        "name": "TUB SHELL",
+        "msg": "TUB SHELL CRACKED THROUGH!"
+      },
+      "taps": {
+        "name": "TAPS",
+        "msg": "TAPS SNAPPED OFF!"
+      },
+      "drain": {
+        "name": "DRAIN",
+        "msg": "DRAIN CAVED IN!"
+      },
+      "feet": {
+        "name": "FEET",
+        "msg": "FEET GAVE WAY!"
+      },
+      "overflow": {
+        "name": "OVERFLOW",
+        "msg": "OVERFLOW CHOKED!"
+      },
+      "enamel": {
+        "name": "ENAMEL",
+        "msg": "ENAMEL CHIPPED AWAY!"
+      }
+    },
+    "shower": {
+      "name": "SHOWER",
+      "mixer_valve": {
+        "name": "MIXER VALVE",
+        "msg": "MIXER VALVE BLEW!"
+      },
+      "tray": {
+        "name": "TRAY",
+        "msg": "TRAY CRACKED!"
+      },
+      "shower_head": {
+        "name": "SHOWER HEAD",
+        "msg": "SHOWER HEAD SHEARED OFF!"
+      },
+      "hose": {
+        "name": "HOSE",
+        "msg": "HOSE BURST!"
+      },
+      "screen": {
+        "name": "SCREEN",
+        "msg": "SCREEN SHATTERED!"
+      },
+      "drain": {
+        "name": "DRAIN",
+        "msg": "DRAIN CLOGGED!"
+      }
+    },
+    "toilet": {
+      "name": "TOILET",
+      "bowl": {
+        "name": "BOWL",
+        "msg": "BOWL CRACKED APART!"
+      },
+      "waste_tank": {
+        "name": "WASTE TANK",
+        "msg": "WASTE TANK SPLIT!"
+      },
+      "cistern": {
+        "name": "CISTERN",
+        "msg": "CISTERN BURST!"
+      },
+      "flush_valve": {
+        "name": "FLUSH VALVE",
+        "msg": "FLUSH VALVE JAMMED OPEN!"
+      },
+      "seat": {
+        "name": "SEAT",
+        "msg": "SEAT SNAPPED!"
+      }
+    },
+    "fountain": {
+      "name": "FOUNTAIN",
+      "basin": {
+        "name": "BASIN",
+        "msg": "BASIN CRACKED THROUGH!"
+      },
+      "pump": {
+        "name": "PUMP",
+        "msg": "PUMP BURNED OUT!"
+      },
+      "jets": {
+        "name": "JETS",
+        "msg": "JETS CRUSHED SHUT!"
+      },
+      "statue": {
+        "name": "STATUE",
+        "msg": "STATUE TOPPLED!"
+      },
+      "plumbing": {
+        "name": "PLUMBIN'",
+        "msg": "PLUMBIN' SPLIT!"
+      }
+    },
+    "aquarium": {
+      "name": "AQUARIUM",
+      "glass": {
+        "name": "GLASS",
+        "msg": "GLASS BURST AN' DA WATER WENT EVERYWHERE!"
+      },
+      "pump": {
+        "name": "PUMP",
+        "msg": "PUMP PACKED UP!"
+      },
+      "filter": {
+        "name": "FILTER",
+        "msg": "FILTER CLOGGED SOLID!"
+      },
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME SPRUNG!"
+      },
+      "heater": {
+        "name": "HEATER",
+        "msg": "HEATER CRACKED!"
+      },
+      "hood_light": {
+        "name": "HOOD LIGHT",
+        "msg": "HOOD LIGHT POPPED!"
+      }
+    },
+    "door": {
+      "name": "DOOR",
+      "leaf": {
+        "name": "LEAF",
+        "msg": "DOOR LEAF SPLIT!"
+      },
+      "lock": {
+        "name": "LOCK",
+        "msg": "LOCK BURST!"
+      },
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME SPLIT!"
+      },
+      "hinges": {
+        "name": "HINGES",
+        "msg": "HINGES TORN OUT!"
+      },
+      "handle": {
+        "name": "HANDLE",
+        "msg": "HANDLE SNAPPED OFF!"
+      }
+    },
+    "window": {
+      "name": "WINDOW",
+      "pane": {
+        "name": "PANE",
+        "msg": "PANE SHATTERED!"
+      },
+      "sash": {
+        "name": "SASH",
+        "msg": "SASH CRACKED!"
+      },
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME SPLIT!"
+      },
+      "shutters": {
+        "name": "SHUTTERS",
+        "msg": "SHUTTERS TORN OFF!"
+      },
+      "latch": {
+        "name": "LATCH",
+        "msg": "LATCH SPRANG!"
+      }
+    },
+    "wall": {
+      "name": "WALL",
+      "courses": {
+        "name": "COURSES",
+        "msg": "COURSES COLLAPSED!"
+      },
+      "footing": {
+        "name": "FOOTIN'",
+        "msg": "FOOTIN' GAVE WAY!"
+      },
+      "facing": {
+        "name": "FACIN'",
+        "msg": "FACIN' SHEARED AWAY!"
+      },
+      "mortar": {
+        "name": "MORTAR",
+        "msg": "MORTAR CRUMBLED OUT!"
+      },
+      "coping": {
+        "name": "COPIN'",
+        "msg": "COPIN' TOPPLED!"
+      }
+    },
+    "fence": {
+      "name": "FENCE",
+      "posts": {
+        "name": "POSTS",
+        "msg": "POSTS SNAPPED AT DA GROUND!"
+      },
+      "rails": {
+        "name": "RAILS",
+        "msg": "RAILS TORN FREE!"
+      },
+      "panels": {
+        "name": "PANELS",
+        "msg": "PANELS BLOWN OUT!"
+      },
+      "gate": {
+        "name": "GATE",
+        "msg": "GATE WRENCHED OFF!"
+      },
+      "wire": {
+        "name": "WIRE",
+        "msg": "WIRE PARTED!"
+      }
+    },
+    "chimney": {
+      "name": "CHIMNEY",
+      "stack": {
+        "name": "STACK",
+        "msg": "STACK TOPPLED!"
+      },
+      "flue": {
+        "name": "FLUE",
+        "msg": "FLUE COLLAPSED!"
+      },
+      "hearth": {
+        "name": "HEARTH",
+        "msg": "HEARTH CRACKED!"
+      },
+      "crown": {
+        "name": "CROWN",
+        "msg": "CROWN CRACKED AWAY!"
+      },
+      "damper": {
+        "name": "DAMPER",
+        "msg": "DAMPER JAMMED!"
+      }
+    },
+    "sign": {
+      "name": "SIGN",
+      "sign_face": {
+        "name": "SIGN FACE",
+        "msg": "SIGN FACE SPLIT!"
+      },
+      "post": {
+        "name": "POST",
+        "msg": "POST SNAPPED!"
+      },
+      "brackets": {
+        "name": "BRACKETS",
+        "msg": "BRACKETS TORE AWAY!"
+      },
+      "lettering": {
+        "name": "LETTERIN'",
+        "msg": "LETTERIN' PEELED OFF!"
+      },
+      "lighting": {
+        "name": "LIGHTIN'",
+        "msg": "LIGHTIN' WENT OUT!"
+      }
+    },
+    "streetlight": {
+      "name": "STREET LIGHT",
+      "column": {
+        "name": "COLUMN",
+        "msg": "COLUMN BENT DOUBLE!"
+      },
+      "base_plate": {
+        "name": "BASE PLATE",
+        "msg": "BASE PLATE TORN FROM ITS BOLTS!"
+      },
+      "lamp_head": {
+        "name": "LAMP HEAD",
+        "msg": "LAMP HEAD BURST!"
+      },
+      "ballast": {
+        "name": "BALLAST",
+        "msg": "BALLAST BURNED OUT!"
+      },
+      "feeder_cable": {
+        "name": "FEEDER CABLE",
+        "msg": "FEEDER CABLE CUT!"
+      }
+    },
+    "statue": {
+      "name": "STATUE",
+      "torso": {
+        "name": "TORSO",
+        "msg": "TORSO SPLIT!"
+      },
+      "plinth": {
+        "name": "PLINTH",
+        "msg": "PLINTH CRACKED THROUGH!"
+      },
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD STRUCK CLEAN OFF!"
+      },
+      "limbs": {
+        "name": "LIMBS",
+        "msg": "LIMBS BROKE AWAY!"
+      },
+      "patina": {
+        "name": "PATINA",
+        "msg": "PATINA SCOURED OFF!"
+      }
+    },
+    "building": {
+      "name": "BUILDIN'",
+      "load_bearing_walls": {
+        "name": "LOAD-BEARIN' WALLS",
+        "msg": "LOAD-BEARIN' WALLS GAVE!"
+      },
+      "foundation": {
+        "name": "FOUNDATION",
+        "msg": "FOUNDATION SPLIT!"
+      },
+      "facade": {
+        "name": "FACADE",
+        "msg": "FACADE SHEARED AWAY!"
+      },
+      "roof": {
+        "name": "ROOF",
+        "msg": "ROOF CAVED IN!"
+      },
+      "floors": {
+        "name": "FLOORS",
+        "msg": "FLOORS PANCAKED!"
+      },
+      "utilities": {
+        "name": "UTILITIES",
+        "msg": "UTILITIES SEVERED!"
+      }
+    },
+    "car": {
+      "name": "CAR",
+      "engine": {
+        "name": "ENGINE",
+        "msg": "ENGINE SEIZED!"
+      },
+      "chassis": {
+        "name": "CHASSIS",
+        "msg": "CHASSIS BENT!"
+      },
+      "wheels": {
+        "name": "WHEELS",
+        "msg": "WHEELS BLEW OUT!"
+      },
+      "fuel_tank": {
+        "name": "FUEL TANK",
+        "msg": "FUEL TANK HOLED!"
+      },
+      "windscreen": {
+        "name": "WINDSCREEN",
+        "msg": "WINDSCREEN CAVED IN!"
+      },
+      "battery": {
+        "name": "BATTERY",
+        "msg": "BATTERY CRACKED!"
+      },
+      "steering": {
+        "name": "STEERIN'",
+        "msg": "STEERIN' WRECKED!"
+      }
+    },
+    "bicycle": {
+      "name": "BICYCLE",
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME BENT!"
+      },
+      "wheels": {
+        "name": "WHEELS",
+        "msg": "WHEELS BUCKLED!"
+      },
+      "chain": {
+        "name": "CHAIN",
+        "msg": "CHAIN SNAPPED!"
+      },
+      "handlebars": {
+        "name": "HANDLEBARS",
+        "msg": "HANDLEBARS TWISTED!"
+      },
+      "brakes": {
+        "name": "BRAKES",
+        "msg": "BRAKES FAILED!"
+      },
+      "saddle": {
+        "name": "SADDLE",
+        "msg": "SADDLE TORN OFF!"
+      }
+    },
+    "shoppingcart": {
+      "name": "SHOPPIN' CART",
+      "basket": {
+        "name": "BASKET",
+        "msg": "BASKET CRUSHED!"
+      },
+      "castors": {
+        "name": "CASTORS",
+        "msg": "CASTORS SHEARED OFF!"
+      },
+      "chassis": {
+        "name": "CHASSIS",
+        "msg": "CHASSIS FOLDED!"
+      },
+      "handle": {
+        "name": "HANDLE",
+        "msg": "HANDLE BENT!"
+      },
+      "child_seat": {
+        "name": "CHILD SEAT",
+        "msg": "CHILD SEAT TORN OUT!"
+      }
+    },
+    "potion": {
+      "name": "POTION",
+      "phial": {
+        "name": "PHIAL",
+        "msg": "PHIAL SHATTERED!"
+      },
+      "draught": {
+        "name": "DRAUGHT",
+        "msg": "DA DRAUGHT SPILLED AN' STEAMED AWAY!"
+      },
+      "stopper": {
+        "name": "STOPPER",
+        "msg": "STOPPER POPPED OUT!"
+      },
+      "wax_seal": {
+        "name": "WAX SEAL",
+        "msg": "WAX SEAL BROKE!"
+      },
+      "label": {
+        "name": "LABEL",
+        "msg": "LABEL SOAKED OFF!"
+      }
+    },
+    "book": {
+      "name": "BOOK",
+      "pages": {
+        "name": "PAGES",
+        "msg": "PAGES SCATTERED!"
+      },
+      "spine": {
+        "name": "SPINE",
+        "msg": "SPINE BROKE!"
+      },
+      "cover": {
+        "name": "COVER",
+        "msg": "COVER TORN OFF!"
+      },
+      "binding": {
+        "name": "BINDIN'",
+        "msg": "BINDIN' CAME APART!"
+      },
+      "clasp": {
+        "name": "CLASP",
+        "msg": "CLASP SNAPPED!"
+      }
+    },
+    "backpack": {
+      "name": "BACKPACK",
+      "main_body": {
+        "name": "MAIN BODY",
+        "msg": "MAIN BODY SPLIT OPEN!"
+      },
+      "straps": {
+        "name": "STRAPS",
+        "msg": "STRAPS TORE AWAY!"
+      },
+      "zip": {
+        "name": "ZIP",
+        "msg": "ZIP BURST!"
+      },
+      "pockets": {
+        "name": "POCKETS",
+        "msg": "POCKETS RIPPED!"
+      },
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME SNAPPED!"
+      }
+    },
+    "torch": {
+      "name": "TORCH",
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD GUTTERED OUT!"
+      },
+      "fuel": {
+        "name": "FUEL",
+        "msg": "FUEL BURNED AWAY!"
+      },
+      "handle": {
+        "name": "HANDLE",
+        "msg": "HANDLE SNAPPED!"
+      },
+      "wick": {
+        "name": "WICK",
+        "msg": "WICK BURNED THROUGH!"
+      }
+    },
+    "painting": {
+      "name": "PAINTIN'",
+      "canvas": {
+        "name": "CANVAS",
+        "msg": "CANVAS SLASHED THROUGH!"
+      },
+      "stretcher": {
+        "name": "STRETCHER",
+        "msg": "STRETCHER SNAPPED!"
+      },
+      "frame": {
+        "name": "FRAME",
+        "msg": "FRAME BROKE APART!"
+      },
+      "varnish": {
+        "name": "VARNISH",
+        "msg": "VARNISH BLISTERED!"
+      },
+      "pigment": {
+        "name": "PIGMENT",
+        "msg": "PIGMENT FLAKED AWAY!"
+      }
+    },
+    "instrument": {
+      "name": "INSTRUMENT",
+      "body": {
+        "name": "BODY",
+        "msg": "BODY CAVED IN!"
+      },
+      "neck": {
+        "name": "NECK",
+        "msg": "NECK SNAPPED!"
+      },
+      "strings": {
+        "name": "STRINGS",
+        "msg": "STRINGS PARTED!"
+      },
+      "bridge": {
+        "name": "BRIDGE",
+        "msg": "BRIDGE TORE OFF!"
+      },
+      "tuners": {
+        "name": "TUNERS",
+        "msg": "TUNERS STRIPPED!"
+      }
+    },
+    "doll": {
+      "name": "DOLL",
+      "body": {
+        "name": "BODY",
+        "msg": "BODY SPLIT AT DA SEAMS!"
+      },
+      "head": {
+        "name": "HEAD",
+        "msg": "HEAD CAME OFF!"
+      },
+      "limbs": {
+        "name": "LIMBS",
+        "msg": "LIMBS PULLED OFF!"
+      },
+      "stuffing": {
+        "name": "STUFFIN'",
+        "msg": "STUFFIN' SPILLED OUT!"
+      },
+      "eyes": {
+        "name": "EYES",
+        "msg": "EYES POPPED OUT!"
+      }
+    },
+    "boulder": {
+      "name": "BOULDER",
+      "core": {
+        "name": "CORE",
+        "msg": "CORE SPLIT!"
+      },
+      "crust": {
+        "name": "CRUST",
+        "msg": "CRUST FLAKED AWAY!"
+      },
+      "fracture_lines": {
+        "name": "FRACTURE LINES",
+        "msg": "FRACTURE LINES OPENED UP!"
+      },
+      "base": {
+        "name": "BASE",
+        "msg": "BASE CRACKED THROUGH!"
+      },
+      "moss": {
+        "name": "MOSS",
+        "msg": "MOSS SCOURED OFF!"
+      }
+    },
+    "log": {
+      "name": "LOG",
+      "heartwood": {
+        "name": "HEARTWOOD",
+        "msg": "HEARTWOOD SPLIT!"
+      },
+      "sapwood": {
+        "name": "SAPWOOD",
+        "msg": "SAPWOOD SHATTERED!"
+      },
+      "bark": {
+        "name": "BARK",
+        "msg": "BARK STRIPPED AWAY!"
+      },
+      "knots": {
+        "name": "KNOTS",
+        "msg": "KNOTS BLEW OUT!"
+      },
+      "rot_pocket": {
+        "name": "ROT POCKET",
+        "msg": "ROT POCKET COLLAPSED!"
+      }
+    },
+    "campfire": {
+      "name": "CAMPFIRE",
+      "flame": {
+        "name": "FLAME",
+        "msg": "FLAME WENT OUT!"
+      },
+      "embers": {
+        "name": "EMBERS",
+        "msg": "EMBERS SCATTERED COLD!"
+      },
+      "fuel_stack": {
+        "name": "FUEL STACK",
+        "msg": "FUEL STACK COLLAPSED!"
+      },
+      "stone_ring": {
+        "name": "STONE RING",
+        "msg": "STONE RING KICKED APART!"
+      }
+    },
+    "puddle": {
+      "name": "PUDDLE",
+      "body": {
+        "name": "BODY",
+        "msg": "BODY OF WATER SCATTERED!"
+      },
+      "surface": {
+        "name": "SURFACE",
+        "msg": "SURFACE BROKEN UP!"
+      },
+      "silt": {
+        "name": "SILT",
+        "msg": "SILT CHURNED UP!"
+      },
+      "rim": {
+        "name": "RIM",
+        "msg": "RIM BROKE AN' IT DRAINED AWAY!"
+      }
+    },
+    "waterfall": {
+      "name": "WATERFALL",
+      "fall": {
+        "name": "FALL",
+        "msg": "DA FALL BROKE APART!"
+      },
+      "plunge_pool": {
+        "name": "PLUNGE POOL",
+        "msg": "PLUNGE POOL BLOWN DRY!"
+      },
+      "crest": {
+        "name": "CREST",
+        "msg": "CREST COLLAPSED!"
+      },
+      "rock_face": {
+        "name": "ROCK FACE",
+        "msg": "ROCK FACE SHEARED AWAY!"
+      },
+      "spray": {
+        "name": "SPRAY",
+        "msg": "SPRAY DISPERSED!"
+      }
+    },
+    "haystack": {
+      "name": "HAYSTACK",
+      "body": {
+        "name": "BODY",
+        "msg": "BODY BURST APART!"
+      },
+      "crown": {
+        "name": "CROWN",
+        "msg": "CROWN SCATTERED!"
+      },
+      "binding": {
+        "name": "BINDIN'",
+        "msg": "BINDIN' PARTED!"
+      },
+      "core": {
+        "name": "CORE",
+        "msg": "CORE COLLAPSED!"
+      }
+    }
+  }
+}

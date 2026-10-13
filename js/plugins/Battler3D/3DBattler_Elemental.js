@@ -153,6 +153,17 @@
             hue: [0.045, 0.03], sat: [0.85, 0.10], lit: [0.30, 0.06],
             coreColor: 0xffb030, emissive: 0xff5a00
         },
+        // ── Level 1-5 elementals, each on its own bespoke build ──
+        lv_matchstickelemental: {
+            variant: 'lv_matchstickelemental', scale: 1.6, texturePool: 'wood', bodyColor: 0xd8b070, accent: 0xffb030, front: true,
+            hue: [0.10, 0.04], sat: [0.50, 0.10], lit: [0.60, 0.08],
+            coreColor: 0xc0281a, emissive: 0xff5a10
+        },
+        lv_raindropelemental: {
+            variant: 'lv_raindropelemental', scale: 1.7, texturePool: 'water', bodyColor: 0x4aa0e0, accent: 0xe0f6ff, front: true,
+            hue: [0.57, 0.04], sat: [0.60, 0.10], lit: [0.58, 0.08],
+            coreColor: 0xffffff, emissive: 0x66bbff
+        },
         es_cinderwrappedsentinel: { variant: 'elemspirit', scale: 2.3, texturePool: 'crystal', bodyColor: 0x4a2418, accent: 0xff6633, coreColor: 0xff6633, emissive: 0xff6633, hue:[0.55,0.2], sat:[0.4,0.15], lit:[0.45,0.12], spec:{ form:'sentinel' } },
         es_encompassingroadwarden: { variant: 'elemspirit', scale: 2.3, texturePool: 'crystal', bodyColor: 0x5a5448, accent: 0xaa9988, coreColor: 0xaa9988, emissive: 0xaa9988, hue:[0.55,0.2], sat:[0.4,0.15], lit:[0.45,0.12], spec:{ form:'sentinel' } },
         es_tempestdjinn: { variant: 'elemspirit', scale: 2.3, texturePool: 'crystal', bodyColor: 0x46566e, accent: 0x88ccff, coreColor: 0x88ccff, emissive: 0x88ccff, hue:[0.55,0.2], sat:[0.4,0.15], lit:[0.45,0.12], spec:{ form:'sylph' } },
@@ -242,6 +253,8 @@
                     case 'blazinginfernoelemental': this._buildBlazingInfernoElemental(); break;
                     case 'bascapeflame':       this._buildBascapeFlame(); break;
                     case 'elemspirit':         this._buildElemSpirit(); break;
+                    case 'lv_matchstickelemental': this._buildLvMatchstick(); break;
+                    case 'lv_raindropelemental':   this._buildLvRaindrop(); break;
                 }
                 this.model = this.bodyGroup;
                 this.applyModelScale();
@@ -381,7 +394,7 @@
             // LEGS: a flaring ash-and-ember skirt (cone base) instead of feet.
             this.legs = new THREE.Mesh(new THREE.ConeGeometry(0.55, 0.85, 12), this._mat(0x551a08, 0.92, 0.7, 0xaa3000)); this.legs.position.y = 0.42; this.bodyGroup.add(this.legs);
             // Drifting ember sparks.
-            this.embers = new THREE.Group();
+            this.embers = new THREE.Group(); this.embers.userData.float = true; // sparks drift free of the fire
             for (let i = 0; i < 9; i++) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), this._mat(p.accent, 0.9, 0.2, p.accent)); e.position.set((this.idRand() - 0.5) * 0.9, 0.6 + this.idRand() * 1.8, (this.idRand() - 0.5) * 0.6); e._t = this.idRand(); this.embers.add(e); }
             this.bodyGroup.add(this.embers);
             // CORE: blazing heart in the chest.
@@ -410,7 +423,7 @@
             this.larm = new THREE.Group(); const la = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.5, 8), gold); la.position.set(-0.45, 1.15, 0); la.rotation.z = 0.7; this.larm.add(la); const lc = mkCoin(); lc.position.set(-0.66, 0.95, 0); this.larm.add(lc); this.larm._coin = lc; this.bodyGroup.add(this.larm);
             this.rarm = new THREE.Group(); const ra = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.5, 8), gold); ra.position.set(0.45, 1.15, 0); ra.rotation.z = -0.7; this.rarm.add(ra); const rc = mkCoin(); rc.position.set(0.66, 0.95, 0); this.rarm.add(rc); this.rarm._coin = rc; this.bodyGroup.add(this.rarm);
             // Orbiting halo of floating coins.
-            this.coins = new THREE.Group();
+            this.coins = new THREE.Group(); this.coins.userData.orbit = true;
             for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const c = mkCoin(); c.position.set(Math.cos(a) * 0.7, 1.5 + Math.sin(a * 2) * 0.15, Math.sin(a) * 0.7); c._a = a; this.coins.add(c); }
             this.bodyGroup.add(this.coins);
             // Four-leaf-clover glow: four green heart-ish discs around the core.
@@ -475,12 +488,25 @@
             this.bodyGroup.add(this.body);
             // ARMS: crackling probability bolts (zig of small boxes).
             this.arms = new THREE.Group();
-            for (const sx of [-1, 1]) { const arm = new THREE.Group(); for (let i = 0; i < 4; i++) { const seg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.08), this._mat(p.accent, 0.9, 0.2, p.accent)); seg.position.set(sx * (0.42 + i * 0.14), 1.2 + ((i % 2) ? 0.12 : -0.12), 0); arm.add(seg); } arm._sx = sx; this.arms.add(arm); }
+            // Each segment runs from one zig point to the next, so the bolt is
+            // one jagged line out of the body; spaced cubes left it a dotted
+            // trail with nothing joining it to the icosahedron.
+            for (const sx of [-1, 1]) {
+                const arm = new THREE.Group();
+                const pts = []; for (let i = 0; i < 5; i++) pts.push([sx * (0.32 + i * 0.14), 1.2 + ((i % 2) ? 0.12 : -0.12)]);
+                for (let i = 0; i < 4; i++) {
+                    const [x0, y0] = pts[i], [x1, y1] = pts[i + 1], len = Math.hypot(x1 - x0, y1 - y0) + 0.06;
+                    const seg = new THREE.Mesh(new THREE.BoxGeometry(len, 0.07, 0.07), this._mat(p.accent, 0.9, 0.2, p.accent));
+                    seg.position.set((x0 + x1) / 2, (y0 + y1) / 2, 0); seg.rotation.z = Math.atan2(y1 - y0, x1 - x0); arm.add(seg);
+                }
+                arm._sx = sx; this.arms.add(arm);
+            }
             this.bodyGroup.add(this.arms);
             // LEGS: an electron-cloud torus skirt instead of feet.
-            this.legs = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.08, 8, 20), this._mat(p.accent, 0.6, 0.3, p.accent)); this.legs.rotation.x = Math.PI / 2; this.legs.position.y = 0.45; this.bodyGroup.add(this.legs);
+            // It girdles the underside of the body; hung lower it floated free.
+            this.legs = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.08, 8, 20), this._mat(p.accent, 0.6, 0.3, p.accent)); this.legs.rotation.x = Math.PI / 2; this.legs.position.y = 0.88; this.bodyGroup.add(this.legs);
             // Orbiting probability particles.
-            this.particles = new THREE.Group();
+            this.particles = new THREE.Group(); this.particles.userData.orbit = true;
             for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2; const pt = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), this._mat(p.coreColor, 0.9, 0.2, p.coreColor)); pt.position.set(Math.cos(a) * 0.6, 1.2, Math.sin(a) * 0.6); pt._a = a; this.particles.add(pt); }
             this.bodyGroup.add(this.particles);
             // CORE: a small glitching cube.
@@ -503,17 +529,21 @@
             // UPPER_FORM: a billowing cloud of overlapping puffs.
             this.upper = new THREE.Group();
             this.puffs = [];
+            // A heavy central puff every scattered one overlaps, so the cloud
+            // never sheds a puff floating on its own above the rest.
+            const heart = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 12), gas); heart.position.y = 1.1; heart._ph = 0; this.puffs.push(heart); this.upper.add(heart);
             for (let i = 0; i < 7; i++) { const r = 0.24 + this.idRand() * 0.18; const puff = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 12), gas); puff.position.set((this.idRand() - 0.5) * 0.7, 1.1 + (this.idRand() - 0.5) * 0.7, (this.idRand() - 0.5) * 0.5); puff._ph = this.idRand() * 6.28; this.puffs.push(puff); this.upper.add(puff); }
             this.bodyGroup.add(this.upper);
             // LOWER_FORM: a settling heavier gas pool drifting to the floor.
             this.lower = new THREE.Group();
+            const neck = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 10), gas); neck.position.y = 0.6; this.lower.add(neck);
             for (let i = 0; i < 4; i++) { const r = 0.3 + this.idRand() * 0.12; const low = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 10), gas); low.position.set((this.idRand() - 0.5) * 0.8, 0.2 + this.idRand() * 0.3, (this.idRand() - 0.5) * 0.5); low.scale.y = 0.6; this.lower.add(low); }
             this.bodyGroup.add(this.lower);
             // Appendages: drooping wispy gas tendrils.
             this.larm = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.7, 8), gas); this.larm.position.set(-0.5, 0.85, 0); this.larm.rotation.z = 2.5; this.bodyGroup.add(this.larm);
             this.rarm = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.7, 8), gas); this.rarm.position.set(0.5, 0.85, 0); this.rarm.rotation.z = -2.5; this.bodyGroup.add(this.rarm);
             // Rising spore motes.
-            this.spores = new THREE.Group();
+            this.spores = new THREE.Group(); this.spores.userData.float = true;
             for (let i = 0; i < 10; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 6), this._mat(p.accent, 0.9, 0.2, p.accent)); m.position.set((this.idRand() - 0.5) * 1.0, 0.4 + this.idRand() * 1.4, (this.idRand() - 0.5) * 0.7); m._t = this.idRand(); this.spores.add(m); }
             this.bodyGroup.add(this.spores);
             // CORE: a soft diffuse glow.
@@ -551,7 +581,7 @@
             this.lleg = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.34, 0.9, 12), water); this.lleg.position.set(-0.28, 0.1, 0); this.bodyGroup.add(this.lleg);
             this.rleg = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.34, 0.9, 12), water); this.rleg.position.set(0.28, 0.1, 0); this.bodyGroup.add(this.rleg);
             // Spray droplets along the crest.
-            this.spray = new THREE.Group();
+            this.spray = new THREE.Group(); this.spray.userData.float = true;
             for (let i = 0; i < 10; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 6), foam); d.position.set((this.idRand() - 0.5) * 1.0, 2.4 + this.idRand() * 0.6, 0.2 + this.idRand() * 0.5); d._t = this.idRand(); this.spray.add(d); }
             this.bodyGroup.add(this.spray);
             // CORE: bright water-heart deep in the wave.
@@ -622,9 +652,13 @@
             // LOWER_FORM: a swirling air vortex of shrinking offset rings.
             this.lower = new THREE.Group(); this.rings = [];
             for (let i = 0; i < 6; i++) { const r = 0.42 - i * 0.06; const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.04, 8, 18), wisp); ring.rotation.x = Math.PI / 2; ring.position.y = 1.0 - i * 0.17; ring._a = i; this.rings.push(ring); this.lower.add(ring); }
+            // The faint funnel the rings spin on. Its wall runs through every
+            // ring and its lid meets the torso, so the tail hangs from the
+            // djinn instead of hovering under it as a stack of hoops.
+            const funnel = new THREE.Mesh(new THREE.CylinderGeometry(0.455, 0.1, 1.05, 10), air); funnel.position.y = 0.575; this.lower.add(funnel);
             this.bodyGroup.add(this.lower);
             // Drifting dust motes swept up by the vortex.
-            this.motes = new THREE.Group();
+            this.motes = new THREE.Group(); this.motes.userData.float = true;
             for (let i = 0; i < 9; i++) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 6), wisp); const a = this.idRand() * 6.28; m.position.set(Math.cos(a) * 0.3, this.idRand() * 1.6, Math.sin(a) * 0.3); m._a = a; m._y = m.position.y; this.motes.add(m); }
             this.bodyGroup.add(this.motes);
             // CORE: a faint swirling glow.
@@ -648,7 +682,7 @@
             const glow = this._mat(p.coreColor, 1.0, 0.3, p.coreColor);
             // UPPER_FORM: a stack/cluster of dodecahedron boulders.
             this.upper = new THREE.Group();
-            const chunks = [[0.6, 0, 1.35, 0], [0.4, -0.45, 1.7, 0.1], [0.4, 0.45, 1.7, -0.1], [0.34, 0, 2.05, 0], [0.3, -0.3, 1.1, 0], [0.3, 0.3, 1.1, 0]];
+            const chunks = [[0.6, 0, 1.35, 0], [0.4, -0.45, 1.7, 0], [0.4, 0.45, 1.7, 0], [0.34, 0, 2.05, 0], [0.3, -0.3, 1.1, 0], [0.3, 0.3, 1.1, 0]];
             for (const [r, x, y, z] of chunks) { const b = new THREE.Mesh(new THREE.DodecahedronGeometry(r, 0), rock); b.position.set(x, y, z); b.rotation.set(this.idRand() * 3, this.idRand() * 3, this.idRand() * 3); this.upper.add(b); }
             // Glowing molten seam across the chest.
             for (let i = 0; i < 4; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.06, 0.06), glow); s.position.set((this.idRand() - 0.5) * 0.5, 1.2 + this.idRand() * 0.5, 0.58); s.rotation.z = (this.idRand() - 0.5) * 1.4; this.upper.add(s); }
@@ -686,10 +720,18 @@
             // Appendages: twin spinning blade-clusters as "arms".
             this.larm = new THREE.Group(); this.rarm = new THREE.Group();
             for (const [grp, sx] of [[this.larm, -1], [this.rarm, 1]]) { for (let i = 0; i < 3; i++) { const a = (i / 3) * Math.PI * 2; const bl = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.025, 6, 10, Math.PI), blade); bl.position.set(sx * 0.85 + Math.cos(a) * 0.16, 1.6, Math.sin(a) * 0.16); bl.rotation.set(Math.PI / 2, a, 0); grp.add(bl); } }
+            // Each cluster rides the end of a thin air-jet spoke out of the
+            // column, so as the arm groups spin round the body the blades stay
+            // fastened to it instead of circling loose.
+            for (const [grp, sx] of [[this.larm, -1], [this.rarm, 1]]) { const spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 0.8, 6), air); spoke.rotation.z = Math.PI / 2; spoke.position.set(sx * 0.48, 1.6, 0); grp.add(spoke); }
             this.bodyGroup.add(this.larm); this.bodyGroup.add(this.rarm);
-            // LEGS: slim downward air-jet cones.
-            this.lleg = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.8, 9), air); this.lleg.rotation.x = Math.PI; this.lleg.position.set(-0.2, 0.35, 0); this.bodyGroup.add(this.lleg);
-            this.rleg = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.8, 9), air); this.rleg.rotation.x = Math.PI; this.rleg.position.set(0.2, 0.35, 0); this.bodyGroup.add(this.rleg);
+            // The still air column at the eye of the storm, from the jets up
+            // through the core. The blade rings circle it on purpose.
+            this.column = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.14, 1.9, 8), air); this.column.position.y = 1.55; this.body.add(this.column);
+            this._floaters = this.bladeRings.slice();
+            // LEGS: slim downward air-jet cones, their tops tucked into the column.
+            this.lleg = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.8, 9), air); this.lleg.rotation.x = Math.PI; this.lleg.position.set(-0.13, 0.62, 0); this.bodyGroup.add(this.lleg);
+            this.rleg = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.8, 9), air); this.rleg.rotation.x = Math.PI; this.rleg.position.set(0.13, 0.62, 0); this.bodyGroup.add(this.rleg);
             // CORE: a calm eye at the storm's center.
             this.core = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), this._mat(p.coreColor, 1.0, 0.1, p.coreColor)); this.core.position.y = 1.5; this.bodyGroup.add(this.core);
             this._eyeDot(this.bodyGroup, 0, 1.5, 0.18, 0.08, 0x224488);
@@ -728,7 +770,7 @@
             this.lleg = mkBolt(-1, 0.95, -1); this.lleg.position.set(-0.22, 0.95, 0); this.bodyGroup.add(this.lleg);
             this.rleg = mkBolt(1, 0.95, -1); this.rleg.position.set(0.22, 0.95, 0); this.bodyGroup.add(this.rleg);
             // Rain streaks falling through the body.
-            this.rain = new THREE.Group();
+            this.rain = new THREE.Group(); this.rain.userData.float = true; // falling streaks, free of the cloud by design
             for (let i = 0; i < 12; i++) { const drop = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.22, 4), rain); drop.position.set((this.idRand() - 0.5) * 1.0, 0.4 + this.idRand() * 1.5, (this.idRand() - 0.5) * 0.4); drop._t = this.idRand(); this.rain.add(drop); }
             this.bodyGroup.add(this.rain);
             // CORE: a crackling charge at the cloud's heart.
@@ -762,7 +804,7 @@
             this.bodyGroup.add(this.body);
             // ARMS: two massive upswept blaze pillars ending in splayed claw-flares.
             this.arms = new THREE.Group();
-            for (const sx of [-1, 1]) { const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, 1.3, 9), white); upper.position.set(sx * 0.95, 2.0, 0.05); upper.rotation.z = sx * 0.7; this.arms.add(upper); for (let c = 0; c < 3; c++) { const claw = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.7, 6), hot); claw.position.set(sx * 1.45, 2.7 + c * 0.12, (c - 1) * 0.18); claw.rotation.z = sx * (0.4 + c * 0.25); this.arms.add(claw); } }
+            for (const sx of [-1, 1]) { const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, 1.3, 9), white); upper.position.set(sx * 0.95, 2.0, 0.05); upper.rotation.z = -sx * 0.7; this.arms.add(upper); for (let c = 0; c < 3; c++) { const claw = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.7, 6), hot); claw.position.set(sx * 1.45, 2.7 + c * 0.12, (c - 1) * 0.18); claw.rotation.z = -sx * (0.4 + c * 0.25); this.arms.add(claw); } }
             this.bodyGroup.add(this.arms);
             // LEGS: a wide roaring fire base - a broad cone with a flared ember rim.
             this.legs = new THREE.Group();
@@ -770,7 +812,7 @@
             for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; const tongue = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.55, 6), hot); tongue.position.set(Math.cos(a) * 0.72, 0.4, Math.sin(a) * 0.72); tongue.rotation.x = Math.cos(a) * 0.3; tongue.rotation.z = Math.sin(a) * 0.3; this.legs.add(tongue); }
             this.bodyGroup.add(this.legs);
             // Blinding ember storm drifting upward.
-            this.embers = new THREE.Group();
+            this.embers = new THREE.Group(); this.embers.userData.float = true;
             for (let i = 0; i < 14; i++) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 6), hot); e.position.set((this.idRand() - 0.5) * 1.4, 0.6 + this.idRand() * 2.6, (this.idRand() - 0.5) * 0.9); e._t = this.idRand(); this.embers.add(e); }
             this.bodyGroup.add(this.embers);
             // CORE: a blinding white-hot heart.
@@ -812,10 +854,13 @@
             // LEGS: a smouldering debris-pool base - a low charred mound with scattered metal scrap.
             this.legs = new THREE.Group();
             const pool = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 10), this._mat(0x100c0a, 0.95, 0.8, 0x551800)); pool.position.y = 0.18; pool.scale.set(1.2, 0.45, 1.0); this.legs.add(pool);
+            // The guttering flame stem the torso burns up out of: without it
+            // the figure hovered over its own wreck pool.
+            const stem = new THREE.Mesh(new THREE.ConeGeometry(0.34, 0.7, 7), soot); stem.position.y = 0.5; this.legs.add(stem);
             for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; const scrap = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, 0.1), metal); scrap.position.set(Math.cos(a) * 0.5, 0.12, Math.sin(a) * 0.4); scrap.rotation.set(0, a, (this.idRand() - 0.5) * 0.6); this.legs.add(scrap); }
             this.bodyGroup.add(this.legs);
             // Trailing black smoke plumes rising and dissipating.
-            this.smoke = new THREE.Group();
+            this.smoke = new THREE.Group(); this.smoke.userData.float = true; // plumes rise off the wreck by design
             for (let i = 0; i < 8; i++) { const puff = new THREE.Mesh(new THREE.SphereGeometry(0.16 + this.idRand() * 0.1, 8, 8), this._mat(0x0a0807, 0.5, 0.95)); puff.position.set((this.idRand() - 0.5) * 0.6, 1.8 + this.idRand() * 1.4, (this.idRand() - 0.5) * 0.4); puff._t = this.idRand(); this.smoke.add(puff); }
             this.bodyGroup.add(this.smoke);
             // CORE: a sullen vengeful glow.
@@ -860,13 +905,113 @@
                 core.position.y = 1.0; this.bodyGroup.add(core); parts.push(core); this.core = core;
             } else {
                 core.scale.set(1.3, 1.5, 1.3); core.position.y = 1.15; this.bodyGroup.add(core); parts.push(core); this.core = core; this.head = core;
-                this.wisps = new THREE.Group();
+                this.wisps = new THREE.Group(); this.wisps.userData.orbit = true;
                 for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const w = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), this._mat(ac, 0.6, 0.1, ac)); w.position.set(Math.cos(a) * 0.42, 1.15 + Math.sin(i) * 0.4, Math.sin(a) * 0.42); this.wisps.add(w); }
                 this.bodyGroup.add(this.wisps); parts.push(this.wisps);
                 this._eyeDot(core, -0.08, 0.05, 0.18, 0.04, 0xffffff); this._eyeDot(core, 0.08, 0.05, 0.18, 0.04, 0xffffff);
             }
             this._partMeshMap = { CORE: this.core, BODY: this.body || this.core, HEAD: this.head || this.core, MASS: this.core, TORSO: this.body || this.core, NUCLEUS: this.core };
             this._cascadeRules = [{ gone: ['CORE', 'NUCLEUS', 'BODY', 'MASS', 'TORSO'], hide: parts }, { gone: ['HEAD'], hide: [this.head].filter(Boolean) }];
+        }
+
+        // A rod from point a to point b (a splinter limb, a rain streak).
+        _lvBone(parent, a, b, r0, r1, mat, seg) {
+            const A = new THREE.Vector3(a[0], a[1], a[2]), d = new THREE.Vector3(b[0], b[1], b[2]).sub(A), len = d.length();
+            const m = new THREE.Mesh(new THREE.CylinderGeometry(r1, r0, len, seg || 5), mat);
+            m.position.copy(A).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+            parent.add(m); return m;
+        }
+
+        // ── Matchstick Elemental: a struck match running about on splinters ─
+        // A square wooden stick with a red phosphor head, the flame on it
+        // wearing a face with a gaping mouth, the wood blackened just under the
+        // head with a curl of ash drooping off it, two bent splinter arms with
+        // flames at the fingertips and two splinter legs.
+        _buildLvMatchstick() {
+            const p = this.profile;
+            const wood = this._skinMat(p.bodyColor, 0.85), char = this._mat(0x1a1210, 1, 0.9), ash = this._mat(0x9a9a98, 1, 0.95);
+            const flameMat = this._mat(p.accent, 0.85, 0.3, p.emissive), hot = this._mat(0xfff0a0, 0.9, 0.2, 0xffcc44);
+            this.body = new THREE.Group();
+            const stick = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.1, 0.12), wood); stick.position.y = 0.85; this.body.add(stick);
+            const burnt = new THREE.Mesh(new THREE.BoxGeometry(0.126, 0.18, 0.126), char); burnt.position.y = 1.32; this.body.add(burnt);
+            const glowLine = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.02, 0.13), this._mat(p.accent, 1, 0.3, p.emissive)); glowLine.position.y = 1.23; this.body.add(glowLine);
+            const curl = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.018, 3, 8, Math.PI * 1.3), ash); curl.position.set(0.12, 1.26, 0); curl.rotation.z = Math.PI * 0.9; this.body.add(curl);
+            this.core = new THREE.Mesh(new THREE.SphereGeometry(0.14, 7, 5), this._mat(p.coreColor, 1, 0.6, 0x400a04)); this.core.scale.y = 1.3; this.core.position.y = 1.5; this.body.add(this.core);
+            this.flame = new THREE.Group(); this.flame.position.y = 1.48;
+            const outer = new THREE.Mesh(new THREE.ConeGeometry(0.17, 0.55, 7), flameMat); outer.position.y = 0.27; this.flame.add(outer);
+            const inner = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.35, 5), hot); inner.position.y = 0.2; this.flame.add(inner);
+            this._eyeDot(this.flame, -0.045, 0.24, 0.1, 0.025, 0x3a0a00); this._eyeDot(this.flame, 0.045, 0.24, 0.1, 0.025, 0x3a0a00);
+            this.maw = new THREE.Mesh(new THREE.SphereGeometry(0.04, 5, 4), this._mat(0x3a0a00, 1, 0.6)); this.maw.scale.set(1, 1.4, 0.5); this.maw.position.set(0, 0.13, 0.125); this.flame.add(this.maw);
+            this.body.add(this.flame);
+            // Bent splinter arms with a flame on each fingertip.
+            this.arms = new THREE.Group();
+            for (const sx of [-1, 1]) {
+                this._lvBone(this.arms, [sx * 0.04, 1.1, 0], [sx * 0.3, 0.95, 0.04], 0.025, 0.02, wood);
+                this._lvBone(this.arms, [sx * 0.3, 0.95, 0.04], [sx * 0.42, 1.15, 0.08], 0.02, 0.015, wood);
+                const tip = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.12, 4), flameMat); tip.position.set(sx * 0.43, 1.2, 0.08); this.arms.add(tip);
+            }
+            this.body.add(this.arms);
+            this.bodyGroup.add(this.body);
+            this.legs = new THREE.Group();
+            for (const sx of [-1, 1]) { this._lvBone(this.legs, [sx * 0.03, 0.36, 0], [sx * 0.13, 0.03, 0.02], 0.025, 0.02, wood); const ft = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.03, 0.1), char); ft.position.set(sx * 0.13, 0.015, 0.04); this.legs.add(ft); }
+            this.bodyGroup.add(this.legs);
+            this.sparks = new THREE.Group(); this.sparks.userData.float = true;
+            for (let i = 0; i < 5; i++) { const s = new THREE.Mesh(new THREE.TetrahedronGeometry(0.025, 0), hot); s.position.set((this.idRand() - 0.5) * 0.5, 2.05 + this.idRand() * 0.4, (this.idRand() - 0.5) * 0.3); this.sparks.add(s); }
+            this.bodyGroup.add(this.sparks);
+            this._partMeshMap = { CORE: this.core, BODY: this.body, EMBER_ARMS: this.arms, ASH_LEGS: this.legs, MAW: this.maw };
+            this._cascadeRules = [
+                { gone: ['CORE'], hide: [this.core, this.body, this.arms, this.legs, this.sparks] },
+                { gone: ['BODY'], hide: [this.body, this.sparks] },
+                { gone: ['EMBER_ARMS'], hide: [this.arms] },
+                { gone: ['ASH_LEGS'], hide: [this.legs] },
+                { gone: ['MAW'], hide: [this.maw] }
+            ];
+        }
+
+        // ── Raindrop Elemental: a wobbling drop with its own little cloud ───
+        // A fat teardrop of spring rain on two stubby legs that end in splash
+        // puddles, a bright air bubble for a heart, wide eyes and a pout, beaded
+        // arms ending in splashes, and its own grey raincloud hanging over its
+        // point on a streak of falling rain.
+        _buildLvRaindrop() {
+            const p = this.profile;
+            const water = this._skinMat(p.bodyColor, 0.15); water.opacity = 0.8;
+            const foam = this._mat(p.accent, 0.9, 0.2), cloudMat = this._mat(0x8a929e, 1, 0.95);
+            this.body = new THREE.Group();
+            const drop = new THREE.Mesh(new THREE.SphereGeometry(0.38, 9, 7), water); drop.position.y = 0.7; this.body.add(drop);
+            const point = new THREE.Mesh(new THREE.ConeGeometry(0.27, 0.45, 9), water); point.position.y = 1.2; this.body.add(point);
+            for (const sx of [-1, 1]) {
+                const w = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 5), this._mat(0xffffff, 1, 0.2)); w.position.set(sx * 0.13, 0.82, 0.31); this.body.add(w);
+                this._eyeDot(w, 0, 0, 0.065, 0.04, 0x10243a);
+            }
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.014, 4, 8), this._mat(0x1a3a5a, 1, 0.4)); this.maw.position.set(0, 0.62, 0.37); this.body.add(this.maw);
+            // The personal raincloud, held over its point by its own rain.
+            this.cloud = new THREE.Group();
+            this._lvBone(this.cloud, [0, 1.38, 0], [0, 1.62, 0], 0.035, 0.05, foam);
+            for (const [x, y, r] of [[0, 1.72, 0.14], [-0.15, 1.68, 0.1], [0.15, 1.69, 0.11]]) { const c = new THREE.Mesh(new THREE.SphereGeometry(r, 6, 4), cloudMat); c.position.set(x, y, 0); this.cloud.add(c); }
+            this.body.add(this.cloud);
+            this.bodyGroup.add(this.body);
+            this.core = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 5), this._mat(p.coreColor, 0.95, 0.1, p.emissive)); this.core.position.set(0, 0.7, 0.08); this.bodyGroup.add(this.core);
+            // Beaded arms ending in a splash, pivoting at the shoulder.
+            this.arms = new THREE.Group(); this.armPivots = [];
+            for (const sx of [-1, 1]) {
+                const g = new THREE.Group(); g.position.set(sx * 0.34, 0.78, 0);
+                [[0.06, -0.04, 0.1], [0.17, -0.1, 0.08]].forEach(([x, y, r]) => { const b = new THREE.Mesh(new THREE.SphereGeometry(r, 6, 4), water); b.position.set(sx * x, y, 0); g.add(b); });
+                for (const a of [-0.6, 0, 0.6]) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.1, 3), foam); sp.position.set(sx * (0.24 + Math.cos(a) * 0.02), -0.12 + Math.sin(a) * 0.05, 0); sp.rotation.z = -sx * (Math.PI / 2) + a; g.add(sp); }
+                g._sx = sx; this.armPivots.push(g); this.arms.add(g);
+            }
+            this.bodyGroup.add(this.arms);
+            const leg = (sx) => { const g = new THREE.Group(); this._lvBone(g, [sx * 0.15, 0.42, 0], [sx * 0.18, 0.08, 0.02], 0.08, 0.06, water); const pud = new THREE.Mesh(new THREE.SphereGeometry(0.13, 7, 4), water); pud.scale.y = 0.3; pud.position.set(sx * 0.18, 0.04, 0.04); g.add(pud); this.bodyGroup.add(g); return g; };
+            this.lleg = leg(-1); this.rleg = leg(1);
+            this._partMeshMap = { CORE: this.core, BODY: this.body, WATER_ARMS: this.arms, LEFT_WATER_LEG: this.lleg, RIGHT_WATER_LEG: this.rleg, MAW: this.maw };
+            this._cascadeRules = [
+                { gone: ['CORE'], hide: [this.core, this.body, this.arms, this.lleg, this.rleg] },
+                { gone: ['BODY'], hide: [this.body] },
+                { gone: ['WATER_ARMS'], hide: [this.arms] },
+                { gone: ['LEFT_WATER_LEG'], hide: [this.lleg] },
+                { gone: ['RIGHT_WATER_LEG'], hide: [this.rleg] },
+                { gone: ['MAW'], hide: [this.maw] }
+            ];
         }
 
         animatePose(deltaTime) {
@@ -910,6 +1055,20 @@
             if (this.core && this.core.material) this.core.material.emissiveIntensity = 0.9 + Math.sin(t * 4) * 0.5;
 
             switch (this.variant) {
+                case 'lv_matchstickelemental':
+                    this.model.position.y = this._baseY + Math.abs(Math.sin(t * (fast ? 10 : 4))) * 0.03 * this.scale;
+                    if (this.flame) this.flame.scale.set(1 + Math.sin(t * 13) * 0.1, 1 + Math.sin(t * 9) * 0.18, 1);
+                    if (this.body) this.body.rotation.z = Math.sin(t * (fast ? 12 : 3)) * 0.03;
+                    if (this.sparks) this.sparks.children.forEach(s => { s.position.y += 0.012; if (s.position.y > 2.6) s.position.y = 2.05; });
+                    break;
+                case 'lv_raindropelemental': {
+                    this.model.position.y = this._baseY;
+                    const sq = Math.sin(t * (fast ? 9 : 2.6));
+                    if (this.body) this.body.scale.set(1 + sq * 0.04, 1 - sq * 0.05, 1 + sq * 0.04);
+                    if (this.armPivots) this.armPivots.forEach(g => { g.rotation.z = g._sx * (fast ? Math.abs(Math.sin(t * 9)) * 0.6 : sq * 0.15); });
+                    if (this.core) this.core.position.y = 0.7 + sq * 0.04;
+                    break;
+                }
                 case 'elemspirit':
                     if (this.wisps) this.wisps.rotation.y = t * 1.2;
                     if (this.head && this.head !== this.core && this.head.rotation) this.head.rotation.y = Math.sin(t * 1.4) * 0.2;
@@ -1041,6 +1200,8 @@
     reg('galesentinel',       { aliases: ['galesentinel'],       scale: S.galesentinel.scale,       weapon: 0, create: make });
     reg('blazinginfernoelemental', { aliases: ['blazinginfernoelemental'], scale: S.blazinginfernoelemental.scale, weapon: 0, create: make });
     reg('bascapeflame',       { aliases: ['bascapeflame'],       scale: S.bascapeflame.scale,       weapon: 0, create: make });
+    reg('lv_matchstickelemental', { aliases: ['lv_matchstickelemental'], scale: S.lv_matchstickelemental.scale, weapon: 0, create: make });
+    reg('lv_raindropelemental',   { aliases: ['lv_raindropelemental'],   scale: S.lv_raindropelemental.scale,   weapon: 0, create: make });
 
 ["es_cinderwrappedsentinel","es_tempestconduit","es_livingsentinel","es_surgingsylph","es_ragingconduit","es_howlingelemental","es_moltencolossusspawn","es_frozenrevenant","es_radiantmonolith","es_ragingcolossusspawn","es_obsidianconduit","es_grindingconstruct","es_howlingsylph","es_tempestwisp","es_quartzwisp","es_howlingrevenant","es_grindingspirit","es_cracklingspirit","es_moltensylph","es_petrifiedwarden","es_livingelemental","es_raginganimus","es_searingspirit","es_petrifiedeffigy","es_tempestcolossusspawn","es_moltenconstruct","es_quartzmonolith","es_quartzsylph","es_moltenwarden","es_moltensentinel","es_searingelemental","es_tempestsylph"].forEach(k => reg(k, { aliases: [k], scale: S[k].scale, weapon: 0, create: make }));
 
@@ -1060,7 +1221,9 @@
         galesentinel:       ["Gale Sentinel"],
         stormelemental:     ["Storm Elemental"],
         blazinginfernoelemental: ["Blazing Inferno Elemental"],
-        bascapeflame:       ["The Bascape Flame"]
+        bascapeflame:       ["The Bascape Flame"],
+        lv_matchstickelemental: ["Matchstick Elemental"],
+        lv_raindropelemental:   ["Raindrop Elemental"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

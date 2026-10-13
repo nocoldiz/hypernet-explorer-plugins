@@ -469,20 +469,23 @@
 
   Scene_NPCEmpathize.prototype._buildPowerOverviewHTML = function (view, T) {
     const live = view.live;
+    // The stored fields are the simulation's English ids; powerLabel reads
+    // them in the active language.
+    const label = (field) => (live && (window.NPCPolitics?.powerLabel?.(live, field) || live[field])) || '';
     let html = `<div class="npc-profile-name">${_escapeHtml(_viewName(view))}</div>`;
-    const sub = [live?.govType, live?.legislature].filter(Boolean);
+    const sub = [label('govType'), label('legislature')].filter(Boolean);
     html += `<div class="npc-profile-sub">${_escapeHtml(sub.join(' · '))}</div><hr class="npc-r-sep">`;
 
     if (live) {
       const head = live.politicians?.[live.headId];
       const ruling = live.parties?.find(p => p.id === live.rulingPartyId);
       html += `<div class="npc-sec-hdr">${T.government}</div>`;
-      html += _kvRow(186, T.government, _escapeHtml(live.govType));
+      html += _kvRow(186, T.government, _escapeHtml(label('govType')));
       if (head) html += `<div class="npc-ident-row">${_iconSpan(215, 17)}<span class="npc-sub">${_escapeHtml(_headTitle(live))}:</span>&nbsp;${_wikiLink('leader', head.name)}<span class="npc-sub">&nbsp;(${T.approval} ${Math.round(head.approval)}%)</span></div>`;
-      else html += _kvRow(215, live.headTitle, _escapeHtml(T.vacant));
+      else html += _kvRow(215, _headTitle(live), _escapeHtml(T.vacant));
       if (ruling) html += _kvRow(187, T.rulingParty, _wikiLink('party', ruling.id, ruling.name) + (live.coalition?.length > 1 ? ` <span class="npc-sub">(+${live.coalition.length - 1})</span>` : ''));
       else if (head) html += _kvRow(187, T.rulingParty, _escapeHtml(T.independent));
-      html += _kvRow(216, T.seats, `${live.seats}, ${_escapeHtml(live.legislature)}`);
+      html += _kvRow(216, T.seats, `${live.seats}, ${_escapeHtml(label('legislature'))}`);
       const dateOf = window.NPCPolitics?.dateOf;
       if (live.nextElectionMinute != null && dateOf) html += _kvRow(220, T.nextElection, _escapeHtml(dateOf(live.nextElectionMinute)));
 
@@ -1030,11 +1033,14 @@
     }
 
     // Everybody from this world the simulation has minted so far.
+    // A walk of the whole society, kept with the wiki's other rolls.
     const group = window.TowerWorlds?.groupName?.(w.floor) || null;
-    const society = (typeof $gameSystem !== 'undefined' && $gameSystem?._npcSociety) || {};
-    const locals = Object.entries(society)
-      .filter(([, prof]) => prof && prof._homeGroupName === group)
-      .map(([name]) => name).sort();
+    const locals = Wiki._roll('worldLocals:' + group, () => {
+      const society = (typeof $gameSystem !== 'undefined' && $gameSystem?._npcSociety) || {};
+      return Object.entries(society)
+        .filter(([, prof]) => prof && prof._homeGroupName === group)
+        .map(([name]) => name).sort();
+    });
     html += `<hr class="npc-r-sep"><div class="npc-sec-hdr">${_escapeHtml(T2('DungeonFloor.world.heading'))}</div>`;
     if (!locals.length) {
       html += `<p class="npc-empty">${_escapeHtml(T.noRecords)}</p>`;
@@ -1319,9 +1325,17 @@
   // biggest first. The Wiki's Armies shelf is built off this, and so is the
   // count on its card; a world with no roster at all answers with an empty
   // list rather than throwing the panel open on an error page.
+  // Asked once per panel: the count on the card and the shelf under it both
+  // read it, on every render.
+  const _armiesMemo = new WeakMap(); // scene -> its roster
   function _listArmies() {
+    const scene = (typeof SceneManager !== 'undefined' && SceneManager._scene) || null;
+    if (scene && _armiesMemo.has(scene)) return _armiesMemo.get(scene);
     const api = _armyApi();
-    try { return (api && api.listArmies) ? api.listArmies() : []; } catch (e) { return []; }
+    let list;
+    try { list = (api && api.listArmies) ? api.listArmies() : []; } catch (e) { list = []; }
+    if (scene) _armiesMemo.set(scene, list);
+    return list;
   }
 
   // The columns one hyperpower has in the field, for the block its article
@@ -1436,7 +1450,7 @@
       // which half of the cast the person came from.
       case 'mainPlayers':
       case 'leaders': {
-        const roll = Wiki.listIn(cat.id, realm);
+        const roll = Wiki.listIn(catId, realm);
         return roll.map(l =>
           _wikiEntryTile('leader', l.name,
             `${_escapeHtml(_worldName('leader', l.name))}${l.dead ? ' <span class="npc-bad">✝</span>' : ''}`,
@@ -1597,8 +1611,14 @@
     if (searching) {
       const hits = _wikiMatch(this._wikiRowsOf(cat.id, realm, T), query);
       if (!hits.length) return _wikiNoMatchHTML(query);
+      // A letter or two matches most of a shelf of thousands, and every one of
+      // them was written on every keystroke. The rest are one press away.
+      const all = this._wikiAllHits === this._wikiCategory + '|' + query;
+      const shown = all ? hits : hits.slice(0, _WIKI_SHELF_SEARCH_CAP);
+      const more = hits.length - shown.length;
       return `<div class="npc-sub npc-mb-2">${_escapeHtml(window.T('Empathize.wikiSearchCount', { n: hits.length }))}</div>
-        <div class="npc-wiki-grid">${hits.map(r => r.html).join('')}</div>`;
+        <div class="npc-wiki-grid">${shown.map(r => r.html).join('')}</div>
+        ${more > 0 ? `<span class="npc-back-btn npc-wiki-search-more" onmousedown="event.stopPropagation();SceneManager._scene._wikiShowAllHits()">${_escapeHtml(window.T('Empathize.wikiSearchShowAll', { n: hits.length }))} →</span>` : ''}`;
     }
     const tiles = _wikiShelfTiles(cat.id, realm, T);
     if (!tiles.length) {
@@ -1621,6 +1641,7 @@
   // MenuSearchBar: a magnifier until opened, F opens it, no field on a pad.
 
   const _WIKI_SEARCH_GROUP_CAP = 24;   // matches shown per shelf on the category page
+  const _WIKI_SHELF_SEARCH_CAP = 120;  // matches shown inside one shelf before "Show all"
 
   function _wikiFold(text) {
     return String(text || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -1712,12 +1733,28 @@
     const MSB = window.MenuSearchBar;
     if (!MSB) return null;
     if (this._wikiSearch && MSB.get?.('npcWiki') === this._wikiSearch) return this._wikiSearch;
+    // Redrawn once the typing stops, not once per letter. A redraw that lands
+    // after the panel has closed has nothing left to draw into. A new query
+    // is capped again, whatever "Show all" was pressed for before it.
+    const redraw = () => {
+      if (typeof SceneManager !== 'undefined' && SceneManager._scene && SceneManager._scene !== this) return;
+      this._wikiAllHits = null;
+      this._refreshWikiResults();
+    };
     this._wikiSearch = MSB.create({
       id: 'npcWiki',
       placeholder: window.T('Empathize.wikiSearchPlaceholder'),
-      onChange: () => this._refreshWikiResults(),
+      onChange: MSB.debounce ? MSB.debounce(redraw, 120) : redraw,
     });
     return this._wikiSearch;
+  };
+
+  // "Show all" under a capped shelf search: every match for this query on
+  // this shelf, until either changes.
+  Scene_NPCEmpathize.prototype._wikiShowAllHits = function () {
+    if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
+    this._wikiAllHits = this._wikiCategory + '|' + (this._wikiBar()?.query || '');
+    this._refreshWikiResults();
   };
 
   // A keystroke: redraw the results box alone, leaving the field where it is.

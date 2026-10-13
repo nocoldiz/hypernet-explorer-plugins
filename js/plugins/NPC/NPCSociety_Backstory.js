@@ -94,8 +94,13 @@
       : String(rawId || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     const own = 'NPCSociety.bio.placeIn.' + slug;
     if (slug && T.has(own)) return T(own, { place: label });
-    return T(isNationId(rawId) ? 'NPCSociety.bio.inCountry' : 'NPCSociety.bio.inTown',
-             { place: label });
+    if (isNationId(rawId)) return T('NPCSociety.bio.inCountry', { place: label });
+    // Italian writes "ad Ancona" but "a Bologna": a language may give a town
+    // that opens on an "a" its own wording (NPCSociety.bio.inTownA).
+    if (/^a/i.test(String(label || '')) && T.has('NPCSociety.bio.inTownA')) {
+      return T('NPCSociety.bio.inTownA', { place: label });
+    }
+    return T('NPCSociety.bio.inTown', { place: label });
   }
 
   // One wording out of the bank a key holds, picked by index so the same person
@@ -311,7 +316,13 @@
       // A beast is an "it" throughout, closing line included. Written out of
       // its own pronoun set rather than out of the gender it was rolled, or a
       // bio would open on "It was assembled" and close on "he".
-      const pr  = beast ? T.obj('NPCSociety.pronoun.beast') : pronounOf(seed.gender);
+      // A language whose nouns carry gender may give one class a set of its
+      // own (NPCSociety.pronoun.<slug>): Italian says "il drone" but "la
+      // creatura", so the Drone agrees in the masculine and every other beast
+      // in the feminine.
+      const pr  = !beast ? pronounOf(seed.gender)
+        : T.obj((slug && T.has('NPCSociety.pronoun.' + slug))
+          ? 'NPCSociety.pronoun.' + slug : 'NPCSociety.pronoun.beast');
       const adj = adjectiveAt(seed.adjIdx);
       // A backstory rolled before the wordings varied has no varIdx of its own,
       // so one is derived from what it does carry: the same person still reads
@@ -346,9 +357,20 @@
       if (seed.isCreature && !manufactured) {
         // Creatures aren't born into a nation, they come out of the wilds near
         // the city closest to their birthplace country.
-        const city = CITY_BY_COUNTRY[backstory.birthplace] || birthplace;
-        placeIn = T('NPCSociety.bio.wildsNear', {
-          city: window.WorldNames ? window.WorldNames.place(city) : city,
+        const cityId = CITY_BY_COUNTRY[backstory.birthplace];
+        const city = cityId || birthplace;
+        // A language may spell the city its own way (NPCSociety.bio.city.<slug>,
+        // "Praga" for Prague), and may say a nation with no city on file through
+        // its own locative (NPCSociety.bio.wildsIn: "in Germania", not "vicino
+        // a Germania"). Without either key the English wording is untouched.
+        const cityKey = cityId ? 'NPCSociety.bio.city.' + cityId.toLowerCase().replace(/[^a-z0-9]+/g, '') : '';
+        const cityLabel = cityKey && T.has(cityKey) ? T(cityKey)
+          : (window.WorldNames ? window.WorldNames.place(city) : city);
+        const nearKey = !cityId && isNationId(backstory.birthplace) && T.has('NPCSociety.bio.wildsIn')
+          ? 'NPCSociety.bio.wildsIn' : 'NPCSociety.bio.wildsNear';
+        placeIn = T(nearKey, {
+          city: cityLabel,
+          placeIn: locativeOf(backstory.birthplace, birthplace),
         });
         key = 'creature';
       } else {
@@ -369,6 +391,8 @@
         event: ev0, later: ev1, moral: moralLine,
       });
       params.classOrigin = classOriginOf(seed.classId, params, oIdx);
+      const finish = (text) =>
+        _capSentences(_agree(text, pr, seed.gender).replace(/  +/g, ' ').trim());
 
       if (beast) {
         // The Drone's own template quotes the timeline; every other creature
@@ -377,63 +401,39 @@
         // Without a class origin to hang it on, the beast template would read
         // as a sentence with a hole in it, so an unbanked class falls back to
         // the ordinary wording it has always had.
-        if (params.classOrigin) {
-          return wording(bank, params, vIdx).replace(/  +/g, ' ').trim();
-        }
+        if (params.classOrigin) return finish(wording(bank, params, vIdx));
       }
 
       const era = wording('NPCSociety.bio.' + key, params, vIdx);
       // The class origin follows the era sentence rather than being written
       // into all twenty era wordings: one line, one place to change it, and a
       // bank that is still complete for a class the era templates never knew.
-      return `${era} ${params.classOrigin}`.replace(/  +/g, ' ').trim();
+      return finish(`${era} ${params.classOrigin}`);
     },
   };
 
-  // Re-capitalize proper nouns (country / hyperpower / faction / leader names)
-  // after an event description has been lowercased to flow mid-sentence, so the
-  // bio reads "...survived the october revolution and Vladimir Lenin's purges".
-  let _pnNouns = null, _pnRe = null, _pnMap = null;
-  function _restoreProperNouns(text) {
-    let nouns = window.HistorySimulator_PROPER_NOUNS;
-    if (!nouns || !nouns.length) return text;
-    // Merge in live, simulated names (dynamic hyperpowers / nations / leaders)
-    // so names not in the static export still get re-capitalized (#82).
-    const hm = window.HistoryManager;
-    if (hm) {
-      const extra = [];
-      const hp = hm.getHyperpowers ? (hm.getHyperpowers() || {}) : {};
-      for (const name of Object.keys(hp)) {
-        extra.push(name);
-        for (const l of ((hp[name] && hp[name].leaders) || [])) if (l && l.name) extra.push(l.name);
-        for (const l of ((hp[name] && hp[name].holy_leaders) || [])) if (l && l.name) extra.push(l.name);
-      }
-      const ns = hm.getNationsState ? (hm.getNationsState() || {}) : {};
-      for (const n of Object.keys(ns)) {
-        extra.push(n);
-        if (ns[n] && ns[n].controller && ns[n].controller !== 'Neutral') extra.push(ns[n].controller);
-      }
-      if (extra.length) nouns = nouns.concat(extra.filter(Boolean));
-    }
-    // The sentence being reflowed has already been written out in the active
-    // language, so the names inside it are the localized ones. The English list
-    // is kept as well: a world simulated before descriptions were keyed still
-    // quotes English prose.
-    if (window.WorldNames) {
-      const localized = Array.from(window.WorldNames.map().values());
-      if (localized.length) nouns = nouns.concat(localized);
-    }
-    if (nouns !== _pnNouns) {
-      _pnNouns = nouns;
-      // Longest first so multi-word names win over their substrings.
-      const seen = new Set();
-      const sorted = nouns.filter(n => { const k = String(n).toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; })
-        .sort((a, b) => b.length - a.length);
-      _pnMap = new Map(sorted.map(n => [n.toLowerCase(), n]));
-      const escaped = sorted.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-      _pnRe = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
-    }
-    return text.replace(_pnRe, m => _pnMap.get(m.toLowerCase()) || m);
+  // Gender agreement. English needs none past the pronoun table, but Italian
+  // agrees participles, adjectives and object pronouns with the person, so a
+  // bank writes the forms inline as {g:masculine|feminine|plural} and the
+  // pronoun set's `g` says which one this person takes (the plural is the
+  // non-binary form, as "loro" is). A set without `g` falls back on the
+  // gender index itself.
+  function _agree(text, pr, gender) {
+    const gi = Number.isInteger(pr && pr.g) ? pr.g : Math.min(Math.max(gender | 0, 0), 2);
+    return text.replace(/\{g:([^{}]*)\}/g, (whole, forms) => {
+      const list = forms.split('|');
+      return list[Math.min(gi, list.length - 1)];
+    });
+  }
+
+  // A sentence may open on a conjugated verb in a language that drops its
+  // subject pronouns ("ha imparato..."), so every sentence start is raised to a
+  // capital once the bio is assembled. A quoted headline already carries its
+  // own capitals and is never split, so nothing inside it is touched.
+  function _capSentences(text) {
+    return text
+      .replace(/^(\s*)(\p{Ll})/u, (m, sp, c) => sp + c.toUpperCase())
+      .replace(/([.!?][»”"]?\s+)(\p{Ll})/gu, (m, gap, c) => gap + c.toUpperCase());
   }
 
   // A snapshotted event's sentence in the active language. A snapshot taken
@@ -446,20 +446,30 @@
     return ev.description || '';
   }
 
+  // An event is quoted in a bio as the headline it is, inside the template's
+  // own quotation marks: "the day of "Floods take the low country of X"".
+  // Headlines come in every shape (a noun phrase, a clause, "MILITARY COUP!
+  // ...", a title and three sentences), so none of them can be lowercased into
+  // the middle of a "when ..." clause and still read as a sentence. Only the
+  // first sentence is kept, an all-capitals title in front of it is dropped,
+  // and its closing punctuation goes, because the template supplies its own.
   function _shortDesc(desc) {
     if (!desc) return T('NPCSociety.bio.uncertainTimes');
-    // Event descriptions are read as clauses inside the narrative, so they are
-    // quoted in full: cutting them at 60 characters left every second sentence
-    // trailing off mid-thought. Only a runaway description is trimmed, and then
-    // at a word boundary.
+    let text = String(desc).trim()
+      .replace(/^(?=[^\p{Ll}]*\p{Lu})[^\p{Ll}:!?.]{3,}[:!]\s+(?=\S)/u, '');
+    // The first full stop that ends a sentence: one followed by a capital and
+    // not closing an initial or a title ("W. B. Yeats", "St. Peter's").
+    const stop = /[.!?]\s+(?=[\p{Lu}"'«“])/gu;
+    const ABBREV = /^(\p{L}|St|Dr|Mr|Mrs|Ms|Mt|Sr|Jr|Gen|Col|Lt|Sgt|Prof|Dott|Sig|Mons)$/u; // i18n-ignore: abbreviations, not prose
+    let m;
+    while ((m = stop.exec(text))) {
+      const word = (text.slice(0, m.index).match(/(\p{L}+)\W*$/u) || [, ''])[1];
+      if (!ABBREV.test(word)) { text = text.slice(0, m.index + 1); break; }
+    }
+    text = text.replace(/[\s.!?…;:,]+$/, '').replace(/^\p{Ll}/u, (c) => c.toUpperCase());
     const MAX = 240;
-    // The clause is dropped into the middle of a sentence that supplies its
-    // own full stop, so it gives up whatever it ended on: a headline event
-    // ("...overthrowing Sniper Zaitsev!") otherwise read as "Zaitsev!.".
-    const text = desc.replace(/[.!?…]+\s*$/, '');
-    if (text.length <= MAX) return _restoreProperNouns(text.toLowerCase());
-    const cut = text.slice(0, MAX).replace(/\s\S*$/, '');
-    return _restoreProperNouns(cut.toLowerCase()) + '…';
+    if (text.length <= MAX) return text;
+    return text.slice(0, MAX).replace(/\s\S*$/, '') + '…';
   }
 
   // Batch generator, call after runSimulation to backfill all loaded profiles

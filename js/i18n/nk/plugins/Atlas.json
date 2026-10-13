@@ -1,8 +1,8 @@
 {
   "title": "WORLD ATLAS",
   "back": "SHUT IT",
-  "noData": "DA ATLAS SHEETS IZ MISSIN'!",
-  "selectPrompt": "PICK A NATION OFF DA MAP.",
+  "noData": "NO ATLAS DATA.",
+  "selectPrompt": "PICK A NATION.",
   "countLabel": "{n} NATIONS CHARTED",
   "unaligned": "UNALIGNED",
   "here": "YOU IZ HERE",
@@ -24,7 +24,7 @@
   },
   "season": {
     "winter": "WINTER",
-    "spring": "SPRIN'",
+    "spring": "SPRING",
     "summer": "SUMMER",
     "autumn": "AUTUMN"
   },
@@ -33,7 +33,7 @@
     "faction": "ALLEGIANCE",
     "enemyLevel": "BAD 'UN LEVEL",
     "controller": "HELD BY",
-    "climate": "CLIMATE THROUGH DA YEAR",
+    "climate": "YEARLY CLIMATE",
     "heldIn": "HELD IN {year}",
     "changedHands": "CHANGED HANDS"
   },
@@ -61,11 +61,11 @@
     "SCORCHIN'"
   ],
   "today": "TODAY",
-  "openArticle": "OPEN DA NATION'S ARTICLE",
+  "openArticle": "OPEN ARTICLE",
   "era": {
-    "before": "BEFORE DA SQUISHIN'",
-    "during": "DA SQUISHIN', {pct}%",
-    "after": "AFTER DA SQUISHIN'"
+    "before": "BEFORE DA SQUISHING",
+    "during": "DA SQUISHING, {pct}%",
+    "after": "AFTER DA SQUISHING"
   },
   "hyperpowersTitle": "HYPERPOWERS",
   "hyperpowersSubtitle": "TERRITORY BREAKDOWN IN {year}",

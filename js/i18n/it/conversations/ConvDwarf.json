@@ -1,32 +1,32 @@
 {
-  "_comment": "La voce Dwarf (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo e' sempre Dwarf.",
+  "_comment": "La voce Dwarf (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo è sempre Dwarf.",
   "voice": {
     "openers": [
-      "Per la mia barba,",
-      "Ricordati le mie parole:",
+      "Per la mia barba!",
+      "Ricordati le mie parole.",
       "Hmpf.",
-      "Ascolta bene,",
-      "Come diceva mio nonno,",
+      "Ascolta bene.",
+      "Te lo dico come lo diceva mio nonno.",
       "Già.",
-      "Allora,",
-      "Detto tra te, me e l'incudine,",
-      "Pietra e birra,",
-      "Sulla forgia di mia madre,",
-      "Per le sale profonde,",
-      "Ascolta un nano:",
-      "Chiedo scusa,",
+      "Allora.",
+      "Che resti tra te, me e l'incudine.",
+      "Pietra e birra!",
+      "Sulla forgia di mia madre!",
+      "Per le sale profonde!",
+      "Ascolta un nano.",
+      "Chiedo scusa.",
       "*si liscia la barba*",
-      "Martello e tenaglie,",
-      "Lo dirò una volta, e lentamente:",
+      "Martello e tenaglie!",
+      "Lo dirò una volta sola, e lentamente.",
       "Bene, allora.",
-      "Granito e rancori,",
-      "Misura due volte, parla una:",
-      "Ah, bah,",
-      "Parlando da artigiano,",
-      "Beh, per il ferro,",
+      "Granito e rancori!",
+      "Misura due volte, parla una.",
+      "Ah, bah!",
+      "Te lo dico da artigiano.",
+      "Beh, per il ferro!",
       "*posa il boccale*",
-      "Giù nelle sale diciamo,",
-      "Verità onesta, verità di pietra:"
+      "Giù nelle sale lo diciamo sempre.",
+      "Verità onesta, verità di pietra."
     ],
     "closers": [
       "Ricordatelo.",
@@ -66,7 +66,7 @@
       "Chi ha costruito quel balcone? Sta su con la speranza e due chiodi.",
       "Ho un nodo nella barba. Non avrò pace finché non l'avrò sciolto.",
       "Stamattina la mia forgia era fredda. L'ho presa sul personale.",
-      "Una buona porta si chiude con un suono solo, non tre.",
+      "Una buona porta si chiude con un suono solo. Questa ne fa tre.",
       "{Granito|Basalto|Marmo} sui gradini della chiesa. Qualcuno qui un tempo aveva gusto.",
       "Mastico questo problema da {tre giorni|una settimana|undici anni}. È quasi tenero.",
       "La gente alta continua a darmi pacche sulla testa. Tengo una lista.",
@@ -102,7 +102,7 @@
     "need": {
       "sleep": [
         "Le palpebre pesano più di un'incudine. A letto.",
-        "Sveglio {da inizio turno|da quando ha cantato il gallo|da quando è stata accesa la forgia}. Basta.",
+        "In piedi {dall'inizio del turno|da quando ha cantato il gallo|da quando è stata accesa la forgia}. Basta.",
         "Ho bisogno di dormire. Da qualche parte in basso, buio e silenzioso. Come una cantina.",
         "Stavo per addormentarmi nella birra. È un crimine contro la birra.",
         "Anche la pietra si stanca. Beh, no. Ma io sì.",
@@ -127,7 +127,7 @@
       "leisure": [
         "Una serata libera. Una pinta, una pipa, una canzone.",
         "Anche un'incudine ha la domenica libera. Più o meno.",
-        "È ora delle freccette. Lancio come martello: forte e dritto.",
+        "È ora delle freccette. Lancio come batto il martello: forte e dritto.",
         "Dovrei fare qualcosa per divertimento. Intagliare conta. Intagliare conta sempre.",
         "Una canzone lunga in una stanza bassa. Ecco cosa mi serve.",
         "Troppo lavoro rende un nano {un macigno|un brontolone|una noia}."
@@ -145,7 +145,7 @@
         "Fuliggine fino ai gomiti. Ora di strofinare.",
         "Ho trovato il pranzo di ieri nella barba. Basta.",
         "Mi serve un lavaggio, il pettine e l'olio buono per la barba.",
-        "Puzzo di forgia. Bello per me, meno per gli altri.",
+        "Puzzo di forgia. Per me è un buon odore, per gli altri meno.",
         "Polvere di miniera in ogni piega. Acqua calda, per favore."
       ],
       "money": [
@@ -170,14 +170,14 @@
         "Un soffitto basso e un muro spesso. Il comfort è tutto lì.",
         "Questa stanza è troppo {piena di spifferi|alta|luminosa}. Datemi una cantina.",
         "Un fuoco caldo e gli stivali tolti. È chiedere tanto?",
-        "La mia schiena vuole una panca seria, non questa cosa traballante fatta da elfi."
+        "La mia schiena vuole una panca seria. Questa cosa traballante l'hanno fatta gli elfi."
       ],
       "social": [
         "Nessuno con cui litigare da {due giorni|una settimana|troppo tempo}. Mi sto rammollendo.",
-        "Mi serve una tavola affollata e qualcuno da battere a cantare.",
+        "Mi serve una tavola affollata e qualcuno da battere a chi canta più forte.",
         "Dovrei andare a trovare i cugini. Avranno nuovi rancori da condividere.",
         "Una pinta da soli è solo una bevuta. Una pinta con gli amici è una festa.",
-        "Ho di nuovo parlato al martello. Ascolta bene, ma è noioso.",
+        "Ho parlato di nuovo col martello. Sa ascoltare, ma è noioso.",
         "Qualcuno, chiunque, venga a dirmi che ho torto. Mi manca."
       ]
     },
@@ -186,7 +186,7 @@
         "Pioggia. Adesso vediamo quanto valgono {le grondaie|gli scarichi|le tegole} di questo paese.",
         "Pioggia sul tetto della forgia. La musica migliore che ci sia.",
         "Barba bagnata, stivali bagnati, umore bagnato.",
-        "Pioggia. La pietra ama la pioggia. Il ferro no. Sono combattuto.",
+        "Pioggia. La pietra ama la pioggia. Il ferro no. Che dilemma.",
         "Bella giornata per l'officina. Brutta giornata per chi ha fatto quel tetto che perde.",
         "La pioggia trova ogni crepa. È così che scopri dove sono le crepe."
       ],
@@ -203,7 +203,7 @@
         "Neve fino alle ginocchia. Che non è molta neve, a dire il vero.",
         "Il ferro freddo si attacca alle dita. Guanti, oggi.",
         "Neve sulla barba. Molto distinto.",
-        "Bloccati dalla neve? Bene. Birra speziata e una lunga storia.",
+        "Strade bloccate dalla neve? Bene. Birra speziata e una lunga storia.",
         "Ho spalato {il vialetto|i gradini|tutta la strada} prima che si svegliassero. Nessuno mi ha ringraziato. Annotato."
       ],
       "clear": [
@@ -219,10 +219,10 @@
       "morning": [
         "Mattina. Forgia accesa prima dell'alba, come si deve.",
         "Alba. La barba dorme ancora, il resto di me lavora.",
-        "Porridge, tè forte, acqua fredda sulla faccia. Pronto.",
+        "Porridge, tè forte, acqua fredda sulla faccia. Si parte.",
         "Turno del mattino. Le martellate migliori si danno prima che qualcuno si lamenti.",
         "Presto. Le strade appartengono ai fornai e ai nani.",
-        "Sveglio prima {del gallo|delle campane|del fornaio}. Come al solito. E ne vado fiero."
+        "In piedi prima {del gallo|delle campane|del fornaio}. Come al solito. E me ne vanto."
       ],
       "afternoon": [
         "Pomeriggio. Il lavoro è a metà e la birra è guadagnata a metà.",
@@ -285,24 +285,24 @@
         "Ho riparato gli stivali per la {terza|quinta|settima} volta. Sono più toppa che stivale.",
         "Ho venduto il secondo martello. Un nano con un martello solo è mezzo nano.",
         "Niente soldi per il carbone. Forgia fredda, cuore freddo.",
-        "Povero, sì. Ma nessuno può dire che il mio lavoro sia povero.",
+        "Al verde, sì. Ma nessuno può dire che il mio lavoro sia povero.",
         "Acqua invece di birra stasera. I miei antenati si rigirano nei loro tumuli."
       ],
       "comfortable": [
         "Abbastanza per il carbone, per la birra, e un po' per l'olio buono da barba. Basta e avanza.",
         "Lavoro costante, paga costante. Come un martello costante.",
-        "Ho comprato tenaglie nuove. Non servivano. Le volevo. Questo è il benessere.",
+        "Ho comprato tenaglie nuove, solo perché le volevo. Questo è il benessere.",
         "Affitto pagato, dispensa piena, rancori aggiornati. Un buon mese.",
         "Ho messo da parte un po' per {una nuova incudine|l'apprendistato di mio nipote|un barile di birra buona}.",
-        "Né ricco né povero. Solido. Come un buon muro."
+        "Conti solidi. Come un buon muro."
       ],
       "rich": [
         "Ho commissionato un boccale intarsiato d'oro. Per me. Ogni nano se lo merita.",
         "Ho comprato tutta la miniera. Beh, una quota. Una grossa quota.",
-        "Abbastanza ricco da saldare i miei rancori. Non lo farò. I rancori non sono in vendita.",
+        "Ho abbastanza soldi da saldare i miei rancori. Non lo farò. I rancori non sono in vendita.",
         "La porta della mia cassaforte è un metro di acciaio. L'ho forgiata io. Due volte.",
         "Ho offerto un giro a tutta la taverna. {Due volte|Tre volte|Tutta la notte}.",
-        "La gente di Varlenia continua a invitarmi a cena. Vogliono la mia cassaforte, non la mia compagnia."
+        "La gente di Varlenia continua a invitarmi a cena. Puntano alla mia cassaforte. La mia compagnia gli interessa poco."
       ]
     },
     "familiar": [
@@ -320,7 +320,7 @@
     "hordeGround": [
       "Terra dell'Orda. Hanno abbattuto buoni muri di pietra per farne di brutti.",
       "Stendardi goblin su un ponte costruito dai nani. Mio nonno piangerebbe.",
-      "L'Orda non tiene rancori. Si tiene tutto il resto.",
+      "L'Orda si tiene tutto tranne i rancori.",
       "Terra dell'Orda. Martello vicino, bocca chiusa, occhi aperti.",
       "Scrivo nel libro ogni goblin che vedo. Mi servirà un libro più grande.",
       "Le loro forge bruciano troppo calde e troppo in fretta. Tutto quello che fanno si crepa entro la primavera.",
@@ -343,8 +343,8 @@
     ],
     "lore": {
       "forge": [
-        "La prima parola di un piccolo nano spesso è 'caldo'. I bambini della forgia imparano in fretta.",
-        "Diamo un nome alle nostre incudini. La mia si chiama Pazienza. Non lo è.",
+        "La prima parola di un bimbo nano spesso è 'scotta'. I figli della forgia imparano in fretta.",
+        "Diamo un nome alle nostre incudini. La mia si chiama Pazienza. Di pazienza non ne ha.",
         "Una lama richiede {cento|mille|diecimila} colpi. Per una reputazione ne basta uno sbagliato.",
         "Gli ingegnatori sono nani che forgiano idee. Quasi tutte esplodono. Qualcuna vola.",
         "Il fuoco nella vecchia sala non si spegne da quattrocento anni. Qualcuno resta sempre.",
@@ -365,7 +365,7 @@
       "grudges": [
         "Il libro dei rancori della mia famiglia conta {undici|quattordici|venti} volumi. Il primo parla quasi solo di una capra.",
         "Un rancore si cancella solo quando il debito è saldato. Certo inchiostro ha trecento anni.",
-        "Noi non odiamo. Ricordiamo con precisione. È diverso.",
+        "Noi ricordiamo con precisione. Tutto qui. Chiamarlo odio è un errore di misura.",
         "Il nonno tenne rancore a un ponte per quarant'anni. Il ponte è crollato prima.",
         "Nel libro c'è una pagina per l'Orda. È una pagina molto lunga.",
         "Perdonare è permesso. Dimenticare no. Tutta la regola è questa.",
@@ -390,12 +390,12 @@
         "Le ricette dell'olio da barba sono segreti di famiglia. La nostra ha ginepro e qualcosa che non nominiamo.",
         "Esistono nani senza barba. Siamo educati al riguardo. Più o meno.",
         "Infila la barba vicino alle macchine. Ogni nano lo impara esattamente una volta.",
-        "Una barba grigia non è vecchia. Una barba grigia è stagionata, come il buon legname."
+        "Una barba grigia è stagionata, come il buon legname."
       ],
       "squishing": [
         "Varlenia è comparsa in una notte di gennaio. Di niente costruito in una notte ci si può fidare. Neanche di un continente.",
         "La Regola dell'80: niente più veloce di ottanta all'ora. I nani la rispettavano da secoli prima che esistesse.",
-        "Dicono che quella torre Omega scenda più in basso di quanto salga. Mi piacerebbe vederne le fondamenta.",
+        "Dicono che la Torre Omega scenda più in basso di quanto salga. Mi piacerebbe vederne le fondamenta.",
         "Novantadue dimensioni che si schiacciano dal 1992. Da qualche parte, il colpevole è un pessimo muratore.",
         "Una bolla temporale ha inghiottito una cava vicino a noi. Lo stesso blocco viene tagliato ogni mattina, per sempre.",
         "Quel Motore Liminale piega la strada. Ingegnoso. Non ci salirei mai. Però lo smonterei.",
@@ -455,7 +455,7 @@
       [
         [
           0,
-          "Ti sei ricordato il nome di mio nonno, {b}. Nessuno se lo ricorda."
+          "Ti sei {go:ricordato|ricordata} il nome di mio nonno, {b}. Nessuno se lo ricorda."
         ],
         [
           1,
@@ -469,7 +469,7 @@
       [
         [
           0,
-          "La tua mensola nuova è in bolla. Ho controllato. Sono rimasto colpito."
+          "La tua mensola nuova è in bolla. Ho controllato. Complimenti."
         ],
         [
           1,
@@ -517,7 +517,7 @@
         ],
         [
           0,
-          "Dal 1996. Non preoccuparti. Era una voce piccola."
+          "Dal 1996. Non preoccuparti. Era una voce da poco."
         ]
       ],
       [
@@ -543,7 +543,7 @@
         ],
         [
           1,
-          "È una staccionata, non una cattedrale."
+          "È solo una staccionata."
         ],
         [
           0,
@@ -715,7 +715,7 @@
         ],
         [
           0,
-          "Mh. *la picchietta* Undici, e non parlerò del difetto di fusione."
+          "Mh. *ci dà un colpetto* Undici, e non parlerò del difetto di fusione."
         ],
         [
           1,
@@ -747,7 +747,7 @@
         ],
         [
           0,
-          "Una cassetta. Beh. Mi sono seduto su troni peggiori."
+          "Una cassetta. Beh. Mi sono {g:seduto|seduta} su troni peggiori."
         ]
       ],
       [
@@ -775,13 +775,13 @@
         ],
         [
           0,
-          "Bene. Sono paziente. Sono fatto per le file."
+          "Bene. Sono paziente. Sono {g:fatto|fatta} per le file."
         ]
       ],
       [
         [
           0,
-          "{Quelle montagne|Quelle colline|Quei picchi} a nord, ci sono miniere?"
+          "Ci sono miniere su {quelle montagne|quelle colline|quei picchi} a nord?"
         ],
         [
           1,
@@ -789,7 +789,7 @@
         ],
         [
           0,
-          "Chiusa. Hmpf. Con una montagna non si finisce mai, si interrompe soltanto."
+          "Chiusa. Hmpf. Con una montagna si può solo fare una pausa."
         ]
       ],
       [
@@ -927,7 +927,7 @@
         ],
         [
           1,
-          "Lo sento dall'odore fin qui."
+          "Se ne sente l'odore fin qui."
         ]
       ],
       [
@@ -963,7 +963,7 @@
       [
         [
           0,
-          "Attento al gradino, è crepato."
+          "{go:Attento|Attenta} al gradino, è incrinato."
         ],
         [
           1,

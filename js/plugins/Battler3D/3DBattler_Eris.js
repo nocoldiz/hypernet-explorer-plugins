@@ -5,7 +5,7 @@
 
 /*:
  * @target MZ
- * @plugindesc Dedicated, ultra-detailed bespoke model for enemy 1343
+ * @plugindesc Dedicated, ultra-detailed bespoke model for Eris, Judgment of Discord
  * "Eris, Judgment of Discord" - a wasteland goddess of static and strife with
  * an actual human face, a seeded body she re-rolls between fights (skin from
  * porcelain to ebony to green, any hair colour in five hairstyles, her own
@@ -23,7 +23,7 @@
  * 3D Battler - Eris, Judgment of Discord
  * ============================================================================
  *
- * The ultimate boss Eris (Enemies.json id 1343) carries a forced
+ * The ultimate boss Eris (Enemies.json, the <Battler3D: eris> boss) carries a forced
  * <Battler3D: eris> note tag. This family registers the `eris` archetype key
  * with its own dedicated, hand-built humanoid mesh and overrides any earlier
  * stand-in (this file loads AFTER 3DBattler_Bosses, so the last registration
@@ -59,6 +59,10 @@
  *     and tips, eye colour, jacket/leather/metal and hairstyle) is rolled from
  *     the world gen seed + the battle number + how many times she has shifted,
  *     so one battle always replays exactly the same sequence of bodies. Her
+ *     first body comes off the wardrobe palettes; every shift after it is
+ *     totally random: any colour, and suit, leather, trim, skin and hair each
+ *     repainted with a freshly generated pattern (stripes, checks, camo,
+ *     marble, scales, stars and more). Her
  *     build never changes: proportions, rig and animation are the same woman
  *     underneath, and lips, blush, brows and lashes are mixed out of the rolled
  *     skin and hair so a green Eris never wears a human mouth.
@@ -67,7 +71,7 @@
  *                                  never the same hairstyle twice running)
  *       ErisAppearance.lock()    - stop: she keeps this body but takes her own
  *                                  hair back, and fights in that shape
- *     TrialSystem.js drives it from the troop 1342 turn script: a shift on each
+ *     TrialSystem.js drives it from her troop's turn script: a shift on each
  *     of her first nine turns, then the lock on turn 10 when she stops healing
  *     and the real fight starts.
  *   - A short astral cape hanging BEHIND her from a gold collarbone clasp
@@ -319,10 +323,35 @@
         return h >>> 0;
     }
 
+    // The surfaces a shift repaints, and the patterns it may paint them with.
+    const WILD_SLOTS = ['suit', 'leather', 'metal', 'skin', 'hair'];
+    const WILD_PATTERNS = ['stripes', 'checker', 'dots', 'camo', 'zigzag', 'static',
+        'marble', 'bands', 'plaid', 'scales', 'stars'];
+
     function rollLook(seed, shift) {
         const s = (seed ^ Math.imul(shift + 1, 0x9E3779B1)) >>> 0;
         const r = mulberry32(s);
         const pick = arr => arr[Math.min(arr.length - 1, Math.floor(r() * arr.length))];
+        // Her first body of a battle comes off the wardrobe; every shift after
+        // it is a totally random one: any colour at all, and every surface
+        // painted with a freshly generated pattern.
+        if (shift > 0) {
+            const any = (sMin, sMax, lMin, lMax) => new THREE.Color().setHSL(
+                r(), sMin + r() * (sMax - sMin), lMin + r() * (lMax - lMin)).getHex();
+            const tex = {};
+            for (const slot of WILD_SLOTS) {
+                tex[slot] = { pattern: pick(WILD_PATTERNS), a: any(0.4, 1, 0.25, 0.75),
+                    b: any(0.2, 1, 0.1, 0.9), seed: Math.floor(r() * 0xffffffff) >>> 0 };
+            }
+            return {
+                seed: s, shift, wild: true, tex,
+                skin: any(0.1, 0.9, 0.3, 0.8),
+                hair: any(0.3, 1, 0.2, 0.8), hairTip: any(0.3, 1, 0.5, 0.95),
+                jacket: any(0.3, 1, 0.2, 0.7), leather: any(0.2, 0.9, 0.1, 0.5), metal: any(0.3, 1, 0.45, 0.85),
+                eye: any(0.6, 1, 0.35, 0.7),
+                style: pick(HAIR_STYLES)
+            };
+        }
         const hair = pick(HAIRS), fit = pick(OUTFITS);
         return {
             seed: s, shift,
@@ -332,6 +361,114 @@
             eye: pick(EYE_COLORS),
             style: pick(HAIR_STYLES)
         };
+    }
+
+    // One generated surface for a shift: two colours and a pattern, painted
+    // from the look's own seed so the same battle replays the same bodies.
+    const WILD_DRAW = {
+        stripes(ctx, w, h, r, A, B) {
+            ctx.fillStyle = A; ctx.fillRect(0, 0, w, h);
+            const step = 6 + Math.floor(r() * 20), wide = step * (0.3 + r() * 0.4);
+            ctx.save(); ctx.translate(w / 2, h / 2); ctx.rotate(r() * Math.PI); ctx.translate(-w, -h);
+            ctx.fillStyle = B;
+            for (let x = 0; x < w * 2; x += step) ctx.fillRect(x, 0, wide, h * 2);
+            ctx.restore();
+        },
+        checker(ctx, w, h, r, A, B) {
+            const n = 4 + Math.floor(r() * 12), cw = w / n, ch = h / n;
+            for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+                ctx.fillStyle = (x + y) % 2 ? A : B; ctx.fillRect(x * cw, y * ch, cw + 1, ch + 1);
+            }
+        },
+        dots(ctx, w, h, r, A, B) {
+            ctx.fillStyle = A; ctx.fillRect(0, 0, w, h);
+            const step = 10 + Math.floor(r() * 18), rad = step * (0.15 + r() * 0.3);
+            ctx.fillStyle = B;
+            for (let y = 0; y < h + step; y += step) for (let x = 0; x < w + step; x += step) {
+                ctx.beginPath(); ctx.arc(x + ((y / step) % 2) * step / 2, y, rad, 0, Math.PI * 2); ctx.fill();
+            }
+        },
+        camo(ctx, w, h, r, A, B) {
+            ctx.fillStyle = A; ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = B;
+            for (let i = 0; i < 40; i++) {
+                ctx.beginPath(); ctx.ellipse(r() * w, r() * h, 6 + r() * 22, 4 + r() * 14, r() * Math.PI, 0, Math.PI * 2); ctx.fill();
+            }
+        },
+        zigzag(ctx, w, h, r, A, B) {
+            ctx.fillStyle = A; ctx.fillRect(0, 0, w, h);
+            const step = 10 + Math.floor(r() * 16), amp = step * 0.5;
+            ctx.strokeStyle = B; ctx.lineWidth = 2 + r() * step * 0.4;
+            for (let y = 0; y < h + step; y += step) {
+                ctx.beginPath(); ctx.moveTo(0, y);
+                for (let x = 0; x <= w; x += step) ctx.lineTo(x, y + ((x / step) % 2 ? amp : -amp));
+                ctx.stroke();
+            }
+        },
+        static(ctx, w, h, r, A, B) {
+            ctx.fillStyle = A; ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = B;
+            const px = 2 + Math.floor(r() * 4);
+            for (let y = 0; y < h; y += px) for (let x = 0; x < w; x += px) if (r() < 0.45) ctx.fillRect(x, y, px, px);
+        },
+        marble(ctx, w, h, r, A, B) {
+            ctx.fillStyle = A; ctx.fillRect(0, 0, w, h);
+            ctx.strokeStyle = B;
+            for (let i = 0; i < 18; i++) {
+                ctx.lineWidth = 0.6 + r() * 3;
+                let x = r() * w, y = r() * h;
+                ctx.beginPath(); ctx.moveTo(x, y);
+                for (let s = 0; s < 8; s++) { x += (r() - 0.5) * 40; y += (r() - 0.5) * 40; ctx.lineTo(x, y); }
+                ctx.stroke();
+            }
+        },
+        bands(ctx, w, h, r, A, B) {
+            const g = ctx.createLinearGradient(0, 0, r() * w, h);
+            const n = 2 + Math.floor(r() * 5);
+            for (let i = 0; i <= n; i++) g.addColorStop(i / n, i % 2 ? B : A);
+            ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+        },
+        plaid(ctx, w, h, r, A, B) {
+            ctx.fillStyle = A; ctx.fillRect(0, 0, w, h);
+            ctx.globalAlpha = 0.55; ctx.fillStyle = B;
+            const step = 16 + Math.floor(r() * 24), band = step * (0.2 + r() * 0.3);
+            for (let x = 0; x < w; x += step) ctx.fillRect(x, 0, band, h);
+            for (let y = 0; y < h; y += step) ctx.fillRect(0, y, w, band);
+            ctx.globalAlpha = 1;
+        },
+        scales(ctx, w, h, r, A, B) {
+            ctx.fillStyle = A; ctx.fillRect(0, 0, w, h);
+            const step = 10 + Math.floor(r() * 14);
+            ctx.strokeStyle = B; ctx.lineWidth = 1.5 + r() * 2;
+            for (let y = 0; y < h + step; y += step / 2) for (let x = 0; x < w + step; x += step) {
+                ctx.beginPath(); ctx.arc(x + ((y / (step / 2)) % 2) * step / 2, y, step / 2, 0, Math.PI); ctx.stroke();
+            }
+        },
+        stars(ctx, w, h, r, A, B) {
+            ctx.fillStyle = A; ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = B;
+            for (let i = 0; i < 30; i++) {
+                const cx = r() * w, cy = r() * h, R = 3 + r() * 9;
+                ctx.beginPath();
+                for (let k = 0; k < 10; k++) {
+                    const a = k * Math.PI / 5 - Math.PI / 2, rr = k % 2 ? R * 0.45 : R;
+                    ctx.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr);
+                }
+                ctx.closePath(); ctx.fill();
+            }
+        }
+    };
+
+    function wildTex(spec, rx, ry) {
+        const draw = WILD_DRAW[spec.pattern] || WILD_DRAW.static;
+        const cv = document.createElement('canvas');
+        cv.width = 128; cv.height = 128;
+        const css = hex => '#' + new THREE.Color(hex).getHexString();
+        draw(cv.getContext('2d'), 128, 128, mulberry32(spec.seed), css(spec.a), css(spec.b));
+        const tex = new THREE.CanvasTexture(cv);
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(rx || 1, ry || 1);
+        return tex;
     }
 
     // Every live Eris model, so a shift restyles whatever is on screen.
@@ -384,8 +521,10 @@
         lock() {
             this._sync();
             const p = E_PROFILE.eris;
-            const look = Object.assign({}, this.current(), {
-                hair: p.hairColor, hairTip: p.hairTip, style: DEFAULT_HAIR_STYLE
+            const cur = this.current();
+            const look = Object.assign({}, cur, {
+                hair: p.hairColor, hairTip: p.hairTip, style: DEFAULT_HAIR_STYLE,
+                tex: cur.tex ? Object.assign({}, cur.tex, { hair: null }) : cur.tex
             });
             this._locked = true;
             this._worn = look;
@@ -454,6 +593,9 @@
         async load(physicsWorld) {
             this.physicsWorld = physicsWorld;
             this._build();
+            // The face materials are made after the first applyLook in
+            // _build: wear the look again so they match a mid-battle body.
+            this.applyLook(this._look, false);
             this.model = this.bodyGroup;
             this.applyModelScale();
             this.loaded = true;
@@ -481,6 +623,9 @@
                 const map = surfaceTex(opts.tex, rep[0], rep[1]);
                 if (map) {
                     m.map = map;
+                    // Kept so a random shift's painted surface can be taken off again.
+                    m.userData.baseMap = map;
+                    m.userData.baseRoughMap = opts.roughMap !== false;
                     // The same greyscale detail doubles as a roughness break-up,
                     // so cloth, leather and metal stop reading as flat plastic.
                     if (opts.roughMap !== false) m.roughnessMap = map;
@@ -531,6 +676,8 @@
             if (this.matLash) this.matLash.color.copy(C(look.hair).multiplyScalar(0.3));
             for (const m of this._irisMats) { m.color.set(look.eye); m.emissive.set(look.eye); }
 
+            this._paintSurfaces(look);
+
             // The hairstyle. A shift always re-grows it, so even a repeated
             // style comes back parted differently.
             if (this.hairSpikes && (flash || prevStyle !== look.style)) {
@@ -540,6 +687,42 @@
             this._fitHeadsetToHair();
             if (flash) this._shiftFx = 1;
             return look;
+        }
+
+        // A random shift paints every surface with its own generated pattern;
+        // any other look puts the stock woven, grained and pored maps back.
+        // The material colour goes white under a painted map so the pattern
+        // shows in its own colours, and glowing parts glow in the pattern.
+        _paintSurfaces(look) {
+            const slots = {
+                suit: [[this.matSuit, 2, 2], [this.matSuitFine, 1, 1]],
+                leather: [[this.matDark, 2, 2]],
+                metal: [[this.matTrim, 2, 1], [this.matHalo, 1, 1]],
+                skin: [[this.matSkin, 1, 1], [this.matSocket, 1, 1]],
+                hair: [[this.matHair, 1, 2], [this.matHairTip, 1, 2], [this.matBrow, 1, 1]]
+            };
+            const old = this._wildTex || [];
+            this._wildTex = [];
+            for (const slot of WILD_SLOTS) {
+                const spec = look.tex && look.tex[slot];
+                for (const [m, rx, ry] of slots[slot]) {
+                    if (!m) continue;
+                    if (spec) {
+                        const tex = wildTex(spec, rx, ry);
+                        this._wildTex.push(tex);
+                        m.map = tex;
+                        m.roughnessMap = tex;
+                        m.color.set(0xffffff);
+                        if (m.emissiveIntensity > 0) { m.emissiveMap = tex; m.emissive.set(0xffffff); }
+                    } else if (m.map && m.map !== m.userData.baseMap) {
+                        m.map = m.userData.baseMap || null;
+                        m.roughnessMap = m.userData.baseRoughMap ? m.map : null;
+                        m.emissiveMap = null;
+                    }
+                    m.needsUpdate = true;
+                }
+            }
+            for (const t of old) t.dispose();
         }
 
         // A big afro wears the circlet outside it instead of buried in it.
@@ -1126,6 +1309,7 @@
         _buildAmbientFX() {
             const rnd = () => this.idRand();
             this.motes = new THREE.Group();
+            this.motes.userData.float = true;   // drifts round her by design
             for (let i = 0; i < 8; i++) {
                 const a = (i / 8) * Math.PI * 2;
                 const r = 0.55 + (i % 3) * 0.09;
@@ -1137,6 +1321,7 @@
             this._floaters.push({ obj: this.motes, axis: 'y', speed: 0.5 });
 
             this.shards = new THREE.Group();
+            this.shards.userData.float = true;
             for (let i = 0; i < 6; i++) {
                 const a = (i / 6) * Math.PI * 2;
                 const r = 0.7 + (i % 2) * 0.14;

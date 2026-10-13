@@ -4,12 +4,12 @@
       "Cos'è stato quel rumore?",
       "Ho un brutto presentimento.",
       "Ho dimenticato qualcosa di importante?",
-      "Il mio cuore sta martellando...",
+      "Il cuore mi martella...",
       "Voglio solo che sia finita."
     ],
     "need": {
       "sleep": [
-        "Sono troppo teso, ma devo sdraiarmi.",
+        "Sono troppo {g:teso|tesa|teso}, ma devo sdraiarmi.",
         "Se non dormo presto crollo.",
         "Ti prego, fammi riposare senza incubi."
       ],
@@ -24,7 +24,7 @@
         "Tutti mi guarderanno mentre lavoro."
       ],
       "leisure": [
-        "Il tempo libero mi rende solo irrequieto.",
+        "Il tempo libero mi mette solo agitazione.",
         "Dovrei rilassarmi, ma non riesco a spegnermi.",
         "Forse un angolo tranquillo dove nessuno mi disturba."
       ],
@@ -44,9 +44,9 @@
         "Mi serve un margine o vado nel panico."
       ],
       "safety": [
-        "Devo restare nascosto.",
+        "Devo restare {g:nascosto|nascosta|nascosto}.",
         "Qualcuno potrebbe cercarmi, sto basso.",
-        "Solo, non attirare l'attenzione."
+        "Basta non attirare l'attenzione."
       ],
       "comfort": [
         "Un posto più sicuro mi calmerebbe i nervi.",
@@ -56,16 +56,16 @@
       "social": [
         "Vorrei compagnia, ma se dicessi la cosa sbagliata?",
         "Parlare potrebbe calmarmi... forse.",
-        "Spero non mi trovino strano."
+        "Spero non mi trovino {g:strano|strana|strano}."
       ],
       "idle": [
         "Va tutto bene? È troppo silenzioso.",
         "Continuo ad aspettarmi che vada storto qualcosa.",
-        "Stai calmo, stai calmo..."
+        "Stai {g:calmo|calma|calmo}, stai {g:calmo|calma|calmo}..."
       ],
       "familiar": [
         "Di nuovo quel viaggiatore, almeno mi è familiare.",
-        "Mi sento un po' più sicuro quando ci sono loro.",
+        "Mi sento un po' più {g:sicuro|sicura|sicuro} quando ci sono loro.",
         "Quasi mi fido di loro. Quasi."
       ]
     }
@@ -115,7 +115,7 @@
         "Penserò a un modo per guadagnare qualcosa."
       ],
       "safety": [
-        "Meglio stare tranquillo per ora.",
+        "Meglio stare {g:tranquillo|tranquilla|tranquillo} per ora.",
         "Manterrò un basso profilo, senza scenate.",
         "La pazienza tiene lontani i guai."
       ],
@@ -144,14 +144,14 @@
   "aggressive": {
     "thoughts": [
       "Non mettermi alla prova.",
-      "Sono pronto a combattere.",
+      "Voglia di combattere, ne ho da vendere.",
       "Cosa stai guardando?",
       "La pazienza sta finendo.",
       "Spostati, o sarai spostato."
     ],
     "need": {
       "sleep": [
-        "Crollo di brutto e mi sveglio già carico.",
+        "Crollo di brutto e mi sveglio già {g:carico|carica|carico}.",
         "La stanchezza mi rende cattivo, meglio dormire.",
         "Fuori dai piedi, vado a letto."
       ],
@@ -191,13 +191,13 @@
         "Nessuno mi mette all'angolo a lungo."
       ],
       "comfort": [
-        "Mi sono guadagnato un posto da difendere.",
+        "Mi sono {g:guadagnato|guadagnata|guadagnato} un posto da difendere.",
         "Una tana più grande per un cane più grosso.",
-        "È ora che viva come uno che conta."
+        "È ora di vivere come chi conta qualcosa."
       ],
       "social": [
         "Mi servirebbe qualcuno con cui allenarmi.",
-        "La gente mi annoia, ma sono irrequieto.",
+        "La gente mi annoia, ma sono {g:irrequieto|irrequieta|irrequieto}.",
         "Trovatemi qualcuno con un po' di fegato."
       ],
       "idle": [
@@ -207,7 +207,7 @@
       ],
       "familiar": [
         "Quello gira ancora da queste parti. Tosto, forse.",
-        "In una rissa li coprirei le spalle, sai.",
+        "In una rissa gli coprirei le spalle, sai.",
         "Si sono guadagnati un grugnito di rispetto."
       ]
     }
@@ -223,7 +223,7 @@
     "need": {
       "sleep": [
         "Almeno nel sonno il dolore svanisce.",
-        "Sono così stanco, in ogni senso.",
+        "Sono così {g:stanco|stanca|stanco}, in ogni senso.",
         "Forse domani sarà più leggero."
       ],
       "hunger": [
@@ -247,7 +247,7 @@
         "Forse i guai mi farebbero sentire qualcosa."
       ],
       "hygiene": [
-        "Mi sono lasciato andare di nuovo.",
+        "Mi sono {g:lasciato|lasciata|lasciato} andare di nuovo.",
         "Una lavata, se trovo la voglia.",
         "Persino questo mi pesa come una fatica."
       ],
@@ -259,7 +259,7 @@
       "safety": [
         "Sparirò per un po'.",
         "Nessuno noterebbe se mi nascondessi.",
-        "Meglio solo e non visto."
+        "Meglio {g:solo|sola|solo} e non {g:visto|vista|visto}."
       ],
       "comfort": [
         "Forse una stanza più accogliente aiuterebbe. Forse.",
@@ -269,12 +269,12 @@
       "social": [
         "Mi manca la vicinanza di qualcuno.",
         "Forse una voce scaccerebbe il grigio.",
-        "Non dovrei stare solo stasera."
+        "Non dovrei stare {g:solo|sola|solo} stasera."
       ],
       "idle": [
         "Il giorno passa, grigio come sempre.",
         "Sospiro, e il mondo lo ignora.",
-        "Solo... alla deriva attraverso tutto."
+        "Solo... mi lascio trascinare da tutto."
       ],
       "familiar": [
         "Quel viaggiatore, un volto familiare nel grigio.",
@@ -293,7 +293,7 @@
     ],
     "need": {
       "sleep": [
-        "Una bella dormita e sarò il doppio più allegro!",
+        "Una bella dormita e sarò {g:allegro|allegra|allegro} il doppio!",
         "Ora di nanna, e sogni pieni di divertimento.",
         "Mi ricarico ora, brillo domani!"
       ],
@@ -318,9 +318,9 @@
         "Preferisco farmi un amico che rubare una moneta."
       ],
       "hygiene": [
-        "Mi rinfresco e mi sento favoloso!",
+        "Mi rinfresco e mi sento {g:favoloso|favolosa|favoloso}!",
         "Una lavata veloce per restare scintillante.",
-        "Non posso salutare gli amici conciato male!"
+        "Non posso salutare gli amici {g:conciato|conciata|conciato} male!"
       ],
       "money": [
         "Un po' a corto, ma si sistemerà, succede sempre!",
@@ -359,13 +359,13 @@
       "Pensiamoci bene.",
       "Quali sono i rischi?",
       "Una decisione affrettata è una cattiva decisione.",
-      "Meglio essere sicuri che dispiaciuti.",
+      "Meglio prevenire che curare.",
       "Analizzare prima la situazione."
     ],
     "need": {
       "sleep": [
         "Riposo prima che la stanchezza mi annebbi il giudizio.",
-        "Meglio dormire presto e restare lucido.",
+        "Meglio dormire presto e restare {g:lucido|lucida|lucido}.",
         "Una mente stanca sbaglia; a letto."
       ],
       "hunger": [
@@ -379,7 +379,7 @@
         "Niente scorciatoie; causano incidenti."
       ],
       "leisure": [
-        "Tempo libero, usato bene, non sprecato.",
+        "Tempo libero, da usare bene.",
         "Mi rilasso in un posto che so essere sicuro.",
         "Una pausa pianificata batte una oziosa."
       ],
@@ -395,7 +395,7 @@
       ],
       "money": [
         "Le mie riserve si assottigliano; devo pianificare.",
-        "È ora di stringere il bilancio.",
+        "È ora di stringere la cinghia.",
         "Mi assicuro un'entrata prima che diventi urgente."
       ],
       "safety": [
@@ -447,7 +447,7 @@
       "work": [
         "Buttiamoci subito nel turno.",
         "Capirò il lavoro mentre lo faccio.",
-        "Già annoiato, improvvisiamo."
+        "Già {g:annoiato|annoiata|annoiato}, improvvisiamo."
       ],
       "leisure": [
         "Tempo libero! Facciamo qualcosa ADESSO.",
@@ -471,7 +471,7 @@
       ],
       "safety": [
         "Nascondermi? Che noia. Ma va bene, un minuto.",
-        "Non riesco a star fermo nemmeno quando dovrei.",
+        "Non riesco a star {g:fermo|ferma|fermo} nemmeno quando dovrei.",
         "Uffa, sto basso, sto basso, per ora."
       ],
       "comfort": [
@@ -482,12 +482,12 @@
       "social": [
         "Mi avvicino e attacco bottone!",
         "Gente nuova, andiamo a conoscerla!",
-        "Non sopporto stare solo, trovo qualcuno!"
+        "Non sopporto stare {g:solo|sola|solo}, trovo qualcuno!"
       ],
       "idle": [
-        "Non posso starmene qui fermo, dai!",
+        "Non posso starmene qui {g:fermo|ferma|fermo}, dai!",
         "Qualcosa, qualunque cosa, ANDIAMO.",
-        "Irrequieto... devo muovermi."
+        "{g:Irrequieto|Irrequieta|Irrequieto}... devo muovermi."
       ],
       "familiar": [
         "Ehi, è quel viaggiatore, andiamo a stuzzicarli!",
@@ -508,10 +508,10 @@
       "sleep": [
         "Il corpo ha bisogno di riposo. Glielo concedo.",
         "Dormire è un dovere come ogni altro.",
-        "Mi sdraio e mi rialzo pronto."
+        "Mi sdraio e mi rialzo {g:pronto|pronta|pronto}."
       ],
       "hunger": [
-        "La fame è un segnale, non un padrone.",
+        "La fame avvisa; a comandare resto io.",
         "Mangerò ciò che serve, niente di più.",
         "Si nutre il corpo perché il lavoro continui."
       ],
@@ -521,9 +521,9 @@
         "Il dovere non aspetta l'umore."
       ],
       "leisure": [
-        "Il riposo si guadagna, non si indulge.",
+        "Il riposo si guadagna, come tutto il resto.",
         "Un momento di quiete è sufficiente.",
-        "Mi basta poco per essere appagato."
+        "Mi basta poco per essere {g:appagato|appagata|appagato}."
       ],
       "crime": [
         "No. I miei principi non sono in vendita.",
@@ -553,11 +553,11 @@
       "social": [
         "Una parola con qualcuno a volte fa bene.",
         "Condividerò un po' di compagnia, brevemente.",
-        "Anche il saldo apprezza un alleato."
+        "Anche chi è saldo apprezza un alleato."
       ],
       "idle": [
         "La giornata non chiede nulla; resto immobile.",
-        "Sono pronto a ciò che verrà.",
+        "Sono {g:pronto|pronta|pronto} a ciò che verrà.",
         "La calma regge. Come dev'essere."
       ],
       "familiar": [
@@ -573,7 +573,7 @@
       "Di chi posso fidarmi? Di nessuno.",
       "Cosa vogliono veramente?",
       "È una cospirazione.",
-      "Devo stare attento."
+      "Devo tenere gli occhi aperti."
     ],
     "need": {
       "sleep": [
@@ -612,7 +612,7 @@
         "Qualcuno mi ha sfilato dei soldi, lo giuro."
       ],
       "safety": [
-        "Resta nascosto. Mi stanno sicuramente cercando.",
+        "Resta {g:nascosto|nascosta|nascosto}. Mi stanno sicuramente cercando.",
         "Cambio percorso, l'hanno imparato a memoria.",
         "Fidati delle ombre più che della gente."
       ],
@@ -628,7 +628,7 @@
       ],
       "idle": [
         "Perché è così silenzioso? È sospetto.",
-        "Qualcuno l'ha spostato. Ne sono certo.",
+        "Qualcuno l'ha spostato. Ne sono {g:certo|certa|certo}.",
         "Occhi ovunque, anche adesso."
       ],
       "familiar": [
@@ -653,17 +653,17 @@
         "Riposo, così domani potrò esserci per loro."
       ],
       "hunger": [
-        "Mi sono dimenticato di mangiare, di nuovo a curare gli altri.",
+        "Mi sono {g:dimenticato|dimenticata|dimenticato} di mangiare, di nuovo a curare gli altri.",
         "Un pasto mi rimetterà in sesto.",
-        "Dovrei nutrire anche me stesso."
+        "Dovrei nutrire anche me {g:stesso|stessa|stesso}."
       ],
       "work": [
         "Spero di rendere più facile la giornata a qualcuno.",
         "Il lavoro è migliore quando ci sosteniamo a vicenda.",
-        "Leggerò l'ambiente e aiuterò dove posso."
+        "Capirò l'aria che tira e aiuterò dove posso."
       ],
       "leisure": [
-        "Un po' di pace per riempire la mia tazza.",
+        "Un po' di pace per ricaricarmi.",
         "Cercherò qualcuno che ha bisogno di compagnia.",
         "È ora di sentire solo le cose belle."
       ],
@@ -680,11 +680,11 @@
       "money": [
         "Ho regalato di nuovo troppo, vero?",
         "I fondi sono bassi; devo badare a me.",
-        "Ne guadagnerò un po', con dolcezza, onestà."
+        "Ne guadagnerò un po', con garbo e onestà."
       ],
       "safety": [
-        "Sto zitto così nessuno si preoccupa per me.",
-        "Meglio restare calmo e nascosto per ora.",
+        "Sto {g:zitto|zitta|zitto} così nessuno si preoccupa per me.",
+        "Meglio restare {g:calmo|calma|calmo} e {g:nascosto|nascosta|nascosto} per ora.",
         "Non voglio portare guai a nessuno."
       ],
       "comfort": [
@@ -703,7 +703,7 @@
         "Stanno tutti bene intorno a me?"
       ],
       "familiar": [
-        "Quel viaggiatore, vi percepisco un cuore gentile.",
+        "Quel viaggiatore ha un cuore gentile, lo sento.",
         "Abbiamo condiviso abbastanza da sentirne gli umori.",
         "Saprei se stessero soffrendo, credo."
       ]
@@ -715,7 +715,7 @@
       "Questo è il piano. Rispettatelo.",
       "Prenderò io la decisione.",
       "La disciplina è la chiave.",
-      "Dobbiamo avere successo."
+      "Dobbiamo riuscirci."
     ],
     "need": {
       "sleep": [
@@ -726,7 +726,7 @@
       "hunger": [
         "Mangerò, poi torno alle questioni.",
         "Nutri il corpo; il lavoro non si fa da solo.",
-        "Un pasto adeguato si addice al compito."
+        "Un pasto adeguato, per il compito che mi attende."
       ],
       "work": [
         "È ora di prendere in mano questo turno.",
@@ -739,19 +739,19 @@
         "Una breve tregua, poi di nuovo al timone."
       ],
       "crime": [
-        "Comando con l'esempio, non con il furto.",
+        "Comando con l'esempio. Il furto lo lascio ad altri.",
         "Tanta meschinità è al di sotto di me.",
-        "L'autorità si guadagna, non si ruba."
+        "L'autorità si guadagna. Rubarla non porta da nessuna parte."
       ],
       "hygiene": [
-        "La presentazione impone rispetto.",
+        "L'aspetto impone rispetto.",
         "Curerò il mio aspetto; gli standard contano.",
         "Un capo deve sembrarlo."
       ],
       "money": [
         "Le risorse scarseggiano; ne procurerò altre.",
         "Un capo provvede, prima a sé stesso.",
-        "Comanderò un'entrata, non la mendicherò."
+        "Un'entrata la esigerò. Mendicare non è da me."
       ],
       "safety": [
         "Un ritiro strategico, nient'altro.",
@@ -760,11 +760,11 @@
       ],
       "comfort": [
         "Una residenza all'altezza del mio rango.",
-        "Mi sono guadagnato uno scranno degno.",
+        "Mi sono {g:guadagnato|guadagnata|guadagnato} uno scranno degno.",
         "Il comfort è la ricompensa del comando."
       ],
       "social": [
-        "Dovrei radunare alleati alla causa.",
+        "Dovrei radunare alleati per la causa.",
         "L'influenza cresce dove mi si vede.",
         "È ora di portarne altri dalla mia parte."
       ],
@@ -861,7 +861,7 @@
     ],
     "need": {
       "sleep": [
-        "I miei sogni sono dove si nascondono le idee migliori.",
+        "È nei sogni che si nascondono le idee migliori.",
         "Riposo, e lascio venire le visioni.",
         "Anche la musa deve dormire, a volte."
       ],
@@ -882,12 +882,12 @@
       ],
       "crime": [
         "No, una bruttura simile perseguiterebbe la mia arte.",
-        "Io creo; non prendo.",
+        "Io creo. Prendere è roba da altri.",
         "Un gesto così macchierebbe l'anima."
       ],
       "hygiene": [
         "Mi laverò, anche l'artista ha bisogno di cura.",
-        "Fresco e limpido, pronto a percepire.",
+        "{g:Fresco|Fresca|Fresco} e {g:limpido|limpida|limpido}, {g:pronto|pronta|pronto} a percepire.",
         "Una lavata veloce per rinnovare i sensi."
       ],
       "money": [
@@ -928,7 +928,7 @@
       "Che noia. Facciamo qualcosa!",
       "Un po' di pericolo rende la vita interessante.",
       "Verso la prossima avventura!",
-      "Non ci sono mai stato? Andiamo!"
+      "Un posto mai visto? Andiamo!"
     ],
     "need": {
       "sleep": [
@@ -942,12 +942,12 @@
         "Uno stomaco vuoto non raggiunge la vetta."
       ],
       "work": [
-        "Lavoro, va bene, se porta da qualche parte di nuovo.",
-        "Renderò anche un turno una piccola impresa.",
+        "Lavoro, va bene, se mi porta in un posto nuovo.",
+        "Trasformerò anche un turno in un'impresa.",
         "Finiamo questo e mettiamoci in viaggio."
       ],
       "leisure": [
-        "Tempo libero, in un posto dove non sono mai stato!",
+        "Tempo libero, in un posto dove non sono mai {g:stato|stata|stato}!",
         "Esploriamo quello strano angolo laggiù.",
         "L'avventura non aspetta il permesso."
       ],
@@ -967,7 +967,7 @@
         "Guadagnerò abbastanza per il prossimo viaggio."
       ],
       "safety": [
-        "Stare nascosto? Dov'è il divertimento...",
+        "Stare {g:nascosto|nascosta|nascosto}? Dov'è il divertimento...",
         "Va bene, mi nascondo, e studio la via d'uscita.",
         "Tratterò il pericolo come una sfida."
       ],
@@ -984,7 +984,7 @@
       "idle": [
         "Così tanto mondo, così poco tempo!",
         "Cosa c'è oltre quel prossimo angolo?",
-        "Non riesco a star fermo, l'avventura chiama."
+        "Non riesco a star {g:fermo|ferma|fermo}, l'avventura chiama."
       ],
       "familiar": [
         "Quel viaggiatore sarebbe un ottimo compagno!",
@@ -996,7 +996,7 @@
   "nurturing": {
     "thoughts": [
       "Stai bene?",
-      "Sembri infreddolito. Prendi il mio mantello.",
+      "Stai tremando. Prendi il mio mantello.",
       "Tutti hanno bisogno di cure.",
       "Devo proteggerli.",
       "Lascia che ti aiuti."
@@ -1010,7 +1010,7 @@
       "hunger": [
         "Dovrei mangiare, non aiuto nessuno se sono debole.",
         "Un pasto, e poi torno a badare alle cose.",
-        "Ho sfamato tutti tranne me stesso, di nuovo."
+        "Ho sfamato tutti tranne me {g:stesso|stessa|stesso}, di nuovo."
       ],
       "work": [
         "Oggi baderò ai miei colleghi.",
@@ -1025,12 +1025,12 @@
       "crime": [
         "Non potrei mai, qualcuno ne soffrirebbe.",
         "Prendere dagli altri? Mai.",
-        "Io proteggo la gente; non la depredo."
+        "Io la gente la proteggo. Depredarla? Mai."
       ],
       "hygiene": [
         "Mi sistemo, il conforto inizia dalla cura.",
         "Una lavata veloce; voglio essere presentabile per loro.",
-        "Curare me stesso fa parte del curare gli altri."
+        "Curare me {g:stesso|stessa|stesso} fa parte del curare gli altri."
       ],
       "money": [
         "Mi serve abbastanza per sfamare tutti noi.",
@@ -1045,7 +1045,7 @@
       "comfort": [
         "Una casa calda dove tutti si sentono al sicuro.",
         "Un focolare più grande attorno a cui riunire la gente.",
-        "Comfort significa un posto per riparare i propri cari."
+        "Comfort significa un posto dove dare riparo ai propri cari."
       ],
       "social": [
         "Qualcuno potrebbe aver bisogno di una parola gentile oggi.",
@@ -1060,7 +1060,7 @@
       "familiar": [
         "Quel viaggiatore, mi preoccupo per loro là fuori.",
         "Li accoglierei se ne avessero mai bisogno.",
-        "Ormai sono quasi come famiglia."
+        "Ormai sono quasi di famiglia."
       ]
     }
   },
@@ -1069,7 +1069,7 @@
       "Sarebbe molto più divertente se...",
       "Mescoliamo un po' le carte.",
       "Non se lo aspetteranno mai.",
-      "Mi chiedo cosa faccia questo pulsante?",
+      "Chissà cosa fa questo pulsante?",
       "Un piccolo scherzo non ha mai fatto male a nessuno... molto."
     ],
     "need": {
@@ -1096,10 +1096,10 @@
       "crime": [
         "Eh eh, l'hanno lasciato incustodito, troppo tentante.",
         "Solo una piccola 'ridistribuzione' per gioco.",
-        "Sono troppo svelto e furbo per farmi prendere."
+        "Sono troppo {g:svelto|svelta|svelto} e {g:furbo|furba|furbo} per farmi prendere."
       ],
       "hygiene": [
-        "Non posso fare il fascinoso conciato male.",
+        "Non posso fare {g:il fascinoso|la fascinosa|il fascinoso} {g:conciato|conciata|conciato} male.",
         "Pulizia veloce, devo sembrare innocente.",
         "In ordine e con l'occhio furbo, il travestimento perfetto."
       ],
@@ -1125,7 +1125,7 @@
       ],
       "idle": [
         "Mmh, in che guaio posso cacciarmi ora?",
-        "Troppo tranquillo... sta proprio invocando uno scherzo.",
+        "Troppo tranquillo... è proprio un invito a uno scherzo.",
         "Le mani oziose combinano i dispetti più furbi."
       ],
       "familiar": [
@@ -1150,9 +1150,9 @@
         "Almeno i sogni non ti mentono in faccia."
       ],
       "hunger": [
-        "Qualunque cosa mangi, è comunque sovrapprezzata.",
+        "Qualunque cosa mangi, costa comunque troppo.",
         "Ho fame. Scommetto che il cibo 'fresco' non lo è.",
-        "Faccio il pieno; la fatica non bada se sei stanco."
+        "Faccio il pieno; la routine se ne frega se sei stanco."
       ],
       "work": [
         "Un altro turno a riempire le tasche di qualcun altro.",
@@ -1162,10 +1162,10 @@
       "leisure": [
         "'Divertimento.' Certo. Ammesso che voglia ancora dire qualcosa.",
         "Mi trovo un angolo lontano dai falsi.",
-        "Tempo libero, libero di restare deluso."
+        "Tempo libero, {g:libero|libera|libero} di restare {g:deluso|delusa|deluso}."
       ],
       "crime": [
-        "Rubano tutti; io sarei solo onesto al riguardo.",
+        "Rubano tutti; io almeno lo ammetterei.",
         "Il sistema mi deruba ogni giorno, pari e patta.",
         "Nessuno è davvero innocente, quindi perché no?"
       ],
@@ -1187,7 +1187,7 @@
       "comfort": [
         "Un posto più bello, ben chiuso contro tutti.",
         "Comfort? Solo meno motivi per avere a che fare con la gente.",
-        "Mi sono guadagnato una porta da sbattere in faccia al mondo."
+        "Mi sono {g:guadagnato|guadagnata|guadagnato} una porta da sbattere in faccia al mondo."
       ],
       "social": [
         "Parlare con la gente? Vogliono solo qualcosa.",
@@ -1209,7 +1209,7 @@
   "disciplined": {
     "thoughts": [
       "Prima il dovere. Poi il resto.",
-      "I sentimenti sono secondari al dovere.",
+      "I sentimenti vengono dopo il dovere.",
       "Attieniti al regime.",
       "Il controllo è forza.",
       "Nessuna scorciatoia."
@@ -1231,7 +1231,7 @@
         "Terrò la posizione e finirò come si deve."
       ],
       "leisure": [
-        "Il riposo è programmato, non sprecato.",
+        "Il riposo è in programma, e lo rispetto.",
         "Userò la pausa per mantenere la mia routine.",
         "Anche il tempo libero ha la sua disciplina."
       ],
@@ -1262,7 +1262,7 @@
       ],
       "social": [
         "Una parola misurata con le persone giuste.",
-        "Coltiverò relazioni con uno scopo, non per ozio.",
+        "Coltiverò relazioni con uno scopo preciso.",
         "Gli alleati sono una risorsa; li coltiverò."
       ],
       "idle": [
@@ -1303,7 +1303,7 @@
       ],
       "leisure": [
         "Tempo libero, destinato a passare come tutto.",
-        "Andrò alla deriva dove mi porta il giorno.",
+        "Mi lascerò portare dove vuole il giorno.",
         "Qualunque cosa faccia, era già scelta."
       ],
       "crime": [
@@ -1327,7 +1327,7 @@
         "Se il pericolo è scritto, nascondersi lo rimanda soltanto."
       ],
       "comfort": [
-        "Un posto più bello, se è nelle carte.",
+        "Un posto più bello, se il destino lo vuole.",
         "Comfort o no, la fine è la stessa.",
         "Prenderò ciò che il destino offre, senza affannarmi."
       ],
@@ -1343,7 +1343,7 @@
       ],
       "familiar": [
         "Le nostre strade dovevano incrociarsi da sempre.",
-        "Quel viaggiatore e io, scritto, chiaramente.",
+        "Quel viaggiatore e io, era scritto, chiaramente.",
         "Il destino me li riporta sempre. E sia."
       ]
     }
@@ -1358,8 +1358,8 @@
     ],
     "need": {
       "sleep": [
-        "Finalmente una scusa per restare solo, a letto.",
-        "Sono esausto e quindi ancora più scontroso.",
+        "Finalmente una scusa per restare {g:solo|sola|solo}, a letto.",
+        "Sono {g:esausto|esausta|esausto} e quindi ancora più {g:scontroso|scontrosa|scontroso}.",
         "Non svegliarmi. Non pensarci nemmeno."
       ],
       "hunger": [
@@ -1370,7 +1370,7 @@
       "work": [
         "Lavoro. Che gioia. Non vedo l'ora.",
         "Un altro turno con questi idioti.",
-        "Finiamola con questa miseria e basta."
+        "Leviamoci di torno questa rottura e basta."
       ],
       "leisure": [
         "'Tempo libero.' Libero di scocciarmi altrove.",
@@ -1383,7 +1383,7 @@
         "Bah, forse. Se è facile."
       ],
       "hygiene": [
-        "Uffa, va bene, mi lavo. Contento ora?",
+        "Uffa, va bene, mi lavo. Felice ora?",
         "Puzzo e la cosa mi infastidisce.",
         "Sbrighiamoci, come tutto il resto."
       ],
@@ -1403,12 +1403,12 @@
         "Merito un po' di pace, per una volta."
       ],
       "social": [
-        "Gente? Uff. Ma immagino di essere solo.",
+        "Gente? Uff. Ma immagino di sentirmi {g:solo|sola|solo}.",
         "Va bene, parlerò. Brevemente. Non insistere.",
         "Forse oggi una persona non mi irriterà."
       ],
       "idle": [
-        "Bah. Tranquillo per una volta. Non rovinarlo.",
+        "Bah. Tutto tranquillo, per una volta. Non rovinarlo.",
         "Come vuoi. Basta che nessuno mi scocci.",
         "Ovvio che non va niente bene. Tipico."
       ],
@@ -1424,12 +1424,12 @@
       "Non li abbandonerò.",
       "Per i miei amici, qualsiasi cosa.",
       "Devo mantenere la mia promessa.",
-      "Insieme, non importa cosa.",
+      "Insieme, qualunque cosa accada.",
       "La mia lealtà è il mio vincolo."
     ],
     "need": {
       "sleep": [
-        "Riposo, poi all'alba sarò pronto per loro.",
+        "Riposo, poi all'alba sarò {g:pronto|pronta|pronto} per loro.",
         "Dormo ora, così domani potrò fare la guardia.",
         "Anche i devoti hanno bisogno di riposo."
       ],
@@ -1445,7 +1445,7 @@
       ],
       "leisure": [
         "Un po' di riposo, poi vado a sentire gli amici.",
-        "Il tempo libero è meglio con chi mi fido.",
+        "Il tempo libero è speso meglio con chi ha la mia fiducia.",
         "Terrò l'orecchio teso, non si sa mai."
       ],
       "crime": [
@@ -1460,7 +1460,7 @@
       ],
       "money": [
         "Mi serve abbastanza per sostenere i miei.",
-        "I fondi sono bassi; provvederò per il gruppo.",
+        "I fondi sono bassi; provvederò per il Party.",
         "Darei la mia ultima moneta a un amico in difficoltà."
       ],
       "safety": [
@@ -1476,10 +1476,10 @@
       "social": [
         "Dovrei sentire i miei amici.",
         "Il tempo con gli alleati non è mai sprecato.",
-        "Mi manca la compagnia di chi mi fido."
+        "Mi manca la compagnia di chi ha la mia fiducia."
       ],
       "idle": [
-        "Resterò pronto, se qualcuno avesse bisogno di me.",
+        "Resterò {g:pronto|pronta|pronto}, se qualcuno avesse bisogno di me.",
         "Va tutto bene con i miei. Bene.",
         "Mantengo la fede, in silenzio, sempre."
       ],
@@ -1521,11 +1521,11 @@
       ],
       "crime": [
         "No, il coraggio non è incoscienza.",
-        "Affronto il pericolo, non lo creo per gli altri.",
+        "Affronto il pericolo; crearlo per gli altri è un'altra faccenda.",
         "Non c'è onore nel rubare."
       ],
       "hygiene": [
-        "Lavata veloce, non posso lanciarmi all'attacco sporco.",
+        "Lavata veloce, non posso andare all'attacco {g:sporco|sporca|sporco}.",
         "Mi pulisco e mi raddrizzo.",
         "Un soldato si tiene in ordine."
       ],
@@ -1535,14 +1535,14 @@
         "Il denaro è solo un'altra montagna da scalare."
       ],
       "safety": [
-        "Nascondersi va contro la mia natura, ma ora è furbo.",
+        "Nascondersi va contro la mia natura, ma ora conviene.",
         "Sto basso, poi lo affronto alle mie condizioni.",
         "Ritirarsi non è arrendersi; tornerò."
       ],
       "comfort": [
         "Una solida base a cui tornare dopo la battaglia.",
         "Un posto dove far riposare queste ossa segnate.",
-        "Mi sono guadagnato un tetto degno."
+        "Mi sono {g:guadagnato|guadagnata|guadagnato} un tetto degno."
       ],
       "social": [
         "Accoglierei volentieri un compagno per la strada.",
@@ -1551,8 +1551,8 @@
       ],
       "idle": [
         "Tranquillo per ora, me lo godo.",
-        "Pronto a qualunque cosa esca dall'ombra.",
-        "La calma prima della prossima prova. Sono saldo."
+        "{g:Pronto|Pronta|Pronto} a qualunque cosa esca dall'ombra.",
+        "La calma prima della prossima prova. Sono {g:saldo|salda|saldo}."
       ],
       "familiar": [
         "Quel viaggiatore non batte ciglio, lo rispetto.",
@@ -1563,7 +1563,7 @@
   },
   "timid": {
     "thoughts": [
-      "Oh, cielo. Sembra male.",
+      "Oh, cielo. Si mette male.",
       "Preferirei di no...",
       "Forse qualcun altro può occuparsene?",
       "Voglio andare a casa.",
@@ -1588,7 +1588,7 @@
       "leisure": [
         "Un posticino tranquillo, lontano dalla folla.",
         "Vorrei rilassarmi, in disparte.",
-        "Il tempo libero è più bello quando sono solo."
+        "Il tempo libero è più bello quando sono {g:solo|sola|solo}."
       ],
       "crime": [
         "Oh no, no, non potrei mai.",
@@ -1596,7 +1596,7 @@
         "Non posso, tremo solo a pensarci."
       ],
       "hygiene": [
-        "Mi laverò in silenzio, dove è vuoto.",
+        "Mi laverò in silenzio, dove non c'è nessuno.",
         "Spero nessuno noti che ne avevo bisogno.",
         "Solo una lavata veloce, poi di nuovo a nascondermi."
       ],
@@ -1606,9 +1606,9 @@
         "Magari un lavoretto piccolo e tranquillo."
       ],
       "safety": [
-        "Sì, nascondersi. Nascondersi è bene. Stai piccolo.",
+        "Sì, nascondersi. Nascondersi è bene. Fatti piccolo.",
         "Ti prego, che non mi trovino.",
-        "Resterò fermo, fermissimo."
+        "Resterò {g:fermo|ferma|fermo}, {g:fermissimo|fermissima|fermissimo}."
       ],
       "comfort": [
         "Un posticino sicuro tutto mio sarebbe il paradiso.",
@@ -1618,7 +1618,7 @@
       "social": [
         "Vorrei un amico, se è gentile...",
         "Forse dirò ciao. Forse.",
-        "Parlare fa paura, ma sono solo."
+        "Parlare fa paura, ma sono {g:solo|sola|solo}."
       ],
       "idle": [
         "È tranquillo. Cioè... bene, credo.",
@@ -1627,7 +1627,7 @@
       ],
       "familiar": [
         "Oh, quel viaggiatore. Non fa così paura.",
-        "Mi sento un po' più coraggioso quando ci sono loro.",
+        "Mi sento un po' più {g:coraggioso|coraggiosa|coraggioso} quando ci sono loro.",
         "Forse... forse posso fidarmi di loro."
       ]
     }
@@ -1643,7 +1643,7 @@
     "need": {
       "sleep": [
         "Un sonno lungo e lussuoso, sì, grazie.",
-        "Mi sprofonderò nel letto più morbido che trovo.",
+        "Sprofonderò nel letto più morbido che trovo.",
         "Dormire è solo un altro piacere da assaporare."
       ],
       "hunger": [
@@ -1657,7 +1657,7 @@
         "Finiamola, e poi a divertirsi."
       ],
       "leisure": [
-        "Finalmente, tempo per indulgere!",
+        "Finalmente, tempo per concedermi qualche vizio!",
         "Vino, musica, buona compagnia, datemi tutto.",
         "Ecco a cosa serve la vita!"
       ],
@@ -1667,9 +1667,9 @@
         "Perché privarmi? Prenditi il piacere."
       ],
       "hygiene": [
-        "Un lungo bagno caldo suona divino.",
+        "Un lungo bagno caldo sarebbe divino.",
         "Mi coccolerò un po', perché no?",
-        "Pulito e profumato, come piace a me."
+        "{g:Pulito|Pulita|Pulito} e {g:profumato|profumata|profumato}, come piace a me."
       ],
       "money": [
         "A corto? Ma la bella vita non è economica!",
@@ -1677,7 +1677,7 @@
         "Vale ogni moneta, finché dura."
       ],
       "safety": [
-        "Stare nascosto? Ma comodamente, insisto.",
+        "Stare {g:nascosto|nascosta|nascosto}? Ma comodamente, insisto.",
         "Mi nasconderò in un posto con del buon vino.",
         "Persino nascondersi dev'essere piacevole."
       ],
@@ -1708,14 +1708,14 @@
       "Meh.",
       "Non mi interessa.",
       "Come vuoi.",
-      "È ancora finita?",
+      "È già finita?",
       "Non importa."
     ],
     "need": {
       "sleep": [
-        "Eh, tanto vale dormire. Niente altro da fare.",
-        "Stanco. Come vuoi. Mi sdraio.",
-        "Dormi, sveglia, ripeti. Va bene."
+        "Eh, tanto vale dormire. Nient'altro da fare.",
+        "{g:Stanco|Stanca|Stanco}. Come vuoi. Mi sdraio.",
+        "Dormire, svegliarsi, ripetere. Va bene."
       ],
       "hunger": [
         "Immagino dovrei mangiare. O no.",
@@ -1725,7 +1725,7 @@
       "work": [
         "Lavoro. Di nuovo. Sì, come vuoi.",
         "Farò il turno. Non importa come.",
-        "Timbra, smonta. Come sempre."
+        "Timbro all'entrata, timbro all'uscita. Come sempre."
       ],
       "leisure": [
         "Tempo libero. Mi... siederò, probabilmente.",
@@ -1797,21 +1797,21 @@
     ],
     "bank": [
       "Questo dovrebbe bastarmi.",
-      "Meglio prevenire, nel caveau finisce.",
-      "Le banche. Non puoi viverci, non puoi vivere senza."
+      "Meglio prevenire: finisce nel caveau.",
+      "Le banche. Non si vive con loro, né senza di loro."
     ],
     "real_estate_office": [
       "La proprietà si ripaga davvero da sola.",
       "Un altro mese, un altro affitto incassato.",
-      "Possedere terra è stata la cosa più furba che abbia mai fatto."
+      "Possedere terreni è stata la cosa più furba che abbia mai fatto."
     ],
     "stock_exchange": [
-      "Come è venuto, se n'è andato.",
+      "Come vengono, così vanno.",
       "Il mercato dà e il mercato toglie.",
       "Lo recupererò la prossima volta."
     ],
     "fast_travel_terminal": [
-      "Non c'è niente come vedere un posto nuovo.",
+      "Non c'è niente di meglio che vedere un posto nuovo.",
       "Viaggiare schiarisce le idee.",
       "Chissà cosa c'è là fuori oggi."
     ],

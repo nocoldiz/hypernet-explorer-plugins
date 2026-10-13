@@ -564,7 +564,11 @@
   function isCreationScene() {
     const scene = typeof SceneManager !== "undefined" ? SceneManager._scene : null;
     const name = scene && scene.constructor ? scene.constructor.name : "";
-    return /CharacterCreation|CreateCreature|ClassSelect|CharacterPreset/i.test(name);
+    if (/CharacterCreation|CreateCreature|ClassSelect|CharacterPreset/i.test(name)) return true;
+    // Detailed mode edits the member inside the Empathize panel: still
+    // creation, so a class changed there settles the last class's kit too.
+    const full = window.CharacterCreationFull;
+    return /NPCEmpathize/.test(name) && !!(full && full.isEditing && full.isEditing());
   }
 
   function grantEntryData(kind, id) {

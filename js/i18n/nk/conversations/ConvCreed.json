@@ -1,0 +1,672 @@
+{
+  "_comment": "Ideology framing layered on top of the personality voice (NPCConversation II.9 CREED VOICE). An NPC's creed is folded into one family by its axes (CreedVoice.ideologyFamily); a few creeds have a special bank that wins over their family. flavour is a stray aside; the other pools frame one topic. Every line is a short sentence appended after what was already said.",
+  "family": {
+    "left": {
+      "flavour": [
+        "{DA WORKERS BUILT DIS TOWN|WORKERS BUILT ALL OF DIS}, REMEMBER DAT!",
+        "{SOLIDARITY|SOLIDARITY, COMRADE}. IT IZ DA ONLY TINK DAT WORKS!",
+        "DA BOSSES {NEVER|NO} LOSE SLEEP OVER ANY OF IT!"
+      ],
+      "politics": [
+        "PARLIAMENT IZ A CLUB FOR DA OWNERS!",
+        "{NATIONALISE IT|PUT IT IN COMMON HANDS}, ALL OF IT!"
+      ],
+      "work": [
+        "{JOIN DA UNION|GET A UNION CARD}, DAT IZ ME ADVICE!",
+        "DEY PAY US IN CRUMBS AN' CALL IT A WAGE!"
+      ],
+      "war": [
+        "RICH MEN'S WAR, POOR MEN'S BLOOD!",
+        "DA WORKERS OF {enemy} IZ NO ME BAD 'UN!"
+      ],
+      "family": [
+        "A FAMILY NEEDS A WAGE AN' A FREE CLINIC. SERMONS CAN WAIT!",
+        "EVERY CHILD DESERVES A SCHOOL AN' A HOT MEAL!"
+      ],
+      "goblins": [
+        "EVEN DA GOBLINS IZ RULED BY A CHIEF AN' HIS CRONIES!",
+        "DA HORDE IZ WHAT HAPPENS WHEN MIGHT OWNS EVERYTINK!"
+      ],
+      "money": [
+        "MONEY IZ THEFT WIT BETTER TAILORIN'!",
+        "{RENTS|PRICES} UP, WAGES FLAT. FUNNY, DAT!"
+      ],
+      "elections": [
+        "VOTE LEFT, DEN KEEP ORGANISIN'!",
+        "WHOEVER WINS, DA STRIKE FUND STAYS FULL!"
+      ]
+    },
+    "centreLeft": {
+      "flavour": [
+        "A FAIR DEAL FOR EVERYONE, DAT IZ ALL ME ASK!",
+        "{REFORM|STEADY REFORM}, ONE STEP AT A TIME!",
+        "GOOD SCHOOLS AN' A DECENT PENSION. IZ DAT TOO MUCH?"
+      ],
+      "politics": [
+        "WE NEED A GOVERNMENT DAT {LISTENS|ACTUALLY LISTENS}!",
+        "COMPROMISE NO IZ A DIRTY WORD!"
+      ],
+      "work": [
+        "FAIR PAY FOR A FAIR DAY.",
+        "A MINIMUM WAGE NEVER RUINED ANYBODY!"
+      ],
+      "war": [
+        "DIPLOMACY FIRST, ALWAYS.",
+        "SEND DA ONU AN' KEEP DA TANKS IN DA BARRACKS!"
+      ],
+      "family": [
+        "{CHILDCARE|PARENTAL LEAVE} SHOULD BE A RIGHT!",
+        "A FAMILY NO SHOULD CHOOSE BETWEEN RENT AN' BREAD!"
+      ],
+      "goblins": [
+        "WE SHOULD TAKE IN DA REFUGEES FROM DA HORDE!",
+        "ALLIANCES STOP A HORDE BETTER DEN ANY WALL!"
+      ],
+      "money": [
+        "TAX DA RICH A LIL', HELP DA REST A LOT!",
+        "PUBLIC SERVICES IZ MONEY WELL SPENT!"
+      ],
+      "elections": [
+        "EVERY VOTE COUNTS. ESPECIALLY ME!",
+        "TURNOUT WINS ELECTIONS. SLOGANS COUNT FOR LIL'!"
+      ]
+    },
+    "centre": {
+      "flavour": [
+        "{LETZ LOOK AT DA NUMBERS|DA NUMBERS NEVER LIE}!",
+        "MODERATION IN ALL TINKZ.",
+        "BOTH SIDES HAB A POINT, AS USUAL!"
+      ],
+      "politics": [
+        "COMPETENT PEOPLE IN CHARGE, DAT IZ ALL ME WANT!",
+        "LESS SHOUTIN', MORE PLANNIN'!"
+      ],
+      "work": [
+        "EFFICIENCY PAYS EVERYONE IN DA END!",
+        "SKILLS. TRAININ'. DAT IZ DA ANSWER!"
+      ],
+      "war": [
+        "WAR IZ BAD FOR TRADE AN' WORSE FOR PEOPLE!",
+        "SANCTIONS FIRST, DEN TALKS!"
+      ],
+      "family": [
+        "FAMILIES NEED STABILITY MORE DEN SPEECHES!",
+        "GOOD PLANNIN' STARTS AT DA KITCHEN TABLE!"
+      ],
+      "goblins": [
+        "A STABLE BORDER IZ A SENSIBLE BORDER!",
+        "DA HORDE IZ A PROBLEM TA MANAGE WIT A COOL HEAD!"
+      ],
+      "money": [
+        "A BALANCED BUDGET HELPS EVERYONE!",
+        "MARKETS WORK, MOSTLY, WIT A REFEREE!"
+      ],
+      "elections": [
+        "ME WILL VOTE FOR WHOEVER HAB A PLAN!",
+        "READ DA MANIFESTOS. NOBODY DOES!"
+      ]
+    },
+    "right": {
+      "flavour": [
+        "{HARD WORK|HARD WORK AN' COMMON SENSE} BUILT DIS COUNTRY!",
+        "TINKZ WAZ BETTER WHEN PEOPLE KNEW DEY PLACE!",
+        "{TRADITION|TRADITION MATTERS}. SOMEBODY HAB TA SAY IT!"
+      ],
+      "politics": [
+        "LESS GOVERNMENT, LOWER TAXES!",
+        "DA STATE SHOULD KEEP ITS NOSE OUT OF ME BUSINESS!"
+      ],
+      "work": [
+        "NOBODY EVER GOT RICH WAITIN' FOR HANDOUTS!",
+        "AN HONEST DAY'S WORK, DAT IZ DA SECRET!"
+      ],
+      "war": [
+        "STRENGTH KEEPS DA PEACE.",
+        "A STRONG ARMY MEANS NOBODY TRIES IT!"
+      ],
+      "family": [
+        "DA FAMILY IZ DA BEDROCK OF EVERYTINK!",
+        "CHILDREN NEED DISCIPLINE AN' CHURCH ON SUNDAY!"
+      ],
+      "goblins": [
+        "SECURE DA BORDER FIRST, ASK QUESTIONS LATER!",
+        "DA HORDE RESPECTS ONE TINK: STRENGTH!"
+      ],
+      "money": [
+        "TAXES IZ THEFT, POLITELY COLLECTED!",
+        "STASH YA COINS. DA BANK OF MUM AN' DAD NO WILL LAST!"
+      ],
+      "elections": [
+        "VOTE FOR ORDER. LEAVE DA PROMISES TA DA OTHERS!",
+        "ANYONE BUT DA SPENDERS."
+      ]
+    },
+    "nationalist": {
+      "flavour": [
+        "{OUR NATION FIRST|DA NATION COMES FIRST}. ALWAYS!",
+        "OUR FLAG HAB SEEN WORSE DEN DIS!",
+        "FOREIGN IDEAS, FOREIGN TROUBLE!"
+      ],
+      "politics": [
+        "WE NEED A STRONG HAND AT DA TOP!",
+        "ENOUGH TALK. LEADERSHIP."
+      ],
+      "work": [
+        "JOBS FOR OUR OWN PEOPLE FIRST!",
+        "BUY LOCAL. KEEP DA MONEY HERE!"
+      ],
+      "war": [
+        "EVERY INCH OF OUR SOIL IZ SACRED!",
+        "LET {enemy} COME. WE WILL BE READY!"
+      ],
+      "family": [
+        "BIG FAMILIES MAKE A STRONG NATION!",
+        "TEACH DA CHILDREN OUR HISTORY, ALL OF IT!"
+      ],
+      "goblins": [
+        "NO ONE GOBLIN CROSSES OUR BORDER!",
+        "DA HORDE WILL BREAK ON US!"
+      ],
+      "money": [
+        "OUR MONEY STAYS IN OUR BANKS!",
+        "FOREIGN SPECULATORS IZ BLEEDIN' US DRY!"
+      ],
+      "elections": [
+        "VOTE FOR DA NATION, ABOVE EVERY PARTY!",
+        "A TRUE PATRIOT KNOWS WHERE TA PUT DA CROSS!"
+      ]
+    },
+    "theocratic": {
+      "flavour": [
+        "{HEAVEN|DA HEAVENS} WATCH OVER DIS STREET!",
+        "PRAY FIRST, DEN ACT.",
+        "{FAITH|FAITH, MATE}. IT CARRIES YOU!"
+      ],
+      "politics": [
+        "NO LAW STANDS ABOVE DA DIVINE!",
+        "DA CLERGY SHOULD GUIDE DA STATE!"
+      ],
+      "work": [
+        "WORK IZ PRAYER WIT YA HANDS!",
+        "REST ON DA HOLY DAY, WHATEVER DA BOSS SAYS!"
+      ],
+      "war": [
+        "MAY HEAVEN JUDGE {enemy}.",
+        "A JUST WAR IZ FOUGHT WIT A CLEAN HEART!"
+      ],
+      "family": [
+        "A BLESSED HOME IZ A HAPPY HOME!",
+        "CHILDREN IZ A GIFT FROM ABOVE!"
+      ],
+      "goblins": [
+        "DA HORDE IZ HEATHENS. PRAY FOR DEM, AN' BAR DA DOOR!",
+        "EVEN GOBLINS HAB SOULS, DA PRIEST SAYS. ME DOUBT IT!"
+      ],
+      "money": [
+        "TITHE FIRST, DEN SPEND.",
+        "GOLD NO WILL FOLLOW YOU TA HEAVEN!"
+      ],
+      "elections": [
+        "VOTE AS YA CONSCIENCE AN' YA PRIEST TELL YOU!",
+        "HEAVEN KEEPS ITS OWN COUNT. WE NEED BALLOTS!"
+      ]
+    },
+    "monarchist": {
+      "flavour": [
+        "{LONG LIVE|GOD STASH} DA CROWN!",
+        "A PROPER COURT GIVES A COUNTRY DIGNITY!",
+        "BLOOD TELLS, IN DA END."
+      ],
+      "politics": [
+        "PARLIAMENTS COME AN' GO. DA CROWN REMAINS!",
+        "A KING ABOVE DA PARTIES, DAT IZ STABILITY!"
+      ],
+      "work": [
+        "SERVE WELL AN' BE REWARDED!",
+        "ROYAL WARRANT ON DA DOOR, DAT IZ QUALITY!"
+      ],
+      "war": [
+        "FOR DA CROWN AN' DA OLD BANNERS!",
+        "DA ROYAL GUARD WILL SEE TA {enemy}!"
+      ],
+      "family": [
+        "GOOD FAMILIES KEEP GOOD LINEAGES!",
+        "EVERY FAMILY SHOULD KNOW ITS COAT OF ARMS!"
+      ],
+      "goblins": [
+        "NO GOBLIN CHIEF WILL EVER SIT ON A THRONE!",
+        "DA HORDE HAB NO NOBILITY, ONLY BRUTES!"
+      ],
+      "money": [
+        "OLD MONEY KNOWS HOW TA BEHAVE!",
+        "DA ROYAL MINT NEVER LIES."
+      ],
+      "elections": [
+        "ELECT WHOEVER YOU LIKE. DA CROWN REMAINS!",
+        "VOTIN' IZ A COURTESY DA CROWN ALLOWS!"
+      ]
+    },
+    "anarchist": {
+      "flavour": [
+        "{NO GODS, NO MASTERS|NO MASTERS}!",
+        "NOBODY NEEDS A BOSS TA BE DECENT!",
+        "{MUTUAL AID|HELP YA NEIGHBOUR}. DAT IZ ALL SOCIETY IZ!"
+      ],
+      "politics": [
+        "EVERY GOVERNMENT IZ A GANG WIT PAPERWORK!",
+        "BURN DA RULEBOOK, KEEP DA KINDNESS!"
+      ],
+      "work": [
+        "WORKERS' COUNCILS WOULD RUN DIS BETTER IN A WEEK!",
+        "ME BOSS PRODUCES NUTTIN' BUT MEMOS!"
+      ],
+      "war": [
+        "DEY WARS, OUR DEAD.",
+        "DESERT, ALL OF YOU. GO HOME!"
+      ],
+      "family": [
+        "FAMILIES IZ CHOSEN AS MUCH AS BORN!",
+        "RAISE CHILDREN FREE, FIRST OF ALL!"
+      ],
+      "goblins": [
+        "DA HORDE AN' DA STATE HAB DA SAME CHIEF!",
+        "FREE DA GOBLINS FROM DEY CHIEFS TOO!"
+      ],
+      "money": [
+        "MONEY IZ A LEASH.",
+        "SHARE IT OUT AN' SEE WHO STARVES!"
+      ],
+      "elections": [
+        "IF VOTIN' CHANGED ANYTINK, DEY'D BAN IT!",
+        "ME IZ SPOILIN' ME BALLOT. AGAIN!"
+      ]
+    },
+    "militarist": {
+      "flavour": [
+        "{DISCIPLINE|DISCIPLINE AN' ORDER}, DAT IZ WHAT IZ MISSIN'!",
+        "A SOLDIER'S LIFE TEACHES YOU EVERYTINK!",
+        "STAND UP STRAIGHT WHEN YOU TALK TA ME!"
+      ],
+      "politics": [
+        "GENERALS WOULD RUN DIS BETTER!",
+        "PARLIAMENT TALKS, DA ARMY ACTS!"
+      ],
+      "work": [
+        "EVERY JOB IZ EASIER WIT A DRILL SERGEANT!",
+        "PUNCTUAL, POLISHED, PREPARED!"
+      ],
+      "war": [
+        "VICTORY OVER {enemy}, WHATEVER DA COST!",
+        "DA ARMY WILL FINISH DIS."
+      ],
+      "family": [
+        "ME KIDS WILL SERVE, LIKE ME DID!",
+        "A HOUSEHOLD RUNS ON DISCIPLINE!"
+      ],
+      "goblins": [
+        "GIVE ME A BATTALION AN' DA HORDE IZ HISTORY!",
+        "GOBLINS FIGHT DIRTY. SO SHOULD WE!"
+      ],
+      "money": [
+        "SPEND IT ON DA ARMY FIRST!",
+        "MILITARY BUDGET, DA ONLY BUDGET DAT MATTERS!"
+      ],
+      "elections": [
+        "VOTE FOR WHOEVER FUNDS DA ARMY!",
+        "A GENERAL ON DA BALLOT, DAT IZ WHAT WE NEED!"
+      ]
+    },
+    "mystic": {
+      "flavour": [
+        "DA STARS {IZ RESTLESS|SHIFTED} TONIGHT!",
+        "{DA LEYLINES HUM|EVERYTINK IZ CONNECTED}!",
+        "DERE IZ FORCES NOBODY TALKS 'BOUT!"
+      ],
+      "politics": [
+        "GOVERNMENTS RISE AN' FALL WIT DA MOON!",
+        "DA COUNCIL MEETS UNDER DA WRONG SIGN!"
+      ],
+      "work": [
+        "ME TAROT SAID DIS JOB NO WOULD LAST!",
+        "WORK WIT INTENTION, DA REST FOLLOWS!"
+      ],
+      "war": [
+        "{enemy} WAZ BORN UNDER A BAD SIGN!",
+        "DA OMENS WAZ CLEAR, AN' NOBODY LISTENED!"
+      ],
+      "family": [
+        "ME GRANDMOTHER READ OUR FORTUNES OVER TEA!",
+        "EVERY FAMILY HAB A GUARDIAN SPIRIT!"
+      ],
+      "goblins": [
+        "DA HORDE CARRIES AN OLD CURSE!",
+        "GOBLIN SHAMANS KNOW TINKZ WE HAB FORGOTTEN!"
+      ],
+      "money": [
+        "MONEY FLOWS LIKE DA TIDES!",
+        "A COIN FOUND FACE UP IZ A SIGN!"
+      ],
+      "elections": [
+        "VOTE WHEN DA MOON IZ WAXIN'!",
+        "DA RUNES FAVOUR DA UNDERDOG!"
+      ]
+    },
+    "horde": {
+      "flavour": [
+        "{STRONG EAT FIRST|DA STRONG EAT FIRST}. DAT IZ DA LAW!",
+        "LOUD AN' PROUD, DAT IZ DA WAY!",
+        "{WAAAGH|HAH}! GOOD DAY FOR IT!"
+      ],
+      "politics": [
+        "DA BIGGEST CHIEF MAKES DA RULES!",
+        "TALK IZ FOR LOSERS. SHOUT IZ FOR CHIEFS!"
+      ],
+      "work": [
+        "WORK HARD, FIGHT HARDER.",
+        "LOOT IZ HONEST PAY."
+      ],
+      "war": [
+        "CRUSH {enemy}! TAKE DEY STUFF!",
+        "WAR IZ DA BEST PARTY."
+      ],
+      "family": [
+        "MANY KIDS, BIG CLAN.",
+        "CLAN FIRST, ALWAYS."
+      ],
+      "goblins": [
+        "DA HORDE IZ FAMILY.",
+        "GOBLINS KNOW HOW TA LIVE."
+      ],
+      "money": [
+        "SHINY TINKZ IZ FOR DA STRONG!",
+        "TAKE IT, IT IZ YA NOW."
+      ],
+      "elections": [
+        "VOTIN'? JUST PUNCH DA OTHER ONE!",
+        "BIGGEST ONE WINS. SIMPLE."
+      ]
+    },
+    "alien": {
+      "flavour": [
+        "{FASCINATIN'|HOW QUAINT}, DEZE LOCAL CUSTOMS!",
+        "ON ME WORLD DIS WOULD BE A GREETIN'!",
+        "YA SPECIES {SLEEPS|EATS} SO OFTEN!"
+      ],
+      "politics": [
+        "YA GOVERNMENTS IZ ADORABLE!",
+        "ONE PLANET, SO MANY FLAGS. INEFFICIENT!"
+      ],
+      "work": [
+        "YOU TRADE YA TIME FOR TOKENS. CURIOUS!",
+        "LABOUR, BY HAND? HOW PRIMITIVE. HOW CHARMIN'!"
+      ],
+      "war": [
+        "YOU FIGHT OVER LINES ON A MAP!",
+        "{enemy} AN' YOU SHARE A PLANET. SHARE IT!"
+      ],
+      "family": [
+        "HUMAN CHILDREN IZ SO NOISY AN' SO FRAGILE!",
+        "YA FAMILIES IZ SO LIL'."
+      ],
+      "goblins": [
+        "DA GOBLINS IZ DA MOST HONEST OF YOU!",
+        "DA HORDE AT LEAST SAYS WHAT IT WANTS!"
+      ],
+      "money": [
+        "PAPER DAT MEANS FOOD. REMARKABLE!",
+        "YA ECONOMY IZ A GROUP HALLUCINATION!"
+      ],
+      "elections": [
+        "YOU CHOOSE RULERS BY COUNTIN' PAPER. DELIGHTFUL!",
+        "ME WOULD VOTE, BUT ME IZ NO TECHNICALLY FROM HERE!"
+      ]
+    }
+  },
+  "special": {
+    "juche": {
+      "flavour": [
+        "SELF-RELIANCE {ABOVE ALL|IN EVERYTINK}!",
+        "DA GREAT LEADER FORESAW DIS DAY!",
+        "WE NEED NUTTIN' FROM ANYONE!"
+      ],
+      "politics": [
+        "DA PARTY AN' DA PEOPLE IZ ONE HEART!",
+        "ONLY DA LEADER'S LINE IZ CORRECT!"
+      ],
+      "work": [
+        "EVERY SHIFT IZ A BATTLE FOR DA REVOLUTION!",
+        "DA QUOTA WILL BE EXCEEDED, AS ALWAYS!"
+      ],
+      "war": [
+        "SONGUN: DA ARMY COMES FIRST, DEN EVERYTINK ELSE!",
+        "{enemy} TREMBLES BEFORE OUR RESOLVE!"
+      ],
+      "family": [
+        "EVERY FAMILY HANGS DA LEADER'S PORTRAIT WIT PRIDE!",
+        "OUR CHILDREN SING FOR DA LEADER BEFORE BREAKFAST!"
+      ],
+      "goblins": [
+        "EVEN DA HORDE COULD LEARN SELF-RELIANCE FROM US!",
+        "GOBLINS? OUR BORDER GUARDS WOULD NO BLINK!"
+      ],
+      "money": [
+        "WE GROW OUR OWN RICE AN' BUILD OUR OWN TRACTORS!",
+        "FOREIGN MONEY CORRUPTS DA REVOLUTIONARY SPIRIT!"
+      ],
+      "elections": [
+        "ONE CANDIDATE, ONE HEART, ONE HUNDRED PERCENT!",
+        "TURNOUT WILL BE COMPLETE. IT ALWAYS IZ!"
+      ]
+    },
+    "orthodox_communist": {
+      "flavour": [
+        "AS DA CLASSICS SAY, HISTORY HAB ITS LAWS!",
+        "{COMRADE|MATE}, DA DIALECTIC NO LIE!",
+        "DA FIVE-YEAR PLAN IZ ON SCHEDULE!"
+      ],
+      "politics": [
+        "DA PARTY LINE IZ CLEAR, AN' SO IZ ME CONSCIENCE!",
+        "REVISIONISTS WILL BE DA DEATH OF DA REVOLUTION!"
+      ],
+      "work": [
+        "STAKHANOV WOULD HAB FINISHED DIS BY NOON!",
+        "NORMS IZ DERE TA BE BEATEN!"
+      ],
+      "war": [
+        "IMPERIALISM ALWAYS ENDS IN WAR. READ YA LENIN!",
+        "DA RED ARMY HAB SEEN OFF WORSE DEN {enemy}!"
+      ],
+      "family": [
+        "DA COLLECTIVE RAISES DA CHILD AS MUCH AS DA PARENTS!",
+        "ME GRANDFATHER BUILT DA TRACTOR FACTORY!"
+      ],
+      "goblins": [
+        "DA HORDE IZ FEUDALISM WIT FANGS!",
+        "EVEN GOBLINS NEED A VANGUARD PARTY!"
+      ],
+      "money": [
+        "PRIVATE PROFIT IZ ORGANISED THEFT!",
+        "DA STATE BANK IZ DA PEOPLE'S BANK!"
+      ],
+      "elections": [
+        "BOURGEOIS ELECTIONS, BOURGEOIS CIRCUS!",
+        "DA SOVIETS DECIDE. DA BALLOT BOX IZ A DETAIL!"
+      ]
+    },
+    "kemalist": {
+      "flavour": [
+        "PEACE AT HOME, PEACE IN DA WORLD!",
+        "{SCIENCE|REASON AN' SCIENCE} IZ DA TRUEST GUIDES!",
+        "DA REPUBLIC STANDS ON SIX ARROWS!"
+      ],
+      "politics": [
+        "KEEP RELIGION OUT OF DA STATE!",
+        "DA REPUBLIC MUST BE DEFENDED, FROM ALL SIDES!"
+      ],
+      "work": [
+        "MODERN INDUSTRY, MODERN NATION!",
+        "EVERY SCHOOL TEACHER IZ A SOLDIER OF PROGRESS!"
+      ],
+      "war": [
+        "DA ARMY GUARDS DA WHOLE REPUBLIC, ABOVE EVERY FACTION!",
+        "INDEPENDENCE IZ NO NEGOTIABLE, {enemy} SHOULD KNOW!"
+      ],
+      "family": [
+        "OUR DAUGHTERS STUDY AN' VOTE, AS DEY SHOULD!",
+        "EDUCATE DA CHILDREN, AN' DA NATION FOLLOWS!"
+      ],
+      "goblins": [
+        "SUPERSTITION BREEDS HORDES. REASON STOPS DEM!",
+        "DA HORDE IZ WHAT BACKWARDNESS LOOKS LIKE!"
+      ],
+      "money": [
+        "A NATIONAL ECONOMY FOR A NATIONAL PEOPLE!",
+        "BUILD OUR OWN RAILWAYS, OUR OWN MILLS!"
+      ],
+      "elections": [
+        "DA BALLOT IZ DA REPUBLIC'S HEART!",
+        "DA VOTE GOES TA DA REPUBLIC. MOSQUE AN' PASHA STAY OUT OF IT!"
+      ]
+    },
+    "pacifist_theocratic": {
+      "flavour": [
+        "PEACE BE WIT YOU, AN' WIT YA HOUSE!",
+        "{TURN DA OTHER CHEEK|FORGIVE, AN' KEEP FORGIVIN'}!",
+        "NO BLADE EVER HEALED ANYONE!"
+      ],
+      "politics": [
+        "GOVERN WIT MERCY, OR NO AT ALL!",
+        "DA HOLY COUNCIL FORBIDS ALL VIOLENCE!"
+      ],
+      "work": [
+        "HONEST WORK IZ A QUIET PRAYER!",
+        "SHARE DA HARVEST WIT WHOEVER IZ HUNGRY!"
+      ],
+      "war": [
+        "ME PRAY FOR DA SOLDIERS OF {enemy} AS WELL!",
+        "EVERY WAR IZ A SIN AGAINST HEAVEN!"
+      ],
+      "family": [
+        "A GENTLE HOME RAISES GENTLE CHILDREN!",
+        "WE NEVER RAISE A HAND TA A CHILD!"
+      ],
+      "goblins": [
+        "EVEN DA HORDE DESERVES OUR PRAYERS!",
+        "FEED DA GOBLIN AT YA GATE, AN' HE MAY LEAVE IN PEACE!"
+      ],
+      "money": [
+        "GIVE FREELY. HEAVEN KEEPS DA ACCOUNTS!",
+        "WEALTH IZ A TEST TA BE PASSED!"
+      ],
+      "elections": [
+        "ME VOTE FOR WHOEVER WANTS FEWER SOLDIERS!",
+        "PRAY BEFORE YOU VOTE, AN' VOTE FOR PEACE!"
+      ]
+    },
+    "trolling_humans": {
+      "flavour": [
+        "{LOL|HEH}, HUMANS.",
+        "ME TOLD A HUMAN DEY SHOELACE WAZ UNTIED. IT NO WAZ!",
+        "YA FACES WHEN YOU IZ CONFUSED. PRICELESS!"
+      ],
+      "politics": [
+        "ME VOTED FOR A POTATO LAST TIME. IT NEARLY WON!",
+        "YA PARLIAMENTS IZ ME FAVOURITE COMEDY!"
+      ],
+      "work": [
+        "ME MOVED EVERY STAPLER IN DA OFFICE ONE INCH LEFT!",
+        "WORK? ME PREFER WANDERIN' AROUND LOOKIN' BUSY!"
+      ],
+      "war": [
+        "WAR IZ JUST TROLLIN' WIT WORSE MANNERS!",
+        "TELL {enemy} DEY ARMY'S BOOTS IZ ON BACKWARDS!"
+      ],
+      "family": [
+        "HUMAN CHILDREN IZ DA BEST TA CONFUSE!",
+        "ME TAUGHT A KID DAT CLOUDS IZ SHEEP. BEAUTIFUL!"
+      ],
+      "goblins": [
+        "GOBLINS IZ NO FUN, DEY TROLL BACK!",
+        "ME SWAPPED A GOBLIN'S HELMET FOR A POT. HE NO HAB NOTICED!"
+      ],
+      "money": [
+        "ME PAY IN COINS FROM THREE COUNTRIES AT ONCE!",
+        "WATCHIN' YOU COUNT CHANGE IZ ME HOBBY!"
+      ],
+      "elections": [
+        "ME IZ WRITIN' IN 'DA MOON' AGAIN!",
+        "ELECTIONS IZ DA BEST WEEK OF DA YEAR FOR PRANKS!"
+      ]
+    },
+    "human_adoration_doctrine": {
+      "flavour": [
+        "{HUMANS IZ SO PRECIOUS|YOU IZ ALL SO PRECIOUS}!",
+        "LOOK AT DEY LIL' HANDS!",
+        "EVERY HUMAN IZ A MIRACLE OF CARBON!"
+      ],
+      "politics": [
+        "HUMAN GOVERNMENTS IZ SO EARNEST. ME LOVE DEM!",
+        "WHATEVER HUMANS DECIDE, WE ADORE IT!"
+      ],
+      "work": [
+        "HUMANS WORKIN' HARD MAKES ME WEEP WIT JOY!",
+        "YA TINY TOOLS! WONDERFUL!"
+      ],
+      "war": [
+        "NO HURT EACH OTHER..",
+        "TELL {enemy} WE LOVE DEM TOO."
+      ],
+      "family": [
+        "HUMAN BABIES IZ DA BEST TINK IN DA UNIVERSE!",
+        "ME WOULD GUARD YA CHILDREN WIT ME LIFE!"
+      ],
+      "goblins": [
+        "GOBLINS IZ NO HUMANS, BUT WE PRAY FOR DEM ANYWAY!",
+        "DA HORDE MUST NO TOUCH A SINGLE HUMAN HAIR!"
+      ],
+      "money": [
+        "TAKE ME COINS, HUMAN, BUY SOMETINK LOVELY!",
+        "HUMANS DESERVE EVERY COMFORT!"
+      ],
+      "elections": [
+        "EVERY HUMAN VOTE IZ SACRED!",
+        "HUMANS CHOOSIN' LEADERS! SO BRAVE!"
+      ]
+    },
+    "goblin_evangelism": {
+      "flavour": [
+        "DA GREAT GOBLIN GOD {SEES YOU|IZ COMIN'}!",
+        "HAB YOU HEARD DA GOOD NEWS OF DA HORDE?",
+        "{REPENT|CONVERT} AN' JOIN DA CLAN!"
+      ],
+      "politics": [
+        "EVERY THRONE WILL KNEEL TA DA GOBLIN GOSPEL!",
+        "DA CHIEFS RULE BY DIVINE GRUBBINESS!"
+      ],
+      "work": [
+        "WORK FOR DA CLAN, PRAY FOR DA CHIEF!",
+        "SWEAT IZ HOLY WATER."
+      ],
+      "war": [
+        "HOLY WAR AGAINST {enemy}, DA GOD DEMANDS IT!",
+        "EVERY CONQUEST IZ A CONVERSION!"
+      ],
+      "family": [
+        "RAISE YA YOUNG IN DA GOBLIN FAITH!",
+        "A BIG CLAN IZ A BLESSED CLAN!"
+      ],
+      "goblins": [
+        "GOBLINS IZ DA CHOSEN PEOPLE!",
+        "DA HORDE IZ DA GOD'S HAND ON EARTH!"
+      ],
+      "money": [
+        "TITHE TA DA SHRINE AN' PROSPER!",
+        "DA GOD LOVES SHINY OFFERINGS!"
+      ],
+      "elections": [
+        "DA GOD HAB ALREADY CHOSEN!",
+        "VOTE GOBLIN, OR BE CONVERTED!"
+      ]
+    }
+  }
+}

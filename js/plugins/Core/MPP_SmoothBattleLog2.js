@@ -870,7 +870,7 @@
     //-------------------------------------------------------------------------
 
     if (window.GameOptions) {
-        window.GameOptions.registerOption('battleLogBgOpacity', T('BattleLog.bgOpacity'), 
+        window.GameOptions.registerOption('battleLogBgOpacity', () => T('BattleLog.bgOpacity'), 
             () => ConfigManager.battleLogBgOpacity,
             (value) => ConfigManager.battleLogBgOpacity = value,
             'gameplay', 'custom',
@@ -896,7 +896,7 @@
                 logOnTopRight() ? LOG_POS_BOTTOM_LEFT : LOG_POS_TOP_RIGHT;
             ConfigManager.save();
         };
-        window.GameOptions.registerOption('battleLogPosition', T('BattleLog.positionOption'),
+        window.GameOptions.registerOption('battleLogPosition', () => T('BattleLog.positionOption'),
             () => ConfigManager.battleLogPosition,
             (value) => ConfigManager.battleLogPosition = value,
             'gameplay', 'custom',
@@ -907,7 +907,7 @@
             togglePosition, togglePosition
         );
 
-        window.GameOptions.registerOption('battleLogSkillNames', T('BattleLog.skillNamesOption') || 'Skill Names',
+        window.GameOptions.registerOption('battleLogSkillNames', () => T('BattleLog.skillNamesOption') || 'Skill Names',
             () => ConfigManager.battleLogSkillNames,
             (value) => ConfigManager.battleLogSkillNames = value,
             'gameplay', 'custom',
@@ -2152,7 +2152,7 @@
                     const dmgStr = isActor
                         ? TextManager.actorDamage.format(displayName, damage)
                         : TextManager.enemyDamage.format(displayName, damage);
-                    text = `\\crit[${dmgStr} (CRITICAL!)]`;
+                    text = `\\crit[${T('BattleLog.critical', { text: dmgStr })}]`;
                 } else {
                     text = isActor
                         ? TextManager.actorDamage.format(displayName, damage)
@@ -2324,13 +2324,7 @@
                 subjectName = NameColorCache.getEnemyName(subject);
             }
             
-            // Format: "[Name] recovered [X] HP!"
-            if(ConfigManager.language === 'it'){
-                this.push("addText", subjectName + " recupera " + value + " HP!");
-            }else{
-                this.push("addText", subjectName + " recovered " + value + " HP!");
-
-            }
+            this.push("addText", T('BattleLog.regenerated', { name: subjectName, value: value }));
         }
     };
 

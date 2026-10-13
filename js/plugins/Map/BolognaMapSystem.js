@@ -1028,6 +1028,31 @@
     }
   };
 
+  // ===== MAP LABEL =====
+  // The city is still being built, and its banner says so: on its streets and
+  // on the map its arrivals land on (Destinations.json entrance / train / bus).
+  function isWipArrivalMap(mapId) {
+    const WS = window.WorkSystem;
+    const dest = (WS && WS.Destinations) || {};
+    for (const key of Object.keys(dest)) {
+      const d = dest[key];
+      if (!d || !d.wip) continue;
+      if ((d.entrance && d.entrance.id === mapId) ||
+          (d.train && d.train.mapId === mapId) ||
+          (d.bus && d.bus.mapId === mapId)) return true;
+    }
+    return false;
+  }
+
+  const _Game_Map_displayName = Game_Map.prototype.displayName;
+  Game_Map.prototype.displayName = function () {
+    const name = _Game_Map_displayName.call(this);
+    if (!name) return name;
+    const WS = window.WorkSystem;
+    if (!WS || typeof WS.wipLabel !== "function") return name;
+    return (isBolognaMap() || isWipArrivalMap(this.mapId())) ? WS.wipLabel(name) : name;
+  };
+
   // ===== TELEPORT =====
   // Load the requested cell and warp the player into it. spawnX/spawnY are in
   // tile coordinates within the 256x256 cell; when omitted the player lands in

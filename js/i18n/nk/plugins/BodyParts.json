@@ -1,5 +1,5 @@
 {
-  "_comment": "DISPLAY TEXT FOR JS/DB/HEALTH/BODYPARTS.JSON, WHICH CARRIES ONLY IDS AN' KEYS. DA ROOT JS/I18N/<lang>/BODYPARTS.JSON STAYS AS HENDRIX_LOCALIZATION'S ENGLISH-STRIN' DICTIONARY FOR TEXT AUTHORED OUTSIDE DA DATA FILES!",
+  "_comment": "Display text for js/db/Health/BodyParts.json, which carries only ids and keys. The root js/i18n/<lang>/bodyparts.json stays as Hendrix_Localization's English-string dictionary for text authored outside the data files.",
   "brain": {
     "name": "BRAIN",
     "damage_msg": "BRAIN WAZ CONCUSSED"

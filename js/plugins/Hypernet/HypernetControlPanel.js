@@ -220,7 +220,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: 'control-panel',
-            name: T('ControlPanel.title'),
+            name: () => T('ControlPanel.title'),
             icon: 234,
             launchFn: function() {
                 window.HypernetControlPanel.launch();

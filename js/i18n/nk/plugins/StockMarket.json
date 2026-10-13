@@ -28,8 +28,8 @@
   "titles": {
     "buyWhich": "BUY WHICH STOCK?",
     "sellWhich": "SELL WHICH STOCK?",
-    "buyHowMany": "BUY HOW MANY {stock} SHARES?",
-    "sellHowMany": "SELL HOW MANY {stock} SHARES?"
+    "buyHowMany": "HOW MANY {stock} SHARES TA BUY?",
+    "sellHowMany": "HOW MANY {stock} SHARES TA SELL?"
   },
   "stockNames": {
     "oil": "OIL",
@@ -37,7 +37,7 @@
   },
   "appName": "QUANTUM PROJECTOR",
   "portfolio": {
-    "liquid": "LIQUID GOLD",
+    "liquid": "CASH",
     "netWorth": "NET WORTH"
   },
   "ui": {
@@ -90,7 +90,7 @@
     "company": {
       "limecorp": [
         "{company} SHIPS A WHOLE PRODUCT LINE A SEASON EARLY, UNFINISHED AN' SOLD OUT!",
-        "ANOTHER EXECUTIVE WALKS OUT OF LEMONCORP AN' INTO A {company} CORNER OFFICE!",
+        "ANOTHER EXECUTIVE WALKS OUT OF LemonCorp AN' INTO A {company} CORNER OFFICE!",
         "{company} ANNOUNCES THREE DEVICES NOBODY ASKED FOR AN' TWO OF DEM SELL!",
         "RETAILERS REPORT QUEUES AROUND DA BLOCK FOR DA NEW {company} HANDHELD!"
       ],
@@ -112,7 +112,7 @@
     },
     "sector": {
       "consumertech": [
-        "{company} UNVEILS A GADGET DAT DOES ONE THING BEAUTIFULLY!",
+        "{company} UNVEILS A GADGET DAT DOES ONE TINK BEAUTIFULLY!",
         "SHELVES CLEAR AS {company} DISCOUNTS LAST SEASON'S RANGE!",
         "A FIRMWARE FAULT HAB {company} SUPPORT LINES BUSY ALL WEEK!"
       ],
@@ -123,7 +123,7 @@
       ],
       "occult": [
         "{company} REPORTS A STRONG WEEK WHEREVER DA VEIL WENT THIN!",
-        "INSPECTORS VISIT A {company} VAULT AN' LEAVE WITHOUT COMMENT!",
+        "INSPECTORS VISIT A {company} VAULT AN' LEAVE WITOUT COMMENT!",
         "{company} RAISES ITS ASSAY FEES AN' NOBODY TRADES ELSEWHERE!"
       ],
       "telecom": [
@@ -134,7 +134,7 @@
       "industrial": [
         "{company} ROLLS DA GIRDERS FOR A BRIDGE THREE COUNTRIES WANT!",
         "A FURNACE AT {company} GOES COLD FOR SCHEDULED RELININ'!",
-        "RAIL ORDERS KEEP {company} MILLS BOOKED OUT TA SPRIN'!"
+        "RAIL ORDERS KEEP {company} MILLS BOOKED OUT TA SPRING!"
       ],
       "agriculture": [
         "{company} BRINGS IN A HARVEST DA ALMANACS SAID WAZ IMPOSSIBLE!",
@@ -144,7 +144,7 @@
       "finance": [
         "{company} LEAVES ITS LENDIN' RATE EXACTLY WHERE IT WAZ!",
         "{company} REPORTS LIQUIDITY RESERVES AT A RECORD!",
-        "A ROUTINE BOND TRANCHE IZ REDEEMED BY {company} WITHOUT DRAMA!"
+        "A ROUTINE BOND TRANCHE IZ REDEEMED BY {company} WITOUT DRAMA!"
       ],
       "transport": [
         "{company} ADDS A NIGHT SERVICE AN' FILLS IT IN A WEEK!",
@@ -360,5 +360,102 @@
     "someWar": "FIGHTIN' ABROAD",
     "someTown": "DA MARKET TOWNS",
     "somePower": "DA POWERS"
+  },
+  "terminal": {
+    "appName": "STOCK MARKET",
+    "title": "STOCK MARKET",
+    "live": "● LIVE MARKET OPEN",
+    "ticks": "SESSION TICKS:",
+    "liquid": "LIQUID FUNDS",
+    "portfolio": "PORTFOLIO STOCKS",
+    "netWorth": "NET WORTH",
+    "watchlist": "MARKET WATCHLIST",
+    "assetProfile": "{symbol} ASSET PROFILE",
+    "holding": "HOLDIN': {n} SHARES",
+    "orderBook": "LIVE ORDER BOOK",
+    "spread": "SPREAD: {value}",
+    "mid": "MID: {value}",
+    "market": "MARKET",
+    "sharesShort": "{n} SH",
+    "sharesN": "{n} SHARES",
+    "select": "SELECT",
+    "noOrders": "NO OPEN ORDERS. USE LIMIT ORDERS TA TRADE AT A TARGET PRICE!",
+    "noHistory": "NO TRADES DIS SESSION.",
+    "away": "{pct}% AWAY",
+    "escrowMoney": "ESCROW: {value}",
+    "escrowShares": "{n} SH ESCROWED",
+    "filled": "FILLED",
+    "chartLine": "LINE & AREA",
+    "chartCandle": "CANDLESTICK",
+    "medianTarget": "MEDIAN TARGET",
+    "console": "ORDER PLACEMENT TERMINAL",
+    "buyLong": "BUY / LONG",
+    "sellLiquidate": "SELL / LIQUIDATE",
+    "execType": "ORDER EXECUTION TYPE",
+    "marketRef": "MARKET REFERENCE:",
+    "orderQty": "ORDER QUANTITY",
+    "available": "AVAILABLE:",
+    "max": "MAX",
+    "execRate": "EXECUTION RATE:",
+    "orderQtyLabel": "ORDER QUANTITY:",
+    "totalRequired": "TOTAL REQUIRED:",
+    "proceeds": "ESTIMATED PROCEEDS:",
+    "place": "PLACE {side} {type} ORDER",
+    "side": {
+      "buy": "GIMME",
+      "sell": "FLOG"
+    },
+    "type": {
+      "market": "MARKET",
+      "limit": "LIMIT",
+      "stop_loss": "STOP LOSS",
+      "take_profit": "TAKE PROFIT"
+    },
+    "priceLabel": {
+      "limit": "LIMIT TARGET PRICE",
+      "stop": "STOP TRIGGER PRICE",
+      "takeProfit": "TAKE PROFIT PRICE"
+    },
+    "tab": {
+      "holdings": "HOLDINGS",
+      "orders": "OPEN ORDERS ({n})",
+      "history": "TRADE HISTORY",
+      "news": "MARKET NEWS FEED"
+    },
+    "col": {
+      "symbol": "SYMBOL",
+      "assetName": "ASSET NAME",
+      "shares": "SHARES",
+      "avgCost": "AVG COST",
+      "marketPrice": "MARKET PRICE",
+      "totalValue": "TOTAL VALUE",
+      "unrealized": "UNREALIZED P&L",
+      "actions": "ACTIONS",
+      "orderId": "ORDER ID",
+      "sideType": "SIDE & TYPE",
+      "quantity": "QUANTITY",
+      "targetPrice": "TARGET PRICE",
+      "distance": "DISTANCE",
+      "escrow": "HELD IN ESCROW",
+      "action": "ACTION",
+      "time": "TIME",
+      "execPrice": "EXECUTION PRICE",
+      "totalVolume": "TOTAL LOUDNESS",
+      "realized": "REALIZED GAIN",
+      "status": "HOW ME DOIN'"
+    },
+    "errors": {
+      "badOrder": "INVALID ORDER PARAMETERS",
+      "noEscrow": "NO ENOUGH MONEY TA COVER DIS LIMIT ORDER",
+      "exceedsHeld": "EXCEEDS OWNED SHARES ({n})"
+    },
+    "toast": {
+      "cancelled": "ORDER {id} CANCELLED. ESCROW RELEASED!",
+      "liquidated": "LIQUIDATED ALL {n} SHARES OF {stock}",
+      "bought": "BOUGHT {n} SHARES OF {stock} AT MARKET PRICE",
+      "sold": "SOLD {n} SHARES OF {stock} AT MARKET PRICE",
+      "placed": "PLACED {side} {type} ORDER FOR {n} SHARES AT {price}",
+      "failed": "FAILED TA PLACE ORDER: {reason}"
+    }
   }
 }

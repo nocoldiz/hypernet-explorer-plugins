@@ -1,10 +1,10 @@
 {
   "name": "Astronomia",
-  "blurb": "Osservazioni e missioni spaziali, ogni dato riportato con lo strumento che lo ha prodotto.",
+  "blurb": "Osservazioni e missioni spaziali.",
   "nodes": {
     "astro_wmap": {
       "name": "Età Cosmica di WMAP",
-      "desc": "Da un'orbita di Lissajous attorno al punto L2 Terra-Sole, due telescopi gregoriani contrapposti alimentano radiometri differenziali su cinque bande da 23 a 94 gigahertz, misurando differenze di temperatura di decine di microkelvin su tutto il cielo mentre la sonda ruota e precede per cancellare gli effetti sistematici. Lo spettro di potenza angolare mostra il primo picco acustico al multipolo 220 e altri due oltre di esso. Il fit a sei parametri dà un'età di 13,7 miliardi di anni con l'uno per cento di incertezza, geometria piatta e un bilancio del 4,6 per cento di barioni, 23 per cento di materia oscura e il resto energia oscura."
+      "desc": "Da un'orbita di Lissajous attorno al punto L2 Terra-Sole, due telescopi gregoriani contrapposti alimentano radiometri differenziali su cinque bande da 23 a 94 gigahertz, misurando differenze di temperatura di decine di microkelvin su tutto il cielo mentre la sonda ruota e compie un moto di precessione per cancellare gli effetti sistematici. Lo spettro di potenza angolare mostra il primo picco acustico al multipolo 220 e altri due oltre di esso. Il fit a sei parametri dà un'età di 13,7 miliardi di anni con l'uno per cento di incertezza, geometria piatta e un bilancio del 4,6 per cento di barioni, 23 per cento di materia oscura e il resto energia oscura."
     },
     "astro_mars_rovers": {
       "name": "Spirit e Opportunity",
@@ -36,7 +36,7 @@
     },
     "astro_kepler": {
       "name": "Lancio del Telescopio Kepler",
-      "desc": "Un telescopio Schmidt da 0,95 metri in orbita eliocentrica che insegue la Terra fissa senza spostarsi un unico campo di 115 gradi quadrati fra Cigno e Lira, leggendo 42 CCD con cadenza di trenta minuti per 150.000 stelle bersaglio. La fotometria è volutamente sfocata su più pixel e calibrata pixel per pixel, mantenendo una precisione differenziale prossima a 20 parti per milione su sei ore. Un pianeta di raggio terrestre che transita davanti a una stella di raggio solare la attenua di 84 parti per milione per poche ore una volta l'anno, quindi il segnale esiste solo se quel livello di rumore regge per tutta la missione."
+      "desc": "Un telescopio Schmidt da 0,95 metri in orbita eliocentrica al seguito della Terra punta senza spostarsi un unico campo di 115 gradi quadrati fra Cigno e Lira, leggendo 42 CCD con cadenza di trenta minuti per 150.000 stelle bersaglio. La fotometria è volutamente sfocata su più pixel e calibrata pixel per pixel, mantenendo una precisione differenziale prossima a 20 parti per milione su sei ore. Un pianeta di raggio terrestre che transita davanti a una stella di raggio solare la attenua di 84 parti per milione per poche ore una volta l'anno, quindi il segnale esiste solo se quel livello di rumore regge per tutta la missione."
     },
     "astro_dawn_vesta": {
       "name": "Dawn Orbita Vesta",
@@ -52,7 +52,7 @@
     },
     "astro_face_mars": {
       "name": "Il Volto su Marte",
-      "desc": "Il fotogramma 35A72 del Viking Orbiter 1, acquisito a 43 metri per pixel con il Sole a 20 gradi sull'orizzonte, mostra una mesa di Cydonia in cui l'ombra riempie simmetricamente le depressioni; un bit di dati perso aggiunge la macchia scura letta come narice. Mars Global Surveyor riprende due volte la stessa formazione fino a 1,56 metri per pixel e con Sole alto, e Mars Express ne restituisce un modello digitale del terreno in stereoscopia. Si tratta di un massiccio eroso del tipo che nella regione se ne contano a centinaia."
+      "desc": "Il fotogramma 35A72 del Viking Orbiter 1, acquisito a 43 metri per pixel con il Sole a 20 gradi sull'orizzonte, mostra una mesa di Cydonia in cui l'ombra riempie simmetricamente le depressioni; un bit di dati perso aggiunge la macchia scura letta come narice. Mars Global Surveyor riprende due volte la stessa formazione fino a 1,56 metri per pixel e con Sole alto, e Mars Express ne restituisce un modello digitale del terreno in stereoscopia. Si tratta di un massiccio eroso, di un tipo che nella regione si conta a centinaia."
     },
     "astro_nibiru": {
       "name": "Nibiru e il Perielio dell'Apocalisse",
@@ -68,7 +68,7 @@
     },
     "astro_rtg": {
       "name": "Alimentazione a Radioisotopi",
-      "desc": "Otto moduli sorgente di calore standard contengono 4,8 chilogrammi di diossido di plutonio-238, il cui tempo di dimezzamento di 87,7 anni produce circa due kilowatt di calore di decadimento. Quel calore attraversa 768 termocoppie di tellururo di piombo e skutterudite disposte in serie e parallelo, e la tensione di Seebeck fornisce circa 110 watt a 28 volt, con un rendimento di conversione vicino al sei per cento. La potenza cala di circa l'1,6 per cento l'anno per decadimento e degrado delle termocoppie, ed è indipendente da polvere, stagione, latitudine e notte, cosa che nessun pannello solare su Marte è."
+      "desc": "Otto moduli sorgente di calore standard contengono 4,8 chilogrammi di diossido di plutonio-238, il cui tempo di dimezzamento di 87,7 anni produce circa due kilowatt di calore di decadimento. Quel calore attraversa 768 termocoppie di tellururo di piombo e skutterudite disposte in serie e parallelo, e la tensione di Seebeck fornisce circa 110 watt a 28 volt, con un rendimento di conversione vicino al sei per cento. La potenza cala di circa l'1,6 per cento l'anno per decadimento e degrado delle termocoppie, ed è indipendente da polvere, stagione, latitudine e notte, a differenza di qualsiasi pannello solare su Marte."
     },
     "astro_skycrane": {
       "name": "La Prova della Gru Volante",

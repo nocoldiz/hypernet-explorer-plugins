@@ -25,7 +25,7 @@
     "load": "+{load}"
   },
   "addiction": {
-    "all": "Ogni voglia",
+    "all": "Tutte le voglie",
     "label": "Voglia",
     "feeds": "Soddisfa"
   },
@@ -51,7 +51,7 @@
       "photo": "{name} sta scattando foto con {item}",
       "stargaze": "{name} sta guardando le stelle con {item}",
       "fish": "{name} sta lanciando {item}",
-      "phone": "{name} è incollato a {item}",
+      "phone": "{name} non si stacca da {item}",
       "write": "{name} sta scarabocchiando su {item}",
       "bath": "{name} si sta rilassando con {item}",
       "scratch": "{name} sta grattando {item}",
@@ -61,7 +61,7 @@
       "exercise": "{name} si sta allenando con {item}",
       "smoke": "{name} sta fumando {item}",
       "bet": "{name} sta studiando le quote di {item}",
-      "gamble": "{name} sta giocando {item}",
+      "gamble": "{name} sta giocando a {item}",
       "surf": "{name} sta cavalcando le onde con {item}"
     }
   },

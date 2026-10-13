@@ -12,8 +12,8 @@
     "none": "None"
   },
   "noMusic": "No music during battles.",
-  "randomEachBattle": "A different track is drawn at the start of every battle.",
-  "continueMap": "Continue playing the current map BGM.",
+  "randomEachBattle": "Random track every battle.",
+  "continueMap": "Keep the current map music.",
   "biomeEachBattle": "Each biome plays its own battle track.",
   "playingAsBattle": "Playing as battle background music.",
   "composer": "Composer",

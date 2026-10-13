@@ -16,7 +16,7 @@
   },
   "battle": {
     "back": "GO BACK",
-    "none": "NOTHIN' TA CAST",
+    "none": "NUTTIN' TA CAST",
     "elementNone": "NON-ELEMENTAL"
   },
   "weapon": {
@@ -29,6 +29,23 @@
       "unarmed": "2 FREE HANDS"
     }
   },
+  "ammo": {
+    "label": "AMMO",
+    "roundOne": "1 ROUND",
+    "rounds": "{n} ROUNDS",
+    "all": "DA WHOLE MAGAZINE",
+    "reload": "REFILLS DA MAGAZINE",
+    "whip": "NO AP COST WHEN DA MAGAZINE IZ EMPTY",
+    "dry": "NEEDS {need} ROUNDS LOADED, {have} LEFT",
+    "dryOne": "NEEDS A ROUND LOADED, DA MAGAZINE IZ EMPTY",
+    "full": "DA MAGAZINE IZ ALREADY FULL",
+    "noMagazine": "DIS WEAPON HAB NO MAGAZINE TA RELOAD",
+    "chip": {
+      "dry": "OUT OF ROUNDS",
+      "full": "MAGAZINE FULL",
+      "noMagazine": "NO MAGAZINE"
+    }
+  },
   "discipline": {
     "basic": "BASIC DISCIPLINE",
     "standard": "STANDARD DISCIPLINE"
@@ -38,20 +55,21 @@
     "incantation": "INCANTATION",
     "damage": "DAMAGE",
     "skillEffects": "SKILL EFFECTS",
-    "training": "TRAININ'"
+    "training": "TRAININ'",
+    "special": "SPECIAL"
   },
   "role": {
     "offensive": {
       "name": "OFFENSIVE",
-      "description": "SKILLS DAT DEAL DAMAGE.\nSTRIKE DOWN YA FOES!"
+      "description": "SKILLS DAT DEAL DAMAGE."
     },
     "healing": {
       "name": "HEALIN'",
-      "description": "RESTORE HP AN' CURE AILMENTS.\nMEND YOURSELF AN' ALLIES!"
+      "description": "RESTORE HP AN' CURE AILMENTS!"
     },
     "support": {
       "name": "SUPPORT",
-      "description": "BUFFS, DEBUFFS AN' UTILITY.\nSHIFT DA TIDE OF BATTLE!"
+      "description": "BUFFS, DEBUFFS AN' UTILITY!"
     }
   },
   "cmd": {
@@ -68,7 +86,7 @@
     "useSkill": "[ USE SKILL ]",
     "carry": "[ SYNC ]",
     "bench": "[ DESYNC ]",
-    "back": "[ BACK ]"
+    "back": "[ Back ]"
   },
   "info": {
     "type": "TYPE:",
@@ -93,7 +111,7 @@
   },
   "empty": {
     "title": "GRIMOIRE CODICIL",
-    "hint": "SELECT A SKILL FROM DA LIST ON DA LEFT TA SEE ITS ELEMENT, COST AN' EFFECTS!",
+    "hint": "SELECT A SKILL TA SEE ITS DETAILS!",
     "section": "[EMPTY]",
     "category": "[EMPTY]"
   },
@@ -107,8 +125,6 @@
       "damage": "DAMAGE",
       "damageCategory": "DAMAGE CLASS",
       "statReq": "REQUIRES",
-      "statHeld": "BASE HELD",
-      "statCounts": "WHAT COUNTS",
       "grantedBy": "GRANTED BY",
       "range": "RANGE"
     },
@@ -133,7 +149,7 @@
     "random": "RANDOM",
     "bestApplied": "SYNCED DA {n} MOST USEFUL SKILLS!",
     "randomApplied": "SYNCED {n} RANDOM SKILLS.",
-    "statLocked": "{name} NEEDS {stat} BASE; DIS ONE HAB {value}!"
+    "statLocked": "{name} NEEDS {stat} BASE; DIS CHARACTER HAB {value}!"
   },
   "tag": {
     "field": "FIELD"
@@ -174,11 +190,11 @@
         },
         "loadout": {
           "name": "LOADOUT",
-          "text": "DA NINE SKILLS CARRIED INTO BATTLE. ONLY DEZE CAN BE CAST IN A FIGHT; BEST AN' RANDOM FILL DA STRIP FOR YOU!"
+          "text": "DA NINE SKILLS USABLE IN BATTLE. BEST AN' RANDOM FILL IT FOR YOU!"
         },
         "sync": {
           "name": "SYNC AN' DESYNC",
-          "text": "SYNC PUTS DA SELECTED SKILL IN DA LOADOUT, DESYNC TAKES IT OUT. SOME SKILLS IZ ALWAYS CARRIED AN' SPEND NO SLOT!"
+          "text": "SYNC PUTS DA SELECTED SKILL IN DA LOADOUT, DESYNC TAKES IT OUT. SOME SKILLS IZ ALWAYS SYNCED AN' USE NO SLOT!"
         },
         "card": {
           "name": "SKILL CARD",
@@ -199,7 +215,7 @@
       "items": {
         "list": {
           "name": "TRICKS",
-          "text": "DA SKILLS DIS CHARACTER CARRIES INTO BATTLE. PICK ONE TA CAST IT!"
+          "text": "DIS CHARACTER'S SYNCED SKILLS. PICK ONE TA CAST IT!"
         },
         "cost": {
           "name": "COST",
@@ -211,7 +227,7 @@
         },
         "target": {
           "name": "TARGET",
-          "text": "A SKILL AIMED AT AN ALLY ASKS WHO IT LANDS ON AFTER BEING PICKED!"
+          "text": "ALLY SKILLS ASK FOR A TARGET AFTER YOU PICK DEM!"
         },
         "help": {
           "name": "? HELP",
@@ -219,5 +235,89 @@
         }
       }
     }
+  },
+  "special": {
+    "mcLoop": "MAKES DA FOE REPEAT ITS LAST ACTION FOR 1 TA 3 TURNS",
+    "mcSeal": "SEALS DA FOE'S LAST SKILL",
+    "mcRebound": "THROWS DA NEXT BAD 'UN SKILL BACK AT ITS CASTER",
+    "mcPuppet": "DA USER PICKS DA FOE'S NEXT MOVE, AIMED AT ITS OWN SIDE",
+    "mcTurncoat": "TURNS DA FOE'S NEXT ACTION ON ITS OWN SIDE",
+    "mcEcho": "DA USER'S NEXT SKILL FIRES TWICE, DA SECOND TIME FREE",
+    "mcMindRead": "REVEALS DA FOE'S NEXT ACTION AN' HOLDS IT TA IT",
+    "reaction": {
+      "generic": "SETS OFF A FOE'S {state}",
+      "setup": "SETS UP {state} FOR {elements}",
+      "Electrocute": "PARALYSES A WET FOE AN' DRIES IT",
+      "FlashFreeze": "MAY FREEZE A WET FOE SOLID",
+      "Ignite": "SETS AN OILY FOE BURNED, LEAPIN' TA OILY NEIGHBOURS",
+      "Shatter": "SHATTERS A FROZEN FOE FOR 50% MORE DAMAGE",
+      "Thaw": "THAWS A FROZEN FOE, LEAVIN' IT WET",
+      "Steam": "TURNS A HOT FOE'S AURA TA BLINDIN' STEAM",
+      "Extinguish": "PUTS OUT A BURNED FOE",
+      "Fanned": "FANS A BURNED FOE'S FLAMES ONTO ITS NEIGHBOURS",
+      "Fumes": "BOILS A POISONED FOE'S VENOM INTO NAUSEA FUMES",
+      "BrittleShatter": "SHATTERS A BRITTLE FOE FOR 60% MORE DAMAGE",
+      "BrittleThaw": "MELTS A BRITTLE FOE'S RIME",
+      "Detonate": "DETONATES A VOLATILE FOE FOR DOUBLE DAMAGE",
+      "Spark": "SPARKS A VOLATILE FOE FOR 50% MORE DAMAGE"
+    },
+    "lifeLinkAllies": "LINKS DA PARTY: HP DAMAGE IZ SHARED EVENLY",
+    "lifeLinkFoes": "LINKS DA FOES: A BLOW ON ONE SPREADS TA DA REST",
+    "guardianSelf": "DA USER TAKES HALF OF EACH ALLY'S HP DAMAGE",
+    "guardian": "TAKES HALF OF EACH ALLY'S HP DAMAGE",
+    "spendsState": "SPENDS DA USER'S {state}",
+    "buildsStack": "ADDS {count} TA {stack} (MAX {max})",
+    "buildsStackOnKill": "EACH FOE IT FELLS ADDS 1 TA {stack} (MAX {max})",
+    "spendsStacks": "SPENDS ALL {stack}",
+    "scalesWithStacks": "STRONGER WIT MORE {stack}",
+    "aimedTargetPart": "AIMS AT DA {part}",
+    "aimedPartOr": " OR ",
+    "aimedAimable": "CHOOSE DA BODY PART TA STRIKE WIT AIM",
+    "aimedAimRider": "A STRUCK {part} LEAVES DA FOE {state}",
+    "aimedPart": {
+      "head": "HEAD",
+      "eye": "EYE",
+      "neck": "NECK",
+      "heart": "HEART",
+      "hand": "HAND",
+      "arm": "ARM",
+      "foot": "FOOT",
+      "leg": "LEG",
+      "wing": "WING",
+      "tail": "TAIL",
+      "torso": "TORSO",
+      "vital": "VITAL ORGANS"
+    },
+    "expireDamage": "{state} COMES DUE AFTER {turns} TURNS AN' STRIKES DA HOLDER",
+    "expireDamageArea": "{state} DETONATES AFTER {turns} TURNS: HITS DA HOLDER AN' ALL ITS ALLIES",
+    "expireHeal": "{state} HEALS DA HOLDER WHEN IT ENDS, AFTER {turns} TURNS",
+    "expireSkill": "{state} CASTS {skill} ON DA HOLDER WHEN IT ENDS, AFTER {turns} TURNS",
+    "expireSkillArea": "{state} CASTS {skill} ON DA HOLDER'S WHOLE SIDE WHEN IT ENDS, AFTER {turns} TURNS",
+    "ammoCostOne": "SPENDS 1 ROUND; NEEDS IT LOADED",
+    "ammoCost": "SPENDS {n} ROUNDS; NEEDS DEM LOADED",
+    "ammoAll": "EMPTIES DA MAGAZINE: ONE HIT PER ROUND SPENT",
+    "ammoReload": "RELOADS DA MAGAZINE; NO WIT IT FULL",
+    "ammoWhip": "FREE WHEN DA MAGAZINE IZ EMPTY",
+    "selfState": "GRANTS DA USER {state}",
+    "bulletHell": "CAST BY A FOE: STARTS A DODGE PHASE, DAMAGE SCALES WIT HITS TAKEN",
+    "psiDodge": "STARTS A DODGE PHASE FLOWN BY DA USER",
+    "slowsDodge": "SLOWS DA DODGE PATTERN",
+    "shrinksHitbox": "SHRINKS DA CRAFT IN A DODGE PHASE",
+    "selfStateChance": "{chance}% CHANCE TA PUT {state} ON DA USER",
+    "drainRate": "HEALS DA USER FOR {pct}% OF DA DAMAGE",
+    "drainMp": "STEALS MP WORTH {pct}% OF DA DAMAGE",
+    "oncePerDay": "ONCE PER DAY",
+    "hpCost": "COSTS {amount} OF DA USER'S HP",
+    "bonusVsState": "STRONGER AGAINST A FOE WIT {state}",
+    "bonusWhileState": "STRONGER WHILE DA USER HAB {state}",
+    "bonusVsWounded": "STRONGER AGAINST A WOUNDED FOE",
+    "bonusWhileWounded": "STRONGER DA MORE DA USER IZ WOUNDED",
+    "scalesWithAp": "GROWS WIT DA USER'S AP",
+    "usesTargetPower": "TURNS DA TARGET'S OWN POWER AGAINST IT",
+    "ignoresDefence": "IGNORES DEFENCE",
+    "stance": "{state}: EVERY BLOW LANDS AS {type}",
+    "drill": "{state}: RAISES WEAPON PROFICIENCY",
+    "actionFail": "{state}: DA FOE MAY STUMBLE ({pct}%)",
+    "taunt": "TAUNTS DA FOE INTO ATTACKIN' DA USER"
   }
 }

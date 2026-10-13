@@ -1,38 +1,38 @@
 {
-  "_comment": "La voce Gnome (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo e' sempre Gnome.",
+  "_comment": "La voce Gnome (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo è sempre Gnome.",
   "voice": {
     "openers": [
-      "Ingranaggi e rocchetti,",
-      "Per la molla maestra,",
-      "Per essere precisissimi,",
-      "Ingranaggi e guarnizioni,",
-      "Se i miei conti tornano,",
-      "Parlando da persona piccola,",
-      "Misura due volte, come diciamo noi,",
-      "Allora, allora,",
-      "Oh! Oh! Ascolta,",
-      "Da quaggiù,",
-      "Come diceva mia nonna,",
-      "Molle e mandrini,",
-      "Aspetta, aspetta,",
-      "Millimetro più millimetro meno,",
-      "Bene, secondo i miei calcoli,",
-      "Piccola osservazione:",
-      "Parola di aggiustatutto,",
-      "Ottone e malanni,",
-      "In termini gnomeschi,",
-      "Riporto uno, e",
-      "Prima la nota a piè di pagina:",
-      "Oh, splendido, splendido,",
-      "Voce piccola, punto grande:",
-      "Ascolta uno gnomo:",
-      "Perdona la precisione, ma"
+      "Ingranaggi e rocchetti!",
+      "Per la molla maestra!",
+      "Precisione prima di tutto.",
+      "Ingranaggi e guarnizioni!",
+      "Se i miei conti tornano, e tornano.",
+      "Lo dico da persona piccola.",
+      "Misura due volte, come diciamo noi.",
+      "Allora, allora.",
+      "Oh! Oh! Ascolta!",
+      "Da quaggiù si vede bene.",
+      "Lo diceva sempre mia nonna.",
+      "Molle e mandrini!",
+      "Aspetta, aspetta.",
+      "Millimetro più, millimetro meno.",
+      "Bene, ho fatto i miei calcoli.",
+      "Piccola osservazione.",
+      "Parola di aggiustatutto!",
+      "Ottone e malanni!",
+      "Lo dico in termini gnomeschi.",
+      "Riporto uno...",
+      "Prima la nota a piè di pagina.",
+      "Oh, splendido, splendido!",
+      "Voce piccola, punto grande.",
+      "Ascolta uno gnomo.",
+      "Perdona la precisione."
     ],
     "closers": [
       "Misura due volte, taglia una.",
       "Al millimetro, più o meno.",
       "Alla fine i conti tornano sempre.",
-      "Piccolo, ma corretto.",
+      "Un dettaglio piccolo, ma corretto.",
       "Ce l'ho scritto da qualche parte.",
       "Gli ingranaggi continuano a girare.",
       "Riporto uno.",
@@ -40,7 +40,7 @@
       "Segnati le mie parole, a matita.",
       "Fidati delle molle.",
       "Ogni bullone ha il suo dado.",
-      "Così dice il piccoletto.",
+      "Così dice {g:il piccoletto|la piccoletta}.",
       "Parola di aggiustatutto.",
       "Al centesimo, bada.",
       "Un goccio d'olio aggiusta quasi tutto.",
@@ -65,14 +65,14 @@
       "Potrei costruire {un bollitore|un campanello|una trappola per topi} migliore di quello. In un pomeriggio.",
       "Un laccio che si allaccia da solo. Così non dovrei più chinarmi. Non che mi chini molto.",
       "Il mio orologio da taschino è {due secondi avanti|un secondo indietro|perfettamente giusto}. Regolo.",
-      "Filo di rame, tre metri, undici centesimi. Un affare. Devo dirlo a {qualcuno|la famiglia|tutti}.",
+      "Filo di rame, tre metri, undici centesimi. Un affare. Devo dirlo {a qualcuno|alla famiglia|a tutti}.",
       "Un ciottolo smosso, il quarto dal marciapiede. Reclamo mentale presentato.",
       "Nessuno mira in basso. Per questo gli gnomi {vivono a lungo|vanno lontano|restano fortunati}.",
       "Il bancone del fornaio è di nuovo troppo alto. Domani porto {una cassa|il mio sgabello|i trampoli}.",
       "Orologio a tredici ore. Orologio a tredici ore. Dove va l'ora in più...",
       "Chissà {cosa fa|quanto costa|quanto pesa} quella macchina. Devo saperlo.",
       "Il cappello è un po' storto. Lo sento. Tutto il mondo sembra storto insieme a lui.",
-      "Prova alchemica stasera: {rame e aceto|sale e fulmine|miele e mercurio}. Cosa potrebbe andare storto.",
+      "Prova alchemica stasera: {rame e aceto|sale e fulmine|miele e mercurio}. Cosa potrebbe andare storto?",
       "Settantanove chilometri orari. Non uno di più. Gli gnomi rispettano la Regola.",
       "Il tram è in ritardo di tre minuti. {Annotato|Avvisato il conducente|Nessuno perdonato}.",
       "Una molla nel passo, e due in tasca.",
@@ -83,11 +83,11 @@
       "Grasso sotto le unghie. Il segno di una giornata onesta.",
       "Il motore di Bubba è una meraviglia. Io ci aggiungerei comunque {una molla|una valvola|un campanellino}.",
       "Qualcuno ha lasciato il gas aperto di un quarto di giro. Lo sento da qui. Chiuso.",
-      "Se il mondo finisce nel 2012, voglio i conti chiusi entro il 2011.",
+      "Se il mondo finisce domani, voglio i conti chiusi entro stasera.",
       "Un bottone d'ottone sul marciapiede! {Intascato|Custodito|Catalogato}.",
       "Mia cugina principessa vuole un cigno a molla per il compleanno. {Di nuovo|Più grande stavolta|Con le ali mobili}.",
       "Da ricordare: comprare {stagno|rivetti|olio per lampade}, vendere {pettegolezzi|ingranaggi vecchi|niente}.",
-      "La piazza qui non è quadrata. È un rombo. A nessun altro importa.",
+      "La piazza qui è un rombo, a guardarla bene. A nessun altro importa.",
       "Cacciavite minuscolo, dove sei. Negli altri pantaloni, naturalmente.",
       "Regola del cuoco: pesa il sale, fidati dell'aglio.",
       "Quel piccione porta la posta tra le bolle. Lo {invidio|ammiro|compatisco}.",
@@ -101,11 +101,11 @@
     ],
     "need": {
       "sleep": [
-        "Gli occhi continuano a {perdere|sfocare|mancare} la messa a fuoco. Perfino le viti sembrano sfocate.",
-        "Troppo stanco per contare. Non era mai successo. {Letto|Cuscino|Cassetto}, subito.",
+        "Gli occhi {perdono|smarriscono|mollano} di continuo la messa a fuoco. Perfino le viti sembrano sfocate.",
+        "Troppa stanchezza per contare. Non era mai successo. {Letto|Cuscino|Cassetto}, subito.",
         "Se dormo adesso sognerò {ingranaggi|somme|zuppa}. Accettabile.",
-        "Sveglio da {diciannove|ventidue|ventisette} ore. Ho la cifra esatta, naturalmente.",
-        "Sbadigliato così forte che mi è caduto il cappello. Ora di andare a letto.",
+        "In piedi da {diciannove|ventidue|ventisette} ore. Ho la cifra esatta, naturalmente.",
+        "Ho sbadigliato così forte che mi è caduto il cappello. Ora di andare a letto.",
         "La mia molla maestra è del tutto scarica. {Caricatemi domani|A letto|Luci spente}."
       ],
       "hunger": [
@@ -113,7 +113,7 @@
         "Stomaco piccolo, lamentele rumorose. {Pranzo|Cena|Qualsiasi cosa} presto.",
         "Potrei mangiare una forma intera di {formaggio|gouda|emmental}. Be', una fetta.",
         "Le mani affamate scivolano sulle viti sottili. Devo mangiare prima di {saldare|caricare|limare} qualcosa.",
-        "Ho valutato la vetrina del fornaio: {quattro|sei|nove} cose che voglio, una che posso permettermi.",
+        "Ho squadrato la vetrina del fornaio: {quattro|sei|nove} cose che voglio, una che posso permettermi.",
         "L'istinto del cuoco dice {stufato|frittata|risotto}. Lo stomaco dice di sì."
       ],
       "work": [
@@ -152,14 +152,14 @@
         "I conti dicono {nove|quattordici|ventidue} euro fino a fine mese. Ricalcolo.",
         "Venduto un orologio, comprato molle, venduto un orologio. Le molle stanno vincendo.",
         "Ogni centesimo nella sua colonna. Le colonne sono preoccupantemente corte.",
-        "Inventa qualcosa e sarai ricco. Non inventare niente e sarai {parsimonioso|frugale|furbo}.",
+        "Inventa qualcosa e farai fortuna. Non inventare niente e {risparmierai|tirerai la cinghia|farai il furbo}.",
         "L'affitto scade. Ho la cifra esatta. Mi mancano gli euro esatti.",
         "Nota: farsi pagare di più {le riparazioni|le ricette|i consigli}. La modestia gnomesca costa cara."
       ],
       "safety": [
         "Profilo basso. Facile, per me. {Ancora più basso|Sotto il tavolo|Dietro una cassa}.",
         "Meglio {nascondere questo|mettere da parte questo|dimenticare questo} nel cassetto con il doppio fondo.",
-        "Troppe sagome alte in strada stasera. A casa, svelto, passi piccoli.",
+        "Troppe sagome alte in strada stasera. A casa, di corsa, a passi piccoli.",
         "Una buona serratura costa undici euro. {La mia porta|La mia officina|La mia cassaforte} ne vuole tre.",
         "Testa bassa. La mia è già parecchio in basso.",
         "Se arrivano guai, sono {sotto il bancone|su per il camino|dietro il barile}."
@@ -174,16 +174,16 @@
       ],
       "social": [
         "Nessuno con cui parlare di ingranaggi tutto il giorno. {Che solitudine|Troppo silenzio|Terribile}.",
-        "Dovrei andare a trovare {l'orologiaio|mio cugino|il caffè}. Ho undici cose da dire.",
+        "Dovrei fare un salto {dall'orologiaio|da mio cugino|al caffè}. Ho undici cose da dire.",
         "Devo raccontare a qualcuno {la mia nuova valvola|la mia nuova ricetta|il mio nuovo nodo}. A chiunque.",
         "Di nuovo a parlare con il bollitore. Sa ascoltare, ma trabocca.",
-        "Mi serve compagnia. Piccola o alta, non sono schizzinoso.",
+        "Mi serve compagnia. Piccola o alta, non vado per il sottile.",
         "Una festa! Con {i canti|le carte|la torta}. Uno gnomo ha bisogno di una festa."
       ]
     },
     "weather": {
       "rain": [
-        "Pioggia. Contate {quaranta|sessanta|cento} gocce sulla tesa prima che si inzuppasse.",
+        "Pioggia. Ho contato {quaranta|sessanta|cento} gocce sulla tesa prima che si inzuppasse.",
         "Le pozzanghere sono laghi alla mia altezza. {Le galosce|Gli stivali|Una barca}, allora.",
         "Il rame bagnato ha un odore meraviglioso. La pioggia migliora una città.",
         "Un ombrello della mia misura costa quanto uno intero. Un furto.",
@@ -193,7 +193,7 @@
       "storm": [
         "Un lampo! {Dodici|Quattordici|Nove} secondi al tuono. A quattro chilometri.",
         "Temporale. Se avessi un'asta di rame e un aquilone... no. Dentro.",
-        "Tieni stretto il cappello. Tieni stretto me. Sono molto leggero.",
+        "Tieni stretto il cappello. Tieni stretto me. Peso pochissimo.",
         "Il vento {fa sbattere|mette alla prova|scuote} ogni cardine della città. Prendo appunti.",
         "Tuono. Le mie molle tremano tutte per solidarietà.",
         "Le notti di temporale sono per l'officina. Si inventa sempre qualcosa."
@@ -227,7 +227,7 @@
       "afternoon": [
         "Pomeriggio. Il lungo tratto tra pranzo e tè. Da superare armeggiando.",
         "{Le due e mezza|Le tre e un quarto|Le quattro}, e la saldatura procede bene.",
-        "Pisolino dopo pranzo? No. {Somme|Rivetti|Ricette} dopo pranzo.",
+        "Dopo pranzo: {somme|rivetti|ricette}. I pisolini possono aspettare.",
         "Sole pomeridiano sul banco. Angolo perfetto per il lavoro di precisione.",
         "Tè alle quattro. Biscotti contati. Due a testa.",
         "A metà giornata e a tre quarti della lista."
@@ -274,7 +274,7 @@
       "WINTER": [
         "Inverno. Ogni tubo della città è un rompicapo ghiacciato che potrei risolvere.",
         "Dita fredde, viti lente. Guanti senza punte, allora.",
-        "Bloccati dalla neve? Perfetto. {Officina|Cucina|Conti} tutto il giorno.",
+        "Strade bloccate dalla neve? Perfetto. {Officina|Cucina|Conti} tutto il giorno.",
         "Giornate corte. Lavoro alla luce della lampada e conto l'olio.",
         "Mercatini d'inverno, vin brulé, mani calde. Valgono i geloni."
       ]
@@ -283,21 +283,21 @@
       "poor": [
         "Mi restano gli ultimi {quattro|sette|dodici} euro. Ogni centesimo ha un nome e un posto.",
         "Non posso permettermi molle nuove. Prendo quelle vecchie dal vecchio orologio.",
-        "Povero, ma ordinato. Una povertà ordinata è mezza fortuna.",
+        "Pochi soldi, ma tanto ordine. Una povertà ordinata è mezza fortuna.",
         "Ho impegnato il cacciavite buono. Il prestatore su pegno non l'ha apprezzato.",
         "Di nuovo zuppa. Ottima zuppa, però. L'abilità non costa niente.",
         "Niente soldi, molte idee. Un giorno le idee diventeranno soldi."
       ],
       "comfortable": [
         "Abbastanza per l'affitto, i rivetti e qualche torta. Una vita in equilibrio.",
-        "Conti tranquilli. Niente di emozionante. Tranquillo è ottimo.",
+        "Conti tranquilli. Perfino noiosi. La tranquillità è ottima.",
         "Questo mese ho comprato uno sgabello migliore. Un regalo a me stesso.",
         "Risparmi su del {tre|quattro|cinque} per cento. Costanti, piccoli, come me.",
         "Potrei permettermi una vacanza. La passerei in un museo degli orologi.",
         "Una cassetta piena e una dispensa piena. Non serve altro. Be', un tornio."
       ],
       "rich": [
-        "Abbastanza ricco da far costruire bassi tutti i banconi di casa.",
+        "Ho abbastanza soldi da far costruire bassi tutti i banconi di casa.",
         "La mia officina ora ha un'officina. Per i lavori più piccoli.",
         "Soldi in tre banche, quattro valute e un cassetto segreto.",
         "Ho comprato un'intera giostra rotta solo per aggiustarla. {Ne valeva la pena|Nessun rimpianto|Meraviglioso}.",
@@ -307,38 +307,38 @@
     },
     "familiar": [
       "Di nuovo quei viaggiatori. Il loro camper sferraglia {dietro|alla ruota sinistra|allo scarico}. Potrei aggiustarlo.",
-      "Quella compagnia paga al centesimo, l'ho notato. Brava gente.",
+      "Quel Party paga al centesimo, l'ho notato. Brava gente.",
       "Se passano, gli mostro {la mia valvola nuova|il mio uccellino a molla|la mia somma migliore}.",
-      "Quello alto del gruppo si abbassa sempre sotto le porte. Mi fa ridere ogni volta.",
+      "Quello alto del Party si abbassa sempre sotto le porte. Mi fa ridere ogni volta.",
       "Quei viaggiatori prendono la strada lunga. Gli avrei disegnato una mappa più corta.",
-      "Ho cominciato a tenere un fascicoletto su quella compagnia. Per pura ammirazione.",
+      "Ho cominciato a tenere un fascicoletto su quel Party. Per pura ammirazione.",
       "Hanno ascoltato tutta la mia spiegazione sugli scappamenti. Nessuno lo fa.",
       "La prossima volta che passano, {gli olio i cardini|gli peso i bagagli|gli do lo stufato}.",
-      "Quella compagnia è sopravvissuta a un'altra stagione di bolle. Un gran sollievo, matematicamente.",
+      "Quel Party è sopravvissuto a un'altra stagione di bolle. Un gran sollievo, matematicamente.",
       "Mi piacerebbe viaggiare con loro. Le gambe dicono di no. La testa dice di sì."
     ],
     "hordeGround": [
-      "Terra dell'Orda. I goblin mi prendono per uno dei loro finché non parlo. Allora ne sono certi.",
+      "Terra dell'Orda. I goblin mi credono di famiglia finché non parlo. Allora ne sono certi.",
       "I goblin hanno preso la città e tenuto la torre dell'orologio. Gli piacciono le campane. Almeno hanno gusto.",
       "Stendardi dell'Orda su ogni lampione. Appesi male. Potrei raddrizzarli. Non lo farò.",
       "Qui essere piccoli aiuta. I goblin mi guardano dall'alto e vedono {un cugino|uno spuntino|un animaletto}. Sorrido.",
       "Niente conti sotto l'Orda. Nessuno conta niente. Mi prude l'anima.",
       "I goblin hanno distrutto le macchine della città. Le piango una per una, per nome.",
       "Un goblin mi ha chiesto di aggiustargli il tamburo. Io l'ho accordato. Ha pianto.",
-      "Sotto l'Orda, il commercio è baratto. Nel baratto sono bravissimo.",
+      "Sotto l'Orda, il commercio è baratto. Nel baratto non mi batte nessuno.",
       "Qui ogni macchina è nascosta in una cantina. Anche la mia. Ticchetta piano.",
-      "Si dice che i goblin abbiano costruito le macchine più belle di 92 dimensioni. Poi le hanno rotte tutte. Perché."
+      "Si dice che i goblin abbiano costruito le macchine più belle di 92 dimensioni. Poi le hanno rotte tutte. Perché?"
     ],
     "abroad": [
       "Gli umani fanno le porte troppo alte. Ho smesso di farci caso. Quasi.",
-      "I vicini mi portano {le radio|i tostapane|gli orologi} rotti. Sono amatissimo.",
+      "I vicini mi portano {le radio|i tostapane|gli orologi} rotti. Mi adorano.",
       "Qui la gente si accovaccia per parlarmi. La lascio fare. È educato da parte loro.",
       "Gli umani qui tengono bene i conti. Meglio di quanto pensino.",
-      "Un bambino mi ha chiesto se vivo in un fungo. Ho detto solo in vacanza.",
-      "Qui da {sei|undici|vent'} anni e mi serve ancora uno sgabello all'ufficio postale.",
+      "Un bambino mi ha chiesto se vivo in un fungo. Ho risposto: solo in vacanza.",
+      "Qui da {sei anni|undici anni|vent'anni} e mi serve ancora uno sgabello all'ufficio postale.",
       "Le città umane sono piene di macchine ingegnose che nessuno guarda. Io le guardo tutte.",
       "Il conducente del tram ora mi aspetta. Piccole gentilezze, annotate e archiviate.",
-      "Qui mi chiamano 'il piccolo aggiustatutto'. Accetto il titolo.",
+      "Qui mi chiamano 'l'aggiustatutto tascabile'. Accetto il titolo.",
       "Ho pagato le tasse in anticipo. L'impiegato non sapeva più che fare."
     ],
     "lore": {
@@ -354,9 +354,9 @@
       ],
       "accounts": [
         "Partita doppia: ogni euro ha un gemello da qualche parte. Trova il gemello.",
-        "I piccoli gnomi imparano a contare prima di camminare. Camminare è sopravvalutato, comunque.",
+        "I bambini gnomi imparano a contare prima di camminare. Camminare è sopravvalutato, comunque.",
         "Un grimorio di conti può essere pericoloso quanto un grimorio di incantesimi. Chiedi a un revisore.",
-        "Si dice che le banconote in euro contengano Fantablack. Una bolla può azzerare il giorno, non la banconota.",
+        "Si dice che le banconote in euro contengano Fantablack. Una bolla azzera il giorno. La banconota resta com'è.",
         "Gli interessi si accumulano. Anche i guai. Tieni traccia di entrambi.",
         "Il motto di famiglia: riporta l'uno, mai il rancore.",
         "I conti del Collettivo Ipercapitalista mi farebbero svenire. In senso buono.",
@@ -373,17 +373,17 @@
         "Un incantesimo scritto male divora le parole accanto. Tieni le ricette su pagine separate."
       ],
       "smallness": [
-        "Piccolo è efficiente. Meno da sfamare, meno da vestire, meno da colpire.",
+        "Essere piccoli è efficiente. Meno da sfamare, meno da vestire, meno da colpire.",
         "Gli gnomi misurano a gnomi. Uno gnomo, due gnomi, uno gnomo e un cappello.",
         "Nessuno mira in basso. Ogni soldato gnomo lo sa.",
         "Le nostre principesse cavalcano pony. I nostri pirati navigano su chiatte. Funziona.",
         "La gente grande pensa in metri. Noi pensiamo in millimetri. Per questo le nostre cose funzionano.",
         "Uno gnomo su una scaletta è uno gnomo su un trono.",
         "Mani piccole hanno costruito metà degli orologi svizzeri. Chiedi chi se ne prende il merito.",
-        "Orgoglio di essere piccoli. Essere alti rallenterebbe solo il pensiero."
+        "Che orgoglio, essere piccoli. Essere alti rallenterebbe solo il pensiero."
       ],
       "ruleOf80": [
-        "Regola dell'80: resta fisso a settantanove e le bolle ti lasciano in pace.",
+        "Regola dell'80: velocità fissa a settantanove e le bolle ti lasciano in pace.",
         "Ora i piccioni portano la posta tra le bolle. Novanta col vento a favore. Uccelli furbi.",
         "Ho tarato il regolatore del carretto per staccare a settantanove. Da allora ne ho venduti quaranta.",
         "Dentro una bolla, il giorno si azzera. Anche i conti. Soprattutto i conti.",
@@ -399,7 +399,7 @@
         "Fantablack dentro ogni cabina liminale. Grattato dalla Torre Omega, si dice. Vernice costosa.",
         "Fai girare un motore liminale vicino a una bolla e va in pezzi. Io ci monterei un campanello d'allarme.",
         "Un giorno uno gnomo costruirà un motore liminale grande come un orologio da taschino.",
-        "Bubba è un meccanico. Non uno gnomo, ma quasi. Proprio quasi.",
+        "Bubba è un meccanico. Quasi uno gnomo. Proprio quasi.",
         "Ogni strada di ogni mondo si unisce alla Strada Avvolgente. Immagina i conti dei pedaggi."
       ]
     }
@@ -417,7 +417,7 @@
         ],
         [
           0,
-          "Sì invece. Mi teneva sveglio, e tu sei mio amico."
+          "E invece sì. Mi teneva {g:sveglio|sveglia}, e tu sei {go:mio amico|mia amica}."
         ]
       ],
       [
@@ -451,7 +451,7 @@
       [
         [
           0,
-          "Fermo un attimo. Ecco. Ora il tuo orologio va giusto."
+          "{go:Fermo|Ferma} un attimo. Ecco. Ora il tuo orologio va giusto."
         ],
         [
           1,
@@ -545,11 +545,11 @@
         ],
         [
           1,
-          "Non ti ho visto, laggiù!"
+          "Non ti ho {go:visto|vista}, laggiù!"
         ],
         [
           0,
-          "Non mi vede mai nessuno. Non è una scusa, è uno schema."
+          "Non mi vede mai nessuno. Ormai è uno schema."
         ]
       ],
       [
@@ -583,7 +583,7 @@
       [
         [
           0,
-          "Smettila di chiamarmi 'piccoletto', {b}."
+          "Smettila di chiamarmi '{g:piccoletto|piccoletta}', {b}."
         ],
         [
           1,
@@ -631,11 +631,11 @@
         ],
         [
           1,
-          "Più o meno e mezza."
+          "È passata la mezz'ora, più o meno."
         ],
         [
           0,
-          "E mezza e undici secondi. Ma più o meno, sì."
+          "La mezz'ora e undici secondi. Ma più o meno, sì."
         ]
       ],
       [
@@ -649,7 +649,7 @@
         ],
         [
           0,
-          "Splendido. Controllerò le sue filettature prima di fidarmi."
+          "Splendido. Prima di fidarmi del ferramenta controllerò le sue filettature."
         ]
       ],
       [
@@ -719,7 +719,7 @@
         ],
         [
           0,
-          "Come sempre è sottovalutato. È facilissimo organizzarcisi intorno."
+          "'Come sempre' è sottovalutato. È facilissimo organizzarcisi intorno."
         ]
       ],
       [
@@ -733,7 +733,7 @@
         ],
         [
           0,
-          "Quello accanto. Grazie. Mi sarei arrampicato, ma il ripiano sembra nervoso."
+          "Quello accanto. Grazie. Mi sarei {g:arrampicato|arrampicata}, ma il ripiano sembra nervoso."
         ]
       ],
       [
@@ -753,7 +753,7 @@
       [
         [
           0,
-          "Nuovo in città?"
+          "{go:Nuovo|Nuova} in città?"
         ],
         [
           1,
@@ -865,7 +865,7 @@
         "lines": [
           [
             0,
-            "I soldi vanno su un conto, non sotto il materasso."
+            "I soldi vanno su un conto. Il materasso serve per dormire."
           ],
           [
             1,
@@ -931,13 +931,13 @@
         ],
         [
           1,
-          "Certo che te ne sei accorto."
+          "Certo che te ne sei {go:accorto|accorta}."
         ]
       ],
       [
         [
           0,
-          "Buon pomeriggio! Attento a dove metti i piedi, sono quaggiù."
+          "Buon pomeriggio! {go:Attento|Attenta} a dove metti i piedi, sono quaggiù."
         ],
         [
           1,
@@ -947,7 +947,7 @@
       [
         [
           0,
-          "Impegnato, {b}?"
+          "{go:Impegnato|Impegnata}, {b}?"
         ],
         [
           1,
@@ -1001,7 +1001,7 @@
         ],
         [
           1,
-          "Grazie. Tu lo noti per primo."
+          "Grazie. Tu certe cose le noti subito."
         ]
       ],
       [

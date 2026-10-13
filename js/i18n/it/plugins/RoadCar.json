@@ -2,7 +2,7 @@
   "unattendedCar": "Un'auto incustodita.",
   "stealCar": "Ruba l'auto",
   "cancel": "Annulla",
-  "usedDriverKeys": "La apri con le chiavi del suo stesso autista.",
+  "usedDriverKeys": "La apri con le chiavi del conducente.",
   "usedSkeletonKey": "Hai usato il Passepartout!",
   "needLockpick": "Ti serve un grimaldello per far partire un'auto a caldo.",
   "lockStuck": "La serratura non si muove.",
@@ -13,7 +13,7 @@
   "ramAngered": "{name} si rialza e ti viene addosso.",
   "vehicleScuffed": "Qualcosa cede contro il muso. Danni: {parts}.",
   "vehicleCrashed": "Ti schianti contro un altro veicolo. Danni: {parts}.",
-  "emptyWorldUnlocked": "La portiera è aperta. Chi l’ha lasciata qui non sarebbe tornato a riprenderla.",
+  "emptyWorldUnlocked": "La portiera non è chiusa a chiave. Chi l’ha lasciata qui non sarebbe tornato a riprenderla.",
   "driverSave": {
     "nearMiss": "[Tiro su DES del guidatore: \\DIE[{roll}] {mod} = {total}] Per un pelo, sterzata all'ultimo istante!",
     "failed": "[Tiro su DES del guidatore: \\DIE[{roll}] {mod} = {total} contro CD {dc}] Riflessi insufficienti, il veicolo va a sbattere!"

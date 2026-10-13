@@ -87,7 +87,7 @@
             <canvas id="${canvasId}" class="item-slot-icon-canvas--sm" width="32" height="32"></canvas>
           </div>
           <div class="item-slot-info">
-            <div class="item-slot-name">${item.name}</div>
+            <div class="item-slot-name">${window.NPCShared.escapeHtml(item.name)}</div>
             <div class="item-slot-meta">
               <span class="steal-choice-pct" style="color:${color}">${chance}%</span>
               ${countHTML}
@@ -183,7 +183,7 @@
       const item   = entry.data;
       const chance  = SS().calcChance(item, this._agi, entry);
       const modifier = SS().rollModifier(this._agi);
-      const success = await SS().performSteal(chance, { actionName: 'Shop Shoplift', modifier });
+      const success = await SS().performSteal(chance, { actionName: SS().translate('rollShoplift'), modifier });
 
       $gameVariables.setValue(79, item.price || 0);
 
@@ -243,6 +243,9 @@
         $gameTemp.reserveCommonEvent(125);
       }
 
+      // Only this scene is closed: if it is no longer the one up, popping
+      // would close whatever screen replaced it.
+      if (window.Dice3D && window.Dice3D.ownerAlive && !window.Dice3D.ownerAlive(this)) return;
       this.popScene();
     }
 

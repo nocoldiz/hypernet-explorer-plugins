@@ -1,26 +1,28 @@
 {
   "biologics": "Biologia",
   "damaged": "DANNEGGIATO",
-  "switchPlayer": "← → Cambia Giocatore",
+  "switchPlayer": "← → Cambia personaggio",
   "statFallback": "Statistica",
   "paramNames": [
     "HP Max",
     "MP Max",
-    "FOR",
-    "Precisione",
-    "INT",
+    "FRZ",
     "COS",
+    "INT",
+    "SAG",
     "DES",
     "PSI"
   ],
-  "vitalOrganDestroyed": "L'organo vitale ({part}) di {actor} è stato distrutto! È morto all'istante ed è stato rimosso dal gruppo.",
+  "vitalOrganDestroyed": "{part} di {actor} distrutto! È morto e ha lasciato il Party.",
   "partDestroyed": "Il {part} di {actor} è stato distrutto e rimosso!",
   "statusBroken": "ROTTO",
   "statusDestroyed": "DISTRUTTO",
   "statusCutOff": "AMPUTATO",
   "partRuined": "Il {part} di {actor} è stato rovinato irrimediabilmente!",
   "partBroken": "Il {part} di {actor} è stato rotto!",
-  "augmentLost": "L'innesto installato lì ({augment}) è stato strappato via con esso.",
+  "augmentLost": "L'innesto {augment} è andato perso con esso.",
   "partDamagedFallback": "{part} danneggiato!",
-  "limbCopy": "{name} {n}"
+  "limbCopy": "{name} {n}",
+  "battleLogWound": "{actor}: {wound}!",
+  "battleLogWoundStat": "{actor}: {wound}, {param} {amount}!"
 }

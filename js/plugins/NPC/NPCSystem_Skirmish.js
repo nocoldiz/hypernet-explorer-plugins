@@ -436,7 +436,7 @@
       window.NPCSim?.RoutineManager?.mark?.(c.eventName, "fleeing"); // i18n-ignore: routine activity id
       c.stateEndTime = now + this.FLEE_MAX_MS;
       c._flee = { eid: threat.eventId ? threat.eventId() : null, x: threat.x, y: threat.y };
-      window.SimLog?.decide("npc", c.eventName, "ParchmentToast.simLog.npc.flee", { name: c.eventName });
+      window.SimLog?.decide("npc", c.eventName, "ParchmentToast.simLog.npc.flee", { name: c.eventName }); // i18n-ignore: i18n key
       const speed = c._speedCap != null ? Math.min(c._speedCap, this.FLEE_SPEED) : this.FLEE_SPEED;
       c.event.setMoveSpeed(speed);
       try { $gameTemp?.requestBalloon?.(c.event, 1); } catch (e) { }
@@ -461,7 +461,7 @@
       window.NPCSim?.RoutineManager?.mark?.(c.eventName, "fighting"); // i18n-ignore: routine activity id
       c.stateEndTime = performance.now() + this.ENGAGE_GIVE_UP_MS;
       c._skirmish = { eid: monster.eventId(), started: false };
-      window.SimLog?.decide("npc", c.eventName, "ParchmentToast.simLog.npc.engage", { name: c.eventName });
+      window.SimLog?.decide("npc", c.eventName, "ParchmentToast.simLog.npc.engage", { name: c.eventName }); // i18n-ignore: i18n key
       c.event.setMoveSpeed(this.ENGAGE_SPEED);
       try { $gameTemp?.requestBalloon?.(c.event, 1); } catch (e) { }
     },
@@ -775,13 +775,60 @@
 
     Skirmish.fights = function() { return skirmishStore(); };
 
-    Skirmish.isFighting = function(ref) {
-        const key = Skirmish.refKey(ref);
+    // Who is in a fight, as a set of side keys. isFighting is asked on every
+    // update of everybody squaring up, and walking the registry (an object
+    // fights are added to and deleted from) each time was the dearest part of
+    // their update. The set is read off the registry again whenever start,
+    // stop or a round's end changes it (fightsChanged), or the registry
+    // itself is another one (a new map, a save restored).
+    let fightVersion = 0;
+    let indexVersion = -1, indexStore = null, indexCount = 0;
+    const fightingKeys = new Set();
+    function fightsChanged() { fightVersion++; }
+    function fightingIndex() {
         const fights = skirmishStore();
-        for (const k in fights) {
-            if (fights[k].keys[0] === key || fights[k].keys[1] === key) return true;
+        if (indexStore !== fights || indexVersion !== fightVersion) {
+            fightingKeys.clear();
+            indexCount = 0;
+            for (const k in fights) {
+                indexCount++;
+                const keys = fights[k].keys;
+                fightingKeys.add(keys[0]);
+                fightingKeys.add(keys[1]);
+            }
+            indexStore = fights;
+            indexVersion = fightVersion;
         }
-        return false;
+        return fightingKeys;
+    }
+    // How many fights the registry holds, off the same reading.
+    function fightCount() {
+        fightingIndex();
+        return indexCount;
+    }
+
+    // A side's key, spelled once per person (or monster) rather than joined
+    // afresh on every ask: a fresh string is hashed anew by every lookup.
+    // refKey reads nothing but the kind and the name or id, so its answer
+    // keeps; a refKey swapped for another one starts the spellings over.
+    const npcKeys = new Map(), monsterKeys = new Map();
+    let keysFor = null;
+    function sideKey(ref) {
+        if (keysFor !== Skirmish.refKey) { npcKeys.clear(); monsterKeys.clear(); keysFor = Skirmish.refKey; }
+        const npc = ref.kind === 'npc'; // i18n-ignore: skirmish side kind
+        const cache = npc ? npcKeys : monsterKeys;
+        const id = npc ? ref.name : ref.id;
+        let key = cache.get(id);
+        if (key === undefined) {
+            key = Skirmish.refKey(ref);
+            if (cache.size > 4096) cache.clear();
+            cache.set(id, key);
+        }
+        return key;
+    }
+
+    Skirmish.isFighting = function(ref) {
+        return fightingIndex().has(sideKey(ref));
     };
 
     // Start (or keep) a fight between two sides. `opener` says who struck
@@ -791,10 +838,11 @@
         const ka = Skirmish.refKey(openerRef), kb = Skirmish.refKey(otherRef);
         const key = ka < kb ? ka + '|' + kb : kb + '|' + ka;
         if (fights[key]) return fights[key];
-        if (Object.keys(fights).length >= Skirmish.MAX_FIGHTS) return null;
+        if (fightCount() >= Skirmish.MAX_FIGHTS) return null;
         const A = Skirmish.sideOf(openerRef), B = Skirmish.sideOf(otherRef);
         if (!A || !B) return null;
         fights[key] = { a: openerRef, b: otherRef, keys: [ka, kb], timer: Skirmish.ROUND_FRAMES };
+        fightsChanged();
         Skirmish.toast('start', A, B);
         // A person set upon squares up or runs (NPCSystem decides which).
         const api = skirmishNpcApi();
@@ -808,6 +856,7 @@
         for (const k in fights) {
             if (fights[k].keys[0] === key || fights[k].keys[1] === key) delete fights[k];
         }
+        fightsChanged();
     };
 
     // A hunter or a predator counts the people in reach as quarry too, and
@@ -867,6 +916,7 @@
             const result = Skirmish.exchange(fight, Skirmish.sideOf(fight.a), Skirmish.sideOf(fight.b), Math.random);
             if (result !== 'continue') {
                 delete fights[key];
+                fightsChanged();
                 const api = skirmishNpcApi();
                 if (api && api.onFightOver) api.onFightOver(fight, result);
             }

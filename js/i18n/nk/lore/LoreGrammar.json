@@ -1,2563 +1,2563 @@
 {
-  "_comment": "",
+  "_comment": "English reference for the js/db/Skills/Lore.json grammar. The db is the source of truth for English; this file exists so other languages have a key set to translate against (ItemSystemUtils.grammar overlays the active language's copy). The family and tokens fields are ids and are never overlaid.",
   "tokenBanks": {
     "worldly": [
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""
+      "{faction} STILL DRILLS IT NEAR {city}",
+      "{leader} OF {faction} PAYS WELL FOR ITS MASTERS IN {city}",
+      "DA {title} OF {faction} PROVE DEY RANK BY IT ACROSS {nation}",
+      "{nation} GUARDS DA OLD FORMS UNDER {leader}",
+      "{faction} KEEPS A HARDENED MASTER OF IT IN {city}",
+      "{leader} STAKES {nation} ON DOZE WHO WIELD IT",
+      "DA {title} OF {nation} CARRY IT INTO {city}",
+      "DA WANDERIN' FOLK OF {nation} BEAR IT FAR PAST {city}",
+      "{faction} HIRES DA FINEST OF ITS PRACTITIONERS OUT OF {city}",
+      "{leader} RULES {city} BY LIL' ELSE",
+      "{govType} OF {nation} SETS A CHECKPOINT TOLL ON EVERY MASTER OF IT OUT OF {city}",
+      "{leader} KEEPS A WHOLE BARRACKS OF IT {govType} COULD NEVER AFFORD",
+      "DA MARKET STALLS OF {city} SELL KNOCK-OFFS OF IT WHILE {faction} KEEPS DA TRUE DRILLS",
+      "NO TRUCKER CONVOY LEAVES {city} WITOUT A {title} OF {faction} WHO KNOWS IT",
+      "{leader} TRADED {nation} HALF A ROAD FOR ONE MASTER OF IT",
+      "DA {title} OF {govType} ENFORCE IT AT DA BORDERS OF {city}",
+      "{faction} AN' ITS RIVALS BOTH BLEED FOR IT IN DA ALLEYS OF {city}",
+      "{leader} OF {faction} OUTLAWED ITS TEACHIN' EVERYWHERE BUT {city}",
+      "PAST DA LAST CHECKPOINT OF {nation} ONLY {faction} STILL DRILLS IT",
+      "DA ROAD-STALLS NEAR {city} HAWK IT TA ANY WHO CARRY {faction} COIN",
+      "{govType} PRETENDS IT NEVER MATTERED, YET {leader} HOARDS ITS MASTERS IN {city}",
+      "DA {title} OF {faction} BURY DEY DEAD NEAR {city} WIT IT CARVED ON DA STONE",
+      "{nation} TAXES IT, {faction} SMUGGLES IT, AN' {city} PAYS FOR IT IN DA DARK",
+      "{leader} LEARNED IT BEFORE DA WALLS OF {city} AN' NEVER LET IT GO",
+      "CONVOY-RUNNERS OUT OF {city} SWEAR NO {title} OF {faction} MOVES WITOUT IT",
+      "DA {title} WHO HOLD {city} FOR {govType} WAZ ALL SCHOOLED IN IT",
+      "{faction} LEFT ITS OLD MASTERS OF IT STRANDED PAST DA CHECKPOINTS OF {nation}",
+      "{leader} WOULD TRADE {city} SOONER DEN DA LAST PRACTITIONER OF IT",
+      "DA CARAVAN-GUARDS OF {nation} CARRY IT WHERE {govType} LAW NO CAN REACH",
+      "EVEN DA BEGGARS AT DA GATES OF {city} NAME {faction} AN' {leader} WHEN DEY SPEAK OF IT"
     ],
     "arcane": [
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""
+      "{faction} STILL WORKS DA RITE NEAR {city}",
+      "{leader} OF {faction} GUARDS ITS GRIMOIRES IN {city}",
+      "DA {title} OF {faction} LEARN IT BY ROTE IN {nation}",
+      "{nation} WHISPERS IT YET IN {deity}'S NAME",
+      "{faction} ALONE DARES TEACH IT BENEATH {city}",
+      "DA SEERS OF {faction} SWEAR BY IT BEFORE {deity}",
+      "{leader} OF {faction} HOARDS ITS SECRETS IN {city}",
+      "{deity}'S FAITHFUL WITHIN {faction} PRESERVE EVERY WORD OF IT",
+      "{nation} BURNS DOZE WHO STEAL IT, YET {faction} KEEPS DA ROLLS",
+      "DA ADEPTS OF {faction} CARRY IT OUT OF {city} FOR {leader}",
+      "DA LEYLINES UNDER {city} ANSWER ONLY DA {title} OF {faction}",
+      "{leader} OF {faction} KEEPS ITS CamelCase NAMES SEALED AWAY FROM {nation}",
+      "{govType} OF {nation} FORBIDS IT, SO {faction} WORKS IT BENEATH {city}",
+      "DA {title} OF {faction} SCRATCH ITS SIGILS ON DA ROAD-STONES OUT OF {city}",
+      "{deity} IZ SAID TA HAB TAUGHT IT TA {leader} BEFORE {faction} EVER FORMED",
+      "DA GRIMOIRE-CELLARS OF {city} HOLD WHAT {leader} OF {faction} WILL NO NAME",
+      "{nation} CALLS IT HERESY, YET DA {title} OF {faction} CHANT IT BEFORE {deity}",
+      "NO RITE OF IT MAY BE SOLD IN {city} UNLESS {faction} HAB COPIED IT FIRST",
+      "{leader} BOUND {nation} TA {deity} WIT DA OLDEST FORM OF IT",
+      "DA LEY-SCRIBES OF {faction} CARRY ITS ROLLS PAST DA WARDS OF {city}",
+      "{govType} KEEPS A CHAINED COPY OF IT, BUT {faction} KEEPS DA WORKIN' ONE",
+      "DA {title} OF {faction} SAY {deity} STILL LISTENS FOR IT ABOVE {city}",
+      "PAST DA LEYLINE-GATES OF {nation} ONLY {leader} OF {faction} MAY WORK IT",
+      "{deity}'S NAME IZ SPOKEN THRICE OVER EACH CASTIN' OF IT IN {city}",
+      "{faction} BURNED {nation}'S COPIES OF IT AN' KEPT ITS OWN IN {city}",
+      "DA ADEPTS OF {faction} TRADE ITS STANZAS FOR SAFE PASSAGE THROUGH {nation}",
+      "{leader} OF {faction} PAID A ROAD IN BLOOD FOR DA LAST GRIMOIRE OF IT IN {city}",
+      "DA {title} OF {govType} HUNT IT, AN' {faction} HIDES IT IN DA CELLARS OF {city}",
+      "{nation} SWEARS {deity} LAID IT IN DA LEYLINES BENEATH {city}",
+      "DA LEY-WITCHES OF {faction} WHISPER IT TA {leader} AN' TA NO ONE ELSE IN {city}"
     ]
   },
   "families": {
     "primordial": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}. {Attrib} FIRST SANG {art}, AN' {token}.",
+        "DA FIRST MAGIC OF ALL: {art}, {mechanism}; {token}!",
+        "{Attrib} BEQUEATHED {art} TA NO ONE, YET {mechanism}; {token}!",
+        "{Art} OF DA DEEP WORLD, {era}, {mechanism}. {Token}."
       ]
     },
     "ancient": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}: {attrib} FIRST SHAPED {art}, AN' {token}.",
+        "OLDER DEN ANY KINGDOM, {art} ENDURES, {mechanism}; {token}!",
+        "{Attrib} KINDLED {art} AT DA DAWN OF TINKZ; {token}!",
+        "A PRIMAL CRAFT, {era}. {Mechanism_cap}, SO {token}."
       ]
     },
     "wild": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}, WHEN {attrib} FIRST WORE DA HIDE AN' TOOK DA HORN; {token}!",
+        "{Attrib} SANG {art} TA DA WILDS LONG BEFORE DA WALLS ROSE, AN' {token}!",
+        "A WILD ART {era}, {mechanism}; {token}.",
+        "{Art} OF DA WILDS, {mechanism}. {Token}."
       ]
     },
     "greek": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, COPIED FROM {attrib}, {mechanism}. {Token}.",
+        "{Era}: HIGH SORCERY FROM {attrib}, {mechanism}; {token}.",
+        "{Art} OF DA OLD GRIMOIRES, SYSTEMATISED BY {attrib}; {token}!",
+        "CEREMONIAL ARCANA {era}, {mechanism}. {Token}.",
+        "{Attrib} SET DOWN {art} IN DA SPELL-PAPERS, AN' {token}!"
       ]
     },
     "holy": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "A GRACE {era}, SANCTIFIED BY {attrib}; {token}!",
+        "{Attrib} FIRST KINDLED {art}, AN' {token}.",
+        "{Art} OF TEMPLE AN' CATHEDRAL, {mechanism}; {token}!",
+        "DIVINE LIGHT {era}, BLESSED BY {attrib}. {Token}!"
       ]
     },
     "dream": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Attrib} FIRST WALKED IT, SIEVIN' DA NIGHT; {token}!",
+        "SLEEP-CRAFT {era}, {mechanism}; {token}.",
+        "{Era}: {attrib} READ DA SOUL'S WISHES IN DREAM, AN' {token}!",
+        "{Art} DRAWN FROM DA VISION-QUEST, {mechanism}. {Token}!"
       ]
     },
     "modern": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "NEWLY DRAFTED: {art}, {era}, {mechanism}. {Token}.",
+        "{Era}. {Attrib} MARRIED {art} TA DA AGE, AN' {token}!",
+        "{Art}, NO OLDER DEN DA SATELLITE AGE, {mechanism}; {token}!",
+        "DA YOUNGEST OF DA SCHOOLS, {art} WAZ BORN {era}; {token}!",
+        "{Attrib} FORGED {art} FROM DA BROKEN WORLD, {mechanism}. {Token}!"
       ]
     },
     "forbidden": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "A PROSCRIBED WORKIN': {art}, {mechanism}, CONDEMNED IN EVERY AGE. {Token}!",
+        "{Art}, OUTLAWED SINCE {attrib} FIRST DARED IT, {mechanism}; {token}!",
+        "BLACK SORCERY {era}, {mechanism}. {Token}.",
+        "{Attrib} PASSED {art} IN SECRET, AN' {token}.",
+        "AN INTERDICTED RITE, {art} WARPS DA LEYLINES; {mechanism}, AN' {token}!"
       ]
     },
     "martial": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}: {attrib} DRILLED {art}, AN' {token}.",
+        "{Art} SHARPENED IN EVERY WAR SINCE, {mechanism}; {token}!",
+        "{Attrib} CODIFIED {art} IN DA WAR-SCHOOLS; {token}!",
+        "A SOLDIER'S CRAFT {era}, {mechanism}. {Token}."
       ]
     },
     "trade": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}: {attrib} PLIED {art}, AN' {token}.",
+        "{Art} HANDED DOWN DA GUILD-LINES, {mechanism}; {token}!",
+        "{Attrib} MASTERED {art} DA LONG WAY; {token}.",
+        "A WORKADAY CRAFT {era}, {mechanism}. {Token}."
       ]
     },
     "fusion": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "A JOINED WORKIN': TWO ARTS BRAIDED INTO ONE, {mechanism}. {Token}!",
+        "{Era}, WHEN DA SQUISHING LET SEPARATE SPELLS FUSE; {mechanism}, AN' {token}!",
+        "A COMPOSITE RITE, {mechanism}; {token}.",
+        "{Attrib} FIRST WELDED DEZE STRANDS TOGETHER, AN' {token}!",
+        "TWO DISCIPLINES MADE ONE, {mechanism}. {Token}!"
       ]
     },
     "wayfaring": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "ROAD-CRAFT {era}, {mechanism}. {Token}.",
+        "{Attrib} KEEP DA ROUTES OPEN, {mechanism}; {token}.",
+        "{Art} OF DA ENCOMPASSIN' ROAD, {mechanism}; {token}!",
+        "{Era}: HOLD DA PACE OR BE RESET; {attrib} LEARNED TA BEND IT, AN' {token}!",
+        "TRAVEL-MAGIC {era}, {mechanism}. {Token}."
       ]
     },
     "generic": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        ""
+        "A CRAFT WIT NO FOUNDER ON RECORD, {mechanism}. {Token}!",
+        "{Era}: WHOEVER DID IT FIRST LEFT NO NAME, AN' {token}!",
+        "{Art}, TAUGHT HAND TA HAND AN' WRITTEN DOWN BADLY; {token}!",
+        "UNCHARTERED, UNDOCUMENTED, STILL IN DAILY USE, {mechanism}; {token}!",
+        "{Attrib} CARRIED {art} THROUGH THREE CENTURIES OF NOBODY CARIN', AN' {token}!"
       ]
     },
     "forged": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}: {attrib} HAMMERED {art}, AN' {token}.",
+        "{Attrib} BEAT {art} OUT ON DA ANVIL, {mechanism}; {token}!",
+        "{Art} OF DA FORGE-TOWNS, {mechanism}. {Token}.",
+        "A SMITH'S WORK {era}, {mechanism}; {token}.",
+        "STEEL-CRAFT OLDER DEN MOST WALLS, {art}, {mechanism}. {Token}!"
       ]
     },
     "primitive": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}: {attrib} CHIPPED {art} FROM WHAT DEY COULD FIND, AN' {token}!",
+        "{Attrib} SCAVENGED {art} FROM DA RUINS, {mechanism}; {token}!",
+        "{Art} OF DA SCRAP-HEAPS, {mechanism}. {Token}.",
+        "A CRUDE TINK {era}, {mechanism}; {token}.",
+        "STONE-AGE WORK IN A BROKEN AGE, {art}, {mechanism}. {Token}!"
       ]
     },
     "firearm": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}: {attrib} BORED AN' RIFLED {art}, AN' {token}!",
+        "{Attrib} MACHINED {art} IN DA GUN-SHOPS, {mechanism}; {token}!",
+        "{Art} OF DA TRENCH AN' DA ASSEMBLY LINE, {mechanism}. {Token}!",
+        "A GUNSMITH'S PIECE {era}, {mechanism}; {token}.",
+        "POWDER-AN'-STEEL WORK, {art}, {mechanism}. {Token}!"
       ]
     },
     "marketed": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}: {attrib} STAMPED {art} OUT BY DA THOUSAND, AN' {token}!",
+        "{Attrib} SHIPPED {art} STRAIGHT FROM DA CATALOG, {mechanism}; {token}!",
+        "{Art} OFF DA LOOP-RESISTANT LINES, {mechanism}. {Token}!",
+        "FACTORY STOCK {era}, {mechanism}; {token}.",
+        "MASS-MADE AN' NEVER QUITE DA SAME TWICE, {art}, {mechanism}. {Token}!"
       ]
     },
     "relic": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}: {attrib} FIRST BORE {art}, AN' {token}.",
+        "{Attrib} CARRIED {art} THROUGH DA OLD WARS, {mechanism}; {token}!",
+        "{Art} OF DA LEYLINE AN' DA DEEP PAST, {mechanism}. {Token}!",
+        "A NAMED TINK {era}, {mechanism}; {token}.",
+        "OLDER DEN DA SQUISHING AN' STRANGER FOR IT, {art}, {mechanism}. {Token}!"
       ]
     },
     "warding": {
       "templates": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "{Art}, {era}, {mechanism}. {Token}.",
+        "{Era}: {attrib} RAISED {art} AGAINST DA ASSAULT, AN' {token}!",
+        "{Attrib} BORE {art} IN DA SIEGE-LINES, {mechanism}; {token}!",
+        "{Art} OF DA SHIELD-WALL, {mechanism}. {Token}.",
+        "A SHELTER {era}, {mechanism}; {token}.",
+        "BUILT TA TURN A BLOW AN' HOLD A LINE, {art}, {mechanism}. {Token}!"
       ]
     }
   },
   "fallbackArchetype": {
     "art": [
-      "",
-      "",
-      "",
-      ""
+      "DA CRAFT WIT NO FOUNDER",
+      "DA TRADE NOBODY FILED A CLAIM ON",
+      "DA ART DAT LOST ITS FIRST PAGE",
+      "DA DISCIPLINE DA GUILDS NEVER CHARTERED"
     ],
     "era": [
-      "",
-      "",
-      "",
-      ""
+      "UNDATED IN EVERY SURVIVIN' COPY",
+      "ITS FIRST DAY TORN OUT OF DA REGISTER",
+      "OLDER DEN DA OLDEST COPY ANYONE STILL OWNS",
+      "OLDER DEN DA ARCHIVE DAT WOULD HAB LOGGED IT"
     ],
     "mechanism": [
-      "",
-      "",
-      "",
-      ""
+      "TAUGHT HAND TA HAND COZ NOBODY WROTE IT DOWN CORRECTLY",
+      "SURVIVIN' IN WORKSHOP NOTES AN' IN NO TEXTBOOK AT ALL",
+      "COPIED WRONG FOUR TIMES AN' WORKIN' ANYWAY",
+      "KEPT BY PEOPLE WHO NEEDED IT MORE DEN DEY NEEDED A NAME FOR IT"
     ],
     "attrib": [
-      "",
-      "",
-      "",
-      ""
+      "PRACTITIONERS WHOSE NAMES WENT UNRECORDED",
+      "MASTERS WHO TAUGHT IT FOR BOARD AN' BREAD",
+      "LABOURERS WHO USED IT LONG BEFORE ANYONE STUDIED IT",
+      "PUPILS WHO LEARNED IT STANDIN' UP, IN DA YARD"
     ]
   },
   "archetypes": {
     "Geomancy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "PETROMANCY",
+        "DA DEEP-STONE ART",
+        "EARTH-SINGIN'",
+        "DA MARROW-RITE",
+        "DA TAR-PIT CALLIN'",
+        "CRUDE-OIL DIVINATION",
+        "DA BEDROCK SUMMONS"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "OLDER DEN MANKIND",
+        "ELDEST OF ALL DA SORCERIES",
+        "FROM BEFORE DA FIRST MAMMAL DREW BREATH",
+        "BORN IN DA MESOZOIC DEEP",
+        "REMEMBERED FROM BEFORE DA CONTINENTS DRIFTED",
+        "OF DA AGE WHEN OIL FIRST POOLED IN DA DARK",
+        "SUNG IN DA REPTILE-TONGUE OF DA DEEP SWAMPS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DRAWIN' ON DA PETRODEMONS ASLEEP IN DA CRUDE OIL",
+        "BINDIN' BLOOD, OIL AN' LEYLINE THROUGH PORPHYRIN THREADS",
+        "COAXIN' POWER FROM DA EARTH'S OWN MARROW",
+        "ANSWERIN' DA BLACK SENTIENT OIL IN DA DEEP",
+        "LISTENIN' TA DA PRESSURE OF DA BURIED SEA OF OIL",
+        "READIN' DA COPPER-PENNY SMELL OF STIRRED PORPHYRIN",
+        "WAKIN' DA STRATA DAT SLEPT SINCE DA GREAT HEAT"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA SAURIAN SHAMANS OF DA MESOZOIC SWAMPS",
+        "DA REPTILE-PRIESTS OF DA PRIMEVAL TAR-PITS",
+        "ENRICO MATTEI (1906-1962), WHO COPIED IT FROM A LIBYAN TOMB-SCROLL",
+        "DA PETRODEMONS DAT TAUGHT IT TA NO ONE",
+        "DA DRILL-SHAMANS WHO COURT DA PETRODEMONS",
+        "DA TOMB-SCROLL COPYISTS OF DA LIBYAN SANDS",
+        "DA DEEP-EARTH LISTENERS WHO NEVER SEE DA SUN"
       ]
     },
     "Bestial": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "BEAST-LORE",
+        "DA HIDE-AN'-HORN RITE",
+        "PRIMAL BEAST-MAGIC",
+        "DA WILD KINSHIP"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "FROM DA DEEP STONE AGE",
+        "OLDER DEN ANY CITY",
+        "SUNG SINCE DA ICE-AGE HUNTS",
+        "AS OLD AS DA WALK WIT DA HERDS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "BORROWIN' DA STRENGTH AN' FURY OF DA BEASTS",
+        "TAKIN' ON CLAW, HIDE AN' SAVAGE INSTINCT",
+        "SPEAKIN' WIT DA ANIMALS AS KIN",
+        "WEARIN' DA TOTEM'S SHAPE IN BATTLE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA ICE-AGE SHAMANS WHO FIRST WORE DA HIDE",
+        "DA DRUIDS OLDER DEN ANY CITY",
+        "DA WILD-FOLK WHO WALKED WIT DA HERDS",
+        "DA HORN-CROWNED HUNTERS OF DA ELDER WILDS"
       ]
     },
     "Hunting": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "DA HUNTER'S CRAFT",
+        "DA TRACKIN'-LORE",
+        "DA STALK-AN'-KILL",
+        "DA TRAIL-CRAFT"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "ELDEST OF ALL HUMAN SKILLS",
+        "DRILLED SINCE DA PALEOLITHIC",
+        "OLDER DEN AGRICULTURE ITSELF",
+        "DA FIRST SKILL OUR KIND EVER MASTERED"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "READIN' SIGN AN' RUNNIN' DOWN DA QUARRY",
+        "LOOSIN' DA KILLIN' SHOT AT DA LAST BREATH",
+        "FIGHTIN' BESIDE A LOYAL BEAST",
+        "FEEDIN' A WHOLE CAMP FROM A COLD TRAIL"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA PALEOLITHIC TRACKERS",
+        "DA FIRST HUNTERS WHO FED DA FIRE",
+        "DA TRAIL-MASTERS OF DA OLD COLD WASTES",
+        "DA BEAST-HUNTERS OF DA ELDER TUNDRA"
       ]
     },
     "Pastoral": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "DA GREEN ART",
+        "DA GROWIN'-WORDS",
+        "SEED-AN'-HERD LORE",
+        "DA PASTORAL RITE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS AGRICULTURE ITSELF",
+        "TEN THOUSAND YEARS DEEP",
+        "FROM DA DAWN OF DA PLOUGH",
+        "BORN WIT DA FIRST NEOLITHIC VILLAGE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "COAXIN' ROOT, VINE AN' BEAST TA OBEY",
+        "WHISPERIN' SEED AN' HERD TA FATNESS",
+        "TURNIN' BARREN FURROWS GREEN",
+        "BINDIN' DA FLOCK TA A SINGLE VOICE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA GRAIN-PRIESTS OF DA FIRST VILLAGES",
+        "DA SETTLED FOLK OF DA NEOLITHIC",
+        "DA CUNNIN'-FOLK WHO SANG TA DA SOWIN'",
+        "DA HERDERS WHO FIRST PUT DOWN ROOTS"
       ]
     },
     "Arcanism": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA ARCANE ART",
+        "HIGH CEREMONIAL MAGIC",
+        "STRUCTURED SORCERY",
+        "DA PURE ARCANA",
+        "DA FIGURE-AN'-FORMULA WORK",
+        "DA GRAVEN-SIGIL ART",
+        "DA DIAGRAM-MAGIC"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "OLDER DEN ROME",
+        "FROM DA SPELL-PAPERS OF GRECO-ROMAN EGYPT",
+        "CODIFIED ANEW IN 1888",
+        "OF DA HERMETIC TRADITION",
+        "SET DOWN IN DA ALEXANDRIAN SPELL-PAPERS",
+        "REVIVED IN DA PARLOUR-LODGES OF 1888",
+        "OF DA HERMETIC REVIVAL'S CAREFUL HAND"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CHANNELLIN' RAW MAGICAL POWER THROUGH LEARNED FIGURES",
+        "SHAPIN' PURE ARCANE ENERGY BY ROTE AN' DIAGRAM",
+        "BINDIN' SIGIL AN' WORD INTO EFFECT",
+        "DRAWIN' STRUCTURE OUT OF CHAOS",
+        "RULIN' CLEAN LINES UNTIL DA CHAOS TOOK SHAPE",
+        "RECITIN' DA BARBAROUS NAMES IN EXACT ORDER",
+        "BINDIN' A FIGURE SO PRECISELY NUTTIN' COULD LEAK"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA SCRIBES OF DA GREEK MAGICAL PAPYRI",
+        "AGRIPPA (1486-1535) AN' JOHN DEE (1527-1608)",
+        "DA HERMETIC ORDER OF DA GOLDEN DAWN",
+        "DA COPYISTS OF DA SEFER RAZIEL AN' DA PICATRIX",
+        "DA LODGE-ADEPTS WHO MEASURED EVERY SIGIL",
+        "DA ALEXANDRIAN COPYISTS OF DA SPELL-PAPERS",
+        "DA DIAGRAM-MASTERS OF DA GOLDEN DAWN"
       ]
     },
     "StatusMagic": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "HEX-CRAFT",
+        "AFFLICTION-MAGIC",
+        "DA BINDIN'-CURSES",
+        "DA KATADESMOI"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "FROM DA CLASSICAL CURSE-TABLETS",
+        "OF DEEP ANTIQUITY",
+        "BURIED WIT DA GREEK AN' ROMAN DEAD",
+        "OF DA TEMPLE-WITCHES"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "BINDIN' SLEEP, SICKNESS AN' FEAR INTO A FOE",
+        "SCRATCHIN' A CURSE TA FIX A RIVAL'S FATE",
+        "LOOSIN' OR LIFTIN' A DOZEN AFFLICTIONS",
+        "TWISTIN' A BODY'S OWN STATES AGAINST IT"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA CURSE-SCRIBES OF DA DEFIXIONES",
+        "DA TEMPLE-WITCHES WHO BURIED DA LEAD TABLETS",
+        "DA HEX-WRITERS OF DA GREEK MAGICAL PAPYRI",
+        "DA OLD KATADESMOS-MAKERS OF DA GRAVES"
       ]
     },
     "Illusion": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "GLAMOUR-LORE",
+        "ILLUSION-CRAFT",
+        "DA DECEIVER'S ART",
+        "DA PHANTASM-WEAVIN'",
+        "DA SENSE-FOOLIN' GLAMOUR",
+        "DA FALSE-SEEMIN' CRAFT",
+        "DA PHANTASM-WEAVE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FROM DA CLASSICAL MYSTERY-CULTS",
+        "WOVEN SINCE ANTIQUITY",
+        "OF DA TEMPLE-ILLUSIONISTS",
+        "AS OLD AS DA FIRST SLEIGHT OF EYE",
+        "SHOWN FIRST IN DA OLD MYSTERY-RITES",
+        "WOVEN SINCE DA FIRST TRICK OF DA EYE",
+        "OF DA SHRINE-ILLUSIONISTS WHO FOOLED DA PILGRIMS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "MAKIN' DA UNREAL SEEM REAL TA ANY EYE",
+        "FOOLIN' EVERY SENSE OF A FOE",
+        "CLOAKIN' A WHOLE COMPANY IN SEEMIN'",
+        "CONJURIN' PHANTASMS DAT BLEED AN' BITE",
+        "LAYIN' A SEEMIN' OVER A WHOLE COMPANY AT ONCE",
+        "CONVINCIN' EVERY SENSE A TINK WAZ TRULY DERE",
+        "CONJURIN' A PHANTOM SOLID ENOUGH TA DRAW BLOOD"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA PRIESTS OF DA OLD MYSTERY-CULTS",
+        "DA TEMPLE-ILLUSIONISTS OF ANTIQUITY",
+        "DA GLAMOUR-WEAVERS OF DA ELDER SHRINES",
+        "DA DECEIVERS WHO FOOLED KINGS",
+        "DA MYSTERY-PRIESTS WHO STAGED DA GOD'S RETURN",
+        "DA SHRINE-GLAMOURISTS WHO AWED DA CREDULOUS",
+        "DA DECEIVERS WHO COULD FOOL A WARY KING"
       ]
     },
     "HolyMagic": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "HOLY FIRE",
+        "DA SACRED GRACE",
+        "DIVINE LIGHT",
+        "DA BLESSIN'-CRAFT",
+        "DA LITANY OF LIGHT",
+        "DA SMITIN'-GRACE",
+        "DA CLEANSIN' FIRE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "SHAPED IN GREEK TEMPLES AN' ROMAN BASILICAS",
+        "INHERITED BY DA CHRISTIAN SAINTS",
+        "OF DA CLASSICAL MYSTERIES AN' DA CHURCH ALIKE",
+        "OLDER DEN DA CATHEDRALS",
+        "CARRIED ON AFTER DA FATHER WAZ SLAIN",
+        "OF DA BASILICA-CHOIRS AN' DA TEMPLE-ORACLES",
+        "KEPT ALIGHT THROUGH DA AGE OF ASH"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "PURIFYIN' WIT SACRED LIGHT",
+        "SMITIN' DA WICKED WIT RIGHTEOUS POWER",
+        "CALLIN' GRACE DOWN UPON DA FAITHFUL",
+        "BURNIN' CORRUPTION FROM FLESH AN' SOUL",
+        "SINGIN' DA WICKED INTO ASH WIT A CLEAN NOTE",
+        "LAYIN' GRACE ON A COMPANY LIKE COOL WATER",
+        "BURNIN' WHAT DA LEYLINE HAB ROTTED OUT OF A SOUL"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "JEANNE D'ARC (1412-1431) ON DA FIELDS OF FRANCE",
+        "DA ORACLES OF GREECE AN' DA AUGURS OF ROME",
+        "DA MARTYRS OF DA EARLY CHURCH",
+        "DA SAINTS WHO SANCTIFIED IT ANEW",
+        "DA WAR-CLERICS WHO BLESS BEFORE DA CHARGE",
+        "DA CHOIR-SAINTS OF DA SURVIVIN' BASILICAS",
+        "DA MARTYRS WHOSE FAITH OUTLIVED DEY GODS"
       ]
     },
     "Healing": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA MENDIN' ART",
+        "RESTORATIVE MAGIC",
+        "DA HEALIN' RITES",
+        "DA POULTICE-LORE",
+        "DA LAID-HAND RITE",
+        "DA FEVER-DRAWIN' ART",
+        "DA BONE-KNITTIN' CRAFT"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FROM DA TEMPLE-MEDICINE OF ANTIQUITY",
+        "AS OLD AS DA FIRST POULTICE",
+        "SANCTIFIED IN DA GREEK HEALIN'-TEMPLES",
+        "OF DA ANCIENT HOUSES OF HEALIN'",
+        "OF DA SLEEP-TEMPLES WHERE DA SICK LAY IN VISION",
+        "AS OLD AS DA FIRST CLEAN BANDAGE",
+        "HANDED DOWN DA HEALER-HOUSES UNBROKEN"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "KNITTIN' WOUND AN' BONE WHOLE AGAIN",
+        "DRAWIN' SICKNESS OUT OF DA LIVIN'",
+        "RESTORIN' VITALITY WIT A LAID HAND",
+        "TURNIN' BACK A MORTAL HURT",
+        "DRAWIN' DA FEVER OUT THROUGH A LAID PALM",
+        "COAXIN' TORN FLESH TA REMEMBER ITS OWN SHAPE",
+        "SEALIN' A MORTAL WOUND BEFORE DA BREATH COULD LEAVE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA HEALER-PRIESTS OF DA OLD TEMPLES",
+        "HILDEGARD VON BINGEN (1098-1179)",
+        "DA PHYSICIANS OF DA CLASSICAL MYSTERIES",
+        "DA VISIONARY ABBESS-HEALERS",
+        "DA DREAM-HEALERS OF DA SLEEP-TEMPLES",
+        "DA ABBESS-PHYSICIANS WHO WROTE DOWN EVERY CURE",
+        "DA FIELD-MENDERS WHO WORK BY LAMPLIGHT"
       ]
     },
     "Augury": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "DA DIVININ' ART",
+        "OMEN-CRAFT",
+        "DA SKY-READIN'",
+        "PROPHECY"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "OLD AS DA MAYA DAY-COUNT",
+        "OF DA ETRUSCAN HARUSPICES",
+        "READ SINCE DA CALENDAR-PRIESTS",
+        "REFINED IN DA 16TH CENTURY"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "READIN' FATE IN DA TZOLK'IN COUNT OF DAYS",
+        "PEERIN' BEYOND DA VEIL OF DA FUTURE",
+        "CASTIN' DA BIRD-SIGNS BEFORE ANY MARCH",
+        "FIXIN' A DESTINY BY ITS BIRTH-DAY"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA MAYA DAY-KEEPERS",
+        "DA ETRUSCAN HARUSPICES AN' ROMAN AUGURS",
+        "NOSTRADAMUS (1503-1566)",
+        "DA AZTEC CALENDAR-PRIESTS OF DA TONALPOHUALLI"
       ]
     },
     "Oneiromancy": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "DREAM-MAGIC",
+        "DA SLEEP-SORCERY",
+        "VISION-CRAFT",
+        "DA DREAMWALKIN'"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "OF DA NATIVE AMERICAN DREAM-LODGES",
+        "REMADE BY DA SQUISHING OF 2003",
+        "SIEVED THROUGH DA FIRST DREAMCATCHER",
+        "OF DA PLAINS VISION-QUEST"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "CHOOSIN' EACH DAY'S SPELLS WITHIN A DREAM",
+        "WALKIN' AN' SHAPIN' DA SLEEPIN' MIND",
+        "READIN' DA SOUL'S HIDDEN WISHES",
+        "DRAWIN' POWER FROM DA COUNTRY OF SLEEP"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA OJIBWE WHO WOVE DA FIRST DREAMCATCHERS",
+        "DA IROQUOIS WHO PRACTISED ONDINNONK",
+        "DA DREAM-LODGES OF DA PLAINS NATIONS",
+        "DA VISION-SEEKERS WHO FASTED FOR DA SIGHT"
       ]
     },
     "Technomagical": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "THAUMOTECH",
+        "DA CIRCUIT-SORCERY",
+        "GADGET-MAGIC",
+        "DA WIRED ARCANA",
+        "DA RITUAL-CIRCUIT WORK",
+        "DA SANCTIFIED MICROCHIP",
+        "DA WIRED GRIMOIRE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "NO OLDER DEN DA SATELLITE AGE",
+        "DRAFTED AFTER DA FALKLANDS WAR OF 1982",
+        "BORN IN DA UNSEEN WORKSHOPS OF A NEW INDUSTRY",
+        "DA YOUNGEST SCHOOL OF ALL",
+        "PATENTED IN DA WORKSHOPS AFTER DA FALKLANDS",
+        "NO OLDER DEN DA SATELLITE DA AGE PUT UP",
+        "DRAFTED WHERE SILICON FIRST MET DA SIGIL"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "MAKIN' SPELL AN' SILICON SHARE A SINGLE CURRENT",
+        "WEAPONISIN' A MICROCHIP THROUGH RITUAL",
+        "TURNIN' GRIMOIRES INTO HARDWARE",
+        "FUSIN' ARCANA TA DA MACHINE",
+        "ETCHIN' A SPELL INTO A WAFER OF DOPED GLASS",
+        "MAKIN' A CURRENT CARRY A WORKIN' DOWN A WIRE",
+        "COMPILIN' A GRIMOIRE UNTIL IT RAN AS HARDWARE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "ESOTERIC HEAVY INDUSTRIES",
+        "DA R&D ARM OF DA NEW WORLD",
+        "DA THAUMO-ENGINEERS WHO PATENT EVERY PROTOTYPE",
+        "DA TECHNOMANCERS OF DA POST-1982 AGE",
+        "DA THAUMO-ENGINEERS OF ESOTERIC HEAVY INDUSTRIES",
+        "DA PATENT-HOLDERS OF DA POST-1982 LABS",
+        "DA CIRCUIT-MAGES WHO SOLDER BY RITUAL"
       ]
     },
     "Economy": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "MONEY-MAGIC",
+        "MERCANTILE ARCANA",
+        "DA PROFIT-RITE",
+        "DA MARKET-SORCERY"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "YOUNG AS DA NEW WORLD'S MARKETS",
+        "BORN AFTER DA SQUISHING OF 2003",
+        "OF DA LOOP-MONETISIN' AGE",
+        "NO OLDER DEN DA LAST CRASH"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "MONETISIN' DA REAL TIME-LOOPS",
+        "TURNIN' GOLD INTO GREATER FORTUNE",
+        "TRADIN' MEMORY AN' HOUR AS CURRENCY",
+        "CORNERIN' A MARKET BY UNNATURAL MEANS"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA HYPERCAPITALIST COLLECTIVE",
+        "DA BROKERS WHO SELL LOOP-ESCAPES",
+        "DA GRIMORIE-MAGES OF DA NEW ECONOMY",
+        "DA MERCHANT-ADEPTS OF DA COLLECTIVE"
       ]
     },
     "Mutation": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "FLESH-SHAPIN'",
+        "MUTATION-CRAFT",
+        "DA BIO-RITE",
+        "DA RESHAPIN' ART"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "IMPOSSIBLE BEFORE 2003",
+        "OF DA POST-SQUISHING BIO-LABS",
+        "YOUNG AS DA RULE OF 80",
+        "BORN WHEN SPEED BECAME A WAY OF LIFE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "GROWIN' WHEELS AN' EXTRA ARMS TA THRIVE ON SPEED",
+        "RESHAPIN' DA WILLIN' FLESH FOR A FEE",
+        "REWRITIN' A BODY AGAINST ITS NATURE",
+        "TRANSFORMIN' FLESH AT A SPOKEN WILL"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA HYPERCAPITALIST COLLECTIVE'S BIO-LABS",
+        "DA POST-SQUISHING MUTILATORS",
+        "DA FLESH-SURGEONS OF DA NEW WORLD",
+        "DA CHANGERS WHO MADE DA RULE OF 80 LIVABLE"
       ]
     },
     "Chronomancy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "TIME-MAGIC",
+        "DA LOOP-CRAFT",
+        "CHRONOMANCY",
+        "DA HOUR-BENDIN' ART",
+        "DA STOLEN-MINUTE ART",
+        "DA LOOP-BENDIN' CRAFT",
+        "DA PACE-HOLDIN' RITE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "BORN OF DA BROKEN CLOCKS AFTER 1999",
+        "OF DA LOOP-AGE",
+        "IMPOSSIBLE BEFORE DA MILLENNIUM BURNED DA TECH",
+        "MAPPED ONCE HOURS BECAME NEGOTIABLE",
+        "MAPPED ONCE DA MILLENNIUM BURNED DA TECH",
+        "OF DA LOOP-AGE BROKERS",
+        "NO OLDER DEN DA NEGOTIABLE HOUR"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "HASTENIN' ALLIES AN' SLOWIN' FOES",
+        "BENDIN' DA DAILY LOOP OF DA RULE OF 80",
+        "SELLIN' ESCAPES FROM DA TIME-LOOPS",
+        "STEALIN' MINUTES FROM DA FLOW ITSELF",
+        "SKIMMIN' A MINUTE OFF ANOTHER MAN'S DAY",
+        "HOLDIN' DA PACE SO DA RESET COULD NO TAKE HOLD",
+        "SLOWIN' A FOE UNTIL HIS BLOW ARRIVED TOO LATE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA LOOP-MAGES OF DA MILLENNIUM'S END",
+        "DA CLOCK-BREAKERS OF 1999",
+        "DA COLLECTIVE, WHO COVET IT ABOVE ALL",
+        "DA CHRONOMANCERS WHO TRADE IN STOLEN HOURS",
+        "DA CLOCK-BREAKERS WHO CHEATED DA RULE OF 80",
+        "DA HOUR-BROKERS OF DA LOOP-AGE MARKETS",
+        "DA COLLECTIVE'S CHRONOMANCERS WHO HOARD DA TRADE"
       ]
     },
     "PsychicAbilities": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "MIND-POWER",
+        "DA PSYCHIC ART",
+        "DA WILL-CRAFT",
+        "TELEPATHY"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "STUDIED ONLY IN DA 20TH CENTURY",
+        "OF DA TTD-ERA LABS",
+        "A MODERN SCIENCE OF DA MIND",
+        "YOUNG AS DA NEW WORLD'S RESEARCH"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "READIN' THOUGHTS AN' BENDIN' WILLS",
+        "MANIPULATIN' MINDS AN' EMOTIONS",
+        "STRIKIN' A FOE THROUGH DA SKULL ALONE",
+        "SHIELDIN' A MIND AGAINST EVERY INTRUSION"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA LABS DAT NAMED DA THOUGHT-TRANSMITTED DISEASES",
+        "DA MIND-RESEARCHERS OF DA NEW WORLD",
+        "DA SCREENERS WHO TEST RECRUITS FOR DA TALENT",
+        "DA FOIL-SHIELDED ADEPTS OF DA MODERN AGE"
       ]
     },
     "AstralMagic": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "STAR-AN'-VOID TRAVEL",
+        "ASTRAL SORCERY",
+        "DA COSMIC ART",
+        "DA LEYLINE-RIDIN'"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "MAPPED ONLY AFTER DA SQUISHING OF 2003",
+        "IMPOSSIBLE BEFORE DA DIMENSIONAL COLLAPSE",
+        "NO OLDER DEN DA BROKEN SKY",
+        "OF DA NEW COSMOS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "CHARTIN' DA SCRAPS OF CREATION",
+        "RIDIN' DA LEYLINES BETWEEN WORLDS",
+        "WALKIN' DA ASTRAL ROADS LAID BARE BY DA COLLAPSE",
+        "DRAWIN' POWER FROM DA SPACE BETWEEN STARS"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA WAYFARERS WHO RIDE DA LEYLINES",
+        "DA SEERS SENT ALONG DA ASTRAL ROADS",
+        "DA STAR-CHARTERS OF DA BROKEN SKY",
+        "DA COSMIC ADEPTS OF DA NEW WORLD"
       ]
     },
     "VoidMagic": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "VOID-CRAFT",
+        "DA NEGATION-ART",
+        "ABYSS-SORCERY",
+        "DA EMPTY RITE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "UNKNOWN UNTIL DA SQUISHING LAID DA ABYSS BARE",
+        "OF DA EMPTY PLACES",
+        "YOUNG AS DA DIMENSIONAL COLLAPSE",
+        "FISHED FROM DA POST-SQUISHING VOID"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "DRAWIN' ON DA CHURNIN' NUTTIN' BETWEEN DA SCRAPS",
+        "UNMAKIN' A FOE WIT PURE NEGATION",
+        "OPENIN' DA ABYSS WHERE PHYSICS FAILS",
+        "ANSWERIN' DA VOID WIT DA VOID"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA VOID-CALLERS WHO DARE DA ABYSS",
+        "DA NEGATORS OF DA EMPTY PLACES",
+        "DA FEW WHO WILL TEACH IT AT ALL",
+        "DA ABYSS-ADEPTS OF DA BROKEN WORLD"
       ]
     },
     "ForbiddenMagic": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA FORBIDDEN WORKIN'",
+        "BLACK SORCERY",
+        "DA PROSCRIBED RITE",
+        "DA INTERDICTED ART",
+        "DA SEALED WORKIN'",
+        "DA LEYLINE-WARPIN' RITE",
+        "DA PRICE-PAID SORCERY"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CONDEMNED IN EVERY AGE",
+        "OUTLAWED SINCE SOLOMON'S DAY",
+        "TOO DANGEROUS FOR ANY GUILD TA TEACH",
+        "BURNED WHEREVER IT IZ FOUND",
+        "BURNED OUT OF EVERY GRIMORIE IT APPEARS IN",
+        "PROSCRIBED SINCE DA FIRST GUILD SET RULES",
+        "TOO COSTLY FOR ANY AGE TA KEEP OPENLY"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "WARPIN' DA LEYLINES AROUND DA CASTER",
+        "BUYIN' POWER AT A TERRIBLE COST",
+        "TWISTIN' REALITY PAST WHAT SHOULD BE ALLOWED",
+        "LOOSIN' WHAT SHOULD HAB STAYED SEALED",
+        "TEARIN' A HOLE WHERE DA LEYLINES SHOULD HAB HELD",
+        "PAYIN' IN SOMETINK DA CASTER NO CAN GET BACK",
+        "LOOSIN' A TINK DA LAST BINDER SWORE WAZ SEALED"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA HEIRS OF ALEISTER CROWLEY",
+        "DA DESPERATE WHO SEEK IT STILL",
+        "DA OUTLAW-MAGES WHO DENY IT EXISTS",
+        "DOZE DA MAGES GUILD BURNED FOR IT",
+        "DA OUTLAW-ADEPTS WHO DENY IT TA YA FACE",
+        "DA RUINED FEW WHO PAID ITS PRICE AN' LIVED",
+        "DOZE DA MAGES GUILD HUNTS BETWEEN DA LINES"
       ]
     },
     "Necromancy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "GRAVE-MAGIC",
+        "DEATH-SORCERY",
+        "DA MORTUARY RITE",
+        "DA RAISIN' ART",
+        "DA TOMB-WHISPER",
+        "DA LAST-BREATH ART",
+        "DA CORPSE-MARSHALLIN' CRAFT"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS BURIAL ITSELF",
+        "OF DA ANCIENT DEATH-CULTS",
+        "PRACTISED BEFORE ROME",
+        "CONDEMNED IN EVERY AGE AN' USED IN EVERY AGE",
+        "PRACTISED BEFORE DA FIRST CITY WALLED ITS DEAD",
+        "OF DA BARROW-CULTS DA SQUISHING STIRRED AWAKE",
+        "AS OLD AS DA FEAR OF AN UNBURIED BODY"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "RAISIN' AN' BINDIN' DA DEAD TA SERVE",
+        "DRAWIN' POWER FROM DA ROAD TA DA UNDERWORLD",
+        "STEALIN' DA LAST BREATH FROM DA DYING",
+        "TREADIN' DA NINE-LAYERED ROAD IN REVERSE",
+        "WALKIN' DA NINE-LAYERED ROAD AGAINST ITS CURRENT",
+        "CATCHIN' DA LAST BREATH BEFORE IT COULD RISE",
+        "BINDIN' COLD FLESH TA A WARM AN' BORROWED WILL"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA WITCH OF ENDOR",
+        "DA THESSALIAN WITCH ERICHTHO",
+        "DA MORTUARY CULTS OF DEEP ANTIQUITY",
+        "DA DEATH-PRIESTS OF DA AZTEC MICTLAN",
+        "DA BARROW-WITCHES WHO TRAFFIC WIT DA BURIED",
+        "DA MICTLAN DEATH-PRIESTS OF DA REVERSED ROAD",
+        "DA GRAVE-CALLERS WHO ANSWER TA NO LIVIN' MASTER"
       ]
     },
     "Convokation": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "DA SUMMONER'S ART",
+        "CONJURATION",
+        "DA CONVOKIN' RITE",
+        "DA CALLIN'-CRAFT"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "TRACED TA SOLOMON (C.960 BC)",
+        "REFORGED IN DA SQUISHING OF 2003",
+        "OF DA LESSER KEY AN' DA DIMENSIONAL COLLAPSE",
+        "MADE FLESH ONLY AFTER 2003"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "BINDIN' DA SEVENTY-TWO SPIRITS WIT A SEALED RING",
+        "CALLIN' DA BOUND TINKZ BODILY FORTH",
+        "CONVOKIN' ALLIES FROM DA CRUSHED DIMENSIONS",
+        "DRAWIN' A CHALK CIRCLE TA SUMMON FLESH AN' BREATH"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "KING SOLOMON AN' HIS BRAZEN VESSEL",
+        "DA CONJURERS WHO REWORKED DA RITE AFTER DA SQUISHING",
+        "DA CIRCLE-DRAWERS OF DA NEW WORLD",
+        "DOZE WHO CALLED VARLENIA OUT OF NUTTIN'"
       ]
     },
     "MetaMagic": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "METAMAGIC",
+        "DA SPELL-'BOUT-SPELLS",
+        "DA SOUL-SPLIT ART",
+        "DA HIGHER WORKIN'"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "YOUNGER DEN DA NEW MILLENNIUM",
+        "RESERVED SINCE DA SQUISHING",
+        "BORN OF DA SOUL-SEPARATION RITUAL",
+        "NO OLDER DEN 2003"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "REPLACIN' EVERY PHYSICAL COMPONENT WIT PURE IMAGINATION",
+        "MULTIPLYIN' META-PROPERTIES INTO WHOLLY NEW WORKINGS",
+        "RESHAPIN' A SPELL AS IT IZ CAST",
+        "BENDIN' DA RULES OTHER MAGIC MUST OBEY"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA HEIRS OF ALEISTER CROWLEY",
+        "DA FEW WHO ENDURED DA SOUL-SPLITTIN' RITE",
+        "DA META-MAGES OF DA POST-SQUISHING AGE",
+        "DOZE WHO SEPARATED SOUL FROM BODY AN' LIVED"
       ]
     },
     "MartialArts": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA EMPTY-HAND ART",
+        "DA GRAPPLIN' STYLES",
+        "UNARMED COMBAT",
+        "DA FIGHTIN'-FORMS",
+        "DA THROW-AN'-LOCK FORMS",
+        "DA EMPTY-HAND DRILL",
+        "DA CLOSE-GRAPPLE ART"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "HUMANITY'S OLDEST UNARMED ART",
+        "CARVED INTO DA BENI HASAN TOMBS BY 2000 BC",
+        "OLDER DEN STEEL",
+        "DRILLED SINCE DA BRONZE AGE",
+        "CARVED ON TOMB WALLS BEFORE DA FIRST SWORD",
+        "DRILLED IN DA WAR-MONASTERIES OF EVERY AGE",
+        "OLDER DEN DA ARMIES DAT BORROWED IT"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "STRIKIN' WIT DISCIPLINED PRECISION AN' FORM",
+        "THROWIN' A FOE WIT DA OLDEST HOLDS KNOWN",
+        "BREAKIN' A GUARD BARE-HANDED",
+        "ANSWERIN' A BLADE WIT AN EMPTY HAND",
+        "TURNIN' A FOE'S OWN WEIGHT INTO HIS FALL",
+        "CLOSIN' INSIDE A BLADE'S REACH TA END IT BARE-HANDED",
+        "BREAKIN' A HOLD DAT SHOULD HAB BROKEN DA ARM"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA WRESTLERS OF SUMER AN' EGYPT",
+        "DA PANKRATION FIGHTERS OF DA 648 BC OLYMPICS",
+        "DA WARRIOR-MONKS WHO PRESERVED DA FORMS",
+        "DA MASTERS WHO RANKED PUPILS BY IT ALONE",
+        "DA TEMPLE-FIGHTERS WHO RANKED BY DA FORMS ALONE",
+        "DA TOMB-CARVERS WHO LEFT DA HOLDS IN STONE",
+        "DA PIT-WRESTLERS OF DA OLD FESTIVAL GAMES"
       ]
     },
     "Swordsmanship": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "BLADE-WORK",
+        "DA SWORD-CRAFT",
+        "FENCIN'",
+        "DA WAY OF DA BLADE",
+        "DA HALF-SWORD WORK",
+        "DA WINDIN'-GUARD CRAFT",
+        "DA SINGLE-PASS DISCIPLINE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS BRONZE",
+        "FROM DA FIRST TRUE SWORDS OF C.3300 BC",
+        "CODIFIED IN DA 14TH-CENTURY FECHTBUCHER",
+        "DRILLED IN EVERY ARMY SINCE",
+        "SET DOWN IN DA MEDIEVAL FENCIN'-BOOKS",
+        "AS OLD AS DA FIRST CAST BRONZE BLADE",
+        "SHARPENED IN EVERY DUEL SINCE DA WAR-SCHOOLS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "STRIKIN' WIT DA REFINED GUARDS AN' CUTS",
+        "TURNIN' A BLADE WIT A HAIR'S MARGIN",
+        "READIN' A DUEL THREE MOVES AHEAD",
+        "ENDIN' A FIGHT IN A SINGLE PASS",
+        "READIN' DA OPENIN' THREE MOVES BEFORE IT SHOWS",
+        "WINDIN' DA POINT IN PAST A STRONGER GUARD",
+        "ENDIN' DA PASS BEFORE DA FOE HAB COMMITTED"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA SMITHS OF ARSLANTEPE WHO FORGED DA FIRST SWORDS",
+        "DA BRONZE AGE DUELLISTS",
+        "DA MEDIEVAL FENCIN'-MASTERS",
+        "DA FECHT-MASTERS WHO SET IT DOWN IN BOOKS",
+        "DA FECHT-MASTERS WHO INKED DA GUARD-PLATES",
+        "DA BRONZE-AGE DUELLISTS OF DA FIRST TRUE SWORDS",
+        "DA FENCIN'-SCHOOLS DAT DRILL IT DAWN TA DUSK"
       ]
     },
     "Tactical": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "BATTLEFIELD CRAFT",
+        "DA GENERAL'S ART",
+        "DA WAR-TACTICS",
+        "FIELD-COMMAND"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS ORGANISED WAR",
+        "REFINED THROUGH EVERY CAMPAIGN SINCE DA BRONZE AGE",
+        "HANDED DOWN FROM DA CLASSICAL WAR-SCHOOLS",
+        "SHARPENED IN EVERY STAFF-ROOM SINCE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "TURNIN' GROUND AN' TIMIN' AGAINST AN BAD 'UN",
+        "READIN' A BATTLE BEFORE IT IZ JOINED",
+        "WRINGIN' VICTORY FROM A WEAKER LINE",
+        "BINDIN' A COMPANY INTO ONE MOVIN' WEAPON"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA PHALANX-CAPTAINS OF ANTIQUITY",
+        "DA CLASSICAL WAR-SCHOOLS",
+        "DA MARSHALS WHO STAKED KINGDOMS ON IT",
+        "DA STAFF-OFFICERS WHO DRILL IT STILL"
       ]
     },
     "Leadership": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "DA ART OF COMMAND",
+        "CAPTAINCY",
+        "DA RALLYIN'-CRAFT",
+        "DA LEADER'S DISCIPLINE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "OLD AS DA FIRST WARBAND",
+        "AS ANCIENT AS KINGSHIP",
+        "SHARPENED IN EVERY AGE SINCE",
+        "HANDED FROM WARLORD TA WARLORD"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "RALLYIN' ALLIES TA A HOPELESS CHARGE",
+        "BINDIN' A HOST TA A SINGLE BANNER",
+        "STEADYIN' A LINE DAT SHOULD HAB BROKEN",
+        "INSPIRIN' MORE FROM SOLDIERS DEN DEY OWN"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA FIRST WAR-CHIEFS",
+        "DA CAPTAINS WHO BOUND NATIONS TA A BANNER",
+        "DA OFFICERS MEASURED AGAINST IT",
+        "DA WARLORDS WHO RULED BY IT ALONE"
       ]
     },
     "Dominion": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "DA SCIENCE OF DOMINION",
+        "CONQUEROR'S CRAFT",
+        "DA RULE-AN'-SUBJUGATION ART",
+        "DA MASTERY OF THRONES"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA FIRST EMPIRE",
+        "AS NEW AS DA LAST COUP",
+        "LEARNED FROM EVERY TOPPLED THRONE",
+        "ANCIENT AN' PITILESS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "PRESSIN' A WHOLE PEOPLE BENEATH ONE WILL",
+        "BENDIN' SOCIETY TA A SINGLE INFLUENCE",
+        "HOLDIN' A NATION BY FEAR AN' FAVOUR",
+        "TURNIN' A COURT AGAINST ITSELF"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA FIRST EMPIRE-BUILDERS",
+        "DA TYRANTS OF EVERY FALLEN THRONE",
+        "DA SCHEMERS WHO TOPPLE KINGS",
+        "DOZE WHO KEPT NATIONS UNDERFOOT"
       ]
     },
     "Firearms": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA GUN-CRAFT",
+        "POWDER-AN'-SHOT",
+        "MARKSMANSHIP",
+        "DA FIRE-LANCE DRILL",
+        "DA HAND-CANNON DRILL",
+        "DA SMOKE-AN'-SHOT ART",
+        "DA TRUE-BARREL WORK"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FIRST FIELDED IN 10TH-CENTURY SONG CHINA",
+        "REACHED EUROPE BY DA 14TH CENTURY",
+        "KING OF DA FIELD SINCE DA 1800S",
+        "AS OLD AS GUNPOWDER",
+        "FIRST LOOSED IN SONG-DYNASTY CHINA",
+        "KING OF DA FIELD SINCE DA POWDER AGE",
+        "CARRIED WEST WIT DA HAND-CANNONEERS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "STRIKIN' FROM AFAR WIT DEADLY ACCURACY",
+        "LOOSIN' FIRE-LANCE AN' HAND-CANNON",
+        "KEEPIN' A BARREL TRUE THROUGH DA SMOKE",
+        "PUTTIN' A SHOT WHERE DA EYE CAN BARELY SEE",
+        "KEEPIN' DA BARREL TRUE THROUGH DA BLACK SMOKE",
+        "PUTTIN' A BALL WHERE DA EYE CAN BARELY FIX",
+        "TIMIN' DA CHARGE SO DA FIRE-LANCE NEVER FOULED"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA SONG-DYNASTY GUNNERS",
+        "DA HAND-CANNONEERS OF MEDIEVAL EUROPE",
+        "DA MARKSMEN PAID IN SILVER",
+        "DA GUNSMITHS WHO KEEP DA DRILLS SHARP",
+        "DA SONG GUNNERS WHO FIRST MADE POWDER SPEAK",
+        "DA PAID MARKSMEN WHO SHOOT FOR SILVER",
+        "DA GUNSMITHS WHO KEEP DA OLD DRILLS HONEST"
       ]
     },
     "Roguery": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA THIEF'S TRADE",
+        "ROGUERY",
+        "DA SHADOW-CRAFT",
+        "DA CUTPURSE ART",
+        "DA SECOND-STOREY WORK",
+        "DA FENCE'S TRADE",
+        "DA QUIET-EXIT CRAFT"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "OLD AS DA FIRST LOCKED DOOR",
+        "WHISPERED IN DA ALLEYS OF EVERY AGE",
+        "AS OLD AS DA WEALTH WORTH STEALIN'",
+        "OF DA THIEVES' CANT",
+        "OLD AS DA FIRST TINK WORTH LOCKIN' AWAY",
+        "WHISPERED IN DA CANT OF EVERY CROOKED AGE",
+        "KEPT ALIVE WHEREVER WEALTH OUTRAN ITS GUARDS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "STRIKIN' FROM DA SHADOWS WIT CUNNIN'",
+        "DECEIVIN', STEALIN' AN' BACKSTABBIN'",
+        "SLIPPIN' A LOCK AN' A POCKET ALIKE",
+        "VANISHIN' BEFORE DA ALARM IZ RAISED",
+        "SLIPPIN' A LOCK IN DA TIME A GUARD BLINKS",
+        "READIN' A MARK'S POCKETS BEFORE HE FEELS DA LOSS",
+        "VANISHIN' DOWN AN ALLEY BEFORE DA CRY GOES UP"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA CUTPURSES OF DA OLD CITIES",
+        "DA SHADOW-GUILDS OF EVERY AGE",
+        "DA FENCES WHO WHISPER DA CANT",
+        "DA MASTER-THIEVES PAID TA TEACH",
+        "DA MASTER-THIEVES WHO HIRE OUT TA TEACH",
+        "DA FENCES WHO KEEP DA CANT AN' DA GRIMORIES",
+        "DA SHADOW-GUILDS OF DA CROOKED WARDS"
       ]
     },
     "Performance": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "BARDIC CRAFT",
+        "DA PERFORMER'S ART",
+        "STAGECRAFT",
+        "DA TROUBADOUR'S SKILL"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "FROM DA MEDIEVAL COURTS",
+        "OLD AS DA FIRST CAMPFIRE TALE",
+        "HANDED DOWN BY DA WANDERIN' PLAYERS",
+        "SUNG IN EVERY COURT AN' TAVERN"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "STIRRIN' CROWDS AN' KINGS ALIKE",
+        "SWAYIN' A WHOLE HALL WIT A VOICE",
+        "CAPTIVATIN' AN' INFLUENCIN' THROUGH ART",
+        "TURNIN' A MOOD WIT A SINGLE VERSE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA MINSTRELS OF DA MEDIEVAL COURTS",
+        "DA WANDERIN' PLAYERS OF OLD",
+        "DA TROUBADOURS WHO FED ON APPLAUSE",
+        "DA STAGE-MASTERS WHO SWAYED CITIES"
       ]
     },
     "Vocation": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "A TRADE-SKILL",
+        "HONEST VOCATION",
+        "WORKADAY MASTERY",
+        "DA GUILD-CRAFT"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "OF DA GUILD AGE",
+        "TAUGHT MASTER TA APPRENTICE",
+        "HANDED DOWN DA GUILD-LINES",
+        "LEARNED DA LONG WAY THROUGH YEARS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "APPLYIN' CRAFT TA BATTLE AN' LABOUR ALIKE",
+        "MASTERIN' DA TRADES OF DAILY LIFE",
+        "TURNIN' RAW STOCK INTO FINISHED WORK",
+        "KEEPIN' A WORKSHOP TRUE TA DA OLD INDENTURES"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA GUILD-MASTERS OF DA MEDIEVAL TRADES",
+        "DA APPRENTICES WHO EARNED DA TOOLS",
+        "DA CRAFTSFOLK OF DA OLD WORKSHOPS",
+        "DOZE WHO HONOUR DA OLD INDENTURES"
       ]
     },
     "Cooking": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "HEARTH-CRAFT",
+        "DA COOK'S ART",
+        "KITCHEN-LORE",
+        "DA MEAL-MAGIC"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA COOKIN'-FIRE",
+        "PERFECTED OVER TEN THOUSAND SUPPERS",
+        "FROM DA FIRST SETTLED HEARTHS",
+        "HANDED DOWN DA KITCHENS OF DA AGES"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "COMBININ' INGREDIENTS FOR BENEFICIAL EFFECT",
+        "RESTORIN' BODY AN' SPIRIT AT A TABLE",
+        "COAXIN' VIRTUE OUT OF PLAIN FARE",
+        "FEEDIN' STRENGTH INTO DA WEARY"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA HEARTH-COOKS OF DA FIRST SETTLEMENTS",
+        "DA KITCHEN-MASTERS OF DA OLD HALLS",
+        "DA COOKS WHO FED WHOLE CITIES",
+        "DOZE WHO KEPT DA OLD RECIPES"
       ]
     },
     "Fusion": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "DA FUSED WORKIN'",
+        "DA BRAIDED ART",
+        "DA COMPOSITE RITE",
+        "DA JOINED SPELL"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "MADE POSSIBLE ONLY BY DA SQUISHING",
+        "OF DA POST-2003 BLENDIN'",
+        "BORN WHEN SEPARATE SPELLS COULD MERGE",
+        "YOUNG AS DA BROKEN WORLD"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "BRAIDIN' TWO DISCIPLINES INTO A SINGLE STROKE",
+        "LETTIN' ONE ART CARRY DA PROPERTIES OF ANOTHER",
+        "WELDIN' STRAND TA STRAND INTO A NEW WHOLE",
+        "MULTIPLYIN' TWO EFFECTS INTO A THIRD"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "DA META-MAGES WHO FIRST WELDED ARTS TOGETHER",
+        "DA POST-SQUISHING FUSERS",
+        "DOZE WHO BRAIDED DA STRANDS",
+        "DA ADEPTS WHO MADE TWO SPELLS ONE"
       ]
     },
     "WpLight": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA FIGHTIN' KNIFE",
+        "STILETTO WORK",
+        "DA THROWIN' DAGGER",
+        "DA BOOT-BLADE",
+        "DA PARRYIN' DAGGER",
+        "DA QUICK SHORT BLADE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA FIRST FLINT EDGE",
+        "CARRIED SINCE MEN LEARNED TA DISTRUST EACH OTHER",
+        "A CRAFT DA SQUISHING DID NO TOUCH",
+        "NO YOUNGER DEN DA BACK-ALLEY TRADE",
+        "HANDED DOWN EVERY KNIFE-FIGHTIN' AGE",
+        "FIRST DRAWN IN DA GOBLIN WARS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "GROUND TA A NEEDLE POINT AN' NEVER BLUNTED TWICE",
+        "FOLDED THIN OVER A LOW COAL FIRE FOR DA FLEX",
+        "BALANCED TA SIT TRUE IN DA THROWIN' HAND",
+        "SHARPENED ON A WHETSTONE WORN TA A GROOVE",
+        "RIVETED THROUGH DA TANG FOR REAL FIGHTIN'",
+        "HONED UNTIL IT WOULD PART A FALLIN' HAIR"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA BACK-ALLEY KNIFESMITHS OF DA FURNACE-CITIES",
+        "DA CUTTHROATS WHO LIVED BY DA QUICK DRAW",
+        "DA COURIERS WHO KEPT ONE IN DA BOOT",
+        "DA GUILD-CUTLERS WHO STAMP DA LIL' BLADES",
+        "DA DUELISTS WHO NEVER TRUSTED A LONGER REACH",
+        "DA ROAD-FOLK WHO CARRIED LIL' ELSE"
       ]
     },
     "WpSword": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA DUELIN' SABER",
+        "DA ARMIN' SWORD",
+        "DA BOARDIN' CUTLASS",
+        "DA THRUSTIN' RAPIER",
+        "LONG-BLADE WORK",
+        "DA CAVALRY BLADE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS BRONZE ITSELF",
+        "DRILLED IN DA WAR-SCHOOLS BEFORE DA WALLS FELL",
+        "A CRAFT OLDER DEN DA FURNACE-CITIES",
+        "FIRST SWUNG IN DA GOBLIN WARS",
+        "HANDED DOWN EVERY ARMY SINCE DA BRONZE AGE",
+        "NO YOUNGER DEN DA FIRST TRUE EDGE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FOLDED OVER CHARCOAL FIRE UNTIL DA EDGE HELD",
+        "QUENCHED IN OIL AN' DRAWN TA A TRUE TEMPER",
+        "HAMMERED FLAT AN' FULLERED FOR A LIGHTER SWING",
+        "PEENED TA DA GUARD BY HANDS DAT HAB DONE IT A THOUSAND TIMES",
+        "GROUND TA A DISTAL TAPER SO DA POINT LED DA CUT",
+        "TESTED AGAINST DA POST BEFORE IT LEFT DA FORGE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA ARMS-GUILDS OF DA FURNACE-CITIES",
+        "DA SWORDSMITHS WHO SIGNED DA RICASSO",
+        "DA DUELISTS WHO LIVED BY IT",
+        "DA WAR-SCHOOLS DAT RANKED A PUPIL BY DA BLADE",
+        "DA BLADEWRIGHTS OF DA OLD SMITHIN' STREETS",
+        "DA OFFICERS WHO WORE IT AS A BADGE OF RANK"
       ]
     },
     "WpHeavy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA WAR-MAUL",
+        "DA FLANGED MACE",
+        "DA CRUSHIN' HAMMER",
+        "DA IRON-BOUND CLUB",
+        "DA HORSEMAN'S PICK",
+        "BLUNT-WEAPON WORK"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "OLDER DEN DA FIRST CAST BRONZE",
+        "SWUNG SINCE ARMOR MADE EDGES USELESS",
+        "A CRAFT DA SQUISHING LEFT WELL ALONE",
+        "NO YOUNGER DEN DA SIEGE-CAMPS",
+        "HANDED DOWN EVERY AGE OF HEAVY PLATE",
+        "FIRST RAISED IN DA GOBLIN WARS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CAST SOLID AN' PINNED TA A SEASONED HAFT",
+        "FORGED WIT FLANGES TA BITE THROUGH MAIL",
+        "WEIGHTED AT DA HEAD SO DA BLOW DID DA WORK",
+        "BANDED IN IRON WHERE LESSER WOOD WOULD SPLIT",
+        "BALANCED TA FALL TRUE UNDER ITS OWN MASS",
+        "HARDENED AT DA STRIKIN' FACE AN' LEFT SOFT WITHIN"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA ARMS-GUILDS WHO CAST DA HEAVY HEADS",
+        "DA SIEGE-CREWS WHO NEEDED NO EDGE AT ALL",
+        "DA SMITHS OF DA FURNACE-CITY FOUNDRIES",
+        "DA SAPPERS WHO BROKE GATES AN' SKULLS ALIKE",
+        "DA HEAVY TROOPS WHO SCORNED FINESSE",
+        "DA MAKERS WHO SOLD WEIGHT BY DA POUND"
       ]
     },
     "WpAxe": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA BOARDIN' AXE",
+        "DA BEARDED WAR-AXE",
+        "DA HAND HATCHET",
+        "DA GREAT CLEAVER",
+        "DA THROWIN' AXE",
+        "DA FELLIN' BLADE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA FIRST SPLIT LOG",
+        "CARRIED SINCE DA AXE WAZ TOOL AN' WEAPON BOTH",
+        "A CRAFT OLDER DEN ANY CITY WALL",
+        "NO YOUNGER DEN DA LOGGIN' CAMPS",
+        "HANDED DOWN DA ROAD SINCE DA GOBLIN WARS",
+        "FIRST THROWN IN DA DEEP FORESTS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FORGE-WELDED WIT A HARD STEEL BIT SET IN SOFT IRON",
+        "BEARDED LOW FOR A HOOKIN' PULL OFF A SHIELD",
+        "SEATED ON A STRAIGHT-GRAIN HAFT AN' WEDGED TIGHT",
+        "GROUND TA A CONVEX EDGE DAT WOULD NO CHIP",
+        "BALANCED SO DA HEAD LED DA THROW END OVER END",
+        "TEMPERED AT DA BIT AN' LEFT TOUGH AT DA EYE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA AXE-SMITHS OF DA LOGGIN' ROADS",
+        "DA BOARDIN'-CREWS OF DA RIVER TRADE",
+        "DA ARMS-GUILDS WHO FORGE-WELD DA BITS",
+        "DA WOODCUTTERS WHO FOUGHT WIT DA FELLIN' BLADE",
+        "DA RAIDERS WHO THREW BEFORE DEY CLOSED",
+        "DA ROAD-FOLK WHO NEVER TRAVEL WITOUT ONE"
       ]
     },
     "WpWhip": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA PLAITED WHIP",
+        "CHAIN-AN'-FLAIL WORK",
+        "DA METEOR CHAIN",
+        "DA DROVER'S LASH",
+        "DA WEIGHTED FLAIL",
+        "DA COILIN' SCOURGE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA HERDS MEN DROVE",
+        "DRILLED SINCE DA DROVERS LEARNED TA STRIKE FROM REACH",
+        "A CRAFT OLDER DEN DA FURNACE-CITIES",
+        "HANDED DOWN EVERY ROAD SINCE DA GOBLIN WARS",
+        "NO YOUNGER DEN DA CATTLE-TRAILS",
+        "SHARPENED IN EVERY WAR DAT LACKED A LONGER REACH"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "PLAITED FROM CURED HIDE OVER A TAPERED CORE",
+        "WEIGHTED AT DA FALL SO DA CRACK LANDED TRUE",
+        "LINKED CHAIN TA CHAIN AN' SWIVELLED AT DA GRIP",
+        "DRILLED INTO DA WRIST UNTIL DA COIL OBEYED",
+        "KNOTTED THROUGH A BONE HANDLE BY A PATIENT HAND",
+        "SWUNG IN A FIGURE SO DA STRIKE COULD NO BE READ"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA DROVERS WHO STRUCK CATTLE AN' MEN ALIKE",
+        "DA FLAIL-MASTERS OF DA WAR-SCHOOLS",
+        "DA ROAD-FOLK WHO KEPT DA REACH HONEST",
+        "DA WHIP-PLAITERS OF DA TRAIL-TOWNS",
+        "DA PIT-FIGHTERS WHO FAVORED DA WRAP AN' PULL",
+        "DA WANDERIN' FOLK WHO TAUGHT DA COIL FOR COIN"
       ]
     },
     "WpStaff": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA CHANNELIN' STAFF",
+        "DA WIZARD'S ROD",
+        "DA LEYLINE WAND",
+        "DA SCEPTRE OF OFFICE",
+        "DA FOCUSIN' STAVE",
+        "DA GRAVEN ROD"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "OLDER DEN DA FIRST WRITTEN SPELL",
+        "KEPT SINCE POWER NEEDED A SHAPE TA RUN THROUGH",
+        "A CRAFT DA SQUISHING ONLY SHARPENED",
+        "NO YOUNGER DEN DA LEYLINE-SCHOOLS",
+        "HANDED DOWN FROM DA OLD GRIMOIRE-HALLS",
+        "FIRST CARRIED BEFORE DA WALLS OF ANY CITY"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CORED WIT COPPER WIRE TA CARRY DA LEYLINE CURRENT",
+        "CAPPED WIT A STONE DAT WOULD HOLD A CHARGE",
+        "GRAVEN ALONG DA GRAIN WIT FIGURES DAT RAN TRUE",
+        "SEASONED FOR YEARS BEFORE IT WOULD CHANNEL AT ALL",
+        "BOUND WIT SILVER AT DA FERRULE TA EARTH DA FLOW",
+        "CARVED FROM A STRUCK TREE DAT HAB DRUNK DA LEY"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA ROD-WRIGHTS OF DA OLD GRIMOIRE-HALLS",
+        "DA LEYLINE-ADEPTS WHO SIGNED EVERY STAVE",
+        "DA GUILD-MAGES WHO TAUGHT DA CHANNEL",
+        "DA MAKERS WHO READ DA WOOD FOR DA WIRE",
+        "DA SEERS WHO CARRIED IT AS SIGN OF DEY CRAFT",
+        "DA RELIC-KEEPERS WHO FIT DA OLD STONES ANEW"
       ]
     },
     "WpBow": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA LONGBOW",
+        "DA HORN-AN'-SINEW BOW",
+        "DA HUNTIN' CROSSBOW",
+        "DA RECURVE",
+        "DA WAR-SLING",
+        "DA STALKIN' BOW"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "ELDEST OF ALL DA FAR WEAPONS",
+        "LOOSED SINCE DA FIRST HUNTERS FED DA FIRE",
+        "A CRAFT OLDER DEN DA PLOUGH",
+        "NO YOUNGER DEN DA DEEP-FOREST HUNTS",
+        "HANDED DOWN SINCE MEN KILLED AT A DISTANCE",
+        "DRILLED IN EVERY WILD AGE SINCE DA ICE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "BACKED WIT SINEW AN' BELLIED WIT HORN FOR DA PULL",
+        "TILLERED SLOW SO BOTH LIMBS BENT EVEN",
+        "STRUNG WIT WAXED CORD DAT WOULD NO STRETCH",
+        "SEASONED FROM A STRAIGHT YEW STAVE FOR YEARS",
+        "CRANKED AN' LOCKED SO A WEAK ARM COULD HOLD FULL DRAW",
+        "FLETCHED AN' NOCKED BY HANDS DAT HUNTED TA EAT"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA BOWYERS OF DA DEEP-FOREST CAMPS",
+        "DA HUNTERS WHO READ SIGN AN' RAN DA QUARRY",
+        "DA WILD-FOLK WHO LOOSED BEFORE DEY WAZ SEEN",
+        "DA FLETCHERS WHO KEPT DA SHAFTS RUNNIN' TRUE",
+        "DA TRAIL-MASTERS WHO FED A WHOLE CAMP BY IT",
+        "DA MARSH-HUNTERS WHO WHISTLED DA BIRDS IN CLOSE"
       ]
     },
     "WpProjectile": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA THROWIN' JUNK",
+        "SLING-AN'-STONE WORK",
+        "DA IMPROVISED BOMB",
+        "DA HURLED SCRAP",
+        "DA PIPE-AN'-BOLT",
+        "DA THROWN WEIGHT"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA FIRST FLUNG ROCK",
+        "CARRIED SINCE MEN HAB NUTTIN' BETTER TA THROW",
+        "A CRAFT DA SQUISHING FILLED WIT NEW SCRAP",
+        "NO YOUNGER DEN DA RUIN-PICKERS",
+        "HANDED DOWN WHEREVER PROPER ARMS RAN OUT",
+        "FIRST HURLED IN DA GOBLIN WARS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "LASHED TOGETHER FROM ROAD-SCRAP DAT CAME TA HAND",
+        "WEIGHTED AT ONE END SO IT FLEW POINT-FIRST",
+        "PACKED AN' FUSED BY A NERVOUS, PRACTICED HAND",
+        "WOUND WIT WIRE UNTIL IT HELD FOR ONE GOOD THROW",
+        "BALANCED BY FEEL ALONE AGAINST A WALL",
+        "CAST FROM A SLING CUT OFF A DEAD CONVEYOR BELT"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA RUIN-PICKERS WHO ARMED THEMSELVES FROM WRECKAGE",
+        "DA SCRAP-THROWERS OF DA ROAD-SIDE CAMPS",
+        "DA GOBLINS WHO REVERTED TA STONE AN' SLING",
+        "DA DESPERATE WHO FOUGHT WIT WHAT LAY 'BOUT",
+        "DA TINKERS WHO FUSED A BOMB FOR A FEE",
+        "DA ROAD-FOLK WHO NEVER RAN OUT OF RUBBLE"
       ]
     },
     "WpGun": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "TRENCH-GUN WORK",
+        "DA SERVICE PISTOL",
+        "DA BOLT RIFLE",
+        "DA SCRAP CARBINE",
+        "DA SAWN-OFF",
+        "POWDER-AN'-SHOT"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "NO OLDER DEN DA FURNACE-CITIES",
+        "FIELDED SINCE POWDER FIRST RULED DA OPEN GROUND",
+        "A CRAFT DA SQUISHING CHOKED WIT DEAD FACTORIES",
+        "NO YOUNGER DEN DA LAST WORKIN' ASSEMBLY LINE",
+        "HANDED DOWN DA ROAD SINCE DA WAR-CAMPS",
+        "YOUNG BESIDE DA BLADE IT REPLACED"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "MILLED ON A DEAD ASSEMBLY LINE AN' NEVER PROOFED",
+        "REBORED BY HAND AN' HEADSPACED BY FEEL",
+        "REAMED TRUE AN' BLUED AGAINST DA ROAD-DAMP",
+        "COBBLED FROM THREE BROKEN GUNS INTO ONE DAT FIRED",
+        "LOADED WIT CAST SLUGS POURED IN A ROAD-SIDE MOLD",
+        "KEPT RUNNIN' WIT SPIT, WIRE AN' STUBBORN FAITH"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA BACK-ALLEY GUNSMITHS",
+        "DA TRENCH-CREWS WHO CLEARED A ROOM BY IT",
+        "DA ROAD-CONVOYS WHO TRUSTED LEAD OVER STEEL",
+        "DA ARMORERS WHO SCAVENGE DA DEAD FACTORIES",
+        "DA SHOOTISTS PAID IN SILVER AN' SHOT",
+        "DA MAKERS WHO CAST DEY OWN FROM WHEEL-WEIGHTS"
       ]
     },
     "WpClaw": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA TIN CLAWS",
+        "DA BEAST-CLAW",
+        "DA KNUCKLE-HOOK",
+        "DA TIGER-CLAW",
+        "DA SCAVENGER'S TALON",
+        "DA RAKIN' BLADE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA FIRST SHARPENED BONE",
+        "WORN SINCE MEN APED DA BEASTS DAT KILLED DEM",
+        "A CRAFT DA SQUISHING DRESSED IN FRESH SCRAP",
+        "NO YOUNGER DEN DA PIT-FIGHTS",
+        "HANDED DOWN WHERE A BLADE WAZ TOO DEAR",
+        "FIRST RAKED IN DA DEEP WILDS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CUT FROM CAN-METAL AN' BOUND TA DA KNUCKLE",
+        "FITTED OVER DA FINGERS SO DA FIST DID DA DRIVIN'",
+        "SHARPENED FROM A BEAST'S OWN CLAW AN' LASHED ON",
+        "RIVETED TA A LEATHER CUFF BY A PATIENT THUG",
+        "CURVED TA HOOK AN' TEAR ON DA PULL-BACK",
+        "GROUND THIN SO IT SLIPPED BETWEEN DA RIBS"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA PIT-FIGHTERS WHO FOUGHT LIKE ANIMALS",
+        "DA SCRAPPERS WHO ARMED DA BARE HAND",
+        "DA BEAST-CULTS WHO WORE DA CLAW AS KIN",
+        "DA ROAD-THUGS OF DA TRAIL-TOWN ALLEYS",
+        "DA SCAVENGERS WHO MADE A WEAPON OF A CAN",
+        "DA WILD-FOLK WHO KEPT DA OLD RAKIN' FORMS"
       ]
     },
     "WpGlove": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA BRASS KNUCKLES",
+        "DA WAR-GAUNTLET",
+        "HAND-WRAP WORK",
+        "DA LOADED GLOVE",
+        "DA FIST-IRON",
+        "DA STRIKIN' CESTUS"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA CLOSED FIST",
+        "DRILLED SINCE DA FIRST BARE-KNUCKLE RINGS",
+        "A CRAFT OLDER DEN ANY FORGED BLADE",
+        "NO YOUNGER DEN DA FIGHTIN'-PITS",
+        "HANDED DOWN EVERY UNARMED AGE SINCE DA ICE",
+        "CARVED INTO DA OLD TOMB-WALLS WIT DA WRESTLERS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CAST TA FIT DA FIST AN' ROUNDED AT DA WEAR",
+        "WRAPPED TIGHT OVER DA KNUCKLE BY AN OLD HAND",
+        "PLATED ACROSS DA BACK TA TURN A BLADE AN' LAND A BLOW",
+        "WEIGHTED IN DA PALM TA DOUBLE DA STRIKE",
+        "STITCHED WIT CORD AN' SET WIT A HIDDEN BAR",
+        "DRILLED INTO DA WRIST UNTIL DA GUARD WAZ SECOND NATURE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA BARE-KNUCKLE MASTERS OF DA FIGHTIN'-PITS",
+        "DA WAR-SCHOOL TEACHERS OF DA EMPTY HAND",
+        "DA BRUISERS WHO WRAPPED IRON IN A GLOVE",
+        "DA GAUNTLET-SMITHS OF DA ARMS-GUILDS",
+        "DA RING-FIGHTERS WHO LIVED BY DA FIST",
+        "DA ROAD-TOUGHS WHO KEPT DA KNUCKLES IN A POCKET"
       ]
     },
     "WpSpear": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA WAR-SPEAR",
+        "DA FOOTMAN'S PIKE",
+        "DA CAVALRY LANCE",
+        "DA BOAR-SPEAR",
+        "POLEARM WORK",
+        "DA THRUSTIN' GLAIVE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA SHARPENED STICK",
+        "DRILLED SINCE DA FIRST SHIELD-WALL HELD",
+        "A CRAFT OLDER DEN DA FURNACE-CITIES",
+        "NO YOUNGER DEN DA PIKE-BLOCKS",
+        "HANDED DOWN EVERY ARMY SINCE DA BRONZE AGE",
+        "FIRST LEVELED IN DA GOBLIN WARS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FORGED WIT A SOCKET AN' RIVETED TA A SEASONED SHAFT",
+        "WINGED BELOW DA HEAD TA STOP A CHARGIN' BEAST",
+        "GROUND TA A LONG THRUSTIN' POINT DAT WOULD NO FOLD",
+        "SOCKETED DEEP SO DA HEAD SAT TRUE UNDER A LUNGE",
+        "BANDED DOWN DA HAFT AGAINST A HACKIN' CUT",
+        "BALANCED SO A WHOLE BLOCK COULD LEVEL IT AS ONE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA SPEAR-SMITHS OF DA FURNACE-CITY FORGES",
+        "DA PIKE-BLOCKS DAT BROKE EVERY CAVALRY CHARGE",
+        "DA SHIELD-WALL CREWS WHO HELD BY DA REACH",
+        "DA ARMS-GUILDS WHO SOCKETED DA HEADS",
+        "DA BOAR-HUNTERS WHO STOPPED DA CHARGE WIT WINGS",
+        "DA DRILL-MASTERS WHO TAUGHT DA BLOCK TA MOVE AS ONE"
       ]
     },
     "WpToy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA FOAM SWORD",
+        "DA PLASTIC DART-GUN",
+        "DA WOODEN TRAININ' BLADE",
+        "DA NOVELTY MACE",
+        "DA SQUEAKY MALLET",
+        "DA PARTY-FAVOR AXE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "NO OLDER DEN DA LAST TOY-FAIR",
+        "SHIPPED SINCE SOMEONE DECIDED WAR SHOULD SELL",
+        "A TINK DA SQUISHING FAILED TA TAKE SERIOUSLY",
+        "NO YOUNGER DEN DA CLEARANCE-BIN",
+        "HANDED OUT AT EVERY FETE SINCE DA COLLAPSE",
+        "YOUNG AS DA CHEAPEST TINK ON DA SHELF"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "INJECTION-MOLDED IN A COLOR NO WEAPON SHOULD BE",
+        "STUFFED WIT FOAM AN' STICKERED WIT A WARNIN'",
+        "GLUED TOGETHER IN A WAY DAT WILL NO SURVIVE A SWING",
+        "PRINTED WIT A MASCOT AN' PRICED TA MOVE",
+        "ASSEMBLED FROM PARTS DAT RATTLE WHEN YOU SHAKE IT",
+        "SOLD THREE TA A BLISTER-PACK AN' WORTH RATHER LESS"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA TOY-MONGERS OF DA MARKET STALLS",
+        "DA MASS-PRODUCERS WHO NEVER HELD A REAL ONE",
+        "DA FETE-ORGANIZERS WHO ARMED DA CHILDREN",
+        "DA DISCOUNT-SELLERS OF DA COLLAPSE-ERA SHELVES",
+        "DA PRANKSTERS WHO BOUGHT A CRATE FOR A LAUGH",
+        "DA SHOPKEEPERS WHO SWEAR IT IZ A REAL BARGAIN"
       ]
     },
     "WpHoly": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA BLESSED BLADE",
+        "DA CONSECRATED ARM",
+        "DA SANCTIFIED WEAPON",
+        "DA RELIQUARY SWORD",
+        "DA CENSER-MACE",
+        "DA ANOINTED STEEL"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CONSECRATED BEFORE DA CATHEDRALS ROSE",
+        "CARRIED SINCE DA SAINTS TOOK UP ARMS",
+        "A GRACE DA SQUISHING COULD NO DEFILE",
+        "NO YOUNGER DEN DA FIRST ORDAINED BLADE",
+        "HANDED DOWN FROM DA OLD TEMPLE-FORGES",
+        "BLESSED IN EVERY RIGHTEOUS AGE SINCE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "QUENCHED IN HOLY WATER AN' PRAYED OVER AT DA ANVIL",
+        "GRAVEN WIT A PSALM ALONG DA FULLER",
+        "ANOINTED WIT OIL AN' SET WIT A SPLINTER OF RELIC",
+        "BLESSED BY A LAID HAND BEFORE IT DREW BLOOD",
+        "FORGED ON A FEAST-DAY AN' SWORN TA NO UNCLEAN USE",
+        "HALLOWED UNTIL CORRUPTION WOULD NO BIDE ITS EDGE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA TEMPLE-SMITHS WHO FORGE ON FEAST-DAYS",
+        "DA ORDAINED WHO CARRY IT AGAINST DA DARK",
+        "DA SAINTS WHO SANCTIFIED IT ANEW",
+        "DA RELIQUARY-KEEPERS OF DA OLD SHRINES",
+        "DA CHURCH-ARMORERS WHO BLESS EVERY BLADE",
+        "DA FAITHFUL WHO TRUST DA GRACE IN DA STEEL"
       ]
     },
     "WpCursed": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA CURSED BLADE",
+        "DA VOID-EATEN ARM",
+        "DA NECROTIC WEAPON",
+        "DA DEMON-FORGED STEEL",
+        "DA HUNGERIN' EDGE",
+        "DA BLIGHTED IRON"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "OUTLAWED SINCE DA FIRST HAND IT RUINED",
+        "CARRIED IN SECRET THROUGH EVERY CONDEMNIN' AGE",
+        "A TINK DA SQUISHING LET BLEED THROUGH",
+        "NO YOUNGER DEN DA ABYSS IT DRANK FROM",
+        "BURNED WHEREVER DA GUILDS COULD FIND IT",
+        "TOO OLD AN' TOO WRONG FOR ANY GRIMORIE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "QUENCHED IN BLOOD AN' LEFT TA DRINK FROM ITS BEARER",
+        "GRAVEN WIT A NAME NO SMITH WOULD SPEAK ALOUD",
+        "FORGED WHERE DA LEYLINES RAN BLACK AN' WRONG",
+        "BOUND TA A HUNGER DAT OUTLASTS ITS WIELDER",
+        "TEMPERED IN DA VOID SO ITS EDGE NEVER DULLS OR FORGIVES",
+        "SEALED WIT A RITE DA GUILDS WOULD BURN A TOWN TA STOP"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA OUTLAW-SMITHS WHO DENY DA CRAFT EXISTS",
+        "DA VOID-CALLERS WHO FED IT FROM DA ABYSS",
+        "DA DESPERATE WHO TOOK UP WHAT DEY SHOULD NO",
+        "DA HEIRS OF A PROSCRIBED FORGE",
+        "DA FEW DA MAGES GUILD BURNED FOR MAKIN' IT",
+        "DA PETRODEMON-CULTS WHO BLESS IT IN REVERSE"
       ]
     },
     "WpFlame": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA FLAME-TONGUE BLADE",
+        "DA MOLTEN-CORE ARM",
+        "DA EMBER-FORGED STEEL",
+        "DA BURNIN' BRAND",
+        "DA SEARIN' EDGE",
+        "DA FIRE-QUENCHED WEAPON"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FORGED AT DA HOTTEST HEARTH IN DA FURNACE-CITIES",
+        "CARRIED SINCE MEN MARRIED DA BLADE TA FIRE",
+        "A CRAFT DA SQUISHING SET ALIGHT ANEW",
+        "NO YOUNGER DEN DA GREAT FOUNDRIES",
+        "HANDED DOWN FROM DA EMBER-SMITHS",
+        "KINDLED FIRST IN DA GOBLIN WARS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "QUENCHED GLOWIN' SO A WISP OF HEAT NEVER LEFT DA STEEL",
+        "CORED WIT A COAL DAT WILL NO GUTTER OUT",
+        "GRAVEN WIT RUNNELS DAT CATCH AN' HOLD A FLAME",
+        "HAMMERED AT A WHITE HEAT FEW SMITHS DARE TA REACH",
+        "BANKED WIT AN EMBER DAT WAKES WHEN BLOOD IZ DRAWN",
+        "TEMPERED IN OIL-FIRE SO DA EDGE RUNS WARM TA DA TOUCH"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA EMBER-SMITHS OF DA GREAT FOUNDRIES",
+        "DA FIRE-TENDERS OF DA FURNACE-CITY FORGES",
+        "DA MAKERS WHO QUENCH AT A KILLIN' HEAT",
+        "DA ARMS-GUILDS WHO KEEP DA HOTTEST HEARTH",
+        "DA ROAD-SMITHS WHO BANK A COAL IN EVERY BLADE",
+        "DA FLAME-WRIGHTS WHO SIGN DEY WORK IN SOOT"
       ]
     },
     "WpFrost": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA FROST-BITTEN BLADE",
+        "DA GLACIAL ARM",
+        "DA RIME-EDGED STEEL",
+        "DA ICE-QUENCHED WEAPON",
+        "DA WINTER BRAND",
+        "DA COLD-FORGED EDGE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA ICE DAT SHAPED IT",
+        "CARRIED SINCE DA FIRST WINTER-FORGES",
+        "A CRAFT FROM BEFORE DA FURNACE-CITIES WARMED",
+        "NO YOUNGER DEN DA GLACIER-CAMPS",
+        "HANDED DOWN FROM DA DEEP-COLD SMITHS",
+        "OLDER DEN ANY SPOKEN THAW"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "QUENCHED IN MELTWATER UNTIL DA STEEL RAN BLUE-COLD",
+        "GRAVEN WIT RIME-FIGURES DAT NEVER FULLY THAW",
+        "FORGED IN A COLD SO DEEP DA METAL BARELY GAVE",
+        "CORED WIT A CHILL DAT FOGS DA AIR NEAR DA EDGE",
+        "TEMPERED UNDER DA GLACIER SO ITS COLD OUTLASTS DA SMITH",
+        "HAMMERED SLOW IN DA KILLIN' FROST OF DA DEEP CAMPS"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA WINTER-SMITHS OF DA GLACIER-CAMPS",
+        "DA ICE-FORGE MASTERS OF DA DEEP COLD",
+        "DA MAKERS WHO QUENCH IN GLACIAL MELT",
+        "DA OLD COLD-WRIGHTS FROM BEFORE DA FURNACES",
+        "DA FROST-HUNTERS WHO CARRIED IT THROUGH DA ICE",
+        "DA RIME-SMITHS WHO SIGN IN BLUE"
       ]
     },
     "WpPetro": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA TAR-FOULED BLADE",
+        "DA PETRO-FORGED ARM",
+        "DA OIL-QUENCHED STEEL",
+        "DA PORPHYRIN EDGE",
+        "DA CRUDE-SLICKED WEAPON",
+        "DA PETRODEMON'S BRAND"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FORGED WHERE BLOOD, OIL AN' LEYLINE MEET",
+        "CARRIED SINCE DA TAR FIRST TAUGHT DA STEEL",
+        "A TINK DA SQUISHING PUMPED UP FROM BELOW",
+        "NO YOUNGER DEN DA DEEP-OIL WELLS",
+        "HANDED DOWN DA BLACK-DERRICK ROADS",
+        "OLD AS DA SLEEPIN' TINKZ IN DA CRUDE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "QUENCHED IN BLACK CRUDE DAT SMELLS OF COPPER PENNIES",
+        "GRAVEN WIT DA PORPHYRIN THREADS DAT BIND OIL TA BLOOD",
+        "FORGED OVER A WELL-FLAME DA SMITH FED WIT TRIBUTE",
+        "SLICKED WIT A TAR DAT WILL NO WASH FROM DA EDGE",
+        "BOUND TA DA PETRODEMONS ASLEEP IN DA DEEP",
+        "TEMPERED IN OIL DAT ANSWERED WHEN IT WAZ POURED"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA DERRICK-SMITHS OF DA BLACK-OIL ROADS",
+        "DA HEIRS OF ENRICO MATTEI AN' HIS TOMB-SCROLL",
+        "DA PETRODEMON-CULTS WHO BLESS DA CRUDE",
+        "DA PORPHYRIN-ADEPTS WHO THREAD OIL TA BLOOD",
+        "DA WELL-PRIESTS WHO FEED DA FORGE-FLAME",
+        "DA OUTLAW-MAKERS DA GUILDS WILL NO NAME"
       ]
     },
     "WpThunder": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA ARC-EDGED BLADE",
+        "DA PLASMA ARM",
+        "DA STORM-CALLER WEAPON",
+        "DA SHOCK-LANCE",
+        "DA LIVE-WIRE BRAND",
+        "DA CHARGED STEEL"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "NO OLDER DEN DA SATELLITE AGE",
+        "WIRED SINCE DA FIRST CURRENT RAN THROUGH A HILT",
+        "A CRAFT BORN OF DA BROKEN WORLD'S DEAD GRIDS",
+        "NO YOUNGER DEN DA LAST WORKIN' POWER LINE",
+        "DRAFTED AFTER DA MILLENNIUM BURNED DA TECH",
+        "YOUNG AS DA MACHINE IT IZ WELDED TA"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CORED WIT A CAPACITOR DAT DUMPS ITS CHARGE ON CONTACT",
+        "WIRED TA AN ARC DAT LEAPS DA LAST INCH TA FLESH",
+        "WELDED FROM A BLADE AN' A SALVAGED BATTERY PACK",
+        "INSULATED AT DA GRIP AN' LIVE EVERYWHERE ELSE",
+        "COBBLED FROM GRID-SCRAP AN' NEVER ONCE SAFETY-RATED",
+        "TUNED TA SPIT PLASMA DA MOMENT DA CIRCUIT CLOSES"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "ESOTERIC HEAVY INDUSTRIES AN' ITS UNMARKED WORKSHOPS",
+        "DA THAUMO-ENGINEERS WHO PATENT EVERY PROTOTYPE",
+        "DA GRID-SCAVENGERS WHO WIRE DA DEAD LINES LIVE",
+        "DA TECHNOMANCERS OF DA POST-COLLAPSE AGE",
+        "DA ARMORERS WHO MARRY STEEL TA SILICON",
+        "DA ROAD-ELECTRICIANS WHO CHARGE A BLADE FOR COIN"
       ]
     },
     "WpLegendary": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA NAMED BLADE",
+        "DA MYTHIC ARM",
+        "DA HERO'S WEAPON",
+        "DA ONE-OF-ITS-KIND STEEL",
+        "DA STORIED BRAND",
+        "DA CROWNED EDGE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "OLDER DEN DA STORY TOLD OF IT",
+        "CARRIED BY EVERY HAND DAT MATTERED SINCE",
+        "A RELIC DA SQUISHING COULD NO UNMAKE",
+        "NO YOUNGER DEN DA DEED IT IZ NAMED FOR",
+        "HANDED DOWN KING TA KING AN' THIEF TA THIEF",
+        "SUNG OF LONG BEFORE IT WAZ LAST DRAWN"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FORGED ONCE AN' NEVER MATCHED BY ANY SMITH SINCE",
+        "GRAVEN WIT DA NAME IT EARNED IN A SINGLE BATTLE",
+        "KEPT WHOLE DOWN DA AGES AGAINST EVERY FORGETTIN'",
+        "TEMPERED BY A HAND WHOSE SECRET DIED WIT IT",
+        "PASSED THROUGH A DOZEN LEGENDS AN' DULLED BY NONE",
+        "WROUGHT SO FINE DAT LESSER STEEL SHATTERS AGAINST IT"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA RELIC-KEEPERS WHO GUARD DA NAMED ARMS",
+        "DA HEROES REMEMBERED ONLY BY WHAT DEY CARRIED",
+        "DA ARCHIVISTS WHO TRACK IT WORLD TA WORLD",
+        "DA COLLECTORS WHO WOULD RUIN A NATION TA HOLD IT",
+        "DA ONE LOST MASTER WHO FORGED IT",
+        "DOZE WHO DIED TA KEEP IT OUT OF DA WRONG HAND"
       ]
     },
     "ArClothes": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA LAYERED RAGS",
+        "CONVOY WORK-CLOTHES",
+        "DA PADDED JERKIN",
+        "STITCHED STREET GARMENTS",
+        "DA PATCHED OVERCOAT",
+        "DA TARPAULIN CLOAK"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "WORN THIN SINCE DA LAST WINTER",
+        "CUT IN DA YEARS AFTER DA SQUISHING",
+        "OF DA DEAD-MALL CLOTHIN' RACKS",
+        "NO OLDER DEN DA LAST CONVOY SEASON",
+        "HANDED DOWN THROUGH THREE OWNERS AT LEAST",
+        "SALVAGED FROM DA WARDROBES OF DA LOOPED DEAD"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "LAYERED FROM WHATEVER CLOTH OUTLASTED DA LOOTIN'",
+        "QUILTED THICK AGAINST DA COLD AN' DA CUDGEL",
+        "SEWN FROM CONVOY TARPAULIN OVER A SLOW WEEK",
+        "PATCHED AGAIN EACH TIME A SEAM FINALLY GAVE",
+        "BELTED TIGHT SO DA PADDIN' WOULD TURN A GLANCIN' BLOW",
+        "REINFORCED WIT CARDBOARD WHERE DA WOOL RAN OUT"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA TAILORS WHO WORK BY CANDLE IN DA MARKET ROWS",
+        "DA ROAD-POOR WHO ARMOUR THEMSELVES IN LAUNDRY",
+        "DA CLOTH-MENDERS OF DA RUINED HIGH STREETS",
+        "DA STALL-KEEPERS WHO SELL WARMTH BY DA LAYER",
+        "DA SCAVENGERS WHO DRESS FROM OTHER PEOPLE'S CLOSETS",
+        "DA SEAMSTRESSES OF DA DEAD-MALL ARCADES"
       ]
     },
     "ArRobe": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA SIGIL-WORKED ROBE",
+        "DA GREY VESTMENT",
+        "DA MANTLE OF MANY HEMS",
+        "DA ASHEN CASSOCK",
+        "DA LEYLINE-STITCHED MANTLE",
+        "DA DEACON'S OVERROBE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "WOVEN LONG BEFORE DA DIMENSIONS FUSED",
+        "OF AN ORDER DAT NO LONGER KEEPS ITS CHAPTER-HOUSE",
+        "OLDER DEN DA GUILD DAT REVERES IT",
+        "KEPT FOLDED SINCE DA LAST TRUE CONCLAVE",
+        "FROM DA WARDROBES OF A BURNED MONASTERY",
+        "OF A RITE DA SQUISHING LEFT HALF-REMEMBERED"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "EMBROIDERED WIT FIGURES DAT TURN A CURSE ASIDE",
+        "DYED IN DA ASH OF A CONSECRATED FIRE",
+        "HUNG WIT CHARMS DA WEARER NO LONGER UNDERSTANDS",
+        "SEWN SO EACH HEM CARRIES A WARDIN' WORD",
+        "WOVEN FROM THREAD DRAWN ALONG A LIVE LEYLINE",
+        "BLESSED ONCE AN' NEVER WASHED SINCE FOR FEAR OF LOSIN' IT"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA VESTMENT-WEAVERS OF DA OLD ORDERS",
+        "DA ROBED ADEPTS OF DA MAGES GUILD",
+        "DA CLOISTER-TAILORS WHOSE HOUSES IZ ASH",
+        "DA SEERS WHO WILL NO BE SEEN WITOUT IT",
+        "DA RELIC-KEEPERS WHO RATION EACH SURVIVIN' MANTLE",
+        "DA DEACONS WHO INHERITED MORE CLOTH DEN DOCTRINE"
       ]
     },
     "ArLight": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA BOILED-LEATHER CUIRASS",
+        "SCAVENGED PLATE OVER PADDIN'",
+        "DA STUDDED JERKIN",
+        "RIVETED ROAD-LEATHERS",
+        "DA LAYERED BRIGANDINE",
+        "DA SCRAP-SCALE VEST"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "KNOCKED TOGETHER SINCE DA LAST RAID",
+        "NO OLDER DEN DA LAST SIEGE",
+        "OF DA POST-COLLAPSE WORKSHOPS",
+        "CUT DOWN FROM SOMETINK LARGER AN' OLDER",
+        "ASSEMBLED ACROSS A SINGLE HARD SEASON",
+        "SALVAGED FROM DA PLATE DA DEAD LEFT BEHIND"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "BOILED AN' MOULDED TA TURN A PASSIN' EDGE",
+        "RIVETED FROM TIN AN' SALVAGED PLATE OVER PADDIN'",
+        "LACED TIGHT SO IT MOVED WIT DA SHOULDER",
+        "LAYERED WIT METAL CARDS SEWN BETWEEN DA LEATHER",
+        "CURED HARD OVER A LOW FIRE FOR A WEEK",
+        "PATCHED WIT WHATEVER SCRAP WOULD TAKE A RIVET"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA LEATHER-WORKERS OF DA MARKET WARDS",
+        "DA ROAD-WARDENS WHO OUTLIVED DEY CONVOYS",
+        "DA SCRAP-ARMOURERS WHO FIT BY EYE",
+        "DA CARAVAN GUARDS WHO ARM ON DA CHEAP",
+        "DA TANNERS WHO MOONLIGHT AS ARMOURERS",
+        "DA SCAVENGERS WHO CUT PLATE DOWN TA SIZE"
       ]
     },
     "ArHeavy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA RIVETED HARNESS",
+        "DA FULL PLATE",
+        "DA TOWER OF MAIL",
+        "DA FLUTED CUIRASS",
+        "DA GREAT HARNESS",
+        "DA FURNACE-BLACK PLATE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "HAMMERED OUT IN DA FURNACE-CITIES",
+        "NO OLDER DEN DA LAST SIEGE",
+        "OF DA DEEP FORGE-HALLS",
+        "CAST IN A FOUNDRY DAT STILL RUNS DAY AN' NIGHT",
+        "SHAPED IN DA YEARS DA WAR NEVER ENDED",
+        "QUENCHED IN DA GREAT WORKS BEFORE DA FUEL RAN LOW"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "RIVETED FROM SALVAGED PLATE OVER A WINTER",
+        "HAMMERED OVER CHARCOAL UNTIL IT RANG TRUE",
+        "ARTICULATED SO A WHOLE MAN COULD STILL RUN IN IT",
+        "QUENCHED HARD AN' TEMPERED SOFT TA HOLD AN EDGE OUT",
+        "FITTED PLATE BY PLATE TA ONE BODY ALONE",
+        "WELDED AN' BUCKLED WHERE DA OLD JOINTS HAB FAILED"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA ARMORERS OF DA FURNACE-CITIES",
+        "DA FORGE-GUILDS WHO STAMP DEY MARKS IN DA STEEL",
+        "DA SMITHS WHO WORK ESOTERIC HEAVY INDUSTRIES IRON",
+        "DA PLATE-FITTERS PAID IN FUEL AN' SILVER",
+        "DA HEAVY-ARMOURERS OF DA FOUNDRY WARDS",
+        "DA MASTER-SMITHS WHO OUTLAST DEY APPRENTICES"
       ]
     },
     "ArEquipment": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA UTILITY BELT",
+        "TRUCKER GEAR",
+        "DA PADDED KIT-HARNESS",
+        "DA CHARM-HUNG RIG",
+        "DA LOOP-RATED TOOLBELT",
+        "DA INDUSTRIAL WEBBIN'"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FRESH OFF AN ESOTERIC HEAVY INDUSTRIES LINE",
+        "NO OLDER DEN DA LAST PRODUCT RECALL",
+        "OF DA CURRENT CATALOGUE",
+        "STILL UNDER ITS PRINTED WARRANTY",
+        "SHIPPED AFTER DA LAST CONVOY RE-ORDER",
+        "STAMPED WIT DIS SEASON'S MODEL NUMBER"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CLIPPED TOGETHER FROM PARTS SOLD IN BLISTER PACKS",
+        "LOADED WIT CHARMS AN' KITS RATED FOR DA LOOP",
+        "BUCKLED ACROSS DA CHEST FOR A DRIVER'S REACH",
+        "ASSEMBLED FROM AN APPROVED-ACCESSORY CHECKLIST",
+        "FITTED WIT POUCHES MARKETED FOR EXACTLY DIS FEAR",
+        "STRAPPED ON OVER DA CLOTHES AN' SOLD AS PROTECTION"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA SALES REPS OF ESOTERIC HEAVY INDUSTRIES",
+        "DA TRUCKER SOCIETY, WHO KIT OUT BY DA MANUAL",
+        "DA CATALOGUE-BUYERS OF DA CONVOY TRADE",
+        "DA GEARHEADS WHO TRUST DA PRINTED RATIN'",
+        "DA OUTFITTERS WHO MOVE STOCK BY DA PALLET",
+        "DA ROAD-CREWS WHO ARM FROM DA ACCESSORY AISLE"
       ]
     },
     "ArShield": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA TOWER SHIELD",
+        "DA DENTED BUCKLER",
+        "DA DOOR-TURNED-AEGIS",
+        "DA ROAD-SIGN SHIELD",
+        "DA BOSS-AN'-BOARD",
+        "DA SCRAP-PLATE BARRIER"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CARRIED SINCE DA LAST HARD WINTER",
+        "NO OLDER DEN DA LAST SIEGE",
+        "OF DA BARRICADE YEARS",
+        "CUT FROM SOMETINK DAT USED TA BE A WALL",
+        "MADE NEW AFTER DA OLD ONE SPLINTERED",
+        "SALVAGED FROM DA WRECK OF A CONVOY"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "PLANKED AN' BANDED TA STOP A CHARGE COLD",
+        "HAMMERED FROM A STOP-SIGN OVER A SPARE AFTERNOON",
+        "FACED WIT PLATE SO AN EDGE WOULD SKATE AWAY",
+        "GRIPPED AN' BRACED TA TAKE DA WEIGHT OF A BLOW",
+        "BOUND AT DA RIM WIT STRAP AN' RIVET AGAINST SPLITTIN'",
+        "BACKED WIT A BOSS CUT FROM A TRUCK HUB"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA SHIELD-WRIGHTS OF DA BARRICADE WARDS",
+        "DA ROAD-WARDENS WHO STAND DA LINE",
+        "DA SCRAP-SMITHS WHO BANG OUT BUCKLERS TA ORDER",
+        "DA CONVOY GUARDS WHO FRONT DA COLUMN",
+        "DA WALL-KEEPERS WHO ARM FROM DA RUINS",
+        "DA DRILL-MASTERS WHO TEACH DA SHIELD-WALL STILL"
       ]
     },
     "ArToy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA FOAM KNIGHT'S BREASTPLATE",
+        "DA PLASTIC RIOT HELMET",
+        "DA INFLATABLE SUMO SUIT",
+        "DA COSTUME-SHOP CHAINMAIL",
+        "DA BUBBLE-WRAP CUIRASS",
+        "DA NOVELTY HARD-HAT"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "STILL IN ITS SHRINK-WRAP FROM DA TOY AISLE",
+        "NO OLDER DEN LAST YEAR'S HALLOWEEN STOCK",
+        "OF DA DEAD-MALL CLEARANCE BINS",
+        "PAST ITS RECOMMENDED AGE OF EIGHT AN' UP",
+        "LEFT OVER FROM A PARTY DAT NEVER HAPPENED",
+        "MARKED DOWN TWICE AN' STILL NO SOLD"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "MOULDED FROM BRIGHT PLASTIC DAT SQUEAKS WHEN STRUCK",
+        "INFLATED BY MOUTH BEFORE EVERY SERIOUS FIGHT",
+        "HELD TOGETHER WIT DA ORIGINAL TWIST-TIES",
+        "PRINTED WIT A SUPERHERO WHO COULD ACTUALLY TAKE A HIT",
+        "PADDED WIT FOAM DAT REMEMBERS EVERY DENT FOREVER",
+        "ASSEMBLED PER DA PICTOGRAM INSTRUCTIONS, MOSTLY"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA CLEARANCE-SHOPPERS WHO ARMOUR FOR CHEAP",
+        "DA PARTY-STORE LOOTERS OF DA DEAD MALLS",
+        "DA DESPERATE WHO TRUST A COSTUME TA STOP STEEL",
+        "DA CHILDREN OF DA LOOP WHO NEVER GREW OUT OF IT",
+        "DA BARGAIN-HUNTERS OF DA TOY-AISLE APOCALYPSE",
+        "DA JESTERS WHO GO TA WAR DRESSED FOR A BIRTHDAY"
       ]
     },
     "ArHoly": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA BLESSED HAUBERK",
+        "DA CONSECRATED MANTLE",
+        "DA SAINT'S CUIRASS",
+        "DA ANOINTED PLATE",
+        "DA WARD-MARKED VESTMENT",
+        "DA PILGRIM'S HARNESS"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "SANCTIFIED BEFORE DA FATHER WAZ SLAIN",
+        "OF DA OLD CATHEDRAL VAULTS",
+        "BLESSED ANEW AFTER DA SQUISHING",
+        "OLDER DEN DA PARISH DAT STILL GUARDS IT",
+        "KEPT ON DA ALTAR BETWEEN WARS",
+        "HALLOWED IN A RITE FEW CAN STILL PERFORM"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "ANOINTED WIT OIL AN' MARKED WIT A WARDIN' CROSS",
+        "BLESSED ON DA ALTAR DA NIGHT BEFORE IT WAZ WORN",
+        "STITCHED WIT SCRIPTURE ALONG EVERY SEAM",
+        "CONSECRATED SO CORRUPTION WOULD NO CLING TA IT",
+        "CENSED IN HOLY SMOKE UNTIL DA STEEL SMELLED OF IT",
+        "SEALED WIT A SAINT'S RELIC SEWN BENEATH DA BREAST"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA ARMOUR-PRIESTS OF DA SURVIVIN' CATHEDRALS",
+        "DA WAR-CLERICS WHO BLESS BEFORE DEY BUCKLE",
+        "DA MARTYRS' ORDERS DAT STILL FORGE FOR DA FAITHFUL",
+        "DA DEACONS WHO KEEP DA ANOINTIN' OIL",
+        "DA PILGRIM-KNIGHTS WHO ARM AT DA ALTAR",
+        "DA SANCTIFIERS WHO HALLOW WHAT DA SMITHS MAKE"
       ]
     },
     "ArCursed": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA NECROTIC MAIL",
+        "DA VOID-TOUCHED CUIRASS",
+        "DA GRAVE-COLD HARNESS",
+        "DA FLESH-BONDED PLATE",
+        "DA WHISPERIN' VESTMENT",
+        "DA ABYSS-MARKED SHIELD"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DUG FROM A BARROW NO ONE WILL NAME",
+        "CONDEMNED IN EVERY AGE IT HAB SURFACED",
+        "OF DA DEATH-CULTS DA SQUISHING SET LOOSE",
+        "OLDER DEN DA CURSE LAID UPON IT",
+        "BURIED AN' UNBURIED MORE TIMES DEN IT SHOULD BE",
+        "SEALED AWAY UNTIL SOMEONE ALWAYS BREAKS DA SEAL"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FUSED TA DA WEARER SO IT WILL NO COME OFF WILLINGLY",
+        "CHILLED BY WHATEVER IT DRANK FROM DA LAST OWNER",
+        "MARKED WIT SIGILS DAT ACHE AGAINST DA LEYLINES",
+        "STITCHED THROUGH DA FLESH AT A TERRIBLE PRICE",
+        "QUENCHED ONCE IN BLOOD AN' NEVER CLEANED SINCE",
+        "BOUND WIT A BARGAIN DA WEARER NO CAN FULLY RECALL"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA GRAVE-ROBBERS WHO SELL WHAT DEY SHOULD HAB LEFT",
+        "DA NECROMANCERS WHO ARMOUR DEY SERVANTS IN IT",
+        "DA VOID-CALLERS WHO BARTER FOR ITS PROTECTION",
+        "DA DESPERATE WHO WEAR IT KNOWIN' DA COST",
+        "DA OUTLAW-SMITHS DA GUILDS BURNED FOR MAKIN' IT",
+        "DOZE DA ROAD REMEMBERS BY DA MARKS IT LEAVES"
       ]
     },
     "ArLegendary": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA NAMED HARNESS",
+        "DA HEIRLOOM PLATE",
+        "DA UNBROKEN CUIRASS OF LEGEND",
+        "DA CHAMPION'S MAIL",
+        "DA STORIED AEGIS",
+        "DA CROWNED ARMOUR"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "FORGED IN AN AGE DA RECORDS ONLY HALF RECALL",
+        "OLDER DEN DA WAR IT IZ FAMOUS FOR",
+        "OF A SMITH WHOSE NAME OUTLIVED DA WORLD",
+        "HANDED DOWN SINCE BEFORE DA DIMENSIONS FUSED",
+        "KEPT WHOLE THROUGH CATASTROPHES DAT BROKE EVERYTINK ELSE",
+        "OF A MAKE NO LIVIN' HAND CAN MATCH"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "HAMMERED ONCE AN' NEVER BETTERED SINCE",
+        "FITTED SO PERFECTLY IT HAB NEVER NEEDED REFORGIN'",
+        "WORKED WIT AN ART DA FURNACE-CITIES HAB LOST",
+        "QUENCHED IN A RITE DA LAST MASTER TOOK TA DA GRAVE",
+        "INLAID WIT DA DEEDS OF EVERYONE WHO WORE IT",
+        "PRESERVED UNMARRED BY WHATEVER SHOULD HAB DESTROYED IT"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA LOST MASTERS WHOSE MARKS IZ STILL COPIED",
+        "DA CHAMPIONS WHO EACH ADDED TA ITS LEGEND",
+        "DA RELIC-KEEPERS WHO GUARD IT BETWEEN OWNERS",
+        "DA HEIRS WHO CLAIM IT AN' RARELY KEEP IT LONG",
+        "DA CHRONICLERS WHO ARGUE OVER WHO FORGED IT",
+        "DOZE DA WORLD REMEMBERS ONLY FOR HAVIN' WORN IT"
       ]
     },
     "Pyromancy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "PYROMANCY",
+        "DA HEARTH-RITE",
+        "FLAME-READIN'",
+        "DA EMBER ART",
+        "DA KINDLIN' CRAFT",
+        "SALAMANDER-CALLIN'",
+        "DA ASH-AN'-CINDER RITE"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "KINDLED AT DA FIRST STONE-AGE HEARTH",
+        "AS OLD AS DA TAMIN' OF FIRE",
+        "FROM DA DAWN OF DA BURNIN' BRAND",
+        "OLDER DEN DA WORD FOR WARMTH",
+        "OF DA AGE WHEN FIRE WAZ STILL A SECRET",
+        "REMEMBERED FROM DA FIRST FOREST DAT BURNED",
+        "OLDER DEN ANY FORGE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "COAXIN' A FLAME OUT OF NUTTIN' BUT INTENT",
+        "READIN' A FUTURE IN DA WAY A FIRE LEANS",
+        "FEEDIN' A FLAME ON DA CASTER AN' NO ON FUEL",
+        "HOLDIN' A FIRE IN A BARE PALM WITOUT A BURN",
+        "LETTIN' DA HEAT OUT OF A TINK ALL AT ONCE",
+        "CALLIN' DA SALAMANDER DAT LIVES IN EVERY EMBER",
+        "TURNIN' COLD AIR TA FLAME BETWEEN TWO WORDS"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA HEARTH-TENDERS WHO GUARDED DA ONLY FLAME",
+        "DA EMBER-KEEPERS OF DA DEEP CAVES",
+        "DA FIRST SHAMANS WHO READ DA SMOKE",
+        "DA FIRE-EATERS OF DA OLD ROAD FAIRS",
+        "DA FORGE-PRIESTS WHO NEVER LET IT GO OUT",
+        "DA ASH-READERS OF DA BURNED VILLAGES",
+        "DA ONES WHO LEARNED IT FROM A LIGHTNING-STRUCK TREE"
       ]
     },
     "Cryomancy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CRYOMANCY",
+        "DA LONG-DARK ART",
+        "FROST-BINDIN'",
+        "DA STILL-WATER RITE",
+        "DA MARROW-CHILL CRAFT",
+        "WINTER-CALLIN'",
+        "DA RIME-WORK"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "REMEMBERED FROM DA LAST ICE AGE'S LONG DARK",
+        "OLDER DEN DA WORDS FOR HOT AN' COLD",
+        "FROM DA AGE OF DA GREAT GLACIERS",
+        "AS OLD AS DA FIRST WINTER DAT DID NO END",
+        "OLDER DEN ANY SPOKEN LANGUAGE",
+        "OF DA CENTURIES UNDER DA ICE",
+        "FROM BEFORE DA THAW"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "PULLIN' FROST FROM DA MARROW OF DA WINTER AIR",
+        "TAKIN' DA HEAT OUT OF A TINK AN' GIVIN' IT NOWHERE TA GO",
+        "STILLIN' WATER IN DA BLOOD BEFORE IT CAN MOVE",
+        "LETTIN' DA COLD IN THROUGH A NAME SPOKEN SLOWLY",
+        "HOLDIN' A BODY AT DA MOMENT BEFORE IT SHIVERS",
+        "GROWIN' ICE INWARD FROM A SINGLE HELD BREATH",
+        "MAKIN' DA AIR REMEMBER DA GLACIER DAT MADE IT"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA STORM-FEARIN' HUNTERS OF DA FROZEN WASTES",
+        "DA ICE-AGE SHAMANS WHO OUTLIVED DA THAW",
+        "DA NORTHERN SILENCE-KEEPERS",
+        "DA GLACIER-READERS OF DA HIGH PASSES",
+        "DA ONES WHO BURIED DEY DEAD IN DA ICE",
+        "DA WINTER-WIVES OF DA LONG DARK",
+        "DA FROST-SINGERS NOBODY COULD HEAR COMIN'"
       ]
     },
     "Electromancy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "ELECTROMANCY",
+        "DA CHARGE-CRAFT",
+        "DA ARC DISCIPLINE",
+        "GALVANIC SORCERY",
+        "DA COIL RITE",
+        "LIGHTNING-CALLIN'",
+        "DA POTENTIAL ART"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "BARELY TWO CENTURIES OLD",
+        "FROM DA AGE OF DA COPPER COIL",
+        "FIRST WRITTEN DOWN IN DA 1790S",
+        "YOUNGER DEN DA STEAM ENGINE",
+        "OF DA CENTURY DAT LEARNED TA STORE A SPARK",
+        "FROM DA FIRST LABORATORY TA KILL A MAN BY ACCIDENT",
+        "NO OLDER DEN DA TELEGRAPH"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "GATHERIN' CHARGE IN DA CASTER AN' LETTIN' IT FALL",
+        "CLOSIN' A CIRCUIT DAT RUNS THROUGH DA AIR AN' A BODY",
+        "READIN' DA POTENTIAL BETWEEN TWO TINKZ DAT SHOULD NO TOUCH",
+        "STRIKIN' FASTER DEN A NERVE CAN CARRY DA NEWS",
+        "HOLDIN' AN ARC OPEN ON DA WILL ALONE",
+        "LETTIN' DA DIFFERENCE RESOLVE ITSELF ALL AT ONCE",
+        "WALKIN' A CURRENT DOWN A PATH ONLY DA CASTER CAN SEE"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA COIL-WINDERS OF DA EARLY LABORATORIES",
+        "DA LIGHTNING-STRUCK WHO SURVIVED IT",
+        "DA GALVANIC SOCIETIES OF DA LAST CENTURY",
+        "NIKOLA TESLA (1856-1943) AN' DA MEN WHO COPIED HIS NOTES",
+        "DA TELEGRAPH OPERATORS WHO LEARNED TA LISTEN",
+        "DA PHYSICIANS WHO TRIED TA RAISE DA DEAD WIT IT",
+        "DA STORM-CHASERS OF DA FLAT COUNTRIES"
       ]
     },
     "Idromancy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "HYDROMANCY",
+        "DA STILL-BASIN ART",
+        "DA TIDE DISCIPLINE",
+        "WATER-READIN'",
+        "DA CURRENT RITE",
+        "DA DROWNED ART",
+        "DA RAIN-CALLIN'"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "WRITTEN UP IN DA GREEK MANUALS",
+        "FROM DA AGE OF DA TEMPLE SPRINGS",
+        "AS OLD AS DA FIRST WELL",
+        "OF DA CENTURIES WHEN ORACLES WORKED BY WATER",
+        "OLDER DEN DA AQUEDUCTS",
+        "FROM DA PORTS OF DA INNER SEA",
+        "SET DOWN BEFORE DA FIRST MAP OF A COASTLINE"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "READIN' WHAT SURFACES IN A STILL BASIN",
+        "TURNIN' A BODY OF WATER TOWARD A SHORE IT WAZ NO GOING TA",
+        "CALLIN' DA RAIN DOWN BY NAMIN' DA CLOUD DAT CARRIES IT",
+        "PULLIN' DA WATER OUT OF A TINK DAT NEEDS IT",
+        "HOLDIN' A WAVE AT DA HEIGHT OF ITS RISE",
+        "MOVIN' A CURRENT WITOUT MOVIN' DA RIVERBED",
+        "LETTIN' DA SEA ANSWER A QUESTION PUT TA IT POLITELY"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA SPRING-ORACLES OF DA OLD TEMPLES",
+        "DA WELL-PRIESTS WHO CHARGED FOR AN ANSWER",
+        "DA HARBOUR-WITCHES OF DA INNER SEA",
+        "DA ONES WHO READ DA BASINS AT DELPHI",
+        "DA DOWSERS WHO NEVER MISSED",
+        "DA DROWNED SAILORS WHO CAME BACK KNOWIN' IT",
+        "DA RAIN-CALLERS DA VILLAGES KEPT FED"
       ]
     },
     "Aeromancy": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AEROMANCY",
+        "DA SKY-READIN'",
+        "DA RAW-AIR CALLIN'",
+        "DA STORM RITE",
+        "WEATHER-TURNIN'",
+        "DA CLOUD DISCIPLINE",
+        "DA OPEN-SKY ART"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "AS OLD AS DA FIRST WATCHED HORIZON",
+        "FROM DA AGE WHEN A STORM WAZ A PERSON",
+        "OLDER DEN ANY SPOKEN LANGUAGE",
+        "OF DA CENTURIES BEFORE DA BAROMETER",
+        "FROM BEFORE DERE WAZ WORDS FOR DA WINDS",
+        "REMEMBERED FROM DA YEAR DA SKY DID NO CLEAR",
+        "OLDER DEN DA SAIL"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "WRINGIN' STORM AN' EMBER FROM DA RAW AIR",
+        "READIN' TOMORROW IN DA WAY DA BIRDS TURN",
+        "MOVIN' DA AIR AN' EVERYTINK DAT RIDES ON IT",
+        "CALLIN' A WIND BY NAMIN' DA PLACE IT CAME FROM",
+        "HOLDIN' A CLOUD TOGETHER PAST DA HOUR IT SHOULD HAB BROKEN",
+        "TURNIN' WEATHER OVER A VALLEY DA WAY A PAGE IZ TURNED",
+        "LETTIN' DA PRESSURE FALL WHEREVER DA CASTER IZ LOOKIN'"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA FIRST HUNTERS WHO FEARED AN' COURTED DA STORM",
+        "DA SKY-WATCHERS OF DA FLAT COUNTRIES",
+        "DA ONES DA VILLAGES PAID NO TA CALL DA RAIN",
+        "DA SHEPHERDS WHO READ DA HIGH CLOUD",
+        "DA SAIL-MAKERS WHO BARGAINED WIT DA WIND",
+        "DA STORM-FEARIN' HUNTERS OF DA OPEN PLAINS",
+        "DA WEATHER-WIVES WHO WAZ USUALLY RIGHT"
       ]
     },
     "ChaosMagic": {
       "art": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "CHAOS MAGIC",
+        "DA RESULTS-ONLY ART",
+        "DA SIGIL DISCIPLINE",
+        "DA NONSENSE-RITE",
+        "DA FICKLE CRAFT",
+        "DA GAMBLER-ART",
+        "DA UNBOUND WORKIN'"
       ],
       "era": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "BARELY OLDER DEN DA PHOTOCOPIER",
+        "FROM DA BACK ROOMS OF DA 1970S",
+        "ASSEMBLED OUT OF WHATEVER WAZ LYING 'BOUT",
+        "YOUNGER DEN MOST OF ITS PRACTITIONERS",
+        "OF DA AGE WHEN BELIEF BECAME A TOOL",
+        "FIRST WRITTEN UP IN A ZINE NOBODY KEPT",
+        "NO OLDER DEN DA PAPERBACK OCCULT SHELF"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "BELIEVIN' SOMETINK ABSURD HARD ENOUGH DAT IT HOLDS",
+        "FIRIN' A SIGIL OFF AN' DEN REFUSIN' TA TINK 'BOUT IT",
+        "TREATIN' LUCK AS A RESOURCE AN' SPENDIN' IT",
+        "MAKIN' DA WORLD FLINCH BY DOING DA WRONG TINK ON PURPOSE",
+        "BORROWIN' DA SHAPE OF A RITE AN' NONE OF ITS FAITH",
+        "PUTTIN' DA WHOLE WORKIN' ON A SINGLE COIN TOSS",
+        "CONFOUNDIN' DA QUESTION UNTIL IT ANSWERS ITSELF"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        "DA ZINE-WRITERS WHO MADE IT UP AS DEY WENT",
+        "DA BACK-ROOM ORDERS DAT NEVER AGREED ON ANYTINK",
+        "AUSTIN OSMAN SPARE (1886-1956) AN' EVERYONE WHO MISREAD HIM",
+        "DA STREET CONJURERS WHO FOUND IT WORKED",
+        "DA GAMBLERS WHO NOTICED DA PATTERN",
+        "DA ONES WHO DID IT FOR A LAUGH AN' COULD NO STOP",
+        "DA PRACTITIONERS WHO LEFT NO CONSISTENT RECORD"
       ]
     },
     "Alchemistry": {
       "art": [
-        "",
-        "",
-        "",
-        ""
+        "DA CHEMIST'S ART",
+        "TRANSMUTATION-LORE",
+        "DA REACTION-CRAFT",
+        "ALCHEMY"
       ],
       "era": [
-        "",
-        "",
-        "",
-        ""
+        "DESCENDED FROM JABIR IBN HAYYAN (8TH CENTURY)",
+        "REFINED BY PARACELSUS (1493-1541)",
+        "POURED FROM MEDIEVAL CRUCIBLES INTO MODERN RETORTS",
+        "OF DA OLD ALCHEMISTS"
       ],
       "mechanism": [
-        "",
-        "",
-        "",
-        ""
+        "BREWIN' POTIONS AN' CHEMICAL REACTIONS",
+        "TRANSMUTIN' BASE STOCK INTO POTENT DRAUGHTS",
+        "DISTILLIN' VIRTUE FROM RAW REAGENT",
+        "LOOSIN' A REACTION WHERE NONE SHOULD OCCUR"
       ],
       "attrib": [
-        "",
-        "",
-        "",
-        ""
+        "JABIR IBN HAYYAN OF DA 8TH CENTURY",
+        "PARACELSUS (1493-1541)",
+        "NICOLAS FLAMEL (C.1330-1418)",
+        "DA ALCHEMISTS WHO FED DA MODERN LABS"
       ]
     }
   }

@@ -602,7 +602,16 @@
       // over on one press: the table asks first, A forfeits and B stays.
       // A bracket round is staked too, on the entry fee already paid: one
       // stray press of B used to knock the player out of a paid run.
-      if (this._stake.type === "none" && !this.inBracket()) { this.leave(); return; }
+      // A friendly game that still counts (a neighbour with nothing staked, an
+      // arena match) is booked as the loss it is on the way out: walking away
+      // used to skip settle(), so the neighbour's once-a-day gate never closed
+      // and the streak never broke, and a losing board could be quit and
+      // re-dealt until it paid a booster.
+      if (this._stake.type === "none" && !this.inBracket()) {
+        if (!this._practice && this._phase === "play" && !this._settled) this.settle(1);
+        this.leave();
+        return;
+      }
       this.openQuitAsk();
     }
 
@@ -1885,7 +1894,7 @@
   if (window.HypernetOS) {
     window.HypernetOS.registerApp({
       id: ARENA_APP_ID,
-      name: T("CardGame.arena.title"),
+      name: () => T("CardGame.arena.title"),
       icon: ARENA_ICON,
       category: "games",
       desktopShortcut: true,

@@ -12,7 +12,8 @@
   "flipped": "Camper flipped",
   "destination": "Destination",
   "freeDrive": "Free Drive",
-  "freeWalk": "Liminal Walk",
+  "freeWalk": "Liminal Walk (WIP)",
+  "worldUnavailable": "Liminal world failed to load.",
   "prompt": {
     "key": "E",
     "talk": "{key}  Talk to {name}",
@@ -59,8 +60,8 @@
     "cmdDrive": "Drive / steer",
     "cmdWalk": "Walk",
     "cmdTalk": "Talk, loot a body",
-    "cmdRun": "Run (hold it at a wall to run up the wall)",
-    "cmdJump": "Jump (again at a wall to kick off it, as often as you like)",
+    "cmdRun": "Run (hold at a wall to wall-run)",
+    "cmdJump": "Jump (again at a wall to wall-jump)",
     "cmdFly": "Take off / land (needs the Fly skill)",
     "cmdCrouch": "Crouch",
     "cmdSwim": "In water: kick up / dive down",
@@ -94,10 +95,10 @@
     "cmdMap": "Map: window, corner, full screen, off",
     "cmdDive": "Dive / surface (needs the Dive module)",
     "cmdThrust": "Throttle up / back",
-    "noteGasGiant": "Nothing here to land on, and the pressure below crushes a hull. Keep the altitude up.",
-    "noteUnderwater": "Under the surface. The trim takes the hull down and brings it back up.",
-    "noteSwimming": "In the water. Kick up for the surface, or hold the crouch to go under.",
-    "noteFlying": "At the helm. The nose does the climbing, the trim holds the altitude."
+    "noteGasGiant": "No surface. Pressure below crushes the hull. Stay high.",
+    "noteUnderwater": "Underwater. Use trim to dive or surface.",
+    "noteSwimming": "Swimming. Kick up to surface, hold crouch to dive.",
+    "noteFlying": "Flying. Pitch to climb, trim to hold altitude."
   },
   "viewMode": {
     "fpdrive": "FP DRIVING",
@@ -121,7 +122,7 @@
   "maintenance": "Vehicle maintenance",
   "refuel": "Refuel from the cans",
   "gasGiant": {
-    "noGround": "There is nothing here to set down on.",
+    "noGround": "Nowhere to land.",
     "tooDeep": "The pressure is crushing the hull. Climb, now.",
     "crushed": "The hull gives way."
   },

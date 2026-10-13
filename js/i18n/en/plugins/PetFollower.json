@@ -5,9 +5,9 @@
   "cloneJoined": "{parent} divides. {name} takes up a place in the party.",
   "cloneFollows": "{parent} divides. There is no room in the party, so {name} follows behind.",
   "training": {
-    "started": "{name} begins training as a {className}. About {days} days of travelling together should do it.",
+    "started": "{name} starts training as a {className}. About {days} days of travel.",
     "stopped": "{name}'s training is called off.",
-    "readyNoRoom": "{name} has finished its training, but there is no room in the party for it yet.",
+    "readyNoRoom": "{name} has finished training. No room in the party yet.",
     "graduated": "{name} finishes training and joins the party as a {className}."
   },
   "designedJoined": "{name} takes up a place in the party.",

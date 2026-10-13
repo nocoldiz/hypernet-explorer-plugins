@@ -29,112 +29,53 @@
     const cartId = 'BootSequence';
     const cartName = 'SYSTEM BOOT';
     
-    // Boot sequence stages
+    // Boot sequence stages. The lines a stage prints live in
+    // Arcade.boot.lines.<stage name>, one array per language.
+    const bootLines = (name) => {
+        const list = (typeof T.list === 'function') ? T.list('Arcade.boot.lines.' + name) : null;
+        return Array.isArray(list) ? list : [];
+    };
+
     const bootStages = [
         { 
             name: 'POST', 
             duration: 1000, 
-            messages: [
-                'POWER ON SELF TEST',
-                'ESOTERIC HEAVY INDUSTRIES',
-                'ARCADE SYSTEM TYPE-X',
-                'CPU: 68000 @ 10MHz',
-                'CO-CPU: Z80 @ 4MHz',
-                'RAM: 64KB MAIN / 2KB VRAM',
-                'MANUFACTURED: 2025'
-            ]
+            get messages() { return bootLines('POST'); }
         },
         { 
             name: 'ROM_CHECK', 
             duration: 2500, 
-            messages: [
-                'ROM CHECK',
-                'CHECKING SYSTEM ROMS...',
-                'MAIN CPU ROM... OK',
-                'SUB CPU ROM... OK', 
-                'SOUND ROM... OK',
-                'GRAPHICS ROM... OK',
-                'ROM CHECK COMPLETE'
-            ]
+            get messages() { return bootLines('ROM_CHECK'); }
         },
         { 
             name: 'RAM_TEST', 
             duration: 3000, 
-            messages: [
-                'RAM TEST',
-                'TESTING MEMORY...',
-                'TESTING 0x0000-0x3FFF... OK',
-                'TESTING 0x4000-0x7FFF... OK',
-                'TESTING 0x8000-0xBFFF... OK',
-                'TESTING 0xC000-0xFFFF... OK',
-                'VRAM TEST 0x0000-0x07FF... OK',
-                'RAM TEST COMPLETE - 65536 BYTES OK'
-            ]
+            get messages() { return bootLines('RAM_TEST'); }
         },
         { 
             name: 'SOUND_INIT', 
             duration: 1800, 
-            messages: [
-                'SOUND SYSTEM',
-                'INITIALIZING YM2151...',
-                'FM SYNTHESIS... OK',
-                'PCM CHANNELS... OK',
-                'MIXER... OK',
-                'AUDIO TEST TONE... OK',
-                'SOUND SYSTEM READY'
-            ]
+            get messages() { return bootLines('SOUND_INIT'); }
         },
         { 
             name: 'VIDEO_TEST', 
             duration: 2200, 
-            messages: [
-                'VIDEO SYSTEM',
-                'TESTING DISPLAY...',
-                'SPRITE LAYER... OK',
-                'TILEMAP LAYER 1... OK',
-                'TILEMAP LAYER 2... OK',
-                'COLOR RAM... OK',
-                'PALETTE TEST... OK',
-                'SYNC GENERATOR... OK',
-                'VIDEO SYSTEM READY'
-            ]
+            get messages() { return bootLines('VIDEO_TEST'); }
         },
         { 
             name: 'SECURITY', 
             duration: 1200, 
-            messages: [
-                'SECURITY CHECK',
-                'VERIFYING LICENSE...',
-                'CONNECTING TO SERVER...',
-                'AUTHENTICATION... OK',
-                'LICENSE VALID',
-                'SECURITY CHECK PASSED'
-            ]
+            get messages() { return bootLines('SECURITY'); }
         },
         { 
             name: 'SYSTEM_INIT', 
             duration: 2000, 
-            messages: [
-                'SYSTEM INITIALIZATION',
-                'LOADING GAME DATA...',
-                'LOADING SPRITE DATA... OK',
-                'LOADING TILE MAPS... OK',
-                'LOADING AUDIO SAMPLES... OK',
-                'INITIALIZING GAME ENGINE... OK',
-                'PREPARING CONTROLLERS... OK',
-                'SYSTEM INITIALIZATION COMPLETE'
-            ]
+            get messages() { return bootLines('SYSTEM_INIT'); }
         },
         { 
             name: 'COMPLETE', 
             duration: 2000, 
-            messages: [
-                'BOOT COMPLETE',
-                'SYSTEM READY',
-                '========================================',
-                '(C) 2025 ESOTERIC HEAVY INDUSTRIES',
-                'ALL SYSTEMS OPERATIONAL'
-            ]
+            get messages() { return bootLines('COMPLETE'); }
         }
     ];
     

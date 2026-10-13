@@ -241,7 +241,7 @@
   "academylordcedric": "Signore dell'Accademia Cedric",
   "acecommanderlavrinenko": "Comandante Asso Lavrinenko",
   "aceoskin": "Asso Oskin",
-  "adamsmithascended": "Adam Smith Ascendente",
+  "adamsmithascended": "Adam Smith Asceso",
   "admiralbarbarosiii": "Ammiraglio Barbaros III",
   "admiraldrakeiv": "Ammiraglio Drake IV",
   "admiralkuznetsov": "Ammiraglio Kuznetsov",
@@ -590,8 +590,8 @@
   "puremagushelena": "Magus Pura Helena",
   "puristeldercassius": "Anziano Purista Cassius",
   "qtechnicaldirector": "Q (Direttore Tecnico)",
-  "queenastrid": "Queen Astrid",
-  "queenvictoria": "Queen Victoria",
+  "queenastrid": "Regina Astrid",
+  "queenvictoria": "Regina Vittoria",
   "radiantmistresscassiel": "Signora Radiosa Cassiel",
   "receptayyiperdoan": "Recep Tayyip Erdoğan",
   "recordmasterelena": "Maestra dei Registri Elena",
@@ -604,7 +604,7 @@
   "rocketherotukhachevsky": "Eroe dei Razzi Tukhachevsky",
   "romanoprodi": "Romano Prodi",
   "rootdefenderoakley": "Difensore delle Radici Oakley",
-  "routelordduke": "Route Lord Duke",
+  "routelordduke": "Signore delle Rotte Duke",
   "sacredqueenuriel": "Sacra Regina Uriel",
   "sacredscholarportia": "Sacra Studiosa Portia",
   "sacredspellcasternora": "Sacra Incantatrice Nora",
@@ -697,5 +697,246 @@
   "yuriandropov": "Yuri Andropov",
   "zeusthethunderer": "Zeus il Tonante",
   "zog": "Zog"
+ },
+ "where": {
+  "city": {
+   "in": "a {name}",
+   "of": "di {name}",
+   "from": "da {name}"
+  },
+  "names": {
+   "Omega Tower": {
+    "name": "Torre Omega",
+    "bare": "la Torre Omega",
+    "in": "alla Torre Omega",
+    "of": "della Torre Omega",
+    "from": "dalla Torre Omega"
+   },
+   "Torre Omega": {
+    "name": "Torre Omega",
+    "bare": "la Torre Omega",
+    "in": "alla Torre Omega",
+    "of": "della Torre Omega",
+    "from": "dalla Torre Omega"
+   },
+   "Vatican Citadel": {
+    "name": "Cittadella Vaticana",
+    "bare": "la Cittadella Vaticana",
+    "in": "nella Cittadella Vaticana",
+    "to": "alla Cittadella Vaticana",
+    "of": "della Cittadella Vaticana",
+    "from": "dalla Cittadella Vaticana"
+   },
+   "Icebush Station": {
+    "name": "Stazione Icebush",
+    "bare": "la Stazione Icebush",
+    "in": "alla Stazione Icebush",
+    "of": "della Stazione Icebush",
+    "from": "dalla Stazione Icebush"
+   },
+   "Moonlit Station": {
+    "name": "Stazione Moonlit",
+    "bare": "la Stazione Moonlit",
+    "in": "alla Stazione Moonlit",
+    "of": "della Stazione Moonlit",
+    "from": "dalla Stazione Moonlit"
+   },
+   "Green Witch Space Center": {
+    "name": "Centro Spaziale Green Witch",
+    "bare": "il Centro Spaziale Green Witch",
+    "in": "al Centro Spaziale Green Witch",
+    "of": "del Centro Spaziale Green Witch",
+    "from": "dal Centro Spaziale Green Witch"
+   },
+   "Centro Spaziale Green Witch": {
+    "name": "Centro Spaziale Green Witch",
+    "bare": "il Centro Spaziale Green Witch",
+    "in": "al Centro Spaziale Green Witch",
+    "of": "del Centro Spaziale Green Witch",
+    "from": "dal Centro Spaziale Green Witch"
+   },
+   "Kola Superdeep Borehole": {
+    "name": "Pozzo superprofondo di Kola",
+    "bare": "il Pozzo superprofondo di Kola",
+    "in": "al Pozzo superprofondo di Kola",
+    "of": "del Pozzo superprofondo di Kola",
+    "from": "dal Pozzo superprofondo di Kola"
+   },
+   "Mont Blanc tunnel south": {
+    "name": "Traforo del Monte Bianco sud",
+    "bare": "il Traforo del Monte Bianco sud",
+    "in": "al Traforo del Monte Bianco sud",
+    "of": "del Traforo del Monte Bianco sud",
+    "from": "dal Traforo del Monte Bianco sud"
+   },
+   "Mont Blanc tunnel north": {
+    "name": "Traforo del Monte Bianco nord",
+    "bare": "il Traforo del Monte Bianco nord",
+    "in": "al Traforo del Monte Bianco nord",
+    "of": "del Traforo del Monte Bianco nord",
+    "from": "dal Traforo del Monte Bianco nord"
+   },
+   "Tritunnel Ovest": {
+    "name": "Tritunnel Ovest",
+    "bare": "il Tritunnel Ovest",
+    "in": "al Tritunnel Ovest",
+    "of": "del Tritunnel Ovest",
+    "from": "dal Tritunnel Ovest"
+   },
+   "Tritunnel East": {
+    "name": "Tritunnel Est",
+    "bare": "il Tritunnel Est",
+    "in": "al Tritunnel Est",
+    "of": "del Tritunnel Est",
+    "from": "dal Tritunnel Est"
+   },
+   "Super Sacred Shrine": {
+    "name": "Santuario super sacro",
+    "bare": "il Santuario super sacro",
+    "in": "al Santuario super sacro",
+    "of": "del Santuario super sacro",
+    "from": "dal Santuario super sacro"
+   },
+   "Santuario super sacro": {
+    "name": "Santuario super sacro",
+    "bare": "il Santuario super sacro",
+    "in": "al Santuario super sacro",
+    "of": "del Santuario super sacro",
+    "from": "dal Santuario super sacro"
+   },
+   "MAX Gauntlet": {
+    "name": "MAX Gauntlet",
+    "bare": "il MAX Gauntlet",
+    "in": "al MAX Gauntlet",
+    "of": "del MAX Gauntlet",
+    "from": "dal MAX Gauntlet"
+   },
+   "MAX Tavern": {
+    "name": "Taverna MAX",
+    "bare": "la Taverna MAX",
+    "in": "alla Taverna MAX",
+    "of": "della Taverna MAX",
+    "from": "dalla Taverna MAX"
+   },
+   "Taverna MAX": {
+    "name": "Taverna MAX",
+    "bare": "la Taverna MAX",
+    "in": "alla Taverna MAX",
+    "of": "della Taverna MAX",
+    "from": "dalla Taverna MAX"
+   },
+   "Petrocave": {
+    "name": "Petrocave",
+    "bare": "la Petrocave",
+    "in": "nella Petrocave",
+    "to": "alla Petrocave",
+    "of": "della Petrocave",
+    "from": "dalla Petrocave"
+   },
+   "Trick Castle": {
+    "name": "Trick Castle",
+    "bare": "il Trick Castle",
+    "in": "al Trick Castle",
+    "of": "del Trick Castle",
+    "from": "dal Trick Castle"
+   },
+   "Dark Tower": {
+    "name": "Torre oscura",
+    "bare": "la Torre oscura",
+    "in": "alla Torre oscura",
+    "of": "della Torre oscura",
+    "from": "dalla Torre oscura"
+   },
+   "Torre oscura": {
+    "name": "Torre oscura",
+    "bare": "la Torre oscura",
+    "in": "alla Torre oscura",
+    "of": "della Torre oscura",
+    "from": "dalla Torre oscura"
+   },
+   "Abandoned Shack": {
+    "name": "Baracca abbandonata",
+    "bare": "la Baracca abbandonata",
+    "in": "alla Baracca abbandonata",
+    "of": "della Baracca abbandonata",
+    "from": "dalla Baracca abbandonata"
+   },
+   "Crabby Beach": {
+    "name": "Spiaggia dei granchi",
+    "bare": "la Spiaggia dei granchi",
+    "in": "alla Spiaggia dei granchi",
+    "of": "della Spiaggia dei granchi",
+    "from": "dalla Spiaggia dei granchi"
+   },
+   "Spiaggia dei granchi": {
+    "name": "Spiaggia dei granchi",
+    "bare": "la Spiaggia dei granchi",
+    "in": "alla Spiaggia dei granchi",
+    "of": "della Spiaggia dei granchi",
+    "from": "dalla Spiaggia dei granchi"
+   },
+   "The Hague": {
+    "name": "L'Aia",
+    "in": "all'Aia",
+    "of": "dell'Aia",
+    "from": "dall'Aia",
+    "bare": "l'Aia"
+   },
+   "Liechtenstein": {
+    "name": "Liechtenstein",
+    "bare": "il Liechtenstein",
+    "in": "in Liechtenstein",
+    "to": "al Liechtenstein",
+    "of": "del Liechtenstein",
+    "from": "dal Liechtenstein"
+   },
+   "Limburg": {
+    "name": "Limburgo",
+    "bare": "il Limburgo",
+    "in": "nel Limburgo",
+    "to": "al Limburgo",
+    "of": "del Limburgo",
+    "from": "dal Limburgo"
+   },
+   "Luxembourg": {
+    "name": "Lussemburgo"
+   },
+   "Berlin": {
+    "name": "Berlino"
+   },
+   "Paris": {
+    "name": "Parigi"
+   },
+   "London": {
+    "name": "Londra"
+   },
+   "Dublin": {
+    "name": "Dublino"
+   },
+   "Edinburgh": {
+    "name": "Edimburgo"
+   },
+   "Rome": {
+    "name": "Roma"
+   },
+   "Antwerpen": {
+    "name": "Anversa"
+   },
+   "Luik": {
+    "name": "Liegi"
+   },
+   "Harlem": {
+    "name": "Haarlem"
+   },
+   "Malmo": {
+    "name": "Malmö"
+   },
+   "Ghent": {
+    "name": "Gand"
+   },
+   "Ivissa": {
+    "name": "Ibiza"
+   }
+  }
  }
 }

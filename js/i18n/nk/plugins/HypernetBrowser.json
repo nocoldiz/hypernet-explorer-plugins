@@ -3,7 +3,7 @@
   "windowTitle": "HYPERNET EXPLORER",
   "windowTitlePage": "{title} - HYPERNET EXPLORER",
   "version": "6.0 (BUILD 2001.9.3)",
-  "linkLost": "TRANSMISSION LINK LOST. DA REQUESTED HYPERNET PAGE COULD NO BE LOADED!",
+  "linkLost": "LINK LOST. DA PAGE COULD NO BE LOADED!",
   "linkStable": "TRANSMISSION LINK STABLE",
   "secureSsl": "SECURE SSL: MAXIMUM",
   "menu": {
@@ -110,7 +110,7 @@
     "topics": "HELP TOPICS",
     "support": "ONLINE SUPPORT",
     "tip": "TIP OF DA DAY",
-    "about": "ABOUT HYPERNET EXPLORER"
+    "about": "'BOUT HYPERNET EXPLORER"
   },
   "toolbar": {
     "back": "GO BACK",
@@ -141,7 +141,7 @@
     "offline": "WORKIN' OFFLINE",
     "popupBlocked": "A POP-UP WAZ BLOCKED. CLICK HERE TA SEE FIDDLY BITS!",
     "popupAllowed": "POP-UPS IZ ALLOWED ON DA HYPERNET ZONE!",
-    "external": "EXTERNAL ADDRESS. DA HYPERNET GATEWAY HOLDS NO ROUTE TA {address}!",
+    "external": "NO ROUTE TA {address}.",
     "downloadStarted": "DOWNLOADIN' {name}...",
     "downloadDone": "DOWNLOAD COMPLETE: {name}",
     "saved": "STASHED TA {path}",
@@ -149,8 +149,8 @@
     "copied": "COPIED TA CLIPBOARD.",
     "pasted": "PASTED FROM CLIPBOARD.",
     "cut": "CUT TA CLIPBOARD.",
-    "selectedAll": "EVERYTHIN' ON DIS PAGE IZ SELECTED!",
-    "nothingToCopy": "DERE IZ NOTHIN' SELECTED TA COPY!",
+    "selectedAll": "EVERYTINK ON DIS PAGE IZ SELECTED!",
+    "nothingToCopy": "DERE IZ NUTTIN' SELECTED TA COPY!",
     "encodingSet": "ENCODIN' SET TA {name}.",
     "zoomSet": "ZOOM: {percent}%",
     "textSizeSet": "TEXT SIZE: {name}",
@@ -174,7 +174,7 @@
     "close": "SHUT IT",
     "count": "{count} MATCHES",
     "none": "NO MATCHES",
-    "unreadable": "DIS PAGE WILL NO LET DA FINDER READ IT!"
+    "unreadable": "DIS PAGE NO CAN BE SEARCHED!"
   },
   "address": {
     "placeholder": "TYPE A HYPERNET ADDRESS, OR A PHRASE TA SEARCH FOR",
@@ -191,18 +191,18 @@
     "searchButton": "NOODLE SEARCH",
     "luckyButton": "ME IZ FEELIN' LUCKY",
     "footer": "(C) 2001 NOODLE - DA HYPERNET SEARCH ENGINE",
-    "stats": "ABOUT {count} RESULTS ({seconds} SECONDS)",
+    "stats": "'BOUT {count} RESULTS ({seconds} SECONDS)",
     "noResults": "YA SEARCH - {query} - DID NO MATCH ANY DOCUMENTS!",
     "directory": "HYPERNET DIRECTORY",
-    "directoryHint": "{count} SITES IZ REACHABLE FROM DIS TERMINAL. PICK A LETTER!",
+    "directoryHint": "{count} SITES AVAILABLE. PICK A LETTER!",
     "connecting": "CONTACTIN' DA NOODLE INDEX...",
-    "indexOffline": "DA NOODLE INDEX IZ UNREACHABLE. DA DIRECTORY BELOW IZ READ STRAIGHT OFF DA LOCAL GATEWAY CACHE!",
+    "indexOffline": "NOODLE INDEX OFFLINE. SHOWIN' DA CACHED DIRECTORY BELOW!",
     "suggestion": "TRY A DIFFERENT PHRASE, OR BROWSE DA DIRECTORY BELOW!"
   },
   "error": {
     "title": "DA PAGE NO CAN BE DISPLAYED",
     "heading": "DA PAGE NO CAN BE DISPLAYED",
-    "body": "DA PAGE YOU IZ LOOKIN' FOR IZ NO ON DIS GATEWAY, OR DA NAME WAZ MISTYPED!",
+    "body": "DA PAGE NO EXIST OR DA ADDRESS WAZ MISTYPED!",
     "address": "ADDRESS: {address}",
     "tryTitle": "TRY DA FOLLOWIN':",
     "try1": "CHECK DAT DA HYPERNET ADDRESS IZ SPELLED CORRECTLY!",
@@ -211,14 +211,14 @@
     "didYouMean": "DID YOU MEAN:",
     "searchFor": "SEARCH NOODLE FOR \"{query}\"",
     "code": "HYPERNET EXPLORER - GATEWAY RESPONSE 404 (NO ROUTE TA DOCUMENT)",
-    "external": "DAT ADDRESS LIVES OUTSIDE DA HYPERNET. DIS TERMINAL HOLDS NO ROUTE TA IT!",
+    "external": "DAT ADDRESS IZ OUTSIDE DA HYPERNET AN' NO CAN BE REACHED!",
     "friendlyOff": "GATEWAY 404. NO ROUTE. DOCUMENT NO HELD LOCALLY!"
   },
   "history": {
     "title": "HISTORY",
     "heading": "HISTORY",
-    "hint": "EVERY PAGE DIS TERMINAL HAB OPENED, NEWEST FIRST!",
-    "empty": "NOTHIN' HAB BEEN VISITED YET!",
+    "hint": "VISITED PAGES, NEWEST FIRST!",
+    "empty": "NUTTIN' HAB BIN VISITED YET!",
     "today": "TODAY",
     "earlier": "EARLIER",
     "clear": "CLEAR HISTORY",
@@ -228,7 +228,7 @@
   "downloads": {
     "title": "DOWNLOADS",
     "heading": "DOWNLOADS",
-    "hint": "FILES PULLED OFF DA HYPERNET LAND IN C:\\Documents!",
+    "hint": "DOWNLOADS IZ STASHED TA C:\\Documents!",
     "empty": "NO DOWNLOADS YET.",
     "file": "FILE",
     "from": "FROM",
@@ -242,7 +242,7 @@
   "mail": {
     "title": "HYPERNET MAIL",
     "heading": "INBOX",
-    "hint": "MAIL HELD FOR DIS TERMINAL. REPLIES IZ NO POSSIBLE: DA RELAY HAB BEEN ONE-WAY SINCE DA Y2K ROLLOVER!",
+    "hint": "MAIL HELD FOR DIS TERMINAL. REPLIES IZ NO POSSIBLE: DA RELAY HAB BIN ONE-WAY SINCE DA Y2K ROLLOVER!",
     "from": "FROM",
     "subject": "SUBJECT",
     "received": "RECEIVED",
@@ -254,14 +254,14 @@
     "composeSubject": "SUBJECT:",
     "composeBody": "MESSAGE:",
     "send": "SEND",
-    "sent": "MESSAGE QUEUED. DA RELAY WILL CARRY IT WHEN DA RELAY COMES BACK!",
+    "sent": "MESSAGE QUEUED. IT SENDS WHEN DA RELAY IZ BACK!",
     "news": "NEWSGROUPS",
     "newsHint": "DA NEWS SERVER REFUSES DIS TERMINAL'S CREDENTIALS!",
     "messages": [
       {
         "from": "POSTMASTER@HYPERNET.EU",
         "subject": "WELCOME TA DA HYPERNET",
-        "body": "YA TERMINAL HAB BEEN REGISTERED WIT DA GATEWAY. DO NO ATTEMPT TA REACH ADDRESSES OUTSIDE DA HYPERNET ZONE. DA GATEWAY HOLDS NO ROUTE TA DEM AN' DA ATTEMPT IZ LOGGED!"
+        "body": "YA TERMINAL HAB BIN REGISTERED WIT DA GATEWAY. DO NO ATTEMPT TA REACH ADDRESSES OUTSIDE DA HYPERNET ZONE. DA GATEWAY HOLDS NO ROUTE TA DEM AN' DA ATTEMPT IZ LOGGED!"
       },
       {
         "from": "BILLIN'@NOODLE.COM",
@@ -281,7 +281,7 @@
       {
         "from": "SALES@HEXASTEEL-DYNAMICS.EU",
         "subject": "YA ENQUIRY",
-        "body": "THANK YOU FOR YA INTEREST IN OUR PRODUCTS. A REPRESENTATIVE HAB BEEN DISPATCHED TA YA REGISTERED ADDRESS. REMAIN AT YA TERMINAL!"
+        "body": "THANK YOU FOR YA INTEREST IN OUR PRODUCTS. A REPRESENTATIVE HAB BIN DISPATCHED TA YA REGISTERED ADDRESS. REMAIN AT YA TERMINAL!"
       }
     ]
   },
@@ -294,7 +294,7 @@
   },
   "open": {
     "title": "OPEN",
-    "hint": "TYPE DA ADDRESS OF A HYPERNET DOCUMENT, OR PICK ONE FROM DA LIST!",
+    "hint": "TYPE AN ADDRESS OR PICK ONE FROM DA LIST!",
     "label": "OPEN:",
     "filter": "FILTER:",
     "ok": "OK",
@@ -355,9 +355,9 @@
     "textSize": "TEXT SIZE:",
     "encoding": "ENCODIN':",
     "zone": "SECURITY ZONE",
-    "zoneLow": "LOW: RUN EVERYTHIN' DA PAGE ASKS FOR",
+    "zoneLow": "LOW: RUN EVERYTINK DA PAGE ASKS FOR",
     "zoneMedium": "MEDIUM: PROMPT BEFORE RUNNIN' UNSIGNED RITES",
-    "zoneHigh": "HIGH: NOTHIN' ON DA PAGE IZ TRUSTED",
+    "zoneHigh": "HIGH: NUTTIN' ON DA PAGE IZ TRUSTED",
     "blocker": "BLOCK POP-UP WINDOWS",
     "advanced": "ADVANCED FIDDLY BITS",
     "showImages": "SHOW PICTURES",
@@ -373,7 +373,7 @@
   },
   "sync": {
     "title": "SYNCHRONIZE",
-    "hint": "OFFLINE PAGES IZ COPIED INTO DA GATEWAY CACHE SO DEY CAN BE READ WIT DA LINK DOWN!",
+    "hint": "COPIES PAGES TA DA CACHE FOR OFFLINE READIN'!",
     "start": "SYNCHRONIZE",
     "close": "SHUT IT",
     "working": "SYNCHRONIZIN' {name}...",
@@ -395,7 +395,7 @@
     "close": "SHUT IT"
   },
   "about": {
-    "title": "ABOUT HYPERNET EXPLORER",
+    "title": "'BOUT HYPERNET EXPLORER",
     "product": "HYPERNET EXPLORER",
     "versionLabel": "VERSION:",
     "cipherLabel": "CIPHER STRENGTH:",
@@ -408,9 +408,9 @@
   "helpPage": {
     "title": "HYPERNET EXPLORER HELP",
     "heading": "HYPERNET EXPLORER HELP",
-    "intro": "EVERYTHIN' DIS BROWSER CAN DO, AN' DA KEY DAT DOES IT!",
+    "intro": "BROWSER FEATURES AN' SHORTCUTS!",
     "navHeading": "GETTIN' AROUND",
-    "navBody": "TYPE AN ADDRESS IN DA ADDRESS BAR AN' PRESS ENTER. AN ADDRESS WIT NO DOT IN IT IZ SEARCHED FOR INSTEAD. A PAGE DAT IZ NO ON DIS GATEWAY SHOWS DA GATEWAY'S OWN 404 NOTICE WIT DA NEAREST MATCHIN' ADDRESSES UNDER IT!",
+    "navBody": "TYPE AN ADDRESS IN DA ADDRESS BAR AN' PRESS ENTER. TEXT WIT NO DOT IZ SEARCHED INSTEAD. MISSIN' PAGES SHOW A 404 NOTICE WIT SIMILAR ADDRESSES!",
     "keysHeading": "KEYBOARD",
     "keys": [
       "CTRL+T - NEW TAB",
@@ -427,7 +427,7 @@
       "ESCAPE - STOP LOADIN'"
     ],
     "favHeading": "FAVORITES",
-    "favBody": "FAVORITES IZ KEPT IN DA TERMINAL'S REGISTRY, SO DEY SURVIVE DA MACHINE BEING SWITCHED OFF AN' TRAVEL WIT DA STASH!",
+    "favBody": "FAVORITES IZ STASHED WIT YA GAME!",
     "offlineHeading": "WHEN DA LINK IZ DOWN",
     "offlineBody": "DA GATEWAY HOLDS A LOCAL COPY OF EVERY DOCUMENT IN DA HYPERNET ZONE, SO PAGES OPEN WIT DA LINE DOWN. ONLY ADDRESSES OUTSIDE DA ZONE NEED DA LINE, AN' DERE IZ NONE!",
     "close": "SHUT IT"
@@ -471,15 +471,15 @@
     "close": "SHUT IT",
     "tips": [
       "AN ADDRESS WIT NO DOT IN IT IZ TREATED AS A SEARCH. TYPE A PHRASE AN' PRESS ENTER!",
-      "MIDDLE OF A LONG PAGE? CTRL+F FINDS A WORD WITHOUT SCROLLIN' FOR IT!",
-      "DA LINKS BAR TAKES AS MANY FAVORITES AS YOU CARE TA PIN TA IT!",
+      "CTRL+F FINDS A WORD ON DA PAGE!",
+      "PIN AS MANY FAVORITES TA DA LINKS BAR AS YOU LIKE!",
       "CTRL+T OPENS A TAB. EACH TAB KEEPS ITS OWN BACK AN' FORWARD!",
       "SOURCE (CTRL+U) SHOWS A PAGE EXACTLY AS DA GATEWAY SENT IT!",
-      "DA HYPERNET DIRECTORY ON DA HOME PAGE LISTS EVERY SITE DA GATEWAY HOLDS!",
-      "A PAGE DAT WILL NO DISPLAY SHOWS DA NEAREST ADDRESSES IT COULD HAB MEANT!",
-      "ZOOM LIVES ON DA STATUS BAR. CLICK DA PERCENTAGE TA CYCLE IT!",
-      "POP-UPS IZ BLOCKED BY DEFAULT. TOOLS, POP-UP BLOCKER CHANGES DAT, AT YA OWN RISK!",
-      "ANYTHIN' STASHED OFF A PAGE LANDS IN C:\\Documents AN' SHOWS UP IN ME COMPUTER!"
+      "DA HYPERNET DIRECTORY ON DA HOME PAGE LISTS EVERY SITE!",
+      "A MISSIN' PAGE SUGGESTS SIMILAR ADDRESSES!",
+      "CLICK DA ZOOM PERCENTAGE ON DA STATUS BAR TA CHANGE IT!",
+      "POP-UPS IZ BLOCKED BY DEFAULT. CHANGE IT IN TOOLS, POP-UP BLOCKER!",
+      "STASHED PAGES GO TA C:\\Documents AN' SHOW UP IN ME COMPUTER!"
     ]
   },
   "context": {
@@ -510,17 +510,17 @@
   },
   "hexapedia": {
     "appName": "HEXAPEDIA",
-    "tooltip": "DA FREE ENCYCLOPEDIA OF POST-SQUISHIN' KNOWLEDGE",
+    "tooltip": "DA FREE ENCYCLOPEDIA OF POST-SQUISHING KNOWLEDGE",
     "peopleTitle": "LIVIN' PERSONS OF NOTE",
-    "peopleIntro": "DIS SERVER WRITES UP ANYBODY DA WORLD HAB HEARD OF. A TRAVELLER WHO REACHES LEVEL {level} EARNS AN ARTICLE, AN' IT IZ KEPT WIT DA WORLD RATHER DEN WIT DA PARTY, SO IT OUTLIVES DEM!",
+    "peopleIntro": "ANY CHARACTER WHO REACHES LEVEL {level} GETS AN ARTICLE. ARTICLES IZ KEPT WIT DA WORLD, NO DA PARTY!",
     "peopleEmpty": "NO ARTICLE YET. NOBODY IN DIS WORLD HAB REACHED LEVEL {level}!",
     "peopleLine": "LEVEL {level} {cls}",
     "personMeta": "LEVEL {level} {cls}, OF DA WORLD OF {world}.",
     "personDiary": "FROM DA RECORD",
-    "personNoDiary": "DA RECORD HOLDS NOTHIN' UNDER DIS NAME YET!",
-    "personFooter": "WRITTEN BY DA ENCYCLOPEDIA FROM DA PARTY DIARY. KEPT WIT DA WORLD, AN' READABLE BY WHOEVER PLAYS IT NEXT!",
+    "personNoDiary": "NO RECORD UNDER DIS NAME YET!",
+    "personFooter": "WRITTEN FROM DA PARTY DIARY. STASHED WIT DA WORLD!",
     "backToPortal": "HEXAPEDIA PORTAL",
     "written": "HEXAPEDIA HAB WRITTEN UP {name}",
-    "updated": "HEXAPEDIA PAGES FOR {name} UPDATED WIT LATEST EXPLOITS"
+    "updated": "HEXAPEDIA ARTICLE ON {name} UPDATED"
   }
 }

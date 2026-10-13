@@ -1,14 +1,15 @@
 /* Global Custom Scrollbars styled like HistorySimulator.js */
 ::-webkit-scrollbar {
-    width: 6px !important;
-    height: 6px !important;
+    width: 14px !important;
+    height: 14px !important;
 }
 ::-webkit-scrollbar-track {
     background: rgba(212, 160, 80, 0.10) !important;
 }
 ::-webkit-scrollbar-thumb {
     background: rgba(212, 160, 80, 0.55) !important;
-    border-radius: 3px !important;
+    border-radius: 7px !important;
+    min-height: 40px !important;
 }
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(233, 196, 106, 0.85) !important;

@@ -216,11 +216,11 @@
             cross.setAttribute('x1', bx);
             cross.setAttribute('x2', bx);
             cross.setAttribute('opacity', '1');
-            const dateOf = ES() && ES().dateStr ? ES().dateStr(best[0]) : `day ${best[0]}`;
+            const dateOf = ES() && ES().dateStr ? ES().dateStr(best[0]) : T('Eurodemics.dayNumbered', { day: best[0] });
             tip.innerHTML = `<b>${escapeHtml(dateOf)}</b><br>` +
-                `<span style="color:${C.ill}">&#9632;</span> ${num(best[1])} ill ` +
-                `<span style="color:${C.inkSoft}">(+${num(best[2])} new)</span><br>` +
-                `<span style="color:${C.dead}">&#9632;</span> ${num(best[3])} dead`;
+                `<span style="color:${C.ill}">&#9632;</span> ${escapeHtml(T('Eurodemics.chartTip.ill', { n: num(best[1]) }))} ` +
+                `<span style="color:${C.inkSoft}">${escapeHtml(T('Eurodemics.chartTip.fresh', { n: num(best[2]) }))}</span><br>` +
+                `<span style="color:${C.dead}">&#9632;</span> ${escapeHtml(T('Eurodemics.chartTip.dead', { n: num(best[3]) }))}`;
             tip.style.display = 'block';
             const px = bx / scale;
             tip.style.left = Math.min(box.width - tip.offsetWidth - 4, Math.max(0, px + 10)) + 'px';
@@ -373,8 +373,13 @@
 
         // Re-draw when the model rolls over to a new day, so a window left open
         // while the game runs keeps up with the curve instead of going stale.
+        // One loop per window: launching the observatory again while it is
+        // open only raises it, and must not stack a second loop beside the
+        // first (each one re-rendered the page on every new day).
         watchClock: function () {
+            const token = this._clockToken = (this._clockToken || 0) + 1;
             const tick = () => {
+                if (token !== this._clockToken) return;            // superseded
                 if (!this.win || !this.win.isConnected) return;   // window closed, stop
                 const day = ES() ? ES().dayIndex() : null;
                 if (day != null && day !== this.lastDay) this.render();
@@ -649,7 +654,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: APP_ID,
-            name: T('Eurodemics.appName'),
+            name: () => T('Eurodemics.appName'),
             icon: APP_ICON,
             launchFn: function () {
                 window.HypernetEurodemics.launch();

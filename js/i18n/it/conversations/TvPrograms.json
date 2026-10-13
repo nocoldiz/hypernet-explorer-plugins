@@ -105,7 +105,7 @@
     "beats": [
       "Tre settimane, una troupe, e una rotta che i notiziari normali non hanno il budget per raggiungere.",
       "La frontiera di {place} si attraversa in sei ore se vi aspettano e in due giorni se non vi aspettano.",
-      "Il nostro inviato filma la coda perché la notizia è la coda, non i funzionari.",
+      "Il nostro inviato filma la coda perché la notizia è la coda.",
       "Quello di cui la gente lì vuole parlare non è quello di cui le agenzie dicono che voglia parlare.",
       "{news}",
       "Un giornalista del posto che non possiamo nominare ha organizzato tutto e non comparirà davanti alla telecamera.",
@@ -217,7 +217,7 @@
       "...la questua si raccoglie in attenzione. {È già stata raccolta|È stata raccolta mentre guardavate|Avete già dato}..."
     ],
     "beats": [
-      "...l'assemblea {di stasera|di questa sera|di quest'ora} è {chiunque|tutti quelli} abbia il televisore caldo...",
+      "...l'assemblea {di stasera|di questa sera|di quest'ora} è {chiunque abbia|tutti quelli che hanno} il televisore caldo...",
       "...noi non passiamo il piattino... noi passiamo una frequenza...",
       "...il diacono trasmette dal {year} e non è mai stato pagato né in liturgia né in moneta...",
       "...sotto tutto questo c'è un inno... non lo si sta cantando... lo si sta ricevendo...",
@@ -258,7 +258,7 @@
       "Prima i prezzi, poi cuciniamo quello che è venuto fuori più economico. {È|Ecco} il format!"
     ],
     "tail": [
-      "Ed {è|ecco} quello che ci possiamo permettere {questa settimana|in questi giorni|nel corso della settimana}. {Che bel vincolo, no|Che bel vincolo|Il vincolo è una meraviglia, no}?"
+      "Ed {è|ecco} quello che ci possiamo permettere {questa settimana|in questi giorni|nel corso della settimana}. {Bel vincolo, no|Che bel vincolo, eh|Il vincolo è una meraviglia, no}?"
     ],
     "beats": [
       "Prezzi dalle bancarelle di {place}, presi stamattina, prima che qualcuno li mettesse in ordine.",
@@ -450,7 +450,7 @@
       "{Pronti tutti|Siete pronti|Ci siamo}? Bene! TUTTI INSIEME!"
     ],
     "tail": [
-      "È stato {BELLISSIMO|MERAVIGLIOSO|STUPENDO}. {Alcuni di voi|Qualcuno di voi|Una parte di voi} era intonato. Qualcun altro era in loop."
+      "È stato {BELLISSIMO|MERAVIGLIOSO|STUPENDO}. {Qualcuno di voi|Più d'uno di voi|Qualcuno fra voi} era intonato. Qualcun altro era in loop."
     ],
     "beats": [
       "Pronti tutti? Bene! TUTTI INSIEME!",
@@ -464,18 +464,18 @@
       "Un'altra volta, e stavolta come se ci CREDESTE davvero, perché è {sinceramente|davvero|proprio} importante!",
       "Anche canticchiare vale! Canticchiare è sempre valso!",
       "E se domani vi ricordate una riga sola, ricordatevi il ritornello!",
-      "È stato BELLISSIMO. {Alcuni di voi|Qualcuno di voi|Una parte di voi} era intonato. Qualcun altro era in loop."
+      "È stato BELLISSIMO. {Qualcuno di voi|Più d'uno di voi|Qualcuno fra voi} era intonato. Qualcun altro era in loop."
     ]
   },
   "first_spell": {
     "lead": [
-      "Bacchette giù. Non vi servirà una bacchetta. Vi servirà scrivere giusto."
+      "Bacchette giù. Vi servirà soltanto scrivere giusto."
     ],
     "tail": [
       "Una parola sola. Maiuscole dentro. {Andate|Forza|Su, andate}. Piano."
     ],
     "beats": [
-      "Bacchette giù. Non vi servirà una bacchetta. Vi servirà scrivere giusto.",
+      "Bacchette giù. Vi servirà soltanto scrivere giusto.",
       "Il vostro primo incantesimo è piccolo e sicuro, e vi farà male lo stesso se lo fate di fretta.",
       "Una parola sola. Maiuscole dentro. Ditela nella testa prima di dirla ad alta voce.",
       "Lo facciamo su terreno morto. Il terreno morto è noioso, ed è proprio quello il punto.",
@@ -524,8 +524,8 @@
       "Le leyline collegano i posti che contano: chiese antiche, battaglie antiche, pozzi antichi!",
       "La gita di oggi è a una leyline vicino a {place}. La andiamo a GUARDARE. Basta!",
       "Non si lancia mai su una linea per fare scena. È così che un paese intero perde la magia!",
-      "Il terreno spezzato è silenziosissimo. Si sente. {Alcuni di voi|Qualcuno di voi|Una parte di voi} lo ha già sentito.",
-      "I maghi grandi passano quasi tutto il tempo a leggere MAPPE. Non a combattere! Mappe!",
+      "Il terreno spezzato è silenziosissimo. Si sente. {Qualcuno di voi|Più d'uno di voi|Qualcuno fra voi} lo ha già sentito.",
+      "I maghi grandi passano quasi tutto il tempo a leggere MAPPE. Tantissime mappe!",
       "Compiti: trovate la linea più vicina, segnatela su un foglio, e non fate ASSOLUTAMENTE NIENT'ALTRO!"
     ]
   },
@@ -585,7 +585,7 @@
       "La porta si è aperta da sola l'ultima notte del 1999, quando è morta moltissima gente.",
       "Dentro ci sono negozi, e una giungla, e un reattore, e un corridoio {pieno di|zeppo di} TENDE!",
       "Ogni paese del mondo ci ha dentro un ufficio. E dentro non possono litigare!",
-      "Archive Foundation tiene la pace sui pianerottoli. È tutto lì il loro mestiere!",
+      "L'Archive Foundation tiene la pace sui pianerottoli. È tutto lì il loro mestiere!",
       "La Torre tiene insieme novantadue mondi, come la bandierina dentro un tramezzino {molto|davvero|proprio} grande!",
       "Ci si può salire! {Per favore non|Vi preghiamo di non|Vi chiediamo di non} salirci! Sono vere tutte e due le cose!",
       "E proprio proprio in cima c'è una sedia. Della sedia parliamo quando sarete più grandi!"
@@ -816,7 +816,7 @@
       "Inni per un paradiso silenzioso, cantati da nove persone in una stanza con un buon soffitto.",
       "{Stasera|Questa sera|A quest'ora} niente organo. L'organo di {place} è muto da quando è venuto giù il tetto.",
       "Questo è stato scritto per un'assemblea che {non esiste più|ormai non esiste|non c'è più}, e si canta ancora ogni settimana.",
-      "Le voci non sono impostate. Non è una scusa, è una descrizione.",
+      "Le voci non sono impostate. È solo una descrizione.",
       "Una versione del {year}, cantata piano, perché è stata scritta per essere cantata piano.",
       "Fra un inno e l'altro c'è silenzio, e il silenzio resta dentro la trasmissione.",
       "L'ultima strofa è senza accompagnamento e la registrazione tiene il respiro che la precede.",
@@ -939,7 +939,7 @@
     "beats": [
       "PREVISTO UN CONFINE VICINO A {place}! IL NOSTRO MAGAZZINO STA DALLA PARTE SBAGLIATA!",
       "DEVE PARTIRE TUTTO STANOTTE! {item} A {price}! QUELLO È UN PREZZO DA PANICO!",
-      "Tom: voglio essere chiaro sul fatto che non stiamo lucrando su un'allerta. Stiamo RISPONDENDO a un'allerta.",
+      "Tom: voglio essere chiaro sul fatto che stiamo RISPONDENDO a un'allerta.",
       "GLI AUTISTI STANNO CARICANDO MENTRE PARLO! LI SENTITE! NON È UN EFFETTO SONORO!",
       "SE L'ALLERTA VIENE REVOCATA, IL PREZZO TORNA SU! LE ALLERTE FUNZIONANO COSÌ!",
       "ORDINATE ADESSO E PARTE PRIMA DEL CORDONE! ORDINATE DOPO E PARTE PRIMA O POI!",
@@ -963,7 +963,7 @@
       "Le case regnanti dell'epoca lo chiamarono incidente. I loro stessi grimori lo chiamano acquisto.",
       "Sono tenuto a segnalare che la copia dell'Archivio è stata corretta due volte, da due mani diverse.",
       "La gente di questo secolo non sapeva di starci dentro. Nemmeno voi.",
-      "Quel che sopravvive è quello che qualcuno ha ritenuto valesse la pena portarsi dietro. È un pregiudizio, non un documento."
+      "Quel che sopravvive è quello che qualcuno ha ritenuto valesse la pena portarsi dietro. È un pregiudizio."
     ]
   },
   "this_week_in_history": {
@@ -978,7 +978,7 @@
       "Sempre {questa settimana|in questi giorni|nel corso della settimana}, in un anno che l'Archivio elenca tre volte: {event} a {place}.",
       "Un anniversario più sommesso: un trattato che non ha rispettato nessuno, firmato da gente di cui non sente la mancanza nessuno.",
       "La voce preferita di Vance {di questa settimana|di questi giorni|della settimana} è una ricevuta. Chiude una discussione vecchia di due secoli.",
-      "Questa settimana è insolitamente affollata. Gli storici sospettano del calendario, non del secolo.",
+      "Questa settimana è insolitamente affollata. Gli storici sospettano del calendario.",
       "Lo segnaliamo perché segnalarlo {è tutto il mestiere|è tutto lì il mestiere|è il mestiere}. Non c'è altro che tenga viva una data.",
       "Quest'anno l'anniversario cade {dentro una bolla|dentro una bolla di loop|dentro una delle bolle}, quindi la commemorazione sarà in ritardo e sincera.",
       "Una rettifica alla {trasmissione|puntata} della settimana scorsa, che facciamo volentieri e per esteso."
@@ -999,7 +999,7 @@
       "La posizione di Vane, ed è soltanto una posizione: qualcosa è stato costruito, e qualcos'altro è arrivato.",
       "La struttura più antica che riusciamo a datare vicino a {place} è allineata a un orizzonte che {non esiste più|ormai non esiste|non c'è più}.",
       "{hist}",
-      "Quello che abbiamo perso non erano gli edifici. Era il presupposto che il cielo restasse dov'era."
+      "Quello che abbiamo perso era il presupposto che il cielo restasse dov'era."
     ]
   },
   "ninety_two": {
@@ -1090,7 +1090,7 @@
       "{hist}",
       "Se la vanga e il grimorio non vanno d'accordo, uno dei due è stato scritto da qualcuno che ci aveva un interesse.",
       "I ritrovamenti di Colm di questa stagione sono fuori moda, il che storicamente vuol dire che sono giusti.",
-      "Vane gradirebbe si mettesse a verbale che la stratigrafia non è un argomento, ma soltanto un indizio {molto|davvero|estremamente} pesante."
+      "Vane gradirebbe si mettesse a verbale che la stratigrafia è soltanto un indizio {molto|davvero|estremamente} pesante."
     ]
   },
   "footnotes": {
@@ -1137,7 +1137,7 @@
       "Niente di così grande se ne va in silenzio. Il silenzio che viene dopo è {la parte che dura|la parte che resta|quello che dura}."
     ],
     "beats": [
-      "Wren tiene un elenco. L'elenco è più corto di quanto fosse nel {year} ed {è tutta lì la trasmissione|è tutta qui la trasmissione|non c'è altro nella trasmissione}.",
+      "Wren tiene un elenco. L'elenco è più corto di quanto fosse nel {year}, {ed è tutta lì la trasmissione|ed è tutta qui la trasmissione|e non c'è altro nella trasmissione}.",
       "Un dio non viene ucciso. A un dio prima si smette di aver bisogno, e poi lo si uccide.",
       "{deity} è il caso di studio {di stasera|di questa sera|di quest'ora}: venerato in tre reami, pianto in nessuno dei tre.",
       "I resti, dove ci sono resti, di solito adesso sono geografia.",
@@ -1180,7 +1180,7 @@
       "{hist}",
       "I trasportatori di questa ricostruzione sono trasportatori veri. Hanno chiesto di tenersi i propri camion.",
       "{C'è|Esiste} un tratto vicino a {place} che non {è mai stato mappato|lo hanno mappato manco una volta|è mai stato cartografato} due volte allo stesso modo.",
-      "Quelli che l'hanno tenuta aperta non erano eroi. Erano pagati, male, e l'hanno tenuta aperta."
+      "Quelli che l'hanno tenuta aperta erano pagati, male, e l'hanno tenuta aperta lo stesso."
     ]
   },
   "archive_reading": {
@@ -1336,7 +1336,7 @@
     ],
     "beats": [
       "L'osservatorio di {place} ha pubblicato, e la pubblicazione sta facendo litigare tutti.",
-      "Renner: questa è una misurazione, non un significato. Il significato richiede un altro decennio.",
+      "Renner: questa è solo una misurazione. Il significato richiede un altro decennio.",
       "Tre gruppi hanno rifatto lo stesso esperimento. Due hanno ottenuto la stessa risposta. È una buona settimana.",
       "Lo strumento è stato costruito prima del {year} e nessuno dei vivi capisce fino in fondo la taratura.",
       "Quello che possiamo dire: le letture sono derivate, piano, in una sola direzione, per parecchio tempo.",
@@ -1376,7 +1376,7 @@
       "Non lanciate niente nel quartiere interessato. Né per fare luce, né per scaldarvi, né per niente.",
       "State sotto gli ottanta. Se siete già dentro, l'altra regola la conoscete.",
       "L'acqua viene portata in tre punti, e i punti sono elencati dopo questo avviso.",
-      "Se il vostro vicino è anziano o solo, bussate. È un'indicazione, non un suggerimento.",
+      "Se il vostro vicino è anziano o solo, bussate. È un'istruzione.",
       "Non abbiamo cifre sulle vittime e sulle vittime non faremo ipotesi.",
       "L'avviso copre {stasera|questa sera|quest'ora}. Verrà riesaminato alle {hour} e {probabilmente|con ogni probabilità|molto verosimilmente} prorogato."
     ]
@@ -1432,7 +1432,7 @@
       "L'agenzia dalla Dimensione Giudiziaria batte da sei ore e non si è ancora ripetuta.",
       "Un pezzo lo teniamo da parte: alla luce del giorno si leggerà meglio e sarà meno credibile.",
       "Uno segnala delle luci. Un secondo segnala l'assenza di luci. Stanno tutti e due vicino alla stessa via.",
-      "Alle sei la squadra del mattino si eredita tutto questo, con le nostre condoglianze."
+      "Alle sei la squadra del mattino eredita tutto questo, con le nostre condoglianze."
     ]
   },
   "road_report": {
@@ -1444,7 +1444,7 @@
     ],
     "beats": [
       "La direttrice principale in uscita da {place} è aperta e lenta, che è la frase migliore di questo bollettino.",
-      "Halloran: l'ho fatta per ventidue anni. Non vi sto leggendo una mappa, vi sto leggendo un ricordo.",
+      "Halloran: l'ho fatta per ventidue anni. Vi sto leggendo un ricordo.",
       "Deviazione in vigore allo svincolo. La deviazione aggiunge un'ora ed evita un confine. Prendetela.",
       "Le code ai depositi sono lunghe a {place}, e la mensa lì è, come sempre, migliore di quanto sarebbe tenuta a essere.",
       "Sotto gli ottanta sui rettilinei. Lo dico tutte le sere perché tutte le sere c'è qualcuno che non lo fa.",
@@ -1591,7 +1591,7 @@
       "Questo è un tono. È questo tono da quando il trasmettitore è stato collaudato.",
       "Il tono cala di un grado ogni {n} ore e quella cosa non l'ha autorizzata nessuno.",
       "I tecnici a {place} monitorano la portante e compilano un rapporto che non legge nessuno.",
-      "Se sentite delle parole, non sono nel segnale. Sono nella stanza.",
+      "Se sentite delle parole, ve le sta dando la stanza.",
       "La portante è quello che resta quando un'emittente non ha niente da dire e lo dice lo stesso.",
       "Ci dicono che l'onda non è modulata. L'oscilloscopio ha le sue opinioni.",
       "Da qualche parte c'è un apparecchio acceso con davanti nessuno. Quell'apparecchio è il pubblico.",
@@ -1631,12 +1631,12 @@
       "Tre delle mie affermazioni precedenti nel frattempo sono state confermate. Non si è scusato nessuno.",
       "Chiedetevi a chi conviene, e poi chiedetevi di chi è la strada che porta lì dove gli conviene.",
       "Ho in linea uno che lavorava in quell'edificio e parla solo con la voce alterata.",
-      "Non vi sto dicendo cosa pensare. Vi sto dicendo cosa non sono riuscito a smettere di notare."
+      "Vi sto solo dicendo cosa non sono riuscito a smettere di notare."
     ]
   },
   "flatmates": {
     "lead": [
-      "Due maghi. Una leyline. Un appartamento esattamente sopra, {cosa che l'agenzia in effetti aveva accennato, di sfuggita|che l'agente in effetti aveva accennato, di sfuggita|accennata una volta dall'agenzia, in fretta}."
+      "Due maghi. Una leyline. Un appartamento esattamente sopra, {cosa che l'agenzia in effetti aveva accennato, di sfuggita|come l'agente in effetti aveva accennato, di sfuggita|cosa accennata una volta dall'agenzia, in fretta}."
     ],
     "tail": [
       "E la settimana prossima sono ancora lì, perché nessuno dei due può permettersi altro."
@@ -1647,7 +1647,7 @@
       "La padrona di casa, Hilda, arriva per parlare dell'affitto e delle bruciature, in quest'ordine.",
       "Fennwick ha inventato un incantesimo per lavare i piatti. Ci mette più tempo che lavare i piatti.",
       "I genitori di Marlo vengono a trovarlo da {place} e della leyline non sanno niente.",
-      "Il vicino di sopra si lamenta del ronzio. Il ronzio è l'appartamento, non i maghi.",
+      "Il vicino di sopra si lamenta del ronzio. Il ronzio è l'appartamento stesso.",
       "Hilda: questo appartamento l'ho affittato undici volte. A due di voi l'ho affittato due volte.",
       "Risolvono la cosa, male, davanti a un tè, che è come la risolvono tutte le settimane."
     ]
@@ -1726,7 +1726,7 @@
   },
   "tavern_rescue": {
     "lead": [
-      "Una taverna che sta andando a fondo, una settimana, e Percival Croft, che non {è mai stato diplomatico|lo è stato manco una volta|è mai stato uno di tatto}."
+      "Una taverna che sta andando a fondo, una settimana, e Percival Croft, che non {è mai stato diplomatico|è mai andato a fondo manco una volta|è mai stato uno di tatto}."
     ],
     "tail": [
       "Li lasciamo con un menù più corto e una cantina pulita. {Il resto tocca a loro|Il resto è affar loro|Quello che succede dopo è affar loro}."
@@ -1916,7 +1916,7 @@
       "Tolliver: qui sotto la temperatura non cambia dal {year} e non {ho mai dovuto farci niente|ci ho mai dovuto mettere mano}.",
       "In fondo c'è una botte che è arrivata da {place} ed è precedente alla licenza.",
       "Il carattere di un oste si capisce tutto da come vengono pulite le linee di spillatura.",
-      "Una cantina ricorda. Non per magia. In pratica. L'odore è trent'anni di decisioni.",
+      "Una cantina ricorda, in modo pratico. L'odore è trent'anni di decisioni.",
       "Dietro le cassette abbiamo trovato un grimorio con i debiti saldati nel {year}, quasi tutti in favori.",
       "Qualcosa bussa dentro il muro allo scoccare dell'ora. Tolliver ha smesso di indagare e ha cominciato ad annuirgli.",
       "L'ultimo che scende spranga la botola. Quella regola è più vecchia della taverna e non la discute nessuno."
@@ -1973,7 +1973,7 @@
       "{news}",
       "Blackwood: su questa cosa ho intervistato quaranta persone e trentotto nominano il freddo.",
       "Non siamo d'accordo, in diretta, a lungo, {ed è il motivo per cui|ed è la ragione per cui|ed ecco perché} questa {trasmissione|puntata|rubrica} esiste ancora.",
-      "La redazione di giorno questo pezzo non lo manderebbe. Non è una critica. È un palinsesto."
+      "La redazione di giorno questo pezzo non lo manderebbe. Pura questione di palinsesto."
     ]
   },
   "long_haul_lines": {
@@ -2023,7 +2023,7 @@
       "La direttrice in uscita da {place} curva senza nessun motivo geografico. Non c'è nessuna collina. Ci ho camminato.",
       "I lavori stradali che durano nove anni non sono lavori stradali.",
       "Ho il rilievo. Ho il secondo rilievo. Il secondo rilievo ha meno pagine.",
-      "Vell: non sto dicendo che ci sia un impianto. Sto dicendo che c'è un buco nelle carte fatto a forma di impianto.",
+      "Vell: c'è un buco nelle carte fatto a forma di impianto. Dico solo questo.",
       "Tre ditte di autotrasporto quel tratto di notte non lo fanno, e nessuna lo dirà a verbale.",
       "{news}",
       "Qualcuno ha riasfaltato undici chilometri di niente, spendendo, in un anno in cui non c'erano fondi per farlo.",
@@ -2169,7 +2169,7 @@
       "Il capitolo quattro è quello difficile e non lo saltiamo proprio perché {è difficile|è duro|non è cosa semplice}.",
       "Finch: lo ha scritto in una cucina a {place}, che è dove viene scritta quasi tutta la Scrittura.",
       "C'è un passo qui sull'attesa che ha tenuto in vita più gente di qualsiasi miracolo del libro.",
-      "I titoletti li ha aggiunti la Chiesa. I titoletti sono l'opinione della Chiesa, non di Margaret.",
+      "I titoletti li ha aggiunti la Chiesa. I titoletti sono l'opinione della Chiesa.",
       "Dice chiaramente che lei non sa. Tre edizioni successive hanno tolto quella frase.",
       "{hist}",
       "Leggetelo piano. È stato scritto da qualcuno che aveva tempo e ben poco altro."
@@ -2423,7 +2423,7 @@
       "Una di queste stava in un quartiere di {place} che da allora non ha più la stessa forma!",
       "È SICURO? È PIÙ SICURO VENDUTO! È UNA FORMA DI SICUREZZA!",
       "Gli assicuratori si sono {ritirati|sfilati|tirati indietro}. Ed è per questo che avete questo prezzo!",
-      "Compratene due e tenetele in stanze diverse. È un'indicazione del produttore, non una battuta.",
+      "Compratene due e tenetele in stanze diverse. È un'indicazione del produttore.",
       "QUANDO SONO FINITE SONO FINITE! ALCUNE SONO GIÀ FINITE!"
     ]
   },
@@ -2519,7 +2519,7 @@
   },
   "customer_lines": {
     "lead": [
-      "Le linee clienti sono aperte per sempre. Non è uno slogan. L'interruttore non lo trova nessuno."
+      "Le linee clienti sono aperte per sempre. Alla lettera. L'interruttore non lo trova nessuno."
     ],
     "tail": [
       "Le linee restano aperte. Verity resta alla scrivania. La scrivania resta, {purtroppo|ahimè|sfortunatamente}, presidiata."
@@ -2765,7 +2765,7 @@
       "Mario Scotti, signore e signori, con una giacca che ha esigenze di illuminazione tutte sue!",
       "Paola gira le lettere. Paola gira lettere da {n} anni e non {ha mai sbagliato|ha sbagliato manco una volta}.",
       "GIRI! Ed è... BANCAROTTA! Il pubblico faccia il rumore! FACCIA IL RUMORE!",
-      "La nostra concorrente è una {job} di {place} e {vorrebbe|desidera|tiene molto a} comprare una vocale, con prudenza.",
+      "Il nostro concorrente è un {job} di {place} e {vorrebbe|desidera|tiene molto a} comprare una vocale, con prudenza.",
       "Mario: signora, la risposta è sul tabellone. È sul tabellone da un pezzo.",
       "Risolva! RISOLVA! Ha risolto! HA RISOLTO CON DUE LETTERE!",
       "Il premio bonus è un'automobile. L'automobile sta su una pedana girevole. La vera star è la pedana.",
@@ -2802,7 +2802,7 @@
       "Lo produce Antonio Ricchi. Ricchi produce tutto. Ricchi potrebbe ESSERE la rete.",
       "Una meteorina a {place} viene sconfitta, in diretta, da una cartina che non vuole stare attaccata al muro.",
       "IN QUESTA C'È GUBBIBO! Gubbibo ha buttato giù una scenografia! La scenografia era costosa!",
-      "Compilation di gente che sbatte contro le porte a vetri! Non è raffinato! È IMBATTIBILE!",
+      "Compilation di gente che sbatte contro le porte a vetri! È IMBATTIBILE!",
       "Un programma di cucina prende fuoco, moderatamente, e lo chef finisce la ricetta lo stesso. RISPETTO.",
       "Il nostro reparto rallenty lo ha rallentato quattro volte. Diventa più divertente e poi triste.",
       "Ricchi: la papera è la verità. Il programma è quello che volevano. La papera è quello che è successo."
@@ -2878,7 +2878,7 @@
       "La madre del convenuto è in studio e le è stato chiesto DUE volte di smettere di commentare.",
       "Rita: signori, siete vicini di casa da {n} anni. Pensateci.",
       "Viene esibita una planimetria del geometra. La planimetria non risolve niente. La planimetria peggiora tutto.",
-      "Sentenza a favore dell'attore, risarcimento di quasi niente, e una stretta di mano che non pensa nessuno."
+      "Sentenza a favore dell'attore, risarcimento di quasi niente, e una stretta di mano in cui non crede nessuno."
     ]
   },
   "lunch_served": {
@@ -2987,7 +2987,7 @@
       "Il video viene mandato quasi per intero perché la trasmissione dura un'ora e la classifica no.",
       "Un gruppo è in studio! Fanno playback! Lo fanno MALE! MAGNIFICO!",
       "Nuova entrata! Entra direttamente! Il conduttore dice 'entra direttamente' con genuina commozione!",
-      "Numero uno per la {n}esima settimana, e Seymandi ha finito i modi per presentarlo.",
+      "Numero uno per la {n}ª settimana, e Seymandi ha finito i modi per presentarlo.",
       "Le previsioni per {la settimana prossima|la prossima volta}, che sono tirate a indovinare, pronunciate con assoluta autorevolezza."
     ]
   },

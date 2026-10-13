@@ -270,11 +270,30 @@
       return this.inCollection() ? this.everyKey() : CG().ownedKeys();
     }
 
-    // The filtered, ordered list the shelf shows, across every page.
+    // The filtered, ordered list the shelf shows, across every page. One grid
+    // step asks for it several times (the selection, the pager, the zones, the
+    // actions) and building it describes and sorts the whole catalogue, so it
+    // is kept until something that shapes it moves: the page, the filter tab,
+    // the strip's query, rarity or ordering, or which cards the shelf holds.
+    // Nothing on this scene changes the collection (the booster and the trader
+    // are scenes of their own), but the owned keys sit in the signature so a
+    // change from anywhere still shows.
     visibleKeys() {
+      const pool = this.poolKeys();
+      const bar = this._bar;
+      const sig = [this._mode, this._filter,
+        bar ? [bar.query, bar.kind, bar.category, bar.sortKey, bar.sortDir].join("\u0001") : "",
+        this.inCollection() ? pool.length : pool.join("\u0001")].join("\u0002");
+      if (this._visibleCache && this._visibleCache.sig === sig) return this._visibleCache.keys;
+      const keys = this.buildVisibleKeys(pool);
+      this._visibleCache = { sig, keys };
+      return keys;
+    }
+
+    buildVisibleKeys(pool) {
       const CGx = CG();
       const mode = FILTERS[this._filter];
-      let keys = this.poolKeys().filter((key) => {
+      let keys = pool.filter((key) => {
         if (mode === "monsters") return CGx.isMonster(key);
         if (mode === "weapons") return CGx.isWeapon(key);
         if (mode === "armor") return CGx.isArmor(key);
@@ -289,9 +308,11 @@
           price: CGx.cardValue(key)
         }));
       } else {
+        const names = {};
+        keys.forEach((key) => { names[key] = CGx.nameOf(key); });
         keys = keys.slice().sort((a, b) => {
           const r = CGx.rarityOf(b) - CGx.rarityOf(a);
-          return r || CGx.nameOf(a).localeCompare(CGx.nameOf(b));
+          return r || names[a].localeCompare(names[b]);
         });
       }
       return keys;
@@ -1919,7 +1940,7 @@
   if (window.HypernetOS) {
     window.HypernetOS.registerApp({
       id: TRADER_APP_ID,
-      name: T("CardGame.trader.title"),
+      name: () => T("CardGame.trader.title"),
       icon: TRADER_ICON,
       category: "economy",
       desktopShortcut: true,

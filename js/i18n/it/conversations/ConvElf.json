@@ -1,47 +1,47 @@
 {
-  "_comment": "La voce Elf (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo e' sempre Elf.",
+  "_comment": "La voce Elf (NPCConversation II.1b, SpeciesVoice). speech: le regole applicate a ogni battuta condivisa. voice: aperture e chiusure. thought: i loro pensieri per situazione. script: dialoghi a due, chi parla per primo è sempre Elf.",
   "voice": {
     "openers": [
-      "Nella mia lunga esperienza,",
+      "Parlo per lunga esperienza.",
       "Ah, i mortali.",
-      "Se permettete a un anziano,",
-      "I secoli mi hanno insegnato che",
+      "Permettete una parola a chi ha qualche secolo.",
+      "I secoli mi hanno insegnato una cosa.",
       "Che grazioso.",
-      "Detto con grazia,",
-      "Come diceva mia madre nell'antica lingua,",
-      "Tra le foglie e le stelle,",
-      "Ho visto cadere dei regni, e",
-      "Con la pazienza di una quercia,",
-      "Perdonate un vecchio orecchio, ma",
+      "Lo dirò con grazia.",
+      "Mia madre lo diceva nell'antica lingua.",
+      "Ascoltate, tra le foglie e le stelle.",
+      "Ho visto cadere dei regni.",
+      "Lo dirò con la pazienza di una quercia.",
+      "Perdonate un vecchio orecchio.",
       "Hm, che pittoresco.",
-      "Bellezza a parte,",
-      "Parlando da ambasciatore,",
-      "Ricordo quando",
-      "Badate, io c'ero:",
-      "Parlando con eleganza,",
-      "Come dicono le vecchie canzoni,",
-      "Caro ragazzo,",
-      "Per la luce delle stelle e per l'argento,",
-      "Lo sento prima di voi:",
-      "Si impara, in qualche secolo,",
-      "Senza voler essere scortese, ma",
+      "Lasciamo stare la bellezza.",
+      "Ve lo dico da {g:ambasciatore|ambasciatrice}.",
+      "Ricordo com'era una volta.",
+      "Badate, io c'ero.",
+      "Con eleganza, prego.",
+      "Lo dicono le vecchie canzoni.",
+      "Creatura cara.",
+      "Per la luce delle stelle e per l'argento!",
+      "Lo sento prima di voi.",
+      "Qualche secolo insegna molte cose.",
+      "Non vorrei essere scortese.",
       "Ah, i giovani.",
-      "Molto prima dei vostri nonni,"
+      "Lo so da molto prima dei vostri nonni."
     ],
     "closers": [
       "O così mi dicono i secoli.",
-      "Molto mortale.",
+      "Così tipicamente mortale.",
       "La bellezza resiste.",
       "Lo ricorderò più a lungo di voi.",
       "Con grazia, sempre.",
       "Gli alberi lo sanno.",
-      "Segnatevelo, fra cent'anni.",
+      "Riparliamone fra cent'anni.",
       "L'ho già visto.",
-      "Così va il mondo breve.",
+      "Così va questo mondo breve.",
       "Sotto le vecchie stelle.",
       "Perdonate le mie orecchie per averlo sentito.",
       "Affascinante, davvero.",
-      "Come era nella mia giovinezza.",
+      "Com'era nella mia giovinezza.",
       "Argento e pazienza.",
       "Un battito di ciglia, per noi.",
       "Cercate di stare al passo.",
@@ -62,8 +62,8 @@
       "Tre secoli di pratica e la treccia ancora non sta a posto {il lunedì|nei giorni di pioggia|nei giorni di mercato}.",
       "Quel giovanotto sarà vecchio quando avrò finito questo {libro|arazzo|sonetto}. Poverino.",
       "Le mie orecchie hanno colto un litigio a tre vie di distanza. I mortali litigano con tanta passione per così poco.",
-      "Stasera devo cambiare le corde al {liuto|arpa|arco}. L'umidità qui entra dappertutto.",
-      "Quell'edificio era nuovo l'ultima volta che sono passato. Ora è grazioso. Fra un secolo sarà bello.",
+      "Stasera devo cambiare le corde {al liuto|all'arpa|all'arco}. L'umidità qui entra dappertutto.",
+      "Quell'edificio era nuovo al mio ultimo passaggio. Ora è grazioso. Fra un secolo sarà bello.",
       "Qualcuno fischietta un'aria che ho scritto nel {1740|1802|1655}. Male, ma con sentimento.",
       "Dovrei annaffiare {le orchidee|le felci|il limone}. Mettono il broncio se faccio tardi, e anch'io.",
       "Ogni anno le vetrine diventano più luminose e i bottegai più maleducati.",
@@ -72,17 +72,17 @@
       "La gente continua a chiedermi l'età. Continuo a rispondere {'abbastanza'|'più della vostra città'|'domanda scortese'}.",
       "La Gilda mi ha mandato un'altra lettera. Sigillata con la ceralacca. Almeno ricordano come dovrebbe essere una lettera.",
       "Ho comprato un televisore. È rumoroso e piccolissimo e dentro hanno tutti fretta.",
-      "C'è un {scricciolo|pettirosso|tordo} che fa il nido nella mia fioriera. Ho riorganizzato la settimana in base a lui.",
+      "C'è {uno scricciolo|un pettirosso|un tordo} che fa il nido nella mia fioriera. Ho riorganizzato la settimana in base a lui.",
       "La moda mortale cambia così in fretta. Ho indossato questo cappotto nel 1890 ed è tornato di moda due volte.",
-      "Oggi le linee ley ronzano un po' stonate. Immagino che qualcuno a monte le stia smorzando.",
-      "Potrei aspettare più di questa fila. Potrei aspettare più di tutto questo palazzo, a dire il vero.",
+      "Oggi le leyline ronzano un po' stonate. Immagino che qualcuno a monte le stia smorzando.",
+      "Questa fila non mi batte in pazienza. Nemmeno tutto questo palazzo, a dire il vero.",
       "La figlia del fornaio ha il naso del nonno. Ricordo anche il naso del nonno del nonno.",
       "La luce del sole tra le foglie di tiglio. Nessun altro ha nemmeno alzato gli occhi. Peggio per loro.",
-      "{I miei guanti costano|I miei stivali costano|Il mio mantello costa} più di quell'auto. E le sopravvivrà.",
-      "Una bambina mi ha chiesto se le mie orecchie sono vere. Le ho chiesto se lo era il suo naso. Siamo pari.",
+      "Quell'auto costa meno {dei miei guanti|dei miei stivali|del mio mantello}. E durerà molto meno.",
+      "Una bambina mi ha chiesto se le mie orecchie sono vere. Le ho chiesto se fosse vero il suo naso. Siamo pari.",
       "Gli orologi qui sono tutti in disaccordo di un minuto. Come se un minuto importasse a qualcuno.",
-      "Ho intenzione di imparare a guidare come si deve. Dal 1923. Non c'è fretta.",
-      "Il coro {della chiesa|della scuola|della stazione} ha cantato calante di nuovo. Non ho detto niente. Eroicamente.",
+      "È dal 1923 che mi riprometto di imparare a guidare come si deve. Non c'è fretta.",
+      "Il coro {della chiesa|della scuola|della stazione} ha stonato di nuovo. Non ho detto niente. Eroicamente.",
       "Un altro palazzo nuovo di vetro e grigio. I mortali costruiscono specchi e poi odiano quello che vedono.",
       "Dovrei scrivere le mie memorie. Continuo a iniziarle, e poi capita un altro secolo.",
       "Un capello grigio. Uno. Lo farò incorniciare, o bruciare.",
@@ -101,25 +101,25 @@
     ],
     "need": {
       "sleep": [
-        "Un breve riposo con gli occhi socchiusi, e tornerò me stesso.",
+        "Un breve riposo con gli occhi socchiusi, e tornerò in me.",
         "Anche un elfo si sfilaccia senza sonno. Io mi sto sfilacciando {ai bordi|alle orecchie|nel carattere}.",
         "Ho bisogno di lenzuola di lino e di una finestra aperta. La notte sta parlando senza di me.",
-        "Sveglio da troppo. Il mio riflesso sembra avere quasi trecento anni.",
+        "Troppe ore senza dormire. Il mio riflesso sembra avere quasi trecento anni.",
         "Dormire, un poco. Le stelle faranno la guardia. Lo fanno da più tempo di me.",
         "A letto. Prima che dica qualcosa di sgarbato sul gusto di qualcuno in fatto di tende."
       ],
       "hunger": [
-        "Mangerei qualcosa. Con delle erbe dentro, per favore, non qualcosa con un involucro.",
+        "Mangerei qualcosa. Con delle erbe dentro, per favore. Niente roba incartata.",
         "Una pera, un po' di formaggio, un bicchiere di vino bianco. È chiedere troppo a una città?",
         "Ho fame. È così poco dignitoso. Il mio stomaco non ha senso dell'opportunità.",
-        "L'odore di quel {forno|cucina|banco del mercato} ha del tutto rovinato il mio contegno.",
-        "Mi sono di nuovo dimenticato di mangiare. Ci si perde ad ammirare le cose.",
-        "Gli elfi possono stare a lungo senza cibo. Il lungo è finito adesso."
+        "L'odore {di quel forno|di quella cucina|di quel banco del mercato} ha del tutto rovinato il mio contegno.",
+        "Ho scordato di nuovo di mangiare. Ci si perde ad ammirare le cose.",
+        "Gli elfi possono stare a lungo senza cibo. E quel lungo tempo adesso è finito."
       ],
       "work": [
         "Torno {al laboratorio|all'ambasciata|alla serra}. La bellezza non si fa da sola, purtroppo.",
         "Un cliente vuole il suo anello per venerdì. Venerdì! Ho passato più tempo a scegliere una pietra.",
-        "Il mio datore di lavoro ha quarant'anni e mi chiama 'signorina'. Lo lascio fare. Mi diverte.",
+        "Il mio datore di lavoro ha quarant'anni e mi tratta come una matricola. Lo lascio fare. Mi diverte.",
         "Un altro giorno di diplomazia. Sorridere, annuire, ricordare tutto ciò che loro dimenticheranno.",
         "Faccio questo lavoro da novant'anni. Trovo ancora nuovi modi per farlo meglio.",
         "Lavoro, poi una lunga serata. I mortali fanno il contrario e si chiedono perché sono stanchi."
@@ -133,11 +133,11 @@
         "Tiro con l'arco all'alba, poesia al tramonto. Il resto si può negoziare."
       ],
       "crime": [
-        "{Quella collana è sprecata|Quella spilla è sprecata|Quell'anello è sprecato} per chi lo porta. No. L'eleganza non ruba.",
+        "Chi porta {quella collana|quella spilla|quell'anello} non se lo merita. No. L'eleganza non ruba.",
         "Potrei prenderlo e sparire prima che battano le ciglia. Sono più veloce dei mortali da secoli.",
         "Un furto sarebbe così volgare. Un furto intelligente, però... no.",
         "Nessuno guarda le mani di un elfo. Guardano sempre le orecchie.",
-        "Sono sopravvissuto a tre corpi di polizia in questa città. Il quarto sembra più zelante.",
+        "Ho visto passare tre corpi di polizia in questa città. Il quarto sembra più zelante.",
         "Pazienza. Se lo voglio abbastanza, prima o poi il proprietario morirà di vecchiaia."
       ],
       "hygiene": [
@@ -150,16 +150,16 @@
       ],
       "money": [
         "Solo {quaranta|sessanta|novanta} euro fino a fine mese. I miei gioielli mi guardano speranzosi.",
-        "La mia famiglia è a Varlenia, che affoga nei soldi. Io sono qui, che sguazzo nell'affitto.",
+        "La mia famiglia è a Varlenia, che affoga nei soldi. Io sono qui, con l'affitto alla gola.",
         "Potrei vendere un anello. Però ognuno ricorda qualcuno.",
         "I soldi vanno e vengono. Ho visto fortune salire e scendere come maree. La mia è in bassa marea.",
-        "La povertà è così poco elegante. Allora dovrò essere povero con bellezza.",
+        "La povertà è così poco elegante. Allora la porterò con bellezza.",
         "Una commissione o due aiuterebbero. Qualcuno vorrà pure una canzone sul suo cane."
       ],
       "safety": [
         "Qualcosa si muove in quel vicolo. Le mie orecchie dicono due, e non amichevoli.",
         "Mi sentirei più al sicuro col mio arco. Più al sicuro di tutto con l'arco e una finestra alta.",
-        "Questa strada non mi convince. Sono sopravvissuto quattro secoli fidandomi di questa sensazione.",
+        "Questa strada non mi convince. Ho attraversato quattro secoli fidandomi di questa sensazione.",
         "Una vita lunga è una vita prudente. Prenderò la strada illuminata.",
         "L'aria sa di una bolla qui vicino. Il tempo qui è acido. Meglio allontanarsi piano.",
         "Passi dietro di me, a cinquanta passi. Credono che non li senta. Mortali."
@@ -167,7 +167,7 @@
       "comfort": [
         "Una poltrona di velluto, un camino, una buona annata. Me li sono guadagnati più volte.",
         "Le mie stanze sono troppo piccole per i miei mobili, e i miei mobili troppo vecchi per questo secolo.",
-        "Mi manca la terrazza col giardino della casa di mia madre. Non la casa. La terrazza.",
+        "Mi manca la terrazza col giardino della casa di mia madre. La casa molto meno.",
         "Cuscini di seta. È vanitoso volere cuscini di seta? Lo è. Li voglio lo stesso.",
         "Una stanza tranquilla rivolta a est. È tutto ciò che serve a un elfo. E un'arpa. E una vista.",
         "Questa panchina è molto dura e molto moderna. Due qualità di cui diffido."
@@ -177,7 +177,7 @@
         "Mi mancano i miei amici. Quasi tutti ora sono statue, o ritratti, o entrambe le cose.",
         "Una cena. Candele, lunghe chiacchiere, qualcuno che si sbaglia su Byron. Ne ho bisogno.",
         "I mortali fanno amicizia così in fretta. Insegnatemi. A me servono una trentina d'anni.",
-        "Dovrei passare dal {fioraio|vecchio professore|signora del piano di sopra}. Ha sempre pettegolezzi e buon tè.",
+        "Dovrei passare {dalla fioraia|dal vecchio professore|dalla signora del piano di sopra}. Lì ci sono sempre pettegolezzi e buon tè.",
         "La solitudine dura di più in un elfo. Preferirei non lasciarla sedimentare."
       ]
     },
@@ -212,7 +212,7 @@
         "Luce del sole su pietra antica. Il mio colore preferito non ha nome nella vostra lingua.",
         "Neanche una nuvola. Il cielo si mette in mostra, e io approvo.",
         "Bel tempo per il tiro con l'arco. O per sedere in giardino fingendo di leggere.",
-        "Che aria limpida. {La cattedrale sembra|Il fiume sembra|Il vecchio castello sembra} bello quasi quanto da nuovo."
+        "Che aria limpida. {La cattedrale ha|Il fiume ha|Il vecchio castello ha} quasi l'aspetto di quando era nuovo."
       ]
     },
     "time": {
@@ -221,14 +221,14 @@
         "Rugiada del mattino sulle rose. Una volta ho contato le gocce. Ci è voluta un'estate.",
         "In piedi prima delle allodole, come si deve. I mortali escono barcollando alle otto, brontolando.",
         "Un mattino fresco. Un altro giorno per essere paziente con tutti. Vediamo quanto dura.",
-        "Mi sono spazzolato i capelli alla finestra guardando il {fornaio|lattaio|postino} fare il suo giro.",
+        "Mi spazzolavo i capelli alla finestra guardando il {fornaio|lattaio|postino} fare il suo giro.",
         "La luce del mattino è sottile e d'argento. Il mio metallo preferito, la mia ora preferita."
       ],
       "afternoon": [
         "Il pomeriggio. L'ora del tè, di un libro e di un lieve disprezzo.",
         "A quest'ora la luce diventa ambrata. Tutto sembra più vecchio di un secolo. Si addice alla città.",
-        "I mortali diventano sonnolenti dopo pranzo. Io divento filosofico. Da fuori sembra lo stesso.",
-        "Un lungo pomeriggio. Per me lo sono tutti. È un po' il senso di essere me.",
+        "I mortali diventano sonnolenti dopo pranzo. Io mi metto a filosofare. Da fuori sembra lo stesso.",
+        "Un lungo pomeriggio. Per me sono tutti lunghi. È un po' il senso di essere me.",
         "Le ombre si allungano. Gli alberi indicano qualcosa. Lo sanno sempre.",
         "A metà giornata e nessuno ha detto niente di bello. C'è ancora tempo."
       ],
@@ -243,8 +243,8 @@
       "night": [
         "Notte. Ci vedo abbastanza bene. I mortali portano lucine e inciampano lo stesso.",
         "I gufi sono fuori. Dicono tante sciocchezze, ma con voci così belle.",
-        "Mezzanotte, e le stelle si sono spostate di nuovo. Dallo Schiacciamento non restano dove le ho lasciate.",
-        "Non ho bisogno di molto sonno. Ho bisogno di molta notte. C'è una differenza.",
+        "Mezzanotte, e le stelle si sono spostate di nuovo. Dallo Squishing non restano dove le ho lasciate.",
+        "Mi basta poco sonno. Di notte, invece, ne voglio tanta.",
         "Luce di luna sui tetti. Argento ovunque e nessuno sveglio per rubarlo.",
         "La città dorme. Sento ogni suo orologio, che scandisce vite mortali."
       ]
@@ -281,24 +281,24 @@
     },
     "wealth": {
       "poor": [
-        "Polsini rammendati e un arco prestato. Sono già stato ricco. Lo sarò di nuovo, prima o poi.",
+        "Polsini rammendati e un arco prestato. La ricchezza l'ho già avuta. Tornerà, prima o poi.",
         "La mia famiglia a Varlenia non mi riconoscerebbe con questo cappotto. Forse è il suo pregio migliore.",
-        "Povero, ma la mia postura vale ancora una fortuna.",
+        "Al verde, ma la mia postura vale ancora una fortuna.",
         "Ho venduto il mio ultimo anello buono per l'affitto. Era il dono di una duchessa. Avrebbe capito.",
         "Pane e acqua, ma serviti sul piatto d'argento di mia nonna. Gli standard si mantengono.",
         "Una vita lunga ha i suoi decenni magri. Questo è uno di quelli. Lo attraverserò cantando."
       ],
       "comfortable": [
-        "Abbastanza per vivere con grazia, non abbastanza per essere volgare. L'equilibrio ideale.",
+        "Abbastanza per vivere con grazia, troppo poco per essere volgare. L'equilibrio ideale.",
         "Un buon appartamento, una buona arpa, un buon vino la domenica. Non mi serve niente da Varlenia.",
         "I miei risparmi crescono dal {1820|1868|1904}. L'interesse composto è pazienza mortale, presa in prestito.",
         "Potrei permettermi l'opera ogni settimana. Ci vado ogni mese, perché resti speciale.",
-        "Agiato. Una parola che i mortali usano come per scusarsi. Io la uso con gusto.",
+        "Agiatezza. Una parola che i mortali usano come per scusarsi. Io la uso con gusto.",
         "Un piccolo giardino mio e nessuno che mi dica come potarlo. Ricchezza sufficiente."
       ],
       "rich": [
         "Ho più gioielli che giorni in un anno. Li indosso a rotazione, naturalmente.",
-        "La mia tenuta a Varlenia ha muro, fossato e smorzatore di ley. Esagerato, dice mia sorella. Lei ne ha due.",
+        "La mia tenuta a Varlenia ha muro, fossato e smorzatore di leyline. Esagerato, dice mia sorella. Lei ne ha due.",
         "I soldi sono facili quando si hanno quattro secoli di interessi.",
         "Ho comprato tutto il frutteto perché nessuno potesse abbatterlo. Poi ho comprato quello accanto.",
         "I sacchi che cadono dal cielo sulla mia tenuta sono un problema di qualcun altro. Pago gente perché lo resti.",
@@ -306,14 +306,14 @@
       ]
     },
     "familiar": [
-      "Di nuovo quei viaggiatori. Sempre di fretta. Sempre vivi. Entrambe sono imprese.",
-      "Mi ricordo di quella compagnia. Uno di loro si è tagliato i capelli. Non bene.",
+      "Di nuovo quei viaggiatori. Sempre di fretta. Sempre vivi. Sono imprese tutte e due.",
+      "Mi ricordo di quel Party. Uno di loro si è tagliato i capelli. Non bene.",
       "La gente della strada è tornata. Farò un inchino, appena accennato. Appena accennato è un grande onore.",
       "Ah, loro. Sono un po' invecchiati dall'ultima volta. I mortali lo fanno tra una visita e l'altra.",
       "Quei viaggiatori camminano come gente che ha visto cose strane. Io approvo le cose strane.",
       "Si sono ricordati il mio nome. Quasi tutti i mortali ricordano solo le orecchie.",
       "Di nuovo qui? Bene. Ho tenuto da parte {una canzone|una storia|una bottiglia} per loro.",
-      "Quella compagnia sa di benzina e di avventura. Soprattutto di benzina.",
+      "Quel Party sa di benzina e di avventura. Soprattutto di benzina.",
       "Spero che restino un po'. Quelli come loro sono così brevi, e così interessanti.",
       "Di nuovo quelli del camper. Ho sentito il loro motore dall'ingresso della città."
     ],
@@ -324,32 +324,32 @@
       "Un goblin mi ha chiesto se le mie orecchie fossero un cappello. Ho detto sì. Ora ne vuole uno.",
       "Sotto l'Orda i giardini si sono inselvatichiti. A dire il vero, un miglioramento rispetto al lavoro del comune.",
       "Tengo la testa bassa e l'arco allentato. La pazienza dura più delle invasioni. Ne ho viste diverse.",
-      "Gli stendardi dell'Orda sono orrendi. Mi sono offerto di ridisegnarli. L'hanno presa come una minaccia.",
+      "Gli stendardi dell'Orda sono orrendi. Ho proposto di ridisegnarli. L'hanno presa come una minaccia.",
       "I Junehem da ogni altoparlante, a ogni ora. Mi manca il clavicembalo.",
-      "Un piccolo goblin mi ha portato {uno scarabeo|un sassolino lucido|un tappo}. Un dono. Sono stranamente commosso.",
+      "Un piccolo goblin mi ha portato {uno scarabeo|un sassolino lucido|un tappo}. Un dono. Mi ha commosso, stranamente.",
       "L'Orda è venuta dal nord, come l'inverno. Gli inverni finiscono. Aspetterò."
     ],
     "abroad": [
       "Il continente è rumoroso e affollato e vivo. Varlenia è silenziosa e recintata e qualcos'altro.",
       "Mia madre scrive ogni mese chiedendo quando tornerò a casa. Le rispondo parlando del tempo.",
       "Qui la gente chiede delle mie orecchie. A Varlenia chiedono del mio statuto. Preferisco le orecchie.",
-      "Ho scelto un bilocale in una città antica, non una tenuta nella Città dei Fantasmi. In famiglia mi credono malato.",
+      "Ho preferito un bilocale in una città antica a una tenuta nella Città dei Fantasmi. In famiglia pensano che io stia male.",
       "I mortali qui sono stati gentili. Ruvidi ai bordi, ma gentili fino in fondo.",
-      "Ho una tessera della biblioteca, una bicicletta e una vicina che porta la minestra. Sono ricco nei modi sbagliati.",
+      "Ho una tessera della biblioteca, una bicicletta e una vicina che porta la minestra. Ricchezze, sì, ma dei tipi sbagliati.",
       "Varlenia ha un clima perfetto. Qui piove proprio su di me. Scopro che mi piace di più.",
       "La nave per Varlenia costa una fortuna e parte una volta a settimana. La perdo apposta da un anno.",
       "La vecchia Europa ha ancora alberi più vecchi di me. Per questo resto.",
-      "I miei vicini mi chiamano 'quello alto con le orecchie'. È il titolo più caloroso che abbia mai avuto."
+      "I miei vicini mi chiamano 'orecchie lunghe'. È il titolo più caloroso che abbia mai avuto."
     ],
     "lore": {
       "longevity": [
         "Ho visto accendere i primi lampioni a gas di questa via. Ora sono elettrici. Poi, chissà.",
         "Novantamila tramonti, e mi fermo ancora per uno bello.",
         "La gente chiede il segreto di una lunga vita. Pazienza, bellezza e mai guidare oltre gli ottanta.",
-        "Sono sopravvissuto al mio primo amore, al secondo e al quarto. Il terzo mi scrive ancora. Da Lisbona.",
+        "Ho seppellito il mio primo amore, il secondo e il quarto. Il terzo mi scrive ancora. Da Lisbona.",
         "Un'amica mortale compie ottant'anni. Le ho regalato i fiori che vidi sbocciare nel giardino di sua nonna.",
-        "La parte difficile di una vita lunga non sono gli anni. Sono gli addii.",
-        "Il mio passaporto dice nato nel {1612|1588|1640}. L'impiegato l'ha letto, mi ha guardato ed è andato a farsi un caffè.",
+        "La parte difficile di una vita lunga sono gli addii.",
+        "Sul mio passaporto c'è scritto {1612|1588|1640} come anno di nascita. L'impiegato l'ha letto, mi ha guardato ed è andato a farsi un caffè.",
         "I mortali misurano la vita in anni. Noi la misuriamo in querce. Ho circa due querce."
       ],
       "varlenia": [
@@ -358,12 +358,12 @@
         "A Varlenia cadono sacchi per cadaveri dal cielo. Mio cugino lo chiama 'traboccamento' e cambia discorso.",
         "Uno statuto varleniano costa più di quanto un mortale guadagni in una vita. Diverse delle mie, a dire il vero.",
         "I giardini di Varlenia sono perfetti. Troppo perfetti. Lì non cresce niente che non sia stato pagato.",
-        "Smorzano le linee ley su Varlenia perché la magia resti calma. Qualcun altro paga per quella calma.",
+        "Smorzano le leyline su Varlenia perché la magia resti calma. Qualcun altro paga per quella calma.",
         "Metà degli elfi che conosco si è trasferita a Varlenia. L'altra metà canta canzoni tristi sulla prima metà.",
         "Varlenia viene da un'altra dimensione o è la stanza chiusa degli dèi? Lì nessuno se lo chiede, se gli affitti salgono."
       ],
       "beauty": [
-        "La bellezza non è vanità. La vanità è non curarsene quando la bellezza svanisce. Io me ne curo moltissimo.",
+        "La vanità è non curarsi della bellezza quando svanisce. Io me ne curo moltissimo.",
         "Una pietra ben tagliata trattiene la luce come una buona canzone trattiene il silenzio.",
         "Ogni secolo ha un edificio perfetto. Questo è ancora indeciso.",
         "Una volta ho incastonato smeraldi per un'imperatrice. Il collo era più corto della collana. Abbiamo aggiustato l'impero.",
@@ -390,10 +390,10 @@
         "Tendere, respirare, rilasciare. Le stesse tre parole per tutto ciò che vale la pena fare.",
         "L'impennaggio è d'oca, l'asta è di frassino, la pazienza è mia.",
         "Un buon arciere vede il vento. Un grande arciere aspetta che cambi idea.",
-        "Ho insegnato a tirare a una ragazza mortale. Dieci anni dopo mi ha battuto. Non sono mai stato così fiero, né così irritato."
+        "Ho insegnato a tirare a una ragazza mortale. Dieci anni dopo mi ha battuto. Mai provato tanta fierezza, né tanta irritazione."
       ],
       "mortals": [
-        "I mortali vivono come se la casa fosse in fiamme. Con lo Schiacciamento, forse lo è.",
+        "I mortali vivono come se la casa fosse in fiamme. Con lo Squishing, forse lo è.",
         "La vostra specie ha fatto la radio, il treno e la piastra per cialde in due secoli. Io ho fatto un arazzo.",
         "I pilastri della Gilda hanno smesso di invecchiare tenendosi una sedia. I mortali farebbero di tutto per essere come noi.",
         "Invidio ai mortali una cosa: non vi annoiate mai. Non avete il tempo.",
@@ -477,13 +477,13 @@
         ],
         [
           0,
-          "Bene. Detesto sprecare la bella luce da solo."
+          "Bene. Detesto sprecare la bella luce da {g:solo|sola}."
         ]
       ],
       [
         [
           0,
-          "Ti sei ricordato del mio onomastico, {b}. Nessuno lo faceva da ottant'anni."
+          "Ti sei {go:ricordato|ricordata} del mio onomastico, {b}. Nessuno lo faceva da ottant'anni."
         ],
         [
           1,
@@ -523,7 +523,7 @@
         ],
         [
           0,
-          "*canta due versi sul pane caldo, perfettamente intonato*"
+          "*canta due versi sul pane caldo, con un'intonazione perfetta*"
         ],
         [
           1,
@@ -553,7 +553,7 @@
         ],
         [
           1,
-          "Scusa, mi sono addormentato con la radio accesa."
+          "Scusa, mi sono {g:addormentato|addormentata} con la radio accesa."
         ],
         [
           0,
@@ -563,7 +563,7 @@
       [
         [
           0,
-          "Mi hai chiamato 'nonna' davanti a tutto il mercato, {b}."
+          "Mi hai dato {g:del nonno|della nonna} davanti a tutto il mercato, {b}."
         ],
         [
           1,
@@ -571,7 +571,7 @@
         ],
         [
           0,
-          "L'età è un fatto. 'Nonna' è un'opinione. Tieniti le tue opinioni."
+          "L'età è un fatto. '{g:Nonno|Nonna}' è un'opinione. Tieniti le tue opinioni."
         ]
       ],
       [
@@ -585,7 +585,7 @@
         ],
         [
           0,
-          "Allora siamo stati imbrogliati entrambi. Solo uno di noi avrebbe dovuto accorgersene."
+          "Allora l'imbroglio è toccato a noi due. Solo uno di noi avrebbe dovuto accorgersene."
         ],
         [
           1,
@@ -647,7 +647,7 @@
         ],
         [
           0,
-          "Caro va bene. È 'scadente' che non tollero."
+          "Il caro va bene. Lo 'scadente' non lo tollero."
         ]
       ],
       [
@@ -791,7 +791,7 @@
         ],
         [
           0,
-          "La chiesa col campanile storto? Era storto anche in gioventù. Grazie."
+          "La chiesa col campanile storto? Era storto anche ai tempi della mia giovinezza. Grazie."
         ]
       ]
     ],
@@ -847,7 +847,7 @@
           ],
           [
             0,
-            "Parlano della stessa cosa. Non è conversazione, è un'eco."
+            "Parlano tutti della stessa cosa. Quella si chiama eco."
           ],
           [
             1,
@@ -860,7 +860,7 @@
         "lines": [
           [
             0,
-            "Il vecchio olmo della piazza andrebbe protetto, non abbattuto per fare parcheggi."
+            "Il vecchio olmo della piazza andrebbe protetto. Abbatterlo per fare parcheggi sarebbe un crimine."
           ],
           [
             1,
@@ -902,7 +902,7 @@
           ],
           [
             1,
-            "Mio padre era falegname. Ti avrebbe abbracciato per questo."
+            "Mio padre era falegname. Ti avrebbe {go:abbracciato|abbracciata} per questo."
           ],
           [
             0,
@@ -935,7 +935,7 @@
       [
         [
           0,
-          "Buongiorno, {b}. Sembri riposato, per una volta."
+          "Buongiorno, {b}. Sembri {go:riposato|riposata}, per una volta."
         ],
         [
           1,
@@ -959,7 +959,7 @@
         ],
         [
           1,
-          "Non me n'ero accorto."
+          "Non me n'ero {g:accorto|accorta}."
         ]
       ],
       [
@@ -1065,7 +1065,7 @@
       [
         [
           0,
-          "Attento alla pozzanghera, {b}. Con eleganza."
+          "{go:Attento|Attenta} alla pozzanghera, {b}. Con eleganza."
         ],
         [
           1,

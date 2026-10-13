@@ -26,12 +26,12 @@
   "notDownloaded": "NO DOWNLOADED YET",
   "statusInstalled": "INSTALLED",
   "statusDownloading": "DOWNLOADIN' {pct}%",
-  "statusPending": "WAITIN' FOR STEAM TA DOWNLOAD IT",
+  "statusPending": "WAITIN' FOR STEAM",
   "statusUpdate": "UPDATE QUEUED",
   "publishing": "UPLOADIN' TA DA WORKSHOP... {pct}%",
   "published": "PUBLISHED TA DA WORKSHOP AS PRIVATE. MAKE IT PUBLIC FROM ITS PAGE!",
   "updated": "WORKSHOP ITEM UPDATED.",
   "publishFailed": "WORKSHOP REQUEST FAILED: {error}",
-  "agreement": "ACCEPT DA STEAM WORKSHOP AGREEMENT, OR NOBODY ELSE CAN SEE DA MOD!",
-  "unsubscribed": "UNSUBSCRIBED. STEAM REMOVES DA FILES WHEN DA GAME CLOSES!"
+  "agreement": "ACCEPT DA STEAM WORKSHOP AGREEMENT TA MAKE DA MOD VISIBLE!",
+  "unsubscribed": "UNSUBSCRIBED. FILES IZ REMOVED WHEN DA GAME CLOSES!"
 }

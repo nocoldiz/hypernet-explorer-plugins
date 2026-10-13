@@ -76,9 +76,9 @@
     "talk": "Talk",
     "empathize": "Empathize",
     "cancel": "Cancel",
-    "silent": "They look through you, somewhere else entirely.",
+    "silent": "They don't respond.",
     "otherParty": "Travelling with {leader}'s party",
-    "readOnly": "They belong to another journey. You can talk, and nothing more.",
+    "readOnly": "In another player's party. You can only talk.",
     "join": "Ask them along"
   },
   "towerWorldOfFloor": "{world}, floor {floor}",

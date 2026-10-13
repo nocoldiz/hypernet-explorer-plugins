@@ -1,6 +1,6 @@
 {
   "name": "Technomagica",
-  "blurb": "Magic engineered as hardware: every node has a build, a test and a signature.",
+  "blurb": "Magic engineered as hardware.",
   "nodes": {
     "tm_leyline_tap": {
       "name": "The Leyline Tap",

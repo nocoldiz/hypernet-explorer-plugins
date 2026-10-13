@@ -27,7 +27,7 @@
     "clash": "DA CLASH",
     "deckCounts": "DECK {you} | DEY {them}",
     "quitBtn": "LEAVE",
-    "stakeNone": "NOTHIN' STAKED",
+    "stakeNone": "NUTTIN' STAKED",
     "stakeMoney": "STAKED: {amount}",
     "stakeItem": "STAKED: {mine} AGAINST {theirs}",
     "wonMoney": "YOU TAKE {amount}.",
@@ -45,7 +45,7 @@
     "forfeitAsk": "LEAVE DA TABLE? DA STAKE IZ FORFEIT!",
     "forfeitYes": "FORFEIT",
     "forfeitNo": "STAY",
-    "forfeitBracketAsk": "LEAVE DA TABLE? DA BRACKET ENDS HERE, AN' DA ENTRY FEE STAYS PAID!"
+    "forfeitBracketAsk": "LEAVE DA TABLE? YOU EXIT DA BRACKET. DA ENTRY FEE IZ NO REFUNDED!"
   },
   "col": {
     "title": "CARD COLLECTION",
@@ -57,7 +57,7 @@
       "armor": "ARMOUR",
       "effects": "EFFECTS"
     },
-    "empty": "NOTHIN' ON DA SHELF YET. OPEN A BOOSTER PACK!",
+    "empty": "NO CARDS YET. OPEN A BOOSTER PACK!",
     "pickACard": "PICK A CARD TA READ IT.",
     "saveDeck": "STASH DECK",
     "newDeck": "NEW DECK",
@@ -71,7 +71,7 @@
     "deckLegal": "LEGAL DECK.",
     "deckTooFew": "A DECK NEEDS AT LEAST {min} CARDS!",
     "deckTooMany": "A DECK HOLDS AT MOST {max} CARDS!",
-    "deckNotOwned": "DIS DECK LISTS CARDS DA PARTY NO LONGER OWNS!",
+    "deckNotOwned": "DIS DECK HAB CARDS YOU NO LONGER OWN!",
     "deckEmpty": "NO CARDS IN DIS DECK.",
     "statsHeading": "STATISTICS",
     "powerLabel": "POWER",
@@ -88,7 +88,7 @@
     "sortPower": "POWER",
     "sortValue": "VALUE",
     "anyRarity": "ANY RARITY",
-    "noResults": "NO CARD ANSWERS TA DAT.",
+    "noResults": "NO MATCHIN' CARDS.",
     "page": "PAGE {n} OF {of}, {total} CARDS",
     "showing": "{n} CARDS",
     "prevPage": "PREVIOUS PAGE",
@@ -115,19 +115,19 @@
   "effect": {
     "halve": {
       "name": "BLIGHT",
-      "desc": "ON A CREATURE: EVERY STAT HALVED, WHOEVER IT BELONGS TA. ON BARE GROUND: DA TILE IZ CURSED, AN' DA NEXT CREATURE TA STAND DERE ARRIVES HALVED!"
+      "desc": "ON A CREATURE: HALVES EVERY STAT, EITHER SIDE. ON AN EMPTY TILE: CURSES IT, HALVIN' DA NEXT CREATURE PLACED DERE!"
     },
     "double": {
       "name": "GILD",
-      "desc": "ON A CREATURE: EVERY STAT DOUBLED, WHOEVER IT BELONGS TA. ON BARE GROUND: DA TILE IZ BLESSED, AN' DA NEXT CREATURE TA STAND DERE ARRIVES DOUBLED!"
+      "desc": "ON A CREATURE: DOUBLES EVERY STAT, EITHER SIDE. ON AN EMPTY TILE: BLESSES IT, DOUBLIN' DA NEXT CREATURE PLACED DERE!"
     },
     "cull": {
       "name": "CULL",
-      "desc": "ON A CREATURE: IT IZ DESTROYED WHERE IT STANDS, WHOEVER IT BELONGS TA. ON BARE GROUND: A TRAP, AN' DA NEXT CREATURE TA STAND DERE DIES AT ONCE!"
+      "desc": "ON A CREATURE: DESTROYS IT, EITHER SIDE. ON AN EMPTY TILE: A TRAP DAT KILLS DA NEXT CREATURE PLACED DERE!"
     },
     "swap": {
       "name": "DISPLACE",
-      "desc": "PICK A CREATURE, DEN A SECOND TILE: DA TWO TRADE PLACES, GEAR AN' CURSES INCLUDED. DA SECOND TILE MAY BE BARE GROUND, AN' DA CREATURE SIMPLY WALKS TA IT!"
+      "desc": "PICK A CREATURE, DEN A SECOND TILE: DEY SWAP PLACES, GEAR AN' CURSES INCLUDED. IF DA TILE IZ EMPTY, DA CREATURE MOVES DERE!"
     },
     "ward": {
       "name": "WARD",
@@ -138,8 +138,8 @@
     "bound": "{name} IZ BOUND INTO A CARD AN' FALLS!",
     "boundNew": "{name} IZ BOUND INTO A CARD, DA FIRST OF ITS KIND, AN' FALLS!",
     "failed": "{name} SLIPS DA BINDIN'. ({chance}% NEEDED)",
-    "tooStrong": "{name} IZ LEVEL {level} AN' WILL NO BE HELD BY A PARTY OF {median}!",
-    "noCard": "DERE IZ NO CARD {name} COULD EVER BE!"
+    "tooStrong": "{name} IZ LEVEL {level}, TOO STRONG FOR A LEVEL {median} PARTY!",
+    "noCard": "{name} HAB NO CARD."
   },
   "trader": {
     "title": "CADD TRADER",
@@ -153,14 +153,14 @@
     "left": "{n} LEFT",
     "soldOut": "SOLD OUT",
     "owned": "YOU HOLD {n}",
-    "hint": "NEW LOTS IZ LISTED EVERY DAY. SOLD LOTS IZ NO RESTOCKED!",
-    "hintSell": "DA SITE PAYS LESS DEN IT ASKS. DAT DIFFERENCE IZ ITS LIVIN'!",
-    "emptyStock": "NOTHIN' LISTED TODAY.",
+    "hint": "NEW LOTS EVERY DAY. SOLD LOTS NO COME BACK!",
+    "hintSell": "SELL PRICES IZ LOWER DEN BUY PRICES!",
+    "emptyStock": "NUTTIN' LISTED TODAY.",
     "emptyShelf": "YOU HAB NO CARDS TA SELL.",
     "bought": "BOUGHT {name} FOR {price}.",
     "sold": "SOLD {name} FOR {price}.",
-    "tooDear": "YOU NO CAN COVER {price}.",
-    "cannotSell": "DAT CARD IZ NO MERCHANDISE!"
+    "tooDear": "NO ENOUGH MONEY ({price}).",
+    "cannotSell": "DIS CARD NO CAN BE SOLD."
   },
   "arena": {
     "title": "HYPER CARD ARENA",
@@ -170,8 +170,8 @@
     "deckOwn": "ME DECK",
     "deckRandom": "A ROLLED DECK",
     "deckOwnNote": "YA DECK: {n} CARDS.",
-    "deckOwnShort": "YOU HAB NO LEGAL DECK ({min} CARDS AT LEAST), SO ONE WILL BE LENT TA YOU!",
-    "deckRandomNote": "A RANDOM DECK DRAWN FROM DA WHOLE CATALOGUE, LIKE DA ONES DA MACHINE USES!",
+    "deckOwnShort": "NO LEGAL DECK (MIN {min} CARDS). YOU WILL GET A LOANER DECK!",
+    "deckRandomNote": "A RANDOM DECK FROM DA FULL CATALOGUE, LIKE DA CPU'S!",
     "levelHeading": "OPPONENT",
     "levelFallback": "LEVEL {n}",
     "levels": [
@@ -185,10 +185,10 @@
     "modeMatch": "ONE MATCH",
     "modeBracket": "BRACKET",
     "feeTag": "ENTRY {amount}",
-    "summaryMatch": "ONE MATCH AGAINST A {level} MACHINE. NOTHIN' STAKED!",
-    "summaryBracket": "{entrants} ENTRANTS, {rounds} ROUNDS, STRAIGHT KNOCK-OUT. ENTRY {fee}, AN' DA WHOLE RUN PAYS {purse} AN' A PRIZE!",
+    "summaryMatch": "ONE MATCH AGAINST A {level} MACHINE. NUTTIN' STAKED!",
+    "summaryBracket": "{entrants} ENTRANTS, {rounds} ROUNDS, KNOCK-OUT. ENTRY {fee}. WINNIN' PAYS {purse} AN' A PRIZE!",
     "start": "SIT DOWN",
-    "cannotAfford": "DA ENTRY IZ {amount}, AN' YOU DO NO HAB IT!",
+    "cannotAfford": "ENTRY COSTS {amount}. NO ENOUGH MONEY!",
     "rounds": [
       "DA QUARTER-FINAL",
       "DA SEMI-FINAL",
@@ -197,16 +197,16 @@
     "roundFallback": "ROUND {n}",
     "rivals": [
       "K4RMA_DEALER",
-      "NULLHAND",
+      "NullHand",
       "MISTRESS VEX",
       "BROKENPIXEL",
       "OSSUARY99",
-      "VOIDCALLER",
-      "THEREDQUEEN",
+      "VoidCaller",
+      "TheRedQueen",
       "GRIM_MODEM",
-      "SAINTOFCOINS",
+      "SaintOfCoins",
       "LOWBIT",
-      "ASHENTIDE",
+      "AshenTide",
       "MARROWSONG"
     ],
     "rivalFallback": "OPPONENT {n}",

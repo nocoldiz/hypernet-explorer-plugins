@@ -26,15 +26,15 @@
     "titleSleep": "Per quanto tempo?",
     "titlePostSleep": "Risveglio",
     "titleCryo": "Risveglio in che data?",
-    "titleWait": "Aspetta quanto?",
-    "titleForage": "Foraggiare per quanto?",
-    "titleRoughSleep": "Dormi all'aperto per quanto?",
+    "titleWait": "Per quanto aspettare?",
+    "titleForage": "Per quanto cercare cibo?",
+    "titleRoughSleep": "Per quanto dormire all'aperto?",
     "roughHint": "Nessun letto qui: solo il %1% del riposo di una notte.",
     "titleCamp": "Accampamento",
     "titleCampSleep": "Dormi all'accampamento",
     "sleep": "Dormi",
     "wait": "Aspetta",
-    "forage": "Foraggia",
+    "forage": "Cerca cibo",
     "hoursWait": "%1 ore",
     "hourWait": "1 ora",
     "halfHour": "30 minuti",
@@ -51,7 +51,7 @@
     "cryoFieldMonth": "Mese",
     "cryoFieldYear": "Anno",
     "cryoConfirm": "Chiudi il coperchio",
-    "cryoSpanLabel": "Sotto per",
+    "cryoSpanLabel": "Durata",
     "cryoSpanDay": "1 giorno",
     "cryoSpanDays": "%1 giorni",
     "cryoSpanMonth": "1 mese",
@@ -61,11 +61,11 @@
     "cryoRate": "Tariffa",
     "cryoPerDay": "%1 al giorno",
     "cryoCost": "Costo",
-    "cryoPurse": "Borsa",
+    "cryoPurse": "Portafoglio",
     "cryoNights": "%1 notti nella capsula",
-    "cryoNoFunds": "La capsula non parte per meno di %1 al giorno.",
-    "cryoUnaffordable": "La borsa non copre questa tariffa.",
-    "cryoEraOver": "La capsula è morta. Nessuno l'ha costruita per dormire oltre la fine del 2012.",
+    "cryoNoFunds": "La capsula costa %1 al giorno.",
+    "cryoUnaffordable": "Soldi insufficienti.",
+    "cryoEraOver": "La capsula non funziona oltre la fine del 2012.",
     "cryoTravelTitle": "Sospensione criogenica",
     "cryoWakeSub": "Il coperchio si apre.",
     "cryoWakeClean": "Stabile",
@@ -77,7 +77,7 @@
     "cryoTp": "AP",
     "cryoHunger": "Cibo",
     "cryoSleep": "Riposo",
-    "cryoHeld": "Bloccato"
+    "cryoHeld": "In stasi"
   },
   "camp": {
     "tended": "All'accampamento ci si lava e si chiacchiera per ore.",
@@ -92,7 +92,7 @@
     "awake": "Sveglio",
     "enemies": "Nemici",
     "level": "Liv. {level}",
-    "levelRange": "Liv. {min} a {max}"
+    "levelRange": "Liv. da {min} a {max}"
   },
   "needLabel": {
     "hunger": "Fame",
@@ -112,7 +112,7 @@
   "addiction": {
     "withdrawal": "{name} è in astinenza da {substance}!",
     "relieved": "{name} ha superato il peggio della voglia di {substance}",
-    "eased": "{name}: la voglia di {substance} cala di {amount}.",
+    "eased": "{name}: voglia di {substance} -{amount}.",
     "partyCard": "Dipendenze ({count})",
     "none": "Pulito"
   },
@@ -191,14 +191,14 @@
     "talk": "{name} sta parlando con {other}",
     "wash": "{name} sta andando in bagno",
     "idle": "{name} si sta sgranchendo le gambe",
-    "relieve": "{name} si allontana un attimo per fare i suoi bisogni"
+    "relieve": "{name} va a fare i suoi bisogni"
   },
   "forage": {
-    "found": "Il gruppo torna con {items}.",
+    "found": "Il Party torna con {items}.",
     "nothing": "Ore di ricerca, e questa terra non concede nulla.",
     "scavenged": "Ore passate a frugare tra i sedili e i pianali portano alla luce {items}.",
     "nothingAboard": "Ore passate a frugare tra i sedili, e nemmeno un biglietto caduto.",
-    "learned": "Ora il terreno si conosce meglio: {points} KP."
+    "learned": "Ottenuti {points} KP dalla raccolta."
   },
   "holiday": {
     "toastTitle": "Festività",
@@ -220,7 +220,7 @@
       "christmasEve": "Vigilia di Natale",
       "christmas": "Natale",
       "stStephen": "Santo Stefano",
-      "boxingDay": "Boxing Day",
+      "boxingDay": "Santo Stefano",
       "orthodoxChristmas": "Natale ortodosso",
       "orthodoxGoodFriday": "Venerdì Santo ortodosso",
       "orthodoxEaster": "Pasqua ortodossa",
@@ -233,7 +233,7 @@
       "stAndrewsDay": "Sant'Andrea",
       "stGeorgesDay": "San Giorgio",
       "stJohnsDay": "San Giovanni",
-      "midsummer": "Mezza estate",
+      "midsummer": "Festa di mezza estate",
       "carnival": "Carnevale",
       "dayOfTheDead": "Giorno dei Morti",
       "ourLady": "Festa della Madonna",

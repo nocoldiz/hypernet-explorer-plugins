@@ -2,5 +2,6 @@
   "defaultName": "Bustina di Abilità",
   "fallbackSkill": "Attacco",
   "categoryTitle": "Bustina {categories}",
-  "newSkill": "NUOVA ABILITÀ!"
+  "newSkill": "NUOVA ABILITÀ!",
+  "duplicate": "DOPPIONE"
 }

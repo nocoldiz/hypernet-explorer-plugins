@@ -2,7 +2,7 @@
   "factions": {
     "magesguild": {
       "name": "Gilda dei Maghi",
-      "description": "L'antica istituzione burocratica che regola l'uso della magia nel continente. Valorizzano l'ordine, la tradizione e i permessi.",
+      "description": "L'antica istituzione burocratica che regola l'uso della magia nel continente. Tengono all'ordine, alla tradizione e ai permessi.",
       "troops": {
         "apprenticemage": {
           "name": "Mago Apprendista"
@@ -97,7 +97,7 @@
           "name": "Curatore Anziano"
         },
         "vaultdefender": {
-          "name": "Difensore della Cripta"
+          "name": "Difensore del Caveau"
         },
         "knowledgesniper": {
           "name": "Cecchino della Conoscenza"
@@ -162,7 +162,7 @@
           "name": "Cecchino Aziendale"
         },
         "executiveguard": {
-          "name": "Guardia Esecutiva"
+          "name": "Guardia dei Dirigenti"
         },
         "combatspecialist": {
           "name": "Specialista da Combattimento"
@@ -622,7 +622,7 @@
           "name": "Titano Aziendale"
         },
         "assemblylinesniper": {
-          "name": "Cecchino Catena Montaggio"
+          "name": "Cecchino della Catena di Montaggio"
         },
         "industrialoverlord": {
           "name": "Signore Industriale"
@@ -672,7 +672,7 @@
           "name": "Arciere del Nord"
         },
         "frostranger": {
-          "name": "Ranger del Gelo"
+          "name": "Ramingo del Gelo"
         },
         "battlecleric": {
           "name": "Chierico da Battaglia"
@@ -746,7 +746,7 @@
           "name": "Cecchino dell'Oscurità"
         },
         "umbralwarlock": {
-          "name": "Warlock Umbratile"
+          "name": "Stregone Umbratile"
         },
         "shadowreaver": {
           "name": "Predatore d'Ombra"
@@ -811,7 +811,7 @@
           "name": "Cavaliere di Catrame"
         },
         "hellfiremarksman": {
-          "name": "Tiratore Fuoco Infernale"
+          "name": "Tiratore del Fuoco Infernale"
         },
         "archdevilofoil": {
           "name": "Arcidemone del Petrolio"
@@ -861,7 +861,7 @@
           "name": "Petromanager Senior"
         },
         "infernalexecutive": {
-          "name": "Esecutivo Infernale"
+          "name": "Dirigente Infernale"
         },
         "scientist": {
           "name": "Analista di Raffineria"
@@ -1268,7 +1268,7 @@
           "name": "Supervisore Zetano"
         },
         "scientist": {
-          "name": "Ricercatore Guida Turistica"
+          "name": "Ricercatore di Guide Turistiche"
         }
       },
       "leaders": {
@@ -1287,7 +1287,7 @@
       }
     },
     "holyvaticanempire": {
-      "name": "Sacro Vaticano Impero",
+      "name": "Sacro Impero Vaticano",
       "description": "L'antica sede del Papato, una città-stato che esercita un immenso potere spirituale e temporale. Opera sulla base della fede, della tradizione e di operazioni clandestine.",
       "troops": {
         "altarserver": {
@@ -1582,11 +1582,11 @@
       }
     },
     "ussr": {
-      "name": "USSR",
+      "name": "URSS",
       "description": "La potente forza militare dell'Unione Sovietica, rinomata per la sua disciplina, numeri massicci e ideologia incrollabile.",
       "troops": {
         "redarmyrecruit": {
-          "name": "Recluta Armata Rossa"
+          "name": "Recluta dell'Armata Rossa"
         },
         "sovietrifleman": {
           "name": "Fuciliere Sovietico"
@@ -1722,7 +1722,7 @@
           "name": "Leader Brigata Corazzata"
         },
         "scientist": {
-          "name": "Ingegnere Corazzato"
+          "name": "Ingegnere dei Corazzati"
         }
       },
       "leaders": {
@@ -1760,7 +1760,7 @@
     },
     "rifledivision": {
       "name": "Divisione Fucilieri",
-      "description": "La spina dorsale dell'Armata Rossa, coraggiosi fucilieri che tengono la linea contro ogni probabilità.",
+      "description": "La spina dorsale dell'Armata Rossa, coraggiosi fucilieri che tengono la linea contro ogni previsione.",
       "troops": {
         "rifleman": {
           "name": "Fuciliere"
@@ -1896,7 +1896,7 @@
           "name": "Comandante Artiglieria Pesante"
         },
         "rocketartillerymaster": {
-          "name": "Maestro Artiglieria Razzi"
+          "name": "Maestro dell'Artiglieria a Razzo"
         },
         "scientist": {
           "name": "Analista Balistico"
@@ -2022,7 +2022,7 @@
       "description": "Il servizio silenzioso della Marina Ottomana. Utilizza sistemi stealth e siluri ad alta tecnologia per mantenere il controllo del Mediterraneo e del Mar Nero.",
       "troops": {
         "submarinecadet": {
-          "name": "Cadetto Sottomarino"
+          "name": "Cadetto Sommergibilista"
         },
         "sonartechnician": {
           "name": "Tecnico Sonar"
@@ -2031,7 +2031,7 @@
           "name": "Operatore Siluri"
         },
         "submarinecommander": {
-          "name": "Comandante Sottomarino"
+          "name": "Comandante di Sottomarino"
         },
         "scientist": {
           "name": "Ingegnere Navale"
@@ -2060,7 +2060,7 @@
           "name": "Specialista in Assassinio"
         },
         "grandintelligencer": {
-          "name": "Grande Intelligence"
+          "name": "Gran Maestro delle Spie"
         },
         "scientist": {
           "name": "Studioso del Califfato"
@@ -2165,7 +2165,7 @@
     },
     "royalnavytaskforce": {
       "name": "Task Force della Royal Navy",
-      "description": "La forza principale di Britannia, che schiera fregate avanzate, portaerei e trasporti a idroplano per mantenere aperte le rotte marittime globali.",
+      "description": "La forza principale di Britannia, che schiera fregate avanzate, portaerei e trasporti ad aliscafo per mantenere aperte le rotte marittime globali.",
       "troops": {
         "seamanrecruit": {
           "name": "Recluta Marinaio"
@@ -2177,7 +2177,7 @@
           "name": "Tecnico Radar"
         },
         "hydrofoilofficer": {
-          "name": "Ufficiale Idroplano"
+          "name": "Ufficiale d'Aliscafo"
         },
         "fleetcommander": {
           "name": "Comandante di Flotta"
@@ -2203,7 +2203,7 @@
     },
     "sassbscommandos": {
       "name": "Commando SAS/SBS",
-      "description": "Il leggendario Special Air Service e Special Boat Service. Altamente addestrati, furtivi e dotati di sistemi di occultamento personale e dati avanzati.",
+      "description": "I leggendari Special Air Service e Special Boat Service. Altamente addestrati, furtivi e dotati di sistemi di occultamento personale e dati avanzati.",
       "troops": {
         "reconspecialist": {
           "name": "Specialista Ricognizione"
@@ -2215,7 +2215,7 @@
           "name": "Sommozzatore SBS"
         },
         "sascounterterrorist": {
-          "name": "Anti-Terrorismo SAS"
+          "name": "Antiterrorista SAS"
         },
         "scientist": {
           "name": "Tecnico da Campo"
@@ -2241,7 +2241,7 @@
       "description": "La divisione di intelligence più clandestina di Britannia, che si occupa di spionaggio tecnologico di alto livello, guerra psicologica e manipolazione politica globale.",
       "troops": {
         "analysthandler": {
-          "name": "Analista/Gestore"
+          "name": "Analista Referente"
         },
         "covertagent": {
           "name": "Agente Segreto"
@@ -2279,7 +2279,7 @@
           "name": "Tecnico di Laboratorio"
         },
         "plasmaengineer": {
-          "name": "Ingegnere Plasma"
+          "name": "Ingegnere del Plasma"
         },
         "powerarmortrooper": {
           "name": "Fante in Armatura Potenziata"
@@ -2311,7 +2311,7 @@
       "description": "La casta oziosa di Zeta Reticuli: sono venuti per guardare, e guardano ancora. Fotografano tutto, non ne capiscono quasi nulla, e adorano le persone che fotografano.",
       "troops": {
         "snapshottourist": {
-          "name": "Turista con Macchina"
+          "name": "Turista Fotografo"
         },
         "itineraryguide": {
           "name": "Guida d'Itinerario"
@@ -2350,7 +2350,7 @@
           "name": "Novizio PSI"
         },
         "mindfolder": {
-          "name": "Piegamenti"
+          "name": "Piegamente"
         },
         "spacefolder": {
           "name": "Piegaspazio"
@@ -2482,7 +2482,7 @@
           "name": "Sergente di Raffineria"
         },
         "concessionenforcer": {
-          "name": "Esattore della Concessione"
+          "name": "Esecutore della Concessione"
         },
         "wellheadcaptain": {
           "name": "Capitano di Pozzo"
@@ -2506,7 +2506,7 @@
           "name": "Custode del Patto"
         },
         "deepwellcaller": {
-          "name": "Chiamatore del Pozzo Profondo"
+          "name": "Evocatore del Pozzo Profondo"
         },
         "contractdemonherd": {
           "name": "Mandriano di Demoni Contrattuali"
@@ -2524,7 +2524,7 @@
           "name": "Fuciliere Immortale"
         },
         "qudsoperative": {
-          "name": "Operativo Savak"
+          "name": "Agente Savak"
         },
         "missilecrewman": {
           "name": "Artigliere Missilistico"
@@ -2608,7 +2608,7 @@
           "name": "Coscritto del Sud"
         },
         "andeanranger": {
-          "name": "Ranger Andino"
+          "name": "Ramingo Andino"
         },
         "cordillerasapper": {
           "name": "Zappatore della Cordigliera"
@@ -2650,16 +2650,16 @@
       "description": "La banda armata che tiene Norvegia e Islanda e vuole il resto. Il doppio dell'esercito di chiunque, un decimo della loro economia, e pazienza per nessuna delle due.",
       "troops": {
         "grunt": {
-          "name": "Soldataglia dell'Orda"
+          "name": "Soldataccio dell'Orda"
         },
         "raider": {
           "name": "Predone dell'Orda"
         },
         "slinger": {
-          "name": "Frombolière dell'Orda"
+          "name": "Fromboliere dell'Orda"
         },
         "guard": {
-          "name": "Scudiero dell'Orda"
+          "name": "Guardia Scudata dell'Orda"
         },
         "shaman": {
           "name": "Sciamano dell'Orda"

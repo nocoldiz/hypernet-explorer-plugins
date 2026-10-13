@@ -1,6 +1,6 @@
 {
-  "alreadyExist": "Every screenshot already exists in {path}",
+  "alreadyExist": "All screenshots already exist in {path}",
   "debugSaved": "Full debug screenshots saved to {path}",
   "saved": "Mapshot saved to {path}",
-  "starting": "Generating the full set of debug screenshots."
+  "starting": "Generating debug screenshots."
 }

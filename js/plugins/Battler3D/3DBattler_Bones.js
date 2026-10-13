@@ -20,7 +20,8 @@
  * by exact name (override with <Battler3D: key>). They map the Skeleton
  * (humanoid) archetype keys (HEAD/TORSO + arm/leg keys) so dismemberment works.
  *
- * Registered: ancientskeleton, bonewarrior, cryptsentinel, rottingskeleton
+ * Registered: ancientskeleton, bonewarrior, cryptsentinel, rottingskeleton,
+ * and the level 1-5 lv_rattlingribcage and lv_chatteringskull (Ghost keys)
  *
  * MUST load AFTER the other Battler3D family plugins.
  */
@@ -55,8 +56,16 @@
         // Cinder-Wrapped Thrall: charred bones with smouldering ember motes.
         bon_cinderthrall:     { variant: 'bon_cinderthrall',     scale: 2.0, texturePool: 'bone', bodyColor: 0x6a5048, accent: 0xff6622, hue: [0.03, 0.03], sat: [0.35, 0.10], lit: [0.36, 0.08] },
         // Sunken Pallbearer: waterlogged bog-corpse, dripping, algae-stained.
-        bon_sunkenpallbearer: { variant: 'bon_sunkenpallbearer', scale: 2.1, texturePool: 'bone', bodyColor: 0xa8aa88, accent: 0x88aa55, hue: [0.28, 0.05], sat: [0.22, 0.08], lit: [0.52, 0.08] }
+        bon_sunkenpallbearer: { variant: 'bon_sunkenpallbearer', scale: 2.1, texturePool: 'bone', bodyColor: 0xa8aa88, accent: 0x88aa55, hue: [0.28, 0.05], sat: [0.22, 0.08], lit: [0.52, 0.08] },
+        // ── Level 1-5 roster (bespoke) ────────────────────────────────────
+        // Rattling Ribcage: a headless barrel of ribs on two long legs, a candle
+        // burning where the heart was and its jaw hung from a rib on a string.
+        lv_rattlingribcage: { variant: 'lv_rattlingribcage', scale: 2.0, texturePool: 'bone', bodyColor: 0xd8ceb0, accent: 0xffb040, hue: [0.12, 0.04], sat: [0.20, 0.08], lit: [0.70, 0.08] },
+        // Chattering Skull (Ghost keys): a floating skull in a jester's cap,
+        // jaw on a hinge, a ghostly spine trailing under it.
+        lv_chatteringskull: { variant: 'lv_chatteringskull', scale: 1.8, texturePool: 'bone', bodyColor: 0xeee4c8, accent: 0x88ffcc, hue: [0.12, 0.03], sat: [0.18, 0.06], lit: [0.82, 0.06] }
     };
+    const V = (x, y, z) => new THREE.Vector3(x, y, z);
 
     class BoneBattler3D extends Base {
         constructor(scale, offsetY, battler, weaponType, creatureType) {
@@ -151,6 +160,8 @@
                 case 'bon_rottingskeleton':  this._buildBonRottingSkeleton(); break;
                 case 'bon_cinderthrall':     this._buildBonCinderThrall(); break;
                 case 'bon_sunkenpallbearer': this._buildBonSunkenPallbearer(); break;
+                case 'lv_rattlingribcage':   this._buildRattlingRibcage(); break;
+                case 'lv_chatteringskull':   this._buildChatteringSkull(); break;
                 default:                     this._buildAncientSkeleton(); break;
             }
             this.model = this.bodyGroup;
@@ -170,6 +181,7 @@
             for (let i = 0; i < 3; i++) { const crack = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.18, 0.02), this._mat(0x4a4030, 1, 0.7)); crack.position.set((this.idRand() - 0.5) * 0.3, 0.05, 0.24); crack.rotation.z = this.idRand() * 1.5; this.head.add(crack); }
             // Falling dust.
             this.dust = new THREE.Group();
+            this.dust.userData.float = true;   // falling dust by design
             for (let i = 0; i < 8; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.02, 5, 5), this._mat(p.accent, 0.6, 0.9)); d.position.set((this.idRand() - 0.5) * 0.6, 0.4 + this.idRand() * 1.2, (this.idRand() - 0.5) * 0.4); d._t = this.idRand(); this.dust.add(d); }
             this.bodyGroup.add(this.dust);
             this._cascadeRules[0].hide.push(this.dust);
@@ -250,16 +262,18 @@
         _buildBonRestlessRevenant() {
             const p = this.profile;
             this._skeletonBase({ eyeGlow: p.accent });
-            // Rusted manacles on the wrists trailing a dangling chain.
+            // Rusted manacles on the wrists trailing a dangling chain (links
+            // interlocked and hung off the wrist bone).
             const iron = this._mat(0x554a44, 1, 0.75);
             this.chains = new THREE.Group();
             for (const side of [-1, 1]) {
-                const cuff = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.02, 6, 12), iron); cuff.position.set(side * 0.28, 0.65, 0.02); cuff.rotation.x = Math.PI / 2; this.chains.add(cuff);
-                for (let i = 0; i < 4; i++) { const link = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.012, 5, 10), iron); link.position.set(side * 0.28 + (this.idRand() - 0.5) * 0.04, 0.58 - i * 0.11, 0.04); link.rotation.x = (i % 2) * Math.PI / 2; this.chains.add(link); }
+                const cuff = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.018, 6, 12), iron); cuff.position.set(side * 0.28, 0.65, 0.02); cuff.rotation.x = Math.PI / 2; this.chains.add(cuff);
+                for (let i = 0; i < 4; i++) { const link = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.012, 5, 10), iron); link.position.set(side * 0.28 + (this.idRand() - 0.5) * 0.02, 0.6 - i * 0.06, 0.02); link.rotation.x = (i % 2) * Math.PI / 2; this.chains.add(link); }
             }
             this.bodyGroup.add(this.chains);
             // Grave-cold vapour clinging to the ribcage.
             this.frost = new THREE.Group();
+            this.frost.userData.float = true;   // drifting vapour by design
             for (let i = 0; i < 6; i++) { const wisp = new THREE.Mesh(new THREE.SphereGeometry(0.05 + this.idRand() * 0.03, 6, 6), this._mat(0xbfe0ec, 0.35, 0.9, 0x335566)); wisp.position.set((this.idRand() - 0.5) * 0.5, 0.7 + this.idRand() * 0.6, 0.05 + this.idRand() * 0.12); wisp._t = this.idRand(); this.frost.add(wisp); }
             this.bodyGroup.add(this.frost);
             this._cascadeRules[0].hide.push(this.chains, this.frost);
@@ -306,6 +320,7 @@
             const shroud = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.32, 0.7, 8, 1, true), wrap); shroud.position.y = 0.0; this.torso.add(shroud);
             // Smouldering ember motes drifting up from the body.
             this.embers = new THREE.Group();
+            this.embers.userData.float = true;   // rising embers by design
             for (let i = 0; i < 10; i++) { const em = new THREE.Mesh(new THREE.SphereGeometry(0.02 + this.idRand() * 0.015, 5, 5), this._mat(p.accent, 0.9, 0.4, 0xff8833)); em.position.set((this.idRand() - 0.5) * 0.55, 0.4 + this.idRand() * 1.2, (this.idRand() - 0.5) * 0.35); em._t = this.idRand(); this.embers.add(em); }
             this.bodyGroup.add(this.embers);
             // Charred jagged club.
@@ -324,11 +339,127 @@
             this.bodyGroup.add(this.weeds);
             // Dripping water droplets.
             this.drips = new THREE.Group();
+            this.drips.userData.float = true;   // falling drips by design
             for (let i = 0; i < 6; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.02, 5, 5), this._mat(0x557766, 0.6, 0.2, 0x113322)); d.position.set((this.idRand() - 0.5) * 0.5, 0.4 + this.idRand() * 1.1, 0.1 + this.idRand() * 0.12); d._t = this.idRand(); this.drips.add(d); }
             this.bodyGroup.add(this.drips);
             // Waterlogged plank carried as a bludgeon.
             this.weapon = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.7, 0.05), this._mat(0x3a4838, 1, 0.9)); this.weapon.position.set(0.32, 1.15, 0.1); this.bodyGroup.add(this.weapon);
             this._cascadeRules[0].hide.push(this.weeds, this.drips, this.weapon);
+        }
+
+        // ── Rattling Ribcage: a ribcage walking about looking for its skull ─
+        // TORSO is the barrel of ribs on its spine and pelvis; HEAD is the
+        // empty stack of neck bones on top (there is no skull); JAWS is the
+        // jawbone it keeps hung off a rib; a candle burns inside the ribs.
+        _buildRattlingRibcage() {
+            const p = this.profile;
+            const bone = this._skinMat(p.bodyColor, 0.6);
+            this._boneMat = bone;
+            this.torso = new THREE.Group(); this.torso.position.set(0, 1.05, 0); this.bodyGroup.add(this.torso);
+            const pelvis = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.16, 0.22), bone); pelvis.position.y = -0.3; this.torso.add(pelvis);
+            this.addStrut(this.torso, bone, V(0, -0.3, -0.12), V(0, 0.55, -0.16), 0.05, 0.045, 6);
+            for (let k = 0; k < 6; k++) { const v = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.04, 6), bone); v.position.set(0, -0.15 + k * 0.13, -0.135 - k * 0.004); this.torso.add(v); }
+            // Barrel ribs: full loops from the spine round to a sternum bar.
+            const sternum = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.5, 0.04), bone); sternum.position.set(0, 0.25, 0.22); sternum.rotation.x = -0.12; this.torso.add(sternum);
+            this._ribs = [];
+            for (let k = 0; k < 6; k++) {
+                const y = 0.02 + k * 0.09, w = 0.24 + Math.sin((k + 0.5) / 6 * Math.PI) * 0.08;
+                // A unit ring squashed into an oval hoop (scale: width, depth, bone thickness).
+                const rib = new THREE.Mesh(new THREE.TorusGeometry(1, 0.1, 4, 14), bone);
+                rib.rotation.x = Math.PI / 2; rib.position.set(0, y, 0.03); rib.scale.set(w, 0.19 + k * 0.006, 0.22);
+                this.torso.add(rib); this._ribs.push(rib);
+            }
+            // The candle stub where the heart was.
+            const shelf = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.03, 8), bone); shelf.position.set(0, 0.0, 0.0); this.torso.add(shelf);
+            const candle = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.045, 0.14, 6), this._mat(0xf0e8c8, 1, 0.7)); candle.position.set(0, 0.085, 0.0); this.torso.add(candle);
+            this._flame = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.09, 5), this._mat(p.accent, 0.95, 0.3, 0xff8a20)); this._flame.position.set(0, 0.2, 0.0); this.torso.add(this._flame);
+            // HEAD: just the neck vertebrae, ending in nothing.
+            this.head = new THREE.Group(); this.head.position.set(0, 1.6, -0.16); this.bodyGroup.add(this.head);
+            for (let k = 0; k < 3; k++) { const v = new THREE.Mesh(new THREE.CylinderGeometry(0.05 - k * 0.006, 0.055 - k * 0.006, 0.05, 6), bone); v.position.y = k * 0.06; this.head.add(v); const spur = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.06, 3), bone); spur.position.set(0, k * 0.06, -0.06); spur.rotation.x = -1.8; this.head.add(spur); }
+            this.addStrut(this.head, bone, V(0, -0.05, 0), V(0, 0.13, 0), 0.025, 0.02, 4);
+            // JAWS: the jaw hung on a string from the lowest left rib.
+            this.jaw = new THREE.Group(); this.jaw.position.set(-0.25, 1.08, 0.05); this.bodyGroup.add(this.jaw);
+            this.addStrut(this.jaw, this._mat(0x6a5a40, 1, 0.9), V(0, 0, 0), V(0, -0.22, 0), 0.006, 0.006, 3);
+            const jawBone = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.02, 4, 8, Math.PI), bone); jawBone.rotation.x = Math.PI / 2; jawBone.rotation.z = Math.PI; jawBone.position.set(0, -0.24, 0.0); this.jaw.add(jawBone);
+            for (let k = 0; k < 4; k++) { const a = Math.PI * (0.2 + k * 0.2); const t = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.03, 0.02), bone); t.position.set(Math.cos(a) * 0.08, -0.22, Math.sin(a) * 0.08 - 0.0); this.jaw.add(t); }
+            // Arms: two short bone arms off the top ribs; legs: long, with feet.
+            this.leftArm = this._boneLimb(-0.3, 1.45, bone); this.rightArm = this._boneLimb(0.3, 1.45, bone);
+            this.leftArm.scale.setScalar(0.8); this.rightArm.scale.setScalar(0.8);
+            this.leftArm.rotation.z = -0.15; this.rightArm.rotation.z = 0.15;
+            this.leftLeg = this._boneLimb(-0.13, 0.78, bone); this.rightLeg = this._boneLimb(0.13, 0.78, bone);
+            for (const leg of [this.leftLeg, this.rightLeg]) { const foot = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.05, 0.2), bone); foot.position.set(0, -0.73, 0.06); leg.add(foot); }
+            const m = {}, set = (ks, me) => ks.forEach(k => m[k] = me);
+            set(['HEAD', 'SKULL', 'BRAIN', 'NECK'], this.head);
+            set(['TORSO', 'BODY', 'CORE', 'RIBCAGE', 'HEART', 'PELVIS'], this.torso);
+            set(['JAWS', 'MOUTH', 'TEETH'], this.jaw);
+            set(['LEFT_ARM', 'LEFT_UPPER_ARM', 'LEFT_HAND'], this.leftArm); set(['RIGHT_ARM', 'RIGHT_UPPER_ARM', 'RIGHT_HAND'], this.rightArm);
+            set(['LEFT_LEG', 'LEFT_THIGH', 'LEFT_FOOT'], this.leftLeg); set(['RIGHT_LEG', 'RIGHT_THIGH', 'RIGHT_FOOT'], this.rightLeg);
+            this._partMeshMap = m;
+            this._cascadeRules = [
+                { gone: ['TORSO', 'BODY', 'CORE', 'RIBCAGE'], hide: [this.torso, this.head, this.jaw, this.leftArm, this.rightArm, this.leftLeg, this.rightLeg] },
+                { gone: ['HEAD', 'SKULL', 'BRAIN'], hide: [this.head] },
+                { gone: ['JAWS'], hide: [this.jaw] },
+                { gone: ['LEFT_ARM', 'LEFT_UPPER_ARM'], hide: [this.leftArm] },
+                { gone: ['RIGHT_ARM', 'RIGHT_UPPER_ARM'], hide: [this.rightArm] },
+                { gone: ['LEFT_LEG', 'LEFT_THIGH'], hide: [this.leftLeg] },
+                { gone: ['RIGHT_LEG', 'RIGHT_THIGH'], hide: [this.rightLeg] },
+            ];
+        }
+
+        // ── Chattering Skull (Ghost keys): a joker of a floating skull ──────
+        // FACE is the cranium with its jester's cap, MAW the hinged jaw (it
+        // pivots at the back of the skull, so it never leaves it), CORE the
+        // ghostly spine trailing below, LEFT_WISP / RIGHT_WISP the spirit
+        // flames curling off its temples.
+        _buildChatteringSkull() {
+            const p = this.profile;
+            const bone = this._skinMat(p.bodyColor, 0.5);
+            const dark = this._mat(0x0a0806, 1, 0.6);
+            const ghost = this._mat(p.accent, 0.45, 0.3, p.accent);
+            this.face = new THREE.Group(); this.face.position.set(0, 1.35, 0); this.bodyGroup.add(this.face);
+            const cranium = new THREE.Mesh(new THREE.SphereGeometry(0.3, 9, 7), bone); cranium.scale.set(1, 0.95, 1.08); this.face.add(cranium);
+            const cheek = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.14, 0.3), bone); cheek.position.set(0, -0.16, 0.08); this.face.add(cheek);
+            for (const s of [-1, 1]) {
+                const sock = new THREE.Mesh(new THREE.SphereGeometry(0.085, 7, 5), dark); sock.position.set(s * 0.11, -0.01, 0.25); sock.scale.z = 0.6; this.face.add(sock);
+                const glint = new THREE.Mesh(new THREE.SphereGeometry(0.022, 5, 4), this._mat(p.accent, 1, 0.2, p.accent)); glint.position.set(s * 0.11, -0.01, 0.29); this.face.add(glint);
+            }
+            const nose = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.08, 3), dark); nose.position.set(0, -0.11, 0.3); nose.rotation.x = Math.PI; this.face.add(nose);
+            for (let k = 0; k < 6; k++) { const t = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.045, 0.03), this._mat(0xf8f2e0, 1, 0.4)); t.position.set((k - 2.5) * 0.04, -0.24, 0.22); this.face.add(t); }
+            // The jester's cap: two floppy points with bells, a band round the brow.
+            const capRed = this._mat(0xb02030, 1, 0.8), capPurple = this._mat(0x5a2a8a, 1, 0.8);
+            const band = new THREE.Mesh(new THREE.TorusGeometry(0.29, 0.04, 4, 12), capPurple); band.rotation.x = Math.PI / 2 - 0.2; band.position.y = 0.12; this.face.add(band);
+            this._bells = [];
+            for (const s of [-1, 1]) {
+                const c = new THREE.CatmullRomCurve3([V(s * 0.08, 0.2, 0), V(s * 0.22, 0.42, -0.02), V(s * 0.38, 0.4, 0.0), V(s * 0.44, 0.24, 0.04)]);
+                this.face.add(new THREE.Mesh(new THREE.TubeGeometry(c, 8, 0.07, 5, false), s < 0 ? capRed : capPurple));
+                const bell = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 4), this._mat(0xe8c040, 1, 0.3, 0x3a2a00)); bell.position.set(s * 0.44, 0.19, 0.04); this.face.add(bell); this._bells.push(bell);
+            }
+            // MAW: the lower jaw hinged at the back of the skull.
+            this.maw = new THREE.Group(); this.maw.position.set(0, -0.2, -0.08); this.face.add(this.maw);
+            const jaw = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.04, 4, 9, Math.PI), bone); jaw.rotation.set(Math.PI / 2, 0, 0); jaw.position.set(0, -0.05, 0.12); jaw.scale.set(1, 1.2, 1); this.maw.add(jaw);
+            this.addStrut(this.maw, bone, V(-0.15, 0.02, -0.02), V(-0.17, -0.05, 0.12), 0.035, 0.035, 4);
+            this.addStrut(this.maw, bone, V(0.15, 0.02, -0.02), V(0.17, -0.05, 0.12), 0.035, 0.035, 4);
+            for (let k = 0; k < 6; k++) { const a = Math.PI * (0.15 + k * 0.14); const t = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.04, 0.03), this._mat(0xf8f2e0, 1, 0.4)); t.position.set(-Math.cos(a) * 0.17, -0.01, 0.12 + Math.sin(a) * 0.2); this.maw.add(t); }
+            // CORE: a ghostly spine trailing off beneath it.
+            this.core = new THREE.Group(); this.core.position.set(0, 1.08, -0.06); this.bodyGroup.add(this.core);
+            this._spine = [];
+            for (let k = 0; k < 5; k++) { const v = new THREE.Mesh(new THREE.SphereGeometry(0.075 - k * 0.011, 6, 4), ghost); v.position.set(0, -k * 0.09, -k * 0.03); v.scale.y = 0.7; this.core.add(v); v._k = k; this._spine.push(v); }
+            this.addStrut(this.core, ghost, V(0, 0.15, 0.02), V(0, 0, 0), 0.05, 0.05, 5);
+            // LEFT_WISP / RIGHT_WISP: spirit flames off the temples.
+            const wisp = (side) => {
+                const g = new THREE.Group(); g.position.set(side * 0.27, 1.38, -0.04); this.bodyGroup.add(g);
+                for (let k = 0; k < 3; k++) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.06 - k * 0.012, 0.2, 5), ghost); f.position.set(side * (0.06 + k * 0.08), 0.06 + k * 0.05, -k * 0.03); f.rotation.z = -side * (0.9 + k * 0.2); g.add(f); }
+                g._side = side; return g;
+            };
+            this.leftWisp = wisp(-1); this.rightWisp = wisp(1);
+            this._partMeshMap = { FACE: this.face, HEAD: this.face, SKULL: this.face, MAW: this.maw, JAWS: this.maw, MOUTH: this.maw, CORE: this.core, BODY: this.core, LEFT_WISP: this.leftWisp, RIGHT_WISP: this.rightWisp };
+            this._cascadeRules = [
+                { gone: ['CORE', 'BODY'], hide: [this.core, this.face, this.leftWisp, this.rightWisp] },
+                { gone: ['FACE', 'HEAD', 'SKULL'], hide: [this.face, this.leftWisp, this.rightWisp] },
+                { gone: ['MAW', 'JAWS'], hide: [this.maw] },
+                { gone: ['LEFT_WISP'], hide: [this.leftWisp] },
+                { gone: ['RIGHT_WISP'], hide: [this.rightWisp] },
+            ];
         }
 
         animatePose(deltaTime) {
@@ -387,6 +518,28 @@
                     if (this.weapon) this.weapon.rotation.x = fast ? Math.sin(t * 10) * 0.5 : 0.08;
                     break;
                 }
+                case 'lv_rattlingribcage': {
+                    // A stiff-legged walk that rattles the ribs; the jaw swings on its string.
+                    const step = Math.sin(t * (fast ? 7 : 2.4)) * (fast ? 0.35 : 0.18);
+                    if (this.leftLeg) this.leftLeg.rotation.x = step;
+                    if (this.rightLeg) this.rightLeg.rotation.x = -step;
+                    if (this.leftArm) this.leftArm.rotation.x = -step * 0.6 + (fast ? -0.6 : 0);
+                    if (this.rightArm) this.rightArm.rotation.x = step * 0.6 + (fast ? -0.6 : 0);
+                    if (this._ribs) this._ribs.forEach((r, i) => { r.rotation.z = Math.sin(t * 22 + i) * (fast ? 0.05 : 0.02); });
+                    if (this.jaw) { this.jaw.rotation.x = Math.sin(t * 2.1) * 0.25; this.jaw.rotation.z = Math.sin(t * 1.7) * 0.15; }
+                    if (this._flame) this._flame.scale.y = 0.8 + Math.abs(Math.sin(t * 9)) * 0.4;
+                    break;
+                }
+                case 'lv_chatteringskull': {
+                    // Floats and chatters: the jaw clacks on its hinge, bells jingle.
+                    this.model.position.y = this._baseY + Math.sin(t * 1.6) * 0.06 * this.scale;
+                    if (this.maw) this.maw.rotation.x = Math.abs(Math.sin(t * (fast ? 16 : 7))) * (fast ? 0.45 : 0.22);
+                    if (this.face) this.face.rotation.z = Math.sin(t * 1.3) * 0.12;
+                    if (this._bells) this._bells.forEach((b, i) => { b.position.y = 0.19 + Math.sin(t * 9 + i * 2) * 0.012; });
+                    if (this._spine) this._spine.forEach(v => { v.position.x = Math.sin(t * 2.4 - v._k * 0.8) * 0.02 * v._k; });
+                    [this.leftWisp, this.rightWisp].forEach(w => { if (w) w.rotation.z = w._side * Math.sin(t * 3.3) * 0.15; });
+                    break;
+                }
                 case 'bon_sunkenpallbearer': {
                     if (this.weeds) this.weeds.rotation.z = Math.sin(t * 1.2) * 0.04; // waterweed drift
                     if (this.drips) this.drips.children.forEach(d => { d.position.y -= 0.014; if (d.position.y < 0.3) d.position.y = 1.4; });
@@ -424,6 +577,8 @@
     reg('bon_rottingskeleton',  { aliases: ['bon_rottingskeleton'],  scale: S.bon_rottingskeleton.scale,  weapon: 0, create: make });
     reg('bon_cinderthrall',     { aliases: ['bon_cinderthrall'],     scale: S.bon_cinderthrall.scale,     weapon: 0, create: make });
     reg('bon_sunkenpallbearer', { aliases: ['bon_sunkenpallbearer'], scale: S.bon_sunkenpallbearer.scale, weapon: 0, create: make });
+    reg('lv_rattlingribcage',   { aliases: ['lv_rattlingribcage'],   scale: S.lv_rattlingribcage.scale,   weapon: 0, create: make });
+    reg('lv_chatteringskull',   { aliases: ['lv_chatteringskull'],   scale: S.lv_chatteringskull.scale,   weapon: 0, create: make });
 
     const NAMED = {
         ancientskeleton: ["Ancient Skeleton"],
@@ -435,7 +590,9 @@
         bon_gildedlichling:   ["Gilded Lichling"],
         bon_rottingskeleton:  ["Rotting Skeleton"],
         bon_cinderthrall:     ["Cinder-Wrapped Thrall"],
-        bon_sunkenpallbearer: ["Sunken Pallbearer"]
+        bon_sunkenpallbearer: ["Sunken Pallbearer"],
+        lv_rattlingribcage:   ["Rattling Ribcage"],
+        lv_chatteringskull:   ["Chattering Skull"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

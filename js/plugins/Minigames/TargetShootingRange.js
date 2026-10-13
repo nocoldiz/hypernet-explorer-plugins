@@ -392,7 +392,7 @@
 
             // Distance boards down the left-hand side.
             for (const d of [10, 25, 45, 65]) {
-                const sign = this._makeSign(d + 'M');
+                const sign = this._makeSign(T('TargetRange.metres', { n: d }));
                 this._track(this._box(0.12, 1.4, 0.12, post, -13.4, 0.7, -d));
                 const board = new THREE.Mesh(this._geo(new THREE.PlaneGeometry(1.5, 0.75)), sign);
                 board.position.set(-13.4, 1.65, -d);
@@ -1070,13 +1070,13 @@
             if (!three3DReady()) {
                 this.createHud();
                 this._state = ST.ABORT;
-                this._status = 'THREE.JS IS NOT LOADED - THE RANGE IS CLOSED';
+                this._status = T('TargetRange.noThree');
                 return;
             }
             if (rangedWeapons().length === 0 || !weaponsReady()) {
                 this.createHud();
                 this._state = ST.ABORT;
-                this._status = 'NOTHING ON THE RACK THAT SHOOTS';
+                this._status = T('TargetRange.nothingOnRack');
                 return;
             }
             this._world = new RangeWorld3D(Graphics.width, Graphics.height);
@@ -1086,7 +1086,7 @@
             this._bindMouse();
             this._startAmbience();
             RangeWeapon.begin();
-            this.showBanner('RANGE HOT', '#fff2c6', 1.4);
+            this.showBanner(T('TargetRange.rangeHot'), '#fff2c6', 1.4);
             if (window.MinigameFun) window.MinigameFun.played('Target Shooting');
         }
 
@@ -1282,7 +1282,7 @@
         finish() {
             this._state = ST.RESULT;
             this._won = this._score >= PAR_SCORE;
-            this.showBanner('RANGE COLD', this._won ? '#93d86e' : '#e6c273', 2.0);
+            this.showBanner(T('TargetRange.rangeCold'), this._won ? '#93d86e' : '#e6c273', 2.0);
             se(this._won ? 'Applause1' : 'Buzzer1', 100, 70);
             // No party and no variables on the title screen's free-play run.
             if (RESULT_VAR > 0 && typeof $gameVariables !== 'undefined' && $gameVariables) {
@@ -1341,7 +1341,7 @@
 
         _updateReady(dt) {
             this._timer -= dt;
-            this._status = 'STAND BY - ' + Math.max(1, Math.ceil(this._timer));
+            this._status = T('TargetRange.standByCount', { n: Math.max(1, Math.ceil(this._timer)) });
             if (this._timer <= 0) {
                 this._state = ST.RUN;
                 this._timer = ROUND_SECONDS;
@@ -1526,9 +1526,9 @@
 
         _drawScoreline(bmp, H, D, w, h) {
             H.decoPanel(bmp, 3, 3, 100, 34, { hairline: false, step: 1 });
-            this._hudText(bmp, 'SHOOTING RANGE', 6, 2, 94, 'left', D.gold, 8);
+            this._hudText(bmp, T('TargetRange.title'), 6, 2, 94, 'left', D.gold, 8);
             const secs = Math.max(0, Math.ceil(this._timer));
-            this._hudText(bmp, this._state === ST.READY ? 'STAND BY' : (secs + 'S'),
+            this._hudText(bmp, this._state === ST.READY ? T('TargetRange.standBy') : T('TargetRange.seconds', { n: secs }),
                 6, 11, 94, 'left', secs <= 10 && this._state === ST.RUN ? D.red : D.dim, 8);
             this._hudText(bmp, String(this._score), 6, 21, 94, 'right', D.goldHi, 16);
 
@@ -1560,13 +1560,13 @@
             this._hudText(bmp, weapon.name, px + 4, py + 2, pw - 8, 'left', D.ink, 8);
             const mag = RangeWeapon.magazine();
             let right;
-            if (RangeWeapon.isReloading()) right = 'RELOADING';
+            if (RangeWeapon.isReloading()) right = T('TargetRange.reloading');
             else if (mag > 0) right = RangeWeapon.ammo() + '/' + mag;
-            else right = 'NOCKED';
+            else right = T('TargetRange.nocked');
             this._hudText(bmp, right, px + 4, py + 13, pw - 8, 'right',
                 RangeWeapon.isReloading() ? D.red : D.gold, 8);
-            const kind = weapon.wtypeId === WTYPE_GUN ? 'GUN'
-                : (weapon.wtypeId === WTYPE_BOW ? 'BOW' : 'THROWN');
+            const kind = weapon.wtypeId === WTYPE_GUN ? T('TargetRange.kindGun')
+                : (weapon.wtypeId === WTYPE_BOW ? T('TargetRange.kindBow') : T('TargetRange.kindThrown'));
             this._hudText(bmp, kind, px + 4, py + 13, pw - 8, 'left', D.faint, 8);
         }
 
@@ -1593,7 +1593,7 @@
 
             H.decoPanel(bmp, px, py, pw, ph, {
                 step: 1, hairline: false,
-                title: 'RACK', titleRight: (idx + 1) + '/' + list.length,
+                title: T('TargetRange.rack'), titleRight: (idx + 1) + '/' + list.length,
                 dom: this._hudDom
             });
 
@@ -1631,15 +1631,14 @@
             const cw = 196, ch = 88;
             const cx = Math.round((w - cw) / 2), cy = Math.round((h - ch) / 2);
             H.decoPanel(bmp, cx, cy, cw, ch, { step: 3 });
-            this._hudText(bmp, this._won ? 'QUALIFIED' : 'NOT QUALIFIED', cx, cy + 7, cw, 'center',
+            this._hudText(bmp, this._won ? T('TargetRange.qualified') : T('TargetRange.notQualified'), cx, cy + 7, cw, 'center',
                 this._won ? '#93d86e' : '#d9533d', 16);
             H.decoRule(bmp, cx + 10, cy + 30, cw - 20, D.goldLo);
             const acc = this._shots > 0 ? Math.round(this._hits * 100 / this._shots) : 0;
-            this._hudText(bmp, 'SCORE ' + this._score + '   PAR ' + PAR_SCORE, cx, cy + 34, cw, 'center', D.ink, 8);
-            this._hudText(bmp, 'HITS ' + this._hits + '/' + this._shots + '   ACCURACY ' + acc + '%',
+            this._hudText(bmp, T('TargetRange.scorePar', { score: this._score, par: PAR_SCORE }), cx, cy + 34, cw, 'center', D.ink, 8);
+            this._hudText(bmp, T('TargetRange.hitsAccuracy', { hits: this._hits, shots: this._shots, acc: acc }),
                 cx, cy + 46, cw, 'center', D.dim, 8);
-            this._hudText(bmp, 'BEST RUN ' + this._bestStreak, cx, cy + 58, cw, 'center', D.dim, 8);
-            this._hudText(bmp, 'PRESS OK', cx, cy + 72, cw, 'center', D.gold, 8);
+            this._hudText(bmp, T('TargetRange.bestRun', { n: this._bestStreak }), cx, cy + 58, cw, 'center', D.dim, 8);
         }
 
         //--- teardown ---------------------------------------------------------
@@ -1656,7 +1655,7 @@
             }
             if (this._worldSprite) {
                 if (this._worldSprite.parent) this._worldSprite.parent.removeChild(this._worldSprite);
-                this._worldSprite.destroy();
+                this._worldSprite.destroy({ texture: true, baseTexture: true });
                 this._worldSprite = null;
             }
             if (this._world) {

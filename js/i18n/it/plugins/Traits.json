@@ -6,31 +6,31 @@
   "confirmTraits": "Confermi questi tratti?",
   "confirmSplice": "Confermi queste modifiche genetiche?",
   "spliceCost": "Totale: {cost} €",
-  "spliceTooExpensive": "Non abbastanza denaro per la modifica genetica.",
+  "spliceTooExpensive": "Non hai abbastanza soldi per la modifica genetica.",
   "yes": "Sì",
   "no": "No",
   "headerText": "Spendi i tuoi {budget} punti tratto. Gli svantaggi restituiscono punti.",
   "pointsLabel": "Punti spesi",
-  "refundLabel": "Restituiti dagli svantaggi",
+  "refundLabel": "Rimborso svantaggi",
   "picksLabel": "Tratti presi",
   "costLabel": "Costo:",
   "selectedTraitsLabel": "TRATTI SELEZIONATI",
   "emptySlot": "[Nessun tratto scelto]",
-  "totalBonuses": "Bonus Totali:",
+  "totalBonuses": "Bonus totali:",
   "benefits": "Vantaggi:",
   "drawbacks": "Svantaggi:",
   "startingItems": "Inizia con:",
   "grantsSkills": "Conferisce abilità:",
-  "finalSkills": "Abilità Conferite",
+  "finalSkills": "Abilità conferite",
   "noSkills": "Nessuna abilità conferita",
   "tabGenetic": "Genetico",
   "tabPhysical": "Fisico",
   "tabMental": "Mentale",
   "tabMagical": "Magico",
   "tabDiseases": "Malattie",
-  "selectedDiseasesLabel": "Malattie portate",
+  "selectedDiseasesLabel": "Malattie",
   "incompatibleNote": "In conflitto con un tratto già scelto.",
-  "unaffordableNote": "Non hai abbastanza punti tratto per questo.",
+  "unaffordableNote": "Punti tratto insufficienti.",
   "noneInCategory": "Niente qui",
   "purseSpent": "Spesi",
   "purseRefunds": "Rimborsi",
@@ -40,7 +40,7 @@
   "searchPlaceholder": "Cerca tratti…",
   "packs": {
     "soldier": {
-      "name": "Vecchio Soldato",
+      "name": "Vecchio soldato",
       "description": "Anni sotto le armi, una voce piatta e un vizio tornato a casa con loro."
     },
     "scholar": {
@@ -60,11 +60,11 @@
       "description": "Nato per l'arte, esperto di alambicchi e attento ai presagi."
     },
     "brawler": {
-      "name": "Rissoso",
+      "name": "Attaccabrighe",
       "description": "Fatto per questo, allenato per questo e svelto a trovarne il motivo."
     },
     "noble": {
-      "name": "Di Nobili Natali",
+      "name": "Di nobili natali",
       "description": "Una casata, un'eredità e modi che aprono le porte."
     },
     "wanderer": {
@@ -96,7 +96,7 @@
       "description": "Forgia, banco da lavoro e una giornata che nessun altro reggerebbe."
     },
     "beastkin": {
-      "name": "Figlio delle Bestie",
+      "name": "Figlio delle bestie",
       "description": "Cresciuto da qualcosa a quattro zampe, e si vede ancora nel passo."
     },
     "hermit": {
@@ -104,12 +104,12 @@
       "description": "Possiede tre cose, non parla con nessuno, e vuole che resti così."
     },
     "nightborn": {
-      "name": "Nato di Notte",
+      "name": "Nato di notte",
       "description": "Qualcosa di antico nel sangue, il gusto del dolore, e le cicatrici di entrambi."
     },
     "oracle": {
       "name": "Oracolo",
-      "description": "Vede ciò che non è accaduto, ascolta i colori, e gli si crede troppo tardi."
+      "description": "Vede ciò che non è accaduto, sente i colori, e gli si crede troppo tardi."
     },
     "firebug": {
       "name": "Piromane",
@@ -124,7 +124,7 @@
       "description": "Troppo grande per la porta, abbastanza forte da non curarsene, si sente dalla via accanto."
     },
     "smallfolk": {
-      "name": "Piccola Gente",
+      "name": "Piccola gente",
       "description": "Minuto, si piega come un corpo non dovrebbe, e abile con entrambe le mani."
     },
     "shadow": {
@@ -133,23 +133,23 @@
     },
     "monk": {
       "name": "Monaco",
-      "description": "Anni in un chiostro freddo, una sola ciotola, e nessun rancore che valga."
+      "description": "Anni in un chiostro freddo, una sola ciotola, e nessun rancore che valga la pena serbare."
     },
     "silent": {
       "name": "Il Silenzioso",
-      "description": "Non parla da anni, vede i volti sbagliati, e ne porta il motivo addosso."
+      "description": "Non parla da anni, non riconosce i volti, e ne porta il motivo addosso."
     },
     "doomsayer": {
-      "name": "Profeta di Sventura",
+      "name": "Profeta di sventura",
       "description": "Non crede in niente, si aspetta il peggio, e teme comunque la fine."
     },
     "caveborn": {
-      "name": "Nato in Grotta",
+      "name": "Nato in grotta",
       "description": "Nato sotto la roccia, bianco come la pietra, e comunque spaventato dal buio."
     },
     "gambler": {
       "name": "Giocatore",
-      "description": "Non passa accanto a un tavolo, vince più del dovuto, e mente su entrambe le cose."
+      "description": "Non resiste a un tavolo da gioco, vince più del dovuto, e mente su entrambe le cose."
     },
     "predator": {
       "name": "Predatore solitario",

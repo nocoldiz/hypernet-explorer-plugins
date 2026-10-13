@@ -52,6 +52,7 @@
       "Nexus",
       "Wilds"
     ],
+    "format": "{adj} {noun}",
     "fallback": "New World {n}"
   },
   "ui": {

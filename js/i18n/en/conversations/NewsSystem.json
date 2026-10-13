@@ -48,6 +48,7 @@
     "December"
   ],
   "ui": {
+    "appName": "News",
     "noChroniclesRegisteredIn": "No chronicles registered in this cycle.",
     "global": "GLOBAL",
     "bullish": "BULLISH",

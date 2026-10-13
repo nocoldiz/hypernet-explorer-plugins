@@ -973,6 +973,47 @@
         ctx.fillRect(Math.round(x - half), Math.round(y - half), Math.round(size), Math.round(size));
     }
     
+    // A catalogued place is drawn the way the fast travel map draws a hub
+    // (FastTravelSystem.js, .travel-marker.is-hub): a gold pin with a dark rim
+    // whose SHAPE says what kind of place it is, from Destinations.json "type".
+    // A village is a disc, a city a rounded square, a delve a diamond, a
+    // roadside stop an upright pill.
+    const TRAVEL_PIN_FILL = '#FFD700';
+    const TRAVEL_PIN_RIM = '#000000';
+
+    function drawTravelPin(ctx, x, y, type, size) {
+        const kind = String(type || 'village').toLowerCase();
+        let w = size, h = size;
+        if (kind === 'city' || kind === 'dungeon') { w = h = size * 1.2; }
+        else if (kind === 'gasstation') { w = size * 0.55; h = size * 0.9; }
+        const hw = w / 2, hh = h / 2;
+        ctx.save();
+        ctx.fillStyle = TRAVEL_PIN_FILL;
+        ctx.strokeStyle = TRAVEL_PIN_RIM;
+        ctx.lineWidth = Math.max(1, size / 7);
+        ctx.beginPath();
+        if (kind === 'dungeon') {
+            ctx.moveTo(x, y - hh);
+            ctx.lineTo(x + hw, y);
+            ctx.lineTo(x, y + hh);
+            ctx.lineTo(x - hw, y);
+            ctx.closePath();
+        } else if (kind === 'city' || kind === 'gasstation') {
+            const r = Math.min(hw, hh) * (kind === 'city' ? 0.25 : 0.5);
+            ctx.moveTo(x - hw + r, y - hh);
+            ctx.arcTo(x + hw, y - hh, x + hw, y + hh, r);
+            ctx.arcTo(x + hw, y + hh, x - hw, y + hh, r);
+            ctx.arcTo(x - hw, y + hh, x - hw, y - hh, r);
+            ctx.arcTo(x - hw, y - hh, x + hw, y - hh, r);
+            ctx.closePath();
+        } else {
+            ctx.arc(x, y, hw, 0, 2 * Math.PI);
+        }
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+    }
+
     function drawDot(ctx, x, y, color, radius) {
         ctx.save();
         ctx.fillStyle = color;
@@ -1468,7 +1509,7 @@
             if (!base || !Number.isFinite(base.x) || !Number.isFinite(base.y)) continue;
             // The key travels with the name: the readable label is what the
             // sheet writes, but the travel overlay books by the gazetteer key.
-            out.push({ x: base.x, y: base.y, key: key, name: destinationLabel(key, data) });
+            out.push({ x: base.x, y: base.y, key: key, name: destinationLabel(key, data), type: data.type });
         }
         destinationMarkersCache = out;
         return out;
@@ -1476,6 +1517,9 @@
 
     // Readable name of a place, from its Destinations.json key.
     function destinationLabel(key, data) {
+        if (window.WorkSystem && window.WorkSystem.destinationTravelName) {
+            return window.WorkSystem.destinationTravelName(key);
+        }
         if (window.WorkSystem && window.WorkSystem.destinationName) {
             return window.WorkSystem.destinationName(key);
         }
@@ -2922,6 +2966,27 @@
         if (isLiveSprite(worldMapSprite)) worldMapSprite.x = panX;
     }
 
+    // A drag or a held stick used to carry the sheet clean off the screen,
+    // leaving an empty frame and no picture to drag back. The middle of the
+    // screen is kept on the sheet instead: every square can still be brought
+    // to the centre, and none of the sheet can be lost past an edge. A
+    // wrapping sheet only needs it north to south.
+    function clampSheetPan() {
+        if (!zoomScale || !isLiveSprite(worldMapSprite)) return;
+        const dims = fullscreenMapDims();
+        if (!dims || !(dims.w > 0) || !(dims.h > 0)) return;
+        const cx = Graphics.width / 2, cy = Graphics.height / 2;
+        let x = panX, y = panY;
+        const wraps = !!(fsLayer && fsSheet.wrap);
+        if (!wraps) x = Math.min(cx, Math.max(cx - dims.w * zoomScale, x));
+        y = Math.min(cy, Math.max(cy - dims.h * zoomScale, y));
+        if (x === panX && y === panY) return;
+        panX = x;
+        panY = y;
+        worldMapSprite.x = panX;
+        worldMapSprite.y = panY;
+    }
+
     // What the overlay draws. Redrawing a 3072px canvas is not free, so it only
     // happens when one of these actually moved.
     function fullscreenOverlaySignature() {
@@ -3085,6 +3150,26 @@
         setWorldMapSpriteBitmap(fullscreenBitmap);
     }
 
+    // The Omega Tower on the world sheet: BiomeBackground's spear, the one
+    // painter of it in 2D, stood with its foot on the tower's own square and
+    // rising fourteen squares up the chart, half lit as a chart is.
+    function drawOmegaLandmark(ctx, targetW, targetH) {
+        const BB = window.BiomeBackground;
+        if (!BB || !BB.TOWER || typeof BB.drawOmegaSpear !== 'function' || isGlobeMapHere()) return;
+        const sq = targetW / WORLD_TILES;
+        const cx = (BB.TOWER.x + 0.5) * sq;
+        const foot = (BB.TOWER.y + 0.5) * (targetH / WORLD_TILES);
+        const hPx = sq * 14, wPx = Math.max(3, sq * 1.6);
+        ctx.save();
+        // Its shadow on the ground, so it reads as standing rather than lying.
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.beginPath();
+        ctx.ellipse(cx, foot, wPx * 0.9, wPx * 0.3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        BB.drawOmegaSpear(ctx, cx, foot, hPx, wPx, 0.5, 0.5);
+        ctx.restore();
+    }
+
     function drawEntitiesOnBitmap(bitmap, targetW, targetH, showLabels, scale = 1) {
         // This function draws global entities.
         // If we are in MiniMap mode on a non-315 map, this function is NOT called.
@@ -3115,6 +3200,11 @@
         // pile up on each other.
         const placeNames = [];
 
+        // 0. The Omega Tower itself, standing up off its square on the chart
+        // the way the intro movie draws it. Under every pin, so its own mark
+        // and name stay on top of it.
+        if (showLabels) drawOmegaLandmark(context, targetW, targetH);
+
         // 1. Every named thing the world knows about, from the one pin model
         // (see THE WORLD SHEET below). This used to be read off the teleport
         // EVENTS, which only exist on map 315: the chart opened from a cellar,
@@ -3141,6 +3231,8 @@
                 drawDiamond(context, px, py, color, showLabels ? markerPx : 8 * scale);
             } else if (pin.kind === 'vault') {
                 drawDot(context, px, py, color, showLabels ? markerPx * 0.6 : 4 * scale);
+            } else if (pin.kind === 'place') {
+                drawTravelPin(context, px, py, pin.type, showLabels ? markerPx : 6 * scale);
             } else {
                 drawSquare(context, px, py, color, showLabels ? markerPx : 6 * scale);
             }
@@ -3169,7 +3261,7 @@
                 const evKey = name.replace(/^teleport\s*/i, '').replace(/^-\s*/, '').trim().toLowerCase();
                 if (evKey && drawnKeys.has(evKey)) continue;
 
-                drawSquare(context, ex, ey, '#00FF00', showLabels ? markerPx : 6 * scale);
+                drawTravelPin(context, ex, ey, null, showLabels ? markerPx : 6 * scale);
 
                 if (showLabels) {
                     // The event carries the Destinations.json key; the sheet
@@ -3369,8 +3461,8 @@
             if (key) {
                 // The event carries the Destinations.json key; the label on the
                 // map is that entry's readable name.
-                const cityName = window.WorkSystem?.destinationName
-                    ? window.WorkSystem.destinationName(key) : key;
+                const cityName = window.WorkSystem?.destinationTravelName
+                    ? window.WorkSystem.destinationTravelName(key) : key;
                 if (cityName) specs.push([ev.x, ev.y, cityName]);
             }
         }
@@ -3640,7 +3732,7 @@
             const cell = squareScreenRect(entry.wx, entry.wy);
             if (!cell) { sprite.visible = false; continue; }
             // The marker is drawn in the middle of its square, so the name is
-            // hung off that same point: it sits directly above its green
+            // hung off that same point: it sits directly above its gold
             // square at any zoom instead of drifting half a square away.
             const marker = Math.max(6, Math.min(cell.w * 0.6, 14));
             const cx = cell.x + cell.w / 2;
@@ -3710,7 +3802,7 @@
     // another planet are other coordinate spaces and are left alone.
 
     const SHEET_KIND_COLOR = {
-        place:  '#00FF00',
+        place:  '#FFD700',
         town:   '#FFD27F',
         custom: '#8FD8FF',
         vault:  '#C792EA',
@@ -3827,7 +3919,7 @@
         // only exist on map 315, so a chart opened from a cellar used to be a
         // blank sheet with a dot on it.
         for (const place of getDestinationMarkers()) {
-            push({ x: place.x, y: place.y, kind: 'place', name: place.name, destName: place.key });
+            push({ x: place.x, y: place.y, kind: 'place', name: place.name, destName: place.key, type: place.type });
         }
         // Towns the party raised. Named over any catalogued place sharing the
         // square, because the party's own work is what they are looking for.
@@ -4063,8 +4155,14 @@
 
     // The zoom bar runs on a log scale: the chart spans 0.25x to 8x and a
     // linear bar spends nine tenths of its travel in the last doubling.
+    // A sheet small enough that it already fits at MAX_ZOOM leaves the bar no
+    // travel at all (minZoom() === MAX_ZOOM): the bar then sits at the top
+    // rather than dividing by zero into a NaN value.
     function zoomToSlider(z) {
-        const t = (Math.log(z) - Math.log(minZoom())) / (Math.log(MAX_ZOOM) - Math.log(minZoom()));
+        const span = Math.log(MAX_ZOOM) - Math.log(minZoom());
+        if (!(span > 1e-9)) return 1000;
+        const t = (Math.log(z) - Math.log(minZoom())) / span;
+        if (!Number.isFinite(t)) return 1000;
         return Math.round(Math.max(0, Math.min(1, t)) * 1000);
     }
 
@@ -4187,9 +4285,10 @@
             chromeCountryEl.value = String(highlightCountryId || 0);
         }
 
-        // Only the interactive panels claim the pointer: the readout is a label
-        // and must not swallow a click on the square it is describing.
-        for (const panel of el.querySelectorAll('.wm-zoom-box, .wm-country-box, .wm-view-box')) {
+        // Only the interactive panels claim the pointer. The readout is one of
+        // them: it stands beside the picked square, never on it, so it can take
+        // its own clicks without hiding the square it describes.
+        for (const panel of el.querySelectorAll('.wm-zoom-box, .wm-country-box, .wm-view-box, #wm-readout')) {
             panel.addEventListener('pointerenter', () => { chromePointerIn = true; });
             panel.addEventListener('pointerleave', () => { chromePointerIn = false; });
         }
@@ -4254,6 +4353,7 @@
         chromeZoomEl = chromeReadoutEl = chromeCountryEl = chromeCoordsEl = chromeMinimapBtnEl = null;
         chromePointerIn = false;
         readoutKey = null;
+        readoutAnchorKey = null;
         closeNoteModal();
         destroyPreview();
     }
@@ -4276,10 +4376,24 @@
         if (!chromeReadoutEl) { readoutKey = null; return; }
         const picked = !!(square && selectedSquare &&
             selectedSquare.x === square.x && selectedSquare.y === square.y);
+        // The readout answers a click (or the pad's cursor), not a hover: it
+        // opens beside the square that was picked and stays put there.
+        if (square && !picked && !padSquare) square = null;
         const key = square ? (square.x + ',' + square.y + (picked ? ':p' : '')) : '';
-        if (key === readoutKey) return;
-        readoutKey = key;
-        if (!square) { chromeReadoutEl.style.display = 'none'; return; }
+        if (key !== readoutKey) {
+            readoutKey = key;
+            readoutAnchorKey = null;
+            fillReadout(square, picked);
+        }
+        placeReadout(square);
+    }
+
+    function fillReadout(square, picked) {
+        if (!square) {
+            chromeReadoutEl.style.display = 'none';
+            chromePointerIn = false;
+            return;
+        }
         const rows = squareReadout(square.x, square.y).map(line =>
             `<div class="wm-read-row"><span class="wm-read-label">${escapeSheet(line.label)}</span>` +
             `<span class="wm-read-value">${escapeSheet(line.value)}</span></div>`).join('');
@@ -4311,6 +4425,41 @@
             `<div class="inspect-btn focusable wm-show-map" data-wm-show="${square.x},${square.y}">` +
             `${escapeSheet(T('WorldMap.preview.showMap'))}</div>` +
             '</div>';
+    }
+
+    // Hangs the readout off the right of its square, or off the left when the
+    // right would run off the screen, kept inside the window vertically. The
+    // square is mapped from game pixels to the page through the canvas's own
+    // rect, so the letterbox and the scale are whatever the canvas says.
+    let readoutAnchorKey = null;
+    const READOUT_GAP_PX = 14;
+
+    function placeReadout(square) {
+        if (!square || !chromeReadoutEl) return;
+        const cell = squareScreenRect(square.x, square.y);
+        const canvas = Graphics._canvas;
+        if (!cell || !canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        const sx = rect.width / Graphics.width;
+        const sy = rect.height / Graphics.height;
+        const left = rect.left + cell.x * sx;
+        const top = rect.top + cell.y * sy;
+        const right = left + cell.w * sx;
+        const bottom = top + cell.h * sy;
+        const key = [left, top, right, bottom, window.innerWidth, window.innerHeight]
+            .map(n => Math.round(n)).join(',');
+        if (key === readoutAnchorKey) return;
+        readoutAnchorKey = key;
+        const w = chromeReadoutEl.offsetWidth;
+        const h = chromeReadoutEl.offsetHeight;
+        const margin = 8;
+        let x = right + READOUT_GAP_PX;
+        if (x + w > window.innerWidth - margin) x = left - READOUT_GAP_PX - w;
+        x = Math.max(margin, Math.min(window.innerWidth - w - margin, x));
+        let y = (top + bottom) / 2 - h / 2;
+        y = Math.max(margin, Math.min(window.innerHeight - h - margin, y));
+        chromeReadoutEl.style.left = Math.round(x) + 'px';
+        chromeReadoutEl.style.top = Math.round(y) + 'px';
     }
 
     // A cab to the picked square, priced exactly as the Hail page prices it
@@ -5166,6 +5315,7 @@
         // The visible segments change with every pan and zoom step, and the
         // check is cheap, so it rides the same frame rather than a redraw.
         wrapFullscreenPan();
+        clampSheetPan();
         updateFullscreenStreaming();
         // Bologna: pick a tile on the sheet and teleport onto it.
         if (isBolognaView()) updateBolognaSheet();
@@ -5233,8 +5383,14 @@
             zoomChange -= (TouchInput.wheelY / 600);
         }
 
-        // Right analog stick Y zooms (the controller has no zoom button otherwise)
-        if (window.AnalogStickInput) {
+        // Right analog stick Y zooms (the controller has no zoom button otherwise),
+        // unless a menu over the map has a pane to read: the stick scrolls that
+        // (UIScroll in Core/MouseControls.js), and reading it here would claim it.
+        const A = window.AnalogStickInput;
+        const paneWantsStick = !!(A && !(A.rightStickIdle && A.rightStickIdle()) &&
+            window.UIScroll && typeof window.UIScroll.activePane === 'function' &&
+            (window.UIScroll.activePane(1) || window.UIScroll.activePane(-1)));
+        if (A && !paneWantsStick) {
             const ry = AnalogStickInput.rightY();
             if (ry !== 0) zoomChange -= ry * zoomSpeed; // push up = zoom in
         }

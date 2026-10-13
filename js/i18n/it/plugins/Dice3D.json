@@ -1,7 +1,7 @@
 {
   "check": {
-    "default": "Prova d'Azione",
-    "percentage": "Prova di Percentuale"
+    "default": "Prova d'azione",
+    "percentage": "Prova percentuale"
   },
   "outcome": {
     "success": "SUCCESSO",
@@ -22,12 +22,12 @@
   },
   "prompt": {
     "title": "Prova di {stat}",
-    "titleFlat": "Un Giro di Fortuna",
-    "who": "{name} si fa avanti",
+    "titleFlat": "Prova di fortuna",
+    "who": "{name} tira",
     "target": "{dc} o più",
     "formula": "d20 {mod} {stat}",
-    "formulaFlat": "d20, e nient'altro",
+    "formulaFlat": "solo d20",
     "try": "Tenta",
-    "cancel": "Lascia perdere"
+    "cancel": "Annulla"
   }
 }

@@ -259,7 +259,6 @@
                                                       : T.n("SkillsMenu.spec.range.tiles", range)
                     });
                 }
-
                 // Which of the ten magic systems it is worked through
                 // (gen_magic_system_tags.js's <MagicSystem:X>), read out in the
                 // current language.
@@ -272,8 +271,8 @@
                 if (!skill.damage || !(skill.damage.type > 0)) {
                     const dt = (skill.meta && skill.meta.DamageType) ||
                         (skill.note && (skill.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-                    if (dt) {
-                        specs.push({ label: T("SkillsMenu.spec.label.damageCategory") || "Damage Type", val: String(dt).trim() });
+                    if (dt && !isNoneClass(dt)) {
+                        specs.push({ label: T("SkillsMenu.spec.label.damageCategory") || "Damage Type", val: T.has("VectorGun.damageType." + String(dt).trim()) ? T("VectorGun.damageType." + String(dt).trim()) : String(dt).trim() });
                     }
                 }
 
@@ -290,27 +289,6 @@
                         specs.push({
                             label: T("SkillsMenu.spec.label.statReq"),
                             val: svc.label(skill)
-                        });
-                    }
-                    // The stat the caster actually holds is only worth a row of
-                    // its own when it falls short: "9 (met)" under "INT 8" says
-                    // nothing the row above has not already said.
-                    const stand = actor && svc.check(actor, skill);
-                    if (stand && !stand.met) {
-                        specs.push({
-                            label: T("SkillsMenu.spec.label.statHeld"),
-                            val: T("SkillsMenu.spec.statShort", {
-                                value: stand.have,
-                                points: stand.points,
-                                percent: Math.round(stand.failChance * 100)
-                            })
-                        });
-                        // Why the sheet and this row disagree, said once: the
-                        // total on the status screen counts gear and buffs, and
-                        // the floor counts neither.
-                        specs.push({
-                            label: T("SkillsMenu.spec.label.statCounts"),
-                            val: T("SkillsMenu.spec.statBaseNote")
                         });
                     }
                 }
@@ -373,13 +351,16 @@
                 return Math.round(median);
             };
 
+            // A <DamageType: None> tag names no class at all, so it prints nothing.
+            const isNoneClass = (v) => /^none$/i.test(String(v).trim());
+
             const damageSpecsOf = (skill, actor) => {
                 const specs = [];
                 if (!skill || !skill.damage || !(skill.damage.type > 0)) return specs;
                 const damageCategory = (skill.meta && skill.meta.DamageType) ||
                     (skill.note && (skill.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
-                if (damageCategory) {
-                    specs.push({ label: T("SkillsMenu.spec.label.damageCategory") || "Damage Type", val: String(damageCategory).trim() });
+                if (damageCategory && !isNoneClass(damageCategory)) {
+                    specs.push({ label: T("SkillsMenu.spec.label.damageCategory") || "Damage Type", val: T.has("VectorGun.damageType." + String(damageCategory).trim()) ? T("VectorGun.damageType." + String(damageCategory).trim()) : String(damageCategory).trim() });
                 }
                 specs.push({ label: T("Inventory.spec.label.damageType"), val: damageTypeName(skill.damage.type) });
                 if (skill.damage.elementId > 0) {
@@ -454,10 +435,134 @@
                 return list;
             };
 
+            // ── Special abilities ─────────────────────────────────────────────
+            // Everything a skill does that its effect list and its numbers do
+            // not show: note-tag mechanics (<SelfState:>, <DrainRate:>, ...),
+            // the payoffs written into its damage formula ("far more against an
+            // Unbalanced foe"), an HP price. Each is one tag in the Special
+            // section: a short name on the tag, the whole rule on hover. A
+            // provider is (skill) => [{ name, desc }, ...] (a bare string still
+            // reads as both); a plugin that adds a skill mechanic registers its
+            // own with SkillDetails.registerSpecial, so every special ability is
+            // read out here and nowhere else.
+            const stateName = (id) => {
+                const st = $dataStates && $dataStates[Number(id)];
+                return st && st.name ? dbText(st.name) : "";
+            };
+            const noteOf = (skill) => String((skill && skill.note) || "");
+            const tagAll = (skill, tag) => {
+                const out = [];
+                const re = new RegExp("<" + tag + ":\\s*([^>]+)>", "gi");
+                let m;
+                while ((m = re.exec(noteOf(skill)))) out.push(m[1].trim());
+                return out;
+            };
+            // One special: SkillsMenu.specialName.<key> on the tag, SkillsMenu.special.<key> on hover.
+            const special = (key, params) => ({
+                name: T("SkillsMenu.specialName." + key, params || {}),
+                desc: T("SkillsMenu.special." + key, params || {})
+            });
+            const specialProviders = [];
+            const registerSpecial = (fn) => { if (typeof fn === "function") specialProviders.push(fn); };
+
+            // Note-tag mechanics the battle system already reads.
+            registerSpecial(skill => {
+                const out = [];
+                for (const raw of tagAll(skill, "SelfState")) {
+                    const [id, chance] = raw.split(",").map(s => s.trim());
+                    const name = stateName(id);
+                    if (!name) continue;
+                    out.push(chance
+                        ? special("selfStateChance", { state: name, chance: Math.round(Number(chance) * 100) })
+                        : special("selfState", { state: name }));
+                }
+                const drain = tagAll(skill, "DrainRate")[0];
+                if (drain) out.push(special("drainRate", { pct: Math.round(Number(drain) * 100) }));
+                const drainMp = tagAll(skill, "DrainMp")[0];
+                if (drainMp) out.push(special("drainMp", { pct: Math.round(Number(drainMp) * 100) }));
+                if (/<OncePerDay>/i.test(noteOf(skill))) out.push(special("oncePerDay"));
+                for (const eff of skill.effects || []) {
+                    if (eff.code === 11 && (eff.value1 < 0 || eff.value2 < 0) && skill.scope === 11) {
+                        out.push(special("hpCost", { amount: eff.value1 < 0 ? Math.round(-eff.value1 * 100) + "%" : String(-eff.value2) }));
+                    }
+                }
+                return out;
+            });
+
+            // Payoffs read straight off the damage formula: the conditions it
+            // tests are what the skill is good against.
+            registerSpecial(skill => {
+                const f = String((skill && skill.damage && skill.damage.formula) || "");
+                if (!f || f === "0") return [];
+                const out = [];
+                const seen = new Set();
+                const pay = (key, params) => {
+                    const entry = special(key, params);
+                    if (!seen.has(entry.desc)) { seen.add(entry.desc); out.push(entry); }
+                };
+                let m;
+                const onTarget = /b\.isStateAffected\((\d+)\)/g;
+                while ((m = onTarget.exec(f))) { const n = stateName(m[1]); if (n) pay("bonusVsState", { state: n }); }
+                const onUser = /a\.isStateAffected\((\d+)\)/g;
+                while ((m = onUser.exec(f))) { const n = stateName(m[1]); if (n) pay("bonusWhileState", { state: n }); }
+                if (/b\.hpRate\(\)|b\.hp\s*[*<]|b\.hp\s*\*\s*\d+\s*<\s*b\.mhp/.test(f)) pay("bonusVsWounded");
+                if (/a\.hpRate\(\)|a\.mhp\s*-\s*a\.hp/.test(f)) pay("bonusWhileWounded");
+                if (/\ba\.tp\b/.test(f)) pay("scalesWithAp");
+                if (/\+\s*b\.(atk|mat)\s*\*/.test(f)) pay("usesTargetPower");
+                if (!/\bb\.(def|mdf)\b/.test(f) && skill.damage.type === 1) pay("ignoresDefence");
+                return out;
+            });
+
+            // What a state the skill applies does beyond its traits: the
+            // mechanic tags other plugins read off the state's note.
+            registerSpecial(skill => {
+                const out = [];
+                const foeScope = [1, 2, 3, 4, 5, 6].includes(skill.scope);
+                for (const eff of skill.effects || []) {
+                    if (eff.code !== 21) continue;
+                    const st = $dataStates && $dataStates[eff.dataId];
+                    if (!st || !st.name) continue;
+                    const note = String(st.note || "");
+                    const name = dbText(st.name);
+                    const stance = (note.match(/<DamageTypeOverride:\s*([^>]+)>/i) || [])[1];
+                    if (stance) out.push(special("stance", { state: name, type: stance.trim() }));
+                    if (/<ProficiencyBoost:/i.test(note)) out.push(special("drill", { state: name }));
+                    const fail = (note.match(/<ActionFail:\s*([\d.]+)>/i) || [])[1];
+                    if (fail && foeScope) out.push(special("actionFail", { state: name, pct: Math.round(Number(fail) * 100) }));
+                    if (eff.dataId === 20 && foeScope) out.push(special("taunt"));
+                }
+                return out;
+            });
+
+            // Every provider's entries as { name, desc }, one per rule: two
+            // providers naming the same rule are read once.
+            const specialsOf = (skill) => {
+                const out = [];
+                const seen = new Set();
+                for (const fn of specialProviders) {
+                    try {
+                        for (const raw of (fn(skill) || [])) {
+                            if (!raw) continue;
+                            const entry = typeof raw === "string" ? { name: raw, desc: raw }
+                                : { name: String(raw.name || raw.desc || ""), desc: String(raw.desc || raw.name || "") };
+                            if (!entry.name || seen.has(entry.desc)) continue;
+                            seen.add(entry.desc);
+                            out.push(entry);
+                        }
+                    }
+                    catch (e) { console.warn("[SkillDetails] special provider failed", e); }
+                }
+                return out;
+            };
+
             // ── Rendering ─────────────────────────────────────────────────────
-            const specRows = (specs) => specs.map(spec =>
-                `<div class="inspect-spec-row${spec.cls ? ' ' + spec.cls : ''}"><span class="inspect-spec-label">${esc(spec.label)}:</span><span class="inspect-spec-value">${esc(spec.val)}</span></div>`
-            ).join("");
+            // Every fact is a tag in the header's pill style, the same
+            // .inspect-pill the quick stats above wear.
+            const pill = (label, valHTML, cls) =>
+                `<div class="inspect-meta-item inspect-pill${cls ? ' ' + cls : ''}"><span class="inspect-pill-lbl">${esc(label)}:</span> <span class="inspect-meta-val inspect-pill-val">${valHTML}</span></div>`;
+            const pills = (inner) => `<div class="inspect-quick-pills">${inner}</div>`;
+            const specRows = (specs) => pills(specs.map(spec =>
+                pill(spec.label, esc(spec.val), spec.cls === 'inspect-spec-row--scaling' ? 'inspect-pill--scaling' : '')).join(""));
 
             const section = (title, body) => `<div class="inspect-section-title">${esc(title)}</div>${body}`;
 
@@ -524,14 +629,19 @@
                 }
 
                 if (effects.length) {
-                    html += section(T("SkillsMenu.section.skillEffects"), `<div class="inspect-chips-grid">` + effects.map(desc =>
-                        `<span class="inspect-stat-chip inspect-stat-chip--gain"><span class="inspect-stat-chip-val">${esc(desc)}</span></span>`
-                    ).join("") + `</div>`);
+                    html += section(T("SkillsMenu.section.skillEffects"), pills(effects.map(desc =>
+                        `<div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${esc(desc)}</span></div>`
+                    ).join("")));
+                }
+                const specials = specialsOf(skill);
+                if (specials.length) {
+                    // The tag carries the short name; the whole rule is its hover.
+                    html += section(T("SkillsMenu.section.special"), pills(specials.map(sp =>
+                        `<div class="inspect-meta-item inspect-pill inspect-pill--special" title="${esc(sp.desc)}"><span class="inspect-meta-val inspect-pill-val">${esc(sp.name)}</span></div>`
+                    ).join("")));
                 }
                 if (training.length) {
-                    html += section(T("SkillsMenu.section.training"), `<div class="inspect-chips-grid">` + training.map(r =>
-                        `<span class="inspect-stat-chip"><span class="inspect-stat-chip-lbl">${r.label}:</span> <span class="inspect-stat-chip-val">${r.val}</span></span>`
-                    ).join("") + `</div>`);
+                    html += section(T("SkillsMenu.section.training"), pills(training.map(r => pill(r.label, r.val)).join("")));
                 }
                 // The skill's lore closes the card, under every number, the way
                 // an item's does on the backpack page: flavour is read last.
@@ -567,7 +677,7 @@
                     const cur = Math.floor(current);
                     const max = Math.floor(maximum);
                     const color = cost > 0
-                        ? (cost <= cur ? 'var(--text-success-active)' : 'var(--text-danger-hover)')
+                        ? (cost <= cur ? 'var(--text-success-active)' : 'var(--text-cost-bad)')
                         : 'var(--text-text-alt-7)';
                     const costTag = cost > 0 ? ` (${cost} ${label})` : '';
                     return `
@@ -630,6 +740,10 @@
                 combatSpecsOf,
                 damageSpecsOf,
                 effectsOf,
+                // The Special section: every mechanic beyond the effect list.
+                specialsOf,
+                special,
+                registerSpecial,
                 // What this move would actually land, as a number. The
                 // equipment panel asks the same question of a basic attack to
                 // print a weapon's damage, so the two screens cannot disagree
@@ -1599,6 +1713,10 @@
         if (hands && !hands.met) {
             text += (text ? '\n' : '') + wpn.label(hands.need);
         }
+        // AmmoBursts (Weapon/WeaponSystem.js): a burst with too few rounds
+        // loaded, or a reload with a full magazine, says why it is greyed.
+        const ammo = window.AmmoBursts && actor ? window.AmmoBursts.blockReason(actor, skill) : '';
+        if (ammo) text += (text ? '\n' : '') + ammo;
         return text;
     }
 
@@ -1707,11 +1825,23 @@
                 rightDiv.appendChild(wpnSpan);
             }
 
+            // AmmoBursts (Weapon/WeaponSystem.js): the magazine refuses it.
+            const ammoChip = window.AmmoBursts && this._actor
+                ? window.AmmoBursts.blockChip(this._actor, skill) : '';
+            if (ammoChip) {
+                const ammoSpan = document.createElement('span');
+                ammoSpan.style.cssText = 'color:var(--text-danger-dark);font-weight:bold;margin-left:8px;';
+                ammoSpan.textContent = ammoChip;
+                ammoSpan.title = window.AmmoBursts.blockReason(this._actor, skill);
+                rightDiv.appendChild(ammoSpan);
+            }
+
             if (this._actor) {
                 const tpCost = this._actor.skillTpCost(skill);
                 const mpCost = this._actor.skillMpCost(skill);
-                const costText = tpCost > 0 && mpCost > 0 ? tpCost + ' AP + ' + mpCost + ' MP'
-                    : tpCost > 0 ? tpCost + ' AP' : (mpCost > 0 ? mpCost + ' MP' : '');
+                const costText = tpCost > 0 && mpCost > 0 ? T('SkillsMenu.cost.both', { ap: tpCost, mp: mpCost })
+                    : tpCost > 0 ? T('SkillsMenu.cost.ap', { n: tpCost })
+                    : (mpCost > 0 ? T('SkillsMenu.cost.mp', { n: mpCost }) : '');
                 if (costText) {
                     const costSpan = document.createElement('span');
                     costSpan.style.color = 'var(--text-primary-hover)';
@@ -2652,7 +2782,29 @@
     // What the tab holds after the strip (UI/MenuSearchBar.js) has filtered and
     // ordered it. A skill has a discipline and a cost, not a weight or a price,
     // so those controls are never offered on this page.
+    // A cursor step asks for it several times over (the page, the right page,
+    // the move handler), and each answer filtered, localised and sorted every
+    // skill the character knows. It is kept until the character, the tab,
+    // what they know, the strip's query or order, or the language changes.
     Scene_Skill.prototype.getUISkillsOnlyList = function () {
+        const actor = this.actor();
+        const bar = this._skillBar;
+        const key = actor ? [
+            actor.actorId(), actor._classId, this._dndSelectedTypeIndex,
+            actor.skills().map(s => (s ? s.id : 0)).join(','),
+            bar ? [bar.query, bar.sortKey, bar.sortDir, bar.category, bar.kind].join('\u0001') : '',
+            ConfigManager.language || ''
+        ].join('|') : null;
+        const memo = this._uiSkillsMemo;
+        if (key !== null && memo && memo.key === key && memo.actor === actor && memo.bar === bar) {
+            return memo.list.slice();
+        }
+        const list = this.computeUISkillsOnlyList();
+        this._uiSkillsMemo = key !== null ? { key, actor, bar, list } : null;
+        return list.slice();
+    };
+
+    Scene_Skill.prototype.computeUISkillsOnlyList = function () {
         const list = this.getUISkillsOnlyListRaw();
         if (!this._skillBar) return list;
         return this._skillBar.apply(list, entry => {
@@ -2671,9 +2823,9 @@
 
     Scene_Skill.prototype.getUISkillCostText = function (skill) {
         if (!skill) return "";
-        if (skill.mpCost > 0 && skill.tpCost > 0) return `${skill.tpCost} AP + ${skill.mpCost} MP`;
-        if (skill.mpCost > 0) return `${skill.mpCost} MP`;
-        if (skill.tpCost > 0) return `${skill.tpCost} AP`;
+        if (skill.mpCost > 0 && skill.tpCost > 0) return T('SkillsMenu.cost.both', { ap: skill.tpCost, mp: skill.mpCost });
+        if (skill.mpCost > 0) return T('SkillsMenu.cost.mp', { n: skill.mpCost });
+        if (skill.tpCost > 0) return T('SkillsMenu.cost.ap', { n: skill.tpCost });
         return "";
     };
 
@@ -3074,7 +3226,7 @@
             const isSelected = member === actor ? "selected" : "";
             companionTabsHTML += `
                 <div class="companion-tab ${isSelected}" onclick="SceneManager._scene.selectUIActor(${idx})">
-                    ${member.name()}
+                    ${escapeHtml(member.name())}
                 </div>
             `;
         });
@@ -3401,7 +3553,7 @@
                     <canvas id="skill-canvas-${idx}" width="32" height="32" style="width:32px;height:32px;"></canvas>
                 </div>
                 <div class="item-slot-info">
-                    <div class="item-slot-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</div>
+                    <div class="item-slot-name" title="${escapeHtml(dbText(item.name))}">${escapeHtml(dbText(item.name))}</div>
                     <div class="item-slot-meta" style="display:flex; align-items:center; justify-content:space-between;">
                         <span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><span class="item-slot-cost">${escapeHtml(costText)}</span>${fieldFlag}${reqFlag}</span>
                         ${syncBtnHTML ? `<span style="flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center;">${syncBtnHTML}</span>` : ""}

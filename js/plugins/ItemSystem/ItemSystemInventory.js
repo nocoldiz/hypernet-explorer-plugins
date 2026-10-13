@@ -1217,13 +1217,13 @@
     if (this._targetWindow && !this._targetWindow.destroyed) {
       this._targetWindow.hide();
     }
+    // The canvas list and detail stay hidden: the parchment page is what the
+    // player sees. Showing the list again made it open-and-active behind the
+    // page, so its own cancel handler popped the whole backpack on the next
+    // Escape / B after using an item on someone.
     if (this._itemWindow && !this._itemWindow.destroyed) {
-      this._itemWindow.show();
       this._itemWindow.refresh();
       this._itemWindow.activate();
-    }
-    if (this._detailWindow && !this._detailWindow.destroyed) {
-      this._detailWindow.show();
     }
     if (this._weightWindow && !this._weightWindow.destroyed) {
       this._weightWindow.refresh();
@@ -1464,6 +1464,14 @@
         return NO_USE;
       }
 
+      // A self item with nobody able to take it is refused before anything is
+      // spent, rather than eaten for nothing.
+      const user = scope === 11 ? $gameParty.leader() : null;
+      if (scope === 11 && commonEventId <= 0 && !(user && user.canUse(item))) {
+        SoundManager.playBuzzer();
+        return NO_USE;
+      }
+
       playItemSound(item);
       $gameParty.consumeItem(item);
 
@@ -1474,17 +1482,20 @@
         return { used: true, commonEvent: reserveItemCommonEvent(item) };
       }
 
+      // The copy was paid for once, above. Game_Battler#useItem only pays the
+      // cost again (it is consumeItem, no effects), so it is never called here:
+      // that was what ate two copies of a self item and one per member of a
+      // scope-0 one, while applying nothing.
       if (scope === 0) {
         $gameParty.members().forEach((actor) => {
-          actor.useItem(item);
           utils.applyNeedRestores(actor, item);
         });
       } else if (scope === 11) {
-        const actor = $gameParty.leader();
-        if (actor && actor.canUse(item)) {
-          actor.useItem(item);
-          utils.applyNeedRestores(actor, item);
-        }
+        const action = new Game_Action(user);
+        action.setItemObject(item);
+        action.apply(user);
+        utils.applyNeedRestores(user, item);
+        user.refresh();
       }
 
       return { used: true, commonEvent: 0 };

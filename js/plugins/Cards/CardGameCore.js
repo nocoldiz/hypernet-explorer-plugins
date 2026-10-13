@@ -474,8 +474,10 @@
     return collection()[key] || 0;
   }
 
+  // Effect cards have no database row of their own, so they are a card when
+  // EFFECTS knows them: a trade that hands one over must land it like any other.
   function addCard(key, amount) {
-    if (!dataOf(key)) return 0;
+    if (!dataOf(key) && !effectOf(key)) return 0;
     const store = collection();
     const n = Math.max(1, Math.round(amount || 1));
     store[key] = (store[key] || 0) + n;
@@ -496,11 +498,15 @@
     for (let i = 0; i < amount && room > 0; i++, room--) deck.cards.push(key);
   }
 
+  // Every copy that leaves the collection (sold, swapped with an NPC) leaves
+  // every saved deck that listed it as well, not only the active one, so no
+  // deck is ever left naming more copies than the party holds (trimDecks).
   function removeCard(key, amount) {
     const store = collection();
     if (!store[key]) return 0;
     store[key] = Math.max(0, store[key] - Math.max(1, Math.round(amount || 1)));
     if (!store[key]) delete store[key];
+    trimDecks(key);
     return store[key] || 0;
   }
 
@@ -921,7 +927,8 @@
 
   // Sell one copy. Effect cards are the party's own vocabulary rather than
   // stock, and nothing else is held back: a copy sold out from under a deck is
-  // trimmed out of every deck that listed it, so no deck is left illegal.
+  // trimmed out of every deck that listed it, so no deck is left illegal
+  // (removeCard trims too; the second pass is a no-op).
   function sellCard(key) {
     if (isEffect(key)) return { ok: false, reason: "notForSale" };
     if (countOf(key) <= 0) return { ok: false, reason: "notOwned" };

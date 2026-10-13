@@ -54,8 +54,8 @@
     "heading": "REQUIRED"
   },
   "rail": {
-    "heading": "PARTS CARRIED",
-    "empty": "YOU IZ CARRYIN' NO COMPONENTS!",
+    "heading": "YA PARTS",
+    "empty": "NO COMPONENTS.",
     "count": "X{n}"
   },
   "hint": {
@@ -95,7 +95,7 @@
     "failLine": "NO {kind} DETECTED",
     "failFooter": "FIT DA MISSIN' PARTS AN' TRY AGAIN!",
     "overdrawHeading": "POWER FAULT",
-    "overdrawLine": "DA CELL NO CAN CARRY {n} W"
+    "overdrawLine": "CELL NO CAN SUPPLY {n} W"
   },
   "tool": {
     "auto": "AUTO-FIT",
@@ -113,18 +113,18 @@
     "handheld": "HANDHELD PAD",
     "phone": "TELEPHONE KEYPAD"
   },
-  "caseWarning": "CHANGIN' DA CASE EMPTIES DA BOARD. EVERY PART GOES BACK IN DA BAG!",
+  "caseWarning": "CHANGIN' DA CASE RETURNS ALL PARTS TA YA BAG!",
   "fault": {
-    "missing": "NO {kind} IZ FITTED. DA MACHINE WILL NO START WITHOUT ONE!",
-    "power": "DA CELL IZ {n} W SHORT OF WHAT DA FITTED PARTS DRAW!",
-    "heat": "NOTHIN' IZ COOLIN' A {n} W BOARD. EXPECT IT TA THROTTLE!",
+    "missing": "NO {kind} FITTED. DA MACHINE NO WILL START!",
+    "power": "POWER CELL IZ {n} W SHORT.",
+    "heat": "NO COOLIN' ON A {n} W BOARD. IT WILL THROTTLE!",
     "uplink": "NO UPLINK FITTED. DA HYPERNET WILL NO ANSWER!",
     "memory": "ONLY {n} MB OF MEMORY. ARCHWAYS XP WILL CRAWL!",
-    "integrated": "NO GRAPHICS ADAPTER. DA PROCESSOR DRIVES DA PANEL ITSELF, ON {n} MB BORROWED FROM MAIN MEMORY!"
+    "integrated": "NO GRAPHICS CARD. USING {n} MB OF SHARED MEMORY!"
   },
   "chip": {
     "heading": "CHIP LAB",
-    "hint": "LEFT BUTTON DRAWS, RIGHT BUTTON RUBS OUT, MIDDLE BUTTON PANS, WHEEL ZOOMS. PICK A TILE TWICE TA STEP THROUGH ITS FIDDLY BITS!",
+    "hint": "LEFT CLICK DRAWS, RIGHT CLICK ERASES, MIDDLE BUTTON PANS, WHEEL ZOOMS. PICK A TILE AGAIN TA CHANGE ITS FIDDLY BIT!",
     "tile": {
       "wire": "WIRE",
       "source": "SOURCE",
@@ -177,7 +177,7 @@
     "made": "{name} ETCHED, {n} SCRAP SPENT.",
     "needScrap": "NO ENOUGH SALVAGED STEEL: {n} NEEDED!",
     "fail": {
-      "noGates": "NOTHIN' TA ETCH. DRAW SOME LOGIC FIRST!",
+      "noGates": "NUTTIN' TA ETCH. DRAW SOME LOGIC FIRST!",
       "noSlot": "NO BLANK DIE LEFT. USE OR SELL AN OLD ONE!",
       "noLab": "DA BENCH IZ NO READY."
     },
@@ -198,18 +198,18 @@
     "rom": {
       "counter": "ROM: BUS COUNTER",
       "fib": "ROM: FIBONACCI",
-      "strcpy": "ROM: STRIN' COPY",
+      "strcpy": "ROM: STRING COPY",
       "muldiv": "ROM: MULTIPLY AN' DIVIDE"
     },
     "bus": "BUS",
     "instr": "INSTR",
-    "presetHeading": "CANNED SCHEMATICS",
-    "presetHint": "PICK A PRESET AN' IT IZ DRAWN WHERE YOU IZ LOOKIN', AS ORDINARY TILES. MOVE IT, WIRE IT INTO SOMETHIN' BIGGER, OR ETCH IT AS IT IZ!",
-    "placing": "{name} IN HAND. CLICK TA PLACE IT, RIGHT BUTTON OR ESC TA PUT IT BACK!",
+    "presetHeading": "PRESETS",
+    "presetHint": "PLACES DA PRESET AS NORMAL TILES WHERE YOU IZ LOOKIN'. EDIT IT OR ETCH IT AS IZ!",
+    "placing": "{name} SELECTED. CLICK TA PLACE, RIGHT CLICK OR ESC TA CANCEL!",
     "app": {
       "name": "CIRCUIT BOARD EDITOR",
       "dies": "ETCHED DIES",
-      "noDies": "NOTHIN' ETCHED YET.",
+      "noDies": "NUTTIN' ETCHED YET.",
       "fitted": "ON DA DECK",
       "inBag": "IN DA BAG",
       "gone": "SPENT"
@@ -219,7 +219,7 @@
     "heading": "HYPERDECK FIRMWARE SETUP",
     "tabMain": "MAIN",
     "tabHealth": "HEALTH",
-    "noFaults": "NO FAULTS REPORTED. EVERY FITTED PART ANSWERED!",
+    "noFaults": "NO FAULTS.",
     "willBoot": "DIS MACHINE WILL POST.",
     "willNotBoot": "DIS MACHINE WILL NO POST.",
     "boot": "POWER ON",

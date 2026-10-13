@@ -11,12 +11,12 @@
     "rented_for_24h": "Buona permanenza!",
     "for_24_hours": "per 24 ore!",
     "not_enough_gold": "Euro insufficienti!",
-    "error_event_id": "Errore: Impossibile determinare ID evento",
+    "error_event_id": "Errore: impossibile determinare l'ID dell'evento",
     "rented": "Affittata",
     "expired": "Scaduta",
-    "available_rooms": "Stanze Disponibili",
+    "available_rooms": "Stanze disponibili",
     "hours_remaining": "ore rimanenti",
-    "rent_now": "Affitta Ora",
+    "rent_now": "Affitta ora",
     "no_rooms": "Nessuna stanza disponibile",
     "empty_world": "La porta è già aperta e il grimorio è vuoto. Non è rimasto nessuno da cui affittare."
   }

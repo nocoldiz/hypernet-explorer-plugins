@@ -57,7 +57,7 @@
 
         render() {
             const text = new PIXI.Text(
-                this._isDemo ? 'DEMO MODE' : 'GAME START',
+                ArcadeManager.getText(this._isDemo ? 'demoMode' : 'gameStart'),
                 {
                     fontFamily: ArcadeManager.getArcadeFont(),
                     fontSize: 48,

@@ -48,8 +48,9 @@
     "Dicembre"
   ],
   "ui": {
+    "appName": "Notizie",
     "noChroniclesRegisteredIn": "Nessuna notizia registrata in questo mese.",
-    "global": "ANALE",
+    "global": "GLOBALE",
     "bullish": "POSITIVO",
     "bearish": "NEGATIVO",
     "surreal": "SURREALE",
@@ -80,7 +81,7 @@
     "noMatches": "Nulla nell'archivio corrisponde a \"{query}\".",
     "tabChronicles": "CRONACHE",
     "tabHistory": "STORIA DEL MONDO",
-    "alertsOn": "AVVISI: SI",
+    "alertsOn": "AVVISI: SÌ",
     "alertsOff": "AVVISI: NO",
     "alertsHint": "Mostra le notizie dell’ultima ora come avviso durante il gioco",
     "recordInDepth": "DETTAGLIO ANNALE",

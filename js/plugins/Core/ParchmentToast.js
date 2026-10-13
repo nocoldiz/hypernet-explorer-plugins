@@ -287,11 +287,112 @@
   }
 
   // The scan below reads offsetWidth/offsetHeight and getComputedStyle over
-  // every child of <body>, which is a layout each time, so its answer is
-  // cached. A DOM page opening or closing a few frames before the render rate
-  // follows it is not something anyone can see.
+  // every child of <body>, which is a forced layout whenever anything on the
+  // page was written since the last one, and the HUDs write every frame. So
+  // the scan does not run on a clock: it runs when the page has CHANGED.
+  //
+  //   - A MutationObserver watches <body>'s own child list, and the style,
+  //     class and hidden attributes of <html>, <body> and every direct child
+  //     of <body>. A page opening, closing, showing or hiding is one of those.
+  //   - A transition or animation ending on a child of <body> (a page fading
+  //     in) marks it too, and so does a resize.
+  //   - For a short settle window after any change the scan keeps rechecking
+  //     at the old rate, so a fade that runs without a further mutation is
+  //     still followed.
+  //   - A slow fallback rescan catches what no observer can see (a page grown
+  //     to full screen by its own contents).
+  //
+  // A changed page is still rescanned at most once every COVERED_RECHECK_FRAMES,
+  // so a body child writing its style every frame costs no more than the old
+  // clock did. Without MutationObserver (node harnesses) it is the old clock.
+  //
+  // One scan answers every fraction: it keeps the largest share of the window
+  // any painting child covers, and a question at any fraction is a comparison.
   const COVERED_RECHECK_FRAMES = 10;
-  const _coveredCache = new Map(); // fraction -> { frame, value }
+  const COVERED_SETTLE_FRAMES = 60;
+  const COVERED_FALLBACK_FRAMES = 600;
+  const COVER_ATTRS = ["style", "class", "hidden"];
+  const _cover = {
+    best: 0,          // largest min(width share, height share) of a painting child
+    frame: -Infinity, // Graphics.frameCount of the last scan
+    dirty: true,      // the page changed since that scan
+    settleUntil: 0,   // keep rechecking until this frame
+    observer: null,
+    scans: 0          // for tests and the console
+  };
+
+  function coverFrame() {
+    return typeof Graphics !== "undefined" && Graphics ? (Graphics.frameCount || 0) : 0;
+  }
+
+  function markCoverDirty() {
+    _cover.dirty = true;
+    _cover.settleUntil = coverFrame() + COVERED_SETTLE_FRAMES;
+  }
+
+  // The toast stack restyles itself as toasts come and go and is never a page.
+  function isCoverNoise(node) {
+    return !!node && (node === _stackEl || node.id === "html-toast-stack");
+  }
+
+  function watchCoverNode(node) {
+    if (!_cover.observer || !node || node.nodeType !== 1) return;
+    try {
+      _cover.observer.observe(node, { attributes: true, attributeFilter: COVER_ATTRS });
+    } catch (e) { /* a node that cannot be observed is caught by the fallback */ }
+  }
+
+  function startCoverObserver() {
+    if (_cover.observer) return true;
+    if (typeof MutationObserver === "undefined" || typeof document === "undefined" ||
+        !document.body) return false;
+    try {
+      _cover.observer = new MutationObserver((records) => {
+        let changed = false;
+        for (let i = 0; i < records.length; i++) {
+          const rec = records[i];
+          if (rec.type === "childList") {
+            const added = rec.addedNodes || [];
+            for (let j = 0; j < added.length; j++) watchCoverNode(added[j]);
+            changed = true;
+          } else if (!isCoverNoise(rec.target)) {
+            changed = true;
+          }
+        }
+        if (changed) markCoverDirty();
+      });
+      _cover.observer.observe(document.body, {
+        childList: true, attributes: true, attributeFilter: COVER_ATTRS
+      });
+      if (document.documentElement) watchCoverNode(document.documentElement);
+      const kids = document.body.children || [];
+      for (let i = 0; i < kids.length; i++) watchCoverNode(kids[i]);
+      const onSettled = (ev) => {
+        const t = ev && ev.target;
+        if (t && t.parentNode === document.body && !isCoverNoise(t)) markCoverDirty();
+      };
+      if (document.addEventListener) {
+        document.addEventListener("transitionend", onSettled, true);
+        document.addEventListener("animationend", onSettled, true);
+      }
+      if (typeof window !== "undefined" && window.addEventListener) {
+        window.addEventListener("resize", markCoverDirty);
+      }
+    } catch (e) {
+      _cover.observer = null;
+      return false;
+    }
+    return true;
+  }
+
+  function coverNeedsScan(frame) {
+    const since = frame - _cover.frame;
+    if (since < 0) return true; // the frame counter went back (a reset)
+    if (!_cover.observer) return since >= COVERED_RECHECK_FRAMES;
+    if (since < COVERED_RECHECK_FRAMES) return false;
+    if (_cover.dirty || frame < _cover.settleUntil) return true;
+    return since >= COVERED_FALLBACK_FRAMES;
+  }
 
   // Is a full-screen DOM page standing over the game view? Menu agnostic on
   // purpose: it asks the page, not a list of plugins, so a menu written next
@@ -301,19 +402,27 @@
   function isCanvasCovered(fraction) {
     const frac = Number(fraction) > 0 ? Number(fraction) : 0.8;
     if (typeof document === "undefined" || !document.body) return false;
-    const frame = typeof Graphics !== "undefined" && Graphics ? (Graphics.frameCount || 0) : 0;
-    const hit = _coveredCache.get(frac);
-    if (hit && frame - hit.frame < COVERED_RECHECK_FRAMES) return hit.value;
-    const value = computeCovered(frac);
-    _coveredCache.set(frac, { frame, value });
-    return value;
+    startCoverObserver();
+    const frame = coverFrame();
+    if (coverNeedsScan(frame)) {
+      _cover.best = computeCoverShare();
+      _cover.frame = frame;
+      _cover.dirty = false;
+      _cover.scans++;
+    }
+    return _cover.best >= frac;
   }
 
-  function computeCovered(frac) {
+  // The largest share of the window covered by one painting child of <body>:
+  // min(width share, height share), so "covers frac of the window" is exactly
+  // the old test offsetWidth >= w * frac && offsetHeight >= h * frac. The
+  // computed style is only read for a child that would raise the answer.
+  function computeCoverShare() {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    if (!(w > 0) || !(h > 0)) return false;
+    if (!(w > 0) || !(h > 0)) return 0;
     const kids = document.body.children || [];
+    let best = 0;
     for (let i = 0; i < kids.length; i++) {
       const el = kids[i];
       if (!el) continue;
@@ -329,15 +438,17 @@
       // over the world exactly as they belong over the map. A menu opened on
       // top of it is a separate element and still answers yes here.
       if (el.id === "camper-drive-overlay") continue;
-      if (!(el.offsetWidth >= w * frac) || !(el.offsetHeight >= h * frac)) continue;
+      const share = Math.min((el.offsetWidth || 0) / w, (el.offsetHeight || 0) / h);
+      if (!(share > best)) continue;
       const cs = window.getComputedStyle ? window.getComputedStyle(el) : null;
-      if (!cs) return true;
-      if (cs.display === "none" || cs.visibility === "hidden") continue;
-      if (parseFloat(cs.opacity || "1") <= 0.01) continue;
-      if (paintsNothing(cs)) continue;
-      return true;
+      if (cs) {
+        if (cs.display === "none" || cs.visibility === "hidden") continue;
+        if (parseFloat(cs.opacity || "1") <= 0.01) continue;
+        if (paintsNothing(cs)) continue;
+      }
+      best = share;
     }
-    return false;
+    return best;
   }
 
   // A layer that takes no clicks and paints no ground of its own is not a page
@@ -379,6 +490,9 @@
     invalidateRect,
     every,
     isCanvasCovered,
+    // A caller that changed the page in a way no observer sees (a stylesheet
+    // swap, say) can ask for a fresh scan.
+    invalidateCovered: markCoverDirty,
     hookEngine,
     // For tests and for the console: what the budget thinks this frame is.
     stats() {
@@ -386,7 +500,9 @@
         tickIndex: _tickIndex,
         tickTotal: _tickTotal,
         frame: _framePresented,
-        presented: isPresented()
+        presented: isPresented(),
+        coverScans: _cover.scans,
+        coverObserved: !!_cover.observer
       };
     }
   };

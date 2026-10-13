@@ -207,9 +207,9 @@
     "reachedFloor": "Omega Tower, floor {floor}",
     "band": "Typical level",
     "bandRange": "around {median} (from {min} to {max})",
-    "noGovernment": "Holds no government.",
-    "earthSeat": "Keeps Earth's own nations and hyperpowers.",
-    "offworld": "Offworld. No place on the world map answers for it.",
+    "noGovernment": "No government.",
+    "earthSeat": "Uses Earth's nations and hyperpowers.",
+    "offworld": "Offworld. Not on the world map.",
     "ofWorld": "of {world}",
     "unknown": "Unrecorded"
   },

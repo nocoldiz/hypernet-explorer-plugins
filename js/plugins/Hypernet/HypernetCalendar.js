@@ -464,7 +464,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: APP_ID,
-            name: tr('title'),
+            name: () => tr('title'),
             icon: ICON,
             category: 'office',
             desktopShortcut: true,

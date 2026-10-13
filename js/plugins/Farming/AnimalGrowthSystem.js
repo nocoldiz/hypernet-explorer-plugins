@@ -537,10 +537,12 @@
       // the timer was last read. Clamping only the far end was not enough: a
       // feeding on arrival after ten years away moved fedFrom to today and the
       // entire decade still counted.
-      const fedFrom = (rec.fedAt != null) ? rec.fedAt : (rec.boughtAt || 0);
-      const windowStart = Math.max(rec.produceTimers[key], fedFrom);
-      const windowEnd = Math.min(now, fedFrom + NUTRITION_DAYS * MINUTES_PER_DAY);
-      const elapsed = windowEnd - windowStart;
+      const win = fedWindow(rec, key, now);
+      // Fed time banked by earlier feedings (feedAnimal) counts as well: a
+      // batch longer than one feeding's food, a sheep's fleece or a rabbit's
+      // litter, is made across several feedings instead of never.
+      const banked = (rec.produceBank && rec.produceBank[key]) || 0;
+      const elapsed = banked + Math.max(0, win.end - win.start);
       const batches = elapsed > 0 ? Math.floor(elapsed / needed) : 0;
       if (batches >= 1) {
         let qty = 0;
@@ -548,16 +550,52 @@
           qty += prod.yieldMin + Math.floor(Math.random() * (prod.yieldMax - prod.yieldMin + 1));
         }
         ready.push({ itemId: prod.itemId, qty, prodIndex: i, batches });
+      }
+      if (commit) {
         // The clock resumes inside the fed window, so an unfed stretch before it
-        // is neither paid for now nor banked for later.
-        if (commit) rec.produceTimers[key] = windowStart + batches * needed; // keep remainder
-      } else if (commit && rec.produceTimers[key] < fedFrom) {
-        // Nothing was produced across the hungry stretch, and that stretch is
-        // not credited later either: the clock restarts at the feed.
-        rec.produceTimers[key] = fedFrom;
+        // is neither paid for now nor banked for later; the fed remainder is.
+        if (!rec.produceBank) rec.produceBank = {};
+        rec.produceBank[key] = elapsed - batches * needed;
+        rec.produceTimers[key] = Math.max(win.start, win.end);
       }
     }
     return ready;
+  }
+
+  // The stretch of one produce clock that fell inside the animal's current
+  // food: from the later of the clock and the last feeding, to the earlier of
+  // now and the moment that food ran out.
+  function fedWindow(rec, key, now) {
+    const fedFrom = (rec.fedAt != null) ? rec.fedAt : (rec.boughtAt || 0);
+    return {
+      start: Math.max(rec.produceTimers[key], fedFrom),
+      end: Math.min(now, fedFrom + NUTRITION_DAYS * MINUTES_PER_DAY),
+    };
+  }
+
+  // A feeding starts a new fed window. What the old one had already made
+  // towards the next batch is banked first, or feeding an animal before
+  // collecting from it threw away every egg and pail it had built up.
+  function bankFedTime(rec, def) {
+    if (!rec || !def || !def.produces || !def.produces.length) return;
+    if (!rec.produceTimers || getStage(rec, def) !== "adult") return;
+    const now = gameMinutes();
+    for (let i = 0; i < def.produces.length; i++) {
+      const key = `p${i}`;
+      if (rec.produceTimers[key] === undefined) continue;
+      const win = fedWindow(rec, key, now);
+      if (!rec.produceBank) rec.produceBank = {};
+      rec.produceBank[key] = (rec.produceBank[key] || 0) + Math.max(0, win.end - win.start);
+      rec.produceTimers[key] = now;
+    }
+  }
+
+  // Fed time this produce clock has run up so far, banked and live: what the
+  // status pages read a batch's progress off.
+  function fedProgress(rec, key) {
+    if (!rec.produceTimers || rec.produceTimers[key] === undefined) return 0;
+    const win = fedWindow(rec, key, gameMinutes());
+    return ((rec.produceBank && rec.produceBank[key]) || 0) + Math.max(0, win.end - win.start);
   }
 
   function collectProduce(rec, def) {
@@ -675,6 +713,7 @@
   function feedAnimal(rec) {
     if (!rec) return false;
     if (nutritionOf(rec) >= 100) return false;
+    bankFedTime(rec, ANIMAL_DB[rec.animalId]);
     rec.fedAt = gameMinutes();
     return true;
   }
@@ -1103,6 +1142,9 @@
     const key = currentMapKey();
     const dealt = farmsteadDealt();
     if (dealt[key]) return;                      // this square has had its turn
+    // Another savegame of this world already dealt the herd (its placements
+    // are world-shared): the farm's stock standing here is the proof.
+    if (placementsAt(key).some(r => r && r.wild && r.owner)) { dealt[key] = true; return; }
 
     const pasture = farmsteadPastureTiles();
     // No tilled soil (or nowhere to stand): not a farm, and not marked either,
@@ -1221,14 +1263,19 @@
   }
 
   // Human-readable place name for a stored map key: either a procedural world
-  // coordinate or a plain map name.
+  // coordinate or a plain map name. The biome in a procedural key is an id,
+  // printed through BiomeNames like every other biome; a key without one is
+  // the wilds.
   function mapDisplayName(mapKey) {
     const key = String(mapKey);
     const proc = key.match(/^proc:([^:]*):(-?\d+),(-?\d+)(?::(\d+))?$/);
     if (proc) {
       const depth = Number(proc[4] || 0);
       const below = depth > 0 ? `, -${depth}` : "";
-      return `${proc[1] || "Wilderness"} (${proc[2]},${proc[3]}${below})`;
+      const place = proc[1]
+        ? (window.BiomeNames ? window.BiomeNames.display(proc[1]) : proc[1])
+        : T('AnimalGrowth.wilderness');
+      return `${place} (${proc[2]},${proc[3]}${below})`;
     }
     const id = Number(key);
     if (Number.isFinite(id) && $dataMapInfos && $dataMapInfos[id]) {
@@ -1260,20 +1307,23 @@
         const item = $dataItems ? $dataItems[prod.itemId] : null;
         const timer = rec.produceTimers ? rec.produceTimers[`p${i}`] : undefined;
         const needed = prod.interval * MINUTES_PER_DAY;
-        const elapsed = timer === undefined ? 0 : now - timer;
+        const elapsed = fedProgress(rec, `p${i}`);
         return {
           itemId: prod.itemId,
           name: item ? item.name : T('AnimalGrowth.itemNumbered', { id: prod.itemId }),
           yieldMin: prod.yieldMin, yieldMax: prod.yieldMax,
           intervalDays: prod.interval,
-          ready: stage === "adult" && timer !== undefined && elapsed >= needed,
+          // Ready only when Collect would pay: a hungry animal gives nothing.
+          ready: stage === "adult" && !isHungry(rec) && timer !== undefined && elapsed >= needed,
           daysLeft: Math.max(0, Math.ceil((needed - elapsed) / MINUTES_PER_DAY)),
         };
       });
       out.push({
         uid: rec.uid,
         mapKey,
-        mapName: rec.mapName || mapDisplayName(mapKey),
+        // Read off the key, not the name stored with the animal: that one was
+        // written in whatever language the game was in on the day it was bought.
+        mapName: mapDisplayName(mapKey) || rec.mapName,
         animalId: rec.animalId,
         stage,
         stageName: STAGE_NAMES[stage] || stage,
@@ -1331,7 +1381,7 @@
       characterName: sprite,
       characterIndex: 0,
       isFollower: false,
-      note: T('AnimalGrowth.petNote', { stage: STAGE_NAMES[rec.stage] || rec.stage, animal: rec.animalId, place: rec.mapName || mapDisplayName(found.mapKey) }),
+      note: T('AnimalGrowth.petNote', { stage: STAGE_NAMES[rec.stage] || rec.stage, animal: rec.animalId, place: mapDisplayName(found.mapKey) || rec.mapName }),
     });
     removePlacement(uid);
     return pet;
@@ -1602,8 +1652,73 @@
     }
   }
 
+  // ---- Feeding from the pack ------------------------------------------------
+  // Feeding used to live only on the Empathize panel's beast board, which a
+  // bought, farmstead or legacy animal never reaches: its event is a bare
+  // "Animal" slot with no society profile, so the panel opened on it with no
+  // Feed action and no record to fill. The yard menu feeds every animal the
+  // same way instead.
+
+  // What in the pack an animal would eat. The panel's feeding tray owns the
+  // answer (NPCEmpathize _feedItemsInPack: food, raw meat, offal), so the yard
+  // and the panel offer the same bowl; the food tag alone stands in when the
+  // panel is not loaded.
+  const FEED_FALLBACK_TAG = /<category:\s*food>/i;
+  function feedItemsInPack() {
+    const H = window.NPCEmpathize && window.NPCEmpathize._helpers;
+    if (H && typeof H._feedItemsInPack === "function") return H._feedItemsInPack() || [];
+    if (!$gameParty) return [];
+    return $gameParty.items().filter(i => i && i.itypeId === 1 && FEED_FALLBACK_TAG.test(i.note || ""));
+  }
+
+  // Puts one of `item` in front of the animal. Spends nothing, and answers
+  // false, when the animal is already full or the pack has none left.
+  function feedFromPack(rec, item) {
+    if (!rec || !item || !$gameParty || !($gameParty.numItems(item) > 0)) return false;
+    updateRecordGrowth(rec);
+    if (!feedAnimal(rec)) return false;
+    $gameParty.loseItem(item, 1);
+    return true;
+  }
+
+  function feedToast(rec, key, severity) {
+    if (!window.ParchmentToast) return;
+    window.ParchmentToast.show(T(key, { animal: rec.animalId }), { severity });
+  }
+
+  // The bowl: a choice of everything in the pack the animal would eat.
+  function offerFeed(rec, def, event) {
+    updateRecordGrowth(rec);
+    if (nutritionOf(rec) >= 100) { feedToast(rec, 'AnimalGrowth.notHungry', 'info'); return; }
+    const items = feedItemsInPack();
+    if (!items.length) { feedToast(rec, 'AnimalGrowth.nothingToFeed', 'warning'); return; }
+    const labels = items.map(i => T('AnimalGrowth.feedChoice', { item: i.name, qty: $gameParty.numItems(i) }));
+    labels.push(T('AnimalGrowth.actionCancel'));
+    $gameMessage.setChoices(labels, 0, labels.length - 1);
+    $gameMessage.setChoiceBackground(0);
+    $gameMessage.setChoicePositionType(2);
+    $gameMessage.setChoiceCallback((n) => {
+      const item = items[n];
+      if (!item) return;
+      setTimeout(() => {
+        try {
+          if (!feedFromPack(rec, item)) { feedToast(rec, 'AnimalGrowth.notHungry', 'info'); return; }
+          SoundManager.playUseItem();
+          feedToast(rec, 'AnimalGrowth.fed', 'good');
+          // A wardrobe animal's life remembers whose hand it ate from, as it
+          // does when fed from the panel (NPCLife_Animals).
+          const name = eventNpcName(event);
+          if (name && animalNpcRecords()[name] === rec) {
+            const leader = $gameParty.leader && $gameParty.leader();
+            window.NPCLifeSim?.Animals?.noteFed?.(name, (leader && leader.name()) || "");
+          }
+        } catch (e) { console.error("[AnimalGrowth] feeding", e); }
+      }, 0);
+    });
+  }
+
   // The menu itself. Built rather than authored, so an animal added to the
-  // wardrobe tomorrow offers the same three things with no event to edit.
+  // wardrobe tomorrow offers the same things with no event to edit.
   function showAnimalMenu(event) {
     const rec = animalBehind(event);
     const def = rec && ANIMAL_DB[rec.animalId];
@@ -1613,6 +1728,7 @@
     const ids = [];
     const labels = [];
     if (hasReadyProduce(rec, def)) { ids.push("collect"); labels.push(T('AnimalGrowth.actionCollect')); }
+    ids.push("feed");      labels.push(T('AnimalGrowth.actionFeed'));
     ids.push("pet");       labels.push(T('AnimalGrowth.actionPet'));
     ids.push("empathize"); labels.push(T('AnimalGrowth.actionEmpathize'));
     ids.push("cancel");    labels.push(T('AnimalGrowth.actionCancel'));
@@ -1623,15 +1739,16 @@
     $gameMessage.setChoiceCallback((n) => {
       const id = ids[n];
       if (id === "empathize") { openEmpathizeOn(event); return; }
-      if (id !== "collect" && id !== "pet") return;
+      if (id !== "collect" && id !== "pet" && id !== "feed") return;
       // The choice is answered from inside the box that asked it, and that box
       // clears the message on its way out: anything said here is wiped before a
       // single frame of it is drawn, which is why Pet used to look like it did
       // nothing at all. So the answer waits for the frame after the close.
       setTimeout(() => {
         try {
-          if (id === "collect") collectFromAnimal(rec, def);
-          else                  petAnimal(rec, def, event);
+          if (id === "collect")   collectFromAnimal(rec, def);
+          else if (id === "feed") offerFeed(rec, def, event);
+          else                    petAnimal(rec, def, event);
         } catch (e) { console.error("[AnimalGrowth] animal menu", e); }
       }, 0);
     });
@@ -1878,7 +1995,7 @@
       const item = $dataItems ? $dataItems[prod.itemId] : null;
       const timer = rec.produceTimers ? rec.produceTimers[`p${i}`] : undefined;
       const needed = prod.interval * MINUTES_PER_DAY;
-      const elapsed = timer === undefined ? 0 : Math.max(0, now - timer);
+      const elapsed = fedProgress(rec, `p${i}`);
       return {
         itemId: prod.itemId,
         iconIndex: item ? item.iconIndex : 0,
@@ -2172,6 +2289,8 @@
     nutritionOf:        (rec) => nutritionOf(rec),
     isHungry:           (rec) => isHungry(rec),
     feedAnimal:         (rec) => feedAnimal(rec),
+    feedFromPack:       (rec, item) => feedFromPack(rec, item),
+    feedItemsInPack:    () => feedItemsInPack(),
     ageDaysOf:          (rec) => ageDaysOf(rec),
     ageLabelOf:         (rec) => ageLabelOf(rec),
     keepCompany:        (rec, def) => keepCompany(rec, def),

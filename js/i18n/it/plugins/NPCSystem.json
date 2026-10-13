@@ -3,7 +3,7 @@
   "shopkeeperFallback": "Negoziante",
   "frontier": "Frontiera",
   "placeOfCountry": "{place} di {country}",
-  "placeSettlement": "Insediamento: {place}",
+  "placeSettlement": "Insediamento di {place}",
   "thought": {
     "flee": {
       "named": [
@@ -76,9 +76,9 @@
     "talk": "Parla",
     "empathize": "Empatizza",
     "cancel": "Annulla",
-    "silent": "Ti guarda attraverso, con la mente altrove.",
-    "otherParty": "In viaggio con il gruppo di {leader}",
-    "readOnly": "Appartiene a un altro viaggio. Puoi parlare, e nulla più.",
+    "silent": "Non risponde.",
+    "otherParty": "In viaggio con il Party di {leader}",
+    "readOnly": "Nel Party di un altro giocatore. Puoi solo parlare.",
     "join": "Chiedigli di unirsi"
   },
   "towerWorldOfFloor": "{world}, piano {floor}",

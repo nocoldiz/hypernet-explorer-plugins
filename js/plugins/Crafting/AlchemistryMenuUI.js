@@ -649,6 +649,9 @@
         const signature = this.stateSignature();
         if (signature !== this._signature) { this.syncAll(); return; }
 
+        // Only the bench tab lists projects; on the recipe tabs the lookup
+        // would filter and sort the whole book every frame to find nothing.
+        if (this._tab !== TAB_BENCH) return;
         const entry = this.currentEntry();
         if (entry && entry.kind === 'project' && A.isRunning(entry.project)) {
             const label = `${alch().processing} · ${A.formatMinutes(A.minutesLeft(entry.project))}`;

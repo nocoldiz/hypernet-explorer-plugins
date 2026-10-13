@@ -1293,26 +1293,32 @@ AudioManager.continueBuffer = function(buffer) {
 	buffer.currentlyPaused = false;
 };
 
+// A channel that could not be started (no file name, or a play that was
+// refused) has no buffer to carry its spatial data, and the load must go on
+// without it rather than throw half way through extracting the save.
 AudioManager.initializeSpatialAudioOnStart = function(data) {
-	for (var i = 0; i < data.bgm.length; i++) {
-		const dt = data.bgm[i];
+	if (!data) return;
+	const bgms = Array.isArray(data.bgm) ? data.bgm : [];
+	const bgss = Array.isArray(data.bgs) ? data.bgs : [];
+	for (var i = 0; i < bgms.length; i++) {
+		const dt = bgms[i];
 		if (dt.spatialData) {
 			var bgm = {name: dt.filename, pitch: dt.pitch, volume: 0};
 			AudioManager.playMushBgm(bgm, dt.channel, dt.autoRemover, dt.pause);
 			const buffer = AudioManager.getBgmFromChannel(dt.channel);
-			buffer.spatialData = dt;
+			if (buffer) buffer.spatialData = dt;
 		} else {
 			var bgm = {name: dt.filename, pitch: dt.pitch, volume: dt.volume};
 			AudioManager.playMushBgm(bgm, dt.channel, dt.autoRemover, dt.pause);
 		}
 	}
-	for (var i = 0; i < data.bgs.length; i++) {
-		const dt = data.bgs[i];
+	for (var i = 0; i < bgss.length; i++) {
+		const dt = bgss[i];
 		if (dt.spatialData) {
 			var bgs = {name: dt.filename, pitch: dt.pitch, volume: 0};
 			AudioManager.playMushBgs(bgs, dt.channel, dt.autoRemover, dt.pause);
 			const buffer = AudioManager.getBgsFromChannel(dt.channel);
-			buffer.spatialData = dt;
+			if (buffer) buffer.spatialData = dt;
 		} else {
 			var bgs = {name: dt.filename, pitch: dt.pitch, volume: dt.volume};
 			AudioManager.playMushBgs(bgs, dt.channel, dt.autoRemover, dt.pause);
@@ -2006,6 +2012,22 @@ AudioManager.generalClearMushBgss = function() {
 	}
 };
 
+// Every channel off at once, fading or not, with no player to tell: the
+// session they belonged to is over (back at the title, or replaced by a
+// save being read in). The stock stopBgs never reaches these channels, so
+// rain or a spatial bed left on one played on over the title and into the
+// next game.
+AudioManager.clearAllMushChannels = function() {
+	const all = this._bgmBuffers.concat(this._bgsBuffers);
+	this._bgmBuffers = [];
+	this._bgsBuffers = [];
+	this._bgmRemover = [];
+	this._bgsRemover = [];
+	for (const buffer of all) {
+		try { buffer.destroy(); } catch (e) { /* never loaded */ }
+	}
+};
+
 
 //==============================================================================================================
 // * 2.08 : Audio Manager - Spatial SE Player
@@ -2125,53 +2147,76 @@ AudioManager.pauseVsc = function(channel) {
 // * 2.10 : Audio Manager - ME Section
 //==============================================================================================================
 
+// A jingle pauses the extra BGM/BGS channels (weather rain, spatial beds) and
+// gives them back when it ends. Only what the jingle itself paused is given
+// back, and only once, when the LAST jingle ends: a second ME started over the
+// first goes through the engine's stopMe on its way in, and that is not the
+// end of the music break. A channel paused by something else (a plugin
+// command) stays paused, and one that started during the jingle and is
+// already playing is not restarted from the top.
 Mush.alias.AudioManager_PlayMe_001 = AudioManager.playMe;
 AudioManager.playMe = function(me) {
-	if (me.name) {
-        if (this._meBuffer == null) {
-        	this.me_stopAllBgmBgs();
-        }
-    }
-    Mush.alias.AudioManager_PlayMe_001.call(this, me);
+	const replacing = !!this._meBuffer;
+	if (me && me.name && !replacing) {
+		this.me_stopAllBgmBgs();
+	}
+	// The engine's playMe calls stopMe first: with a jingle already on air
+	// and another one taking its place, that stop must not end the break.
+	this._meReplacing = replacing && !!(me && me.name);
+	try {
+		Mush.alias.AudioManager_PlayMe_001.call(this, me);
+	} finally {
+		this._meReplacing = false;
+	}
 };
 
 Mush.alias.AudioManager_StopMe_001 = AudioManager.stopMe;
 AudioManager.stopMe = function() {
-    if (this._meBuffer) {
-        AudioManager.me_restartAllMushBgmBgs();
-    }
-    Mush.alias.AudioManager_StopMe_001.call(this);
+	const ending = !!this._meBuffer && !this._meReplacing;
+	Mush.alias.AudioManager_StopMe_001.call(this);
+	if (ending) {
+		AudioManager.me_restartAllMushBgmBgs();
+	}
 };
 
 AudioManager.isMePlaying = function() {
 	if (this._meBuffer) {
-		this._meBuffer.isPlaying();
+		return this._meBuffer.isPlaying();
 	} else {
 		return false;
 	}
 };
 
 AudioManager.me_stopAllBgmBgs = function() {
+	const pause = (buffer, pauseFn) => {
+		if (!buffer || buffer.currentlyPaused) return;
+		if (buffer.isPlaying && !buffer.isPlaying()) return;
+		pauseFn.call(AudioManager, buffer.channel);
+		buffer._pausedByMe = true;
+	};
 	for (var i = 0; i < this._bgmBuffers.length; i++) {
-		const buffer = this._bgmBuffers[i];
-		AudioManager.pauseMushBgm(buffer.channel);
+		pause(this._bgmBuffers[i], AudioManager.pauseMushBgm);
 	}
 	for (var i = 0; i < this._bgsBuffers.length; i++) {
-		const buffer = this._bgsBuffers[i];
-		AudioManager.pauseMushBgs(buffer.channel);
+		pause(this._bgsBuffers[i], AudioManager.pauseMushBgs);
 	}
 };
 
 AudioManager.me_restartAllMushBgmBgs = function() {
-	for (var i = 0; i < this._bgmBuffers.length; i++) {
-		const buffer = this._bgmBuffers[i];
-		AudioManager.continueMushBgm(buffer.channel);
+	let resumed = 0;
+	const resume = (buffer) => {
+		if (!buffer || !buffer._pausedByMe) return;
+		buffer._pausedByMe = false;
+		if (!buffer.currentlyPaused) return;
+		AudioManager.continueBuffer(buffer);
+		resumed++;
+	};
+	(this._bgmBuffers || []).slice().forEach(resume);
+	(this._bgsBuffers || []).slice().forEach(resume);
+	if (resumed && typeof $gamePlayer !== 'undefined' && $gamePlayer &&
+		$gamePlayer.requestSpatialAudioUpdate_full) {
+		$gamePlayer.requestSpatialAudioUpdate_full();
 	}
-	for (var i = 0; i < this._bgsBuffers.length; i++) {
-		const buffer = this._bgsBuffers[i];
-		AudioManager.continueMushBgs(buffer.channel);
-	}
-	$gamePlayer.requestSpatialAudioUpdate_full();
 };
 
 
@@ -2371,8 +2416,10 @@ DataManager.makeSaveContents = function() {
 
 Mush.alias.DataManager_ExtractSaveContents_002 = DataManager.extractSaveContents;
 DataManager.extractSaveContents = function(contents) {
+    // The save's channels replace the session's, as its BGM and BGS do.
+    AudioManager.clearAllMushChannels();
     Mush.alias.DataManager_ExtractSaveContents_002.call(this, contents);
-    AudioManager.initializeSpatialAudioOnStart(contents.mushAudio);
+    AudioManager.initializeSpatialAudioOnStart(contents && contents.mushAudio);
 };
 
 DataManager.makeMushAudioContents = function() {
@@ -2999,6 +3046,20 @@ Scene_GameEnd.prototype.commandToTitle = function() {
 
 
 //==============================================================================================================
+// * 5.06 : Scene Title
+//==============================================================================================================
+
+// Game End is only one road back to the title: a permadeath grave, a failed
+// load and the title's own menu all take another, and none of them reached the
+// channels above. Whatever is still on one when the title starts is cut.
+Mush.alias.Scene_Title_Start_002 = Scene_Title.prototype.start;
+Scene_Title.prototype.start = function() {
+    AudioManager.clearAllMushChannels();
+    Mush.alias.Scene_Title_Start_002.call(this);
+};
+
+
+//==============================================================================================================
 // * 6.01 : Window Options
 //==============================================================================================================
 
@@ -3146,7 +3207,10 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
                 try {
                     const fs = require('fs');
                     const path = require('path');
-                    const root = path.join(process.cwd(), BGM_DIR);
+                    // The game folder, not the working directory a launcher left behind.
+                    const base = (process.mainModule && process.mainModule.filename)
+                        ? path.dirname(process.mainModule.filename) : process.cwd();
+                    const root = path.join(base, BGM_DIR);
                     raw = walkLibrary(
                         d => fs.readdirSync(d),
                         f => { try { return fs.statSync(f).isDirectory(); } catch (e) { return false; } },
@@ -3415,7 +3479,17 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
 
             win.addEventListener('hypernet-closed', () => {
                 cancelAnimationFrame(state.raf);
-                try { if (state.analyser) state.analyser.disconnect(); } catch (e) {}
+                // The tap hangs off the master gain, so it is that edge that
+                // has to go: a disconnect of the analyser's own (unused)
+                // output left it fed and processed for every window ever
+                // opened.
+                try {
+                    if (state.analyser) {
+                        if (WebAudio._masterGainNode) WebAudio._masterGainNode.disconnect(state.analyser);
+                        state.analyser.disconnect();
+                    }
+                } catch (e) {}
+                state.analyser = null;
                 if (state.touched) {
                     if (state.savedBgm && state.savedBgm.name) AudioManager.replayBgm(state.savedBgm);
                     else AudioManager.stopBgm();
@@ -3431,7 +3505,7 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
         if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;
         window.HypernetOS.registerApp({
             id: APP_ID,
-            name: T('MUSH_Audio_Engine.hyperamp.appName'),
+            name: () => T('MUSH_Audio_Engine.hyperamp.appName'),
             icon: 80,
             category: 'media',
             launchFn: () => window.HyperAmp.launch(),
@@ -3484,21 +3558,48 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
         if (typeof require === 'function') {
             fs = require('fs');
             path = require('path');
-            root = process.cwd();
+            root = gameRoot();
         }
     } catch (e) {
         fs = null;
     }
+    if (!root) fs = null;
+
+    // The folder index.html sits in, found the way AssetCaseResolver.js and
+    // js/asset_decrypt.js find it. The working directory is NOT it: a launcher,
+    // a shortcut or Steam may start NW.js from anywhere, and a check made
+    // against the working directory would then miss every encrypted twin.
+    function gameRoot() {
+        if (typeof process === 'object' && process && process.mainModule &&
+            process.mainModule.filename) {
+            return path.dirname(process.mainModule.filename);
+        }
+        try {
+            const loc = typeof window === 'object' && window.location;
+            if (loc && loc.protocol === 'file:') {
+                let file = decodeURIComponent(loc.pathname || '');
+                if (/^\/[A-Za-z]:/.test(file)) file = file.slice(1);
+                if (file) return path.dirname(file);
+            }
+        } catch (e) {
+            // fall through: no root known
+        }
+        return '';
+    }
 
     // js/asset_decrypt.js patches existsSync to answer for the twin as well, so
     // the check has to be made against the raw suffixed name, which no patch
-    // rewrites.
+    // rewrites. The plain url is chosen only when the plain file is really
+    // there and its twin is not: if neither is found the folder being looked
+    // in cannot be the game's, and the build's own word (System.json says all
+    // audio is encrypted) is trusted instead.
     function twinExists(url) {
         if (!fs) return true;
         if (url in twinCache) return twinCache[url];
         let exists = true;
         try {
-            exists = fs.existsSync(path.join(root, decodeURIComponent(url) + '_'));
+            const file = path.join(root, decodeURIComponent(url));
+            exists = fs.existsSync(file + '_') || !fs.existsSync(file);
         } catch (e) {
             exists = true;
         }
@@ -3532,5 +3633,5 @@ WebAudio.prototype.volumeTransition = function(startVolume, endVolume, time) {
         return _WebAudio_readableBuffer.call(this);
     };
 
-    window.PlainAudioFallback = { isEncryptedBuffer, twinExists };
+    window.PlainAudioFallback = { isEncryptedBuffer, twinExists, root: () => root };
 })();

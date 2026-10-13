@@ -1,3 +1,185 @@
+0.8.6a
+
+Skills rework:
+ - reworked every school so each skill has its own role
+ - skillmaster: one tree per school, simple skills first, forbidden last, esoteric spells as optional side branches
+ - incantations reworked to be serious (pataphysic ones are memes) and translated to italian
+ - solomon chant logs random lines, the full chant with the grimoire
+ - checked every skill's name, effect, message and italian text
+ - elemental schools: soak, freeze and burn setups, with payoffs on wet, frozen or burning foes
+ - aeromancy and electromancy play fast: pokes, chain arcs, buff strips
+ - geomancy is slow and heavy: armour break, lockdown, stone walls
+ - arcanism, psychic and void fight magic: mana burn, wards, reflection, lockdowns, erasure
+ - chaos, forbidden and necromancy trade hp, mp or luck for power
+ - astral drops sky nukes and steals turns, meta magic edits the numbers
+ - healing, holy, pastoral and status magic: one cure or affliction per spell
+ - illusion makes the party hard to hit and foes blind, confused or asleep
+ - swordsmanship, martial arts, roguery and void: openers mark a foe, finishers cash it in
+ - firearms, hunting and tactical: each round or tool one job, big finishers have a drawback
+ - leadership orders share ap and mp, performance songs each own one effect
+ - bestial, cooking, vocation, convokation, alchemistry and technomagical split into clear one job skills
+ - soul readings, age whisper, flicker, efficiency surge, taunt diversion and master theft work again
+ - guard broken guarding, endless vulnerability and hp costs wounding every limb fixed
+ - esoteric tag only on world and time spells
+
+Spell effects:
+ - workbench, fusion, enchanting and the forge build with skill tags, shown on skill, item and equip cards
+ - weapon drills raise proficiency, stances switch blows to cutting, blunt or piercing
+ - aimed skills hit a chosen body part: headshots, kneecaps, joint locks
+ - firearm bursts spend magazine rounds, new tactical reload and pistol whip
+ - bullet time slows enemy bullet hell, enemy ultimates open dodge phases
+ - life link shares damage, guardian bond shields allies
+ - element reactions: thunder paralyses wet foes, fire ignites oil, blows shatter ice
+ - psychic mind control: loop, seal, rebound, puppet, turncoat, echo, mind read
+ - chi, souls and faith stacks, payoff skills spend combo, lock on, focus and hide
+ - doom, fuse bomb and delayed heal go off when they expire
+ - lock on ignores evasion, perfect focus never misses, unbalanced foes can stumble
+ - provoke taunts, shadow veil gives evasion, oily no longer curses attacks
+ - status ailment block also covers freeze, bleeding, burns and holds
+ - map battle mode respects taunts, hide and target rerolls
+
+Added:
+ - levitation spells and flight skills
+ - equipping a wing grants the flight skill
+ - bodyparts tab in character creation, simple and detailed mode
+ - healing crystals teleport the party to discovered crystals
+ - playtest force new story title button that erases all story saves
+ - trial system command to start the eris boss battle
+ - news rework: hyperpower newspapers, npc journalists, newspaper reader, 2002 news
+ - playtest story debug title button: Em level 10 with Bubba
+ - eris exchange with em and bubba, tower stakes and duel challenge
+ - demo build sets demo switch on in story mode and new party
+ - popup granting temporary ship controls on first spaceship visit outside story mode
+ - world manager: export characters or the party as qr code, move inactive members to other worlds
+ - character creation imports party cards above the fixed presets
+ - startinmovie intro before a new story, also in the minigames list
+ - galaxy trade, 3D pizza maker, pizza bases and per vehicle storage
+ - earthlike planets use earth biomes with human colony spaceports
+ - bespoke ff8 style 3D models for the 250 low level enemies
+ - emotional states for npcs and party, shown when empathizing and in the brain menu
+ - party members teach each other skills and specializations when empathizing
+ - dargos lore from the zanfretta case, titania and the mysterious device
+ - kessler syndrome ring in the biome sky, lit at night
+ - dvorak new world, 1812 overture and blue danube in the titlescreen music
+ - italian translation for every anomaly adventure
+ - english i18n, story mode and tutorial translated to Naguka
+ - teleport cutscene can be skipped
+
+Changed:
+ - reworked skill specials into short names, held by few spells
+ - surgery menu uses the same improvements as the augment menu
+ - secondary archetype grants its peculiar parts, like wings for avians
+ - reworked creation body parts tab as the status grid with skills
+ - augment always active label replaced with always synced
+ - eris gets totally random textures each turn
+ - reworked story difficulties, blood and oil lets em and bubba die
+ - reverted intro movie to play before story char creation, force new story too
+ - reworked augments menu on the inventory ui, with body part tabs
+ - em story mode: description and 3d model switched back
+ - bubba combat explanation uses much less accent and adds no topics
+ - removed simple or already done roadmap long term goals
+ - bologna teleport, fast travel and map labels marked (WIP)
+ - char creation tabs restored to the top, remove member button for non leaders
+ - universally wider scrollbars, controller reliably scrolls overflowing text
+ - steam builds now remove every bat, sh and py file
+ - build no longer deletes work in progress maps that transfers lead into
+ - spellchecked eris_tower and translated it in italian
+ - Em and 3D portrait speakers talk as live posing models in dialog busts
+ - char creation tabs are now a column on the left
+ - fixed performance problems on empathize and main menu screens
+ - char creation menu no longer redraws the whole UI on selection
+ - reworked omega tower in the intro movie style, drawn on the world map
+ - intro movie weapon forms attack differently, the moon blocks them
+ - roadmap: a title button, lists most features and goals, lower percentages, narrower with bigger text
+ - title language selector moved to the right
+ - reworked i18n text: less wordy, correct italian, no english leaks
+ - item, shop and skill menus show info as tags, no item lore
+ - hovered and pressed buttons much darker
+ - char creation: bust and description swapped, description tab in detailed mode
+ - reworked 3D monster editor: keyboard and pad, shared look
+ - item and creature 3D editors, liminal walk and drive marked (WIP)
+ - reworked vector gun form: spells play the attack animation only in base gun form
+ - performance: map lights, toasts, animated water, biomebg, npc movement, fights and thoughts
+ - maps missing troops use their radial level bracket, banners show median level
+ - no rage skills on enemies under level 10
+ - steal and mug only take items the enemy drops
+ - crafted items use fixed quality levels grouped by tier
+ - repeating a dialogue option bores the npc and lowers opinion
+ - joined monsters without Talk tag are non sentient, pets train accordingly
+ - goblin horde starts in scandinavia, holds it until 2005, then expands
+ - removed the travel malus on the earth map
+ - demo mode opens only floors 1, secret 1 and -1
+ - surfing pump and brake on arrows and pad, up and down no longer tilt the camera
+ - diary opens on the last page
+ - no map label on train start
+ - placeholder checker and verify tools handle alternation, pronouns and windows line endings
+
+Fixed:
+ - broomstick and flight cannot cross terrain 7 tiles on interiors
+ - initial movie no longer a black screen for storymode, Em in default colours
+ - battle against eris in eris trial plays fully, with mocking resurrections
+ - startin movie no longer shows black after story creation
+ - em bust mode lighting no longer too dark or too light
+ - fix roadmap upper options appearing separate
+ - title screen no longer shows bubba join the party
+ - fix bubba bust and name tag in the eris tower scene
+ - map 402 battleback pointed to a removed background
+ - named empty switches referenced in code
+ - worldmap square info appears next to the clicked tile, buttons fixed
+ - fixed every failing test
+ - weapon sculptor no longer crashes on redraw
+ - empathize wiki leaders shelf no longer crashes
+ - game icon is now the square camper, store screenshots 1920x1080
+ - story mode start goes straight to char creation and plays the intro
+ - export_intro_movie.bat uses RPG Maker MZ's NW.js
+ - character creation: double payments, skipped embark, duplicate pet, lost bag and gold, trait points and badges
+ - character creation: blank scenario cash, creature dossier bodies, randomize all kit
+ - 3D monster editor limbs, move arrows and undo
+ - monster models: parts stay connected, no gun burgers, riders astride, mounts and dragonfly wings upright
+ - memory leaks in 3D enemies, minigames, weapon hits, biome background, compass and clock
+ - battles without webgl or with a broken 3D model fall back to sprites
+ - audio: radio, rain, night and weather sounds no longer leak into battles, the title or loads
+ - footsteps at 0 silent, music player hides unplayable genres, encrypted audio always found
+ - pad and keyboard: stuck directions, diagonal stick, dpad choice cursor, text field keys
+ - dead npcs no longer keep jobs, pay, houses, census entries or travel
+ - wards follow their guardian and are rehomed when it dies
+ - office holders and newborns no longer created as animals, polities capped at six politicians
+ - 11 factions could never gain or lose standing
+ - onu sitting: party no longer walks around or gets stuck after an error
+ - field battles: troops and members can die and win, results kept, beaten armies gone, army list stable
+ - battle: free escape, surrender vs bosses, losing cleanup, refused battles, end of round checks
+ - battle: summons, bullet hell kills, thrown items, vector switch, colosseum respawn, leader handoff
+ - dual wield deals more damage, firearm bursts and off hand swing kept
+ - minigames: piano, scratch cards, bubble pop, free arcade, snake score, fishing, card duel loss
+ - diary logs pool, bowling, basketball, tarot, scratch cards and boosters
+ - liminal world: soft locks, black screens, saves at sea, free play kept, block bar removed
+ - spell fusion, lobotomagic, forgotten grimoire and expression bench misfires
+ - expressions: EveryTurn fires, early rounds counts rounds
+ - medicine: no double doses, works from the menu, virtuahealer and amputation fixed
+ - map state survives saves and map sliding: elevators, dives, doors, torches, trees, hatch, rivers
+ - tower bands, opened chests, crates, traps and house doors no longer reset or bleed into other squares
+ - teleports: stairs, ropes, menus, surfacing and world layers land on the right tile
+ - dreams shift again, dungeon fade no longer touches every map
+ - farming: feeding, unripe harvests, farm herds, bee queens and honey
+ - loot: items above id 1500 drop again, treasure room doors stay consistent
+ - pets and companions no longer freeze, double up or land on the leash
+ - shops: stockbusters, vending, counter, conjured sales, double clicks, pickpocket money
+ - equipment: slots, drag swaps, missing armour ids, target picker, carry weight, self target items
+ - building: drag drawing no longer erases or double charges, one warning when out of materials
+ - pc apps: token exchange, notepad, my computer and reopening windows
+ - quests: contracts, notice escrow, second hunts, warrants for the dead
+ - rent, work shift menu, prison sentence and skeleton key crime across saves and days
+ - automatic doors close after 1 sec without blocking
+ - F4 fullscreen saved, reset defaults keeps language and fullscreen
+ - failed load returns to title, history viewer keeps the active world, journal shows its own run
+ - crashes: book viewer, dice roll menu, Lichdom, pixel art canvas
+ - trading cards away removes them from decks, npc card swaps work
+ - daily skill teacher shows euros and checks requirements
+ - item data: gunmancer skills, premium armour resistances, dragon scale amulet, reach tags, mana pools
+ - world data: ambience, factions, greenwitch ownership, npc sheets, horde litter, piratespeak mod
+ - night vision fireflies no longer vanish after a menu or battle
+
+
 0.8.5a
 
 Added:

@@ -131,8 +131,11 @@
       if (window.NPCCreature?.mayHoldMoney?.(tp, thief.eventName) === false) return false;
       const [lo, hi] = StreetCrime.STEAL_SHARE;
       const share = lo + Math.random() * (hi - lo);
-      const amount = Math.max(1, Math.min(StreetCrime.STEAL_CAP, Math.floor((mp.money || 0) * share)));
-      mp.money = Math.max(0, (mp.money || 0) - amount);
+      // The thief gains exactly what the mark loses: never more than the whole
+      // gold in the pocket, and nothing at all from an empty one or a fraction.
+      const held = Math.max(0, Math.floor(mp.money || 0));
+      const amount = Math.min(held, StreetCrime.STEAL_CAP, Math.max(held > 0 ? 1 : 0, Math.floor(held * share)));
+      mp.money = (mp.money || 0) - amount;
       tp.money = (tp.money || 0) + amount;
       tp.moralityScore = Math.max(-100, (tp.moralityScore ?? 0) - 2);
       // A thief dressed not to be seen is noticed less (their Stealth look).
@@ -142,6 +145,7 @@
       const money = StreetCrime._money(amount);
       const piece = StreetCrime.liftValuable(thief.eventName, mark.eventName);
       if (!noticed) {
+        if (!piece && amount <= 0) return true; // an empty pocket: nothing to tell the street
         StreetCrime.notify(piece
           ? T('NPCSystem.streetCrime.pickpocketValuable', { thief: thief.eventName, victim: mark.eventName, item: piece.label })
           : T('NPCSystem.streetCrime.pickpocket', { thief: thief.eventName, victim: mark.eventName, amount: money }),

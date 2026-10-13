@@ -1,11 +1,11 @@
 {
   "bubbaRefusesJoin": "\"Qualcuno deve tenere insieme il camper, guagliò. Vai avanti tu.\"",
-  "partyFull": "Il tuo gruppo è al completo.",
+  "partyFull": "Il tuo Party è al completo.",
   "introduce": "Il mio nome è {name} e sono un {className}",
-  "joinsParty": "{name} si unisce al gruppo!",
+  "joinsParty": "{name} si unisce al Party!",
   "residence": "Residenza",
-  "joinedInactive": "{name} si unisce, ma non c'è posto sulla strada: attende tra le riserve.",
-  "benchedLore": "{name} ha accettato di viaggiare con il gruppo, e da allora attende un posto al suo interno.",
+  "joinedInactive": "{name} si unisce, ma il Party è pieno. Attende tra le Riserve.",
+  "benchedLore": "{name} ha accettato di viaggiare con il Party, e da allora attende un posto al suo interno.",
   "lodging": {
     "halls": "la Sala delle Scale",
     "house": "la casa a {place}",

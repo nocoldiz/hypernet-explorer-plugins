@@ -1,13 +1,13 @@
 {
   "stat": "Statistica",
-  "fighter": "Sfidante",
+  "fighter": "Combattente",
   "uses": "{user} usa {skill}!",
-  "no3d": "Sistema 3D non disponibile: impossibile aprire il torneo",
-  "chooseFighter": "Torneo dei Mostri - Scegli il tuo sfidante",
-  "fighterOf": "Sfidante {index} / {total}",
+  "no3d": "3D non disponibile: impossibile aprire il torneo.",
+  "chooseFighter": "Torneo dei Mostri - Scegli il tuo combattente",
+  "fighterOf": "Combattente {index} / {total}",
   "doubleBet": "Raddoppia la puntata (+{bet})",
   "noTokens": "Nessun gettone disponibile!",
-  "placeBet": "{name} - Punta",
+  "placeBet": "{name} - Piazza la puntata",
   "wins": "{name} VINCE!",
   "defeated": "{name} è stato sconfitto...",
   "eliminated": "{name} è stato eliminato",
@@ -22,6 +22,23 @@
     "hp": "HP",
     "mp": "MP",
     "tp": "AP",
-    "time": "TEMPO"
+    "time": "TEMPO",
+    "available": "Disponibili: {count}",
+    "combatPower": "Potenza di combattimento: {power}"
+  },
+  "advances": "{name} passa al turno successivo!",
+  "bout": "{round}: {a}  CONTRO  {b}",
+  "round": {
+    "final": "FINALE",
+    "semi": "SEMIFINALE",
+    "quarter": "QUARTI DI FINALE",
+    "other": "TURNO"
+  },
+  "popup": {
+    "down": "K.O.",
+    "miss": "MANCATO",
+    "mp": "{n} MP",
+    "buffUp": "{param} in aumento",
+    "buffDown": "{param} in calo"
   }
 }

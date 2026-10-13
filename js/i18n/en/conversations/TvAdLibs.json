@@ -52,7 +52,7 @@
     "If you can hear this {you are still in range|the transmitter is still reaching you|you are inside the range}. Stay in range.",
     "{Knock next door|Check on your neighbours|Look in on the house next door}, {then get back inside|then stay in|and then stay indoors}.",
     "{This is not a drill|It is not a drill}. {We said it might be. It is not|Nobody is pretending otherwise now|We have stopped saying it might be}.",
-    "{Torch, water, papers, radio|Water, torch, papers|Papers, water, a torch}. {By the door|In a bag by the door|Bag it and put it by the door}. {Tonight, not tomorrow|Now, please|Do it now}."
+    "{Torch, water, papers, radio|Water, torch, papers|Papers, water, a torch}. {By the door|In a bag by the door|Bag it and put it by the door}. {Tonight, before bed|Now, please|Do it now}."
   ],
   "cryptic": [
     "...the gap between two frames is {where it lives|where it waits|where it keeps itself}...",
@@ -91,7 +91,7 @@
     "This is the bit people skip. {Please don't|Don't skip it|Please do not skip it}.",
     "Take notes. {Notes tend to outlast us|Paper resets slower than people do|Notes last longer than we do}.",
     "This part matters, so {I am going to say it twice|say it with me|I'll say it twice}. This part matters.",
-    "Understanding {is not memory|will not hold the way memory holds}, {but it is the next best anchor|but it holds better than nothing|and it is what we have}.",
+    "Understanding {is second to memory|will not hold the way memory holds}, {but it is the next best anchor|but it holds better than nothing|and it is what we have}.",
     "{Say it out loud once|Say it back to yourself|Repeat it once} before we go on. {I know how that sounds. It helps|It does help|It helps}.",
     "{Nobody was born knowing this|None of this is instinct|You are not meant to know it already}. {Somebody had to learn it first|All of it was learned by somebody|It is all learned}.",
     "{Have you got a pen|Pen, if you have one|Go and get a pen}? {Go on, I'll wait|I'll wait|We're overrunning anyway, I have time}."

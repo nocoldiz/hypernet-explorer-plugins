@@ -501,9 +501,29 @@
     "group": "topics",
     "order": 16440,
     "keyword": "Dargos",
-    "synonyms": [],
+    "synonyms": [
+      "Dargo",
+      "Dargos Embassy",
+      "Titanians",
+      "Ambasciata Dargos",
+      "Titaniani"
+    ],
     "title": "DialogueTopics.theDargos.title",
     "description": "DialogueTopics.theDargos.description",
+    "image": ""
+  },
+  "titaniaWorld": {
+    "type": "topic",
+    "group": "topics",
+    "order": 16445,
+    "keyword": "Titania",
+    "synonyms": [
+      "Teetonia",
+      "Planet Titania",
+      "Pianeta Titania"
+    ],
+    "title": "DialogueTopics.titaniaWorld.title",
+    "description": "DialogueTopics.titaniaWorld.description",
     "image": ""
   },
   "hillIncident": {
@@ -522,10 +542,36 @@
     "order": 16460,
     "keyword": "Zanfretta Incident",
     "synonyms": [
-      "Zanfretta"
+      "Zanfretta",
+      "Pier Fortunato Zanfretta",
+      "Pierfortunato Zanfretta",
+      "Fortunato Zanfretta",
+      "Zanfretta case",
+      "Marzano di Torriglia",
+      "Scoffera Pass",
+      "Caso Zanfretta",
+      "Incidente Zanfretta",
+      "Passo della Scoffera"
     ],
     "title": "DialogueTopics.zanfrettaIncident.title",
     "description": "DialogueTopics.zanfrettaIncident.description",
+    "image": ""
+  },
+  "zanfrettaSphere": {
+    "type": "topic",
+    "group": "topics",
+    "order": 16465,
+    "keyword": "Zanfretta Sphere",
+    "synonyms": [
+      "Mysterious Device",
+      "Dargos Sphere",
+      "Dargos Device",
+      "Sfera di Zanfretta",
+      "Sfera dei Dargos",
+      "Dispositivo misterioso"
+    ],
+    "title": "DialogueTopics.zanfrettaSphere.title",
+    "description": "DialogueTopics.zanfrettaSphere.description",
     "image": ""
   },
   "jennaOfNorthpoint": {
@@ -921,7 +967,9 @@
     "group": "topics",
     "order": 16830,
     "keyword": "Main menu",
-    "synonyms": ["MENU"],
+    "synonyms": [
+      "MENU"
+    ],
     "autoDetect": false,
     "title": "DialogueTopics.topicMainMenu.title",
     "description": "DialogueTopics.topicMainMenu.description",

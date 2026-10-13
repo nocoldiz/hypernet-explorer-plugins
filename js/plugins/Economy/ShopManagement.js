@@ -1029,7 +1029,7 @@
     if (window.ParchmentToast) {
       window.ParchmentToast.report([
         T('ShopManagement.msg.initialized', { shop: shopId }),
-        T('ShopManagement.msg.category', { category: category }),
+        T('ShopManagement.msg.category', { category: tradeLabel(category) }),
         T('ShopManagement.msg.stocked')
       ], {
         severity: 'good'
@@ -2093,6 +2093,14 @@
     'Tools', 'Component', 'Crafting', 'Collectibles', 'Combat',
   ];
 
+  // A trade as the player reads it. The id stays the <Category:> tag the
+  // shelves are filled from; only its caption follows the language.
+  function tradeLabel(category) {
+    if (!category) return '';
+    const key = 'Inventory.category.' + category;
+    return (T.has && T.has(key)) ? T(key) : String(category);
+  }
+
   // The trade is the property's, not the roll of the day: the same deed is
   // always the same kind of shop, in every savegame of the world.
   function tradeForProperty(property) {
@@ -2156,7 +2164,7 @@
 
     if (window.ParchmentToast && window.ParchmentToast.show) {
       window.ParchmentToast.show(
-        T('ShopManagement.owned.bought', { shop: shop.displayName, trade: shop.category }),
+        T('ShopManagement.owned.bought', { shop: shop.displayName, trade: tradeLabel(shop.category) }),
         { title: T('ShopManagement.owned.title') }
       );
     }
@@ -2471,7 +2479,7 @@
         const held = shelves.reduce((n, r) => n + r.amount, 0);
         return `<tr>
           <td style="${TB.td}">${tbEsc(shopDisplayName(shop))}</td>
-          <td style="${TB.td}">${tbEsc(shop.category || '')}</td>
+          <td style="${TB.td}">${tbEsc(tradeLabel(shop.category))}</td>
           <td style="${TB.td} text-align:right">${tbEsc(formatEuroPrice(shop.balance || 0))}</td>
           <td style="${TB.td} text-align:right">${tbEsc(formatEuroPrice(Number(shop.earnedToday) || 0))}</td>
           <td style="${TB.td} text-align:right">${Number(shop.soldToday) || 0}</td>
@@ -2679,7 +2687,7 @@
   if (window.HypernetOS && window.HypernetOS.registerApp) {
     window.HypernetOS.registerApp({
       id: TILL_APP_ID,
-      name: T('ShopManagement.till.appName'),
+      name: () => T('ShopManagement.till.appName'),
       icon: TILL_ICON,
       category: 'economy',
       launchFn: function () { window.Tillbook.launch(); },

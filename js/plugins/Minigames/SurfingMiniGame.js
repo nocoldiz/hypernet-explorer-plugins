@@ -1186,7 +1186,7 @@
                 this._gates.push(gate);
             }
             this._box(30, 4, 0.4,
-                this._mat(0xffffff, { map: this._signTexture(this.venue || 'WAVE POOL'), emissive: 0x223344 }),
+                this._mat(0xffffff, { map: this._signTexture(this.venue || T('Surfing.msg.wavePool')), emissive: 0x223344 }),
                 HALL_MID, 9.5, MACHINE_Z - 1.7);
 
             // The gallery, and the people in it who have paid to watch you fall.
@@ -1600,7 +1600,8 @@
 
     // WASD is not the movement map everywhere in this project, so the scene
     // claims those four keys under names of its own and hands them straight
-    // back on the way out. The arrow keys keep their meaning and drive the head.
+    // back on the way out. Left / right arrows turn the head; up / down pump
+    // and brake alongside W / S (see _readInput).
     const SURF_KEYS = { 87: 'surfPump', 65: 'surfLeft', 83: 'surfBrake', 68: 'surfRight' };
 
     class Scene_SurfingGame extends Scene_MenuBase {
@@ -1642,7 +1643,7 @@
             if (!three3DReady()) {
                 this.createHud();
                 this._state = ST.ABORT;
-                this._status = 'THREE.JS IS NOT LOADED - SURFING UNAVAILABLE';
+                this._status = T('Surfing.msg.noThree');
                 return;
             }
             this._field = new WaveField(this._interior, this._rng);
@@ -1813,8 +1814,8 @@
                 this._world.fireGates();
                 this._se('Buzzer1', 70, 60);
             }
-            this._status = this._interior ? 'MACHINE ARMED' : 'SET APPROACHING';
-            this.showBanner(`WAVE ${this._waveNo} / ${WAVES_PER_HEAT}`, '#fff2c6', 1.4);
+            this._status = this._interior ? T('Surfing.msg.machineArmed') : T('Surfing.msg.setApproaching');
+            this.showBanner(T('Surfing.msg.waveBanner', { wave: this._waveNo, total: WAVES_PER_HEAT }), '#fff2c6', 1.4);
         }
 
         popUp() {
@@ -1827,16 +1828,16 @@
             const margin = F.margin(s, u.x);
 
             if (d > 9 || zc < SHOAL_Z + 6) {
-                this.showBanner('TOO EARLY', '#d9533d', 1.1);
+                this.showBanner(T('Surfing.msg.tooEarly'), '#d9533d', 1.1);
                 this._se('Buzzer1', 130, 55);
                 return;
             }
             if (d < -2.5) {
-                this._missWave('THE WAVE WENT WITHOUT YOU');
+                this._missWave(T('Surfing.msg.waveWent'));
                 return;
             }
             if (margin > 60) {
-                this._missWave('TOO FAR DOWN THE LINE');
+                this._missWave(T('Surfing.msg.tooFar'));
                 return;
             }
 
@@ -1847,13 +1848,13 @@
             this._state = ST.RIDE;
             this._rideTime = 0;
             this._status = '';
-            this.showBanner('DROP IN!', '#93d86e', 1.0);
+            this.showBanner(T('Surfing.msg.dropIn'), '#93d86e', 1.0);
             this._se('Water1', 110, 80);
         }
 
         _missWave(reason) {
             this._missed = true;
-            this.showBanner('MISSED IT', '#d9533d', 1.6);
+            this.showBanner(T('Surfing.msg.missedIt'), '#d9533d', 1.6);
             this._status = reason;
             this._state = ST.KICKOUT;
             this._timer = 1.8;
@@ -1865,7 +1866,7 @@
             this._state = ST.WIPEOUT;
             this._timer = 2.4;
             this._wipeSpin = (Math.random() < 0.5 ? -1 : 1) * (2 + Math.random() * 3);
-            this.showBanner('WIPEOUT', '#d9533d', 2.0);
+            this.showBanner(T('Surfing.msg.wipeout'), '#d9533d', 2.0);
             this._status = reason || '';
             this._se('Splash', 90, 95);
             this._se('Dive', 80, 70);
@@ -1879,7 +1880,7 @@
             this._state = ST.KICKOUT;
             this._timer = 2.0;
             this._status = reason || '';
-            this.showBanner('KICK OUT', '#e6c273', 1.6);
+            this.showBanner(T('Surfing.msg.kickOut'), '#e6c273', 1.6);
             this._se('Water3', 100, 70);
             this._bankRide();
         }
@@ -1910,8 +1911,10 @@
                 (Input.isPressed('surfLeft') || Input.isPressed('pageup') ? 1 : 0);
             return {
                 turn: turn,
-                pump: Input.isPressed('surfPump'),
-                brake: Input.isPressed('surfBrake'),
+                // Up / down (arrow keys, d-pad, left stick) pump and brake
+                // as well as W / S, so the board rides on any controller.
+                pump: Input.isPressed('surfPump') || Input.isPressed('up'),
+                brake: Input.isPressed('surfBrake') || Input.isPressed('down'),
                 tuck: Input.isPressed('shift'),
                 wave: this._swell
             };
@@ -1920,10 +1923,10 @@
         _updateLook(dt) {
             let dy = 0, dp = 0;
             const k = 1.9 * LOOK_SPEED * dt;
+            // Up / down are the pump and brake, so the head pitches on the
+            // right stick and the mouse only.
             if (Input.isPressed('left'))  dy += k;
             if (Input.isPressed('right')) dy -= k;
-            if (Input.isPressed('up'))    dp += k * 0.6;
-            if (Input.isPressed('down'))  dp -= k * 0.6;
 
             if (TouchInput.isPressed()) {
                 if (this._lastTouch) {
@@ -2008,11 +2011,11 @@
                 this._se('Water3', 120, 55);
             }
             this._status = ready
-                ? 'NOW!'
-                : (this._interior ? 'MACHINE ARMED' : 'SET APPROACHING');
+                ? T('Surfing.msg.now')
+                : (this._interior ? T('Surfing.msg.machineArmed') : T('Surfing.msg.setApproaching'));
 
             if (Input.isTriggered('ok')) this.popUp();
-            else if (d < -6) this._missWave('THE WAVE WENT WITHOUT YOU');
+            else if (d < -6) this._missWave(T('Surfing.msg.waveWent'));
 
             this._world.syncBoard(u, true);
             this._world.placeCamera(u, this._lookYaw, this._lookPitch, PADDLE_EYE, 0);
@@ -2049,7 +2052,7 @@
                 this._tubeTime += dt;
                 this._rideScore += PTS_TUBE * dt;
                 if (this._tubeTime > 0.6 && this._bannerT <= 0) {
-                    this.showBanner('IN THE BARREL', '#5fc9a8', 1.2);
+                    this.showBanner(T('Surfing.msg.barrel'), '#5fc9a8', 1.2);
                 }
             }
 
@@ -2061,26 +2064,26 @@
             switch (event) {
                 case 'carve':
                     this._rideScore += PTS_CARVE * (zone > 1 ? 1.5 : 1);
-                    this.showBanner('CARVE', '#e6c273', 0.9);
+                    this.showBanner(T('Surfing.msg.carve'), '#e6c273', 0.9);
                     this._world.emitSpray(u.x, u.y + 0.2, u.z, 18, 4, 1.4);
                     if (this._seCool <= 0) { this._se('Water2', 120, 55); this._seCool = 0.35; }
                     break;
                 case 'launch':
-                    this.showBanner('AIR', '#fff2c6', 0.9);
+                    this.showBanner(T('Surfing.msg.air'), '#fff2c6', 0.9);
                     this._se('Wind1', 130, 55);
                     break;
                 case 'land': {
                     if (u.airTime > 0.35) {
                         const spinBonus = Math.floor(u.spin / (Math.PI / 2)) * 120;
                         this._rideScore += PTS_AIR * u.airTime + spinBonus;
-                        this.showBanner(spinBonus > 0 ? 'SPIN LANDED' : 'STOMPED', '#93d86e', 1.1);
+                        this.showBanner(spinBonus > 0 ? T('Surfing.msg.spinLanded') : T('Surfing.msg.stomped'), '#93d86e', 1.1);
                     }
                     this._world.emitSpray(u.x, u.y, u.z, 16, 3.5, 1.0);
                     this._se('Water1', 105, 60);
                     break;
                 }
                 case 'crash':
-                    this.wipeout('BLEW THE LANDING');
+                    this.wipeout(T('Surfing.msg.blewLanding'));
                     return;
             }
 
@@ -2094,22 +2097,22 @@
 
             // Endings.
             if (!u.airborne && foam > 0.62 && margin < 4) {
-                this.wipeout('CAUGHT BY THE SECTION');
+                this.wipeout(T('Surfing.msg.caughtSection'));
                 return;
             }
             if (!u.airborne && d > 0.6 && speed < 2.6 && Math.abs(F.slope(u.x, u.z).z) > 0.55) {
-                this.wipeout('PEARLED THE NOSE');
+                this.wipeout(T('Surfing.msg.pearled'));
                 return;
             }
             if (u.z > BEACH_Z - 4) {
-                this.kickOut(this._interior ? 'WASHED UP ON THE BEACH END' : 'RODE IT TO THE SAND');
+                this.kickOut(this._interior ? T('Surfing.msg.washedUp') : T('Surfing.msg.rodeToSand'));
                 return;
             }
             if (alive < 0.05) {
-                this.kickOut(this._interior ? 'THAT IS THE END OF THE POOL' : 'THE WAVE SHOULDERED OFF');
+                this.kickOut(this._interior ? T('Surfing.msg.endOfPool') : T('Surfing.msg.shoulderedOff'));
                 return;
             }
-            if (margin > 90) { this.kickOut('OUT ON THE SHOULDER'); return; }
+            if (margin > 90) { this.kickOut(T('Surfing.msg.outOnShoulder')); return; }
 
             const eye = EYE_H - u.crouch * 0.44;
             this._world.syncBoard(u, true);
@@ -2199,7 +2202,7 @@
             // Scoreline.
             H.decoPanel(bmp, 3, 3, 104, 34, { hairline: false, step: 1 });
             this._hudText(bmp, this._venue, 6, 2, 98, 'left', D.gold, 8);
-            this._hudText(bmp, `WAVE ${Math.min(this._waveNo, WAVES_PER_HEAT)}/${WAVES_PER_HEAT}`,
+            this._hudText(bmp, T('Surfing.msg.waveCount', { wave: Math.min(this._waveNo, WAVES_PER_HEAT), total: WAVES_PER_HEAT }),
                 6, 11, 98, 'left', D.dim, 8);
             this._hudText(bmp, String(Math.round(this._score + this._rideScore)),
                 6, 21, 98, 'right', D.goldHi, 16);
@@ -2217,11 +2220,11 @@
                 const t = clamp((this._margin + 14) / 104, 0, 1);
                 const px = bx + Math.round(t * (bw - 2));
                 bmp.fillRect(px, by - 2, 2, bh + 4, this._margin < 0 ? D.red : D.goldHi);
-                const label = this._margin < 0 ? 'INSIDE'
-                    : (this._margin < 7 ? 'POCKET'
-                    : (this._margin < 30 ? 'FACE' : 'SHOULDER'));
+                const label = T('Surfing.msg.' + (this._margin < 0 ? 'zoneInside'
+                    : (this._margin < 7 ? 'zonePocket'
+                    : (this._margin < 30 ? 'zoneFace' : 'zoneShoulder'))));
                 this._hudText(bmp, label, gx + 4, gy + 1, gw - 8, 'left', D.dim, 8);
-                this._hudText(bmp, `${Math.round(this._margin)}M`, gx + 4, gy + 1, gw - 8, 'right', D.gold, 8);
+                this._hudText(bmp, T('Surfing.msg.metres', { n: Math.round(this._margin) }), gx + 4, gy + 1, gw - 8, 'right', D.gold, 8);
 
                 // Speed.
                 const sx = gx, sy = h - 24, sw = 128, sh = 20;
@@ -2229,7 +2232,7 @@
                 H.decoBar(bmp, sx + 30, sy + 6, sw - 36, 8, clamp(this._surfer.speed() / MAX_SPEED, 0, 1), {
                     colorAt: t2 => (t2 < 0.55 ? D.jade : (t2 < 0.85 ? D.gold : D.goldHi))
                 });
-                this._hudText(bmp, 'SPD', sx + 4, sy + 5, 26, 'left', D.dim, 8);
+                this._hudText(bmp, T('Surfing.msg.spd'), sx + 4, sy + 5, 26, 'left', D.dim, 8);
             }
 
             // Prompt strip.
@@ -2261,11 +2264,11 @@
             H.decoPanel(bmp, cx, cy, cw, ch, { step: 3 });
             H.decoSunburst(bmp, cx + 1, cy + 12, 13, D.goldLo, { from: 0, span: Math.PI / 2, rays: 5, dashed: false });
             H.decoSunburst(bmp, cx + cw - 2, cy + 12, 13, D.goldLo, { from: Math.PI, span: -Math.PI / 2, rays: 5, dashed: false });
-            this._hudText(bmp, this._won ? 'HEAT WON' : 'HEAT LOST', cx, cy + 7, cw, 'center',
+            this._hudText(bmp, this._won ? T('Surfing.msg.heatWon') : T('Surfing.msg.heatLost'), cx, cy + 7, cw, 'center',
                 this._won ? '#93d86e' : '#d9533d', 16);
             H.decoRule(bmp, cx + 10, cy + 30, cw - 20, D.goldLo);
-            this._hudText(bmp, `TOTAL ${this._score}`, cx, cy + 34, cw, 'center', D.ink, 8);
-            this._hudText(bmp, `BEST WAVE ${this._best}   PAR ${PAR_PER_WAVE * WAVES_PER_HEAT}`,
+            this._hudText(bmp, T('Surfing.msg.total', { score: this._score }), cx, cy + 34, cw, 'center', D.ink, 8);
+            this._hudText(bmp, T('Surfing.msg.bestPar', { best: this._best, par: PAR_PER_WAVE * WAVES_PER_HEAT }),
                 cx, cy + 44, cw, 'center', D.dim, 8);
         }
 
@@ -2342,7 +2345,7 @@
             }
             if (this._worldSprite) {
                 if (this._worldSprite.parent) this._worldSprite.parent.removeChild(this._worldSprite);
-                this._worldSprite.destroy();
+                this._worldSprite.destroy({ texture: true, baseTexture: true });
                 this._worldSprite = null;
             }
             if (this._world) {

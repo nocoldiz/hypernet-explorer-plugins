@@ -7,8 +7,8 @@
   "selectCommand": "SELECT A COMMAND TA REMAP. PRESS ESC TA GO BACK!",
   "selectCommandGamepad": "SELECT A COMMAND TA REMAP. PRESS B TA GO BACK!",
   "resetToDefault": "RESET TA DEFAULT",
-  "keysReset": "KEY MAPPINGS HAB BEEN RESET TA DEFAULT!",
-  "gamepadReset": "GAMEPAD MAPPINGS HAB BEEN RESET TA DEFAULT!",
+  "keysReset": "KEYS RESET TA DEFAULT.",
+  "gamepadReset": "GAMEPAD RESET TA DEFAULT.",
   "commandNames": {
     "ok": "OK/CONFIRM",
     "cancel": "FORGET IT",

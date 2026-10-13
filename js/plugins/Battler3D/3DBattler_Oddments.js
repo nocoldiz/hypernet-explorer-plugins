@@ -48,7 +48,11 @@
         bloodmimic:         { variant: 'bloodmimic',         scale: 2.4, texturePool: 'wood',    bodyColor: 0x7a3a28, accent: 0xcc2233, hue: [0.04, 0.04], sat: [0.50, 0.12], lit: [0.36, 0.10] },
         mrinadequate:       { variant: 'mrinadequate',       scale: 1.4, texturePool: 'stone',   bodyColor: 0x7a7060, accent: 0x9a9a55, hue: [0.12, 0.05], sat: [0.18, 0.08], lit: [0.45, 0.08] },
         crystallineskulker: { variant: 'crystallineskulker', scale: 2.1, texturePool: 'crystal', bodyColor: 0x88ccdd, accent: 0xffffff, hue: [0.52, 0.10], sat: [0.40, 0.12], lit: [0.62, 0.10] },
-        compressedair:      { variant: 'compressedair',      scale: 2.4, texturePool: 'void',    bodyColor: 0xbfcad8, accent: 0xffffff, hue: [0.60, 0.06], sat: [0.10, 0.06], lit: [0.72, 0.08] }
+        compressedair:      { variant: 'compressedair',      scale: 2.4, texturePool: 'void',    bodyColor: 0xbfcad8, accent: 0xffffff, hue: [0.60, 0.06], sat: [0.10, 0.06], lit: [0.72, 0.08] },
+        // ── Level 1-5 oddments, each on its own bespoke build ──
+        lv_pondterrapin:      { variant: 'lv_pondterrapin',      scale: 1.7, texturePool: 'foliage', bodyColor: 0x5a6a3a, accent: 0xcc3322, hue: [0.22, 0.05], sat: [0.35, 0.10], lit: [0.36, 0.08] },
+        lv_snappinghatchling: { variant: 'lv_snappinghatchling', scale: 1.6, texturePool: 'stone',   bodyColor: 0x4a3a2a, accent: 0xd8d0b8, hue: [0.08, 0.04], sat: [0.30, 0.10], lit: [0.28, 0.06] },
+        lv_dustdevil:         { variant: 'lv_dustdevil',         scale: 2.0, texturePool: 'stone',   bodyColor: 0xc8a878, accent: 0x6a4a2a, hue: [0.09, 0.04], sat: [0.35, 0.10], lit: [0.62, 0.08] }
     };
 
     class OddmentBattler3D extends Base {
@@ -58,7 +62,7 @@
             this.variant = profile.variant;
             this._materials = [];
             this._baseY = null;
-            if (this.variant === 'bloodmimic' || this.variant === 'mrinadequate') this.facingYaw = 0;
+            if (this.variant === 'bloodmimic' || this.variant === 'mrinadequate' || this.variant === 'lv_dustdevil') this.facingYaw = 0;
         }
 
         _mat(color, opacity, rough, emissive) {
@@ -86,6 +90,9 @@
                 case 'mrinadequate':       this._buildInadequate(); break;
                 case 'crystallineskulker': this._buildCrystalSkulker(); break;
                 case 'compressedair':      this._buildCompressedAir(); break;
+                case 'lv_pondterrapin':      this._buildLvPondTerrapin(); break;
+                case 'lv_snappinghatchling': this._buildLvSnappingHatchling(); break;
+                case 'lv_dustdevil':         this._buildLvDustDevil(); break;
                 default:                   this._buildTurtle(false); break;
             }
             this.model = this.bodyGroup;
@@ -238,6 +245,11 @@
             this.core = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), this._mat(0xffffff, 0.9, 0.1, 0xffffff)); this.core.position.y = 1.0; this.bodyGroup.add(this.core);
             this.body = new THREE.Group();
             for (let i = 0; i < 4; i++) { const ring = new THREE.Mesh(new THREE.TorusGeometry(0.22 + i * 0.1, 0.04, 8, 20), wind); ring.position.y = 0.5 + i * 0.3; ring.rotation.x = Math.PI / 2; ring.scale.set(1, 1, 0.5); ring._i = i; this.body.add(ring); }
+            // A faint funnel of air the rings ride on: its wall passes through
+            // every ring, so the vortex reads as one column instead of four
+            // hoops stacked in the air over a pair of loose legs.
+            const funnel = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.12, 1.3, 10, 1, true), this._mat(p.bodyColor, 0.22, 0.3));
+            funnel.position.y = 0.85; this.body.add(funnel);
             this.bodyGroup.add(this.body);
             // Razor wind blade-arms.
             this.larm = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.7, 3), this._mat(p.accent, 0.6, 0.2, p.accent)); this.larm.position.set(-0.4, 1.0, 0); this.larm.rotation.z = Math.PI / 2; this.bodyGroup.add(this.larm);
@@ -252,6 +264,180 @@
                 { gone: ['RIGHT_RAIN_ARM'], hide: [this.rarm] },
                 { gone: ['LEFT_THUNDER_LEG'], hide: [this.lleg] },
                 { gone: ['RIGHT_THUNDER_LEG'], hide: [this.rleg] },
+            ];
+        }
+
+        // ── Level 1-5 oddments: helpers ─────────────────────────────────────
+        // A rod from point a to point b (a neck, a leg, a tail segment).
+        _lvBone(parent, a, b, r0, r1, mat, seg) {
+            const A = new THREE.Vector3(a[0], a[1], a[2]), d = new THREE.Vector3(b[0], b[1], b[2]).sub(A), len = d.length();
+            const m = new THREE.Mesh(new THREE.CylinderGeometry(r1, r0, len, seg || 6), mat);
+            m.position.copy(A).addScaledVector(d, 0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+            parent.add(m); return m;
+        }
+        // Turtle part map: losing the SHELL takes everything with it.
+        _lvTurtleWire(extra) {
+            this._partMeshMap = { SHELL: this.shell, HEAD: this.head, LEFT_LEG: this.frontLeft, RIGHT_LEG: this.frontRight, REAR_LEFT_LEG: this.rearLeft, REAR_RIGHT_LEG: this.rearRight, TAIL: this.tail, BEAK: this.beak };
+            this._cascadeRules = [
+                { gone: ['SHELL', 'BODY', 'CORE'], hide: [this.shell, this.head, this.frontLeft, this.frontRight, this.rearLeft, this.rearRight, this.tail, ...(extra || [])] },
+                { gone: ['HEAD'], hide: [this.head] },
+                { gone: ['BEAK'], hide: [this.beak] },
+                { gone: ['LEFT_LEG'], hide: [this.frontLeft] },
+                { gone: ['RIGHT_LEG'], hide: [this.frontRight] },
+                { gone: ['REAR_LEFT_LEG'], hide: [this.rearLeft] },
+                { gone: ['REAR_RIGHT_LEG'], hide: [this.rearRight] },
+                { gone: ['TAIL'], hide: [this.tail] },
+            ];
+        }
+
+        // ── Pond Terrapin: a mossy slider basking on its log ────────────────
+        // A low wide shell with raised scutes, moss clumps and moss hanging off
+        // the rim, a striped neck stretched out to a head with the red ear
+        // patch of a slider, webbed feet gripping the log it suns itself on.
+        _buildLvPondTerrapin() {
+            const p = this.profile;
+            const skin = this._skinMat(0x4a5a2a, 0.6), shellMat = this._skinMat(p.bodyColor, 0.7);
+            const moss = this._mat(0x3a7a2a, 1, 0.95), stripe = this._mat(0xd8c84a, 1, 0.6), bark = this._mat(0x5a3a22, 1, 0.95);
+            this.log = new THREE.Group();
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.22, 1.3, 7), bark); trunk.rotation.x = Math.PI / 2; trunk.position.y = 0.21; this.log.add(trunk);
+            for (const z of [-0.651, 0.651]) { const ring = new THREE.Mesh(new THREE.CircleGeometry(0.19, 7), this._mat(0xb89a6a, 1, 0.9)); ring.position.set(0, 0.21, z); if (z < 0) ring.rotation.y = Math.PI; this.log.add(ring); }
+            this._lvBone(this.log, [0.12, 0.3, -0.3], [0.32, 0.46, -0.42], 0.05, 0.03, bark);
+            this.bodyGroup.add(this.log);
+            this.shell = new THREE.Group();
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.5, 9, 4, 0, Math.PI * 2, 0, Math.PI / 2), shellMat); dome.scale.set(1, 0.5, 1.25); dome.position.y = 0.5; this.shell.add(dome);
+            const plastron = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.44, 0.07, 9), this._mat(0xc8b860, 1, 0.7)); plastron.scale.z = 1.25; plastron.position.y = 0.47; this.shell.add(plastron);
+            for (const [x, z, r] of [[0, 0.25, 0.13], [0, -0.05, 0.14], [0, -0.33, 0.12], [-0.26, 0.1, 0.11], [0.26, 0.1, 0.11], [-0.26, -0.22, 0.1], [0.26, -0.22, 0.1]]) {
+                const nx = x / 0.5, nz = z / 0.625, h = 0.25 * Math.sqrt(Math.max(0, 1 - nx * nx - nz * nz));
+                const sc = new THREE.Mesh(new THREE.CylinderGeometry(r, r + 0.02, 0.04, 6), shellMat); sc.position.set(x, 0.5 + h - 0.005, z); sc.rotation.set(-nz * 0.6, 0, nx * 0.6); this.shell.add(sc);
+            }
+            for (const [x, z] of [[-0.18, 0.32], [0.3, -0.05], [-0.12, -0.4]]) { const nx = x / 0.5, nz = z / 0.625; const m = new THREE.Mesh(new THREE.SphereGeometry(0.09, 5, 4), moss); m.scale.y = 0.5; m.position.set(x, 0.5 + 0.25 * Math.sqrt(1 - nx * nx - nz * nz), z); this.shell.add(m); }
+            for (let i = 0; i < 6; i++) { const a = 0.4 + i * 1.0; const st = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.18, 4), moss); st.position.set(Math.cos(a) * 0.49, 0.42, Math.sin(a) * 0.61); st.rotation.x = Math.PI; this.shell.add(st); }
+            this.bodyGroup.add(this.shell);
+            // Neck and head, stretched out to the sun.
+            this.head = new THREE.Group();
+            this._lvBone(this.head, [0, 0.5, 0.5], [0, 0.6, 0.78], 0.08, 0.07, skin);
+            for (const sx of [-1, 1]) this._lvBone(this.head, [sx * 0.07, 0.52, 0.52], [sx * 0.065, 0.62, 0.78], 0.012, 0.012, stripe, 3);
+            const skull = new THREE.Mesh(new THREE.SphereGeometry(0.13, 7, 5), skin); skull.scale.set(0.9, 0.8, 1.3); skull.position.set(0, 0.63, 0.87); this.head.add(skull);
+            for (const sx of [-1, 1]) {
+                const ear = new THREE.Mesh(new THREE.SphereGeometry(0.05, 5, 4), this._mat(p.accent, 1, 0.5)); ear.scale.set(0.3, 0.6, 1.4); ear.position.set(sx * 0.11, 0.63, 0.82); this.head.add(ear);
+                this._eye(this.head, sx * 0.08, 0.68, 0.94, 0.03, 0x111111);
+            }
+            this.beak = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.08, 4), skin); this.beak.rotation.x = Math.PI / 2; this.beak.position.set(0, 0.6, 1.03); this.head.add(this.beak);
+            this.bodyGroup.add(this.head);
+            // Webbed feet gripping the log, pivoting where they leave the shell.
+            const leg = (sx, z) => {
+                const g = new THREE.Group(); g.position.set(sx * 0.4, 0.47, z);
+                this._lvBone(g, [0, 0, 0], [-sx * 0.24, -0.08, 0.04], 0.065, 0.05, skin);
+                const foot = new THREE.Mesh(new THREE.SphereGeometry(0.075, 6, 4), skin); foot.scale.set(1.2, 0.45, 1.1); foot.position.set(-sx * 0.27, -0.1, 0.05); g.add(foot);
+                for (const k of [-1, 0, 1]) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.012, 0.06, 3), this._mat(0x1a1a10, 1, 0.5)); c.position.set(-sx * 0.27 + k * 0.035, -0.1, 0.13); c.rotation.x = Math.PI / 2; g.add(c); }
+                this.bodyGroup.add(g); return g;
+            };
+            this.frontLeft = leg(-1, 0.35); this.frontRight = leg(1, 0.35); this.rearLeft = leg(-1, -0.38); this.rearRight = leg(1, -0.38);
+            this.tail = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.22, 5), skin); this.tail.position.set(0, 0.46, -0.7); this.tail.rotation.x = -Math.PI / 2 - 0.3; this.bodyGroup.add(this.tail);
+            this._lvTurtleWire();
+        }
+
+        // ── Snapping Hatchling: a mud-caked baby snapper, still in its shell ─
+        // Half sunk in a mound of mud: a small shell with three saw-toothed
+        // keels and a serrated rear edge, an oversized head with a hooked beak
+        // gaping open under a scowling brow, a cap of its own eggshell still
+        // stuck on top, and a long tail ridged like a saw.
+        _buildLvSnappingHatchling() {
+            const p = this.profile;
+            const skin = this._skinMat(0x5a5040, 0.8), shellMat = this._skinMat(p.bodyColor, 0.85);
+            const mud = this._mat(0x3a2a1a, 1, 0.95), egg = this._mat(p.accent, 1, 0.5), horn = this._mat(0x2a2218, 1, 0.5);
+            this.mound = new THREE.Mesh(new THREE.SphereGeometry(0.62, 9, 4), mud); this.mound.scale.y = 0.25; this.bodyGroup.add(this.mound);
+            this.shell = new THREE.Group();
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2), shellMat); dome.scale.set(1, 0.55, 1.2); dome.position.y = 0.13; this.shell.add(dome);
+            for (const x of [-0.13, 0, 0.13]) for (let i = 0; i < 4; i++) {
+                const z = 0.24 - i * 0.16, nx = x / 0.35, nz = z / 0.42, h = 0.19 * Math.sqrt(Math.max(0, 1 - nx * nx - nz * nz));
+                const sp = new THREE.Mesh(new THREE.ConeGeometry(0.035, x ? 0.08 : 0.11, 4), horn); sp.position.set(x, 0.13 + h + 0.02, z); sp.rotation.x = -0.5; this.shell.add(sp);
+            }
+            for (let i = 0; i < 5; i++) { const a = Math.PI * 1.2 + i * Math.PI * 0.15; const sp = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.09, 4), horn); sp.position.set(Math.cos(a) * 0.34, 0.14, Math.sin(a) * 0.41); sp.rotation.set(Math.sin(a) * 1.4, 0, -Math.cos(a) * 1.4); this.shell.add(sp); }
+            for (const [x, z] of [[0.2, 0.1], [-0.15, -0.2], [0.05, 0.3]]) { const m = new THREE.Mesh(new THREE.SphereGeometry(0.07, 5, 3), mud); m.scale.y = 0.4; const nx = x / 0.35, nz = z / 0.42; m.position.set(x, 0.13 + 0.19 * Math.sqrt(Math.max(0, 1 - nx * nx - nz * nz)), z); this.shell.add(m); }
+            this.bodyGroup.add(this.shell);
+            // Oversized head on a short thick neck.
+            this.head = new THREE.Group(); this.head.position.set(0, 0.22, 0.38);
+            this._lvBone(this.head, [0, -0.04, -0.12], [0, 0.04, 0.08], 0.09, 0.09, skin);
+            const skull = new THREE.Mesh(new THREE.SphereGeometry(0.17, 7, 5), skin); skull.scale.set(1, 0.85, 1.2); skull.position.set(0, 0.08, 0.16); this.head.add(skull);
+            for (const sx of [-1, 1]) {
+                this._eye(this.head, sx * 0.09, 0.14, 0.27, 0.03, 0xccaa22);
+                const brow = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.025, 0.04), skin); brow.position.set(sx * 0.08, 0.185, 0.26); brow.rotation.z = sx * 0.4; this.head.add(brow);
+            }
+            this.beak = new THREE.Group();
+            const upper = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.16, 4), horn); upper.position.set(0, 0.05, 0.34); upper.rotation.x = Math.PI / 2 + 0.5; this.beak.add(upper);
+            this.jaw = new THREE.Group(); this.jaw.position.set(0, -0.02, 0.18);
+            const lower = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.04, 0.16), horn); lower.position.set(0, -0.02, 0.08); this.jaw.add(lower);
+            this.jaw.rotation.x = 0.35; this.beak.add(this.jaw);
+            this.head.add(this.beak);
+            const capShell = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 3, 0, Math.PI * 2, 0, Math.PI / 2.4), egg); capShell.position.set(0.02, 0.2, 0.12); capShell.rotation.z = -0.3; this.head.add(capShell);
+            for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; const chip = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.05, 3), egg); chip.position.set(0.02 + Math.cos(a) * 0.1, 0.24, 0.12 + Math.sin(a) * 0.1); this.head.add(chip); }
+            this.bodyGroup.add(this.head);
+            const leg = (sx, z) => {
+                const g = new THREE.Group(); g.position.set(sx * 0.28, 0.14, z);
+                this._lvBone(g, [0, 0, 0], [sx * 0.16, -0.08, z > 0 ? 0.06 : -0.06], 0.055, 0.045, skin);
+                for (const k of [-1, 0, 1]) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.014, 0.07, 3), horn); c.position.set(sx * 0.2, -0.09, (z > 0 ? 0.08 : -0.04) + k * 0.03); c.rotation.x = Math.PI / 2; g.add(c); }
+                this.bodyGroup.add(g); return g;
+            };
+            this.frontLeft = leg(-1, 0.2); this.frontRight = leg(1, 0.2); this.rearLeft = leg(-1, -0.22); this.rearRight = leg(1, -0.22);
+            // Saw-ridged tail curling off behind.
+            this.tail = new THREE.Group(); this.tail.position.set(0, 0.14, -0.4);
+            const tp = [[0, 0, 0], [0.05, -0.02, -0.18], [0.14, -0.03, -0.32], [0.26, -0.04, -0.4]];
+            for (let i = 0; i < 3; i++) { this._lvBone(this.tail, tp[i], tp[i + 1], 0.06 - i * 0.017, 0.045 - i * 0.015, skin); const r = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.07, 3), horn); r.position.set((tp[i][0] + tp[i + 1][0]) / 2, (tp[i][1] + tp[i + 1][1]) / 2 + 0.05 - i * 0.012, (tp[i][2] + tp[i + 1][2]) / 2); this.tail.add(r); }
+            this.bodyGroup.add(this.tail);
+            this._lvTurtleWire([this.mound]);
+        }
+
+        // ── Dust Devil: a gritty whirlwind that has stolen a hat ────────────
+        // A sand-coloured funnel of stacked spinning slices, each turning at
+        // its own speed so the column twists, two dark hollows for eyes and a
+        // howling mouth, two arcing streams of sand for arms, little dust
+        // skitters at its foot, and somebody's bowler hat riding on top.
+        _buildLvDustDevil() {
+            const p = this.profile;
+            const sand = this._skinMat(p.bodyColor, 0.95); sand.opacity = 0.9;
+            const dark = this._mat(0x2a1a0e, 1, 0.9), felt = this._mat(0x1e1a18, 1, 0.8);
+            this.body = new THREE.Group();
+            this.spinners = [];
+            const tipM = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.22, 7), sand); tipM.rotation.x = Math.PI; tipM.position.y = 0.11; this.body.add(tipM);
+            for (let i = 0; i < 7; i++) {
+                const g = new THREE.Group(); g.position.y = 0.3 + i * 0.19;
+                const r = 0.12 + i * 0.055;
+                const slice = new THREE.Mesh(new THREE.CylinderGeometry(r + 0.03, r, 0.26, 9), sand); slice.position.x = (i % 2 ? 0.035 : -0.035); g.add(slice);
+                g._spd = (i % 2 ? 1 : -1) * (3 + i * 0.6); this.spinners.push(g); this.body.add(g);
+            }
+            this.bodyGroup.add(this.body);
+            // The stolen bowler, riding the top of the funnel.
+            this.hat = new THREE.Group(); this.hat.position.set(0.03, 1.56, 0); this.hat.rotation.z = 0.18;
+            const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.03, 10), felt); this.hat.add(brim);
+            const crown = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2), felt); crown.scale.y = 1.3; this.hat.add(crown);
+            const band = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.018, 3, 10), this._mat(0x7a1a1a, 1, 0.7)); band.rotation.x = Math.PI / 2; band.position.y = 0.04; this.hat.add(band);
+            this.body.add(this.hat);
+            // Face, held still while the slices turn behind it.
+            this.face = new THREE.Group();
+            for (const sx of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.06, 5, 4), dark); e.scale.set(1, 1.4, 0.5); e.position.set(sx * 0.12, 1.08, 0.33); this.face.add(e); }
+            this.body.add(this.face);
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.025, 4, 8), dark); this.maw.scale.y = 1.4; this.maw.position.set(0, 0.86, 0.3); this.bodyGroup.add(this.maw);
+            this.core = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06, 0), this._mat(0xe8d8a0, 1, 0.3, 0x665522)); this.core.position.set(0, 0.62, 0.22); this.bodyGroup.add(this.core);
+            // Sand streams arcing off its sides.
+            const stream = (sx) => { const g = new THREE.Group(); g.position.set(sx * 0.33, 1.1, 0); const arc = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.04, 4, 9, Math.PI * 0.9), sand); arc.position.x = 0.22; arc.rotation.z = Math.PI; g.add(arc); if (sx < 0) g.rotation.y = Math.PI; this.bodyGroup.add(g); return g; };
+            this.larm = stream(-1); this.rarm = stream(1);
+            // Dust skitters at its foot.
+            this.lleg = new THREE.Mesh(new THREE.SphereGeometry(0.11, 6, 4), sand); this.lleg.scale.y = 0.5; this.lleg.position.set(-0.15, 0.06, 0.02); this.bodyGroup.add(this.lleg);
+            this.rleg = new THREE.Mesh(new THREE.SphereGeometry(0.11, 6, 4), sand); this.rleg.scale.y = 0.5; this.rleg.position.set(0.15, 0.06, -0.02); this.bodyGroup.add(this.rleg);
+            // Grit flung around it: free in the air by design.
+            this.grit = new THREE.Group(); this.grit.userData.orbit = true;
+            for (let i = 0; i < 10; i++) { const g = new THREE.Mesh(new THREE.TetrahedronGeometry(0.03, 0), this._mat(p.accent, 1, 0.9)); const a = (i / 10) * Math.PI * 2; g.position.set(Math.cos(a) * 0.6, 0.3 + (i % 5) * 0.25, Math.sin(a) * 0.5); this.grit.add(g); }
+            this.bodyGroup.add(this.grit);
+            this._partMeshMap = { CORE: this.core, BODY: this.body, LEFT_RAIN_ARM: this.larm, RIGHT_RAIN_ARM: this.rarm, LEFT_THUNDER_LEG: this.lleg, RIGHT_THUNDER_LEG: this.rleg, MAW: this.maw };
+            this._cascadeRules = [
+                { gone: ['CORE'], hide: [this.core, this.body, this.larm, this.rarm, this.lleg, this.rleg, this.maw, this.grit] },
+                { gone: ['BODY'], hide: [this.body, this.maw, this.grit] },
+                { gone: ['LEFT_RAIN_ARM'], hide: [this.larm] },
+                { gone: ['RIGHT_RAIN_ARM'], hide: [this.rarm] },
+                { gone: ['LEFT_THUNDER_LEG'], hide: [this.lleg] },
+                { gone: ['RIGHT_THUNDER_LEG'], hide: [this.rleg] },
+                { gone: ['MAW'], hide: [this.maw] },
             ];
         }
 
@@ -296,9 +482,32 @@
                     if (this.veins) this.veins.children.forEach((v, i) => { v.material.emissiveIntensity = 0.4 + Math.sin(t * 5 + i) * 0.4; });
                     break;
                 }
+                case 'lv_pondterrapin': {
+                    this.model.position.y = this._baseY;
+                    if (this.head) this.head.position.z = fast ? Math.abs(Math.sin(t * 9)) * 0.06 : Math.sin(t * 0.6) * 0.015;
+                    [this.frontLeft, this.frontRight, this.rearLeft, this.rearRight].forEach((lg, i) => { if (lg) lg.rotation.x = Math.sin(t * (fast ? 6 : 1.2) + i) * 0.12 * stride; });
+                    break;
+                }
+                case 'lv_snappinghatchling': {
+                    this.model.position.y = this._baseY;
+                    if (this.jaw) this.jaw.rotation.x = fast ? 0.1 + Math.abs(Math.sin(t * 12)) * 0.5 : 0.3 + Math.sin(t * 1.5) * 0.06;
+                    if (this.head) this.head.position.z = 0.38 + (fast ? Math.abs(Math.sin(t * 6)) * 0.08 : 0);
+                    if (this.tail) this.tail.rotation.y = Math.sin(t * 1.8) * 0.25;
+                    break;
+                }
+                case 'lv_dustdevil': {
+                    this.model.position.y = this._baseY + Math.sin(t * 2) * 0.03 * this.scale;
+                    if (this.spinners) this.spinners.forEach(g => { g.rotation.y += g._spd * (fast ? 1.8 : 1) * deltaTime; });
+                    if (this.body) this.body.rotation.z = Math.sin(t * 1.3) * 0.05;
+                    if (this.hat) this.hat.rotation.y = Math.sin(t * 2.2) * 0.4;
+                    if (this.larm) this.larm.rotation.x = Math.sin(t * 4) * 0.25;
+                    if (this.rarm) this.rarm.rotation.x = -Math.sin(t * 4) * 0.25;
+                    if (this.grit) this.grit.rotation.y = t * (fast ? 6 : 3);
+                    break;
+                }
                 case 'compressedair': {
                     this.model.position.y = this._baseY + Math.sin(t * 2.5) * 0.06 * this.scale;
-                    if (this.body) this.body.children.forEach(r => { r.rotation.z += (fast ? 10 : 6) * deltaTime * (1 + r._i * 0.2); });
+                    if (this.body) this.body.children.forEach(r => { if (r._i === undefined) return; r.rotation.z +=(fast ? 10 : 6) * deltaTime * (1 + r._i * 0.2); });
                     if (this.larm) this.larm.rotation.y = t * (fast ? 16 : 9);
                     if (this.rarm) this.rarm.rotation.y = -t * (fast ? 16 : 9);
                     if (this.core) this.core.material.emissiveIntensity = 1.0 + Math.sin(t * 8) * 0.5;
@@ -329,7 +538,10 @@
         bloodmimic:         ["Blood Mimic"],
         mrinadequate:       ["Mr. Inadequate"],
         crystallineskulker: ["Crystalline Skulker"],
-        compressedair:      ["Compressed air"]
+        compressedair:      ["Compressed air"],
+        lv_pondterrapin:      ["Pond Terrapin"],
+        lv_snappinghatchling: ["Snapping Hatchling"],
+        lv_dustdevil:         ["Dust Devil"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

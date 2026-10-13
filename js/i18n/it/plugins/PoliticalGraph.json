@@ -4,8 +4,8 @@
   "search": "Cerca ideologie...",
   "confirm": "Scegli ideologia",
   "listHead": "Ideologie",
-  "noAdherents": "Nessun partito politico attivo in questa sessione",
-  "adherents": "Aderenti noti nel mondo:",
+  "noAdherents": "Nessun partito segue ancora questa ideologia.",
+  "adherents": "Partiti che la seguono:",
   "axisShort": "E: {econ} | A: {auth} | Z: {myst}",
   "canvasAxis": {
     "econ": "Destra (+econ)",

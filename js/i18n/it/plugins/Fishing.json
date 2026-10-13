@@ -4,8 +4,8 @@
   "lineSnapped": "Lenza spezzata",
   "nothingBiting": "Non abbocca niente",
   "tooSlow": "Troppo lento",
-  "freeCamOn": "Camera libera",
-  "freeCamOff": "Camera del pescatore",
+  "freeCamOn": "Visuale libera",
+  "freeCamOff": "Visuale del pescatore",
   "something": "Qualcosa",
   "hint": {
     "loading": "Carico il lago...",
@@ -45,5 +45,22 @@
     "18": "Pesce palla spinoso",
     "19": "Medusa",
     "20": "Kraken"
+  },
+  "hud": {
+    "bite": "ABBOCCA",
+    "depth": "PROFONDITÀ {n}M",
+    "onLand": "A TERRA!",
+    "cast": "LANCIO {n}M",
+    "water": "ACQUA {n}M",
+    "powerMetres": "POTENZA {n}M",
+    "line": "LENZA",
+    "snap": "SI SPEZZA!",
+    "good": "BENE",
+    "slack": "LENTA",
+    "dist": "DIST",
+    "fish": "PESCE",
+    "weightAt": "{kg}KG  A {depth}M",
+    "upFrom": "SU DA {depth}M",
+    "notLettingGo": "NON MOLLA LA PRESA"
   }
 }

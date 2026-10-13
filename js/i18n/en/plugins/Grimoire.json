@@ -1,21 +1,21 @@
 {
   "back": "Back",
-  "forbiddenDraw": "{percent}% Forbidden draw",
+  "forbiddenDraw": "{percent}%",
   "forbiddenTitle": "Forbidden Grimoire",
   "skillBookTitle": "{school} Skill Book",
   "forgottenTitle": "Forgotten Grimoire",
   "schoolTitle": "{school} Grimoire",
-  "noSpells": "Nobody here can grasp a spell from these pages.<br>(none within the party's MP reach, or all already known)",
+  "noSpells": "No one here can learn these spells.<br>(not enough MP, or already known)",
   "ui": {
     "beyondStat": "✧ Needs {stat} {points}, has {value}",
     "requires": "Requires {stat} {points}",
-    "blurb": "The same five spells are offered to everyone. Pick a reader who can learn one, then claim it.",
+    "blurb": "Five spells on offer. Pick a reader, then a spell.",
     "alreadyKnown": "✧ Already known",
-    "beyondReach": "✧ Beyond this reader's MP",
+    "beyondReach": "✧ Not enough MP",
     "partyReader": "Party Reader",
     "psychicDiagnostics": "Psychic Diagnostics",
     "medianPsi": "Median PSI (Luck)",
-    "forbiddenSurfacing": "Forbidden Surfacing",
+    "forbiddenSurfacing": "Forbidden spell chance",
     "forbidden": "✦ Forbidden",
     "whisperedSpells": "Whispered Spells",
     "esoteric": "✦ Esoteric",
@@ -24,11 +24,11 @@
   },
   "toast": {
     "title": "Spell Learned",
-    "learned": "{actor} copied {skill} out of the {book}."
+    "learned": "{actor} learned {skill} from the {book}."
   },
   "custom": {
     "title": "A Written Volume",
-    "blurb": "Every page has to be read out before this volume closes. {left} of {total} are still unread. Leave now and it goes back in the pack, whole.",
-    "takenBy": "Read out to {actor}"
+    "blurb": "{left} of {total} pages unread. Leave now and the book goes back in the pack.",
+    "takenBy": "Read by {actor}"
   }
 }

@@ -32,17 +32,11 @@
         _scene: null,
         _active: false,
         _openedFrame: 0,
-        _wasdInput: { up: false, down: false },
-        _wasdHeld: { up: false, down: false },
-        _wasdHoldFrames: { up: 0, down: 0 },
 
         activate(scene) {
             this._scene = scene;
             this._active = true;
             this._openedFrame = Graphics.frameCount;
-            this._wasdInput.up = this._wasdInput.down = false;
-            this._wasdHeld.up = this._wasdHeld.down = false;
-            this._wasdHoldFrames.up = this._wasdHoldFrames.down = 0;
         },
 
         deactivate() {
@@ -57,22 +51,12 @@
             // Swallow the key press that opened the scene
             if (Graphics.frameCount - this._openedFrame < 4) return;
 
-            // WASD hold-repeat simulation (matches MZ key-repeat timing)
-            for (const dir of ["up", "down"]) {
-                if (this._wasdHeld[dir]) {
-                    this._wasdHoldFrames[dir]++;
-                    const held = this._wasdHoldFrames[dir];
-                    if (held > Input.keyRepeatWait && (held - Input.keyRepeatWait) % Input.keyRepeatInterval === 0) {
-                        this._wasdInput[dir] = true;
-                    }
-                } else {
-                    this._wasdHoldFrames[dir] = 0;
-                }
-            }
-
-            const isUp = Input.isRepeated("up") || this._wasdInput.up;
-            const isDown = Input.isRepeated("down") || this._wasdInput.down;
-            this._wasdInput.up = this._wasdInput.down = false;
+            // One repeat source: MZ's own. W and S are mapped to up and down
+            // globally (Input.keyMapper, History/HistorySimulatorUI.js), so a
+            // held W repeats through Input.isRepeated like an arrow key; a
+            // second W/S repeat here stepped the list twice as fast.
+            const isUp = Input.isRepeated("up");
+            const isDown = Input.isRepeated("down");
 
             if (isUp) {
                 scene._moveFloorSelection(-1);
@@ -100,20 +84,6 @@
     const _Scene_FloorList_create = Scene_FloorList.prototype.create;
     Scene_FloorList.prototype.create = function () {
         _Scene_FloorList_create.call(this);
-
-        this._wasdListener = (event) => {
-            if (event.repeat) return;
-            const key = event.key.toLowerCase();
-            if (key === "w") { FloorListInputManager._wasdInput.up = true; FloorListInputManager._wasdHeld.up = true; event.preventDefault(); }
-            if (key === "s") { FloorListInputManager._wasdInput.down = true; FloorListInputManager._wasdHeld.down = true; event.preventDefault(); }
-        };
-        this._wasdUpListener = (event) => {
-            const key = event.key.toLowerCase();
-            if (key === "w") { FloorListInputManager._wasdHeld.up = false; FloorListInputManager._wasdHoldFrames.up = 0; }
-            if (key === "s") { FloorListInputManager._wasdHeld.down = false; FloorListInputManager._wasdHoldFrames.down = 0; }
-        };
-        window.addEventListener("keydown", this._wasdListener);
-        window.addEventListener("keyup", this._wasdUpListener);
 
         this._floorItems = FloorListData.buildItemList();
         this._selectedIndex = FloorListData.initialIndex
@@ -146,12 +116,6 @@
     };
 
     Scene_FloorList.prototype.terminate = function () {
-        if (this._wasdListener) {
-            window.removeEventListener("keydown", this._wasdListener);
-            window.removeEventListener("keyup", this._wasdUpListener);
-            this._wasdListener = null;
-            this._wasdUpListener = null;
-        }
         FloorListInputManager.deactivate();
         if (this._floorListEl) {
             const el = this._floorListEl;

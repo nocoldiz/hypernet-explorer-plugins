@@ -46,14 +46,17 @@
     "ate": "You ate {name} raw.",
     "cannotCombine": "Raw meat and plant matter can't be cooked together.",
     "cookware": "\nCookware bonus +{percent}%",
-    "fedParty": "\n (a party of {count} at table)",
+    "fedParty": "\n (split among {count})",
     "cannotPrepare": "Not enough ingredients for {name}.",
-    "recipePrepared": "{name} prepared (x{count}) and put in the pack.",
-    "recipeSpoiled": "{name} went wrong in the pan: all that is left is a spoiled dish."
+    "recipePrepared": "{name} prepared (x{count}). Added to the pack.",
+    "recipeSpoiled": "{name} failed. You got a spoiled dish.",
+    "pizzaShared": "{name} baked and shared (x{count})."
   },
   "names": {
     "meaty": "Meaty {name}",
-    "vegetarian": "Vegetarian {name}"
+    "vegetarian": "Vegetarian {name}",
+    "sameItem": "{adjective} {name}",
+    "combo": "{first} {last}"
   },
   "ui": {
     "selectFirstIngredient": "Select first ingredient to cook",
@@ -103,7 +106,8 @@
   "cookware": "Cookware",
   "tabs": {
     "combine": "Combine",
-    "recipes": "Recipes"
+    "recipes": "Recipes",
+    "pizza": "Create pizza"
   },
   "recipes": {
     "empty": "No recipes in the book.",
@@ -118,13 +122,15 @@
     "spoil": "Chance to spoil",
     "reward": "Cooking",
     "points": "+{points} points",
-    "keeps": "The dish goes into the pack instead of being eaten.",
+    "keeps": "Goes into the pack instead of being eaten.",
     "prepareButton": "Prepare",
-    "prepareAnyway": "Prepare anyway"
+    "prepareAnyway": "Prepare anyway",
+    "pizzaEaten": "Eaten by the whole party at once. Not kept.",
+    "designPizza": "Design a pizza"
   },
   "allergy": {
     "title": "Allergy warning",
     "line": "{actor}: {allergens}",
-    "toast": "Allergy warning: {list}. Press again to go ahead."
+    "toast": "Allergy warning: {list}. Press again to confirm."
   }
 }

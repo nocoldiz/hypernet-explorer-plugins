@@ -1282,9 +1282,17 @@
         });
     };
 
+    // The spread is built here and only here on opening: start() always runs
+    // before the scene is drawn, so building it in create() as well filled
+    // every panel twice. The fade waits for the content it is fading in.
     Scene_Status.prototype.start = function () {
         Scene_MenuBase.prototype.start.call(this);
         this.refreshActor();
+        setTimeout(() => {
+            if (this._dndContainer) {
+                this._dndContainer.style.opacity = "1";
+            }
+        }, 16);
     };
 
     Scene_Status.prototype.refreshActor = function () {
@@ -1356,14 +1364,6 @@
         this._dndContainer.style.opacity = "0";
         this._dndContainer.style.transition = "opacity 0.22s ease-out";
         document.body.appendChild(this._dndContainer);
-
-        this.refreshUIStatus();
-
-        setTimeout(() => {
-            if (this._dndContainer) {
-                this._dndContainer.style.opacity = "1";
-            }
-        }, 16);
     };
 
     Scene_Status.prototype.refreshUIStatus = function () {
@@ -1515,7 +1515,7 @@
             const isSelected = member === actor ? "selected" : "";
             companionTabsHTML += `
                 <div class="companion-tab ${isSelected}" onclick="SceneManager._scene.selectUIActor(${idx})">
-                    ${member.name()}
+                    ${escapeAttr(member.name())}
                 </div>
             `;
         });
@@ -2451,8 +2451,15 @@
     // Every animation the rig answers to. Loops run until another is asked
     // for; one-shots play over whatever loop is running and end by themselves.
     const RIG_LOOPS = ['idle', 'walk', 'run', 'crouch', 'crouchWalk', 'jump', 'fall',
-                       'swim', 'aim', 'sit', 'dance', 'death'];
-    const RIG_ONESHOTS = { shoot: 0.22, melee: 0.5, hurt: 0.45, wave: 2.2, nod: 0.9, jumpLand: 0.3 };
+                       'swim', 'aim', 'sit', 'dance', 'death', 'talk'];
+    const RIG_ONESHOTS = { shoot: 0.22, melee: 0.5, hurt: 0.45, wave: 2.2, nod: 0.9, jumpLand: 0.3,
+                           think: 2.4, shrug: 1.4, headShake: 1.1, tilt: 1.6, laugh: 1.4,
+                           point: 1.6, handOnChest: 1.8, adjust: 1.5 };
+    // The gestures a speaking portrait picks one of on every line it says
+    // (DialogueSystem's SpeakerModels). Each keeps a hand near the face or the
+    // head and shoulders moving, since a portrait is cut at the collar.
+    const RIG_TALK_GESTURES = ['nod', 'think', 'shrug', 'headShake', 'tilt', 'laugh',
+                               'point', 'handOnChest', 'adjust', 'wave'];
     const RIG_UPPER = ['spine', 'chest', 'upperChest', 'neck', 'head',
                        'lShoulder', 'lUpperArm', 'lLowerArm', 'lHand',
                        'rShoulder', 'rUpperArm', 'rLowerArm', 'rHand'];
@@ -2684,8 +2691,31 @@
             rigFingers(pose, 'l', 30);
             rigFingers(pose, 'r', 30);
             return pose;
+        },
+        // Speaking: the idle stance, livelier above the collar. The head keeps
+        // the beat of the words and the forearms lift a little on it.
+        talk(t) {
+            const pose = RIG_POSES.idle(t);
+            const beat = Math.sin(t * 5.3) * 0.6 + Math.sin(t * 8.1) * 0.4;
+            rigAdd(pose, 'head', 3 * beat - 2, 7 * Math.sin(t * 0.9), 3 * Math.sin(t * 0.7));
+            rigAdd(pose, 'neck', 1.5 * beat, 0, 0);
+            rigAdd(pose, 'chest', 0, 3 * Math.sin(t * 0.8), 0);
+            const lift = 0.5 + 0.5 * Math.sin(t * 2.3);
+            rigAdd(pose, 'lLowerArm', 0, -22 * lift, 0);
+            rigAdd(pose, 'rLowerArm', 0, 22 * (1 - lift), 0);
+            rigAdd(pose, 'lShoulder', 0, 0, 2 * Math.abs(beat));
+            rigAdd(pose, 'rShoulder', 0, 0, -2 * Math.abs(beat));
+            return pose;
         }
     };
+
+    // How far into a gesture its full weight is: eased in, held, eased out.
+    function rigHold(k, inFrac, outFrac) {
+        const a = Math.min(1, k / (inFrac || 0.2));
+        const b = Math.min(1, (1 - k) / (outFrac || 0.25));
+        const w = Math.max(0, Math.min(a, b));
+        return w * w * (3 - 2 * w);
+    }
 
     // The one-shots, added over the running loop. `k` runs 0 to 1 across the
     // shot; each returns what it adds.
@@ -2754,6 +2784,93 @@
             rigAdd(pose, 'rFoot', -22 * d, 0, 0);
             rigAdd(pose, 'spine', 10 * d, 0, 0);
             return pose;
+        },
+        // The talking gestures (RIG_TALK_GESTURES).
+        // Right hand to the chin, head cocked, weighing it up.
+        think(k) {
+            const pose = { off: [0, 0, 0] };
+            const w = rigHold(k, 0.18, 0.2);
+            rigAdd(pose, 'rUpperArm', -40 * w, 50 * w, -75 * w);
+            rigAdd(pose, 'rLowerArm', 0, 120 * w, 0);
+            rigAdd(pose, 'rHand', 0, 0, -20 * w);
+            rigAdd(pose, 'head', -5 * w, -8 * w, 7 * w);
+            rigFingers(pose, 'r', 45 * w);
+            return pose;
+        },
+        // Shoulders up, forearms out, palms open.
+        shrug(k) {
+            const pose = { off: [0, 0.01 * Math.sin(k * Math.PI), 0] };
+            const w = rigHold(k, 0.25, 0.3);
+            rigAdd(pose, 'lShoulder', 0, 0, 16 * w);
+            rigAdd(pose, 'rShoulder', 0, 0, -16 * w);
+            rigAdd(pose, 'lUpperArm', 0, -20 * w, 18 * w);
+            rigAdd(pose, 'rUpperArm', 0, 20 * w, -18 * w);
+            rigAdd(pose, 'lLowerArm', 0, -70 * w, 0);
+            rigAdd(pose, 'rLowerArm', 0, 70 * w, 0);
+            rigAdd(pose, 'head', -4 * w, 0, 9 * w);
+            rigFingers(pose, 'l', -14 * w);
+            rigFingers(pose, 'r', -14 * w);
+            return pose;
+        },
+        headShake(k) {
+            const pose = { off: [0, 0, 0] };
+            const fade = 1 - k;
+            rigAdd(pose, 'head', 2 * fade, 20 * Math.sin(k * Math.PI * 5) * fade, 0);
+            rigAdd(pose, 'neck', 0, 6 * Math.sin(k * Math.PI * 5) * fade, 0);
+            return pose;
+        },
+        // A curious tilt of the head toward one shoulder.
+        tilt(k) {
+            const pose = { off: [0, 0, 0] };
+            const w = rigHold(k, 0.25, 0.3);
+            rigAdd(pose, 'head', -3 * w, 9 * w, 15 * w);
+            rigAdd(pose, 'neck', 0, 0, 5 * w);
+            return pose;
+        },
+        // Head back, shoulders bouncing.
+        laugh(k, t) {
+            const w = rigHold(k, 0.12, 0.3);
+            const bounce = Math.abs(Math.sin(t * 17)) * w;
+            const pose = { off: [0, -0.008 * bounce, 0] };
+            rigAdd(pose, 'head', -13 * w + 3 * bounce, 0, 4 * w);
+            rigAdd(pose, 'chest', -5 * w, 0, 0);
+            rigAdd(pose, 'lShoulder', 0, 0, 7 * bounce);
+            rigAdd(pose, 'rShoulder', 0, 0, -7 * bounce);
+            rigAdd(pose, 'lLowerArm', 0, -30 * w, 0);
+            rigAdd(pose, 'rLowerArm', 0, 30 * w, 0);
+            return pose;
+        },
+        // The right arm out in front at shoulder height.
+        point(k) {
+            const pose = { off: [0, 0, 0] };
+            const w = rigHold(k, 0.2, 0.25);
+            rigAdd(pose, 'rUpperArm', 0, 78 * w, -66 * w);
+            rigAdd(pose, 'rLowerArm', 0, -6 * w, 0);
+            rigAdd(pose, 'chest', 0, 8 * w, 0);
+            rigAdd(pose, 'head', 0, 6 * w, 0);
+            rigFingers(pose, 'r', 30 * w);
+            return pose;
+        },
+        // The right hand laid on the chest.
+        handOnChest(k) {
+            const pose = { off: [0, 0, 0] };
+            const w = rigHold(k, 0.2, 0.25);
+            rigAdd(pose, 'rUpperArm', 0, 42 * w, -6 * w);
+            rigAdd(pose, 'rLowerArm', 0, 118 * w, 0);
+            rigAdd(pose, 'head', 6 * w, 0, -4 * w);
+            rigFingers(pose, 'r', -12 * w);
+            return pose;
+        },
+        // A hand up to the brow: glasses pushed up, a brim set straight.
+        adjust(k) {
+            const pose = { off: [0, 0, 0] };
+            const w = rigHold(k, 0.22, 0.3);
+            rigAdd(pose, 'rUpperArm', -40 * w, 45 * w, -100 * w);
+            rigAdd(pose, 'rLowerArm', 0, 105 * w, 0);
+            rigAdd(pose, 'rHand', 0, 0, -16 * w);
+            rigAdd(pose, 'head', 6 * w, -4 * w, 0);
+            rigFingers(pose, 'r', 30 * w);
+            return pose;
         }
     };
 
@@ -2793,6 +2910,11 @@
         this.colliders = [];
         this.hem = null;
         this.ready = false;
+        // Per figure: how much of the weight the hair carries (0 is weightless)
+        // and how much it drifts on its own, as if under water.
+        this.gravityScale = 1;
+        this.float = 0;
+        this._time = 0;
         this._m = new THREE.Matrix4();
         this._m2 = new THREE.Matrix4();
         this._p = new THREE.Vector3();
@@ -2912,6 +3034,7 @@
         if (!this.ready || this._c.distanceTo(this._lastRoot) > 1.5 * s) this.settle();
         this._lastRoot.copy(this._c);
         this.colliders.forEach((c) => c.c.copy(c.local).applyMatrix4(c.bone.matrixWorld));
+        this._time += dt;
         const n = Math.min(6, Math.max(1, Math.round(dt / RIG_STEP)));
         for (let i = 0; i < n; i++) {
             this.stepSprings(dt / n, s);
@@ -2922,7 +3045,9 @@
     RigPhysics.prototype.stepSprings = function (dt, s) {
         const P = RIG_SPRING;
         const pos = this._a, next = this._b, d = this._c;
-        this.springs.forEach((sp) => {
+        const g = P.gravity * this.gravityScale;
+        const t = this._time;
+        this.springs.forEach((sp, i) => {
             const bone = sp.bone;
             // The bone's frame as its parent holds it now, at rest.
             bone.parent.matrixWorld.decompose(this._p, this._q2, this._s);
@@ -2934,7 +3059,13 @@
 
             next.copy(sp.tail).sub(sp.prev).multiplyScalar(1 - P.drag).add(sp.tail);
             next.addScaledVector(d.copy(sp.axis).applyQuaternion(this._q), P.stiffness * dt * s);
-            next.y -= P.gravity * dt * s;
+            next.y -= g * dt * s;
+            if (this.float > 0) {
+                const f = this.float * dt * s;
+                next.x += Math.sin(t * 0.9 + i * 0.7) * f;
+                next.y += Math.sin(t * 0.7 + i * 1.3) * f;
+                next.z += Math.cos(t * 0.8 + i * 0.5) * f;
+            }
             next.sub(pos).setLength(sp.length).add(pos);
             this.colliders.forEach((c) => {
                 const r = (c.r + P.hitRadius) * s;
@@ -2974,7 +3105,7 @@
         d.copy(h.downW).multiplyScalar(L).add(h.pivot).sub(h.tail);
         next.addScaledVector(d, Math.min(1, P.stiffness * dt)).add(h.tail);
         h.pivot.copy(pivot);
-        next.y -= P.gravity * dt * dt * s;
+        next.y -= P.gravity * this.gravityScale * dt * dt * s;
         d.copy(next).sub(pivot).normalize();
         // Never swung further out than a skirt would go.
         const max = P.maxAngle * D2R;
@@ -3377,10 +3508,18 @@
                 return fig;
             });
         },
+        // A rigged figure of its own, straight from a model file, for a scene
+        // that is not about any one character (a cinematic): { model, rig }
+        // with the dossier material clean-up done, or null.
+        figure(path) {
+            return loadFigureGLB(path).then((fig) => (fig && fig.rig ? fig : null));
+        },
         // Repaints a dossier model in { skin, hair, dress } on the spot.
         tint(root, colours) { tintDossierModel(root, colours); },
         rigFor(root) { return humanoidRigFor(root); },
-        animations() { return RIG_LOOPS.concat(Object.keys(RIG_ONESHOTS)); }
+        animations() { return RIG_LOOPS.concat(Object.keys(RIG_ONESHOTS)); },
+        // The one-shots a speaking portrait picks from, one per line.
+        talkGestures() { return RIG_TALK_GESTURES.slice(); }
     };
 
     Scene_Status.prototype.syncStatus3D = function (info) {
@@ -3399,6 +3538,57 @@
         this.initStatus3D(info);
     };
 
+    // ONE WebGL context for the status portrait, kept for the whole session.
+    // A renderer used to be built per opening and per member switch and its
+    // context handed back on the way out, so every look at the sheet paid for
+    // a fresh context, a fresh compile of every shader and a fresh upload of
+    // every texture. Keeping the one alive also keeps the browser's live-context
+    // count steady, which is what handing it back was protecting. Its canvas is
+    // moved into whichever portrait box is showing. A lost context (driver
+    // reset) is dropped and replaced.
+    let _statusRenderer = null;
+    function acquireStatusRenderer() {
+        if (_statusRenderer) {
+            let lost = false;
+            try {
+                const gl = _statusRenderer.getContext();
+                lost = !gl || (gl.isContextLost && gl.isContextLost());
+            } catch (e) { lost = true; }
+            if (!lost) return _statusRenderer;
+            const dead = _statusRenderer;
+            _statusRenderer = null;
+            try {
+                if (window.PSXShader && window.PSXShader.disposeContext) window.PSXShader.disposeContext(dead);
+            } catch (e) { /* already gone */ }
+            try { dead.dispose(); } catch (e) { /* already gone */ }
+            const deadCanvas = dead.domElement;
+            if (deadCanvas && deadCanvas.parentNode) deadCanvas.parentNode.removeChild(deadCanvas);
+        }
+        _statusRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        _statusRenderer.setPixelRatio(1);
+        return _statusRenderer;
+    }
+
+    // The renderer outlives the model it drew, so the model's own buffers have
+    // to be handed back by hand. Battler geometry interned in the shared cache
+    // belongs to that cache, and a dossier model is the cached file itself,
+    // drawn again next time, so neither is touched.
+    function disposeStatusModel(battler, info) {
+        if (!battler || !battler.model) return;
+        const root = battler.model;
+        if (root.parent) root.parent.remove(root);
+        if (info && info.kind === 'glb') return;
+        if (typeof root.traverse !== 'function') return;
+        const release = m => { if (m && typeof m.dispose === 'function') m.dispose(); };
+        root.traverse(obj => {
+            if (obj.geometry && !obj.geometry._battlerShared && typeof obj.geometry.dispose === 'function') {
+                obj.geometry.dispose();
+            }
+            if (Array.isArray(obj.material)) obj.material.forEach(release);
+            else release(obj.material);
+        });
+    }
+
     Scene_Status.prototype.initStatus3D = function (info) {
         this.cleanupStatus3D();
         if (typeof THREE === 'undefined' || !window.Battler3D || !window.Battler3D.create) return;
@@ -3406,18 +3596,17 @@
         const wrapper = bustCanvas ? bustCanvas.parentNode : null;
         if (!wrapper) return;
 
-        // Reuse or create the 3D canvas overlay, sized to match the bust area.
-        let canvas = document.getElementById('status-bust-3d');
-        if (!canvas) {
-            canvas = document.createElement('canvas');
-            canvas.id = 'status-bust-3d';
-            // Sized by the stylesheet (100% of the portrait box, letterboxed),
-            // never in pixels: a fixed size would spill over the gauges below
-            // once the page is shorter than the portrait.
-            canvas.style.cssText = 'display:block; cursor:grab;';
-            wrapper.appendChild(canvas);
-        }
-        canvas.style.display = 'block';
+        // The session's portrait canvas, moved into this bust area.
+        const renderer = acquireStatusRenderer();
+        const canvas = renderer.domElement;
+        const stale = document.getElementById('status-bust-3d');
+        if (stale && stale !== canvas && stale.parentNode) stale.parentNode.removeChild(stale);
+        canvas.id = 'status-bust-3d';
+        // Sized by the stylesheet (100% of the portrait box, letterboxed),
+        // never in pixels: a fixed size would spill over the gauges below
+        // once the page is shorter than the portrait.
+        canvas.style.cssText = 'display:block; cursor:grab;';
+        if (canvas.parentNode !== wrapper) wrapper.appendChild(canvas);
 
         // The buffer matches the box it is drawn in, so the portrait uses the
         // whole width the page gives it rather than being letterboxed down from
@@ -3426,9 +3615,7 @@
         const rect   = canvas.getBoundingClientRect();
         const width  = Math.max(1, Math.round(rect.width)  || 440);
         const height = Math.max(1, Math.round(rect.height) || 500);
-        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
         renderer.setSize(width, height, false);
-        renderer.setPixelRatio(1);
 
         const scene = new THREE.Scene();
         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
@@ -3442,7 +3629,7 @@
         scene.add(pivot);
 
         const state = {
-            renderer, canvas, scene, camera, pivot,
+            renderer, canvas, scene, camera, pivot, info,
             model: null, rafId: 0, disposed: false, dragging: false, attackTimer: 0, frameAcc: 0,
             activeButton: -1, prev: { x: 0, y: 0 }, clock: new THREE.Clock(), listeners: {}
         };
@@ -3460,7 +3647,8 @@
         const brokenParts = actorPartStates(this.actor());
 
         loadPromise.then((battler) => {
-            if (state.disposed) return;
+            // Torn down while it was still building: nothing will draw it.
+            if (state.disposed) { disposeStatusModel(battler, info); return; }
             // Nothing could be built for this subject: drop the viewer rather
             // than leaving a live context behind an empty frame.
             if (!battler || !battler.model) {
@@ -3587,13 +3775,15 @@
         }
         window.removeEventListener('mouseup',  L.onUp);
         window.removeEventListener('touchend', L.onTEnd);
-        // dispose() leaves the WebGL context alive. The browser caps live
-        // contexts and force-loses the OLDEST past the cap, which is the game's
-        // own canvas: PIXI then silently stops rendering and the picture freezes
-        // until the game is restarted. A fresh canvas is built on every open, so
-        // releasing the context here costs nothing.
-        try { s.renderer.dispose(); } catch (e) {}
-        try { if (s.renderer.forceContextLoss) s.renderer.forceContextLoss(); } catch (e) {}
+        // The renderer is deliberately NOT disposed: it is the session's one
+        // portrait context (see acquireStatusRenderer). Only the model goes, and
+        // the canvas is wiped so the next subject never opens on the last one.
+        disposeStatusModel(s.model, s.info);
+        s.model = null;
+        try {
+            s.renderer.setRenderTarget(null);
+            s.renderer.clear(true, true, true);
+        } catch (e) { /* context already gone */ }
         this._status3D = null;
     };
 

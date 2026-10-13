@@ -31,7 +31,7 @@
   "showOnMapAt": "SHOW ON MAP: {place} · SHIFT",
   "moveToInProgress": "MOVE TA IN PROGRESS · →",
   "moveToToDo": "MOVE BACK TA TA DO · ←",
-  "boardHint": "DRAG A NOTE, OR HOLD OK AN' PRESS ←/→, TA MOVE IT BETWEEN COLUMNS",
+  "boardHint": "DRAG A NOTE, OR HOLD OK + ←/→, TA MOVE IT",
   "mapMarker": "MAP MARKER",
   "notify": {
     "newQuest": "NEW QUEST: {title}",

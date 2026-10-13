@@ -284,6 +284,90 @@
         return ids;
     }
 
+    // ── Where the lamp posts stand, kept between rebuilds ───────────────────
+    // Every Scene_Map rebuild (a transfer, but also every menu closed) builds a
+    // new lighting layer, and on the procedural map that meant walking every
+    // tile of the map again to find posts that had not moved. The answer is
+    // kept, keyed on what it was read from: the map, its tileset, its size and
+    // a checksum of the three layers the test reads. $dataMap is re-read from
+    // disk on every rebuild, so the array's identity alone says nothing; and a
+    // tile dug out or a piece of furniture placed writes into the same array,
+    // so its identity could not say that either. The checksum sees both, at a
+    // fraction of the cost of the scan it saves.
+    let _lampCache = null;
+    const _lampStats = { scans: 0, hits: 0 };
+
+    // FNV-1a style mix over layers 2, 3 and 4 (upper tiles and shadows), the
+    // only layers the lamp test reads. Two independent 32 bit lanes, so two
+    // different maps meeting on one value is not a thing to plan around.
+    function lampLayerChecksum(data, width, height) {
+        const plane = width * height;
+        const start = 2 * plane;
+        const end = 5 * plane;
+        let h1 = 0x811c9dc5 | 0;
+        let h2 = 0x01000193 | 0;
+        for (let i = start; i < end; i++) {
+            const v = data[i] | 0;
+            h1 = Math.imul(h1 ^ v, 16777619);
+            h2 = Math.imul(h2 + v, 2246822519) ^ (h2 >>> 15);
+        }
+        return (h1 >>> 0).toString(36) + ':' + (h2 >>> 0).toString(36);
+    }
+
+    // The posts' heads on the current map, as [{x, y, tileId}] in the order the
+    // lights are made (columns left to right, top to bottom). null when the
+    // tileset declares no lamp post.
+    function lampPostTiles() {
+        if (!$gameMap || !$dataMap || !$dataMap.data) return null;
+        const currentTileset = $gameMap.tileset();
+        const tilesetId = currentTileset ? currentTileset.id : 0;
+        const streetlightTileIds = streetlightTileIdsFor(tilesetId);
+        if (!streetlightTileIds || !streetlightTileIds.size) return null;
+
+        const data = $dataMap.data;
+        const width = $dataMap.width | 0;
+        const height = $dataMap.height | 0;
+        const mapId = $gameMap.mapId();
+        const sum = lampLayerChecksum(data, width, height);
+        const c = _lampCache;
+        if (c && c.mapId === mapId && c.tilesetId === tilesetId &&
+            c.width === width && c.height === height && c.sum === sum) {
+            _lampStats.hits++;
+            return c.lamps;
+        }
+
+        // Highest layer wins, exactly as $gameMap.tileId read it: the shadow
+        // layer (4) first, then 3, then 2. One flag per tile, read once.
+        const plane = width * height;
+        const isLamp = new Uint8Array(plane);
+        for (let i = 0; i < plane; i++) {
+            const t4 = data[4 * plane + i] || 0;
+            if (t4 !== 0) { isLamp[i] = streetlightTileIds.has(t4) ? 1 : 0; continue; }
+            const t3 = data[3 * plane + i] || 0;
+            if (t3 !== 0) { isLamp[i] = streetlightTileIds.has(t3) ? 1 : 0; continue; }
+            const t2 = data[2 * plane + i] || 0;
+            if (t2 !== 0) isLamp[i] = streetlightTileIds.has(t2) ? 1 : 0;
+        }
+
+        // A lamp post is drawn as a COLUMN of tiles (tileset 303 declares
+        // <Streetlight: [E232],[E240],[E248],[E256]>, four tiles tall), and
+        // the light hangs from the head at the top of it. Lighting every
+        // matching tile stacked four lamps inside one post and put most of
+        // the glow on the pole rather than on the street, so only the top of
+        // each run is lit and the rest of the column is skipped.
+        const lamps = [];
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                const i = y * width + x;
+                if (!isLamp[i] || (y > 0 && isLamp[i - width])) continue;
+                lamps.push({ x, y, tileId: data[2 * plane + i] || 0 });
+            }
+        }
+        _lampStats.scans++;
+        _lampCache = { mapId, tilesetId, width, height, sum, lamps };
+        return lamps;
+    }
+
     function isDeadWorldNow() {
         return !!(window.WorldManager &&
             (window.WorldManager.isEmptyWorld?.() || window.WorldManager.isDeathWorld?.()));
@@ -297,9 +381,16 @@
     });
 
     PluginManager.registerCommand(pluginName, 'toggleLight', args => {
-        const eventId = Number(args.eventId);
-        if ($gameLighting && eventId > 0) {
+        if (!$gameLighting) return;
+        // Given no event (the Flicker spell, cast from the menu), the light
+        // nearest the leader flickers; with none in reach, the leader's own.
+        const eventId = Number(args.eventId) > 0 ? Number(args.eventId) : $gameLighting.nearestLightId();
+        if (eventId > 0) {
             $gameLighting.toggleLight(eventId);
+        } else if ($gameLighting.hasPlayerLight()) {
+            $gameLighting.removePlayerLight();
+        } else {
+            $gameLighting.addPlayerLight();
         }
     });
 
@@ -839,6 +930,7 @@
             this.removeChildren();
             this._lightSprites = [];
             this._playerLight = null;
+            this._tileLampList = undefined;
 
             if (!$gameMap || typeof $gameMap.events !== 'function') {
                 if (enableDebug) {
@@ -886,6 +978,56 @@
             if ($gameLighting && $gameLighting.hasPlayerLight()) {
                 this.createPlayerLight(true);
             }
+            // The lamp list was read just above: handed on, so the checksum is
+            // not taken twice for one build.
+            this._builtFrom = this.lightSourceState(this._tileLampList);
+        }
+
+        // Everything createLights reads, as it stands now: the map, the light
+        // events (the Game_Event and the data it shows), the lamp posts, the
+        // torches lit by hand and whether the flashlight is on. Two equal
+        // states build the same lights, so a rebuild between them is skipped.
+        lightSourceState(knownLamps) {
+            const state = { mapId: 0, events: [], lamps: null, lit: '', player: false };
+            if (!$gameMap || typeof $gameMap.events !== 'function') return state;
+            state.mapId = $gameMap.mapId();
+            const events = $gameMap.events();
+            if (Array.isArray(events)) {
+                for (const event of events) {
+                    if (this.isLightEvent(event)) state.events.push(event, event.event());
+                }
+            }
+            if (state.mapId === 636) {
+                state.lamps = knownLamps !== undefined ? knownLamps : lampPostTiles();
+                const TD = window.TerrainInteractions;
+                if (TD && typeof TD.getLitTiles === 'function') {
+                    state.lit = (TD.getLitTiles() || []).map(t => t.x + ',' + t.y).join(';');
+                }
+            }
+            state.player = !!($gameLighting && $gameLighting.hasPlayerLight());
+            return state;
+        }
+
+        isBuiltFrom(state) {
+            const b = this._builtFrom;
+            if (!b || !state) return false;
+            if (b.mapId !== state.mapId || b.lamps !== state.lamps ||
+                b.lit !== state.lit || b.player !== state.player) return false;
+            if (b.events.length !== state.events.length) return false;
+            for (let i = 0; i < b.events.length; i++) {
+                if (b.events[i] !== state.events[i]) return false;
+            }
+            // The flashlight's own sprite has to still be standing (a fade out
+            // removes it on a timer).
+            return state.player === !!this._playerLight;
+        }
+
+        // Rebuild only if something createLights reads has moved since the
+        // last build. Returns whether it rebuilt.
+        refreshIfStale() {
+            if (this.isBuiltFrom(this.lightSourceState())) return false;
+            this.createLights();
+            return true;
         }
 
         // The lamp posts standing on the map. There is no biome test any more:
@@ -897,44 +1039,18 @@
         // lamp post, whether the generator put it on a city street or a prefab
         // dropped it on a farm track. The tiles decide.
         createTileLights() {
-            const currentTileset = $gameMap.tileset();
-            const tilesetId = currentTileset ? currentTileset.id : 0;
-            const streetlightTileIds = streetlightTileIdsFor(tilesetId);
-            if (!streetlightTileIds || !streetlightTileIds.size) {
-                return;
-            }
-
-            const width = $gameMap.width();
-            const height = $gameMap.height();
-            const isLamp = (x, y) => {
-                if (x < 0 || y < 0 || x >= width || y >= height) return false;
-                // Highest layer wins, exactly as the old scan did.
-                for (const layer of [4, 3, 2]) {
-                    const tileId = $gameMap.tileId(x, y, layer);
-                    if (tileId !== 0) return streetlightTileIds.has(tileId);
-                }
-                return false;
-            };
-
-            // A lamp post is drawn as a COLUMN of tiles (tileset 303 declares
-            // <Streetlight: [E232],[E240],[E248],[E256]>, four tiles tall), and
-            // the light hangs from the head at the top of it. Lighting every
-            // matching tile stacked four lamps inside one post and put most of
-            // the glow on the pole rather than on the street, so only the top of
-            // each run is lit and the rest of the column is skipped.
-            let lightsCreated = 0;
-            for (let x = 0; x < width; x++) {
-                for (let y = 0; y < height; y++) {
-                    if (!isLamp(x, y) || isLamp(x, y - 1)) continue;
-                    const tileLight = new Sprite_TileLight(x, y, $gameMap.tileId(x, y, 2));
-                    this._lightSprites.push(tileLight);
-                    this.addChild(tileLight);
-                    lightsCreated++;
-                }
+            const lamps = lampPostTiles();
+            this._tileLampList = lamps;
+            if (!lamps) return;
+            for (let i = 0; i < lamps.length; i++) {
+                const lamp = lamps[i];
+                const tileLight = new Sprite_TileLight(lamp.x, lamp.y, lamp.tileId);
+                this._lightSprites.push(tileLight);
+                this.addChild(tileLight);
             }
 
             if (enableDebug) {
-                console.log(`[DynamicLighting] ${lightsCreated} streetlight(s) lit on tileset ${tilesetId}`);
+                console.log(`[DynamicLighting] ${lamps.length} streetlight(s) lit on map ${$gameMap.mapId()}`);
             }
         }
 
@@ -1097,6 +1213,21 @@
             if (this._lightingLayer) {
                 this._lightingLayer.toggleLight(eventId);
             }
+        }
+
+        // The event whose light stands nearest the player, within reach tiles;
+        // 0 when no lit event is that close.
+        nearestLightId(reach = 6) {
+            const sprites = (this._lightingLayer && this._lightingLayer._lightSprites) || [];
+            if (typeof $gamePlayer === 'undefined' || !$gamePlayer) return 0;
+            let best = 0, bestD = Infinity;
+            for (const sprite of sprites) {
+                const ev = sprite && sprite._event;
+                if (!ev || typeof ev.eventId !== 'function') continue;
+                const d = Math.abs(ev.x - $gamePlayer.x) + Math.abs(ev.y - $gamePlayer.y);
+                if (d <= reach && d < bestD) { best = ev.eventId(); bestD = d; }
+            }
+            return best;
         }
 
         // Instantly reflects a Torch/Candle toggle on the live map (persistence
@@ -2178,20 +2309,49 @@
     // the tilemap) are already updated by the engine's child traversal, so no
     // Spriteset_Map.update alias is needed.
 
-    // Refresh lights when entering a new map
+    // Refresh lights when entering a new map. The layer already built its
+    // lights when the spriteset was made; this second look, a moment later,
+    // catches what the map's own setup added after that (spawned events, a
+    // generator's last tiles). It is tied to the scene and the layer it was
+    // scheduled for: a scene that has gone (a menu opened, a transfer) or a
+    // spriteset that was rebuilt is left alone, and the timer is cancelled on
+    // terminate. And when nothing createLights reads has moved, nothing is
+    // rebuilt (Spriteset_Lighting.refreshIfStale).
+    const LIGHT_SETTLE_MS = 100;
     const _Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
     Scene_Map.prototype.onMapLoaded = function () {
         _Scene_Map_onMapLoaded.call(this);
+        this.scheduleLightSettle();
+    };
 
-        setTimeout(() => {
-            if ($gameLighting && this._spriteset && this._spriteset._lightingLayer) {
-                this._spriteset._lightingLayer.createLights();
-
-                if (enableDebug) {
-                    console.log('Lights refreshed for new map');
-                }
+    Scene_Map.prototype.scheduleLightSettle = function () {
+        this.cancelLightSettle();
+        const spriteset = this._spriteset;
+        const layer = spriteset && spriteset._lightingLayer;
+        if (!layer) return;
+        this._lightSettleTimer = setTimeout(() => {
+            this._lightSettleTimer = null;
+            if (!$gameLighting || SceneManager._scene !== this) return;
+            if (this._spriteset !== spriteset || spriteset._destroyed) return;
+            if (spriteset._lightingLayer !== layer || layer._destroyed || !layer.parent) return;
+            const rebuilt = layer.refreshIfStale();
+            if (enableDebug) {
+                console.log(rebuilt ? 'Lights refreshed for new map' : 'Lights already current');
             }
-        }, 100);
+        }, LIGHT_SETTLE_MS);
+    };
+
+    Scene_Map.prototype.cancelLightSettle = function () {
+        if (this._lightSettleTimer) {
+            clearTimeout(this._lightSettleTimer);
+            this._lightSettleTimer = null;
+        }
+    };
+
+    const _Scene_Map_terminate_lighting = Scene_Map.prototype.terminate;
+    Scene_Map.prototype.terminate = function () {
+        this.cancelLightSettle();
+        if (_Scene_Map_terminate_lighting) _Scene_Map_terminate_lighting.call(this);
     };
 
     // Initialize on game start

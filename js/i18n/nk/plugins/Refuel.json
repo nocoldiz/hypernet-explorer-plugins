@@ -30,15 +30,15 @@
     "items": {
       "vehicles": {
         "name": "VEHICLES",
-        "text": "EVERY VEHICLE DA PARTY OWNS DAT TAKES FUEL. PICK ONE TA SEE ITS REFUELLIN' FIDDLY BITS!"
+        "text": "YA VEHICLES DAT USE FUEL. PICK ONE TA REFUEL IT!"
       },
       "options": {
         "name": "REFUEL FIDDLY BITS",
-        "text": "BUY A SET NUMBER OF LITRES OR FILL DA TANK. DA PRICE OF EACH OPTION IZ SHOWN BESIDE IT!"
+        "text": "BUY A SET AMOUNT OF LITRES OR FILL DA TANK!"
       },
       "overview": {
         "name": "FUEL OVERVIEW",
-        "text": "DA FUEL LEVEL OF DA SELECTED VEHICLE, DA PRICE PER LITRE AN' WHAT DA PARTY HAB IN ITS WALLET!"
+        "text": "FUEL LEVEL, PRICE PER LITRE AN' YA MONEY!"
       },
       "exit": {
         "name": "EXIT STATION",

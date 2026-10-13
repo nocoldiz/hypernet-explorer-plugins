@@ -1791,8 +1791,8 @@ window.Game_SummonFollower = Game_SummonFollower;
     async function rollRitual(spec, intMod, silent) {
         if (window.Dice3D && !silent) {
             return await window.Dice3D.rollD20({
-                actionName: `Summoning: ${spec.name || 'Creature'}`,
-                statName: 'INT',
+                actionName: T('Battle.summon.diceAction', { name: spec.name || T('Battle.summon.diceCreature') }),
+                statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(4) : '',
                 modifier: intMod,
                 dc: 10,
                 force3D: true
@@ -1833,6 +1833,10 @@ window.Game_SummonFollower = Game_SummonFollower;
         // would open the dice table at the top of every single battle.
         const boundRoll = spec.mapBound ? spec.ritual : null;
         const rollRes = boundRoll || await rollRitual(spec, intMod);
+        // The fight may have ended while the die was in the air: nothing is
+        // brought into a party that has already left the field, where it could
+        // never be dismissed and would be saved with the party.
+        if (!boundRoll && (!rollRes || rollRes.ownerGone || !$gameParty.inBattle())) return false;
         const quiet = !!boundRoll;
 
         const hyperMax = hyperThreshold();
@@ -2715,12 +2719,27 @@ window.Game_SummonFollower = Game_SummonFollower;
         flushLeave();
     };
 
-    const _BattleManager_endTurn = BattleManager.endTurn;
-    BattleManager.endTurn = function () {
-        _BattleManager_endTurn.call(this);
-        flushUltimate();
-        flushLeave();
-    };
+    // The end of a round. IndividualBattleTurns (loaded before this file)
+    // never runs BattleManager.endTurn: a round ends when its queue runs dry
+    // and makeITBSRound builds the next one while the battle is in its turn
+    // phase. Without it the vanilla endTurn is the boundary.
+    if (typeof BattleManager.makeITBSRound === 'function') {
+        const _BattleManager_makeITBSRound = BattleManager.makeITBSRound;
+        BattleManager.makeITBSRound = function () {
+            if (this._phase === 'turn') {
+                flushUltimate();
+                flushLeave();
+            }
+            return _BattleManager_makeITBSRound.apply(this, arguments);
+        };
+    } else {
+        const _BattleManager_endTurn = BattleManager.endTurn;
+        BattleManager.endTurn = function () {
+            _BattleManager_endTurn.call(this);
+            flushUltimate();
+            flushLeave();
+        };
+    }
 
     // What a rite cost, remembered for the moment. A skill used from the menu
     // reserves its common event and that event runs a few frames later on the

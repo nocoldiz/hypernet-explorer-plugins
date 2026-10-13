@@ -2,7 +2,7 @@
   "traits": {
     "obese": {
       "name": "Obeso",
-      "description": "Porta peso extra"
+      "description": "Ha chili di troppo"
     },
     "underweight": {
       "name": "Sottopeso",
@@ -13,7 +13,7 @@
       "description": "Teme gli spazi chiusi"
     },
     "trigger_happy": {
-      "name": "Impulsivo",
+      "name": "Grilletto facile",
       "description": "Rapido ad attaccare"
     },
     "paranoid": {
@@ -50,11 +50,11 @@
     },
     "lombrosian_physiognomy": {
       "name": "Lombrosiano",
-      "description": "Aspetto sospetto aumenta rilevamento crimini"
+      "description": "L'aspetto sospetto rende i crimini più facili da notare"
     },
     "hydrophobic": {
       "name": "Idrofobico",
-      "description": "Non può nuotare, teme l'acqua"
+      "description": "Non sa nuotare, teme l'acqua"
     },
     "silvertongue": {
       "name": "Parlantina",
@@ -69,7 +69,7 @@
       "description": "Non può consumare carne"
     },
     "impostor_syndrome": {
-      "name": "Sindrome dell'Impostore",
+      "name": "Sindrome dell'impostore",
       "description": "Dubita costantemente delle proprie capacità"
     },
     "vampire": {
@@ -85,8 +85,8 @@
       "description": "Teme contaminazione e malattie"
     },
     "adrenaline_junkie": {
-      "name": "Dipendente da Adrenalina",
-      "description": "Prospera nel pericolo e nell'eccitazione"
+      "name": "Dipendente da adrenalina",
+      "description": "Vive per il pericolo e le emozioni forti"
     },
     "pacifist": {
       "name": "Pacifista",
@@ -105,7 +105,7 @@
       "description": "Preferisce semplicità e pochi beni"
     },
     "compulsive_liar": {
-      "name": "Bugiardo Compulsivo",
+      "name": "Bugiardo compulsivo",
       "description": "Non può fare a meno di ingannare"
     },
     "perfectionist": {
@@ -118,7 +118,7 @@
     },
     "sociopath": {
       "name": "Sociopatico",
-      "description": "Manca di empatia e rimorso"
+      "description": "Privo di empatia e rimorso"
     },
     "empath": {
       "name": "Empatico",
@@ -129,7 +129,7 @@
       "description": "Teme la tecnologia moderna"
     },
     "tech_savvy": {
-      "name": "Esperto di Tecnologia",
+      "name": "Esperto di tecnologia",
       "description": "Maestro della tecnologia moderna"
     },
     "superstitious": {
@@ -153,7 +153,7 @@
       "description": "Ossessionato dalla produttività"
     },
     "photographic_memory": {
-      "name": "Memoria Fotografica",
+      "name": "Memoria fotografica",
       "description": "Ricorda tutto nei minimi dettagli"
     },
     "colorblind": {
@@ -166,11 +166,11 @@
     },
     "blind": {
       "name": "Cieco",
-      "description": "Non può vedere, si affida ad altri sensi"
+      "description": "Non vede, si affida agli altri sensi"
     },
     "deaf": {
       "name": "Sordo",
-      "description": "Non può sentire i suoni"
+      "description": "Non sente i suoni"
     },
     "agoraphobic": {
       "name": "Agorafobico",
@@ -178,7 +178,7 @@
     },
     "sadist": {
       "name": "Sadico",
-      "description": "Prova piacere dal dolore altrui"
+      "description": "Gode del dolore altrui"
     },
     "hemophobic": {
       "name": "Emofobico",
@@ -190,7 +190,7 @@
     },
     "ascetic": {
       "name": "Ascetico",
-      "description": "Pratica estrema autodisciplina"
+      "description": "Pratica un'autodisciplina estrema"
     },
     "acrophobic": {
       "name": "Acrofobico",
@@ -202,31 +202,31 @@
     },
     "berserker": {
       "name": "Berserker",
-      "description": "Entra in rabbia incontrollabile in combattimento"
+      "description": "In combattimento cade in una furia incontrollabile"
     },
     "coward": {
       "name": "Codardo",
-      "description": "Veloce a fuggire dal pericolo"
+      "description": "Fugge subito dal pericolo"
     },
     "xenophobic": {
       "name": "Xenofobo",
-      "description": "Teme stranieri ed esterni"
+      "description": "Teme stranieri ed estranei"
     },
     "hypochondriac": {
       "name": "Ipocondriaco",
       "description": "Ossessivamente preoccupato per le malattie"
     },
     "eidetic_reader": {
-      "name": "Lettore Eidetico",
-      "description": "Può ricordare qualsiasi testo perfettamente"
+      "name": "Lettore eidetico",
+      "description": "Ricorda alla perfezione qualsiasi testo"
     },
     "amblyopic": {
       "name": "Ambliope",
-      "description": "Ha occhio pigro"
+      "description": "Ha l'occhio pigro"
     },
     "prosopagnosic": {
       "name": "Prosopagnosico",
-      "description": "Non può riconoscere i volti"
+      "description": "Non riconosce i volti"
     },
     "megalomaniac": {
       "name": "Megalomane",
@@ -234,7 +234,7 @@
     },
     "albinism": {
       "name": "Albinismo",
-      "description": "Manca di pigmentazione di melanina"
+      "description": "Privo di melanina"
     },
     "gigantism": {
       "name": "Gigantismo",
@@ -258,7 +258,7 @@
     },
     "polydactyly": {
       "name": "Polidattilia",
-      "description": "Nato con dita extra"
+      "description": "Nato con dita in più"
     },
     "hypertrichosis": {
       "name": "Ipertricosi",
@@ -274,10 +274,10 @@
     },
     "sensitive": {
       "name": "Sensitivo",
-      "description": "Sensitivo alle forze PSI"
+      "description": "Sensibile alle forze PSI"
     },
     "sickle_cell_trait": {
-      "name": "Tratto Falciforme",
+      "name": "Tratto falciforme",
       "description": "Forma alterata dei globuli rossi"
     },
     "ehlers-danlos": {
@@ -285,12 +285,12 @@
       "description": "Colpisce i tessuti connettivi"
     },
     "congenital_analgesia": {
-      "name": "Analgesia Congenita",
-      "description": "Non può sentire il dolore fisico"
+      "name": "Analgesia congenita",
+      "description": "Non sente il dolore fisico"
     },
     "savant_syndrome": {
-      "name": "Sindrome del Savant",
-      "description": "Abilità eccezionale in area specifica"
+      "name": "Sindrome del savant",
+      "description": "Abilità eccezionale in un campo specifico"
     },
     "adhd": {
       "name": "ADHD",
@@ -310,14 +310,14 @@
     },
     "extrovert": {
       "name": "Estroverso",
-      "description": "Energizzato dall'interazione sociale"
+      "description": "Si ricarica stando con gli altri"
     },
     "introvert": {
       "name": "Introverso",
-      "description": "Prosciugato dall'interazione sociale"
+      "description": "Stare con gli altri lo sfinisce"
     },
     "chronic_pain": {
-      "name": "Dolore Cronico",
+      "name": "Dolore cronico",
       "description": "Disagio fisico costante"
     },
     "ambitious": {
@@ -353,7 +353,7 @@
       "description": "Modesto e discreto"
     },
     "gluttonous": {
-      "name": "Goloso",
+      "name": "Ingordo",
       "description": "Consumo eccessivo di cibo"
     },
     "hedonist": {
@@ -385,15 +385,15 @@
       "description": "Toccato dal favore divino"
     },
     "caffeine_dependent": {
-      "name": "Dipendente da Caffeina",
+      "name": "Dipendente da caffeina",
       "description": "Richiede caffeina per funzionare normalmente"
     },
     "nicotine_addict": {
-      "name": "Dipendente da Nicotina",
+      "name": "Dipendente da nicotina",
       "description": "Dipendente da prodotti del tabacco"
     },
     "gambling_addict": {
-      "name": "Dipendente dal Gioco",
+      "name": "Dipendente dal gioco",
       "description": "Gioca d'azzardo compulsivamente"
     },
     "drug_dependent": {
@@ -401,11 +401,11 @@
       "description": "Si affida a sostanze per affrontare la vita"
     },
     "restrictive_eating": {
-      "name": "Alimentazione Restrittiva",
+      "name": "Alimentazione restrittiva",
       "description": "Limita severamente l'assunzione di cibo"
     },
     "binge_eating": {
-      "name": "Alimentazione Compulsiva",
+      "name": "Alimentazione compulsiva",
       "description": "Episodi di alimentazione incontrollata"
     },
     "nyctophobic": {
@@ -418,7 +418,7 @@
     },
     "entomophobic": {
       "name": "Entomofobico",
-      "description": "Teme insetti e scarafaggi"
+      "description": "Teme gli insetti"
     },
     "ophidiophobic": {
       "name": "Ofidiofobico",
@@ -434,7 +434,7 @@
     },
     "trypophobic": {
       "name": "Tripofobico",
-      "description": "Teme buchi o motivi raggruppati"
+      "description": "Teme i gruppi di piccoli fori"
     },
     "atychiphobic": {
       "name": "Atichifobico",
@@ -454,30 +454,30 @@
     },
     "heretic": {
       "name": "Eretico",
-      "description": "Marchiato come emarginato religioso"
+      "description": "Bollato come reietto religioso"
     },
     "pilgrim": {
       "name": "Pellegrino",
-      "description": "Viaggia per scopo spirituale"
+      "description": "Viaggia per motivi spirituali"
     },
     "excommunicated": {
       "name": "Scomunicato",
       "description": "Espulso dalla comunità religiosa"
     },
     "monk-trained": {
-      "name": "Addestrato dai Monaci",
-      "description": "Disciplinato nei modi monastici"
+      "name": "Addestrato dai monaci",
+      "description": "Ha la disciplina dei monaci"
     },
     "prophetic": {
       "name": "Profetico",
-      "description": "Sperimenta visioni del futuro"
+      "description": "Ha visioni del futuro"
     },
     "noble": {
       "name": "Nobile",
       "description": "Nato nell'aristocrazia"
     },
     "street_urchin": {
-      "name": "Monello di Strada",
+      "name": "Monello di strada",
       "description": "Cresciuto nella povertà"
     },
     "orphan": {
@@ -494,19 +494,19 @@
     },
     "twin": {
       "name": "Gemello",
-      "description": "Ha un fratello identico"
+      "description": "Ha un gemello identico"
     },
     "exiled": {
       "name": "Esiliato",
       "description": "Bandito dalla patria"
     },
     "slave-born": {
-      "name": "Nato Schiavo",
+      "name": "Nato schiavo",
       "description": "Nato in schiavitù"
     },
     "wealthy": {
       "name": "Ricco",
-      "description": "Nato con privilegio finanziario"
+      "description": "Nato nella ricchezza"
     },
     "scholar": {
       "name": "Studioso",
@@ -518,7 +518,7 @@
     },
     "criminal": {
       "name": "Criminale",
-      "description": "Passato in attività illegali"
+      "description": "Ha un passato criminale"
     },
     "illiterate": {
       "name": "Analfabeta",
@@ -530,7 +530,7 @@
     },
     "farmer": {
       "name": "Contadino",
-      "description": "Provenienza agricola rurale"
+      "description": "Cresciuto in campagna"
     },
     "herbalist": {
       "name": "Erborista",
@@ -546,7 +546,7 @@
     },
     "blacksmith": {
       "name": "Fabbro",
-      "description": "Metallurgo esperto"
+      "description": "Esperto nel lavorare i metalli"
     },
     "thief": {
       "name": "Ladro",
@@ -585,7 +585,7 @@
       "description": "Mano sinistra dominante"
     },
     "quick_reflexes": {
-      "name": "Riflessi Rapidi",
+      "name": "Riflessi rapidi",
       "description": "Reazioni fulminee"
     },
     "duelist": {
@@ -601,7 +601,7 @@
       "description": "Abile con arco e frecce"
     },
     "shield_master": {
-      "name": "Maestro dello Scudo",
+      "name": "Maestro dello scudo",
       "description": "Esperto in tattiche difensive"
     },
     "assassin": {
@@ -609,15 +609,15 @@
       "description": "Addestrato a uccidere silenziosamente"
     },
     "berserker_rage": {
-      "name": "Furia Berserker",
+      "name": "Furia berserker",
       "description": "Canalizza la furia della battaglia"
     },
     "mounted_combat": {
-      "name": "Combattimento a Cavallo",
+      "name": "Combattimento a cavallo",
       "description": "Combattente di cavalleria esperto"
     },
     "martial_artist": {
-      "name": "Artista Marziale",
+      "name": "Artista marziale",
       "description": "Maestro del combattimento disarmato"
     },
     "optimist": {
@@ -642,7 +642,7 @@
     },
     "romantic": {
       "name": "Romantico",
-      "description": "Guidato dal cuore sulla mente"
+      "description": "Si lascia guidare dal cuore"
     },
     "cynic": {
       "name": "Cinico",
@@ -653,8 +653,8 @@
       "description": "Non perdona mai un'offesa"
     },
     "forgiving": {
-      "name": "Perdonatore",
-      "description": "Veloce nel perdonare le trasgressioni"
+      "name": "Indulgente",
+      "description": "Perdona facilmente"
     },
     "jealous": {
       "name": "Geloso",
@@ -677,7 +677,7 @@
       "description": "Ampiamente riconosciuto e celebrato"
     },
     "infamous": {
-      "name": "Infame",
+      "name": "Famigerato",
       "description": "Conosciuto per azioni terribili"
     },
     "anonymous": {
@@ -686,7 +686,7 @@
     },
     "wanted": {
       "name": "Ricercato",
-      "description": "Cacciato dalle autorità"
+      "description": "Braccato dalle autorità"
     },
     "hero": {
       "name": "Eroe",
@@ -694,46 +694,46 @@
     },
     "disgraced": {
       "name": "Disonorato",
-      "description": "Caduto dall'onore precedente"
+      "description": "Ha perso l'onore di un tempo"
     },
     "cold-blooded": {
-      "name": "Sangue Freddo",
+      "name": "Sangue freddo",
       "description": "Adattato a climi freddi"
     },
     "heat-adapted": {
-      "name": "Adattato al Calore",
+      "name": "Adattato al calore",
       "description": "Prospera in ambienti caldi"
     },
     "mountain-born": {
-      "name": "Nato in Montagna",
+      "name": "Nato in montagna",
       "description": "Resistenza ad alta quota"
     },
     "island-raised": {
-      "name": "Cresciuto in Isola",
+      "name": "Cresciuto su un'isola",
       "description": "Abilità di sopravvivenza marittima"
     },
     "desert_dweller": {
-      "name": "Abitante del Deserto",
+      "name": "Abitante del deserto",
       "description": "Sopravvive in terre aride"
     },
     "cave_dweller": {
-      "name": "Abitante delle Caverne",
+      "name": "Abitante delle caverne",
       "description": "Adattato alla vita sotterranea"
     },
     "animal_handler": {
-      "name": "Addestratore di Animali",
+      "name": "Addestratore di animali",
       "description": "Si lega facilmente con le creature"
     },
     "beast_whisperer": {
-      "name": "Sussurratore di Bestie",
+      "name": "Sussurratore di bestie",
       "description": "Comunica con gli animali"
     },
     "nature_attuned": {
-      "name": "In Sintonia con la Natura",
+      "name": "In sintonia con la natura",
       "description": "Profonda connessione con la natura"
     },
     "urban_native": {
-      "name": "Nativo Urbano",
+      "name": "Nativo urbano",
       "description": "Prospera solo in città"
     },
     "feral": {
@@ -741,31 +741,31 @@
       "description": "Cresciuto nella natura selvaggia"
     },
     "magically_gifted": {
-      "name": "Dotato Magicamente",
+      "name": "Dotato di magia",
       "description": "Talento arcano naturale"
     },
     "mana-starved": {
-      "name": "Privo di Mana",
+      "name": "Privo di mana",
       "description": "Non può canalizzare energia magica"
     },
     "spell-scarred": {
-      "name": "Segnato da Incantesimi",
+      "name": "Segnato dalla magia",
       "description": "Segnato da incidente magico"
     },
     "witch-marked": {
-      "name": "Marchiato dalla Strega",
-      "description": "Porta il marchio di maledizione soprannaturale"
+      "name": "Marchiato dalla strega",
+      "description": "Porta un marchio di maledizione"
     },
     "clairvoyant": {
       "name": "Chiaroveggente",
       "description": "Vede oltre la percezione normale"
     },
     "booming_voice": {
-      "name": "Voce Tonante",
+      "name": "Voce tonante",
       "description": "Naturalmente forte e autorevole"
     },
     "soft-spoken": {
-      "name": "Dalla Voce Morbida",
+      "name": "Voce pacata",
       "description": "Voce tranquilla e gentile"
     },
     "mute": {
@@ -782,10 +782,10 @@
     },
     "gun_fu": {
       "name": "Gun-Fu",
-      "description": "Le abilità di arti marziali sparate con pistola o arco concatenano un attacco extra gratuito"
+      "description": "Le abilità marziali con pistola o arco attivano un attacco extra gratuito"
     },
     "cystic_fibrosis": {
-      "name": "Fibrosi Cistica",
+      "name": "Fibrosi cistica",
       "description": "Disturbo genetico di polmoni e pancreas"
     },
     "huntingtons_disease": {
@@ -797,11 +797,11 @@
       "description": "Disturbo del sangue ereditario, vesciche al sole"
     },
     "pack_hunter": {
-      "name": "Cacciatore di Branco",
+      "name": "Cacciatore di branco",
       "description": "Abbatte le prede insieme ai suoi simili"
     },
     "lone_predator": {
-      "name": "Predatore Solitario",
+      "name": "Predatore solitario",
       "description": "Caccia da solo e non vuole compagnia"
     },
     "skittish": {
@@ -817,16 +817,16 @@
       "description": "Mangia gli avanzi degli altri e ci prospera"
     },
     "thick_hide": {
-      "name": "Pelle Spessa",
+      "name": "Pelle spessa",
       "description": "Una pelle che devia le lame e appesantisce il corpo"
     },
     "keen_nose": {
-      "name": "Fiuto Acuto",
-      "description": "Sente arrivare le cose molto prima che arrivino"
+      "name": "Fiuto acuto",
+      "description": "Fiuta i pericoli molto prima che arrivino"
     },
     "venomous": {
       "name": "Velenoso",
-      "description": "Porta il veleno nel morso a spese del proprio vigore"
+      "description": "Morso velenoso che costa un po' di vigore"
     },
     "imprinted": {
       "name": "Imprinting",
@@ -834,7 +834,7 @@
     },
     "rabid": {
       "name": "Rabbioso",
-      "description": "Malato, furioso e ormai irraggiungibile"
+      "description": "Malato e furioso, impossibile da calmare"
     },
     "burrower": {
       "name": "Scavatore",
@@ -842,46 +842,46 @@
     },
     "hibernator": {
       "name": "Letargico",
-      "description": "Dorme via il freddo con un corpo fatto per conservarlo"
+      "description": "Supera il freddo dormendo sulle riserve di grasso"
     },
     "peanut_allergy": {
-      "name": "Allergia alle Arachidi",
+      "name": "Allergia alle arachidi",
       "description": "Le arachidi possono chiudere la gola"
     },
     "tree_nut_allergy": {
-      "name": "Allergia alla Frutta a Guscio",
+      "name": "Allergia alla frutta a guscio",
       "description": "Mandorle, nocciole e noci scatenano una reazione"
     },
     "shellfish_allergy": {
-      "name": "Allergia ai Crostacei",
+      "name": "Allergia ai crostacei",
       "description": "Gamberi, granchi e aragoste sono pericolosi"
     },
     "fish_allergy": {
-      "name": "Allergia al Pesce",
+      "name": "Allergia al pesce",
       "description": "Il pesce provoca orticaria e nausea"
     },
     "milk_allergy": {
-      "name": "Allergia al Latte",
+      "name": "Allergia al latte",
       "description": "I latticini provocano orticaria e crampi"
     },
     "egg_allergy": {
-      "name": "Allergia alle Uova",
+      "name": "Allergia alle uova",
       "description": "Le uova provocano un'eruzione cutanea"
     },
     "wheat_allergy": {
-      "name": "Allergia al Frumento",
+      "name": "Allergia al frumento",
       "description": "Frumento e orzo provocano un'eruzione cutanea"
     },
     "soy_allergy": {
-      "name": "Allergia alla Soia",
+      "name": "Allergia alla soia",
       "description": "La soia provoca prurito"
     },
     "hay_fever": {
-      "name": "Febbre da Fieno",
+      "name": "Febbre da fieno",
       "description": "Il polline primaverile scatena attacchi di starnuti all'aperto"
     },
     "penicillin_allergy": {
-      "name": "Allergia alla Penicillina",
+      "name": "Allergia alla penicillina",
       "description": "La penicillina scatena una reazione violenta"
     }
   }

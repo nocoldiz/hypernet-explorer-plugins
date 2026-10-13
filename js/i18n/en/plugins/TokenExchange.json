@@ -1,7 +1,7 @@
 {
   "title": "Token Exchange",
   "banner": "TOKEN EXCHANGE",
-  "tagline": "Exchanges euros and arcade tokens without commission.",
+  "tagline": "Swap euros and arcade tokens. No fees.",
   "rate": "1 token = €{price}",
   "atPar": "Buy and sell at par.",
   "wallet": "WALLET",
@@ -28,10 +28,10 @@
     "one": "{count} token",
     "other": "{count} tokens"
   },
-  "statusBuying": "Buying: euros leave the wallet, tokens arrive in the bag.",
-  "statusSelling": "Selling: tokens leave the bag, euros return to the wallet.",
+  "statusBuying": "Buying tokens with euros.",
+  "statusSelling": "Selling tokens for euros.",
   "notEnoughEuros": "Not enough euros for that.",
-  "notEnoughTokens": "You do not hold that many tokens.",
+  "notEnoughTokens": "Not enough tokens.",
   "bought": {
     "one": "Bought {count} token for €{total}.",
     "other": "Bought {count} tokens for €{total}."

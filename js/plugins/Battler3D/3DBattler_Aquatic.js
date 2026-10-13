@@ -91,7 +91,12 @@
         primordialdragonturtle:{ variant: 'primordialdragonturtle',scale: 3.0, texturePool: 'water', bodyColor: 0x3a6a7a, shell: 0xa8e0ee, accent: 0xeafcff, hue: [0.52, 0.06], sat: [0.40, 0.12], lit: [0.52, 0.10] },
         // ── Bespoke squids split from the shared 'octopus' rig ──
         aqu_bubblesquid:       { variant: 'aqu_bubblesquid',       scale: 1.9, texturePool: 'water', bodyColor: 0x4a9ad8, accent: 0xbfe9ff, hue: [0.55, 0.08], sat: [0.45, 0.15], lit: [0.55, 0.12] },
-        aqu_bubblesquidsecond: { variant: 'aqu_bubblesquidsecond', scale: 1.8, texturePool: 'water', bodyColor: 0x6ac0a8, accent: 0xbaff6a, hue: [0.42, 0.08], sat: [0.45, 0.15], lit: [0.52, 0.12] }
+        aqu_bubblesquidsecond: { variant: 'aqu_bubblesquidsecond', scale: 1.8, texturePool: 'water', bodyColor: 0x6ac0a8, accent: 0xbaff6a, hue: [0.42, 0.08], sat: [0.45, 0.15], lit: [0.52, 0.12] },
+        // ── Level 1-5 starter roster (bespoke, one builder each) ──
+        lv_moonjellyling:   { variant: 'moonjellyling',   scale: 1.7, texturePool: 'water', bodyColor: 0xd8e8f8, accent: 0xf0a8d0, hue: [0.58, 0.05], sat: [0.30, 0.10], lit: [0.85, 0.05] },
+        lv_voidjellyling:   { variant: 'voidjellyling',   scale: 1.8, texturePool: 'void',  bodyColor: 0x1a142e, accent: 0x9a5aff, hue: [0.74, 0.05], sat: [0.40, 0.10], lit: [0.12, 0.05] },
+        lv_tidepooloctopus: { variant: 'tidepooloctopus', scale: 1.6, texturePool: 'water', bodyColor: 0xc85a3a, accent: 0xf0d0a0, hue: [0.04, 0.04], sat: [0.55, 0.10], lit: [0.45, 0.06] },
+        lv_templetortoise:  { variant: 'templetortoise',  scale: 2.0, texturePool: 'stone', bodyColor: 0x8a7a5a, shell: 0x5a4a32, accent: 0xc8302a, hue: [0.11, 0.04], sat: [0.25, 0.08], lit: [0.42, 0.06] }
     };
 
     class AquaticBattler3D extends Base {
@@ -146,6 +151,10 @@
                 case 'armoredrexlord':        this._buildArmoredRexLord(); break;
                 case 'steelshelltortoise':    this._buildSteelshellTortoise(); break;
                 case 'primordialdragonturtle': this._buildPrimordialDragonTurtle(); break;
+                case 'moonjellyling':   this._buildMoonJellyling(); break;
+                case 'voidjellyling':   this._buildVoidJellyling(); break;
+                case 'tidepooloctopus': this._buildTidepoolOctopus(); break;
+                case 'templetortoise':  this._buildTempleTortoise(); break;
                 default:          this._buildFish(); break;
             }
             this.model = this.bodyGroup;
@@ -189,6 +198,18 @@
             this.bodyGroup.add(g);
             this._segments.push(g);
             return g;
+        }
+
+        // A thin strand run down the middle of a _chain, for chains whose beads
+        // are spaced wider than they are round: without it the tentacle reads
+        // (and measures) as a column of separate floating pearls.
+        _thread(chain, mat, r) {
+            const n = chain._parts.length;
+            if (n < 2) return chain;
+            const len = -chain._parts[n - 1].position.y;
+            const strand = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 0.6, len, 5), mat);
+            strand.position.y = -len / 2; chain.add(strand);
+            return chain;
         }
 
         // ── Fish ─────────────────────────────────────────────────────────────
@@ -274,7 +295,9 @@
             this.bodyGroup.add(this.mantle);
             // Two triangular fins near the mantle tip.
             const finMat = this._mat(p.bodyColor, 0.8, 0.6);
-            for (const fx of [-1, 1]) { const fin = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.4, 4), finMat); fin.position.set(fx * 0.34, 1.9, 0); fin.rotation.z = fx * 1.1; fin.scale.set(1, 1, 0.15); this.mantle.add(fin); }
+            // Fins are children of the mantle, so they sit in its own space near
+            // the tip (body-space y 1.9 put them a body length over the squid).
+            for (const fx of [-1, 1]) { const fin = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.4, 4), finMat); fin.position.set(fx * 0.22, 0.3, 0); fin.rotation.z = fx * 1.1; fin.scale.set(1, 1, 0.15); this.mantle.add(fin); }
             // Head with two large squid eyes.
             this.head = new THREE.Mesh(new THREE.SphereGeometry(0.38, 14, 12), bodyMat);
             this.head.position.set(0, 1.0, 0); this.head.scale.set(1.0, 0.9, 1.0);
@@ -290,6 +313,7 @@
             }
             // Bubbles it expels.
             this.bubbles = new THREE.Group();
+            this.bubbles.userData.float = true; // vented clouds drift free by design
             const bubMat = (bubbleKind === 'toxic')
                 ? this._mat(p.accent, 0.4, 0.2, p.accent)
                 : this._mat(0xeaf6ff, 0.35, 0.2);
@@ -612,6 +636,16 @@
             ];
         }
 
+        // Belly plate (plastron) filling the gap between a raised dome and the
+        // tops of the legs, so the legs have something to hang from. Built in
+        // the shell group's own space and hidden with it.
+        _plastron(mat, shellY, legTopY, rx, rz, dz) {
+            const h = Math.max(0.1, shellY - legTopY + 0.08);
+            const belly = new THREE.Mesh(new THREE.CylinderGeometry(1, 0.92, 1, 12), mat);
+            belly.scale.set(rx, h, rz); belly.position.set(0, -h / 2 + 0.04, dz || 0);
+            this.shell.add(belly); return belly;
+        }
+
         // ── Coralic Warcaster (coral-encrusted sea turtle + storm orbs) ───────
         _buildCoralWarcaster() {
             const p = this.profile;
@@ -637,7 +671,7 @@
             const orbMat = this._mat(p.accent, 0.85, 0.3, p.accent);
             for (let i = 0; i < 3; i++) {
                 const orb = new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 10), orbMat);
-                orb._a = (i / 3) * Math.PI * 2;
+                orb._a = (i / 3) * Math.PI * 2; orb.userData.float = true;
                 this.shell.add(orb); this.stormOrbs.push(orb);
             }
             this._turtleChassis(skinMat);
@@ -684,6 +718,7 @@
             }
             // Lightning arcs: thin bright zig-zag bars arcing over the shell.
             this.arcs = new THREE.Group();
+            this.arcs.userData.float = true; // arcing over the shell, not on it
             const arcMat = this._mat(p.accent, 0.9, 0.2, p.accent);
             for (let i = 0; i < 5; i++) {
                 const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.22, 4), arcMat);
@@ -735,8 +770,11 @@
             this.dorsalPlates = new THREE.Group();
             const plateMat = this._mat(p.bodyColor, 1.0, 0.5);
             for (let i = 0; i < 5; i++) {
-                const plate = new THREE.Mesh(new THREE.ConeGeometry(0.18 - i * 0.02, 0.45 - i * 0.04, 4), plateMat);
-                plate.position.set(0, 2.05 - i * 0.05, -0.2 - i * 0.22); plate.scale.set(1, 1, 0.18);
+                // Rooted along the crown of the body (an ellipsoid 0.78 tall and
+                // 0.585 deep): the old straight row ran on past its back end.
+                const h = 0.45 - i * 0.04, z = -0.1 - i * 0.11;
+                const plate = new THREE.Mesh(new THREE.ConeGeometry(0.18 - i * 0.02, h, 4), plateMat);
+                plate.position.set(0, 1.4 + 0.78 * Math.sqrt(Math.max(0, 1 - (z / 0.585) * (z / 0.585))) + h / 2 - 0.08, z); plate.scale.set(1, 1, 0.18);
                 this.dorsalPlates.add(plate);
             }
             this.bodyGroup.add(this.dorsalPlates);
@@ -802,12 +840,12 @@
             this.eye.position.set(0, 1.55, 0); this.bodyGroup.add(this.eye);
             // Two long trailing tentacle ribbons + several oral arms.
             const tentMat = this._mat(p.accent, 0.6, 0.3, p.accent);
-            this.tentOne = this._chain(tentMat, -0.18, 1.45, 0.0, 7, 0.06, 1.5, true);
-            this.tentTwo = this._chain(tentMat, 0.18, 1.45, 0.0, 7, 0.06, 1.5, true);
+            this.tentOne = this._thread(this._chain(tentMat, -0.18, 1.45, 0.0, 7, 0.06, 1.5, true), tentMat, 0.022);
+            this.tentTwo = this._thread(this._chain(tentMat, 0.18, 1.45, 0.0, 7, 0.06, 1.5, true), tentMat, 0.022);
             this.oralArms = new THREE.Group();
             for (let i = 0; i < 4; i++) {
                 const a = (i / 4) * Math.PI * 2;
-                const arm = this._chain(tentMat, Math.cos(a) * 0.25, 1.45, Math.sin(a) * 0.25, 4, 0.045, 0.7, true);
+                const arm = this._thread(this._chain(tentMat, Math.cos(a) * 0.25, 1.45, Math.sin(a) * 0.25, 4, 0.045, 0.7, true), tentMat, 0.018);
                 this.oralArms.add(arm);
             }
             this._partMeshMap = { BODY: this.bell, EYE: this.eye, TENTACLE_ONE: this.tentOne, TENTACLE_TWO: this.tentTwo };
@@ -828,7 +866,7 @@
             this.body.position.set(0, 0.7, 0); this.body.scale.set(1.0, 1.1, 1.6);
             this.bodyGroup.add(this.body);
             const mantle = new THREE.Mesh(new THREE.SphereGeometry(0.4, 14, 12, 0, Math.PI * 2, 0, Math.PI / 2), bodyMat);
-            mantle.position.set(0, 0.95, 0.2); mantle.scale.set(1.3, 0.7, 1.4); this.body.add(mantle);
+            mantle.position.set(0, 0.36, 0.12); mantle.scale.set(1.3, 0.7, 1.4); this.body.add(mantle); // in the body's own space
             // Slimy foot trail underneath.
             const foot = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.1, 1.3), this._mat(p.accent, 0.5, 0.2, p.accent));
             foot.position.set(0, 0.12, 0.1); this.bodyGroup.add(foot);
@@ -882,7 +920,7 @@
             this.bodyGroup.add(this.mantle);
             // Golden halo ring floating above the mantle.
             const halo = new THREE.Mesh(new THREE.TorusGeometry(0.45, 0.06, 10, 24), this._mat(p.accent, 0.95, 0.2, p.accent));
-            halo.position.set(0, 0.85, 0); halo.rotation.x = Math.PI / 2; this.mantle.add(halo);
+            halo.position.set(0, 0.85, 0); halo.rotation.x = Math.PI / 2; halo.userData.float = true; this.mantle.add(halo);
             // Head with sacred eyes.
             this.head = new THREE.Mesh(new THREE.SphereGeometry(0.48, 14, 12), bodyMat);
             this.head.position.set(0, 1.05, 0.1); this.bodyGroup.add(this.head);
@@ -927,17 +965,26 @@
             }
             this.shell.position.set(0, 0.7, 0); this.bodyGroup.add(this.shell);
             this._turtleChassis(skinMat);
-            // Replace stub legs with broad flippers.
+            // Replace stub legs with broad flippers. The chassis stubs come off
+            // the body first: left in, they stood orphaned under the flippers.
+            [this.frontLeft, this.frontRight, this.rearLeft, this.rearRight].forEach(l => this.bodyGroup.remove(l));
+            this._plastron(shellMat, 0.7, 0.48, 0.66, 0.8);
             this.frontLeft = this._flipper(skinMat, -0.55, 0.45, 1);
             this.frontRight = this._flipper(skinMat, 0.55, 0.45, 1);
             this.rearLeft = this._flipper(skinMat, -0.5, -0.45, 0.6);
             this.rearRight = this._flipper(skinMat, 0.5, -0.45, 0.6);
             this._turtleRig();
         }
+        // A flipper is hinged where it leaves the shell and flaps about that
+        // hinge (rotation.z); spun about its own middle it swung clear of the
+        // body on every stroke.
         _flipper(mat, x, z, len) {
+            const side = x > 0 ? 1 : -1;
+            const g = new THREE.Group();
             const f = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.06, 0.55 * len), mat);
-            f.position.set(x, 0.5, z + (z > 0 ? 0.1 : -0.1)); f.rotation.z = x > 0 ? -0.4 : 0.4; f.rotation.y = x > 0 ? -0.5 : 0.5;
-            this.bodyGroup.add(f); return f;
+            f.position.set(side * 0.12, -0.04, z > 0 ? 0.1 : -0.1); f.rotation.z = -side * 0.4; f.rotation.y = -side * 0.5; g.add(f);
+            g.position.set(x - side * 0.12, 0.54, z); g._side = side; g._flap = true;
+            this.bodyGroup.add(g); return g;
         }
 
         // ── Shadow Tortoise (smoke-wreathed cursed tortoise, dark shell) ───────
@@ -961,7 +1008,7 @@
             const smokeMat = this._mat(0x1a1a22, 0.45, 0.9, 0x120822);
             for (let i = 0; i < 6; i++) {
                 const puff = new THREE.Mesh(new THREE.SphereGeometry(0.16 + this.idRand() * 0.08, 8, 8), smokeMat);
-                puff._a = (i / 6) * Math.PI * 2; puff._yb = 0.3 + this.idRand() * 0.4;
+                puff._a = (i / 6) * Math.PI * 2; puff._yb = 0.3 + this.idRand() * 0.4; puff.userData.float = true;
                 this.shell.add(puff); this.smoke.push(puff);
             }
             this.shell.position.set(0, 0.7, 0); this.bodyGroup.add(this.shell);
@@ -1119,7 +1166,7 @@
             const finMat = this._mat(p.accent, 0.4, 0.6, p.accent);
             for (let i = 0; i < 5; i++) {
                 const fin = new THREE.Mesh(new THREE.ConeGeometry(0.22 - i * 0.02, 0.55 - i * 0.05, 3), finMat);
-                fin.position.set(0, 2.0 - i * 0.04, -0.2 - i * 0.24); fin.scale.set(1, 1, 0.08); fin.rotation.z = (i % 2 ? 0.15 : -0.15);
+                fin.position.set(0, 1.98 - i * 0.07, -0.1 - i * 0.13); fin.scale.set(1, 1, 0.08); fin.rotation.z = (i % 2 ? 0.15 : -0.15); // over the cloud, not past it
                 this.dorsalPlates.add(fin);
             }
             this.bodyGroup.add(this.dorsalPlates);
@@ -1240,7 +1287,11 @@
                     const s = new THREE.Mesh(new THREE.SphereGeometry(0.06 - i * 0.008, 7, 7), fleshMat);
                     s.position.set(0, -i * 0.13, i * 0.03); g.add(s);
                 }
-                g.position.set(x, 1.5, z); g.rotation.x = 0.3;
+                const strand = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.014, 0.54, 5), fleshMat);
+                strand.position.set(0, -0.26, 0.06); strand.rotation.x = -0.23; g.add(strand);
+                // Hung from the lower face in the head's own space; y 1.5 was a
+                // body-space height and floated the whole beard over the skull.
+                g.position.set(x, -0.12, z); g.rotation.x = -0.35; // swung forward over the chest
                 this.head.add(g); this._segments.push(g); return g;
             };
             this.tentOne = mkTent(-0.14, 0.22);
@@ -1293,6 +1344,7 @@
             this.rearRight = this._pillarLeg(skinMat, 0.55, -0.5);
             this.tail = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.36, 6), skinMat);
             this.tail.position.set(0, 0.5, -0.85); this.tail.rotation.x = -1.8; this.bodyGroup.add(this.tail);
+            this._plastron(shellMat, 0.75, 0.52, 0.72, 0.82);
             this._turtleRig();
         }
         _pillarLeg(mat, x, z) {
@@ -1339,6 +1391,7 @@
             this.rearRight = this._stub(skinMat, 0.45, -0.5);
             this.tail = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.4, 6), skinMat);
             this.tail.position.set(0, 0.55, -0.9); this.tail.rotation.x = -1.7; this.bodyGroup.add(this.tail);
+            this._plastron(shellMat, 0.7, 0.56, 0.5, 0.82);
             this._turtleRig(this.gusts);
         }
 
@@ -1365,7 +1418,7 @@
             const moteMat = this._mat(p.accent, 0.7, 0.3, p.accent);
             for (let i = 0; i < 6; i++) {
                 const mote = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 6), moteMat);
-                mote._a = (i / 6) * Math.PI * 2; mote._yb = 0.5 + this.idRand() * 0.4;
+                mote._a = (i / 6) * Math.PI * 2; mote._yb = 0.5 + this.idRand() * 0.4; mote.userData.float = true;
                 this.shell.add(mote); this.motes.push(mote);
             }
             this.shell.position.set(0, 0.7, 0); this.bodyGroup.add(this.shell);
@@ -1462,6 +1515,7 @@
             }
             // Lightning bolts arcing between the rods over the dome.
             this.arcs = new THREE.Group();
+            this.arcs.userData.float = true; // arcing between the rods by design
             const boltMat = this._mat(p.accent, 0.95, 0.2, p.accent);
             for (let i = 0; i < 6; i++) {
                 const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.26, 4), boltMat);
@@ -1499,7 +1553,7 @@
             for (let i = 0; i < 6; i++) {
                 const a = (i / 6) * Math.PI * 2;
                 const drop = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), dropMat);
-                drop.scale.set(1, 1.7, 1); drop._a = a; drop._yb = 0.0 - this.idRand() * 0.2;
+                drop.scale.set(1, 1.7, 1); drop._a = a; drop._yb = 0.0 - this.idRand() * 0.2; drop.userData.float = true;
                 drop.position.set(Math.cos(a) * 0.68, 0.0, Math.sin(a) * 0.78);
                 this.shell.add(drop); this.drips.push(drop);
             }
@@ -1533,7 +1587,7 @@
                 const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), this._mat(p.accent, 1.0, 0.2, p.accent));
                 pupil.position.z = 0.07; eg.add(pupil);
                 const tear = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 6), this._mat(p.accent, 0.7, 0.1, p.accent));
-                tear.position.set(0, -0.14, 0.06); tear.scale.set(1, 1.8, 1); eg.add(tear); eg._tear = tear;
+                tear.position.set(0, -0.14, 0.06); tear.scale.set(1, 1.8, 1); tear.userData.float = true; eg.add(tear); eg._tear = tear;
                 eg.position.set(Math.cos(a) * 0.52, yb, Math.sin(a) * 0.5);
                 eg.lookAt(eg.position.x * 3, eg.position.y * 3, eg.position.z * 3 + 1);
                 eg._yb = yb;
@@ -1548,8 +1602,8 @@
             this.eye.position.set(0, 1.5, 0.55); this.bodyGroup.add(this.eye);
             // Two drifting wispy tentacles trailing below the mass.
             const tentMat = this._mat(p.bodyColor, 0.85, 0.7, 0x120a1c);
-            this.tentOne = this._chain(tentMat, -0.3, 1.0, 0.1, 6, 0.1, 1.3, true);
-            this.tentTwo = this._chain(tentMat, 0.3, 1.0, -0.1, 6, 0.1, 1.3, true);
+            this.tentOne = this._thread(this._chain(tentMat, -0.3, 1.0, 0.1, 6, 0.1, 1.3, true), tentMat, 0.04);
+            this.tentTwo = this._thread(this._chain(tentMat, 0.3, 1.0, 0.1, 6, 0.1, 1.3, true), tentMat, 0.04);
             this._partMeshMap = { BODY: this.body, EYE: this.eye, TENTACLE_ONE: this.tentOne, TENTACLE_TWO: this.tentTwo };
             this._cascadeRules = [
                 { gone: ['BODY'], hide: [this.body, this.eye, this.tentOne, this.tentTwo] },
@@ -1665,6 +1719,7 @@
             this.rearRight = this._clawLeg(skinMat, boulderMat, 0.55, -0.5);
             this.tail = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.4, 5), skinMat);
             this.tail.position.set(0, 0.5, -0.88); this.tail.rotation.x = -1.8; this.bodyGroup.add(this.tail);
+            this._plastron(rockMat, 0.78, 0.53, 0.68, 0.78);
             this._turtleRig();
         }
         _clawLeg(legMat, clawMat, x, z) {
@@ -1692,8 +1747,10 @@
             this._eye(this.carapace, 0.28, 0.45, 0.2, 0.045, 0x111111);
             // Hinged hexagonal abdomen (opisthosoma) with side spines.
             this.abdomen = new THREE.Group();
-            const ab = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.3, 0.16, 6), mat);
-            ab.rotation.x = Math.PI / 2; ab.scale.set(1.0, 1.0, 0.55); this.abdomen.add(ab);
+            // A flat hexagonal plate lying on the ground (a quarter turn on x
+            // stood it on edge like a coin).
+            const ab = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.44, 0.16, 6), mat);
+            ab.scale.set(1.0, 1.0, 0.8); this.abdomen.add(ab);
             for (let i = 0; i < 5; i++) {
                 const side = i < 2 ? -1 : (i < 4 ? 1 : 0);
                 if (side === 0) continue;
@@ -1702,8 +1759,12 @@
             }
             this.abdomen.position.set(0, 0.5, -0.55); this.bodyGroup.add(this.abdomen);
             // Long spiked tail (telson) trailing from the abdomen.
-            this.tail = new THREE.Mesh(new THREE.ConeGeometry(0.06, 1.0, 6), mat);
-            this.tail.position.set(0, 0.5, -1.4); this.tail.rotation.x = -Math.PI / 2 - 0.1; this.abdomen.add(this.tail);
+            // Hinged at the abdomen's back edge, in the abdomen's own space; the
+            // spike sits half its length along the hinge's axis.
+            this.tail = new THREE.Group();
+            const telson = new THREE.Mesh(new THREE.ConeGeometry(0.06, 1.0, 6), mat);
+            telson.position.y = 0.5; this.tail.add(telson);
+            this.tail.position.set(0, 0, -0.3); this.tail.rotation.x = -Math.PI / 2 - 0.1; this.abdomen.add(this.tail);
             // Small chelicerae/claws tucked under the front of the carapace.
             this.clawL = this._horseshoeClaw(mat, -1); this.clawR = this._horseshoeClaw(mat, 1);
             // Two front legs and two rear legs grouped under the body.
@@ -1787,6 +1848,7 @@
             this.rearRight = this._pillarLeg(skinMat, 0.58, -0.5);
             this.tail = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.6, 6), skinMat);
             this.tail.position.set(0, 0.5, -0.95); this.tail.rotation.x = -1.7; this.bodyGroup.add(this.tail);
+            this._plastron(plateMat, 0.78, 0.52, 0.74, 0.86, 0.1);
             // Custom rig: head loss also drops the horns/frill (children of head).
             this._partMeshMap = { SHELL: this.shell, HEAD: this.head, LEFT_LEG: this.frontLeft, RIGHT_LEG: this.frontRight, REAR_LEFT_LEG: this.rearLeft, REAR_RIGHT_LEG: this.rearRight, TAIL: this.tail };
             this._cascadeRules = [
@@ -1810,20 +1872,25 @@
             const dome = new THREE.Mesh(new THREE.SphereGeometry(0.62, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), steelMat);
             dome.scale.set(1.1, 0.85, 1.25); this.shell.add(dome);
             // Banded steel plates: flat hex caps bolted around the dome.
-            const bands = [{ r: 0.0, y: 0.78, n: 1 }, { r: 0.34, y: 0.6, n: 6 }, { r: 0.58, y: 0.3, n: 8 }];
+            // Each plate is bolted flat onto the dome (an ellipsoid 0.682 x 0.527
+            // x 0.775): placed on its surface and turned to its normal. The old
+            // fixed heights stood the crown plate and its rivets in the air.
+            const DA = 0.682, DB = 0.527, DC = 0.775, up = new THREE.Vector3(0, 1, 0);
+            const bands = [{ f: 0.0, n: 1 }, { f: 0.5, n: 6 }, { f: 0.85, n: 8 }];
             for (const b of bands) {
                 for (let i = 0; i < b.n; i++) {
                     const a = (i / b.n) * Math.PI * 2;
+                    const x = Math.cos(a) * DA * b.f, z = Math.sin(a) * DC * b.f, y = DB * Math.sqrt(1 - b.f * b.f);
                     const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.05, 6), steelMat);
-                    plate.position.set(Math.cos(a) * b.r, b.y, Math.sin(a) * b.r * 1.18);
-                    plate.rotation.x = Math.PI / 2 + Math.sin(a) * 0.4;
+                    plate.position.set(x, y, z);
+                    plate.quaternion.setFromUnitVectors(up, new THREE.Vector3(x / (DA * DA), y / (DB * DB), z / (DC * DC)).normalize());
                     this.shell.add(plate);
-                    // Rivets around each plate.
+                    // Rivets around each plate, on its face.
                     for (let k = 0; k < 4; k++) {
                         const ra = (k / 4) * Math.PI * 2;
                         const rivet = new THREE.Mesh(new THREE.SphereGeometry(0.022, 6, 6), rivetMat);
-                        rivet.position.set(plate.position.x + Math.cos(ra) * 0.1, plate.position.y + 0.03, plate.position.z + Math.sin(ra) * 0.1);
-                        this.shell.add(rivet);
+                        rivet.position.set(Math.cos(ra) * 0.1, 0.03, Math.sin(ra) * 0.1);
+                        plate.add(rivet);
                     }
                 }
             }
@@ -1885,7 +1952,227 @@
             this.rearRight = this._stub(skinMat, 0.55, -0.5);
             this.tail = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.7, 6), skinMat);
             this.tail.position.set(0, 0.52, -0.95); this.tail.rotation.x = -1.7; this.bodyGroup.add(this.tail);
+            this._plastron(this.applySkin(this._mat(p.bodyColor, 1.0, 0.7)), 0.78, 0.56, 0.64, 0.84);
             this._turtleRig();
+        }
+
+        // ════════════════════════════════════════════════════════════════════
+        // Level 1-5 starter roster: one bespoke model per enemy (lv_ keys).
+        // ════════════════════════════════════════════════════════════════════
+        _dk(hex, k) { const c = new THREE.Color(hex).multiplyScalar(k); c.r = Math.min(1, c.r); c.g = Math.min(1, c.g); c.b = Math.min(1, c.b); return c.getHex(); }
+        // A tapering limb through a list of points (struts plus joint balls),
+        // as a Group at pts[0] so a turn of the group swings the whole limb.
+        _armThrough(parent, pts, r0, r1, mat) {
+            const g = new THREE.Group(); g.position.copy(pts[0]);
+            const n = pts.length - 1;
+            for (let i = 1; i <= n; i++) {
+                const ra = r0 + (r1 - r0) * (i - 1) / n, rb = r0 + (r1 - r0) * i / n;
+                const a = pts[i - 1].clone().sub(pts[0]), b = pts[i].clone().sub(pts[0]);
+                this.addStrut(g, mat, a, b, ra, rb, 5);
+                const ball = new THREE.Mesh(new THREE.SphereGeometry(rb * 1.05, 5, 4), mat); ball.position.copy(b); g.add(ball);
+            }
+            parent.add(g); return g;
+        }
+
+        // ── Moon Jellyling: a pale saucer bell with the four pink horseshoes
+        // of a moon jelly, a fringe of fine stingers and frilled oral arms ────
+        _buildMoonJellyling() {
+            const p = this.profile;
+            const bellMat = this._mat(p.bodyColor, 0.5, 0.2, p.accent); bellMat.emissiveIntensity = 0.15;
+            const pink = this._mat(p.accent, 0.9, 0.3, p.accent); pink.emissiveIntensity = 0.3;
+            const arm = this._mat(this._dk(p.bodyColor, 0.92), 0.7, 0.3);
+            this.bell = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 5, 0, Math.PI * 2, 0, Math.PI * 0.42), bellMat);
+            this.bell.scale.set(1, 0.55, 1); this.bell.position.set(0, 1.25, 0); this.bodyGroup.add(this.bell);
+            for (let k = 0; k < 4; k++) {
+                const a = k * Math.PI / 2 + Math.PI / 4, x = Math.cos(a) * 0.17, z = Math.sin(a) * 0.17;
+                const hs = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.022, 4, 10, Math.PI * 1.5), pink);
+                hs.position.set(x, Math.sqrt(0.25 - x * x - z * z) + 0.005, z); hs.rotation.set(Math.PI / 2, 0, a); this.bell.add(hs);
+            }
+            // Rhopalia: the little sense knots round the margin (the EYE part).
+            this.eye = new THREE.Group(); this.bell.add(this.eye);
+            for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; const r = new THREE.Mesh(new THREE.SphereGeometry(0.025, 4, 3), pink); r.position.set(Math.cos(a) * 0.484, 0.124, Math.sin(a) * 0.484); this.eye.add(r); }
+            // Margin fringe: follows the rim as the bell pulses.
+            this.fringe = new THREE.Group(); this.fringe.position.y = 1.25 + 0.124 * 0.55; this.bodyGroup.add(this.fringe);
+            const strand = this._mat(p.bodyColor, 0.6, 0.3);
+            for (let k = 0; k < 16; k++) { const a = (k + 0.5) * Math.PI / 8; const s = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.004, 0.26, 3), strand); s.position.set(Math.cos(a) * 0.475, -0.12, Math.sin(a) * 0.475); this.fringe.add(s); }
+            // Manubrium: the mouth stalk down the middle of the bell.
+            this.beak = new THREE.Group(); this.bodyGroup.add(this.beak);
+            this.addStrut(this.beak, arm, new THREE.Vector3(0, 1.5, 0), new THREE.Vector3(0, 1.26, 0), 0.04, 0.06, 5);
+            const lip = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.12, 6), arm); lip.rotation.x = Math.PI; lip.position.y = 1.2; this.beak.add(lip);
+            // Four frilled oral arms trailing from the mouth.
+            this.oralArms = [];
+            for (let k = 0; k < 4; k++) {
+                const a = k * Math.PI / 2;
+                const ch = this._thread(this._chain(arm, Math.cos(a) * 0.05, 1.18, Math.sin(a) * 0.05, 5, 0.055, 0.62, true), arm, 0.02);
+                // Beads pressed into ruffled lobes, so the arm reads as a frilled
+                // ribbon rather than a string of pearls.
+                ch._parts.forEach(b => { b.scale.set(1.5, 0.75, 0.45); b.rotation.y = -a; });
+                ch._parts.forEach((b, i) => { if (i % 2) { const fr = new THREE.Mesh(new THREE.SphereGeometry(0.05, 4, 3), pink); fr.scale.set(1.2, 0.25, 0.6); fr.position.set(Math.cos(a) * 0.04, b.position.y, Math.sin(a) * 0.04); fr.rotation.y = -a; ch.add(fr); } });
+                this.oralArms.push(ch);
+            }
+            this._partMeshMap = { BODY: this.bell, EYE: this.eye, TENTACLE_ONE: this.oralArms[0], TENTACLE_TWO: this.oralArms[2], BEAK: this.beak };
+            this._cascadeRules = [
+                { gone: ['BODY'], hide: [this.bell, this.fringe, this.beak, ...this.oralArms] },
+                { gone: ['EYE'], hide: [this.eye] },
+                { gone: ['TENTACLE_ONE'], hide: [this.oralArms[0]] },
+                { gone: ['TENTACLE_TWO'], hide: [this.oralArms[2]] },
+                { gone: ['BEAK'], hide: [this.beak] },
+            ];
+        }
+
+        // ── Void Jellyling: a box jelly of starless dark, glowing at the
+        // edges, a void at its heart, eye-knots on all four faces ─────────────
+        _buildVoidJellyling() {
+            const p = this.profile, V = (x, y, z) => new THREE.Vector3(x, y, z);
+            const voidMat = this._mat(p.bodyColor, 0.55, 0.15, p.accent); voidMat.emissiveIntensity = 0.12;
+            const edge = this._mat(p.accent, 0.95, 0.2, p.accent); edge.emissiveIntensity = 0.8; this._edgeMat = edge;
+            const lash = this._mat(this._dk(p.accent, 0.7), 0.75, 0.3, p.accent); lash.emissiveIntensity = 0.25;
+            this.bell = new THREE.Group(); this.bell.position.set(0, 1.62, 0); this.bodyGroup.add(this.bell);
+            const box = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.36, 0.55, 4, 1, true), voidMat); box.rotation.y = Math.PI / 4; this.bell.add(box);
+            const cap = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.18, 4), voidMat); cap.rotation.y = Math.PI / 4; cap.position.y = 0.364; this.bell.add(cap);
+            for (const [sx, sz] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+                this.addStrut(this.bell, edge, V(sx * 0.212, 0.275, sz * 0.212), V(sx * 0.255, -0.275, sz * 0.255), 0.014, 0.014, 4);
+            }
+            const core = new THREE.Mesh(new THREE.SphereGeometry(0.15, 7, 5), this._mat(0x020104, 1, 0.9)); core.position.y = 0.05; this.bell.add(core);
+            const halo = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.012, 3, 14), edge); halo.position.y = 0.05; halo.rotation.x = 1.1; core.add(halo); halo.position.y = 0;
+            // Eye knots, one on each face.
+            this.eye = new THREE.Group(); this.bell.add(this.eye);
+            for (let k = 0; k < 4; k++) {
+                const a = k * Math.PI / 2, n = V(Math.sin(a), 0, Math.cos(a));
+                const knob = new THREE.Mesh(new THREE.SphereGeometry(0.045, 5, 4), this._mat(0xe8e0f8, 1, 0.3)); knob.position.copy(n).multiplyScalar(0.25).setY(-0.12); this.eye.add(knob);
+                for (const s of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.016, 4, 3), this._mat(0x000000, 1, 0.2)); e.position.set(Math.cos(a) * s * 0.02, 0.012, -Math.sin(a) * s * 0.02).addScaledVector(n, 0.04); knob.add(e); }
+            }
+            // Manubrium hanging in the open box.
+            this.beak = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.42, 5), lash); this.beak.position.y = 0.06; this.bell.add(this.beak);
+            // Pedalia at the four lower corners, three lashes from each.
+            this.lashes = [];
+            [[-1, 1], [1, 1], [1, -1], [-1, -1]].forEach(([sx, sz], ci) => {
+                const g = new THREE.Group(); g.position.set(sx * 0.255, -0.275, sz * 0.255); this.bell.add(g);
+                const ped = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.16, 4), lash); ped.scale.set(1, 1, 0.35); ped.rotation.set(Math.PI, Math.atan2(sx, sz), 0); ped.position.y = -0.07; g.add(ped);
+                for (let k = 0; k < 3; k++) {
+                    const off = (k - 1) * 0.05, len = 0.75 + k * 0.12;
+                    const a0 = V(off, -0.14, 0), a1 = V(sx * 0.08 + off, -0.14 - len * 0.6, sz * 0.08), a2 = V(sx * 0.02 + off * 2, -0.14 - len, sz * 0.16 + 0.05);
+                    this.addStrut(g, lash, a0, a1, 0.012, 0.009, 3); this.addStrut(g, lash, a1, a2, 0.009, 0.005, 3);
+                }
+                g._ci = ci; this.lashes.push(g);
+            });
+            this._partMeshMap = { BODY: this.bell, EYE: this.eye, TENTACLE_ONE: this.lashes[0], TENTACLE_TWO: this.lashes[1], BEAK: this.beak };
+            this._cascadeRules = [
+                { gone: ['BODY'], hide: [this.bell] },
+                { gone: ['EYE'], hide: [this.eye] },
+                { gone: ['TENTACLE_ONE'], hide: [this.lashes[0]] },
+                { gone: ['TENTACLE_TWO'], hide: [this.lashes[1]] },
+                { gone: ['BEAK'], hide: [this.beak] },
+            ];
+        }
+
+        // ── Tidepool Octopus: a sulky little octopus lording it over its rock
+        // pool, arms spread on the water, siphon cocked to ink ───────────────
+        _buildTidepoolOctopus() {
+            const p = this.profile, V = (x, y, z) => new THREE.Vector3(x, y, z);
+            const skin = this._skinMat(p.bodyColor, 0.45);
+            const rock = this._skinMat(0x6a6660, 0.95);
+            this.pool = new THREE.Group(); this.bodyGroup.add(this.pool);
+            const surf = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.03, 12), this._mat(0x3a8aa0, 0.55, 0.05)); surf.position.y = 0.03; this.pool.add(surf);
+            for (let i = 0; i < 9; i++) { const a = i / 9 * Math.PI * 2 + 0.2; const st = new THREE.Mesh(new THREE.DodecahedronGeometry(0.12 + this.idRand() * 0.06, 0), rock); st.position.set(Math.cos(a) * 0.9, 0.07, Math.sin(a) * 0.9); st.scale.set(1, 0.7, 1); this.pool.add(st); }
+            const star = new THREE.Group(); star.position.set(Math.cos(0.2) * 0.9, 0.17, Math.sin(0.2) * 0.9); this.pool.add(star);
+            for (let k = 0; k < 5; k++) { const a = k / 5 * Math.PI * 2; const leg = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.1, 3), this._mat(0xe86a2a, 1, 0.6)); leg.position.set(Math.cos(a) * 0.045, 0, Math.sin(a) * 0.045); leg.quaternion.setFromUnitVectors(V(0, 1, 0), V(Math.cos(a), 0, Math.sin(a))); star.add(leg); }
+            this.head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 8, 6), skin); this.head.scale.set(1.1, 0.85, 1); this.head.position.set(0, 0.3, 0.08); this.bodyGroup.add(this.head);
+            // Sulky eyes: pupils set low under heavy lids.
+            for (const s of [-1, 1]) {
+                const eg = new THREE.Group(); eg.position.set(s * 0.15, 0.13, 0.13); this.head.add(eg);
+                eg.add(new THREE.Mesh(new THREE.SphereGeometry(0.088, 6, 5), this._mat(0xe8d8a8, 1, 0.3)));
+                const pup = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.022, 0.02), this._mat(0x111111, 1, 0.2)); pup.position.set(0, -0.026, 0.082); eg.add(pup);
+                const lid = new THREE.Mesh(new THREE.SphereGeometry(0.096, 6, 3, 0, Math.PI * 2, 0, Math.PI / 2), skin); lid.rotation.x = 0.2; lid.rotation.z = s * 0.25; eg.add(lid);
+            }
+            this.mantle = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 6), skin); this.mantle.scale.set(0.95, 1.2, 1.1); this.mantle.rotation.x = -0.5; this.mantle.position.set(0, 0.52, -0.12); this.bodyGroup.add(this.mantle);
+            this.siphon = new THREE.Group(); this.siphon.position.set(-0.24, 0.4, -0.02); this.siphon.rotation.set(0.2, 0, 0.9); this.bodyGroup.add(this.siphon);
+            const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.15, 6), skin); tube.position.y = 0.06; this.siphon.add(tube);
+            this.ink = new THREE.Mesh(new THREE.SphereGeometry(0.04, 5, 4), this._mat(0x0a0a14, 0.9, 0.2)); this.ink.position.y = 0.15; this.siphon.add(this.ink);
+            this.beak = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.07, 4), this._mat(0x2a1a14, 1, 0.4)); this.beak.position.set(0, 0.12, 0.3); this.beak.rotation.x = 2.2; this.bodyGroup.add(this.beak);
+            // Eight arms laid out on the water, tips curling up; paired into the
+            // four TENTACLE parts.
+            this.armPairs = [new THREE.Group(), new THREE.Group(), new THREE.Group(), new THREE.Group()];
+            this.armPairs.forEach(g => this.bodyGroup.add(g));
+            this._arms = [];
+            for (let k = 0; k < 8; k++) {
+                const a = (k + 0.5) / 8 * Math.PI * 2, d = V(Math.sin(a), 0, Math.cos(a));
+                const pts = [V(0, 0.16, 0.06).addScaledVector(d, 0.12)];
+                for (let j = 1; j <= 6; j++) {
+                    const r = 0.12 + j * 0.095;
+                    pts.push(V(0, 0.07 + (j >= 5 ? (j - 4) * 0.07 : 0), 0.06).addScaledVector(d, r).add(V(Math.cos(a) * j * 0.012, 0, -Math.sin(a) * j * 0.012)));
+                }
+                const armG = this._armThrough(this.armPairs[k >> 1], pts, 0.075, 0.028, skin);
+                armG._a = a; this._arms.push(armG);
+            }
+            this._partMeshMap = { HEAD: this.head, MANTLE: this.mantle, TENTACLE_1: this.armPairs[0], TENTACLE_2: this.armPairs[1], TENTACLE_3: this.armPairs[2], TENTACLE_4: this.armPairs[3], BEAK: this.beak };
+            this._cascadeRules = [
+                { gone: ['HEAD'], hide: [this.head, this.mantle, this.siphon, this.beak, ...this.armPairs] },
+                { gone: ['MANTLE'], hide: [this.mantle, this.siphon] },
+                { gone: ['TENTACLE_1'], hide: [this.armPairs[0]] },
+                { gone: ['TENTACLE_2'], hide: [this.armPairs[1]] },
+                { gone: ['TENTACLE_3'], hide: [this.armPairs[2]] },
+                { gone: ['TENTACLE_4'], hide: [this.armPairs[3]] },
+                { gone: ['BEAK'], hide: [this.beak] },
+            ];
+        }
+
+        // ── Temple Tortoise: an old high-domed tortoise in mossy scutes, tied
+        // with a red temple cord, bell and prayer slips, lettuce in its beak ──
+        _buildTempleTortoise() {
+            const p = this.profile, V = (x, y, z) => new THREE.Vector3(x, y, z);
+            const skinMat = this._skinMat(p.bodyColor, 0.85);
+            const shellMat = this.applySkin(this._mat(p.shell, 1.0, 0.85));
+            const scuteMat = this.applySkin(this._mat(this._dk(p.shell, 1.45), 1.0, 0.8));
+            const cord = this._mat(p.accent, 1, 0.6);
+            const gold = this._mat(0xd8a830, 1, 0.25, 0x3a2a00);
+            this.shell = new THREE.Group();
+            const DA = 0.6, DB = 0.63, DC = 0.732;
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.6, 9, 6, 0, Math.PI * 2, 0, Math.PI / 2), shellMat); dome.scale.set(1.0, 1.05, 1.22); this.shell.add(dome);
+            for (const b of [{ f: 0, n: 1 }, { f: 0.55, n: 6 }, { f: 0.86, n: 8 }]) for (let i = 0; i < b.n; i++) {
+                const a = (i / b.n) * Math.PI * 2 + b.f;
+                const x = Math.cos(a) * DA * b.f, z = Math.sin(a) * DC * b.f, y = DB * Math.sqrt(1 - b.f * b.f);
+                const sc = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.16, 0.06, 6), scuteMat); sc.position.set(x, y, z);
+                sc.quaternion.setFromUnitVectors(V(0, 1, 0), V(x / (DA * DA), y / (DB * DB), z / (DC * DC)).normalize()); this.shell.add(sc);
+            }
+            [[0.1, -0.3], [-0.22, -0.12], [0.26, 0.05]].forEach(([x, z]) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.12, 5, 3), this._mat(0x5a8a32, 1, 1)); m.scale.set(1, 0.35, 1.3); m.position.set(x, DB * Math.sqrt(Math.max(0, 1 - (x / DA) * (x / DA) - (z / DC) * (z / DC))), z); this.shell.add(m); });
+            // The temple cord round the shell, a bell at the front, prayer slips.
+            const band = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.026, 4, 16), cord); band.scale.set(1, 1.22, 1); band.rotation.x = Math.PI / 2; band.position.y = 0.08; this.shell.add(band);
+            this.bell = new THREE.Group(); this.bell.position.set(0, 0.06, 0.73); this.shell.add(this.bell);
+            const loop = new THREE.Mesh(new THREE.TorusGeometry(0.025, 0.008, 3, 6), gold); loop.position.y = -0.02; this.bell.add(loop);
+            const cup = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 3, 0, Math.PI * 2, 0, Math.PI * 0.62), gold); cup.position.y = -0.1; this.bell.add(cup);
+            const clap = new THREE.Mesh(new THREE.SphereGeometry(0.02, 4, 3), gold); clap.position.y = -0.14; this.bell.add(clap);
+            for (const s of [-1, 1]) {
+                const slip = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.17, 0.006), this._mat(0xf2ead8, 1, 0.8)); slip.position.set(s * 0.6, -0.03, 0.12); slip.rotation.y = s * 1.3; this.shell.add(slip);
+                const mark = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.06, 0.008), cord); mark.position.y = -0.02; slip.add(mark);
+            }
+            this.shell.position.set(0, 0.52, 0); this.bodyGroup.add(this.shell);
+            this._plastron(shellMat, 0.52, 0.34, 0.6, 0.74);
+            // Old head on a wrinkled neck, a lettuce leaf in the beak.
+            // Pivoted at the root of the neck, so a nod swings neck and head together.
+            this.head = new THREE.Group(); this.head.position.set(0, 0.52, 0.56); this.bodyGroup.add(this.head);
+            this.addStrut(this.head, skinMat, V(0, 0, 0), V(0, 0.08, 0.3), 0.13, 0.11, 6);
+            const hg = new THREE.Group(); hg.position.set(0, 0.1, 0.36); this.head.add(hg);
+            for (let k = 0; k < 2; k++) { const w = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.018, 3, 8), skinMat); w.position.set(0, -0.07 + k * 0.025, -0.24 + k * 0.1); w.rotation.x = 0.25; hg.add(w); }
+            const skull = new THREE.Mesh(new THREE.SphereGeometry(0.17, 7, 5), skinMat); skull.scale.set(0.95, 0.85, 1.25); hg.add(skull);
+            for (const s of [-1, 1]) {
+                this._eye(hg, s * 0.1, 0.05, 0.12, 0.035, 0x111111);
+                const lid = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.02, 0.03), skinMat); lid.position.set(s * 0.1, 0.085, 0.13); lid.rotation.z = -s * 0.2; hg.add(lid);
+            }
+            this.beak = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.12, 5), this._mat(0xd8c8a0, 1, 0.5)); this.beak.position.set(0, -0.06, 0.22); this.beak.rotation.x = 1.9; hg.add(this.beak);
+            this.leaf = new THREE.Group(); this.leaf.position.set(0.06, -0.08, 0.22); hg.add(this.leaf);
+            for (let k = 0; k < 2; k++) { const lf = new THREE.Mesh(new THREE.SphereGeometry(0.09, 5, 3), this._mat(k ? 0xb8e070 : 0x8ac84a, 1, 0.6)); lf.scale.set(1.5, 0.18, 0.9); lf.position.set(0.08 + k * 0.05, k * 0.02, -k * 0.02); lf.rotation.set(0.3 * k, 0.4, 0.2 - k * 0.4); this.leaf.add(lf); }
+            const leg = (x, z) => {
+                const g = new THREE.Group(); g.position.set(x, 0.18, z);
+                const col = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.15, 0.36, 7), skinMat); g.add(col);
+                for (let k = -1; k <= 1; k++) { const nail = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.07, 4), this._mat(0xe0d8c0, 1, 0.5)); nail.position.set(k * 0.07, -0.15, 0.13); nail.rotation.x = 1.4; g.add(nail); }
+                this.bodyGroup.add(g); return g;
+            };
+            this.frontLeft = leg(-0.42, 0.4); this.frontRight = leg(0.42, 0.4); this.rearLeft = leg(-0.42, -0.4); this.rearRight = leg(0.42, -0.4);
+            this.tail = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.24, 5), skinMat); this.tail.position.set(0, 0.38, -0.82); this.tail.rotation.x = -1.9; this.bodyGroup.add(this.tail);
+            this._turtleRig();
+            this._partMeshMap.BEAK = this.beak;
+            this._cascadeRules.push({ gone: ['BEAK'], hide: [this.beak, this.leaf] });
         }
 
         animatePose(deltaTime) {
@@ -2005,7 +2292,11 @@
                 case 'shadowtortoise': {
                     this.model.position.y = this._baseY + Math.sin(t * 1.1) * 0.04 * this.scale;
                     if (this.head && this.head.visible) this.head.position.z = 0.78 + (fast ? 0.1 : 0) + Math.sin(t * 1.4) * 0.04;
-                    [this.frontLeft, this.frontRight, this.rearLeft, this.rearRight].forEach((l, i) => { if (l && l.visible) l.rotation.x = Math.sin(t * (fast ? 7 : 2.5) + i) * 0.3 * stride; });
+                    [this.frontLeft, this.frontRight, this.rearLeft, this.rearRight].forEach((l, i) => {
+                        if (!l || !l.visible) return;
+                        if (l._flap) l.rotation.z = l._side * Math.sin(t * (fast ? 7 : 2.5) + i) * 0.3 * stride;
+                        else l.rotation.x = Math.sin(t * (fast ? 7 : 2.5) + i) * 0.3 * stride;
+                    });
                     if (this.smoke) this.smoke.forEach((puff) => { const a = puff._a + t * 0.8; puff.position.set(Math.cos(a) * 0.6, puff._yb + Math.sin(t * 1.5 + puff._a) * 0.15, Math.sin(a) * 0.6); puff.material.opacity = 0.3 + Math.abs(Math.sin(t + puff._a)) * 0.25; });
                     break;
                 }
@@ -2037,7 +2328,7 @@
                 case 'mindflayer': {
                     this.model.position.y = this._baseY + Math.sin(t * 1.4) * 0.05 * this.scale;
                     if (this.head && this.head.visible) this.head.rotation.y = Math.sin(t * 1.0) * 0.2;
-                    this._segments.forEach((g, i) => { if (g.visible) { g.rotation.z = Math.sin(t * (fast ? 8 : 3) + i) * 0.4; g.rotation.x = 0.3 + Math.sin(t * (fast ? 6 : 2) + i) * 0.2; } });
+                    this._segments.forEach((g, i) => { if (g.visible) { g.rotation.z = Math.sin(t * (fast ? 8 : 3) + i) * 0.4; g.rotation.x = -0.35 + Math.sin(t * (fast ? 6 : 2) + i) * 0.2; } });
                     break;
                 }
                 case 'shellbreakerbulwark':
@@ -2097,6 +2388,38 @@
                     if (this.abdomen && this.abdomen.visible) this.abdomen.rotation.x = Math.sin(t * 1.4) * 0.08;
                     [this.frontLeg, this.rearLeg].forEach((l, i) => { if (l && l.visible) l.children.forEach((leg, k) => { leg.rotation.x = (leg.rotation.x || 0) * 0 + (k % 2 ? -1 : 1) * Math.sin(t * (fast ? 7 : 3) + i + k) * 0.2; }); });
                     if (this.antennae && this.antennae.visible) this.antennae.rotation.z = Math.sin(t * 2.5) * 0.12;
+                    break;
+                }
+                case 'moonjellyling': {
+                    const pulse = 1.0 + Math.sin(t * (fast ? 6 : 2.2)) * 0.08;
+                    if (this.bell && this.bell.visible) this.bell.scale.set(pulse, 0.55 / pulse, pulse);
+                    // The fringe rides the rim as the bell squeezes.
+                    if (this.fringe) { this.fringe.scale.set(pulse, 1, pulse); this.fringe.position.y = 1.25 + 0.124 * 0.55 / pulse; }
+                    this.model.position.y = this._baseY + Math.sin(t * 1.6) * 0.1 * this.scale;
+                    if (this.oralArms) this.oralArms.forEach((g, i) => { g.rotation.x = Math.sin(t * 1.8 + i) * 0.15; g.rotation.z = Math.cos(t * 1.5 + i) * 0.15; });
+                    break;
+                }
+                case 'voidjellyling': {
+                    const sq = 1.0 + Math.sin(t * (fast ? 6 : 2)) * 0.07;
+                    if (this.bell) this.bell.scale.set(sq, 1 / sq, sq);
+                    this.model.position.y = this._baseY + Math.sin(t * 1.3) * 0.12 * this.scale;
+                    if (this._edgeMat) this._edgeMat.emissiveIntensity = 0.5 + Math.abs(Math.sin(t * 1.7)) * 0.6;
+                    if (this.lashes) this.lashes.forEach((g, i) => { g.rotation.x = Math.sin(t * 1.4 + i) * (fast ? 0.35 : 0.12); g.rotation.z = Math.cos(t * 1.2 + i * 1.3) * 0.12; });
+                    break;
+                }
+                case 'tidepooloctopus': {
+                    if (this.mantle && this.mantle.visible) { const b = 1 + Math.sin(t * (fast ? 5 : 1.8)) * 0.05; this.mantle.scale.set(0.95 * b, 1.2 * b, 1.1 * b); }
+                    if (this._arms) this._arms.forEach((g, i) => { g.rotation.y = Math.sin(t * 1.4 + i * 0.9) * 0.1; });
+                    if (this.siphon) this.siphon.rotation.z = 0.9 + (fast ? Math.abs(Math.sin(t * 7)) * 0.3 : 0);
+                    if (this.ink) this.ink.scale.setScalar(fast ? 1 + Math.abs(Math.sin(t * 7)) * 1.2 : 1);
+                    break;
+                }
+                case 'templetortoise': {
+                    this.model.position.y = this._baseY + Math.sin(t * 0.9) * 0.015 * this.scale;
+                    if (this.head && this.head.visible) this.head.rotation.x = Math.sin(t * 1.1) * 0.06 + (fast ? -Math.abs(Math.sin(t * 5)) * 0.2 : 0);
+                    if (this.leaf) this.leaf.rotation.z = Math.sin(t * 4) * 0.12; // chewing
+                    if (this.bell) this.bell.rotation.z = Math.sin(t * 1.9) * 0.25;
+                    [this.frontLeft, this.frontRight, this.rearLeft, this.rearRight].forEach((l, i) => { if (l && l.visible) l.rotation.x = Math.sin(t * (fast ? 5 : 1.6) + i) * 0.12 * stride; });
                     break;
                 }
                 case 'serpent':
@@ -2174,6 +2497,10 @@
     reg('armoredrexlord',         { aliases: ['armoredrexlord'],         scale: S.armoredrexlord.scale,         weapon: 0, create: make });
     reg('steelshelltortoise',     { aliases: ['steelshelltortoise'],     scale: S.steelshelltortoise.scale,     weapon: 0, create: make });
     reg('primordialdragonturtle', { aliases: ['primordialdragonturtle'], scale: S.primordialdragonturtle.scale, weapon: 0, create: make });
+    reg('lv_moonjellyling',       { aliases: ['lv_moonjellyling'],       scale: S.lv_moonjellyling.scale,       weapon: 0, create: make });
+    reg('lv_voidjellyling',       { aliases: ['lv_voidjellyling'],       scale: S.lv_voidjellyling.scale,       weapon: 0, create: make });
+    reg('lv_tidepooloctopus',     { aliases: ['lv_tidepooloctopus'],     scale: S.lv_tidepooloctopus.scale,     weapon: 0, create: make });
+    reg('lv_templetortoise',      { aliases: ['lv_templetortoise'],      scale: S.lv_templetortoise.scale,      weapon: 0, create: make });
 
     const NAMED = {
         paralyticslug:     ["Paralytic Slug"],
@@ -2204,7 +2531,11 @@
         horseshoecrab:          ["Horseshoe Crab"],
         armoredrexlord:         ["Armored Rex Lord"],
         steelshelltortoise:     ["Steelshell Tortoise"],
-        primordialdragonturtle: ["Primordial Dragon Turtle"]
+        primordialdragonturtle: ["Primordial Dragon Turtle"],
+        lv_moonjellyling:       ["Moon Jellyling"],
+        lv_voidjellyling:       ["Void Jellyling"],
+        lv_tidepooloctopus:     ["Tidepool Octopus"],
+        lv_templetortoise:      ["Temple Tortoise"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

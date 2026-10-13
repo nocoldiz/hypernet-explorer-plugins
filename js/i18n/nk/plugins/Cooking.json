@@ -40,20 +40,23 @@
   "messages": {
     "prepared": "YOU PREPARED {name}!",
     "sameItemPositive": "\nIT TURNED OUT EXCEPTIONALLY WELL!",
-    "sameItemNeutral": "\nIT IZ NOTHIN' SPECIAL, BUT EDIBLE!",
+    "sameItemNeutral": "\nIT IZ NUTTIN' SPECIAL, BUT EDIBLE!",
     "sameItemNegative": "\nPERHAPS YOU NO SHOULD HAB TRIED DAT...",
     "recoveredHunger": "\nRECOVERED {percent}% HUNGER PER MEMBER",
     "ate": "YOU ATE {name} RAW.",
     "cannotCombine": "RAW MEAT AN' PLANT MATTER NO CAN BE COOKED TOGETHER!",
     "cookware": "\nCOOKWARE BONUS +{percent}%",
-    "fedParty": "\n (A PARTY OF {count} AT TABLE)",
+    "fedParty": "\n (SPLIT AMONG {count})",
     "cannotPrepare": "NO ENOUGH INGREDIENTS FOR {name}!",
-    "recipePrepared": "{name} PREPARED (X{count}) AN' PUT IN DA PACK!",
-    "recipeSpoiled": "{name} WENT WRONG IN DA PAN: ALL DAT IZ LEFT IZ A SPOILED DISH!"
+    "recipePrepared": "{name} PREPARED (X{count}). ADDED TA DA PACK!",
+    "recipeSpoiled": "{name} FAILED. YOU GOT A SPOILED DISH!",
+    "pizzaShared": "{name} BAKED AN' SHARED (X{count})."
   },
   "names": {
     "meaty": "MEATY {name}",
-    "vegetarian": "VEGETARIAN {name}"
+    "vegetarian": "VEGETARIAN {name}",
+    "sameItem": "{adjective} {name}",
+    "combo": "{first} {last}"
   },
   "ui": {
     "selectFirstIngredient": "SELECT FIRST INGREDIENT TA COOK",
@@ -103,7 +106,8 @@
   "cookware": "COOKWARE",
   "tabs": {
     "combine": "COMBINE",
-    "recipes": "RECIPES"
+    "recipes": "RECIPES",
+    "pizza": "CREATE PIZZA"
   },
   "recipes": {
     "empty": "NO RECIPES IN DA BOOK.",
@@ -118,13 +122,15 @@
     "spoil": "CHANCE TA SPOIL",
     "reward": "COOKIN'",
     "points": "+{points} POINTS",
-    "keeps": "DA DISH GOES INTO DA PACK INSTEAD OF BEING EATEN!",
+    "keeps": "GOES INTO DA PACK INSTEAD OF BEING EATEN!",
     "prepareButton": "PREPARE",
-    "prepareAnyway": "PREPARE ANYWAY"
+    "prepareAnyway": "PREPARE ANYWAY",
+    "pizzaEaten": "EATEN BY DA WHOLE PARTY AT ONCE. NO KEPT!",
+    "designPizza": "DESIGN A PIZZA"
   },
   "allergy": {
     "title": "ALLERGY WARNIN'",
     "line": "{actor}: {allergens}",
-    "toast": "ALLERGY WARNIN': {list}. PRESS AGAIN TA GO AHEAD!"
+    "toast": "ALLERGY WARNIN': {list}. PRESS AGAIN TA CONFIRM!"
   }
 }

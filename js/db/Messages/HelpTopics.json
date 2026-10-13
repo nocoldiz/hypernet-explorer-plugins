@@ -1982,6 +1982,14 @@
     "description": "HelpTopics.gamesBasketball.description",
     "image": ""
   },
+  "gamesPizza": {
+    "type": "mechanic",
+    "group": "minigames",
+    "order": 232,
+    "title": "HelpTopics.gamesPizza.title",
+    "description": "HelpTopics.gamesPizza.description",
+    "image": ""
+  },
   "gamesChess": {
     "type": "mechanic",
     "group": "minigames",

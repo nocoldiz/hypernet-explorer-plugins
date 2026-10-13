@@ -655,7 +655,7 @@
         brimming: (a) => a.mmp > 0 && a.mpRate() >= 0.75,
         weatherIs: (a, arg) => weatherNow() === arg,
         indoors: () => !!(window.$gameWeather && window.$gameWeather.isInterior),
-        earlyRounds: () => $gameTroop.turnCount() < EARLY_ROUNDS,
+        earlyRounds: () => battleRound() <= EARLY_ROUNDS,       // battleRound: see the battle hooks
         wealthy: (a, arg) => $gameParty.gold() >= arg,
         wanted: () => heatNow() > 0,
         needLowNow: (a, arg) => needPercent(a, arg) < NEED_LOW,
@@ -906,19 +906,54 @@
         return id > 0 ? [id] : [];
     };
 
-    // A new battle spends nobody's power yet, then the opening fires.
+    // Rounds. IndividualBattleTurns (loaded before this file) makes the engine
+    // run as TPB, so BattleManager.startTurn and endTurn never run in a real
+    // fight and $gameTroop.turnCount() climbs once per ENEMY action, not once
+    // per round. Its makeITBSRound is the one place a round begins: at the
+    // start of a battle and every time the queue runs dry, map battles
+    // included (MapBattleMode wraps it after this file and calls through).
+    // Without it the vanilla startTurn is the round boundary.
+    const ROUNDS_BY_QUEUE = typeof BattleManager.makeITBSRound === 'function';
+    let startingBattle = false;
+    BattleManager._expressionRound = 0;
+
+    // The round of the current battle, counted from 1.
+    const battleRound = () => BattleManager._expressionRound > 0
+        ? BattleManager._expressionRound
+        : $gameTroop.turnCount() + 1;
+
+    // A new battle spends nobody's power yet, then the opening fires, then the
+    // first round begins.
     const _BattleManager_startBattle = BattleManager.startBattle;
     BattleManager.startBattle = function () {
-        _BattleManager_startBattle.call(this);
+        startingBattle = true;
+        try { _BattleManager_startBattle.call(this); } finally { startingBattle = false; }
         $gameParty.allMembers().forEach(m => { m._expressionSpent = false; });
+        this._expressionRound = ROUNDS_BY_QUEUE ? 1 : 0;
         fireAll('opening');
+        if (ROUNDS_BY_QUEUE) fireAll('eachRound');
     };
 
-    const _BattleManager_startTurn = BattleManager.startTurn;
-    BattleManager.startTurn = function () {
-        _BattleManager_startTurn.call(this);
-        fireAll('eachRound');
-    };
+    if (ROUNDS_BY_QUEUE) {
+        // The opening round is built inside startBattle, before the reset
+        // above, so it is announced from there; every later one fires here,
+        // before anybody in it acts.
+        const _BattleManager_makeITBSRound = BattleManager.makeITBSRound;
+        BattleManager.makeITBSRound = function () {
+            const round = _BattleManager_makeITBSRound.apply(this, arguments);
+            if (!startingBattle && inBattle()) {
+                this._expressionRound = (this._expressionRound || 0) + 1;
+                fireAll('eachRound');
+            }
+            return round;
+        };
+    } else {
+        const _BattleManager_startTurn = BattleManager.startTurn;
+        BattleManager.startTurn = function () {
+            _BattleManager_startTurn.call(this);
+            fireAll('eachRound');
+        };
+    }
 
     // Damage: the blow that would knock a character out, the one that takes
     // them under half health, a critical hit, an element landing either way,

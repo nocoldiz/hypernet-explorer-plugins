@@ -2,62 +2,62 @@
   "topic": {
     "crimeWave": [
       "{Terzo|Quarto|Secondo} furto in casa nella mia via questo mese. {Chiudete a chiave|Sbarrate le finestre|Tenete la porta chiusa}.",
-      "Adesso c'è una guardia a ogni angolo. {Era ora|Non un giorno troppo presto|E non bastano ancora}, con tutto questo {rubare|andirivieni|malaffare}.",
+      "Adesso c'è una guardia a ogni angolo. {Era ora|Anche troppo tardi|E non bastano ancora}, con tutto questo {rubare|andirivieni|malaffare}.",
       "Dopo il tramonto per {group} non ci passo più. {Non di questi tempi|Non da primavera|Nessuno con la testa lo fa}.",
-      "Dicono che la stretta {funziona|serve|li sta prendendo}. Io dico {tieniti stretta la borsa|occhio alle tasche|lo credo quando lo vedo}.",
+      "Dicono che la stretta {funzioni|serva|stia dando frutti}. Io dico {tieniti stretta la borsa|occhio alle tasche|ci credo quando lo vedo}.",
       "Conoscono tutti qualcuno a cui hanno {rubato qualcosa|svuotato casa|alleggerito le tasche}. {Tutti|Proprio tutti|Chiedi a chi vuoi}.",
-      "{Qualcuno|Un vicino|Una donna} è stato {seguito fino a casa|aggredito|alleggerito della borsa} due vie più in là. {In pieno giorno|All'imbrunire|Con il sole alto}."
+      "{Hanno seguito fino a casa|Hanno aggredito|Hanno scippato} {qualcuno|un vicino|una donna} due vie più in là. {In pieno giorno|All'imbrunire|Con il sole alto}."
     ],
     "boom": [
-      "Lavoro {dappertutto|a ogni angolo|per chiunque lo chieda}! A {group} non si vedevano annate così da {un pezzo|una generazione|che ho memoria}.",
+      "Lavoro {dappertutto|a ogni angolo|per chiunque lo chieda}! Un'annata così {group} non la vedeva da {un pezzo|una generazione|che ho memoria}.",
       "Mio cugino l'hanno assunto il {giorno|mattino|momento} stesso che ha chiesto. Il giorno stesso!",
-      "A {group} {girano soldi|i soldi corrono|si muove denaro}. Perfino i {mendicanti|venditori ambulanti|garzoni} fanno gli schizzinosi.",
+      "In giro per {group} {girano soldi|i soldi corrono|si muove denaro}. Perfino i {mendicanti|venditori ambulanti|garzoni} fanno gli schizzinosi.",
       "Se non trovi lavoro in questa stagione vuol dire che {non lo stai cercando|dormi|non ci provi}.",
       "Con la ripresa salgono anche {gli affitti|i prezzi|pane e affitto}. {C'è sempre il rovescio della medaglia|C'è sempre una fregatura|Niente è gratis}.",
       "I {magazzini|cantieri|laboratori} adesso vanno {fino a notte|su due turni|anche di domenica}."
     ],
     "bust": [
       "Metà delle botteghe della mia via ha {le luci spente|le assi alle finestre|la saracinesca giù}. {Tempi duri|Brutta stagione|Anni magri}.",
-      "A {group} non assume nessuno. {Nessuno|Nemmeno uno|Neanche per carità}.",
-      "Ho visto {tre|quattro|due} amici perdere il posto in questa stagione. {Tre|Quattro|Due}.",
+      "Per {group} non assume più nessuno. {Nessuno|Nemmeno uno|Neanche per carità}.",
+      "Ho visto {tre amici perdere il posto in questa stagione. Tre|quattro amici perdere il posto in questa stagione. Quattro|due amici perdere il posto in questa stagione. Due}.",
       "Quando il lavoro finisce la gente si {dispera|fa pericolosa|fa avventata}. {Si sente nell'aria|Lo vedi in faccia|Si respira}.",
-      "{Stringi la cinghia|Metti da parte|Non spendere niente}. Questa {crisi|invernata|storia} con {group} non ha ancora finito.",
+      "{Stringi la cinghia|Metti da parte|Non spendere niente}. Questa {crisi|invernata|storia} non ha ancora finito con {group}.",
       "Il {mulino|cantiere|porto} ha mandato via {una dozzina di persone|metà squadra|i più giovani} {venerdì|il giorno di mercato|tutti in una mattina}."
     ],
     "festival": [
-      "Ci vai a {festival}? {Ci vanno tutti|Ci va tutta la via|Ci va sempre tutti}.",
+      "Ci vai, a vedere {festival}? {Ci vanno tutti|Ci va tutta la via|Non manca mai nessuno}.",
       "Per strada c'è odore di {frittelle e olio di lampada|zucchero e fumo|vino e caramello bruciato}. {Adoro|Aspetto tutto l'anno|Vivo per} {festival}.",
       "{La settimana più bella dell'anno|I giorni migliori dell'anno|L'unica settimana che conta}, {festival}! {Occhio alle tasche|Tieni la borsa stretta|Una mano sui soldi}, però, con tutta quella calca.",
-      "Ho ballato fino {all'alba|a lampade spente|a non sentire i piedi}. {festival} capita una volta l'anno.",
+      "Ho ballato fino {all'alba|a lampade spente|a non sentire più i piedi}. Una festa come {festival} capita una volta l'anno.",
       "Hanno tirato su {le lanterne|le bandierine|mezza piazza} per {festival} {in una notte|stamattina|mentre dormivo}."
     ],
     "epidemic": [
-      "{Copriti la bocca|Stammi lontano|Fatti in là}. In giro c'è {epidemic}.",
+      "{Copriti la bocca|Stammi lontano|Fatti in là}. In giro c'è un brutto male: {epidemic}.",
       "Nel mio vicolo {due|tre|quattro} case sono {sbarrate|sigillate|segnate} per {epidemic}. {Gira alla larga|Non passarci|Cambia strada}.",
-      "I mercati sono {mezzi vuoti|deserti|spogli}. Nessuno vuole beccarsi {epidemic}.",
-      "{Lavati le mani|Fai bollire l'acqua|Sta' pulito}, forestiero. A {epidemic} {non interessa chi sei|non guarda in faccia nessuno|va bene chiunque}.",
+      "I mercati sono {mezzi vuoti|deserti|spogli}. Nessuno vuole rischiare di prendersi il male che gira: {epidemic}.",
+      "{Lavati le mani|Fai bollire l'acqua|Occhio all'igiene}, viandante. Il contagio ({epidemic}) {non guarda in faccia nessuno|colpisce chiunque|non fa distinzioni}.",
       "{Il medico|Lo speziale|La guaritrice} è {in piedi da stanotte|di casa in casa|senza fiato} per {epidemic}."
     ],
     "headline": [
       "{L'hai sentita|Hai sentito|La sai la novità}? {headline}",
       "Non si parla {d'altro|che di questo|di nient'altro}: {headline}",
-      "{Sul giornale|Il banditore|La radio} c'è scritto: {headline}. {In che tempi viviamo|Fanne quello che vuoi|Credici se ci riesci}."
+      "{Lo scrive il giornale|Lo grida il banditore|Lo dice la radio}: {headline}. {In che tempi viviamo|Fanne quello che vuoi|Credici se ci riesci}."
     ],
     "outlaw": [
       "Quella faccia {mi dice qualcosa|l'ho già vista|non mi è nuova}... non c'era {un avviso di taglia|un ritratto sul muro|un foglio di ricercato}?",
-      "{Occhi aperti|Cammina dritto|Attento a te}. Ultimamente in giro c'è {gente ricercata|brutta gente|facce segnate}.",
-      "La guardia va in giro con un ritratto. Ti somigliava {parecchio|molto|in modo imbarazzante}, forestiero.",
+      "{Occhi aperti|Rigare dritto, mi raccomando|Stai in guardia}. Ultimamente in giro c'è {gente ricercata|brutta gente|qualche faccia segnata}.",
+      "La guardia va in giro con un ritratto. Ti somigliava {parecchio|molto|in modo imbarazzante}, viandante.",
       "Una di quelle facce sul muro vale {bei soldi|più di quanto guadagno in un anno|una paga annuale}."
     ],
     "market": {
       "bullish": [
         "Il mio agente dice che {il petrolio|il titolo|tutto} da qui {sale e basta|non può che salire|va su}. {Comprano tutti|Compra tutta la via|Non vende nessuno}.",
-        "Adesso giocano in borsa perfino gli {scaricatori di porto|scaricatori|pescivendoli}. {Bei tempi|Strani tempi|È così che si capisce}.",
+        "Adesso giocano in borsa perfino {gli scaricatori di porto|i facchini|i pescivendoli}. {Bei tempi|Strani tempi|È così che si capisce}.",
         "L'ho raddoppiato in {una stagione|un mese|sei settimane}. {Sulla carta|Per ora|Finora}."
       ],
       "bearish": [
         "Ho venduto tutto prima che valesse {zero|carta straccia|niente}. Il mercato è {marcio|a picco|finito}.",
-        "Adesso i risparmi in borsa non mettercela. {Fidati|Te lo dico io|Dammi retta}.",
+        "Adesso i risparmi in borsa non metterceli. {Fidati|Te lo dico io|Dammi retta}.",
         "{Qualcuno|Un tale|Un signore} si è {rovinato|giocato tutto|buttato} per la borsa {la settimana scorsa|martedì|questo mese}."
       ]
     },
@@ -79,7 +79,7 @@
         "Non c'è più una casa di cui sentire la mancanza. Solo questa torre e il buio dove stava casa."
       ],
       "Sanguine": [
-        "Siamo vivi! Non è poco, non dopo quello che è successo a tutto il resto.",
+        "Siamo vivi! Dopo quello che è successo a tutto il resto, è moltissimo.",
         "Ogni mattina che mi sveglio in questa torre è una mattina che non mi aspettavo."
       ],
       "Cautious": [
@@ -88,22 +88,22 @@
       ],
       "Impulsive": [
         "Andiamo a GUARDARE fuori, dai. Cosa può succederci ancora, sinceramente?",
-        "La Terra non c'è più, e allora? Non sto qui fermo ad aspettare che finisca l'aria anche qui."
+        "La Terra non c'è più, e allora? Non sto qui {g:fermo|ferma} ad aspettare che finisca l'aria anche qui."
       ],
       "Stoic": [
         "Il pianeta non c'è più. La torre sta in piedi. Io mi occupo di quello che sta in piedi.",
-        "Il dolore non riempie i serbatoi dell'acqua. Il lavoro sì."
+        "Il lavoro riempie i serbatoi dell'acqua. Il dolore può aspettare."
       ],
       "Paranoid": [
         "Qualcuno in questa torre lo sapeva e non ha detto niente. Ci scommetto.",
         "Ogni porta chiusa qui dentro nasconde una decisione che a noi non l'hanno raccontata."
       ],
       "Empathetic": [
-        "Qui dentro tutti hanno perso tutti quelli che conoscevano. Provo a stare seduto accanto a chi ne ha bisogno.",
+        "Qui dentro tutti hanno perso tutti quelli che conoscevano. Provo a stare vicino a chi ne ha bisogno.",
         "Siamo l'unica cosa che ci resta. Faccio in modo che qui nessuno pianga da solo."
       ],
       "Authoritative": [
-        "Il panico non tiene accese le luci. Turni, razioni, guardie. Si dura così.",
+        "Turni, razioni, guardie. È questo che tiene accese le luci, ed è così che si dura.",
         "Ogni anima rimasta risponde a qualcuno, adesso. Sempre meglio del caos in una torre che galleggia."
       ],
       "Scholarly": [
@@ -124,7 +124,7 @@
       ],
       "Mischievous": [
         "Ultimi esseri umani vivi e stiamo ANCORA litigando su chi tocca pulire i ricircolatori.",
-        "È finito il mondo e sono ancora io quello che ha nascosto la tazza del capitano. Priorità."
+        "È finito il mondo e sono ancora io {g:quello|quella} che ha nascosto la tazza del capitano. Priorità."
       ],
       "Cynical": [
         "Ci mancava. Il pianeta finalmente si è preso quello che si meritava, e a pulire tocca a noi.",
@@ -132,7 +132,7 @@
       ],
       "Disciplined": [
         "La routine non si ferma perché si è fermato il pianeta. Il turno inizia in orario.",
-        "Esercitazioni, rotazioni, manutenzione. È l'ordine l'unica cosa che tiene questa torre una casa e non una bara."
+        "Esercitazioni, rotazioni, manutenzione. Solo l'ordine impedisce a questa torre di diventare una bara."
       ],
       "Fatalistic": [
         "Quel sasso doveva arrivare da sempre. Il caso ha voluto che fossimo noi quelli ancora in piedi.",
@@ -178,11 +178,11 @@
       ],
       "Aggressive": [
         "Quel coso voleva noi e si è preso Saturno. Bene. Che bruci.",
-        "Siamo ancora in piedi. A chi ha spostato quel sasso devo da bere."
+        "Siamo ancora in piedi. A chi ha spostato quel sasso offro da bere."
       ],
       "Melancholic": [
         "Ci hanno salvati, e non mi va comunque via il freddo che ho sentito mentre aspettavo la fine.",
-        "Festeggiano tutti la stella nuova. Io mi ricordo solo quanto ci è mancato di non vederla."
+        "Festeggiano tutti la stella nuova. Io penso solo a quanto poco è mancato perché non la vedessimo mai."
       ],
       "Sanguine": [
         "Guarda in alto! C'è una stella nuova di zecca e noi possiamo continuare a viverci sotto!",
@@ -194,7 +194,7 @@
       ],
       "Impulsive": [
         "Il mondo non è finito! E allora andiamo a FARE qualcosa col tempo che non abbiamo perso!",
-        "Stella nuova in cielo e io sono il primo che sale sul tetto della torre a vederla da vicino."
+        "Stella nuova in cielo e io sono {g:il primo|la prima} a salire sul tetto della torre per vederla da vicino."
       ],
       "Stoic": [
         "La minaccia è passata. La vita riprende. Non c'è altro da dire.",
@@ -206,11 +206,11 @@
       ],
       "Empathetic": [
         "Il giorno che il cielo si è acceso su Saturno invece che su di noi ho abbracciato tutti i vicini che ho.",
-        "Quanta gente terrorizzata. Sono solo contento che possiamo consolarci invece che piangerci addosso."
+        "Quanta gente terrorizzata. Sono solo {g:contento|contenta} che possiamo consolarci invece di piangerci addosso."
       ],
       "Authoritative": [
         "La crisi è passata perché la gente è rimasta al proprio posto. Ricordatelo, alla prossima.",
-        "L'ordine ha tenuto mentre il cielo stava cadendo. È stata disciplina. Continuate così."
+        "L'ordine ha tenuto mentre il cielo stava cadendo. Merito della disciplina. Continuate così."
       ],
       "Scholarly": [
         "Un pianeta è appena diventato una stella. Non ho mai avuto tante domande in vita mia.",
@@ -230,10 +230,10 @@
       ],
       "Mischievous": [
         "Stella nuova, ombre nuove, posti nuovi dove nessuno ha ancora pensato di controllare. Mi piacciono le probabilità.",
-        "Il mondo ottiene una proroga e io resto comunque il primo sospettato quando sparisce qualcosa."
+        "Il mondo ottiene una proroga e io resto comunque {g:il primo sospettato|la prima sospettata} quando sparisce qualcosa."
       ],
       "Cynical": [
-        "Ci è andata bene. Non lasciarti raccontare che sia stato altro.",
+        "Ci è andata bene. Fortuna e basta, qualunque cosa ti raccontino.",
         "Saturno si becca il colpo per noi e la gente si comporta come se l'universo ci dovesse un favore. Non ce ne doveva nessuno."
       ],
       "Disciplined": [
@@ -241,7 +241,7 @@
         "Le esercitazioni sono servite. E allora continuiamo a farle, stella nuova o no."
       ],
       "Fatalistic": [
-        "Da qualche parte doveva cadere. Stavolta, per fortuna, non addosso a noi.",
+        "Da qualche parte doveva cadere. Stavolta, per fortuna, è caduto altrove.",
         "È arrivato il turno di Saturno al posto del nostro. Non chiedo perché. Mi vivo i giorni che ho."
       ],
       "Grumpy": [
@@ -257,7 +257,7 @@
         "Abbiamo fissato negli occhi il cielo stesso e ha battuto le palpebre per primo. Questa sfida la accetto ogni giorno."
       ],
       "Timid": [
-        "Quella notte mi sono nascosto per intero. Sono contento di avere ancora un posto dove nascondermi.",
+        "Quella notte mi sono {g:nascosto|nascosta} sotto le coperte. Che sollievo avere ancora un posto dove nascondermi.",
         "La stella nuova è bellissima, da molto lontano, attraverso una finestra ben chiusa."
       ],
       "Hedonistic": [

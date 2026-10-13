@@ -11,7 +11,7 @@
     "groupCreeds": "Credi",
     "groupPolitics": "Potenze, partiti e fazioni",
     "groupTopics": "Argomenti",
-    "noTopics": "A nessuno nel gruppo è ancora stato detto niente che valga la pena tirare fuori.",
+    "noTopics": "A nessuno nel Party è ancora stato detto niente che valga la pena tirare fuori.",
     "noTeach": "Non c'è niente che voi due possiate insegnare a {name}.",
     "noLearn": "{name} non sa niente che tu possa imparare.",
     "hintHours": "{hours} h",
@@ -44,7 +44,17 @@
     "trainSpecDone": "{name} ora è {tier} in {spec}. Sono passate {hours} h.",
     "trainSpecSold": "{name} ora è {tier} in {spec} e ha pagato {price}. Sono passate {hours} h.",
     "learnSpecDone": "{actor} ora è {tier} in {spec}. Sono passate {hours} h.",
-    "learnSpecPaid": "{actor} ora è {tier} in {spec} per {price}. Sono passate {hours} h."
+    "learnSpecPaid": "{actor} ora è {tier} in {spec} per {price}. Sono passate {hours} h.",
+    "peerTeach": "Insegna un'abilità",
+    "peerTeachSpec": "Insegna una specializzazione",
+    "pickPeerTeacher": "Chi insegnerà a {name}?",
+    "pickPeerTeach": "{teacher} insegna un'abilità a {name}",
+    "pickPeerSpec": "{teacher} allena {name} in una specializzazione",
+    "hintPeerTeacher": "{count} da insegnare",
+    "noPeerTeach": "Nessun altro nel Party conosce un'abilità che {name} possa imparare.",
+    "noPeerSpec": "Nessun altro nel Party ha una specializzazione sopra quella di {name}.",
+    "peerTeachDone": "{teacher} ha insegnato {skill} a {name}. Sono passate {hours} h.",
+    "peerSpecDone": "{teacher} ha portato {name} a {tier} in {spec}. Sono passate {hours} h."
   },
   "reason": {
     "known": "Lo sa già",
@@ -60,7 +70,8 @@
     "child": "Troppo giovane per imparare",
     "beast": "Non può imparare",
     "unimplemented": "Nessuno la pratica ancora",
-    "pacifist": "Non si allena a combattere"
+    "pacifist": "Non si allena a combattere",
+    "nothingToTeach": "Niente da insegnargli"
   },
   "talk": {
     "ask": {
@@ -105,10 +116,10 @@
           "{topic}? {Ha i suoi lati buoni e quelli cattivi|Potrebbe andare peggio, potrebbe andare meglio}.",
           "Non penso granché a {topic}, {né in un senso né nell'altro|in nessun senso}.",
           "{topic} va {bene, credo|com'è}. Perché lo chiedi?",
-          "Su {topic} {certi giorni sono a favore, certi no|sono indeciso}."
+          "Su {topic} {certi giorni sono a favore, certi no|non ho ancora deciso}."
         ],
         "unknown": [
-          "{topic}? {Mai sentito|Non posso dire di conoscerlo}. {Cos'è|Spiegami}?",
+          "{topic}? {Mai sentito|Non posso dire di saperne qualcosa}. {Cos'è|Spiegami}?",
           "{Mi spiace|Mah}, {topic} non mi dice niente.",
           "{topic}... {no, non mi dice niente|dovrei saperlo}?",
           "Un giorno dovrai parlarmi di {topic}. {Non ne ho idea|Neanche la più pallida}."
@@ -117,7 +128,7 @@
       "toEm": {
         "like": [
           "{topic}? {Oh, tu ne sai più di me, strega, ma sì|Sì}, mi piace. {Per favore non maledirmi per averlo detto|È la risposta giusta}?",
-          "Secondo me {topic} è meraviglioso. {Te lo stai scrivendo, vero|Te lo stai scrivendo}?",
+          "Secondo me {topic} è una meraviglia. {Te lo stai scrivendo, vero|Te lo stai scrivendo}?",
           "{topic}, sì. Sono a favore. Mi guardi come se fossi un incantesimo da controllare."
         ],
         "dislike": [
@@ -138,13 +149,13 @@
       },
       "toBubba": {
         "like": [
-          "{topic}? Lo adoro. Quasi quanto adoro il suo motore, signor Wilson.",
+          "{topic}? Che passione. Quasi quanto il suo motore, signor Wilson.",
           "Detto da lei? Sì, {topic}, sì. Qualunque cosa pensi lei, la penso anch'io.",
-          "{topic} è magnifico. Aspetti che dica a mia madre che me l'ha chiesto Bubba Wilson."
+          "{topic} è una cosa magnifica. Aspetti che dica a mia madre che me l'ha chiesto Bubba Wilson."
         ],
         "dislike": [
-          "{topic}? Non lo sopporto. Mi scusi, signor Wilson, spero non sia una delle sue.",
-          "Sinceramente? {topic} è robaccia. Lei lo aggiusterebbe in un pomeriggio, scommetto.",
+          "{topic}? Non mi va giù. Mi scusi, signor Wilson, spero non sia una delle sue.",
+          "Sinceramente? {topic} è robaccia. Lei ci rimetterebbe mano in un pomeriggio, scommetto.",
           "{topic} non mi piace per niente. Per favore non rimanga deluso da me."
         ],
         "neutral": [
@@ -170,12 +181,12 @@
           "Preferirei farmi lanciare una fattura che difendere {topic}. Mi hanno lanciato una fattura. Era meglio."
         ],
         "neutral": [
-          "{topic}. Interessante, non importante. Lo archivio sotto forse.",
+          "{topic}. Interessante, vagamente. Lo archivio sotto forse.",
           "{topic} dipende da chi chiede e da cosa vuole. Allora, tu cosa vuoi?",
           "Non provo niente per {topic}. Ho delle note a piè di pagina."
         ],
         "unknown": [
-          "{topic}. Non lo conosco. Mi irrita più di quanto dovrebbe.",
+          "{topic}. Mi giunge nuovo. Mi irrita più di quanto dovrebbe.",
           "Mai sentito parlare di {topic}. Dammi un giorno e una biblioteca.",
           "{topic}? Non c'è in nessun libro che possiedo. Il che significa che mi servono più libri."
         ]
@@ -187,7 +198,7 @@
           "{topic}, sì, sì. Quella è una cosa che vale la pena tenere nella cassetta degli attrezzi."
         ],
         "dislike": [
-          "{topic}? Mannaggia. Impianto elettrico sbagliato, quello. Lo strapperei via e ricomincerei da capo.",
+          "{topic}? Mannaggia. Impianto elettrico sbagliato, quello. Da strappare via e ricominciare da capo.",
           "Non parlarmi di {topic}, guaglio'. Mi fa venire il mal di testa come una guarnizione saltata.",
           "{topic} è marcio dal telaio in su. Questa è la mia idea."
         ],
@@ -208,7 +219,7 @@
         "{E tu|Tocca a te}: che ne pensi di {topic}?",
         "Visto che parliamo, {cosa pensi di|da che parte stai su} {topic}?",
         "Lascia che te ne chieda una io. {topic}: {sì o no|a favore o contro}?",
-        "Hai mai sentito parlare di {topic}? {Sono curioso|Mi piacerebbe saperlo}."
+        "Hai mai sentito parlare di {topic}? {Mi incuriosisce|Mi piacerebbe saperlo}."
       ],
       "toEm": [
         "Posso chiedertene una, signorina? {topic}. È roba da streghe?",
@@ -218,10 +229,10 @@
       "toBubba": [
         "Posso chiederle, signor Wilson? {topic}. Lei che ne dice?",
         "Cosa pensa di {topic} l'uomo che ha costruito il Motore Liminale?",
-        "{topic}, signor Wilson. Lo aggiusterebbe o lo rottamerebbe?"
+        "{topic}, signor Wilson. Da aggiustare o da rottamare?"
       ],
       "em": [
-        "Ora tu. {topic}. Sii preciso.",
+        "Ora tu. {topic}. Con precisione.",
         "Tocca a te, {name}. {topic}: difendi una posizione.",
         "{topic}. Dimmi cosa ne pensi e io ti dirò cosa c'è di sbagliato."
       ],
@@ -234,9 +245,9 @@
     "reply": {
       "default": {
         "like": [
-          "{topic}? {Sono tutto a favore|Mi piace, sinceramente}.",
+          "{topic}? {Sono a favore, al cento per cento|Mi piace, sinceramente}.",
           "Secondo me {topic} è {una delle cose buone|da difendere}.",
-          "{Sono un grande fan di|Non posso dire una parola storta su} {topic}."
+          "{Faccio il tifo per|Non posso dire una parola storta su} {topic}."
         ],
         "dislike": [
           "{topic}? {Non fa per me|Ne faccio a meno}.",
@@ -245,13 +256,13 @@
         ],
         "neutral": [
           "{topic}? {Prendere o lasciare, per me è uguale|Niente di particolare}.",
-          "Su {topic} {sono indeciso|ho due idee}.",
+          "Su {topic} {non ho deciso|ho due idee}.",
           "{topic} va {bene|benino}, credo."
         ],
         "unknown": [
           "{topic}? {Mai sentito|Nessuna idea, scusa}.",
           "Non conosco {topic}. {Dovrai raccontarmelo tu|Cos'è}?",
-          "{topic}... {non mi dice niente|mi sono perso}."
+          "{topic}... {non mi dice niente|non ti seguo}."
         ]
       },
       "em": {
@@ -271,21 +282,21 @@
           "Non ho un'opinione su {topic}. Ho delle domande."
         ],
         "unknown": [
-          "{topic}. Non lo conosco, e non ne sono contenta.",
+          "{topic}. Mi giunge nuovo, e non ne sono contenta.",
           "Mai sentito parlare di {topic}. Scrivimelo.",
           "{topic}? Non ancora. Dammi una biblioteca."
         ]
       },
       "bubba": {
         "like": [
-          "{topic}? Lo adoro, tesoro. Gira che è un sogno.",
+          "{topic}? Che passione, tesoro. Gira che è un sogno.",
           "Uè, {topic} è roba buona. Ci metterei la firma.",
           "{topic}, sì. Lavoro onesto, quello."
         ],
         "dislike": [
           "{topic}? Mannaggia, no. Progettato male da paraurti a paraurti.",
-          "Non sopporto {topic}, guaglio'. Non lo farei avvicinare alla Bestia.",
-          "{topic} è ferraglia. Lo smonterei per i pezzi."
+          "Non sopporto {topic}, guaglio'. Lontano dalla Bestia, quella roba.",
+          "{topic} è ferraglia. Da smontare per i pezzi."
         ],
         "neutral": [
           "{topic}? Eh. Gira, più o meno.",
@@ -295,7 +306,7 @@
         "unknown": [
           "{topic}? Mai sentito, tesoro.",
           "Mi hai fregato. {topic} è una novità.",
-          "{topic}? Dovrei smontarlo per dirtelo."
+          "{topic}? Dovrei smontare la faccenda per dirtelo."
         ]
       }
     }
@@ -344,7 +355,7 @@
       "toEm": [
         "Una strega mi ha insegnato {skill}. Gratis. Nessuno ci crederà.",
         "Grazie, signorina. Ho capito più o meno metà, ma era la metà giusta.",
-        "{skill}! Ci starò attento, lo prometto. Grazie."
+        "{skill}! Ne farò buon uso, lo prometto. Grazie."
       ],
       "toBubba": [
         "Bubba Wilson mi ha insegnato {skill}. Lui in persona. Non mi laverò mai più queste mani.",
@@ -365,7 +376,7 @@
     "thanksPaid": {
       "default": [
         "{price}, e ne valeva la pena. Grazie, {name}.",
-        "Soldi ben spesi. {skill} adesso è mio.",
+        "Soldi ben spesi. Ora {skill} fa parte del mio bagaglio.",
         "{Prezzo giusto|Mi sta bene}. Grazie per la lezione."
       ],
       "toEm": [
@@ -394,7 +405,7 @@
     "ask": {
       "default": [
         "Mi insegneresti {skill}?",
-        "{Potresti|Vorresti} mostrarmi {skill}? Te ne sarei grato.",
+        "{Potresti|Vorresti} mostrarmi {skill}? Te ne sarei riconoscente.",
         "Vorrei imparare {skill}. {Me lo insegneresti|C'è qualche possibilità}?"
       ],
       "em": [
@@ -513,7 +524,7 @@
         "default": [
           "Posso allenarti in {spec}. {La mia tariffa è|Ti costerà} {price}.",
           "Una vera sessione di {spec}, per {price}.",
-          "{price} e ti rendo più bravo in {spec}. Giusto?"
+          "{price} e ti faccio fare un salto di livello in {spec}. Giusto?"
         ],
         "em": [
           "{spec}, una sessione, {price}. La competenza non è beneficenza.",
@@ -567,7 +578,7 @@
         "toBubba": [
           "{price} per un allenamento con Bubba Wilson? Avrei pagato il doppio.",
           "Ecco a lei, signor Wilson. I {price} meglio spesi della mia vita.",
-          "Pagato, e ne vado fiero. Grazie, signore."
+          "Pagato, e con gioia. Grazie, signore."
         ],
         "em": [
           "{price}. Va bene. L'allenamento valeva un po' di più, ma va bene.",
@@ -585,16 +596,16 @@
       "ask": {
         "default": [
           "Potresti allenarmi in {spec}, {name}?",
-          "{Mi insegneresti|Ti andrebbe di insegnarmi} un po' del tuo {spec}?",
-          "Sei bravo in {spec}. Mi fai vedere come si fa?"
+          "{Mi insegneresti|Ti andrebbe di insegnarmi} un po' di quello che sai in {spec}?",
+          "Te la cavi bene in {spec}. Mi fai vedere come si fa?"
         ],
         "em": [
-          "{name}. Il tuo {spec}. Lo voglio. Insegnamelo.",
+          "{name}. Quello che sai di {spec}. Lo voglio. Insegnamelo.",
           "Mi risulta che tu sia competente in {spec}. Dimostralo insegnandomelo.",
           "Allenami in {spec}. Imparo in fretta, e prendo appunti."
         ],
         "bubba": [
-          "Eh, {name}, mi fai vedere un po' del tuo {spec}?",
+          "Eh, {name}, mi fai vedere un po' di {spec}?",
           "Tesoro, dicono che sai {spec}. Lo insegni a un vecchio?",
           "Jamme, {spec}. Sono tutt'orecchi, guaglio'."
         ]
@@ -616,7 +627,7 @@
           "Gratis, signore. Mi lasci solo raccontarlo in giro."
         ],
         "em": [
-          "Va bene. Gratis. Perché mi sei simpatico, il che è raro.",
+          "Va bene. Gratis. Perché mi vai a genio, il che è raro.",
           "Siediti. {spec}. Fai attenzione, non lo ripeterò.",
           "Niente compenso. Consideralo un investimento sulla tua sopravvivenza."
         ],

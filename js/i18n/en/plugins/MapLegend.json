@@ -7,7 +7,7 @@
     "hotbarCycle": "Change hotbar item",
     "hotbarUse": "Use hotbar item",
     "leadSwap": "Switch party member",
-    "interact": "Interact with or dismantle an object",
+    "interact": "Interact or dismantle",
     "leftClick": "Left Click",
     "rightClick": "Right Click",
     "menu": "Menu",
@@ -369,7 +369,7 @@
     },
     "m102_zone2": {
       "title": "Training center",
-      "text": "Did you see the training center at Ghent? In reality it's a fake building that, on entry, transports you to the interior of this training center. I was hired to design the mechanism; it's not magical, it's pure physics!"
+      "text": "Did you see the training center at Ghent? In reality it's a fake building that, on entry, transports you to the interior of this training center. I was hired to design the mechanism; it's pure physics!"
     },
     "m1414_zone14": {
       "title": "Camper",
@@ -387,7 +387,7 @@
     },
     "seeTheDoctor": {
       "title": "See the doctor",
-      "text": "The clinic is the low building with the white door. Whatever is broken gets set in there."
+      "text": "The clinic is the low building with the white door. Get treated there."
     },
     "searchTheWagons": {
       "title": "Search the wagons",

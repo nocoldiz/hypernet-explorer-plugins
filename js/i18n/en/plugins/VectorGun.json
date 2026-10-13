@@ -44,8 +44,8 @@
     },
     "solomonIncantation": {
       "name": "Solomon incantation",
-      "desc": "Spells are spoken aloud and deal 15% more damage.",
-      "effect": "Runs only with the Grimoire of Solomon fitted, or while the book is open in Graceful Death. Every spell cast is read out in full first, in a box of its own, and then deals or heals 15% more."
+      "desc": "Spells log a line of their chant. Full chant with the grimoire open.",
+      "effect": "Spells cast with the vector gun add a random chant line to the battle log. With the Grimoire of Solomon fitted, or open in Graceful Death, the full chant is logged and the spell deals or heals 15% more."
     },
     "card": {
       "name": "Card",
@@ -170,9 +170,9 @@
     "uncalibrated": "{choice} dropped.",
     "calSwapped": "{choice} chosen, {old} dropped.",
     "reaped": "The scythe takes {name}.",
-    "noSky": "No sky in here to turn over.",
+    "noSky": "No weather indoors.",
     "spent": "{form} spent, folded back into the pistol.",
-    "locked": "{mode} opens at level {n}.",
+    "locked": "{mode} unlocks at level {n}.",
     "roll": "Dice of Yaldabaoth: {n}. {form}.",
     "natural": "Dice of Yaldabaoth: natural {n}. The Grimoire of Solomon opens.",
     "grimoire": "Grimoire of Solomon",
@@ -182,12 +182,12 @@
     "switched": "{name} switches to {form}."
   },
   "lock": {
-    "title": "Not yet earned",
+    "title": "Locked",
     "level": "Level {n}",
-    "unlocksAt": "Opens at level",
+    "unlocksAt": "Unlocks at level",
     "current": "Em's level",
-    "remaining": "{n} modes still shut, next at level {next}",
-    "formsRemaining": "{n} forms still shut, next at level {next}"
+    "remaining": "{n} modes locked, next at level {next}",
+    "formsRemaining": "{n} forms locked, next at level {next}"
   },
   "locked": {
     "equip": "Only Em can equip the vector gun.",
@@ -200,7 +200,7 @@
   },
   "element": {
     "title": "Element",
-    "hint": "The element is stored on the pistol. Weapon forms drop it and attack without an element. The coilgun has its own element, set on the Calibration page, so the frame can hold two at once.",
+    "hint": "Applies to the pistol only. Weapon forms have no element. The coilgun's element is set in Calibration.",
     "physicalDesc": "Physical damage, no element.",
     "desc": {
       "1": "Physical damage, no element.",
@@ -359,32 +359,32 @@
   "cal": {
     "none": "Nothing to calibrate",
     "known": "Learned",
-    "borrowed": "Read off the frame",
+    "borrowed": "From the weapon",
     "apCost": "{ap} AP",
     "chip": {
       "selected": "Chosen"
     },
     "section": {
-      "element": "The coilgun's element",
-      "rack": "The rack",
-      "marks": "The mark it leaves",
-      "stance": "The stance she holds it in",
-      "sky": "The sky it calls",
-      "schools": "The schools it deals from",
-      "quarry": "What it was built for",
-      "lash": "What the lash tears down",
-      "venom": "What the darts carry",
-      "head": "What the head delivers",
-      "cleave": "How wide the swing carries",
-      "draw": "How far it is drawn",
-      "charge": "How it is brought to bear",
-      "discord": "How wild the blow is",
-      "measure": "What it weighs them against",
-      "reads": "What the bar reads",
-      "bargain": "The bargain struck",
-      "mends": "What the beads mend",
-      "known": "What she knows",
-      "reach": "Within her reach"
+      "element": "Coilgun element",
+      "rack": "Rack",
+      "marks": "Status",
+      "stance": "Stance",
+      "sky": "Weather",
+      "schools": "Schools",
+      "quarry": "Target type",
+      "lash": "Lowered stat",
+      "venom": "Dart status",
+      "head": "Damage type",
+      "cleave": "Targets",
+      "draw": "Draw",
+      "charge": "Attack style",
+      "discord": "Variance",
+      "measure": "Measured stat",
+      "reads": "Reading",
+      "bargain": "Bargain",
+      "mends": "Heals",
+      "known": "Learned",
+      "reach": "Available"
     },
     "lash": {
       "desc": "Lowers this parameter on hit for a few rounds. 45% chance, 85% damage."
@@ -585,67 +585,67 @@
     },
     "form": {
       "gun": {
-        "hint": "The coilgun has its own element, so the frame holds two at once. Rack depth is up to you, but a doubled rack doubles the ammo cost of every shot."
+        "hint": "The coilgun has its own element. A doubled rack doubles the ammo cost per shot."
       },
       "abrasax": {
-        "hint": "Applies one affliction. Harsher afflictions have lower odds of landing, and PSI raises the odds."
+        "hint": "Applies one status. Harsher ones land less often. PSI raises the odds."
       },
       "thelema": {
-        "hint": "A normal attack sometimes becomes this sword skill instead, paying its AP cost. The skill does not need to be learned."
+        "hint": "Normal attacks may become this sword skill, paying its AP. No need to learn it."
       },
       "freud": {
-        "hint": "Damage is based on PSI. A normal attack sometimes becomes this skill instead, paying its AP cost."
+        "hint": "Damage scales on PSI. Normal attacks may become this skill, paying its AP."
       },
       "fists": {
-        "hint": "A normal attack sometimes becomes a random form from the selected set, paying its AP cost."
+        "hint": "Normal attacks may become a random skill from the set, paying its AP."
       },
       "kia": {
-        "hint": "The stance is active while the gauntlet is equipped, and lowers the damage you deal while it is up."
+        "hint": "Active while the gauntlet is equipped. Lowers your damage."
       },
       "hadit": {
-        "hint": "Switching to the staff changes the weather to this one. Weather affects enemies too, and has no effect indoors."
+        "hint": "Switching to the staff sets this weather. Affects enemies too. No effect indoors."
       },
       "solomon": {
-        "hint": "The pact is drawn from the selected schools. With nothing selected it draws from every school. A very narrow selection may have nothing to draw."
+        "hint": "Spells come from the selected schools, or all schools if none. Too narrow a pick may leave nothing."
       },
       "choronzon": {
-        "hint": "The damage type dealt. It decides what the attack is strong and weak against."
+        "hint": "Decides what the attack is strong and weak against."
       },
       "babalon": {
-        "hint": "How many targets the attack hits. Every extra target lowers the damage dealt to all of them."
+        "hint": "Number of targets. Each extra target lowers damage to all."
       },
       "nuit": {
-        "hint": "The lash lowers one parameter instead of dealing full damage. The attack deals less damage in exchange."
+        "hint": "Lowers one stat on hit, for less damage."
       },
       "aiwass": {
-        "hint": "How far the bow is drawn. Longer draw trades off against arrow damage."
+        "hint": "Longer draw: more range, less damage."
       },
       "zos": {
-        "hint": "The status effect on the darts, taken from the same loaded rounds."
+        "hint": "Status applied by the darts."
       },
       "baphomet": {
-        "hint": "What the talons drain from the target. Draining AP costs the most, since AP powers attacks that turn into skills."
+        "hint": "What the talons drain. Draining AP costs the most."
       },
       "longinus": {
-        "hint": "How the lance attacks. Each mode trades one property for another."
+        "hint": "Attack style. Each one has a trade-off."
       },
       "eris": {
-        "hint": "Damage variance. Wider variance raises the average damage but makes single hits less predictable."
+        "hint": "Wider variance: higher average damage, less predictable hits."
       },
       "maat": {
-        "hint": "The parameter the ankh weighs the target against. A balanced target takes less damage than from a normal attack."
+        "hint": "The stat the target is weighed on. Balanced targets take less than a normal attack."
       },
       "bubba": {
-        "hint": "The target type the wrench is built for. Much more damage against it, less against everything else."
+        "hint": "Much more damage to this target type, less to others."
       },
       "yaldabaoth": {
-        "hint": "The reading the bar takes from the target. Against an unaffected target it deals less than a normal attack."
+        "hint": "What the bar measures. Unhurt targets take less than a normal attack."
       },
       "nyarlathotep": {
-        "hint": "Which side the reaping targets. It never takes Em, and cannot target a boss, a petrodemon, or anything more than ten levels above her."
+        "hint": "Which side can be reaped. Never Em, bosses, petrodemons or anything 10+ levels above her."
       },
       "gautama": {
-        "hint": "What the rosary heals. It deals no damage at all."
+        "hint": "What the rosary heals. Deals no damage."
       }
     }
   }

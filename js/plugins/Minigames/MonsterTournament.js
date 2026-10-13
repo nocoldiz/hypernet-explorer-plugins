@@ -351,8 +351,8 @@
                                 added.forEach(s => {
                                     if (s && s.id !== targetB.deathStateId()) beat.results.push({ kind: 'state', side: sideOf(targetB), text: s.name });
                                 });
-                                (res.addedBuffs || []).forEach(pid => beat.results.push({ kind: 'buff', side: sideOf(targetB), text: paramName(pid) + ' Up' }));
-                                (res.addedDebuffs || []).forEach(pid => beat.results.push({ kind: 'buff', side: sideOf(targetB), text: paramName(pid) + ' Down' }));
+                                (res.addedBuffs || []).forEach(pid => beat.results.push({ kind: 'buff', side: sideOf(targetB), text: T('MonsterTournament.popup.buffUp', { param: paramName(pid) }) }));
+                                (res.addedDebuffs || []).forEach(pid => beat.results.push({ kind: 'buff', side: sideOf(targetB), text: T('MonsterTournament.popup.buffDown', { param: paramName(pid) }) }));
                             }
                         }
 
@@ -463,8 +463,12 @@
             this._keys = new Set();
             this._onKeyDown = (e) => { this._keys.add(e.code); };
             this._onKeyUp = (e) => { this._keys.delete(e.code); };
+            // A key released while the window is out of focus sends no keyup:
+            // without this the camera kept orbiting after an alt-tab.
+            this._onBlur = () => { this._keys.clear(); };
             document.addEventListener('keydown', this._onKeyDown);
             document.addEventListener('keyup', this._onKeyUp);
+            window.addEventListener('blur', this._onBlur);
             this._lastTouch = null;
 
             this._initThree();
@@ -564,7 +568,30 @@
             return this.fighters[side];
         }
 
+        // A model that finished loading after its slot was cleared (the player
+        // cycled to the next monster, or the arena was disposed) belongs to
+        // nobody: it is taken apart here instead of being left in the scene.
+        _disposeBattler(battler) {
+            const root = battler && battler.model;
+            if (!root) return;
+            if (root.parent) root.parent.remove(root);
+            root.traverse(n => {
+                if (n.isMesh) {
+                    if (n.geometry) try { n.geometry.dispose(); } catch (e) {}
+                    const mats = Array.isArray(n.material) ? n.material : [n.material];
+                    mats.forEach(m => { if (m) try { m.dispose(); } catch (e) {} });
+                }
+            });
+        }
+
+        // True when a load started under `gen` has since been superseded.
+        _isStale(gen) {
+            return this._disposed || gen !== this._loadGen;
+        }
+
         clearFighters() {
+            // Every clear supersedes the loads still in flight.
+            this._loadGen = (this._loadGen || 0) + 1;
             Object.keys(this.fighters).forEach(k => {
                 const f = this.fighters[k];
                 if (f && f.rig) {
@@ -587,8 +614,13 @@
             this._mode = 'idle';
             this._seq = null;
             this.clearFighters();
+            const gen = this._loadGen;
             const battler = await this._makeBattler(enemyData);
             if (!battler) return false;
+            if (this._isStale(gen)) {
+                this._disposeBattler(battler);
+                return false;
+            }
             const rig = new THREE.Group();
             rig.position.set(0, FOOT_Y + (battler.offsetY || 0) / 100, 0);
             rig.scale.setScalar(MODEL_SCALE);
@@ -709,10 +741,18 @@
             this._mode = 'idle';
             this._seq = null;
             this.clearFighters();
+            const gen = this._loadGen;
 
             const left = await this._makeBattler(leftData);
             const right = await this._makeBattler(rightData);
+            if (this._isStale(gen)) {
+                this._disposeBattler(left);
+                this._disposeBattler(right);
+                return;
+            }
             if (!left || !right) {
+                this._disposeBattler(left);
+                this._disposeBattler(right);
                 if (onDone) onDone();
                 return;
             }
@@ -782,7 +822,7 @@
             const f = this.fighters[loserSide];
             if (f && f.battler && f.battler.currentAnimation !== 'death') {
                 f.battler.playAnimation('death', false);
-                if (this.onPopup) this.onPopup(loserSide, { text: 'DOWN', color: '#ff5555' });
+                if (this.onPopup) this.onPopup(loserSide, { text: T('MonsterTournament.popup.down'), color: '#ff5555' });
             }
             this._seqI = this._seq.length - 1;
             this._stepT = 0;
@@ -802,9 +842,9 @@
                 } else if (r.kind === 'heal') {
                     if (this.onPopup) this.onPopup(r.side, { text: '+' + r.value, color: '#7CFF7C' });
                 } else if (r.kind === 'mp') {
-                    if (this.onPopup) this.onPopup(r.side, { text: r.value + ' MP', color: '#7CC8FF' });
+                    if (this.onPopup) this.onPopup(r.side, { text: T('MonsterTournament.popup.mp', { n: r.value }), color: '#7CC8FF' });
                 } else if (r.kind === 'miss') {
-                    if (this.onPopup) this.onPopup(r.side, { text: 'MISS', color: '#cccccc' });
+                    if (this.onPopup) this.onPopup(r.side, { text: T('MonsterTournament.popup.miss'), color: '#cccccc' });
                 } else if (r.kind === 'state') {
                     if (this.onPopup) this.onPopup(r.side, { text: r.text, color: '#ff9be0' });
                 } else if (r.kind === 'buff') {
@@ -813,7 +853,7 @@
                     died = true;
                     const df = this.fighters[r.side];
                     if (df && df.battler) df.battler.playAnimation('death', false);
-                    if (this.onPopup) this.onPopup(r.side, { text: 'DOWN', color: '#ff5555' });
+                    if (this.onPopup) this.onPopup(r.side, { text: T('MonsterTournament.popup.down'), color: '#ff5555' });
                 }
             }
             if (damagedTarget && !died) {
@@ -846,7 +886,7 @@
                 start: () => {
                     const f = this.fighters[beat.side];
                     if (f && f.battler) f.battler.playAnimation('death', false);
-                    if (this.onPopup) this.onPopup(beat.side, { text: 'DOWN', color: '#ff5555' });
+                    if (this.onPopup) this.onPopup(beat.side, { text: T('MonsterTournament.popup.down'), color: '#ff5555' });
                     this._reportGauges(beat);
                 },
                 update: () => {}
@@ -936,11 +976,13 @@
         }
 
         dispose() {
+            this._disposed = true;
             this.clearFighters();
             this._fx.forEach(fx => { this.scene.remove(fx.obj); });
             this._fx = [];
             document.removeEventListener('keydown', this._onKeyDown);
             document.removeEventListener('keyup', this._onKeyUp);
+            window.removeEventListener('blur', this._onBlur);
             this._keys.clear();
             if (this.renderer) {
                 this.renderer.dispose();
@@ -1319,21 +1361,21 @@
                 `<div class="mt-stat"><div class="lbl">${n}</div><div class="val">${m.params[i + 2]}</div></div>`
             ).join('');
             const power = m.params[0] + m.params[2] + m.params[4] + m.params[5];
-            this._statsEl.querySelector('.mt-power').textContent = `Combat Power: ${power}`;
+            this._statsEl.querySelector('.mt-power').textContent = T('MonsterTournament.ui.combatPower', { power });
         }
 
         refreshBet() {
             if (!this._betEl) return;
             const maxBet = $gameParty.numItems($dataItems[bettingItemId]);
-            this._betEl.querySelector('.mt-bet-amount').innerHTML = `Bet: <b>${this._betAmount}</b>`;
-            this._betEl.querySelector('.mt-bet-avail').textContent = `Available: ${maxBet}`;
+            this._betEl.querySelector('.mt-bet-amount').innerHTML = `${T('MonsterTournament.ui.bet')} <b>${this._betAmount}</b>`;
+            this._betEl.querySelector('.mt-bet-avail').textContent = T('MonsterTournament.ui.available', { count: maxBet });
         }
 
         refreshAddBet() {
             if (!this._addbetEl) return;
             const bet = this.currentBets[this.playerChoice] || 0;
             this._addbetEl.querySelector('.mt-addbet-title').textContent =
-                `${this.selectedMonsters[this.playerChoice].name} advances!`;
+                T('MonsterTournament.advances', { name: this.selectedMonsters[this.playerChoice].name });
             const opts = this._addbetEl.querySelectorAll('.mt-opt');
             opts[0].textContent = T('MonsterTournament.doubleBet', { bet });
             opts.forEach((o, i) => o.classList.toggle('sel', i === this._addBetIndex));
@@ -1545,7 +1587,7 @@
             const winnerIndex = playerWon ? playerIndex : opponentIndex;
 
             const roundName = this.roundLabel(this.tournamentBracket.length);
-            this.setTitle(`${roundName}: ${playerMonster.name}  VS  ${opponentMonster.name}`);
+            this.setTitle(T('MonsterTournament.bout', { round: roundName, a: playerMonster.name, b: opponentMonster.name }));
 
             // The fighting-game board: both fighters' HP, MP and TP and the round
             // clock, live for as long as the bout is on screen.
@@ -1570,10 +1612,10 @@
         }
 
         roundLabel(remaining) {
-            if (remaining <= 2) return 'FINAL';
-            if (remaining <= 4) return 'SEMI-FINAL';
-            if (remaining <= 8) return 'QUARTER-FINAL';
-            return 'ROUND';
+            if (remaining <= 2) return T('MonsterTournament.round.final');
+            if (remaining <= 4) return T('MonsterTournament.round.semi');
+            if (remaining <= 8) return T('MonsterTournament.round.quarter');
+            return T('MonsterTournament.round.other');
         }
 
         // Off-screen battles: run the same simulation, keep only the winner.
@@ -1699,7 +1741,7 @@
             }
             if (this._arenaSprite) {
                 if (this._arenaSprite.parent) this._arenaSprite.parent.removeChild(this._arenaSprite);
-                this._arenaSprite.destroy();
+                this._arenaSprite.destroy({ texture: true, baseTexture: true });
                 this._arenaSprite = null;
             }
             if (this._arena) {
@@ -3464,7 +3506,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: APP_ID,
-            name: t('appName'),
+            name: () => t('appName'),
             icon: APP_ICON,
             launchFn: () => App.launch(),
             desktopShortcut: true,       // a default desktop app, both federations

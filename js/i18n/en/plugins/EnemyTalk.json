@@ -1,7 +1,7 @@
 {
   "msg": {
     "noUnderstand": "The enemy doesn't understand you.",
-    "unrecruitable": "{name} does not answer.\nThere is nothing in there to bargain with.",
+    "unrecruitable": "{name} does not answer.\nIt can't be recruited.",
     "cantTalkNow": "The enemy can't talk right now.",
     "silenced": "Enemy is silenced!\n He can't talk now.",
     "enraged": "Enemy is enraged!\n He doesn't want to talk to you.",
@@ -20,7 +20,7 @@
     "petSuccess": "The enemy seems to enjoy being petted!",
     "petFail": "The enemy doesn't want to be petted.",
     "petRefuse": "This creature doesn't respond to petting.",
-    "outOfReach": "{name} looks you over and turns away.\nIt has no reason to follow a party this far beneath it."
+    "outOfReach": "{name} turns away.\nYour party's level is too low."
   },
   "choices": [
     "Chat",
@@ -31,6 +31,11 @@
     "Pet",
     "Cancel"
   ],
+  "dice": {
+    "recruit": "Recruit: {name}",
+    "follower": "Follower: {name}",
+    "tame": "Tame: {name}"
+  },
   "opinion": "Opinion",
   "recruit": {
     "askToFollow": "Ask to Follow",

@@ -816,7 +816,7 @@ function createSeededRNG(eventId = null) {
     }
 
     function displayProceduralBook(book, eventId) {
-        const titleLine = `\\C[4]"${book.title}"\\C[0] \\C[3]by ${book.author}.\\C[0]`;
+        const titleLine = `\\C[4]"${book.title}"\\C[0] \\C[3]${T('ConvBooks.byAuthor', { author: book.author })}\\C[0]`;
         const messageText = `${titleLine}\n${book.description}`;
         showPaged(messageText, '');
         payReading("book", eventId, book.title);  // i18n-ignore  reading-log id
@@ -845,9 +845,9 @@ function createSeededRNG(eventId = null) {
             return;
         }
 
-        const readLabel = T.language() === 'it' ? 'Leggi' : 'Read';
-        const scanLabel = (window.RamanScanner && typeof window.RamanScanner.analyzeLabel === 'function' && window.RamanScanner.analyzeLabel()) || (T.language() === 'it' ? 'Analizza' : 'Analyze');
-        const cancelLabel = T.language() === 'it' ? 'Annulla' : 'Cancel';
+        const readLabel = T('ConvBooks.choiceRead');
+        const scanLabel = (window.RamanScanner && typeof window.RamanScanner.analyzeLabel === 'function' && window.RamanScanner.analyzeLabel()) || T('ConvBooks.choiceAnalyze');
+        const cancelLabel = T('ConvBooks.choiceCancel');
         const choices = [readLabel, scanLabel, cancelLabel];
         const cancelIndex = choices.length - 1;
 
@@ -866,10 +866,10 @@ function createSeededRNG(eventId = null) {
 
     function interactItemBook(placeKey, eventId, item, isPlaced) {
         const withProbe = hasRamanProbe();
-        const readLabel = T.language() === 'it' ? 'Leggi' : 'Read';
-        const takeLabel = T.language() === 'it' ? 'Prendi' : 'Take';
-        const scanLabel = (window.RamanScanner && typeof window.RamanScanner.analyzeLabel === 'function' && window.RamanScanner.analyzeLabel()) || (T.language() === 'it' ? 'Analizza' : 'Analyze');
-        const cancelLabel = T.language() === 'it' ? 'Annulla' : 'Cancel';
+        const readLabel = T('ConvBooks.choiceRead');
+        const takeLabel = T('ConvBooks.choiceTake');
+        const scanLabel = (window.RamanScanner && typeof window.RamanScanner.analyzeLabel === 'function' && window.RamanScanner.analyzeLabel()) || T('ConvBooks.choiceAnalyze');
+        const cancelLabel = T('ConvBooks.choiceCancel');
 
         const choices = withProbe ? [readLabel, takeLabel, scanLabel, cancelLabel] : [readLabel, takeLabel, cancelLabel];
         const cancelIndex = choices.length - 1;
@@ -916,18 +916,14 @@ function createSeededRNG(eventId = null) {
         }
         saveLibraryData(placeKey, libData);
 
-        const msg = T.language() === 'it'
-            ? `Hai ottenuto \\I[${item.iconIndex}]\\C[4]${item.name}\\C[0]!`
-            : `Obtained \\I[${item.iconIndex}]\\C[4]${item.name}\\C[0]!`;
+        const msg = T('ConvBooks.obtained', { item: `\\I[${item.iconIndex}]\\C[4]${item.name}\\C[0]` });
         showPaged(msg, '');
         payReadingFun("book", eventId, `item${item.id}`);  // i18n-ignore  reading-log id
     }
 
     function handlePutBookMenu(placeKey, eventId, hasItemBook) {
         if (hasItemBook) {
-            const msg = T.language() === 'it'
-                ? 'Questa libreria contiene già un volume speciale.'
-                : 'There is already a special book in this library.';
+            const msg = T('ConvBooks.shelfOccupied');
             showPaged(msg, '');
             return;
         }
@@ -935,9 +931,7 @@ function createSeededRNG(eventId = null) {
         const ownedBooks = getOwnedCategoryBooks();
 
         if (ownedBooks.length === 0) {
-            const msg = T.language() === 'it'
-                ? 'Non possiedi nessun libro da riporre.'
-                : 'You do not have any books to place.';
+            const msg = T('ConvBooks.noBooksToPlace');
             showPaged(msg, '');
             return;
         }
@@ -947,7 +941,7 @@ function createSeededRNG(eventId = null) {
             const count = $gameParty.numItems(b);
             labels.push(`\\I[${b.iconIndex}] ${b.name}${count > 1 ? ` x${count}` : ''}`);
         }
-        const cancelLabel = T.language() === 'it' ? 'Annulla' : 'Cancel';
+        const cancelLabel = T('ConvBooks.choiceCancel');
         labels.push(cancelLabel);
         const cancelIdx = labels.length - 1;
 
@@ -967,9 +961,7 @@ function createSeededRNG(eventId = null) {
                 try {
                     AudioManager.playSe({ name: 'Book1', volume: 80, pitch: 100, pan: 0 });
                 } catch (e) {}
-                const placedMsg = T.language() === 'it'
-                    ? `Hai riposto \\I[${chosenBook.iconIndex}]\\C[4]${chosenBook.name}\\C[0] nella libreria.`
-                    : `Placed \\I[${chosenBook.iconIndex}]\\C[4]${chosenBook.name}\\C[0] in the library.`;
+                const placedMsg = T('ConvBooks.placedInLibrary', { item: `\\I[${chosenBook.iconIndex}]\\C[4]${chosenBook.name}\\C[0]` });
                 showPaged(placedMsg, '');
             }, 0);
         });
@@ -1031,13 +1023,13 @@ function createSeededRNG(eventId = null) {
         // carrying a book: an empty backpack has nothing to shelve, and the
         // choice would open on a refusal.
         if (getOwnedCategoryBooks().length > 0) {
-            const putBookLabel = T.language() === 'it' ? 'Riponi libro' : 'Put book';
+            const putBookLabel = T('ConvBooks.choicePutBook');
             choiceLabels.push(putBookLabel);
             choiceActions.push({ type: 'put_book' });
         }
 
         // Add "Cancel" choice
-        const cancelLabel = T.language() === 'it' ? 'Annulla' : 'Cancel';
+        const cancelLabel = T('ConvBooks.choiceCancel');
         choiceLabels.push(cancelLabel);
         const cancelIndex = choiceLabels.length - 1;
 
@@ -1162,6 +1154,21 @@ function generatePaintingDescription(random = Math.random, customSubject = "") {
 }
     // Generate a deterministic title
     function generateTitle(random = Math.random) {
+        // A language whose titles cannot be glued word by word (Italian needs
+        // the article and the adjective to agree with the noun) ships its own
+        // title forms: each {slot} draws from ConvBooks.titleBank.<slot>, a
+        // trailing digit only telling two draws of one bank apart. English has
+        // no titleForms and keeps the six fixed shapes below.
+        if (T.has('ConvBooks.titleForms')) {
+            const forms = T.pool('ConvBooks.titleForms');
+            if (forms.length) {
+                const form = String(forms[Math.floor(random() * forms.length)]);
+                return form.replace(/\{([A-Za-z]+)\d*\}/g, (m, slot) => {
+                    const bank = bookBank('ConvBooks.titleBank.' + slot);
+                    return bank.length ? String(bank[Math.floor(random() * bank.length)]) : '';
+                }).replace(/\s+/g, ' ').trim();
+            }
+        }
         const prefixes = titlePrefixes();
         const adjs = titleAdjectives();
         const nouns = titleNouns();

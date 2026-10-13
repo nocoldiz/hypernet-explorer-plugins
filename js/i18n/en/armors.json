@@ -1853,7 +1853,7 @@
   },
   "474": {
     "name": "PSI Chocker Collar",
-    "description": "A snug choker woven with grey sigils. Teaches\na skill."
+    "description": "A snug choker woven with grey sigils. Teaches\na skill and resists Wind."
   },
   "475": {
     "name": "Quiet Mind Charm",
@@ -3117,7 +3117,7 @@
   },
   "830": {
     "name": "Beastcaller Pelt",
-    "description": "A rough pelt that still feels warm. Teaches a\nskill."
+    "description": "A rough pelt that still feels warm. Teaches a\nskill and blocks Charm."
   },
   "831": {
     "name": "Palimpsest Veil",
@@ -3253,7 +3253,7 @@
   },
   "864": {
     "name": "Disco Spectacles",
-    "description": "Mirrored glasses scattering light. Teaches a\nskill."
+    "description": "Mirrored glasses scattering light. Teaches a\nskill and blocks Confusion."
   },
   "865": {
     "name": "Tipsy Tinted Goggles",
@@ -3285,7 +3285,7 @@
   },
   "872": {
     "name": "Gendershift Mantle",
-    "description": "A shimmering mantle of shifting hue. Teaches a\nskill."
+    "description": "A shimmering mantle of shifting hue. Teaches a\nskill and resists Fire."
   },
   "873": {
     "name": "Prosthetist's Harness",

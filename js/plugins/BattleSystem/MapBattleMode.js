@@ -1437,7 +1437,10 @@
     // A CPU turn is withheld until its approach walk has finished.
     const _BattleManager_processTurn = BattleManager.processTurn;
     BattleManager.processTurn = function () {
-        if (MBM.isActive() && MBM.isAiControlled(this._subject)) {
+        // A party member whose action is forced on them (MindControl) walks
+        // into reach the way a CPU battler does.
+        const forced = window.MindControl && window.MindControl.isForced(this._subject);
+        if (MBM.isActive() && (MBM.isAiControlled(this._subject) || forced)) {
             if (!MBM._updateAiTurn(this._subject)) return;
         }
         _BattleManager_processTurn.call(this);
@@ -1452,7 +1455,12 @@
         const range = MBM.actionRange(this);
         const min = MBM.actionMinRange(this);
         const subject = this.subject();
-        return targets.filter(t => t === subject || MBM.canReach(subject, t, range, min));
+        const keep = t => t === subject || MBM.canReach(subject, t, range, min);
+        // Out-of-reach random picks are rerolled in reach (PartialFixes section).
+        if (this.isForRandom() && !(subject.isConfused && subject.isConfused())) {
+            return MBM._rerollRandomTargets(this, targets, range, min);
+        }
+        return targets.filter(keep);
     };
 
     // Where the blow comes from: the facing of the target relative to the
@@ -3200,13 +3208,29 @@
 
         const range = MBM.actionRange(action);
         const min = MBM.actionMinRange(action);
-        const unit = forFriend ? subject.friendsUnit() : subject.opponentsUnit();
+        // The action's own units: a turned action (MindControl) aims at the
+        // other side.
+        const unit = forFriend ? action.friendsUnit() : action.opponentsUnit();
         const members = unit.members();
         const wantsDead = forFriend && action.isForDeadFriend();
         const reachable = members.filter(b =>
-            b && (wantsDead ? b.isDead() : b.isAlive()) && MBM.canReach(subject, b, range, min));
+            b && (wantsDead ? b.isDead() : b.isAlive()) && MBM.canReach(subject, b, range, min) &&
+            !(action._mcSwap && b === subject));
         if (reachable.length === 0) return false;
         if (action.isForAll() || action.isForRandom()) return true;
+        // Provoked: the provoker or nothing, and the approach walks to it.
+        const provoker = !forFriend && subject.provoker ? subject.provoker() : null;
+        if (provoker && action.isForOne()) {
+            if (!reachable.includes(provoker)) return false;
+            action.setTarget(members.indexOf(provoker));
+            return true;
+        }
+        // A target forced by MindControl is kept while it is in reach.
+        if (action._mcKeepTarget && reachable.includes(members[action._targetIndex])) return true;
+        if (!forFriend) {
+            action.setTarget(members.indexOf(MBM._pickAiTarget(subject, reachable)));
+            return true;
+        }
         // Prefer a target it can flank: a blow from behind is the better blow.
         const scored = reachable.map(b => {
             const facing = MBM.facingOf(subject, b);
@@ -3223,11 +3247,16 @@
     MBM._startAiApproach = function (subject, character) {
         const action = subject.currentAction();
         const forFriend = !!(action && action.item() && action.isForFriend() && !action.isForOpponent());
-        const unit = forFriend ? subject.friendsUnit() : subject.opponentsUnit();
+        const aim = action && action.item() ? action : subject;
+        const unit = forFriend ? aim.friendsUnit() : aim.opponentsUnit();
         const targets = unit.members()
             .filter(b => b && b !== subject && (forFriend ? true : b.isAlive()))
             .map(b => ({ b, c: MBM.mapCharacterFor(b) }))
             .filter(t => t.c);
+        if (targets.length === 0) return false;
+        // Against the other side the walk heads where TGR points it: the
+        // provoker alone, never toward a Hidden foe while a visible one stands.
+        if (!forFriend) MBM._approachTargets(subject, action, targets);
         if (targets.length === 0) return false;
 
         const reach = (action && action.item()) ? MBM.actionRange(action) : MBM.attackRange(subject);
@@ -3246,7 +3275,7 @@
                 if (!MBM.hasLineOfSight(x, y, t.c.x, t.c.y, blockers)) continue;
                 const rel = forFriend ? "front"
                     : Facing.relative(t.c.x + deltaX(x, t.c.x), t.c.y + deltaY(y, t.c.y), t.c.x, t.c.y, t.c.direction());
-                best = Math.max(best, Facing.hitBonus(rel));
+                best = Math.max(best, (t.w === undefined ? 1 : t.w) * (1 + 4 * Facing.hitBonus(rel)));
             }
             return best;
         };
@@ -3279,6 +3308,78 @@
         if (path.length === 0) return false;
         MBM._activeWalk = { character, path, i: 0, onDone: null };
         return true;
+    };
+
+    // ===== PartialFixes: TGR-weighted CPU targets and in-reach random rerolls =====
+    //
+    // Scene_Battle picks a foe with Game_Unit.randomTarget, weighted by TGR, so
+    // Hide (TGR 0), Provoke (TGR 9) and Death Mark mean something there. The map
+    // AI used to rank reachable foes by flank alone. Now TGR is the weight and
+    // the flank multiplies it (a rear blow doubles the pull), so a Hidden foe is
+    // never chosen while a visible one is in reach, and a Death Marked one is.
+
+    MBM._tgrOf = function (b) {
+        const v = b && typeof b.tgr === "number" ? b.tgr : 1;
+        return Math.max(0, v);
+    };
+
+    // One weighted draw; with every weight at 0 the plain weights are used.
+    MBM._weightedPick = function (list, weightOf, fallbackOf) {
+        if (!list || list.length === 0) return null;
+        let weights = list.map(weightOf);
+        let sum = weights.reduce((a, w) => a + w, 0);
+        if (sum <= 0 && fallbackOf) {
+            weights = list.map(fallbackOf);
+            sum = weights.reduce((a, w) => a + w, 0);
+        }
+        if (sum <= 0) return list[Math.floor(Math.random() * list.length)];
+        let roll = Math.random() * sum;
+        for (let i = 0; i < list.length; i++) {
+            roll -= weights[i];
+            if (roll < 0) return list[i];
+        }
+        return list[list.length - 1];
+    };
+
+    MBM._flankWeight = function (subject, b) {
+        const facing = MBM.facingOf(subject, b);
+        const bonus = facing ? Facing.hitBonus(facing.relative) + (facing.pinned ? PINNED_HIT : 0) : 0;
+        return 1 + 4 * bonus;
+    };
+
+    MBM._pickAiTarget = function (subject, reachable) {
+        return MBM._weightedPick(reachable,
+            b => MBM._tgrOf(b) * MBM._flankWeight(subject, b),
+            b => MBM._flankWeight(subject, b));
+    };
+
+    // Narrows (in place) the foes an approach walk aims for and gives each its
+    // TGR share as `w`, read by the strike score.
+    MBM._approachTargets = function (subject, action, targets) {
+        const provoker = subject.provoker ? subject.provoker() : null;
+        const single = !!(action && action.item() && action.isForOne() && !action.isForRandom());
+        if (provoker && single) {
+            const only = targets.filter(t => t.b === provoker);
+            if (only.length > 0) { targets.length = 0; targets.push(...only); }
+        }
+        const max = targets.reduce((m, t) => Math.max(m, MBM._tgrOf(t.b)), 0);
+        if (max <= 0) return;
+        const seen = targets.filter(t => MBM._tgrOf(t.b) > 0);
+        targets.length = 0;
+        targets.push(...seen);
+        for (const t of targets) t.w = MBM._tgrOf(t.b) / max;
+    };
+
+    // Each random pick out of reach is drawn again among the foes in reach,
+    // TGR-weighted like Game_Unit.randomTarget. Nobody in reach: no targets.
+    MBM._rerollRandomTargets = function (action, targets, range, min) {
+        const subject = action.subject();
+        const unit = subject.opponentsUnit();
+        const reachable = unit.aliveMembers().filter(b => MBM.canReach(subject, b, range, min));
+        if (reachable.length === 0) return [];
+        return targets.map(t => (t && t.isAlive && t.isAlive() && reachable.includes(t))
+            ? t
+            : MBM._weightedPick(reachable, b => MBM._tgrOf(b), () => 1));
     };
 
     //=========================================================================

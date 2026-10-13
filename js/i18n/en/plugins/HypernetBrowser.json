@@ -3,7 +3,7 @@
   "windowTitle": "Hypernet Explorer",
   "windowTitlePage": "{title} - Hypernet Explorer",
   "version": "6.0 (Build 2001.9.3)",
-  "linkLost": "Transmission link lost. The requested Hypernet page could not be loaded.",
+  "linkLost": "Link lost. The page could not be loaded.",
   "linkStable": "TRANSMISSION LINK STABLE",
   "secureSsl": "SECURE SSL: MAXIMUM",
   "menu": {
@@ -141,7 +141,7 @@
     "offline": "Working Offline",
     "popupBlocked": "A pop-up was blocked. Click here to see options.",
     "popupAllowed": "Pop-ups are allowed on the Hypernet Zone.",
-    "external": "External address. The Hypernet gateway holds no route to {address}.",
+    "external": "No route to {address}.",
     "downloadStarted": "Downloading {name}...",
     "downloadDone": "Download complete: {name}",
     "saved": "Saved to {path}",
@@ -174,7 +174,7 @@
     "close": "Close",
     "count": "{count} matches",
     "none": "No matches",
-    "unreadable": "This page will not let the finder read it."
+    "unreadable": "This page can't be searched."
   },
   "address": {
     "placeholder": "Type a Hypernet address, or a phrase to search for",
@@ -194,15 +194,15 @@
     "stats": "About {count} results ({seconds} seconds)",
     "noResults": "Your search - {query} - did not match any documents.",
     "directory": "Hypernet Directory",
-    "directoryHint": "{count} sites are reachable from this terminal. Pick a letter.",
+    "directoryHint": "{count} sites available. Pick a letter.",
     "connecting": "Contacting the Noodle index...",
-    "indexOffline": "The Noodle index is unreachable. The directory below is read straight off the local gateway cache.",
+    "indexOffline": "Noodle index offline. Showing the cached directory below.",
     "suggestion": "Try a different phrase, or browse the directory below."
   },
   "error": {
     "title": "The page cannot be displayed",
     "heading": "The page cannot be displayed",
-    "body": "The page you are looking for is not on this gateway, or the name was mistyped.",
+    "body": "The page doesn't exist or the address was mistyped.",
     "address": "Address: {address}",
     "tryTitle": "Please try the following:",
     "try1": "Check that the Hypernet address is spelled correctly.",
@@ -211,13 +211,13 @@
     "didYouMean": "Did you mean:",
     "searchFor": "Search Noodle for \"{query}\"",
     "code": "Hypernet Explorer - Gateway response 404 (no route to document)",
-    "external": "That address lives outside the Hypernet. This terminal holds no route to it.",
+    "external": "That address is outside the Hypernet and can't be reached.",
     "friendlyOff": "GATEWAY 404. NO ROUTE. DOCUMENT NOT HELD LOCALLY."
   },
   "history": {
     "title": "History",
     "heading": "History",
-    "hint": "Every page this terminal has opened, newest first.",
+    "hint": "Visited pages, newest first.",
     "empty": "Nothing has been visited yet.",
     "today": "Today",
     "earlier": "Earlier",
@@ -228,7 +228,7 @@
   "downloads": {
     "title": "Downloads",
     "heading": "Downloads",
-    "hint": "Files pulled off the Hypernet land in C:\\Documents.",
+    "hint": "Downloads are saved to C:\\Documents.",
     "empty": "No downloads yet.",
     "file": "File",
     "from": "From",
@@ -254,7 +254,7 @@
     "composeSubject": "Subject:",
     "composeBody": "Message:",
     "send": "Send",
-    "sent": "Message queued. The relay will carry it when the relay comes back.",
+    "sent": "Message queued. It sends when the relay is back.",
     "news": "Newsgroups",
     "newsHint": "The news server refuses this terminal's credentials.",
     "messages": [
@@ -294,7 +294,7 @@
   },
   "open": {
     "title": "Open",
-    "hint": "Type the address of a Hypernet document, or pick one from the list.",
+    "hint": "Type an address or pick one from the list.",
     "label": "Open:",
     "filter": "Filter:",
     "ok": "OK",
@@ -373,7 +373,7 @@
   },
   "sync": {
     "title": "Synchronize",
-    "hint": "Offline pages are copied into the gateway cache so they can be read with the link down.",
+    "hint": "Copies pages to the cache for offline reading.",
     "start": "Synchronize",
     "close": "Close",
     "working": "Synchronizing {name}...",
@@ -408,9 +408,9 @@
   "helpPage": {
     "title": "Hypernet Explorer Help",
     "heading": "Hypernet Explorer Help",
-    "intro": "Everything this browser can do, and the key that does it.",
+    "intro": "Browser features and shortcuts.",
     "navHeading": "Getting around",
-    "navBody": "Type an address in the Address bar and press Enter. An address with no dot in it is searched for instead. A page that is not on this gateway shows the gateway's own 404 notice with the nearest matching addresses under it.",
+    "navBody": "Type an address in the Address bar and press Enter. Text with no dot is searched instead. Missing pages show a 404 notice with similar addresses.",
     "keysHeading": "Keyboard",
     "keys": [
       "Ctrl+T - new tab",
@@ -427,7 +427,7 @@
       "Escape - stop loading"
     ],
     "favHeading": "Favorites",
-    "favBody": "Favorites are kept in the terminal's registry, so they survive the machine being switched off and travel with the save.",
+    "favBody": "Favorites are saved with your game.",
     "offlineHeading": "When the link is down",
     "offlineBody": "The gateway holds a local copy of every document in the Hypernet Zone, so pages open with the line down. Only addresses outside the Zone need the line, and there are none.",
     "close": "Close"
@@ -471,15 +471,15 @@
     "close": "Close",
     "tips": [
       "An address with no dot in it is treated as a search. Type a phrase and press Enter.",
-      "Middle of a long page? Ctrl+F finds a word without scrolling for it.",
-      "The Links bar takes as many Favorites as you care to pin to it.",
+      "Ctrl+F finds a word on the page.",
+      "Pin as many Favorites to the Links bar as you like.",
       "Ctrl+T opens a tab. Each tab keeps its own Back and Forward.",
       "Source (Ctrl+U) shows a page exactly as the gateway sent it.",
-      "The Hypernet Directory on the home page lists every site the gateway holds.",
-      "A page that will not display shows the nearest addresses it could have meant.",
-      "Zoom lives on the status bar. Click the percentage to cycle it.",
-      "Pop-ups are blocked by default. Tools, Pop-up Blocker changes that, at your own risk.",
-      "Anything saved off a page lands in C:\\Documents and shows up in My Computer."
+      "The Hypernet Directory on the home page lists every site.",
+      "A missing page suggests similar addresses.",
+      "Click the zoom percentage on the status bar to change it.",
+      "Pop-ups are blocked by default. Change it in Tools, Pop-up Blocker.",
+      "Saved pages go to C:\\Documents and show up in My Computer."
     ]
   },
   "context": {
@@ -512,15 +512,15 @@
     "appName": "Hexapedia",
     "tooltip": "The free encyclopedia of post-Squishing knowledge",
     "peopleTitle": "Living persons of note",
-    "peopleIntro": "This server writes up anybody the world has heard of. A traveller who reaches level {level} earns an article, and it is kept with the world rather than with the party, so it outlives them.",
+    "peopleIntro": "Any character who reaches level {level} gets an article. Articles are kept with the world, not the party.",
     "peopleEmpty": "No article yet. Nobody in this world has reached level {level}.",
     "peopleLine": "level {level} {cls}",
     "personMeta": "Level {level} {cls}, of the world of {world}.",
     "personDiary": "From the record",
-    "personNoDiary": "The record holds nothing under this name yet.",
-    "personFooter": "Written by the encyclopedia from the party diary. Kept with the world, and readable by whoever plays it next.",
+    "personNoDiary": "No record under this name yet.",
+    "personFooter": "Written from the party diary. Saved with the world.",
     "backToPortal": "Hexapedia portal",
     "written": "Hexapedia has written up {name}",
-    "updated": "Hexapedia pages for {name} updated with latest exploits"
+    "updated": "Hexapedia article on {name} updated"
   }
 }

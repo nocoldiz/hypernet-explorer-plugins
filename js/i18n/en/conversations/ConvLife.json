@@ -906,18 +906,18 @@
       "Cleared out {lost}'s house. {Every drawer a memory|Took a week}.",
       "{lost} would know what to do. {Always did|I miss that}.",
       "Made {lost}'s recipe. {Not the same|Close, almost}.",
-      "The funeral was beautiful. {{lost} would have hated the fuss|Everyone came}.",
+      "The funeral was beautiful. {{lost} would have hated the fuss|Everyone came for {lost}}.",
       "Nobody calls me by my childhood name since {lost} went.",
       "I have {lost}'s {hands|laugh}. {People say so|I see it now}."
     ],
     "familyLostChild": [
       "{lost}'s room is just as it was. {I can't|Not yet. Maybe never}.",
-      "Parents shouldn't bury their children. {It's backwards|Nothing's right anymore}.",
+      "I shouldn't have had to bury {lost}. {It's backwards|Nothing's right anymore}.",
       "I hear {lost}'s laugh in the street sometimes. {It's never them|Every time}.",
       "People don't know what to say to me since {lost}. {Neither do I|They try}.",
       "Lit a candle for {lost} today. {Every day|It helps a little}.",
       "{lost} would be {older|grown} now. {I count the birthdays|I think of it every day}.",
-      "Getting up is the hard part. {Then the rest of the day|Every morning}."
+      "Getting up without {lost} is the hard part. {Then the rest of the day|Every morning}."
     ],
     "familyGrandchildren": [
       "{grandchild} visited today. {Ate all my biscuits|Exhausting and wonderful}.",
@@ -1223,7 +1223,7 @@
     ],
     "talkGriefChild": [
       [[0, "It's been hard since {lost}."], [1, "{I'm so sorry|There are no words}."], [0, "No. There aren't."]],
-      [[1, "If you need anything, {a}. Anything."], [0, "{Thank you|Just company, sometimes}."]],
+      [[1, "I'm sorry about {lost}. If you need anything, {a}. Anything."], [0, "{Thank you|Just company, sometimes}."]],
       [[0, "I keep {lost}'s {drawings|shoes} by the door."], [1, "Keep them as long as you need."], [0, "Forever, then."]]
     ],
     "talkGrandchildren": [

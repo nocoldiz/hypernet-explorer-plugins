@@ -321,11 +321,12 @@
             }
         }
 
-        // On Earth's ground the banner prints the square's level bracket: every
-        // creature met here is inside it. A map with no fauna at all prints none.
+        // On Earth's ground the banner prints the middle of the square's level
+        // bracket, the one number every creature met here sits around. A map
+        // with no fauna at all prints none.
         const bracket = (mapName && this._medianEncounterLevel !== null) ? groundBracket() : null;
         if (bracket) {
-            return T('WorldMap.banner.levelRange', { name: mapName, min: bracket.min, max: bracket.max }) + suffix;
+            return T('WorldMap.banner.level', { name: mapName, level: Math.round(bracket.center) }) + suffix;
         }
         // Check if the map has a name and a median level was calculated.
         if (mapName && this._medianEncounterLevel !== null) {
@@ -397,6 +398,13 @@
         };
     }
 
+    // The train the story opens on is a stage, not a place: its banner would
+    // only print the editor's own "Train start". StoryModeStart owns its id.
+    function isBannerlessMap() {
+        const start = window.StoryModeStart;
+        return !!(start && start.TRAIN_MAP_ID && $gameMap && $gameMap.mapId() === start.TRAIN_MAP_ID);
+    }
+
     class Window_MapNameWithBorder extends Window_MapName {
         initialize(rect) {
             super.initialize(rect);
@@ -443,7 +451,7 @@
                 return;
             }
 
-            const text = $gameMap.displayName();
+            const text = isBannerlessMap() ? '' : $gameMap.displayName();
             if (!text) {
                 if (this._htmlShown) {
                     s.display = 'none';

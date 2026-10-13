@@ -148,7 +148,7 @@
       this._container.addChild(this._angleGraphic);
 
       // Game Over
-      this._gameOverText = new PIXI.Text('GAME OVER', {
+      this._gameOverText = new PIXI.Text(T('Arcade.hud.gameOver'), {
         fontFamily: ArcadeManager.getArcadeFont(),
         fontSize: 48,
         fill: '#ff4444',
@@ -249,7 +249,9 @@
           this._state = 'gameover';
           this._gameOverText.visible = true;
           this.stop();
-          if (!this._isDemo) ArcadeManager.endGame(this._score);
+          // The demo ends too: the cabinet reads demo mode and goes back to
+          // its title rather than standing on a dead board for ever.
+          ArcadeManager.endGame(this._score);
         } else {
           this.spawnBubble();
         }

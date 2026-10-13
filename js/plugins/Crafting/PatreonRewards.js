@@ -677,6 +677,9 @@
   }
 
   function hatchTileAtWorld(x, y) {
+    // A planet's landing-grid cell is not a square of Earth, whatever its
+    // numbers (see isAlienSurface below).
+    if (isAlienSurface(null)) return null;
     const rec = patronRecordAtWorld(x, y);
     return rec ? rec.mapCoordinates.slice() : null;
   }

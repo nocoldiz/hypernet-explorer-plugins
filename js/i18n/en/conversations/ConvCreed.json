@@ -20,7 +20,7 @@
         "The workers of {enemy} are not my enemy."
       ],
       "family": [
-        "A family needs a wage and a free clinic, not sermons.",
+        "A family needs a wage and a free clinic. Sermons can wait.",
         "Every child deserves a school and a hot meal."
       ],
       "goblins": [
@@ -39,7 +39,7 @@
     "centreLeft": {
       "flavour": [
         "A fair deal for everyone, that's all I ask.",
-        "{Reform|Steady reform}, not revolution.",
+        "{Reform|Steady reform}, one step at a time.",
         "Good schools and a decent pension. Is that too much?"
       ],
       "politics": [
@@ -52,7 +52,7 @@
       ],
       "war": [
         "Diplomacy first, always.",
-        "Send the ONU, not the tanks."
+        "Send the ONU and keep the tanks in the barracks."
       ],
       "family": [
         "{Childcare|Parental leave} should be a right.",
@@ -60,7 +60,7 @@
       ],
       "goblins": [
         "We should take in the refugees from the Horde.",
-        "Walls won't stop the Horde. Alliances might."
+        "Alliances stop a Horde better than any wall."
       ],
       "money": [
         "Tax the rich a little, help the rest a lot.",
@@ -68,7 +68,7 @@
       ],
       "elections": [
         "Every vote counts. Especially mine.",
-        "Turnout wins elections, not slogans."
+        "Turnout wins elections. Slogans count for little."
       ]
     },
     "centre": {
@@ -95,7 +95,7 @@
       ],
       "goblins": [
         "A stable border is a sensible border.",
-        "The Horde is a problem to manage, not to scream about."
+        "The Horde is a problem to manage with a cool head."
       ],
       "money": [
         "A balanced budget helps everyone.",
@@ -137,7 +137,7 @@
         "Save your coins. The bank of mum and dad won't last."
       ],
       "elections": [
-        "Vote for order, not promises.",
+        "Vote for order. Leave the promises to the others.",
         "Anyone but the spenders."
       ]
     },
@@ -172,7 +172,7 @@
         "Foreign speculators are bleeding us dry."
       ],
       "elections": [
-        "Vote for the nation, not for parties.",
+        "Vote for the nation, above every party.",
         "A true patriot knows where to put the cross."
       ]
     },
@@ -208,7 +208,7 @@
       ],
       "elections": [
         "Vote as your conscience and your priest tell you.",
-        "Heaven doesn't need ballots, but we do."
+        "Heaven keeps its own count. We need ballots."
       ]
     },
     "monarchist": {
@@ -266,7 +266,7 @@
       ],
       "family": [
         "Families are chosen as much as born.",
-        "Raise children free, not obedient."
+        "Raise children free, first of all."
       ],
       "goblins": [
         "The Horde and the state have the same chief.",
@@ -490,7 +490,7 @@
       ],
       "elections": [
         "Bourgeois elections, bourgeois circus.",
-        "The Soviets decide, not the ballot box."
+        "The Soviets decide. The ballot box is a detail."
       ]
     },
     "kemalist": {
@@ -508,7 +508,7 @@
         "Every school teacher is a soldier of progress."
       ],
       "war": [
-        "The army guards the Republic, not a faction.",
+        "The army guards the whole Republic, above every faction.",
         "Independence is not negotiable, {enemy} should know."
       ],
       "family": [
@@ -525,7 +525,7 @@
       ],
       "elections": [
         "The ballot is the Republic's heart.",
-        "Vote for the Republic, not for the mosque or the pasha."
+        "The vote goes to the Republic. Mosque and pasha stay out of it."
       ]
     },
     "pacifist_theocratic": {
@@ -556,7 +556,7 @@
       ],
       "money": [
         "Give freely. Heaven keeps the accounts.",
-        "Wealth is a test, not a prize."
+        "Wealth is a test to be passed."
       ],
       "elections": [
         "I vote for whoever wants fewer soldiers.",

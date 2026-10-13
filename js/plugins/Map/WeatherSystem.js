@@ -694,6 +694,13 @@
   ];
   let _dateCacheStr = null;
   let _dateCacheVal = null;
+  // A note tag's value as text. A bare tag (<Night> with no value) is read by
+  // the engine as `true`, and calling a string method on that threw out of
+  // the map load; it now reads as an empty value, which every caller skips.
+  function metaText(v) {
+    return (v === undefined || v === null || v === true) ? "" : String(v);
+  }
+
   function getGameDateFromVariable() {
     const dateStr = $gameVariables.value(113) || "01 JAN 2001 12:00";
     // Fast path: same string as last parse, return cached result.
@@ -1662,7 +1669,7 @@
 
       this.mapForcedWeather = null;
       if ($dataMap.meta.ForceWeather !== undefined) {
-        const weatherStr = $dataMap.meta.ForceWeather.toLowerCase();
+        const weatherStr = metaText($dataMap.meta.ForceWeather).toLowerCase();
         if (Object.values(WeatherTypes).includes(weatherStr)) {
           this.mapForcedWeather = weatherStr;
         }
@@ -1671,7 +1678,7 @@
       // Parse Night tag for custom night ambience
       this.mapCustomNightSound = null;
       if ($dataMap.meta.Night !== undefined) {
-        const nightSound = $dataMap.meta.Night.trim();
+        const nightSound = metaText($dataMap.meta.Night).trim();
         if (nightSound.length > 0) {
           this.mapCustomNightSound = nightSound;
           if (enableTimeDebug) {
@@ -1682,7 +1689,7 @@
 
       // Parse Country tag (only when NOT on world map 315)
       if ($gameMap.mapId() !== 315 && $dataMap.meta.Country !== undefined) {
-        const countryName = $dataMap.meta.Country.trim();
+        const countryName = metaText($dataMap.meta.Country).trim();
         const matchedCountry = Countries.find(
           (c) => c.country.toLowerCase() === countryName.toLowerCase()
         );
@@ -3008,6 +3015,20 @@
     _Spriteset_Map_createWeather.call(this);
     this._customWeatherLayer = new Weather_CustomLayer();
     this.addChild(this._customWeatherLayer);
+    // The effect belongs to $gameWeather, the layer to this spriteset, and a
+    // menu, a battle or a transfer builds a new spriteset: the fireflies of a
+    // night vision cast went out on the first menu opened afterwards while the
+    // effect was still on. A new layer picks up the one running, already at
+    // full strength. Going indoors clears it as before (clearWeather).
+    const w = window.$gameWeather;
+    if (w && w.customWeatherType && !w.isInterior) {
+      const layer = this._customWeatherLayer;
+      const intensity = Number(w.customWeatherIntensity) || 5;
+      layer.setWeather(w.customWeatherType, intensity, 0);
+      layer.intensity = intensity;
+      layer.targetIntensity = intensity;
+      layer.alpha = intensity / 10;
+    }
   };
   const _Spriteset_Map_updateWeather = Spriteset_Map.prototype.updateWeather;
   Spriteset_Map.prototype.updateWeather = function () {
@@ -3153,6 +3174,60 @@
     };
   }
 
+  // Which map rows hold an A1 tile that trails by row (any A1 but terrain 3
+  // water). A row tick only changes how those draw, so a tick with none of
+  // them on screen has nothing to repaint: the full tilemap rebuild used to
+  // run on every tick (about twelve a second, thirty in a storm) on maps with
+  // no such tile anywhere. Built from the tilemap's own data and kept until
+  // the data array is swapped or the periodic recheck finds it edited.
+  function laggedA1Rows(tilemap) {
+    const data = tilemap._mapData;
+    const w = tilemap._mapWidth | 0;
+    const h = tilemap._mapHeight | 0;
+    if (!data || w <= 0 || h <= 0) return null;
+    const rows = new Uint8Array(h);
+    const flags = tilemap.flags;
+    for (let z = 0; z < 4; z++) {
+      const base = z * h * w;
+      for (let y = 0; y < h; y++) {
+        if (rows[y]) continue;
+        const off = base + y * w;
+        for (let x = 0; x < w; x++) {
+          const id = data[off + x];
+          if (id >= 2048 && id < 2816 && waterTerrainTag(flags, id) !== WATER_ANIM_UNIFORM_TAG) {
+            rows[y] = 1;
+            break;
+          }
+        }
+      }
+    }
+    return rows;
+  }
+
+  const LAGGED_ROWS_RECHECK = 300; // frames between rescans of the same map data
+
+  // True when a row tick can change what is on screen. Without map data to
+  // read (or a size to read it with) the answer is yes, as it always was.
+  function rowTickVisible(tilemap) {
+    const rows = tilemap._laggedRows;
+    if (!rows) return true;
+    const h = rows.length;
+    const th = tilemap.tileHeight || 48;
+    const margin = tilemap._margin || 0;
+    const viewH = tilemap.height || 0;
+    if (!(viewH > 0)) return true;
+    const oy = Math.ceil((tilemap.origin && tilemap.origin.y) || 0);
+    const startY = Math.floor((oy - margin) / th);
+    const count = Math.ceil((viewH + margin * 2) / th) + 1;
+    for (let i = 0; i < count; i++) {
+      let y = startY + i;
+      if (tilemap.verticalWrap) y = ((y % h) + h) % h;
+      else if (y < 0 || y >= h) continue;
+      if (rows[y]) return true;
+    }
+    return false;
+  }
+
   if (typeof Tilemap !== "undefined") {
     // The engine adds one per frame; this adds the eased rate instead, re-read
     // once a second so a weather change ramps the water up or down smoothly.
@@ -3166,15 +3241,25 @@
         this._waterAnimTarget = currentWaterAnimRate();
         this._waterAnimCheck = 60;
       }
+      // A new map is read at once; an edit to the one in place (digging,
+      // furniture) within a few seconds, which is as often as a whole-map scan
+      // is worth paying for.
+      if (this._laggedRowsData !== this._mapData || --this._laggedRowsCheck <= 0) {
+        this._laggedRowsData = this._mapData;
+        this._laggedRows = laggedA1Rows(this);
+        this._laggedRowsCheck = LAGGED_ROWS_RECHECK;
+      }
       this._waterAnimRate += (this._waterAnimTarget - this._waterAnimRate) * 0.02;
       this.animationCount += this._waterAnimRate;
       this.animationFrame = Math.floor(this.animationCount / 30);
       // Rows lag behind each other, so the tilemap has to repaint whenever
-      // any row crosses a frame, not only when the whole map does.
+      // any row crosses a frame, not only when the whole map does: but only
+      // while a row that trails is on screen (see laggedA1Rows). Every other
+      // A1 tile keeps the shared frame, which the engine repaints on its own.
       const rowTick = Math.floor(this.animationCount / WATER_ANIM_ROW_LAG);
       if (rowTick !== this._waterRowTick) {
         this._waterRowTick = rowTick;
-        this._needsRepaint = true;
+        if (rowTickVisible(this)) this._needsRepaint = true;
       }
       if (A1Pressed.expire()) this._needsRepaint = true;
       for (const child of this.children) {
@@ -3573,7 +3658,7 @@
     if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;
     window.HypernetOS.registerApp({
       id: WHETHER_APP_ID,
-      name: T('Weather.app.appName'),
+      name: () => T('Weather.app.appName'),
       icon: 184,
       category: 'reference',
       launchFn: () => window.WhetherChannel.launch(),

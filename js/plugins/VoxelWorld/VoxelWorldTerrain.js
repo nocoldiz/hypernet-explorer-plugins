@@ -314,6 +314,11 @@
             try {
                 blobUrl = URL.createObjectURL(new Blob([src], { type: 'application/javascript' }));
             } catch (e) { this._fail('blob', e); return; }
+            // Owned by the pool from here on, BEFORE any worker is spawned: a
+            // spawn that fails partway goes through _fail -> _terminate, which
+            // revokes it along with the workers already up. Kept only on the
+            // way out, a failed boot used to leak the blob for the session.
+            this._blobUrl = blobUrl;
             const s = this._snap;
             const snap = { size: s.size, names: s.names, colors: s.colors, roadNames: s.roadNames,
                            biome: s.biome, road: s.road, river: s.river };
@@ -328,9 +333,8 @@
                 w.onmessage = (e) => this._onMessage(rec, e.data);
                 w.onerror = (e) => { if (e && e.preventDefault) e.preventDefault(); this._fail('worker', e && e.message); };
                 this.workers.push(rec);
-                w.postMessage({ type: 'init', urls, snap });
+                try { w.postMessage({ type: 'init', urls, snap }); } catch (e) { this._fail('init', e); return; }
             }
-            this._blobUrl = blobUrl;
         }
 
         _onMessage(rec, m) {

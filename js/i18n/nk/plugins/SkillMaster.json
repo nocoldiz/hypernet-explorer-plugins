@@ -54,7 +54,7 @@
   "youHold": "YOU HOLD",
   "dominant": "DOMINANT:",
   "recessive": "RECESSIVE:",
-  "theDominantDefinesDamageAnd": "DA DOMINANT SPELL DECIDES DA DAMAGE AN' DA TARGETS. DA RECESSIVE PART DECIDES WHETHER YOU GET A SPELL OR A SKILL. BOTH PARTS IZ FORGOTTEN, BUT YOU CAN SPLIT DA RESULT BACK INTO DEM LATER!",
+  "theDominantDefinesDamageAnd": "BOTH PARENTS IZ READ AS TAGS: KEEP DA ONES YOU WANT, DA DOMINANT'S FIRST WHERE ONLY ONE FITS. RECESSIVE: MAKES IT A SPELL OR A SKILL. BOTH PARTS IZ CONSUMED; SPLIT DA RESULT TA GET DEM BACK!",
   "training": "TRAININ'",
   "fusedSkillDesc": "A PROCEDURAL SKILL FUSED FROM {parts} (DOMINANT: {dominant})!",
   "fusedSpellDesc": "A PROCEDURAL SPELL FUSED FROM {parts} (DOMINANT: {dominant})!",
@@ -77,7 +77,7 @@
   "category": {
     "All": "ALL"
   },
-  "forgeBlurb": "COMBINE TWO OF {actor}'S ABILITIES INTO A NEW ONE. DA DOMINANT SPELL DECIDES WHAT IT DOES; DA RECESSIVE SPELL OR SKILL DECIDES WHETHER DA RESULT IZ A SPELL OR A SKILL. BOTH PARTS IZ FORGOTTEN. YOU HAB {knowledge} KP!",
+  "forgeBlurb": "FUSE TWO OF {actor}'S ABILITIES INTO ONE. DOMINANT SETS DA EFFECT; RECESSIVE MAKES IT A SPELL OR A SKILL. BOTH PARTS IZ CONSUMED. YOU HAB {knowledge} KP!",
   "kpMultiplier3x": "3.0X KP",
   "kpMultiplier15x": "1.5X KP",
   "foreignSchool": "SELF-TAUGHT",
@@ -87,9 +87,9 @@
     "hint": "SELECT A SYSTEM TA SEE ITS SPELLS AN' DA CLASSES DAT USE IT",
     "empty": "CHOOSE A SYSTEM FROM DA WHEEL",
     "classesHeading": "CLASSES",
-    "noClasses": "NO KNOWN CLASS DRAWS ON DIS SYSTEM YET!",
+    "noClasses": "NO CLASS USES DIS SYSTEM YET!",
     "spellsHeading": "SPELLS",
-    "noSpells": "NO SPELLS BELONG TA DIS SYSTEM YET!",
+    "noSpells": "NO SPELLS IN DIS SYSTEM YET!",
     "knownFraction": "{known} / {total} KNOWN ({pct}%)",
     "yourSystem": "YA CLASS'S SYSTEM",
     "systems": {
@@ -101,47 +101,47 @@
       "Sacred": {
         "name": "SACRED",
         "desc": "POWER DRAWN DOWN FROM HIGHER ORDERS!",
-        "lore": "SACRED POWER IZ ASKED FOR, NEVER TAKEN. DA RITE IZ FIXED BUT DA ANSWER IZ NO: DA SAME PRAYER SAID WIT DA SAME VOICE ON DA SAME MORNIN' MAY RAISE DA DEAD, HEAL A STRANGER THREE TOWNS AWAY, OR DO NOTHIN' AT ALL FOR A YEAR. DA DEVOUT DO NO SPEAK OF COSTS OR LIMITS, ONLY OF WORTHINESS, AN' NO TWO SAINTS HAB EVER AGREED ON WHAT MAKES A PETITION HEARD!"
+        "lore": "SACRED POWER IZ ASKED FOR, NEVER TAKEN. DA RITE IZ FIXED BUT DA ANSWER IZ NO: DA SAME PRAYER SAID WIT DA SAME VOICE ON DA SAME MORNIN' MAY RAISE DA DEAD, HEAL A STRANGER THREE TOWNS AWAY, OR DO NUTTIN' AT ALL FOR A YEAR. DA DEVOUT DO NO SPEAK OF COSTS OR LIMITS, ONLY OF WORTHINESS, AN' NO TWO SAINTS HAB EVER AGREED ON WHAT MAKES A PETITION HEARD!"
       },
       "Sympathetic": {
         "name": "SYMPATHETIC",
         "desc": "LIKE CALLS TA LIKE: OBJECT BOUND TA OBJECT!",
-        "lore": "LIKE CALLS TA LIKE, AN' DA CORRESPONDENCE TABLES SAY PRECISELY HOW LOUDLY. A HAIR BINDS TIGHTER DEN A COAT, A COAT TIGHTER DEN A NAME; DISTANCE HALVES DA PULL, AN' A BROKEN LINK ENDS DA WORKIN' OUTRIGHT RATHER DEN WEAKENIN' IT. A SYMPATHETIC WITCH KEEPS GRIMORIES OF WHAT BELONGS TA WHOM, BECAUSE IN DIS CRAFT DA STRENGTH OF A TIE CAN BE MEASURED BEFORE DA KNIFE FALLS!"
+        "lore": "LIKE CALLS TA LIKE, AN' DA CORRESPONDENCE TABLES SAY PRECISELY HOW LOUDLY. A HAIR BINDS TIGHTER DEN A COAT, A COAT TIGHTER DEN A NAME; DISTANCE HALVES DA PULL, AN' A BROKEN LINK ENDS DA WORKIN' OUTRIGHT RATHER DEN WEAKENIN' IT. A SYMPATHETIC WITCH KEEPS GRIMORIES OF WHAT BELONGS TA WHOM, COZ IN DIS CRAFT DA STRENGTH OF A TIE CAN BE MEASURED BEFORE DA KNIFE FALLS!"
       },
       "Dimensional": {
         "name": "DIMENSIONAL",
         "desc": "MAGIC DAT BENDS SPACE, TIME AN' PROBABILITY!",
-        "lore": "SPACE, TIME AN' PROBABILITY IZ TREATED AS MATERIALS WIT A GRAIN AN' A TOLERANCE. A FOLD HAB A MEASURED SPAN, A DEBT IN DURATION AN' A FAILURE MODE: OVERREACH IT AN' DA PRACTITIONER ARRIVES SOMEWHERE REAL, JUST NO WHERE DEY MEANT. DA MATHEMATICS IZ UGLY AN' UNFORGIVIN', WHICH IZ EXACTLY WHY DA SURVIVORS OF DIS SCHOOL IZ SO PRECISE ABOUT DEY NUMBERS!"
+        "lore": "SPACE, TIME AN' PROBABILITY IZ TREATED AS MATERIALS WIT A GRAIN AN' A TOLERANCE. A FOLD HAB A MEASURED SPAN, A DEBT IN DURATION AN' A FAILURE MODE: OVERREACH IT AN' DA PRACTITIONER ARRIVES SOMEWHERE REAL, JUST NO WHERE DEY MEANT. DA MATHEMATICS IZ UGLY AN' UNFORGIVIN', WHICH IZ EXACTLY WHY DA SURVIVORS OF DIS SCHOOL IZ SO PRECISE 'BOUT DEY NUMBERS!"
       },
       "Psionics": {
         "name": "PSIONICS",
         "desc": "POWER PROJECTED FROM DA MIND ALONE!",
-        "lore": "DERE IZ NOTHIN' TA READ AN' NOTHIN' TA BUY. A PSION PUSHES, AN' DA WORLD MOVES AS FAR AS DEY CONVICTION CARRIES IT, WHICH IZ FURTHER ON SOME DAYS DEN ON OTHERS AN' NOBODY HAB EVER CHARTED WHY. TALENT ARRIVES UNEARNED, DEEPENS WITHOUT PRACTICE, AN' ABANDONS ITS HOLDERS MID-SENTENCE. WHAT ONE MIND CAN DO SAYS NOTHIN' ABOUT WHAT DA NEXT ONE WILL MANAGE!"
+        "lore": "DERE IZ NUTTIN' TA READ AN' NUTTIN' TA BUY. A PSION PUSHES, AN' DA WORLD MOVES AS FAR AS DEY CONVICTION CARRIES IT, WHICH IZ FURTHER ON SOME DAYS DEN ON OTHERS AN' NOBODY HAB EVER CHARTED WHY. TALENT ARRIVES UNEARNED, DEEPENS WITOUT PRACTICE, AN' ABANDONS ITS HOLDERS MID-SENTENCE. WHAT ONE MIND CAN DO SAYS NUTTIN' 'BOUT WHAT DA NEXT ONE WILL MANAGE!"
       },
       "Technomagic": {
         "name": "TECHNOMAGIC",
         "desc": "DA OCCULT FUSED WIT DA MACHINE!",
-        "lore": "DA OCCULT WAZ TAKEN APART ON A BENCH AN' PUT BACK TOGETHER WIT TOLERANCES. A TECHNOMAGICAL RIG LISTS ITS DRAW IN WATTS AN' ITS YIELD IN EFFECT, IT FAILS WHEN ITS SUPPLY FAILS, AN' A SECOND RIG BUILT TA DA SAME SCHEMATIC PERFORMS DA SAME TA WITHIN A MARGIN DA BUILDERS WILL ARGUE ABOUT FOR HOURS. MAGIC HERE IZ AN ENGINEERIN' DISCIPLINE WIT WORSE SAFETY STANDARDS!"
+        "lore": "DA OCCULT WAZ TAKEN APART ON A BENCH AN' PUT BACK TOGETHER WIT TOLERANCES. A TECHNOMAGICAL RIG LISTS ITS DRAW IN WATTS AN' ITS YIELD IN EFFECT, IT FAILS WHEN ITS SUPPLY FAILS, AN' A SECOND RIG BUILT TA DA SAME SCHEMATIC PERFORMS DA SAME TA WITHIN A MARGIN DA BUILDERS WILL ARGUE 'BOUT FOR HOURS. MAGIC HERE IZ AN ENGINEERIN' DISCIPLINE WIT WORSE SAFETY STANDARDS!"
       },
       "Pataphysic": {
         "name": "PATAPHYSIC",
-        "desc": "MAGIC DAT ANSWERS TA NO CONSISTENT LAW!",
-        "lore": "DA PATAPHYSICIAN STUDIES DA LAWS GOVERNIN' EXCEPTIONS, AN' DA FIELD RETURNS DA COURTESY BY HAVIN' NONE. A WORKIN' DAT OPENED A DOOR ON TUESDAY MAKES A DOOR OPEN DA PATAPHYSICIAN ON THURSDAY. NOTES IZ KEPT, AN' DEY IZ ALWAYS ABOUT A MAGIC DAT NO LONGER EXISTS. PRACTITIONERS DESCRIBE IT AS A JOKE TOLD BY SOMETHIN' WIT NO SENSE OF HUMOUR AN' INFINITE PATIENCE!"
+        "desc": "MAGIC WIT NO CONSISTENT LAWS!",
+        "lore": "DA PATAPHYSICIAN STUDIES DA LAWS GOVERNIN' EXCEPTIONS, AN' DA FIELD RETURNS DA COURTESY BY HAVIN' NONE. A WORKIN' DAT OPENED A DOOR ON TUESDAY MAKES A DOOR OPEN DA PATAPHYSICIAN ON THURSDAY. NOTES IZ KEPT, AN' DEY IZ ALWAYS 'BOUT A MAGIC DAT NO LONGER EXISTS. PRACTITIONERS DESCRIBE IT AS A JOKE TOLD BY SOMETINK WIT NO SENSE OF HUMOUR AN' INFINITE PATIENCE!"
       },
       "Natural": {
         "name": "NATURAL",
         "desc": "POWER DRAWN FROM PLANT, BEAST AN' EARTH!",
-        "lore": "GREEN POWER COMES ON ITS OWN TERMS. A GROVE GIVES WHAT IT IZ MINDED TA GIVE, IN A SEASON IT CHOOSES, TA A SUPPLICANT IT HAB DECIDED ABOUT FOR REASONS NO HERBALIST HAB MANAGED TA WRITE DOWN. BARGAINS HOLD UNTIL DEY DO NO. EVERY PRACTITIONER HAB A STORY ABOUT DA YEAR DA RIVER SIMPLY STOPPED ANSWERIN', AN' NONE HAB AN EXPLANATION WORTH REPEATIN'!"
+        "lore": "GREEN POWER COMES ON ITS OWN TERMS. A GROVE GIVES WHAT IT IZ MINDED TA GIVE, IN A SEASON IT CHOOSES, TA A SUPPLICANT IT HAB DECIDED 'BOUT FOR REASONS NO HERBALIST HAB MANAGED TA WRITE DOWN. BARGAINS HOLD UNTIL DEY DO NO. EVERY PRACTITIONER HAB A STORY 'BOUT DA YEAR DA RIVER SIMPLY STOPPED ANSWERIN', AN' NONE HAB AN EXPLANATION WORTH REPEATIN'!"
       },
       "Thermodynamics": {
         "name": "THERMODYNAMICS",
         "desc": "MAGIC DAT LIVES IN HEAT, COLD AN' CURRENT!",
-        "lore": "HEAT IZ MOVED, NEVER MADE. WARM A ROOM AN' SOMETHIN' NEARBY GOES COLD BY EXACTLY AS MUCH; DA PRACTITIONER WHO FORGETS DA GRIMORIE BALANCES IT WIT DEY OWN BODY. CURRENTS RUN WHERE RESISTANCE IZ LEAST, GRADIENTS EQUALISE ON A SCHEDULE DAT CAN BE CALCULATED IN ADVANCE, AN' DA WHOLE DISCIPLINE IZ REALLY A REAL HOSTILE BRANCH OF PHYSICS PERFORMED WITHOUT INSTRUMENTS!"
+        "lore": "HEAT IZ MOVED, NEVER MADE. WARM A ROOM AN' SOMETINK NEARBY GOES COLD BY EXACTLY AS MUCH; DA PRACTITIONER WHO FORGETS DA GRIMORIE BALANCES IT WIT DEY OWN BODY. CURRENTS RUN WHERE RESISTANCE IZ LEAST, GRADIENTS EQUALISE ON A SCHEDULE DAT CAN BE CALCULATED IN ADVANCE, AN' DA WHOLE DISCIPLINE IZ REALLY A REAL HOSTILE BRANCH OF PHYSICS PERFORMED WITOUT INSTRUMENTS!"
       },
       "Ritual": {
         "name": "RITUAL",
         "desc": "POWER BOUGHT WIT RITE, BLOOD OR BARGAIN!",
-        "lore": "DA PRICE IZ SET BEFORE DA WORKIN' BEGINS. SO MANY HOURS, SO MUCH BLOOD, SO MANY VOICES IN DA CIRCLE, AN' DA EFFECT FOLLOWS IN PROPORTION; HALVE DA OFFERIN' AN' YOU HALVE DA RESULT, BREAK DA CIRCLE AN' YOU GET NOTHIN' RATHER DEN SOMETHIN' WILD. DA BARGAINS IZ WRITTEN IN TERMS BOTH PARTIES CAN ENFORCE, AN' DA OLDEST RITES IZ DA ONES WHOSE TERMS HAB NEVER HAB TA CHANGE!"
+        "lore": "DA PRICE IZ SET BEFORE DA WORKIN' BEGINS. SO MANY HOURS, SO MUCH BLOOD, SO MANY VOICES IN DA CIRCLE, AN' DA EFFECT FOLLOWS IN PROPORTION; HALVE DA OFFERIN' AN' YOU HALVE DA RESULT, BREAK DA CIRCLE AN' YOU GET NUTTIN' RATHER DEN SOMETINK WILD. DA BARGAINS IZ WRITTEN IN TERMS BOTH PARTIES CAN ENFORCE, AN' DA OLDEST RITES IZ DA ONES WHOSE TERMS HAB NEVER HAB TA CHANGE!"
       }
     },
     "rigor": {
@@ -160,41 +160,43 @@
     "lockedBy": "UNLOCKED BY: {skills}",
     "lockedByCount": "NEEDS {need} MORE OF: {skills}",
     "lockedHint": "LEARN A CONNECTED SKILL FIRST TA UNLOCK DIS ONE!",
-    "lockedToast": "{skill} DOES NO BORDER ANYTHIN' DIS PUPIL KNOWS!",
+    "lockedToast": "{skill} IZ NO CONNECTED TA A KNOWN SKILL!",
     "lockedEsotericLevel": "ESOTERIC KNOWLEDGE: LEVEL {level} OR ABOVE!",
     "lockedForbiddenLevel": "FORBIDDEN KNOWLEDGE: LEVEL {level} OR ABOVE!",
-    "lockedCultist": "A CULTIST LEARNS NOTHIN' HERE: ONLY GRIMOIRES AN' SKILL BOOKS WILL TEACH DEM!"
+    "lockedCultist": "CULTISTS CAN ONLY LEARN FROM GRIMOIRES AN' SKILL BOOKS!"
   },
   "atlas": {
     "progress": "{learned} OF {total} LEARNED",
     "kp": "{kp} KP",
     "schoolOf": "{index} / {total}",
     "held": "YOU HOLD {knowledge} KP",
-    "hint": "DRAG TA PAN, WHEEL TA ZOOM"
+    "hint": "DRAG TA PAN, WHEEL TA ZOOM",
+    "zoomIn": "ZOOM IN",
+    "zoomOut": "ZOOM OUT"
   },
   "tag": {
     "esoteric": "ESOTERIC",
     "forbidden": "FORBIDDEN"
   },
   "carry": {
-    "take": "CARRY INTO BATTLE",
-    "drop": "LEAVE ON DA BENCH",
-    "locked": "ALWAYS CARRIED",
+    "take": "ADD TA LOADOUT",
+    "drop": "REMOVE FROM LOADOUT",
+    "locked": "ALWAYS EQUIPPED",
     "full": "LOADOUT FULL",
-    "takenToast": "{skill} IZ CARRIED INTO BATTLE.",
-    "droppedToast": "{skill} IZ LEFT ON DA BENCH.",
-    "fullToast": "DA LOADOUT ALREADY CARRIES {max}. BENCH SOMETHIN' FIRST!",
-    "lockedToast": "{skill} IZ ALWAYS CARRIED AN' SPENDS NO SLOT!"
+    "takenToast": "{skill} ADDED TA LOADOUT.",
+    "droppedToast": "{skill} REMOVED FROM LOADOUT.",
+    "fullToast": "LOADOUT FULL ({max}). REMOVE A SKILL FIRST!",
+    "lockedToast": "{skill} IZ ALWAYS EQUIPPED AN' USES NO SLOT!"
   },
   "fusion": {
     "rename": "RENAME",
     "delete": "UNMAKE",
     "confirm": "STASH",
-    "confirmDelete": "UNMAKE {skill}? ITS COMPONENTS IZ ALREADY SPENT. PRESS AGAIN TA CONFIRM!",
+    "confirmDelete": "UNMAKE {skill}? COMPONENTS IZ NO REFUNDED. PRESS AGAIN TA CONFIRM!",
     "deleted": "{skill} IZ UNMADE."
   },
   "fusionCritical": "★ \\DIE[20] CRITICAL SUCCESS! ★\n{result}\nEMPOWERED WIT -20% MP COST AN' +25% POTENCY!",
-  "fusionFailed": "☠ ARCANE FUSION FAILED (DC {dc}) ☠\nDA SPELL FUSION DESTABILISED IN A VIOLENT MAGICAL BACKLASH!\nDA COMPONENT SPELLS ({components}) WAZ DESTROYED!",
+  "fusionFailed": "☠ ARCANE FUSION FAILED (DC {dc}) ☠\nMAGICAL BACKLASH!\nCOMPONENT SPELLS ({components}) DESTROYED!",
   "primarySchool": "PRIMARY",
   "secondarySchool": "SECONDARY",
   "rename": "RENAME",
@@ -202,7 +204,7 @@
   "renamePrompt": "ENTER A NEW NAME FOR DIS SPELL:",
   "dissolveConfirm": "DISSOLVE {name} BACK INTO KNOWLEDGE?",
   "pupil": "PUPIL",
-  "chaosLevelSkill": "{actor} PICKS UP {skill} OUT OF NOWHERE!",
+  "chaosLevelSkill": "{actor} SUDDENLY LEARNED {skill}.",
   "craft": {
     "buttonSpell": "CRAFT SPELL",
     "buttonSkill": "CRAFT SKILL",
@@ -219,7 +221,7 @@
       "description": "WRITE ITS DESCRIPTION",
       "lore": "WRITE ITS LORE",
       "incantation": "WRITE ITS INCANTATION",
-      "hint": "ENTER STASHES A NAME, ESCAPE CLOSES. SHIFT AN' ENTER BREAK A LINE!"
+      "hint": "ENTER: STASH. ESC: CLOSE. SHIFT+ENTER: NEW LINE!"
     },
     "rewriteDesc": "REWRITE DESCRIPTION",
     "rewriteLore": "REWRITE LORE",
@@ -232,8 +234,8 @@
     "unwritten": "UNWRITTEN",
     "knowledge": "KNOWLEDGE",
     "cxShort": "CX",
-    "nothingToBuy": "NOTHIN' ON DIS SHELF",
-    "noneYet": "NOTHIN' WRITTEN YET",
+    "nothingToBuy": "NUTTIN' TA BUY",
+    "noneYet": "NUTTIN' WRITTEN YET",
     "yourSpells": "YA SPELLS",
     "yourSkills": "YA SKILLS",
     "defaultSpellName": "UNNAMED SPELL",
@@ -255,8 +257,7 @@
     "occasionLabel": "USABLE",
     "anywhere": "ANYWHERE",
     "battleOnly": "BATTLE ONLY",
-    "riderCount": "RIDERS",
-    "benchBlurb": "BUY EACH PART ONCE WIT KP, DEN REUSE IT IN EVERYTHIN' YOU WRITE HERE. COMPLEXITY RAISES DA MP OF EVERY CAST AN' DA {stat} NEEDED TA USE IT!",
+    "benchBlurb": "EVERY TAG IZ BOUGHT WIT KP WHEN DA ENTRY IZ WRITTEN. DA MP OR AP IT COSTS AN' DA {stat} IT ASKS FOR IZ WHAT DA SHIPPED BOOK CHARGES FOR DA SAME POWER!",
     "writtenResult": "\\C[3]{name}\\C[0] IZ WRITTEN. {cost} KP SPENT, {left} KP LEFT!",
     "rewrittenResult": "\\C[3]{name}\\C[0] IZ REWRITTEN. {cost} KP SPENT, {left} KP LEFT!",
     "row": {
@@ -266,380 +267,870 @@
       "incantation": "INCANTATION",
       "icon": "ICON",
       "animation": "ANIMATION",
-      "core": "CORE",
-      "power": "AMPLIFIER",
-      "scope": "SHAPE",
-      "riders": "RIDERS",
-      "refines": "REFINEMENTS",
       "create": "WRITE",
-      "randomize": "ROLL"
+      "randomize": "ROLL",
+      "catalogue": "ADD TAG",
+      "core": "CORE",
+      "element": "ELEMENT",
+      "power": "AMPLIFIER",
+      "shape": "SHAPE",
+      "rider": "RIDERS",
+      "refine": "REFINEMENTS",
+      "payoff": "PAYOFFS",
+      "mechanic": "MECHANICS"
     },
     "pick": {
       "core": "CHOOSE A CORE",
+      "element": "CHOOSE AN ELEMENT",
       "power": "CHOOSE AN AMPLIFIER",
-      "scope": "CHOOSE A SHAPE",
-      "riders": "BUY RIDERS",
-      "refines": "BUY REFINEMENTS",
+      "shape": "CHOOSE A SHAPE",
+      "rider": "ADD A RIDER",
+      "refine": "ADD A REFINEMENT",
+      "payoff": "ADD A PAYOFF",
+      "mechanic": "ADD A MECHANIC",
+      "catalogue": "TAG CATALOGUE",
       "icon": "CHOOSE AN ICON",
       "animation": "CHOOSE AN ANIMATION"
     },
     "blocked": {
-      "incomplete": "DA BUILD IZ NO FINISHED.",
-      "mismatch": "DAT CORE NO CAN BE AIMED DAT WAY!",
+      "incomplete": "BUILD INCOMPLETE: IT NEEDS A CORE AN' A SHAPE!",
+      "invalid": "A TAG DOES NO FIT: {why}",
+      "overload": "OVER 100 AP: LIGHTEN DA BUILD!",
       "knowledge": "NO ENOUGH KNOWLEDGE.",
-      "stat": "NEEDS {stat} {need}, YOU HOLD {have}.",
-      "full": "DA BENCH HOLDS {max} ALREADY. UNMAKE ONE FIRST!"
-    },
-    "dmgType": {
-      "0": "NO DAMAGE",
-      "1": "HP DAMAGE",
-      "2": "MP DAMAGE",
-      "3": "HP RECOVERY",
-      "4": "MP RECOVERY",
-      "5": "HP DRAIN",
-      "6": "MP DRAIN"
-    },
-    "comp": {
-      "core": {
-        "fire": {
-          "name": "KINDLIN'",
-          "desc": "FIRE DAMAGE. DA CHEAPEST THING DAT BURNS!"
-        },
-        "ice": {
-          "name": "RIME",
-          "desc": "ICE DAMAGE, A SHADE GENTLER DEN FIRE AN' STEADIER!"
-        },
-        "thunder": {
-          "name": "ARC",
-          "desc": "THUNDER DAMAGE DAT CUTS THROUGH PART OF DA GUARD!"
-        },
-        "water": {
-          "name": "TORRENT",
-          "desc": "WATER DAMAGE. BLUNT, AN' DA EASIEST TA DRAW!"
-        },
-        "stone": {
-          "name": "SHARD",
-          "desc": "PETRO DAMAGE. HEAVY, AN' SLOW TA BE TURNED ASIDE!"
-        },
-        "gale": {
-          "name": "DRAUGHT",
-          "desc": "WIND DAMAGE. LIGHT, QUICK AN' CHEAP TA HOLD!"
-        },
-        "sacred": {
-          "name": "HALO",
-          "desc": "SACRED DAMAGE DAT MOST GUARDS BARELY BLUNT!"
-        },
-        "cursed": {
-          "name": "BLIGHT",
-          "desc": "CURSED DAMAGE. DA HARDEST THING HERE TA STAND IN FRONT OF!"
-        },
-        "arcane": {
-          "name": "SIGIL",
-          "desc": "ELEMENTLESS DAMAGE NOTHIN' ON DA FIELD RESISTS!"
-        },
-        "mend": {
-          "name": "SUTURE",
-          "desc": "HEALS HP OFF DA CASTER'S OWN LEARNIN'!"
-        },
-        "etherFlow": {
-          "name": "CONDUIT",
-          "desc": "GIVES MP BACK TA WHOEVER IT LANDS ON!"
-        },
-        "siphon": {
-          "name": "LEECH",
-          "desc": "DAMAGE DAT RETURNS AS HP TA DA CASTER!"
-        },
-        "mindBurn": {
-          "name": "STATIC",
-          "desc": "BURNS MP OUT OF DA TARGET INSTEAD OF BLOOD!"
-        },
-        "ward": {
-          "name": "EMPTY FRAME",
-          "desc": "NO DAMAGE AT ALL. A SHELL FOR RIDERS TA SIT ON!"
-        },
-        "strike": {
-          "name": "STRIKE",
-          "desc": "A PLAIN BLOW OFF DA ARM DAT SWINGS IT!"
-        },
-        "cleave": {
-          "name": "CLEAVE",
-          "desc": "A HEAVIER SWING DAT DA GUARD STILL ANSWERS IN FULL!"
-        },
-        "thrust": {
-          "name": "THRUST",
-          "desc": "A NARROWER BLOW DAT MOST OF DA GUARD MISSES!"
-        },
-        "brawl": {
-          "name": "GRAPPLE",
-          "desc": "CLOSE WORK. NOTHIN' FANCY, NOTHIN' WASTED!"
-        },
-        "marksman": {
-          "name": "AIMED SHOT",
-          "desc": "A SHOT DAT NO CAN BE EVADED!"
-        },
-        "venomEdge": {
-          "name": "FOUL EDGE",
-          "desc": "A CURSED BLADE RATHER DEN A CLEAN ONE!"
-        },
-        "bandage": {
-          "name": "FIELD DRESSIN'",
-          "desc": "PATCHES HP WITHOUT A WORD OF MAGIC!"
-        },
-        "secondWind": {
-          "name": "SECOND WIND",
-          "desc": "A BLOW DAT GIVES BACK WHAT IT TAKES!"
-        },
-        "rally": {
-          "name": "EMPTY STANCE",
-          "desc": "NO DAMAGE AT ALL. A SHELL FOR RIDERS TA SIT ON!"
-        }
-      },
-      "power": {
-        "plain": {
-          "name": "PLAIN",
-          "desc": "DA CORE AS WRITTEN. COSTS NOTHIN'!"
-        },
-        "focused": {
-          "name": "FOCUSED",
-          "desc": "A QUARTER AGAIN AS STRONG!"
-        },
-        "potent": {
-          "name": "POTENT",
-          "desc": "HALF AGAIN AS STRONG, AN' MUCH HEAVIER TA HOLD!"
-        },
-        "ruinous": {
-          "name": "RUINOUS",
-          "desc": "TWICE OVER. ONLY A TRAINED MIND CARRIES DIS!"
-        }
-      },
-      "scope": {
-        "oneEnemy": {
-          "name": "ONE BAD 'UN",
-          "desc": "A SINGLE TARGET ACROSS DA FIELD!"
-        },
-        "twoRandom": {
-          "name": "TWO AT RANDOM",
-          "desc": "TWICE, WHEREVER IT LANDS."
-        },
-        "threeRandom": {
-          "name": "THREE AT RANDOM",
-          "desc": "THREE TIMES, WHEREVER IT LANDS!"
-        },
-        "allEnemies": {
-          "name": "ALL BAD 'UNS",
-          "desc": "DA WHOLE OPPOSIN' LINE AT ONCE!"
-        },
-        "oneAlly": {
-          "name": "ONE ALLY",
-          "desc": "A SINGLE COMPANION."
-        },
-        "allAllies": {
-          "name": "ALL ALLIES",
-          "desc": "DA WHOLE PARTY AT ONCE."
-        },
-        "theUser": {
-          "name": "DA WRITER",
-          "desc": "YOURSELF AN' NOBODY ELSE. COSTS NOTHIN'!"
-        },
-        "everyone": {
-          "name": "EVERYONE",
-          "desc": "BOTH LINES, MATE AN' BAD 'UN ALIKE!"
-        }
-      },
-      "riders": {
-        "poison": {
-          "name": "VENOM",
-          "desc": "OFTEN LEAVES DA TARGET POISONED!"
-        },
-        "blind": {
-          "name": "CINDERS",
-          "desc": "OFTEN BLINDS DA TARGET."
-        },
-        "silence": {
-          "name": "GAG",
-          "desc": "SOMETIMES SILENCES DA TARGET!"
-        },
-        "confusion": {
-          "name": "MUDDLE",
-          "desc": "SOMETIMES CONFUSES DA TARGET!"
-        },
-        "sleep": {
-          "name": "LULLABY",
-          "desc": "SOMETIMES PUTS DA TARGET TA SLEEP!"
-        },
-        "freeze": {
-          "name": "HOARFROST",
-          "desc": "SOMETIMES FREEZES DA TARGET!"
-        },
-        "paralysis": {
-          "name": "LOCKIN' NERVE",
-          "desc": "SOMETIMES PARALYSES DA TARGET!"
-        },
-        "stun": {
-          "name": "CONCUSSION",
-          "desc": "OFTEN STUNS DA TARGET."
-        },
-        "deathMark": {
-          "name": "DEATH MARK",
-          "desc": "RARELY MARKS DA TARGET FOR DEATH. EXPENSIVE, AN' IT SHOULD BE!"
-        },
-        "provoke": {
-          "name": "INSULT",
-          "desc": "ALMOST ALWAYS PROVOKES DA TARGET INTO ANSWERIN' YOU!"
-        },
-        "sapAtk": {
-          "name": "SAP STRENGTH",
-          "desc": "WEAKENS DA TARGET'S ATTACK!"
-        },
-        "sapDef": {
-          "name": "SAP GUARD",
-          "desc": "WEAKENS DA TARGET'S DEFENCE!"
-        },
-        "sapMat": {
-          "name": "SAP MIND",
-          "desc": "WEAKENS DA TARGET'S MAGIC!"
-        },
-        "sapAgi": {
-          "name": "SAP STEP",
-          "desc": "WEAKENS DA TARGET'S SPEED!"
-        },
-        "stripBuffs": {
-          "name": "UNWRITE",
-          "desc": "STRIPS DA BUFFS DA TARGET IZ STANDIN' BEHIND!"
-        },
-        "regenHP": {
-          "name": "SLOW KNIT",
-          "desc": "LEAVES HP REGENERATION BEHIND!"
-        },
-        "regenMP": {
-          "name": "SLOW SPRIN'",
-          "desc": "LEAVES MP REGENERATION BEHIND!"
-        },
-        "regenAP": {
-          "name": "SLOW BREATH",
-          "desc": "LEAVES AP REGENERATION BEHIND!"
-        },
-        "protect": {
-          "name": "AEGIS",
-          "desc": "LEAVES DA TARGET PROTECTED!"
-        },
-        "counter": {
-          "name": "RIPOSTE",
-          "desc": "LEAVES DA TARGET ANSWERIN' BLOWS IN KIND!"
-        },
-        "inspired": {
-          "name": "KIND WORD",
-          "desc": "LEAVES DA TARGET INSPIRED!"
-        },
-        "arcaneSurge": {
-          "name": "SURGE",
-          "desc": "LEAVES AN ARCANE SURGE ON DA TARGET!"
-        },
-        "divineShield": {
-          "name": "DIVINE SHIELD",
-          "desc": "RARELY LEAVES A DIVINE SHIELD. DA DEAREST THING ON DA SHELF!"
-        },
-        "shadowVeil": {
-          "name": "SHADOW VEIL",
-          "desc": "LEAVES DA TARGET VEILED."
-        },
-        "wardAilments": {
-          "name": "CHARM AGAINST HARM",
-          "desc": "LEAVES DA TARGET BLOCKIN' STATUS AILMENTS!"
-        },
-        "braceAtk": {
-          "name": "BRACE STRENGTH",
-          "desc": "RAISES DA TARGET'S ATTACK!"
-        },
-        "braceDef": {
-          "name": "BRACE GUARD",
-          "desc": "RAISES DA TARGET'S DEFENCE!"
-        },
-        "braceMat": {
-          "name": "BRACE MIND",
-          "desc": "RAISES DA TARGET'S MAGIC."
-        },
-        "braceAgi": {
-          "name": "BRACE STEP",
-          "desc": "RAISES DA TARGET'S SPEED."
-        },
-        "cleanse": {
-          "name": "CLEAN SLATE",
-          "desc": "LIFTS POISON, BLINDNESS, SILENCE AN' DA REST!"
-        },
-        "firstAid": {
-          "name": "SALVE",
-          "desc": "GIVES BACK A SLICE OF HP ON TOP OF EVERYTHIN' ELSE!"
-        },
-        "etherSplash": {
-          "name": "DRAUGHT",
-          "desc": "GIVES BACK A SLICE OF MP ON TOP OF EVERYTHIN' ELSE!"
-        },
-        "apSurge": {
-          "name": "ADRENALINE",
-          "desc": "HANDS DA TARGET AP OUTRIGHT!"
-        }
-      },
-      "refines": {
-        "certain": {
-          "name": "UNERRIN'",
-          "desc": "NEVER MISSES, WHATEVER STANDS IN DA WAY!"
-        },
-        "twinCast": {
-          "name": "TWINNED",
-          "desc": "LANDS TWICE."
-        },
-        "tripleCast": {
-          "name": "THRICE-WRITTEN",
-          "desc": "LANDS THREE TIMES. DA HEAVIEST THING ON DA SHELF!"
-        },
-        "swift": {
-          "name": "SWIFT",
-          "desc": "GOES EARLIER IN DA ROUND."
-        },
-        "precise": {
-          "name": "PRECISE",
-          "desc": "NEVER FUMBLES ITS OWN SUCCESS ROLL!"
-        },
-        "stable": {
-          "name": "STABLE",
-          "desc": "ALWAYS DA SAME NUMBER."
-        },
-        "wild": {
-          "name": "WILD",
-          "desc": "WILDLY VARIABLE. CHEAP, AN' HONEST ABOUT IT!"
-        },
-        "keenEdge": {
-          "name": "KEEN",
-          "desc": "CAN LAND A CRITICAL."
-        },
-        "guardBreak": {
-          "name": "GUARD BREAK",
-          "desc": "HALVES DA DEFENCE COUNTED AGAINST IT!"
-        },
-        "efficient": {
-          "name": "EFFICIENT",
-          "desc": "COSTS LESS TA CAST, AN' ADDS NO COMPLEXITY OF ITS OWN!"
-        },
-        "menuCast": {
-          "name": "EVERYDAY",
-          "desc": "USABLE OUTSIDE BATTLE AS WELL AS IN IT!"
-        },
-        "apReturn": {
-          "name": "FEEDBACK",
-          "desc": "GIVES DA USER AP BACK ON USE!"
-        }
-      }
+      "stat": "NEEDS {stat} {need}, YOU HAB {have}.",
+      "full": "MAX {max} ENTRIES. UNMAKE ONE FIRST!",
+      "beyond": "STRONGER DEN ANYTINK IN DA BOOK: LIGHTEN DA BUILD!"
     },
     "randomize": "ROLL IT",
     "identity": "IDENTITY",
     "chipInfo": "{name}: {desc} ({kp} KP, COMPLEXITY {cx})",
-    "pickUpTo": "PICK UP TA {max}. HOVER OR MOVE ONTO A CHIP TA READ IT!",
     "camel": {
-      "title": "DAT IZ NO A SPELL NAME",
-      "body": "A SPELL IZ NAMED AS ONE WORD IN CAMELCASE, WIT NO SPACES: FIREBOLT, NO FIRE BOLT. {name} IZ KEPT AS WRITTEN IF YOU WANT IT!",
-      "rename": "NAME IT AGAIN",
+      "title": "INVALID SPELL NAME",
+      "body": "SPELL NAMES IZ ONE CamelCase WORD: FireBolt, NO FIRE BOLT. YOU CAN STILL KEEP {name}!",
+      "rename": "RENAME",
       "keep": "KEEP IT"
+    },
+    "tags": {
+      "bolt": {
+        "name": "BOLT",
+        "desc": "MAGICAL HP DAMAGE OFF INT. GIVE IT AN ELEMENT!"
+      },
+      "physical": {
+        "name": "PHYSICAL",
+        "desc": "PHYSICAL ELEMENT: ARMOUR AN' GUARD COUNT IN FULL!"
+      },
+      "bleeding": {
+        "name": "OPEN VEIN",
+        "desc": "OFTEN LEAVES DA TARGET BLEEDIN'!"
+      },
+      "burned": {
+        "name": "SCORCH",
+        "desc": "OFTEN LEAVES DA TARGET BURNED!"
+      },
+      "vulnerable": {
+        "name": "EXPOSE",
+        "desc": "OFTEN LEAVES DA TARGET VULNERABLE!"
+      },
+      "unbalanced": {
+        "name": "TRIP",
+        "desc": "MAY LEAVE DA TARGET UNBALANCED: ITS ACTIONS CAN STUMBLE!"
+      },
+      "concussed": {
+        "name": "RING DA BELL",
+        "desc": "MAY LEAVE DA TARGET CONCUSSED!"
+      },
+      "guardBroken": {
+        "name": "PRY OPEN",
+        "desc": "MAY INFLICT GUARD BROKEN: DEFENCE HALVED!"
+      },
+      "hobbled": {
+        "name": "HOBBLE",
+        "desc": "MAY INFLICT HOBBLED: SLOWER AN' EASIER TA HIT!"
+      },
+      "disarmed": {
+        "name": "NUMB HAND",
+        "desc": "MAY INFLICT DISARMED: WEAKER BLOWS!"
+      },
+      "wet": {
+        "name": "SOAK",
+        "desc": "OFTEN LEAVES DA TARGET WET: THUNDER ELECTROCUTES IT, ICE FREEZES IT!"
+      },
+      "oily": {
+        "name": "SLICK",
+        "desc": "OFTEN LEAVES DA TARGET OILY: DA NEXT FIRE HIT SETS IT ALIGHT!"
+      },
+      "brittle": {
+        "name": "EMBRITTLE",
+        "desc": "MAY LEAVE DA TARGET BRITTLE: DA NEXT PHYSICAL BLOW SHATTERS IT!"
+      },
+      "volatile": {
+        "name": "PRIME",
+        "desc": "MAY LEAVE DA TARGET VOLATILE: FIRE OR THUNDER DETONATES IT!"
+      },
+      "doom": {
+        "name": "SENTENCE",
+        "desc": "MAY INFLICT DOOM: WHEN IT RUNS OUT DA TARGET TAKES HEAVY CURSED DAMAGE!"
+      },
+      "litFuse": {
+        "name": "FUSE",
+        "desc": "MAY PLANT A LIT FUSE: WHEN IT RUNS OUT IT BLASTS DA TARGET AN' ITS ALLIES!"
+      },
+      "looped": {
+        "name": "LOOP",
+        "desc": "MAY INFLICT LOOPED: DA TARGET REPEATS ITS LAST ACTION!"
+      },
+      "mindSealed": {
+        "name": "SEAL",
+        "desc": "MAY INFLICT MIND SEALED: ITS LAST SKILL IZ SEALED!"
+      },
+      "puppeted": {
+        "name": "STRINGS",
+        "desc": "MAY INFLICT PUPPETED: ITS NEXT MOVE IZ NO ITS OWN!"
+      },
+      "turncoat": {
+        "name": "TURN COAT",
+        "desc": "MAY INFLICT TURNCOAT: IT TURNS ON ITS OWN SIDE!"
+      },
+      "mindRead": {
+        "name": "READ",
+        "desc": "ALMOST ALWAYS INFLICTS MIND READ: ITS NEXT ACTION IZ KNOWN!"
+      },
+      "dawnVow": {
+        "name": "DAWN VOW",
+        "desc": "GRANTS DAWN VOW: HELP ARRIVES WHEN IT RUNS OUT!"
+      },
+      "rebound": {
+        "name": "REBOUND",
+        "desc": "GRANTS REBOUND: DA NEXT SKILL AIMED AT DEM IZ THROWN BACK!"
+      },
+      "echo": {
+        "name": "ECHO",
+        "desc": "GRANTS ECHO: DEY NEXT SKILL FIRES TWICE!"
+      },
+      "bladeDrill": {
+        "name": "BLADE DRILL",
+        "desc": "GRANTS BLADE DRILL: SWORDS AN' KNIVES ANSWER BETTER!"
+      },
+      "gunDrill": {
+        "name": "GUN DRILL",
+        "desc": "GRANTS GUN DRILL: FIREARMS ANSWER BETTER!"
+      },
+      "drilled": {
+        "name": "DRILL",
+        "desc": "GRANTS DRILLED: ANY WEAPON ANSWERS A LIL' BETTER!"
+      },
+      "edgeStance": {
+        "name": "EDGE STANCE",
+        "desc": "GRANTS EDGE STANCE: BLOWS DEAL CUTTIN' DAMAGE. ON A WEAPON: CUTS!"
+      },
+      "mercifulStance": {
+        "name": "MERCIFUL STANCE",
+        "desc": "GRANTS MERCIFUL STANCE: BLOWS DEAL BLUNT DAMAGE. ON A WEAPON: BLUDGEONS!"
+      },
+      "spearpointStance": {
+        "name": "SPEARPOINT STANCE",
+        "desc": "GRANTS SPEARPOINT STANCE: BLOWS DEAL PIERCIN' DAMAGE. ON A WEAPON: PIERCES!"
+      },
+      "bulletTime": {
+        "name": "BULLET TIME",
+        "desc": "GRANTS BULLET TIME: BLOWS IZ SLIPPED AN' A DODGE PHASE SLOWS DOWN!"
+      },
+      "foresight": {
+        "name": "FORESIGHT",
+        "desc": "GRANTS FORESIGHT: SPELLS IZ SIDESTEPPED AN' DA DODGE CRAFT SHRINKS!"
+      },
+      "guardianBond": {
+        "name": "GUARDIAN BOND",
+        "desc": "GRANTS GUARDIAN BOND: DA USER TAKES HALF DA HP DAMAGE DEALT TA EACH ALLY. DA USER ONLY!"
+      },
+      "lifeLink": {
+        "name": "LIFE LINK",
+        "desc": "INFLICTS LIFE LINK: HP DAMAGE IZ SPLIT AMONG EVERYONE LINKED. EITHER SIDE!"
+      },
+      "consumeCombo": {
+        "name": "COMBO FINISHER",
+        "desc": "DOUBLED WHILE DA USER HAB COMBO READY, WHICH IT SPENDS!"
+      },
+      "consumeLockOn": {
+        "name": "LOCKED SHOT",
+        "desc": "DOUBLED WHILE DA USER IZ LOCKED ON, WHICH IT SPENDS!"
+      },
+      "consumeFocus": {
+        "name": "FOCUSED RELEASE",
+        "desc": "DOUBLED UNDER PERFECT FOCUS, WHICH IT SPENDS!"
+      },
+      "consumeHide": {
+        "name": "FROM HIDIN'",
+        "desc": "DOUBLED WHILE DA USER IZ HIDDEN, WHICH IT SPENDS!"
+      },
+      "vsWet": {
+        "name": "CONDUCTOR",
+        "desc": "DOUBLED AGAINST A WET TARGET!"
+      },
+      "vsOily": {
+        "name": "KINDLER",
+        "desc": "DOUBLED AGAINST AN OILY TARGET!"
+      },
+      "vsBrittle": {
+        "name": "SHATTERER",
+        "desc": "DOUBLED AGAINST A BRITTLE TARGET!"
+      },
+      "vsBurned": {
+        "name": "SEARER",
+        "desc": "DOUBLED AGAINST A BURNED TARGET!"
+      },
+      "vsPoison": {
+        "name": "TOXIC SPITE",
+        "desc": "DOUBLED AGAINST A POISONED TARGET!"
+      },
+      "vsGrappled": {
+        "name": "PINNIN' BLOW",
+        "desc": "DOUBLED AGAINST A GRAPPLED TARGET!"
+      },
+      "vsConcussed": {
+        "name": "FOLLOW-THROUGH",
+        "desc": "DOUBLED AGAINST A CONCUSSED TARGET!"
+      },
+      "vsUnbalanced": {
+        "name": "TOPPLE",
+        "desc": "DOUBLED AGAINST AN UNBALANCED TARGET!"
+      },
+      "vsVital": {
+        "name": "VITAL STRIKE",
+        "desc": "DOUBLED AGAINST A TARGET WIT A VITAL EXPOSED!"
+      },
+      "whileRage": {
+        "name": "FURY",
+        "desc": "HALF AGAIN AS STRONG WHILE DA USER HAB RAGE!"
+      },
+      "whileBerserk": {
+        "name": "FRENZY",
+        "desc": "HALF AGAIN AS STRONG WHILE DA USER IZ BERSERK!"
+      },
+      "whileInspired": {
+        "name": "MUSE",
+        "desc": "HALF AGAIN AS STRONG WHILE DA USER IZ INSPIRED!"
+      },
+      "whileSurge": {
+        "name": "OVERFLOW",
+        "desc": "HALF AGAIN AS STRONG UNDER ARCANE SURGE!"
+      },
+      "whileFlow": {
+        "name": "IN DA FLOW",
+        "desc": "HALF AGAIN AS STRONG WHILE DA USER IZ IN FLOW STATE!"
+      },
+      "execute": {
+        "name": "EXECUTE",
+        "desc": "DOUBLED AGAINST A FOE UNDER 30% HP!"
+      },
+      "desperation": {
+        "name": "DESPERATION",
+        "desc": "GROWS WIT DA HP DA USER HAB LOST!"
+      },
+      "spendChi": {
+        "name": "RELEASE CHI",
+        "desc": "GROWS A QUARTER WIT EVERY CHI STACK, DEN SPENDS DEM!"
+      },
+      "spendFaith": {
+        "name": "RELEASE FAITH",
+        "desc": "GROWS A QUARTER WIT EVERY FAITH STACK, DEN SPENDS DEM!"
+      },
+      "spendSouls": {
+        "name": "RELEASE SOULS",
+        "desc": "GROWS A QUARTER WIT EVERY SOUL STACK, DEN SPENDS DEM!"
+      },
+      "selfCombo": {
+        "name": "SET UP",
+        "desc": "HALF DA TIME LEAVES DA USER WIT COMBO READY!"
+      },
+      "selfLockOn": {
+        "name": "SIGHT IN",
+        "desc": "LEAVES DA USER LOCKED ON."
+      },
+      "selfFocus": {
+        "name": "CENTRE",
+        "desc": "LEAVES DA USER IN PERFECT FOCUS!"
+      },
+      "selfDodge": {
+        "name": "LIGHT FEET",
+        "desc": "LEAVES DA USER READY TA DODGE!"
+      },
+      "selfFlow": {
+        "name": "FIND DA FLOW",
+        "desc": "LEAVES DA USER IN FLOW STATE!"
+      },
+      "selfCounter": {
+        "name": "RIPOSTE STANCE",
+        "desc": "LEAVES DA USER READY TA COUNTER ATTACK!"
+      },
+      "selfGuard": {
+        "name": "COVER",
+        "desc": "LEAVES DA USER ON GUARD."
+      },
+      "selfHide": {
+        "name": "FADE",
+        "desc": "LEAVES DA USER HIDDEN."
+      },
+      "selfChiBurn": {
+        "name": "CHI BURN",
+        "desc": "DRAWBACK: LEAVES DA USER WIT CHI BURN. CHEAPER TA CAST!"
+      },
+      "selfUnbalanced": {
+        "name": "OVERREACH",
+        "desc": "DRAWBACK: LEAVES DA USER UNBALANCED. CHEAPER TA CAST!"
+      },
+      "selfWinded": {
+        "name": "ALL OUT",
+        "desc": "DRAWBACK: LEAVES DA USER WINDED. CHEAPER TA CAST!"
+      },
+      "selfVulnerable": {
+        "name": "OPEN GUARD",
+        "desc": "DRAWBACK: LEAVES DA USER VULNERABLE. CHEAPER TA CAST!"
+      },
+      "drainGentle": {
+        "name": "THIN DRAW",
+        "desc": "A DRAIN RETURNS ONLY HALF OF WHAT IT TAKES. CHEAPER!"
+      },
+      "drainDeep": {
+        "name": "DEEP DRAW",
+        "desc": "A DRAIN RETURNS HALF AGAIN WHAT IT TAKES!"
+      },
+      "manaSap": {
+        "name": "MANA SAP",
+        "desc": "TAKES MP WORTH 30% OF DA DAMAGE AN' GIVES IT TA DA USER!"
+      },
+      "stackChi": {
+        "name": "GATHER CHI",
+        "desc": "BUILDS A CHI STACK ON EVERY USE, UP TA 5!"
+      },
+      "stackFaith": {
+        "name": "GATHER FAITH",
+        "desc": "BUILDS A FAITH STACK ON EVERY USE, UP TA 5!"
+      },
+      "soulsOnKill": {
+        "name": "REAP SOULS",
+        "desc": "GAINS A SOUL STACK FOR EVERY FOE IT FELLS, UP TA 5!"
+      },
+      "aimHead": {
+        "name": "GO FOR DA HEAD",
+        "desc": "AIMS FOR DA HEAD."
+      },
+      "aimArm": {
+        "name": "GO FOR DA ARM",
+        "desc": "AIMS FOR DA HAND OR DA ARM!"
+      },
+      "aimLeg": {
+        "name": "GO FOR DA LEGS",
+        "desc": "AIMS FOR DA LEGS."
+      },
+      "aimable": {
+        "name": "FOLLOW DA AIM",
+        "desc": "GOES WHERE DA USER'S AIM POINTS!"
+      },
+      "ammo2": {
+        "name": "DOUBLE TAP",
+        "desc": "SPENDS 2 ROUNDS. A GUN'S BURST!"
+      },
+      "ammo4": {
+        "name": "BURST",
+        "desc": "SPENDS 4 ROUNDS. A GUN'S BURST!"
+      },
+      "ammoAll": {
+        "name": "MAG DUMP",
+        "desc": "EMPTIES DA MAGAZINE; HITS SCALE WIT DA ROUNDS SPENT!"
+      },
+      "reload": {
+        "name": "RELOAD",
+        "desc": "REFILLS DA MAGAZINE. NEEDS AN EMPTY STANCE ON DA USER!"
+      },
+      "bulletHell": {
+        "name": "DODGE PHASE",
+        "desc": "OPENS A DODGE PHASE FLOWN BY DA USER. ELSEWHERE A PLAIN HIT!"
+      },
+      "fire": {
+        "name": "KINDLIN'",
+        "desc": "FIRE DAMAGE. CHEAPEST ELEMENT!"
+      },
+      "ice": {
+        "name": "RIME",
+        "desc": "ICE DAMAGE. SLIGHTLY WEAKER DEN FIRE, MORE STABLE!"
+      },
+      "thunder": {
+        "name": "ARC",
+        "desc": "THUNDER DAMAGE DAT CUTS THROUGH PART OF DA GUARD!"
+      },
+      "water": {
+        "name": "TORRENT",
+        "desc": "WATER DAMAGE. CHEAP AN' BLUNT!"
+      },
+      "stone": {
+        "name": "SHARD",
+        "desc": "PETRO DAMAGE. HEAVY AN' HARD TA RESIST!"
+      },
+      "gale": {
+        "name": "DRAUGHT",
+        "desc": "WIND DAMAGE. LIGHT AN' CHEAP!"
+      },
+      "sacred": {
+        "name": "HALO",
+        "desc": "SACRED DAMAGE. MOST DEFENCES BARELY REDUCE IT!"
+      },
+      "cursed": {
+        "name": "BLIGHT",
+        "desc": "CURSED DAMAGE. DA STRONGEST CORE!"
+      },
+      "mend": {
+        "name": "SUTURE",
+        "desc": "HEALS HP OFF DA CASTER'S OWN LEARNIN'!"
+      },
+      "etherFlow": {
+        "name": "CONDUIT",
+        "desc": "GIVES MP BACK TA WHOEVER IT LANDS ON!"
+      },
+      "siphon": {
+        "name": "LEECH",
+        "desc": "DAMAGE DAT RETURNS AS HP TA DA CASTER!"
+      },
+      "mindBurn": {
+        "name": "STATIC",
+        "desc": "BURNS MP OUT OF DA TARGET INSTEAD OF BLOOD!"
+      },
+      "ward": {
+        "name": "EMPTY FRAME",
+        "desc": "NO DAMAGE. A BASE FOR RIDERS!"
+      },
+      "strike": {
+        "name": "STRIKE",
+        "desc": "A PLAIN PHYSICAL ATTACK."
+      },
+      "cleave": {
+        "name": "CLEAVE",
+        "desc": "A HEAVIER HIT. FULL DEFENCE APPLIES!"
+      },
+      "thrust": {
+        "name": "THRUST",
+        "desc": "IGNORES MOST OF DA DEFENCE!"
+      },
+      "brawl": {
+        "name": "GRAPPLE",
+        "desc": "A BASIC CLOSE-RANGE ATTACK!"
+      },
+      "marksman": {
+        "name": "AIMED SHOT",
+        "desc": "A SHOT DAT NO CAN BE EVADED!"
+      },
+      "venomEdge": {
+        "name": "FOUL EDGE",
+        "desc": "CURSED PHYSICAL DAMAGE."
+      },
+      "bandage": {
+        "name": "FIELD DRESSIN'",
+        "desc": "HEALS HP WITOUT MAGIC."
+      },
+      "secondWind": {
+        "name": "SECOND WIND",
+        "desc": "DAMAGE DAT HEALS DA USER."
+      },
+      "rally": {
+        "name": "EMPTY STANCE",
+        "desc": "NO DAMAGE. A BASE FOR RIDERS!"
+      },
+      "focused": {
+        "name": "FOCUSED",
+        "desc": "+25% POWER."
+      },
+      "potent": {
+        "name": "POTENT",
+        "desc": "+50% POWER. MUCH MORE COMPLEX!"
+      },
+      "ruinous": {
+        "name": "RUINOUS",
+        "desc": "DOUBLE POWER. NEEDS A HIGH STAT!"
+      },
+      "oneEnemy": {
+        "name": "ONE BAD 'UN",
+        "desc": "ONE BAD 'UN."
+      },
+      "twoRandom": {
+        "name": "TWO AT RANDOM",
+        "desc": "HITS TWO RANDOM TARGETS."
+      },
+      "threeRandom": {
+        "name": "THREE AT RANDOM",
+        "desc": "HITS THREE RANDOM TARGETS!"
+      },
+      "allEnemies": {
+        "name": "ALL BAD 'UNS",
+        "desc": "ALL BAD 'UNS."
+      },
+      "oneAlly": {
+        "name": "ONE ALLY",
+        "desc": "ONE ALLY."
+      },
+      "allAllies": {
+        "name": "ALL ALLIES",
+        "desc": "DA WHOLE PARTY."
+      },
+      "theUser": {
+        "name": "DA WRITER",
+        "desc": "YOURSELF ONLY. FREE."
+      },
+      "everyone": {
+        "name": "EVERYONE",
+        "desc": "ALL ALLIES AN' BAD 'UNS."
+      },
+      "poison": {
+        "name": "VENOM",
+        "desc": "OFTEN LEAVES DA TARGET POISONED!"
+      },
+      "blind": {
+        "name": "CINDERS",
+        "desc": "OFTEN BLINDS DA TARGET."
+      },
+      "silence": {
+        "name": "GAG",
+        "desc": "SOMETIMES SILENCES DA TARGET!"
+      },
+      "confusion": {
+        "name": "MUDDLE",
+        "desc": "SOMETIMES CONFUSES DA TARGET!"
+      },
+      "sleep": {
+        "name": "LULLABY",
+        "desc": "SOMETIMES PUTS DA TARGET TA SLEEP!"
+      },
+      "freeze": {
+        "name": "HOARFROST",
+        "desc": "SOMETIMES FREEZES DA TARGET!"
+      },
+      "paralysis": {
+        "name": "LOCKIN' NERVE",
+        "desc": "SOMETIMES PARALYSES DA TARGET!"
+      },
+      "stun": {
+        "name": "CONCUSSION",
+        "desc": "OFTEN STUNS DA TARGET."
+      },
+      "deathMark": {
+        "name": "DEATH MARK",
+        "desc": "RARELY MARKS DA TARGET FOR DEATH. EXPENSIVE!"
+      },
+      "provoke": {
+        "name": "INSULT",
+        "desc": "ALMOST ALWAYS PROVOKES DA TARGET!"
+      },
+      "sapAtk": {
+        "name": "SAP STRENGTH",
+        "desc": "WEAKENS DA TARGET'S ATTACK!"
+      },
+      "sapDef": {
+        "name": "SAP GUARD",
+        "desc": "WEAKENS DA TARGET'S DEFENCE!"
+      },
+      "sapMat": {
+        "name": "SAP MIND",
+        "desc": "WEAKENS DA TARGET'S MAGIC!"
+      },
+      "sapAgi": {
+        "name": "SAP STEP",
+        "desc": "WEAKENS DA TARGET'S SPEED!"
+      },
+      "stripBuffs": {
+        "name": "UNWRITE",
+        "desc": "REMOVES DA TARGET'S BUFFS!"
+      },
+      "regenHP": {
+        "name": "SLOW KNIT",
+        "desc": "GRANTS HP REGENERATION."
+      },
+      "regenMP": {
+        "name": "SLOW SPRING",
+        "desc": "GRANTS MP REGENERATION."
+      },
+      "regenAP": {
+        "name": "SLOW BREATH",
+        "desc": "GRANTS AP REGENERATION."
+      },
+      "protect": {
+        "name": "AEGIS",
+        "desc": "PROTECTS DA TARGET."
+      },
+      "counter": {
+        "name": "RIPOSTE",
+        "desc": "GRANTS COUNTERATTACK."
+      },
+      "inspired": {
+        "name": "KIND WORD",
+        "desc": "INSPIRES DA TARGET."
+      },
+      "arcaneSurge": {
+        "name": "SURGE",
+        "desc": "GRANTS AN ARCANE SURGE."
+      },
+      "divineShield": {
+        "name": "DIVINE SHIELD",
+        "desc": "RARELY GRANTS A DIVINE SHIELD. MOST EXPENSIVE RIDER!"
+      },
+      "shadowVeil": {
+        "name": "SHADOW VEIL",
+        "desc": "VEILS DA TARGET."
+      },
+      "wardAilments": {
+        "name": "CHARM AGAINST HARM",
+        "desc": "BLOCKS STATUS AILMENTS."
+      },
+      "braceAtk": {
+        "name": "BRACE STRENGTH",
+        "desc": "RAISES DA TARGET'S ATTACK!"
+      },
+      "braceDef": {
+        "name": "BRACE GUARD",
+        "desc": "RAISES DA TARGET'S DEFENCE!"
+      },
+      "braceMat": {
+        "name": "BRACE MIND",
+        "desc": "RAISES DA TARGET'S MAGIC."
+      },
+      "braceAgi": {
+        "name": "BRACE STEP",
+        "desc": "RAISES DA TARGET'S SPEED."
+      },
+      "cleanse": {
+        "name": "CLEAN SLATE",
+        "desc": "CURES POISON, BLINDNESS, SILENCE AN' OTHER AILMENTS!"
+      },
+      "firstAid": {
+        "name": "SALVE",
+        "desc": "ALSO RESTORES SOME HP."
+      },
+      "etherSplash": {
+        "name": "DRAUGHT",
+        "desc": "ALSO RESTORES SOME MP."
+      },
+      "apSurge": {
+        "name": "ADRENALINE",
+        "desc": "GIVES DA TARGET AP."
+      },
+      "certain": {
+        "name": "UNERRIN'",
+        "desc": "NEVER MISSES."
+      },
+      "twinCast": {
+        "name": "TWINNED",
+        "desc": "LANDS TWICE."
+      },
+      "tripleCast": {
+        "name": "THRICE-WRITTEN",
+        "desc": "LANDS THREE TIMES. MOST COMPLEX REFINEMENT!"
+      },
+      "swift": {
+        "name": "SWIFT",
+        "desc": "GOES EARLIER IN DA ROUND."
+      },
+      "precise": {
+        "name": "PRECISE",
+        "desc": "NEVER FAILS ITS SUCCESS ROLL!"
+      },
+      "stable": {
+        "name": "STABLE",
+        "desc": "NO DAMAGE VARIANCE."
+      },
+      "wild": {
+        "name": "WILD",
+        "desc": "HIGH VARIANCE. CHEAP."
+      },
+      "keenEdge": {
+        "name": "KEEN",
+        "desc": "CAN LAND A CRITICAL."
+      },
+      "guardBreak": {
+        "name": "GUARD BREAK",
+        "desc": "HALVES DA DEFENCE COUNTED AGAINST IT!"
+      },
+      "efficient": {
+        "name": "EFFICIENT",
+        "desc": "LOWER CAST COST. ADDS NO COMPLEXITY!"
+      },
+      "menuCast": {
+        "name": "EVERYDAY",
+        "desc": "USABLE OUTSIDE BATTLE TOO!"
+      },
+      "apReturn": {
+        "name": "FEEDBACK",
+        "desc": "GIVES DA USER AP BACK ON USE!"
+      },
+      "freshMagazine": {
+        "name": "FRESH MAGAZINE",
+        "desc": "GRANTS FRESH MAGAZINE: DA NEXT SHOT LANDS SURER AN' CRITS MORE OFTEN!"
+      }
+    },
+    "group": {
+      "core": "CORE",
+      "element": "ELEMENT",
+      "power": "AMPLIFIER",
+      "shape": "SHAPE",
+      "rider": "RIDERS",
+      "refine": "REFINEMENTS",
+      "payoff": "PAYOFFS",
+      "mechanic": "MECHANICS"
+    },
+    "groupHint": {
+      "core": "WHAT IT IZ. ONE, REQUIRED!",
+      "element": "DA ELEMENT IT STRIKES WIT. ONE AT MOST!",
+      "power": "RAISES ITS POWER. ONE AT MOST!",
+      "shape": "WHO IT LANDS ON. ONE, REQUIRED!",
+      "rider": "STATES AN' EFFECTS IT LANDS. UP TA {max}!",
+      "refine": "CHANGES TA ITS FIELDS. UP TA {max}!",
+      "payoff": "CONDITIONS WRITTEN INTO ITS FORMULA. UP TA {max}!",
+      "mechanic": "BATTLE MECHANICS ON ITS NOTE. UP TA {max}!"
+    },
+    "why": {
+      "unknown": "UNKNOWN TAG.",
+      "bench": "NO FOR DIS BENCH.",
+      "have": "ALREADY ON DA BUILD.",
+      "full": "GROUP FULL: {max} AT MOST.",
+      "slot": "ONLY ONE OF ITS KIND: {other} IZ ON!",
+      "clash": "UNDONE BY {other}.",
+      "shape": "DA SHAPE POINTS AT DA WRONG SIDE!",
+      "strands": "{other} COULD NO LONGER REACH ITS TARGET!",
+      "side": "DA SHAPE NO CAN REACH ITS SIDE!",
+      "missing": "NEEDS A {group}.",
+      "needs": {
+        "damage": "NEEDS A DAMAGIN' CORE.",
+        "hpHit": "NEEDS AN HP DAMAGE CORE.",
+        "drain": "NEEDS A DRAININ' CORE.",
+        "oneFoe": "NEEDS DA ONE BAD 'UN SHAPE!",
+        "foeSide": "NEEDS A SHAPE AIMED AT BAD 'UNS!",
+        "notFoe": "NO ON A DAMAGIN' CORE.",
+        "userShape": "NEEDS DA WRITER SHAPE.",
+        "marksman": "GUNS ONLY: NEEDS DA AIMED SHOT CORE!",
+        "multiHit": "NEEDS TWINNED OR THRICE-WRITTEN!",
+        "emptyUser": "NEEDS DA EMPTY STANCE CORE ON DA WRITER!"
+      }
+    },
+    "auto": {
+      "comma": ", ",
+      "and": " AN' ",
+      "stateN": "STATE {id}",
+      "target": {
+        "oneEnemy": "ONE BAD 'UN",
+        "twoRandom": "TWO RANDOM BAD 'UNS",
+        "threeRandom": "THREE RANDOM BAD 'UNS",
+        "allEnemies": "ALL BAD 'UNS",
+        "oneAlly": "ONE ALLY",
+        "allAllies": "ALL ALLIES",
+        "theUser": "DA USER",
+        "everyone": "EVERYONE"
+      },
+      "weight": {
+        "minor": "MINOR ",
+        "light": "LIGHT ",
+        "normal": "",
+        "heavy": "HEAVY ",
+        "massive": "MASSIVE "
+      },
+      "el": {
+        "1": "PHYSICAL ",
+        "2": "FIRE ",
+        "3": "ICE ",
+        "4": "THUNDER ",
+        "5": "WATER ",
+        "6": "PETRO ",
+        "7": "WIND ",
+        "8": "SACRED ",
+        "9": "CURSED "
+      },
+      "times": {
+        "2": " TWICE",
+        "3": " THREE TIMES"
+      },
+      "lead": {
+        "1": "DEALS {weight}{element}DAMAGE TA {target}",
+        "2": "BURNS MP OUT OF {target}",
+        "3": "RESTORES HP TA {target}",
+        "4": "RESTORES MP TA {target}",
+        "5": "DRAINS {weight}{element}DAMAGE FROM {target} AS HP",
+        "6": "DRAINS MP FROM {target}",
+        "inflict": "INFLICTS {states} ON {target}",
+        "grant": "GRANTS {states} TA {target}",
+        "acts": "WORKS ON {target}",
+        "empty": "DOES NUTTIN' YET"
+      },
+      "inflicts": "INFLICTS {states}",
+      "grants": "GRANTS {states}",
+      "rider": {
+        "sapAtk": "LOWERS DEY STR",
+        "sapDef": "LOWERS DEY CON",
+        "sapMat": "LOWERS DEY INT",
+        "sapAgi": "LOWERS DEY DEX",
+        "stripBuffs": "STRIPS DEY BUFFS",
+        "braceAtk": "RAISES DEY STR",
+        "braceDef": "RAISES DEY CON",
+        "braceMat": "RAISES DEY INT",
+        "braceAgi": "RAISES DEY DEX",
+        "cleanse": "CURES DEY AILMENTS",
+        "firstAid": "RESTORES SOME HP",
+        "etherSplash": "RESTORES SOME MP",
+        "apSurge": "GIVES DEM AP"
+      },
+      "self": "LEAVES DA USER WIT {state}.",
+      "selfMaybe": "MAY LEAVE DA USER WIT {state}.",
+      "selfCost": "LEAVES DA USER WIT {state} AS ITS PRICE!",
+      "consume": "DOUBLED WIT {state} READY, WHICH IT SPENDS!",
+      "versus": "DOUBLED AGAINST A TARGET WIT {state}!",
+      "whileHeld": "HALF AGAIN AS STRONG WHILE DA USER HAB {state}!",
+      "spend": "GROWS WIT EVERY {stack} STACK, WHICH IT SPENDS!",
+      "stack": "BUILDS A {stack} STACK.",
+      "stackOnKill": "GAINS A {stack} STACK FOR EVERY FOE IT FELLS!",
+      "aim": "AIMS FOR DA {part}.",
+      "ammo": "SPENDS {n} ROUNDS.",
+      "ammoAll": "EMPTIES DA MAGAZINE.",
+      "part": {
+        "head": "HEAD",
+        "arm": "ARM",
+        "leg": "LEGS"
+      },
+      "tag": {
+        "execute": "DOUBLED AGAINST A FOE UNDER 30% HP!",
+        "desperation": "GROWS WIT DA HP DA USER HAB LOST!",
+        "drainGentle": "RETURNS HALF DA HP IT DRAINS!",
+        "drainDeep": "RETURNS HALF AGAIN DA HP IT DRAINS!",
+        "manaSap": "SAPS MP WORTH 30% OF DA DAMAGE!",
+        "aimable": "FOLLOWS DA USER'S AIM.",
+        "reload": "RELOADS DA GUN.",
+        "bulletHell": "OPENS A DODGE PHASE FLOWN BY DA USER!",
+        "certain": "NEVER MISSES.",
+        "keenEdge": "CAN CRIT.",
+        "menuCast": "USABLE OUTSIDE BATTLE.",
+        "guardBreak": "HALVES DA DEFENCE AGAINST IT!",
+        "apReturn": "GIVES DA USER AP BACK."
+      },
+      "first": "STRIKES FIRST.",
+      "lands": "LANDS {pct}% OF DA TIME.",
+      "stackName": {
+        "chi": "CHI",
+        "faith": "FAITH",
+        "souls": "SOUL"
+      }
+    },
+    "catalogue": "ADD TAG",
+    "addChip": "+ ADD",
+    "swapChip": "SWAP",
+    "addHint": "OPEN DA CATALOGUE OF {group} TAGS!",
+    "chipSwap": "OK TA SWAP IT.",
+    "chipRemove": "OK TA TAKE IT OFF.",
+    "tagCost": "{kp} KP, COMPLEXITY {cx}",
+    "autoWritten": "WRITTEN FROM ITS TAGS",
+    "powerLabel": "POWER / PRICE BUYS",
+    "offCurve": "SUPPORT",
+    "tagCount": "TAGS",
+    "dropped": "TAKEN OFF: {tags}.",
+    "fuse": {
+      "keep": "KEPT TAGS",
+      "keepNote": "PICK WHICH TAGS DA FUSED ENTRY KEEPS. GREYED TAGS DO NO FIT WIT DA REST!",
+      "lost": "{n} PARTS OF DA PARENTS HAB NO TAG AN' IZ LOST!",
+      "becomes": "BECOMES A {kind}",
+      "none": "NO TAG COULD BE READ OFF DEZE TWO!"
     }
   },
   "fusionRollAction": "ARCANE FUSION: {parts}",
@@ -648,8 +1139,8 @@
     "buttonArmor": "ENCHANT EQUIPMENT",
     "titleWeapon": "WEAPON ENCHANTIN'",
     "titleArmor": "EQUIPMENT ENCHANTIN'",
-    "blurbWeapon": "DA WEAPON CASTS DA BOUND SPELL FOR FREE EVERY TIME IT LANDS A CRITICAL HIT. ONLY ATTACK AN' STATUS SPELLS CAN BE BOUND!",
-    "blurbArmor": "ONCE PER BATTLE, WHEN DA WEARER TAKES A CRITICAL HIT, DIS PIECE CASTS DA BOUND SPELL FOR FREE. ONLY PROTECTIVE SPELLS CAN BE BOUND!",
+    "blurbWeapon": "BIND A SPELL, GIVE DA WEAPON SPECIAL PROPERTIES, OR BOTH. A BOUND SPELL IZ CAST FOR FREE ON EVERY CRITICAL HIT; ATTACK AN' STATUS SPELLS ONLY!",
+    "blurbArmor": "BIND A SPELL, GIVE DA PIECE SPECIAL PROPERTIES, OR BOTH. A BOUND SPELL IZ CAST FOR FREE WHEN DA WEARER TAKES A CRITICAL HIT, ONCE PER BATTLE; PROTECTIVE SPELLS ONLY!",
     "back": "GO BACK",
     "chooseGear": "CHOOSE A PIECE",
     "boundSoFar": "BOUND SO FAR",
@@ -660,49 +1151,105 @@
     "unmake": "UNMAKE",
     "bound": "{item} IZ BOUND.",
     "lostSpell": "SPELL LOST",
-    "noGear": "NOTHIN' HERE CAN TAKE A BINDIN'!",
-    "noneBound": "NOTHIN' BOUND YET",
-    "noSpells": "NOBODY IN DA PARTY KNOWS A SPELL DIS BENCH WILL TAKE!",
+    "noGear": "NO ITEMS CAN BE ENCHANTED!",
+    "noneBound": "NUTTIN' BOUND YET",
+    "noSpells": "NO PARTY MEMBER KNOWS A VALID SPELL!",
     "weaponName": "{base} OF {spell}",
     "armorName": "{base} OF {spell}",
-    "weaponDesc": "A UNIQUE ARTIFACT. IT CASTS {spell} ON EVERY CRITICAL HIT IT LANDS, AN' COSTS NO MP TA DO IT!",
-    "armorDesc": "A UNIQUE ARTIFACT. IT ANSWERS DA FIRST CRITICAL HIT YOU TAKE EACH BATTLE WIT {spell}, AN' COSTS NO MP TA DO IT!",
+    "weaponDesc": "UNIQUE ARTIFACT. CASTS {spell} FOR FREE ON EVERY CRITICAL HIT!",
+    "armorDesc": "UNIQUE ARTIFACT. CASTS {spell} FOR FREE ON DA FIRST CRITICAL HIT YOU TAKE EACH BATTLE!",
     "log": {
       "fires": "DA BINDIN' ANSWERS: {spell}!",
       "burned": "{book} BURNS AWAY."
     },
     "buttonBook": "ENCHANT BOOK",
     "titleBook": "BOOK ENCHANTIN'",
-    "blurbBook": "READIN' DA BOOK ALOUD CASTS DA BOUND SPELL FOR FREE, IN BATTLE OR ON DA MAP. ANY SPELL CAN BE BOUND, BUT EVERY READIN' MAY BURN DA BOOK!",
-    "bookDesc": "A UNIQUE ARTIFACT. READ IT OUT TA CAST {spell} FOR NOTHIN'. EVERY READIN' MAY BURN IT!",
+    "blurbBook": "READ DA BOOK TA CAST DA BOUND SPELL FOR FREE, IN BATTLE OR ON DA MAP. ANY SPELL WORKS, BUT EACH READIN' MAY BURN IT!",
+    "bookDesc": "UNIQUE ARTIFACT. READ IT TA CAST {spell} FOR FREE. MAY BURN ON EACH READIN'!",
     "bookFallbackName": "BOUND GRIMORIE OF {spell}",
     "rename": "RENAME",
-    "recover": "COVER"
+    "recover": "COVER",
+    "weaponNameTags": "{base} OF {tag}",
+    "armorNameTags": "{base} OF {tag}",
+    "weaponDescTags": "UNIQUE ARTIFACT. ENCHANTED WIT {tags}!",
+    "armorDescTags": "UNIQUE ARTIFACT. ENCHANTED WIT {tags}!",
+    "weaponDescBoth": "UNIQUE ARTIFACT. ENCHANTED WIT {tags}, AN' CASTS {spell} FOR FREE ON EVERY CRITICAL HIT!",
+    "armorDescBoth": "UNIQUE ARTIFACT. ENCHANTED WIT {tags}, AN' CASTS {spell} FOR FREE ON DA FIRST CRITICAL HIT YOU TAKE EACH BATTLE!",
+    "formTitle": "ENCHANTMENT",
+    "spellRow": "BOUND SPELL",
+    "noSpell": "NO SPELL",
+    "pickSpell": "CHOOSE A SPELL TA BIND",
+    "spellOptional": "OPTIONAL: A PIECE MAY CARRY SPECIAL PROPERTIES ALONE!",
+    "ownSkill": "DIS PIECE ALREADY CASTS A SKILL OF ITS OWN!",
+    "addChip": "+ ADD",
+    "addHint": "ADD A PROPERTY TA DA {group} ROW!",
+    "chipInfo": "{line} ({kp} KP). PRESS TA TAKE IT OFF!",
+    "groupHint": "PRESS + TA ADD A PROPERTY!",
+    "pick": "ADD A SPECIAL PROPERTY",
+    "tagCost": "COSTS {kp} KP",
+    "spellPrice": "SPELL",
+    "tagsPrice": "PROPERTIES",
+    "price": "PRICE",
+    "complexity": "COMPLEXITY",
+    "enchantIt": "ENCHANT",
+    "dropped": "TAKEN OFF: {tags}.",
+    "blocked": {
+      "noBase": "DIS PIECE NO CAN BE ENCHANTED!",
+      "empty": "BIND A SPELL OR ADD AT LEAST ONE PROPERTY!",
+      "spell": "DAT SPELL DOES NO BELONG ON DIS BENCH!",
+      "ownSkill": "DIS PIECE ALREADY CASTS A SKILL OF ITS OWN: PROPERTIES ONLY!",
+      "tags": "NO ON DIS PIECE: {why}",
+      "knowledge": "NO ENOUGH KNOWLEDGE: {cost} KP NEEDED!"
+    },
+    "gear": {
+      "line": "{name}: {effect}",
+      "and": ", ",
+      "attackElement": "STRIKES WIT {element}",
+      "resistElement": "TAKES {pct}% LESS {element} DAMAGE",
+      "attackState": "{pct}% CHANCE TA INFLICT {state} ON A HIT",
+      "resistState": "IMMUNE TA {state}",
+      "speed": "ACTS EARLIER IN DA ROUND (+{value})",
+      "extraHit": "+{n} STRIKE PER ATTACK",
+      "paramRate": "+{pct}% {stat}",
+      "hit": "+{pct}% ACCURACY",
+      "crit": "+{pct}% CRITICAL CHANCE",
+      "damageType": "BLOWS DEAL {type} DAMAGE",
+      "onCrit": "CASTS {spell} ON EVERY CRITICAL HIT",
+      "onCritTaken": "CASTS {spell} WHEN DA WEARER TAKES A CRITICAL HIT, ONCE PER BATTLE",
+      "damageTypes": {
+        "Cutting": "CUTTIN'",
+        "Blunt": "BLUNT",
+        "Piercing": "PIERCIN'"
+      },
+      "regenHP": "REGAINS {pct}% HP EACH TURN",
+      "regenMP": "REGAINS {pct}% MP EACH TURN",
+      "regenAP": "REGAINS {pct}% AP EACH TURN"
+    }
   },
   "write": {
     "buttonSkillBook": "WRITE SKILL BOOK",
     "buttonGrimorie": "WRITE GRIMORIE",
     "titleSkillBook": "WRITIN' A SKILL BOOK",
     "titleGrimorie": "WRITIN' A GRIMORIE",
-    "blurbSkillBook": "COPY SKILLS DA PARTY KNOWS INTO A BOOK. EACH PAGE TEACHES ONE SKILL TA WHOEVER IT IZ READ TA; DA BOOK LASTS UNTIL EVERY PAGE HAB BEEN READ!",
-    "blurbGrimorie": "COPY SPELLS DA PARTY KNOWS INTO A GRIMORIE. EACH PAGE TEACHES ONE SPELL TA WHOEVER IT IZ READ TA; DA BOOK LASTS UNTIL EVERY PAGE HAB BEEN READ!",
+    "blurbSkillBook": "COPY KNOWN SKILLS INTO A BOOK. EACH PAGE TEACHES ONE SKILL. DA BOOK IZ USED UP ONCE EVERY PAGE IZ READ!",
+    "blurbGrimorie": "COPY KNOWN SPELLS INTO A GRIMORIE. EACH PAGE TEACHES ONE SPELL. DA BOOK IZ USED UP ONCE EVERY PAGE IZ READ!",
     "sourceSkillBook": "ABILITIES DA PARTY KNOWS",
     "sourceGrimorie": "SPELLS DA PARTY KNOWS",
     "back": "GO BACK",
     "knowledge": "KNOWLEDGE",
     "chosenPages": "PAGES CHOSEN ({count}/{max})",
     "nothingChosen": "NO PAGES CHOSEN YET",
-    "nothingToCopy": "NOBODY IN DA PARTY KNOWS ANYTHIN' DIS BENCH WILL COPY!",
+    "nothingToCopy": "NUTTIN' TA COPY.",
     "writeIt": "WRITE IT",
     "writtenSoFar": "WRITTEN SO FAR",
-    "noneWritten": "NOTHIN' WRITTEN YET",
+    "noneWritten": "NUTTIN' WRITTEN YET",
     "pages": "{count} PAGES",
     "rename": "RENAME",
     "recover": "COVER",
     "unmake": "UNMAKE",
     "written": "{book} IZ WRITTEN.",
-    "skillBookDesc": "A LOUDNESS WRITTEN BY HAND, HOLDIN' {count} ABILITIES. EVERY ONE OF DEM MUST BE READ OUT BEFORE IT CLOSES!",
-    "grimorieDesc": "A LOUDNESS WRITTEN BY HAND, HOLDIN' {count} SPELLS. EVERY ONE OF DEM MUST BE READ OUT BEFORE IT CLOSES!",
+    "skillBookDesc": "HANDWRITTEN BOOK WIT {count} ABILITIES. USED UP ONCE EVERY PAGE IZ READ!",
+    "grimorieDesc": "HANDWRITTEN BOOK WIT {count} SPELLS. USED UP ONCE EVERY PAGE IZ READ!",
     "skillBookFallbackName": "NOTEBOOK OF {first}",
     "grimorieFallbackName": "GRIMORIE OF {first}",
     "statPages": "PAGES",
@@ -735,42 +1282,42 @@
     "not": "NO",
     "remove": "REMOVE",
     "potency": "POWER {pct}%.",
-    "once": "FIRES ONCE PER BATTLE, OR ONCE A DAY OUT IN DA WORLD!",
+    "once": "ONCE PER BATTLE, OR ONCE A DAY OUTSIDE BATTLE!",
     "finalize": "FINALIZE ({kp} KP)",
     "finalized": "FINALIZED: {power}",
-    "noneFinalized": "NOTHIN' FINALIZED YET.",
-    "alwaysFires": "A FINALIZED EXPRESSION ALWAYS FIRES AS FINALIZED, EVEN IF DA STATS IT ASKED FOR IZ LOST!",
+    "noneFinalized": "NUTTIN' FINALIZED YET.",
+    "alwaysFires": "A FINALIZED EXPRESSION KEEPS WORKIN' EVEN IF STATS DROP!",
     "finalizedToast": "{name}'S EXPRESSION IZ FINALIZED!",
     "needs": "NEEDS {stat} {req}.",
     "needsBranch": "SET A BRANCH FIRST.",
-    "noChoices": "DERE IZ NOTHIN' TA BIND DIS TA YET!",
+    "noChoices": "DERE IZ NUTTIN' TA BIND DIS TA YET!",
     "bindTo": "BIND {name} TA:",
     "refusal": {
       "incomplete": "PICK A TRIGGER AN' AT LEAST ONE DEN EFFECT!",
-      "beyondStats": "A PIECE OF DA DRAFT IZ BEYOND DIS CHARACTER'S STATS NOW: TAKE IT OFF!",
+      "beyondStats": "A PIECE NEEDS HIGHER STATS. REMOVE IT!",
       "unchanged": "DIS IZ ALREADY DA FINALIZED POWER!",
       "kp": "NO ENOUGH KNOWLEDGE: {kp} KP NEEDED!",
-      "locked": "DIS CHARACTER'S STATS DO NO REACH DAT PIECE!",
+      "locked": "STATS TOO LOW FOR DIS PIECE!",
       "needsBranch": "SET A BRANCH FIRST.",
       "needsArg": "CHOOSE WHAT TA BIND IT TA!",
       "missing": "DAT PIECE NO CAN GO DERE.",
-      "neverFires": "DEZE LIMITATIONS RULE EACH OTHER OUT, OR RULE OUT DA TRIGGER: DA POWER COULD NEVER BE USED!"
+      "neverFires": "DEZE LIMITATIONS CONFLICT WIT EACH OTHER OR DA TRIGGER. DA POWER COULD NEVER FIRE!"
     },
     "limitations": "LIMITATIONS",
-    "limitNone": "NO LIMITATIONS: DA POWER COSTS ITS FULL PRICE AN' ASKS ITS FULL REQUIREMENTS!",
-    "limitSummary": "BOUND BY {n} VOW POINTS: IT COSTS {pct}% LESS KP AN' EVERY STAT REQUIREMENT IZ {leeway} LOWER!",
+    "limitNone": "NO LIMITATIONS: FULL KP COST AN' FULL REQUIREMENTS!",
+    "limitSummary": "{n} VOW POINTS: -{pct}% KP, STAT REQUIREMENTS -{leeway}!",
     "limitWeight": "WEIGHT {n}",
     "limitGives": "-{pct}% KP",
     "limitWeightLabel": "WEIGHT",
     "limitGivesLabel": "GIVES BACK",
-    "limitGivesValue": "{pct}% OFF DA KP, EVERY REQUIREMENT {leeway} LOWER",
+    "limitGivesValue": "-{pct}% KP, REQUIREMENTS -{leeway}",
     "reqLowered": "{stat} {have}/{req} (WAZ {base})"
   },
   "hexorcize": {
     "button": "HEXORCIZE",
     "title": "HEXORCIZIN'",
     "detailTitle": "DA PIECE",
-    "blurb": "BREAK DOWN A MAGICAL WEAPON OR PIECE OF EQUIPMENT TA GET KNOWLEDGE (KP) BACK. EQUIPPED PIECES MUST BE TAKEN OFF FIRST!",
+    "blurb": "BREAK DOWN MAGICAL GEAR FOR KNOWLEDGE (KP). UNEQUIP IT FIRST!",
     "back": "GO BACK",
     "one": "UNMAKE",
     "all": "UNMAKE ALL",
@@ -779,15 +1326,15 @@
     "bindingHeld": "BINDIN'",
     "knowledge": "KNOWLEDGE",
     "pickPiece": "CHOOSE A PIECE ON DA LEFT!",
-    "totalHere": "EVERYTHIN' HERE IZ WORTH {kp} KP!",
-    "nothing": "NOTHIN' MAGICAL IZ BEING CARRIED!",
+    "totalHere": "TOTAL: {kp} KP.",
+    "nothing": "NO MAGICAL GEAR IN LOOT SACK!",
     "unmade": "{item} IZ UNMADE FOR {kp} KP."
   },
   "lobotomagic": {
     "button": "LOBOTOMAGIC",
     "title": "LOBOTOMAGIC",
     "detailTitle": "{name}'S MIND",
-    "blurb": "CUT A LEARNED SKILL OR SPELL OUT OF A PARTY MEMBER'S MIND AN' GET BACK {pct}% OF WHAT TEACHIN' IT WOULD COST IN KNOWLEDGE (KP). SKILLS GRANTED BY TRAITS OR GEAR NO CAN BE CUT!",
+    "blurb": "REMOVE A LEARNED SKILL OR SPELL AN' REFUND {pct}% OF ITS KP COST. SKILLS FROM TRAITS OR GEAR NO CAN BE REMOVED!",
     "back": "GO BACK",
     "forget": "FORGET",
     "confirm": "SURE?",
@@ -795,8 +1342,8 @@
     "relearn": "TA RELEARN",
     "school": "SCHOOL",
     "pickSkill": "CHOOSE A SKILL ON DA LEFT!",
-    "nothing": "NOTHIN' LEARNED CAN BE CUT FROM DIS MIND!",
-    "warning": "{name} WILL FORGET IT FOR GOOD. LEARNIN' IT AGAIN COSTS DA FULL PRICE!",
+    "nothing": "NO REMOVABLE SKILLS.",
+    "warning": "{name} FORGETS IT FOR GOOD. RELEARNIN' COSTS FULL PRICE!",
     "cut": "{name} FORGETS {skill} FOR {kp} KP."
   },
   "tips": {
@@ -853,7 +1400,7 @@
         },
         "detail": {
           "name": "SKILL CARD",
-          "text": "DA SELECTED SKILL'S COST, EFFECT AN' DESCRIPTION. FROM HERE YOU CAN LEARN IT, PREVIEW IT, OR CHOOSE WHETHER IT IZ CARRIED INTO BATTLE!"
+          "text": "DA SELECTED SKILL'S COST, EFFECT AN' DESCRIPTION. LEARN IT, PREVIEW IT, OR ADD IT TA DA BATTLE LOADOUT!"
         },
         "member": {
           "name": "COMPANION TABS",
@@ -886,7 +1433,7 @@
         },
         "fused": {
           "name": "FUSED SPELLS",
-          "text": "EVERYTHIN' FUSED SO FAR. RENAME, SPLIT OR DELETE ONE FROM HERE!"
+          "text": "EVERYTINK FUSED SO FAR. RENAME, SPLIT OR DELETE ONE FROM HERE!"
         },
         "help": {
           "name": "? HELP",
@@ -915,7 +1462,7 @@
         },
         "yours": {
           "name": "YA SPELLS AN' SKILLS",
-          "text": "EVERYTHIN' WRITTEN HERE SO FAR. EDIT OR DISCARD ONE FROM DA LIST!"
+          "text": "EVERYTINK WRITTEN HERE SO FAR. EDIT OR DISCARD ONE FROM DA LIST!"
         },
         "help": {
           "name": "? HELP",
@@ -961,7 +1508,7 @@
         },
         "write": {
           "name": "WRITE IT",
-          "text": "WRITES DA BOOK. IT CAN BE READ UNTIL EVERY PAGE HAB BEEN READ ONCE!"
+          "text": "WRITES DA BOOK. EACH PAGE CAN BE READ ONCE!"
         },
         "written": {
           "name": "WRITTEN SO FAR",
@@ -1003,7 +1550,7 @@
         },
         "refund": {
           "name": "GIVES BACK",
-          "text": "DA KP EACH SKILL GIVES BACK WHEN FORGOTTEN, PART OF WHAT TEACHIN' IT WOULD COST!"
+          "text": "KP REFUNDED WHEN DA SKILL IZ FORGOTTEN!"
         },
         "forget": {
           "name": "FORGET",
@@ -1049,11 +1596,11 @@
       "items": {
         "pieces": {
           "name": "PIECES",
-          "text": "EACH TAB HOLDS ONE KIND OF PIECE: DA TRIGGER DAT SETS DA POWER OFF, DA CONDITIONS IT WAITS FOR, WHAT IT DOES, DA SHAPE IT TAKES AN' DA LIMITATIONS IT IZ BOUND BY. CONFIRM A CARD TA FIT IT!"
+          "text": "EACH TAB HOLDS ONE KIND OF PIECE: TRIGGER, CONDITIONS, EFFECTS, FORM AN' LIMITATIONS. CONFIRM A CARD TA FIT IT!"
         },
         "limits": {
           "name": "LIMITATIONS",
-          "text": "VOWS DA POWER MUST KEEP: A DAY IT NO CAN BE USED, DA ONLY KIND OF CREATURE IT WORKS ON, A PRICE PAID EACH TIME. DA MORE IT IZ BOUND, DA LESS IT COSTS, AN' DA FURTHER IT CAN REACH BEYOND DIS CHARACTER'S STATS!"
+          "text": "RESTRICTIONS ON DA POWER, LIKE A DAY IT NO CAN BE USED OR A COST PER USE. MORE LIMITATIONS LOWER DA KP COST AN' STAT REQUIREMENTS!"
         },
         "blueprint": {
           "name": "BLUEPRINT",
@@ -1061,7 +1608,7 @@
         },
         "finalize": {
           "name": "FINALIZE",
-          "text": "SPENDS KNOWLEDGE ON EVERY NEW PIECE AN' MAKES DA POWER REAL. A FINALIZED POWER KEEPS WORKIN' EVEN IF DA STATS IT ASKED FOR IZ LOST!"
+          "text": "SPENDS KP ON NEW PIECES AN' ACTIVATES DA POWER. IT KEEPS WORKIN' EVEN IF STATS DROP!"
         },
         "help": {
           "name": "? HELP",

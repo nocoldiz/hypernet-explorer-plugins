@@ -435,7 +435,7 @@
           <div class="left-page">
             <div class="page-header-bar">
               <button class="back-button">${T.back}</button>
-              <h2 class="title">${shopName}</h2>
+              <h2 class="title">${_esc(shopName)}</h2>
               ${roleBadge}
             </div>
             <div class="backpack-tabs">${tabs}</div>
@@ -779,9 +779,9 @@
           (sum, e) => sum + (shop.menuPrices[e.row.itemId] || 0) * e.row.amount, 0);
         const rows = onSale.length
           ? onSale.map(e => `
-              <div class="inspect-spec-row focusable" tabindex="0"
+              <div class="inspect-spec-row sm-takeback-row focusable" tabindex="0"
                    onclick="SceneManager._scene?.takeBackItem?.(${e.row.itemId})"
-                   style="cursor: pointer;" title="${T('ShopManagement.shelves.takeBack')}">
+                   title="${T('ShopManagement.shelves.takeBack')}">
                 <span class="inspect-spec-label">${_itemName(e.item)}</span>
                 <span class="inspect-spec-value">&times;${e.row.amount}</span>
               </div>`).join('')
@@ -791,7 +791,7 @@
         return `
           <div class="inspect-header">
             <div class="inspect-title-box">
-              <div class="inspect-name">${name}</div>
+              <div class="inspect-name">${_esc(name)}</div>
               <div class="inspect-rarity">${SM.formatEuroPrice(worth)}</div>
             </div>
           </div>
@@ -818,7 +818,7 @@
         return `
           <div class="inspect-header">
             <div class="inspect-title-box">
-              <div class="inspect-name">${name}</div>
+              <div class="inspect-name">${_esc(name)}</div>
               <div class="inspect-rarity">${SM.formatEuroPrice(shop.balance || 0)}</div>
             </div>
           </div>

@@ -10,13 +10,13 @@
   "cannotKeep": "YOU NO CAN KEEP ANIMALS HERE!",
   "noAnimalToSell": "NO ANIMAL HERE TA SELL.",
   "sold": "SOLD \\c[14]{animal}\\c[0] FOR €{amount}!",
-  "nothingToCollect": "NOTHIN' TA COLLECT YET.",
+  "nothingToCollect": "NUTTIN' TA COLLECT YET.",
   "youngAnimal": {
-    "one": "A YOUNG \\c[14]{animal}\\c[0]. FULLY GROWN IN ABOUT {count} DAY!",
-    "other": "A YOUNG \\c[14]{animal}\\c[0]. FULLY GROWN IN ABOUT {count} DAYS!"
+    "one": "A YOUNG \\c[14]{animal}\\c[0]. FULLY GROWN IN 'BOUT {count} DAY!",
+    "other": "A YOUNG \\c[14]{animal}\\c[0]. FULLY GROWN IN 'BOUT {count} DAYS!"
   },
   "pleased": "DA \\c[14]{animal}\\c[0] IZ PLEASED TA SEE YOU!",
-  "nothingReady": "DA \\c[14]{animal}\\c[0] HAB NOTHIN' READY YET!",
+  "nothingReady": "DA \\c[14]{animal}\\c[0] HAB NUTTIN' READY YET!",
   "company": "YOU SPEND A WHILE WIT DA \\c[14]{animal}\\c[0]. DA COMPANY DOES EVERYONE GOOD!",
   "age": {
     "years": {
@@ -42,7 +42,7 @@
     "hungry": "HUNGRY",
     "company": "COMPANY",
     "produce": "PRODUCE",
-    "producesNothing": "PRODUCES NOTHIN'",
+    "producesNothing": "PRODUCES NUTTIN'",
     "yield": "{min}-{max} EVERY {days}D",
     "ready": "READY",
     "readyIn": {
@@ -55,16 +55,19 @@
   "actionPet": "PET",
   "actionEmpathize": "EMPATHIZE",
   "actionCancel": "FORGET IT",
+  "actionFeed": "FEED",
+  "feedChoice": "{item} ×{qty}",
+  "nothingToFeed": "YOU HAB NUTTIN' DA \\c[14]{animal}\\c[0] WOULD EAT!",
   "petting": [
     "YOU CROUCH DOWN AN' SCRATCH DA {animal} BEHIND DA EARS!",
     "YOU RUN A HAND ALONG DA {animal}'S BACK AN' LET IT LEAN INTO YOU!",
-    "YOU STAND A WHILE WIT DA {animal}, SAYIN' NOTHIN' IN PARTICULAR!",
+    "YOU STAND A WHILE WIT DA {animal}, SAYIN' NUTTIN' IN PARTICULAR!",
     "YOU RUB DA {animal} UNDER DA CHIN UNTIL IT CLOSES ITS EYES!",
     "YOU PAT DA {animal} AN' IT DECIDES YOU IZ ALLOWED TA STAY!"
   ],
   "fed": "DA \\c[14]{animal}\\c[0] EATS OUT OF YA HAND.",
   "notHungry": "DA \\c[14]{animal}\\c[0] HAB HAB ENOUGH.",
-  "tooHungryToProduce": "DA \\c[14]{animal}\\c[0] IZ TOO HUNGRY TA GIVE ANYTHIN'!",
+  "tooHungryToProduce": "DA \\c[14]{animal}\\c[0] IZ TOO HUNGRY TA GIVE ANYTINK!",
   "farmerOf": "DA FARMER OF {place}",
   "owner": "OWNER",
   "wildAnimal": "WILD",
@@ -75,5 +78,6 @@
     "grownUp": "DA {animal} HAB GROWN UP.",
     "died": "YA {animal} AT {place} HAB DIED.",
     "born": "A YOUNG {animal} WAZ BORN AT {place}."
-  }
+  },
+  "wilderness": "WILDERNESS"
 }

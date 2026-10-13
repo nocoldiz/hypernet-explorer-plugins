@@ -654,7 +654,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: 'app-kanban-quest',
-            name: T('Kanban.appName'),
+            name: () => T('Kanban.appName'),
             icon: 186,
             launchFn: function() {
                 if (window.HypernetKanbanApp) {
@@ -1116,17 +1116,31 @@
               ${this._detailHTML(useIt)}`);
         }
 
+        // Opening or closing the sheet changes nothing on the board but which
+        // note wears the cursor, so only the sheet itself is put up or taken
+        // down: a long log is hundreds of notes, and rebuilding all four
+        // columns for it is what made the sheet slow to come and go.
         _openDetail(quest) {
             if (!quest) return;
             this._selectedQuest = quest;
             SoundManager.playOk();
-            this._refresh();
+            this._swapDetail();
         }
 
         _closeDetail() {
             this._selectedQuest = null;
             SoundManager.playCancel();
-            this._refresh();
+            this._swapDetail();
+        }
+
+        _swapDetail() {
+            if (!this._el) return;
+            if (!this._el.querySelector('#kb-columns')) { this._refresh(); return; }
+            const old = this._el.querySelector('#kb-detail-backdrop');
+            if (old) old.remove();
+            const html = this._detailHTML(ConfigManager.language === 'it');
+            if (html) this._el.insertAdjacentHTML('beforeend', html);
+            this._updateHighlight();
         }
 
         _updateHighlight() {

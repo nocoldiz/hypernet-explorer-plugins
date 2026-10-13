@@ -1478,449 +1478,242 @@
     // =========================================================================
     // The Omega Tower
     //
-    // Six world squares by six of black stone and gold going up nearly five
-    // kilometres. It is not a building the town planner could make - it is
-    // bigger than any town - and it is not terrain, so it is neither chunked
-    // nor streamed: it is built once, stood in the world, and drawn from
-    // wherever the party happens to be (see the scene's _updateOmegaTower,
-    // which is what makes it visible from the far side of the map).
+    // The spear Eris drove into the Earth in 1992, drawn the way the intro
+    // movie (StartinMovie.js) draws it: one tapering eight-sided shaft of dark
+    // stone run through with a grid of gold, lit windows scattered up its
+    // faces, a sheath of light round it, five rings standing off it that hold
+    // the dimensions together, and the celestial throne floating over its tip
+    // with a beacon burning in it. It is not a building the town planner could
+    // make and it is not terrain, so it is neither chunked nor streamed: it is
+    // built once, stood in the world, and drawn from wherever the party happens
+    // to be (see the scene's _updateOmegaTower, which is what makes it visible
+    // from the far side of the map).
     //
-    // THE SHAPE. Not a shaft: a HEAP. The tower is a stack of DECKS, and every
-    // deck is a whole art deco skyline in its own right - four to seven
-    // separate skyscrapers of different footprints and different heights,
-    // standing on a plate that is itself smaller and turned a few degrees off
-    // the one below it. The towers of a deck are kept out of the footprint of
-    // the deck above, so the tall ones push straight past its edge and stand
-    // clear against the sky: from below the whole thing reads as a city that
-    // kept being built on top of itself, not as a wedding cake.
+    // THE PROPORTIONS are the movie's, measured in its own unit: a shaft 900
+    // tall, 26 across the foot and 5 at the tip, the throne 40 over it. Here
+    // the shaft is a little stouter so its foot fills the plinth it stands on.
     //
-    // THE STYLE is 1930. Every shaft is fluted with gold piers running its
-    // full height, capped with a stepped ziggurat crown of two setbacks, banded
-    // in gold at every parapet, and friezed with a chevron of alternating gold
-    // blocks. Some towers carry a sunburst crest. The crown of the whole thing
-    // is a needle: stacked gold rings narrowing to a spike.
-    //
-    // THE GOLD BURNS AT NIGHT. All of it is one emissive material and the
+    // THE GOLD BURNS AT NIGHT. The shaft's grid is its emissive map and the
     // scene turns its intensity up as the light goes (setNightGlow, driven by
-    // the day factor), so at dusk the piers, the bands and the crest come up
-    // like a lit skyline and the tower is at its most visible exactly when
-    // there is least else to see by.
-    //
-    // It is seeded, so it is the same tower every time anybody comes back.
+    // the day factor), so at dusk the whole spear comes up lit and the tower is
+    // at its most visible exactly when there is least else to see by.
     // =========================================================================
     // Folders of a biome's furniture that are ground cover rather than things
     // in the way: you walk through grass and flowers, not round them.
     const PLANT_FOLDERS = /grass|flower|plant|weed|moss|lichen|fern|reed|clover|leaf|leaves|shrub|ivy|vine|crop|wheat|hay/i;
 
-    const OMEGA_BLACK = 0x111014;
-    const OMEGA_STONE = 0x1b1a21;   // the second stone, so the heap is not one mass
-    const OMEGA_GOLD  = 0xd9a441;
-    // What the gold is lit from within by at noon and at midnight. The scene
+    const OMEGA_HULL = 0x3a342c;    // the shaft's stone, under its gold grid
+    const OMEGA_GLOW = 0xffc060;    // what the grid and the windows burn with
+    const OMEGA_GOLD = 0xffd36a;    // the throne
+    // What the shaft is lit from within by at noon and at midnight. The scene
     // slides between the two every frame off its own day factor.
-    const OMEGA_GLOW_DAY   = 0.10;
-    const OMEGA_GLOW_NIGHT = 1.00;
+    const OMEGA_GLOW_DAY   = 0.2;
+    const OMEGA_GLOW_NIGHT = 1.0;
 
-    function omegaRnd(i) {
-        // Its own stream, and a fixed one: this is a landmark, not scenery.
-        const h = Math.sin(i * 127.1 + 311.7) * 43758.5453;
-        return h - Math.floor(h);
+    // The movie's own measurements, in its own unit.
+    const MOVIE_SHAFT_H = 900;
+    const MOVIE_FOOT_R = 26, MOVIE_TIP_R = 5;
+    const MOVIE_THRONE_UP = 40;
+    // How much of the tower's height is the shaft; the throne floats in the rest.
+    const SHAFT_FRAC = 0.9;
+    // How much stouter than the movie's spear this one is.
+    const OMEGA_STOUT = 1.4;
+    // Where up the shaft the five rings stand.
+    const OMEGA_RINGS = [0.18, 0.36, 0.55, 0.74, 0.9];
+
+    // The plan, as plain numbers, worked out once per size and kept so the
+    // geometry and anything that wants to measure the thing agree:
+    //   base   the footprint across        tip    the top of the shaft (the muzzle)
+    //   footR  the shaft's radius at foot  tipR   ...and at the tip
+    //   unit   one movie unit in tower units
+    //   rings  [{ y, r, tube }]            throneY where the throne floats
+    function omegaTowerPlan(span, height) {
+        const base = span * WORLD_TILE_SIZE;
+        const tip = height * SHAFT_FRAC;
+        const unit = tip / MOVIE_SHAFT_H;
+        const footR = Math.min(base * 0.45, MOVIE_FOOT_R * unit * OMEGA_STOUT);
+        const tipR = footR * MOVIE_TIP_R / MOVIE_FOOT_R;
+        const f = footR / MOVIE_FOOT_R;
+        const rings = OMEGA_RINGS.map((k) => ({
+            y: tip * k,
+            r: footR + (tipR - footR) * k + 7 * f,
+            tube: (0.9 + (1 - k) * 1.2) * f,
+        }));
+        return { base, tip, top: tip, height, unit, footR, tipR, rings, throneY: tip + MOVIE_THRONE_UP * unit };
     }
 
-    // How much of the tower's height is the gold needle on top of it.
-    const SPIRE_FRAC = 0.11;
-
-    // The plan, as plain numbers, worked out once and kept so the geometry and
-    // anything that wants to measure the thing agree:
-    //
-    //   decks[]  { y, plateH, half, x, z, rot, towers[] }  the plate and its skyline
-    //   towers[] { x, z, w, d, h, rot, crest }             one skyscraper on it
-    //
-    // x/z are offsets from the middle of the footprint, before the deck's own
-    // rotation; y is the top of the plate the towers stand on.
-    let _omegaPlan = null;
-    function omegaTowerPlan(span, height) {
-        if (_omegaPlan) return _omegaPlan;
-        const base = span * WORLD_TILE_SIZE;      // 3000 units across at the foot
-        const spire = height * SPIRE_FRAC;
-        const body  = height - spire;             // everything below the needle
-
-        // A deck roughly every hundred and fifty metres, so the heap stays a
-        // heap however tall the thing is asked to be.
-        const decks = Math.max(14, Math.min(30, Math.round(height / 640)));
-        // How much of the footprint the last plate keeps. Spread over however
-        // many decks there are rather than fixed per step, or a tall tower
-        // tapers to a needle a third of the way up.
-        const TOP_FRAC = 0.135;
-        const shrink = Math.pow(TOP_FRAC, 1 / Math.max(1, decks - 1));
-
-        const out = [];
-        let half = base / 2, cx = 0, cz = 0, rot = 0, y = 0;
-        for (let i = 0; i < decks; i++) {
-            const t = i / (decks - 1);
-            const nextHalf = half * shrink * (0.94 + omegaRnd(i * 13 + 3) * 0.12);
-            // The plate. Thin at the bottom where the towers do the work, and
-            // thicker up top where it is most of what is left of the tower.
-            const plateH = body * (0.006 + 0.012 * t);
-            // How far up the next plate sits. Less than the towers of this deck
-            // are tall, which is what makes the tall ones break its edge.
-            const rise = body * (0.028 + 0.052 * t) * (0.82 + omegaRnd(i * 7 + 2) * 0.4);
-
-            // The skyline of this deck. Towers go in the band between the edge
-            // of the next plate and the edge of this one, so nothing of theirs
-            // is buried under the deck above except deliberately.
-            const inner = Math.min(nextHalf * 1.04, half * 0.86);
-            const count = 4 + Math.floor(omegaRnd(i * 41 + 19) * 4);   // 4..7
-            const towers = [];
-            for (let j = 0; j < count; j++) {
-                const s = i * 97 + j * 11;
-                // A point in the square annulus [inner, half]: pick the side,
-                // then how far along it and how far out into the band.
-                const side = Math.floor(omegaRnd(s + 1) * 4);
-                const out1 = inner + (half - inner) * (0.28 + omegaRnd(s + 2) * 0.68);
-                const along = (omegaRnd(s + 3) * 2 - 1) * out1;
-                let tx, tz;
-                if (side === 0)      { tx =  out1; tz = along; }
-                else if (side === 1) { tx = -out1; tz = along; }
-                else if (side === 2) { tx = along; tz =  out1; }
-                else                 { tx = along; tz = -out1; }
-                // Footprint: a slice of the band, never wider than the room it
-                // has, so towers of one deck do not grow through one another.
-                const room = Math.max(40, half - inner);
-                const w = room * (0.42 + omegaRnd(s + 4) * 0.5);
-                const d = w * (0.7 + omegaRnd(s + 5) * 0.6);
-                // Height: most clear the plate above, some by a long way. The
-                // outermost ones are the tallest, which keeps the silhouette
-                // ragged rather than domed.
-                const reach = 0.55 + (out1 / half) * 1.35 + omegaRnd(s + 6) * 1.25;
-                towers.push({
-                    x: tx, z: tz, w, d,
-                    h: rise * reach,
-                    rot: (omegaRnd(s + 7) - 0.5) * 0.5,
-                    crest: omegaRnd(s + 8) < 0.28,
-                });
-            }
-            // The deck's own tower: one shaft on the middle of the plate,
-            // holding the stack together where the ring would leave a hole.
-            towers.push({
-                x: 0, z: 0,
-                w: inner * 1.15, d: inner * (0.9 + omegaRnd(i * 53 + 7) * 0.4),
-                h: rise * (1.02 + omegaRnd(i * 59 + 11) * 0.3),
-                rot: (omegaRnd(i * 61 + 13) - 0.5) * 0.3,
-                crest: false,
-            });
-
-            out.push({ y, plateH, half, x: cx, z: cz, rot, towers });
-
-            y += rise;
-            // The next plate is smaller, turned, and shouldered off to one side
-            // - which is the whole difference between a heap and a pyramid.
-            if (omegaRnd(i * 19 + 7) < 0.72) {
-                cx += (omegaRnd(i * 23 + 11) - 0.5) * (half - nextHalf) * 1.1;
-                cz += (omegaRnd(i * 29 + 13) - 0.5) * (half - nextHalf) * 1.1;
-            }
-            rot += (omegaRnd(i * 31 + 17) - 0.5) * 0.36;
-            half = nextHalf;
+    // The shaft's skin, painted once: the movie's dark stone, its gold grid and
+    // its windows, some warm and some the cold blue of the rings.
+    let _omegaSkin;
+    function omegaSkinCanvas() {
+        if (_omegaSkin !== undefined) return _omegaSkin;
+        _omegaSkin = null;
+        if (typeof document === 'undefined' || !document.createElement) return null;
+        const c = document.createElement('canvas');
+        c.width = 256; c.height = 1024;
+        const ctx = c.getContext && c.getContext('2d');
+        if (!ctx) return null;
+        const w = c.width, h = c.height;
+        let s = 0x0e9a;
+        const r = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+        ctx.fillStyle = '#14110d';
+        ctx.fillRect(0, 0, w, h);
+        for (let i = 0; i < 900; i++) {
+            ctx.fillStyle = 'rgba(' + (40 + Math.floor(r() * 40)) + ',34,26,0.6)';
+            ctx.fillRect(r() * w, r() * h, 2 + r() * 14, 1 + r() * 4);
         }
-
-        // The rises above are proportions, not measurements, so the stack lands
-        // wherever it lands. Scale it so the tip of the needle is at exactly
-        // the height it was asked for: OMEGA_HEIGHT is how tall the tower IS,
-        // and the scene, the plinth and anything else that measures it all read
-        // that one number.
-        const k = body / Math.max(1, y);
-        for (const dk of out) {
-            dk.y *= k; dk.plateH *= k;
-            for (const tw of dk.towers) tw.h *= k;
+        ctx.fillStyle = 'rgba(255,200,90,0.95)';
+        for (let x = 0; x < w; x += 32) ctx.fillRect(x, 0, 2, h);
+        for (let y = 0; y < h; y += 64) ctx.fillRect(0, y, w, 3);
+        for (let i = 0; i < 400; i++) {
+            ctx.fillStyle = r() > 0.5 ? 'rgba(255,226,150,0.9)' : 'rgba(160,220,255,0.7)';
+            ctx.fillRect(Math.floor(r() * 8) * 32 + 6 + r() * 20, r() * h, 2, 2);
         }
-        y *= k;
-        const last = out[out.length - 1];
-        _omegaPlan = { decks: out, top: y, spire, tip: y + spire, base, crown: last };
-        return _omegaPlan;
+        _omegaSkin = c;
+        return c;
+    }
+
+    // The beacon's soft round light.
+    function omegaGlowCanvas() {
+        if (typeof document === 'undefined' || !document.createElement) return null;
+        const c = document.createElement('canvas');
+        c.width = c.height = 128;
+        const ctx = c.getContext && c.getContext('2d');
+        if (!ctx) return null;
+        const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+        g.addColorStop(0, 'rgba(255,250,225,1)');
+        g.addColorStop(0.25, 'rgba(255,210,90,0.55)');
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 128, 128);
+        return c;
     }
 
     // The tower as a group standing on y = 0, ready to be put wherever the
-    // scene wants it.
-    //
-    // EVERYTHING IS INSTANCED. A heap of a hundred and fifty skyscrapers, each
-    // fluted, banded, friezed and crowned, is some thousands of pieces; drawn
-    // as meshes that is thousands of draw calls for one landmark, every frame,
-    // from anywhere on the map. So the whole thing is gathered into four lists
-    // by (shape, material) and issued as four InstancedMeshes. Adding a piece
-    // costs an entry in an array.
+    // scene wants it. A handful of meshes, so a handful of draw calls.
     //
     // Every material has its fog turned off: a landmark meant to be seen from
     // the far side of the world cannot be allowed to fade into the haze at four
-    // thousand units like a hedge.
+    // thousand units like a hedge. Every piece is built at the group's origin
+    // with its geometry moved into place, so a shader reading a vertex's own
+    // y reads tower units (the launch cinematic charges the shaft by height).
     //
-    // opts.bore, when given, is the half width of a square shaft cut straight
-    // down the tower's axis, in tower units: the launch cinematic fires its
-    // round up the middle of the thing, so every piece crossing the axis is
-    // split round the hole and every cone or tilted blade in it is left out.
+    // opts.bore, when given, is the radius of a round shaft cut straight down
+    // the tower's axis, in tower units: the launch cinematic fires its round up
+    // the middle of the thing, so the spear is built hollow round it, the tip
+    // is left open as the muzzle and the throne is not built over it.
     function buildOmegaTower(span, height, opts) {
         const plan = omegaTowerPlan(span, height);
         const bore = (opts && opts.bore > 0) ? opts.bore : 0;
         const group = new THREE.Group();
-        const geos = [], mats = [];
-
-        const mat = (hex, opts) => {
-            const m = new THREE.MeshLambertMaterial(Object.assign({ color: hex }, opts || {}));
-            m.fog = false;
-            mats.push(m);
+        const geos = [], mats = [], texs = [];
+        const own = (list, x) => { list.push(x); return x; };
+        const fogless = (m) => { m.fog = false; return own(mats, m); };
+        const additive = (color, opacity) => fogless(new THREE.MeshBasicMaterial({
+            color, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false
+        }));
+        const mesh = (geo, mat) => {
+            const m = new THREE.Mesh(own(geos, geo), mat);
+            m.frustumCulled = false;
+            group.add(m);
             return m;
         };
-        const stoneA = mat(OMEGA_BLACK);
-        const stoneB = mat(OMEGA_STONE);
-        // The gold is lit from within as well as from the sky, so it still reads
-        // at night and at distance, which is when this thing matters most. The
-        // scene drives the intensity (see setNightGlow below).
-        const gold = mat(OMEGA_GOLD, { emissive: 0xffb347, emissiveIntensity: OMEGA_GLOW_DAY });
+        const tip = plan.tip;
+        const tipR = Math.max(plan.tipR, bore * 1.6);
+        const footR = Math.max(plan.footR, tipR);
+        const f = footR / MOVIE_FOOT_R;
+        const u = plan.unit;
 
-        // Unit shapes, pivoted on their base, scaled per instance.
-        const uBox  = new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0);
-        const uCone = new THREE.CylinderGeometry(0, 0.5, 1, 6).translate(0, 0.5, 0);
-        geos.push(uBox, uCone);
-
-        // One bucket per (shape, material). An entry is a full transform, so a
-        // chevron block turned on its nose costs exactly what a shaft costs.
-        const buckets = [
-            { geo: uBox,  mat: stoneA, list: [] },
-            { geo: uBox,  mat: stoneB, list: [] },
-            { geo: uBox,  mat: gold,   list: [] },
-            { geo: uCone, mat: gold,   list: [] },
-        ];
-        const BOX_A = buckets[0].list, BOX_B = buckets[1].list;
-        const BOX_G = buckets[2].list, CONE_G = buckets[3].list;
-        // x,y,z = where the base of the piece sits; w,h,d = how big; ry/rz = turn.
-        const put = (list, x, y, z, w, h, d, ry, rz) => {
-            list.push({ x, y, z, w, h, d, ry: ry || 0, rz: rz || 0 });
+        // THE SHAFT. Its gold grid is both its colour and its light.
+        const skin = omegaSkinCanvas();
+        let tex = null;
+        if (skin && THREE.CanvasTexture) {
+            tex = own(texs, new THREE.CanvasTexture(skin));
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(6, 12);
+        }
+        const hullOpts = {
+            color: OMEGA_HULL, emissive: OMEGA_GLOW, emissiveIntensity: OMEGA_GLOW_DAY,
+            side: bore ? THREE.DoubleSide : THREE.FrontSide
         };
-
-        // ---------------------------------------------------------------------
-        // One art deco skyscraper, in the deck's own frame of reference.
-        // ---------------------------------------------------------------------
-        function skyscraper(tw, deck, baseY, seed) {
-            const c = Math.cos(deck.rot), s = Math.sin(deck.rot);
-            const x = deck.x + tw.x * c - tw.z * s;
-            const z = deck.z + tw.x * s + tw.z * c;
-            const ry = deck.rot + tw.rot;
-            const cy = Math.cos(ry), sy2 = Math.sin(ry);
-            const shaftMat = (omegaRnd(seed) < 0.5) ? BOX_A : BOX_B;
-
-            // THE SHAFT, and the two setbacks of its crown. Deco towers do not
-            // stop, they step: each step keeps most of the height and loses a
-            // fifth of the plan, and every one of them is banded in gold.
-            let w = tw.w, d = tw.d, y = baseY, left = tw.h;
-            const STEPS = 3;
-            for (let k = 0; k < STEPS; k++) {
-                // The shaft is most of it; the two crown steps share the rest.
-                const h = (k === 0) ? left * 0.76 : (k === 1 ? left * 0.62 : left);
-                put(shaftMat, x, y, z, w, h, d, ry);
-
-                // Gold piers up the full face of this step, four to a side. The
-                // flute is what makes a black box read as 1930 rather than as a
-                // slab, so it goes on every step, not just the shaft.
-                const pierW = Math.max(1.2, w * 0.045);
-                const pierD = Math.max(1.2, d * 0.045);
-                // How far a pier stands out of the face. A sliver of a percent
-                // was inside what the depth buffer can tell apart from the far
-                // end of the map, and the gold flickered through the black.
-                const proudW = w + 2 * Math.max(1.5, w * 0.02);
-                const proudD = d + 2 * Math.max(1.5, d * 0.02);
-                for (const f of [-0.34, -0.12, 0.12, 0.34]) {
-                    const lx = w * f;
-                    put(BOX_G, x + lx * cy, y, z + lx * sy2,
-                        pierW, h * 0.985, proudD, ry);
-                }
-                for (const f of [-0.3, 0.3]) {
-                    const lz = d * f;
-                    put(BOX_G, x - lz * sy2, y, z + lz * cy,
-                        proudW, h * 0.985, pierD, ry);
-                }
-
-                // The parapet band, standing proud of the step under it so it
-                // catches the light along its whole edge. Its top stops short
-                // of the roof: level with it, the gold and the black fought for
-                // the same face and the whole roof flickered.
-                const bandH = Math.max(2.5, h * 0.045);
-                const bandLip = bandH * 0.35;
-                put(BOX_G, x, y + h - bandH - bandLip, z, w * 1.06, bandH, d * 1.06, ry);
-
-                // ...and the chevron frieze under it: gold blocks alternating
-                // long and short along the two long faces, which at any
-                // distance reads as the zigzag it is standing in for.
-                const teeth = 6;
-                const toothW = w / (teeth * 1.9);
-                const fh = bandH * 1.7;
-                for (let n = 0; n < teeth; n++) {
-                    const f = (n / (teeth - 1) - 0.5) * 0.86;
-                    const tall = (n % 2 === 0) ? 1 : 0.5;
-                    for (const sd of [-0.5, 0.5]) {
-                        const lx = w * f, lz = d * sd;
-                        put(BOX_G,
-                            x + lx * cy - lz * sy2,
-                            y + h - bandH - bandLip - fh * tall,
-                            z + lx * sy2 + lz * cy,
-                            toothW, fh * tall, Math.max(3, d * 0.04), ry);
-                    }
-                }
-
-                y += h;
-                left -= h;
-                w *= 0.78; d *= 0.78;
-                if (left <= 0) break;
-            }
-
-            // A sunburst crest on the ones that carry one: a fan of thin gold
-            // blades leaning off the crown, the deco signature.
-            if (tw.crest) {
-                const blades = 7;
-                const bl = Math.min(tw.h * 0.18, w * 2.6);
-                for (let n = 0; n < blades; n++) {
-                    const a = (n / (blades - 1) - 0.5) * 1.5;
-                    put(BOX_G, x, y, z, Math.max(0.8, w * 0.06), bl, Math.max(0.8, d * 0.06),
-                        ry, a);
-                }
-                put(CONE_G, x, y, z, w * 0.5, bl * 0.55, d * 0.5, ry);
-            } else if (omegaRnd(seed + 3) < 0.45) {
-                // ...or a plain mast, so the skyline is not all one note.
-                put(CONE_G, x, y, z, w * 0.34, tw.h * 0.1, d * 0.34, ry);
-            }
-        }
-
-        // ---------------------------------------------------------------------
-        // The heap
-        // ---------------------------------------------------------------------
-        for (let i = 0; i < plan.decks.length; i++) {
-            const dk = plan.decks[i];
-            const side = dk.half * 2;
-            // The plate itself, and the gold rim round its edge: from below
-            // that rim is the line that says where one deck ends and the next
-            // city begins.
-            const extraBaseH = (i === 0) ? 60 : 0;
-            put(BOX_A, dk.x, dk.y - dk.plateH - extraBaseH, dk.z, side, dk.plateH + extraBaseH, side, dk.rot);
-            // The rim's top stops short of the deck's: level with it, the gold
-            // and the black fought for the whole floor and every deck flickered.
-            const rimH = Math.max(3, dk.plateH * 0.34);
-            const rimLip = rimH * 0.4;
-            put(BOX_G, dk.x, dk.y - rimH - rimLip, dk.z, side * 1.035, rimH, side * 1.035, dk.rot);
-            // Corner piers: four stepped gold pylons standing on the corners of
-            // the plate, which is how a deco setback is always finished.
-            const pw = Math.max(4, dk.half * 0.075);
-            const ph = dk.plateH * 3.2;
-            const cd = Math.cos(dk.rot), sd2 = Math.sin(dk.rot);
-            for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
-                const lx = sx * dk.half * 0.94, lz = sz * dk.half * 0.94;
-                const px = dk.x + lx * cd - lz * sd2;
-                const pz = dk.z + lx * sd2 + lz * cd;
-                put(BOX_G, px, dk.y, pz, pw, ph, pw, dk.rot);
-                put(CONE_G, px, dk.y + ph, pz, pw * 1.4, ph * 0.7, pw * 1.4, dk.rot);
-            }
-            // Solid base podium for the foundation deck so the base of the megastructure is completely solid
-            if (i === 0) {
-                const baseRise = (plan.decks.length > 1 ? plan.decks[1].y : dk.plateH * 5) - dk.y;
-                put(BOX_A, dk.x, dk.y, dk.z, side * 0.96, baseRise, side * 0.96, dk.rot);
-                const bph = baseRise * 0.95;
-                const bpw = pw * 1.2;
-                for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
-                    const lx = sx * dk.half * 0.92, lz = sz * dk.half * 0.92;
-                    const px = dk.x + lx * cd - lz * sd2;
-                    const pz = dk.z + lx * sd2 + lz * cd;
-                    put(BOX_G, px, dk.y, pz, bpw, bph, bpw, dk.rot);
-                }
-            }
-            for (let j = 0; j < dk.towers.length; j++) {
-                skyscraper(dk.towers[j], dk, dk.y, i * 131 + j * 17 + 5);
-            }
-        }
-
-        // ---------------------------------------------------------------------
-        // The needle
-        // ---------------------------------------------------------------------
-        // Stacked gold rings narrowing to a spike, standing on the last plate:
-        // the one piece of the tower nothing else on the world can be mistaken
-        // for, and the reason it can be found from horizon distance.
-        const crown = plan.crown;
-        const spireH = plan.spire;
-        const RINGS = 6;
-        let sy = plan.top, sw = crown.half * 0.9;
-        for (let r = 0; r < RINGS; r++) {
-            const h = spireH * 0.07 * (1 - r / (RINGS + 2));
-            put(BOX_G, crown.x, sy, crown.z, sw, h, sw, crown.rot + r * 0.18);
-            sy += h;
-            sw *= 0.72;
-        }
-        put(CONE_G, crown.x, sy, crown.z, sw * 1.6, Math.max(1, plan.tip - sy), sw * 1.6, crown.rot);
-
-        // ---------------------------------------------------------------------
-        // Issued
-        // ---------------------------------------------------------------------
+        if (tex) { hullOpts.map = tex; hullOpts.emissiveMap = tex; }
+        const hull = fogless(new THREE.MeshLambertMaterial(hullOpts));
+        mesh(new THREE.CylinderGeometry(tipR, footR, tip, 8, 24, !!bore).translate(0, tip / 2, 0), hull);
         if (bore) {
-            for (const b of buckets) b.list = boreThrough(b.list, b.geo === uCone);
+            // The bore's own wall, and the open ring of the muzzle round it.
+            mesh(new THREE.CylinderGeometry(bore, bore, tip, 8, 1, true).translate(0, tip / 2, 0), hull);
+            mesh(new THREE.RingGeometry(bore, tipR, 8).rotateX(-Math.PI / 2).translate(0, tip, 0), hull);
         }
-        const dummy = new THREE.Object3D();
-        for (const b of buckets) {
-            if (!b.list.length) continue;
-            const im = new THREE.InstancedMesh(b.geo, b.mat, b.list.length);
-            im.castShadow = false;
-            im.receiveShadow = false;
-            im.frustumCulled = false;
-            for (let i = 0; i < b.list.length; i++) {
-                const e = b.list[i];
-                dummy.position.set(e.x, e.y, e.z);
-                dummy.rotation.set(0, e.ry, e.rz);
-                dummy.scale.set(e.w, e.h, e.d);
-                dummy.updateMatrix();
-                im.setMatrixAt(i, dummy.matrix);
-            }
-            im.instanceMatrix.needsUpdate = true;
-            group.add(im);
-        }
+        // The sheath of light round it.
+        const glow = additive(0xffb040, 0.12);
+        mesh(new THREE.CylinderGeometry(9 * f, 40 * f, tip, 16, 1, true).translate(0, tip / 2, 0), glow);
 
-        // The shaft. A box is cut in its own frame: the axis is carried into
-        // it, the hole square is clipped to the box, and what is left is up to
-        // four strips round it. Every box turns the hole with it, so the union
-        // of the holes still clears a round shaft of `bore` all the way up.
-        function boreThrough(list, isCone) {
-            const out = [];
-            for (const e of list) {
-                const c = Math.cos(e.ry), s = Math.sin(e.ry);
-                const lx = -e.x * c + e.z * s;
-                const lz = -e.x * s - e.z * c;
-                const hw = e.w / 2, hd = e.d / 2;
-                const x0 = Math.max(-hw, lx - bore), x1 = Math.min(hw, lx + bore);
-                const z0 = Math.max(-hd, lz - bore), z1 = Math.min(hd, lz + bore);
-                if (x0 >= x1 || z0 >= z1) { out.push(e); continue; }
-                if (isCone || e.rz) continue;
-                const strips = [
-                    [-hw, x0, -hd, hd], [x1, hw, -hd, hd],
-                    [x0, x1, -hd, z0], [x0, x1, z1, hd],
-                ];
-                for (const [a0, a1, b0, b1] of strips) {
-                    if (a1 - a0 < 0.5 || b1 - b0 < 0.5) continue;
-                    const cx = (a0 + a1) / 2, cz = (b0 + b1) / 2;
-                    out.push({
-                        x: e.x + cx * c + cz * s, y: e.y, z: e.z - cx * s + cz * c,
-                        w: a1 - a0, h: e.h, d: b1 - b0, ry: e.ry, rz: 0,
-                    });
-                }
+        // THE RINGS that hold the dimensions together, gold and blue in turn.
+        const rings = plan.rings.map((rg, i) => {
+            const k = rg.y / tip;
+            const geo = new THREE.TorusGeometry(footR + (tipR - footR) * k + 7 * f, rg.tube, 6, 48)
+                .rotateX(Math.PI / 2).translate(0, rg.y, 0);
+            return mesh(geo, additive(i % 2 ? 0x9ad8ff : 0xffd070, 0.85));
+        });
+
+        // THE CELESTIAL THRONE, floating over the tip. Not over a muzzle.
+        let throne = null, beacon = null;
+        const gold = fogless(new THREE.MeshLambertMaterial({
+            color: OMEGA_GOLD, emissive: 0xc08a20, emissiveIntensity: 0.9
+        }));
+        if (!bore) {
+            throne = new THREE.Group();
+            throne.position.y = plan.throneY;
+            const part = (geo, mat, x, y, z) => {
+                const m = new THREE.Mesh(own(geos, geo), mat);
+                m.position.set(x, y, z);
+                m.frustumCulled = false;
+                throne.add(m);
+                return m;
+            };
+            part(new THREE.BoxGeometry(18 * u, 4 * u, 14 * u), gold, 0, 0, 0);
+            part(new THREE.BoxGeometry(18 * u, 26 * u, 3 * u), gold, 0, 13 * u, -6 * u);
+            part(new THREE.TorusGeometry(16 * u, 1.2 * u, 6, 48), additive(0xfff2c0, 0.9), 0, 30 * u, -7 * u);
+            for (const x of [-1, 0, 1]) {
+                part(new THREE.ConeGeometry(2.4 * u, 26 * u, 6), gold, x * 12 * u, (30 + (x ? 0 : 10)) * u, -6 * u);
             }
-            return out;
+            const glowSrc = omegaGlowCanvas();
+            if (glowSrc && THREE.Sprite && THREE.CanvasTexture) {
+                const bm = fogless(new THREE.SpriteMaterial({
+                    map: own(texs, new THREE.CanvasTexture(glowSrc)), color: 0xfff4d0,
+                    transparent: true, blending: THREE.AdditiveBlending, depthWrite: false
+                }));
+                beacon = new THREE.Sprite(bm);
+                beacon.position.y = 20 * u;
+                beacon.scale.setScalar(120 * u);
+                beacon.frustumCulled = false;
+                throne.add(beacon);
+            }
+            group.add(throne);
         }
 
         return {
             group, plan,
-            // The gold itself, for a caller that drives more than the night
-            // glow through it (the launch cinematic charges the whole tower).
-            gold,
-            // How hard the gold burns, 0 at noon and 1 at the dead of night.
+            // The shaft's lit material, for a caller that drives more than the
+            // night glow through it (the launch cinematic charges the tower).
+            gold: hull,
+            // How hard the shaft burns, 0 at noon and 1 at the dead of night.
             // Called every frame by the scene off its own day factor.
             setNightGlow(k) {
                 const t = Math.max(0, Math.min(1, k));
-                gold.emissiveIntensity = OMEGA_GLOW_DAY + (OMEGA_GLOW_NIGHT - OMEGA_GLOW_DAY) * t;
+                hull.emissiveIntensity = OMEGA_GLOW_DAY + (OMEGA_GLOW_NIGHT - OMEGA_GLOW_DAY) * t;
+                glow.opacity = 0.08 + 0.14 * t;
             },
+            // The throne turns and the beacon breathes, as they do in the movie.
+            tick(seconds) {
+                if (throne) throne.rotation.y = seconds * 0.05;
+                if (beacon) beacon.material.opacity = 0.7 + 0.3 * Math.sin(seconds * 2.2);
+            },
+            rings,
             dispose() {
                 for (const g of geos) g.dispose();
                 for (const m of mats) m.dispose();
+                for (const t of texs) t.dispose();
                 if (group.parent) group.parent.remove(group);
             }
         };

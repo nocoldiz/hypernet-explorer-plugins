@@ -153,10 +153,9 @@ const GameOptions = {
             } catch (e) {
                 console.error("GameOptions: Failed to load theme files dynamically.", e);
             }
-        } else {
-            // Web browser fallback
-            themes.push('omega_tower.css');
         }
+        // The browser build has no theme folder to read: the default the list
+        // starts with is the whole of it (pushing it again listed it twice).
 
         themes.push(this.ASCII_THEME);
         this._themesCache = themes;
@@ -861,6 +860,10 @@ window.GameOptions = GameOptions;
         this.activeTheme = config.activeTheme !== undefined ? config.activeTheme : 0;
         // The theme to come back to when the ASCII layer is switched off.
         this.themeBeforeAscii = config.themeBeforeAscii !== undefined ? config.themeBeforeAscii : 0;
+        // Whether the ASCII theme, not the player's own switch, put the terminal
+        // look on. Kept across launches, or leaving the theme after a restart
+        // left the terminal styling on for good.
+        GameOptions._asciiUiFromTheme = !!config.asciiUiFromTheme;
         this.showFps = config.showFps !== undefined ? config.showFps : false;
         // The "?" over the party leader when they stand by an invisible event
         // worth pressing a button at (MousePan.js draws it).
@@ -979,6 +982,7 @@ window.GameOptions = GameOptions;
         config.charBasedSprites = this.charBasedSprites;
         config.activeTheme = this.activeTheme;
         config.themeBeforeAscii = this.themeBeforeAscii;
+        config.asciiUiFromTheme = !!GameOptions._asciiUiFromTheme;
         config.showFps = this.showFps;
         config.interactIcon = this.interactIcon;
         config.lowModelDetail = this.lowModelDetail;
@@ -1213,19 +1217,19 @@ window.GameOptions = GameOptions;
         if (window.Mush && window.Mush.parameters && window.Mush.parameters.mushAudioEngine) {
             const par = window.Mush.parameters.mushAudioEngine;
             if (par.menuOptions.uisVolumeFeature && par.genFeatures.uis) {
-                GameOptions.registerOption('uisVolume', T.param(par.menuOptions.uisVolumeText, 'GameOptions.label.uiVolume'),
+                GameOptions.registerOption('uisVolume', () => T.param(par.menuOptions.uisVolumeText, 'GameOptions.label.uiVolume'),
                     () => ConfigManager.uisVolume,
                     (value) => ConfigManager.uisVolume = value,
                     'audio', 'number');
             }
             if (par.menuOptions.vscVolumeFeature) {
-                GameOptions.registerOption('vscVolume', T.param(par.menuOptions.vscVolumeText, 'GameOptions.label.voiceVolume'),
+                GameOptions.registerOption('vscVolume', () => T.param(par.menuOptions.vscVolumeText, 'GameOptions.label.voiceVolume'),
                     () => ConfigManager.vscVolume,
                     (value) => ConfigManager.vscVolume = value,
                     'audio', 'number');
             }
             if (par.menuOptions.masterVolumeFeature) {
-                GameOptions.registerOption('masterVolume', T.param(par.menuOptions.masterVolumeText, 'GameOptions.label.masterVolume'),
+                GameOptions.registerOption('masterVolume', () => T.param(par.menuOptions.masterVolumeText, 'GameOptions.label.masterVolume'),
                     () => ConfigManager.masterVolume,
                     (value) => ConfigManager.masterVolume = value,
                     'audio', 'number');
@@ -1542,7 +1546,18 @@ window.GameOptions = GameOptions;
     Scene_Options.prototype.renderTabs = function () {
         const c = this._dndContainer && this._dndContainer.querySelector('#options-categories');
         if (!c) return;
-        const it = ConfigManager.language === 'it';
+        // The header bar is redrawn with the tabs: a language switch on this
+        // screen calls renderTabs and used to leave Back, the title and Reset
+        // in the language just left.
+        const header = this._dndContainer.querySelector('.page-header-bar');
+        if (header) {
+            const back = header.querySelector('#opt-back-btn');
+            const title = header.querySelector('.title');
+            const reset = header.querySelector('#opt-reset-btn');
+            if (back) back.textContent = T('GameOptions.back');
+            if (title) title.textContent = T('GameOptions.preferences');
+            if (reset) reset.textContent = T('GameOptions.resetDefaults');
+        }
         c.innerHTML = GameOptions.tabs.map((tab, idx) => {
             const dispName = T('GameOptions.label.' + tab.nameKey);
             return `<div class="backpack-tab" data-tab="${idx}" onclick="SceneManager._scene.selectTab(${idx})">
@@ -1958,9 +1973,23 @@ window.GameOptions = GameOptions;
         if (on) SoundManager.playCursor();
     };
 
+    // The language and the window mode are kept: a reset used to drop an
+    // Italian player into English with half the screen still in Italian, and
+    // to flip the fullscreen row without touching the window until the next
+    // launch.
+    GameOptions.RESET_KEEPS = ['language', 'fullscreen'];
+
     Scene_Options.prototype.resetToDefaults = function () {
-        ConfigManager.applyData({});
+        const kept = {};
+        GameOptions.RESET_KEEPS.forEach(key => {
+            if (ConfigManager[key] !== undefined) kept[key] = ConfigManager[key];
+        });
+        ConfigManager.applyData(kept);
         ConfigManager.save();
+        // Weather already playing keeps its old level until told otherwise.
+        if (window.WeatherAudio && window.WeatherAudio.refresh) {
+            window.WeatherAudio.refresh();
+        }
         SoundManager.playLoad();
         this._rebuildRows();
         this.renderOptions();
@@ -2012,7 +2041,7 @@ window.GameOptions = GameOptions;
     // through to AudioManager), turning it off restores the volume the player
     // had before muting. The state is derived from bgmVolume itself, so
     // dragging the slider back up unmutes the toggle with no extra bookkeeping.
-    GameOptions.registerOption('bgmMute', T('GameOptions.label.muteBgm'),
+    GameOptions.registerOption('bgmMute', () => T('GameOptions.label.muteBgm'),
         () => ConfigManager.bgmVolume === 0,
         (value) => {
             if (value) {
@@ -2030,7 +2059,7 @@ window.GameOptions = GameOptions;
     // Register Footsteps Volume (Merged from VolumePercentageDisplay).
     // The getter defends against a null/NaN value inherited from an older
     // config, which would otherwise render as "undefined%".
-    GameOptions.registerOption('footstepsVolume', T('GameOptions.label.footstepsVolume'),
+    GameOptions.registerOption('footstepsVolume', () => T('GameOptions.label.footstepsVolume'),
         () => {
             const v = Number(ConfigManager.footstepsVolume);
             return isFinite(v) ? v : defaultFootstepsVolume;
@@ -2042,14 +2071,14 @@ window.GameOptions = GameOptions;
     // vowel or consonant blip, pitched by the speaker's own voice, a keyword's
     // gold run a third higher. On by default; the blips live in
     // audio/se/Vowels and audio/se/Consonants.
-    GameOptions.registerOption('dialogueVoices', T('GameOptions.label.dialogueVoices'),
+    GameOptions.registerOption('dialogueVoices', () => T('GameOptions.label.dialogueVoices'),
         () => !!ConfigManager.dialogueVoices,
         (value) => ConfigManager.dialogueVoices = !!value,
         'audio', 'boolean');
 
     // How loud the letter blips are. Its own slider rather than a share of the
     // SE volume, so the chatter can be turned down on its own.
-    GameOptions.registerOption('dialogueVoicesVolume', T('GameOptions.label.dialogueVoicesVolume'),
+    GameOptions.registerOption('dialogueVoicesVolume', () => T('GameOptions.label.dialogueVoicesVolume'),
         () => {
             const v = Number(ConfigManager.dialogueVoicesVolume);
             return isFinite(v) ? v : defaultDialogueVoicesVolume;
@@ -2060,7 +2089,7 @@ window.GameOptions = GameOptions;
     // Weather Volume: the rain/storm/night ambience the WeatherSystem plays on
     // MUSH channel 4. The setter re-applies the level to whatever is already
     // playing, so dragging the slider is audible while the menu is open.
-    GameOptions.registerOption('weatherVolume', T('GameOptions.label.weatherVolume'),
+    GameOptions.registerOption('weatherVolume', () => T('GameOptions.label.weatherVolume'),
         () => {
             const v = Number(ConfigManager.weatherVolume);
             return isFinite(v) ? v : defaultWeatherVolume;
@@ -2090,7 +2119,7 @@ window.GameOptions = GameOptions;
         ConfigManager.enemyBattlers = window.EnemyBattlerModes.normalize(v);
         ConfigManager.charBasedSprites = (ConfigManager.enemyBattlers === 2); // legacy mirror
     };
-    GameOptions.registerOption('enemyBattlers', T('GameOptions.label.enemyBattlers'),
+    GameOptions.registerOption('enemyBattlers', () => T('GameOptions.label.enemyBattlers'),
         () => window.EnemyBattlerModes.normalize(ConfigManager.enemyBattlers),
         (value) => setEnemyBattlers(value),
         'video', 'boolean',
@@ -2132,7 +2161,7 @@ window.GameOptions = GameOptions;
     // quality dial. One step scales every budget it has: galaxies per
     // supercluster, nebula layers, how far the cosmic web streams, and how much
     // of a point cloud survives at a distance.
-    GameOptions.registerOption('galaxyQuality', T('GameOptions.label.galaxyQuality'),
+    GameOptions.registerOption('galaxyQuality', () => T('GameOptions.label.galaxyQuality'),
         () => ConfigManager.galaxyQuality,
         (value) => {
             ConfigManager.galaxyQuality =
@@ -2143,28 +2172,28 @@ window.GameOptions = GameOptions;
             (GALAXY_QUALITY_MODES.includes(value) ? value : 'high')),
         stepGalaxyQuality(1), stepGalaxyQuality(-1));
 
-    GameOptions.registerOption('interactIcon', T('GameOptions.label.interactIcon'),
+    GameOptions.registerOption('interactIcon', () => T('GameOptions.label.interactIcon'),
         () => ConfigManager.interactIcon !== false,
         (value) => { ConfigManager.interactIcon = !!value; },
         'video', 'boolean');
 
-    GameOptions.registerOption('lowModelDetail', T('GameOptions.label.lowModelDetail'),
+    GameOptions.registerOption('lowModelDetail', () => T('GameOptions.label.lowModelDetail'),
         () => !!ConfigManager.lowModelDetail,
         (value) => { ConfigManager.lowModelDetail = !!value; },
         'video', 'boolean');
 
-    GameOptions.registerOption('hyperverseInvertX', T('GameOptions.label.hyperverseInvertX'),
+    GameOptions.registerOption('hyperverseInvertX', () => T('GameOptions.label.hyperverseInvertX'),
         () => !!ConfigManager.hyperverseInvertX,
         (value) => { ConfigManager.hyperverseInvertX = !!value; },
         'video', 'boolean');
 
-    GameOptions.registerOption('starMapInvertY', T('GameOptions.label.starMapInvertY'),
+    GameOptions.registerOption('starMapInvertY', () => T('GameOptions.label.starMapInvertY'),
         () => !!ConfigManager.starMapInvertY,
         (value) => { ConfigManager.starMapInvertY = !!value; },
         'video', 'boolean');
 
     // Register Show FPS
-    GameOptions.registerOption('showFps', T('GameOptions.label.showFps'),
+    GameOptions.registerOption('showFps', () => T('GameOptions.label.showFps'),
         () => ConfigManager.showFps,
         (value) => {
             ConfigManager.showFps = value;
@@ -2182,7 +2211,7 @@ window.GameOptions = GameOptions;
 
     // Register Run In Background: with this on the game keeps updating while
     // the window is not focused, so alt tabbing no longer freezes it.
-    GameOptions.registerOption('runInBackground', T('GameOptions.label.runInBackground'),
+    GameOptions.registerOption('runInBackground', () => T('GameOptions.label.runInBackground'),
         () => ConfigManager.runInBackground === true,
         (value) => { ConfigManager.runInBackground = value; },
         'gameplay', 'boolean');
@@ -2197,7 +2226,7 @@ window.GameOptions = GameOptions;
     // takes effect on the next start; the ASCII layer at once.
     const themeCount = () => GameOptions.getThemes().length;
 
-    GameOptions.registerOption('activeTheme', T('GameOptions.label.activeTheme'),
+    GameOptions.registerOption('activeTheme', () => T('GameOptions.label.activeTheme'),
         () => ConfigManager.activeTheme !== undefined ? ConfigManager.activeTheme : 0,
         (value) => GameOptions.setTheme(value),
         'video', 'boolean',
@@ -2218,7 +2247,7 @@ window.GameOptions = GameOptions;
     // beside the other combat settings: it replaces the standard battle scene.
     // Off by default; it is also offered up front as a combat mode during
     // character creation.
-    GameOptions.registerOption('mapBattleMode', T('GameOptions.label.mapBattle'),
+    GameOptions.registerOption('mapBattleMode', () => T('GameOptions.label.mapBattle'),
         () => ConfigManager.mapBattleMode === true,
         (value) => {
             // In a LAN session the host's setting is everybody's setting
@@ -2271,7 +2300,7 @@ window.GameOptions = GameOptions;
         const idx = (Math.max(0, cur) + dir + SHADER_MODES.length) % SHADER_MODES.length;
         this.setConfigValue('retroShaderMode', SHADER_MODES[idx]);
     };
-    GameOptions.registerOption('retroShaderMode', T('GameOptions.label.shaderStyle'),
+    GameOptions.registerOption('retroShaderMode', () => T('GameOptions.label.shaderStyle'),
         () => ConfigManager.retroShaderMode || RETRO_DEFAULTS.mode,
         (value) => { ConfigManager.retroShaderMode = value; applyRetroConfig(); },
         'shader', 'boolean',
@@ -2280,20 +2309,20 @@ window.GameOptions = GameOptions;
 
     // Internal render resolution slider (lower = more pixelated). 100% disables
     // the low-res downsample pass entirely.
-    GameOptions.registerOption('retroDownscale', T('GameOptions.label.renderResolution'),
+    GameOptions.registerOption('retroDownscale', () => T('GameOptions.label.renderResolution'),
         () => ConfigManager.retroDownscale != null ? ConfigManager.retroDownscale : RETRO_DEFAULTS.downscale,
         (value) => { ConfigManager.retroDownscale = value; applyRetroConfig(); },
         'shader', 'number');
 
     // Dither strength slider.
-    GameOptions.registerOption('retroDither', T('GameOptions.label.dithering'),
+    GameOptions.registerOption('retroDither', () => T('GameOptions.label.dithering'),
         () => ConfigManager.retroDither != null ? ConfigManager.retroDither : RETRO_DEFAULTS.dither,
         (value) => { ConfigManager.retroDither = value; applyRetroConfig(); },
         'shader', 'number');
 
     // Color depth select (shades per channel; fewer = more banding).
     const RETRO_COLOR_MIN = 2, RETRO_COLOR_MAX = 64, RETRO_COLOR_STEP = 2;
-    GameOptions.registerOption('retroColorLevels', T('GameOptions.label.colorLevels'),
+    GameOptions.registerOption('retroColorLevels', () => T('GameOptions.label.colorLevels'),
         () => ConfigManager.retroColorLevels != null ? ConfigManager.retroColorLevels : RETRO_DEFAULTS.colorLevels,
         (value) => { ConfigManager.retroColorLevels = value; applyRetroConfig(); },
         'shader', 'boolean',
@@ -2312,7 +2341,7 @@ window.GameOptions = GameOptions;
 
     // Vertex snap grid select (lower = chunkier wobble).
     const RETRO_SNAP_MIN = 40, RETRO_SNAP_MAX = 300, RETRO_SNAP_STEP = 10;
-    GameOptions.registerOption('retroVertexSnap', T('GameOptions.label.vertexSnap'),
+    GameOptions.registerOption('retroVertexSnap', () => T('GameOptions.label.vertexSnap'),
         () => ConfigManager.retroVertexSnap != null ? ConfigManager.retroVertexSnap : RETRO_DEFAULTS.vertexSnap,
         (value) => { ConfigManager.retroVertexSnap = value; applyRetroConfig(); },
         'shader', 'boolean',
@@ -2365,7 +2394,7 @@ window.GameOptions = GameOptions;
         const idx = (Math.max(0, cur) + dir + PIXEL_PALETTES.length) % PIXEL_PALETTES.length;
         this.setConfigValue('pixelArtPalette', PIXEL_PALETTES[idx]);
     };
-    GameOptions.registerOption('pixelArtPalette', T('GameOptions.label.pixelPalette'),
+    GameOptions.registerOption('pixelArtPalette', () => T('GameOptions.label.pixelPalette'),
         () => ConfigManager.pixelArtPalette,
         (value) => { ConfigManager.pixelArtPalette = value; applyRetroConfig(); },
         'shader', 'boolean',
@@ -2436,7 +2465,7 @@ window.GameOptions = GameOptions;
         if (i < 0) i = 0;
         return TITLE_BG_ORDER[(i + dir + TITLE_BG_ORDER.length) % TITLE_BG_ORDER.length];
     };
-    GameOptions.registerOption('titleBackground', T('GameOptions.label.titleBackground'),
+    GameOptions.registerOption('titleBackground', () => T('GameOptions.label.titleBackground'),
         () => ConfigManager.titleBackground !== undefined ? ConfigManager.titleBackground : 7,
         (value) => ConfigManager.titleBackground = value,
         'video', 'boolean',
@@ -2454,7 +2483,7 @@ window.GameOptions = GameOptions;
     //=========================================================================
     // Slider stays a plain 0..100 number so it renders (and click-drags) like
     // the volume sliders; the displayed value is the signed stat percentage.
-    GameOptions.registerOption('enemyDifficulty', T('GameOptions.label.enemyDifficulty'),
+    GameOptions.registerOption('enemyDifficulty', () => T('GameOptions.label.enemyDifficulty'),
         () => ConfigManager.enemyDifficulty != null ? ConfigManager.enemyDifficulty : ENEMY_DIFFICULTY_DEFAULT,
         (value) => ConfigManager.enemyDifficulty = value,
         'gameplay', 'number',
@@ -2482,7 +2511,7 @@ window.GameOptions = GameOptions;
     // On, neighbouring procedural squares sharing a tileset are stitched into one
     // seamless map and walked across without a transition. Off, one square is
     // loaded at a time and its border is crossed with a classic screen-by-screen pan.
-    GameOptions.registerOption('mapStreaming', T('GameOptions.label.mapStreaming'),
+    GameOptions.registerOption('mapStreaming', () => T('GameOptions.label.mapStreaming'),
         () => ConfigManager.mapStreaming !== false,
         (value) => {
             ConfigManager.mapStreaming = !!value;
@@ -2492,7 +2521,7 @@ window.GameOptions = GameOptions;
         },
         'gameplay', 'boolean');
 
-    GameOptions.registerOption('cpuPartyMembers', T('GameOptions.label.cpuPartyMembers'),
+    GameOptions.registerOption('cpuPartyMembers', () => T('GameOptions.label.cpuPartyMembers'),
         () => ConfigManager.cpuPartyMembers,
         (value) => ConfigManager.cpuPartyMembers = value,
         'gameplay', 'boolean');

@@ -223,7 +223,7 @@
     "assassination": "{name}, {title} OF {power}, IZ ASSASSINATED.",
     "politicianDies": "{name} DIES AT {age}.",
     "headDies": "{name} DIES AT {age}. {power} MOURNS ITS {title}.",
-    "diagnosed": "{name} HAB BEEN DIAGNOSED WIT {disease}. DA PHYSICIANS OF {power} GIVE NO HOPE OF A CURE!",
+    "diagnosed": "{name} HAB BIN DIAGNOSED WIT {disease}. DA PHYSICIANS OF {power} GIVE NO HOPE OF A CURE!",
     "diesOfIllness": "{name} DIES OF {disease}. {power} MOURNS ITS {title}.",
     "hordeFlight": "DA GOBLIN HORDE TAKES {country}; {n} OF ITS PEOPLE PREPARE TA FLEE!",
     "hordeLiberation": "{country} IZ FREE OF DA GOBLIN HORDE; {n} REFUGEES CAN START FOR HOME!",
@@ -251,7 +251,7 @@
     "awakened": "FORMED POLITICAL OPINIONS!",
     "conversion": "LEFT DA {from} FOR DA {to}.",
     "radicalized": "HARDENED VIEWS AS UNREST SPREAD!",
-    "grudge": "BITTER ABOUT {winner} WINNIN' DA {election}!",
+    "grudge": "BITTER 'BOUT {winner} WINNIN' DA {election}!",
     "electedMayor": "ELECTED MAYOR OF {group} ({votes}/{total} VOTES)!",
     "appointed": "APPOINTED {office} OF {group}.",
     "campaigned": "WON OVER TA DA {party} BY A CAMPAIGN (WAZ WIT {from})!",
@@ -365,18 +365,18 @@
       "power": "HYPERPOWER"
     },
     "empty": {
-      "noPolitics": "NOBODY GOVERNS ANYBODY IN DIS WORLD: NO OFFICE IZ HELD AN' NO VOTE IZ CAST!",
-      "noPlace": "DA PARTY IZ STANDIN' NOWHERE ANY GOVERNMENT HAB MAPPED!",
-      "noLocal": "DIS PLACE KEEPS NO TOWN HALL OF ITS OWN!",
-      "noNation": "{country} KEEPS NO GOVERNMENT OF ITS OWN DAT ANYBODY HERE HAB HEARD OF!",
-      "noCountry": "NO NATION CLAIMS DA GROUND UNDER DA PARTY!",
-      "noPower": "NO HYPERPOWER HOLDS DIS GROUND!",
-      "noElected": "NOBODY HOLDS AN OFFICE OVER DIS PLACE!",
-      "noSelection": "NOTHIN' CHOSEN.",
+      "noPolitics": "NO GOVERNMENT IN DIS WORLD!",
+      "noPlace": "NO GOVERNMENT COVERS DIS PLACE!",
+      "noLocal": "NO TOWN HALL HERE.",
+      "noNation": "{country} HAB NO KNOWN GOVERNMENT.",
+      "noCountry": "NO NATION CLAIMS DIS PLACE!",
+      "noPower": "NO HYPERPOWER HOLDS DIS PLACE!",
+      "noElected": "NO OFFICE HOLDERS HERE.",
+      "noSelection": "NUTTIN' CHOSEN.",
       "noParties": "NO PARTY SITS IN DIS CHAMBER!",
-      "noElections": "NO ELECTION HAB BEEN HELD HERE YET!",
+      "noElections": "NO ELECTION HAB BIN HELD HERE YET!",
       "noWars": "AT PEACE WIT EVERYBODY.",
-      "noMatch": "NOTHIN' MATCHES.",
+      "noMatch": "NUTTIN' MATCHES.",
       "noPartiesFound": "NO PARTY STANDS HERE."
     },
     "lbl": {
@@ -484,23 +484,23 @@
       "powerOf": "HYPERPOWER: {name}"
     },
     "hint": {
-      "fee": "EVERY SUPPORTER PAYS DIS EACH WEEK AN' DA TAKINGS IZ PAID TA DA PARTY. A CHEAP CARD FILLS WIT DA POOR, A DEAR ONE ONLY WIT DA ELITE!",
+      "fee": "EACH SUPPORTER PAYS DIS WEEKLY. LOW FEES DRAW DA POOR, HIGH FEES DA ELITE!",
       "feeEntry": "WEEKLY SUBSCRIPTION, IN EUROS",
-      "creed": "DA CREED DA PARTY STANDS ON. ITS TENETS BEND IT FROM DERE!",
-      "found": "EVERYBODY IN DA TEAM JOINS AS A FOUNDIN' MEMBER. A WORLD HOLDS ONLY ONE PARTY OF YA!",
+      "creed": "BASE IDEOLOGY. TENETS ADJUST IT!",
+      "found": "YA WHOLE TEAM JOINS AS FOUNDERS. ONE PARTY PER WORLD!",
       "save": "DA NEW PLATFORM TAKES EFFECT AT ONCE!",
-      "tenets": "PICK UP TA {n} TENETS. TWO DAT PULL DA SAME WAY AGAINST EACH OTHER NO CAN BOTH BE HELD!",
-      "propaganda": "CAMPAIGNS, SMEARS AN' CANDIDACIES IZ RUN FROM PROPAGANDA2 ON DA HYPERDECK!",
+      "tenets": "PICK UP TA {n} TENETS. OPPOSIN' TENETS NO CAN BE COMBINED!",
+      "propaganda": "RUN CAMPAIGNS, SMEARS AN' CANDIDACIES FROM PROPAGANDA2 ON DA HYPERDECK!",
       "pick": "CONFIRM TA CHOOSE IT.",
-      "filter": "NARROW DA LIST TA A TOWN OR VILLAGE, A NATION OR A HYPERPOWER!"
+      "filter": "FILTER BY TOWN, NATION OR HYPERPOWER!"
     },
     "msg": {
       "needCreed": "CHOOSE AN IDEOLOGY FIRST.",
       "alreadyFounded": "DIS WORLD ALREADY HAB A PARTY OF YA!",
-      "founded": "{party} IZ FOUNDED. {n} FOUNDIN' MEMBERS JOINED!",
+      "founded": "{party} FOUNDED WIT {n} MEMBERS.",
       "noParty": "YOU HAB NO FOUNDED A PARTY YET!",
-      "saved": "{party} HAB ITS NEW PLATFORM.",
-      "tooManyTenets": "A PARTY CAN HOLD AT MOST {n} TENETS!"
+      "saved": "{party} PLATFORM UPDATED.",
+      "tooManyTenets": "MAX {n} TENETS PER PARTY."
     },
     "feeClass": {
       "0": "DA POOREST",
@@ -636,8 +636,8 @@
       "smear": "SMEAR"
     },
     "kindHint": {
-      "convert": "WINS PEOPLE OVER TA DA PARTY AN' PULLS DEY VIEWS TOWARD ITS PLATFORM!",
-      "smear": "DRAINS ITS SUPPORTERS' FAITH AN' SOURS DEM ON ITS PLATFORM. DA SHAKEN IZ EASIER TA WIN LATER; DA FAITHLESS WALK OUT!"
+      "convert": "WINS PEOPLE OVER AN' PULLS DEY VIEWS TOWARD YA PLATFORM!",
+      "smear": "ERODES ITS SUPPORTERS' FAITH. SHAKEN ONES IZ EASIER TA WIN; DA REST LEAVE!"
     },
     "target": "PARTY",
     "chooseTarget": "CHOOSE A PARTY",
@@ -670,7 +670,7 @@
     "cost": "COST",
     "noProjection": "CHOOSE A PARTY TA SEE DA PROJECTION!",
     "launch": "LAUNCH CAMPAIGN",
-    "launched": "CAMPAIGN FOR {party} LAUNCHED: ABOUT {n} PEOPLE BY DA END, FOR {cost}!",
+    "launched": "CAMPAIGN FOR {party} LAUNCHED: 'BOUT {n} PEOPLE, FOR {cost}!",
     "campaigns": "CAMPAIGNS",
     "progress": "RESULT",
     "progressOf": "{n} OF {of} EXPECTED",
@@ -681,7 +681,7 @@
     "candidate": "CANDIDATE",
     "noTeam": "NOBODY IN DA TEAM.",
     "runsFor": "RUNS FOR {party}, ON ITS PLATFORM!",
-    "runsAlone": "RUNS AS AN INDEPENDENT. FOUND A PARTY SO ITS SUPPORTERS VOTE FOR DA CANDIDATE!",
+    "runsAlone": "RUNS AS AN INDEPENDENT. FOUND A PARTY TA GET ITS SUPPORTERS' VOTES!",
     "date": "DATE",
     "deposit": "DEPOSIT",
     "stand": "STAND",

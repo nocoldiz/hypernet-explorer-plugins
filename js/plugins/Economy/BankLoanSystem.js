@@ -310,7 +310,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: 'app-bank-system',
-            name: T('BankLoan.ui.appName'),
+            name: () => T('BankLoan.ui.appName'),
             icon: 84,
             launchFn: function() {
                 openBank();

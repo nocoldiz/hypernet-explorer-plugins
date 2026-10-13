@@ -83,11 +83,11 @@
       "Grease under the fingernails. The sign of an honest day.",
       "Bubba's engine is a marvel. I would still add a {spring|valve|little bell}.",
       "Somebody left the gas a quarter turn open. I can smell it from here. Turned off.",
-      "If the world ends in 2012, I want my accounts closed by 2011.",
+      "If the world ends tomorrow, I want my accounts closed tonight.",
       "A brass button on the pavement! {Pocketed|Treasured|Catalogued}.",
       "My cousin the princess wants a clockwork swan for her birthday. {Again|Bigger this year|With wings that flap}.",
       "Must remember: buy {solder|rivets|lamp oil}, sell {gossip|old gears|nothing}.",
-      "The square here is not square. It is a rhombus. Nobody else cares.",
+      "The square here is a rhombus, if you look closely. Nobody else cares.",
       "Tiny screwdriver, where are you. In the other trousers, of course.",
       "Chef's rule: weigh the salt, trust the garlic.",
       "That pigeon is carrying the post between bubbles. I {envy|admire|pity} it.",
@@ -227,7 +227,7 @@
       "afternoon": [
         "Afternoon. The long stretch between lunch and tea. Must tinker through it.",
         "{Half past two|Quarter past three|Four o'clock}, and the soldering is going well.",
-        "After-lunch nap? No. After-lunch {sums|rivets|recipes}.",
+        "After lunch: {sums|rivets|recipes}. Naps can wait.",
         "Afternoon sun on the workbench. Perfect angle for close work.",
         "Tea at four. Biscuits counted. Two each.",
         "Halfway through the day and three-quarters through my list."
@@ -290,7 +290,7 @@
       ],
       "comfortable": [
         "Enough for rent, rivets and the occasional cake. A balanced life.",
-        "Accounts comfortable. Not exciting. Comfortable is excellent.",
+        "Accounts comfortable. Dull, even. Comfortable is excellent.",
         "Bought a better stool this month. A treat.",
         "Savings up {three|four|five} percent. Steady, small, like me.",
         "I could afford a holiday. I would spend it in a clock museum.",
@@ -356,7 +356,7 @@
         "Double entry: every euro has a twin somewhere. Find the twin.",
         "Gnome children learn to count before they walk. Walking is overrated anyway.",
         "A grimorie of accounts can be as dangerous as a grimorie of spells. Ask any auditor.",
-        "Euro notes carry Fantablack, they say. A bubble can reset the day, not the bill.",
+        "Euro notes carry Fantablack, they say. A bubble resets the day. The bill stays as it is.",
         "Interest compounds. So does trouble. Track both.",
         "Our family motto: carry the one, never the grudge.",
         "The Hypercapitalist Collective's accounts would make me faint. In a good way.",
@@ -399,7 +399,7 @@
         "Fantablack inside every liminal cabin. Scraped off the Omega Tower, they say. Pricey paint.",
         "Run a liminal engine near a bubble and it comes apart. I would fit a warning bell.",
         "One day a gnome will build a liminal engine the size of a pocket watch.",
-        "Bubba is a mechanic. Not a gnome, but nearly. Very nearly.",
+        "Bubba is a mechanic. Nearly a gnome. Very nearly.",
         "Every road in every world joins the Encompassing Road. Imagine the toll accounts."
       ]
     }
@@ -549,7 +549,7 @@
         ],
         [
           0,
-          "Nobody ever does. That's not an excuse, it's a pattern."
+          "Nobody ever does. By now it's a pattern."
         ]
       ],
       [
@@ -865,7 +865,7 @@
         "lines": [
           [
             0,
-            "Money belongs in an account, not under a mattress."
+            "Money belongs in an account. Mattresses are for sleeping."
           ],
           [
             1,

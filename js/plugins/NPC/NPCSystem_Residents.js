@@ -394,6 +394,51 @@
       return tpl;
     },
 
+    // The sprite the pool's Varlenian check reads off a resident's template
+    // (the first page image with a face): their own when the citizen event's
+    // first such page is one template() repaints, else the citizen's own. Read
+    // once per manifest, so asking for names never clones a template per head.
+    _citizenFace() {
+      const manifest = NPCPoolStore.load() || null;
+      const memo = ResidentRegistry._faceMemo;
+      if (memo && memo.manifest === manifest) return memo.face;
+      const tpl = NPCPoolStore.template("citizen");
+      let face = null;
+      if (tpl) {
+        face = { own: false, name: null };
+        for (const page of tpl.pages || []) {
+          if (page?.image && (page.list?.length ?? 0) > 1) { face.own = true; break; }
+          if (page?.image?.characterName) { face.name = page.image.characterName; break; }
+        }
+      }
+      ResidentRegistry._faceMemo = { manifest, face };
+      return face;
+    },
+
+    // The names SpawnManager.getNPCPool would deal for a group, in the same
+    // order and through the same two views (keepVarlenianHome,
+    // keepLocalsHome), without building a spawn template for every resident:
+    // the wiki's People shelf asks this of every group in the world. Each
+    // resident stands in as a stub carrying only what the views read.
+    poolNamesOf(groupName) {
+      if (!groupName) return [];
+      const pool = SpawnManager.getAuthoredPool(groupName).slice();
+      const e = Config.isProceduralGroup(groupName) ? null : ResidentRegistry.entry(groupName);
+      const face = e ? ResidentRegistry._citizenFace() : null;
+      if (face) {
+        const society = $gameSystem?._npcSociety || {};
+        for (const [name, mapId] of Object.entries(e.homes || {})) {
+          const sprite = society[name]?.spriteKey;
+          if (!sprite) continue;
+          const shown = face.own ? sprite : face.name;
+          pool.push({ eventData: { name, pages: shown ? [{ image: { characterName: shown } }] : [] }, mapId });
+        }
+      }
+      return SpawnManager.keepLocalsHome(SpawnManager.keepVarlenianHome(pool), groupName)
+        .map(t => t?.eventData?.name)
+        .filter(n => n && n !== "NPC"); // i18n-ignore: placeholder event name
+    },
+
     templatesFor(groupName) {
       const e = ResidentRegistry.entry(groupName);
       if (!e) return [];
@@ -442,4 +487,7 @@
   Object.assign(window.NPCSystem._internal, {
     ResidentRegistry,
   });
+
+  // The names-only twin of getNPCNamesByGroup, for the wiki's People shelf.
+  window.NPCSystem.getNPCPoolNames = (groupName) => ResidentRegistry.poolNamesOf(groupName);
 })();

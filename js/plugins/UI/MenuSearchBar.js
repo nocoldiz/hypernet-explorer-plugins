@@ -542,6 +542,22 @@
     let lastId = null;
     let keyInstalled = false;
 
+    // The strip F should open: the newest one, while it is still alive and
+    // drawn; otherwise whichever live strip is on the page. A sub-menu that
+    // disposed its own strip on the way out used to leave F pointing at it,
+    // so the menu it returned to never answered the key again; and a strip
+    // that is alive but not drawn (the main menu's, under the backpack) is
+    // never toggled behind the page that is.
+    function barOnScreen() {
+        const drawn = Array.from(document.querySelectorAll(".msb-field-only[data-msb]"));
+        if (lastId && bars.get(lastId) && drawn.some(n => n.getAttribute("data-msb") === lastId)) return bars.get(lastId);
+        for (let i = drawn.length - 1; i >= 0; i--) {
+            const live = bars.get(drawn[i].getAttribute("data-msb"));
+            if (live) return live;
+        }
+        return null;
+    }
+
     function installSearchKey() {
         if (keyInstalled || typeof document === "undefined") return;
         keyInstalled = true;
@@ -550,10 +566,11 @@
             if (e.altKey || e.metaKey) return;
             if (isTyping()) return;
             if (padOnly()) return;
-            const bar = lastId ? bars.get(lastId) : null;
             // Only while a strip is actually on screen: the same key means
             // nothing on a map or in a battle.
-            if (!bar || !document.querySelector(".msb-toggle")) return;
+            if (!document.querySelector(".msb-toggle")) return;
+            const bar = barOnScreen();
+            if (!bar) return;
             e.preventDefault();
             e.stopPropagation();
             bar.toggleField();

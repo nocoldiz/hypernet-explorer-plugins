@@ -51,7 +51,7 @@
     "cryoFieldMonth": "Month",
     "cryoFieldYear": "Year",
     "cryoConfirm": "Close the lid",
-    "cryoSpanLabel": "Under for",
+    "cryoSpanLabel": "Duration",
     "cryoSpanDay": "1 day",
     "cryoSpanDays": "%1 days",
     "cryoSpanMonth": "1 month",
@@ -63,9 +63,9 @@
     "cryoCost": "Fare",
     "cryoPurse": "Purse",
     "cryoNights": "%1 nights in the pod",
-    "cryoNoFunds": "The pod will not run for less than %1 a day.",
-    "cryoUnaffordable": "The purse will not cover this fare.",
-    "cryoEraOver": "The pod is dead. Nothing was built to sleep through the end of 2012.",
+    "cryoNoFunds": "The pod costs %1 a day.",
+    "cryoUnaffordable": "Not enough money.",
+    "cryoEraOver": "The pod can't run past the end of 2012.",
     "cryoTravelTitle": "Cryogenic suspension",
     "cryoWakeSub": "The lid opens.",
     "cryoWakeClean": "Steady",
@@ -77,7 +77,7 @@
     "cryoTp": "AP",
     "cryoHunger": "Food",
     "cryoSleep": "Rest",
-    "cryoHeld": "Held"
+    "cryoHeld": "In stasis"
   },
   "camp": {
     "tended": "The camp washes and talks the hours away.",
@@ -112,7 +112,7 @@
   "addiction": {
     "withdrawal": "{name} is in withdrawal from {substance}!",
     "relieved": "{name} is over the worst of the {substance} craving",
-    "eased": "{name}: the itch for {substance} eases by {amount}.",
+    "eased": "{name}: {substance} craving -{amount}.",
     "partyCard": "Addictions ({count})",
     "none": "Clean"
   },
@@ -191,14 +191,14 @@
     "talk": "{name} is talking to {other}",
     "wash": "{name} is going to the bathroom",
     "idle": "{name} is stretching their legs",
-    "relieve": "{name} slips away for a moment to relieve themselves"
+    "relieve": "{name} goes to relieve themselves"
   },
   "forage": {
     "found": "The party comes back with {items}.",
     "nothing": "Hours of searching, and the country gives up nothing.",
     "scavenged": "Hours going over the seats and the footwells turn up {items}.",
     "nothingAboard": "Hours going over the seats, and not so much as a dropped ticket.",
-    "learned": "The ground is better known now: {points} KP."
+    "learned": "Gained {points} KP from foraging."
   },
   "holiday": {
     "toastTitle": "Public holiday",

@@ -44,7 +44,24 @@
 
             if (content == null) content = '';
 
-            const id = 'app-hypernet-notepad';
+            // One window per document. Building the editor again inside a
+            // window already on screen swapped its text out from under the
+            // player, kept the old title, and bound Save a second time with
+            // the old path, so saving wrote the new text over the old file.
+            const baseId = 'app-hypernet-notepad';
+            const WM = window.HypernetOS.WindowManager;
+            const ready = Array.from(document.querySelectorAll('.hypernet-os-window[data-notepad-ready]:not([data-closing])'));
+            const raise = w => WM.createWindow({ id: w.id, title: w.dataset.title || '', contentHTML: '' });
+            const same = path ? ready.find(w => w.dataset.notepadPath === path) : null;
+            if (same) { raise(same); return; }
+            const baseOpen = ready.find(w => w.id === baseId);
+            if (baseOpen && !path && !content) { raise(baseOpen); return; }
+            let id = baseId;
+            if (baseOpen) {
+                let n = 2;
+                while (document.getElementById(baseId + '-' + n)) n++;
+                id = baseId + '-' + n;
+            }
             const fileName = path ? path.substring(path.lastIndexOf('/') + 1)
                 : T('HypernetNotepad.untitled');
             const title = T('HypernetNotepad.windowTitle', { file: fileName });
@@ -85,6 +102,9 @@
                 height: 460,
                 contentHTML: contentHTML
             });
+
+            win.dataset.notepadReady = '1';
+            win.dataset.notepadPath = path || '';
 
             // Handle Menu Dropdowns
             const fileMenu = win.querySelector('#notepad-menu-file');
@@ -134,6 +154,7 @@
 
                 if (window.HypernetFileSystem && window.HypernetFileSystem.writeFile(targetPath, textarea.value)) {
                     path = targetPath;
+                    win.dataset.notepadPath = path;
                     const finalFileName = path.substring(path.lastIndexOf('/') + 1);
                     win.dataset.title = T('HypernetNotepad.windowTitle', { file: finalFileName });
                     
@@ -172,7 +193,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: 'app-hypernet-notepad',
-            name: T('HypernetNotepad.appName'),
+            name: () => T('HypernetNotepad.appName'),
             icon: 190,
             launchFn: function() {
                 window.HypernetNotepad.launch();
@@ -647,7 +668,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: WYRD_APP_ID,
-            name: T('HypernetNotepad.wyrd.appName'),
+            name: () => T('HypernetNotepad.wyrd.appName'),
             icon: 189,
             category: 'office',
             launchFn: () => Wyrd.launch(),
@@ -655,7 +676,7 @@
         });
         window.HypernetOS.registerApp({
             id: HEXCEL_APP_ID,
-            name: T('HypernetNotepad.hexcel.appName'),
+            name: () => T('HypernetNotepad.hexcel.appName'),
             icon: 233,
             category: 'office',
             launchFn: () => Hexcel.launch(),

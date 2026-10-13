@@ -48,14 +48,14 @@
     "appointments": "APPOINTMENTS"
   },
   "none": {
-    "holidays": "AN ORDINARY WORKIN' DAY.",
-    "deadlines": "NO CONTRACT FALLS DUE.",
-    "appointments": "NOTHIN' WRITTEN DOWN."
+    "holidays": "NO HOLIDAYS.",
+    "deadlines": "NO DEADLINES.",
+    "appointments": "NO APPOINTMENTS."
   },
   "status": {
-    "added": "APPOINTMENT WRITTEN DOWN.",
-    "removed": "APPOINTMENT CROSSED OUT.",
-    "empty": "WRITE WHAT DA APPOINTMENT IZ FIRST!"
+    "added": "APPOINTMENT ADDED.",
+    "removed": "APPOINTMENT REMOVED.",
+    "empty": "ENTER A DESCRIPTION FIRST!"
   },
   "toast": {
     "title": "APPOINTMENT",

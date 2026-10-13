@@ -1,11 +1,11 @@
 {
   "vaultName": "Bunker del Santo Patrono di {patron}",
   "starLabel": "Stella {planet}",
-  "surveyNote": "Rilevato e nominato. Registrato a {patron}, patrono di questa realta.",
+  "surveyNote": "Rilevato e nominato. Registrato a {patron}, patrono di questa realtà.",
   "hatchReturn": "Di nuovo sulla botola di {patron}.",
   "hatchReturnUnknown": "Di nuovo sulla botola.",
   "vesselSender": "Il Bunker del Santo Patrono",
   "vesselSubject": "La tua via verso il basso",
   "vesselBody": "Le coordinate sono state pronunciate ad alta voce in questo mondo, e ora il bunker gli risponde. In allegato trovi il vascello che ti riporta giù alla botola di {patron}, ogni volta che lo vorrai.",
-  "vaultSealed": "La botola non si apre: sopra non c'e' piu' terra."
+  "vaultSealed": "La botola non si apre: sopra non c'è più terra."
 }

@@ -520,7 +520,7 @@
 
   function globeStepCost() {
     const WMR = window.WorldMapReturn;
-    return (WMR && WMR.GLOBE_STEP_COST) || 5;
+    return (WMR && WMR.GLOBE_STEP_COST) || 1;
   }
 
   // The one map id every procedural square reuses.
@@ -2139,8 +2139,8 @@
     const baseMultiplier = isShiftPressed ? shiftMultiplier : 1.0;
 
     // Check if on map 315 (world map) for special time/depletion rules. The
-    // globe (map 1409) is a world map too, at a tenth of the scale: one of its
-    // steps costs the clock and the body five of map 315's.
+    // globe (map 1409) is a world map too and one of its steps costs the
+    // clock and the body the same as one of map 315's.
     const isOnGlobe = isGlobeMapNow();
     const isOnWorldMap = $gameMap && ($gameMap.mapId() === 315 || isOnGlobe);
     const travelScale = isOnGlobe ? globeStepCost() : 1;

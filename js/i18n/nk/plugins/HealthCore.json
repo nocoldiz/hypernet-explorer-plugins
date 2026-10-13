@@ -1,26 +1,28 @@
 {
   "biologics": "BIOLOGICS",
   "damaged": "DAMAGED",
-  "switchPlayer": "← → SWITCH PLAYER",
+  "switchPlayer": "← → SWITCH CHARACTER",
   "statFallback": "STAT",
   "paramNames": [
     "MAX HP",
     "MAX MP",
     "STR",
-    "HIT RATE",
+    "CON",
     "INT",
-    "COS",
+    "WIS",
     "DEX",
     "PSI"
   ],
-  "vitalOrganDestroyed": "{actor}'S VITAL ORGAN ({part}) WAZ DESTROYED! DEY DIED INSTANTLY AN' WAZ REMOVED FROM DA PARTY!",
+  "vitalOrganDestroyed": "{actor}'S {part} WAZ DESTROYED! DEY DIED AN' LEFT DA PARTY!",
   "partDestroyed": "{actor}'S {part} WAZ DESTROYED AN' REMOVED!",
   "statusBroken": "BROKEN",
   "statusDestroyed": "DESTROYED",
   "statusCutOff": "CUT OFF",
   "partRuined": "{actor}'S {part} WAZ RUINED BEYOND REPAIR!",
   "partBroken": "{actor}'S {part} WAZ BROKEN!",
-  "augmentLost": "DA AUGMENT INSTALLED DERE ({augment}) WAZ TORN OFF WIT IT!",
+  "augmentLost": "DA {augment} AUGMENT WAZ LOST WIT IT!",
   "partDamagedFallback": "{part} DAMAGED!",
-  "limbCopy": "{name} {n}"
+  "limbCopy": "{name} {n}",
+  "battleLogWound": "{actor}'S {wound}!",
+  "battleLogWoundStat": "{actor}'S {wound}, {param} {amount}!"
 }

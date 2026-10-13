@@ -3,457 +3,361 @@
     [
       [
         0,
-        ""
+        "*TELLS A SILLY JOKE*"
       ],
       [
         1,
-        ""
+        "*LAUGHS* DAT IZ TERRIBLE! BUT ME NEEDED DAT LAUGH!"
       ],
       [
         0,
-        ""
+        "SOMETIMES YOU NEED TA FIND HUMOR IN DA CHAOS!"
       ]
     ],
     [
       [
         0,
-        ""
+        "REMEMBER WHEN WE FIRST MET? ME NEVER THOUGHT WE'D COME DIS FAR!"
       ],
       [
         1,
-        ""
+        "HA! YOU TRIED TA PICK A FIGHT WIT ME BACK DEN!"
       ],
       [
         0,
-        ""
+        "AN' NOW ME WOULD TRUST YOU WIT ME LIFE. FUNNY HOW TINKZ CHANGE!"
+      ],
+      [
+        1,
+        "SAME HERE, MATE. SAME HERE!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME FOUND DIS IN TOWN. THOUGHT YOU MIGHT LIKE IT!"
       ],
       [
         1,
-        ""
+        "YOU GOT DIS... FOR ME? {a}, ME NO KNOW WHAT TA SAY!"
       ],
       [
         0,
-        ""
+        "JUST SAW IT AN' THOUGHT OF YOU. NO BIG DEAL!"
       ],
       [
         1,
-        ""
+        "IT IZ TA ME. THANK YOU, TRULY!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME NOTICED YOU READIN' DAT BOOK 'BOUT ANCIENT MAGIC!"
       ],
       [
         1,
-        ""
+        "YOU IZ INTERESTED IN MAGICAL THEORY TOO?"
       ],
       [
         0,
-        ""
+        "ALWAYS HAB BIN! MAYBE WE COULD STUDY TOGETHER SOMETIME?"
       ],
       [
         1,
-        ""
+        "ME WOULD REALLY LIKE DAT!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU SEEM DOWN TODAY. EVERYTINK OKAY?"
       ],
       [
         1,
-        ""
+        "JUST... QUESTIONIN' IF ME IZ STRONG ENOUGH FOR DIS!"
       ],
       [
         0,
-        ""
+        "IZ YOU KIDDIN'? YOU IZ ONE OF DA STRONGEST PEOPLE ME KNOW!"
       ],
       [
         1,
-        ""
+        "YOU REALLY MEAN DAT? THANK YOU..."
       ]
     ],
     [
       [
         0,
-        ""
+        "ME NEVER TOLD YOU WHY ME CAME TA DIS TOWN..."
       ],
       [
         1,
-        ""
+        "YOU NO HAB TA IF IT IZ TOO PERSONAL!"
       ],
       [
         0,
-        ""
+        "NO, ME WANT YOU TA KNOW. ME TRUST YOU!"
       ],
       [
         1,
-        ""
+        "ME IZ HONORED. ME IZ HERE TA LISTEN!"
       ]
     ],
     [
       [
         0,
-        ""
+        "HOW DO YOU ALWAYS KNOW WHICH HERBS IZ SAFE?"
       ],
       [
         1,
-        ""
+        "ME GRANDMOTHER TAUGHT ME. WANT ME TA SHOW YOU?"
       ],
       [
         0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "ME WOULD LOVE TA LEARN FROM YOU!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME HAB BIN MEANIN' TA SAY, YOU INSPIRE ME. DA WAY YOU KEEP GOING!"
       ],
       [
         1,
-        ""
+        "DAT MIGHT BE DA KINDEST TINK ANYONE'S SAID TA ME IN MONTHS!"
       ],
       [
         0,
-        ""
+        "IT IZ TRUE."
       ],
       [
         1,
-        ""
+        "DEN ME WILL KEEP GOING. FOR BOTH OF US!"
       ]
     ],
     [
       [
         0,
-        ""
+        "CAN ME SHOW YOU SOMETINK ME MADE?"
       ],
       [
         1,
-        ""
+        "OF COURSE! LET ME SEE."
       ],
       [
         0,
-        ""
+        "IT IZ NO FINISHED YET. BUT ME WANTED YA OPINION!"
       ],
       [
         1,
-        ""
+        "{a}, DIS IZ WONDERFUL. NO CHANGE A TINK!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME STASHED YOU A SEAT. ME KNOW YOU LIKE DIS SPOT!"
       ],
       [
         1,
-        ""
+        "YOU REMEMBERED?"
       ],
       [
         0,
-        ""
+        "OF COURSE ME DID."
       ],
       [
         1,
-        ""
+        "NOBODY EVER DOES DAT FOR ME. THANK YOU!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME WROTE SOMETINK. ME THOUGHT OF YOU WHEN ME FINISHED IT!"
       ],
       [
         1,
-        ""
+        "CAN ME READ IT?"
       ],
       [
         0,
-        ""
+        "ONLY IF YOU PROMISE NO TA GO EASY ON ME!"
+      ],
+      [
+        1,
+        "ME NEVER DO. HAND IT OVER!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU MAKE IT LOOK EASY, {b}."
       ],
       [
         1,
-        ""
+        "HA. ME JUST HIDE DA STRUGGLIN' BETTER DEN MOST!"
       ],
       [
         0,
-        ""
+        "DAT IZ ALMOST REASSURIN'."
       ],
       [
         1,
-        ""
+        "GOOD. IT WAZ MEANT TA BE."
       ]
     ],
     [
       [
         0,
-        ""
+        "ME WAZ GOING TA GIVE UP TODAY!"
       ],
       [
         1,
-        ""
+        "WHAT CHANGED YA MIND?"
       ],
       [
         0,
-        ""
+        "YOU, HONESTLY. WATCHIN' YOU KEEP GOING!"
       ],
       [
         1,
-        ""
+        "ME NO KNOW. ME IZ GLAD YOU TOLD ME!"
       ]
     ],
     [
       [
         0,
-        ""
+        "HAPPY BIRTHDAY, {b}. ME NO FORGET!"
       ],
       [
         1,
-        ""
+        "YOU REMEMBERED. ME NO CAN BELIEVE YOU REMEMBERED!"
       ],
       [
         0,
-        ""
+        "OF COURSE ME DID. COME ON, ME FOUND SOMEWHERE GOOD TA EAT!"
       ],
       [
         1,
-        ""
+        "LEAD DA WAY."
       ]
     ],
     [
       [
         0,
-        ""
+        "ME WAZ WORRIED 'BOUT YOU. YOU WENT QUIET FOR DAYS!"
       ],
       [
         1,
-        ""
+        "ME NEEDED TIME TA TINK. BUT ME IZ OKAY!"
       ],
       [
         0,
-        ""
+        "YOU CAN ALWAYS TELL ME WHEN YOU NEED SPACE!"
       ],
       [
         1,
-        ""
+        "ME KNOW. DAT IZ WHY IT IZ EASY TA COME BACK!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME USED TA TINK PEOPLE LIKE YOU ONLY EXISTED IN STORIES!"
       ],
       [
         1,
-        ""
+        "PEOPLE LIKE ME?"
       ],
       [
         0,
-        ""
+        "ONES WHO ACTUALLY KEEP DEY WORD!"
       ],
       [
         1,
-        ""
+        "ME JUST DO WHAT ME SAY. IT SHOULD BE ORDINARY!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME FOUND YA OLD CLOAK. DA ONE YOU LOST IN DA FOREST!"
       ],
       [
         1,
-        ""
+        "DAT WAZ SIX MONTHS AGO! HOW?"
       ],
       [
         0,
-        ""
+        "ME WENT LOOKIN'. FIGURED IT MATTERED TA YOU!"
       ],
       [
         1,
-        ""
+        "IT DID. MORE DEN ME SAID."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU NEVER GAVE UP ON ME, EVEN WHEN ME DESERVED IT!"
       ],
       [
         1,
-        ""
+        "DAT IZ NO HOW IT WORKS. NO FOR ME!"
       ],
       [
         0,
-        ""
+        "WHY?"
       ],
       [
         1,
-        ""
+        "COZ ME HAB NEEDED SOMEONE NO TA GIVE UP ON ME TOO!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU LOOK BETTER DEN YOU DID LAST WEEK!"
       ],
       [
         1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "ME FEEL IT. WHATEVER IT WAZ, IT HAB PASSED!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME HAB BIN TELLIN' PEOPLE WHAT YOU DID!"
       ],
       [
         1,
-        ""
+        "DO NO."
       ],
       [
         0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "TOO LATE. HALF DA STREET KNOWS!"
       ]
     ],
     [
       [
         0,
-        ""
+        "WHATEVER YOU NEED, YOU ONLY HAB TA ASK!"
       ],
       [
         1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "ME WILL REMEMBER DAT. ME USUALLY DO!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU WAZ RIGHT AN' ME WAZ WRONG, AN' ME IZ SAYIN' IT OUT LOUD!"
       ],
       [
         1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ]
-    ],
-    [
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ]
-    ],
-    [
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ]
-    ],
-    [
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ]
-    ],
-    [
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "ONCE A YEAR IZ ENOUGH. ME WILL TAKE IT!"
       ]
     ]
   ],
@@ -461,419 +365,327 @@
     [
       [
         0,
-        ""
+        "DO YOU EVER STOP TALKIN'?"
       ],
       [
         1,
-        ""
+        "DO YOU EVER STOP BROODIN'?"
       ],
       [
         0,
-        ""
+        "AT LEAST ME TINK BEFORE ME SPEAK!"
+      ],
+      [
+        1,
+        "YEAH, YOU OVERTHINK EVERYTINK!"
       ]
     ],
     [
       [
         0,
-        ""
+        "WHOSE SIDE IZ YOU REALLY ON?"
       ],
       [
         1,
-        ""
+        "WHAT IZ DAT SUPPOSED TA MEAN?"
       ],
       [
         0,
-        ""
+        "YOU HAB BIN ACTIN' STRANGE LATELY!"
       ],
       [
         1,
-        ""
+        "MAYBE COZ YOU IZ PARANOID 'BOUT EVERYTINK!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU NEVER SAID THANK YOU. NO ONCE!"
       ],
       [
         1,
-        ""
+        "ME NO ASK FOR YA HELP IN DA FIRST PLACE!"
       ],
       [
         0,
-        ""
+        "AN' YET HERE ME IZ, STILL CLEANIN' UP YA MESSES!"
       ],
       [
         1,
-        ""
+        "DEN STOP! NOBODY'S FORCIN' YOU!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU TOLD DEM WHAT ME SAID?!"
       ],
       [
         1,
-        ""
+        "ME THOUGHT IT WAZ COMMON KNOWLEDGE!"
       ],
       [
         0,
-        ""
+        "DAT WAZ PRIVATE. ME TRUSTED YOU!"
       ],
       [
         1,
-        ""
+        "ME NO TINK IT WAZ A BIG DEAL!"
+      ],
+      [
+        0,
+        "OF COURSE YOU NO."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU ALWAYS DISAPPEAR RIGHT WHEN TINKZ GET HARD!"
       ],
       [
         1,
-        ""
+        "ME WAZ HANDLIN' ME OWN PROBLEMS!"
       ],
       [
         0,
-        ""
+        "WE IZ SUPPOSED TA BE IN DIS TOGETHER!"
       ],
       [
         1,
-        ""
+        "IZ WE? COZ LATELY IT FEELS REAL ONE-SIDED!"
       ]
     ],
     [
       [
         0,
-        ""
+        "STOP MAKIN' PROMISES YOU NO KEEP!"
       ],
       [
         1,
-        ""
+        "CIRCUMSTANCES CHANGE, {a}. TINKZ COME UP!"
       ],
       [
         0,
-        ""
+        "TINKZ ALWAYS COME UP. DAT IZ DA POINT!"
       ],
       [
         1,
-        ""
+        "FINE. NO COUNT ON ME DEN. EASIER FOR BOTH OF US!"
       ]
     ],
     [
       [
         0,
-        ""
+        "DID YOU TAKE CREDIT FOR WHAT ME DID?"
       ],
       [
         1,
-        ""
+        "ME MAY HAB FRAMED IT A CERTAIN WAY!"
       ],
       [
         0,
-        ""
+        "DAT IZ A REAL ELEGANT WAY OF SAYIN' YOU LIED!"
       ],
       [
         1,
-        ""
+        "ME PREFER TA CALL IT POSITIONIN'!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU LEFT ME WAITIN' FOR AN HOUR!"
       ],
       [
         1,
-        ""
+        "ME LOST TRACK OF TIME."
       ],
       [
         0,
-        ""
+        "YOU ALWAYS LOSE TRACK OF TIME. EVERY SINGLE TIME!"
       ],
       [
         1,
-        ""
+        "DEN STOP BEING SURPRISED BY IT!"
       ]
     ],
     [
       [
         0,
-        ""
+        "EVERYTINK IZ A JOKE TA YOU, IZ IT NO?"
       ],
       [
         1,
-        ""
+        "MOST TINKZ, YES. LAUGHIN' IZ EASIER DEN DA ALTERNATIVE!"
       ],
       [
         0,
-        ""
+        "SOME TINKZ DESERVE TA BE TAKEN SERIOUSLY!"
       ],
       [
         1,
-        ""
+        "AN' SOME TINKZ DESERVE TA BE LAUGHED OFF BEFORE DEY BREAK YOU!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU HAB NO RIGHT TA MAKE DAT CALL WITOUT ME!"
       ],
       [
         1,
-        ""
+        "YOU WAZ NO DERE. SOMEONE HAB TA DECIDE!"
       ],
       [
         0,
-        ""
+        "SO YOU DECIDED FOR BOTH OF US!"
       ],
       [
         1,
-        ""
+        "ME DECIDED FOR DA SITUATION. YOU WAZ A LUXURY ME DID NO HAB!"
       ]
     ],
     [
       [
         0,
-        ""
+        "STOP INTERRUPTIN' ME WHEN ME SPEAK!"
       ],
       [
         1,
-        ""
+        "ME ONLY DO IT WHEN YOU IZ WRONG!"
       ],
       [
         0,
-        ""
+        "WHICH APPARENTLY IZ CONSTANTLY!"
       ],
       [
         1,
-        ""
+        "YA WORDS, MIND."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU HAB BIN AVOIDIN' ME."
       ],
       [
         1,
-        ""
+        "ME HAB BIN BUSY."
       ],
       [
         0,
-        ""
+        "YOU IZ ALWAYS BUSY WHEN TINKZ GET UNCOMFORTABLE!"
       ],
       [
         1,
-        ""
-      ],
-      [
-        0,
-        ""
+        "AN' YOU ALWAYS PUSH WHEN ME NEED SPACE. WE HAB OUR PATTERNS!"
       ]
     ],
     [
       [
         0,
-        ""
+        "DAT WAZ ME AN' YOU KNEW IT!"
       ],
       [
         1,
-        ""
+        "IT WAZ NO LABELED."
       ],
       [
         0,
-        ""
+        "NO EVERYTINK NEEDS A LABEL, {b}!"
       ],
       [
         1,
-        ""
+        "DEN HOW WAZ ME SUPPOSED TA KNOW?"
+      ],
+      [
+        0,
+        "YOU WAZ SUPPOSED TA ASK."
       ]
     ],
     [
       [
         0,
-        ""
+        "DO YOU EVER LISTEN TA ANYONE OTHER DEN YOURSELF?"
       ],
       [
         1,
-        ""
+        "ME LISTEN. ME JUST DISAGREE!"
       ],
       [
         0,
-        ""
+        "DERE IZ A DIFFERENCE BETWEEN DISAGREEIN' AN' NO HEARIN'!"
       ],
       [
         1,
-        ""
+        "FINE. ME IZ LISTENIN' NOW. IZ YOU GOING TA SAY SOMETINK WORTH HEARIN'?"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU SAID YOU WOULD BE DERE!"
       ],
       [
         1,
-        ""
+        "SOMETINK CAME UP."
       ],
       [
         0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "SOMETINK ALWAYS DOES."
       ]
     ],
     [
       [
         0,
-        ""
+        "ME HEARD WHAT YOU HAB BIN SAYIN' 'BOUT ME!"
       ],
       [
         1,
-        ""
+        "DEN YOU HEARD IT WRONG."
       ],
       [
         0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "ME HEARD IT TWICE."
       ]
     ],
     [
       [
         0,
-        ""
+        "DO NO TOUCH WHAT IZ ME AGAIN!"
       ],
       [
         1,
-        ""
+        "ME DID NO TOUCH ANYTINK."
       ],
       [
         0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "DEN IT WALKED OFF BY ITSELF!"
       ]
     ],
     [
       [
         0,
-        ""
+        "EVERY TIME ME HELP YOU IT COSTS ME!"
       ],
       [
         1,
-        ""
+        "DEN STOP HELPIN'."
       ],
       [
         0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "ME INTEND TA."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU TALK A GREAT DEAL FOR SOMEONE WHO HAB DONE NUTTIN'!"
       ],
       [
         1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ]
-    ],
-    [
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ]
-    ],
-    [
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ]
-    ],
-    [
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ]
-    ],
-    [
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "AN' YOU DO A GREAT DEAL OF NUTTIN' QUIETLY. WE EACH HAB OUR GIFT!"
       ]
     ]
   ],
@@ -881,601 +693,635 @@
     [
       [
         0,
-        ""
+        "DA WEATHER'S BIN STRANGE LATELY, NO HAB IT?"
       ],
       [
         1,
-        ""
+        "YEAH, ME HAB NOTICED DAT TOO. HOPE IT NO LAST!"
       ],
       [
         0,
-        ""
+        "WE WILL MANAGE EITHER WAY, ME SUPPOSE!"
       ]
     ],
     [
       [
         0,
-        ""
+        "CLEAR NIGHT. DA STARS IZ BRIGHT!"
       ],
       [
         1,
-        ""
+        "ME VILLAGE HAB DIFFERENT CONSTELLATIONS!"
       ],
       [
         0,
-        ""
+        "REALLY? DAT IZ INTERESTIN'!"
+      ],
+      [
+        1,
+        "MAKES YOU REALIZE HOW BIG DA WORLD IZ!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU IZ UP EARLY."
       ],
       [
         1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "NO CAN SLEEP. MIGHT AS WELL GET READY!"
       ]
     ],
     [
       [
         0,
-        ""
+        "DIS TOWN REMINDS ME OF HOME!"
       ],
       [
         1,
-        ""
+        "HOW SO?"
       ],
       [
         0,
-        ""
+        "DA SMELL OF BREAD BAKIN'. SAME ANYWHERE YOU GO!"
       ],
       [
         1,
-        ""
+        "SOME TINKZ IZ UNIVERSAL, ME GUESS!"
       ]
     ],
     [
       [
         0,
-        ""
+        "HAB DA STRANGEST DREAM LAST NIGHT!"
       ],
       [
         1,
-        ""
+        "'BOUT WHAT?"
+      ],
+      [
+        0,
+        "NO CAN QUITE REMEMBER. JUST FELT... IMPORTANT SOMEHOW!"
+      ],
+      [
+        1,
+        "DREAMS CAN BE LIKE DAT."
       ]
     ],
     [
       [
         0,
-        ""
+        "IN ME HOMELAND, WE HAB A SAYIN'..."
       ],
       [
         1,
-        ""
+        "WHAT IZ DAT?"
       ],
       [
         0,
-        ""
+        "'DA MOUNTAIN REMEMBERS EVERY FOOTSTEP.'"
       ],
       [
         1,
-        ""
+        "MEANIN' WE LEAVE OUR MARK WHEREVER WE GO?"
+      ],
+      [
+        0,
+        "SOMETINK LIKE DAT."
       ]
     ],
     [
       [
         0,
-        ""
+        "IZ DAT YOU HUMMIN'?"
       ],
       [
         1,
-        ""
+        "OH, SORRY. OLD HABIT."
       ],
       [
         0,
-        ""
+        "NO, IT IZ NICE. WHAT SONG IZ IT?"
       ],
       [
         1,
-        ""
+        "SOMETINK ME MOTHER USED TA SING!"
       ]
     ],
     [
       [
         0,
-        ""
+        "BLACK CAT JUST CROSSED ME PATH EARLIER!"
       ],
       [
         1,
-        ""
+        "YOU IZ NO SUPERSTITIOUS, IZ YOU?"
       ],
       [
         0,
-        ""
+        "NO REALLY. BUT ME GRANDMOTHER WAZ!"
       ],
       [
         1,
-        ""
-      ],
-      [
-        0,
-        ""
+        "ME TOO. ALWAYS HAB A CHARM FOR EVERYTINK!"
       ]
     ],
     [
       [
         0,
-        ""
+        "DAT MERCHANT SEEMED SHADY!"
       ],
       [
         1,
-        ""
+        "MOST OF DEM IZ, IN ME EXPERIENCE!"
       ],
       [
         0,
-        ""
+        "STILL, MIGHT HAB USEFUL INFORMATION!"
       ],
       [
         1,
-        ""
+        "IF YOU CAN AFFORD IT."
       ]
     ],
     [
       [
         0,
-        ""
+        "DEZE RUINS MUST BE ANCIENT!"
       ],
       [
         1,
-        ""
+        "WONDER WHAT HAPPENED TA DA PEOPLE WHO BUILT DEM!"
       ],
       [
         0,
-        ""
+        "SAME TINK DAT HAPPENS TA ALL CIVILIZATIONS, ME SUPPOSE!"
       ],
       [
         1,
-        ""
+        "TIME CONQUERS EVERYTINK EVENTUALLY!"
       ]
     ],
     [
       [
         0,
-        ""
+        "FOG'S ROLLIN' IN."
       ],
       [
         1,
-        ""
+        "MAKES IT HARDER TA SEE TROUBLE COMIN'!"
       ],
       [
         0,
-        ""
+        "ALSO MAKES IT HARDER FOR TROUBLE TA SEE US!"
       ],
       [
         1,
-        ""
+        "FAIR POINT."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU COME HERE OFTEN?"
       ],
       [
         1,
-        ""
+        "OFTEN ENOUGH. YOU?"
       ],
       [
         0,
-        ""
+        "FIRST TIME. SEEMS QUIET."
       ],
       [
         1,
-        ""
+        "MOSTLY."
       ]
     ],
     [
       [
         0,
-        ""
+        "DID YOU CATCH DA FIGHT OUTSIDE DA TAVERN LAST NIGHT?"
       ],
       [
         1,
-        ""
+        "HARD TA MISS IT. DA WHOLE STREET WAZ WATCHIN'!"
       ],
       [
         0,
-        ""
+        "WONDER WHAT STARTED IT."
       ],
       [
         1,
-        ""
+        "DOES IT EVER NEED A REASON AROUND HERE?"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME KEEP HEARIN' STRANGE SOUNDS FROM DA OLD MILL!"
       ],
       [
         1,
-        ""
+        "RATS, MAYBE-MAYBE."
       ],
       [
         0,
-        ""
+        "BIG RATS."
       ],
       [
         1,
-        ""
+        "NO TINK 'BOUT IT TOO LONG!"
       ]
     ],
     [
       [
         0,
-        ""
+        "LONG SHIFT TODAY."
       ],
       [
         1,
-        ""
+        "SAME AS YESTERDAY."
       ],
       [
         0,
-        ""
+        "AN' TOMORROW, ME EXPECT."
       ],
       [
         1,
-        ""
+        "AT LEAST DERE IZ PAY AT DA END OF IT!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU GREW UP AROUND HERE?"
       ],
       [
         1,
-        ""
+        "NO, ME CAME LATER. YOU?"
       ],
       [
         0,
-        ""
+        "BORN HERE. NEVER QUITE MANAGED TA LEAVE!"
       ],
       [
         1,
-        ""
+        "DERE IZ WORSE PLACES TA BE STUCK!"
       ]
     ],
     [
       [
         0,
-        ""
+        "SOMEONE LEFT BREAD ON ME DOORSTEP DIS MORNIN'!"
       ],
       [
         1,
-        ""
+        "ANY IDEA WHO?"
       ],
       [
         0,
-        ""
+        "NONE. BUT IT WAZ STILL WARM!"
       ],
       [
         1,
-        ""
+        "SOMEBODY LIKES YOU."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU HAB FAMILY NEARBY?"
       ],
       [
         1,
-        ""
+        "A SISTER, A FEW DAYS' WALK!"
       ],
       [
         0,
-        ""
+        "DO YOU SEE HER MUCH?"
       ],
       [
         1,
-        ""
+        "NO AS MUCH AS ME SHOULD."
       ]
     ],
     [
       [
         0,
-        ""
+        "DAT BUILDIN' HAB BIN EMPTY FOR YEARS!"
       ],
       [
         1,
-        ""
+        "USED TA BE A BAKERY, ME TINK!"
       ],
       [
         0,
-        ""
+        "WHAT HAPPENED?"
       ],
       [
         1,
-        ""
+        "NOBODY SEEMS TA AGREE ON DAT!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU SPEAK ANY OTHER LANGUAGES?"
       ],
       [
         1,
-        ""
+        "A LIL'. ENOUGH TA OFFEND PEOPLE IN TWO TONGUES!"
       ],
       [
         0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "USEFUL SKILL."
       ]
     ],
     [
       [
         0,
-        ""
+        "WHAT DO YOU DO WHEN YOU NO CAN SLEEP?"
       ],
       [
         1,
-        ""
+        "WALK, MOSTLY. OR SIT SOMEWHERE QUIET!"
       ],
       [
         0,
-        ""
+        "DOES IT HELP?"
       ],
       [
         1,
-        ""
+        "NO REALLY. BUT IT PASSES DA TIME!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU TRUST DAT NEW MAGISTRATE?"
       ],
       [
         1,
-        ""
+        "TOO EARLY TA SAY."
       ],
       [
         0,
-        ""
+        "LAST ONE WAZ NO GOOD."
       ],
       [
         1,
-        ""
+        "DAT IZ WHY ME SAID TOO EARLY!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME DROPPED SOMETINK IN DA CANAL!"
       ],
       [
         1,
-        ""
+        "WHAT WAZ IT?"
       ],
       [
         0,
-        ""
+        "ME DIGNITY, MOSTLY."
+      ],
+      [
+        1,
+        "DOZE FLOAT. YOU WILL GET IT BACK!"
       ]
     ],
     [
       [
         0,
-        ""
+        "DO YOU BELIEVE IN LUCK?"
       ],
       [
         1,
-        ""
+        "ME BELIEVE IN PREPARATION AN' TIMIN'!"
       ],
       [
         0,
-        ""
+        "SO YES, DEN."
       ],
       [
         1,
-        ""
+        "DAT IZ NO WHAT ME SAID."
       ]
     ],
     [
       [
         0,
-        ""
+        "DA MARKET CLOSES EARLY ON FESTIVAL DAYS!"
       ],
       [
         1,
-        ""
+        "SINCE WHEN?"
       ],
       [
         0,
-        ""
+        "SINCE LAST YEAR, APPARENTLY!"
       ],
       [
         1,
-        ""
+        "NOBODY TELLS ME ANYTINK."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU HAB ANY HOBBIES?"
       ],
       [
         1,
-        ""
+        "SURVIVIN', MOSTLY."
       ],
       [
         0,
-        ""
+        "WHAT DID YOU DO BEFORE ALL DIS?"
       ],
       [
         1,
-        ""
+        "SURVIVIN', MOSTLY. JUST WIT LESS URGENCY!"
       ]
     ],
     [
       [
         0,
-        ""
+        "ME FOUND A COIN FROM A COUNTRY ME HAB NEVER HEARD OF!"
       ],
       [
         1,
-        ""
+        "HOW OLD IZ IT?"
       ],
       [
         0,
-        ""
+        "NO IDEA. DA FACE ON IT IZ WORN DOWN TA NUTTIN'!"
       ],
       [
         1,
-        ""
+        "COULD BE WORTH SOMETINK. OR NUTTIN'!"
       ]
     ],
     [
       [
         0,
-        ""
+        "DO YOU TINK DIS TOWN HAB ALWAYS BIN DIS WAY?"
       ],
       [
         1,
-        ""
+        "MAYBE-MAYBE NO. TOWNS CHANGE SLOWLY, LIKE PEOPLE!"
       ],
       [
         0,
-        ""
+        "REASSURIN' OR DEPRESSIN'?"
       ],
       [
         1,
-        ""
+        "DEPENDS ON DA TOWN."
       ]
     ],
     [
       [
         0,
-        ""
+        "ME HAB BIN THINKIN' 'BOUT SOMETINK YOU SAID WEEKS AGO!"
       ],
       [
         1,
-        ""
+        "WHAT DID ME SAY?"
       ],
       [
         0,
-        ""
+        "DAT IZ DA TINK. ME NO CAN REMEMBER EXACTLY!"
       ],
       [
         1,
-        ""
+        "AN' YOU HAB BIN THINKIN' 'BOUT IT SINCE?"
+      ],
+      [
+        0,
+        "IT FELT IMPORTANT AT DA TIME!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU EVER WORK SOMEWHERE ELSE BEFORE HERE?"
       ],
       [
         1,
-        ""
+        "TWO OTHER PLACES. NEITHER LASTED!"
       ],
       [
         0,
-        ""
+        "BY CHOICE OR CIRCUMSTANCE?"
       ],
       [
         1,
-        ""
+        "LIL' OF BOTH."
       ]
     ],
     [
       [
         0,
-        ""
+        "WHAT IZ DA FURTHEST YOU HAB EVER TRAVELLED?"
       ],
       [
         1,
-        ""
+        "FURTHER DEN ME PLANNED TA, DAT IZ CERTAIN!"
       ],
       [
         0,
-        ""
+        "WAZ IT WORTH IT?"
       ],
       [
         1,
-        ""
+        "ASK ME AGAIN IN A YEAR."
       ]
     ],
     [
       [
         0,
-        ""
+        "PRICES AGAIN."
       ],
       [
         1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
-      ],
-      [
-        0,
-        ""
+        "PRICES AGAIN. EVERY CONVERSATION ON DIS STREET ENDS DERE!"
       ]
     ],
     [
       [
         0,
-        ""
+        "DID YOU SLEEP?"
       ],
       [
         1,
-        ""
-      ],
-      [
-        0,
-        ""
-      ],
-      [
-        1,
-        ""
+        "SOME. NO ENOUGH TA BOAST 'BOUT!"
       ]
     ],
     [
       [
         0,
-        ""
+        "DEY HAB MOVED DA MARKET DAY!"
       ],
       [
         1,
-        ""
+        "OF COURSE DEY HAB. NOBODY ASKED US!"
+      ]
+    ],
+    [
+      [
+        0,
+        "NEW FACES 'BOUT."
+      ],
+      [
+        1,
+        "DERE IZ ALWAYS NEW FACES. FEW OF DEM STAY!"
+      ]
+    ],
+    [
+      [
+        0,
+        "HAB YOU BIN OUT PAST DA CROSSROADS LATELY?"
+      ],
+      [
+        1,
+        "NO SINCE IT GOT STRANGE OUT DERE. YOU?"
       ],
       [
         0,
-        ""
+        "NO SINCE DEN EITHER."
+      ]
+    ],
+    [
+      [
+        0,
+        "DA WATER TASTES DIFFERENT DIS MONTH!"
       ],
       [
         1,
-        ""
+        "IT DOES. NOBODY WILL SAY WHY!"
+      ]
+    ],
+    [
+      [
+        0,
+        "LONG DAY?"
+      ],
+      [
+        1,
+        "LONG WEEK. DA DAY IZ ONLY DOING ITS SHARE!"
+      ]
+    ],
+    [
+      [
+        0,
+        "HOW IZ DA FAMILY?"
+      ],
+      [
+        1,
+        "LOUD. FED. DAT IZ MOST OF WHAT ME ASK!"
       ]
     ]
   ],
@@ -1485,19 +1331,19 @@
       "lines": [
         [
           0,
-          ""
+          "DA KINGDOM NEEDS A STRONG RULER. DEMOCRACY IZ CHAOS!"
         ],
         [
           1,
-          ""
+          "ONE PERSON NO SHOULD HAB ALL DAT POWER. PEOPLE DESERVE A VOICE!"
         ],
         [
           0,
-          ""
+          "DA MASSES IZ EASILY SWAYED. DEY NEED GUIDANCE!"
         ],
         [
           1,
-          ""
+          "DAT IZ EXACTLY WHAT TYRANTS SAY TA JUSTIFY OPPRESSION!"
         ]
       ]
     },
@@ -1506,19 +1352,19 @@
       "lines": [
         [
           0,
-          ""
+          "DA SYSTEM IZ BROKEN. WE NEED COMPLETE REVOLUTION!"
         ],
         [
           1,
-          ""
+          "CHANGE FROM WITHIN IZ SAFER. REVOLUTION BRINGS BLOODSHED!"
         ],
         [
           0,
-          ""
+          "SOMETIMES BLOOD IZ DA PRICE OF FREEDOM!"
         ],
         [
           1,
-          ""
+          "SPOKEN LIKE SOMEONE WHO IZ NEVER SEEN WAR..."
         ]
       ]
     },
@@ -1527,19 +1373,19 @@
       "lines": [
         [
           0,
-          ""
+          "WHY SHOULD NOBLES LIVE IN LUXURY WHILE PEASANTS STARVE?"
         ],
         [
           1,
-          ""
+          "DEY PROVIDE PROTECTION AN' GOVERNANCE. IT IZ EARNED!"
         ],
         [
           0,
-          ""
+          "EARNED? DEY WAZ BORN INTO IT!"
         ],
         [
           1,
-          ""
+          "AN' CARRY DA BURDEN OF RESPONSIBILITY FROM BIRTH!"
         ]
       ]
     },
@@ -1548,19 +1394,19 @@
       "lines": [
         [
           0,
-          ""
+          "DO WE TRULY HAB FREE WILL, OR IZ EVERYTINK PREDETERMINED?"
         ],
         [
           1,
-          ""
+          "WE MAKE CHOICES EVERY DAY. OF COURSE WE HAB FREE WILL!"
         ],
         [
           0,
-          ""
+          "BUT DOZE CHOICES MIGHT BE ILLUSIONS, PREDETERMINED BY CAUSALITY!"
         ],
         [
           1,
-          ""
+          "DAT IZ A DEPRESSIN' WAY TA VIEW EXISTENCE!"
         ]
       ]
     },
@@ -1569,19 +1415,19 @@
       "lines": [
         [
           0,
-          ""
+          "ME BELIEVE PEOPLE IZ INHERENTLY GOOD!"
         ],
         [
           1,
-          ""
+          "DEN WHY IZ DERE SO MUCH EVIL IN DA WORLD?"
         ],
         [
           0,
-          ""
+          "CIRCUMSTANCES CORRUPT. GIVEN DA CHANCE, PEOPLE CHOOSE GOOD!"
         ],
         [
           1,
-          ""
+          "ME HAB SEEN TOO MUCH TA BELIEVE DAT FAIRY TALE!"
         ]
       ]
     },
@@ -1590,19 +1436,19 @@
       "lines": [
         [
           0,
-          ""
+          "WHAT IZ DA POINT OF ALL DIS? WHY DO WE STRUGGLE?"
         ],
         [
           1,
-          ""
+          "TA GROW, TA LOVE, TA LEAVE DA WORLD BETTER!"
         ],
         [
           0,
-          ""
+          "BUT WE ALL DIE. EVERYTINK WE DO TURNS TA DUST!"
         ],
         [
           1,
-          ""
+          "DA JOURNEY MATTERS MORE DEN DA DESTINATION!"
         ]
       ]
     },
@@ -1611,19 +1457,19 @@
       "lines": [
         [
           0,
-          ""
+          "IZ IT EVER RIGHT TA DO EVIL FOR DA GREATER GOOD?"
         ],
         [
           1,
-          ""
+          "ABSOLUTELY. SOMETIMES HARD CHOICES MUST BE MADE!"
         ],
         [
           0,
-          ""
+          "BUT WHO DECIDES WHAT DA 'GREATER GOOD' IZ?"
         ],
         [
           1,
-          ""
+          "DOZE WIT DA COURAGE TA ACT WHEN OTHERS NO WILL!"
         ]
       ]
     },
@@ -1632,19 +1478,19 @@
       "lines": [
         [
           0,
-          ""
+          "SHOULD WE ALWAYS PUT DUTY BEFORE PERSONAL HAPPINESS?"
         ],
         [
           1,
-          ""
+          "DUTY GIVES LIFE MEANIN'. SELFISH PURSUITS IZ EMPTY!"
         ],
         [
           0,
-          ""
+          "BUT A LIFE WITOUT JOY IZ NO LIFE AT ALL!"
         ],
         [
           1,
-          ""
+          "JOY COMES FROM FULFILLIN' ONE'S PURPOSE!"
         ]
       ]
     },
@@ -1653,19 +1499,19 @@
       "lines": [
         [
           0,
-          ""
+          "IZ IT BETTER TA LIVE SAFELY OR TA LIVE FULLY?"
         ],
         [
           1,
-          ""
+          "FULLY. A LONG AN' EMPTY LIFE IZ JUST A SLOW DISAPPEARANCE!"
         ],
         [
           0,
-          ""
+          "BUT PEOPLE GET HURT CHASIN' FULLNESS!"
         ],
         [
           1,
-          ""
+          "DEY GET HURT EITHER WAY. AT LEAST ONE VERSION HAB A GOOD STORY!"
         ]
       ]
     },
@@ -1674,19 +1520,19 @@
       "lines": [
         [
           0,
-          ""
+          "SHOULD DA LAW BE FOLLOWED EVEN WHEN IT IZ UNJUST?"
         ],
         [
           1,
-          ""
+          "YES. SOCIETY NO CAN FUNCTION IF EVERYONE PICKS DEY OWN LAWS!"
         ],
         [
           0,
-          ""
+          "DEN WHO PROTECTS PEOPLE FROM DA LAW ITSELF?"
         ],
         [
           1,
-          ""
+          "DAT IZ WHAT REFORM IZ FOR, AN' IT NEEDS NO REBELLION!"
         ]
       ]
     },
@@ -1695,23 +1541,23 @@
       "lines": [
         [
           0,
-          ""
+          "IZ WEALTH EARNED, OR IZ IT MOSTLY LUCK AN' CIRCUMSTANCE?"
         ],
         [
           1,
-          ""
+          "EARNED. HARD WORK ALWAYS CREATES OPPORTUNITY!"
         ],
         [
           0,
-          ""
+          "TELL DAT TA SOMEONE BORN WIT NUTTIN', IN DA WRONG TOWN!"
         ],
         [
           1,
-          ""
+          "PLENTY OF PEOPLE RISE FROM NUTTIN'!"
         ],
         [
           0,
-          ""
+          "AN' MANY MORE DO NO. DAT IZ DA POINT!"
         ]
       ]
     },
@@ -1720,19 +1566,19 @@
       "lines": [
         [
           0,
-          ""
+          "DOES IT MATTER WHAT WE DO IF NOBODY REMEMBERS US?"
         ],
         [
           1,
-          ""
+          "OF COURSE IT MATTERS. DA PEOPLE AROUND US REMEMBER, EVEN IF HISTORY NO!"
         ],
         [
           0,
-          ""
+          "A LIL' AUDIENCE IZ STILL AN AUDIENCE!"
         ],
         [
           1,
-          ""
+          "SOMETIMES IT IZ DA ONLY ONE DAT COUNTS!"
         ]
       ]
     },
@@ -1741,23 +1587,23 @@
       "lines": [
         [
           0,
-          ""
+          "IZ IT EVER RIGHT TA LIE TA PROTECT SOMEONE FROM DA TRUTH?"
         ],
         [
           1,
-          ""
+          "YES. SOMETIMES DA TRUTH DOES MORE HARM DEN GOOD!"
         ],
         [
           0,
-          ""
+          "BUT WHO DECIDES WHAT HARM LOOKS LIKE? DA LIAR?"
         ],
         [
           1,
-          ""
+          "SOMEONE HAB TA. DA TRUTH IZ NO ALWAYS KIND!"
         ],
         [
           0,
-          ""
+          "KINDNESS BUILT ON LIES HAB ANOTHER NAME: CONTROL!"
         ]
       ]
     },
@@ -1766,23 +1612,23 @@
       "lines": [
         [
           0,
-          ""
+          "ANIMALS SHOULD HAB DA SAME RIGHTS AS PEOPLE!"
         ],
         [
           1,
-          ""
+          "RIGHTS REQUIRE RESPONSIBILITIES. ANIMALS NO CAN HOLD DEM!"
         ],
         [
           0,
-          ""
+          "NEITHER CAN INFANTS, AN' WE PROTECT DEM!"
         ],
         [
           1,
-          ""
+          "INFANTS GROW INTO RESPONSIBILITY. DAT IZ A DIFFERENT CASE!"
         ],
         [
           0,
-          ""
+          "IZ IT? WE DRAW DA LINE WHERE IT IZ CONVENIENT!"
         ]
       ]
     },
@@ -1791,19 +1637,19 @@
       "lines": [
         [
           0,
-          ""
+          "IZ IT POSSIBLE TA TRULY KNOW ANOTHER PERSON?"
         ],
         [
           1,
-          ""
+          "NO. EVEN DA PEOPLE CLOSEST TA US IZ PARTLY STRANGERS!"
         ],
         [
           0,
-          ""
+          "DAT SOUNDS BLEAK."
         ],
         [
           1,
-          ""
+          "ME TINK IT IZ BEAUTIFUL. DERE IZ ALWAYS MORE TA DISCOVER!"
         ]
       ]
     },
@@ -1812,19 +1658,19 @@
       "lines": [
         [
           0,
-          ""
+          "ART AN' MUSIC IZ LUXURIES. IN HARD TIMES, WE SHOULD FOCUS ON SURVIVAL!"
         ],
         [
           1,
-          ""
+          "ART IZ HOW PEOPLE SURVIVE HARD TIMES. IT ALWAYS HAB BIN!"
         ],
         [
           0,
-          ""
+          "YOU NO CAN EAT A PAINTIN'!"
         ],
         [
           1,
-          ""
+          "YOU NO CAN LIVE WITOUT SOMETINK WORTH LIVIN' FOR, EITHER!"
         ]
       ]
     },
@@ -1833,19 +1679,19 @@
       "lines": [
         [
           0,
-          ""
+          "DA ENDS ALWAYS JUSTIFY DA MEANS IF DA OUTCOME IZ GOOD ENOUGH!"
         ],
         [
           1,
-          ""
+          "DERE IZ NO GUARANTEE DA OUTCOME WILL BE GOOD. YOU IZ GAMBLIN' WIT OTHER PEOPLE'S SUFFERIN'!"
         ],
         [
           0,
-          ""
+          "DOING NUTTIN' IZ ALSO A GAMBLE!"
         ],
         [
           1,
-          ""
+          "BUT INACTION DOES NO MAKE YOU DA INSTRUMENT OF HARM!"
         ]
       ]
     },
@@ -1854,19 +1700,19 @@
       "lines": [
         [
           0,
-          ""
+          "DO YOU TINK HISTORY REPEATS, OR DO WE JUST MAKE DA SAME MISTAKES IN NEW CLOTHES?"
         ],
         [
           1,
-          ""
+          "NEW CLOTHES, MOSTLY. DA VANITY IZ ORIGINAL. DA MISTAKE IZ OLD!"
         ],
         [
           0,
-          ""
+          "SO WHAT DO WE DO?"
         ],
         [
           1,
-          ""
+          "LEARN TA RECOGNIZE DA COSTUME, ME SUPPOSE. LIL' HELP, BUT SOMETINK!"
         ]
       ]
     },
@@ -1875,19 +1721,19 @@
       "lines": [
         [
           0,
-          ""
+          "TRADITION IZ DA WISDOM OF DA DEAD WEIGHIN' DOWN DA LIVIN'!"
         ],
         [
           1,
-          ""
+          "TRADITION IZ DA ONLY PROOF DAT ANYTINK WORKED LONG ENOUGH TA PASS ON!"
         ],
         [
           0,
-          ""
+          "AN' PLENTY OF TERRIBLE TINKZ GOT PASSED ON!"
         ],
         [
           1,
-          ""
+          "WHICH IZ WHY WE EXAMINE DEM BEFORE WE THROW ANYTINK AWAY!"
         ]
       ]
     },
@@ -1896,23 +1742,23 @@
       "lines": [
         [
           0,
-          ""
+          "IF YOU COULD KNOW WHEN YOU WAZ GOING TA DIE, WOULD YOU WANT TA?"
         ],
         [
           1,
-          ""
+          "YES. ME WOULD PLAN BETTER!"
         ],
         [
           0,
-          ""
+          "OR YOU WOULD LIVE SMALLER. KNOWIN' DA END MAKES EVERY RISK FEEL POINTLESS!"
         ],
         [
           1,
-          ""
+          "KNOWIN' DA END WOULD MAKE EVERY DAY FEEL INTENTIONAL!"
         ],
         [
           0,
-          ""
+          "OR PARALYZED. YOU IZ ASSUMIN' YOU WOULD BE BRAVE 'BOUT IT!"
         ]
       ]
     }
@@ -1921,451 +1767,551 @@
     [
       [
         0,
-        ""
+        "BUSY DAY?"
       ],
       [
         1,
-        ""
+        "SAME AS ALWAYS."
       ]
     ],
     [
       [
         0,
-        ""
+        "HOW'S DA FAMILY?"
       ],
       [
         1,
-        ""
+        "LOUD. YA?"
       ]
     ],
     [
       [
         0,
-        ""
+        "DID YOU HEAR DA NEWS?"
       ],
       [
         1,
-        ""
+        "NUTTIN' GOOD, ME BET."
       ]
     ],
     [
       [
         0,
-        ""
+        "DIS WORK NEVER ENDS."
       ],
       [
         1,
-        ""
+        "TELL ME 'BOUT IT."
       ]
     ],
     [
       [
         0,
-        ""
+        "LUNCH LATER?"
       ],
       [
         1,
-        ""
+        "IF ME EVER FINISH HERE."
       ]
     ],
     [
       [
         0,
-        ""
+        "PRICES KEEP GOING UP."
       ],
       [
         1,
-        ""
+        "EVERYTINK BUT ME PAY."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU LOOK TIRED."
       ],
       [
         1,
-        ""
+        "ME WILL SLEEP WHEN ME IZ DEAD!"
       ]
     ],
     [
       [
         0,
-        ""
+        "NICE WEATHER FOR ONCE."
       ],
       [
         1,
-        ""
+        "GIVE IT AN HOUR."
       ]
     ],
     [
       [
         0,
-        ""
+        "SEEN ANYTINK STRANGE LATELY?"
       ],
       [
         1,
-        ""
+        "AROUND HERE? ALWAYS."
       ]
     ],
     [
       [
         0,
-        ""
+        "STILL OWE ME DAT DRINK."
       ],
       [
         1,
-        ""
+        "PUT IT ON ME TAB."
       ]
     ],
     [
       [
         0,
-        ""
+        "COLD TODAY."
       ],
       [
         1,
-        ""
+        "GETTIN' COLDER."
       ]
     ],
     [
       [
         0,
-        ""
+        "HEARD ANYTINK GOOD LATELY?"
       ],
       [
         1,
-        ""
+        "NUTTIN' ME WOULD REPEAT."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU EVER JUST WANT TA LEAVE?"
       ],
       [
         1,
-        ""
+        "EVERY OTHER TUESDAY."
       ]
     ],
     [
       [
         0,
-        ""
+        "WATCH YA STEP BACK DERE."
       ],
       [
         1,
-        ""
+        "SOMETINK SPILLED?"
       ]
     ],
     [
       [
         0,
-        ""
+        "LONG NIGHT?"
       ],
       [
         1,
-        ""
+        "LONGER MORNIN'."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU LOOK BETTER TODAY."
       ],
       [
         1,
-        ""
+        "LOW BAR, BUT ME WILL TAKE IT!"
       ]
     ],
     [
       [
         0,
-        ""
+        "GOOD CROWD TODAY."
       ],
       [
         1,
-        ""
+        "TOO GOOD."
       ]
     ],
     [
       [
         0,
-        ""
+        "SOMEONE QUIT AGAIN."
       ],
       [
         1,
-        ""
+        "NO WAZ DA FIRST. NO WILL BE DA LAST!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU EATIN' DAT?"
       ],
       [
         1,
-        ""
+        "NOW ME IZ."
       ]
     ],
     [
       [
         0,
-        ""
+        "WHERE DID DA DAY GO?"
       ],
       [
         1,
-        ""
+        "SAME PLACE DEY ALWAYS GO."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU NEED A HAND?"
       ],
       [
         1,
-        ""
+        "ME NEED TWO, BUT THANKS."
       ]
     ],
     [
       [
         0,
-        ""
+        "QUIET TODAY."
       ],
       [
         1,
-        ""
+        "TOO QUIET."
       ]
     ],
     [
       [
         0,
-        ""
+        "ANY PLANS AFTER?"
       ],
       [
         1,
-        ""
+        "SLEEP, MOSTLY."
       ]
     ],
     [
       [
         0,
-        ""
+        "SEEN DA NEW ARRIVALS?"
       ],
       [
         1,
-        ""
+        "HARD TA MISS DEM."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU TRUST ANYONE AROUND HERE?"
       ],
       [
         1,
-        ""
+        "ONE OR TWO. MAYBE."
       ]
     ],
     [
       [
         0,
-        ""
+        "DAT JOB STILL OPEN?"
       ],
       [
         1,
-        ""
+        "MAYBE-MAYBE NO ANYMORE."
       ]
     ],
     [
       [
         0,
-        ""
+        "TINKZ GETTIN' WORSE OR IZ IT JUST ME?"
       ],
       [
         1,
-        ""
+        "IT IZ NO JUST YOU."
       ]
     ],
     [
       [
         0,
-        ""
+        "SOMETINK SMELLS GOOD."
       ],
       [
         1,
-        ""
+        "NO GET EXCITED. IT IZ NO FOR US!"
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU LOOK LIKE YOU HAB SOMETINK TA SAY!"
       ],
       [
         1,
-        ""
+        "ME DO. AN' ME NO WILL."
       ]
     ],
     [
       [
         0,
-        ""
+        "ROUGH WEEK?"
       ],
       [
         1,
-        ""
+        "ROUGH YEAR."
       ]
     ],
     [
       [
         0,
-        ""
+        "DA BOSS IN TODAY?"
       ],
       [
         1,
-        ""
+        "AFRAID SO."
       ]
     ],
     [
       [
         0,
-        ""
+        "RUNNIN' LOW ON SUPPLIES."
       ],
       [
         1,
-        ""
+        "SAME. WE WILL MANAGE."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU EVER JUST SIT AN' DO NUTTIN'?"
       ],
       [
         1,
-        ""
+        "ME CALL IT THINKIN'."
       ]
     ],
     [
       [
         0,
-        ""
+        "MARKET WAZ CROWDED TODAY."
       ],
       [
         1,
-        ""
+        "FESTIVAL SEASON. ENDURE IT!"
       ]
     ],
     [
       [
         0,
-        ""
+        "NEW FACES IN TOWN."
       ],
       [
         1,
-        ""
+        "MORE EVERY WEEK."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU HEARD FROM DA OTHERS?"
       ],
       [
         1,
-        ""
+        "NO LATELY."
       ]
     ],
     [
       [
         0,
-        ""
+        "KEEP FORGETTIN' TA EAT."
       ],
       [
         1,
-        ""
+        "YA BODY WILL REMIND YOU."
       ]
     ],
     [
       [
         0,
-        ""
+        "ME HATE DIS PART OF DA JOB!"
       ],
       [
         1,
-        ""
+        "WHICH PART?"
       ]
     ],
     [
       [
         0,
-        ""
+        "DIS PART."
       ],
       [
         1,
-        ""
+        "YEAH. ME TOO."
       ]
     ],
     [
       [
         0,
-        ""
+        "STILL HERE?"
       ],
       [
         1,
-        ""
+        "STILL HERE."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU LOOK DISTRACTED."
       ],
       [
         1,
-        ""
+        "ME IZ. GO ON."
       ]
     ],
     [
       [
         0,
-        ""
+        "THOUGHT YOU WENT HOME ALREADY!"
       ],
       [
         1,
-        ""
+        "THOUGHT ME DID TOO."
       ]
     ],
     [
       [
         0,
-        ""
+        "GOOD MORNIN'."
       ],
       [
         1,
-        ""
+        "DEBATABLE."
       ]
     ],
     [
       [
         0,
-        ""
+        "YOU BRING FOOD TODAY?"
       ],
       [
         1,
-        ""
+        "ME THOUGHT YOU WAZ BRINGIN' FOOD!"
       ]
     ],
     [
       [
         0,
-        ""
+        "DID SOMETINK CHANGE OR DO ME SEEM DIFFERENT?"
       ],
       [
         1,
-        ""
+        "YES. NO SURE WHICH."
+      ]
+    ],
+    [
+      [
+        0,
+        "MORNIN'."
+      ],
+      [
+        1,
+        "IT IZ."
+      ]
+    ],
+    [
+      [
+        0,
+        "WATCH DAT STEP."
+      ],
+      [
+        1,
+        "EVERY DAY, AN' EVERY DAY ME FORGET!"
+      ]
+    ],
+    [
+      [
+        0,
+        "SEEN ME HAMMER?"
+      ],
+      [
+        1,
+        "SEEN IT. NO SAYIN' WHERE."
+      ]
+    ],
+    [
+      [
+        0,
+        "QUIET, NO IZ IT."
+      ],
+      [
+        1,
+        "TOO QUIET, IF YOU WANT ME VIEW!"
+      ]
+    ],
+    [
+      [
+        0,
+        "DAT YA DOG?"
+      ],
+      [
+        1,
+        "IT IZ NOW."
+      ]
+    ],
+    [
+      [
+        0,
+        "ANY WORD FROM DA ROAD?"
+      ],
+      [
+        1,
+        "NONE, WHICH IZ DA GOOD KIND OF WORD!"
+      ]
+    ],
+    [
+      [
+        0,
+        "YOU IZ UP EARLY."
+      ],
+      [
+        1,
+        "ME NEVER WENT DOWN."
+      ]
+    ],
+    [
+      [
+        0,
+        "RAIN LATER."
+      ],
+      [
+        1,
+        "RAIN ALWAYS LATER."
+      ]
+    ],
+    [
+      [
+        0,
+        "MIND DA PUDDLE."
+      ],
+      [
+        1,
+        "MIND DA HOLE UNDER DA PUDDLE!"
+      ]
+    ],
+    [
+      [
+        0,
+        "BUSY?"
+      ],
+      [
+        1,
+        "ENOUGH TA COMPLAIN 'BOUT, NO ENOUGH TA LIVE ON!"
       ]
     ]
   ]

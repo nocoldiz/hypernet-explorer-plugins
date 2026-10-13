@@ -170,7 +170,7 @@
       "A wall to lean on. Luxury.",
       "Wake me if anything interesting happens.",
       "I will catch up. Eventually.",
-      "I am not tired. I am supervising.",
+      "Resting? I am supervising.",
       "Let me get the stone out of my boot first.",
       "Good bench. Somebody knew what they were doing.",
       "Two minutes. I am counting.",
@@ -278,9 +278,35 @@
     "choiceBury": "Bury",
     "choiceCancel": "Cancel",
     "looted": "Recovered equipment from {name}.",
-    "nothingToLoot": "There is nothing left to loot on {name}.",
-    "examined": "You examine the anatomy and body condition of the fallen comrade.",
-    "buried": "Buried {name} with dignity."
+    "nothingToLoot": "Nothing left to loot on {name}.",
+    "examined": "You examine the body.",
+    "buried": "Buried {name} with dignity.",
+    "leaderFallback": "Leader",
+    "prayer": {
+      "default": "\"Rest in peace, {name}. Your journey is remembered.\"",
+      "sacred": "\"May the Eternal Light receive your soul, {name}, and grant you everlasting peace. Amen.\"",
+      "nature": "\"Return to the earth and the deep roots of the ancient forest, {name}. Walk free among the spirits.\"",
+      "arcane": "\"To the astral tides and the starry deep, may the great expanse shelter your essence, {name}.\"",
+      "martyr": "\"Blood was paid and duty fulfilled, {name}. Rise in honor beyond the veil.\"",
+      "generic": "\"Rest well, {name}. Your battle is done, and your name will not be forgotten.\""
+    },
+    "commemorate": {
+      "warm": [
+        "I'll never forget what you did for us, {name}... Rest in peace.",
+        "You didn't deserve this, {name}. We'll carry your memory with us.",
+        "May you find the peace you were looking for, my friend."
+      ],
+      "cold": [
+        "Told you recklessness would catch up to you, {name}... damn it.",
+        "The road takes what it wants. Farewell, {name}.",
+        "Quiet now, {name}... sleep well."
+      ],
+      "neutral": [
+        "Another one claimed by the road. We have to keep moving, for {name}'s sake.",
+        "They fought bravely until the end. We honor their memory.",
+        "Keep your guard up, everyone. {name} wouldn't want us falling next."
+      ]
+    }
   },
   "grave": {
     "prompt": "Grave of {name}. What will you do?",
@@ -290,11 +316,66 @@
     "choiceCancel": "Cancel",
     "epitaph": "\"Here lies {name}. Born: {born}\"",
     "bornUnknown": "Unknown",
-    "desecrated": "You desecrated the grave of {name}. Recovered bones and remaining personal belongings.",
+    "bornYear": "Year {year}",
+    "desecrated": "You desecrated {name}'s grave and took the bones and belongings.",
     "dismantled": "Dismantled the grave of {name}."
   },
   "succession": {
     "takesCommand": "{name} takes command of the party."
+  },
+  "romance": {
+    "toast": "[Romance] {suitor} → {target} ({action}): Rolled {roll} vs {chance}% ➔ {outcome}",
+    "success": "Success ({hearts})",
+    "rejected": "Rejected ({hearts})",
+    "actions": {
+      "flirt": {
+        "label": "Flirt",
+        "lines": [
+          "\"I was hoping I'd run into you, {name}.\"",
+          "\"Careful, {name}. I could get used to this.\"",
+          "\"You've been on my mind all day, {name}.\""
+        ],
+        "good": ["*smiles softly* \"Is that so?\"", "*laughs* \"You're trouble.\"", "*blushes* \"Keep talking like that.\""],
+        "bad": ["*looks away* \"Let's keep this friendly.\"", "*chuckles dryly* \"Nice try.\"", "*shakes head* \"No.\""]
+      },
+      "admire": {
+        "label": "Admire",
+        "lines": [
+          "\"You're hard to look away from, {name}.\"",
+          "\"There's something striking about you, {name}.\"",
+          "\"You always brighten up the room, {name}.\""
+        ],
+        "good": ["*beams* \"Thank you, that's really sweet.\"", "*grins* \"You have good taste.\"", "*winks* \"Right back at you.\""],
+        "bad": ["*shrugs* \"Please, don't.\"", "*frowns* \"I'm busy.\"", "*steps back* \"That's enough.\""]
+      },
+      "serenade": {
+        "label": "Serenade",
+        "lines": [
+          "takes a breath and hums a romantic tune for {name}.",
+          "sings a poetic verse dedicated to {name}."
+        ],
+        "good": ["*listens happily* \"Nobody's ever done that for me.\"", "*claps* \"That was wonderful.\"", "*blushes deeply* \"You're too much.\""],
+        "bad": ["*groans playfully* \"Please stop, everyone is looking!\"", "*wiggles out* \"Not the time.\"", "*sighs* \"A bit dramatic.\""]
+      },
+      "kiss": {
+        "label": "Playful Kiss",
+        "lines": [
+          "leans in close and leaves a gentle kiss on {name}'s cheek.",
+          "steps in close with a soft embrace for {name}."
+        ],
+        "good": ["*eyes widen with a radiant smile* \"Oh...\"", "*kisses back gently*", "*holds close warmly*"],
+        "bad": ["*dodges and steps back* \"Hey, hands off.\"", "*scowls* \"Too fast!\"", "*pushes away* \"Not interested.\""]
+      },
+      "wink": {
+        "label": "Playful Wink",
+        "lines": [
+          "gives {name} a playful wink across the way.",
+          "flashes a teasing smile and a wink at {name}."
+        ],
+        "good": ["*winks right back with a smirk*", "*giggles and waves*", "*smiles warmly*"],
+        "bad": ["*rolls eyes*", "*looks the other way*", "*blinks blankly*"]
+      }
+    }
   },
   "pet": {
     "actionPet": "Pet",
@@ -332,7 +413,7 @@
     "actionEmpathize": "Empathize",
     "actionReserves": "Send to Reserves",
     "actionJoin": "Come back with us",
-    "rejoined": "{name} takes a place on the road again.",
+    "rejoined": "{name} rejoins the party.",
     "actionCancel": "Never mind"
   },
   "auto": {
@@ -347,14 +428,14 @@
     "heads": "{name} heads for {target}",
     "door": "{name} takes the door at {target}",
     "wanders": "{name} wanders off",
-    "avoided": "{name} keeps away from {target}, level {level}",
-    "stuck": "{name} cannot get anywhere with {target} and looks for something else",
+    "avoided": "{name} avoids {target}, level {level}",
+    "stuck": "{name} can't reach {target}, trying something else",
     "restless": "{name} has stood here long enough and moves on",
     "detour": "{name} stops pacing and works out the long way round",
     "flees": "{name} runs from the fight",
     "worldMap": "{name} steps out onto the world map",
     "rim": "{name} heads for the edge of the map",
-    "avoidedUnknown": "{name} keeps away from {target}, whose level cannot be read",
+    "avoidedUnknown": "{name} avoids {target}, level unknown",
     "evades": "{name} runs from {target} before it can close in",
     "travelled": "{name} goes down into {place}",
     "targetsPlace": "{name} sets out across the world map for {place}",

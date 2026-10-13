@@ -76,6 +76,22 @@
             variant: 'amo_kingslime', scale: 2.6, texturePool: 'foliage',
             bodyColor: 0x2f9ad8, emissive: 0x103a5a, accent: 0xffe066,
             hue: [0.55, 0.08], sat: [0.60, 0.18], lit: [0.48, 0.12]
+        },
+        // ── Level 1-5 starter ghosts, each on its own builder ──
+        lv_forgottenpassword: {
+            variant: 'lv_forgottenpassword', scale: 1.9, texturePool: 'pale',
+            bodyColor: 0xc8c0e0, emissive: 0x2a2440, accent: 0x66ffbb,
+            hue: [0.72, 0.06], sat: [0.25, 0.10], lit: [0.74, 0.08]
+        },
+        lv_spamwraith: {
+            variant: 'lv_spamwraith', scale: 2.1, texturePool: 'pale',
+            bodyColor: 0xe8e0c8, emissive: 0x2a2010, accent: 0xff3a8a,
+            hue: [0.12, 0.05], sat: [0.25, 0.10], lit: [0.80, 0.08]
+        },
+        lv_hallowedlantern: {
+            variant: 'lv_hallowedlantern', scale: 2.0, texturePool: 'metal',
+            bodyColor: 0xb8903a, emissive: 0x1a1000, accent: 0xfff0b0,
+            hue: [0.11, 0.04], sat: [0.50, 0.12], lit: [0.48, 0.08]
         }
     };
 
@@ -97,6 +113,9 @@
                 case 'amo_thephantom':     this._buildThePhantom(); break;
                 case 'amo_blick':          this._buildBlick(); break;
                 case 'amo_kingslime':      this._buildKingSlime(); break;
+                case 'lv_forgottenpassword': this._buildLvForgottenPassword(); break;
+                case 'lv_spamwraith':        this._buildLvSpamWraith(); break;
+                case 'lv_hallowedlantern':   this._buildLvHallowedLantern(); break;
                 default:                   this._buildSlime(); break;
             }
 
@@ -180,8 +199,8 @@
 
             // Eyes for character.
             const eyeMat = this._mat(0x111111, 0x000000, 1.0);
-            const le = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), eyeMat); le.position.set(-0.16, 1.0, 0.36);
-            const re = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), eyeMat); re.position.set(0.16, 1.0, 0.36);
+            const le = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), eyeMat); le.position.set(-0.16, 0.06, 0.36);
+            const re = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), eyeMat); re.position.set(0.16, 0.06, 0.36);
             this.upperBody.add(le, re);
 
             // Pseudopods: small blobs budding from the sides.
@@ -189,7 +208,7 @@
             this.pseudopod1.position.set(-0.6, 0.35, 0.1); this.pseudopod1.scale.set(1.0, 0.7, 1.0);
             this.bodyGroup.add(this.pseudopod1);
             this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), bodyMat);
-            this.pseudopod2.position.set(0.6, 0.35, -0.1); this.pseudopod2.scale.set(1.0, 0.7, 1.0);
+            this.pseudopod2.position.set(0.6, 0.35, 0.1); this.pseudopod2.scale.set(1.0, 0.7, 1.0);
             this.bodyGroup.add(this.pseudopod2);
 
             this._partMeshMap = {
@@ -236,7 +255,7 @@
             // Floating pixel motes (scrolling feed) around it.
             this.pixels = new THREE.Group();
             for (let i = 0; i < 8; i++) { const px = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.05), this._mat(p.accent, p.accent, 0.8)); px.position.set((this.idRand() - 0.5) * 0.9, 0.5 + this.idRand() * 0.9, 0.4 + this.idRand() * 0.3); px._t = this.idRand(); this.pixels.add(px); }
-            this.bodyGroup.add(this.pixels);
+            this.pixels.userData.float = true; this.bodyGroup.add(this.pixels);
             this._cascadeRules[0].hide.push(this.screen, this.pixels);
         }
 
@@ -270,7 +289,7 @@
             const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.26, 16, 16), this._mat(0xf0e8f4, 0x000000, 1.0)); this.bigEye.add(sclera);
             const iris = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 12), this._mat(p.accent, p.accent, 1.0)); iris.position.z = 0.16; this.bigEye.add(iris);
             const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), this._mat(0x000000, 0x000000, 1.0)); pupil.position.z = 0.25; this.bigEye.add(pupil);
-            this.bigEye.position.set(0, 1.0, 0.34); this.upperBody.add(this.bigEye);
+            this.bigEye.position.set(0, 0.04, 0.24); this.upperBody.add(this.bigEye);
             // Entropy beam stub charging in front of the eye.
             this.beam = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.5, 10), this._mat(p.accent, p.accent, 0.5)); this.beam.rotation.x = Math.PI / 2; this.beam.position.set(0, 1.0, 0.7); this.beam.visible = false; this.bodyGroup.add(this.beam);
             this._cascadeRules[0].hide.push(this.beam);
@@ -283,6 +302,7 @@
             // Bulk up the body.
             this.lowerBody.scale.set(1.4, 1.0, 1.4);
             this.upperBody.scale.set(1.25, 1.1, 1.25);
+            this._lowerBase = [1.4, 1.0, 1.4]; this._upperBase = [1.25, 1.1, 1.25];
             // A golden crown perched on top.
             this.crown = new THREE.Group();
             const band = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.32, 0.12, 12), this._mat(p.accent, 0x4a3a00, 1.0)); this.crown.add(band);
@@ -293,6 +313,167 @@
             for (let i = 0; i < 4; i++) { const a = (i / 4) * Math.PI * 2 + 0.4; const b = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 10), this.lowerBody.material); b.position.set(Math.cos(a) * 0.75, 0.2, Math.sin(a) * 0.75); b.scale.set(1, 0.7, 1); b._a = a; this.minions.add(b); }
             this.bodyGroup.add(this.minions);
             this._cascadeRules[0].hide.push(this.crown, this.minions);
+        }
+
+        // ══ Level 1-5 starter ghosts: each its own body plan ═══════════════
+        // Ghost keys FACE/CORE/LEFT_WISP/RIGHT_WISP/MAW; CORE takes the lot.
+        _lvGhostWire(extraCoreHide) {
+            this._ghostly = true;
+            this._partMeshMap = { FACE: this.face, CORE: this.core, LEFT_WISP: this.leftWisp, RIGHT_WISP: this.rightWisp, MAW: this.maw };
+            this._cascadeRules = [
+                { gone: ['CORE'], hide: [this.core, this.face, this.leftWisp, this.rightWisp, this.maw].concat(extraCoreHide || []) },
+                { gone: ['FACE'], hide: [this.face] },
+                { gone: ['MAW'], hide: [this.maw] },
+                { gone: ['LEFT_WISP'], hide: [this.leftWisp] },
+                { gone: ['RIGHT_WISP'], hide: [this.rightWisp] },
+            ];
+        }
+
+        // ── Forgotten Password: a ghostly padlock with a keyhole for a mouth,
+        //    jiggling the wrong keys and trailing a ring of asterisks ───────
+        _buildLvForgottenPassword() {
+            const p = this.profile;
+            const ghost = this.applySkin(this._mat(p.bodyColor, p.emissive, 0.78));
+            const metal = this._mat(0xa8a8b8, 0x101018, 0.85);
+            // CORE: the lock body, its shackle sprung half open, a sheet-like tail.
+            this.core = new THREE.Group();
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.6, 0.32), ghost); body.position.y = 1.0; this.core.add(body);
+            const shackle = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.06, 5, 10, Math.PI), metal); shackle.position.set(0, 1.38, 0); this.core.add(shackle);
+            const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.2, 6), metal); legL.position.set(-0.22, 1.37, 0); this.core.add(legL);
+            const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.2, 6), metal); legR.position.set(0.22, 1.37, 0); this.core.add(legR);
+            shackle.position.y = 1.44; shackle.rotation.z = -0.12;
+            const tail = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.6, 6), ghost); tail.rotation.x = Math.PI; tail.position.y = 0.46; this.core.add(tail);
+            for (let i = 0; i < 3; i++) { const t = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.24, 4), ghost); t.rotation.x = Math.PI; t.position.set((i - 1) * 0.14, 0.62, 0.12); this.core.add(t); }
+            // A blank sticky note slapped on the corner: the hint it never wrote.
+            const note = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.01), this._mat(0xffe860, 0x332a00, 1)); note.position.set(0.22, 0.85, 0.165); note.rotation.z = 0.2; this.core.add(note);
+            this.bodyGroup.add(this.core);
+            // FACE: two tired eyes under heavy lids above the keyhole.
+            this.face = new THREE.Group(); this._pwLids = [];
+            for (const sx of [-1, 1]) {
+                const e = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 6), this._mat(0xf0f0ff, 0x222244, 1)); e.position.set(sx * 0.16, 1.16, 0.15); e.scale.z = 0.5; this.face.add(e);
+                const lid = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.035, 0.03), this._mat(0x4a4466, 0x000000, 1)); lid.position.set(sx * 0.16, 1.18, 0.175); lid.rotation.z = -sx * 0.2; this.face.add(lid); this._pwLids.push(lid);
+            }
+            this.bodyGroup.add(this.face);
+            // MAW: the keyhole, round top over a tapering slot.
+            this.maw = new THREE.Group();
+            const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.02, 8), this._mat(0x080810, 0x000000, 1)); hole.rotation.x = Math.PI / 2; hole.position.y = 0.06; this.maw.add(hole);
+            const slot = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.18, 4), this._mat(0x080810, 0x000000, 1)); slot.scale.z = 0.15; slot.position.y = -0.05; this.maw.add(slot);
+            this.maw.position.set(0, 0.95, 0.165); this.bodyGroup.add(this.maw);
+            // LEFT/RIGHT_WISP: wispy arms, each jiggling a key that never fits.
+            const keyArm = (sx) => {
+                const g = new THREE.Group();
+                const arm = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.42, 6), ghost); arm.rotation.z = -sx * (Math.PI / 2 + 0.3); arm.position.set(sx * 0.2, -0.06, 0); g.add(arm);
+                const key = new THREE.Group();
+                const bow = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.02, 4, 8), metal); key.add(bow);
+                const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.24, 5), metal); shaft.position.y = -0.17; key.add(shaft);
+                for (let k = 0; k < 2; k++) { const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.03, 0.02), metal); tooth.position.set(0.03, -0.24 + k * 0.06, 0); key.add(tooth); }
+                key.position.set(sx * 0.42, -0.08, 0.04); g.add(key); g._key = key;
+                g.position.set(sx * 0.35, 1.0, 0); this.bodyGroup.add(g); return g;
+            };
+            this.leftWisp = keyArm(-1); this.rightWisp = keyArm(1);
+            // The password it keeps half-typing: asterisks circling, by design.
+            this.stars = new THREE.Group(); this.stars.userData.float = true;
+            for (let i = 0; i < 6; i++) {
+                const a = (i / 6) * Math.PI * 2; const ast = new THREE.Group();
+                for (let k = 0; k < 3; k++) { const bar = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 0.02), this._mat(p.accent, p.accent, 0.9)); bar.rotation.z = k * Math.PI / 3; ast.add(bar); }
+                ast.position.set(Math.cos(a) * 0.7, 1.0 + Math.sin(a * 2) * 0.05, Math.sin(a) * 0.5); this.stars.add(ast);
+            }
+            this.bodyGroup.add(this.stars);
+            this._lvGhostWire([this.stars]);
+        }
+
+        // ── Spam Wraith: a robe of pasted flyers with a megaphone for a mouth,
+        //    envelope arms and a cheap gold rosette for a prize never won ───
+        _buildLvSpamWraith() {
+            const p = this.profile;
+            const paper = this.applySkin(this._mat(p.bodyColor, p.emissive, 0.88));
+            const loud = this._mat(p.accent, p.accent, 1);
+            const gold = this._mat(0xe8b830, 0x3a2a00, 1);
+            // CORE: a tall ragged robe, flyers pasted all over it.
+            this.core = new THREE.Group();
+            const robe = new THREE.Mesh(new THREE.ConeGeometry(0.46, 1.15, 7), paper); robe.position.y = 0.88; this.core.add(robe);
+            for (let i = 0; i < 7; i++) { const a = i * 0.9 + 0.3; const t = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.26, 3), paper); t.rotation.x = Math.PI; t.position.set(Math.cos(a) * 0.4, 0.26, Math.sin(a) * 0.4); this.core.add(t); }
+            const cols = [0xff5a9a, 0x5ad8ff, 0xffe040, 0xffffff];
+            for (let i = 0; i < 8; i++) {
+                const y = 0.5 + (i % 4) * 0.18, a = i * 1.7, r = 0.46 * (1.455 - y) / 1.15 + 0.01;
+                const fl = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.14, 0.01), this._mat(cols[i % 4], 0x111111, 1));
+                fl.position.set(Math.cos(a) * r, y, Math.sin(a) * r); fl.lookAt(Math.cos(a) * 3, y + 0.6, Math.sin(a) * 3); fl.rotateZ((i % 3 - 1) * 0.3); this.core.add(fl);
+            }
+            // The prize rosette pinned to its chest.
+            const ros = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.035, 5, 10), gold); ros.position.set(0, 1.12, 0.13); this.core.add(ros);
+            for (const sx of [-1, 1]) { const rib = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.16, 0.01), loud); rib.position.set(sx * 0.04, 1.0, 0.16); rib.rotation.z = sx * 0.25; this.core.add(rib); }
+            this.bodyGroup.add(this.core);
+            // FACE: a round head with two glaring exclamation marks for eyes.
+            this.face = new THREE.Group();
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 9, 7), paper); this.face.add(head);
+            for (const sx of [-1, 1]) {
+                const bar = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.1, 0.02), loud); bar.position.set(sx * 0.08, 0.11, 0.16); this.face.add(bar);
+                const dot = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.03, 0.02), loud); dot.position.set(sx * 0.08, 0.04, 0.18); this.face.add(dot);
+            }
+            this.face.position.y = 1.52; this.bodyGroup.add(this.face);
+            // MAW: the megaphone it shouts through, bell forward.
+            this.maw = new THREE.Group();
+            const horn = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.06, 0.4, 8, 1, true), this._mat(0xd8d8e0, 0x111111, 1)); horn.rotation.x = Math.PI / 2; horn.position.z = 0.2; this.maw.add(horn);
+            const band = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.025, 4, 10), loud); band.position.z = 0.4; this.maw.add(band);
+            this.maw.position.set(0, 1.38, 0.1); this.bodyGroup.add(this.maw);
+            // LEFT/RIGHT_WISP: arms of chained envelopes, the last one torn open.
+            const envArm = (sx) => {
+                const g = new THREE.Group();
+                const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(sx * 0.2, -0.08, 0.05), new THREE.Vector3(sx * 0.38, -0.2, 0.1), new THREE.Vector3(sx * 0.52, -0.36, 0.14)];
+                for (let k = 1; k < pts.length; k++) {
+                    this.addStrut(g, paper, pts[k - 1], pts[k], 0.035, 0.03, 4);
+                    const env = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 0.02), this._mat(k === 3 ? 0xfff0d0 : 0xf0e8d8, 0x111111, 1)); env.position.copy(pts[k]); env.rotation.z = sx * (0.3 + k * 0.2); g.add(env);
+                    if (k === 3) { const flap = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.08, 3), this._mat(0xe8d8c0, 0x111111, 1)); flap.scale.z = 0.15; flap.position.copy(pts[k]).add(new THREE.Vector3(0, 0.09, 0)); g.add(flap); }
+                }
+                g.position.set(sx * 0.06, 1.32, 0); this.bodyGroup.add(g); return g;
+            };
+            this.leftWisp = envArm(-1); this.rightWisp = envArm(1);
+            // Gold prize stars it keeps promising, circling out of reach by design.
+            this.prizes = new THREE.Group(); this.prizes.userData.float = true;
+            for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; const st = new THREE.Mesh(new THREE.OctahedronGeometry(0.07, 0), gold); st.scale.z = 0.35; st.position.set(Math.cos(a) * 0.75, 1.3 + Math.sin(a * 3) * 0.12, Math.sin(a) * 0.6); this.prizes.add(st); }
+            this.bodyGroup.add(this.prizes);
+            this._lvGhostWire([this.prizes]);
+        }
+
+        // ── Hallowed Lantern: a chapel lantern keeping vigil, a pale face in
+        //    its flame, a shroud hanging under it and wax running off the rim ─
+        _buildLvHallowedLantern() {
+            const p = this.profile;
+            const brass = this.applySkin(this._mat(p.bodyColor, 0x1a1000, 1));
+            const shroud = this._mat(0xe8e8f0, 0x2a2a3a, 0.6);
+            const wax = this._mat(0xf4ecd8, 0x222018, 1);
+            // CORE: the six-sided housing, glass panes, posts, spire roof, ring.
+            this.core = new THREE.Group();
+            const base = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.26, 0.12, 6), brass); base.position.y = 0.96; this.core.add(base);
+            this._pane = this._mat(0xfff4c0, p.accent, 0.35);
+            const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.5, 6, 1, true), this._pane); glass.position.y = 1.27; this.core.add(glass);
+            for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const post = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.52, 0.04), brass); post.position.set(Math.cos(a) * 0.27, 1.27, Math.sin(a) * 0.27); this.core.add(post); }
+            const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.3, 0.08, 6), brass); cap.position.y = 1.56; this.core.add(cap);
+            const roof = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.36, 6), brass); roof.position.y = 1.78; this.core.add(roof);
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.022, 4, 10), brass); ring.position.y = 2.0; this.core.add(ring);
+            // Wax that ran over the rim and set in long drips.
+            for (let i = 0; i < 5; i++) { const a = i * 1.3 + 0.2, len = 0.08 + (i % 3) * 0.05; const d = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.018, len, 5), wax); d.position.set(Math.cos(a) * 0.29, 0.96 - len / 2, Math.sin(a) * 0.29); this.core.add(d); }
+            // The shroud it wears below, ragged at the hem.
+            const sheet = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.4, 0.75, 7, 1, true), shroud); sheet.position.y = 0.53; this.core.add(sheet);
+            for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2; const t = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.22, 3), shroud); t.rotation.x = Math.PI; t.position.set(Math.cos(a) * 0.38, 0.1, Math.sin(a) * 0.38); this.core.add(t); }
+            this.bodyGroup.add(this.core);
+            // FACE: a pale face in the flame behind the glass.
+            this.face = new THREE.Group();
+            this._flame = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.36, 6), this._mat(p.accent, p.accent, 0.9)); this.face.add(this._flame);
+            for (const sx of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 5), this._mat(0x2a1a08, 0x000000, 1)); e.position.set(sx * 0.045, 0.02, 0.09); this.face.add(e); }
+            this.face.position.y = 1.24; this.bodyGroup.add(this.face);
+            // MAW: the small open mouth in the flame.
+            this.maw = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 5), this._mat(0x2a1a08, 0x000000, 1)); this.maw.scale.y = 1.5; this.maw.position.set(0, 1.18, 0.1); this.bodyGroup.add(this.maw);
+            // LEFT/RIGHT_WISP: smoky arms out of the shroud, each holding a vigil candle.
+            const candleArm = (sx) => {
+                const g = new THREE.Group();
+                const arm = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.4, 5), shroud); arm.rotation.z = -sx * (Math.PI / 2 + 0.4); arm.position.set(sx * 0.18, -0.08, 0); g.add(arm);
+                const candle = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 0.16, 6), wax); candle.position.set(sx * 0.36, -0.08, 0); g.add(candle);
+                const fl = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.07, 4), this._mat(p.accent, p.accent, 0.9)); fl.position.set(sx * 0.36, 0.035, 0); g.add(fl); g._fl = fl;
+                g.position.set(sx * 0.27, 0.72, 0.04); this.bodyGroup.add(g); return g;
+            };
+            this.leftWisp = candleArm(-1); this.rightWisp = candleArm(1);
+            this._lvGhostWire();
         }
 
         animatePose(deltaTime) {
@@ -309,8 +490,41 @@
                 case 'amo_thephantom':     this._animateGhost(t); this._animateThePhantom(t); break;
                 case 'amo_blick':          this._animateSlime(t); this._animateBlick(t); break;
                 case 'amo_kingslime':      this._animateSlime(t); this._animateKingSlime(t); break;
+                case 'lv_forgottenpassword': this._animateLvForgottenPassword(t); break;
+                case 'lv_spamwraith':        this._animateLvSpamWraith(t); break;
+                case 'lv_hallowedlantern':   this._animateLvHallowedLantern(t); break;
                 default:                   this._animateSlime(t); break;
             }
+        }
+
+        // ── Level 1-5 starter ghosts ──────────────────────────────────────
+        _lvGhostBob(t, amp) {
+            let bob = Math.sin(t * 1.5) * amp;
+            if (this.currentAnimation === 'attack' || this.currentAnimation === 'specialattack') bob += Math.sin(t * 8) * amp;
+            this.model.position.y = this._baseY + bob * this.scale;
+            this.model.rotation.z = this.currentAnimation === 'hit' ? Math.sin(t * 26) * Math.exp(-t * 6) * 0.18 : Math.sin(t * 0.9) * 0.04;
+        }
+        _animateLvForgottenPassword(t) {
+            const fast = (this.currentAnimation === 'attack' || this.currentAnimation === 'specialattack');
+            this._lvGhostBob(t, 0.1);
+            [this.leftWisp, this.rightWisp].forEach((w, i) => { if (w && w.visible) { w.rotation.z = Math.sin(t * (fast ? 9 : 2.5) + i) * 0.18; if (w._key) w._key.rotation.y = Math.sin(t * (fast ? 14 : 5) + i) * 0.6; } });
+            if (this.stars) this.stars.rotation.y = t * (fast ? 1.6 : 0.6);
+            if (this._pwLids) this._pwLids.forEach(l => { l.position.y = Math.sin(t * 1.7) > 0.9 ? 1.16 : 1.18; });
+        }
+        _animateLvSpamWraith(t) {
+            const fast = (this.currentAnimation === 'attack' || this.currentAnimation === 'specialattack');
+            this._lvGhostBob(t, 0.12);
+            if (this.maw) { const s = 1 + Math.abs(Math.sin(t * (fast ? 16 : 4))) * (fast ? 0.25 : 0.08); this.maw.scale.set(s, s, 1); }
+            [this.leftWisp, this.rightWisp].forEach((w, i) => { if (w && w.visible) w.rotation.z = (i ? -1 : 1) * Math.sin(t * (fast ? 8 : 2.2)) * 0.3; });
+            if (this.prizes) this.prizes.rotation.y = t * (fast ? 2.2 : 0.8);
+        }
+        _animateLvHallowedLantern(t) {
+            const fast = (this.currentAnimation === 'attack' || this.currentAnimation === 'specialattack');
+            this._lvGhostBob(t, 0.07);
+            const fl = 1 + Math.sin(t * 11) * 0.06 + Math.sin(t * 17) * 0.04 + (fast ? Math.abs(Math.sin(t * 9)) * 0.3 : 0);
+            if (this._flame) this._flame.scale.set(1 / Math.sqrt(fl), fl, 1 / Math.sqrt(fl));
+            if (this._pane) this._pane.emissiveIntensity = (fast ? 1.6 : 0.8) + Math.sin(t * 7) * 0.2;
+            [this.leftWisp, this.rightWisp].forEach((w, i) => { if (w && w.visible) { w.rotation.z = (i ? -1 : 1) * Math.sin(t * 1.6 + i) * 0.15; if (w._fl) w._fl.scale.y = 1 + Math.sin(t * 13 + i * 2) * 0.25; } });
         }
 
         _animateKaraokeBanshee(t) {
@@ -339,7 +553,8 @@
         }
 
         _animateKingSlime(t) {
-            if (this.crown) this.crown.position.y = 1.45 + Math.sin(t * 2) * 0.05;
+            // The crown rides the squashing dome instead of bobbing free of it.
+            if (this.crown && this.upperBody) this.crown.position.y = 0.95 + 0.42 * this.upperBody.scale.y + 0.02 + Math.sin(t * 2) * 0.015;
             if (this.minions) this.minions.children.forEach((b, i) => { b.position.y = 0.2 + Math.abs(Math.sin(t * 3 + i)) * 0.08; });
         }
 
@@ -369,8 +584,9 @@
 
             const sy = 1.0 - squash;
             const sxz = 1.0 + squash * 0.6;
-            if (this.lowerBody && this.lowerBody.visible) this.lowerBody.scale.set(1.1 * sxz, 0.8 * sy, 1.1 * sxz);
-            if (this.upperBody && this.upperBody.visible) this.upperBody.scale.set(1.0 * sxz, 0.95 * sy, 1.0 * sxz);
+            const lb = this._lowerBase || [1.1, 0.8, 1.1], ub = this._upperBase || [1.0, 0.95, 1.0];
+            if (this.lowerBody && this.lowerBody.visible) this.lowerBody.scale.set(lb[0] * sxz, lb[1] * sy, lb[2] * sxz);
+            if (this.upperBody && this.upperBody.visible) this.upperBody.scale.set(ub[0] * sxz, ub[1] * sy, ub[2] * sxz);
 
             if (this.core && this.core.visible) {
                 this.core.position.y = 0.6 + Math.sin(t * 3.0) * 0.05;
@@ -385,7 +601,7 @@
             const op = 1.0 - prog;
             for (const mat of this._materials) mat.opacity = Math.min(mat.opacity, op);
 
-            if (this.variant === 'ghost') {
+            if (this.variant === 'ghost' || this._ghostly) {
                 // Drift upward and disperse.
                 if (this._baseY === null) this._baseY = this.model.position.y;
                 this.model.position.y = this._baseY + prog * 0.6 * this.scale;
@@ -415,6 +631,9 @@
     reg('amo_thephantom',     { aliases: ['amo_thephantom'],     scale: P.amo_thephantom.scale,     weapon: 0, create: make });
     reg('amo_blick',          { aliases: ['amo_blick'],          scale: P.amo_blick.scale,          weapon: 0, create: make });
     reg('amo_kingslime',      { aliases: ['amo_kingslime'],      scale: P.amo_kingslime.scale,      weapon: 0, create: make });
+    reg('lv_forgottenpassword', { aliases: ['lv_forgottenpassword'], scale: P.lv_forgottenpassword.scale, weapon: 0, create: make });
+    reg('lv_spamwraith',        { aliases: ['lv_spamwraith'],        scale: P.lv_spamwraith.scale,        weapon: 0, create: make });
+    reg('lv_hallowedlantern',   { aliases: ['lv_hallowedlantern'],   scale: P.lv_hallowedlantern.scale,   weapon: 0, create: make });
 
     // Repin the bespoke names off the shared ghost/slime rigs. These same names
     // are also assigned to ghost/slime in 3DBattler_Bosses.js, which loads AFTER
@@ -424,7 +643,10 @@
         amo_memeghost:      ["Meme Ghost"],
         amo_thephantom:     ["The Phantom"],
         amo_blick:          ["Blick"],
-        amo_kingslime:      ["King Slime"]
+        amo_kingslime:      ["King Slime"],
+        lv_forgottenpassword: ["Forgotten Password"],
+        lv_spamwraith:        ["Spam Wraith"],
+        lv_hallowedlantern:   ["Hallowed Lantern"]
     };
     if (window.Battler3D.registerNamed) {
         setTimeout(() => {

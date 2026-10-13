@@ -210,3 +210,64 @@ Just leave him be!
 
 
 ------------------------------------------------------------------------------------------------------------
+eris_tower
+
+Eris:
+Good evening, Eurozone! This is Eris, and tonight's request goes out to a little witch who murdered the God of the Catholics.
+
+Em:
+So you're Bubba's ex-wife.
+
+Bubba:
+Hey, Eris. You look good!
+
+Eris:
+Of course I look good, I always look good. You look tired. Are you eating? You're not eating anymore...
+Ahem.
+
+Em:
+And me?
+
+Eris:
+You, Em, are a stupid excuse for a witch and for a human being.
+
+Em:
+Oook?
+
+Eris:
+Look at me, you little witch. Really look.
+You and me, we are the same kind of thing now.
+
+Em:
+Bubba's sidekick?
+
+Eris:
+A deicide.
+
+Em:
+I'm under arrest???
+
+Eris:
+I haven't decided! Deicide is a complex thing! There is a lot of bureaucracy to get through!
+Ask the [Pope] if you want to be arrested so badly!
+Meanwhile I will be waiting for you at the top of the [Omega Tower].
+Actually, why wait? The tower is sooooooo tall and I am sooooo hexing bored.
+Right here. Right now. FIGHT ME, WITCH.
+
+Em:
+I beg your pardon?
+
+Eris:
+DEICIDE ME like you did to the Old One and it's all yours! Strife! Justice! Discord! Trillions of followers across the multiverse! All of it! A real goddess, Em! A real one! Wannabe witch no more!
+
+Bubba:
+Eris, you don't have to do this. Can't we reach a peaceful solution?
+Like, why does Nibiru have to hit Earth in 2012? You can bend the odds of its impact down to almost zero just by lifting your pinky finger!
+Just like you did when we were on the road together robbing banks!
+
+Eris:
+Oh yes, I can, Bubba. But I really need to crack this planet open before that date.
+
+
+
+------------------------------------------------------------------------------------------------------------

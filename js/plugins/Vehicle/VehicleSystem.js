@@ -860,6 +860,26 @@
   }
 
   // Maps a vehicle config to the VehicleUpgrades / maintenance type key.
+  // Every vehicle's hold is VehicleStorage.js's, sized to the vehicle: the
+  // Storage row opens it there. A config's storageEvent is only the fallback
+  // for a build without that plugin.
+  function vehicleHasStorage(config) {
+    const VST = window.VehicleStorage;
+    if (VST) return VST.has(upgradeTypeForConfig(config));
+    return !!config.storageEvent;
+  }
+
+  function storageLabel(config) {
+    const VST = window.VehicleStorage;
+    return VST ? VST.title(upgradeTypeForConfig(config)) : T('VehicleSystem.storage');
+  }
+
+  function openVehicleStorage(config) {
+    const VST = window.VehicleStorage;
+    if (VST && VST.open(upgradeTypeForConfig(config))) return;
+    if (config.storageEvent) $gameTemp.reserveCommonEvent(config.storageEvent);
+  }
+
   function upgradeTypeForConfig(config) {
     if (!config) return null;
     switch (config.name) {
@@ -1574,6 +1594,17 @@
   }
 
   /**
+   * Terrain tag 7 is the roof, the void and the dead mass behind a wall. Out in
+   * the open a flier crosses it like anything else (a rooftop is somewhere to
+   * land); under a roof there is no sky above it, so no flight of any kind,
+   * broom, wings or a levitation spell, ever enters one. Asked directly rather
+   * than left to the walker's passability, which a flier does not always use.
+   */
+  function flightBarredTile(x, y) {
+    return flightGroundedHere() && $gameMap.terrainTag(x, y) === 7;
+  }
+
+  /**
    * Where a flying vehicle may set down. It flies over everything, so the only
    * question is what the rider can stand on once it stops, and the answer is
    * deliberately generous: anything the party could walk on, PLUS the three
@@ -2229,8 +2260,8 @@
       let consumption = config.fuelRate * deltaTime * FUEL_CONSUMPTION_MULTIPLIER;
 
       if (isGlobeMapId($gameMap.mapId())) {
-        // A globe step burns five times the fuel of one on map 315.
-        consumption *= (window.WorldMapReturn.GLOBE_STEP_COST || 5);
+        // A globe step burns the same fuel as one on map 315.
+        consumption *= (window.WorldMapReturn.GLOBE_STEP_COST || 1);
       } else if ($gameMap.mapId() !== 315) {
         consumption /= 25;
       }
@@ -2414,6 +2445,7 @@
         // Under a roof the broom is a fast walk and nothing more: it goes
         // exactly where the party could have gone on foot.
         if (!$gameMap.isValid(x2, y2)) return false;
+        if (flightBarredTile(x2, y2)) return false;
         if (isVehicleBlockedTile(x2, y2, $gameMap.mapId())) return false;
         return $gameMap.isPassable(x2, y2, this.reverseDir(d));
       }
@@ -2507,6 +2539,7 @@
       // so the landing question is only ever "can the party stand here".
       if (flightGroundedHere()) {
         return $gameMap.isValid(x, y) && $gameMap.regionId(x, y) !== 10 &&
+          !flightBarredTile(x, y) &&
           [2, 4, 6, 8].some(dir => $gameMap.isPassable(x, y, dir));
       }
       return isFlyingLandingTile(x, y);
@@ -3701,9 +3734,9 @@
       choices.push(T('VehicleSystem.refuel'));
       handlers.push(() => openVehicleRefuel());
     }
-    if (config.storageEvent) {
-      choices.push(T('VehicleSystem.storage'));
-      handlers.push(() => $gameTemp.reserveCommonEvent(config.storageEvent));
+    if (vehicleHasStorage(config)) {
+      choices.push(storageLabel(config));
+      handlers.push(() => openVehicleStorage(config));
     }
     if (config.repairEvent) {
       choices.push(T('VehicleSystem.repairs'));
@@ -3855,9 +3888,9 @@
       });
     }
 
-    if (config.storageEvent) {
-      choices.push(T('VehicleSystem.storage'));
-      handlers.push(() => $gameTemp.reserveCommonEvent(config.storageEvent));
+    if (vehicleHasStorage(config)) {
+      choices.push(storageLabel(config));
+      handlers.push(() => openVehicleStorage(config));
     }
 
     if (config.repairEvent) {
@@ -5214,6 +5247,16 @@
     // this is not the same question as isInVehicle().
     isRidingPortable() {
       return !!riddenPortableConfig();
+    },
+
+    // The one sky rule every kind of flight answers to (the Broom here, wings
+    // and levitation in FlySystem): grounded under a roof, and barred from
+    // terrain tag 7 there while free to cross it outdoors.
+    flightGroundedHere() {
+      return flightGroundedHere();
+    },
+    flightBarredTile(x, y) {
+      return flightBarredTile(x, y);
     },
 
     // True when this follower is on a machine of their own right now (a bike

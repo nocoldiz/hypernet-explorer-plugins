@@ -47,12 +47,12 @@
     "memberSeat": "{name}, FOR {faction}",
     "declineSeat": "TAKE NO SEAT DIS WEEK",
     "unaccredited": "UNACCREDITED",
-    "unaccreditedHint": "DIS CHARACTER HOLDS NO SEAT. DA CREDENTIALS DESK DECIDES WHO GETS ONE!",
+    "unaccreditedHint": "NO SEAT. GET ONE AT DA CREDENTIALS DESK!",
     "noSeatsTitle": "NO POWER WILL VOUCH FOR YOU",
-    "noSeatsHint": "ACCREDITATION NEEDS A POWER DAT IZ NEUTRAL OR POSITIVE TOWARD YOU. IMPROVE A REPUTATION AN' COME BACK!",
-    "sgBlurb": "DA SECRETARY GENERAL DOES NO VOTE, BUT IZ DA ONLY ONE WHO CAN BREAK A TIE ON DA SECURITY COUNCIL!",
+    "noSeatsHint": "YOU NEED A POWER DAT IZ NEUTRAL OR FRIENDLY TA YOU. RAISE YA REPUTATION FIRST!",
+    "sgBlurb": "NO VOTE, BUT BREAKS SECURITY COUNCIL TIES!",
     "holdsSeat": "{name} HOLDS DIS DELEGATION'S SEAT AT DA ASSEMBLY!",
-    "holdsSeatParent": "{name} SITS FOR {faction}, WHICH DIS ANSWERS TA!",
+    "holdsSeatParent": "{name} SITS FOR {faction}, WHICH DIS DELEGATION BELONGS TA!",
     "you": "YOU"
   },
   "role": {
@@ -68,7 +68,7 @@
   "toast": {
     "stipendTitle": "DIPLOMATIC STIPEND",
     "stipendLine": "{name}, FOR {faction}: {amount}",
-    "dismissed": "{name} HAB BEEN RECALLED BY {faction}.",
+    "dismissed": "{name} HAB BIN RECALLED BY {faction}.",
     "joined": "{name} IZ ACCREDITED TA {faction}.",
     "resigned": "{name} HAB RESIGNED DA SEAT OF {faction}!",
     "sessionClosed": "SESSION CLOSED. {carried} OF {total} MOTIONS CARRIED!",
@@ -77,7 +77,7 @@
   "stance": {
     "for": "IN FAVOUR",
     "against": "AGAINST",
-    "abstained": "WITHOUT TAKIN' A SIDE"
+    "abstained": "WITOUT TAKIN' A SIDE"
   },
   "ballotWord": {
     "public": "OPEN",
@@ -89,8 +89,8 @@
   },
   "portal": {
     "appName": "CHAMBER",
-    "subtitle": "WHAT DA ASSEMBLY DOES, WHO SITS IN IT, AN' DA PARTY'S STANDIN' WIT EACH POWER!",
-    "inPerson": "TAKIN' A SEAT, SPEAKIN' AN' VOTIN' IZ DONE IN DA CHAMBER ITSELF!",
+    "subtitle": "ASSEMBLY BUSINESS, SEATS AN' YA STANDIN' WIT EACH POWER!",
+    "inPerson": "SIT, SPEAK AN' VOTE IN DA CHAMBER!",
     "tab": {
       "floor": "DA FLOOR",
       "powers": "POWERS",
@@ -101,11 +101,11 @@
     "nextSittingIn": "NEXT SITTIN' IN {n} WEEKS",
     "sittingThisWeek": "SITTIN' DIS WEEK",
     "powersSeated": "{n} POWERS HOLD A SEAT.",
-    "weHold": "DA PARTY HOLDS {n} SEATS, PAYIN' {pay} A WEEK!",
-    "weHoldNothing": "DA PARTY HOLDS NO SEAT. ANYTHIN' DECIDED IZ DECIDED WITHOUT US!",
-    "floorNote": "DA CHAMBER MEETS EVERY MONDAY AT 13:00. SITTINGS YOU DO NO ATTEND IZ RESOLVED WITHOUT YOU!",
-    "noChamber": "NO ASSEMBLY HAB BEEN CONVENED IN DIS WORLD!",
-    "powersBlurb": "STANDIN' IZ TRACKED PER CHARACTER. DIS COLUMN SHOWS {who}!",
+    "weHold": "YOU HOLD {n} SEATS, PAYIN' {pay} A WEEK!",
+    "weHoldNothing": "YOU HOLD NO SEATS.",
+    "floorNote": "MEETS EVERY MONDAY AT 13:00. MISSED SITTINGS GO AHEAD WITOUT YOU!",
+    "noChamber": "NO ASSEMBLY HAB BIN CONVENED IN DIS WORLD!",
+    "powersBlurb": "STANDIN' IZ PER CHARACTER. SHOWIN' {who}!",
     "colDelegate": "DELEGATE",
     "colFor": "SITS FOR",
     "colStanding": "STANDIN'",
@@ -121,11 +121,14 @@
     "unseated": "NO SEAT",
     "alreadySeated": "ALREADY SEATED.",
     "wouldTakeNobody": "NO POWER WOULD HAB DEM.",
-    "seatsBlurb": "ANY POWER DAT DOES NO DISLIKE YOU CAN OFFER A SEAT. SEATS IZ TAKEN IN DA CHAMBER!",
-    "businessBlurb": "EVERY MOTION DA ASSEMBLY CAN VOTE ON. DA WEEKLY AGENDA IZ ROLLED EACH DAY!",
+    "seatsBlurb": "ANY POWER DAT NO DISLIKE YOU CAN OFFER A SEAT. TAKE IT IN DA CHAMBER!",
+    "businessBlurb": "ALL MOTIONS DA ASSEMBLY CAN VOTE ON. DA AGENDA REROLLS DAILY!",
     "grave": "GRAVE",
     "ordinary": "ORDINARY",
-    "graveNote": "A GRAVE MOTION GOES ON TA DA SECURITY COUNCIL, WHERE A SINGLE VETO ENDS IT!",
+    "graveNote": "GOES TA DA SECURITY COUNCIL, WHERE ONE VETO STOPS IT!",
     "noParty": "DERE IZ NOBODY TA SEAT."
+  },
+  "dice": {
+    "debate": "ONU ASSEMBLY DEBATE"
   }
 }

@@ -8,9 +8,9 @@
   "camperExpedition": "CAMPER EXPEDITION",
   "aReinforcedHeavyCamperDesigned": "A REINFORCED HEAVY CAMPER DESIGNED TA ENDURE WILDERNESS TOURS AN' LONG JOURNEYS. DEMANDS HIGH OVERALL STRUCTURAL INTEGRITY!",
   "standardUrbanSedan": "STANDARD URBAN SEDAN",
-  "aClassicStandardEngineTransport": "A CLASSIC STANDARD ENGINE TRANSPORT SUITED FOR URBAN ENVIRONMENTS. RELIES ON TIGHT STEERIN' AN' TRANSMISSION CONTROL!",
-  "lightSportMotorcycle": "LIGHT SPORT MOTORCYCLE",
-  "anAgileAndRapidPersonal": "AN AGILE AN' RAPID PERSONAL SPORT BIKE. REQUIRES PERFECT CHAIN LUBRICATION AN' BRAKE RESPONSIVENESS!",
+  "aClassicStandardEngineTransport": "A CLASSIC CAR BUILT FOR CITY STREETS. RELIES ON ITS STEERIN' AN' TRANSMISSION!",
+  "lightSportMotorcycle": "SPORT BICYCLE",
+  "anAgileAndRapidPersonal": "A LIGHT, FAST SPORT BICYCLE. NEEDS A WELL-OILED CHAIN AN' SHARP BRAKES!",
   "explorerStarship": "EXPLORER STARSHIP",
   "anAdvancedDeepSpaceExplorer": "AN ADVANCED DEEP-SPACE EXPLORER EQUIPPED WIT HYPER-NAVIGATION DRIVES. CRITICAL PARTS MUST BE FLAWLESS TA PERMIT ASCENT!",
   "inflatableDinghy": "INFLATABLE DINGHY",
@@ -19,7 +19,7 @@
   "changeAppearance": "CHANGE APPEARANCE",
   "statusBroken": "STATUS: BROKEN",
   "statusOperational": "STATUS: OPERATIONAL",
-  "allCriticalComponentsMustMaintain": "EVERY ESSENTIAL COMPONENT MUST STAY ABOVE 0% INTEGRITY FOR DA VEHICLE TA RUN!",
+  "allCriticalComponentsMustMaintain": "ESSENTIAL PARTS MUST STAY ABOVE 0% OR DA VEHICLE NO WILL RUN!",
   "repair": "REPAIR",
   "upgrades": "UPGRADES",
   "close": "SHUT IT",
@@ -38,23 +38,23 @@
     },
     "speed": {
       "name": "AERO STREAMLININ'",
-      "desc": "HIGHER TOP SPEED AN' LESS GAME-TIME SPENT CROSSIN' EACH WORLD TILE!"
+      "desc": "HIGHER TOP SPEED. FASTER WORLD MAP TRAVEL!"
     },
     "fuel": {
       "name": "EXPANDED TANK",
-      "desc": "A LARGER RESERVOIR RAISES DA MAXIMUM FUEL CAPACITY!"
+      "desc": "MORE FUEL CAPACITY."
     },
     "health": {
       "name": "REINFORCED CHASSIS",
-      "desc": "A HARDENED FRAME MAKES DA VEHICLE TAKE LESS DAMAGE FROM IMPACTS!"
+      "desc": "LESS DAMAGE FROM IMPACTS."
     },
     "aquatic": {
       "name": "AMPHIBIOUS CONVERSION",
-      "desc": "A SEALED HULL AN' PONTOONS LET DA CAMPER DRIVE ON AN' DIVE BENEATH WATER!"
+      "desc": "DA CAMPER CAN DRIVE ON AN' DIVE UNDER WATER!"
     },
     "flight": {
       "name": "ANTIGRAVITY ROTORS",
-      "desc": "FOLD-OUT ANTIGRAVITY ROTORS LET DA CAMPER TAKE OFF AN' FLY!"
+      "desc": "DA CAMPER CAN TAKE OFF AN' FLY!"
     }
   },
   "upgradeWorkshop": "UPGRADE WORKSHOP",
@@ -98,8 +98,8 @@
   "systemNotReady": "SYSTEM NO READY. TRY AGAIN!",
   "criticalDamage": "\\C[2]CRITICAL DAMAGE!\\C[0] DA {vehicle} IZ NOW BROKEN!",
   "tookDamage": "DA {vehicle} HAB TAKEN DAMAGE!",
-  "fullyRepaired": "DA {vehicle} HAB BEEN FULLY REPAIRED!",
-  "partiallyRepaired": "DA {vehicle} HAB BEEN PARTIALLY REPAIRED ({percent}%)!",
+  "fullyRepaired": "DA {vehicle} HAB BIN FULLY REPAIRED!",
+  "partiallyRepaired": "DA {vehicle} HAB BIN PARTIALLY REPAIRED ({percent}%)!",
   "nowOperational": "\\C[3]DA {vehicle} IZ NOW OPERATIONAL!\\C[0]",
   "brokenCannotUse": "DA {vehicle} IZ BROKEN AN' NO CAN BE USED!",
   "repairCriticalFirstLong": "ESSENTIAL PARTS MUST BE REPAIRED BEFORE IT CAN BE USED!",
@@ -123,23 +123,23 @@
       },
       "portrait": {
         "name": "VEHICLE",
-        "text": "DA VEHICLE, ITS DESCRIPTION AN' WHETHER IT RUNS. A STARSHIP CAN CHANGE ITS APPEARANCE FROM HERE!"
+        "text": "VEHICLE INFO AN' STATUS. STARSHIPS CAN CHANGE APPEARANCE HERE!"
       },
       "status": {
         "name": "HOW ME DOIN'",
-        "text": "BROKEN MEANS AN ESSENTIAL COMPONENT IZ AT 0% AN' DA VEHICLE WILL NO MOVE UNTIL IT IZ REPAIRED!"
+        "text": "BROKEN: AN ESSENTIAL PART IZ AT 0%. REPAIR IT TA MOVE AGAIN!"
       },
       "tabs": {
         "name": "REPAIR AN' UPGRADES",
-        "text": "TURN BETWEEN MENDIN' PARTS AN' IMPROVIN' DA VEHICLE!"
+        "text": "SWITCH BETWEEN REPAIRS AN' UPGRADES!"
       },
       "repair": {
         "name": "COMPONENTS REGISTRY",
-        "text": "EVERY PART WIT ITS INTEGRITY. ESSENTIAL ONES KEEP DA VEHICLE RUNNIN'. REPAIR ONE PART, OR FULL REPAIR FOR ALL OF DEM, SPENDIN' MATERIALS!"
+        "text": "EACH PART AN' ITS CONDITION. REPAIR ONE PART, OR USE FULL REPAIR FOR ALL. COSTS MATERIALS!"
       },
       "upgrades": {
         "name": "UPGRADE WORKSHOP",
-        "text": "IMPROVEMENTS BOUGHT IN LEVELS: ACCELERATION, TOP SPEED, FUEL CAPACITY, DAMAGE REDUCTION, AN' FOR DA CAMPER DRIVIN' ON WATER AN' FLIGHT!"
+        "text": "UPGRADE ACCELERATION, SPEED, FUEL AN' ARMOR BY LEVEL. DA CAMPER CAN ALSO GAIN WATER DRIVIN' AN' FLIGHT!"
       },
       "help": {
         "name": "? HELP",

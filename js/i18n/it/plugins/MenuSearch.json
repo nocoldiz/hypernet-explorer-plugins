@@ -1,8 +1,8 @@
 {
   "placeholder": "Cerca…",
-  "open": "Apri la ricerca",
-  "close": "Chiudi la ricerca",
-  "clear": "Cancella la ricerca",
+  "open": "Apri ricerca",
+  "close": "Chiudi ricerca",
+  "clear": "Cancella ricerca",
   "anyCategory": "Qualsiasi categoria",
   "showing": "{count} mostrati",
   "min": "min",

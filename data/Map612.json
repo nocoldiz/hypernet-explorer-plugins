@@ -17,7 +17,7 @@
   },
   "disableDashing": false,
   "displayName": "",
-  "encounterList": [],
+  "encounterList": [{"troopId":1395,"weight":5,"regionSet":[]},{"troopId":1612,"weight":5,"regionSet":[]},{"troopId":1534,"weight":5,"regionSet":[]},{"troopId":1614,"weight":5,"regionSet":[]},{"troopId":1464,"weight":5,"regionSet":[]},{"troopId":1556,"weight":5,"regionSet":[]},{"troopId":1630,"weight":5,"regionSet":[]},{"troopId":93,"weight":3,"regionSet":[]},{"troopId":123,"weight":3,"regionSet":[]},{"troopId":1484,"weight":3,"regionSet":[]},{"troopId":1561,"weight":3,"regionSet":[]},{"troopId":1544,"weight":3,"regionSet":[]}],
   "encounterStep": 30,
   "height": 13,
   "note": "<Interior>\n<Country: Belgium>\n<Coords 79 125>\n<BuildRights: Owner>\n<Biome: City>",

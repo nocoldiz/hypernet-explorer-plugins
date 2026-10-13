@@ -229,7 +229,10 @@
 
   function anomalyBiomeKey(planet) {
     const PT = (window.GalaxySim && window.GalaxySim.PlanetTypes) || {};
-    const b = PT[planet && planet.type] && PT[planet.type].biome;
+    // An earthlike world walks on Earth's biomes but keeps its own pack of
+    // star-map anomalies, filed under the alien biome it used to wear.
+    const info = PT[planet && planet.type];
+    const b = info && (info.anomalyBiome || info.biome);
     const db = anomalyDB().biomes || {};
     return (b && db[b]) ? b : ANOM_FALLBACK_BIOME;
   }
@@ -385,7 +388,10 @@
     su: { il: "sul", lo: "sullo", la: "sulla", i: "sui", gli: "sugli", le: "sulle", "l'": "sull'" },
   };
   function anomFixItalian(text) {
-    return String(text).replace(/\b(di|a|da|in|su)\s+(il|lo|la|i|gli|le|l')(?=\s|$|[a-zàèéìòù])/gi, (m, prep, art) => {
+    // Only the elided l' runs straight into its noun; every other article must
+    // stand as a whole word, or "di loro" and "a leggerli" would fuse too.
+    return String(text).replace(/\b(di|a|da|in|su)\s+(?:(il|lo|la|i|gli|le)(?=\s|$)|(l')(?=[a-zàèéìòù]))/gi, (m, prep, art1, art2) => {
+      const art = art1 || art2;
       const joined = ANOM_IT_PREPS[prep.toLowerCase()] && ANOM_IT_PREPS[prep.toLowerCase()][art.toLowerCase()];
       if (!joined) return m;
       return prep[0] === prep[0].toUpperCase() ? joined[0].toUpperCase() + joined.slice(1) : joined;
@@ -720,6 +726,7 @@
     const banks = anomBanks(session);
     for (let pass = 0; pass < 6; pass++) {
       let hit = false;
+      s = anomApplyWhere(session, s);
       s = s.replace(/\{(\w+)\}/g, (m, key) => {
         if (session.ctx[key] !== undefined) { hit = true; return session.ctx[key]; }
         // A numbered token ({place2}) draws from the same bank as its base but
@@ -868,14 +875,16 @@
       { count: anomText("ui.goldChip", { amount: amount }) });
   }
 
-  // The free row in the artifact band (items 1501-1600). "Empty ..." is the
-  // sentinel ArctifactGenerator writes into an unused slot; a row the history
-  // simulator or the generator has already claimed is never overwritten.
+  // The free row in the relic band (window.RuntimeItemIds, ItemSystemUtils.js),
+  // past every row data/ ships and clear of the world's historical artifacts.
+  // A row another relic has already claimed is never overwritten.
   function anomFreeArtifactId() {
-    if (typeof $dataItems === "undefined") return 0;
-    for (let id = 1501; id <= 1600; id++) {
-      const it = $dataItems[id];
-      if (!it || (typeof it.name === "string" && it.name.indexOf("Empty ") === 0)) return id;
+    const R = window.RuntimeItemIds;
+    if (typeof $dataItems === "undefined" || !R) return 0;
+    const band = R.band("relic");   // i18n-ignore: band id
+    for (let i = 0; i < band.size; i++) {
+      const id = band.base + i;
+      if (!$dataItems[id] && !R.isAuthored($dataItems, id)) return id;
     }
     return 0;
   }
@@ -912,7 +921,7 @@
       params: [0, 0, 0, 0, 0, 0, 0, 0],
       isGenerated: true,
     };
-    $dataItems[id] = item;
+    if (!window.RuntimeItemIds.place($dataItems, item)) return null;
     // File it with the world's artifacts (HistorySimulator re-injects this list
     // on every load, and WorldManager persists it into the world folder).
     const gen = ($gameSystem._generatedArtifacts =
@@ -933,7 +942,9 @@
     const band = anomBracket().gear;
     const lo = band[0], hi = band[1];
     const pool = [];
-    for (let i = 1; i < db.length && i < 1501; i++) {
+    // Only rows data/ ships: never a forged, enchanted or artifact row.
+    const shipped = window.RuntimeItemIds ? window.RuntimeItemIds.authoredLength(db) : db.length;
+    for (let i = 1; i < db.length && i < shipped; i++) {
       const e = db[i];
       if (window.ItemSystemUtils && window.ItemSystemUtils.isRestrictedEntry(e)) continue;
       if (e && e.name && e.price >= lo && e.price <= hi) pool.push(e);
@@ -1515,7 +1526,7 @@
       if (item) {
         anomReward(lines, "artifact", { name: item.name }, { icon: item.iconIndex });
       } else {
-        // The artifact band (items 1501-1600) is full: pay the ending out in
+        // The relic band is full: pay the ending out in
         // kit and coin rather than leaving the party with a story and nothing.
         const gear = anomRandomGear(session, "weapon");
         if (gear) anomReward(lines, "gear", { name: gear.name }, { icon: gear.iconIndex });
@@ -2282,6 +2293,58 @@
 
   function earthDB() { return anomalyDB().earth || {}; }
 
+  // Where the square is, the way the language says it. A pack that writes an
+  // `earth.where` table (Italian does: "in Francia", "nel Regno Unito", "a
+  // Parigi", "nei dintorni") gets the country and the named place in its own
+  // words, and the preposition written in front of {region} / {place} is
+  // swapped for the right one. A pack without the table (English) is left
+  // exactly as it was.
+  function anomEarthWhere(session, country, placeRaw, display) {
+    const W = earthDB().where;
+    if (!W || typeof W !== "object" || !W.country) return;
+    const names = W.names || {};
+    const regionRaw = (country && country.country) || null;
+    const localName = (raw, nation) => {
+      const e = names[raw];
+      if (e && e.name) return e.name;
+      if (nation && window.WorldNames && typeof window.WorldNames.nation === "function") {
+        return window.WorldNames.nation(raw) || raw;
+      }
+      return raw;
+    };
+    const regionName = regionRaw ? localName(regionRaw, true) : null;
+    const placeName = placeRaw ? localName(placeRaw, false) : null;
+    const none = W.nearName || display;
+    session.ctx.region = session.ctx.country = regionName || none;
+    session.ctx.place = placeName || none;
+    if (placeName) session.ctx.city = placeName;
+    session.placeName = placeName || regionName || display;
+    session.where = {
+      region: regionRaw ? { kind: "country", raw: regionRaw, name: regionName } : { kind: "none" },
+      place: placeRaw ? { kind: "city", raw: placeRaw, name: placeName } : { kind: "none" },
+    };
+  }
+
+  const ANOM_WHERE_FORM = { a: "in", ad: "in", "in": "in", di: "of", da: "from" };
+  function anomApplyWhere(session, text) {
+    const W = session && session.earth && session.where && earthDB().where;
+    if (!W) return text;
+    return String(text).replace(/\b(a|ad|in|di|da)\s+\{(region|country|place|city)\}/gi, (m, prep, key) => {
+      const slot = (key === "place" || key === "city") ? session.where.place : session.where.region;
+      const form = ANOM_WHERE_FORM[prep.toLowerCase()];
+      let out = null;
+      if (!slot || slot.kind === "none") {
+        if (form === "in") out = W.nearIn || null;
+      } else {
+        const e = (W.names || {})[slot.raw];
+        const tpl = (e && e[form]) || (W[slot.kind] && W[slot.kind][form]) || null;
+        if (tpl) out = String(tpl).replace("{name}", slot.name);
+      }
+      if (!out) return m;
+      return prep[0] === prep[0].toUpperCase() ? out.charAt(0).toUpperCase() + out.slice(1) : out;
+    });
+  }
+
   function earthKey(x, y) { return "earth|" + x + "," + y; }   // i18n-ignore: store key
 
   // The biome whose adventure a world-map biome plays. A biome nothing was
@@ -2742,6 +2805,7 @@
       session.ctx.place = marker.place || display;
       session.ctx.region = region || display;
       session.ctx.country = region || display;
+      anomEarthWhere(session, country, marker.place || null, display);
       const powers = earthPowersOf(country);
       if (marker.power) session.ctx.power = marker.power;
       else if (powers.length) session.ctx.power = powers[0];
@@ -3197,7 +3261,13 @@
           label: c.text,
           chip: Stage.chipText(c),
           locked: !!c.locked,
-          run: async () => this.present(await Anomaly.choose(i)),
+          run: async () => {
+            const next = await Anomaly.choose(i);
+            // The encounter was closed while its die was in the air: the
+            // branch is taken, but there is no card left to draw it on.
+            if (!this._running) return;
+            this.present(next);
+          },
         }));
         rows.push({ label: anomText("ui.walkAway"), run: () => this.walkAway(view) });
         this.setRows(rows);

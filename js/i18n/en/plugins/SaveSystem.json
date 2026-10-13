@@ -11,6 +11,10 @@
   "sandboxSlot": "SANDBOX",
   "quickslot": "QUICKSAVE {n}",
   "partyOf": "Party of {name}",
+  "autosaveName": "Autosave",
+  "slotName": "Slot {n}",
+  "adjacentParty": "Adjacent: {name}",
+  "coordinatesLabel": "Coordinates:",
   "levelShort": "Lv {n}",
   "hpShort": "HP",
   "mpShort": "MP",
@@ -25,20 +29,20 @@
   "worldType": "Timeline:",
   "worldMagic": "Magic:",
   "worldStarted": "Began:",
-  "daysUntilDestiny": "Days until destiny comes:",
-  "daysAfterDestiny": "Days after destiny hit:",
+  "daysUntilDestiny": "Days until destiny:",
+  "daysAfterDestiny": "Days since destiny:",
   "destinyAverted": "Destiny averted",
-  "anotherPartyOfThisWorld": "Another party of this world. You may load it, but not write here.",
+  "anotherPartyOfThisWorld": "Saved by another party. Load only.",
   "playTime": "Play Time:",
   "recordedOn": "Recorded on:",
   "partyMembers": "Party Members",
   "save": "Save",
   "load": "Load",
   "delete": "Delete",
-  "thisPageOfHistoryRemains": "This page of history remains blank. Press twice or press ENTER to record your current adventure into this slot.",
+  "thisPageOfHistoryRemains": "Empty slot.",
   "deleteParty": "Delete Party",
-  "areYouSureYouWant": "Are you sure you want to delete this party? This cannot be undone.",
-  "cannotDeleteCurrent": "This is the party you are playing. You cannot delete it from inside its own story.",
+  "areYouSureYouWant": "Delete this party? This cannot be undone.",
+  "cannotDeleteCurrent": "Can't delete the party you're playing.",
   "cancel": "Cancel",
   "theAdventurer": "The adventurer",
   "playTime2": "Play Time",
@@ -65,5 +69,9 @@
     "quicksaveLoaded": "Quicksave {n} loaded"
   },
   "rememberedFor": "What will be remembered",
-  "diaryStamp": "{date}, {time}"
+  "diaryStamp": "{date}, {time}",
+  "story": {
+    "giveUp": "Give up",
+    "witchesNeverDie": "Witches never die!"
+  }
 }

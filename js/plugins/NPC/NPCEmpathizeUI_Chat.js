@@ -120,6 +120,15 @@
   // otherwise leave the newest message hanging below the bottom edge. Re-pinning
   // every frame of that window is also what makes a stale callback from an
   // earlier render harmless, it simply gets overwritten on the next frame.
+  //
+  // One frame chain per panel. Several renders inside the window each used to
+  // start a chain of their own, and every one of them re-measured the panel
+  // (a style write and a layout read) on every frame. A call while the chain
+  // runs pins at once and pushes the window's end out; the running chain
+  // carries it the rest of the way. The log is still measured on every frame
+  // of the window: the observers below re-pin the log but never re-size it,
+  // and a sibling of the log (the verbs, the feedback line) settling late is
+  // exactly what the measuring is for.
   Scene_NPCEmpathize.prototype._scrollChatToBottom = function () {
     this._chatStick    = true;
     this._chatPinUntil = (window.performance?.now?.() ?? Date.now()) + 400;
@@ -130,12 +139,14 @@
       chat.scrollTop = chat.scrollHeight;
       return true;
     };
+    if (!pin() || this._chatPinRaf) return;
     const step = () => {
+      this._chatPinRaf = null;
       if (!pin()) return;
       const now = window.performance?.now?.() ?? Date.now();
-      if (now < this._chatPinUntil) requestAnimationFrame(step);
+      if (now < this._chatPinUntil) this._chatPinRaf = requestAnimationFrame(step) || true;
     };
-    step();
+    this._chatPinRaf = requestAnimationFrame(step) || true;
   };
 
   // How close to the foot of the log still counts as "at the bottom". One
@@ -250,7 +261,7 @@
     { id: 'help', actions: ['treat', 'feed', 'treatThem', 'giveMedicine', 'firstAid', 'offerFix', 'intervene', 'shelter'] },
     { id: 'work', actions: ['collect', 'askWork', 'hire', 'fire', 'workTogether', 'askRide', 'borrowVehicle',
       'inviteMove', 'inviteExpedition', 'join', 'joinFollower', 'animalJoin', 'animalJoinParty'] },
-    { id: 'lessons', actions: ['teach', 'learn', 'trainSpec', 'learnSpec'] },
+    { id: 'lessons', actions: ['teach', 'learn', 'trainSpec', 'learnSpec', 'peerTeach', 'peerTeachSpec'] },
     { id: 'games', actions: ['cardDuel', 'cardTrade', 'challenge'] },
     { id: 'romance', actions: ['romance', 'introduce'] },
     { id: 'rough', actions: ['accuse', 'attack', 'pickpocket', 'cough', 'spit', 'bite', 'infect'] },
@@ -424,6 +435,31 @@
   };
 
   Scene_NPCEmpathize.prototype._buildChatHTML = function (displayName, T, profile, opinion, npcName, remoteMode) {
+    // Reading a line for its topics and names (DialogueTopics.html) runs two
+    // alternations over everything the world can name, and the log is redrawn
+    // whole on every render, so each bubble keeps its reading. What a line reads
+    // as moves only with the language and with the roster of names (the
+    // signature DialogueSystem rebuilds its own matcher on), so the reading is
+    // kept against both and taken again, teaching included, when either moves.
+    // A line already read teaches nothing new on a second reading: the topics
+    // and the rumours it named are already filed.
+    let topicKey = '';
+    try {
+      const lang = (typeof ConfigManager !== 'undefined' && ConfigManager.language) || 'en';
+      const party = (typeof $gameParty !== 'undefined' && $gameParty?.allMembers?.() || [])
+        .map(a => a && a.name && a.name()).join(',');
+      const sys = typeof $gameSystem !== 'undefined' ? $gameSystem : null;
+      topicKey = lang + '|' + party + '|' + Object.keys(sys?._npcSociety || {}).length +
+        '|' + Object.keys(sys?._npcMapGroups || {}).length;
+    } catch (e) { topicKey = ''; }
+    const topicHtml = (entry, text) => {
+      if (entry._html === undefined || entry._htmlText !== text || entry._htmlKey !== topicKey) {
+        entry._html = _topicHtml(text);
+        entry._htmlText = text;
+        entry._htmlKey = topicKey;
+      }
+      return entry._html;
+    };
     const bubblesHTML = this._chatHistory.map(entry => {
       if (entry.role === 'convo') return this._buildConvoBubble(entry);
       // A member of a people with a voice of their own (NPCConversation.SpeciesVoice:
@@ -446,7 +482,7 @@
         // topic or a name the codex knows is picked up here exactly as it is
         // in the message box, marked gold where it stands, and the popup
         // announcing it fires over the open panel.
-        : `<div class="npc-bubble npc-bubble-npc">${_topicHtml(text)}</div>`;
+        : `<div class="npc-bubble npc-bubble-npc">${topicHtml(entry, text)}</div>`;
     }).join('');
     const typingHTML = this._isTyping
       ? `<div class="npc-bubble npc-bubble-npc npc-typing">…</div>` : '';
@@ -813,7 +849,7 @@
     modal.className = 'npc-chat-modal-backdrop';
     modal.innerHTML = `
       <div class="npc-chat-modal" onmousedown="event.stopPropagation();">
-        <div class="npc-chat-modal-title">${esc(T.introspectChangeNamePrompt || 'Enter new character name:')}</div>
+        <div class="npc-chat-modal-title">${esc(T.introspectChangeNamePrompt)}</div>
         <input type="text" id="npc-dlg-name-input" class="npc-chat-modal-input"
           maxlength="24" autocomplete="off" spellcheck="false"
           value="${esc(currentName)}" />
@@ -881,7 +917,7 @@
       this._npcName = val;
     }
     const T = _getT();
-    this._joinMessage = { type: 'good', text: T.introspectNameSuccess || 'Name changed successfully.' };
+    this._joinMessage = { type: 'good', text: T.introspectNameSuccess };
     SoundManager.playOk();
     this._render();
   };
@@ -953,7 +989,7 @@
     const profile = _getProfile(actor.name());
     if (profile) profile.gender = genderId;
     SoundManager.playOk();
-    this._joinMessage = { type: 'good', text: T.introspectGenderSuccess || 'Gender changed successfully.' };
+    this._joinMessage = { type: 'good', text: T.introspectGenderSuccess };
     this._cancelIntrospectSubMode();
   };
 
@@ -1026,7 +1062,7 @@
       }
     }
     SoundManager.playOk();
-    this._joinMessage = { type: 'good', text: T.introspectOrientationSuccess || 'Sexual orientation changed successfully.' };
+    this._joinMessage = { type: 'good', text: T.introspectOrientationSuccess };
     this._cancelIntrospectSubMode();
   };
 
@@ -1091,7 +1127,7 @@
       profile.ideologyIndex = list.findIndex(i => i && i.id === id);
     }
     SoundManager.playOk();
-    this._joinMessage = { type: 'good', text: T.introspectCreedSuccess || 'Creed changed successfully.' };
+    this._joinMessage = { type: 'good', text: T.introspectCreedSuccess };
     this._cancelIntrospectSubMode();
   };
 
@@ -1477,7 +1513,7 @@
     const badgeHTML = `
       <div class="npc-badge-row">
         ${wealthLabel && !nonSentient ? `<span class="npc-badge">${_escapeHtml(wealthLabel)}</span>` : ''}
-        ${nonSentient ? '' : `<span class="npc-badge npc-score--${moralBand}">Mor. ${morality} (${_escapeHtml(moralEntry.label)})</span>`}
+        ${nonSentient ? '' : `<span class="npc-badge npc-score--${moralBand}">${_escapeHtml(window.T('Empathize.moralityBadge', { score: morality, label: moralEntry.label }))}</span>`}
         ${profile?._isPresetCharacter ? `<span class="npc-badge">${_iconSpan(82, 15)}${_escapeHtml(T.presetCharacterBadge)}</span>` : ''}
         ${nonSentient ? '' : _dietBadgeHTML(profile)}
       </div>`;
@@ -1516,9 +1552,9 @@
       if (wealthLabel && !nonSentient) identHTML += `<div class="npc-ident-row">${_iconSpan(314, 17)}<span>${_escapeHtml(wealthLabel)}</span></div>`;
       const homeAddr = nonSentient ? null : _homeAddressLabel(profile, T);
       if (homeAddr) {
-        identHTML += `<div class="npc-ident-row">${_iconSpan(190, 17)}<span class="npc-sub">${_escapeHtml(T.residenceLbl || 'Residence')}:</span>&nbsp;<span>${_escapeHtml(homeAddr)}</span></div>`;
+        identHTML += `<div class="npc-ident-row">${_iconSpan(190, 17)}<span class="npc-sub">${_escapeHtml(T.residenceLbl)}:</span>&nbsp;<span>${_escapeHtml(homeAddr)}</span></div>`;
       } else if (profile?.isHomeless && !nonSentient) {
-        identHTML += `<div class="npc-ident-row">${_iconSpan(190, 17)}<span class="npc-sub">${_escapeHtml(T.residenceLbl || 'Residence')}:</span>&nbsp;<span class="npc-bad">${_escapeHtml(T.homelessLbl || 'Homeless')}</span></div>`;
+        identHTML += `<div class="npc-ident-row">${_iconSpan(190, 17)}<span class="npc-sub">${_escapeHtml(T.residenceLbl)}:</span>&nbsp;<span class="npc-bad">${_escapeHtml(T.homelessLbl)}</span></div>`;
       }
       const travelText = nonSentient ? '' : _travelRowText(npcName, profile);
       if (travelText) identHTML += `<div class="npc-ident-row">${_iconSpan(190, 17)}<span class="npc-sub">${_escapeHtml(travelText)}</span></div>`;

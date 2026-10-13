@@ -144,20 +144,31 @@
     // directly precedes a resolved choice, so pre-existing prose (e.g. the correct
     // "a once-mighty king") is never disturbed. The letter heuristic is safe for
     // the curated vocabulary (every vowel-letter option also takes a vowel sound).
-    const ARTICLE_TAIL = /\b([Aa])n?(\s+)$/;
+    const ARTICLE_TAIL = /\b([Aa])[Nn]?(\s+)$/;
 
-    function evalNodes(nodes, rng) {
+    // Only English (and Naguka, which is English restyled) has an a / an article.
+    // In Italian or French a bare "a" is a preposition or a verb ("continua a
+    // {vagare | aggirarsi}") and must never turn into "an".
+    function englishArticles() {
+        const lang = (typeof ConfigManager !== 'undefined' && ConfigManager && ConfigManager.language) || 'en';
+        return lang === 'en' || lang === 'nk';
+    }
+
+    function evalNodes(nodes, rng, en) {
+        if (en === undefined) en = englishArticles();
         let out = '';
         for (const n of nodes) {
             if (n.t === 'text') { out += n.v; continue; }
             const opts = n.opts;
             const idx = opts.length <= 1 ? 0 : Math.floor(rng.next() * opts.length) % opts.length;
-            const s = evalNodes(opts[idx] || [], rng);
-            const m = out.match(ARTICLE_TAIL);
+            const s = evalNodes(opts[idx] || [], rng, en);
+            const m = en ? out.match(ARTICLE_TAIL) : null;
             if (m && /[A-Za-z]/.test(s.charAt(0))) {
                 const wantAn = /^[aeiou]/i.test(s);
                 let art = wantAn ? 'an' : 'a';
-                if (m[1] === 'A') art = art.charAt(0).toUpperCase() + art.slice(1);
+                // An all-capitals language (Naguka) keeps its article in capitals.
+                if (s === s.toUpperCase()) art = art.toUpperCase();
+                else if (m[1] === 'A') art = art.charAt(0).toUpperCase() + art.slice(1);
                 out = out.slice(0, out.length - m[0].length) + art + m[2];
             }
             out += s;

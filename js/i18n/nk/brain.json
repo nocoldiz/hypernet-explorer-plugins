@@ -1,0 +1,44 @@
+{
+  "brain": {
+    "prefrontalcortex": {
+      "name": "PREFRONTAL CORTEX",
+      "function": "EXECUTIVE FUNCTION, DECISION MAKIN'"
+    },
+    "motorcortex": {
+      "name": "MOTOR CORTEX",
+      "function": "MOTOR CONTROL, MOVEMENT"
+    },
+    "sensorycortex": {
+      "name": "SENSORY CORTEX",
+      "function": "SENSORY PROCESSIN'"
+    },
+    "hippocampus": {
+      "name": "HIPPOCAMPUS",
+      "function": "MEMORY FORMATION, LEARNIN'"
+    },
+    "amygdala": {
+      "name": "AMYGDALA",
+      "function": "EMOTION, FEAR RESPONSE"
+    },
+    "cerebellum": {
+      "name": "CEREBELLUM",
+      "function": "BALANCE, COORDINATION"
+    },
+    "brainstem": {
+      "name": "BRAINSTEM",
+      "function": "VITAL FUNCTIONS, BREATHIN'"
+    },
+    "occipitallobe": {
+      "name": "OCCIPITAL LOBE",
+      "function": "VISUAL PROCESSIN'"
+    },
+    "temporallobe": {
+      "name": "TEMPORAL LOBE",
+      "function": "AUDITORY PROCESSIN', LANGUAGE"
+    },
+    "parietallobe": {
+      "name": "PARIETAL LOBE",
+      "function": "SPATIAL PROCESSIN', INTEGRATION"
+    }
+  }
+}

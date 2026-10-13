@@ -18,33 +18,39 @@
     "built": "BUILT ON",
     "builtWhat": "{count}: {what}",
     "builtCount": "{count} PIECES",
-    "power": "HELD BY"
+    "power": "HELD BY",
+    "enemies": "BAD 'UNS",
+    "levelRange": "LV. {min} TA {max}"
+  },
+  "banner": {
+    "level": "{name} LV. {level}"
   },
   "country": {
     "title": "HIGHLIGHT A COUNTRY",
     "none": "NO COUNTRY"
   },
   "hint": {
-    "sheet": "CLICK A SQUARE TA PICK IT. RIGHT-CLICK TA PUT DA CHART AWAY!",
-    "travel": "CLICK TA SET OFF FOR {place}.",
-    "needVehicle": "YOU NEED TA BE ABOARD A VEHICLE TA SET OFF FROM DA CHART!",
-    "world": "CLICK EUROPE TA LOOK CLOSER. RIGHT-CLICK TA PUT DA CHART AWAY!"
+    "sheet": "CLICK A SQUARE TA SELECT IT. RIGHT-CLICK TA CLOSE!",
+    "travel": "CLICK TA TRAVEL TA {place}.",
+    "needVehicle": "YOU NEED A VEHICLE TA TRAVEL FROM DA MAP!",
+    "world": "CLICK EUROPE TA ZOOM IN. RIGHT-CLICK TA CLOSE!",
+    "taxi": "TAXI HERE: {fare}, {time}"
   },
   "note": {
     "title": "{place}",
-    "placeholder": "WRITE SOMETHIN' ABOUT DIS SQUARE",
-    "save": "KEEP",
-    "delete": "RUB OUT",
+    "placeholder": "WRITE SOMETINK 'BOUT DIS SQUARE",
+    "save": "STASH",
+    "delete": "SMASH",
     "cancel": "GO BACK",
     "write": "WRITE A NOTE"
   },
   "preview": {
     "showMap": "SHOW MAP",
     "title": "{place}",
-    "building": "LAYIN' DA GROUND OUT...",
-    "notKept": "DRAWN FOR DIS LOOK ONLY, AN' KEPT NOWHERE!",
+    "building": "GENERATIN'...",
+    "notKept": "PREVIEW ONLY. NO STASHED.",
     "close": "SHUT IT",
-    "unbuildable": "DERE IZ NO GROUND TA LAY OUT ON DAT SQUARE!"
+    "unbuildable": "NUTTIN' TA PREVIEW ON DIS SQUARE!"
   },
   "view": {
     "title": "VIEW",
@@ -59,10 +65,10 @@
     "value": "{x}, {y}"
   },
   "bologna": {
-    "title": "BOLOGNA",
+    "title": "BOLOGNA (WIP)",
     "cell": "CELL",
     "tile": "TILE",
     "teleport": "TELEPORT HERE",
-    "hint": "CLICK A TILE TA PICK IT, DEN TELEPORT ONTO IT. RIGHT-CLICK TA PUT DA CHART AWAY!"
+    "hint": "CLICK A TILE, DEN TELEPORT TA IT. RIGHT-CLICK TA CLOSE!"
   }
 }

@@ -16,12 +16,12 @@
     "description": "Compresse antidolorifiche. Cura lieve;\nallevia la febbre."
   },
   "4": {
-    "name": "Gocce al mentolo",
+    "name": "Caramelle al mentolo",
     "description": "Pastiglie al mentolo. Leniscono gola e tosse."
   },
   "5": {
     "name": "Antiacido di calcio",
-    "description": "Compresse masticabili. Calmano l'acidita."
+    "description": "Compresse masticabili. Calmano l'acidità."
   },
   "6": {
     "name": "Compresse di bisacodile",
@@ -89,7 +89,7 @@
   },
   "22": {
     "name": "Cocaina rossa",
-    "description": "Polvere stimolante tinta. Grande aumento\ndelle statistiche, poi Furia. Da dipendenza."
+    "description": "Polvere stimolante tinta. Grande aumento\ndelle statistiche, poi Rabbia. Da dipendenza."
   },
   "23": {
     "name": "Bevanda energetica",
@@ -137,7 +137,7 @@
   },
   "34": {
     "name": "Elisir di saggezza",
-    "description": "Elisir. Aumenta SAG; cura lieve e Furia."
+    "description": "Elisir. Aumenta SAG; cura lieve e Rabbia."
   },
   "35": {
     "name": "Bevanda energetica sotterranea",
@@ -152,15 +152,15 @@
     "description": "Miscela senza etichetta. Aumenta ogni\nstatistica e brucia mentre scende."
   },
   "38": {
-    "name": "Sali da bagno",
+    "name": "Sali ammoniacali",
     "description": "Capsula di ammoniaca. Rianima un alleato."
   },
   "39": {
     "name": "Triptocaina",
-    "description": "Composto iniettato. Concede Immortale\ne immunita al dolore."
+    "description": "Composto iniettato. Concede Immortale\ne immunità al dolore."
   },
   "40": {
-    "name": "Potenziatore di potenza",
+    "name": "Potenziatore di forza",
     "description": "Ciclo da clinica. Aggiunge 1 FRZ e 1 COS\nin modo permanente."
   },
   "41": {
@@ -241,7 +241,7 @@
   },
   "60": {
     "name": "Elisir di Chronos",
-    "description": "Elisir. Cura totale; concede Immortale\ne Furia."
+    "description": "Elisir. Cura totale; concede Immortale\ne Rabbia."
   },
   "61": {
     "name": "Elisir miracoloso",
@@ -292,7 +292,7 @@
     "description": "Un'ascia corta bilanciata per il lancio."
   },
   "80": {
-    "name": "Vaso alchemico",
+    "name": "Vaso incendiario",
     "description": "Vaso di terracotta con pece ardente.\nSi rompe e incendia ogni nemico."
   },
   "81": {
@@ -313,7 +313,7 @@
   },
   "85": {
     "name": "Luna Gelida EP:",
-    "description": "Un EP in vinile. Ascoltarlo insegna una\nraffica gelida che puo congelare."
+    "description": "Un EP in vinile. Ascoltarlo insegna una\nraffica gelida che può congelare."
   },
   "86": {
     "name": "Calcio Ardente EP:",
@@ -321,7 +321,7 @@
   },
   "87": {
     "name": "Amuleto del Berserker",
-    "description": "Amuleto d'osso su un laccio. Indossato,\npuo far cadere in furia chi lo porta."
+    "description": "Amuleto d'osso su un laccio. Indossato,\npuò far cadere in furia chi lo porta."
   },
   "88": {
     "name": "Spezzaguardia",
@@ -329,7 +329,7 @@
   },
   "89": {
     "name": "Criocella rotta",
-    "description": "Cella refrigerante incrinata. Congela\ne immobilizza cio che tocca."
+    "description": "Cella refrigerante incrinata. Congela\ne immobilizza ciò che tocca."
   },
   "90": {
     "name": "Parata Perfetta EP:",
@@ -361,7 +361,7 @@
   },
   "97": {
     "name": "Antica pergamena",
-    "description": "Pergamena di velino arrotolata. Leggerla\ninsegna varie abilita di combattimento."
+    "description": "Pergamena di velino arrotolata. Leggerla\ninsegna varie abilità di combattimento."
   },
   "98": {
     "name": "Pergamena proibita",
@@ -412,7 +412,7 @@
     "description": "Vaso di terracotta cotta per i liquidi."
   },
   "120": {
-    "name": "Bottiglia d'acqua insulata",
+    "name": "Borraccia termica",
     "description": "Bottiglia termica. Tiene la bevanda calda\no fredda."
   },
   "121": {
@@ -437,7 +437,7 @@
   },
   "126": {
     "name": "Zaino",
-    "description": "Zaino imbottito. Permette di portare di piu."
+    "description": "Zaino imbottito. Permette di portare di più."
   },
   "127": {
     "name": "Taccuino tascabile",
@@ -477,7 +477,7 @@
   },
   "136": {
     "name": "Torcia a LED",
-    "description": "Torcia a LED con luminosita regolabile."
+    "description": "Torcia a LED con luminosità regolabile."
   },
   "137": {
     "name": "Navigatore GPS portatile",
@@ -516,7 +516,7 @@
     "description": "Registro dei mostri rilegato in pelle."
   },
   "146": {
-    "name": "Serbatoio del carburante",
+    "name": "Tanica di carburante",
     "description": "Tanica d'acciaio con 25 litri di carburante."
   },
   "147": {
@@ -564,7 +564,7 @@
     "description": "Telefono non registrato con canale voce\ncrittografato."
   },
   "158": {
-    "name": "Telecamera dell'investigatore",
+    "name": "Fotocamera dell'investigatore",
     "description": "Fotocamera da cronista con zoom nitido."
   },
   "159": {
@@ -593,7 +593,7 @@
   },
   "165": {
     "name": "Seme dell'Espressione",
-    "description": "Seme che racchiude una scintilla di potere.\nUsato su un personaggio, ne sblocca l'Espressione."
+    "description": "Seme con una scintilla di potere. Usato su\nun personaggio, ne sblocca l'Espressione."
   },
   "166": {
     "name": "Spilla d'orbita bassa",
@@ -669,7 +669,7 @@
   },
   "189": {
     "name": "Kit per incontri romantici",
-    "description": "Candele, olio e lino. Alzano l'umore\ne le probabilita di concepire."
+    "description": "Candele, olio e lino. Alzano l'umore\ne le probabilità di concepire."
   },
   "190": {
     "name": "Cuffie antisuono immersive",
@@ -677,7 +677,7 @@
   },
   "191": {
     "name": "Pacchetto Carriera",
-    "description": "Corso serale. Aggiunge 1 INT in permanenza."
+    "description": "Corso serale. Aggiunge 1 INT\nin modo permanente."
   },
   "192": {
     "name": "Bonsai tascabile",
@@ -693,11 +693,11 @@
   },
   "195": {
     "name": "Sistema di fitness domestico",
-    "description": "Panca e rastrelliera con pesi. Aggiunge\n1 FRZ e 1 DES in permanenza."
+    "description": "Panca e rastrelliera con pesi. Aggiunge\n1 FRZ e 1 DES in modo permanente."
   },
   "196": {
     "name": "Caffeinatore portatile",
-    "description": "Piccola macchina del caffe con serbatoio."
+    "description": "Piccola macchina del caffè con serbatoio."
   },
   "197": {
     "name": "Tabacco Trinciato",
@@ -784,7 +784,7 @@
     "description": "Penna d'oca tagliata. Apre il diario."
   },
   "231": {
-    "name": "Guanti da guanto",
+    "name": "Guanti del guantaio",
     "description": "Guanti su misura. Mettono un alleato\nin guardia."
   },
   "232": {
@@ -793,7 +793,7 @@
   },
   "233": {
     "name": "Lente dell'ottico",
-    "description": "Lente di vetro molato. Mostra cio\nche la mappa nasconde."
+    "description": "Lente di vetro molato. Mostra ciò\nche la mappa nasconde."
   },
   "234": {
     "name": "Bussola del navigatore",
@@ -808,7 +808,7 @@
     "description": "Flauto di legno intagliato. Porta il sonno."
   },
   "237": {
-    "name": "Flusso del fabbro",
+    "name": "Fondente del fabbro",
     "description": "Fondente da forgia. Aggiunge 1 FRZ e 1 COS."
   },
   "238": {
@@ -829,7 +829,7 @@
   },
   "242": {
     "name": "Lente d'ingrandimento da gioielliere",
-    "description": "Lente da gioielliere. Mostra cio\nche e nascosto."
+    "description": "Lente da gioielliere. Mostra ciò\nche è nascosto."
   },
   "243": {
     "name": "Set di coltelli da lancio dell'artigiano",
@@ -860,7 +860,7 @@
     "description": "Astrolabio d'ottone. Legge le stelle."
   },
   "250": {
-    "name": "Pugnale del fabbro di lame",
+    "name": "Pugnale dello spadaio",
     "description": "Pugnale bilanciato con impugnatura lavorata."
   },
   "261": {
@@ -876,7 +876,7 @@
     "description": "Copia stampata della Divina Commedia:\nPurgatorio, di Dante Alighieri."
   },
   "264": {
-    "name": "92 Days of Solomon",
+    "name": "I 92 giorni di Salomone",
     "description": "Una copia stampata de I 92 giorni di Salomone."
   },
   "265": {
@@ -1080,7 +1080,7 @@
     "description": "Rara moneta con due lottatori impressi."
   },
   "325": {
-    "name": "Bandana del focus",
+    "name": "Bandana della concentrazione",
     "description": "Bandana di cotone. Alza i colpi critici."
   },
   "326": {
@@ -1097,7 +1097,7 @@
   },
   "329": {
     "name": "Guanti del Maestro",
-    "description": "Guanti logori di un maestro.\nAggiungono 1 FRZ in permanenza."
+    "description": "Guanti logori di un maestro.\nAggiungono 1 FRZ in modo permanente."
   },
   "330": {
     "name": "Stivali del Drago del Tuono",
@@ -1113,7 +1113,7 @@
   },
   "333": {
     "name": "Guanti da boxe storici",
-    "description": "I guanti indossati nel titolo MAX."
+    "description": "I guanti indossati nell'incontro\nper il titolo MAX."
   },
   "334": {
     "name": "Pugno di diamante",
@@ -1124,19 +1124,19 @@
     "description": ""
   },
   "346": {
-    "name": "Fascino inutile",
+    "name": "Amuleto inutile",
     "description": "Talismano venduto come protezione.\nNon protegge da nulla."
   },
   "347": {
     "name": "Fagiolo non proprio magico",
-    "description": "Fagiolo venduto come seme magico.\nE un fagiolo."
+    "description": "Fagiolo venduto come seme magico.\nÈ un fagiolo."
   },
   "348": {
     "name": "Bacchetta magica giocattolo",
     "description": "Bacchetta giocattolo che brilla e suona."
   },
   "349": {
-    "name": "Pietra luminosa mondana",
+    "name": "Pietra luminosa comune",
     "description": "Pietra dipinta con vernice luminosa."
   },
   "350": {
@@ -1165,7 +1165,7 @@
   },
   "356": {
     "name": "Pozione di lieve traslucenza",
-    "description": "Pozione che rende la pelle un po' chiara."
+    "description": "Pozione che rende la pelle appena trasparente."
   },
   "357": {
     "name": "Mantello non volante",
@@ -1177,11 +1177,11 @@
   },
   "359": {
     "name": "Contenitore demoniaco vuoto",
-    "description": "Scatola sigillata venduta come prigione\ndi un demone. E vuota."
+    "description": "Scatola sigillata venduta come prigione\ndi un demone. È vuota."
   },
   "360": {
     "name": "Uovo di drago falso",
-    "description": "Uovo falso. Aprirlo mostra che e vuoto."
+    "description": "Uovo falso. Aprirlo mostra che è vuoto."
   },
   "361": {
     "name": "Anello di acustica minore",
@@ -1189,7 +1189,7 @@
   },
   "362": {
     "name": "Falsa immortalità",
-    "description": "Pozione venduta come immortalita.\nRipristina 1 AP."
+    "description": "Pozione venduta come immortalità.\nRipristina 1 AP."
   },
   "373": {
     "name": "<-- Espionage -->",
@@ -1232,7 +1232,7 @@
     "description": "Portafoglio di tesserini stampa.\nLa gente parla."
   },
   "383": {
-    "name": "Kit per testing",
+    "name": "Kit per analisi",
     "description": "Kit da campo per saggiare la purezza."
   },
   "384": {
@@ -1264,11 +1264,11 @@
     "description": "Valigetta pieghevole di vetreria alchemica."
   },
   "391": {
-    "name": "Contatti della rete stradale",
+    "name": "Contatti della rete di strada",
     "description": "Elenco di informatori di strada in debito."
   },
   "392": {
-    "name": "Directory della rete di informatori",
+    "name": "Elenco della rete di informatori",
     "description": "Elenco di contatti in ogni mestiere."
   },
   "393": {
@@ -1309,7 +1309,7 @@
   },
   "422": {
     "name": "Fagioli bruciati",
-    "description": "Fagioli bruciati. Puo far male allo stomaco."
+    "description": "Fagioli bruciati. Può far male allo stomaco."
   },
   "423": {
     "name": "Mela ammaccata",
@@ -1317,11 +1317,11 @@
   },
   "424": {
     "name": "Pane Pietrificato",
-    "description": "Una pagnotta indurita e raffermo."
+    "description": "Una pagnotta indurita e rafferma."
   },
   "425": {
     "name": "Pesce vecchio di un giorno",
-    "description": "Pesce di un giorno oltre. Rischioso."
+    "description": "Pesce andato a male da un giorno.\nRischioso."
   },
   "426": {
     "name": "Zuppa di verdure acquosa",
@@ -1329,7 +1329,7 @@
   },
   "427": {
     "name": "Zuppa sospetta",
-    "description": "Brodo di ingredienti incerti.\nPuo far male allo stomaco."
+    "description": "Brodo di ingredienti incerti.\nPuò far male allo stomaco."
   },
   "428": {
     "name": "Porridge grumoso",
@@ -1441,7 +1441,7 @@
   },
   "455": {
     "name": "Tè alla menta",
-    "description": "Tazza di te alla menta. Calma i nervi."
+    "description": "Tazza di tè alla menta. Calma i nervi."
   },
   "456": {
     "name": "Pretzel al formaggio",
@@ -1457,7 +1457,7 @@
   },
   "459": {
     "name": "Caffè forte",
-    "description": "Tazza di caffe nero forte."
+    "description": "Tazza di caffè nero forte."
   },
   "460": {
     "name": "Fetta di pizza al salame piccante",
@@ -1504,7 +1504,7 @@
     "description": "Panini al vapore ripieni di fagioli rossi."
   },
   "471": {
-    "name": "Pasticceria alla frutta",
+    "name": "Pasticcino alla frutta",
     "description": "Dolce ripieno di confettura di frutta."
   },
   "472": {
@@ -1541,7 +1541,7 @@
   },
   "480": {
     "name": "Ale forte",
-    "description": "Pinta di ale ambrata forte. Da ubriachi."
+    "description": "Pinta di ale ambrata forte. Inebriante."
   },
   "481": {
     "name": "Cheeseburger Deluxe",
@@ -1600,7 +1600,7 @@
     "description": "Manzo e noodles di riso in brodo chiaro."
   },
   "495": {
-    "name": "Sundubu Jigyo",
+    "name": "Sundubu Jjigae",
     "description": "Stufato caldo di tofu morbido e pesce."
   },
   "496": {
@@ -1613,7 +1613,7 @@
   },
   "498": {
     "name": "Birra delle monache",
-    "description": "Bottiglia di birra da monastero. Da ubriachi."
+    "description": "Bottiglia di birra da monastero. Inebriante."
   },
   "499": {
     "name": "Verdure arrostite",
@@ -1688,12 +1688,12 @@
     "description": "Tazza di tisana medicinale. Calmante."
   },
   "517": {
-    "name": "Miele di idromele",
-    "description": "Bottiglia di idromele leggero. Da ubriachi."
+    "name": "Idromele al miele",
+    "description": "Bottiglia di idromele leggero. Inebriante."
   },
   "518": {
     "name": "Spaghetti Bolognese",
-    "description": "Spaghetti in ragu cotto a lungo."
+    "description": "Spaghetti in ragù cotto a lungo."
   },
   "519": {
     "name": "Menu Triplo Hamburger",
@@ -1733,7 +1733,7 @@
   },
   "528": {
     "name": "Tazza di caffè",
-    "description": "Tazza di caffe. Ripristina 40 AP\ne toglie qualche stato."
+    "description": "Tazza di caffè. Ripristina 40 AP\ne toglie qualche stato."
   },
   "529": {
     "name": "Carne di orso salata",
@@ -1753,7 +1753,7 @@
   },
   "533": {
     "name": "Pane perfetto",
-    "description": "Pagnotta perfetta. Mangiarla allena\nun'abilita."
+    "description": "Pagnotta perfetta. Mangiarla allena\nun'abilità."
   },
   "534": {
     "name": "Stufato sostanzioso",
@@ -1761,7 +1761,7 @@
   },
   "535": {
     "name": "Vino invecchiato",
-    "description": "Bottiglia di vino invecchiato in rovere.\nDa ubriachi."
+    "description": "Bottiglia di vino invecchiato in rovere.\nInebriante."
   },
   "536": {
     "name": "Pizza Margherita",
@@ -1781,7 +1781,7 @@
   },
   "540": {
     "name": "Tiramisù",
-    "description": "Savoiardi al caffe sotto il mascarpone."
+    "description": "Savoiardi al caffè sotto il mascarpone."
   },
   "541": {
     "name": "Spaghetti Carbonara",
@@ -1789,7 +1789,7 @@
   },
   "542": {
     "name": "Ruota del casaro",
-    "description": "Forma di formaggio stagionato.\nAllena un'abilita."
+    "description": "Forma di formaggio stagionato.\nAllena un'abilità."
   },
   "543": {
     "name": "Cioccolato gourmet",
@@ -1797,7 +1797,7 @@
   },
   "544": {
     "name": "Whisky potente",
-    "description": "Bottiglia di whisky di grano. Da ubriachi."
+    "description": "Bottiglia di whisky di grano. Inebriante."
   },
   "545": {
     "name": "Risotto ai funghi",
@@ -1809,7 +1809,7 @@
   },
   "547": {
     "name": "Caffè di Varlenia",
-    "description": "Tazza del caffe piu caro del mondo."
+    "description": "Tazza del caffè più caro del mondo."
   },
   "548": {
     "name": "Arrosto di cigno reale",
@@ -1817,7 +1817,7 @@
   },
   "549": {
     "name": "Lasagne",
-    "description": "Strati di pasta, ragu e formaggio."
+    "description": "Strati di pasta, ragù e formaggio."
   },
   "550": {
     "name": "Carpaccio di manzo",
@@ -1829,7 +1829,7 @@
   },
   "552": {
     "name": "Cocktail al respiro del drago",
-    "description": "Cocktail speziato che brucia. Da ubriachi."
+    "description": "Cocktail speziato che brucia. Inebriante."
   },
   "553": {
     "name": "Osso Buco",
@@ -1841,7 +1841,7 @@
   },
   "555": {
     "name": "Bacca di pepe ardente",
-    "description": "Piccola bacca ardente. Cura il veleno e cura."
+    "description": "Piccola bacca ardente. Cura il veleno\ne risana."
   },
   "556": {
     "name": "Frutto luminoso abissale",
@@ -1860,7 +1860,7 @@
     "description": "Bacca fatata. Cura vento e acqua."
   },
   "560": {
-    "name": "Maccheroni alla rosa e cardamomo",
+    "name": "Macarons alla rosa e cardamomo",
     "description": "Gusci di mandorla ripieni di crema\nal cardamomo."
   },
   "561": {
@@ -1868,8 +1868,8 @@
     "description": "Peperoncino dorato. Rianima un caduto."
   },
   "562": {
-    "name": "Soufflé con macchie d'oro",
-    "description": "Souffle di cioccolato sotto foglia d'oro."
+    "name": "Soufflé con scaglie d'oro",
+    "description": "Soufflé di cioccolato sotto foglia d'oro."
   },
   "563": {
     "name": "Sussurro di mezzanotte",
@@ -1877,7 +1877,7 @@
   },
   "564": {
     "name": "Caffè deadline",
-    "description": "Tazza di caffe pregiato e deciso."
+    "description": "Tazza di caffè pregiato e deciso."
   },
   "565": {
     "name": "Funghi Matsutake saltati",
@@ -1893,7 +1893,7 @@
   },
   "568": {
     "name": "Riserva d'Oro",
-    "description": "Il caffe preparato piu raro che ci sia."
+    "description": "Il caffè preparato più raro che ci sia."
   },
   "569": {
     "name": "Bouillabaisse allo zafferano",
@@ -1909,7 +1909,7 @@
   },
   "572": {
     "name": "Whisky Premium",
-    "description": "Bottiglia di whisky pregiato. Ripristina MP,\nallena un'abilita e ubriaca."
+    "description": "Bottiglia di whisky pregiato. Ripristina MP,\nallena un'abilità e ubriaca."
   },
   "573": {
     "name": "Bistecca di Wagyu",
@@ -1917,7 +1917,7 @@
   },
   "574": {
     "name": "Tè al muschio di neve",
-    "description": "Teiera di raro te di muschio nordico."
+    "description": "Teiera di raro tè di muschio nordico."
   },
   "575": {
     "name": "Miele di carne reale",
@@ -1956,20 +1956,20 @@
     "description": "Mela d'oro. Aggiunge 10 HP massimi."
   },
   "584": {
-    "name": "Melomano",
+    "name": "Melograno di mana",
     "description": "Melograno blu. Ripristina MP."
   },
   "585": {
     "name": "Caffè del birraio",
-    "description": "Caffe preparato con cura. Allena un'abilita."
+    "description": "Caffè preparato con cura. Allena un'abilità."
   },
   "586": {
     "name": "Bacca scintillante prismatica",
     "description": "Bacca che cambia colore. Cura il veleno."
   },
   "587": {
-    "name": "Il vino di Varlenia",
-    "description": "Bottiglia di vino da uve rare.\nDa ubriachi."
+    "name": "Vino di Varlenia",
+    "description": "Bottiglia di vino da uve rare.\nInebriante."
   },
   "588": {
     "name": "Cuore della giungla",
@@ -1977,7 +1977,7 @@
   },
   "589": {
     "name": "Soffio di lampone artico",
-    "description": "Frutto cosi leggero che galleggia.\nToglie uno stato."
+    "description": "Frutto così leggero che galleggia.\nToglie uno stato."
   },
   "590": {
     "name": "Frutto del nettare cristallino",
@@ -1989,7 +1989,7 @@
   },
   "592": {
     "name": "Frutto di Yggdrasil",
-    "description": "Frutto dell'albero del mondo. Alza ogni\nstatistica in permanenza."
+    "description": "Frutto dell'albero del mondo. Alza ogni\nstatistica in modo permanente."
   },
   "593": {
     "name": "Pollo Crudo",
@@ -2032,7 +2032,7 @@
     "description": "Elisir venduto a peso di atomi.\nCura 1 HP, 1 MP e 1 AP."
   },
   "622": {
-    "name": "<-- Jungle -->",
+    "name": "<-- Wildlife -->",
     "description": ""
   },
   "623": {
@@ -2088,7 +2088,7 @@
     "description": ""
   },
   "646": {
-    "name": "Pane della Via Elfica",
+    "name": "Pan di via elfico",
     "description": "Focaccia da viaggio incartata.\nRipristina 200 HP."
   },
   "647": {
@@ -2144,7 +2144,7 @@
     "description": "Cristallo che lampeggia e acceca i nemici."
   },
   "660": {
-    "name": "Semi a crescita rapida",
+    "name": "Seme a crescita rapida",
     "description": "Seme che germoglia appena tocca terra."
   },
   "661": {
@@ -2221,7 +2221,7 @@
   },
   "679": {
     "name": "Lente della Rivelazione",
-    "description": "Lente che mostra cio che e invisibile."
+    "description": "Lente che mostra ciò che è invisibile."
   },
   "680": {
     "name": "Campana Fatata dell'Evocazione",
@@ -2237,7 +2237,7 @@
   },
   "683": {
     "name": "Vetro della verità",
-    "description": "Vetro che mostra cio che c'e davvero."
+    "description": "Vetro che mostra ciò che c'è davvero."
   },
   "684": {
     "name": "Catene della rapidità",
@@ -2249,7 +2249,7 @@
   },
   "686": {
     "name": "Sacca delle Cose",
-    "description": "Una sacca piu grande dentro che fuori."
+    "description": "Una sacca più grande dentro che fuori."
   },
   "687": {
     "name": "Diadema della Maestria",
@@ -2269,23 +2269,23 @@
   },
   "691": {
     "name": "Cristallo dell'anima dello stregone",
-    "description": "Cristallo d'anima. Ripristina tutti gli MP\ne da una quota SOUL."
+    "description": "Cristallo d'anima. Ripristina tutti gli MP\ne dà una quota SOUL."
   },
   "692": {
     "name": "Ambrosia",
     "description": "Cibo degli dei. Ripristina tutti HP e MP."
   },
   "693": {
-    "name": "Rotolo delle EntitàEsterne",
-    "description": "Pergamena che evoca un'entita esterna.\nChi legge paga col sangue."
+    "name": "Pergamena delle entità esterne",
+    "description": "Pergamena che evoca un'entità esterna.\nChi legge paga col sangue."
   },
   "694": {
-    "name": "Pergamena dei nomi anziani",
+    "name": "Pergamena dei nomi antichi",
     "description": "Pergamena che pronuncia il nome di un dio\nantico. Chi legge paga col sangue."
   },
   "695": {
     "name": "Clessidra Chronos",
-    "description": "Clessidra che ruba indietro un attimo."
+    "description": "Clessidra che si riprende un attimo."
   },
   "696": {
     "name": "Bussola del viaggiatore",
@@ -2392,12 +2392,12 @@
     "description": "Disco rigido esterno da 512MB."
   },
   "722": {
-    "name": "Allenamento focus mentale",
-    "description": "Ciclo di esercizi. Aggiunge 5 MP massimi\nin permanenza."
+    "name": "Allenamento della concentrazione",
+    "description": "Ciclo di esercizi. Aggiunge 5 MP massimi\nin modo permanente."
   },
   "723": {
     "name": "Focus del combattente",
-    "description": "Stimolante che porta una lucidita fredda."
+    "description": "Stimolante che porta una lucidità fredda."
   },
   "724": {
     "name": "Teschio levitante",
@@ -2412,7 +2412,7 @@
     "description": "Console portatile con schermo grigio."
   },
   "727": {
-    "name": "Addestramento PSIonico",
+    "name": "Addestramento psionico",
     "description": "Ciclo di esercizi. Aggiunge 1 PSI."
   },
   "728": {
@@ -2433,11 +2433,11 @@
   },
   "732": {
     "name": "Impianto Overdrive",
-    "description": "Impianto che rifa chi lo usa\ncome combattente."
+    "description": "Impianto che rifà chi lo usa\ncome combattente."
   },
   "733": {
     "name": "Ottimizzatore Genomico",
-    "description": "Terapia genica. Alza ogni statistica\nin permanenza."
+    "description": "Terapia genica. Alza ogni statistica\nin modo permanente."
   },
   "734": {
     "name": "Catalizzatore di Potenziale",
@@ -2473,7 +2473,7 @@
   },
   "742": {
     "name": "Incrementatore di fertilità",
-    "description": "Stimolante che induce piu ovulazioni\ninsieme."
+    "description": "Stimolante che induce più ovulazioni\ninsieme."
   },
   "743": {
     "name": "Scalda-uova",
@@ -2505,7 +2505,7 @@
   },
   "753": {
     "name": "Melma cristallizzata",
-    "description": "Melma di un limo acido, indurita."
+    "description": "Bava di una melma acida, indurita."
   },
   "754": {
     "name": "Scheggia di legno vampirico",
@@ -2540,7 +2540,7 @@
     "description": "Il dito lungo di un incubo."
   },
   "762": {
-    "name": "Borsa con veleno di scorpione",
+    "name": "Sacca velenifera di scorpione",
     "description": "La sacca velenifera di uno scorpione gigante."
   },
   "763": {
@@ -2560,12 +2560,12 @@
     "description": "La coda di una manticora, aculei compresi."
   },
   "767": {
-    "name": "Occhio dell'osservatore",
+    "name": "Peduncolo oculare d'osservatore",
     "description": "Peduncolo oculare reciso a un osservatore."
   },
   "768": {
     "name": "Nucleo di memoria cyborg",
-    "description": "Unita di memoria presa a un cyborg."
+    "description": "Unità di memoria presa a un cyborg."
   },
   "769": {
     "name": "Nucleo di Golem",
@@ -2585,7 +2585,7 @@
   },
   "773": {
     "name": "Essenza d'ombra",
-    "description": "Cio che resta di un'ombra sfuggita."
+    "description": "Ciò che resta di un'ombra sfuggita."
   },
   "774": {
     "name": "Zanna di drago",
@@ -2604,7 +2604,7 @@
     "description": "L'uovo di un grifone."
   },
   "778": {
-    "name": "Antica Scala del Drago",
+    "name": "Scaglia di antico drago",
     "description": "Una scaglia di un antico wyrm."
   },
   "779": {
@@ -2733,7 +2733,7 @@
   },
   "851": {
     "name": "Nucleo quantistico",
-    "description": "Nucleo di calcolo di alta qualita."
+    "description": "Nucleo di calcolo di alta qualità."
   },
   "852": {
     "name": "Scheda elettronica",
@@ -2768,7 +2768,7 @@
     "description": "Un pezzo di legname tagliato."
   },
   "860": {
-    "name": "Ossa",
+    "name": "Osso",
     "description": "Un osso secco, buono per gli utensili."
   },
   "861": {
@@ -2780,7 +2780,7 @@
     "description": "Un taglio di carne cruda."
   },
   "863": {
-    "name": "Minerale di acciaio",
+    "name": "Acciaio di recupero",
     "description": "Una barra d'acciaio di recupero."
   },
   "864": {
@@ -2808,11 +2808,11 @@
     "description": "Fiala di estratto di erbe concentrato."
   },
   "870": {
-    "name": "Tanica di petrolio",
+    "name": "Fiasca d'olio",
     "description": "Una fiasca di olio raffinato."
   },
   "871": {
-    "name": "Soluzione acidica",
+    "name": "Soluzione acida",
     "description": "Una fiala di acido corrosivo."
   },
   "882": {
@@ -3049,7 +3049,7 @@
   },
   "940": {
     "name": "Termite",
-    "description": "Un pirotecnico che brucia caldissimo."
+    "description": "Miscela pirotecnica che brucia\na temperature altissime."
   },
   "941": {
     "name": "Agenti Chelanti",
@@ -3416,11 +3416,11 @@
     "description": "Corpo preso dalla carcassa."
   },
   "1052": {
-    "name": "ala Sinistra",
+    "name": "Ala sinistra",
     "description": "Ala sinistra presa dalla carcassa."
   },
   "1053": {
-    "name": "ala Destra",
+    "name": "Ala destra",
     "description": "Ala destra presa dalla carcassa."
   },
   "1054": {
@@ -3712,7 +3712,7 @@
     "description": "Fuoco fatuo destro preso dal residuo."
   },
   "1126": {
-    "name": "Schiera di Sensori",
+    "name": "Matrice di sensori",
     "description": "Schiera di sensori presa dal residuo."
   },
   "1127": {
@@ -4125,7 +4125,7 @@
   },
   "1229": {
     "name": "Cannone da Braccio",
-    "description": "Cannone dal relitto."
+    "description": "Cannone da braccio preso dal relitto."
   },
   "1230": {
     "name": "Torso di Difensore Robotico",
@@ -4196,16 +4196,16 @@
     "description": "Corpo preso dal guscio."
   },
   "1247": {
-    "name": "Braccia D'acqua",
-    "description": "Braccia dal guscio."
+    "name": "Braccia d'acqua",
+    "description": "Braccia d'acqua prese dal guscio."
   },
   "1248": {
-    "name": "Gamba D'acqua Sinistra",
-    "description": "Gamba dal guscio."
+    "name": "Gamba d'acqua sinistra",
+    "description": "Gamba d'acqua sinistra presa dal guscio."
   },
   "1249": {
-    "name": "Gamba D'acqua Destra",
-    "description": "Gamba dal guscio."
+    "name": "Gamba d'acqua destra",
+    "description": "Gamba d'acqua destra presa dal guscio."
   },
   "1250": {
     "name": "Nucleo d'Elementale di Fulmine",
@@ -4528,8 +4528,8 @@
     "description": "Memoria rigenerata pre Y2K.\nTrentadue megabyte, se funziona."
   },
   "1330": {
-    "name": "Unita Floppy Slim",
-    "description": "Unita sottile che legge e scrive\ndischetti."
+    "name": "Unità floppy slim",
+    "description": "Unità sottile che legge e scrive\ndischetti."
   },
   "1331": {
     "name": "Disco da Viaggio Hex 6GB",
@@ -4549,7 +4549,7 @@
   },
   "1335": {
     "name": "Slitta CD-RW Aokin",
-    "description": "Unita che legge e masterizza CD."
+    "description": "Unità che legge e masterizza CD."
   },
   "1336": {
     "name": "Disco Recuperato 540MB",
@@ -4593,7 +4593,7 @@
   },
   "1346": {
     "name": "Pannello TFT Omni-Lex 10.4in",
-    "description": "Pannello a matrice attiva da 10.4 pollici.\nIl piu grande che si ripiega."
+    "description": "Pannello a matrice attiva da 10.4 pollici.\nIl più grande che si ripieghi ancora."
   },
   "1347": {
     "name": "Pannello Crepato, Mezzo Acceso",
@@ -4616,11 +4616,11 @@
     "description": "Pacco piatto ai polimeri di litio, 5200 mAh."
   },
   "1352": {
-    "name": "Cella da Campo, Perde",
+    "name": "Cella da campo che perde",
     "description": "Cella pre Y2K che perde.\nTiene la carica, per poco."
   },
   "1353": {
-    "name": "Ala Solare a Filo",
+    "name": "Ala solare a carica lenta",
     "description": "Ala solare pieghevole. Carica piano,\nma non smette mai."
   },
   "1354": {
@@ -4640,7 +4640,7 @@
     "description": "Radio 802.11b per rete senza fili."
   },
   "1358": {
-    "name": "Manica Dati GSM",
+    "name": "Manicotto dati GSM",
     "description": "Manicotto che accetta una scheda telefonica\ne compone il numero."
   },
   "1359": {
@@ -4689,7 +4689,7 @@
   },
   "1370": {
     "name": "Pannello TFT Divinatorio",
-    "description": "Pannello a matrice attiva che mostra\nun po' piu di quello che c'e."
+    "description": "Pannello a matrice attiva che mostra\nun po' più di quello che c'è."
   },
   "1371": {
     "name": "Cache Omuncolo",
@@ -4709,7 +4709,7 @@
   },
   "1375": {
     "name": "Frame Buffer Astrale",
-    "description": "Frame buffer da 512 MB che disegna\npiu in fretta di quanto riceva."
+    "description": "Frame buffer da 512 MB che disegna\npiù in fretta di quanto venga alimentato."
   },
   "1376": {
     "name": "Nucleo di Quarzo Risonante",
@@ -4796,12 +4796,12 @@
     "description": "Un grimorio di magia dimenticata.\nUsalo per imparare uno di cinque incantesimi."
   },
   "1409": {
-    "name": "Grimorio di Abilita Psichiche",
-    "description": "Un grimorio di Abilita Psichiche.\nUsalo per imparare uno di cinque incantesimi."
+    "name": "Grimorio di Abilità Psichiche",
+    "description": "Un grimorio di Abilità Psichiche.\nUsalo per imparare uno di cinque incantesimi."
   },
   "1410": {
-    "name": "Grimorio di Magia di Stato",
-    "description": "Un grimorio di Magia di Stato.\nUsalo per imparare uno di cinque incantesimi."
+    "name": "Grimorio di Magia di Status",
+    "description": "Un grimorio di Magia di Status.\nUsalo per imparare uno di cinque incantesimi."
   },
   "1411": {
     "name": "Grimorio di Convocazione",
@@ -4844,43 +4844,43 @@
     "description": "Un grimorio di Tecnomagia.\nUsalo per imparare uno di cinque incantesimi."
   },
   "1421": {
-    "name": "Manuale di Martial Arts",
+    "name": "Manuale di Arti Marziali",
     "description": "Un manuale di Arti Marziali.\nInsegna una di cinque tecniche rivelate."
   },
   "1422": {
-    "name": "Manuale di Swordsmanship",
+    "name": "Manuale di Scherma",
     "description": "Un manuale di Scherma.\nInsegna una di cinque tecniche rivelate."
   },
   "1423": {
-    "name": "Manuale di Bestial",
+    "name": "Manuale Bestiale",
     "description": "Un manuale Bestiale.\nInsegna una di cinque tecniche rivelate."
   },
   "1425": {
-    "name": "Manuale di Alchemistry",
-    "description": "Un manuale di Alchimia.\nInsegna una di cinque tecniche rivelate."
+    "name": "Manuale di Alchimica",
+    "description": "Un manuale di Alchimica.\nInsegna una di cinque tecniche rivelate."
   },
   "1426": {
-    "name": "Manuale di Firearms",
+    "name": "Manuale di Armi da Fuoco",
     "description": "Un manuale di Armi da Fuoco.\nInsegna una di cinque tecniche rivelate."
   },
   "1427": {
-    "name": "Manuale di Cooking",
+    "name": "Manuale di Cucina",
     "description": "Un manuale di Cucina.\nInsegna una di cinque tecniche rivelate."
   },
   "1428": {
-    "name": "Manuale di Performance",
+    "name": "Manuale di Spettacolo",
     "description": "Un manuale di Spettacolo.\nInsegna una di cinque tecniche rivelate."
   },
   "1429": {
-    "name": "Manuale di Leadership",
+    "name": "Manuale di Comando",
     "description": "Un manuale di Comando.\nInsegna una di cinque tecniche rivelate."
   },
   "1430": {
-    "name": "Manuale di Tactical",
+    "name": "Manuale di Tattica",
     "description": "Un manuale di Tattica.\nInsegna una di cinque tecniche rivelate."
   },
   "1431": {
-    "name": "Manuale di Roguery",
+    "name": "Manuale di Furfanteria",
     "description": "Un manuale di Furfanteria.\nInsegna una di cinque tecniche rivelate."
   },
   "1432": {
@@ -4888,7 +4888,7 @@
     "description": "Un manuale di tecniche comuni.\nInsegna una di cinque tecniche rivelate."
   },
   "1433": {
-    "name": "Manuale di Pastoral",
+    "name": "Manuale Pastorale",
     "description": "Un manuale Pastorale.\nInsegna una di cinque tecniche rivelate."
   },
   "1434": {
@@ -4900,11 +4900,11 @@
     "description": "Un grimorio di Elettromanzia.\nUsalo per imparare uno di cinque incantesimi."
   },
   "1436": {
-    "name": "Manuale di Dominion",
+    "name": "Manuale di Dominio",
     "description": "Un manuale di Dominio.\nInsegna una di cinque tecniche rivelate."
   },
   "1437": {
-    "name": "Manuale di Economy",
+    "name": "Manuale di Economia",
     "description": "Un manuale di Economia.\nInsegna una di cinque tecniche rivelate."
   },
   "1438": {
@@ -4916,7 +4916,7 @@
     "description": "Un grimorio di Aeromanzia.\nUsalo per imparare uno di cinque incantesimi."
   },
   "1441": {
-    "name": "Manuale di Vocation",
+    "name": "Manuale di Vocazione",
     "description": "Un manuale di Vocazione.\nInsegna una di cinque tecniche rivelate."
   },
   "1442": {
@@ -5061,7 +5061,7 @@
   },
   "1477": {
     "name": "Tintura di Digitale",
-    "description": "Tintura dosata di digitale per il cuore.\nSopra la dose e veleno."
+    "description": "Tintura dosata di digitale per il cuore.\nSopra la dose è veleno."
   },
   "1478": {
     "name": "Compresse Anticonvulsivanti",
@@ -5109,7 +5109,7 @@
   },
   "1489": {
     "name": "Sali per Cauterizzazione di Ley",
-    "description": "Sali pigiati in un canale rovinato\ne accesi. Il marciume si ferma li."
+    "description": "Sali pigiati in un canale rovinato\ne accesi. Il marciume si ferma lì."
   },
   "1490": {
     "name": "Tintura della Strega",
@@ -5121,7 +5121,7 @@
   },
   "1492": {
     "name": "Siero Firewall",
-    "description": "Siero che rimette un confine tra te\ne cio che ti sta parlando."
+    "description": "Siero che rimette un confine tra te\ne ciò che ti sta parlando."
   },
   "1493": {
     "name": "Unguento Nullo",
@@ -5141,879 +5141,879 @@
   },
   "1497": {
     "name": "Fiala di Coltura: Influenza",
-    "description": "Una fiala di coltura sigillata di Influenza.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Influenza.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1498": {
     "name": "Fiala di Coltura: Raffreddore comune",
-    "description": "Una fiala di coltura sigillata di Raffreddore comune.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Raffreddore comune.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1499": {
     "name": "Fiala di Coltura: Nuovo coronavirus",
-    "description": "Una fiala di coltura sigillata di Nuovo coronavirus.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Nuovo coronavirus.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1500": {
     "name": "Fiala di Coltura: Morbillo",
-    "description": "Una fiala di coltura sigillata di Morbillo.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Morbillo.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1501": {
     "name": "Fiala di Coltura: Parotite",
-    "description": "Una fiala di coltura sigillata di Parotite.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Parotite.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1502": {
     "name": "Fiala di Coltura: Rosolia",
-    "description": "Una fiala di coltura sigillata di Rosolia.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Rosolia.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1503": {
     "name": "Fiala di Coltura: Varicella",
-    "description": "Una fiala di coltura sigillata di Varicella.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Varicella.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1504": {
     "name": "Fiala di Coltura: Fuoco di Sant'Antonio",
-    "description": "Una fiala di coltura sigillata di Fuoco di Sant'Antonio.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Fuoco di Sant'Antonio.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1505": {
     "name": "Fiala di Coltura: Mononucleosi",
-    "description": "Una fiala di coltura sigillata di Mononucleosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Mononucleosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1506": {
     "name": "Fiala di Coltura: Epatite A",
-    "description": "Una fiala di coltura sigillata di Epatite A.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Epatite A.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1507": {
     "name": "Fiala di Coltura: Epatite B",
-    "description": "Una fiala di coltura sigillata di Epatite B.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Epatite B.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1508": {
     "name": "Fiala di Coltura: Epatite C",
-    "description": "Una fiala di coltura sigillata di Epatite C.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Epatite C.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1509": {
     "name": "Fiala di Coltura: Norovirus",
-    "description": "Una fiala di coltura sigillata di Norovirus.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Norovirus.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1510": {
     "name": "Fiala di Coltura: Rotavirus",
-    "description": "Una fiala di coltura sigillata di Rotavirus.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Rotavirus.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1511": {
     "name": "Fiala di Coltura: Rabbia",
-    "description": "Una fiala di coltura sigillata di Rabbia.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Rabbia.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1512": {
     "name": "Fiala di Coltura: Poliomielite",
-    "description": "Una fiala di coltura sigillata di Poliomielite.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Poliomielite.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1513": {
     "name": "Fiala di Coltura: Vaiolo",
-    "description": "Una fiala di coltura sigillata di Vaiolo.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Vaiolo.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1514": {
     "name": "Fiala di Coltura: Ebola",
-    "description": "Una fiala di coltura sigillata di Ebola.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Ebola.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1515": {
     "name": "Fiala di Coltura: Febbre dengue",
-    "description": "Una fiala di coltura sigillata di Febbre dengue.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Febbre dengue.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1516": {
     "name": "Fiala di Coltura: Febbre gialla",
-    "description": "Una fiala di coltura sigillata di Febbre gialla.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Febbre gialla.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1517": {
     "name": "Fiala di Coltura: Virus Zika",
-    "description": "Una fiala di coltura sigillata di Virus Zika.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Virus Zika.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1518": {
     "name": "Fiala di Coltura: Virus del Nilo occidentale",
-    "description": "Una fiala di coltura sigillata di Virus del Nilo occidentale.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Virus del Nilo occidentale.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1519": {
     "name": "Fiala di Coltura: Hantavirus",
-    "description": "Una fiala di coltura sigillata di Hantavirus.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Hantavirus.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1520": {
     "name": "Fiala di Coltura: HIV",
-    "description": "Una fiala di coltura sigillata di HIV.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di HIV.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1521": {
     "name": "Fiala di Coltura: Herpes simplex",
-    "description": "Una fiala di coltura sigillata di Herpes simplex.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Herpes simplex.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1522": {
     "name": "Fiala di Coltura: Papillomavirus umano",
-    "description": "Una fiala di coltura sigillata di Papillomavirus umano.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Papillomavirus umano.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1523": {
     "name": "Fiala di Coltura: Citomegalovirus",
-    "description": "Una fiala di coltura sigillata di Citomegalovirus.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Citomegalovirus.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1524": {
     "name": "Fiala di Coltura: Faringite streptococcica",
-    "description": "Una fiala di coltura sigillata di Faringite streptococcica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Faringite streptococcica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1525": {
     "name": "Fiala di Coltura: Tubercolosi",
-    "description": "Una fiala di coltura sigillata di Tubercolosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Tubercolosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1526": {
     "name": "Fiala di Coltura: Polmonite batterica",
-    "description": "Una fiala di coltura sigillata di Polmonite batterica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Polmonite batterica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1527": {
     "name": "Fiala di Coltura: Colera",
-    "description": "Una fiala di coltura sigillata di Colera.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Colera.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1528": {
     "name": "Fiala di Coltura: Febbre tifoide",
-    "description": "Una fiala di coltura sigillata di Febbre tifoide.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Febbre tifoide.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1529": {
     "name": "Fiala di Coltura: Peste bubbonica",
-    "description": "Una fiala di coltura sigillata di Peste bubbonica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Peste bubbonica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1530": {
     "name": "Fiala di Coltura: Tetano",
-    "description": "Una fiala di coltura sigillata di Tetano.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Tetano.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1531": {
     "name": "Fiala di Coltura: Lebbra",
-    "description": "Una fiala di coltura sigillata di Lebbra.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Lebbra.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1532": {
     "name": "Fiala di Coltura: Malattia di Lyme",
-    "description": "Una fiala di coltura sigillata di Malattia di Lyme.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia di Lyme.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1533": {
     "name": "Fiala di Coltura: Meningite batterica",
-    "description": "Una fiala di coltura sigillata di Meningite batterica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Meningite batterica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1534": {
     "name": "Fiala di Coltura: Gonorrea",
-    "description": "Una fiala di coltura sigillata di Gonorrea.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Gonorrea.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1535": {
     "name": "Fiala di Coltura: Clamidia",
-    "description": "Una fiala di coltura sigillata di Clamidia.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Clamidia.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1536": {
     "name": "Fiala di Coltura: Sifilide",
-    "description": "Una fiala di coltura sigillata di Sifilide.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Sifilide.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1537": {
     "name": "Fiala di Coltura: Botulismo",
-    "description": "Una fiala di coltura sigillata di Botulismo.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Botulismo.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1538": {
     "name": "Fiala di Coltura: MRSA",
-    "description": "Una fiala di coltura sigillata di MRSA.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di MRSA.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1539": {
     "name": "Fiala di Coltura: Scarlattina",
-    "description": "Una fiala di coltura sigillata di Scarlattina.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Scarlattina.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1540": {
     "name": "Fiala di Coltura: Pertosse",
-    "description": "Una fiala di coltura sigillata di Pertosse.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Pertosse.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1541": {
     "name": "Fiala di Coltura: Cancrena",
-    "description": "Una fiala di coltura sigillata di Cancrena.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Cancrena.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1542": {
     "name": "Fiala di Coltura: Sepsi",
-    "description": "Una fiala di coltura sigillata di Sepsi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Sepsi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1543": {
     "name": "Fiala di Coltura: Tigna",
-    "description": "Una fiala di coltura sigillata di Tigna.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Tigna.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1544": {
     "name": "Fiala di Coltura: Piede d'atleta",
-    "description": "Una fiala di coltura sigillata di Piede d'atleta.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Piede d'atleta.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1545": {
     "name": "Fiala di Coltura: Candidosi",
-    "description": "Una fiala di coltura sigillata di Candidosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Candidosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1546": {
     "name": "Fiala di Coltura: Aspergillosi",
-    "description": "Una fiala di coltura sigillata di Aspergillosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Aspergillosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1547": {
     "name": "Fiala di Coltura: Febbre della valle",
-    "description": "Una fiala di coltura sigillata di Febbre della valle.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Febbre della valle.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1548": {
     "name": "Fiala di Coltura: Criptococcosi",
-    "description": "Una fiala di coltura sigillata di Criptococcosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Criptococcosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1549": {
     "name": "Fiala di Coltura: Sindrome da muffa nera",
-    "description": "Una fiala di coltura sigillata di Sindrome da muffa nera.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Sindrome da muffa nera.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1550": {
     "name": "Fiala di Coltura: Malaria",
-    "description": "Una fiala di coltura sigillata di Malaria.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malaria.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1551": {
     "name": "Fiala di Coltura: Toxoplasmosi",
-    "description": "Una fiala di coltura sigillata di Toxoplasmosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Toxoplasmosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1552": {
     "name": "Fiala di Coltura: Giardiasi",
-    "description": "Una fiala di coltura sigillata di Giardiasi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Giardiasi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1553": {
     "name": "Fiala di Coltura: Dissenteria amebica",
-    "description": "Una fiala di coltura sigillata di Dissenteria amebica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Dissenteria amebica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1554": {
     "name": "Fiala di Coltura: Malattia di Chagas",
-    "description": "Una fiala di coltura sigillata di Malattia di Chagas.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia di Chagas.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1555": {
     "name": "Fiala di Coltura: Malattia del sonno africana",
-    "description": "Una fiala di coltura sigillata di Malattia del sonno africana.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia del sonno africana.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1556": {
     "name": "Fiala di Coltura: Leishmaniosi",
-    "description": "Una fiala di coltura sigillata di Leishmaniosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Leishmaniosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1557": {
     "name": "Barattolo da Campione: Tenia",
-    "description": "Un barattolo da campione sigillato di Tenia.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Tenia.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1558": {
     "name": "Barattolo da Campione: Anchilostoma",
-    "description": "Un barattolo da campione sigillato di Anchilostoma.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Anchilostoma.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1559": {
     "name": "Barattolo da Campione: Schistosomiasi",
-    "description": "Un barattolo da campione sigillato di Schistosomiasi.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Schistosomiasi.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1560": {
     "name": "Barattolo da Campione: Scabbia",
-    "description": "Un barattolo da campione sigillato di Scabbia.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Scabbia.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1561": {
     "name": "Barattolo da Campione: Pidocchi",
-    "description": "Un barattolo da campione sigillato di Pidocchi.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Pidocchi.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1562": {
     "name": "Barattolo da Campione: Filariosi linfatica",
-    "description": "Un barattolo da campione sigillato di Filariosi linfatica.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Filariosi linfatica.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1563": {
     "name": "Barattolo da Campione: Cecità dei fiumi",
-    "description": "Un barattolo da campione sigillato di Cecità dei fiumi.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Cecità dei fiumi.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1564": {
     "name": "Fiala Prionica: Malattia di Creutzfeldt-Jakob",
-    "description": "Una fiala prionica sigillata di Malattia di Creutzfeldt-Jakob.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala prionica sigillata di Malattia di Creutzfeldt-Jakob.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1565": {
     "name": "Fiala Prionica: Kuru",
-    "description": "Una fiala prionica sigillata di Kuru.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala prionica sigillata di Kuru.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1566": {
     "name": "Fiala Prionica: Insonnia familiare fatale",
-    "description": "Una fiala prionica sigillata di Insonnia familiare fatale.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala prionica sigillata di Insonnia familiare fatale.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1567": {
     "name": "Fiala di Coltura: Diabete di tipo 1",
-    "description": "Una fiala di coltura sigillata di Diabete di tipo 1.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Diabete di tipo 1.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1568": {
     "name": "Fiala di Coltura: Diabete di tipo 2",
-    "description": "Una fiala di coltura sigillata di Diabete di tipo 2.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Diabete di tipo 2.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1577": {
     "name": "Fiala di Coltura: Lupus",
-    "description": "Una fiala di coltura sigillata di Lupus.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Lupus.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1578": {
     "name": "Fiala di Coltura: Artrite reumatoide",
-    "description": "Una fiala di coltura sigillata di Artrite reumatoide.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Artrite reumatoide.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1579": {
     "name": "Fiala di Coltura: Sclerosi multipla",
-    "description": "Una fiala di coltura sigillata di Sclerosi multipla.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Sclerosi multipla.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1580": {
     "name": "Fiala di Coltura: Malattia di Crohn",
-    "description": "Una fiala di coltura sigillata di Malattia di Crohn.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia di Crohn.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1581": {
     "name": "Fiala di Coltura: Celiachia",
-    "description": "Una fiala di coltura sigillata di Celiachia.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Celiachia.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1582": {
     "name": "Fiala di Coltura: Psoriasi",
-    "description": "Una fiala di coltura sigillata di Psoriasi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Psoriasi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1583": {
     "name": "Fiala di Coltura: Morbo di Basedow-Graves",
-    "description": "Una fiala di coltura sigillata di Morbo di Basedow-Graves.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Morbo di Basedow-Graves.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1584": {
     "name": "Fiala di Coltura: Tiroidite di Hashimoto",
-    "description": "Una fiala di coltura sigillata di Tiroidite di Hashimoto.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Tiroidite di Hashimoto.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1585": {
     "name": "Fiala di Coltura: Asma",
-    "description": "Una fiala di coltura sigillata di Asma.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Asma.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1586": {
     "name": "Fiala di Coltura: BPCO",
-    "description": "Una fiala di coltura sigillata di BPCO.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di BPCO.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1587": {
     "name": "Fiala di Coltura: Ipertensione",
-    "description": "Una fiala di coltura sigillata di Ipertensione.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Ipertensione.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1588": {
     "name": "Fiala di Coltura: Aritmia cardiaca",
-    "description": "Una fiala di coltura sigillata di Aritmia cardiaca.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Aritmia cardiaca.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1589": {
     "name": "Kit da Privazione: Anemia sideropenica",
-    "description": "Un kit da privazione sigillato di Anemia sideropenica.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un kit da privazione sigillato di Anemia sideropenica.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1590": {
     "name": "Fiala di Coltura: Emicrania cronica",
-    "description": "Una fiala di coltura sigillata di Emicrania cronica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Emicrania cronica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1591": {
     "name": "Fiala di Coltura: Epilessia",
-    "description": "Una fiala di coltura sigillata di Epilessia.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Epilessia.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1592": {
     "name": "Fiala di Coltura: Malattia di Parkinson",
-    "description": "Una fiala di coltura sigillata di Malattia di Parkinson.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia di Parkinson.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1593": {
     "name": "Fiala di Coltura: Malattia di Alzheimer",
-    "description": "Una fiala di coltura sigillata di Malattia di Alzheimer.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia di Alzheimer.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1594": {
     "name": "Fiala di Coltura: Narcolessia",
-    "description": "Una fiala di coltura sigillata di Narcolessia.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Narcolessia.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1595": {
     "name": "Fiala di Coltura: Reflusso gastroesofageo cronico",
-    "description": "Una fiala di coltura sigillata di Reflusso gastroesofageo\ncronico. Aprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Reflusso gastroesofageo\ncronico. Aprirla trasmette la malattia a qualcuno nel Party."
   },
   "1596": {
     "name": "Fiala di Coltura: Sindrome dell'intestino irritabile",
-    "description": "Una fiala di coltura sigillata di Sindrome dell'intestino\nirritabile. Aprirla infetta un membro del gruppo."
+    "description": "Una fiala di coltura sigillata di Sindrome dell'intestino\nirritabile. Aprirla infetta un membro del Party."
   },
   "1597": {
     "name": "Fiala di Coltura: Ulcera peptica",
-    "description": "Una fiala di coltura sigillata di Ulcera peptica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Ulcera peptica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1598": {
     "name": "Kit da Privazione: Scorbuto",
-    "description": "Un kit da privazione sigillato di Scorbuto.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un kit da privazione sigillato di Scorbuto.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1599": {
     "name": "Kit da Privazione: Rachitismo",
-    "description": "Un kit da privazione sigillato di Rachitismo.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un kit da privazione sigillato di Rachitismo.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1600": {
     "name": "Kit da Privazione: Beriberi",
-    "description": "Un kit da privazione sigillato di Beriberi.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un kit da privazione sigillato di Beriberi.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1601": {
     "name": "Kit da Privazione: Pellagra",
-    "description": "Un kit da privazione sigillato di Pellagra.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un kit da privazione sigillato di Pellagra.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1602": {
     "name": "Kit da Privazione: Kwashiorkor",
-    "description": "Un kit da privazione sigillato di Kwashiorkor.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un kit da privazione sigillato di Kwashiorkor.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1603": {
     "name": "Kit da Privazione: Gozzo da carenza di iodio",
-    "description": "Un kit da privazione sigillato di Gozzo da carenza di iodio.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un kit da privazione sigillato di Gozzo da carenza di iodio.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1604": {
     "name": "Cartella Clinica: Depressione clinica",
-    "description": "Una cartella clinica sigillata di Depressione clinica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartella clinica sigillata di Depressione clinica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1605": {
     "name": "Cartella Clinica: Ansia generalizzata",
-    "description": "Una cartella clinica sigillata di Ansia generalizzata.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartella clinica sigillata di Ansia generalizzata.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1606": {
     "name": "Cartella Clinica: Disturbo post-traumatico da stress",
-    "description": "Una cartella clinica sigillata di Disturbo post-traumatico da\nstress. Aprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartella clinica sigillata di Disturbo post-traumatico da\nstress. Aprirla trasmette la malattia a qualcuno nel Party."
   },
   "1607": {
     "name": "Cartella Clinica: Disturbo bipolare",
-    "description": "Una cartella clinica sigillata di Disturbo bipolare.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartella clinica sigillata di Disturbo bipolare.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1608": {
     "name": "Cartella Clinica: Schizofrenia",
-    "description": "Una cartella clinica sigillata di Schizofrenia.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartella clinica sigillata di Schizofrenia.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1609": {
     "name": "Cartella Clinica: Insonnia cronica",
-    "description": "Una cartella clinica sigillata di Insonnia cronica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartella clinica sigillata di Insonnia cronica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1610": {
     "name": "Cartella Clinica: Disturbo ossessivo-compulsivo",
-    "description": "Una cartella clinica sigillata di Disturbo\nossessivo-compulsivo. Aprirla infetta un membro del gruppo."
+    "description": "Una cartella clinica sigillata di Disturbo\nossessivo-compulsivo. Aprirla infetta un membro del Party."
   },
   "1611": {
     "name": "Fiala Protetta: Marciume di ley",
-    "description": "Una fiala protetta e sigillata di Marciume di ley.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Marciume di ley.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1612": {
     "name": "Fiala Protetta: Peste di mana",
-    "description": "Una fiala protetta e sigillata di Peste di mana.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Peste di mana.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1613": {
     "name": "Fiala Protetta: Polmone d'etere",
-    "description": "Una fiala protetta e sigillata di Polmone d'etere.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Polmone d'etere.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1614": {
     "name": "Reliquiario: Lo Svuotamento",
-    "description": "Un reliquiario sigillato di Lo Svuotamento.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato dello Svuotamento.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1615": {
     "name": "Reliquiario: Fame del Wendigo",
-    "description": "Un reliquiario sigillato di Fame del Wendigo.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Fame del Wendigo.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1616": {
     "name": "Reliquiario: Carne di pietra",
-    "description": "Un reliquiario sigillato di Carne di pietra.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Carne di pietra.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1617": {
     "name": "Fiala Protetta: Febbre dei sussurri",
-    "description": "Una fiala protetta e sigillata di Febbre dei sussurri.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Febbre dei sussurri.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1618": {
     "name": "Fiala Protetta: Male dello specchio",
-    "description": "Una fiala protetta e sigillata di Male dello specchio.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Male dello specchio.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1619": {
     "name": "Reliquiario: Febbre cronale",
-    "description": "Un reliquiario sigillato di Febbre cronale.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Febbre cronale.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1620": {
     "name": "Reliquiario: Tocco del vuoto",
-    "description": "Un reliquiario sigillato di Tocco del vuoto.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Tocco del vuoto.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1621": {
     "name": "Reliquiario: Follia stellare",
-    "description": "Un reliquiario sigillato di Follia stellare.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Follia stellare.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1622": {
     "name": "Cartuccia Dati: Statica grigia",
-    "description": "Una cartuccia dati sigillata di Statica grigia.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartuccia dati sigillata di Statica grigia.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1623": {
     "name": "Cartuccia Dati: Sindrome nulla",
-    "description": "Una cartuccia dati sigillata di Sindrome nulla.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartuccia dati sigillata di Sindrome nulla.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1624": {
     "name": "Cartuccia Dati: Marciume dei dati",
-    "description": "Una cartuccia dati sigillata di Marciume dei dati.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartuccia dati sigillata di Marciume dei dati.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1625": {
     "name": "Fiala Protetta: Peste dei sogni",
-    "description": "Una fiala protetta e sigillata di Peste dei sogni.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Peste dei sogni.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1626": {
     "name": "Fiala di Coltura: Fioritura cadaverica",
-    "description": "Una fiala di coltura sigillata di Fioritura cadaverica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Fioritura cadaverica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1627": {
     "name": "Reliquiario: Maledizione del polmone di ferro",
-    "description": "Un reliquiario sigillato di Maledizione del polmone di ferro.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Maledizione del polmone di ferro.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1628": {
-    "name": "Fiala Protetta: Vaiolo del riso",
-    "description": "Una fiala protetta e sigillata di Vaiolo del riso.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "name": "Fiala Protetta: Vaiolo della risata",
+    "description": "Una fiala protetta e sigillata di Vaiolo della risata.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1629": {
     "name": "Fiala Protetta: Fuoco di Sant'Antonio abate",
-    "description": "Una fiala protetta e sigillata di Fuoco di Sant'Antonio abate.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Fuoco di Sant'Antonio abate.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1630": {
     "name": "Fiala Protetta: Piaga del bozzolo",
-    "description": "Una fiala protetta e sigillata di Piaga del bozzolo.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Piaga del bozzolo.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1631": {
     "name": "Fiala di Coltura: Grande influenza",
-    "description": "Una fiala di coltura sigillata di Grande influenza.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Grande influenza.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1632": {
     "name": "Fiala di Coltura: Tifo epidemico",
-    "description": "Una fiala di coltura sigillata di Tifo epidemico.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Tifo epidemico.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1633": {
     "name": "Fiala di Coltura: Difterite",
-    "description": "Una fiala di coltura sigillata di Difterite.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Difterite.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1634": {
     "name": "Fiala di Coltura: Antrace",
-    "description": "Una fiala di coltura sigillata di Antrace.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Antrace.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1635": {
     "name": "Fiala di Coltura: Febbre di Marburg",
-    "description": "Una fiala di coltura sigillata di Febbre di Marburg.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Febbre di Marburg.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1636": {
     "name": "Fiala di Coltura: Encefalite di Nipah",
-    "description": "Una fiala di coltura sigillata di Encefalite di Nipah.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Encefalite di Nipah.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1637": {
     "name": "Fiala di Coltura: Polmonite atipica",
-    "description": "Una fiala di coltura sigillata di Polmonite atipica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Polmonite atipica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1638": {
     "name": "Fiala di Coltura: Malattia del legionario",
-    "description": "Una fiala di coltura sigillata di Malattia del legionario.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia del legionario.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1639": {
     "name": "Fiala di Coltura: Malattia del sonno del cervello",
-    "description": "Una fiala di coltura sigillata di Malattia del sonno del\ncervello. Aprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia del sonno del\ncervello. Aprirla trasmette la malattia a qualcuno nel Party."
   },
   "1640": {
     "name": "Opuscolo: Febbre danzante",
-    "description": "Un opuscolo sigillato di Febbre danzante.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Febbre danzante.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1641": {
     "name": "Opuscolo: Panico della strega ruba-genitali",
-    "description": "Un opuscolo sigillato di Panico della strega ruba-genitali.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Panico della strega ruba-genitali.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1642": {
     "name": "Opuscolo: Epidemia di risa",
-    "description": "Un opuscolo sigillato di Epidemia di risa.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Epidemia di risa.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1643": {
     "name": "Opuscolo: Tarantismo",
-    "description": "Un opuscolo sigillato di Tarantismo.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Tarantismo.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1644": {
     "name": "Opuscolo: Mimetismo conventuale",
-    "description": "Un opuscolo sigillato di Mimetismo conventuale.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Mimetismo conventuale.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1645": {
     "name": "Opuscolo: Panico del gassatore fantasma",
-    "description": "Un opuscolo sigillato di Panico del gassatore fantasma.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Panico del gassatore fantasma.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1646": {
     "name": "Opuscolo: Male dello svenimento",
-    "description": "Un opuscolo sigillato di Male dello svenimento.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Male dello svenimento.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1647": {
     "name": "Opuscolo: Delirio dei parabrezza scheggiati",
-    "description": "Un opuscolo sigillato di Delirio dei parabrezza scheggiati.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Delirio dei parabrezza scheggiati.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1648": {
     "name": "Opuscolo: Infestazione fantasma",
-    "description": "Un opuscolo sigillato di Infestazione fantasma.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Infestazione fantasma.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1649": {
     "name": "Opuscolo: Panico satanico",
-    "description": "Un opuscolo sigillato di Panico satanico.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Panico satanico.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1650": {
     "name": "Opuscolo: Panico del doppelgänger",
-    "description": "Un opuscolo sigillato di Panico del doppelgänger.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Panico del doppelgänger.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1651": {
     "name": "Opuscolo: Panico del furto dei nomi",
-    "description": "Un opuscolo sigillato di Panico del furto dei nomi.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Panico del furto dei nomi.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1652": {
     "name": "Opuscolo: Male del parlare",
-    "description": "Un opuscolo sigillato di Male del parlare.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Male del parlare.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1653": {
     "name": "Opuscolo: Pellegrinaggio sonnambulo",
-    "description": "Un opuscolo sigillato di Pellegrinaggio sonnambulo.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Pellegrinaggio sonnambulo.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1654": {
     "name": "Opuscolo: Visione collettiva",
-    "description": "Un opuscolo sigillato di Visione collettiva.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Visione collettiva.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1655": {
     "name": "Opuscolo: Compulsione della stazione dei numeri",
-    "description": "Un opuscolo sigillato di Compulsione della stazione dei\nnumeri. Aprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un opuscolo sigillato di Compulsione della stazione dei\nnumeri. Aprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1657": {
     "name": "Fiala di Coltura: Sifilide Terziaria",
-    "description": "Una fiala di coltura sigillata di Sifilide Terziaria.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Sifilide Terziaria.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1658": {
     "name": "Fiala di Coltura: Cirrosi Epatica",
-    "description": "Una fiala di coltura sigillata di Cirrosi Epatica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Cirrosi Epatica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1659": {
     "name": "Fiala di Coltura: Febbre Reumatica",
-    "description": "Una fiala di coltura sigillata di Febbre Reumatica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Febbre Reumatica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1660": {
     "name": "Fiala di Coltura: Lyme Disseminata Tardiva",
-    "description": "Una fiala di coltura sigillata di Lyme Disseminata Tardiva.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Lyme Disseminata Tardiva.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1661": {
     "name": "Fiala di Coltura: Sindrome Post-Virale",
-    "description": "Una fiala di coltura sigillata di Sindrome Post-Virale.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Sindrome Post-Virale.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1662": {
     "name": "Fiala di Coltura: Malattia Infiammatoria Pelvica",
-    "description": "Una fiala di coltura sigillata di Malattia Infiammatoria\nPelvica. Aprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia Infiammatoria\nPelvica. Aprirla trasmette la malattia a qualcuno nel Party."
   },
   "1663": {
     "name": "Fiala di Coltura: Tubercolosi Miliare",
-    "description": "Una fiala di coltura sigillata di Tubercolosi Miliare.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Tubercolosi Miliare.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1664": {
     "name": "Fiala di Coltura: Neuropatia Diabetica",
-    "description": "Una fiala di coltura sigillata di Neuropatia Diabetica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Neuropatia Diabetica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1665": {
     "name": "Fiala di Coltura: Ascesso Epatico Amebico",
-    "description": "Una fiala di coltura sigillata di Ascesso Epatico Amebico.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Ascesso Epatico Amebico.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1666": {
     "name": "Fiala Protetta: Necrosi di Ley",
-    "description": "Una fiala protetta e sigillata di Necrosi di Ley.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Necrosi di Ley.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1667": {
     "name": "Reliquiario: Il Guscio Vuoto",
-    "description": "Un reliquiario sigillato di Il Guscio Vuoto.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato del Guscio Vuoto.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1668": {
     "name": "Cartuccia Dati: Comunione di Statica",
-    "description": "Una cartuccia dati sigillata di Comunione di Statica.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartuccia dati sigillata di Comunione di Statica.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1669": {
     "name": "Barattolo da Campione: Infestazione di Sanguisughe",
-    "description": "Un barattolo da campione sigillato di Infestazione\ndi Sanguisughe. Aprirlo infetta un membro del gruppo."
+    "description": "Un barattolo da campione sigillato di Infestazione\ndi Sanguisughe. Aprirlo infetta un membro del Party."
   },
   "1670": {
     "name": "Barattolo da Campione: Cimici da Letto",
-    "description": "Un barattolo da campione sigillato di Cimici da Letto.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Cimici da Letto.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1671": {
     "name": "Barattolo da Campione: Infestazione di Pulci",
-    "description": "Un barattolo da campione sigillato di Infestazione di Pulci.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Infestazione di Pulci.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1672": {
     "name": "Barattolo da Campione: Infestazione di Zecche",
-    "description": "Un barattolo da campione sigillato di Infestazione di Zecche.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Infestazione di Zecche.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1673": {
     "name": "Barattolo da Campione: Ossiuri",
-    "description": "Un barattolo da campione sigillato di Ossiuri.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Ossiuri.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1674": {
     "name": "Barattolo da Campione: Ascaridi",
-    "description": "Un barattolo da campione sigillato di Ascaridi.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Ascaridi.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1675": {
     "name": "Barattolo da Campione: Tricocefalo",
-    "description": "Un barattolo da campione sigillato di Tricocefalo.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Tricocefalo.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1676": {
     "name": "Barattolo da Campione: Verme di Guinea",
-    "description": "Un barattolo da campione sigillato di Verme di Guinea.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Verme di Guinea.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1677": {
     "name": "Barattolo da Campione: Distoma Epatico",
-    "description": "Un barattolo da campione sigillato di Distoma Epatico.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Distoma Epatico.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1678": {
     "name": "Barattolo da Campione: Miasi da Dermatobia",
-    "description": "Un barattolo da campione sigillato di Miasi da Dermatobia.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Miasi da Dermatobia.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1679": {
     "name": "Barattolo da Campione: Pulce Penetrante",
-    "description": "Un barattolo da campione sigillato di Pulce Penetrante.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Pulce Penetrante.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1680": {
     "name": "Barattolo da Campione: Piattole",
-    "description": "Un barattolo da campione sigillato di Piattole.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Piattole.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1681": {
     "name": "Barattolo da Campione: Rogna Sarcoptica",
-    "description": "Un barattolo da campione sigillato di Rogna Sarcoptica.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Rogna Sarcoptica.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1682": {
     "name": "Fiala di Coltura: Naegleriasi",
-    "description": "Una fiala di coltura sigillata di Naegleriasi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Naegleriasi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1683": {
     "name": "Fiala Prionica: Encefalopatia Spongiforme Bovina",
-    "description": "Una fiala prionica sigillata di Encefalopatia Spongiforme\nBovina. Aprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala prionica sigillata di Encefalopatia Spongiforme\nBovina. Aprirla trasmette la malattia a qualcuno nel Party."
   },
   "1684": {
     "name": "Fiala Prionica: Contatto con la Scrapie",
-    "description": "Una fiala prionica sigillata di Contatto con la Scrapie.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala prionica sigillata di Contatto con la Scrapie.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1685": {
     "name": "Fiala di Coltura: Adenovirus",
-    "description": "Una fiala di coltura sigillata di Adenovirus.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Adenovirus.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1686": {
     "name": "Fiala di Coltura: Malattia Mani-Piedi-Bocca",
-    "description": "Una fiala di coltura sigillata di Malattia Mani-Piedi-Bocca.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Malattia Mani-Piedi-Bocca.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1687": {
     "name": "Fiala di Coltura: Megaloeritema",
-    "description": "Una fiala di coltura sigillata di Megaloeritema.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Megaloeritema.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1688": {
     "name": "Fiala di Coltura: Chikungunya",
-    "description": "Una fiala di coltura sigillata di Chikungunya.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Chikungunya.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1689": {
     "name": "Fiala di Coltura: Febbre di Lassa",
-    "description": "Una fiala di coltura sigillata di Febbre di Lassa.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Febbre di Lassa.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1690": {
     "name": "Fiala di Coltura: Febbre Emorragica Crimea-Congo",
-    "description": "Una fiala di coltura sigillata di Febbre Emorragica\nCrimea-Congo. Aprirla infetta un membro del gruppo."
+    "description": "Una fiala di coltura sigillata di Febbre Emorragica\nCrimea-Congo. Aprirla infetta un membro del Party."
   },
   "1691": {
     "name": "Fiala di Coltura: Vaiolo delle Scimmie",
-    "description": "Una fiala di coltura sigillata di Vaiolo delle Scimmie.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Vaiolo delle Scimmie.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1692": {
     "name": "Fiala di Coltura: Encefalite Virale",
-    "description": "Una fiala di coltura sigillata di Encefalite Virale.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Encefalite Virale.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1693": {
     "name": "Fiala di Coltura: Brucellosi",
-    "description": "Una fiala di coltura sigillata di Brucellosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Brucellosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1694": {
     "name": "Fiala di Coltura: Febbre Q",
-    "description": "Una fiala di coltura sigillata di Febbre Q.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Febbre Q.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1695": {
     "name": "Fiala di Coltura: Listeriosi",
-    "description": "Una fiala di coltura sigillata di Listeriosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Listeriosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1696": {
     "name": "Fiala di Coltura: Salmonellosi",
-    "description": "Una fiala di coltura sigillata di Salmonellosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Salmonellosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1697": {
     "name": "Fiala di Coltura: Shigellosi",
-    "description": "Una fiala di coltura sigillata di Shigellosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Shigellosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1698": {
     "name": "Fiala di Coltura: Campilobatteriosi",
-    "description": "Una fiala di coltura sigillata di Campilobatteriosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Campilobatteriosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1699": {
     "name": "Fiala di Coltura: Tracoma",
-    "description": "Una fiala di coltura sigillata di Tracoma.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Tracoma.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1700": {
     "name": "Fiala di Coltura: Melioidosi",
-    "description": "Una fiala di coltura sigillata di Melioidosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Melioidosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1701": {
     "name": "Fiala di Coltura: Endocardite Infettiva",
-    "description": "Una fiala di coltura sigillata di Endocardite Infettiva.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Endocardite Infettiva.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1702": {
     "name": "Fiala di Coltura: Istoplasmosi",
-    "description": "Una fiala di coltura sigillata di Istoplasmosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Istoplasmosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1703": {
     "name": "Fiala di Coltura: Sporotricosi",
-    "description": "Una fiala di coltura sigillata di Sporotricosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Sporotricosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1704": {
     "name": "Fiala di Coltura: Mucormicosi",
-    "description": "Una fiala di coltura sigillata di Mucormicosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Mucormicosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1705": {
     "name": "Barattolo da Campione: Trichinosi",
-    "description": "Un barattolo da campione sigillato di Trichinosi.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Trichinosi.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1706": {
     "name": "Barattolo da Campione: Idatidosi",
-    "description": "Un barattolo da campione sigillato di Idatidosi.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un barattolo da campione sigillato di Idatidosi.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1707": {
     "name": "Fiala di Coltura: Babesiosi",
-    "description": "Una fiala di coltura sigillata di Babesiosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Babesiosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1708": {
     "name": "Fiala di Coltura: Criptosporidiosi",
-    "description": "Una fiala di coltura sigillata di Criptosporidiosi.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Criptosporidiosi.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1709": {
     "name": "Kit da Privazione: Carenza di Vitamina A",
-    "description": "Un kit da privazione sigillato di Carenza di Vitamina A.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un kit da privazione sigillato di Carenza di Vitamina A.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1710": {
     "name": "Kit da Privazione: Carenza di B12",
-    "description": "Un kit da privazione sigillato di Carenza di B12.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un kit da privazione sigillato di Carenza di B12.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1711": {
     "name": "Fiala di Coltura: Paralisi di Bell",
-    "description": "Una fiala di coltura sigillata di Paralisi di Bell.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala di coltura sigillata di Paralisi di Bell.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1712": {
     "name": "Reliquiario: Malattia dell'Anima",
-    "description": "Un reliquiario sigillato di Malattia dell'Anima.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Malattia dell'Anima.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1713": {
     "name": "Reliquiario: Polmone di Petrolio",
-    "description": "Un reliquiario sigillato di Polmone di Petrolio.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Polmone di Petrolio.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1714": {
     "name": "Reliquiario: Tosse d'Asfalto",
-    "description": "Un reliquiario sigillato di Tosse d'Asfalto.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Tosse d'Asfalto.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1715": {
     "name": "Reliquiario: Vertigine della Torre",
-    "description": "Un reliquiario sigillato di Vertigine della Torre.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Vertigine della Torre.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1716": {
     "name": "Reliquiario: Amnesia del Ciclo",
-    "description": "Un reliquiario sigillato di Amnesia del Ciclo.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Amnesia del Ciclo.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1717": {
     "name": "Fiala Protetta: Ruggine dei Sigilli",
-    "description": "Una fiala protetta e sigillata di Ruggine dei Sigilli.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Ruggine dei Sigilli.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1718": {
     "name": "Fiala Protetta: Febbre del Famiglio",
-    "description": "Una fiala protetta e sigillata di Febbre del Famiglio.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Febbre del Famiglio.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1719": {
     "name": "Fiala Protetta: Acufene del Grimorio",
-    "description": "Una fiala protetta e sigillata di Acufene del Grimorio.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una fiala protetta e sigillata di Acufene del Grimorio.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1720": {
     "name": "Cartuccia Dati: Febbre dei Pacchetti",
-    "description": "Una cartuccia dati sigillata di Febbre dei Pacchetti.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartuccia dati sigillata di Febbre dei Pacchetti.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1721": {
     "name": "Cartuccia Dati: Male della Ricorsione",
-    "description": "Una cartuccia dati sigillata di Male della Ricorsione.\nAprirla trasmette la malattia a qualcuno nel gruppo."
+    "description": "Una cartuccia dati sigillata di Male della Ricorsione.\nAprirla trasmette la malattia a qualcuno nel Party."
   },
   "1722": {
     "name": "Reliquiario: La Quiete",
-    "description": "Un reliquiario sigillato di La Quiete.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato della Quiete.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1723": {
     "name": "Reliquiario: Possessione",
-    "description": "Un reliquiario sigillato di Possessione.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Possessione.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1724": {
     "name": "Reliquiario: Licantropia",
-    "description": "Un reliquiario sigillato di Licantropia.\nAprirlo trasmette la malattia a qualcuno nel gruppo."
+    "description": "Un reliquiario sigillato di Licantropia.\nAprirlo trasmette la malattia a qualcuno nel Party."
   },
   "1725": {
     "name": "<-- Wild Food -->",
@@ -6097,7 +6097,7 @@
   },
   "1745": {
     "name": "Ghiande",
-    "description": "Ghiande di quercia. Amare finche\nnon sono lisciviate."
+    "description": "Ghiande di quercia. Amare finché\nnon sono lisciviate."
   },
   "1746": {
     "name": "Castagne",
@@ -6153,7 +6153,7 @@
   },
   "1759": {
     "name": "Radice di Cicoria",
-    "description": "Radice pallida. Tostata da caffe finto."
+    "description": "Radice pallida. Tostata, diventa\ncaffè finto."
   },
   "1760": {
     "name": "Cime di Ortica",
@@ -6229,7 +6229,7 @@
   },
   "1778": {
     "name": "Crescione",
-    "description": "Foglie pepate di un ruscello corrente."
+    "description": "Foglie pepate colte in un ruscello."
   },
   "1779": {
     "name": "Salicornia",
@@ -6261,11 +6261,11 @@
   },
   "1786": {
     "name": "Tartufo Nero",
-    "description": "Una nocca di tartufo nero."
+    "description": "Un pezzo di tartufo nero."
   },
   "1787": {
     "name": "Radice Pallida di Grotta",
-    "description": "Radice cresciuta in basso nella roccia."
+    "description": "Radice cresciuta verso il basso\nattraverso la roccia."
   },
   "1788": {
     "name": "Spugnole di Cenere",
@@ -6273,7 +6273,7 @@
   },
   "1789": {
     "name": "Fungo di Zolfo",
-    "description": "Fungo giallo a mensola da una bocca calda."
+    "description": "Fungo giallo a mensola cresciuto\nsu una fumarola."
   },
   "1790": {
     "name": "Erbe di Ciglio Strada",
@@ -6285,7 +6285,7 @@
   },
   "1792": {
     "name": "Uovo di Anatra",
-    "description": "Uovo di anatra. Piu grande e piu grasso."
+    "description": "Uovo di anatra. Più grande e più grasso\ndi quello di gallina."
   },
   "1793": {
     "name": "Latte di Capra",
@@ -6349,11 +6349,11 @@
   },
   "1808": {
     "name": "Slitta CD-ROM Aokin",
-    "description": "Unita rigenerata pre Y2K.\nLegge i dischi, non scrive nulla."
+    "description": "Unità rigenerata pre Y2K.\nLegge i dischi, non scrive nulla."
   },
   "1809": {
     "name": "Slitta Zip 100",
-    "description": "Unita rigenerata pre Y2K.\nCento megabyte su un dischetto grasso."
+    "description": "Unità rigenerata pre Y2K.\nCento megabyte su un dischetto grasso."
   },
   "1810": {
     "name": "Alloggiamento SmartMedia 16MB",
@@ -6381,7 +6381,7 @@
   },
   "1816": {
     "name": "Pannello Passivo EHI 9.4in",
-    "description": "Pannello rigenerato pre Y2K.\n9.4 pollici, grande e spento."
+    "description": "Pannello rigenerato pre Y2K.\n9.4 pollici, grande e poco luminoso."
   },
   "1817": {
     "name": "Mattone NiCd 1000",
@@ -6464,7 +6464,7 @@
     "description": "Copia stampata di Household Gods,\ndi Aleister Crowley."
   },
   "1837": {
-    "name": "Tannhauser",
+    "name": "Tannhäuser",
     "description": "Copia stampata del Tannhauser,\ndi Aleister Crowley."
   },
   "1838": {
@@ -6625,7 +6625,7 @@
   },
   "1877": {
     "name": "Rastrelliera di Cucchiaini Ricordo",
-    "description": "Rastrelliera di cucchiaini smaltati\ndi dodici citta di mare."
+    "description": "Rastrelliera di cucchiaini smaltati\ndi dodici città di mare."
   },
   "1878": {
     "name": "Mazzo di Cartoline",
@@ -6641,7 +6641,7 @@
   },
   "1881": {
     "name": "Fila di Palle di Vetro",
-    "description": "Fila di sei palle di vetro, una citta\nciascuna."
+    "description": "Fila di sei palle di neve, una città\nciascuna."
   },
   "1882": {
     "name": "Pannello di Spille Smaltate",
@@ -6849,7 +6849,7 @@
   },
   "1933": {
     "name": "Uovo Imperiale Smaltato",
-    "description": "Uovo smaltato che si apre a cerniera.\nLa sorpresa dentro non c'e piu."
+    "description": "Uovo smaltato che si apre a cerniera.\nLa sorpresa dentro non c'è più."
   },
   "1934": {
     "name": "Diamante Azzurro Perfetto",
@@ -6869,10 +6869,10 @@
   },
   "1938": {
     "name": "Un Centesimo della Guiana Britannica",
-    "description": "Francobollo magenta ottagonale da un\ncentesimo, siglato dal postino."
+    "description": "Francobollo magenta ottagonale da un\ncentesimo, siglato dal direttore delle poste."
   },
   "1939": {
-    "name": "Nichelino Testa di Liberta",
+    "name": "Nichelino Testa di Libertà",
     "description": "Nichelino coniato in un anno in cui\nla zecca dice di non aver coniato."
   },
   "1940": {
@@ -6881,7 +6881,7 @@
   },
   "1941": {
     "name": "Doppia Aquila d'Oro",
-    "description": "Moneta d'oro dell'anno in cui il paese\nlascio il tallone aureo."
+    "description": "Moneta d'oro dell'anno in cui il paese\nlasciò il tallone aureo."
   },
   "1942": {
     "name": "Figurina Wagner",
@@ -7021,7 +7021,7 @@
   },
   "1981": {
     "name": "Modem Tascabile",
-    "description": "Apre il browser dell'Ipernet."
+    "description": "Apre il browser di Hypernet."
   },
   "1982": {
     "name": "Copia della Fedina",
@@ -7121,7 +7121,7 @@
   },
   "2006": {
     "name": "Campana del Coro degli Spiriti",
-    "description": "Aggiunge ogni spirito combattente al gruppo."
+    "description": "Aggiunge ogni spirito combattente al Party."
   },
   "2007": {
     "name": "Cuore d'Uragano",
@@ -7221,11 +7221,11 @@
   },
   "2031": {
     "name": "Nastro del Confidente",
-    "description": "Apre il pannello Empatia su un PNG."
+    "description": "Apre il pannello Empatizza su un PNG."
   },
   "2032": {
     "name": "Tessera della Clinica",
-    "description": "Apre la simulazione biologica del gruppo."
+    "description": "Apre la simulazione biologica del Party."
   },
   "2033": {
     "name": "Livella del Costruttore",
@@ -7233,7 +7233,7 @@
   },
   "2034": {
     "name": "Densimetro del Birraio",
-    "description": "Apre la distilleria e le sue botti."
+    "description": "Apre il birrificio e le sue botti."
   },
   "2035": {
     "name": "Tessera Stockbusters",
@@ -7297,7 +7297,7 @@
   },
   "2050": {
     "name": "Unguento che Ricuce",
-    "description": "Cura le parti del corpo rotte del gruppo."
+    "description": "Cura le parti del corpo rotte del Party."
   },
   "2051": {
     "name": "Cassa del Quartiermastro",
@@ -7305,7 +7305,7 @@
   },
   "2052": {
     "name": "Branda da Campo",
-    "description": "Ripristina completamente tutto il gruppo."
+    "description": "Ripristina completamente tutto il Party."
   },
   "2053": {
     "name": "Gettone del Favore di Gilda",
@@ -7361,19 +7361,19 @@
   },
   "2066": {
     "name": "Cancellatore Neurale",
-    "description": "Porta il membro al livello 1, mantiene ogni\nabilita e apre la scelta della classe."
+    "description": "Porta il membro al livello 1, mantiene ogni\nabilità e apre la scelta della classe."
   },
   "2067": {
     "name": "Tavola da surf",
-    "description": "Tavola {incerata | in vetroresina}.\n{Cavalca l'onda | Prendi la cresta} in acqua."
+    "description": "Tavola {incerata | in vetroresina}.\n{Cavalca | Doma} le onde al mare."
   },
   "2068": {
     "name": "Vasca di crescita portatile",
-    "description": "Una vasca di incubazione sigillata che fa crescere\nuna creatura di tua invenzione in tempi accelerati."
+    "description": "Vasca di incubazione sigillata che fa crescere\nuna creatura su misura in tempi accelerati."
   },
   "2069": {
     "name": "Ricombinatore genico portatile",
-    "description": "Un ricombinatore genico che impianta un embrione\numanoide di tua invenzione in un membro del gruppo."
+    "description": "Ricombinatore genico che impianta un embrione\numanoide su misura in un membro del Party."
   },
   "2070": {
     "name": "Farina",
@@ -7465,7 +7465,7 @@
   },
   "2092": {
     "name": "Sciame di surgerybot",
-    "description": "Custodia {ronzante|chiusa} di microdroni.\nRifa corpo e volto, come la gente del posto."
+    "description": "Custodia {ronzante|chiusa} di microdroni.\nRifà corpo e volto, come la gente del posto."
   },
   "2093": {
     "name": "Spazzolino",
@@ -7485,7 +7485,7 @@
   },
   "2097": {
     "name": "Salviette umidificate",
-    "description": "Salviette {stropicciate|richiudibili}.\nRipristina un po' di igiene, ovunque."
+    "description": "Salviette {stropicciate|richiudibili}.\nRipristinano un po' di igiene, ovunque."
   },
   "2098": {
     "name": "Deodorante stick",
@@ -7546,5 +7546,9 @@
   "2112": {
     "name": "Bustina di tinta",
     "description": "Una tinta per capelli {nero corvino|blu neon}.\nSostanza +20 per un giorno intero."
+  },
+  "2113": {
+    "name": "Base per pizza",
+    "description": "Un disco di pasta per pizza, già steso.\nAggiungi salsa e condimenti, poi inforna."
   }
 }

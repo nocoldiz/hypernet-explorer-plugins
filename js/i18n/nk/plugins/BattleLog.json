@@ -41,5 +41,7 @@
     }
   },
   "statDelta": "{stat} {points}",
-  "statUnchanged": "{stats} HELD WHERE DEY STAND!"
+  "statUnchanged": "{stats} UNCHANGED!",
+  "critical": "{text} (CRITICAL!)",
+  "regenerated": "{name} RECOVERED {value} HP!"
 }

@@ -10,5 +10,14 @@
   "swish": "TUTTA RETE!",
   "score": "SEGNATO!",
   "miss": "SBAGLIATO",
-  "finalScore": "Giocatore: {player}  {opponent}: {opponentScore}"
+  "finalScore": "Giocatore: {player}  {opponent}: {opponentScore}",
+  "hud": {
+    "power": "FORZA",
+    "touch": "TOCCO"
+  },
+  "result": {
+    "victory": "VITTORIA!",
+    "defeat": "SCONFITTA",
+    "draw": "PAREGGIO"
+  }
 }

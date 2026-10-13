@@ -106,27 +106,35 @@
         battleProgressPoints
     };
 
+    // The stat abbreviations live in js/i18n/<lang>/stats.json, outside what
+    // window.T covers. Read once per language at draw time, so the saved
+    // language (applied after plugin load) and a later switch are followed.
     let _statsI18n = null;
+    let _statsI18nLang = null;
 
-    const _loadStatsI18n = async () => {
-        const lang = ConfigManager.language || 'en';
+    const _loadStatsI18n = (lang) => {
+        _statsI18n = {};
+        _statsI18nLang = lang;
         const url = `js/i18n/${lang}/stats.json`;
         try {
-            const response = await fetch(url);
-            _statsI18n = await response.json();
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, false);
+            xhr.send();
+            if (xhr.status === 200 || xhr.status === 0) _statsI18n = JSON.parse(xhr.responseText);
         } catch (e) {
             console.error('SkillMaster: Failed to load i18n data from ' + url, e);
         }
     };
 
     const _si18n = (key) => {
+        const lang = (typeof ConfigManager !== 'undefined' && ConfigManager.language) || 'en';
+        if (_statsI18n === null || _statsI18nLang !== lang) _loadStatsI18n(lang);
         if (_statsI18n && _statsI18n[key]) {
             return _statsI18n[key];
         }
         return key;
     };
 
-    _loadStatsI18n();
     SkillMaster._si18n = _si18n;
 
     //=============================================================================

@@ -65,6 +65,8 @@
         celestialdragonanshar: { variant: 'celestialdragonanshar', scale: 4.6, texturePool: 'thunder', bodyColor: 0x161640, wingColor: 0x0c0c2a, accent: 0xfff0a0, hue: [0.66, 0.06], sat: [0.55, 0.12], lit: [0.26, 0.08] },
         primaloceandragonabzu: { variant: 'primaloceandragonabzu', scale: 4.5, texturePool: 'water', bodyColor: 0x103a6a, wingColor: 0x0a2a50, accent: 0x66f0ff, hue: [0.58, 0.06], sat: [0.65, 0.12], lit: [0.30, 0.10] },
         searingmagmawyrm: { variant: 'searingmagmawyrm', scale: 4.0, texturePool: 'fire', bodyColor: 0x241410, wingColor: 0x1a0e08, accent: 0xff6a10, hue: [0.04, 0.04], sat: [0.85, 0.10], lit: [0.16, 0.08] },
+        // Level 1-5 roster: a squat three-headed hatchling still wearing its egg.
+        lv_hydrahatchling: { variant: 'lv_hydrahatchling', scale: 2.0, texturePool: 'green', bodyColor: 0x7d8a4e, wingColor: 0x2e3a1e, accent: 0xffd23a, hue: [0.20, 0.06], sat: [0.40, 0.12], lit: [0.40, 0.10] },
         dragonofwisdomenki: { variant: 'dragonofwisdomenki', scale: 4.6, texturePool: 'water', bodyColor: 0x18306a, wingColor: 0x122550, accent: 0xf0c850, hue: [0.62, 0.05], sat: [0.60, 0.12], lit: [0.30, 0.10] }
     };
 
@@ -110,6 +112,7 @@
                 case 'primaloceandragonabzu': this._buildPrimalOceanDragonAbzu(); break;
                 case 'searingmagmawyrm':      this._buildSearingMagmaWyrm(); break;
                 case 'dragonofwisdomenki':    this._buildDragonOfWisdomEnki(); break;
+                case 'lv_hydrahatchling':     this._buildHydraHatchling(); break;
                 default:          this._buildDragon(); break;
             }
             this.model = this.bodyGroup;
@@ -132,8 +135,37 @@
             const eye = new THREE.Mesh(new THREE.SphereGeometry(r, 8, 8), this._mat(accent || 0x111111, 1.0, 0.2, accent));
             eye.position.set(x, y, z); parent.add(eye); return eye;
         }
+        // A wing spreads outward from its own shoulder. The shared builder fans
+        // its fingers toward -side, which crossed every wing over the back to
+        // the far flank (and flapped it down through the body), so a wing that
+        // comes back crossed is rebuilt from the other hand and keeps its side.
         _wing(mat, side, x, y, z) {
-            return this.buildDragonWing(mat, side, x, y, z);
+            let g = this.buildDragonWing(mat, side, x, y, z);
+            const tips = g._wingTips || [];
+            const far = tips[tips.length - 1];
+            if (far && far.x * side < 0) {
+                this.bodyGroup.remove(g);
+                const i = this._wings.indexOf(g); if (i >= 0) this._wings.splice(i, 1);
+                g.traverse(o => { if (o.geometry) o.geometry.dispose(); });
+                g = this.buildDragonWing(mat, -side, x, y, z);
+                g._side = side;
+            }
+            return g;
+        }
+        // A point on a wing's membrane, a fraction `u` of the way from the
+        // shoulder to finger `k`'s tip, so wing decor rides on the skin and
+        // flaps with it instead of hanging in the air beside it.
+        _wingPoint(w, k, u) {
+            const tips = w._wingTips || [];
+            const t = tips[Math.min(k, tips.length - 1)];
+            return t ? new THREE.Vector3(t.x * u, t.y * u, 0.03) : new THREE.Vector3(0, 0, 0.03);
+        }
+        // An extra bone laid along finger `k`, knuckle to tip (the default
+        // wing's knuckle stands 0.48 up the arm), so ribs follow the struts.
+        _wingRib(w, mat, k, r) {
+            const tips = w._wingTips || [];
+            const t = tips[Math.min(k, tips.length - 1)];
+            if (t) this.addStrut(w, mat, new THREE.Vector3(0, 0.48, 0.03), new THREE.Vector3(t.x, t.y, 0.03), r, r * 0.6);
         }
         _limb(mat, x, y, z, len) {
             const g = new THREE.Group();
@@ -651,7 +683,7 @@
             // Big wings studded with ice spikes along the leading edge.
             this.lWing = this._wing(wingMat, -1, -0.45, 1.8, -0.1); this.lWing.scale.setScalar(1.4);
             this.rWing = this._wing(wingMat, 1, 0.45, 1.8, -0.1); this.rWing.scale.setScalar(1.4);
-            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 3; i++) { const spk = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.3, 4), iceMat); spk.position.set(w._side * (0.4 + i * 0.3), 0.2 + i * 0.1, 0); spk.rotation.z = w._side * 1.2; w.add(spk); } }
+            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 3; i++) { const tip = this._wingPoint(w, i, 1.0); const spk = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.3, 4), iceMat); spk.position.copy(tip); spk.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tip.clone().sub(new THREE.Vector3(0, 0.48, 0.03)).normalize()); spk.translateY(0.1); w.add(spk); } }
             // Sturdy legs.
             this.leftLeg = this._limb(mat, -0.48, 1.0, 0.2, 0.95);
             this.rightLeg = this._limb(mat, 0.48, 1.0, 0.2, 0.95);
@@ -733,7 +765,7 @@
             this.fireOrgan = new THREE.Mesh(new THREE.SphereGeometry(0.32, 14, 12), sacMat);
             this.fireOrgan.position.set(0, 1.2, 0.6); this.fireOrgan.scale.set(1.1, 0.95, 1.0); this.bodyGroup.add(this.fireOrgan);
             // Concentric sonic ring around the throat.
-            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.04, 8, 16), this._mat(p.accent, 0.6, 0.2, p.accent)); ring.position.set(0, 1.2, 0.65); this.fireOrgan.add(ring);
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.04, 8, 16), this._mat(p.accent, 0.6, 0.2, p.accent)); ring.position.set(0, 0, 0.05); this.fireOrgan.add(ring);
             // Short stubby wings.
             this.lWing = this._wing(wingMat, -1, -0.45, 1.0, -0.05); this.lWing.scale.setScalar(0.7);
             this.rWing = this._wing(wingMat, 1, 0.45, 1.0, -0.05); this.rWing.scale.setScalar(0.7);
@@ -890,7 +922,8 @@
             }
             this.bodyGroup.add(this.body);
             // Static fizz: tiny scattered cube "particles" dissolving off the edges.
-            for (let i = 0; i < 14; i++) { const px = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.07), starMat); px.position.set((this.idRand() - 0.5) * 1.6, 1.2 + (this.idRand() - 0.5) * 1.0, (this.idRand() - 0.5) * 2.0); this.bodyGroup.add(px); }
+            const fizz = new THREE.Group(); fizz.userData.float = true; this.bodyGroup.add(fizz);
+            for (let i = 0; i < 14; i++) { const px = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.07), starMat); px.position.set((this.idRand() - 0.5) * 1.6, 1.2 + (this.idRand() - 0.5) * 1.0, (this.idRand() - 0.5) * 2.0); fizz.add(px); }
             // Cosmic neck/head.
             this.neck = this._neckHead(mat, 0, 1.55, 0.9, p.accent, 1.2);
             this.head = this.neck._head;
@@ -1027,6 +1060,96 @@
             ];
         }
 
+        // ── Hydra Hatchling: squat newborn hydra, three short banded necks that
+        // bicker over every bite, a cap of its own eggshell still stuck to the
+        // back and a glowing yolk sac sagging under the belly. Low and wide on
+        // four splayed stubs, body nose to tail along Z.
+        _buildHydraHatchling() {
+            const p = this.profile;
+            const mat = this._skinMat(p.bodyColor, 0.75);
+            const bandMat = this._mat(p.wingColor, 1.0, 0.8);
+            const bellyMat = this._mat(0xd8c89a, 1.0, 0.85);
+            const shellMat = this._mat(0xeae2c8, 1.0, 0.6);
+            const yolkMat = this._mat(0xffb43a, 0.82, 0.3, 0xff9a1a);
+            const toothMat = this._mat(0xf4f0e0, 1.0, 0.4);
+            // Barrel: a faceted egg-shaped lump, longer than it is wide.
+            this.body = new THREE.Mesh(new THREE.SphereGeometry(0.5, 9, 7), mat);
+            this.body.position.set(0, 0.62, 0); this.body.scale.set(1.0, 0.7, 1.35);
+            this.bodyGroup.add(this.body);
+            // Dark bands round the barrel (rings in the XY plane, squashed to the body).
+            for (const [bz, br] of [[0.08, 0.49], [-0.3, 0.45]]) { const band = new THREE.Mesh(new THREE.TorusGeometry(br, 0.04, 4, 12), bandMat); band.position.set(0, 0.62, bz); band.scale.set(1, 0.7, 1); this.bodyGroup.add(band); }
+            // Pale underbelly plate and the yolk sac it has not finished absorbing.
+            const belly = new THREE.Mesh(new THREE.SphereGeometry(0.36, 8, 5), bellyMat); belly.position.set(0, 0.5, 0.12); belly.scale.set(1.0, 0.55, 1.3); this.bodyGroup.add(belly);
+            this.yolk = new THREE.Mesh(new THREE.SphereGeometry(0.2, 7, 5), yolkMat); this.yolk.position.set(0, 0.34, 0.05); this.yolk.scale.set(1.0, 0.8, 1.25); this.bodyGroup.add(this.yolk);
+            // The odd detail: a jagged cap of its own eggshell still worn on the back.
+            const shell = new THREE.Group();
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(0.3, 7, 3, 0, Math.PI * 2, 0, Math.PI * 0.4), shellMat); shell.add(cap);
+            for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2 + 0.3; const tooth = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.12 + (i % 2) * 0.06, 3), shellMat); tooth.position.set(Math.cos(a) * 0.27, 0.06 + (i % 2) * 0.03, Math.sin(a) * 0.27); tooth.rotation.set(Math.sin(a) * 0.5, 0, -Math.cos(a) * 0.5); shell.add(tooth); }
+            shell.position.set(0.06, 0.82, -0.18); shell.rotation.set(-0.15, 0, 0.32); this.bodyGroup.add(shell);
+            // Three short necks of uneven length, the side heads turned in on the middle one.
+            const hatchNeck = (bx, by, bz, segs, lean, big) => {
+                const g = new THREE.Group();
+                let prev = new THREE.Vector3(0, 0, 0), pr = 0.13;
+                for (let i = 0; i < segs; i++) {
+                    const r = 0.13 - i * 0.015;
+                    const pt = new THREE.Vector3(lean * 0.05 * i, 0.16 * i, 0.07 * i);
+                    const seg = new THREE.Mesh(new THREE.SphereGeometry(r, 7, 5), i % 2 ? bandMat : mat); seg.position.copy(pt); g.add(seg);
+                    if (i > 0) this.addStrut(g, i % 2 ? bandMat : mat, prev, pt, pr * 0.85, r * 0.85, 6);
+                    prev = pt; pr = r;
+                }
+                const head = new THREE.Group();
+                const sk = new THREE.Mesh(new THREE.DodecahedronGeometry(big ? 0.17 : 0.15, 0), mat); sk.scale.set(1, 0.85, 1.3); head.add(sk);
+                const snout = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.2, 5), mat); snout.rotation.x = Math.PI / 2; snout.position.set(0, -0.01, 0.24); head.add(snout);
+                // Lower jaw on its own hinge so the heads can snap at each other.
+                const jaw = new THREE.Group(); jaw.position.set(0, -0.07, 0.08);
+                const jb = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.04, 0.2), bellyMat); jb.position.set(0, -0.02, 0.1); jaw.add(jb);
+                for (const tx of [-0.035, 0.035]) { const tooth = new THREE.Mesh(new THREE.ConeGeometry(0.014, 0.05, 3), toothMat); tooth.position.set(tx, 0.02, 0.17); jaw.add(tooth); }
+                head.add(jaw);
+                head.position.set(prev.x + lean * 0.04, prev.y + 0.12, prev.z + 0.12);
+                head.rotation.y = -lean * 0.55;
+                g.add(head);
+                this.addStrut(g, mat, prev, head.position, pr * 0.85, 0.11, 6);
+                g.position.set(bx, by, bz);
+                g._head = head; g._jaw = jaw;
+                this.bodyGroup.add(g);
+                return g;
+            };
+            this.head1 = hatchNeck(-0.24, 0.8, 0.45, 3, -1, false);
+            this.head2 = hatchNeck(0.0, 0.85, 0.5, 4, 0, true);
+            this.head3 = hatchNeck(0.24, 0.8, 0.45, 2, 1, false);
+            // Mismatched eyes: the left head has one huge milky eye, the right a
+            // pair of beads, the middle the yolk-gold glare of the one in charge.
+            this._eye(this.head1._head, -0.09, 0.05, 0.08, 0.065, 0xe8f0d0);
+            this._eye(this.head1._head, 0.08, 0.06, 0.11, 0.025, 0x111111);
+            for (const ex of [-0.08, 0.08]) this._eye(this.head2._head, ex, 0.07, 0.12, 0.04, p.accent);
+            for (const ex of [-0.07, 0.07]) this._eye(this.head3._head, ex, 0.06, 0.11, 0.03, 0xff5a2a);
+            // Four stubby legs splayed out to the sides.
+            this._hatchLegs = [];
+            for (const [lx, lz] of [[-1, 0.3], [1, 0.3], [-1, -0.3], [1, -0.3]]) {
+                const leg = new THREE.Group(); leg.position.set(lx * 0.32, 0.5, lz);
+                const foot = new THREE.Vector3(lx * 0.14, -0.44, 0.03);
+                this.addStrut(leg, mat, new THREE.Vector3(0, 0, 0), foot, 0.125, 0.085, 6);
+                const pad = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.05, 0.19), mat); pad.position.set(foot.x, foot.y - 0.02, foot.z + 0.04); leg.add(pad);
+                for (let c = -1; c <= 1; c++) { const claw = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.07, 3), toothMat); claw.position.set(foot.x + c * 0.045, foot.y - 0.02, foot.z + 0.15); claw.rotation.x = Math.PI / 2; leg.add(claw); }
+                this.bodyGroup.add(leg); this._hatchLegs.push(leg);
+            }
+            // Short banded tail ending in a little three-spined frill.
+            this.tail = new THREE.Group();
+            let ty = 0.6, tz = -0.6, tr = 0.16, tPrev = new THREE.Vector3(0, ty, tz);
+            for (let i = 0; i < 4; i++) { const r = 0.16 - i * 0.03; const pt = new THREE.Vector3(0, ty, tz); const seg = new THREE.Mesh(new THREE.SphereGeometry(r, 7, 5), i % 2 ? bandMat : mat); seg.position.copy(pt); this.tail.add(seg); if (i > 0) this.addStrut(this.tail, mat, tPrev, pt, tr * 0.85, r * 0.85, 6); tPrev = pt; tr = r; tz -= 0.2; ty -= 0.04 * i; }
+            for (let i = -1; i <= 1; i++) { const fin = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.24, 3), bandMat); fin.position.set(i * 0.06, tPrev.y + 0.04, tPrev.z - 0.08); fin.rotation.set(-1.2, 0, i * 0.5); fin.scale.set(1, 1, 0.3); this.tail.add(fin); }
+            this.bodyGroup.add(this.tail);
+            this._partMeshMap = { BODY: this.body, HEAD_ONE: this.head1, HEAD_TWO: this.head2, HEAD_THREE: this.head3, TAIL: this.tail, MAW: this.head2._jaw };
+            this._cascadeRules = [
+                { gone: ['BODY'], hide: [this.body, this.head1, this.head2, this.head3, this.tail, this.yolk, shell].concat(this._hatchLegs) },
+                { gone: ['HEAD_ONE'], hide: [this.head1] },
+                { gone: ['HEAD_TWO'], hide: [this.head2] },
+                { gone: ['HEAD_THREE'], hide: [this.head3] },
+                { gone: ['TAIL'], hide: [this.tail] },
+                { gone: ['MAW'], hide: [this.head2._jaw] },
+            ];
+        }
+
         // ── Mire Dragon: mud-caked swamp dragon, tattered wings, corrosive fog ─
         _buildMireDragon() {
             const p = this.profile;
@@ -1098,11 +1221,12 @@
                 for (let i = 0; i < 5; i++) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.7 + i * 0.08, 5), featherMat); f.position.set(side * (0.2 + i * 0.18), i * 0.04, 0); f.rotation.z = side * (1.1 - i * 0.08); f.scale.set(1, 1, 0.2); g.add(f); }
                 g.position.set(x, y, z); g._side = side; this.bodyGroup.add(g); this._wings.push(g); return g;
             };
-            this.lWing = featherWing(-1, -0.35, 1.7, -0.1);
-            this.rWing = featherWing(1, 0.35, 1.7, -0.1);
-            // Small clawed legs.
-            this.leftLeg = this._limb(mat, -0.3, 0.75, 0.1, 0.6);
-            this.rightLeg = this._limb(mat, 0.3, 0.75, 0.1, 0.6);
+            // The coil sways to +x here, so the wings and legs sit on it, not on the spine line.
+            this.lWing = featherWing(-1, 0.17, 1.5, -0.1);
+            this.rWing = featherWing(1, 0.57, 1.5, -0.1);
+            // Small clawed legs under the first coils.
+            this.leftLeg = this._limb(mat, 0.08, 0.95, -0.46, 0.84);
+            this.rightLeg = this._limb(mat, 0.44, 0.95, -0.46, 0.84);
             // Tapering coiling tail with a feathered tip.
             this.tail = new THREE.Group();
             let ty = 0.85, tz = -0.85, tr = 0.2, tPrev = new THREE.Vector3(0, ty, tz);
@@ -1144,7 +1268,7 @@
             this.rightLeg = this._limb(mat, 0.55, 1.0, 0.2, 1.1);
             // Long heavy tail with a rune-etched club.
             this.tail = this._tail(mat, 1);
-            const club = new THREE.Mesh(new THREE.IcosahedronGeometry(0.24, 0), mat); club.position.set(0, 1.0, -2.4); this.tail.add(club);
+            const club = new THREE.Mesh(new THREE.IcosahedronGeometry(0.24, 0), mat); club.position.set(0, 0.9, -2.08); this.tail.add(club);
             const cr = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.02, 6, 12), runeMat); cr.position.copy(club.position); cr.rotation.y = Math.PI / 2; this.tail.add(cr);
             this._wireDragonRig();
         }
@@ -1212,7 +1336,7 @@
             // Tattered translucent wings (just the finger-bones + thin shreds).
             this.lWing = this._wing(wingMat, -1, -0.4, 1.7, -0.1); this.lWing.scale.set(1.3, 1.4, 1);
             this.rWing = this._wing(wingMat, 1, 0.4, 1.7, -0.1); this.rWing.scale.set(1.3, 1.4, 1);
-            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 3; i++) { const fb = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.015, 0.7, 5), boneMat); fb.position.set(w._side * (0.3 + i * 0.25), 0.1, 0); fb.rotation.z = w._side * (1.0 - i * 0.15); w.add(fb); } }
+            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 3; i++) this._wingRib(w, boneMat, i, 0.025); }
             // Bony stick legs with clawed feet.
             this.leftLeg = this._limb(boneMat, -0.42, 0.95, 0.2, 1.0);
             this.rightLeg = this._limb(boneMat, 0.42, 0.95, 0.2, 1.0);
@@ -1245,7 +1369,8 @@
             }
             this.bodyGroup.add(this.body);
             // Dissolving starry scales spiralling outward as glowing motes.
-            for (let i = 0; i < 22; i++) { const sz = 0.04 + this.idRand() * 0.06; const mote = new THREE.Mesh(new THREE.OctahedronGeometry(sz, 0), voidMat); const a = i * 0.9; mote.position.set(Math.cos(a) * (0.7 + this.idRand() * 0.9), 1.1 + (this.idRand() - 0.5) * 1.4, Math.sin(a) * 0.4 + (this.idRand() - 0.5) * 1.6); this.bodyGroup.add(mote); }
+            const motes = new THREE.Group(); motes.userData.float = true; this.bodyGroup.add(motes);
+            for (let i = 0; i < 22; i++) { const sz = 0.04 + this.idRand() * 0.06; const mote = new THREE.Mesh(new THREE.OctahedronGeometry(sz, 0), voidMat); const a = i * 0.9; mote.position.set(Math.cos(a) * (0.7 + this.idRand() * 0.9), 1.1 + (this.idRand() - 0.5) * 1.4, Math.sin(a) * 0.4 + (this.idRand() - 0.5) * 1.6); motes.add(mote); }
             // Cosmic skull on a swirling neck.
             this.neck = this._neckHead(mat, 0, 1.5, 0.95, p.accent, 1.4);
             this.head = this.neck._head;
@@ -1258,14 +1383,17 @@
             // Wide starfield energy wings.
             this.lWing = this._wing(wingMat, -1, -0.45, 1.75, -0.1); this.lWing.scale.setScalar(1.5);
             this.rWing = this._wing(wingMat, 1, 0.45, 1.75, -0.1); this.rWing.scale.setScalar(1.5);
-            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 4; i++) { const st = new THREE.Mesh(new THREE.TetrahedronGeometry(0.05, 0), voidMat); st.position.set(w._side * (0.3 + i * 0.25), 0.1 * i, 0); w.add(st); } }
+            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 4; i++) { const st = new THREE.Mesh(new THREE.TetrahedronGeometry(0.05, 0), voidMat); st.position.copy(this._wingPoint(w, i, 0.45 + i * 0.12)); w.add(st); } }
             // Vestigial energy claws.
-            this.leftLeg = this._limb(mat, -0.4, 0.85, 0.15, 0.8);
-            this.rightLeg = this._limb(mat, 0.4, 0.85, 0.15, 0.8);
+            this.leftLeg = this._limb(mat, -0.4, 0.95, 0.0, 0.95);
+            this.rightLeg = this._limb(mat, 0.4, 0.95, 0.0, 0.95);
+            // The coil weaves off the spine line, so each hip reaches up to the ring above it.
+            this.addStrut(this.leftLeg, mat, new THREE.Vector3(0, 0.08, 0), new THREE.Vector3(0.09, 0.55, 0.04), 0.12, 0.1);
+            this.addStrut(this.rightLeg, mat, new THREE.Vector3(0, 0.08, 0), new THREE.Vector3(0.06, 0.41, 0.11), 0.12, 0.1);
             // Tail unravelling into a stream of shrinking void cubes.
             this.tail = new THREE.Group();
             let ty = 1.05, tz = -0.9;
-            for (let i = 0; i < 8; i++) { const r = 0.26 - i * 0.028; const seg = new THREE.Mesh(i < 3 ? new THREE.TorusGeometry(Math.max(0.08, r), 0.08, 6, 12) : new THREE.OctahedronGeometry(Math.max(0.05, r), 0), i < 3 ? mat : voidMat); if (i < 3) seg.rotation.x = Math.PI / 2; seg.position.set((this.idRand() - 0.5) * 0.25 * i, ty, tz); this.tail.add(seg); tz -= 0.3; }
+            for (let i = 0; i < 8; i++) { const r = 0.26 - i * 0.028; const seg = new THREE.Mesh(i < 3 ? new THREE.TorusGeometry(Math.max(0.08, r), 0.08, 6, 12) : new THREE.OctahedronGeometry(Math.max(0.05, r), 0), i < 3 ? mat : voidMat); if (i < 3) seg.rotation.x = Math.PI / 2; seg.position.set((this.idRand() - 0.5) * 0.25 * i, ty, tz); if (i >= 3) seg.userData.float = true; this.tail.add(seg); tz -= 0.3; }
             this.bodyGroup.add(this.tail);
             this._wireDragonRig();
         }
@@ -1295,13 +1423,14 @@
             // Vast star-speckled wings.
             this.lWing = this._wing(wingMat, -1, -0.45, 1.85, -0.1); this.lWing.scale.setScalar(1.6);
             this.rWing = this._wing(wingMat, 1, 0.45, 1.85, -0.1); this.rWing.scale.setScalar(1.6);
-            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 5; i++) { const st = new THREE.Mesh(new THREE.TetrahedronGeometry(0.05, 0), starMat); st.position.set(w._side * (0.25 + i * 0.22), (this.idRand() - 0.5) * 0.5, 0); w.add(st); } }
+            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 5; i++) { const st = new THREE.Mesh(new THREE.TetrahedronGeometry(0.05, 0), starMat); st.position.copy(this._wingPoint(w, i % 4, 0.3 + this.idRand() * 0.6)); w.add(st); } }
             // Slender legs.
             this.leftLeg = this._limb(mat, -0.46, 1.0, 0.2, 1.0);
             this.rightLeg = this._limb(mat, 0.46, 1.0, 0.2, 1.0);
             // Long flowing tail trailing a comet-tail of stars.
             this.tail = this._tail(mat, 1);
-            for (let i = 0; i < 6; i++) { const sp = new THREE.Mesh(new THREE.TetrahedronGeometry(0.06 - i * 0.006, 0), starMat); sp.position.set((this.idRand() - 0.5) * 0.3, 1.0 - i * 0.02, -2.0 - i * 0.28); this.tail.add(sp); }
+            const comet = new THREE.Group(); comet.userData.float = true; this.tail.add(comet);
+            for (let i = 0; i < 6; i++) { const sp = new THREE.Mesh(new THREE.TetrahedronGeometry(0.06 - i * 0.006, 0), starMat); sp.position.set((this.idRand() - 0.5) * 0.3, 1.0 - i * 0.02, -2.0 - i * 0.28); comet.add(sp); }
             this._wireDragonRig();
         }
 
@@ -1339,7 +1468,7 @@
             // Broad webbed finned wings.
             this.lWing = this._wing(finMat, -1, -0.45, 1.5, 0.2); this.lWing.scale.set(1.5, 0.9, 1);
             this.rWing = this._wing(finMat, 1, 0.45, 1.5, 0.2); this.rWing.scale.set(1.5, 0.9, 1);
-            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 3; i++) { const ray = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.01, 0.9, 5), mat); ray.position.set(w._side * (0.3 + i * 0.25), 0, 0); ray.rotation.z = w._side * (1.0 - i * 0.12); w.add(ray); } }
+            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 3; i++) this._wingRib(w, mat, i, 0.018); }
             // Flipper legs.
             this.leftLeg = this._limb(mat, -0.4, 0.85, 0.2, 0.75);
             this.rightLeg = this._limb(mat, 0.4, 0.85, 0.2, 0.75);
@@ -1470,7 +1599,7 @@
             // Broad serene wings with gold-traced ribs.
             this.lWing = this._wing(wingMat, -1, -0.45, 1.7, -0.1); this.lWing.scale.set(1.5, 1.3, 1);
             this.rWing = this._wing(wingMat, 1, 0.45, 1.7, -0.1); this.rWing.scale.set(1.5, 1.3, 1);
-            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 3; i++) { const rib = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.012, 1.0, 5), goldMat); rib.position.set(w._side * (0.3 + i * 0.24), 0, 0); rib.rotation.z = w._side * (1.0 - i * 0.12); w.add(rib); } }
+            for (const w of [this.lWing, this.rWing]) { for (let i = 0; i < 3; i++) this._wingRib(w, goldMat, i, 0.022); }
             // Stately gilded-clawed legs.
             this.leftLeg = this._limb(mat, -0.46, 0.9, 0.2, 0.95);
             this.rightLeg = this._limb(mat, 0.46, 0.9, 0.2, 0.95);
@@ -1498,9 +1627,10 @@
             this.model.rotation.z = hitJolt;
             this.model.position.y = this._baseY + Math.sin(t * 1.3) * 0.06 * this.scale;
 
-            // Wing flap.
-            const flap = Math.sin(t * (fast ? 7 : 3)) * 0.5;
-            this._wings.forEach(w => { if (w.visible) w.rotation.z = (w._side || 1) * (0.2 + flap); });
+            // Wing flap about the shoulder hinge: side * + raises a wing, and the
+            // upstroke stops with the leading finger upright.
+            const flap = Math.sin(t * (fast ? 7 : 3)) * 0.45;
+            this._wings.forEach(w => { if (w.visible) w.rotation.z = (w._side || 1) * (0.05 + flap); });
 
             // Glow pulses.
             if (this.fireOrgan && this.fireOrgan.material) this.fireOrgan.material.emissiveIntensity = (fast ? 1.5 : 0.5) + Math.sin(t * 6) * 0.4;
@@ -1512,6 +1642,17 @@
             });
             if (this.tail && this.tail.visible) this.tail.rotation.y = Math.sin(t * 1.6) * 0.12;
             if (this.feathers && this.feathers.visible) this.feathers.rotation.z = Math.sin(t * 2) * 0.06;
+
+            // Hydra Hatchling: the side heads turn in and snap at the middle one,
+            // which lunges forward on an attack; each neck pivots at its root.
+            if (this.variant === 'lv_hydrahatchling') {
+                const spat = Math.sin(t * (fast ? 9 : 3.2));
+                if (this.head1 && this.head1.visible) this.head1.rotation.y = 0.2 + Math.max(0, spat) * 0.35;
+                if (this.head3 && this.head3.visible) this.head3.rotation.y = -0.2 - Math.max(0, -spat) * 0.35;
+                if (this.head2 && this.head2.visible) this.head2.rotation.x = fast ? Math.max(0, Math.sin(t * 6)) * 0.45 : Math.sin(t * 1.7) * 0.08;
+                [this.head1, this.head2, this.head3].forEach((h, i) => { if (h && h._jaw) h._jaw.rotation.x = 0.08 + Math.max(0, Math.sin(t * (fast ? 14 : 5) + i * 2.1)) * 0.45; });
+                if (this.yolk && this.yolk.visible) this.yolk.material.emissiveIntensity = 0.4 + Math.sin(t * 2.4) * 0.2;
+            }
         }
 
         deathPose(deltaTime) {
@@ -1559,6 +1700,7 @@
     reg('primaloceandragonabzu', { aliases: ['primaloceandragonabzu'], scale: S.primaloceandragonabzu.scale, weapon: 0, create: make });
     reg('searingmagmawyrm',      { aliases: ['searingmagmawyrm'], scale: S.searingmagmawyrm.scale, weapon: 0, create: make });
     reg('dragonofwisdomenki',    { aliases: ['dragonofwisdomenki'], scale: S.dragonofwisdomenki.scale, weapon: 0, create: make });
+    reg('lv_hydrahatchling',     { aliases: ['lv_hydrahatchling'], scale: S.lv_hydrahatchling.scale, weapon: 0, create: make });
 
     const NAMED = {
         firedragonling: ["Fire Dragonling"],
@@ -1587,6 +1729,7 @@
         primaloceandragonabzu: ["Primal Ocean Dragon Abzu"],
         searingmagmawyrm: ["Searing Magma Wyrm"],
         dragonofwisdomenki: ["Dragon of Wisdom Enki ", "Dragon of Wisdom Enki"],
+        lv_hydrahatchling: ["Hydra Hatchling"],
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

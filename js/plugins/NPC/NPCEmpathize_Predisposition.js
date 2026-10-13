@@ -1254,7 +1254,310 @@
     return thoughts;
   }
 
+  // NPC-EMOTIONS-START
+  // ── NPC emotions, boredom and the one place an exchange is scored ────────
+  // An NPC feels in the model window.EmotionModel defines once
+  // (Health_BiologicSimulation.js), the same model a party member's brain
+  // chapter reads. The state lives on the society profile (profile.emotions),
+  // is created the first time somebody reads it (seeded from the NPC's
+  // personality and traits) and is brought up to date only when read: the
+  // game minutes that passed decay it toward its baseline plus what the
+  // moment does to them (the hour, their needs, an illness), and whatever the
+  // simulation logged about them since (a shift, a meal, a theft) is felt
+  // once. Nothing here runs per frame. It belongs to the NPC, not to whoever
+  // is talking to them: handing the conversation to another party member
+  // changes nothing in it.
+  //
+  // _empathizeAct is the single scorer every Empathize exchange goes through:
+  // it applies the boredom of repeating one move, the NPC's mood, pushes the
+  // NPC (and the speaking party member) toward the emotions the move carries
+  // (INTERACTION_EMOTIONS) and then moves the standing.
+  // i18n-ignore-start: emotion ids, interaction keys, event-log tags and personality ids
+  const _EM = () => window.EmotionModel || null;
+
+  // What each Empathize move pushes. `npc` is felt by the one spoken to,
+  // `speaker` by the party member who made it. `intent` says what the move
+  // was meant as: a friendly move that came out negative is felt as SOURED
+  // instead, a hostile one is felt as itself whatever it scored.
+  const INTERACTION_EMOTIONS = {
+    'social:praise':     { intent: 'positive', npc: { joy: 10, proud: 8, trust: 3 }, speaker: { joy: 3 } },
+    'social:compliment': { intent: 'positive', npc: { joy: 8, loved: 6, proud: 4 }, speaker: { joy: 3 } },
+    'social:encourage':  { intent: 'positive', npc: { hopeful: 10, trust: 5, stressed: -5 }, speaker: { hopeful: 3 } },
+    'social:flatter':    { intent: 'positive', npc: { proud: 8, joy: 4, trust: -2 }, speaker: { anticipation: 2 } },
+    'social:thank':      { intent: 'positive', npc: { loved: 6, content: 6, proud: 3 }, speaker: { content: 3 } },
+    'social:smalltalk':  { intent: 'neutral',  npc: { relaxed: 6, lonely: -8, loved: 2 }, speaker: { relaxed: 3, lonely: -4 } },
+    'social:gossip':     { intent: 'neutral',  npc: { curiosity: 8, anticipation: 4, lonely: -6 }, speaker: { curiosity: 3 } },
+    'social:weather':    { intent: 'neutral',  npc: { relaxed: 3, boredom: 3, lonely: -4 }, speaker: { boredom: 2 } },
+    'social:insult':     { intent: 'negative', npc: { anger: 15, shame: 6, joy: -8, trust: -8 }, speaker: { proud: 3, anger: 2 } },
+    'social:mock':       { intent: 'negative', npc: { shame: 12, anger: 10, joy: -6 }, speaker: { joy: 2 } },
+    'social:criticize':  { intent: 'negative', npc: { shame: 8, irritable: 8, sadness: 4 }, speaker: { irritable: 2 } },
+    'social:threaten':   { intent: 'negative', npc: { fear: 18, anger: 8, stressed: 10, trust: -12 }, speaker: { anticipation: 3, stressed: 2 } },
+    'social:joke':       { intent: 'positive', npc: { joy: 10, surprise: 6, relaxed: 4 }, speaker: { joy: 4 } },
+    'social:story':      { intent: 'positive', npc: { curiosity: 10, nostalgic: 6, joy: 4 }, speaker: { proud: 3 } },
+    'social:poem':       { intent: 'positive', npc: { loved: 5, nostalgic: 6, joy: 5, surprise: 3 }, speaker: { proud: 3 } },
+    'feral:growl':       { intent: 'negative', npc: { fear: 12, anger: 4 } },
+    'feral:roar':        { intent: 'negative', npc: { fear: 20, stressed: 10 } },
+    'feral:drool':       { intent: 'negative', npc: { disgust: 12 } },
+    'feral:sniff':       { intent: 'neutral',  npc: { surprise: 5, curiosity: 4 } },
+    'feral:nuzzle':      { intent: 'positive', npc: { loved: 10, joy: 6, relaxed: 4 }, speaker: { loved: 4 } },
+    'feral:beg':         { intent: 'positive', npc: { loved: 4, curiosity: 4, joy: 3 }, speaker: { anticipation: 3 } },
+    'pet':               { intent: 'positive', npc: { loved: 10, relaxed: 10, content: 6 }, speaker: { content: 4, relaxed: 4 } },
+    'feed':              { intent: 'positive', npc: { content: 14, joy: 6, trust: 6, loved: 4 }, speaker: { content: 3 } },
+    'gift':              { intent: 'positive', npc: { joy: 12, surprise: 8, loved: 6, trust: 4 }, speaker: { proud: 3, joy: 2 } },
+    'bribe':             { intent: 'positive', npc: { anticipation: 8, joy: 4, trust: -4 }, speaker: { stressed: 2 } },
+    'bribeRefused':      { intent: 'negative', npc: { disgust: 10, anger: 6, trust: -8 }, speaker: { shame: 5 } },
+    'trade':             { intent: 'positive', npc: { joy: 5, anticipation: 5 }, speaker: { joy: 2 } },
+    'attack':            { intent: 'negative', npc: { fear: 25, anger: 20, trust: -20 }, speaker: { stressed: 6 } },
+    'caught':            { intent: 'negative', npc: { anger: 15, trust: -15, disgust: 8 }, speaker: { shame: 6, fear: 4 } },
+    'rude':              { intent: 'negative', npc: { irritable: 8, trust: -4 } },
+    'talk':              { intent: 'neutral',  npc: { curiosity: 8, lonely: -6, relaxed: 3 }, speaker: { curiosity: 3 } },
+    'teach':             { intent: 'positive', npc: { curiosity: 10, proud: 6, trust: 6, hopeful: 4 }, speaker: { proud: 5 } },
+    'favour':            { intent: 'neutral',  npc: { trust: 4, loved: 3, lonely: -3 }, speaker: { content: 2 } },
+    'civic':             { intent: 'neutral',  npc: { curiosity: 4, anticipation: 3 }, speaker: { anticipation: 2 } },
+    'adopt':             { intent: 'positive', npc: { loved: 12, trust: 10, anticipation: 6 }, speaker: { loved: 6, joy: 4 } },
+    'court':             { intent: 'positive', npc: { loved: 12, joy: 6, surprise: 4 }, speaker: { anticipation: 4, loved: 3 } },
+    'propose':           { intent: 'positive', npc: { loved: 18, surprise: 12, joy: 8, stressed: 4 }, speaker: { anticipation: 8, stressed: 4 } },
+  };
+  // A friendly move that came out badly, and the generic fallbacks.
+  const SOURED_EMOTIONS = { npc: { irritable: 8, boredom: 4, joy: -4, trust: -3 }, speaker: { shame: 4, sadness: 3 } };
+  const GENERIC_UP      = { npc: { joy: 4, trust: 2 }, speaker: { content: 2 } };
+  const GENERIC_DOWN    = { npc: { irritable: 6, trust: -3 }, speaker: { stressed: 2 } };
+
+  // What the simulation's own log entries (NPCSim StoryLogger: { minute, tag,
+  // key }) do to the person they are about, felt once each.
+  const LIFE_EVENT_EMOTIONS = {
+    work: { fatigued: 15, proud: 4 }, eating: { content: 12, joy: 4 }, cooking: { content: 8, proud: 4 },
+    shopping: { joy: 5, anticipation: 3 }, theft_success: { anticipation: 8, joy: 4, shame: 4 },
+    theft_caught: { shame: 15, fear: 12 }, social: { loved: 6, lonely: -10 }, farm: { content: 6, relaxed: 5 },
+    minigame: { joy: 6, anticipation: 6, surprise: 4 }, levelup: { proud: 15, joy: 6 }, spec: { proud: 12, joy: 4 },
+    investing: { anticipation: 8 }, banking: { stressed: 3 }, addiction: { irritable: 8, stressed: 6 },
+    crime: { fear: 20, anger: 15, trust: -10 }, wealth: { content: 4, anticipation: 4 }, renting: { content: 4 },
+    realty: { content: 5, proud: 3 },
+  };
+  // A log key refines its tag (a stock loss is not a stock gain).
+  const LIFE_KEY_EMOTIONS = [
+    [/Loss|Lost|lose/,         { sadness: 8, stressed: 6, joy: -4 }],
+    [/Gain|Won|win/,           { joy: 8, proud: 4 }],
+    [/withdrawalOver/,         { relaxed: 10, proud: 6 }],
+    [/usedFix|sippedBrew/,     { relaxed: 10, shame: 4 }],
+    [/tookLoan/,               { stressed: 8 }],
+  ];
+  // What the simulation's EventBus announces (NPCSimulationCore SECTION 1).
+  const BUS_EVENT_EMOTIONS = {
+    'npc:downed':             { fear: 30, anger: 15, stressed: 15 },
+    'npc:shift_end':          { fatigued: 15, relaxed: 5 },
+    'npc:leave_start:sick':   { sadness: 10, fatigued: 10, irritable: 6 },
+    'npc:leave_start:parental': { loved: 20, joy: 10, fatigued: 6 },
+  };
+
+  // Boredom: how a move loses its worth when it is made again and again.
+  // Every move keeps a count per NPC that halves every HALF_LIFE_MIN game
+  // minutes, and shrinks by VARIETY_RELIEF whenever a DIFFERENT move is made,
+  // so variety restores interest. KEY_MULT is what a friendly move is still
+  // worth after 0, 1, 2 and 3 recent uses (interpolated between); from
+  // LOSS_FROM uses on it costs standing instead. A whole sitting tires them
+  // too: past SITTING_FREE exchanges each one is worth SITTING_STEP less, down
+  // to SITTING_FLOOR, and the sitting count halves every SITTING_HALF_LIFE_MIN.
+  const BOREDOM = {
+    HALF_LIFE_MIN: 120, SITTING_HALF_LIFE_MIN: 60, VARIETY_RELIEF: 0.7,
+    KEY_MULT: [1, 0.6, 0.3, 0], LOSS_FROM: 4, LOSS_MAX: 4,
+    SITTING_FREE: 5, SITTING_STEP: 0.09, SITTING_FLOOR: 0.2,
+  };
+
+  // Which voice a bored NPC complains in, by personality.
+  const BOREDOM_FLAVOUR = {
+    Sanguine: 'warm', Empathetic: 'warm', Nurturing: 'warm', Loyal: 'warm', Hedonistic: 'warm', Artistic: 'warm',
+    Aggressive: 'hot', Grumpy: 'hot', Impulsive: 'hot', Mischievous: 'hot', Brave: 'hot', Adventurous: 'hot',
+    Nervous: 'anxious', Paranoid: 'anxious', Timid: 'anxious', Melancholic: 'anxious', Cautious: 'anxious',
+  };
+
+  function _emNow() {
+    const EM = _EM();
+    return EM ? EM.nowMinutes() : ($gameVariables?.value(114) ?? 0);
+  }
+  function _npcEmotionName(profile) { return profile?._eventName || profile?.name || null; }
+  function _npcEmotionSet(profile) {
+    const name = _npcEmotionName(profile);
+    const NC = window.NPCCreature;
+    if (name && _isNonSentientNpc(name)) return 'creature';
+    return (!name && NC?.isNonSentientProfile?.(profile)) ? 'creature' : 'sentient';
+  }
+  function _npcEmotionCtx(profile, now) {
+    const leave = profile?.leave;
+    const onSickLeave = !!leave && leave.kind === 'sick' && Number(leave.untilMin ?? Infinity) > now;
+    return {
+      hour: _EM()?.hourNow?.() ?? 12,
+      hunger: profile?.hunger, sleep: profile?.sleep, hygiene: profile?.hygiene,
+      social: profile?.social, leisure: profile?.leisure,
+      sick: onSickLeave || (Array.isArray(profile?.diseases) && profile.diseases.length > 0),
+    };
+  }
+  function _npcEmotionSensitivity(profile) {
+    const EM = _EM();
+    return EM ? EM.sensitivity(_npcEmotionSet(profile), _personalityName(profile), profile?.traitIds) : {};
+  }
+  // The simulation's log entries since this state last looked, felt once.
+  function _foldLifeEvents(profile, state, sens) {
+    const EM = _EM();
+    const log = profile?.eventLog;
+    if (!EM || !Array.isArray(log) || !log.length) return;
+    let seen = state.seen ?? state.t ?? 0, newest = seen;
+    for (const e of log) {
+      if (!e || typeof e !== 'object' || e.minute == null) continue; // Empathize's own entries are scored where they happen
+      const m = Number(e.minute);
+      if (!(m > seen)) continue;
+      if (m > newest) newest = m;
+      const vec = LIFE_EVENT_EMOTIONS[e.tag];
+      if (vec) EM.push(state, vec, sens);
+      const k = String(e.key || '');
+      for (const [re, extra] of LIFE_KEY_EMOTIONS) if (re.test(k)) { EM.push(state, extra, sens); break; }
+    }
+    state.seen = newest;
+  }
+  // THE emotional state of an NPC, up to date. Created on first read.
+  function _npcEmotions(profile, now) {
+    const EM = _EM();
+    if (!profile || !EM) return null;
+    const t = now ?? _emNow();
+    const set = _npcEmotionSet(profile);
+    const pers = _personalityName(profile), traits = profile.traitIds, ctx = _npcEmotionCtx(profile, t);
+    if (!profile.emotions || !profile.emotions.v || profile.emotions.set !== set) {
+      profile.emotions = EM.create(set, pers, traits, ctx, t);
+    } else {
+      EM.refresh(profile.emotions, pers, traits, ctx, t);
+    }
+    _foldLifeEvents(profile, profile.emotions, _npcEmotionSensitivity(profile));
+    return profile.emotions;
+  }
+  function _pushNpcEmotion(profile, vec, scale) {
+    const st = _npcEmotions(profile);
+    if (st) _EM().push(st, vec, _npcEmotionSensitivity(profile), scale);
+    return st;
+  }
+
+  // The simulation's own announcements, felt at once. Event driven, never polled.
+  function _hookEmotionBus() {
+    const bus = window.NPCSim;
+    if (!bus?.on || _hookEmotionBus.done) return;
+    _hookEmotionBus.done = true;
+    const feel = (name, key) => {
+      const profile = name ? $gameSystem?._npcSociety?.[name] : null;
+      if (profile && BUS_EVENT_EMOTIONS[key]) _pushNpcEmotion(profile, BUS_EVENT_EMOTIONS[key]);
+    };
+    bus.on('npc:downed', (d) => feel(d?.name, 'npc:downed'));
+    bus.on('npc:shift_end', (d) => feel(d?.name, 'npc:shift_end'));
+    bus.on('npc:leave_start', (d) => feel(d?.name, 'npc:leave_start:' + (d?.kind === 'parental' ? 'parental' : 'sick')));
+  }
+  _hookEmotionBus();
+
+  // ── Boredom bookkeeping (profile.empBoredom) ──
+  function _boredomRecord(profile, now) {
+    const rec = (profile.empBoredom ??= { keys: {}, sit: 0, t: now });
+    const dt = now - (rec.t ?? now);
+    if (dt > 0) {
+      const k = Math.pow(0.5, dt / BOREDOM.HALF_LIFE_MIN);
+      for (const id in rec.keys) {
+        rec.keys[id] *= k;
+        if (rec.keys[id] < 0.05) delete rec.keys[id];
+      }
+      rec.sit = (rec.sit || 0) * Math.pow(0.5, dt / BOREDOM.SITTING_HALF_LIFE_MIN);
+    }
+    if (!(rec.t >= now)) rec.t = now;
+    return rec;
+  }
+  function _boredomKeyMult(count) {
+    const T_ = BOREDOM.KEY_MULT;
+    if (count >= BOREDOM.LOSS_FROM) return -Math.min(BOREDOM.LOSS_MAX, 1 + Math.floor(count - BOREDOM.LOSS_FROM));
+    if (count >= T_.length - 1) return T_[T_.length - 1];
+    const i = Math.floor(count), f = count - i;
+    return T_[i] + (T_[i + 1] - T_[i]) * f;
+  }
+  // How bored of this move (and of this sitting) the NPC is, before it is made.
+  function _boredomOf(profile, key, now) {
+    const t = now ?? _emNow();
+    if (!profile) return { count: 0, sitting: 0, keyMult: 1, sitMult: 1 };
+    const rec = _boredomRecord(profile, t);
+    const count = rec.keys[key] || 0;
+    const sitting = rec.sit || 0;
+    const keyMult = _boredomKeyMult(count);
+    const sitMult = Math.max(BOREDOM.SITTING_FLOOR, 1 - Math.max(0, sitting - BOREDOM.SITTING_FREE) * BOREDOM.SITTING_STEP);
+    return { count, sitting, keyMult, sitMult };
+  }
+  function _useBoredom(profile, key, now) {
+    const rec = _boredomRecord(profile, now ?? _emNow());
+    for (const id in rec.keys) if (id !== key) rec.keys[id] *= BOREDOM.VARIETY_RELIEF;
+    rec.keys[key] = (rec.keys[key] || 0) + 1;
+    rec.sit = (rec.sit || 0) + 1;
+  }
+
+  // A line for an NPC who has had enough of a move, in their own temper.
+  // tier: waning | flat | annoyed. A beast's line is growled by the caller.
+  function _boredomLine(profile, tier) {
+    const flavour = BOREDOM_FLAVOUR[_personalityName(profile)] || 'cold';
+    const pool = window.T?.pool?.('Empathize.boredom.' + tier + '.' + flavour) || [];
+    return pool.length ? pool[Math.floor(Math.random() * pool.length)] : '';
+  }
+
+  // THE scorer of an Empathize exchange. key: the move ('social:praise',
+  // 'gift', 'feral:nuzzle' ...), delta: what the move would be worth on its
+  // own. Applies boredom and mood to a friendly move's worth, pushes the
+  // NPC's and the speaker's emotions, then moves the speaker's standing
+  // (opts.attraction moves attraction instead, opts.apply === false moves
+  // nothing). Answers { delta, tier, count }.
+  function _empathizeAct(profile, actor, key, delta, opts) {
+    opts = opts || {};
+    const EM = _EM();
+    const now = _emNow();
+    const st = profile ? _npcEmotions(profile, now) : null;
+    const bored = _boredomOf(profile, key, now);
+    const entry = INTERACTION_EMOTIONS[key] || INTERACTION_EMOTIONS[String(key).split(':')[0]] || null;
+    let out = Math.round(Number(delta) || 0);
+    let tier = 'fresh';
+    if (out > 0) {
+      if (bored.keyMult < 0) { out = bored.keyMult; tier = 'annoyed'; }
+      else {
+        const m = bored.keyMult * bored.sitMult;
+        tier = m <= 0.05 ? 'flat' : m < 0.75 ? 'waning' : 'fresh';
+        out = Math.round(out * m * (st ? EM.gainMult(st) : 1));
+      }
+    } else if (out < 0 && st) {
+      // Somebody already angry takes a hostile move harder.
+      const heat = st.v.anger ?? st.v.aggression ?? 0;
+      out = Math.round(out * (1 + Math.max(0, heat - 30) / 150));
+    }
+    if (profile) _useBoredom(profile, key, now);
+
+    const friendly = entry ? entry.intent !== 'negative' : (Number(delta) || 0) >= 0;
+    const soured = friendly && out < 0;
+    if (st) {
+      const sens = _npcEmotionSensitivity(profile);
+      const vec = soured ? SOURED_EMOTIONS.npc : (entry ? entry.npc : (out >= 0 ? GENERIC_UP.npc : GENERIC_DOWN.npc));
+      EM.push(st, vec, sens);
+      // Repetition bores, a new move interests; a long sitting bores either way.
+      const over = Math.max(0, bored.sitting - BOREDOM.SITTING_FREE) * 1.5;
+      EM.push(st, bored.count < 0.3
+        ? { boredom: -3 + over, curiosity: 2 }
+        : { boredom: 2 + 6 * Math.min(4, bored.count) + over, curiosity: -2 }, sens);
+    }
+    if (actor && EM && opts.speaker !== false) {
+      const sv = soured ? SOURED_EMOTIONS.speaker : (entry ? entry.speaker : (out >= 0 ? GENERIC_UP.speaker : GENERIC_DOWN.speaker));
+      if (sv) EM.push(EM.ofActor(actor, now), sv, EM.actorSensitivity(actor));
+    }
+    if (profile && actor && opts.apply !== false && out !== 0) {
+      if (opts.attraction) _addNpcAttraction(profile, actor.actorId(), out);
+      else _addNpcOpinion(profile, actor.actorId(), out);
+    }
+    return { delta: out, tier, count: bored.count };
+  }
+  // i18n-ignore-end
+  window.NPCEmpathize.Emotions = {
+    of: _npcEmotions, act: _empathizeAct, boredom: _boredomOf, push: _pushNpcEmotion,
+    boredomLine: _boredomLine, INTERACTIONS: INTERACTION_EMOTIONS, BOREDOM,
+  };
+  // NPC-EMOTIONS-END
+
   Object.assign(window.NPCEmpathize._internal, {
+    _boredomLine, _boredomOf, _empathizeAct, _npcEmotions, _pushNpcEmotion, BOREDOM, INTERACTION_EMOTIONS,
     _addNpcAttraction, _addNpcOpinion, _addPairBond, _bubbaContext, _bubbaDb, _bubbaPlaythrough,
     _bubbaSeedFirstImpression, _cardRefusalLine, _computePartyAttraction,
     _computePartyPredisposition, _creatureClassOfActor, _creatureClassOfNpc, _emContext,

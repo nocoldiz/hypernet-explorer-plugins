@@ -1,6 +1,6 @@
 {
   "name": "Arcane",
-  "blurb": "Magic measured as a field: strength, tolerance and falloff with distance. Failed lines stay on record.",
+  "blurb": "Magic studied as a measurable field, failed research included.",
   "nodes": {
     "arc_leyline": {
       "name": "Leyline Cartography",
@@ -68,7 +68,7 @@
     },
     "arc_imagination_discipline": {
       "name": "The Discipline of Pure Imagination",
-      "desc": "The rite must be held whole in the mind, without drift, for as long as it takes to run. Training is measured as unbroken hold time under distraction, starting at seconds and reaching hours over years, with an examination that adds noise, cold and interruption. The failure mode is not a failed working: the imagined substrate is what the operator is standing on while the rite runs, and the recorded cases of drift past a certain depth end with an operator who is still breathing and does not come back."
+      "desc": "The rite must be held whole in the mind, without drift, for as long as it takes to run. Training is measured as unbroken hold time under distraction, starting at seconds and reaching hours over years, with an examination that adds noise, cold and interruption. The failure mode is graver than a failed working: the imagined substrate is what the operator is standing on while the rite runs, and the recorded cases of drift past a certain depth end with an operator who is still breathing and does not come back."
     }
   }
 }

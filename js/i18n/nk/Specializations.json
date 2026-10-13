@@ -1,0 +1,3223 @@
+{
+  "_comment": "Display text for the specialization table. Structure (ids, stat, category, classStart, traitStart, wtypeId) stays in js/db/Skills/Specialization.json, and the English name there is the LOOKUP KEY every by-name call site uses, so it is never translated: this file carries what the player reads, keyed by id.",
+  "level": {
+    "Untrained": "UNTRAINED",
+    "Beginner": "BEGINNER",
+    "Intermediate": "INTERMEDIATE",
+    "Advanced": "ADVANCED",
+    "Master": "MASTER"
+  },
+  "category": {
+    "Combat": "COMBAT",
+    "Weapons": "WEAPONS",
+    "Athletics": "ATHLETICS",
+    "Arcana": "ARCANA",
+    "Occult": "OCCULT",
+    "Medicine": "MEDICINE",
+    "Science": "SCIENCE",
+    "Technology": "TECHNOLOGY",
+    "Crafting": "CRAFTIN'",
+    "Survival": "SURVIVAL",
+    "Social": "SOCIAL",
+    "Crime": "CRIME",
+    "Academia": "ACADEMIA",
+    "Commerce": "COMMERCE",
+    "Vehicles": "VEHICLES",
+    "Arts": "ARTS",
+    "Culinary": "CULINARY"
+  },
+  "spec": {
+    "1": {
+      "name": "ACCOUNTIN'",
+      "description": "KEEPIN' AN' INTERPRETIN' FINANCIAL RECORDS: GRIMORIES, STATEMENTS AN' RECONCILIATION!"
+    },
+    "2": {
+      "name": "ACROBATICS",
+      "description": "CONTROLLED TUMBLIN', VAULTIN' AN' BALANCE WORK IN MOTION!"
+    },
+    "3": {
+      "name": "ACTIN'",
+      "description": "PORTRAYIN' A CHARACTER CONVINCINGLY FOR AN AUDIENCE OR A CAMERA!"
+    },
+    "4": {
+      "name": "AERODYNAMICS THEORY",
+      "description": "HOW AIR BEHAVES AROUND A MOVIN' BODY: LIFT, DRAG AN' FLOW SEPARATION!"
+    },
+    "6": {
+      "name": "AIKIDO",
+      "description": "A JAPANESE ART OF REDIRECTIN' AN ATTACKER'S FORCE INTO THROWS AN' JOINT LOCKS!"
+    },
+    "8": {
+      "name": "AIRCRAFT PILOTIN'",
+      "description": "FLYIN' A FIXED-WING AIRCRAFT, FROM PREFLIGHT CHECKS TA LANDIN'!"
+    },
+    "9": {
+      "name": "ALCOHOL TOLERANCE",
+      "description": "ABSORBIN' DRINK WITOUT LOSIN' COORDINATION OR JUDGEMENT!"
+    },
+    "10": {
+      "name": "AMBUSH TACTICS",
+      "description": "CHOOSIN' GROUND, CONCEALMENT AN' TIMIN' TA STRIKE FIRST!"
+    },
+    "11": {
+      "name": "ANATOMY",
+      "description": "DA STRUCTURE OF DA BODY: BONES, MUSCLES, VESSELS AN' ORGANS!"
+    },
+    "12": {
+      "name": "ANIMAL HUSBANDRY",
+      "description": "BREEDIN', FEEDIN' AN' KEEPIN' LIVESTOCK IN HEALTH!"
+    },
+    "13": {
+      "name": "ANIMAL TRAININ'",
+      "description": "CONDITIONIN' AN ANIMAL TA WORK WIT CUES, REWARD AN' REPETITION!"
+    },
+    "14": {
+      "name": "ANIMISM",
+      "description": "READIN' DA WORLD AS POPULATED BY SPIRITS, AN' DEALIN' WIT DEM!"
+    },
+    "15": {
+      "name": "ANTHROPOLOGY",
+      "description": "DA COMPARATIVE STUDY OF HUMAN CULTURES, KINSHIP AN' MATERIAL LIFE!"
+    },
+    "16": {
+      "name": "APPLIED SCIENCE",
+      "description": "TURNIN' ESTABLISHED THEORY INTO WORKIN' METHOD AN' APPARATUS!"
+    },
+    "18": {
+      "name": "ARCHITECTURE",
+      "description": "DESIGNIN' BUILDINGS DAT STAND, FUNCTION AN' CAN ACTUALLY BE BUILT!"
+    },
+    "19": {
+      "name": "ARM WRESTLIN'",
+      "description": "BEATIN' ANOTHER ARM ACROSS A TABLE WIT LEVERAGE AN' GRIP!"
+    },
+    "20": {
+      "name": "ARMOR SMITHIN'",
+      "description": "FORMIN', FITTIN' AN' ARTICULATIN' PLATE AN' MAIL!"
+    },
+    "21": {
+      "name": "ART HISTORY",
+      "description": "PLACIN' WORKS IN PERIOD, SCHOOL AN' CONTEXT!"
+    },
+    "22": {
+      "name": "ASTROLOGY",
+      "description": "READIN' CHARACTER AN' EVENT FROM DA POSITIONS OF DA PLANETS!"
+    },
+    "23": {
+      "name": "ASTRONOMY",
+      "description": "OBSERVIN' AN' INTERPRETIN' DA SKY: BODIES, MOTIONS AN' DISTANCES!"
+    },
+    "24": {
+      "name": "ATHLETICS",
+      "description": "GENERAL RUNNIN', JUMPIN' AN' THROWIN' ABILITY UNDER EXERTION!"
+    },
+    "26": {
+      "name": "BAKIN'",
+      "description": "WORKIN' DOUGH AN' BATTER: HYDRATION, PROOF AN' OVEN HEAT!"
+    },
+    "27": {
+      "name": "BALLET",
+      "description": "CLASSICAL DANCE TECHNIQUE OF TURNOUT, LINE AN' SET POSITIONS!"
+    },
+    "28": {
+      "name": "BALLISTICS",
+      "description": "DA FLIGHT OF A PROJECTILE, AN' WHAT IT DOES AT DA FAR END!"
+    },
+    "30": {
+      "name": "BARTER",
+      "description": "TRADIN' GOODS FOR GOODS, WITOUT MONEY CHANGIN' HANDS!"
+    },
+    "31": {
+      "name": "BASEBALL",
+      "description": "BATTIN', FIELDIN' AN' PITCHIN' IN DA NINE-INNIN' GAME!"
+    },
+    "32": {
+      "name": "BASE JUMPIN'",
+      "description": "PARACHUTIN' FROM A FIXED OBJECT WIT ALMOST NO ALTITUDE TA SPARE!"
+    },
+    "34": {
+      "name": "BASKETBALL",
+      "description": "SHOOTIN', PASSIN' AN' DEFENDIN' ON DA COURT!"
+    },
+    "35": {
+      "name": "BEATBOXIN'",
+      "description": "PRODUCIN' PERCUSSION AN' BASS WIT DA VOICE ALONE!"
+    },
+    "36": {
+      "name": "BEEKEEPIN'",
+      "description": "KEEPIN' HIVES IN HEALTH AN' TAKIN' HONEY WITOUT LOSIN' DA COLONY!"
+    },
+    "37": {
+      "name": "BILLIARDS",
+      "description": "CUE CONTROL, ANGLES AN' POSITION PLAY ON DA TABLE!"
+    },
+    "38": {
+      "name": "BIOKINESIS",
+      "description": "STEERIN' LIVIN' TISSUE BY WILL: GROWTH, HEALIN', CHANGE!"
+    },
+    "39": {
+      "name": "BIOMANCY",
+      "description": "MAGIC WORKED DIRECTLY ON FLESH AN' ITS PROCESSES!"
+    },
+    "40": {
+      "name": "BLACKSMITHIN'",
+      "description": "FORGIN' AN' SHAPIN' HOT IRON AN' STEEL AT DA ANVIL!"
+    },
+    "41": {
+      "name": "BOARD GAME STRATEGY",
+      "description": "READIN' POSITION, TEMPO AN' ODDS ACROSS DA BOARD!"
+    },
+    "42": {
+      "name": "BOAT PILOTIN'",
+      "description": "HANDLIN' A POWERED BOAT IN TRAFFIC, CURRENT AN' WEATHER!"
+    },
+    "43": {
+      "name": "BODYBUILDIN'",
+      "description": "TRAININ' AN' DIET AIMED AT MUSCULAR SIZE AN' DEFINITION!"
+    },
+    "44": {
+      "name": "BOTANY",
+      "description": "DA CLASSIFICATION, STRUCTURE AN' LIFE OF PLANTS!"
+    },
+    "45": {
+      "name": "TENPIN BOWLIN'",
+      "description": "LINE, HOOK AN' SPARE SHOOTIN' ON DA LANES!"
+    },
+    "46": {
+      "name": "BOXIN'",
+      "description": "PUNCHIN', GUARD AN' FOOTWORK UNDER DA BOXIN' RULES!"
+    },
+    "47": {
+      "name": "BRAINWASHIN'",
+      "description": "BREAKIN' DOWN AN' REBUILDIN' WHAT SOMEBODY BELIEVES!"
+    },
+    "48": {
+      "name": "BREATH HOLDIN'",
+      "description": "EXTENDIN' APNOEA BY TOLERANCE, TECHNIQUE AN' CALM!"
+    },
+    "49": {
+      "name": "BREWIN'",
+      "description": "MASHIN', BOILIN' AN' FERMENTIN' GRAIN INTO BEER!"
+    },
+    "50": {
+      "name": "BRICKLAYIN'",
+      "description": "LAYIN' BRICK TA LINE, LEVEL AN' BOND WIT SOUND MORTAR JOINTS!"
+    },
+    "51": {
+      "name": "BUNGEE JUMPIN'",
+      "description": "JUMPIN' ON A MEASURED CORD AN' SURVIVIN' DA REBOUND!"
+    },
+    "52": {
+      "name": "BUTCHERY",
+      "description": "BREAKIN' A CARCASS DOWN INTO NAMED CUTS WIT MINIMAL WASTE!"
+    },
+    "53": {
+      "name": "CABINETRY",
+      "description": "FINE JOINERY: CASES, DRAWERS AN' DOORS DAT STAY SQUARE!"
+    },
+    "54": {
+      "name": "CALLIGRAPHY",
+      "description": "WRITIN' LETTERFORMS WIT A CONTROLLED, DELIBERATE HAND!"
+    },
+    "55": {
+      "name": "CANOEIN'",
+      "description": "PADDLIN' AN' READIN' WATER FROM AN OPEN BOAT!"
+    },
+    "56": {
+      "name": "CAR DRIVIN'",
+      "description": "HANDLIN' A ROAD CAR: CONTROL, TRAFFIC SENSE AN' HAZARD READIN'!"
+    },
+    "57": {
+      "name": "CARD COUNTIN'",
+      "description": "TRACKIN' DA REMAININ' DECK TA KNOW WHEN DA ODDS TURN!"
+    },
+    "58": {
+      "name": "CARPENTRY",
+      "description": "CUTTIN' AN' JOININ' TIMBER INTO STRUCTURE AN' FITTIN'!"
+    },
+    "59": {
+      "name": "CARTOGRAPHY",
+      "description": "SURVEYIN' AN' DRAWIN' MAPS DAT CAN BE NAVIGATED BY!"
+    },
+    "60": {
+      "name": "CHEESE MAKIN'",
+      "description": "FIDDLY BIT CURD, PRESSIN' AN' AGEIN' MILK INTO CHEESE!"
+    },
+    "61": {
+      "name": "CHEMISTRY",
+      "description": "DA COMPOSITION AN' REACTIONS OF SUBSTANCES, AN' HOW TA RUN DEM!"
+    },
+    "62": {
+      "name": "CHESS",
+      "description": "OPENIN', MIDDLEGAME AN' ENDGAME PLAY ON DA SIXTY-FOUR SQUARES!"
+    },
+    "63": {
+      "name": "CHIROPRACTIC",
+      "description": "MANUAL ADJUSTMENT OF DA SPINE AN' JOINTS!"
+    },
+    "64": {
+      "name": "CHOPPIN'",
+      "description": "SPLITTIN' AN' FELLIN' WIT AXE OR MAUL, EFFICIENTLY AN' REPEATEDLY!"
+    },
+    "65": {
+      "name": "CHRONOKINESIS",
+      "description": "BENDIN' DA LOCAL RATE OF TIME BY WILL!"
+    },
+    "66": {
+      "name": "CLAIRVOYANCE",
+      "description": "PERCEIVIN' WHAT IZ DISTANT OR HIDDEN WITOUT DA SENSES!"
+    },
+    "68": {
+      "name": "COLD READIN'",
+      "description": "GUESSIN' CONVINCIN' PERSONAL DETAILS FROM CUES AN' PROBABILITY!"
+    },
+    "69": {
+      "name": "COLD TOLERANCE",
+      "description": "WORKIN' AN' THINKIN' CLEARLY IN COLD DAT WOULD STOP OTHERS!"
+    },
+    "70": {
+      "name": "JOKE TELLIN'",
+      "description": "TIMIN', SETUP AN' DELIVERY DAT LANDS DA PUNCHLINE!"
+    },
+    "71": {
+      "name": "COMPLEX MATHEMATICS",
+      "description": "ADVANCED FORMAL MATHEMATICS PAST ROUTINE CALCULATION!"
+    },
+    "72": {
+      "name": "COMPUTERS",
+      "description": "OPERATIN', CONFIGURIN' AN' TROUBLESHOOTIN' COMPUTER SYSTEMS!"
+    },
+    "73": {
+      "name": "SPELL CONCENTRATION",
+      "description": "HOLDIN' A WORKIN' TOGETHER WHILE BEING HIT, MOVED OR DISTRACTED!"
+    },
+    "74": {
+      "name": "CONTORTION",
+      "description": "EXTREME CONTROLLED FLEXIBILITY OF DA SPINE AN' JOINTS!"
+    },
+    "75": {
+      "name": "COOKIN'",
+      "description": "PREPARIN' MEALS: HEAT, SEASONIN', TIMIN' AN' WHAT GOES WIT WHAT!"
+    },
+    "76": {
+      "name": "COSPLAY",
+      "description": "BUILDIN' AN' WEARIN' ACCURATE COSTUME OF A KNOWN CHARACTER!"
+    },
+    "77": {
+      "name": "CROCHETIN'",
+      "description": "MAKIN' FABRIC FROM A SINGLE HOOKED LOOP OF YARN!"
+    },
+    "79": {
+      "name": "CRYPTOGRAPHY",
+      "description": "ENCRYPTIN', KEY HANDLIN' AN' BREAKIN' WEAK CIPHERS!"
+    },
+    "80": {
+      "name": "CRYOKINESIS",
+      "description": "DRAWIN' HEAT OUT OF MATTER BY WILL!"
+    },
+    "82": {
+      "name": "DANCIN'",
+      "description": "MOVIN' IN TIME TA MUSIC, ALONE OR WIT A PARTNER!"
+    },
+    "83": {
+      "name": "DATA ANALYSIS",
+      "description": "CLEANIN', SUMMARISIN' AN' DRAWIN' DEFENSIBLE CONCLUSIONS FROM DATA!"
+    },
+    "84": {
+      "name": "DECEPTION",
+      "description": "LYING CONVINCINGLY, IN WORD AN' IN BEARIN'!"
+    },
+    "85": {
+      "name": "DEMOLITIONS",
+      "description": "PLACIN' CHARGES TA BRING STRUCTURE DOWN WHERE IT IZ MEANT TA FALL!"
+    },
+    "86": {
+      "name": "DENTISTRY",
+      "description": "DIAGNOSIN' AN' TREATIN' TEETH, GUMS AN' DA BITE!"
+    },
+    "87": {
+      "name": "EXCAVATION",
+      "description": "DIGGIN' A SITE IN CONTROLLED LAYERS, RECORDIN' AS YOU GO!"
+    },
+    "88": {
+      "name": "DIPLOMACY",
+      "description": "NEGOTIATIN' BETWEEN PARTIES WHO WOULD RATHER NO AGREE!"
+    },
+    "89": {
+      "name": "DIRECTIN'",
+      "description": "SHAPIN' PERFORMANCE, STAGIN' AN' CUT INTO ONE INTENDED WHOLE!"
+    },
+    "90": {
+      "name": "DJING",
+      "description": "BEATMATCHIN' AN' SEQUENCIN' RECORDS TA HOLD A FLOOR!"
+    },
+    "91": {
+      "name": "DODGIN'",
+      "description": "SEEIN' AN ATTACK COMIN' AN' GETTIN' OUT OF DA WAY!"
+    },
+    "92": {
+      "name": "DRAWIN'",
+      "description": "RENDERIN' WHAT IZ SEEN OR IMAGINED IN LINE AN' TONE!"
+    },
+    "93": {
+      "name": "DRUIDISM",
+      "description": "OLD PRACTICE BOUND TA TREES, SEASONS AN' DA LAND!"
+    },
+    "94": {
+      "name": "EARTHSHAPIN'",
+      "description": "MOVIN' AN' REFORMIN' EARTH AN' STONE BY WILL!"
+    },
+    "95": {
+      "name": "EIDETIC MEMORY",
+      "description": "RECALLIN' DETAIL EXACTLY, LONG AFTER SEEIN' IT ONCE!"
+    },
+    "96": {
+      "name": "ELECTRICAL WIRIN'",
+      "description": "RUNNIN', TERMINATIN' AN' TESTIN' DOMESTIC AN' INDUSTRIAL WIRIN'!"
+    },
+    "97": {
+      "name": "ELECTROKINESIS",
+      "description": "DIRECTIN' ELECTRIC CURRENT BY WILL!"
+    },
+    "98": {
+      "name": "ELECTRONICS",
+      "description": "READIN', BUILDIN' AN' REPAIRIN' CIRCUITS AT COMPONENT LEVEL!"
+    },
+    "99": {
+      "name": "EMBROIDERY",
+      "description": "STITCHIN' DECORATION ONTO CLOTH BY HAND OR FRAME!"
+    },
+    "100": {
+      "name": "HORSE RIDIN'",
+      "description": "RIDIN' AN' CONTROLLIN' A HORSE AT ALL PACES!"
+    },
+    "101": {
+      "name": "EVENT PLANNIN'",
+      "description": "RUNNIN' AN EVENT'S LOGISTICS, BUDGET AN' SCHEDULE!"
+    },
+    "102": {
+      "name": "FABRICATION",
+      "description": "CUTTIN', FORMIN' AN' WELDIN' RAW STOCK INTO FINISHED PARTS!"
+    },
+    "103": {
+      "name": "FALCONRY",
+      "description": "TRAININ' AN' HUNTIN' WIT BIRDS OF PREY!"
+    },
+    "104": {
+      "name": "FARMIN'",
+      "description": "WORKIN' LAND AN' STOCK THROUGH DA SEASON: SOWIN', TENDIN', HARVEST!"
+    },
+    "105": {
+      "name": "FASTIN'",
+      "description": "GOING WITOUT FOOD DELIBERATELY, AN' STAYIN' FUNCTIONAL!"
+    },
+    "106": {
+      "name": "SPORT FENCIN'",
+      "description": "FOIL, EPEE AN' SABRE UNDER COMPETITION RULES!"
+    },
+    "107": {
+      "name": "FERMENTATION",
+      "description": "CULTURIN' FOOD AN' DRINK UNDER CONTROLLED SPOILAGE!"
+    },
+    "108": {
+      "name": "FIGURE SKATIN'",
+      "description": "JUMPS, SPINS AN' EDGE WORK ON ICE!"
+    },
+    "109": {
+      "name": "FIRE STARTIN'",
+      "description": "GETTIN' FLAME FROM SPARK, FRICTION OR LENS IN POOR CONDITIONS!"
+    },
+    "110": {
+      "name": "FIRST AID",
+      "description": "KEEPIN' DA INJURED ALIVE AN' STABLE UNTIL BETTER HELP ARRIVES!"
+    },
+    "112": {
+      "name": "FISHIN'",
+      "description": "TAKIN' FISH BY ROD, LINE, NET OR TRAP!"
+    },
+    "114": {
+      "name": "FLIRTIN'",
+      "description": "SIGNALLIN' INTEREST WITOUT COMMITTIN' TA IT!"
+    },
+    "115": {
+      "name": "FORAGIN'",
+      "description": "FINDIN' AN' IDENTIFYIN' EDIBLE WILD FOOD SAFELY!"
+    },
+    "116": {
+      "name": "FORTUNE TELLIN'",
+      "description": "TELLIN' A CLIENT DEY FUTURE IN TERMS DEY WILL ACCEPT!"
+    },
+    "117": {
+      "name": "FREEDIVIN'",
+      "description": "DIVIN' DEEP ON ONE BREATH AN' COMIN' BACK UP!"
+    },
+    "118": {
+      "name": "GARDENIN'",
+      "description": "GROWIN' AN' MAINTAININ' ORNAMENTAL AN' KITCHEN PLANTS!"
+    },
+    "119": {
+      "name": "GEMOLOGY",
+      "description": "IDENTIFYIN', GRADIN' AN' VALUIN' GEMSTONES!"
+    },
+    "120": {
+      "name": "GEOGRAPHY",
+      "description": "LAND, CLIMATE, POPULATION, AN' HOW DEY DISTRIBUTE!"
+    },
+    "121": {
+      "name": "GLASSBLOWIN'",
+      "description": "GATHERIN', INFLATIN' AN' SHAPIN' HOT GLASS AT DA PIPE!"
+    },
+    "122": {
+      "name": "GO STRATEGY",
+      "description": "TERRITORY, LIFE AN' DEATH ON DA NINETEEN-LINE BOARD!"
+    },
+    "123": {
+      "name": "GOLF",
+      "description": "DRIVIN', APPROACH AN' PUTTIN' ACROSS A COURSE!"
+    },
+    "124": {
+      "name": "GRAPPLIN'",
+      "description": "CONTROLLIN' A BODY AT CLOSE QUARTERS: HOLDS, THROWS AN' LOCKS!"
+    },
+    "125": {
+      "name": "GYMNASTICS",
+      "description": "STRENGTH AN' CONTROL ON FLOOR AN' APPARATUS!"
+    },
+    "126": {
+      "name": "HACKIN'",
+      "description": "GETTIN' INTO SYSTEMS BY FLAW, MISCONFIGURATION, OR DA PERSON USING DEM!"
+    },
+    "127": {
+      "name": "HAGGLIN'",
+      "description": "TALKIN' A PRICE DOWN WITOUT KILLIN' DA DEAL!"
+    },
+    "128": {
+      "name": "HAIRDRESSIN'",
+      "description": "CUTTIN', COLOURIN' AN' FIDDLY BIT HAIR TA A PLAN!"
+    },
+    "130": {
+      "name": "HANG GLIDIN'",
+      "description": "FLYIN' AN UNPOWERED WING ON LIFT AN' TERRAIN!"
+    },
+    "131": {
+      "name": "HEAT TOLERANCE",
+      "description": "WORKIN' IN HEAT DAT WOULD PUT OTHERS DOWN!"
+    },
+    "132": {
+      "name": "HEAVY MACHINERY OPERATION",
+      "description": "RUNNIN' LARGE PLANT SAFELY ON A WORKIN' SITE!"
+    },
+    "133": {
+      "name": "HELICOPTER PILOTIN'",
+      "description": "FLYIN' ROTORCRAFT, INCLUDIN' HOVER AN' AUTOROTATION!"
+    },
+    "134": {
+      "name": "HERBALISM",
+      "description": "IDENTIFYIN' AN' PREPARIN' PLANTS FOR MEDICINE!"
+    },
+    "135": {
+      "name": "HISTORY",
+      "description": "WHAT HAPPENED, IN WHAT ORDER, AN' ON WHAT EVIDENCE!"
+    },
+    "136": {
+      "name": "HVAC REPAIR",
+      "description": "SERVICIN' HEATIN', VENTILATION AN' COOLIN' PLANT!"
+    },
+    "137": {
+      "name": "HYPNOSIS",
+      "description": "INDUCIN' SUGGESTIBLE TRANCE AN' WORKIN' WITHIN IT!"
+    },
+    "138": {
+      "name": "ICE SKATIN'",
+      "description": "EDGES, BALANCE AN' SPEED ON BLADES!"
+    },
+    "139": {
+      "name": "INTERROGATION",
+      "description": "GETTIN' TRUTHFUL INFORMATION OUT OF SOMEONE UNWILLIN'!"
+    },
+    "140": {
+      "name": "INTIMIDATION",
+      "description": "MAKIN' SOMEONE FEAR WHAT HAPPENS IF DEY REFUSE!"
+    },
+    "141": {
+      "name": "INTERIOR DESIGN",
+      "description": "PLANNIN' A ROOM'S FUNCTION, LIGHT, COLOUR AN' FURNITURE!"
+    },
+    "142": {
+      "name": "JOURNALISM",
+      "description": "REPORTIN': SOURCIN', CHECKIN', AN' WRITIN' IT STRAIGHT!"
+    },
+    "143": {
+      "name": "JUDO",
+      "description": "THROWS, HOLDS AN' CHOKES FROM DA JAPANESE GRAPPLIN' ART!"
+    },
+    "144": {
+      "name": "JUGGLIN'",
+      "description": "KEEPIN' OBJECTS IN DA AIR IN PATTERN!"
+    },
+    "145": {
+      "name": "KARATE",
+      "description": "STRIKIN' ART OF BLOCKS, PUNCHES AN' KICKS FROM SET FORMS!"
+    },
+    "146": {
+      "name": "KAYAKIN'",
+      "description": "PADDLIN' A CLOSED BOAT, INCLUDIN' ROLL AN' ROUGH WATER!"
+    },
+    "148": {
+      "name": "KENDO",
+      "description": "JAPANESE FENCIN' WIT DA SHINAI, IN ARMOUR AN' RULE!"
+    },
+    "149": {
+      "name": "KICKBOXIN'",
+      "description": "PUNCHIN' AN' KICKIN' UNDER DA FULL-CONTACT RULES!"
+    },
+    "150": {
+      "name": "KNITTIN'",
+      "description": "MAKIN' FABRIC ON NEEDLES FROM CONTINUOUS YARN!"
+    },
+    "151": {
+      "name": "KNOT TYING",
+      "description": "CHOOSIN' AN' TYING DA KNOT DAT WILL HOLD, AN' UNTIE AFTER!"
+    },
+    "152": {
+      "name": "KRAV MAGA",
+      "description": "PRACTICAL ISRAELI CLOSE COMBAT AIMED AT ENDIN' IT FAST!"
+    },
+    "153": {
+      "name": "LANDSCAPIN'",
+      "description": "GRADIN', PLANTIN' AN' HARD LANDSCAPIN' TA A DESIGN!"
+    },
+    "155": {
+      "name": "LAW",
+      "description": "DA STATUTES, PROCEDURE AN' ARGUMENT DAT DECIDE A CASE!"
+    },
+    "156": {
+      "name": "LEADERSHIP",
+      "description": "GETTIN' A GROUP TA ACT TOGETHER, AN' KEEP ACTIN'!"
+    },
+    "157": {
+      "name": "LEATHERWORKIN'",
+      "description": "CUTTIN', STITCHIN' AN' FINISHIN' LEATHER GOODS!"
+    },
+    "158": {
+      "name": "LIGHTFOOTED",
+      "description": "MOVIN' QUIETLY AN' LIGHTLY, LEAVIN' LIL' TA HEAR OR TRACK!"
+    },
+    "159": {
+      "name": "LINGUISTICS",
+      "description": "DA STRUCTURE OF LANGUAGE: SOUND, GRAMMAR AN' CHANGE!"
+    },
+    "160": {
+      "name": "LIP READIN'",
+      "description": "READIN' SPEECH FROM DA MOUTH WITOUT HEARIN' IT!"
+    },
+    "161": {
+      "name": "LOCKPICKIN'",
+      "description": "OPENIN' LOCKS BY TENSION AN' FEEL, WITOUT DA KEY!"
+    },
+    "164": {
+      "name": "LUCID DREAMIN'",
+      "description": "BECOMIN' AWARE INSIDE A DREAM AN' ACTIN' DELIBERATELY IN IT!"
+    },
+    "165": {
+      "name": "MAGIC THEORY",
+      "description": "DA FORMAL PRINCIPLES UNDER A WORKIN': CORRESPONDENCE, COST AN' LIMIT!"
+    },
+    "166": {
+      "name": "MAGUS",
+      "description": "GENERAL MAGIC ACROSS EVERY SCHOOL!"
+    },
+    "167": {
+      "name": "MAINTENANCE",
+      "description": "KEEPIN' A BUILDIN' OR MACHINE RUNNIN' THROUGH ROUTINE CARE!"
+    },
+    "168": {
+      "name": "MAKEUP ARTISTRY",
+      "description": "PAINTIN' A FACE FOR CAMERA, STAGE OR EFFECT!"
+    },
+    "169": {
+      "name": "MARATHON RUNNIN'",
+      "description": "RUNNIN' DA DISTANCE ON PACE, FUEL AN' PACIN' DISCIPLINE!"
+    },
+    "170": {
+      "name": "MARINE BIOLOGY",
+      "description": "DA LIFE OF DA SEA, FROM PLANKTON TA REEF AN' WHALE!"
+    },
+    "172": {
+      "name": "MASSAGE THERAPY",
+      "description": "WORKIN' SOFT TISSUE FOR PAIN, MOBILITY AN' CIRCULATION!"
+    },
+    "173": {
+      "name": "MECHANICS",
+      "description": "DIAGNOSIN' AN' REPAIRIN' ENGINES AN' DRIVETRAINS!"
+    },
+    "174": {
+      "name": "MEDITATION",
+      "description": "SUSTAINED ATTENTION PRACTICE, AN' DA SETTLIN' DAT FOLLOWS!"
+    },
+    "175": {
+      "name": "MENTAL MATH",
+      "description": "CALCULATIN' ACCURATELY IN DA HEAD, QUICKLY!"
+    },
+    "176": {
+      "name": "METALWORKIN'",
+      "description": "CUTTIN', FORMIN' AN' JOININ' METAL STOCK!"
+    },
+    "177": {
+      "name": "METEOROLOGY",
+      "description": "READIN' AN' FORECASTIN' WEATHER FROM DATA AN' SKY!"
+    },
+    "178": {
+      "name": "BARTENDIN'",
+      "description": "MIXIN' DRINKS TA SPEC AN' RUNNIN' A BAR UNDER PRESSURE!"
+    },
+    "179": {
+      "name": "MORSE CODE",
+      "description": "SENDIN' AN' READIN' CODE BY KEY, LIGHT OR SOUND!"
+    },
+    "180": {
+      "name": "MOTORCYCLE RIDIN'",
+      "description": "RIDIN' AN' CONTROLLIN' A MOTORCYCLE ON ROAD AN' LEAN!"
+    },
+    "181": {
+      "name": "MOUNTAINEERIN'",
+      "description": "CLIMBIN' HIGH GROUND WIT ROUTE, WEATHER AN' ALTITUDE JUDGEMENT!"
+    },
+    "182": {
+      "name": "MUAY THAI",
+      "description": "THAI STRIKIN' WIT FISTS, ELBOWS, KNEES AN' SHINS!"
+    },
+    "183": {
+      "name": "MUSIC COMPOSITION",
+      "description": "WRITIN' MUSIC: LINE, HARMONY AN' STRUCTURE!"
+    },
+    "184": {
+      "name": "INSTRUMENT NAVIGATION",
+      "description": "NAVIGATIN' ON INSTRUMENTS ALONE, WITOUT OUTSIDE REFERENCE!"
+    },
+    "185": {
+      "name": "CELESTIAL NAVIGATION",
+      "description": "FIXIN' POSITION FROM SUN, STARS AN' DA HORIZON!"
+    },
+    "186": {
+      "name": "NEGOTIATION",
+      "description": "REACHIN' TERMS BOTH SIDES WILL SIGN AN' KEEP!"
+    },
+    "187": {
+      "name": "NIMBLE",
+      "description": "QUICKNESS OF HAND AN' FOOT IN TIGHT, AWKWARD MOMENTS!"
+    },
+    "188": {
+      "name": "NURSIN'",
+      "description": "BEDSIDE CARE, OBSERVATION AN' DA PRACTICAL SIDE OF MEDICINE!"
+    },
+    "189": {
+      "name": "ORIENTEERIN'",
+      "description": "RACIN' BETWEEN CONTROL POINTS ON MAP AN' COMPASS!"
+    },
+    "190": {
+      "name": "ORIGAMI",
+      "description": "FOLDIN' PAPER INTO FORM WITOUT CUTTIN'!"
+    },
+    "191": {
+      "name": "PAIN TOLERANCE",
+      "description": "STAYIN' FUNCTIONAL THROUGH PAIN DAT WOULD STOP OTHERS!"
+    },
+    "192": {
+      "name": "PAINTIN'",
+      "description": "WORKIN' IN PAINT: COLOUR, VALUE AN' SURFACE!"
+    },
+    "193": {
+      "name": "PANKRATION",
+      "description": "ANCIENT GREEK ALL-IN FIGHTIN': STRIKIN' AN' GRAPPLIN' TOGETHER!"
+    },
+    "194": {
+      "name": "PARACHUTIN'",
+      "description": "JUMPIN', CANOPY CONTROL AN' LANDIN'!"
+    },
+    "195": {
+      "name": "PARKOUR",
+      "description": "MOVIN' THROUGH BUILT TERRAIN BY VAULT, CLIMB AN' DROP!"
+    },
+    "196": {
+      "name": "PEN SPINNIN'",
+      "description": "ROTATIN' A PEN THROUGH DA FINGERS IN PATTERNS!"
+    },
+    "197": {
+      "name": "PHARMACOLOGY",
+      "description": "WHAT DRUGS DO, AT WHAT DOSE, AN' WHAT DEY DO TOGETHER!"
+    },
+    "198": {
+      "name": "PHARMACY DISPENSIN'",
+      "description": "FILLIN' PRESCRIPTIONS ACCURATELY AN' CHECKIN' INTERACTIONS!"
+    },
+    "199": {
+      "name": "PHILOSOPHY",
+      "description": "ARGUMENT 'BOUT KNOWLEDGE, BEING, ETHICS AN' MIND!"
+    },
+    "200": {
+      "name": "PHOTOKINESIS",
+      "description": "BENDIN' AN' GENERATIN' LIGHT BY WILL!"
+    },
+    "201": {
+      "name": "PHOTOGRAPHY",
+      "description": "EXPOSURE, FOCUS AN' COMPOSITION, IN CAMERA!"
+    },
+    "202": {
+      "name": "PHYSICS",
+      "description": "MATTER, ENERGY, MOTION AN' DA LAWS DEY OBEY!"
+    },
+    "203": {
+      "name": "PICKPOCKETIN'",
+      "description": "LIFTIN' FROM A PERSON WITOUT DEM REGISTERIN' IT!"
+    },
+    "205": {
+      "name": "PILATES",
+      "description": "CONTROLLED CORE CONDITIONIN' THROUGH SET MOVEMENT!"
+    },
+    "206": {
+      "name": "PLAYIN' BASS",
+      "description": "HOLDIN' DA LOW END IN TIME WIT DA DRUMS!"
+    },
+    "207": {
+      "name": "PLAYIN' DRUMS",
+      "description": "KEEPIN' AN' SHAPIN' TIME ON A KIT!"
+    },
+    "208": {
+      "name": "PLAYIN' GUITAR",
+      "description": "PLAYIN' GUITAR: CHORDS, LEAD AN' TONE!"
+    },
+    "209": {
+      "name": "PLAYIN' PIANO",
+      "description": "PLAYIN' PIANO WIT BOTH HANDS, READIN' OR BY EAR!"
+    },
+    "210": {
+      "name": "PLAYIN' VIOLIN",
+      "description": "BOWIN' AN' STOPPIN' DA VIOLIN IN TUNE!"
+    },
+    "211": {
+      "name": "PLUMBIN'",
+      "description": "RUNNIN', JOINTIN' AN' TESTIN' WATER AN' WASTE!"
+    },
+    "212": {
+      "name": "POETRY",
+      "description": "WRITIN' VERSE WIT RHYTHM, IMAGERY AN' FORM!"
+    },
+    "213": {
+      "name": "POISON RESISTANCE",
+      "description": "SURVIVIN' DOSES OF POISON DAT WOULD KILL OTHERS!"
+    },
+    "214": {
+      "name": "POKER",
+      "description": "BETTIN', READIN' OPPONENTS AN' KNOWIN' WHEN TA FOLD!"
+    },
+    "215": {
+      "name": "POTTERY",
+      "description": "THROWIN', TRIMMIN' AN' FIRIN' CLAY VESSELS!"
+    },
+    "216": {
+      "name": "POWERLIFTIN'",
+      "description": "MAXIMAL STRENGTH IN DA SQUAT, BENCH AN' DEADLIFT!"
+    },
+    "217": {
+      "name": "PROGRAMMIN'",
+      "description": "WRITIN', STRUCTURIN' AN' DEBUGGIN' CODE!"
+    },
+    "218": {
+      "name": "PUBLIC SPEAKIN'",
+      "description": "HOLDIN' A ROOM FROM DA FRONT, WIT STRUCTURE AN' VOICE!"
+    },
+    "219": {
+      "name": "PYROKINESIS",
+      "description": "IGNITIN' AN' STEERIN' FIRE BY WILL!"
+    },
+    "220": {
+      "name": "RADIO OPERATION",
+      "description": "WORKIN' A RADIO SET: BANDS, PROCEDURE AN' TRAFFIC!"
+    },
+    "221": {
+      "name": "RAPPIN'",
+      "description": "WRITIN' AN' DELIVERIN' RHYMED VERSE IN TIME!"
+    },
+    "222": {
+      "name": "WEAPON RELOADIN'",
+      "description": "RELOADIN' FAST AN' CORRECTLY, WITOUT LOOKIN' AT IT!"
+    },
+    "224": {
+      "name": "ROCK CLIMBIN'",
+      "description": "ROPED CLIMBIN' ON ROCK: TECHNIQUE, PROTECTION AN' ROPE WORK!"
+    },
+    "225": {
+      "name": "ROLLER SKATIN'",
+      "description": "BALANCE, SPEED AN' STOPS ON WHEELS!"
+    },
+    "226": {
+      "name": "ROOFIN'",
+      "description": "COVERIN' AN' FLASHIN' A ROOF SO IT STAYS WATERTIGHT!"
+    },
+    "227": {
+      "name": "SPEEDCUBIN'",
+      "description": "SOLVIN' TWISTY PUZZLES BY ALGORITHM AT SPEED!"
+    },
+    "228": {
+      "name": "RUGBY",
+      "description": "CONTACT, HANDLIN' AN' SET PIECE IN DA RUNNIN' GAME!"
+    },
+    "229": {
+      "name": "SAILIN'",
+      "description": "WORKIN' A BOAT UNDER SAIL ON WIND, TIDE AN' TRIM!"
+    },
+    "230": {
+      "name": "SCUBA DIVIN'",
+      "description": "DIVIN' ON COMPRESSED AIR WIT BUOYANCY AN' GAS DISCIPLINE!"
+    },
+    "231": {
+      "name": "SEDUCTION",
+      "description": "DRAWIN' SOMEONE IN DELIBERATELY, AN' KNOWIN' WHEN IT IZ WORKIN'!"
+    },
+    "233": {
+      "name": "SEWIN'",
+      "description": "JOININ' CLOTH BY HAND OR MACHINE TA A SEAM DAT HOLDS!"
+    },
+    "234": {
+      "name": "SHOEMAKIN'",
+      "description": "LASTIN', SEWIN' AN' SOLIN' FOOTWEAR!"
+    },
+    "238": {
+      "name": "SIGN LANGUAGE",
+      "description": "SIGNED CONVERSATION, WIT ITS OWN GRAMMAR AN' SPACE!"
+    },
+    "239": {
+      "name": "SILVERSMITHIN'",
+      "description": "RAISIN', SOLDERIN' AN' FINISHIN' SILVER!"
+    },
+    "240": {
+      "name": "SINGIN'",
+      "description": "PITCH, BREATH AN' TONE WIT DA TRAINED VOICE!"
+    },
+    "241": {
+      "name": "SKATEBOARDIN'",
+      "description": "RIDIN', BALANCE AN' TRICKS ON A BOARD!"
+    },
+    "242": {
+      "name": "SLEEP DEPRIVATION",
+      "description": "STAYIN' FUNCTIONAL WITOUT ENOUGH SLEEP!"
+    },
+    "243": {
+      "name": "SLEIGHT OF HAND",
+      "description": "DOING SOMETINK WIT DA HANDS NOBODY SEES!"
+    },
+    "245": {
+      "name": "STEALTH MOVEMENT",
+      "description": "MOVIN' PAST PEOPLE UNSEEN AN' UNHEARD!"
+    },
+    "246": {
+      "name": "SNOWBOARDIN'",
+      "description": "EDGES, CARVIN' AN' TERRAIN ON A BOARD!"
+    },
+    "247": {
+      "name": "SOCCER",
+      "description": "BALL CONTROL, PASSIN' AN' SHOOTIN' IN DA ELEVEN-A-SIDE GAME!"
+    },
+    "248": {
+      "name": "SOCIOLOGY",
+      "description": "HOW SOCIETIES, CLASSES AN' INSTITUTIONS ACTUALLY BEHAVE!"
+    },
+    "249": {
+      "name": "SOLDERIN'",
+      "description": "JOININ' METAL AN' ELECTRONICS WIT FILLER AN' CONTROLLED HEAT!"
+    },
+    "250": {
+      "name": "SOUND ENGINEERIN'",
+      "description": "RECORDIN', MIXIN' AN' REINFORCIN' SOUND!"
+    },
+    "251": {
+      "name": "SPATIAL MANIPULATION",
+      "description": "FOLDIN' DISTANCE AN' LOUDNESS BY WILL!"
+    },
+    "253": {
+      "name": "SPEED READIN'",
+      "description": "READIN' FAST WITOUT LOSIN' WHAT WAZ ON DA PAGE!"
+    },
+    "254": {
+      "name": "SPEEDRUNNIN'",
+      "description": "COMPLETIN' A GAME BY DA FASTEST ROUTE KNOWN, AN' FINDIN' FASTER ONES!"
+    },
+    "255": {
+      "name": "SPELLCRAFT",
+      "description": "CONSTRUCTIN' AN' CASTIN' A SPELL FROM ITS COMPONENTS!"
+    },
+    "257": {
+      "name": "SPRINTIN'",
+      "description": "MAXIMUM SPEED OVER SHORT DISTANCE, FROM DA START!"
+    },
+    "258": {
+      "name": "STATISTICS",
+      "description": "SAMPLIN', INFERENCE AN' READIN' DATA CORRECTLY!"
+    },
+    "259": {
+      "name": "STOCK TRADIN'",
+      "description": "BUYIN' AN' SELLIN' SECURITIES ON ANALYSIS AN' NERVE!"
+    },
+    "260": {
+      "name": "STORMSHAPIN'",
+      "description": "CALLIN' AN' STEERIN' WEATHER BY WILL!"
+    },
+    "261": {
+      "name": "STREETWISE",
+      "description": "READIN' A CITY'S RULES: WHO TA ASK, WHERE NO TA GO!"
+    },
+    "262": {
+      "name": "STRUCTURAL ENGINEERIN'",
+      "description": "SIZIN' STRUCTURE SO IT CARRIES LOAD AN' STAYS STANDIN'!"
+    },
+    "263": {
+      "name": "SUMO WRESTLIN'",
+      "description": "DRIVIN' AN OPPONENT OUT OF DA RING, OR DOWN INSIDE IT!"
+    },
+    "264": {
+      "name": "SURFIN'",
+      "description": "READIN', CATCHIN' AN' RIDIN' A WAVE!"
+    },
+    "265": {
+      "name": "SURGERY",
+      "description": "OPERATIN': OPENIN', REPAIRIN' AN' CLOSIN' A LIVIN' BODY!"
+    },
+    "266": {
+      "name": "SURVIVAL",
+      "description": "STAYIN' ALIVE OUTDOORS: WATER, SHELTER, FIRE, FOOD!"
+    },
+    "267": {
+      "name": "SWIMMIN'",
+      "description": "EFFICIENT STROKES AN' STAYIN' SAFE IN OPEN WATER!"
+    },
+    "268": {
+      "name": "TAEKWONDO",
+      "description": "KOREAN STRIKIN' ART BUILT ON FAST, HIGH KICKS!"
+    },
+    "269": {
+      "name": "TAILORIN'",
+      "description": "CUTTIN' AN' FITTIN' GARMENTS TA A BODY!"
+    },
+    "270": {
+      "name": "TANGO",
+      "description": "CLOSE PARTNER DANCE OF LEAD, PAUSE AN' WALK!"
+    },
+    "271": {
+      "name": "TAROT READIN'",
+      "description": "LAYIN' AN' INTERPRETIN' DA CARDS FOR A QUERENT!"
+    },
+    "272": {
+      "name": "TAXIDERMY",
+      "description": "SKINNIN', MOUNTIN' AN' POSIN' AN ANIMAL TA LOOK ALIVE!"
+    },
+    "273": {
+      "name": "TECHNOMANCY",
+      "description": "WORKIN' MAGIC THROUGH MACHINES AN' CODE!"
+    },
+    "274": {
+      "name": "TELEKINESIS",
+      "description": "MOVIN' OBJECTS AT A DISTANCE BY WILL!"
+    },
+    "275": {
+      "name": "TELEPATHY",
+      "description": "READIN' AN' SENDIN' THOUGHT WITOUT SPEECH!"
+    },
+    "276": {
+      "name": "TENNIS",
+      "description": "SERVE, GROUNDSTROKES AN' COURT MOVEMENT!"
+    },
+    "277": {
+      "name": "THEOLOGY",
+      "description": "DOCTRINE, SCRIPTURE AN' DA ARGUMENTS INSIDE A FAITH!"
+    },
+    "278": {
+      "name": "POWER THROWIN'",
+      "description": "THROWIN' HEAVY OBJECTS HARD, WIT DA WHOLE BODY BEHIND IT!"
+    },
+    "279": {
+      "name": "PRECISION THROWIN'",
+      "description": "HITTIN' A LIL' TARGET WIT A THROWN OBJECT AT RANGE!"
+    },
+    "280": {
+      "name": "TORTURE",
+      "description": "INFLICTIN' PAIN TA A PURPOSE, AN' WHAT DAT IZ ACTUALLY WORTH!"
+    },
+    "281": {
+      "name": "TRACKIN'",
+      "description": "FOLLOWIN' SIGN LEFT BY PEOPLE AN' ANIMALS!"
+    },
+    "282": {
+      "name": "TRANSLATION",
+      "description": "RENDERIN' MEANIN' FROM ONE LANGUAGE INTO ANOTHER!"
+    },
+    "283": {
+      "name": "TRAPPIN'",
+      "description": "FIDDLY BIT, PLACIN' AN' CHECKIN' TRAPS FOR GAME!"
+    },
+    "285": {
+      "name": "TRUCK DRIVIN'",
+      "description": "DRIVIN' HEAVY GOODS VEHICLES: LOAD, BRAKES AN' HOURS!"
+    },
+    "286": {
+      "name": "UNARMED COMBAT",
+      "description": "FIGHTIN' WIT DA BODY ALONE: STRIKES, CLINCH AN' CONTROL!"
+    },
+    "287": {
+      "name": "UPHOLSTERY",
+      "description": "STRIPPIN', PADDIN' AN' COVERIN' FURNITURE FRAMES!"
+    },
+    "288": {
+      "name": "URBAN PLANNIN'",
+      "description": "ZONIN', TRANSPORT AN' HOW A CITY GROWS OR CHOKES!"
+    },
+    "289": {
+      "name": "VIDEO EDITIN'",
+      "description": "CUTTIN' FOOTAGE INTO SEQUENCE, PACE AN' SENSE!"
+    },
+    "290": {
+      "name": "VIDEO GAMIN'",
+      "description": "PLAYIN' VIDEOGAMES WELL: REFLEX, SYSTEMS AN' PATTERN!"
+    },
+    "292": {
+      "name": "WAKEBOARDIN'",
+      "description": "RIDIN' AN' JUMPIN' DA WAKE BEHIND A BOAT!"
+    },
+    "294": {
+      "name": "WATER SKIIN'",
+      "description": "RIDIN' SKIS BEHIND A BOAT, ON A WAKE AN' ACROSS IT!"
+    },
+    "295": {
+      "name": "WEIGHTLIFTIN'",
+      "description": "DA SNATCH AN' DA CLEAN AN' JERK, DONE TECHNICALLY!"
+    },
+    "296": {
+      "name": "WELDIN'",
+      "description": "FUSIN' METAL WIT A SOUND, LOAD-BEARIN' BEAD!"
+    },
+    "297": {
+      "name": "WHITTLIN'",
+      "description": "CUTTIN' LIL' OBJECTS FROM WOOD WIT A KNIFE ALONE!"
+    },
+    "298": {
+      "name": "WINDSURFIN'",
+      "description": "SAILIN' A BOARD: RIG HANDLIN', TRIM AN' STANCE!"
+    },
+    "299": {
+      "name": "WINEMAKIN'",
+      "description": "CRUSHIN', FERMENTIN' AN' AGEIN' GRAPES INTO WINE!"
+    },
+    "300": {
+      "name": "WOODCARVIN'",
+      "description": "CUTTIN' FIGURE AN' RELIEF INTO WOOD WIT CHISEL AN' GOUGE!"
+    },
+    "301": {
+      "name": "WRESTLIN'",
+      "description": "TAKEDOWNS, CONTROL AN' PINS ON DA MAT!"
+    },
+    "303": {
+      "name": "YOGA",
+      "description": "POSTURES, BREATH AN' ATTENTION HELD TOGETHER!"
+    },
+    "304": {
+      "name": "YO-YO",
+      "description": "STRING TRICKS, SLEEP AN' RETURN ON DA YO-YO!"
+    },
+    "305": {
+      "name": "ZOOLOGY",
+      "description": "DA STUDY OF ANIMALS: CLASSIFICATION, ANATOMY AN' BEHAVIOUR!"
+    },
+    "306": {
+      "name": "AERIAL SILKS",
+      "description": "CLIMBIN', WRAPPIN' AN' DROPPIN' ON SUSPENDED FABRIC!"
+    },
+    "307": {
+      "name": "AGROFORESTRY",
+      "description": "GROWIN' CROPS AN' LIVESTOCK AMONG MANAGED TREES ON DA SAME LAND!"
+    },
+    "308": {
+      "name": "AIR TRAFFIC CONTROL",
+      "description": "SEQUENCIN' AN' SEPARATIN' AIRCRAFT BY RADIO AN' RADAR!"
+    },
+    "309": {
+      "name": "ALCHEMY",
+      "description": "DA PRE-CHEMICAL ART OF TRANSMUTATION, DISTILLATION AN' DA TRIA PRIMA!"
+    },
+    "310": {
+      "name": "ANTIQUE GUNSMITHIN'",
+      "description": "REPAIRIN' AN' RESTORIN' PRE-MODERN FIREARMS AN' DEY ACTIONS!"
+    },
+    "312": {
+      "name": "ART FORGERY",
+      "description": "REPRODUCIN' ANOTHER ARTIST'S HAND, MATERIALS AN' PROVENANCE!"
+    },
+    "313": {
+      "name": "ASBESTOS REMOVAL",
+      "description": "STRIPPIN' FRIABLE INSULATION WITOUT RELEASIN' FIBRE!"
+    },
+    "314": {
+      "name": "ASTROPHOTOGRAPHY",
+      "description": "PHOTOGRAPHIN' FAINT SKY OBJECTS THROUGH LONG EXPOSURE AN' TRACKIN'!"
+    },
+    "315": {
+      "name": "AVIONICS REPAIR",
+      "description": "DIAGNOSIN' AN' FIXIN' AIRCRAFT ELECTRONICS AN' INSTRUMENTS!"
+    },
+    "316": {
+      "name": "BANJO PLAYIN'",
+      "description": "PLAYIN' DA FIVE-STRING BANJO, ROLLS AN' CLAWHAMMER!"
+    },
+    "317": {
+      "name": "BARREL MAKIN'",
+      "description": "COOPERIN' STAVES AN' HOOPS INTO WATERTIGHT CASKS!"
+    },
+    "318": {
+      "name": "BASE BUILDIN'",
+      "description": "LAYIN' OUT A DEFENSIBLE, WORKABLE SETTLEMENT OR CAMP!"
+    },
+    "319": {
+      "name": "BASKET WEAVIN'",
+      "description": "WEAVIN' PREPARED FIBRE OR CANE INTO VESSELS AN' CONTAINERS!"
+    },
+    "320": {
+      "name": "BIO-JUICE EXTRACTION",
+      "description": "RENDERIN' BIOLOGICAL MATTER DOWN TA USABLE FLUID!"
+    },
+    "321": {
+      "name": "BLADESMITHIN'",
+      "description": "FORGIN', GRINDIN' AN' HEAT-TREATIN' EDGED BLADES!"
+    },
+    "322": {
+      "name": "BONSAI CULTIVATION",
+      "description": "KEEPIN' A TREE LIL', HEALTHY AN' SHAPED OVER YEARS!"
+    },
+    "323": {
+      "name": "BOOMERANG CRAFTIN'",
+      "description": "CARVIN' AN AIRFOIL DAT COMES BACK!"
+    },
+    "324": {
+      "name": "BOULDERIN'",
+      "description": "SHORT, HARD CLIMBIN' WITOUT ROPE, CLOSE TA DA GROUND!"
+    },
+    "325": {
+      "name": "BRICKMAKIN'",
+      "description": "FORMIN' AN' FIRIN' CLAY INTO BRICKS OF EVEN SIZE AN' HARDNESS!"
+    },
+    "326": {
+      "name": "BUNGEE CORD TESTIN'",
+      "description": "LOAD-TESTIN' ELASTIC CORD FOR SAFETY!"
+    },
+    "327": {
+      "name": "CABLE SPLICIN'",
+      "description": "JOININ' CABLES WITOUT LOSIN' STRENGTH OR SIGNAL!"
+    },
+    "328": {
+      "name": "CAMPFIRE COOKIN'",
+      "description": "COOKIN' ON OPEN FIRE AN' COALS, WIT WHAT IZ CARRIED!"
+    },
+    "331": {
+      "name": "CAVIN'",
+      "description": "MOVIN' SAFELY THROUGH CAVE SYSTEMS: RIGGIN', SQUEEZES AN' ROUTE!"
+    },
+    "336": {
+      "name": "COB BUILDIN'",
+      "description": "BUILDIN' WALLS FROM CLAY, SAND AN' STRAW, LAYER BY LAYER!"
+    },
+    "337": {
+      "name": "CORAL REEF RESTORATION",
+      "description": "PROPAGATIN' AN' REPLANTIN' CORAL ON DAMAGED REEF!"
+    },
+    "338": {
+      "name": "RESUSCITATION",
+      "description": "RESTARTIN' BREATHIN' AN' CIRCULATION!"
+    },
+    "339": {
+      "name": "CRIMINOLOGY",
+      "description": "DA STUDY OF CRIME, OFFENDERS AN' WHAT ACTUALLY DETERS DEM!"
+    },
+    "340": {
+      "name": "CRYPTOZOOLOGY",
+      "description": "PURSUIN' ANIMALS DAT IZ REPORTED BUT NO CATALOGUED!"
+    },
+    "341": {
+      "name": "DEEP SEA DIVIN'",
+      "description": "WORKIN' AT DEPTH ON MIXED GAS, WIT DECOMPRESSION DISCIPLINE!"
+    },
+    "342": {
+      "name": "NUTRITION",
+      "description": "WHAT FOOD DOES IN DA BODY, AN' WHAT A DIET LACKS!"
+    },
+    "343": {
+      "name": "DOG SLEDDIN'",
+      "description": "DRIVIN' AN' HANDLIN' A WORKIN' DOG TEAM OVER SNOW!"
+    },
+    "344": {
+      "name": "DRUM MAKIN'",
+      "description": "BUILDIN' DRUM SHELLS AN' TUNIN' DA HEADS!"
+    },
+    "345": {
+      "name": "DRY-STONE WALLIN'",
+      "description": "BUILDIN' WALLS DAT STAND ON FIT AN' GRAVITY, WITOUT MORTAR!"
+    },
+    "346": {
+      "name": "E-COMMERCE",
+      "description": "RUNNIN' AN ONLINE SHOP: LISTINGS, STOCK, PAYMENT AN' RETURNS!"
+    },
+    "347": {
+      "name": "EARTHQUAKE SURVIVAL",
+      "description": "ACTIN' CORRECTLY IN DA SHAKIN' AN' IN DA HOURS AFTER!"
+    },
+    "348": {
+      "name": "EMP DEVICE CRAFTIN'",
+      "description": "BUILDIN' PULSE DEVICES DAT KILL ELECTRONICS WITOUT A BANG!"
+    },
+    "349": {
+      "name": "ELEPHANT HANDLIN'",
+      "description": "WORKIN' WIT ELEPHANTS SAFELY, BY VOICE, HOOK AN' HABIT!"
+    },
+    "350": {
+      "name": "ESPIONAGE",
+      "description": "COLLECTIN' PROTECTED INFORMATION WITOUT BEING IDENTIFIED!"
+    },
+    "353": {
+      "name": "FIRE JUGGLIN'",
+      "description": "JUGGLIN' BURNIN' PROPS WITOUT DROPPIN' DEM!"
+    },
+    "354": {
+      "name": "FIREWALKIN'",
+      "description": "CROSSIN' HOT COALS UNBURNED, THANKS TA BRIEF CONTACT!"
+    },
+    "355": {
+      "name": "FISH FILLETIN'",
+      "description": "TAKIN' CLEAN FILLETS OFF A FISH WIT MINIMAL WASTE!"
+    },
+    "357": {
+      "name": "FORCEFIELD GENERATION",
+      "description": "RAISIN' A BARRIER OF PURE FORCE!"
+    },
+    "358": {
+      "name": "FORESTRY",
+      "description": "MANAGIN' WOODLAND: PLANTIN', THINNIN', FELLIN' AN' YIELD!"
+    },
+    "360": {
+      "name": "FUNGAL RESISTANCE",
+      "description": "DA BODY'S TOLERANCE OF SPORES, ROT AN' FUNGAL TOXINS!"
+    },
+    "361": {
+      "name": "GEM CUTTIN'",
+      "description": "FACETIN' ROUGH STONE FOR LIGHT RETURN AN' SYMMETRY!"
+    },
+    "362": {
+      "name": "GEOCACHIN'",
+      "description": "FINDIN' HIDDEN CACHES BY COORDINATE AN' CLUE!"
+    },
+    "363": {
+      "name": "GLACIOLOGY",
+      "description": "DA STUDY OF ICE SHEETS, GLACIERS AN' DEY MOVEMENT!"
+    },
+    "364": {
+      "name": "GOLD PANNIN'",
+      "description": "WASHIN' GRAVEL DOWN TA WHAT IZ HEAVY AN' YELLOW!"
+    },
+    "365": {
+      "name": "HANDWRITIN' ANALYSIS",
+      "description": "READIN' A HAND FOR AUTHORSHIP, FORGERY OR STATE OF MIND!"
+    },
+    "366": {
+      "name": "GUNPOWDER MILLIN'",
+      "description": "MILLIN' AN' CORNIN' BLACK POWDER WITOUT FIDDLY BIT IT OFF!"
+    },
+    "367": {
+      "name": "HABITAT RESTORATION",
+      "description": "REBUILDIN' A DAMAGED HABITAT UNTIL IT HOLDS ITS OWN SPECIES!"
+    },
+    "368": {
+      "name": "HARPSICHORD PLAYIN'",
+      "description": "PLAYIN' PLUCKED-STRING KEYBOARD, WHERE TOUCH NO CAN CHANGE LOUDNESS!"
+    },
+    "369": {
+      "name": "HELICOPTER MECHANICS",
+      "description": "MAINTAININ' ROTOR SYSTEMS, GEARBOXES AN' TURBINES!"
+    },
+    "370": {
+      "name": "HERBAL POULTICE CRAFTIN'",
+      "description": "PREPARIN' HERB DRESSINGS DAT DRAW, SOOTHE OR CLOSE!"
+    },
+    "371": {
+      "name": "HIGH-ALTITUDE ACCLIMATIZATION",
+      "description": "ADAPTIN' TA THIN AIR WITOUT FALLIN' ILL!"
+    },
+    "372": {
+      "name": "HULA DANCIN'",
+      "description": "HAWAIIAN DANCE DAT TELLS A STORY WIT DA HANDS!"
+    },
+    "373": {
+      "name": "HYDROGEOLOGY",
+      "description": "GROUNDWATER: WHERE IT IZ, HOW IT MOVES AN' WHAT IT CARRIES!"
+    },
+    "374": {
+      "name": "ICE FISHIN'",
+      "description": "FISHIN' THROUGH CUT ICE, AN' READIN' DA ICE FIRST!"
+    },
+    "375": {
+      "name": "IGLOO BUILDIN'",
+      "description": "CUTTIN' AN' LAYIN' SNOW BLOCKS INTO A SPIRAL SHELTER!"
+    },
+    "376": {
+      "name": "IMPROVISED EXPLOSIVES",
+      "description": "MAKIN' CHARGES OUT OF WHAT IZ TA HAND, AN' SURVIVIN' DEM!"
+    },
+    "377": {
+      "name": "INTELLIGENCE GATHERIN'",
+      "description": "COLLECTIN', SORTIN' AN' WEIGHTIN' INFORMATION INTO USABLE FACT!"
+    },
+    "380": {
+      "name": "KELP FARMIN'",
+      "description": "GROWIN' AN' HARVESTIN' KELP ON LINE AT SEA!"
+    },
+    "381": {
+      "name": "KINTSUGI REPAIR",
+      "description": "REJOININ' BROKEN POTTERY IN GOLD, LEAVIN' DA BREAK VISIBLE!"
+    },
+    "382": {
+      "name": "LABYRINTH NAVIGATION",
+      "description": "KEEPIN' ORIENTATION AN' ROUTE INSIDE A DELIBERATE MAZE!"
+    },
+    "383": {
+      "name": "HIDE TANNIN'",
+      "description": "TURNIN' RAW HIDE INTO LEATHER DAT WILL NO ROT!"
+    },
+    "384": {
+      "name": "LOOM WEAVIN'",
+      "description": "WARPIN' AN' WEAVIN' CLOTH ON A LOOM!"
+    },
+    "385": {
+      "name": "MACHINE LEARNIN'",
+      "description": "TRAININ' STATISTICAL MODELS TA DO A TASK FROM DATA!"
+    },
+    "387": {
+      "name": "MANUAL TOOLIN'",
+      "description": "WORKIN' A LATHE, MILL AN' FILE BY HAND TA A TOLERANCE!"
+    },
+    "388": {
+      "name": "MAPLE SYRUPIN'",
+      "description": "TAPPIN', COLLECTIN' AN' BOILIN' SAP TA SYRUP!"
+    },
+    "389": {
+      "name": "MARINE NAVIGATION",
+      "description": "CHARTIN' AN' HOLDIN' A COURSE AT SEA BY FIX AN' DEAD RECKONIN'!"
+    },
+    "390": {
+      "name": "MATCHMAKIN'",
+      "description": "INTRODUCIN' TWO PEOPLE WHO WILL ACTUALLY SUIT EACH OTHER!"
+    },
+    "391": {
+      "name": "MEAT CURIN'",
+      "description": "PRESERVIN' MEAT WIT SALT, SMOKE, NITRATE AN' TIME!"
+    },
+    "393": {
+      "name": "METEORITE HUNTIN'",
+      "description": "FINDIN' AN' RECOGNISIN' FALLEN SPACE ROCK IN DA FIELD!"
+    },
+    "395": {
+      "name": "MINIATURE GOLF",
+      "description": "PUTTIN' THROUGH OBSTACLES ON A SHORT BUILT COURSE!"
+    },
+    "396": {
+      "name": "MOLECULAR GASTRONOMY",
+      "description": "COOKIN' ON CHEMISTRY: GELS, FOAMS AN' PHASE CHANGES!"
+    },
+    "397": {
+      "name": "MOSAICS",
+      "description": "FIDDLY BIT TESSERAE INTO IMAGE AN' PATTERN!"
+    },
+    "398": {
+      "name": "MUSHROOM CULTIVATION",
+      "description": "GROWIN' EDIBLE FUNGI ON PREPARED SUBSTRATE!"
+    },
+    "399": {
+      "name": "MUTAGEN CRAFTIN'",
+      "description": "COMPOUNDIN' AGENTS DAT REWRITE LIVIN' TISSUE!"
+    },
+    "400": {
+      "name": "NANOTECHNOLOGY",
+      "description": "ENGINEERIN' MATTER AT DA SCALE OF MOLECULES!"
+    },
+    "401": {
+      "name": "NEON SIGN MAKIN'",
+      "description": "BENDIN' AN' FILLIN' GLASS TUBE INTO LIT SIGN!"
+    },
+    "402": {
+      "name": "NEUROHACKIN'",
+      "description": "INTERVENIN' DIRECTLY IN A NERVOUS SYSTEM TA CHANGE HOW IT RUNS!"
+    },
+    "404": {
+      "name": "OBOE PLAYIN'",
+      "description": "PLAYIN' DA OBOE, REED MAKIN' INCLUDED!"
+    },
+    "405": {
+      "name": "OCEANOGRAPHY",
+      "description": "DA PHYSICS, CHEMISTRY AN' CIRCULATION OF DA SEA!"
+    },
+    "406": {
+      "name": "BIRD WATCHIN'",
+      "description": "IDENTIFYIN' BIRDS BY SIGHT, CALL AN' BEHAVIOUR IN DA FIELD!"
+    },
+    "407": {
+      "name": "PALEOBOTANY",
+      "description": "FOSSIL PLANTS, AN' DA CLIMATES DEY RECORD!"
+    },
+    "408": {
+      "name": "PAPER MACHE",
+      "description": "BUILDIN' FORM FROM PASTE AN' LAYERED PAPER!"
+    },
+    "409": {
+      "name": "PARAMEDICINE",
+      "description": "EMERGENCY MEDICINE IN DA FIELD, BEFORE HOSPITAL!"
+    },
+    "410": {
+      "name": "PARQUET FLOORIN'",
+      "description": "LAYIN' PATTERNED WOOD FLOORIN' TRUE AN' TIGHT!"
+    },
+    "411": {
+      "name": "PEARL DIVIN'",
+      "description": "DIVIN' FOR OYSTERS ON BREATH, AN' SHUCKIN' FOR PEARL!"
+    },
+    "412": {
+      "name": "PERFUMERY",
+      "description": "BLENDIN' TOP, HEART AN' BASE NOTES INTO A SCENT DAT LASTS!"
+    },
+    "413": {
+      "name": "PEWTER CASTIN'",
+      "description": "MELTIN' AN' CASTIN' PEWTER INTO MOULDS!"
+    },
+    "414": {
+      "name": "PHRENOLOGY",
+      "description": "READIN' CHARACTER FROM DA BUMPS OF DA SKULL, AS DA OLD BOOKS HAB IT!"
+    },
+    "415": {
+      "name": "PHYTOREMEDIATION",
+      "description": "CLEANIN' CONTAMINATED GROUND WIT PLANTS DAT TAKE UP DA POISON!"
+    },
+    "416": {
+      "name": "PICTURE FRAMIN'",
+      "description": "CUTTIN', MOUNTIN' AN' GLAZIN' WORK FOR DISPLAY!"
+    },
+    "417": {
+      "name": "PIPELAYIN'",
+      "description": "LAYIN', JOINTIN' AN' BEDDIN' PIPE TA FALL!"
+    },
+    "418": {
+      "name": "PLANETARIUM OPERATION",
+      "description": "RUNNIN' A DOME PROJECTOR AN' DA SHOW DAT GOES WIT IT!"
+    },
+    "419": {
+      "name": "PLASTERIN'",
+      "description": "FLOATIN' AN' FINISHIN' PLASTER FLAT AN' HARD!"
+    },
+    "420": {
+      "name": "POKER FACE",
+      "description": "GIVIN' NUTTIN' AWAY IN DA FACE, UNDER PRESSURE!"
+    },
+    "421": {
+      "name": "POLYGRAPH OPERATION",
+      "description": "RUNNIN' AN' INTERPRETIN' A POLYGRAPH, FOR WHAT DAT IZ WORTH!"
+    },
+    "425": {
+      "name": "PROSTHETICS DESIGN",
+      "description": "DESIGNIN' LIMBS AN' DEVICES DAT A BODY CAN ACTUALLY USE!"
+    },
+    "426": {
+      "name": "PSYCHOANALYSIS",
+      "description": "READIN' DA UNCONSCIOUS THROUGH TALK, DREAM AN' SLIP!"
+    },
+    "427": {
+      "name": "QUANTUM COMPUTIN'",
+      "description": "COMPUTIN' WIT SUPERPOSITION AN' INTERFERENCE!"
+    },
+    "428": {
+      "name": "QUILLIN'",
+      "description": "ROLLIN' AN' SHAPIN' PAPER STRIPS INTO RELIEF DESIGN!"
+    },
+    "429": {
+      "name": "RADIO ASTRONOMY",
+      "description": "OBSERVIN' DA SKY AT RADIO WAVELENGTHS!"
+    },
+    "430": {
+      "name": "RAPTOR REHABILITATION",
+      "description": "TREATIN' AN' RELEASIN' INJURED BIRDS OF PREY!"
+    },
+    "431": {
+      "name": "READIN' MICRO-EXPRESSIONS",
+      "description": "CATCHIN' DA EXPRESSION DAT SHOWS BEFORE IT IZ CONTROLLED!"
+    },
+    "432": {
+      "name": "REDSMITHIN'",
+      "description": "WORKIN' COPPER AN' ITS ALLOYS AT DA BENCH!"
+    },
+    "434": {
+      "name": "SAIL RIGGIN'",
+      "description": "FIDDLY BIT UP STANDIN' AN' RUNNIN' RIGGIN' CORRECTLY!"
+    },
+    "435": {
+      "name": "ROLLER DERBY",
+      "description": "BLOCKIN', JAMMIN' AN' SKATIN' IN A PACK!"
+    },
+    "437": {
+      "name": "RUNIC TRANSLATION",
+      "description": "READIN' RUNIC INSCRIPTION AN' KNOWIN' WHICH FUTHARK IT IZ!"
+    },
+    "438": {
+      "name": "SAILMAKIN'",
+      "description": "CUTTIN' AN' SEWIN' SAILS DAT HOLD DEY SHAPE!"
+    },
+    "439": {
+      "name": "SCRIMSHAW",
+      "description": "ENGRAVIN' AN' INKIN' DESIGNS INTO BONE OR IVORY!"
+    },
+    "440": {
+      "name": "SCYTHE MOWIN'",
+      "description": "MOWIN' STANDIN' GRASS WIT A SCYTHE, AN' PEENIN' DA BLADE!"
+    },
+    "441": {
+      "name": "SEARCH AN' RESCUE",
+      "description": "FINDIN' MISSIN' PEOPLE AN' GETTIN' DEM OUT ALIVE!"
+    },
+    "442": {
+      "name": "SEISMOLOGY",
+      "description": "RECORDIN' AN' INTERPRETIN' GROUND MOVEMENT AN' EARTHQUAKES!"
+    },
+    "444": {
+      "name": "SHEPHERDIN'",
+      "description": "MOVIN', GRAZIN' AN' GUARDIN' A FLOCK!"
+    },
+    "448": {
+      "name": "SILKWORM BREEDIN'",
+      "description": "RAISIN' SILKWORMS AN' REELIN' DEY COCOONS!"
+    },
+    "450": {
+      "name": "SNAKE HANDLIN'",
+      "description": "HANDLIN' SNAKES, VENOMOUS ONES INCLUDED, WITOUT BEING BITTEN!"
+    },
+    "451": {
+      "name": "SNOWPLOW OPERATION",
+      "description": "CLEARIN' ROADS OF SNOW WITOUT TAKIN' DA ROAD WIT IT!"
+    },
+    "452": {
+      "name": "SPEARFISHIN'",
+      "description": "TAKIN' FISH UNDERWATER WIT SLING OR GUN ON BREATH!"
+    },
+    "453": {
+      "name": "SPEED STACKIN'",
+      "description": "STACKIN' AN' UNSTACKIN' CUPS AGAINST DA CLOCK!"
+    },
+    "456": {
+      "name": "STEADICAM OPERATION",
+      "description": "CARRYIN' A STABILISED CAMERA FOR SMOOTH MOVIN' SHOTS!"
+    },
+    "457": {
+      "name": "STILT WALKIN'",
+      "description": "WALKIN', TURNIN' AN' WORKIN' AT HEIGHT ON STILTS!"
+    },
+    "458": {
+      "name": "STONE SKIPPIN'",
+      "description": "THROWIN' A FLAT STONE FOR DA MAXIMUM NUMBER OF BOUNCES!"
+    },
+    "459": {
+      "name": "STREET MAGIC",
+      "description": "CLOSE-UP MAGIC WIT NO STAGE, SEEN FROM EVERY SIDE!"
+    },
+    "460": {
+      "name": "UNDERWATER WELDIN'",
+      "description": "WELDIN' AT DEPTH, WHERE ELECTRICITY AN' WATER MEET!"
+    },
+    "461": {
+      "name": "EVASION AN' ESCAPE TRAININ'",
+      "description": "BREAKIN' CONTACT, MOVIN' UNSEEN AN' GETTIN' BACK!"
+    },
+    "462": {
+      "name": "SWORD SWALLOWIN'",
+      "description": "PASSIN' A BLADE DOWN DA THROAT WITOUT INJURY!"
+    },
+    "463": {
+      "name": "TEA LEAF READIN'",
+      "description": "READIN' DA SHAPES LEFT IN DA CUP!"
+    },
+    "464": {
+      "name": "TELESCOPE MAKIN'",
+      "description": "GRINDIN', SHAPIN' AN' MOUNTIN' TELESCOPE OPTICS!"
+    },
+    "465": {
+      "name": "TERATOLOGY",
+      "description": "DA STUDY OF MALFORMATION: WHAT GOES WRONG IN DEVELOPMENT, AN' HOW!"
+    },
+    "466": {
+      "name": "TERRARIUM BUILDIN'",
+      "description": "BUILDIN' A SEALED, SELF-SUSTAININ' TERRARIUM!"
+    },
+    "469": {
+      "name": "THERMITE CRAFTIN'",
+      "description": "MIXIN' METAL OXIDE AN' FUEL INTO A CHARGE DAT CUTS STEEL!"
+    },
+    "470": {
+      "name": "TINSMITHIN'",
+      "description": "CUTTIN', FORMIN' AN' SEAMIN' SHEET TIN!"
+    },
+    "471": {
+      "name": "TOPIARY",
+      "description": "CLIPPIN' LIVIN' SHRUBS INTO LASTIN' SHAPES!"
+    },
+    "472": {
+      "name": "TRUFFLE HUNTIN'",
+      "description": "FINDIN' TRUFFLES WIT A TRAINED DOG AN' A GOOD NOSE!"
+    },
+    "473": {
+      "name": "TYPOGRAPHY",
+      "description": "FIDDLY BIT TYPE: FACE, SIZE, SPACIN' AN' RHYTHM!"
+    },
+    "474": {
+      "name": "UFOLOGY",
+      "description": "COLLECTIN' AN' ASSESSIN' REPORTS OF UNIDENTIFIED CRAFT!"
+    },
+    "476": {
+      "name": "URBAN EXPLORATION",
+      "description": "GETTIN' INTO DISUSED STRUCTURES, AN' BACK OUT!"
+    },
+    "477": {
+      "name": "FLAG IDENTIFICATION",
+      "description": "NAMIN' A NATION OR A SIGNAL FROM ITS FLAG!"
+    },
+    "478": {
+      "name": "VIADUCT ENGINEERIN'",
+      "description": "DESIGNIN' AN' BUILDIN' LONG ELEVATED SPANS!"
+    },
+    "479": {
+      "name": "VINTAGE CAR RESTORATION",
+      "description": "REBUILDIN' AN OLD CAR TA RUNNIN', ORIGINAL CONDITION!"
+    },
+    "480": {
+      "name": "WATER DOWSIN'",
+      "description": "FINDIN' WATER WIT A ROD, AN' DA CONFIDENCE TA DIG DERE!"
+    },
+    "482": {
+      "name": "WIG MAKIN'",
+      "description": "VENTILATIN' AN' DRESSIN' HAIR INTO WIGS DAT PASS!"
+    },
+    "483": {
+      "name": "WIND TURBINE REPAIR",
+      "description": "SERVICIN' TURBINES UP-TOWER, IN DA WEATHER!"
+    },
+    "484": {
+      "name": "WIRE MAKIN'",
+      "description": "DRAWIN' METAL DOWN INTO WIRE OF EVEN GAUGE!"
+    },
+    "485": {
+      "name": "XYLOPHONE PLAYIN'",
+      "description": "PLAYIN' TUNED BARS WIT MALLETS, IN TIME!"
+    },
+    "487": {
+      "name": "YODELIN'",
+      "description": "SINGIN' ACROSS DA BREAK BETWEEN CHEST AN' HEAD VOICE, FAST!"
+    },
+    "490": {
+      "name": "3D MODELIN' AN' PRINTIN'",
+      "description": "BUILDIN' OBJECTS AS DIGITAL MESHES AN' PRODUCIN' DEM ON AN ADDITIVE PRINTER!"
+    },
+    "492": {
+      "name": "ACOUSTICS",
+      "description": "HOW SOUND BEHAVES IN A SPACE, AN' HOW TA CONTROL IT!"
+    },
+    "493": {
+      "name": "ACTUARIAL SCIENCE",
+      "description": "PRICIN' RISK WIT STATISTICS: MORTALITY, CLAIMS AN' LONG-TERM LIABILITIES!"
+    },
+    "494": {
+      "name": "AEROBICS",
+      "description": "SUSTAINED RHYTHMIC EXERCISE DAT TRAINS DA HEART AN' LUNGS!"
+    },
+    "495": {
+      "name": "ANIMATION",
+      "description": "MAKIN' DRAWN OR MODELLED FIGURES MOVE FRAME BY FRAME!"
+    },
+    "496": {
+      "name": "APPRAISIN'",
+      "description": "JUDGIN' WHAT AN OBJECT IZ WORTH, AN' WHY!"
+    },
+    "497": {
+      "name": "AQUAPONICS",
+      "description": "GROWIN' PLANTS AN' FISH IN ONE LOOP, DA FISH WASTE FEEDIN' DA CROP!"
+    },
+    "498": {
+      "name": "ARMOR PIERCIN'",
+      "description": "DEFEATIN' ARMOUR: ANGLES, PENETRATORS AN' DA WEAK SEAMS!"
+    },
+    "499": {
+      "name": "ART RESTORATION",
+      "description": "CLEANIN', CONSOLIDATIN' AN' RETOUCHIN' DAMAGED WORKS!"
+    },
+    "501": {
+      "name": "AUCTIONEERIN'",
+      "description": "RUNNIN' A SALE: CHANT, BID SPOTTIN' AN' CLOSIN' DA LOT!"
+    },
+    "502": {
+      "name": "AUDITIN'",
+      "description": "CHECKIN' ACCOUNTS AN' PROCESSES AGAINST EVIDENCE AN' RULE!"
+    },
+    "503": {
+      "name": "AUTO DETAILIN'",
+      "description": "RESTORIN' A VEHICLE'S FINISH INSIDE AN' OUT!"
+    },
+    "504": {
+      "name": "BAGGAGE HANDLIN'",
+      "description": "MOVIN' AN' SORTIN' LUGGAGE AT LOAD WITOUT DAMAGE OR DELAY!"
+    },
+    "505": {
+      "name": "BAIL BONDIN'",
+      "description": "POSTIN' SURETY FOR A DEFENDANT AN' RECOVERIN' DA RISK!"
+    },
+    "506": {
+      "name": "BALLOON SCULPTIN'",
+      "description": "TWISTIN' INFLATED BALLOONS INTO RECOGNISABLE FIGURES!"
+    },
+    "507": {
+      "name": "BATON TWIRLIN'",
+      "description": "SPINNIN' AN' TOSSIN' A METAL BATON IN ROUTINE!"
+    },
+    "509": {
+      "name": "BICYCLE REPAIR",
+      "description": "TRUIN', ADJUSTIN' AN' REBUILDIN' A BICYCLE'S MECHANISMS!"
+    },
+    "510": {
+      "name": "BINDIN'",
+      "description": "HOLDIN' A SPIRIT, CREATURE OR FORCE TA A SET OF TERMS!"
+    },
+    "511": {
+      "name": "BIOCHEMICAL ENGINEERIN'",
+      "description": "DESIGNIN' PROCESSES DAT USE LIVIN' SYSTEMS AT INDUSTRIAL SCALE!"
+    },
+    "512": {
+      "name": "BIONIC INSTALLATION",
+      "description": "FITTIN' POWERED PROSTHETICS AN' IMPLANTS TA LIVIN' TISSUE!"
+    },
+    "514": {
+      "name": "BLOGGIN'",
+      "description": "WRITIN' POSTS REGULARLY AN' BUILDIN' A READERSHIP!"
+    },
+    "515": {
+      "name": "BLOOD MAGIC",
+      "description": "WORKIN' WIT BLOOD AS DA PRICE AN' DA MEDIUM!"
+    },
+    "516": {
+      "name": "BOAT BUILDIN'",
+      "description": "BUILDIN' HULLS FROM FRAME AN' PLANK, OR FROM MOULDED SHELL!"
+    },
+    "517": {
+      "name": "BOBSLEDDIN'",
+      "description": "DRIVIN' A SLED DOWN AN ICED TRACK AT SPEED!"
+    },
+    "518": {
+      "name": "BOOKBINDIN'",
+      "description": "SEWIN', GLUIN' AN' CASIN' PAGES INTO A DURABLE BOOK!"
+    },
+    "519": {
+      "name": "BOOMERANG THROWIN'",
+      "description": "THROWIN' FOR DA RETURN, READIN' WIND AN' LAYOVER!"
+    },
+    "520": {
+      "name": "CROWD CONTROL",
+      "description": "MOVIN' AN' HOLDIN' A CROWD WITOUT IT TURNIN'!"
+    },
+    "521": {
+      "name": "LAWN BOWLS",
+      "description": "ROLLIN' BIASED BOWLS TA DA JACK ACROSS DA GREEN!"
+    },
+    "522": {
+      "name": "BRAIN SURGERY",
+      "description": "OPERATIN' INSIDE DA SKULL WITOUT TAKIN' DA PERSON WIT IT!"
+    },
+    "523": {
+      "name": "BRASS CATCHIN'",
+      "description": "RECOVERIN' SPENT CASINGS BEFORE DEY HIT DA GROUND!"
+    },
+    "524": {
+      "name": "BREWIN' POTIONS",
+      "description": "COMPOUNDIN' LIQUID PREPARATIONS WIT A MAGICAL EFFECT!"
+    },
+    "525": {
+      "name": "BROADCAST JOURNALISM",
+      "description": "REPORTIN' TA CAMERA AN' MICROPHONE AGAINST A DEADLINE!"
+    },
+    "526": {
+      "name": "BULL RIDIN'",
+      "description": "STAYIN' ON A BUCKIN' BULL FOR DA EIGHT SECONDS!"
+    },
+    "527": {
+      "name": "CALL CENTER OPERATIONS",
+      "description": "HANDLIN' QUEUED CALLS TA SCRIPT, TARGET AN' TEMPER!"
+    },
+    "528": {
+      "name": "CALISTHENICS",
+      "description": "STRENGTH TRAININ' WIT BODY WEIGHT ALONE!"
+    },
+    "529": {
+      "name": "CAPOEIRA",
+      "description": "A BRAZILIAN ART OF KICKS, SWEEPS AN' EVASION SET TA RHYTHM!"
+    },
+    "530": {
+      "name": "CARPET LAYIN'",
+      "description": "FITTIN', STRETCHIN' AN' SEAMIN' FLOOR COVERIN'!"
+    },
+    "531": {
+      "name": "CAVE DIVIN'",
+      "description": "DIVIN' IN FLOODED PASSAGE, ON LINE, WIT NO WAY STRAIGHT UP!"
+    },
+    "532": {
+      "name": "CHAINSAW OPERATION",
+      "description": "FELLIN' AN' BUCKIN' WIT A SAW WITOUT BINDIN' OR KICKBACK!"
+    },
+    "533": {
+      "name": "CHARCUTERIE",
+      "description": "CURIN', SALTIN' AN' FERMENTIN' MEAT FOR KEEPIN'!"
+    },
+    "534": {
+      "name": "CHILDCARE",
+      "description": "KEEPIN' CHILDREN SAFE, FED AN' OCCUPIED OVER LONG HOURS!"
+    },
+    "535": {
+      "name": "CHOIR SINGIN'",
+      "description": "SINGIN' A PART IN TUNE AN' BLEND WIT OTHER VOICES!"
+    },
+    "536": {
+      "name": "CINEMATOGRAPHY",
+      "description": "LIGHTIN' AN' FRAMIN' A SCENE FOR DA CAMERA!"
+    },
+    "537": {
+      "name": "JANITORIAL CLEANIN'",
+      "description": "KEEPIN' A BUILDIN' CLEAN, STOCKED AN' SAFE OVERNIGHT!"
+    },
+    "538": {
+      "name": "CLOCK AN' WATCHMAKIN'",
+      "description": "BUILDIN' AN' SERVICIN' MECHANICAL TIMEPIECES!"
+    },
+    "539": {
+      "name": "CLOUD READIN'",
+      "description": "FORECASTIN' DA COMIN' HOURS FROM CLOUD FORM AN' MOVEMENT!"
+    },
+    "540": {
+      "name": "CNC MACHININ'",
+      "description": "PROGRAMMIN' AN' RUNNIN' COMPUTER-CONTROLLED CUTTIN' MACHINES!"
+    },
+    "541": {
+      "name": "COMPOSTIN'",
+      "description": "ROTTIN' ORGANIC WASTE DOWN INTO USABLE SOIL AT DA RIGHT HEAT!"
+    },
+    "542": {
+      "name": "CONCRETE MIXIN'",
+      "description": "BATCHIN' CEMENT, AGGREGATE AN' WATER TA A WORKABLE, SOUND MIX!"
+    },
+    "544": {
+      "name": "CONSPIRACY THEORIZIN'",
+      "description": "ASSEMBLIN' SCATTERED FACTS INTO A HIDDEN PATTERN DAT HOLDS TOGETHER!"
+    },
+    "545": {
+      "name": "CONTACT JUGGLIN'",
+      "description": "ROLLIN' AN' ISOLATIN' A SPHERE ACROSS HANDS AN' BODY!"
+    },
+    "546": {
+      "name": "COPYWRITIN'",
+      "description": "WRITIN' TEXT DAT SELLS, IN DA FEWEST WORDS DAT WORK!"
+    },
+    "547": {
+      "name": "CORPSE BUTCHERY",
+      "description": "DISMEMBERIN' A BODY CLEANLY!"
+    },
+    "548": {
+      "name": "COUPONIN'",
+      "description": "STACKIN' OFFERS AN' DISCOUNTS TA STRIP A BILL DOWN!"
+    },
+    "549": {
+      "name": "CRANE OPERATION",
+      "description": "LIFTIN' AN' PLACIN' LOADS BY CRANE WITHIN SIGHT AN' SIGNAL!"
+    },
+    "550": {
+      "name": "CREATIVE WRITIN'",
+      "description": "WRITIN' FICTION, VERSE AN' NARRATIVE WIT INTENT!"
+    },
+    "551": {
+      "name": "CRICKET",
+      "description": "BATTIN', BOWLIN' AN' FIELDIN' ACROSS DA INNINGS!"
+    },
+    "552": {
+      "name": "CRIME SCENE INVESTIGATION",
+      "description": "RECORDIN', PRESERVIN' AN' LIFTIN' EVIDENCE FROM A SCENE!"
+    },
+    "553": {
+      "name": "CROP ROTATION",
+      "description": "SEQUENCIN' CROPS ACROSS FIELDS TA KEEP SOIL FERTILE!"
+    },
+    "554": {
+      "name": "CROSSFIT",
+      "description": "HIGH-INTENSITY MIXED TRAININ' AGAINST DA CLOCK!"
+    },
+    "555": {
+      "name": "CROWD SURFIN'",
+      "description": "BEING CARRIED ACROSS RAISED HANDS WITOUT GOING DOWN!"
+    },
+    "556": {
+      "name": "CURLIN'",
+      "description": "DELIVERIN' AN' SWEEPIN' STONES TA DA HOUSE!"
+    },
+    "557": {
+      "name": "CUSTOMER SERVICE",
+      "description": "HANDLIN' CUSTOMERS, COMPLAINTS AN' RETURNS WITOUT UPSETTIN' ANYONE!"
+    },
+    "558": {
+      "name": "CYBERNETICS",
+      "description": "CONTROL AN' FEEDBACK IN MACHINES AN' LIVIN' SYSTEMS!"
+    },
+    "559": {
+      "name": "DAIRY PRODUCTION",
+      "description": "MILKIN', HANDLIN' AN' PROCESSIN' MILK AT SCALE AN' IN HYGIENE!"
+    },
+    "561": {
+      "name": "DEBT COLLECTION",
+      "description": "RECOVERIN' MONEY OWED, LEGALLY AN' PERSISTENTLY!"
+    },
+    "562": {
+      "name": "DECATHLON",
+      "description": "TEN TRACK AN' FIELD EVENTS, SCORED AS ONE!"
+    },
+    "563": {
+      "name": "DIALECT COACHIN'",
+      "description": "TEACHIN' AN ACCENT UNTIL IT SURVIVES IMPROVISATION!"
+    },
+    "564": {
+      "name": "DIGITAL MARKETIN'",
+      "description": "REACHIN' AN AUDIENCE THROUGH SEARCH, MAIL AN' METRICS!"
+    },
+    "565": {
+      "name": "DIRECTION SENSE",
+      "description": "KNOWIN' WHERE NORTH, DA EXIT AN' DA WAY BACK IZ!"
+    },
+    "567": {
+      "name": "DISASTER MANAGEMENT",
+      "description": "COORDINATIN' RESPONSE, TRIAGE AN' SUPPLY AFTER CATASTROPHE!"
+    },
+    "568": {
+      "name": "DISC GOLF",
+      "description": "THROWIN' DISCS TA DA BASKET IN DA FEWEST STROKES!"
+    },
+    "569": {
+      "name": "DISHWASHIN'",
+      "description": "CLEARIN' A SERVICE'S WORTH OF PLATES FAST AN' CLEAN!"
+    },
+    "570": {
+      "name": "DISTILLIN'",
+      "description": "SEPARATIN' SPIRIT FROM WASH BY HEAT, AN' CUTTIN' HEADS FROM HEARTS!"
+    },
+    "571": {
+      "name": "DIVINATION",
+      "description": "READIN' ANSWERS OUT OF LOTS, CARDS, ENTRAILS OR SMOKE!"
+    },
+    "572": {
+      "name": "DOG WALKIN'",
+      "description": "MANAGIN' SEVERAL DOGS ON LEAD WITOUT INCIDENT!"
+    },
+    "573": {
+      "name": "DOLL MAKIN'",
+      "description": "BUILDIN' JOINTED FIGURES, FROM ARMATURE TA FACE!"
+    },
+    "574": {
+      "name": "DRAFTIN'",
+      "description": "PRODUCIN' DIMENSIONED TECHNICAL DRAWINGS OTHERS CAN BUILD FROM!"
+    },
+    "575": {
+      "name": "DRESSAGE",
+      "description": "RIDIN' A HORSE THROUGH PRECISE SCHOOLED MOVEMENTS!"
+    },
+    "576": {
+      "name": "DRONE PILOTIN'",
+      "description": "FLYIN' A REMOTE AIRCRAFT BY LINE OF SIGHT OR CAMERA!"
+    },
+    "577": {
+      "name": "DRYWALL INSTALLATION",
+      "description": "HANGIN', TAPIN' AN' FINISHIN' PLASTERBOARD FLAT!"
+    },
+    "578": {
+      "name": "ELECTRICAL ENGINEERIN'",
+      "description": "DESIGNIN' CIRCUITS, POWER SYSTEMS AN' DA MACHINES DEY DRIVE!"
+    },
+    "579": {
+      "name": "ELEVATOR REPAIR",
+      "description": "SERVICIN' LIFT MACHINERY, CONTROLS AN' SAFETIES!"
+    },
+    "580": {
+      "name": "ENGRAVIN'",
+      "description": "CUTTIN' LINE INTO METAL, GLASS OR STONE!"
+    },
+    "581": {
+      "name": "ENTOMOLOGY",
+      "description": "DA STUDY OF INSECTS: IDENTIFICATION, LIFE CYCLES AN' CONTROL!"
+    },
+    "582": {
+      "name": "ESCAPE ARTISTRY",
+      "description": "GETTIN' OUT OF ROPES, CUFFS AN' BOXES, QUICKLY!"
+    },
+    "583": {
+      "name": "ESPORTS",
+      "description": "PLAYIN' VIDEOGAMES COMPETITIVELY, AT A TRAINED LEVEL!"
+    },
+    "585": {
+      "name": "ETIQUETTE",
+      "description": "KNOWIN' DA EXPECTED MANNERS IN ANY FIDDLY BIT, AN' USING DEM!"
+    },
+    "586": {
+      "name": "EVANGELISM",
+      "description": "PREACHIN' A CONVICTION TA PEOPLE WHO DID NO ASK!"
+    },
+    "587": {
+      "name": "EXCAVATOR OPERATION",
+      "description": "WORKIN' A TRACKED EXCAVATOR WIT PRECISION AN' STABILITY!"
+    },
+    "588": {
+      "name": "EXORCISM",
+      "description": "DRIVIN' OUT A POSSESSIN' SPIRIT BY RITE AN' WILL!"
+    },
+    "589": {
+      "name": "EXTREME IRONIN'",
+      "description": "PRESSIN' LAUNDRY SOMEWHERE IT HAB NO BUSINESS BEING PRESSED!"
+    },
+    "590": {
+      "name": "FANFICTION WRITIN'",
+      "description": "WRITIN' NEW STORIES INSIDE SOMEBODY ELSE'S WORLD!"
+    },
+    "591": {
+      "name": "FENCE BUILDIN'",
+      "description": "FIDDLY BIT POSTS AN' STRAININ' WIRE OR RAIL TA A TRUE LINE!"
+    },
+    "592": {
+      "name": "FENG SHUI",
+      "description": "ARRANGIN' A SPACE SO DA FLOW THROUGH IT IZ FAVOURABLE!"
+    },
+    "594": {
+      "name": "FILM CRITICISM",
+      "description": "ANALYSIN' FILM IN TERMS OF CRAFT, FORM AN' INTENT!"
+    },
+    "595": {
+      "name": "FINANCIAL PLANNIN'",
+      "description": "MAPPIN' INCOME, RISK AN' TIME INTO A PLAN SOMEBODY CAN KEEP!"
+    },
+    "596": {
+      "name": "FIRE DANCIN'",
+      "description": "PERFORMIN' WIT LIT POI, STAFF OR FANS!"
+    },
+    "597": {
+      "name": "FIREARMS CLEANIN'",
+      "description": "STRIPPIN', CLEANIN' AN' REASSEMBLIN' A WEAPON TA FUNCTION!"
+    },
+    "598": {
+      "name": "FLEET MANAGEMENT",
+      "description": "KEEPIN' A FLEET OF VEHICLES SERVICED, INSURED AN' MOVIN'!"
+    },
+    "599": {
+      "name": "FLINT KNAPPIN'",
+      "description": "STRIKIN' STONE INTO EDGES AN' POINTS BY CONTROLLED FRACTURE!"
+    },
+    "600": {
+      "name": "FLORAL ARRANGEMENT",
+      "description": "ARRANGIN' CUT FLOWERS BY LINE AN' MASS, SO DEY LAST!"
+    },
+    "601": {
+      "name": "FOLEY SOUND DESIGN",
+      "description": "MAKIN' A SCENE'S SOUNDS BY HAND IN A STUDIO!"
+    },
+    "603": {
+      "name": "FORKLIFT OPERATION",
+      "description": "LIFTIN', STACKIN' AN' MANOEUVRIN' LOADS ON DA TRUCK!"
+    },
+    "606": {
+      "name": "GAME DESIGN",
+      "description": "DESIGNIN' RULES AN' SYSTEMS DAT STAY INTERESTIN' TA PLAY!"
+    },
+    "607": {
+      "name": "GENEALOGY",
+      "description": "TRACIN' DESCENT THROUGH RECORDS AN' DEY GAPS!"
+    },
+    "608": {
+      "name": "GLASS CUTTIN'",
+      "description": "SCORIN' AN' BREAKIN' GLASS TA A CLEAN INTENDED LINE!"
+    },
+    "609": {
+      "name": "GOLEMANCY",
+      "description": "MAKIN' AN INERT BODY AN' FIDDLY BIT IT TA WORK!"
+    },
+    "610": {
+      "name": "RUMORMONGERIN'",
+      "description": "STARTIN' A STORY DAT WILL TRAVEL AN' STICK!"
+    },
+    "611": {
+      "name": "GRAPHIC DESIGN",
+      "description": "ARRANGIN' TYPE, IMAGE AN' SPACE TA COMMUNICATE!"
+    },
+    "612": {
+      "name": "GRAVE DIGGIN'",
+      "description": "OPENIN' AN' CLOSIN' GRAVES TA DEPTH, IN ANY GROUND!"
+    },
+    "613": {
+      "name": "GREENHOUSE MANAGEMENT",
+      "description": "RUNNIN' HEAT, HUMIDITY AN' LIGHT UNDER GLASS!"
+    },
+    "614": {
+      "name": "GROCERY SHOPPIN'",
+      "description": "PROVISIONIN' WELL AGAINST A LIST, A BUDGET AN' A USE-BY DATE!"
+    },
+    "615": {
+      "name": "GUERILLA WARFARE",
+      "description": "FIGHTIN' A STRONGER FORCE BY RAID, TERRAIN AN' WITHDRAWAL!"
+    },
+    "616": {
+      "name": "GUNSMITHIN'",
+      "description": "BUILDIN', FITTIN' AN' REPAIRIN' FIREARMS!"
+    },
+    "617": {
+      "name": "HAMMER THROW",
+      "description": "THROWIN' DA WEIGHTED WIRE HAMMER FOR DISTANCE!"
+    },
+    "618": {
+      "name": "AMMUNITION HANDLOADIN'",
+      "description": "ASSEMBLIN' CARTRIDGES FROM PRIMER, POWDER, CASE AN' PROJECTILE!"
+    },
+    "620": {
+      "name": "HEAVY ARMOR TRAININ'",
+      "description": "MOVIN', FIGHTIN' AN' LASTIN' IN FULL PLATE AN' LOAD!"
+    },
+    "621": {
+      "name": "HISTORICAL EUROPEAN MARTIAL ARTS",
+      "description": "FIGHTIN' FROM DA SURVIVIN' EUROPEAN FENCIN' MANUALS!"
+    },
+    "622": {
+      "name": "HIGH JUMP",
+      "description": "CLEARIN' A RAISED BAR FROM A RUNNIN' APPROACH!"
+    },
+    "624": {
+      "name": "HOME STAGIN'",
+      "description": "DRESSIN' A PROPERTY SO IT SHOWS AN' SELLS!"
+    },
+    "625": {
+      "name": "HOT AIR BALLOONIN'",
+      "description": "FLYIN' A BALLOON ON BURNER, BALLAST AN' DA WIND YOU CHOOSE!"
+    },
+    "626": {
+      "name": "HULA HOOPIN'",
+      "description": "KEEPIN' HOOPS TURNIN' ON BODY AN' LIMBS!"
+    },
+    "627": {
+      "name": "HUMAN RESOURCES",
+      "description": "HIRIN', CONTRACTS, GRIEVANCE, AN' DA PAPERWORK OF PEOPLE!"
+    },
+    "628": {
+      "name": "HUNTIN'",
+      "description": "TRACKIN', STALKIN' AN' TAKIN' GAME CLEANLY!"
+    },
+    "629": {
+      "name": "HYDROPONICS",
+      "description": "GROWIN' CROPS IN NUTRIENT SOLUTION WITOUT SOIL!"
+    },
+    "630": {
+      "name": "HYPOCHONDRIAC SELF-DIAGNOSIS",
+      "description": "FINDIN' DA WORST PLAUSIBLE EXPLANATION FOR ANY SYMPTOM!"
+    },
+    "631": {
+      "name": "ICE SCULPTIN'",
+      "description": "CARVIN' BLOCKS OF ICE BEFORE DEY MELT!"
+    },
+    "632": {
+      "name": "ILLUSION MAGIC",
+      "description": "MAKIN' DA SENSES REPORT WHAT IZ NO DERE!"
+    },
+    "634": {
+      "name": "IMMUNOLOGY",
+      "description": "DA IMMUNE SYSTEM, ITS DEFENCES AN' ITS MISTAKES!"
+    },
+    "635": {
+      "name": "IMPROV COMEDY",
+      "description": "BUILDIN' A SCENE LIVE, FROM NUTTIN', WIT OTHER PEOPLE!"
+    },
+    "636": {
+      "name": "INJECTION MOLDIN'",
+      "description": "RUNNIN' MOULDS, GATES AN' CYCLES FOR CAST PLASTIC PARTS!"
+    },
+    "637": {
+      "name": "INSURANCE UNDERWRITIN'",
+      "description": "DECIDIN' WHAT TA COVER, ON WHAT TERMS, AT WHAT PREMIUM!"
+    },
+    "638": {
+      "name": "INVESTIGATIVE JOURNALISM",
+      "description": "DIGGIN' OUT A STORY SOMEBODY IZ KEEPIN'!"
+    },
+    "639": {
+      "name": "INVESTMENT BANKIN'",
+      "description": "RAISIN' CAPITAL, PRICIN' DEALS AN' TAKIN' A CUT!"
+    },
+    "640": {
+      "name": "IRONIN'",
+      "description": "PRESSIN' CLOTH FLAT WITOUT SCORCHIN' OR SHININ' IT!"
+    },
+    "641": {
+      "name": "JAVELIN THROW",
+      "description": "THROWIN' DA JAVELIN FOR DISTANCE ON A LEGAL RELEASE!"
+    },
+    "642": {
+      "name": "JET SKIIN'",
+      "description": "HANDLIN' A PERSONAL WATERCRAFT AT SPEED AN' IN CHOP!"
+    },
+    "643": {
+      "name": "JEWELRY MAKIN'",
+      "description": "FABRICATIN' AN' FIDDLY BIT JEWELLERY FROM METAL AN' STONE!"
+    },
+    "644": {
+      "name": "JIGSAW PUZZLES",
+      "description": "ASSEMBLIN' CUT PICTURES BY EDGE, COLOUR AN' SHAPE!"
+    },
+    "645": {
+      "name": "JOUSTIN'",
+      "description": "RIDIN' AT ANOTHER RIDER WIT A LANCE AN' STAYIN' SEATED!"
+    },
+    "646": {
+      "name": "KART RACIN'",
+      "description": "RACIN' LIGHT KARTS ON LINE, BRAKE AN' MOMENTUM!"
+    },
+    "647": {
+      "name": "KITE FLYIN'",
+      "description": "LAUNCHIN', FLYIN' AN' LANDIN' KITES IN CHANGIN' WIND!"
+    },
+    "649": {
+      "name": "LACROSSE",
+      "description": "CRADLIN', PASSIN' AN' SHOOTIN' WIT DA NETTED STICK!"
+    },
+    "650": {
+      "name": "LASER TAG",
+      "description": "INFRARED SKIRMISH PLAY: COVER, ANGLES AN' HIT AVOIDANCE!"
+    },
+    "651": {
+      "name": "LASSOIN'",
+      "description": "THROWIN' AN' CLOSIN' A ROPE LOOP ON A MOVIN' TARGET!"
+    },
+    "652": {
+      "name": "LAUNDRY MANAGEMENT",
+      "description": "SORTIN', WASHIN' AN' TURNIN' AROUND LOUDNESS LAUNDRY!"
+    },
+    "653": {
+      "name": "LAWN CARE",
+      "description": "MOWIN', FEEDIN' AN' REPAIRIN' TURF THROUGH DA YEAR!"
+    },
+    "654": {
+      "name": "LIFEGUARDIN'",
+      "description": "WATCHIN' WATER, SPOTTIN' TROUBLE EARLY AN' GETTIN' PEOPLE OUT!"
+    },
+    "655": {
+      "name": "LIGHT ARMOR TRAININ'",
+      "description": "FIGHTIN' IN LIGHT ARMOUR WHILE KEEPIN' ITS MOBILITY!"
+    },
+    "656": {
+      "name": "LIGHTIN' DESIGN",
+      "description": "LIGHTIN' A STAGE OR SET FOR MOOD, FOCUS AN' VISIBILITY!"
+    },
+    "657": {
+      "name": "LINE DANCIN'",
+      "description": "DANCIN' SET CHOREOGRAPHED STEPS IN FORMATION!"
+    },
+    "659": {
+      "name": "LUMBERJACKIN'",
+      "description": "FELLIN', LIMBIN' AN' MOVIN' TIMBER IN DA WOODS!"
+    },
+    "660": {
+      "name": "LYE MAKIN'",
+      "description": "LEACHIN' WOOD ASH INTO CAUSTIC LYE, SAFELY!"
+    },
+    "661": {
+      "name": "MACRAME",
+      "description": "KNOTTIN' CORD INTO PATTERNED TEXTILE WITOUT NEEDLE OR LOOM!"
+    },
+    "663": {
+      "name": "MANTRA CHANTIN'",
+      "description": "SUSTAINED REPETITION OF A FORMULA FOR EFFECT ON MIND OR WORLD!"
+    },
+    "664": {
+      "name": "MAP READIN'",
+      "description": "TURNIN' A MAP AN' TERRAIN INTO A ROUTE AN' A POSITION!"
+    },
+    "665": {
+      "name": "MASONRY",
+      "description": "CUTTIN' AN' LAYIN' STONE INTO WALL, ARCH AN' COURSE!"
+    },
+    "666": {
+      "name": "MECHANICAL ENGINEERIN'",
+      "description": "DESIGNIN' MACHINES, MECHANISMS AN' DA LOADS DEY CARRY!"
+    },
+    "667": {
+      "name": "MEDIATION",
+      "description": "BRINGIN' TWO SIDES TA AN AGREEMENT NEITHER DICTATED!"
+    },
+    "668": {
+      "name": "MEDICAL BILLIN'",
+      "description": "CODIN' TREATMENT AN' GETTIN' IT PAID!"
+    },
+    "670": {
+      "name": "METAL DETECTIN'",
+      "description": "SWEEPIN' GROUND AN' READIN' SIGNAL BEFORE DIGGIN'!"
+    },
+    "671": {
+      "name": "MICROBIOLOGY",
+      "description": "DA STUDY OF BACTERIA, VIRUSES AN' WHAT DEY DO TA A HOST!"
+    },
+    "672": {
+      "name": "MIME",
+      "description": "TELLIN' A STORY IN GESTURE AN' BODY ALONE!"
+    },
+    "673": {
+      "name": "MINIATURE PAINTIN'",
+      "description": "PAINTIN' LIL' FIGURES AT HIGH DETAIL!"
+    },
+    "674": {
+      "name": "MININ'",
+      "description": "EXTRACTIN' ORE AN' STONE, AN' KNOWIN' WHAT IZ WORTH EXTRACTIN'!"
+    },
+    "675": {
+      "name": "MODEL ROCKETRY",
+      "description": "BUILDIN' AN' FLYIN' LIL' ROCKETS ON RECOVERY AN' STABILITY!"
+    },
+    "676": {
+      "name": "MOTOCROSS",
+      "description": "RACIN' MOTORCYCLES OVER DIRT, JUMPS AN' RUTS!"
+    },
+    "677": {
+      "name": "MURAL PAINTIN'",
+      "description": "PAINTIN' AT ARCHITECTURAL SCALE, ON A WALL DAT STAYS!"
+    },
+    "678": {
+      "name": "MUTATIONAL ADAPTATION",
+      "description": "SURVIVIN' CHANGE TA YA OWN BODY AN' TURNIN' IT TA USE!"
+    },
+    "679": {
+      "name": "NATUROPATHY",
+      "description": "TREATIN' ILLNESS WIT DIET, HERBS AN' REGIMEN!"
+    },
+    "680": {
+      "name": "NETMAKIN'",
+      "description": "KNOTTIN' AN' REPAIRIN' NETS TA GAUGE!"
+    },
+    "681": {
+      "name": "NETWORK ADMINISTRATION",
+      "description": "RUNNIN' NETWORKS: ROUTIN', ADDRESSIN', UPTIME AN' ACCESS!"
+    },
+    "682": {
+      "name": "NEUROLOGY",
+      "description": "DA NERVOUS SYSTEM, ITS DISEASES AN' DEY DIAGNOSIS!"
+    },
+    "683": {
+      "name": "NUCLEAR PHYSICS",
+      "description": "DA NUCLEUS: DECAY, FISSION, FUSION AN' CROSS-SECTIONS!"
+    },
+    "684": {
+      "name": "OBSTACLE COURSE RACIN'",
+      "description": "RUNNIN' A COURSE OF CLIMBS, CARRIES AN' CRAWLS!"
+    },
+    "685": {
+      "name": "OIL DRILLIN'",
+      "description": "DRILLIN', CASIN' AN' CONTROLLIN' A WELL!"
+    },
+    "686": {
+      "name": "OPERA SINGIN'",
+      "description": "SINGIN' TRAINED CLASSICAL REPERTOIRE WITOUT AMPLIFICATION!"
+    },
+    "687": {
+      "name": "OPTOMETRY",
+      "description": "TESTIN' SIGHT AN' PRESCRIBIN' CORRECTION!"
+    },
+    "688": {
+      "name": "PACKIN'",
+      "description": "PACKIN' WHAT YOU NEED INTO WHAT YOU CAN ACTUALLY CARRY!"
+    },
+    "689": {
+      "name": "PAINTBALL",
+      "description": "MARKER SKIRMISH: COVER, ANGLES AN' SUPPRESSION!"
+    },
+    "690": {
+      "name": "PALEONTOLOGY",
+      "description": "EXCAVATIN' AN' INTERPRETIN' FOSSILS AN' DA LIFE DEY CAME FROM!"
+    },
+    "691": {
+      "name": "PAPER MAKIN'",
+      "description": "PULPIN', FORMIN' AN' DRYIN' SHEETS BY HAND!"
+    },
+    "692": {
+      "name": "PARAGLIDIN'",
+      "description": "FLYIN' A FOOT-LAUNCHED CANOPY ON THERMALS AN' RIDGE LIFT!"
+    },
+    "693": {
+      "name": "PASTRY BAKIN'",
+      "description": "LAMINATIN', PIPIN' AN' BAKIN' FINE PASTRY!"
+    },
+    "696": {
+      "name": "PEST CONTROL",
+      "description": "IDENTIFYIN', EXCLUDIN' AN' ELIMINATIN' INFESTATION!"
+    },
+    "697": {
+      "name": "PHLEBOTOMY",
+      "description": "DRAWIN' BLOOD CLEANLY AN' LABELLIN' IT CORRECTLY!"
+    },
+    "698": {
+      "name": "PICKLEBALL",
+      "description": "PADDLE PLAY ON A SHORT COURT WIT A PERFORATED BALL!"
+    },
+    "700": {
+      "name": "PIGEON RACIN'",
+      "description": "BREEDIN', TRAININ' AN' TIMIN' HOMIN' PIGEONS!"
+    },
+    "701": {
+      "name": "PIPE BENDIN'",
+      "description": "BENDIN' PIPE AN' CONDUIT TA ANGLE WITOUT KINKIN' IT!"
+    },
+    "702": {
+      "name": "PIXEL ART",
+      "description": "DRAWIN' AT DA LEVEL OF DA INDIVIDUAL PIXEL!"
+    },
+    "704": {
+      "name": "POLE VAULTIN'",
+      "description": "CLEARIN' A BAR ON A PLANTED, LOADED POLE!"
+    },
+    "705": {
+      "name": "POLICE SKETCHIN'",
+      "description": "DRAWIN' A USABLE LIKENESS FROM A WITNESS DESCRIPTION!"
+    },
+    "706": {
+      "name": "POLITICAL SCIENCE",
+      "description": "HOW POWER, INSTITUTIONS AN' VOTIN' ACTUALLY BEHAVE!"
+    },
+    "707": {
+      "name": "POOL CLEANIN'",
+      "description": "KEEPIN' A POOL BALANCED, FILTERED AN' CLEAR!"
+    },
+    "709": {
+      "name": "PUBLIC RELATIONS",
+      "description": "MANAGIN' WHAT IZ SAID 'BOUT A CLIENT, AN' BY WHOM!"
+    },
+    "710": {
+      "name": "PRIMITIVE FIRE MAKIN'",
+      "description": "MAKIN' FIRE BY FRICTION ALONE, WIT PREPARED MATERIALS!"
+    },
+    "711": {
+      "name": "PROJECT MANAGEMENT",
+      "description": "SCOPE, SCHEDULE AN' PEOPLE, HELD TOGETHER TA DELIVERY!"
+    },
+    "712": {
+      "name": "PROP MAKIN'",
+      "description": "BUILDIN' CONVINCIN' OBJECTS FOR STAGE OR CAMERA!"
+    },
+    "713": {
+      "name": "PSYCHIATRY",
+      "description": "DIAGNOSIN' AN' TREATIN' MENTAL ILLNESS, MEDICATION INCLUDED!"
+    },
+    "714": {
+      "name": "PSYCHOLOGY",
+      "description": "HOW PEOPLE TINK, LEARN AN' BEHAVE, AN' HOW DAT IZ TESTED!"
+    },
+    "715": {
+      "name": "PUPPETRY",
+      "description": "GIVIN' A PUPPET WEIGHT, FOCUS AN' LIFE!"
+    },
+    "716": {
+      "name": "QI GONG",
+      "description": "COORDINATED POSTURE, BREATH AN' INTENT AS A PRACTICE!"
+    },
+    "717": {
+      "name": "QUALITY ASSURANCE",
+      "description": "TESTIN' TA FIND DA FAILURE BEFORE DA CUSTOMER DOES!"
+    },
+    "718": {
+      "name": "QUILTIN'",
+      "description": "PIECIN' AN' STITCHIN' LAYERED CLOTH INTO QUILTS!"
+    },
+    "719": {
+      "name": "RACQUETBALL",
+      "description": "FAST ENCLOSED-COURT PLAY OFF EVERY WALL!"
+    },
+    "720": {
+      "name": "RADIATION MANAGEMENT",
+      "description": "WORKIN' WIT SOURCES SAFELY: SHIELDIN', DOSE AN' TIME!"
+    },
+    "721": {
+      "name": "RADIO SCAVENGIN'",
+      "description": "PULLIN' WORKIN' PARTS AN' SIGNAL OUT OF DEAD EQUIPMENT!"
+    },
+    "722": {
+      "name": "REAL ESTATE APPRAISAL",
+      "description": "VALUIN' PROPERTY AGAINST COMPARABLES AN' CONDITION!"
+    },
+    "723": {
+      "name": "REFEREEIN'",
+      "description": "OFFICIATIN' A GAME CONSISTENTLY, AN' BEING OBEYED!"
+    },
+    "724": {
+      "name": "RESIN CASTIN'",
+      "description": "MIXIN' AN' CASTIN' RESIN WITOUT BUBBLES OR HEAT DAMAGE!"
+    },
+    "725": {
+      "name": "ANTIQUE RESTORATION",
+      "description": "RETURNIN' OLD OBJECTS TA SOUND CONDITION WITOUT ERASIN' DEY AGE!"
+    },
+    "726": {
+      "name": "RETAIL MANAGEMENT",
+      "description": "RUNNIN' A SHOP FLOOR: STOCK, STAFF AN' TAKINGS!"
+    },
+    "727": {
+      "name": "RHYTHMIC GYMNASTICS",
+      "description": "APPARATUS WORK WIT RIBBON, HOOP, BALL AN' CLUBS!"
+    },
+    "728": {
+      "name": "ROBOTICS",
+      "description": "BUILDIN' MACHINES DAT SENSE, DECIDE AN' MOVE!"
+    },
+    "729": {
+      "name": "ROPE MAKIN'",
+      "description": "LAYIN' FIBRE INTO ROPE OF EVEN TWIST AN' STRENGTH!"
+    },
+    "730": {
+      "name": "ROWIN'",
+      "description": "DRIVIN' A BOAT WIT OARS, IN RHYTHM AN' IN CREW!"
+    },
+    "731": {
+      "name": "RUNECRAFTIN'",
+      "description": "CUTTIN' AN' CHARGIN' RUNES SO DEY HOLD WHAT IZ PUT IN DEM!"
+    },
+    "732": {
+      "name": "RV DRIVIN'",
+      "description": "DRIVIN' A LARGE MOTORHOME: LENGTH, HEIGHT AN' WEIGHT!"
+    },
+    "733": {
+      "name": "SALES",
+      "description": "FINDIN' DA NEED, MATCHIN' IT AN' CLOSIN'!"
+    },
+    "734": {
+      "name": "SANDBLASTIN'",
+      "description": "STRIPPIN' AN' TEXTURIN' SURFACES WIT ABRASIVE UNDER PRESSURE!"
+    },
+    "735": {
+      "name": "SCAFFOLDIN'",
+      "description": "ERECTIN' AN' TYING SCAFFOLD DAT WILL TAKE DA LOAD!"
+    },
+    "736": {
+      "name": "SCRAPBOOKIN'",
+      "description": "COMPOSIN' PHOTOGRAPHS AN' KEEPSAKES INTO ALBUM PAGES!"
+    },
+    "737": {
+      "name": "SCROLL SCRIBIN'",
+      "description": "WRITIN' A WORKIN' ONTO A SCROLL SO IT WILL FIRE WHEN READ!"
+    },
+    "738": {
+      "name": "SEARCH ENGINE OPTIMIZATION",
+      "description": "GETTIN' A PAGE TA RANK ON WHAT PEOPLE ACTUALLY SEARCH!"
+    },
+    "740": {
+      "name": "SHEEP SHEARIN'",
+      "description": "TAKIN' A FLEECE OFF IN ONE PIECE WITOUT CUTTIN' DA SHEEP!"
+    },
+    "741": {
+      "name": "SHELTER BUILDIN'",
+      "description": "BUILDIN' SHELTER FROM TERRAIN AN' MATERIALS AT HAND!"
+    },
+    "742": {
+      "name": "SHIPPIN'",
+      "description": "FREIGHT, MANIFESTS, CUSTOMS AN' GETTIN' CARGO DERE!"
+    },
+    "743": {
+      "name": "CLAY SHOOTIN'",
+      "description": "BREAKIN' FLYIN' CLAY TARGETS ON A SWINGIN' LEAD!"
+    },
+    "744": {
+      "name": "INDUSTRIAL ARTS",
+      "description": "SHOP WORK ACROSS METAL, WOOD AN' MACHINE!"
+    },
+    "745": {
+      "name": "STENOGRAPHY",
+      "description": "TAKIN' SPEECH DOWN VERBATIM AT SPEAKIN' SPEED!"
+    },
+    "746": {
+      "name": "SHOW JUMPIN'",
+      "description": "RIDIN' A COURSE OF FENCES CLEAR AN' INSIDE DA TIME!"
+    },
+    "747": {
+      "name": "SIGN SPINNIN'",
+      "description": "THROWIN' AN' SPINNIN' AN ADVERTISIN' BOARD FOR ATTENTION!"
+    },
+    "748": {
+      "name": "SKYDIVIN'",
+      "description": "FREEFALL STABILITY, CANOPY AN' LANDIN'!"
+    },
+    "749": {
+      "name": "SLACKLININ'",
+      "description": "BALANCIN' AN' WALKIN' FLAT WEBBIN' UNDER TENSION!"
+    },
+    "750": {
+      "name": "SLEDDIN'",
+      "description": "STEERIN' AN' BRAKIN' A SLED DOWNHILL!"
+    },
+    "751": {
+      "name": "SNORKELIN'",
+      "description": "SURFACE DIVIN' AN' SWIMMIN' ON MASK AN' SNORKEL!"
+    },
+    "752": {
+      "name": "SNOWMOBILIN'",
+      "description": "RIDIN' A SNOWMOBILE OVER DEEP SNOW AN' ICE!"
+    },
+    "753": {
+      "name": "SNOWSHOEIN'",
+      "description": "TRAVELLIN' OVER DEEP SNOW WITOUT SINKIN'!"
+    },
+    "754": {
+      "name": "SOAP MAKIN'",
+      "description": "SAPONIFYIN' FAT WIT LYE INTO CURED SOAP!"
+    },
+    "756": {
+      "name": "SOFTBALL",
+      "description": "BATTIN', PITCHIN' AN' FIELDIN' IN DA UNDERHAND GAME!"
+    },
+    "757": {
+      "name": "SOFTWARE TESTIN'",
+      "description": "DESIGNIN' TESTS DAT FIND REAL DEFECTS!"
+    },
+    "758": {
+      "name": "WINE TASTIN'",
+      "description": "ASSESSIN' WINE BY SIGHT, NOSE AN' PALATE, AN' NAMIN' IT!"
+    },
+    "759": {
+      "name": "SPEED SKATIN'",
+      "description": "LONG, LOW BLADE WORK AT RACIN' PACE!"
+    },
+    "760": {
+      "name": "SPINNIN' YARN",
+      "description": "DRAFTIN' AN' TWISTIN' FIBRE INTO YARN ON WHEEL OR SPINDLE!"
+    },
+    "761": {
+      "name": "SPORTS COACHIN'",
+      "description": "TRAININ' ATHLETES, AN' GETTIN' A TEAM TA PLAY AS ONE!"
+    },
+    "762": {
+      "name": "SQUASH",
+      "description": "FAST ENCLOSED-COURT RACQUET PLAY OFF DA FRONT WALL!"
+    },
+    "763": {
+      "name": "STAINED GLASS MAKIN'",
+      "description": "CUTTIN', LEADIN' AN' SOLDERIN' COLOURED GLASS INTO PANEL!"
+    },
+    "764": {
+      "name": "STAND-UP PADDLEBOARDIN'",
+      "description": "STANDIN' AN' PADDLIN' A BOARD ON OPEN WATER!"
+    },
+    "765": {
+      "name": "STEALTH KILLS",
+      "description": "ENDIN' A FIGHT BEFORE IT STARTS, FROM BEHIND!"
+    },
+    "766": {
+      "name": "STONE CUTTIN'",
+      "description": "SPLITTIN' AN' DRESSIN' STONE TA DIMENSION!"
+    },
+    "767": {
+      "name": "STREET SWEEPIN'",
+      "description": "CLEARIN' STREETS BY MACHINE AN' BY HAND!"
+    },
+    "768": {
+      "name": "STUNT DRIVIN'",
+      "description": "SLIDES, JUMPS AN' PRECISION DRIVIN' ON A MARK!"
+    },
+    "769": {
+      "name": "SUBMARINE PILOTIN'",
+      "description": "HANDLIN' A SUBMERSIBLE ON TRIM, DEPTH AN' BALLAST!"
+    },
+    "770": {
+      "name": "SUPPLY CHAIN MANAGEMENT",
+      "description": "KEEPIN' PARTS AN' STOCK MOVIN' FROM SUPPLIER TA SHELF!"
+    },
+    "771": {
+      "name": "SURVEYIN'",
+      "description": "MEASURIN' LAND AN' FIDDLY BIT OUT LEVELS AN' BOUNDARIES!"
+    },
+    "772": {
+      "name": "SYNCHRONIZED SWIMMIN'",
+      "description": "FIGURES AN' LIFTS PERFORMED IN TIME, MOSTLY UNDERWATER!"
+    },
+    "773": {
+      "name": "TABLE TENNIS",
+      "description": "SPIN, PLACEMENT AN' SPEED ACROSS DA TABLE!"
+    },
+    "774": {
+      "name": "TAILGATIN'",
+      "description": "RUNNIN' A CAR-PARK PARTY PROPERLY, FOOD AN' ALL!"
+    },
+    "775": {
+      "name": "TAI CHI",
+      "description": "SLOW INTERNAL FORM PRACTISED FOR BALANCE, HEALTH AN' STRUCTURE!"
+    },
+    "776": {
+      "name": "TALLOW RENDERIN'",
+      "description": "RENDERIN' ANIMAL FAT CLEAN FOR CANDLES, SOAP AN' COOKIN'!"
+    },
+    "778": {
+      "name": "TATTOO ARTISTRY",
+      "description": "PUTTIN' INK IN SKIN: LINE, SHADE AN' HEALIN'!"
+    },
+    "779": {
+      "name": "TEAR GAS TOLERANCE",
+      "description": "KEEPIN' WORKIN' IN GAS DAT IZ DESIGNED TA STOP YOU!"
+    },
+    "780": {
+      "name": "TELEMARKETIN'",
+      "description": "SELLIN' BY TELEPHONE TA PEOPLE WHO DID NO CALL!"
+    },
+    "781": {
+      "name": "TELEPORTATION",
+      "description": "MOVIN' FROM ONE PLACE TA ANOTHER WITOUT CROSSIN' DA GAP!"
+    },
+    "782": {
+      "name": "THATCHIN'",
+      "description": "ROOFIN' IN REED OR STRAW SO IT SHEDS WATER FOR DECADES!"
+    },
+    "783": {
+      "name": "TIGHTROPE WALKIN'",
+      "description": "CROSSIN' A TENSIONED WIRE ON BALANCE ALONE!"
+    },
+    "784": {
+      "name": "TILIN'",
+      "description": "FIDDLY BIT, SPACIN' AN' GROUTIN' TILE FLAT AN' LEVEL!"
+    },
+    "785": {
+      "name": "TOUCH TYPIN'",
+      "description": "TYPIN' ACCURATELY AT SPEED WITOUT LOOKIN'!"
+    },
+    "786": {
+      "name": "TOUR GUIDIN'",
+      "description": "LEADIN' A GROUP AN' HOLDIN' DEY ATTENTION WHILE WALKIN'!"
+    },
+    "787": {
+      "name": "VEHICLE TOWIN'",
+      "description": "RECOVERIN' AN' TOWIN' VEHICLES SAFELY AN' LEGALLY!"
+    },
+    "788": {
+      "name": "TOXICOLOGY",
+      "description": "POISONS: DOSE, EFFECT, DETECTION AN' ANTIDOTE!"
+    },
+    "789": {
+      "name": "TRACTOR DRIVIN'",
+      "description": "DRIVIN' AN' OPERATIN' A TRACTOR AN' ITS IMPLEMENTS!"
+    },
+    "790": {
+      "name": "TRAIN CONDUCTIN'",
+      "description": "RUNNIN' A TRAIN'S SCHEDULE, SIGNALS AN' PASSENGERS!"
+    },
+    "791": {
+      "name": "TRAMPOLININ'",
+      "description": "HEIGHT, SHAPE AN' CONTROL OFF DA BED!"
+    },
+    "792": {
+      "name": "TRASH COLLECTION",
+      "description": "WORKIN' A COLLECTION ROUND: ROUTE, LIFT AN' LOAD!"
+    },
+    "793": {
+      "name": "TREE CLIMBIN'",
+      "description": "ASCENDIN' TREES ON ROPE AN' SPURS, SAFELY!"
+    },
+    "794": {
+      "name": "TRIATHLON",
+      "description": "SWIM, BIKE AN' RUN, WIT DA TRANSITIONS BETWEEN!"
+    },
+    "795": {
+      "name": "MARTIAL ARTS TRICKIN'",
+      "description": "ACROBATIC KICKS AN' FLIPS PERFORMED AS DISPLAY!"
+    },
+    "796": {
+      "name": "TRIPLE JUMP",
+      "description": "HOP, STEP AN' JUMP OFF A SINGLE RUN-UP!"
+    },
+    "797": {
+      "name": "INTERFACE DESIGN",
+      "description": "LAYIN' OUT CONTROLS SO PEOPLE CAN USE DEM WITOUT BEING TOLD!"
+    },
+    "798": {
+      "name": "ULTIMATE DISC",
+      "description": "DISC HANDLIN', CUTS AN' DEFENCE IN DA RUNNIN' GAME!"
+    },
+    "799": {
+      "name": "UNICYCLIN'",
+      "description": "RIDIN', TURNIN' AN' IDLIN' ON ONE WHEEL!"
+    },
+    "800": {
+      "name": "VENTRILOQUISM",
+      "description": "SPEAKIN' WITOUT VISIBLE MOVEMENT, AN' PLACIN' DA VOICE!"
+    },
+    "801": {
+      "name": "VETERINARY MEDICINE",
+      "description": "DIAGNOSIN' AN' TREATIN' ANIMALS DAT NO CAN SAY WHERE IT HURTS!"
+    },
+    "803": {
+      "name": "VOICE ACTIN'",
+      "description": "ACTIN' WIT DA VOICE ALONE, TA PICTURE OR PAGE!"
+    },
+    "804": {
+      "name": "VOLLEYBALL",
+      "description": "SERVE, SET, SPIKE AN' BLOCK OVER DA NET!"
+    },
+    "805": {
+      "name": "WAND MAKIN'",
+      "description": "SELECTIN', TURNIN' AN' PAIRIN' WOOD INTO A WORKIN' WAND!"
+    },
+    "806": {
+      "name": "WATER POLO",
+      "description": "SWIMMIN', HOLDIN' POSITION AN' SHOOTIN' IN DA WATER GAME!"
+    },
+    "807": {
+      "name": "WEAPONSMITHIN'",
+      "description": "MAKIN' WEAPONS DAT BALANCE, HOLD AN EDGE AN' TAKE USE!"
+    },
+    "809": {
+      "name": "WEB DEVELOPMENT",
+      "description": "BUILDIN' SITES AN' WEB APPLICATIONS, FRONT AN' BACK!"
+    },
+    "810": {
+      "name": "WELL DIGGIN'",
+      "description": "SINKIN' AN' LININ' A WELL TA RELIABLE WATER!"
+    },
+    "811": {
+      "name": "WHEELCHAIR RACIN'",
+      "description": "RACIN' A TRACK CHAIR ON PUSH TECHNIQUE AN' LINE!"
+    },
+    "812": {
+      "name": "WINDOW WASHIN'",
+      "description": "CLEANIN' GLASS STREAK-FREE, AT HEIGHT IF NEEDED!"
+    },
+    "814": {
+      "name": "X-RAY OPERATION",
+      "description": "POSITIONIN', EXPOSIN' AN' SHIELDIN' FOR A USABLE RADIOGRAPH!"
+    },
+    "817": {
+      "name": "ZAMBONI OPERATION",
+      "description": "RESURFACIN' ICE EVENLY, IN ONE PASS, BEFORE DA NEXT PERIOD!"
+    },
+    "818": {
+      "name": "ZINE MAKIN'",
+      "description": "WRITIN', LAYIN' OUT AN' PHOTOCOPYIN' A LIL' SELF-PUBLISHED MAGAZINE!"
+    },
+    "819": {
+      "name": "ZOOKEEPIN'",
+      "description": "FEEDIN', ENRICHIN' AN' MANAGIN' CAPTIVE ANIMALS!"
+    },
+    "820": {
+      "name": "SAXOPHONE",
+      "description": "PLAYIN' DA SAXOPHONE: REED, BREATH AN' PHRASIN'!"
+    },
+    "821": {
+      "name": "RAMAN SPECTROSCOPY",
+      "description": "IDENTIFYIN' SUBSTANCES BY HOW DEY SCATTER LASER LIGHT!"
+    },
+    "822": {
+      "name": "MASS SPECTROMETRY",
+      "description": "IDENTIFYIN' SUBSTANCES BY IONISIN' DEM AN' WEIGHIN' DA FRAGMENTS!"
+    },
+    "823": {
+      "name": "CRYSTALLOGRAPHY",
+      "description": "DETERMININ' STRUCTURE FROM HOW CRYSTALS DIFFRACT!"
+    },
+    "824": {
+      "name": "ELECTRON MICROSCOPY",
+      "description": "IMAGIN' MATTER BELOW DA WAVELENGTH OF LIGHT!"
+    },
+    "825": {
+      "name": "GENOME SEQUENCIN'",
+      "description": "READIN' A GENOME AN' ASSEMBLIN' IT INTO A USABLE SEQUENCE!"
+    },
+    "826": {
+      "name": "PARTICLE PHYSICS",
+      "description": "DA FUNDAMENTAL PARTICLES AN' DA FORCES BETWEEN DEM!"
+    },
+    "827": {
+      "name": "THERMODYNAMICS",
+      "description": "HEAT, WORK AN' WHAT NO CAN BE GOT BACK!"
+    },
+    "828": {
+      "name": "FLUID DYNAMICS",
+      "description": "HOW LIQUIDS AN' GASES MOVE: FLOW, TURBULENCE AN' PRESSURE!"
+    },
+    "829": {
+      "name": "VOLCANOLOGY",
+      "description": "VOLCANOES: DEY BEHAVIOUR, WARNIN' SIGNS AN' PRODUCTS!"
+    },
+    "830": {
+      "name": "MYCOLOGY",
+      "description": "DA STUDY OF FUNGI: IDENTIFICATION, ECOLOGY AN' TOXICITY!"
+    },
+    "831": {
+      "name": "HERPETOLOGY",
+      "description": "DA STUDY OF REPTILES AN' AMPHIBIANS!"
+    },
+    "832": {
+      "name": "ICHTHYOLOGY",
+      "description": "DA STUDY OF FISH: SPECIES, ANATOMY AN' STOCKS!"
+    },
+    "833": {
+      "name": "LIMNOLOGY",
+      "description": "DA STUDY OF LAKES, RIVERS AN' DEY INLAND ECOLOGY!"
+    },
+    "834": {
+      "name": "SOIL SCIENCE",
+      "description": "SOIL STRUCTURE, CHEMISTRY AN' FERTILITY!"
+    },
+    "835": {
+      "name": "ASTROBIOLOGY",
+      "description": "DA SEARCH FOR, AN' STUDY OF, LIFE BEYOND EARTH AN' ITS CONDITIONS!"
+    },
+    "836": {
+      "name": "QUANTUM CRYPTOGRAPHY",
+      "description": "EXCHANGIN' KEYS SO DAT ANY EAVESDROPPIN' IZ DETECTED!"
+    },
+    "837": {
+      "name": "FIRMWARE REVERSE ENGINEERIN'",
+      "description": "PULLIN' APART EMBEDDED CODE TA FIND WHAT IT REALLY DOES!"
+    },
+    "838": {
+      "name": "SATELLITE UPLINK OPERATION",
+      "description": "ALIGNIN' A DISH AN' HOLDIN' A LINK TA A SATELLITE!"
+    },
+    "840": {
+      "name": "BIOMETRIC SECURITY",
+      "description": "IDENTITY SYSTEMS BUILT ON FINGERPRINTS, IRISES AN' GAIT!"
+    },
+    "842": {
+      "name": "RADIOLOGY",
+      "description": "PRODUCIN' AN' READIN' MEDICAL IMAGES!"
+    },
+    "843": {
+      "name": "ENDOCRINOLOGY",
+      "description": "DA HORMONE SYSTEMS, AN' WHAT HAPPENS WHEN DEY MISFIRE!"
+    },
+    "844": {
+      "name": "GERONTOLOGY",
+      "description": "DA MEDICINE AN' CARE OF DA AGEIN' BODY AN' MIND!"
+    },
+    "845": {
+      "name": "PODIATRY",
+      "description": "TREATIN' FEET, GAIT AN' DA PROBLEMS DEY CAUSE UPSTREAM!"
+    },
+    "846": {
+      "name": "AUDIOLOGY",
+      "description": "TESTIN' HEARIN' AN' FITTIN' DA AIDS DAT CORRECT IT!"
+    },
+    "847": {
+      "name": "SPORTS MEDICINE",
+      "description": "TREATIN' AN' PREVENTIN' DA INJURIES SPORT CAUSES!"
+    },
+    "848": {
+      "name": "DAMASCUS STEEL FORGIN'",
+      "description": "FORGE-WELDIN' LAYERED STEEL INTO PATTERNED BILLETS!"
+    },
+    "849": {
+      "name": "GLASS ETCHIN'",
+      "description": "FROSTIN' AN' CUTTIN' PATTERN INTO GLASS BY ACID OR ABRASIVE!"
+    },
+    "850": {
+      "name": "VIOLIN MAKIN'",
+      "description": "CARVIN', THINNIN' AN' VARNISHIN' VIOLINS!"
+    },
+    "851": {
+      "name": "CHAINMAIL WEAVIN'",
+      "description": "RIVETIN' AN' CLOSIN' RINGS INTO MAIL OF EVEN WEAVE!"
+    },
+    "852": {
+      "name": "WILDERNESS FIRST RESPONSE",
+      "description": "EMERGENCY MEDICINE HOURS FROM ANY ROAD!"
+    },
+    "853": {
+      "name": "PERMACULTURE DESIGN",
+      "description": "DESIGNIN' A GROWIN' SYSTEM DAT MOSTLY MAINTAINS ITSELF!"
+    },
+    "854": {
+      "name": "BEACH COMBIN'",
+      "description": "WORKIN' A SHORELINE FOR WHAT DA TIDE HAB LEFT!"
+    },
+    "855": {
+      "name": "ICE CORE DRILLIN'",
+      "description": "EXTRACTIN' AN' LOGGIN' CORES DAT HOLD DA OLD CLIMATE!"
+    },
+    "856": {
+      "name": "HOSTAGE NEGOTIATION",
+      "description": "TALKIN' A BARRICADED SITUATION DOWN WITOUT A BODY!"
+    },
+    "857": {
+      "name": "CROWD READIN'",
+      "description": "JUDGIN' A CROWD'S MOOD AN' INTENT, AN' WHEN IT TURNS DANGEROUS!"
+    },
+    "859": {
+      "name": "WILD SHAPE ATTUNEMENT",
+      "description": "HOLDIN' A BORROWED ANIMAL FORM WITOUT LOSIN' YOURSELF IN IT!"
+    },
+    "860": {
+      "name": "ASTRAL PROJECTION",
+      "description": "SEPARATIN' AWARENESS FROM DA BODY AN' TRAVELLIN' WITOUT IT!"
+    },
+    "861": {
+      "name": "ICE CLIMBIN'",
+      "description": "CLIMBIN' FROZEN FALLS AN' ICE ON TOOLS AN' CRAMPONS!"
+    },
+    "862": {
+      "name": "LOG ROLLIN'",
+      "description": "STAYIN' UPRIGHT ON A SPINNIN' FLOATIN' LOG!"
+    },
+    "863": {
+      "name": "AXE THROWIN'",
+      "description": "THROWIN' AN AXE FOR ROTATION AN' STICK AT A SET DISTANCE!"
+    },
+    "864": {
+      "name": "BOCCE",
+      "description": "ROLLIN' WEIGHTED BALLS TA DA JACK ON AN UNEVEN COURT!"
+    },
+    "865": {
+      "name": "SHUFFLEBOARD",
+      "description": "SLIDIN' WEIGHTED DISCS TA SCORIN' ZONES!"
+    },
+    "866": {
+      "name": "ZEPPELIN PILOTIN'",
+      "description": "FLYIN' A RIGID AIRSHIP ON BALLAST, TRIM AN' SLOW DECISIONS!"
+    },
+    "867": {
+      "name": "MONORAIL OPERATION",
+      "description": "DRIVIN' AN' DISPATCHIN' A MONORAIL ON SCHEDULE!"
+    },
+    "868": {
+      "name": "HOVERCRAFT PILOTIN'",
+      "description": "HANDLIN' AN AIR-CUSHION CRAFT OVER LAND AN' WATER!"
+    },
+    "869": {
+      "name": "SAND SCULPTURE",
+      "description": "PACKIN' AN' CARVIN' SAND INTO FORM BEFORE IT DRIES!"
+    },
+    "870": {
+      "name": "CHALK ART",
+      "description": "DRAWIN' IN CHALK AT SCALE, KNOWIN' IT WILL BE WASHED AWAY!"
+    },
+    "871": {
+      "name": "THROAT SINGIN'",
+      "description": "PRODUCIN' TWO OR MORE TONES AT ONCE WIT ONE VOICE!"
+    },
+    "872": {
+      "name": "SUSHI PREPARATION",
+      "description": "RICE, CUTTIN' AN' HANDLIN' RAW FISH TA STANDARD!"
+    },
+    "873": {
+      "name": "CHOCOLATE TEMPERIN'",
+      "description": "HEATIN' AN' COOLIN' CHOCOLATE SO IT SETS WIT SNAP AN' SHINE!"
+    },
+    "874": {
+      "name": "COFFEE ROASTIN'",
+      "description": "TAKIN' GREEN COFFEE THROUGH FIRST CRACK TA A CHOSEN PROFILE!"
+    },
+    "876": {
+      "name": "FRANCHISE MANAGEMENT",
+      "description": "RUNNIN' OUTLETS TA A BRAND'S STANDARD AN' MARGIN!"
+    },
+    "877": {
+      "name": "GRANT WRITIN'",
+      "description": "WRITIN' APPLICATIONS DAT ACTUALLY GET FUNDED!"
+    },
+    "878": {
+      "name": "EPIGRAPHY",
+      "description": "READIN' AN' DATIN' INSCRIPTIONS CUT IN HARD MATERIAL!"
+    },
+    "879": {
+      "name": "NUMISMATICS",
+      "description": "DA STUDY AN' COLLECTIN' OF COINS AN' DEY ISSUE!"
+    },
+    "880": {
+      "name": "PAPYROLOGY",
+      "description": "READIN' AN' CONSERVIN' TEXTS WRITTEN ON PAPYRUS!"
+    },
+    "881": {
+      "name": "COUNTERFEITIN'",
+      "description": "PRODUCIN' FORGED CURRENCY OR DOCUMENTS DAT PASS INSPECTION!"
+    },
+    "882": {
+      "name": "MONEY LAUNDERIN'",
+      "description": "PASSIN' DIRTY MONEY THROUGH CLEAN BOOKS!"
+    },
+    "883": {
+      "name": "SAFECRACKIN'",
+      "description": "OPENIN' A SAFE BY MANIPULATION, DRILLIN' OR DA OWNER'S HABITS!"
+    },
+    "886": {
+      "name": "TRENCH WARFARE TACTICS",
+      "description": "HOLDIN', RAIDIN' AN' LIVIN' IN FIXED LINES!"
+    },
+    "887": {
+      "name": "SIEGE ENGINEERIN'",
+      "description": "BUILDIN' AN' USING ENGINES DAT TAKE FORTIFICATIONS DOWN!"
+    },
+    "888": {
+      "name": "LIGHT",
+      "description": "FIGHTIN' WIT LIGHT, QUICK WEAPONS DAT TRADE REACH FOR SPEED!"
+    },
+    "889": {
+      "name": "SWORD",
+      "description": "FIGHTIN' WIT DA SWORD: GUARD, CUT AN' THRUST!"
+    },
+    "890": {
+      "name": "HEAVY",
+      "description": "FIGHTIN' WIT HEAVY TWO-HANDED WEAPONS AN' DEY COMMITTED SWINGS!"
+    },
+    "891": {
+      "name": "AXE",
+      "description": "FIGHTIN' WIT HAND AXES AN' DEY HEAVY CHOPPIN' SWINGS!"
+    },
+    "892": {
+      "name": "WHIP",
+      "description": "FIGHTIN' WIT DA WHIP: REACH, CRACK AN' ENTANGLEMENT!"
+    },
+    "893": {
+      "name": "STAFF",
+      "description": "FIGHTIN' WIT DA STAFF AN' ITS TWO-ENDED LEVERAGE!"
+    },
+    "894": {
+      "name": "BOW",
+      "description": "SHOOTIN' A BOW: DRAW, ANCHOR, RELEASE AN' RANGE ESTIMATION!"
+    },
+    "895": {
+      "name": "PROJECTILE",
+      "description": "FIGHTIN' WIT THROWN AN' LAUNCHED WEAPONS AT RANGE!"
+    },
+    "896": {
+      "name": "GUN",
+      "description": "HANDLIN' AN' SHOOTIN' FIREARMS ACCURATELY UNDER PRESSURE!"
+    },
+    "897": {
+      "name": "CLAW",
+      "description": "FIGHTIN' WIT HAND CLAWS AN' DEY CLOSE, TEARIN' RANGE!"
+    },
+    "898": {
+      "name": "GLOVE",
+      "description": "FIGHTIN' WIT GLOVED FISTS AT CLOSE PUNCHIN' RANGE!"
+    },
+    "899": {
+      "name": "SPEAR",
+      "description": "FIGHTIN' WIT DA SPEAR: REACH, THRUST AN' SET!"
+    },
+    "900": {
+      "name": "CYCLIN'",
+      "description": "RIDIN' A BICYCLE WIT EFFICIENCY, BALANCE AN' TRAFFIC SENSE!"
+    },
+    "901": {
+      "name": "SPACECRAFT PILOTIN'",
+      "description": "HANDLIN' A SHIP IN SPACE: BURNS, ORBIT AN' FIDDLY BIT DOWN!"
+    },
+    "902": {
+      "name": "ENCHANTIN'",
+      "description": "BINDIN' A SPELL INTO AN OBJECT SO IT CAN CAST IT LATER!"
+    }
+  }
+}

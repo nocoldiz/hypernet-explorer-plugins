@@ -155,10 +155,17 @@
     //-----------------------------------------------------------------------------
     // Steal (Mug, Master Theft)
     //-----------------------------------------------------------------------------
-    // Takes one thing the struck enemy was carrying: a pick from its own drop
-    // table, once per enemy per fight. A miss steals nothing. It used to hand
-    // over one to four copies of any item in the database, top tier included,
-    // for 8 AP a turn.
+    // Takes one thing the struck enemy was carrying, and only ever something
+    // it would drop: the pool is exactly its own dropItems in Enemies.json,
+    // which tools/enemies/gen_enemy_drops.js writes as the name and biology
+    // material (common), the useful find (uncommon) and the trophy (rare). The
+    // pick is weighted by each slot's own drop odds (1/denominator), so the
+    // common material comes off far more often than the trophy, exactly as on
+    // defeat. One copy, once per enemy per fight; an enemy with no drops (or
+    // one already robbed) gives nothing and says so. A miss steals nothing.
+    // It used to run "Item: GetRandomItem" (common event 2): one to four
+    // copies of any item in the database, a Stradivari Violin off a crab
+    // included, and blank unnamed rows announced as "x2".
 
     const lastActionUser = () => {
         const subject = BattleManager._subject;
@@ -176,10 +183,41 @@
         if (BattleManager._logWindow) BattleManager._logWindow.push('addText', text);
     };
 
-    const stealPool = (enemy) => (enemy.enemy().dropItems || [])
-        .filter(d => d && d.kind > 0 && d.dataId > 0)
-        .map(d => enemy.itemObject(d.kind, d.dataId))
-        .filter(Boolean);
+    // A row a thief can actually pocket: a real, named, priced entry. Blank
+    // rows, "<--" / "---" dividers and unpriced stubs are not things.
+    const isStealable = (obj) => {
+        if (!obj || !obj.id) return false;
+        const name = String(obj.name || '').trim();
+        if (!name || name.startsWith('<--') || name.startsWith('---')) return false;
+        return Number(obj.price) > 0;
+    };
+
+    // The struck enemy's steal table: [{ item, weight }], in drop-table order.
+    // Same enemy, same table, every time.
+    const stealTable = (enemy) => {
+        const data = enemy && enemy.enemy ? enemy.enemy() : null;
+        return ((data && data.dropItems) || [])
+            .filter(d => d && d.kind > 0 && d.dataId > 0)
+            .map(d => ({
+                item: enemy.itemObject(d.kind, d.dataId),
+                weight: 1 / Math.max(1, Number(d.denominator) || 1)
+            }))
+            .filter(e => isStealable(e.item));
+    };
+
+    const stealPool = (enemy) => stealTable(enemy).map(e => e.item);
+
+    // Weighted pick off the table; roll is in [0, 1).
+    const pickSteal = (table, roll) => {
+        if (!table || !table.length) return null;
+        const total = table.reduce((s, e) => s + e.weight, 0);
+        let r = Math.max(0, Math.min(0.999999, Number(roll) || 0)) * total;
+        for (const e of table) {
+            r -= e.weight;
+            if (r < 0) return e.item;
+        }
+        return table[table.length - 1].item;
+    };
 
     const handleStealCommand = () => {
         if (!$gameParty.inBattle()) return;
@@ -188,12 +226,11 @@
         if (!user || !enemy) return;
         const result = enemy.result ? enemy.result() : null;
         if (result && !result.isHit()) return;
-        const pool = enemy._stolenFrom ? [] : stealPool(enemy);
-        if (!pool.length) {
+        const item = enemy._stolenFrom ? null : pickSteal(stealTable(enemy), Math.random());
+        if (!item) {
             logLine(T('Battle.steal.nothing', { actor: user.name(), enemy: enemy.name() }));
             return;
         }
-        const item = pool[Math.randomInt(pool.length)];
         enemy._stolenFrom = true;
         $gameParty.gainItem(item, 1);
         logLine(T('Battle.steal.stole', { actor: user.name(), item: item.name, enemy: enemy.name() }));
@@ -235,7 +272,7 @@
         PluginManager.registerCommand(key, "stealFromEnemy", handleStealCommand);
         PluginManager.registerCommand(key, "improvise", handleImproviseCommand);
     }
-    window.BattleActiveSkills = { isImprovisable, stealPool };
+    window.BattleActiveSkills = { isImprovisable, stealPool, stealTable, pickSteal, handleStealCommand };
 
 
     //-----------------------------------------------------------------------------
@@ -304,8 +341,12 @@
     Game_Action.prototype.apply = function(target) {
         _Game_Action_apply.call(this, target);
 
-        if (this.isSkill() && this.subject().isEnemy() && isSpecialClass(target)) {
-            const skillId = this.item().id;
+        // A skill id with no database row resolves to a null item, and a
+        // battler gone from the troop to a null subject: neither is learnable.
+        const subject = this.isSkill() ? this.subject() : null;
+        const usedSkill = (subject && subject.isEnemy() && isSpecialClass(target)) ? this.item() : null;
+        if (usedSkill) {
+            const skillId = usedSkill.id;
 
             const skillData = $dataSkills[skillId];
             const isLearnable = skillId >= SKILL_POOL_START &&
@@ -316,7 +357,7 @@
             if (isLearnable && Math.randomInt(100) < LEARN_CHANCE) {
                 target.learnSkill(skillId);
                 const message = T('Battle.mimic.learnedFromEnemy', { actor: target.name(), skill: $dataSkills[skillId].name });
-                BattleManager._logWindow.push('addText', message);
+                if (BattleManager._logWindow) BattleManager._logWindow.push('addText', message);
             }
         }
     };
@@ -831,65 +872,42 @@
         });
     }
 
+    // A spell's words are its <Lore:> text (ItemSystemUtils.loreFor, the
+    // generative grammar in js/db/Skills/Lore.json); nobody incants a sword
+    // swing, so anything that is not a spell has none.
+    function chantOf(skill) {
+        if (!skill || !skill.name || !isMagicalSkill(skill)) return '';
+        const utils = window.ItemSystemUtils;
+        try {
+            return (utils && utils.loreFor) ? (utils.loreFor(skill) || '') : '';
+        } catch (e) { return ''; }
+    }
+
     /**
-     * The incantation of whatever she is about to cast, read out. A spell's
-     * words are its <Lore:> text (ItemSystemUtils.loreFor, the generative
-     * grammar in js/db/Skills/Lore.json); a spell with none, and anything that
-     * is not a spell at all, is named instead. Nobody incants a sword swing.
+     * The whole incantation of whatever is about to be cast, read into the
+     * battle log: the open book of Graceful Death, or the Grimoire of Solomon
+     * in the vector gun's form bay. A spell with no words, and anything that is
+     * not a spell, is named instead.
      */
     function emIncant(actor, skill) {
         if (!skill || !skill.name) return;
-        const utils = window.ItemSystemUtils;
-        let lore = '';
-        try {
-            lore = (isMagicalSkill(skill) && utils && utils.loreFor) ? utils.loreFor(skill) : '';
-        } catch (e) { lore = ''; }
-        // With the Solomon incantation fitted in the gun's mode bay the words
-        // leave the log and are said out loud instead, in a box of their own.
-        if (lore && incantBox(actor, lore)) return;
+        const lore = chantOf(skill);
         announce(lore
             ? text('em.incant', { actor: actor.name(), skill: skill.name, lore })
             : text('em.incantPlain', { actor: actor.name(), skill: skill.name }));
     }
 
-    // Whether a reading is holding the field right now. Set when the box goes
-    // up, dropped by the battle log the frame after it comes down.
-    let incantHeld = false;
-
     /**
-     * The reading raised as a box rather than as a line in the log: typed out,
-     * chattered letter by letter, and with nobody's portrait painted over the
-     * fight, which is the one thing a battle never allows. Answers false
-     * whenever the gun's Solomon incantation is not running, which is what
-     * keeps the log line the default.
-     * @param {Game_Actor} actor - Whoever is reading
-     * @param {string} lore - The incantation, already resolved
-     * @returns {boolean} true when the box has the words
+     * One broken line of the chant, picked at random: what the Solomon
+     * incantation lets slip when no book is open to read it whole.
      */
-    function incantBox(actor, lore) {
-        const VG = window.VectorGun;
-        if (!VG || !VG.incanting || !VG.incanting(actor)) return false;
-        const VO = window.DialogueVoiceOver;
-        if (!VO || !VO.say) return false;
-        const said = VO.say(actor.name(), [text('em.incantBox', { actor: actor.name(), lore })]);
-        if (!said) return false;
-        incantHeld = true;
-        return true;
-    }
-
-    // Nothing else moves while the page is being read. BattleManager is held
-    // already, by a message it cannot advance past, but the battle log runs on
-    // a clock of its own and would play the cast over the top of the box, so it
-    // waits out the reading too.
-    if (typeof Window_BattleLog !== 'undefined') {
-        const _Window_BattleLog_updateWait_incant = Window_BattleLog.prototype.updateWait;
-        Window_BattleLog.prototype.updateWait = function () {
-            if (incantHeld) {
-                if (typeof $gameMessage !== 'undefined' && $gameMessage && $gameMessage.isBusy()) return true;
-                incantHeld = false;
-            }
-            return _Window_BattleLog_updateWait_incant.call(this);
-        };
+    function emMurmur(actor, skill) {
+        const lore = chantOf(skill);
+        if (!lore) return;
+        const lines = lore.split(/\n+|(?<=[.!?;:])\s+/).map(l => l.trim()).filter(Boolean);
+        if (!lines.length) return;
+        const line = lines[Math.floor(Math.random() * lines.length)];
+        announce(text('em.incantFragment', { actor: actor.name(), skill: skill.name, lore: line }));
     }
 
     /**
@@ -1379,12 +1397,16 @@
     BattleManager.startAction = function () {
         const subject = this._subject;
         if (subject && subject._hyperPending) LimitBreak.unleash(subject);
-        // Every spell out of the open book is read aloud before it lands.
-        if (subject && LimitBreak.isGrimoireOpen(subject) && subject.currentAction) {
+        // Every spell out of an open book is read aloud in full before it lands;
+        // with only the vector gun's Solomon incantation fitted, a line of it slips out.
+        if (subject && subject.currentAction) {
             const action = subject.currentAction();
-            if (action && action.isSkill && action.isSkill() && action.item) {
-                const skill = action.item();
+            const skill = (action && action.isSkill && action.isSkill() && action.item) ? action.item() : null;
+            const VG = window.VectorGun;
+            if (skill && (LimitBreak.isGrimoireOpen(subject) || (VG && VG.chantsInFull && VG.chantsInFull(subject)))) {
                 emIncant(subject, skill);
+            } else if (skill && VG && VG.murmuring && VG.murmuring(subject)) {
+                emMurmur(subject, skill);
             }
         }
         _BattleManager_startAction_hyper.call(this);
@@ -1413,8 +1435,8 @@
         _BattleManager_endBattle_hyper.call(this, result);
     };
 
-    // A defeat never reaches endBattle: processDefeat (BattleSystemEnhancedState.js)
-    // goes straight to updateBattleEnd, so the fight is closed there as well.
+    // Any route that reaches updateBattleEnd without endBattle (a scripted
+    // abort, a plugin's own defeat) still closes the fight here as well.
     // Clearing is idempotent, so a fight that passed through both is unharmed.
     const _BattleManager_updateBattleEnd_hyper = BattleManager.updateBattleEnd;
     BattleManager.updateBattleEnd = function () {

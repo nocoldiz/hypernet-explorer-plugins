@@ -680,7 +680,10 @@
             const nK = getKey(nx, ny);
             if (!$gameMap.isValid(nx, ny) || closedSet.has(nK)) continue;
             const hasDoor = doorKeys.has(nK);
-            if (!hasDoor && (!this.character.canPass(cx, cy, dir) || !this.isPassable(nx, ny, undefined, eventGrid))) continue;
+            // The tile tests (region, terrain, the frame's event grid) before
+            // the engine's canPass, which walks every event on the map for a
+            // collision: both only read, so the order changes nothing but cost.
+            if (!hasDoor && (!this.isPassable(nx, ny, undefined, eventGrid) || !this.character.canPass(cx, cy, dir))) continue;
             if (avoidEnemies && enemyDangerKeys.has(nK)) continue;
             if (avoidNPCs && allNpcKeys.has(nK) && nK !== selfKey) continue;
 
@@ -864,13 +867,20 @@
     // What findSpot asks of a tile, as bits: dry ground to stand on, water to
     // swim in, and the four passabilities (isPassable 2, 4, 6, 8).
     _DRY: 1, _SWIM: 2, _PASS: { 2: 4, 4: 8, 6: 16, 8: 32 },
+    // Each question is put to the map once: the water test and the four
+    // passabilities feed both the dry-ground answer (isDryStand, which would
+    // ask them all again) and their own bits.
     _readTile(x, y) {
-      let bits = 0;
-      if (this.isDryStand(x, y)) bits |= this._DRY;
-      if (this.isSwimWater(x, y)) bits |= this._SWIM;
+      let bits = 0, pass = 0;
+      const swim = this.isSwimWater(x, y);
+      if (swim) bits |= this._SWIM;
       for (let i = 0; i < ORTHO_DIRS.length; i++) {
         const d = ORTHO_DIRS[i];
-        if ($gameMap.isPassable(x, y, d)) bits |= this._PASS[d];
+        if ($gameMap.isPassable(x, y, d)) pass |= this._PASS[d];
+      }
+      bits |= pass;
+      if (!swim && pass && !this.KEEP_OUT_REGIONS.includes($gameMap.regionId(x, y)) && !Utils.isBlockedTerrain(x, y)) {
+        bits |= this._DRY;
       }
       return bits;
     },

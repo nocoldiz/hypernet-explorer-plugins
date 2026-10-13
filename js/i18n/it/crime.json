@@ -1,7 +1,7 @@
 {
   "crime": {
     "pettytheft": {
-      "name": "Furto Semplice"
+      "name": "Furto semplice"
     },
     "pickpocketing": {
       "name": "Borseggio"
@@ -10,22 +10,22 @@
       "name": "Taccheggio"
     },
     "burglary": {
-      "name": "Furto con Scasso"
+      "name": "Furto con scasso"
     },
     "graverobbing": {
-      "name": "Profanazione di Sepolcro"
+      "name": "Profanazione di sepolcro"
     },
     "robbery": {
       "name": "Rapina"
     },
     "armedrobbery": {
-      "name": "Rapina a Mano Armata"
+      "name": "Rapina a mano armata"
     },
     "bankrobbery": {
-      "name": "Rapina in Banca"
+      "name": "Rapina in banca"
     },
     "grandtheft": {
-      "name": "Furto Aggravato"
+      "name": "Furto aggravato"
     },
     "assault": {
       "name": "Aggressione"
@@ -34,19 +34,19 @@
       "name": "Percosse"
     },
     "aggravatedassault": {
-      "name": "Aggressione Aggravata"
+      "name": "Aggressione aggravata"
     },
     "abandonchild": {
-      "name": "Abbandono di Minore"
+      "name": "Abbandono di minore"
     },
     "murder": {
       "name": "Omicidio"
     },
     "manslaughter": {
-      "name": "Omicidio Colposo"
+      "name": "Omicidio colposo"
     },
     "serialkilling": {
-      "name": "Omicidio Seriale"
+      "name": "Omicidio seriale"
     },
     "vandalism": {
       "name": "Vandalismo"
@@ -55,64 +55,64 @@
       "name": "Graffitismo"
     },
     "arson": {
-      "name": "Incendio Doloso"
+      "name": "Incendio doloso"
     },
     "propertydestruction": {
-      "name": "Danneggiamento di Proprietà"
+      "name": "Danneggiamento di proprietà"
     },
     "illegalconstruction": {
-      "name": "Costruzione Abusiva"
+      "name": "Costruzione abusiva"
     },
     "publicdisturbance": {
-      "name": "Disturbo della Quiete Pubblica"
+      "name": "Turbativa dell'ordine pubblico"
     },
     "disorderlyconduct": {
-      "name": "Condotta Molesta"
+      "name": "Condotta molesta"
     },
     "harassment": {
       "name": "Molestie"
     },
     "trespassing": {
-      "name": "Violazione di Domicilio"
+      "name": "Violazione di domicilio"
     },
     "breakingandentering": {
-      "name": "Violazione di Domicilio con Scasso"
+      "name": "Violazione di domicilio con scasso"
     },
     "unlawfulentry": {
-      "name": "Ingresso Illegale"
+      "name": "Ingresso illegale"
     },
     "drugpossession": {
-      "name": "Possesso di Stupefacenti"
+      "name": "Possesso di stupefacenti"
     },
     "drugdealing": {
-      "name": "Spaccio di Droga"
+      "name": "Spaccio di droga"
     },
     "drugtrafficking": {
-      "name": "Traffico di Stupefacenti"
+      "name": "Traffico di stupefacenti"
     },
     "smuggling": {
       "name": "Contrabbando"
     },
     "contraband": {
-      "name": "Possesso di Merce di Contrabbando"
+      "name": "Possesso di merce di contrabbando"
     },
     "fraud": {
       "name": "Frode"
     },
     "embezzlement": {
-      "name": "Appropriazione Indebita"
+      "name": "Appropriazione indebita"
     },
     "bribery": {
       "name": "Corruzione"
     },
     "corruption": {
-      "name": "Corruzione Professionale"
+      "name": "Corruzione professionale"
     },
     "taxevasion": {
-      "name": "Evasione Fiscale"
+      "name": "Evasione fiscale"
     },
     "moneylaundering": {
-      "name": "Riciclaggio di Denaro"
+      "name": "Riciclaggio di denaro"
     },
     "forgery": {
       "name": "Falsificazione"
@@ -121,22 +121,22 @@
       "name": "Contraffazione"
     },
     "moneyforging": {
-      "name": "Falsificazione di Moneta"
+      "name": "Falsificazione di moneta"
     },
     "identitytheft": {
-      "name": "Furto d'Identità"
+      "name": "Furto d'identità"
     },
     "cybercrime": {
-      "name": "Crimine Informatico"
+      "name": "Crimine informatico"
     },
     "hacking": {
-      "name": "Hacking Informatico"
+      "name": "Hacking"
     },
     "datatheft": {
-      "name": "Furto di Dati"
+      "name": "Furto di dati"
     },
     "piracy": {
-      "name": "Pirateria Digitale"
+      "name": "Pirateria digitale"
     },
     "extortion": {
       "name": "Estorsione"
@@ -145,13 +145,13 @@
       "name": "Ricatto"
     },
     "kidnapping": {
-      "name": "Sequestro di Persona"
+      "name": "Sequestro di persona"
     },
     "hostage": {
-      "name": "Presa di Ostaggi"
+      "name": "Presa di ostaggi"
     },
     "humantrafficking": {
-      "name": "Tratta di Esseri Umani"
+      "name": "Tratta di esseri umani"
     },
     "slavery": {
       "name": "Schiavitù"
@@ -160,94 +160,94 @@
       "name": "Bracconaggio"
     },
     "illegalhunting": {
-      "name": "Caccia Illegale"
+      "name": "Caccia illegale"
     },
     "animalcruelty": {
-      "name": "Maltrattamento di Animali"
+      "name": "Maltrattamento di animali"
     },
     "abandonpet": {
-      "name": "Abbandono di Animale"
+      "name": "Abbandono di animale"
     },
     "environmentalcrime": {
-      "name": "Reato Ambientale"
+      "name": "Reato ambientale"
     },
     "pollutionviolation": {
-      "name": "Violazione Normativa Inquinamento"
+      "name": "Violazione delle norme antinquinamento"
     },
     "illegaldumping": {
-      "name": "Scarico Illegale di Rifiuti"
+      "name": "Scarico illegale di rifiuti"
     },
     "speedingminor": {
-      "name": "Eccesso di Velocità Lieve"
+      "name": "Eccesso di velocità lieve"
     },
     "speedingmajor": {
-      "name": "Eccesso di Velocità Grave"
+      "name": "Eccesso di velocità grave"
     },
     "recklessdriving": {
-      "name": "Guida Spericolata"
+      "name": "Guida spericolata"
     },
     "dui": {
-      "name": "Guida sotto l'Influenza"
+      "name": "Guida in stato di ebbrezza"
     },
     "hitandrun": {
-      "name": "Omissione di Soccorso / Pirateria Stradale"
+      "name": "Pirateria stradale"
     },
     "vehicletheft": {
-      "name": "Furto di Veicolo"
+      "name": "Furto di veicolo"
     },
     "carjacking": {
-      "name": "Rapina d'Auto con Violenza"
+      "name": "Rapina d'auto"
     },
     "illegalracing": {
-      "name": "Corse Clandestine"
+      "name": "Corse clandestine"
     },
     "publicintoxication": {
-      "name": "Ubriachezza Molesta"
+      "name": "Ubriachezza molesta"
     },
     "underagedrinking": {
-      "name": "Consumo di Alcol da parte di Minori"
+      "name": "Consumo di alcol da minorenne"
     },
     "disturbing": {
-      "name": "Disturbo della Quiete Pubblica"
+      "name": "Disturbo della quiete pubblica"
     },
     "loitering": {
       "name": "Vagabondaggio"
     },
     "jaywalking": {
-      "name": "Attraversamento Pedonale Imprudente"
+      "name": "Attraversamento fuori dalle strisce"
     },
     "littering": {
-      "name": "Abbandono di Rifiuti"
+      "name": "Abbandono di rifiuti"
     },
     "noisepollution": {
-      "name": "Inquinamento Acustico"
+      "name": "Inquinamento acustico"
     },
     "perjury": {
       "name": "Spergiuro"
     },
     "contemptofcourt": {
-      "name": "Oltraggio alla Corte"
+      "name": "Oltraggio alla corte"
     },
     "obstructingjustice": {
-      "name": "Intralcio alla Giustizia"
+      "name": "Intralcio alla giustizia"
     },
     "resistingarrest": {
-      "name": "Resistenza a Pubblico Ufficiale"
+      "name": "Resistenza a pubblico ufficiale"
     },
     "escapingcustody": {
-      "name": "Evasione dalla Custodia"
+      "name": "Fuga dalla custodia"
     },
     "prisonbreak": {
-      "name": "Evasione dal Carcere"
+      "name": "Evasione dal carcere"
     },
     "weaponspossession": {
-      "name": "Porto Abusivo di Armi"
+      "name": "Porto abusivo di armi"
     },
     "illegalweapons": {
-      "name": "Produzione Illegale di Armi"
+      "name": "Produzione illegale di armi"
     },
     "weaponstrafficking": {
-      "name": "Traffico d'Armi"
+      "name": "Traffico d'armi"
     },
     "terrorism": {
       "name": "Terrorismo"
@@ -256,19 +256,19 @@
       "name": "Bioterrorismo"
     },
     "treason": {
-      "name": "Tradimento"
+      "name": "Alto tradimento"
     },
     "espionage": {
       "name": "Spionaggio"
     },
     "warcrimes": {
-      "name": "Crimini di Guerra"
+      "name": "Crimini di guerra"
     },
     "genocide": {
       "name": "Genocidio"
     },
     "crimesagainsthumanity": {
-      "name": "Crimini contro l'Umanità"
+      "name": "Crimini contro l'umanità"
     },
     "fareevasion": {
       "name": "Viaggio senza biglietto"

@@ -12,7 +12,7 @@
   "coilEmpty": "SPIRALE VUOTA",
   "noStock": "SCORTE ESAURITE",
   "selectProduct": "SCEGLI UN PRODOTTO",
-  "coilEmptyHelp": "Su questa spirale non c'è nulla. Scorri con le frecce, oppure clicca un prodotto per comprarlo.",
+  "coilEmptyHelp": "Questa spirale è vuota. Usa le frecce o clicca un prodotto.",
   "unavailable": "NON DISPONIBILE",
   "unlisted": "MERCE FUORI CATALOGO",
   "standard": "MERCE STANDARD",
@@ -21,7 +21,7 @@
   "insertCoinsPrice": "INSERISCI MONETE · {price}",
   "buyPrice": "COMPRA · {price}",
   "collectExit": "RITIRA ED ESCI",
-  "returnWallet": "RIPRENDI IL PORTAFOGLI",
+  "returnWallet": "RIPRENDI IL PORTAFOGLIO",
   "coinAccepted": "MONETA ACCETTATA",
   "billAccepted": "BANCONOTA ACCETTATA",
   "accessGranted": "ACCESSO CONSENTITO",
@@ -30,15 +30,15 @@
   "ui": {
     "keyClear": "CANC",
     "keyEnter": "INV",
-    "selectProduct": "SELEZIONA UN PRODOTTO",
+    "selectProduct": "SCEGLI UN PRODOTTO",
     "ready": "PRONTA",
-    "browseHint": "Usa le frecce per scorrere, oppure clicca un prodotto per acquistarlo.",
+    "browseHint": "Frecce per scorrere, clicca un prodotto per comprarlo.",
     "coins": "MONETE",
     "bills": "BANCONOTE",
     "codeEntry": "INSERIMENTO CODICE",
     "wallet": "Portafoglio",
     "balance": "Credito",
-    "returnWallet": "RESTITUISCI RESTO",
+    "returnWallet": "RIPRENDI IL PORTAFOGLIO",
     "empty": "VUOTO"
   }
 }

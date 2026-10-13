@@ -261,8 +261,21 @@
             // Fetch and build dynamic list of procedural artifacts
             const discovered = [];
 
-            // 1. Scan Items (1501-1600)
-            for (let id = 1501; id <= 1600; id++) {
+            // The rows the game writes at run time live in the reserved bands
+            // of window.RuntimeItemIds (ItemSystemUtils.js), never in data/.
+            const R = window.RuntimeItemIds;
+            const bandIds = (names) => {
+                const out = [];
+                if (!R) return out;
+                names.forEach(n => {
+                    const b = R.band(n);
+                    for (let i = 0; b && i < b.size; i++) out.push(b.base + i);
+                });
+                return out;
+            };
+
+            // 1. Scan Items (the world's artifacts and the relics)
+            for (const id of bandIds(['historyArtifact', 'relic'])) {   // i18n-ignore: band ids
                 const item = $dataItems[id];
                 if (item && (item.isGenerated || (item.name && !item.name.startsWith("Empty ") && (item.note || '').toLowerCase().includes('artifact')))) {
                     discovered.push({
@@ -277,8 +290,8 @@
                 }
             }
 
-            // 2. Scan Weapons (1501-1550)
-            for (let id = 1501; id <= 1550; id++) {
+            // 2. Scan Weapons (the world's artifacts)
+            for (const id of bandIds(['historyArtifact'])) {   // i18n-ignore: band id
                 const weapon = $dataWeapons[id];
                 if (weapon && (weapon.isGenerated || (weapon.name && !weapon.name.startsWith("Empty ") && ((weapon.note || '').toLowerCase().includes('procedural') || (weapon.note || '').toLowerCase().includes('artifact'))))) {
                     discovered.push({
@@ -293,8 +306,8 @@
                 }
             }
 
-            // 3. Scan Armors (1501-1550)
-            for (let id = 1501; id <= 1550; id++) {
+            // 3. Scan Armors (the world's artifacts)
+            for (const id of bandIds(['historyArtifact'])) {   // i18n-ignore: band id
                 const armor = $dataArmors[id];
                 if (armor && (armor.isGenerated || (armor.name && !armor.name.startsWith("Empty ") && ((armor.note || '').toLowerCase().includes('procedural') || (armor.note || '').toLowerCase().includes('artifact'))))) {
                     discovered.push({
@@ -499,7 +512,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: 'app-artifact-analyzer',
-            name: T('ArtifactAnalyzer.title'),
+            name: () => T('ArtifactAnalyzer.title'),
             icon: 300,
             launchFn: function() {
                 window.HypernetArtifactAnalyzer.launch();

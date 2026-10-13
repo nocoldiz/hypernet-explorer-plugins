@@ -169,6 +169,21 @@
         WASPS: 'wasps',
         BEARS: 'bears'
     };
+
+    // What the page prints for one of the ids above. They are lookup keys and
+    // never shown as written: the season is the calendar's own word
+    // (Weather.app.seasons), the hive's weather, mood and threats live in the
+    // Apiary bank.
+    function hiveLabel(bank, id) {
+        const key = bank + '.' + id;
+        return (window.T && T.has && T.has(key)) ? T(key) : String(id);
+    }
+    const HiveLabels = {
+        season: (s) => hiveLabel('Weather.app.seasons', s),
+        weather: (w) => hiveLabel('Apiary.weather', w),
+        state: (s) => hiveLabel('Apiary.state', s),
+        threat: (t) => hiveLabel('Apiary.threat', t)
+    };
     
     class ApiaryBee {
         constructor(type, age = 0) {
@@ -791,8 +806,10 @@
                 this.performSwarm();
             }
             
-            // Supersedure (replace failing queen)
-            if (this.colony.queen && this.colony.queen.health < 20) {
+            // Supersedure (replace failing queen). At 30 she stops laying, so
+            // that is when the colony must act: wait longer and the last of
+            // her brood has hatched into workers, leaving nothing to rear.
+            if (this.colony.queen && this.colony.queen.health <= 30) {
                 this.colony.state = ColonyState.SUPERSEDURE;
                 this.raiseNewQueen();
             }
@@ -822,31 +839,32 @@
             }
         }
         
+        // A failing or dead queen is replaced off the brood she left. This used
+        // to look for a larva younger than 3 hours, which cannot exist (an egg
+        // only becomes a larva AT 3), and then waited for that larva to be an
+        // adult, which it never was: the first queen was the colony's last and
+        // every kept hive dwindled to nothing. The youngest brood is reared
+        // into the new queen at once (simplified, as the rest of the model is).
         raiseNewQueen() {
-            // Find suitable larvae
-            const larvae = this.colony.bees.filter(b => 
-                b.stage === LifeStage.LARVA && b.age < 3
-            );
-            
-            if (larvae.length > 0) {
-                // Convert larva to queen
-                const chosenLarva = larvae[0];
-                chosenLarva.type = BeeType.QUEEN;
-                chosenLarva.genetics.productivity *= 1.5;
-                chosenLarva.genetics.longevity *= 2;
-                
-                // Remove old queen if superseding
-                if (this.colony.queen && this.colony.state === ColonyState.SUPERSEDURE) {
-                    this.colony.queen = null;
-                }
-                
-                // Wait for new queen to mature
-                // (This is simplified - in reality would take time)
-                if (chosenLarva.stage === LifeStage.ADULT) {
-                    this.colony.queen = chosenLarva;
-                    this.colony.bees = this.colony.bees.filter(b => b !== chosenLarva);
-                }
+            const BROOD = [LifeStage.EGG, LifeStage.LARVA, LifeStage.PUPA];
+            const brood = this.colony.bees.filter(b => BROOD.includes(b.stage));
+            if (!brood.length) {
+                // Nothing to rear one from: a dead queen leaves the hive queenless.
+                if (this.colony.queen && this.colony.queen.health <= 0) this.colony.queen = null;
+                return false;
             }
+            const chosen = brood.reduce((a, b) => (b.age < a.age ? b : a));
+            chosen.type = BeeType.QUEEN;
+            chosen.stage = LifeStage.ADULT;
+            chosen.age = 0;
+            chosen.health = 100;
+            chosen.mated = true;
+            chosen.eggsLaid = 0;
+            chosen.genetics.productivity *= 1.5;
+            chosen.genetics.longevity *= 2;
+            this.colony.bees = this.colony.bees.filter(b => b !== chosen);
+            this.colony.queen = chosen;
+            return true;
         }
         
         updateColonyState() {
@@ -971,19 +989,19 @@
         
         harvestHoney() {
             const harvestable = Math.floor(this.colony.resources.honey * 0.7); // Keep 30% for bees
-            if (harvestable > 0) {
-                this.colony.resources.honey -= harvestable;
-                // The colony only ever loses the 70%; the keeper's skill shows
-                // in how much of it survives extraction into actual jars.
-                const jars = Math.floor(harvestable * beekeepingBonus() / 10);
-                deliverFarmProduce($dataItems[HONEY_ITEM_ID], jars);
-                // What came off the hives, in the party's diary (Diary.js).
-                if (window.Diary) {
-                    window.Diary.onHiveHarvest($dataItems[HONEY_ITEM_ID].name, jars);
-                }
-                return harvestable;
+            // The colony only ever loses the 70%; the keeper's skill shows in
+            // how much of it survives extraction into actual jars. Too little
+            // to fill one jar is not taken at all, rather than taken for nothing.
+            const jars = Math.floor(harvestable * beekeepingBonus() / 10);
+            if (jars <= 0) return 0;
+            this.colony.resources.honey -= harvestable;
+            deliverFarmProduce($dataItems[HONEY_ITEM_ID], jars);
+            // What came off the hives, in the party's diary (Diary.js).
+            if (window.Diary) {
+                window.Diary.onHiveHarvest($dataItems[HONEY_ITEM_ID].name, jars);
             }
-            return 0;
+            // The jars, which is what the keeper is told they got.
+            return jars;
         }
 
         // A neighbour topping up the hive's water trough (NPCSimulationCore
@@ -1163,8 +1181,8 @@
             return (colony && colony.owner) || null;
         },
     };
-    window.ApiarySystem = Object.assign(window.ApiarySystem || {}, NpcHives);
-    
+    window.ApiarySystem = Object.assign(window.ApiarySystem || {}, NpcHives, { labels: HiveLabels });
+
     // Expose the colony classes globally so JsonEx can restore their prototypes when a
     // save is loaded (the instance graph is stored inside $gameSystem.apiaryComplex).
     window.ApiaryComplex = ApiaryComplex;
@@ -1608,7 +1626,7 @@
                 : `<div class="apiary-warning">${ic(12, 16)} ${T('Apiary.noQueen')}</div>`;
 
             const threatsHTML = report.environment.threats.length > 0
-                ? `<div class="apiary-threats">${ic(12, 16)} ${T('Apiary.threats', { list: report.environment.threats.join(', ') })}</div>`
+                ? `<div class="apiary-threats">${ic(12, 16)} ${T('Apiary.threats', { list: report.environment.threats.map(HiveLabels.threat).join(', ') })}</div>`
                 : `<div class="apiary-threats safe">${ic(87, 16)} ${T('Apiary.secure')}</div>`;
 
             const feedbackHTML = this._feedbackMsg
@@ -1626,7 +1644,7 @@
                             <div>
                                 <div class="apiary-section">
                                     <div class="apiary-section-title">${ic(41, 14)} ${T('Apiary.ui.colony')}</div>
-                                    <div class="apiary-stat-row"><span>${T('Apiary.ui.state')}</span><span style="color:${stateColor}; text-transform:capitalize">${report.colony.state}</span></div>
+                                    <div class="apiary-stat-row"><span>${T('Apiary.ui.state')}</span><span style="color:${stateColor}">${HiveLabels.state(report.colony.state)}</span></div>
                                     <div class="apiary-stat-row"><span>${T('Apiary.ui.mood')}</span><span>${report.colony.mood}%</span></div>
                                     <div class="apiary-stat-row"><span>${T('Apiary.ui.efficiency')}</span><span>${report.colony.efficiency}%</span></div>
                                 </div>
@@ -1636,8 +1654,8 @@
                                 </div>
                                 <div class="apiary-section">
                                     <div class="apiary-section-title">${ic(231, 14)} ${T('Apiary.ui.environment')}</div>
-                                    <div class="apiary-stat-row"><span>${ic(103, 16)} ${T('Apiary.ui.season')}</span><span style="text-transform:capitalize">${report.environment.season}</span></div>
-                                    <div class="apiary-stat-row"><span>${ic(232, 16)} ${T('Apiary.ui.weather')}</span><span style="text-transform:capitalize">${report.environment.weather}</span></div>
+                                    <div class="apiary-stat-row"><span>${ic(103, 16)} ${T('Apiary.ui.season')}</span><span>${HiveLabels.season(report.environment.season)}</span></div>
+                                    <div class="apiary-stat-row"><span>${ic(232, 16)} ${T('Apiary.ui.weather')}</span><span>${HiveLabels.weather(report.environment.weather)}</span></div>
                                     <div class="apiary-stat-row"><span>${ic(224, 16)} ${T('Apiary.ui.temp')}</span><span>${report.environment.temperature}°C</span></div>
                                     <div class="apiary-stat-row"><span>${ic(105, 16)} ${T('Apiary.ui.flowers')}</span><span>${report.environment.flowers}%</span></div>
                                 </div>
@@ -1720,7 +1738,7 @@
             if (action === 'harvest') {
                 const harvested = apiary.harvestHoney();
                 if (harvested > 0) {
-                    this._feedbackMsg = T('Apiary.harvested', { amount: Math.floor(harvested / 10) });
+                    this._feedbackMsg = T('Apiary.harvested', { amount: harvested });
                     SoundManager.playUseItem();
                     // Taking a crop off without losing the colony is the whole
                     // craft, so it is worth more than merely tending.

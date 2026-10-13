@@ -9,8 +9,8 @@
   "earnings": "EARNINGS:",
   "yes": "YAH!",
   "no": "NAH!",
-  "insufficientGold": "INSUFFICIENT GOLD!",
-  "insufficientTokens": "INSUFFICIENT TOKENS!",
+  "insufficientGold": "NO ENOUGH MONEY!",
+  "insufficientTokens": "NO ENOUGH TOKENS!",
   "msg": {
     "notConfigured": "TOKEN CONVERTER IZ NO CONFIGURED CORRECTLY!",
     "error": "TOKEN CONVERTER ERROR. CHECK CONSOLE!",

@@ -9,27 +9,27 @@
   },
   "3": {
     "name": "Coltello da quattro soldi",
-    "description": "Coltello scadente col manico che si allenta.\nPuo accecare."
+    "description": "Coltello scadente col manico che si allenta.\nPuò accecare."
   },
   "4": {
     "name": "Bottiglia rotta",
-    "description": "Bottiglia rotta avvolta in stracci.\nPuo infliggere Veleno."
+    "description": "Bottiglia rotta avvolta in stracci.\nPuò infliggere Veleno."
   },
   "5": {
     "name": "Riga affilata",
-    "description": "Riga di legno rinforzata e affilata.\nPuo infliggere Veleno."
+    "description": "Riga di legno rinforzata e affilata.\nPuò infliggere Veleno."
   },
   "6": {
     "name": "Coltello da cucina",
-    "description": "Coltello da bistecca col manico fasciato.\nPuo infliggere Veleno."
+    "description": "Coltello da bistecca col manico fasciato.\nPuò infliggere Veleno."
   },
   "7": {
     "name": "Forbici da combattimento",
-    "description": "Forbici coi manici nastrati.\nPuo infliggere Veleno."
+    "description": "Forbici coi manici nastrati.\nPuò infliggere Veleno."
   },
   "8": {
     "name": "Mannaia da cucina",
-    "description": "Mannaia col manico nastrato.\nPuo infliggere Veleno."
+    "description": "Mannaia col manico nastrato.\nPuò infliggere Veleno."
   },
   "9": {
     "name": "Pugnale d'osso",
@@ -37,15 +37,15 @@
   },
   "10": {
     "name": "Paletto di legno",
-    "description": "Paletto di legno appuntito, per i non morti.\nPuo accecare."
+    "description": "Paletto di legno appuntito, per i non morti.\nPuò accecare."
   },
   "11": {
     "name": "Coltello",
-    "description": "Un coltello comune. Puo accecare."
+    "description": "Un coltello comune. Può accecare."
   },
   "12": {
     "name": "Pugnale seme",
-    "description": "Pugnale cresciuto da un seme dell'Espressione.\nPuo avvelenare."
+    "description": "Pugnale cresciuto da un seme dell'Espressione.\nPuò avvelenare."
   },
   "13": {
     "name": "Nunchaku di legno",
@@ -53,15 +53,15 @@
   },
   "14": {
     "name": "Daga navale",
-    "description": "Pugnale corto da marinaio.\nPuo accecare."
+    "description": "Pugnale corto da marinaio.\nPuò accecare."
   },
   "15": {
     "name": "Pugnale",
-    "description": "Lama corta per il corpo a corpo.\nPuo accecare."
+    "description": "Lama corta per il corpo a corpo.\nPuò accecare."
   },
   "16": {
     "name": "Katar",
-    "description": "Pugnale da spinta con impugnatura a T.\nPuo accecare."
+    "description": "Pugnale da spinta con impugnatura a T.\nPuò accecare."
   },
   "17": {
     "name": "Coltello da combattimento",
@@ -73,7 +73,7 @@
   },
   "19": {
     "name": "Machete",
-    "description": "Lama pesante da taglio.\nPuo accecare."
+    "description": "Lama pesante da taglio.\nPuò accecare."
   },
   "20": {
     "name": "Sai gemelli",
@@ -81,19 +81,19 @@
   },
   "21": {
     "name": "Pugnale di mithril",
-    "description": "Pugnale forgiato in mithril.\nPuo accecare."
+    "description": "Pugnale forgiato in mithril.\nPuò accecare."
   },
   "22": {
     "name": "Mano a lama",
-    "description": "Stile che colpisce col taglio della mano.\nPuo accecare."
+    "description": "Stile che colpisce col taglio della mano.\nPuò accecare."
   },
   "23": {
     "name": "Shuriken divisorio",
-    "description": "Lama da lancio che si divide in volo.\nPuo accecare."
+    "description": "Lama da lancio che si divide in volo.\nPuò accecare."
   },
   "24": {
     "name": "Kukri luminosi",
-    "description": "Due pugnali ricurvi incantati che lasciano\nscie di luce. Colpisce con Tuono."
+    "description": "Due pugnali ricurvi incantati che lasciano\nscie di luce. Colpisce con Fulmine."
   },
   "25": {
     "name": "Pugnale di drago",
@@ -101,11 +101,11 @@
   },
   "26": {
     "name": "Ladro di memorie",
-    "description": "Pugnale che prende i ricordi di cio che\ntaglia. Ghiaccio, infligge Freddo."
+    "description": "Pugnale che prende i ricordi di ciò che\ntaglia. Ghiaccio, infligge Freddo."
   },
   "27": {
     "name": "Cercatore di sapere",
-    "description": "Pugnale da Gobekli Tepe che mostra cio che\ne nascosto. Ghiaccio, infligge Freddo."
+    "description": "Pugnale da Gobekli Tepe che mostra ciò che\nè nascosto. Ghiaccio, infligge Freddo."
   },
   "28": {
     "name": "Corona psichica",
@@ -145,35 +145,35 @@
   },
   "47": {
     "name": "Punteruolo di ferraglia",
-    "description": "Ferraglia affilata nastrata a un tubo.\nPuo infliggere Veleno."
+    "description": "Ferraglia affilata nastrata a un tubo.\nPuò infliggere Veleno."
   },
   "48": {
     "name": "Spada a lame di sega",
-    "description": "Lame di sega inchiodate a un asse.\nPuo infliggere Veleno."
+    "description": "Lame di sega inchiodate a un asse.\nPuò infliggere Veleno."
   },
   "49": {
     "name": "Mannaia da segnale",
-    "description": "Cartello stradale rotto su un manico.\nPuo infliggere Veleno."
+    "description": "Cartello stradale rotto su un manico.\nPuò infliggere Veleno."
   },
   "50": {
     "name": "Machete a balestra",
-    "description": "Balestra d'auto molata a filo.\nPuo infliggere Oleoso."
+    "description": "Balestra d'auto molata a filo.\nPuò infliggere Oleoso."
   },
   "51": {
-    "name": "Spada dell'eta del bronzo",
+    "name": "Spada dell'età del bronzo",
     "description": "Antica spada di bronzo."
   },
   "52": {
     "name": "Lama di ossidiana",
-    "description": "Ossidiana montata su manico di legno.\nColpisce con Pietra e puo paralizzare."
+    "description": "Ossidiana montata su manico di legno.\nColpisce con Petro e può paralizzare."
   },
   "53": {
     "name": "Spada corta",
-    "description": "Spada leggera dalla lama corta.\nPuo avvelenare."
+    "description": "Spada leggera dalla lama corta.\nPuò avvelenare."
   },
   "54": {
     "name": "Spada seme",
-    "description": "Spada cresciuta da un seme dell'Espressione.\nPuo avvelenare."
+    "description": "Spada cresciuta da un seme dell'Espressione.\nPuò avvelenare."
   },
   "55": {
     "name": "Mazza seme",
@@ -181,11 +181,11 @@
   },
   "56": {
     "name": "Spada mesopotamica",
-    "description": "Spada di bronzo dell'antica Mesopotamia.\nPuo avvelenare."
+    "description": "Spada di bronzo dell'antica Mesopotamia.\nPuò avvelenare."
   },
   "57": {
     "name": "Spada lunga",
-    "description": "Lunga spada da battaglia ben affilata.\nPuo avvelenare."
+    "description": "Lunga spada da battaglia ben affilata.\nPuò avvelenare."
   },
   "58": {
     "name": "Gladio",
@@ -201,7 +201,7 @@
   },
   "61": {
     "name": "Stocco",
-    "description": "Lama sottile da duello, ben bilanciata.\nPuo avvelenare."
+    "description": "Lama sottile da duello, ben bilanciata.\nPuò avvelenare."
   },
   "62": {
     "name": "Shamshir",
@@ -209,15 +209,15 @@
   },
   "63": {
     "name": "Patag",
-    "description": "Spada tibetana dritta e a un solo filo.\nPuo avvelenare."
+    "description": "Spada tibetana dritta e a un solo filo.\nPuò avvelenare."
   },
   "64": {
     "name": "Sciabola navale",
-    "description": "Sciabola ricurva per combattere a bordo.\nPuo avvelenare."
+    "description": "Sciabola ricurva per combattere a bordo.\nPuò avvelenare."
   },
   "65": {
     "name": "Falcione",
-    "description": "Spada larga e ricurva da taglio.\nPuo avvelenare."
+    "description": "Spada larga e ricurva da taglio.\nPuò avvelenare."
   },
   "66": {
     "name": "Spadone europeo",
@@ -225,27 +225,27 @@
   },
   "67": {
     "name": "Shinai",
-    "description": "Spada di bambu da allenamento del kendo.\nPuo avvelenare."
+    "description": "Spada di bambù da allenamento del kendo.\nPuò avvelenare."
   },
   "68": {
     "name": "Estoc",
-    "description": "Spada rigida e stretta per infilare le\ngiunture. Puo avvelenare."
+    "description": "Spada rigida e stretta per infilare le\ngiunture. Può avvelenare."
   },
   "69": {
     "name": "Urumi",
-    "description": "Spada indiana di nastri d'acciaio flessibili.\nPuo avvelenare."
+    "description": "Spada indiana di nastri d'acciaio flessibili.\nPuò avvelenare."
   },
   "70": {
     "name": "Bokken da kendo",
-    "description": "Lunga spada di legno cerchiata di metallo.\nPuo avvelenare."
+    "description": "Lunga spada di legno cerchiata di metallo.\nPuò avvelenare."
   },
   "71": {
     "name": "Claymore",
-    "description": "Spada scozzese a due fili con guardia\ninclinata. Puo avvelenare."
+    "description": "Spada scozzese a due fili con guardia\ninclinata. Può avvelenare."
   },
   "72": {
     "name": "Katana",
-    "description": "Spada giapponese dal taglio affilatissimo.\nPuo avvelenare."
+    "description": "Spada giapponese dal taglio affilatissimo.\nPuò avvelenare."
   },
   "73": {
     "name": "Spezzaspade",
@@ -253,7 +253,7 @@
   },
   "74": {
     "name": "Zweihander",
-    "description": "Enorme spadone impugnato a due mani.\nPuo avvelenare."
+    "description": "Enorme spadone impugnato a due mani.\nPuò avvelenare."
   },
   "75": {
     "name": "Spada d'argento benedetta",
@@ -265,19 +265,19 @@
   },
   "77": {
     "name": "Lama runica",
-    "description": "Lama incisa di rune lucenti. Colpisce\ncon Sacro e puo ispirare."
+    "description": "Lama incisa di rune lucenti. Colpisce\ncon Sacro e può ispirare."
   },
   "78": {
     "name": "Lama del canto di fiamma",
-    "description": "Spada corta che prende fuoco se sguainata.\nColpisce con Fuoco e puo bruciare."
+    "description": "Spada corta che prende fuoco se sguainata.\nColpisce con Fuoco e può bruciare."
   },
   "79": {
     "name": "Spada di ossidiana",
-    "description": "Lama di vetro vulcanico indurito.\nColpisce con Pietra e puo paralizzare."
+    "description": "Lama di vetro vulcanico indurito.\nColpisce con Petro e può paralizzare."
   },
   "80": {
     "name": "Spada di mithril",
-    "description": "Spada lunga forgiata in mithril.\nPuo avvelenare."
+    "description": "Spada lunga forgiata in mithril.\nPuò avvelenare."
   },
   "81": {
     "name": "Lama vibrante",
@@ -285,7 +285,7 @@
   },
   "82": {
     "name": "Sciabola astrale",
-    "description": "Lama ricurva accesa da una stella lontana.\nColpisce con Fuoco e puo bruciare."
+    "description": "Lama ricurva accesa da una stella lontana.\nColpisce con Fuoco e può bruciare."
   },
   "83": {
     "name": "Spada d'acciaio d'ombra",
@@ -297,7 +297,7 @@
   },
   "85": {
     "name": "Lama di scaglie di drago",
-    "description": "Spada seghettata con scaglie di drago.\nPuo avvelenare."
+    "description": "Spada seghettata con scaglie di drago.\nPuò avvelenare."
   },
   "86": {
     "name": "Lama mutevole",
@@ -309,19 +309,19 @@
   },
   "88": {
     "name": "Taglio del vuoto",
-    "description": "Lama dal filo cavo che inghiotte cio\nche taglia. Colpisce con Maledetto."
+    "description": "Lama dal filo cavo che inghiotte ciò\nche taglia. Colpisce con Maledetto."
   },
   "89": {
     "name": "Taglio folgorante",
-    "description": "Vecchia spada avvolta di corrente.\nColpisce con Tuono."
+    "description": "Vecchia spada avvolta di corrente.\nColpisce con Fulmine."
   },
   "90": {
-    "name": "Eredita dell'eroe",
+    "name": "Eredità dell'eroe",
     "description": "Spada che custodisce l'anima di un eroe,\nche consiglia. Colpisce con Fuoco."
   },
   "91": {
     "name": "Lama di fase",
-    "description": "Spada per meta in un'altra dimensione.\nPassa le guardie. Colpisce con Acqua."
+    "description": "Spada per metà in un'altra dimensione.\nPassa le guardie. Colpisce con Acqua."
   },
   "92": {
     "name": "Lama d'acciaio d'ombra",
@@ -341,7 +341,7 @@
   },
   "96": {
     "name": "Lama rompiprotezioni",
-    "description": "Spada incantata per tagliare le protezioni.\nTuono, infligge Statico."
+    "description": "Spada incantata per tagliare le protezioni.\nFulmine, infligge Statico."
   },
   "97": {
     "name": "Taglio succhiaincanti",
@@ -357,7 +357,7 @@
   },
   "100": {
     "name": "Lama di energia",
-    "description": "Spada il cui filo e energia pura.\nColpisce con Maledetto."
+    "description": "Spada il cui filo è energia pura.\nColpisce con Maledetto."
   },
   "101": {
     "name": "Punitrice divina",
@@ -365,27 +365,27 @@
   },
   "102": {
     "name": "Lama arcana",
-    "description": "Spada la cui lama e magia pura.\nColpisce con Fuoco."
+    "description": "Spada la cui lama è magia pura.\nColpisce con Fuoco."
   },
   "103": {
     "name": "Lama dimensionale",
-    "description": "Spada che apre un taglio nella realta.\nColpisce con Sacro."
+    "description": "Spada che apre un taglio nella realtà.\nColpisce con Sacro."
   },
   "104": {
     "name": "Lama del pilastro a T",
-    "description": "Lama di pietra da Gobekli Tepe incisa di\nsegni animali. Puo avvelenare."
+    "description": "Lama di pietra da Gobekli Tepe incisa di\nsegni animali. Può avvelenare."
   },
   "105": {
     "name": "Tagliastelle",
-    "description": "Lama ricurva di Gobekli Tepe segnata da\ncostellazioni perdute. Puo avvelenare."
+    "description": "Lama ricurva di Gobekli Tepe segnata da\ncostellazioni perdute. Può avvelenare."
   },
   "106": {
     "name": "Taglio di petrolio EHI",
-    "description": "Spada a motosega che gronda olio e divora\nl'armatura. Pietra, puo paralizzare."
+    "description": "Spada a motosega che gronda olio e rode\nl'armatura di chi la usa. Petro, paralizza."
   },
   "107": {
     "name": "Spadone di pietra celeste",
-    "description": "Enorme spadone di pietra di Gobekli Tepe\nche non pesa nulla. Vento, puo accecare."
+    "description": "Enorme spadone di pietra di Gobekli Tepe\nche non pesa quasi nulla. Vento, può accecare."
   },
   "108": {
     "name": "Taglio dell'onniscienza EHI",
@@ -405,7 +405,7 @@
   },
   "112": {
     "name": "Tagliatrice dimensionale",
-    "description": "Lama che si dice tagli tra le dimensioni.\nTuono, infligge Statico."
+    "description": "Lama che si dice tagli tra le dimensioni.\nFulmine, infligge Statico."
   },
   "113": {
     "name": "Lama del drago",
@@ -416,8 +416,8 @@
     "description": ""
   },
   "125": {
-    "name": "Baguette raffermo",
-    "description": "Pagnotta raffermata e dura come pietra.\nPuo stordire."
+    "name": "Baguette rafferma",
+    "description": "Pagnotta rafferma e dura come pietra.\nPuò stordire."
   },
   "126": {
     "name": "Padella ammaccata",
@@ -425,7 +425,7 @@
   },
   "127": {
     "name": "Clava scheggiata",
-    "description": "Clava di legno, spaccata e crepata.\nPuo stordire."
+    "description": "Clava di legno, spaccata e crepata.\nPuò stordire."
   },
   "128": {
     "name": "Flagello di legno",
@@ -437,7 +437,7 @@
   },
   "130": {
     "name": "Clava di legno",
-    "description": "Semplice clava di legno, la piu antica\ndelle armi. Puo stordire."
+    "description": "Semplice clava di legno, la più antica\ndelle armi. Può stordire."
   },
   "131": {
     "name": "Martello ingestibile",
@@ -445,55 +445,55 @@
   },
   "132": {
     "name": "Padella fidata",
-    "description": "Padella col manico fasciato di nastro.\nPuo infliggere Oleoso."
+    "description": "Padella col manico fasciato di nastro.\nPuò infliggere Oleoso."
   },
   "133": {
     "name": "Asse chiodata",
-    "description": "Chiodi legati a una gamba di tavolo.\nPuo infliggere Veleno."
+    "description": "Chiodi legati a una gamba di tavolo.\nPuò infliggere Veleno."
   },
   "134": {
     "name": "Matterello incatenato",
-    "description": "Matterello avvolto di catena.\nPuo infliggere Oleoso."
+    "description": "Matterello avvolto di catena.\nPuò infliggere Oleoso."
   },
   "135": {
     "name": "Clava di tondino",
-    "description": "Tondino col cemento ancora attaccato.\nPuo infliggere Nausea."
+    "description": "Tondino col cemento ancora attaccato.\nPuò infliggere Nausea."
   },
   "136": {
     "name": "Mazza a chiave inglese",
-    "description": "Tubo con una valvola pesante in punta.\nPuo infliggere Oleoso."
+    "description": "Tubo con una valvola pesante in punta.\nPuò infliggere Oleoso."
   },
   "137": {
     "name": "Flagello di catena da bici",
-    "description": "Catena da bici con un lucchetto in fondo.\nPuo infliggere Oleoso."
+    "description": "Catena da bici con un lucchetto in fondo.\nPuò infliggere Oleoso."
   },
   "138": {
     "name": "Chiave modificata",
-    "description": "Chiave inglese con dadi saldati sopra.\nPuo infliggere Oleoso."
+    "description": "Chiave inglese con dadi saldati sopra.\nPuò infliggere Oleoso."
   },
   "139": {
     "name": "Mazza chiodata",
-    "description": "Mazza avvolta di filo spinato e chiodi.\nPuo infliggere Veleno."
+    "description": "Mazza avvolta di filo spinato e chiodi.\nPuò infliggere Veleno."
   },
   "140": {
     "name": "Flagello a cassetta",
-    "description": "Cassetta degli attrezzi su una catena.\nPuo infliggere Oleoso."
+    "description": "Cassetta degli attrezzi su una catena.\nPuò infliggere Oleoso."
   },
   "141": {
     "name": "Mazza di cemento",
-    "description": "Mazza con cemento colato sulla testa.\nColpisce Pietra e puo infliggere Nausea."
+    "description": "Mazza con cemento colato sulla testa.\nColpisce Petro e può infliggere Nausea."
   },
   "142": {
     "name": "Clava borchiata di pietra",
-    "description": "Lunga clava irta di pietre aguzze.\nColpisce con Pietra."
+    "description": "Lunga clava irta di pietre aguzze.\nColpisce con Petro."
   },
   "143": {
     "name": "Manganello a piombo",
-    "description": "Bastone con un peso di piombo fasciato\ndi cuoio. Puo stordire."
+    "description": "Bastone con un peso di piombo fasciato\ndi cuoio. Può stordire."
   },
   "144": {
     "name": "Flagello di pietra",
-    "description": "Flagello con testa di pietra su catena.\nColpisce con Pietra."
+    "description": "Flagello con testa di pietra su catena.\nColpisce con Petro."
   },
   "145": {
     "name": "Clava da guerra",
@@ -501,11 +501,11 @@
   },
   "146": {
     "name": "Clava a denti di squalo",
-    "description": "Clava polinesiana bordata di denti di\nsqualo. Puo stordire."
+    "description": "Clava polinesiana bordata di denti di\nsqualo. Può stordire."
   },
   "147": {
     "name": "Cuscino sarcastico",
-    "description": "Cuscino che picchia molto piu forte del\ndovuto e borbotta insulti. Stordisce."
+    "description": "Cuscino che picchia molto più forte del\ndovuto e borbotta insulti. Stordisce."
   },
   "148": {
     "name": "Flagello di bronzo",
@@ -517,7 +517,7 @@
   },
   "150": {
     "name": "Clava mere",
-    "description": "Clava maori di legno o osso di balena.\nPuo stordire."
+    "description": "Clava maori di legno o osso di balena.\nPuò stordire."
   },
   "151": {
     "name": "Tessen",
@@ -525,11 +525,11 @@
   },
   "152": {
     "name": "Coppia di martelli sonori",
-    "description": "Due martelli giocattolo. Schiacciati insieme\nlanciano un'onda d'urto. Puo stordire."
+    "description": "Due martelli giocattolo. Schiacciati insieme\nlanciano un'onda d'urto. Può stordire."
   },
   "153": {
     "name": "Macuahuitl",
-    "description": "Clava azteca irta di lame di ossidiana.\nPuo stordire."
+    "description": "Clava azteca irta di lame di ossidiana.\nPuò stordire."
   },
   "154": {
     "name": "Mano da tifoso",
@@ -545,19 +545,19 @@
   },
   "157": {
     "name": "Flagello",
-    "description": "Sfera chiodata su catena corta.\nPuo stordire."
+    "description": "Sfera chiodata su catena corta.\nPuò stordire."
   },
   "158": {
     "name": "Mazza a flange",
-    "description": "Mazza europea a flange per rompere le\narmature. Puo stordire."
+    "description": "Mazza europea a flange per rompere le\narmature. Può stordire."
   },
   "159": {
     "name": "Martello di Lucerna",
-    "description": "Martello da guerra svizzero con punta per\nforare la piastra. Puo stordire."
+    "description": "Martello da guerra svizzero con punta per\nforare la piastra. Può stordire."
   },
   "160": {
     "name": "Martello da guerra",
-    "description": "Martello pesante che schiaccia l'armatura.\nPuo stordire."
+    "description": "Martello pesante che schiaccia l'armatura.\nPuò stordire."
   },
   "161": {
     "name": "Mazza da guerra a flange",
@@ -573,11 +573,11 @@
   },
   "164": {
     "name": "Nunchaku da allenamento",
-    "description": "Due bastoni di legno su catena corta.\nPuo stordire."
+    "description": "Due bastoni di legno su catena corta.\nPuò stordire."
   },
   "165": {
     "name": "Catena pesante",
-    "description": "Spezzone di catena, roteato e avvolto\naddosso al nemico. Puo stordire."
+    "description": "Spezzone di catena, roteato e avvolto\naddosso al nemico. Può stordire."
   },
   "166": {
     "name": "Scudo da battaglia chiodato",
@@ -589,15 +589,15 @@
   },
   "168": {
     "name": "Flagello di mithril",
-    "description": "Flagello cerchiato di mithril.\nPuo stordire."
+    "description": "Flagello cerchiato di mithril.\nPuò stordire."
   },
   "169": {
     "name": "Nunchaku d'acciaio",
-    "description": "Bastoni d'acciaio su maglie rinforzate,\nchiodati in punta. Puo stordire."
+    "description": "Bastoni d'acciaio su maglie rinforzate,\nchiodati in punta. Può stordire."
   },
   "170": {
     "name": "Spezzassedi",
-    "description": "Enorme mazza a due mani per abbattere\nle mura. Puo stordire."
+    "description": "Enorme mazza a due mani per abbattere\nle mura. Può stordire."
   },
   "171": {
     "name": "Martello sismico",
@@ -609,7 +609,7 @@
   },
   "173": {
     "name": "Flagello di drago",
-    "description": "Flagello cerchiato con zanne di drago.\nPuo stordire."
+    "description": "Flagello cerchiato con zanne di drago.\nPuò stordire."
   },
   "174": {
     "name": "Flagello succhia anime",
@@ -625,7 +625,7 @@
   },
   "177": {
     "name": "Schiacciapensieri",
-    "description": "Martello che rompe il corpo e il pensiero\ndietro di esso. Puo stordire."
+    "description": "Martello che rompe il corpo e il pensiero\ndietro di esso. Può stordire."
   },
   "178": {
     "name": "Martello celeste",
@@ -637,19 +637,19 @@
   },
   "180": {
     "name": "Martello di Chronos",
-    "description": "Martello che rallenta il tempo dove cade.\nColpisce con Acqua e puo bagnare."
+    "description": "Martello che rallenta il tempo dove cade.\nColpisce con Acqua e può bagnare."
   },
   "181": {
     "name": "Attentatore EHI",
-    "description": "Flagello le cui teste contengono olio\nvolatile che esplode. Puo stordire."
+    "description": "Flagello le cui teste contengono olio\nvolatile che esplode. Può stordire."
   },
   "182": {
     "name": "Martello totem del cinghiale",
-    "description": "Gran martello di pietra di Gobekli Tepe\ninciso di cinghiali. Da forza. Ghiaccio."
+    "description": "Gran martello di pietra di Gobekli Tepe\ninciso di cinghiali. Dà forza. Ghiaccio."
   },
   "183": {
     "name": "Ventaglio da guerra di Varlenia",
-    "description": "Ventaglio pieghevole di lame di Varlenia.\nColpisce con Acqua e puo bagnare."
+    "description": "Ventaglio pieghevole di lame di Varlenia.\nColpisce con Acqua e può bagnare."
   },
   "184": {
     "name": "Maglio a compressione EHI",
@@ -669,15 +669,15 @@
   },
   "188": {
     "name": "Chitarra copia da banco dei pegni",
-    "description": "Copia di una copia, comprata usata e mai\naccordata. Puo stordire."
+    "description": "Copia di una copia, comprata usata e mai\naccordata. Può stordire."
   },
   "189": {
     "name": "Chitarra infernale",
-    "description": "Elettrica trapuntata cherry burst. Piu forte\ndella stanza, piu calda dell'ampli. Sacro."
+    "description": "Elettrica trapuntata cherry burst. Più forte\ndella stanza, più calda dell'ampli. Sacro."
   },
   "190": {
     "name": "Chitarra a punta di freccia",
-    "description": "Chitarra a forma di cio per cui viene usata.\nPuo stordire."
+    "description": "Chitarra a forma di ciò per cui viene usata.\nPuò stordire."
   },
   "191": {
     "name": "Basso elettrico",
@@ -689,7 +689,7 @@
   },
   "193": {
     "name": "Cannone di feedback",
-    "description": "Chitarra ancora collegata a un impianto che\nnon c'e piu. Ulula lo stesso."
+    "description": "Chitarra ancora collegata a un impianto che\nnon c'è più. Ulula lo stesso."
   },
   "194": {
     "name": "Superstrat infernale",
@@ -709,7 +709,7 @@
   },
   "199": {
     "name": "Ascia da allenamento",
-    "description": "Ascia di legno da allenamento, filo smussato.\nPuo stordire."
+    "description": "Ascia di legno da allenamento, filo smussato.\nPuò stordire."
   },
   "200": {
     "name": "Ascia economica",
@@ -717,23 +717,23 @@
   },
   "201": {
     "name": "Ascia di pietra",
-    "description": "Selce legata a un manico di legno.\nColpisce con Pietra."
+    "description": "Selce legata a un manico di legno.\nColpisce con Petro."
   },
   "202": {
     "name": "Pala affilata",
-    "description": "Pala molata a filo.\nPuo infliggere Nausea."
+    "description": "Pala molata a filo.\nPuò infliggere Nausea."
   },
   "203": {
     "name": "Ascia a lama di rasaerba",
-    "description": "Lama di rasaerba imbullonata a un manico.\nPuo infliggere Oleoso."
+    "description": "Lama di rasaerba imbullonata a un manico.\nPuò infliggere Oleoso."
   },
   "204": {
     "name": "Ascia di coprimozzo",
-    "description": "Lamiera d'auto affilata su un manico.\nPuo infliggere Oleoso."
+    "description": "Lamiera d'auto affilata su un manico.\nPuò infliggere Oleoso."
   },
   "205": {
     "name": "Ascia da pompiere affilata",
-    "description": "Ascia da pompiere con lamette nastrate.\nColpisce Fuoco e puo infliggere Veleno."
+    "description": "Ascia da pompiere con lamette nastrate.\nColpisce Fuoco e può infliggere Veleno."
   },
   "206": {
     "name": "Ascia seme",
@@ -757,11 +757,11 @@
   },
   "211": {
     "name": "Sedia d'acciaio",
-    "description": "Sedia pieghevole d'acciaio, calata di piatto.\nPuo stordire."
+    "description": "Sedia pieghevole d'acciaio, calata di piatto.\nPuò stordire."
   },
   "212": {
     "name": "Coperchio di bidone",
-    "description": "Coperchio d'acciaio, tenuto come scudo\ne clava. Puo stordire."
+    "description": "Coperchio di bidone, tenuto come scudo\ne clava. Può stordire."
   },
   "213": {
     "name": "Bardiche",
@@ -777,15 +777,15 @@
   },
   "216": {
     "name": "Scala d'acciaio",
-    "description": "Scala rinforzata, da salire o da roteare.\nPuo stordire."
+    "description": "Scala rinforzata, da salire o da roteare.\nPuò stordire."
   },
   "217": {
     "name": "Ascia di mithril",
-    "description": "Ascia da battaglia forgiata in mithril.\nPuo stordire."
+    "description": "Ascia da battaglia forgiata in mithril.\nPuò stordire."
   },
   "218": {
     "name": "Ascia dell'elementale vincolato",
-    "description": "Ascia che racchiude un elementale del fuoco,\nsempre accesa. Colpisce con Tuono."
+    "description": "Ascia che racchiude un elementale del fuoco,\nsempre accesa. Colpisce con Fulmine."
   },
   "219": {
     "name": "Grande ascia vulcanica",
@@ -793,7 +793,7 @@
   },
   "220": {
     "name": "Schiacciatrice gravitazionale",
-    "description": "Ascia che apre un piccolo pozzo di gravita\ndove cade."
+    "description": "Ascia che apre un piccolo pozzo di gravità\ndove cade."
   },
   "221": {
     "name": "Fendianime",
@@ -809,7 +809,7 @@
   },
   "224": {
     "name": "Petrocorruttore EHI",
-    "description": "Ascia col filo di olio compresso. Taglia\ntutto e marcisce chi la porta."
+    "description": "Ascia col filo di olio compresso. Taglia\ntutto e fa marcire chi la porta."
   },
   "225": {
     "name": "Mannaia di Varlenia",
@@ -817,7 +817,7 @@
   },
   "226": {
     "name": "Mannaia dimensionale",
-    "description": "Ascia che fende piu mondi insieme.\nSacro, infligge Ispirato."
+    "description": "Ascia che fende più mondi insieme.\nSacro, infligge Ispirato."
   },
   "237": {
     "name": "<-- Whip -->",
@@ -825,7 +825,7 @@
   },
   "238": {
     "name": "Scacciamosche",
-    "description": "Scacciamosche leggero di plastica.\nPuo provocare."
+    "description": "Scacciamosche leggero di plastica.\nPuò provocare."
   },
   "239": {
     "name": "Frusta screpolata",
@@ -833,39 +833,39 @@
   },
   "240": {
     "name": "Cintura con fibbia pesante",
-    "description": "Cintura con la fibbia rinforzata.\nPuo infliggere Nausea."
+    "description": "Cintura con la fibbia rinforzata.\nPuò infliggere Nausea."
   },
   "241": {
     "name": "Canna da pesca da combattimento",
-    "description": "Canna che lancia pesi chiodati.\nPuo infliggere Oleoso."
+    "description": "Canna che lancia pesi chiodati.\nPuò infliggere Oleoso."
   },
   "242": {
     "name": "Frusta di cavi",
-    "description": "Frusta intrecciata con cavi elettrici.\nPuo infliggere Oleoso."
+    "description": "Frusta intrecciata con cavi elettrici.\nPuò infliggere Oleoso."
   },
   "243": {
     "name": "Frusta seme",
-    "description": "Frusta cresciuta da un seme dell'Espressione.\nPuo provocare."
+    "description": "Frusta cresciuta da un seme dell'Espressione.\nPuò provocare."
   },
   "244": {
     "name": "Rete del retiario",
-    "description": "Rete appesantita da gladiatore, lanciata\nper irretire. Puo provocare."
+    "description": "Rete appesantita da gladiatore, lanciata\nper irretire. Può provocare."
   },
   "245": {
     "name": "Frusta da mandriano",
-    "description": "Frusta di cuoio intrecciato.\nPuo provocare."
+    "description": "Frusta di cuoio intrecciato.\nPuò provocare."
   },
   "246": {
     "name": "Rete del gladiatore",
-    "description": "Rete piu pesante, lanciata larga.\nPuo provocare."
+    "description": "Rete più pesante, lanciata larga.\nPuò provocare."
   },
   "247": {
     "name": "Catena di anelli volanti",
-    "description": "Catena di anelli affilati, lanciata o\nfrustata. Puo provocare."
+    "description": "Catena di anelli affilati, lanciata o\nfrustata. Può provocare."
   },
   "248": {
     "name": "Corda e rampino",
-    "description": "Corda con rampino che trascina il nemico\npiu vicino."
+    "description": "Corda con rampino che trascina il nemico\npiù vicino."
   },
   "249": {
     "name": "Frusta di cavo d'acciaio",
@@ -877,7 +877,7 @@
   },
   "251": {
     "name": "Frusta di gelo",
-    "description": "Frusta di ghiaccio che non si scioglie.\nColpisce con Ghiaccio e puo raffreddare."
+    "description": "Frusta di ghiaccio che non si scioglie.\nColpisce con Ghiaccio e può raffreddare."
   },
   "252": {
     "name": "Frusta di spine",
@@ -897,7 +897,7 @@
   },
   "256": {
     "name": "Frusta mentale",
-    "description": "Frusta di pensiero addensato che sferza corpo\ne mente. Tuono, infligge Statico."
+    "description": "Frusta di pensiero addensato che sferza corpo\ne mente. Fulmine, infligge Statico."
   },
   "257": {
     "name": "Intestini di fenice",
@@ -905,15 +905,15 @@
   },
   "258": {
     "name": "Frusta dell'eco temporale",
-    "description": "Frusta presente in piu linee temporali.\nColpisce piu di una volta. Maledetto."
+    "description": "Frusta presente in più linee temporali.\nColpisce più di una volta. Maledetto."
   },
   "259": {
     "name": "Frusta di pietra liquida",
-    "description": "Frusta di Gobekli Tepe di anelli di pietra\nche scorre. Pietra, puo paralizzare."
+    "description": "Frusta di Gobekli Tepe ad anelli di pietra\nche scorre come acqua. Petro, può paralizzare."
   },
   "260": {
     "name": "Frusta a catena di Varlenia",
-    "description": "Frusta a catena di maglie dorate che si\nallunga molto. Tuono, puo dare statico."
+    "description": "Frusta a catena di maglie dorate che si\nallunga molto. Fulmine, può dare Statico."
   },
   "261": {
     "name": "Legatore onnisciente EHI",
@@ -941,23 +941,23 @@
   },
   "277": {
     "name": "Ombrello appuntito",
-    "description": "Ombrello con le stecche affilate.\nColpisce Fuoco e puo infliggere Nausea."
+    "description": "Ombrello con le stecche affilate.\nColpisce Fuoco e può infliggere Nausea."
   },
   "278": {
     "name": "Stampella chiodata",
-    "description": "Stampella con chiodi passanti in cima.\nColpisce Fuoco e puo infliggere Veleno."
+    "description": "Stampella con chiodi passanti in cima.\nColpisce Fuoco e può infliggere Veleno."
   },
   "279": {
     "name": "Bordone di scopa chiodato",
-    "description": "Manico di mocio con chiodi in punta.\nColpisce Ghiaccio e puo infliggere Veleno."
+    "description": "Manico di mocio con chiodi in punta.\nColpisce Ghiaccio e può infliggere Veleno."
   },
   "280": {
     "name": "Mocio affilato",
-    "description": "Mocio avvolto di filo spinato.\nColpisce Ghiaccio e puo infliggere Veleno."
+    "description": "Mocio avvolto di filo spinato.\nColpisce Ghiaccio e può infliggere Veleno."
   },
   "281": {
     "name": "Mazza da hockey spinata",
-    "description": "Mazza da hockey con filo spinato.\nColpisce Acqua e puo infliggere Veleno."
+    "description": "Mazza da hockey con filo spinato.\nColpisce Acqua e può infliggere Veleno."
   },
   "282": {
     "name": "Bastone da lancio",
@@ -965,7 +965,7 @@
   },
   "283": {
     "name": "Bordone di legno",
-    "description": "Bordone semplice e comune.\nMaledetto, puo avvelenare."
+    "description": "Bordone semplice e comune.\nMaledetto, può avvelenare."
   },
   "284": {
     "name": "Bordone seme",
@@ -973,7 +973,7 @@
   },
   "285": {
     "name": "Bastone ferrato",
-    "description": "Bordone appesantito a entrambe le estremita.\nTuono, infligge Statico."
+    "description": "Bordone appesantito a entrambe le estremità.\nFulmine, infligge Statico."
   },
   "286": {
     "name": "Bastoni escrima",
@@ -981,15 +981,15 @@
   },
   "287": {
     "name": "Bacchetta magica",
-    "description": "Bacchetta che presta un po' di potere magico.\nMaledetto, puo avvelenare."
+    "description": "Bacchetta che presta un po' di potere magico.\nMaledetto, può avvelenare."
   },
   "288": {
     "name": "Soffiabolle rimbalzante",
-    "description": "Bacchetta le cui bolle imprigionano e fanno\nrimbalzare. Tuono, infligge Statico."
+    "description": "Bacchetta le cui bolle imprigionano e fanno\nrimbalzare. Fulmine, infligge Statico."
   },
   "289": {
     "name": "Scettro di menta",
-    "description": "Gigantesco bastoncino di zucchero che spara\nraggi di menta. Tuono, da statico."
+    "description": "Gigantesco bastoncino di zucchero che spara\nraggi di menta. Fulmine, infligge Statico."
   },
   "290": {
     "name": "Bacchetta di forza",
@@ -997,7 +997,7 @@
   },
   "291": {
     "name": "Bordone flessibile",
-    "description": "Canne di bambu indurite legate in un solo\nbordone. Ghiaccio, infligge Freddo."
+    "description": "Canne di bambù indurite legate in un solo\nbordone. Ghiaccio, infligge Freddo."
   },
   "292": {
     "name": "Tonfa di ferro",
@@ -1013,7 +1013,7 @@
   },
   "295": {
     "name": "Bordone pietrificato",
-    "description": "Bordone di legno fossile.\nColpisce con Tuono."
+    "description": "Bordone di legno fossile.\nColpisce con Fulmine."
   },
   "296": {
     "name": "Verga di mithril",
@@ -1025,7 +1025,7 @@
   },
   "298": {
     "name": "Bordone colpito dal fulmine",
-    "description": "Bordone ricavato da un albero fulminato.\nTuono, infligge Statico."
+    "description": "Bordone ricavato da un albero fulminato.\nFulmine, infligge Statico."
   },
   "299": {
     "name": "Ramo di Yggdrasil",
@@ -1033,19 +1033,19 @@
   },
   "300": {
     "name": "Bordone chiamatuoni",
-    "description": "Bordone che richiama il fulmine.\nColpisce con Tuono."
+    "description": "Bordone che richiama il fulmine.\nColpisce con Fulmine."
   },
   "301": {
     "name": "Bordone dell'occhio",
-    "description": "Bordone coronato da un occhio vivo che vede\ncio che e nascosto. Colpisce Acqua."
+    "description": "Bordone coronato da un occhio vivo che vede\nciò che è nascosto. Colpisce con Acqua."
   },
   "302": {
     "name": "Bordone sonico",
-    "description": "Bordone che lancia onde sonore dure.\nColpisce con Acqua e puo bagnare."
+    "description": "Bordone che lancia onde sonore dure.\nColpisce con Acqua e può bagnare."
   },
   "303": {
     "name": "Bordone dell'albero del mondo",
-    "description": "Bordone di legno dell'albero del mondo che\nvibra col bosco. Acqua, puo bagnare."
+    "description": "Bordone di legno dell'albero del mondo che\nvibra col bosco. Acqua, può bagnare."
   },
   "304": {
     "name": "Ramo dell'albero del mondo",
@@ -1053,7 +1053,7 @@
   },
   "305": {
     "name": "Bordone di corno di unicorno",
-    "description": "Bordone di corno di unicorno che rimargina\nle ferite. Tuono, infligge Statico."
+    "description": "Bordone di corno di unicorno che rimargina\nle ferite. Fulmine, infligge Statico."
   },
   "306": {
     "name": "Assorbitore di incantesimi",
@@ -1069,11 +1069,11 @@
   },
   "309": {
     "name": "Bordone di barriera",
-    "description": "Bordone che alza barriere su chi lo porta\ne sugli alleati. Tuono, da statico."
+    "description": "Bordone che alza barriere su chi lo porta\ne sugli alleati. Fulmine, può dare Statico."
   },
   "310": {
-    "name": "Bordone di gravita",
-    "description": "Bordone che piega la gravita per schiacciare\no sollevare. Colpisce con Ghiaccio."
+    "name": "Bordone di gravità",
+    "description": "Bordone che piega la gravità per schiacciare\no sollevare. Colpisce con Ghiaccio."
   },
   "311": {
     "name": "Bordone scudo mentale",
@@ -1081,7 +1081,7 @@
   },
   "312": {
     "name": "Sfera arcana",
-    "description": "Sfera che protegge chi la porta e lancia\ndardi arcani. Maledetto, puo avvelenare."
+    "description": "Sfera che protegge chi la porta e lancia\ndardi arcani. Maledetto, può avvelenare."
   },
   "313": {
     "name": "Bordone proiettore mentale",
@@ -1093,11 +1093,11 @@
   },
   "315": {
     "name": "Bordone del guardiano elementale",
-    "description": "Bordone protetto che blocca un elemento\nalla volta. Maledetto, puo avvelenare."
+    "description": "Bordone protetto che blocca un elemento\nalla volta. Maledetto, può avvelenare."
   },
   "316": {
     "name": "Bordone totem dell'avvoltoio",
-    "description": "Bordone sormontato dall'avvoltoio di Gobekli\nTepe. Tuono, infligge Statico."
+    "description": "Bordone sormontato dall'avvoltoio di Gobekli\nTepe. Fulmine, infligge Statico."
   },
   "317": {
     "name": "Corona amplificatrice psichica",
@@ -1113,19 +1113,19 @@
   },
   "320": {
     "name": "Bordone arcano di Varlenia",
-    "description": "Bordone dorato di acciaio di Varlenia che\namplifica la magia. Colpisce con Tuono."
+    "description": "Bordone dorato di acciaio di Varlenia che\namplifica la magia. Colpisce con Fulmine."
   },
   "321": {
     "name": "Codice proibito EHI",
     "description": "Bordone che racchiude il sapere di ogni\nciviltà antica. Invecchia chi lo porta."
   },
   "322": {
-    "name": "Bordone dell'eternita",
-    "description": "Bordone che racchiude la saggezza dei secoli\ne potere senza limite. Colpisce Sacro."
+    "name": "Bordone dell'eternità",
+    "description": "Bordone che racchiude la saggezza dei secoli\ne potere senza limite. Colpisce con Sacro."
   },
   "323": {
     "name": "Onniscienza petrolifera EHI",
-    "description": "Bordone che racchiude tutto il sapere nato\ndal petrolio. Colpisce con Pietra."
+    "description": "Bordone che racchiude tutto il sapere nato\ndal petrolio. Colpisce con Petro."
   },
   "324": {
     "name": "Bordone della forza universale",
@@ -1133,7 +1133,7 @@
   },
   "325": {
     "name": "Bastone infernale",
-    "description": "Bastone da passeggio col pomo a teschio.\nIl fusto e un fodero. Ghiaccio, raffredda."
+    "description": "Bastone da passeggio col pomo a teschio.\nIl fusto è un fodero. Ghiaccio, raffredda."
   },
   "335": {
     "name": "<-- Bow -->",
@@ -1141,7 +1141,7 @@
   },
   "336": {
     "name": "Arco giocattolo",
-    "description": "Arco di plastica con elastico debole.\nPuo accecare."
+    "description": "Arco di plastica con elastico debole.\nPuò accecare."
   },
   "337": {
     "name": "Frecce deformate",
@@ -1149,35 +1149,35 @@
   },
   "338": {
     "name": "Arco fragile",
-    "description": "Arco grezzo di legno nodoso che puo spezzarsi."
+    "description": "Arco grezzo di legno nodoso che può spezzarsi."
   },
   "339": {
     "name": "Balestra a mano disallineata",
-    "description": "Balestra da pugno di legno debole che perde\nsempre la registrazione."
+    "description": "Balestra da pugno di legno debole che va\nsempre fuori asse."
   },
   "340": {
     "name": "Balestra inaffidabile",
-    "description": "Balestra la cui noce spesso non scatta.\nPuo accecare."
+    "description": "Balestra la cui noce spesso non scatta.\nPuò accecare."
   },
   "341": {
     "name": "Arco di asta da doccia",
-    "description": "Asta di tenda incordata con paracord.\nPuo infliggere Veleno."
+    "description": "Asta di tenda incordata con paracord.\nPuò infliggere Veleno."
   },
   "342": {
     "name": "Arco in PVC",
-    "description": "Tubo di PVC incordato con vecchia corda.\nPuo infliggere Nausea."
+    "description": "Tubo di PVC incordato con vecchia corda.\nPuò infliggere Nausea."
   },
   "343": {
     "name": "Balestra di scarti",
-    "description": "Balestra artigianale di scarti e molle.\nPuo infliggere Veleno."
+    "description": "Balestra artigianale di scarti e molle.\nPuò infliggere Veleno."
   },
   "344": {
     "name": "Arco seme",
-    "description": "Arco cresciuto da un seme dell'Espressione.\nPuo accecare."
+    "description": "Arco cresciuto da un seme dell'Espressione.\nPuò accecare."
   },
   "345": {
     "name": "Arco corto",
-    "description": "Arco corto da caccia. Puo accecare."
+    "description": "Arco corto da caccia. Può accecare."
   },
   "346": {
     "name": "Arco lungo",
@@ -1185,11 +1185,11 @@
   },
   "347": {
     "name": "Arco composito",
-    "description": "Arco ricurvo delle steppe, tirato da cavallo.\nPuo accecare."
+    "description": "Arco ricurvo delle steppe, tirato da cavallo.\nPuò accecare."
   },
   "348": {
     "name": "Chu-Ko-Nu",
-    "description": "Balestra a ripetizione cinese.\nPuo accecare."
+    "description": "Balestra a ripetizione cinese.\nPuò accecare."
   },
   "349": {
     "name": "Balestra a rete",
@@ -1197,27 +1197,27 @@
   },
   "350": {
     "name": "Arco compound",
-    "description": "Arco compound in fibra di carbonio.\nPuo accecare."
+    "description": "Arco compound in fibra di carbonio.\nPuò accecare."
   },
   "351": {
     "name": "Balestra multidardo",
-    "description": "Balestra caricata con dardi speciali.\nColpisce con Tuono."
+    "description": "Balestra caricata con dardi speciali.\nColpisce con Fulmine."
   },
   "352": {
     "name": "Arco compound avanzato",
-    "description": "Arco compound su un moderno sistema\ndi carrucole. Puo accecare."
+    "description": "Arco compound su un moderno sistema\ndi carrucole. Può accecare."
   },
   "353": {
     "name": "Arco del gelo",
-    "description": "Arco che scocca frecce di ghiaccio.\nColpisce con Ghiaccio e puo raffreddare."
+    "description": "Arco che scocca frecce di ghiaccio.\nColpisce con Ghiaccio e può raffreddare."
   },
   "354": {
     "name": "Arco eterico",
-    "description": "Arco che forma le sue frecce dalla magia.\nColpisce con Tuono."
+    "description": "Arco che forma le sue frecce dalla magia.\nColpisce con Fulmine."
   },
   "355": {
     "name": "Arco dalla faretra infinita",
-    "description": "Arco che trae frecce dall'aria e non si\nsvuota mai. Ghiaccio, puo raffreddare."
+    "description": "Arco che trae frecce dall'aria e non si\nsvuota mai. Ghiaccio, può raffreddare."
   },
   "356": {
     "name": "Arco del drago",
@@ -1233,15 +1233,15 @@
   },
   "359": {
     "name": "Arco d'osso di drago",
-    "description": "Arco intagliato in osso di drago antico.\nNon manca il bersaglio. Puo accecare."
+    "description": "Arco intagliato in osso di drago antico.\nNon manca il bersaglio. Può accecare."
   },
   "360": {
     "name": "Arco di frecce mentali",
-    "description": "Arco che scocca frecce di pensiero oltre\nogni armatura. Tuono, da statico."
+    "description": "Arco che scocca frecce di pensiero oltre\nogni armatura. Fulmine, può dare Statico."
   },
   "361": {
     "name": "Balestra spezzaincanti",
-    "description": "Balestra i cui dardi tagliano il bersaglio\nfuori dalla sua magia. Maledetto."
+    "description": "Balestra i cui dardi isolano il bersaglio\ndalla sua magia. Maledetto."
   },
   "362": {
     "name": "Arco delle corde d'anima",
@@ -1249,7 +1249,7 @@
   },
   "363": {
     "name": "Arco di luce lunare",
-    "description": "Arco tagliato nella luce della luna.\nMaledetto, puo avvelenare."
+    "description": "Arco tagliato nella luce lunare che scocca\nenergia lunare. Maledetto, può avvelenare."
   },
   "364": {
     "name": "Arco cercaincanti",
@@ -1260,12 +1260,12 @@
     "description": "Arco di pietra inciso coi tori di Gobekli\nTepe. Colpisce con Fuoco."
   },
   "366": {
-    "name": "Cancellatore d'identita EHI",
+    "name": "Cancellatore d'identità EHI",
     "description": "Arco le cui frecce portano sapere compresso.\nRompe le menti, anche quella dell'arciere."
   },
   "367": {
     "name": "Arco di energia di Varlenia",
-    "description": "Arco dorato di acciaio di Varlenia flessibile.\nColpisce con Tuono."
+    "description": "Arco dorato di acciaio di Varlenia flessibile.\nColpisce con Fulmine."
   },
   "368": {
     "name": "Emorragia cerebrale EHI",
@@ -1277,11 +1277,11 @@
   },
   "380": {
     "name": "Fionda sbilanciata",
-    "description": "Fionda artigianale dalla forcella storta.\nPuo accecare."
+    "description": "Fionda artigianale dalla forcella storta.\nPuò accecare."
   },
   "381": {
     "name": "Fionda elastica",
-    "description": "Fionda di cuoio scadente che si allunga.\nPuo accecare."
+    "description": "Fionda di cuoio scadente che si allunga.\nPuò accecare."
   },
   "382": {
     "name": "Cerbottana forata",
@@ -1289,31 +1289,31 @@
   },
   "383": {
     "name": "Fionda di gruccia",
-    "description": "Una gruccia e degli elastici.\nPuo infliggere Oleoso."
+    "description": "Una gruccia e degli elastici.\nPuò infliggere Oleoso."
   },
   "384": {
     "name": "Fionda di scarti",
-    "description": "Ramo biforcuto con gomma di copertone.\nPuo infliggere Oleoso."
+    "description": "Ramo biforcuto con gomma di copertone.\nPuò infliggere Oleoso."
   },
   "385": {
     "name": "Fionda di tubo",
-    "description": "Tubo biforcuto con camera d'aria.\nPuo infliggere Oleoso."
+    "description": "Tubo biforcuto con camera d'aria.\nPuò infliggere Oleoso."
   },
   "386": {
     "name": "Pistola a spiedini",
-    "description": "Pistola giocattolo che spara spiedini.\nPuo infliggere Veleno."
+    "description": "Pistola giocattolo che spara spiedini.\nPuò infliggere Veleno."
   },
   "387": {
     "name": "Torcia a lacca",
-    "description": "Bomboletta di lacca con un accendino.\nColpisce Fuoco e puo infliggere Nausea."
+    "description": "Bomboletta di lacca con un accendino.\nColpisce Fuoco e può infliggere Nausea."
   },
   "388": {
     "name": "Sparachiodi a graffette",
-    "description": "Sparapunti che sputa schegge di metallo.\nPuo infliggere Veleno."
+    "description": "Sparapunti che sputa schegge di metallo.\nPuò infliggere Veleno."
   },
   "389": {
     "name": "Dardi di pietra",
-    "description": "Dardi con la punta di pietra scheggiata.\nColpisce con Pietra."
+    "description": "Dardi con la punta di pietra scheggiata.\nColpisce con Petro."
   },
   "390": {
     "name": "Fionda di fibra",
@@ -1325,23 +1325,23 @@
   },
   "392": {
     "name": "Grimorie seme",
-    "description": "Grimorie cresciuto da un seme dell'Espressione.\nGhiaccio, infligge Freddo."
+    "description": "Grimorie nato da un seme dell'Espressione.\nGhiaccio, infligge Freddo."
   },
   "393": {
     "name": "Bolas",
-    "description": "Pesi di pietra su corde, lanciati per\nirretire. Puo accecare."
+    "description": "Pesi di pietra su corde, lanciati per\nirretire. Può accecare."
   },
   "394": {
     "name": "Fionda",
-    "description": "Fionda che scaglia una pietra con forza.\nPuo accecare."
+    "description": "Fionda che scaglia una pietra con forza.\nPuò accecare."
   },
   "395": {
     "name": "Boomerang",
-    "description": "Bastone da lancio ricurvo che torna indietro.\nPuo accecare."
+    "description": "Bastone da lancio ricurvo che torna indietro.\nPuò accecare."
   },
   "396": {
     "name": "Dardo a corda",
-    "description": "Dardo cinese appesantito su una lunga corda.\nPuo accecare."
+    "description": "Dardo cinese appesantito su una lunga corda.\nPuò accecare."
   },
   "397": {
     "name": "Chakram",
@@ -1349,11 +1349,11 @@
   },
   "398": {
     "name": "Cannone al peperoncino",
-    "description": "Bomboletta che spruzza capsaicina concentrata.\nPuo accecare."
+    "description": "Bomboletta che spruzza capsaicina concentrata.\nPuò accecare."
   },
   "399": {
     "name": "Shongo",
-    "description": "Pesante coltello da lancio africano a piu\nlame. Puo accecare."
+    "description": "Pesante coltello da lancio africano a più\nlame. Può accecare."
   },
   "400": {
     "name": "Disco che torna",
@@ -1365,11 +1365,11 @@
   },
   "402": {
     "name": "Granata di ghisa",
-    "description": "Guscio di ghisa pieno di polvere da sparo.\nPuo accecare."
+    "description": "Guscio di ghisa pieno di polvere da sparo.\nPuò accecare."
   },
   "403": {
     "name": "Balestra",
-    "description": "Balestra che scocca dardi con archi robusti.\nPuo accecare."
+    "description": "Balestra che scocca dardi con archi robusti.\nPuò accecare."
   },
   "404": {
     "name": "Arco di mithril",
@@ -1381,7 +1381,7 @@
   },
   "406": {
     "name": "Balestra esplosiva",
-    "description": "Balestra i cui dardi portano una carica.\nPuo accecare."
+    "description": "Balestra i cui dardi portano una carica.\nPuò accecare."
   },
   "407": {
     "name": "Disgregatore EMP",
@@ -1389,11 +1389,11 @@
   },
   "408": {
     "name": "Balestra tattica",
-    "description": "Balestra moderna con ottica e flettenti\nin carbonio. Puo accecare."
+    "description": "Balestra moderna con ottica e flettenti\nin carbonio. Può accecare."
   },
   "409": {
     "name": "Disturbatore neurale",
-    "description": "Emettitore di campo che scombina i nervi.\nColpisce con Tuono."
+    "description": "Emettitore di campo che scombina i nervi.\nColpisce con Fulmine."
   },
   "410": {
     "name": "Lanciacariche a tempo",
@@ -1405,7 +1405,7 @@
   },
   "412": {
     "name": "Fionda stellare",
-    "description": "Fionda di Gobekli Tepe che fa di un sasso\nfuoco di stella. Puo accecare."
+    "description": "Fionda di Gobekli Tepe che fa di un sasso\nfuoco di stella. Può accecare."
   },
   "413": {
     "name": "Lanciatore di sciame di droni",
@@ -1413,11 +1413,11 @@
   },
   "414": {
     "name": "Iniettore di sapere EHI",
-    "description": "Balestra i cui dardi portano biblioteche\nintere. Colpisce Acqua e puo bagnare."
+    "description": "Balestra i cui dardi portano biblioteche\nintere. Colpisce Acqua e può bagnare."
   },
   "415": {
     "name": "Disco portale",
-    "description": "Disco di Gobekli Tepe che apre un portale\ndove cade. Tuono, puo dare statico."
+    "description": "Disco di Gobekli Tepe che apre un portale\ndove cade. Fulmine, può infliggere Statico."
   },
   "426": {
     "name": "<-- Gun -->",
@@ -1433,47 +1433,47 @@
   },
   "429": {
     "name": "Fucile arrugginito",
-    "description": "Vecchio fucile, canna arrugginita e otturatore\nconsumato. Puo stordire."
+    "description": "Vecchio fucile, canna arrugginita e otturatore\nconsumato. Può stordire."
   },
   "430": {
     "name": "Tubo pieno di sabbia",
-    "description": "Tubo da giardino riempito di sabbia.\nPuo infliggere Nausea."
+    "description": "Tubo da giardino riempito di sabbia.\nPuò infliggere Nausea."
   },
   "431": {
     "name": "Pistola a salve modificata",
-    "description": "Pistola a salve rifatta per il metallo.\nPuo infliggere Nausea."
+    "description": "Pistola a salve rifatta per sparare metallo.\nPuò infliggere Nausea."
   },
   "432": {
     "name": "Fucile ad aria a pompa da bici",
-    "description": "Tubo di PVC su una pompa da bici.\nColpisce Vento e puo infliggere Oleoso."
+    "description": "Tubo di PVC su una pompa da bici.\nColpisce Vento e può infliggere Oleoso."
   },
   "433": {
     "name": "Cannone a patate",
-    "description": "Fucile di PVC che spara colpi duri.\nPuo infliggere Nausea."
+    "description": "Fucile di PVC che spara colpi duri.\nPuò infliggere Nausea."
   },
   "434": {
     "name": "Fucile di tubo",
-    "description": "Tubo, legno e molle, spara ferraglia.\nPuo infliggere Oleoso."
+    "description": "Tubo, legno e molle, spara ferraglia.\nPuò infliggere Oleoso."
   },
   "435": {
     "name": "Fucile a pressione",
-    "description": "Idropulitrice che spara barre d'acciaio.\nPuo infliggere Oleoso."
+    "description": "Idropulitrice che spara barre d'acciaio.\nPuò infliggere Oleoso."
   },
   "436": {
     "name": "Lanciafiamme da giardino",
-    "description": "Spruzzatore, accendino e benzina.\nColpisce Fuoco e puo infliggere Nausea."
+    "description": "Spruzzatore, accendino e benzina.\nColpisce Fuoco e può infliggere Nausea."
   },
   "437": {
     "name": "Lanciamacerie",
-    "description": "Tubo chirurgico che scaglia cemento.\nPuo infliggere Nausea."
+    "description": "Tubo chirurgico che scaglia cemento.\nPuò infliggere Nausea."
   },
   "438": {
     "name": "Pistola seme",
     "description": "Pistola cresciuta da un seme dell'Espressione."
   },
   "439": {
-    "name": "Cerbottana di bambu",
-    "description": "Cerbottana di bambu per dardi avvelenati."
+    "name": "Cerbottana di bambù",
+    "description": "Cerbottana di bambù per dardi avvelenati."
   },
   "440": {
     "name": "Lanciapatate deluxe",
@@ -1481,39 +1481,39 @@
   },
   "441": {
     "name": "Pistola a pietra focaia",
-    "description": "Pistola antica a pietra focaia, incisa.\nPuo stordire."
+    "description": "Pistola antica a pietra focaia, incisa.\nPuò stordire."
   },
   "442": {
     "name": "Pescatore da combattimento",
-    "description": "Canna da pesca che tira su creature marine\ne le aizza. Acqua, puo bagnare."
+    "description": "Canna da pesca che tira su creature marine\ne le aizza. Acqua, può bagnare."
   },
   "443": {
     "name": "Pistola a ruota",
-    "description": "Pistola antica accesa da una ruota che\nfa scintille. Puo stordire."
+    "description": "Pistola antica accesa da una ruota che\nfa scintille. Può stordire."
   },
   "444": {
     "name": "Pistola",
-    "description": "Pistola comune dal discreto potere d'arresto.\nPuo stordire."
+    "description": "Pistola comune dal discreto potere d'arresto.\nPuò stordire."
   },
   "445": {
     "name": "Moschetto",
-    "description": "Moschetto a colpo singolo dalla canna lunga.\nPuo stordire."
+    "description": "Moschetto a colpo singolo dalla canna lunga.\nPuò stordire."
   },
   "446": {
     "name": "Cannone spara magliette estremo",
-    "description": "Cannone spara magliette regolato per buttare\ngiu un muro. Puo stordire."
+    "description": "Cannone spara magliette regolato per buttare\ngiù un muro. Può stordire."
   },
   "447": {
     "name": "Moschetto a miccia",
-    "description": "Moschetto antico acceso da una miccia.\nPuo stordire."
+    "description": "Moschetto antico acceso da una miccia.\nPuò stordire."
   },
   "448": {
     "name": "Revolver pepperbox",
-    "description": "Revolver con un gruppo di canne rotanti.\nPuo stordire."
+    "description": "Revolver con un gruppo di canne rotanti.\nPuò stordire."
   },
   "449": {
     "name": "Pistola da duello",
-    "description": "Pistola da duello di fattura pregiata.\nPuo stordire."
+    "description": "Pistola da duello di fattura pregiata.\nPuò stordire."
   },
   "450": {
     "name": "Trombone a pietra focaia",
@@ -1529,7 +1529,7 @@
   },
   "453": {
     "name": "Moschetto rigato",
-    "description": "Moschetto rigato dell'epoca della guerra\ncivile. Puo stordire."
+    "description": "Moschetto rigato dell'epoca della guerra\ncivile. Può stordire."
   },
   "454": {
     "name": "Revolver a percussione",
@@ -1537,7 +1537,7 @@
   },
   "455": {
     "name": "Trombone",
-    "description": "Vecchio trombone dalla rosata larga.\nPuo stordire."
+    "description": "Vecchio trombone dalla rosata larga.\nPuò stordire."
   },
   "456": {
     "name": "Pistola 9mm",
@@ -1545,7 +1545,7 @@
   },
   "457": {
     "name": "Fucile antisommossa",
-    "description": "Fucile che spara proiettili di gomma.\nPuo stordire."
+    "description": "Fucile che spara proiettili di gomma.\nPuò stordire."
   },
   "458": {
     "name": "Fucile a retrocarica",
@@ -1553,7 +1553,7 @@
   },
   "459": {
     "name": "Fucile di Bubba",
-    "description": "Fucile a pompa, canna segata.\nPuo stordire."
+    "description": "Fucile a pompa, canna segata.\nPuò stordire."
   },
   "460": {
     "name": "Fucile a pompa",
@@ -1573,7 +1573,7 @@
   },
   "464": {
     "name": "Lanciagas",
-    "description": "Lanciatore per gas lacrimogeno e fumogeni.\nPuo stordire."
+    "description": "Lanciatore per gas lacrimogeno e fumogeni.\nPuò stordire."
   },
   "465": {
     "name": "Doppietta",
@@ -1581,35 +1581,35 @@
   },
   "466": {
     "name": "Fucile tranquillante",
-    "description": "Fucile che spara dardi tranquillanti.\nPuo stordire."
+    "description": "Fucile che spara dardi tranquillanti.\nPuò stordire."
   },
   "467": {
     "name": "Mitra",
-    "description": "Mitra compatto ad alta cadenza di fuoco.\nPuo stordire."
+    "description": "Mitra compatto ad alta cadenza di fuoco.\nPuò stordire."
   },
   "468": {
     "name": "Fucile a otturatore",
-    "description": "Fucile a otturatore affidabile e preciso.\nPuo stordire."
+    "description": "Fucile a otturatore affidabile e preciso.\nPuò stordire."
   },
   "469": {
     "name": "Mitra a tamburo",
-    "description": "Mitra di calibro da pistola alimentato\na tamburo. Puo stordire."
+    "description": "Mitra di calibro da pistola alimentato\na tamburo. Può stordire."
   },
   "470": {
     "name": "Pistola ad aria compressa",
     "description": "Pistola che spara capsule ad aria compressa.\nColpisce con Vento."
   },
   "471": {
-    "name": "Fucile a salve multiple",
-    "description": "Arma a manovella le cui canne sparano tutte\ninsieme. Puo stordire."
+    "name": "Fucile a canne multiple",
+    "description": "Arma a manovella le cui canne sparano tutte\ninsieme. Può stordire."
   },
   "472": {
     "name": "Arma da difesa personale",
-    "description": "Arma da difesa compatta con munizioni\nspeciali. Puo stordire."
+    "description": "Arma da difesa compatta con munizioni\nspeciali. Può stordire."
   },
   "473": {
     "name": "Paralizzatore",
-    "description": "Pistola a dardi con aghi paralizzanti.\nPuo stordire."
+    "description": "Pistola a dardi con aghi paralizzanti.\nPuò stordire."
   },
   "474": {
     "name": "Mitra compatto",
@@ -1617,7 +1617,7 @@
   },
   "475": {
     "name": "Fucile semiautomatico d'ordinanza",
-    "description": "Fucile d'ordinanza semiautomatico del tempo\ndi guerra. Puo stordire."
+    "description": "Fucile d'ordinanza semiautomatico del tempo\ndi guerra. Può stordire."
   },
   "476": {
     "name": "Pistola a due canne",
@@ -1625,7 +1625,7 @@
   },
   "477": {
     "name": "Mitra di guerra",
-    "description": "Mitra in acciaio stampato degli anni di\nguerra. Puo stordire."
+    "description": "Mitra in acciaio stampato degli anni di\nguerra. Può stordire."
   },
   "478": {
     "name": "Fucile d'assalto",
@@ -1633,11 +1633,11 @@
   },
   "479": {
     "name": "Revolver magnum",
-    "description": "Revolver di grosso calibro dal forte potere\nd'arresto. Puo stordire."
+    "description": "Revolver di grosso calibro dal forte potere\nd'arresto. Può stordire."
   },
   "480": {
     "name": "Mitragliatrice a manovella",
-    "description": "Prima mitragliatrice azionata a manovella.\nPuo stordire."
+    "description": "Antica mitragliatrice azionata a manovella.\nPuò stordire."
   },
   "481": {
     "name": "Carabina compatta",
@@ -1649,11 +1649,11 @@
   },
   "483": {
     "name": "Fucile da battaglia a fuoco selettivo",
-    "description": "Fucile da battaglia di calibro pieno che\npuo sparare a raffica."
+    "description": "Fucile da battaglia di calibro pieno che\npuò sparare a raffica."
   },
   "484": {
     "name": "Taglierina ad acqua",
-    "description": "Taglierina portatile che spara un getto\nd'acqua. Acqua, puo bagnare."
+    "description": "Taglierina portatile che spara un getto\nd'acqua. Acqua, può bagnare."
   },
   "485": {
     "name": "Fucile da combattimento",
@@ -1669,7 +1669,7 @@
   },
   "488": {
     "name": "Lanciagranate",
-    "description": "Lanciatore basculante per proiettili da 40mm.\nPuo stordire."
+    "description": "Lanciatore basculante per proiettili da 40mm.\nPuò stordire."
   },
   "489": {
     "name": "Fucile di precisione",
@@ -1689,7 +1689,7 @@
   },
   "493": {
     "name": "Carabina tattica",
-    "description": "Carabina moderna con slitte di montaggio.\nPuo stordire."
+    "description": "Carabina moderna con slitte di montaggio.\nPuò stordire."
   },
   "494": {
     "name": "Fucile a pompa tattico",
@@ -1713,7 +1713,7 @@
   },
   "499": {
     "name": "Fucile al plasma",
-    "description": "Fucile a energia che spara dardi di plasma.\nTuono, infligge Statico."
+    "description": "Fucile a energia che spara dardi di plasma.\nFulmine, infligge Statico."
   },
   "500": {
     "name": "Cannone da braccio cibernetico",
@@ -1729,7 +1729,7 @@
   },
   "503": {
     "name": "Mitragliatrice leggera",
-    "description": "Mitragliatrice leggera per il fuoco\ndi soppressione. Puo stordire."
+    "description": "Mitragliatrice leggera per il fuoco\ndi soppressione. Può stordire."
   },
   "504": {
     "name": "Fucile anti-materiale",
@@ -1737,11 +1737,11 @@
   },
   "505": {
     "name": "Lanciarazzi",
-    "description": "Lanciarazzi da spalla.\nPuo stordire."
+    "description": "Lanciarazzi da spalla.\nPuò stordire."
   },
   "506": {
     "name": "Lanciagranate intelligente",
-    "description": "Lanciagranate con spolette programmabili.\nPuo stordire."
+    "description": "Lanciagranate con spolette programmabili.\nPuò stordire."
   },
   "507": {
     "name": "Rastrelliera di micromissili",
@@ -1749,15 +1749,15 @@
   },
   "508": {
     "name": "Razzo monouso",
-    "description": "Lanciarazzi monocolpo, gettato dopo il tiro.\nColpisce con Pietra."
+    "description": "Lanciarazzi monocolpo, gettato dopo il tiro.\nColpisce con Petro."
   },
   "509": {
     "name": "Fucile di precisione pesante",
-    "description": "Fucile di precisione semiautomatico calibro\n.50. Puo stordire."
+    "description": "Fucile di precisione semiautomatico calibro\n.50. Può stordire."
   },
   "510": {
     "name": "Mitragliatrice su bipiede",
-    "description": "Mitragliatrice pesante montata su bipiede.\nPuo stordire."
+    "description": "Mitragliatrice pesante montata su bipiede.\nPuò stordire."
   },
   "511": {
     "name": "Amplificatore di onde cerebrali",
@@ -1765,7 +1765,7 @@
   },
   "512": {
     "name": "Arsenale polimorfo",
-    "description": "Arma a controllo neurale che passa da lama\na fucile. Colpisce con Tuono."
+    "description": "Arma a controllo neurale che passa da lama\na fucile. Colpisce con Fulmine."
   },
   "513": {
     "name": "Missile terra-aria portatile",
@@ -1777,7 +1777,7 @@
   },
   "515": {
     "name": "Disgregatore neurale",
-    "description": "Arma che spara dardi di pensiero nella mente\ndel nemico. Tuono, da statico."
+    "description": "Arma che spara dardi di pensiero nella mente\ndel nemico. Fulmine, può infliggere Statico."
   },
   "516": {
     "name": "Cannone a bobine",
@@ -1789,7 +1789,7 @@
   },
   "518": {
     "name": "Prototipo di railgun",
-    "description": "Prototipo di railgun elettromagnetico.\nColpisce con Tuono."
+    "description": "Prototipo di railgun elettromagnetico.\nColpisce con Fulmine."
   },
   "519": {
     "name": "Induttore di emicrania EHI",
@@ -1797,19 +1797,19 @@
   },
   "520": {
     "name": "Proiettore di greggio EHI",
-    "description": "Cannone industriale che spara greggio in\npressione. Puo incendiare chi spara."
+    "description": "Cannone industriale che spara greggio in\npressione. Può incendiare chi spara."
   },
   "521": {
     "name": "Minigun",
-    "description": "Arma rotante dalla cadenza di fuoco estrema.\nPuo stordire."
+    "description": "Arma rotante dalla cadenza di fuoco estrema.\nPuò stordire."
   },
   "522": {
     "name": "IA da combattimento adattiva",
-    "description": "Arma che impara lo scontro e cambia carica.\nMaledetto, puo avvelenare."
+    "description": "Arma che impara lo scontro e cambia carica.\nMaledetto, può avvelenare."
   },
   "523": {
     "name": "Proiettore di pensiero",
-    "description": "Lanciatore di pietra di Gobekli Tepe che\nspara dardi di pensiero. Fuoco, scalda."
+    "description": "Lanciatore di pietra di Gobekli Tepe che\nspara dardi di pensiero. Fuoco, dà Caldo."
   },
   "524": {
     "name": "Fucile memetico EHI",
@@ -1817,14 +1817,14 @@
   },
   "525": {
     "name": "Vector Gun",
-    "description": "Pistola forgiata dai gnomi con presa sui\nvettori. Puo scagliarti in un salto."
+    "description": "Pistola forgiata dagli gnomi con presa sui\nvettori. Può scagliarti in un salto."
   },
   "526": {
     "name": "Fucile a raggi di Varlenia",
     "description": "Fucile dorato di Varlenia che spara raggi\narcani. Colpisce con Fuoco."
   },
   "527": {
-    "name": "Cannone di distorsione della realta",
+    "name": "Cannone di distorsione della realtà",
     "description": "Cannone che riscrive la fisica locale.\nGhiaccio, infligge Freddo."
   },
   "528": {
@@ -1845,19 +1845,19 @@
   },
   "542": {
     "name": "Artigli di cesoie",
-    "description": "Cesoie da giardino legate a dei guanti.\nPuo infliggere Veleno."
+    "description": "Cesoie da giardino legate a dei guanti.\nPuò infliggere Veleno."
   },
   "543": {
     "name": "Artigli di lamiera",
-    "description": "Lamiera affilata su guanti da lavoro.\nPuo infliggere Oleoso."
+    "description": "Lamiera affilata su guanti da lavoro.\nPuò infliggere Oleoso."
   },
   "544": {
     "name": "Artigli di lamette",
-    "description": "Lamette su guanti tagliati.\nPuo infliggere Veleno."
+    "description": "Lamette su guanti tagliati.\nPuò infliggere Veleno."
   },
   "545": {
     "name": "Artiglio seme",
-    "description": "Artiglio cresciuto da un seme dell'Espressione.\nPuo avvelenare."
+    "description": "Artiglio nato da un seme dell'Espressione.\nPuò avvelenare."
   },
   "546": {
     "name": "Bagh Nakh",
@@ -1873,11 +1873,11 @@
   },
   "549": {
     "name": "Artiglio di ferro",
-    "description": "Artigli di ferro legati alla mano.\nPuo avvelenare."
+    "description": "Artigli di ferro legati alla mano.\nPuò avvelenare."
   },
   "550": {
     "name": "Coltelli a corno di cervo",
-    "description": "Coppia di lame a mezzaluna su impugnature\ncorte. Puo avvelenare."
+    "description": "Coppia di lame a mezzaluna su impugnature\ncorte. Può avvelenare."
   },
   "551": {
     "name": "Tekko-kagi",
@@ -1885,7 +1885,7 @@
   },
   "552": {
     "name": "Artigli velenosi",
-    "description": "Artigli di metallo spalmati di veleno\nparalizzante. Maledetto, puo avvelenare."
+    "description": "Artigli di metallo spalmati di veleno\nparalizzante. Maledetto, può avvelenare."
   },
   "553": {
     "name": "Artiglio di mithril",
@@ -1893,7 +1893,7 @@
   },
   "554": {
     "name": "Artigli succhiavita",
-    "description": "Artigli che estraggono la vita da cio che\ntagliano. Puo avvelenare."
+    "description": "Artigli che estraggono la vita da ciò che\ntagliano. Può avvelenare."
   },
   "555": {
     "name": "Artigli neurali",
@@ -1917,7 +1917,7 @@
   },
   "560": {
     "name": "Artigli psicoattivi EHI",
-    "description": "Artigli intrisi di oli rari e sapere.\nDanno velocita e allucinazioni."
+    "description": "Artigli intrisi di oli rari e sapere.\nDanno velocità e allucinazioni."
   },
   "561": {
     "name": "Artigli divini",
@@ -1929,31 +1929,31 @@
   },
   "573": {
     "name": "Fasce da principiante",
-    "description": "Fasce di cuoio sottile con pezzetti di metallo\ncuciti dentro. Puo stordire."
+    "description": "Fasce di cuoio sottile con pezzetti di metallo\ncuciti dentro. Può stordire."
   },
   "574": {
     "name": "Guantoni da boxe improvvisati",
-    "description": "Guanti sottili con pepite di ferro che si\nspostano dentro. Puo stordire."
+    "description": "Guanti sottili con pepite di ferro che si\nspostano dentro. Può stordire."
   },
   "575": {
     "name": "Nocchiere scadenti",
-    "description": "Guanti di cuoio grezzo con borchie che si\nallentano. Puo stordire."
+    "description": "Guanti di cuoio grezzo con borchie che si\nallentano. Può stordire."
   },
   "576": {
     "name": "Nocchiere di chiavi",
-    "description": "Chiavi nastrate tra le dita.\nPuo infliggere Veleno."
+    "description": "Chiavi nastrate tra le dita.\nPuò infliggere Veleno."
   },
   "577": {
     "name": "Guanto da golf chiodato",
-    "description": "Guanto da golf cucito di tee.\nPuo infliggere Nausea."
+    "description": "Guanto da golf cucito di tee.\nPuò infliggere Nausea."
   },
   "578": {
     "name": "Pugno di specchio",
-    "description": "Schegge di specchio nastrate alle mani.\nPuo infliggere Nausea."
+    "description": "Schegge di specchio nastrate alle mani.\nPuò infliggere Nausea."
   },
   "579": {
     "name": "Nocchiere di vetro",
-    "description": "Guanti infissi di vetro rotto.\nPuo infliggere Veleno."
+    "description": "Guanti irti di vetro rotto.\nPuò infliggere Veleno."
   },
   "580": {
     "name": "Guanto seme",
@@ -1961,7 +1961,7 @@
   },
   "581": {
     "name": "Cesto",
-    "description": "Guanto da battaglia chiodato sulle nocche.\nPuo stordire."
+    "description": "Guanto da battaglia chiodato sulle nocche.\nPuò stordire."
   },
   "582": {
     "name": "Nocchiere di ferro",
@@ -1969,7 +1969,7 @@
   },
   "583": {
     "name": "Nocchiere d'ottone",
-    "description": "Un paio di nocchiere d'ottone.\nPuo stordire."
+    "description": "Un paio di nocchiere d'ottone.\nPuò stordire."
   },
   "584": {
     "name": "Guanti del solletico spettrale",
@@ -1981,11 +1981,11 @@
   },
   "586": {
     "name": "Nocchiere di ferro battuto",
-    "description": "Guanti da combattimento piastrati sulle\nnocche. Puo stordire."
+    "description": "Guanti da combattimento piastrati sulle\nnocche. Può stordire."
   },
   "587": {
     "name": "Maschera da kendo",
-    "description": "Maschera da kendo in acciaio, roteata per\nle stringhe. Puo stordire."
+    "description": "Maschera da kendo in acciaio, roteata per\ni lacci. Può stordire."
   },
   "588": {
     "name": "Calci volanti",
@@ -1997,27 +1997,27 @@
   },
   "590": {
     "name": "Guanti d'urto",
-    "description": "Guanti che scaricano una scossa all'impatto.\nTuono, infligge Statico."
+    "description": "Guanti che scaricano una scossa all'impatto.\nFulmine, infligge Statico."
   },
   "591": {
     "name": "Guanti d'attacco di mithril",
-    "description": "Guanti leggeri rivestiti di mithril.\nPuo stordire."
+    "description": "Guanti leggeri rivestiti di mithril.\nPuò stordire."
   },
   "592": {
     "name": "Guanto sonico",
-    "description": "Guanto che lancia un'onda d'urto sonora.\nPuo stordire."
+    "description": "Guanto che lancia un'onda d'urto sonora.\nPuò stordire."
   },
   "593": {
     "name": "Guanti della lucertola del tuono",
-    "description": "Guanti squamati con la pelle di una vecchia\nlucertola del tuono. Colpisce con Tuono."
+    "description": "Guanti squamati con la pelle di una vecchia\nlucertola del tuono. Colpisce con Fulmine."
   },
   "594": {
     "name": "Pugni dell'elementale del fulmine",
-    "description": "Guanti tratti da un elementale del fulmine.\nTuono, infligge Statico."
+    "description": "Guanti tratti da un elementale del fulmine.\nFulmine, infligge Statico."
   },
   "595": {
     "name": "Guanti di forza schiacciante",
-    "description": "Guanti infissi di cristalli che schiacciano\nda dentro. Tuono, da statico."
+    "description": "Guanti infissi di cristalli che schiacciano\nda dentro. Fulmine, può infliggere Statico."
   },
   "596": {
     "name": "Guanti dell'incubo",
@@ -2041,11 +2041,11 @@
   },
   "601": {
     "name": "Pugni dello spirito volpe",
-    "description": "Guanti di pietra incisi con le volpi di\nGobekli Tepe. Danno velocita. Maledetto."
+    "description": "Guanti di pietra incisi con le volpi di\nGobekli Tepe. Danno velocità. Maledetto."
   },
   "602": {
     "name": "Guanti manipolatori mentali",
-    "description": "Guanti che entrano in una mente e prendono\no cambiano cio che vi trovano."
+    "description": "Guanti che entrano in una mente e prendono\no cambiano ciò che vi trovano."
   },
   "603": {
     "name": "Iniettori petrolchimici EHI",
@@ -2057,7 +2057,7 @@
   },
   "605": {
     "name": "Pugno di Varlenia",
-    "description": "Guanti dorati di Varlenia che mettono forza\narcana dietro un pugno. Tuono."
+    "description": "Guanti dorati di Varlenia che mettono forza\narcana dietro un pugno. Fulmine."
   },
   "606": {
     "name": "Guanti manipolatori molecolari",
@@ -2081,27 +2081,27 @@
   },
   "621": {
     "name": "Lancia grezza",
-    "description": "Lancia semplice con punta di ferro molle.\nPuo avvelenare."
+    "description": "Lancia semplice con punta di ferro molle.\nPuò avvelenare."
   },
   "622": {
     "name": "Sturalavandini letale",
-    "description": "Sturalavandini con metallo nella ventosa.\nPuo infliggere Nausea."
+    "description": "Sturalavandini con metallo nella ventosa.\nPuò infliggere Nausea."
   },
   "623": {
     "name": "Stecca da biliardo affilata",
-    "description": "Stecca da biliardo appuntita.\nPuo infliggere Nausea."
+    "description": "Stecca da biliardo appuntita.\nPuò infliggere Nausea."
   },
   "624": {
     "name": "Lancia di scopa",
-    "description": "Manico di scopa con un coltello nastrato.\nPuo infliggere Veleno."
+    "description": "Manico di scopa con un coltello nastrato.\nPuò infliggere Veleno."
   },
   "625": {
     "name": "Stocco d'antenna",
-    "description": "Antenna d'auto irrigidita e affilata.\nPuo infliggere Oleoso."
+    "description": "Antenna d'auto irrigidita e affilata.\nPuò infliggere Oleoso."
   },
   "626": {
     "name": "Palo segnaletico",
-    "description": "Palo di cartello divelto col cemento.\nPuo infliggere Nausea."
+    "description": "Palo di cartello divelto col cemento.\nPuò infliggere Nausea."
   },
   "627": {
     "name": "Giavellotto",
@@ -2109,19 +2109,19 @@
   },
   "628": {
     "name": "Lancia seme",
-    "description": "Lancia cresciuta da un seme dell'Espressione.\nPuo avvelenare."
+    "description": "Lancia cresciuta da un seme dell'Espressione.\nPuò avvelenare."
   },
   "629": {
     "name": "Lancia corta",
-    "description": "Lancia corta fatta per l'affondo.\nPuo avvelenare."
+    "description": "Lancia corta fatta per l'affondo.\nPuò avvelenare."
   },
   "630": {
     "name": "Lancia sumera",
-    "description": "Lancia sumera di rame con lama a foglia.\nPuo avvelenare."
+    "description": "Lancia sumera di rame con lama a foglia.\nPuò avvelenare."
   },
   "631": {
     "name": "Pilum",
-    "description": "Giavellotto romano costruito per piegarsi\nall'impatto. Puo avvelenare."
+    "description": "Giavellotto romano costruito per piegarsi\nall'impatto. Può avvelenare."
   },
   "632": {
     "name": "Lancia dory",
@@ -2133,7 +2133,7 @@
   },
   "634": {
     "name": "Lancia lunga",
-    "description": "Lancia sull'asta piu lunga che si possa\nancora portare."
+    "description": "Lancia sull'asta più lunga che si possa\nancora portare."
   },
   "635": {
     "name": "Iklwa",
@@ -2153,7 +2153,7 @@
   },
   "639": {
     "name": "Azza",
-    "description": "Lunga arma inastata con lama d'ascia e punta.\nPuo avvelenare."
+    "description": "Lunga arma inastata con lama d'ascia e punta.\nPuò avvelenare."
   },
   "640": {
     "name": "Giavarina",
@@ -2161,7 +2161,7 @@
   },
   "641": {
     "name": "Picca con testa d'ascia",
-    "description": "Picca con una testa d'ascia in punta.\nPuo avvelenare."
+    "description": "Picca con una testa d'ascia in punta.\nPuò avvelenare."
   },
   "642": {
     "name": "Lancia di fuoco",
@@ -2177,7 +2177,7 @@
   },
   "645": {
     "name": "Lancia del drago",
-    "description": "Lancia forgiata dalle zanne di un drago.\nPuo avvelenare."
+    "description": "Lancia forgiata dalle zanne di un drago.\nPuò avvelenare."
   },
   "646": {
     "name": "Lancia di protezione",
@@ -2197,7 +2197,7 @@
   },
   "650": {
     "name": "Lancia gravitazionale",
-    "description": "Lancia di Gobekli Tepe dall'aria semplice\nche piega la gravita. Tuono."
+    "description": "Lancia di Gobekli Tepe dall'aria semplice\nche piega la gravità. Fulmine."
   },
   "651": {
     "name": "Lancia di Varlenia che torna",
@@ -2209,7 +2209,7 @@
   },
   "663": {
     "name": "Proiettore di schiuma",
-    "description": "Arma sperimentale che spara schiuma adesiva\nper bloccare. Puo stordire."
+    "description": "Arma sperimentale che spara schiuma adesiva\nper bloccare. Può stordire."
   },
   "664": {
     "name": "Lanciatore di reti elettriche",
@@ -2217,6 +2217,6 @@
   },
   "665": {
     "name": "Emettitore a microonde",
-    "description": "Emettitore direzionale che lancia un raggio\ndi microonde. Puo stordire."
+    "description": "Emettitore direzionale che lancia un raggio\ndi microonde. Può stordire."
   }
 }

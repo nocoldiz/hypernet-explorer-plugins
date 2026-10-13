@@ -2,11 +2,11 @@
   "passive": {
     "4": {
       "name": "Voto del Guardiano",
-      "desc": "Mentre sei vivo sopra il 25% HP, gli altri membri subiscono il 15% di danni in meno e la parte deviata colpisce te."
+      "desc": "Sopra il 25% HP, assorbi il 15% dei danni subiti dagli alleati."
     },
     "13": {
       "name": "Furia di Sangue",
-      "desc": "Il tuo attacco cresce quando l'HP cala (fino a +40% al 10% HP), ma le cure che ricevi sono dimezzate."
+      "desc": "Il tuo attacco cresce quando gli HP calano (fino a +40% al 10% HP), ma le cure che ricevi sono dimezzate."
     },
     "26": {
       "name": "Posizione Iaido",
@@ -18,7 +18,7 @@
     },
     "33": {
       "name": "Egida",
-      "desc": "Mentre sei vivo, tutta la squadra subisce meno danni fisici E magici, in proporzione ai tuoi HP attuali (un Guardiano a HP pieni protegge del 25%). Più Guardiani si sommano, fino al 50%."
+      "desc": "Mentre sei vivo, il Party subisce meno danni fisici e magici, in base ai tuoi HP (25% a HP pieni). Più Guardiani si sommano, fino al 50%."
     },
     "40": {
       "name": "Pelle Spessa",
@@ -30,7 +30,7 @@
     },
     "38": {
       "name": "Contraente",
-      "desc": "Guadagni una taglia in oro per ogni nemico sconfitto, i lavori di combattimento pagano di più e ogni mercenario nel gruppo taglia del 5% il mantenimento settimanale del tuo esercito."
+      "desc": "Guadagni una taglia in denaro per ogni nemico sconfitto, i lavori di combattimento pagano di più e ogni mercenario nel Party taglia del 5% il mantenimento settimanale del tuo esercito."
     },
     "32": {
       "name": "Feldmaresciallo",
@@ -38,7 +38,7 @@
     },
     "5": {
       "name": "Catena di Prese",
-      "desc": "Attacchi base consecutivi sullo stesso nemico accumulano una Presa; a 3 il nemico e stordito. Tutto cio che evochi arriva con +30% di salute e +20% di attacco e magia."
+      "desc": "Attacchi base consecutivi sullo stesso nemico accumulano una Presa; a 3 il nemico è stordito. Tutto ciò che evochi arriva con +30% di salute e +20% di attacco e magia."
     },
     "11": {
       "name": "Flusso di Chi",
@@ -54,19 +54,19 @@
     },
     "17": {
       "name": "Gioco di Gambe",
-      "desc": "L'alta elusione ti fa schivare i colpi; ogni schivata accumula una Combo (max 5) che aggiunge +8% danno per accumulo al colpo successivo."
+      "desc": "L'alta schivata ti fa evitare i colpi; ogni schivata accumula una Combo (max 5) che aggiunge +8% danno per accumulo al colpo successivo."
     },
     "18": {
       "name": "Kayfabe",
-      "desc": "Giochi per il pubblico, aprendo ogni battaglia con un'ondata di AP extra."
+      "desc": "Inizi ogni battaglia con AP extra."
     },
     "14": {
       "name": "Acrobata Libero",
-      "desc": "La tua agilita e molto aumentata (+30%), agisci prima e ignori il danno da caduta."
+      "desc": "La tua agilità è molto aumentata (+30%), agisci prima e ignori il danno da caduta."
     },
     "2": {
       "name": "Maestra di Pozioni",
-      "desc": "Le tue pozioni escono di una qualità superiore e puoi preparare malefici da lancio."
+      "desc": "Le tue pozioni escono di una qualità superiore e puoi preparare malefici da battaglia."
     },
     "10": {
       "name": "Sintonia",
@@ -98,11 +98,11 @@
     },
     "34": {
       "name": "Lama Incantata",
-      "desc": "I tuoi attacchi base portano l'elemento dell'ultimo incantesimo lanciato."
+      "desc": "Gli attacchi base usano l'elemento del tuo ultimo incantesimo."
     },
     "37": {
       "name": "Mago da Guerra",
-      "desc": "Lanci in prima linea senza penalita e gli incantesimi attingono agli AP quando finisci gli MP."
+      "desc": "Lanci in prima linea senza penalità e gli incantesimi attingono agli AP quando finisci gli MP."
     },
     "23": {
       "name": "Patto",
@@ -110,11 +110,11 @@
     },
     "31": {
       "name": "Raccolto Funebre",
-      "desc": "Ogni nemico che muore lascia una carica d'anima che alimenta le tue evocazioni."
+      "desc": "Ogni nemico che muore lascia un'Anima, fino a cinque, che i riti delle anime della Necromanzia consumano."
     },
     "8": {
       "name": "Devoto",
-      "desc": "Nelle ore notturne infliggi +15% di danno e ne subisci il 10% in meno; le penalità nei processi sono ridotte. Copi qualsiasi abilità da un grimorio o da un manuale a qualunque livello, ma il Maestro delle Abilità non ti insegna nulla."
+      "desc": "Di notte infliggi +15% di danno e ne subisci il 10% in meno; le penalità nei processi sono ridotte. Puoi copiare qualsiasi abilità da un grimorio o manuale a qualunque livello, ma il Maestro delle Abilità non ti insegna nulla."
     },
     "7": {
       "name": "Sanguigno",
@@ -122,23 +122,23 @@
     },
     "62": {
       "name": "Disperazione",
-      "desc": "Meno oro porti, più alte sono critica ed elusione; non temi nulla."
+      "desc": "Meno denaro porti, più alti sono il tasso di critico e la schivata. Immune alla paura."
     },
     "21": {
       "name": "Imboscata",
-      "desc": "Hai un'alta probabilita di critico e infliggi +25% danni ai nemici ancora a HP pieni."
+      "desc": "Hai un'alta probabilità di critico e infliggi +25% danni ai nemici ancora a HP pieni."
     },
     "35": {
       "name": "Tessitore di Canti",
-      "desc": "Ad ogni turno un canto rotante pulsa un potenziamento a tutta la squadra."
+      "desc": "Ogni turno un canto a rotazione potenzia tutto il Party."
     },
     "3": {
       "name": "Benedizione",
-      "desc": "Mentre sei viva, la squadra si cura un poco alla fine di ogni turno."
+      "desc": "Mentre sei viva, il Party si cura un poco alla fine di ogni turno."
     },
     "25": {
       "name": "Favore Divino",
-      "desc": "Le cure in eccesso che dispensi diventano una barriera protettiva invece di andare sprecate."
+      "desc": "Le tue cure in eccesso diventano una barriera protettiva."
     },
     "59": {
       "name": "Sermone",
@@ -158,7 +158,7 @@
     },
     "51": {
       "name": "Cura Premurosa",
-      "desc": "Ogni pozione e oggetto curativo che usi ristora il 30% in più, e diagnostichi ogni malattia del gruppo il giorno stesso in cui viene contratta."
+      "desc": "Ogni pozione e oggetto curativo che usi ristora il 30% in più, e diagnostichi ogni malattia del Party il giorno stesso in cui viene contratta."
     },
     "61": {
       "name": "Sangue Divino",
@@ -166,7 +166,7 @@
     },
     "42": {
       "name": "Metodo",
-      "desc": "Il tuo artigianato e alchimica rendono un prodotto extra e puoi analizzare oggetti sconosciuti."
+      "desc": "Artigianato e alchimia ti rendono un prodotto in più e puoi analizzare oggetti sconosciuti."
     },
     "48": {
       "name": "Cattedra",
@@ -174,15 +174,15 @@
     },
     "49": {
       "name": "Intuizione",
-      "desc": "La tua lucidita ti rende immune a paura, confusione e ammaliamento; leggi anche il morale nemico e la mente dei PNG."
+      "desc": "La tua lucidità ti rende immune a paura, confusione e ammaliamento; leggi anche il morale nemico e la mente dei PNG."
     },
     "50": {
       "name": "Scavatore",
-      "desc": "I tuoi scavi e tesori migliorano e i manufatti hanno più probabilita di essere identificati."
+      "desc": "I tuoi scavi e tesori migliorano e i manufatti hanno più probabilità di essere identificati."
     },
     "53": {
       "name": "Cinematica",
-      "desc": "I tuoi critici fulmine e fisici colpiscono ad area in base alla velocità nemica e la tua nave consuma meno carburante."
+      "desc": "I tuoi critici di fulmine e fisici colpiscono ad area in base alla velocità nemica e la tua nave consuma meno carburante."
     },
     "58": {
       "name": "Meteorologo",
@@ -190,19 +190,19 @@
     },
     "46": {
       "name": "Pass Stampa",
-      "desc": "Documenti ogni scontro per un piccolo scoop in oro per nemico sconfitto, e i PNG ti rivelano di più."
+      "desc": "Guadagni un po' di denaro per ogni nemico sconfitto e i PNG ti rivelano di più."
     },
     "54": {
       "name": "Meccanico",
-      "desc": "Le riparazioni dei veicoli costano metà e smontare mobili restituisce tutti i materiali. Niente di ciò che fai è magia: il tuo mana non sale mai oltre i dieci di partenza."
+      "desc": "Le riparazioni dei veicoli costano la metà e smontare mobili restituisce tutti i materiali. Il tuo mana massimo è limitato a 10."
     },
     "24": {
       "name": "Tiratore Scelto",
-      "desc": "I tuoi attacchi con arco e pistola infliggono +25% danni e non subiscono la penalita da mischia."
+      "desc": "I tuoi attacchi con arco e pistola infliggono +25% danni e non subiscono la penalità da mischia."
     },
     "28": {
       "name": "Esploratore",
-      "desc": "Avvisti il pericolo in anticipo: le battaglie che inizi hanno molte più probabilita di essere un attacco preventivo e i nemici raramente ti imboscano."
+      "desc": "Le battaglie iniziano molto più spesso con un attacco preventivo e i nemici raramente ti tendono imboscate."
     },
     "52": {
       "name": "Raccoglitore",
@@ -214,7 +214,7 @@
     },
     "57": {
       "name": "Boscaiolo",
-      "desc": "Raccogli legno extra, abbattendo un albero ottieni dieci volte i materiali e maneggi le asce con danno bonus e una probabilità di abbattere nemici grossi."
+      "desc": "Raccogli legno extra, abbattendo un albero ottieni dieci volte i materiali e maneggi le asce con danno bonus e una probabilità di far vacillare i nemici grossi."
     },
     "43": {
       "name": "Ignifugo",
@@ -222,11 +222,11 @@
     },
     "47": {
       "name": "Costruttore",
-      "desc": "La tua costruzione e libera, l'artigianato costa meno materiali e le strutture si rinforzano."
+      "desc": "Costruisci in forma libera, l'artigianato costa meno materiali e puoi rinforzare le strutture."
     },
     "45": {
       "name": "Gourmet",
-      "desc": "La tua cucina da più nutrimento, concede un potenziamento da sazio e non causa mai indigestione."
+      "desc": "La tua cucina dà più nutrimento, concede un potenziamento da sazio e non causa mai indigestione."
     },
     "1": {
       "name": "Tuttofare",
@@ -242,15 +242,15 @@
     },
     "55": {
       "name": "Mercante",
-      "desc": "Compri più economico e vendi più caro ovunque, e la merce giornaliera si rifornisce con oggetti migliori."
+      "desc": "Ovunque compri a prezzi più bassi e vendi a prezzi più alti, e la merce giornaliera si rinnova con oggetti migliori."
     },
     "60": {
       "name": "Spettacolo",
-      "desc": "Guadagni oro e simpatia esibendoti, il gruppo guadagna morale dopo ogni vittoria nei minigiochi e il Divertimento di tutti sale da solo finché viaggi con loro."
+      "desc": "Guadagni denaro e simpatia esibendoti, il Party guadagna morale dopo ogni vittoria nei minigiochi e il Divertimento di tutti sale mentre viaggiate insieme."
     },
     "66": {
       "name": "Potenziato",
-      "desc": "Sei immune a veleno, malattia e sanguinamento, funzioni a energia invece che a fame e porti uno scudo energetico rigenerante."
+      "desc": "Sei immune a veleno, malattia e sanguinamento, funzioni a energia invece che a fame e hai uno scudo energetico rigenerante."
     },
     "63": {
       "name": "Ferino",
@@ -268,11 +268,11 @@
   "trait": {
     "202": {
       "name": "Gun-Fu",
-      "desc": "Impugnando pistola, arma da lancio o arco, ogni abilità di Arti Marziali che usi e seguita da un attacco normale gratuito sullo stesso nemico."
+      "desc": "Impugnando pistola, arma da lancio o arco, ogni abilità di Arti Marziali che usi è seguita da un attacco normale gratuito sullo stesso nemico."
     },
     "43": {
       "name": "Presa Doppia",
-      "desc": "Maneggi un'arma per mano senza la penalita della mano debole."
+      "desc": "Maneggi un'arma per mano senza la penalità della mano debole."
     },
     "74": {
       "name": "Nessun Dolore",
@@ -292,11 +292,11 @@
     },
     "156": {
       "name": "Primo Sangue",
-      "desc": "Il tuo primo colpo in battaglia e sempre critico contro un nemico ignaro."
+      "desc": "Il tuo primo colpo in battaglia è sempre critico contro un nemico ignaro."
     },
     "31": {
       "name": "Il Dolore Nutre",
-      "desc": "Il danno che subisci carica la tua energia invece di solo ferirti."
+      "desc": "Il danno che subisci carica anche la tua energia."
     },
     "190": {
       "name": "Sorgente di Mana",
@@ -308,7 +308,7 @@
     },
     "99": {
       "name": "Sorte Avversa",
-      "desc": "La sfortuna ti segue, ma le maledizioni lanciate su di te rimbalzano sul lanciatore."
+      "desc": "La sfortuna ti segue, ma le maledizioni lanciate su di te rimbalzano su chi le ha lanciate."
     }
   },
   "elem": {
@@ -324,7 +324,7 @@
   },
   "log": {
     "chamberedMana": "{actor} riprende mana dalla camera di scoppio.",
-    "pinStunned": "{target} e immobilizzato e stordito!",
+    "pinStunned": "{target} è immobilizzato e stordito!",
     "chiFlows": "Il chi di {actor} scorre!",
     "mirrorShatters": "Un'immagine speculare di {actor} si frantuma!",
     "gunFuFollowThrough": "{actor} incalza - Gun-Fu!",
@@ -349,19 +349,19 @@
     "gunFu": "Gun-Fu"
   },
   "chipInfo": {
-    "next": "Cosa sta per fare questo mostro, letto da un Oracolo nel gruppo.",
-    "pin": "Prese mantenute sul bersaglio attuale. La terza lo immobilizza del tutto.",
-    "chi": "Chi accumulato dall'Artista Marziale. Ogni terza azione è gratuita.",
-    "combo": "Combo accumulate schivando. Ognuna rende il colpo successivo più forte.",
-    "decoys": "Doppi illusori ancora in piedi. Ognuno assorbe un attacco diretto a te.",
-    "iaido": "La lama è nel fodero e pronta: il primo colpo dello scontro affonda.",
-    "edge": "L'elemento portato dalla lama dall'ultimo incantesimo lanciato.",
-    "attuned": "In sintonia con il meteo: gli incantesimi di questo elemento sono più forti.",
-    "souls": "Anime raccolte dai caduti, spese in potere negromantico.",
-    "divineBlood": "L'unica resurrezione concessa dal sangue divino è ancora intatta.",
-    "rage": "Furia di sangue: più è vicino alla morte, più forte colpisce.",
-    "aegis": "La protezione che il Guardiano sta mantenendo sul gruppo adesso.",
-    "night": "Potenziamento notturno: il Cultista è più forte quando è buio.",
-    "gunFu": "Un'arma a distanza è equipaggiata, quindi il colpo di rimessa è pronto."
+    "next": "La prossima azione del mostro, prevista dal tuo Oracolo.",
+    "pin": "Prese sul bersaglio attuale. A 3 viene stordito.",
+    "chi": "Chi dell'Artista Marziale. Ogni terza azione è gratuita.",
+    "combo": "Si accumula schivando. Ogni accumulo aumenta il danno del colpo successivo.",
+    "decoys": "Esche rimaste. Ognuna assorbe un attacco.",
+    "iaido": "Il tuo primo colpo in questa battaglia infligge danno doppio.",
+    "edge": "Elemento dell'ultimo incantesimo, aggiunto agli attacchi base.",
+    "attuned": "In sintonia con il meteo. Questo elemento è più forte.",
+    "souls": "Anime dai nemici caduti, fino a cinque. I riti delle anime della Necromanzia le consumano.",
+    "divineBlood": "Resurrezione ancora disponibile in questa battaglia.",
+    "rage": "Bonus d'attacco dagli HP bassi.",
+    "aegis": "Riduzione dei danni al Party data dal Guardiano.",
+    "night": "Bonus notturno: più forte quando è buio.",
+    "gunFu": "Arma a distanza equipaggiata. Colpo aggiuntivo pronto."
   }
 }

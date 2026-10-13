@@ -3720,4 +3720,267 @@
     _BM_endBattle_AIM.call(this, result);
   };
 
+
+  // ===== AimedSkills: skills that go for one place on the body =====
+  // Aim (above) is the plain Attack's. Two skill note tags put a skill on the
+  // same footing:
+  //
+  //   <TargetPart: head>   the skill is made for one part of the body and
+  //                        always goes there when it connects. Several words
+  //                        are read in order (<TargetPart: neck|head>): the
+  //                        first one the creature actually has is struck. A
+  //                        creature with none of them takes the blow wherever
+  //                        an ordinary blow lands, and the log says so.
+  //   <Aimable>            the skill follows the user's own Aim (the Aim
+  //                        battle command, the same menu and the same rows),
+  //                        staked on reaching the named part exactly as an
+  //                        aimed Attack is: the odds on the row, and nothing
+  //                        struck at all on a miss. With no Aim, or the Aim on
+  //                        the whole body, it is an ordinary blow (or its
+  //                        TargetPart, when it has one).
+  //
+  // A part reached on purpose answers for it: a head is Concussed, an eye
+  // Blinded, an arm or a hand Disarmed, a leg, a foot or a wing Hobbled. The
+  // blow itself goes through applyDamageToBodyPart like any other, so cutting,
+  // breaking, the stat a lost part costs and the vital-part kill rule (only
+  // under a quarter of HP, never with a Blunt blow) are the ones above.
+  //
+  // Both battle modes run actions through Game_Action.apply, so nothing here
+  // knows which one is up. The only difference is who picks the monster: the
+  // battle scene is short-cut below, and MapBattleMode already sends every
+  // skill to the monster its user has an Aim on (MBM._startTargeting).
+
+  const AIMED_HOBBLED_STATE = 80;
+  const AIMED_DISARMED_STATE = 81;
+
+  // Which family a part key is in, read off the language-independent key the
+  // way wrestlePartFamily does. Order matters: an eye is checked before a
+  // head, a hand before an arm.
+  const AIMED_FAMILIES = [
+    ["eye",   /EYE|SENSOR/],
+    ["head",  /HEAD|SKULL|FACE|HELMET|CROWN|^CAP$/],
+    ["neck",  /NECK|THROAT/],
+    ["heart", /HEART/],
+    ["hand",  /HAND|FINGER|THUMB|PALM|KNUCKLE|CLAW|PAW|TALON|PINCER|GAUNTLET|WRIST/],
+    ["arm",   /(^|_)ARMS?($|_)|TENTACLE|PSEUDOPOD|APPENDAGE|PAULDRON|LIMB/],
+    ["foot",  /FOOT|FEET|TOE|HOOF/],
+    ["leg",   /LEG|THIGH|SHIN|KNEE|GREAVES/],
+    ["wing",  /WING|FEATHERS/],
+    ["tail",  /TAIL/],
+    ["torso", /TORSO|BODY|CHEST|RIBCAGE|THORAX|ABDOMEN|CARAPACE|CHASSIS|TRUNK|MASS|SHELL|CORE|_FORM$/],
+  ];
+  const AIMED_FAMILY_RE = new Map(AIMED_FAMILIES);
+
+  // What reaching each family does on top of the damage.
+  const AIMED_RIDERS = {
+    head: 60,                     // Concussed
+    eye: 5,                       // Blind
+    hand: AIMED_DISARMED_STATE,
+    arm: AIMED_DISARMED_STATE,
+    foot: AIMED_HOBBLED_STATE,
+    leg: AIMED_HOBBLED_STATE,
+    wing: AIMED_HOBBLED_STATE,
+  };
+
+  function aimedFamilyOf(partKey) {
+    const k = String(partKey || "").toUpperCase();
+    for (const [family, re] of AIMED_FAMILIES) if (re.test(k)) return family;
+    return null;
+  }
+
+  // The tags a skill carries, read off its note so the answer does not hang on
+  // DataManager having parsed meta yet. null for anything that is not aimed.
+  function aimedSkillSpec(action) {
+    const item = action && action.item ? action.item() : null;
+    if (!item || !item.note || (action.isAttack && action.isAttack())) return null;
+    if (DataManager.isSkill && !DataManager.isSkill(item)) return null;
+    const m = /<TargetPart:\s*([^>]+)>/i.exec(item.note);
+    const aimable = /<Aimable>/i.test(item.note);
+    if (!m && !aimable) return null;
+    const families = m
+      ? m[1].split(/[|,]/).map(w => w.trim().toLowerCase())
+          .filter(w => w === "vital" || AIMED_FAMILY_RE.has(w))
+      : [];
+    return { families: families, aimable: aimable };
+  }
+
+  function aimedPartMatches(enemy, key, family) {
+    if (family === "vital") return isVitalPart(enemy, key);
+    const re = AIMED_FAMILY_RE.get(family);
+    return !!re && re.test(String(key).toUpperCase());
+  }
+
+  // The part of this body a <TargetPart> skill goes for: the first family in
+  // the tag that the body has, and within it the part already worst off (so a
+  // second armbar finishes the arm the first one hurt), the biggest of them on
+  // a tie. null when the body has nothing of the kind still attached.
+  function aimedSkillPart(enemy, families) {
+    if (!enemy) return null;
+    if (!enemy._bodyParts) initializeEnemyBodyParts(enemy);
+    const archetype = getArchetype(enemy._archetypeName);
+    const weights = (archetype && archetype.hitLocations) || {};
+    for (const family of families) {
+      let best = null;
+      for (const key in enemy._bodyParts) {
+        const part = enemy._bodyParts[key];
+        if (!part || partFinished(part) || !aimedPartMatches(enemy, key, family)) continue;
+        const cond = part.maxHp > 0 ? part.currentHp / part.maxHp : 1;
+        const weight = weights[key] ? (weights[key].weight || 0) : 0;
+        if (!best || cond < best.cond || (cond === best.cond && weight > best.weight)) {
+          best = { key: key, cond: cond, weight: weight };
+        }
+      }
+      if (best) return best.key;
+    }
+    return null;
+  }
+
+  // The consequence of the blow having reached the part it was meant for.
+  // Only a blow that landed on that very part counts: a miss, an evasion, or
+  // damage spread over the body by an Area or Explosive blow does not.
+  function aimedSkillConsequence(target, key, seqBefore) {
+    if (!target || !target.isAlive || !target.isAlive()) return;
+    const result = target.result ? target.result() : null;
+    if (result && result.isHit && !result.isHit()) return;
+    if (target._fxHitSeq === seqBefore || target._lastHitPart !== key) return;
+    const stateId = AIMED_RIDERS[aimedFamilyOf(key)];
+    if (!stateId || !$dataStates || !$dataStates[stateId]) return;
+    if (target.isStateResist && target.isStateResist(stateId)) return;
+    const rate = target.stateRate ? target.stateRate(stateId) : 1;
+    if (Math.random() >= rate) return;
+    target.addState(stateId);
+  }
+
+  const _GA_apply_AIMSK = Game_Action.prototype.apply;
+  Game_Action.prototype.apply = function (target) {
+    const spec = aimedSkillSpec(this);
+    // A grapple finisher is already on the limb the hold was on.
+    if (!spec || !target || !target.isEnemy || !target.isEnemy() || _wrestleForcedPart) {
+      _GA_apply_AIMSK.call(this, target);
+      return;
+    }
+    if (!target._bodyParts) initializeEnemyBodyParts(target);
+    const subject = this.subject();
+    let key = null;
+
+    // The user's own Aim, for a skill that follows it: one roll against the
+    // named part, the same one the Aim row shows.
+    if (spec.aimable && subject && subject.isActor && subject.isActor()) {
+      const plan = Aiming.planFor(subject);
+      if (plan && plan.enemy === target && !plan.whole) {
+        if (Math.random() * 100 >= Aiming.chance(subject, target, plan.partKey)) {
+          this._aimForceMiss = true;
+          try {
+            _GA_apply_AIMSK.call(this, target);
+          } finally {
+            this._aimForceMiss = false;
+          }
+          aimLog(T('HealthMonsters.aim.log.missed', {
+            actor: subject.name(), enemy: target.name(), part: plan.part.name,
+          }));
+          return;
+        }
+        key = plan.partKey;
+      }
+    }
+
+    // The part the skill is made for.
+    if (!key && spec.families.length > 0) {
+      key = aimedSkillPart(target, spec.families);
+      if (!key && !this._aimedNoPartLogged) {
+        this._aimedNoPartLogged = true;
+        aimLog(T('HealthMonsters.aimedSkill.log.noPart', {
+          enemy: target.name(), skill: this.item().name,
+        }));
+      }
+    }
+
+    if (!key) {
+      _GA_apply_AIMSK.call(this, target);
+      return;
+    }
+    const seqBefore = target._fxHitSeq;
+    _aimForcedPart = key;
+    _aimForcedEnemy = target;
+    try {
+      _GA_apply_AIMSK.call(this, target);
+    } finally {
+      _aimForcedPart = null;
+      _aimForcedEnemy = null;
+    }
+    aimedSkillConsequence(target, key, seqBefore);
+  };
+
+  // In the battle scene a skill that follows the Aim needs no target window:
+  // the monster was named when the part was, so the skill goes straight to it,
+  // as an aimed Attack does (BattleSystemEnhanchedCommands.commandAttack).
+  // On the map this is MBM._startTargeting's job, and it already does it.
+  const _SB_onSelectAction_AIMSK = Scene_Battle.prototype.onSelectAction;
+  Scene_Battle.prototype.onSelectAction = function () {
+    const action = BattleManager.inputtingAction ? BattleManager.inputtingAction() : null;
+    const spec = aimedSkillSpec(action);
+    const single = !!(action && action.isForOpponent && action.isForOpponent() &&
+                      action.needsSelection && action.needsSelection());
+    const plan = (spec && spec.aimable && single) ? Aiming.planFor(BattleManager.actor()) : null;
+    if (plan) {
+      action.setTarget(plan.enemyIndex);
+      if (this._skillWindow) this._skillWindow.hide();
+      if (this._itemWindow) this._itemWindow.hide();
+      this.selectNextCommand();
+      return;
+    }
+    if (_SB_onSelectAction_AIMSK) _SB_onSelectAction_AIMSK.call(this);
+  };
+
+  window.AimedSkills = {
+    spec: aimedSkillSpec,
+    partFor: aimedSkillPart,
+    familyOf: aimedFamilyOf,
+    riders: AIMED_RIDERS,
+    specials: aimedSkillSpecials,
+  };
+
+  // The skill card's Special column (SkillDetails, CategorizedBattleSkills.js)
+  // reads every aimed skill out: where it goes, what reaching it does, or that
+  // it follows the Aim.
+  function aimedSkillSpecials(skill) {
+    const spec = aimedSkillSpec({ item: () => skill, isAttack: () => false });
+    if (!spec) return [];
+    const out = [];
+    const entry = (key, params) => ({ name: T('SkillsMenu.specialName.' + key, params), desc: T('SkillsMenu.special.' + key, params) });
+    const partName = (family) => T('SkillsMenu.special.aimedPart.' + family);
+    if (spec.families.length > 0) {
+      out.push(entry('aimedTargetPart', {
+        part: spec.families.map(partName).join(T('SkillsMenu.special.aimedPartOr')),
+      }));
+      const riderFamily = spec.families.find(f => AIMED_RIDERS[f]);
+      const state = riderFamily && $dataStates ? $dataStates[AIMED_RIDERS[riderFamily]] : null;
+      if (state && state.name) {
+        const name = typeof window.Hendrix_Localization === "function"
+          ? window.Hendrix_Localization(String(state.name)) : state.name;
+        out.push(entry('aimedAimRider', { part: partName(riderFamily), state: name }));
+      }
+    }
+    if (spec.aimable) out.push(entry('aimedAimable'));
+    return out;
+  }
+
+  // SkillDetails is built by a plugin that loads after this one, so the
+  // provider is handed over as soon as it exists: now, or when the game boots.
+  let _aimedSpecialsRegistered = false;
+  function registerAimedSpecials() {
+    const SD = window.SkillDetails;
+    if (_aimedSpecialsRegistered || !SD || typeof SD.registerSpecial !== "function") return;
+    SD.registerSpecial(aimedSkillSpecials);
+    _aimedSpecialsRegistered = true;
+  }
+  registerAimedSpecials();
+  if (typeof Scene_Boot !== "undefined" && Scene_Boot.prototype && Scene_Boot.prototype.start) {
+    const _SBoot_start_AIMSK = Scene_Boot.prototype.start;
+    Scene_Boot.prototype.start = function () {
+      registerAimedSpecials();
+      _SBoot_start_AIMSK.apply(this, arguments);
+    };
+  }
+
 })();

@@ -3,21 +3,33 @@
     "dungeon": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Sotterraneo",
         "Fortilizio",
-        "Cripta Bassa",
         "Presidio",
-        "Cunicoli",
-        "Profondi",
-        "Gallerie",
+        "Cunicolo",
+        "Abisso",
         "Sottolivello",
-        "Ridotta",
-        "Labirinto"
+        "Bastione",
+        "Labirinto",
+        "Dedalo",
+        "Antro"
+      ],
+      "theNoun": [
+        "Il Sotterraneo",
+        "Il Fortilizio",
+        "Il Presidio",
+        "Il Cunicolo",
+        "L'Abisso",
+        "Il Sottolivello",
+        "Il Bastione",
+        "Il Labirinto",
+        "Il Dedalo",
+        "L'Antro"
       ],
       "adj": [
         "Sommerso",
@@ -32,36 +44,48 @@
         "Senza Nome"
       ],
       "of": [
-        "le Nove Serrature",
-        "il Magistrato",
-        "San Ulrico",
-        "la Campana Annegata",
-        "il Lungo Inverno",
-        "lo Scrivano Impiccato",
-        "Cenere Fredda",
-        "il Giuramento Rotto",
-        "la Guardia Insonne",
-        "l'Ultimo Custode"
+        "delle Nove Serrature",
+        "del Magistrato",
+        "di Sant'Ulrico",
+        "della Campana Annegata",
+        "del Lungo Inverno",
+        "dello Scrivano Impiccato",
+        "di Cenere Fredda",
+        "del Giuramento Rotto",
+        "della Guardia Insonne",
+        "dell'Ultimo Custode"
       ]
     },
     "crypt": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Cripta",
-        "Sepolcro",
-        "Ossario",
-        "Carnaio",
-        "Mausoleo",
         "Tomba",
-        "Reliquiario",
         "Volta d'Ossa",
         "Casa dei Morti",
-        "Sottocripta"
+        "Sottocripta",
+        "Cella Funeraria",
+        "Camera Sepolcrale",
+        "Arca",
+        "Edicola Funebre",
+        "Necropoli"
+      ],
+      "theNoun": [
+        "La Cripta",
+        "La Tomba",
+        "La Volta d'Ossa",
+        "La Casa dei Morti",
+        "La Sottocripta",
+        "La Cella Funeraria",
+        "La Camera Sepolcrale",
+        "L'Arca",
+        "L'Edicola Funebre",
+        "La Necropoli"
       ],
       "adj": [
         "Fredda",
@@ -69,43 +93,55 @@
         "Sigillata",
         "Pallida",
         "Quieta",
-        "Seconda",
-        "Più Profonda",
-        "di Marmo",
+        "Murata",
+        "Profonda",
+        "Marmorea",
         "Ammutolita",
         "Senza Luce"
       ],
       "of": [
-        "la Quinta Famiglia",
-        "Madre Agnese",
-        "il Coro Annegato",
-        "gli Innominati",
-        "l'Abate Grigio",
-        "Nove Sorelle",
-        "i Morti d'Inverno",
-        "il Voto Mantenuto",
-        "l'Anno della Peste",
-        "il Sangue Antico"
+        "della Quinta Famiglia",
+        "di Madre Agnese",
+        "del Coro Annegato",
+        "degli Innominati",
+        "dell'Abate Grigio",
+        "delle Nove Sorelle",
+        "dei Morti d'Inverno",
+        "del Voto Mantenuto",
+        "dell'Anno della Peste",
+        "del Sangue Antico"
       ]
     },
     "cellar": {
       "pattern": [
         "{noun} {adj}",
-        "la {noun} di {of}",
-        "{noun} di {of}",
-        "La {noun} {adj} di {of}"
+        "{theNoun} {of}",
+        "{noun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Cantina",
-        "Deposito",
-        "Nascondiglio",
         "Dispensa",
-        "Sottoscala",
         "Camera Blindata",
         "Credenza",
         "Riserva",
         "Cella Fredda",
-        "Rifugio"
+        "Cantinetta",
+        "Ghiacciaia",
+        "Botola",
+        "Conserva"
+      ],
+      "theNoun": [
+        "La Cantina",
+        "La Dispensa",
+        "La Camera Blindata",
+        "La Credenza",
+        "La Riserva",
+        "La Cella Fredda",
+        "La Cantinetta",
+        "La Ghiacciaia",
+        "La Botola",
+        "La Conserva"
       ],
       "adj": [
         "in Mattoni",
@@ -117,39 +153,51 @@
         "Piccola",
         "Bassa",
         "Ammuffita",
-        "Raccolta"
+        "Nascosta"
       ],
       "of": [
-        "l'Oste",
-        "uno Zio Morto",
-        "la Vedova",
-        "il Contasoldi",
-        "il Vecchio Marek",
-        "il Fornaio",
-        "un Notaio Scomparso",
-        "un Ladro Allegro",
-        "un Cattivo Raccolto",
-        "il Padrone Assente"
+        "dell'Oste",
+        "di uno Zio Morto",
+        "della Vedova",
+        "del Contasoldi",
+        "del Vecchio Marek",
+        "del Fornaio",
+        "di un Notaio Scomparso",
+        "di un Ladro Allegro",
+        "di un Cattivo Raccolto",
+        "del Padrone Assente"
       ]
     },
     "den": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
+        "{noun} {of}",
+        "{theNoun} {of}",
         "{noun} {adj}"
       ],
       "noun": [
         "Tana",
-        "Covo",
-        "Cavità",
-        "Cunicolo",
-        "Nido",
-        "Posatoio",
-        "Giaciglio",
-        "Rifugio",
         "Buca",
-        "Fossa"
+        "Fossa",
+        "Cavità",
+        "Galleria",
+        "Cuccia",
+        "Rimessa",
+        "Spelonca",
+        "Nicchia",
+        "Gola"
+      ],
+      "theNoun": [
+        "La Tana",
+        "La Buca",
+        "La Fossa",
+        "La Cavità",
+        "La Galleria",
+        "La Cuccia",
+        "La Rimessa",
+        "La Spelonca",
+        "La Nicchia",
+        "La Gola"
       ],
       "adj": [
         "Fetida",
@@ -164,36 +212,48 @@
         "Angusta"
       ],
       "of": [
-        "Qualcosa di Grosso",
-        "la Cosa che Scava",
-        "la Madre",
-        "i Nove Cuccioli",
-        "il Rosicchiatore",
-        "il Vecchio Maschio",
-        "Ciò che si Nutre",
-        "il Branco",
-        "il Dormiente d'Inverno",
-        "la Bestia Marchiata"
+        "di Qualcosa di Grosso",
+        "della Cosa che Scava",
+        "della Madre",
+        "dei Nove Cuccioli",
+        "del Rosicchiatore",
+        "del Vecchio Maschio",
+        "di Ciò che si Nutre",
+        "del Branco",
+        "del Dormiente d'Inverno",
+        "della Bestia Marchiata"
       ]
     },
     "temple": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Tempio",
-        "Sancta",
-        "Basilica",
         "Ipogeo",
-        "Navata",
-        "Cappella",
         "Chiostro",
         "Reliquiario",
         "Santuario",
-        "Salone"
+        "Salone",
+        "Oratorio",
+        "Sacrario",
+        "Tabernacolo",
+        "Battistero"
+      ],
+      "theNoun": [
+        "Il Tempio",
+        "L'Ipogeo",
+        "Il Chiostro",
+        "Il Reliquiario",
+        "Il Santuario",
+        "Il Salone",
+        "L'Oratorio",
+        "Il Sacrario",
+        "Il Tabernacolo",
+        "Il Battistero"
       ],
       "adj": [
         "Sepolto",
@@ -208,80 +268,104 @@
         "Sigillato"
       ],
       "of": [
-        "un Dio senza Bocca",
-        "il Nome Nonuplo",
-        "Santa Perpetua",
-        "l'Ora Non Fatta",
-        "la Ruota che Gira",
-        "il Coro Muto",
-        "l'Undicesimo Angelo",
-        "il Lungo Digiuno",
-        "la Fiamma Custodita",
-        "la Prima Parola"
+        "di un Dio senza Bocca",
+        "del Nome Nonuplo",
+        "di Santa Perpetua",
+        "dell'Ora Non Fatta",
+        "della Ruota che Gira",
+        "del Coro Muto",
+        "dell'Undicesimo Angelo",
+        "del Lungo Digiuno",
+        "della Fiamma Custodita",
+        "della Prima Parola"
       ]
     },
     "sewer": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} {adj} di {of}",
-        "{noun} di {of}"
+        "{noun} {of}",
+        "{theNoun} {adj} {of}",
+        "{noun} {of}"
       ],
       "noun": [
-        "Fogna",
         "Scarico",
         "Sbocco",
         "Collettore",
         "Intercettore",
-        "Chiavica",
-        "Canali",
-        "Chiusa",
+        "Canale",
         "Troppopieno",
-        "Condotto"
+        "Condotto",
+        "Fognolo",
+        "Sifone",
+        "Emissario"
+      ],
+      "theNoun": [
+        "Lo Scarico",
+        "Lo Sbocco",
+        "Il Collettore",
+        "L'Intercettore",
+        "Il Canale",
+        "Il Troppopieno",
+        "Il Condotto",
+        "Il Fognolo",
+        "Il Sifone",
+        "L'Emissario"
       ],
       "adj": [
         "Municipale",
         "Traboccante",
-        "Ostruita",
-        "Grigia",
+        "Ostruito",
+        "Grigio",
         "Puzzolente",
-        "Dismessa",
+        "Dismesso",
         "Settentrionale",
         "Inferiore",
-        "Condannata",
+        "Condannato",
         "in Mattoni"
       ],
       "of": [
-        "la Città Vecchia",
-        "il Foro Boario",
-        "il Quartiere del Pesce",
-        "l'Acquedotto Civico",
-        "la Borsa del Grano",
-        "il Sesto Rione",
-        "il Chiostro del Duomo",
-        "la Conceria",
-        "il Quartiere Povero",
-        "il Taglio Nuovo"
+        "della Città Vecchia",
+        "del Foro Boario",
+        "del Quartiere del Pesce",
+        "dell'Acquedotto Civico",
+        "della Borsa del Grano",
+        "del Sesto Rione",
+        "del Chiostro del Duomo",
+        "della Conceria",
+        "del Quartiere Povero",
+        "del Taglio Nuovo"
       ]
     },
     "vault": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Caveau",
         "Tesoro",
         "Erario",
-        "Camera Blindata",
         "Deposito",
-        "Riserva",
         "Forziere",
         "Bottino",
         "Archivio",
-        "Presidio"
+        "Scrigno",
+        "Salvadanaio",
+        "Tesoretto"
+      ],
+      "theNoun": [
+        "Il Caveau",
+        "Il Tesoro",
+        "L'Erario",
+        "Il Deposito",
+        "Il Forziere",
+        "Il Bottino",
+        "L'Archivio",
+        "Lo Scrigno",
+        "Il Salvadanaio",
+        "Il Tesoretto"
       ],
       "adj": [
         "Sigillato",
@@ -293,83 +377,95 @@
         "Silenzioso",
         "Non Registrato",
         "Vincolato",
-        "di Ferro"
+        "Ferrato"
       ],
       "of": [
-        "un Uomo Prudente",
-        "il Nono Conto",
-        "il Socio Silenzioso",
-        "una Lunga Assenza",
-        "il Non Dichiarato",
-        "il Defunto Proprietario",
-        "l'Ordine Permanente",
-        "il Grimorio Grigio",
-        "Nessuno",
-        "il Fondo Dormiente"
+        "di un Uomo Prudente",
+        "del Nono Conto",
+        "del Socio Silenzioso",
+        "di una Lunga Assenza",
+        "del Non Dichiarato",
+        "del Defunto Proprietario",
+        "dell'Ordine Permanente",
+        "del Grimorio Grigio",
+        "di Nessuno",
+        "del Fondo Dormiente"
       ]
     },
     "catacombs": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Le {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Catacombe",
-        "Ossario",
         "Gallerie d'Ossa",
         "Nicchie",
-        "Loculi",
-        "Necropoli",
-        "Campi d'Ossa",
+        "Cripte",
         "Vie dei Morti",
-        "Corridoi",
-        "Sale"
+        "Sale",
+        "Grotte",
+        "Fosse Comuni",
+        "Camere Sepolcrali",
+        "Tombe"
+      ],
+      "theNoun": [
+        "Le Catacombe",
+        "Le Gallerie d'Ossa",
+        "Le Nicchie",
+        "Le Cripte",
+        "Le Vie dei Morti",
+        "Le Sale",
+        "Le Grotte",
+        "Le Fosse Comuni",
+        "Le Camere Sepolcrali",
+        "Le Tombe"
       ],
       "adj": [
         "Infinite",
-        "Polverizzate",
+        "Polverose",
         "Accatastate",
-        "a Lume",
+        "a Lume di Candela",
         "Senza Nome",
         "Municipali",
         "Stracolme",
-        "Più Antiche",
+        "Antichissime",
         "Numerate",
         "Segnate a Gesso"
       ],
       "of": [
-        "Trentamila",
-        "l'Anno del Colera",
-        "San Biagio",
-        "i Poveri della Parrocchia",
-        "la Seconda Peste",
-        "i Non Reclamati",
-        "la Gilda del Carnaio",
-        "Fra Anselmo",
-        "il Cimitero Spianato",
-        "i Morti Traslati"
+        "dei Trentamila",
+        "dell'Anno del Colera",
+        "di San Biagio",
+        "dei Poveri della Parrocchia",
+        "della Seconda Peste",
+        "dei Non Reclamati",
+        "della Gilda del Carnaio",
+        "di Fra Anselmo",
+        "del Cimitero Spianato",
+        "dei Morti Traslati"
       ]
     },
     "mine": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "{noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{noun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Miniera",
-        "Pozzo",
-        "Scavi",
         "Galleria",
-        "Cunicolo",
-        "Filone",
         "Cava",
-        "Livello",
         "Traversa",
-        "Escavazioni"
+        "Vena",
+        "Fossa",
+        "Discenderia",
+        "Escavazione",
+        "Coltivazione",
+        "Trincea"
       ],
       "adj": [
         "Allagata",
@@ -377,43 +473,55 @@
         "Profonda",
         "Acida",
         "Franata",
-        "della Società",
+        "Aziendale",
         "Silenziosa",
         "Esaurita",
         "Inferiore",
         "Vecchia"
       ],
       "of": [
-        "il Vedovaio",
-        "il Consorzio",
-        "Santa Barbara",
-        "gli Ottantuno",
-        "il Lungo Sciopero",
-        "il Ferro Freddo",
-        "l'Aria Cattiva",
-        "il Filone Profondo",
-        "l'Ultimo Turno",
-        "la Squadra Sepolta"
+        "della Fabbrica di Vedove",
+        "del Consorzio",
+        "di Santa Barbara",
+        "degli Ottantuno",
+        "del Lungo Sciopero",
+        "del Ferro Freddo",
+        "dell'Aria Cattiva",
+        "del Filone Profondo",
+        "dell'Ultimo Turno",
+        "della Squadra Sepolta"
       ]
     },
     "frozenCave": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
+        "{noun} {of}",
+        "{theNoun} {of}",
         "{noun} {adj}"
       ],
       "noun": [
         "Grotta",
-        "Antro",
         "Cavità",
         "Ghiacciaia",
         "Grotta Glaciale",
         "Camera Fredda",
-        "Cavo di Brina",
-        "Profondo",
         "Caverna",
-        "Camino"
+        "Spelonca",
+        "Voragine",
+        "Galleria di Brina",
+        "Forra"
+      ],
+      "theNoun": [
+        "La Grotta",
+        "La Cavità",
+        "La Ghiacciaia",
+        "La Grotta Glaciale",
+        "La Camera Fredda",
+        "La Caverna",
+        "La Spelonca",
+        "La Voragine",
+        "La Galleria di Brina",
+        "La Forra"
       ],
       "adj": [
         "Ghiacciata",
@@ -428,36 +536,48 @@
         "Immobile"
       ],
       "of": [
-        "il Lungo Inverno",
-        "la Linea del Gelo",
-        "l'Acqua Ferma",
-        "l'Anno Bianco",
-        "il Santo Freddo",
-        "Nove Gradi",
-        "il Lento Disgelo",
-        "la Mandria Sepolta",
-        "la Fiera del Ghiaccio",
-        "l'Ora Azzurra"
+        "del Lungo Inverno",
+        "della Linea del Gelo",
+        "dell'Acqua Ferma",
+        "dell'Anno Bianco",
+        "del Santo Freddo",
+        "dei Nove Gradi",
+        "del Lento Disgelo",
+        "della Mandria Sepolta",
+        "della Fiera del Ghiaccio",
+        "dell'Ora Azzurra"
       ]
     },
     "cistern": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Cisterna",
-        "Serbatoio",
-        "Vasche",
-        "Acquedotto",
-        "Pozzo Nero",
-        "Bacino",
+        "Vasca",
         "Sala Sommersa",
-        "Terme",
         "Casa dell'Acqua",
-        "Condotta"
+        "Condotta",
+        "Conserva d'Acqua",
+        "Piscina",
+        "Fonte",
+        "Riserva Idrica",
+        "Galleria Idrica"
+      ],
+      "theNoun": [
+        "La Cisterna",
+        "La Vasca",
+        "La Sala Sommersa",
+        "La Casa dell'Acqua",
+        "La Condotta",
+        "La Conserva d'Acqua",
+        "La Piscina",
+        "La Fonte",
+        "La Riserva Idrica",
+        "La Galleria Idrica"
       ],
       "adj": [
         "Allagata",
@@ -472,39 +592,51 @@
         "Salmastra"
       ],
       "of": [
-        "Quattrocento Colonne",
-        "l'Anno Secco",
-        "la Febbre",
-        "il Consorzio Idrico",
-        "il Vecchio Acquedotto",
-        "l'Acqua Ferma",
-        "l'Ingegnere Annegato",
-        "la Fornitura Pulita",
-        "la Campana Sommersa",
-        "i Pesci Ciechi"
+        "delle Quattrocento Colonne",
+        "dell'Anno Secco",
+        "della Febbre",
+        "del Consorzio Idrico",
+        "del Vecchio Acquedotto",
+        "dell'Acqua Ferma",
+        "dell'Ingegnere Annegato",
+        "della Fornitura Pulita",
+        "della Campana Sommersa",
+        "dei Pesci Ciechi"
       ]
     },
     "fungal": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
+        "{noun} {of}",
+        "{theNoun} {of}",
         "{noun} {adj}"
       ],
       "noun": [
         "Tana",
-        "Letti",
         "Fioritura",
-        "Sottobosco",
-        "Micelio",
-        "Cappelle",
         "Cavità",
-        "Giardino",
-        "Germoglio",
-        "Sale delle Spore"
+        "Grotta",
+        "Serra",
+        "Coltura",
+        "Sala delle Spore",
+        "Fungaia",
+        "Volta",
+        "Camera"
+      ],
+      "theNoun": [
+        "La Tana",
+        "La Fioritura",
+        "La Cavità",
+        "La Grotta",
+        "La Serra",
+        "La Coltura",
+        "La Sala delle Spore",
+        "La Fungaia",
+        "La Volta",
+        "La Camera"
       ],
       "adj": [
-        "Fungina",
+        "Muschiosa",
         "Sporifera",
         "Umida",
         "Luminescente",
@@ -516,36 +648,48 @@
         "Strisciante"
       ],
       "of": [
-        "la Lenta Fioritura",
-        "un Solo Organismo",
-        "il Frutteto Sepolto",
-        "il Cappello Grigio",
-        "l'Anno Umido",
-        "la Cosa che si Diffonde",
-        "il Marciume Dolce",
-        "il Quinto Germoglio",
-        "la Rete di Radici",
-        "la Madre Molle"
+        "della Lenta Fioritura",
+        "di un Solo Organismo",
+        "del Frutteto Sepolto",
+        "del Cappello Grigio",
+        "dell'Anno Umido",
+        "della Cosa che si Diffonde",
+        "del Marciume Dolce",
+        "del Quinto Germoglio",
+        "della Rete di Radici",
+        "della Madre Molle"
       ]
     },
     "crystal": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
+        "{noun} {of}",
+        "{theNoun} {of}",
         "{noun} {adj}"
       ],
       "noun": [
         "Caverna",
-        "Geode",
-        "Sale di Cristallo",
+        "Sala di Cristallo",
         "Cavità",
-        "Reticolo",
         "Camera",
         "Cattedrale",
         "Sacca",
-        "Prismi",
-        "Profondo"
+        "Grotta",
+        "Volta",
+        "Galleria",
+        "Drusa"
+      ],
+      "theNoun": [
+        "La Caverna",
+        "La Sala di Cristallo",
+        "La Cavità",
+        "La Camera",
+        "La Cattedrale",
+        "La Sacca",
+        "La Grotta",
+        "La Volta",
+        "La Galleria",
+        "La Drusa"
       ],
       "adj": [
         "Cantante",
@@ -560,40 +704,52 @@
         "Tagliente"
       ],
       "of": [
-        "la Lunga Pressione",
-        "un Suono di Campane",
-        "la Bussola Rotta",
-        "la Nona Faccia",
-        "il Minerale Lento",
-        "il Cercatore Cieco",
-        "la Pietra Tagliata",
-        "la Vena Bianca",
-        "l'Acqua Paziente",
-        "la Luce Rinchiusa"
+        "della Lunga Pressione",
+        "di un Suono di Campane",
+        "della Bussola Rotta",
+        "della Nona Faccia",
+        "del Minerale Lento",
+        "del Cercatore Cieco",
+        "della Pietra Tagliata",
+        "della Vena Bianca",
+        "dell'Acqua Paziente",
+        "della Luce Rinchiusa"
       ]
     },
     "oubliette": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Segreta",
-        "Celle",
         "Prigione",
         "Custodia",
-        "Gabbie",
         "Fossa a Bottiglia",
-        "Camerotto",
-        "Recinto",
-        "Sotterranei",
-        "Fossa"
+        "Fossa",
+        "Cella",
+        "Gattabuia",
+        "Galera",
+        "Cella di Rigore",
+        "Torre Muta"
+      ],
+      "theNoun": [
+        "La Segreta",
+        "La Prigione",
+        "La Custodia",
+        "La Fossa a Bottiglia",
+        "La Fossa",
+        "La Cella",
+        "La Gattabuia",
+        "La Galera",
+        "La Cella di Rigore",
+        "La Torre Muta"
       ],
       "adj": [
         "Dimenticata",
-        "dei Debitori",
+        "per Debitori",
         "Inferiore",
         "Militare",
         "Politica",
@@ -604,36 +760,48 @@
         "Provvisoria"
       ],
       "of": [
-        "l'Emergenza",
-        "Nessuna Accusa",
-        "il Fascicolo Perduto",
-        "il Terzo Regime",
-        "l'Arresto Silenzioso",
-        "il Nono Reparto",
-        "i Non Condannati",
-        "la Lunga Custodia",
-        "la Lista Grigia",
-        "il Giudice Assente"
+        "dell'Emergenza",
+        "del Processo Mai Fatto",
+        "del Fascicolo Perduto",
+        "del Terzo Regime",
+        "dell'Arresto Silenzioso",
+        "del Nono Reparto",
+        "dei Non Condannati",
+        "della Lunga Detenzione",
+        "della Lista Grigia",
+        "del Giudice Assente"
       ]
     },
     "library": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Biblioteca",
-        "Scaffali",
-        "Archivio",
-        "Sale di Lettura",
         "Raccolta",
-        "Deposito",
-        "Bibliotheca",
         "Riserva",
-        "Scriptorium",
-        "Indice"
+        "Bibliotheca",
+        "Sala di Lettura",
+        "Libreria",
+        "Collezione",
+        "Emeroteca",
+        "Stanza dei Libri",
+        "Scaffalatura"
+      ],
+      "theNoun": [
+        "La Biblioteca",
+        "La Raccolta",
+        "La Riserva",
+        "La Bibliotheca",
+        "La Sala di Lettura",
+        "La Libreria",
+        "La Collezione",
+        "L'Emeroteca",
+        "La Stanza dei Libri",
+        "La Scaffalatura"
       ],
       "adj": [
         "Sommersa",
@@ -648,80 +816,92 @@
         "Senza Luce"
       ],
       "of": [
-        "Libri che Nessuno ha Scritto",
-        "i Ritirati",
-        "il Nono Scaffale",
-        "una Società Estinta",
-        "i Non Letti",
-        "il Lungo Prestito",
-        "il Copista",
-        "il Volume Mancante",
-        "le Postille",
-        "l'Ultimo Lettore"
+        "dei Libri che Nessuno ha Scritto",
+        "dei Ritirati",
+        "del Nono Scaffale",
+        "di una Società Estinta",
+        "dei Non Letti",
+        "del Lungo Prestito",
+        "del Copista",
+        "del Volume Mancante",
+        "delle Postille",
+        "dell'Ultimo Lettore"
       ]
     },
     "forge": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Fucina",
         "Fonderia",
         "Officina",
-        "Forno",
-        "Bottega del Fabbro",
+        "Bottega",
         "Ferriera",
         "Sala di Colata",
-        "Bassofuoco",
-        "Crogiolo",
-        "Calore"
+        "Forgia",
+        "Acciaieria",
+        "Fornace",
+        "Magona"
+      ],
+      "theNoun": [
+        "La Fucina",
+        "La Fonderia",
+        "L'Officina",
+        "La Bottega",
+        "La Ferriera",
+        "La Sala di Colata",
+        "La Forgia",
+        "L'Acciaieria",
+        "La Fornace",
+        "La Magona"
       ],
       "adj": [
         "Sotterranea",
         "Coperta",
         "Ruggente",
         "Fredda",
-        "della Società",
+        "Aziendale",
         "Profonda",
-        "Fusa",
+        "Rovente",
         "Annerita",
         "Inattiva",
         "Inferiore"
       ],
       "of": [
-        "un Fuoco Paziente",
-        "la Gilda del Ferro",
-        "Sant'Eligio",
-        "l'Ultima Colata",
-        "lo Stampo Rotto",
-        "il Turno di Notte",
-        "il Calore Costante",
-        "il Non Spento",
-        "il Martello Sepolto",
-        "l'Ora Rossa"
+        "di un Fuoco Paziente",
+        "della Gilda del Ferro",
+        "di Sant'Eligio",
+        "dell'Ultima Colata",
+        "dello Stampo Rotto",
+        "del Turno di Notte",
+        "del Calore Costante",
+        "del Non Spento",
+        "del Martello Sepolto",
+        "dell'Ora Rossa"
       ]
     },
     "bunker": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "{noun} {adj} di {of}",
+        "{noun} {of}",
+        "{noun} {adj} {of}",
         "{noun} {num}"
       ],
       "noun": [
         "Bunker",
         "Rifugio",
-        "Installazione",
-        "Struttura",
         "Complesso",
-        "Postazione",
-        "Ridotta",
-        "Stazione",
+        "Sito",
         "Deposito",
-        "Sito"
+        "Impianto",
+        "Presidio",
+        "Avamposto",
+        "Silo",
+        "Ricovero"
       ],
       "adj": [
         "Blindato",
@@ -732,20 +912,20 @@
         "Governativo",
         "Regionale",
         "Non Registrato",
-        "in Riserva",
+        "di Riserva",
         "Profondo"
       ],
       "of": [
-        "una Guerra che Attese",
-        "la Contingenza Nove",
-        "la Busta Grigia",
-        "l'Ordine Permanente",
-        "la Difesa Civile",
-        "il Fascicolo Blu",
-        "l'Ultima Esercitazione",
-        "il Ministero Silenzioso",
-        "l'Ala Non Elencata",
-        "il Lungo Allarme"
+        "di una Guerra Mai Venuta",
+        "della Contingenza Nove",
+        "della Busta Grigia",
+        "dell'Ordine Permanente",
+        "della Difesa Civile",
+        "del Fascicolo Blu",
+        "dell'Ultima Esercitazione",
+        "del Ministero Silenzioso",
+        "dell'Ala Non Elencata",
+        "del Lungo Allarme"
       ],
       "num": [
         "Quattordici",
@@ -763,21 +943,21 @@
     "lab": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "{noun} {adj} di {of}",
+        "{noun} {of}",
+        "{noun} {adj} {of}",
         "{noun} {num}"
       ],
       "noun": [
         "Laboratorio",
-        "Struttura",
-        "Ala",
         "Istituto",
-        "Stazione",
         "Annesso",
-        "Officina",
-        "Sezione",
         "Reparto",
-        "Programma"
+        "Programma",
+        "Centro",
+        "Padiglione",
+        "Settore",
+        "Impianto",
+        "Complesso"
       ],
       "adj": [
         "Sepolto",
@@ -792,16 +972,16 @@
         "Provvisorio"
       ],
       "of": [
-        "un Programma Annullato",
-        "la Nona Prova",
-        "l'Istituto Grigio",
-        "Nessun Comitato Etico",
-        "il Finanziamento Silenzioso",
-        "il Soggetto Quattordici",
-        "i Risultati Sepolti",
-        "il Secondo Protocollo",
-        "la Coorte Scomparsa",
-        "gli Inediti"
+        "di un Programma Annullato",
+        "della Nona Prova",
+        "dell'Istituto Grigio",
+        "senza Comitato Etico",
+        "del Finanziamento Silenzioso",
+        "del Soggetto Quattordici",
+        "dei Risultati Sepolti",
+        "del Secondo Protocollo",
+        "della Coorte Scomparsa",
+        "degli Inediti"
       ],
       "num": [
         "Quattordici",
@@ -819,21 +999,33 @@
     "shrine": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Santuario",
-        "Sancta",
         "Cerchio",
         "Altare",
-        "Cappella",
         "Sacrario",
-        "Rotonda",
         "Anello",
         "Seggio",
-        "Navata"
+        "Tabernacolo",
+        "Tempietto",
+        "Recinto Sacro",
+        "Sacello"
+      ],
+      "theNoun": [
+        "Il Santuario",
+        "Il Cerchio",
+        "L'Altare",
+        "Il Sacrario",
+        "L'Anello",
+        "Il Seggio",
+        "Il Tabernacolo",
+        "Il Tempietto",
+        "Il Recinto Sacro",
+        "Il Sacello"
       ],
       "adj": [
         "Profano",
@@ -848,67 +1040,67 @@
         "in Attesa"
       ],
       "of": [
-        "un Nome da Non Dire",
-        "la Bocca Nonupla",
-        "la Croce Rovesciata",
-        "la Lunga Pazienza",
-        "il Piede Caprino",
-        "il Coro Cavo",
-        "il Secondo Patto",
-        "Ciò che Risponde",
-        "l'Ora Venduta",
-        "la Cosa di Sotto"
+        "di un Nome da Non Dire",
+        "della Bocca Nonupla",
+        "della Croce Rovesciata",
+        "della Lunga Pazienza",
+        "del Piede Caprino",
+        "del Coro Cavo",
+        "del Secondo Patto",
+        "di Ciò che Risponde",
+        "dell'Ora Venduta",
+        "della Cosa di Sotto"
       ]
     },
     "smuggler": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "{noun} {adj} di {of}",
-        "{noun} di {of}"
+        "{noun} {of}",
+        "{noun} {adj} {of}",
+        "{noun} {of}"
       ],
       "noun": [
         "Passaggio",
         "Tunnel",
         "Cunicolo",
         "Taglio",
-        "Rotta",
         "Rifugio",
-        "Via",
-        "Strisciata",
-        "Linea",
-        "Consegna"
+        "Varco",
+        "Valico",
+        "Sentiero",
+        "Camminamento",
+        "Approdo"
       ],
       "adj": [
-        "dei Contrabbandieri",
+        "Segreto",
         "Silenzioso",
         "Non Autorizzato",
         "Esentasse",
         "Notturno",
         "Storto",
-        "Non Tassato",
+        "Clandestino",
         "Nascosto",
         "di Servizio",
         "Discreto"
       ],
       "of": [
-        "il Commercio del Sale",
-        "il Brandy Non Tassato",
-        "il Carico Notturno",
-        "un Accordo Silenzioso",
-        "il Doganiere",
-        "l'Anno di Confine",
-        "un Favore Dovuto",
-        "la Guardia Cieca",
-        "il Secondo Grimorio",
-        "la Sentinella Addormentata"
+        "del Commercio del Sale",
+        "del Brandy Non Tassato",
+        "del Carico Notturno",
+        "di un Accordo Silenzioso",
+        "del Doganiere",
+        "dell'Anno di Confine",
+        "di un Favore Dovuto",
+        "della Guardia Cieca",
+        "del Secondo Grimorio",
+        "della Sentinella Addormentata"
       ]
     },
     "grotto": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
+        "{noun} {of}",
+        "{theNoun} {of}",
         "{noun} {adj}"
       ],
       "noun": [
@@ -918,13 +1110,25 @@
         "Grotta di Marea",
         "Vasca",
         "Camera",
-        "Stretto",
         "Insenatura",
         "Sottogrotta",
-        "Sfiatatoio"
+        "Caletta",
+        "Spelonca"
+      ],
+      "theNoun": [
+        "La Grotta",
+        "La Grotta Marina",
+        "La Cavità",
+        "La Grotta di Marea",
+        "La Vasca",
+        "La Camera",
+        "L'Insenatura",
+        "La Sottogrotta",
+        "La Caletta",
+        "La Spelonca"
       ],
       "adj": [
-        "di Marea",
+        "Salmastra",
         "Annegata",
         "Salata",
         "Rimbombante",
@@ -936,40 +1140,52 @@
         "Cantante"
       ],
       "of": [
-        "la Marea che Gira",
-        "l'Equipaggio Annegato",
-        "la Linea del Sale",
-        "la Quadratura",
-        "la Barca Perduta",
-        "le Foche Grigie",
-        "la Lunga Onda",
-        "la Catena Sommersa",
-        "il Voto del Pescatore",
-        "il Richiamo della Luna"
+        "della Marea che Gira",
+        "dell'Equipaggio Annegato",
+        "della Linea del Sale",
+        "della Quadratura",
+        "della Barca Perduta",
+        "delle Foche Grigie",
+        "della Lunga Onda",
+        "della Catena Sommersa",
+        "del Voto del Pescatore",
+        "del Richiamo della Luna"
       ]
     },
     "lavaTube": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
+        "{noun} {of}",
+        "{theNoun} {of}",
         "{noun} {adj}"
       ],
       "noun": [
         "Tubo",
-        "Colata",
         "Sfiato",
         "Condotto",
-        "Canna",
-        "Gola",
-        "Canale",
         "Camino",
-        "Galleria",
-        "Percorso"
+        "Canale",
+        "Cunicolo",
+        "Budello",
+        "Cratere",
+        "Pozzo",
+        "Tunnel"
+      ],
+      "theNoun": [
+        "Il Tubo",
+        "Lo Sfiato",
+        "Il Condotto",
+        "Il Camino",
+        "Il Canale",
+        "Il Cunicolo",
+        "Il Budello",
+        "Il Cratere",
+        "Il Pozzo",
+        "Il Tunnel"
       ],
       "adj": [
         "Vulcanico",
-        "Fuso",
+        "Rovente",
         "Incandescente",
         "di Basalto",
         "Respirante",
@@ -980,42 +1196,54 @@
         "Instabile"
       ],
       "of": [
-        "l'Ultima Eruzione",
-        "la Gola della Montagna",
-        "l'Anno Rosso",
-        "il Fuoco Costante",
-        "il Villaggio Sepolto",
-        "il Lento Raffreddamento",
-        "il Fuoco di Sotto",
-        "il Santo dello Zolfo",
-        "la Crosta Rotta",
-        "la Pioggia di Cenere"
+        "dell'Ultima Eruzione",
+        "della Gola della Montagna",
+        "dell'Anno Rosso",
+        "del Fuoco Costante",
+        "del Villaggio Sepolto",
+        "del Lento Raffreddamento",
+        "del Fuoco di Sotto",
+        "del Santo dello Zolfo",
+        "della Crosta Rotta",
+        "della Pioggia di Cenere"
       ]
     },
     "barrow": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "{noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Tumulo",
-        "Montagnola",
         "Poggio",
-        "Tumulo Antico",
-        "Tumulo Lungo",
+        "Sepolcreto",
+        "Ipogeo",
         "Cairn",
         "Colle Funerario",
-        "Tomba a Corridoio",
-        "Anello",
-        "Collina"
+        "Anello di Pietre",
+        "Monticello",
+        "Dolmen",
+        "Cumulo"
+      ],
+      "theNoun": [
+        "Il Tumulo",
+        "Il Poggio",
+        "Il Sepolcreto",
+        "L'Ipogeo",
+        "Il Cairn",
+        "Il Colle Funerario",
+        "L'Anello di Pietre",
+        "Il Monticello",
+        "Il Dolmen",
+        "Il Cumulo"
       ],
       "adj": [
         "Lungo",
         "Regale",
         "Erboso",
-        "Più Antico",
+        "Antichissimo",
         "Aperto",
         "Mai Aperto",
         "a Nove Camere",
@@ -1024,36 +1252,36 @@
         "Cerchiato"
       ],
       "of": [
-        "un Re che Nessuno Nomina",
-        "il Cavallo e il Cavaliere",
-        "gli Anni del Bronzo",
-        "il Nono Capo",
-        "l'Oro sotto l'Erba",
-        "la Corona di Corna",
-        "il Primo Popolo",
-        "l'Offerta Bruciata",
-        "le Pietre Erette",
-        "il Capo Inquieto"
+        "di un Re che Nessuno Nomina",
+        "del Cavallo e del Cavaliere",
+        "degli Anni del Bronzo",
+        "del Nono Capo",
+        "dell'Oro sotto l'Erba",
+        "della Corona di Corna",
+        "del Primo Popolo",
+        "dell'Offerta Bruciata",
+        "delle Pietre Erette",
+        "del Capo Inquieto"
       ]
     },
     "metro": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "{noun} {adj} di {of}",
-        "{noun} di {of}"
+        "{noun} {of}",
+        "{noun} {adj} {of}",
+        "{noun} {of}"
       ],
       "noun": [
         "Stazione",
         "Banchina",
         "Fermata",
-        "Capolinea",
-        "Interscambio",
-        "Bivio",
-        "Scalo",
-        "Atrio",
-        "Deposito",
-        "Gallerie"
+        "Galleria",
+        "Rimessa",
+        "Diramazione",
+        "Linea",
+        "Uscita",
+        "Biglietteria",
+        "Sottostazione"
       ],
       "adj": [
         "Dismessa",
@@ -1063,41 +1291,53 @@
         "Mai Aperta",
         "di Guerra",
         "Abbandonata",
-        "a Grande Profondità",
+        "Profondissima",
         "Sbarrata",
         "Settentrionale"
       ],
       "of": [
-        "la Linea Annullata",
-        "gli Anni del Rifugio",
-        "la Fermata Scomparsa",
-        "l'Ultimo Treno",
-        "l'Orario Grigio",
-        "il Secondo Prolungamento",
-        "la Banchina Murata",
-        "il Servizio Notturno",
-        "il Ramo Chiuso",
-        "il Biglietto Invenduto"
+        "della Linea Annullata",
+        "degli Anni del Rifugio",
+        "della Fermata Scomparsa",
+        "dell'Ultimo Treno",
+        "dell'Orario Grigio",
+        "del Secondo Prolungamento",
+        "della Banchina Murata",
+        "del Servizio Notturno",
+        "del Ramo Chiuso",
+        "del Biglietto Invenduto"
       ]
     },
     "salt": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
+        "{noun} {of}",
+        "{theNoun} {of}",
         "{noun} {adj}"
       ],
       "noun": [
         "Salina",
         "Miniera di Sale",
-        "Gallerie",
-        "Vasche",
-        "Scavi",
-        "Camere",
-        "Sale del Sale",
-        "Escavazioni",
-        "Livelli",
-        "Giacimento"
+        "Galleria",
+        "Vasca",
+        "Cava di Sale",
+        "Camera",
+        "Sala del Sale",
+        "Escavazione",
+        "Vena di Sale",
+        "Fossa"
+      ],
+      "theNoun": [
+        "La Salina",
+        "La Miniera di Sale",
+        "La Galleria",
+        "La Vasca",
+        "La Cava di Sale",
+        "La Camera",
+        "La Sala del Sale",
+        "L'Escavazione",
+        "La Vena di Sale",
+        "La Fossa"
       ],
       "adj": [
         "Bianca",
@@ -1106,33 +1346,32 @@
         "Asciutta",
         "Profonda",
         "Conservata",
-        "della Società",
+        "Aziendale",
         "Amara",
         "Cristallina",
         "Lavorata"
       ],
       "of": [
-        "la Via del Sale",
-        "i Conservati",
-        "la Tassa Amara",
-        "l'Anno Bianco",
-        "Santa Cunegonda",
-        "la Lunga Siccità",
-        "il Livello Sigillato",
-        "la Cattedrale di Sale",
-        "il Mare Asciutto",
-        "il Vecchio Monopolio"
+        "della Via del Sale",
+        "dei Conservati",
+        "della Tassa Amara",
+        "dell'Anno Bianco",
+        "di Santa Cunegonda",
+        "della Lunga Siccità",
+        "del Livello Sigillato",
+        "della Cattedrale di Sale",
+        "del Mare Asciutto",
+        "del Vecchio Monopolio"
       ]
     },
     "hardware": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "Il {noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
-        "Ferramenta",
         "Magazzino Attrezzi",
         "Emporio Edile",
         "Deposito",
@@ -1141,7 +1380,20 @@
         "Bazar dei Chiodi",
         "Spaccio Utensili",
         "Banco Ricambi",
-        "Fondaco"
+        "Fondaco",
+        "Colorificio"
+      ],
+      "theNoun": [
+        "Il Magazzino Attrezzi",
+        "L'Emporio Edile",
+        "Il Deposito",
+        "Il Legnaio",
+        "Il Negozio Fai da Te",
+        "Il Bazar dei Chiodi",
+        "Lo Spaccio Utensili",
+        "Il Banco Ricambi",
+        "Il Fondaco",
+        "Il Colorificio"
       ],
       "adj": [
         "Chiuso",
@@ -1156,27 +1408,27 @@
         "Vuoto"
       ],
       "of": [
-        "Vecchio Brannigan",
-        "Fratelli Martello",
-        "un Idraulico Fallito",
-        "Guardiano Notturno",
-        "Re dei Chiodi",
-        "Zio Rudi",
-        "Uomini del Sindacato",
-        "un Falegname Scomparso",
-        "Sorelle Rivetti",
-        "Ultimo Caporeparto"
+        "del Vecchio Brannigan",
+        "dei Fratelli Martello",
+        "di un Idraulico Fallito",
+        "del Guardiano Notturno",
+        "del Re dei Chiodi",
+        "di Zio Rudi",
+        "degli Uomini del Sindacato",
+        "di un Falegname Scomparso",
+        "delle Sorelle Rivetti",
+        "dell'Ultimo Caporeparto"
       ]
     },
     "grocery": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "Il {noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
-        "Alimentari",
+        "Negozio di Alimentari",
         "Mercato",
         "Negozietto",
         "Spaccio",
@@ -1187,8 +1439,20 @@
         "Discount",
         "Minimarket"
       ],
+      "theNoun": [
+        "Il Negozio di Alimentari",
+        "Il Mercato",
+        "Il Negozietto",
+        "Lo Spaccio",
+        "Il Supermercato",
+        "Il Fruttivendolo",
+        "L'Emporio Alimentare",
+        "Il Banco Salumi",
+        "Il Discount",
+        "Il Minimarket"
+      ],
       "adj": [
-        "Avariato",
+        "Scadente",
         "Tremolante",
         "Appiccicoso",
         "Vuoto",
@@ -1200,24 +1464,24 @@
         "Luminoso"
       ],
       "of": [
-        "Mamma Lucia",
-        "Fratelli Okafor",
-        "Taglia Prezzi",
-        "una Cassiera Sparita",
-        "Campi Freschi",
-        "Signor Patel",
-        "Turno di Notte",
-        "Vecchia Cooperativa",
-        "un Franchising Fallito",
-        "Giro del Latte"
+        "di Mamma Lucia",
+        "dei Fratelli Okafor",
+        "del Taglia Prezzi",
+        "di una Cassiera Sparita",
+        "di Campi Freschi",
+        "del Signor Patel",
+        "del Turno di Notte",
+        "della Vecchia Cooperativa",
+        "di un Franchising Fallito",
+        "del Giro del Latte"
       ]
     },
     "shop": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "Il {noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Negozio",
@@ -1227,9 +1491,21 @@
         "Magazzino",
         "Bottegone",
         "Rigattiere",
-        "Negozio di Curiosita",
+        "Negozio di Curiosità",
         "Outlet",
         "Emporio Generale"
+      ],
+      "theNoun": [
+        "Il Negozio",
+        "L'Emporio",
+        "Il Bazar",
+        "Lo Spaccio",
+        "Il Magazzino",
+        "Il Bottegone",
+        "Il Rigattiere",
+        "Il Negozio di Curiosità",
+        "L'Outlet",
+        "L'Emporio Generale"
       ],
       "adj": [
         "Chiuso",
@@ -1244,24 +1520,24 @@
         "Sbarrato"
       ],
       "of": [
-        "Madama Orsolya",
-        "Due Fratelli",
-        "un Erede Perduto",
-        "Banco dei Pegni",
-        "Meraviglie",
-        "Seconde Occasioni",
-        "Vecchio Padrone",
-        "Cianfrusaglie",
-        "Commesso Viaggiatore",
-        "Trovate Fortunate"
+        "di Madama Orsolya",
+        "dei Due Fratelli",
+        "di un Erede Perduto",
+        "del Banco dei Pegni",
+        "delle Meraviglie",
+        "delle Seconde Occasioni",
+        "del Vecchio Padrone",
+        "delle Cianfrusaglie",
+        "del Commesso Viaggiatore",
+        "delle Trovate Fortunate"
       ]
     },
     "hospital": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "Il {noun} {adj} di {of}"
+        "{noun} {of}",
+        "{noun} {of}",
+        "{noun} {adj} {of}"
       ],
       "noun": [
         "Ospedale",
@@ -1285,27 +1561,27 @@
         "Dimenticato",
         "della Misericordia",
         "Grigio",
-        "Ultimo"
+        "Fatiscente"
       ],
       "of": [
-        "Sant'Agata",
-        "gli Infermi",
-        "Misericordia",
-        "l'Infermiera di Notte",
-        "Dottor Halloran",
-        "l'Anno della Febbre",
-        "Quieta Guarigione",
-        "l'Ala Chiusa",
-        "Buon Samaritano",
-        "Lungo Sonno"
+        "di Sant'Agata",
+        "degli Infermi",
+        "di Santa Maria",
+        "dell'Infermiera di Notte",
+        "del Dottor Halloran",
+        "dell'Anno della Febbre",
+        "della Quieta Guarigione",
+        "dell'Ala Chiusa",
+        "del Buon Samaritano",
+        "del Lungo Sonno"
       ]
     },
     "clinic": {
       "pattern": [
-        "La {noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "La {noun} {adj} di {of}"
+        "{theNoun} {adj}",
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Clinica",
@@ -1318,6 +1594,18 @@
         "Stanza di Cura",
         "Clinica di Quartiere",
         "Clinica Diurna"
+      ],
+      "theNoun": [
+        "La Clinica",
+        "L'Infermeria",
+        "La Farmacia",
+        "La Guardia Medica",
+        "La Casa di Cura",
+        "La Sala Visite",
+        "La Condotta Medica",
+        "La Stanza di Cura",
+        "La Clinica di Quartiere",
+        "La Clinica Diurna"
       ],
       "adj": [
         "Chiusa",
@@ -1332,24 +1620,24 @@
         "Dimenticata"
       ],
       "of": [
-        "Dottor Vos",
-        "Mani Gentili",
-        "Quartiere",
-        "San Luca",
-        "Vecchio Speziale",
-        "Dottoressa Amara",
-        "Opera Pia",
-        "Piccole Grazie",
-        "Defunto Dottore",
-        "Via Quieta"
+        "del Dottor Vos",
+        "delle Mani Gentili",
+        "del Rione",
+        "di San Luca",
+        "del Vecchio Speziale",
+        "della Dottoressa Amara",
+        "dell'Opera Pia",
+        "delle Piccole Grazie",
+        "del Defunto Dottore",
+        "di Via Quieta"
       ]
     },
     "tavern": {
       "pattern": [
-        "La {noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "La {noun} {adj} di {of}"
+        "{theNoun} {adj}",
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Taverna",
@@ -1363,6 +1651,18 @@
         "Enoteca",
         "Trattoria"
       ],
+      "theNoun": [
+        "La Taverna",
+        "La Locanda",
+        "L'Osteria",
+        "La Bettola",
+        "La Mescita",
+        "La Stazione di Posta",
+        "La Fiaschetteria",
+        "La Cantina",
+        "L'Enoteca",
+        "La Trattoria"
+      ],
       "adj": [
         "Ubriaca",
         "Storta",
@@ -1371,29 +1671,29 @@
         "Dorata",
         "Chiassosa",
         "Gocciolante",
-        "Saltellante",
-        "Ultima",
+        "Ballerina",
+        "Sgangherata",
         "Assetata"
       ],
       "of": [
-        "Uomo Verde",
-        "Tre Botti",
-        "Vecchio Hask",
-        "Ruota Rotta",
-        "Bovaro Allegro",
-        "Leone Rosso",
-        "Violinista Impiccato",
-        "Maiale Errante",
-        "Sette Stelle",
-        "Viandante Stanco"
+        "dell'Uomo Verde",
+        "delle Tre Botti",
+        "del Vecchio Hask",
+        "della Ruota Rotta",
+        "del Bovaro Allegro",
+        "del Leone Rosso",
+        "del Violinista Impiccato",
+        "del Maiale Errante",
+        "delle Sette Stelle",
+        "del Viandante Stanco"
       ]
     },
     "restaurant": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "Il {noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Ristorante",
@@ -1406,6 +1706,18 @@
         "Refettorio",
         "Bar Tavola Calda",
         "Desco"
+      ],
+      "theNoun": [
+        "Il Ristorante",
+        "Il Bistrot",
+        "Il Locale",
+        "Il Self Service",
+        "Il Grill",
+        "Lo Steakhouse",
+        "Il Circolo",
+        "Il Refettorio",
+        "Il Bar Tavola Calda",
+        "Il Desco"
       ],
       "adj": [
         "Chiuso",
@@ -1420,24 +1732,24 @@
         "Dorato"
       ],
       "of": [
-        "Chef Moreau",
-        "Nonna Rita",
-        "Cucchiaio d'Argento",
-        "Piatto Blu",
-        "Signor Wong",
-        "Segugio Affamato",
+        "dello Chef Moreau",
+        "di Nonna Rita",
+        "del Cucchiaio d'Argento",
+        "del Piatto Blu",
+        "del Signor Wong",
+        "del Segugio Affamato",
         "Bella Vista",
-        "Vecchia Cucina",
-        "Ricetta Perduta",
-        "Petit Coin"
+        "della Vecchia Cucina",
+        "della Ricetta Perduta",
+        "Au Petit Coin"
       ]
     },
     "farmhouse": {
       "pattern": [
-        "La {noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "La {noun} {adj} di {of}"
+        "{theNoun} {adj}",
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Cascina",
@@ -1448,8 +1760,20 @@
         "Baita",
         "Stalla",
         "Tenuta",
-        "Mezzadria",
+        "Casa Rurale",
         "Casa del Mugnaio"
+      ],
+      "theNoun": [
+        "La Cascina",
+        "La Fattoria",
+        "La Masseria",
+        "La Grangia",
+        "La Casa Colonica",
+        "La Baita",
+        "La Stalla",
+        "La Tenuta",
+        "La Casa Rurale",
+        "La Casa del Mugnaio"
       ],
       "adj": [
         "Solitaria",
@@ -1464,24 +1788,24 @@
         "Dimenticata"
       ],
       "of": [
-        "Famiglia Hollis",
-        "Vecchia Margit",
-        "un Pastore Morto",
-        "Campo Lungo",
-        "Vedova Cray",
-        "Tre Acri",
-        "Fienile",
-        "Raccolto Perduto",
-        "Mugnaio",
-        "Colle della Fame"
+        "della Famiglia Hollis",
+        "della Vecchia Margit",
+        "di un Pastore Morto",
+        "del Campo Lungo",
+        "della Vedova Cray",
+        "dei Tre Acri",
+        "del Fienile",
+        "del Raccolto Perduto",
+        "del Fabbro",
+        "del Colle della Fame"
       ]
     },
     "house": {
       "pattern": [
-        "La {noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "La {noun} {adj} di {of}"
+        "{theNoun} {adj}",
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Casa",
@@ -1494,6 +1818,18 @@
         "Mansarda",
         "Abitazione",
         "Magione"
+      ],
+      "theNoun": [
+        "La Casa",
+        "La Dimora",
+        "La Residenza",
+        "La Villetta",
+        "La Palazzina",
+        "La Casetta",
+        "La Pensione",
+        "La Mansarda",
+        "L'Abitazione",
+        "La Magione"
       ],
       "adj": [
         "Vuota",
@@ -1508,24 +1844,24 @@
         "Vecchia"
       ],
       "of": [
-        "Famiglia Marlowe",
-        "una Maestra in Pensione",
-        "Numero Nove",
-        "Inquilino Assente",
-        "Nonna Elsa",
-        "Pensionanti",
-        "Orologiaio",
-        "una Zia Dimenticata",
-        "Clown Triste",
-        "Nottambulo"
+        "della Famiglia Marlowe",
+        "di una Maestra in Pensione",
+        "del Numero Nove",
+        "dell'Inquilino Assente",
+        "di Nonna Elsa",
+        "dei Pensionanti",
+        "dell'Orologiaio",
+        "di una Zia Dimenticata",
+        "del Clown Triste",
+        "del Nottambulo"
       ]
     },
     "abandoned": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "Il {noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Rudere",
@@ -1534,17 +1870,29 @@
         "Scheletro",
         "Tugurio",
         "Stabile",
-        "Casolare Marcio",
-        "Isolato Bruciato",
-        "Palazzo Condannato",
-        "Vuoto"
+        "Casolare",
+        "Isolato",
+        "Palazzaccio",
+        "Casermone"
+      ],
+      "theNoun": [
+        "Il Rudere",
+        "Il Relitto",
+        "Il Guscio",
+        "Lo Scheletro",
+        "Il Tugurio",
+        "Lo Stabile",
+        "Il Casolare",
+        "L'Isolato",
+        "Il Palazzaccio",
+        "Il Casermone"
       ],
       "adj": [
         "Crollato",
         "Sventrato",
         "Marcio",
         "Infestato",
-        "Caduto",
+        "Pericolante",
         "Ammuffito",
         "Bruciato",
         "Vandalizzato",
@@ -1552,24 +1900,24 @@
         "Fatiscente"
       ],
       "of": [
-        "Ultimo Inquilino",
-        "Finestre Rotte",
-        "Notte del Fuoco",
-        "Abusivi",
-        "Cattivo Padrone",
-        "Muffa e Marciume",
-        "Sfrattati",
-        "Anno dell'Alluvione",
-        "Affitto Dimenticato",
-        "Demolitori"
+        "dell'Ultimo Inquilino",
+        "delle Finestre Rotte",
+        "della Notte del Fuoco",
+        "degli Abusivi",
+        "del Cattivo Padrone",
+        "di Muffa e Marciume",
+        "degli Sfrattati",
+        "dell'Anno dell'Alluvione",
+        "dell'Affitto Dimenticato",
+        "dei Demolitori"
       ]
     },
     "basement": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "Il {noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Seminterrato",
@@ -1580,8 +1928,20 @@
         "Laboratorio",
         "Rifugio",
         "Carbonile",
-        "Sottotetto Rovescio",
+        "Sottoscala",
         "Vano Tecnico"
+      ],
+      "theNoun": [
+        "Il Seminterrato",
+        "Il Locale Caldaia",
+        "Lo Scantinato",
+        "Il Ripostiglio",
+        "Il Lavatoio",
+        "Il Laboratorio",
+        "Il Rifugio",
+        "Il Carbonile",
+        "Il Sottoscala",
+        "Il Vano Tecnico"
       ],
       "adj": [
         "Umido",
@@ -1596,24 +1956,24 @@
         "Segreto"
       ],
       "of": [
-        "Custode",
-        "Vecchia Caldaia",
-        "un Accumulatore",
-        "Padrone di Casa",
-        "Dottor Feld",
-        "Bidello di Notte",
-        "un Bambino Scomparso",
-        "Condominio",
-        "Idraulico",
-        "Collezionista"
+        "del Custode",
+        "della Vecchia Caldaia",
+        "di un Accaparratore",
+        "del Padrone di Casa",
+        "del Dottor Feld",
+        "del Bidello di Notte",
+        "di un Bambino Scomparso",
+        "del Condominio",
+        "dell'Idraulico",
+        "del Collezionista"
       ]
     },
     "laboratory": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "Il {noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Laboratorio",
@@ -1622,10 +1982,22 @@
         "Istituto",
         "Annesso",
         "Poligono Sperimentale",
-        "Locale Sterile",
+        "Bioreparto",
         "Stabilimento Biologico",
         "Posto di Prova",
         "Centro Ricerche"
+      ],
+      "theNoun": [
+        "Il Laboratorio",
+        "Il Reparto Ricerca",
+        "Il Centro Prove",
+        "L'Istituto",
+        "L'Annesso",
+        "Il Poligono Sperimentale",
+        "Il Bioreparto",
+        "Lo Stabilimento Biologico",
+        "Il Posto di Prova",
+        "Il Centro Ricerche"
       ],
       "adj": [
         "Sigillato",
@@ -1640,24 +2012,24 @@
         "Silenzioso"
       ],
       "of": [
-        "Dottor Kessler",
-        "Progetto Lanterna",
-        "Ministero",
-        "Futuri Applicati",
-        "Turno di Notte",
-        "Prova Fallita",
-        "Unita Nove",
-        "Fondi Neri",
-        "Camici Grigi",
-        "Ultimo Esperimento"
+        "del Dottor Kessler",
+        "del Progetto Lanterna",
+        "del Ministero",
+        "dei Futuri Applicati",
+        "del Turno di Notte",
+        "della Prova Fallita",
+        "dell'Unità Nove",
+        "dei Fondi Neri",
+        "dei Camici Grigi",
+        "dell'Ultimo Esperimento"
       ]
     },
     "factory": {
       "pattern": [
-        "La {noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "La {noun} {adj} di {of}"
+        "{theNoun} {adj}",
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Fabbrica",
@@ -1665,11 +2037,23 @@
         "Filanda",
         "Fonderia",
         "Raffineria",
-        "Conserviera",
+        "Distilleria",
         "Acciaieria",
         "Ferriera",
         "Cartiera",
         "Manifattura"
+      ],
+      "theNoun": [
+        "La Fabbrica",
+        "L'Officina",
+        "La Filanda",
+        "La Fonderia",
+        "La Raffineria",
+        "La Distilleria",
+        "L'Acciaieria",
+        "La Ferriera",
+        "La Cartiera",
+        "La Manifattura"
       ],
       "adj": [
         "Arrugginita",
@@ -1684,24 +2068,24 @@
         "Silenziosa"
       ],
       "of": [
-        "Henley e Figli",
-        "Sindacato",
-        "Ruota di Ferro",
-        "Ultimo Turno",
-        "Acciaierie Riunite",
-        "Sciopero",
-        "Sirena di Notte",
-        "Vecchio Padrone",
-        "Progresso",
-        "Cinghia Rotta"
+        "di Henley e Figli",
+        "del Sindacato",
+        "della Ruota di Ferro",
+        "dell'Ultimo Turno",
+        "delle Acciaierie Riunite",
+        "dello Sciopero",
+        "della Sirena di Notte",
+        "del Vecchio Padrone",
+        "del Progresso",
+        "della Cinghia Rotta"
       ]
     },
     "castle": {
       "pattern": [
         "{noun} {adj}",
-        "{noun} di {of}",
-        "Il {noun} di {of}",
-        "Il {noun} {adj} di {of}"
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Mastio",
@@ -1713,7 +2097,19 @@
         "Baluardo",
         "Bastione",
         "Cassero",
-        "Rocca Alta"
+        "Fortilizio"
+      ],
+      "theNoun": [
+        "Il Mastio",
+        "Il Castello",
+        "Il Maniero",
+        "Il Forte",
+        "Il Torrione",
+        "Il Palazzo",
+        "Il Baluardo",
+        "Il Bastione",
+        "Il Cassero",
+        "Il Fortilizio"
       ],
       "adj": [
         "Cupo",
@@ -1728,24 +2124,24 @@
         "Solitario"
       ],
       "of": [
-        "Re Aldric",
-        "Usurpatore",
-        "Regina Rossa",
-        "Ultimo Assedio",
-        "Stendardo d'Argento",
-        "Lord Mortane",
-        "Re Fanciullo",
-        "Corona Spezzata",
-        "Corte d'Inverno",
-        "Sette Cavalieri"
+        "di Re Aldric",
+        "dell'Usurpatore",
+        "della Regina Rossa",
+        "dell'Ultimo Assedio",
+        "dello Stendardo d'Argento",
+        "di Lord Mortane",
+        "del Re Fanciullo",
+        "della Corona Spezzata",
+        "della Corte d'Inverno",
+        "dei Sette Cavalieri"
       ]
     },
     "church": {
       "pattern": [
-        "La {noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "La {noun} {adj} di {of}"
+        "{theNoun} {adj}",
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Chiesa",
@@ -1759,9 +2155,21 @@
         "Parrocchia",
         "Chiesetta"
       ],
+      "theNoun": [
+        "La Chiesa",
+        "La Cappella",
+        "L'Abbazia",
+        "La Cattedrale",
+        "La Pieve",
+        "La Basilica",
+        "La Collegiata",
+        "La Prioria",
+        "La Parrocchia",
+        "La Chiesetta"
+      ],
       "adj": [
         "Silenziosa",
-        "Santa",
+        "Spoglia",
         "Sconsacrata",
         "Vuota",
         "a Lume di Candela",
@@ -1772,24 +2180,24 @@
         "Piccola"
       ],
       "of": [
-        "San Colombano",
-        "Vergine Piangente",
-        "Santo Nome",
-        "Martiri",
-        "Nostra Signora",
-        "Ultima Messa",
-        "Campanaro",
-        "Sant'Ivo",
-        "Pellegrini",
-        "Buon Pastore"
+        "di San Colombano",
+        "della Vergine Piangente",
+        "del Santo Nome",
+        "dei Martiri",
+        "di Nostra Signora",
+        "dell'Ultima Messa",
+        "del Campanaro",
+        "di Sant'Ivo",
+        "dei Pellegrini",
+        "del Buon Pastore"
       ]
     },
     "mines": {
       "pattern": [
-        "La {noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "La {noun} {adj} di {of}"
+        "{theNoun} {adj}",
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Miniera",
@@ -1800,8 +2208,20 @@
         "Escavazione",
         "Discenderia",
         "Fossa",
-        "Cava Profonda",
+        "Trincea",
         "Coltivazione"
+      ],
+      "theNoun": [
+        "La Miniera",
+        "La Cava",
+        "La Galleria",
+        "La Solfatara",
+        "La Vena",
+        "L'Escavazione",
+        "La Discenderia",
+        "La Fossa",
+        "La Trincea",
+        "La Coltivazione"
       ],
       "adj": [
         "Profonda",
@@ -1816,24 +2236,24 @@
         "Fredda"
       ],
       "of": [
-        "Colle di Ferro",
-        "Vecchio Grub",
-        "Vena d'Argento",
-        "Squadra Perduta",
-        "Gola del Rame",
-        "Compagnia",
-        "Canarino",
-        "Lungo Buio",
-        "Re Gnomi",
-        "Roccia Nera"
+        "del Colle di Ferro",
+        "del Vecchio Grub",
+        "della Vena d'Argento",
+        "della Squadra Perduta",
+        "della Gola del Rame",
+        "della Compagnia",
+        "del Canarino",
+        "del Lungo Buio",
+        "dei Re Gnomi",
+        "della Roccia Nera"
       ]
     },
     "lair": {
       "pattern": [
-        "La {noun} {adj}",
-        "{noun} di {of}",
-        "La {noun} di {of}",
-        "La {noun} {adj} di {of}"
+        "{theNoun} {adj}",
+        "{noun} {of}",
+        "{theNoun} {of}",
+        "{theNoun} {adj} {of}"
       ],
       "noun": [
         "Tana",
@@ -1844,8 +2264,20 @@
         "Buca",
         "Fossa",
         "Rimessa",
-        "Tana Profonda",
+        "Voragine",
         "Gabbia"
+      ],
+      "theNoun": [
+        "La Tana",
+        "La Spelonca",
+        "La Cova",
+        "La Caverna",
+        "La Grotta",
+        "La Buca",
+        "La Fossa",
+        "La Rimessa",
+        "La Voragine",
+        "La Gabbia"
       ],
       "adj": [
         "Fetida",
@@ -1860,16 +2292,16 @@
         "Profonda"
       ],
       "of": [
-        "Wyrm",
-        "Molti Denti",
-        "Bestia",
-        "Vecchio Scald",
-        "Cacciatore Pallido",
-        "Madre della Covata",
-        "Ghiottone",
-        "Artiglio Silente",
-        "Fauce Rossa",
-        "Dormiente"
+        "del Wyrm",
+        "dei Molti Denti",
+        "della Bestia",
+        "del Vecchio Scald",
+        "del Cacciatore Pallido",
+        "della Madre della Covata",
+        "del Ghiottone",
+        "dell'Artiglio Silente",
+        "della Fauce Rossa",
+        "del Dormiente"
       ]
     }
   }

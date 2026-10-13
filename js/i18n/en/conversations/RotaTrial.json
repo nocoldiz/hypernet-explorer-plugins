@@ -49,8 +49,12 @@
     ]
   },
   "noCase": {
-    "la": ["Nulla accusatio in tabula scripta est. Tribunal non sedet. Discede."],
-    "tr": ["There is no charge written on the sheet. The court does not sit. You may go."]
+    "la": [
+      "Nulla accusatio in tabula scripta est. Tribunal non sedet. Discede."
+    ],
+    "tr": [
+      "There is no charge written on the sheet. The court does not sit. You may go."
+    ]
   },
   "opening": {
     "la": [
@@ -85,34 +89,54 @@
     ]
   },
   "askPlea": {
-    "la": ["Quid respondes? Confiteris, an negas?"],
-    "tr": ["What do you answer? Do you confess, or do you deny?"]
+    "la": [
+      "Quid respondes? Confiteris, an negas?"
+    ],
+    "tr": [
+      "What do you answer? Do you confess, or do you deny?"
+    ]
   },
   "noMercy": {
     "la": [
       "Misericordia non est in hoc foro. Responde ad accusationem.",
-      "Misericordiam a Deo pete, non a Rota. Confiteris, an negas?"
+      "Misericordiam a solo Deo pete. Confiteris, an negas?"
     ],
     "tr": [
       "There is no mercy in this court. Answer the charge.",
-      "Ask God for mercy, not the Rota. Do you confess, or do you deny?"
+      "Ask God alone for mercy. Do you confess, or do you deny?"
     ]
   },
   "confession": {
-    "la": ["Confessio accepta est. Poena uno gradu minuitur, nec amplius."],
-    "tr": ["The confession is accepted. The sentence is lowered by one step on the tariff, and no further."]
+    "la": [
+      "Confessio accepta est. Poena uno gradu minuitur, nec amplius."
+    ],
+    "tr": [
+      "The confession is accepted. The sentence is lowered by one step on the tariff, and no further."
+    ]
   },
   "markNotArguable": {
-    "la": ["Quod es, non quod fecisti, in tabula scriptum est. De hoc non disputatur."],
-    "tr": ["What is written on the sheet is what you are, not what you did. That is not open to argument."]
+    "la": [
+      "Quod es in tabula scriptum est. De hoc non disputatur."
+    ],
+    "tr": [
+      "What is written on the sheet is what you are. That is not open to argument."
+    ]
   },
   "statesOdds": {
-    "la": ["Interpres tibi dicet quanta sit spes defensionis tuae. Nihil celatur."],
-    "tr": ["The court states the odds plainly, so nobody can call it unfair: your defence carries {chance} in a hundred. If it fails, the denial is perjury, and the sentence rises one step."]
+    "la": [
+      "Interpres tibi dicet quanta sit spes defensionis tuae. Nihil celatur."
+    ],
+    "tr": [
+      "The court states the odds plainly, so nobody can call it unfair: your defence carries {chance} in a hundred. If it fails, the denial is perjury, and the sentence rises one step."
+    ]
   },
   "hearDefence": {
-    "la": ["Loquere. Rota audit."],
-    "tr": ["Speak. The Rota is listening."]
+    "la": [
+      "Loquere. Rota audit."
+    ],
+    "tr": [
+      "Speak. The Rota is listening."
+    ]
   },
   "acquittal": {
     "la": [
@@ -145,12 +169,20 @@
     ]
   },
   "sentence": {
-    "la": ["Poenam tibi irrogo secundum tariffam Imperii."],
-    "tr": ["I pass sentence according to the Empire's tariff: {sentence}."]
+    "la": [
+      "Poenam tibi irrogo secundum tariffam Imperii."
+    ],
+    "tr": [
+      "I pass sentence according to the Empire's tariff: {sentence}."
+    ]
   },
   "confiscation": {
-    "la": ["Bona tua publicantur, usque ad summam poenae."],
-    "tr": ["Your goods are confiscated, up to the full sum of the penalty: {amount}."]
+    "la": [
+      "Bona tua publicantur, usque ad summam poenae."
+    ],
+    "tr": [
+      "Your goods are confiscated, up to the full sum of the penalty: {amount}."
+    ]
   },
   "release": [
     "The cell door opens. A cleric reads the release aloud in Latin, then once more for you. The Rota does not see you out.",

@@ -2,7 +2,7 @@
   "someone": "SOMEONE",
   "weapon": {
     "title": "WEAPON PROFICIENCY",
-    "trains": "TRAINS BY WINNIN' BATTLES WIT SUCH A WEAPON EQUIPPED!",
+    "trains": "TRAIN BY WINNIN' BATTLES WIT DIS WEAPON TYPE EQUIPPED!",
     "cut": "STATS OF {weapon} WEAPONS IZ CUT TA {pct}% UNTIL INTERMEDIATE!",
     "raised": "STATS OF {weapon} WEAPONS IZ RAISED TA {pct}%!",
     "full": "STATS OF {weapon} WEAPONS APPLY IN FULL!"

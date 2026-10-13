@@ -2,16 +2,16 @@
   "player1": "Player 1",
   "player2": "Player 2",
   "player2Cpu": "CPU",
-  "noThree": "THREE.JS IS NOT LOADED - POOL UNAVAILABLE",
+  "noThree": "THREE.JS NOT LOADED - POOL UNAVAILABLE",
   "aimPrompt": "{player}: LINE UP THE SHOT",
   "powerPrompt": "{player}: SET THE POWER",
-  "englishPrompt": "{player}: SET THE ENGLISH",
+  "englishPrompt": "{player}: SET THE SPIN",
   "liningUp": "{player} IS LINING UP...",
   "potted": "DOWN: {count}",
   "nothingDown": "NOTHING DOWN",
-  "scratch": "SCRATCH - THE CUE BALL GOES BACK ON THE SPOT",
-  "eightGood": "THE EIGHT DROPS - THE FRAME IS OVER",
-  "eightEarly": "THE EIGHT WENT DOWN EARLY",
+  "scratch": "SCRATCH - CUE BALL RESPOTTED",
+  "eightGood": "EIGHT BALL DOWN - FRAME OVER",
+  "eightEarly": "EIGHT BALL DOWN TOO EARLY",
   "victory": "VICTORY!",
   "defeat": "DEFEAT",
   "draw": "DRAW",
@@ -20,7 +20,7 @@
   "hud": {
     "title": "POOL",
     "power": "POWER",
-    "english": "ENGLISH",
+    "english": "SPIN",
     "onTable": "ON TABLE {count}"
   }
 }

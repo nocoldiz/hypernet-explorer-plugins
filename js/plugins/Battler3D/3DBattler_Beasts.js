@@ -65,6 +65,8 @@
 
     const Base = window.Battler3D.Base;
     const debugLog = window.Battler3D.debugLog || function () {};
+    // Painted coat sheets of the starter critters, one per pattern, shared.
+    const LV_SHEETS = new Map();
 
     // variant + which models face the camera (front) vs the angled 3/4 view,
     // plus per-id HSL colour ranges and a themed texture pool.
@@ -227,6 +229,47 @@
         bst_maleficentape:      { variant: 'bst_maleficentape',      front: true,  scale: 2.9, texturePool: 'fur', bodyColor: 0x2a2622, accent: 0xb89878, hue: [0.07, 0.05], sat: [0.16, 0.10], lit: [0.18, 0.08] },
         bst_organgrindermonkey: { variant: 'bst_organgrindermonkey', front: true,  scale: 2.2, texturePool: 'fur', bodyColor: 0x6a4a30, accent: 0xd8b23a, hue: [0.08, 0.05], sat: [0.40, 0.12], lit: [0.34, 0.10] },
         bst_treemonkey:         { variant: 'bst_treemonkey',         front: true,  scale: 2.2, texturePool: 'fur', bodyColor: 0x7a5638, accent: 0xd8c090, hue: [0.08, 0.05], sat: [0.38, 0.12], lit: [0.36, 0.10] },
+        // ── Level 1-5 starter critters: each its own low-poly body ─────────
+        lv_pantrymouse:        { variant: 'lv_pantrymouse',         front: false, scale: 1.9, texturePool: 'fur', bodyColor: 0x8a7a66, accent: 0xf4efe4, hue: [0.07, 0.04], sat: [0.1, 0.10], lit: [0.43, 0.08] },
+        lv_barnkitten:         { variant: 'lv_barnkitten',          front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xc8843a, accent: 0x8ad048, hue: [0.07, 0.04], sat: [0.51, 0.10], lit: [0.47, 0.08] },
+        lv_acornsquirrel:      { variant: 'lv_acornsquirrel',       front: false, scale: 1.9, texturePool: 'fur', bodyColor: 0xa0582a, accent: 0x6a4a28, hue: [0.04, 0.04], sat: [0.53, 0.10], lit: [0.36, 0.08] },
+        lv_molehillpup:        { variant: 'lv_molehillpup',         front: false, scale: 1.8, texturePool: 'fur', bodyColor: 0x3a3438, accent: 0xe890a0, hue: [0.87, 0.04], sat: [0.02, 0.06], lit: [0.18, 0.08] },
+        lv_gutterrat:          { variant: 'lv_gutterrat',           front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0x6e6450, accent: 0xd8c060, hue: [0.09, 0.04], sat: [0.11, 0.10], lit: [0.33, 0.08] },
+        lv_grumpyhedgehog:     { variant: 'lv_grumpyhedgehog',      front: false, scale: 1.9, texturePool: 'fur', bodyColor: 0x9a7a5a, accent: 0x3a2a1e, hue: [0.06, 0.04], sat: [0.21, 0.10], lit: [0.44, 0.08] },
+        lv_chipmunkhoarder:    { variant: 'lv_chipmunkhoarder',     front: false, scale: 1.8, texturePool: 'fur', bodyColor: 0xb0703a, accent: 0x2a1c14, hue: [0.06, 0.04], sat: [0.45, 0.10], lit: [0.42, 0.08] },
+        lv_sockthiefferret:    { variant: 'lv_sockthiefferret',     front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xc8b088, accent: 0xc83a3a, hue: [0.08, 0.04], sat: [0.32, 0.10], lit: [0.62, 0.08] },
+        lv_binraccoon:         { variant: 'lv_binraccoon',          front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0x7a7a80, accent: 0xe8c838, hue: [0.65, 0.04], sat: [0.02, 0.06], lit: [0.45, 0.08] },
+        lv_dunejerboa:         { variant: 'lv_dunejerboa',          front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xd8b880, accent: 0x1a1410, hue: [0.09, 0.04], sat: [0.48, 0.10], lit: [0.63, 0.08] },
+        lv_fennecfoxkit:       { variant: 'lv_fennecfoxkit',        front: false, scale: 1.9, texturePool: 'fur', bodyColor: 0xe0c090, accent: 0xf4ece0, hue: [0.08, 0.04], sat: [0.51, 0.10], lit: [0.68, 0.08] },
+        lv_frostfoxkit:        { variant: 'lv_frostfoxkit',         front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xe8eef4, accent: 0x8adfff, hue: [0.56, 0.04], sat: [0.3, 0.10], lit: [0.8, 0.06] },
+        lv_mudskipper:         { variant: 'lv_mudskipper',          front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0x7a7448, accent: 0x3a6ab8, hue: [0.13, 0.04], sat: [0.21, 0.10], lit: [0.34, 0.08] },
+        lv_scrapyardjackal:    { variant: 'lv_scrapyardjackal',     front: false, scale: 2.1, texturePool: 'fur', bodyColor: 0xb08850, accent: 0xffd040, hue: [0.08, 0.04], sat: [0.33, 0.10], lit: [0.46, 0.08] },
+        lv_moorwolfpup:        { variant: 'lv_moorwolfpup',         front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0x7a6e60, accent: 0xd89a30, hue: [0.07, 0.04], sat: [0.07, 0.10], lit: [0.39, 0.08] },
+        lv_dromedarycalf:      { variant: 'lv_dromedarycalf',       front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xd0aa70, accent: 0x2a1c14, hue: [0.08, 0.04], sat: [0.46, 0.10], lit: [0.59, 0.08] },
+        lv_marshotter:         { variant: 'lv_marshotter',          front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0x6a4a30, accent: 0x8a8c90, hue: [0.05, 0.04], sat: [0.33, 0.10], lit: [0.26, 0.08] },
+        lv_froststoat:         { variant: 'lv_froststoat',          front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xf0f2f4, accent: 0x141210, hue: [0.56, 0.04], sat: [0.1, 0.10], lit: [0.8, 0.06] },
+        lv_yeticub:            { variant: 'lv_yeticub',             front: false, scale: 2.1, texturePool: 'fur', bodyColor: 0xe8eef4, accent: 0x6a8ab8, hue: [0.56, 0.04], sat: [0.3, 0.10], lit: [0.8, 0.06] },
+        lv_snowsledpup:        { variant: 'lv_snowsledpup',         front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0x8a9098, accent: 0xb83a2a, hue: [0.58, 0.04], sat: [0.01, 0.10], lit: [0.53, 0.08] },
+        lv_shrinemouse:        { variant: 'lv_shrinemouse',         front: false, scale: 1.8, texturePool: 'fur', bodyColor: 0xf4f2ee, accent: 0xd02030, hue: [0.09, 0.04], sat: [0.16, 0.10], lit: [0.8, 0.06] },
+        lv_pilgrimgoatkid:     { variant: 'lv_pilgrimgoatkid',      front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xe0d4c0, accent: 0xc8a040, hue: [0.08, 0.04], sat: [0.29, 0.10], lit: [0.78, 0.08] },
+        lv_shrinefox:          { variant: 'lv_shrinefox',           front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xc85a2a, accent: 0xc81e1e, hue: [0.03, 0.04], sat: [0.6, 0.10], lit: [0.43, 0.08] },
+        lv_slumbersheep:       { variant: 'lv_slumbersheep',        front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xf0ece6, accent: 0x4a5aa8, hue: [0.08, 0.04], sat: [0.2, 0.10], lit: [0.8, 0.06] },
+        lv_dreamtapir:         { variant: 'lv_dreamtapir',          front: false, scale: 2.2, texturePool: 'fur', bodyColor: 0x2a2a3a, accent: 0xb088ff, hue: [0.65, 0.04], sat: [0.11, 0.10], lit: [0.16, 0.08] },
+        lv_subwayrat:          { variant: 'lv_subwayrat',           front: false, scale: 1.9, texturePool: 'fur', bodyColor: 0x5a5a5e, accent: 0xc8e040, hue: [0.65, 0.04], sat: [0.02, 0.06], lit: [0.32, 0.08] },
+        lv_cyberpup:           { variant: 'lv_cyberpup',            front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xc8b8a0, accent: 0xff2a2a, hue: [0.08, 0.04], sat: [0.22, 0.10], lit: [0.67, 0.08] },
+        lv_greaserat:          { variant: 'lv_greaserat',           front: false, scale: 1.9, texturePool: 'fur', bodyColor: 0x8a7040, accent: 0xe8c040, hue: [0.09, 0.04], sat: [0.32, 0.10], lit: [0.36, 0.08] },
+        lv_chainsawbeaver:     { variant: 'lv_chainsawbeaver',      front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0x7a5232, accent: 0xd86a1a, hue: [0.05, 0.04], sat: [0.37, 0.10], lit: [0.3, 0.08] },
+        lv_shopliftingraccoon: { variant: 'lv_shopliftingraccoon',  front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0x6a6a72, accent: 0xe8e8e0, hue: [0.65, 0.04], sat: [0.02, 0.06], lit: [0.39, 0.08] },
+        lv_trufflepiglet:      { variant: 'lv_trufflepiglet',       front: false, scale: 1.9, texturePool: 'fur', bodyColor: 0xe0a0a0, accent: 0x5a3e28, hue: [0, 0.04], sat: [0.46, 0.10], lit: [0.71, 0.08] },
+        lv_fungalshrew:        { variant: 'lv_fungalshrew',         front: false, scale: 1.8, texturePool: 'fur', bodyColor: 0x6a5a4a, accent: 0xc83a2a, hue: [0.06, 0.04], sat: [0.13, 0.10], lit: [0.31, 0.08] },
+        lv_alpinemarmot:       { variant: 'lv_alpinemarmot',        front: false, scale: 1.9, texturePool: 'fur', bodyColor: 0x8a7258, accent: 0xe08a2a, hue: [0.07, 0.04], sat: [0.17, 0.10], lit: [0.4, 0.08] },
+        lv_harbourwhelk:       { variant: 'lv_harbourwhelk',        front: false, scale: 2.2, texturePool: 'fur', bodyColor: 0xd8b890, accent: 0x8a9488, hue: [0.07, 0.04], sat: [0.43, 0.10], lit: [0.67, 0.08] },
+        lv_jungletamarin:      { variant: 'lv_jungletamarin',       front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0x3a3434, accent: 0xa0482a, hue: [0, 0.04], sat: [0.02, 0.06], lit: [0.18, 0.08] },
+        lv_unicornfoal:        { variant: 'lv_unicornfoal',         front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xf2eee6, accent: 0xffe680, hue: [0.09, 0.04], sat: [0.27, 0.10], lit: [0.8, 0.06] },
+        lv_bamboopandacub:     { variant: 'lv_bamboopandacub',      front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xf0f0ec, accent: 0x1c1c1e, hue: [0.15, 0.04], sat: [0.07, 0.10], lit: [0.8, 0.06] },
+        lv_taigasquirrel:      { variant: 'lv_taigasquirrel',       front: false, scale: 1.9, texturePool: 'fur', bodyColor: 0x8a8c90, accent: 0x6a4a2a, hue: [0.59, 0.04], sat: [0.02, 0.06], lit: [0.51, 0.08] },
+        lv_savannahmeerkat:    { variant: 'lv_savannahmeerkat',     front: false, scale: 2.0, texturePool: 'fur', bodyColor: 0xc8aa78, accent: 0x9a6a40, hue: [0.08, 0.04], sat: [0.37, 0.10], lit: [0.59, 0.08] },
+        lv_steppevole:         { variant: 'lv_steppevole',          front: false, scale: 1.8, texturePool: 'fur', bodyColor: 0x7a5e44, accent: 0x6aa040, hue: [0.06, 0.04], sat: [0.23, 0.10], lit: [0.33, 0.08] },
     };
 
     class BeastBattler3D extends Base {
@@ -591,6 +634,47 @@
                 case 'bst_maleficentape':      this._buildBstMaleficentape(fur); break;
                 case 'bst_organgrindermonkey': this._buildBstOrgangrindermonkey(fur); break;
                 case 'bst_treemonkey':         this._buildBstTreemonkey(fur); break;
+                // ── Level 1-5 starter critters ──────────────────────────────
+                case 'lv_pantrymouse':         this._buildLvPantrymouse(); break;
+                case 'lv_barnkitten':          this._buildLvBarnkitten(); break;
+                case 'lv_acornsquirrel':       this._buildLvAcornsquirrel(); break;
+                case 'lv_molehillpup':         this._buildLvMolehillpup(); break;
+                case 'lv_gutterrat':           this._buildLvGutterrat(); break;
+                case 'lv_grumpyhedgehog':      this._buildLvGrumpyhedgehog(); break;
+                case 'lv_chipmunkhoarder':     this._buildLvChipmunkhoarder(); break;
+                case 'lv_sockthiefferret':     this._buildLvSockthiefferret(); break;
+                case 'lv_binraccoon':          this._buildLvBinraccoon(); break;
+                case 'lv_dunejerboa':          this._buildLvDunejerboa(); break;
+                case 'lv_fennecfoxkit':        this._buildLvFennecfoxkit(); break;
+                case 'lv_frostfoxkit':         this._buildLvFrostfoxkit(); break;
+                case 'lv_mudskipper':          this._buildLvMudskipper(); break;
+                case 'lv_scrapyardjackal':     this._buildLvScrapyardjackal(); break;
+                case 'lv_moorwolfpup':         this._buildLvMoorwolfpup(); break;
+                case 'lv_dromedarycalf':       this._buildLvDromedarycalf(); break;
+                case 'lv_marshotter':          this._buildLvMarshotter(); break;
+                case 'lv_froststoat':          this._buildLvFroststoat(); break;
+                case 'lv_yeticub':             this._buildLvYeticub(); break;
+                case 'lv_snowsledpup':         this._buildLvSnowsledpup(); break;
+                case 'lv_shrinemouse':         this._buildLvShrinemouse(); break;
+                case 'lv_pilgrimgoatkid':      this._buildLvPilgrimgoatkid(); break;
+                case 'lv_shrinefox':           this._buildLvShrinefox(); break;
+                case 'lv_slumbersheep':        this._buildLvSlumbersheep(); break;
+                case 'lv_dreamtapir':          this._buildLvDreamtapir(); break;
+                case 'lv_subwayrat':           this._buildLvSubwayrat(); break;
+                case 'lv_cyberpup':            this._buildLvCyberpup(); break;
+                case 'lv_greaserat':           this._buildLvGreaserat(); break;
+                case 'lv_chainsawbeaver':      this._buildLvChainsawbeaver(); break;
+                case 'lv_shopliftingraccoon':  this._buildLvShopliftingraccoon(); break;
+                case 'lv_trufflepiglet':       this._buildLvTrufflepiglet(); break;
+                case 'lv_fungalshrew':         this._buildLvFungalshrew(); break;
+                case 'lv_alpinemarmot':        this._buildLvAlpinemarmot(); break;
+                case 'lv_harbourwhelk':        this._buildLvHarbourwhelk(); break;
+                case 'lv_jungletamarin':       this._buildLvJungletamarin(); break;
+                case 'lv_unicornfoal':         this._buildLvUnicornfoal(); break;
+                case 'lv_bamboopandacub':      this._buildLvBamboopandacub(); break;
+                case 'lv_taigasquirrel':       this._buildLvTaigasquirrel(); break;
+                case 'lv_savannahmeerkat':     this._buildLvSavannahmeerkat(); break;
+                case 'lv_steppevole':          this._buildLvSteppevole(); break;
                 default:         this._buildBear(fur); break;
             }
             this.model = this.bodyGroup;
@@ -1081,8 +1165,10 @@
             const snout = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), this._mat(p.accent, 1.0, 0.4)); snout.scale.z = 0.6; snout.position.set(0, -0.05, 0.32); this.head.add(snout);
             this._digClaws(0.92);
             // Dirt mound kicked up around the base.
+            // A ring of turned earth the feet stand in, clods heaped on it.
             const dirt = this._mat(0x4a3c2c, 1.0, 1.0);
-            for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; const c = new THREE.Mesh(new THREE.SphereGeometry(0.12, 7, 6), dirt); c.scale.y = 0.4; c.position.set(Math.cos(a) * 0.4, 0.06, Math.sin(a) * 0.4); this._deco(c); }
+            const mound = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.09, 5, 10), dirt); mound.rotation.x = Math.PI / 2; mound.scale.z = 0.7; mound.position.set(0, 0.28, 0.02); this._deco(mound);
+            for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; const c = new THREE.Mesh(new THREE.SphereGeometry(0.1, 7, 6), dirt); c.scale.y = 0.55; c.position.set(Math.cos(a) * 0.3, 0.31, 0.02 + Math.sin(a) * 0.3); this._deco(c); }
         }
         // Big flat fan claws replacing the front paws (mole diggers).
         _digClaws(yPos) {
@@ -1478,7 +1564,8 @@
             for (const ex of [-0.16, 0.16]) { const ear = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.16, 5), fur); ear.position.set(ex, 0.22, 0); this.head.add(ear); }
             this._eye(this.head, -0.13, 0.06, 0.18, 0.04, p.accent, !!o.eyeGlow);
             this._eye(this.head, 0.13, 0.06, 0.18, 0.04, p.accent, !!o.eyeGlow);
-            this.head.position.set(0, 0.92, 0.62); this.bodyGroup.add(this.head);
+            // Carried off the front of the shoulders, level with the hump.
+            this.head.position.set(0, o.hump !== false ? 1.06 : 0.96, 0.64); this.bodyGroup.add(this.head);
 
             this.frontLeft  = this._leg(fur, -0.26, 0.38, 0.78, 0.78, 'hoof');
             this.frontRight = this._leg(fur, 0.26, 0.38, 0.78, 0.78, 'hoof');
@@ -1543,8 +1630,7 @@
         _buildBstBlackpanther(fur)     { this._felineBase(fur, { sizeBody: 1.0, eyeGlow: true, legLen: 0.9 }); }
         _buildBstReflectivetiger(fur)  { this._felineBase(fur, { sizeBody: 1.0, eyeGlow: false, legLen: 0.88 });
             // Snow-glint stripes, banded down the flanks where a tiger's are.
-            const d = this._catDrop || 0;
-            const st = this._mat(this.profile.accent, 1.0, 0.4); for (let i = 0; i < 5; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.22, 0.05), st); s.position.set(0, 0.97 - d, 0.3 - i * 0.18); this._deco(s); } }
+            this._tigerStripes(this._mat(this.profile.accent, 1.0, 0.4), 5, 0.3, 0.18, 1.0); }
         _buildBstSabercat(fur)         { this._felineBase(fur, { sizeBody: 1.05, fangs: 0.28, ear: 'round', eyeGlow: true, legLen: 0.9 }); }
         _buildBstWildcat(fur)          { this._felineBase(fur, { sizeBody: 0.8, ear: 'tuft', eyeGlow: false, legLen: 0.78 }); }
         // Street tomcat: small, half-starved, one ear torn off in a fight and
@@ -1560,15 +1646,29 @@
             for (let i = 0; i < 3; i++) { const r = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.02, 0.03), rib); r.position.set(0, 0.86 - d, 0.28 - i * 0.12); this._deco(r); } }
         _buildBstGoldenlion(fur)       { this._felineBase(fur, { sizeBody: 1.1, mane: true, maneMat: this._mat(0x6a3a10, 1.0, 0.8), eyeGlow: false, legLen: 0.92 }); }
         _buildBstStripedtiger(fur)     { this._felineBase(fur, { sizeBody: 1.05, eyeGlow: false, legLen: 0.9 });
+            this._tigerStripes(this._mat(this.profile.accent, 1.0, 0.6), 6, 0.36, 0.16, 1.05); }
+        // Tiger stripes: open hoops that wrap the barrel over the back and
+        // down both flanks, leaving the belly bare. Each is a torus arc lying
+        // across the spine, so a stripe hugs the coat instead of a flat slab
+        // poking out through it sideways.
+        _tigerStripes(mat, count, z0, dz, b) {
             const d = this._catDrop || 0;
-            const st = this._mat(this.profile.accent, 1.0, 0.6); for (let i = 0; i < 6; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(0.63, 0.24, 0.06), st); s.position.set(0, 0.98 - d, 0.36 - i * 0.16); this._deco(s); } }
+            for (let i = 0; i < count; i++) {
+                const z = z0 - i * dz;
+                // The torso is an ellipsoid 0.6*b long; the hoop shrinks with it.
+                const k = Math.sqrt(Math.max(0.35, 1 - Math.pow(z / (0.62 * b), 2)));
+                const s = new THREE.Mesh(new THREE.TorusGeometry(0.285 * b * k, 0.03, 4, 10, Math.PI * 1.3), mat);
+                s.rotation.z = -Math.PI * 0.15; s.scale.set(1.0, 1.0, 1.4);
+                s.position.set(0, 0.95 - d, z); this._deco(s);
+            }
+        }
         _buildBstUmbrapanthera(fur)    { this._felineBase(fur, { sizeBody: 1.0, eyeGlow: true, legLen: 0.9 });
             // Wispy shadow trails off the raised tail tip.
             const d = this._catDrop || 0;
             const sh = this._mat(this.profile.accent, 0.4, 0.2, this.profile.accent); for (let i = 0; i < 3; i++) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.1 - i * 0.02, 8, 8), sh); s.position.set(0, 1.6 - d + i * 0.16, -0.72 - i * 0.04); this._deco(s); } }
         _buildBstMysticpanther(fur)    { this._felineBase(fur, { sizeBody: 1.0, eyeGlow: true, legLen: 0.9 });
             const d = this._catDrop || 0;
-            const glow = this._mat(this.profile.accent, 0.6, 0.3, this.profile.accent); for (let i = 0; i < 4; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.015, 6, 10), glow); r.position.set(-0.12 + i * 0.08, 1.13 - d, 0.2 - i * 0.12); r.rotation.x = Math.PI / 2; this._deco(r); } }
+            const glow = this._mat(this.profile.accent, 0.6, 0.3, this.profile.accent); for (let i = 0; i < 4; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.015, 6, 10), glow); r.position.set(0, 1.21 - d, 0.24 - i * 0.16); r.rotation.x = Math.PI / 2; this._deco(r); } }
         _buildBstSabertoothalpha(fur)  { this._felineBase(fur, { sizeBody: 1.15, fangs: 0.38, ear: 'tuft', eyeGlow: true, legLen: 0.95 }); }
         _buildBstDiresabertoothalpha(fur){ this._felineBase(fur, { sizeBody: 1.25, fangs: 0.44, ear: 'tuft', eyeGlow: true, legLen: 1.0, fangColor: 0xeaf4ff }); }
 
@@ -1624,7 +1724,8 @@
         _buildBstFrostfangbear(fur)    { this._ursineBase(fur, { sizeBody: 1.05, ear: 'round', eyeGlow: true, noseColor: 0x335566 });
             const ice = this._mat(this.profile.accent, 0.8, 0.15, this.profile.accent); for (const fx of [-0.06, 0.06]) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.16, 5), ice); f.position.set(fx, 1.36, 0.86); f.rotation.x = Math.PI; this._deco(f); } }
         _buildBstThundermawursine(fur) { this._ursineBase(fur, { sizeBody: 1.05, ear: 'round', eyeGlow: true, noseColor: 0x33334a });
-            const bolt = this._mat(this.profile.accent, 0.95, 0.4, this.profile.accent); for (let i = 0; i < 4; i++) { const b = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.24, 4), bolt); b.position.set(-0.12 + i * 0.08, 1.36, 0.2 - (i % 2) * 0.2); b.rotation.z = (i % 2 ? 0.3 : -0.3); this._deco(b); } }
+            // Two mirrored pairs of spark spikes standing off the shoulders.
+            const bolt = this._mat(this.profile.accent, 0.95, 0.4, this.profile.accent); for (let i = 0; i < 4; i++) { const sx = i % 2 ? 1 : -1; const b = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.24, 4), bolt); b.position.set(sx * 0.12, 1.56, 0.36 - (i >> 1) * 0.26); b.rotation.z = -sx * 0.3; this._deco(b); } }
         _buildBstTitaniccavebear(fur)  { this._ursineBase(fur, { sizeBody: 1.25, ear: 'round' });
             const claw = this._mat(0xe8dcc0, 1.0, 0.4); for (const x of [-0.32, 0.32]) for (let i = 0; i < 3; i++) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.18, 5), claw); c.position.set(x + (i - 1) * 0.05, 0.02, 0.52); c.rotation.x = Math.PI / 2 + 0.2; this._deco(c); } }
 
@@ -1708,28 +1809,48 @@
         _buildGiantsnail(fur) {
             const p = this.profile;
             const fleshMat = this._mat(p.accent, 1.0, 0.85);
+            // The slug foot is the body: it is what the snail stands on, and
+            // the head rears up off its front end, so the head reads above it.
             this.body = new THREE.Group();
-            // Slug foot.
             const foot = new THREE.Mesh(new THREE.SphereGeometry(0.4, 14, 10), fleshMat); foot.scale.set(0.9, 0.4, 1.7); this.body.add(foot);
-            // Coiled spiral shell built from shrinking spheres.
-            let sr = 0.42, sa = 0, sx = 0, sy = 0.35;
-            for (let i = 0; i < 9; i++) { const seg = new THREE.Mesh(new THREE.SphereGeometry(sr, 12, 12), fur); seg.position.set(sx, sy + Math.sin(sa) * 0.12, -0.1 + Math.cos(sa) * 0.25); this.body.add(seg); sa += 0.8; sr *= 0.84; sy += 0.05; }
-            this.body.position.set(0, 0.55, 0); this.bodyGroup.add(this.body);
+            const skirt = new THREE.Mesh(new THREE.SphereGeometry(0.42, 12, 6, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), fleshMat); skirt.scale.set(1.0, 0.3, 1.75); this.body.add(skirt);
+            this.body.position.set(0, 0.2, 0); this.bodyGroup.add(this.body);
+            // Coiled spiral shell built from shrinking spheres, on the foot.
+            this.shell = new THREE.Group();
+            let sr = 0.42, sa = 0, sy = 0.0;
+            for (let i = 0; i < 9; i++) { const seg = new THREE.Mesh(new THREE.SphereGeometry(sr, 12, 12), fur); seg.position.set(0, sy + Math.sin(sa) * 0.12, -0.1 + Math.cos(sa) * 0.25); this.shell.add(seg); sa += 0.8; sr *= 0.84; sy += 0.05; }
+            this.shell.position.set(0, 0.6, -0.05); this.bodyGroup.add(this.shell);
 
             this.head = new THREE.Group();
             const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.5, 10), fleshMat); neck.rotation.x = 1.0; neck.position.set(0, 0.0, 0.12); this.head.add(neck);
             const snout = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 10), fleshMat); snout.scale.set(1, 0.8, 1.3); snout.position.set(0, 0.18, 0.34); this.head.add(snout);
-            // Two long retractable eyestalks.
-            for (const sx2 of [-0.09, 0.09]) { const stk = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.4, 6), fleshMat); stk.position.set(sx2, 0.42, 0.36); stk.rotation.x = -0.3; this.head.add(stk); this._eye(this.head, sx2, 0.62, 0.42, 0.07, p.accent, true); }
-            this.head.position.set(0, 0.55, 0.55); this.bodyGroup.add(this.head);
-
-            // No legs: small slime-foot nubs along the underside.
-            this.frontLeft  = this._nub(fleshMat, -0.18, 0.2, 0.4, 0.1);
-            this.frontRight = this._nub(fleshMat, 0.18, 0.2, 0.4, 0.1);
-            this.rearLeft   = this._nub(fleshMat, -0.18, 0.2, -0.4, 0.1);
-            this.rearRight  = this._nub(fleshMat, 0.18, 0.2, -0.4, 0.1);
-            this.tail = this._nub(fleshMat, 0, 0.2, -0.75, 0.14);
-            this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+            // Two long retractable eyestalks, raked forward, an eye on each tip.
+            this._stalks = [];
+            for (const sx2 of [-0.09, 0.09]) {
+                const st = new THREE.Group();
+                const stk = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.4, 6), fleshMat); stk.position.y = 0.2; st.add(stk);
+                this._eye(st, 0, 0.42, 0, 0.07, p.accent, true);
+                st.position.set(sx2, 0.24, 0.34); st.rotation.set(0.3, 0, sx2 > 0 ? -0.2 : 0.2); this.head.add(st); this._stalks.push(st);
+            }
+            this.head.position.set(0, 0.38, 0.6); this.bodyGroup.add(this.head);
+            this._wireSnail({ body: this.body, shell: this.shell, head: this.head, stalks: this._stalks });
+        }
+        // Snail part map (Snail archetype keys): the foot carries everything.
+        _wireSnail(p) {
+            const m = {}, set = (ks, mesh) => { if (mesh) ks.forEach(k => m[k] = mesh); };
+            set(['BODY', 'FOOT', 'MASS'], p.body);
+            set(['SHELL'], p.shell);
+            set(['HEAD', 'MOUTH', 'FACE'], p.head);
+            set(['TENTACLE_1', 'EYE', 'EYES'], p.stalks[0]);
+            set(['TENTACLE_2'], p.stalks[1]);
+            this._partMeshMap = m;
+            this._cascadeRules = [
+                { gone: ['BODY', 'FOOT', 'MASS'], hide: [p.body, p.shell, p.head].filter(Boolean) },
+                { gone: ['SHELL'], hide: [p.shell].filter(Boolean) },
+                { gone: ['HEAD', 'MOUTH', 'FACE'], hide: [p.head].filter(Boolean) },
+                { gone: ['TENTACLE_1'], hide: [p.stalks[0]].filter(Boolean) },
+                { gone: ['TENTACLE_2'], hide: [p.stalks[1]].filter(Boolean) },
+            ];
         }
 
         // ── Infernal Cerberus: three-headed hellhound wreathed in flame ──────
@@ -1770,7 +1891,8 @@
             this.body = new THREE.Group();
             const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.42, 14, 12), fur); bulb.scale.set(1.0, 0.95, 1.3); this.body.add(bulb);
             // Leafy fronds across the back.
-            for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI - Math.PI / 2; const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.42, 4), this._mat(0x3f7a33, 1.0, 0.7)); leaf.position.set(Math.sin(a) * 0.32, 0.3, -0.1 - Math.cos(a) * 0.1); leaf.rotation.set(-0.8, 0, Math.sin(a)); this.body.add(leaf); }
+            // Swept back along the spine, splayed a little to each side.
+            for (let i = 0; i < 6; i++) { const a = (i / 5) * 2 - 1; const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.42, 4), this._mat(0x3f7a33, 1.0, 0.7)); leaf.position.set(a * 0.24, 0.34 - Math.abs(a) * 0.08, -0.1 - Math.abs(a) * 0.06); leaf.rotation.set(-1.0, 0, -a * 0.45); this.body.add(leaf); }
             this.body.position.set(0, 0.95, 0); this.bodyGroup.add(this.body);
 
             // Venus-flytrap maw head.
@@ -1789,7 +1911,7 @@
             this.rearRight  = this._leg(this._mat(0x2f5a2a, 1.0, 0.7), 0.24, -0.42, 0.9, 0.95, 'paw');
             // Thorned tail vine.
             this.tail = this._tail(this._mat(0x2f5a2a, 1.0, 0.7), 0.96, -0.58, 6, 0.88, 0.8);
-            for (let i = 0; i < 4; i++) { const th = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.12, 4), this._mat(0xffe0e8, 1.0, 0.4)); th.position.set((i % 2 ? 0.08 : -0.08), -i * 0.13, 0); th.rotation.z = i % 2 ? -1.4 : 1.4; this.tail.add(th); }
+            for (let i = 0; i < 4; i++) { const th = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.12, 4), this._mat(0xffe0e8, 1.0, 0.4)); th.position.set((i % 2 ? 0.08 : -0.08), -i * 0.13, 0); th.rotation.z = i % 2 ? -0.7 : 0.7; this.tail.add(th); }
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
@@ -1818,6 +1940,9 @@
             this.rearLeft   = this._nub(crayonMat(3), -0.42, 0.5, 0.0, 0.12);
             this.rearRight  = this._nub(crayonMat(4), 0.42, 0.55, 0.0, 0.12);
             this.tail = this._nub(crayonMat(1), 0, 0.6, -0.5, 0.13);
+            // A scribble is drawn, not jointed: the head and the four limbs
+            // hang off the body in the air by design.
+            this._floaters = [this.head, this.frontLeft, this.frontRight, this.rearLeft, this.rearRight, this.tail];
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
@@ -2048,7 +2173,7 @@
             for (let i = 0; i < 6; i++) { const t = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.16, 4), this._mat(0xd8d0b0, 1.0, 0.4)); t.position.set(-0.22 + i * 0.088, -0.1, 0.46); t.rotation.x = Math.PI; this.head.add(t); }
             this._eye(this.head, -0.18, 0.14, 0.28, 0.06, p.accent, true);
             this._eye(this.head, 0.18, 0.14, 0.28, 0.06, p.accent, true);
-            this.head.position.set(0, 1.32, 0.92); this.bodyGroup.add(this.head);
+            this.head.position.set(0, 1.46, 0.94); this.bodyGroup.add(this.head);
 
             this.frontLeft  = this._leg(fur, -0.42, 0.5, 1.18, 1.2, 'paw');
             this.frontRight = this._leg(fur, 0.42, 0.5, 1.18, 1.2, 'paw');
@@ -2079,11 +2204,18 @@
             this._eye(this.head, 0.07, 0.0, 0.14, 0.05, 0x111111, false);
             this.head.position.set(0, 1.2, 0.05); this.bodyGroup.add(this.head);
 
-            // Stubby fleshy tendril feet (no real legs).
-            this.frontLeft  = this._nub(flesh, -0.3, 0.55, 0.3, 0.13);
-            this.frontRight = this._nub(flesh, 0.3, 0.55, 0.3, 0.13);
-            this.rearLeft   = this._nub(flesh, -0.3, 0.55, -0.3, 0.13);
-            this.rearRight  = this._nub(flesh, 0.3, 0.55, -0.3, 0.13);
+            // Fleshy tendril feet hanging from the underside of the ring down
+            // to the ground, pivoted where they leave the flesh.
+            const tendril = (x, z) => {
+                const g = new THREE.Group();
+                const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.06, 0.95, 7), flesh); stalk.position.y = -0.47; g.add(stalk);
+                const pad = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 6), flesh); pad.scale.y = 0.6; pad.position.y = -0.95; g.add(pad);
+                g.position.set(x, 1.08, z); this.bodyGroup.add(g); return g;
+            };
+            this.frontLeft  = tendril(-0.3, 0.3);
+            this.frontRight = tendril(0.3, 0.3);
+            this.rearLeft   = tendril(-0.3, -0.3);
+            this.rearRight  = tendril(0.3, -0.3);
             this.tail = this._tail(flesh, 1.2, -0.6, 4, 0.8, -0.5);
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
@@ -2141,10 +2273,11 @@
             this.head.position.set(0, 1.32, 0.36); this.bodyGroup.add(this.head);
 
             // Four carved table legs.
-            this.frontLeft  = this._leg(wood, -0.6, 0.4, 0.85, 0.85, 'pad');
-            this.frontRight = this._leg(wood, 0.6, 0.4, 0.85, 0.85, 'pad');
-            this.rearLeft   = this._leg(wood, -0.6, -0.4, 0.85, 0.85, 'pad');
-            this.rearRight  = this._leg(wood, 0.6, -0.4, 0.85, 0.85, 'pad');
+            // Hips tucked up under the slab, so the legs carry the table.
+            this.frontLeft  = this._leg(wood, -0.6, 0.4, 0.99, 0.99, 'pad');
+            this.frontRight = this._leg(wood, 0.6, 0.4, 0.99, 0.99, 'pad');
+            this.rearLeft   = this._leg(wood, -0.6, -0.4, 0.99, 0.99, 'pad');
+            this.rearRight  = this._leg(wood, 0.6, -0.4, 0.99, 0.99, 'pad');
             this.tail = this._nub(flesh, 0, 1.0, -0.55, 0.14);
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
@@ -2260,7 +2393,8 @@
             for (const ex of [-0.16, 0.16]) { const ear = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.16, 5), fur); ear.position.set(ex, 0.22, 0); this.head.add(ear); }
             // Empty glowing eye sockets sunk into the skull.
             for (const sx of [-0.13, 0.13]) { const socket = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), this._mat(0x000000, 1.0, 0.4)); socket.position.set(sx, 0.06, 0.16); this.head.add(socket); this._eye(this.head, sx, 0.06, 0.19, 0.035, p.accent, true); }
-            this.head.position.set(0, 0.92, 0.62); this.bodyGroup.add(this.head);
+            // Carried off the front of the hump, not slung under the chest.
+            this.head.position.set(0, 1.14, 0.68); this.bodyGroup.add(this.head);
 
             this.frontLeft  = this._leg(fur, -0.26, 0.38, 0.78, 0.78, 'hoof');
             this.frontRight = this._leg(fur, 0.26, 0.38, 0.78, 0.78, 'hoof');
@@ -2458,6 +2592,1759 @@
             this.rearRight  = this._leg(fur, 0.19, -0.44, 0.86, 0.92, 'pad');
             this.tail = this._tail(fur, 0.94, -0.62, 5, 0.8, -0.5);
             this._wireQuad({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        //=====================================================================
+        // LEVEL 1-5 STARTER CRITTERS (lv_*)
+        //=====================================================================
+        // The small beasts of the starter roster, each of which used to wear
+        // another enemy's body. Built PS1 style: low segment counts the core
+        // shades flat, one painted coat sheet per creature (grain, a pattern in
+        // a darker ink, a pale belly) tinted by the per-id colour, muddy trim
+        // colours, and one odd detail each. Every head group is pivoted at its
+        // neck, every limb at its hip or shoulder and every tail at its root,
+        // so the shared gait, nods and tail sway turn parts about their joints
+        // (none of those groups carries a rest rotation the gait would wipe).
+        // Feet stand on y = 0 and every creature faces +Z.
+
+        // A painted coat sheet: 64px, painted in greys so the material colour
+        // (the per-id tint) colours it. Shared species wide by pattern and
+        // nearest filtered, which is what gives it the PS1 crunch.
+        _lvSheet(pattern) {
+            const cached = LV_SHEETS.get(pattern);
+            if (cached) return cached;
+            const W = 64, cv = document.createElement('canvas');
+            cv.width = cv.height = W;
+            const g = cv.getContext('2d');
+            let s = 9;
+            for (let i = 0; i < pattern.length; i++) s = (s * 31 + pattern.charCodeAt(i)) % 2147483647;
+            const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+            const grey = v => 'rgb(' + v + ',' + v + ',' + v + ')';
+            const ink = grey(64), mid = grey(132), pale = grey(252);
+            const blot = (x, y, r, col) => { g.fillStyle = col; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); };
+            g.fillStyle = grey(224); g.fillRect(0, 0, W, W);
+            // Fur grain: short vertical dashes a shade either side of the base.
+            for (let i = 0; i < 260; i++) { g.fillStyle = grey(192 + (rnd() * 60 | 0)); g.fillRect(rnd() * W | 0, rnd() * W | 0, 1, 2 + (rnd() * 3 | 0)); }
+            switch (pattern) {
+                case 'stripe':   // wavy bands from the spine down the flanks
+                    for (let i = 0; i < 8; i++) { let x = i * 8 + rnd() * 3; g.fillStyle = ink; for (let y = 2; y < 48; y += 2) { x += (rnd() - 0.5) * 1.6; g.fillRect(x | 0, y, 2 + (rnd() * 2 | 0), 2); } }
+                    break;
+                case 'bands':    // rings round a tail, a sock, a whorl
+                    g.fillStyle = ink; for (let y = 1; y < W; y += 12) g.fillRect(0, y, W, 5);
+                    break;
+                case 'spots':
+                    for (let i = 0; i < 18; i++) blot(rnd() * W, 4 + rnd() * 44, 2 + rnd() * 3, rnd() < 0.6 ? ink : mid);
+                    break;
+                case 'saddle':   // a darker back fading into the flanks
+                    g.fillStyle = mid; g.fillRect(0, 0, W, 20);
+                    for (let x = 0; x < W; x += 2) g.fillRect(x, 20, 2, rnd() * 7 | 0);
+                    break;
+                case 'mottle':
+                    for (let i = 0; i < 46; i++) { g.fillStyle = rnd() < 0.5 ? mid : grey(176); g.fillRect(rnd() * W | 0, rnd() * W | 0, 3 + (rnd() * 5 | 0), 2 + (rnd() * 4 | 0)); }
+                    break;
+                case 'mange':    // bald pale patches through a dark coat
+                    g.fillStyle = mid; g.fillRect(0, 0, W, 30);
+                    for (let i = 0; i < 9; i++) blot(rnd() * W, rnd() * 50, 3 + rnd() * 4, pale);
+                    break;
+                case 'soot':
+                    for (let i = 0; i < 34; i++) blot(rnd() * W, rnd() * W, 2 + rnd() * 5, grey(70 + (rnd() * 70 | 0)));
+                    break;
+                case 'speck':    // a night sky: pale stars on a dark field
+                    g.fillStyle = grey(96); g.fillRect(0, 0, W, W);
+                    g.fillStyle = pale; for (let i = 0; i < 40; i++) g.fillRect(rnd() * W | 0, rnd() * W | 0, 1 + (rnd() * 2 | 0), 1);
+                    break;
+            }
+            // A pale belly along the bottom rows (the underside of a ball).
+            if (pattern !== 'flat' && pattern !== 'bands' && pattern !== 'speck') {
+                g.fillStyle = pale; g.fillRect(0, 54, W, 10);
+                for (let x = 0; x < W; x += 2) g.fillRect(x, 50 + (rnd() * 4 | 0), 2, 4);
+            }
+            const tex = new THREE.CanvasTexture(cv);
+            tex.magFilter = THREE.NearestFilter; tex.minFilter = THREE.NearestFilter; tex.generateMipmaps = false;
+            tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+            LV_SHEETS.set(pattern, tex);
+            return tex;
+        }
+        // A coat material on a painted sheet; colour defaults to the per-id tint.
+        _lvCoat(pattern, color, rough) {
+            const m = new THREE.MeshStandardMaterial({
+                color: (color !== undefined && color !== null) ? color : this.color,
+                map: this._lvSheet(pattern || 'flat'), roughness: rough === undefined ? 0.92 : rough,
+                flatShading: true, transparent: true
+            });
+            this._materials.push(m);
+            return m;
+        }
+        // Faceted primitives added to a parent at a point. The segment counts
+        // are low on purpose: the facets are the look.
+        _lvBall(parent, mat, x, y, z, r, sx, sy, sz, seg) {
+            const n = seg || 7;
+            const m = new THREE.Mesh(new THREE.SphereGeometry(r, n, Math.max(3, Math.round(n * 0.7))), mat);
+            m.scale.set(sx === undefined ? 1 : sx, sy === undefined ? 1 : sy, sz === undefined ? 1 : sz);
+            m.position.set(x, y, z); parent.add(m); return m;
+        }
+        _lvCone(parent, mat, x, y, z, r, h, seg) { const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, seg || 4), mat); m.position.set(x, y, z); parent.add(m); return m; }
+        _lvCyl(parent, mat, x, y, z, r0, r1, h, seg) { const m = new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, h, seg || 6), mat); m.position.set(x, y, z); parent.add(m); return m; }
+        _lvBox(parent, mat, x, y, z, w, h, d) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); m.position.set(x, y, z); parent.add(m); return m; }
+        // A tapered strut between two [x, y, z] points.
+        _lvStrut(parent, mat, a, b, r0, r1, seg) {
+            return this.addStrut(parent, mat, new THREE.Vector3(a[0], a[1], a[2]), new THREE.Vector3(b[0], b[1], b[2]), r0, r1, seg || 5);
+        }
+        // A cone whose base sits on point p and whose tip points along dir.
+        _lvSpike(parent, mat, p, dir, r, h, seg) {
+            const d = new THREE.Vector3(dir[0], dir[1], dir[2]).normalize();
+            const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, seg || 4), mat);
+            m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
+            m.position.set(p[0] + d.x * h * 0.45, p[1] + d.y * h * 0.45, p[2] + d.z * h * 0.45);
+            parent.add(m); return m;
+        }
+        // Balls on a polyline from the origin, joined by struts: tails, trunks,
+        // moustaches. radii has one entry more than pts (the root's).
+        _lvChain(parent, mat, pts, radii, flat) {
+            let prev = [0, 0, 0];
+            const sx = flat || 1;
+            this._lvBall(parent, mat, 0, 0, 0, radii[0], sx, 1, 1, 6);
+            pts.forEach((p, i) => {
+                this._lvStrut(parent, mat, prev, p, radii[i], radii[i + 1], 5);
+                this._lvBall(parent, mat, p[0], p[1], p[2], radii[i + 1], sx, 1, 1, 6);
+                prev = p;
+            });
+        }
+        _lvTail(mat, y, z, pts, radii, flat) {
+            const g = new THREE.Group();
+            this._lvChain(g, mat, pts, radii, flat);
+            g.position.set(0, y, z); this.bodyGroup.add(g); return g;
+        }
+        // A bead eye: a dark (or coloured, or glowing) ball, an optional pupil,
+        // a glint set inboard on both eyes so the pair mirrors, and an optional
+        // heavy upper lid (lid = how much of the ball it covers, 0..1).
+        _lvEye(parent, x, y, z, r, o) {
+            o = o || {};
+            const g = new THREE.Group();
+            const iris = o.iris !== undefined ? o.iris : 0x100c0a;
+            this._lvBall(g, this._mat(iris, 1.0, 0.15, o.glow ? iris : 0), 0, 0, 0, r, 1, 1, 1, 6);
+            if (o.pupil) this._lvBall(g, this._mat(0x080606, 1.0, 0.1), 0, 0, r * 0.62, r * 0.55, o.slit ? 0.35 : 1, o.bar ? 0.35 : 1, 0.5, 5);
+            const s = x < 0 ? 1 : -1;
+            this._lvBall(g, this._mat(0xffffff, 1.0, 0.05, 0xffffff), s * r * 0.3, r * 0.35, r * 0.8, r * 0.26, 1, 1, 1, 4);
+            if (o.lid) {
+                const lid = new THREE.Mesh(new THREE.SphereGeometry(r * 1.12, 6, 3, 0, Math.PI * 2, 0, Math.PI * o.lid), this._mat(o.lidColor !== undefined ? o.lidColor : 0x2a2420, 1.0, 0.8));
+                lid.rotation.x = 0.35; g.add(lid);
+            }
+            g.position.set(x, y, z); parent.add(g); return g;
+        }
+        // An ear on its own pivot at the base, so it can be flicked. shape
+        // 'round' is a cupped disc, anything else a flattened cone; inner is
+        // the paler cup colour, tuft a dark tassel on the tip.
+        _lvEar(parent, side, x, y, z, o) {
+            const g = new THREE.Group();
+            const w = o.w, h = o.h, mat = o.mat;
+            const inner = o.inner !== undefined && o.inner !== null ? this._mat(o.inner, 1.0, 0.7) : null;
+            if (o.shape === 'round') {
+                this._lvBall(g, mat, 0, h * 0.5, 0, w, 1, h / (2 * w), 0.32, 7);
+                if (inner) this._lvBall(g, inner, 0, h * 0.5, w * 0.12, w * 0.66, 1, h / (2 * w), 0.22, 6);
+            } else {
+                const c = this._lvCone(g, mat, 0, h * 0.5, 0, w, h, 4); c.scale.z = 0.45;
+                if (inner) { const ci = this._lvCone(g, inner, 0, h * 0.42, w * 0.18, w * 0.6, h * 0.72, 4); ci.scale.z = 0.3; }
+            }
+            if (o.tuft) this._lvCone(g, this._mat(o.tuftColor || 0x1a1410, 1.0, 0.9), 0, h + o.tuft * 0.4, 0, w * 0.22, o.tuft, 4);
+            g.position.set(side * x, y, z);
+            g.rotation.set(o.tx || 0, o.ty ? side * o.ty : 0, -side * (o.tz || 0));
+            g.userData.rx0 = g.rotation.x;
+            parent.add(g);
+            (this._lvEars || (this._lvEars = [])).push(g);
+            return g;
+        }
+        _lvWhiskers(parent, x, y, z, len, color) {
+            const m = this._mat(color || 0xe8e0d0, 0.8, 0.3);
+            for (const sd of [-1, 1]) for (let i = 0; i < 3; i++) {
+                const wk = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.0025, len, 3), m);
+                wk.position.set(sd * (x + len * 0.4), y + (i - 1) * 0.016, z);
+                wk.rotation.set(0, -sd * 0.3, sd * (Math.PI / 2 - 0.12 + i * 0.12));
+                parent.add(wk);
+            }
+        }
+        // A hip-pivoted two-segment leg standing on y = 0 (or hanging o.len
+        // long). knee > 0 bends the knee forward, < 0 back (a haunch); foot is
+        // 'paw' | 'long' | 'web' | 'hoof' | 'pad'.
+        _lvLeg(mat, x, hipY, z, o) {
+            o = o || {};
+            const g = new THREE.Group();
+            const L = o.len || hipY, r = o.r || 0.05;
+            const fr = o.footR || r * 1.3;
+            const fz = o.footZ || 0;
+            const knee = [0, -L * (o.kneeAt || 0.5), o.knee || 0];
+            const ankle = [0, -L + fr * 0.7, o.ankle !== undefined ? o.ankle : fz * 0.4];
+            this._lvBall(g, mat, 0, 0, 0, r * 1.2, 1, 1, 1, 6);
+            this._lvStrut(g, mat, [0, 0, 0], knee, r, r * 0.85);
+            this._lvBall(g, mat, knee[0], knee[1], knee[2], o.kneeR || r * 0.9, 1, 1, 1, 5);
+            this._lvStrut(g, mat, knee, ankle, r * 0.85, r * 0.62);
+            const foot = this._lvFoot(o.foot || 'paw', fr, o.footMat || mat, o);
+            foot.position.set(0, -L, fz); g.add(foot);
+            g.position.set(x, hipY, z); this.bodyGroup.add(g); return g;
+        }
+        // A foot whose origin is the ground under the ankle, toes toward +Z.
+        _lvFoot(kind, fr, mat, o) {
+            const f = new THREE.Group();
+            const clawMat = o.claw ? this._mat(o.claw, 1.0, 0.35) : null;
+            if (kind === 'hoof') {
+                this._lvCyl(f, this._mat(o.hoofColor || 0x2a2018, 1.0, 0.45), 0, fr * 0.6, 0, fr * 0.8, fr, fr * 1.2, 6);
+            } else if (kind === 'long' || kind === 'web') {
+                const web = kind === 'web';
+                this._lvBall(f, mat, 0, fr * 0.45, fr * 0.9, fr, web ? 1.3 : 0.75, 0.45, 2.2, 6);
+                for (let i = -1; i <= 1; i++) this._lvBall(f, mat, i * fr * (web ? 0.55 : 0.4), fr * 0.25, fr * 2.9, fr * 0.32, 1, 1, 1, 4);
+                if (clawMat) for (let i = -1; i <= 1; i++) this._lvSpike(f, clawMat, [i * fr * 0.4, fr * 0.25, fr * 3.1], [0, -0.4, 1], fr * 0.12, fr * 0.5);
+            } else if (kind === 'pad') {
+                this._lvBall(f, mat, 0, fr * 0.4, fr * 0.2, fr, 1.3, 0.5, 1.4, 6);
+            } else {
+                this._lvBall(f, mat, 0, fr * 0.55, fr * 0.2, fr, 1, 0.6, 1.25, 6);
+                for (let i = -1; i <= 1; i++) this._lvBall(f, mat, i * fr * 0.5, fr * 0.3, fr * 1.15, fr * 0.36, 1, 1, 1, 4);
+                if (clawMat) for (let i = -1; i <= 1; i++) this._lvSpike(f, clawMat, [i * fr * 0.5, fr * 0.3, fr * 1.4], [0, -0.5, 1], fr * 0.14, fr * 0.55);
+            }
+            return f;
+        }
+        // A shoulder-pivoted forelimb for the upright critters: upper arm down,
+        // forearm forward, a small hand. The hand group is arm.hand, so props
+        // ride in it.
+        _lvArm(mat, side, x, y, z, o) {
+            o = o || {};
+            const g = new THREE.Group();
+            const r = o.r || 0.035;
+            const elbow = [side * (o.elbowX || 0.02), o.elbowY !== undefined ? o.elbowY : -0.1, o.elbowZ !== undefined ? o.elbowZ : 0.02];
+            const wrist = [side * (o.handX || 0), o.handY !== undefined ? o.handY : -0.12, o.reach !== undefined ? o.reach : 0.1];
+            this._lvBall(g, mat, 0, 0, 0, r * 1.25, 1, 1, 1, 6);
+            this._lvStrut(g, mat, [0, 0, 0], elbow, r, r * 0.85);
+            this._lvBall(g, mat, elbow[0], elbow[1], elbow[2], r * 0.88, 1, 1, 1, 5);
+            this._lvStrut(g, mat, elbow, wrist, r * 0.85, r * 0.7);
+            const hand = new THREE.Group();
+            const hr = o.handR || r * 1.25, hm = o.handMat || mat;
+            this._lvBall(hand, hm, 0, 0, 0, hr, 1, 0.8, 1.1, 6);
+            if (o.fingers !== false) for (let i = -1; i <= 1; i++) this._lvBall(hand, hm, i * hr * 0.45, -hr * 0.35, hr * 0.75, hr * 0.32, 1, 1, 1, 4);
+            if (o.claw) { const cm = this._mat(o.claw, 1.0, 0.35); for (let i = -1; i <= 1; i++) this._lvSpike(hand, cm, [i * hr * 0.45, -hr * 0.4, hr * 0.95], [0, -0.6, 1], hr * 0.14, hr * 0.6); }
+            hand.position.set(wrist[0], wrist[1], wrist[2]); g.add(hand); g.hand = hand;
+            g.position.set(x, y, z); this.bodyGroup.add(g); return g;
+        }
+        // Beast part map plus MOUTH (the jaw when it is its own group).
+        _wireLv(p) {
+            this._wireQuad(p);
+            this._partMeshMap.MOUTH = p.mouth || p.head;
+            if (p.mouth && p.mouth !== p.head) this._cascadeRules.push({ gone: ['MOUTH'], hide: [p.mouth] });
+        }
+        // A jaw or other part posed by the animation: remember its rest pose.
+        _lvRest(o) { o.userData.rx0 = o.rotation.x; o.userData.x0 = o.position.x; return o; }
+
+        // ── Pantry Mouse: flour-dusted larder mouse with ears too big for it,
+        //    a cheese crumb in its teeth and a bite out of one ear ──────────
+        _buildLvPantrymouse() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), pink = this._mat(0xe0a0a0, 1.0, 0.6), flour = this._mat(p.accent, 1.0, 1.0);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.26, 0.85, 0.8, 1.25);
+            this._lvBall(this.body, coat, 0, 0, -0.18, 0.2, 1, 0.95, 1);
+            // Flour on the back where it sleeps among the sacks.
+            this._lvBall(this.body, flour, 0.05, 0.19, 0.06, 0.1, 1, 0.3, 1.2, 6);
+            this._lvBall(this.body, flour, -0.07, 0.18, -0.1, 0.09, 1, 0.3, 1.1, 6);
+            this._lvBall(this.body, flour, 0.02, 0.17, -0.24, 0.07, 1, 0.3, 1, 5);
+            this.body.position.set(0, 0.3, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.02, 0.08, 0.15, 0.9, 0.85, 1.1);
+            this._lvCone(this.head, coat, 0, -0.01, 0.24, 0.075, 0.18, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, flour, 0, 0, 0.3, 0.032, 1, 1, 1, 5);
+            this._lvBall(this.head, pink, 0, -0.005, 0.33, 0.022, 1, 1, 1, 4);
+            for (const ix of [-0.012, 0.012]) this._lvBox(this.head, this._mat(0xf4ecd0, 1.0, 0.4), ix, -0.05, 0.27, 0.016, 0.04, 0.012);
+            const crumb = this._lvCyl(this.head, this._mat(0xe8c040, 1.0, 0.7), 0, -0.075, 0.29, 0.04, 0.04, 0.03, 3); crumb.rotation.y = 0.4;
+            this._lvEye(this.head, -0.075, 0.06, 0.19, 0.035);
+            this._lvEye(this.head, 0.075, 0.06, 0.19, 0.035);
+            this._lvEar(this.head, -1, 0.08, 0.1, 0.03, { shape: 'round', w: 0.11, h: 0.2, mat: coat, inner: 0xe8a8b0, tz: 0.45, tx: -0.15 });
+            const bitten = this._lvEar(this.head, 1, 0.08, 0.1, 0.03, { shape: 'round', w: 0.11, h: 0.2, mat: coat, inner: 0xe8a8b0, tz: 0.45, tx: -0.15 });
+            this._lvBall(bitten, this._mat(0x4a2a24, 1.0, 0.8), 0.07, 0.17, 0.0, 0.03, 1, 1, 0.5, 5);
+            this._lvWhiskers(this.head, 0.03, -0.01, 0.27, 0.2);
+            this.head.position.set(0, 0.36, 0.25); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.11, 0.24, 0.17, { r: 0.035, footR: 0.04, knee: 0.02, footMat: pink });
+            this.frontRight = this._lvLeg(coat, 0.11, 0.24, 0.17, { r: 0.035, footR: 0.04, knee: 0.02, footMat: pink });
+            this.rearLeft   = this._lvLeg(coat, -0.13, 0.26, -0.2, { r: 0.045, footR: 0.04, knee: -0.07, foot: 'long', footMat: pink });
+            this.rearRight  = this._lvLeg(coat, 0.13, 0.26, -0.2, { r: 0.045, footR: 0.04, knee: -0.07, foot: 'long', footMat: pink });
+            this.tail = this._lvTail(pink, 0.28, -0.37, [[0, -0.04, -0.15], [0.06, -0.16, -0.3], [0.16, -0.24, -0.36], [0.26, -0.25, -0.3]], [0.03, 0.025, 0.02, 0.014, 0.01]);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Barn Kitten: a scrappy tabby arched on tiptoe with its tail
+        //    bottle-brushed, straws from the hayloft stuck in its coat ──────
+        _buildLvBarnkitten() {
+            const p = this.profile;
+            const coat = this._lvCoat('stripe'), cream = this._mat(0xf0e2c8, 1.0, 0.9);
+            const straw = this._mat(0xe0c060, 1.0, 0.8), pink = this._mat(0xe890a0, 1.0, 0.6);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0.17, 0.17, 0.95, 1, 1);
+            this._lvBall(this.body, coat, 0, 0.09, 0, 0.18, 0.95, 0.95, 1.05);
+            this._lvBall(this.body, coat, 0, 0.02, -0.17, 0.17, 0.95, 1, 1);
+            this._lvBall(this.body, cream, 0, -0.06, 0.3, 0.1, 0.9, 1, 0.6, 6);
+            // Hackles up along the arch.
+            for (let i = 0; i < 5; i++) { const z = 0.12 - i * 0.06; this._lvSpike(this.body, coat, [0, 0.24 - z * z * 1.5, z], [0, 1, -0.35], 0.028, 0.09, 4); }
+            // Straw from the hayloft, caught in the fur.
+            this._lvStrut(this.body, straw, [0.12, 0.12, 0.02], [0.27, 0.2, 0.08], 0.008, 0.007, 3);
+            this._lvStrut(this.body, straw, [-0.1, 0.06, -0.15], [-0.25, 0.13, -0.22], 0.008, 0.007, 3);
+            this._lvStrut(this.body, straw, [0.05, 0.2, -0.05], [0.11, 0.34, -0.14], 0.008, 0.007, 3);
+            this.body.position.set(0, 0.44, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.07, 0.08, 0.17, 1.05, 0.95, 0.95);
+            this._lvBall(this.head, cream, 0, -0.01, 0.22, 0.07, 1.2, 0.75, 0.8, 6);
+            this._lvBall(this.head, pink, 0, 0.025, 0.272, 0.02, 1.2, 0.8, 0.8, 4);
+            // Mouth open in a hiss, two needle fangs.
+            this._lvBall(this.head, this._mat(0x3a1418, 1.0, 0.5), 0, -0.045, 0.24, 0.035, 1.2, 0.7, 0.8, 5);
+            for (const fx of [-0.02, 0.02]) this._lvCone(this.head, this._mat(0xfff8ec, 1.0, 0.3), fx, -0.035, 0.262, 0.007, 0.03, 3).rotation.x = Math.PI;
+            this._lvEye(this.head, -0.07, 0.08, 0.21, 0.05, { iris: p.accent, pupil: true, slit: true });
+            this._lvEye(this.head, 0.07, 0.08, 0.21, 0.05, { iris: p.accent, pupil: true, slit: true });
+            this._lvEar(this.head, -1, 0.1, 0.17, 0.05, { w: 0.07, h: 0.13, mat: coat, inner: 0xe8a0b0, tz: 0.25 });
+            this._lvEar(this.head, 1, 0.1, 0.17, 0.05, { w: 0.07, h: 0.13, mat: coat, inner: 0xe8a0b0, tz: 0.25 });
+            this._lvWhiskers(this.head, 0.06, -0.01, 0.23, 0.18);
+            this.head.position.set(0, 0.5, 0.3); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.08, 0.38, 0.18, { r: 0.035, footR: 0.045, footMat: cream });
+            this.frontRight = this._lvLeg(coat, 0.08, 0.38, 0.18, { r: 0.035, footR: 0.045, footMat: cream });
+            this.rearLeft   = this._lvLeg(coat, -0.08, 0.4, -0.17, { r: 0.04, footR: 0.045, knee: -0.03, footMat: cream });
+            this.rearRight  = this._lvLeg(coat, 0.08, 0.4, -0.17, { r: 0.04, footR: 0.045, knee: -0.03, footMat: cream });
+            this.tail = this._lvTail(coat, 0.5, -0.31, [[0, 0.12, -0.05], [0, 0.26, -0.04], [0, 0.38, 0]], [0.05, 0.065, 0.07, 0.065, 0.045]);
+            this._lvMove = 'prowl';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Acorn Squirrel: sits up clutching an acorn and wears the cap of
+        //    another one as a helmet ────────────────────────────────────────
+        _buildLvAcornsquirrel() {
+            const coat = this._lvCoat('saddle'), cream = this._mat(0xf0dcc0, 1.0, 0.9);
+            const nutM = this._mat(0xb07a3a, 1.0, 0.5), cupM = this._mat(0x6a4a28, 1.0, 0.95), dark = this._mat(0x1a120c, 1.0, 0.5);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.2, 0.9, 1.25, 0.85);
+            this._lvBall(this.body, coat, 0, 0.17, 0.03, 0.15);
+            this._lvBall(this.body, cream, 0, -0.02, 0.14, 0.13, 0.8, 1.3, 0.4, 6);
+            this.body.position.set(0, 0.32, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.07, 0.04, 0.13);
+            this._lvBall(this.head, cream, 0, 0.03, 0.15, 0.06, 1, 0.85, 1.1, 6);
+            this._lvBall(this.head, dark, 0, 0.05, 0.21, 0.02, 1, 1, 1, 4);
+            for (const ix of [-0.01, 0.01]) this._lvBox(this.head, this._mat(0xf0c070, 1.0, 0.4), ix, -0.01, 0.19, 0.014, 0.035, 0.01);
+            this._lvEye(this.head, -0.07, 0.1, 0.13, 0.03);
+            this._lvEye(this.head, 0.07, 0.1, 0.13, 0.03);
+            this._lvEar(this.head, -1, 0.07, 0.17, 0, { w: 0.045, h: 0.09, mat: coat, inner: 0xe0b0a0, tz: 0.15 });
+            this._lvEar(this.head, 1, 0.07, 0.17, 0, { w: 0.045, h: 0.09, mat: coat, inner: 0xe0b0a0, tz: 0.15 });
+            // The acorn-cap helmet, worn at a slant, stalk up.
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(0.1, 7, 3, 0, Math.PI * 2, 0, Math.PI / 2), cupM);
+            cap.scale.set(1, 0.7, 1); cap.position.set(0, 0.165, 0.04); cap.rotation.z = 0.2; this.head.add(cap);
+            this._lvCyl(this.head, cupM, -0.013, 0.24, 0.04, 0.008, 0.012, 0.05, 4).rotation.z = 0.2;
+            this.head.position.set(0, 0.62, 0.04); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.1, 0.5, 0.08, { r: 0.03, elbowY: -0.08, handX: -0.04, handY: -0.12, reach: 0.14 });
+            this.frontRight = this._lvArm(coat, 1, 0.1, 0.5, 0.08, { r: 0.03, elbowY: -0.08, handX: -0.04, handY: -0.12, reach: 0.14 });
+            // The acorn it is holding, cap and all.
+            const nut = this.frontRight.hand;
+            this._lvBall(nut, nutM, -0.06, -0.01, 0.02, 0.055, 1, 1.25, 1, 6);
+            const nc = new THREE.Mesh(new THREE.SphereGeometry(0.058, 6, 3, 0, Math.PI * 2, 0, Math.PI / 2), cupM); nc.position.set(-0.06, 0.04, 0.02); nut.add(nc);
+            this.rearLeft   = this._lvLeg(coat, -0.11, 0.16, -0.02, { r: 0.045, footR: 0.045, knee: 0.06, foot: 'long' });
+            this.rearRight  = this._lvLeg(coat, 0.11, 0.16, -0.02, { r: 0.045, footR: 0.045, knee: 0.06, foot: 'long' });
+            this.tail = this._lvTail(coat, 0.16, -0.12, [[0, 0.06, -0.12], [0, 0.22, -0.2], [0, 0.4, -0.2], [0, 0.55, -0.12], [0, 0.62, 0]], [0.08, 0.1, 0.11, 0.12, 0.11, 0.09], 0.65);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Molehill Pup: a blind velvet mole half out of its molehill,
+        //    spade hands flailing, a pink star of feelers for a nose ────────
+        _buildLvMolehillpup() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), pink = this._mat(p.accent, 1.0, 0.55);
+            const dirt = this._mat(0x5a4430, 1.0, 1.0), claw = this._mat(0xe8dcc0, 1.0, 0.4);
+            this.body = new THREE.Group();
+            this._lvCone(this.body, dirt, 0, -0.17, 0, 0.42, 0.34, 7).scale.z = 0.9;
+            for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + 0.3; this._lvBall(this.body, dirt, Math.cos(a) * 0.35, -0.3, Math.sin(a) * 0.31, 0.07, 1, 0.6, 1, 5); }
+            this._lvBall(this.body, coat, 0, 0.08, 0.02, 0.2, 1, 1.2, 0.9);
+            this.body.position.set(0, 0.34, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.02, 0.06, 0.12, 0.9, 0.85, 1.2);
+            this._lvBall(this.head, pink, 0, 0, 0.19, 0.045, 1, 1, 1, 6);
+            // The star nose: a ring of feelers round the snout tip.
+            for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; this._lvSpike(this.head, pink, [Math.cos(a) * 0.03, Math.sin(a) * 0.03, 0.215], [Math.cos(a), Math.sin(a), 0.4], 0.012, 0.055, 3); }
+            const shut = this._mat(0x120c0c, 1.0, 0.5);
+            for (const ex of [-0.055, 0.055]) this._lvBall(this.head, shut, ex, 0.05, 0.135, 0.016, 1.4, 0.35, 0.6, 4);
+            this.head.position.set(0, 0.62, 0.08); this.bodyGroup.add(this.head);
+
+            // Spade hands thrown up out of the earth, claws splayed.
+            const arm = side => {
+                const a = this._lvArm(coat, side, side * 0.15, 0.5, 0.08, { r: 0.045, elbowX: 0.08, elbowY: 0.02, elbowZ: 0.03, handX: 0.14, handY: 0.1, reach: 0.08, handR: 0.085, handMat: pink, fingers: false });
+                a.hand.children[0].scale.set(1.15, 1.2, 0.4);
+                for (let i = -2; i <= 2; i++) this._lvSpike(a.hand, claw, [i * 0.03, 0.08, 0.01], [i * 0.2 + side * 0.2, 1, 0.2], 0.012, 0.07, 3);
+                return a;
+            };
+            this.frontLeft = arm(-1); this.frontRight = arm(1);
+            this.rearLeft   = this._lvLeg(coat, -0.1, 0.24, -0.06, { r: 0.035, footR: 0.04, footMat: pink });
+            this.rearRight  = this._lvLeg(coat, 0.1, 0.24, -0.06, { r: 0.035, footR: 0.04, footMat: pink });
+            this.tail = this._lvTail(pink, 0.38, -0.17, [[0, 0.02, -0.06]], [0.035, 0.02]);
+            this._lvMove = 'scurry'; this._lvFlail = true;
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Gutter Rat: a hunched drain rat, knobbed spine, bald patches, a
+        //    torn ear and long yellow teeth ─────────────────────────────────
+        _buildLvGutterrat() {
+            const p = this.profile;
+            const coat = this._lvCoat('mange'), tailM = this._lvCoat('bands', 0xb08070), pink = this._mat(0xc88a80, 1.0, 0.6);
+            const tooth = this._mat(p.accent, 1.0, 0.35);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0.15, 0.17, 0.95, 0.95, 1.05);
+            this._lvBall(this.body, coat, 0, 0.05, -0.01, 0.19, 1, 1, 1.05);
+            this._lvBall(this.body, coat, 0, 0.08, -0.17, 0.21, 1, 1, 1.1);
+            const ridge = [0.17, 0.21, 0.24, 0.28, 0.29, 0.28];
+            for (let i = 0; i < 6; i++) this._lvBall(this.body, coat, 0, ridge[i], 0.18 - i * 0.08, 0.03, 1, 0.8, 1.2, 5);
+            this._lvBall(this.body, pink, 0.17, 0.06, -0.06, 0.06, 0.35, 1, 1.2, 5);
+            this._lvBall(this.body, pink, -0.15, 0.01, 0.1, 0.05, 0.35, 1, 1.2, 5);
+            this.body.position.set(0, 0.36, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0, 0.05, 0.11, 0.9, 0.85, 1.2);
+            this._lvCone(this.head, coat, 0, -0.02, 0.19, 0.065, 0.2, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, pink, 0, -0.02, 0.29, 0.02, 1, 1, 1, 4);
+            for (const ix of [-0.011, 0.011]) this._lvBox(this.head, tooth, ix, -0.065, 0.25, 0.016, 0.07, 0.012);
+            this._lvEye(this.head, -0.06, 0.04, 0.12, 0.025, { iris: 0x2a0a0a });
+            this._lvEye(this.head, 0.06, 0.04, 0.12, 0.025, { iris: 0x2a0a0a });
+            const torn = this._lvEar(this.head, -1, 0.07, 0.08, 0, { shape: 'round', w: 0.055, h: 0.1, mat: coat, inner: 0xc8908a, tz: 0.4 });
+            this._lvBall(torn, this._mat(0x3a2a24, 1.0, 0.8), -0.03, 0.09, 0, 0.022, 1, 1, 0.5, 4);
+            this._lvEar(this.head, 1, 0.07, 0.08, 0, { shape: 'round', w: 0.055, h: 0.1, mat: coat, inner: 0xc8908a, tz: 0.4 });
+            this._lvWhiskers(this.head, 0.03, -0.02, 0.24, 0.16, 0x8a8478);
+            this.head.position.set(0, 0.47, 0.3); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.1, 0.27, 0.17, { r: 0.03, footR: 0.035, knee: 0.02, footMat: pink, claw: 0xd8c8a0 });
+            this.frontRight = this._lvLeg(coat, 0.1, 0.27, 0.17, { r: 0.03, footR: 0.035, knee: 0.02, footMat: pink, claw: 0xd8c8a0 });
+            this.rearLeft   = this._lvLeg(coat, -0.12, 0.33, -0.2, { r: 0.045, footR: 0.04, knee: -0.08, foot: 'long', footMat: pink });
+            this.rearRight  = this._lvLeg(coat, 0.12, 0.33, -0.2, { r: 0.045, footR: 0.04, knee: -0.08, foot: 'long', footMat: pink });
+            this.tail = this._lvTail(tailM, 0.42, -0.38, [[0, -0.06, -0.15], [0, -0.2, -0.3], [0.08, -0.33, -0.42], [0.2, -0.39, -0.48]], [0.035, 0.03, 0.024, 0.017, 0.01]);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Grumpy Hedgehog: a dome of banded spines with a leaf skewered on
+        //    it and a scowling little face under a heavy brow ──────────────
+        _buildLvGrumpyhedgehog() {
+            const skin = this._lvCoat('flat'), spineM = this._mat(0x3a2a1e, 1.0, 0.8), tipM = this._mat(0xd8c8a8, 1.0, 0.7);
+            const dark = this._mat(0x140e0a, 1.0, 0.4);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, spineM, 0, 0, 0, 0.3, 1, 0.85, 1.15, 8);
+            this._lvBall(this.body, skin, 0, -0.1, 0.12, 0.22, 1, 0.6, 1.1, 7);
+            let k = 0;
+            for (let ring = 0; ring < 5; ring++) {
+                const th = 0.2 + ring * 0.3, n = 5 + ring * 3;
+                for (let i = 0; i < n; i++) {
+                    const ph = (i + (ring % 2) * 0.5) / n * Math.PI * 2;
+                    const nx = Math.sin(th) * Math.sin(ph), ny = Math.cos(th), nz = Math.sin(th) * Math.cos(ph);
+                    if (nz > 0.55 && ny < 0.6) continue;   // the face stays bare
+                    this._lvSpike(this.body, (k++ % 3) ? spineM : tipM, [nx * 0.276, ny * 0.235, nz * 0.317], [nx, ny * 1.1, nz], 0.035, 0.17, 4);
+                }
+            }
+            const leaf = this._lvBall(this.body, this._mat(0x8aa040, 1.0, 0.7), 0.1, 0.235, -0.1, 0.07, 1, 0.15, 0.6, 5); leaf.rotation.z = 0.4;
+            this.body.position.set(0, 0.27, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, skin, 0, 0, 0.02, 0.11, 1, 0.9, 1);
+            this._lvCone(this.head, skin, 0, -0.03, 0.13, 0.08, 0.2, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, dark, 0, -0.03, 0.235, 0.025, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.055, 0.04, 0.09, 0.025);
+            this._lvEye(this.head, 0.055, 0.04, 0.09, 0.025);
+            // The scowl: two brow wedges sloping down to the middle.
+            for (const sd of [-1, 1]) this._lvBox(this.head, dark, sd * 0.05, 0.08, 0.09, 0.07, 0.018, 0.03).rotation.z = sd * 0.45;
+            this._lvEar(this.head, -1, 0.08, 0.07, -0.02, { shape: 'round', w: 0.035, h: 0.05, mat: skin, tz: 0.4 });
+            this._lvEar(this.head, 1, 0.08, 0.07, -0.02, { shape: 'round', w: 0.035, h: 0.05, mat: skin, tz: 0.4 });
+            this.head.position.set(0, 0.38, 0.3); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(skin, -0.12, 0.12, 0.17, { r: 0.03, footR: 0.035, claw: 0x2a1c14 });
+            this.frontRight = this._lvLeg(skin, 0.12, 0.12, 0.17, { r: 0.03, footR: 0.035, claw: 0x2a1c14 });
+            this.rearLeft   = this._lvLeg(skin, -0.13, 0.12, -0.17, { r: 0.03, footR: 0.035 });
+            this.rearRight  = this._lvLeg(skin, 0.13, 0.12, -0.17, { r: 0.03, footR: 0.035 });
+            this.tail = this._lvTail(skin, 0.17, -0.33, [[0, -0.01, -0.04]], [0.035, 0.025]);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Chipmunk Hoarder: sits up with its cheek pouches crammed bigger
+        //    than its head, a seed ready to spit and more in its fists ─────
+        _buildLvChipmunkhoarder() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), cream = this._mat(0xf0e0c8, 1.0, 0.9), dark = this._mat(p.accent, 1.0, 0.8);
+            const seedM = this._lvCoat('bands', 0x3a3430);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.18, 0.95, 1.25, 0.9);
+            this._lvBall(this.body, cream, 0, -0.02, 0.12, 0.12, 0.8, 1.3, 0.5, 6);
+            // Back stripes, nape to rump: dark, pale, dark.
+            for (const [x, m] of [[0, dark], [-0.06, cream], [0.06, cream], [-0.1, dark], [0.1, dark]]) this._lvBall(this.body, m, x, 0.02, -0.14, 0.15, 0.1, 1.25, 0.3, 5);
+            this.body.position.set(0, 0.3, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.07, 0.04, 0.12);
+            this._lvCheeks = [this._lvBall(this.head, coat, -0.1, 0, 0.09, 0.1, 1, 0.95, 1), this._lvBall(this.head, coat, 0.1, 0, 0.09, 0.1, 1, 0.95, 1)];
+            this._lvBall(this.head, cream, 0, 0.03, 0.15, 0.05, 1, 1, 1, 6);
+            this._lvBall(this.head, dark, 0, 0.05, 0.2, 0.018, 1, 1, 1, 4);
+            this._lvCone(this.head, seedM, 0, -0.02, 0.19, 0.025, 0.07, 4).rotation.x = Math.PI / 2;
+            this._lvEye(this.head, -0.06, 0.11, 0.12, 0.028);
+            this._lvEye(this.head, 0.06, 0.11, 0.12, 0.028);
+            for (const sd of [-1, 1]) this._lvBall(this.head, cream, sd * 0.065, 0.15, 0.1, 0.03, 1.2, 0.25, 0.5, 4);
+            this._lvBall(this.head, dark, 0, 0.16, 0.02, 0.06, 0.25, 0.6, 1.4, 5);
+            this._lvEar(this.head, -1, 0.07, 0.16, -0.01, { shape: 'round', w: 0.035, h: 0.055, mat: coat, inner: 0xf0d0c0, tz: 0.25 });
+            this._lvEar(this.head, 1, 0.07, 0.16, -0.01, { shape: 'round', w: 0.035, h: 0.055, mat: coat, inner: 0xf0d0c0, tz: 0.25 });
+            this.head.position.set(0, 0.54, 0.03); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.09, 0.44, 0.08, { r: 0.028, elbowY: -0.07, handX: -0.04, handY: -0.1, reach: 0.1 });
+            this.frontRight = this._lvArm(coat, 1, 0.09, 0.44, 0.08, { r: 0.028, elbowY: -0.07, handX: -0.04, handY: -0.1, reach: 0.1 });
+            for (let i = 0; i < 3; i++) this._lvSpike(this.frontRight.hand, seedM, [-0.01 - i * 0.012, 0.02, 0.02], [i - 1, 1, 0.6], 0.016, 0.05, 4);
+            this._lvSpike(this.frontLeft.hand, seedM, [0.01, 0.02, 0.02], [0.4, 1, 0.5], 0.016, 0.05, 4);
+            this.rearLeft   = this._lvLeg(coat, -0.1, 0.14, -0.02, { r: 0.04, footR: 0.04, knee: 0.05, foot: 'long' });
+            this.rearRight  = this._lvLeg(coat, 0.1, 0.14, -0.02, { r: 0.04, footR: 0.04, knee: 0.05, foot: 'long' });
+            this.tail = this._lvTail(coat, 0.15, -0.12, [[0, 0.1, -0.08], [0, 0.26, -0.1], [0, 0.4, -0.06]], [0.05, 0.06, 0.065, 0.06, 0.045], 0.7);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Sock Thief Ferret: a long arched sable ferret mid war dance, an
+        //    odd striped sock hanging out of its mouth ──────────────────────
+        _buildLvSockthiefferret() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), mask = this._mat(0x2a2018, 1.0, 0.8), cream = this._mat(0xf0e6d0, 1.0, 0.9);
+            const sock = this._lvCoat('bands', p.accent, 0.95);
+            this.body = new THREE.Group();
+            const spine = [[0, 0, 0.34], [0, 0.07, 0.17], [0, 0.12, 0], [0, 0.07, -0.17], [0, 0, -0.33]];
+            const rad = [0.1, 0.11, 0.115, 0.11, 0.1];
+            spine.forEach((q, i) => {
+                this._lvBall(this.body, coat, q[0], q[1], q[2], rad[i], 1, 0.95, 1.1);
+                if (i) this._lvStrut(this.body, coat, spine[i - 1], q, rad[i - 1] * 0.9, rad[i] * 0.9);
+            });
+            this.body.position.set(0, 0.24, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            // Head reared high on a long neck, the war dance pose.
+            this._lvStrut(this.head, coat, [0, -0.14, -0.06], [0, 0, 0.04], 0.07, 0.06);
+            this._lvBall(this.head, coat, 0, 0.03, 0.07, 0.09, 0.9, 0.8, 1.3);
+            this._lvBall(this.head, mask, 0, 0.05, 0.11, 0.085, 1.15, 0.45, 0.75, 6);
+            this._lvBall(this.head, cream, 0, 0, 0.17, 0.045, 1, 0.8, 1.2, 6);
+            this._lvBall(this.head, this._mat(0xe0a0a0, 1.0, 0.6), 0, 0.01, 0.22, 0.016, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.045, 0.055, 0.15, 0.02);
+            this._lvEye(this.head, 0.045, 0.055, 0.15, 0.02);
+            this._lvEar(this.head, -1, 0.06, 0.08, 0.03, { shape: 'round', w: 0.035, h: 0.05, mat: coat, inner: 0xf0e0d0, tz: 0.3 });
+            this._lvEar(this.head, 1, 0.06, 0.08, 0.03, { shape: 'round', w: 0.035, h: 0.05, mat: coat, inner: 0xf0e0d0, tz: 0.3 });
+            // The stolen sock, heel and toe, dangling from its teeth.
+            this._sock = new THREE.Group();
+            this._lvStrut(this._sock, sock, [0, 0, 0], [0.08, -0.12, 0.02], 0.035, 0.035);
+            this._lvBall(this._sock, sock, 0.08, -0.12, 0.02, 0.037, 1, 1, 1, 6);
+            this._lvStrut(this._sock, sock, [0.08, -0.12, 0.02], [0.08, -0.15, 0.11], 0.035, 0.03);
+            this._lvBall(this._sock, cream, 0.08, -0.15, 0.11, 0.033, 1, 0.9, 1, 6);
+            this._sock.position.set(0, -0.03, 0.17); this.head.add(this._sock);
+            this.head.position.set(0, 0.4, 0.42); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.08, 0.2, 0.33, { r: 0.03, footR: 0.035, knee: 0.02, footMat: mask });
+            this.frontRight = this._lvLeg(coat, 0.08, 0.2, 0.33, { r: 0.03, footR: 0.035, knee: 0.02, footMat: mask });
+            this.rearLeft   = this._lvLeg(coat, -0.09, 0.2, -0.32, { r: 0.035, footR: 0.035, knee: -0.04, footMat: mask });
+            this.rearRight  = this._lvLeg(coat, 0.09, 0.2, -0.32, { r: 0.035, footR: 0.035, knee: -0.04, footMat: mask });
+            this.tail = this._lvTail(coat, 0.25, -0.43, [[0, 0.01, -0.13], [0, -0.02, -0.26]], [0.045, 0.05, 0.045]);
+            this._lvBall(this.tail, mask, 0, -0.02, -0.28, 0.046, 1, 1, 1.1, 6);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail, mouth: this._sock });
+        }
+
+        // ── Bin Raccoon: a fat masked alley king sat in state with a banana
+        //    peel for a crown and an apple core for a sceptre ──────────────
+        _buildLvBinraccoon() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), mask = this._mat(0x18181c, 1.0, 0.8), pale = this._mat(0xe8e6e0, 1.0, 0.9);
+            const ring = this._lvCoat('bands', 0x8a8a90), peel = this._mat(p.accent, 1.0, 0.6);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.3, 1, 1.05, 0.95, 8);
+            this._lvBall(this.body, pale, 0, -0.04, 0.2, 0.2, 0.85, 1, 0.55);
+            this.body.position.set(0, 0.38, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.06, 0.04, 0.15, 1.1, 0.9, 1);
+            this._lvCone(this.head, pale, 0, 0, 0.18, 0.06, 0.13, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, mask, 0, 0, 0.25, 0.022, 1, 1, 1, 4);
+            this._lvBall(this.head, mask, 0, 0.08, 0.1, 0.11, 1.35, 0.42, 0.75, 6);
+            this._lvBall(this.head, pale, 0, 0.13, 0.09, 0.1, 1.1, 0.22, 0.6, 6);
+            this._lvEye(this.head, -0.06, 0.085, 0.17, 0.025);
+            this._lvEye(this.head, 0.06, 0.085, 0.17, 0.025);
+            this._lvEar(this.head, -1, 0.1, 0.16, 0, { w: 0.055, h: 0.09, mat: coat, inner: 0xe8e6e0, tz: 0.35 });
+            this._lvEar(this.head, 1, 0.1, 0.16, 0, { w: 0.055, h: 0.09, mat: coat, inner: 0xe8e6e0, tz: 0.35 });
+            // The banana-peel crown, strips flopped over the brow.
+            this._lvBall(this.head, peel, 0, 0.22, 0.04, 0.03, 1, 1, 1, 5);
+            for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2 + Math.PI / 4; const s = this._lvSpike(this.head, peel, [Math.cos(a) * 0.02, 0.21, 0.04 + Math.sin(a) * 0.02], [Math.cos(a), -0.6, Math.sin(a)], 0.03, 0.17, 4); s.scale.x = 0.45; }
+            this.head.position.set(0, 0.68, 0.06); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.18, 0.56, 0.12, { r: 0.04, elbowX: 0.03, elbowY: -0.1, elbowZ: 0.06, handX: -0.1, handY: -0.13, reach: 0.16, handR: 0.045, handMat: mask, claw: 0x2a2a2a });
+            this.frontRight = this._lvArm(coat, 1, 0.18, 0.56, 0.12, { r: 0.04, elbowX: 0.03, elbowY: -0.1, elbowZ: 0.06, handX: -0.1, handY: -0.13, reach: 0.16, handR: 0.045, handMat: mask, claw: 0x2a2a2a });
+            const core = this.frontRight.hand, apple = this._mat(0xb83a2a, 1.0, 0.6);
+            this._lvCyl(core, this._mat(0xf0e0b0, 1.0, 0.8), -0.08, 0, 0.03, 0.02, 0.02, 0.08, 5);
+            this._lvBall(core, apple, -0.08, 0.05, 0.03, 0.035, 1, 0.8, 1, 6);
+            this._lvBall(core, apple, -0.08, -0.05, 0.03, 0.035, 1, 0.8, 1, 6);
+            this.rearLeft   = this._lvLeg(coat, -0.16, 0.2, 0.08, { r: 0.05, footR: 0.05, knee: 0.08, foot: 'long', footMat: mask });
+            this.rearRight  = this._lvLeg(coat, 0.16, 0.2, 0.08, { r: 0.05, footR: 0.05, knee: 0.08, foot: 'long', footMat: mask });
+            this.tail = this._lvTail(ring, 0.2, -0.24, [[0.06, -0.08, -0.14], [0.2, -0.11, -0.2], [0.32, -0.1, -0.12]], [0.07, 0.075, 0.07, 0.06, 0.045]);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Dune Jerboa: a pebble of a body on kangaroo legs, ears as long as
+        //    it is tall and a tail ending in a black and white flag ─────────
+        _buildLvDunejerboa() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), cream = this._mat(0xf4ead8, 1.0, 0.9), pink = this._mat(0xe8b0a8, 1.0, 0.6);
+            const black = this._mat(p.accent, 1.0, 0.8);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.14, 0.9, 1, 1.15);
+            this.body.position.set(0, 0.4, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.03, 0.06, 0.1, 1, 0.95, 1.05);
+            this._lvBall(this.head, cream, 0, 0, 0.15, 0.04, 1, 1, 1, 6);
+            this._lvBall(this.head, pink, 0, 0.01, 0.19, 0.014, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.06, 0.05, 0.12, 0.035);
+            this._lvEye(this.head, 0.06, 0.05, 0.12, 0.035);
+            this._lvEar(this.head, -1, 0.05, 0.09, 0, { shape: 'round', w: 0.065, h: 0.28, mat: coat, inner: 0xe8b0a8, tz: 0.25, tx: -0.25 });
+            this._lvEar(this.head, 1, 0.05, 0.09, 0, { shape: 'round', w: 0.065, h: 0.28, mat: coat, inner: 0xe8b0a8, tz: 0.25, tx: -0.25 });
+            this._lvWhiskers(this.head, 0.03, 0, 0.15, 0.26);
+            this.head.position.set(0, 0.48, 0.12); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(cream, -1, -0.06, 0.38, 0.1, { r: 0.018, elbowY: -0.04, handY: -0.06, reach: 0.06, handR: 0.02, fingers: false });
+            this.frontRight = this._lvArm(cream, 1, 0.06, 0.38, 0.1, { r: 0.018, elbowY: -0.04, handY: -0.06, reach: 0.06, handR: 0.02, fingers: false });
+            // Kangaroo hind legs: knee forward, a long shin back, a long foot.
+            const hind = x => this._lvLeg(coat, x, 0.36, -0.06, { r: 0.045, knee: 0.12, kneeAt: 0.45, ankle: -0.1, footR: 0.045, foot: 'long', footZ: -0.08, footMat: cream });
+            this.rearLeft = hind(-0.09); this.rearRight = hind(0.09);
+            this.tail = this._lvTail(coat, 0.38, -0.15, [[0, -0.04, -0.2], [0, -0.12, -0.42], [0, -0.16, -0.64]], [0.025, 0.02, 0.016, 0.012]);
+            this._lvBall(this.tail, black, 0, -0.16, -0.68, 0.035, 0.8, 0.8, 1.3, 6);
+            this._lvBall(this.tail, cream, 0, -0.16, -0.74, 0.03, 1, 1, 1, 5);
+            this._lvMove = 'hop';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Fennec Fox Kit: a sitting desert kit wearing ears bigger than the
+        //    rest of it, tail wrapped round its feet ───────────────────────
+        _buildLvFennecfoxkit() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), cream = this._mat(p.accent, 1.0, 0.9), dark = this._mat(0x1a1410, 1.0, 0.5);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0.03, 0, 0.17, 0.9, 1.15, 1).rotation.x = 0.25;
+            this._lvBall(this.body, cream, 0, 0.02, 0.14, 0.11, 0.8, 1.2, 0.5, 6);
+            for (const sd of [-1, 1]) this._lvBall(this.body, coat, sd * 0.09, -0.12, -0.07, 0.12, 0.8, 0.85, 1.2);
+            this.body.position.set(0, 0.3, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.04, 0.04, 0.12, 1.05, 0.95, 1);
+            this._lvCone(this.head, coat, 0, 0, 0.15, 0.05, 0.12, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, dark, 0, 0, 0.215, 0.016, 1, 1, 1, 4);
+            this._lvBall(this.head, cream, 0, -0.03, 0.09, 0.07, 1.2, 0.7, 0.8, 6);
+            this._lvEye(this.head, -0.06, 0.07, 0.12, 0.04, { iris: 0x2a1a10, pupil: true });
+            this._lvEye(this.head, 0.06, 0.07, 0.12, 0.04, { iris: 0x2a1a10, pupil: true });
+            // The ears, each with a fan of pale fur standing up inside.
+            for (const sd of [-1, 1]) {
+                const ear = this._lvEar(this.head, sd, 0.07, 0.12, -0.02, { w: 0.1, h: 0.3, mat: coat, inner: 0xf0d8c8, tz: 0.35 });
+                for (let i = -1; i <= 1; i++) this._lvSpike(ear, cream, [i * 0.025, 0.04, 0.03], [i * 0.3, 1, 0.3], 0.012, 0.08, 3);
+            }
+            this._lvWhiskers(this.head, 0.03, -0.01, 0.17, 0.14);
+            this.head.position.set(0, 0.52, 0.07); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.06, 0.3, 0.1, { r: 0.025, footR: 0.035 });
+            this.frontRight = this._lvLeg(coat, 0.06, 0.3, 0.1, { r: 0.025, footR: 0.035 });
+            this.rearLeft   = this._lvLeg(coat, -0.11, 0.12, -0.06, { r: 0.04, footR: 0.04, knee: 0.05, foot: 'long' });
+            this.rearRight  = this._lvLeg(coat, 0.11, 0.12, -0.06, { r: 0.04, footR: 0.04, knee: 0.05, foot: 'long' });
+            this.tail = this._lvTail(coat, 0.18, -0.1, [[0.08, -0.1, -0.1], [0.2, -0.11, 0.04], [0.18, -0.11, 0.2]], [0.05, 0.065, 0.07, 0.06, 0.045]);
+            this._lvBall(this.tail, dark, 0.18, -0.11, 0.24, 0.045, 1, 1, 1, 6);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Frost Fox Kit: a white cub stalking low behind a fluffed ruff,
+        //    icicles for whiskers and rime grown on its tail ───────────────
+        _buildLvFrostfoxkit() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), ice = this._mat(p.accent, 0.8, 0.15, p.accent), dark = this._mat(0x1a1c22, 1.0, 0.5);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.16, 0.9, 0.85, 1.6);
+            for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; this._lvSpike(this.body, coat, [Math.cos(a) * 0.1, Math.sin(a) * 0.09, 0.16], [Math.cos(a), Math.sin(a), -0.6], 0.045, 0.11, 4); }
+            this.body.position.set(0, 0.3, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.02, 0.05, 0.11);
+            this._lvCone(this.head, coat, 0, -0.01, 0.17, 0.055, 0.17, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, dark, 0, -0.01, 0.26, 0.018, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.055, 0.05, 0.12, 0.025, { iris: p.accent, glow: true, pupil: true });
+            this._lvEye(this.head, 0.055, 0.05, 0.12, 0.025, { iris: p.accent, glow: true, pupil: true });
+            this._lvEar(this.head, -1, 0.065, 0.1, 0, { w: 0.05, h: 0.11, mat: coat, inner: 0xd8e4ee, tz: 0.2 });
+            this._lvEar(this.head, 1, 0.065, 0.1, 0, { w: 0.05, h: 0.11, mat: coat, inner: 0xd8e4ee, tz: 0.2 });
+            // Icicles where the whiskers should be.
+            for (const sd of [-1, 1]) for (let i = 0; i < 2; i++) this._lvSpike(this.head, ice, [sd * 0.035, -0.02 + i * 0.02, 0.17], [sd, -0.2, 0.3], 0.008, 0.08, 3);
+            this.head.position.set(0, 0.34, 0.27); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.08, 0.24, 0.18, { r: 0.03, footR: 0.035, knee: 0.03 });
+            this.frontRight = this._lvLeg(coat, 0.08, 0.24, 0.18, { r: 0.03, footR: 0.035, knee: 0.03 });
+            this.rearLeft   = this._lvLeg(coat, -0.08, 0.26, -0.18, { r: 0.035, footR: 0.035, knee: -0.06 });
+            this.rearRight  = this._lvLeg(coat, 0.08, 0.26, -0.18, { r: 0.035, footR: 0.035, knee: -0.06 });
+            this.tail = this._lvTail(coat, 0.32, -0.25, [[0, -0.02, -0.14], [0, -0.06, -0.28], [0, -0.06, -0.4]], [0.06, 0.075, 0.08, 0.07, 0.05]);
+            for (const d of [[0, 1, -0.3], [0.7, 0.5, -0.5], [-0.7, 0.5, -0.5]]) this._lvSpike(this.tail, ice, [0, -0.06, -0.43], d, 0.015, 0.07, 4);
+            this._lvMove = 'prowl';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Mudskipper: a goggle-eyed fish propped up on its fin-arms, sail
+        //    raised, mud drying on its flanks ──────────────────────────────
+        _buildLvMudskipper() {
+            const p = this.profile;
+            const skin = this._lvCoat('spots', null, 0.45), belly = this._mat(0xd8d0b0, 1.0, 0.6);
+            const fin = this._mat(0x8a7a50, 0.9, 0.6), sail = this._mat(p.accent, 0.95, 0.5, 0x0a1830), mud = this._mat(0x3a2c1c, 1.0, 1.0);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, skin, 0, 0.02, 0, 0.16, 0.85, 0.75, 1.6).rotation.x = -0.12;
+            this._lvBall(this.body, belly, 0, -0.06, 0.05, 0.13, 0.8, 0.4, 1.4, 6);
+            this._lvCone(this.body, skin, 0, -0.03, -0.32, 0.09, 0.26, 6).rotation.x = -Math.PI / 2 - 0.15;
+            for (const [x, y, z, r] of [[0.11, 0, -0.05, 0.035], [-0.12, -0.02, 0.06, 0.03], [0.06, 0.08, -0.16, 0.025]]) this._lvBall(this.body, mud, x, y, z, r, 1, 0.5, 1.3, 5);
+            this.body.position.set(0, 0.17, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, skin, 0, 0, 0.06, 0.13, 1, 0.85, 1);
+            this._lvJaw = new THREE.Group();
+            this._lvBall(this._lvJaw, belly, 0, 0, 0.04, 0.07, 1.2, 0.35, 0.6, 6);
+            this._lvJaw.position.set(0, -0.06, 0.12); this.head.add(this._lvRest(this._lvJaw));
+            // The goggles: two turrets on top of the head, an eye on each.
+            for (const sd of [-1, 1]) {
+                this._lvBall(this.head, skin, sd * 0.045, 0.1, 0.06, 0.05, 1, 1, 1, 6);
+                this._lvEye(this.head, sd * 0.045, 0.14, 0.07, 0.045, { iris: 0xc8a040, pupil: true });
+            }
+            this.head.position.set(0, 0.22, 0.24); this.bodyGroup.add(this.head);
+
+            // Pectoral fins used as arms: a fleshy stump and a fan on the mud.
+            const finArm = sd => {
+                const g = new THREE.Group();
+                this._lvBall(g, skin, 0, 0, 0, 0.035, 1, 1, 1, 5);
+                this._lvStrut(g, skin, [0, 0, 0], [sd * 0.08, -0.1, 0.06], 0.03, 0.025);
+                this._lvBall(g, fin, sd * 0.1, -0.11, 0.08, 0.07, 0.6, 0.2, 1, 6);
+                g.position.set(sd * 0.09, 0.14, 0.12); this.bodyGroup.add(g); return g;
+            };
+            this.frontLeft = finArm(-1); this.frontRight = finArm(1);
+            this._dorsal = new THREE.Group();
+            this._lvBall(this._dorsal, sail, 0, 0.08, -0.04, 0.12, 0.12, 0.75, 1.3, 6);
+            for (let i = 0; i < 4; i++) this._lvStrut(this._dorsal, fin, [0, 0, -0.1 + i * 0.06], [0, 0.15 - Math.abs(i - 1.5) * 0.02, -0.14 + i * 0.07], 0.008, 0.006, 3);
+            const dot = this._mat(0x9ad0ff, 1.0, 0.3, 0x3a6ab8);
+            for (const [y, z] of [[0.08, -0.08], [0.12, 0.0], [0.06, 0.04]]) for (const sd of [-1, 1]) this._lvBall(this._dorsal, dot, sd * 0.014, y, z, 0.012, 0.5, 1, 1, 4);
+            this._dorsal.position.set(0, 0.28, -0.02); this.bodyGroup.add(this._dorsal);
+            this.tail = new THREE.Group();
+            this._lvBall(this.tail, fin, 0, 0.02, -0.07, 0.1, 0.12, 1.1, 0.9, 6);
+            this.tail.position.set(0, 0.14, -0.43); this.bodyGroup.add(this.tail);
+            this._lvMove = 'hop';
+            // AquaticFish part map: HEAD, BODY, MOUTH and the four fins.
+            const m = {}, set = (ks, o) => ks.forEach(k => m[k] = o);
+            set(['BODY', 'TORSO', 'CORE', 'MASS'], this.body);
+            set(['HEAD', 'SKULL', 'FACE', 'EYE', 'EYES'], this.head);
+            set(['MOUTH'], this._lvJaw);
+            set(['TAIL_FIN', 'TAIL'], this.tail);
+            set(['DORSAL_FIN'], this._dorsal);
+            set(['LEFT_PECTORAL_FIN', 'LEFT_LEG'], this.frontLeft);
+            set(['RIGHT_PECTORAL_FIN', 'RIGHT_LEG'], this.frontRight);
+            this._partMeshMap = m;
+            this._cascadeRules = [
+                { gone: ['BODY', 'TORSO', 'CORE', 'MASS'], hide: [this.body, this.head, this.tail, this._dorsal, this.frontLeft, this.frontRight] },
+                { gone: ['HEAD', 'SKULL', 'FACE'], hide: [this.head] },
+                { gone: ['MOUTH'], hide: [this._lvJaw] },
+                { gone: ['TAIL_FIN'], hide: [this.tail] },
+                { gone: ['DORSAL_FIN'], hide: [this._dorsal] },
+                { gone: ['LEFT_PECTORAL_FIN'], hide: [this.frontLeft] },
+                { gone: ['RIGHT_PECTORAL_FIN'], hide: [this.frontRight] },
+            ];
+        }
+
+        // ── Scrapyard Jackal: lean and laughing, ribs showing, a length of
+        //    chain for a collar with a padlock hanging off it ──────────────
+        _buildLvScrapyardjackal() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), cream = this._mat(0xe8d8b8, 1.0, 0.9), dark = this._mat(0x1a1410, 1.0, 0.6);
+            const iron = this._mat(0x7a7470, 1.0, 0.45), rust = this._mat(0x8a4a24, 1.0, 0.8), bone = this._mat(0xd8c8a8, 0.85, 0.6);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0.18, 0.15, 0.85, 1.05, 1);
+            this._lvBall(this.body, coat, 0, 0.02, -0.2, 0.13, 0.95, 0.95, 1);
+            this._lvStrut(this.body, coat, [0, 0, 0.1], [0, 0.02, -0.12], 0.1, 0.085);
+            // Ribs standing out round the tucked waist.
+            for (let i = 0; i < 3; i++) { const rb = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.012, 4, 8, Math.PI * 1.2), bone); rb.rotation.z = -Math.PI * 0.1; rb.position.set(0, 0.01, 0.07 - i * 0.07); this.body.add(rb); }
+            this.body.position.set(0, 0.52, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvStrut(this.head, coat, [0, 0, 0], [0, 0.06, 0.06], 0.07, 0.06);
+            this._lvBall(this.head, coat, 0, 0.08, 0.1, 0.095, 0.9, 0.85, 1.1);
+            this._lvCone(this.head, coat, 0, 0.06, 0.25, 0.05, 0.2, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, dark, 0, 0.06, 0.35, 0.018, 1, 1, 1, 4);
+            // The lower jaw, hung open in a laugh.
+            this._lvJaw = new THREE.Group();
+            this._lvCone(this._lvJaw, cream, 0, 0, 0.08, 0.035, 0.16, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this._lvJaw, this._mat(0xc85a6a, 1.0, 0.5), 0, 0.012, 0.06, 0.03, 0.8, 0.4, 1.6, 5);
+            this._lvJaw.position.set(0, 0.04, 0.15); this._lvJaw.rotation.x = 0.35; this.head.add(this._lvRest(this._lvJaw));
+            this._lvEye(this.head, -0.05, 0.11, 0.17, 0.025, { iris: p.accent, glow: true });
+            this._lvEye(this.head, 0.05, 0.11, 0.17, 0.025, { iris: p.accent, glow: true });
+            this._lvEar(this.head, -1, 0.06, 0.15, 0.07, { w: 0.055, h: 0.15, mat: coat, inner: 0xe8d8b8, tz: 0.25 });
+            this._lvEar(this.head, 1, 0.06, 0.15, 0.07, { w: 0.055, h: 0.15, mat: coat, inner: 0xe8d8b8, tz: 0.25 });
+            // A chain collar round the neck, padlock dangling at the throat.
+            const collar = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.016, 4, 10), iron); collar.rotation.x = -Math.PI / 4; collar.position.set(0, 0.03, 0.03); this.head.add(collar);
+            const shackle = new THREE.Mesh(new THREE.TorusGeometry(0.015, 0.006, 3, 8), iron); shackle.position.set(0, -0.03, 0.09); this.head.add(shackle);
+            this._lvBox(this.head, rust, 0, -0.06, 0.09, 0.05, 0.055, 0.025);
+            this.head.position.set(0, 0.62, 0.26); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.08, 0.48, 0.2, { r: 0.03, footR: 0.035, knee: 0.02 });
+            this.frontRight = this._lvLeg(coat, 0.08, 0.48, 0.2, { r: 0.03, footR: 0.035, knee: 0.02 });
+            this.rearLeft   = this._lvLeg(coat, -0.08, 0.5, -0.2, { r: 0.035, footR: 0.035, knee: -0.08 });
+            this.rearRight  = this._lvLeg(coat, 0.08, 0.5, -0.2, { r: 0.035, footR: 0.035, knee: -0.08 });
+            this.tail = this._lvTail(coat, 0.54, -0.32, [[0, -0.1, -0.08], [0, -0.24, -0.12], [0, -0.34, -0.1]], [0.04, 0.05, 0.05, 0.04, 0.03]);
+            this._lvBall(this.tail, dark, 0, -0.36, -0.1, 0.032, 1, 1, 1, 5);
+            this._lvMove = 'prowl';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail, mouth: this._lvJaw });
+        }
+
+        // ── Moor Wolf Pup: all head and paws, milk fangs bared, a pale blaze
+        //    down its face ────────────────────────────────────────────────
+        _buildLvMoorwolfpup() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), pale = this._mat(0xe8e4dc, 1.0, 0.9), dark = this._mat(0x141210, 1.0, 0.5);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.16, 0.95, 0.95, 1.35);
+            this._lvBall(this.body, pale, 0, -0.04, 0.15, 0.1, 0.8, 0.9, 0.7, 6);
+            this.body.position.set(0, 0.36, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.06, 0.07, 0.15);
+            this._lvBall(this.head, pale, 0, 0, 0.2, 0.07, 0.9, 0.8, 1.2, 6);
+            this._lvBall(this.head, dark, 0, 0.02, 0.28, 0.025, 1, 1, 1, 4);
+            for (const fx of [-0.025, 0.025]) this._lvCone(this.head, this._mat(0xfffaf0, 1.0, 0.3), fx, -0.05, 0.26, 0.008, 0.035, 3).rotation.x = Math.PI;
+            this._lvBall(this.head, pale, 0, 0.13, 0.17, 0.05, 0.5, 1.2, 0.4, 5);
+            this._lvEye(this.head, -0.065, 0.09, 0.18, 0.03, { iris: p.accent, pupil: true });
+            this._lvEye(this.head, 0.065, 0.09, 0.18, 0.03, { iris: p.accent, pupil: true });
+            this._lvEar(this.head, -1, 0.085, 0.16, 0.04, { w: 0.07, h: 0.13, mat: coat, inner: 0xd8c8b8, tz: 0.35 });
+            this._lvEar(this.head, 1, 0.085, 0.16, 0.04, { w: 0.07, h: 0.13, mat: coat, inner: 0xd8c8b8, tz: 0.35 });
+            this.head.position.set(0, 0.44, 0.17); this.bodyGroup.add(this.head);
+
+            // Paws it has not grown into yet.
+            this.frontLeft  = this._lvLeg(coat, -0.09, 0.3, 0.15, { r: 0.04, footR: 0.075, knee: 0.02, claw: 0x2a2420 });
+            this.frontRight = this._lvLeg(coat, 0.09, 0.3, 0.15, { r: 0.04, footR: 0.075, knee: 0.02, claw: 0x2a2420 });
+            this.rearLeft   = this._lvLeg(coat, -0.09, 0.3, -0.15, { r: 0.045, footR: 0.07, knee: -0.05, claw: 0x2a2420 });
+            this.rearRight  = this._lvLeg(coat, 0.09, 0.3, -0.15, { r: 0.045, footR: 0.07, knee: -0.05, claw: 0x2a2420 });
+            this.tail = this._lvTail(coat, 0.4, -0.21, [[0, 0.05, -0.08], [0, 0.08, -0.15]], [0.04, 0.05, 0.045]);
+            this._lvMove = 'prowl';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Dromedary Calf: knob-kneed and spoiled, long lashes, chewing,
+        //    a spit bubble swelling on its lip ─────────────────────────────
+        _buildLvDromedarycalf() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), dark = this._mat(p.accent, 1.0, 0.6), lip = this._mat(0xb89060, 1.0, 0.8);
+            const spit = this._mat(0xd8f0ff, 0.55, 0.05);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.2, 0.85, 0.9, 1.3);
+            this._lvBall(this.body, coat, 0, 0.16, -0.02, 0.12, 1, 1, 1.3, 6);
+            this.body.position.set(0, 0.8, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvStrut(this.head, coat, [0, 0, 0], [0, 0.2, 0.12], 0.07, 0.055);
+            this._lvBall(this.head, coat, 0, 0.2, 0.12, 0.055, 1, 1, 1, 5);
+            this._lvStrut(this.head, coat, [0, 0.2, 0.12], [0, 0.36, 0.14], 0.055, 0.05);
+            this._lvBall(this.head, coat, 0, 0.4, 0.18, 0.085, 0.85, 0.85, 1.5);
+            this._lvEye(this.head, -0.05, 0.43, 0.22, 0.025);
+            this._lvEye(this.head, 0.05, 0.43, 0.22, 0.025);
+            // Long lashes, three over each eye.
+            for (const sd of [-1, 1]) for (let i = 0; i < 3; i++) this._lvSpike(this.head, dark, [sd * (0.045 + i * 0.008), 0.448, 0.225 - i * 0.008], [sd * 0.4, 1, 0.6], 0.005, 0.04, 3);
+            this._lvEar(this.head, -1, 0.05, 0.45, 0.1, { w: 0.025, h: 0.06, mat: coat, tz: 0.6 });
+            this._lvEar(this.head, 1, 0.05, 0.45, 0.1, { w: 0.025, h: 0.06, mat: coat, tz: 0.6 });
+            // The chewing lip and the spit bubble on it.
+            this._lvJaw = new THREE.Group();
+            this._lvBall(this._lvJaw, lip, 0, 0.01, 0.04, 0.05, 1.1, 0.8, 1, 6);
+            this._lvBall(this._lvJaw, spit, 0, -0.02, 0.085, 0.035, 1, 1, 1, 6);
+            this._lvJaw.position.set(0, 0.35, 0.26); this.head.add(this._lvRest(this._lvJaw));
+            this.head.position.set(0, 0.86, 0.2); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.1, 0.72, 0.15, { r: 0.03, kneeR: 0.05, knee: 0.02, foot: 'pad', footR: 0.05, footMat: lip });
+            this.frontRight = this._lvLeg(coat, 0.1, 0.72, 0.15, { r: 0.03, kneeR: 0.05, knee: 0.02, foot: 'pad', footR: 0.05, footMat: lip });
+            this.rearLeft   = this._lvLeg(coat, -0.1, 0.72, -0.16, { r: 0.035, kneeR: 0.05, knee: -0.05, foot: 'pad', footR: 0.05, footMat: lip });
+            this.rearRight  = this._lvLeg(coat, 0.1, 0.72, -0.16, { r: 0.035, kneeR: 0.05, knee: -0.05, foot: 'pad', footR: 0.05, footMat: lip });
+            this.tail = this._lvTail(coat, 0.84, -0.25, [[0, -0.12, -0.04], [0, -0.24, -0.05]], [0.02, 0.016, 0.012]);
+            this._lvBall(this.tail, dark, 0, -0.26, -0.05, 0.03, 1, 1.3, 1, 5);
+            this._lvMove = 'drowse';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail, mouth: this._lvJaw });
+        }
+
+        // ── Marsh Otter: sat up on its tail, a flat river stone balanced on
+        //    its head and another held ready to throw ──────────────────────
+        _buildLvMarshotter() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle', null, 0.5), pale = this._mat(0xd8c8b0, 1.0, 0.8), dark = this._mat(0x14100c, 1.0, 0.4);
+            const stone = this._mat(p.accent, 1.0, 0.6);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0.12, 0, 0.15, 0.9, 1.7, 0.85);
+            this._lvBall(this.body, pale, 0, 0.18, 0.08, 0.1, 0.8, 1.6, 0.5, 6);
+            this.body.position.set(0, 0.3, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.05, 0.03, 0.1, 1.15, 0.85, 1);
+            this._lvBall(this.head, pale, 0, 0.01, 0.11, 0.06, 1.4, 0.8, 0.8, 6);
+            this._lvBall(this.head, dark, 0, 0.03, 0.155, 0.022, 1.4, 1, 1, 4);
+            this._lvEye(this.head, -0.05, 0.08, 0.1, 0.02);
+            this._lvEye(this.head, 0.05, 0.08, 0.1, 0.02);
+            this._lvEar(this.head, -1, 0.1, 0.07, -0.01, { shape: 'round', w: 0.025, h: 0.035, mat: coat, tz: 1.0 });
+            this._lvEar(this.head, 1, 0.1, 0.07, -0.01, { shape: 'round', w: 0.025, h: 0.035, mat: coat, tz: 1.0 });
+            this._lvWhiskers(this.head, 0.06, 0, 0.12, 0.16, 0xf0ece0);
+            // The stone it keeps balanced on its head.
+            this._lvBall(this.head, stone, 0, 0.15, 0.03, 0.08, 1.3, 0.45, 1, 6);
+            this.head.position.set(0, 0.66, 0.02); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.1, 0.56, 0.05, { r: 0.03, elbowY: -0.09, handX: -0.05, handY: -0.14, reach: 0.12, handMat: dark });
+            this.frontRight = this._lvArm(coat, 1, 0.1, 0.56, 0.05, { r: 0.03, elbowY: -0.09, handX: -0.05, handY: -0.14, reach: 0.12, handMat: dark });
+            this._lvBall(this.frontRight.hand, stone, -0.05, 0, 0.02, 0.055, 1.2, 0.6, 1, 6);
+            this.rearLeft   = this._lvLeg(coat, -0.09, 0.22, -0.02, { r: 0.045, footR: 0.055, knee: 0.05, foot: 'web', footMat: dark });
+            this.rearRight  = this._lvLeg(coat, 0.09, 0.22, -0.02, { r: 0.045, footR: 0.055, knee: 0.05, foot: 'web', footMat: dark });
+            this.tail = this._lvTail(coat, 0.24, -0.08, [[0, -0.12, -0.12], [0, -0.19, -0.28], [0, -0.19, -0.42]], [0.07, 0.06, 0.045, 0.03, 0.02]);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Frost Stoat: a white winter stoat stood up like a periscope, a
+        //    black tail tip and frost grown along its back ─────────────────
+        _buildLvFroststoat() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), black = this._mat(p.accent, 1.0, 0.6), ice = this._mat(0xbfe8ff, 0.8, 0.15, 0x6ab8e8);
+            this.body = new THREE.Group();
+            const spine = [[0, 0, -0.1], [0, 0.04, 0.04], [0, 0.18, 0.08], [0, 0.32, 0.08]];
+            const rad = [0.1, 0.095, 0.085, 0.075];
+            spine.forEach((q, i) => {
+                this._lvBall(this.body, coat, q[0], q[1], q[2], rad[i], 1, 1, 1.15);
+                if (i) this._lvStrut(this.body, coat, spine[i - 1], q, rad[i - 1] * 0.95, rad[i] * 0.95);
+            });
+            for (let i = 0; i < 3; i++) this._lvSpike(this.body, ice, [0, 0.08, -0.08 - i * 0.04], [0, 1, -0.3 - i * 0.2], 0.02, 0.08, 4);
+            this.body.position.set(0, 0.16, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.03, 0.05, 0.075, 0.9, 0.85, 1.25);
+            this._lvCone(this.head, coat, 0, 0.02, 0.13, 0.035, 0.08, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, black, 0, 0.02, 0.17, 0.014, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.04, 0.06, 0.1, 0.018);
+            this._lvEye(this.head, 0.04, 0.06, 0.1, 0.018);
+            this._lvEar(this.head, -1, 0.05, 0.08, 0, { shape: 'round', w: 0.028, h: 0.035, mat: coat, inner: 0xf0e0e0, tz: 0.4 });
+            this._lvEar(this.head, 1, 0.05, 0.08, 0, { shape: 'round', w: 0.028, h: 0.035, mat: coat, inner: 0xf0e0e0, tz: 0.4 });
+            this.head.position.set(0, 0.5, 0.1); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.06, 0.42, 0.1, { r: 0.02, elbowY: -0.06, handY: -0.1, reach: 0.04, handR: 0.022 });
+            this.frontRight = this._lvArm(coat, 1, 0.06, 0.42, 0.1, { r: 0.02, elbowY: -0.06, handY: -0.1, reach: 0.04, handR: 0.022 });
+            this.rearLeft   = this._lvLeg(coat, -0.08, 0.14, -0.1, { r: 0.035, footR: 0.035, knee: 0.04, foot: 'long' });
+            this.rearRight  = this._lvLeg(coat, 0.08, 0.14, -0.1, { r: 0.035, footR: 0.035, knee: 0.04, foot: 'long' });
+            this.tail = this._lvTail(coat, 0.16, -0.21, [[0, -0.03, -0.12], [0, -0.07, -0.24]], [0.03, 0.03, 0.028]);
+            this._lvBall(this.tail, black, 0, -0.08, -0.28, 0.04, 1, 1, 1.3, 6);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Yeti Cub: a shaggy snowball on stubby legs, long hugging arms, a
+        //    flat blue face and two ice nubs where horns will grow ─────────
+        _buildLvYeticub() {
+            const p = this.profile;
+            const coat = this._lvCoat('mottle'), face = this._mat(p.accent, 1.0, 0.7), dark = this._mat(0x2a3448, 1.0, 0.5);
+            const horn = this._mat(0xbfe0f0, 0.9, 0.2, 0x3a6a8a);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.26, 1, 1.05, 0.9, 8);
+            for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; this._lvSpike(this.body, coat, [Math.cos(a) * 0.2, -0.12, Math.sin(a) * 0.17], [Math.cos(a) * 0.3, -1, Math.sin(a) * 0.3], 0.05, 0.12, 4); }
+            for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; this._lvSpike(this.body, coat, [Math.cos(a) * 0.17, 0.16, Math.sin(a) * 0.14], [Math.cos(a) * 0.6, -0.4, Math.sin(a) * 0.6], 0.045, 0.1, 4); }
+            this.body.position.set(0, 0.44, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.08, 0.02, 0.17);
+            this._lvBall(this.head, face, 0, 0.06, 0.15, 0.12, 1, 1.05, 0.5, 6);
+            this._lvBall(this.head, dark, 0, 0.05, 0.21, 0.03, 1.6, 0.8, 0.8, 5);
+            this._lvBall(this.head, dark, 0, -0.01, 0.2, 0.03, 1.6, 0.5, 0.5, 5);
+            this._lvEye(this.head, -0.05, 0.1, 0.2, 0.022);
+            this._lvEye(this.head, 0.05, 0.1, 0.2, 0.022);
+            for (const sd of [-1, 1]) this._lvSpike(this.head, horn, [sd * 0.07, 0.22, 0.02], [sd * 0.4, 1, 0], 0.025, 0.08, 4);
+            for (let i = -1; i <= 1; i++) this._lvSpike(this.head, coat, [i * 0.03, 0.24, -0.02], [i * 0.5, 1, -0.3], 0.03, 0.08, 4);
+            this.head.position.set(0, 0.68, 0.02); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.24, 0.56, 0.02, { r: 0.06, elbowX: 0.04, elbowY: -0.14, elbowZ: 0.04, handY: -0.26, reach: 0.14, handR: 0.08, handMat: face });
+            this.frontRight = this._lvArm(coat, 1, 0.24, 0.56, 0.02, { r: 0.06, elbowX: 0.04, elbowY: -0.14, elbowZ: 0.04, handY: -0.26, reach: 0.14, handR: 0.08, handMat: face });
+            this.rearLeft   = this._lvLeg(coat, -0.12, 0.22, 0, { r: 0.07, footR: 0.09, footMat: face });
+            this.rearRight  = this._lvLeg(coat, 0.12, 0.22, 0, { r: 0.07, footR: 0.09, footMat: face });
+            this.tail = this._lvTail(coat, 0.36, -0.22, [[0, -0.02, -0.05]], [0.05, 0.035]);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Snow Sled Pup: a husky pup still in the red harness it slipped,
+        //    the snapped trace trailing and a brass bell at its chest ───────
+        _buildLvSnowsledpup() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), white = this._mat(0xf0f0f0, 1.0, 0.9), strap = this._mat(p.accent, 1.0, 0.6);
+            const brass = this._mat(0xc8a040, 1.0, 0.3, 0x3a2a08), rope = this._mat(0xa08860, 1.0, 0.9), dark = this._mat(0x141210, 1.0, 0.5);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.17, 0.95, 0.95, 1.4);
+            this._lvBall(this.body, white, 0, -0.03, 0.14, 0.12, 0.85, 0.85, 0.8, 6);
+            for (const z of [0.12, -0.12]) { const band = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.018, 4, 10), strap); band.position.set(0, 0, z); this.body.add(band); }
+            this._lvBox(this.body, strap, 0, 0.16, 0, 0.04, 0.02, 0.26);
+            this._lvStrut(this.body, rope, [0, 0.15, -0.12], [0.1, -0.02, -0.36], 0.014, 0.012, 4);
+            for (const d of [[1, -0.3, -0.6], [0.6, -0.8, -0.4], [1.2, -0.6, -0.2]]) this._lvSpike(this.body, rope, [0.1, -0.02, -0.36], d, 0.008, 0.04, 3);
+            this._lvBall(this.body, brass, 0, -0.17, 0.12, 0.035, 1, 1, 1, 6);
+            this.body.position.set(0, 0.38, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.04, 0.05, 0.12);
+            this._lvBall(this.head, white, 0, -0.01, 0.12, 0.09, 1.1, 0.8, 0.9, 6);
+            this._lvCone(this.head, white, 0, -0.01, 0.2, 0.05, 0.14, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, dark, 0, 0, 0.27, 0.02, 1, 1, 1, 4);
+            for (const sd of [-1, 1]) this._lvBall(this.head, white, sd * 0.04, 0.11, 0.14, 0.015, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.055, 0.07, 0.15, 0.025, { iris: 0x8ad0ff, pupil: true });
+            this._lvEye(this.head, 0.055, 0.07, 0.15, 0.025, { iris: 0x8ad0ff, pupil: true });
+            this._lvEar(this.head, -1, 0.065, 0.13, 0.03, { w: 0.055, h: 0.1, mat: coat, inner: 0xf0f0f0, tz: 0.15 });
+            this._lvEar(this.head, 1, 0.065, 0.13, 0.03, { w: 0.055, h: 0.1, mat: coat, inner: 0xf0f0f0, tz: 0.15 });
+            this.head.position.set(0, 0.46, 0.21); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.09, 0.3, 0.16, { r: 0.035, footR: 0.04, knee: 0.02, footMat: white });
+            this.frontRight = this._lvLeg(coat, 0.09, 0.3, 0.16, { r: 0.035, footR: 0.04, knee: 0.02, footMat: white });
+            this.rearLeft   = this._lvLeg(coat, -0.09, 0.32, -0.17, { r: 0.04, footR: 0.04, knee: -0.05, footMat: white });
+            this.rearRight  = this._lvLeg(coat, 0.09, 0.32, -0.17, { r: 0.04, footR: 0.04, knee: -0.05, footMat: white });
+            this.tail = this._lvTail(coat, 0.44, -0.23, [[0, 0.1, -0.06], [0, 0.18, 0], [0, 0.16, 0.08]], [0.045, 0.06, 0.06, 0.05, 0.035]);
+            this._lvMove = 'prowl';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Shrine Mouse: a white temple mouse with red eyes, paws pressed
+        //    together over a stolen grain of rice, a paper streamer at its
+        //    throat on a red cord ──────────────────────────────────────────
+        _buildLvShrinemouse() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), pink = this._mat(0xf0b0b8, 1.0, 0.6), red = this._mat(p.accent, 1.0, 0.5), paper = this._mat(0xfaf8f0, 1.0, 0.9);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0.03, 0, 0.15, 0.9, 1.2, 0.9);
+            const cord = new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.012, 4, 10), red); cord.rotation.x = Math.PI / 2; cord.position.set(0, 0.16, 0); this.body.add(cord);
+            // Two zigzag paper streamers (shide) hung from the cord.
+            for (const sd of [-1, 1]) [0, 1, 2].forEach(i => this._lvBox(this.body, paper, sd * (0.03 + (i % 2) * 0.012), 0.135 - i * 0.03, 0.095 + i * 0.006, 0.03, 0.035, 0.004));
+            this.body.position.set(0, 0.26, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.05, 0.04, 0.1);
+            this._lvCone(this.head, coat, 0, 0.02, 0.14, 0.05, 0.12, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, pink, 0, 0.02, 0.205, 0.014, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.05, 0.08, 0.11, 0.025, { iris: p.accent, glow: true });
+            this._lvEye(this.head, 0.05, 0.08, 0.11, 0.025, { iris: p.accent, glow: true });
+            this._lvEar(this.head, -1, 0.07, 0.12, 0, { shape: 'round', w: 0.065, h: 0.11, mat: coat, inner: 0xf0b0b8, tz: 0.35 });
+            this._lvEar(this.head, 1, 0.07, 0.12, 0, { shape: 'round', w: 0.065, h: 0.11, mat: coat, inner: 0xf0b0b8, tz: 0.35 });
+            this._lvWhiskers(this.head, 0.025, 0.01, 0.17, 0.14);
+            this.head.position.set(0, 0.46, 0.03); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.07, 0.38, 0.06, { r: 0.022, elbowY: -0.06, handX: -0.055, handY: -0.07, reach: 0.1, handR: 0.028, handMat: pink });
+            this.frontRight = this._lvArm(coat, 1, 0.07, 0.38, 0.06, { r: 0.022, elbowY: -0.06, handX: -0.055, handY: -0.07, reach: 0.1, handR: 0.028, handMat: pink });
+            this._lvBall(this.frontRight.hand, paper, -0.015, 0.03, 0.01, 0.012, 1, 1.6, 1, 4);
+            this.rearLeft   = this._lvLeg(coat, -0.08, 0.15, -0.02, { r: 0.035, footR: 0.035, knee: 0.04, foot: 'long', footMat: pink });
+            this.rearRight  = this._lvLeg(coat, 0.08, 0.15, -0.02, { r: 0.035, footR: 0.035, knee: 0.04, foot: 'long', footMat: pink });
+            this.tail = this._lvTail(pink, 0.17, -0.1, [[0.04, -0.12, -0.06], [0.14, -0.15, 0], [0.18, -0.15, 0.12]], [0.02, 0.017, 0.013, 0.01]);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Pilgrim Goat Kid: a bell-collared kid on wobbly legs, horn nubs,
+        //    bar-pupilled eyes and somebody's map rolled up in its mouth ────
+        _buildLvPilgrimgoatkid() {
+            const p = this.profile;
+            const coat = this._lvCoat('mottle'), horn = this._mat(0xd8c8a0, 1.0, 0.5), brass = this._mat(p.accent, 1.0, 0.3, 0x3a2a08);
+            const paper = this._mat(0xe8dcb0, 1.0, 0.9), seal = this._mat(0xa02020, 1.0, 0.5), strap = this._mat(0x6a3a20, 1.0, 0.8);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.17, 0.85, 0.9, 1.35);
+            this.body.position.set(0, 0.58, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvStrut(this.head, coat, [0, 0, 0], [0, 0.08, 0.05], 0.05, 0.045);
+            this._lvBall(this.head, coat, 0, 0.12, 0.1, 0.09, 0.85, 0.9, 1.35);
+            this._lvBall(this.head, coat, 0, 0.09, 0.2, 0.05, 0.9, 0.8, 1);
+            this._lvBall(this.head, this._mat(0x2a1c18, 1.0, 0.5), 0, 0.1, 0.245, 0.015, 1, 1, 1, 4);
+            for (const sd of [-1, 1]) this._lvCone(this.head, horn, sd * 0.035, 0.21, 0.08, 0.02, 0.05, 4);
+            this._lvEar(this.head, -1, 0.07, 0.15, 0.06, { w: 0.03, h: 0.1, mat: coat, inner: 0xe8c8b8, tz: 1.3 });
+            this._lvEar(this.head, 1, 0.07, 0.15, 0.06, { w: 0.03, h: 0.1, mat: coat, inner: 0xe8c8b8, tz: 1.3 });
+            this._lvEye(this.head, -0.06, 0.14, 0.14, 0.022, { iris: 0xc8a040, pupil: true, bar: true });
+            this._lvEye(this.head, 0.06, 0.14, 0.14, 0.022, { iris: 0xc8a040, pupil: true, bar: true });
+            // The pilgrim's map, half eaten: a scroll across the mouth and a
+            // chewed sheet hanging off it.
+            this._lvCyl(this.head, paper, 0, 0.06, 0.22, 0.02, 0.02, 0.18, 6).rotation.z = Math.PI / 2;
+            this._lvBall(this.head, seal, 0, 0.06, 0.243, 0.012, 1, 1, 0.5, 5);
+            this._lvBox(this.head, paper, 0.05, 0.02, 0.225, 0.06, 0.08, 0.004).rotation.z = 0.2;
+            // A bell collar round the neck.
+            const collar = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.01, 4, 10), strap); collar.rotation.x = -1.01; collar.position.set(0, 0.03, 0.02); this.head.add(collar);
+            this._lvCone(this.head, brass, 0, -0.01, 0.06, 0.025, 0.035, 6);
+            this._lvBall(this.head, brass, 0, -0.03, 0.06, 0.01, 1, 1, 1, 4);
+            this.head.position.set(0, 0.66, 0.18); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.08, 0.52, 0.15, { r: 0.028, kneeR: 0.035, knee: 0.02, foot: 'hoof', footR: 0.03 });
+            this.frontRight = this._lvLeg(coat, 0.08, 0.52, 0.15, { r: 0.028, kneeR: 0.035, knee: 0.02, foot: 'hoof', footR: 0.03 });
+            this.rearLeft   = this._lvLeg(coat, -0.08, 0.52, -0.16, { r: 0.03, kneeR: 0.035, knee: -0.05, foot: 'hoof', footR: 0.03 });
+            this.rearRight  = this._lvLeg(coat, 0.08, 0.52, -0.16, { r: 0.03, kneeR: 0.035, knee: -0.05, foot: 'hoof', footR: 0.03 });
+            this.tail = this._lvTail(coat, 0.65, -0.2, [[0, 0.06, -0.04]], [0.03, 0.02]);
+            this._lvMove = 'prowl';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Shrine Fox: sits formally in a red bib, its face a white festival
+        //    mask with red brush marks, tail raised like a flame ───────────
+        _buildLvShrinefox() {
+            const p = this.profile;
+            const coat = this._lvCoat('belly'), white = this._mat(0xf4f0e8, 1.0, 0.9), red = this._mat(p.accent, 1.0, 0.6), black = this._mat(0x18120e, 1.0, 0.6);
+            const gold = this._mat(0xe8c040, 1.0, 0.3, 0xe8a020);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0.05, 0, 0.17, 0.9, 1.25, 0.95).rotation.x = 0.2;
+            for (const sd of [-1, 1]) this._lvBall(this.body, coat, sd * 0.09, -0.12, -0.06, 0.13, 0.8, 0.85, 1.2);
+            // The red bib knotted at the throat, a gold bell on it.
+            const bib = this._lvCyl(this.body, red, 0, 0.15, 0.13, 0.14, 0.001, 0.18, 3); bib.rotation.y = Math.PI; bib.scale.z = 0.35;
+            this._lvBall(this.body, gold, 0, 0.22, 0.165, 0.02, 1, 1, 1, 5);
+            this.body.position.set(0, 0.34, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.05, 0.04, 0.11);
+            this._lvCone(this.head, coat, 0, 0.01, 0.16, 0.045, 0.15, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, black, 0, 0.01, 0.235, 0.015, 1, 1, 1, 4);
+            // The mask: a white face plate painted with red slashes.
+            this._lvBall(this.head, white, 0, 0.04, 0.1, 0.1, 1, 0.95, 0.55, 6);
+            for (const sd of [-1, 1]) this._lvBox(this.head, red, sd * 0.045, 0.1, 0.152, 0.04, 0.01, 0.01).rotation.z = sd * 0.5;
+            this._lvBall(this.head, red, 0, 0.125, 0.148, 0.012, 1, 1, 0.5, 4);
+            for (const sd of [-1, 1]) { const e = this._lvEye(this.head, sd * 0.045, 0.065, 0.148, 0.022, { iris: gold.color.getHex(), glow: true }); e.scale.y = 0.5; e.rotation.z = sd * 0.3; }
+            this._lvEar(this.head, -1, 0.065, 0.12, 0, { w: 0.055, h: 0.14, mat: coat, inner: 0xf4f0e8, tz: 0.18, tuft: 0.04, tuftColor: 0x18120e });
+            this._lvEar(this.head, 1, 0.065, 0.12, 0, { w: 0.055, h: 0.14, mat: coat, inner: 0xf4f0e8, tz: 0.18, tuft: 0.04, tuftColor: 0x18120e });
+            this.head.position.set(0, 0.6, 0.05); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(black, -0.06, 0.32, 0.1, { r: 0.025, footR: 0.035 });
+            this.frontRight = this._lvLeg(black, 0.06, 0.32, 0.1, { r: 0.025, footR: 0.035 });
+            this.rearLeft   = this._lvLeg(coat, -0.12, 0.12, -0.06, { r: 0.04, footR: 0.04, knee: 0.05, foot: 'long', footMat: black });
+            this.rearRight  = this._lvLeg(coat, 0.12, 0.12, -0.06, { r: 0.04, footR: 0.04, knee: 0.05, foot: 'long', footMat: black });
+            this.tail = this._lvTail(coat, 0.24, -0.14, [[0, 0.12, -0.1], [0, 0.3, -0.12], [0, 0.46, -0.06]], [0.05, 0.08, 0.09, 0.08, 0.05]);
+            this._lvBall(this.tail, white, 0, 0.5, -0.04, 0.055, 1, 1.2, 1, 6);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Slumber Sheep: a cloud of wool on spindly legs, eyelids at half
+        //    mast and a striped nightcap flopped over to one side ──────────
+        _buildLvSlumbersheep() {
+            const p = this.profile;
+            const wool = this._lvCoat('flat', null, 1.0), face = this._mat(0x2a2624, 1.0, 0.8), cap = this._lvCoat('bands', p.accent), pom = this._mat(0xf8f8f0, 1.0, 1.0);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, wool, 0, 0, 0, 0.24, 1, 0.9, 1.25, 7);
+            const puffs = [[0.16, 0.1, 0.12], [-0.16, 0.1, 0.12], [0.18, 0.08, -0.12], [-0.18, 0.08, -0.12], [0, 0.2, 0.05], [0, 0.18, -0.16], [0.12, 0.18, -0.02], [-0.12, 0.18, -0.02], [0.2, -0.06, 0], [-0.2, -0.06, 0], [0, 0.02, -0.28], [0, 0.06, 0.26]];
+            puffs.forEach(([x, y, z], i) => this._lvBall(this.body, wool, x, y, z, 0.1 + (i % 3) * 0.015, 1, 1, 1, 6));
+            this.body.position.set(0, 0.5, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, face, 0, 0, 0.07, 0.09, 0.8, 1, 1.3);
+            for (const sd of [-1, 1]) this._lvEye(this.head, sd * 0.045, 0.03, 0.13, 0.022, { iris: 0xd8c8a0, pupil: true, bar: true, lid: 0.55, lidColor: 0x2a2624 });
+            this._lvEar(this.head, -1, 0.06, 0.04, 0.04, { w: 0.03, h: 0.09, mat: face, inner: 0x6a5a58, tz: 1.45 });
+            this._lvEar(this.head, 1, 0.06, 0.04, 0.04, { w: 0.03, h: 0.09, mat: face, inner: 0x6a5a58, tz: 1.45 });
+            this._lvBall(this.head, wool, 0, 0.08, 0.04, 0.07, 1, 1, 1, 6);
+            // The nightcap, its tip flopped over with a pom-pom on it.
+            this._lvSpike(this.head, cap, [0, 0.12, 0.03], [0.5, 1, -0.2], 0.065, 0.2, 6);
+            this._lvBall(this.head, pom, 0.084, 0.287, -0.003, 0.03, 1, 1, 1, 5);
+            this.head.position.set(0, 0.52, 0.28); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(face, -0.1, 0.36, 0.14, { r: 0.022, foot: 'hoof', footR: 0.025 });
+            this.frontRight = this._lvLeg(face, 0.1, 0.36, 0.14, { r: 0.022, foot: 'hoof', footR: 0.025 });
+            this.rearLeft   = this._lvLeg(face, -0.1, 0.36, -0.14, { r: 0.022, foot: 'hoof', footR: 0.025 });
+            this.rearRight  = this._lvLeg(face, 0.1, 0.36, -0.14, { r: 0.022, foot: 'hoof', footR: 0.025 });
+            this.tail = this._lvTail(wool, 0.52, -0.3, [[0, -0.02, -0.05]], [0.06, 0.05]);
+            this._lvMove = 'drowse';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Dream Tapir: a round tapir floating in its sleep, a starry
+        //    saddle round its middle and a wisp of nightmare on its trunk ───
+        _buildLvDreamtapir() {
+            const p = this.profile;
+            const dark = this._lvCoat('flat'), saddle = this._lvCoat('speck', 0xd8d0f0), glow = this._mat(p.accent, 0.8, 0.3, p.accent);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, dark, 0, 0, 0.18, 0.24, 1, 1, 1.05);
+            this._lvBall(this.body, saddle, 0, 0.02, -0.04, 0.27, 1, 0.98, 0.9);
+            this._lvBall(this.body, dark, 0, 0, -0.26, 0.23);
+            this.body.position.set(0, 0.62, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, dark, 0, 0, 0.06, 0.14, 0.9, 0.95, 1.1);
+            for (const sd of [-1, 1]) this._lvEye(this.head, sd * 0.075, 0.05, 0.14, 0.022, { lid: 0.6, lidColor: 0x2a2a3a });
+            this._lvEar(this.head, -1, 0.08, 0.11, 0, { shape: 'round', w: 0.045, h: 0.07, mat: dark, inner: 0xe8e0f0, tz: 0.3 });
+            this._lvEar(this.head, 1, 0.08, 0.11, 0, { shape: 'round', w: 0.045, h: 0.07, mat: dark, inner: 0xe8e0f0, tz: 0.3 });
+            // The trunk, curled down, a wisp of eaten nightmare at its tip.
+            this._lvJaw = new THREE.Group();
+            this._lvChain(this._lvJaw, dark, [[0, -0.04, 0.07], [0, -0.11, 0.11], [0, -0.17, 0.09]], [0.05, 0.045, 0.035, 0.03]);
+            this._lvBall(this._lvJaw, glow, 0, -0.2, 0.07, 0.035, 1, 1, 1, 5);
+            this._lvJaw.position.set(0, -0.02, 0.2); this.head.add(this._lvRest(this._lvJaw));
+            this.head.position.set(0, 0.68, 0.38); this.bodyGroup.add(this.head);
+
+            // Short legs tucked up under it as it floats.
+            const leg = (x, z) => this._lvLeg(dark, x, 0.5, z, { len: 0.2, r: 0.05, foot: 'hoof', footR: 0.05, hoofColor: 0x1a1a24 });
+            this.frontLeft = leg(-0.13, 0.2); this.frontRight = leg(0.13, 0.2);
+            this.rearLeft = leg(-0.13, -0.26); this.rearRight = leg(0.13, -0.26);
+            this.tail = this._lvTail(dark, 0.64, -0.48, [[0, -0.02, -0.05]], [0.035, 0.025]);
+            this._lvMove = 'float';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail, mouth: this._lvJaw });
+        }
+
+        // ── Subway Rat: a soot-grey rat sat up washing its face, eyes shining
+        //    like tunnel lamps, a bus ticket in its teeth ──────────────────
+        _buildLvSubwayrat() {
+            const p = this.profile;
+            const coat = this._lvCoat('soot'), pink = this._mat(0xb89890, 1.0, 0.6), ticket = this._mat(0xe8d8a0, 1.0, 0.8), ink = this._mat(0x3a2a7a, 1.0, 0.8);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0.03, -0.02, 0.17, 0.95, 1.15, 1.05);
+            this.body.position.set(0, 0.3, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.02, 0.05, 0.1, 0.9, 0.85, 1.2);
+            this._lvCone(this.head, coat, 0, 0, 0.17, 0.055, 0.15, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, pink, 0, 0, 0.248, 0.016, 1, 1, 1, 4);
+            for (const ix of [-0.01, 0.01]) this._lvBox(this.head, this._mat(0xe8d8a8, 1.0, 0.4), ix, -0.04, 0.21, 0.012, 0.04, 0.01);
+            this._lvEye(this.head, -0.05, 0.05, 0.12, 0.02, { iris: p.accent, glow: true });
+            this._lvEye(this.head, 0.05, 0.05, 0.12, 0.02, { iris: p.accent, glow: true });
+            this._lvEar(this.head, -1, 0.06, 0.08, 0, { shape: 'round', w: 0.055, h: 0.09, mat: coat, inner: 0xb89890, tz: 0.35 });
+            this._lvEar(this.head, 1, 0.06, 0.08, 0, { shape: 'round', w: 0.055, h: 0.09, mat: coat, inner: 0xb89890, tz: 0.35 });
+            this._lvWhiskers(this.head, 0.025, 0, 0.2, 0.15, 0x9a948a);
+            // A punched travel ticket held crosswise in the teeth.
+            this._lvBox(this.head, ticket, 0.04, -0.06, 0.21, 0.1, 0.006, 0.05).rotation.y = 0.5;
+            this._lvBox(this.head, ink, 0.04, -0.055, 0.21, 0.08, 0.004, 0.012).rotation.y = 0.5;
+            this.head.position.set(0, 0.5, 0.06); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.08, 0.42, 0.08, { r: 0.025, elbowX: 0.03, elbowY: -0.05, elbowZ: 0.05, handX: -0.03, handY: 0.04, reach: 0.12, handMat: pink });
+            this.frontRight = this._lvArm(coat, 1, 0.08, 0.42, 0.08, { r: 0.025, elbowX: 0.03, elbowY: -0.05, elbowZ: 0.05, handX: -0.03, handY: 0.04, reach: 0.12, handMat: pink });
+            this.rearLeft   = this._lvLeg(coat, -0.1, 0.19, -0.04, { r: 0.04, footR: 0.04, knee: 0.05, foot: 'long', footMat: pink });
+            this.rearRight  = this._lvLeg(coat, 0.1, 0.19, -0.04, { r: 0.04, footR: 0.04, knee: 0.05, foot: 'long', footMat: pink });
+            this.tail = this._lvTail(pink, 0.2, -0.15, [[0, -0.14, -0.1], [-0.12, -0.17, -0.2], [-0.28, -0.17, -0.16], [-0.36, -0.17, -0.02]], [0.028, 0.024, 0.019, 0.014, 0.01]);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Cyber Pup: a patchy puppy with a cheap implant: one eye a red
+        //    lens in a riveted plate, an aerial, a tin hind leg ────────────
+        _buildLvCyberpup() {
+            const p = this.profile;
+            const coat = this._lvCoat('spots'), metal = this._mat(0x8a9098, 1.0, 0.3), dark = this._mat(0x18181c, 1.0, 0.5);
+            const led2 = this._mat(0x44ff88, 1.0, 0.2, 0x44ff88);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.16, 0.95, 0.95, 1.35);
+            const collar = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.015, 4, 10), dark); collar.rotation.x = -0.6; collar.position.set(0, 0.06, 0.17); this.body.add(collar);
+            this._lvBox(this.body, dark, 0, -0.02, 0.24, 0.05, 0.04, 0.035);
+            this._lvBall(this.body, led2, 0, -0.02, 0.26, 0.008, 1, 1, 1, 4);
+            this.body.position.set(0, 0.36, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.05, 0.06, 0.13);
+            this._lvBall(this.head, coat, 0, 0, 0.18, 0.06, 0.9, 0.8, 1.2, 6);
+            this._lvBall(this.head, dark, 0, 0.01, 0.25, 0.022, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.06, 0.08, 0.17, 0.03, { iris: 0x3a2414, pupil: true });
+            // The implant: a riveted plate over the right eye, a red lens in it.
+            this._lvBox(this.head, metal, 0.065, 0.08, 0.15, 0.08, 0.08, 0.03).rotation.y = 0.4;
+            const lens = this._lvEye(this.head, 0.06, 0.08, 0.17, 0.03, { iris: p.accent, glow: true });
+            this._lvStrut(this.head, metal, [0.04, 0.16, 0.02], [0.08, 0.33, -0.02], 0.01, 0.007, 4);
+            this._lvBall(this.head, led2, 0.08, 0.34, -0.02, 0.02, 1, 1, 1, 5);
+            this._lvStrut(this.head, dark, [0.09, 0.03, 0.12], [0.06, -0.1, 0], 0.008, 0.008, 3);
+            this._lvEar(this.head, -1, 0.11, 0.1, 0.03, { shape: 'round', w: 0.05, h: 0.11, mat: coat, inner: 0xd8b8a8, tz: 2.4 });
+            this._lvEar(this.head, 1, 0.11, 0.1, 0.03, { shape: 'round', w: 0.05, h: 0.11, mat: coat, inner: 0xd8b8a8, tz: 2.4 });
+            this.head.position.set(0, 0.44, 0.17); this.bodyGroup.add(this.head);
+            this._lvGlow = [lens.children[0].material, led2];
+
+            this.frontLeft  = this._lvLeg(coat, -0.09, 0.3, 0.15, { r: 0.04, footR: 0.05, knee: 0.02 });
+            this.frontRight = this._lvLeg(coat, 0.09, 0.3, 0.15, { r: 0.04, footR: 0.05, knee: 0.02 });
+            this.rearLeft   = this._lvLeg(coat, -0.09, 0.3, -0.15, { r: 0.045, footR: 0.05, knee: -0.05 });
+            this.rearRight  = this._lvLeg(metal, 0.09, 0.3, -0.15, { r: 0.045, footR: 0.05, knee: -0.05 });
+            this.tail = this._lvTail(coat, 0.42, -0.21, [[0, 0.07, -0.06], [0, 0.12, -0.08]], [0.03, 0.03, 0.025]);
+            this._lvMove = 'prowl';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Grease Rat: a fat rat slick with fryer oil, dripping, a chip
+        //    sticking out of the side of its mouth ─────────────────────────
+        _buildLvGreaserat() {
+            const p = this.profile;
+            const coat = this._lvCoat('mottle', null, 0.25), pink = this._mat(0xc89080, 1.0, 0.5), oil = this._mat(0xb8902a, 0.85, 0.1), fry = this._mat(p.accent, 1.0, 0.7);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.26, 1.05, 0.95, 1.2);
+            for (const [x, z] of [[0.12, 0.08], [-0.1, -0.06], [0.04, -0.18]]) this._lvBall(this.body, oil, x, -0.2, z, 0.03, 1, 1.4, 1, 5);
+            this.body.position.set(0, 0.28, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0, 0.04, 0.11, 1, 0.85, 1.15);
+            this._lvCone(this.head, coat, 0, -0.02, 0.15, 0.055, 0.14, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, pink, 0, -0.02, 0.22, 0.018, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.055, 0.04, 0.11, 0.02);
+            this._lvEye(this.head, 0.055, 0.04, 0.11, 0.02);
+            this._lvEar(this.head, -1, 0.065, 0.07, 0, { shape: 'round', w: 0.045, h: 0.07, mat: coat, inner: 0xc89080, tz: 0.4 });
+            this._lvEar(this.head, 1, 0.065, 0.07, 0, { shape: 'round', w: 0.045, h: 0.07, mat: coat, inner: 0xc89080, tz: 0.4 });
+            this._lvWhiskers(this.head, 0.03, -0.03, 0.18, 0.14, 0x6a5a40);
+            this._lvBox(this.head, fry, 0.06, -0.05, 0.16, 0.022, 0.022, 0.2).rotation.y = 0.9;
+            this._lvBall(this.head, oil, 0.14, -0.065, 0.22, 0.012, 1, 1.4, 1, 4);
+            this.head.position.set(0, 0.36, 0.3); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.12, 0.14, 0.2, { r: 0.035, footR: 0.04, footMat: pink });
+            this.frontRight = this._lvLeg(coat, 0.12, 0.14, 0.2, { r: 0.035, footR: 0.04, footMat: pink });
+            this.rearLeft   = this._lvLeg(coat, -0.14, 0.15, -0.18, { r: 0.04, footR: 0.04, knee: -0.03, foot: 'long', footMat: pink });
+            this.rearRight  = this._lvLeg(coat, 0.14, 0.15, -0.18, { r: 0.04, footR: 0.04, knee: -0.03, foot: 'long', footMat: pink });
+            this.tail = this._lvTail(pink, 0.22, -0.3, [[0, -0.1, -0.12], [0.06, -0.17, -0.26], [0.14, -0.19, -0.36]], [0.04, 0.033, 0.026, 0.018, 0.012]);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Chainsaw Beaver: a furious beaver in a cloud of sawdust whose
+        //    teeth have become a saw bar, buzzing in its mouth ─────────────
+        _buildLvChainsawbeaver() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), dark = this._mat(0x2a1a10, 1.0, 0.6), steel = this._mat(0xb8bcc4, 1.0, 0.25), orange = this._mat(p.accent, 1.0, 0.45);
+            const tooth = this._mat(0xe8e0c8, 1.0, 0.3), dust = this._mat(0xe8c890, 1.0, 1.0), paddle = this._lvCoat('mottle', 0x3a2a20, 0.6);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0.02, 0, 0.22, 1, 1.15, 0.95);
+            for (let i = 0; i < 8; i++) {
+                const th = 0.6 + (i % 3) * 0.5, ph = i * 2.1;
+                this._lvBox(this.body, dust, Math.sin(th) * Math.sin(ph) * 0.22, 0.02 + Math.cos(th) * 0.253, Math.sin(th) * Math.cos(ph) * 0.209, 0.025, 0.012, 0.02);
+            }
+            this.body.position.set(0, 0.36, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.04, 0.05, 0.14, 1.05, 0.95, 1);
+            this._lvBall(this.head, coat, 0, -0.01, 0.15, 0.08, 1.3, 0.9, 1);
+            this._lvBall(this.head, dark, 0, 0.03, 0.225, 0.025, 1.4, 1, 1, 4);
+            this._lvEye(this.head, -0.06, 0.08, 0.15, 0.022, { iris: 0xff4020, glow: true });
+            this._lvEye(this.head, 0.06, 0.08, 0.15, 0.022, { iris: 0xff4020, glow: true });
+            for (const sd of [-1, 1]) this._lvBox(this.head, dark, sd * 0.055, 0.11, 0.16, 0.06, 0.016, 0.025).rotation.z = sd * 0.45;
+            this._lvEar(this.head, -1, 0.11, 0.1, 0, { shape: 'round', w: 0.03, h: 0.04, mat: coat, tz: 0.5 });
+            this._lvEar(this.head, 1, 0.11, 0.1, 0, { shape: 'round', w: 0.03, h: 0.04, mat: coat, tz: 0.5 });
+            // The saw: an orange housing in the mouth between two incisors and
+            // a toothed steel bar angled out of it. The bar buzzes.
+            this._saw = new THREE.Group();
+            this._lvBox(this._saw, orange, 0, 0, 0, 0.1, 0.07, 0.07);
+            for (const sd of [-1, 1]) this._lvBox(this._saw, orange, sd * 0.065, 0.02, 0.02, 0.03, 0.07, 0.02);
+            this._lvShake = new THREE.Group();
+            this._lvBox(this._lvShake, steel, 0, 0, 0.15, 0.025, 0.06, 0.3);
+            for (let i = 0; i < 6; i++) {
+                this._lvCone(this._lvShake, tooth, 0, -0.04, 0.04 + i * 0.045, 0.012, 0.03, 3).rotation.x = Math.PI;
+                this._lvCone(this._lvShake, tooth, 0, 0.04, 0.04 + i * 0.045, 0.012, 0.03, 3);
+            }
+            this._lvShake.position.set(0, -0.02, 0.03); this._lvShake.rotation.x = 0.45; this._saw.add(this._lvRest(this._lvShake));
+            this._saw.position.set(0, -0.06, 0.18); this.head.add(this._saw);
+            this.head.position.set(0, 0.64, 0.05); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.15, 0.5, 0.08, { r: 0.035, elbowY: -0.08, handX: -0.02, handY: -0.12, reach: 0.14, handMat: dark, claw: 0xe8dcc0 });
+            this.frontRight = this._lvArm(coat, 1, 0.15, 0.5, 0.08, { r: 0.035, elbowY: -0.08, handX: -0.02, handY: -0.12, reach: 0.14, handMat: dark, claw: 0xe8dcc0 });
+            this.rearLeft   = this._lvLeg(coat, -0.12, 0.2, 0, { r: 0.05, footR: 0.065, knee: 0.05, foot: 'web', footMat: dark });
+            this.rearRight  = this._lvLeg(coat, 0.12, 0.2, 0, { r: 0.05, footR: 0.065, knee: 0.05, foot: 'web', footMat: dark });
+            this.tail = new THREE.Group();
+            this._lvStrut(this.tail, coat, [0, 0, 0], [0, -0.13, -0.14], 0.05, 0.04);
+            this._lvBall(this.tail, paddle, 0, -0.165, -0.28, 0.14, 0.8, 0.14, 1.15, 7).rotation.x = 0.12;
+            this.tail.position.set(0, 0.2, -0.15); this.bodyGroup.add(this.tail);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail, mouth: this._saw });
+        }
+
+        // ── Shoplifting Raccoon: walks out upright with its arms full of
+        //    groceries, the price tag still hanging off one ear ────────────
+        _buildLvShopliftingraccoon() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), mask = this._mat(0x18181c, 1.0, 0.8), pale = this._mat(p.accent, 1.0, 0.9), ring = this._lvCoat('bands', 0x7a7a82);
+            const tin = this._mat(0xb8bcc4, 1.0, 0.3), label = this._mat(0xc83a2a, 1.0, 0.6), box = this._mat(0xe8c838, 1.0, 0.7), tag = this._mat(0xfaf8f0, 1.0, 0.8);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0.05, 0, 0.2, 0.95, 1.25, 0.9);
+            this._lvBall(this.body, pale, 0, 0.03, 0.1, 0.13, 0.85, 1.2, 0.6, 6);
+            this.body.position.set(0, 0.52, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.05, 0.04, 0.13, 1.1, 0.9, 1);
+            this._lvCone(this.head, pale, 0, 0, 0.17, 0.05, 0.12, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, mask, 0, 0, 0.235, 0.02, 1, 1, 1, 4);
+            this._lvBall(this.head, mask, 0, 0.07, 0.1, 0.1, 1.35, 0.42, 0.75, 6);
+            this._lvBall(this.head, pale, 0, 0.12, 0.09, 0.09, 1.1, 0.22, 0.6, 6);
+            this._lvEye(this.head, -0.055, 0.075, 0.16, 0.022);
+            this._lvEye(this.head, 0.055, 0.075, 0.16, 0.022);
+            const tagged = this._lvEar(this.head, -1, 0.09, 0.14, 0, { w: 0.05, h: 0.08, mat: coat, inner: p.accent, tz: 0.35 });
+            this._lvEar(this.head, 1, 0.09, 0.14, 0, { w: 0.05, h: 0.08, mat: coat, inner: p.accent, tz: 0.35 });
+            // The price tag still hanging from its ear on a red thread.
+            this._lvStrut(tagged, label, [0, 0.04, 0], [-0.03, -0.025, 0.02], 0.004, 0.004, 3);
+            this._lvBox(tagged, tag, -0.035, -0.055, 0.02, 0.045, 0.06, 0.004);
+            this._lvBox(tagged, label, -0.035, -0.045, 0.023, 0.035, 0.012, 0.004);
+            this.head.position.set(0, 0.8, 0.04); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.16, 0.68, 0.06, { r: 0.035, elbowY: -0.12, elbowZ: 0.05, handX: -0.08, handY: -0.18, reach: 0.18, handMat: mask });
+            this.frontRight = this._lvArm(coat, 1, 0.16, 0.68, 0.06, { r: 0.035, elbowY: -0.12, elbowZ: 0.05, handX: -0.08, handY: -0.18, reach: 0.18, handMat: mask });
+            // The loot: a cereal box with a tin on top, hugged to the chest.
+            const loot = this.frontRight.hand;
+            this._lvBox(loot, box, -0.08, 0.03, 0.04, 0.15, 0.12, 0.06);
+            this._lvCyl(loot, tin, -0.06, 0.125, 0.04, 0.035, 0.035, 0.07, 7);
+            this._lvCyl(loot, label, -0.06, 0.125, 0.04, 0.037, 0.037, 0.03, 7);
+            this.rearLeft   = this._lvLeg(coat, -0.09, 0.36, -0.02, { r: 0.045, footR: 0.045, knee: 0.05, foot: 'long', footMat: mask });
+            this.rearRight  = this._lvLeg(coat, 0.09, 0.36, -0.02, { r: 0.045, footR: 0.045, knee: 0.05, foot: 'long', footMat: mask });
+            this.tail = this._lvTail(ring, 0.42, -0.12, [[0, -0.12, -0.1], [0, -0.25, -0.22], [0, -0.3, -0.36]], [0.055, 0.06, 0.055, 0.045, 0.03]);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Truffle Piglet: a mud-caked piglet with a snout disc too big for
+        //    its face and a black truffle pinned under it ──────────────────
+        _buildLvTrufflepiglet() {
+            const p = this.profile;
+            const coat = this._lvCoat('mottle'), mud = this._mat(p.accent, 1.0, 1.0), disc = this._mat(0xc87880, 1.0, 0.5), dark = this._mat(0x1a1010, 1.0, 0.5);
+            const truffle = this._mat(0x2a1c14, 1.0, 0.9);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.22, 0.95, 0.9, 1.25);
+            for (const [x, y, z, r] of [[0.19, -0.06, 0.05, 0.06], [-0.18, -0.08, -0.08, 0.07], [0.12, 0.1, -0.18, 0.05], [-0.06, 0.17, 0.1, 0.045]]) this._lvBall(this.body, mud, x, y, z, r, 0.5, 0.8, 1.2, 5);
+            this.body.position.set(0, 0.36, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0, 0.06, 0.13, 1, 0.92, 1);
+            this._lvCyl(this.head, coat, 0, -0.04, 0.2, 0.07, 0.07, 0.08, 7).rotation.x = Math.PI / 2;
+            this._lvCyl(this.head, disc, 0, -0.04, 0.24, 0.072, 0.072, 0.01, 7).rotation.x = Math.PI / 2;
+            for (const sd of [-1, 1]) this._lvBall(this.head, dark, sd * 0.025, -0.04, 0.246, 0.012, 1, 1, 0.5, 4);
+            const t = new THREE.Mesh(new THREE.IcosahedronGeometry(0.045, 0), truffle); t.position.set(0, -0.11, 0.26); this.head.add(t);
+            this._lvEye(this.head, -0.06, 0.05, 0.16, 0.018);
+            this._lvEye(this.head, 0.06, 0.05, 0.16, 0.018);
+            this._lvEar(this.head, -1, 0.08, 0.1, 0.03, { w: 0.055, h: 0.1, mat: coat, inner: 0xe8a8b0, tz: 0.3, tx: 0.9 });
+            this._lvEar(this.head, 1, 0.08, 0.1, 0.03, { w: 0.055, h: 0.1, mat: coat, inner: 0xe8a8b0, tz: 0.3, tx: 0.9 });
+            this.head.position.set(0, 0.44, 0.26); this.bodyGroup.add(this.head);
+
+            // Legs caked in mud to the hip.
+            this.frontLeft  = this._lvLeg(mud, -0.1, 0.24, 0.15, { r: 0.035, foot: 'hoof', footR: 0.03, hoofColor: 0x2a1a14 });
+            this.frontRight = this._lvLeg(mud, 0.1, 0.24, 0.15, { r: 0.035, foot: 'hoof', footR: 0.03, hoofColor: 0x2a1a14 });
+            this.rearLeft   = this._lvLeg(mud, -0.1, 0.24, -0.15, { r: 0.035, foot: 'hoof', footR: 0.03, hoofColor: 0x2a1a14 });
+            this.rearRight  = this._lvLeg(mud, 0.1, 0.24, -0.15, { r: 0.035, foot: 'hoof', footR: 0.03, hoofColor: 0x2a1a14 });
+            this.tail = new THREE.Group();
+            this._lvBall(this.tail, coat, 0, 0, 0, 0.02, 1, 1, 1, 5);
+            const curl = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.012, 4, 10, Math.PI * 1.6), coat); curl.rotation.y = Math.PI / 2; curl.position.set(0, 0.02, -0.025); this.tail.add(curl);
+            this.tail.position.set(0, 0.4, -0.27); this.bodyGroup.add(this.tail);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Fungal Shrew: a long-nosed shrew furred in mould, toadstools
+        //    growing out of its back ───────────────────────────────────────
+        _buildLvFungalshrew() {
+            const p = this.profile;
+            const coat = this._lvCoat('mottle'), mould = this._mat(0x7a9a4a, 1.0, 0.9), cap = this._lvCoat('spots', p.accent, 0.7), stalk = this._mat(0xe8e0c8, 1.0, 0.8);
+            const pink = this._mat(0xd89a9a, 1.0, 0.6), dot = this._mat(0xfaf6ea, 1.0, 0.8);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.14, 0.9, 0.85, 1.5);
+            for (const [x, y, z, r] of [[0.1, 0.03, 0.06, 0.04], [-0.09, 0.05, -0.1, 0.035], [0.04, -0.06, -0.16, 0.03]]) this._lvBall(this.body, mould, x, y, z, r, 0.5, 1, 1.3, 5);
+            // Toadstools, rooted in the back where its spine should be.
+            [[0.02, 0, 0.1, 0.07], [-0.05, -0.12, 0.07, 0.05], [0.05, 0.11, 0.05, 0.04]].forEach(([x, z, h, r], i) => {
+                const y0 = 0.119 * Math.sqrt(Math.max(0, 1 - Math.pow(x / 0.126, 2) - Math.pow(z / 0.21, 2))) - 0.01;
+                this._lvCyl(this.body, stalk, x, y0 + h * 0.5, z, r * 0.25, r * 0.32, h, 5);
+                const c = new THREE.Mesh(new THREE.SphereGeometry(r, 7, 3, 0, Math.PI * 2, 0, Math.PI / 2), cap); c.scale.y = 0.75; c.position.set(x, y0 + h, z); this.body.add(c);
+                if (!i) for (let k = 0; k < 3; k++) { const a = k * 2.1; this._lvBall(this.body, dot, x + Math.cos(a) * r * 0.55, y0 + h + r * 0.55, z + Math.sin(a) * r * 0.55, r * 0.14, 1, 0.6, 1, 4); }
+            });
+            this.body.position.set(0, 0.22, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0, 0.04, 0.08, 0.9, 0.85, 1.1);
+            this._lvCone(this.head, coat, 0, -0.01, 0.16, 0.035, 0.16, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, pink, 0, -0.01, 0.24, 0.013, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.04, 0.03, 0.09, 0.015, { iris: 0x9ad040, glow: true });
+            this._lvEye(this.head, 0.04, 0.03, 0.09, 0.015, { iris: 0x9ad040, glow: true });
+            this._lvEar(this.head, -1, 0.055, 0.05, 0, { shape: 'round', w: 0.025, h: 0.03, mat: coat, tz: 0.5 });
+            this._lvEar(this.head, 1, 0.055, 0.05, 0, { shape: 'round', w: 0.025, h: 0.03, mat: coat, tz: 0.5 });
+            this._lvWhiskers(this.head, 0.02, -0.01, 0.19, 0.12);
+            this.head.position.set(0, 0.32, 0.14); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.06, 0.16, 0.12, { r: 0.02, footR: 0.025, footMat: pink });
+            this.frontRight = this._lvLeg(coat, 0.06, 0.16, 0.12, { r: 0.02, footR: 0.025, footMat: pink });
+            this.rearLeft   = this._lvLeg(coat, -0.07, 0.16, -0.12, { r: 0.025, footR: 0.025, knee: -0.03, footMat: pink });
+            this.rearRight  = this._lvLeg(coat, 0.07, 0.16, -0.12, { r: 0.025, footR: 0.025, knee: -0.03, footMat: pink });
+            this.tail = this._lvTail(pink, 0.22, -0.2, [[0, -0.05, -0.12], [0, -0.1, -0.22]], [0.02, 0.016, 0.01]);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Alpine Marmot: a plump sentry sat up on its haunches, paws at its
+        //    chest, mouth rounded into a whistle over orange teeth ─────────
+        _buildLvAlpinemarmot() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), cream = this._mat(0xd8c0a0, 1.0, 0.9), dark = this._mat(0x2a1c14, 1.0, 0.6);
+            const tooth = this._mat(p.accent, 1.0, 0.35), mouth = this._mat(0x3a1a14, 1.0, 0.6);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0.04, 0, 0.25, 1, 1.15, 0.92, 8);
+            this._lvBall(this.body, cream, 0, 0, 0.15, 0.17, 0.85, 1.1, 0.55, 6);
+            this.body.position.set(0, 0.36, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.05, 0.04, 0.13, 1.1, 0.95, 1);
+            this._lvBall(this.head, cream, 0, 0, 0.14, 0.065, 1.2, 0.9, 1, 6);
+            this._lvBall(this.head, dark, 0, 0.04, 0.2, 0.02, 1, 1, 1, 4);
+            for (const ix of [-0.01, 0.01]) this._lvBox(this.head, tooth, ix, -0.008, 0.195, 0.014, 0.03, 0.01);
+            // The whistle: lips pursed into a ring.
+            this._lvCyl(this.head, mouth, 0, -0.035, 0.192, 0.026, 0.026, 0.012, 8).rotation.x = Math.PI / 2;
+            const lips = new THREE.Mesh(new THREE.TorusGeometry(0.024, 0.01, 4, 10), cream); lips.position.set(0, -0.035, 0.2); this.head.add(lips);
+            this._lvEye(this.head, -0.06, 0.08, 0.13, 0.02);
+            this._lvEye(this.head, 0.06, 0.08, 0.13, 0.02);
+            this._lvEar(this.head, -1, 0.1, 0.1, 0, { shape: 'round', w: 0.03, h: 0.035, mat: coat, tz: 0.5 });
+            this._lvEar(this.head, 1, 0.1, 0.1, 0, { shape: 'round', w: 0.03, h: 0.035, mat: coat, tz: 0.5 });
+            this.head.position.set(0, 0.66, 0.04); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.12, 0.54, 0.08, { r: 0.035, elbowY: -0.08, handX: -0.06, handY: -0.1, reach: 0.14, handMat: dark });
+            this.frontRight = this._lvArm(coat, 1, 0.12, 0.54, 0.08, { r: 0.035, elbowY: -0.08, handX: -0.06, handY: -0.1, reach: 0.14, handMat: dark });
+            this.rearLeft   = this._lvLeg(coat, -0.13, 0.18, 0, { r: 0.05, footR: 0.045, knee: 0.05, foot: 'long', footMat: dark });
+            this.rearRight  = this._lvLeg(coat, 0.13, 0.18, 0, { r: 0.05, footR: 0.045, knee: 0.05, foot: 'long', footMat: dark });
+            this.tail = this._lvTail(coat, 0.2, -0.16, [[0, -0.08, -0.1], [0, -0.1, -0.2]], [0.05, 0.055, 0.045]);
+            this._lvBall(this.tail, dark, 0, -0.1, -0.23, 0.045, 1, 1, 1, 5);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Harbour Whelk: a sea snail under a tall ridged whelk shell crusted
+        //    with barnacles, a frayed mooring rope still knotted round it ───
+        _buildLvHarbourwhelk() {
+            const p = this.profile;
+            const shellM = this._lvCoat('bands', null, 0.6), ridge = this._mat(0x8a6a48, 1.0, 0.7), flesh = this._mat(p.accent, 1.0, 0.3);
+            const barn = this._mat(0xd8d8d0, 1.0, 0.8), barnTip = this._mat(0x3a3a40, 1.0, 0.6), rope = this._mat(0xa08050, 1.0, 0.9);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, flesh, 0, 0, 0, 0.3, 0.85, 0.35, 1.5, 8);
+            this.body.position.set(0, 0.1, 0); this.bodyGroup.add(this.body);
+
+            // The shell: a body whorl and a tapering spire, ridged at each turn.
+            this.shell = new THREE.Group();
+            this._lvBall(this.shell, shellM, 0, 0, 0, 0.22, 1, 0.85, 1.1, 8);
+            [[0.17, -0.03, 0.16], [0.29, -0.06, 0.12], [0.38, -0.08, 0.09], [0.45, -0.1, 0.065], [0.5, -0.11, 0.045], [0.54, -0.12, 0.03]].forEach(([y, z, r]) => {
+                this._lvBall(this.shell, shellM, 0, y, z, r, 1, 0.8, 1, 7);
+                const rg = new THREE.Mesh(new THREE.TorusGeometry(r * 0.98, 0.012, 3, 10), ridge); rg.rotation.x = Math.PI / 2; rg.position.set(0, y - r * 0.35, z); this.shell.add(rg);
+            });
+            this._lvSpike(this.shell, shellM, [0, -0.05, 0.2], [0, -0.3, 1], 0.05, 0.16, 6);
+            // Barnacles, little volcanoes with dark mouths.
+            for (const [th, ph] of [[0.7, 0.6], [1.1, 2.2], [0.9, 3.6], [1.3, 4.6], [0.5, 5.4]]) {
+                const n = [Math.sin(th) * Math.sin(ph), Math.cos(th), Math.sin(th) * Math.cos(ph)];
+                const q = [n[0] * 0.22, n[1] * 0.187, n[2] * 0.242];
+                this._lvSpike(this.shell, barn, q, n, 0.03, 0.035, 5);
+                this._lvBall(this.shell, barnTip, q[0] + n[0] * 0.03, q[1] + n[1] * 0.03, q[2] + n[2] * 0.03, 0.01, 1, 1, 1, 4);
+            }
+            // The mooring rope it glued itself to, frayed off at the end.
+            const loop = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.012, 4, 14), rope); loop.rotation.x = Math.PI / 2 + 0.3; loop.scale.set(1.12, 1.25, 1); this.shell.add(loop);
+            this._lvStrut(this.shell, rope, [0.224, 0, 0.02], [0.3, -0.14, 0.1], 0.012, 0.011, 4);
+            for (const d of [[0.5, -1, 0.3], [1, -0.6, 0.6], [0.2, -1, 0.8]]) this._lvSpike(this.shell, rope, [0.3, -0.14, 0.1], d, 0.006, 0.04, 3);
+            this.shell.position.set(0, 0.28, -0.06); this.bodyGroup.add(this.shell);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, flesh, 0, 0.02, 0.04, 0.07, 1.2, 0.8, 1, 6);
+            // The siphon, raised like a snorkel.
+            this._lvStrut(this.head, flesh, [0, 0.03, 0.02], [0, 0.2, 0.12], 0.025, 0.02, 6);
+            const lip = new THREE.Mesh(new THREE.TorusGeometry(0.02, 0.007, 3, 8), flesh); lip.rotation.x = -0.5; lip.position.set(0, 0.205, 0.123); this.head.add(lip);
+            this._stalks = [];
+            for (const sd of [-1, 1]) {
+                const st = new THREE.Group();
+                this._lvStrut(st, flesh, [0, 0, 0], [sd * 0.06, 0.08, 0.06], 0.015, 0.008, 4);
+                this._lvEye(st, sd * 0.012, 0, 0.015, 0.012);
+                st.position.set(sd * 0.05, 0.05, 0.07); this.head.add(st); this._stalks.push(st);
+            }
+            this.head.position.set(0, 0.14, 0.4); this.bodyGroup.add(this.head);
+            this._lvMove = 'creep';
+            this._wireSnail({ body: this.body, shell: this.shell, head: this.head, stalks: this._stalks });
+        }
+
+        // ── Jungle Tamarin: a crouched little monkey with a white moustache
+        //    hanging to its knees and a stolen coin under one hand ─────────
+        _buildLvJungletamarin() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), face = this._mat(0x6a5a5a, 1.0, 0.7), white = this._mat(0xf4f4f0, 1.0, 0.9), rust = this._mat(p.accent, 1.0, 0.8);
+            const gold = this._mat(0xe8c040, 1.0, 0.2, 0x5a4010);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.14, 0.9, 1, 1.2).rotation.x = 0.35;
+            this.body.position.set(0, 0.34, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.04, 0.05, 0.1);
+            this._lvBall(this.head, face, 0, 0.03, 0.12, 0.07, 1, 1.1, 0.5, 6);
+            this._lvBall(this.head, this._mat(0x1a1414, 1.0, 0.5), 0, 0.03, 0.155, 0.012, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.035, 0.06, 0.14, 0.022);
+            this._lvEye(this.head, 0.035, 0.06, 0.14, 0.022);
+            // The moustache: two long white strands curling down from the lip.
+            for (const sd of [-1, 1]) {
+                const m = new THREE.Group();
+                this._lvChain(m, white, [[sd * 0.04, -0.025, 0.01], [sd * 0.08, -0.08, 0], [sd * 0.09, -0.15, -0.02]], [0.013, 0.012, 0.009, 0.006]);
+                m.position.set(sd * 0.015, 0.005, 0.15); this.head.add(m);
+            }
+            this._lvBall(this.head, white, 0, -0.04, 0.12, 0.02, 1, 1, 1, 5);
+            this._lvEar(this.head, -1, 0.09, 0.06, 0, { shape: 'round', w: 0.025, h: 0.035, mat: coat, tz: 0.5 });
+            this._lvEar(this.head, 1, 0.09, 0.06, 0, { shape: 'round', w: 0.025, h: 0.035, mat: coat, tz: 0.5 });
+            this.head.position.set(0, 0.44, 0.1); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.06, 0.38, 0.1, { r: 0.025, footR: 0.03, knee: 0.03, footMat: face });
+            this.frontRight = this._lvLeg(coat, 0.06, 0.38, 0.1, { r: 0.025, footR: 0.03, knee: 0.03, footMat: face });
+            const coin = this._lvCyl(this.frontRight, gold, -0.04, -0.376, 0.06, 0.035, 0.035, 0.008, 8); coin.rotation.z = 0.05;
+            this.rearLeft   = this._lvLeg(coat, -0.08, 0.3, -0.08, { r: 0.035, footR: 0.035, knee: 0.1, foot: 'long', footMat: face });
+            this.rearRight  = this._lvLeg(coat, 0.08, 0.3, -0.08, { r: 0.035, footR: 0.035, knee: 0.1, foot: 'long', footMat: face });
+            this.tail = this._lvTail(rust, 0.36, -0.14, [[0, -0.04, -0.15], [0, -0.16, -0.3], [0, -0.3, -0.36], [0, -0.34, -0.28]], [0.03, 0.03, 0.028, 0.024, 0.018]);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Unicorn Foal: knock-kneed on long new legs, a short brush mane
+        //    and a horn that is still only a glowing nub ───────────────────
+        _buildLvUnicornfoal() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), mane = this._mat(0xd8a8e8, 1.0, 0.6), hornM = this._mat(p.accent, 1.0, 0.3, p.accent), muzzle = this._mat(0xd8c8c8, 1.0, 0.7);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.2, 0.85, 0.85, 1.35);
+            this.body.position.set(0, 0.82, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvStrut(this.head, coat, [0, 0, 0], [0, 0.18, 0.1], 0.06, 0.05);
+            this._lvBall(this.head, coat, 0, 0.24, 0.16, 0.09, 0.85, 0.95, 1.4);
+            this._lvBall(this.head, muzzle, 0, 0.2, 0.27, 0.055, 0.9, 0.8, 1, 6);
+            for (const sd of [-1, 1]) {
+                this._lvEye(this.head, sd * 0.055, 0.27, 0.2, 0.03, { iris: 0x2a1e3a, pupil: true });
+                for (let i = 0; i < 2; i++) this._lvSpike(this.head, this._mat(0x2a1e3a, 1.0, 0.6), [sd * (0.06 + i * 0.01), 0.295, 0.2 - i * 0.012], [sd * 0.5, 0.7, 0.4], 0.004, 0.035, 3);
+            }
+            this._lvEar(this.head, -1, 0.04, 0.31, 0.12, { w: 0.025, h: 0.07, mat: coat, inner: 0xf0c0c8, tz: 0.25 });
+            this._lvEar(this.head, 1, 0.04, 0.31, 0.12, { w: 0.025, h: 0.07, mat: coat, inner: 0xf0c0c8, tz: 0.25 });
+            // A brush mane standing up the back of the neck.
+            for (let i = 0; i < 6; i++) { const t = i / 5 * 1.3; this._lvSpike(this.head, mane, [0, t * 0.18 + 0.024, t * 0.1 - 0.044], [0, 0.486, -0.874], 0.025, 0.07, 4); }
+            this.horn = new THREE.Group();
+            this._lvSpike(this.horn, hornM, [0, 0, 0], [0, 1, 0.5], 0.022, 0.055, 5);
+            this.horn.position.set(0, 0.315, 0.22); this.head.add(this.horn);
+            this.head.position.set(0, 0.9, 0.22); this.bodyGroup.add(this.head);
+
+            // Long new legs, splayed and knock-kneed.
+            const leg = (x, z, knee) => { const g = this._lvLeg(coat, x, 0.76, z, { r: 0.03, kneeR: 0.045, knee, foot: 'hoof', footR: 0.035, hoofColor: 0xc8a868 }); g.rotation.z = x < 0 ? -0.1 : 0.1; return g; };
+            this.frontLeft = leg(-0.09, 0.17, 0.02); this.frontRight = leg(0.09, 0.17, 0.02);
+            this.rearLeft = leg(-0.09, -0.18, -0.06); this.rearRight = leg(0.09, -0.18, -0.06);
+            this.tail = this._lvTail(mane, 0.86, -0.25, [[0, -0.08, -0.06], [0, -0.18, -0.06]], [0.04, 0.05, 0.035]);
+            this._lvMove = 'prowl';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+            this._partMeshMap.HORN = this.horn;
+            this._cascadeRules.push({ gone: ['HORN'], hide: [this.horn] });
+        }
+
+        // ── Bamboo Panda Cub: a round cub sat chewing a bamboo stalk held in
+        //    both paws, teardrop patches round its eyes ────────────────────
+        _buildLvBamboopandacub() {
+            const p = this.profile;
+            const coat = this._lvCoat('flat'), black = this._mat(p.accent, 1.0, 0.85), green = this._mat(0x5a9a3a, 1.0, 0.6), node = this._mat(0x3a6a28, 1.0, 0.6), leaf = this._mat(0x6ab84a, 1.0, 0.7);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.27, 1, 1.05, 0.95, 8);
+            const band = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.08, 5, 10), black); band.rotation.x = Math.PI / 2; band.position.set(0, 0.14, 0); band.scale.set(1.1, 0.95, 1); this.body.add(band);
+            this.body.position.set(0, 0.36, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.06, 0.03, 0.17, 1.1, 0.95, 1);
+            this._lvBall(this.head, coat, 0, 0, 0.17, 0.07, 1.2, 0.85, 1, 6);
+            this._lvBall(this.head, black, 0, 0.03, 0.235, 0.025, 1.4, 1, 1, 4);
+            for (const sd of [-1, 1]) {
+                this._lvBall(this.head, black, sd * 0.065, 0.06, 0.19, 0.045, 1, 1.5, 0.4, 6).rotation.z = sd * 0.5;
+                this._lvEye(this.head, sd * 0.06, 0.065, 0.2, 0.018);
+            }
+            this._lvEar(this.head, -1, 0.12, 0.17, 0, { shape: 'round', w: 0.06, h: 0.09, mat: black, tz: 0.4 });
+            this._lvEar(this.head, 1, 0.12, 0.17, 0, { shape: 'round', w: 0.06, h: 0.09, mat: black, tz: 0.4 });
+            this.head.position.set(0, 0.64, 0.04); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(black, -1, -0.2, 0.52, 0.06, { r: 0.06, elbowX: 0.03, elbowY: -0.1, elbowZ: 0.06, handX: -0.08, handY: -0.16, reach: 0.18, handR: 0.07 });
+            this.frontRight = this._lvArm(black, 1, 0.2, 0.52, 0.06, { r: 0.06, elbowX: 0.03, elbowY: -0.1, elbowZ: 0.06, handX: -0.08, handY: -0.16, reach: 0.18, handR: 0.07 });
+            // The bamboo stalk, jointed, leaves sprouting at the top.
+            const bam = this.frontRight.hand, a = [0, 0, 0.02], b = [-0.24, 0.45, 0.04];
+            this._lvStrut(bam, green, a, b, 0.022, 0.02, 6);
+            for (const t of [0.3, 0.62, 0.9]) this._lvBall(bam, node, a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, 0.026, 1, 0.5, 1, 6);
+            for (const d of [[-1, 0.6, 0.2], [-0.6, 1, -0.3], [0.2, 0.8, 0.4]]) this._lvSpike(bam, leaf, b, d, 0.03, 0.12, 4).scale.x = 0.35;
+            this.rearLeft   = this._lvLeg(black, -0.14, 0.16, 0.08, { r: 0.07, footR: 0.08, knee: 0.06 });
+            this.rearRight  = this._lvLeg(black, 0.14, 0.16, 0.08, { r: 0.07, footR: 0.08, knee: 0.06 });
+            this.tail = this._lvTail(coat, 0.24, -0.22, [[0, -0.01, -0.05]], [0.045, 0.035]);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Taiga Squirrel: a grey squirrel on all fours, long tassels on its
+        //    ears, a tail curled over its back and a pine cone in its teeth ─
+        _buildLvTaigasquirrel() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), cream = this._mat(0xf0ece4, 1.0, 0.9), dark = this._mat(0x2a2420, 1.0, 0.6), cone = this._mat(p.accent, 1.0, 0.85);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.14, 0.9, 0.95, 1.35);
+            this._lvBall(this.body, coat, 0, 0.02, -0.14, 0.13);
+            this.body.position.set(0, 0.3, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.04, 0.06, 0.1);
+            this._lvBall(this.head, cream, 0, 0.01, 0.15, 0.045, 1, 1, 1, 6);
+            this._lvBall(this.head, dark, 0, 0.03, 0.19, 0.015, 1, 1, 1, 4);
+            for (const sd of [-1, 1]) {
+                this._lvBall(this.head, cream, sd * 0.055, 0.07, 0.115, 0.034, 1, 1, 0.5, 6);
+                this._lvEye(this.head, sd * 0.055, 0.07, 0.13, 0.026);
+                this._lvEar(this.head, sd, 0.06, 0.12, 0.03, { w: 0.035, h: 0.08, mat: coat, inner: 0xf0ece4, tz: 0.15, tuft: 0.1, tuftColor: 0x2a2420 });
+            }
+            // A pine cone carried crosswise, scale on scale.
+            for (let i = 0; i < 4; i++) this._lvCone(this.head, cone, -0.04 + i * 0.027, -0.04, 0.17, 0.036 - i * 0.005, 0.035, 5).rotation.z = Math.PI / 2;
+            this.head.position.set(0, 0.34, 0.17); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.06, 0.24, 0.12, { r: 0.025, footR: 0.03, claw: 0x2a2420 });
+            this.frontRight = this._lvLeg(coat, 0.06, 0.24, 0.12, { r: 0.025, footR: 0.03, claw: 0x2a2420 });
+            this.rearLeft   = this._lvLeg(coat, -0.09, 0.26, -0.15, { r: 0.04, footR: 0.035, knee: -0.06, foot: 'long' });
+            this.rearRight  = this._lvLeg(coat, 0.09, 0.26, -0.15, { r: 0.04, footR: 0.035, knee: -0.06, foot: 'long' });
+            this.tail = this._lvTail(coat, 0.34, -0.25, [[0, 0.14, -0.08], [0, 0.3, -0.06], [0, 0.42, 0.04], [0, 0.44, 0.16], [0, 0.38, 0.24]], [0.07, 0.08, 0.085, 0.08, 0.07, 0.06], 0.6);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+        }
+
+        // ── Savannah Meerkat: bolt upright on top of a termite mound, arms
+        //    hanging, dark rings round its staring eyes ────────────────────
+        _buildLvSavannahmeerkat() {
+            const p = this.profile;
+            const coat = this._lvCoat('stripe'), cream = this._mat(0xe8d8b8, 1.0, 0.9), dark = this._mat(0x1a1410, 1.0, 0.6), earth = this._mat(p.accent, 1.0, 1.0);
+            // The termite mound it keeps watch from, turrets and all.
+            this._mound = new THREE.Group();
+            this._lvCyl(this._mound, earth, 0, 0.16, 0, 0.08, 0.26, 0.32, 7);
+            for (const [x, z, h] of [[0.19, 0.08, 0.2], [-0.17, -0.12, 0.26], [0.06, -0.2, 0.16]]) this._lvCone(this._mound, earth, x, h * 0.5, z, 0.06, h, 5);
+            this.bodyGroup.add(this._mound);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.1, 0.9, 2.2, 0.85);
+            this._lvBall(this.body, cream, 0, -0.02, 0.05, 0.08, 0.8, 2, 0.5, 6);
+            this.body.position.set(0, 0.62, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0.04, 0.03, 0.07, 0.95, 0.9, 1.2);
+            this._lvCone(this.head, coat, 0, 0.03, 0.12, 0.03, 0.09, 5).rotation.x = Math.PI / 2;
+            this._lvBall(this.head, dark, 0, 0.03, 0.165, 0.012, 1, 1, 1, 4);
+            for (const sd of [-1, 1]) {
+                this._lvBall(this.head, dark, sd * 0.035, 0.06, 0.09, 0.028, 1, 1, 0.5, 6);
+                this._lvEye(this.head, sd * 0.036, 0.06, 0.1, 0.016);
+            }
+            this._lvEar(this.head, -1, 0.065, 0.05, 0, { shape: 'round', w: 0.02, h: 0.025, mat: dark, tz: 0.6 });
+            this._lvEar(this.head, 1, 0.065, 0.05, 0, { shape: 'round', w: 0.02, h: 0.025, mat: dark, tz: 0.6 });
+            this.head.position.set(0, 0.84, 0.02); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvArm(coat, -1, -0.05, 0.74, 0.03, { r: 0.02, elbowX: 0.01, elbowY: -0.08, elbowZ: 0.03, handY: -0.14, reach: 0.05, handR: 0.022, handMat: dark });
+            this.frontRight = this._lvArm(coat, 1, 0.05, 0.74, 0.03, { r: 0.02, elbowX: 0.01, elbowY: -0.08, elbowZ: 0.03, handY: -0.14, reach: 0.05, handR: 0.022, handMat: dark });
+            this.rearLeft   = this._lvLeg(coat, -0.05, 0.46, 0, { len: 0.14, r: 0.03, footR: 0.03, knee: 0.03, foot: 'long', footMat: dark });
+            this.rearRight  = this._lvLeg(coat, 0.05, 0.46, 0, { len: 0.14, r: 0.03, footR: 0.03, knee: 0.03, foot: 'long', footMat: dark });
+            this.tail = this._lvTail(coat, 0.48, -0.05, [[0, -0.07, -0.05], [0, -0.14, -0.06]], [0.025, 0.02, 0.015]);
+            this._lvMove = 'sit';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
+            this._cascadeRules[0].hide.push(this._mound);
+        }
+
+        // ── Steppe Vole: a near-round ball of a vole with a mouthful of grass
+        //    stalks, seed heads and all ────────────────────────────────────
+        _buildLvSteppevole() {
+            const p = this.profile;
+            const coat = this._lvCoat('saddle'), pink = this._mat(0xc89890, 1.0, 0.6), grass = this._mat(p.accent, 1.0, 0.7), seed = this._mat(0xd8c070, 1.0, 0.8);
+            this.body = new THREE.Group();
+            this._lvBall(this.body, coat, 0, 0, 0, 0.2, 1, 0.92, 1.1);
+            this.body.position.set(0, 0.2, 0); this.bodyGroup.add(this.body);
+
+            this.head = new THREE.Group();
+            this._lvBall(this.head, coat, 0, 0, 0.05, 0.1, 1, 0.9, 1);
+            this._lvBall(this.head, coat, 0, -0.01, 0.13, 0.05, 1, 0.85, 1, 6);
+            this._lvBall(this.head, pink, 0, 0, 0.18, 0.016, 1, 1, 1, 4);
+            this._lvEye(this.head, -0.055, 0.04, 0.11, 0.018);
+            this._lvEye(this.head, 0.055, 0.04, 0.11, 0.018);
+            this._lvEar(this.head, -1, 0.07, 0.07, 0, { shape: 'round', w: 0.03, h: 0.035, mat: coat, tz: 0.4 });
+            this._lvEar(this.head, 1, 0.07, 0.07, 0, { shape: 'round', w: 0.03, h: 0.035, mat: coat, tz: 0.4 });
+            this._lvWhiskers(this.head, 0.03, -0.01, 0.15, 0.13);
+            // A mouthful of steppe grass, seed heads nodding at the tips.
+            for (let i = -2; i <= 2; i++) {
+                const d = new THREE.Vector3(i * 0.5, 0.25 + Math.abs(i) * 0.05, 0.15).normalize(), o = [0, -0.04, 0.16];
+                this._lvSpike(this.head, grass, o, [d.x, d.y, d.z], 0.008, 0.16, 3);
+                if (i % 2) this._lvBall(this.head, seed, o[0] + d.x * 0.15, o[1] + d.y * 0.15, o[2] + d.z * 0.15, 0.014, 1, 1.6, 1, 4);
+            }
+            this.head.position.set(0, 0.24, 0.18); this.bodyGroup.add(this.head);
+
+            this.frontLeft  = this._lvLeg(coat, -0.1, 0.08, 0.12, { r: 0.02, footR: 0.025, footMat: pink });
+            this.frontRight = this._lvLeg(coat, 0.1, 0.08, 0.12, { r: 0.02, footR: 0.025, footMat: pink });
+            this.rearLeft   = this._lvLeg(coat, -0.11, 0.09, -0.1, { r: 0.025, footR: 0.03, footMat: pink });
+            this.rearRight  = this._lvLeg(coat, 0.11, 0.09, -0.1, { r: 0.025, footR: 0.03, footMat: pink });
+            this.tail = this._lvTail(coat, 0.2, -0.21, [[0, -0.01, -0.05]], [0.025, 0.018]);
+            this._lvMove = 'scurry';
+            this._wireLv({ body: this.body, head: this.head, fl: this.frontLeft, fr: this.frontRight, rl: this.rearLeft, rr: this.rearRight, tail: this.tail });
         }
 
         animatePose(deltaTime) {
@@ -2769,7 +4656,60 @@
                 case 'bst_madboar':
                     if (this.head && this.head.visible) this.head.rotation.x = (fast ? 0.3 : 0.0) + Math.sin(t * 1.6) * 0.04;
                     break;
+                default:
+                    if (this._lvMove) this._animLv(t, fast, baseX);
+                    break;
             }
+        }
+
+        // Starter critter motion. Each picks a way of moving (_lvMove) and the
+        // builder hands over whatever else twitches: ears, a jaw, cheek pouches,
+        // a vibrating saw, blinking lights. Everything turns about its own
+        // joint or rest pose, so nothing leaves the body.
+        _animLv(t, fast, baseX) {
+            const sc = this.scale;
+            const head = this.head && this.head.visible ? this.head : null;
+            const lunge = fast ? Math.max(0, Math.sin(Math.min(t * 7, Math.PI))) : 0;
+            switch (this._lvMove) {
+                case 'scurry':   // never still: a twitching sniff
+                    this.model.position.x = baseX + Math.sin(t * 9) * 0.02 * sc;
+                    if (head) { head.rotation.z = Math.sin(t * 7) * 0.08; head.rotation.y = Math.sin(t * 2.3) * 0.25; }
+                    this.model.position.y += lunge * 0.1 * sc;
+                    break;
+                case 'hop':      // springs off its feet, high on the attack
+                    this.model.position.y += Math.abs(Math.sin(t * (fast ? 7 : 3))) * (fast ? 0.2 : 0.035) * sc;
+                    if (head) head.rotation.y = Math.sin(t * 1.9) * 0.2;
+                    break;
+                case 'sit':      // sat up: looks about, rises into a swipe
+                    if (head) head.rotation.y = Math.sin(t * 0.9) * 0.3;
+                    this.model.position.y += lunge * 0.12 * sc;
+                    break;
+                case 'float':    // drifts on air
+                    this.model.position.y = this._baseY + ((0.5 + Math.sin(t * 1.3) * 0.5) * 0.06 + lunge * 0.1) * sc;
+                    this.model.rotation.z = Math.sin(t * 0.8) * 0.04;
+                    break;
+                case 'prowl':    // the head drops into the lunge
+                    if (head) head.rotation.x += lunge * 0.3;
+                    this.model.position.y += lunge * 0.14 * sc;
+                    break;
+                case 'drowse':   // nodding off where it stands
+                    if (head) head.rotation.x += (0.5 + Math.sin(t * 0.7) * 0.5) * 0.16;
+                    this.model.position.y += lunge * 0.08 * sc;
+                    break;
+                case 'creep':    // a snail: barely moves at all
+                    if (head) head.rotation.x = Math.sin(t * 0.6) * 0.06;
+                    break;
+            }
+            if (this._lvEars) this._lvEars.forEach((e, i) => {
+                if (!e.visible) return;
+                const flick = Math.max(0, Math.sin(t * 0.9 + i * 1.7) - 0.9) * 4;
+                e.rotation.x = e.userData.rx0 - flick * 0.4 - (fast ? 0.25 : 0);
+            });
+            if (this._lvJaw && this._lvJaw.visible) this._lvJaw.rotation.x = this._lvJaw.userData.rx0 + (fast ? Math.abs(Math.sin(t * 14)) * 0.4 : Math.abs(Math.sin(t * 1.8)) * 0.06);
+            if (this._lvShake && this._lvShake.visible) this._lvShake.position.x = this._lvShake.userData.x0 + Math.sin(t * 60) * (fast ? 0.012 : 0.004);
+            if (this._lvCheeks) { const puff = 1 + (fast ? Math.abs(Math.sin(t * 9)) * 0.18 : Math.sin(t * 2.2) * 0.05); this._lvCheeks.forEach(c => c.scale.setScalar(puff)); }
+            if (this._lvFlail) [this.frontLeft, this.frontRight].forEach((a, i) => { if (a && a.visible) a.rotation.z = (i ? 1 : -1) * Math.sin(t * (fast ? 12 : 4) + i) * 0.25; });
+            if (this._lvGlow) this._lvGlow.forEach((m, i) => { m.emissiveIntensity = Math.sin(t * 6 + i * 2) > 0 ? 1.2 : 0.2; });
         }
 
         _animApe(t, anim, fast) {
@@ -2865,6 +4805,8 @@
     reg('icelemming',          { aliases: ['icelemming'],          scale: S.icelemming.scale,          weapon: 0, create: make });
     // Bespoke Beast splits (narrow aliases; pinned by exact name below).
     ["bst_arcticfox","bst_cottonfox","bst_icewolfpup","bst_rabidhyena","bst_feralhyenapack","bst_graywolf","bst_manedterrorwolf","bst_redfox","bst_alphadirewolf","bst_alphawarg","bst_arcticwolf","bst_rabidcoyote","bst_scavengingcoyote","bst_lazycat","bst_blackpanther","bst_reflectivetiger","bst_sabercat","bst_wildcat","bst_feralalleycat","bst_goldenlion","bst_stripedtiger","bst_umbrapanthera","bst_mysticpanther","bst_sabertoothalpha","bst_diresabertoothalpha","bst_thirstycamel","bst_foreststag","bst_pastoralsheep","bst_armoredrhinoceros","bst_bloodbellcow","bst_deersprite","bst_hollowgoat","bst_ironhoofcharger","bst_rancorousbull","bst_titanotherealpha","bst_brownbear","bst_hornedbear","bst_youngyeti","bst_frostbackursid","bst_panda","bst_polarbear","bst_timewornowlbear","bst_demonbear","bst_kodiakbear","bst_emberclawbear","bst_frostfangbear","bst_thundermawursine","bst_titaniccavebear","bst_direpig","bst_flyingpig","bst_razorbackboar","bst_wildboar","bst_flyingpig2","bst_normalpig","bst_madboar","bst_maleficentape","bst_organgrindermonkey","bst_treemonkey"].forEach(k => reg(k, { aliases: [k], scale: S[k].scale, weapon: 0, create: make }));
+    // Level 1-5 starter critters (each enemy carries <Model3D: lv_...>; pinned below too).
+    ["lv_pantrymouse","lv_barnkitten","lv_acornsquirrel","lv_molehillpup","lv_gutterrat","lv_grumpyhedgehog","lv_chipmunkhoarder","lv_sockthiefferret","lv_binraccoon","lv_dunejerboa","lv_fennecfoxkit","lv_frostfoxkit","lv_mudskipper","lv_scrapyardjackal","lv_moorwolfpup","lv_dromedarycalf","lv_marshotter","lv_froststoat","lv_yeticub","lv_snowsledpup","lv_shrinemouse","lv_pilgrimgoatkid","lv_shrinefox","lv_slumbersheep","lv_dreamtapir","lv_subwayrat","lv_cyberpup","lv_greaserat","lv_chainsawbeaver","lv_shopliftingraccoon","lv_trufflepiglet","lv_fungalshrew","lv_alpinemarmot","lv_harbourwhelk","lv_jungletamarin","lv_unicornfoal","lv_bamboopandacub","lv_taigasquirrel","lv_savannahmeerkat","lv_steppevole"].forEach(k => reg(k, { aliases: [k], scale: S[k].scale, weapon: 0, create: make }));
 
     //=========================================================================
     // Name assignments. Every "beast" enemy carries <Archetype: Beast>, which
@@ -2996,6 +4938,47 @@
         feralbadger: ["Feral Badger"],
         starvinggnasher: ["Starving Gnasher"],
         feralridgeback: ["Feral Ridgeback"],
+        // ── Level 1-5 starter critter pins ──────────────────────────────────
+        lv_pantrymouse: ["Pantry Mouse"],
+        lv_barnkitten: ["Barn Kitten"],
+        lv_acornsquirrel: ["Acorn Squirrel"],
+        lv_molehillpup: ["Molehill Pup"],
+        lv_gutterrat: ["Gutter Rat"],
+        lv_grumpyhedgehog: ["Grumpy Hedgehog"],
+        lv_chipmunkhoarder: ["Chipmunk Hoarder"],
+        lv_sockthiefferret: ["Sock Thief Ferret"],
+        lv_binraccoon: ["Bin Raccoon"],
+        lv_dunejerboa: ["Dune Jerboa"],
+        lv_fennecfoxkit: ["Fennec Fox Kit"],
+        lv_frostfoxkit: ["Frost Fox Kit"],
+        lv_mudskipper: ["Mudskipper"],
+        lv_scrapyardjackal: ["Scrapyard Jackal"],
+        lv_moorwolfpup: ["Moor Wolf Pup"],
+        lv_dromedarycalf: ["Dromedary Calf"],
+        lv_marshotter: ["Marsh Otter"],
+        lv_froststoat: ["Frost Stoat"],
+        lv_yeticub: ["Yeti Cub"],
+        lv_snowsledpup: ["Snow Sled Pup"],
+        lv_shrinemouse: ["Shrine Mouse"],
+        lv_pilgrimgoatkid: ["Pilgrim Goat Kid"],
+        lv_shrinefox: ["Shrine Fox"],
+        lv_slumbersheep: ["Slumber Sheep"],
+        lv_dreamtapir: ["Dream Tapir"],
+        lv_subwayrat: ["Subway Rat"],
+        lv_cyberpup: ["Cyber Pup"],
+        lv_greaserat: ["Grease Rat"],
+        lv_chainsawbeaver: ["Chainsaw Beaver"],
+        lv_shopliftingraccoon: ["Shoplifting Raccoon"],
+        lv_trufflepiglet: ["Truffle Piglet"],
+        lv_fungalshrew: ["Fungal Shrew"],
+        lv_alpinemarmot: ["Alpine Marmot"],
+        lv_harbourwhelk: ["Harbour Whelk"],
+        lv_jungletamarin: ["Jungle Tamarin"],
+        lv_unicornfoal: ["Unicorn Foal"],
+        lv_bamboopandacub: ["Bamboo Panda Cub"],
+        lv_taigasquirrel: ["Taiga Squirrel"],
+        lv_savannahmeerkat: ["Savannah Meerkat"],
+        lv_steppevole: ["Steppe Vole"],
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

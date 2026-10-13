@@ -10,5 +10,14 @@
   "swish": "SWISH!",
   "score": "SCORE!",
   "miss": "MISS",
-  "finalScore": "PLAYER: {player} {opponent}: {opponentScore}"
+  "finalScore": "PLAYER: {player} {opponent}: {opponentScore}",
+  "hud": {
+    "power": "POWER",
+    "touch": "TOUCH"
+  },
+  "result": {
+    "victory": "VICTORY!",
+    "defeat": "DEFEAT",
+    "draw": "DRAW"
+  }
 }

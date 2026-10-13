@@ -1,0 +1,22 @@
+{
+  "noThree": "THREE.JS NON CARICATO - IL POLIGONO È CHIUSO",
+  "nothingOnRack": "NESSUN'ARMA A DISTANZA NELLA RASTRELLIERA",
+  "rangeHot": "POLIGONO ATTIVO",
+  "rangeCold": "CESSATE IL FUOCO",
+  "standBy": "IN ATTESA",
+  "standByCount": "IN ATTESA - {n}",
+  "seconds": "{n}S",
+  "metres": "{n}M",
+  "title": "POLIGONO DI TIRO",
+  "reloading": "RICARICA",
+  "nocked": "INCOCCATA",
+  "kindGun": "ARMA DA FUOCO",
+  "kindBow": "ARCO",
+  "kindThrown": "DA LANCIO",
+  "rack": "RASTRELLIERA",
+  "qualified": "QUALIFICATO",
+  "notQualified": "NON QUALIFICATO",
+  "scorePar": "PUNTI {score}   PAR {par}",
+  "hitsAccuracy": "COLPI {hits}/{shots}   PRECISIONE {acc}%",
+  "bestRun": "SERIE MIGLIORE {n}"
+}

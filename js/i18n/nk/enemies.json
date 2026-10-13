@@ -1,0 +1,4919 @@
+{
+  "1": {
+    "name": "<-- 1-10 -->"
+  },
+  "2": {
+    "name": "ANCIENT SKELETON"
+  },
+  "3": {
+    "name": "ANXIETY ELEMENTAL"
+  },
+  "4": {
+    "name": "APPRENTICE PYROMANCER"
+  },
+  "5": {
+    "name": "APPRENTICE'S REMAINS"
+  },
+  "6": {
+    "name": "ARCTIC FOX"
+  },
+  "7": {
+    "name": "ARMORED REMAINS"
+  },
+  "8": {
+    "name": "BABY BUNNY"
+  },
+  "9": {
+    "name": "BACKWARDS BIRD"
+  },
+  "10": {
+    "name": "BI HUMAN"
+  },
+  "11": {
+    "name": "BIOLUMINESCENT CAVEWORM"
+  },
+  "12": {
+    "name": "BLOOD MIMIC"
+  },
+  "13": {
+    "name": "BLOOD MOSQUITO"
+  },
+  "14": {
+    "name": "BLUE JAY"
+  },
+  "15": {
+    "name": "BOG HATCHLIN'"
+  },
+  "16": {
+    "name": "BONE WARRIOR"
+  },
+  "17": {
+    "name": "BONEYARD HUNTER"
+  },
+  "18": {
+    "name": "BUBBLE SQUID"
+  },
+  "19": {
+    "name": "BUBBLE SQUID SECOND"
+  },
+  "20": {
+    "name": "BUZZIN' BUMBLEBEE"
+  },
+  "21": {
+    "name": "CAFFEINATED SQUIRREL"
+  },
+  "22": {
+    "name": "CATFISH"
+  },
+  "23": {
+    "name": "CATICAN"
+  },
+  "24": {
+    "name": "CATIZARD"
+  },
+  "25": {
+    "name": "CAUTIOUS OPOSSUM "
+  },
+  "26": {
+    "name": "COTTON FOX"
+  },
+  "27": {
+    "name": "CRAWLIN' HAND"
+  },
+  "28": {
+    "name": "CRYPT SENTINEL"
+  },
+  "29": {
+    "name": "CULTIST ACOLYTE"
+  },
+  "30": {
+    "name": "CURIOUS RABBIT"
+  },
+  "31": {
+    "name": "DATA DRONE"
+  },
+  "32": {
+    "name": "DECAYIN' CORPSE"
+  },
+  "33": {
+    "name": "DESERT RAIDER"
+  },
+  "34": {
+    "name": "DESPERATE PUFFERFISH"
+  },
+  "35": {
+    "name": "DISCO BEETLE"
+  },
+  "36": {
+    "name": "DOUBLE SINGER"
+  },
+  "37": {
+    "name": "DRACONIC DRAGONFLY"
+  },
+  "38": {
+    "name": "EARTHWORM"
+  },
+  "39": {
+    "name": "ELECTROMAGNETIC GHOUL"
+  },
+  "40": {
+    "name": "EXPIRED OOZE"
+  },
+  "41": {
+    "name": "EYEBALL SLUG"
+  },
+  "42": {
+    "name": "FALLEN WARRIOR"
+  },
+  "43": {
+    "name": "FERAL ALLEY CAT"
+  },
+  "44": {
+    "name": "FESTERIN' CORPSE"
+  },
+  "45": {
+    "name": "FIDGET SPRITE"
+  },
+  "46": {
+    "name": "FIELD MOUSE"
+  },
+  "47": {
+    "name": "FINGER WORM"
+  },
+  "48": {
+    "name": "FLAME FRAKE"
+  },
+  "49": {
+    "name": "FLAMINGO SENTINEL"
+  },
+  "50": {
+    "name": "FLOWER PIXIE"
+  },
+  "51": {
+    "name": "FOREST POACHER"
+  },
+  "52": {
+    "name": "FOREST RAT"
+  },
+  "53": {
+    "name": "FORGOTTEN ACOLYTE"
+  },
+  "54": {
+    "name": "FREE LOBSTER"
+  },
+  "55": {
+    "name": "FROST RACCOON"
+  },
+  "56": {
+    "name": "FROST-TOUCHED THRALL"
+  },
+  "57": {
+    "name": "FROZEN BAT"
+  },
+  "58": {
+    "name": "GARDEN FROG"
+  },
+  "59": {
+    "name": "GHOST WISP"
+  },
+  "60": {
+    "name": "GIANT JELLYFISH"
+  },
+  "61": {
+    "name": "GIGGLIN' SKULL"
+  },
+  "62": {
+    "name": "GOLDEN SEAHORSE"
+  },
+  "63": {
+    "name": "GRASSHOPPER"
+  },
+  "64": {
+    "name": "GRAVEYARD HAUNT"
+  },
+  "65": {
+    "name": "GRAVEYARD SHAMBLER"
+  },
+  "66": {
+    "name": "GUN BURGER"
+  },
+  "67": {
+    "name": "HOBGOBLIN ARCHER"
+  },
+  "68": {
+    "name": "HOBGOBLIN FIRESTARTER"
+  },
+  "69": {
+    "name": "HOBGOBLIN RUNT"
+  },
+  "70": {
+    "name": "HOBGOBLIN WARRIOR"
+  },
+  "71": {
+    "name": "ICE LEMMIN'"
+  },
+  "72": {
+    "name": "ICE WOLF PUP"
+  },
+  "73": {
+    "name": "INSIDE-OUT CRITTER"
+  },
+  "74": {
+    "name": "KARAOKE BANSHEE"
+  },
+  "75": {
+    "name": "KAZOO IMP"
+  },
+  "76": {
+    "name": "LADYBUG"
+  },
+  "77": {
+    "name": "LAZY CAT"
+  },
+  "78": {
+    "name": "LINGERIN' SPIRIT"
+  },
+  "79": {
+    "name": "LOST MEMORY"
+  },
+  "80": {
+    "name": "MAGGOT SLAIL"
+  },
+  "81": {
+    "name": "MARSH SKULK"
+  },
+  "82": {
+    "name": "MEME GHOST"
+  },
+  "83": {
+    "name": "ME SLAVE"
+  },
+  "84": {
+    "name": "MINOR SHADE"
+  },
+  "85": {
+    "name": "MISCHIEVOUS SPRITE"
+  },
+  "86": {
+    "name": "MOLE"
+  },
+  "87": {
+    "name": "MR. INADEQUATE"
+  },
+  "88": {
+    "name": "NOVICE BOXER"
+  },
+  "89": {
+    "name": "ORC CAPTAIN"
+  },
+  "90": {
+    "name": "ORIGAMI CRANE"
+  },
+  "91": {
+    "name": "PARROTFISH GRAZER"
+  },
+  "92": {
+    "name": "PILLOW GUARDIAN"
+  },
+  "93": {
+    "name": "PIT FIGHTER"
+  },
+  "94": {
+    "name": "PLAGUE CARRIER"
+  },
+  "95": {
+    "name": "PREGNANT SEAHORSE"
+  },
+  "96": {
+    "name": "QUACKIN' DUCK"
+  },
+  "97": {
+    "name": "RABID HYENA"
+  },
+  "98": {
+    "name": "REANIMATED GUARD"
+  },
+  "99": {
+    "name": "REEF GUPPY"
+  },
+  "100": {
+    "name": "ROTTIN' SKELETON"
+  },
+  "101": {
+    "name": "RUBBER FAMILIAR"
+  },
+  "102": {
+    "name": "RUBBER REALITY BLOB"
+  },
+  "103": {
+    "name": "SARDINE SCHOOL"
+  },
+  "104": {
+    "name": "SECURITY BOT"
+  },
+  "105": {
+    "name": "SKIN BALLOON"
+  },
+  "106": {
+    "name": "SKUNK"
+  },
+  "107": {
+    "name": "SKY BARD"
+  },
+  "108": {
+    "name": "SLOW TURTLE"
+  },
+  "109": {
+    "name": "SNOW WEREWOLF"
+  },
+  "110": {
+    "name": "SPORE WANDERER"
+  },
+  "111": {
+    "name": "SQUEAKY TURNIP FIEND"
+  },
+  "112": {
+    "name": "SQUIRREL"
+  },
+  "113": {
+    "name": "STONE SHIFTER"
+  },
+  "114": {
+    "name": "SURVEILLANCE DRONE"
+  },
+  "115": {
+    "name": "SUSHI SNAIL"
+  },
+  "116": {
+    "name": "SWAMP RAT"
+  },
+  "117": {
+    "name": "SWAMP WITCH NOVICE"
+  },
+  "118": {
+    "name": "TAX COLLECTOR"
+  },
+  "119": {
+    "name": "TAXIDOGGO"
+  },
+  "120": {
+    "name": "THIRSTY CAMEL"
+  },
+  "121": {
+    "name": "TIDE CRAB"
+  },
+  "122": {
+    "name": "TINY CHICK"
+  },
+  "123": {
+    "name": "TOOTH RATKIN"
+  },
+  "124": {
+    "name": "TOTEMIC SPROUT"
+  },
+  "125": {
+    "name": "TOURIST SKELETON"
+  },
+  "126": {
+    "name": "TUNDRA CROW"
+  },
+  "127": {
+    "name": "UNDEAD ARCHER"
+  },
+  "128": {
+    "name": "VEGETAL VAMPIRE"
+  },
+  "129": {
+    "name": "WANDERIN' EYEBALL"
+  },
+  "130": {
+    "name": "WASTELAND BEAVER"
+  },
+  "131": {
+    "name": "YOUNG FAKE HYDRA"
+  },
+  "132": {
+    "name": "YOUNG OGRE"
+  },
+  "133": {
+    "name": "ZOMBIE VILLAGER"
+  },
+  "134": {
+    "name": "<-- 11-20 -->"
+  },
+  "135": {
+    "name": "ABANDONED NOVICE"
+  },
+  "136": {
+    "name": "ABYSSAL SERPENT"
+  },
+  "137": {
+    "name": "ACID ANT"
+  },
+  "138": {
+    "name": "AMATEUR PUGILIST"
+  },
+  "139": {
+    "name": "ARMORED BEAVER"
+  },
+  "140": {
+    "name": "ARMORED PURCUPINE"
+  },
+  "141": {
+    "name": "ASSAULT MECH"
+  },
+  "142": {
+    "name": "AZURE SLIME"
+  },
+  "143": {
+    "name": "BABY DOLL HEAD"
+  },
+  "144": {
+    "name": "BANDIT ARCHER"
+  },
+  "145": {
+    "name": "BANDIT ASSASSIN"
+  },
+  "146": {
+    "name": "BANDIT BARD"
+  },
+  "147": {
+    "name": "BANDIT CHIEF"
+  },
+  "148": {
+    "name": "BANDIT CLERIC"
+  },
+  "149": {
+    "name": "BANDIT CROSSBOWMAN"
+  },
+  "150": {
+    "name": "BANDIT GRUNT"
+  },
+  "151": {
+    "name": "BANDIT MAGE"
+  },
+  "152": {
+    "name": "BANDIT PYROMANCER"
+  },
+  "153": {
+    "name": "BANDIT ROGUE"
+  },
+  "154": {
+    "name": "BANDIT SCOUT"
+  },
+  "155": {
+    "name": "BARKHIDE BRUISER"
+  },
+  "156": {
+    "name": "BATTLE MECH"
+  },
+  "157": {
+    "name": "BELL GOBLIN"
+  },
+  "158": {
+    "name": "BLACK PANTHER"
+  },
+  "159": {
+    "name": "BLIZZARD OWL"
+  },
+  "160": {
+    "name": "BLOATED WHALE"
+  },
+  "161": {
+    "name": "BLOOD INITIATE"
+  },
+  "162": {
+    "name": "BLOODAXE RAIDER"
+  },
+  "163": {
+    "name": "BOG LEECH"
+  },
+  "164": {
+    "name": "BOG MUTANT"
+  },
+  "165": {
+    "name": "BONE SENTINEL"
+  },
+  "166": {
+    "name": "BROWN BEAR"
+  },
+  "167": {
+    "name": "CAVE GNOME"
+  },
+  "168": {
+    "name": "CHICCHAN SERPENT SHAMAN"
+  },
+  "169": {
+    "name": "COMBAT DRONE"
+  },
+  "170": {
+    "name": "COMPRESSED AIR"
+  },
+  "171": {
+    "name": "CORAL GUARDIAN"
+  },
+  "172": {
+    "name": "CORRUPTED BIOSLAVE"
+  },
+  "173": {
+    "name": "CREEPIN' SHADE"
+  },
+  "174": {
+    "name": "CRIMSON JELLY"
+  },
+  "175": {
+    "name": "CRIMSON SUCKER"
+  },
+  "176": {
+    "name": "CRUSHIN' BOA"
+  },
+  "177": {
+    "name": "CRYO DRONE"
+  },
+  "178": {
+    "name": "CRYSTALLINE SKULKER"
+  },
+  "179": {
+    "name": "CYBERNETIC TANK"
+  },
+  "180": {
+    "name": "DEATH AXOLOTL"
+  },
+  "181": {
+    "name": "DEATH'S HEAD"
+  },
+  "182": {
+    "name": "DESERT SCORPION"
+  },
+  "183": {
+    "name": "DIRE PIG"
+  },
+  "184": {
+    "name": "DIRE RABBIT"
+  },
+  "185": {
+    "name": "DISCORD DEMON"
+  },
+  "186": {
+    "name": "DODGER IMP"
+  },
+  "187": {
+    "name": "DREAM WEAVER"
+  },
+  "188": {
+    "name": "DROWNED REVENANT"
+  },
+  "189": {
+    "name": "DRYAD PROTECTOR"
+  },
+  "190": {
+    "name": "EARTH ELEMENTAL"
+  },
+  "191": {
+    "name": "ECHO MAW"
+  },
+  "192": {
+    "name": "ELVEN BLADESINGER"
+  },
+  "193": {
+    "name": "ELVEN FLAME WEAVER"
+  },
+  "194": {
+    "name": "ELVEN FROST MAGE"
+  },
+  "195": {
+    "name": "ELVEN GEOMANCER"
+  },
+  "196": {
+    "name": "ELVEN HIGH MAGE"
+  },
+  "197": {
+    "name": "ELVEN MYSTIC"
+  },
+  "198": {
+    "name": "ELVEN RANGER CAPTAIN"
+  },
+  "199": {
+    "name": "ELVEN ROYAL GUARD"
+  },
+  "200": {
+    "name": "ELVEN SCOUT"
+  },
+  "201": {
+    "name": "ELVEN SHARPSHOOTER"
+  },
+  "202": {
+    "name": "ELVEN SWORDMASTER"
+  },
+  "203": {
+    "name": "EMBER CASTER"
+  },
+  "204": {
+    "name": "EMBER FIEND"
+  },
+  "205": {
+    "name": "EMBER IMP"
+  },
+  "206": {
+    "name": "EMBER SPRITE"
+  },
+  "207": {
+    "name": "EMERALD OOZE"
+  },
+  "208": {
+    "name": "EYELESS BAT"
+  },
+  "209": {
+    "name": "FEAR SIPHON"
+  },
+  "210": {
+    "name": "FERAL HYENA PACK"
+  },
+  "211": {
+    "name": "FIRE DRAGONLIN'"
+  },
+  "212": {
+    "name": "FLAME TURRET"
+  },
+  "213": {
+    "name": "FLUXLIN' FURRET"
+  },
+  "214": {
+    "name": "FLYIN' PIG"
+  },
+  "215": {
+    "name": "FOREST STAG"
+  },
+  "216": {
+    "name": "FROST APPRENTICE"
+  },
+  "217": {
+    "name": "FROST DECIEVER"
+  },
+  "218": {
+    "name": "FROST ELEMENTAL"
+  },
+  "219": {
+    "name": "FROST SPIDER"
+  },
+  "220": {
+    "name": "FROST SUCCUBUS"
+  },
+  "221": {
+    "name": "FROST SYLPH"
+  },
+  "222": {
+    "name": "FURYHOWL BARBARIAN"
+  },
+  "223": {
+    "name": "GATORGHAST HORROR"
+  },
+  "224": {
+    "name": "GIANT PENGUIN"
+  },
+  "225": {
+    "name": "GIANT RAT"
+  },
+  "226": {
+    "name": "GIANT SCORPION"
+  },
+  "227": {
+    "name": "GIANT SPIDER"
+  },
+  "228": {
+    "name": "GIANT VULTURE"
+  },
+  "229": {
+    "name": "GLACIER CRAB"
+  },
+  "230": {
+    "name": "GLIMMER SHRIMP"
+  },
+  "231": {
+    "name": "GLITTER GOBLIN"
+  },
+  "232": {
+    "name": "GNOME HERBALIST"
+  },
+  "233": {
+    "name": "GNOME MINER"
+  },
+  "234": {
+    "name": "GNOME PEASANT"
+  },
+  "235": {
+    "name": "GNOME SCOUT"
+  },
+  "236": {
+    "name": "GNOME TINKERER"
+  },
+  "237": {
+    "name": "GNOME TRICKSTER"
+  },
+  "238": {
+    "name": "GOLDEN MIMIC"
+  },
+  "239": {
+    "name": "GOLDEN PUDDING"
+  },
+  "240": {
+    "name": "GRASS SLIME"
+  },
+  "241": {
+    "name": "GRAVEL IMP"
+  },
+  "242": {
+    "name": "GRAY WOLF"
+  },
+  "243": {
+    "name": "GREEN SLIME"
+  },
+  "244": {
+    "name": "GRIPHON"
+  },
+  "245": {
+    "name": "HAIR BALL"
+  },
+  "246": {
+    "name": "HALO ACOLYTE"
+  },
+  "247": {
+    "name": "HAND CRAWLER"
+  },
+  "248": {
+    "name": "HAUNTED MANNEQUIN"
+  },
+  "249": {
+    "name": "HAUNTIN' SCARECROW"
+  },
+  "250": {
+    "name": "HOLOGRAPHIC DECOY"
+  },
+  "251": {
+    "name": "HORNED BEAR"
+  },
+  "252": {
+    "name": "HYDROKINETIC ENGINE"
+  },
+  "253": {
+    "name": "ICE DRAGONLIN'"
+  },
+  "254": {
+    "name": "ICE KANGAROO"
+  },
+  "255": {
+    "name": "INK BLOT CHILD"
+  },
+  "256": {
+    "name": "INSECT SWARM"
+  },
+  "257": {
+    "name": "JUNKRAT"
+  },
+  "258": {
+    "name": "KANGAROO"
+  },
+  "259": {
+    "name": "KOMODO DRAGON"
+  },
+  "260": {
+    "name": "LIZARD SNIPER"
+  },
+  "261": {
+    "name": "LUMINOUS DEACON"
+  },
+  "262": {
+    "name": "LUMINOUS JELLYFISH"
+  },
+  "263": {
+    "name": "MAGMA ANT"
+  },
+  "264": {
+    "name": "MALEFICENT APE"
+  },
+  "265": {
+    "name": "MANED TERROR WOLF"
+  },
+  "266": {
+    "name": "MANNEQUIN"
+  },
+  "267": {
+    "name": "MARSH WRAITH"
+  },
+  "268": {
+    "name": "MECHANICAL GOLEM"
+  },
+  "269": {
+    "name": "MILITARY CYBORG"
+  },
+  "270": {
+    "name": "MIMIC SHAPED BOX"
+  },
+  "271": {
+    "name": "MIND LEECH"
+  },
+  "272": {
+    "name": "MIRE SPIDER"
+  },
+  "273": {
+    "name": "MIRROR FIEND"
+  },
+  "274": {
+    "name": "MONITOR LIZARD"
+  },
+  "275": {
+    "name": "MONSTROUS BADGER"
+  },
+  "276": {
+    "name": "MUD SLIME"
+  },
+  "277": {
+    "name": "MURKWALLOW GHOUL"
+  },
+  "278": {
+    "name": "MUTANT BUG"
+  },
+  "279": {
+    "name": "NEURAL INTERFACE"
+  },
+  "280": {
+    "name": "NIGHT RACCOON"
+  },
+  "281": {
+    "name": "NOVICE ILLUSIONIST"
+  },
+  "282": {
+    "name": "NOVICE PALADIN"
+  },
+  "283": {
+    "name": "OBSIDIAN VISIONARY"
+  },
+  "284": {
+    "name": "OCHRE JELLY SWARM"
+  },
+  "285": {
+    "name": "OGRE BRUTE"
+  },
+  "286": {
+    "name": "OGRE CRUSHER"
+  },
+  "287": {
+    "name": "OGRE FIRE SHAMAN"
+  },
+  "288": {
+    "name": "OGRE MYSTIC"
+  },
+  "289": {
+    "name": "ORC BRUISER"
+  },
+  "290": {
+    "name": "ORGAN GRINDER MONKEY"
+  },
+  "291": {
+    "name": "OVERWORKED VILLAGER"
+  },
+  "292": {
+    "name": "PASTORAL SHEEP"
+  },
+  "293": {
+    "name": "PERMAFROST BEETLE"
+  },
+  "294": {
+    "name": "PHANTOM MARIONETTE"
+  },
+  "295": {
+    "name": "PHOTON DEFENDER"
+  },
+  "296": {
+    "name": "PINK SLIME"
+  },
+  "297": {
+    "name": "PLAGUEBRO RATTUS"
+  },
+  "298": {
+    "name": "POCKET WATCH SCARAB"
+  },
+  "299": {
+    "name": "POCKET-DIMENSION IMP"
+  },
+  "300": {
+    "name": "PRIMAL KANGAROO"
+  },
+  "301": {
+    "name": "PROFESSIONAL BOXER"
+  },
+  "302": {
+    "name": "QUAGMIRE CREEPER"
+  },
+  "303": {
+    "name": "RABID JACKRABBIT"
+  },
+  "304": {
+    "name": "RAT KING"
+  },
+  "305": {
+    "name": "RATTLIN' REMAINS"
+  },
+  "306": {
+    "name": "RAZORBACK BOAR"
+  },
+  "307": {
+    "name": "RED FOX"
+  },
+  "308": {
+    "name": "REEF SHARK"
+  },
+  "309": {
+    "name": "REFLECTIVE TIGER"
+  },
+  "310": {
+    "name": "RIB CAGE CRAB"
+  },
+  "311": {
+    "name": "ROGUE SENTINEL"
+  },
+  "312": {
+    "name": "ROTATIN' SAWBLADE"
+  },
+  "313": {
+    "name": "SABER CAT"
+  },
+  "314": {
+    "name": "SAND GOLEM"
+  },
+  "315": {
+    "name": "SAND SLIME"
+  },
+  "316": {
+    "name": "SAVAGE BERSERKER"
+  },
+  "317": {
+    "name": "SCULPTOR'S SORROW"
+  },
+  "318": {
+    "name": "SEAL PUP"
+  },
+  "319": {
+    "name": "SECURITY SENTINEL"
+  },
+  "320": {
+    "name": "SEWER RAT"
+  },
+  "321": {
+    "name": "SHADOW CRAWLER"
+  },
+  "322": {
+    "name": "SHADOW STALKER"
+  },
+  "323": {
+    "name": "SHOCK SLIME"
+  },
+  "324": {
+    "name": "SIREN APPRENTICE"
+  },
+  "325": {
+    "name": "SKULL KEEPER"
+  },
+  "326": {
+    "name": "SKULLCRUSHER BRUTE"
+  },
+  "327": {
+    "name": "SLIME KNIGHT"
+  },
+  "328": {
+    "name": "SOUL HARVESTER"
+  },
+  "329": {
+    "name": "SOUL MERCHANT"
+  },
+  "330": {
+    "name": "SPACE ZEBRA"
+  },
+  "331": {
+    "name": "SPECTRAL WARDSTONE"
+  },
+  "332": {
+    "name": "SPINED LIZARD"
+  },
+  "333": {
+    "name": "SPINY SPRINTER"
+  },
+  "334": {
+    "name": "STEALTHY OPERATIVE"
+  },
+  "335": {
+    "name": "STONE GUARDIAN"
+  },
+  "336": {
+    "name": "STORM BANSHEE"
+  },
+  "337": {
+    "name": "STREET BRAWLER"
+  },
+  "338": {
+    "name": "STREET PUNK"
+  },
+  "339": {
+    "name": "SWAMP CROCODILE"
+  },
+  "340": {
+    "name": "TARANTULA"
+  },
+  "341": {
+    "name": "DA SURGEON"
+  },
+  "342": {
+    "name": "THOR"
+  },
+  "343": {
+    "name": "THUNDER SPRITE"
+  },
+  "344": {
+    "name": "TIMBERWOOD SHAMAN"
+  },
+  "345": {
+    "name": "TOMB GUARDIAN"
+  },
+  "346": {
+    "name": "TOMEKEEPER OF DA SUNSTONE"
+  },
+  "347": {
+    "name": "TONGUE LEECH"
+  },
+  "348": {
+    "name": "TOOTH FAIRY"
+  },
+  "349": {
+    "name": "TOTEM GUARDIAN"
+  },
+  "350": {
+    "name": "TOTEM INITIATE"
+  },
+  "351": {
+    "name": "TOXIC ANEMONE"
+  },
+  "352": {
+    "name": "TOXIC SLUDGE"
+  },
+  "353": {
+    "name": "TOXIC SPRAYER"
+  },
+  "354": {
+    "name": "TRASHLIN'"
+  },
+  "355": {
+    "name": "TREASURE GOLEM"
+  },
+  "356": {
+    "name": "TREE MONKEY"
+  },
+  "357": {
+    "name": "TRICKSTER IMP"
+  },
+  "358": {
+    "name": "TRIDENT HUNTER"
+  },
+  "359": {
+    "name": "TUNDRA MAMMOTH CALF"
+  },
+  "360": {
+    "name": "TUNNELIN' MOLE"
+  },
+  "361": {
+    "name": "TWILIGHT SATYR"
+  },
+  "362": {
+    "name": "TWISTED MARIONETTE"
+  },
+  "363": {
+    "name": "UMBER MOTH SWARM"
+  },
+  "364": {
+    "name": "UMBRAL LURKER"
+  },
+  "365": {
+    "name": "VAMPIRE BAT"
+  },
+  "366": {
+    "name": "VENOMOUS SNAKE"
+  },
+  "367": {
+    "name": "WANDERIN' ARCHER"
+  },
+  "368": {
+    "name": "WATER NYMPH"
+  },
+  "369": {
+    "name": "WEBWEAVER"
+  },
+  "370": {
+    "name": "WEEPIN' MASK"
+  },
+  "371": {
+    "name": "WHISPER WISP"
+  },
+  "372": {
+    "name": "WILD BOAR"
+  },
+  "373": {
+    "name": "WILD RABBIT"
+  },
+  "374": {
+    "name": "WILD RIPPER"
+  },
+  "375": {
+    "name": "WILDCAT"
+  },
+  "376": {
+    "name": "WILL-O-’-WISP LAMP"
+  },
+  "377": {
+    "name": "WISE OWL"
+  },
+  "378": {
+    "name": "WOODEN FLOWER"
+  },
+  "379": {
+    "name": "XIBALBA GLYPHWEAVER "
+  },
+  "380": {
+    "name": "YOUNG MAGMA DRAKE"
+  },
+  "381": {
+    "name": "YOUNG YETI"
+  },
+  "382": {
+    "name": "ZEPHYR WIZARD"
+  },
+  "383": {
+    "name": "<-- 21-30 -->"
+  },
+  "384": {
+    "name": "ABYSSAL CRAB"
+  },
+  "385": {
+    "name": "ABYSSAL FIEND"
+  },
+  "386": {
+    "name": "ABYSSAL HALLUCIGENIA"
+  },
+  "387": {
+    "name": "ABYSSAL HORROR"
+  },
+  "388": {
+    "name": "ABYSSAL HUNTER"
+  },
+  "389": {
+    "name": "ABYSSAL TENTACLER"
+  },
+  "390": {
+    "name": "ACCURSED STONEFISH"
+  },
+  "391": {
+    "name": "ACID BOMBARDIER"
+  },
+  "392": {
+    "name": "ACIDIC TIDECALLER"
+  },
+  "393": {
+    "name": "AIR ELEMENTAL"
+  },
+  "394": {
+    "name": "GREMORY"
+  },
+  "395": {
+    "name": "ANGUISH PHANTOM"
+  },
+  "396": {
+    "name": "ANIMATED ARSENAL"
+  },
+  "397": {
+    "name": "ANIMATED GRAVESTALKER"
+  },
+  "398": {
+    "name": "AQUATIC ELEMENTAL"
+  },
+  "399": {
+    "name": "AQUATIC MANTIS"
+  },
+  "400": {
+    "name": "ARMORED RHINOCEROS"
+  },
+  "401": {
+    "name": "ASSASSIN WASP"
+  },
+  "402": {
+    "name": "BLANK EMERGENCE"
+  },
+  "403": {
+    "name": "BLICK"
+  },
+  "404": {
+    "name": "BLINDIN' SADIST"
+  },
+  "405": {
+    "name": "BLOOD COUNTESS"
+  },
+  "406": {
+    "name": "BLOOD WIDOW"
+  },
+  "407": {
+    "name": "BLOODBELL COW"
+  },
+  "408": {
+    "name": "BLOODTHIRSTY CRUSADER"
+  },
+  "409": {
+    "name": "BOG ELEMENTAL"
+  },
+  "410": {
+    "name": "BOGSCALE HUNTER"
+  },
+  "411": {
+    "name": "BONECHEWER DEVOURER"
+  },
+  "412": {
+    "name": "BRINE WISP"
+  },
+  "413": {
+    "name": "BUBBA"
+  },
+  "414": {
+    "name": "BUREAUCRATIC NIGHTMARE"
+  },
+  "415": {
+    "name": "CHAINBOUND FURY"
+  },
+  "416": {
+    "name": "CHAMPION CONTENDER"
+  },
+  "417": {
+    "name": "CHROMATIC MANTICORE"
+  },
+  "418": {
+    "name": "CHUPACABRA FIEND"
+  },
+  "419": {
+    "name": "CINDER WEAVER"
+  },
+  "420": {
+    "name": "CINDERMAW HOUND"
+  },
+  "421": {
+    "name": "CINDERTHROAT VARANUS"
+  },
+  "422": {
+    "name": "CLOUD GIANT"
+  },
+  "423": {
+    "name": "COBALT-FOOTED REX"
+  },
+  "424": {
+    "name": "CONSECRATED GUARDIAN"
+  },
+  "425": {
+    "name": "CORAL ENCHANTRESS"
+  },
+  "426": {
+    "name": "CORPSECARVER KNIGHT"
+  },
+  "427": {
+    "name": "CORRUPTED KNIGHT"
+  },
+  "428": {
+    "name": "CRIMSON ANALIZER"
+  },
+  "429": {
+    "name": "CRIMSON FISH"
+  },
+  "430": {
+    "name": "CRIMSON HARVESTER"
+  },
+  "431": {
+    "name": "CRYSTAL HOARDER"
+  },
+  "432": {
+    "name": "CRYSTAL SIREN"
+  },
+  "433": {
+    "name": "CRYSTALBACK SCELOPORUS"
+  },
+  "434": {
+    "name": "CrystalCarapace SENTINEL"
+  },
+  "435": {
+    "name": "CURSED CANDLE"
+  },
+  "436": {
+    "name": "DARK MAGE"
+  },
+  "437": {
+    "name": "DEEP FROST EEL"
+  },
+  "438": {
+    "name": "DEEP ONE HYBRID"
+  },
+  "439": {
+    "name": "DEER SPRITE"
+  },
+  "440": {
+    "name": "DESERT COMMANDER"
+  },
+  "441": {
+    "name": "DEVOTED TEMPLAR"
+  },
+  "442": {
+    "name": "MARCHOSIAS"
+  },
+  "443": {
+    "name": "DIVINE ARBITER"
+  },
+  "444": {
+    "name": "DOMINANT TASKMASTER"
+  },
+  "445": {
+    "name": "DREAM SERPENT HIGH PRIEST"
+  },
+  "446": {
+    "name": "DUMPSTER HEAD"
+  },
+  "447": {
+    "name": "DUNE FANG"
+  },
+  "448": {
+    "name": "DUST DEVIL BIRD"
+  },
+  "449": {
+    "name": "ELDERWOOD GUARDIAN"
+  },
+  "450": {
+    "name": "ELECTRO ARACHNID"
+  },
+  "451": {
+    "name": "BATHIN"
+  },
+  "452": {
+    "name": "EM"
+  },
+  "453": {
+    "name": "EMBER CENTIPEDE"
+  },
+  "454": {
+    "name": "EMBER WARDER"
+  },
+  "455": {
+    "name": "EMERALD STALKER"
+  },
+  "456": {
+    "name": "ENGORGED TICK SWARM"
+  },
+  "457": {
+    "name": "ESSENCE LEECH"
+  },
+  "458": {
+    "name": "ETERNAL INTERN"
+  },
+  "459": {
+    "name": "ETHEREAL DEVOURER"
+  },
+  "460": {
+    "name": "FENCLAW BRUTE"
+  },
+  "461": {
+    "name": "FEY ENCHANTRESS"
+  },
+  "462": {
+    "name": "FIERY SLEEP DEMON"
+  },
+  "463": {
+    "name": "FILTH FIEND"
+  },
+  "464": {
+    "name": "FIRE CENTIPEDE"
+  },
+  "465": {
+    "name": "FLAME ELEMENTAL"
+  },
+  "466": {
+    "name": "FLAME-TOUCHED HELLHOUND"
+  },
+  "467": {
+    "name": "FLATWOOD SENTINEL"
+  },
+  "468": {
+    "name": "FLYIN' PIG"
+  },
+  "469": {
+    "name": "FOREST ARCHER"
+  },
+  "470": {
+    "name": "FOREST CENTAUR"
+  },
+  "471": {
+    "name": "FOREST'S VENGEANCE"
+  },
+  "472": {
+    "name": "FOSSIL SENTINEL"
+  },
+  "473": {
+    "name": "FROG MONK"
+  },
+  "474": {
+    "name": "FROST SCARAB"
+  },
+  "475": {
+    "name": "FROST SLIME"
+  },
+  "476": {
+    "name": "GIANT SLITHERIN' SNAIL"
+  },
+  "477": {
+    "name": "GILDED ZAPBACK"
+  },
+  "478": {
+    "name": "GLACIER SERPENT"
+  },
+  "479": {
+    "name": "GLOOMWURM"
+  },
+  "480": {
+    "name": "GNOME ALCHEMIST"
+  },
+  "481": {
+    "name": "GNOME ARTIFICER"
+  },
+  "482": {
+    "name": "GNOME BOMBARDIER"
+  },
+  "483": {
+    "name": "GNOME ENGINEER"
+  },
+  "484": {
+    "name": "GNOME SHAMAN"
+  },
+  "485": {
+    "name": "GOBLIN GRUNT"
+  },
+  "486": {
+    "name": "GOBLIN MOUNTED ARCHER"
+  },
+  "487": {
+    "name": "GOBLIN SCOUT"
+  },
+  "488": {
+    "name": "GOLDEN LION"
+  },
+  "489": {
+    "name": "GRASPIN' SHADOW"
+  },
+  "490": {
+    "name": "GRAVEBOUND REVENANT"
+  },
+  "491": {
+    "name": "GROTESQUE SLIME"
+  },
+  "492": {
+    "name": "GUARDIAN VINDICATOR"
+  },
+  "493": {
+    "name": "GUTTURAL MAGGOTUS"
+  },
+  "494": {
+    "name": "HAMMERHEAD ENFORCER"
+  },
+  "495": {
+    "name": "HARPY BANSHEE"
+  },
+  "496": {
+    "name": "HELLTHORN DRYAD"
+  },
+  "497": {
+    "name": "HIVEMIND TERMITE"
+  },
+  "498": {
+    "name": "HOLLOW GOAT"
+  },
+  "499": {
+    "name": "INTERDIMENSIONAL TOURIST"
+  },
+  "500": {
+    "name": "IRON HORSE"
+  },
+  "501": {
+    "name": "JUNGLE CONSTRICTOR"
+  },
+  "502": {
+    "name": "JUNGLE PREDATOR"
+  },
+  "503": {
+    "name": "JUNGLE STALKER"
+  },
+  "504": {
+    "name": "JUVENILE ICE WYRM"
+  },
+  "505": {
+    "name": "LABYRINTH GUARDIAN"
+  },
+  "506": {
+    "name": "LAKE LURKER SERPENT"
+  },
+  "507": {
+    "name": "LILITH DA CORRUPTOR"
+  },
+  "508": {
+    "name": "LIVIN' ARMOR"
+  },
+  "509": {
+    "name": "LIVIN' MONOLITH"
+  },
+  "510": {
+    "name": "LUCK ELEMENTAL"
+  },
+  "511": {
+    "name": "LUMINOUS ANGLER"
+  },
+  "512": {
+    "name": "LUMINOUS DEFENDER"
+  },
+  "513": {
+    "name": "MAGMA CENTIPEDE"
+  },
+  "514": {
+    "name": "MAJESTIC ENCHANTRESS "
+  },
+  "515": {
+    "name": "MARSHJAW HELODERMA"
+  },
+  "516": {
+    "name": "MARSHJAW STALKER"
+  },
+  "517": {
+    "name": "PAIMON"
+  },
+  "518": {
+    "name": "MERCHANT'S NIGHTMARE"
+  },
+  "519": {
+    "name": "MI-GO BRAIN HARVESTER"
+  },
+  "520": {
+    "name": "MIANNI"
+  },
+  "521": {
+    "name": "MIASMA LANTERN"
+  },
+  "522": {
+    "name": "MIDNIGHT HUNTER"
+  },
+  "523": {
+    "name": "MIND FLAYER"
+  },
+  "524": {
+    "name": "MOLTEN SLAG"
+  },
+  "525": {
+    "name": "MOONLIT WENDIGO"
+  },
+  "526": {
+    "name": "MOSS VIPER"
+  },
+  "527": {
+    "name": "MOSSSCALE AMPHIBOLURUS"
+  },
+  "528": {
+    "name": "MOTHSHADE STALKER"
+  },
+  "529": {
+    "name": "MOTIVATIONAL FUNGOID"
+  },
+  "530": {
+    "name": "MOUNTAIN CRUSHER"
+  },
+  "531": {
+    "name": "MOUNTAIN EAGLE"
+  },
+  "532": {
+    "name": "MOUNTAIN OGRE"
+  },
+  "533": {
+    "name": "NERVOUS SYSTEM"
+  },
+  "534": {
+    "name": "NIGHTMARE BACTERIA"
+  },
+  "535": {
+    "name": "NIGHTMARE SHARK"
+  },
+  "536": {
+    "name": "NORMAL PIG"
+  },
+  "537": {
+    "name": "NOVICE SHAOLIN ACOLYTE"
+  },
+  "538": {
+    "name": "OBSIDIAN BURROWER"
+  },
+  "539": {
+    "name": "OGRE ELEMENTAL ADEPT"
+  },
+  "540": {
+    "name": "OMINOUS RAVEN MURDER"
+  },
+  "541": {
+    "name": "ONEIRIC PHANTOM"
+  },
+  "542": {
+    "name": "PAIN ENTHUSIAST"
+  },
+  "543": {
+    "name": "PALETTE PHANTOM"
+  },
+  "544": {
+    "name": "PANDA"
+  },
+  "545": {
+    "name": "PARALYTIC SLUG"
+  },
+  "546": {
+    "name": "PARROT"
+  },
+  "547": {
+    "name": "PEREGRINE FALCON"
+  },
+  "548": {
+    "name": "PETRIFIED ENFORCER"
+  },
+  "549": {
+    "name": "PHANTOM ARCHER"
+  },
+  "550": {
+    "name": "PHILOSOPHICAL ZOMBIE"
+  },
+  "551": {
+    "name": "PLATINUM MIMIC"
+  },
+  "552": {
+    "name": "POISON POOKA"
+  },
+  "553": {
+    "name": "POLAR BEAR"
+  },
+  "554": {
+    "name": "PRIMAL SLOTH"
+  },
+  "555": {
+    "name": "PRISMATIC POLYCHROMUS"
+  },
+  "556": {
+    "name": "PSIONIC FENBEAST"
+  },
+  "557": {
+    "name": "PUMPKIN SLIME"
+  },
+  "558": {
+    "name": "QUETZALCOATL CHANNELER"
+  },
+  "559": {
+    "name": "RADIANT JUSTICAR"
+  },
+  "560": {
+    "name": "RADIANT UNICORN"
+  },
+  "561": {
+    "name": "RAINBOW SLIME"
+  },
+  "562": {
+    "name": "RANCOROUS BULL"
+  },
+  "563": {
+    "name": "ZAGAN"
+  },
+  "564": {
+    "name": "RHINOBEETLE"
+  },
+  "565": {
+    "name": "RITUAL SENTINEL"
+  },
+  "566": {
+    "name": "ROTVULTURE"
+  },
+  "567": {
+    "name": "ROTWOOD ENTANGLER"
+  },
+  "568": {
+    "name": "ROYAL CHAMPION"
+  },
+  "569": {
+    "name": "ROYAL KNIGHT"
+  },
+  "570": {
+    "name": "RUBBLER"
+  },
+  "571": {
+    "name": "RUMMAGIN' OPOSSUM"
+  },
+  "572": {
+    "name": "SAND COBRA"
+  },
+  "573": {
+    "name": "SANDSTRIDER VARANUS"
+  },
+  "574": {
+    "name": "SCARECROW SENTINEL"
+  },
+  "575": {
+    "name": "SCRAPFORGED"
+  },
+  "576": {
+    "name": "SEA TURTLE"
+  },
+  "577": {
+    "name": "SEAFOAM ENCHANTRESS"
+  },
+  "578": {
+    "name": "SEEIN' SLIME"
+  },
+  "579": {
+    "name": "SEISMIC TUNNELER"
+  },
+  "580": {
+    "name": "SENTIENT MEME"
+  },
+  "581": {
+    "name": "SENTIENT TRAFFIC CONE"
+  },
+  "582": {
+    "name": "SHADOW BAT"
+  },
+  "583": {
+    "name": "SHADOW BLADE"
+  },
+  "584": {
+    "name": "SHADOW BLADE"
+  },
+  "585": {
+    "name": "SHADOW THIEF"
+  },
+  "586": {
+    "name": "SHADOW TORTOISE"
+  },
+  "587": {
+    "name": "SIEGE AUTOMATION"
+  },
+  "588": {
+    "name": "SILKEN ENCHANTRESS"
+  },
+  "589": {
+    "name": "SIREN ENCHANTRESS"
+  },
+  "590": {
+    "name": "SKULMIRE SLIME"
+  },
+  "591": {
+    "name": "SOLDIER ANT COLONY"
+  },
+  "592": {
+    "name": "SOMNOLENT APPARITION"
+  },
+  "593": {
+    "name": "SONIC MOLTEN DRAKEBAT"
+  },
+  "594": {
+    "name": "SORROW SPECTER"
+  },
+  "595": {
+    "name": "SPECTRAL SONGBIRD"
+  },
+  "596": {
+    "name": "SPECTRAL WISP"
+  },
+  "597": {
+    "name": "SPIKEY PORCUPINE"
+  },
+  "598": {
+    "name": "SPINESCALE POGONA"
+  },
+  "599": {
+    "name": "SPINESHADE"
+  },
+  "600": {
+    "name": "SPOREBURST MYCONID"
+  },
+  "601": {
+    "name": "STAR CALLER"
+  },
+  "602": {
+    "name": "STORM DRAGONLIN'"
+  },
+  "603": {
+    "name": "STRIPED TIGER"
+  },
+  "604": {
+    "name": "SWAMP GAS ELEMENTAL"
+  },
+  "605": {
+    "name": "SWAMP SCORPION"
+  },
+  "606": {
+    "name": "SYLVAN BARKSTALKER"
+  },
+  "607": {
+    "name": "TALKIN' DOOR"
+  },
+  "608": {
+    "name": "TANKO"
+  },
+  "609": {
+    "name": "TERRA GOLEM"
+  },
+  "610": {
+    "name": "DA BLOOD COUNTESS"
+  },
+  "611": {
+    "name": "DA CREMATOR"
+  },
+  "612": {
+    "name": "DA FROZEN LADY"
+  },
+  "613": {
+    "name": "DA PHANTOM"
+  },
+  "614": {
+    "name": "DA PUPPETEER"
+  },
+  "615": {
+    "name": "DA SCARLET JUDGE"
+  },
+  "616": {
+    "name": "DA TAXIDERMIST"
+  },
+  "617": {
+    "name": "DA VIPER"
+  },
+  "618": {
+    "name": "THOUGHT WEAVER"
+  },
+  "619": {
+    "name": "THUNDER BLOB"
+  },
+  "620": {
+    "name": "THUNDER DRAGONLIN'"
+  },
+  "621": {
+    "name": "TIDE SCULPTOR"
+  },
+  "622": {
+    "name": "TIMEWORN OWLBEAR"
+  },
+  "623": {
+    "name": "TONNO DIMENSIONALE"
+  },
+  "624": {
+    "name": "TOTEM ADEPT"
+  },
+  "625": {
+    "name": "TOXIC AMALGAM"
+  },
+  "626": {
+    "name": "TOXIC GHOST"
+  },
+  "627": {
+    "name": "TSUNAMI GUARDIAN"
+  },
+  "628": {
+    "name": "UMBRA PANTHERA"
+  },
+  "629": {
+    "name": "VAMPIRE LORD"
+  },
+  "630": {
+    "name": "VEILED PHANTASM"
+  },
+  "631": {
+    "name": "VENOMFANG ARCHER"
+  },
+  "632": {
+    "name": "VENOMOUS DRAGONFLY"
+  },
+  "633": {
+    "name": "ANDRAS"
+  },
+  "634": {
+    "name": "WARBORN CHIEFTAIN"
+  },
+  "635": {
+    "name": "WHISPERIN' WRAITH"
+  },
+  "636": {
+    "name": "WINTER COURT KNIGHT"
+  },
+  "637": {
+    "name": "WRATH DOLPHIN"
+  },
+  "638": {
+    "name": "ZEPHYR DJINN"
+  },
+  "639": {
+    "name": "<-- 31-40 -->"
+  },
+  "640": {
+    "name": "ABYSSAL PIXIE"
+  },
+  "641": {
+    "name": "ADVERTISEMENT BADGER"
+  },
+  "642": {
+    "name": "ALPHA DIRE WOLF"
+  },
+  "643": {
+    "name": "ALPHA WARG"
+  },
+  "644": {
+    "name": "ANNUNAKI OVERLORD"
+  },
+  "645": {
+    "name": "ARCHANGEL MORTIFIER"
+  },
+  "646": {
+    "name": "ARCTIC WOLF"
+  },
+  "647": {
+    "name": "ARMORED REX LORD"
+  },
+  "648": {
+    "name": "AZATHOTH FRAGMENT"
+  },
+  "649": {
+    "name": "BABALON PRIESTESS"
+  },
+  "650": {
+    "name": "BALD EAGLE"
+  },
+  "651": {
+    "name": "BEAST 666"
+  },
+  "652": {
+    "name": "BLIGHT SYLPH"
+  },
+  "653": {
+    "name": "BRIMSTONE BEHEMUTT"
+  },
+  "654": {
+    "name": "CARRION STALKER"
+  },
+  "655": {
+    "name": "CAUSTIC SLIME"
+  },
+  "656": {
+    "name": "CELESTIAL AVATAR :EP"
+  },
+  "657": {
+    "name": "CHERUBIC HOST-ALPHA"
+  },
+  "658": {
+    "name": "CHROMATIC TICK"
+  },
+  "659": {
+    "name": "CHRONOVORE"
+  },
+  "660": {
+    "name": "COGNITIVE BACTERIA"
+  },
+  "661": {
+    "name": "COLOSSAL MAMMOTH KING"
+  },
+  "662": {
+    "name": "CORPORATE NINJA"
+  },
+  "663": {
+    "name": "CRIMSON PATRIARCH"
+  },
+  "664": {
+    "name": "CULTIST OF CTHULHU"
+  },
+  "665": {
+    "name": "CULTIST OF NYARLATHOTEP"
+  },
+  "666": {
+    "name": "CULTIST OF SHUB-NIGGURATH"
+  },
+  "667": {
+    "name": "CULTIST OF YOG-SOTHOTH"
+  },
+  "668": {
+    "name": "CURSED GRIMORIE"
+  },
+  "669": {
+    "name": "DEEPMAW HORROR"
+  },
+  "670": {
+    "name": "DIRE SABER-TOOTH ALPHA"
+  },
+  "671": {
+    "name": "DOMINION OF DA FLAME"
+  },
+  "672": {
+    "name": "DRAGON MONK :EP"
+  },
+  "673": {
+    "name": "ESMERALDA DA DREAM WEAVER"
+  },
+  "674": {
+    "name": "ETERNAL LICH-KING"
+  },
+  "675": {
+    "name": "ETHEREAL TACTICIAN"
+  },
+  "676": {
+    "name": "FIERY DEITY"
+  },
+  "677": {
+    "name": "FROST ARCHMAGUS"
+  },
+  "678": {
+    "name": "FROST KNIGHT"
+  },
+  "679": {
+    "name": "GALE SENTINEL"
+  },
+  "680": {
+    "name": "GHOST TIGER"
+  },
+  "681": {
+    "name": "GIANT TERROR BIRD"
+  },
+  "682": {
+    "name": "GILDED GUARDIAN"
+  },
+  "683": {
+    "name": "GLITCH ENTITY"
+  },
+  "684": {
+    "name": "GOBLIN MARKSMAN"
+  },
+  "685": {
+    "name": "GOBLIN SHAMAN"
+  },
+  "686": {
+    "name": "GOBLIN WARRIOR"
+  },
+  "687": {
+    "name": "GREY ZETA RETICULAN"
+  },
+  "688": {
+    "name": "HELLFIRE MAMMOTH"
+  },
+  "689": {
+    "name": "HYPERDIMENSIONAL GRIMORIE :EP"
+  },
+  "690": {
+    "name": "INFERNO POOKA"
+  },
+  "691": {
+    "name": "IRON SENTINEL"
+  },
+  "692": {
+    "name": "LIVIN' THEOREM"
+  },
+  "693": {
+    "name": "LUMINOUS LOCUST KING"
+  },
+  "694": {
+    "name": "MAD BOAR"
+  },
+  "695": {
+    "name": "MAELSTROM SOVEREIGN"
+  },
+  "696": {
+    "name": "MEGALODON"
+  },
+  "697": {
+    "name": "MIND FLAYER MOTH"
+  },
+  "698": {
+    "name": "MIND SHIELD"
+  },
+  "699": {
+    "name": "MOR'DUN DA FLESH-ARCHITECT"
+  },
+  "700": {
+    "name": "MOUNTAIN DEVASTATOR"
+  },
+  "701": {
+    "name": "MOUNTAIN GIANT"
+  },
+  "702": {
+    "name": "MYSTIC PANTHER"
+  },
+  "703": {
+    "name": "NETHER COURT DUCHESS"
+  },
+  "704": {
+    "name": "NETWORK OVERLORD"
+  },
+  "705": {
+    "name": "NIGHTMARE MAGE"
+  },
+  "706": {
+    "name": "NIGHTVEIL ASSASSIN"
+  },
+  "707": {
+    "name": "NIGHTWISP"
+  },
+  "708": {
+    "name": "NOBLE GUARDIAN"
+  },
+  "709": {
+    "name": "OMINOUS RAVEN"
+  },
+  "710": {
+    "name": "PLAGUE HEAP"
+  },
+  "711": {
+    "name": "PRIMORDIAL BEHEMOTH"
+  },
+  "712": {
+    "name": "PRIMORDIAL DRAGON TURTLE"
+  },
+  "713": {
+    "name": "PRIMORDIAL TERROR REX"
+  },
+  "714": {
+    "name": "PROTO TURRET"
+  },
+  "715": {
+    "name": "QEL'THUZAD DA MEMORY-EATER"
+  },
+  "716": {
+    "name": "RABID COYOTE"
+  },
+  "717": {
+    "name": "RADIANT DEFENDER"
+  },
+  "718": {
+    "name": "ROYAL JUSTICAR"
+  },
+  "719": {
+    "name": "SCAVENGIN' COYOTE"
+  },
+  "720": {
+    "name": "SCORCHED TYRANT"
+  },
+  "721": {
+    "name": "SCREECHIN' NIGHTBAT"
+  },
+  "722": {
+    "name": "SHADOW ASSASSIN"
+  },
+  "723": {
+    "name": "SHELLBREAKER BULWARK"
+  },
+  "724": {
+    "name": "SKY SERPENT"
+  },
+  "725": {
+    "name": "SOUL REAPER"
+  },
+  "726": {
+    "name": "STEELSHELL TORTOISE"
+  },
+  "727": {
+    "name": "STOMPIN' ELEPHANT"
+  },
+  "728": {
+    "name": "STONE BULWARK"
+  },
+  "729": {
+    "name": "STORM ELEMENTAL"
+  },
+  "730": {
+    "name": "STORM ROC"
+  },
+  "731": {
+    "name": "SUMMER COURT ARCHON"
+  },
+  "732": {
+    "name": "SWAMP LEECH QUEEN"
+  },
+  "733": {
+    "name": "SWORDFISH SOVEREIGN"
+  },
+  "734": {
+    "name": "TEMPEST PEGASUS"
+  },
+  "735": {
+    "name": "THUNDERWIN' ROC"
+  },
+  "736": {
+    "name": "TITANIC CAVE BEAR"
+  },
+  "737": {
+    "name": "TOTEMIC PROTECTOR"
+  },
+  "738": {
+    "name": "TOXIC OOZE"
+  },
+  "739": {
+    "name": "VELOCICORN"
+  },
+  "740": {
+    "name": "VELOCIRAPTOR"
+  },
+  "741": {
+    "name": "VIRULENT SLIMEFIEND"
+  },
+  "742": {
+    "name": "VORTHAK DA MEMBRANE-RIPPER"
+  },
+  "743": {
+    "name": "WAR HYPPOTAUR"
+  },
+  "744": {
+    "name": "WAR IDOL"
+  },
+  "745": {
+    "name": "WORLD SERPENT"
+  },
+  "746": {
+    "name": "YITH'OGHRA DA CONSENSUS-BREAKER"
+  },
+  "747": {
+    "name": "<-- 41-50 -->"
+  },
+  "748": {
+    "name": "ABYSSAL DEVOURER"
+  },
+  "749": {
+    "name": "ABYSSAL HYDROMANCER"
+  },
+  "750": {
+    "name": "AETHER SPLICER"
+  },
+  "751": {
+    "name": "ANCIENT LICH"
+  },
+  "752": {
+    "name": "ASHEN DIREWOLF"
+  },
+  "753": {
+    "name": "ASPHALT REVENANT"
+  },
+  "754": {
+    "name": "ASTRAL SENTINEL"
+  },
+  "755": {
+    "name": "BEHEMOTH GORILLA"
+  },
+  "756": {
+    "name": "BLOODLORD SUPREME"
+  },
+  "757": {
+    "name": "BOG GOLEM"
+  },
+  "758": {
+    "name": "BONE COMMANDER"
+  },
+  "759": {
+    "name": "BULL WYVERN"
+  },
+  "760": {
+    "name": "CAUSTIC LARVA"
+  },
+  "761": {
+    "name": "CELESTIAL PROTECTOR"
+  },
+  "762": {
+    "name": "CHRONO CONSUMER"
+  },
+  "763": {
+    "name": "CHRONOS, TIME TITAN"
+  },
+  "764": {
+    "name": "CONSCRIPT RAIDER"
+  },
+  "765": {
+    "name": "CRAG BEHEMOTH"
+  },
+  "766": {
+    "name": "CRIMSON TYRANT"
+  },
+  "767": {
+    "name": "CRYSTALLINE BROOD-TINK"
+  },
+  "768": {
+    "name": "CRYSTALLINE CARAPACE"
+  },
+  "769": {
+    "name": "DEMON BEAR"
+  },
+  "770": {
+    "name": "DISGRACED BOT"
+  },
+  "771": {
+    "name": "DUSK COMMANDER"
+  },
+  "772": {
+    "name": "ELDER TINK"
+  },
+  "773": {
+    "name": "FAE QUEEN"
+  },
+  "774": {
+    "name": "FOREST SOVEREIGN"
+  },
+  "775": {
+    "name": "FOREST WITCH"
+  },
+  "776": {
+    "name": "FROST WEAVER"
+  },
+  "777": {
+    "name": "GELATINOUS DRONE-BUG"
+  },
+  "778": {
+    "name": "GLACIAL TITAN"
+  },
+  "779": {
+    "name": "GLOOMSCALE BASILISK"
+  },
+  "780": {
+    "name": "GOBLIN CAVALRY"
+  },
+  "781": {
+    "name": "GOBLIN ELITE GUARD"
+  },
+  "782": {
+    "name": "GOBLIN MASTER SNIPER"
+  },
+  "783": {
+    "name": "GUL'MAGOTH DA TIME-WEAVER"
+  },
+  "784": {
+    "name": "HOLLOW-EYED SNAPPER"
+  },
+  "785": {
+    "name": "IRON PALM DISCIPLE"
+  },
+  "786": {
+    "name": "KING SLIME"
+  },
+  "787": {
+    "name": "KODIAK BEAR"
+  },
+  "788": {
+    "name": "LEYLINE ANEURYSM"
+  },
+  "789": {
+    "name": "LUMINESCENT MYCELIAN"
+  },
+  "790": {
+    "name": "MAGMA OVERLORD"
+  },
+  "791": {
+    "name": "MANGY HOWLER"
+  },
+  "792": {
+    "name": "MIND OVERLORD"
+  },
+  "793": {
+    "name": "MIND TYRANT"
+  },
+  "794": {
+    "name": "MOLTEN DRAGON"
+  },
+  "795": {
+    "name": "MOLTEN EFREETI"
+  },
+  "796": {
+    "name": "MOLTEN GLOB"
+  },
+  "797": {
+    "name": "MOLTEN GUARDIAN"
+  },
+  "798": {
+    "name": "MOLTEN PUDDING"
+  },
+  "799": {
+    "name": "MOUNTAIN DEVASTATOR"
+  },
+  "800": {
+    "name": "MOUNTAIN KING"
+  },
+  "801": {
+    "name": "MOUNTAIN TITAN"
+  },
+  "802": {
+    "name": "MUD-CAKED RIPPER"
+  },
+  "803": {
+    "name": "MULTI-HEADED HYDRA"
+  },
+  "804": {
+    "name": "NEPENTHE MYCOASTRUM"
+  },
+  "805": {
+    "name": "NIGHTMARE WEAVER"
+  },
+  "806": {
+    "name": "NYTH'AGGOTH DA CONCEPT-CORRUPTOR"
+  },
+  "807": {
+    "name": "OBSIDIAN DREADNOUGHT"
+  },
+  "808": {
+    "name": "OFF-RAMP INCARNATE"
+  },
+  "809": {
+    "name": "OGRE WARLOCK KING"
+  },
+  "810": {
+    "name": "OVERCLOCKED POACHER"
+  },
+  "811": {
+    "name": "PACK BOAR"
+  },
+  "812": {
+    "name": "PACK RIPPER"
+  },
+  "813": {
+    "name": "PETRIFYIN' GORGON"
+  },
+  "814": {
+    "name": "PHYLACTERY GUARDIAN"
+  },
+  "815": {
+    "name": "PORPHYRIN LEECH"
+  },
+  "816": {
+    "name": "RADIANT COLOSSUS"
+  },
+  "817": {
+    "name": "RAVENNA DA SHADOWBINDER"
+  },
+  "818": {
+    "name": "SABERTOOTH ALPHA"
+  },
+  "819": {
+    "name": "SALT-CURED CERECLOTH"
+  },
+  "820": {
+    "name": "SALT-CURED MOURNER"
+  },
+  "821": {
+    "name": "SALVAGED OUTLAW"
+  },
+  "822": {
+    "name": "SCRAP RAIDER"
+  },
+  "823": {
+    "name": "SERAPHIC EMISSARY"
+  },
+  "824": {
+    "name": "SEWERS SLIME"
+  },
+  "825": {
+    "name": "SHADOW EXECUTIONER"
+  },
+  "826": {
+    "name": "SHADOW WRAITH"
+  },
+  "827": {
+    "name": "SHAL'THYSS DA VOID-SURGEON"
+  },
+  "828": {
+    "name": "SHARDMAW"
+  },
+  "829": {
+    "name": "SQUISHING ECHO"
+  },
+  "830": {
+    "name": "STORM CALLER"
+  },
+  "831": {
+    "name": "STORM-HOWLER"
+  },
+  "832": {
+    "name": "SUNKEN CHARNELHOUND"
+  },
+  "833": {
+    "name": "SWARMIN' BROOD-TINK"
+  },
+  "834": {
+    "name": "SWARMIN' HIVEMIND"
+  },
+  "835": {
+    "name": "TEMPEST DJINN"
+  },
+  "836": {
+    "name": "THREE-TAILED BOAR"
+  },
+  "837": {
+    "name": "TIDAL WARDEN"
+  },
+  "838": {
+    "name": "TIDE SORCERER"
+  },
+  "839": {
+    "name": "TIME-LOOP STALKER"
+  },
+  "840": {
+    "name": "TOTEMIC TITAN"
+  },
+  "841": {
+    "name": "TWITCHIN' PUDDING"
+  },
+  "842": {
+    "name": "TYRANT CROCODILIAN"
+  },
+  "843": {
+    "name": "UMBRAL BASILISK"
+  },
+  "844": {
+    "name": "VARLENIA MIRAGE"
+  },
+  "845": {
+    "name": "VEL'KORTHAK DA REALITY-BREEDER"
+  },
+  "846": {
+    "name": "VENOM DEVIL"
+  },
+  "847": {
+    "name": "VETERAN GOON"
+  },
+  "848": {
+    "name": "VOID DESOLATOR"
+  },
+  "849": {
+    "name": "VOID EMPRESS"
+  },
+  "850": {
+    "name": "VOID GEL"
+  },
+  "851": {
+    "name": "XOTH'NAGAL DA DREAM-PLAGUE"
+  },
+  "852": {
+    "name": "YELLOW KING"
+  },
+  "853": {
+    "name": "ZHOTH'AGGUR DA SILENCE-WEAVER"
+  },
+  "854": {
+    "name": "ZOMBIE WHALE"
+  },
+  "855": {
+    "name": "<-- 51-60 -->"
+  },
+  "856": {
+    "name": "ABYSSAL SIREN"
+  },
+  "857": {
+    "name": "ASHEN PROWLER"
+  },
+  "858": {
+    "name": "BACK-ALLEY BOT"
+  },
+  "859": {
+    "name": "BARBED MANTICORE"
+  },
+  "860": {
+    "name": "BASILISK"
+  },
+  "861": {
+    "name": "BLOATED DRONE-BUG"
+  },
+  "862": {
+    "name": "BLOATED GEL"
+  },
+  "863": {
+    "name": "BLOATED GLOB"
+  },
+  "864": {
+    "name": "BOG-STANDARD MARAUDER"
+  },
+  "865": {
+    "name": "BOG-STANDARD SHARPSHOOTER"
+  },
+  "866": {
+    "name": "BOXIN' ELEMENTAL"
+  },
+  "867": {
+    "name": "BRAIN SWARMER"
+  },
+  "868": {
+    "name": "CAPERIN' HEX-WEAVER"
+  },
+  "869": {
+    "name": "CHITTERIN' MIRE-SPAWN"
+  },
+  "870": {
+    "name": "CINDERHEART SCION"
+  },
+  "871": {
+    "name": "CONE MIMIC"
+  },
+  "872": {
+    "name": "CORALIC WARCASTER"
+  },
+  "873": {
+    "name": "CRACKLIN' SPIRIT"
+  },
+  "874": {
+    "name": "CRIMSON HARBINGER"
+  },
+  "875": {
+    "name": "CRIMSON MAGMA DRAKE"
+  },
+  "876": {
+    "name": "CRYPTBORN SHRIEKER"
+  },
+  "877": {
+    "name": "CRYSTALLINE SHARDBEAST"
+  },
+  "878": {
+    "name": "DISCO REVENANT"
+  },
+  "879": {
+    "name": "DISCORD LARVA"
+  },
+  "880": {
+    "name": "DISGRACED SHARPSHOOTER"
+  },
+  "881": {
+    "name": "EARTH SENTINEL"
+  },
+  "882": {
+    "name": "ECHO WISP"
+  },
+  "883": {
+    "name": "ENCOMPASSIN' ROADWARDEN"
+  },
+  "884": {
+    "name": "FLOWER BEHEMOTH"
+  },
+  "885": {
+    "name": "FOLDED SAINT"
+  },
+  "886": {
+    "name": "FOREST TREANT"
+  },
+  "887": {
+    "name": "FORGOTTEN CADAVER"
+  },
+  "888": {
+    "name": "FROST ENCHANTRESS"
+  },
+  "889": {
+    "name": "FROSTBACK URSID"
+  },
+  "890": {
+    "name": "FUNGAL SNAPJAW"
+  },
+  "891": {
+    "name": "GAUNT SNAPPER"
+  },
+  "892": {
+    "name": "GELATINOUS MIRE-SPAWN"
+  },
+  "893": {
+    "name": "GELATINOUS PUDDING"
+  },
+  "894": {
+    "name": "GEODE HYDRA"
+  },
+  "895": {
+    "name": "GLITTERIN' BROOD-TINK"
+  },
+  "896": {
+    "name": "GLITTERIN' CRAWLER"
+  },
+  "897": {
+    "name": "GNOME WARLOCK"
+  },
+  "898": {
+    "name": "GOBLIN CHIEFTAIN"
+  },
+  "899": {
+    "name": "GOBLIN SHRIEKER"
+  },
+  "900": {
+    "name": "HOBGOBLIN SCOUT"
+  },
+  "901": {
+    "name": "IDENTITY THIEF"
+  },
+  "902": {
+    "name": "INFERNAL CERBERUS"
+  },
+  "903": {
+    "name": "INFERNAL MONARCH"
+  },
+  "904": {
+    "name": "INFERNAL PYROMANCER"
+  },
+  "905": {
+    "name": "INFERNAL WARMONGER"
+  },
+  "906": {
+    "name": "IRON-FANGED HORNBEAST"
+  },
+  "907": {
+    "name": "IRONHOOF CHARGER"
+  },
+  "908": {
+    "name": "KRAKEN SPAWN"
+  },
+  "909": {
+    "name": "LAUGHIN' MIRE IDOL"
+  },
+  "910": {
+    "name": "MAJESTIC GRIFFON"
+  },
+  "911": {
+    "name": "MANGY STALKHOUND"
+  },
+  "912": {
+    "name": "MARROW ARCHMAGE"
+  },
+  "913": {
+    "name": "MARSH MURKWEB"
+  },
+  "914": {
+    "name": "MATHEMATICS EATER"
+  },
+  "915": {
+    "name": "MERCENARY DRONE"
+  },
+  "916": {
+    "name": "MERCURY DRAGON"
+  },
+  "917": {
+    "name": "MIRE HYDRA"
+  },
+  "918": {
+    "name": "MUMMIFIED MOURNER"
+  },
+  "919": {
+    "name": "NECROTIC CHAMPION"
+  },
+  "920": {
+    "name": "NEPHILIM REMNANT"
+  },
+  "921": {
+    "name": "OBSIDIAN WRAITH"
+  },
+  "922": {
+    "name": "OCEAN WARLOCK"
+  },
+  "923": {
+    "name": "PACK RIDGEBACK"
+  },
+  "924": {
+    "name": "PHANTOM CHLOROBLADE"
+  },
+  "925": {
+    "name": "PLASMA JUGGERNAUT"
+  },
+  "926": {
+    "name": "PRIMORDIAL GOLEM"
+  },
+  "927": {
+    "name": "QUAKE-MAW TITAN"
+  },
+  "928": {
+    "name": "QUANTUM FLUCTUATION"
+  },
+  "929": {
+    "name": "QUANTUM INTELLECT"
+  },
+  "930": {
+    "name": "QUANTUM SUPERSOLDIER"
+  },
+  "931": {
+    "name": "QUARTZ SYLPH"
+  },
+  "932": {
+    "name": "RAGIN' CONDUIT"
+  },
+  "933": {
+    "name": "RAGIN' GEIST"
+  },
+  "934": {
+    "name": "REAGANITE"
+  },
+  "935": {
+    "name": "RESTLESS CHARNELHOUND"
+  },
+  "936": {
+    "name": "RESTLESS REVENANT"
+  },
+  "937": {
+    "name": "RIME SPINNER"
+  },
+  "938": {
+    "name": "RUSTED BRAWLER"
+  },
+  "939": {
+    "name": "SALT-CURED WIGHT"
+  },
+  "940": {
+    "name": "SCARRED CLAWRUNNER"
+  },
+  "941": {
+    "name": "SEARIN' CONDUIT"
+  },
+  "942": {
+    "name": "SELENE DA VOID WITCH"
+  },
+  "943": {
+    "name": "SINGULARITY PRIME"
+  },
+  "944": {
+    "name": "SIREN SNIPER"
+  },
+  "945": {
+    "name": "STARVIN' CLAWRUNNER"
+  },
+  "946": {
+    "name": "STARVIN' SABER-CAT"
+  },
+  "947": {
+    "name": "STRATOS SOVEREIGN"
+  },
+  "948": {
+    "name": "SWAMP LEVIATHAN"
+  },
+  "949": {
+    "name": "TEMPEST WYVERN"
+  },
+  "950": {
+    "name": "TITANOTHERE ALPHA"
+  },
+  "951": {
+    "name": "TOTEMIC OVERLORD"
+  },
+  "952": {
+    "name": "VAMPIRIC NIGHTWIN'"
+  },
+  "953": {
+    "name": "VOID PARASITE PLANT"
+  },
+  "954": {
+    "name": "VOID SORCERER"
+  },
+  "955": {
+    "name": "VOLCANIC SHARK"
+  },
+  "956": {
+    "name": "VOLCANIC WYVERN"
+  },
+  "957": {
+    "name": "WHISPERIN' TORMENTOR"
+  },
+  "958": {
+    "name": "WINTER'S HARBINGER"
+  },
+  "959": {
+    "name": "WINTER'S HERALD"
+  },
+  "960": {
+    "name": "XYLOMANTI FLOROUS "
+  },
+  "961": {
+    "name": "ZEN FIST MASTER"
+  },
+  "962": {
+    "name": "<-- 61-70 -->"
+  },
+  "963": {
+    "name": "ACIDIC MIRE-SPAWN"
+  },
+  "964": {
+    "name": "BACKWARDS DOLL"
+  },
+  "965": {
+    "name": "BAPTISM FONT"
+  },
+  "966": {
+    "name": "BLOATED MOLD"
+  },
+  "967": {
+    "name": "BLOATED OOZE"
+  },
+  "968": {
+    "name": "BOG-STANDARD GOON"
+  },
+  "969": {
+    "name": "BRACKISH OOZE"
+  },
+  "970": {
+    "name": "CAUSTIC MIRE-SPAWN"
+  },
+  "971": {
+    "name": "CELESTIAL ARBITER"
+  },
+  "972": {
+    "name": "CELESTIAL AVATAR"
+  },
+  "973": {
+    "name": "CEREMENT BONEPICKER"
+  },
+  "974": {
+    "name": "CEREMENT GRAVEWALKER"
+  },
+  "975": {
+    "name": "CHITTERIN' PUDDING"
+  },
+  "976": {
+    "name": "CHORONZON"
+  },
+  "977": {
+    "name": "CINDER THORNHIDE"
+  },
+  "978": {
+    "name": "CINDER-WRAPPED THRALL"
+  },
+  "979": {
+    "name": "COLOR OUT OF SOUND"
+  },
+  "980": {
+    "name": "CRACKLIN' EFFIGY"
+  },
+  "981": {
+    "name": "CRUMBLIN' COLOSSUS"
+  },
+  "982": {
+    "name": "CRYPT BONEPICKER"
+  },
+  "983": {
+    "name": "CRYSTAL GIANT"
+  },
+  "984": {
+    "name": "CRYSTALLINE GLOB"
+  },
+  "985": {
+    "name": "DEEP ONE MONARCH"
+  },
+  "986": {
+    "name": "DIRE GNASHER"
+  },
+  "987": {
+    "name": "DREAD KNIGHT"
+  },
+  "988": {
+    "name": "ELITE BOXIN' CHAMPION"
+  },
+  "989": {
+    "name": "EMBERCLAW BEAR"
+  },
+  "990": {
+    "name": "EMOTIONAL LEECH"
+  },
+  "991": {
+    "name": "FANGED IMP"
+  },
+  "992": {
+    "name": "FERAL LYNX"
+  },
+  "993": {
+    "name": "FLESH CALCULATOR"
+  },
+  "994": {
+    "name": "FOUL GOUGER"
+  },
+  "995": {
+    "name": "FROST-HORNBEAST"
+  },
+  "996": {
+    "name": "FROSTFANG BEAR"
+  },
+  "997": {
+    "name": "GALESHELL TORTOISE"
+  },
+  "998": {
+    "name": "GELATINOUS HUSK-BEETLE"
+  },
+  "999": {
+    "name": "GELATINOUS OOZE"
+  },
+  "1000": {
+    "name": "GLIMMERIN' SUCCUBUS"
+  },
+  "1001": {
+    "name": "GOBLIN HEAD"
+  },
+  "1002": {
+    "name": "GOBLIN RIOT CASTER"
+  },
+  "1003": {
+    "name": "GRAVE MONARCH"
+  },
+  "1004": {
+    "name": "GRIEF COLLECTOR"
+  },
+  "1005": {
+    "name": "HECATE DA PLAGUE MISTRESS"
+  },
+  "1006": {
+    "name": "HOBGOBLIN SHAMAN"
+  },
+  "1007": {
+    "name": "HOLLOW PIXIE"
+  },
+  "1008": {
+    "name": "HOLLOW-EYED BOAR"
+  },
+  "1009": {
+    "name": "INFERNAL WARHOUND"
+  },
+  "1010": {
+    "name": "INFERNO ARCHIVIST"
+  },
+  "1011": {
+    "name": "INSIDE-OUT WHALE"
+  },
+  "1012": {
+    "name": "INVERTED HUNGER"
+  },
+  "1013": {
+    "name": "KRAKEN LEVIATHAN"
+  },
+  "1014": {
+    "name": "LULLABY WRAITH"
+  },
+  "1015": {
+    "name": "MAAT'S SEVERED HAND"
+  },
+  "1016": {
+    "name": "MEAT PUPPET THEATER"
+  },
+  "1017": {
+    "name": "MECHANIZED HARBINGER"
+  },
+  "1018": {
+    "name": "MEMORY LEECH"
+  },
+  "1019": {
+    "name": "MIND MANIPULATOR"
+  },
+  "1020": {
+    "name": "MIND SCULPTOR"
+  },
+  "1021": {
+    "name": "MIRE DRAGON"
+  },
+  "1022": {
+    "name": "MOLTEN SENTINEL"
+  },
+  "1023": {
+    "name": "MORGANA DA BLOODWEAVER"
+  },
+  "1024": {
+    "name": "MYSTIC PRODIGY"
+  },
+  "1025": {
+    "name": "NIGHTCURSE TORTOISE"
+  },
+  "1026": {
+    "name": "NYARLATHOTEP AVATAR"
+  },
+  "1027": {
+    "name": "OBSIDIAN CONDUIT"
+  },
+  "1028": {
+    "name": "OBSIDIAN ELEMENTAL"
+  },
+  "1029": {
+    "name": "OGRE CHAMPION"
+  },
+  "1030": {
+    "name": "OVERCLOCKED ENFORCER"
+  },
+  "1031": {
+    "name": "OVERCLOCKED MARAUDER"
+  },
+  "1032": {
+    "name": "PACK CLAWRUNNER"
+  },
+  "1033": {
+    "name": "PACK LYNX"
+  },
+  "1034": {
+    "name": "PACT-BOUND DEVILKIN"
+  },
+  "1035": {
+    "name": "PERMAFROST CONJURER"
+  },
+  "1036": {
+    "name": "PETRIFIED SYLPH"
+  },
+  "1037": {
+    "name": "PLAGUE CERECLOTH"
+  },
+  "1038": {
+    "name": "PLAGUE HUSK"
+  },
+  "1039": {
+    "name": "QUIVERIN' LARVA"
+  },
+  "1040": {
+    "name": "RABID LYNX"
+  },
+  "1041": {
+    "name": "RAGIN' ANIMUS"
+  },
+  "1042": {
+    "name": "RAGIN' COLOSSUS-SPAWN"
+  },
+  "1043": {
+    "name": "RATTUS SAPSCREAM"
+  },
+  "1044": {
+    "name": "REALITY WARPER"
+  },
+  "1045": {
+    "name": "RENEGADE BOT"
+  },
+  "1046": {
+    "name": "RESTLESS PALLBEARER"
+  },
+  "1047": {
+    "name": "RUSTED RAIDER"
+  },
+  "1048": {
+    "name": "RUSTED TINKER"
+  },
+  "1049": {
+    "name": "SCREAMIN' JAR"
+  },
+  "1050": {
+    "name": "SEARIN' MAGMA WYRM"
+  },
+  "1051": {
+    "name": "SENTIENT WOUND"
+  },
+  "1052": {
+    "name": "SKITTERIN' MOLD"
+  },
+  "1053": {
+    "name": "STORM-GNASHER"
+  },
+  "1054": {
+    "name": "STRINGBOUND ABOMINATION"
+  },
+  "1055": {
+    "name": "SULPHUR GREMLIN"
+  },
+  "1056": {
+    "name": "SWARMIN' MIRE-SPAWN"
+  },
+  "1057": {
+    "name": "DA DREAMWEAVER"
+  },
+  "1058": {
+    "name": "THOTH'S BROKEN WARD"
+  },
+  "1059": {
+    "name": "THOUGHT PARASITE"
+  },
+  "1060": {
+    "name": "THUNDERMAW URSINE"
+  },
+  "1061": {
+    "name": "TWITCHY SHARPSHOOTER"
+  },
+  "1062": {
+    "name": "TWITCHY TINKER"
+  },
+  "1063": {
+    "name": "VENOM LORD"
+  },
+  "1064": {
+    "name": "WHISPERIN' NIXIE"
+  },
+  "1065": {
+    "name": "WIND LEVIATHAN"
+  },
+  "1066": {
+    "name": "WITHERED CHARNELHOUND"
+  },
+  "1067": {
+    "name": "WITHERED MOURNER"
+  },
+  "1068": {
+    "name": "YOG-SOTHOTH SPAWN"
+  },
+  "1069": {
+    "name": "<-- 71-80 -->"
+  },
+  "1070": {
+    "name": "ABORTION MIMIC"
+  },
+  "1071": {
+    "name": "ACIDIC LARVA"
+  },
+  "1072": {
+    "name": "ANCIENT DRAGON :EP"
+  },
+  "1073": {
+    "name": "BLEEDIN' STATUE"
+  },
+  "1074": {
+    "name": "BOG-STANDARD TINKER"
+  },
+  "1075": {
+    "name": "BONE ORCHESTRA"
+  },
+  "1076": {
+    "name": "BRACKISH PUDDING"
+  },
+  "1077": {
+    "name": "BRASS SENTINEL MK. IV"
+  },
+  "1078": {
+    "name": "BREATHIN' BUILDIN'"
+  },
+  "1079": {
+    "name": "BRIMSTONE NIXIE"
+  },
+  "1080": {
+    "name": "BRIMSTONE SPRITE"
+  },
+  "1081": {
+    "name": "CAPERIN' TRICKSTER"
+  },
+  "1082": {
+    "name": "CAUSTIC CARAPACE"
+  },
+  "1083": {
+    "name": "CEREMENT BONEKNIGHT"
+  },
+  "1084": {
+    "name": "CHITTERIN' HUSK-BEETLE"
+  },
+  "1085": {
+    "name": "CINDER DIREWOLF"
+  },
+  "1086": {
+    "name": "COGWORK BULWARK"
+  },
+  "1087": {
+    "name": "CONSCRIPT GOON"
+  },
+  "1088": {
+    "name": "CRACKLIN' ELEMENTAL"
+  },
+  "1089": {
+    "name": "CRYPT WIGHT"
+  },
+  "1090": {
+    "name": "CRYSTALLINE DRONE-BUG"
+  },
+  "1091": {
+    "name": "DAWNSHELL TORTOISE"
+  },
+  "1092": {
+    "name": "DIRE CLAWRUNNER"
+  },
+  "1093": {
+    "name": "DRAGON OF DEATH NERGAL"
+  },
+  "1094": {
+    "name": "EARTHEN COLOSSUS"
+  },
+  "1095": {
+    "name": "ELDERGLOOM SPOREMANTLE"
+  },
+  "1096": {
+    "name": "EMBERBACK HELLSCORPION"
+  },
+  "1097": {
+    "name": "ENTROPY WYRM :EP"
+  },
+  "1098": {
+    "name": "FERAL PROWLER"
+  },
+  "1099": {
+    "name": "FLESHWEAVER SPIDER"
+  },
+  "1100": {
+    "name": "FROZEN REVENANT"
+  },
+  "1101": {
+    "name": "GAUNT CLAWRUNNER"
+  },
+  "1102": {
+    "name": "GELATINOUS GLOB"
+  },
+  "1103": {
+    "name": "GEOMETRY DEVOURER"
+  },
+  "1104": {
+    "name": "GIBBERIN' SPRITE"
+  },
+  "1105": {
+    "name": "GILDED REVENANT"
+  },
+  "1106": {
+    "name": "GLIMMERIN' DEVILKIN"
+  },
+  "1107": {
+    "name": "GLITTERIN' LARVA"
+  },
+  "1108": {
+    "name": "GOBLIN HEAD"
+  },
+  "1109": {
+    "name": "GOBLIN MOSH LORD"
+  },
+  "1110": {
+    "name": "GOBLIN WITCH DOCTOR"
+  },
+  "1111": {
+    "name": "GRAVITY WORM"
+  },
+  "1112": {
+    "name": "GRIZZLED BOT"
+  },
+  "1113": {
+    "name": "GRIZZLED TINKER"
+  },
+  "1114": {
+    "name": "HIRED POACHER"
+  },
+  "1115": {
+    "name": "HOLLOW BONEPICKER"
+  },
+  "1116": {
+    "name": "HOLLOW MOTHER"
+  },
+  "1117": {
+    "name": "HOLLOW-EYED BRISTLEBACK"
+  },
+  "1118": {
+    "name": "INVERTED ANGEL"
+  },
+  "1119": {
+    "name": "IRIDESCENT CRAWLER"
+  },
+  "1120": {
+    "name": "IRON BASTION AUTOMATON"
+  },
+  "1121": {
+    "name": "LEERIN' SPRITE"
+  },
+  "1122": {
+    "name": "MAAT WITHIN ERIS"
+  },
+  "1123": {
+    "name": "MANGY RIDGEBACK"
+  },
+  "1124": {
+    "name": "MASKED BRUISER"
+  },
+  "1125": {
+    "name": "MOLTEN MIRE-SPAWN"
+  },
+  "1126": {
+    "name": "MOLTEN MOLD"
+  },
+  "1127": {
+    "name": "MOLTEN WARDEN"
+  },
+  "1128": {
+    "name": "MUD-CAKED CLAWRUNNER"
+  },
+  "1129": {
+    "name": "MUD-CAKED GNASHER"
+  },
+  "1130": {
+    "name": "MUD-CAKED PROWLER"
+  },
+  "1131": {
+    "name": "OSSUARY COLOSSUS"
+  },
+  "1132": {
+    "name": "OVERCLOCKED BRAWLER"
+  },
+  "1133": {
+    "name": "PACK HORNBEAST"
+  },
+  "1134": {
+    "name": "PACK JACKAL"
+  },
+  "1135": {
+    "name": "PACT-BOUND FIEND"
+  },
+  "1136": {
+    "name": "PETRIFIED EFFIGY"
+  },
+  "1137": {
+    "name": "PETRODEMON HATCHLIN'"
+  },
+  "1138": {
+    "name": "PROBABILITY SPIDER"
+  },
+  "1139": {
+    "name": "PYROSHELL TORTOISE"
+  },
+  "1140": {
+    "name": "QUARTZ WISP"
+  },
+  "1141": {
+    "name": "QUIVERIN' CARAPACE"
+  },
+  "1142": {
+    "name": "RABID BADGER"
+  },
+  "1143": {
+    "name": "RADIANT MONOLITH"
+  },
+  "1144": {
+    "name": "RENEGADE OUTLAW"
+  },
+  "1145": {
+    "name": "RESTLESS BONEPICKER"
+  },
+  "1146": {
+    "name": "RESTLESS CADAVER"
+  },
+  "1147": {
+    "name": "RESTLESS THRALL"
+  },
+  "1148": {
+    "name": "ROTTIN' HUSK"
+  },
+  "1149": {
+    "name": "SCARRED BRISTLEBACK"
+  },
+  "1150": {
+    "name": "SCRAP SENTRY"
+  },
+  "1151": {
+    "name": "SEARIN' SPIRIT"
+  },
+  "1152": {
+    "name": "SKITTERIN' DRONE-BUG"
+  },
+  "1153": {
+    "name": "SLUDGY CRAWLER"
+  },
+  "1154": {
+    "name": "SPITEFUL DEVILKIN"
+  },
+  "1155": {
+    "name": "STORMSHELL TORTOISE"
+  },
+  "1156": {
+    "name": "SULPHUR WHISPERLIN'"
+  },
+  "1157": {
+    "name": "SUNKEN HUSK"
+  },
+  "1158": {
+    "name": "SWARMIN' SWARMLIN'"
+  },
+  "1159": {
+    "name": "TEMPEST COLOSSUS-SPAWN"
+  },
+  "1160": {
+    "name": "TEMPEST CONDUIT"
+  },
+  "1161": {
+    "name": "TEMPORAL HORNET"
+  },
+  "1162": {
+    "name": "DA CUBE DAT NO WAZ"
+  },
+  "1163": {
+    "name": "THREE-TAILED LYNX"
+  },
+  "1164": {
+    "name": "TIAMAT, MOTHER OF CHAOS"
+  },
+  "1165": {
+    "name": "TWITCHIN' DRONE-BUG"
+  },
+  "1166": {
+    "name": "TWITCHIN' OOZE"
+  },
+  "1167": {
+    "name": "TWITCHY DRONE"
+  },
+  "1168": {
+    "name": "TWITCHY SAPPER"
+  },
+  "1169": {
+    "name": "UMBILICAL STRANGLER"
+  },
+  "1170": {
+    "name": "VETERAN BOT"
+  },
+  "1171": {
+    "name": "VOID HOWLER"
+  },
+  "1172": {
+    "name": "WHISPERIN' DOOR"
+  },
+  "1173": {
+    "name": "WITHERED HUSK"
+  },
+  "1174": {
+    "name": "WITHERED THRALL"
+  },
+  "1175": {
+    "name": "WOMB OF NIGHTMARES"
+  },
+  "1176": {
+    "name": "<-- 81-90 -->"
+  },
+  "1177": {
+    "name": "ABYSSAL SEA DRAGON"
+  },
+  "1178": {
+    "name": "AIWASS MESSENGER"
+  },
+  "1179": {
+    "name": "AVATAR OF DA SEVEN SISTERS"
+  },
+  "1180": {
+    "name": "BADASS PIGEON"
+  },
+  "1181": {
+    "name": "BASALTSTONE GOLEM"
+  },
+  "1182": {
+    "name": "BLAZIN' INFERNO ELEMENTAL"
+  },
+  "1183": {
+    "name": "BLOATED CARAPACE"
+  },
+  "1184": {
+    "name": "BLOODMAW DIREWOLF"
+  },
+  "1185": {
+    "name": "BLOODMAW MAW-HOUND"
+  },
+  "1186": {
+    "name": "BOG BEHEMOTH"
+  },
+  "1187": {
+    "name": "BRIMSTONE FIEND"
+  },
+  "1188": {
+    "name": "BRIMSTONE WHISPERLIN'"
+  },
+  "1189": {
+    "name": "CAPERIN' DEVILKIN"
+  },
+  "1190": {
+    "name": "CAPERIN' FIEND"
+  },
+  "1191": {
+    "name": "CELESTIAL DRAGON ANSHAR"
+  },
+  "1192": {
+    "name": "CELESTIAL TYRANNOSAURUS"
+  },
+  "1193": {
+    "name": "CERBERUS SENTINEL"
+  },
+  "1194": {
+    "name": "CHILDHOOD'S END"
+  },
+  "1195": {
+    "name": "CINDER-WRAPPED SENTINEL"
+  },
+  "1196": {
+    "name": "CONSCRIPT AUTOMATON"
+  },
+  "1197": {
+    "name": "CONSCRIPT BRUISER"
+  },
+  "1198": {
+    "name": "CONSCRIPT MARAUDER"
+  },
+  "1199": {
+    "name": "CRACKLIN' ANIMUS"
+  },
+  "1200": {
+    "name": "CRACKLIN' REVENANT"
+  },
+  "1201": {
+    "name": "CREEPIN' LUMINSPORE"
+  },
+  "1202": {
+    "name": "CRYSTALLINE GEL"
+  },
+  "1203": {
+    "name": "CRYSTALLINE LARVA"
+  },
+  "1204": {
+    "name": "DIAMOND MIMIC :EP"
+  },
+  "1205": {
+    "name": "DOPED CHIMP"
+  },
+  "1206": {
+    "name": "DRAGON OF DA UNDERWORLD KUR"
+  },
+  "1207": {
+    "name": "EMPEROR DEATHSTALKER"
+  },
+  "1208": {
+    "name": "FERAL BADGER"
+  },
+  "1209": {
+    "name": "FERAL RIDGEBACK"
+  },
+  "1210": {
+    "name": "FORGOTTEN BONEKNIGHT"
+  },
+  "1211": {
+    "name": "FORGOTTEN THRALL"
+  },
+  "1212": {
+    "name": "FROST DRAGON"
+  },
+  "1213": {
+    "name": "FROST MONARCH"
+  },
+  "1214": {
+    "name": "FROZEN CONSTRUCT"
+  },
+  "1215": {
+    "name": "FROZEN SENTINEL"
+  },
+  "1216": {
+    "name": "GAUNT LYNX"
+  },
+  "1217": {
+    "name": "GAUNT RIPPER"
+  },
+  "1218": {
+    "name": "GIBBERIN' FIEND"
+  },
+  "1219": {
+    "name": "GILDED THRALL"
+  },
+  "1220": {
+    "name": "GOBLIN METAL WARLORD"
+  },
+  "1221": {
+    "name": "GOBLIN WAR CHIEF"
+  },
+  "1222": {
+    "name": "GRAVE-BOUND BONEKNIGHT"
+  },
+  "1223": {
+    "name": "GRAVE-BOUND GRAVEWALKER"
+  },
+  "1224": {
+    "name": "GRAVE-BOUND MOURNER"
+  },
+  "1225": {
+    "name": "HEXIN' CAMBION"
+  },
+  "1226": {
+    "name": "HIRED TINKER"
+  },
+  "1227": {
+    "name": "HOLLOW CHARNELHOUND"
+  },
+  "1228": {
+    "name": "HOLLOW WHISPERLIN'"
+  },
+  "1229": {
+    "name": "HOWLIN' ELEMENTAL"
+  },
+  "1230": {
+    "name": "HOWLIN' REVENANT"
+  },
+  "1231": {
+    "name": "HUNGER INCARNATE"
+  },
+  "1232": {
+    "name": "HYPERDIMENSIONAL GRIMORIE"
+  },
+  "1233": {
+    "name": "INFERNAL ANNIHILATOR"
+  },
+  "1234": {
+    "name": "INFERNAL DEVASTATOR"
+  },
+  "1235": {
+    "name": "IRON-FANGED DIREWOLF"
+  },
+  "1236": {
+    "name": "IRON-FANGED MAW-HOUND"
+  },
+  "1237": {
+    "name": "LANDFILL LEVIATHAN"
+  },
+  "1238": {
+    "name": "LONE JACKAL"
+  },
+  "1239": {
+    "name": "MAELSTROM LEVIATHAN"
+  },
+  "1240": {
+    "name": "MASKED BOT"
+  },
+  "1241": {
+    "name": "MASKED OUTLAW"
+  },
+  "1242": {
+    "name": "MASKED RAIDER"
+  },
+  "1243": {
+    "name": "MIRROR BASHER"
+  },
+  "1244": {
+    "name": "MOCKIN' WHISPERLIN'"
+  },
+  "1245": {
+    "name": "MOLTEN JUGGERNAUT"
+  },
+  "1246": {
+    "name": "MOLTEN SYLPH"
+  },
+  "1247": {
+    "name": "MUTATED GOBLIN"
+  },
+  "1248": {
+    "name": "NON-EUCLIDEAN CRAB"
+  },
+  "1249": {
+    "name": "OBSIDIAN HELLHOUND"
+  },
+  "1250": {
+    "name": "OGRE WARLORD"
+  },
+  "1251": {
+    "name": "OPHANIM JUDICATOR"
+  },
+  "1252": {
+    "name": "ORPHANAGE WARDEN"
+  },
+  "1253": {
+    "name": "PERMAFROST DRAGON"
+  },
+  "1254": {
+    "name": "PRIMAL OCEAN DRAGON ABZU"
+  },
+  "1255": {
+    "name": "PUPPET MASTER'S CORPSE"
+  },
+  "1256": {
+    "name": "QUARTZ COLOSSUS-SPAWN"
+  },
+  "1257": {
+    "name": "QUIVERIN' BROOD-TINK"
+  },
+  "1258": {
+    "name": "QUIVERIN' HIVEMIND"
+  },
+  "1259": {
+    "name": "RECURSIVE PARADOX"
+  },
+  "1260": {
+    "name": "RENEGADE DRONE"
+  },
+  "1261": {
+    "name": "RENEGADE ENFORCER"
+  },
+  "1262": {
+    "name": "RESTLESS GRAVEWALKER"
+  },
+  "1263": {
+    "name": "SCRAP BOT"
+  },
+  "1264": {
+    "name": "SCRAP GOON"
+  },
+  "1265": {
+    "name": "SEARIN' ELEMENTAL"
+  },
+  "1266": {
+    "name": "SHOGGOTH"
+  },
+  "1267": {
+    "name": "SPITEFUL PIXIE"
+  },
+  "1268": {
+    "name": "STARVIN' GNASHER"
+  },
+  "1269": {
+    "name": "STORM DRAGON KING ENLIL"
+  },
+  "1270": {
+    "name": "STORM HARBINGER"
+  },
+  "1271": {
+    "name": "SUNKEN PALLBEARER"
+  },
+  "1272": {
+    "name": "SURGEON OF SOULS"
+  },
+  "1273": {
+    "name": "TEMPORAL BARNACLE"
+  },
+  "1274": {
+    "name": "TERRACLAW TORTOISE"
+  },
+  "1275": {
+    "name": "THREE-TAILED HORNBEAST"
+  },
+  "1276": {
+    "name": "TIDALCARAPACE TORTOISE"
+  },
+  "1277": {
+    "name": "TOTEM OF SINS"
+  },
+  "1278": {
+    "name": "TWITCHY BOT"
+  },
+  "1279": {
+    "name": "VOID MANIPULATOR"
+  },
+  "1280": {
+    "name": "VOID WEAVER"
+  },
+  "1281": {
+    "name": "WAR COLOSSUS"
+  },
+  "1282": {
+    "name": "YOG-SOTHOTH SPAWN :EP"
+  },
+  "1283": {
+    "name": "<-- 91-100 -->"
+  },
+  "1284": {
+    "name": "ABYSSAL LEVIATHAN"
+  },
+  "1285": {
+    "name": "ANCIENT DRAGON"
+  },
+  "1286": {
+    "name": "ARCANE ARCHMAGE"
+  },
+  "1287": {
+    "name": "BACK-ALLEY SHARPSHOOTER"
+  },
+  "1288": {
+    "name": "BACKWARDS TREE"
+  },
+  "1289": {
+    "name": "BATTLE MECH :EP"
+  },
+  "1290": {
+    "name": "BLOOD COUNTESS :EP"
+  },
+  "1291": {
+    "name": "BLOOD LEECH COLOSSUS"
+  },
+  "1292": {
+    "name": "BRIMSTONE CAMBION"
+  },
+  "1293": {
+    "name": "BRIMSTONE DEVILKIN"
+  },
+  "1294": {
+    "name": "CAPERIN' NIXIE"
+  },
+  "1295": {
+    "name": "CAPERIN' PIXIE"
+  },
+  "1296": {
+    "name": "CINDER-WRAPPED WIGHT"
+  },
+  "1297": {
+    "name": "CORPSE OF MAAT"
+  },
+  "1298": {
+    "name": "CRIMSON VAMPIRE :EP"
+  },
+  "1299": {
+    "name": "CRUDE LEVIATHAN"
+  },
+  "1300": {
+    "name": "CRYIN' TREE"
+  },
+  "1301": {
+    "name": "CRYPT REVENANT"
+  },
+  "1302": {
+    "name": "DRAGON OF WISDOM ENKI "
+  },
+  "1303": {
+    "name": "ENTROPY WYRM"
+  },
+  "1304": {
+    "name": "ERIS, JUDGMENT OF DISCORD"
+  },
+  "1305": {
+    "name": "FEAST OF FAMINE"
+  },
+  "1306": {
+    "name": "FORGOTTEN CHARNELHOUND"
+  },
+  "1307": {
+    "name": "FORGOTTEN SENTINEL"
+  },
+  "1308": {
+    "name": "FROST COLOSSUS"
+  },
+  "1309": {
+    "name": "FROSTBACK TORTOISE"
+  },
+  "1310": {
+    "name": "FROZEN MONOLITH"
+  },
+  "1311": {
+    "name": "GIBBERIN' HEX-WEAVER"
+  },
+  "1312": {
+    "name": "GIBBERIN' TRICKSTER"
+  },
+  "1313": {
+    "name": "GILDED LICHLIN'"
+  },
+  "1314": {
+    "name": "GILDED SENTINEL"
+  },
+  "1315": {
+    "name": "GLACIAL GEIST"
+  },
+  "1316": {
+    "name": "GLIMMERIN' HEX-WEAVER"
+  },
+  "1317": {
+    "name": "GLIMMERIN' SPRITE"
+  },
+  "1318": {
+    "name": "GLIMMERIN' TRICKSTER"
+  },
+  "1319": {
+    "name": "GOBLIN KING"
+  },
+  "1320": {
+    "name": "GOBLIN NECROMANCER"
+  },
+  "1321": {
+    "name": "GOBLIN SHADOW SORCERER"
+  },
+  "1322": {
+    "name": "GORGON QUEEN"
+  },
+  "1323": {
+    "name": "GRINDIN' CONSTRUCT"
+  },
+  "1324": {
+    "name": "GRINDIN' SPIRIT"
+  },
+  "1325": {
+    "name": "HOLLOW GRAVEWALKER"
+  },
+  "1326": {
+    "name": "HOLLOW IMP"
+  },
+  "1327": {
+    "name": "HOLLOW SUCCUBUS"
+  },
+  "1328": {
+    "name": "HOLLOW WIGHT"
+  },
+  "1329": {
+    "name": "HORSESHOE CRAB"
+  },
+  "1330": {
+    "name": "HOWLIN' SYLPH"
+  },
+  "1331": {
+    "name": "INFERNAL PRODIGY"
+  },
+  "1332": {
+    "name": "LEERIN' PIXIE"
+  },
+  "1333": {
+    "name": "LIVIN' ELEMENTAL"
+  },
+  "1334": {
+    "name": "LIVIN' SENTINEL"
+  },
+  "1335": {
+    "name": "MAGMA TITAN"
+  },
+  "1336": {
+    "name": "MATERNITY WARD"
+  },
+  "1337": {
+    "name": "MEGALODON PRIME"
+  },
+  "1338": {
+    "name": "MOCKIN' NIXIE"
+  },
+  "1339": {
+    "name": "MOCKIN' SHADE"
+  },
+  "1340": {
+    "name": "MOLTEN COLOSSUS-SPAWN"
+  },
+  "1341": {
+    "name": "MOLTEN CONSTRUCT"
+  },
+  "1342": {
+    "name": "MOTIVATIONAL SPEAKER :EP"
+  },
+  "1343": {
+    "name": "MUMMIFIED GRAVEWALKER"
+  },
+  "1344": {
+    "name": "NIGHTMARE SOVEREIGN"
+  },
+  "1345": {
+    "name": "OBSIDIAN ANIMUS"
+  },
+  "1346": {
+    "name": "OGRE ARCHMAGE"
+  },
+  "1347": {
+    "name": "OVERCLOCKED RAIDER"
+  },
+  "1348": {
+    "name": "PACT-BOUND NIXIE"
+  },
+  "1349": {
+    "name": "PETRIFIED MONOLITH"
+  },
+  "1350": {
+    "name": "PETRIFIED WARDEN"
+  },
+  "1351": {
+    "name": "PLAGUE PALLBEARER"
+  },
+  "1352": {
+    "name": "PORPHYRIN COLOSSUS"
+  },
+  "1353": {
+    "name": "PYROCLAST PHOENIX"
+  },
+  "1354": {
+    "name": "QUANTUM ARCHON"
+  },
+  "1355": {
+    "name": "QUANTUM FLUCTUATION :EP"
+  },
+  "1356": {
+    "name": "QUARTZ GEIST"
+  },
+  "1357": {
+    "name": "QUARTZ MONOLITH"
+  },
+  "1358": {
+    "name": "RADIANT ARCHPRIEST"
+  },
+  "1359": {
+    "name": "RAGIN' SENTINEL"
+  },
+  "1360": {
+    "name": "REALITY BENDER"
+  },
+  "1361": {
+    "name": "RENEGADE POACHER"
+  },
+  "1362": {
+    "name": "SACRED KRAKEN"
+  },
+  "1363": {
+    "name": "SACRED PHOENIX"
+  },
+  "1364": {
+    "name": "SALT-CURED GRAVEWALKER"
+  },
+  "1365": {
+    "name": "SALVAGED AUTOMATON"
+  },
+  "1366": {
+    "name": "SALVAGED SENTRY"
+  },
+  "1367": {
+    "name": "SCRAP AUTOMATON"
+  },
+  "1368": {
+    "name": "SERAPH OF DA SEVENTH VEIL"
+  },
+  "1369": {
+    "name": "SPITEFUL CAMBION"
+  },
+  "1370": {
+    "name": "SPITEFUL TORMENTOR"
+  },
+  "1371": {
+    "name": "STORM BEHEMOTH"
+  },
+  "1372": {
+    "name": "SULPHUR CAMBION"
+  },
+  "1373": {
+    "name": "SULPHUR NIXIE"
+  },
+  "1374": {
+    "name": "SULPHUR SHADE"
+  },
+  "1375": {
+    "name": "SULPHUR SPRITE"
+  },
+  "1376": {
+    "name": "SUNKEN GRAVEWALKER"
+  },
+  "1377": {
+    "name": "SUPREME DRAGON GOD USUMGALLU"
+  },
+  "1378": {
+    "name": "SURGIN' CONSTRUCT"
+  },
+  "1379": {
+    "name": "SURGIN' ELEMENTAL"
+  },
+  "1380": {
+    "name": "SURGIN' SYLPH"
+  },
+  "1381": {
+    "name": "TEMPEST SYLPH"
+  },
+  "1382": {
+    "name": "TEMPEST WISP"
+  },
+  "1383": {
+    "name": "DA BASCAPE FLAME"
+  },
+  "1384": {
+    "name": "DA WELL DAT DREAMS"
+  },
+  "1385": {
+    "name": "THUNDER LIZARD COLOSSUS"
+  },
+  "1386": {
+    "name": "TITAN ANACONDA"
+  },
+  "1387": {
+    "name": "TWILIGHT GREMLIN"
+  },
+  "1388": {
+    "name": "TWILIGHT PIXIE"
+  },
+  "1389": {
+    "name": "TWILIGHT SHADE"
+  },
+  "1390": {
+    "name": "PANTRY MOUSE"
+  },
+  "1391": {
+    "name": "HEDGE RABBIT"
+  },
+  "1392": {
+    "name": "BARN KITTEN"
+  },
+  "1393": {
+    "name": "ACORN SQUIRREL"
+  },
+  "1394": {
+    "name": "MOLEHILL PUP"
+  },
+  "1395": {
+    "name": "PLAZA PIGEON"
+  },
+  "1396": {
+    "name": "HOUSE SPARROW"
+  },
+  "1397": {
+    "name": "FARMYARD CHICK"
+  },
+  "1398": {
+    "name": "DUNG BEETLE"
+  },
+  "1399": {
+    "name": "GARDEN PILLBUG"
+  },
+  "1400": {
+    "name": "PICNIC GNAT"
+  },
+  "1401": {
+    "name": "HEARTH CRICKET"
+  },
+  "1402": {
+    "name": "GARDEN SLUG"
+  },
+  "1403": {
+    "name": "COMPOST WORM"
+  },
+  "1404": {
+    "name": "PUDDLE TOAD"
+  },
+  "1405": {
+    "name": "BOG TADPOLE"
+  },
+  "1406": {
+    "name": "RIVER MINNOW"
+  },
+  "1407": {
+    "name": "ESCAPED GOLDFISH"
+  },
+  "1408": {
+    "name": "BOTTLECAP HERMIT CRAB"
+  },
+  "1409": {
+    "name": "MOON JELLYLIN'"
+  },
+  "1410": {
+    "name": "DANDELION DRIFTER"
+  },
+  "1411": {
+    "name": "PUDDLE SLIME"
+  },
+  "1412": {
+    "name": "HICCUP IMP"
+  },
+  "1413": {
+    "name": "PUDDLE SPRITE"
+  },
+  "1414": {
+    "name": "OPOSSUM KIT"
+  },
+  "1415": {
+    "name": "GUTTER RAT"
+  },
+  "1416": {
+    "name": "GRUMPY HEDGEHOG"
+  },
+  "1417": {
+    "name": "CHIPMUNK HOARDER"
+  },
+  "1418": {
+    "name": "SOCK THIEF FERRET"
+  },
+  "1419": {
+    "name": "STRAY PUP"
+  },
+  "1420": {
+    "name": "SNOWDRIFT HARE"
+  },
+  "1421": {
+    "name": "HARBOUR GULL"
+  },
+  "1422": {
+    "name": "GLINT MAGPIE"
+  },
+  "1423": {
+    "name": "YOUNG BARN OWL"
+  },
+  "1424": {
+    "name": "PIPISTRELLE BAT"
+  },
+  "1425": {
+    "name": "RED FIRE ANT"
+  },
+  "1426": {
+    "name": "MEADOW FIREFLY"
+  },
+  "1427": {
+    "name": "POND DAMSELFLY"
+  },
+  "1428": {
+    "name": "LAMP MOTH"
+  },
+  "1429": {
+    "name": "DITCH LEECH"
+  },
+  "1430": {
+    "name": "MOSS SNAIL"
+  },
+  "1431": {
+    "name": "CANOPY TREE FROG"
+  },
+  "1432": {
+    "name": "RIVER STICKLEBACK"
+  },
+  "1433": {
+    "name": "SHORE CRAB"
+  },
+  "1434": {
+    "name": "NETTLE SPROUT"
+  },
+  "1435": {
+    "name": "BREAD MOULD PATCH"
+  },
+  "1436": {
+    "name": "SNEEZE BLOB"
+  },
+  "1437": {
+    "name": "CANDLE WISP"
+  },
+  "1438": {
+    "name": "FORGOTTEN PASSWORD"
+  },
+  "1439": {
+    "name": "LOST GLOVE"
+  },
+  "1440": {
+    "name": "EMBER MOTE"
+  },
+  "1441": {
+    "name": "BIN RACCOON"
+  },
+  "1442": {
+    "name": "DUNE JERBOA"
+  },
+  "1443": {
+    "name": "FENNEC FOX KIT"
+  },
+  "1444": {
+    "name": "FROST FOX KIT"
+  },
+  "1445": {
+    "name": "SULKY SKUNKLET"
+  },
+  "1446": {
+    "name": "POND TERRAPIN"
+  },
+  "1447": {
+    "name": "FRUIT BAT"
+  },
+  "1448": {
+    "name": "PARK GOOSE"
+  },
+  "1449": {
+    "name": "PAPER WASP"
+  },
+  "1450": {
+    "name": "STABLE HORSEFLY"
+  },
+  "1451": {
+    "name": "LOCUST NYMPH"
+  },
+  "1452": {
+    "name": "CAVE GLOWSNAIL"
+  },
+  "1453": {
+    "name": "MUDSKIPPER"
+  },
+  "1454": {
+    "name": "SPINY PUFFLIN'"
+  },
+  "1455": {
+    "name": "DITCH CRAYFISH"
+  },
+  "1456": {
+    "name": "BURR SPROUT"
+  },
+  "1457": {
+    "name": "GRASS SNAKELET"
+  },
+  "1458": {
+    "name": "JAM JAR OOZE"
+  },
+  "1459": {
+    "name": "DRAUGHTY SHADE"
+  },
+  "1460": {
+    "name": "CREAKY POLTERGEIST"
+  },
+  "1461": {
+    "name": "MONDAY DREAD"
+  },
+  "1462": {
+    "name": "STATIC SPRITE"
+  },
+  "1463": {
+    "name": "POCKET IMP"
+  },
+  "1464": {
+    "name": "FOLDED AIRPLANE"
+  },
+  "1465": {
+    "name": "GOBLIN SCAMP"
+  },
+  "1466": {
+    "name": "DRUNK BUSKER"
+  },
+  "1467": {
+    "name": "SCRAPYARD JACKAL"
+  },
+  "1468": {
+    "name": "MOOR WOLF PUP"
+  },
+  "1469": {
+    "name": "SNAPPIN' HATCHLIN'"
+  },
+  "1470": {
+    "name": "DROMEDARY CALF"
+  },
+  "1471": {
+    "name": "GREY HERON FLEDGLIN'"
+  },
+  "1472": {
+    "name": "MARSH OTTER"
+  },
+  "1473": {
+    "name": "CANE TOAD"
+  },
+  "1474": {
+    "name": "DUNE WORMLIN'"
+  },
+  "1475": {
+    "name": "TIDEPOOL OCTOPUS"
+  },
+  "1476": {
+    "name": "SPROUTIN' SPUD"
+  },
+  "1477": {
+    "name": "WASABI SNAIL"
+  },
+  "1478": {
+    "name": "CHATTERIN' SKULL"
+  },
+  "1479": {
+    "name": "RATTLIN' RIBCAGE"
+  },
+  "1480": {
+    "name": "DEWDROP PIXIE"
+  },
+  "1481": {
+    "name": "APPRENTICE HEDGE-WITCH"
+  },
+  "1482": {
+    "name": "BANDIT LOOKOUT"
+  },
+  "1483": {
+    "name": "SCHOOLYARD BULLY"
+  },
+  "1484": {
+    "name": "PICKPOCKET URCHIN"
+  },
+  "1485": {
+    "name": "TOY DRONE"
+  },
+  "1486": {
+    "name": "ROGUE VACUUM BOT"
+  },
+  "1487": {
+    "name": "CLOCKWORK TIN SOLDIER"
+  },
+  "1488": {
+    "name": "NOSY PEEPER"
+  },
+  "1489": {
+    "name": "DRYER LINT GOLEM"
+  },
+  "1490": {
+    "name": "SNOW SPARROW"
+  },
+  "1491": {
+    "name": "FROST MITE"
+  },
+  "1492": {
+    "name": "PENGUIN CHICK"
+  },
+  "1493": {
+    "name": "FROST STOAT"
+  },
+  "1494": {
+    "name": "SNOWBALL IMP"
+  },
+  "1495": {
+    "name": "FROSTBITE BAT"
+  },
+  "1496": {
+    "name": "WHITE OWLET"
+  },
+  "1497": {
+    "name": "WINTER CROW"
+  },
+  "1498": {
+    "name": "YETI CUB"
+  },
+  "1499": {
+    "name": "SNOW SLED PUP"
+  },
+  "1500": {
+    "name": "SAND GECKO"
+  },
+  "1501": {
+    "name": "CACTUS SPROUT"
+  },
+  "1502": {
+    "name": "DESERT TUMBLEWEED"
+  },
+  "1503": {
+    "name": "DUNE SCORPLIN'"
+  },
+  "1504": {
+    "name": "MIRAGE IMP"
+  },
+  "1505": {
+    "name": "SALT CRAB"
+  },
+  "1506": {
+    "name": "DUST DEVIL"
+  },
+  "1507": {
+    "name": "DESERT PORCUPINE"
+  },
+  "1508": {
+    "name": "MANTICORE CUB"
+  },
+  "1509": {
+    "name": "SHRINE MOUSE"
+  },
+  "1510": {
+    "name": "BELFRY BAT"
+  },
+  "1511": {
+    "name": "BLESSED DOVE"
+  },
+  "1512": {
+    "name": "TEMPLE TORTOISE"
+  },
+  "1513": {
+    "name": "CHERUB FLEDGLIN'"
+  },
+  "1514": {
+    "name": "PILGRIM GOAT KID"
+  },
+  "1515": {
+    "name": "HALLOWED LANTERN"
+  },
+  "1516": {
+    "name": "SACRED HYMNAL"
+  },
+  "1517": {
+    "name": "SERAPH MOTH"
+  },
+  "1518": {
+    "name": "SHRINE FOX"
+  },
+  "1519": {
+    "name": "BELLTOWER GARGOYLE"
+  },
+  "1520": {
+    "name": "OPHANIM RINGLET"
+  },
+  "1521": {
+    "name": "DREAM MOTH"
+  },
+  "1522": {
+    "name": "NIGHTMARE NIBBLER"
+  },
+  "1523": {
+    "name": "SLUMBER SHEEP"
+  },
+  "1524": {
+    "name": "VOID JELLYLIN'"
+  },
+  "1525": {
+    "name": "VOID FERRET KIT"
+  },
+  "1526": {
+    "name": "REVERIE BUBBLE"
+  },
+  "1527": {
+    "name": "DREAM TAPIR"
+  },
+  "1528": {
+    "name": "GLITCH MITE"
+  },
+  "1529": {
+    "name": "PAPER CUT IMP"
+  },
+  "1530": {
+    "name": "STELLAR MOTE"
+  },
+  "1531": {
+    "name": "SUBWAY RAT"
+  },
+  "1532": {
+    "name": "LOST TOURIST"
+  },
+  "1533": {
+    "name": "PIXEL SLIME"
+  },
+  "1534": {
+    "name": "STAPLER MIMIC"
+  },
+  "1535": {
+    "name": "SATELLITE GNAT"
+  },
+  "1536": {
+    "name": "DARGOS EXCHANGE STUDENT"
+  },
+  "1537": {
+    "name": "DATA LEECH"
+  },
+  "1538": {
+    "name": "PRINTER GREMLIN"
+  },
+  "1539": {
+    "name": "METEOR PEBBLE"
+  },
+  "1540": {
+    "name": "CYBER PUP"
+  },
+  "1541": {
+    "name": "ASTRAL JELLYFISH"
+  },
+  "1542": {
+    "name": "LOBBY SECURITY DRONE"
+  },
+  "1543": {
+    "name": "LUNAR HOPPER"
+  },
+  "1544": {
+    "name": "MALL GUARD BOT"
+  },
+  "1545": {
+    "name": "SPAM WRAITH"
+  },
+  "1546": {
+    "name": "GERM BLOB"
+  },
+  "1547": {
+    "name": "RUST BEETLE"
+  },
+  "1548": {
+    "name": "NOODLE WORM"
+  },
+  "1549": {
+    "name": "SYRINGE MOSQUITO"
+  },
+  "1550": {
+    "name": "PILL BEETLE"
+  },
+  "1551": {
+    "name": "LOOSE BOLT BOT"
+  },
+  "1552": {
+    "name": "GREASE RAT"
+  },
+  "1553": {
+    "name": "PLUSH BEAR"
+  },
+  "1554": {
+    "name": "BANDAGE WRAITH"
+  },
+  "1555": {
+    "name": "SPARK PLUG SPRITE"
+  },
+  "1556": {
+    "name": "FRY COOK GOBLIN"
+  },
+  "1557": {
+    "name": "MANNEQUIN HAND"
+  },
+  "1558": {
+    "name": "PLAGUE LEECH"
+  },
+  "1559": {
+    "name": "LOOSE TOOTH IMP"
+  },
+  "1560": {
+    "name": "PAINT BLOB"
+  },
+  "1561": {
+    "name": "COIN PURSE MIMIC"
+  },
+  "1562": {
+    "name": "KITCHEN ROACH"
+  },
+  "1563": {
+    "name": "MORGUE CRAWLER"
+  },
+  "1564": {
+    "name": "IMPLANT TICK"
+  },
+  "1565": {
+    "name": "CHAINSAW BEAVER"
+  },
+  "1566": {
+    "name": "SHOPLIFTIN' RACCOON"
+  },
+  "1567": {
+    "name": "PIZZA OOZE"
+  },
+  "1568": {
+    "name": "DWARVEN TINKER"
+  },
+  "1569": {
+    "name": "SCRAP ELEMENTAL"
+  },
+  "1570": {
+    "name": "TOY TURRET"
+  },
+  "1571": {
+    "name": "QUARTZ TICK"
+  },
+  "1572": {
+    "name": "SPORE PUFF"
+  },
+  "1573": {
+    "name": "GEODE SNAIL"
+  },
+  "1574": {
+    "name": "MUSHROOM IMP"
+  },
+  "1575": {
+    "name": "CRYSTAL GLOWWORM"
+  },
+  "1576": {
+    "name": "TRUFFLE PIGLET"
+  },
+  "1577": {
+    "name": "PRISM BEETLE"
+  },
+  "1578": {
+    "name": "MYCONID SPROUT"
+  },
+  "1579": {
+    "name": "CRYSTAL GECKO"
+  },
+  "1580": {
+    "name": "FUNGAL SHREW"
+  },
+  "1581": {
+    "name": "HOARD LIZARD"
+  },
+  "1582": {
+    "name": "PIT ROOSTER"
+  },
+  "1583": {
+    "name": "PIT RHINO BEETLE"
+  },
+  "1584": {
+    "name": "KOBOLD HOARD THIEF"
+  },
+  "1585": {
+    "name": "TRAININ' DUMMY"
+  },
+  "1586": {
+    "name": "HOARD WYRMLIN'"
+  },
+  "1587": {
+    "name": "GLADIATOR CRICKET"
+  },
+  "1588": {
+    "name": "DRAGON TICK"
+  },
+  "1589": {
+    "name": "NOVICE GLADIATOR"
+  },
+  "1590": {
+    "name": "ALPINE MARMOT"
+  },
+  "1591": {
+    "name": "HARBOUR WHELK"
+  },
+  "1592": {
+    "name": "FISHNET CRAB"
+  },
+  "1593": {
+    "name": "PARROT CHICK"
+  },
+  "1594": {
+    "name": "JUNGLE TAMARIN"
+  },
+  "1595": {
+    "name": "TOUCAN FLEDGLIN'"
+  },
+  "1596": {
+    "name": "COCONUT CRAB"
+  },
+  "1597": {
+    "name": "CINDER NEWT"
+  },
+  "1598": {
+    "name": "MATCHSTICK ELEMENTAL"
+  },
+  "1599": {
+    "name": "PHOENIX CHICK"
+  },
+  "1600": {
+    "name": "HELLHOUND PUP"
+  },
+  "1601": {
+    "name": "BAT-WINGED IMP"
+  },
+  "1602": {
+    "name": "CELLAR SPIDER"
+  },
+  "1603": {
+    "name": "TOMB SCARAB"
+  },
+  "1604": {
+    "name": "SEWER GATOR HATCHLIN'"
+  },
+  "1605": {
+    "name": "STITCHED RAGDOLL"
+  },
+  "1606": {
+    "name": "LOST DOLL HEAD"
+  },
+  "1607": {
+    "name": "SHADOW PUDDLE"
+  },
+  "1608": {
+    "name": "FLEDGLIN' VAMPIRE"
+  },
+  "1609": {
+    "name": "CLUMSY SQUIRE"
+  },
+  "1610": {
+    "name": "MINOTAUR CALF"
+  },
+  "1611": {
+    "name": "GORGON HATCHLIN'"
+  },
+  "1612": {
+    "name": "LITTER CRITTER"
+  },
+  "1613": {
+    "name": "RAINDROP ELEMENTAL"
+  },
+  "1614": {
+    "name": "GARDEN GNOME"
+  },
+  "1615": {
+    "name": "WISHIN' TOTEM"
+  },
+  "1616": {
+    "name": "VERDEN SEEDLIN'"
+  },
+  "1617": {
+    "name": "SAPLIN' TREANT"
+  },
+  "1618": {
+    "name": "LIL' SCARECROW"
+  },
+  "1619": {
+    "name": "ELVEN PAGE"
+  },
+  "1620": {
+    "name": "ORC WHELP"
+  },
+  "1621": {
+    "name": "QUARRELSOME TWO-HEAD"
+  },
+  "1622": {
+    "name": "WILD FOAL"
+  },
+  "1623": {
+    "name": "LEVIATHAN HATCHLIN'"
+  },
+  "1624": {
+    "name": "CENTAUR FOAL"
+  },
+  "1625": {
+    "name": "UNICORN FOAL"
+  },
+  "1626": {
+    "name": "SILK WEAVER APPRENTICE"
+  },
+  "1627": {
+    "name": "HYDRA HATCHLIN'"
+  },
+  "1628": {
+    "name": "ELEPHANT CALF"
+  },
+  "1629": {
+    "name": "POND SKATER"
+  },
+  "1630": {
+    "name": "BRIDGE TROLL TODDLER"
+  },
+  "1631": {
+    "name": "HIGHWAY HAWK CHICK"
+  },
+  "1632": {
+    "name": "FERRY GULL"
+  },
+  "1633": {
+    "name": "BAMBOO PANDA CUB"
+  },
+  "1634": {
+    "name": "TAIGA SQUIRREL"
+  },
+  "1635": {
+    "name": "SPIRIT WOODS FAWN"
+  },
+  "1636": {
+    "name": "SAVANNAH MEERKAT"
+  },
+  "1637": {
+    "name": "CANYON SWIFT"
+  },
+  "1638": {
+    "name": "STEPPE VOLE"
+  },
+  "1639": {
+    "name": "RUIN GECKO"
+  }
+}

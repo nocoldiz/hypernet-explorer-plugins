@@ -1,177 +1,177 @@
 {
   "Nervous": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "WHAT WAZ DAT NOISE?",
+    "ME HAB A BAD FEELIN' 'BOUT DIS!",
+    "DID ME FORGET SOMETINK IMPORTANT?",
+    "ME HEART IZ POUNDIN'...",
+    "ME JUST WANT DIS TA BE OVER!"
   ],
   "Calm": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "ONE STEP AT A TIME.",
+    "KEEP BREATHIN'. EVERYTINK IZ FINE!",
+    "DIS, TOO, SHALL PASS.",
+    "WORRYIN' SOLVES NUTTIN'.",
+    "MAINTAIN FOCUS."
   ],
   "Aggressive": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "NO TEST ME.",
+    "ME IZ READY FOR A FIGHT.",
+    "WHAT IZ YOU LOOKIN' AT?",
+    "PATIENCE IZ RUNNIN' THIN.",
+    "MOVE, OR BE MOVED."
   ],
   "Melancholic": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "IZ DIS ALL DERE IZ?",
+    "ME REMEMBER WHEN TINKZ WAZ BETTER!",
+    "A HEAVY FEELIN'...",
+    "SOLITUDE FEELS RIGHT.",
+    "EVERYTINK SEEMS GREY."
   ],
   "Sanguine": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "WHAT A WONDERFUL DAY!",
+    "ME SHOULD TALK TA SOMEONE!",
+    "WHAT IZ NEXT? SOMETINK FUN, ME HOPE!",
+    "ME FEEL GREAT!",
+    "DA FUTURE IZ BRIGHT."
   ],
   "Cautious": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "LETZ TINK DIS THROUGH.",
+    "WHAT IZ DA RISKS?",
+    "A HASTY DECISION IZ A BAD DECISION!",
+    "BETTER TA BE SAFE DEN SORRY!",
+    "ANALYZE DA SITUATION FIRST!"
   ],
   "Impulsive": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "JUST DO IT!",
+    "WHY WAIT?",
+    "DIS SEEMS LIKE A GOOD IDEA!",
+    "WORRY 'BOUT CONSEQUENCES LATER!",
+    "ACT NOW, TINK LATER."
   ],
   "Stoic": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "DIS IZ JUST A TINK. IT WILL PASS!",
+    "PAIN IZ TEMPORARY.",
+    "COMPLAININ' CHANGES NUTTIN'!",
+    "CONTROL WHAT YOU CAN, ACCEPT WHAT YOU NO CAN!",
+    "ME WILL ENDURE."
   ],
   "Paranoid": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "DEY IZ WATCHIN' ME.",
+    "WHO CAN ME TRUST? NO ONE.",
+    "WHAT DO DEY REALLY WANT?",
+    "IT IZ A CONSPIRACY.",
+    "ME NEED TA BE CAREFUL."
   ],
   "Empathetic": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "ME FEEL WHAT YOU IZ GOING THROUGH!",
+    "IZ DEY OKAY? DEY SEEM SAD!",
+    "ME CAN SENSE DA TENSION IN DA ROOM!",
+    "HOW CAN ME HELP?",
+    "DEY JOY IZ ME JOY."
   ],
   "Authoritative": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "FOLLOW ME LEAD.",
+    "DIS IZ DA PLAN. STICK TA IT!",
+    "ME WILL MAKE DA DECISION.",
+    "DISCIPLINE IZ KEY.",
+    "WE MUST SUCCEED."
   ],
   "Scholarly": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "ME WONDER WHY DAT IZ...",
+    "DAT REMINDS ME OF A BOOK ME READ!",
+    "DA DATA IZ INCONCLUSIVE.",
+    "KNOWLEDGE IZ DA TRUE POWER!",
+    "ME NEED TA LEARN MORE."
   ],
   "Artistic": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "DA LIGHT HERE IZ BEAUTIFUL!",
+    "WHAT A STRANGE, WONDERFUL SOUND!",
+    "ME FEEL DIS SO DEEPLY.",
+    "INSPIRATION... ME MUST REMEMBER DIS FEELIN'!",
+    "DA WORLD IZ A CANVAS."
   ],
   "Adventurous": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "ME WONDER WHAT IZ OVER DAT HILL!",
+    "DIS IZ BORIN'. LETZ DO SOMETINK!",
+    "A LIL' DANGER MAKES LIFE INTERESTIN'!",
+    "ON TA DA NEXT ADVENTURE!",
+    "ME HAB NEVER BIN DERE? LETZ GO!"
   ],
   "Nurturing": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "IZ YOU ALRIGHT?",
+    "YOU LOOK COLD. TAKE ME CLOAK!",
+    "EVERYONE NEEDS TA BE CARED FOR!",
+    "ME MUST PROTECT DEM.",
+    "LET ME HELP WIT DAT."
   ],
   "Mischievous": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "DIS WOULD BE SO MUCH FUNNIER IF...",
+    "LETZ STIR TINKZ UP A BIT.",
+    "DEY WILL NEVER SEE DIS COMIN'!",
+    "ME WONDER WHAT DIS BUTTON DOES?",
+    "A LIL' PRANK NEVER HURT ANYONE... MUCH!"
   ],
   "Cynical": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "EVERYONE'S IN IT FOR THEMSELVES!",
+    "WHAT IZ DA CATCH?",
+    "DAT IZ JUST WHAT DEY WANT ME TA TINK!",
+    "SURE, 'ALTRUISM'. RIGHT.",
+    "DIS WILL ALL END BADLY."
   ],
   "Disciplined": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "FIRST, DA TASK. DEN, DA REST!",
+    "FEELINGS IZ SECONDARY TA DUTY!",
+    "STICK TA DA REGIMEN.",
+    "CONTROL IZ STRENGTH.",
+    "NO SHORTCUTS."
   ],
   "Fatalistic": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "WHATEVER HAPPENS, HAPPENS!",
+    "IT WAZ MEANT TA BE.",
+    "DERE IZ NO POINT FIGHTIN' IT!",
+    "ME PATH IZ ALREADY WRITTEN!",
+    "WHAT IZ DA USE?"
   ],
   "Grumpy": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "UGH, WHAT NOW?",
+    "DIS IZ ALL SO STUPID.",
+    "LEAVE ME ALONE.",
+    "OF COURSE DIS WOULD HAPPEN!",
+    "ME HATE DIS."
   ],
   "Loyal": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "ME WILL NO ABANDON DEM.",
+    "FOR ME MATES, ANYTINK.",
+    "ME MUST KEEP ME PROMISE.",
+    "TOGETHER, NO MATTER WHAT.",
+    "ME LOYALTY IZ ME BOND."
   ],
   "Brave": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "SOMEONE HAB TA DO IT.",
+    "DIS IZ SCARY, BUT ME MUST ACT!",
+    "FEAR IZ JUST A FEELIN'.",
+    "ME WILL NO BACK DOWN.",
+    "FORWARD!"
   ],
   "Timid": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "OH, DEAR. DIS LOOKS BAD.",
+    "ME WOULD RATHER NO...",
+    "MAYBE SOMEONE ELSE CAN HANDLE DIS?",
+    "ME WANT TA GO HOME.",
+    "NO NOTICE ME."
   ],
   "Hedonistic": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "IF IT FEELS GOOD, DO IT.",
+    "LIFE IZ SHORT, ENJOY IT NOW!",
+    "ME NEED MORE WINE. AN' CHEESE!",
+    "DIS IZ DA LIFE!",
+    "WORK? UGH. LATER."
   ],
   "Apathetic": [
-    "",
-    "",
-    "",
-    "",
-    ""
+    "MEH.",
+    "ME NO REALLY CARE.",
+    "WHATEVER.",
+    "IZ IT OVER YET?",
+    "IT NO MATTER."
   ]
 }

@@ -58,9 +58,9 @@
     "Nessuno in Particolare",
     "il Secondo Miglior Testimone",
     "una Folla di Uno",
-    "la Vedova di Martedi",
+    "la Vedova di Martedì",
     "L'Archive Foundation",
-    "il Concetto di Mercoledi",
+    "il Concetto di Mercoledì",
     "un Camper Non Registrato",
     "il Fantasma di un Cassiere",
     "il Dio Dormiente di Anversa",
@@ -130,7 +130,7 @@
     [
       "Si avvicini alla cor...",
       "*il martelletto finisce da qualche parte sotto il banco e li resta*",
-      "No. Non raccoglierlo. Lascialo li.",
+      "No. Non raccoglierlo. Lascialo lì.",
       "Bubba.",
       "Tu, fra tutte le persone delle novantadue dimensioni, sei {nella mia|in} aula."
     ],
@@ -153,7 +153,7 @@
       "E un errore.",
       "E un errore amministrativo e qualcuno diventera {pioggia|una rana|una nota a pie di pagina} per questo.",
       "Ciao, Bubba.",
-      "Stai bene. Stai... non era una domanda. Siediti. Non sederti. Resta li in piedi."
+      "Stai bene. Stai... non era una domanda. Siediti. Non sederti. Resta lì in piedi."
     ]
   ],
   "bubbaTrialFluster": [
@@ -255,7 +255,7 @@
     "Ultimamente sei stata {fortunata|sfortunata} un numero improbabile di volte. L'improbabile e il mio reparto.",
     "Ogni porta che si è bloccata. Ogni moneta caduta storta. Ogni treno perso per un soffio. Ciao.",
     "Ti ho piegato le probabilità addosso {martedì scorso|il mese scorso|l'inverno scorso}. Te ne sei accorta? Spero di sì.",
-    "Non è gelosia. E {giurisdizione|prassi|ordinaria amministrazione}. ...E gelosia.",
+    "È {giurisdizione|prassi|ordinaria amministrazione}. ...E va bene. È gelosia.",
     "Dormi a tre metri dall'unica cosa che abbia mai voluto. E russi.",
     "Potrei renderti {colpevole|innocente|un rospo} senza toccare le prove. Voglio che tu lo sappia.",
     "Ti sei mai chiesta perché la tua vita e così? Guarda in alto. Saluta."
@@ -397,7 +397,7 @@
       "Può rivolgersi al banco. Brevemente."
     ],
     "irritated": [
-      "Un avvocato. Magnifico. Ci vorra {il doppio|il quadruplo|un'eternita} del tempo.",
+      "Un avvocato. Magnifico. Ci vorrà {il doppio|il quadruplo|un'eternità} del tempo.",
       "Ho letto le sue memorie. Le ho lette in corridoio. Le ho lette male.",
       "Dica qualcosa di utile nella prossima frase o si sieda."
     ],
@@ -470,7 +470,7 @@
     [
       "*fissa il difensore per un lungo istante senza battere ciglio*",
       "Ha una faccia {sveglia|onesta|costosa} e non sono in vena di nessuna delle tre.",
-      "Congedato. Non il caso. Lei."
+      "Congedato. Lei, intendo."
     ]
   ],
   "lawyerObjections": [
@@ -479,9 +479,9 @@
     "\"Con rispetto, la corte ha citato un caso che ha deciso col lancio di una moneta.\"",
     "\"Il capo d'imputazione e datato {domani|nel secolo sbagliato|a matita}.\"",
     "\"Chiedo alla corte di dare atto che il mio assistito è rimasto seduto in silenzio per tutta l'udienza.\"",
-    "\"Non c'è una parte lesa. Non c'è un testimone. C'è un piccione.\"",
+    "\"Parte lesa, testimone e prova sono tutti lo stesso piccione.\"",
     "\"La taglia è stata calcolata da un sistema che la corte stessa ha definito folle.\"",
-    "\"Il mio assistito invoca il contesto, Vostro Onore. Enormi quantita di contesto.\"",
+    "\"Il mio assistito invoca il contesto, Vostro Onore. Enormi quantità di contesto.\"",
     "\"Ogni elemento di questo reato richiede il dolo. Il mio assistito raramente ne ha.\"",
     "\"Ho preparato undici precedenti. Ne leggerò {uno|due|nessuno}, per pietà.\""
   ],
@@ -491,7 +491,7 @@
     "Accolta. Nun faccia quella faccia soddisfatta.",
     "Lo sto mettenno per iscritto. Nun ho intenzione di rileggerlo.",
     "La corte fingera di nun aver sentito, e se lo ricordera per sempre.",
-    "Lei e {bravo|caro|sprecato qui}. Nun bastera. Forse bastera.",
+    "Lei è {bravo|caro|sprecato qui}. Nun basterà. Forse basterà.",
     "Preso atto, e fastidioso.",
     "*nun risponne per 'n attimo leggermente troppo lungo*"
   ],
@@ -631,7 +631,7 @@
     "Vi prego. Ho delle persone che mi aspettano.",
     "Fate quello che volete. Lo fate sempre.",
     "Sono pronto, Vostro Onore.",
-    "Questa non è giustizia. E teatro.",
+    "Questo è teatro.",
     "Che gli dei vi giudichino come giudicate me."
   ],
   "reversePartingLines": [
@@ -2020,6 +2020,7 @@
   },
   "line": {
     "crimes": "Crimini:",
+    "verdictRoll": "Verdetto della corte",
     "noneYet": "Nessuno (ancora)",
     "bounty": "Taglia:",
     "prisonTimeRemaining": "Tempo Rimanente",
@@ -2040,7 +2041,7 @@
     "gallery": "Galleria",
     "guilty": "COLPEVOLE",
     "innocent": "INNOCENTE",
-    "partyMember": "Membro del gruppo",
+    "partyMember": "Membro del Party",
     "noLawyer": "Nessun avvocato",
     "defendYourself": "Ti difendi da solo",
     "devoted": "Devoto",
@@ -2116,5 +2117,14 @@
     "truth": "In verità, {name} era {verdict}.",
     "guilty": "colpevole",
     "innocent": "innocente"
+  },
+  "boss": {
+    "deal": "Ci stai?",
+    "choiceDeal": "CI STO",
+    "choiceDate": "APPUNTAMENTO?",
+    "choiceArrest": "ARRESTAMI",
+    "coward": "PUSILLANIME!!!",
+    "crowned": "La bilancia ora è tua. Nessun tribunale leggerà più il tuo nome.",
+    "gone": "Il tribunale è vuoto..."
   }
 }

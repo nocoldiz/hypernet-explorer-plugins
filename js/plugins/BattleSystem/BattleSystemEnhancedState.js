@@ -279,6 +279,10 @@
 
     const _BattleManager_setup = BattleManager.setup;
     BattleManager.setup = function(troopId, canEscape, canLose) {
+        // The engine's setup rolls the escape odds (makeEscapeRatio) before
+        // startBattle resets the round count, so the count is cleared first:
+        // the free first-round getaway must never read the last fight's rounds.
+        _battleTurnCount = 0;
         _BattleManager_setup.call(this, troopId, canEscape, canLose);
 
         // Apply wet status if battle starts on water tile. A title-launched arena
@@ -547,17 +551,62 @@
         });
     }
 
+    // Rounds. IndividualBattleTurns (loaded after this file) runs the engine
+    // as TPB, so BattleManager.startTurn and endTurn never run in a real
+    // fight: the round count stayed at 0 (the free getaway was handed out on
+    // every round, not the first) and the end-of-round death check never ran.
+    // Its makeITBSRound is where a round begins: once inside startBattle and
+    // again every time the queue runs dry, which is also where the previous
+    // round ends. Without it the vanilla startTurn / endTurn are the boundary.
+    const roundsByQueue = () => typeof BattleManager.makeITBSRound === 'function';
+
+    function onRoundEnd() {
+        BattleManager.checkActorDeaths();
+    }
+
+    function onRoundStart() {
+        _battleTurnCount++;
+    }
+
+    BSE.Functions.battleRoundCount = () => _battleTurnCount;
+
     const _BattleManager_startTurn = BattleManager.startTurn;
     BattleManager.startTurn = function() {
         _BattleManager_startTurn.call(this);
-        _battleTurnCount++;
+        if (!roundsByQueue()) onRoundStart();
     };
 
     const _BattleManager_endTurn = BattleManager.endTurn;
     BattleManager.endTurn = function() {
-        this.checkActorDeaths();
+        if (!roundsByQueue()) onRoundEnd();
         _BattleManager_endTurn.call(this);
     };
+
+    // Installed once every plugin has loaded, since IndividualBattleTurns
+    // comes after this file. A queue rebuilt while the battle is already in
+    // its turn phase closes the round before it; the one built inside
+    // startBattle only opens the first.
+    function installQueueRoundHooks() {
+        if (!roundsByQueue() || BattleManager.makeITBSRound._bseRounds) return;
+        const _makeITBSRound = BattleManager.makeITBSRound;
+        const wrapped = function() {
+            if (this._phase === 'turn') onRoundEnd();
+            const round = _makeITBSRound.apply(this, arguments);
+            onRoundStart();
+            return round;
+        };
+        wrapped._bseRounds = true;
+        BattleManager.makeITBSRound = wrapped;
+    }
+    BSE.Functions.installQueueRoundHooks = installQueueRoundHooks;
+
+    if (typeof Scene_Boot !== 'undefined') {
+        const _Scene_Boot_start_bseRounds = Scene_Boot.prototype.start;
+        Scene_Boot.prototype.start = function() {
+            installQueueRoundHooks();
+            _Scene_Boot_start_bseRounds.apply(this, arguments);
+        };
+    }
 
     // The engine's own processVictory() already calls gainRewards() right after
     // this, so paying here as well handed the party every reward twice: double
@@ -598,6 +647,16 @@
     // (BattleSystemEnhancedDeath.js).
 
     BattleManager.processDefeat = function() {
+        // A fight set up as losable (a work hazard, an anomaly, an event's
+        // "Can Lose") is an answer, not a death: the party gets back up where
+        // it stands and whoever started the fight hears it was lost, the way
+        // the engine's own processDefeat does it.
+        if (this._canLose) {
+            $gameParty.reviveBattleMembers();
+            this.replayBgmAndBgs();
+            this.endBattle(2);
+            return;
+        }
         const _storyModeMaps = [1414, 1415, 1416, 1417];
         const inStoryMode = $gameSwitches.value(75) && _storyModeMaps.includes($gameMap.mapId());
         AudioManager.stopBgm();
@@ -617,6 +676,11 @@
         BSE.State.needsRespawn = true;
         const actor1 = $gameParty.members()[0];
         if (actor1) actor1.recoverAll();
+        // The battle is closed the engine's way before the scene is left: every
+        // endBattle hook (the battle event ids in section 6, summons, weapon
+        // models, the event's own callback) ran on a win and an escape but
+        // never on a defeat, so the next fight inherited the last one's state.
+        this.endBattle(2);
         this._escaped = true;
         this.updateBattleEnd();
     };
@@ -1419,6 +1483,13 @@
                 }
                 this.createRewardsPopup();
             }
+            // The record belongs to the battle that wrote it and is spent here.
+            // Left standing, it was handed to the NEXT fight that did not write
+            // one of its own (a monster hooked while fishing, for one): every
+            // procedural square is map 636, so the mapId test passed and the
+            // party was put down on tiles from another square, out at sea.
+            $gameSystem._p1PreBattlePos = null;
+            $gameSystem._p2PreBattlePos = null;
 
             $gameSystem.setBattleEnded(false);
             $gameSystem.setFullPartyWipe(false);
@@ -1580,6 +1651,253 @@
                 _Game_Actor_updateStateSteps.call(this, state);
             };
         }
+    }
+
+    // ===== DelayedEffects: states that go off when they run out =====
+    // A state may carry a payload that resolves the moment it EXPIRES on its
+    // own (its turns tick down in removeStatesAuto). A cure, death or the end
+    // of the fight erases it without firing anything.
+    //
+    //   <OnExpire: skillId>        the battler who applied the state casts that
+    //                              skill: a one-target skill lands on the
+    //                              holder, an all-target one on the holder's
+    //                              whole side, whatever side the caster is on
+    //   <OnExpireDamage: formula>  HP damage to the holder (a = the caster,
+    //                              b = the holder, v = game variables)
+    //   <OnExpireHeal: formula>    HP restored to the holder instead
+    //   <OnExpireArea>             the damage / heal reaches the holder's side
+    //   <OnExpireElement: n>       element of that damage (elementRate applies)
+    //   <OnExpireAnimation: n>     animation played on whoever is struck
+    //
+    // IndividualBattleTurns ticks a battler's states at the START of its own
+    // slot (onTurnEnd in updateTpb), so a countdown resolves before the holder
+    // acts: Doom drops its victim before its turn, and a holder it kills is
+    // simply skipped. MapBattleMode runs the same round loop, so the hook is
+    // the same there; the payload never goes through makeTargets, so a caster
+    // standing out of range on the map still has its countdown land.
+    const DelayedEffects = (window.DelayedEffects = window.DelayedEffects || {});
+
+    DelayedEffects.metaOf = function(state) {
+        if (!state) return null;
+        if (state._delayedMeta !== undefined) return state._delayedMeta;
+        const note = String(state.note || '');
+        const tag = (name) => {
+            const m = note.match(new RegExp('<' + name + '(?::\\s*([^>]*))?>', 'i'));
+            return m ? (m[1] === undefined ? true : String(m[1]).trim()) : null;
+        };
+        const skillId = Number(tag('OnExpire')) || 0;
+        const damage = tag('OnExpireDamage');
+        const heal = tag('OnExpireHeal');
+        const meta = (skillId || typeof damage === 'string' || typeof heal === 'string') ? {
+            skillId,
+            formula: typeof heal === 'string' ? heal : (typeof damage === 'string' ? damage : ''),
+            heal: typeof heal === 'string',
+            area: !!tag('OnExpireArea'),
+            elementId: Number(tag('OnExpireElement')) || 0,
+            animationId: Number(tag('OnExpireAnimation')) || 0,
+        } : null;
+        try { Object.defineProperty(state, '_delayedMeta', { value: meta, configurable: true }); }
+        catch (e) { /* frozen row: parse again next time */ }
+        return meta;
+    };
+
+    // Who applied a state, as a key that survives a save (never a reference).
+    DelayedEffects.keyOf = function(battler) {
+        if (!battler) return null;
+        if (battler.isActor && battler.isActor()) return { a: battler.actorId() };
+        if (battler.isEnemy && battler.isEnemy()) return { e: battler.index() };
+        return null;
+    };
+    DelayedEffects.resolve = function(key) {
+        if (!key) return null;
+        if (key.a && typeof $gameActors !== 'undefined' && $gameActors) return $gameActors.actor(key.a) || null;
+        if (key.e !== undefined && typeof $gameTroop !== 'undefined' && $gameTroop) return $gameTroop.members()[key.e] || null;
+        return null;
+    };
+
+    DelayedEffects._applier = null;
+
+    DelayedEffects.inBattle = function() {
+        return !!(typeof $gameParty !== 'undefined' && $gameParty && $gameParty.inBattle && $gameParty.inBattle());
+    };
+
+    DelayedEffects.log = function() {
+        return (typeof BattleManager !== 'undefined' && BattleManager && BattleManager._logWindow) || null;
+    };
+
+    DelayedEffects.sideOf = function(holder) {
+        const unit = holder.friendsUnit ? holder.friendsUnit() : null;
+        const alive = unit ? unit.aliveMembers() : [];
+        return alive.length ? alive : [holder];
+    };
+
+    DelayedEffects.evalFormula = function(formula, a, b) {
+        try {
+            const v = typeof $gameVariables !== 'undefined' && $gameVariables ? $gameVariables._data : [];
+            const value = Number(new Function('a', 'b', 'v', 'return (' + formula + ');')(a, b, v)); // i18n-ignore: formula source
+            return isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+        } catch (e) {
+            console.warn('DelayedEffects: bad formula', formula, e);
+            return 0;
+        }
+    };
+
+    // Resolve one expired state. Returns the battlers it reached.
+    DelayedEffects.trigger = function(holder, stateId, sourceKey) {
+        const state = $dataStates[stateId];
+        const meta = DelayedEffects.metaOf(state);
+        if (!meta || !holder) return [];
+        const caster = DelayedEffects.resolve(sourceKey) || holder;
+        const log = DelayedEffects.log();
+        const stateName = typeof window.translateText === 'function' ? window.translateText(state.name) : state.name;
+        if (log && typeof T === 'function') log.push('addText', T('Battle.delayed.triggered', { state: stateName, name: holder.name() }));
+        const reached = [];
+
+        if (meta.skillId && $dataSkills[meta.skillId] && typeof Game_Action !== 'undefined') {
+            const action = new Game_Action(caster, true);
+            action.setSkill(meta.skillId);
+            const targets = action.isForAll() ? DelayedEffects.sideOf(holder)
+                : (holder.isAlive() || action.isForDeadFriend() ? [holder] : []);
+            const skill = $dataSkills[meta.skillId];
+            if (log && targets.length && skill.animationId > 0) log.push('showAnimation', caster, targets.slice(), skill.animationId);
+            for (const target of targets) {
+                const repeats = Math.max(1, action.numRepeats ? action.numRepeats() : 1);
+                for (let i = 0; i < repeats; i++) action.apply(target);
+                if (log) log.displayActionResults(caster, target);
+                reached.push(target);
+            }
+            // The common events only: applyGlobal would also file the payload
+            // as the caster's "last used skill", which it never chose.
+            for (const effect of skill.effects || []) {
+                if (effect.code === Game_Action.EFFECT_COMMON_EVENT && typeof $gameTemp !== 'undefined' && $gameTemp) {
+                    $gameTemp.reserveCommonEvent(effect.dataId);
+                }
+            }
+        }
+
+        if (meta.formula) {
+            const targets = meta.area ? DelayedEffects.sideOf(holder) : (holder.isAlive() ? [holder] : []);
+            if (log && targets.length && meta.animationId > 0) log.push('showAnimation', caster, targets.slice(), meta.animationId);
+            for (const target of targets) {
+                let value = DelayedEffects.evalFormula(meta.formula, caster, target);
+                if (!meta.heal && meta.elementId > 0 && target.elementRate) value = Math.floor(value * target.elementRate(meta.elementId));
+                const result = target.result();
+                result.clear();
+                result.used = true;
+                if (meta.heal) {
+                    target.gainHp(value);
+                } else {
+                    target.gainHp(-value);
+                    if (value > 0 && target.onDamage) target.onDamage(value);
+                }
+                if (log) log.displayActionResults(caster, target);
+                reached.push(target);
+            }
+        }
+        if (typeof BattleManager !== 'undefined' && BattleManager.refreshStatus) BattleManager.refreshStatus();
+        return reached;
+    };
+
+    if (typeof Game_Action !== 'undefined' && Game_Action.prototype && Game_Action.prototype.apply) {
+        const _Game_Action_apply_delayed = Game_Action.prototype.apply;
+        Game_Action.prototype.apply = function(target) {
+            const prev = DelayedEffects._applier;
+            DelayedEffects._applier = this.subject();
+            try {
+                _Game_Action_apply_delayed.call(this, target);
+            } finally {
+                DelayedEffects._applier = prev;
+            }
+        };
+    }
+
+    if (typeof Game_Battler !== 'undefined' && Game_Battler.prototype) {
+        const _Game_Battler_addState_delayed = Game_Battler.prototype.addState;
+        Game_Battler.prototype.addState = function(stateId) {
+            _Game_Battler_addState_delayed.call(this, stateId);
+            if (!DelayedEffects.metaOf($dataStates[stateId]) || !this.isStateAffected(stateId)) return;
+            if (!this._delayedSources) this._delayedSources = {};
+            this._delayedSources[stateId] = DelayedEffects.keyOf(DelayedEffects._applier || this);
+        };
+
+        const _Game_Battler_removeState_delayed = Game_Battler.prototype.removeState;
+        Game_Battler.prototype.removeState = function(stateId) {
+            _Game_Battler_removeState_delayed.call(this, stateId);
+            if (this._delayedSources && !this.isStateAffected(stateId)) delete this._delayedSources[stateId];
+        };
+
+        // The one place a state runs out on its own: what it carries fires here.
+        const _Game_Battler_removeStatesAuto_delayed = Game_Battler.prototype.removeStatesAuto;
+        Game_Battler.prototype.removeStatesAuto = function(timing) {
+            const due = [];
+            if (DelayedEffects.inBattle()) {
+                for (const state of this.states()) {
+                    if (state && state.autoRemovalTiming === timing && this.isStateExpired(state.id) &&
+                        DelayedEffects.metaOf(state)) {
+                        due.push({ id: state.id, source: (this._delayedSources || {})[state.id] || null });
+                    }
+                }
+            }
+            _Game_Battler_removeStatesAuto_delayed.call(this, timing);
+            for (const d of due) {
+                if (this.isStateAffected(d.id)) continue;
+                try {
+                    DelayedEffects.trigger(this, d.id, d.source);
+                } catch (e) {
+                    console.warn('DelayedEffects: payload of state ' + d.id + ' failed', e);
+                }
+            }
+        };
+
+        const _Game_Battler_onBattleEnd_delayed = Game_Battler.prototype.onBattleEnd;
+        Game_Battler.prototype.onBattleEnd = function() {
+            _Game_Battler_onBattleEnd_delayed.call(this);
+            delete this._delayedSources;
+        };
+    }
+
+    // The skill card's Special column: one line per state the skill inflicts
+    // that carries a payload, saying when it goes off and on whom.
+    DelayedEffects.specialLines = function(skill) {
+        const out = [];
+        if (!skill || typeof $dataStates === 'undefined' || !$dataStates) return out;
+        const tr = (text) => (typeof window.translateText === 'function' ? window.translateText(text) : text);
+        for (const eff of skill.effects || []) {
+            if (eff.code !== 21) continue;
+            const state = $dataStates[eff.dataId];
+            const meta = DelayedEffects.metaOf(state);
+            if (!meta) continue;
+            const turns = state.minTurns === state.maxTurns ? String(state.minTurns) : state.minTurns + '-' + state.maxTurns;
+            const params = { state: tr(state.name), turns };
+            if (meta.skillId && $dataSkills[meta.skillId]) {
+                const payload = $dataSkills[meta.skillId];
+                params.skill = tr(payload.name);
+                const all = [2, 8, 10, 14].includes(payload.scope);
+                const key = all ? 'expireSkillArea' : 'expireSkill';
+                out.push({ name: T('SkillsMenu.specialName.' + key, params), desc: T('SkillsMenu.special.' + key, params) });
+            }
+            if (meta.formula) {
+                const key = meta.heal ? 'expireHeal' : (meta.area ? 'expireDamageArea' : 'expireDamage');
+                out.push({ name: T('SkillsMenu.specialName.' + key, params), desc: T('SkillsMenu.special.' + key, params) });
+            }
+        }
+        return out;
+    };
+    DelayedEffects.registerSpecial = function() {
+        if (DelayedEffects._specialRegistered) return true;
+        const SD = window.SkillDetails;
+        if (!SD || typeof SD.registerSpecial !== 'function') return false;
+        SD.registerSpecial(DelayedEffects.specialLines);
+        DelayedEffects._specialRegistered = true;
+        return true;
+    };
+    // CategorizedBattleSkills loads after this plugin: register once it exists.
+    if (!DelayedEffects.registerSpecial() && typeof Scene_Boot !== 'undefined' && Scene_Boot.prototype) {
+        const _Scene_Boot_start_delayed = Scene_Boot.prototype.start;
+        Scene_Boot.prototype.start = function() {
+            DelayedEffects.registerSpecial();
+            _Scene_Boot_start_delayed.call(this);
+        };
     }
 
     // ========================================================================

@@ -19,7 +19,8 @@
  * and per-monster-id variation from window.Battler3D.Base.
  *
  * Registered: CrystalEntity, Mineral, Bacterial, Gorgon, AbyssalLeviathan,
- *             Ophanim, Centaur
+ *             Ophanim, Centaur, and the level 1-5 Ophanim Ringlet
+ *             (lv_ophanimringlet)
  *
  * MUST load AFTER BattleSystem/3DBattlerSystem.
  */
@@ -49,8 +50,12 @@
         cindermawhound:   { variant: 'cindermawhound', scale: 2.5, texturePool: 'ash', bodyColor: 0x33302e, accent: 0xff5522, hue: [0.04, 0.03], sat: [0.30, 0.12], lit: [0.20, 0.06] },
         crystalhoarder:   { variant: 'crystalhoarder', scale: 2.7, texturePool: 'crystal', bodyColor: 0x9a86c4, accent: 0xffd24a, hue: [0.74, 0.08], sat: [0.40, 0.12], lit: [0.55, 0.10], front: true },
         crystalsiren:     { variant: 'crystalsiren', scale: 2.7, texturePool: 'crystal', bodyColor: 0xf0a0d0, accent: 0xffe0ff, hue: [0.90, 0.06], sat: [0.55, 0.12], lit: [0.66, 0.08], front: true },
-        emeraldstalker:   { variant: 'emeraldstalker', scale: 2.7, texturePool: 'crystal', bodyColor: 0x2aa05a, accent: 0xaaff66, hue: [0.38, 0.06], sat: [0.60, 0.12], lit: [0.42, 0.08], front: true }
+        emeraldstalker:   { variant: 'emeraldstalker', scale: 2.7, texturePool: 'crystal', bodyColor: 0x2aa05a, accent: 0xaaff66, hue: [0.38, 0.06], sat: [0.60, 0.12], lit: [0.42, 0.08], front: true },
+        // Ophanim Ringlet (level 1-5, bespoke): one eyed wheel, a staring
+        // central eye on spokes, three gyroscope rings and two tiny wings.
+        lv_ophanimringlet: { variant: 'lv_ophanimringlet', scale: 2.0, texturePool: 'pale', bodyColor: 0xf0e2b0, accent: 0x3a8aff, hue: [0.12, 0.04], sat: [0.40, 0.12], lit: [0.72, 0.08], front: true }
     };
+    const V = (x, y, z) => new THREE.Vector3(x, y, z);
 
     class ExoticBattler3D extends Base {
         constructor(scale, offsetY, battler, weaponType, creatureType) {
@@ -79,6 +84,7 @@
                 case 'crystalhoarder': this._buildHoarder(); break;
                 case 'crystalsiren':  this._buildSiren(); break;
                 case 'emeraldstalker': this._buildStalker(); break;
+                case 'lv_ophanimringlet': this._buildOphanimRinglet(); break;
                 default:          this._buildCrystal(); break;
             }
             this.model = this.bodyGroup;
@@ -284,6 +290,62 @@
             ];
         }
 
+        // ── Ophanim Ringlet: the first wheel of a heavenly watcher ────────────
+        // WHEEL_ONE is a thick gilded ring facing the viewer with a row of eyes
+        // set into its face that blink in turn as it rolls; the EYE_RING is the
+        // single great eye at the hub on four spokes, which never blinks;
+        // WHEEL_TWO..FOUR are thin gyroscope hoops cutting through the main
+        // ring at three tilts; MOUTH is a small lipped mouth on the low spoke.
+        _buildOphanimRinglet() {
+            const p = this.profile;
+            const gold = this.applySkin(this._mat(p.bodyColor, 1.0, 0.3, 0x2a2008));
+            const hub = V(0, 1.3, 0);
+            this.wheel1 = new THREE.Group(); this.wheel1.position.copy(hub); this.bodyGroup.add(this.wheel1);
+            this.wheel1.add(new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.09, 6, 16), gold));
+            this._rimEyes = [];
+            for (let i = 0; i < 10; i++) {
+                const a = (i / 10) * Math.PI * 2, e = this._eye(this.wheel1, Math.cos(a) * 0.5, Math.sin(a) * 0.5, 0.08, 0.07, p.accent);
+                this._rimEyes.push(e);
+            }
+            // The hub eye on its four spokes (not on the wheel, so it stays upright).
+            this.eyeRing = new THREE.Group(); this.eyeRing.position.copy(hub); this.bodyGroup.add(this.eyeRing);
+            for (let i = 0; i < 4; i++) { const a = Math.PI / 4 + (i / 4) * Math.PI * 2; this.addStrut(this.eyeRing, gold, V(0, 0, 0), V(Math.cos(a) * 0.45, Math.sin(a) * 0.45, 0), 0.03, 0.02, 5); }
+            const great = new THREE.Mesh(new THREE.SphereGeometry(0.17, 10, 8), this._mat(0xfff8ea, 1, 0.2)); this.eyeRing.add(great);
+            const iris = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), this._mat(p.accent, 1, 0.2, p.accent)); iris.position.z = 0.13; iris.scale.z = 0.6; this.eyeRing.add(iris);
+            const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 4), this._mat(0x05050a, 1, 0.2)); pupil.position.z = 0.175; pupil.scale.z = 0.5; this.eyeRing.add(pupil);
+            this._greatIris = iris;
+            // MOUTH: on a short drop below the hub eye.
+            this.mouth = new THREE.Group(); this.mouth.position.set(0, 1.08, 0.04); this.bodyGroup.add(this.mouth);
+            this.addStrut(this.mouth, gold, V(0, 0.12, -0.04), V(0, 0, 0), 0.025, 0.025, 4);
+            const lips = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.018, 4, 10), this._mat(0xc85a6a, 1, 0.5)); lips.scale.y = 0.45; lips.position.z = 0.02; this.mouth.add(lips);
+            // Gyroscope hoops: radius set inside the main ring's tube so each
+            // hoop passes through it wherever the two cross.
+            const hoopMat = this._mat(p.bodyColor, 0.9, 0.25, 0x2a2008);
+            const hoops = [];
+            for (let i = 0; i < 3; i++) {
+                const g = new THREE.Group(); g.position.copy(hub); g.rotation.set(0.4 + i * 0.9, i * 1.1, 0); this.bodyGroup.add(g);
+                g.add(new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.022, 4, 20), hoopMat)); hoops.push(g);
+            }
+            this.wheel2 = hoops[0]; this.wheel3 = hoops[1]; this.wheel4 = hoops[2];
+            // Two small feathered wings on the rim, the odd cherub touch.
+            this._wings = [];
+            for (const s of [-1, 1]) {
+                const w = new THREE.Group(); w.position.set(hub.x + s * 0.56, hub.y + 0.05, -0.02); this.bodyGroup.add(w);
+                for (let k = 0; k < 4; k++) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.3 - k * 0.04, 3), this._mat(0xffffff, 1, 0.6)); f.position.set(s * (0.1 + k * 0.03), 0.06 + k * 0.03, -0.01 * k); f.rotation.z = -s * (1.1 + k * 0.25); f.scale.z = 0.3; w.add(f); }
+                w._side = s; this._wings.push(w);
+            }
+            this._wheels = [this.wheel1, ...hoops];
+            this._partMeshMap = { WHEEL_ONE: this.wheel1, WHEEL_TWO: this.wheel2, WHEEL_THREE: this.wheel3, WHEEL_FOUR: this.wheel4, EYE_RING: this.eyeRing, MOUTH: this.mouth, CORE: this.eyeRing };
+            this._cascadeRules = [
+                { gone: ['EYE_RING', 'CORE'], hide: [this.eyeRing, this.mouth, ...this._wheels, ...this._wings] },
+                { gone: ['WHEEL_ONE'], hide: [this.wheel1, ...this._wings] },
+                { gone: ['WHEEL_TWO'], hide: [this.wheel2] },
+                { gone: ['WHEEL_THREE'], hide: [this.wheel3] },
+                { gone: ['WHEEL_FOUR'], hide: [this.wheel4] },
+                { gone: ['MOUTH'], hide: [this.mouth] },
+            ];
+        }
+
         // ── Centaur: humanoid torso on a horse body ───────────────────────────
         _buildCentaur() {
             const p = this.profile;
@@ -301,9 +363,9 @@
             this._eye(this.head, -0.1, 0.05, 0.2, 0.05, 0x111111); this._eye(this.head, 0.1, 0.05, 0.2, 0.05, 0x111111);
             this.head.position.set(0, 2.05, 0.35); this.bodyGroup.add(this.head);
             this.leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.05, 0.6, 8), mat);
-            this.leftArm.position.set(-0.32, 1.65, 0.35); this.leftArm.rotation.z = 0.5; this.bodyGroup.add(this.leftArm);
+            this.leftArm.position.set(-0.36, 1.6, 0.35); this.leftArm.rotation.z = -0.2; this.bodyGroup.add(this.leftArm);
             this.rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.05, 0.6, 8), mat);
-            this.rightArm.position.set(0.32, 1.65, 0.35); this.rightArm.rotation.z = -0.5; this.bodyGroup.add(this.rightArm);
+            this.rightArm.position.set(0.36, 1.6, 0.35); this.rightArm.rotation.z = 0.2; this.bodyGroup.add(this.rightArm);
             this._partMeshMap = { BODY: this.body, TORSO: this.torso, HEAD: this.head, LEFT_ARM: this.leftArm, RIGHT_ARM: this.rightArm, LEFT_LEG: this.frontLeft, RIGHT_LEG: this.frontRight, REAR_LEFT_LEG: this.rearLeft, REAR_RIGHT_LEG: this.rearRight };
             this._cascadeRules = [
                 { gone: ['BODY'], hide: [this.body, this.torso, this.head, this.leftArm, this.rightArm, this.frontLeft, this.frontRight, this.rearLeft, this.rearRight] },
@@ -614,6 +676,16 @@
                     if (this.eyeRing) this.eyeRing.rotation.z = t * 0.5;
                     break;
                 }
+                case 'lv_ophanimringlet': {
+                    // The wheel rolls, the rim eyes blink one after another, the
+                    // hoops spin, and the great eye never looks away.
+                    if (this.wheel1) this.wheel1.rotation.z = t * (fast ? 2.4 : 0.6);
+                    if (this._rimEyes) this._rimEyes.forEach((e, i) => { const ph = (t * 1.6 - i * 0.35) % 3.5; e.scale.y = (ph > 0 && ph < 0.18) ? 0.15 : 1; });
+                    [this.wheel2, this.wheel3, this.wheel4].forEach((h, i) => { if (h) h.rotation.z = t * (i % 2 ? -1 : 1) * (fast ? 3 : 1.1); });
+                    if (this._wings) this._wings.forEach(w => { w.rotation.z = w._side * Math.sin(t * (fast ? 14 : 6)) * 0.25; });
+                    if (this._greatIris && this._greatIris.material) this._greatIris.material.emissiveIntensity = 0.4 + Math.abs(Math.sin(t * 2)) * 0.5;
+                    break;
+                }
                 case 'centaur': {
                     const gait = fast ? 8 : 2.4;
                     [this.frontLeft, this.rearRight].forEach(l => { if (l) l.rotation.x = Math.sin(t * gait) * 0.2 * stride; });
@@ -675,6 +747,15 @@
     // archetype (3DBattler_Bosses.js), so registering it here would only shadow both.
     reg('ophanim',          { aliases: ['ophanim', 'ophan', 'thronebearer'], scale: S.ophanim.scale, weapon: 0, create: make });
     reg('centaur',          { aliases: ['centaur', 'centaurs'], scale: S.centaur.scale, weapon: 0, create: make });
+    reg('lv_ophanimringlet', { aliases: ['lv_ophanimringlet'], scale: S.lv_ophanimringlet.scale, weapon: 0, create: make });
+
+    // Exact-name pins (also parsed by scripts/gen_3d_models_doc.js).
+    const NAMED = {
+        lv_ophanimringlet: ["Ophanim Ringlet"]
+    };
+    if (window.Battler3D.registerNamed) {
+        for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));
+    }
 
     debugLog('Exotic family registered');
 

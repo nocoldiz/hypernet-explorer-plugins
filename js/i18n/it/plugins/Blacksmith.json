@@ -5,10 +5,10 @@
   "trades": "Mestieri",
   "methods": "Metodi di produzione",
   "tooComplex": "Troppo complessi",
-  "tooComplexShort": "Oltre queste mani",
+  "tooComplexShort": "Troppo difficile",
   "materials": "Materiali",
   "forge": "Forgia",
-  "forged": "Forgiato!",
+  "forged": "Forgiatura riuscita!",
   "noMaterials": "Materiali insufficienti",
   "noRecipes": "Niente qui...",
   "back": "INDIETRO",
@@ -26,163 +26,152 @@
   "yes": "Sì",
   "searchPlaceholder": "Cerca pezzi…",
   "forgedTab": "Forgiati",
-  "alreadyForged": "Già uscito dall'incudine",
+  "alreadyForged": "Già forgiato",
   "finish": "Finitura",
   "finishStrange": "Strane",
-  "finishAuto": "Come viene",
+  "finishAuto": "Casuale",
   "smeltNone": "Niente da fondere",
-  "smelted": "Di nuovo nel crogiolo",
-  "madeBy": "Battuto da {smith}",
+  "smelted": "Fuso",
+  "madeBy": "Opera di {smith}",
   "forgedName": "{name} di {smith}",
   "forgedNameNumbered": "{name} di {smith} {mark}",
-  "forgedDesc": "Forgiato da {smith}. Lavoro {quality}, è unico nel suo genere.",
+  "forgedDesc": "Opera di {smith}, {quality}. Pezzo unico.",
+  "forgedNameTier": "{name} di {smith} ({quality})",
+  "forgedNameNumberedTier": "{name} di {smith} {mark} ({quality})",
+  "forgedDescTier": "Opera di {smith}, {quality}.",
   "nameHeader": "Nome",
   "namePlaceholder": "Dai un nome a questo pezzo…",
   "nameReroll": "Tira un altro nome",
   "quality": {
-    "crude": "grezzo",
-    "sound": "solido",
-    "fine": "pregiato",
-    "superb": "superbo",
+    "crude": "di fattura grezza",
+    "sound": "di buona fattura",
+    "fine": "di pregio",
+    "superb": "d'eccellenza",
     "masterwork": "da maestro"
   },
   "nameBank": {
     "blade": {
       "prefix": [
-        "Vedova",
-        "Cupo",
-        "Sangue",
-        "Corvo",
-        "Cenere",
-        "Gelo",
-        "Notte",
-        "Ferro",
-        "Spettro",
-        "Tempesta",
-        "Pallido",
-        "Nero"
-      ],
-      "noun": [
         "Zanna",
         "Lama",
         "Spina",
-        "Falciata",
         "Sussurro",
         "Morso",
-        "Fendente",
         "Dente",
         "Canto",
+        "Filo",
         "Squarcio",
-        "Puntura",
-        "Taglio"
+        "Pungiglione",
+        "Taglio",
+        "Falce"
+      ],
+      "noun": [
+        "della Vedova",
+        "del Corvo",
+        "di Sangue",
+        "di Cenere",
+        "di Gelo",
+        "della Notte",
+        "di Ferro",
+        "dello Spettro",
+        "della Tempesta",
+        "dell'Ombra",
+        "del Lutto",
+        "della Luna Pallida"
       ]
     },
     "heavy": {
       "prefix": [
-        "Ferro",
-        "Pietra",
-        "Teschio",
-        "Tempesta",
-        "Tomba",
-        "Rovina",
-        "Vedova",
-        "Cenere",
-        "Osso",
-        "Tuono",
-        "Nero",
-        "Vecchio"
-      ],
-      "noun": [
         "Spaccaossa",
         "Frantumatore",
-        "Mazza",
-        "Rovina",
-        "Squarciatore",
-        "Schianto",
-        "Devastatore",
-        "Scossa",
+        "Maglio",
         "Martello",
-        "Caduta",
+        "Schianto",
+        "Flagello",
         "Macina",
-        "Sfondatore"
+        "Sfondatore",
+        "Squasso",
+        "Rintocco",
+        "Crollo",
+        "Devastatore"
+      ],
+      "noun": [
+        "di Ferro",
+        "di Pietra",
+        "del Teschio",
+        "della Tempesta",
+        "della Tomba",
+        "del Giudizio",
+        "della Vedova",
+        "di Cenere",
+        "d'Osso",
+        "del Tuono",
+        "delle Tenebre",
+        "dei Padri"
       ]
     },
     "gun": {
       "prefix": [
-        "Rosso",
-        "Ferro",
-        "Notte",
-        "Spettro",
-        "Silenzio",
-        "Morto",
-        "Alto",
-        "Ultimo",
-        "Freddo",
-        "Lungo",
-        "Nero",
-        "Grigio"
-      ],
-      "noun": [
         "Linea",
-        "Fabbro",
         "Sussurro",
         "Richiamo",
-        "Redenzione",
+        "Giudizio",
         "Raffica",
         "Eco",
-        "Guardia",
+        "Sentinella",
         "Colpo",
         "Marchio",
         "Latrato",
-        "Canto"
+        "Canto",
+        "Resa dei Conti"
+      ],
+      "noun": [
+        "di Ferro",
+        "della Notte",
+        "dello Spettro",
+        "del Silenzio",
+        "del Morto",
+        "dell'Alba",
+        "dell'Ultima Ora",
+        "del Gelo",
+        "della Lunga Distanza",
+        "di Piombo",
+        "del Crepuscolo",
+        "del Lupo Grigio"
       ]
     },
     "wood": {
       "prefix": [
-        "Salice",
-        "Tempesta",
-        "Vento",
-        "Argento",
-        "Verde",
-        "Luna",
-        "Selvaggio",
-        "Cenere",
-        "Profondo",
-        "Vecchio",
-        "Grigio",
-        "Lungo"
-      ],
-      "noun": [
         "Ramo",
         "Portata",
         "Fischio",
-        "Vagante",
+        "Viandante",
         "Fronda",
         "Ago",
         "Spina",
-        "Bruma",
+        "Soffio",
         "Radice",
         "Puntura",
         "Canto",
         "Cocca"
+      ],
+      "noun": [
+        "di Salice",
+        "della Tempesta",
+        "del Vento",
+        "d'Argento",
+        "del Bosco Verde",
+        "della Luna",
+        "della Selva",
+        "di Frassino",
+        "del Profondo",
+        "dei Vecchi",
+        "della Nebbia",
+        "del Lungo Inverno"
       ]
     },
     "magic": {
       "prefix": [
-        "Astrale",
-        "Vuoto",
-        "Arcano",
-        "Brace",
-        "Spettrale",
-        "Runico",
-        "Lunare",
-        "Prismatico",
-        "Arcaico",
-        "Cavo",
-        "Ombroso",
-        "Dorato"
-      ],
-      "noun": [
         "Trama",
         "Sigillo",
         "Bagliore",
@@ -195,24 +184,24 @@
         "Canto",
         "Custodia",
         "Vincolo"
+      ],
+      "noun": [
+        "delle Stelle",
+        "del Vuoto",
+        "dell'Arcano",
+        "di Brace",
+        "degli Spettri",
+        "delle Rune",
+        "della Luna",
+        "del Prisma",
+        "del Fato",
+        "dell'Abisso",
+        "dell'Ombra",
+        "d'Oro"
       ]
     },
     "default": {
       "prefix": [
-        "Ferro",
-        "Grigio",
-        "Vecchio",
-        "Vero",
-        "Silenzioso",
-        "Selvaggio",
-        "Lontano",
-        "Solitario",
-        "Alto",
-        "Ultimo",
-        "Quieto",
-        "Semplice"
-      ],
-      "noun": [
         "Mano",
         "Guardia",
         "Sentiero",
@@ -225,6 +214,20 @@
         "Riparo",
         "Stretta",
         "Linea"
+      ],
+      "noun": [
+        "di Ferro",
+        "del Grigio",
+        "dei Vecchi Tempi",
+        "del Giusto",
+        "del Silenzio",
+        "della Selva",
+        "delle Terre Lontane",
+        "del Solitario",
+        "delle Alture",
+        "dell'Ultimo Giorno",
+        "della Quiete",
+        "del Viandante"
       ]
     }
   },
@@ -233,7 +236,7 @@
     "ready": "Pronti",
     "short": "Senza materiali",
     "locked": "Non addestrato",
-    "owned": "In borsa",
+    "owned": "Nello zaino",
     "forged": "Forgiati",
     "salvage": "Smonta"
   },
@@ -242,31 +245,31 @@
   "readyCount": "{n} pronti",
   "tradeHint": "{known} di {total} formule conosciute",
   "pieceCount": "{n} pezzi",
-  "pickHint": "Scegli un pezzo per vedere cosa serve a farlo.",
+  "pickHint": "Scegli un pezzo per vederne la ricetta.",
   "smelt": "Fondi",
   "qtyMax": "Max",
   "batchCount": "x{n}",
   "autoSmith": "Auto",
-  "autoSmithHint": "Ogni pezzo e forgiato dal membro del gruppo piu abile",
-  "modelEdit": "Modifica modello",
-  "modelEditFitted": "Modifica modello ({n} montate)",
+  "autoSmithHint": "Il membro più abile forgia ogni pezzo",
+  "modelEdit": "Modifica modello (WIP)",
+  "modelEditFitted": "Modifica modello ({n} montate) (WIP)",
   "sculpt": {
-    "title": "Editor del modello",
-    "hint": "Trascina lo sfondo per girare il pezzo. Scegli una parte montata per spostarla, ruotarla o ridimensionarla.",
+    "title": "Editor del modello (WIP)",
+    "hint": "Trascina lo sfondo per ruotare. Clicca una parte montata per selezionarla, poi trascinala per spostarla, ruotarla o ridimensionarla.",
     "thePiece": "Il pezzo",
     "fitted": "Parti montate",
     "noneFitted": "Nessuna parte montata",
     "kept": "Tenuta",
     "removed": "Rimossa",
     "remove": "Togli questa parte",
-    "pickHint": "Scegli una parte montata, o prendine una da un'altra arma mostrata a fianco.",
+    "pickHint": "Scegli una parte dallo scaffale per montarla.",
     "search": "Cerca armi",
     "noDonors": "Nessuna arma corrisponde",
     "undo": "Annulla",
     "redo": "Ripeti",
     "revert": "Ripristina",
     "done": "Fatto",
-    "tooMany": "Un pezzo porta al massimo {n} parti montate",
+    "tooMany": "Massimo {n} parti per pezzo",
     "partName": "{name} ({band})",
     "band": {
       "head": "Testa",
@@ -285,13 +288,42 @@
     "turn": "Rotazione",
     "tilt": "Inclinazione",
     "roll": "Rollio",
-    "size": "Dimensione"
+    "size": "Dimensione",
+    "selectHint": "Scegli una parte montata per spostarla, ruotarla o ridimensionarla.",
+    "parts": "Parti da altre armi",
+    "finish": "Finitura",
+    "resetPart": "Ripristina la parte",
+    "discard": "Scarta le modifiche",
+    "stackNote": "Vale per tutta la pila",
+    "noStage": "Vista 3D non disponibile. Le modifiche valgono comunque.",
+    "noModel": "Nessun modello 3D per questo pezzo. Le modifiche valgono comunque.",
+    "showMore": "Mostra altro ({n})",
+    "less": "Meno {what}",
+    "more": "Più {what}",
+    "minus": "-",
+    "plus": "+",
+    "degrees": "{n}°",
+    "view": {
+      "left": "Gira a sinistra",
+      "right": "Gira a destra",
+      "up": "Inclina su",
+      "down": "Inclina giù",
+      "in": "Più vicino",
+      "out": "Più lontano",
+      "reset": "Vista iniziale"
+    },
+    "armourBand": {
+      "head": "Sopra",
+      "shaft": "Centro",
+      "grip": "Sotto",
+      "whole": "Pezzo intero"
+    }
   },
   "backToBoard": "TORNA AL BANCO",
-  "appearanceHeader": "Come viene fuori",
-  "detailsHeader": "Che cos'è",
+  "appearanceHeader": "Aspetto",
+  "detailsHeader": "Dettagli",
   "carrying": "ne hai {n}",
-  "fixedPattern": "Fatta su un solo schema: questo telaio non si rimodella al banco.",
+  "fixedPattern": "Questo pezzo non si può rimodellare.",
   "nameEdit": "Scrivi il nome",
   "tips": {
     "pick": "Scegli",
@@ -303,27 +335,28 @@
     "leave": "Esci",
     "reroll": "Ritira",
     "sculpt": "Muovi pezzo",
-    "mode": "Maniglia",
+    "mode": "Manipolatore",
     "fitting": "Innesto",
-    "done": "Fatto"
+    "done": "Fatto",
+    "cursor": "Sposta cursore"
   },
   "npcUnique": {
-    "name": "{{base} {adjective} di {owner}|{base} di {owner}, {adjective}}",
+    "name": "{{base} di {owner}, {adjective}|{base} di {owner}, {adjective}|{base} {adjective} di {owner}}",
     "adjective": {
       "weapon": [
         "dal filo {rugginoso|insanguinato}",
         "dalle incisioni lunari",
         "dal manico di frassino",
         "dalla doppia tempra",
-        "dal pomo di rovo",
+        "dalle spire di rovo",
         "dai riflessi di sale",
         "dalla lacca notturna",
         "dagli anelli di rame",
         "dal gelo di tomba",
-        "della buona sorte",
+        "portafortuna",
         "dal filo storto",
         "dall'impugnatura d'osso",
-        "che sussurra",
+        "sussurrante",
         "dal cattivo carattere",
         "dalle borchie d'ottone",
         "dalle vene d'argento",
@@ -331,7 +364,7 @@
       ],
       "armor": [
         "dalle toppe",
-        "della buona sorte",
+        "portafortuna",
         "dal morso delle tarme",
         "dai bottoni d'ottone",
         "dalle macchie di pioggia",
@@ -343,11 +376,11 @@
         "dalla crosta di sale",
         "dai segni di brace",
         "dalla lunga fatica",
-        "della domenica"
+        "per le feste"
       ]
     },
-    "madeFor": "Opera di {maker}, su misura per {owner}.",
-    "madeOwn": "Opera di {owner}, fatta per la propria mano.",
+    "madeFor": "Opera di {maker} per {owner}.",
+    "madeOwn": "Opera di {owner}, fatta per sé.",
     "history": "Da allora: {chain}.",
     "how": {
       "crafted": "la forgiatura di {holder}",
@@ -357,17 +390,17 @@
       "seized": "il saccheggio di {holder}",
       "returned": "la restituzione a {holder}",
       "acquired": "il passaggio a {holder}",
-      "recruited": "l'ingresso nel gruppo di {holder}",
+      "recruited": "il reclutamento da parte di {holder}",
       "sold": "la vendita a {holder}",
-      "soldAt": "la vendita a un banco di {holder}"
+      "soldAt": "la vendita a un negozio di {holder}"
     },
-    "tip": "Pezzo unico. Opera di {maker}, su misura per {owner}.",
-    "tipHeld": "Pezzo unico. Opera di {maker}, su misura per {owner}, ora nelle mani di {holder}."
+    "tip": "Pezzo unico. Fatto da {maker} per {owner}.",
+    "tipHeld": "Pezzo unico. Fatto da {maker} per {owner}. Ora di {holder}."
   },
   "help": {
     "board": {
       "title": "L'officina",
-      "intro": "Scegli un mestiere a sinistra, poi un pezzo a destra per vedere cosa serve a costruirlo.",
+      "intro": "Scegli un mestiere a sinistra, poi un pezzo a destra.",
       "items": {
         "back": {
           "name": "Indietro",
@@ -375,11 +408,11 @@
         },
         "trades": {
           "name": "Metodi di produzione",
-          "text": "I mestieri del gruppo, con quante formule di ciascuno sono note. Sceglierne uno restringe i pezzi della pagina destra a quel mestiere."
+          "text": "I mestieri del Party e quante formule conosce ciascuno. Scegline uno per filtrare l'elenco."
         },
         "member": {
           "name": "Schede dei compagni",
-          "text": "Chi lavora al banco. Auto affida ogni pezzo al membro più bravo a farlo; un nome fa lavorare quel membro su tutto."
+          "text": "Chi lavora. Auto sceglie il membro migliore per ogni pezzo; un nome fa lavorare quel membro su tutto."
         },
         "search": {
           "name": "Cerca",
@@ -387,15 +420,15 @@
         },
         "status": {
           "name": "Schede di stato",
-          "text": "Dividono i pezzi per quel che si può farne: pronti, senza materiali, oltre l'addestramento del fabbro, già portati o già forgiati."
+          "text": "Filtra i pezzi per stato: pronti, senza materiali, non addestrati, nello zaino o forgiati."
         },
         "context": {
           "name": "Riepilogo",
-          "text": "Il mestiere e lo stato mostrati e quanti pezzi corrispondono."
+          "text": "Mestiere, stato e numero di risultati."
         },
         "list": {
           "name": "Pezzi",
-          "text": "Tutto ciò che corrisponde. Apri un pezzo per vederne materiali, aspetto e statistiche, e per costruirlo."
+          "text": "I pezzi trovati. Aprine uno per vederne materiali, aspetto e statistiche, e per costruirlo."
         },
         "help": {
           "name": "? Aiuto",
@@ -411,24 +444,24 @@
           "text": "Ritorna all'elenco dei pezzi."
         },
         "look": {
-          "name": "Come viene fuori",
-          "text": "Un'anteprima del pezzo finito. Modifica modello apre l'editor, dove le parti montate si spostano, ruotano e ridimensionano."
+          "name": "Aspetto",
+          "text": "Anteprima del pezzo finito. Modifica modello apre l'editor per spostare, ruotare e ridimensionare le parti montate."
         },
         "details": {
-          "name": "Che cos'è",
-          "text": "Tipo, slot, rarità, valore, peso e bonus del pezzo, e i materiali che richiede contro quelli che il gruppo porta."
+          "name": "Dettagli",
+          "text": "Tipo, slot, rarità, valore, peso, bonus e materiali richiesti."
         },
         "name": {
           "name": "Nome",
-          "text": "Come si chiamerà il pezzo. Scrivi un nome tuo o tirane uno nuovo."
+          "text": "Il nome del pezzo. Scrivine uno o tirane uno nuovo."
         },
         "batch": {
           "name": "Quantità",
-          "text": "Quanti farne in una volta, entro i materiali a disposizione."
+          "text": "Quanti farne in una volta, entro i materiali disponibili."
         },
         "forge": {
           "name": "Forgia e Fondi",
-          "text": "Forgia costruisce il pezzo e spende i materiali. Fondi smonta una copia portata."
+          "text": "Forgia costruisce il pezzo e consuma i materiali. Fondi smonta una copia nello zaino."
         },
         "help": {
           "name": "? Aiuto",
@@ -444,5 +477,15 @@
   "salvageAllBody": "Smontare tutti i {n} pezzi non equipaggiati di questo scaffale?",
   "salvageAllConfirm": "Smonta",
   "salvageWorker": "{name}: {n}",
-  "salvageMore": "...e altri {n}"
+  "salvageMore": "...e altri {n}",
+  "dice": {
+    "forging": "Forgiatura all'incudine"
+  },
+  "tagsHeader": "Proprietà speciali",
+  "tagsAdd": "+ Aggiungi proprietà",
+  "tagsPick": "Aggiungi una proprietà speciale",
+  "tagsNone": "Nessuna: un pezzo semplice.",
+  "tagsNeed": "Con le sue proprietà",
+  "tagHint": "+{units} materiali, richiede {level}",
+  "tagsDesc": "Forgiato con {tags}."
 }

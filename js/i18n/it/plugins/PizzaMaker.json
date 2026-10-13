@@ -1,0 +1,59 @@
+{
+  "noThree": "Il tavolo 3D non può essere disegnato qui.",
+  "pantry": "Dispensa",
+  "emptySlot": "vuoto",
+  "name": {
+    "plain": "Pizza bianca",
+    "one": "Pizza {a}",
+    "two": "Pizza {a} e {b}",
+    "many": "Pizza suprema {a}",
+    "numbered": "{name} {n}"
+  },
+  "cmd": {
+    "save": "Salva nel ricettario",
+    "serve": "Servi la pizza",
+    "clear": "Togli gli ingredienti",
+    "leave": "Lascia il tavolo"
+  },
+  "status": {
+    "kitchen": "Scegli fino a cinque ingredienti, poi salva la pizza nel ricettario.",
+    "free": "Un cliente aspetta. Prepara quello che ha ordinato.",
+    "added": "{a} sulla pizza.",
+    "removed": "{a} tolto.",
+    "cleared": "Di nuovo una base vuota.",
+    "baking": "In forno...",
+    "continue": "Premi per continuare."
+  },
+  "card": {
+    "cost": "Costo di produzione {cost}",
+    "kcal": "{kcal} kcal",
+    "missing": "{n} ingredienti mancanti",
+    "allInPack": "Hai tutto nello zaino",
+    "base": "Basi per pizza nello zaino: {n}",
+    "noBase": "Nessuna base per pizza nello zaino"
+  },
+  "order": {
+    "title": "Ordine",
+    "crave": "Vuole {a}",
+    "shun": "Odia {a}",
+    "budget": "Budget {cost}"
+  },
+  "result": {
+    "savedTitle": "Ricetta salvata",
+    "ready": "Pronta da infornare in cucina.",
+    "missing": "Mancano {n} ingredienti.",
+    "failTitle": "Non salvata",
+    "servedTitle": "Pizza servita",
+    "stars": "{n} stelle su 3",
+    "hits": "Desideri esauditi: {n} su 2",
+    "shunned": "C'era un ingrediente che odia.",
+    "over": "Buona, ma fuori budget."
+  },
+  "error": {
+    "noBook": "Non c'è un ricettario su cui scrivere.",
+    "noState": "Non c'è un ricettario su cui scrivere.",
+    "tooManyRecipes": "Il ricettario è pieno.",
+    "tooManyToppings": "Una pizza ha al massimo cinque ingredienti.",
+    "noToppings": "Scegli almeno un ingrediente."
+  }
+}

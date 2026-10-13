@@ -1,6 +1,8 @@
 {
   "menu": {
     "defaultStart": "Default Start",
+    "storyDebug": "Story Debug",
+    "forceNewStory": "Force New Story",
     "explore": "New Party",
     "reconnect": "Select Party",
     "storyMode": "New Story",
@@ -17,6 +19,8 @@
   },
   "menuOverlay": {
     "defaultStart": "DEFAULT START",
+    "storyDebug": "STORY DEBUG",
+    "forceNewStory": "FORCE NEW STORY",
     "explore": "NEW PARTY",
     "reconnect": "SELECT PARTY",
     "storyMode": "NEW STORY",
@@ -42,6 +46,7 @@
     "chess": "Chess",
     "bowling": "Bowling",
     "basketball": "Basketball",
+    "pizza": "Pizza Maker",
     "fishing": "Fishing",
     "slotMachine": "Slot Machine",
     "horseRace": "Horse Race",
@@ -65,7 +70,8 @@
     "arcadeCentipede": "Arcade: Crawler",
     "piano": "Piano",
     "hyperdeck": "Build a Hyperdeck",
-    "rocketLaunch": "Rocket Launch"
+    "rocketLaunch": "Rocket Launch",
+    "introMovie": "Intro Movie"
   },
   "minigameSetup": {
     "venueTitle": "Where",
@@ -78,6 +84,9 @@
     "evening": "Evening",
     "night": "Night",
     "vehicleTitle": "How",
+    "diceTitle": "Dice",
+    "diceRandom": "Random",
+    "diceFace": "{face}: {name}",
     "destinationTitle": "Where From",
     "onFoot": "On Foot",
     "camper": "Camper",
@@ -95,11 +104,11 @@
     "header": "NEWS // EARLY BUILD",
     "older": "‹ BACK",
     "newer": "NEXT ›",
-    "empty": "This build shipped without a changelog."
+    "empty": "No changelog for this build."
   },
   "support": {
     "header": "SUPPORT THE DEVELOPMENT",
-    "patronPerk": "Every Patreon subscriber, new and old, gets a habitable planet named after them in another galaxy plus the coordinates of a secret location on the world map, communicated on Patreon only."
+    "patronPerk": "Every Patreon supporter gets a planet named after them in another galaxy and the coordinates of a secret world map location, sent via Patreon."
   },
   "background": {
     "label": "BG: "
@@ -140,14 +149,14 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.8.4a"
+    "text": "0.8.6a"
   },
   "language": {
     "label": "LANG"
   },
   "update": {
     "checking": "✦ CHECKING BUILDS…",
-    "checkingTip": "Asking the update server what the newest build is.",
+    "checkingTip": "Checking for the newest build.",
     "ready": "✦ BUILD {build} READY",
     "readyPlain": "✦ NEW BUILD READY",
     "download": "✦ DOWNLOAD {name}",
@@ -158,20 +167,20 @@
     "installing": "✦ INSTALLING UPDATE",
     "installReady": "✦ INSTALL {name}",
     "installReadyPlain": "✦ INSTALL THE NEW BUILD",
-    "installReadyTip": "The new build is downloaded and waiting. Click to install it; the game will close afterwards so you can reopen it.",
+    "installReadyTip": "Build downloaded. Click to install. The game will close; reopen it after.",
     "restarting": "✦ CLOSING THE GAME",
     "restartReady": "✦ CLOSE TO FINISH",
-    "restartTip": "The new build is installed. Click to close the game, then reopen it yourself to finish.",
+    "restartTip": "Build installed. Click to close the game, then reopen it.",
     "upToDate": "✦ ALREADY UP TO DATE",
     "failed": "✦ UPDATE FAILED, RETRY",
-    "tip": "A newer build is waiting. Click to download and install it; the game closes on its own when it is done, so you can reopen it on the new build.",
+    "tip": "New build available. Click to download and install. The game closes when done; reopen it after.",
     "majorLine": "MAJOR UPDATE, DOWNLOAD THE FULL GAME AFTERWARDS",
-    "majorTip": "This build is a major update. It installs from here, but the whole game must be downloaded again for full compatibility.",
+    "majorTip": "Major update. Installs from here, but redownload the full game for full compatibility.",
     "majorInstalled": "MAJOR UPDATE INSTALLED",
     "majorInstalledLine": "DOWNLOAD THE FULL GAME AGAIN FOR FULL COMPATIBILITY",
-    "majorInstalledTip": "This copy was patched across a major update. Download the whole game again for full compatibility.",
+    "majorInstalledTip": "Patched across a major update. Redownload the full game for full compatibility.",
     "redownload": "✦ REDOWNLOAD THE GAME",
-    "redownloadTip": "A major update is out and this copy is behind it. Patching cannot finish the job, so the whole game has to be downloaded again. Click to open the download page; the updater screen can still install the build by hand."
+    "redownloadTip": "This copy is behind a major update. Click to open the download page, or install the build by hand from the updater screen."
   },
   "hyperverse": {
     "lead": "HYPERVERSE // ",
@@ -277,6 +286,19 @@
       "Mantle",
       "Cuirass"
     ],
+    "adjectivesFem": [
+      "Legendary",
+      "Ancient",
+      "Puzzling",
+      "Alien",
+      "Divine",
+      "Cursed",
+      "Ethereal",
+      "Quantum",
+      "Forgotten",
+      "Astral"
+    ],
+    "nounGender": {},
     "nameFormat": "{adj} {noun}",
     "fallbackType": "Relic"
   }

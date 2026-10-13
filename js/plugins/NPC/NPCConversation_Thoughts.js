@@ -43,6 +43,30 @@
   //   - personalityCoreThoughts       (personality inner voice, fires at random)
   //   - need-based templates          (shared pool, voiced per personality)
 
+  // Gender agreement with the thinker. Every line below is a thought in the
+  // first person, and a language that agrees its participles and adjectives
+  // ("sono stanco" / "sono stanca") writes the forms inline as
+  // {g:masculine|feminine|non-binary}. They are resolved against the
+  // thinker's profile.gender (1 a woman, 2 and up non-binary, anything else a
+  // man) BEFORE vary() runs, which would otherwise read the group as an {a|b}
+  // choice; a group with fewer forms falls back to its last one. English lines
+  // carry no {g:} and pass through untouched. The same convention as
+  // NPCLifeSimulator's agreeGender and NPCEmpathize's _agreeSubject.
+  function _thinkerGenderIndex(profile) {
+    const g = Number(profile?.gender);
+    return g === 1 ? 1 : g >= 2 ? 2 : 0;
+  }
+  function agreeThinker(text, profile) {
+    if (typeof text !== 'string' || text.indexOf('{g:') < 0) return text;
+    const i = _thinkerGenderIndex(profile);
+    return text.replace(/\{g:([^{}]*)\}/g, (whole, forms) => {
+      const list = forms.split('|');
+      return list[Math.min(i, list.length - 1)];
+    });
+  }
+  // One line off a pool, already agreed with whoever is thinking it.
+  const _pickFor = (pool, profile) => agreeThinker(_pickFrom(pool), profile);
+
   // The season the game is in, in the vocabulary the farming and weather
   // plugins already use, with the calendar variable as the fallback.
   const SEASON_MONTHS = { SPRING: [2, 3, 4], SUMMER: [5, 6, 7], AUTUMN: [8, 9, 10] };
@@ -82,14 +106,14 @@
       // about today's sky or this hour of the day.
       if (Math.random() < 0.25) {
         const pool = SEASON_THOUGHTS()[_currentSeason()];
-        if (pool?.length) return vary(_pickFrom(pool), persName);
+        if (pool?.length) return vary(_pickFor(pool, profile), persName);
       }
       if (Math.random() < 0.5) {
         const pool = WEATHER_THOUGHTS()[_weatherKey()];
-        return vary(_pickFrom((persName && pool[persName]) || pool.default), persName);
+        return vary(_pickFor((persName && pool[persName]) || pool.default, profile), persName);
       }
       const pool = TIME_THOUGHTS()[_timeOfDay()];
-      return vary(_pickFrom((persName && pool[persName]) || pool.default), persName);
+      return vary(_pickFor((persName && pool[persName]) || pool.default, profile), persName);
     },
   };
 
@@ -117,7 +141,7 @@
         ? CRAVING_WITHDRAWAL_THOUGHTS() : CRAVING_THOUGHTS();
       const pool = table && table[worst.key];
       if (!pool || !pool.length) return null;
-      return applyVoice(_pickFrom(pool), _personalityNameOf(profile));
+      return applyVoice(_pickFor(pool, profile), _personalityNameOf(profile));
     },
   };
 
@@ -134,7 +158,7 @@
     line(profile, moment, key, params) {
       const pool = this.pool(moment, key);
       if (!Array.isArray(pool) || !pool.length) return null;
-      const line = applyVoice(_pickFrom(pool), _personalityNameOf(profile));
+      const line = applyVoice(_pickFor(pool, profile), _personalityNameOf(profile));
       if (!params || typeof line !== 'string') return line;
       return line.replace(/\{(\w+)\}/g, (m, k) => (params[k] != null ? String(params[k]) : m));
     },
@@ -160,7 +184,7 @@
       const fits = pool.filter(l => typeof l === 'string' &&
         (l.match(/\{(\w+)\}/g) || []).every(m => p[m.slice(1, -1)] != null));
       if (!fits.length) return null;
-      const filled = _pickFrom(fits).replace(/\{(\w+)\}/g, (m, k) => String(p[k]));
+      const filled = _pickFor(fits, profile).replace(/\{(\w+)\}/g, (m, k) => String(p[k]));
       return applyVoice(filled, _personalityNameOf(profile));
     },
   };
@@ -199,9 +223,9 @@
       let roll = Math.random() * options.reduce((sum, [w]) => sum + w, 0);
       for (const [w, pool] of options) {
         roll -= w;
-        if (roll <= 0) return vary(_pickFrom(pool), null);
+        if (roll <= 0) return vary(_pickFor(pool, profile), null);
       }
-      return vary(_pickFrom(options[options.length - 1][1]), null);
+      return vary(_pickFor(options[options.length - 1][1], profile), null);
     },
   };
 
@@ -284,18 +308,18 @@
       const tier = this.severity(profile, state);
       if (tier === 'dire') { // i18n-ignore: severity tier id
         const dire = NEED_DIRE_THOUGHTS()?.[state];
-        if (Array.isArray(dire) && dire.length) return applyVoice(_pickFrom(dire), persName);
+        if (Array.isArray(dire) && dire.length) return applyVoice(_pickFor(dire, profile), persName);
       }
       if (Math.random() < PERSONALITY_NEED_CHANCE) {
         const own = this.personalityPool(profile, state ?? 'idle'); // i18n-ignore: PersonalityThoughts key
-        if (own) return vary(_pickFrom(own), persName);
+        if (own) return vary(_pickFor(own, profile), persName);
       }
       if (tier === 'mild' && Math.random() < NEED_SEVERITY.MILD_SHARE) { // i18n-ignore: severity tier id
         const mild = NEED_MILD_THOUGHTS()?.[state];
-        if (Array.isArray(mild) && mild.length) return applyVoice(_pickFrom(mild), persName);
+        if (Array.isArray(mild) && mild.length) return applyVoice(_pickFor(mild, profile), persName);
       }
       const pool = this.pool(state) || NEED_THOUGHTS()[null];
-      return applyVoice(_pickFrom(pool), persName);
+      return applyVoice(_pickFor(pool, profile), persName);
     },
   };
 
@@ -354,8 +378,8 @@
       const r = Math.random();
       if ((profile.playerOpinion ?? 0) >= 20 && r < 0.12) {
         const own = Math.random() < PERSONALITY_NEED_CHANCE ? NeedThoughts.personalityPool(profile, 'familiar') : null; // i18n-ignore: PersonalityThoughts key
-        if (own) return vary(_pickFrom(own), _personalityNameOf(profile));
-        return applyVoice(_pickFrom(FAMILIAR_THOUGHTS()), _personalityNameOf(profile));
+        if (own) return vary(_pickFor(own, profile), _personalityNameOf(profile));
+        return applyVoice(_pickFor(FAMILIAR_THOUGHTS(), profile), _personalityNameOf(profile));
       }
       if (r < 0.28) {
         const t = SituationalThoughts.pick(profile);
@@ -379,13 +403,13 @@
       if (tier === null) return null;
       const key = tier <= 1 ? 'poor' : tier <= 3 ? 'comfortable' : 'rich';
       const pool = WEALTH_THOUGHTS()[key];
-      return pool?.length ? applyVoice(_pickFrom(pool), _personalityNameOf(profile)) : null;
+      return pool?.length ? applyVoice(_pickFor(pool, profile), _personalityNameOf(profile)) : null;
     },
 
     pickPersonalityCoreThought(profile) {
       const name = _personalityOf(profile)?.name;
       const pool = name ? PERSONALITY_CORE_THOUGHTS()[name] : null;
-      return pool?.length ? vary(_pickFrom(pool), name) : null;
+      return pool?.length ? vary(_pickFor(pool, profile), name) : null;
     },
 
     // Crime narration with the coveted/stolen item's name baked in.
@@ -394,7 +418,7 @@
       const pool = kind === 'intent'  ? CRIME_INTENT_THOUGHTS()
                  : kind === 'success' ? CRIME_SUCCESS_THOUGHTS()
                  : CRIME_CAUGHT_THOUGHTS();
-      const line = _pickFrom(pool).replace(/{item}/g, itemName || 'that');
+      const line = _pickFor(pool, profile).replace(/{item}/g, itemName || 'that');
       return applyVoice(line, _personalityNameOf(profile));
     },
 
@@ -409,12 +433,12 @@
       const price = Number(itemData.price) || 0;
       const tier  = price >= 400 ? 'pricey' : 'cheap';
       const table = kind === 'buy' ? ITEM_BUY_THOUGHTS() : ITEM_BROWSE_THOUGHTS();
-      let line = _pickFrom(table[tier]).replace(/{item}/g, name);
+      let line = _pickFor(table[tier], profile).replace(/{item}/g, name);
 
       // Occasionally append a disposition aside that reflects who they are.
       const disp = this._shoppingDisposition(profile);
       if (disp && ITEM_DISPOSITION_THOUGHTS()[disp] && Math.random() < 0.5) {
-        line += ' ' + _pickFrom(ITEM_DISPOSITION_THOUGHTS()[disp]);
+        line += ' ' + _pickFor(ITEM_DISPOSITION_THOUGHTS()[disp], profile);
       }
       return applyVoice(line, _personalityNameOf(profile));
     },
@@ -441,7 +465,7 @@
       let pool = WATER_THOUGHTS();
       for (const part of String(moment || '').split('.')) pool = pool ? pool[part] : null;
       if (!Array.isArray(pool) || !pool.length) return null;
-      const line = applyVoice(_pickFrom(pool), _personalityNameOf(profile));
+      const line = applyVoice(_pickFor(pool, profile), _personalityNameOf(profile));
       if (!params || typeof line !== 'string') return line;
       return line.replace(/\{(\w+)\}/g, (m, k) => (params[k] != null ? String(params[k]) : m));
     },
@@ -456,7 +480,7 @@
         const t = this.pickPersonalityCoreThought(profile);
         if (t) return t;
       }
-      return applyVoice(_pickFrom(pool), _personalityNameOf(profile));
+      return applyVoice(_pickFor(pool, profile), _personalityNameOf(profile));
     },
   };
 
@@ -1323,7 +1347,7 @@
   };
 
   Object.assign(window.NPCConversation._internal, {
-    AddictionThoughts, BubbleLayout, CareThoughts, CravingProvider, NEED_SEVERITY, NeedThoughts,
+    AddictionThoughts, agreeThinker, BubbleLayout, CareThoughts, CravingProvider, NEED_SEVERITY, NeedThoughts,
     PERSONALITY_NEED_CHANCE, SituationalThoughts, SpeciesThoughts, SpecTalk,
     ThoughtBubbleManager, ThoughtProvider,
   });

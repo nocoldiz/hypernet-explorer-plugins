@@ -5,5 +5,7 @@
   "stealFailed": "Non sei riuscito a rubare",
   "stealTitle": "Ruba",
   "nothingNearby": "Non c'è nulla da rubare qui intorno.",
-  "recruitSawTheft": "{name} ti ha visto prendere {item} dal suo vecchio bancone."
+  "recruitSawTheft": "{name} ti ha visto prendere {item} dal suo vecchio bancone.",
+  "rollSteal": "Tentativo di furto",
+  "rollShoplift": "Taccheggio"
 }

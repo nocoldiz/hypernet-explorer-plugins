@@ -241,6 +241,7 @@
         build: 210,
         quest_log: 231,
         diary: 189,
+        news: 193,
         training: 101,
         research: 225,
         bestiary: 291,
@@ -308,6 +309,7 @@
         { symbol: "search",          labelKey: "MainMenu.cmd.find" },
         { symbol: "quest_log",       labelKey: "MainMenu.cmd.questLog" },
         { symbol: "diary",           labelKey: "MainMenu.cmd.diary" },
+        { symbol: "news",            labelKey: "MainMenu.cmd.news" },
         { symbol: "hypernet",        labelKey: "MainMenu.cmd.hyperdeck" },
         { symbol: "radio",           labelKey: "MainMenu.cmd.radio" },
         { symbol: "bestiary",        labelKey: "MainMenu.cmd.bestiary" },
@@ -852,7 +854,15 @@
         if (this._cancelButton) this._cancelButton.visible = false;
 
         // Check if our persistent menu DOM container already exists in the body
-        const existing = document.getElementById('menu-container');
+        let existing = document.getElementById('menu-container');
+        // A page another scene is still fading out (the backpack opened from
+        // the map, closed a moment ago) shares the id but is not ours: taking
+        // it over had its removal timer delete the menu out from under us.
+        if (existing && existing._dndClosing) {
+            if (existing.parentNode) existing.parentNode.removeChild(existing);
+            existing = document.getElementById('menu-container');
+            if (existing && existing._dndClosing) existing = null;
+        }
         if (existing) {
             this._dndContainer = existing;
 
@@ -882,14 +892,18 @@
             // pages for it only throws the drawn parchment away and paints the
             // portraits again, which is the redraw you see on the way back, so
             // the pages are left exactly as they were and only the navigator is
-            // bound again.
+            // bound again. The one exception is the language: Preferences can
+            // switch it, and every word on the spread was printed in the old one.
+            const menuLang = String(ConfigManager.language || "");
             if (SceneManager.isPreviousScene(Scene_Options) &&
-                this._dndContainer.querySelector(".book-spread")) {
+                this._dndContainer.querySelector(".book-spread") &&
+                this._dndContainer.dataset.menuLang === menuLang) {
                 UIMenuInputManager.activate(4);
                 if (window.MenuSearch) window.MenuSearch.afterRender(this);
             } else {
                 this.refreshUIMenuDOM(false); // Draw instantly in background
             }
+            this._dndContainer.dataset.menuLang = menuLang;
 
 
 
@@ -904,6 +918,7 @@
         } else {
             // First open: create DOM container fresh
             this.createUIMenuDOM();
+            if (this._dndContainer) this._dndContainer.dataset.menuLang = String(ConfigManager.language || "");
         }
     };
 
@@ -1167,6 +1182,12 @@
         // The lodging sheet is drawn over everything else, so it is the first
         // thing a cancel takes back.
         if (this._lodgingModal && this.closeUILodgingModal()) return true;
+        // So is the Dynamics QR sheet: a pad cannot reach its Close button.
+        if (document.getElementById('dyn-qr-modal')) {
+            this.closeDynamicsQr();
+            SoundManager.playCancel();
+            return true;
+        }
         // A live search covers both pages, so it is the first thing a cancel
         // takes back (CustomMainMenuSearch.js).
         if (window.MenuSearch && window.MenuSearch.isActive()) {
@@ -1440,6 +1461,15 @@
         if (!window.MergedVehicleSystem) return;
         SoundManager.playOk();
         if (window.MergedVehicleSystem.openRepairByKey(key)) garageReturnKey = key;
+    };
+
+    // A vehicle's hold, opened from the garage page (Vehicle/VehicleStorage.js);
+    // backing out of it returns to the same vehicle on this page.
+    Scene_Menu.prototype.storageUIVehicle = function (key) {
+        const VST = window.VehicleStorage;
+        if (!VST) return;
+        SoundManager.playOk();
+        if (VST.open(key)) garageReturnKey = key;
     };
 
     // Convoking a familiar from its row: the same rite the Convoke Familiar
@@ -3458,6 +3488,12 @@
         const repairBtn = sel.hasRepair
             ? `<div class="inspect-btn focusable" onclick="SceneManager._scene?.repairUIVehicle?.('${sel.key}')">${T('MainMenu.roster.repair')}</div>`
             : '';
+        // The hold is reached from the garage page wherever the vehicle is
+        // parked: it answers over the same link its instruments do.
+        const VST = window.VehicleStorage;
+        const storageBtn = VST && VST.has(sel.key)
+            ? `<div class="inspect-btn focusable" onclick="SceneManager._scene?.storageUIVehicle?.('${sel.key}')">${escapeHtml(VST.title(sel.key))}</div>`
+            : '';
         const boardBtn = sel.type === 'airship'
             ? `<div class="inspect-btn focusable" onclick="SceneManager._scene?.teleportToShipUI?.()">${T('MainMenu.cmd.teleportToShip')}</div>`
             : '';
@@ -3474,7 +3510,7 @@
                     ${partsPanel}
                 </div>
                 <div class="inspect-actions inspect-actions--row">
-                    ${spawnBtn}${repairBtn}${boardBtn}
+                    ${spawnBtn}${storageBtn}${repairBtn}${boardBtn}
                 </div>
             </div>`;
     };
@@ -4216,6 +4252,7 @@
                         this.generateUICommandItemHTML(T('MainMenu.cmd.find'), "search"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.questLog'), "quest_log"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.diary'), "diary"),
+                        this.generateUICommandItemHTML(T('MainMenu.cmd.news'), "news"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.hyperdeck'), "hypernet"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.radio'), "radio"),
                         this.generateUICommandItemHTML(T('MainMenu.cmd.bestiary'), "bestiary"),
@@ -4436,22 +4473,30 @@
         `;
     };
 
+    // The items the party is carrying, in database order. The tools tabs used
+    // to walk every entry in $dataItems (two thousand and more, each with its
+    // note read and lowercased) to find the few dozen in the sack; the sack is
+    // the short list, so it is walked instead. Sorted by id so every tab keeps
+    // the order the database walk gave it.
+    function carriedItemsInIdOrder() {
+        return $gameParty.items()
+            .filter(item => item && $gameParty.hasItem(item))
+            .sort((a, b) => a.id - b.id);
+    }
+
     Scene_Menu.prototype.generateUIToolItemsListHTML = function () {
         let html = "";
         const seen = new Set();
-        for (let i = 1; i < $dataItems.length; i++) {
-            const item = $dataItems[i];
-            if (!item) continue;
+        for (const item of carriedItemsInIdOrder()) {
             const category = item.meta ? (item.meta.category || item.meta.Category) : null;
             if (!category || String(category).trim().toLowerCase() !== "tools") continue;
-            if (!$gameParty.hasItem(item)) continue;
             if (seen.has(item.id)) continue;
             seen.add(item.id);
             const iconIndex = item.iconIndex || 0;
             html += `
                 <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
                     <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
-                    <span>${item.name}</span>
+                    <span>${escapeHtml(item.name)}</span>
                 </div>
             `;
         }
@@ -4463,19 +4508,16 @@
     Scene_Menu.prototype.generateUIMedicalItemsListHTML = function () {
         let html = "";
         const seen = new Set();
-        for (let i = 1; i < $dataItems.length; i++) {
-            const item = $dataItems[i];
-            if (!item) continue;
+        for (const item of carriedItemsInIdOrder()) {
             const category = item.meta ? (item.meta.category || item.meta.Category) : null;
             if (!category || String(category).trim().toLowerCase() !== "medical") continue;
-            if (!$gameParty.hasItem(item)) continue;
             if (seen.has(item.id)) continue;
             seen.add(item.id);
             const iconIndex = item.iconIndex || 0;
             html += `
                 <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
                     <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
-                    <span>${item.name}</span>
+                    <span>${escapeHtml(item.name)}</span>
                 </div>
             `;
         }
@@ -4487,19 +4529,16 @@
     Scene_Menu.prototype.generateUILifestyleItemsListHTML = function () {
         let html = "";
         const seen = new Set();
-        for (let i = 1; i < $dataItems.length; i++) {
-            const item = $dataItems[i];
-            if (!item) continue;
+        for (const item of carriedItemsInIdOrder()) {
             const category = item.meta ? (item.meta.category || item.meta.Category) : null;
             if (!category || String(category).trim().toLowerCase() !== "lifestyle") continue;
-            if (!$gameParty.hasItem(item)) continue;
             if (seen.has(item.id)) continue;
             seen.add(item.id);
             const iconIndex = item.iconIndex || 0;
             html += `
                 <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
                     <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
-                    <span>${item.name}</span>
+                    <span>${escapeHtml(item.name)}</span>
                 </div>
             `;
         }
@@ -4524,18 +4563,15 @@
     Scene_Menu.prototype.generateUIBooksItemsListHTML = function () {
         let html = "";
         const seen = new Set();
-        for (let i = 1; i < $dataItems.length; i++) {
-            const item = $dataItems[i];
-            if (!item) continue;
+        for (const item of carriedItemsInIdOrder()) {
             if (!this.isUIBookOrSkillBookItem(item)) continue;
-            if (!$gameParty.hasItem(item)) continue;
             if (seen.has(item.id)) continue;
             seen.add(item.id);
             const iconIndex = item.iconIndex || 0;
             html += `
                 <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
                     <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
-                    <span>${item.name}</span>
+                    <span>${escapeHtml(item.name)}</span>
                 </div>
             `;
         }
@@ -4555,7 +4591,7 @@
             html += `
                 <div class="command-item focusable" data-symbol="tool_${item.id}" onclick="if(SceneManager._scene && typeof SceneManager._scene.useUIToolItem === 'function') SceneManager._scene.useUIToolItem(${item.id})">
                     <span class="icon menu-icon" style="${iconStyle(iconIndex)}"></span>
-                    <span>${item.name}</span>
+                    <span>${escapeHtml(item.name)}</span>
                 </div>
             `;
         };
@@ -4834,6 +4870,14 @@
                         console.warn("Scene_Diary is not defined!");
                     }
                     break;
+                // The day's papers and every past edition (Quest/NewsSystemUI.js).
+                case "news":
+                    if (window.Scene_Newspaper) {
+                        SceneManager.push(window.Scene_Newspaper);
+                    } else {
+                        console.warn("Scene_Newspaper is not defined!");
+                    }
+                    break;
                 case "pets":
                     this.showPetsPage();
                     break;
@@ -4946,21 +4990,35 @@
         }
     };
 
+    // Uses an item off one of the right page's tool lists the way the
+    // backpack would: on the member the page is showing (or the whole party
+    // for an all-party item), refused when it cannot be used here or would do
+    // nothing. It used to run only the item's common event, so a medicine was
+    // spent, the menu closed and nobody was healed.
     Scene_Menu.prototype.useUIToolItem = function (itemId) {
         const item = $dataItems[itemId];
-        if (item && $gameParty.hasItem(item)) {
-            SoundManager.playUseItem();
-            if ($gameParty && typeof $gameParty.setLastItem === 'function') {
-                $gameParty.setLastItem(item);
-            }
-            if (item.consumable) {
-                $gameParty.loseItem(item, 1);
-            }
-            const action = new Game_Action($gameParty.leader());
-            action.setItemObject(item);
-            action.applyGlobal();
-            this.popScene();
+        if (!item || !$gameParty.hasItem(item)) return;
+        const user = (this.selectedActor && this.selectedActor()) || $gameParty.leader();
+        if (!user || !$gameParty.canUse(item)) {
+            SoundManager.playBuzzer();
+            return;
         }
+        const action = new Game_Action(user);
+        action.setItemObject(item);
+        const targets = !action.isForFriend() ? []
+            : action.isForAll() ? $gameParty.members() : [user];
+        if (targets.length > 0 && !targets.some(t => action.testApply(t))) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        SoundManager.playUseItem();
+        if (typeof $gameParty.setLastItem === 'function') $gameParty.setLastItem(item);
+        user.useItem(item);
+        for (const target of targets) {
+            for (let i = 0; i < action.numRepeats(); i++) action.apply(target);
+        }
+        action.applyGlobal();
+        this.popScene();
     };
 
     // Helper: DateTime Parser
@@ -4986,7 +5044,7 @@
         const hh = String(Math.floor(hour) % 24).padStart(2, "0");
         const mm = String(Math.floor((hour % 1) * 60)).padStart(2, "0");
         const locked = lp.day.frozen ? ` (${T('MainMenu.label.tidallyLocked')})` : "";
-        const world = lp.name ? ` ${lp.name}` : "";
+        const world = lp.name ? ` ${escapeHtml(lp.name)}` : "";
         return `
                 <div class="clock-row">
                     <span class="clock-label">${T('MainMenu.label.localTime')}</span>
@@ -5090,6 +5148,8 @@
         const inspect = window.ItemInspect;
         if (inspect && inspect.isMedicineInfoOpen && inspect.isMedicineInfoOpen()) inspect.closeMedicineInfo();
         if (inspect && inspect.isModelFullscreenOpen && inspect.isModelFullscreenOpen()) inspect.closeModelFullscreen();
+        // The Dynamics QR sheet hangs off the body, so it would outlive the menu.
+        this.closeDynamicsQr();
 
         const isReturningToMap = SceneManager.isNextScene(Scene_Map) || (SceneManager._nextScene instanceof Scene_Map);
 
@@ -5228,6 +5288,7 @@
         thinker:    () => pushMapScene(typeof Scene_Thinker !== "undefined" ? Scene_Thinker : window.Scene_Thinker),
         alchemistry: () => { if (isAlchemistryAvailable()) pushMapScene(window.Scene_Alchemistry); },
         diary:      () => pushMapScene(window.Scene_Diary),
+        news:       () => pushMapScene(window.Scene_Newspaper),
         cards:      () => pushMapScene(
             typeof Scene_CardCollection !== "undefined" ? Scene_CardCollection : window.Scene_CardCollection),
         research:   () => pushMapScene(typeof Scene_TechTree !== "undefined" ? Scene_TechTree : window.Scene_TechTree),

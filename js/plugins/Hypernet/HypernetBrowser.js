@@ -3442,7 +3442,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: APP_ID,
-            name: t('appName'),
+            name: () => t('appName'),
             icon: APP_ICON,
             launchFn: function () { window.HypernetBrowserApp.launch(); },
             desktopShortcut: true
@@ -3456,7 +3456,7 @@
         // open moves that window rather than fighting it for the id.
         window.HypernetOS.registerApp({
             id: HEXAPEDIA_APP_ID,
-            name: t('hexapedia.appName'),
+            name: () => t('hexapedia.appName'),
             icon: HEXAPEDIA_ICON,
             category: 'reference',
             launchFn: function () {

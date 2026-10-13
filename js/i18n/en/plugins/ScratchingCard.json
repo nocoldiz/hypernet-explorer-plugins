@@ -18,7 +18,7 @@
     "wallet": "Wallet: €{amount}",
     "terms": "Stake €{cost}  ·  Top prize €{amount}",
     "back": "Back",
-    "backDesc": "Leave the counter with your money in your pocket.",
+    "backDesc": "Leave without buying.",
     "needMoney": "Not enough money for this ticket.",
     "desc": {
       "esoteric": "Purple foil and borrowed sigils. A modest ceiling.",

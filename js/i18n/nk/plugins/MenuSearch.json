@@ -1,8 +1,8 @@
 {
   "placeholder": "SEARCH…",
-  "open": "OPEN DA SEARCH",
-  "close": "CLOSE DA SEARCH",
-  "clear": "CLEAR DA SEARCH",
+  "open": "OPEN SEARCH",
+  "close": "CLOSE SEARCH",
+  "clear": "CLEAR SEARCH",
   "anyCategory": "ANY CATEGORY",
   "showing": "{count} SHOWN",
   "min": "MIN",

@@ -5,27 +5,27 @@
     "noCrimes": "NO CRIMES COMMITTED.",
     "crimesCommitted": "CRIMES COMMITTED:",
     "bountyCleared": "BOUNTY CLEARED!",
-    "allCrimesForgi": "ALL CRIMES HAB BEEN FORGIVEN!",
+    "allCrimesForgi": "ALL CRIMES HAB BIN FORGIVEN!",
     "availableCrimes": "AVAILABLE CRIMES BY CATEGORY",
     "errorUnknown": "ERROR: UNKNOWN CRIME TYPE:",
     "total": "TOTAL",
-    "selfPardon": "YOU SELF PARDON DIS CRIME",
+    "selfPardon": "YOU PARDON YOURSELF.",
     "lawfulPardon": "{name} COMMITTED {crime} IN DA NAME OF DA LAW!"
   },
   "bribe": {
     "action": "BRIBE {name}: {cost}",
     "theOfficer": "DA OFFICER",
     "taken": "{name} POCKETS {cost} AN' LOOKS DA OTHER WAY!",
-    "rejected": "{name} REFUSES DA MONEY AN' ADDS BRIBERY TA YA CHARGES!",
-    "incorruptible": "{name} IZ INCORRUPTIBLE AN' WILL NEVER TAKE YA MONEY. BRIBERY IZ ADDED TA YA CHARGES!",
-    "cannotAfford": "{name} WANTS {cost}, AN' YOU DO NO HAB IT!"
+    "rejected": "{name} REFUSES. BRIBERY ADDED TA YA CHARGES!",
+    "incorruptible": "{name} NO CAN BE BRIBED. BRIBERY ADDED TA YA CHARGES!",
+    "cannotAfford": "{name} WANTS {cost}. YOU NO CAN AFFORD IT!"
   },
   "law": {
     "notRecognised": "YA CRIME IZ NO RECOGNIZED IN DIS TERRITORY",
-    "enterCanon": "YOU CROSS INTO DA HOLY VATICAN EMPIRE. CANON LAW HOLDS HERE, AN' YA RECORD BEYOND ITS BORDERS DOES NO!",
-    "leaveCanon": "YOU LEAVE DA HOLY VATICAN EMPIRE. ITS CANON LAW AN' ITS RECORD STAY BEHIND!",
-    "enterHorde": "YOU CROSS INTO GOBLIN HORDE GROUND. ANYTHIN' GOES HERE, EXCEPT STEALIN'!",
-    "leaveHorde": "YOU LEAVE GOBLIN HORDE GROUND. DA COMMON LAW AN' ITS RECORD HOLD AGAIN!"
+    "enterCanon": "ENTERED DA HOLY VATICAN EMPIRE. CANON LAW APPLIES; CRIMES ELSEWHERE NO COUNT!",
+    "leaveCanon": "LEFT DA HOLY VATICAN EMPIRE. CRIMES DERE NO FOLLOW YOU!",
+    "enterHorde": "ENTERED GOBLIN HORDE GROUND. ONLY STEALIN' IZ A CRIME HERE!",
+    "leaveHorde": "LEFT GOBLIN HORDE GROUND. COMMON LAW APPLIES AGAIN!"
   },
   "canon": {
     "indecencyKiss": "PUBLIC INDECENCY - KISSIN'",
@@ -48,6 +48,7 @@
     "simony": "SIMONY",
     "usury": "USURY",
     "falseWitness": "FALSE WITNESS",
+    "debasingTheCoin": "DEBASIN' DA COIN",
     "tradeInSouls": "TRADE IN SOULS",
     "defianceOfTheHolyOffice": "DEFIANCE OF DA HOLY OFFICE",
     "armingTheUnfaithful": "ARMIN' DA UNFAITHFUL",
@@ -60,8 +61,8 @@
     "atheism": "ATHEISM"
   },
   "nobodyLeftToJudgeYou": "NOBODY LEFT TA JUDGE YOU",
-  "nobodySaw": "NOBODY SAW A THING.",
+  "nobodySaw": "NOBODY SAW A TINK.",
   "theShopkeeper": "DA SHOPKEEPER",
   "vendorRefusesForever": "{keeper} WILL NEVER SELL TA YOU AGAIN!",
-  "vendorRefusesEntry": "{keeper} TURNS AWAY. YOU IZ NO WELCOME AT DIS COUNTER!"
+  "vendorRefusesEntry": "{keeper} NO WILL SERVE YOU."
 }

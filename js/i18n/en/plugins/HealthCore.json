@@ -1,26 +1,28 @@
 {
   "biologics": "Biologics",
   "damaged": "DAMAGED",
-  "switchPlayer": "← → Switch Player",
+  "switchPlayer": "← → Switch character",
   "statFallback": "Stat",
   "paramNames": [
     "Max HP",
     "Max MP",
     "STR",
-    "Hit Rate",
+    "CON",
     "INT",
-    "COS",
+    "WIS",
     "DEX",
     "PSI"
   ],
-  "vitalOrganDestroyed": "{actor}'s vital organ ({part}) was destroyed! They died instantly and were removed from the party.",
+  "vitalOrganDestroyed": "{actor}'s {part} was destroyed! They died and left the party.",
   "partDestroyed": "{actor}'s {part} was destroyed and removed!",
   "statusBroken": "BROKEN",
   "statusDestroyed": "DESTROYED",
   "statusCutOff": "CUT OFF",
   "partRuined": "{actor}'s {part} was ruined beyond repair!",
   "partBroken": "{actor}'s {part} was broken!",
-  "augmentLost": "The augment installed there ({augment}) was torn off with it.",
+  "augmentLost": "The {augment} augment was lost with it.",
   "partDamagedFallback": "{part} damaged!",
-  "limbCopy": "{name} {n}"
+  "limbCopy": "{name} {n}",
+  "battleLogWound": "{actor}'s {wound}!",
+  "battleLogWoundStat": "{actor}'s {wound}, {param} {amount}!"
 }

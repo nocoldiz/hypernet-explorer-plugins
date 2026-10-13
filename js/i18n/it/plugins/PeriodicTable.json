@@ -1,35 +1,35 @@
 {
   "ui": {
-    "title": "Tavola Periodica",
+    "title": "Tavola periodica",
     "back": "Indietro",
     "lanthanides": "Lantanidi",
     "actinides": "Attinidi",
-    "esotericSection": "Elementi Esoterici",
+    "esotericSection": "Elementi esoterici",
     "props": {
       "symbol": "Simbolo",
-      "number": "Numero Atomico",
-      "mass": "Massa Atomica",
+      "number": "Numero atomico",
+      "mass": "Massa atomica",
       "category": "Categoria",
       "state": "Stato a STP",
-      "discoveredBy": "Scoperto Da",
+      "discoveredBy": "Scoperto da",
       "year": "Anno",
       "origin": "Origine"
     },
     "sections": {
-      "properties": "Proprieta'",
+      "properties": "Proprietà",
       "description": "Descrizione",
       "legend": "Legenda"
     }
   },
   "categories": {
-    "alkaliMetal": "Metallo Alcalino",
-    "alkalineEarth": "Metallo Alcalino-terroso",
-    "transitionMetal": "Metallo di Transizione",
-    "postTransition": "Post-Transizione",
+    "alkaliMetal": "Metallo alcalino",
+    "alkalineEarth": "Metallo alcalino-terroso",
+    "transitionMetal": "Metallo di transizione",
+    "postTransition": "Post-transizione",
     "metalloid": "Metalloide",
     "nonmetal": "Non-metallo",
     "halogen": "Alogeno",
-    "nobleGas": "Gas Nobile",
+    "nobleGas": "Gas nobile",
     "lanthanide": "Lantanide",
     "actinide": "Attinide",
     "esoteric": "Esoterico"
@@ -105,7 +105,7 @@
     },
     "S": {
       "name": "Zolfo",
-      "desc": "Un solido giallo brillante conosciuto e usato fin dall'antichità in medicina e alchimica. Essenziale nelle proteine e prodotto industriale chiave nella fertilizzazione e nella vulcanizzazione."
+      "desc": "Un solido giallo brillante conosciuto e usato fin dall'antichità in medicina e alchimia. Essenziale nelle proteine e prodotto industriale chiave nella fertilizzazione e nella vulcanizzazione."
     },
     "Cl": {
       "name": "Cloro",
@@ -117,7 +117,7 @@
     },
     "K": {
       "name": "Potassio",
-      "desc": "Un nutriente essenziale per ogni cellula animale, regolando l'equilibrio dei fluidi e la funzione nervosa. Reagisce esplosivamente con l'acqua, accendendosi con una caratteristica fiamma viola."
+      "desc": "Un nutriente essenziale per ogni cellula animale, che regola l'equilibrio dei fluidi e la funzione nervosa. Reagisce esplosivamente con l'acqua, accendendosi con una caratteristica fiamma viola."
     },
     "Ca": {
       "name": "Calcio",
@@ -125,7 +125,7 @@
     },
     "Sc": {
       "name": "Scandio",
-      "desc": "Un metallo di transizione raro la cui leggerezza e alto punto di fusione lo rendono prezioso nelle leghe aerospaziali e nelle lampade ai alogenuri metallici ad alta intensità."
+      "desc": "Un metallo di transizione raro la cui leggerezza e alto punto di fusione lo rendono prezioso nelle leghe aerospaziali e nelle lampade agli alogenuri metallici ad alta intensità."
     },
     "Ti": {
       "name": "Titanio",
@@ -153,7 +153,7 @@
     },
     "Ni": {
       "name": "Nichel",
-      "desc": "Un metallo lucente e resistente alla corrosione comune nelle monete e nell'acciaio inossidabile. Prende il nome da un demonio della tradizione tedesca, poiché i minatori del passato maledivano il minerale."
+      "desc": "Un metallo lucente e resistente alla corrosione comune nelle monete e nell'acciaio inossidabile. Prende il nome da un demonio della tradizione tedesca, poiché i minatori del passato maledivano il minerale che non dava rame."
     },
     "Cu": {
       "name": "Rame",
@@ -161,7 +161,7 @@
     },
     "Zn": {
       "name": "Zinco",
-      "desc": "Usato per galvanizzare l'acciaio contro la corrosione e come essenziale dietetico per la funzione immunitaria e la cicatrizzazione. L'ossido forma uno strato bianco protettivo all'ossidazione."
+      "desc": "Usato per galvanizzare l'acciaio contro la corrosione e come nutriente essenziale per la funzione immunitaria e la cicatrizzazione. L'ossido forma uno strato bianco protettivo all'ossidazione."
     },
     "Ga": {
       "name": "Gallio",
@@ -321,7 +321,7 @@
     },
     "At": {
       "name": "Astato",
-      "desc": "L'elemento naturale più raro; nell'intera Terra esistono solo minuscole tracce, prodotte dal decadimento radioattivo dell'uranio. La sua chimica è stata appena introdotta allo studio."
+      "desc": "L'elemento naturale più raro; nell'intera Terra esistono solo minuscole tracce, prodotte dal decadimento radioattivo dell'uranio. La sua chimica comincia appena a essere compresa."
     },
     "Rn": {
       "name": "Radon",
@@ -345,7 +345,7 @@
     },
     "Sg": {
       "name": "Seaborgio",
-      "desc": "Prende il nome da Glenn T. Seaborg, l'unico elemento mai intitolato a una persona vivente al momento della sua scoperta. Seaborg detiene il record per il maggior numero di elementi co-scoperti."
+      "desc": "Prende il nome da Glenn T. Seaborg, l'unico elemento mai intitolato a una persona vivente al momento della sua scoperta. Seaborg deteneva il record per il maggior numero di elementi co-scoperti."
     },
     "Bh": {
       "name": "Bohrio",
@@ -357,7 +357,7 @@
     },
     "Mt": {
       "name": "Meitnerio",
-      "desc": "Intitolato a Lise Meitner, la fisica pioniera della ricerca sulla fissione nucleare, controversialmente esclusa dal Premio Nobel assegnato al suo collaboratore."
+      "desc": "Intitolato a Lise Meitner, la fisica pioniera della ricerca sulla fissione nucleare, esclusa tra molte polemiche dal Premio Nobel assegnato al suo collaboratore."
     },
     "Ds": {
       "name": "Darmstadtio",
@@ -445,7 +445,7 @@
     },
     "Tm": {
       "name": "Tulio",
-      "desc": "Il lantanide stabile meno abbondante e secondo più pesante. Usato in dispositivi X portatili come sorgente di radiazione quando irradiato in un reattore nucleare, emettendo utili raggi gamma."
+      "desc": "Il lantanide stabile meno abbondante e secondo più pesante. Usato in dispositivi a raggi X portatili come sorgente di radiazione quando irradiato in un reattore nucleare, emettendo utili raggi gamma."
     },
     "Yb": {
       "name": "Itterbio",
@@ -453,7 +453,7 @@
     },
     "Lu": {
       "name": "Lutezio",
-      "desc": "Il più pesante e duro dei lantanidi. Usato come catalizzatore nella raffinazione del petrolio, nei rilevatori per PET scan e nella radioimmunochemioterapia per certi tumori."
+      "desc": "Il più pesante e duro dei lantanidi. Usato come catalizzatore nella raffinazione del petrolio, nei rilevatori per PET scan e nella radioimmunoterapia per certi tumori."
     },
     "Ac": {
       "name": "Attinio",
@@ -473,7 +473,7 @@
     },
     "Np": {
       "name": "Nettunio",
-      "desc": "Il primo elemento transuranico sintetico, prodotto in un ciclotrone nel 1940 e nominato in base al pianeta Nettuno. Piccole quantità si trovano naturalmente come prodotto di decadimento dell'uranio."
+      "desc": "Il primo elemento transuranico sintetico, prodotto in un ciclotrone nel 1940 e chiamato così in onore del pianeta Nettuno. Piccole quantità si trovano naturalmente come prodotto di decadimento dell'uranio."
     },
     "Pu": {
       "name": "Plutonio",
@@ -497,7 +497,7 @@
     },
     "Es": {
       "name": "Einsteinio",
-      "desc": "Prende il nome da Albert Einstein. Rilevato per la prima volta nel 1952 nelle ricadute del primo test di bomba termonucleare, prodotto dall'intensa bombardatura con neutroni dell'uranio-238."
+      "desc": "Prende il nome da Albert Einstein. Rilevato per la prima volta nel 1952 nelle ricadute del primo test di bomba termonucleare, prodotto dall'intenso bombardamento con neutroni dell'uranio-238."
     },
     "Fm": {
       "name": "Fermio",
@@ -517,7 +517,7 @@
     },
     "My": {
       "name": "Mithrilio",
-      "desc": "Un leggendario metallo argenteo più leggero della seta eppure più resistente dell'acciaio temprato, trovato solo nelle miniere naneschi più profonde sotto le radici delle antiche montagne. La sua struttura molecolare sembra sfidare la fisica convenzionale, mantenendo un ordine cristallino perfetto indefinitamente pur restando malleabile sotto il martello di un mastro fabbro."
+      "desc": "Un leggendario metallo argenteo più leggero della seta eppure più resistente dell'acciaio temprato, trovato solo nelle miniere nanesche più profonde sotto le radici delle antiche montagne. La sua struttura molecolare sembra sfidare la fisica convenzionale, mantenendo un ordine cristallino perfetto indefinitamente pur restando malleabile sotto il martello di un mastro fabbro."
     },
     "Ad": {
       "name": "Adamantite",
@@ -529,15 +529,15 @@
     },
     "Vd": {
       "name": "Voidite",
-      "desc": "Materia raccolta dallo spazio nullo tra i piani di esistenza, così scura da rendere visivamente indeterminato lo spazio attorno ad essa, e fredda ben oltre lo zero assoluto. Qualsiasi energia che la contatta viene assorbita del tutto: luce, calore e magia. La rende preziosa per certi rituali proibiti e straordinariamente letale da contenere senza adeguati sigilli protettivi."
+      "desc": "Materia raccolta dallo spazio nullo tra i piani di esistenza, così scura da rendere visivamente indeterminato lo spazio attorno ad essa, e fredda ben oltre lo zero assoluto. Qualsiasi energia che la contatta viene assorbita del tutto: luce, calore e magia. Ciò la rende preziosa per certi rituali proibiti e straordinariamente letale da contenere senza adeguati sigilli protettivi."
     },
     "Sl": {
-      "name": "Anisite",
-      "desc": "Essenza cristallizzata di anime viventi, formata solo ai nodi dove l'energia spirituale di migliaia di morti si è raccolta e solidificata nel corso di secoli in frammenti traslucidi rosati. Ogni frammento ronza di una debole emozione persistente, l'ultimo sentimento di qualsiasi coscienza che ha contribuito la propria forza vitale alla formazione del cristallo."
+      "name": "Animite",
+      "desc": "Essenza cristallizzata di anime viventi, formata solo ai nodi dove l'energia spirituale di migliaia di morti si è raccolta e solidificata nel corso di secoli in frammenti traslucidi rosati. Ogni frammento ronza di una debole emozione persistente, l'ultimo sentimento di qualsiasi coscienza che ha ceduto la propria forza vitale alla formazione del cristallo."
     },
     "Dc": {
       "name": "Dracite",
-      "desc": "Un minerale cremisi intenso trovato solo nel cuore dei draghi anziani morti, dove il fuoco draconico concentrato che li ha sostenuti per millenni ha trasmutato le loro ossa più interne in qualcosa al di là dell'osso o del metallo. Le armi e le armature forgiate da essa mantengono la furia della creatura da cui proviene, senza mai raffreddarsi né appannarsi."
+      "desc": "Un minerale cremisi intenso trovato solo nel cuore dei draghi anziani morti, dove il fuoco draconico concentrato che li ha sostenuti per millenni ha trasmutato le loro ossa più interne in qualcosa al di là dell'osso o del metallo. Le armi e le armature forgiate con esso mantengono la furia della creatura da cui proviene, senza mai raffreddarsi né appannarsi."
     },
     "Ma": {
       "name": "Manaite",
@@ -545,7 +545,7 @@
     },
     "Sh": {
       "name": "Schrödingerite",
-      "desc": "Raccolto in scaglie sul bordo di accrescimento dell'orizzonte degli eventi di un buco nero supermassiccio, dove il gradiente di marea tende il confine tra un esito e l'altro finché non si lacera. Ogni altra sostanza conosciuta può porre in sovrapposizione soltanto le particelle; la schrödingerite lo fa con gli oggetti interi, scindendo una chiave, una porta o un cadavere in due stati quantistici coerenti che convivono fianco a fianco finché qualcuno non li osserva. Chi la maneggia viene avvertito che il campione è insieme nella fiala e fuori dalla fiala, e che è l'apertura della fiala a decidere quale delle due giornate stia vivendo."
+      "desc": "Raccolta in scaglie sul bordo di accrescimento dell'orizzonte degli eventi di un buco nero supermassiccio, dove il gradiente di marea tende il confine tra un esito e l'altro finché non si lacera. Ogni altra sostanza conosciuta può porre in sovrapposizione soltanto le particelle; la schrödingerite lo fa con gli oggetti interi, scindendo una chiave, una porta o un cadavere in due stati quantistici coerenti che convivono fianco a fianco finché qualcuno non li osserva. Chi la maneggia viene avvertito che il campione è insieme nella fiala e fuori dalla fiala, e che è l'apertura della fiala a decidere quale delle due giornate stia vivendo."
     }
   },
   "unknownDiscoverer": "Sconosciuto",

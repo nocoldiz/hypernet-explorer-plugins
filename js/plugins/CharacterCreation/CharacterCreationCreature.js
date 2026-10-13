@@ -1379,7 +1379,10 @@
         // Archetype cards are on the left (compact list), biology on the right.
         if (rightPage && rightHtml) {
           const rightInnerHtml = rightHtml.replace(/^\s*<div[^>]*>/, '').replace(/<\/div>\s*$/, '');
-          rightPage.innerHTML = rightInnerHtml;
+          // Patched in place, so the page keeps its scroll, its images and its
+          // hover rather than being parsed again on every pick.
+          if (window.CCMorph) window.CCMorph.inner(rightPage, rightInnerHtml);
+          else rightPage.innerHTML = rightInnerHtml;
         }
         if (leftPage) {
           const cards = leftPage.querySelectorAll(".cc-card-option");
@@ -1417,7 +1420,10 @@
         // Cards are on the right; preview image is on the left, update both
         if (leftPage && leftHtml) {
           const leftInnerHtml = leftHtml.replace(/^\s*<div[^>]*>/, '').replace(/<\/div>\s*$/, '');
-          leftPage.innerHTML = leftInnerHtml;
+          // Patched in place, so the page keeps its scroll, its images and its
+          // hover rather than being parsed again on every pick.
+          if (window.CCMorph) window.CCMorph.inner(leftPage, leftInnerHtml);
+          else leftPage.innerHTML = leftInnerHtml;
         }
         if (rightPage) {
           const cards = rightPage.querySelectorAll(".cc-wanted-card");
@@ -1429,7 +1435,10 @@
         // Cards are on the left; sprite preview is on the right, update both
         if (rightPage && rightHtml) {
           const rightInnerHtml = rightHtml.replace(/^\s*<div[^>]*>/, '').replace(/<\/div>\s*$/, '');
-          rightPage.innerHTML = rightInnerHtml;
+          // Patched in place, so the page keeps its scroll, its images and its
+          // hover rather than being parsed again on every pick.
+          if (window.CCMorph) window.CCMorph.inner(rightPage, rightInnerHtml);
+          else rightPage.innerHTML = rightInnerHtml;
         }
         if (leftPage) {
           const cards = leftPage.querySelectorAll(".cc-wanted-card");

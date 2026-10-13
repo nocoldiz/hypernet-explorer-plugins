@@ -1,7 +1,7 @@
 {
   "title": "TV Guide",
   "status": "{channels} channels  |  Studio Map {map}  |  {slots} daily slots",
-  "noSignal": "No transmission signal. (RandomTVTransmissionGenerator not loaded?)",
+  "noSignal": "No signal.",
   "endOfTransmission": "- end of transmission -",
   "narrator": "Narrator",
   "format": "Format:",
@@ -619,5 +619,10 @@
         "title": "School of the Week"
       }
     }
-  }
+  },
+  "programCount": {
+    "one": "{count} program",
+    "other": "{count} programs"
+  },
+  "noTransmissions": "No transmissions found. {path} could not be loaded."
 }

@@ -1,6 +1,6 @@
 {
   "name": "Matematica",
-  "blurb": "Dimostrazioni e calcolo, compresi risultati la cui verifica non si e mai chiusa.",
+  "blurb": "Dimostrazioni e calcolo, compresi risultati mai verificati.",
   "nodes": {
     "math_aks": {
       "name": "Test di Primalità AKS",
@@ -31,7 +31,7 @@
       "desc": "Un manoscritto di cento pagine sostiene di separare P da NP mappando lo spazio delle soluzioni di k-SAT casuale vicino alla soglia di soddisfacibilità sulla struttura di indipendenza condizionata di un modello grafico, e argomentando che un algoritmo polinomiale può esprimere solo distribuzioni a dipendenza condizionata limitata, cosa che lo spazio delle soluzioni a grappoli a quella soglia non è. Due obiezioni emergono in pochi giorni su un wiki pubblico: la parametrizzazione usata per caratterizzare il tempo polinomiale esclude anche XOR-SAT, risolubile per eliminazione di Gauss, e il risultato sui grappoli invocato vale per un intervallo di densità che non comprende quello richiesto dall'argomento."
     },
     "math_fundamental_lemma": {
-      "name": "Prova del Lemma Fondamentale",
+      "name": "Dimostrazione del Lemma Fondamentale",
       "desc": "Il trasferimento di Langlands delle forme automorfe fra un gruppo e i suoi gruppi endoscopici richiede un'identità fra integrali orbitali pesati sui due lati, congetturata per decenni e verificata solo in rango basso. La dimostrazione legge quegli integrali come conteggi di punti sulle fibre della fibrazione di Hitchin per il relativo spazio di moduli dei fibrati di Higgs, cosicché l'identità diventa un enunciato sulla coomologia di un unico oggetto geometrico, dove il teorema di supporto per quella fibrazione costringe i due lati a coincidere."
     },
     "math_abc": {

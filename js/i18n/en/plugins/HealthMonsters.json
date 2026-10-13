@@ -51,16 +51,21 @@
     "menu": {
       "partRow": "{part}  {percent}%  hit {chance}%",
       "partRowCurrent": "{part}  {percent}%  hit {chance}%  (aimed)",
-      "clear": "Aim nowhere",
+      "clear": "Clear aim",
       "back": "Back",
       "noParts": "Nothing left to aim at",
       "wholeName": "the whole body",
-      "wholeRow": "The whole body  (wherever it lands)",
-      "wholeRowCurrent": "The whole body  (wherever it lands)  (aimed)"
+      "wholeRow": "Whole body  (random part)",
+      "wholeRowCurrent": "Whole body  (random part)  (aimed)"
     },
     "log": {
       "missed": "{actor} aims for {enemy}'s {part} and finds nothing but air.",
       "moved": "{actor} shifts aim to {enemy}'s {part}."
+    }
+  },
+  "aimedSkill": {
+    "log": {
+      "noPart": "{enemy} has nothing of the kind to aim {skill} at: it lands wherever it can."
     }
   },
   "wrestle": {
@@ -85,12 +90,12 @@
     },
     "limbs": {
       "helpMine": "{part} can take: {holds}.",
-      "helpMineNone": "{part} is no use for taking a hold.",
+      "helpMineNone": "{part} can't take a hold.",
       "helpTheirs": "{part}: {note}",
       "note": {
-        "vital": "a vital part, and it fights to stay out of your hands.",
-        "awkward": "small and awkward, and hard to keep a grip on.",
-        "plain": "solid enough to get both hands around."
+        "vital": "vital, hard to grab.",
+        "awkward": "small, hard to grip.",
+        "plain": "easy to grip."
       }
     },
     "hold": {

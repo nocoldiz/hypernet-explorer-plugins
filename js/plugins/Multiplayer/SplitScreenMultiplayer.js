@@ -1184,8 +1184,8 @@
                     <div class="item-slot${selected}" data-index="${i}">
                         <div class="item-slot-icon"><canvas id="ss-list-canvas-${i}" width="48" height="48"></canvas></div>
                         <div class="item-slot-info">
-                            <div class="item-slot-name">${name}</div>
-                            <div class="item-slot-meta">${cls}</div>
+                            <div class="item-slot-name">${window.NPCShared.escapeHtml(name)}</div>
+                            <div class="item-slot-meta">${window.NPCShared.escapeHtml(cls)}</div>
                         </div>
                     </div>`;
             }).join("");
@@ -1265,7 +1265,7 @@
             let equipHTML;
             if (cand.weapon && ssIsSelectableName(cand.weapon.name)) {
                 const wName = window.translateText ? window.translateText(cand.weapon.name) : cand.weapon.name;
-                equipHTML = `<div class="inspect-bullet-item">${wName}</div>`;
+                equipHTML = `<div class="inspect-bullet-item">${window.NPCShared.escapeHtml(wName)}</div>`;
             } else {
                 equipHTML = `<div class="inspect-bullet-item">${T('SplitScreen.none')}</div>`;
             }
@@ -1274,7 +1274,7 @@
             const traitRows = (cand.traits || [])
                 .map((tr) => this.traitName(tr))
                 .filter((nm) => ssIsSelectableName(nm))
-                .map((nm) => `<div class="inspect-bullet-item">${nm}</div>`)
+                .map((nm) => `<div class="inspect-bullet-item">${window.NPCShared.escapeHtml(nm)}</div>`)
                 .join("");
             const traitsHTML = traitRows || `<div class="inspect-bullet-item">${T('SplitScreen.none')}</div>`;
 
@@ -1282,8 +1282,8 @@
                 <div class="inspect-header">
                     <div class="inspect-frame"><canvas id="ss-preview-canvas" class="inspect-canvas"></canvas></div>
                     <div class="inspect-title-box">
-                        <div class="inspect-name">${name}</div>
-                        <div class="inspect-rarity">${cls}</div>
+                        <div class="inspect-name">${window.NPCShared.escapeHtml(name)}</div>
+                        <div class="inspect-rarity">${window.NPCShared.escapeHtml(cls)}</div>
                     </div>
                 </div>
                 <div class="inspect-lore">

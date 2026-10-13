@@ -176,7 +176,12 @@
     const REVEAL_TRANSITION_DURATION = Math.max(1, Number(parameters['Reveal Transition Duration'] || 16));
     const VISION_SMOOTHING = Number(parameters['Vision Smoothing'] || 0.9);
     const ADD_TO_OPTIONS_MENU = parameters['Add To Options Menu'] !== 'false';
-    const OPTIONS_MENU_TEXT = parameters['Options Menu Text'] || 'Fog of War (WIP)';
+    // Resolved at draw time so the label follows a language change; an edited
+    // parameter wins as written (see T.param).
+    const OPTIONS_MENU_TEXT_PARAM = parameters['Options Menu Text'];
+    const optionsMenuText = () => (window.T && typeof window.T.param === 'function')
+        ? window.T.param(OPTIONS_MENU_TEXT_PARAM, 'GameOptions.label.fogOfWar')
+        : (OPTIONS_MENU_TEXT_PARAM || 'Fog of War');  // i18n-ignore: fallback before i18n loads
     const RESET_ON_NEW_GAME = parameters['Reset On New Game'] !== 'false';
 
     const VISION_ANGLE = 110;
@@ -470,7 +475,7 @@
 
     if (ADD_TO_OPTIONS_MENU) {
         if (window.GameOptions) {
-            window.GameOptions.registerOption('fogOfWar', OPTIONS_MENU_TEXT,
+            window.GameOptions.registerOption('fogOfWar', optionsMenuText,
                 () => ConfigManager.fogOfWar,
                 (value) => ConfigManager.fogOfWar = value,
                 'gameplay', 'boolean');
@@ -478,7 +483,7 @@
             const _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
             Window_Options.prototype.addGeneralOptions = function () {
                 _Window_Options_addGeneralOptions.call(this);
-                this.addCommand(OPTIONS_MENU_TEXT, 'fogOfWar');
+                this.addCommand(optionsMenuText(), 'fogOfWar');
             };
         }
     }

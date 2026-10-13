@@ -1,9 +1,9 @@
 {
-  "title": "Diario di Viaggio",
+  "title": "Diario di viaggio",
   "pages": "Pagine",
   "back": "Indietro",
-  "newPage": "Nuova Pagina",
-  "deletePage": "Strappa Pagina",
+  "newPage": "Nuova pagina",
+  "deletePage": "Strappa pagina",
   "editorHint": "Scrivi • Esc per le pagine",
   "listHint": "Invio per aprire • Esc per chiudere",
   "emptyPage": "Pagina",

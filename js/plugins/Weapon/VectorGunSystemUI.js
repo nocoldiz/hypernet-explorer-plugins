@@ -393,6 +393,23 @@
      * landed on by the cursor.
      */
     rows() {
+      // update() asks for the page every frame, and the calibrate page of a
+      // skill-firing shape ranks a whole skill category to build it. The page
+      // is kept until the tab, the fitted shape or the holder moves, or a card
+      // is worked (confirmRow bumps _rowsGen: every setting the screen can
+      // change goes through it).
+      let sig = this._tab + '|' + (this._rowsGen || 0);
+      if (this._tab === 'calibrate') {
+        const actor = VG.wielder() || VG.emActor();
+        sig += '|' + VG.fittedForm() + '|' + (actor ? actor._actorId + ':' + actor.level : '');
+      }
+      if (this._rowsCache && this._rowsCache.sig === sig) return this._rowsCache.rows;
+      const rows = this._buildRows();
+      this._rowsCache = { sig: sig, rows: rows, pickable: null };
+      return rows;
+    }
+
+    _buildRows() {
       const byName = (list, name) => list.slice().sort(
         (a, b) => String(name(a)).localeCompare(String(name(b))));
       if (this._tab === 'modes') {
@@ -436,7 +453,13 @@
 
     /** The cards a cursor can actually land on, in grid order. */
     pickable() {
-      return this.rows().filter((row) => row.kind !== 'head');
+      const rows = this.rows();
+      const cache = this._rowsCache;
+      if (cache && cache.rows === rows) {
+        if (!cache.pickable) cache.pickable = rows.filter((row) => row.kind !== 'head');
+        return cache.pickable;
+      }
+      return rows.filter((row) => row.kind !== 'head');
     }
 
     current() {
@@ -735,6 +758,7 @@
       } else if (row.kind === 'cal') {
         this._calibrate(row);
       }
+      this._rowsGen = (this._rowsGen || 0) + 1;
       this._paint();
     }
 

@@ -10,7 +10,7 @@
   "noMaterials": "NO MATERIALS STORED.",
   "freeBuild": "FREE BUILD",
   "illegal": {
-    "warning": "DIS LAND IZ NO YA. ANYTHIN' YOU PUT DOWN HERE IZ ILLEGAL CONSTRUCTION, AN' DA N€POLICE WILL BILL YOU FOR IT!",
+    "warning": "DIS LAND NO IZ YA. BUILDIN' HERE IZ ILLEGAL AN' DA N€POLICE WILL FINE YOU!",
     "charge": "ILLEGAL CONSTRUCTION"
   },
   "cannotAfford": {
@@ -23,7 +23,7 @@
   "confirmQ": "CONFIRM?",
   "piecesShown": "PIECES SHOWN",
   "closeEsc": "CLOSE (ESC)",
-  "truncated": "SHOWIN' DA FIRST {shown} BUILDABLE PIECES (+{more} MORE). SEARCH OR PICK A CATEGORY TA NARROW IT DOWN!",
+  "truncated": "SHOWIN' {shown} PIECES (+{more} MORE). SEARCH OR PICK A CATEGORY!",
   "door": {
     "inn": "INN",
     "shop": "SHOP",
@@ -49,10 +49,10 @@
     "animals": "NO LIVESTOCK IZ AVAILABLE HERE!",
     "search": "NO FURNITURE MATCHES YA SEARCH!",
     "cannotAfford": "YOU NO CAN AFFORD ANY FURNITURE RIGHT NOW!",
-    "cannotBuild": "YOU NO CAN BUILD ANYTHIN' WIT YA CURRENT MATERIALS!",
+    "cannotBuild": "YOU NO CAN BUILD ANYTINK WIT YA CURRENT MATERIALS!",
     "category": "NO FURNITURE IN DIS CATEGORY!",
     "prefabs": "NO PREFABS IZ BUILT IN DIS BIOME!",
-    "stock": "NOTHIN' IN STOCK. ORDER FROM DA HOMELY CATALOGUE ON DA HYPERDECK!"
+    "stock": "NUTTIN' IN STOCK. ORDER FROM DA HOMELY CATALOGUE ON DA HYPERDECK!"
   },
   "tip": {
     "construct": "SPEND CRAFTIN' MATERIALS",
@@ -61,12 +61,12 @@
     "purchasePrice": "PURCHASE PRICE",
     "dragToPlace": "PLACE IT ON DA MAP",
     "cannotAfford": "YOU NO CAN AFFORD DIS",
-    "clearAll": "DELETE EVERYTHIN' BUILT ON DIS MAP AN' REFUND MATERIALS",
+    "clearAll": "DELETE EVERYTINK BUILT ON DIS MAP AN' REFUND MATERIALS",
     "clearAllConfirm": "CLICK AGAIN TA CONFIRM",
     "cycleVariants": "OTHER COLOURWAYS AVAILABLE",
     "backToCategories": "BACK TA DA FOLDER LIST",
-    "stock": "ALREADY ORDERED AN' PAID FOR. FIDDLY BIT IT DOWN SPENDS ONE!",
-    "mirror": "FLIP DA PIECE LEFT TA RIGHT (NO FOR DOORS, WALLS, ROOFS OR TERRAIN)"
+    "stock": "ALREADY PAID FOR. PLACIN' IT USES ONE!",
+    "mirror": "FLIP LEFT TA RIGHT (NO DOORS, WALLS, ROOFS OR TERRAIN)"
   },
   "category": {
     "Ads": "ADS",
@@ -101,7 +101,7 @@
     "City": "CITY",
     "Clocks": "CLOCKS",
     "Clothes": "CLOTHES",
-    "ClothingStore": "CLOTHINGSTORE",
+    "ClothingStore": "CLOTHIN' STORE",
     "Columns": "COLUMNS",
     "Containers": "CONTAINERS",
     "Couches": "COUCHES",
@@ -125,7 +125,7 @@
     "Graffiti": "GRAFFITI",
     "Grass": "GRASS",
     "Graves": "GRAVES",
-    "GroceryStore": "GROCERYSTORE",
+    "GroceryStore": "GROCERY STORE",
     "Gym": "GYM",
     "Holes": "HOLES",
     "Hospital": "HOSPITAL",
@@ -137,7 +137,7 @@
     "Libraries": "LIBRARIES",
     "Lights": "LIGHTS",
     "Liquids": "LIQUIDS",
-    "LivingRoom": "LIVINGROOM",
+    "LivingRoom": "LIVIN' ROOM",
     "Magic": "MAGIC",
     "Mailboxes": "MAILBOXES",
     "Mannequins": "MANNEQUINS",
@@ -157,7 +157,7 @@
     "Plants": "PLANTS",
     "Poles": "POLES",
     "Potions": "POTIONS",
-    "PottedPlants": "POTTEDPLANTS",
+    "PottedPlants": "POTTED PLANTS",
     "Rails": "RAILS",
     "Rocks": "ROCKS",
     "Roofs": "ROOFS",
@@ -165,7 +165,7 @@
     "School": "SCHOOL",
     "Sheets": "SHEETS",
     "Shelves": "SHELVES",
-    "ShoppingCarts": "SHOPPINGCARTS",
+    "ShoppingCarts": "SHOPPIN' CARTS",
     "Signs": "SIGNS",
     "Sport": "SPORT",
     "Sports": "SPORTS",
@@ -181,24 +181,24 @@
     "Tilesets": "TILESETS",
     "Tombs": "TOMBS",
     "Tools": "TOOLS",
-    "TrafficCones": "TRAFFICCONES",
+    "TrafficCones": "TRAFFIC CONES",
     "Trash": "TRASH",
     "Treasures": "TREASURES",
-    "TreeStumps": "TREESTUMPS",
+    "TreeStumps": "TREE STUMPS",
     "Trees": "TREES",
     "Tunnels": "TUNNELS",
     "Underwater": "UNDERWATER",
     "Vases": "VASES",
     "Vehicles": "VEHICLES",
-    "VehiclesInterior": "VEHICLESINTERIOR",
+    "VehiclesInterior": "VEHICLE INTERIORS",
     "Vines": "VINES",
     "Wall": "WALL",
-    "WaterItems": "WATERITEMS",
+    "WaterItems": "WATER ITEMS",
     "Weapons": "WEAPONS",
     "Wells": "WELLS",
     "Windows": "WINDOWS",
     "Wood": "WOOD",
-    "WorldMap": "WORLDMAP"
+    "WorldMap": "WORLD MAP"
   },
   "freeBadge": "FREE",
   "buildMode": "BUILD MODE",
@@ -212,7 +212,7 @@
     "cannotAfford": "NO CAN AFFORD IT YET",
     "noMoney": "NO ENOUGH MONEY",
     "noMaterials": "NO ENOUGH MATERIALS",
-    "idle": "NOTHIN' IN HAND."
+    "idle": "NUTTIN' SELECTED."
   },
   "selection": "SELECTION",
   "backToCategories": "BACK TA DA FOLDERS",
@@ -223,28 +223,28 @@
     "search": "SEARCH DA CATALOGUE",
     "yourStock": "YA STOCK",
     "stockBlurb": "EACH ORDERED PIECE CAN BE PLACED {n} TIMES. ONCE BROKEN IT IZ GONE AN' MUST BE REORDERED!",
-    "stockEmpty": "NOTHIN' ON ORDER. PICK A DEPARTMENT AN' BUY SOMETHIN'!",
+    "stockEmpty": "NUTTIN' ON ORDER. PICK A DEPARTMENT AN' BUY SOMETINK!",
     "delivered": "DELIVERED",
-    "leftInStock": "{n} FIDDLY BITS-DOWN LEFT",
+    "leftInStock": "{n} PLACEMENTS LEFT",
     "order": "ORDER ONE",
-    "ordered": "{item} ORDERED FOR {price}. {n} FIDDLY BITS-DOWN WAITIN' IN STOCK!",
-    "cannotAfford": "DA PURSE WILL NO COVER IT, DELIVERY INCLUDED!",
+    "ordered": "{item} ORDERED FOR {price}. {n} PLACEMENTS IN STOCK!",
+    "cannotAfford": "NO ENOUGH MONEY (DELIVERY INCLUDED)!",
     "unknownPiece": "DA CATALOGUE HAB NO SUCH PIECE!",
-    "searchResults": "ANYTHIN' CALLED \"{q}\"",
-    "nothingHere": "NOTHIN' IN DIS DEPARTMENT!",
+    "searchResults": "RESULTS FOR \"{q}\"",
+    "nothingHere": "NUTTIN' IN DIS DEPARTMENT!",
     "pageOf": "PAGE {page} OF {pages}",
-    "prev": "BACK A PAGE",
-    "next": "ON A PAGE"
+    "prev": "PREVIOUS PAGE",
+    "next": "NEXT PAGE"
   },
   "stockLeft": "{n} LEFT",
   "mirror": "MIRROR",
   "painting": {
-    "pickTitle": "WHICH PICTURE DOES IT HOLD?",
-    "none": "AS IT IZ"
+    "pickTitle": "CHOOSE A PICTURE",
+    "none": "KEEP CURRENT"
   },
   "use": {
     "rest": "REST BY DA FIRE",
     "cook": "COOK",
-    "contentsReturned": "{n} STORED ITEMS BACK IN DA PACK"
+    "contentsReturned": "{n} STORED ITEMS RETURNED TA DA PACK"
   }
 }

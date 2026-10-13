@@ -637,7 +637,8 @@
     try {
       const classId = pickParentClass(parentProfiles, rng);
       const homeMapId = leadProfile?.homeBuilding?.mapId ?? leadProfile?.homeMapId ?? undefined;
-      const options = { initSpec: { age: String(age) } };
+      // Born to people, a person: never the creature roll.
+      const options = { initSpec: { age: String(age) }, person: true };
       if (spriteKey) { options.spriteKey = spriteKey; options.bustIndex = bustIndex; }
       profile = window.NPCSocietyRegistry?.ensureProfile?.(name, classId, group, homeMapId, options) || null;
     } catch (e) {

@@ -11,11 +11,11 @@
         "msg": "Schienale spezzato!"
       },
       "front_legs": {
-        "name": "Gambe Anteriori",
+        "name": "Gambe anteriori",
         "msg": "Gambe anteriori piegate!"
       },
       "rear_legs": {
-        "name": "Gambe Posteriori",
+        "name": "Gambe posteriori",
         "msg": "Gambe posteriori cedute!"
       },
       "joints": {
@@ -57,7 +57,7 @@
         "msg": "Ripiani spezzati!"
       },
       "back_panel": {
-        "name": "Pannello Posteriore",
+        "name": "Pannello posteriore",
         "msg": "Pannello posteriore sfondato!"
       },
       "brackets": {
@@ -84,7 +84,7 @@
         "msg": "Cassetti frantumati!"
       },
       "inner_shelving": {
-        "name": "Ripiani Interni",
+        "name": "Ripiani interni",
         "msg": "Ripiani interni crollati!"
       },
       "hinges": {
@@ -291,7 +291,7 @@
         "msg": "Serratura scoppiata!"
       },
       "floor_plate": {
-        "name": "Piastra di Fondo",
+        "name": "Piastra di fondo",
         "msg": "Piastra di fondo piegata!"
       },
       "welds": {
@@ -330,7 +330,7 @@
       },
       "door": {
         "name": "Anta",
-        "msg": "Anta piegata via dal telaio!"
+        "msg": "Anta divelta dal telaio!"
       },
       "latch": {
         "name": "Chiusura",
@@ -360,7 +360,7 @@
         "msg": "Catenacci tranciati!"
       },
       "hardplate": {
-        "name": "Piastra Antitrapano",
+        "name": "Piastra antitrapano",
         "msg": "Piastra antitrapano perforata!"
       },
       "shell": {
@@ -383,7 +383,7 @@
         "msg": "Sportello divelto!"
       },
       "coolant_line": {
-        "name": "Circuito Refrigerante",
+        "name": "Circuito refrigerante",
         "msg": "Circuito refrigerante scoppiato!"
       },
       "condenser_coils": {
@@ -399,18 +399,18 @@
         "msg": "Guarnizione strappata!"
       },
       "interior_light": {
-        "name": "Luce Interna",
+        "name": "Luce interna",
         "msg": "Luce interna saltata!"
       }
     },
     "oven": {
       "name": "Forno",
       "cavity": {
-        "name": "Camera di Cottura",
+        "name": "Camera di cottura",
         "msg": "Camera di cottura sfondata!"
       },
       "gas_line": {
-        "name": "Tubo del Gas",
+        "name": "Tubo del gas",
         "msg": "Tubo del gas squarciato!"
       },
       "burners": {
@@ -418,7 +418,7 @@
         "msg": "Bruciatori schiacciati!"
       },
       "door_glass": {
-        "name": "Vetro dello Sportello",
+        "name": "Vetro dello sportello",
         "msg": "Vetro dello sportello esploso!"
       },
       "thermostat": {
@@ -495,7 +495,7 @@
         "msg": "Vasca sfondata!"
       },
       "dough_hook": {
-        "name": "Gancio Impastatore",
+        "name": "Gancio impastatore",
         "msg": "Gancio impastatore piegato!"
       },
       "guard": {
@@ -504,7 +504,7 @@
       }
     },
     "vendingmachine": {
-      "name": "Distributore Automatico",
+      "name": "Distributore automatico",
       "cabinet": {
         "name": "Mobile",
         "msg": "Mobile piegato!"
@@ -538,10 +538,10 @@
       },
       "screen": {
         "name": "Schermo",
-        "msg": "Schermo implosso!"
+        "msg": "Schermo imploso!"
       },
       "chassis": {
-        "name": "Telaio Elettronico",
+        "name": "Telaio elettronico",
         "msg": "Telaio elettronico in corto!"
       },
       "speaker": {
@@ -560,7 +560,7 @@
     "computer": {
       "name": "Computer",
       "motherboard": {
-        "name": "Scheda Madre",
+        "name": "Scheda madre",
         "msg": "Scheda madre fritta!"
       },
       "tower": {
@@ -572,7 +572,7 @@
         "msg": "Monitor spento!"
       },
       "hard_disk": {
-        "name": "Disco Rigido",
+        "name": "Disco rigido",
         "msg": "Disco rigido andato!"
       },
       "power_supply": {
@@ -587,7 +587,7 @@
     "telephone": {
       "name": "Telefono",
       "line_card": {
-        "name": "Scheda di Linea",
+        "name": "Scheda di linea",
         "msg": "Scheda di linea morta!"
       },
       "handset": {
@@ -603,7 +603,7 @@
         "msg": "Cavo strappato!"
       },
       "coin_box": {
-        "name": "Cassetta Monete",
+        "name": "Cassetta monete",
         "msg": "Cassetta monete scassinata!"
       },
       "bell": {
@@ -622,7 +622,7 @@
         "msg": "Casse bruciate!"
       },
       "cassette_deck": {
-        "name": "Piastra a Cassette",
+        "name": "Piastra a cassette",
         "msg": "La piastra ha mangiato il nastro!"
       },
       "cd_tray": {
@@ -639,7 +639,7 @@
       }
     },
     "securitycamera": {
-      "name": "Telecamera di Sicurezza",
+      "name": "Telecamera di sicurezza",
       "sensor": {
         "name": "Sensore",
         "msg": "Sensore accecato!"
@@ -662,7 +662,7 @@
       }
     },
     "gymmachine": {
-      "name": "Attrezzo da Palestra",
+      "name": "Attrezzo da palestra",
       "frame": {
         "name": "Telaio",
         "msg": "Telaio piegato!"
@@ -676,7 +676,7 @@
         "msg": "Nastro sbrindellato!"
       },
       "weight_stack": {
-        "name": "Pacco Pesi",
+        "name": "Pacco pesi",
         "msg": "Pacco pesi crollato!"
       },
       "console": {
@@ -689,7 +689,7 @@
       }
     },
     "arcadecabinet": {
-      "name": "Cabinato Arcade",
+      "name": "Cabinato arcade",
       "board": {
         "name": "Scheda",
         "msg": "Scheda fritta!"
@@ -699,7 +699,7 @@
         "msg": "Monitor morto!"
       },
       "control_panel": {
-        "name": "Pannello Comandi",
+        "name": "Pannello comandi",
         "msg": "Pannello comandi divelto!"
       },
       "cabinet": {
@@ -707,7 +707,7 @@
         "msg": "Mobile sfondato!"
       },
       "coin_door": {
-        "name": "Sportello Gettoni",
+        "name": "Sportello gettoni",
         "msg": "Sportello gettoni forzato!"
       },
       "marquee": {
@@ -716,7 +716,7 @@
       }
     },
     "fuelpump": {
-      "name": "Distributore di Carburante",
+      "name": "Distributore di carburante",
       "pump_motor": {
         "name": "Pompa",
         "msg": "Pompa grippata!"
@@ -734,7 +734,7 @@
         "msg": "Contatore bloccato!"
       },
       "breakaway_valve": {
-        "name": "Valvola di Sicurezza",
+        "name": "Valvola di sicurezza",
         "msg": "Valvola di sicurezza saltata!"
       },
       "housing": {
@@ -749,7 +749,7 @@
         "msg": "Cassaforte aperta!"
       },
       "cash_cassette": {
-        "name": "Cassetta Contanti",
+        "name": "Cassetta contanti",
         "msg": "Cassetta contanti scoppiata!"
       },
       "screen": {
@@ -761,7 +761,7 @@
         "msg": "Tastierino strappato!"
       },
       "card_reader": {
-        "name": "Lettore di Carte",
+        "name": "Lettore di carte",
         "msg": "Lettore di carte inceppato!"
       },
       "dispenser": {
@@ -803,7 +803,7 @@
         "msg": "Lavello crepato da parte a parte!"
       },
       "supply_pipes": {
-        "name": "Tubi di Carico",
+        "name": "Tubi di carico",
         "msg": "Tubi di carico squarciati!"
       },
       "tap": {
@@ -820,7 +820,7 @@
       }
     },
     "bathtub": {
-      "name": "Vasca da Bagno",
+      "name": "Vasca da bagno",
       "tub_shell": {
         "name": "Vasca",
         "msg": "Vasca crepata!"
@@ -853,7 +853,7 @@
         "msg": "Miscelatore saltato!"
       },
       "tray": {
-        "name": "Piatto Doccia",
+        "name": "Piatto doccia",
         "msg": "Piatto doccia crepato!"
       },
       "shower_head": {
@@ -880,7 +880,7 @@
         "msg": "Tazza spaccata!"
       },
       "waste_tank": {
-        "name": "Serbatoio Reflui",
+        "name": "Serbatoio reflui",
         "msg": "Serbatoio reflui spaccato!"
       },
       "cistern": {
@@ -888,7 +888,7 @@
         "msg": "Cassetta scoppiata!"
       },
       "flush_valve": {
-        "name": "Valvola di Scarico",
+        "name": "Valvola di scarico",
         "msg": "Valvola di scarico bloccata!"
       },
       "seat": {
@@ -976,7 +976,7 @@
         "msg": "Vetro in frantumi!"
       },
       "sash": {
-        "name": "Telaio Mobile",
+        "name": "Telaio mobile",
         "msg": "Telaio mobile crepato!"
       },
       "frame": {
@@ -1041,7 +1041,7 @@
     "chimney": {
       "name": "Camino",
       "stack": {
-        "name": "Canna Fumaria",
+        "name": "Canna fumaria",
         "msg": "Canna fumaria crollata!"
       },
       "flue": {
@@ -1091,11 +1091,11 @@
         "msg": "Palo piegato in due!"
       },
       "base_plate": {
-        "name": "Piastra di Base",
+        "name": "Piastra di base",
         "msg": "Piastra di base strappata dai tirafondi!"
       },
       "lamp_head": {
-        "name": "Testa Lampada",
+        "name": "Testa lampada",
         "msg": "Testa lampada esplosa!"
       },
       "ballast": {
@@ -1103,7 +1103,7 @@
         "msg": "Reattore bruciato!"
       },
       "feeder_cable": {
-        "name": "Cavo di Alimentazione",
+        "name": "Cavo di alimentazione",
         "msg": "Cavo di alimentazione tranciato!"
       }
     },
@@ -1133,7 +1133,7 @@
     "building": {
       "name": "Edificio",
       "load_bearing_walls": {
-        "name": "Muri Portanti",
+        "name": "Muri portanti",
         "msg": "Muri portanti ceduti!"
       },
       "foundation": {
@@ -1216,7 +1216,7 @@
       }
     },
     "shoppingcart": {
-      "name": "Carrello della Spesa",
+      "name": "Carrello della spesa",
       "basket": {
         "name": "Cesto",
         "msg": "Cesto schiacciato!"
@@ -1253,7 +1253,7 @@
         "msg": "Tappo saltato!"
       },
       "wax_seal": {
-        "name": "Sigillo di Cera",
+        "name": "Sigillo di cera",
         "msg": "Sigillo di cera rotto!"
       },
       "label": {
@@ -1333,7 +1333,7 @@
         "msg": "Tela squarciata!"
       },
       "stretcher": {
-        "name": "Telaio Interno",
+        "name": "Telaio interno",
         "msg": "Telaio interno spezzato!"
       },
       "frame": {
@@ -1342,7 +1342,7 @@
       },
       "varnish": {
         "name": "Vernice",
-        "msg": "Vernice imbolsita!"
+        "msg": "Vernice coperta di bolle!"
       },
       "pigment": {
         "name": "Pigmento",
@@ -1350,7 +1350,7 @@
       }
     },
     "instrument": {
-      "name": "Strumento Musicale",
+      "name": "Strumento musicale",
       "body": {
         "name": "Cassa",
         "msg": "Cassa sfondata!"
@@ -1430,14 +1430,14 @@
       },
       "bark": {
         "name": "Corteccia",
-        "msg": "Corteccia scortecciata!"
+        "msg": "Corteccia strappata via!"
       },
       "knots": {
         "name": "Nodi",
         "msg": "Nodi saltati!"
       },
       "rot_pocket": {
-        "name": "Cavità Marcia",
+        "name": "Cavità marcia",
         "msg": "Cavità marcia collassata!"
       }
     },
@@ -1456,14 +1456,14 @@
         "msg": "Catasta crollata!"
       },
       "stone_ring": {
-        "name": "Cerchio di Pietre",
+        "name": "Cerchio di pietre",
         "msg": "Cerchio di pietre disfatto!"
       }
     },
     "puddle": {
       "name": "Pozzanghera",
       "body": {
-        "name": "Massa d’Acqua",
+        "name": "Massa d’acqua",
         "msg": "Massa d’acqua dispersa!"
       },
       "surface": {
@@ -1476,7 +1476,7 @@
       },
       "rim": {
         "name": "Bordo",
-        "msg": "Bordo rotto, defluita!"
+        "msg": "Bordo rotto, l'acqua è defluita!"
       }
     },
     "waterfall": {
@@ -1494,7 +1494,7 @@
         "msg": "Ciglio crollato!"
       },
       "rock_face": {
-        "name": "Parete Rocciosa",
+        "name": "Parete rocciosa",
         "msg": "Parete rocciosa franata!"
       },
       "spray": {

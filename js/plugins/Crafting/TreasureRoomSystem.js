@@ -117,19 +117,31 @@
   // 636 that is the world square plus the tile inside it: the map coordinate
   // alone moves with the shape of the stitched window, so the same doorway
   // answered to a different key from one visit to the next.
-  function procSpot() {
+  function procSpot(at) {
+    const x = at ? at.x : $gamePlayer.x, y = at ? at.y : $gamePlayer.y;
     if (!$gameMap || $gameMap.mapId() !== 636) {
-      return { x: $gamePlayer.x, y: $gamePlayer.y };
+      return { x, y };
     }
     const S = window.ProcStitch;
     const local = (S && typeof S.localToParty === "function")
-      ? S.localToParty($gamePlayer.x, $gamePlayer.y)
-      : { x: $gamePlayer.x, y: $gamePlayer.y };
+      ? S.localToParty(x, y)
+      : { x, y };
     return { x: local.x, y: local.y };
   }
 
+  // The doorway itself, not the tile the party touched it from. Every
+  // entrance is a player-touch event standing among the characters, so the
+  // party is always on one of the tiles beside it, and keying on that tile
+  // sent the same door to a different room (and a fresh chest) from each side.
+  function entranceSpot() {
+    const it = $gameMap && $gameMap._interpreter;
+    const id = it && typeof it.isRunning === "function" && it.isRunning() ? it.eventId() : 0;
+    const ev = id ? $gameMap.event(id) : null;
+    return procSpot(ev ? { x: ev.x, y: ev.y } : null);
+  }
+
   function createLocationKey() {
-    const spot = procSpot();
+    const spot = entranceSpot();
     if ($gameMap && $gameMap.mapId() === 636) {
       const wx = $gameVariables.value(43), wy = $gameVariables.value(44);
       return `${$gameMap.mapId()}_${wx},${wy}_${spot.x}_${spot.y}`;
@@ -149,6 +161,10 @@
       y: spot.y,
       direction: $gamePlayer.direction(),
     };
+    // The doorway this room was entered by, which is what names its chests.
+    const door = entranceSpot();
+    returnPoint.doorX = door.x;
+    returnPoint.doorY = door.y;
     // On the procedural map (636), also remember the world coordinates (vars
     // 43/44) so returning from the treasure room restores them exactly. Without
     // this, a later border/edge exit could read stale/scrambled coords and
@@ -397,7 +413,13 @@
     for (let i = treasureRoomReturnStack.length - 1; i >= 0; i--) {
       const rp = treasureRoomReturnStack[i];
       if (rp && rp.treasureRoomId === currentMapId) {
-        return `${rp.mapId}_${rp.x}_${rp.y}`;
+        const x = rp.doorX != null ? rp.doorX : rp.x;
+        const y = rp.doorY != null ? rp.doorY : rp.y;
+        // On the procedural map the tile is square-local, so the square is
+        // part of the name, or two squares' doors on the same tile shared one
+        // set of chests.
+        const square = rp.worldX != null ? `_${rp.worldX},${rp.worldY}` : "";
+        return `${rp.mapId}${square}_${x}_${y}`;
       }
     }
     return null;

@@ -45,7 +45,7 @@
     "ore_crystal": "Filone di cristallo",
     "ore_varlenia": "Filone di varlenia",
     "ore_arcane": "Filone arcano",
-    "ore_ethereal": "Filone eterico",
+    "ore_ethereal": "Filone etereo",
     "ore_quantum": "Filone quantico",
     "ore_meteor": "Filone meteorico",
     "red_sand": "Sabbia rossa",
@@ -79,13 +79,13 @@
   "tool": {
     "target": "{name}",
     "holding": "In mano: {name}",
-    "bedrock": "La roccia madre non cede.",
-    "noRoom": "Non c'è niente contro cui costruire qui.",
+    "bedrock": "Impossibile scavare la roccia madre.",
+    "noRoom": "Nessuna superficie su cui costruire.",
     "struck": "Hai colpito un filone di {name}.",
-    "pouchFull": "Non c'è più posto per quello che esce dalla roccia.",
-    "barFull": "La barra rapida è piena. Costruisci prima qualcosa con ciò che c'è sopra.",
-    "noBlock": "Non hai niente in mano con cui costruire.",
-    "noDigFight": "Non durante uno scontro. Il terreno resta dov'è.",
+    "pouchFull": "Inventario pieno.",
+    "barFull": "Barra rapida piena. Usa prima qualche blocco.",
+    "noBlock": "Nessun blocco in mano.",
+    "noDigFight": "Non puoi scavare durante uno scontro.",
     "bareHands": "Mani nude"
   },
   "hud": {
@@ -93,10 +93,12 @@
     "cmdPlace": "Posa un blocco",
     "cmdBlock": "Cambia blocco",
     "cmdBar": "Cambia barra rapida",
-    "cmdCast": "Lancia l'incantesimo in mano",
-    "cmdReady": "Ricarica, ripiega la pistola o parata",
-    "cmdFightHit": "Attacca con l'arma",
-    "cmdFightUse": "Usa l'incantesimo, l'oggetto o il blocco in mano"
+    "cmdCast": "Lancia incantesimo",
+    "cmdReady": "Ricarica, ripiega l'arma o para",
+    "cmdFightHit": "Attacca",
+    "cmdFightUse": "Usa incantesimo, oggetto o blocco in mano",
+    "solomonBegun": "IL RITUALE DI SALOMONE È COMINCIATO",
+    "solomonDismissed": "Rituale di Salomone congedato"
   },
   "bar": {
     "blocks": "Blocchi",
@@ -109,10 +111,10 @@
     "car": "Auto",
     "bike": "Bici",
     "boat": "Barca",
-    "broom": "Manico di scopa",
+    "broom": "Scopa volante",
     "starship": "Astronave",
     "none": "Nessun veicolo posseduto",
-    "called": "{name} portato qui."
+    "called": "Veicolo evocato: {name}."
   },
   "combat": {
     "begin": "Scontro!",

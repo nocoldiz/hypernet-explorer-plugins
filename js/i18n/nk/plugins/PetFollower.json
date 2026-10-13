@@ -5,9 +5,9 @@
   "cloneJoined": "{parent} DIVIDES. {name} TAKES UP A PLACE IN DA PARTY!",
   "cloneFollows": "{parent} DIVIDES. DERE IZ NO ROOM IN DA PARTY, SO {name} FOLLOWS BEHIND!",
   "training": {
-    "started": "{name} BEGINS TRAININ' AS A {className}. ABOUT {days} DAYS OF TRAVELLIN' TOGETHER SHOULD DO IT!",
+    "started": "{name} STARTS TRAININ' AS A {className}. 'BOUT {days} DAYS OF TRAVEL!",
     "stopped": "{name}'S TRAININ' IZ CALLED OFF!",
-    "readyNoRoom": "{name} HAB FINISHED ITS TRAININ', BUT DERE IZ NO ROOM IN DA PARTY FOR IT YET!",
+    "readyNoRoom": "{name} HAB FINISHED TRAININ'. NO ROOM IN DA PARTY YET!",
     "graduated": "{name} FINISHES TRAININ' AN' JOINS DA PARTY AS A {className}!"
   },
   "designedJoined": "{name} TAKES UP A PLACE IN DA PARTY!",

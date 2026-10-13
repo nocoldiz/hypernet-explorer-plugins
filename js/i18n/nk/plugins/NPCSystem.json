@@ -21,7 +21,7 @@
       "named": [
         "{name}... TCH.",
         "NO YOU AGAIN, {name}.",
-        "{name}'S NOTHIN' BUT TROUBLE."
+        "{name}'S NUTTIN' BUT TROUBLE."
       ],
       "anon": [
         "ME NO LIKE DA LOOK OF DIS PERSON!",
@@ -76,9 +76,9 @@
     "talk": "TALK",
     "empathize": "EMPATHIZE",
     "cancel": "FORGET IT",
-    "silent": "DEY LOOK THROUGH YOU, SOMEWHERE ELSE ENTIRELY!",
+    "silent": "DEY NO RESPOND.",
     "otherParty": "TRAVELLIN' WIT {leader}'S PARTY",
-    "readOnly": "DEY BELONG TA ANOTHER JOURNEY. YOU CAN TALK, AN' NOTHIN' MORE!",
+    "readOnly": "IN ANOTHER PLAYER'S PARTY. YOU CAN ONLY TALK!",
     "join": "ASK DEM ALONG"
   },
   "towerWorldOfFloor": "{world}, FLOOR {floor}",

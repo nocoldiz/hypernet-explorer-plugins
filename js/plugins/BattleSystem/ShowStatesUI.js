@@ -514,7 +514,10 @@
         this._select(this._idx === -1 ? 0 : this._idx + PAGE_JUMP, true);
       } else if (Input.isRepeated('left')) {
         this._select(this._idx === -1 ? 0 : this._idx - PAGE_JUMP, true);
-      } else if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+      } else if (Input.isTriggered('cancel')) {
+        // Right click is answered by the contextmenu listener alone: the same
+        // click also arrives as TouchInput's cancel, and reading both stepped
+        // out two levels at once (deselect, then leave the screen).
         this.onCancel();
       }
     }

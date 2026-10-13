@@ -72,7 +72,22 @@
 
     // Latched per-axis direction for the left stick, shared by the RMMZ core
     // hook and this helper's own discrete API so both read the same press.
-    const _latch = { x: 0, y: 0 };
+    //
+    // One latch PER PAD, keyed by its index. Core polls every connected pad
+    // in turn, the button-less Windows ghost included, and a single shared
+    // latch was reset to zero by whichever idle pad came after the one being
+    // held: the hysteresis band then never held anything, and the flapping it
+    // exists to stop came straight back on any machine with two pads listed.
+    const _latches = {};
+    const NO_LATCH = Object.freeze({ x: 0, y: 0 });
+    function latchOf(index) {
+        const key = index === undefined || index === null ? 0 : index;
+        if (!_latches[key]) _latches[key] = { x: 0, y: 0 };
+        return _latches[key];
+    }
+    function peekLatch(index) {
+        return _latches[index] || NO_LATCH;
+    }
 
     // A gamepad stick held toward a corner does not sit still: it wobbles a few
     // hundredths either side of wherever the thumb is resting. RMMZ core folds
@@ -89,19 +104,20 @@
     // once and stays latched. Diagonal MOVEMENT is untouched, because both axes
     // may be latched at the same time; it is only the flapping that stops.
     const LATCH_KEYS = ['x', 'y'];
-    function snapAxes(axes) {
+    function snapAxes(axes, index) {
+        const latch = latchOf(index);
         const out = Array.prototype.slice.call(axes || []);
         for (let i = 0; i < 2; i++) {
             const v = out[i] || 0;
             const key = LATCH_KEYS[i];
             if (Math.abs(v) >= STEP_THRESHOLD) {
-                _latch[key] = v < 0 ? -1 : 1;
+                latch[key] = v < 0 ? -1 : 1;
             } else if (Math.abs(v) < STEP_RELEASE) {
-                _latch[key] = 0;
+                latch[key] = 0;
             }
             // Report the latched direction at full deflection so whatever
             // threshold the consumer uses agrees with the latch.
-            out[i] = _latch[key];
+            out[i] = latch[key];
         }
         return out;
     }
@@ -114,8 +130,40 @@
         _Input_updateGamepadState.call(this, {
             index: gamepad.index,
             buttons: gamepad.buttons,
-            axes: snapAxes(gamepad.axes)
+            axes: snapAxes(gamepad.axes, gamepad.index)
         });
+    };
+
+    // A pad pulled out (or whose battery dies) while a button or the stick is
+    // held: core only ever polls CONNECTED pads, so the release edge for what
+    // it was holding never comes, and _currentState keeps that action down for
+    // good. The party walked on by itself and a menu cursor ran to the end of
+    // its list, and on a Steam Deck there was no keyboard key to let it go.
+    // Every pad core has a state for and that is no longer connected is
+    // released here, exactly as core would on a release edge, and forgotten.
+    const _Input_pollGamepads = Input._pollGamepads;
+    Input._pollGamepads = function () {
+        _Input_pollGamepads.apply(this, arguments);
+        const states = this._gamepadStates;
+        if (!states) return;
+        const live = {};
+        const pads = navigator.getGamepads ? (navigator.getGamepads() || []) : [];
+        for (const pad of pads) {
+            if (pad && pad.connected) live[pad.index] = true;
+        }
+        for (const index of Object.keys(states)) {
+            if (live[index]) continue;
+            const last = states[index] || [];
+            for (let j = 0; j < last.length; j++) {
+                const name = this.gamepadMapper[j];
+                if (name && last[j]) this._currentState[name] = false;
+            }
+            delete states[index];
+            delete _latches[index];
+        }
+        for (const index of Object.keys(_latches)) {
+            if (!live[index]) delete _latches[index];
+        }
     };
 
     const AnalogStickInput = {
@@ -283,11 +331,14 @@
             // core hook uses (see snapAxes) rather than the analog values, so a
             // DOM scene stepping through a list and a Window_Selectable doing
             // the same both see one steady press instead of a stick flapping
-            // across the threshold.
-            this._step('up', _latch.y < 0);
-            this._step('down', _latch.y > 0);
-            this._step('left', _latch.x < 0);
-            this._step('right', _latch.x > 0);
+            // across the threshold. It is the latch of the pad read above, and
+            // none once that pad is gone, so a stick held while the pad was
+            // pulled out does not keep pulsing a direction forever.
+            const latch = pad ? peekLatch(pad.index) : NO_LATCH;
+            this._step('up', latch.y < 0);
+            this._step('down', latch.y > 0);
+            this._step('left', latch.x < 0);
+            this._step('right', latch.x > 0);
         },
 
         _step(dir, held) {
@@ -344,10 +395,13 @@
             // Mirror core's stick-to-d-pad fold, reading the same latch our
             // _updateGamepadState hook feeds it (see snapAxes), so a held
             // direction is seeded exactly as core would have recorded it.
-            state[12] = _latch.y < 0;
-            state[13] = _latch.y > 0;
-            state[14] = _latch.x < 0;
-            state[15] = _latch.x > 0;
+            // OR'd with the d-pad buttons themselves, as core does: a held
+            // d-pad seeded as released read as a fresh press next frame.
+            const latch = peekLatch(pad.index);
+            state[12] = !!state[12] || latch.y < 0;
+            state[13] = !!state[13] || latch.y > 0;
+            state[14] = !!state[14] || latch.x < 0;
+            state[15] = !!state[15] || latch.x > 0;
             for (let j = 0; j < state.length; j++) {
                 const name = Input.gamepadMapper[j];
                 if (name && state[j]) {

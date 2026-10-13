@@ -30,6 +30,14 @@
  * pure effect: nothing is transferred and the party returns to the map. The
  * MirageMarch common event drives it this way.
  *
+ * OK, cancel or a click skips straight to the closing flash.
+ *
+ * Crystal network: every Restore Crystal the party uses (the CureParty
+ * common event) is filed in the save, and the crystal's Teleport choice
+ * lists every other filed crystal, always played as the sky beams.
+ * Crystals on the Omega Tower's levels and in the dungeon are sealed:
+ * never filed, and no Teleport choice is offered there.
+ *
  * Plugin Commands:
  *   playTeleportCutscene - Plays the teleport cutscene and transfers player
  *
@@ -69,6 +77,14 @@
  * @value 2
  * @default 0
  * @desc Fade type after teleport completes
+ *
+ * @command registerCrystal
+ * @text Register Crystal
+ * @desc Files the Restore Crystal running this event in the crystal network
+ *
+ * @command openCrystalNetwork
+ * @text Open Crystal Network
+ * @desc Lists the other filed crystals and teleports the party to the chosen one
  */
 
 (() => {
@@ -117,6 +133,11 @@
         const opts = Object.assign({ variant: currentVariant() }, options || {});
         if (SceneManager._scene instanceof Scene_Map && typeof SceneManager.snapForBackground === 'function') {
             snapWithoutParty(SceneManager._scene);
+        } else if (partylessSnap) {
+            // From a menu: the menu's own backdrop still shows the party on
+            // their tiles, so the copy taken without them when the map was
+            // left is used instead.
+            opts.background = partylessSnap;
         }
         SceneManager.goto(Scene_TeleportCutscene);
         SceneManager.prepareNextScene(opts);
@@ -132,7 +153,7 @@
         return typeof Game_Follower !== 'undefined' && ch instanceof Game_Follower;
     }
 
-    function snapWithoutParty(scene) {
+    function hidePartySprites(scene) {
         const spriteset = scene && scene._spriteset;
         const sprites = (spriteset && spriteset._characterSprites) || [];
         const hidden = [];
@@ -142,12 +163,54 @@
                 hidden.push(sprite);
             }
         }
+        return hidden;
+    }
+
+    function snapWithoutParty(scene) {
+        const hidden = hidePartySprites(scene);
         try {
             SceneManager.snapForBackground();
         } finally {
             for (const sprite of hidden) sprite.visible = true;
         }
     }
+
+    // A teleport started from a menu (Return to Ship) has no map to snap: the
+    // menu's backdrop was taken with the party standing on it, and the
+    // cutscene drawing its own party on top showed every member twice. So
+    // whenever the map is left for a menu, a second picture without the party
+    // is kept for the cutscene. The menu keeps its own backdrop untouched.
+    let partylessSnap = null;
+    let snapping = false;
+    const _snapForBackground = SceneManager.snapForBackground;
+    SceneManager.snapForBackground = function () {
+        const scene = this._scene;
+        if (snapping || !(typeof Scene_Map !== 'undefined' && scene instanceof Scene_Map)) {
+            return _snapForBackground.apply(this, arguments);
+        }
+        snapping = true;
+        const hidden = hidePartySprites(scene);
+        try {
+            if (hidden.length) {
+                const keep = this._backgroundBitmap;
+                this._backgroundBitmap = null;
+                _snapForBackground.apply(this, arguments);
+                if (partylessSnap && partylessSnap !== this._backgroundBitmap && partylessSnap.destroy) {
+                    partylessSnap.destroy();
+                }
+                partylessSnap = this._backgroundBitmap;
+                this._backgroundBitmap = keep;
+            }
+        } finally {
+            for (const sprite of hidden) sprite.visible = true;
+            snapping = false;
+        }
+        if (!hidden.length) {
+            if (partylessSnap && partylessSnap.destroy) partylessSnap.destroy();
+            partylessSnap = null;
+        }
+        return _snapForBackground.apply(this, arguments);
+    };
 
     // Where every party member stands on screen, leader first. The cutscene
     // starts from the real tiles so the party lifts off (or sinks away)
@@ -186,6 +249,7 @@
         void: ['hold', 'gather', 'sink', 'flash']
     };
     const DURATION = { hold: 20, gather: 60, lift: 90, sink: 110, flash: 30 };
+    const SKIP_GRACE = 10;
 
     class Scene_TeleportCutscene extends Scene_Base {
         initialize() {
@@ -213,6 +277,7 @@
             this._fadeType = Number(options.fadeType) || 0;
             this._variant = options.variant === 'void' ? 'void' : 'ascend';
             this._onTeleport = typeof options.onTeleport === 'function' ? options.onTeleport : null;
+            this._background = options.background || null;
         }
 
         create() {
@@ -226,6 +291,7 @@
             this._phaseIndex = 0;
             this._phase = PHASES[this._variant][0];
             this._phaseTimer = 0;
+            this._elapsed = 0;
             this._done = false;
         }
 
@@ -234,7 +300,8 @@
         // void swallows the room.
         createBackground() {
             this._backgroundSprite = new Sprite();
-            const snap = typeof SceneManager.backgroundBitmap === 'function' ? SceneManager.backgroundBitmap() : null;
+            const snap = this._background ||
+                (typeof SceneManager.backgroundBitmap === 'function' ? SceneManager.backgroundBitmap() : null);
             this._backgroundSprite.bitmap = snap || this.solidBitmap('black');
             this.addChild(this._backgroundSprite);
 
@@ -422,6 +489,8 @@
         update() {
             super.update();
             if (this._done) return;
+            this._elapsed++;
+            if (this.isSkipRequested()) this.skipToFlash();
             this._phaseTimer++;
             const progress = Math.min(this._phaseTimer / DURATION[this._phase], 1);
 
@@ -434,6 +503,24 @@
             }
 
             if (progress >= 1) this.nextPhase();
+        }
+
+        // OK, cancel or a click jumps to the closing flash. The first frames
+        // are ignored so the press that started the teleport cannot skip it.
+        isSkipRequested() {
+            if (this._phase === 'flash' || this._elapsed < SKIP_GRACE) return false;
+            const input = typeof Input !== 'undefined' &&
+                (Input.isTriggered('ok') || Input.isTriggered('cancel'));
+            const touch = typeof TouchInput !== 'undefined' &&
+                (TouchInput.isTriggered() || TouchInput.isCancelled());
+            return !!(input || touch);
+        }
+
+        skipToFlash() {
+            const list = PHASES[this._variant];
+            this._phaseIndex = list.indexOf('flash');
+            this._phase = 'flash';
+            this._phaseTimer = 0;
         }
 
         nextPhase() {
@@ -566,7 +653,129 @@
         }
     }
 
+    // ------------------------------------------------------------------
+    // Crystal network. Every Restore Crystal the party uses is filed in the
+    // save, and any crystal can send the party back to one of the others,
+    // always rising in the sky beams. Crystals on the Omega Tower's levels
+    // and in the dungeon are sealed: never filed, and they offer no way out.
+    // ------------------------------------------------------------------
+    function crystalSealedHere() {
+        const floors = window.DungeonFloors;
+        if (!floors) return false;
+        if (typeof floors.onTowerLevels === 'function' && floors.onTowerLevels()) return true;
+        return typeof floors.isDungeonMap === 'function' && !!floors.isDungeonMap();
+    }
+
+    function crystalSealedMap(mapId) {
+        const floors = window.DungeonFloors;
+        return !!(floors && typeof floors.isDungeonMap === 'function' && floors.isDungeonMap(mapId));
+    }
+
+    function crystalNetwork() {
+        if (!$gameSystem._crystalNetwork) $gameSystem._crystalNetwork = [];
+        return $gameSystem._crystalNetwork;
+    }
+
+    function crystalMapName(mapId) {
+        const raw = (typeof $dataMap !== 'undefined' && $dataMap && $gameMap.mapId() === mapId && $dataMap.displayName)
+            || (window.$dataMapInfos && $dataMapInfos[mapId] && $dataMapInfos[mapId].name) || '';
+        return String(raw).replace(/^\d+\s*-\s*/, '').trim();
+    }
+
+    // The crystal is the event running the common event. The party arrives
+    // where it stood to touch it, facing it, so the spot is always walkable.
+    function registerCrystal(eventId) {
+        if (crystalSealedHere()) return null;
+        const event = eventId ? $gameMap.event(eventId) : null;
+        if (!event) return null;
+        const mapId = $gameMap.mapId();
+        const list = crystalNetwork();
+        const spot = {
+            mapId, eventId,
+            x: $gamePlayer.x, y: $gamePlayer.y, dir: $gamePlayer.direction(),
+            name: crystalMapName(mapId),
+        };
+        const known = list.find(c => c.mapId === mapId && c.eventId === eventId);
+        if (known) {
+            Object.assign(known, spot);
+            return known;
+        }
+        list.push(spot);
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(T('TeleportCutscene.crystalAttuned', { name: crystalLabel(spot.name) }));
+        }
+        return spot;
+    }
+
+    function crystalLabel(name) {
+        return typeof window.translateText === 'function' ? window.translateText(name) : name;
+    }
+
+    // Every filed crystal but the one being touched, two on one map told
+    // apart by number.
+    function crystalDestinations(eventId) {
+        const here = $gameMap.mapId();
+        const dests = crystalNetwork().filter(c =>
+            !(c.mapId === here && c.eventId === eventId) && !crystalSealedMap(c.mapId));
+        const seen = {};
+        return dests.map(c => {
+            const label = crystalLabel(c.name);
+            const n = (seen[label] = (seen[label] || 0) + 1);
+            const sameName = dests.filter(d => crystalLabel(d.name) === label).length > 1;
+            return { crystal: c, label: sameName ? T('TeleportCutscene.crystalNumbered', { name: label, n }) : label };
+        });
+    }
+
+    let pendingCrystal = null;
+
+    function openCrystalNetwork(interpreter) {
+        if (crystalSealedHere()) return;
+        const eventId = interpreter && interpreter.eventId ? interpreter.eventId() : 0;
+        const dests = crystalDestinations(eventId);
+        if (!dests.length) {
+            $gameMessage.add(T('TeleportCutscene.crystalNoneKnown'));
+        } else {
+            const choices = dests.map(d => d.label).concat([T('TeleportCutscene.crystalCancel')]);
+            $gameMessage.add(T('TeleportCutscene.crystalPrompt'));
+            $gameMessage.setChoices(choices, 0, choices.length - 1);
+            $gameMessage.setChoiceBackground(0);
+            $gameMessage.setChoicePositionType(2);
+            $gameMessage.setChoiceCallback(n => {
+                if (n >= 0 && n < dests.length) pendingCrystal = dests[n].crystal;
+            });
+        }
+        if (interpreter && interpreter.setWaitMode) interpreter.setWaitMode('message');
+    }
+
+    // The cutscene waits for the choice window to close, so the snapshot it
+    // plays over shows the map and not the menu.
+    const _Scene_Map_update_crystal = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function () {
+        if (_Scene_Map_update_crystal) _Scene_Map_update_crystal.call(this);
+        if (pendingCrystal && !$gameMessage.isBusy() && !$gamePlayer.isTransferring() &&
+            !SceneManager.isSceneChanging()) {
+            const c = pendingCrystal;
+            pendingCrystal = null;
+            play({ mapId: c.mapId, x: c.x, y: c.y, dir: c.dir, fadeType: 0, variant: 'ascend' });
+        }
+    };
+
+    PluginManager.registerCommand(pluginName, 'registerCrystal', function () {
+        registerCrystal(this.eventId ? this.eventId() : 0);
+    });
+
+    PluginManager.registerCommand(pluginName, 'openCrystalNetwork', function () {
+        openCrystalNetwork(this);
+    });
+
     window.Scene_TeleportCutscene = Scene_TeleportCutscene;
-    window.TeleportCutscene = { play, isExteriorHere, currentVariant, partyScreenSpots };
+    window.TeleportCutscene = {
+        play, isExteriorHere, currentVariant, partyScreenSpots,
+        partylessSnap: () => partylessSnap,
+        // Restore Crystals: used by the CureParty common event.
+        crystalTeleportAvailable: () => !crystalSealedHere(),
+        registerCrystal, crystalDestinations, openCrystalNetwork,
+        crystalNetwork: () => crystalNetwork().slice(),
+    };
 
 })();

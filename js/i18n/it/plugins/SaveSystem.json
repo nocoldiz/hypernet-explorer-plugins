@@ -1,5 +1,5 @@
 {
-  "autoSave": "Salvataggio Auto",
+  "autoSave": "Salvataggio automatico",
   "saveInterval": "Intervallo (min)",
   "empty": "Vuoto",
   "back": "Indietro",
@@ -11,6 +11,10 @@
   "sandboxSlot": "SANDBOX",
   "quickslot": "SALV. RAPIDO {n}",
   "partyOf": "Party di {name}",
+  "autosaveName": "Autosalvataggio",
+  "slotName": "Slot {n}",
+  "adjacentParty": "Nelle vicinanze: {name}",
+  "coordinatesLabel": "Coordinate:",
   "levelShort": "Lv {n}",
   "hpShort": "HP",
   "mpShort": "MP",
@@ -28,30 +32,30 @@
   "daysUntilDestiny": "Giorni al destino:",
   "daysAfterDestiny": "Giorni dal destino:",
   "destinyAverted": "Destino evitato",
-  "anotherPartyOfThisWorld": "Un'altra compagnia di questo mondo. Puoi caricarla, ma non scrivere qui.",
-  "playTime": "Tempo di Gioco:",
+  "anotherPartyOfThisWorld": "Salvato da un altro Party. Solo caricamento.",
+  "playTime": "Tempo di gioco:",
   "recordedOn": "Registrato il:",
   "partyMembers": "Membri del Party",
   "save": "Salva",
   "load": "Carica",
   "delete": "Elimina",
-  "thisPageOfHistoryRemains": "Questa pagina del diario è vuota. Premi due volte o premi INVIO per registrare le tue avventure attuali in questo slot.",
+  "thisPageOfHistoryRemains": "Slot vuoto.",
   "deleteParty": "Elimina Party",
-  "areYouSureYouWant": "Sei sicuro di voler eliminare questo party? L'azione non può essere annullata.",
-  "cannotDeleteCurrent": "Questa è la compagnia con cui stai giocando. Non puoi eliminarla dall'interno della sua stessa storia.",
+  "areYouSureYouWant": "Eliminare questo Party? Non si può annullare.",
+  "cannotDeleteCurrent": "Non puoi eliminare il Party con cui stai giocando.",
   "cancel": "Annulla",
   "theAdventurer": "L'avventuriero",
-  "playTime2": "Tempo di Gioco",
+  "playTime2": "Tempo di gioco",
   "youDied": "SEI MORTO",
-  "returnToMainMenu": "Torna al Menu Principale",
+  "returnToMainMenu": "Torna al menu principale",
   "emWillReturnSomehowWitches": "Em tornerà in qualche modo...le streghe non muoiono mai!",
   "dateLocale": "it-IT",
-  "adventureLog": "Diario di Viaggio",
+  "adventureLog": "Diario di viaggio",
   "epitaph": "Qui giace {name}",
   "stat": {
     "bounty": "Taglia",
-    "floorReached": "Piano Raggiunto",
-    "arenaWins": "Vittorie Arena",
+    "floorReached": "Piano raggiunto",
+    "arenaWins": "Vittorie nell'arena",
     "difficulty": "Difficoltà"
   },
   "quick": {
@@ -65,5 +69,9 @@
     "quicksaveLoaded": "Salvataggio rapido {n} caricato"
   },
   "rememberedFor": "Cosa verrà ricordato",
-  "diaryStamp": "{date}, {time}"
+  "diaryStamp": "{date}, {time}",
+  "story": {
+    "giveUp": "Arrenditi",
+    "witchesNeverDie": "Le streghe non muoiono mai!"
+  }
 }

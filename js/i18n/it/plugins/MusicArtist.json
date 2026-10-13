@@ -9,7 +9,7 @@
   "byLine": "di {artist}",
   "artist": {
     "custom": "La tua cassetta",
-    "procedural": "Generata sul momento",
+    "procedural": "Procedurale",
     "unknown": "Artista sconosciuto"
   },
   "cassette": {

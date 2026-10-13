@@ -23,7 +23,7 @@
     "kmh": "{n} KM/H",
     "outlook": "FIVE-DAY OUTLOOK",
     "precip": "{n}% PRECIP.",
-    "disclaimer": "OUTLOOKS IZ ROLLED FROM DA SEASON TABLES AN' DA CALENDAR. DA SKY OWES DEM NOTHIN'!",
+    "disclaimer": "FORECASTS MAY BE WRONG.",
     "months": [
       "JAN",
       "FEB",
@@ -40,7 +40,7 @@
     ],
     "seasons": {
       "winter": "WINTER",
-      "spring": "SPRIN'",
+      "spring": "SPRING",
       "summer": "SUMMER",
       "autumn": "AUTUMN"
     }

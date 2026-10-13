@@ -203,20 +203,37 @@
             return this._pendingRolls > 0;
         }
 
-        _shouldShow3D(options = {}) {
-            if (options.forceToast === true) return false;
-            if (options.force3D === true) return true;
-            if (typeof $gameParty !== 'undefined' && $gameParty.inBattle && $gameParty.inBattle()) return true;
+        // The scene a throw belongs to: whatever scene is up when it is asked
+        // for, unless the caller names one (`owner`), or none at all
+        // (`owner: null`) for a die that outlives any one screen.
+        _ownerOf(options = {}) {
+            if (Object.prototype.hasOwnProperty.call(options, 'owner')) return options.owner || null;
+            return (typeof SceneManager !== 'undefined' && SceneManager && SceneManager._scene) || null;
+        }
 
-            const act = String(options.actionName || '').toLowerCase();
-            if (act.includes('eris') || act.includes('onu') || act.includes('court') ||
-                act.includes('romance') || act.includes('propose') || act.includes('proposal') ||
-                act.includes('empathize') || act.includes('steal') || act.includes('shoplift') || act.includes('pickpocket') ||
-                act.includes('summon') || act.includes('fusion') || act.includes('spell') ||
-                act.includes('recruit') || act.includes('tame') || act.includes('talk') || act.includes('bash') ||
-                act.includes('cook') || act.includes('culinary')) {
-                return true;
-            }
+        // Whether the screen that threw a die is still the one up. A menu left
+        // while its die was in the air is gone: what comes after the landing
+        // must not touch its windows, its DOM or the scene stack on its behalf.
+        // A scene already on its way out (another queued behind it) counts as
+        // gone too. Callers ask this after the await, with their own scene.
+        ownerAlive(owner) {
+            if (!owner) return true;
+            if (typeof SceneManager === 'undefined' || !SceneManager) return true;
+            if (SceneManager._scene !== owner) return false;
+            const next = SceneManager._nextScene;
+            return !(next && next !== owner);
+        }
+
+        // Whether a throw gets the 3D table or a toast. The caller says so
+        // outright and the title is never read: it is in the player's
+        // language, so a word test on it gave Italian a different table than
+        // English. In order: `table: 'toast'` / `forceToast` wins, then
+        // `table: '3d'` / `force3D`, then any roll in battle is on the table,
+        // and a caller that asks for nothing gets the toast.
+        _shouldShow3D(options = {}) {
+            if (options.forceToast === true || options.table === 'toast') return false;
+            if (options.force3D === true || options.table === '3d') return true;
+            if (typeof $gameParty !== 'undefined' && $gameParty.inBattle && $gameParty.inBattle()) return true;
             return false;
         }
 
@@ -582,7 +599,10 @@
                 nat1,
                 nat20,
                 statName,
-                actionName
+                actionName,
+                // Set when the screen that threw the die closed before it
+                // landed: the roll still counts, the screen is not there.
+                ownerGone: false
             };
 
             const shouldShow3D = this._shouldShow3D(options);
@@ -617,7 +637,8 @@
             // One die on screen at a time: a throw asked for while another is
             // still tumbling is queued behind it rather than stealing its
             // scene, its card and its frame loop half way through.
-            const throwIt = () => this._throwD20(resultData, options);
+            const owner = this._ownerOf(options);
+            const throwIt = () => this._throwD20(resultData, options, owner);
             this._pendingRolls++;
             // Nothing in the air: the die leaves the hand now. Something in the
             // air: this one waits behind it, however that one ends.
@@ -639,10 +660,16 @@
 
         // The throw itself: the scene, the card and the frame loop. Only ever
         // entered through rollD20, which keeps the throws one behind another.
-        _throwD20(resultData, options) {
+        _throwD20(resultData, options, owner = null) {
             const { dc, modifier, statName, actionName, roll: rawRoll, total, nat1, nat20, success } = resultData;
 
             return new Promise((resolve) => {
+                // Queued behind another die and its screen closed meanwhile:
+                // nothing is thrown, the roll is handed back as it stands.
+                if (!this.ownerAlive(owner)) {
+                    resultData.ownerGone = true;
+                    return resolve(resultData);
+                }
                 this._setupThree();
                 if (!this._container) {
                     return resolve(resultData);
@@ -727,8 +754,34 @@
                 let summed = false;
                 let exiting = false;
                 let restDrawn = false;
+                let finished = false;
+
+                // The one way out of a throw, landed or cut short. The stage
+                // is put away and the roll handed back exactly once.
+                const finish = () => {
+                    if (finished) return;
+                    finished = true;
+                    if (this._animFrameId) {
+                        if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(this._animFrameId);
+                        this._animFrameId = null;
+                    }
+                    if (this._container) {
+                        this._container.style.display = 'none';
+                        this._container.className = '';
+                    }
+                    if (this._banner) this._banner.className = '';
+                    resultData.ownerGone = !this.ownerAlive(owner);
+                    resolve(resultData);
+                };
 
                 const animate = (currentTime) => {
+                    if (finished) return;
+                    // The menu that threw this die was closed while it was in
+                    // the air: the die leaves with it, at once and in silence.
+                    if (!this.ownerAlive(owner)) {
+                        finish();
+                        return;
+                    }
                     if (startTime === null) startTime = currentTime;
                     const elapsed = currentTime - startTime;
                     const progress = Math.min(1, elapsed / rollDuration);
@@ -842,11 +895,8 @@
                     if (elapsed < totalDuration) {
                         this._animFrameId = requestAnimationFrame(animate);
                     } else {
-                        setTimeout(() => {
-                            this._container.style.display = 'none';
-                            this._container.className = '';
-                            resolve(resultData);
-                        }, 50);
+                        this._animFrameId = null;
+                        setTimeout(finish, 50);
                     }
                 };
 

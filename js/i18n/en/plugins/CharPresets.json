@@ -21,13 +21,13 @@
     "richardBenson": "Broadcasts from a transmitter he built out of parts nobody will admit selling him, and has been at war with his own audience for twenty years. Fluent in three languages and hostile in all of them. Claims to have invented every genre he plays and to have been robbed of the credit for each one.",
     "ritaLeviMontalcini": "Did the work that won her the Nobel in a bedroom laboratory, hiding from a state that had decided she was not permitted to be a scientist. Nothing since has been able to impress her, including the state, the Nobel, or her own century. Senator for life, and still the first one awake.",
     "kofiAnnan": "Spent a career standing between people who had already decided to kill each other, and got enough of them to stop that the rest is a matter of arithmetic. Speaks quietly, on the theory that a room will lean in to hear a man who refuses to shout at it.",
-    "georgeWBush": "Inherited an oil fortune, a family name and a country in that order, and has been underestimated by everyone he has ever beaten. Runs on certainty rather than analysis, which is a liability in peacetime and something else entirely in a war.",
-    "berlusconi": "Owns the channels that report on him, which he has never regarded as a conflict so much as an efficiency. Sells optimism at scale and believes every word of it while he is saying it, which is what makes it sell.",
-    "ciampi": "Spent a lifetime holding the lira together and then signed it away for something steadier, and considers that the whole of his career rather than the end of it. Central bankers do not get statues; he has never once seemed to mind."
+    "georgeWBush": "Inherited an oil fortune, a family name and a country in that order, and has been underestimated by everyone he has ever beaten. Runs on pure certainty, which is a liability in peacetime and something else entirely in a war.",
+    "berlusconi": "Owns the channels that report on him, which he has always regarded as an efficiency. Sells optimism at scale and believes every word of it while he is saying it, which is what makes it sell.",
+    "ciampi": "Spent a lifetime holding the lira together and then signed it away for something steadier, and considers that the whole of his career. Central bankers do not get statues; he has never once seemed to mind."
   },
   "emBank": {
     "0": [
-      "The branch behind her is a world where magic was never filed away among fairy tales but licensed, taxed and printed in the back pages of the newspapers.",
+      "The branch behind her is a world where magic is licensed, taxed and printed in the back pages of the newspapers.",
       "Her dimension burned its last cathedral in 1913 and has run on borrowed miracles ever since.",
       "The world she left was one flooded city ninety storeys tall, with the sea held back by recited law.",
       "She grew up in a country that had quietly seceded from geography and could only be reached by getting lost on purpose.",
@@ -91,7 +91,7 @@
     "I am the protagonist. I am not being modest about it because I do not see the point of that.",
     "I know a spell or two. I own four hundred grimoires and I have read most of them, so it is rather more than two.",
     "This game is played better from my side of the net. You are welcome to the other side.",
-    "Choose me and I promise you hours of properly strange business. That is not a figure of speech. I have checked.",
+    "Choose me and I promise you hours of properly strange business. I mean that literally. I have checked.",
     "I am immortal across dimensions. Try to stop me. Genuinely, try, I want to see the attempt.",
     "Witches never dies. ...somebody explained why that is wrong and I have decided to keep it.",
     "Ninety-two percent of my memories were taken and I remain the strongest thing on this board. Consider what the other eight percent must be.",
@@ -101,8 +101,8 @@
   "emBackstory": [
     "Em was born in {town}, Britannia, and wanted to be a witch in an age that had filed magic away with the fairy tales.",
     "When Margaret Thatcher, quietly one of the three pillars of the Mage Guild, needed a fulcrum for the Solomonic Ritual, she picked Em. Em offered herself as the sacrifice. The price was ninety-two percent of her memories.",
-    "They did not go anywhere. They were forged into the Lance of Memory, the spear that killed the Father aspect of YHWH: his soul was scattered into quadrillions of fragments, his rotting body still orbits the Earth, and every sacred spell the Vatican knew stopped working that night.",
-    "She did not die on the table. She woke alone on Ritual Island on the first of January with no past at all and, for reasons nobody has been able to explain, a magical potential grown enormously past what she started with. She is still learning to hold it, and it is still growing.",
+    "Those memories were forged into the Lance of Memory, the spear that killed the Father aspect of YHWH: his soul was scattered into quadrillions of fragments, his rotting body still orbits the Earth, and every sacred spell the Vatican knew stopped working that night.",
+    "She survived the table and woke alone on Ritual Island on the first of January with no past at all and, for reasons nobody has been able to explain, a magical potential grown enormously past what she started with. She is still learning to hold it, and it is still growing.",
     "She travels with Bubba and the camper they share, pointed at Beagle for an appointment she barely remembers. Bubba feels nothing for her and still loves Eris; Eris, goddess of discord and current occupant of the celestial throne, is jealous enough to bend cosmic law and probability to make Em's life hell."
   ],
   "emLabel": {
@@ -115,6 +115,7 @@
     "menuTraining": "Drills",
     "menuWait": "Stand About Grandly",
     "menuWorkforce": "Army Of Em",
+    "needBladder": "The Little Room",
     "needHunger": "Appetite",
     "needHygiene": "Presentability",
     "needLeisure": "Amusement",
@@ -137,13 +138,13 @@
   "partyCannotBeEmpty": "The party cannot be left empty.",
   "leaderCannotLeave": "{name} leads the party and cannot be sent away.",
   "cannotLeaveNow": "{name} cannot leave the party right now.",
-  "memberRetired": "{name} has left the party and is available as a character in future playthroughs of this world.",
+  "memberRetired": "{name} left the party. They can be picked as a character in future games in this world.",
   "retiredLore": "Travelled with {leader} as a {role} and stepped back from the road, at level {level}.",
   "retiredLoreDated": "Travelled with {leader} as a {role} and stepped back from the road on {date}, at level {level}.",
   "theParty": "the party",
   "companion": "companion",
   "skins": "Appearance",
-  "skinHint": "leafs through the looks",
+  "skinHint": "browse looks",
   "skin": {
     "statesman": "Statesman",
     "arcane": "Arcane",
@@ -195,7 +196,7 @@
     "18": "Tough frontline brawler who hits hard with physical strength, strikes fast, and fires up the party with battle shouts.",
     "22": "Armored holy warrior who protects allies, cleanses ailments with holy water, and smites enemies with sacred light.",
     "35": "Support specialist whose enduring songs empower the whole party with buffs to damage, defense, and magic.",
-    "36": "Illusionist: a caster who fights the mind rather than the body, blinding, silencing and unravelling what the enemy believes it knows before a single blow is struck.",
+    "36": "Illusionist: a caster who attacks the mind, blinding, silencing and confusing enemies.",
     "49": "Mentalist who bypasses physical armor with free psychic blasts, drains life, and disrupts enemy minds.",
     "64": "Unpredictable shapeshifter who copies enemy skills and transforms directly into opponents to turn their powers against them."
   },
@@ -352,6 +353,7 @@
     "697": "Restores MP to the user and raises their INT and WIS. A ForbiddenMagic technique, a real draw on the mana bar.",
     "702": "Deals light Physical damage to all enemies and may inflict Unbalanced. A ForbiddenMagic technique, a real draw on the mana bar.",
     "770": "Raises the user's INT. Grants Arcane Surge. A Arcanism technique, a heavy spell to pay for.",
+    "771": "Grants Magic Reflection to the user, turning spells cast at them back on the caster. An Arcanism technique.",
     "774": "Raises one ally's INT. May grant Arcane Surge. Strikes last. A Arcanism technique, a heavy spell to pay for.",
     "776": "Drains HP from one enemy and lowers INT. May inflict Silence. Strikes last. A Arcanism technique, a heavy spell to pay for.",
     "777": "Curses a target to lower their attack strength and make them take more damage.",
@@ -533,7 +535,7 @@
     "1659": "Calls down a raging storm. A Aeromancy technique, a heavy spell to pay for.",
     "1661": "Throws the weather into wild flux. A Aeromancy technique, a heavy spell to pay for.",
     "1664": "Forces the temperature to settle. A Pyromancy technique, a real draw on the mana bar.",
-    "1693": "Takes the party into the air on its own wings. A Geomancy technique, a real draw on the mana bar.",
+    "1693": "Flies the party through the air. A Geomancy technique, a real draw on the mana bar.",
     "1714": "Quick fiery dart that burns the enemy over time and hampers their accuracy.",
     "1717": "Deals light Ice damage to one enemy and lowers their STR. A Cryomancy technique, cheap to cast.",
     "1718": "Deals Thunder damage to one enemy and lowers their DEX. May inflict Stun. Strikes first. A Electromancy technique, a real draw on the mana bar.",
@@ -562,20 +564,20 @@
     "1820": "Raises all allies' STR. A Leadership technique, paid in a little fighting spirit.",
     "1825": "Deals light Thunder damage to all enemies and lowers DEX. May inflict Stun. Strikes last. A Electromancy technique, a real draw on the mana bar.",
     "1838": "Deals Water damage to all enemies and may inflict Confusion. Strikes first. A HolyMagic technique, a real draw on the mana bar.",
-    "1919": "Buys the help of whatever is loitering nearby. A Convokation technique, a real draw on the mana bar.",
+    "1919": "Pays nearby creatures to help. A Convokation technique, a real draw on the mana bar.",
     "1928": "Marks a creature so a later rite can find it. A Convokation technique, a real draw on the mana bar.",
     "1929": "Marks the person ahead so a rite can call them. A Convokation technique, a real draw on the mana bar.",
-    "1930": "Sends whatever the party has called to the field back where it came from, ending the summoning early and clearing the slot it was holding.",
+    "1930": "Dismisses the party's summon early and frees its slot.",
     "1931": "Wears a companion's name, class, skills and body until the fight ends. A Bestial technique, paid in a little fighting spirit.",
-    "1933": "Copies whatever an enemy just did and turns it back on them, so a fight they thought they were winning starts happening to them instead.",
+    "1933": "Copies the last action an enemy used and turns it back on that enemy.",
     "1934": "Opens a gateway across space into a reserved interior, or flees battle. A Convokation technique, a real draw on the mana bar.",
     "1937": "Sets down a tripod gun that rakes every enemy. Strikes twice. A Tactical technique, paid in hard won fighting spirit.",
     "1939": "Lays a live wire under one enemy. May inflict Paralysis. A Tactical technique, paid in a little fighting spirit.",
     "1940": "Straps a powered brace on one ally, raising their DEX and STR. A Tactical technique, paid in a little fighting spirit."
   },
   "dossierJoined": "{name} joins the party.",
-  "dossierJoinedInactive": "{name} signs on, and waits with the members in reserves.",
-  "playerMadeLore": "A dossier you wrote yourself. Take it as often as you like, and change whatever you please.",
+  "dossierJoinedInactive": "{name} joins the reserves.",
+  "playerMadeLore": "A dossier you made. Use and edit it freely.",
   "exportCardEquipment": "Equipment",
   "exportCardNoEquipment": "Nothing equipped",
   "party": {
@@ -615,5 +617,6 @@
       "name": "The Caravan",
       "desc": "A fortune teller, her driver and the goat that has outlived three of her predictions."
     }
-  }
+  },
+  "partyFromFolder": "A party card from the characters folder. It can be taken as many times as you like."
 }

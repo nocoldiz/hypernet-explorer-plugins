@@ -234,7 +234,7 @@
             // Crown of foliage.
             this.crown = new THREE.Group();
             const crownMat = this.applySkin(this._mat(p.crown, 1.0, 0.85));
-            for (const [x, y, z, r] of [[0, 3.2, 0, 1.0], [-0.7, 2.9, 0.2, 0.7], [0.7, 2.9, -0.2, 0.7], [0, 3.6, -0.2, 0.6]]) { const b = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 12), crownMat); b.position.set(x, y, z); this.crown.add(b); }
+            for (const [x, y, z, r] of [[0, 3.2, 0, 1.0], [-0.7, 2.9, 0.2, 0.7], [0.68, 2.86, -0.2, 0.64], [0, 3.6, -0.2, 0.6]]) { const b = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 12), crownMat); b.position.set(x, y, z); this.crown.add(b); }
             this.bodyGroup.add(this.crown);
             // Branch arms + roots.
             this.leftArm = this._branch(barkMat, -1); this.rightArm = this._branch(barkMat, 1);

@@ -1,0 +1,1639 @@
+{
+  "factions": {
+    "magesguild": {
+      "name": "MAGES GUILD",
+      "description": "DA ANCIENT, BUREAUCRATIC INSTITUTION REGULATIN' DA USE OF MAGIC ACROSS DA CONTINENT. DEY VALUE ORDER, TRADITION, AN' PERMITS!",
+      "troops": {
+        "apprenticemage": {
+          "name": "APPRENTICE MAGE"
+        },
+        "guildinitiate": {
+          "name": "GUILD INITIATE"
+        },
+        "guildwarden": {
+          "name": "GUILD WARDEN"
+        },
+        "certifiedmage": {
+          "name": "CERTIFIED MAGE"
+        },
+        "battlemage": {
+          "name": "BATTLE MAGE"
+        },
+        "guildenforcer": {
+          "name": "GUILD ENFORCER"
+        },
+        "mysticarcher": {
+          "name": "MYSTIC ARCHER"
+        },
+        "seniormagister": {
+          "name": "SENIOR MAGISTER"
+        },
+        "warwizard": {
+          "name": "WAR WIZARD"
+        },
+        "archmage": {
+          "name": "ARCHMAGE"
+        },
+        "spellsniper": {
+          "name": "SPELL SNIPER"
+        },
+        "grandmasterwizard": {
+          "name": "GRANDMASTER WIZARD"
+        },
+        "scientist": {
+          "name": "ARCANE RESEARCHER"
+        }
+      }
+    },
+    "archivefoundation": {
+      "name": "ARCHIVE FOUNDATION",
+      "description": "A SECRETIVE ORGANIZATION DEDICATED TA HOARDIN' HISTORY AN' CONTROLLIN' INFORMATION. DEY BELIEVE KNOWLEDGE IZ DANGEROUS AN' MUST BE CONTAINED!",
+      "troops": {
+        "archiveclerk": {
+          "name": "ARCHIVE CLERK"
+        },
+        "juniorarchivist": {
+          "name": "JUNIOR ARCHIVIST"
+        },
+        "archivesentinel": {
+          "name": "ARCHIVE SENTINEL"
+        },
+        "knowledgekeeper": {
+          "name": "KNOWLEDGE KEEPER"
+        },
+        "crossbowarchivist": {
+          "name": "CROSSBOW ARCHIVIST"
+        },
+        "archiveguardian": {
+          "name": "ARCHIVE GUARDIAN"
+        },
+        "seniorcurator": {
+          "name": "SENIOR CURATOR"
+        },
+        "vaultdefender": {
+          "name": "VAULT DEFENDER"
+        },
+        "knowledgesniper": {
+          "name": "KNOWLEDGE SNIPER"
+        },
+        "masterlibrarian": {
+          "name": "MASTER LIBRARIAN"
+        },
+        "scientist": {
+          "name": "ARCHIVE SCHOLAR"
+        }
+      }
+    },
+    "hypercapitalistcollective": {
+      "name": "HYPERCAPITALIST COLLECTIVE",
+      "description": "A RUTHLESS ALLIANCE OF MERCHANT-KINGS AN' TYCOONS WHO BELIEVE DA FREE MARKET IZ DA ONLY TRUE GOD!",
+      "troops": {
+        "contractworker": {
+          "name": "CONTRACT WORKER"
+        },
+        "corporatesecurity": {
+          "name": "CORPORATE SECURITY"
+        },
+        "corporatemarksman": {
+          "name": "CORPORATE MARKSMAN"
+        },
+        "hiredmercenary": {
+          "name": "HIRED MERCENARY"
+        },
+        "fieldmedic": {
+          "name": "FIELD MEDIC"
+        },
+        "eliteenforcer": {
+          "name": "ELITE ENFORCER"
+        },
+        "corporatesniper": {
+          "name": "CORPORATE SNIPER"
+        },
+        "executiveguard": {
+          "name": "EXECUTIVE GUARD"
+        },
+        "combatspecialist": {
+          "name": "COMBAT SPECIALIST"
+        },
+        "corporateassassin": {
+          "name": "CORPORATE ASSASSIN"
+        },
+        "scientist": {
+          "name": "R&D ANALYST"
+        }
+      }
+    },
+    "loyalists": {
+      "name": "LOYALISTS",
+      "description": "DOZE WHO ADHERE STRICTLY TA DA GRANDMASTER'S DECREES, FAVORIN' POLITICAL STABILITY OVER MAGICAL INNOVATION!",
+      "troops": {
+        "loyalacolyte": {
+          "name": "LOYAL ACOLYTE"
+        },
+        "decreeenforcer": {
+          "name": "DECREE ENFORCER"
+        },
+        "loyalbattlemage": {
+          "name": "LOYAL BATTLE MAGE"
+        },
+        "loyalsentinel": {
+          "name": "LOYAL SENTINEL"
+        },
+        "grandmasterschampion": {
+          "name": "GRANDMASTER'S CHAMPION"
+        },
+        "scientist": {
+          "name": "FIELD RESEARCHER"
+        }
+      }
+    },
+    "traditionalists": {
+      "name": "TRADITIONALISTS",
+      "description": "HARDLINERS WHO REJECT TECHNOLOGY AN' BELIEVE MAGIC SHOULD REMAIN PURE, ESOTERIC, AN' ELITIST!",
+      "troops": {
+        "puristnovice": {
+          "name": "PURIST NOVICE"
+        },
+        "hermeticmage": {
+          "name": "HERMETIC MAGE"
+        },
+        "traditionalistguard": {
+          "name": "TRADITIONALIST GUARD"
+        },
+        "esotericmaster": {
+          "name": "ESOTERIC MASTER"
+        },
+        "ancientsage": {
+          "name": "ANCIENT SAGE"
+        },
+        "scientist": {
+          "name": "LORE SCHOLAR"
+        }
+      }
+    },
+    "technomancers": {
+      "name": "TECHNOMANCERS",
+      "description": "RADICALS ATTEMPTIN' TA FUSE ARCANE SIGILS WIT COMBUSTION ENGINES AN' HEAVY MACHINERY!",
+      "troops": {
+        "techapprentice": {
+          "name": "TECH APPRENTICE"
+        },
+        "gearwright": {
+          "name": "GEARWRIGHT"
+        },
+        "steamfistbrawler": {
+          "name": "STEAMFIST BRAWLER"
+        },
+        "arcaneengineer": {
+          "name": "ARCANE ENGINEER"
+        },
+        "gunmage": {
+          "name": "GUNMAGE"
+        },
+        "magitekspecialist": {
+          "name": "MAGITEK SPECIALIST"
+        },
+        "scientist": {
+          "name": "TECHNOMANCER ENGINEER"
+        }
+      }
+    },
+    "92schoolsbranch": {
+      "name": "92 SCHOOLS BRANCH",
+      "description": "AN ACADEMIC SPLINTER GROUP OBSESSED WIT CATEGORIZIN' EVERY MINUTE VARIATION OF SPELLCASTIN' INTO RIGID SCHOOLS!",
+      "troops": {
+        "schoolscholar": {
+          "name": "SCHOOL SCHOLAR"
+        },
+        "specializedcaster": {
+          "name": "SPECIALIZED CASTER"
+        },
+        "schooldefender": {
+          "name": "SCHOOL DEFENDER"
+        },
+        "schoolmaster": {
+          "name": "SCHOOL MASTER"
+        },
+        "polymathmage": {
+          "name": "POLYMATH MAGE"
+        },
+        "scientist": {
+          "name": "SCHOOL SCHOLAR"
+        }
+      }
+    },
+    "eriscourt": {
+      "name": "ERIS' COURT",
+      "description": "FOLLOWERS OF DA GODDESS OF DISCORD, SEEKIN' TA DISRUPT DA BORIN' ORDER OF DA GUILDS AN' FOUNDATION!",
+      "troops": {
+        "chaoscultist": {
+          "name": "CHAOS CULTIST"
+        },
+        "chaosbrawler": {
+          "name": "CHAOS BRAWLER"
+        },
+        "discordagent": {
+          "name": "DISCORD AGENT"
+        },
+        "entropybringer": {
+          "name": "ENTROPY BRINGER"
+        },
+        "chaosberserker": {
+          "name": "CHAOS BERSERKER"
+        },
+        "avatarofdiscord": {
+          "name": "AVATAR OF DISCORD"
+        },
+        "scientist": {
+          "name": "COURT ALCHEMIST"
+        }
+      }
+    },
+    "naguka": {
+      "name": "NAGUKA",
+      "description": "A TRIBE OF SWAMP-DWELLIN' SCAVENGERS KNOWN FOR DEY RESISTANCE TA INDUSTRIAL TOXINS!",
+      "troops": {
+        "swampscavenger": {
+          "name": "SWAMP SCAVENGER"
+        },
+        "blowdarthunter": {
+          "name": "BLOWDART HUNTER"
+        },
+        "toxicwarrior": {
+          "name": "TOXIC WARRIOR"
+        },
+        "poisonslinger": {
+          "name": "POISON SLINGER"
+        },
+        "plaguebearer": {
+          "name": "PLAGUE BEARER"
+        },
+        "nagukashaman": {
+          "name": "NAGUKA SHAMAN"
+        },
+        "scientist": {
+          "name": "TRIBAL HERBALIST"
+        }
+      }
+    },
+    "truckerssociety": {
+      "name": "TRUCKERS SOCIETY",
+      "description": "DA BRAVE SOULS WHO TRANSPORT GOODS ACROSS DA WASTELANDS. DEY IZ DA LIFEBLOOD OF DA ECONOMY AN' OBEY NO ROAD LAWS!",
+      "troops": {
+        "rookietrucker": {
+          "name": "ROOKIE TRUCKER"
+        },
+        "highwaymarksman": {
+          "name": "HIGHWAY MARKSMAN"
+        },
+        "roadwarrior": {
+          "name": "ROAD WARRIOR"
+        },
+        "convoysniper": {
+          "name": "CONVOY SNIPER"
+        },
+        "veterandriver": {
+          "name": "VETERAN DRIVER"
+        },
+        "roadmedic": {
+          "name": "ROAD MEDIC"
+        },
+        "roadmaster": {
+          "name": "ROAD MASTER"
+        },
+        "scientist": {
+          "name": "FLEET MECHANIC"
+        }
+      }
+    },
+    "esotericheavyindustries": {
+      "name": "ESOTERIC HEAVY INDUSTRIES",
+      "description": "A MASSIVE AN' MYSTERIOUS CONGLOMERATE!",
+      "troops": {
+        "factoryworker": {
+          "name": "FACTORY WORKER"
+        },
+        "industrialforeman": {
+          "name": "INDUSTRIAL FOREMAN"
+        },
+        "factorysharpshooter": {
+          "name": "FACTORY SHARPSHOOTER"
+        },
+        "heavymachinist": {
+          "name": "HEAVY MACHINIST"
+        },
+        "industrialengineer": {
+          "name": "INDUSTRIAL ENGINEER"
+        },
+        "steelsentinel": {
+          "name": "STEEL SENTINEL"
+        },
+        "corporatetitan": {
+          "name": "CORPORATE TITAN"
+        },
+        "assemblylinesniper": {
+          "name": "ASSEMBLY LINE SNIPER"
+        },
+        "industrialoverlord": {
+          "name": "INDUSTRIAL OVERLORD"
+        },
+        "scientist": {
+          "name": "INDUSTRIAL ENGINEER"
+        }
+      }
+    },
+    "northpointarmy": {
+      "name": "NORTH POINT ARMY",
+      "description": "A DISCIPLINED MILITARY FORCE PROTECTIN' DA NORTHERN BORDERS FROM WHATEVER LURKS IN DA FROZEN WASTES!",
+      "troops": {
+        "recruit": {
+          "name": "RECRUIT"
+        },
+        "regularsoldier": {
+          "name": "REGULAR SOLDIER"
+        },
+        "northernarcher": {
+          "name": "NORTHERN ARCHER"
+        },
+        "frostranger": {
+          "name": "FROST RANGER"
+        },
+        "battlecleric": {
+          "name": "BATTLE CLERIC"
+        },
+        "winterguard": {
+          "name": "WINTER GUARD"
+        },
+        "frostmarksman": {
+          "name": "FROST MARKSMAN"
+        },
+        "northernknight": {
+          "name": "NORTHERN KNIGHT"
+        },
+        "winterpriest": {
+          "name": "WINTER PRIEST"
+        },
+        "marshalofthefrost": {
+          "name": "MARSHAL OF DA FROST"
+        },
+        "scientist": {
+          "name": "MILITARY ENGINEER"
+        }
+      }
+    },
+    "invertedcitadel": {
+      "name": "INVERTED CITADEL",
+      "description": "A FORTRESS HANGIN' FROM DA CEILING OF A MASSIVE CAVERN, HOME TA OUTCASTS AN' DARK SCHOLARS!",
+      "troops": {
+        "caveoutcast": {
+          "name": "CAVE OUTCAST"
+        },
+        "voidarcher": {
+          "name": "VOID ARCHER"
+        },
+        "darkacolyte": {
+          "name": "DARK ACOLYTE"
+        },
+        "abyssalblade": {
+          "name": "ABYSSAL BLADE"
+        },
+        "shadowscholar": {
+          "name": "SHADOW SCHOLAR"
+        },
+        "darknesssniper": {
+          "name": "DARKNESS SNIPER"
+        },
+        "umbralwarlock": {
+          "name": "UMBRAL WARLOCK"
+        },
+        "shadowreaver": {
+          "name": "SHADOW REAVER"
+        },
+        "citadelmaster": {
+          "name": "CITADEL MASTER"
+        },
+        "scientist": {
+          "name": "CITADEL SAVANT"
+        }
+      }
+    },
+    "petrodemons": {
+      "name": "PETRODEMONS",
+      "description": "ENTITIES BORN FROM DEEP EARTH OIL DEPOSITS; LIVIN' FUEL DAT BURNS WIT MALICE!",
+      "troops": {
+        "oilimp": {
+          "name": "OIL IMP"
+        },
+        "flameslinger": {
+          "name": "FLAME SLINGER"
+        },
+        "crudefiend": {
+          "name": "CRUDE FIEND"
+        },
+        "petrohellion": {
+          "name": "PETRO HELLION"
+        },
+        "burningarcher": {
+          "name": "BURNIN' ARCHER"
+        },
+        "infernalbaron": {
+          "name": "INFERNAL BARON"
+        },
+        "tarknight": {
+          "name": "TAR KNIGHT"
+        },
+        "hellfiremarksman": {
+          "name": "HELLFIRE MARKSMAN"
+        },
+        "archdevilofoil": {
+          "name": "ARCHDEVIL OF OIL"
+        },
+        "scientist": {
+          "name": "PETROCHEMICAL ENGINEER"
+        }
+      }
+    },
+    "petromanagers": {
+      "name": "PETROMANAGERS",
+      "description": "MIDDLE-MANAGERS WHO HAB SIGNED INFERNAL PACTS TA MAXIMIZE OIL EXTRACTION EFFICIENCY!",
+      "troops": {
+        "juniormanager": {
+          "name": "JUNIOR MANAGER"
+        },
+        "efficiencyanalyst": {
+          "name": "EFFICIENCY ANALYST"
+        },
+        "seniorpetromanager": {
+          "name": "SENIOR PETROMANAGER"
+        },
+        "infernalexecutive": {
+          "name": "INFERNAL EXECUTIVE"
+        },
+        "scientist": {
+          "name": "REFINERY ANALYST"
+        }
+      }
+    },
+    "speeddemons": {
+      "name": "SPEED DEMONS",
+      "description": "ADRENALINE JUNKIES AN' COURIERS WHO WORSHIP VELOCITY AN' HIGH-OCTANE FUEL!",
+      "troops": {
+        "speedfreak": {
+          "name": "SPEED FREAK"
+        },
+        "nitrocourier": {
+          "name": "NITRO COURIER"
+        },
+        "velocitycultist": {
+          "name": "VELOCITY CULTIST"
+        },
+        "sonicdemon": {
+          "name": "SONIC DEMON"
+        },
+        "scientist": {
+          "name": "PIT ENGINEER"
+        }
+      }
+    },
+    "sevensisters": {
+      "name": "SEVEN SISTERS",
+      "description": "DA SEVEN RULIN' FAMILIES DAT HOLD A MONOPOLY ON ALL FUEL PRODUCTION!",
+      "troops": {
+        "familyenforcer": {
+          "name": "FAMILY ENFORCER"
+        },
+        "oilbaronguard": {
+          "name": "OIL BARON GUARD"
+        },
+        "familychampion": {
+          "name": "FAMILY CHAMPION"
+        },
+        "heiressassassin": {
+          "name": "HEIRESS ASSASSIN"
+        },
+        "scientist": {
+          "name": "CARTEL CHEMIST"
+        }
+      }
+    },
+    "thegods": {
+      "name": "DA GODS",
+      "description": "DA DIVINE PANTHEON OVERSEEIN' DA REALMS, LARGELY INDIFFERENT TA MORTAL SUFFERIN'!",
+      "troops": {
+        "divineherald": {
+          "name": "DIVINE HERALD"
+        },
+        "heavenlyarcher": {
+          "name": "HEAVENLY ARCHER"
+        },
+        "celestialguardian": {
+          "name": "CELESTIAL GUARDIAN"
+        },
+        "divinetemplar": {
+          "name": "DIVINE TEMPLAR"
+        },
+        "seraphimwarrior": {
+          "name": "SERAPHIM WARRIOR"
+        },
+        "angelicsniper": {
+          "name": "ANGELIC SNIPER"
+        },
+        "highpriest": {
+          "name": "HIGH PRIEST"
+        },
+        "demigodavatar": {
+          "name": "DEMIGOD AVATAR"
+        },
+        "scientist": {
+          "name": "DIVINE SCHOLAR"
+        }
+      }
+    },
+    "supremearchivistcouncil": {
+      "name": "SUPREME ARCHIVIST COUNCIL",
+      "description": "DA ELDERS WHO DECIDE WHICH TRUTHS IZ REMEMBERED AN' WHICH IZ ERASED FOREVER!",
+      "troops": {
+        "councilscribe": {
+          "name": "COUNCIL SCRIBE"
+        },
+        "truthkeeper": {
+          "name": "TRUTH KEEPER"
+        },
+        "councilelder": {
+          "name": "COUNCIL ELDER"
+        },
+        "scientist": {
+          "name": "CHIEF ARCHIVIST"
+        }
+      }
+    },
+    "dataacquisitiondepartment": {
+      "name": "DATA ACQUISITION DEPARTMENT",
+      "description": "FIELD AGENTS AN' SPIES TASKED WIT STEALIN' SECRETS AN' RECOVERIN' LOST ARTIFACTS!",
+      "troops": {
+        "fieldagent": {
+          "name": "FIELD AGENT"
+        },
+        "acquisitionspy": {
+          "name": "ACQUISITION SPY"
+        },
+        "eliteinfiltrator": {
+          "name": "ELITE INFILTRATOR"
+        },
+        "scientist": {
+          "name": "DATA ANALYST"
+        }
+      }
+    },
+    "knowledgepreservationdivision": {
+      "name": "KNOWLEDGE PRESERVATION DIVISION",
+      "description": "LIBRARIANS WHO MAINTAIN DA PHYSICAL INTEGRITY OF DA BOOKS AN' SILENCE NOISY PATRONS... PERMANENTLY!",
+      "troops": {
+        "silentlibrarian": {
+          "name": "SILENT LIBRARIAN"
+        },
+        "preservationguard": {
+          "name": "PRESERVATION GUARD"
+        },
+        "masterconservator": {
+          "name": "MASTER CONSERVATOR"
+        },
+        "scientist": {
+          "name": "PRESERVATION SCHOLAR"
+        }
+      }
+    },
+    "publictransparencyunit": {
+      "name": "PUBLIC TRANSPARENCY UNIT",
+      "description": "DA PROPAGANDA WING. DEY NAME IZ IRONIC; DEY SPECIALIZE IN REDACTION AN' MISINFORMATION!",
+      "troops": {
+        "propagandist": {
+          "name": "PROPAGANDIST"
+        },
+        "spindoctor": {
+          "name": "SPIN DOCTOR"
+        },
+        "misinformationmaster": {
+          "name": "MISINFORMATION MASTER"
+        },
+        "scientist": {
+          "name": "RECORDS ANALYST"
+        }
+      }
+    },
+    "internalcomplianceunit": {
+      "name": "INTERNAL COMPLIANCE UNIT",
+      "description": "DA SECRET POLICE ENSURIN' NO ARCHIVIST LEAKS DATA TA DA OUTSIDE WORLD!",
+      "troops": {
+        "complianceofficer": {
+          "name": "COMPLIANCE OFFICER"
+        },
+        "secretenforcer": {
+          "name": "SECRET ENFORCER"
+        },
+        "internalinquisitor": {
+          "name": "INTERNAL INQUISITOR"
+        },
+        "scientist": {
+          "name": "COMPLIANCE ANALYST"
+        }
+      }
+    },
+    "libertariangods": {
+      "name": "LIBERTARIAN GODS",
+      "description": "MINOR DEITIES WHO DEMAND NO WORSHIP, ONLY MUTUALLY BENEFICIAL TRANSACTIONS!",
+      "troops": {
+        "freemarketangel": {
+          "name": "FREE MARKET ANGEL"
+        },
+        "contractenforcer": {
+          "name": "CONTRACT ENFORCER"
+        },
+        "sovereignspirit": {
+          "name": "SOVEREIGN SPIRIT"
+        },
+        "scientist": {
+          "name": "FREELANCE SCHOLAR"
+        }
+      }
+    },
+    "thetourists": {
+      "name": "DA TOURISTS",
+      "description": "ALIENS FROM ZETA RETICULI VIEWIN' DIS WORLD'S CONFLICTS AS MERE ENTERTAINMENT!",
+      "troops": {
+        "observerdrone": {
+          "name": "OBSERVER DRONE"
+        },
+        "probescout": {
+          "name": "PROBE SCOUT"
+        },
+        "alientourist": {
+          "name": "ALIEN TOURIST"
+        },
+        "beamsniper": {
+          "name": "BEAM SNIPER"
+        },
+        "realitymanipulator": {
+          "name": "REALITY MANIPULATOR"
+        },
+        "enforcerconstruct": {
+          "name": "ENFORCER CONSTRUCT"
+        },
+        "plasmarifleman": {
+          "name": "PLASMA RIFLEMAN"
+        },
+        "zetanoverseer": {
+          "name": "ZETAN OVERSEER"
+        },
+        "scientist": {
+          "name": "FIELD GUIDE RESEARCHER"
+        }
+      }
+    },
+    "holyvaticanempire": {
+      "name": "HOLY VATICAN EMPIRE",
+      "description": "DA ANCIENT SEAT OF DA PAPACY, A CITY-STATE DAT WIELDS IMMENSE SPIRITUAL AN' TEMPORAL POWER. IT OPERATES ON FAITH, TRADITION, AN' CLANDESTINE OPERATIONS!",
+      "troops": {
+        "altarserver": {
+          "name": "ALTAR SERVER"
+        },
+        "vaticanguard": {
+          "name": "VATICAN GUARD"
+        },
+        "holyarcher": {
+          "name": "HOLY ARCHER"
+        },
+        "holyknight": {
+          "name": "HOLY KNIGHT"
+        },
+        "blessedmarksman": {
+          "name": "BLESSED MARKSMAN"
+        },
+        "papalchampion": {
+          "name": "PAPAL CHAMPION"
+        },
+        "vaticanpriest": {
+          "name": "VATICAN PRIEST"
+        },
+        "divinesniper": {
+          "name": "DIVINE SNIPER"
+        },
+        "cardinaltemplar": {
+          "name": "CARDINAL TEMPLAR"
+        },
+        "scientist": {
+          "name": "PAPAL SCHOLAR"
+        }
+      }
+    },
+    "cardinalscouncil": {
+      "name": "CARDINAL'S COUNCIL",
+      "description": "DA SECRETIVE INNER CIRCLE OF CARDINALS WHO ADVISE DA POPE AN' CONTROL DA CHURCH'S POLITICAL MACHINATIONS!",
+      "troops": {
+        "councildeacon": {
+          "name": "COUNCIL DEACON"
+        },
+        "cardinaladvisor": {
+          "name": "CARDINAL ADVISOR"
+        },
+        "princeofthechurch": {
+          "name": "PRINCE OF DA CHURCH"
+        },
+        "scientist": {
+          "name": "CURIAL THEOLOGIAN"
+        }
+      }
+    },
+    "ior": {
+      "name": "IOR",
+      "description": "DA INSTITUTE FOR DA WORKS OF RELIGION, DA VATICAN'S CONTROVERSIAL BANK, RUMORED TA HANDLE FUNDS FROM LESS-DEN-HOLY SOURCES!",
+      "troops": {
+        "bankclerk": {
+          "name": "BANK CLERK"
+        },
+        "financialanalyst": {
+          "name": "FINANCIAL ANALYST"
+        },
+        "iorenforcer": {
+          "name": "IOR ENFORCER"
+        },
+        "holybanker": {
+          "name": "HOLY BANKER"
+        },
+        "scientist": {
+          "name": "FINANCIAL ANALYST"
+        }
+      }
+    },
+    "battlenuns": {
+      "name": "BATTLE NUNS",
+      "description": "AN ORDER OF MILITANT NUNS TRAINED IN BOTH SCRIPTURE AN' MODERN COMBAT, SERVIN' AS DA VATICAN'S SPECIAL FORCES!",
+      "troops": {
+        "novicesister": {
+          "name": "NOVICE SISTER"
+        },
+        "battlesister": {
+          "name": "BATTLE SISTER"
+        },
+        "sistersuperior": {
+          "name": "SISTER SUPERIOR"
+        },
+        "mothersuperior": {
+          "name": "MOTHER SUPERIOR"
+        },
+        "scientist": {
+          "name": "COMBAT CHAPLAIN SCHOLAR"
+        }
+      }
+    },
+    "hexorcistscorp": {
+      "name": "HEXORCISTS CORP",
+      "description": "A SPECIALIZED UNIT OF TECH-PRIESTS WHO COMBAT DEMONIC CODE, ROGUE AIS, AN' OTHER DIGITAL HERESIES!",
+      "troops": {
+        "cyberacolyte": {
+          "name": "CYBER ACOLYTE"
+        },
+        "techpriest": {
+          "name": "TECH-PRIEST"
+        },
+        "digitalexorcist": {
+          "name": "DIGITAL EXORCIST"
+        },
+        "masterhexorcist": {
+          "name": "MASTER HEXORCIST"
+        },
+        "scientist": {
+          "name": "EXORCISM RESEARCHER"
+        }
+      }
+    },
+    "gaylobby": {
+      "name": "GAY LOBBY",
+      "description": "A POWERFUL AN' INFLUENTIAL SHADOW GROUP WITHIN DA VATICAN, ADVOCATIN' FOR PROGRESSIVE REFORMS FROM WITHIN DA ANCIENT INSTITUTION!",
+      "troops": {
+        "progressivepriest": {
+          "name": "PROGRESSIVE PRIEST"
+        },
+        "reformadvocate": {
+          "name": "REFORM ADVOCATE"
+        },
+        "shadowdiplomat": {
+          "name": "SHADOW DIPLOMAT"
+        },
+        "scientist": {
+          "name": "POLICY ANALYST"
+        }
+      }
+    },
+    "opusdei": {
+      "name": "OPUS DEI",
+      "description": "A DEEPLY CONSERVATIVE AN' SECRETIVE LAY ORGANIZATION KNOWN FOR ITS MEMBERS' UNWAVERIN' DEVOTION AN' INFLUENCE IN SECULAR SOCIETY!",
+      "troops": {
+        "devotednumerary": {
+          "name": "DEVOTED NUMERARY"
+        },
+        "secularagent": {
+          "name": "SECULAR AGENT"
+        },
+        "opusdeizealot": {
+          "name": "OPUS DEI ZEALOT"
+        },
+        "supernumeraryelite": {
+          "name": "SUPERNUMERARY ELITE"
+        },
+        "scientist": {
+          "name": "DOCTRINAL SCHOLAR"
+        }
+      }
+    },
+    "swissguards": {
+      "name": "SWISS GUARDS",
+      "description": "DA COLORFULLY-DRESSED BUT DEADLY ELITE MERCENARIES SWORN TA PROTECT DA POPE, WIELDIN' BOTH HALBERDS AN' ADVANCED PLASMA RIFLES!",
+      "troops": {
+        "swissrecruit": {
+          "name": "SWISS RECRUIT"
+        },
+        "halberdier": {
+          "name": "HALBERDIER"
+        },
+        "plasmaguard": {
+          "name": "PLASMA GUARD"
+        },
+        "swisscommander": {
+          "name": "SWISS COMMANDER"
+        },
+        "scientist": {
+          "name": "VATICAN ENGINEER"
+        }
+      }
+    },
+    "ussr": {
+      "name": "USSR",
+      "description": "DA MIGHTY MILITARY FORCE OF DA SOVIET UNION, RENOWNED FOR ITS DISCIPLINE, MASSIVE NUMBERS, AN' UNWAVERIN' IDEOLOGY!",
+      "troops": {
+        "redarmyrecruit": {
+          "name": "RED ARMY RECRUIT"
+        },
+        "sovietrifleman": {
+          "name": "SOVIET RIFLEMAN"
+        },
+        "commissar": {
+          "name": "COMMISSAR"
+        },
+        "redveteran": {
+          "name": "RED VETERAN"
+        },
+        "sovietsniper": {
+          "name": "SOVIET SNIPER"
+        },
+        "redofficer": {
+          "name": "RED OFFICER"
+        },
+        "elitesoldier": {
+          "name": "ELITE SOLDIER"
+        },
+        "sovietcommander": {
+          "name": "SOVIET COMMANDER"
+        },
+        "scientist": {
+          "name": "SOVIET SCIENTIST"
+        }
+      }
+    },
+    "guardsdivision": {
+      "name": "GUARDS DIVISION",
+      "description": "ELITE SOVIET UNITS DAT HAB DISTINGUISHED THEMSELVES IN BATTLE, BEARIN' DA PRESTIGIOUS 'GUARDS' TITLE!",
+      "troops": {
+        "guardsprivate": {
+          "name": "GUARDS PRIVATE"
+        },
+        "guardssergeant": {
+          "name": "GUARDS SERGEANT"
+        },
+        "guardsmarksman": {
+          "name": "GUARDS MARKSMAN"
+        },
+        "guardslieutenant": {
+          "name": "GUARDS LIEUTENANT"
+        },
+        "guardscaptain": {
+          "name": "GUARDS CAPTAIN"
+        },
+        "guardsmajor": {
+          "name": "GUARDS MAJOR"
+        },
+        "scientist": {
+          "name": "DIVISION ENGINEER"
+        }
+      }
+    },
+    "tankdivision": {
+      "name": "TANK DIVISION",
+      "description": "ARMORED FORCES EQUIPPED WIT T-34S AN' HEAVY TANKS, DA IRON FIST OF DA RED ARMY!",
+      "troops": {
+        "tankcrewman": {
+          "name": "TANK CREWMAN"
+        },
+        "t34driver": {
+          "name": "T-34 DRIVER"
+        },
+        "tankcommander": {
+          "name": "TANK COMMANDER"
+        },
+        "heavytankoperator": {
+          "name": "HEAVY TANK OPERATOR"
+        },
+        "tankace": {
+          "name": "TANK ACE"
+        },
+        "armoredbrigadeleader": {
+          "name": "ARMORED BRIGADE LEADER"
+        },
+        "scientist": {
+          "name": "ARMOR ENGINEER"
+        }
+      }
+    },
+    "rifledivision": {
+      "name": "RIFLE DIVISION",
+      "description": "DA BACKBONE OF DA RED ARMY, BRAVE RIFLEMEN WHO HOLD DA LINE AGAINST ALL ODDS!",
+      "troops": {
+        "rifleman": {
+          "name": "RIFLEMAN"
+        },
+        "veteranrifleman": {
+          "name": "VETERAN RIFLEMAN"
+        },
+        "riflesquadleader": {
+          "name": "RIFLE SQUAD LEADER"
+        },
+        "sharpshooter": {
+          "name": "SHARPSHOOTER"
+        },
+        "riflecompanycommander": {
+          "name": "RIFLE COMPANY COMMANDER"
+        },
+        "elitemarksman": {
+          "name": "ELITE MARKSMAN"
+        },
+        "scientist": {
+          "name": "BALLISTICS RESEARCHER"
+        }
+      }
+    },
+    "airbornedivision": {
+      "name": "AIRBORNE DIVISION",
+      "description": "ELITE PARATROOPERS AN' AIRBORNE FORCES, STRIKIN' FROM DA SKIES BEHIND BAD 'UN LINES!",
+      "troops": {
+        "paratrooper": {
+          "name": "PARATROOPER"
+        },
+        "airborneassault": {
+          "name": "AIRBORNE ASSAULT"
+        },
+        "jumpmaster": {
+          "name": "JUMP MASTER"
+        },
+        "airbornesniper": {
+          "name": "AIRBORNE SNIPER"
+        },
+        "airbornecommander": {
+          "name": "AIRBORNE COMMANDER"
+        },
+        "spetsnazparatrooper": {
+          "name": "SPETSNAZ PARATROOPER"
+        },
+        "scientist": {
+          "name": "AERONAUTICS ENGINEER"
+        }
+      }
+    },
+    "artillerydivision": {
+      "name": "ARTILLERY DIVISION",
+      "description": "HEAVY ARTILLERY AN' ROCKET FORCES, DA 'GOD OF WAR' DAT RAINS DESTRUCTION UPON DA BAD 'UN!",
+      "troops": {
+        "artillerygunner": {
+          "name": "ARTILLERY GUNNER"
+        },
+        "howitzercrew": {
+          "name": "HOWITZER CREW"
+        },
+        "katyushaoperator": {
+          "name": "KATYUSHA OPERATOR"
+        },
+        "artilleryspotter": {
+          "name": "ARTILLERY SPOTTER"
+        },
+        "heavyartillerycommander": {
+          "name": "HEAVY ARTILLERY COMMANDER"
+        },
+        "rocketartillerymaster": {
+          "name": "ROCKET ARTILLERY MASTER"
+        },
+        "scientist": {
+          "name": "BALLISTICS ANALYST"
+        }
+      }
+    },
+    "ottomanempire": {
+      "name": "OTTOMAN EMPIRE",
+      "description": "DA GREAT EMPIRE DAT NEVER FELL. A VAST, MULTI-ETHNIC POWERHOUSE RULIN' FROM ISTANBUL, BLENDIN' CENTURIES-OLD TRADITIONS WIT MODERN MILITARY AN' COVERT TECHNOLOGY. IT IZ LED BY DA SULTAN-CALIPH!",
+      "troops": {
+        "sipahicavalry": {
+          "name": "SIPAHI CAVALRY"
+        },
+        "janissarytrooper": {
+          "name": "JANISSARY TROOPER"
+        },
+        "imperialengineer": {
+          "name": "IMPERIAL ENGINEER"
+        },
+        "modernjanissary": {
+          "name": "MODERN JANISSARY"
+        },
+        "bashibazoukmercenary": {
+          "name": "BASHI-BAZOUK MERCENARY"
+        },
+        "pashasadvisor": {
+          "name": "PASHA'S ADVISOR"
+        },
+        "ottomanguard": {
+          "name": "OTTOMAN GUARD"
+        },
+        "grandvizierselite": {
+          "name": "GRAND VIZIER'S ELITE"
+        },
+        "scientist": {
+          "name": "IMPERIAL SCHOLAR"
+        }
+      }
+    },
+    "tanzimatbureaucracy": {
+      "name": "TANZIMAT BUREAUCRACY",
+      "description": "DA SPRAWLIN', HIGHLY STRUCTURED, AN' OFTEN CORRUPT ADMINISTRATIVE CORE OF DA EMPIRE, MODERNIZIN' WIT RUTHLESS EFFICIENCY!",
+      "troops": {
+        "registryclerk": {
+          "name": "REGISTRY CLERK"
+        },
+        "mfettiinspector": {
+          "name": "MÜFETTIŞ (INSPECTOR)"
+        },
+        "viziersdiplomat": {
+          "name": "VIZIER'S DIPLOMAT"
+        },
+        "emineffendihighofficial": {
+          "name": "EMIN EFFENDI (HIGH OFFICIAL)"
+        },
+        "scientist": {
+          "name": "BUREAUCRATIC ANALYST"
+        }
+      }
+    },
+    "imperialsubmarinefleet": {
+      "name": "IMPERIAL SUBMARINE FLEET",
+      "description": "DA SILENT SERVICE OF DA OTTOMAN NAVY. UTILIZIN' HIGH-TECH STEALTH AN' TORPEDO SYSTEMS TA MAINTAIN CONTROL OF DA MEDITERRANEAN AN' BLACK SEAS!",
+      "troops": {
+        "submarinecadet": {
+          "name": "SUBMARINE CADET"
+        },
+        "sonartechnician": {
+          "name": "SONAR TECHNICIAN"
+        },
+        "torpedooperator": {
+          "name": "TORPEDO OPERATOR"
+        },
+        "submarinecommander": {
+          "name": "SUBMARINE COMMANDER"
+        },
+        "scientist": {
+          "name": "NAVAL ENGINEER"
+        }
+      }
+    },
+    "talonofthecaliph": {
+      "name": "TALON OF DA CALIPH",
+      "description": "DA SULTAN-CALIPH'S SECRET POLICE AN' INTELLIGENCE AGENCY, FOCUSIN' ON BOTH DOMESTIC DISSENT AN' FOREIGN ESPIONAGE. DEY IZ DA TRUE 'EYES AN' EARS' OF DA EMPIRE!",
+      "troops": {
+        "informant": {
+          "name": "INFORMANT"
+        },
+        "shadowoperative": {
+          "name": "SHADOW OPERATIVE"
+        },
+        "assassinationspecialist": {
+          "name": "ASSASSINATION SPECIALIST"
+        },
+        "grandintelligencer": {
+          "name": "GRAND INTELLIGENCER"
+        },
+        "scientist": {
+          "name": "CALIPHATE SCHOLAR"
+        }
+      }
+    },
+    "janissaryguard": {
+      "name": "JANISSARY GUARD",
+      "description": "A LIL', HIGHLY-TRAINED DETACHMENT OF MODERN JANISSARIES SERVIN' AS DA SULTAN-CALIPH'S PERSONAL GUARD AN' ELITE SHOCK TROOPS!",
+      "troops": {
+        "janissarynovice": {
+          "name": "JANISSARY NOVICE"
+        },
+        "korumatrooper": {
+          "name": "KORUMA TROOPER"
+        },
+        "janissarycaptain": {
+          "name": "JANISSARY CAPTAIN"
+        },
+        "aaofthekoruma": {
+          "name": "AĞA OF DA KORUMA"
+        },
+        "scientist": {
+          "name": "JANISSARY TACTICIAN"
+        }
+      }
+    },
+    "britannia": {
+      "name": "BRITANNIA",
+      "description": "DA SUCCESSOR TA DA BRITISH EMPIRE, A GLOBAL POWER DEFINED BY ITS TECHNOLOGICAL SUPERIORITY, VAST COMMONWEALTH RESOURCES, AN' DISCIPLINED MILITARY. RULED BY A MODERN CONSTITUTIONAL MONARCHY!",
+      "troops": {
+        "commonwealthtrooper": {
+          "name": "COMMONWEALTH TROOPER"
+        },
+        "royalmarinerifleman": {
+          "name": "ROYAL MARINE RIFLEMAN"
+        },
+        "fieldmedic": {
+          "name": "FIELD MEDIC"
+        },
+        "imperialgrenadier": {
+          "name": "IMPERIAL GRENADIER"
+        },
+        "highlandermarksman": {
+          "name": "HIGHLANDER MARKSMAN"
+        },
+        "staffofficer": {
+          "name": "STAFF OFFICER"
+        },
+        "veteranfusilier": {
+          "name": "VETERAN FUSILIER"
+        },
+        "guardcommander": {
+          "name": "GUARD COMMANDER"
+        },
+        "scientist": {
+          "name": "ROYAL SCIENTIST"
+        }
+      }
+    },
+    "royalnavytaskforce": {
+      "name": "ROYAL NAVY TASK FORCE",
+      "description": "DA CORE STRENGTH OF BRITANNIA, DEPLOYIN' ADVANCED FRIGATES, AIRCRAFT CARRIERS, AN' HYDROFOIL TRANSPORTS TA MAINTAIN GLOBAL SEA LANES!",
+      "troops": {
+        "seamanrecruit": {
+          "name": "SEAMAN RECRUIT"
+        },
+        "frigatecrewman": {
+          "name": "FRIGATE CREWMAN"
+        },
+        "radartechnician": {
+          "name": "RADAR TECHNICIAN"
+        },
+        "hydrofoilofficer": {
+          "name": "HYDROFOIL OFFICER"
+        },
+        "fleetcommander": {
+          "name": "FLEET COMMANDER"
+        },
+        "scientist": {
+          "name": "NAVAL ANALYST"
+        }
+      }
+    },
+    "sassbscommandos": {
+      "name": "SAS/SBS COMMANDOS",
+      "description": "DA LEGENDARY SPECIAL AIR SERVICE AN' SPECIAL BOAT SERVICE. HIGHLY TRAINED, STEALTHY, AN' EQUIPPED WIT ADVANCED PERSONAL CLOAKIN' AN' DATA SYSTEMS!",
+      "troops": {
+        "reconspecialist": {
+          "name": "RECON SPECIALIST"
+        },
+        "demolitionsexpert": {
+          "name": "DEMOLITIONS EXPERT"
+        },
+        "sbsfrogman": {
+          "name": "SBS FROGMAN"
+        },
+        "sascounterterrorist": {
+          "name": "SAS COUNTER-TERRORIST"
+        },
+        "scientist": {
+          "name": "FIELD TECHNICIAN"
+        }
+      }
+    },
+    "mi6blackarchive": {
+      "name": "MI6 BLACK ARCHIVE",
+      "description": "BRITANNIA'S MOST CLANDESTINE INTELLIGENCE DIVISION, DEALIN' IN HIGH-LEVEL TECHNOLOGICAL ESPIONAGE, PSYCHOLOGICAL WARFARE, AN' GLOBAL POLITICAL MANIPULATION!",
+      "troops": {
+        "analysthandler": {
+          "name": "ANALYST HANDLER"
+        },
+        "covertagent": {
+          "name": "COVERT AGENT"
+        },
+        "psychologicalwarfareexpert": {
+          "name": "PSYCHOLOGICAL WARFARE EXPERT"
+        },
+        "sectionchiefthecontroller": {
+          "name": "SECTION CHIEF (DA CONTROLLER)"
+        },
+        "scientist": {
+          "name": "INTELLIGENCE ANALYST"
+        }
+      }
+    },
+    "sciencecommand": {
+      "name": "SCIENCE COMMAND",
+      "description": "A JOINT MILITARY-SCIENTIFIC DIVISION RESPONSIBLE FOR DEVELOPIN' AN' DEPLOYIN' CUTTIN'-EDGE PLASMA WEAPONRY, KINETIC DEFENSE SYSTEMS, AN' POWER ARMOUR!",
+      "troops": {
+        "labtechnician": {
+          "name": "LAB TECHNICIAN"
+        },
+        "plasmaengineer": {
+          "name": "PLASMA ENGINEER"
+        },
+        "powerarmortrooper": {
+          "name": "POWER ARMOR TROOPER"
+        },
+        "chiefscientistkineticist": {
+          "name": "CHIEF SCIENTIST (KINETICIST)"
+        },
+        "scientist": {
+          "name": "LEAD SCIENTIST"
+        }
+      }
+    },
+    "greywanderers": {
+      "name": "GREY WANDERERS",
+      "description": "DA IDLE CASTE OF ZETA RETICULI: DEY CAME TA LOOK, AN' DEY IZ STILL LOOKIN'. DEY PHOTOGRAPH EVERYTINK, UNDERSTAND ALMOST NONE OF IT, AN' ADORE DA PEOPLE DEY PHOTOGRAPH!",
+      "troops": {
+        "snapshottourist": {
+          "name": "SNAPSHOT TOURIST"
+        },
+        "itineraryguide": {
+          "name": "ITINERARY GUIDE"
+        },
+        "souvenirhunter": {
+          "name": "SOUVENIR HUNTER"
+        },
+        "shutterwarden": {
+          "name": "SHUTTER WARDEN"
+        }
+      }
+    },
+    "crimsonanalyzers": {
+      "name": "CRIMSON ANALYZERS",
+      "description": "DA SCIENTIFIC CASTE, WHO HOLD DAT NUTTIN' IZ UNDERSTOOD UNTIL IT HAB BIN OPENED. DEY CARRY KATANAS COZ A SCALPEL IZ SLOW AN' DA UNIVERSE IZ LARGE!",
+      "troops": {
+        "fieldsampler": {
+          "name": "FIELD SAMPLER"
+        },
+        "katanasurgeon": {
+          "name": "KATANA SURGEON"
+        },
+        "specimenwarden": {
+          "name": "SPECIMEN WARDEN"
+        },
+        "chiefvivisector": {
+          "name": "CHIEF VIVISECTOR"
+        }
+      }
+    },
+    "palewarpers": {
+      "name": "PALE WARPERS",
+      "description": "DA PSIONIC CASTE, WHO FOLD MINDS AN' DISTANCES RATHER DEN CROSS DEM. DEY SPEAK RARELY, AN' NEVER WIT DA MOUTH!",
+      "troops": {
+        "psinovice": {
+          "name": "PSI NOVICE"
+        },
+        "mindfolder": {
+          "name": "MIND FOLDER"
+        },
+        "spacefolder": {
+          "name": "SPACE FOLDER"
+        },
+        "warpchoir": {
+          "name": "WARP CHOIR"
+        }
+      }
+    },
+    "dargosembassy": {
+      "name": "DARGOS EMBASSY",
+      "description": "DA WHOLE DIPLOMATIC APPARATUS OF TITANIA, RUN AS ONE LONG PRACTICAL JOKE AT HUMANITY'S EXPENSE. IT ATTENDS NO ASSEMBLY AN' ANSWERS NO SUMMONS, WHICH IZ ITSELF PART OF DA BIT!",
+      "troops": {
+        "embassyclerk": {
+          "name": "EMBASSY CLERK"
+        },
+        "pranksman": {
+          "name": "PRANKSMAN"
+        },
+        "punchlineregent": {
+          "name": "PUNCHLINE REGENT"
+        }
+      }
+    },
+    "gandanorder": {
+      "name": "GANDAN ORDER",
+      "description": "DA MONASTIC ORDER DAT RECOGNISES DA KHAN, KEEPS DA COUNT OF YEARS, AN' DECIDES WHEN A LIFE HAB BIN LIVED WELL ENOUGH TA BE WORTH MENTIONIN'!",
+      "troops": {
+        "noviceofthelamp": {
+          "name": "NOVICE OF DA LAMP"
+        },
+        "gandanchanter": {
+          "name": "GANDAN CHANTER"
+        },
+        "prayerwheelguard": {
+          "name": "PRAYER-WHEEL GUARD"
+        },
+        "illuminedadept": {
+          "name": "ILLUMINED ADEPT"
+        },
+        "banneroftheeighthsky": {
+          "name": "BANNER OF DA EIGHTH SKY"
+        },
+        "abbotmilitant": {
+          "name": "ABBOT MILITANT"
+        }
+      }
+    },
+    "steppebanners": {
+      "name": "STEPPE BANNERS",
+      "description": "HORSE, BOW AN' FELT. DA BANNERS RIDE FOR DA KHANATE AN' GO HOME WHEN DA GRASS FAILS, WHICH DA KHANATE HAB LEARNED TA PLAN AROUND!",
+      "troops": {
+        "hordeoutrider": {
+          "name": "HORDE OUTRIDER"
+        },
+        "hornbowrider": {
+          "name": "HORNBOW RIDER"
+        },
+        "felttentsergeant": {
+          "name": "FELT-TENT SERGEANT"
+        },
+        "keshigguard": {
+          "name": "KESHIG GUARD"
+        },
+        "khansfalconer": {
+          "name": "KHAN'S FALCONER"
+        },
+        "standardbearerofthegobi": {
+          "name": "STANDARD-BEARER OF DA GOBI"
+        }
+      }
+    },
+    "sanhedringuard": {
+      "name": "SANHEDRIN GUARD",
+      "description": "DA REPUBLIC'S STANDIN' GUARD, SWORN TA DA RESTORED COURT RATHER DEN TA WHICHEVER GOVERNMENT IT HAPPENS TA HAB SEATED!",
+      "troops": {
+        "templewatchman": {
+          "name": "TEMPLE WATCHMAN"
+        },
+        "sealbearer": {
+          "name": "SEAL-BEARER"
+        },
+        "levitesharpshooter": {
+          "name": "LEVITE SHARPSHOOTER"
+        },
+        "nasisescort": {
+          "name": "NASI'S ESCORT"
+        },
+        "brazenpillarguard": {
+          "name": "BRAZEN PILLAR GUARD"
+        },
+        "cherubimoperator": {
+          "name": "CHERUBIM OPERATOR"
+        }
+      }
+    },
+    "shemhamphorasch": {
+      "name": "CLERKS OF DA DIVIDED NAME",
+      "description": "DEY FILE DA SEVENTY-TWO, DEY KEEP DA BRASS POTS SEALED, AN' DEY IZ EXTREMELY CLEAR DAT NUTTIN' IZ CURRENTLY MISSIN'!",
+      "troops": {
+        "nameclerk": {
+          "name": "NAME CLERK"
+        },
+        "bindingscribe": {
+          "name": "BINDIN' SCRIBE"
+        },
+        "ringbearer": {
+          "name": "RING-BEARER"
+        },
+        "seventytwomaster": {
+          "name": "MASTER OF DA SEVENTY-TWO"
+        },
+        "brasspotwarden": {
+          "name": "BRASS-POT WARDEN"
+        }
+      }
+    },
+    "concessionguard": {
+      "name": "CONCESSION GUARD",
+      "description": "WHOEVER HOLDS DA CONCESSION HOLDS DEZE: PIPELINE WATCH, DERRICK MARKSMEN, AN' DA MEN WHO SETTLE A DISPUTED LEASE IN PERSON!",
+      "troops": {
+        "pipelinewatch": {
+          "name": "PIPELINE WATCH"
+        },
+        "derrickmarksman": {
+          "name": "DERRICK MARKSMAN"
+        },
+        "refinerysergeant": {
+          "name": "REFINERY SERGEANT"
+        },
+        "concessionenforcer": {
+          "name": "CONCESSION ENFORCER"
+        },
+        "wellheadcaptain": {
+          "name": "WELLHEAD CAPTAIN"
+        },
+        "flarelightsniper": {
+          "name": "FLARELIGHT SNIPER"
+        }
+      }
+    },
+    "deepcontractors": {
+      "name": "DEEP CONTRACTORS",
+      "description": "DA PEOPLE WHO NEGOTIATE WIT WHATEVER DA DRILLIN' WAKES, AN' DA PEOPLE WHO DELIVER ON WHAT WAZ AGREED. USUALLY DA SAME PEOPLE!",
+      "troops": {
+        "signatorydeacon": {
+          "name": "SIGNATORY DEACON"
+        },
+        "crudehandler": {
+          "name": "CRUDE HANDLER"
+        },
+        "bargainkeeper": {
+          "name": "BARGAIN-KEEPER"
+        },
+        "deepwellcaller": {
+          "name": "DEEP-WELL CALLER"
+        },
+        "contractdemonherd": {
+          "name": "CONTRACT DEMON-HERD"
+        }
+      }
+    },
+    "pasdaranorder": {
+      "name": "IMMORTAL GUARD",
+      "description": "DA SHAH'S OWN REGIMENT, TEN THOUSAND STRONG ON PAPER AN' NEVER ONCE COUNTED IN PUBLIC!",
+      "troops": {
+        "basijvolunteer": {
+          "name": "LEVY VOLUNTEER"
+        },
+        "pasdaranrifleman": {
+          "name": "IMMORTAL RIFLEMAN"
+        },
+        "qudsoperative": {
+          "name": "SAVAK OPERATIVE"
+        },
+        "missilecrewman": {
+          "name": "MISSILE CREWMAN"
+        },
+        "guardiancommander": {
+          "name": "COMMANDER OF DA IMMORTALS"
+        }
+      }
+    },
+    "hawzascholars": {
+      "name": "IMPERIAL ACADEMY",
+      "description": "SEMINARY, COURT AN' HOSPITAL UNDER ONE ROOF, AN' ANSWERABLE TA DA THRONE RATHER DEN TA DA PULPIT!",
+      "troops": {
+        "seminarian": {
+          "name": "ACADEMICIAN"
+        },
+        "jurisprudent": {
+          "name": "COURT JURIST"
+        },
+        "fatwaclerk": {
+          "name": "CHANCERY CLERK"
+        },
+        "hawzaphysician": {
+          "name": "COURT PHYSICIAN"
+        },
+        "marjascounsel": {
+          "name": "COUNSEL TA DA THRONE"
+        }
+      }
+    },
+    "rashtrasevaks": {
+      "name": "RASHTRA SEVAKS",
+      "description": "VOLUNTEERS OF DA ETERNAL ORDER: DRILLED EVERY MORNIN', AN' AVAILABLE EVERY EVENIN'!",
+      "troops": {
+        "sevakvolunteer": {
+          "name": "SEVAK VOLUNTEER"
+        },
+        "lathisergeant": {
+          "name": "LATHI SERGEANT"
+        },
+        "dhanushmarksman": {
+          "name": "DHANUSH MARKSMAN"
+        },
+        "rashtrasubhedar": {
+          "name": "RASHTRA SUBHEDAR"
+        },
+        "chakrastandardbearer": {
+          "name": "CHAKRA STANDARD-BEARER"
+        },
+        "mahasenapati": {
+          "name": "MAHASENAPATI"
+        }
+      }
+    },
+    "mathacircle": {
+      "name": "MATHA CIRCLE",
+      "description": "DA TEACHIN' HOUSES: RECITATION, MEDICINE, DA CALENDAR, AN' DA QUIET RUNNIN' OF EVERYTINK DA ASSEMBLY FORGETS!",
+      "troops": {
+        "brahmacharin": {
+          "name": "BRAHMACHARIN"
+        },
+        "vedicreciter": {
+          "name": "VEDIC RECITER"
+        },
+        "acharyasaide": {
+          "name": "ACHARYA'S AIDE"
+        },
+        "yajnakeeper": {
+          "name": "YAJNA KEEPER"
+        },
+        "mathaphysician": {
+          "name": "MATHA PHYSICIAN"
+        }
+      }
+    },
+    "cordilleracorps": {
+      "name": "CORDILLERA CORPS",
+      "description": "DA ARMY OF DA LONG SOUTH, TRAINED FOR A BORDER DAT IZ MOSTLY VERTICAL AN' NEVER QUITE WHERE DA MAP PUTS IT!",
+      "troops": {
+        "conscriptofthesouth": {
+          "name": "CONSCRIPT OF DA SOUTH"
+        },
+        "andeanranger": {
+          "name": "ANDEAN RANGER"
+        },
+        "cordillerasapper": {
+          "name": "CORDILLERA SAPPER"
+        },
+        "mountainartillerist": {
+          "name": "MOUNTAIN ARTILLERIST"
+        },
+        "longsouthcaptain": {
+          "name": "CAPTAIN OF DA LONG SOUTH"
+        },
+        "valdiviasgrenadier": {
+          "name": "VALDIVIA'S GRENADIER"
+        }
+      }
+    },
+    "australnavy": {
+      "name": "AUSTRAL FLOTILLA",
+      "description": "CHANNELS, FJORDS AN' ICE WATER. IT HAB NEVER LOST A SHIP IT ADMITS TA HAVIN' HAB!",
+      "troops": {
+        "channelpilot": {
+          "name": "CHANNEL PILOT"
+        },
+        "straitmarine": {
+          "name": "STRAIT MARINE"
+        },
+        "icewatermate": {
+          "name": "ICEWATER MATE"
+        },
+        "australgunner": {
+          "name": "AUSTRAL GUNNER"
+        },
+        "commodoreofthefjords": {
+          "name": "COMMODORE OF DA FJORDS"
+        }
+      }
+    },
+    "goblinhorde": {
+      "name": "GOBLIN HORDE",
+      "description": "DA WARBAND DAT HOLDS NORWAY AN' ICELAND AN' WANTS DA REST. TWICE ANYONE'S ARMY, A TENTH OF DEY ECONOMY, AN' NO PATIENCE FOR EITHER!",
+      "troops": {
+        "grunt": {
+          "name": "HORDE GRUNT"
+        },
+        "raider": {
+          "name": "HORDE RAIDER"
+        },
+        "slinger": {
+          "name": "HORDE SLINGER"
+        },
+        "guard": {
+          "name": "HORDE SHIELDGUARD"
+        },
+        "shaman": {
+          "name": "HORDE SHAMAN"
+        },
+        "warboss": {
+          "name": "HORDE WARBOSS"
+        }
+      }
+    }
+  }
+}

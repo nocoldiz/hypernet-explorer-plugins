@@ -7,7 +7,7 @@
       "desc": "Una difosfina chirale come il BINAP, chelata a rutenio o rodio, rende non equivalenti le due facce prochirali del substrato nello stato di transizione, per cui l'idrogenazione o l'ossidazione passa dalla barriera più bassa e produce un solo enantiomero con eccesso del 95-99 per cento e numeri di turnover nell'ordine delle migliaia. Il caso industriale è il mentolo, diecimila tonnellate l'anno. Poiché l'immagine speculare di un farmaco può essere inerte, antagonista o teratogena, l'eccesso enantiomerico passa da statistica di laboratorio a specifica di rilascio."
     },
     "chem_click": {
-      "name": "Chimica a Innesto",
+      "name": "Chimica Click",
       "desc": "La catalisi con rame(I) della cicloaddizione di Huisgen unisce un'azide organica a un alchino terminale e produce il solo triazolo 1,4, con velocità superiori di sette ordini di grandezza rispetto alla reazione termica. Le condizioni sono acqua a temperatura ambiente, le rese sono quasi quantitative, di sottoprodotti non ce ne sono, e alcoli, ammine, tioli e carbossilati liberi restano intatti. Poiché nessuno dei due partner esiste in una cellula, la coppia può reagire dentro un organismo vivo; la variante con cicloottino tensionato elimina il rame e con esso la citotossicità."
     },
     "chem_ubiquitin": {
@@ -56,7 +56,7 @@
     },
     "chem_target_fabrication": {
       "name": "Fabbricazione di Bersagli Attinidi",
-      "desc": "Quantità dell'ordine del milligrammo di un attinide che non esiste in natura vengono elettrodepositate da isopropanolo su una lamina di supporto in titanio spessa due micrometri, con densità superficiale di circa 0,3 milligrammi per centimetro quadrato. La lamina viene montata su una ruota che gira a duemila giri al minuto, così nessun punto resta sotto il fascio per più di un millisecondo. Qualche centinaio di watt di potenza di fascio finisce in uno strato più sottile di una lunghezza d'onda della luce, e il bersaglio deve reggere per mesi senza bollare, senza essere polverizzato e senza perdere materiale abbastanza da falsare la misura di sezione d'urto."
+      "desc": "Quantità dell'ordine del milligrammo di un attinide che non esiste in natura vengono elettrodepositate da isopropanolo su una lamina di supporto in titanio spessa due micrometri, con densità superficiale di circa 0,3 milligrammi per centimetro quadrato. La lamina viene montata su una ruota che gira a duemila giri al minuto, così nessun punto resta sotto il fascio per più di un millisecondo. Qualche centinaio di watt di potenza di fascio finisce in uno strato più sottile di una lunghezza d'onda della luce, e il bersaglio deve reggere per mesi senza formare bolle, senza essere polverizzato e senza perdere materiale abbastanza da falsare la misura di sezione d'urto."
     },
     "chem_synchrotron": {
       "name": "Cristallografia da Sincrotrone",

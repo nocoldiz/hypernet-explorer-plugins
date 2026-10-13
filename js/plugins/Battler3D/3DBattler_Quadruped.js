@@ -431,6 +431,7 @@
             this.rearLeft = this._frogLeg(skin, -0.26); this.rearRight = this._frogLeg(skin, 0.26);
             // Stubby vestigial tail.
             this.tail = this._segTail(skin, 3, 0.12, 1.1, false);
+            this.tail.position.z = -0.42;   // rooted in the rump, not a hand behind it
             this._wireRept();
         }
         _emberFist(mat, side, p) {
@@ -586,7 +587,8 @@
             const beard = new THREE.Mesh(new THREE.SphereGeometry(0.24, 12, 8, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), this._mat(0x5a3a1a, 1.0, 0.85)); beard.position.set(0, -0.14, 0.18); beard.scale.set(1.1, 1.2, 0.7); this.head.add(beard);
             for (let i = 0; i < 7; i++) { const a = (i / 6 - 0.5) * 2.2; const bspike = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.16, 4), spineMat); bspike.position.set(Math.sin(a) * 0.24, -0.26, 0.18 + Math.cos(a) * 0.02); bspike.rotation.z = Math.sin(a); bspike.rotation.x = 0.6; this.head.add(bspike); }
             this._eye(this.head, -0.13, 0.08, 0.18, 0.055, 0xaa5500); this._eye(this.head, 0.13, 0.08, 0.18, 0.055, 0xaa5500);
-            this.head.position.set(0, 0.82, 0.66); this.bodyGroup.add(this.head);
+            // Head lifted off the shoulders the way a bearded dragon basks.
+            this.head.position.set(0, 0.98, 0.68); this.bodyGroup.add(this.head);
             const sp = (x, z, len) => { const g = this._reptLeg(skin, x, z, len, p.accent); g.position.set(x, 0.72, z); g.rotation.z = (x < 0 ? -0.5 : 0.5); return g; };
             this.frontLeft = sp(-0.4, 0.46, 0.36); this.frontRight = sp(0.4, 0.46, 0.36);
             this.rearLeft = sp(-0.42, -0.46, 0.4); this.rearRight = sp(0.42, -0.46, 0.4);
@@ -617,6 +619,7 @@
             this.rearLeft = this._reptLeg(skin, -0.2, -0.02, 0.55, p.accent); this.rearLeft.position.set(-0.2, 1.0, -0.02);
             this.rearRight = this._reptLeg(skin, 0.2, -0.02, 0.55, p.accent); this.rearRight.position.set(0.2, 1.0, -0.02);
             this.tail = this._segTail(skin, 6, 0.16, 1.0, false);
+            this.tail.position.z = -0.36;   // rooted at the base of the spine
             this._wireRept();
         }
         _bowArm(mat, side, p) {

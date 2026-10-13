@@ -1,10 +1,10 @@
 {
   "scale": "Scala:",
-  "hpDamage": "Danno PS",
+  "hpDamage": "Danno HP",
   "mpDamage": "Danno MP",
-  "hpRecovery": "Recupero PS",
+  "hpRecovery": "Recupero HP",
   "mpRecovery": "Recupero MP",
-  "hpDrain": "Assorbimento PS",
+  "hpDrain": "Assorbimento HP",
   "mpDrain": "Assorbimento MP",
   "buff": "Potenzia",
   "debuff": "Riduce",
@@ -14,8 +14,8 @@
   "skills": "ABILITÀ",
   "mastered": "IMPARATA",
   "magic": "MAGIA",
-  "fuseSpells": "Fondi Incantesimi",
-  "fuseSpellsShiftX": "Fondi Incantesimi (SHIFT / X)",
+  "fuseSpells": "Fondi incantesimi",
+  "fuseSpellsShiftX": "Fondi incantesimi (SHIFT / X)",
   "selectASkill": "SELEZIONA ABILITÀ",
   "learned": "IMPARATA",
   "noDescriptionAvailable": "Nessuna descrizione.",
@@ -26,16 +26,16 @@
   "dragToRotateScrollTo": "Trascina per ruotare · Rotellina per zoom",
   "replay": "↺ Ripeti",
   "close": "Chiudi",
-  "dominantSpell": "Incantesimo Dominante",
+  "dominantSpell": "Incantesimo dominante",
   "magicOnlyDefinesTheEffect": "un incantesimo; decide cosa fa il risultato",
-  "recessiveSpellOrSkill": "Recessivo (Incantesimo o Abilità)",
+  "recessiveSpellOrSkill": "Recessivo (incantesimo o abilità)",
   "spellOrSkillSetsThe": "un incantesimo o un'abilità; decide se il risultato è un incantesimo o un'abilità",
   "skill": "ABILITÀ",
   "emptySlot": "Vuoto",
   "emptyPressToChoose": "vuoto · premi per scegliere",
   "default": "predefinita",
   "animation": "Animazione",
-  "fuseSpells2": "Fondi Incantesimi",
+  "fuseSpells2": "Fondi incantesimi",
   "knowledge": "Conoscenza",
   "notEnough": " · insufficiente",
   "split": "Dividi",
@@ -54,13 +54,13 @@
   "youHold": "possiedi",
   "dominant": "Dominante:",
   "recessive": "Recessivo:",
-  "theDominantDefinesDamageAnd": "L'incantesimo dominante decide danno e bersagli. La parte recessiva decide se ottieni un incantesimo o un'abilità. Entrambe le parti vengono dimenticate, ma potrai separare di nuovo il risultato in seguito.",
-  "training": "Allenamento",
+  "theDominantDefinesDamageAnd": "Entrambi i genitori vengono letti come tag: tieni quelli che vuoi, prima quelli del dominante dove ne entra uno solo. Recessivo: lo rende un incantesimo o un'abilità. Entrambe le parti vengono consumate; separa il risultato per riaverle.",
+  "training": "Addestramento",
   "fusedSkillDesc": "Un'abilità procedurale fusa da {parts} (dominante: {dominant}).",
   "fusedSpellDesc": "Un incantesimo procedurale fuso da {parts} (dominante: {dominant}).",
-  "teachActor": "Insegna a {actor} ({cost} KC)",
+  "teachActor": "Insegna a {actor} ({cost} KP)",
   "teachPupil": "Insegna a {actor}",
-  "selectSkillForDetails": "Seleziona una skill per vederne i dettagli",
+  "selectSkillForDetails": "Seleziona un'abilità per vederne i dettagli",
   "mpLabel": "MP:",
   "apLabel": "AP:",
   "effectLabel": "Effetto:",
@@ -69,7 +69,7 @@
   "knowledgeLabel": "Conoscenza",
   "learnedMark": "Imparata ✓",
   "unknownSkill": "Sconosciuta",
-  "costKp": "Costo: {cost} KC",
+  "costKp": "Costo: {cost} KP",
   "actorLearned": "{actor} ha imparato {skill}!",
   "fusedResult": "Fuso {name}! (-{cost} KP, restano {left})",
   "splitResult": "{name} diviso nei componenti.",
@@ -77,76 +77,76 @@
   "category": {
     "All": "Tutte"
   },
-  "forgeBlurb": "Unisci due capacità di {actor} in una nuova. L'incantesimo dominante decide cosa fa; l'incantesimo o abilità recessiva decide se il risultato è un incantesimo o un'abilità. Entrambe le parti vengono dimenticate. Hai {knowledge} KP.",
-  "kpMultiplier3x": "3.0X KC",
-  "kpMultiplier15x": "1.5X KC",
+  "forgeBlurb": "Fondi due abilità di {actor} in una. Il dominante stabilisce l'effetto; il recessivo la rende un incantesimo o un'abilità. Entrambe le parti vengono consumate. Hai {knowledge} KP.",
+  "kpMultiplier3x": "3.0X KP",
+  "kpMultiplier15x": "1.5X KP",
   "foreignSchool": "Da autodidatta",
   "magicSystem": {
-    "tabLabel": "Sistemi Magici",
-    "title": "Sistemi Magici",
+    "tabLabel": "Sistemi magici",
+    "title": "Sistemi magici",
     "hint": "Seleziona un sistema per vederne gli incantesimi e le classi che lo usano",
     "empty": "Scegli un sistema dalla ruota",
     "classesHeading": "Classi",
-    "noClasses": "Nessuna classe conosciuta attinge ancora a questo sistema.",
+    "noClasses": "Nessuna classe usa ancora questo sistema.",
     "spellsHeading": "Incantesimi",
-    "noSpells": "Nessun incantesimo appartiene ancora a questo sistema.",
+    "noSpells": "Ancora nessun incantesimo in questo sistema.",
     "knownFraction": "{known} / {total} conosciuti ({pct}%)",
     "yourSystem": "Il sistema della tua classe",
     "systems": {
       "Arcane": {
         "name": "Arcano",
         "desc": "Magia antica, appresa da libri e formule.",
-        "lore": "Ogni opera arcana viene scritta prima di essere pronunciata. Un sigillo ha un costo dichiarato in fiato e sangue, una portata dichiarata, un'ora dichiarata, e il praticante che altera un termine della formula ottiene un risultato diverso, non uno piu' forte. Due maghi a due secoli di distanza che leggono la stessa pagina bruceranno la stessa candela e otterranno lo stesso fuoco: solo per questo i collegi hanno mai potuto insegnare."
+        "lore": "Ogni opera arcana viene scritta prima di essere pronunciata. Un sigillo ha un costo dichiarato in fiato e sangue, una portata dichiarata, un'ora dichiarata, e il praticante che altera un termine della formula ottiene un risultato diverso, non uno più forte. Due maghi a due secoli di distanza che leggono la stessa pagina bruceranno la stessa candela e otterranno lo stesso fuoco: per questo i collegi hanno potuto insegnare."
       },
       "Sacred": {
         "name": "Sacro",
         "desc": "Potere disceso da ordini superiori.",
-        "lore": "Il potere sacro si chiede, non si prende. Il rito e' fisso, la risposta no: la stessa preghiera detta con la stessa voce nella stessa mattina puo' resuscitare un morto, guarire uno sconosciuto a tre paesi di distanza, o non fare nulla per un anno intero. I devoti non parlano di costi o di limiti, solo di degnita', e mai due santi si sono trovati d'accordo su cosa renda una supplica ascoltata."
+        "lore": "Il potere sacro si chiede, non si prende. Il rito è fisso, la risposta no: la stessa preghiera detta con la stessa voce nella stessa mattina può resuscitare un morto, guarire uno sconosciuto a tre paesi di distanza, o non fare nulla per un anno intero. I devoti non parlano di costi o di limiti, solo di dignità, e mai due santi si sono trovati d'accordo su cosa renda una supplica ascoltata."
       },
       "Sympathetic": {
-        "name": "Simpatica",
+        "name": "Simpatetico",
         "desc": "Il simile richiama il simile: un oggetto legato a un altro.",
-        "lore": "Il simile chiama il simile, e le tavole delle corrispondenze dicono esattamente quanto forte. Un capello lega piu' stretto di un cappotto, un cappotto piu' di un nome; la distanza dimezza la presa, e un legame spezzato chiude l'opera invece di indebolirla. La strega simpatetica tiene grimori di cosa appartenga a chi, perche' in questa arte la forza di un vincolo si misura prima che cada il coltello."
+        "lore": "Il simile chiama il simile, e le tavole delle corrispondenze dicono esattamente quanto forte. Un capello lega più stretto di un cappotto, un cappotto più di un nome; la distanza dimezza la presa, e un legame spezzato chiude l'opera invece di indebolirla. La strega simpatetica tiene grimori di cosa appartenga a chi, perché in questa arte la forza di un vincolo si misura prima che cada il coltello."
       },
       "Dimensional": {
         "name": "Dimensionale",
         "desc": "Magia che piega spazio, tempo e probabilità.",
-        "lore": "Spazio, tempo e probabilita' sono trattati come materiali con una venatura e una tolleranza. Una piega ha un'ampiezza misurata, un debito in durata e un modo di guastarsi: forzala e il praticante arriva in un posto reale, solo non quello voluto. La matematica e' brutta e non perdona, ed e' esattamente per questo che i sopravvissuti di questa scuola sono tanto precisi con i loro numeri."
+        "lore": "Spazio, tempo e probabilità sono trattati come materiali con una venatura e una tolleranza. Una piega ha un'ampiezza misurata, un debito in durata e un modo di guastarsi: forzala e il praticante arriva in un posto reale, solo non quello voluto. La matematica è brutta e non perdona, ed è esattamente per questo che i sopravvissuti di questa scuola sono tanto precisi con i loro numeri."
       },
       "Psionics": {
         "name": "Psionica",
         "desc": "Potere proiettato dalla sola mente.",
-        "lore": "Non c'e' nulla da leggere e nulla da comprare. Lo psionico spinge, e il mondo si muove fin dove lo porta la sua convinzione, che certi giorni arriva piu' lontano senza che nessuno abbia mai saputo dire perche'. Il talento arriva immeritato, si approfondisce senza esercizio e abbandona chi lo porta a meta' frase. Cio' che riesce a una mente non dice nulla di cosa riuscira' alla successiva."
+        "lore": "Non c'è nulla da leggere e nulla da comprare. Lo psionico spinge, e il mondo si muove fin dove lo porta la sua convinzione, che certi giorni arriva più lontano senza che nessuno abbia mai saputo dire perché. Il talento arriva immeritato, si approfondisce senza esercizio e abbandona chi lo porta a metà frase. Ciò che riesce a una mente non dice nulla di cosa riuscirà alla successiva."
       },
       "Technomagic": {
         "name": "Tecnomagia",
         "desc": "L'occulto fuso con la macchina.",
-        "lore": "L'occulto e' stato smontato su un banco e rimontato con delle tolleranze. Un apparato tecnomagico dichiara il suo assorbimento in watt e la sua resa in effetto, si ferma quando si ferma l'alimentazione, e un secondo apparato costruito sullo stesso schema rende uguale entro un margine su cui i costruttori litigheranno per ore. Qui la magia e' una disciplina ingegneristica con norme di sicurezza peggiori."
+        "lore": "L'occulto è stato smontato su un banco e rimontato con delle tolleranze. Un apparato tecnomagico dichiara il suo assorbimento in watt e la sua resa in effetto, si ferma quando si ferma l'alimentazione, e un secondo apparato costruito sullo stesso schema rende uguale entro un margine su cui i costruttori litigheranno per ore. Qui la magia è una disciplina ingegneristica con norme di sicurezza peggiori."
       },
       "Pataphysic": {
         "name": "Patafisica",
-        "desc": "Magia che non risponde a nessuna legge coerente.",
-        "lore": "Il patafisico studia le leggi che governano le eccezioni, e il campo ricambia la cortesia non avendone alcuna. Un'opera che martedi' ha aperto una porta, giovedi' fa si' che una porta apra il patafisico. Gli appunti si prendono, e parlano sempre di una magia che non esiste piu'. I praticanti la descrivono come una barzelletta raccontata da qualcosa che non ha senso dell'umorismo e ha pazienza infinita."
+        "desc": "Magia senza leggi coerenti.",
+        "lore": "Il patafisico studia le leggi che governano le eccezioni, e il campo ricambia la cortesia non avendone alcuna. Un'opera che martedì ha aperto una porta, giovedì fa sì che una porta apra il patafisico. Gli appunti si prendono, e parlano sempre di una magia che non esiste più. I praticanti la descrivono come una barzelletta raccontata da qualcosa che non ha senso dell'umorismo e ha pazienza infinita."
       },
       "Natural": {
         "name": "Naturale",
         "desc": "Potere tratto da piante, bestie e terra.",
-        "lore": "Il potere verde arriva alle sue condizioni. Un bosco da' quel che gli va di dare, nella stagione che sceglie, a un supplice su cui ha deciso per ragioni che nessun erborista e' riuscito a mettere per iscritto. I patti tengono finche' tengono. Ogni praticante ha una storia sull'anno in cui il fiume smise semplicemente di rispondere, e nessuno ha una spiegazione che valga la pena ripetere."
+        "lore": "Il potere verde arriva alle sue condizioni. Un bosco dà quel che gli va di dare, nella stagione che sceglie, a un supplice su cui ha deciso per ragioni che nessun erborista è riuscito a mettere per iscritto. I patti tengono finché tengono. Ogni praticante ha una storia sull'anno in cui il fiume smise semplicemente di rispondere, e nessuno ha una spiegazione che valga la pena ripetere."
       },
       "Thermodynamics": {
         "name": "Termodinamica",
         "desc": "Magia che vive nel calore, nel gelo e nella corrente.",
-        "lore": "Il calore si sposta, non si crea. Scalda una stanza e qualcosa li' accanto si raffredda esattamente di altrettanto; chi dimentica il grimorio lo pareggia col proprio corpo. Le correnti scorrono dove la resistenza e' minore, i gradienti si equalizzano secondo tempi calcolabili in anticipo, e l'intera disciplina e' in fondo un ramo molto ostile della fisica praticato senza strumenti."
+        "lore": "Il calore si sposta, non si crea. Scalda una stanza e qualcosa lì accanto si raffredda esattamente di altrettanto; chi dimentica il grimorio lo pareggia col proprio corpo. Le correnti scorrono dove la resistenza è minore, i gradienti si equalizzano secondo tempi calcolabili in anticipo, e l'intera disciplina è in fondo un ramo molto ostile della fisica praticato senza strumenti."
       },
       "Ritual": {
         "name": "Rituale",
         "desc": "Potere pagato con rito, sangue o patto.",
-        "lore": "Il prezzo e' fissato prima che l'opera cominci. Tante ore, tanto sangue, tante voci nel cerchio, e l'effetto segue in proporzione; dimezza l'offerta e dimezzi il risultato, spezza il cerchio e non ottieni nulla invece di qualcosa di selvaggio. I patti sono scritti in termini che entrambe le parti possono far valere, e i riti piu' antichi sono quelli i cui termini non hanno mai dovuto cambiare."
+        "lore": "Il prezzo è fissato prima che l'opera cominci. Tante ore, tanto sangue, tante voci nel cerchio, e l'effetto segue in proporzione; dimezza l'offerta e dimezzi il risultato, spezza il cerchio e non ottieni nulla invece di qualcosa di selvaggio. I patti sono scritti in termini che entrambe le parti possono far valere, e i riti più antichi sono quelli i cui termini non hanno mai dovuto cambiare."
       }
     },
     "rigor": {
-      "hard": "Magia Rigida",
-      "soft": "Magia Fluida",
+      "hard": "Magia rigida",
+      "soft": "Magia fluida",
       "hardHint": "Regole fisse e costi noti",
       "softHint": "Nessuna regola fissa; i risultati variano"
     },
@@ -157,44 +157,46 @@
     "legendOpen": "Disponibile",
     "legendLocked": "Bloccata",
     "locked": "BLOCCATA",
-    "lockedBy": "Si sblocca da: {skills}",
+    "lockedBy": "Sbloccata da: {skills}",
     "lockedByCount": "Ne servono ancora {need} fra: {skills}",
     "lockedHint": "Impara prima un'abilità collegata per sbloccare questa.",
-    "lockedToast": "{skill} non confina con nulla che questo allievo conosca.",
+    "lockedToast": "{skill} non è collegata a un'abilità nota.",
     "lockedEsotericLevel": "Sapere esoterico: livello {level} o superiore.",
     "lockedForbiddenLevel": "Sapere proibito: livello {level} o superiore.",
-    "lockedCultist": "Un Cultista non impara nulla qui: solo grimori e manuali possono istruirlo."
+    "lockedCultist": "I cultisti imparano solo da grimori e libri di abilità."
   },
   "atlas": {
     "progress": "{learned} di {total} apprese",
-    "kp": "{kp} KC",
+    "kp": "{kp} KP",
     "schoolOf": "{index} / {total}",
-    "held": "Hai {knowledge} KC",
-    "hint": "Trascina per spostare, rotella per ingrandire"
+    "held": "Hai {knowledge} KP",
+    "hint": "Trascina per spostare, rotella per ingrandire",
+    "zoomIn": "Ingrandisci",
+    "zoomOut": "Riduci"
   },
   "tag": {
     "esoteric": "Esoterica",
     "forbidden": "Proibita"
   },
   "carry": {
-    "take": "Porta in battaglia",
-    "drop": "Lascia in panchina",
+    "take": "Aggiungi all'assetto",
+    "drop": "Togli dall'assetto",
     "locked": "Sempre equipaggiata",
     "full": "Assetto al completo",
-    "takenToast": "{skill} viene portata in battaglia.",
-    "droppedToast": "{skill} resta in panchina.",
-    "fullToast": "L'assetto porta già {max} abilità. Mettine una in panchina.",
-    "lockedToast": "{skill} è sempre equipaggiata e non occupa uno slot."
+    "takenToast": "{skill} aggiunta all'assetto.",
+    "droppedToast": "{skill} tolta dall'assetto.",
+    "fullToast": "Assetto pieno ({max}). Togli prima un'abilità.",
+    "lockedToast": "{skill} è sempre equipaggiata e non occupa slot."
   },
   "fusion": {
     "rename": "Rinomina",
     "delete": "Disfa",
     "confirm": "Salva",
-    "confirmDelete": "Disfare {skill}? I suoi componenti sono già stati consumati. Premi di nuovo per confermare.",
+    "confirmDelete": "Disfare {skill}? I componenti non vengono restituiti. Premi di nuovo per confermare.",
     "deleted": "{skill} è stata disfatta."
   },
   "fusionCritical": "★ SUCCESSO CRITICO \\DIE[20]! ★\n{result}\nPotenziata con -20% di costo in MP e +25% di efficacia!",
-  "fusionFailed": "☠ FUSIONE ARCANA FALLITA (CD {dc}) ☠\nLa fusione degli incantesimi si è destabilizzata in un violento contraccolpo magico!\nGli incantesimi componenti ({components}) sono stati distrutti!",
+  "fusionFailed": "☠ FUSIONE ARCANA FALLITA (CD {dc}) ☠\nContraccolpo magico!\nIncantesimi componenti ({components}) distrutti!",
   "primarySchool": "Primaria",
   "secondarySchool": "Secondaria",
   "rename": "Rinomina",
@@ -202,12 +204,12 @@
   "renamePrompt": "Inserisci un nuovo nome per questa magia:",
   "dissolveConfirm": "Dissolvere {name} in conoscenza?",
   "pupil": "Allievo",
-  "chaosLevelSkill": "{actor} impara {skill} dal nulla.",
+  "chaosLevelSkill": "{actor} ha imparato all'improvviso {skill}.",
   "craft": {
-    "buttonSpell": "Crea Incantesimo",
-    "buttonSkill": "Crea Abilita",
-    "titleSpell": "Banco degli Incantesimi",
-    "titleSkill": "Banco delle Abilita",
+    "buttonSpell": "Crea incantesimo",
+    "buttonSkill": "Crea abilità",
+    "titleSpell": "Banco degli incantesimi",
+    "titleSkill": "Banco delle abilità",
     "back": "Indietro",
     "cancel": "Annulla",
     "use": "Usa",
@@ -218,8 +220,8 @@
       "name": "Dagli un nome",
       "description": "Scrivi la descrizione",
       "lore": "Scrivi la storia",
-      "incantation": "Scrivi il suo incantesimo",
-      "hint": "Invio salva un nome, Esc chiude. Maiusc e Invio vanno a capo."
+      "incantation": "Scrivi la sua formula",
+      "hint": "Invio: salva. Esc: chiudi. Shift+Invio: a capo."
     },
     "rewriteDesc": "Riscrivi descrizione",
     "rewriteLore": "Riscrivi storia",
@@ -227,22 +229,22 @@
     "rewrite": "Riscrivilo",
     "preview": "Anteprima",
     "none": "Nessuno",
-    "yes": "Si",
+    "yes": "Sì",
     "no": "No",
     "unwritten": "Non scritto",
     "knowledge": "Conoscenza",
     "cxShort": "CX",
-    "nothingToBuy": "Niente su questo scaffale",
+    "nothingToBuy": "Niente da comprare",
     "noneYet": "Non hai ancora scritto nulla",
     "yourSpells": "I tuoi incantesimi",
-    "yourSkills": "Le tue abilita",
+    "yourSkills": "Le tue abilità",
     "defaultSpellName": "Incantesimo senza nome",
-    "defaultSkillName": "Abilita senza nome",
+    "defaultSkillName": "Abilità senza nome",
     "spendsMP": "Consuma MP",
     "spendsAP": "Consuma AP",
     "mpLabel": "Costo MP",
     "apLabel": "Costo AP",
-    "complexity": "Complessita",
+    "complexity": "Complessità",
     "statFloor": "Soglia",
     "yourStat": "Hai",
     "price": "Prezzo",
@@ -251,458 +253,1003 @@
     "formula": "Formula",
     "repeats": "Ripetizioni",
     "variance": "Varianza",
-    "critical": "Puo essere critico",
+    "critical": "Può essere critico",
     "occasionLabel": "Utilizzabile",
     "anywhere": "Ovunque",
     "battleOnly": "Solo in battaglia",
-    "riderCount": "Innesti",
-    "benchBlurb": "Compra ogni parte una volta sola con i KP, poi riusala in tutto ciò che scrivi qui. La complessità aumenta gli MP di ogni lancio e il valore di {stat} necessario per usarlo.",
-    "writtenResult": "\\C[3]{name}\\C[0] e scritto. {cost} PC spesi, {left} PC rimasti.",
-    "rewrittenResult": "\\C[3]{name}\\C[0] e riscritto. {cost} PC spesi, {left} PC rimasti.",
+    "benchBlurb": "Ogni tag si paga in KP quando la voce viene scritta. Gli MP o gli AP che costa e la {stat} che richiede sono ciò che il libro chiede per la stessa potenza.",
+    "writtenResult": "\\C[3]{name}\\C[0] è scritto. {cost} KP spesi, {left} KP rimasti.",
+    "rewrittenResult": "\\C[3]{name}\\C[0] è riscritto. {cost} KP spesi, {left} KP rimasti.",
     "row": {
       "name": "Nome",
       "description": "Descrizione",
       "lore": "Storia",
-      "incantation": "Incantesimo",
+      "incantation": "Formula",
       "icon": "Icona",
       "animation": "Animazione",
-      "core": "Nucleo",
-      "power": "Amplificatore",
-      "scope": "Forma",
-      "riders": "Innesti",
-      "refines": "Rifiniture",
       "create": "Scrivi",
-      "randomize": "Tira"
+      "randomize": "Tira",
+      "catalogue": "Aggiungi tag",
+      "core": "Nucleo",
+      "element": "Elemento",
+      "power": "Amplificatore",
+      "shape": "Forma",
+      "rider": "Effetti aggiuntivi",
+      "refine": "Rifiniture",
+      "payoff": "Ricompense",
+      "mechanic": "Meccaniche"
     },
     "pick": {
       "core": "Scegli un nucleo",
+      "element": "Scegli un elemento",
       "power": "Scegli un amplificatore",
-      "scope": "Scegli una forma",
-      "riders": "Compra innesti",
-      "refines": "Compra rifiniture",
+      "shape": "Scegli una forma",
+      "rider": "Aggiungi un effetto",
+      "refine": "Aggiungi una rifinitura",
+      "payoff": "Aggiungi una ricompensa",
+      "mechanic": "Aggiungi una meccanica",
+      "catalogue": "Catalogo dei tag",
       "icon": "Scegli un'icona",
       "animation": "Scegli un'animazione"
     },
     "blocked": {
-      "incomplete": "Il progetto non e finito.",
-      "mismatch": "Quel nucleo non si puo puntare in quel modo.",
+      "incomplete": "Costruzione incompleta: servono un nucleo e una forma.",
+      "invalid": "Un tag non si adatta: {why}",
+      "overload": "Oltre 100 AP: alleggerisci la costruzione.",
       "knowledge": "Conoscenza insufficiente.",
       "stat": "Richiede {stat} {need}, tu hai {have}.",
-      "full": "Il banco ne tiene gia {max}. Disfane uno prima."
-    },
-    "dmgType": {
-      "0": "Nessun danno",
-      "1": "Danno PS",
-      "2": "Danno MP",
-      "3": "Recupero PS",
-      "4": "Recupero MP",
-      "5": "Assorbimento PS",
-      "6": "Assorbimento MP"
-    },
-    "comp": {
-      "core": {
-        "fire": {
-          "name": "Esca",
-          "desc": "Danno di fuoco. La cosa piu economica che bruci."
-        },
-        "ice": {
-          "name": "Brina",
-          "desc": "Danno di ghiaccio, un poco piu gentile del fuoco e piu costante."
-        },
-        "thunder": {
-          "name": "Arco",
-          "desc": "Danno di fulmine che taglia parte della guardia."
-        },
-        "water": {
-          "name": "Torrente",
-          "desc": "Danno d'acqua. Ottuso, e il piu facile da tracciare."
-        },
-        "stone": {
-          "name": "Scheggia",
-          "desc": "Danno di pietra. Pesante, e lento da deviare."
-        },
-        "gale": {
-          "name": "Spiffero",
-          "desc": "Danno di vento. Leggero, rapido ed economico da reggere."
-        },
-        "sacred": {
-          "name": "Aureola",
-          "desc": "Danno sacro che quasi nessuna guardia smorza."
-        },
-        "cursed": {
-          "name": "Piaga",
-          "desc": "Danno maledetto. La cosa piu dura qui davanti a cui stare."
-        },
-        "arcane": {
-          "name": "Sigillo",
-          "desc": "Danno senza elemento a cui nulla sul campo resiste."
-        },
-        "mend": {
-          "name": "Sutura",
-          "desc": "Cura PS attingendo allo studio di chi lancia."
-        },
-        "etherFlow": {
-          "name": "Condotto",
-          "desc": "Restituisce MP a chiunque colpisca."
-        },
-        "siphon": {
-          "name": "Sanguisuga",
-          "desc": "Danno che torna come PS a chi lancia."
-        },
-        "mindBurn": {
-          "name": "Scarica",
-          "desc": "Brucia MP invece che sangue."
-        },
-        "ward": {
-          "name": "Cornice Vuota",
-          "desc": "Nessun danno. Un guscio su cui posare gli innesti."
-        },
-        "strike": {
-          "name": "Colpo",
-          "desc": "Un colpo netto dal braccio che lo tira."
-        },
-        "cleave": {
-          "name": "Fendente",
-          "desc": "Un colpo piu pesante a cui la guardia risponde per intero."
-        },
-        "thrust": {
-          "name": "Affondo",
-          "desc": "Un colpo piu stretto che gran parte della guardia manca."
-        },
-        "brawl": {
-          "name": "Presa",
-          "desc": "Lavoro ravvicinato. Niente fronzoli, niente sprechi."
-        },
-        "marksman": {
-          "name": "Tiro Mirato",
-          "desc": "Un tiro che non si puo schivare."
-        },
-        "venomEdge": {
-          "name": "Lama Sporca",
-          "desc": "Una lama maledetta invece che pulita."
-        },
-        "bandage": {
-          "name": "Fasciatura",
-          "desc": "Rattoppa PS senza una parola di magia."
-        },
-        "secondWind": {
-          "name": "Secondo Fiato",
-          "desc": "Un colpo che restituisce cio che toglie."
-        },
-        "rally": {
-          "name": "Guardia Vuota",
-          "desc": "Nessun danno. Un guscio su cui posare gli innesti."
-        }
-      },
-      "power": {
-        "plain": {
-          "name": "Semplice",
-          "desc": "Il nucleo come sta scritto. Non costa nulla."
-        },
-        "focused": {
-          "name": "Concentrato",
-          "desc": "Un quarto piu forte."
-        },
-        "potent": {
-          "name": "Potente",
-          "desc": "Meta piu forte, e molto piu pesante da reggere."
-        },
-        "ruinous": {
-          "name": "Rovinoso",
-          "desc": "Il doppio. Solo una mente addestrata lo porta."
-        }
-      },
-      "scope": {
-        "oneEnemy": {
-          "name": "Un nemico",
-          "desc": "Un solo bersaglio dall'altra parte del campo."
-        },
-        "twoRandom": {
-          "name": "Due a caso",
-          "desc": "Due volte, dove capita."
-        },
-        "threeRandom": {
-          "name": "Tre a caso",
-          "desc": "Tre volte, dove capita."
-        },
-        "allEnemies": {
-          "name": "Tutti i nemici",
-          "desc": "Tutta la linea avversaria in una volta."
-        },
-        "oneAlly": {
-          "name": "Un alleato",
-          "desc": "Un solo compagno."
-        },
-        "allAllies": {
-          "name": "Tutti gli alleati",
-          "desc": "Tutto il gruppo in una volta."
-        },
-        "theUser": {
-          "name": "Chi scrive",
-          "desc": "Te stesso e nessun altro. Non costa nulla."
-        },
-        "everyone": {
-          "name": "Tutti quanti",
-          "desc": "Entrambe le linee, amici e nemici."
-        }
-      },
-      "riders": {
-        "poison": {
-          "name": "Veleno",
-          "desc": "Spesso lascia il bersaglio avvelenato."
-        },
-        "blind": {
-          "name": "Braci",
-          "desc": "Spesso acceca il bersaglio."
-        },
-        "silence": {
-          "name": "Bavaglio",
-          "desc": "A volte zittisce il bersaglio."
-        },
-        "confusion": {
-          "name": "Confusione",
-          "desc": "A volte confonde il bersaglio."
-        },
-        "sleep": {
-          "name": "Ninnananna",
-          "desc": "A volte addormenta il bersaglio."
-        },
-        "freeze": {
-          "name": "Galaverna",
-          "desc": "A volte congela il bersaglio."
-        },
-        "paralysis": {
-          "name": "Nervo Bloccato",
-          "desc": "A volte paralizza il bersaglio."
-        },
-        "stun": {
-          "name": "Commozione",
-          "desc": "Spesso stordisce il bersaglio."
-        },
-        "deathMark": {
-          "name": "Marchio di Morte",
-          "desc": "Di rado marchia il bersaglio per la morte. Caro, e giusto che lo sia."
-        },
-        "provoke": {
-          "name": "Insulto",
-          "desc": "Quasi sempre provoca il bersaglio a rispondere a te."
-        },
-        "sapAtk": {
-          "name": "Fiacca Forza",
-          "desc": "Indebolisce l'attacco del bersaglio."
-        },
-        "sapDef": {
-          "name": "Fiacca Guardia",
-          "desc": "Indebolisce la difesa del bersaglio."
-        },
-        "sapMat": {
-          "name": "Fiacca Mente",
-          "desc": "Indebolisce la magia del bersaglio."
-        },
-        "sapAgi": {
-          "name": "Fiacca Passo",
-          "desc": "Indebolisce la velocita del bersaglio."
-        },
-        "stripBuffs": {
-          "name": "Cancellatura",
-          "desc": "Strappa via i potenziamenti dietro cui sta il bersaglio."
-        },
-        "regenHP": {
-          "name": "Ricucitura Lenta",
-          "desc": "Lascia rigenerazione di PS."
-        },
-        "regenMP": {
-          "name": "Sorgente Lenta",
-          "desc": "Lascia rigenerazione di MP."
-        },
-        "regenAP": {
-          "name": "Respiro Lento",
-          "desc": "Lascia rigenerazione di AP."
-        },
-        "protect": {
-          "name": "Egida",
-          "desc": "Lascia il bersaglio protetto."
-        },
-        "counter": {
-          "name": "Risposta",
-          "desc": "Lascia il bersaglio a rendere i colpi."
-        },
-        "inspired": {
-          "name": "Buona Parola",
-          "desc": "Lascia il bersaglio ispirato."
-        },
-        "arcaneSurge": {
-          "name": "Impeto",
-          "desc": "Lascia un impeto arcano sul bersaglio."
-        },
-        "divineShield": {
-          "name": "Scudo Divino",
-          "desc": "Di rado lascia uno scudo divino. La cosa piu cara sullo scaffale."
-        },
-        "shadowVeil": {
-          "name": "Velo d'Ombra",
-          "desc": "Lascia il bersaglio velato."
-        },
-        "wardAilments": {
-          "name": "Amuleto",
-          "desc": "Lascia il bersaglio a bloccare le alterazioni."
-        },
-        "braceAtk": {
-          "name": "Rinforza Forza",
-          "desc": "Alza l'attacco del bersaglio."
-        },
-        "braceDef": {
-          "name": "Rinforza Guardia",
-          "desc": "Alza la difesa del bersaglio."
-        },
-        "braceMat": {
-          "name": "Rinforza Mente",
-          "desc": "Alza la magia del bersaglio."
-        },
-        "braceAgi": {
-          "name": "Rinforza Passo",
-          "desc": "Alza la velocita del bersaglio."
-        },
-        "cleanse": {
-          "name": "Tabula Rasa",
-          "desc": "Toglie veleno, cecita, silenzio e il resto."
-        },
-        "firstAid": {
-          "name": "Unguento",
-          "desc": "Restituisce una fetta di PS oltre a tutto il resto."
-        },
-        "etherSplash": {
-          "name": "Sorso",
-          "desc": "Restituisce una fetta di MP oltre a tutto il resto."
-        },
-        "apSurge": {
-          "name": "Adrenalina",
-          "desc": "Consegna AP al bersaglio senza condizioni."
-        }
-      },
-      "refines": {
-        "certain": {
-          "name": "Infallibile",
-          "desc": "Non manca mai, qualunque cosa ci sia in mezzo."
-        },
-        "twinCast": {
-          "name": "Gemello",
-          "desc": "Colpisce due volte."
-        },
-        "tripleCast": {
-          "name": "Scritto Tre Volte",
-          "desc": "Colpisce tre volte. La cosa piu pesante sullo scaffale."
-        },
-        "swift": {
-          "name": "Rapido",
-          "desc": "Agisce prima nel round."
-        },
-        "precise": {
-          "name": "Preciso",
-          "desc": "Non fallisce mai il proprio tiro di riuscita."
-        },
-        "stable": {
-          "name": "Stabile",
-          "desc": "Sempre lo stesso numero."
-        },
-        "wild": {
-          "name": "Selvaggio",
-          "desc": "Selvaggiamente variabile. Economico, e onesto in questo."
-        },
-        "keenEdge": {
-          "name": "Affilato",
-          "desc": "Puo mettere a segno un critico."
-        },
-        "guardBreak": {
-          "name": "Spezzaguardia",
-          "desc": "Dimezza la difesa contata contro di lui."
-        },
-        "efficient": {
-          "name": "Efficiente",
-          "desc": "Costa meno da lanciare, e non aggiunge complessita."
-        },
-        "menuCast": {
-          "name": "Quotidiano",
-          "desc": "Utilizzabile anche fuori dalla battaglia."
-        },
-        "apReturn": {
-          "name": "Ritorno",
-          "desc": "Restituisce AP a chi lo usa."
-        }
-      }
+      "full": "Max {max} voci. Disfane una prima.",
+      "beyond": "Più forte di qualunque cosa nel libro: alleggerisci la costruzione."
     },
     "randomize": "Tira a caso",
     "identity": "Identità",
     "chipInfo": "{name}: {desc} ({kp} KP, complessità {cx})",
-    "pickUpTo": "Scegline fino a {max}. Passa sopra una voce per leggerla.",
     "camel": {
-      "title": "Non è un nome da incantesimo",
-      "body": "Un incantesimo si chiama con una sola parola in CamelCase, senza spazi: FireBolt, non fire bolt. {name} resta come lo hai scritto, se lo vuoi.",
-      "rename": "Rinominalo",
+      "title": "Nome non valido",
+      "body": "I nomi degli incantesimi sono una parola in CamelCase: FireBolt, non fire bolt. Puoi comunque tenere {name}.",
+      "rename": "Rinomina",
       "keep": "Tienilo"
+    },
+    "tags": {
+      "bolt": {
+        "name": "Dardo",
+        "desc": "Danno HP magico basato su INT. Dagli un elemento."
+      },
+      "physical": {
+        "name": "Fisico",
+        "desc": "Elemento fisico: armatura e guardia contano per intero."
+      },
+      "bleeding": {
+        "name": "Vena Aperta",
+        "desc": "Spesso lascia il bersaglio Sanguinante."
+      },
+      "burned": {
+        "name": "Scottatura",
+        "desc": "Spesso lascia il bersaglio Bruciato."
+      },
+      "vulnerable": {
+        "name": "Esporre",
+        "desc": "Spesso rende il bersaglio Vulnerabile."
+      },
+      "unbalanced": {
+        "name": "Sgambetto",
+        "desc": "Può lasciare il bersaglio Sbilanciato: le sue azioni possono fallire."
+      },
+      "concussed": {
+        "name": "Campana",
+        "desc": "Può lasciare il bersaglio con Commozione Cerebrale."
+      },
+      "guardBroken": {
+        "name": "Scardinare",
+        "desc": "Può infliggere Guardia Rotta: difesa dimezzata."
+      },
+      "hobbled": {
+        "name": "Azzoppare",
+        "desc": "Può infliggere Azzoppato: più lento e più facile da colpire."
+      },
+      "disarmed": {
+        "name": "Mano Intorpidita",
+        "desc": "Può infliggere Disarmato: colpi più deboli."
+      },
+      "wet": {
+        "name": "Inzuppare",
+        "desc": "Spesso lascia il bersaglio Bagnato: il Fulmine lo folgora, il Ghiaccio lo congela."
+      },
+      "oily": {
+        "name": "Unto",
+        "desc": "Spesso lascia il bersaglio Oleoso: il prossimo colpo di Fuoco lo incendia."
+      },
+      "brittle": {
+        "name": "Infragilire",
+        "desc": "Può lasciare il bersaglio Fragile: il prossimo colpo fisico lo frantuma."
+      },
+      "volatile": {
+        "name": "Innescare",
+        "desc": "Può lasciare il bersaglio Volatile: Fuoco o Fulmine lo fanno esplodere."
+      },
+      "doom": {
+        "name": "Sentenza",
+        "desc": "Può infliggere Condanna: allo scadere il bersaglio subisce grave danno Maledetto."
+      },
+      "litFuse": {
+        "name": "Miccia",
+        "desc": "Può piazzare una Miccia Accesa: allo scadere esplode sul bersaglio e i suoi alleati."
+      },
+      "looped": {
+        "name": "Ciclo",
+        "desc": "Può infliggere Ciclo Mentale: il bersaglio ripete la sua ultima azione."
+      },
+      "mindSealed": {
+        "name": "Sigillo",
+        "desc": "Può infliggere Sigillo Mentale: la sua ultima abilità è sigillata."
+      },
+      "puppeted": {
+        "name": "Fili",
+        "desc": "Può infliggere Burattino: la sua prossima mossa non è sua."
+      },
+      "turncoat": {
+        "name": "Voltagabbana",
+        "desc": "Può infliggere Voltagabbana: si rivolta contro i suoi."
+      },
+      "mindRead": {
+        "name": "Lettura",
+        "desc": "Infligge quasi sempre Mente Letta: la sua prossima azione è nota."
+      },
+      "dawnVow": {
+        "name": "Voto dell'Alba",
+        "desc": "Concede Voto dell'Alba: l'aiuto arriva allo scadere."
+      },
+      "rebound": {
+        "name": "Rimbalzo",
+        "desc": "Concede Rimbalzo: la prossima abilità rivolta contro di loro viene respinta."
+      },
+      "echo": {
+        "name": "Eco",
+        "desc": "Concede Eco: la loro prossima abilità parte due volte."
+      },
+      "bladeDrill": {
+        "name": "Esercizio di Lama",
+        "desc": "Concede Esercizio di Lama: spade e coltelli rispondono meglio."
+      },
+      "gunDrill": {
+        "name": "Esercizio di Tiro",
+        "desc": "Concede Esercizio di Tiro: le armi da fuoco rispondono meglio."
+      },
+      "drilled": {
+        "name": "Addestramento",
+        "desc": "Concede Addestrato: ogni arma risponde un po' meglio."
+      },
+      "edgeStance": {
+        "name": "Posizione di Taglio",
+        "desc": "Concede Posizione di Taglio: i colpi infliggono danno da Taglio. Su un'arma: taglia."
+      },
+      "mercifulStance": {
+        "name": "Posizione Clemente",
+        "desc": "Concede Posizione Clemente: i colpi infliggono danno Contundente. Su un'arma: contunde."
+      },
+      "spearpointStance": {
+        "name": "Posizione di Punta",
+        "desc": "Concede Posizione di Punta: i colpi infliggono danno Perforante. Su un'arma: perfora."
+      },
+      "bulletTime": {
+        "name": "Tempo Rallentato",
+        "desc": "Concede Tempo Rallentato: i colpi vengono schivati e la fase di schivata rallenta."
+      },
+      "foresight": {
+        "name": "Preveggenza",
+        "desc": "Concede Preveggenza: gli incantesimi vengono evitati e il velivolo di schivata si rimpicciolisce."
+      },
+      "guardianBond": {
+        "name": "Legame del Guardiano",
+        "desc": "Concede Legame del Guardiano: chi lo usa subisce metà del danno HP di ogni alleato. Solo su chi lo usa."
+      },
+      "lifeLink": {
+        "name": "Legame Vitale",
+        "desc": "Infligge Legame Vitale: il danno HP si divide tra tutti i legati. Su qualunque lato."
+      },
+      "consumeCombo": {
+        "name": "Chiusura Combo",
+        "desc": "Doppio se chi lo usa ha Combo Pronta, che consuma."
+      },
+      "consumeLockOn": {
+        "name": "Colpo Agganciato",
+        "desc": "Doppio se chi lo usa ha Presa di Mira, che consuma."
+      },
+      "consumeFocus": {
+        "name": "Rilascio Concentrato",
+        "desc": "Doppio con Focus Perfetto, che consuma."
+      },
+      "consumeHide": {
+        "name": "Dal Nascondiglio",
+        "desc": "Doppio se chi lo usa è Nascosto, che consuma."
+      },
+      "vsWet": {
+        "name": "Conduttore",
+        "desc": "Doppio contro un bersaglio Bagnato."
+      },
+      "vsOily": {
+        "name": "Accendino",
+        "desc": "Doppio contro un bersaglio Oleoso."
+      },
+      "vsBrittle": {
+        "name": "Frantumatore",
+        "desc": "Doppio contro un bersaglio Fragile."
+      },
+      "vsBurned": {
+        "name": "Ustionatore",
+        "desc": "Doppio contro un bersaglio Bruciato."
+      },
+      "vsPoison": {
+        "name": "Rancore Tossico",
+        "desc": "Doppio contro un bersaglio Avvelenato."
+      },
+      "vsGrappled": {
+        "name": "Colpo in Presa",
+        "desc": "Doppio contro un bersaglio In Presa."
+      },
+      "vsConcussed": {
+        "name": "Seguito",
+        "desc": "Doppio contro un bersaglio con Commozione Cerebrale."
+      },
+      "vsUnbalanced": {
+        "name": "Abbattere",
+        "desc": "Doppio contro un bersaglio Sbilanciato."
+      },
+      "vsVital": {
+        "name": "Colpo Vitale",
+        "desc": "Doppio contro un bersaglio con Punto Vitale Esposto."
+      },
+      "whileRage": {
+        "name": "Furia",
+        "desc": "Più forte del 50% mentre chi lo usa ha Rabbia."
+      },
+      "whileBerserk": {
+        "name": "Frenesia",
+        "desc": "Più forte del 50% mentre chi lo usa è in Berserk."
+      },
+      "whileInspired": {
+        "name": "Musa",
+        "desc": "Più forte del 50% mentre chi lo usa è Ispirato."
+      },
+      "whileSurge": {
+        "name": "Traboccare",
+        "desc": "Più forte del 50% con Impeto Arcano."
+      },
+      "whileFlow": {
+        "name": "Nel Flusso",
+        "desc": "Più forte del 50% mentre chi lo usa è in Stato di Flusso."
+      },
+      "execute": {
+        "name": "Esecuzione",
+        "desc": "Doppio contro un nemico sotto il 30% degli HP."
+      },
+      "desperation": {
+        "name": "Disperazione",
+        "desc": "Cresce con gli HP persi da chi lo usa."
+      },
+      "spendChi": {
+        "name": "Rilascio del Chi",
+        "desc": "Cresce di un quarto per ogni carica di chi, poi le consuma."
+      },
+      "spendFaith": {
+        "name": "Rilascio della Fede",
+        "desc": "Cresce di un quarto per ogni carica di fede, poi le consuma."
+      },
+      "spendSouls": {
+        "name": "Rilascio delle Anime",
+        "desc": "Cresce di un quarto per ogni carica di anime, poi le consuma."
+      },
+      "selfCombo": {
+        "name": "Preparazione",
+        "desc": "Metà delle volte lascia chi lo usa con Combo Pronta."
+      },
+      "selfLockOn": {
+        "name": "Mirare",
+        "desc": "Lascia chi lo usa con Presa di Mira."
+      },
+      "selfFocus": {
+        "name": "Centrarsi",
+        "desc": "Lascia chi lo usa in Focus Perfetto."
+      },
+      "selfDodge": {
+        "name": "Piedi Leggeri",
+        "desc": "Lascia chi lo usa pronto a Schivare."
+      },
+      "selfFlow": {
+        "name": "Trovare il Flusso",
+        "desc": "Lascia chi lo usa in Stato di Flusso."
+      },
+      "selfCounter": {
+        "name": "Guardia di Risposta",
+        "desc": "Lascia chi lo usa pronto al Contrattacco."
+      },
+      "selfGuard": {
+        "name": "Copertura",
+        "desc": "Lascia chi lo usa in Guardia."
+      },
+      "selfHide": {
+        "name": "Dissolversi",
+        "desc": "Lascia chi lo usa Nascosto."
+      },
+      "selfChiBurn": {
+        "name": "Chi Bruciato",
+        "desc": "Svantaggio: lascia chi lo usa con Chi Bruciato. Costa meno."
+      },
+      "selfUnbalanced": {
+        "name": "Sbilanciarsi",
+        "desc": "Svantaggio: lascia chi lo usa Sbilanciato. Costa meno."
+      },
+      "selfWinded": {
+        "name": "Senza Riserve",
+        "desc": "Svantaggio: lascia chi lo usa Senza Fiato. Costa meno."
+      },
+      "selfVulnerable": {
+        "name": "Guardia Aperta",
+        "desc": "Svantaggio: lascia chi lo usa Vulnerabile. Costa meno."
+      },
+      "drainGentle": {
+        "name": "Sorso Sottile",
+        "desc": "Un assorbimento restituisce solo metà di ciò che prende. Costa meno."
+      },
+      "drainDeep": {
+        "name": "Sorso Profondo",
+        "desc": "Un assorbimento restituisce una volta e mezza ciò che prende."
+      },
+      "manaSap": {
+        "name": "Linfa di Mana",
+        "desc": "Prende MP pari al 30% del danno e li dà a chi lo usa."
+      },
+      "stackChi": {
+        "name": "Raccogliere Chi",
+        "desc": "Accumula una carica di chi a ogni uso, fino a 5."
+      },
+      "stackFaith": {
+        "name": "Raccogliere Fede",
+        "desc": "Accumula una carica di fede a ogni uso, fino a 5."
+      },
+      "soulsOnKill": {
+        "name": "Mietere Anime",
+        "desc": "Ottiene una carica di anime per ogni nemico che abbatte, fino a 5."
+      },
+      "aimHead": {
+        "name": "Alla Testa",
+        "desc": "Mira alla testa."
+      },
+      "aimArm": {
+        "name": "Al Braccio",
+        "desc": "Mira alla mano o al braccio."
+      },
+      "aimLeg": {
+        "name": "Alle Gambe",
+        "desc": "Mira alle gambe."
+      },
+      "aimable": {
+        "name": "Seguire la Mira",
+        "desc": "Va dove punta la Mira di chi lo usa."
+      },
+      "ammo2": {
+        "name": "Doppio Colpo",
+        "desc": "Spende 2 colpi. Una raffica."
+      },
+      "ammo4": {
+        "name": "Raffica",
+        "desc": "Spende 4 colpi. Una raffica."
+      },
+      "ammoAll": {
+        "name": "Svuotare il Caricatore",
+        "desc": "Svuota il caricatore; i colpi crescono con i proiettili spesi."
+      },
+      "reload": {
+        "name": "Ricarica",
+        "desc": "Ricarica il caricatore. Richiede una guardia vuota su chi lo usa."
+      },
+      "bulletHell": {
+        "name": "Fase di Schivata",
+        "desc": "Apre una fase di schivata pilotata da chi lo usa. Altrove un colpo normale."
+      },
+      "fire": {
+        "name": "Esca",
+        "desc": "Danno da fuoco. L'elemento più economico."
+      },
+      "ice": {
+        "name": "Brina",
+        "desc": "Danno da ghiaccio. Un po' più debole del fuoco, più stabile."
+      },
+      "thunder": {
+        "name": "Arco voltaico",
+        "desc": "Danno di fulmine che taglia parte della guardia."
+      },
+      "water": {
+        "name": "Torrente",
+        "desc": "Danno d'acqua. Economico e grezzo."
+      },
+      "stone": {
+        "name": "Scheggia",
+        "desc": "Danno Petro. Pesante, e resistergli è difficile."
+      },
+      "gale": {
+        "name": "Spiffero",
+        "desc": "Danno da vento. Leggero ed economico."
+      },
+      "sacred": {
+        "name": "Aureola",
+        "desc": "Danno sacro. Le difese lo riducono appena."
+      },
+      "cursed": {
+        "name": "Piaga",
+        "desc": "Danno maledetto. Il nucleo più forte."
+      },
+      "mend": {
+        "name": "Sutura",
+        "desc": "Cura HP attingendo allo studio di chi lancia."
+      },
+      "etherFlow": {
+        "name": "Condotto",
+        "desc": "Restituisce MP a chiunque colpisca."
+      },
+      "siphon": {
+        "name": "Sanguisuga",
+        "desc": "Danno che torna come HP a chi lancia."
+      },
+      "mindBurn": {
+        "name": "Scarica",
+        "desc": "Brucia MP invece che sangue."
+      },
+      "ward": {
+        "name": "Cornice Vuota",
+        "desc": "Nessun danno. Una base per gli effetti aggiuntivi."
+      },
+      "strike": {
+        "name": "Colpo",
+        "desc": "Un semplice attacco fisico."
+      },
+      "cleave": {
+        "name": "Fendente",
+        "desc": "Un colpo più pesante. La difesa si applica per intero."
+      },
+      "thrust": {
+        "name": "Affondo",
+        "desc": "Ignora gran parte della difesa."
+      },
+      "brawl": {
+        "name": "Presa",
+        "desc": "Un attacco ravvicinato di base."
+      },
+      "marksman": {
+        "name": "Tiro Mirato",
+        "desc": "Un tiro che non si può schivare."
+      },
+      "venomEdge": {
+        "name": "Lama Sporca",
+        "desc": "Danno fisico maledetto."
+      },
+      "bandage": {
+        "name": "Fasciatura",
+        "desc": "Cura HP senza magia."
+      },
+      "secondWind": {
+        "name": "Secondo Fiato",
+        "desc": "Danno che cura chi lo usa."
+      },
+      "rally": {
+        "name": "Guardia Vuota",
+        "desc": "Nessun danno. Una base per gli effetti aggiuntivi."
+      },
+      "focused": {
+        "name": "Concentrato",
+        "desc": "+25% potenza."
+      },
+      "potent": {
+        "name": "Potente",
+        "desc": "+50% potenza. Molto più complesso."
+      },
+      "ruinous": {
+        "name": "Rovinoso",
+        "desc": "Potenza doppia. Richiede una statistica alta."
+      },
+      "oneEnemy": {
+        "name": "Un nemico",
+        "desc": "Un nemico."
+      },
+      "twoRandom": {
+        "name": "Due a caso",
+        "desc": "Colpisce due bersagli casuali."
+      },
+      "threeRandom": {
+        "name": "Tre a caso",
+        "desc": "Colpisce tre bersagli casuali."
+      },
+      "allEnemies": {
+        "name": "Tutti i nemici",
+        "desc": "Tutti i nemici."
+      },
+      "oneAlly": {
+        "name": "Un alleato",
+        "desc": "Un alleato."
+      },
+      "allAllies": {
+        "name": "Tutti gli alleati",
+        "desc": "Tutto il Party."
+      },
+      "theUser": {
+        "name": "Chi scrive",
+        "desc": "Solo te stesso. Gratis."
+      },
+      "everyone": {
+        "name": "Tutti quanti",
+        "desc": "Tutti gli alleati e i nemici."
+      },
+      "poison": {
+        "name": "Veleno",
+        "desc": "Spesso lascia il bersaglio avvelenato."
+      },
+      "blind": {
+        "name": "Braci",
+        "desc": "Spesso acceca il bersaglio."
+      },
+      "silence": {
+        "name": "Bavaglio",
+        "desc": "A volte zittisce il bersaglio."
+      },
+      "confusion": {
+        "name": "Confusione",
+        "desc": "A volte confonde il bersaglio."
+      },
+      "sleep": {
+        "name": "Ninnananna",
+        "desc": "A volte addormenta il bersaglio."
+      },
+      "freeze": {
+        "name": "Galaverna",
+        "desc": "A volte congela il bersaglio."
+      },
+      "paralysis": {
+        "name": "Nervo Bloccato",
+        "desc": "A volte paralizza il bersaglio."
+      },
+      "stun": {
+        "name": "Commozione",
+        "desc": "Spesso stordisce il bersaglio."
+      },
+      "deathMark": {
+        "name": "Marchio di Morte",
+        "desc": "Raramente marchia il bersaglio per la morte. Costoso."
+      },
+      "provoke": {
+        "name": "Insulto",
+        "desc": "Provoca quasi sempre il bersaglio."
+      },
+      "sapAtk": {
+        "name": "Fiacca Forza",
+        "desc": "Indebolisce l'attacco del bersaglio."
+      },
+      "sapDef": {
+        "name": "Fiacca Guardia",
+        "desc": "Indebolisce la difesa del bersaglio."
+      },
+      "sapMat": {
+        "name": "Fiacca Mente",
+        "desc": "Indebolisce la magia del bersaglio."
+      },
+      "sapAgi": {
+        "name": "Fiacca Passo",
+        "desc": "Indebolisce la velocità del bersaglio."
+      },
+      "stripBuffs": {
+        "name": "Cancellatura",
+        "desc": "Rimuove i potenziamenti del bersaglio."
+      },
+      "regenHP": {
+        "name": "Ricucitura Lenta",
+        "desc": "Concede rigenerazione HP."
+      },
+      "regenMP": {
+        "name": "Sorgente Lenta",
+        "desc": "Concede rigenerazione MP."
+      },
+      "regenAP": {
+        "name": "Respiro Lento",
+        "desc": "Concede rigenerazione AP."
+      },
+      "protect": {
+        "name": "Egida",
+        "desc": "Protegge il bersaglio."
+      },
+      "counter": {
+        "name": "Risposta",
+        "desc": "Concede il contrattacco."
+      },
+      "inspired": {
+        "name": "Buona Parola",
+        "desc": "Ispira il bersaglio."
+      },
+      "arcaneSurge": {
+        "name": "Impeto",
+        "desc": "Concede un'impennata arcana."
+      },
+      "divineShield": {
+        "name": "Scudo Divino",
+        "desc": "Raramente concede uno scudo divino. L'effetto più costoso."
+      },
+      "shadowVeil": {
+        "name": "Velo d'Ombra",
+        "desc": "Vela il bersaglio."
+      },
+      "wardAilments": {
+        "name": "Amuleto",
+        "desc": "Blocca le alterazioni di stato."
+      },
+      "braceAtk": {
+        "name": "Rinforza Forza",
+        "desc": "Alza l'attacco del bersaglio."
+      },
+      "braceDef": {
+        "name": "Rinforza Guardia",
+        "desc": "Alza la difesa del bersaglio."
+      },
+      "braceMat": {
+        "name": "Rinforza Mente",
+        "desc": "Alza la magia del bersaglio."
+      },
+      "braceAgi": {
+        "name": "Rinforza Passo",
+        "desc": "Alza la velocità del bersaglio."
+      },
+      "cleanse": {
+        "name": "Tabula Rasa",
+        "desc": "Cura veleno, cecità, silenzio e altre alterazioni."
+      },
+      "firstAid": {
+        "name": "Unguento",
+        "desc": "Ripristina anche un po' di HP."
+      },
+      "etherSplash": {
+        "name": "Sorso",
+        "desc": "Ripristina anche un po' di MP."
+      },
+      "apSurge": {
+        "name": "Adrenalina",
+        "desc": "Dà AP al bersaglio."
+      },
+      "certain": {
+        "name": "Infallibile",
+        "desc": "Non manca mai."
+      },
+      "twinCast": {
+        "name": "Gemello",
+        "desc": "Colpisce due volte."
+      },
+      "tripleCast": {
+        "name": "Scritto Tre Volte",
+        "desc": "Colpisce tre volte. Il perfezionamento più complesso."
+      },
+      "swift": {
+        "name": "Rapido",
+        "desc": "Agisce prima nel turno."
+      },
+      "precise": {
+        "name": "Preciso",
+        "desc": "Non fallisce mai il tiro di successo."
+      },
+      "stable": {
+        "name": "Stabile",
+        "desc": "Nessuna variazione del danno."
+      },
+      "wild": {
+        "name": "Selvaggio",
+        "desc": "Alta variazione. Economico."
+      },
+      "keenEdge": {
+        "name": "Affilato",
+        "desc": "Può mettere a segno un critico."
+      },
+      "guardBreak": {
+        "name": "Spezzaguardia",
+        "desc": "Dimezza la difesa contata contro di lui."
+      },
+      "efficient": {
+        "name": "Efficiente",
+        "desc": "Costo di lancio ridotto. Non aggiunge complessità."
+      },
+      "menuCast": {
+        "name": "Quotidiano",
+        "desc": "Usabile anche fuori dalla battaglia."
+      },
+      "apReturn": {
+        "name": "Ritorno",
+        "desc": "Restituisce AP a chi lo usa."
+      },
+      "freshMagazine": {
+        "name": "Caricatore Nuovo",
+        "desc": "Concede Caricatore Nuovo: il prossimo colpo va a segno più facilmente e fa critico più spesso."
+      }
+    },
+    "group": {
+      "core": "Nucleo",
+      "element": "Elemento",
+      "power": "Amplificatore",
+      "shape": "Forma",
+      "rider": "Effetti aggiuntivi",
+      "refine": "Rifiniture",
+      "payoff": "Ricompense",
+      "mechanic": "Meccaniche"
+    },
+    "groupHint": {
+      "core": "Che cos'è. Uno, obbligatorio.",
+      "element": "L'elemento con cui colpisce. Al massimo uno.",
+      "power": "Ne alza la potenza. Al massimo uno.",
+      "shape": "Su chi atterra. Una, obbligatoria.",
+      "rider": "Stati ed effetti che applica. Fino a {max}.",
+      "refine": "Modifiche ai suoi campi. Fino a {max}.",
+      "payoff": "Condizioni scritte nella sua formula. Fino a {max}.",
+      "mechanic": "Meccaniche di battaglia nella nota. Fino a {max}."
+    },
+    "why": {
+      "unknown": "Tag sconosciuto.",
+      "bench": "Non per questo banco.",
+      "have": "Già nella costruzione.",
+      "full": "Gruppo pieno: al massimo {max}.",
+      "slot": "Solo uno del suo tipo: c'è già {other}.",
+      "clash": "Annullato da {other}.",
+      "shape": "La forma punta al lato sbagliato.",
+      "strands": "{other} non raggiungerebbe più il suo bersaglio.",
+      "side": "La forma non raggiunge il suo lato.",
+      "missing": "Serve: {group}.",
+      "needs": {
+        "damage": "Serve un nucleo che infligge danno.",
+        "hpHit": "Serve un nucleo di danno HP.",
+        "drain": "Serve un nucleo che assorbe.",
+        "oneFoe": "Serve la forma Un nemico.",
+        "foeSide": "Serve una forma rivolta ai nemici.",
+        "notFoe": "Non su un nucleo che infligge danno.",
+        "userShape": "Serve la forma Chi scrive.",
+        "marksman": "Solo armi da fuoco: serve il nucleo Tiro Mirato.",
+        "multiHit": "Serve Gemello o Scritto Tre Volte.",
+        "emptyUser": "Serve il nucleo Guardia Vuota su Chi scrive."
+      }
+    },
+    "auto": {
+      "comma": ", ",
+      "and": " e ",
+      "stateN": "stato {id}",
+      "target": {
+        "oneEnemy": "un nemico",
+        "twoRandom": "due nemici a caso",
+        "threeRandom": "tre nemici a caso",
+        "allEnemies": "tutti i nemici",
+        "oneAlly": "un alleato",
+        "allAllies": "tutti gli alleati",
+        "theUser": "chi lo usa",
+        "everyone": "tutti"
+      },
+      "weight": {
+        "minor": " minimi",
+        "light": " leggeri",
+        "normal": "",
+        "heavy": " pesanti",
+        "massive": " devastanti"
+      },
+      "el": {
+        "1": " fisici",
+        "2": " da fuoco",
+        "3": " da ghiaccio",
+        "4": " da fulmine",
+        "5": " d'acqua",
+        "6": " Petro",
+        "7": " da vento",
+        "8": " sacri",
+        "9": " maledetti"
+      },
+      "times": {
+        "2": " due volte",
+        "3": " tre volte"
+      },
+      "lead": {
+        "1": "infligge danni{weight}{element} a {target}",
+        "2": "brucia MP a {target}",
+        "3": "ripristina HP a {target}",
+        "4": "ripristina MP a {target}",
+        "5": "assorbe danni{weight}{element} da {target} come HP",
+        "6": "assorbe MP da {target}",
+        "inflict": "infligge {states} a {target}",
+        "grant": "concede {states} a {target}",
+        "acts": "agisce su {target}",
+        "empty": "per ora non fa nulla"
+      },
+      "inflicts": "infligge {states}",
+      "grants": "concede {states}",
+      "rider": {
+        "sapAtk": "riduce la sua FRZ",
+        "sapDef": "riduce la sua COS",
+        "sapMat": "riduce la sua INT",
+        "sapAgi": "riduce la sua DES",
+        "stripBuffs": "rimuove i suoi potenziamenti",
+        "braceAtk": "alza la sua FRZ",
+        "braceDef": "alza la sua COS",
+        "braceMat": "alza la sua INT",
+        "braceAgi": "alza la sua DES",
+        "cleanse": "cura le sue alterazioni",
+        "firstAid": "ripristina un po' di HP",
+        "etherSplash": "ripristina un po' di MP",
+        "apSurge": "gli dà AP"
+      },
+      "self": "Lascia chi lo usa con {state}.",
+      "selfMaybe": "Può lasciare chi lo usa con {state}.",
+      "selfCost": "Come prezzo lascia chi lo usa con {state}.",
+      "consume": "Doppio con {state} pronto, che consuma.",
+      "versus": "Doppio contro un bersaglio con {state}.",
+      "whileHeld": "Più forte del 50% mentre chi lo usa ha {state}.",
+      "spend": "Cresce con ogni carica di {stack}, che consuma.",
+      "stack": "Accumula una carica di {stack}.",
+      "stackOnKill": "Ottiene una carica di {stack} per ogni nemico che abbatte.",
+      "aim": "Mira {part}.",
+      "ammo": "Spende {n} colpi.",
+      "ammoAll": "Svuota il caricatore.",
+      "part": {
+        "head": "alla testa",
+        "arm": "al braccio",
+        "leg": "alle gambe"
+      },
+      "tag": {
+        "execute": "Doppio contro un nemico sotto il 30% degli HP.",
+        "desperation": "Cresce con gli HP persi da chi lo usa.",
+        "drainGentle": "Restituisce metà degli HP che assorbe.",
+        "drainDeep": "Restituisce una volta e mezza gli HP che assorbe.",
+        "manaSap": "Sottrae MP pari al 30% del danno.",
+        "aimable": "Segue la mira di chi lo usa.",
+        "reload": "Ricarica l'arma.",
+        "bulletHell": "Apre una fase di schivata pilotata da chi lo usa.",
+        "certain": "Non manca mai.",
+        "keenEdge": "Può essere critico.",
+        "menuCast": "Usabile fuori dalla battaglia.",
+        "guardBreak": "Dimezza la difesa contro di lui.",
+        "apReturn": "Restituisce AP a chi lo usa."
+      },
+      "first": "Colpisce per primo.",
+      "lands": "Va a segno il {pct}% delle volte.",
+      "stackName": {
+        "chi": "chi",
+        "faith": "fede",
+        "souls": "anime"
+      }
+    },
+    "catalogue": "Aggiungi tag",
+    "addChip": "+ Aggiungi",
+    "swapChip": "Cambia",
+    "addHint": "Apri il catalogo dei tag: {group}.",
+    "chipSwap": "OK per cambiarlo.",
+    "chipRemove": "OK per toglierlo.",
+    "tagCost": "{kp} KP, complessità {cx}",
+    "autoWritten": "Scritta dai suoi tag",
+    "powerLabel": "Potenza / Prezzo",
+    "offCurve": "Supporto",
+    "tagCount": "Tag",
+    "dropped": "Tolti: {tags}.",
+    "fuse": {
+      "keep": "Tag mantenuti",
+      "keepNote": "Scegli quali tag mantiene la voce fusa. I tag in grigio non si adattano al resto.",
+      "lost": "{n} parti dei genitori non hanno un tag e vanno perse.",
+      "becomes": "Diventa: {kind}",
+      "none": "Nessun tag leggibile da questi due."
     }
   },
-  "fusionRollAction": "Fusione Arcana: {parts}",
+  "fusionRollAction": "Fusione arcana: {parts}",
   "enchant": {
-    "buttonWeapon": "Incanta Arma",
-    "buttonArmor": "Incanta Equipaggiamento",
-    "titleWeapon": "Incantamento delle Armi",
-    "titleArmor": "Incantamento dell’Equipaggiamento",
-    "blurbWeapon": "L'arma lancia gratis l'incantesimo legato ogni volta che mette a segno un colpo critico. Si possono legare solo incantesimi d'attacco e di stato.",
-    "blurbArmor": "Una volta per battaglia, quando chi lo indossa subisce un colpo critico, questo pezzo lancia gratis l'incantesimo legato. Si possono legare solo incantesimi protettivi.",
+    "buttonWeapon": "Incanta arma",
+    "buttonArmor": "Incanta equipaggiamento",
+    "titleWeapon": "Incantamento delle armi",
+    "titleArmor": "Incantamento dell'equipaggiamento",
+    "blurbWeapon": "Vincola un incantesimo, dai all'arma proprietà speciali, o entrambe le cose. Un incantesimo vincolato si lancia gratis a ogni colpo critico; solo incantesimi d'attacco e di stato.",
+    "blurbArmor": "Vincola un incantesimo, dai al pezzo proprietà speciali, o entrambe le cose. Un incantesimo vincolato si lancia gratis quando chi lo indossa subisce un colpo critico, una volta per battaglia; solo incantesimi protettivi.",
     "back": "Indietro",
-    "chooseGear": "Scegli un Pezzo",
-    "boundSoFar": "Già Vincolati",
-    "spellsTitle": "Incantesimi Noti al Gruppo",
+    "chooseGear": "Scegli un pezzo",
+    "boundSoFar": "Già vincolati",
+    "spellsTitle": "Incantesimi noti al Party",
     "pickGearFirst": "Scegli prima un pezzo sulla sinistra.",
     "bindingInto": "Vincolo su {item}",
     "knowledge": "Conoscenza",
     "unmake": "Disfa",
     "bound": "{item} è vincolato.",
     "lostSpell": "Incantesimo perduto",
-    "noGear": "Qui non c’è nulla che possa accogliere un vincolo.",
-    "noneBound": "Nessun vincolo ancora",
-    "noSpells": "Nessuno nel gruppo conosce un incantesimo che questo banco accetti.",
+    "noGear": "Nessun oggetto incantabile.",
+    "noneBound": "Ancora nessun vincolo",
+    "noSpells": "Nessun membro del Party conosce un incantesimo valido.",
     "weaponName": "{base} di {spell}",
     "armorName": "{base} di {spell}",
-    "weaponDesc": "Un artefatto unico. Lancia {spell} a ogni colpo critico che mette a segno, e non costa MP.",
-    "armorDesc": "Un artefatto unico. Risponde con {spell} al primo colpo critico che subisci in ogni battaglia, e non costa MP.",
+    "weaponDesc": "Artefatto unico. Lancia gratis {spell} a ogni colpo critico.",
+    "armorDesc": "Artefatto unico. Lancia gratis {spell} al primo critico subito in ogni battaglia.",
     "log": {
       "fires": "Il vincolo risponde: {spell}!",
       "burned": "{book} si consuma tra le fiamme."
     },
-    "buttonBook": "Incanta Libro",
-    "titleBook": "Incantamento dei Libri",
-    "blurbBook": "Leggere il libro ad alta voce lancia gratis l'incantesimo legato, in battaglia o sulla mappa. Si può legare qualsiasi incantesimo, ma ogni lettura può bruciare il libro.",
-    "bookDesc": "Un artefatto unico. Leggilo per lanciare {spell} senza alcun costo. Ogni lettura può bruciarlo.",
+    "buttonBook": "Incanta libro",
+    "titleBook": "Incantamento dei libri",
+    "blurbBook": "Leggi il libro per lanciare gratis l'incantesimo legato, in battaglia o sulla mappa. Vale qualsiasi incantesimo, ma ogni lettura può bruciarlo.",
+    "bookDesc": "Artefatto unico. Leggilo per lanciare gratis {spell}. Può bruciare a ogni lettura.",
     "bookFallbackName": "Grimorie Vincolato di {spell}",
     "rename": "Rinomina",
-    "recover": "Copertina"
+    "recover": "Copertina",
+    "weaponNameTags": "{base} di {tag}",
+    "armorNameTags": "{base} di {tag}",
+    "weaponDescTags": "Artefatto unico. Incantato con {tags}.",
+    "armorDescTags": "Artefatto unico. Incantato con {tags}.",
+    "weaponDescBoth": "Artefatto unico. Incantato con {tags}, e lancia {spell} gratis a ogni colpo critico.",
+    "armorDescBoth": "Artefatto unico. Incantato con {tags}, e lancia {spell} gratis al primo colpo critico che subisci in ogni battaglia.",
+    "formTitle": "Incantamento",
+    "spellRow": "Incantesimo vincolato",
+    "noSpell": "Nessun incantesimo",
+    "pickSpell": "Scegli un incantesimo da vincolare",
+    "spellOptional": "Facoltativo: un pezzo può portare anche solo proprietà speciali.",
+    "ownSkill": "Questo pezzo lancia già un'abilità tutta sua.",
+    "addChip": "+ Aggiungi",
+    "addHint": "Aggiungi una proprietà alla riga {group}.",
+    "chipInfo": "{line} ({kp} KP). Premi per toglierla.",
+    "groupHint": "Premi + per aggiungere una proprietà.",
+    "pick": "Aggiungi una proprietà speciale",
+    "tagCost": "Costa {kp} KP",
+    "spellPrice": "Incantesimo",
+    "tagsPrice": "Proprietà",
+    "price": "Prezzo",
+    "complexity": "Complessità",
+    "enchantIt": "Incanta",
+    "dropped": "Tolte: {tags}.",
+    "blocked": {
+      "noBase": "Questo pezzo non si può incantare.",
+      "empty": "Vincola un incantesimo o aggiungi almeno una proprietà.",
+      "spell": "Quell'incantesimo non appartiene a questo banco.",
+      "ownSkill": "Questo pezzo lancia già un'abilità tutta sua: solo proprietà.",
+      "tags": "Non su questo pezzo: {why}",
+      "knowledge": "Conoscenza insufficiente: servono {cost} KP."
+    },
+    "gear": {
+      "line": "{name} ({effect})",
+      "and": " e ",
+      "attackElement": "colpisce con {element}",
+      "resistElement": "subisce il {pct}% in meno di danni da {element}",
+      "attackState": "{pct}% di probabilità di infliggere {state} a ogni colpo",
+      "resistState": "immune a {state}",
+      "speed": "agisce prima nel turno (+{value})",
+      "extraHit": "+{n} colpo per attacco",
+      "paramRate": "{stat} +{pct}%",
+      "hit": "precisione +{pct}%",
+      "crit": "probabilità di critico +{pct}%",
+      "damageType": "i colpi infliggono danni da {type}",
+      "onCrit": "Lancia {spell} a ogni colpo critico",
+      "onCritTaken": "Lancia {spell} quando chi lo indossa subisce un colpo critico, una volta per battaglia",
+      "damageTypes": {
+        "Cutting": "taglio",
+        "Blunt": "impatto",
+        "Piercing": "perforazione"
+      },
+      "regenHP": "recupera il {pct}% degli HP a ogni turno",
+      "regenMP": "recupera il {pct}% degli MP a ogni turno",
+      "regenAP": "recupera il {pct}% degli AP a ogni turno"
+    }
   },
   "write": {
-    "buttonSkillBook": "Scrivi Manuale",
+    "buttonSkillBook": "Scrivi manuale",
     "buttonGrimorie": "Scrivi Grimorie",
-    "titleSkillBook": "Scrittura di un Manuale",
+    "titleSkillBook": "Scrittura di un manuale",
     "titleGrimorie": "Scrittura di un Grimorie",
-    "blurbSkillBook": "Copia in un libro le abilità che il gruppo conosce. Ogni pagina insegna un'abilità a chi la ascolta; il libro dura finché ogni pagina non è stata letta.",
-    "blurbGrimorie": "Copia in un grimorio gli incantesimi che il gruppo conosce. Ogni pagina insegna un incantesimo a chi la ascolta; il libro dura finché ogni pagina non è stata letta.",
-    "sourceSkillBook": "Abilità Note al Gruppo",
-    "sourceGrimorie": "Incantesimi Noti al Gruppo",
+    "blurbSkillBook": "Copia le abilità note in un libro. Ogni pagina insegna un'abilità. Il libro si consuma quando tutte le pagine sono state lette.",
+    "blurbGrimorie": "Copia gli incantesimi noti in un grimorio. Ogni pagina insegna un incantesimo. Il libro si consuma quando tutte le pagine sono state lette.",
+    "sourceSkillBook": "Abilità note al Party",
+    "sourceGrimorie": "Incantesimi noti al Party",
     "back": "Indietro",
     "knowledge": "Conoscenza",
-    "chosenPages": "Pagine Scelte ({count}/{max})",
+    "chosenPages": "Pagine scelte ({count}/{max})",
     "nothingChosen": "Nessuna pagina scelta",
-    "nothingToCopy": "Nessuno nel gruppo conosce qualcosa che questo banco possa ricopiare.",
+    "nothingToCopy": "Niente da copiare.",
     "writeIt": "Scrivilo",
-    "writtenSoFar": "Già Scritti",
-    "noneWritten": "Nessuno scritto ancora",
+    "writtenSoFar": "Già scritti",
+    "noneWritten": "Ancora nulla di scritto",
     "pages": "{count} pagine",
     "rename": "Rinomina",
     "recover": "Copertina",
     "unmake": "Disfa",
     "written": "{book} è stato scritto.",
-    "skillBookDesc": "Un volume scritto a mano, che contiene {count} abilità. Ognuna va letta prima che si chiuda.",
-    "grimorieDesc": "Un volume scritto a mano, che contiene {count} incantesimi. Ognuno va letto prima che si chiuda.",
+    "skillBookDesc": "Libro scritto a mano con {count} abilità. Si consuma quando tutte le pagine sono state lette.",
+    "grimorieDesc": "Libro scritto a mano con {count} incantesimi. Si consuma quando tutte le pagine sono state lette.",
     "skillBookFallbackName": "Quaderno di {first}",
     "grimorieFallbackName": "Grimorie di {first}",
     "statPages": "Pagine",
@@ -735,11 +1282,11 @@
     "not": "NON",
     "remove": "Togli",
     "potency": "Potenza {pct}%.",
-    "once": "Si attiva una volta per battaglia, o una volta al giorno nel mondo.",
+    "once": "Una volta per battaglia, o una volta al giorno fuori dalla battaglia.",
     "finalize": "Finalizza ({kp} KP)",
     "finalized": "Finalizzata: {power}",
     "noneFinalized": "Ancora nulla di finalizzato.",
-    "alwaysFires": "Un'Espressione finalizzata si attiva sempre come è stata finalizzata, anche se le statistiche richieste vanno perse.",
+    "alwaysFires": "Un'Espressione finalizzata funziona anche se le statistiche calano.",
     "finalizedToast": "L'Espressione di {name} è finalizzata.",
     "needs": "Richiede {stat} {req}.",
     "needsBranch": "Imposta prima un bivio.",
@@ -747,47 +1294,47 @@
     "bindTo": "Lega {name} a:",
     "refusal": {
       "incomplete": "Scegli un innesco e almeno un effetto Allora.",
-      "beyondStats": "Un pezzo del progetto è oltre le statistiche di questo personaggio: toglilo.",
+      "beyondStats": "Un pezzo richiede statistiche più alte. Toglilo.",
       "unchanged": "Questo è già il potere finalizzato.",
       "kp": "Conoscenza insufficiente: servono {kp} KP.",
-      "locked": "Le statistiche di questo personaggio non arrivano a quel pezzo.",
+      "locked": "Statistiche troppo basse per questo pezzo.",
       "needsBranch": "Imposta prima un bivio.",
       "needsArg": "Scegli a cosa legarlo.",
       "missing": "Quel pezzo non può andare lì.",
-      "neverFires": "Queste limitazioni si escludono a vicenda, o escludono l'innesco: il potere non si potrebbe mai usare."
+      "neverFires": "Queste limitazioni si escludono a vicenda o escludono l'innesco. Il potere non si attiverebbe mai."
     },
     "limitations": "Limitazioni",
-    "limitNone": "Nessuna limitazione: il potere costa il prezzo pieno e chiede i requisiti pieni.",
-    "limitSummary": "Legato da {n} punti di voto: costa il {pct}% di KP in meno e ogni requisito di statistica è più basso di {leeway}.",
+    "limitNone": "Nessuna limitazione: costo KP e requisiti pieni.",
+    "limitSummary": "{n} punti voto: -{pct}% KP, requisiti di statistica -{leeway}.",
     "limitWeight": "Peso {n}",
     "limitGives": "-{pct}% KP",
     "limitWeightLabel": "Peso",
     "limitGivesLabel": "Restituisce",
-    "limitGivesValue": "{pct}% di KP in meno, ogni requisito più basso di {leeway}",
+    "limitGivesValue": "-{pct}% KP, requisiti -{leeway}",
     "reqLowered": "{stat} {have}/{req} (era {base})"
   },
   "hexorcize": {
     "button": "Esorcizza",
     "title": "Esorcismo",
-    "detailTitle": "Il Pezzo",
-    "blurb": "Smonta un'arma o un pezzo d'equipaggiamento magico per riavere Conoscenza (KP). I pezzi indossati vanno prima tolti.",
+    "detailTitle": "Il pezzo",
+    "blurb": "Scomponi l'equipaggiamento magico per ottenere Conoscenza (KP). Prima toglilo di dosso.",
     "back": "Indietro",
     "one": "Disfa",
-    "all": "Disfa Tutti",
+    "all": "Disfa tutti",
     "worth": "Valore",
     "held": "Trasportati",
     "bindingHeld": "Vincolo",
     "knowledge": "Conoscenza",
     "pickPiece": "Scegli un pezzo a sinistra.",
-    "totalHere": "Tutto quello che c'è qui vale {kp} KP.",
-    "nothing": "Non si trasporta nulla di magico.",
+    "totalHere": "Totale: {kp} KP.",
+    "nothing": "Nessun equipaggiamento magico nell'inventario.",
     "unmade": "{item} è disfatto per {kp} KP."
   },
   "lobotomagic": {
     "button": "Lobotomagia",
     "title": "Lobotomagia",
-    "detailTitle": "La Mente di {name}",
-    "blurb": "Recidi un'abilità o un incantesimo appreso dalla mente di un membro del gruppo e riavi il {pct}% di quanto costerebbe insegnarlo in Conoscenza (KP). Le abilità date da tratti o equipaggiamento non si possono recidere.",
+    "detailTitle": "La mente di {name}",
+    "blurb": "Rimuovi un'abilità o un incantesimo appreso e recupera il {pct}% del suo costo in KP. Le abilità date da tratti o equipaggiamento non si possono rimuovere.",
     "back": "Indietro",
     "forget": "Dimentica",
     "confirm": "Sicuro?",
@@ -795,8 +1342,8 @@
     "relearn": "Per riapprenderla",
     "school": "Scuola",
     "pickSkill": "Scegli un'abilità a sinistra.",
-    "nothing": "Niente di appreso si può recidere da questa mente.",
-    "warning": "{name} la dimenticherà per sempre. Riapprenderla costa il prezzo pieno.",
+    "nothing": "Nessuna abilità rimovibile.",
+    "warning": "{name} lo dimentica per sempre. Reimpararlo costa il prezzo pieno.",
     "cut": "{name} dimentica {skill} per {kp} KP."
   },
   "tips": {
@@ -845,15 +1392,15 @@
         },
         "legend": {
           "name": "Appresa, Disponibile, Bloccata",
-          "text": "Imparata: già conosciuta. Aperta: si può imparare ora con i KP. Bloccata: non ancora disponibile."
+          "text": "Appresa: già conosciuta. Disponibile: si può imparare ora con i KP. Bloccata: non ancora disponibile."
         },
         "progress": {
           "name": "Progresso",
-          "text": "Quante abilità della scuola l'allievo ha appreso, e la Conoscenza del gruppo."
+          "text": "Quante abilità della scuola l'allievo ha appreso, e la Conoscenza del Party."
         },
         "detail": {
           "name": "Scheda abilità",
-          "text": "Costo, effetto e descrizione dell'abilità selezionata. Da qui puoi impararla, vederne un'anteprima o scegliere se portarla in battaglia."
+          "text": "Costo, effetto e descrizione dell'abilità selezionata. Imparala, vedine l'anteprima o aggiungila all'assetto di battaglia."
         },
         "member": {
           "name": "Schede dei compagni",
@@ -928,7 +1475,7 @@
       "items": {
         "gear": {
           "name": "Oggetto",
-          "text": "L'arma, l'equipaggiamento o il libro in cui mettere un incantesimo. Compaiono solo gli oggetti che il gruppo porta con sé."
+          "text": "L'arma, l'equipaggiamento o il libro in cui mettere un incantesimo. Compaiono solo gli oggetti che il Party porta con sé."
         },
         "spells": {
           "name": "Incantesimi",
@@ -953,7 +1500,7 @@
       "items": {
         "source": {
           "name": "Pagine",
-          "text": "Le abilità o gli incantesimi che il gruppo conosce già. Ognuno scelto diventa una pagina."
+          "text": "Le abilità o gli incantesimi che il Party conosce già. Ognuno scelto diventa una pagina."
         },
         "chosen": {
           "name": "Pagine scelte",
@@ -961,7 +1508,7 @@
         },
         "write": {
           "name": "Scrivilo",
-          "text": "Scrive il libro. Si può leggere finché ogni pagina non è stata letta una volta."
+          "text": "Scrive il libro. Ogni pagina si può leggere una volta."
         },
         "written": {
           "name": "Scritti finora",
@@ -978,7 +1525,7 @@
       "items": {
         "pieces": {
           "name": "Oggetti magici",
-          "text": "Armi ed equipaggiamento magici che il gruppo porta con sé. I pezzi indossati vanno prima tolti."
+          "text": "Armi ed equipaggiamento magici che il Party porta con sé. I pezzi indossati vanno prima tolti."
         },
         "worth": {
           "name": "Valore",
@@ -999,11 +1546,11 @@
       "items": {
         "skills": {
           "name": "Abilità apprese",
-          "text": "Abilità e incantesimi appresi dal membro del gruppo scelto. Le abilità date da tratti o equipaggiamento non sono elencate."
+          "text": "Abilità e incantesimi appresi dal membro del Party scelto. Le abilità date da tratti o equipaggiamento non sono elencate."
         },
         "refund": {
           "name": "Restituisce",
-          "text": "I KP che ogni abilità restituisce quando viene dimenticata, una parte di quanto costerebbe insegnarla."
+          "text": "KP restituiti quando l'abilità viene dimenticata."
         },
         "forget": {
           "name": "Dimentica",
@@ -1011,7 +1558,7 @@
         },
         "member": {
           "name": "Membro",
-          "text": "Usa le schede, o sinistra e destra, per cambiare membro del gruppo."
+          "text": "Usa le schede, o sinistra e destra, per cambiare membro del Party."
         },
         "help": {
           "name": "? Aiuto",
@@ -1049,11 +1596,11 @@
       "items": {
         "pieces": {
           "name": "Pezzi",
-          "text": "Ogni scheda contiene un tipo di pezzo: l'innesco che scatena il potere, le condizioni che aspetta, cosa fa, la forma che prende e le limitazioni che lo legano. Conferma una carta per montarla."
+          "text": "Ogni scheda contiene un tipo di pezzo: innesco, condizioni, effetti, forma e limitazioni. Conferma una carta per inserirla."
         },
         "limits": {
           "name": "Limitazioni",
-          "text": "Voti che il potere deve rispettare: un giorno in cui non si può usare, l'unica specie di creatura contro cui funziona, un prezzo pagato ogni volta. Più è legato, meno costa, e più può spingersi oltre le statistiche del personaggio."
+          "text": "Restrizioni sul potere, come un giorno in cui non si può usare o un costo a ogni uso. Più limitazioni abbassano il costo in KP e i requisiti."
         },
         "blueprint": {
           "name": "Progetto",
@@ -1061,7 +1608,7 @@
         },
         "finalize": {
           "name": "Finalizza",
-          "text": "Spende conoscenza per ogni pezzo nuovo e rende reale il potere. Un potere finalizzato continua a funzionare anche se le statistiche richieste vanno perse."
+          "text": "Spende KP sui nuovi pezzi e attiva il potere. Funziona anche se le statistiche calano."
         },
         "help": {
           "name": "? Aiuto",

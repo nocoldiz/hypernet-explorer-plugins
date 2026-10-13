@@ -95,9 +95,17 @@
     const pg = typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._procGenData;
     const cache = pg && pg.biomeCoordinateCache;
     const wc = worldCoords || { x: pg ? pg.worldX || 0 : 0, y: pg ? pg.worldY || 0 : 0 };
-    const diagonalBiomes = cache && Utils2.checkDiagonalMapBiomesFromCache
-      ? Utils2.checkDiagonalMapBiomesFromCache(wc.x || 0, wc.y || 0, cache)
-      : null;
+    // On another world Earth's cache is somewhere else entirely: an earthlike
+    // world answers for its own corners (GalaxySim currentGridAdjacency), any
+    // other has none.
+    let diagonalBiomes = null;
+    if (pg && pg.alienGrid) {
+      const GS = window.GalaxySim;
+      const earth = (GS && GS.currentGridAdjacency) ? GS.currentGridAdjacency(wc.x || 0, wc.y || 0) : null;
+      diagonalBiomes = earth ? earth.diagonalBiomes : null;
+    } else if (cache && Utils2.checkDiagonalMapBiomesFromCache) {
+      diagonalBiomes = Utils2.checkDiagonalMapBiomesFromCache(wc.x || 0, wc.y || 0, cache);
+    }
     const BeachGen = window.ProcGenBeach;
     return {
       worldCoords: wc,

@@ -1,0 +1,7 @@
+{
+  "crystalAttuned": "CRYSTAL ATTUNED: {name}",
+  "crystalPrompt": "DA CRYSTAL HUMS WIT DA LIGHT OF EVERY CRYSTAL YOU HAB TOUCHED. WHERE TA?",
+  "crystalNoneKnown": "NO OTHER CRYSTAL ANSWERS. TOUCH MORE CRYSTALS TA JOIN DEM TA DA NETWORK!",
+  "crystalCancel": "FORGET IT",
+  "crystalNumbered": "{name} {n}"
+}

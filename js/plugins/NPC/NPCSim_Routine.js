@@ -20,6 +20,10 @@
 (() => {
   "use strict";
 
+  // What each remembered sleep window was worked out from (sleepWindow),
+  // beside the window rather than on it, so none of it goes into the save.
+  const _sleepWinInputs = new WeakMap();
+
   const NPCSim = window.NPCSim;
   const {
     eraTension, isBlockedTerrain, MiniRng, nameHash, SHIFT_HOURS,
@@ -331,9 +335,18 @@
       const d = Number.isFinite(day) ? day : this._dayIndex();
       const minor = Children.isMinor(profile, name);
       const shopShift = $gameSystem?._npcShopAssignments?.[name]?.shift;
-      const stamp = `${d}|${profile?.currentJobId ?? ""}|${profile?.workShift ?? ""}|${shopShift ?? ""}|${minor ? 1 : 0}|${ScheduleManager._isNonSentient(profile) ? 1 : 0}`;
+      const nonSentient = ScheduleManager._isNonSentient(profile);
+      const jobId = profile?.currentJobId, workShift = profile?.workShift;
       const cached = profile?._sleepWin;
-      if (cached && cached.k === stamp) return cached;
+      // Asked by every bed search and schedule read: the same inputs as the
+      // last answer are recognised field by field (kept off the save) before
+      // the stamp string is spelled out.
+      const seen = cached ? _sleepWinInputs.get(cached) : null;
+      if (seen && seen.d === d && seen.jobId === jobId && seen.workShift === workShift &&
+          seen.shopShift === shopShift && seen.minor === minor && seen.nonSentient === nonSentient) return cached;
+      const stamp = `${d}|${jobId ?? ""}|${workShift ?? ""}|${shopShift ?? ""}|${minor ? 1 : 0}|${nonSentient ? 1 : 0}`;
+      const inputs = { d, jobId, workShift, shopShift, minor, nonSentient };
+      if (cached && cached.k === stamp) { _sleepWinInputs.set(cached, inputs); return cached; }
       const rng = this._routineRng(name, d);
       let win;
       if (minor) {
@@ -352,6 +365,7 @@
         win = { bed: a.bedHour, wake: a.wakeHour };
       }
       win.k = stamp;
+      _sleepWinInputs.set(win, inputs);
       if (profile) profile._sleepWin = win;
       return win;
     },

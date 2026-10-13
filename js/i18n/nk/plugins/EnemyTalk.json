@@ -1,7 +1,7 @@
 {
   "msg": {
     "noUnderstand": "DA BAD 'UN NO UNDERSTAND YOU!",
-    "unrecruitable": "{name} DOES NO ANSWER.\nDERE IZ NOTHIN' IN DERE TA BARGAIN WIT!",
+    "unrecruitable": "{name} DOES NO ANSWER.\nIT NO CAN BE RECRUITED!",
     "cantTalkNow": "DA BAD 'UN NO CAN TALK RIGHT NOW!",
     "silenced": "BAD 'UN IZ SILENCED!\n HE NO CAN TALK NOW!",
     "enraged": "BAD 'UN IZ ENRAGED!\n HE NO WANT TA TALK TA YOU!",
@@ -20,7 +20,7 @@
     "petSuccess": "DA BAD 'UN SEEMS TA ENJOY BEING PETTED!",
     "petFail": "DA BAD 'UN NO WANT TA BE PETTED!",
     "petRefuse": "DIS CREATURE NO RESPOND TA PETTIN'!",
-    "outOfReach": "{name} LOOKS YOU OVER AN' TURNS AWAY.\nIT HAB NO REASON TA FOLLOW A PARTY DIS FAR BENEATH IT!"
+    "outOfReach": "{name} TURNS AWAY.\nYA PARTY'S LEVEL IZ TOO LOW!"
   },
   "choices": [
     "CHAT",
@@ -31,6 +31,11 @@
     "PET",
     "FORGET IT"
   ],
+  "dice": {
+    "recruit": "RECRUIT: {name}",
+    "follower": "FOLLOWER: {name}",
+    "tame": "TAME: {name}"
+  },
   "opinion": "OPINION",
   "recruit": {
     "askToFollow": "ASK TA FOLLOW",

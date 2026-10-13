@@ -1,4 +1,5 @@
 {
+  "wipPlace": "{name} (WIP)",
   "description": "Description",
   "faction": "Faction",
   "locations": "Locations",
@@ -6,12 +7,12 @@
   "moreLocations": "+{count} more",
   "requirements": "Requirements",
   "successRate": "Success Rate",
-  "deficitWarning": "Deficits detected. Taking this contract on carries a higher risk of failure and injury.",
+  "deficitWarning": "Stats too low. Higher risk of failure and injury.",
   "successRatePct": "{pct}% success",
   "selectWorker": "Select worker:",
-  "noGuildLaborRequisitionsCurrently": "No guild labor requisitions currently available.",
+  "noGuildLaborRequisitionsCurrently": "No guild jobs available.",
   "dismiss": "Dismiss",
-  "selectALaborContractTo": "Select a labor contract to view the specifications.",
+  "selectALaborContractTo": "Select a contract to see details.",
   "deploymentLocations": "Deployment Locations",
   "laborContract": "LABOR CONTRACT",
   "category": "Category: {category}",
@@ -25,10 +26,10 @@
   "signContract": "SIGN CONTRACT",
   "retractContract": "RETRACT CONTRACT",
   "jobBoardOffers": "JOB BOARD OFFERS",
-  "noJobOffersCurrentlyAvailable": "No job offers currently available.",
-  "selectAJobOfferTo": "Select a job offer to view the contract specifications.",
+  "noJobOffersCurrentlyAvailable": "No job offers available.",
+  "selectAJobOfferTo": "Select a job offer to see details.",
   "availableLocations": "Available Locations",
-  "proposalContract": "PROPOSAL CONTRACT",
+  "proposalContract": "JOB OFFER",
   "totalReward": "Total Reward",
   "hourlyRate": "Hourly Rate",
   "remoteWorkLabel": "Remote Work",
@@ -107,11 +108,11 @@
   "shift": {
     "dispatched": "{actor} leaves for a {hours}h shift at {job}.",
     "returned": "{actor} is back from {job} with {amount}€.",
-    "benched": "{actor} finished at {job} with {amount}€, and waits with the members in reserves.",
+    "benched": "{actor} finished at {job} with {amount}€ and is now in reserve.",
     "awayTitle": "Away on a shift",
     "awayOn": "Working {job}",
     "remaining": "{hours}h {minutes}m left",
-    "leavesParty": "Whoever takes this contract leaves the party for its hours and rejoins when they are up.",
-    "lastMemberWarning": "Nobody would be left to travel with. This shift is worked the old way instead: the screen fades and the hours are skipped."
+    "leavesParty": "The worker leaves the party for the shift and rejoins after.",
+    "lastMemberWarning": "Nobody else is in the party. Time skips until the shift ends."
   }
 }

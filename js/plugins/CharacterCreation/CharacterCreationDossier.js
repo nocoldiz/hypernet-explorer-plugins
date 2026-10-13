@@ -27,6 +27,7 @@
 
   const {
     ccT,
+    ccEsc,
     ccTp,
     ccStatLabels,
     resolveTraitName,
@@ -95,7 +96,17 @@
     // A stat box's own card: what the stat actually governs, read off the
     // i18n bank (CharCreate.statInfo.<key>) so it translates with the rest of
     // the sheet instead of carrying its own hardcoded prose.
+    // Which row raised the hover card, and what it was showing then, so a page
+    // patched in place (refreshUIOverlayDOM) knows whether the card still
+    // belongs to something on screen.
+    _ccNoteHoverAnchor(event) {
+      const el = event && event.currentTarget && event.currentTarget.getAttribute ? event.currentTarget : null;
+      this._ccHoverAnchor = el;
+      this._ccHoverSig = el ? el.getAttribute("onmouseenter") : null;
+    }
+
     onStatHover(event, statKey) {
+      this._ccNoteHoverAnchor(event);
       const tooltip = this._ccTooltipEl();
       const SL = ccStatLabels();
       const label = SL[statKey] || statKey;
@@ -124,6 +135,7 @@
 
     // ── Item Hover Tooltip Handlers ──
     onItemHover(event, type, id, qty) {
+      this._ccNoteHoverAnchor(event);
       // A trait is not a $data* record, so it is resolved off the trait bank
       // (window.Health.Traits) the same way the trait board's own detail
       // panel resolves the one it has highlighted.
@@ -228,6 +240,7 @@
     }
 
     onItemLeave() {
+      this._ccHoverAnchor = null;
       const tooltip = document.getElementById("cc-item-tooltip");
       window.CCPanel.hide(tooltip);
     }
@@ -321,8 +334,8 @@
 
     // The portrait showcase card: the 2D bust or the live 3D model, whichever
     // the Bio tab's portrait choice says, for a person and a creature alike.
-    // The sidebar wears it, except on the simple bio sheet, where it trades
-    // places with the written history (see _bioSwapsPortraitAndHistory).
+    // The sidebar wears it, except on story mode Em's bio sheet, where it
+    // trades places with the written history (see _bioSwapsPortraitAndHistory).
     _ccPortraitCardHtml(actor, isLocked, isCreature) {
       let profileBoxHtml = "";
       // The Romance tab shows her bust, never the model.
@@ -339,7 +352,7 @@
             <div class="cc-compact-bust-full empty cc3d-live-portrait cc-clip" title="${emTitle}" onclick="${emClick}">
               <div class="cc3d-live-portrait-fallback cc-col cc-col-gap-2 cc-fill-center">
                 ${this._ccIconHtml(224, 28)}
-                <span class="cc-portrait-caption">${actor.name()}</span>
+                <span class="cc-portrait-caption">${ccEsc(actor.name())}</span>
               </div>
             </div>
           </div>
@@ -413,11 +426,14 @@
       return profileBoxHtml;
     }
 
-    // The simple bio sheet reads the history in the sidebar's portrait well,
-    // where it scrolls, and stands the model on the facing page instead.
+    // Story mode Em's bio sheet reads her history in the sidebar's portrait
+    // well, where it scrolls, and stands the model on the facing page instead.
     _bioSwapsPortraitAndHistory() {
-      return !this._presetWindow && this._isBioPickerStep() && Scene_CharacterCreation.isSimpleMode()
-        && !Scene_CharacterCreation._isPetMode && !Scene_CharacterCreation._isVehicleMode;
+      const CP = window.CharacterPresets;
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      return !this._presetWindow && this._isBioPickerStep()
+        && !Scene_CharacterCreation._isPetMode && !Scene_CharacterCreation._isVehicleMode
+        && !!(CP && CP.isStoryModeEm && CP.isStoryModeEm(actor));
     }
 
     _renderCompactSidebarHtml() {
@@ -449,16 +465,24 @@
       const isLocked = this._isActorLockedPreset(actor);
 
       const classData = $dataClasses[actor._classId];
-      const className = classData ? window.CCDbName(classData) : "Class";
+      const className = classData ? window.CCDbName(classData) : ccT("CharCreate.class");
       // The identity card reads as an occupation, not a body: "{job} {class}",
       // e.g. "Jobless Witch". The job is the same one the Bio tab tracks
       // (actor._jobId, 0 = jobless), so both places always agree.
       const identityJobs = (window.WorkSystem && window.WorkSystem.Jobs) || [];
       const identityJobId = actor._jobId != null ? actor._jobId : 0;
       const identityJob = identityJobId > 0 ? (identityJobs.find((j) => j.id === identityJobId) || null) : null;
-      const jobName = identityJob
-        ? (window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(identityJob) : (identityJob.name || ccTp('CharCreate.jobNumber', { id: identityJob.id })))
-        : ccT('CharCreate.bio.joblessShort');
+      // A creature holds no job, so its card names the class alone. The word
+      // order belongs to the language ("Unemployed Witch", "Strega senza
+      // lavoro"), so the line is a template rather than two names joined.
+      const identityLine = (window.NPCCreature && window.NPCCreature.isNonSentientActor && window.NPCCreature.isNonSentientActor(actor))
+        ? className
+        : identityJob
+          ? ccTp('CharCreate.bio.identityJob', {
+              job: window.WorkSystem && window.WorkSystem.jobName ? window.WorkSystem.jobName(identityJob) : (identityJob.name || ccTp('CharCreate.jobNumber', { id: identityJob.id })),
+              class: className,
+            })
+          : ccTp('CharCreate.bio.identityJobless', { class: className });
 
       const startingGold = CC_BASE_START_GOLD + memberStartingGold(actor);
       const startingMoneyFormatted = this._formatGoldToEuros(startingGold);
@@ -482,15 +506,15 @@
                 ${this._nameFieldHtml(actor, isLocked)}
               </div>
               <div class="cc-row-inline cc-identity-line">
-                <span class="cc-identity-name">${jobName} ${className}</span>
+                <span class="cc-identity-name">${identityLine}</span>
               </div>
             </div>
           </div>
         </div>
       `;
 
-      // 2. Full-Width Portrait Showcase Card, or on the simple bio sheet the
-      // written history in its place.
+      // 2. Full-Width Portrait Showcase Card, or on story mode Em's bio sheet
+      // the written history in its place.
       const sidebarAge = (actor && Number(actor._ccAge)) || 28;
       const profileBoxHtml = this._bioSwapsPortraitAndHistory()
         ? `<div class="cc-compact-portrait-card cc-sidebar-history">${this._simpleSheetHistoryHtml(actor, sidebarAge)}</div>`
@@ -684,7 +708,7 @@
       if (!actor) return `<div class="cc-page cc-page-right"></div>`;
 
       const classData = $dataClasses[actor._classId];
-      const className = classData ? window.CCDbName(classData) : "Class";
+      const className = classData ? window.CCDbName(classData) : ccT("CharCreate.class");
       const genderVal = actor.gender ? actor.gender() : 0;
       const genderName = [
         ccT('CharCreate.male'), ccT('CharCreate.female'), ccT('CharCreate.nonBinary2'), ccT('CharCreate.cocoon')
@@ -784,7 +808,7 @@
           </div>
 
           <div class="cc-dossier-card cc-card-padded">
-            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.name')}:</span><span class="cc-dossier-value">${actor.name()}</span></div>
+            <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.name')}:</span><span class="cc-dossier-value">${ccEsc(actor.name())}</span></div>
             <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('ClassSelect.vocation')}:</span><span class="cc-dossier-value">${className}</span></div>
             <div class="cc-dossier-row cc-dossier-row--lead"><span class="cc-dossier-label">${ccT('CharCreate.gender')}:</span><span class="cc-dossier-value">${genderName}</span></div>
           </div>
@@ -835,7 +859,6 @@
     _scenarioMemberSheetHtml(actor) {
       const classData = $dataClasses[actor._classId];
       const className = classData ? window.CCDbName(classData) : T('CharCreate.class');
-      const bustUrl = this._getBustUrl(this._getActorBust(actor));
       const money = CC_BASE_START_GOLD
         + (typeof classStartingMoney === 'function' ? classStartingMoney(actor._classId) : 0)
         + (typeof traitStartingMoney === 'function' ? traitStartingMoney(actor) : 0)
@@ -890,10 +913,9 @@
       return `
         <div class="cc-scenario-sheet">
           <div class="cc-scenario-sheet-head">
-            ${bustUrl ? `<div class="cc-scenario-sheet-bust" style="--cc-bust:${window.CCArt.url(bustUrl)}"></div>` : ''}
             <div class="cc-scenario-sheet-sprite" style="${this.getSpriteStyle(actor.characterName(), actor.characterIndex())}"></div>
             <div class="cc-scenario-sheet-id">
-              <span class="cc-scenario-sheet-name">${actor.name()}</span>
+              <span class="cc-scenario-sheet-name">${ccEsc(actor.name())}</span>
               <span class="cc-scenario-sheet-class">${className}</span>
               <span class="cc-scenario-sheet-money">${this._formatGoldToEuros(money)}</span>
             </div>
@@ -1325,8 +1347,10 @@
       if (!CCO.normalizeCustomScenario) return;
       const container = this._dndContainer || document.getElementById("character-creation-container");
       if (!container) return;
+      // A sheet already up is closed through its own close, so its keydown
+      // listener goes with it instead of answering every Enter from then on.
       const existing = container.querySelector(".cc-modal-veil");
-      if (existing) existing.remove();
+      if (existing) { if (existing._ccClose) existing._ccClose(); else existing.remove(); }
 
       let draft = CCO.normalizeCustomScenario(scenario || CCO.blankCustomScenario());
       const veil = document.createElement("div");
@@ -1342,6 +1366,7 @@
         if (this._ccModalState && this._ccModalState.veil === veil) this._ccModalState = null;
         veil.remove();
       };
+      veil._ccClose = close;
 
       // --- controls -------------------------------------------------------
       const pickBtn = (act, value, extra) =>
@@ -1551,7 +1576,7 @@
         CCO.setActiveCustomScenario(result.scenario, result.file);
         this._ccCustomList(true);
         if (window.ParchmentToast) {
-          window.ParchmentToast.show(ccTp('CharCreate.custom.saved', { name: result.scenario.name }), { severity: "success" }); // i18n-ignore: severity id
+          window.ParchmentToast.show(ccTp('CharCreate.custom.saved', { name: result.scenario.name }), { severity: "good" }); // i18n-ignore: severity id
         }
         close();
         if (onSaved) onSaved();
@@ -1731,7 +1756,7 @@
 
       const chips = entries.map((e) => {
         const worn = e.note
-          ? `<span class="cc-inv-worn">${T('CharCreate.wornBy')} ${e.note}</span>`
+          ? `<span class="cc-inv-worn">${T('CharCreate.wornBy')} ${ccEsc(e.note)}</span>`
           : "";
         const count = e.qty > 1 ? `<span class="cc-inv-qty">x${e.qty}</span>` : "";
         return `

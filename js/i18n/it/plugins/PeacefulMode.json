@@ -22,7 +22,7 @@
     ],
     "crustacean": [
       "{name} fa schioccare le chele oziosamente.",
-      "{name} scivola di lato e aspetta."
+      "{name} zampetta di lato e aspetta."
     ],
     "snail": [
       "{name} avanza lentissimo, lasciando una scia lucida.",
@@ -161,7 +161,7 @@
       "{name} veglia su di te, sereno."
     ],
     "ophanim": [
-      "{name} ruota lento, anelli di luce in giro.",
+      "{name} ruota lento, tra anelli di luce che girano.",
       "{name} risplende di calma luminosità."
     ],
     "fairy": [
@@ -210,7 +210,7 @@
     ],
     "robot": [
       "{name} resta inattivo con un basso ronzio elettronico.",
-      "{name} lampeggia una spia, in attesa."
+      "{name} fa lampeggiare una spia, in attesa."
     ],
     "drone": [
       "{name} aleggia sul posto, scandagliando pigro.",
@@ -230,7 +230,7 @@
     ],
     "chestmimic": [
       "{name} se ne sta lì, identico a un baule innocuo.",
-      "{name} scricchiola il coperchio e resta fermo."
+      "{name} fa scricchiolare il coperchio e resta fermo."
     ],
     "trashcreature": [
       "{name} fruga dentro sé stesso, borbottando.",
@@ -309,7 +309,7 @@
       "{name} si arriccia su sé stesso e aspetta."
     ],
     "spikymonster": [
-      "{name} si rizza, poi rilassa gli aculei.",
+      "{name} rizza gli aculei, poi li rilassa.",
       "{name} si raggomitola e riposa."
     ],
     "default": [

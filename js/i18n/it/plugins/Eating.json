@@ -1,5 +1,5 @@
 {
-  "selectFood": "Scegli il cibo per il gruppo ({selected}/{total})",
+  "selectFood": "Scegli il cibo per il Party ({selected}/{total})",
   "current": "Attuale: {who}",
   "allSelected": "Tutti scelti",
   "confirm": "Conferma",

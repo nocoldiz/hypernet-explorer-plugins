@@ -111,22 +111,32 @@
       const P = window.NPCPolitics;
       if (!P || typeof P.getPower !== 'function') return null;
       let powerName = null, country = null;
+      const hour = Math.floor(_nowMinute() / 60);
       try {
         const mapId = (typeof $gameMap !== 'undefined' && $gameMap?.mapId?.()) || 0;
-        const group = mapId ? window.NPCSystem?.findMapGroupByMap?.(mapId) : null;
-        const pol = group ? P.polityOfGroup?.(group) : null;
-        if (pol && pol.power) { powerName = pol.power; country = pol.country || null; }
+        // The polity of the map in hand, resolved once a map and an hour
+        // (every thought of everybody on it asks), kept with the answer below
+        // so clearing _cache forgets both.
+        let here = this._cache.group;
+        if (!here || here.mapId !== mapId || here.hour !== hour) {
+          here = { mapId, hour, power: null, country: null };
+          this._cache.group = here;
+          const group = mapId ? window.NPCSystem?.findMapGroupByMap?.(mapId) : null;
+          const pol = group ? P.polityOfGroup?.(group) : null;
+          if (pol && pol.power) { here.power = pol.power; here.country = pol.country || null; }
+        }
+        if (here.power) { powerName = here.power; country = here.country; }
       } catch (_) {}
       if (!powerName && profile?._eventName) {
         const id = P.getIdentity?.(profile._eventName);
         if (id && id.power) { powerName = id.power; country = id.country || null; }
       }
       if (!powerName) return null;
-      const key = powerName + '|' + Math.floor(_nowMinute() / 60);
+      const key = powerName + '|' + hour;
       if (this._cache.key === key) return this._cache.val;
       let val = null;
       try { val = this._compute(P.getPower(powerName), powerName, country, profile); } catch (_) { val = null; }
-      this._cache = { key, val };
+      this._cache = { key, val, group: this._cache.group };
       return val;
     },
 
@@ -218,14 +228,21 @@
   // The calendar day of a game minute, counted the way TimeDateSystem counts
   // it (the clock starts at 1 JAN 2001 10:00 and adds wall-clock minutes), so
   // `day` is the same index PublicHolidays uses.
+  // The last minute asked is remembered: every context built in the same
+  // game minute reads the same day (the answer is only ever read).
+  let _dateMemoMinute = null, _dateMemo = null;
   function _dateOfMinute(minute) {
+    const min = Number(minute) || 0;
+    if (_dateMemo && _dateMemoMinute === min) return _dateMemo;
     const dt = new Date(2001, 0, 1, 10, 0, 0);
-    dt.setMinutes(dt.getMinutes() + (Number(minute) || 0));
+    dt.setMinutes(dt.getMinutes() + min);
     const y = dt.getFullYear(), m = dt.getMonth() + 1, d = dt.getDate();
-    return {
+    _dateMemoMinute = min;
+    _dateMemo = {
       y, m, d, hour: dt.getHours(), weekday: dt.getDay(),
       day: Math.round((Date.UTC(y, m - 1, d) - Date.UTC(2001, 0, 1)) / 86400000),
     };
+    return _dateMemo;
   }
   // How many days from (m, d) to the next (bm, bd), 0 on the day itself.
   function _daysUntilDate(today, bm, bd) {
@@ -480,12 +497,21 @@
     if (adult && profile.relationships && typeof profile.relationships === 'object') {
       const kinNames = new Set([...c.partners, ...Object.keys(rec?.kin || {})]);
       let best = null, worst = null;
-      for (const [n, r] of Object.entries(profile.relationships)) {
-        if (!r || kinNames.has(n) || n === name || (r.meetCount ?? 0) < FRIEND_MIN_MEETS) continue;
-        if (recOf(n)?.dead) continue;
+      // Walked in place (somebody may know hundreds of people): no list of
+      // pairs is made, the cheap tests go first, and the life record is read
+      // only for somebody who would be the new best friend or worst rival.
+      const rels = profile.relationships;
+      for (const n in rels) {
+        if (!Object.prototype.hasOwnProperty.call(rels, n)) continue;
+        const r = rels[n];
+        if (!r || (r.meetCount ?? 0) < FRIEND_MIN_MEETS || n === name || kinNames.has(n)) continue;
         const op = Number(r.opinion) || 0;
-        if (op >= FRIEND_MIN_OPINION && (!best || op > best.op)) best = { n, op };
-        if (op <= RIVAL_MAX_OPINION && (!worst || op < worst.op)) worst = { n, op };
+        const asFriend = op >= FRIEND_MIN_OPINION && (!best || op > best.op);
+        const asFoe = op <= RIVAL_MAX_OPINION && (!worst || op < worst.op);
+        if (!asFriend && !asFoe) continue;
+        if (recOf(n)?.dead) continue;
+        if (asFriend) best = { n, op };
+        if (asFoe) worst = { n, op };
       }
       if (best) { c.friend = true; p.friend = best.n; }
       if (worst) { c.foe = true; p.foe = worst.n; }
@@ -924,11 +950,45 @@
     return list[list.length - 1];
   }
 
+  // Gender agreement for a language that needs it (English lines carry none
+  // and pass through untouched). A line writes the forms inline as
+  // {g:masculine|feminine|non-binary} for the speaker, {go:...} for the one
+  // spoken to, and {g@partner:...} for whoever a placeholder names ({child},
+  // {ex}, {friend}...). A missing third form reads as the first. Resolved
+  // before the {a|b} pass, so a form is never taken for a choice.
+  function _genderIndex(profile) {
+    const g = Number(profile?.gender);
+    return g === 1 ? 1 : g >= 2 ? 2 : 0;
+  }
+  function _genderOfName(name) {
+    if (!name) return 0;
+    try {
+      const gi = window.NPCLifeSim?._internal?.genderIndexOf;
+      if (typeof gi === 'function') return gi(name);
+    } catch (_) {}
+    return _genderIndex(_getProfile(name));
+  }
+  function _agree(text, params, map, genders) {
+    if (text.indexOf('{g') < 0) return text;
+    return text.replace(/\{g(o|@[a-zA-Z0-9]+)?:([^{}]*)\}/g, (m, who, body) => {
+      let i = 0;
+      if (!who) i = genders?.self ?? 0;
+      else if (who === 'o') i = genders?.other ?? 0;
+      else {
+        const key = who.slice(1);
+        i = _genderOfName(params ? params[map && map[key] ? map[key] : key] : null);
+      }
+      const forms = body.split('|');
+      return forms[i] ?? forms[0];
+    });
+  }
+
   // Fills {placeholder}s the context knows, and the fallback words for the
   // ones it does not. {a}, {b} and {name} are left for the speaker layer.
-  function _lifeFill(text, params, map) {
+  // `genders` ({ self, other }, 0/1/2) is who speaks and who listens.
+  function _lifeFill(text, params, map, genders) {
     const fb = LIFE_FALLBACK();
-    return String(text).replace(/\{([a-zA-Z0-9]+)\}/g, (m, key) => {
+    return _agree(String(text), params, map, genders).replace(/\{([a-zA-Z0-9]+)\}/g, (m, key) => {
       if (key === 'a' || key === 'b' || key === 'name') return m;
       const src = map && map[key] ? map[key] : key;
       const v = params ? params[src] : null;
@@ -1025,7 +1085,7 @@
       if (!b) return null;
       const pool = (topic && Array.isArray(b.bank[topic]) && b.bank[topic].length) ? b.bank[topic] : b.bank.flavour;
       if (!Array.isArray(pool) || !pool.length) return null;
-      return vary(_lifeFill(_pickFrom(pool), params || {}), _personalityNameOf(profile));
+      return vary(_lifeFill(_pickFrom(pool), params || {}, null, { self: _genderIndex(profile) }), _personalityNameOf(profile));
     },
 
     decorate(line, profile, topic, chance, params, name) {
@@ -1063,7 +1123,7 @@
       const pool = LIFE_THOUGHTS()[key];
       if (!Array.isArray(pool) || !pool.length) return null;
       const persName = _personalityNameOf(profile);
-      const raw = _lifeFill(_pickFrom(pool), c?.params || {}, map);
+      const raw = _lifeFill(_pickFrom(pool), c?.params || {}, map, { self: _genderIndex(profile) });
       // A child speaks plainly; the personality voice is for grown-ups.
       return (key.startsWith('kid')) ? vary(raw, persName) : applyVoice(raw, persName);
     },
@@ -1108,7 +1168,8 @@
       return null;
     },
 
-    _script(key, swap, params, map) {
+    // `genders` is [first participant, second participant], 0/1/2.
+    _script(key, swap, params, map, genders) {
       const pool = LIFE_SCRIPTS()[key];
       if (!Array.isArray(pool) || !pool.length) return null;
       const lines = _pickFrom(pool);
@@ -1116,7 +1177,11 @@
       // Swapping who speaks swaps who is addressed too: {a} is always the
       // conversation's first participant, whoever opens the script.
       const flip = (s) => String(s).replace(/\{[ab]\}/g, m => (m === '{a}' ? '{b}' : '{a}'));
-      return lines.map(([who, text]) => [swap ? 1 - who : who, _lifeFill(swap ? flip(text) : text, params || {}, map)]);
+      return lines.map(([who, text]) => {
+        const at = swap ? 1 - who : who;
+        const g = genders ? { self: genders[at], other: genders[1 - at] } : null;
+        return [at, _lifeFill(swap ? flip(text) : text, params || {}, map, g)];
+      });
     },
 
     // A script for these two about their lives, or null for the ordinary
@@ -1128,7 +1193,7 @@
       const stA = profA.lifeStage || 'adult', stB = profB.lifeStage || 'adult'; // i18n-ignore: life stage id
       const rel = this.kinRelation(aName, bName);
       const make = (key, swap, params, tone, frame, map) => {
-        const lines = this._script(key, swap, params, map);
+        const lines = this._script(key, swap, params, map, [_genderIndex(profA), _genderIndex(profB)]);
         if (!lines) return null;
         const t = tone || KIN_SCRIPT_TONE[key] || 'neutral';
         return { kind: t, lines, agreement: t !== 'negative', frame: frame || 'family', topic: key };
@@ -1221,7 +1286,8 @@
       const pool = LIFE_AMBIENT()[pick.key];
       if (!Array.isArray(pool) || !pool.length) return null;
       const params = Object.assign({}, c?.params, { child: c?.params?.childKid || c?.params?.childNewborn });
-      return _pickFrom(pool).map(([who, text]) => [who, _lifeFill(text, params)]);
+      const gs = [_genderIndex(profA), _genderIndex(profB)];
+      return _pickFrom(pool).map(([who, text]) => [who, _lifeFill(text, params, null, { self: gs[who], other: gs[1 - who] })]);
     },
 
     // A hello between relatives passing close by.
@@ -1286,7 +1352,7 @@
       if (!Array.isArray(pool) || !pool.length) return null;
       const persName = _personalityNameOf(profile);
       const params = Object.assign({}, c.params, { years: c.params.years || (c.togetherYears != null ? String(Math.max(1, c.togetherYears)) : null) });
-      const line = applyVoice(_lifeFill(_pickFrom(pool), params, pick.map), persName, VOICE_CHANCE_DIALOGUE);
+      const line = applyVoice(_lifeFill(_pickFrom(pool), params, pick.map, { self: _genderIndex(profile) }), persName, VOICE_CHANCE_DIALOGUE);
       return CreedVoice.decorate(line, profile, MENTION_FRAME[pick.key] || 'family', CREED_CHANCE_MENTION, params, npcName);
     },
   };

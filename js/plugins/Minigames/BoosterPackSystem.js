@@ -408,12 +408,40 @@
                 this.selectNextCard();
             } else if (Input.isTriggered('ok')) {
                 this.flipSelectedCard();
+            } else if (TouchInput.isTriggered()) {
+                this.onCardClick(TouchInput.x, TouchInput.y);
             }
         }
         
-        if (Input.isTriggered('cancel') && this._flippedCards === this._packCards.length) {
+        if (this._flippedCards === this._packCards.length && !this._animating &&
+            (Input.isTriggered('cancel') || TouchInput.isCancelled() || TouchInput.isTriggered())) {
             this.exitScene();
         }
+    };
+
+    // The face-down card under a screen point, or -1. Cards are centre
+    // anchored, so the box is the bitmap scaled about the sprite's position.
+    Scene_BoosterPack.prototype.cardIndexAt = function(x, y) {
+        for (let i = 0; i < this._cardSprites.length; i++) {
+            const sprite = this._cardSprites[i];
+            if (!sprite || sprite._flipped || !sprite.bitmap) continue;
+            const halfW = sprite.bitmap.width * Math.abs(sprite.scale.x || 1) / 2;
+            const halfH = sprite.bitmap.height * Math.abs(sprite.scale.y || 1) / 2;
+            if (Math.abs(x - sprite.x) <= halfW && Math.abs(y - sprite.y) <= halfH) return i;
+        }
+        return -1;
+    };
+
+    // A click on a face-down card picks it and turns it over.
+    Scene_BoosterPack.prototype.onCardClick = function(x, y) {
+        const index = this.cardIndexAt(x, y);
+        if (index < 0) return false;
+        if (index !== this._selectedIndex) {
+            this._selectedIndex = index;
+            this.updateCardSelection();
+        }
+        this.flipSelectedCard();
+        return true;
     };
     
     Scene_BoosterPack.prototype.selectPreviousCard = function() {
@@ -691,7 +719,7 @@
             this.bitmap.outlineColor = '#000000';
             // Duplicate skills no longer pay out (see processCardReward), so the
             // card face must not promise gold it will not grant.
-            this.bitmap.drawText('DUPLICATE', 15, 200, 130, 25, 'center');
+            this.bitmap.drawText(T('BoosterPack.duplicate'), 15, 200, 130, 25, 'center');
         } else {
             this.bitmap.fontSize = 18;
             this.bitmap.textColor = colors.primary;

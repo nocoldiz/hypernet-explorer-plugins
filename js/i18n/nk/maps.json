@@ -1,0 +1,2897 @@
+{
+  "30": {
+    "val": "30",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypernet point": {
+    "val": "HYPERNET POINT",
+    "excluded": "",
+    "name": ""
+  },
+  "Elevator": {
+    "val": "ELEVATOR",
+    "excluded": "",
+    "name": ""
+  },
+  "Hall": {
+    "val": "HALL",
+    "excluded": "",
+    "name": ""
+  },
+  "Narrow passage": {
+    "val": "NARROW PASSAGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Maze": {
+    "val": "MAZE",
+    "excluded": "",
+    "name": ""
+  },
+  "Grey dock": {
+    "val": "GREY DOCK",
+    "excluded": "",
+    "name": ""
+  },
+  "Papercut plex": {
+    "val": "PAPERCUT PLEX",
+    "excluded": "",
+    "name": ""
+  },
+  "Shadowed meadows": {
+    "val": "SHADOWED MEADOWS",
+    "excluded": "",
+    "name": ""
+  },
+  "Brickplace": {
+    "val": "BRICKPLACE",
+    "excluded": "",
+    "name": ""
+  },
+  "Dirtplace": {
+    "val": "DIRTPLACE",
+    "excluded": "",
+    "name": ""
+  },
+  "Confined corridor": {
+    "val": "CONFINED CORRIDOR",
+    "excluded": "",
+    "name": ""
+  },
+  "Labis the Gnome capital": {
+    "val": "LABIS DA GNOME CAPITAL",
+    "excluded": "",
+    "name": ""
+  },
+  "Serene temple": {
+    "val": "SERENE TEMPLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Forested village": {
+    "val": "FORESTED VILLAGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Sandy Pillars": {
+    "val": "SANDY PILLARS",
+    "excluded": "",
+    "name": ""
+  },
+  "Masked bazaar": {
+    "val": "MASKED BAZAAR",
+    "excluded": "",
+    "name": ""
+  },
+  "Smoldering wall": {
+    "val": "SMOLDERIN' WALL",
+    "excluded": "",
+    "name": ""
+  },
+  "The Boneyard": {
+    "val": "DA BONEYARD",
+    "excluded": "",
+    "name": ""
+  },
+  "Factory floor": {
+    "val": "FACTORY FLOOR",
+    "excluded": "",
+    "name": ""
+  },
+  "Bulkward fortress": {
+    "val": "BULKWARD FORTRESS",
+    "excluded": "",
+    "name": ""
+  },
+  "urquoise Maze": {
+    "val": "TURQUOISE MAZE",
+    "excluded": "",
+    "name": ""
+  },
+  "Fractured time": {
+    "val": "FRACTURED TIME",
+    "excluded": "",
+    "name": ""
+  },
+  "Spiral summers": {
+    "val": "SPIRAL SUMMERS",
+    "excluded": "",
+    "name": ""
+  },
+  "Moderna archipelago": {
+    "val": "MODERNA ARCHIPELAGO",
+    "excluded": "",
+    "name": ""
+  },
+  "Mossy palace": {
+    "val": "MOSSY PALACE",
+    "excluded": "",
+    "name": ""
+  },
+  "Figures world": {
+    "val": "FIGURES WORLD",
+    "excluded": "",
+    "name": ""
+  },
+  "Sacrifice": {
+    "val": "SACRIFICE",
+    "excluded": "",
+    "name": ""
+  },
+  "The Bridge": {
+    "val": "DA BRIDGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Big Cross": {
+    "val": "BIG CROSS",
+    "excluded": "",
+    "name": ""
+  },
+  "Decrepit Houses": {
+    "val": "DECREPIT HOUSES",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypercapital burrows": {
+    "val": "HYPERCAPITAL BURROWS",
+    "excluded": "",
+    "name": ""
+  },
+  "Facade": {
+    "val": "FACADE",
+    "excluded": "",
+    "name": ""
+  },
+  "Rotten library": {
+    "val": "ROTTEN LIBRARY",
+    "excluded": "",
+    "name": ""
+  },
+  "Crater valley": {
+    "val": "CRATER VALLEY",
+    "excluded": "",
+    "name": ""
+  },
+  "Mini dungeon": {
+    "val": "MINI DUNGEON",
+    "excluded": "",
+    "name": ""
+  },
+  "Eye of God": {
+    "val": "EYE OF GOD",
+    "excluded": "",
+    "name": ""
+  },
+  "Pinkpink Forest": {
+    "val": "PINKPINK FOREST",
+    "excluded": "",
+    "name": ""
+  },
+  "Dark metropolis": {
+    "val": "DARK METROPOLIS",
+    "excluded": "",
+    "name": ""
+  },
+  "Mushroom planet": {
+    "val": "MUSHROOM PLANET",
+    "excluded": "",
+    "name": ""
+  },
+  "Bowels": {
+    "val": "BOWELS",
+    "excluded": "",
+    "name": ""
+  },
+  "Rainbow land": {
+    "val": "RAINBOW LAND",
+    "excluded": "",
+    "name": ""
+  },
+  "The Square Lodge": {
+    "val": "DA SQUARE LODGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Landfill": {
+    "val": "LANDFILL",
+    "excluded": "",
+    "name": ""
+  },
+  "Corner": {
+    "val": "CORNER",
+    "excluded": "",
+    "name": ""
+  },
+  "Arcade Blue": {
+    "val": "ARCADE BLUE",
+    "excluded": "",
+    "name": ""
+  },
+  "Graves": {
+    "val": "GRAVES",
+    "excluded": "",
+    "name": ""
+  },
+  "Opulent Palace": {
+    "val": "OPULENT PALACE",
+    "excluded": "",
+    "name": ""
+  },
+  "Very Quiet Village": {
+    "val": "REAL QUIET VILLAGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Landstrandedland": {
+    "val": "LANDSTRANDEDLAND",
+    "excluded": "",
+    "name": ""
+  },
+  "Fuming cave": {
+    "val": "FUMIN' CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Tableword": {
+    "val": "TABLEWORD",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 66)": {
+    "val": "GENERATED DUNGEON (MAP 66)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 67)": {
+    "val": "GENERATED DUNGEON (MAP 67)",
+    "excluded": "",
+    "name": ""
+  },
+  "Connecting pipe": {
+    "val": "CONNECTIN' PIPE",
+    "excluded": "",
+    "name": ""
+  },
+  "Nuclear Bunker": {
+    "val": "NUCLEAR BUNKER",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 70)": {
+    "val": "GENERATED DUNGEON (MAP 70)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 71)": {
+    "val": "GENERATED DUNGEON (MAP 71)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 72)": {
+    "val": "GENERATED DUNGEON (MAP 72)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 73)": {
+    "val": "GENERATED DUNGEON (MAP 73)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 74)": {
+    "val": "GENERATED DUNGEON (MAP 74)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 75)": {
+    "val": "GENERATED DUNGEON (MAP 75)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 76)": {
+    "val": "GENERATED DUNGEON (MAP 76)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 77)": {
+    "val": "GENERATED DUNGEON (MAP 77)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 78)": {
+    "val": "GENERATED DUNGEON (MAP 78)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 79)": {
+    "val": "GENERATED DUNGEON (MAP 79)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 80)": {
+    "val": "GENERATED DUNGEON (MAP 80)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 81)": {
+    "val": "GENERATED DUNGEON (MAP 81)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 82)": {
+    "val": "GENERATED DUNGEON (MAP 82)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 83)": {
+    "val": "GENERATED DUNGEON (MAP 83)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 84)": {
+    "val": "GENERATED DUNGEON (MAP 84)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 85)": {
+    "val": "GENERATED DUNGEON (MAP 85)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 86)": {
+    "val": "GENERATED DUNGEON (MAP 86)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 87)": {
+    "val": "GENERATED DUNGEON (MAP 87)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 88)": {
+    "val": "GENERATED DUNGEON (MAP 88)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 89)": {
+    "val": "GENERATED DUNGEON (MAP 89)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 91)": {
+    "val": "GENERATED DUNGEON (MAP 91)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 92)": {
+    "val": "GENERATED DUNGEON (MAP 92)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 93)": {
+    "val": "GENERATED DUNGEON (MAP 93)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 94)": {
+    "val": "GENERATED DUNGEON (MAP 94)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 95)": {
+    "val": "GENERATED DUNGEON (MAP 95)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 96)": {
+    "val": "GENERATED DUNGEON (MAP 96)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 97)": {
+    "val": "GENERATED DUNGEON (MAP 97)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 98)": {
+    "val": "GENERATED DUNGEON (MAP 98)",
+    "excluded": "",
+    "name": ""
+  },
+  "Pristine sewers": {
+    "val": "PRISTINE SEWERS",
+    "excluded": "",
+    "name": ""
+  },
+  "Accursed market": {
+    "val": "ACCURSED MARKET",
+    "excluded": "",
+    "name": ""
+  },
+  "Omega Tower Station": {
+    "val": "OMEGA TOWER STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Map": {
+    "val": "GENERATED MAP",
+    "excluded": "",
+    "name": ""
+  },
+  "The Vast Library": {
+    "val": "DA VAST LIBRARY",
+    "excluded": "",
+    "name": ""
+  },
+  "Miniature city": {
+    "val": "MINIATURE CITY",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 127)": {
+    "val": "GENERATED DUNGEON (MAP 127)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 128)": {
+    "val": "GENERATED DUNGEON (MAP 128)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 129)": {
+    "val": "GENERATED DUNGEON (MAP 129)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 130)": {
+    "val": "GENERATED DUNGEON (MAP 130)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 131)": {
+    "val": "GENERATED DUNGEON (MAP 131)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 132)": {
+    "val": "GENERATED DUNGEON (MAP 132)",
+    "excluded": "",
+    "name": ""
+  },
+  "The first room": {
+    "val": "DA FIRST ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Omega Tower": {
+    "val": "OMEGA TOWER",
+    "excluded": "",
+    "name": ""
+  },
+  "Basement Stairs": {
+    "val": "BASEMENT STAIRS",
+    "excluded": "",
+    "name": ""
+  },
+  "Locker room": {
+    "val": "LOCKER ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Kt cave": {
+    "val": "KT CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Arcade": {
+    "val": "ARCADE",
+    "excluded": "",
+    "name": ""
+  },
+  "Girlfriend walkway": {
+    "val": "GIRLFRIEND WALKWAY",
+    "excluded": "",
+    "name": ""
+  },
+  "Bush room": {
+    "val": "BUSH ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Mini room": {
+    "val": "MINI ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Dream depot": {
+    "val": "DREAM DEPOT",
+    "excluded": "",
+    "name": ""
+  },
+  "Buried city": {
+    "val": "BURIED CITY",
+    "excluded": "",
+    "name": ""
+  },
+  "Flooded cave": {
+    "val": "FLOODED CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Just a normal room": {
+    "val": "JUST A NORMAL ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Prison space": {
+    "val": "PRISON SPACE",
+    "excluded": "",
+    "name": ""
+  },
+  "The purple desert": {
+    "val": "DA PURPLE DESERT",
+    "excluded": "",
+    "name": ""
+  },
+  "Moderna's Temple": {
+    "val": "MODERNA'S TEMPLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Layer 0 - B1 Stacked Walls)": {
+    "val": "GENERATED DUNGEON (LAYER 0 - B1 STACKED WALLS)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 177)": {
+    "val": "GENERATED DUNGEON (MAP 177)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 178)": {
+    "val": "GENERATED DUNGEON (MAP 178)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 179)": {
+    "val": "GENERATED DUNGEON (MAP 179)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 180)": {
+    "val": "GENERATED DUNGEON (MAP 180)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 181)": {
+    "val": "GENERATED DUNGEON (MAP 181)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 182)": {
+    "val": "GENERATED DUNGEON (MAP 182)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 183)": {
+    "val": "GENERATED DUNGEON (MAP 183)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 184)": {
+    "val": "GENERATED DUNGEON (MAP 184)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 185)": {
+    "val": "GENERATED DUNGEON (MAP 185)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 186)": {
+    "val": "GENERATED DUNGEON (MAP 186)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 187)": {
+    "val": "GENERATED DUNGEON (MAP 187)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 188)": {
+    "val": "GENERATED DUNGEON (MAP 188)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 189)": {
+    "val": "GENERATED DUNGEON (MAP 189)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 190)": {
+    "val": "GENERATED DUNGEON (MAP 190)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 191)": {
+    "val": "GENERATED DUNGEON (MAP 191)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 192)": {
+    "val": "GENERATED DUNGEON (MAP 192)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 193)": {
+    "val": "GENERATED DUNGEON (MAP 193)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 194)": {
+    "val": "GENERATED DUNGEON (MAP 194)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 195)": {
+    "val": "GENERATED DUNGEON (MAP 195)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 196)": {
+    "val": "GENERATED DUNGEON (MAP 196)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 197)": {
+    "val": "GENERATED DUNGEON (MAP 197)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 198)": {
+    "val": "GENERATED DUNGEON (MAP 198)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 199)": {
+    "val": "GENERATED DUNGEON (MAP 199)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 200)": {
+    "val": "GENERATED DUNGEON (MAP 200)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 201)": {
+    "val": "GENERATED DUNGEON (MAP 201)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 202)": {
+    "val": "GENERATED DUNGEON (MAP 202)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 203)": {
+    "val": "GENERATED DUNGEON (MAP 203)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 204)": {
+    "val": "GENERATED DUNGEON (MAP 204)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 205)": {
+    "val": "GENERATED DUNGEON (MAP 205)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 206)": {
+    "val": "GENERATED DUNGEON (MAP 206)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 207)": {
+    "val": "GENERATED DUNGEON (MAP 207)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 208)": {
+    "val": "GENERATED DUNGEON (MAP 208)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 209)": {
+    "val": "GENERATED DUNGEON (MAP 209)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 210)": {
+    "val": "GENERATED DUNGEON (MAP 210)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 211)": {
+    "val": "GENERATED DUNGEON (MAP 211)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 212)": {
+    "val": "GENERATED DUNGEON (MAP 212)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 213)": {
+    "val": "GENERATED DUNGEON (MAP 213)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 214)": {
+    "val": "GENERATED DUNGEON (MAP 214)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 215)": {
+    "val": "GENERATED DUNGEON (MAP 215)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 216)": {
+    "val": "GENERATED DUNGEON (MAP 216)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 217)": {
+    "val": "GENERATED DUNGEON (MAP 217)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 218)": {
+    "val": "GENERATED DUNGEON (MAP 218)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 219)": {
+    "val": "GENERATED DUNGEON (MAP 219)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 220)": {
+    "val": "GENERATED DUNGEON (MAP 220)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 221)": {
+    "val": "GENERATED DUNGEON (MAP 221)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 222)": {
+    "val": "GENERATED DUNGEON (MAP 222)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 223)": {
+    "val": "GENERATED DUNGEON (MAP 223)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 224)": {
+    "val": "GENERATED DUNGEON (MAP 224)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 225)": {
+    "val": "GENERATED DUNGEON (MAP 225)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 226)": {
+    "val": "GENERATED DUNGEON (MAP 226)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 227)": {
+    "val": "GENERATED DUNGEON (MAP 227)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 228)": {
+    "val": "GENERATED DUNGEON (MAP 228)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 229)": {
+    "val": "GENERATED DUNGEON (MAP 229)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 230)": {
+    "val": "GENERATED DUNGEON (MAP 230)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 231)": {
+    "val": "GENERATED DUNGEON (MAP 231)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 232)": {
+    "val": "GENERATED DUNGEON (MAP 232)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 233)": {
+    "val": "GENERATED DUNGEON (MAP 233)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 234)": {
+    "val": "GENERATED DUNGEON (MAP 234)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 235)": {
+    "val": "GENERATED DUNGEON (MAP 235)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 237)": {
+    "val": "GENERATED DUNGEON (MAP 237)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 238)": {
+    "val": "GENERATED DUNGEON (MAP 238)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 239)": {
+    "val": "GENERATED DUNGEON (MAP 239)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 240)": {
+    "val": "GENERATED DUNGEON (MAP 240)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 241)": {
+    "val": "GENERATED DUNGEON (MAP 241)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 242)": {
+    "val": "GENERATED DUNGEON (MAP 242)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 243)": {
+    "val": "GENERATED DUNGEON (MAP 243)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 244)": {
+    "val": "GENERATED DUNGEON (MAP 244)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 245)": {
+    "val": "GENERATED DUNGEON (MAP 245)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 246)": {
+    "val": "GENERATED DUNGEON (MAP 246)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 247)": {
+    "val": "GENERATED DUNGEON (MAP 247)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 248)": {
+    "val": "GENERATED DUNGEON (MAP 248)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 249)": {
+    "val": "GENERATED DUNGEON (MAP 249)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 250)": {
+    "val": "GENERATED DUNGEON (MAP 250)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 251)": {
+    "val": "GENERATED DUNGEON (MAP 251)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 252)": {
+    "val": "GENERATED DUNGEON (MAP 252)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 253)": {
+    "val": "GENERATED DUNGEON (MAP 253)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 254)": {
+    "val": "GENERATED DUNGEON (MAP 254)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 255)": {
+    "val": "GENERATED DUNGEON (MAP 255)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 276)": {
+    "val": "GENERATED DUNGEON (MAP 276)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 257)": {
+    "val": "GENERATED DUNGEON (MAP 257)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 258)": {
+    "val": "GENERATED DUNGEON (MAP 258)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 259)": {
+    "val": "GENERATED DUNGEON (MAP 259)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 260)": {
+    "val": "GENERATED DUNGEON (MAP 260)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 261)": {
+    "val": "GENERATED DUNGEON (MAP 261)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 262)": {
+    "val": "GENERATED DUNGEON (MAP 262)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 263)": {
+    "val": "GENERATED DUNGEON (MAP 263)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 264)": {
+    "val": "GENERATED DUNGEON (MAP 264)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 265)": {
+    "val": "GENERATED DUNGEON (MAP 265)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 266)": {
+    "val": "GENERATED DUNGEON (MAP 266)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 267)": {
+    "val": "GENERATED DUNGEON (MAP 267)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 268)": {
+    "val": "GENERATED DUNGEON (MAP 268)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 269)": {
+    "val": "GENERATED DUNGEON (MAP 269)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 270)": {
+    "val": "GENERATED DUNGEON (MAP 270)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 271)": {
+    "val": "GENERATED DUNGEON (MAP 271)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 272)": {
+    "val": "GENERATED DUNGEON (MAP 272)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 273)": {
+    "val": "GENERATED DUNGEON (MAP 273)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 274)": {
+    "val": "GENERATED DUNGEON (MAP 274)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 275)": {
+    "val": "GENERATED DUNGEON (MAP 275)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 278)": {
+    "val": "GENERATED DUNGEON (MAP 278)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 279)": {
+    "val": "GENERATED DUNGEON (MAP 279)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 280)": {
+    "val": "GENERATED DUNGEON (MAP 280)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 281)": {
+    "val": "GENERATED DUNGEON (MAP 281)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 282)": {
+    "val": "GENERATED DUNGEON (MAP 282)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 283)": {
+    "val": "GENERATED DUNGEON (MAP 283)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 284)": {
+    "val": "GENERATED DUNGEON (MAP 284)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 285)": {
+    "val": "GENERATED DUNGEON (MAP 285)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 286)": {
+    "val": "GENERATED DUNGEON (MAP 286)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 287)": {
+    "val": "GENERATED DUNGEON (MAP 287)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 288)": {
+    "val": "GENERATED DUNGEON (MAP 288)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 289)": {
+    "val": "GENERATED DUNGEON (MAP 289)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 290)": {
+    "val": "GENERATED DUNGEON (MAP 290)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 291)": {
+    "val": "GENERATED DUNGEON (MAP 291)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 292)": {
+    "val": "GENERATED DUNGEON (MAP 292)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 293)": {
+    "val": "GENERATED DUNGEON (MAP 293)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 294)": {
+    "val": "GENERATED DUNGEON (MAP 294)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 295)": {
+    "val": "GENERATED DUNGEON (MAP 295)",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 296)": {
+    "val": "GENERATED DUNGEON (MAP 296)",
+    "excluded": "",
+    "name": ""
+  },
+  "ad": {
+    "val": "AD",
+    "excluded": "",
+    "name": ""
+  },
+  "MAX Gauntlet": {
+    "val": "MAX GAUNTLET",
+    "excluded": "",
+    "name": ""
+  },
+  "MAX Tavern": {
+    "val": "MAX TAVERN",
+    "excluded": "",
+    "name": ""
+  },
+  "Shopping Alley": {
+    "val": "SHOPPIN' ALLEY",
+    "excluded": "",
+    "name": ""
+  },
+  "Gym": {
+    "val": "GYM",
+    "excluded": "",
+    "name": ""
+  },
+  "Bait shop": {
+    "val": "BAIT SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Camping room": {
+    "val": "CAMPIN' ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Museum": {
+    "val": "MUSEUM",
+    "excluded": "",
+    "name": ""
+  },
+  "Ko's Bakery": {
+    "val": "KO'S BAKERY",
+    "excluded": "",
+    "name": ""
+  },
+  "Ice cream shop": {
+    "val": "ICE CREAM SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Costume shop": {
+    "val": "COSTUME SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Music store": {
+    "val": "MUSIC STORE",
+    "excluded": "",
+    "name": ""
+  },
+  "Gun store": {
+    "val": "GUN STORE",
+    "excluded": "",
+    "name": ""
+  },
+  "Apartments": {
+    "val": "APARTMENTS",
+    "excluded": "",
+    "name": ""
+  },
+  "Holy reactor": {
+    "val": "HOLY REACTOR",
+    "excluded": "",
+    "name": ""
+  },
+  "Old Europe": {
+    "val": "OLD EUROPE",
+    "excluded": "",
+    "name": ""
+  },
+  "Regional train": {
+    "val": "REGIONAL TRAIN",
+    "excluded": "",
+    "name": ""
+  },
+  "Cult meeting": {
+    "val": "CULT MEETIN'",
+    "excluded": "",
+    "name": ""
+  },
+  "Fake lab": {
+    "val": "FAKE LAB",
+    "excluded": "",
+    "name": ""
+  },
+  "Nothing": {
+    "val": "NUTTIN'",
+    "excluded": "",
+    "name": ""
+  },
+  "Red Brick Market": {
+    "val": "RED BRICK MARKET",
+    "excluded": "",
+    "name": ""
+  },
+  "Basement": {
+    "val": "BASEMENT",
+    "excluded": "",
+    "name": ""
+  },
+  "Fridge": {
+    "val": "FRIDGE",
+    "excluded": "",
+    "name": ""
+  },
+  "The looping pools": {
+    "val": "DA LOOPIN' POOLS",
+    "excluded": "",
+    "name": ""
+  },
+  "Inner tower": {
+    "val": "INNER TOWER",
+    "excluded": "",
+    "name": ""
+  },
+  "Lower sewers": {
+    "val": "LOWER SEWERS",
+    "excluded": "",
+    "name": ""
+  },
+  "Docks": {
+    "val": "DOCKS",
+    "excluded": "",
+    "name": ""
+  },
+  "Deep chasm": {
+    "val": "DEEP CHASM",
+    "excluded": "",
+    "name": ""
+  },
+  "Hidden airship": {
+    "val": "HIDDEN AIRSHIP",
+    "excluded": "",
+    "name": ""
+  },
+  "House complex": {
+    "val": "HOUSE COMPLEX",
+    "excluded": "",
+    "name": ""
+  },
+  "Inner lake": {
+    "val": "INNER LAKE",
+    "excluded": "",
+    "name": ""
+  },
+  "Houses interiors": {
+    "val": "HOUSES INTERIORS",
+    "excluded": "",
+    "name": ""
+  },
+  "Lower tunnel": {
+    "val": "LOWER TUNNEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Crocomoss cave": {
+    "val": "CROCOMOSS CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Buried grounds": {
+    "val": "BURIED GROUNDS",
+    "excluded": "",
+    "name": ""
+  },
+  "Illegal Alley": {
+    "val": "ILLEGAL ALLEY",
+    "excluded": "",
+    "name": ""
+  },
+  "Elven ship": {
+    "val": "ELVEN SHIP",
+    "excluded": "",
+    "name": ""
+  },
+  "Inner meadows": {
+    "val": "INNER MEADOWS",
+    "excluded": "",
+    "name": ""
+  },
+  "Gray Stairs": {
+    "val": "GRAY STAIRS",
+    "excluded": "",
+    "name": ""
+  },
+  "Antwerpen": {
+    "val": "ANTWERPEN",
+    "excluded": "",
+    "name": ""
+  },
+  "Moonlit Station": {
+    "val": "MOONLIT STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Dark tower": {
+    "val": "DARK TOWER",
+    "excluded": "",
+    "name": ""
+  },
+  "Vents": {
+    "val": "VENTS",
+    "excluded": "",
+    "name": ""
+  },
+  "ClosetScape": {
+    "val": "ClosetScape",
+    "excluded": "",
+    "name": ""
+  },
+  "Fairy Patch": {
+    "val": "FAIRY PATCH",
+    "excluded": "",
+    "name": ""
+  },
+  "Deep crater": {
+    "val": "DEEP CRATER",
+    "excluded": "",
+    "name": ""
+  },
+  "House Inside": {
+    "val": "HOUSE INSIDE",
+    "excluded": "",
+    "name": ""
+  },
+  "Mushroom Island": {
+    "val": "MUSHROOM ISLAND",
+    "excluded": "",
+    "name": ""
+  },
+  "Pink Pyramid": {
+    "val": "PINK PYRAMID",
+    "excluded": "",
+    "name": ""
+  },
+  "Rocky Lodge": {
+    "val": "ROCKY LODGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Trash cave": {
+    "val": "TRASH CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Mossy ground": {
+    "val": "MOSSY GROUND",
+    "excluded": "",
+    "name": ""
+  },
+  "Secret cinema": {
+    "val": "SECRET CINEMA",
+    "excluded": "",
+    "name": ""
+  },
+  "Forgery": {
+    "val": "FORGERY",
+    "excluded": "",
+    "name": ""
+  },
+  "Unassuming bush": {
+    "val": "UNASSUMIN' BUSH",
+    "excluded": "",
+    "name": ""
+  },
+  "Demon court": {
+    "val": "DEMON COURT",
+    "excluded": "",
+    "name": ""
+  },
+  "Lava cave": {
+    "val": "LAVA CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Prickly Beach": {
+    "val": "PRICKLY BEACH",
+    "excluded": "",
+    "name": ""
+  },
+  "Inside a mouth": {
+    "val": "INSIDE A MOUTH",
+    "excluded": "",
+    "name": ""
+  },
+  "Truck": {
+    "val": "TRUCK",
+    "excluded": "",
+    "name": ""
+  },
+  "Toxic House": {
+    "val": "TOXIC HOUSE",
+    "excluded": "",
+    "name": ""
+  },
+  "Shroom village": {
+    "val": "SHROOM VILLAGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Damp river": {
+    "val": "DAMP RIVER",
+    "excluded": "",
+    "name": ""
+  },
+  "Corner shop": {
+    "val": "CORNER SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Corner Restaurant": {
+    "val": "CORNER RESTAURANT",
+    "excluded": "",
+    "name": ""
+  },
+  "Okla city": {
+    "val": "OKLA CITY",
+    "excluded": "",
+    "name": ""
+  },
+  "Bloody Roots": {
+    "val": "BLOODY ROOTS",
+    "excluded": "",
+    "name": ""
+  },
+  "East side": {
+    "val": "EAST SIDE",
+    "excluded": "",
+    "name": ""
+  },
+  "Labis fields": {
+    "val": "LABIS FIELDS",
+    "excluded": "",
+    "name": ""
+  },
+  "Connecting hole": {
+    "val": "CONNECTIN' HOLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Bone desert": {
+    "val": "BONE DESERT",
+    "excluded": "",
+    "name": ""
+  },
+  "Forest Temple": {
+    "val": "FOREST TEMPLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Pipes": {
+    "val": "PIPES",
+    "excluded": "",
+    "name": ""
+  },
+  "Spaceship": {
+    "val": "SPACESHIP",
+    "excluded": "",
+    "name": ""
+  },
+  "Guts": {
+    "val": "GUTS",
+    "excluded": "",
+    "name": ""
+  },
+  "Unsettling face": {
+    "val": "UNSETTLIN' FACE",
+    "excluded": "",
+    "name": ""
+  },
+  "Conference hall": {
+    "val": "CONFERENCE HALL",
+    "excluded": "",
+    "name": ""
+  },
+  "Sewers": {
+    "val": "SEWERS",
+    "excluded": "",
+    "name": ""
+  },
+  "Depths": {
+    "val": "DEPTHS",
+    "excluded": "",
+    "name": ""
+  },
+  "Restaurant": {
+    "val": "RESTAURANT",
+    "excluded": "",
+    "name": ""
+  },
+  "Undeground arena": {
+    "val": "UNDEGROUND ARENA",
+    "excluded": "",
+    "name": ""
+  },
+  "Balcony": {
+    "val": "BALCONY",
+    "excluded": "",
+    "name": ""
+  },
+  "Underground Jungle": {
+    "val": "UNDERGROUND JUNGLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Metro Tunnel": {
+    "val": "METRO TUNNEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Level Omega": {
+    "val": "LEVEL OMEGA",
+    "excluded": "",
+    "name": ""
+  },
+  "Eyeland": {
+    "val": "EYELAND",
+    "excluded": "",
+    "name": ""
+  },
+  "Smokeshop": {
+    "val": "SMOKESHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Corner arena": {
+    "val": "CORNER ARENA",
+    "excluded": "",
+    "name": ""
+  },
+  "Race track": {
+    "val": "RACE TRACK",
+    "excluded": "",
+    "name": ""
+  },
+  "Prison": {
+    "val": "PRISON",
+    "excluded": "",
+    "name": ""
+  },
+  "Lab of Truth": {
+    "val": "LAB OF TRUTH",
+    "excluded": "",
+    "name": ""
+  },
+  "Camped corridor": {
+    "val": "CAMPED CORRIDOR",
+    "excluded": "",
+    "name": ""
+  },
+  "Coffeshop": {
+    "val": "COFFESHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Conditioned Cave": {
+    "val": "CONDITIONED CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Jungle passage": {
+    "val": "JUNGLE PASSAGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Spectacle view": {
+    "val": "SPECTACLE VIEW",
+    "excluded": "",
+    "name": ""
+  },
+  "Undeground Gym": {
+    "val": "UNDEGROUND GYM",
+    "excluded": "",
+    "name": ""
+  },
+  "Hell Shop": {
+    "val": "HELL SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Swamp": {
+    "val": "SWAMP",
+    "excluded": "",
+    "name": ""
+  },
+  "Catacombs": {
+    "val": "CATACOMBS",
+    "excluded": "",
+    "name": ""
+  },
+  "Forest Castle": {
+    "val": "FOREST CASTLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Sunken Tree": {
+    "val": "SUNKEN TREE",
+    "excluded": "",
+    "name": ""
+  },
+  "Metro Bistrot": {
+    "val": "METRO BISTROT",
+    "excluded": "",
+    "name": ""
+  },
+  "Growing tent": {
+    "val": "GROWIN' TENT",
+    "excluded": "",
+    "name": ""
+  },
+  "Craft wagon": {
+    "val": "CRAFT WAGON",
+    "excluded": "",
+    "name": ""
+  },
+  "Pizza place": {
+    "val": "PIZZA PLACE",
+    "excluded": "",
+    "name": ""
+  },
+  "Abandoned bus": {
+    "val": "ABANDONED BUS",
+    "excluded": "",
+    "name": ""
+  },
+  "Abandoned Alley": {
+    "val": "ABANDONED ALLEY",
+    "excluded": "",
+    "name": ""
+  },
+  "Training center": {
+    "val": "TRAININ' CENTER",
+    "excluded": "",
+    "name": ""
+  },
+  "Pillar island": {
+    "val": "PILLAR ISLAND",
+    "excluded": "",
+    "name": ""
+  },
+  "Underwater pass": {
+    "val": "UNDERWATER PASS",
+    "excluded": "",
+    "name": ""
+  },
+  "Split Dungeon": {
+    "val": "SPLIT DUNGEON",
+    "excluded": "",
+    "name": ""
+  },
+  "Fisherman hut": {
+    "val": "FISHERMAN HUT",
+    "excluded": "",
+    "name": ""
+  },
+  "Coral nest": {
+    "val": "CORAL NEST",
+    "excluded": "",
+    "name": ""
+  },
+  "Graffiti Tunnel": {
+    "val": "GRAFFITI TUNNEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Flooded park": {
+    "val": "FLOODED PARK",
+    "excluded": "",
+    "name": ""
+  },
+  "Stockhouse": {
+    "val": "STOCKHOUSE",
+    "excluded": "",
+    "name": ""
+  },
+  "Ziqqurat": {
+    "val": "ZIQQURAT",
+    "excluded": "",
+    "name": ""
+  },
+  "Trick castle": {
+    "val": "TRICK CASTLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Greenwitch station": {
+    "val": "GREENWITCH STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Eris'Courtroom": {
+    "val": "ERIS'COURTROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Recruitment center": {
+    "val": "RECRUITMENT CENTER",
+    "excluded": "",
+    "name": ""
+  },
+  "Luxembourg Fortress": {
+    "val": "LUXEMBOURG FORTRESS",
+    "excluded": "",
+    "name": ""
+  },
+  "617 - Super sacred shrine": {
+    "val": "617 - SUPER SACRED SHRINE",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent NPCs": {
+    "val": "GHENT NPCS",
+    "excluded": "",
+    "name": ""
+  },
+  "GreenWitch": {
+    "val": "GreenWitch",
+    "excluded": "",
+    "name": ""
+  },
+  "Serpentine pass": {
+    "val": "SERPENTINE PASS",
+    "excluded": "",
+    "name": ""
+  },
+  "Badass Peak": {
+    "val": "BADASS PEAK",
+    "excluded": "",
+    "name": ""
+  },
+  "Underbeach": {
+    "val": "UNDERBEACH",
+    "excluded": "",
+    "name": ""
+  },
+  "Jail Fortress": {
+    "val": "JAIL FORTRESS",
+    "excluded": "",
+    "name": ""
+  },
+  "Stacked cave ": {
+    "val": "STACKED CAVE ",
+    "excluded": "",
+    "name": ""
+  },
+  "Waves wall": {
+    "val": "WAVES WALL",
+    "excluded": "",
+    "name": ""
+  },
+  "Tall maze": {
+    "val": "TALL MAZE",
+    "excluded": "",
+    "name": ""
+  },
+  "Garage": {
+    "val": "GARAGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Omega City": {
+    "val": "OMEGA CITY",
+    "excluded": "",
+    "name": ""
+  },
+  "Stairs": {
+    "val": "STAIRS",
+    "excluded": "",
+    "name": ""
+  },
+  "Zumbaland": {
+    "val": "ZUMBALAND",
+    "excluded": "",
+    "name": ""
+  },
+  "Stairs Hall": {
+    "val": "STAIRS HALL",
+    "excluded": "",
+    "name": ""
+  },
+  "Fields": {
+    "val": "FIELDS",
+    "excluded": "",
+    "name": ""
+  },
+  "House": {
+    "val": "HOUSE",
+    "excluded": "",
+    "name": ""
+  },
+  "Strange house": {
+    "val": "STRANGE HOUSE",
+    "excluded": "",
+    "name": ""
+  },
+  "Lighthouse": {
+    "val": "LIGHTHOUSE",
+    "excluded": "",
+    "name": ""
+  },
+  "Underwater Tunnel": {
+    "val": "UNDERWATER TUNNEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Underglass City": {
+    "val": "UNDERGLASS CITY",
+    "excluded": "",
+    "name": ""
+  },
+  "Glass Skyscraper": {
+    "val": "GLASS SKYSCRAPER",
+    "excluded": "",
+    "name": ""
+  },
+  "Underroad": {
+    "val": "UNDERROAD",
+    "excluded": "",
+    "name": ""
+  },
+  "Pillar cave": {
+    "val": "PILLAR CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Maya rock": {
+    "val": "MAYA ROCK",
+    "excluded": "",
+    "name": ""
+  },
+  "Shagged rock": {
+    "val": "SHAGGED ROCK",
+    "excluded": "",
+    "name": ""
+  },
+  "Secret inn": {
+    "val": "SECRET INN",
+    "excluded": "",
+    "name": ""
+  },
+  "Paiting": {
+    "val": "PAINTIN'",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent Riverside": {
+    "val": "GHENT RIVERSIDE",
+    "excluded": "",
+    "name": ""
+  },
+  "Toxic clearing": {
+    "val": "TOXIC CLEARIN'",
+    "excluded": "",
+    "name": ""
+  },
+  "Raytrace land": {
+    "val": "RAYTRACE LAND",
+    "excluded": "",
+    "name": ""
+  },
+  "Spherodrome": {
+    "val": "SPHERODROME",
+    "excluded": "",
+    "name": ""
+  },
+  "Fuji": {
+    "val": "FUJI",
+    "excluded": "",
+    "name": ""
+  },
+  "Road to FUji": {
+    "val": "ROAD TA FUJI",
+    "excluded": "",
+    "name": ""
+  },
+  "Roadside Inn": {
+    "val": "ROADSIDE INN",
+    "excluded": "",
+    "name": ""
+  },
+  "697 - Gold Palace": {
+    "val": "697 - GOLD PALACE",
+    "excluded": "",
+    "name": ""
+  },
+  "Gold Palace": {
+    "val": "GOLD PALACE",
+    "excluded": "",
+    "name": ""
+  },
+  "Buried houses": {
+    "val": "BURIED HOUSES",
+    "excluded": "",
+    "name": ""
+  },
+  "Hardware store": {
+    "val": "HARDWARE STORE",
+    "excluded": "",
+    "name": ""
+  },
+  "Under Bridge": {
+    "val": "UNDER BRIDGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Garage sale": {
+    "val": "GARAGE SALE",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent Grove station": {
+    "val": "GHENT GROVE STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "North Docks": {
+    "val": "NORTH DOCKS",
+    "excluded": "",
+    "name": ""
+  },
+  "Shipping station": {
+    "val": "SHIPPIN' STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent Station": {
+    "val": "GHENT STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Explorers' Bar": {
+    "val": "EXPLORERS' BAR",
+    "excluded": "",
+    "name": ""
+  },
+  "Back station": {
+    "val": "BACK STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Riverside Inn": {
+    "val": "RIVERSIDE INN",
+    "excluded": "",
+    "name": ""
+  },
+  "Riverside Inn FL2": {
+    "val": "RIVERSIDE INN FL2",
+    "excluded": "",
+    "name": ""
+  },
+  "Kitchen": {
+    "val": "KITCHEN",
+    "excluded": "",
+    "name": ""
+  },
+  "Undeground museum": {
+    "val": "UNDEGROUND MUSEUM",
+    "excluded": "",
+    "name": ""
+  },
+  "Shopping Tunnel": {
+    "val": "SHOPPIN' TUNNEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypermetro train": {
+    "val": "HYPERMETRO TRAIN",
+    "excluded": "",
+    "name": ""
+  },
+  "Bus": {
+    "val": "BUS",
+    "excluded": "",
+    "name": ""
+  },
+  "Taxi": {
+    "val": "TAXI",
+    "excluded": "",
+    "name": ""
+  },
+  " Low orbit spaceship": {
+    "val": " LOW ORBIT SPACESHIP",
+    "excluded": "",
+    "name": ""
+  },
+  "Wilderness": {
+    "val": "WILDERNESS",
+    "excluded": "",
+    "name": ""
+  },
+  " Clock tower": {
+    "val": " CLOCK TOWER",
+    "excluded": "",
+    "name": ""
+  },
+  "Energy station": {
+    "val": "ENERGY STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Condominium": {
+    "val": "CONDOMINIUM",
+    "excluded": "",
+    "name": ""
+  },
+  "Ventout Club": {
+    "val": "VENTOUT CLUB",
+    "excluded": "",
+    "name": ""
+  },
+  "Vatican Cidatel": {
+    "val": "VATICAN CIDATEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Petro infested cave": {
+    "val": "PETRO INFESTED CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Grav Place": {
+    "val": "GRAV PLACE",
+    "excluded": "",
+    "name": ""
+  },
+  " Empty Rooms": {
+    "val": " EMPTY ROOMS",
+    "excluded": "",
+    "name": ""
+  },
+  "Knot Village": {
+    "val": "KNOT VILLAGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Monotown": {
+    "val": "MONOTOWN",
+    "excluded": "",
+    "name": ""
+  },
+  "Generated Dungeon (Map 256)": {
+    "val": "GENERATED DUNGEON (MAP 256)",
+    "excluded": "",
+    "name": ""
+  },
+  "Cardinal Longhi Office": {
+    "val": "CARDINAL LONGHI OFFICE",
+    "excluded": "",
+    "name": ""
+  },
+  "Knot Forest": {
+    "val": "KNOT FOREST",
+    "excluded": "",
+    "name": ""
+  },
+  "Knot Bubble": {
+    "val": "KNOT BUBBLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Twin houses": {
+    "val": "TWIN HOUSES",
+    "excluded": "",
+    "name": ""
+  },
+  "Market": {
+    "val": "MARKET",
+    "excluded": "",
+    "name": ""
+  },
+  "Empty Rooms": {
+    "val": "EMPTY ROOMS",
+    "excluded": "",
+    "name": ""
+  },
+  "Treetop": {
+    "val": "TREETOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Some guy house": {
+    "val": "SOME GUY HOUSE",
+    "excluded": "",
+    "name": ""
+  },
+  "First Floor": {
+    "val": "FIRST FLOOR",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent Mages Guild": {
+    "val": "GHENT MAGES GUILD",
+    "excluded": "",
+    "name": ""
+  },
+  "Butchery": {
+    "val": "BUTCHERY",
+    "excluded": "",
+    "name": ""
+  },
+  "Bakery": {
+    "val": "BAKERY",
+    "excluded": "",
+    "name": ""
+  },
+  "Angel tunnel": {
+    "val": "ANGEL TUNNEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Service tunnel": {
+    "val": "SERVICE TUNNEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Rooftops": {
+    "val": "ROOFTOPS",
+    "excluded": "",
+    "name": ""
+  },
+  "Papa Office": {
+    "val": "PAPA OFFICE",
+    "excluded": "",
+    "name": ""
+  },
+  "Smoking Area": {
+    "val": "SMOKIN' AREA",
+    "excluded": "",
+    "name": ""
+  },
+  "Bathroom": {
+    "val": "BATHROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Abandoned school": {
+    "val": "ABANDONED SCHOOL",
+    "excluded": "",
+    "name": ""
+  },
+  "Gun Range": {
+    "val": "GUN RANGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Casino": {
+    "val": "CASINO",
+    "excluded": "",
+    "name": ""
+  },
+  "Office": {
+    "val": "OFFICE",
+    "excluded": "",
+    "name": ""
+  },
+  "Container": {
+    "val": "CONTAINER",
+    "excluded": "",
+    "name": ""
+  },
+  "Ley spot": {
+    "val": "LEY SPOT",
+    "excluded": "",
+    "name": ""
+  },
+  "Riverside house": {
+    "val": "RIVERSIDE HOUSE",
+    "excluded": "",
+    "name": ""
+  },
+  "Red Symbol": {
+    "val": "RED SYMBOL",
+    "excluded": "",
+    "name": ""
+  },
+  "North Building": {
+    "val": "NORTH BUILDIN'",
+    "excluded": "",
+    "name": ""
+  },
+  "Sistine Chapel": {
+    "val": "SISTINE CHAPEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Vatican Archives": {
+    "val": "VATICAN ARCHIVES",
+    "excluded": "",
+    "name": ""
+  },
+  "Sister of War HQ": {
+    "val": "SISTER OF WAR HQ",
+    "excluded": "",
+    "name": ""
+  },
+  "Inn": {
+    "val": "INN",
+    "excluded": "",
+    "name": ""
+  },
+  "Double shop": {
+    "val": "DOUBLE SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Prison Ruins": {
+    "val": "PRISON RUINS",
+    "excluded": "",
+    "name": ""
+  },
+  "Roadside cave": {
+    "val": "ROADSIDE CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent station FL 0": {
+    "val": "GHENT STATION FL 0",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent Hospital": {
+    "val": "GHENT HOSPITAL",
+    "excluded": "",
+    "name": ""
+  },
+  "Emergency Room": {
+    "val": "EMERGENCY ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Operating room": {
+    "val": "OPERATIN' ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Hospital room": {
+    "val": "HOSPITAL ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Hospital FL 0": {
+    "val": "HOSPITAL FL 0",
+    "excluded": "",
+    "name": ""
+  },
+  "Hospital FL 1": {
+    "val": "HOSPITAL FL 1",
+    "excluded": "",
+    "name": ""
+  },
+  "Hospital FL 2": {
+    "val": "HOSPITAL FL 2",
+    "excluded": "",
+    "name": ""
+  },
+  "Hospital FL -1": {
+    "val": "HOSPITAL FL -1",
+    "excluded": "",
+    "name": ""
+  },
+  "Ambulance room": {
+    "val": "AMBULANCE ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Rooftop": {
+    "val": "ROOFTOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent Fire station": {
+    "val": "GHENT FIRE STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Railroad": {
+    "val": "RAILROAD",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent Fields": {
+    "val": "GHENT FIELDS",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent Downtown": {
+    "val": "GHENT DOWNTOWN",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent forest": {
+    "val": "GHENT FOREST",
+    "excluded": "",
+    "name": ""
+  },
+  "Devil's Fork": {
+    "val": "DEVIL'S FORK",
+    "excluded": "",
+    "name": ""
+  },
+  " Antwerpen station": {
+    "val": " ANTWERPEN STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Abyssal stairs": {
+    "val": "ABYSSAL STAIRS",
+    "excluded": "",
+    "name": ""
+  },
+  " Abandoned Building": {
+    "val": " ABANDONED BUILDIN'",
+    "excluded": "",
+    "name": ""
+  },
+  "Abyssal cave FL 1": {
+    "val": "ABYSSAL CAVE FL 1",
+    "excluded": "",
+    "name": ""
+  },
+  "Lime Corp": {
+    "val": "LIME CORP",
+    "excluded": "",
+    "name": ""
+  },
+  "G Eneric Corp FL 21": {
+    "val": "G ENERIC CORP FL 21",
+    "excluded": "",
+    "name": ""
+  },
+  "Skyscraper": {
+    "val": "SKYSCRAPER",
+    "excluded": "",
+    "name": ""
+  },
+  "Police Station": {
+    "val": "POLICE STATION",
+    "excluded": "",
+    "name": ""
+  },
+  "Fire station FL 0": {
+    "val": "FIRE STATION FL 0",
+    "excluded": "",
+    "name": ""
+  },
+  "Underforest": {
+    "val": "UNDERFOREST",
+    "excluded": "",
+    "name": ""
+  },
+  "Abandoned Building": {
+    "val": "ABANDONED BUILDIN'",
+    "excluded": "",
+    "name": ""
+  },
+  "Police Box": {
+    "val": "POLICE BOX",
+    "excluded": "",
+    "name": ""
+  },
+  "Abyssal cave FL -1": {
+    "val": "ABYSSAL CAVE FL -1",
+    "excluded": "",
+    "name": ""
+  },
+  "Abyssal cave FL 0": {
+    "val": "ABYSSAL CAVE FL 0",
+    "excluded": "",
+    "name": ""
+  },
+  "Fire station FL 1": {
+    "val": "FIRE STATION FL 1",
+    "excluded": "",
+    "name": ""
+  },
+  "Mages Guild Basement": {
+    "val": "MAGES GUILD BASEMENT",
+    "excluded": "",
+    "name": ""
+  },
+  "Subservice Tunnel": {
+    "val": "SUBSERVICE TUNNEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Canteen": {
+    "val": "CANTEEN",
+    "excluded": "",
+    "name": ""
+  },
+  "Clothing Shop": {
+    "val": "CLOTHIN' SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypermarket": {
+    "val": "HYPERMARKET",
+    "excluded": "",
+    "name": ""
+  },
+  "Pharmacy": {
+    "val": "PHARMACY",
+    "excluded": "",
+    "name": ""
+  },
+  "G Eneric Corp FL 0": {
+    "val": "G ENERIC CORP FL 0",
+    "excluded": "",
+    "name": ""
+  },
+  "Lime corp FL 10": {
+    "val": "LIME CORP FL 10",
+    "excluded": "",
+    "name": ""
+  },
+  "Lime corp FL -3": {
+    "val": "LIME CORP FL -3",
+    "excluded": "",
+    "name": ""
+  },
+  "Lime corp FL 21": {
+    "val": "LIME CORP FL 21",
+    "excluded": "",
+    "name": ""
+  },
+  "Church": {
+    "val": "CHURCH",
+    "excluded": "",
+    "name": ""
+  },
+  "Waterfalls": {
+    "val": "WATERFALLS",
+    "excluded": "",
+    "name": ""
+  },
+  "Bell tower": {
+    "val": "BELL TOWER",
+    "excluded": "",
+    "name": ""
+  },
+  "Bowling Alley": {
+    "val": "BOWLIN' ALLEY",
+    "excluded": "",
+    "name": ""
+  },
+  "Ozone Mountain": {
+    "val": "OZONE MOUNTAIN",
+    "excluded": "",
+    "name": ""
+  },
+  "Bank": {
+    "val": "BANK",
+    "excluded": "",
+    "name": ""
+  },
+  "Cursed slot": {
+    "val": "CURSED SLOT",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent Outskirts": {
+    "val": "GHENT OUTSKIRTS",
+    "excluded": "",
+    "name": ""
+  },
+  "Graveyard": {
+    "val": "GRAVEYARD",
+    "excluded": "",
+    "name": ""
+  },
+  "Flower shop": {
+    "val": "FLOWER SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Post office": {
+    "val": "POST OFFICE",
+    "excluded": "",
+    "name": ""
+  },
+  "Tool shed": {
+    "val": "TOOL SHED",
+    "excluded": "",
+    "name": ""
+  },
+  "Dimensional fracture": {
+    "val": "DIMENSIONAL FRACTURE",
+    "excluded": "",
+    "name": ""
+  },
+  "Crypt": {
+    "val": "CRYPT",
+    "excluded": "",
+    "name": ""
+  },
+  "Cursing temple": {
+    "val": "CURSIN' TEMPLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Tent": {
+    "val": "TENT",
+    "excluded": "",
+    "name": ""
+  },
+  "Cellar": {
+    "val": "CELLAR",
+    "excluded": "",
+    "name": ""
+  },
+  "Bell": {
+    "val": "BELL",
+    "excluded": "",
+    "name": ""
+  },
+  "Watery hole": {
+    "val": "WATERY HOLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Weapon fanatic' house": {
+    "val": "WEAPON FANATIC' HOUSE",
+    "excluded": "",
+    "name": ""
+  },
+  "Cursing Temple FL -1": {
+    "val": "CURSIN' TEMPLE FL -1",
+    "excluded": "",
+    "name": ""
+  },
+  "Car": {
+    "val": "CAR",
+    "excluded": "",
+    "name": ""
+  },
+  "Ghent station FL 1": {
+    "val": "GHENT STATION FL 1",
+    "excluded": "",
+    "name": ""
+  },
+  "Closed Shop": {
+    "val": "CLOSED SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Ticket Office": {
+    "val": "TICKET OFFICE",
+    "excluded": "",
+    "name": ""
+  },
+  "Belvedere": {
+    "val": "BELVEDERE",
+    "excluded": "",
+    "name": ""
+  },
+  "Temple": {
+    "val": "TEMPLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Dark tower inside": {
+    "val": "DARK TOWER INSIDE",
+    "excluded": "",
+    "name": ""
+  },
+  "Costume Shop": {
+    "val": "COSTUME SHOP",
+    "excluded": "",
+    "name": ""
+  },
+  "Magic Market": {
+    "val": "MAGIC MARKET",
+    "excluded": "",
+    "name": ""
+  },
+  "Bloody Temple": {
+    "val": "BLOODY TEMPLE",
+    "excluded": "",
+    "name": ""
+  },
+  "Storage Unit": {
+    "val": "STORAGE UNIT",
+    "excluded": "",
+    "name": ""
+  },
+  "Abyssal Wasteland": {
+    "val": "ABYSSAL WASTELAND",
+    "excluded": "",
+    "name": ""
+  },
+  "Rodent cave": {
+    "val": "RODENT CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Frost Cave": {
+    "val": "FROST CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Enrichment Center": {
+    "val": "ENRICHMENT CENTER",
+    "excluded": "",
+    "name": ""
+  },
+  "Polar motel": {
+    "val": "POLAR MOTEL",
+    "excluded": "",
+    "name": ""
+  },
+  "Scalding Sauna": {
+    "val": "SCALDIN' SAUNA",
+    "excluded": "",
+    "name": ""
+  },
+  "Eyestalk Cave": {
+    "val": "EYESTALK CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Shadowed Graves": {
+    "val": "SHADOWED GRAVES",
+    "excluded": "",
+    "name": ""
+  },
+  "Processing Pools": {
+    "val": "PROCESSIN' POOLS",
+    "excluded": "",
+    "name": ""
+  },
+  "Grand pool": {
+    "val": "GRAND POOL",
+    "excluded": "",
+    "name": ""
+  },
+  "Playground": {
+    "val": "PLAYGROUND",
+    "excluded": "",
+    "name": ""
+  },
+  "Red wood maze": {
+    "val": "RED WOOD MAZE",
+    "excluded": "",
+    "name": ""
+  },
+  "Crabby Beach": {
+    "val": "CRABBY BEACH",
+    "excluded": "",
+    "name": ""
+  },
+  "Sand Fortress": {
+    "val": "SAND FORTRESS",
+    "excluded": "",
+    "name": ""
+  },
+  "Base Room": {
+    "val": "BASE ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Castle Crypts": {
+    "val": "CASTLE CRYPTS",
+    "excluded": "",
+    "name": ""
+  },
+  "Chasm Bazaar": {
+    "val": "CHASM BAZAAR",
+    "excluded": "",
+    "name": ""
+  },
+  "North Bazaar": {
+    "val": "NORTH BAZAAR",
+    "excluded": "",
+    "name": ""
+  },
+  "Undegroung corridoor": {
+    "val": "UNDERGROUND CORRIDOR",
+    "excluded": "",
+    "name": ""
+  },
+  "Storehouse": {
+    "val": "STOREHOUSE",
+    "excluded": "",
+    "name": ""
+  },
+  "Bioslaves holding cells": {
+    "val": "BIOSLAVES HOLDIN' CELLS",
+    "excluded": "",
+    "name": ""
+  },
+  "Vending stairs": {
+    "val": "VENDIN' STAIRS",
+    "excluded": "",
+    "name": ""
+  },
+  "Water Chief Office": {
+    "val": "WATER CHIEF OFFICE",
+    "excluded": "",
+    "name": ""
+  },
+  "Water treatment plant": {
+    "val": "WATER TREATMENT PLANT",
+    "excluded": "",
+    "name": ""
+  },
+  "Water Planet": {
+    "val": "WATER PLANET",
+    "excluded": "",
+    "name": ""
+  },
+  "Bigscraper": {
+    "val": "BIGSCRAPER",
+    "excluded": "",
+    "name": ""
+  },
+  "Comfy Room": {
+    "val": "COMFY ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Geometric Woods": {
+    "val": "GEOMETRIC WOODS",
+    "excluded": "",
+    "name": ""
+  },
+  "Dubious Storage": {
+    "val": "DUBIOUS STORAGE",
+    "excluded": "",
+    "name": ""
+  },
+  "Pleasure room": {
+    "val": "PLEASURE ROOM",
+    "excluded": "",
+    "name": ""
+  },
+  "Tree cave": {
+    "val": "TREE CAVE",
+    "excluded": "",
+    "name": ""
+  },
+  "Antwerpen NPC": {
+    "val": "ANTWERPEN NPC",
+    "excluded": "",
+    "name": ""
+  },
+  "Camper": {
+    "val": "CAMPER",
+    "excluded": "",
+    "name": ""
+  },
+  "Frozen landfill": {
+    "val": "FROZEN LANDFILL",
+    "excluded": "",
+    "name": ""
+  },
+  "Frozen caves": {
+    "val": "FROZEN CAVES",
+    "excluded": "",
+    "name": ""
+  },
+  "Wagon": {
+    "val": "WAGON",
+    "excluded": "",
+    "name": ""
+  },
+  "Clinic": {
+    "val": "CLINIC",
+    "excluded": "",
+    "name": ""
+  },
+  "Green Witch": {
+    "val": "GREEN WITCH",
+    "excluded": "",
+    "name": ""
+  },
+  "Green Witch Space Center": {
+    "val": "GREEN WITCH SPACE CENTER",
+    "excluded": "",
+    "name": ""
+  },
+  "Super Sacred Shrine": {
+    "val": "SUPER SACRED SHRINE",
+    "excluded": "",
+    "name": ""
+  },
+  "Dark Tower": {
+    "val": "DARK TOWER",
+    "excluded": "",
+    "name": ""
+  },
+  "Tavern FL -1": {
+    "val": "TAVERN FL -1",
+    "excluded": "",
+    "name": ""
+  },
+  "Nerd Cave FL -2": {
+    "val": "NERD CAVE FL -2",
+    "excluded": "",
+    "name": ""
+  },
+  "Biolaboratory FL -3": {
+    "val": "BIOLABORATORY FL -3",
+    "excluded": "",
+    "name": ""
+  },
+  "Farming grounds FL -4": {
+    "val": "FARMIN' GROUNDS FL -4",
+    "excluded": "",
+    "name": ""
+  },
+  "Housing floor FL -5": {
+    "val": "HOUSIN' FLOOR FL -5",
+    "excluded": "",
+    "name": ""
+  },
+  "Reactor Halley FL -6": {
+    "val": "REACTOR HALLEY FL -6",
+    "excluded": "",
+    "name": ""
+  },
+  "Arcane library FL -7": {
+    "val": "ARCANE LIBRARY FL -7",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypermarket FL -9": {
+    "val": "HYPERMARKET FL -9",
+    "excluded": "",
+    "name": ""
+  },
+  "Hypermetro station FL -9": {
+    "val": "HYPERMETRO STATION FL -9",
+    "excluded": "",
+    "name": ""
+  }
+}

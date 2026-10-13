@@ -1,13 +1,13 @@
 {
   "noRooms": "Non ci sono stanze disponibili in affitto.",
-  "bookedBy": "Già prenotata dal gruppo di {name}",
-  "someoneElse": "un altro gruppo",
+  "bookedBy": "Già prenotata dal Party di {name}",
+  "someoneElse": "un altro Party",
   "ui": {
     "rooms": "Stanze"
   },
   "toast": {
     "rented": "{name} affittata per 24h!",
-    "notEnough": "Euro insufficienti!",
+    "notEnough": "Soldi insufficienti!",
     "room": "Stanza"
   }
 }

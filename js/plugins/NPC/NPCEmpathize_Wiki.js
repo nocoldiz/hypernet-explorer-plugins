@@ -40,8 +40,11 @@
     // its localized label, listPeople walks every society profile the world
     // holds, and the Wiki tab asks for ALL of them on every render just to
     // print the count on each card. None of it can change while a panel is
-    // open, so each roll is made once per panel and handed back afterwards.
+    // open, so each roll is made once and handed back afterwards.
     _lists: null,
+
+    // What the rolls and the link index were made against (see refresh).
+    _stamp: null,
 
     invalidate() {
       this._index = null;
@@ -49,6 +52,85 @@
       this._linkRegex = null;
       this._indexLang = null;
       this._lists = null;
+      this._stamp = null;
+    },
+
+    // Every wiki link opens a new panel, so dropping the rolls on each open
+    // re-sorted every shelf and recompiled the link pattern (one alternation
+    // over thousands of names) on every hop through the encyclopedia. A panel
+    // now drops them only when the world under them has moved: another
+    // language, another world, the clock, or a shelf that has grown or shrunk.
+    refresh() {
+      const now = this._stampNow();
+      const was = this._stamp;
+      if (was && was.length === now.length && was.every((v, i) => v === now[i])) return false;
+      this.invalidate();
+      this._stamp = now;
+      return true;
+    },
+
+    // Cheap reads only: object identities and lengths, never a walk of a list.
+    _stampNow() {
+      const gs = (typeof $gameSystem !== 'undefined' && $gameSystem) || null;
+      const hm = this._hm();
+      const society = gs?._npcSociety || null;
+      const politics = gs?._npcPolitics || null;
+      let seats = 0;
+      for (const bucket of [politics?.powers, politics?.nations]) {
+        for (const polity of Object.values(bucket || {})) {
+          seats += Object.keys(polity?.politicians || {}).length + (polity?.parties?.length || 0);
+        }
+      }
+      const raw = (prop) => {
+        try { return hm?._histField ? hm._histField(prop, undefined) : undefined; }
+        catch (e) { return undefined; }
+      };
+      const events = raw('events');
+      const dead = raw('deadLeaders');
+      const deaths = raw('leaderDeaths');
+      const gen = this._generatedArtifacts();
+      const lang = (window.T && typeof T.language === 'function') ? T.language() : 'en';
+      // The game clock (variable 114, as the NPC simulation reads it): any time
+      // passing may have moved somebody, so the hops of one visit share a roll
+      // and the next visit after time has passed rolls afresh.
+      const minute = (typeof $gameVariables !== 'undefined' && $gameVariables?.value)
+        ? ($gameVariables.value(114) || 0) : 0;
+      return [
+        lang, gs, minute,
+        society, society ? Object.keys(society).length : 0,
+        events, Array.isArray(events) ? events.length : 0,
+        Array.isArray(dead) ? dead.length : 0,
+        deaths ? Object.keys(deaths).length : 0,
+        politics, politics?.lastSimMinute ?? null, seats,
+        Object.keys(politics?.powers || {}).length, Object.keys(politics?.nations || {}).length,
+        gen, gen ? (gen.items?.length || 0) + (gen.weapons?.length || 0) + (gen.armors?.length || 0) : 0,
+        window.$gameFactions?.playerFaction?.()?.name ?? null,
+      ];
+    },
+
+    // One collator for every sort on the wiki: the same order a bare
+    // localeCompare gives, without building the comparison per call.
+    _collator: null,
+    _compare(a, b) {
+      const c = this._collator || (this._collator = new Intl.Collator());
+      return c.compare(a, b);
+    },
+
+    // Sorted by a label worked out once per entry rather than twice per
+    // comparison (WorldNames.leader is a lookup, and a shelf of thousands
+    // makes tens of thousands of comparisons).
+    _sortByLabel(list, labelOf) {
+      return list.map(e => ({ e, k: labelOf(e) }))
+        .sort((a, b) => this._compare(a.k, b.k))
+        .map(x => x.e);
+    },
+
+    // The chronicle lines about one name, read once per roll: getEventsAbout
+    // localizes the whole history before searching it, and an article asks
+    // again on every render.
+    _eventsAbout(name, limit) {
+      return this._roll('events:' + limit + ':' + name,
+        () => this._hm()?.getEventsAbout?.(name, limit) ?? []);
     },
 
     // Roll `key` if it has not been rolled since the last invalidate.
@@ -98,7 +180,7 @@
         history, power, ownGov, settlements,
         seasons: staticInfo?.seasons ?? null,
         regionId: staticInfo?.id ?? null,
-        events: hm?.getEventsAbout?.(name, 14) ?? [],
+        events: this._eventsAbout(name, 14),
       };
     },
 
@@ -118,7 +200,7 @@
         factions: this.listFactionsOfPower(name),
         holy_leaders: holyLeaders,
         currentHoly: currentHoly?.[name] || null,
-        events: hm?.getEventsAbout?.(name, 14) ?? [],
+        events: this._eventsAbout(name, 14),
       };
     },
 
@@ -179,7 +261,7 @@
             date: found.pol.deathDate ?? null,
             cause: window.NPCPolitics?.textOf?.(found.pol.deathCause) || null,
           },
-          events: hm?.getEventsAbout?.(found.pol.name, 12) ?? [],
+          events: this._eventsAbout(found.pol.name, 12),
         };
       }
       const deaths   = hm?.getLeaderDeaths?.() || {};
@@ -199,7 +281,7 @@
               record: hm?.getLeaderRecord?.(name) ?? null,
               death: isDead ? (deaths[name] || { date: null, cause: null })
                             : this._emptyWorldDeath('iso'),
-              events: hm?.getEventsAbout?.(name, 12) ?? [],
+              events: this._eventsAbout(name, 12),
             };
           }
         }
@@ -216,7 +298,7 @@
           dossier, record,
           death: isDead ? (deaths[name] || { date: null, cause: null })
                         : this._emptyWorldDeath('iso'),
-          events: hm?.getEventsAbout?.(name, 12) ?? [],
+          events: this._eventsAbout(name, 12),
         };
       }
       return null;
@@ -263,7 +345,7 @@
       return {
         type: 'artifact', key: `${kind}:${id}`, kind, id,
         name: artifactName, data, rec,
-        events: hm?.getEventsAbout?.(artifactName, 10) ?? [],
+        events: this._eventsAbout(artifactName, 10),
       };
     },
 
@@ -297,20 +379,23 @@
         if (display === name || f?.name === name) { dlIndex = i; dlFaction = f; }
       });
       if (!hist && !dlFaction) return null;
-      const members = [];
-      if (dlIndex >= 0 && typeof $gameSystem !== 'undefined') {
+      // A walk of the whole society, so it is made once per roll.
+      const members = dlIndex < 0 ? [] : this._roll('members:' + dlIndex, () => {
+        const out = [];
+        if (typeof $gameSystem === 'undefined') return out;
         for (const [npcName, prof] of Object.entries($gameSystem?._npcSociety || {})) {
           if (prof?.factionIndex === dlIndex) {
-            members.push(npcName);
-            if (members.length >= 24) break;
+            out.push(npcName);
+            if (out.length >= 24) break;
           }
         }
-      }
+        return out;
+      });
       // The power this faction answers to is named outright in Factions.json.
       const parentPower = dlFaction?.parentHyperpower || null;
       return {
         type: 'faction', name, hist, dlFaction, dlIndex, members, parentPower,
-        events: hm?.getEventsAbout?.(name, 14) ?? [],
+        events: this._eventsAbout(name, 14),
       };
     },
 
@@ -446,14 +531,17 @@
         people.set(name, { name, group: prof?._homeGroupName ?? null });
       }
       const sys = window.NPCSystem;
-      if (sys?.getGroupNames && sys?.getNPCNamesByGroup) {
+      // The names alone (NPCSystem_Residents.js): the same people the spawn
+      // pool would deal, without cloning a spawn template for each of them.
+      const namesOf = sys?.getNPCPoolNames || sys?.getNPCNamesByGroup;
+      if (sys?.getGroupNames && namesOf) {
         for (const groupName of sys.getGroupNames()) {
-          for (const name of sys.getNPCNamesByGroup(groupName)) {
+          for (const name of namesOf.call(sys, groupName)) {
             if (!people.has(name)) people.set(name, { name, group: groupName });
           }
         }
       }
-      return [...people.values()].sort((a, b) => a.name.localeCompare(b.name));
+      return this._sortByLabel([...people.values()], p => p.name);
     },
 
     // Everybody who ever held an office in this world, book or not. The two
@@ -493,7 +581,7 @@
       // Sorted by the label the listing prints, not by the id behind it, so the
       // A-Z of the page is the A-Z the reader sees.
       const label = n => (window.WorldNames ? window.WorldNames.leader(n) : n);
-      return [...out.values()].sort((a, b) => label(a.name).localeCompare(label(b.name)));
+      return this._sortByLabel([...out.values()], l => label(l.name));
     },
 
     // The cast splits in two, and the wiki gives each half its own shelf.
@@ -546,7 +634,7 @@
       collect(state.powers, 'power');
       collect(state.nations, 'nation');
       const label = n => (window.WorldNames ? window.WorldNames.leader(n) : n);
-      return [...out.values()].sort((a, b) => label(a.name).localeCompare(label(b.name)));
+      return this._sortByLabel([...out.values()], p => label(p.name));
     },
 
     listPowerNames() { return this._roll('powers', this._listPowerNames); },
@@ -555,16 +643,15 @@
       for (const n of (window.NPCPolitics?.listPowers?.() || [])) set.add(n);
       // Sorted by the label, not the id: see listLeaders.
       const label = n => (window.WorldNames ? window.WorldNames.power(n) : n);
-      return [...set].sort((a, b) => label(a).localeCompare(label(b)));
+      return this._sortByLabel([...set], label);
     },
 
     listNations() { return this._roll('nations', this._listNations); },
     _listNations() {
       const states = this._hm()?.getNationsState?.() || {};
       const label = n => (window.WorldNames ? window.WorldNames.nation(n) : n);
-      return this.listNationNames()
-        .map(name => ({ name, controller: states[name]?.controller ?? null }))
-        .sort((a, b) => label(a.name).localeCompare(label(b.name)));
+      return this._sortByLabel(this.listNationNames()
+        .map(name => ({ name, controller: states[name]?.controller ?? null })), n => label(n.name));
     },
 
     listFactionNames() { return this._roll('factions', this._listFactionNames); },
@@ -585,17 +672,16 @@
       if (own && own.name) set.add(own.name);
       const powers = new Set(this.listPowerNames());
       const label = n => (window.WorldNames ? window.WorldNames.faction(n) : n);
-      return [...set].filter(n => !powers.has(n))
-        .sort((a, b) => label(a).localeCompare(label(b)));
+      return this._sortByLabel([...set].filter(n => !powers.has(n)), label);
     },
 
     // Every party currently seated anywhere (power attached), for the wiki's
     // Political Parties index; multiple entries can and do share an ideology.
     listPartyNames() { return this._roll('parties', this._listPartyNames); },
     _listPartyNames() {
-      return (window.NPCPolitics?.listAllParties?.() || [])
-        .map(({ party, powerName }) => ({ id: party.id, name: party.name, powerName, ideologyId: party.ideologyId }))
-        .sort((a, b) => a.name.localeCompare(b.name));
+      return this._sortByLabel((window.NPCPolitics?.listAllParties?.() || [])
+        .map(({ party, powerName }) => ({ id: party.id, name: party.name, powerName, ideologyId: party.ideologyId })),
+        p => p.name);
     },
 
     // Every non-alien creed in Ideology.json, so the Ideologies index is the
@@ -630,7 +716,7 @@
       for (const [key, r] of Object.entries(this._hm()?.getArtifactRecords?.() || {})) {
         if (!seen.has(key)) out.push({ key, name: r.name, kind: r.kind, iconIndex: 245 });
       }
-      return out.sort((a, b) => a.name.localeCompare(b.name));
+      return this._sortByLabel(out, a => a.name);
     },
 
     // ── Earth and the Omega Tower ────────────────────────────────────────────
@@ -682,7 +768,12 @@
     // One shelf of the front page, for 'earth' or 'tower'. Null for a shelf
     // the wiki draws off something else (favourites, the party).
     listIn(cat, realm) {
+      // Kept per shelf and half: the people shelf alone asks TowerWorlds about
+      // every person's group, and the front page counts every shelf per render.
       const tower = realm === 'tower';
+      return this._roll('in:' + cat + ':' + (tower ? 'tower' : 'earth'), () => this._listIn(cat, tower));
+    },
+    _listIn(cat, tower) {
       const byPower = (list, key) => list.filter(e => this.isTowerPower(key(e)) === tower);
       switch (cat) {
         case 'worlds':      return tower ? this.listWorlds() : [];

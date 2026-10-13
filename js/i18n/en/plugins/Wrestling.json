@@ -30,7 +30,7 @@
   },
   "label": {
     "day": "Night {n}",
-    "airtime": "Both shows go live at {hour}. They always have.",
+    "airtime": "Both shows air at {hour}.",
     "mainEvent": "Main event",
     "openDivision": "Open Division",
     "record": "Record",
@@ -47,7 +47,7 @@
     "viewers": "Viewers",
     "share": "Share",
     "wonNight": "{fed} won the hour",
-    "tiedNight": "The hour was split down the middle",
+    "tiedNight": "The hour was a tie",
     "stipulation": "Stipulation",
     "finish": "Finish",
     "odds": "Odds",
@@ -55,7 +55,7 @@
     "payout": "Payout",
     "openBets": "Open bets",
     "settled": "Settled",
-    "noBets": "Nothing staked on tomorrow yet.",
+    "noBets": "No bets on tomorrow yet.",
     "placeBet": "Stake",
     "watchPromo": "Watch the promo",
     "readCard": "Read the card",
@@ -70,7 +70,7 @@
     "over": "Over",
     "under": "Under",
     "whoWinsHour": "Who wins the hour",
-    "noCard": "The card has not been posted yet.",
+    "noCard": "No card posted yet.",
     "injured": "Hurt",
     "cursed": "Cursed",
     "fine": "Fit",
@@ -462,7 +462,7 @@
       "face": [
         "I have heard the count three times tonight and got up on two every time.",
         "You came out in the rain for this, so I will not waste it.",
-        "I do not have a speech. I have a match and I have you."
+        "Forget speeches. I have a match and I have you."
       ],
       "heel": [
         "Sit down. All of you. The professionals are working.",
@@ -472,7 +472,7 @@
       "enigma": [
         "I was told to say something. This is something.",
         "There is a version of tonight where I do not come out here at all. I looked at it.",
-        "Count with me. Not to three. Keep going."
+        "Count with me. Past three. Keep going."
       ]
     },
     "callout": [
@@ -486,7 +486,7 @@
       "You want a speech about respect. I want the {title}.",
       "I did what I did. I would file it again.",
       "You say my name like it belongs to you. It does not. Nothing does.",
-      "I am not here to be understood, {foe}. I am here at {hour}.",
+      "I am here at {hour}, {foe}. Understand that much.",
       "One of us leaves that ring standing, and it has never once been you."
     ],
     "boast": [
@@ -569,8 +569,8 @@
     "placed": "{stake} on {pick} at {odds}.",
     "won": "Paid {amount}: {pick} came in at {odds}.",
     "lost": "Lost {amount} on {pick}.",
-    "tooPoor": "Not enough in the purse for that.",
-    "closed": "The book on that night is closed.",
+    "tooPoor": "Not enough money.",
+    "closed": "Betting on that night is closed.",
     "min": "Minimum stake is {amount}.",
     "max": "Maximum stake is {amount}.",
     "settledNight": "Night {n} settled: {net}."
@@ -602,7 +602,7 @@
     "careerLine": "{wins} wins, {losses} losses across {total} nights on television.",
     "anglesHeading": "Current storylines",
     "matchesHeading": "Recent matches",
-    "noAngles": "Nothing on file. This is unusual and the desk is watching."
+    "noAngles": "No current storylines."
   },
   "toast": {
     "titleChange": "{winner} takes the {title}",
@@ -614,7 +614,7 @@
     "note": "{w} has no arcane abilities.",
     "wikiLine": "Registered mundane, and licensed for none of it. {w} wrestles with hands and weight and nothing else.",
     "promo": [
-      "I do not have a hex. I have never had a hex. I have hands.",
+      "A hex? I have hands. I have always had hands.",
       "You brought a ritual to a wrestling match. I brought forty minutes of cardio.",
       "Half this roster needs a licence to touch me. I need a taped wrist.",
       "When your candle goes out you will still be in the hold.",

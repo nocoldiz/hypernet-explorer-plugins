@@ -194,6 +194,10 @@
  * @desc When true, uses the tile the player is facing instead of event location
  * @type boolean
  * @default false
+ *
+ * @command autoDoor
+ * @text Automatic Door
+ * @desc Swings the calling door event open without halting the game, then closes it again a second later once the doorway is clear.
  */
 
 (() => {
@@ -554,8 +558,28 @@
     useRoomOverEdge();
   });
 
+  PluginManager.registerCommand(pluginName, "autoDoor", function () {
+    const id = (typeof this.eventId === "function") ? this.eventId() : 0;
+    const ev = id ? $gameMap.event(id) : null;
+    if (ev) autoDoorOpen(ev);
+  });
+
+  // Where the party stands, as a key a building can be cached under. On the
+  // procedural map the raw coordinate is not a place: map 636 is every world
+  // square, and inside a stitched window the same tile reads differently with
+  // every shape the window takes. So there it is the world square plus the
+  // square-local tile, spelled the way the deeds spell it (see
+  // ownershipKeyForEntrance), and a tower's floors stay with the tower.
   function createLocationKey() {
-    return `${$gameMap.mapId()}_${$gamePlayer.x}_${$gamePlayer.y}`;
+    const mapId = $gameMap.mapId();
+    if (mapId !== 636) return `${mapId}_${$gamePlayer.x}_${$gamePlayer.y}`;
+    const S = window.ProcStitch;
+    const local = (S && typeof S.localToParty === 'function')
+      ? S.localToParty($gamePlayer.x, $gamePlayer.y)
+      : { x: $gamePlayer.x, y: $gamePlayer.y };
+    const wx = (typeof $gameVariables !== 'undefined') ? $gameVariables.value(43) : 0;
+    const wy = (typeof $gameVariables !== 'undefined') ? $gameVariables.value(44) : 0;
+    return `${mapId}:${wx},${wy}_${local.x}_${local.y}`;
   }
 
   function seededRandom(seed) {
@@ -582,12 +606,48 @@
   // exactly as it has always been.
   let _seedSaltProvider = null;
   function mapSeedSalt() {
-    if (!_seedSaltProvider) return 0;
-    try { return (_seedSaltProvider() | 0) >>> 0; } catch (e) { return 0; }
+    // An earthlike world's town stands at planet-local numbers every such
+    // world shares, so its world is part of what is behind each door (the
+    // salt GalaxySim enterPlanetSurface stamps on the landing grid).
+    const grid = (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._procGenData)
+      ? $gameSystem._procGenData.alienGrid : null;
+    const world = (grid && grid.earthlike && grid.salt) ? (grid.salt >>> 0) : 0;
+    if (!_seedSaltProvider) return world;
+    try { return ((_seedSaltProvider() | 0) ^ world) >>> 0; } catch (e) { return world; }
   }
 
   function createSeed(mapId, x, y) {
-    return ((mapId * 1000000 + x * 1000 + y) ^ getWorldSeed() ^ mapSeedSalt()) >>> 0;
+    let salt = mapSeedSalt();
+    // A door on the procedural map is addressed by the world square it stands
+    // in and its tile inside that square: the raw map coordinate moves with the
+    // shape of the stitched window, and the same tile on two different squares
+    // must not open onto the same premises.
+    if (mapId === 636) {
+      const place = procDoorPlace(x, y);
+      x = place.x;
+      y = place.y;
+      salt = (salt ^ place.salt) >>> 0;
+    }
+    return ((mapId * 1000000 + x * 1000 + y) ^ getWorldSeed() ^ salt) >>> 0;
+  }
+
+  function procDoorPlace(x, y) {
+    const S = window.ProcStitch;
+    let wx = (typeof $gameVariables !== 'undefined') ? $gameVariables.value(43) : 0;
+    let wy = (typeof $gameVariables !== 'undefined') ? $gameVariables.value(44) : 0;
+    if (S && typeof S.active === 'function' && S.active()) {
+      try {
+        const sq = S.squareAt(x, y);
+        const loc = S.local(x, y);
+        if (sq && loc) { wx = sq.x; wy = sq.y; x = loc.x; y = loc.y; }
+      } catch (e) { /* keep the raw coordinate */ }
+    }
+    const pg = (typeof $gameSystem !== 'undefined' && $gameSystem) ? $gameSystem._procGenData : null;
+    const depth = (pg && pg.biomeLayerStack) ? pg.biomeLayerStack.length : 0;
+    let h = Math.imul((wx | 0) ^ 0x9e3779b1, 0x85ebca6b);
+    h = Math.imul(h ^ (wy | 0) ^ (h >>> 13), 0xc2b2ae35);
+    h = Math.imul(h ^ depth ^ (h >>> 16), 0x27d4eb2f);
+    return { x, y, salt: (h ^ (h >>> 15)) >>> 0 };
   }
 
   function getSeededRandomFromArray(array, seed) {
@@ -1111,7 +1171,7 @@
     return Object.keys(owned).map(key => {
       // Two spellings: a plain `mapId_x_y_f0`, and the procedural map's
       // `mapId:worldX,worldY_x_y_f0`, whose coordinates are square-local.
-      const m = key.match(/^(\d+)(?::(-?\d+),(-?\d+))?_(\d+)_(\d+)_f(\d+)$/);
+      const m = key.match(/^(\d+)(?::(-?\d+),(-?\d+))?_(-?\d+)_(-?\d+)_f(\d+)$/);
       const mapId = m ? Number(m[1]) : null;
       const x = m ? Number(m[4]) : null;
       const y = m ? Number(m[5]) : null;
@@ -1404,15 +1464,24 @@
     return salt ? `${key}#${salt}` : key;
   }
 
-  function getDoorKey(useFacing) {
-    const c = getEventCoordinates(useFacing);
-    return `${c.x},${c.y}`;
+  // Where a door's forced-open record is filed. On the procedural map the raw
+  // tile moves with the stitched window's shape and the party's own square is
+  // not the door's, so the record is addressed by the door's world square (the
+  // procDoorPlace salt) and its tile inside that square instead.
+  function forcedDoorSlot(x, y) {
+    if ($gameMap && $gameMap.mapId() === 636) {
+      const p = procDoorPlace(x, y);
+      const salt = mapSeedSalt();
+      const place = `proc636:${p.salt}` + (salt ? `#${salt}` : '');
+      return { place, key: `${p.x},${p.y}` };
+    }
+    return { place: doorPlaceKey(), key: `${x},${y}` };
   }
 
   // The world folder's forced-door table for the place the party is standing in.
   // Null when WorldManager is not there (a browser build with no world folder),
   // which the callers read as "nothing is forced open".
-  function getForcedDoors(create) {
+  function getForcedDoors(create, place) {
     if (!window.WorldManager || typeof window.WorldManager.getFile !== 'function') return null;
     let store = null;
     try { store = window.WorldManager.getFile('terrain'); } catch (e) { return null; }
@@ -1421,7 +1490,6 @@
       if (!create) return null;
       store.forcedDoors = {};
     }
-    const place = doorPlaceKey();
     if (!store.forcedDoors[place]) {
       if (!create) return null;
       store.forcedDoors[place] = {};
@@ -1438,8 +1506,9 @@
   }
 
   function isTileForcedOpen(x, y) {
-    const doors = getForcedDoors(false);
-    const key = `${x},${y}`;
+    const slot = forcedDoorSlot(x, y);
+    const doors = getForcedDoors(false, slot.place);
+    const key = slot.key;
     let forcedAt = doors ? doors[key] : undefined;
     if (forcedAt === undefined) forcedAt = legacyForcedAt(x, y);
     if (forcedAt === undefined) return false;
@@ -1469,9 +1538,11 @@
   // broken door without waiting for this one to be saved.
   function markDoorForcedOpen(useFacing) {
     const now = (typeof $gameVariables !== 'undefined') ? $gameVariables.value(114) : 0;
-    const doors = getForcedDoors(true);
+    const c = getEventCoordinates(useFacing);
+    const slot = forcedDoorSlot(c.x, c.y);
+    const doors = getForcedDoors(true, slot.place);
     if (doors) {
-      doors[getDoorKey(useFacing)] = now;
+      doors[slot.key] = now;
       if (typeof window.WorldManager.flush === 'function') {
         try { window.WorldManager.flush('terrain'); } catch (e) { /* non-fatal */ }
       }
@@ -2060,12 +2131,15 @@
     try {
       if (window.Dice3D) {
         const rollRes = await window.Dice3D.rollD20({
-          actionName: "Door Bash",
-          statName: "STR (Athletics)",
+          actionName: T('ProceduralHouse.diceDoorBash'),
+          statName: TextManager.param(2),
           modifier: strMod,
           dc: 12,
           force3D: true
         });
+        // The map was left while the die was in the air (a menu, a transfer):
+        // the party is no longer at this door, so nothing happens to it.
+        if (rollRes && rollRes.ownerGone) return;
         success = rollRes.success;
       } else {
         const roll = Math.floor(Math.random() * 20) + 1;
@@ -2626,6 +2700,24 @@
     $gamePlayer.reserveTransfer(currentMultiBuilding.structure.floors[targetFloorIndex], 0, 0, $gamePlayer.direction(), 2);
   }
 
+  // A save written mid-ride loads onto a black screen. Finish the ride on the
+  // first map frame when the building it belongs to came back with the save;
+  // otherwise cancel it and bring the screen back where the party stands.
+  function resumeSavedElevatorTransit(saved) {
+    const target = saved ? Number(saved.targetFloorIndex) : NaN;
+    const st = currentMultiBuilding && currentMultiBuilding.structure;
+    const floors = st && Array.isArray(st.floors) ? st.floors : null;
+    if (floors && target >= 0 && target < floors.length && floors[target] &&
+        target !== currentMultiBuilding.currentFloorIndex) {
+      _elevatorTransit = { framesLeft: 0, targetFloorIndex: target };
+      return;
+    }
+    _elevatorTransit = null;
+    if (saved && typeof $gameScreen !== "undefined" && $gameScreen) {
+      $gameScreen.startFadeIn(30);
+    }
+  }
+
   function updateElevatorTransit() {
     if (!_elevatorTransit) return;
     if (_elevatorTransit.framesLeft > 0) {
@@ -2804,6 +2896,73 @@
     }
   }
 
+  // ── Automatic doors ─────────────────────────────────────────────────────────
+  // A door that opens by itself as the party walks up and shuts behind them.
+  // The swing is a forced route with no wait, so the interpreter that called it
+  // is done at once and the player never stops; the event's own update then
+  // counts the second down and swings it shut, holding while anybody stands in
+  // the doorway. Touching a door already open only restarts the count.
+  const AUTO_DOOR_OPEN_FRAMES = 60;
+
+  function autoDoorOpen(ev) {
+    const st = ev._autoDoor;
+    if (st) { st.timer = AUTO_DOOR_OPEN_FRAMES; return; }
+    ev._autoDoor = { timer: AUTO_DOOR_OPEN_FRAMES, dirFix: ev._directionFix };
+    ev._directionFix = false;
+    AudioManager.playSe({ name: "Open1", volume: 90, pitch: 100, pan: 0 });
+    ev.forceMoveRoute({
+      repeat: false, skippable: true, wait: false,
+      list: [
+        { code: 17 },                  // turn left
+        { code: 15, parameters: [3] }, // wait 3
+        { code: 18 },                  // turn right
+        { code: 15, parameters: [3] }, // wait 3
+        { code: 19 },                  // turn up
+        { code: 37 },                  // through on
+        { code: 0 }
+      ]
+    });
+  }
+
+  function autoDoorOccupied(ev) {
+    const x = ev.x, y = ev.y;
+    if ($gamePlayer.pos(x, y)) return true;
+    if ($gamePlayer.followers().isSomeoneCollided(x, y)) return true;
+    return $gameMap.eventsXy(x, y).some(e => e !== ev && e.isNormalPriority() && !e.isThrough());
+  }
+
+  function autoDoorUpdate(ev) {
+    const st = ev._autoDoor;
+    if (st.closing) {
+      if (ev.isMoveRouteForcing()) return;
+      ev._directionFix = st.dirFix;
+      ev._autoDoor = null;
+      return;
+    }
+    if (st.timer > 0) st.timer--;
+    if (st.timer > 0 || ev.isMoveRouteForcing() || autoDoorOccupied(ev)) return;
+    st.closing = true;
+    AudioManager.playSe({ name: "Close1", volume: 90, pitch: 100, pan: 0 });
+    ev.forceMoveRoute({
+      repeat: false, skippable: true, wait: false,
+      list: [
+        { code: 38 },                  // through off
+        { code: 18 },                  // turn right
+        { code: 15, parameters: [3] }, // wait 3
+        { code: 17 },                  // turn left
+        { code: 15, parameters: [3] }, // wait 3
+        { code: 16 },                  // turn down
+        { code: 0 }
+      ]
+    });
+  }
+
+  const _Game_Event_update_autoDoor = Game_Event.prototype.update;
+  Game_Event.prototype.update = function () {
+    _Game_Event_update_autoDoor.call(this);
+    if (this._autoDoor) autoDoorUpdate(this);
+  };
+
   const _Scene_Map_update_door = Scene_Map.prototype.update;
   Scene_Map.prototype.update = function() {
     _Scene_Map_update_door.call(this);
@@ -2936,6 +3095,10 @@
     contents.proceduralHouseSystem.currentHouseSessionId = currentHouseSessionId;
     contents.proceduralHouseSystem.currentMultiBuilding = currentMultiBuilding;
     contents.proceduralHouseSystem.currentBuilding = _currentBuilding;
+    // A ride in progress is part of the save: the screen is already black, and
+    // without the ride the load would never fade back in.
+    contents.proceduralHouseSystem.elevatorTransit = _elevatorTransit
+      ? { targetFloorIndex: _elevatorTransit.targetFloorIndex } : null;
     return contents;
   };
 
@@ -2948,6 +3111,8 @@
     for (const k of Object.keys(multiBuildingStructures)) delete multiBuildingStructures[k];
     currentHouseSessionId = null;
     currentMultiBuilding = null;
+    _elevatorTransit = null;
+    _postTransferActions = null;
     setCurrentBuilding(null);
     if (contents.proceduralHouseSystem) {
         const system = contents.proceduralHouseSystem;
@@ -2956,6 +3121,7 @@
         currentHouseSessionId = system.currentHouseSessionId || null;
         currentMultiBuilding = system.currentMultiBuilding || null;
         setCurrentBuilding(system.currentBuilding || null);
+        resumeSavedElevatorTransit(system.elevatorTransit);
     } else if (contents.treasureRoomSystem) {
         // Backwards compatibility migration
         const system = contents.treasureRoomSystem;
@@ -3003,11 +3169,16 @@
         if (seen.has(mapId)) continue;
         seen.add(mapId);
         const info = ($dataMapInfos && $dataMapInfos[mapId]) ? $dataMapInfos[mapId] : null;
-        let displayName = (info && info.name) ? info.name : ('House ' + mapId);
+        let displayName = (info && info.name) ? info.name : T('ProceduralHouse.houseNum', { id: mapId });
         const m = displayName.match(/^\d+\s*-\s*(.*)$/);
         if (m && m[1]) {
+          // The map's own name is an English id: the bare House / Hut ones read
+          // through the language file, numbered so they tell apart.
           const rest = m[1].trim();
-          displayName = rest ? (rest === 'House' || rest === 'Hut' ? rest + ' ' + mapId : rest) : ('Room ' + mapId);
+          if (!rest) displayName = T('ProceduralHouse.roomNum', { id: mapId });
+          else if (rest === 'House') displayName = T('ProceduralHouse.houseNum', { id: mapId });
+          else if (rest === 'Hut') displayName = T('ProceduralHouse.hutNum', { id: mapId });
+          else displayName = rest;
         }
         results.push({
           mapId: mapId,

@@ -1,0 +1,59 @@
+{
+  "noThree": "The 3D table cannot be drawn here.",
+  "pantry": "Pantry",
+  "emptySlot": "empty",
+  "name": {
+    "plain": "Plain Pizza",
+    "one": "{a} Pizza",
+    "two": "{a} and {b} Pizza",
+    "many": "{a} Supreme",
+    "numbered": "{name} {n}"
+  },
+  "cmd": {
+    "save": "Save to the recipe book",
+    "serve": "Serve the pizza",
+    "clear": "Clear the toppings",
+    "leave": "Leave the table"
+  },
+  "status": {
+    "kitchen": "Pick up to five toppings, then save the pizza to the recipe book.",
+    "free": "A customer is waiting. Make what they ordered.",
+    "added": "{a} on the pizza.",
+    "removed": "{a} taken off.",
+    "cleared": "Back to a bare base.",
+    "baking": "In the oven...",
+    "continue": "Press to continue."
+  },
+  "card": {
+    "cost": "Cost to make {cost}",
+    "kcal": "{kcal} kcal",
+    "missing": "{n} ingredients missing",
+    "allInPack": "Everything is in the pack",
+    "base": "Pizza bases in the pack: {n}",
+    "noBase": "No pizza base in the pack"
+  },
+  "order": {
+    "title": "Order",
+    "crave": "Wants {a}",
+    "shun": "Hates {a}",
+    "budget": "Budget {cost}"
+  },
+  "result": {
+    "savedTitle": "Recipe saved",
+    "ready": "Ready to bake in the kitchen.",
+    "missing": "Missing {n} ingredients.",
+    "failTitle": "Not saved",
+    "servedTitle": "Pizza served",
+    "stars": "{n} of 3 stars",
+    "hits": "{n} of 2 wishes met",
+    "shunned": "It had a topping they hate.",
+    "over": "Good, but over the budget."
+  },
+  "error": {
+    "noBook": "There is no recipe book to write in.",
+    "noState": "There is no recipe book to write in.",
+    "tooManyRecipes": "The recipe book is full.",
+    "tooManyToppings": "A pizza holds at most five toppings.",
+    "noToppings": "Pick at least one topping."
+  }
+}

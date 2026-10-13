@@ -224,22 +224,31 @@
   // so it is asked here rather than worked out twice:
   //
   //   specForEvent(ev)    an NPC standing on the map: the model their sheet
-  //                       names in NPCs.json, or the body a creature profile
-  //                       is built from. A dossier's model (Em) never speaks. Unlike
-  //                       the panel, the sheet's own bust does not outrank a
-  //                       model here: a speaker with a body is shown by it.
-  //   specForActor(actor) a party member, by the portrait they chose, never
-  //                       by a dossier's model.
+  //                       names in NPCs.json, the body a creature profile is
+  //                       built from, or the dossier model (Em) of a dossier
+  //                       standing on her own map. Unlike the panel, the
+  //                       sheet's own bust does not outrank a model here: a
+  //                       speaker with a body is shown by it.
+  //   specForActor(actor) a party member, by the model the status sheet
+  //                       portrays them by (window.ActorModel3D.infoFor): a
+  //                       3D portrait picked at creation, a recruited or
+  //                       promoted monster, a dossier's model.
+  //   specForBust(name)   the dossier whose painted bust this is, by its
+  //                       model, for a cast member who is nobody's actor.
   //   build(spec)         Promise of the built battler, or null.
   //
-  // Null means "no model: draw the bust".
+  // `frame: 'bust'` on a spec asks for a person's head and shoulders rather
+  // than the whole body. Null means "no model: draw the bust".
   function _speakerSpecForEvent(ev) {
     if (!ev || typeof ev.event !== 'function') return null;
     const npcName = window.NPCSim?.npcNameForEvent?.(ev) ?? (ev.event()?.name?.trim() || '');
-    // A dossier with a model of its own (Em) was painted a bust too, and in
-    // dialogue that bust is who she is: the model is for the panel and the
-    // status sheet only.
-    if (_presetFromEvent(ev)) return null;
+    // A dossier with a model of its own (Em) speaks as it, on her own map
+    // as in the party. A dossier with none keeps the bust it was painted.
+    const preset = _presetFromEvent(ev);
+    if (preset) {
+      const spec = _presetModelSpec(null, preset);
+      return spec ? Object.assign(spec, { frame: 'bust' }) : null;
+    }
     const NC = window.NPCCreature;
     if (!NC) return null;
     const profile = npcName ? _getProfile(npcName) : null;
@@ -257,9 +266,31 @@
 
   function _speakerSpecForActor(actor) {
     if (!actor) return null;
-    if (window.CharacterPresets?.getActorPresetModel?.(actor)) return null;
-    const spec = _creatureModelSpec(_creatureSubject(actor, null, actor.name()), actor);
-    return spec && spec.info && spec.info.kind === 'glb' ? null : spec;
+    const AM = window.ActorModel3D;
+    const info = AM && AM.infoFor ? AM.infoFor(actor) : null;
+    if (!info) return null;
+    // A creature is shown whole; a person, dossier or sculpted at creation,
+    // head and shoulders like the busts.
+    const NC = window.NPCCreature;
+    const creature = info.kind === 'enemy' || !!actor._isCreatureActor ||
+      (typeof actor.portraitMode === 'function' && actor.portraitMode() === 'sprite') ||
+      !!(NC && NC.isNonSentientActor && NC.isNonSentientActor(actor));
+    const spec = { info, id: AM.keyFor(info) };
+    if (!creature) spec.frame = 'bust';
+    return spec;
+  }
+
+  function _speakerSpecForBust(bustName) {
+    const CP = window.CharacterPresets;
+    if (!bustName || !CP || !CP.getCharacterPresets) return null;
+    const name = String(bustName).replace(/^img\/busts\//, '').replace(/\.png$/, '');
+    // A portrait name, or the dossier's own name where a beat names its
+    // speaker instead ("Em").
+    const low = name.trim().toLowerCase();
+    const preset = CP.getCharacterPresets().find((p) => p && (p.busts === name ||
+      String(p.name ?? '').trim().toLowerCase() === low));
+    const spec = preset ? _presetModelSpec(null, preset) : null;
+    return spec ? Object.assign(spec, { frame: 'bust' }) : null;
   }
 
   // The same two ways _initPortrait3D builds a spec, shared so the message box
@@ -278,6 +309,7 @@
   window.NPCPortraitModel = {
     specForEvent: _speakerSpecForEvent,
     specForActor: _speakerSpecForActor,
+    specForBust: _speakerSpecForBust,
     build: _buildSpecModel,
   };
 
@@ -546,7 +578,7 @@
 
   function _needLabels(T) {
     return Object.assign(_situationLabels(T), {
-      sleep: T.atHome || T.resting || 'At Home', home: T.atHome || 'At Home', hunger: T.hungry, hygiene: T.freshening, work: T.working, shopwork: T.working,
+      sleep: T.atHome || T.resting, home: T.atHome, hunger: T.hungry, hygiene: T.freshening, work: T.working, shopwork: T.working,
       money: T.earning, crime: T.scheming, safety: T.wary, comfort: T.relaxing,
       social: T.socializing, leisure: T.leisure, traveling: T.traveling,
       shopping: T.shopping, school: T.atSchool, heal: T.healing,
@@ -615,7 +647,7 @@
 
   function _homeAddressLabel(profile, T) {
     if (!profile) return '';
-    if (profile.isHomeless) return T?.homelessLbl || 'Homeless';
+    if (profile.isHomeless) return T?.homelessLbl || '';
     const b = profile.homeBuilding;
     if (!b) return '';
 
@@ -626,18 +658,18 @@
     if (!mapName && b.mapId === 636) {
       const gName = profile._homeGroupName || b.groupName;
       const grp = gName ? $gameSystem?._npcMapGroups?.[gName] : null;
-      mapName = grp?.displayName || window.MapManager?.getMapName?.(636) || T?.frontier || 'Settlement';
+      mapName = grp?.displayName || window.MapManager?.getMapName?.(636) || T?.frontierSettlement || '';
     } else if (!mapName && b.mapId) {
-      mapName = window.MapManager?.getMapName?.(b.mapId) || ($dataMapInfos?.[b.mapId]?.name) || `Map ${b.mapId}`;
+      mapName = window.MapManager?.getMapName?.(b.mapId) || ($dataMapInfos?.[b.mapId]?.name) || window.T('Empathize.mapNum', { id: b.mapId });
     }
 
     const coords = (b.x != null && b.y != null) ? `(${b.x}, ${b.y})` : '';
     const floorNum = (b.floorIndex != null ? b.floorIndex : 0) + 1;
-    const floorLabel = `${T?.floorLbl || 'Floor'} ${floorNum}`;
+    const floorLabel = `${T?.floorLbl || ''} ${floorNum}`.trim();
 
     const parts = [];
     if (mapName) parts.push(mapName);
-    if (coords) parts.push(`Door ${coords}`);
+    if (coords) parts.push(window.T('Empathize.doorAt', { coords }));
     if (floorLabel) parts.push(floorLabel);
 
     return parts.join(' · ');
@@ -661,7 +693,7 @@
     if (activity === 'sleep' || activity === 'home') {
       if (profile && profile.homeBuilding && !profile.isHomeless) {
         const addr = _homeAddressLabel(profile, T);
-        return addr ? `${T.atHome || 'At Home'} (${addr})` : (T.atHome || 'At Home');
+        return addr ? `${T.atHome} (${addr})` : T.atHome;
       }
     }
     return needLabels[activity] || activity;
@@ -1523,6 +1555,12 @@
 
   Scene_NPCEmpathize.prototype._render = function () {
     if (!this._overlay) return;
+    // Every string the panel reads through _getT agrees with whoever the panel
+    // is about ({g:...} forms, see _setSubjectGender).
+    try {
+      const subject = this._targetName?.();
+      window.NPCEmpathize._internal?._setSubjectGender?.(subject ? _getProfile(subject)?.gender : 0);
+    } catch (e) { /* agreement falls back to the unmarked form */ }
     const typing = _searchFieldFocus();
     // Whatever this render draws, the rows the cursor walks are about to be
     // replaced: drop the cached lists of them so the next cursor move reads
@@ -1564,7 +1602,23 @@
     // grid tiles, so re-apply the keyboard/controller focus ring after each
     // render. The NPC-mode path also does this inside its own rAF, but the
     // entity-page path (_renderEntityInner) did not - cover both here.
-    requestAnimationFrame(() => this._updateSelectionHighlight?.());
+    this._queueSelectionHighlight();
+  };
+
+  // The focus ring is put back once a frame, however many renders and paths
+  // asked for it. Each render used to queue two passes of its own (here and
+  // inside the NPC-mode frame), and each pass walks the action buttons. The
+  // pass is re-queued rather than kept where it was, so it still runs after
+  // every other frame callback a render queued before it (the chat pin, the
+  // routine row scrolled into view), as the last of them did before.
+  Scene_NPCEmpathize.prototype._queueSelectionHighlight = function () {
+    if (this._selHighlightRaf && typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(this._selHighlightRaf);
+    }
+    this._selHighlightRaf = requestAnimationFrame(() => {
+      this._selHighlightRaf = null;
+      this._updateSelectionHighlight?.();
+    });
   };
 
   Scene_NPCEmpathize.prototype._renderInner = function () {
@@ -2216,8 +2270,9 @@
       if (showingChatUI) this._scrollChatToBottom();
       if (this._activeTab === 'routine')
         this._rightEl?.querySelector('#npc-routine-now')?.scrollIntoView({ block: 'center' });
-      this._updateSelectionHighlight?.();
     });
+    // After the frame above, so the ring is drawn once the log is pinned.
+    this._queueSelectionHighlight();
 
     // Restore focus + caret after a re-render rebuilt the field, so an
     // in-progress draft survives (matches the search-input pattern used by
@@ -2422,6 +2477,31 @@
     return html;
   }
 
+  // A compact readout of one EmotionModel state (Health_BiologicSimulation.js):
+  // the mood the brain chapter would name and the strongest emotions as bars.
+  // The labels are Biologic.emotion, the same words the brain chapter prints.
+  function _emotionBlockHTML(state, title, n) {
+    const EM = window.EmotionModel;
+    if (!EM || !state || !state.v) return '';
+    const tr = window.T;
+    const mood = EM.moodOf(state);
+    const moodLabel = tr.has('Biologic.mood.' + mood) ? tr('Biologic.mood.' + mood) : mood;
+    const rows = EM.top(state, n).map((r) => {
+      // i18n-ignore-start: CSS band ids
+      const band = r.valence > 0 ? 'good' : r.valence < 0 ? (r.value >= 45 ? 'bad' : 'warm') : 'warm';
+      // i18n-ignore-end
+      const label = tr('Biologic.emotion.' + r.id);
+      const level = tr('Biologic.emotionLevel.' + r.level);
+      return `<div class="npc-pred-row npc-emo-row" title="${_escapeHtml(label + ': ' + level)}">` +
+        `<span class="npc-pred-name">${_escapeHtml(label)}</span>` +
+        `<div class="npc-pred-track"><div class="npc-pred-fill npc-fill--${band}" style="--npc-w:${r.value}%"></div></div>` +
+        `<span class="npc-pred-val npc-score--${band}">${r.value}</span></div>`;
+    }).join('');
+    return `<div class="npc-emo-block">` +
+      `<div class="npc-sec-hdr">${_escapeHtml(title)} <span class="npc-emo-mood">${_escapeHtml(moodLabel)}</span></div>` +
+      `${rows}</div>`;
+  }
+
   Scene_NPCEmpathize.prototype._buildLeftPanelHTML = function (bustPath, profile, predispositions, T, ident, attractions, modelSpec, animalStatus) {
     let hpmpHTML = '';
     if (profile?.mhp !== undefined || profile?.mmp !== undefined) {
@@ -2467,6 +2547,24 @@
         `<div class="npc-focus-switcher">` +
         `<span class="npc-focus-switcher-lbl">${_escapeHtml(T.interactingAs)}</span>` +
         `${chips}${hint}</div>`;
+    }
+
+    // How they feel. The subject's state belongs to the subject (an NPC's
+    // profile.emotions, a party member's actor._emotions) and never moves when
+    // the conversation is handed to somebody else; the block under the
+    // switcher is the member doing the talking, and follows the switcher.
+    let subjectEmoHTML = '';
+    let speakerEmoHTML = '';
+    if (window.EmotionModel && !this._entity) {
+      const subjectState = this._actorId != null
+        ? window.EmotionModel.ofActor($gameActors.actor(this._actorId))
+        : (profile ? window.NPCEmpathize?.Emotions?.of?.(profile) : null);
+      subjectEmoHTML = _emotionBlockHTML(subjectState, T('Empathize.emotionsTitle'), 5);
+      const speaker = isNpcMode ? this._focusActor?.() : null;
+      if (speaker) {
+        speakerEmoHTML = _emotionBlockHTML(window.EmotionModel.ofActor(speaker),
+          T('Empathize.speakerEmotions', { name: speaker.name() }), 3);
+      }
     }
 
     let predHTML = '';
@@ -2593,7 +2691,9 @@
     return `
       ${portraitHTML}
       ${identHTML}
+      ${subjectEmoHTML}
       ${switcherHTML}
+      ${speakerEmoHTML}
       <div class="npc-vitals-footer">
         ${topInfoHTML}
         ${vitalsHTML}${needHTML}${hostileHTML}${lastMetHTML}

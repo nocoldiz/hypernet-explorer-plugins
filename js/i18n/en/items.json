@@ -7546,5 +7546,9 @@
   "2112": {
     "name": "Hair Dye Sachet",
     "description": "A sachet of {raven black|neon blue} hair dye.\nSubstance +20 for a whole day."
+  },
+  "2113": {
+    "name": "Pizza Base",
+    "description": "A round of pizza dough, stretched and ready.\nAdd sauce and toppings, then bake."
   }
 }

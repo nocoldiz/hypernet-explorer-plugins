@@ -31,7 +31,7 @@
   "panel": {
     "title": "Animale",
     "breed": "Razza",
-    "age": "Eta",
+    "age": "Età",
     "growth": "Crescita",
     "grownAlready": "Adulto",
     "daysToAdult": {
@@ -55,25 +55,29 @@
   "actionPet": "Accarezza",
   "actionEmpathize": "Empatizza",
   "actionCancel": "Annulla",
+  "actionFeed": "Nutri",
+  "feedChoice": "{item} ×{qty}",
+  "nothingToFeed": "Non hai niente che il \\c[14]{animal}\\c[0] mangerebbe.",
   "petting": [
     "Ti accovacci e gratti il {animal} dietro le orecchie.",
     "Passi una mano sulla schiena del {animal} e lo lasci appoggiare a te.",
     "Resti un po' con il {animal}, senza dire niente di particolare.",
-    "Gratti il {animal} sotto il mento finche' non chiude gli occhi.",
+    "Gratti il {animal} sotto il mento finché non chiude gli occhi.",
     "Accarezzi il {animal} e lui decide che puoi restare."
   ],
   "fed": "Il \\c[14]{animal}\\c[0] mangia dalla tua mano.",
   "notHungry": "Il \\c[14]{animal}\\c[0] ne ha avuto abbastanza.",
-  "tooHungryToProduce": "Il \\c[14]{animal}\\c[0] e troppo affamato per dare qualcosa.",
+  "tooHungryToProduce": "Il \\c[14]{animal}\\c[0] è troppo affamato per dare qualcosa.",
   "farmerOf": "Il contadino di {place}",
   "owner": "Proprietario",
   "wildAnimal": "Selvatico",
   "actionConvince": "Convinci a unirsi",
   "actionJoinPet": "Unisciti come animale",
-  "actionJoinPartyAnimal": "Unisciti al gruppo",
+  "actionJoinPartyAnimal": "Unisciti al Party",
   "toast": {
     "grownUp": "Il {animal} è cresciuto.",
     "died": "Il tuo {animal} a {place} è morto.",
     "born": "A {place} è nato un piccolo di {animal}."
-  }
+  },
+  "wilderness": "Terre selvagge"
 }

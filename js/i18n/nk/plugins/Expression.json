@@ -62,7 +62,7 @@
     },
     "bloodied": {
       "name": "BLOODIED",
-      "desc": "FIRES WHEN A BLOW TAKES DIS CHARACTER UNDER HALF HEALTH!"
+      "desc": "FIRES WHEN DIS CHARACTER DROPS BELOW HALF HEALTH!"
     },
     "mpDry": {
       "name": "RUNNIN' DRY",
@@ -90,7 +90,7 @@
     },
     "stateOnEnemy": {
       "name": "BAD 'UN STATE",
-      "desc": "FIRES WHEN DA CHOSEN STATE TAKES HOLD OF AN BAD 'UN!"
+      "desc": "FIRES WHEN AN BAD 'UN GETS DA CHOSEN STATE!"
     },
     "struckTrue": {
       "name": "STRUCK TRUE",
@@ -98,15 +98,15 @@
     },
     "deathsDoor": {
       "name": "DEATH'S DOOR",
-      "desc": "FIRES ON DA BLOW DAT WOULD KNOCK DIS CHARACTER OUT: DEY HOLD ON AT 1 HP INSTEAD!"
+      "desc": "FIRES ON A KNOCKOUT BLOW. DIS CHARACTER SURVIVES AT 1 HP!"
     },
     "stateOnSelf": {
       "name": "STATE TAKEN",
-      "desc": "FIRES WHEN DA CHOSEN STATE TAKES HOLD OF DIS CHARACTER!"
+      "desc": "FIRES WHEN DIS CHARACTER GETS DA CHOSEN STATE!"
     },
     "afflicted": {
       "name": "AFFLICTED",
-      "desc": "FIRES WHEN ANY HARMFUL STATE TAKES HOLD OF DIS CHARACTER!"
+      "desc": "FIRES WHEN DIS CHARACTER GETS ANY HARMFUL STATE!"
     },
     "levelUp": {
       "name": "GROWTH",
@@ -126,7 +126,7 @@
     },
     "heatRises": {
       "name": "HEAT RISES",
-      "desc": "FIRES WHEN DA POLICE'S ATTENTION ON DA PARTY GROWS!"
+      "desc": "FIRES WHEN POLICE ATTENTION ON DA PARTY RISES!"
     },
     "crime": {
       "name": "CRIME",
@@ -174,7 +174,7 @@
     },
     "outnumbered": {
       "name": "OUTNUMBERED",
-      "desc": "HOLDS WHILE DA BAD 'UNS STANDIN' OUTNUMBER DA PARTY!"
+      "desc": "HOLDS WHILE BAD 'UNS OUTNUMBER DA PARTY!"
     },
     "wounded": {
       "name": "WOUNDED",
@@ -202,7 +202,7 @@
     },
     "wealthy": {
       "name": "WEALTHY",
-      "desc": "HOLDS WHILE DA PARTY CARRIES AT LEAST DA CHOSEN SUM!"
+      "desc": "HOLDS WHILE DA PARTY HAB AT LEAST DA CHOSEN SUM!"
     },
     "wanted": {
       "name": "WANTED",
@@ -226,7 +226,7 @@
     },
     "sick": {
       "name": "SICK",
-      "desc": "HOLDS WHILE DIS CHARACTER CARRIES A DISEASE!"
+      "desc": "HOLDS WHILE DIS CHARACTER HAB A DISEASE!"
     },
     "selfHasState": {
       "name": "UNDER A STATE",
@@ -238,11 +238,11 @@
     },
     "bossFight": {
       "name": "BOSS FIGHT",
-      "desc": "HOLDS WHILE A BOSS STANDS AMONG DA BAD 'UNS!"
+      "desc": "HOLDS WHILE FIGHTIN' A BOSS!"
     },
     "duel": {
       "name": "DUEL",
-      "desc": "HOLDS WHILE A SINGLE BAD 'UN IZ LEFT STANDIN'!"
+      "desc": "HOLDS WHILE ONLY ONE BAD 'UN REMAINS!"
     },
     "lastStand": {
       "name": "LAST STAND",
@@ -282,7 +282,7 @@
     },
     "windfall": {
       "name": "WINDFALL",
-      "desc": "A LIL' MONEY TURNS UP IN DA PARTY'S POCKETS!"
+      "desc": "GIVES DA PARTY A LIL' MONEY!"
     },
     "grant": {
       "name": "GRANT",
@@ -294,7 +294,7 @@
     },
     "coolHeat": {
       "name": "LIE LOW",
-      "desc": "DA POLICE LOSE SOME INTEREST IN DA PARTY!"
+      "desc": "LOWERS POLICE ATTENTION ON DA PARTY!"
     },
     "cure": {
       "name": "CURE",
@@ -310,107 +310,107 @@
     },
     "rally": {
       "name": "RALLY",
-      "desc": "RESTORES PART OF DA HEALTH OF EVERYONE IN DA PARTY STILL STANDIN'!"
+      "desc": "RESTORES SOME HEALTH TA EVERY STANDIN' PARTY MEMBER!"
     },
     "reviveMember": {
       "name": "REVIVE MEMBER",
-      "desc": "BRINGS DA CHOSEN PARTY MEMBER BACK ON DEY FEET!"
+      "desc": "REVIVES DA CHOSEN PARTY MEMBER!"
     },
     "rebirth": {
       "name": "REBIRTH",
-      "desc": "BRINGS EVERY FALLEN ALLY BACK ON DEY FEET!"
+      "desc": "REVIVES EVERY FALLEN ALLY!"
     },
     "aura": {
       "name": "AURA",
-      "desc": "DA POWER COMES OFF DIS CHARACTER!"
+      "desc": "DA POWER COMES FROM DIS CHARACTER!"
     },
     "summon": {
       "name": "SUMMON",
-      "desc": "DA POWER MANIFESTS IN BATTLE AS A SUMMON MODELLED ON DA CHOSEN PET!"
+      "desc": "IN BATTLE, DA POWER APPEARS AS A SUMMON BASED ON DA CHOSEN PET!"
     },
     "notOnWeekday": {
       "name": "NO ON DAT DAY",
-      "desc": "DA POWER NO CAN BE USED AT ALL ON DA CHOSEN DAY OF DA WEEK!"
+      "desc": "UNUSABLE ON DA CHOSEN WEEKDAY!"
     },
     "onlyOnWeekday": {
       "name": "ONLY ON DAT DAY",
-      "desc": "DA POWER CAN ONLY BE USED ON DA CHOSEN DAY OF DA WEEK!"
+      "desc": "USABLE ONLY ON DA CHOSEN WEEKDAY!"
     },
     "onlyVsKind": {
       "name": "ONLY AGAINST DAT KIND",
-      "desc": "DA POWER CAN ONLY BE USED IN A FIGHT AGAINST DA CHOSEN KIND OF CREATURE!"
+      "desc": "USABLE ONLY AGAINST DA CHOSEN KIND OF CREATURE!"
     },
     "notVsBoss": {
       "name": "NO AGAINST DA MIGHTY",
-      "desc": "DA POWER NO CAN BE USED WHILE A BOSS STANDS IN DA FIGHT!"
+      "desc": "UNUSABLE IN A BOSS FIGHT."
     },
     "onlyVsBoss": {
       "name": "ONLY AGAINST DA MIGHTY",
-      "desc": "DA POWER CAN ONLY BE USED IN A FIGHT WIT A BOSS!"
+      "desc": "USABLE ONLY IN A BOSS FIGHT!"
     },
     "onlyAtNight": {
       "name": "ONLY BY NIGHT",
-      "desc": "DA POWER CAN ONLY BE USED BETWEEN DUSK AN' DAWN!"
+      "desc": "USABLE ONLY FROM DUSK TA DAWN!"
     },
     "onlyByDay": {
       "name": "ONLY BY DAY",
-      "desc": "DA POWER CAN ONLY BE USED BETWEEN DAWN AN' DUSK!"
+      "desc": "USABLE ONLY FROM DAWN TA DUSK!"
     },
     "onlyInWeather": {
       "name": "ONLY IN DAT WEATHER",
-      "desc": "DA POWER CAN ONLY BE USED UNDER DA CHOSEN WEATHER!"
+      "desc": "USABLE ONLY IN DA CHOSEN WEATHER!"
     },
     "onlyIndoors": {
       "name": "ONLY INDOORS",
-      "desc": "DA POWER CAN ONLY BE USED UNDER A ROOF!"
+      "desc": "USABLE ONLY INDOORS."
     },
     "onlyOutdoors": {
       "name": "ONLY UNDER DA SKY",
-      "desc": "DA POWER CAN ONLY BE USED OUT IN DA OPEN!"
+      "desc": "USABLE ONLY OUTDOORS."
     },
     "onlyHurt": {
       "name": "ONLY WHEN HURT",
-      "desc": "DA POWER CAN ONLY BE USED WHILE DIS CHARACTER IZ UNDER HALF HEALTH!"
+      "desc": "USABLE ONLY WHILE DIS CHARACTER IZ UNDER HALF HEALTH!"
     },
     "onlyUnharmed": {
       "name": "ONLY WHEN UNHARMED",
-      "desc": "DA POWER CAN ONLY BE USED WHILE DIS CHARACTER IZ AT FULL HEALTH!"
+      "desc": "USABLE ONLY AT FULL HEALTH!"
     },
     "onlyAlone": {
       "name": "ONLY ALONE",
-      "desc": "DA POWER CAN ONLY BE USED WHEN NOBODY ELSE IN DA PARTY IZ STILL STANDIN'!"
+      "desc": "USABLE ONLY WHEN NO ONE ELSE IN DA PARTY IZ STANDIN'!"
     },
     "onlyWithMember": {
       "name": "ONLY WIT DEM",
-      "desc": "DA POWER CAN ONLY BE USED WHILE DA CHOSEN COMPANION IZ WIT DA PARTY AN' STANDIN'!"
+      "desc": "USABLE ONLY WHILE DA CHOSEN COMPANION IZ IN DA PARTY AN' STANDIN'!"
     },
     "onlyUnarmed": {
       "name": "ONLY UNARMED",
-      "desc": "DA POWER CAN ONLY BE USED WIT NO WEAPON IN HAND!"
+      "desc": "USABLE ONLY WIT NO WEAPON EQUIPPED!"
     },
     "onlyInBattle": {
       "name": "ONLY IN BATTLE",
-      "desc": "DA POWER CAN ONLY BE USED IN A FIGHT!"
+      "desc": "USABLE ONLY IN BATTLE."
     },
     "onlyInWorld": {
       "name": "ONLY OUTSIDE BATTLE",
-      "desc": "DA POWER CAN ONLY BE USED OUT IN DA WORLD, NEVER IN A FIGHT!"
+      "desc": "USABLE ONLY OUTSIDE BATTLE!"
     },
     "oncePerWeek": {
       "name": "ONCE A WEEK",
-      "desc": "DA POWER CAN BE USED ONCE A WEEK AT MOST, IN BATTLE OR OUT OF IT!"
+      "desc": "USABLE ONCE A WEEK."
     },
     "bloodPrice": {
       "name": "PRICE IN BLOOD",
-      "desc": "EACH USE COSTS A QUARTER OF DIS CHARACTER'S HEALTH. IT NEVER LEAVES DEM BELOW ONE!"
+      "desc": "EACH USE COSTS A QUARTER OF DIS CHARACTER'S HEALTH. NEVER DROPS BELOW 1 HP!"
     },
     "spiritPrice": {
       "name": "PRICE IN SPIRIT",
-      "desc": "EACH USE DRAINS ALL OF DIS CHARACTER'S MP. IT NO CAN BE USED WIT NONE LEFT!"
+      "desc": "EACH USE DRAINS ALL OF DIS CHARACTER'S MP. NEEDS MP TA USE!"
     },
     "goldPrice": {
-      "name": "PRICE IN GOLD",
-      "desc": "EACH USE COSTS A TWENTIETH OF DA PARTY'S MONEY!"
+      "name": "PRICE IN CASH",
+      "desc": "EACH USE COSTS 5% OF DA PARTY'S MONEY!"
     }
   }
 }

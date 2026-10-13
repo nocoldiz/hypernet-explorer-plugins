@@ -13,7 +13,7 @@
       "description": "Si adira in fretta, forte impulso fisico."
     },
     "melancholic": {
-      "name": "Melanconico",
+      "name": "Malinconico",
       "description": "Incline alla tristezza e all'introspezione."
     },
     "sanguine": {
@@ -41,8 +41,8 @@
       "description": "Molto sensibile alle emozioni altrui."
     },
     "authoritative": {
-      "name": "Autoritario",
-      "description": "Leader nato, deciso e autorevole."
+      "name": "Autorevole",
+      "description": "Leader nato, deciso e imperioso."
     },
     "scholarly": {
       "name": "Erudito",
@@ -57,11 +57,11 @@
       "description": "Cerca novità ed emozioni forti, ad alto rischio."
     },
     "nurturing": {
-      "name": "Protettivo",
-      "description": "Premuroso, protettivo e compassionevole."
+      "name": "Premuroso",
+      "description": "Affettuoso, protettivo e compassionevole."
     },
     "mischievous": {
-      "name": "Malizioso",
+      "name": "Birichino",
       "description": "Giocoso, astuto e amante del caos."
     },
     "cynical": {
@@ -77,7 +77,7 @@
       "description": "Crede che ogni evento sia predeterminato."
     },
     "grumpy": {
-      "name": "Scontroso",
+      "name": "Burbero",
       "description": "Cronicamente irritabile e di cattivo umore."
     },
     "loyal": {

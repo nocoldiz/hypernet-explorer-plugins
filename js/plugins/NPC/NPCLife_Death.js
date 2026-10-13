@@ -138,7 +138,12 @@
 
   function rehomeOrphans(deadName, atMinute) {
     const moved = [];
-    for (const child of childrenOf(deadName)) {
+    // Their own children, and any minor they had taken in as guardian.
+    const wards = new Set(childrenOf(deadName));
+    for (const r of Object.values(getRecords() || {})) {
+      if (r?.guardian === deadName && r.name) wards.add(r.name);
+    }
+    for (const child of wards) {
       if (!isMinor(child) || !isAliveName(child)) continue;
       if (parentsOf(child).some(p => p !== deadName && isAliveName(p))) continue;
       const guardian = guardianFor(child);

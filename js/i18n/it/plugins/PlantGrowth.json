@@ -28,7 +28,7 @@
   "expectedYield": "Resa prevista:",
   "produces": "Produce:",
   "conditionsActions": "Condizioni e azioni",
-  "plotBlurb": "Come sta crescendo questo appezzamento in questo momento",
+  "plotBlurb": "Condizioni di crescita attuali",
   "growingConditions": "Condizioni di crescita",
   "seasonLabel": "Stagione:",
   "greenhouseLabel": "Serra:",
@@ -61,8 +61,8 @@
   "growth": "Crescita",
   "yield": "Resa",
   "seeds": "Semi",
-  "pickSeedHint": "Scegli un seme a destra per vedere le sue stagioni e quanto ci mette a crescere.",
-  "seedBlurb": "I semi piantati nella stagione giusta crescono. In serra crescono tutto l'anno, e piu in fretta.",
+  "pickSeedHint": "Scegli un seme per vedere stagioni e tempo di crescita.",
+  "seedBlurb": "I semi crescono nella loro stagione. In serra crescono tutto l'anno e più in fretta.",
   "seasonAbbr": {
     "SPRING": "Pri",
     "SUMMER": "Est",
@@ -83,7 +83,28 @@
     "check": "Controlla"
   },
   "toast": {
-    "ripe": "{plant} è pronto per il raccolto."
+    "ripe": "Si può raccogliere: {plant}."
   },
-  "plotAt": "Campo aperto, riquadro {tile}"
+  "plotAt": "Campo aperto, riquadro {tile}",
+  "plantName": {
+    "Tomato": "Pomodoro",
+    "Watermelon": "Anguria",
+    "Wheat": "Grano",
+    "Pumpkin": "Zucca",
+    "Carrot": "Carota",
+    "Potato": "Patata",
+    "Mushroom": "Fungo",
+    "Sunflower": "Girasole",
+    "Strawberry": "Fragola",
+    "Corn": "Mais",
+    "Lavender": "Lavanda",
+    "Onion": "Cipolla",
+    "Cabbage": "Cavolo",
+    "Eggplant": "Melanzana",
+    "Pepper": "Peperone",
+    "Ananas": "Ananas",
+    "Grapes": "Vite",
+    "Cactus": "Cactus",
+    "Beanstalk": "Pianta di fagioli"
+  }
 }

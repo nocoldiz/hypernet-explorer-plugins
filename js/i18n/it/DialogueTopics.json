@@ -2,7 +2,7 @@
   "DialogueTopics": {
     "topicHardwareStore": {
       "title": "Ferramenta",
-      "description": "Un negozio di attrezzi e materiali da costruzione. Ogni ferramenta vende [grimaldelli | gamesLockpick], multi-utensili, pale, torce a LED e livelle del costruttore. Molte hanno anche legname, minerale di acciaio, vetro, tessuto o pelle per le ricette di [Assembla | topicThinkerMenu] e [Costruisci | topicBuildMenu].\n\nOgni negozio tiene per sempre lo stesso assortimento. Cambia solo la quantità sugli scaffali, che viene rifornita ogni giorno."
+      "description": "Un negozio di attrezzi e materiali da costruzione. Ogni ferramenta vende [grimaldelli | gamesLockpick], multi-utensili, pale, torce a LED e livelle del costruttore. Molte hanno anche legname, acciaio di recupero, vetro, tessuto o pelle per le ricette di [Assembla | topicThinkerMenu] e [Costruisci | topicBuildMenu].\n\nOgni negozio tiene per sempre lo stesso assortimento. Cambia solo la quantità sugli scaffali, che viene rifornita ogni giorno."
     },
     "topicEsotericHeavyParticles": {
       "title": "Particelle Esoteriche Pesanti",
@@ -150,11 +150,11 @@
     },
     "marioDraghi": {
       "title": "Mario Draghi",
-      "description": "Il nome di Mario Draghi è stampato su decine di miliardi di banconote in euro. Compare in più transazioni di quante volte compaia il nome di Dio in tutte le Bibbie della Terra.\n\nLa striscia di sicurezza di ogni banconota contiene [Fantablack | fantablack] raschiato dalla [Torre Omega | omegaTower], e i nomi hanno potere. L'ultima notte del 2000 Draghi ha lasciato il suo corpo ed è asceso come dio dei mercati. Non è più una persona. È il motore che fa girare in silenzio l'economia del multiverso.\n\nGli altri dèi muoiono quando finisce la fede. Per uccidere Draghi dovresti bruciare ogni banconota che porta il suo nome."
+      "description": "Il nome di Mario Draghi è stampato su decine di miliardi di banconote in euro. Compare in più transazioni di quante volte compaia il nome di Dio in tutte le Bibbie della Terra.\n\nLa striscia di sicurezza di ogni banconota contiene [Fantablack | fantablack] raschiato dalla [Torre Omega | omegaTower], e i nomi hanno potere. L'ultima notte del 2000 Draghi ha lasciato il suo corpo ed è asceso come dio dei mercati. Ora è il motore che fa girare in silenzio l'economia del multiverso.\n\nGli altri dèi muoiono quando finisce la fede. Per uccidere Draghi dovresti bruciare ogni banconota che porta il suo nome."
     },
     "ladyThatcher": {
       "title": "Lady Margaret Thatcher",
-      "description": "Prima Ministra di [Britannia | topicBritannia], e pilastro del presente nella [Gilda dei Maghi | magesGuild]. Era nel cuore della Gilda già molto prima della [guerra delle Falkland | falklandsWar], quando affondò la flotta argentina con [Okeanus | okeanus] davanti alle telecamere.\n\nQuando la Gilda ebbe bisogno di qualcuno da sacrificare nel [Rituale di Salomone | solomonRitual], scelse [Em | emTheMemoryWitch]. Aveva preso con sé la ragazza anni prima e le aveva insegnato la vera magia. Non fu mai gentilezza. Stava preparando Em per il rituale.\n\nLe cose non andarono come previsto. Em perse il novantadue per cento dei suoi ricordi ma ne uscì molto più potente di prima, e imparò la metamagia da sola. Ora Thatcher guarda la sua vecchia allieva con inquietudine più che con orgoglio."
+      "description": "Prima Ministra di [Britannia | topicBritannia], e pilastro del presente nella [Gilda dei Maghi | magesGuild]. Era nel cuore della Gilda già molto prima della [guerra delle Falkland | falklandsWar], in cui affondò la flotta argentina con [Okeanus | okeanus] davanti alle telecamere.\n\nQuando la Gilda ebbe bisogno di qualcuno da sacrificare nel [Rituale di Salomone | solomonRitual], scelse [Em | emTheMemoryWitch]. Aveva preso con sé la ragazza anni prima e le aveva insegnato la vera magia. Per tutto il tempo stava preparando Em per il rituale.\n\nLe cose non andarono come previsto. Em perse il novantadue per cento dei suoi ricordi ma ne uscì molto più potente di prima, e imparò la metamagia da sola. Ora Thatcher guarda la sua vecchia allieva con inquietudine."
     },
     "aleisterCrowley": {
       "title": "Sir Aleister Crowley",
@@ -174,7 +174,11 @@
     },
     "theDargos": {
       "title": "I Dargos",
-      "description": "I Dargos vengono da Titania, un mondo lontano in Andromeda. I [Turisti | theTourists] sono arrivati da poco. I Dargos conoscono la Terra da moltissimo tempo.\n\nI loro contatti con gli umani sono soprattutto rapimenti e scherzi, così crudeli e precisi che i rapporti ufficiali li chiamano trolling. Perfino la loro ambasciata è gestita come un unico lungo scherzo alle spalle dell'umanità. Non partecipa a nessuna assemblea e non risponde a nessuna convocazione.\n\nSembra che vogliano solo la reazione. Una vittima raramente resta ferita a lungo, e raramente viene creduta. Molti ricercatori pensano che lo scopo sia proprio questo."
+      "description": "I Dargos vengono da [Titania | titaniaWorld], un mondo oceanico di acido lontano, in Andromeda. I [Turisti | theTourists] hanno sentito parlare della Terra solo nel 1975. I Dargos la conoscono da molto più tempo, e non hanno mai smesso di farci visita.\n\nLa descrizione migliore di uno di loro viene da [Pier Fortunato Zanfretta | zanfrettaIncident], che li ha incontrati undici volte. Un Dargos è alto circa tre metri. Ha la pelle grigioverde che ricade in pieghe, come una lamiera ondulata. Due file di creste gli corrono all'indietro sul cranio, e gli occhi sono triangoli gialli che brillano al buio. Sono caldi: qualunque cosa tocchino resta tiepida per un'ora, e le loro navi bruciano l'erba dove si posano.\n\nLe loro navi sono triangoli di luce bianca. Quando una si avvicina, i motori si spengono, i fari si oscurano e le radio tacciono, tutto nello stesso istante. A bordo parlano agli umani attraverso una fascia stretta intorno alla testa, e l'umano sente un italiano perfetto, o qualunque sia la lingua in cui pensa.\n\nTra di loro i Dargos non apprezzano nulla quanto un buon scherzo. Con uno scherzo si salutano, litigano e fanno pace. I loro contatti con gli umani sono soprattutto rapimenti e scherzi, così crudeli e precisi che i rapporti ufficiali li chiamano trolling. Perfino l'Ambasciata Dargos è gestita come un unico lungo scherzo alle spalle dell'umanità. Non partecipa a nessuna [assemblea | peopleONU] e non risponde a nessuna convocazione.\n\nSembra che vogliano solo la reazione. Una vittima raramente resta ferita a lungo, e raramente viene creduta. Molti ricercatori pensano che lo scopo sia proprio questo. La [Gilda | magesGuild] tiene comunque un fascicolo spesso su di loro, perché le protezioni che [Crowley | aleisterCrowley] ha steso intorno alla Terra fermano le navi dei Turisti e non hanno mai fermato una nave Dargos.\n\nI Dargos giovani vengono sulla Terra in scambio culturale, con dei taccuini che non lasciano leggere a nessuno. Quelli più anziani tornano, secondo la Gilda, per la [Sfera di Zanfretta | zanfrettaSphere]. Chiedine all'Ambasciata e, per una volta, nessuno lì dentro ride."
+    },
+    "titaniaWorld": {
+      "title": "Titania",
+      "description": "Titania è la patria dei [Dargos | theDargos]. Si trova in Andromeda, la grande galassia vicina, a due milioni e mezzo di anni luce dalla Terra. [Zanfretta | zanfrettaIncident] ne capì il nome come Teetonia, e i Dargos gli dissero che si trovava nella terza galassia. Nessuno ha ancora capito quali siano le prime due che hanno contato.\n\nL'intero pianeta è un unico oceano, ed è tutto acido, abbastanza forte da corrodere uno scafo. Non c'è terraferma. I Dargos vivono sull'acqua, in città galleggianti fatte di un materiale caldo e ripiegato che l'acido non riesce a intaccare.\n\nTitania orbita intorno a un buco nero centinaia di migliaia di volte più pesante del Sole. I Dargos lo chiamano il vicino. Raccontano ai visitatori che il vicino sta lentamente tirando Titania verso di sé, e che un giorno avranno bisogno di una nuova casa. Raccontano anche moltissime cose false, quindi nessuno sa se preoccuparsi.\n\nL'umanità ha un invito permanente su Titania dal 1977, un anno prima della prima visita a Zanfretta, e su Titania nessuno ha ancora smesso di trovarlo divertente. Sull'acqua c'è un'ambasciata umana. Ci si arriva con un [lancio | galaxyRocketLaunch], e un'astronave può commerciare con i Dargos in orbita. I visitatori tengono le tute sigillate dal momento in cui [atterrano | galaxyLanding] a quello in cui ripartono."
     },
     "hillIncident": {
       "title": "L'Incidente Hill",
@@ -182,7 +186,11 @@
     },
     "zanfrettaIncident": {
       "title": "L'Incidente Zanfretta",
-      "description": "Il 6 dicembre 1978 Pier Fortunato Zanfretta faceva un tranquillo turno di notte come guardia giurata fuori Genova. Quella notte ebbe il suo primo incontro. Non fu l'ultimo.\n\nPer anni continuò a raccontare nuove visite. A ogni racconto gli esseri diventavano più alti, più strani e più difficili da credere.\n\nOggi i ricercatori della [Gilda | magesGuild] lo considerano uno scherzo ricorrente più che un evento singolo, e danno la colpa ai [Dargos | theDargos]. Niente nel caso sembra un vero contatto. Tutto sembra opera di una specie che ha trovato un uomo credulone e a suo agio davanti alle telecamere, ed è tornata più volte a sentire cosa avrebbe detto dopo."
+      "description": "Pier Fortunato Zanfretta era una guardia giurata notturna per un istituto di vigilanza privato della Val Bisagno, sopra Genova. Aveva ventisei anni, era sposato, ed era noto come un uomo tranquillo che non beveva.\n\nIl 6 dicembre 1978, poco prima di mezzanotte, salì a controllare una villa per le vacanze vuota a Marzano di Torriglia. Al cancello l'auto si spense. Motore, fari e radio si fermarono tutti insieme. In giardino vide quattro luci che si muovevano basse tra gli alberi e pensò ai ladri, così entrò con la torcia e la pistola.\n\nQualcosa gli toccò la spalla. Si voltò e vide un essere alto circa tre metri, con la pelle grigioverde che ricadeva in pieghe, creste sulla testa e occhi gialli triangolari e luminosi. Scappò. Dietro la villa un enorme triangolo di luce bianca si alzò nel cielo, e l'aria divenne calda come un forno. Quando la radio tornò a funzionare chiamò la centrale, e l'operatore lo sentì dire: \"Mamma mia, quanto sono brutti!\"\n\nI colleghi lo trovarono in ginocchio con la pistola puntata contro di loro, con la divisa che scottava in una gelida notte di dicembre. In giardino l'erba era bruciata e schiacciata in un ampio ferro di cavallo.\n\nIl 27 dicembre, sotto una pioggia fortissima, la sua auto smise di rispondere al volante e salì da sola fino al Passo della Scoffera. Fu trovato in un campo accanto alla strada con i vestiti asciutti e caldi. Vicino a lui c'erano impronte lunghe mezzo metro.\n\nSotto ipnosi descrisse una stanza bianca e rovente, una fascia stretta intorno alla testa e voci che attraverso di essa parlavano in italiano. Gli esseri si chiamavano [Dargos | theDargos] e dicevano di venire da Teetonia, come lui la pronunciava, nella terza galassia: [Titania | titaniaWorld]. In seguito i medici gli somministrarono il siero della verità, e il suo racconto non cambiò di un solo dettaglio.\n\nLe visite continuarono fino al 1981, undici in tutto, e un giornalista genovese le seguì tutte fin dalla prima notte. Durante una di esse i Dargos gli misero in mano la [Sfera di Zanfretta | zanfrettaSphere]. Dopo il 1981 smisero. Le loro ultime parole furono che sarebbero tornati.\n\nLa [Gilda | magesGuild] archivia il caso come uno scherzo ricorrente: una specie che ha trovato un uomo onesto e spaventato ed è tornata più volte a sentire cosa avrebbe detto dopo. I suoi archivisti aggiungono una nota a margine. Di solito uno scherzo non si lascia dietro niente."
+    },
+    "zanfrettaSphere": {
+      "title": "La Sfera di Zanfretta",
+      "description": "La Sfera di Zanfretta è l'unico oggetto che, a quanto si dice, i [Dargos | theDargos] si siano mai lasciati dietro.\n\nDurante una delle ultime visite, raccontò [Zanfretta | zanfrettaIncident], gliela misero in mano. Era una sfera trasparente grande più o meno come un'arancia, tiepida come qualcosa di vivo, e al centro galleggiava una piccola piramide senza toccarne le pareti. I Dargos gli dissero di tenerla nascosta e di consegnarla all'umanità solo al loro ritorno. Dissero che lei avrebbe saputo quando.\n\nLui la nascose. Sotto ipnosi descrisse il nascondiglio con esattezza, e quando lo perquisirono non c'era niente. O non è mai esistita, o i Dargos se la sono ripresa, oppure si è spostata.\n\nDa allora la sfera è diventata una piccola industria. Nei mercati di Genova si vendono copie di vetro, ognuna giurata come quella vera. La [Gilda | magesGuild] offre una ricompensa permanente dal 1979 e non l'ha mai pagata. I [Turisti | theTourists] dicono di non avere idea di cosa sia, un po' troppo in fretta.\n\nI Dargos scherzano su qualsiasi cosa, perfino su [Titania | titaniaWorld] che cade nel suo buco nero. La sfera è l'unico argomento su cui l'Ambasciata Dargos non fa scherzi. Quando gliene si chiede, il personale tace e cambia discorso. Alcuni ricercatori della Gilda pensano che quel silenzio sia l'unica cosa seria che i Dargos abbiano mai detto all'umanità."
     },
     "jennaOfNorthpoint": {
       "title": "Jenna di Northpoint",
@@ -190,11 +198,11 @@
     },
     "popePetrusII": {
       "title": "Papa Pietro II",
-      "description": "Nato Joseph Ratzinger. Divenne Papa Pietro II dopo che Giovanni Paolo II morì per l'attentato del 13 maggio 1981. Il suo predecessore è ricordato come protetto dal destino. Pietro II è ricordato come il papa che armò il destino.\n\nDopo la morte dell'aspetto Padre di [YHWH | topicYHWH], nel 2001, fece ricostruire la Città del Vaticano come Cittadella Vaticana. Galleggia a circa 800 metri sopra Roma, difesa da una batteria di cannoni Gauss.\n\nHa dichiarato [Jenna di Northpoint | jennaOfNorthpoint] l'Anticristo e ha portato il [Sacro Vaticano Impero | vaticanEmpire] in guerra contro di lei."
+      "description": "Al secolo Joseph Ratzinger. Divenne Papa Pietro II dopo che Giovanni Paolo II morì per l'attentato del 13 maggio 1981. Il suo predecessore è ricordato come protetto dal destino. Pietro II è ricordato come il papa che armò il destino.\n\nDopo la morte dell'aspetto Padre di [YHWH | topicYHWH], nel 2001, fece ricostruire la Città del Vaticano come Cittadella Vaticana. Galleggia a circa 800 metri sopra Roma, difesa da una batteria di cannoni Gauss.\n\nHa dichiarato [Jenna di Northpoint | jennaOfNorthpoint] l'Anticristo e ha portato il [Sacro Vaticano Impero | vaticanEmpire] in guerra contro di lei."
     },
     "maat": {
       "title": "Maat",
-      "description": "La dea egizia della giustizia, dell'ordine e della verità. Pesa il cuore dei morti contro una sola piuma. Ha resistito alla lenta perdita dei suoi fedeli meglio della maggior parte degli [dei | theGods] della sua epoca.\n\nPoi [Eris | eris] l'ha uccisa scagliandole contro la [Torre Omega | omegaTower]. Eris lo fa nel dicembre 2012, ma il colpo è arrivato nel 1992. Da quell'omicidio è cominciato [lo Squishing | squishing].\n\nIl corpo di Maat giace sotto la punta della Torre, centinaia di chilometri sotto terra. La sua mente è ancora sveglia, dentro un cadavere che non può muoversi e non può morire di nuovo. Nessuno ha trovato un modo per liberarla che non peggiori il paradosso."
+      "description": "La dea egizia della giustizia, dell'ordine e della verità. Pesa il cuore dei morti contro una sola piuma. Ha resistito alla lenta perdita dei suoi fedeli meglio della maggior parte degli [dèi | theGods] della sua epoca.\n\nPoi [Eris | eris] l'ha uccisa scagliandole contro la [Torre Omega | omegaTower]. Eris lo fa nel dicembre 2012, ma il colpo è arrivato nel 1992. Da quell'omicidio è cominciato [lo Squishing | squishing].\n\nIl corpo di Maat giace sotto la punta della Torre, centinaia di chilometri sotto terra. La sua mente è ancora sveglia, dentro un cadavere che non può muoversi e non può morire di nuovo. Nessuno ha trovato un modo per liberarla che non peggiori il paradosso."
     },
     "falklandsWar": {
       "title": "La Guerra delle Falkland",
@@ -210,19 +218,19 @@
     },
     "goblinHorde": {
       "title": "L'Orda Goblin",
-      "description": "Ciò che sono diventati i [Naguka | naguka] quando hanno avuto un governo. È una confederazione di bande guerriere. Il suo capo si chiama semplicemente il Capoccia, i suoi clan discutono nel Da Moot, e un capo dura solo finché non arriva qualcuno più grosso.\n\nI goblin sono usciti dal Pozzo superprofondo di Kola nel maggio 1970. Oggi l'Orda tiene la Norvegia e l'Islanda, e vuole il resto. Ha l'esercito più grande della Terra e quasi nessuna economia.\n\nPiù che diplomazia, l'Orda fa razzie che ogni tanto si fermano. L'unica potenza con relazioni formali è il [Sacro Vaticano Impero | vaticanEmpire], i cui missionari cercano ancora di convertire un popolo che vuole soprattutto essere lasciato in pace con i suoi dischi dei [Junehem | junehem]."
+      "description": "Ciò che sono diventati i [Naguka | naguka] quando hanno avuto un governo. È una confederazione di bande guerriere. Il suo capo si chiama semplicemente il Capoccia, i suoi clan discutono nel Da Moot, e un capo dura solo finché non arriva qualcuno più grosso.\n\nI goblin sono usciti dal Pozzo superprofondo di Kola nel maggio 1970. Oggi l'Orda tiene la Norvegia e l'Islanda, e vuole il resto. Ha l'esercito più grande della Terra e quasi nessuna economia.\n\nLa diplomazia dell'Orda consiste in razzie che ogni tanto si fermano. L'unica potenza con relazioni formali è il [Sacro Vaticano Impero | vaticanEmpire], i cui missionari cercano ancora di convertire un popolo che vuole soprattutto essere lasciato in pace con i suoi dischi dei [Junehem | junehem]."
     },
     "kukulkanAscendancy": {
       "title": "L'Ascendenza di Kukulkan",
-      "description": "L'iperpotenza del Messico si definisce una restaurazione, non una repubblica. Il suo capo di stato è il Dio-Imperatore, dal nome di Kukulkan, il serpente piumato. Il suo consiglio, il Consiglio degli Ajawob, passa quasi tutto il tempo a discutere del calendario. Ogni regno dura un k'atun, circa vent'anni.\n\nEppure il suo elenco di capi sembra il secolo stesso del Messico: Porfirio Diaz, Madero, Zapata, Villa, Cardenas e via fino a Zedillo. Nell'Ascendenza nessuno lo trova strano. Se dietro la presidenza moderna sieda ancora Kukulkan, i suoi cittadini non se lo chiedono."
+      "description": "L'iperpotenza del Messico si definisce una restaurazione. Il suo capo di stato è il Dio-Imperatore, dal nome di Kukulkan, il serpente piumato. Il suo consiglio, il Consiglio degli Ajawob, passa quasi tutto il tempo a discutere del calendario. Ogni regno dura un k'atun, circa vent'anni.\n\nEppure il suo elenco di capi sembra il secolo stesso del Messico: Porfirio Diaz, Madero, Zapata, Villa, Cardenas e via fino a Zedillo. Nell'Ascendenza nessuno lo trova strano. Se dietro la presidenza moderna sieda ancora Kukulkan, i suoi cittadini non se lo chiedono."
     },
     "dprkorea": {
       "title": "La Repubblica Popolare Democratica di Corea",
-      "description": "La famiglia Kim governa la Repubblica Popolare Democratica di Corea come ha sempre fatto, di padre in figlio e poi in nipote. Il capo di stato è il Presidente Eterno. Un piccolo gruppo fisso di uomini di partito si occupa di ciò che non fa la famiglia.\n\nL'Assemblea Suprema del Popolo ha due partiti, e uno dei due non ha mai vinto niente.\n\nDa fuori, la politica è difficile da capire. Ciò che si vede bene è il culto della personalità. I media di stato affermano cose impossibili sui Kim, come il controllo del tempo atmosferico e la vittoria senza sforzo. Lo fanno con tale costanza che smette di sembrare propaganda e comincia a sembrare un'affermazione vera e propria."
+      "description": "La famiglia Kim governa la Repubblica Popolare Democratica di Corea come ha sempre fatto, di padre in figlio e poi in nipote. Il capo di stato è il Presidente Eterno. Un piccolo nucleo fisso di uomini di partito si occupa di ciò che non fa la famiglia.\n\nL'Assemblea Suprema del Popolo ha due partiti, e uno dei due non ha mai vinto niente.\n\nDa fuori, la politica è difficile da capire. Ciò che si vede bene è il culto della personalità. I media di stato affermano cose impossibili sui Kim, come il controllo del tempo atmosferico e la vittoria senza sforzo. Lo fanno con tale costanza che smette di sembrare propaganda e comincia a sembrare un'affermazione vera e propria."
     },
     "dharmaDirectorate": {
       "title": "Il Direttorio del Dharma",
-      "description": "Il governo della Cina porta due volti insieme e non ne vede la cucitura.\n\nUn volto è familiare. Il suo elenco di capi passa per Sun Yat-sen, Chiang Kai-shek, Mao, Deng e Jiang Zemin, come li ricorda la storia.\n\nL'altro volto è un impero armonioso di riti ed esami. Il suo capo è il Cancelliere dei Riti. La sua assemblea è la Sala delle Diecimila Voci. Nessuno vota il mandato di governare: lo esamina un corpo di venticinque Precettori, come un esame.\n\nQuale volto governi il paese in un certo giorno dipende da chi lo chiedi. Il Direttorio non ha mai visto un motivo per spiegarlo agli stranieri."
+      "description": "Il governo della Cina porta due volti insieme e non ne vede la cucitura.\n\nUn volto è familiare. Il suo elenco di capi passa per Sun Yat-sen, Chiang Kai-shek, Mao, Deng e Jiang Zemin, come li ricorda la storia.\n\nL'altro volto è un impero armonioso di riti ed esami. Il suo capo è il Cancelliere dei Riti. La sua assemblea è la Sala delle Diecimila Voci. Nessuno vota il mandato di governare: lo esamina un corpo di venticinque Precettori, come un esame.\n\nQuale volto governi il paese in un certo giorno dipende da chi interpelli. Il Direttorio non ha mai visto un motivo per spiegarlo agli stranieri."
     },
     "illuminatedKhanate": {
       "title": "Il Khanato Illuminato",
@@ -246,7 +254,7 @@
     },
     "imperialStatePersia": {
       "title": "Lo Stato Imperiale di Persia",
-      "description": "In Persia la rivoluzione non è mai arrivata. Gli scià Qajar passarono il potere senza scosse ai Pahlavi: Reza Shah, Mohammad Reza, poi Reza Pahlavi II. Il periodo di Mossadegh come primo ministro è archiviato come un'interruzione, non come una rottura. La Shahbanu Farah compare nell'elenco come qualcosa di più di una consorte.\n\nIl Trono del Pavone nomina un Primo Ministro, e il governo risponde all'Assemblea Consultiva Nazionale. La Guardia degli Immortali protegge lo Scià.\n\nLo Stato Imperiale tratta la propria sopravvivenza come la sua principale esportazione. Una monarchia, dice, cade solo quando acconsente a cadere."
+      "description": "In Persia la rivoluzione non è mai arrivata. Gli scià Qajar passarono il potere senza scosse ai Pahlavi: Reza Shah, Mohammad Reza, poi Reza Pahlavi II. Il periodo di Mossadegh come primo ministro è archiviato come una semplice interruzione. La Shahbanu Farah compare nell'elenco come qualcosa di più di una consorte.\n\nIl Trono del Pavone nomina un Primo Ministro, e il governo risponde all'Assemblea Consultiva Nazionale. La Guardia degli Immortali protegge lo Scià.\n\nLo Stato Imperiale tratta la propria sopravvivenza come la sua principale esportazione. Una monarchia, dice, cade solo quando acconsente a cadere."
     },
     "topicApuliaSpaceCenter": {
       "title": "Centro spaziale di Puglia",
@@ -254,7 +262,7 @@
     },
     "topicArchiveMenu": {
       "title": "L'Archivio",
-      "description": "La voce Archivio del [menu principale | topicMainMenu], nel suo gruppo Archivio. È il libro da cui il gruppo reimpara la strada.\n\nContiene il manuale, gli stati, gli [elementi | elementsOverview], le [malattie | healthDiseases] e la [storia del secolo | societyHistory]. La sua pagina [Argomenti | societyTopics] elenca tutto ciò che qualcuno ha raccontato al gruppo, compresa questa pagina. Quando un membro ha sentito un argomento, chiunque di loro può tirarlo fuori in una conversazione."
+      "description": "La voce Archivio del [menu principale | topicMainMenu], nel suo Party Archivio. È il libro da cui il Party reimpara la strada.\n\nContiene il manuale, gli stati, gli [elementi | elementsOverview], le [malattie | healthDiseases] e la [storia del secolo | societyHistory]. La sua pagina [Argomenti | societyTopics] elenca tutto ciò che qualcuno ha raccontato al Party, compresa questa pagina. Quando un membro ha sentito un argomento, chiunque di loro può tirarlo fuori in una conversazione."
     },
     "topicArchiveFoundation": {
       "title": "L'Archive Foundation",
@@ -265,12 +273,12 @@
       "description": "L'erede dell'Impero britannico, una monarchia parlamentare con [Margaret Thatcher | ladyThatcher] come Prima Ministra.\n\nLa sua casa reale sostenne [Sir Aleister Crowley | aleisterCrowley] quando, all'inizio del Novecento, rifondò la [Gilda dei Maghi | magesGuild] come ordine cavalleresco. È da lì che vengono ancora i Sir e le Lady della Gilda.\n\nOltre l'oceano tiene il Protettorato di Cascadia sulla costa occidentale delle [tre Americhe | threeAmericas], e la Costa Orientale è allineata con lei."
     },
     "topicBuildMenu": {
-      "title": "Costruzione",
+      "title": "Costruisci",
       "description": "Il menu Costruisci apre il costruttore di arredi sulla mappa in cui ti trovi.\n\nPuoi comprare mobili, oppure costruirli con materiali come legno, acciaio di recupero, stoffa e vetro. Poi li sistemi sul pavimento, un pezzo alla volta. Smontare un pezzo restituisce gran parte dei suoi materiali.\n\nNon puoi costruire sulla [mappa del mondo | worldMapPage]. Costruire su un terreno di qualcun altro è un reato, e il valore di ciò che hai costruito si aggiunge alla tua [taglia | lawCrime]. Vedi [Costruire e arredare | craftFurniture]."
     },
     "topicCamp": {
       "title": "Accampamento",
-      "description": "Monta un accampamento sulla [mappa del mondo | worldMapPage]: premi [Continua | topicContinue] e scegli Monta il campo, oppure aspetta lì. Puoi accamparti anche dal menu di un [veicolo | vehiclesOverview] accanto a cui ti trovi, ma mai in volo.\n\nUn accampamento non costa niente, e su gran parte della [Strada Avvolgente | encompassingRoad] è l'unico letto che c'è. Una notte lì fa più di un letto. Il gruppo si lava e chiacchiera, così tornano anche l'[igiene | needsHygiene] e la [compagnia | needsSocial]. Se il cibo scarseggia, si mette una pentola sul fuoco e il gruppo mangia dallo [zaino | gearBackpack]."
+      "description": "Monta un accampamento sulla [mappa del mondo | worldMapPage]: premi [Continua | topicContinue] e scegli Monta un accampamento, oppure aspetta lì. Puoi accamparti anche dal menu di un [veicolo | vehiclesOverview] accanto a cui ti trovi, ma mai in volo.\n\nUn accampamento non costa niente, e su gran parte della [Strada Avvolgente | encompassingRoad] è l'unico letto che c'è. Una notte lì fa più di un letto. Il Party si lava e chiacchiera, così tornano anche l'[igiene | needsHygiene] e la [compagnia | needsSocial]. Se il cibo scarseggia, si mette una pentola sul fuoco e il Party mangia dallo [zaino | gearBackpack]."
     },
     "topicCamper": {
       "title": "Il Camper",
@@ -282,19 +290,19 @@
     },
     "topicContinue": {
       "title": "Continua",
-      "description": "Continua è il tasto di conferma.\n\nPremilo accanto a una persona o a un animale per vedere cosa puoi fare con loro, per esempio [Empatizza | topicEmpathize]. Premilo accanto a un oggetto per usarlo.\n\nSulla [mappa del mondo | worldMapPage] apre le scelte di viaggio: visitare il riquadro, [foraggiare | needsForage] lì, oppure montare un [Accampamento | topicCamp]."
+      "description": "Continua è il tasto di conferma.\n\nPremilo accanto a una persona o a un animale per vedere cosa puoi fare con loro, per esempio [Empatizza | topicEmpathize]. Premilo accanto a un oggetto per usarlo.\n\nSulla [mappa del mondo | worldMapPage] apre le scelte di viaggio: visitare il riquadro, [raccogliere | needsForage] lì, oppure montare un [Accampamento | topicCamp]."
     },
     "topicCookingMenu": {
       "title": "Cucina",
-      "description": "La voce Cucina del [menu principale | topicMainMenu] trasforma gli ingredienti crudi in pasti.\n\nLa pentola unisce due cibi in un solo pasto migliore. La pagina [Ricette | craftCooking] prepara piatti veri e propri, che vanno nello [zaino | gearBackpack] per dopo. Ogni piatto richiede un livello di cucina. Se sei sotto quel livello, il piatto può venire avariato e far star male chi lo mangia. Vieni avvisato prima di cucinare qualcosa a cui un membro del gruppo è allergico.\n\nIl cibo cucinato nutre meglio degli ingredienti crudi. Vedi [Fame e nutrizione | needsHunger]."
+      "description": "La voce Cucina del [menu principale | topicMainMenu] trasforma gli ingredienti crudi in pasti.\n\nLa pentola unisce due cibi in un solo pasto migliore. La pagina [Ricette | craftCooking] prepara piatti veri e propri, che vanno nello [zaino | gearBackpack] per dopo. Ogni piatto richiede un livello di cucina. Se sei sotto quel livello, il piatto può venire avariato e far star male chi lo mangia. Vieni avvisato prima di cucinare qualcosa a cui un membro del Party è allergico.\n\nIl cibo cucinato nutre meglio degli ingredienti crudi. Vedi [Fame e nutrizione | needsHunger]."
     },
     "topicCrimsonAnalyzers": {
       "title": "Gli Analizzatori Cremisi",
       "description": "La casta scientifica dei [Turisti | theTourists]. Per loro nulla è capito finché non è stato aperto, e portano katane perché un bisturi è lento e l'universo è grande. Nel 1999 volevano vivisezionare [Em | emTheMemoryWitch], ma non avevano il permesso, così la lasciarono girare per la loro nave."
     },
     "topicEmpathize": {
-      "title": "Empatia",
-      "description": "Il [pannello Empatizza | peopleEmpathize]: leggi una persona o un animale, convincila e, se si affeziona al gruppo, chiedile di venire con voi, come [animale da compagnia | partyPets] o come [membro | partyRecruiting] a tutti gli effetti."
+      "title": "Empatizza",
+      "description": "Il [pannello Empatizza | peopleEmpathize]: leggi una persona o un animale, convincila e, se si affeziona al Party, chiedile di venire con voi, come [animale da compagnia | partyPets] o come [membro | partyRecruiting] a tutti gli effetti."
     },
     "topicEsotericHeavyIndustries": {
       "title": "Esoteric Heavy Industries",
@@ -310,11 +318,11 @@
     },
     "topicGreenwitchSpaceCenter": {
       "title": "Centro spaziale di Greenwitch",
-      "description": "Uno dei due posti che portano il gruppo in alto, attraverso la fascia di detriti. L'altro è il [Centro spaziale di Puglia | topicApuliaSpaceCenter]. Greenwitch si trova in [Britannia | topicBritannia], vicino a Londra.\n\nUn [cannone magnetico | galaxyRocketLaunch] alto un chilometro spara in cielo un proiettile corazzato. La [fascia di Kessler | kesslerSyndrome] strappa la corazza piastra dopo piastra, e ciò che resta si aggancia all'[astronave | galaxyShip] del gruppo.\n\nUn volo in orbita costa 500 euro. Il breve salto fino in Puglia è gratis. In modalità storia ogni volo è gratis."
+      "description": "Uno dei due posti che portano il Party in alto, attraverso la fascia di detriti. L'altro è il [Centro spaziale di Puglia | topicApuliaSpaceCenter]. Greenwitch si trova in [Britannia | topicBritannia], vicino a Londra.\n\nUn [cannone magnetico | galaxyRocketLaunch] alto un chilometro spara in cielo un proiettile corazzato. La [fascia di Kessler | kesslerSyndrome] strappa la corazza piastra dopo piastra, e ciò che resta si aggancia all'[astronave | galaxyShip] del Party.\n\nUn volo in orbita costa 500 euro. Il breve salto fino in Puglia è gratis. In modalità storia ogni volo è gratis."
     },
     "topicJudicialDimension": {
       "title": "La Dimensione Giudiziaria",
-      "description": "Il luogo dove [Eris | eris] tiene i suoi [processi | lawTrial]. Bubba dice che sono i fantasmi giudiziari a trascinarci i colpevoli. Lei porta avanti miliardi di processi insieme, quindi non aspettarti tutta la sua attenzione.\n\nPrima dell'udienza puoi assumere un avvocato, far parlare un compagno o difenderti da solo. Poi ti dichiari: colpevole, innocente, oppure è complicato. Puoi anche dirle che la colpevole è lei, ma così la irriti e basta.\n\nL'ultima scelta è sfidare Eris a combattere. Se perdi la causa, il gruppo finisce in [carcere | lawPrison]."
+      "description": "Il luogo dove [Eris | eris] tiene i suoi [processi | lawTrial]. Bubba dice che sono i fantasmi giudiziari a trascinarci i colpevoli. Lei porta avanti miliardi di processi insieme, quindi non aspettarti tutta la sua attenzione.\n\nPrima dell'udienza puoi assumere un avvocato, far parlare un compagno o difenderti da solo. Poi ti dichiari: colpevole, innocente, oppure è complicato. Puoi anche dirle che la colpevole è lei, ma così la irriti e basta.\n\nL'ultima scelta è sfidare Eris a combattere. Se perdi la causa, il Party finisce in [carcere | lawPrison]."
     },
     "topicLeylines": {
       "title": "Leyline",
@@ -322,7 +330,7 @@
     },
     "topicMainMenu": {
       "title": "Il Menu Principale",
-      "description": "Non è un menu vero e proprio. Come dice Bubba, basta immaginarsi un menu da JRPG nella testa. Premi MENU per aprirlo.\n\nDa qui il gruppo raggiunge il [Thinker | topicThinkerMenu], [Costruisci | topicBuildMenu], [Ricerca | topicResearchMenu], [Cucina | topicCookingMenu], Aspetta per [dormire | topicSleepMenu], il [libro dell'Archivio | topicArchiveMenu] e tutto il resto."
+      "description": "Il menu esiste solo nella tua testa: come dice Bubba, basta immaginarsi un menu da JRPG. Premi MENU per aprirlo.\n\nDa qui il Party raggiunge [Assembla | topicThinkerMenu], [Costruisci | topicBuildMenu], [Ricerca | topicResearchMenu], [Cucina | topicCookingMenu], Aspetta per [dormire | topicSleepMenu], il [libro dell'Archivio | topicArchiveMenu] e tutto il resto."
     },
     "topicMarcoMarcoMarco": {
       "title": "Marco Marco Marco",
@@ -334,27 +342,27 @@
     },
     "topicMoonlitStation": {
       "title": "Moonlit Station",
-      "description": "Una sosta lungo la strada, in riva a un lago in Belgio, e l'ultima sera normale del gruppo. C'erano un picnic di capodanno e fuochi d'artificio tecnomagici fatti in casa. Poi dal lago è uscita una mano gigante fatta d'acqua e si è portata via [Em | emTheMemoryWitch]."
+      "description": "Una sosta lungo la strada, in riva a un lago in Belgio, e l'ultima sera normale del Party. C'erano un picnic di capodanno e fuochi d'artificio tecnomagici fatti in casa. Poi dal lago è uscita una mano gigante fatta d'acqua e si è portata via [Em | emTheMemoryWitch]."
     },
     "topicNobelPrize": {
       "title": "Il Premio Nobel",
-      "description": "Il comitato svedese che ha dato a Bubba uno dei suoi premi. Secondo Bubba, il padre di [Em | emTheMemoryWitch] lo ha corrotto per intero, per far superare all'Em Drive la revisione dei colleghi."
+      "description": "Il comitato svedese che ha dato a Bubba uno dei suoi premi. Secondo Bubba, il padre di [Em | emTheMemoryWitch] lo ha corrotto per intero, per far superare all'Em Drive la revisione paritaria."
     },
     "topicOverviewEffect": {
       "title": "L'effetto veduta d'insieme",
       "description": "Quello che prende una persona quando vede tutta la Terra insieme dall'orbita. A quanto pare si rifiuta di visitare i miliardari. Nessuno l'ha mai spiegato in modo convincente."
     },
     "topicPet": {
-      "title": "Accarezzare",
-      "description": "L'opzione di [Empatizza | topicEmpathize] per gli animali. Accarezzare non va mai male, e ogni volta l'animale ti vuole un po' più bene.\n\nUn animale che ti vuole bene accetta più facilmente quando gli chiedi di venire con voi. Può seguire il gruppo come [animale | partyPets], oppure unirsi come membro vero e proprio se nel gruppo c'è un posto libero."
+      "title": "Accarezza",
+      "description": "L'opzione di [Empatizza | topicEmpathize] per gli animali. Accarezzare non va mai male, e ogni volta l'animale ti vuole un po' più bene.\n\nUn animale che ti vuole bene accetta più facilmente quando gli chiedi di venire con voi. Può seguire il Party come [animale | partyPets], oppure unirsi come membro vero e proprio se nel Party c'è un posto libero."
     },
     "topicResearchMenu": {
       "title": "Ricerca",
-      "description": "Il menu Ricerca: i materiali messi da parte si spendono in [scoperte | worldTechTree]. Quello che un gruppo scopre appartiene a tutto il mondo in cui l'ha scoperto, non a un solo salvataggio."
+      "description": "Il menu Ricerca: i materiali messi da parte si spendono in [scoperte | worldTechTree]. Quello che un Party scopre appartiene a tutto il mondo in cui l'ha scoperto, non a un solo salvataggio."
     },
     "topicRoccalonga": {
       "title": "Roccalonga",
-      "description": "Un paesino rurale italiano. Qui una nave madre triangolare atterrò la notte dell'[evento Y2K | topicY2KEvent], mentre Bubba ed [Em | emTheMemoryWitch] ci davano la caccia agli [alieni | theTourists]. Presero Em per studiarla, e poi la restituirono."
+      "description": "Un paesino rurale italiano. Qui una nave madre triangolare atterrò la notte dell'[evento Y2K | topicY2KEvent], mentre lì Bubba ed [Em | emTheMemoryWitch] davano la caccia agli [alieni | theTourists]. Presero Em per studiarla, e poi la restituirono."
     },
     "topicRoute666": {
       "title": "Route 666",
@@ -362,11 +370,11 @@
     },
     "topicSleepMenu": {
       "title": "Sonno",
-      "description": "Letti, falò, tende, un [accampamento | topicCamp] sulla [mappa del mondo | worldMapPage] e le [stanze in affitto | econProperty]: in tutti questi posti il gruppo può [dormire | needsSleep]. Scegli quanto, fino a dodici ore.\n\nOtto ore sono una notte intera: tornano salute, magia e stamina, e guariscono gli stati e le ossa rotte. Con Aspetta nel menu principale puoi anche dormire all'addiaccio dove ti trovi. Però vale solo mezza notte, a meno che tu non abbia con te un giaciglio."
+      "description": "Letti, falò, tende, un [accampamento | topicCamp] sulla [mappa del mondo | worldMapPage] e le [stanze in affitto | econProperty]: in tutti questi posti il Party può [dormire | needsSleep]. Scegli quanto, fino a dodici ore.\n\nOtto ore sono una notte intera: tornano salute, magia e stamina, e guariscono gli stati e le ossa rotte. Con Aspetta nel menu principale puoi anche dormire all'addiaccio dove ti trovi. Però vale solo mezza notte, a meno che tu non abbia con te un giaciglio."
     },
     "topicThinkerMenu": {
       "title": "Il Thinker",
-      "description": "Il [banco da lavoro | craftThinker] nel [menu principale | topicMainMenu]. Una sola schermata contiene tutte le ricette di oggetti, armi e armature, fatte con materiali come acciaio e legno di recupero.\n\nLe ricette per cui il gruppo non si è ancora [addestrato | progressTraining] sono in elenco, ma in grigio. Lo stesso banco può anche smontare un oggetto per ricavarne i materiali. Il cibo invece si prepara in [Cucina | topicCookingMenu]."
+      "description": "Il [banco da lavoro | craftThinker] nel [menu principale | topicMainMenu]. Una sola schermata contiene tutte le ricette di oggetti, armi e armature, fatte con materiali come acciaio di recupero e legno.\n\nLe ricette per cui il Party non si è ancora [addestrato | progressTraining] sono in elenco, ma in grigio. Lo stesso banco può anche smontare un oggetto per ricavarne i materiali. Il cibo invece si prepara in [Cucina | topicCookingMenu]."
     },
     "topicUmbraExcidii": {
       "title": "L'Umbra Excidii",
@@ -390,11 +398,11 @@
     },
     "topicArmy": {
       "title": "Esercito",
-      "description": "Fino a cento [soldati | societyArmy], ingaggiati in una [locanda | worldHouses] con Recluta truppe. Ognuno ha un costo d'ingaggio. Seguono il gruppo sulla [mappa del mondo | worldMapPage] e combattono le sue battaglie campali come un solo blocco, non come membri del gruppo.\n\nOgni soldato ha anche una paga settimanale. Se il denaro del gruppo non basta a coprire una settimana di paghe, il loro morale cala."
+      "description": "Fino a cento [soldati | societyArmy], ingaggiati in una [locanda | worldHouses] con Recluta truppe. Ognuno ha un costo d'ingaggio. Seguono il Party sulla [mappa del mondo | worldMapPage] e combattono le sue battaglie campali come un solo blocco, non come membri del Party.\n\nOgni soldato ha anche una paga settimanale. Se il denaro del Party non basta a coprire una settimana di paghe, il loro morale cala."
     },
     "topicOptionsMenu": {
       "title": "Opzioni",
-      "description": "Qui si imposta tutto ciò che riguarda l'aspetto del gioco, il suo audio e come risponde al [controller | controlsGamepad]: la dimensione del testo, lo shader retrò, la [musica di battaglia | hypernetMusic], i suggerimenti e ogni tasto con cui guidi il gruppo."
+      "description": "Qui si imposta tutto ciò che riguarda l'aspetto del gioco, il suo audio e come risponde al [controller | controlsGamepad]: la dimensione del testo, lo shader retrò, la [musica di battaglia | hypernetMusic], i suggerimenti e ogni tasto con cui guidi il Party."
     },
     "topicFriday": {
       "title": "Venerdì",
@@ -402,11 +410,11 @@
     },
     "topicMahyem": {
       "title": "Mahyem",
-      "description": "Una band black metal norvegese che le orde goblin dei [Naguka | naguka] adorano come [dei | theGods] veri e propri. È la fede a tenerli in vita: ogni governo del pianeta ha provato a ucciderli e nessuno ci è riuscito. La loro musica guida l'[inconscio collettivo goblin | goblinHorde], e le orde che scendono dalla Scandinavia verso l'Europa marciano al suo ritmo."
+      "description": "Una band black metal norvegese che le orde goblin dei [Naguka | naguka] adorano come [dèi | theGods] veri e propri. È la fede a tenerli in vita: ogni governo del pianeta ha provato a ucciderli e nessuno ci è riuscito. La loro musica guida l'[inconscio collettivo goblin | goblinHorde], e le orde che scendono dalla Scandinavia verso l'Europa marciano al suo ritmo."
     },
     "topicEuronymous": {
       "title": "Euronymous",
-      "description": "Il membro dei [Mahyem | topicMahyem] sopravvissuto al coltello di Varg. Il trauma cranico gli ha lasciato una sindrome del savant acquisita e una delle menti psioniche più potenti al mondo. Ha lasciato il palco mentre il resto della band continuava a vivere da dei, e nessuno sa dove sia adesso."
+      "description": "Il membro dei [Mahyem | topicMahyem] sopravvissuto al coltello di Varg. Il trauma cranico gli ha lasciato una sindrome del savant acquisita e una delle menti psioniche più potenti al mondo. Ha lasciato il palco mentre il resto della band continuava a vivere da dèi, e nessuno sa dove sia adesso."
     },
     "topicTritunnelWest": {
       "title": "Tritunnel Ovest",

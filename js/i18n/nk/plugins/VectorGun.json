@@ -44,8 +44,8 @@
     },
     "solomonIncantation": {
       "name": "SOLOMON INCANTATION",
-      "desc": "SPELLS IZ SPOKEN ALOUD AN' DEAL 15% MORE DAMAGE!",
-      "effect": "RUNS ONLY WIT DA GRIMOIRE OF SOLOMON FITTED, OR WHILE DA BOOK IZ OPEN IN GRACEFUL DEATH. EVERY SPELL CAST IZ READ OUT IN FULL FIRST, IN A BOX OF ITS OWN, AN' DEN DEALS OR HEALS 15% MORE!"
+      "desc": "SPELLS LOG A LINE OF DEY CHANT. FULL CHANT WIT DA GRIMOIRE OPEN!",
+      "effect": "SPELLS CAST WIT DA VECTOR GUN ADD A RANDOM CHANT LINE TA DA BATTLE LOG. WIT DA GRIMOIRE OF SOLOMON FITTED, OR OPEN IN GRACEFUL DEATH, DA FULL CHANT IZ LOGGED AN' DA SPELL DEALS OR HEALS 15% MORE!"
     },
     "card": {
       "name": "CARD",
@@ -170,9 +170,9 @@
     "uncalibrated": "{choice} DROPPED.",
     "calSwapped": "{choice} CHOSEN, {old} DROPPED.",
     "reaped": "DA SCYTHE TAKES {name}.",
-    "noSky": "NO SKY IN HERE TA TURN OVER!",
+    "noSky": "NO WEATHER INDOORS.",
     "spent": "{form} SPENT, FOLDED BACK INTO DA PISTOL!",
-    "locked": "{mode} OPENS AT LEVEL {n}.",
+    "locked": "{mode} UNLOCKS AT LEVEL {n}.",
     "roll": "DICE OF YALDABAOTH: {n}. {form}.",
     "natural": "DICE OF YALDABAOTH: NATURAL {n}. DA GRIMOIRE OF SOLOMON OPENS!",
     "grimoire": "GRIMOIRE OF SOLOMON",
@@ -182,12 +182,12 @@
     "switched": "{name} SWITCHES TA {form}."
   },
   "lock": {
-    "title": "NO YET EARNED",
+    "title": "LOCKED",
     "level": "LEVEL {n}",
-    "unlocksAt": "OPENS AT LEVEL",
+    "unlocksAt": "UNLOCKS AT LEVEL",
     "current": "EM'S LEVEL",
-    "remaining": "{n} MODES STILL SHUT, NEXT AT LEVEL {next}",
-    "formsRemaining": "{n} FORMS STILL SHUT, NEXT AT LEVEL {next}"
+    "remaining": "{n} MODES LOCKED, NEXT AT LEVEL {next}",
+    "formsRemaining": "{n} FORMS LOCKED, NEXT AT LEVEL {next}"
   },
   "locked": {
     "equip": "ONLY EM CAN EQUIP DA VECTOR GUN!",
@@ -200,13 +200,13 @@
   },
   "element": {
     "title": "ELEMENT",
-    "hint": "DA ELEMENT IZ STORED ON DA PISTOL. WEAPON FORMS DROP IT AN' ATTACK WITHOUT AN ELEMENT. DA COILGUN HAB ITS OWN ELEMENT, SET ON DA CALIBRATION PAGE, SO DA FRAME CAN HOLD TWO AT ONCE!",
+    "hint": "APPLIES TA DA PISTOL ONLY. WEAPON FORMS HAB NO ELEMENT. DA COILGUN'S ELEMENT IZ SET IN CALIBRATION!",
     "physicalDesc": "PHYSICAL DAMAGE, NO ELEMENT!",
     "desc": {
       "1": "PHYSICAL DAMAGE, NO ELEMENT!",
       "2": "FIRE DAMAGE, CAN SET DA TARGET BURNIN'!",
       "3": "ICE DAMAGE, CAN FREEZE DA TARGET!",
-      "4": "LIGHTNIN' DAMAGE.",
+      "4": "LIGHTNING DAMAGE.",
       "5": "WATER DAMAGE.",
       "6": "EARTH DAMAGE.",
       "7": "WIND DAMAGE.",
@@ -339,7 +339,7 @@
     "nyarlathotep": {
       "name": "SCYTHE OF NYARLATHOTEP",
       "desc": "CRITS CAN KILL.",
-      "effect": "CRITICAL HITS HAB A 50% CHANCE TA KILL OUTRIGHT, ON DA CHOSEN SIDE. NEVER EM, BOSSES, PETRODEMONS OR ANYTHIN' OVER 10 LEVELS ABOVE HER!"
+      "effect": "CRITICAL HITS HAB A 50% CHANCE TA KILL OUTRIGHT, ON DA CHOSEN SIDE. NEVER EM, BOSSES, PETRODEMONS OR ANYTINK OVER 10 LEVELS ABOVE HER!"
     },
     "freud": {
       "name": "KATANA OF FREUD",
@@ -357,34 +357,34 @@
     "elements": "ELEMENTS"
   },
   "cal": {
-    "none": "NOTHIN' TA CALIBRATE",
+    "none": "NUTTIN' TA CALIBRATE",
     "known": "LEARNED",
-    "borrowed": "READ OFF DA FRAME",
+    "borrowed": "FROM DA WEAPON",
     "apCost": "{ap} AP",
     "chip": {
       "selected": "CHOSEN"
     },
     "section": {
-      "element": "DA COILGUN'S ELEMENT",
-      "rack": "DA RACK",
-      "marks": "DA MARK IT LEAVES",
-      "stance": "DA STANCE SHE HOLDS IT IN",
-      "sky": "DA SKY IT CALLS",
-      "schools": "DA SCHOOLS IT DEALS FROM",
-      "quarry": "WHAT IT WAZ BUILT FOR",
-      "lash": "WHAT DA LASH TEARS DOWN",
-      "venom": "WHAT DA DARTS CARRY",
-      "head": "WHAT DA HEAD DELIVERS",
-      "cleave": "HOW WIDE DA SWING CARRIES",
-      "draw": "HOW FAR IT IZ DRAWN",
-      "charge": "HOW IT IZ BROUGHT TA BEAR",
-      "discord": "HOW WILD DA BLOW IZ",
-      "measure": "WHAT IT WEIGHS DEM AGAINST",
-      "reads": "WHAT DA BAR READS",
-      "bargain": "DA BARGAIN STRUCK",
-      "mends": "WHAT DA BEADS MEND",
-      "known": "WHAT SHE KNOWS",
-      "reach": "WITHIN HER REACH"
+      "element": "COILGUN ELEMENT",
+      "rack": "RACK",
+      "marks": "HOW ME DOIN'",
+      "stance": "STANCE",
+      "sky": "WEATHER",
+      "schools": "SCHOOLS",
+      "quarry": "TARGET TYPE",
+      "lash": "LOWERED STAT",
+      "venom": "DART STATUS",
+      "head": "DAMAGE TYPE",
+      "cleave": "TARGETS",
+      "draw": "DRAW",
+      "charge": "ATTACK STYLE",
+      "discord": "VARIANCE",
+      "measure": "MEASURED STAT",
+      "reads": "READIN'",
+      "bargain": "BARGAIN",
+      "mends": "HEALS",
+      "known": "LEARNED",
+      "reach": "AVAILABLE"
     },
     "lash": {
       "desc": "LOWERS DIS PARAMETER ON HIT FOR A FEW ROUNDS. 45% CHANCE, 85% DAMAGE!"
@@ -585,67 +585,67 @@
     },
     "form": {
       "gun": {
-        "hint": "DA COILGUN HAB ITS OWN ELEMENT, SO DA FRAME HOLDS TWO AT ONCE. RACK DEPTH IZ UP TA YOU, BUT A DOUBLED RACK DOUBLES DA AMMO COST OF EVERY SHOT!"
+        "hint": "DA COILGUN HAB ITS OWN ELEMENT. A DOUBLED RACK DOUBLES DA AMMO COST PER SHOT!"
       },
       "abrasax": {
-        "hint": "APPLIES ONE AFFLICTION. HARSHER AFFLICTIONS HAB LOWER ODDS OF LANDIN', AN' PSI RAISES DA ODDS!"
+        "hint": "APPLIES ONE STATUS. HARSHER ONES LAND LESS OFTEN. PSI RAISES DA ODDS!"
       },
       "thelema": {
-        "hint": "A NORMAL ATTACK SOMETIMES BECOMES DIS SWORD SKILL INSTEAD, PAYIN' ITS AP COST. DA SKILL DOES NO NEED TA BE LEARNED!"
+        "hint": "NORMAL ATTACKS MAY BECOME DIS SWORD SKILL, PAYIN' ITS AP. NO NEED TA LEARN IT!"
       },
       "freud": {
-        "hint": "DAMAGE IZ BASED ON PSI. A NORMAL ATTACK SOMETIMES BECOMES DIS SKILL INSTEAD, PAYIN' ITS AP COST!"
+        "hint": "DAMAGE SCALES ON PSI. NORMAL ATTACKS MAY BECOME DIS SKILL, PAYIN' ITS AP!"
       },
       "fists": {
-        "hint": "A NORMAL ATTACK SOMETIMES BECOMES A RANDOM FORM FROM DA SELECTED SET, PAYIN' ITS AP COST!"
+        "hint": "NORMAL ATTACKS MAY BECOME A RANDOM SKILL FROM DA SET, PAYIN' ITS AP!"
       },
       "kia": {
-        "hint": "DA STANCE IZ ACTIVE WHILE DA GAUNTLET IZ EQUIPPED, AN' LOWERS DA DAMAGE YOU DEAL WHILE IT IZ UP!"
+        "hint": "ACTIVE WHILE DA GAUNTLET IZ EQUIPPED. LOWERS YA DAMAGE!"
       },
       "hadit": {
-        "hint": "SWITCHIN' TA DA STAFF CHANGES DA WEATHER TA DIS ONE. WEATHER AFFECTS BAD 'UNS TOO, AN' HAB NO EFFECT INDOORS!"
+        "hint": "SWITCHIN' TA DA STAFF SETS DIS WEATHER. AFFECTS BAD 'UNS TOO. NO EFFECT INDOORS!"
       },
       "solomon": {
-        "hint": "DA PACT IZ DRAWN FROM DA SELECTED SCHOOLS. WIT NOTHIN' SELECTED IT DRAWS FROM EVERY SCHOOL. A REAL NARROW SELECTION MAY HAB NOTHIN' TA DRAW!"
+        "hint": "SPELLS COME FROM DA SELECTED SCHOOLS, OR ALL SCHOOLS IF NONE. TOO NARROW A PICK MAY LEAVE NUTTIN'!"
       },
       "choronzon": {
-        "hint": "DA DAMAGE TYPE DEALT. IT DECIDES WHAT DA ATTACK IZ STRONG AN' WEAK AGAINST!"
+        "hint": "DECIDES WHAT DA ATTACK IZ STRONG AN' WEAK AGAINST!"
       },
       "babalon": {
-        "hint": "HOW MANY TARGETS DA ATTACK HITS. EVERY EXTRA TARGET LOWERS DA DAMAGE DEALT TA ALL OF DEM!"
+        "hint": "NUMBER OF TARGETS. EACH EXTRA TARGET LOWERS DAMAGE TA ALL!"
       },
       "nuit": {
-        "hint": "DA LASH LOWERS ONE PARAMETER INSTEAD OF DEALIN' FULL DAMAGE. DA ATTACK DEALS LESS DAMAGE IN EXCHANGE!"
+        "hint": "LOWERS ONE STAT ON HIT, FOR LESS DAMAGE!"
       },
       "aiwass": {
-        "hint": "HOW FAR DA BOW IZ DRAWN. LONGER DRAW TRADES OFF AGAINST ARROW DAMAGE!"
+        "hint": "LONGER DRAW: MORE RANGE, LESS DAMAGE!"
       },
       "zos": {
-        "hint": "DA STATUS EFFECT ON DA DARTS, TAKEN FROM DA SAME LOADED ROUNDS!"
+        "hint": "STATUS APPLIED BY DA DARTS!"
       },
       "baphomet": {
-        "hint": "WHAT DA TALONS DRAIN FROM DA TARGET. DRAININ' AP COSTS DA MOST, SINCE AP POWERS ATTACKS DAT TURN INTO SKILLS!"
+        "hint": "WHAT DA TALONS DRAIN. DRAININ' AP COSTS DA MOST!"
       },
       "longinus": {
-        "hint": "HOW DA LANCE ATTACKS. EACH MODE TRADES ONE PROPERTY FOR ANOTHER!"
+        "hint": "ATTACK STYLE. EACH ONE HAB A TRADE-OFF!"
       },
       "eris": {
-        "hint": "DAMAGE VARIANCE. WIDER VARIANCE RAISES DA AVERAGE DAMAGE BUT MAKES SINGLE HITS LESS PREDICTABLE!"
+        "hint": "WIDER VARIANCE: HIGHER AVERAGE DAMAGE, LESS PREDICTABLE HITS!"
       },
       "maat": {
-        "hint": "DA PARAMETER DA ANKH WEIGHS DA TARGET AGAINST. A BALANCED TARGET TAKES LESS DAMAGE DEN FROM A NORMAL ATTACK!"
+        "hint": "DA STAT DA TARGET IZ WEIGHED ON. BALANCED TARGETS TAKE LESS DEN A NORMAL ATTACK!"
       },
       "bubba": {
-        "hint": "DA TARGET TYPE DA WRENCH IZ BUILT FOR. MUCH MORE DAMAGE AGAINST IT, LESS AGAINST EVERYTHIN' ELSE!"
+        "hint": "MUCH MORE DAMAGE TA DIS TARGET TYPE, LESS TA OTHERS!"
       },
       "yaldabaoth": {
-        "hint": "DA READIN' DA BAR TAKES FROM DA TARGET. AGAINST AN UNAFFECTED TARGET IT DEALS LESS DEN A NORMAL ATTACK!"
+        "hint": "WHAT DA BAR MEASURES. UNHURT TARGETS TAKE LESS DEN A NORMAL ATTACK!"
       },
       "nyarlathotep": {
-        "hint": "WHICH SIDE DA REAPIN' TARGETS. IT NEVER TAKES EM, AN' NO CAN TARGET A BOSS, A PETRODEMON, OR ANYTHIN' MORE DEN TEN LEVELS ABOVE HER!"
+        "hint": "WHICH SIDE CAN BE REAPED. NEVER EM, BOSSES, PETRODEMONS OR ANYTINK 10+ LEVELS ABOVE HER!"
       },
       "gautama": {
-        "hint": "WHAT DA ROSARY HEALS. IT DEALS NO DAMAGE AT ALL!"
+        "hint": "WHAT DA ROSARY HEALS. DEALS NO DAMAGE!"
       }
     }
   }

@@ -66,6 +66,10 @@
   // the base _render() hands it to _buildMoreHTML with the editor page.
   const FACTIONS_TAB = "ccFactions";
 
+  // The body tab, the same way: the anatomy the archetypes build and the
+  // skills each part teaches (HealthCore.partSkillRows), read only.
+  const BODY_TAB = "ccBody";
+
   // Where a character stands with the powers before the first day of play. A
   // budget rather than a free hand: goodwill is bought a band at a time, and
   // the only way to walk in adored by several factions is to walk in loathed
@@ -907,7 +911,11 @@
       const chosen = pick(window.CreatureClasses.sentientRoster());
       if (chosen) {
         actor.changeClass(chosen, true);
-        if (window.equipRandomCompatibleWeapon) window.equipRandomCompatibleWeapon(actor, chosen);
+        // The new class deals its kit (weapon, armour, items) the way every
+        // wizard path does. The weapon helper it used to look for on window
+        // was never published there, so a rolled class arrived empty-handed.
+        const SE = window.StartingEquipment;
+        if (SE && SE.applyStartingGear) SE.applyStartingGear(actor, chosen);
       }
     }
     if (window.selectRandomSpriteForActor) window.selectRandomSpriteForActor(actor.actorId());
@@ -1033,6 +1041,12 @@
         value: archetypeLabel(actor), kind: "open",
       });
     }
+    // A second archetype splices its peculiar parts onto the body (a Bird's
+    // wings on a person, a Beast's tail), and the skills those parts teach.
+    identity.push({
+      id: "archetype2", label: T("secondaryArchetype"),
+      value: secondaryArchetypeLabel(actor), kind: "pick",
+    });
     identity.push(
       { id: "gender", label: TE("genderLbl"), value: genderLabel(actor.gender()), kind: "pick" },
       {
@@ -1220,8 +1234,17 @@
     return TE("virtuous");
   }
 
+  function secondaryArchetypeLabel(actor) {
+    const kit = window.CCKit;
+    const key = kit && kit.actorSecondaryArchetypeKey ? kit.actorSecondaryArchetypeKey(actor) : null;
+    if (!key) return T("detailed.none");
+    return kit.archetypeDisplayName ? kit.archetypeDisplayName(key) : String(key);
+  }
+
   function archetypeLabel(actor) {
-    const archetype = actor && actor._currentArchetype;
+    const kit = window.CCKit;
+    const keys = kit && kit.actorArchetypeKeys ? kit.actorArchetypeKeys(actor) : [];
+    const archetype = keys.length ? keys.join("/") : (actor && actor._currentArchetype);
     if (!archetype) return T("detailed.unset");
     if (!window.HealthCore || !window.HealthCore.getArchetypeDisplayName) return String(archetype);
     return String(archetype).split("/").map((part) => {
@@ -1312,6 +1335,18 @@
             { key: "model", label: T("portraitModel") },
           ],
         };
+      case "archetype2": {
+        const kit = window.CCKit;
+        const actor = editedActor();
+        const primary = kit && actor ? kit.actorArchetypeKey(actor) : null;
+        const keys = kit && kit.creatureArchetypeKeys ? kit.creatureArchetypeKeys() : [];
+        return {
+          title: T("secondaryArchetype"),
+          options: [{ key: "", label: T("detailed.none") }].concat(keys
+            .filter((key) => key !== primary)
+            .map((key) => ({ key, label: kit.archetypeDisplayName(key) }))),
+        };
+      }
       case "gender":
         return {
           title: TE("genderLbl"),
@@ -1486,6 +1521,14 @@
       case "portrait": {
         const kit = window.CCKit;
         if (!actor || !kit || !kit.setPortraitStyle || !kit.setPortraitStyle(actor, key)) {
+          SoundManager.playBuzzer();
+        }
+        return false;
+      }
+      case "archetype2": {
+        const kit = window.CCKit;
+        if (!actor || !kit || !kit.applySecondaryArchetypeToActor ||
+            !kit.applySecondaryArchetypeToActor(actor, key || null)) {
           SoundManager.playBuzzer();
         }
         return false;
@@ -1970,7 +2013,7 @@
   const _tabOrder = Scene_NPCEmpathize.prototype._tabOrder;
   Scene_NPCEmpathize.prototype._tabOrder = function () {
     if (!isEditing(this) || this._entity) return _tabOrder.call(this);
-    return [CC_TAB, FACTIONS_TAB, "info", "background", "biologics", "health", "romance", "lifeHistory", "wiki"];
+    return [CC_TAB, FACTIONS_TAB, BODY_TAB, "info", "background", "biologics", "health", "romance", "lifeHistory", "wiki"];
   };
 
   const _buildTabsHTML = Scene_NPCEmpathize.prototype._buildTabsHTML;
@@ -1983,6 +2026,7 @@
     return this._buildBackBtnHTML(T2) + this._tabOrder().map((id) => {
       const label = id === CC_TAB ? T("detailed.tab")
         : id === FACTIONS_TAB ? T("detailed.factionsTab")
+        : id === BODY_TAB ? T("detailed.bodyTab")
         : (id === "wiki" ? labels.wikiTab : labels[id]);
       return `<div class="npc-tab${this._activeTab === id ? " active" : ""}"
            onmousedown="event.stopPropagation();SceneManager._scene._setTab('${id}')">${esc(label)}</div>`;
@@ -2021,6 +2065,7 @@
   Scene_NPCEmpathize.prototype._buildMoreHTML = function (T2) {
     if (!isEditing(this)) return _buildMoreHTML.call(this, T2);
     if (this._activeTab === FACTIONS_TAB) return this._buildCCFactionsHTML();
+    if (this._activeTab === BODY_TAB) return this._buildCCBodyHTML();
     if (this._activeTab !== CC_TAB) return _buildMoreHTML.call(this, T2);
     return this._ccPicker ? this._buildCCPickerHTML() : this._buildCCEditorHTML();
   };
@@ -2123,6 +2168,30 @@
   //---------------------------------------------------------------------------
   // The standing page
   //---------------------------------------------------------------------------
+
+  Scene_NPCEmpathize.prototype._buildCCBodyHTML = function () {
+    const actor = editedActor();
+    if (!actor) return `<p class="cc-empty-note">${esc(T("detailed.unavailable"))}</p>`;
+    const HC = window.HealthCore;
+    const rows = (HC && HC.partSkillRows) ? HC.partSkillRows(actor) : [];
+    let html = `<div class="npc-profile-name">${esc(actor.name())}</div>` +
+      `<div class="npc-profile-sub">${esc(T("detailed.bodyTitle"))} · ${esc(archetypeLabel(actor))}</div>` +
+      `<div class="npc-cc-hint">${esc(T("anatomyHint"))}</div>`;
+    if (!rows.length) return html + `<p class="cc-empty-note">${esc(T("noAnatomicalOrgansDefined"))}</p>`;
+    html += `<hr class="npc-r-sep"><div class="npc-sec-hdr">${esc(T("anatomy"))}</div>`;
+    rows.forEach((row) => {
+      const skills = row.skills.map((id) => {
+        const skill = $dataSkills[id];
+        return window.CCDbName ? window.CCDbName(skill) : skill.name;
+      });
+      html += `<div class="npc-cc-row npc-cc-row--static">
+        <span class="npc-cc-row-lbl">${esc(row.name)}</span>
+        <span class="npc-cc-row-val">${row.hpPercent}% HP${row.vital ? " " + esc(T("vital")) : ""}</span>
+      </div>` +
+      (skills.length ? `<div class="npc-cc-note">${esc(T("anatomyTeaches"))}: ${esc(skills.join(", "))}</div>` : "");
+    });
+    return html;
+  };
 
   Scene_NPCEmpathize.prototype._buildCCFactionsHTML = function () {
     const actor = editedActor();

@@ -2,5 +2,6 @@
   "defaultName": "Skill Booster Pack",
   "fallbackSkill": "Attack",
   "categoryTitle": "{categories} Booster Pack",
-  "newSkill": "NEW SKILL!"
+  "newSkill": "NEW SKILL!",
+  "duplicate": "DUPLICATE"
 }

@@ -31,6 +31,18 @@
     _needLabels, _personalitySocialMult, _rand, _resolveBustPath, _signatureLines, _socialLines, _timesSuffix,
     NEED_ICONS, OPT, vary,
   } = Scene_NPCEmpathize._internal;
+  // The stat a die is thrown on, named the way the status screen names it.
+  const _diceStat = (paramId) => ((typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(paramId) : '');
+
+  // A court move is scored where every other Empathize move is
+  // (NPCEmpathize.Emotions.act): the boredom of the same move made again and the
+  // emotions it carries, onto attraction rather than opinion.
+  function _scoreRomance(profile, actor, key, delta) {
+    const act = window.NPCEmpathize?.Emotions?.act;
+    if (act) return act(profile, actor, key, delta, { attraction: true }).delta;
+    _addNpcAttraction(profile, actor?.actorId?.(), delta);
+    return delta;
+  }
 
   // ============================================================================
   // SCREEN 3 OF 5: THE LEDGER
@@ -1766,9 +1778,10 @@
       const chance = _proposeChance(profile, npcName, actor, styleKey, priorAttraction, priorOpinion);
       if (window.Dice3D) {
         const res = await window.Dice3D.rollPercentage(chance, {
-          actionName: `Proposal: ${nm(style)}`,
-          statName: 'PSI',
-          modifier: actor?.psiMod || 0
+          actionName: _getT()('Empathize.dice.proposal', { style: nm(style) }),
+          statName: _diceStat(7),
+          modifier: actor?.psiMod || 0,
+          force3D: true
         });
         landed = res.success;
       } else {
@@ -1785,7 +1798,7 @@
     }
 
     if (profile && actorId != null) {
-      _addNpcAttraction(profile, actorId, delta);
+      delta = _scoreRomance(profile, actor, 'propose', delta);
       (profile.eventLog ??= []).push({
         tag: 'romance_propose', desc: `propose ${styleKey} (${delta >= 0 ? '+' : ''}${delta})`, // i18n-ignore: event-log record id
         timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
@@ -1867,9 +1880,10 @@
         landed = true;
       } else if (window.Dice3D) {
         const res = await window.Dice3D.rollPercentage(chance, {
-          actionName: `Romance: ${def.label || id}`,
-          statName: 'PSI',
-          modifier: actor?.psiMod || 0
+          actionName: _getT()('Empathize.dice.romance', { action: def.label || id }),
+          statName: _diceStat(7),
+          modifier: actor?.psiMod || 0,
+          force3D: true
         });
         landed = res.success;
       } else {
@@ -1899,7 +1913,7 @@
     if (pairCtx) _addPairBond(-Math.max(4, Math.abs(delta)));
 
     if (profile && actorId != null && !pairCtx) {
-      _addNpcAttraction(profile, actorId, delta);
+      delta = _scoreRomance(profile, actor, 'court:' + id, delta);
       (profile.eventLog ??= []).push({
         tag: 'romance_' + id, desc: `${id} (${delta >= 0 ? '+' : ''}${delta})`,
         timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
@@ -2147,7 +2161,7 @@
         const rows = events.slice(0, 20).map(e => `
           <div class="npc-life-row">
             <span class="npc-life-time">${_escapeHtml(e.date || '')}</span>
-            <span>${_escapeHtml(window.NPCLifeSim.lifeEventText?.(e) || '')}</span>
+            <span>${_escapeHtml(window.NPCLifeSim.lifeEventText?.(e, npcName) || '')}</span>
           </div>`).join('');
         animalHTML = `<div class="npc-routine-sub-hdr">${_escapeHtml(window.T('Empathize.animalLifeEvents'))}</div>${rows}`;
       }

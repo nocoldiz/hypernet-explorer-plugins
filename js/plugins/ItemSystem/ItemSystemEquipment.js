@@ -35,6 +35,10 @@
  *   handed a second weapon, but then EVERY weapon it carries is cut to 65%
  *   (HandSlots.UNTRAINED_DUAL_PENALTY); Optimize leaves those classes holding
  *   one weapon and puts a shield in the other hand.
+ * - A plain Attack with a weapon in each hand is two blows: the main hand
+ *   lands its whole blow, then the off hand follows up with 50% of a blow
+ *   worked out from its own weapon (attack, scaling, element). Skills are
+ *   thrown once. See "Both hands swing" below.
  * - So a pair of hands comes to one of: two shields, a weapon and a shield,
  *   one two-handed weapon across both, two one-handed weapons, one of either
  *   on its own, or nothing at all.
@@ -983,9 +987,14 @@
         // that knows a Clothes slot from a Robe slot from an Armour slot: all
         // three carry the same equip type and differ only by armour type.
         const held = kind === 'hand' || kind === 'mouth';
+        // The bag can name an id the database no longer has (a save from a
+        // build with more armour, a removed piece): $gameParty hands that back
+        // as undefined, which must not reach slotFits or the bench.
+        const weapons = $gameParty.weapons().filter(Boolean);
+        const armors = $gameParty.armors().filter(Boolean);
         const pool = held
-            ? $gameParty.weapons().concat($gameParty.armors().filter(a => a.etypeId === ETYPE_OFFHAND))
-            : $gameParty.armors();
+            ? weapons.concat(armors.filter(a => a.etypeId === ETYPE_OFFHAND))
+            : armors;
         return pool.filter(item => this.canEquip(item) && HandSlots.slotFits(this, slotId, item));
     };
 
@@ -1181,14 +1190,25 @@
             if (item && item.wtypeId) carried++;
         }
         const penalty = HandSlots.dualPenalty(this, carried);
+        // In the middle of one hand's swing (see "Both hands swing", below)
+        // only the weapon in that hand lands its strength: the blow is struck
+        // with it alone. Every weapon still counts towards `raw`, because that
+        // is what the stock sum underneath has already added.
+        const swing = this._swingWeapon || null;
+        let swingCounted = false;
         for (let i = 0; i < equips.length; i++) {
             const item = equips[i];
             if (!item || !item.wtypeId || !item.params) continue;
             const base = item.params[paramId] || 0;
             raw += base;
+            if (swing) {
+                if (item !== swing || swingCounted) continue;
+                swingCounted = true;
+            }
             scaled.push(Math.round(base * WeaponProficiency.multiplier(this, item) * penalty));
         }
-        if (!scaled.length) return { raw: 0, total: 0 };
+        if (!scaled.length) return { raw: raw, total: 0 };
+        if (swing) return { raw: raw, total: scaled[0] };
         const total = scaled.length > 2
             ? medianOf(scaled)
             : scaled.reduce((sum, value) => sum + value, 0);
@@ -1326,6 +1346,11 @@
     // in frame all read this, and all of them are about the blow being struck.
     // Out of battle nothing is drawn and the whole armful answers.
     Game_Actor.prototype.weapons = function () {
+        // One hand's swing is struck with that hand's weapon and nothing else
+        // (see "Both hands swing", below), so everything read off "the weapon
+        // in hand" while it lands - scaling, firearm rates, the grip - reads
+        // the weapon actually swinging.
+        if (this._swingWeapon) return [this._swingWeapon];
         const weapons = this.allWeapons();
         if (weapons.length <= 2) return weapons;
         if (typeof $gameParty === 'undefined' || !$gameParty || !$gameParty.inBattle()) return weapons;
@@ -1350,6 +1375,18 @@
     const _Game_Actor_traitObjects_weapons = Game_Actor.prototype.traitObjects;
     Game_Actor.prototype.traitObjects = function () {
         const objects = _Game_Actor_traitObjects_weapons.call(this);
+        // Mid swing only the swinging weapon lends its traits: an off-hand
+        // fire dagger cuts with fire, the sword in the other hand does not.
+        const swing = this._swingWeapon;
+        if (swing) {
+            let kept = false;
+            return objects.filter(object => {
+                if (!(object && object.wtypeId)) return true;
+                if (object !== swing || kept) return false;
+                kept = true;
+                return true;
+            });
+        }
         if (this.allWeapons().length <= 2) return objects;
         const active = this.activeWeapons();
         return objects.filter(object => !(object && object.wtypeId) || active.includes(object));
@@ -1361,16 +1398,30 @@
     //
     // A plain Attack is one blow in the stock engine, however many weapons are
     // held: a second weapon only ever added its numbers to the first one's
-    // swing, so the off hand was never seen to move and never landed anything
-    // of its own. Every weapon in hand this turn now gets a swing of its own:
-    // an armful of two strikes twice, and when there are more it is the pair
-    // drawn for the turn that swings (activeWeapons, above).
+    // swing, and once the pace layer (BattleSystemEnhanced, dndResolveDamage)
+    // started sizing every hit off the defender's health bar, those numbers
+    // stopped showing at all. Worse, the old rule then shared one blow out
+    // between the two hands, and the burst rule (BattleSystemEnhancedMechanics,
+    // burstShareFor) read the second hand as a burst and shaved it again, so
+    // a weapon in each hand landed a little LESS than one weapon alone.
     //
-    // It is the same blow shared out, not a free doubling. The weapons already
-    // pool their strength into the character's attack (weaponParamDelta), so
-    // each swing carries its share of it and the turn comes to what it always
-    // came to, dealt one hand at a time. A burst from a firearm keeps its own
-    // repeats and is shared out the same way.
+    // Every weapon in hand this turn now strikes a blow of its own, with its
+    // own numbers: the main hand swings first and lands exactly what it would
+    // alone, then each other hand follows up with OFFHAND_SWING_RATE of a blow
+    // worked out from ITS weapon (its attack, its proficiency, its <Scale:>
+    // stats, its element). Two swords come to 1.5 swords a turn, never 2: the
+    // second hand is a follow-up, not a second turn. When more than two are
+    // carried, it is the pair drawn for the turn that swings (activeWeapons).
+    //
+    // A class that was never trained to dual wield pays
+    // HandSlots.UNTRAINED_DUAL_PENALTY on every swing as well as on the stats,
+    // so for them a second weapon is a step down (0.65 + 0.325 of a blow),
+    // which is what the equip screen warns about.
+    //
+    // A burst from a firearm in the main hand keeps its own repeats; the off
+    // hand adds one more swing after it. Only the plain Attack is affected:
+    // a skill is thrown once, with whichever hand its school asks for.
+    const OFFHAND_SWING_RATE = 0.5;
 
     function handSwingsFor(action) {
         if (!action || !action.isAttack || !action.isAttack()) return 1;
@@ -1389,23 +1440,112 @@
             return base + (handSwingsFor(this) - 1);
         };
 
-        // What one of those swings is worth: the whole blow divided among the
-        // hands delivering it.
-        Game_Action.prototype.handSwingShare = function () {
-            const swings = handSwingsFor(this);
-            if (swings <= 1) return 1;
-            const base = _Game_Action_numRepeats_hands.call(this);
-            if (!(base > 0)) return 1;
-            return base / (base + swings - 1);
+        // How many of numRepeats() are the extra hands rather than the main
+        // hand's own repeats: the burst rule shares out only the latter.
+        Game_Action.prototype.handExtraSwings = function () {
+            return handSwingsFor(this) - 1;
         };
+
+        // Which repeat is which hand. Laid out once per action, when its
+        // targets are made (before a bullet is spent, so a magazine running
+        // low cannot move the boundary), or on the first swing for a caller
+        // that applies the action without making targets (the voxel world).
+        // Each target's repeats run main hand first: the main hand's own
+        // repeats, then one swing for each other hand.
+        const swingPlanFor = (action) => {
+            if (action._handSwingPlan !== undefined) return action._handSwingPlan;
+            const swings = handSwingsFor(action);
+            let plan = null;
+            if (swings > 1) {
+                const subject = action.subject();
+                // The whole repeat count, so a firearm's fire rate (added by
+                // WeaponSystem, which loads later) stays on the main hand.
+                const base = Math.max(1, (action.numRepeats() || 1) - (swings - 1));
+                plan = {
+                    base: base,
+                    total: base + swings - 1,
+                    weapons: subject.activeWeapons().slice(0, swings),
+                    counts: new Map()
+                };
+            }
+            action._handSwingPlan = plan;
+            return plan;
+        };
+
+        const handOfSwing = (plan, k) =>
+            (k < plan.base ? 0 : Math.min(plan.weapons.length - 1, k - plan.base + 1));
+
+        const _Game_Action_makeTargets_hands = Game_Action.prototype.makeTargets;
+        if (typeof _Game_Action_makeTargets_hands === 'function') {
+            Game_Action.prototype.makeTargets = function () {
+                this._handSwingPlan = undefined;
+                const targets = _Game_Action_makeTargets_hands.call(this);
+                swingPlanFor(this);
+                return targets;
+            };
+        }
+
+        /** The hand the next repeat on this target is swung with (0 = main). */
+        Game_Action.prototype.nextSwingHand = function (target) {
+            const plan = swingPlanFor(this);
+            if (!plan) return 0;
+            return handOfSwing(plan, plan.counts.get(target) || 0);
+        };
+
+        /** True while an off-hand follow-up is landing. */
+        Game_Action.prototype.isOffHandSwing = function () {
+            return (this._swingHand || 0) > 0;
+        };
+
+        // What the swing landing right now is worth against a lone blow.
+        Game_Action.prototype.handSwingRate = function () {
+            if (this._swingHand === undefined || this._swingHand === null) return 1;
+            const penalty = HandSlots.dualPenalty(this.subject());
+            return (this._swingHand > 0 ? OFFHAND_SWING_RATE : 1) * penalty;
+        };
+
+        const _Game_Action_apply_hands = Game_Action.prototype.apply;
+        if (typeof _Game_Action_apply_hands === 'function') {
+            Game_Action.prototype.apply = function (target) {
+                const plan = swingPlanFor(this);
+                if (!plan) {
+                    _Game_Action_apply_hands.call(this, target);
+                    const plainResult = target && typeof target.result === 'function' ? target.result() : null;
+                    if (plainResult) plainResult.handIndex = null;
+                    return;
+                }
+                const k = plan.counts.get(target) || 0;
+                plan.counts.set(target, (k + 1) % plan.total);
+                const hand = handOfSwing(plan, k);
+                const subject = this.subject();
+                const prevWeapon = subject._swingWeapon;
+                const prevHand = this._swingHand;
+                subject._swingWeapon = plan.weapons[hand] || null;
+                this._swingHand = hand;
+                try {
+                    _Game_Action_apply_hands.call(this, target);
+                } finally {
+                    subject._swingWeapon = prevWeapon;
+                    this._swingHand = prevHand;
+                }
+                // The battle log draws, sounds and marks the blow with the
+                // hand that struck it (WeaponSystem, displayActionResults).
+                const result = target && typeof target.result === 'function' ? target.result() : null;
+                if (result) result.handIndex = hand;
+            };
+        }
 
         const _Game_Action_makeDamageValue_hands = Game_Action.prototype.makeDamageValue;
         Game_Action.prototype.makeDamageValue = function (target, critical) {
             const value = _Game_Action_makeDamageValue_hands.call(this, target, critical);
-            const share = this.handSwingShare();
-            return share === 1 ? value : Math.round(value * share);
+            const rate = this.handSwingRate();
+            if (rate === 1 || !value) return value;
+            const scaled = Math.round(value * rate);
+            return value > 0 ? Math.max(1, scaled) : Math.min(-1, scaled);
         };
     }
+
+    window.DualWieldRules = { OFFHAND_SWING_RATE: OFFHAND_SWING_RATE };
 
     // =============================================================================
     // Training the weapons in hand
@@ -1451,6 +1591,202 @@
         WeaponProficiency.rewardBattle();
         _BattleManager_processVictory_proficiency.call(this);
     };
+
+    // ===== WeaponDrill: proficiency lent by a state =====
+    //
+    // A drill state lifts its carrier's proficiency with one weapon type for as
+    // long as it lasts: `<ProficiencyBoost: 2 +2>` is two steps of Sword,
+    // `<ProficiencyBoost: 1,2 +1>` one step of Light and Sword, and
+    // `<ProficiencyBoost: any +1>` one step of whatever weapon is in hand. The
+    // step is added inside WeaponProficiency.levelFor, so every reader (the
+    // stats through weaponParamSums, the plain attack's weapon power, the equip
+    // screens) sees the drilled level, capped at Master. The stock addState /
+    // removeState already refresh the battler, so the stats move the moment
+    // the drill lands or lapses, in Scene_Battle and on the MapBattleMode field
+    // alike: both run the same Game_Action and state calls.
+    //
+    // Enemies carry no weapons and no specialization levels, so a drill on an
+    // enemy changes nothing.
+
+    const DRILL_TAG = /<ProficiencyBoost:\s*([^>]*?)\s*([+-]\d+)\s*>/gi;
+    const DRILL_MAX_LEVEL = LEVEL_MULTIPLIER.length - 1;
+
+    const WeaponDrill = {
+        _parsed: new Map(),
+
+        // [{ any, wtypes: [ids], amount }] for one state, cached on its note.
+        boostsOf(state) {
+            if (!state || !state.note || state.note.indexOf('ProficiencyBoost') < 0) return [];
+            const hit = this._parsed.get(state.id);
+            if (hit && hit.note === state.note) return hit.boosts;
+            const boosts = [];
+            DRILL_TAG.lastIndex = 0;
+            let m;
+            while ((m = DRILL_TAG.exec(state.note)) !== null) {
+                const amount = Number(m[2]) || 0;
+                if (!amount) continue;
+                const what = m[1].trim().toLowerCase();
+                const any = what === 'any' || what === 'held' || what === 'all';
+                const wtypes = any ? [] : what.split(/[\s,]+/).map(Number).filter(n => n > 0);
+                if (any || wtypes.length) boosts.push({ any, wtypes, amount });
+            }
+            this._parsed.set(state.id, { note: state.note, boosts });
+            return boosts;
+        },
+
+        // Steps the battler's states add to their proficiency with this weapon.
+        bonusFor(battler, weapon) {
+            if (!battler || !weapon || !weapon.wtypeId || typeof battler.states !== 'function') return 0;
+            let sum = 0;
+            for (const state of battler.states()) {
+                for (const b of this.boostsOf(state)) {
+                    if (b.any || b.wtypes.indexOf(weapon.wtypeId) >= 0) sum += b.amount;
+                }
+            }
+            return sum;
+        },
+
+        isDrilled(battler, weapon) {
+            return this.bonusFor(battler, weapon) > 0;
+        }
+    };
+
+    const _WeaponProficiency_levelFor_drill = WeaponProficiency.levelFor;
+    WeaponProficiency.levelFor = function (actor, weapon) {
+        const base = _WeaponProficiency_levelFor_drill.call(this, actor, weapon);
+        // Only a weapon type that HAS a proficiency, in the hands of someone
+        // who trains one, can be drilled: missing data stays neutral.
+        if (!actor || !actor.specializationLevel || !this.specFor(weapon)) return base;
+        const bonus = WeaponDrill.bonusFor(actor, weapon);
+        if (!bonus) return base;
+        return Math.max(1, Math.min(DRILL_MAX_LEVEL, base + bonus));
+    };
+
+    window.WeaponDrill = WeaponDrill;
+    // ===== end WeaponDrill =====
+
+    // ===== GearTags: the special properties a bench wrote, read in battle =====
+    //
+    // The enchanting bench and the forge (SkillMaster.js, Quest/ThinkerMenu.js)
+    // write a piece's special properties through window.SkillTags as plain
+    // traits and note tags, and mark the piece <GearTags: ...> (an enchanted
+    // piece is also <Enchanted: kind>). Most of what they write the engine
+    // already reads: element and state resistance (11, 14), parameter rates
+    // (21), hit, critical and regeneration (22), extra strikes (34), and
+    // <DamageType:> through Health_Core's weapon reader.
+    //
+    // Three would be written and never read, because the plain Attack here is
+    // not RMMZ's: skill 1 strikes with its own element (Physical) instead of
+    // the Normal Attack element, it carries no normal-attack state effect, and
+    // the turn order (IndividualBattleTurns) ranks battlers by AGI and never
+    // asks an action its speed. This section reads those three for the pieces
+    // the benches wrote, and only for them, so a shipped weapon keeps exactly
+    // the attack it always had:
+    //   attack element (31)  the plain Attack lands at the best rate of its own
+    //                        element and the piece's
+    //   attack state (32)    the plain Attack, on a hit, rolls each state at the
+    //                        trait's chance x the target's state rate x luck
+    //   attack speed (33)    added to the wearer's place in the turn order
+    // Scene_Battle and MapBattleMode run the same Game_Action and the same
+    // turn order, so one hook answers both.
+
+    const GearBattle = {
+        isTagged(item) {
+            return !!(item && item.meta && (item.meta.GearTags || item.meta.Enchanted));
+        },
+
+        taggedEquips(battler) {
+            if (!battler || typeof battler.isActor !== 'function' || !battler.isActor()) return [];
+            if (typeof battler.equips !== 'function') return [];
+            return (battler.equips() || []).filter(item => this.isTagged(item));
+        },
+
+        traitsOf(battler, code) {
+            const out = [];
+            for (const item of this.taggedEquips(battler)) {
+                for (const t of item.traits || []) if (t && t.code === code) out.push(t);
+            }
+            return out;
+        },
+
+        elements(battler) {
+            const ids = [];
+            for (const t of this.traitsOf(battler, 31)) if (t.dataId > 0 && ids.indexOf(t.dataId) < 0) ids.push(t.dataId);
+            return ids;
+        },
+
+        states(battler) {
+            return this.traitsOf(battler, 32).filter(t => t.dataId > 0 && t.value > 0)
+                .map(t => ({ id: t.dataId, rate: t.value }));
+        },
+
+        speed(battler) {
+            return this.traitsOf(battler, 33).reduce((sum, t) => sum + (Number(t.value) || 0), 0);
+        },
+
+        isPlainAttack(action) {
+            if (!action || typeof action.item !== 'function') return false;
+            const item = action.item();
+            const subject = action.subject ? action.subject() : null;
+            if (!item || !subject || typeof subject.attackSkillId !== 'function') return false;
+            if (typeof $dataSkills === 'undefined' || !$dataSkills || $dataSkills[item.id] !== item) return false;
+            return item.id === subject.attackSkillId();
+        }
+    };
+
+    if (typeof Game_Action !== 'undefined') {
+        const _Game_Action_calcElementRate_gear = Game_Action.prototype.calcElementRate;
+        Game_Action.prototype.calcElementRate = function (target) {
+            const rate = _Game_Action_calcElementRate_gear.call(this, target);
+            if (!GearBattle.isPlainAttack(this)) return rate;
+            const ids = GearBattle.elements(this.subject());
+            if (!ids.length || typeof this.elementsMaxRate !== 'function') return rate;
+            return Math.max(rate, this.elementsMaxRate(target, ids));
+        };
+
+        const _Game_Action_apply_gear = Game_Action.prototype.apply;
+        Game_Action.prototype.apply = function (target) {
+            _Game_Action_apply_gear.call(this, target);
+            if (!target || !GearBattle.isPlainAttack(this)) return;
+            const result = target.result ? target.result() : null;
+            if (!result || !result.isHit() || (target.isDead && target.isDead())) return;
+            for (const s of GearBattle.states(this.subject())) {
+                const rate = typeof target.stateRate === 'function' ? target.stateRate(s.id) : 1;
+                const luck = typeof this.lukEffectRate === 'function' ? this.lukEffectRate(target) : 1;
+                if (Math.random() < s.rate * rate * luck) {
+                    target.addState(s.id);
+                    if (typeof this.makeSuccess === 'function') this.makeSuccess(target);
+                }
+            }
+        };
+    }
+
+    // The turn order is IndividualBattleTurns', which may load after this
+    // file: the hook goes on whenever the method is there, once.
+    function installGearSpeed() {
+        if (typeof Game_Battler === 'undefined' || !Game_Battler.prototype.updateBattleAgi) return;
+        if (Game_Battler.prototype.updateBattleAgi._gearSpeed) return;
+        const base = Game_Battler.prototype.updateBattleAgi;
+        const wrapped = function () {
+            base.apply(this, arguments);
+            const bonus = GearBattle.speed(this);
+            if (bonus) this._battleAgi = (this._battleAgi || 0) + bonus;
+        };
+        wrapped._gearSpeed = true;
+        Game_Battler.prototype.updateBattleAgi = wrapped;
+    }
+    installGearSpeed();
+    if (typeof Scene_Boot !== 'undefined' && Scene_Boot.prototype && Scene_Boot.prototype.start) {
+        const _Scene_Boot_start_gear = Scene_Boot.prototype.start;
+        Scene_Boot.prototype.start = function () {
+            installGearSpeed();
+            _Scene_Boot_start_gear.apply(this, arguments);
+        };
+    }
+    GearBattle.installSpeed = installGearSpeed;
+
+    window.GearBattle = GearBattle;
+    // ===== end GearTags =====
 
     // =============================================================================
     // Weapon scaling

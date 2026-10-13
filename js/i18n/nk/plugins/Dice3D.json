@@ -22,12 +22,12 @@
   },
   "prompt": {
     "title": "TRIAL OF {stat}",
-    "titleFlat": "A TURN OF FORTUNE",
-    "who": "{name} STEPS UP",
+    "titleFlat": "LUCK CHECK",
+    "who": "{name} ROLLS",
     "target": "{dc} OR BETTER",
     "formula": "D20 {mod} {stat}",
-    "formulaFlat": "D20, AN' NOTHIN' ELSE",
+    "formulaFlat": "D20 ONLY",
     "try": "TRY IT",
-    "cancel": "WALK AWAY"
+    "cancel": "FORGET IT"
   }
 }

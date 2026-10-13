@@ -365,7 +365,7 @@
         [/^Alien(Under)?(Lava|Magma|Chthonian|Hot)/, 'volcano'],
         [/^Alien(Under)?(Ice|Glacier|Tundra|Comet|ShortPeriod|LongPeriod|Dwarf|Centaur)/, 'ice'],
         [/^Alien(Diamond|UnderGeode)/, 'crystal'],
-        [/^Alien(Rainforest|Habitable|EarthLike)/, 'alienjungle'],
+        [/^AlienRainforest/, 'alienjungle'],
         [/^Alien(Ocean|AcidOcean|UnderAbyss)/, 'ocean'],
         [/^Alien(Desert|UnderDust)/, 'desert'],
         [/^Alien(Plasma|Magnetar|Quark|UnderVoid|UnderStorm)/, 'eldritch'],
@@ -2577,7 +2577,7 @@
 
                 case 'bite':
                     this._biteTimer = 170;
-                    this._setPrompt('BITE', '#ff5544');
+                    this._setPrompt(T('Fishing.hud.bite'), '#ff5544');
                     this._se('Water2', 140, 90);
                     this._shake = 8;
                     break;
@@ -2907,10 +2907,21 @@
                 // climbs out of the water after it.
                 if (typeof $dataMap === 'undefined' || !$dataMap) return;
                 const troopId = ent.data.id;
-                const ceId = window.MovementSystem ? window.MovementSystem.fishingBattleCommonEventId : 0;
-                if (ceId > 0) $gameTemp.reserveCommonEvent(ceId);
                 this._monsterBattleTimer = setTimeout(() => {
                     this._monsterBattleTimer = null;
+                    // Both side effects belong to the fight actually starting:
+                    // an angler who walks off the bank inside this pause (the
+                    // timer is cleared in terminate) used to leave the balloon
+                    // event queued on the map and a stale return record that
+                    // the next fight on map 636 would land the party on.
+                    const ceId = window.MovementSystem ? window.MovementSystem.fishingBattleCommonEventId : 0;
+                    if (ceId > 0) $gameTemp.reserveCommonEvent(ceId);
+                    // Where the angler stood to cast is where the fight hands them
+                    // back, escape, win or loss alike. Without a record of its own
+                    // the battle's return pass put the party on the tiles of the
+                    // last map monster they fought instead (every procedural square
+                    // is map 636), which could be open sea on this square.
+                    Scene_FishingMinigame.recordAnglerPosition();
                     // Going straight to the battle hands it the scene this one
                     // was opened from, so the end of the fight pops back to the
                     // map. Popping first and pushing after would put THIS scene
@@ -3300,7 +3311,7 @@
             const pw = 96, ph = 26, px = 4, py = 4;
             window.PSXHud.panel(bmp, px, py, pw, ph);
 
-            this._hudText(bmp, 'DEPTH ' + this._hookDepth.toFixed(1) + 'M', px + 4, py + 3, pw - 8, 'left', P.cyan, 8);
+            this._hudText(bmp, T('Fishing.hud.depth', { n: this._hookDepth.toFixed(1) }), px + 4, py + 3, pw - 8, 'left', P.cyan, 8);
 
             const interested = this._world.entities.filter(e => e.state === 'interested').length;
             const inBand = this._world.entities.filter(e => e.state !== 'landed' && e.likesDepth(this._hookDepth)).length;
@@ -3329,7 +3340,7 @@
                 if (!pulse) return;
                 const r = biting ? 5 : 4;
                 window.PSXHud.reticle(bmp, x, y, r, col, { len: 3, dot: biting, dotColor: P.amber });
-                if (biting) this._hudText(bmp, 'BITE', x - 20, y - 18, 40, 'center', P.red, 8);
+                if (biting) this._hudText(bmp, T('Fishing.hud.bite'), x - 20, y - 18, 40, 'center', P.red, 8);
                 return;
             }
 
@@ -3353,9 +3364,9 @@
             window.PSXHud.panel(bmp, px, py, pw, ph);
 
             const bad = !pv.onWater;
-            this._hudText(bmp, bad ? 'ON LAND!' : 'CAST ' + Math.round(pv.dist) + 'M',
+            this._hudText(bmp, bad ? T('Fishing.hud.onLand') : T('Fishing.hud.cast', { n: Math.round(pv.dist) }),
                 px + 4, py + 3, pw - 8, 'left', bad ? P.red : P.amber, 8);
-            this._hudText(bmp, bad ? '- - -' : 'WATER ' + pv.depth.toFixed(1) + 'M',
+            this._hudText(bmp, bad ? '- - -' : T('Fishing.hud.water', { n: pv.depth.toFixed(1) }),
                 px + 4, py + 12, pw - 8, 'left', P.cyan, 8);
 
             const reach = bad ? 0 : this._world.entities.filter(e => e.state !== 'landed' && e.likesDepth(pv.depth)).length;
@@ -3372,7 +3383,7 @@
                 colorAt: t => (t < 0.5 ? P.green : (t < 0.8 ? P.amber : P.red)),
                 needle: this._power
             });
-            this._hudText(bmp, 'POWER ' + Math.round(lerp(CAST_MIN, CAST_MAX, this._power)) + 'M',
+            this._hudText(bmp, T('Fishing.hud.powerMetres', { n: Math.round(lerp(CAST_MIN, CAST_MAX, this._power)) }),
                 bx, by - 11, bw, 'center', P.ink, 8);
         }
 
@@ -3392,22 +3403,22 @@
                 seg: 3, gap: 1, zone: [0.45, 0.88],
                 colorAt: t => (flash ? P.red : (t > 0.88 ? P.red : (t >= 0.45 ? P.green : P.blue)))
             });
-            this._hudText(bmp, 'LINE', bx - labelW - 3, by - 1, labelW, 'right', P.dim, 8);
-            this._hudText(bmp, danger ? 'SNAP!' : (this._tension >= 0.45 ? 'GOOD' : 'SLACK'),
+            this._hudText(bmp, T('Fishing.hud.line'), bx - labelW - 3, by - 1, labelW, 'right', P.dim, 8);
+            this._hudText(bmp, danger ? T('Fishing.hud.snap') : (this._tension >= 0.45 ? T('Fishing.hud.good') : T('Fishing.hud.slack')),
                 bx + bw + 3, by - 1, labelW + 6, 'left', danger ? P.red : (this._tension >= 0.45 ? P.green : P.cyan), 8);
 
             // Distance to the rod.
             by += gap;
             window.PSXHud.bar(bmp, bx, by, bw, bh, this._distanceFraction(),
                 { seg: 3, gap: 1, color: P.amber });
-            this._hudText(bmp, 'DIST', bx - labelW - 3, by - 1, labelW, 'right', P.dim, 8);
+            this._hudText(bmp, T('Fishing.hud.dist'), bx - labelW - 3, by - 1, labelW, 'right', P.dim, 8);
             this._hudText(bmp, Math.max(0, Math.ceil(this._distance - LAND_DIST)) + 'M', bx + bw + 3, by - 1, labelW + 6, 'left', P.ink, 8);
 
             // Fish stamina.
             by += gap;
             const f = this._hooked;
             window.PSXHud.bar(bmp, bx, by, bw, bh, f ? f.stamina : 0, { seg: 3, gap: 1, color: P.magenta });
-            this._hudText(bmp, 'FISH', bx - labelW - 3, by - 1, labelW, 'right', P.dim, 8);
+            this._hudText(bmp, T('Fishing.hud.fish'), bx - labelW - 3, by - 1, labelW, 'right', P.dim, 8);
             if (f) {
                 this._hudText(bmp, this._entityName(f), bx, by + 10, bw, 'center',
                     f.type === 'monster' ? P.red : P.ink, 8);
@@ -3436,11 +3447,11 @@
 
             this._hudText(bmp, this._caughtName, textX, cy + 6, textW, 'center', P.green, 16);
             const sub = this._caughtWeight > 0
-                ? this._caughtWeight.toFixed(2) + 'KG  AT ' + this._hookDepth.toFixed(1) + 'M'
-                : 'UP FROM ' + this._hookDepth.toFixed(1) + 'M';
+                ? T('Fishing.hud.weightAt', { kg: this._caughtWeight.toFixed(2), depth: this._hookDepth.toFixed(1) })
+                : T('Fishing.hud.upFrom', { depth: this._hookDepth.toFixed(1) });
             this._hudText(bmp, sub, textX, cy + 24, textW, 'center', P.ink, 8);
             if (this._hooked && this._hooked.type === 'monster') {
-                this._hudText(bmp, 'IT IS NOT LETTING GO', textX, cy + 34, textW, 'center', P.red, 8);
+                this._hudText(bmp, T('Fishing.hud.notLettingGo'), textX, cy + 34, textW, 'center', P.red, 8);
             }
         }
 
@@ -3610,7 +3621,7 @@
 
             if (this._worldSprite) {
                 if (this._worldSprite.parent) this._worldSprite.parent.removeChild(this._worldSprite);
-                this._worldSprite.destroy();
+                this._worldSprite.destroy({ texture: true, baseTexture: true });
                 this._worldSprite = null;
             }
             if (this._world) {
@@ -3619,6 +3630,24 @@
             }
         }
     }
+
+    // The pre-battle position BattleSystemEnhancedState puts the party back on
+    // when the fight ends. Taken off the map the angler is standing on: the
+    // fishing scene never moves them, so this is the tile they cast from.
+    Scene_FishingMinigame.recordAnglerPosition = function () {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return null;
+        if (typeof $gamePlayer === 'undefined' || !$gamePlayer) return null;
+        if (typeof $gameMap === 'undefined' || !$gameMap) return null;
+        const rec = {
+            mapId: $gameMap.mapId(),
+            x: $gamePlayer.x,
+            y: $gamePlayer.y,
+            d: $gamePlayer.direction()
+        };
+        $gameSystem._p1PreBattlePos = rec;
+        $gameSystem._p2PreBattlePos = null;
+        return rec;
+    };
 
     window.Scene_FishingMinigame = Scene_FishingMinigame;
 

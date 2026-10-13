@@ -45,6 +45,118 @@
         return parseInt(hex.replace('#', '0x'), 16);
     }
 
+    // ---- Button labels ------------------------------------------------------
+    // PIXI measures a font once, on the shared TextMetrics canvas, by drawing
+    // a probe string and reading its pixels back. When that canvas's 2D
+    // context has been lost (the browser drops canvas contexts under GPU
+    // memory pressure: a big party's 3D models, the voxel world), the probe
+    // measures 0 wide and getImageData throws IndexSizeError, which killed
+    // the game the first time the editor drew a button. Labels here are
+    // built from a style that is always valid, their font is measured
+    // before PIXI gets to it, and a dead measurer is replaced by a fresh
+    // canvas or, failing that, answered with metrics worked out from the
+    // font size, so measureFont never reads back a zero-width canvas.
+    const LABEL_FONT_SIZE = 14;
+    const LABEL_FONT_FAMILY = 'sans-serif';  // i18n-ignore  CSS generic font family
+
+    function labelFontSize(v) {
+        const n = Number(v);
+        return Number.isFinite(n) && n > 0 ? n : LABEL_FONT_SIZE;
+    }
+
+    function labelFontFamily(v) {
+        const list = (Array.isArray(v) ? v : [v])
+            .map(f => (f == null ? '' : String(f).trim()))
+            .filter(f => f && f !== 'undefined' && f !== 'null');  // i18n-ignore  stringified holes
+        return list.length ? list : [LABEL_FONT_FAMILY];
+    }
+
+    function labelText(v) {
+        const s = v == null ? '' : String(v);
+        return s.length ? s : ' ';
+    }
+
+    function labelStyle(opts) {
+        const o = opts || {};
+        return {
+            fontFamily: labelFontFamily(o.fontFamily),
+            fontSize: labelFontSize(o.fontSize),
+            fill: o.fill || '#ffffff',
+            fontWeight: 'bold'  // i18n-ignore  CSS font weight
+        };
+    }
+
+    function fallbackFontMetrics(size) {
+        const px = labelFontSize(size);
+        const ascent = Math.max(1, Math.ceil(px * 0.8));
+        const descent = Math.max(1, Math.ceil(px * 0.25));
+        return { ascent, descent, fontSize: ascent + descent };
+    }
+
+    function measurerAlive(ctx, font, probe) {
+        if (!ctx || typeof ctx.measureText !== 'function') return false;
+        try {
+            ctx.font = font;
+            return Math.ceil(ctx.measureText(probe).width) > 0;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // Makes sure PIXI holds metrics for this style's font before a Text
+    // asks for them. Answers the metrics it settled on.
+    function ensureFontMetrics(style) {
+        const TM = PIXI.TextMetrics;
+        if (!TM || !style || typeof style.toFontString !== 'function') return null;
+        const font = style.toFontString();
+        if (!TM._fonts) TM._fonts = {};
+        if (TM._fonts[font]) return TM._fonts[font];
+        const probe = String(TM.METRICS_STRING || '|') + String(TM.BASELINE_SYMBOL || 'M');  // i18n-ignore  font probe glyphs
+        if (!measurerAlive(TM._context, font, probe) && typeof document !== 'undefined') {
+            try {
+                const c = document.createElement('canvas');
+                c.width = c.height = 10;
+                const ctx = c.getContext('2d');
+                if (measurerAlive(ctx, font, probe)) {
+                    TM._canvas = c;
+                    TM._context = ctx;
+                }
+            } catch (e) { /* keep the old measurer, the fallback below covers it */ }
+        }
+        if (measurerAlive(TM._context, font, probe) && typeof TM.measureFont === 'function') {
+            try {
+                const m = TM.measureFont(font);
+                if (m && m.fontSize > 0) return m;
+            } catch (e) { /* fall through to the worked out metrics */ }
+        }
+        const metrics = fallbackFontMetrics(style.fontSize);
+        TM._fonts[font] = metrics;
+        return metrics;
+    }
+
+    class SafeLabel extends PIXI.Text {
+        constructor(text, style) {
+            super(labelText(text), labelStyle(style));
+        }
+
+        updateText(respectDirty) {
+            const style = this._style;
+            if (style && (this.dirty || this.localStyleID !== style.styleID)) ensureFontMetrics(style);
+            try {
+                super.updateText(respectDirty);
+            } catch (e) {
+                // Last line of defence: the measurer died between the check
+                // and the draw. Pin worked out metrics and draw once more.
+                const TM = PIXI.TextMetrics;
+                if (!TM || !style || typeof style.toFontString !== 'function') throw e;
+                if (!TM._fonts) TM._fonts = {};
+                TM._fonts[style.toFontString()] = fallbackFontMetrics(style.fontSize);
+                this.dirty = true;
+                super.updateText(respectDirty);
+            }
+        }
+    }
+
     class UIButton extends PIXI.Container {
         constructor(width, height, text, bgColor = 0x333333, textColor = '#ffffff') {
             super();
@@ -58,7 +170,8 @@
             this.bg.tint = bgColor;
             this.addChild(this.bg);
 
-            this.label = new PIXI.Text(text, { fontFamily: 'sans-serif', fontSize: 14, fill: textColor, fontWeight: 'bold' });
+            this.label = new SafeLabel(text, { fontFamily: LABEL_FONT_FAMILY, fontSize: LABEL_FONT_SIZE, fill: textColor });
+            ensureFontMetrics(this.label.style);
             this.label.anchor.set(0.5);
             this.label.x = width / 2;
             this.label.y = height / 2;
@@ -628,6 +741,16 @@
             }
         }
     }
+
+    // Test seam: the editor scene and its label plumbing.
+    window.PixelArtMaker = {
+        Scene: Scene_PixelArtMaker,
+        UIButton,
+        SafeLabel,
+        labelStyle,
+        ensureFontMetrics,
+        fallbackFontMetrics
+    };
 
     // =========================================================================
     // Pain: the HypernetOS paint program
@@ -1298,7 +1421,7 @@
         if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;
         window.HypernetOS.registerApp({
             id: PAINT_APP_ID,
-            name: T('PixelArt.paint.appName'),
+            name: () => T('PixelArt.paint.appName'),
             icon: 224,
             category: 'accessories',
             launchFn: () => window.HypernetPaint.launch(),

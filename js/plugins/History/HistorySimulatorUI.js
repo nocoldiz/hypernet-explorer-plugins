@@ -806,7 +806,7 @@
                       })
                     : `${Math.floor(data.military)} / ${Math.floor(data.economy)}`;
                 return `<div class="inspect-spec-row">
-                    <span class="inspect-spec-label">${worldName(name)}</span>
+                    <span class="inspect-spec-label">${window.NPCShared.escapeHtml(worldName(name))}</span>
                     <span class="inspect-spec-value">${value}</span>
                 </div>`;
             }).join("");

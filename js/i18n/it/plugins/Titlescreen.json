@@ -1,14 +1,16 @@
 {
   "menu": {
-    "defaultStart": "Inizio Predefinito",
+    "defaultStart": "Inizio predefinito",
+    "storyDebug": "Debug storia",
+    "forceNewStory": "Forza nuova storia",
     "explore": "Nuovo Party",
     "reconnect": "Seleziona Party",
-    "storyMode": "Nuova Storia",
-    "continueStory": "Continua la Storia",
+    "storyMode": "Nuova storia",
+    "continueStory": "Continua la storia",
     "minigames": "Minigiochi",
     "sandbox": "Sandbox",
     "worlds": "Mondi",
-    "wiki": "Storia del Mondo",
+    "wiki": "Storia del mondo",
     "preferences": "Preferenze",
     "mods": "Mods",
     "exit": "Esci",
@@ -17,6 +19,8 @@
   },
   "menuOverlay": {
     "defaultStart": "INIZIO PREDEFINITO",
+    "storyDebug": "DEBUG STORIA",
+    "forceNewStory": "FORZA NUOVA STORIA",
     "explore": "NUOVO PARTY",
     "reconnect": "SELEZIONA PARTY",
     "storyMode": "NUOVA STORIA",
@@ -33,26 +37,27 @@
   },
   "minigame": {
     "arena": "Arena",
-    "liminalWorld": "Mondo Liminale",
-    "galaxyMap": "Mappa Galattica",
+    "liminalWorld": "Mondo liminale",
+    "galaxyMap": "Mappa galattica",
     "dream": "Sogno",
     "surfing": "Surf",
-    "targetRange": "Poligono di Tiro",
+    "targetRange": "Poligono di tiro",
     "pool": "Biliardo",
     "chess": "Scacchi",
     "bowling": "Bowling",
     "basketball": "Basket",
+    "pizza": "Pizzaiolo",
     "fishing": "Pesca",
     "slotMachine": "Slot Machine",
-    "horseRace": "Corsa dei Cavalli",
-    "tarotReading": "Lettura dei Tarocchi",
+    "horseRace": "Corsa dei cavalli",
+    "tarotReading": "Lettura dei tarocchi",
     "scratchCard": "Gratta e Vinci",
-    "monsterTournament": "Torneo dei Mostri",
+    "monsterTournament": "Torneo dei mostri",
     "cardBattle": "Battaglia di carte",
     "cardBattleYou": "Sfidante",
     "cardBattleFoe": "Sconosciuto",
     "hyperTamer": "Hyper Tamer",
-    "periodicTable": "Tavola Periodica",
+    "periodicTable": "Tavola periodica",
     "boosterPack": "Bustina",
     "lockpick": "Scasso",
     "arcadeSnake": "Arcade: Snake",
@@ -65,7 +70,8 @@
     "arcadeCentipede": "Arcade: Crawler",
     "piano": "Pianoforte",
     "hyperdeck": "Costruisci un Hyperdeck",
-    "rocketLaunch": "Lancio del Razzo"
+    "rocketLaunch": "Lancio del razzo",
+    "introMovie": "Filmato iniziale"
   },
   "minigameSetup": {
     "venueTitle": "Dove",
@@ -78,28 +84,31 @@
     "evening": "Sera",
     "night": "Notte",
     "vehicleTitle": "Come",
-    "destinationTitle": "Da Dove",
-    "onFoot": "A Piedi",
+    "diceTitle": "Dado",
+    "diceRandom": "Casuale",
+    "diceFace": "{face}: {name}",
+    "destinationTitle": "Da dove",
+    "onFoot": "A piedi",
     "camper": "Camper",
     "car": "Auto",
-    "bike": "Bicicletta",
+    "bike": "Bici",
     "boat": "Barca",
-    "broom": "Scopa Volante",
+    "broom": "Scopa volante",
     "back": "Indietro"
   },
   "disclaimer": {
-    "text": "Questa prima build giocabile ha bisogno del tuo aiuto! Segnala qualsiasi bug, problema di collisione, funzionalità che vorresti aggiungere o cose da riequilibrare nel canale #bug-feedback del server Esoteric Heavy Industries",
+    "text": "",
     "noclip": "Se resti bloccato in un muro, tieni premuto CTRL per usare la modalità noclip."
   },
   "news": {
     "header": "NOTIZIE // BUILD INIZIALE",
     "older": "‹ INDIETRO",
     "newer": "AVANTI ›",
-    "empty": "Questa build non include un changelog."
+    "empty": "Nessun changelog per questa build."
   },
   "support": {
     "header": "SOSTIENI LO SVILUPPO",
-    "patronPerk": "Ogni sostenitore Patreon, nuovo o storico, riceve un pianeta abitabile che porta il suo nome in un'altra galassia e le coordinate di un luogo segreto sulla mappa del mondo, comunicate solo su Patreon."
+    "patronPerk": "Ogni sostenitore Patreon riceve un pianeta col suo nome in un'altra galassia e le coordinate di un luogo segreto sulla mappa del mondo, inviate su Patreon."
   },
   "background": {
     "label": "SFONDO: "
@@ -140,14 +149,14 @@
     "curvature": "CURVATURA SPAZIALE RILEVATA"
   },
   "version": {
-    "text": "0.8.4a"
+    "text": "0.8.6a"
   },
   "language": {
     "label": "LINGUA"
   },
   "update": {
     "checking": "✦ CONTROLLO BUILD…",
-    "checkingTip": "Sto chiedendo al server degli aggiornamenti qual è la build più recente.",
+    "checkingTip": "Controllo della build più recente.",
     "ready": "✦ BUILD {build} PRONTA",
     "readyPlain": "✦ NUOVA BUILD PRONTA",
     "download": "✦ SCARICA {name}",
@@ -158,27 +167,27 @@
     "installing": "✦ INSTALLO L'AGGIORNAMENTO",
     "installReady": "✦ INSTALLA {name}",
     "installReadyPlain": "✦ INSTALLA LA NUOVA BUILD",
-    "installReadyTip": "La nuova build è già scaricata e pronta. Clicca per installarla; il gioco si chiuderà dopo, per poi riaprirlo tu.",
+    "installReadyTip": "Build scaricata. Clicca per installarla. Il gioco si chiuderà; poi riaprilo.",
     "restarting": "✦ CHIUSURA DEL GIOCO",
     "restartReady": "✦ CHIUDI PER FINIRE",
-    "restartTip": "La nuova build è installata. Clicca per chiudere il gioco, poi riaprilo tu per finire.",
+    "restartTip": "Build installata. Clicca per chiudere il gioco, poi riaprilo.",
     "upToDate": "✦ GIÀ AGGIORNATO",
     "failed": "✦ AGGIORNAMENTO FALLITO, RIPROVA",
-    "tip": "C'è una build più recente in attesa. Clicca per scaricarla e installarla; alla fine il gioco si chiude da solo, così lo riapri sulla build nuova.",
+    "tip": "Nuova build disponibile. Clicca per scaricarla e installarla. Il gioco si chiude al termine; poi riaprilo.",
     "majorLine": "AGGIORNAMENTO MAJOR, POI RISCARICA IL GIOCO INTERO",
-    "majorTip": "Questa build è un aggiornamento major. Si installa da qui, ma per la piena compatibilità va riscaricato l'intero gioco.",
+    "majorTip": "Aggiornamento major. Si installa da qui, ma riscarica il gioco intero per la piena compatibilità.",
     "majorInstalled": "AGGIORNAMENTO MAJOR INSTALLATO",
     "majorInstalledLine": "RISCARICA L'INTERO GIOCO PER LA PIENA COMPATIBILITÀ",
-    "majorInstalledTip": "Questa copia è stata aggiornata attraverso un aggiornamento major. Riscarica l'intero gioco per la piena compatibilità.",
+    "majorInstalledTip": "Aggiornata oltre un aggiornamento major. Riscarica il gioco intero per la piena compatibilità.",
     "redownload": "✦ RISCARICA IL GIOCO",
-    "redownloadTip": "È uscito un aggiornamento major e questa copia è indietro. Le patch non bastano: va riscaricato il gioco intero. Clicca per aprire la pagina di download; dalla schermata degli aggiornamenti puoi comunque installare la build a mano."
+    "redownloadTip": "Questa copia è indietro di un aggiornamento major. Clicca per aprire la pagina di download, o installa la build a mano dalla schermata degli aggiornamenti."
   },
   "hyperverse": {
     "lead": "IPERVERSO // ",
     "catalog": "CATALOGO",
     "procedural": "PROCEDURALE",
     "nextBody": "PROSSIMO CORPO",
-    "freeLook": "VISTA LIBERA // TRASCINA: RUOTA . ROTELLA: ZOOM",
+    "freeLook": "VISTA LIBERA // TRASCINA: SPOSTA . ROTELLA: ZOOM",
     "catalogButton": "CATALOGO",
     "catalogTitle": "CATALOGO // CORPI NOTI",
     "catalogEmpty": "NESSUN CORPO CATALOGATO DISPONIBILE",
@@ -264,7 +273,7 @@
       "Ascia",
       "Bastone",
       "Arco",
-      "Giavellotto",
+      "Falcione",
       "Martello",
       "Pistola"
     ],
@@ -277,6 +286,26 @@
       "Manto",
       "Corsaletto"
     ],
+    "adjectivesFem": [
+      "Leggendaria",
+      "Antica",
+      "Enigmatica",
+      "Aliena",
+      "Divina",
+      "Maledetta",
+      "Eterea",
+      "Quantica",
+      "Dimenticata",
+      "Astrale"
+    ],
+    "nounGender": {
+      "Reliquia": "f",
+      "Lama": "f",
+      "Ascia": "f",
+      "Pistola": "f",
+      "Egida": "f",
+      "Corazza": "f"
+    },
     "nameFormat": "{noun} {adj}",
     "fallbackType": "Reliquia"
   }

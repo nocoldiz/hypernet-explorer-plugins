@@ -68,7 +68,32 @@
         thoughtparasite:        { variant: 'thoughtparasite',        scale: 1.7, texturePool: 'crystal', bodyColor: 0xb8c8e0, accent: 0xa0d8ff, hue: [0.58, 0.06], sat: [0.20, 0.10], lit: [0.62, 0.10] },
         emberbackhellscorpion:  { variant: 'emberbackhellscorpion',  scale: 2.0, texturePool: 'fire',    bodyColor: 0x141014, accent: 0xff5a14, hue: [0.04, 0.04], sat: [0.85, 0.10], lit: [0.16, 0.08] },
         gravityworm:            { variant: 'gravityworm',            scale: 2.2, texturePool: 'crystal', bodyColor: 0x14121c, accent: 0x6a3aff, hue: [0.72, 0.06], sat: [0.40, 0.12], lit: [0.16, 0.08] },
-        temporalhornet:         { variant: 'temporalhornet',         scale: 1.8, texturePool: 'metal',   bodyColor: 0xf0c020, accent: 0x88e0ff, hue: [0.13, 0.04], sat: [0.75, 0.10], lit: [0.52, 0.08] }
+        temporalhornet:         { variant: 'temporalhornet',         scale: 1.8, texturePool: 'metal',   bodyColor: 0xf0c020, accent: 0x88e0ff, hue: [0.13, 0.04], sat: [0.75, 0.10], lit: [0.52, 0.08] },
+        // Level 1-5 roster, each on a build of its own.
+        lv_dungbeetle:        { variant: 'lv_dungbeetle', scale: 1.5, texturePool: 'metal', bodyColor: 0x2a2018, accent: 0x8a5a2a, hue: [0.07, 0.04], sat: [0.35, 0.10], lit: [0.18, 0.06] },
+        lv_gardenpillbug:     { variant: 'lv_gardenpillbug', scale: 1.3, texturePool: 'stone', bodyColor: 0x6a6e74, accent: 0xe8d27a, hue: [0.58, 0.06], sat: [0.08, 0.08], lit: [0.40, 0.08] },
+        lv_picnicgnat:        { variant: 'lv_picnicgnat', scale: 1.2, texturePool: 'void', bodyColor: 0x2a2a20, accent: 0xcc3355, hue: [0.15, 0.06], sat: [0.20, 0.10], lit: [0.18, 0.06] },
+        lv_hearthcricket:     { variant: 'lv_hearthcricket', scale: 1.4, texturePool: 'wood', bodyColor: 0x4a3020, accent: 0xff7a22, hue: [0.07, 0.03], sat: [0.45, 0.10], lit: [0.22, 0.06] },
+        lv_redfireant:        { variant: 'lv_redfireant', scale: 1.4, texturePool: 'fire', bodyColor: 0xa8301c, accent: 0xffd040, hue: [0.02, 0.03], sat: [0.70, 0.10], lit: [0.38, 0.08] },
+        lv_meadowfirefly:     { variant: 'lv_meadowfirefly', scale: 1.4, texturePool: 'wood', bodyColor: 0x3a2c22, accent: 0xd8ff5a, hue: [0.08, 0.04], sat: [0.35, 0.10], lit: [0.22, 0.06] },
+        lv_ponddamselfly:     { variant: 'lv_ponddamselfly', scale: 1.5, texturePool: 'crystal', bodyColor: 0x2a6aa8, accent: 0x7ad8ff, hue: [0.57, 0.06], sat: [0.60, 0.10], lit: [0.42, 0.08] },
+        lv_lampmoth:          { variant: 'lv_lampmoth', scale: 1.5, texturePool: 'fur', bodyColor: 0x8a8478, accent: 0xffc84a, hue: [0.10, 0.04], sat: [0.12, 0.06], lit: [0.50, 0.08] },
+        lv_lostglove:         { variant: 'lv_lostglove', scale: 1.5, texturePool: 'fur', bodyColor: 0x9a3a3a, accent: 0x2a2a3a, hue: [0.98, 0.06], sat: [0.50, 0.15], lit: [0.38, 0.08] },
+        lv_paperwasp:         { variant: 'lv_paperwasp', scale: 1.5, texturePool: 'wood', bodyColor: 0x3a2a14, accent: 0xf0c030, hue: [0.10, 0.03], sat: [0.55, 0.10], lit: [0.25, 0.06] },
+        lv_stablehorsefly:    { variant: 'lv_stablehorsefly', scale: 1.5, texturePool: 'flesh', bodyColor: 0x4a4440, accent: 0x5aff9a, hue: [0.08, 0.05], sat: [0.15, 0.08], lit: [0.30, 0.06] },
+        lv_locustnymph:       { variant: 'lv_locustnymph', scale: 1.4, texturePool: 'foliage', bodyColor: 0x8aa83a, accent: 0x1a1a10, hue: [0.20, 0.06], sat: [0.55, 0.10], lit: [0.45, 0.08] },
+        lv_dreammoth:         { variant: 'lv_dreammoth', scale: 1.4, texturePool: 'fur', bodyColor: 0xb89ad8, accent: 0xfff2a8, hue: [0.76, 0.05], sat: [0.35, 0.10], lit: [0.66, 0.06] },
+        lv_rustbeetle:        { variant: 'lv_rustbeetle', scale: 1.4, texturePool: 'metal', bodyColor: 0xa8501c, accent: 0x5a5a60, hue: [0.05, 0.03], sat: [0.60, 0.10], lit: [0.36, 0.06] },
+        lv_noodleworm:        { variant: 'lv_noodleworm', scale: 1.5, texturePool: 'flesh', bodyColor: 0xf0dcae, accent: 0xd84a2a, hue: [0.12, 0.03], sat: [0.50, 0.10], lit: [0.78, 0.06] },
+        lv_syringemosquito:   { variant: 'lv_syringemosquito', scale: 1.4, texturePool: 'metal', bodyColor: 0x3a3a42, accent: 0xd01a2a, hue: [0.65, 0.05], sat: [0.10, 0.06], lit: [0.25, 0.06] },
+        lv_pillbeetle:        { variant: 'lv_pillbeetle', scale: 1.3, texturePool: 'crystal', bodyColor: 0xd02a3a, accent: 0xf4f0e6, hue: [0.98, 0.04], sat: [0.70, 0.10], lit: [0.46, 0.06] },
+        lv_mannequinhand:     { variant: 'lv_mannequinhand', scale: 1.5, texturePool: 'pale', bodyColor: 0xe8d8c8, accent: 0xc81a2a, hue: [0.07, 0.03], sat: [0.20, 0.08], lit: [0.82, 0.06] },
+        lv_kitchenroach:      { variant: 'lv_kitchenroach', scale: 1.4, texturePool: 'wood', bodyColor: 0x5a2a12, accent: 0xd8b070, hue: [0.06, 0.03], sat: [0.60, 0.10], lit: [0.24, 0.06] },
+        lv_implanttick:       { variant: 'lv_implanttick', scale: 1.5, texturePool: 'metal', bodyColor: 0x7a8088, accent: 0x3aff6a, hue: [0.58, 0.05], sat: [0.10, 0.06], lit: [0.48, 0.08] },
+        lv_quartztick:        { variant: 'lv_quartztick', scale: 1.4, texturePool: 'crystal', bodyColor: 0xe8a0c0, accent: 0x6a3a5a, hue: [0.92, 0.04], sat: [0.50, 0.10], lit: [0.72, 0.06] },
+        lv_gladiatorcricket:  { variant: 'lv_gladiatorcricket', scale: 1.6, texturePool: 'metal', bodyColor: 0x6a4a1c, accent: 0xc81a1a, hue: [0.10, 0.03], sat: [0.50, 0.10], lit: [0.34, 0.06] },
+        lv_dragontick:        { variant: 'lv_dragontick', scale: 1.6, texturePool: 'fire', bodyColor: 0x6a1a14, accent: 0x5aa838, hue: [0.01, 0.03], sat: [0.60, 0.10], lit: [0.26, 0.06] },
+        lv_pondskater:        { variant: 'lv_pondskater', scale: 1.5, texturePool: 'water', bodyColor: 0x3a3024, accent: 0x9ad0e8, hue: [0.08, 0.04], sat: [0.30, 0.10], lit: [0.22, 0.06] }
     };
 
     class BugBattler3D extends Base {
@@ -109,7 +134,9 @@
         // Build the 6 legs + wire the archetype part-keys/cascade.
         _wireBug(o) {
             const mat = o.mat, ys = o.legY;
-            (o.legZs || [0.25, 0.0, -0.25]).forEach(z => { this.legL.push(this._bugLeg(-1, z, ys, mat)); this.legR.push(this._bugLeg(1, z, ys, mat)); });
+            // A builder with its own jointed legs hands them in (front to back).
+            if (o.legsL) { this.legL = o.legsL.slice(); this.legR = o.legsR.slice(); }
+            else (o.legZs || [0.25, 0.0, -0.25]).forEach(z => { this.legL.push(this._bugLeg(-1, z, ys, mat)); this.legR.push(this._bugLeg(1, z, ys, mat)); });
             const mand = o.mandibles || null;
             this._partMeshMap = { HEAD: o.head, THORAX: o.thorax, ABDOMEN: o.abdomen };
             if (mand) this._partMeshMap.MANDIBLES = mand;
@@ -125,12 +152,69 @@
                 ...lk.concat(rk).map(k => ({ gone: [k], hide: [this._partMeshMap[k]] }))
             ].filter(Boolean);
         }
+        // Two stalks rising from the brow, each tip bead sat on its stalk's end.
         _antennae(head, mat, accent) {
-            for (const ax of [-0.07, 0.07]) {
-                const a = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.34, 4), mat); a.position.set(ax, 0.22, 0.05); a.rotation.x = -0.5; head.add(a);
-                const tip = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 6), this._mat(accent, 1.0, 0.3, accent)); tip.position.set(ax * 1.5, 0.38, 0.13); head.add(tip);
+            const tipMat = this._mat(accent, 1.0, 0.3, accent);
+            for (const s of [-1, 1]) {
+                const base = new THREE.Vector3(s * 0.06, 0.1, 0.08), tip = new THREE.Vector3(s * 0.12, 0.36, 0.16);
+                this.addStrut(head, mat, base, tip, 0.012, 0.009, 4);
+                const bead = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 6), tipMat); bead.position.copy(tip); head.add(bead);
             }
         }
+
+        // A tapered rod from a to b (parent space), thin end at b.
+        _rod(parent, mat, a, b, r0, r1, sides) {
+            return this.addStrut(parent, mat, new THREE.Vector3(a[0], a[1], a[2]), new THREE.Vector3(b[0], b[1], b[2]), r0, r1, sides || 4);
+        }
+
+        // A jointed leg whose Group sits at the hip, so the scuttle (rotation.x)
+        // swings it about the joint. pts are hip-relative [knee, foot] or
+        // [knee, ankle, foot] for the right side; the left is mirrored in x.
+        _jointLeg(side, hip, pts, mat, r, jointMat) {
+            const g = new THREE.Group();
+            let prev = [0, 0, 0];
+            pts.forEach((p, i) => {
+                const q = [side * p[0], p[1], p[2]];
+                const t = 1 - i / pts.length;
+                this._rod(g, mat, prev, q, r * (0.6 + 0.4 * t), r * (0.45 + 0.4 * t), 4);
+                if (i < pts.length - 1) { const k = new THREE.Mesh(new THREE.SphereGeometry(r * 1.15, 5, 4), jointMat || mat); k.position.set(q[0], q[1], q[2]); g.add(k); }
+                prev = q;
+            });
+            g.position.set(side * hip[0], hip[1], hip[2]); g._side = side;
+            this.bodyGroup.add(g); this._legs.push(g);
+            return g;
+        }
+
+        // A wing hinged at the thorax: the Group sits on the wing root and the
+        // membrane lies outward from it, so the flap (rotation.z, about the
+        // body's long axis) swings the tip and never lifts the root off the
+        // body. sweep yaws the blade back, lift is the resting dihedral.
+        _hingeWing(side, x, y, z, o) {
+            const g = new THREE.Group();
+            const blade = new THREE.Group(); blade.rotation.y = side * (o.sweep || 0); g.add(blade);
+            let m;
+            if (o.shape) {
+                // An outline drawn root-outward: [out, back] pairs in units of len / width.
+                const sh = new THREE.Shape();
+                o.shape.forEach((q, i) => { if (i) sh.lineTo(q[0] * o.len, q[1] * o.width); else sh.moveTo(q[0] * o.len, q[1] * o.width); });
+                m = new THREE.Mesh(new THREE.ShapeGeometry(sh), o.mat); m.scale.set(side, 1, 1);
+            } else {
+                m = new THREE.Mesh(new THREE.CircleGeometry(0.5, o.seg || 10), o.mat);
+                m.scale.set(o.len, o.width, 1); m.position.x = side * o.len * 0.47;
+            }
+            m.rotation.x = -Math.PI / 2; blade.add(m);
+            if (o.veins) for (let v = 0; v < (o.veinCount || 2); v++) {
+                const off = (v - ((o.veinCount || 2) - 1) / 2) * o.width * 0.28;
+                this._rod(blade, o.veins, [0, 0.004, off * 0.3], [side * o.len * 0.88, 0.004, off], 0.008, 0.004, 3);
+            }
+            g.position.set(side * Math.abs(x), y, z); g.rotation.z = side * (o.lift || 0);
+            g._side = side; g._blade = blade; g._lift = o.lift || 0; g._amp = o.amp === undefined ? 0.45 : o.amp;
+            g._rate = o.rate || 28; g._rateFast = o.rateFast || (g._rate * 1.4); g._phase = o.phase || 0;
+            if (!this.wings) { this.wings = new THREE.Group(); this.bodyGroup.add(this.wings); }
+            this.wings.add(g); (this._wingHinges = this._wingHinges || []).push(g);
+            return g;
+        }
+        _wingPair(x, y, z, o) { return [this._hingeWing(-1, x, y, z, o), this._hingeWing(1, x, y, z, o)]; }
 
         async load(physicsWorld /*, sx, sy, sz */) {
             this.physicsWorld = physicsWorld;
@@ -163,6 +247,30 @@
                 case 'emberbackhellscorpion': this._buildEmberbackHellscorpion(); break;
                 case 'gravityworm':           this._buildGravityWorm(); break;
                 case 'temporalhornet':        this._buildTemporalHornet(); break;
+                case 'lv_dungbeetle':          this._buildLvDungBeetle(); break;
+                case 'lv_gardenpillbug':       this._buildLvGardenPillbug(); break;
+                case 'lv_picnicgnat':          this._buildLvPicnicGnat(); break;
+                case 'lv_hearthcricket':       this._buildLvHearthCricket(); break;
+                case 'lv_redfireant':          this._buildLvRedFireAnt(); break;
+                case 'lv_meadowfirefly':       this._buildLvMeadowFirefly(); break;
+                case 'lv_ponddamselfly':       this._buildLvPondDamselfly(); break;
+                case 'lv_lampmoth':            this._buildLvLampMoth(); break;
+                case 'lv_lostglove':           this._buildLvLostGlove(); break;
+                case 'lv_paperwasp':           this._buildLvPaperWasp(); break;
+                case 'lv_stablehorsefly':      this._buildLvStableHorsefly(); break;
+                case 'lv_locustnymph':         this._buildLvLocustNymph(); break;
+                case 'lv_dreammoth':           this._buildLvDreamMoth(); break;
+                case 'lv_rustbeetle':          this._buildLvRustBeetle(); break;
+                case 'lv_noodleworm':          this._buildLvNoodleWorm(); break;
+                case 'lv_syringemosquito':     this._buildLvSyringeMosquito(); break;
+                case 'lv_pillbeetle':          this._buildLvPillBeetle(); break;
+                case 'lv_mannequinhand':       this._buildLvMannequinHand(); break;
+                case 'lv_kitchenroach':        this._buildLvKitchenRoach(); break;
+                case 'lv_implanttick':         this._buildLvImplantTick(); break;
+                case 'lv_quartztick':          this._buildLvQuartzTick(); break;
+                case 'lv_gladiatorcricket':    this._buildLvGladiatorCricket(); break;
+                case 'lv_dragontick':          this._buildLvDragonTick(); break;
+                case 'lv_pondskater':          this._buildLvPondSkater(); break;
                 default:              this._buildLadybug(); break;
             }
             this.model = this.bodyGroup;
@@ -227,12 +335,23 @@
             this.head.position.set(0, 0.86, 0.56); this.bodyGroup.add(this.head);
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, extra: [this.leftWing, this.rightWing], legY: 0.72, mat: black });
         }
+        // One wing-case: a quarter ellipsoid covering its own side of the
+        // abdomen, hinged on the top midline so it lifts open outward. The
+        // spots sit on the shell's own surface and open with it.
         _elytron(side, red, black) {
+            const a = 0.506, b = 0.483, c = 0.598;
             const g = new THREE.Group();
-            const shell = new THREE.Mesh(new THREE.SphereGeometry(0.42, 14, 10, 0, Math.PI, 0, Math.PI / 2), red);
-            shell.scale.set(0.55, 1.0, 1.25); shell.rotation.y = side > 0 ? 0 : Math.PI; g.add(shell);
-            for (let i = 0; i < 3; i++) { const spot = new THREE.Mesh(new THREE.CircleGeometry(0.07, 10), black); const a = 0.4 + i * 0.5; spot.position.set(side * 0.18, 0.78 + Math.cos(a) * 0.0, -0.1 - i * 0.18); spot.position.y = 1.0; spot.rotation.x = -1.0; g.add(spot); }
-            g.position.set(side * 0.02, 0.78, -0.15); g._side = side; this.bodyGroup.add(g); return g;
+            const shell = new THREE.Mesh(new THREE.SphereGeometry(0.46, 12, 8, side > 0 ? Math.PI / 2 : -Math.PI / 2, Math.PI, 0, Math.PI / 2), red);
+            shell.scale.set(a / 0.46, b / 0.46, c / 0.46); shell.position.y = -b; g.add(shell);
+            const zAxis = new THREE.Vector3(0, 0, 1);
+            for (const [sx, sz] of [[0.24, 0.26], [0.3, -0.02], [0.2, -0.3]]) {
+                const x = side * sx, z = sz, h = b * Math.sqrt(Math.max(0, 1 - (x / a) ** 2 - (z / c) ** 2));
+                const n = new THREE.Vector3(x / (a * a), h / (b * b), z / (c * c)).normalize();
+                const spot = new THREE.Mesh(new THREE.CircleGeometry(0.075, 7), black);
+                spot.quaternion.setFromUnitVectors(zAxis, n);
+                spot.position.set(x, h - b, z).addScaledVector(n, 0.006); g.add(spot);
+            }
+            g.position.set(0, 0.78 + b, -0.15); g._side = side; this.bodyGroup.add(g); return g;
         }
 
         // ── Grasshopper: long green body with huge sprung hind legs ──────────
@@ -288,15 +407,12 @@
             this.head = new THREE.Group();
             const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), this._mat(0x223344, 1.0, 0.2, p.accent)); eyeL.position.set(-0.12, 0, 0.05); this.head.add(eyeL);
             const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), this._mat(0x223344, 1.0, 0.2, p.accent)); eyeR.position.set(0.12, 0, 0.05); this.head.add(eyeR);
-            this.head.position.set(0, 1.05, 0.55); this.bodyGroup.add(this.head);
-            // Four veined, iridescent wings.
-            this.wings = new THREE.Group();
+            this.head.position.set(0, 1.05, 0.42); this.bodyGroup.add(this.head);
+            // Four veined, iridescent wings hinged on the top of the thorax; the
+            // hind pair beats a little behind the fore pair.
             const wingMat = this._mat(p.accent, 0.35, 0.2, p.accent);
-            for (const [sx, sz] of [[-1, 0.18], [1, 0.18], [-1, -0.05], [1, -0.05]]) {
-                const w = new THREE.Mesh(new THREE.CircleGeometry(0.45, 12), wingMat); w.scale.set(1.1, 0.34, 1);
-                w.position.set(sx * 0.42, 1.12, sz); w.rotation.x = -Math.PI / 2; w.rotation.z = sx * 0.1; w._sx = sx; this.wings.add(w);
-            }
-            this.bodyGroup.add(this.wings);
+            this._wingPair(0.1, 1.2, 0.18, { len: 1.0, width: 0.3, mat: wingMat, sweep: 0.05, lift: 0.08, amp: 0.45, rate: 28, rateFast: 40 });
+            this._wingPair(0.1, 1.2, -0.02, { len: 0.95, width: 0.32, mat: wingMat, sweep: 0.22, lift: 0.08, amp: 0.45, rate: 28, rateFast: 40, phase: 1.2 });
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, extra: [this.wings], legY: 0.98, legZs: [0.25, 0.05], mat: body });
         }
 
@@ -313,10 +429,8 @@
             this._eye(this.head, -0.1, 0.03, 0.14, 0.06, p.accent); this._eye(this.head, 0.1, 0.03, 0.14, 0.06, p.accent);
             this._antennae(this.head, black, 0x664400);
             this.head.position.set(0, 0.98, 0.58); this.bodyGroup.add(this.head);
-            this.wings = new THREE.Group();
             const wingMat = this._mat(0xeef4ff, 0.4, 0.2);
-            for (const sx of [-1, 1]) { const w = new THREE.Mesh(new THREE.CircleGeometry(0.3, 12), wingMat); w.scale.set(1, 0.5, 1); w.position.set(sx * 0.28, 1.25, 0.0); w.rotation.x = -Math.PI / 2; w.rotation.z = sx * 0.3; w._sx = sx; this.wings.add(w); }
-            this.bodyGroup.add(this.wings);
+            this._wingPair(0.12, 1.22, 0.2, { len: 0.6, width: 0.3, mat: wingMat, sweep: 0.5, lift: 0.35, amp: 0.5, rate: 32, rateFast: 44 });
             // Stinger on the abdomen tip.
             this.stinger = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.2, 6), black); this.stinger.position.set(0, 0.95, -0.92); this.stinger.rotation.x = -Math.PI / 2; this.bodyGroup.add(this.stinger);
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, extra: [this.wings, this.stinger], legY: 0.78, mat: black });
@@ -327,17 +441,15 @@
             const p = this.profile;
             const body = this._skinMat(p.bodyColor, 0.5);
             this.thorax = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 10), body); this.thorax.position.set(0, 1.0, 0.1); this.bodyGroup.add(this.thorax);
-            this.abdomen = new THREE.Mesh(new THREE.SphereGeometry(0.22, 14, 12), this._mat(p.accent, 0.9, 0.35, 0x440a0a)); this.abdomen.position.set(0, 1.0, -0.6); this.abdomen.scale.set(1, 1, 2.1); this.bodyGroup.add(this.abdomen);
+            this.abdomen = new THREE.Mesh(new THREE.SphereGeometry(0.22, 14, 12), this._mat(p.accent, 0.9, 0.35, 0x440a0a)); this.abdomen.position.set(0, 1.0, -0.52); this.abdomen.scale.set(1, 1, 2.1); this.bodyGroup.add(this.abdomen);
             this.head = new THREE.Group();
             const h = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 10), body); this.head.add(h);
             this._eye(this.head, -0.08, 0.03, 0.1, 0.06, p.accent); this._eye(this.head, 0.08, 0.03, 0.1, 0.06, p.accent);
             // Long needle proboscis.
             this.proboscis = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.004, 0.55, 5), this._mat(0x221015, 1.0, 0.4)); this.proboscis.position.set(0, -0.02, 0.32); this.proboscis.rotation.x = Math.PI / 2; this.head.add(this.proboscis);
             this.head.position.set(0, 1.0, 0.42); this.bodyGroup.add(this.head);
-            this.wings = new THREE.Group();
             const wingMat = this._mat(0xdfe6ee, 0.35, 0.2);
-            for (const sx of [-1, 1]) { const w = new THREE.Mesh(new THREE.CircleGeometry(0.32, 10), wingMat); w.scale.set(1.3, 0.28, 1); w.position.set(sx * 0.18, 1.15, -0.15); w.rotation.x = -Math.PI / 2; w.rotation.z = sx * 0.15; w._sx = sx; this.wings.add(w); }
-            this.bodyGroup.add(this.wings);
+            this._wingPair(0.08, 1.14, 0.05, { len: 0.8, width: 0.18, mat: wingMat, sweep: 0.6, lift: 0.15, amp: 0.45, rate: 34, rateFast: 46 });
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, extra: [this.wings, this.proboscis], legY: 0.92, mat: body });
         }
 
@@ -358,10 +470,13 @@
             const fingerDefs = [[-0.2, 0.34, 0], [-0.07, 0.36, 0], [0.07, 0.36, 0], [0.2, 0.32, 0], [-0.3, 0.05, 1]];
             for (const [fx, fz, thumb] of fingerDefs) {
                 const g = new THREE.Group();
+                // Knuckle, an arched first joint, then the fingertip down to the floor.
                 const knuckle = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), flesh); g.add(knuckle);
-                const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.035, 0.28, 6), flesh); seg.position.set(0, -0.16, 0.02); seg.rotation.x = thumb ? 0.5 : 0.9; g.add(seg);
-                const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.025, 0.22, 6), flesh); tip.position.set(0, -0.36, 0.16); tip.rotation.x = thumb ? -0.4 : -0.3; g.add(tip);
-                const nail = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 5), this._mat(0xd8cbb0, 1.0, 0.4)); nail.position.set(0, -0.45, 0.27); g.add(nail);
+                const mid = thumb ? [-0.14, 0.0, 0.06] : [0, 0.04, 0.18], end = thumb ? [-0.24, -0.4, 0.12] : [0, -0.4, 0.3];
+                this._rod(g, flesh, [0, 0, 0], mid, 0.045, 0.04, 6);
+                const joint = new THREE.Mesh(new THREE.SphereGeometry(0.042, 6, 5), flesh); joint.position.set(mid[0], mid[1], mid[2]); g.add(joint);
+                this._rod(g, flesh, mid, end, 0.038, 0.026, 6);
+                const nail = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 5), this._mat(0xd8cbb0, 1.0, 0.4)); nail.position.set(end[0], end[1], end[2]); g.add(nail);
                 g.position.set(fx, 0.5, fz); g._thumb = thumb; this.bodyGroup.add(g); this._fingers.push(g); this._legs.push(g);
             }
             // Face on the BACK of the hand.
@@ -373,8 +488,10 @@
             // Two wisp-tendrils trailing up from the wrist.
             this._wisps = [];
             for (const wx of [-1, 1]) {
-                const w = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.55, 5), this._mat(p.accent, 0.45, 0.3, p.accent));
-                w.position.set(wx * 0.18, 0.85, -0.28); w.rotation.x = -0.5; w._sx = wx; this.bodyGroup.add(w); this._wisps.push(w);
+                // Rooted on the wrist stump; the group sways about that root.
+                const w = new THREE.Group();
+                const cone = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.55, 5), this._mat(p.accent, 0.45, 0.3, p.accent)); cone.position.y = 0.26; w.add(cone);
+                w.position.set(wx * 0.07, 0.62, -0.36); w.rotation.x = -0.5; w._sx = wx; w._mat = cone.material; this.bodyGroup.add(w); this._wisps.push(w);
             }
             this._partMeshMap = { FACE: this.head, CORE: this.core, LEFT_WISP: this._wisps[0], RIGHT_WISP: this._wisps[1] };
             this._cascadeRules = [
@@ -427,13 +544,13 @@
             for (let i = 0; i < N; i++) {
                 const z = 0.45 - i * 0.26;
                 const seg = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 10), shellMat); seg.scale.set(1.1, 0.85, 1); seg.position.set(0, 0.85, z); this.bodyGroup.add(seg); this._segments.push(seg);
-                const ring = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.04, 6, 14), this._mat(p.accent, 1.0, 0.3, p.accent)); ring.position.set(0, 0.85, z + 0.13); ring.rotation.x = Math.PI / 2; this.bodyGroup.add(ring); this._segGlow.push(ring.material);
+                const ring = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.04, 6, 14), this._mat(p.accent, 1.0, 0.3, p.accent)); ring.position.set(0, 0.85, z + 0.13); ring.rotation.x = Math.PI / 2; this.bodyGroup.add(ring); this._ride(seg, ring); this._segGlow.push(ring.material);
             }
             // Thorax = first body segment, abdomen = last (for the rig).
             this.thorax = this._segments[0]; this.abdomen = this._segments[N - 1];
             // Wire base 6 legs, then add MANY more burning legs along the body.
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, legY: 0.78, legZs: [0.3, 0.1, -0.1], mat: shellMat });
-            for (let i = 0; i < N; i++) { const z = 0.45 - i * 0.26; for (const s of [-1, 1]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.008, 0.3, 4), glowMat); leg.position.set(s * 0.22, 0.72, z); leg.rotation.z = s * 1.0; this.bodyGroup.add(leg); } }
+            for (let i = 0; i < N; i++) { const z = 0.45 - i * 0.26; for (const s of [-1, 1]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.008, 0.3, 4), glowMat); leg.position.set(s * 0.22, 0.72, z); leg.rotation.z = s * 1.0; this.bodyGroup.add(leg); this._ride(this._segments[i], leg); } }
         }
 
         // ── Frost Scarab: round beetle, crystalline frost-rimed carapace ─────
@@ -462,6 +579,15 @@
             for (const mx of [-0.08, 0.08]) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.2, 4), ice); m.position.set(mx, 0.8, 0.74); m.rotation.x = 1.5; this.mandibles.add(m); }
             this.bodyGroup.add(this.mandibles);
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: this._frost, legY: 0.66, mat: carapaceMat });
+        }
+
+        // A part dressed onto a swaying segment (leg, ring, sac) follows that
+        // segment sideways instead of staying behind as the body slides away.
+        // Held in this._riders too, which keeps the draw-call merge off them.
+        _ride(seg, mesh) { if (seg && mesh) { mesh._rideX = mesh.position.x; (seg._riders = seg._riders || []).push(mesh); (this._riders = this._riders || []).push(mesh); } return mesh; }
+        _swayRiders() {
+            const segs = this._wormSegs || this._segments;
+            if (segs) segs.forEach(s => { if (s._riders) s._riders.forEach(r => { r.position.x = r._rideX + s.position.x; }); });
         }
 
         // Shared worm builder: chain of HEAD/HEART_SEGMENT/BODY_SEGMENT/TAIL.
@@ -512,7 +638,7 @@
                 },
                 onSeg: (seg, i) => {
                     // Shadow miasma haze sphere around every other segment.
-                    if (i % 2 === 0) { const haze = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 8), this._mat(p.accent, 0.16, 0.9, p.accent)); haze.position.copy(seg.position); this.bodyGroup.add(haze); (this._miasma = this._miasma || []).push(haze); }
+                    if (i % 2 === 0) { const haze = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 8), this._mat(p.accent, 0.16, 0.9, p.accent)); haze.position.copy(seg.position); this.bodyGroup.add(haze); this._ride(seg, haze); (this._miasma = this._miasma || []).push(haze); }
                 }
             });
             if (this._miasma) this._cascadeRules[0].hide.push(...this._miasma);
@@ -585,8 +711,8 @@
                 },
                 onSeg: (seg, i, r, z) => {
                     // Bristly legs + a venom stripe down each segment.
-                    for (const s of [-1, 1]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.006, 0.3, 4), green); leg.position.set(s * (r + 0.06), 0.62, z); leg.rotation.z = s * 1.1; this.bodyGroup.add(leg); (this._jsLegs = this._jsLegs || []).push(leg); }
-                    const stripe = new THREE.Mesh(new THREE.SphereGeometry(r * 0.45, 8, 6), venom); stripe.position.set(0, 0.75 + r * 0.7, z); stripe.scale.set(0.6, 0.4, 1); this.bodyGroup.add(stripe); this._jsVenom.push(stripe.material);
+                    for (const s of [-1, 1]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.006, 0.3, 4), green); leg.position.set(s * (r + 0.06), 0.62, z); leg.rotation.z = s * 1.1; this.bodyGroup.add(leg); this._ride(seg, leg); (this._jsLegs = this._jsLegs || []).push(leg); }
+                    const stripe = new THREE.Mesh(new THREE.SphereGeometry(r * 0.45, 8, 6), venom); stripe.position.set(0, 0.75 + r * 0.7, z); stripe.scale.set(0.6, 0.4, 1); this.bodyGroup.add(stripe); this._ride(seg, stripe); this._jsVenom.push(stripe.material);
                 }
             });
             const extra = (this._jsLegs || []).concat(this.mandibles ? [this.mandibles] : []);
@@ -614,10 +740,8 @@
             for (const mx of [-0.07, 0.07]) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.18, 4), body); m.position.set(mx, 0.9, 0.72); m.rotation.x = 1.5; this.mandibles.add(m); }
             this.bodyGroup.add(this.mandibles);
             // Long folded membranous wings.
-            this.wings = new THREE.Group();
             const wingMat = this._mat(p.accent, 0.32, 0.2, p.accent); this._lkGlow.push(wingMat);
-            for (const sx of [-1, 1]) { const w = new THREE.Mesh(new THREE.CircleGeometry(0.6, 12), wingMat); w.scale.set(0.45, 1, 1); w.position.set(sx * 0.16, 1.05, -0.5); w.rotation.x = -Math.PI / 2 + 0.2; w.rotation.z = sx * 0.15; w._sx = sx; this.wings.add(w); }
-            this.bodyGroup.add(this.wings);
+            this._wingPair(0.1, 1.15, 0.08, { len: 1.15, width: 0.42, mat: wingMat, sweep: 1.25, lift: 0.15, amp: 0.25, rate: 10, rateFast: 24 });
             // Big sprung jumping hind legs.
             this._lkHind = [];
             for (const side of [-1, 1]) {
@@ -645,9 +769,9 @@
                 },
                 onSeg: (seg, i, r, z) => {
                     // Molten crack ring glowing in the gap between plates.
-                    const crack = new THREE.Mesh(new THREE.TorusGeometry(r * 1.0, 0.035, 6, 14), this._mat(p.accent, 1.0, 0.3, p.accent)); crack.position.set(0, 0.78, z + 0.14); crack.rotation.x = Math.PI / 2; this.bodyGroup.add(crack); this._mcGlow.push(crack.material); (this._mcCracks = this._mcCracks || []).push(crack);
+                    const crack = new THREE.Mesh(new THREE.TorusGeometry(r * 1.0, 0.035, 6, 14), this._mat(p.accent, 1.0, 0.3, p.accent)); crack.position.set(0, 0.78, z + 0.14); crack.rotation.x = Math.PI / 2; this.bodyGroup.add(crack); this._ride(seg, crack); this._mcGlow.push(crack.material); (this._mcCracks = this._mcCracks || []).push(crack);
                     // Stubby rock legs.
-                    for (const s of [-1, 1]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.01, 0.26, 4), rock); leg.position.set(s * (r + 0.04), 0.64, z); leg.rotation.z = s * 1.1; this.bodyGroup.add(leg); (this._mcLegs = this._mcLegs || []).push(leg); }
+                    for (const s of [-1, 1]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.01, 0.26, 4), rock); leg.position.set(s * (r + 0.04), 0.64, z); leg.rotation.z = s * 1.1; this.bodyGroup.add(leg); this._ride(seg, leg); (this._mcLegs = this._mcLegs || []).push(leg); }
                 }
             });
             const extra = (this._mcLegs || []).concat(this._mcCracks || []).concat(this.mandibles ? [this.mandibles] : []);
@@ -674,17 +798,17 @@
             // Large eye-pattern wings (mandibles slot stays a small proboscis coil).
             this.mandibles = new THREE.Group();
             const coil = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.015, 6, 12), this._mat(0x2a2030, 1.0, 0.5)); coil.position.set(0, 0.88, 0.66); this.mandibles.add(coil); this.bodyGroup.add(this.mandibles);
-            this.wings = new THREE.Group();
             const wingMat = this._mat(p.bodyColor, 0.85, 0.7); const eyeMat = this._mat(p.accent, 1.0, 0.4, p.accent);
-            this._mothEyes = [];
+            const pupilMat = this._mat(0x100810, 1.0, 0.4);
+            this._mothEyes = [eyeMat];
+            const flap = { lift: 0.15, amp: 0.3, rate: 4, rateFast: 14 };
             for (const sx of [-1, 1]) {
-                const fore = new THREE.Mesh(new THREE.CircleGeometry(0.5, 14), wingMat); fore.scale.set(1, 1, 0.8); fore.position.set(sx * 0.5, 1.0, 0.15); fore.rotation.x = -Math.PI / 2; fore.rotation.z = sx * 0.2; fore._sx = sx; this.wings.add(fore);
-                const hind = new THREE.Mesh(new THREE.CircleGeometry(0.4, 14), wingMat); hind.position.set(sx * 0.45, 1.0, -0.35); hind.rotation.x = -Math.PI / 2; hind.rotation.z = sx * 0.15; hind._sx = sx; this.wings.add(hind);
-                // Hypnotic eye spots.
-                const spot = new THREE.Mesh(new THREE.CircleGeometry(0.13, 12), eyeMat); spot.position.set(sx * 0.52, 1.01, 0.1); spot.rotation.x = -Math.PI / 2; this.wings.add(spot); this._mothEyes.push(spot.material);
-                const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.05, 10), this._mat(0x100810, 1.0, 0.4)); pupil.position.set(sx * 0.52, 1.02, 0.1); pupil.rotation.x = -Math.PI / 2; this.wings.add(pupil);
+                const fore = this._hingeWing(sx, 0.12, 1.08, 0.25, Object.assign({ len: 1.0, width: 0.8, mat: wingMat, sweep: -0.1 }, flap));
+                this._hingeWing(sx, 0.12, 1.05, 0.05, Object.assign({ len: 0.8, width: 0.7, mat: wingMat, sweep: 0.5 }, flap));
+                // Hypnotic eye spot painted on the fore wing.
+                const spot = new THREE.Mesh(new THREE.CircleGeometry(0.13, 12), eyeMat); spot.position.set(sx * 0.5, 0.01, 0); spot.rotation.x = -Math.PI / 2; fore._blade.add(spot);
+                const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.05, 10), pupilMat); pupil.position.set(sx * 0.5, 0.02, 0); pupil.rotation.x = -Math.PI / 2; fore._blade.add(pupil);
             }
-            this.bodyGroup.add(this.wings);
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings], legY: 0.78, legZs: [0.3, 0.1], mat: fuzz });
         }
 
@@ -781,10 +905,10 @@
                 onSeg: (seg, i, r, z) => {
                     // Translucent egg-sacs bulging from alternate segments.
                     if (i % 2 === 1) {
-                        for (const s of [-1, 1]) { const sac = new THREE.Mesh(new THREE.SphereGeometry(r * 0.5, 10, 8), this._mat(0xd8ff8a, 0.6, 0.2, 0x3a5a10)); sac.position.set(s * r * 0.9, 0.7, z); this.bodyGroup.add(sac); (this._tgEggs = this._tgEggs || []).push(sac); }
+                        for (const s of [-1, 1]) { const sac = new THREE.Mesh(new THREE.SphereGeometry(r * 0.5, 10, 8), this._mat(0xd8ff8a, 0.6, 0.2, 0x3a5a10)); sac.position.set(s * r * 0.9, 0.7, z); this.bodyGroup.add(sac); this._ride(seg, sac); (this._tgEggs = this._tgEggs || []).push(sac); }
                     }
                     // Venom sheen blister on top.
-                    const blob = new THREE.Mesh(new THREE.SphereGeometry(r * 0.3, 8, 6), venom); blob.position.set(0, 0.7 + r * 0.7, z); this.bodyGroup.add(blob); this._tgVenom.push(blob.material);
+                    const blob = new THREE.Mesh(new THREE.SphereGeometry(r * 0.3, 8, 6), venom); blob.position.set(0, 0.7 + r * 0.7, z); this.bodyGroup.add(blob); this._ride(seg, blob); this._tgVenom.push(blob.material);
                 }
             });
             const extra = (this._tgEggs || []);
@@ -807,21 +931,16 @@
             this.head = new THREE.Group();
             const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), this._mat(0x2a3a14, 1.0, 0.2, p.accent)); eyeL.position.set(-0.12, 0, 0.05); this.head.add(eyeL); this._vdVenom.push(eyeL.material);
             const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), this._mat(0x2a3a14, 1.0, 0.2, p.accent)); eyeR.position.set(0.12, 0, 0.05); this.head.add(eyeR); this._vdVenom.push(eyeR.material);
-            this.head.position.set(0, 1.05, 0.58); this.bodyGroup.add(this.head);
+            this.head.position.set(0, 1.05, 0.46); this.bodyGroup.add(this.head);
             // Venom fangs / mandibles.
             this.mandibles = new THREE.Group();
-            for (const mx of [-0.07, 0.07]) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.22, 4), venom); m.position.set(mx, 0.98, 0.78); m.rotation.x = 1.5; m.rotation.z = -mx * 3; this.mandibles.add(m); }
+            for (const mx of [-0.07, 0.07]) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.22, 4), venom); m.position.set(mx, 0.98, 0.68); m.rotation.x = 1.5; m.rotation.z = -mx * 3; this.mandibles.add(m); }
             this.bodyGroup.add(this.mandibles);
-            // Four long iridescent wings.
-            this.wings = new THREE.Group();
+            // Four long veined iridescent wings hinged on the thorax.
             const wingMat = this._mat(p.accent, 0.32, 0.15, p.accent); this._vdVenom.push(wingMat);
-            for (const [sx, sz] of [[-1, 0.22], [1, 0.22], [-1, -0.08], [1, -0.08]]) {
-                const w = new THREE.Mesh(new THREE.CircleGeometry(0.55, 14), wingMat); w.scale.set(1.4, 0.28, 1);
-                w.position.set(sx * 0.5, 1.14, sz); w.rotation.x = -Math.PI / 2; w.rotation.z = sx * 0.08; w._sx = sx; this.wings.add(w);
-                // Wing vein ribs.
-                for (let v = -1; v <= 1; v++) { const vein = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.78, 4), this._mat(0x244411, 0.6, 0.4)); vein.position.set(sx * 0.5, 1.142, sz + v * 0.07); vein.rotation.z = Math.PI / 2; this.wings.add(vein); }
-            }
-            this.bodyGroup.add(this.wings);
+            const veinMat = this._mat(0x244411, 0.6, 0.4);
+            this._wingPair(0.1, 1.2, 0.2, { len: 1.5, width: 0.3, mat: wingMat, veins: veinMat, veinCount: 3, seg: 14, sweep: 0.04, lift: 0.06, amp: 0.45, rate: 30, rateFast: 42 });
+            this._wingPair(0.1, 1.2, -0.02, { len: 1.4, width: 0.32, mat: wingMat, veins: veinMat, veinCount: 3, seg: 14, sweep: 0.2, lift: 0.06, amp: 0.45, rate: 30, rateFast: 42, phase: 1.2 });
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings, this.tailBarb], legY: 0.98, legZs: [0.25, 0.08], mat: body });
         }
 
@@ -877,19 +996,19 @@
             this.mandibles = new THREE.Group();
             const coil = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.018, 6, 12), this._mat(0x3a2050, 1.0, 0.5)); coil.position.set(0, 0.86, 0.66); this.mandibles.add(coil); this.bodyGroup.add(this.mandibles);
             // Huge psychedelic eye-pattern wings.
-            this.wings = new THREE.Group();
             const wingMat = this._mat(p.bodyColor, 0.9, 0.7);
+            const pupilMat = this._mat(0x100018, 1.0, 0.3);
+            const flap = { lift: 0.15, amp: 0.3, rate: 4, rateFast: 14 };
             for (const sx of [-1, 1]) {
-                const fore = new THREE.Mesh(new THREE.CircleGeometry(0.62, 16), wingMat); fore.scale.set(1, 1, 0.85); fore.position.set(sx * 0.6, 1.0, 0.18); fore.rotation.x = -Math.PI / 2; fore.rotation.z = sx * 0.2; fore._sx = sx; this.wings.add(fore);
-                const hind = new THREE.Mesh(new THREE.CircleGeometry(0.5, 16), wingMat); hind.position.set(sx * 0.55, 1.0, -0.42); hind.rotation.x = -Math.PI / 2; hind.rotation.z = sx * 0.12; hind._sx = sx; this.wings.add(hind);
-                // Concentric psychic-eye rings.
+                const fore = this._hingeWing(sx, 0.14, 1.1, 0.25, Object.assign({ len: 1.24, width: 1.05, mat: wingMat, seg: 16, sweep: -0.1 }, flap));
+                this._hingeWing(sx, 0.14, 1.07, 0.02, Object.assign({ len: 1.0, width: 0.9, mat: wingMat, seg: 16, sweep: 0.55 }, flap));
+                // Concentric psychic-eye rings painted on the fore wing.
                 for (let r = 0; r < 3; r++) {
                     const ring = new THREE.Mesh(new THREE.RingGeometry(0.06 + r * 0.07, 0.1 + r * 0.07, 16), psy);
-                    ring.position.set(sx * 0.62, 1.01 + r * 0.001, 0.12); ring.rotation.x = -Math.PI / 2; this.wings.add(ring); this._mfPsy.push(ring.material);
+                    ring.position.set(sx * 0.62, 0.01 + r * 0.001, 0); ring.rotation.x = -Math.PI / 2; fore._blade.add(ring);
                 }
-                const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), this._mat(0x100018, 1.0, 0.3)); pupil.position.set(sx * 0.62, 1.014, 0.12); pupil.rotation.x = -Math.PI / 2; this.wings.add(pupil);
+                const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.05, 12), pupilMat); pupil.position.set(sx * 0.62, 0.014, 0); pupil.rotation.x = -Math.PI / 2; fore._blade.add(pupil);
             }
-            this.bodyGroup.add(this.wings);
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings].concat(this._mfTents), legY: 0.78, legZs: [0.3, 0.1], mat: fuzz });
         }
 
@@ -952,9 +1071,9 @@
                 onSeg: (seg, i, r, z) => {
                     // Faint phasing aura sphere over each segment.
                     const aura = new THREE.Mesh(new THREE.SphereGeometry(r * 1.4, 10, 8), this._mat(p.accent, 0.12, 0.05, p.accent));
-                    aura.position.set(0, 0.7, z); this.bodyGroup.add(aura); this._tpGhost.push(aura.material); (this._tpAura = this._tpAura || []).push(aura);
+                    aura.position.set(0, 0.7, z); this.bodyGroup.add(aura); this._ride(seg, aura); this._tpGhost.push(aura.material); (this._tpAura = this._tpAura || []).push(aura);
                     // Tick-worm bristle barbs.
-                    for (const s of [-1, 1]) { const barb = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.14, 4), ghost); barb.position.set(s * r * 0.9, 0.7, z); barb.rotation.z = s * 1.2; this.bodyGroup.add(barb); }
+                    for (const s of [-1, 1]) { const barb = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.14, 4), ghost); barb.position.set(s * r * 0.9, 0.7, z); barb.rotation.z = s * 1.2; this.bodyGroup.add(barb); this._ride(seg, barb); }
                 }
             });
             if (this._tpAura) this._cascadeRules[0].hide.push(...this._tpAura);
@@ -1055,9 +1174,9 @@
                 onSeg: (seg, i, r, z) => {
                     // Concentric event-horizon halo warping around each segment.
                     const halo = new THREE.Mesh(new THREE.TorusGeometry(r * 1.5, 0.02, 8, 20), this._mat(p.accent, 0.4, 0.1, p.accent));
-                    halo.position.set(0, 0.75, z); halo.rotation.x = Math.PI / 2 + Math.sin(i) * 0.3; this.bodyGroup.add(halo); this._gwRings.push(halo.material); (this._gwHalos = this._gwHalos || []).push(halo);
+                    halo.position.set(0, 0.75, z); halo.rotation.x = Math.PI / 2 + Math.sin(i) * 0.3; this.bodyGroup.add(halo); this._ride(seg, halo); this._gwRings.push(halo.material); (this._gwHalos = this._gwHalos || []).push(halo);
                     // Lensing shimmer shell pulled toward the body.
-                    const lens = new THREE.Mesh(new THREE.SphereGeometry(r * 1.25, 12, 10), this._mat(0x3a2a6a, 0.16, 0.05, p.accent)); lens.position.set(0, 0.75, z); this.bodyGroup.add(lens); this._gwRings.push(lens.material); (this._gwLens = this._gwLens || []).push(lens);
+                    const lens = new THREE.Mesh(new THREE.SphereGeometry(r * 1.25, 12, 10), this._mat(0x3a2a6a, 0.16, 0.05, p.accent)); lens.position.set(0, 0.75, z); this.bodyGroup.add(lens); this._ride(seg, lens); this._gwRings.push(lens.material); (this._gwLens = this._gwLens || []).push(lens);
                 }
             });
             const extra = (this._gwHalos || []).concat(this._gwLens || []);
@@ -1085,16 +1204,852 @@
             for (const mx of [-0.08, 0.08]) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.2, 4), black); m.position.set(mx, 0.92, 0.72); m.rotation.x = 1.5; m.rotation.z = -mx * 3; this.mandibles.add(m); }
             this.bodyGroup.add(this.mandibles);
             // Shimmering time-warped wings with afterimage echo planes.
-            this.wings = new THREE.Group();
-            const wingMat = this._mat(p.accent, 0.42, 0.15, p.accent); this._thWings = [wingMat];
-            this._thEcho = [];
-            for (const sx of [-1, 1]) {
-                const w = new THREE.Mesh(new THREE.CircleGeometry(0.5, 14), wingMat); w.scale.set(1.4, 0.4, 1); w.position.set(sx * 0.32, 1.18, 0.05); w.rotation.x = -Math.PI / 2; w.rotation.z = sx * 0.2; w._sx = sx; this.wings.add(w);
-                // Faint trailing time-echo of the wing.
-                const echo = new THREE.Mesh(new THREE.CircleGeometry(0.5, 14), this._mat(p.accent, 0.18, 0.1, p.accent)); echo.scale.set(1.4, 0.4, 1); echo.position.set(sx * 0.32, 1.18, -0.12); echo.rotation.x = -Math.PI / 2; echo.rotation.z = sx * 0.3; echo._sx = sx; this.wings.add(echo); this._thEcho.push(echo); this._thWings.push(echo.material);
-            }
-            this.bodyGroup.add(this.wings);
+            const wingMat = this._mat(p.accent, 0.42, 0.15, p.accent);
+            const echoMat = this._mat(p.accent, 0.18, 0.1, p.accent);
+            this._thWings = [wingMat, echoMat];
+            // The real wings, then a faint time-echo of each on the same root that
+            // beats a beat behind and swept further back.
+            this._wingPair(0.1, 1.17, 0.15, { len: 1.3, width: 0.4, mat: wingMat, seg: 14, sweep: 0.35, lift: 0.2, amp: 0.5, rate: 30, rateFast: 42 });
+            this._thEcho = this._wingPair(0.1, 1.17, 0.1, { len: 1.3, width: 0.4, mat: echoMat, seg: 14, sweep: 0.55, lift: 0.2, amp: 0.5, rate: 30, rateFast: 42, phase: -0.7 });
             this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings, this.stinger], legY: 0.82, mat: black });
+        }
+
+        // ════ Level 1-5 roster: small fry with a build of their own ══════════
+
+        _ball(parent, mat, r, pos, scl, seg) {
+            const m = new THREE.Mesh(new THREE.SphereGeometry(r, seg ? seg[0] : 10, seg ? seg[1] : 8), mat);
+            m.position.set(pos[0], pos[1], pos[2]); if (scl) m.scale.set(scl[0], scl[1], scl[2]);
+            parent.add(m); return m;
+        }
+        // Leg pairs front to back from [{ hip, pts, r }]; returns { L, R }.
+        _legSet(defs, mat, jointMat) {
+            const L = [], R = [];
+            defs.forEach(d => { L.push(this._jointLeg(-1, d.hip, d.pts, mat, d.r || 0.022, jointMat)); R.push(this._jointLeg(1, d.hip, d.pts, mat, d.r || 0.022, jointMat)); });
+            return { L, R };
+        }
+        // A ring hugging a body: rotate its axis (z) onto dir.
+        _band(parent, mat, pos, radius, tube, dir) {
+            const t = new THREE.Mesh(new THREE.TorusGeometry(radius, tube, 4, 10), mat);
+            t.position.set(pos[0], pos[1], pos[2]);
+            if (dir) t.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(dir[0], dir[1], dir[2]).normalize());
+            parent.add(t); return t;
+        }
+        // CrawlingHand archetype keys for a hand built of finger groups.
+        _wireHand(o) {
+            const fk = ['THUMB', 'INDEX_FINGER', 'MIDDLE_FINGER', 'RING_FINGER', 'LITTLE_FINGER'];
+            this._partMeshMap = { PALM: o.palm, WRIST_STUMP: o.stump, KNUCKLES: o.knuckles, NAILS: o.nails[0] };
+            fk.forEach((k, i) => { this._partMeshMap[k] = o.fingers[i]; });
+            this._cascadeRules = [
+                { gone: ['PALM'], hide: [o.palm, o.stump, o.knuckles, ...o.fingers, ...(o.extra || [])] },
+                { gone: ['WRIST_STUMP'], hide: [o.stump] },
+                { gone: ['KNUCKLES'], hide: [o.knuckles] },
+                { gone: ['NAILS'], hide: o.nails },
+                ...fk.map((k, i) => ({ gone: [k], hide: [o.fingers[i]] }))
+            ];
+        }
+
+        // ── Dung Beetle: shovel-faced, head down, hind legs up on its ball ───
+        _buildLvDungBeetle() {
+            const p = this.profile;
+            const shell = this._skinMat(p.bodyColor, 0.35);
+            const dark = this._mat(0x140e08, 1.0, 0.5);
+            this.thorax = this._ball(this.bodyGroup, shell, 0.26, [0, 0.5, 0.2], [1.2, 0.7, 0.9]);
+            this.abdomen = this._ball(this.bodyGroup, shell, 0.36, [0, 0.6, -0.2], [1.05, 0.75, 1.15]); this.abdomen.rotation.x = 0.35;
+            this.head = new THREE.Group(); this.head.position.set(0, 0.4, 0.44); this.bodyGroup.add(this.head);
+            this._ball(this.head, shell, 0.15, [0, 0, 0], [1.2, 0.8, 1]);
+            // Toothed shovel of a face and one horn curling back over the head.
+            const shovel = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.17, 0.04, 6), shell); shovel.position.set(0, -0.04, 0.1); shovel.rotation.x = 0.3; this.head.add(shovel);
+            for (const tx of [-0.11, -0.04, 0.04, 0.11]) { const tooth = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.08, 4), dark); tooth.position.set(tx, -0.08, 0.3); tooth.rotation.x = Math.PI / 2; this.head.add(tooth); }
+            this._rod(this.head, shell, [0, 0.06, 0.02], [0, 0.26, -0.04], 0.045, 0.03, 5);
+            this._rod(this.head, shell, [0, 0.26, -0.04], [0, 0.34, -0.2], 0.03, 0.008, 5);
+            this._eye(this.head, -0.15, 0.03, 0.05, 0.035, 0xffaa44); this._eye(this.head, 0.15, 0.03, 0.05, 0.035, 0xffaa44);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, dark, [s * 0.05, -0.08, 0.1], [s * 0.02, -0.12, 0.22], 0.025, 0.008, 4);
+            // The ball: lumpy dung bristling with straw, a lost coin pressed into it.
+            const dung = this._skinMat(p.accent, 0.95);
+            this.ball = new THREE.Mesh(new THREE.IcosahedronGeometry(0.42, 1), dung); this.ball.position.set(0, 0.44, -0.92); this.bodyGroup.add(this.ball);
+            const straw = this._mat(0xd8b04a, 1.0, 0.8), up = new THREE.Vector3(0, 1, 0);
+            for (const d of [[0.6, 0.6, 0.2], [-0.7, 0.3, -0.4], [0.2, -0.3, -0.9], [-0.3, 0.8, 0.3], [0.8, -0.2, -0.5]]) {
+                const dir = new THREE.Vector3(d[0], d[1], d[2]).normalize();
+                const st = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.3, 3), straw);
+                const lean = new THREE.Vector3(-dir.z, 0, dir.x).normalize().multiplyScalar(0.6).add(dir).normalize();
+                st.position.copy(dir).multiplyScalar(0.42); st.quaternion.setFromUnitVectors(up, lean); this.ball.add(st);
+            }
+            const cdir = new THREE.Vector3(0.4, 0.6, -0.7).normalize();
+            const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.025, 8), this._mat(0xe8c040, 1.0, 0.2, 0x3a2a00));
+            coin.position.copy(cdir).multiplyScalar(0.4); coin.quaternion.setFromUnitVectors(up, cdir); this.ball.add(coin);
+            const legs = this._legSet([
+                { hip: [0.16, 0.4, 0.32], pts: [[0.16, -0.06, 0.12], [0.2, -0.4, 0.22]], r: 0.028 },
+                { hip: [0.2, 0.42, 0.05], pts: [[0.22, -0.04, -0.02], [0.36, -0.42, -0.06]], r: 0.026 },
+                { hip: [0.18, 0.5, -0.3], pts: [[0.22, 0.28, -0.12], [0.02, 0.16, -0.36]], r: 0.028 }
+            ], dark);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.ball], legsL: legs.L, legsR: legs.R, mat: shell });
+        }
+
+        // ── Garden Pillbug: an arched woodlouse of overlapping grey plates ────
+        _buildLvGardenPillbug() {
+            const p = this.profile;
+            const plateA = this._skinMat(p.bodyColor, 0.45), plateB = this._skinMat(0x4a4e56, 0.5);
+            const belly = this._mat(0x34343a, 1.0, 0.7), spot = this._mat(p.accent, 1.0, 0.5);
+            this.belly = this._ball(this.bodyGroup, belly, 0.3, [0, 0.36, 0], [1.05, 0.55, 1.75]);
+            this.thorax = new THREE.Group(); this.abdomen = new THREE.Group(); this.bodyGroup.add(this.thorax); this.bodyGroup.add(this.abdomen);
+            // Seven plates laid along an arch, each turned to follow it.
+            for (let i = 0; i < 7; i++) {
+                const phi = 1.05 - i * 0.33, w = 1.0 - Math.abs(i - 2.5) * 0.06;
+                const pl = this._ball(i < 3 ? this.thorax : this.abdomen, i % 2 ? plateB : plateA, 0.3, [0, 0.2 + 0.42 * Math.cos(phi), 0.42 * Math.sin(phi)], [1.25 * w, 0.42, 0.55]);
+                pl.rotation.x = phi;
+                // A row of pale spots down each flank, the woodlouse's tell.
+                if (i % 2 === 0) for (const s of [-1, 1]) this._ball(pl, spot, 0.04, [s * 0.24, 0.16, 0], null, [6, 4]);
+            }
+            this.head = new THREE.Group(); this.head.position.set(0, 0.27, 0.46); this.bodyGroup.add(this.head);
+            this._ball(this.head, belly, 0.12, [0, 0, 0], [1.3, 0.7, 0.9]);
+            this._eye(this.head, -0.11, 0.03, 0.05, 0.025, 0xffffff); this._eye(this.head, 0.11, 0.03, 0.05, 0.025, 0xffffff);
+            for (const s of [-1, 1]) { this._rod(this.head, belly, [s * 0.08, 0.02, 0.06], [s * 0.2, 0.1, 0.24], 0.016, 0.012); this._rod(this.head, belly, [s * 0.2, 0.1, 0.24], [s * 0.28, -0.06, 0.36], 0.012, 0.007); }
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, belly, [s * 0.03, -0.04, 0.08], [s * 0.015, -0.08, 0.14], 0.015, 0.005);
+            // Twin uropods at the tail.
+            this._uropods = [];
+            for (const s of [-1, 1]) this._uropods.push(this._rod(this.bodyGroup, belly, [s * 0.08, 0.34, -0.42], [s * 0.15, 0.3, -0.58], 0.03, 0.01));
+            const defs = [];
+            for (let i = 0; i < 7; i++) defs.push({ hip: [0.2, 0.3, 0.36 - i * 0.12], pts: [[0.12, -0.06, 0.02], [0.2, -0.3, 0.04]], r: 0.018 });
+            const legs = this._legSet(defs, belly);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.belly, ...this._uropods],
+                legsL: [legs.L[0], legs.L[3], legs.L[6]], legsR: [legs.R[0], legs.R[3], legs.R[6]], mat: plateA });
+        }
+
+        // ── Picnic Gnat: a hunched gnat with a jam drop, its cloud about it ──
+        _buildLvPicnicGnat() {
+            const p = this.profile;
+            this._flyer = true;
+            const body = this._skinMat(p.bodyColor, 0.6);
+            this.thorax = this._ball(this.bodyGroup, body, 0.16, [0, 1.1, 0.04], [1, 1.15, 1.1]);
+            this.abdomen = this._rod(this.bodyGroup, body, [0, 1.06, -0.06], [0, 0.94, -0.6], 0.1, 0.035, 6);
+            this.head = new THREE.Group(); this.head.position.set(0, 1.07, 0.22); this.bodyGroup.add(this.head);
+            this._ball(this.head, body, 0.09, [0, 0, 0]);
+            const eyeMat = this._mat(p.accent, 1.0, 0.3, 0x400810);
+            for (const s of [-1, 1]) this._ball(this.head, eyeMat, 0.065, [s * 0.06, 0.02, 0.04], null, [8, 6]);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            this._rod(this.mandibles, body, [0, -0.06, 0.06], [0, -0.17, 0.14], 0.015, 0.006);
+            // A stolen drop of jam clings to the tip of its abdomen.
+            this.jam = this._ball(this.bodyGroup, this._mat(p.accent, 0.85, 0.15, 0x3a0010), 0.11, [0, 0.86, -0.64], [1, 1.3, 1]);
+            const legs = this._legSet([
+                { hip: [0.05, 1.0, 0.1], pts: [[0.14, -0.2, 0.06], [0.18, -0.58, 0.1]], r: 0.012 },
+                { hip: [0.05, 1.0, 0.04], pts: [[0.16, -0.2, 0.0], [0.2, -0.6, 0.0]], r: 0.012 },
+                { hip: [0.05, 1.0, -0.02], pts: [[0.14, -0.2, -0.06], [0.18, -0.62, -0.12]], r: 0.012 }
+            ], body);
+            this._wingPair(0.05, 1.2, 0.04, { len: 0.72, width: 0.2, mat: this._mat(0xe8eef8, 0.35, 0.2), sweep: 0.85, lift: 0.12, amp: 0.55, rate: 40, rateFast: 52 });
+            // The rest of the cloud: tiny gnats orbiting it, meant to hang in the air.
+            this._gnatCloud = new THREE.Group(); this._gnatCloud.userData.float = true; this._gnatCloud.position.set(0, 1.0, 0); this.bodyGroup.add(this._gnatCloud);
+            const mini = this._mat(0x1a1a14, 1.0, 0.6), miniWing = this._mat(0xeef2ff, 0.4, 0.2);
+            for (let i = 0; i < 7; i++) {
+                const a = (i / 7) * Math.PI * 2, rr = 0.6 + this.idRand() * 0.3;
+                const g = new THREE.Group(); g.position.set(Math.cos(a) * rr, (this.idRand() - 0.5) * 0.6, Math.sin(a) * rr); g.rotation.y = -a;
+                this._ball(g, mini, 0.035, [0, 0, 0], [1, 1, 1.6], [6, 4]);
+                for (const s of [-1, 1]) { const w = new THREE.Mesh(new THREE.CircleGeometry(0.04, 5), miniWing); w.scale.set(1.5, 0.6, 1); w.position.set(s * 0.05, 0.02, 0); w.rotation.x = -Math.PI / 2; g.add(w); }
+                this._gnatCloud.add(g);
+            }
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.jam, this.wings], legsL: legs.L, legsR: legs.R, mat: body });
+        }
+
+        // ── Hearth Cricket: sooty, flat-backed, whip antennae, an ember file ──
+        _buildLvHearthCricket() {
+            const p = this.profile;
+            const brown = this._skinMat(p.bodyColor, 0.55), soot = this._mat(0x1a1410, 1.0, 0.85);
+            const ember = this._mat(p.accent, 1.0, 0.4, p.accent); this._emberMats = [ember];
+            this.thorax = this._ball(this.bodyGroup, brown, 0.2, [0, 0.42, 0.2], [1.2, 0.85, 1.0]);
+            this.abdomen = this._ball(this.bodyGroup, brown, 0.26, [0, 0.4, -0.26], [1, 0.7, 1.5]);
+            // Wings folded flat on the back; the singing file across them glows like a coal.
+            this.wingCase = new THREE.Group(); this.bodyGroup.add(this.wingCase);
+            for (const s of [-1, 1]) { const w = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.025, 0.62), soot); w.position.set(s * 0.1, 0.56, -0.24); w.rotation.z = -s * 0.12; this.wingCase.add(w); }
+            for (let k = 0; k < 5; k++) { const r = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.02, 0.02), ember); r.position.set(0, 0.577, -0.02 - k * 0.05); this.wingCase.add(r); }
+            this.head = new THREE.Group(); this.head.position.set(0, 0.42, 0.42); this.bodyGroup.add(this.head);
+            this._ball(this.head, brown, 0.17, [0, 0, 0]);
+            this._eye(this.head, -0.1, 0.05, 0.12, 0.04, p.accent); this._eye(this.head, 0.1, 0.05, 0.12, 0.04, p.accent);
+            // Antennae longer than the whole body, swept back over it.
+            for (const s of [-1, 1]) {
+                const pts = [[s * 0.05, 0.12, 0.08], [s * 0.22, 0.42, -0.15], [s * 0.36, 0.5, -0.75], [s * 0.42, 0.36, -1.35]];
+                for (let i = 0; i < 3; i++) this._rod(this.head, soot, pts[i], pts[i + 1], 0.014 - i * 0.003, 0.011 - i * 0.003, 3);
+            }
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, soot, [s * 0.05, -0.1, 0.12], [s * 0.02, -0.16, 0.2], 0.025, 0.008);
+            this._cerci = [];
+            for (const s of [-1, 1]) this._cerci.push(this._rod(this.bodyGroup, soot, [s * 0.05, 0.42, -0.6], [s * 0.2, 0.48, -0.92], 0.025, 0.008));
+            const lL = [], lR = [];
+            for (const s of [-1, 1]) {
+                const out = s < 0 ? lL : lR;
+                out.push(this._jointLeg(s, [0.14, 0.36, 0.3], [[0.12, -0.1, 0.1], [0.2, -0.36, 0.18]], soot, 0.02));
+                out.push(this._jointLeg(s, [0.12, 0.38, 0.08], [[0.18, -0.08, 0.0], [0.3, -0.38, -0.04]], soot, 0.02));
+                out.push(this._jointLeg(s, [0.2, 0.42, -0.18], [[0.18, 0.26, -0.22], [0.24, -0.42, -0.48]], brown, 0.05, soot));
+            }
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wingCase, ...this._cerci], legsL: lL, legsR: lR, mat: brown });
+        }
+
+        // ── Red Fire Ant: a soldier with a head too big for it, sting raised ──
+        _buildLvRedFireAnt() {
+            const p = this.profile;
+            const red = this._skinMat(p.bodyColor, 0.4), dark = this._mat(0x2a0a06, 1.0, 0.4);
+            const venom = this._mat(p.accent, 1.0, 0.2, p.accent); this._venomMats = [venom];
+            this.head = new THREE.Group(); this.head.position.set(0, 0.62, 0.5); this.bodyGroup.add(this.head);
+            this._ball(this.head, red, 0.26, [0, 0, 0], [1.15, 0.9, 1]);
+            this._eye(this.head, -0.19, 0.06, 0.12, 0.045, p.accent); this._eye(this.head, 0.19, 0.06, 0.12, 0.045, p.accent);
+            // Elbowed antennae: a long scape, a knee, then the whip.
+            for (const s of [-1, 1]) {
+                this._rod(this.head, dark, [s * 0.08, 0.12, 0.18], [s * 0.22, 0.36, 0.26], 0.02, 0.016);
+                this._ball(this.head, dark, 0.024, [s * 0.22, 0.36, 0.26], null, [5, 4]);
+                this._rod(this.head, dark, [s * 0.22, 0.36, 0.26], [s * 0.38, 0.3, 0.52], 0.016, 0.01);
+            }
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) { this._rod(this.mandibles, dark, [s * 0.1, -0.08, 0.2], [s * 0.2, -0.1, 0.38], 0.045, 0.03, 5); this._rod(this.mandibles, dark, [s * 0.2, -0.1, 0.38], [s * 0.05, -0.12, 0.5], 0.03, 0.008, 5); }
+            this.thorax = this._ball(this.bodyGroup, red, 0.16, [0, 0.6, 0.12], [1, 0.95, 1.6]);
+            // Thin waist with its little node, then the banded gaster held high.
+            this._waist = this._rod(this.bodyGroup, red, [0, 0.58, -0.08], [0, 0.6, -0.28], 0.05, 0.05, 5);
+            this._ball(this._waist, red, 0.07, [0, 0, 0.05], [1, 0.6, 1.2], [6, 5]);
+            this.abdomen = this._ball(this.bodyGroup, red, 0.3, [0, 0.68, -0.52], [1, 0.88, 1.25]); this.abdomen.rotation.x = 0.25;
+            for (const z of [0.08, -0.06, -0.18]) this._band(this.abdomen, dark, [0, 0, z], Math.sqrt(0.09 - z * z), 0.02);
+            const sting = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.14, 4), dark); sting.position.set(0, 0.02, -0.34); sting.rotation.x = -Math.PI / 2; this.abdomen.add(sting);
+            this._ball(this.abdomen, venom, 0.035, [0, 0.02, -0.42], null, [6, 4]);
+            const legs = this._legSet([
+                { hip: [0.1, 0.55, 0.26], pts: [[0.22, 0.14, 0.1], [0.42, -0.55, 0.22]] },
+                { hip: [0.1, 0.55, 0.12], pts: [[0.24, 0.14, 0.0], [0.44, -0.55, 0.0]] },
+                { hip: [0.1, 0.55, -0.02], pts: [[0.22, 0.14, -0.1], [0.42, -0.55, -0.24]] }
+            ], dark);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this._waist], legsL: legs.L, legsR: legs.R, mat: red });
+        }
+
+        // ── Meadow Firefly: shield-hooded beetle with a two-lamp tail ────────
+        _buildLvMeadowFirefly() {
+            const p = this.profile;
+            this._flyer = true;
+            const brown = this._skinMat(p.bodyColor, 0.5), shieldMat = this._mat(0xd87a4a, 1.0, 0.5), black = this._mat(0x141010, 1.0, 0.5);
+            const lantern = this._mat(p.accent, 1.0, 0.3, p.accent); this._lanterns = [lantern];
+            this.thorax = this._ball(this.bodyGroup, brown, 0.16, [0, 1.02, 0.18], [1, 0.9, 1.1]);
+            // The pronotum: a flat hood over the head with two blood-red spots.
+            this.shield = this._ball(this.bodyGroup, shieldMat, 0.2, [0, 1.12, 0.3], [1.15, 0.4, 1.0]);
+            for (const s of [-1, 1]) this._ball(this.shield, this._mat(0xc81a1a, 1.0, 0.5), 0.045, [s * 0.08, 0.18, 0.05], null, [6, 4]);
+            this.head = new THREE.Group(); this.head.position.set(0, 1.02, 0.42); this.bodyGroup.add(this.head);
+            this._ball(this.head, black, 0.09, [0, 0, 0]);
+            this._eye(this.head, -0.06, 0.0, 0.05, 0.035, p.accent); this._eye(this.head, 0.06, 0.0, 0.05, 0.035, p.accent);
+            for (const s of [-1, 1]) {
+                this._rod(this.head, black, [s * 0.04, 0.04, 0.06], [s * 0.14, 0.2, 0.3], 0.012, 0.008);
+                for (let k = 1; k <= 3; k++) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.012, 0.012), black); b.position.set(s * (0.04 + 0.025 * k), 0.04 + 0.04 * k, 0.06 + 0.06 * k); this.head.add(b); }
+            }
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, black, [s * 0.03, -0.05, 0.06], [s * 0.01, -0.09, 0.12], 0.012, 0.004);
+            this.abdomen = this._ball(this.bodyGroup, brown, 0.17, [0, 0.98, -0.2], [1, 0.8, 1.9]);
+            this._lamps = [this._ball(this.bodyGroup, lantern, 0.15, [0, 0.94, -0.5], [1, 0.8, 1.1]), this._ball(this.bodyGroup, lantern, 0.11, [0, 0.92, -0.66])];
+            // Wing cases raised stiffly, the hind wings beating beneath them.
+            const caseMat = this._mat(0x3a2418, 1.0, 0.5);
+            this._wingPair(0.06, 1.12, 0.12, { len: 0.6, width: 0.2, mat: caseMat, sweep: 1.2, lift: 0.75, amp: 0.06, rate: 6, rateFast: 10 });
+            this._wingPair(0.06, 1.1, 0.08, { len: 0.75, width: 0.26, mat: this._mat(0xe8d8a8, 0.35, 0.2), sweep: 0.55, lift: 0.1, amp: 0.55, rate: 30, rateFast: 42 });
+            const legs = this._legSet([
+                { hip: [0.06, 0.96, 0.24], pts: [[0.12, -0.14, 0.04], [0.14, -0.42, 0.08]], r: 0.014 },
+                { hip: [0.06, 0.96, 0.16], pts: [[0.14, -0.14, 0.0], [0.16, -0.44, -0.02]], r: 0.014 },
+                { hip: [0.06, 0.96, 0.08], pts: [[0.12, -0.14, -0.06], [0.14, -0.44, -0.14]], r: 0.014 }
+            ], black);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.shield, this.wings, ...this._lamps], legsL: legs.L, legsR: legs.R, mat: brown });
+        }
+
+        // ── Pond Damselfly: barbell head, needle body, wings folded up in a V ─
+        _buildLvPondDamselfly() {
+            const p = this.profile;
+            this._flyer = true;
+            const blue = this._skinMat(p.bodyColor, 0.35), black = this._mat(0x101418, 1.0, 0.4), eyeMat = this._mat(p.accent, 1.0, 0.2, p.accent);
+            this.thorax = this._ball(this.bodyGroup, blue, 0.14, [0, 1.06, 0.06], [0.9, 1.2, 1.15]);
+            this.head = new THREE.Group(); this.head.position.set(0, 1.1, 0.24); this.bodyGroup.add(this.head);
+            this._ball(this.head, blue, 0.07, [0, 0, 0], [2.0, 0.9, 0.9]);
+            for (const s of [-1, 1]) this._ball(this.head, eyeMat, 0.085, [s * 0.17, 0, 0], null, [8, 6]);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, black, [s * 0.03, -0.04, 0.04], [s * 0.01, -0.08, 0.1], 0.014, 0.004);
+            const a = [0, 1.04, -0.06], b = [0, 0.98, -1.35];
+            this.abdomen = this._rod(this.bodyGroup, blue, a, b, 0.045, 0.03, 5);
+            // Black rings down the needle, and the clasper fork at its end.
+            this._rings = [];
+            for (let k = 1; k <= 7; k++) { const f = k / 8; this._rings.push(this._band(this.bodyGroup, black, [0, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f], 0.045 - 0.015 * f, 0.012, [0, b[1] - a[1], b[2] - a[2]])); }
+            for (const s of [-1, 1]) this._rings.push(this._rod(this.bodyGroup, black, [0, 0.98, -1.33], [s * 0.05, 1.0, -1.45], 0.012, 0.005));
+            const wingMat = this._mat(0xd8f0ff, 0.3, 0.2), stigma = this._mat(0x1a2030, 1.0, 0.4);
+            const ws = this._wingPair(0.03, 1.18, 0.1, { len: 0.95, width: 0.13, mat: wingMat, sweep: 0.95, lift: 0.95, amp: 0.2, rate: 14, rateFast: 26 })
+                .concat(this._wingPair(0.03, 1.18, 0.02, { len: 0.9, width: 0.13, mat: wingMat, sweep: 1.05, lift: 0.9, amp: 0.2, rate: 14, rateFast: 26, phase: 0.8 }));
+            ws.forEach(w => { const st = new THREE.Mesh(new THREE.CircleGeometry(0.035, 5), stigma); st.position.set(w._side * 0.82, 0.004, 0); st.rotation.x = -Math.PI / 2; w._blade.add(st); });
+            // Spiny legs held forward as a basket for catching gnats.
+            const legs = this._legSet([
+                { hip: [0.04, 0.98, 0.14], pts: [[0.1, -0.12, 0.14], [0.12, -0.3, 0.26]], r: 0.012 },
+                { hip: [0.04, 0.98, 0.08], pts: [[0.12, -0.12, 0.06], [0.16, -0.34, 0.12]], r: 0.012 },
+                { hip: [0.04, 0.98, 0.02], pts: [[0.12, -0.12, -0.02], [0.18, -0.36, 0.0]], r: 0.012 }
+            ], black);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings, ...this._rings], legsL: legs.L, legsR: legs.R, mat: blue });
+        }
+
+        // ── Lamp Moth: dusty delta wings, lamp-bright eyes, a haze of powder ──
+        _buildLvLampMoth() {
+            const p = this.profile;
+            this._flyer = true;
+            const fur = this._skinMat(p.bodyColor, 0.95), dusty = this._mat(0x9a9284, 0.95, 0.9), dark = this._mat(0x3a342c, 1.0, 0.8);
+            const lamp = this._mat(p.accent, 1.0, 0.2, p.accent); this._lampEyes = [lamp];
+            this.thorax = this._ball(this.bodyGroup, fur, 0.22, [0, 1.08, 0.12]);
+            const collar = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.06, 5, 10), fur); collar.position.set(0, 1.1, 0.3); this.bodyGroup.add(collar);
+            this.abdomen = this._rod(this.bodyGroup, fur, [0, 1.06, -0.04], [0, 1.0, -0.62], 0.14, 0.06, 6);
+            this._ball(this.abdomen, fur, 0.07, [0, 0.29, 0], null, [6, 4]);
+            this.head = new THREE.Group(); this.head.position.set(0, 1.08, 0.38); this.bodyGroup.add(this.head);
+            this._ball(this.head, fur, 0.12, [0, 0, 0]);
+            for (const s of [-1, 1]) this._ball(this.head, lamp, 0.055, [s * 0.08, 0.02, 0.07], null, [8, 6]);
+            // Combed antennae.
+            for (const s of [-1, 1]) {
+                this._rod(this.head, dark, [s * 0.04, 0.08, 0.06], [s * 0.2, 0.3, 0.16], 0.012, 0.008);
+                for (let k = 1; k <= 4; k++) { const f = k / 5; this._rod(this.head, dark, [s * (0.04 + 0.16 * f), 0.08 + 0.22 * f, 0.06 + 0.1 * f], [s * (0.08 + 0.16 * f), 0.06 + 0.22 * f, 0.12 + 0.1 * f], 0.006, 0.003, 3); }
+            }
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            const coil = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.012, 4, 8, Math.PI * 1.6), dark); coil.position.set(0, -0.1, 0.06); coil.rotation.y = Math.PI / 2; this.mandibles.add(coil);
+            // Broad triangular wings held flat, a dark zigzag across each.
+            const delta = [[0, -0.15], [1.0, 0.05], [0.85, 0.55], [0, 0.55]];
+            const flap = { mat: dusty, shape: delta, lift: 0.08, amp: 0.3, rate: 5, rateFast: 14 };
+            for (const s of [-1, 1]) {
+                const w = this._hingeWing(s, 0.1, 1.16, 0.14, Object.assign({ len: 0.95, width: 0.9, sweep: 0.15 }, flap));
+                this._rod(w._blade, dark, [s * 0.1, 0.004, -0.22], [s * 0.45, 0.004, -0.12], 0.012, 0.012, 3);
+                this._rod(w._blade, dark, [s * 0.45, 0.004, -0.12], [s * 0.78, 0.004, -0.3], 0.012, 0.008, 3);
+            }
+            // Wing powder shaken loose, hanging in the air around it.
+            this._dust = new THREE.Group(); this._dust.userData.float = true; this._dust.position.set(0, 1.05, -0.1); this.bodyGroup.add(this._dust);
+            const powder = this._mat(0xd8d0c0, 0.35, 0.9);
+            for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const d = this._ball(this._dust, powder, 0.05 + this.idRand() * 0.04, [Math.cos(a) * 0.9, (this.idRand() - 0.5) * 0.5, Math.sin(a) * 0.7], null, [6, 4]); d._y = d.position.y; }
+            const legs = this._legSet([
+                { hip: [0.08, 0.96, 0.2], pts: [[0.12, -0.1, 0.06], [0.16, -0.3, 0.1]], r: 0.016 },
+                { hip: [0.08, 0.96, 0.1], pts: [[0.14, -0.1, 0.0], [0.18, -0.32, -0.02]], r: 0.016 },
+                { hip: [0.08, 0.96, 0.0], pts: [[0.12, -0.1, -0.06], [0.16, -0.32, -0.12]], r: 0.016 }
+            ], fur);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings, collar], legsL: legs.L, legsR: legs.R, mat: fur });
+        }
+
+        // ── Lost Glove: a woollen glove on four fat fingers, button eyes ─────
+        _buildLvLostGlove() {
+            const p = this.profile;
+            const wool = this._skinMat(p.bodyColor, 0.95), rib = this._mat(0x6a2020, 1.0, 0.95);
+            const buttonMat = this._mat(p.accent, 1.0, 0.3), darn = this._mat(0xd8c060, 1.0, 0.9), thread = this._mat(0x201818, 1.0, 0.8);
+            this.palm = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.16, 0.48), wool); this.palm.position.set(0, 0.5, 0); this.bodyGroup.add(this.palm);
+            // Ribbed cuff with a crust of snow.
+            this.cuff = new THREE.Group(); this.cuff.position.set(0, 0.5, -0.22); this.bodyGroup.add(this.cuff);
+            const cuffBody = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.22, 0.24, 8, 1, true), rib); cuffBody.position.z = -0.12; cuffBody.rotation.x = Math.PI / 2; this.cuff.add(cuffBody);
+            for (let k = 0; k < 4; k++) this._band(this.cuff, rib, [0, 0, -0.03 - k * 0.06], 0.21, 0.02);
+            const snow = this._mat(0xf4f8ff, 1.0, 0.9);
+            for (const d of [[0.12, 0.17, -0.1], [-0.05, 0.2, -0.16], [-0.15, 0.13, -0.05]]) this._ball(this.cuff, snow, 0.05, d, null, [6, 4]);
+            // A face sewn on the back of the hand: two buttons and an X-stitch mouth.
+            for (const s of [-1, 1]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.03, 8), buttonMat); b.position.set(s * 0.11, 0.59, -0.08); this.bodyGroup.add(b); }
+            for (let k = -1; k <= 1; k++) { this._rod(this.bodyGroup, thread, [k * 0.07 - 0.025, 0.582, 0.08], [k * 0.07 + 0.025, 0.582, 0.13], 0.008, 0.008, 3); this._rod(this.bodyGroup, thread, [k * 0.07 + 0.025, 0.582, 0.08], [k * 0.07 - 0.025, 0.582, 0.13], 0.008, 0.008, 3); }
+            this.knuckles = new THREE.Group(); this.bodyGroup.add(this.knuckles);
+            for (const x of [-0.16, -0.05, 0.05, 0.16]) this._ball(this.knuckles, wool, 0.05, [x, 0.58, 0.22], null, [6, 4]);
+            // Fingers: fat woollen tubes walking on darned tips; the little one is empty and drags.
+            this._fingers = []; this._darns = [];
+            const defs = [
+                { at: [-0.26, 0.5, 0.0], pts: [[-0.14, 0.02, 0.06], [-0.24, -0.46, 0.1]] },
+                { at: [-0.18, 0.5, 0.22], pts: [[0, 0.06, 0.14], [0, -0.12, 0.3], [0, -0.46, 0.36]] },
+                { at: [-0.06, 0.5, 0.22], pts: [[0, 0.07, 0.16], [0, -0.12, 0.34], [0, -0.46, 0.4]] },
+                { at: [0.06, 0.5, 0.22], pts: [[0, 0.06, 0.14], [0, -0.12, 0.3], [0, -0.46, 0.36]] },
+                { at: [0.18, 0.5, 0.22], pts: [[0, -0.04, 0.16], [0, -0.3, 0.26], [0, -0.48, 0.32]], limp: true }
+            ];
+            defs.forEach(d => {
+                const g = this._jointLeg(1, [0, d.at[1], d.at[2]], d.pts, wool, d.limp ? 0.04 : 0.055);
+                g.position.x = d.at[0];
+                const e = d.pts[d.pts.length - 1];
+                this._ball(g, wool, d.limp ? 0.04 : 0.055, e, null, [6, 4]);
+                const patch = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.03), darn); patch.position.set(e[0], e[1] + 0.03, e[2] + 0.04); g.add(patch);
+                this._darns.push(patch); this._fingers.push(g);
+            });
+            this._wireHand({ palm: this.palm, stump: this.cuff, knuckles: this.knuckles, nails: this._darns, fingers: this._fingers });
+        }
+
+        // ── Paper Wasp: wasp-waisted, dangling legs, clutching a scrap of comb
+        _buildLvPaperWasp() {
+            const p = this.profile;
+            this._flyer = true;
+            const black = this._skinMat(p.bodyColor, 0.45), yellow = this._mat(p.accent, 1.0, 0.45);
+            this.thorax = this._ball(this.bodyGroup, black, 0.15, [0, 1.1, 0.12], [1, 1.05, 1.3]);
+            this.head = new THREE.Group(); this.head.position.set(0, 1.12, 0.36); this.bodyGroup.add(this.head);
+            this._ball(this.head, black, 0.12, [0, 0, 0], [1.1, 1, 0.9]);
+            for (const s of [-1, 1]) this._ball(this.head, this._mat(0x3a1a0a, 1.0, 0.3), 0.06, [s * 0.09, 0.02, 0.04], [0.8, 1.4, 0.8], [8, 6]);
+            this._ball(this.head, yellow, 0.05, [0, -0.03, 0.09], null, [6, 4]);
+            this._antennae(this.head, black, p.accent);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, yellow, [s * 0.04, -0.08, 0.06], [s * 0.02, -0.13, 0.12], 0.018, 0.006);
+            this._waist = this._rod(this.bodyGroup, black, [0, 1.06, -0.06], [0, 1.0, -0.34], 0.035, 0.03, 5);
+            this.abdomen = this._ball(this.bodyGroup, black, 0.17, [0, 0.98, -0.62], [1, 1, 1.9]);
+            for (const z of [0.06, -0.02, -0.09]) this._band(this.abdomen, yellow, [0, 0, z], Math.sqrt(0.0289 - z * z), 0.022);
+            const sting = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.1, 4), this._mat(0x1a1408, 1.0, 0.4)); sting.position.set(0, 0, -0.2); sting.rotation.x = -Math.PI / 2; this.abdomen.add(sting);
+            this._wingPair(0.07, 1.22, 0.14, { len: 0.85, width: 0.2, mat: this._mat(0xc89a4a, 0.4, 0.2), sweep: 0.45, lift: 0.25, amp: 0.5, rate: 34, rateFast: 46 });
+            // A scrap of grey paper comb clutched in the front feet.
+            this.comb = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.06, 6), this._mat(0xb8b0a0, 1.0, 0.95)); this.comb.position.set(0, 0.8, 0.42); this.bodyGroup.add(this.comb);
+            const cell = this._mat(0x5a5248, 1.0, 0.9);
+            for (let k = 0; k < 7; k++) { const a = k * Math.PI / 3, rr = k === 6 ? 0 : 0.085; const c = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.064, 6), cell); c.position.set(Math.cos(a) * rr, 0, Math.sin(a) * rr); this.comb.add(c); }
+            const legs = this._legSet([
+                { hip: [0.05, 1.02, 0.2], pts: [[0.1, -0.08, 0.14], [0.06, -0.2, 0.22]], r: 0.014 },
+                { hip: [0.06, 1.02, 0.1], pts: [[0.18, -0.12, 0.02], [0.24, -0.5, -0.04]], r: 0.014 },
+                { hip: [0.06, 1.02, 0.0], pts: [[0.18, -0.2, -0.12], [0.22, -0.62, -0.24]], r: 0.014 }
+            ], black, yellow);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings, this._waist, this.comb], legsL: legs.L, legsR: legs.R, mat: black });
+        }
+
+        // ── Stable Horsefly: a fat drone with huge banded rainbow eyes ───────
+        _buildLvStableHorsefly() {
+            const p = this.profile;
+            this._flyer = true;
+            const grey = this._skinMat(p.bodyColor, 0.6), dark = this._mat(0x1a1612, 1.0, 0.6);
+            const eyeA = this._mat(p.accent, 1.0, 0.2, 0x0a3a1a), eyeB = this._mat(0xc83a9a, 1.0, 0.25);
+            this.thorax = this._ball(this.bodyGroup, grey, 0.26, [0, 1.05, 0.04], [1.1, 1, 1.1]);
+            this.abdomen = this._ball(this.bodyGroup, grey, 0.28, [0, 1.0, -0.42], [1.15, 0.7, 1.25]);
+            for (const z of [0.1, 0.0, -0.1]) { const tri = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.05, 3), this._mat(0xc8c0a8, 1.0, 0.8)); tri.position.set(0, Math.sqrt(0.0784 - z * z) - 0.01, z); this.abdomen.add(tri); }
+            this.head = new THREE.Group(); this.head.position.set(0, 1.05, 0.34); this.bodyGroup.add(this.head);
+            this._ball(this.head, grey, 0.14, [0, 0, 0], [1.3, 1, 0.8]);
+            for (const s of [-1, 1]) {
+                const eye = this._ball(this.head, eyeA, 0.17, [s * 0.11, 0.02, 0.05], null, [10, 8]);
+                for (const y of [-0.08, 0.0, 0.08]) { const st = this._band(eye, eyeB, [0, y, 0], Math.sqrt(0.0289 - y * y) + 0.004, 0.016); st.rotation.x = Math.PI / 2; }
+            }
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, dark, [s * 0.03, -0.1, 0.06], [s * 0.01, -0.3, 0.16], 0.03, 0.006, 4);
+            const smoke = this._mat(0x8a8a90, 0.45, 0.3), blot = this._mat(0x3a3028, 0.8, 0.6);
+            this._wingPair(0.1, 1.25, 0.05, { len: 1.0, width: 0.42, mat: smoke, sweep: 0.6, lift: 0.12, amp: 0.5, rate: 36, rateFast: 48 })
+                .forEach(w => { const b = new THREE.Mesh(new THREE.CircleGeometry(0.09, 6), blot); b.position.set(w._side * 0.5, 0.004, 0.04); b.rotation.x = -Math.PI / 2; w._blade.add(b); });
+            const legs = this._legSet([
+                { hip: [0.12, 0.9, 0.16], pts: [[0.2, -0.16, 0.06], [0.26, -0.48, 0.1]], r: 0.026 },
+                { hip: [0.12, 0.9, 0.04], pts: [[0.22, -0.16, 0.0], [0.28, -0.5, -0.02]], r: 0.026 },
+                { hip: [0.12, 0.9, -0.08], pts: [[0.2, -0.16, -0.08], [0.26, -0.5, -0.16]], r: 0.026 }
+            ], dark);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings], legsL: legs.L, legsR: legs.R, mat: grey });
+        }
+
+        // ── Locust Nymph: wingless, head too big, banded like a warning ──────
+        _buildLvLocustNymph() {
+            const p = this.profile;
+            const green = this._skinMat(p.bodyColor, 0.5), band = this._mat(p.accent, 1.0, 0.6), yellow = this._mat(0xe8c83a, 1.0, 0.6);
+            this.head = new THREE.Group(); this.head.position.set(0, 0.66, 0.44); this.bodyGroup.add(this.head);
+            this._ball(this.head, green, 0.24, [0, 0, 0], [0.9, 1.15, 1]);
+            // One eye bigger than the other.
+            this._eye(this.head, -0.17, 0.08, 0.08, 0.07, 0xffffff); this._eye(this.head, 0.17, 0.08, 0.08, 0.085, 0xffffff);
+            this._antennae(this.head, green, 0x2a3a10);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, band, [s * 0.05, -0.2, 0.08], [s * 0.02, -0.28, 0.14], 0.03, 0.01);
+            this.thorax = this._ball(this.bodyGroup, green, 0.2, [0, 0.6, 0.16], [1.1, 0.95, 1.15]);
+            this._band(this.thorax, band, [0, 0, -0.06], Math.sqrt(0.04 - 0.0036), 0.025);
+            this._buds = [];
+            for (const s of [-1, 1]) { const bud = this._ball(this.bodyGroup, this._mat(0x6a8a2a, 1.0, 0.5), 0.1, [s * 0.15, 0.66, 0.0], [0.5, 0.25, 1.2], [6, 4]); bud.rotation.z = -s * 0.4; this._buds.push(bud); }
+            const a = [0, 0.6, -0.04], b = [0, 0.5, -0.66];
+            this.abdomen = this._rod(this.bodyGroup, green, a, b, 0.17, 0.08, 8);
+            this._ball(this.abdomen, green, 0.08, [0, 0.31, 0], null, [8, 6]);
+            this._rings = [];
+            [0.2, 0.4, 0.6, 0.8].forEach((f, i) => this._rings.push(this._band(this.bodyGroup, i % 2 ? yellow : band, [0, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f], 0.17 - 0.09 * f + 0.004, 0.022, [0, b[1] - a[1], b[2] - a[2]])));
+            const lL = [], lR = [];
+            for (const s of [-1, 1]) {
+                const out = s < 0 ? lL : lR;
+                out.push(this._jointLeg(s, [0.12, 0.5, 0.26], [[0.12, -0.14, 0.08], [0.2, -0.5, 0.14]], green, 0.022));
+                out.push(this._jointLeg(s, [0.14, 0.5, 0.1], [[0.16, -0.12, 0.0], [0.28, -0.5, -0.04]], green, 0.022));
+                out.push(this._jointLeg(s, [0.15, 0.55, -0.06], [[0.14, 0.32, -0.22], [0.22, -0.55, -0.42]], green, 0.045, band));
+            }
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [...this._buds, ...this._rings], legsL: lL, legsR: lR, mat: green });
+        }
+
+        // ── Dream Moth: a lilac puff with sleepy lidded eyes and moon wings ──
+        _buildLvDreamMoth() {
+            const p = this.profile;
+            this._flyer = true;
+            const fluff = this._skinMat(p.bodyColor, 0.95), lilac = this._mat(0x9a7ac0, 0.9, 0.8), dark = this._mat(0x2a2038, 1.0, 0.5);
+            const moon = this._mat(p.accent, 1.0, 0.3, p.accent); this._moonMats = [moon];
+            this.thorax = this._ball(this.bodyGroup, fluff, 0.26, [0, 1.1, 0.1]);
+            this._collar = new THREE.Group(); this.bodyGroup.add(this._collar);
+            for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; this._ball(this._collar, fluff, 0.08, [Math.cos(a) * 0.18, 1.1 + Math.sin(a) * 0.16, 0.3], null, [6, 4]); }
+            this.abdomen = this._ball(this.bodyGroup, fluff, 0.2, [0, 1.04, -0.3], [1, 1, 1.5]);
+            this.head = new THREE.Group(); this.head.position.set(0, 1.1, 0.42); this.bodyGroup.add(this.head);
+            this._ball(this.head, fluff, 0.13, [0, 0, 0]);
+            // Sleepy eyes: dark beads half covered by heavy furred lids.
+            for (const s of [-1, 1]) {
+                this._ball(this.head, dark, 0.06, [s * 0.08, 0, 0.08], null, [8, 6]);
+                const lid = new THREE.Mesh(new THREE.SphereGeometry(0.066, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2), fluff); lid.position.set(s * 0.08, 0, 0.08); lid.rotation.x = 0.45; this.head.add(lid);
+            }
+            for (const s of [-1, 1]) {
+                this._rod(this.head, dark, [s * 0.04, 0.1, 0.04], [s * 0.18, 0.32, 0.12], 0.01, 0.007);
+                for (let k = 1; k <= 3; k++) { const f = k / 4; this._rod(this.head, dark, [s * (0.04 + 0.14 * f), 0.1 + 0.22 * f, 0.04 + 0.08 * f], [s * (0.09 + 0.14 * f), 0.08 + 0.22 * f, 0.1 + 0.08 * f], 0.005, 0.003, 3); }
+            }
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            const coil = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.012, 4, 10, Math.PI * 1.7), dark); coil.position.set(0, -0.12, 0.08); coil.rotation.y = Math.PI / 2; this.mandibles.add(coil);
+            const flap = { mat: lilac, seg: 12, lift: 0.3, amp: 0.35, rate: 5, rateFast: 12 };
+            for (const s of [-1, 1]) {
+                const fore = this._hingeWing(s, 0.12, 1.22, 0.16, Object.assign({ len: 0.9, width: 0.85, sweep: -0.05 }, flap));
+                this._hingeWing(s, 0.12, 1.18, 0.0, Object.assign({ len: 0.7, width: 0.65, sweep: 0.55, phase: 0.4 }, flap));
+                const cres = new THREE.Mesh(new THREE.RingGeometry(0.06, 0.1, 8, 1, 0, Math.PI), moon); cres.position.set(s * 0.5, 0.006, 0); cres.rotation.x = -Math.PI / 2; fore._blade.add(cres);
+            }
+            // Bubbles of the dreams it has sipped, drifting overhead.
+            this._dreams = new THREE.Group(); this._dreams.userData.float = true; this.bodyGroup.add(this._dreams);
+            const bubble = this._mat(p.accent, 0.3, 0.1, p.accent);
+            for (let i = 0; i < 4; i++) { const d = this._ball(this._dreams, bubble, 0.05 + i * 0.012, [(i - 1.5) * 0.22, 1.65 + (i % 2) * 0.18, 0.1 - i * 0.08], null, [8, 6]); d._y = d.position.y; }
+            const legs = this._legSet([
+                { hip: [0.08, 1.0, 0.2], pts: [[0.1, -0.1, 0.04], [0.12, -0.26, 0.06]], r: 0.016 },
+                { hip: [0.08, 0.98, 0.1], pts: [[0.12, -0.1, 0.0], [0.14, -0.28, -0.02]], r: 0.016 },
+                { hip: [0.08, 0.98, 0.0], pts: [[0.1, -0.1, -0.04], [0.12, -0.28, -0.08]], r: 0.016 }
+            ], fluff);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings, this._collar], legsL: legs.L, legsR: legs.R, mat: fluff });
+        }
+
+        // ── Rust Beetle: a riveted iron box of a beetle chewing a bent nail ──
+        _buildLvRustBeetle() {
+            const p = this.profile;
+            const rust = this._skinMat(p.bodyColor, 0.8), iron = this._mat(p.accent, 1.0, 0.4), flake = this._mat(0xd8782a, 1.0, 0.9);
+            this.thorax = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.2, 0.3), rust); this.thorax.position.set(0, 0.46, 0.24); this.bodyGroup.add(this.thorax);
+            this.abdomen = new THREE.Group(); this.bodyGroup.add(this.abdomen);
+            for (const s of [-1, 1]) { const e = new THREE.Mesh(new THREE.BoxGeometry(0.23, 0.22, 0.62), rust); e.position.set(s * 0.115, 0.5, -0.22); e.rotation.z = -s * 0.05; this.abdomen.add(e); }
+            for (const s of [-1, 1]) for (const z of [0.02, -0.2, -0.42]) this._ball(this.abdomen, iron, 0.025, [s * 0.2, 0.61, z], null, [5, 4]);
+            // Rust flakes lifting off the shell.
+            for (const [x, z, rx, rz] of [[0.1, -0.05, 0.5, 0.3], [-0.12, -0.3, -0.6, 0.4], [0.06, -0.44, 0.7, -0.5], [-0.05, 0.1, -0.4, -0.6]]) { const f = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.012, 0.08), flake); f.position.set(x, 0.615, z); f.rotation.set(rx, 0, rz); this.abdomen.add(f); }
+            this.head = new THREE.Group(); this.head.position.set(0, 0.42, 0.45); this.bodyGroup.add(this.head);
+            this.head.add(new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.14, 0.18), rust));
+            this._eye(this.head, -0.12, 0.03, 0.06, 0.03, 0xffcc66); this._eye(this.head, 0.12, 0.03, 0.06, 0.03, 0xffcc66);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) { const m = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.16, 4), iron); m.position.set(s * 0.06, -0.02, 0.15); m.rotation.x = Math.PI / 2; this.mandibles.add(m); }
+            // The bent nail it is gnawing.
+            this._rod(this.mandibles, iron, [-0.28, -0.02, 0.17], [0.05, -0.02, 0.18], 0.016, 0.016, 4);
+            this._rod(this.mandibles, iron, [0.05, -0.02, 0.18], [0.22, 0.08, 0.2], 0.016, 0.006, 4);
+            const nailHead = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.015, 6), iron); nailHead.position.set(-0.28, -0.02, 0.17); nailHead.rotation.z = Math.PI / 2; this.mandibles.add(nailHead);
+            const legs = this._legSet([
+                { hip: [0.18, 0.4, 0.3], pts: [[0.18, 0.04, 0.0], [0.3, -0.4, 0.05]], r: 0.03 },
+                { hip: [0.18, 0.4, 0.06], pts: [[0.2, 0.04, 0.0], [0.32, -0.4, 0.0]], r: 0.03 },
+                { hip: [0.18, 0.4, -0.18], pts: [[0.18, 0.04, 0.0], [0.3, -0.4, -0.05]], r: 0.03 }
+            ], rust, iron);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, legsL: legs.L, legsR: legs.R, mat: rust });
+        }
+
+        // ── Noodle Worm: a limp noodle rising out of its bowl, chopsticks in ─
+        _buildLvNoodleWorm() {
+            const p = this.profile;
+            const noodle = this._skinMat(p.bodyColor, 0.4), porcelain = this._mat(0xe8eef4, 1.0, 0.3), blue = this._mat(0x2a4aa8, 1.0, 0.3);
+            const broth = this._mat(0xc87a2a, 0.85, 0.2), wood = this._mat(0x8a5a2a, 1.0, 0.7);
+            this.bowl = new THREE.Group(); this.bodyGroup.add(this.bowl);
+            const cup = new THREE.Mesh(new THREE.SphereGeometry(0.44, 12, 6, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), porcelain); cup.position.y = 0.44; this.bowl.add(cup);
+            this._band(this.bowl, blue, [0, 0.44, 0], 0.44, 0.025, [0, 1, 0]);
+            const soup = new THREE.Mesh(new THREE.CircleGeometry(0.43, 12), broth); soup.position.y = 0.38; soup.rotation.x = -Math.PI / 2; this.bowl.add(soup);
+            for (const [a, b] of [[[0.12, 0.3, 0.12], [0.4, 1.1, 0.34]], [[0.18, 0.3, 0.04], [0.48, 1.05, 0.2]]]) this._rod(this.bowl, wood, a, b, 0.02, 0.012, 4);
+            // Loose noodles flopped over the rim.
+            this._drape = [];
+            for (const s of [-1, 1]) {
+                const arc = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.03, 4, 8, Math.PI), noodle); arc.position.set(s * 0.44, 0.42, -0.1); this.bowl.add(arc); this._drape.push(arc);
+                this._drape.push(this._rod(this.bowl, noodle, [s * 0.54, 0.42, -0.1], [s * 0.56, 0.22, -0.08], 0.03, 0.026));
+            }
+            // The worm: one long noodle rising from the broth, pivoting at the surface.
+            this.noodle = new THREE.Group(); this.noodle.position.set(0, 0.36, -0.05); this.bodyGroup.add(this.noodle);
+            const P = [[0, 0, 0], [0.1, 0.22, -0.05], [0.12, 0.47, 0.0], [0.04, 0.67, 0.1], [-0.06, 0.82, 0.23], [-0.06, 0.9, 0.39], [0, 0.87, 0.55]];
+            const rods = [], joints = [];
+            for (let i = 0; i < P.length - 1; i++) {
+                rods.push(this._rod(this.noodle, noodle, P[i], P[i + 1], 0.07 - i * 0.002, 0.068 - i * 0.002, 6));
+                if (i) joints.push(this._ball(this.noodle, noodle, 0.068, P[i], null, [6, 4]));
+            }
+            this.head = new THREE.Group(); this.head.position.set(0, 0.88, 0.6); this.noodle.add(this.head);
+            this._ball(this.head, noodle, 0.1, [0, 0, 0], [1, 0.9, 1.15]);
+            this._eye(this.head, -0.05, 0.05, 0.07, 0.02, 0xffffff); this._eye(this.head, 0.05, 0.05, 0.07, 0.02, 0xffffff);
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.016, 4, 8), this._mat(p.accent, 1.0, 0.5)); this.maw.position.set(0, -0.02, 0.11); this.head.add(this.maw);
+            this._noodleRods = rods; this._noodleJoints = joints;
+            this._partMeshMap = { HEAD: this.head, MAW: this.maw, HEART_SEGMENT: rods[4], BODY_SEGMENT: rods[2], TAIL: rods[0] };
+            this._cascadeRules = [
+                { gone: ['HEART_SEGMENT'], hide: [this.head, ...rods, ...joints, ...this._drape] },
+                { gone: ['HEAD'], hide: [this.head] },
+                { gone: ['MAW'], hide: [this.maw] },
+                { gone: ['BODY_SEGMENT'], hide: rods.slice(0, 4).concat(joints.slice(0, 3), this._drape) },
+                { gone: ['TAIL'], hide: [rods[0], ...this._drape] }
+            ];
+        }
+
+        // ── Syringe Mosquito: the abdomen a glass barrel, a steel needle nose ─
+        _buildLvSyringeMosquito() {
+            const p = this.profile;
+            this._flyer = true;
+            const body = this._skinMat(p.bodyColor, 0.5), steel = this._mat(0xc8ccd4, 1.0, 0.2), glass = this._mat(0xd8eef8, 0.35, 0.05);
+            const blood = this._mat(p.accent, 0.9, 0.3, 0x400808), black = this._mat(0x15151a, 1.0, 0.5);
+            this.thorax = this._ball(this.bodyGroup, body, 0.16, [0, 1.1, 0.08], [1, 1.1, 1.1]);
+            this.head = new THREE.Group(); this.head.position.set(0, 1.08, 0.28); this.bodyGroup.add(this.head);
+            this._ball(this.head, body, 0.09, [0, 0, 0]);
+            this._eye(this.head, -0.06, 0.02, 0.05, 0.045, p.accent); this._eye(this.head, 0.06, 0.02, 0.05, 0.045, p.accent);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.025, 0.07, 6), steel); hub.position.set(0, -0.03, 0.1); hub.rotation.x = Math.PI / 2; this.mandibles.add(hub);
+            this._rod(this.mandibles, steel, [0, -0.03, 0.12], [0, -0.16, 0.75], 0.012, 0.003, 4);
+            // The barrel: glass, graduated, half full, flange and plunger at the back.
+            this.abdomen = new THREE.Group(); this.bodyGroup.add(this.abdomen);
+            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.62, 8), glass); barrel.position.set(0, 1.06, -0.37); barrel.rotation.x = Math.PI / 2; this.abdomen.add(barrel);
+            this._fill = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.3, 8), blood); this._fill.position.set(0, 1.06, -0.53); this._fill.rotation.x = Math.PI / 2; this.abdomen.add(this._fill);
+            for (let k = 0; k < 5; k++) this._band(this.abdomen, black, [0, 1.06, -0.14 - k * 0.11], 0.112, 0.006);
+            const flange = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.05, 0.03), steel); flange.position.set(0, 1.06, -0.69); this.abdomen.add(flange);
+            this._plunger = new THREE.Group(); this._plungerZ = -0.69; this._plunger.position.set(0, 1.06, -0.69); this.abdomen.add(this._plunger);
+            this._rod(this._plunger, steel, [0, 0, 0.2], [0, 0, -0.26], 0.025, 0.025, 5);
+            const thumb = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.025, 8), steel); thumb.position.z = -0.27; thumb.rotation.x = Math.PI / 2; this._plunger.add(thumb);
+            this._wingPair(0.05, 1.22, 0.04, { len: 0.78, width: 0.16, mat: this._mat(0xe0e8f0, 0.35, 0.2), sweep: 0.65, lift: 0.15, amp: 0.5, rate: 40, rateFast: 52 });
+            const legs = this._legSet([
+                { hip: [0.05, 1.0, 0.14], pts: [[0.24, -0.08, 0.12], [0.34, -0.72, 0.22]], r: 0.012 },
+                { hip: [0.05, 1.0, 0.06], pts: [[0.26, -0.06, 0.0], [0.38, -0.74, 0.0]], r: 0.012 },
+                { hip: [0.05, 1.0, -0.02], pts: [[0.24, -0.08, -0.14], [0.32, -0.74, -0.28]], r: 0.012 }
+            ], black);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wings], legsL: legs.L, legsR: legs.R, mat: body });
+        }
+
+        // ── Pill Beetle: a red and white medicine capsule on stubby legs ─────
+        _buildLvPillBeetle() {
+            const p = this.profile;
+            const red = this._skinMat(p.bodyColor, 0.25), white = this._mat(p.accent, 1.0, 0.25), black = this._mat(0x141414, 1.0, 0.5);
+            const hemi = (r, mat) => new THREE.Mesh(new THREE.SphereGeometry(r, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), mat);
+            this.abdomen = new THREE.Group(); this.abdomen.position.set(0, 0.42, 0); this.bodyGroup.add(this.abdomen);
+            const bc = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.36, 12), white); bc.position.z = -0.18; bc.rotation.x = Math.PI / 2; this.abdomen.add(bc);
+            const bcap = hemi(0.3, white); bcap.position.z = -0.36; bcap.rotation.x = -Math.PI / 2; this.abdomen.add(bcap);
+            this.thorax = new THREE.Group(); this.thorax.position.set(0, 0.42, 0); this.bodyGroup.add(this.thorax);
+            const fc = new THREE.Mesh(new THREE.CylinderGeometry(0.305, 0.305, 0.36, 12), red); fc.position.z = 0.18; fc.rotation.x = Math.PI / 2; this.thorax.add(fc);
+            const fcap = hemi(0.305, red); fcap.position.z = 0.36; fcap.rotation.x = Math.PI / 2; this.thorax.add(fcap);
+            // The seam where the halves join, a score line and a stamped dose.
+            this._band(this.thorax, black, [0, 0, 0], 0.306, 0.012);
+            const score = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.008, 0.3), black); score.position.set(0, 0.305, 0.2); this.thorax.add(score);
+            for (const x of [-0.12, 0.12]) { const d = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.008, 0.02), black); d.position.set(x, 0.29, -0.2); this.abdomen.add(d); }
+            this.head = new THREE.Group(); this.head.position.set(0, 0.3, 0.62); this.bodyGroup.add(this.head);
+            this._ball(this.head, black, 0.11, [0, 0, 0], [1.2, 0.8, 1]);
+            this._eye(this.head, -0.07, 0.03, 0.07, 0.025, 0xffffff); this._eye(this.head, 0.07, 0.03, 0.07, 0.025, 0xffffff);
+            for (const s of [-1, 1]) this._rod(this.head, black, [s * 0.05, 0.05, 0.06], [s * 0.14, 0.12, 0.18], 0.01, 0.006);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, black, [s * 0.03, -0.04, 0.08], [s * 0.01, -0.07, 0.14], 0.012, 0.004);
+            const legs = this._legSet([
+                { hip: [0.16, 0.2, 0.24], pts: [[0.1, -0.04, 0.02], [0.16, -0.2, 0.04]], r: 0.02 },
+                { hip: [0.16, 0.2, 0.0], pts: [[0.1, -0.04, 0.0], [0.17, -0.2, 0.0]], r: 0.02 },
+                { hip: [0.16, 0.2, -0.24], pts: [[0.1, -0.04, -0.02], [0.16, -0.2, -0.04]], r: 0.02 }
+            ], black);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, legsL: legs.L, legsR: legs.R, mat: black });
+        }
+
+        // ── Mannequin Hand: glossy jointed fingers high-stepping like a spider
+        _buildLvMannequinHand() {
+            const p = this.profile;
+            const plastic = this._skinMat(p.bodyColor, 0.2), steel = this._mat(0xb0b4bc, 1.0, 0.25), nailMat = this._mat(p.accent, 1.0, 0.3);
+            this.palm = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.13, 0.44), plastic); this.palm.position.set(0, 0.78, 0); this.bodyGroup.add(this.palm);
+            this.knuckles = new THREE.Group(); this.bodyGroup.add(this.knuckles);
+            for (const x of [-0.15, -0.05, 0.05, 0.15]) this._ball(this.knuckles, plastic, 0.06, [x, 0.8, 0.22], null, [8, 6]);
+            // Wrist socket and the bare display rod it was pulled off.
+            this.socket = new THREE.Group(); this.socket.position.set(0, 0.78, -0.22); this.bodyGroup.add(this.socket);
+            const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.15, 0.14, 8), plastic); cup.position.z = -0.06; cup.rotation.x = Math.PI / 2; this.socket.add(cup);
+            this._band(this.socket, steel, [0, 0, -0.13], 0.13, 0.018);
+            this._rod(this.socket, steel, [0, 0, -0.08], [0, 0.2, -0.42], 0.03, 0.03, 5);
+            this._fingers = []; this._nails = [];
+            const defs = [
+                { at: [-0.21, 0.78, 0.02], pts: [[-0.14, 0.04, 0.06], [-0.26, -0.3, 0.1], [-0.3, -0.78, 0.12]] },
+                { at: [-0.15, 0.8, 0.24], pts: [[0, 0.1, 0.13], [0, 0.0, 0.28], [0, -0.5, 0.34], [0, -0.8, 0.36]] },
+                { at: [-0.05, 0.8, 0.24], pts: [[0, 0.12, 0.14], [0, 0.02, 0.32], [0, -0.5, 0.38], [0, -0.8, 0.4]] },
+                { at: [0.05, 0.8, 0.24], pts: [[0, 0.1, 0.13], [0, 0.0, 0.28], [0, -0.5, 0.34], [0, -0.8, 0.36]] },
+                { at: [0.15, 0.8, 0.24], pts: [[0, 0.08, 0.11], [0, -0.02, 0.24], [0, -0.5, 0.28], [0, -0.8, 0.3]] }
+            ];
+            defs.forEach((d, i) => {
+                const g = this._jointLeg(1, [0, d.at[1], d.at[2]], d.pts, plastic, 0.04);
+                g.position.x = d.at[0];
+                const e = d.pts[d.pts.length - 1];
+                const nail = this._ball(g, nailMat, 0.028, [e[0], e[1] + 0.05, e[2] + 0.03], [1, 1.2, 0.5], [6, 4]); this._nails.push(nail);
+                // A price tag still looped on the ring finger.
+                if (i === 3) {
+                    const mid = [0, 0.05, 0.065];
+                    this._band(g, steel, mid, 0.045, 0.01, [0, 0.1, 0.13]);
+                    this._rod(g, this._mat(0x8a6a4a, 1.0, 0.8), [0, 0.0, 0.08], [0.02, -0.24, 0.12], 0.006, 0.006, 3);
+                    const tag = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 0.012), this._mat(0xf0e8d0, 1.0, 0.8)); tag.position.set(0.02, -0.3, 0.12); g.add(tag);
+                }
+                this._fingers.push(g);
+            });
+            this._wireHand({ palm: this.palm, stump: this.socket, knuckles: this.knuckles, nails: this._nails, fingers: this._fingers });
+        }
+
+        // ── Kitchen Roach: flat and glossy, one antenna kinked back ──────────
+        _buildLvKitchenRoach() {
+            const p = this.profile;
+            const brown = this._skinMat(p.bodyColor, 0.25), rim = this._mat(p.accent, 1.0, 0.4), dark = this._mat(0x2a1408, 1.0, 0.4);
+            this.abdomen = this._ball(this.bodyGroup, brown, 0.4, [0, 0.3, -0.18], [0.85, 0.22, 1.35]);
+            this.wingCovers = new THREE.Group(); this.bodyGroup.add(this.wingCovers);
+            for (const s of [-1, 1]) { const w = this._ball(this.wingCovers, brown, 0.38, [s * 0.16, 0.37, -0.22], [0.48, 0.13, 1.25]); w.rotation.y = -s * 0.07; }
+            this.thorax = this._ball(this.bodyGroup, brown, 0.26, [0, 0.36, 0.28], [1.15, 0.26, 0.85]);
+            const edge = this._band(this.bodyGroup, rim, [0, 0.35, 0.28], 0.27, 0.025, [0, 1, 0]); edge.scale.set(1.1, 0.82, 1);
+            this.head = new THREE.Group(); this.head.position.set(0, 0.27, 0.48); this.bodyGroup.add(this.head);
+            this._ball(this.head, dark, 0.1, [0, 0, 0], [1.1, 0.8, 0.9]);
+            this._eye(this.head, -0.07, 0.03, 0.06, 0.025, p.accent); this._eye(this.head, 0.07, 0.03, 0.06, 0.025, p.accent);
+            const antL = [[-0.04, 0.04, 0.06], [-0.2, 0.12, 0.5], [-0.45, 0.18, 0.95], [-0.72, 0.08, 1.25]];
+            const antR = [[0.04, 0.04, 0.06], [0.2, 0.16, 0.42], [0.35, 0.3, 0.3], [0.55, 0.24, -0.3]];
+            for (const pts of [antL, antR]) for (let i = 0; i < 3; i++) this._rod(this.head, dark, pts[i], pts[i + 1], 0.012 - i * 0.003, 0.009 - i * 0.003, 3);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, dark, [s * 0.04, -0.05, 0.06], [s * 0.015, -0.08, 0.12], 0.015, 0.005);
+            this._cerci = [];
+            for (const s of [-1, 1]) this._cerci.push(this._rod(this.bodyGroup, dark, [s * 0.08, 0.3, -0.7], [s * 0.18, 0.33, -0.86], 0.02, 0.006));
+            const defs = [
+                { hip: [0.16, 0.3, 0.2], pts: [[0.22, 0.08, 0.08], [0.42, -0.3, 0.18]] },
+                { hip: [0.18, 0.3, 0.0], pts: [[0.25, 0.08, 0.0], [0.48, -0.3, -0.02]] },
+                { hip: [0.18, 0.3, -0.25], pts: [[0.24, 0.08, -0.12], [0.46, -0.3, -0.32]] }
+            ];
+            const legs = this._legSet(defs, dark);
+            // Spines along each shin.
+            defs.forEach((d, i) => [legs.L[i], legs.R[i]].forEach(g => {
+                const s = g._side, k = d.pts[0], f0 = d.pts[1];
+                for (const f of [0.35, 0.65]) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.01, 0.06, 3), dark); sp.position.set(s * (k[0] + (f0[0] - k[0]) * f + 0.012), k[1] + (f0[1] - k[1]) * f + 0.02, k[2] + (f0[2] - k[2]) * f); sp.rotation.z = -s * 0.8; g.add(sp); }
+            }));
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.wingCovers, edge, ...this._cerci], legsL: legs.L, legsR: legs.R, mat: brown });
+        }
+
+        // Tick body plan shared by the three level-one ticks: a small hooded
+        // front, a capitulum head and eight legs (the fourth pair unkeyed).
+        _tickLegs(mat, jointMat, hipX, hipY, zs, reach, r) {
+            const defs = zs.map((z, i) => ({ hip: [hipX, hipY, z], pts: [[0.2, 0.12, (1.5 - i) * 0.06], [reach, -hipY, (1.5 - i) * 0.16]], r }));
+            const legs = this._legSet(defs, mat, jointMat);
+            return { L: legs.L.slice(0, 3), R: legs.R.slice(0, 3) };
+        }
+
+        // ── Implant Tick: a steel tick with a blinking light, jacked in ──────
+        _buildLvImplantTick() {
+            const p = this.profile;
+            const metal = this._skinMat(p.bodyColor, 0.3), dark = this._mat(0x22252a, 1.0, 0.4), copper = this._mat(0xc87a3a, 1.0, 0.3);
+            const led = this._mat(p.accent, 1.0, 0.2, p.accent); this._ledMat = led;
+            const trace = this._mat(p.accent, 0.9, 0.3, p.accent);
+            this.abdomen = this._ball(this.bodyGroup, metal, 0.42, [0, 0.5, -0.15], [1, 0.6, 1.2], [12, 8]);
+            for (const z of [0.15, -0.05, -0.22]) this._band(this.abdomen, dark, [0, 0, z], Math.sqrt(0.1764 - z * z), 0.02);
+            for (const [x, z, len] of [[0.12, 0.05, 0.2], [-0.12, -0.1, 0.24], [0.0, -0.3, 0.14]]) { const tr = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.01, len), trace); tr.position.set(x, Math.sqrt(0.1764 - x * x - z * z) - 0.004, z); this.abdomen.add(tr); }
+            this._ball(this.abdomen, led, 0.05, [0, 0.415, 0.05], null, [6, 4]);
+            this.thorax = this._ball(this.bodyGroup, dark, 0.2, [0, 0.46, 0.24], [1.1, 0.55, 0.9]);
+            this.head = new THREE.Group(); this.head.position.set(0, 0.42, 0.42); this.bodyGroup.add(this.head);
+            this._ball(this.head, metal, 0.08, [0, 0, 0], [1.2, 0.7, 1.3]);
+            this._eye(this.head, -0.05, 0.03, 0.06, 0.02, p.accent); this._eye(this.head, 0.05, 0.03, 0.06, 0.02, p.accent);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.08, 4), copper); c.position.set(s * 0.03, -0.02, 0.12); c.rotation.x = Math.PI / 2; this.mandibles.add(c); }
+            // A cable from its mouthparts down to a jack plug on the floor.
+            this.cable = new THREE.Group(); this.bodyGroup.add(this.cable);
+            const cab = this._mat(0x1a1a1e, 1.0, 0.6), C = [[0, 0.4, 0.5], [0.05, 0.25, 0.72], [0.18, 0.06, 0.88], [0.4, 0.04, 0.98]];
+            for (let i = 0; i < 3; i++) this._rod(this.cable, cab, C[i], C[i + 1], 0.02, 0.02, 4);
+            const plug = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.14, 6), cab); plug.position.set(0.47, 0.04, 1.0); plug.rotation.z = Math.PI / 2; this.cable.add(plug);
+            this._rod(this.cable, copper, [0.54, 0.04, 1.0], [0.66, 0.04, 1.0], 0.016, 0.012, 4);
+            const legs = this._tickLegs(dark, copper, 0.16, 0.44, [0.26, 0.12, -0.04, -0.2], 0.42, 0.028);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.cable], legsL: legs.L, legsR: legs.R, mat: metal });
+        }
+
+        // ── Quartz Tick: a pink crystal cluster for a body, one big sail ─────
+        _buildLvQuartzTick() {
+            const p = this.profile;
+            const quartz = this._mat(p.bodyColor, 0.8, 0.1, 0x30101c), core = this._mat(p.accent, 1.0, 0.3), up = new THREE.Vector3(0, 1, 0);
+            this.abdomen = new THREE.Mesh(new THREE.IcosahedronGeometry(0.36, 0), quartz); this.abdomen.position.set(0, 0.5, -0.15); this.abdomen.scale.set(1, 0.8, 1.15); this.bodyGroup.add(this.abdomen);
+            this.abdomen.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.2, 0), core));
+            const pts = [[0, 1, -0.3, 0.11, 0.62], [0.6, 0.7, 0.1, 0.06, 0.28], [-0.6, 0.7, 0.0, 0.06, 0.3], [0.4, 0.6, -0.7, 0.07, 0.3], [-0.4, 0.5, -0.8, 0.05, 0.24], [0.8, 0.2, -0.4, 0.05, 0.22], [-0.8, 0.3, -0.3, 0.05, 0.2]];
+            for (const [x, y, z, r, h] of pts) { const d = new THREE.Vector3(x, y, z).normalize(); const c = new THREE.Mesh(new THREE.ConeGeometry(r, h, 5), quartz); c.position.copy(d).multiplyScalar(0.26 + h * 0.4); c.quaternion.setFromUnitVectors(up, d); this.abdomen.add(c); }
+            this.thorax = new THREE.Mesh(new THREE.OctahedronGeometry(0.18, 0), quartz); this.thorax.position.set(0, 0.46, 0.24); this.thorax.scale.set(1.2, 0.6, 1.0); this.bodyGroup.add(this.thorax);
+            this.head = new THREE.Group(); this.head.position.set(0, 0.42, 0.42); this.bodyGroup.add(this.head);
+            this.head.add(new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 0), quartz));
+            this._eye(this.head, -0.04, 0.03, 0.05, 0.02, 0xffffff); this._eye(this.head, 0.04, 0.03, 0.05, 0.02, 0xffffff);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) { const c = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.09, 4), core); c.position.set(s * 0.03, -0.02, 0.1); c.rotation.x = Math.PI / 2; this.mandibles.add(c); }
+            const legs = this._tickLegs(quartz, core, 0.14, 0.44, [0.26, 0.12, -0.04, -0.2], 0.4, 0.022);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, legsL: legs.L, legsR: legs.R, mat: quartz });
+        }
+
+        // ── Dragon Tick: a scaly tick wearing a stolen dragon scale as a shield
+        _buildLvDragonTick() {
+            const p = this.profile;
+            const scaly = this._skinMat(p.bodyColor, 0.55), scaly2 = this._mat(0x4a120c, 1.0, 0.6), dark = this._mat(0x2a0a08, 1.0, 0.5);
+            const plate = this._mat(p.accent, 1.0, 0.25, 0x102a08);
+            const glow = this._mat(0xff6a1a, 0.9, 0.3, 0xff6a1a); this._dtGlow = glow;
+            this.abdomen = this._ball(this.bodyGroup, scaly, 0.4, [0, 0.46, -0.15], [1, 0.55, 1.2]);
+            for (const a of [-0.6, -0.2, 0.2, 0.6]) for (const s of [-1, 1]) { const sc = this._ball(this.abdomen, scaly2, 0.07, [s * Math.cos(a) * 0.4, 0, Math.sin(a) * 0.4], [0.5, 1, 1.2], [6, 4]); sc.rotation.y = s * a; }
+            this._ball(this.bodyGroup, glow, 0.3, [0, 0.34, -0.15], [1, 0.3, 1.1]);
+            this.shieldScale = this._ball(this.bodyGroup, plate, 0.36, [0, 0.66, -0.12], [0.9, 0.16, 1.3], [10, 6]); this.shieldScale.rotation.x = -0.08;
+            this._rod(this.bodyGroup, dark, [0, 0.715, 0.2], [0, 0.715, -0.42], 0.015, 0.015, 3);
+            for (const x of [-0.12, 0, 0.12]) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.12, 4), dark); sp.position.set(x, 0.66, -0.58 + Math.abs(x) * 0.2); sp.rotation.x = -Math.PI / 2; this.bodyGroup.add(sp); }
+            this.thorax = this._ball(this.bodyGroup, dark, 0.18, [0, 0.44, 0.26], [1.15, 0.55, 0.9]);
+            this.head = new THREE.Group(); this.head.position.set(0, 0.4, 0.44); this.bodyGroup.add(this.head);
+            this._ball(this.head, scaly, 0.09, [0, 0, 0], [1.2, 0.7, 1.3]);
+            this._eye(this.head, -0.05, 0.03, 0.07, 0.022, 0xff8a2a); this._eye(this.head, 0.05, 0.03, 0.07, 0.022, 0xff8a2a);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) { this._rod(this.mandibles, dark, [s * 0.03, -0.02, 0.1], [s * 0.04, -0.06, 0.2], 0.018, 0.012); this._rod(this.mandibles, dark, [s * 0.04, -0.06, 0.2], [s * 0.01, -0.1, 0.24], 0.012, 0.004); }
+            const legs = this._tickLegs(dark, scaly2, 0.14, 0.42, [0.26, 0.12, -0.02, -0.16], 0.34, 0.04);
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: [this.shieldScale], legsL: legs.L, legsR: legs.R, mat: scaly });
+        }
+
+        // ── Gladiator Cricket: bronze helmet, red crest, spiked kicking legs ─
+        _buildLvGladiatorCricket() {
+            const p = this.profile;
+            const bronze = this._skinMat(p.bodyColor, 0.35), body = this._mat(0x4a3a20, 1.0, 0.6), plume = this._mat(p.accent, 1.0, 0.8), spike = this._mat(0xd8d0b0, 1.0, 0.5);
+            this.abdomen = this._ball(this.bodyGroup, body, 0.2, [0, 0.58, -0.32], [0.9, 0.8, 1.9]);
+            for (const z of [0.08, -0.02, -0.12]) this._band(this.abdomen, bronze, [0, 0, z], Math.sqrt(0.04 - z * z), 0.018);
+            this.thorax = this._ball(this.bodyGroup, bronze, 0.22, [0, 0.62, 0.16], [1.1, 0.85, 1.25]);
+            // The crest: a fan of red plumes along the helmet's ridge.
+            this._crest = [];
+            for (let k = 0; k < 6; k++) { const z = 0.38 - k * 0.09, y = 0.62 + 0.187 * Math.sqrt(Math.max(0, 1 - ((z - 0.16) / 0.275) ** 2)); const c = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.2 + (k === 2 || k === 3 ? 0.06 : 0), 4), plume); c.position.set(0, y + 0.08, z); c.rotation.x = -0.3; this.bodyGroup.add(c); this._crest.push(c); }
+            this.head = new THREE.Group(); this.head.position.set(0, 0.6, 0.42); this.bodyGroup.add(this.head);
+            this._ball(this.head, body, 0.15, [0, 0, 0]);
+            for (const s of [-1, 1]) { const g = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.14, 0.12), bronze); g.position.set(s * 0.12, -0.02, 0.04); this.head.add(g); }
+            this._eye(this.head, -0.08, 0.05, 0.11, 0.035, 0xffeeaa); this._eye(this.head, 0.08, 0.05, 0.11, 0.035, 0xffeeaa);
+            this._antennae(this.head, body, p.accent);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            for (const s of [-1, 1]) this._rod(this.mandibles, body, [s * 0.05, -0.08, 0.1], [s * 0.02, -0.14, 0.18], 0.025, 0.008);
+            const lL = [], lR = [];
+            for (const s of [-1, 1]) {
+                const out = s < 0 ? lL : lR;
+                out.push(this._jointLeg(s, [0.12, 0.54, 0.3], [[0.16, 0.06, 0.16], [0.2, 0.22, 0.3]], body, 0.024, bronze));
+                out.push(this._jointLeg(s, [0.15, 0.52, 0.08], [[0.2, 0.0, 0.0], [0.32, -0.52, 0.02]], body, 0.024, bronze));
+                const hind = this._jointLeg(s, [0.13, 0.56, -0.14], [[0.16, 0.36, -0.18], [0.24, -0.56, -0.46]], bronze, 0.05, body);
+                for (const f of [0.2, 0.4, 0.6, 0.8]) { const sp = new THREE.Mesh(new THREE.ConeGeometry(0.014, 0.08, 3), spike); sp.position.set(s * (0.16 + 0.08 * f), 0.36 - 0.92 * f, -0.18 - 0.28 * f - 0.03); sp.rotation.x = -1.2; hind.add(sp); }
+                out.push(hind);
+            }
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, extra: this._crest, legsL: lL, legsR: lR, mat: bronze });
+        }
+
+        // ── Pond Skater: a sliver of a bug on four huge oars, dimpling water ─
+        _buildLvPondSkater() {
+            const p = this.profile;
+            const dark = this._skinMat(p.bodyColor, 0.5), silver = this._mat(0xc8d0d8, 1.0, 0.3);
+            this.thorax = this._ball(this.bodyGroup, dark, 0.1, [0, 0.3, 0.05], [0.9, 0.7, 1.8]);
+            this.abdomen = this._ball(this.bodyGroup, dark, 0.08, [0, 0.29, -0.25], [0.9, 0.65, 2.0]);
+            this._ball(this.thorax, silver, 0.07, [0, -0.04, 0], [1.1, 0.6, 1]);
+            this.head = new THREE.Group(); this.head.position.set(0, 0.31, 0.3); this.bodyGroup.add(this.head);
+            this._ball(this.head, dark, 0.065, [0, 0, 0], [1, 0.85, 1.2]);
+            this._eye(this.head, -0.055, 0.02, 0.03, 0.035, p.accent); this._eye(this.head, 0.055, 0.02, 0.03, 0.035, p.accent);
+            this.mandibles = new THREE.Group(); this.head.add(this.mandibles);
+            this._rod(this.mandibles, dark, [0, -0.03, 0.06], [0, -0.1, 0.12], 0.01, 0.004);
+            const lL = [], lR = [];
+            this._ripples = [];
+            for (const s of [-1, 1]) {
+                const out = s < 0 ? lL : lR;
+                out.push(this._jointLeg(s, [0.05, 0.28, 0.18], [[0.08, -0.04, 0.1], [0.07, -0.12, 0.2]], dark, 0.012));
+                out.push(this._jointLeg(s, [0.06, 0.28, 0.04], [[0.45, 0.14, 0.22], [1.15, -0.28, 0.62]], dark, 0.015));
+                out.push(this._jointLeg(s, [0.06, 0.28, -0.08], [[0.38, 0.1, -0.28], [0.9, -0.28, -0.95]], dark, 0.014));
+                // A dimple where each oar presses the water, and a ring spreading from it.
+                for (const leg of out.slice(1)) {
+                    const foot = leg === out[1] ? [s * 1.15, -0.28, 0.62] : [s * 0.9, -0.28, -0.95];
+                    const dim = new THREE.Mesh(new THREE.CircleGeometry(0.07, 8), this._mat(p.accent, 0.45, 0.1)); dim.position.set(foot[0], foot[1] + 0.004, foot[2]); dim.rotation.x = -Math.PI / 2; leg.add(dim);
+                    const ring = new THREE.Mesh(new THREE.RingGeometry(0.1, 0.13, 12), this._mat(p.accent, 0.6, 0.1)); ring.position.set(foot[0], foot[1] + 0.006, foot[2]); ring.rotation.x = -Math.PI / 2; ring.userData.float = true; leg.add(ring); this._ripples.push(ring);
+                }
+            }
+            this._wireBug({ thorax: this.thorax, abdomen: this.abdomen, head: this.head, mandibles: this.mandibles, legsL: lL, legsR: lR, mat: dark });
+        }
+
+        // Per-creature motion for the level 1-5 roster.
+        _lvAnim(t, fast) {
+            switch (this.variant) {
+                case 'lv_dungbeetle': if (this.ball && this.ball.visible) this.ball.rotation.x = t * (fast ? 2.4 : 0.7); break;
+                case 'lv_picnicgnat':
+                    if (this._gnatCloud) this._gnatCloud.rotation.y = t * (fast ? 3 : 1.2);
+                    if (this.jam && this.jam.visible) this.jam.scale.y = 1.3 + Math.sin(t * 2.5) * 0.15;
+                    break;
+                case 'lv_hearthcricket': if (this._emberMats) this._emberMats.forEach((m, i) => { m.emissiveIntensity = 0.35 + Math.abs(Math.sin(t * 3 + i)) * 0.5; }); break;
+                case 'lv_redfireant': if (this._venomMats) this._venomMats[0].emissiveIntensity = 0.4 + Math.abs(Math.sin(t * 4)) * 0.5; break;
+                case 'lv_meadowfirefly': if (this._lanterns) this._lanterns[0].emissiveIntensity = 0.25 + Math.pow(Math.max(0, Math.sin(t * (fast ? 6 : 2))), 3) * 1.4; break;
+                case 'lv_lampmoth':
+                    if (this._dust) { this._dust.rotation.y = t * 0.4; this._dust.children.forEach((d, i) => { d.position.y = d._y + Math.sin(t * 1.3 + i) * 0.06; }); }
+                    if (this._lampEyes) this._lampEyes[0].emissiveIntensity = 0.6 + Math.sin(t * 3) * 0.3;
+                    break;
+                case 'lv_dreammoth':
+                    if (this._dreams) this._dreams.children.forEach((d, i) => { d.position.y = d._y + Math.sin(t * 0.9 + i * 1.3) * 0.08; });
+                    if (this._moonMats) this._moonMats[0].emissiveIntensity = 0.4 + Math.abs(Math.sin(t * 1.2)) * 0.4;
+                    break;
+                case 'lv_noodleworm':
+                    if (this.noodle && this.noodle.visible) { this.noodle.rotation.z = Math.sin(t * (fast ? 5 : 1.6)) * 0.12; this.noodle.rotation.x = fast ? Math.abs(Math.sin(t * 5)) * 0.3 : Math.sin(t * 1.1) * 0.05; }
+                    if (this.head) this.head.rotation.x = Math.sin(t * 2.2) * 0.15;
+                    break;
+                case 'lv_syringemosquito': {
+                    const pump = Math.abs(Math.sin(t * (fast ? 6 : 1.5)));
+                    if (this._plunger) this._plunger.position.z = this._plungerZ - pump * 0.06;
+                    if (this._fill) this._fill.scale.y = 0.85 + pump * 0.3;
+                    if (this.head && fast) this.head.rotation.x = pump * 0.3;
+                    break;
+                }
+                case 'lv_pillbeetle': this.model.rotation.z = Math.sin(t * (fast ? 7 : 1.6)) * (fast ? 0.14 : 0.05); break;
+                case 'lv_implanttick': if (this._ledMat) this._ledMat.emissiveIntensity = (Math.sin(t * (fast ? 14 : 4)) > 0.3) ? 1.4 : 0.15; break;
+                case 'lv_dragontick': if (this._dtGlow) this._dtGlow.emissiveIntensity = 0.4 + Math.abs(Math.sin(t * 2)) * 0.5; break;
+                case 'lv_pondskater':
+                    if (this._ripples) this._ripples.forEach((r, i) => { const k = (t * 0.8 + i * 0.27) % 1; r.scale.set(1 + k * 1.2, 1 + k * 1.2, 1); r.material.opacity = 0.6 * (1 - k); });
+                    break;
+            }
         }
 
         animatePose(deltaTime) {
@@ -1105,10 +2060,12 @@
             if (anim === 'spawn') growth = Math.min(1.0, t / 0.8);
             this.applyModelScale(growth);
             const fast = (anim === 'attack' || anim === 'specialattack');
-            const flyer = (this.variant === 'dragonfly' || this.variant === 'bumblebee' || this.variant === 'bloodmosquito' || this.variant === 'temporalhornet');
+            const flyer = this._flyer || (this.variant === 'dragonfly' || this.variant === 'bumblebee' || this.variant === 'bloodmosquito' || this.variant === 'temporalhornet');
             this.model.position.y = this._baseY + Math.sin(t * 1.3) * (flyer ? 0.07 : 0.02) * this.scale;
             // Default leg scuttle for the walkers.
             if (!flyer) this._legs.forEach((lg, i) => { if (lg.visible) lg.rotation.x = Math.sin(t * (fast ? 9 : 4) + i * 1.1) * 0.18; });
+            // Every hinged wing beats about its root on the thorax.
+            if (this._wingHinges) this._wingHinges.forEach(w => { if (w.visible) w.rotation.z = w._side * (w._lift + Math.sin(t * (fast ? w._rateFast : w._rate) + w._phase) * w._amp); });
 
             const baseX = this._baseX !== null ? this._baseX : this.model.position.x;
             switch (this.variant) {
@@ -1124,8 +2081,9 @@
                 }
                 case 'ladybug': {
                     const open = fast ? 1.0 : (0.15 + Math.max(0, Math.sin(t * 0.5)) * 0.2);
-                    if (this.leftWing) this.leftWing.rotation.z = open * 0.9;
-                    if (this.rightWing) this.rightWing.rotation.z = -open * 0.9;
+                    // Each case lifts outward about its midline hinge.
+                    if (this.leftWing) this.leftWing.rotation.z = -open * 0.9;
+                    if (this.rightWing) this.rightWing.rotation.z = open * 0.9;
                     break;
                 }
                 case 'grasshopper': {
@@ -1142,14 +2100,13 @@
                 case 'dragonfly':
                 case 'bumblebee':
                 case 'bloodmosquito': {
-                    if (this.wings) this.wings.children.forEach(w => { w.rotation.x = -Math.PI / 2 + Math.sin(t * (fast ? 40 : 28) + (w._sx || 0)) * 0.5; });
                     this.model.position.y = this._baseY + Math.sin(t * 2.2) * 0.06 * this.scale + 0.04 * this.scale;
                     if (this.variant === 'bloodmosquito' && this.proboscis) this.head.rotation.x = fast ? Math.abs(Math.sin(t * 7)) * 0.4 : 0;
                     break;
                 }
                 case 'crawlinghand': {
                     if (this._fingers) this._fingers.forEach((f, i) => { if (f.visible && !f._thumb) f.rotation.x = Math.sin(t * (fast ? 9 : 4) + i * 1.3) * 0.3; });
-                    if (this._wisps) this._wisps.forEach(w => { if (w.visible) { w.rotation.z = Math.sin(t * 2 + w._sx) * 0.3; w.material.emissiveIntensity = 0.4 + Math.sin(t * 3 + w._sx) * 0.3; } });
+                    if (this._wisps) this._wisps.forEach(w => { if (w.visible) { w.rotation.z = Math.sin(t * 2 + w._sx) * 0.3; w._mat.emissiveIntensity = 0.4 + Math.sin(t * 3 + w._sx) * 0.3; } });
                     if (this.head) this.head.rotation.z = Math.sin(t * 1.5) * 0.08;
                     break;
                 }
@@ -1194,7 +2151,6 @@
                 }
                 case 'luminouslocustking': {
                     if (this._lkGlow) this._lkGlow.forEach((m, i) => { m.emissiveIntensity = 0.5 + Math.sin(t * 4 + i * 0.5) * 0.4; });
-                    if (this.wings) this.wings.children.forEach(w => { w.rotation.x = -Math.PI / 2 + 0.2 + Math.sin(t * (fast ? 24 : 10) + (w._sx || 0)) * 0.25; });
                     if (this._lkHind && fast) this._lkHind.forEach(lg => { if (lg.visible) lg.rotation.x = Math.abs(Math.sin(t * 6)) * 0.4; });
                     this.model.position.y = this._baseY + Math.sin(t * 2) * 0.04 * this.scale;
                     break;
@@ -1206,7 +2162,6 @@
                     break;
                 }
                 case 'mothshadestalker': {
-                    if (this.wings) this.wings.children.forEach(w => { if (w._sx) w.rotation.z = (w._sx) * (0.2 + Math.sin(t * (fast ? 14 : 4)) * 0.18); });
                     if (this._mothEyes) this._mothEyes.forEach((m, i) => { m.emissiveIntensity = 0.3 + Math.abs(Math.sin(t * 2 + i * 1.5)) * 0.5; });
                     this.model.position.y = this._baseY + Math.sin(t * 1.8) * 0.05 * this.scale;
                     break;
@@ -1225,7 +2180,6 @@
                     break;
                 }
                 case 'venomousdragonfly': {
-                    if (this.wings) this.wings.children.forEach(w => { if (w._sx) w.rotation.x = -Math.PI / 2 + Math.sin(t * (fast ? 42 : 30) + w._sx) * 0.5; });
                     if (this._vdVenom) this._vdVenom.forEach((m, i) => { m.emissiveIntensity = 0.4 + Math.abs(Math.sin(t * 3 + i * 0.4)) * 0.4; });
                     this.model.position.y = this._baseY + Math.sin(t * 2.2) * 0.06 * this.scale + 0.04 * this.scale;
                     if (this.abdomen && this.abdomen.visible) this.abdomen.rotation.z = Math.sin(t * 1.4) * 0.04;
@@ -1239,7 +2193,6 @@
                     break;
                 }
                 case 'mindflayermoth': {
-                    if (this.wings) this.wings.children.forEach(w => { if (w._sx) w.rotation.z = w._sx * (0.2 + Math.sin(t * (fast ? 14 : 4)) * 0.18); });
                     if (this._mfPsy) this._mfPsy.forEach((m, i) => { const hue = (t * 0.25 + i * 0.08) % 1; m.color.setHSL(hue, 0.9, 0.6); m.emissive.setHSL(hue, 0.9, 0.45); m.emissiveIntensity = 0.4 + Math.abs(Math.sin(t * 2.5 + i)) * 0.5; });
                     if (this._mfTents) this._mfTents.forEach((tn, i) => { if (tn.visible) tn.rotation.z = Math.sin(t * (fast ? 6 : 2.5) + i * 1.2) * 0.4; });
                     this.model.position.y = this._baseY + Math.sin(t * 1.8) * 0.05 * this.scale;
@@ -1277,14 +2230,16 @@
                     break;
                 }
                 case 'temporalhornet': {
-                    if (this.wings) this.wings.children.forEach(w => { if (w._sx) w.rotation.x = -Math.PI / 2 + Math.sin(t * (fast ? 42 : 30) + w._sx) * 0.5; });
                     if (this._thWings) this._thWings.forEach((m, i) => { m.opacity = (i === 0 ? 0.42 : 0.18) * (0.6 + Math.abs(Math.sin(t * 5 + i)) * 0.6); m.emissiveIntensity = 0.3 + Math.abs(Math.sin(t * 4 + i)) * 0.4; });
-                    if (this._thEcho) this._thEcho.forEach((e, i) => { if (e.visible) e.position.z = -0.12 - Math.abs(Math.sin(t * 6)) * 0.08; });
                     this.model.position.y = this._baseY + Math.sin(t * 2.2) * 0.06 * this.scale + 0.04 * this.scale;
                     if (this.abdomen && this.abdomen.visible) this.abdomen.rotation.z = Math.sin(t * 1.5) * 0.03;
                     break;
                 }
+                default:
+                    if (this._lvAnim) this._lvAnim(t, fast);
+                    break;
             }
+            this._swayRiders();
         }
 
         deathPose(deltaTime) {
@@ -1333,6 +2288,31 @@
     reg('emberbackhellscorpion',  { aliases: ['emberbackhellscorpion'],  scale: S.emberbackhellscorpion.scale,  weapon: 0, create: make });
     reg('gravityworm',            { aliases: ['gravityworm'],            scale: S.gravityworm.scale,            weapon: 0, create: make });
     reg('temporalhornet',         { aliases: ['temporalhornet'],         scale: S.temporalhornet.scale,         weapon: 0, create: make });
+    // Level 1-5 roster.
+    reg('lv_dungbeetle',         { aliases: ['lv_dungbeetle'],          scale: S.lv_dungbeetle.scale,          weapon: 0, create: make });
+    reg('lv_gardenpillbug',      { aliases: ['lv_gardenpillbug'],       scale: S.lv_gardenpillbug.scale,       weapon: 0, create: make });
+    reg('lv_picnicgnat',         { aliases: ['lv_picnicgnat'],          scale: S.lv_picnicgnat.scale,          weapon: 0, create: make });
+    reg('lv_hearthcricket',      { aliases: ['lv_hearthcricket'],       scale: S.lv_hearthcricket.scale,       weapon: 0, create: make });
+    reg('lv_redfireant',         { aliases: ['lv_redfireant'],          scale: S.lv_redfireant.scale,          weapon: 0, create: make });
+    reg('lv_meadowfirefly',      { aliases: ['lv_meadowfirefly'],       scale: S.lv_meadowfirefly.scale,       weapon: 0, create: make });
+    reg('lv_ponddamselfly',      { aliases: ['lv_ponddamselfly'],       scale: S.lv_ponddamselfly.scale,       weapon: 0, create: make });
+    reg('lv_lampmoth',           { aliases: ['lv_lampmoth'],            scale: S.lv_lampmoth.scale,            weapon: 0, create: make });
+    reg('lv_lostglove',          { aliases: ['lv_lostglove'],           scale: S.lv_lostglove.scale,           weapon: 0, create: make });
+    reg('lv_paperwasp',          { aliases: ['lv_paperwasp'],           scale: S.lv_paperwasp.scale,           weapon: 0, create: make });
+    reg('lv_stablehorsefly',     { aliases: ['lv_stablehorsefly'],      scale: S.lv_stablehorsefly.scale,      weapon: 0, create: make });
+    reg('lv_locustnymph',        { aliases: ['lv_locustnymph'],         scale: S.lv_locustnymph.scale,         weapon: 0, create: make });
+    reg('lv_dreammoth',          { aliases: ['lv_dreammoth'],           scale: S.lv_dreammoth.scale,           weapon: 0, create: make });
+    reg('lv_rustbeetle',         { aliases: ['lv_rustbeetle'],          scale: S.lv_rustbeetle.scale,          weapon: 0, create: make });
+    reg('lv_noodleworm',         { aliases: ['lv_noodleworm'],          scale: S.lv_noodleworm.scale,          weapon: 0, create: make });
+    reg('lv_syringemosquito',    { aliases: ['lv_syringemosquito'],     scale: S.lv_syringemosquito.scale,     weapon: 0, create: make });
+    reg('lv_pillbeetle',         { aliases: ['lv_pillbeetle'],          scale: S.lv_pillbeetle.scale,          weapon: 0, create: make });
+    reg('lv_mannequinhand',      { aliases: ['lv_mannequinhand'],       scale: S.lv_mannequinhand.scale,       weapon: 0, create: make });
+    reg('lv_kitchenroach',       { aliases: ['lv_kitchenroach'],        scale: S.lv_kitchenroach.scale,        weapon: 0, create: make });
+    reg('lv_implanttick',        { aliases: ['lv_implanttick'],         scale: S.lv_implanttick.scale,         weapon: 0, create: make });
+    reg('lv_quartztick',         { aliases: ['lv_quartztick'],          scale: S.lv_quartztick.scale,          weapon: 0, create: make });
+    reg('lv_gladiatorcricket',   { aliases: ['lv_gladiatorcricket'],    scale: S.lv_gladiatorcricket.scale,    weapon: 0, create: make });
+    reg('lv_dragontick',         { aliases: ['lv_dragontick'],          scale: S.lv_dragontick.scale,          weapon: 0, create: make });
+    reg('lv_pondskater',         { aliases: ['lv_pondskater'],          scale: S.lv_pondskater.scale,          weapon: 0, create: make });
 
     const NAMED = {
         discobeetle:   ["Disco Beetle"],
@@ -1363,7 +2343,31 @@
         thoughtparasite:        ["Thought Parasite"],
         emberbackhellscorpion:  ["Emberback Hellscorpion"],
         gravityworm:            ["Gravity Worm"],
-        temporalhornet:         ["Temporal Hornet"]
+        temporalhornet:         ["Temporal Hornet"],
+        lv_dungbeetle:         ["Dung Beetle"],
+        lv_gardenpillbug:      ["Garden Pillbug"],
+        lv_picnicgnat:         ["Picnic Gnat"],
+        lv_hearthcricket:      ["Hearth Cricket"],
+        lv_redfireant:         ["Red Fire Ant"],
+        lv_meadowfirefly:      ["Meadow Firefly"],
+        lv_ponddamselfly:      ["Pond Damselfly"],
+        lv_lampmoth:           ["Lamp Moth"],
+        lv_lostglove:          ["Lost Glove"],
+        lv_paperwasp:          ["Paper Wasp"],
+        lv_stablehorsefly:     ["Stable Horsefly"],
+        lv_locustnymph:        ["Locust Nymph"],
+        lv_dreammoth:          ["Dream Moth"],
+        lv_rustbeetle:         ["Rust Beetle"],
+        lv_noodleworm:         ["Noodle Worm"],
+        lv_syringemosquito:    ["Syringe Mosquito"],
+        lv_pillbeetle:         ["Pill Beetle"],
+        lv_mannequinhand:      ["Mannequin Hand"],
+        lv_kitchenroach:       ["Kitchen Roach"],
+        lv_implanttick:        ["Implant Tick"],
+        lv_quartztick:         ["Quartz Tick"],
+        lv_gladiatorcricket:   ["Gladiator Cricket"],
+        lv_dragontick:         ["Dragon Tick"],
+        lv_pondskater:         ["Pond Skater"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

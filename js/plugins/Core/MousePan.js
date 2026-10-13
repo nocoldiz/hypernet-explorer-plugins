@@ -1006,8 +1006,8 @@
     // one of these, so "Transfer 2", "Upstairs B", "AudioEmitter" and the rest
     // of the machinery events stay silent along with the bare name.
     const HIDDEN_NAME_PREFIXES = [
-        "countryname", "tutorial", "ev", "enemy", "transfer","trasferimento", "steal", "exit", "downstairs", "upstairs",
-        "initialize", "audio", "acquire", "door", "puzzlesetup", "debug", "EV","NPC"
+        "countryname", "tutorial", "enemy", "transfer","trasferimento", "steal", "exit", "downstairs", "upstairs",
+        "initialize", "audio", "acquire", "door", "puzzlesetup", "debug"
     ];
 
     function shouldHideEvent(name) {

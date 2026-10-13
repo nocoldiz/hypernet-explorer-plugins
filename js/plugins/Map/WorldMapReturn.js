@@ -572,7 +572,11 @@
             candidates.push(procGenData.underBiomeMap[`${procGenData.originX},${procGenData.originY}`]);
         }
         const cache = procGenData.biomeCoordinateCache;
-        if (cache && getAdjacentBiomesFromCache) {
+        const planet = planetSquareNeighbours(procGenData, procGenData.originX, procGenData.originY);
+        if (planet) {
+            const adj = planet.adjacentBiomes || {};
+            candidates.push(adj.north, adj.east, adj.south, adj.west);
+        } else if (cache && getAdjacentBiomesFromCache) {
             const adj = getAdjacentBiomesFromCache(procGenData.originX, procGenData.originY, cache);
             candidates.push(adj.north, adj.east, adj.south, adj.west);
         }
@@ -593,6 +597,19 @@
     // track the party walked in with is faded out instead of following them out
     // into open country. A hand-made map is authored, not generated, so there it
     // still means "carry on with whatever is playing".
+    // The neighbours of a square of another world's landing grid. Earth's
+    // coordinate cache is somewhere on Earth, so it is never read for one: an
+    // earthlike world answers out of its own map (GalaxySim
+    // currentGridAdjacency), a one-biome alien world with nothing at all. Null
+    // on Earth, where the cache is the answer.
+    function planetSquareNeighbours(pg, x, y) {
+        if (!pg || !pg.alienGrid) return null;
+        const GS = window.GalaxySim;
+        const earth = (pg.alienGrid.earthlike && GS && GS.currentGridAdjacency)
+            ? GS.currentGridAdjacency(x, y) : null;
+        return earth || { adjacentBiomes: null, cacheInfo: null, diagonalBiomes: null };
+    }
+
     function biomeMusicDecision(biome, biomeName, procGenData, isNight, isProcGenMap) {
         // Off-world plays its own pool, seeded on the biome; an empty one is
         // silence, never the track the party warped in with.
@@ -1767,8 +1784,12 @@
         if (!biome || !generateProceduralTerrain) return false;
 
         let adjacentBiomes = null, cacheInfo = null;
-        const cache = pg.biomeCoordinateCache;
-        if (cache && Object.keys(cache).length > 0) {
+        const planet = planetSquareNeighbours(pg, originX, originY);
+        const cache = planet ? null : pg.biomeCoordinateCache;
+        if (planet) {
+            adjacentBiomes = planet.adjacentBiomes;
+            cacheInfo = planet.cacheInfo;
+        } else if (cache && Object.keys(cache).length > 0) {
             const adj = getAdjacentBiomesFromCache(originX, originY, cache);
             adjacentBiomes = {
                 north: normalizeBiomeForEdge(adj.north),
@@ -1968,11 +1989,16 @@
     // coordinates and the square surfaces bare.
     function rebuildSurfaceFromSeed(pg, biomeName, biome) {
         const seed  = procMapSeed(pg.originX, pg.originY, (pg.biomeLayerStack || []).length);
-        const cache = pg.biomeCoordinateCache;
+        const planet = planetSquareNeighbours(pg, pg.originX, pg.originY);
+        const cache = planet ? null : pg.biomeCoordinateCache;
         const hasCache = cache && Object.keys(cache).length > 0;
 
         let adjacentBiomes = null, diagonalBiomes = null, cacheInfo = null;
-        if ($gameMap.mapId() === WORLD_MAP_ID) {
+        if (planet) {
+            adjacentBiomes = planet.adjacentBiomes;
+            cacheInfo = planet.cacheInfo;
+            diagonalBiomes = planet.diagonalBiomes;
+        } else if ($gameMap.mapId() === WORLD_MAP_ID) {
             adjacentBiomes = getAdjacentBiomesOnWorldMap(pg.originX, pg.originY);
         } else if (hasCache) {
             adjacentBiomes = getAdjacentBiomesFromCache(pg.originX, pg.originY, cache);
@@ -3459,9 +3485,9 @@
 
     // The rectangle of map 1409 that map 315 is a close-up of, globe tiles, inclusive.
     const EUROPE_ON_GLOBE = { x1: 69, y1: 8, x2: 101, y2: 41 };
-    // A step on the globe covers ten times the ground of one on map 315, but
-    // costs five times as much (TimeDateSystem.js reads this).
-    const GLOBE_STEP_COST = 5;
+    // A step on the globe costs the same time, needs and fuel as one on map 315
+    // (TimeDateSystem.js and VehicleSystem.js read this).
+    const GLOBE_STEP_COST = 1;
     // How far an arrival may be moved off water or rock onto ground the party
     // can stand on.
     const GLOBE_SETTLE_RADIUS = 12;
@@ -4055,7 +4081,8 @@
 
         // A centre the old system owns takes no neighbours at all - and it only
         // owns the SURFACE of it (see canStitch).
-        const centreIsAuthored = !depth && authoredDoorAt(cx, cy);
+        // A planet's (gx, gy) is no Earth square, whatever Earth authored there.
+        const centreIsAuthored = !alienGrid && !depth && authoredDoorAt(cx, cy);
 
         const ok = {};
         for (let dy = -1; dy <= 1; dy++) {
@@ -4227,6 +4254,10 @@
         if (!grid) return;
         grid.gx = gx;
         grid.gy = gy;
+        // Every square of an earthlike world is its own Earth biome.
+        if (grid.earthlike && window.GalaxySim && window.GalaxySim.currentGridCellBiome) {
+            grid.biome = window.GalaxySim.currentGridCellBiome(gx, gy) || grid.biome;
+        }
         const landed = $gameSystem._landedPlanet;
         if (!landed) return;
         if (landed.terrain && landed.terrain.cell) {
@@ -4772,6 +4803,13 @@
         // map id alone (NPCSystem's passable-tile scan) is now describing a map
         // that no longer exists.
         $gameMap._passableTerrainCache = null;
+        // MovementInteractionSystem decides once per map whether it holds any
+        // water, bridge, climb or keep-out tile at all, and skips every one of
+        // those rules when it does not. That answer was given for the window
+        // the party arrived on: a dry window that slid onto a river kept it,
+        // so the river could not be swum and its bridge could not be crossed.
+        if (typeof $gameMap._misScanSpecialPassability === 'function') $gameMap._misScanSpecialPassability();
+        $gameMap._misSubmergedDeck = null;
         // The map is a different shape now, so which of its edges are borders is
         // a different question than it was a moment ago.
         forgetGrowthAnswers();
@@ -6706,7 +6744,13 @@
         // The door the party came down by, read BEFORE the square is put back:
         // restoring a snapshot restores its stored entrance coordinates too, and
         // those predate this descent.
-        const goDownX = procGenData.goDownEventX || 64, goDownY = procGenData.goDownEventY || 64;
+        // (0, 0) is where a hidden GoDown event is parked (a water square has
+        // none), so it says "no door" just as a missing value does, and the
+        // party surfaces in the middle of the square. The old fallback was 64,
+        // one tile off the far corner of a 64x64 square.
+        const hasDoor = (procGenData.goDownEventX > 0 || procGenData.goDownEventY > 0);
+        const goDownX = hasDoor ? procGenData.goDownEventX : Math.floor(PROC_MAP_WIDTH  / 2);
+        const goDownY = hasDoor ? procGenData.goDownEventY : Math.floor(PROC_MAP_HEIGHT / 2);
 
         // Surfacing ends any door-dungeon session so the surface border resumes
         // normal biome-edge travel.
@@ -6869,7 +6913,13 @@
         if (edgeTransitionWaiting(procGenData)) { logWarn('switchLayer: a transition is already under way.'); return; }
 
         const isUnderground = procGenData.biomeLayerStack && procGenData.biomeLayerStack.length > 0;
-        const playerX       = $gamePlayer.x, playerY = $gamePlayer.y, playerDir = $gamePlayer.direction();
+        // Square-local, read BEFORE the window closes, as every spawn point on
+        // map 636 is: inside a stitched window the party's map coordinate runs
+        // over the whole window (0..191 for a 3x3), and handed to the transfer
+        // as it was it landed off the 64x64 layer, or a whole square away once
+        // the next window added its own offset on top.
+        const playerLocal   = squareLocalPlayerCoord($gamePlayer.x, $gamePlayer.y);
+        const playerX       = playerLocal.x, playerY = playerLocal.y, playerDir = $gamePlayer.direction();
 
         if (isUnderground) {
             const previousBiomeName = procGenData.biomeLayerStack.pop();
@@ -6944,8 +6994,8 @@
             // The same re-stamp goDown makes, and for the same reason: on an
             // alien world the ten underground archetypes are cut out of the
             // SURFACE square's own tileset, and the record they are filed under
-            // carries a placeholder (AlienEarthLike is drawn with 321, the
-            // AlienUnderBurrow record under it says 347). The resolver applies
+            // carries a placeholder (the surface world is drawn with its own
+            // sheet, the AlienUnderBurrow record under it says 347). The resolver applies
             // the rule, so every OTHER route onto that square -- a window, a
             // crossing, a rebuild -- answers with the surface sheet. Descending
             // by this command stored the placeholder instead, which is one
@@ -7458,6 +7508,18 @@
     // `strict` refuses the current map's biome as a guess: that fallback only
     // describes the square the party is standing on, never an arbitrary one.
     function worldSquareName(wx, wy, strict) {
+        // A square of an earthlike world is named off that world, never off
+        // whatever Earth holds at the same numbers: its colony by name, any
+        // other square by its own biome.
+        const GS = window.GalaxySim;
+        const grid = $gameSystem && $gameSystem._procGenData && $gameSystem._procGenData.alienGrid;
+        if (grid && grid.earthlike && GS && GS.currentGridCellBiome) {
+            const planet = GS.getOffEarthPlanet ? GS.getOffEarthPlanet() : null;
+            const colony = (planet && GS.colonyOf) ? GS.colonyOf(planet) : null;
+            if (colony && colony.cell.gx === wx && colony.cell.gy === wy) return colony.name;
+            const cell = GS.currentGridCellBiome(wx, wy);
+            return cell ? window.BiomeNames.display(cell) : '';
+        }
         const named = window.WorldGen && window.WorldGen.HardcodedBiomeNames;
         const hardcoded = named ? named[`${wx},${wy}`] : null;
         if (hardcoded) return hardcoded;
@@ -7684,7 +7746,11 @@
         if (!GS || !GS.spaceportAtCell) return null;
         const planet = (GS.getOffEarthPlanet && GS.getOffEarthPlanet()) ||
             (GS.getSurfacePlanet && GS.getSurfacePlanet());
-        return planet ? GS.spaceportAtCell(planet, gx, gy) : null;
+        const port = planet ? GS.spaceportAtCell(planet, gx, gy) : null;
+        // Only a DRAWN pad: a colony's square is generated like any other, so it
+        // stitches and is walked into like any other (GalaxySim.isAuthoredPort).
+        if (port && GS.isAuthoredPort && !GS.isAuthoredPort(port)) return null;
+        return port;
     }
 
     // Standing on another planet there is no world map to go back to: map 315 is
@@ -7894,8 +7960,8 @@
     function squareLabel(x, y) {
         const key = destinationKeyAt(x, y);
         if (key) {
-            return (window.WorkSystem && window.WorkSystem.destinationName)
-                ? window.WorkSystem.destinationName(key) : key;
+            return (window.WorkSystem && window.WorkSystem.destinationTravelName)
+                ? window.WorkSystem.destinationTravelName(key) : key;
         }
         return localizeName(worldSquareName(x, y)) || T('WorldMapReturn.wilderness');
     }
@@ -7958,8 +8024,8 @@
         if (!key) return null;
         const vehicles = VS.reachableVehicles();
         if (!vehicles.length) return null;
-        const place = (window.WorkSystem && window.WorkSystem.destinationName)
-            ? window.WorkSystem.destinationName(key) : key;
+        const place = (window.WorkSystem && window.WorkSystem.destinationTravelName)
+            ? window.WorkSystem.destinationTravelName(key) : key;
         return { place, vehicles };
     }
 
@@ -8360,7 +8426,12 @@
         // places, and what is carried out of one is still standing in the other.
         const sess = pg._dungeonSession;
         const salt = (sess && sess.salt) ? `:${sess.salt}` : '';
-        return `proc:${pg.currentBiome}:${wx},${wy}:${depth}${salt}`;
+        // An earthlike world grows Earth's biomes at planet-local numbers, so
+        // the world joins the address too (its salt, see GalaxySim
+        // enterPlanetSurface): a farm on one is never a farm on another.
+        const grid = pg.alienGrid;
+        const world = (grid && grid.earthlike && grid.salt) ? `@${grid.salt}` : '';
+        return `proc:${pg.currentBiome}${world}:${wx},${wy}:${depth}${salt}`;
     };
 
     // The tower's floors are not squares of the world: the party climbed into
@@ -8589,7 +8660,7 @@
             { place: localizeName(place && (place.name || place.key) || '') });
     }
 
-    // "There is a spacetime bubble ahead, you cannot proceed" - said when the
+    // "A spacetime bubble blocks the way" - said when the
     // party walks into the skin of one from outside, where the place on the far
     // side is not necessarily something they have been told the name of.
     function lockedAheadMessage() {

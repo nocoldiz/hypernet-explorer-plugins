@@ -237,10 +237,14 @@
                 window.SpecializationXP.awardCapped('Pickpocketing', 1, { soloist: true });
             }
             if (window.Dice3D && typeof window.Dice3D.rollPercentage === 'function') {
+                // The title is in the player's language, so the 3D table is
+                // asked for outright rather than guessed from English words.
+                const dex = (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(6) : '';
                 return window.Dice3D.rollPercentage(chance, {
-                    actionName: options.actionName || 'Steal Attempt',
-                    statName: 'DEX',
-                    modifier: options.modifier || 0
+                    actionName: options.actionName || translate('rollSteal'),
+                    statName: dex,
+                    modifier: options.modifier || 0,
+                    force3D: true
                 }).then(res => res.success);
             }
             return Promise.resolve(Math.random() * 100 < chance);

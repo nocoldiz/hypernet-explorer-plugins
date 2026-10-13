@@ -23,35 +23,34 @@
     "levelRange": "Lv. {min} to {max}"
   },
   "banner": {
-    "level": "{name} Lv. {level}",
-    "levelRange": "{name} Lv. {min} to {max}"
+    "level": "{name} Lv. {level}"
   },
   "country": {
     "title": "Highlight a country",
     "none": "No country"
   },
   "hint": {
-    "sheet": "Click a square to pick it. Right-click to put the chart away.",
-    "travel": "Click to set off for {place}.",
-    "needVehicle": "You need to be aboard a vehicle to set off from the chart.",
-    "world": "Click Europe to look closer. Right-click to put the chart away.",
+    "sheet": "Click a square to select it. Right-click to close.",
+    "travel": "Click to travel to {place}.",
+    "needVehicle": "You need a vehicle to travel from the map.",
+    "world": "Click Europe to zoom in. Right-click to close.",
     "taxi": "Taxi here: {fare}, {time}"
   },
   "note": {
     "title": "{place}",
     "placeholder": "Write something about this square",
-    "save": "Keep",
-    "delete": "Rub out",
+    "save": "Save",
+    "delete": "Delete",
     "cancel": "Back",
     "write": "Write a note"
   },
   "preview": {
     "showMap": "Show map",
     "title": "{place}",
-    "building": "Laying the ground out...",
-    "notKept": "Drawn for this look only, and kept nowhere.",
+    "building": "Generating...",
+    "notKept": "Preview only. Not saved.",
     "close": "Close",
-    "unbuildable": "There is no ground to lay out on that square."
+    "unbuildable": "Nothing to preview on this square."
   },
   "view": {
     "title": "View",
@@ -66,10 +65,10 @@
     "value": "{x}, {y}"
   },
   "bologna": {
-    "title": "Bologna",
+    "title": "Bologna (WIP)",
     "cell": "Cell",
     "tile": "Tile",
     "teleport": "Teleport here",
-    "hint": "Click a tile to pick it, then teleport onto it. Right-click to put the chart away."
+    "hint": "Click a tile, then teleport to it. Right-click to close."
   }
 }

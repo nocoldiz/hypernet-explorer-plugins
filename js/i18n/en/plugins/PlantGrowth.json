@@ -28,7 +28,7 @@
   "expectedYield": "Expected Yield:",
   "produces": "Produces:",
   "conditionsActions": "Conditions & Actions",
-  "plotBlurb": "How well this plot is growing right now",
+  "plotBlurb": "Current growth conditions",
   "growingConditions": "Growing Conditions",
   "seasonLabel": "Season:",
   "greenhouseLabel": "Greenhouse:",
@@ -61,8 +61,8 @@
   "growth": "Growth",
   "yield": "Yield",
   "seeds": "Seeds",
-  "pickSeedHint": "Pick a seed on the right to see its seasons and how long it takes to grow.",
-  "seedBlurb": "Seeds planted in the right season will grow. In a greenhouse they grow all year, and faster.",
+  "pickSeedHint": "Pick a seed to see its seasons and growth time.",
+  "seedBlurb": "Seeds grow in their season. In a greenhouse they grow all year, faster.",
   "seasonAbbr": {
     "SPRING": "Spr",
     "SUMMER": "Sum",
@@ -83,7 +83,28 @@
     "check": "Check"
   },
   "toast": {
-    "ripe": "{plant} is ripe for picking."
+    "ripe": "{plant} is ready to harvest."
   },
-  "plotAt": "Open ground, tile {tile}"
+  "plotAt": "Open ground, tile {tile}",
+  "plantName": {
+    "Tomato": "Tomato",
+    "Watermelon": "Watermelon",
+    "Wheat": "Wheat",
+    "Pumpkin": "Pumpkin",
+    "Carrot": "Carrot",
+    "Potato": "Potato",
+    "Mushroom": "Mushroom",
+    "Sunflower": "Sunflower",
+    "Strawberry": "Strawberry",
+    "Corn": "Corn",
+    "Lavender": "Lavender",
+    "Onion": "Onion",
+    "Cabbage": "Cabbage",
+    "Eggplant": "Eggplant",
+    "Pepper": "Pepper",
+    "Ananas": "Pineapple",
+    "Grapes": "Grapevine",
+    "Cactus": "Cactus",
+    "Beanstalk": "Beanstalk"
+  }
 }

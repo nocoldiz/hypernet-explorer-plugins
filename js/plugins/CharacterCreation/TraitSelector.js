@@ -1765,7 +1765,8 @@
         Object.keys(stats || {}).forEach((param) => {
           const paramId = paramMap[param];
           if (typeof paramId === "number") {
-            actor._paramPlus[paramId] = (actor._paramPlus[paramId] || 0) + stats[param];
+            // Scaled as the badges print it: HP and MP are worth ten a point.
+            actor._paramPlus[paramId] = (actor._paramPlus[paramId] || 0) + window.TraitParams.scale(param, stats[param]);
           }
         });
       });

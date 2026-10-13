@@ -275,7 +275,16 @@
   // pentagram star, angelic star, oil star, clockwork star, mirror star, bone
   // star, hollow star, candle star), which exist nowhere in the universe
   // except where they are authored - one per patron's world (PatreonRewards).
+  // Built once: the bag is the same every time it is asked for (STAR_TYPES
+  // never changes after load), and a galaxy of 220 systems used to rebuild its
+  // twenty thousand entries 220 times. Callers only ever read from it.
+  let _starTypePool = null;
   function buildStarTypePool() {
+    if (_starTypePool) return _starTypePool;
+    _starTypePool = makeStarTypePool();
+    return _starTypePool;
+  }
+  function makeStarTypePool() {
     const pool = [];
     Object.keys(STAR_TYPES).forEach((type) => {
       const freq = Number(STAR_TYPES[type].freq) || 0;
@@ -2492,6 +2501,38 @@
       const cached = this._lazyChunks.get(key);
       if (cached) return cached;
 
+      const systems = this._buildLazyChunk(cx, cz);
+      this._lazyChunks.set(key, systems);
+      if (this._lazyChunks.size > LAZY_CHUNK_CACHE) {
+        this._lazyChunks.delete(this._lazyChunks.keys().next().value);
+      }
+      return systems;
+    }
+
+    // The same chunk, read without filing it in the chunk cache: the colony
+    // survey (GalaxySim_Core "Colonies") looks at thousands of chunks across
+    // the whole disk once, and filing them would push out every chunk the star
+    // map is actually drawing. A chunk already cached is handed back as it is.
+    peekLazyChunk(cx, cz) {
+      const cached = this._lazyChunks && this._lazyChunks.get(cx + "," + cz);
+      return cached || this._buildLazyChunk(cx, cz);
+    }
+
+    // What materializeLazySystem would make of a lazy star, without making it:
+    // a copy carrying its planets, registered nowhere and never mutating the
+    // shell, so the star map later materializes exactly the same bodies.
+    previewLazySystem(shell) {
+      if (!shell) return null;
+      if (shell._materialized) return shell;
+      const copy = Object.assign({}, shell, { planets: [] });
+      const rng = new RandomGenerator("LZplanets:" + shell.name);
+      if (copy.type !== "ROGUE_PLANET" && rng.random() < 0.7) {
+        this._populatePlanets(copy, rng);
+      }
+      return copy;
+    }
+
+    _buildLazyChunk(cx, cz) {
       const rng = new RandomGenerator("LZ:" + this.proceduralSeed + ":" + cx + ":" + cz);
       const x0 = cx * LAZY_CHUNK_LY;
       const y0 = cz * LAZY_CHUNK_LY;
@@ -2515,11 +2556,6 @@
         // Skip the inner bubble (static catalog covers it) and the disk rim.
         if (Math.sqrt(x * x + y * y) < MAP_RADIUS || Rgc > GAL_DISK_RADIUS_LY) continue;
         systems.push(this._makeLazyStar("LZ." + cx + "." + cz + "." + i, x, y, z, rng));
-      }
-
-      this._lazyChunks.set(key, systems);
-      if (this._lazyChunks.size > LAZY_CHUNK_CACHE) {
-        this._lazyChunks.delete(this._lazyChunks.keys().next().value);
       }
       return systems;
     }
@@ -2693,6 +2729,45 @@
       const cached = this._galaxySystemsCache.get(key);
       if (cached) return cached;
 
+      // A galaxy the colony survey already read is entered with those very
+      // systems rather than a second copy of them.
+      const previewed = this._galaxyPreviewCache && this._galaxyPreviewCache.get(key);
+      if (previewed) this._galaxyPreviewCache.delete(key);
+      const list = previewed || this._buildGalaxySystemList(seed, radius);
+      for (const sys of list) this.systems.set(sys.name, sys);
+      for (const far of (this._farSystems || [])) {
+        if (far.galaxySeed !== seed) continue;
+        if (!list.some((s) => s && s.name === far.name)) list.push(far);
+      }
+      // The planets this world added to the galaxy (a crash world made to
+      // fit a party's level) go back into their systems every time.
+      const GS = window.GalaxySim;
+      if (GS && typeof GS.applyWorldPlanets === "function") GS.applyWorldPlanets(seed, list);
+      this._galaxySystemsCache.set(key, list);
+      return list;
+    }
+
+    // A procedural galaxy's own systems, read without registering any of them:
+    // the colony survey (GalaxySim_Core "Colonies") looks inside every galaxy
+    // of the Local Group once, and registering them would leak 220 foreign
+    // systems apiece into every Milky Way list built off getAllSystems. A
+    // galaxy already entered hands back the list the star map is using.
+    previewGalaxySystems(seed) {
+      const cached = this._galaxySystemsCache && this._galaxySystemsCache.get(String(seed));
+      if (cached) return cached;
+      if (!this._galaxyPreviewCache) this._galaxyPreviewCache = new Map();
+      let list = this._galaxyPreviewCache.get(String(seed));
+      if (!list) {
+        list = this._buildGalaxySystemList(seed);
+        this._galaxyPreviewCache.set(String(seed), list);
+        if (this._galaxyPreviewCache.size > 32) {
+          this._galaxyPreviewCache.delete(this._galaxyPreviewCache.keys().next().value);
+        }
+      }
+      return list;
+    }
+
+    _buildGalaxySystemList(seed, radius) {
       const rng = new RandomGenerator("GX:" + seed);
       // Falls back to the exact same seed-derived radius buildProceduralGalaxy
       // uses (Rdisk = 1500 + seed%700), so a caller that only knows the name -
@@ -2710,17 +2785,7 @@
         const z = Math.sin(th) * rr;
         const sys = this.generateSingleProceduralSystem(x, y, z, name, rng);
         list.push(sys);
-        this.systems.set(name, sys);
       }
-      for (const far of (this._farSystems || [])) {
-        if (far.galaxySeed !== seed) continue;
-        if (!list.some((s) => s && s.name === far.name)) list.push(far);
-      }
-      // The planets this world added to the galaxy (a crash world made to
-      // fit a party's level) go back into their systems every time.
-      const GS = window.GalaxySim;
-      if (GS && typeof GS.applyWorldPlanets === "function") GS.applyWorldPlanets(seed, list);
-      this._galaxySystemsCache.set(key, list);
       return list;
     }
 
@@ -2964,6 +3029,11 @@
   // Exposed so the 3D scene's lazy star field maps world coords to chunks with
   // the exact same cell size used here.
   StarMapDataManager.LAZY_CHUNK_LY = LAZY_CHUNK_LY;
+  // The shape of the Milky Way's disk, for the colony survey that scatters
+  // its settlements across it (GalaxySim_Core "Colonies").
+  StarMapDataManager.GAL_SUN_R_LY = GAL_SUN_R_LY;
+  StarMapDataManager.GAL_DISK_RADIUS_LY = GAL_DISK_RADIUS_LY;
+  StarMapDataManager.INNER_RADIUS_LY = MAP_RADIUS;
   StarMapDataManager.GALAXY_LAZY_CHUNK = GALAXY_LAZY_CHUNK;
   // Fuel caps, exposed so the HUD can draw gauges against them.
   StarMapDataManager.HYPERFLUX_MAX = HYPERFLUX_MAX;

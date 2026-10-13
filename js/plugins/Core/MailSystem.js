@@ -1039,13 +1039,13 @@
           const lines = this.history().map(turn => `<div class="ng-line">
             <span class="ng-who ng-who--${turn.role === 'me' ? 'me' : 'them'}">${ngEsc(turn.role === 'me' ? me : contact.name)}:</span>
             ${ngEsc(turn.text)}</div>`).join('')
-            || `<div class="ng-note">${T('Mail.nudge.sayHello', { who: contact.name })}</div>`;
+            || `<div class="ng-note">${ngEsc(T('Mail.nudge.sayHello', { who: contact.name }))}</div>`;
           talk.innerHTML = `
             <div class="ng-talkhead">
               <b>${ngEsc(contact.name)}</b> <span class="ng-note">${ngEsc(contact.sub || '')}</span>
             </div>
             <div id="ng-log" class="ng-log">${lines}
-              ${this.typing[contact.key] ? `<div class="ng-note">${T('Mail.nudge.typing', { who: contact.name })}</div>` : ''}</div>
+              ${this.typing[contact.key] ? `<div class="ng-note">${ngEsc(T('Mail.nudge.typing', { who: contact.name }))}</div>` : ''}</div>
             <div class="ng-entry">
               <input id="ng-input" class="focusable ng-input" tabindex="0" placeholder="${T('Mail.nudge.placeholder')}">
               <span class="focusable ng-btn" tabindex="0" data-ng-send="1" >${T('Mail.nudge.send')}</span>
@@ -1202,7 +1202,7 @@
     if (window.HypernetOS._apps && window.HypernetOS._apps[NUDGE_APP_ID]) return;
     window.HypernetOS.registerApp({
       id: NUDGE_APP_ID,
-      name: T('Mail.nudge.appName'),
+      name: () => T('Mail.nudge.appName'),
       icon: NUDGE_ICON,
       category: 'internet',
       launchFn: function () { window.Nudge.launch(); },
@@ -3012,7 +3012,7 @@
     if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;
     window.HypernetOS.registerApp({
       id: HM_APP_ID,
-      name: T("Mail.app.appName"),
+      name: () => T("Mail.app.appName"),
       icon: HM_APP_ICON,
       category: "internet",   // i18n-ignore  category id
       launchFn: function () { window.HyperMailApp.launch(); },

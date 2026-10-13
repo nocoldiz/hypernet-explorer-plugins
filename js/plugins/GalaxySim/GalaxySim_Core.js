@@ -655,7 +655,11 @@
     if (spaceportSurfaceSite()) return true;
     if ($gameMap.mapId() !== 636) return false;
     const pg = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._procGenData : null;
-    return !!(pg && /^Alien/.test(String(pg.currentBiome || "")));
+    if (!pg) return false;
+    // An earthlike world walks on Earth's own biome names, so the landing grid
+    // is what says this is another world; the name answers for the rest.
+    if (pg.alienGrid && pg.alienGrid.earthlike) return true;
+    return /^Alien/.test(String(pg.currentBiome || ""));
   }
   function currentAlienHasLife() {
     return !!(typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem._alienPlanetHasLife);
@@ -1306,7 +1310,11 @@
   // exactly as they always have.
   // ============================================================================
   function spaceportCells(planet) {
-    const locs = (planet && planet.landingLocations) || [];
+    const locs = ((planet && planet.landingLocations) || []).slice();
+    // A human colony is a spaceport too, standing on a square of its own world
+    // (see "Colonies" below): generated ground rather than an authored map.
+    const colony = colonyOf(planet);
+    if (colony) locs.push(colony.loc);
     if (!locs.length) return [];
     const { w, h } = planetGridSize(planet);
     const out = [];
@@ -1333,6 +1341,526 @@
     return spaceportCells(planet).find((p) => p.gx === x && p.gy === y) || null;
   }
   window.GalaxySim.spaceportAtCell = spaceportAtCell;
+
+  // A port whose ground is drawn by hand (it names a map). A colony names none:
+  // its square is generated like any other, and only that map differs.
+  function isAuthoredPort(port) {
+    const loc = port && (port.loc || port);
+    return !!(loc && loc.mapId != null);
+  }
+  window.GalaxySim.isAuthoredPort = isAuthoredPort;
+
+  // ============================================================================
+  // Earthlike worlds
+  // ----------------------------------------------------------------------------
+  // An earthlike world (PlanetTypes.json `earthBiomes`: earth_like, super_earth,
+  // habitable) is not one alien biome laid over the whole grid. Every square of
+  // its landing grid is one of Earth's own outdoor biomes, read off the same
+  // field the globe and the picker are painted from (Renderer3D
+  // terrestrialClimate): the elevation band says sea, shore, lowland, upland or
+  // peak, the latitude and height say how cold, the cloud field says how wet.
+  // So the desert seen from orbit is the desert walked on, the pole is ice, the
+  // coast has its beach, and a few rivers run downhill from the mountains to
+  // the sea.
+  //
+  // THE MAP IS THE ONLY ANSWER. Square generation (ProceduralMapBiomeGenerator),
+  // the edge crossings, the stitched windows and the HUD all ask
+  // planetCellBiome / planetAdjacency; nothing re-derives a cell's biome.
+  // ============================================================================
+  function isEarthlikeWorld(planet) {
+    const info = planetTypeInfo(planet);
+    return !!(info && info.earthBiomes);
+  }
+  window.GalaxySim.isEarthlikeWorld = isEarthlikeWorld;
+
+  function wrapCell(v, n) { return ((Math.floor(v) % n) + n) % n; }
+
+  function cellClimate(planet, gx, gy, grid) {
+    const R3D = window.GalaxySim.Renderer3D;
+    if (!R3D || typeof R3D.terrestrialClimate !== "function") return null;
+    return R3D.terrestrialClimate(R3D._seedFor(planet),
+      (gx + 0.5) / grid.w, (gy + 0.5) / grid.h, planet.type === "ocean");   // i18n-ignore: planet type id
+  }
+
+  function cellRoll(planet, gx, gy, what) {
+    return (fnv1a(((planet && planet.name) || "") + "|" + what + "|" + gx + "," + gy) % 10000) / 10000;
+  }
+
+  // The Earth biome one climate grows. `roll` (0..1, seeded on the square)
+  // picks between the biomes a climate can hold, so the land is not one
+  // biome per band.
+  // i18n-ignore-start: biome ids from js/db/WorldGen/Biomes.json
+  function climateBiome(c, roll) {
+    const heat = c.climate.heat;
+    const wet = c.climate.wet;
+    switch (c.band) {
+      case "water": return "Ocean";
+      case "beach": return (heat === "hot" && wet === "wet") ? "Mangrove" : "Beach";
+      case "snow":
+        if (c.land > 0.72) return "MountainIce";
+        return c.temp < 0.12 ? "Ice" : "Snow";
+      case "rock":
+        if (heat === "cold") return "MountainIce";
+        if (roll < 0.06) return "Volcano";
+        if (heat === "hot" && wet === "dry") return roll < 0.3 ? "Canyon" : "MountainDesert";
+        return "Mountain";
+      case "forest":
+        if (heat === "cold") return wet === "wet" ? "ForestIce" : "Taiga";
+        if (heat === "hot") {
+          if (wet === "dry") return "Savannah";
+          return (wet === "wet" && roll >= 0.25) ? "Jungle" : "ForestTropical";
+        }
+        return (wet === "wet" && roll < 0.08) ? "Mushroom" : "Forest";
+      default:
+        if (heat === "cold") return c.temp < 0.15 ? "Permafrost" : "Tundra";
+        if (heat === "hot") {
+          if (wet === "dry") return roll < 0.15 ? "SaltFlats" : (roll < 0.3 ? "Badlands" : "Desert");
+          if (wet === "mid") return "Savannah";
+          return roll < 0.2 ? "Bamboo" : "Jungle";
+        }
+        if (wet === "dry") return roll < 0.25 ? "Badlands" : "Steppe";
+        if (wet === "wet") return c.land < 0.2 ? "Swamp" : "Meadows";
+        if (c.land > 0.32) return "Highlands";
+        return roll < 0.35 ? "Meadows" : "Fields";
+    }
+  }
+  const EARTH_RIVER = "River";
+  const EARTH_LAKE = "Lake";
+  const EARTH_FARM = "Farm";
+  // i18n-ignore-end
+
+  const _earthMapCache = new Map();
+  const EARTH_MAP_CACHE = 24;
+
+  // The whole grid of an earthlike world, one Earth biome name per square, or
+  // null for any other world. Built once per world (and per world seed, since
+  // the colony on it is the world's) and kept.
+  function earthlikeBiomeMap(planet) {
+    if (!planet || !isEarthlikeWorld(planet)) return null;
+    const key = (planet.name || "") + "|" + worldSeedInt();
+    const hit = _earthMapCache.get(key);
+    if (hit) return hit;
+    const grid = planetGridSize(planet);
+    const { w, h } = grid;
+    const at = (x, y) => wrapCell(y, h) * w + wrapCell(x, w);
+    const climate = new Array(w * h);
+    const cells = new Array(w * h);
+    for (let gy = 0; gy < h; gy++) {
+      for (let gx = 0; gx < w; gx++) {
+        const c = cellClimate(planet, gx, gy, grid);
+        if (!c) return null;
+        climate[at(gx, gy)] = c;
+        cells[at(gx, gy)] = climateBiome(c, cellRoll(planet, gx, gy, "biome"));
+      }
+    }
+    const isWater = (x, y) => climate[at(x, y)].band === "water";
+    const STEPS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+    // A sea of one square, with land on all four sides, is a lake.
+    for (let gy = 0; gy < h; gy++) {
+      for (let gx = 0; gx < w; gx++) {
+        if (isWater(gx, gy) && STEPS.every(([dx, dy]) => !isWater(gx + dx, gy + dy))) {
+          cells[at(gx, gy)] = EARTH_LAKE;
+        }
+      }
+    }
+    const colony = colonyOf(planet);
+    const colonyIdx = colony ? at(colony.cell.gx, colony.cell.gy) : -1;
+    // Rivers: from a peak, downhill to the sea. Only lowland and forest squares
+    // are drawn as river; the walk crosses the high ground without marking it.
+    const flow = (sx, sy) => {
+      let x = sx, y = sy;
+      const seen = new Set();
+      for (let step = 0; step < w * h; step++) {
+        seen.add(at(x, y));
+        let best = null;
+        for (const [dx, dy] of STEPS) {
+          const nx = x + dx, ny = y + dy;
+          if (seen.has(at(nx, ny))) continue;
+          const e = climate[at(nx, ny)].elevation;
+          if (!best || e < best.e) best = { x: nx, y: ny, e };
+        }
+        if (!best || best.e > climate[at(x, y)].elevation + 0.02) return;
+        x = best.x; y = best.y;
+        const idx = at(x, y);
+        if (isWater(x, y)) return;
+        const band = climate[idx].band;
+        if ((band === "grass" || band === "forest") && idx !== colonyIdx) cells[idx] = EARTH_RIVER;
+      }
+    };
+    const peaks = [];
+    for (let i = 0; i < w * h; i++) {
+      if (climate[i].band === "rock") peaks.push(i);
+    }
+    peaks.sort((a, b) => cellRoll(planet, a, 0, "spring") - cellRoll(planet, b, 0, "spring"));
+    const springs = Math.min(peaks.length, 1 + Math.floor(cellRoll(planet, w, h, "rivers") * 3));
+    for (let i = 0; i < springs; i++) flow(peaks[i] % w, Math.floor(peaks[i] / w));
+    if (colony) {
+      // A river town has its river: one starts on the square beside it.
+      if (colony.kind === COLONY_RIVER_KIND) {
+        const east = at(colony.cell.gx + 1, colony.cell.gy);
+        if (!isWater(colony.cell.gx + 1, colony.cell.gy)) cells[east] = EARTH_RIVER;
+        flow(colony.cell.gx + 1, colony.cell.gy);
+      }
+      cells[colonyIdx] = colony.kind;
+      // A farming colony works the land around it.
+      if (colony.production === "farming") {
+        for (const [dx, dy] of STEPS) {
+          const idx = at(colony.cell.gx + dx, colony.cell.gy + dy);
+          const band = climate[idx].band;
+          if ((band === "grass" || band === "forest") && cells[idx] !== EARTH_RIVER) cells[idx] = EARTH_FARM;
+        }
+      }
+    }
+    const map = { w, h, cells, climate };
+    _earthMapCache.set(key, map);
+    if (_earthMapCache.size > EARTH_MAP_CACHE) _earthMapCache.delete(_earthMapCache.keys().next().value);
+    return map;
+  }
+  window.GalaxySim.earthlikeBiomeMap = earthlikeBiomeMap;
+
+  // The Earth biome of one square of an earthlike world, or null for any other.
+  function planetCellBiome(planet, gx, gy) {
+    const map = earthlikeBiomeMap(planet);
+    if (!map) return null;
+    return map.cells[wrapCell(gy, map.h) * map.w + wrapCell(gx, map.w)];
+  }
+  window.GalaxySim.planetCellBiome = planetCellBiome;
+
+  // The squares around one square of an earthlike world, in the three shapes
+  // Earth's own generators read their neighbours in: one name per side, the
+  // border lists, and the four corners. The grid wraps both ways, as the edge
+  // crossings do (WorldMapReturn neighbourCoord). Null for any other world.
+  function planetAdjacency(planet, gx, gy) {
+    if (!earthlikeBiomeMap(planet)) return null;
+    const n = (dx, dy) => planetCellBiome(planet, gx + dx, gy + dy);
+    const adjacentBiomes = { north: n(0, -1), south: n(0, 1), east: n(1, 0), west: n(-1, 0) };
+    return {
+      adjacentBiomes,
+      cacheInfo: {
+        north: [adjacentBiomes.north], south: [adjacentBiomes.south],
+        east: [adjacentBiomes.east], west: [adjacentBiomes.west],
+      },
+      diagonalBiomes: {
+        topLeft: [n(-1, -1)], topRight: [n(1, -1)],
+        bottomLeft: [n(-1, 1)], bottomRight: [n(1, 1)],
+      },
+    };
+  }
+  window.GalaxySim.planetAdjacency = planetAdjacency;
+
+  // The planet whose landing grid the procedural squares are being built on
+  // right now: the landed descriptor, which carries the name and type the
+  // biome map is keyed on.
+  function gridPlanet() {
+    const pg = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._procGenData : null;
+    if (!pg || !pg.alienGrid) return null;
+    return $gameSystem._offEarthPlanet || $gameSystem._landedPlanet || null;
+  }
+
+  // The Earth biome of a square of the earthlike world being walked, or null
+  // when the grid is not an earthlike world's.
+  function currentGridCellBiome(gx, gy) {
+    const pg = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._procGenData : null;
+    if (!pg || !pg.alienGrid || !pg.alienGrid.earthlike) return null;
+    return planetCellBiome(gridPlanet(), gx, gy);
+  }
+  window.GalaxySim.currentGridCellBiome = currentGridCellBiome;
+
+  function currentGridAdjacency(gx, gy) {
+    const pg = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._procGenData : null;
+    if (!pg || !pg.alienGrid || !pg.alienGrid.earthlike) return null;
+    return planetAdjacency(gridPlanet(), gx, gy);
+  }
+  window.GalaxySim.currentGridAdjacency = currentGridAdjacency;
+
+  // ============================================================================
+  // Colonies
+  // ----------------------------------------------------------------------------
+  // Humanity has settled a few earthlike worlds. Each colony is one square of
+  // its world, built by Earth's own settlement generators (every Village*,
+  // Burg* and City* biome, chosen by the ground it stands on), and that square
+  // is the world's spaceport: it is marked on the landing grid, listed in the
+  // Spaceports tabs, buys pizza, and sells what the colony makes (its
+  // production, see COLONY_GOODS) through the Trade tab of the pizza console.
+  //
+  // There are at most COLONY_MILKY_WAY_MAX in the Milky Way, scattered thinly
+  // across the whole disk and a little thicker around Sol, and three or four in
+  // every other galaxy of the Local Group. Which worlds they are is drawn from
+  // the world seed, so every world of the game has its own; nothing is saved,
+  // because the survey always comes out the same for the same seed.
+  //
+  // The survey reads systems without registering them (DataManager
+  // peekLazyChunk / previewLazySystem / previewGalaxySystems), so the planets
+  // it names are exactly the ones the star map materializes later.
+  // ============================================================================
+  const COLONY_MILKY_WAY_MAX = 1000;
+  const COLONY_SURVEY_ATTEMPTS = 16000;
+  const COLONY_NEAR_SOL_SHARE = 0.45;
+  const COLONY_NEAR_SOL_LY = 7000;
+  const COLONY_SAMPLES = 8;
+  const COLONY_TIERS = [["village", 0.55], ["burg", 0.25], ["city", 0.20]];
+  const COLONY_PRODUCTIONS = [
+    "farming", "industrial", "mining", "medical", "arcane", "military", "cultural", "frontier",
+  ];
+  // i18n-ignore-start: biome ids from js/db/WorldGen/Biomes.json
+  const COLONY_KINDS = {
+    village: { ice: "VillageIce", desert: "VillageDesert", mountain: "VillageMountain",
+      sea: "VillageSea", river: "VillageRiver", plain: "Village" },
+    burg: { ice: "BurgIce", desert: "BurgDesert", plain: "Burg" },
+    city: { ice: "CityIce", desert: "CityDesert", plain: "City" },
+  };
+  const COLONY_RIVER_KIND = "VillageRiver";
+  // i18n-ignore-end
+  const INNER_BUBBLE_NAME = /^[A-Za-z_]+-\d{4}$/;
+
+  let _colonySurvey = null;
+
+  // What the colony's square stands on decides which of the settlement biomes
+  // it is: ice and desert towns, a mountain or harbour village, a river one.
+  function colonyKind(tier, c, coast, roll) {
+    const cold = c.band === "snow" || c.climate.heat === "cold";
+    const desert = c.climate.heat === "hot" && c.climate.wet === "dry";
+    // On the high ground (the peaks, and the uplands below them) there is room
+    // for a village and no more, cold or not.
+    if (c.band === "rock" || (c.band !== "snow" && c.land > 0.45)) return COLONY_KINDS.village.mountain;
+    const kinds = COLONY_KINDS[tier];
+    if (cold) return kinds.ice;
+    if (desert) return kinds.desert;
+    if (tier !== "village") return kinds.plain;
+    if (coast) return kinds.sea;
+    if (c.climate.wet === "wet" || roll < 0.3) return kinds.river;
+    return kinds.plain;
+  }
+
+  // What a colony makes, weighted by the ground its world is made of.
+  function colonyProduction(samples, tier, rng) {
+    const n = samples.length || 1;
+    const share = (fn) => samples.filter(fn).length / n;
+    const grass = share((c) => c.band === "grass" && c.climate.heat !== "cold");
+    const rock = share((c) => c.band === "rock");
+    const dry = share((c) => c.climate.wet === "dry" && c.band !== "water");
+    const cold = share((c) => c.band === "snow" || c.climate.heat === "cold");
+    const wet = share((c) => c.climate.wet === "wet" && c.band !== "water");
+    const forest = share((c) => c.band === "forest");
+    const weights = {
+      farming: 0.5 + grass * 4,
+      industrial: 1 + (tier === "city" ? 3 : 0) + (tier === "burg" ? 1 : 0),
+      mining: 0.4 + rock * 5 + dry * 1.5,
+      medical: 0.6 + wet * 1.5,
+      arcane: 0.4 + forest * 1.5 + wet,
+      military: 0.5 + (tier === "burg" ? 2 : 0),
+      cultural: 0.4 + (tier === "city" ? 2.5 : 0),
+      frontier: 0.4 + cold * 3 + (tier === "village" ? 0.8 : 0),
+    };
+    let total = 0;
+    for (const p of COLONY_PRODUCTIONS) total += weights[p];
+    let r = rng.random() * total;
+    for (const p of COLONY_PRODUCTIONS) {
+      r -= weights[p];
+      if (r <= 0) return p;
+    }
+    return COLONY_PRODUCTIONS[0];
+  }
+
+  // A colony's name, out of the i18n banks. Built in the language the survey
+  // runs in; the record is keyed on its id, never on this.
+  function colonyName(rng, fallback) {
+    const roots = (window.T && T.list) ? T.list("Galaxy.colony.nameRoots") : [];
+    const patterns = (window.T && T.list) ? T.list("Galaxy.colony.namePatterns") : [];
+    if (!roots.length || !patterns.length) return fallback;
+    const root = roots[rng.int(0, roots.length - 1)];
+    const pattern = patterns[rng.int(0, patterns.length - 1)];
+    return String(pattern).replace("{root}", root);
+  }
+
+  // One colony on one world, or null when the world has no ground for one.
+  function makeColony(planet, sys, galaxy, rng) {
+    const grid = planetGridSize(planet);
+    const samples = [];
+    let pick = null;
+    for (let i = 0; i < COLONY_SAMPLES; i++) {
+      const gx = rng.int(0, grid.w - 1);
+      const gy = rng.int(0, grid.h - 1);
+      const c = cellClimate(planet, gx, gy, grid);
+      if (!c) return null;
+      samples.push(c);
+      if (!pick && c.band !== "water") pick = { gx, gy, c };
+    }
+    if (!pick) return null;
+    const coast = [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => {
+      const n = cellClimate(planet, wrapCell(pick.gx + dx, grid.w), wrapCell(pick.gy + dy, grid.h), grid);
+      return !!(n && n.band === "water");
+    });
+    let r = rng.random();
+    let tier = COLONY_TIERS[0][0];
+    for (const [t, share] of COLONY_TIERS) {
+      if (r < share) { tier = t; break; }
+      r -= share;
+    }
+    const kind = colonyKind(tier, pick.c, coast, rng.random());
+    if (kind === COLONY_KINDS.village.mountain) tier = "village";
+    const production = colonyProduction(samples, tier, rng);
+    const id = "col:" + sys.name + "|" + planet.name;
+    const name = colonyName(rng, planet.name);
+    const cell = { gx: pick.gx, gy: pick.gy };
+    const pos = sys.position || {};
+    return {
+      id, name, kind, tier, production, cell,
+      galaxy: galaxy.name,
+      galaxyNameInt: galaxy.name_int || null,
+      galaxySeed: galaxy.seed,
+      galaxyDistance: galaxy.distance || 0,
+      system: sys.name,
+      systemLabel: sys.label || sys.name,
+      planet: planet.name,
+      planetType: planet.type,
+      position: { x: pos.x || 0, y: pos.y || 0, z: pos.z || 0 },
+      loc: { name, cell, colony: id },
+    };
+  }
+
+  function colonySurvey() {
+    const seed = worldSeedInt();
+    if (_colonySurvey && _colonySurvey.seed === seed) return _colonySurvey;
+    const survey = { seed, list: [], byPlanet: new Map(), byId: new Map() };
+    // Filed before the survey runs: a world asked about while it runs (the
+    // biome map of a candidate) finds no colony rather than starting another.
+    _colonySurvey = survey;
+    let dm = null;
+    try { dm = window.GalaxySim.getDataManager(); } catch (e) { dm = null; }
+    const GM = window.GalaxySim.Math || {};
+    const DM = window.GalaxySim.DataManager || {};
+    if (!dm || !GM.RandomGenerator || !window.GalaxySim.Renderer3D) return survey;
+    const rng = new GM.RandomGenerator("colonies:" + seed);
+    const used = new Set();
+    const settle = (sys, galaxy) => {
+      if (!sys || used.has(sys.name)) return false;
+      const planet = (sys.planets || []).find((p) => isEarthlikeWorld(p) && !isSurfacelessWorld(p));
+      if (!planet || survey.byPlanet.has(planet.name)) return false;
+      const colony = makeColony(planet, sys, galaxy, rng);
+      if (!colony) return false;
+      used.add(sys.name);
+      survey.list.push(colony);
+      survey.byPlanet.set(planet.name, colony);
+      survey.byId.set(colony.id, colony);
+      return true;
+    };
+
+    const galaxies = getNearestGalaxiesList();
+    const home = galaxies.find((g) => !g.distance) || { name: "Milky Way" };   // i18n-ignore: galaxy id
+    const milkyWay = { name: home.name, name_int: home.name_int, seed: null, distance: 0 };
+
+    // The Milky Way: the procedural systems around Sol first...
+    try {
+      if (!dm.proceduralGenerated && typeof dm.generateProceduralSystems === "function") {
+        dm.generateProceduralSystems();
+      }
+      const inner = (dm.getAllSystems ? dm.getAllSystems() : [])
+        .filter((s) => s && !s.hardcoded && !s.farHardcoded && !s.lazy && INNER_BUBBLE_NAME.test(s.name))
+        .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+      for (const s of inner) {
+        if (survey.list.length >= COLONY_MILKY_WAY_MAX) break;
+        if (rng.random() < 0.5) settle(s, milkyWay);
+      }
+    } catch (e) { /* no inner bubble: the disk still has its colonies */ }
+
+    // ...then the whole disk, a star at a time.
+    const CHUNK = DM.LAZY_CHUNK_LY || 64;
+    const SUN_R = DM.GAL_SUN_R_LY || 26000;
+    const DISK_R = DM.GAL_DISK_RADIUS_LY || 52000;
+    const INNER_R = DM.INNER_RADIUS_LY || 130;
+    if (typeof dm.peekLazyChunk === "function" && typeof dm.previewLazySystem === "function") {
+      for (let i = 0; i < COLONY_SURVEY_ATTEMPTS && survey.list.length < COLONY_MILKY_WAY_MAX; i++) {
+        const th = rng.random() * Math.PI * 2;
+        let x, y;
+        if (rng.random() < COLONY_NEAR_SOL_SHARE) {
+          const r = INNER_R + COLONY_NEAR_SOL_LY * Math.pow(rng.random(), 1.6);
+          x = Math.cos(th) * r;
+          y = Math.sin(th) * r;
+        } else {
+          const r = DISK_R * Math.sqrt(rng.random());
+          x = -SUN_R + Math.cos(th) * r;
+          y = Math.sin(th) * r;
+        }
+        const pickStar = rng.random();
+        const stars = dm.peekLazyChunk(Math.floor(x / CHUNK), Math.floor(y / CHUNK));
+        if (!stars || !stars.length) continue;
+        const star = stars[Math.min(stars.length - 1, Math.floor(pickStar * stars.length))];
+        if (!star || used.has(star.name)) continue;
+        settle(dm.previewLazySystem(star), milkyWay);
+      }
+    }
+
+    // Every other galaxy of the Local Group: three or four, and no more.
+    if (typeof dm.previewGalaxySystems === "function") {
+      for (const g of galaxies) {
+        if (!g || !g.distance) continue;
+        const gseed = getGalaxySeed(g.name);
+        const want = 3 + (rng.random() < 0.5 ? 1 : 0);
+        let systems = [];
+        try { systems = dm.previewGalaxySystems(gseed) || []; } catch (e) { systems = []; }
+        const order = systems.map((s, i) => i);
+        for (let i = order.length - 1; i > 0; i--) {
+          const j = rng.int(0, i);
+          const t = order[i]; order[i] = order[j]; order[j] = t;
+        }
+        const galaxy = { name: g.name, name_int: g.name_int, seed: gseed, distance: g.distance };
+        let made = 0;
+        for (const idx of order) {
+          if (made >= want) break;
+          const s = systems[idx];
+          if (s && !s.farHardcoded && settle(s, galaxy)) made++;
+        }
+      }
+    }
+    // The world's biome maps were built while no colony was known.
+    _earthMapCache.clear();
+    return survey;
+  }
+
+  function colonies() { return colonySurvey().list; }
+  window.GalaxySim.colonies = colonies;
+
+  // The colony on a world (planet record, landed descriptor or a bare
+  // { name }), or null. Never throws: a world asked about with no star map to
+  // survey simply has none.
+  function colonyOf(planet) {
+    if (!planet || !planet.name || !isEarthlikeWorld(planet)) return null;
+    try {
+      return colonySurvey().byPlanet.get(planet.name) || null;
+    } catch (e) {
+      return null;
+    }
+  }
+  window.GalaxySim.colonyOf = colonyOf;
+
+  function colonyById(id) {
+    try { return colonySurvey().byId.get(id) || null; } catch (e) { return null; }
+  }
+  window.GalaxySim.colonyById = colonyById;
+
+  // The colony whose square the party is standing on, or null.
+  function currentColony() {
+    const pg = (typeof $gameSystem !== "undefined" && $gameSystem) ? $gameSystem._procGenData : null;
+    const grid = pg && pg.alienGrid;
+    if (!grid || !grid.earthlike || !isAlienSurface()) return null;
+    const colony = colonyOf(gridPlanet());
+    if (!colony || colony.cell.gx !== grid.gx || colony.cell.gy !== grid.gy) return null;
+    return colony;
+  }
+  window.GalaxySim.currentColony = currentColony;
+
+  // A body people from Earth land at: an authored offworld pad or a colony.
+  // The pizza trade sells at every one of them.
+  function isHumanSpaceport(body) {
+    if (!body) return false;
+    if ((body.landingLocations || []).length) return true;
+    return !!colonyOf(body);
+  }
+  window.GalaxySim.isHumanSpaceport = isHumanSpaceport;
+
+  window.GalaxySim.COLONY_PRODUCTIONS = COLONY_PRODUCTIONS;
+  window.GalaxySim.COLONY_MILKY_WAY_MAX = COLONY_MILKY_WAY_MAX;
 
   // Descriptor of the planet the party is currently standing on, or null when
   // not on an alien surface. Map 636 is ALSO reused for ordinary Earth biomes
@@ -1456,7 +1984,16 @@
     const cell = opts.gridCell || {};
     const gx = (typeof cell.gx === "number" && isFinite(cell.gx)) ? ((Math.floor(cell.gx) % w) + w) % w : Math.floor(w / 2);
     const gy = (typeof cell.gy === "number" && isFinite(cell.gy)) ? ((Math.floor(cell.gy) % h) + h) % h : Math.floor(h / 2);
-    $gameSystem._procGenData.alienGrid = { w, h, gx, gy, biome: biomeName };
+    // An earthlike world is not one biome: every square is the Earth biome its
+    // own climate grows (see "Earthlike worlds"), and the squares carry the
+    // world's own salt so no two worlds, and no world and Earth, ever share one.
+    const earthlike = isEarthlikeWorld(planet) && !!earthlikeBiomeMap(planet);
+    $gameSystem._procGenData.alienGrid = {
+      w, h, gx, gy,
+      biome: earthlike ? planetCellBiome(planet, gx, gy) : biomeName,
+      earthlike,
+      salt: earthlike ? fnv1a("planet|" + (planet.name || "")) : 0,
+    };
     resetSkyEase();
     // Built here rather than above, because which column of the landing grid
     // this is decides what o'clock it is forever on a tidally locked world.
@@ -1667,6 +2204,7 @@
     const ny = ((Math.floor(gy) % grid.h) + grid.h) % grid.h;
     grid.gx = nx;
     grid.gy = ny;
+    if (grid.earthlike) grid.biome = currentGridCellBiome(nx, ny) || grid.biome;
     $gameVariables.setValue(43, nx);
     $gameVariables.setValue(44, ny);
     $gameSystem._procGenData.biomeLayerStack = [];
@@ -1701,7 +2239,13 @@
     // A flyby is the same world opened the same way; the only difference is
     // what the party arrives in, so it takes the same route in.
     if (opts.flyby && !VW.startAlienFlyby) return false;
-    const biome = planetBiomeRecord(planet);
+    // An earthlike world opens on the Earth biome of the square chosen.
+    let biome = planetBiomeRecord(planet);
+    const cellName = isEarthlikeWorld(planet) ? planetCellBiome(planet, gx | 0, gy | 0) : null;
+    if (cellName) {
+      const list = (window.WorldGen && window.WorldGen.Biomes) || [];
+      biome = list.find((b) => b && b.name === cellName) || biome;
+    }
     if (!biome) return false;
     // A world with no ground is flown over and nothing else: the walk is
     // refused here as well as in the two pickers, because the pickers are not
@@ -1848,7 +2392,8 @@
   function landingModeCommands(planet, port) {
     const list = [];
     if (!isSurfacelessWorld(planet)) {
-      if (port) {
+      // A colony is generated ground, so its square is landed on like any other.
+      if (port && isAuthoredPort(port)) {
         list.push({ symbol: "portFoot", label: T('Galaxy.hud.landOnFoot') });
         list.push({ symbol: "portShip", label: T('Galaxy.hud.landWithShip') });
       } else {
@@ -2379,8 +2924,19 @@
   // ============================================================================
   function landAtSpaceport(loc, opts) {
     opts = opts || {};
-    if (!loc || loc.mapId == null) return false;
+    if (!loc) return false;
     const planet = opts.planet || null;
+    // A colony is generated ground: setting down at it is landing on its square,
+    // and the settlement generators build the town there. There is no pad map to
+    // bring the ship down on, so it always arrives on foot.
+    if (loc.mapId == null) {
+      if (!loc.colony || !loc.cell || !planet) return false;
+      return enterPlanetSurface(planet, {
+        gridCell: loc.cell,
+        isMoon: !!opts.isMoon,
+        parentPlanet: opts.parentPlanet || null,
+      });
+    }
     if (!planet || !loc.cell) return teleportToLandingSite(loc, opts);
     const ok = enterPlanetSurface(planet, {
       gridCell: loc.cell,
@@ -2445,8 +3001,11 @@
     if (typeof $gameSystem === "undefined" || !$gameSystem) return;
     const pg = $gameSystem._procGenData;
     if (pg) {
+      // An earthlike world's squares carry Earth names, so the name is no
+      // proof the square was off Earth: having a grid at all is.
+      const hadGrid = !!pg.alienGrid;
       pg.alienGrid = null;
-      if (/^Alien/.test(String(pg.currentBiome || ""))) {
+      if (hadGrid || /^Alien/.test(String(pg.currentBiome || ""))) {
         pg.currentBiome = null;
         pg.currentRoadDirection = null;
       }
@@ -2493,6 +3052,7 @@
       // First time aboard, the telescope's refit is pinned to the quest log.
       hubbleQuestOpen();
       storyCrewAnnounce();
+      freeCrewAnnounce();
       // Entering spaceship interior sets the respawn point to the helm (map 721, x 28, y 10)
       const mapVar = (window.BSE && window.BSE.Params && window.BSE.Params.respawnMapVar) || 25;
       const xVar = (window.BSE && window.BSE.Params && window.BSE.Params.respawnXVar) || 26;
@@ -2525,6 +3085,30 @@
     return true;
   }
   window.GalaxySim.storyCrewAnnounce = storyCrewAnnounce;
+
+  // Outside the story the party has no rank aboard: the first time it boards
+  // the Starship it is told the helm is lent until Captain Hack is back, and
+  // that the teleport is there to skip the Kessler debris. A party carrying the
+  // Low orbit pin is told the pin is its pass instead. Shown once per save.
+  const LOW_ORBIT_PIN_ITEM = 166;
+  function freeCrewAnnounce() {
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return false;
+    if (typeof $gameSwitches === "undefined" || !$gameSwitches) return false;
+    if ($gameSwitches.value(STORY_MODE_SWITCH)) return false;
+    if ($gameSystem._freeCrewAnnounced) return false;
+    $gameSystem._freeCrewAnnounced = true;
+    const toast = window.ParchmentToast;
+    if (!toast || typeof toast.show !== "function") return true;
+    let pinned = false;
+    try {
+      const pin = typeof $dataItems !== "undefined" && $dataItems ? $dataItems[LOW_ORBIT_PIN_ITEM] : null;
+      pinned = !!(pin && typeof $gameParty !== "undefined" && $gameParty && $gameParty.hasItem(pin));
+    } catch (e) { pinned = false; }
+    const key = pinned ? 'Galaxy.freeCrew.pin' : 'Galaxy.freeCrew.controls';
+    toast.show(T(key), { severity: "good", duration: 480, key: "freeCrew" });
+    return true;
+  }
+  window.GalaxySim.freeCrewAnnounce = freeCrewAnnounce;
 
   // ============================================================================
   // Procedural alien species. A living world (see currentAlienHasLife) hosts a
@@ -4318,6 +4902,43 @@
         border-color: var(--border-focus-hover, #ffd700);
         background: rgba(255, 255, 255, 0.09);
       }
+      .gx-sc-chips {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 8px;
+      }
+      .gx-sc-chips-label {
+        font-size: 11px;
+        color: var(--text-text-alt-4, #9ca3af);
+        margin-right: 4px;
+        min-width: 72px;
+      }
+      .gx-sc-chip {
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 11px;
+        cursor: pointer;
+        background: var(--bg-primary-hover-translucent-35, rgba(255, 255, 255, 0.06));
+        border: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 255, 255, 0.15));
+        color: var(--text-text-alt-4, #9ca3af);
+        font-family: var(--font-ui, sans-serif);
+      }
+      .gx-sc-chip.on {
+        border-color: var(--border-focus-hover, #ffd700);
+        color: var(--text-primary-hover, #f3f4f6);
+        background: rgba(255, 215, 0, 0.12);
+      }
+      .gx-sc-chip:focus, .gx-sc-chip.focused {
+        outline: 1px solid var(--border-focus-hover, #ffd700);
+      }
+      .gx-sc-more {
+        font-size: 11px;
+        color: var(--text-text-alt-4, #9ca3af);
+        padding: 6px 0;
+        text-align: center;
+      }
       .gx-sc-pips {
         display: flex;
         gap: 3px;
@@ -4591,44 +5212,123 @@
     return { found, weak, fresh };
   }
 
+  // Every human spaceport there is, known from the start: the hand-drawn pads
+  // and every colony (see "Colonies"), wherever they are. Distances only mean
+  // anything inside one galaxy (each galaxy keeps its own frame), so a port in
+  // the galaxy the ship is in is measured in light-years and sorted by it, and
+  // one in another galaxy is named by its galaxy and sorted after, nearest
+  // galaxy first.
+  //
+  // Each row: { name, bodyName, parentPlanet, isMoon, systemName, systemLabel,
+  //   system, dist (ly, or null in another galaxy), sameGalaxy, galaxy,
+  //   galaxyDistance (kly), far, colony, kind, tier, production }
+  // `tier` is "village", "burg", "city", or "authored" for a hand-drawn pad.
   function getSpaceportsList(dm) {
     if (!dm) return [];
     const origin = getShipPosition(dm);
+    const ship = dm.playerShip || {};
+    const GM = window.GalaxySim.Math || {};
+    const seedOf = (name) => (GM.galaxySeedOfSystemName ? GM.galaxySeedOfSystemName(name) : null);
+    const hereSeed = ship.currentSystem ? seedOf(ship.currentSystem) : null;
+    const galaxies = getNearestGalaxiesList();
+    const homeName = (galaxies.find((g) => !g.distance) || {}).name || "";
+    const galaxyOfSeed = (seed) => {
+      if (seed == null) return { name: homeName, distance: 0 };
+      const g = galaxies.find((x) => x && getGalaxySeed(x.name) === seed);
+      return g ? { name: g.name, distance: g.distance || 0 } : { name: "", distance: 0 };
+    };
     const spaceports = [];
+    const push = (row, seed, position) => {
+      row.sameGalaxy = (seed == null ? null : seed) === (hereSeed == null ? null : hereSeed);
+      row.dist = row.sameGalaxy ? calcSysDistance(origin, position) : null;
+      spaceports.push(row);
+    };
+
     const systems = (dm.getAllSystems ? dm.getAllSystems() : [])
       .filter((s) => s && (s.hardcoded || s.farHardcoded));
-
     systems.forEach((sys) => {
+      const seed = sys.farHardcoded ? (sys.galaxySeed != null ? sys.galaxySeed : seedOf(sys.name)) : null;
+      const g = galaxyOfSeed(seed);
+      const authored = (loc, body, parent) => push({
+        name: loc.name,
+        bodyName: body.name,
+        parentPlanet: parent ? parent.name : null,
+        isMoon: !!parent,
+        systemName: sys.name,
+        systemLabel: sys.label || sys.name,
+        system: sys,
+        galaxy: g.name,
+        galaxyDistance: g.distance,
+        far: !!sys.farHardcoded,
+        colony: null,
+        kind: null,
+        tier: "authored",
+        production: null,
+      }, seed, sys);
       (sys.planets || []).forEach((planet) => {
-        (planet.landingLocations || []).forEach((loc) => {
-          spaceports.push({
-            name: loc.name,
-            bodyName: planet.name,
-            parentPlanet: null,
-            isMoon: false,
-            system: sys,
-            dist: calcSysDistance(origin, sys),
-            far: !!sys.farHardcoded,
-          });
-        });
+        (planet.landingLocations || []).forEach((loc) => authored(loc, planet, null));
         (planet.moons || []).forEach((moon) => {
-          (moon.landingLocations || []).forEach((loc) => {
-            spaceports.push({
-              name: loc.name,
-              bodyName: moon.name,
-              parentPlanet: planet.name,
-              isMoon: true,
-              system: sys,
-              dist: calcSysDistance(origin, sys),
-              far: !!sys.farHardcoded,
-            });
-          });
+          (moon.landingLocations || []).forEach((loc) => authored(loc, moon, planet));
         });
       });
     });
 
-    spaceports.sort((a, b) => a.dist - b.dist);
+    colonies().forEach((c) => push({
+      name: c.name,
+      bodyName: c.planet,
+      parentPlanet: null,
+      isMoon: false,
+      systemName: c.system,
+      systemLabel: c.systemLabel,
+      system: { name: c.system, label: c.systemLabel, position: c.position },
+      galaxy: c.galaxy,
+      galaxyDistance: c.galaxyDistance,
+      far: c.galaxySeed != null,
+      colony: c.id,
+      kind: c.kind,
+      tier: c.tier,
+      production: c.production,
+    }, c.galaxySeed, c.position));
+
+    spaceports.sort((a, b) => {
+      if (a.sameGalaxy !== b.sameGalaxy) return a.sameGalaxy ? -1 : 1;
+      if (a.sameGalaxy) return a.dist - b.dist;
+      if (a.galaxyDistance !== b.galaxyDistance) return a.galaxyDistance - b.galaxyDistance;
+      return String(a.name).localeCompare(String(b.name));
+    });
     return spaceports;
+  }
+
+  // The filters of the Spaceports tab. Chips, not selects, so a pad can work
+  // them: galaxy, size and what the colony makes.
+  const SP_FILTER_GALAXY = ["all", "here", "milky", "local"];
+  const SP_FILTER_SIZE = ["all", "village", "burg", "city", "authored"];
+  const SP_ROW_LIMIT = 150;
+  const _spFilter = { galaxy: "all", size: "all", prod: "all" };
+
+  function spaceportPassesFilters(sp, homeGalaxy) {
+    if (_spFilter.galaxy === "here" && !sp.sameGalaxy) return false;
+    if (_spFilter.galaxy === "milky" && sp.galaxy !== homeGalaxy) return false;
+    if (_spFilter.galaxy === "local" && sp.galaxy === homeGalaxy) return false;
+    if (_spFilter.size !== "all" && sp.tier !== _spFilter.size) return false;
+    if (_spFilter.prod !== "all" && sp.production !== _spFilter.prod) return false;
+    return true;
+  }
+
+  function spaceportFilterChips() {
+    const row = (key, label, values, text) => {
+      const chips = values.map((v) => {
+        const on = _spFilter[key] === v;
+        return `<button class="gx-sc-chip focusable ${on ? "on" : ""}" data-sc-spf='{"k":"${key}","v":"${v}"}'>${escHtml(text(v))}</button>`;
+      }).join("");
+      return `<div class="gx-sc-chips"><span class="gx-sc-chips-label">${escHtml(label)}</span>${chips}</div>`;
+    };
+    return row("galaxy", T('Galaxy.colony.filter.galaxy'), SP_FILTER_GALAXY,
+        (v) => T('Galaxy.colony.filter.galaxy_' + v)) +
+      row("size", T('Galaxy.colony.filter.size'), SP_FILTER_SIZE,
+        (v) => T('Galaxy.colony.filter.size_' + v)) +
+      row("prod", T('Galaxy.colony.filter.production'), ["all"].concat(COLONY_PRODUCTIONS),
+        (v) => (v === "all" ? T('Galaxy.colony.filter.any') : T('Galaxy.colony.production.' + v)));
   }
 
   function openShipControls(initialTab) {
@@ -5219,7 +5919,7 @@
           const dist = calcSysDistance(shipPos, sys);
           const pCount = sys.planets ? sys.planets.length : 0;
           const pStr = pCount === 1 ? T('Galaxy.shipControls.planetsCountOne') : T('Galaxy.shipControls.planetsCount', { count: pCount });
-          const distStr = dist > 0 ? ` · ${dist.toFixed(1)} ly` : "";
+          const distStr = dist > 0 ? ` · ${T('Galaxy.shipControls.distanceLy', { dist: dist.toFixed(1) })}` : "";
           const isBookmarked = bookmarks.some(b => b.name === sys.name);
 
           html += `
@@ -5281,7 +5981,7 @@
         patronStars.forEach((rec) => {
           const isCurrentSys = !ship.isMoving && ship.currentSystem === rec.system?.name;
           const dist = calcSysDistance(shipPos, rec.system);
-          const distStr = dist > 0 ? ` · ${dist.toFixed(1)} ly` : "";
+          const distStr = dist > 0 ? ` · ${T('Galaxy.shipControls.distanceLy', { dist: dist.toFixed(1) })}` : "";
           const isBookmarked = bookmarks.some(b => b.name === rec.system?.name || b.name === rec.name);
           const patronName = rec.patron?.name || rec.name;
           const starType = String(rec.system?.type || "?").replace(/_/g, " ");
@@ -5343,7 +6043,7 @@
       } else {
         const renderRow = (w) => {
           const isHere = !ship.isMoving && ship.currentPlanet === w.planet.name;
-          const distStr = w.dist > 0 ? ` · ${w.dist.toFixed(1)} ly` : "";
+          const distStr = w.dist > 0 ? ` · ${T('Galaxy.shipControls.distanceLy', { dist: w.dist.toFixed(1) })}` : "";
           const isBookmarked = bookmarks.some(b => b.name === w.planet.name);
           const typeStr = String(w.planet.type || "?").replace(/_/g, " ");
           const tierStr = w.tierLabel ? ` · ${w.tierLabel}` : "";
@@ -5384,13 +6084,16 @@
       }
     } else if (_shipControlsTab === "spaceports") {
       let spaceports = getSpaceportsList(dm);
+      const homeGalaxy = (getNearestGalaxiesList().find((g) => !g.distance) || {}).name || "";
+      spaceports = spaceports.filter((sp) => spaceportPassesFilters(sp, homeGalaxy));
       const q = (_shipControlsFilter || "").trim().toLowerCase();
       if (q) {
         spaceports = spaceports.filter((sp) => {
           const n = (sp.name || "").toLowerCase();
           const bn = (sp.bodyName || "").toLowerCase();
-          const sn = (sp.system.label || sp.system.name || "").toLowerCase();
-          return n.includes(q) || bn.includes(q) || sn.includes(q);
+          const sn = (sp.systemLabel || sp.systemName || "").toLowerCase();
+          const gn = (sp.galaxy || "").toLowerCase();
+          return n.includes(q) || bn.includes(q) || sn.includes(q) || gn.includes(q);
         });
       }
 
@@ -5400,18 +6103,26 @@
         <div class="gx-sc-search-wrap">
           <input type="text" class="gx-sc-search-input" data-sc-search-input placeholder="${T('Galaxy.shipControls.searchSpaceportsPlaceholder')}" value="${escHtml(_shipControlsFilter)}">
         </div>
+        ${spaceportFilterChips()}
       `;
 
       if (!spaceports.length) {
         html += `<div class="npc-empty gx-sc-empty">${T('Galaxy.shipControls.noSpaceportsFound')}</div>`;
       } else {
         html += `<div class="npc-sec-hdr gx-sc-sec-hdr">${T('Galaxy.shipControls.landingSitesGroup')}</div>`;
-        spaceports.forEach((sp) => {
+        spaceports.slice(0, SP_ROW_LIMIT).forEach((sp) => {
           const isHere = !ship.isMoving && ship.currentPlanet === sp.bodyName;
-          const distStr = sp.dist > 0 ? ` · ${sp.dist.toFixed(1)} ly` : "";
-          const isBookmarked = bookmarks.some(b => b.name === sp.name || b.name === sp.bodyName);
+          const where = sp.sameGalaxy
+            ? (sp.dist > 0 ? ` · ${T('Galaxy.shipControls.distanceLy', { dist: sp.dist.toFixed(1) })}` : "")
+            : ` · ${sp.galaxy}`;
+          const isBookmarked = bookmarks.some(b => b.name === sp.bodyName);
           const bodyLabel = sp.isMoon ? `${sp.bodyName} (${sp.parentPlanet})` : sp.bodyName;
-          const sub = `${bodyLabel} · ${sp.system.label || sp.system.name}${distStr}`;
+          const what = sp.colony
+            ? `${window.BiomeNames ? window.BiomeNames.display(sp.kind) : sp.kind} · ${T('Galaxy.colony.production.' + sp.production)} · `
+            : "";
+          const sub = `${what}${bodyLabel} · ${sp.systemLabel}${where}`;
+          const kind = sp.isMoon ? "moon" : "planet";
+          const target = `{"kind":"${kind}","name":"${escHtml(sp.bodyName)}","parentPlanet":"${escHtml(sp.parentPlanet || "")}","systemName":"${escHtml(sp.systemName)}","galaxy":"${escHtml(sp.sameGalaxy ? "" : sp.galaxy)}"}`;
 
           html += `
             <div class="gx-sc-row">
@@ -5421,14 +6132,17 @@
               </div>
               <div class="gx-sc-item-actions">
                 ${isHere ? `<span class="gx-sc-badge here npc-badge">${T('Galaxy.shipControls.here')}</span>` : `
-                  ${!sp.far ? `<button class="gx-sc-btn focusable" data-sc-course='{"kind":"${sp.isMoon ? "moon" : "planet"}","name":"${escHtml(sp.bodyName)}","parentPlanet":"${escHtml(sp.parentPlanet || "")}","systemName":"${escHtml(sp.system.name)}"}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>` : ''}
-                  <button class="gx-sc-btn bridge focusable" data-sc-sb='{"kind":"${sp.isMoon ? "moon" : "planet"}","name":"${escHtml(sp.bodyName)}","parentPlanet":"${escHtml(sp.parentPlanet || "")}","systemName":"${escHtml(sp.system.name)}"}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
+                  ${sp.sameGalaxy ? `<button class="gx-sc-btn focusable" data-sc-course='${target}' style="margin:0;">${T('Galaxy.shipControls.setCourse')}</button>` : ''}
+                  <button class="gx-sc-btn bridge focusable" data-sc-sb='${target}' title="${T('Galaxy.hud.openSchrDingerBohrBridge')}">${T('Galaxy.shipControls.sbJump')}</button>
                 `}
-                <button class="gx-sc-btn bookmark ${isBookmarked ? 'bookmark-on' : ''} focusable" data-sc-toggle-bm='{"kind":"${sp.isMoon ? "moon" : "planet"}","name":"${escHtml(sp.name)}","systemName":"${escHtml(sp.system.name)}"}' style="margin:0;" title="${isBookmarked ? T('Galaxy.hud.bookmarkRemove') : T('Galaxy.hud.bookmarkAdd')}">${isBookmarked ? "★" : "☆"}</button>
+                <button class="gx-sc-btn bookmark ${isBookmarked ? 'bookmark-on' : ''} focusable" data-sc-toggle-bm='{"kind":"${kind}","name":"${escHtml(sp.bodyName)}","systemName":"${escHtml(sp.systemName)}"}' style="margin:0;" title="${isBookmarked ? T('Galaxy.hud.bookmarkRemove') : T('Galaxy.hud.bookmarkAdd')}">${isBookmarked ? "★" : "☆"}</button>
               </div>
             </div>
           `;
         });
+        if (spaceports.length > SP_ROW_LIMIT) {
+          html += `<div class="gx-sc-more">${T('Galaxy.colony.moreRows', { shown: SP_ROW_LIMIT, total: spaceports.length })}</div>`;
+        }
       }
 
       area.innerHTML = html;
@@ -5470,8 +6184,9 @@
           }
 
           const dist = g.distance != null ? g.distance : 0;
-          const distStr = dist === 0 ? "0 kly" : `${dist} kly`;
-          const typeStr = (g.type || "Galaxy").replace(/_/g, " ");
+          const distStr = T('Galaxy.shipControls.distanceKly', { dist });
+          const typeKey = 'Galaxy.shipControls.galaxyType.' + (g.type || "galaxy");
+          const typeStr = (T.has && T.has(typeKey)) ? T(typeKey) : String(g.type).replace(/_/g, " ");
           const isBookmarked = bookmarks.some(b => b.name === g.name);
 
           html += `
@@ -5565,6 +6280,16 @@
       });
 
       contentArea.addEventListener("click", (e) => {
+        const chip = e.target.closest("[data-sc-spf]");
+        if (chip) {
+          try {
+            const f = JSON.parse(chip.getAttribute("data-sc-spf"));
+            if (f && Object.prototype.hasOwnProperty.call(_spFilter, f.k)) _spFilter[f.k] = f.v;
+          } catch (err) { console.error(err); }
+          if (window.SoundManager && window.SoundManager.playCursor) SoundManager.playCursor();
+          renderShipControlsContent();
+          return;
+        }
         const bioscanBtn = e.target.closest("[data-sc-bioscan]");
         if (bioscanBtn) {
           scanBiosignatures(dm);
@@ -5799,10 +6524,20 @@
       if (ok && abroad && window.SceneManager && window.SceneManager._scene && typeof window.SceneManager._scene._exitGalaxyFocus === "function") {
         window.SceneManager._scene._exitGalaxyFocus();
       }
-    } else if (target.kind === "planet") {
+    } else if (target.kind === "planet" || target.kind === "moon") {
+      // A world in another galaxy (a colony out in the Local Group) or back in
+      // ours: the bridge crosses the gap, and the ship is then in that galaxy.
+      const wasAbroad = !!(ship && ship.currentSystem && isForeignGalaxySystem(ship.currentSystem));
+      const goingAbroad = isForeignGalaxySystem(target.systemName);
       ok = dm.teleportToPlanetOrbit(target.systemName, target.name);
-    } else if (target.kind === "moon") {
-      ok = dm.teleportToPlanetOrbit(target.systemName, target.name);
+      const scene = window.SceneManager && window.SceneManager._scene;
+      if (ok && ship && goingAbroad && target.galaxy) {
+        ship.currentGalaxy = target.galaxy;
+        if (scene && typeof scene._enterGalaxyFocus === "function") scene._enterGalaxyFocus(target.galaxy);
+      } else if (ok && ship && wasAbroad && !goingAbroad) {
+        ship.currentGalaxy = "Milky Way";   // i18n-ignore: galaxy id
+        if (scene && typeof scene._exitGalaxyFocus === "function") scene._exitGalaxyFocus();
+      }
     } else {
       ok = dm.teleportToSystem(target.systemName || target.name);
     }

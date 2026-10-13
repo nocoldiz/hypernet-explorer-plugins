@@ -3,7 +3,7 @@
     "Nervous": [
       "Sta arrivando un tuono? La pioggia finisce sempre in qualcosa di peggio...",
       "Ho gli stivali fradici. E se mi becco qualcosa? Di raffreddore si muore!",
-      "Era una goccia quella? Sì. Sta cominciando. Sta cominciando e io non sono pronto.",
+      "Era una goccia quella? Sì. Sta cominciando. Sta cominciando e io non sono {g:pronto|pronta|pronto}.",
       "Pioggia sul tetto tutta la notte. Ogni goccia sembra qualcuno alla porta."
     ],
     "Calm": [
@@ -14,9 +14,9 @@
     ],
     "Aggressive": [
       "Pioggia stupida. Chiunque ci sia lassù è meglio che la smetta.",
-      "Ancora pioggia. Perfetto. Adesso posso essere infastidito da tutto in una volta.",
+      "Ancora pioggia. Perfetto. Adesso posso essere {g:infastidito|infastidita|infastidito} da tutto in una volta.",
       "Schizzami un'altra volta, carrettiere. Vedi cosa succede.",
-      "Io dall'acqua non mi nascondo. È l'acqua che deve nascondersi da me."
+      "Io dall'acqua non mi nascondo. Semmai si nasconda lei da me."
     ],
     "Melancholic": [
       "Il cielo piange. Almeno c'è qualcun altro che lo fa.",
@@ -56,7 +56,7 @@
     ],
     "Empathetic": [
       "Spero che nessuno sia rimasto fuori con questa senza un tetto.",
-      "Quella povera corriera era zuppa. Dovevo offrirle qualcosa di caldo.",
+      "Quella povera postina era zuppa. Dovevo offrirle qualcosa di caldo.",
       "I giorni di pioggia fanno sentire soli. Bussare alla porta di un amico aiuta.",
       "Il vecchio di fronte odia l'umido. Vado a controllare che abbia acceso il fuoco."
     ],
@@ -75,7 +75,7 @@
     "Artistic": [
       "Ascolta: sotto la pioggia ogni tetto suona una nota diversa.",
       "La luce delle lampade si sdoppia nelle pozzanghere. Due città, una strada bagnata.",
-      "Sotto la pioggia il grigio non è un colore solo. Sono venti.",
+      "Sotto la pioggia il grigio si divide in venti colori diversi.",
       "Dipingerei questo acquazzone se la tela sopravvivesse."
     ],
     "Adventurous": [
@@ -129,7 +129,7 @@
     "Brave": [
       "Un po' di pioggia non ha mai fermato nessuno che valesse la pena conoscere.",
       "La pioggia fredda ti sveglia meglio di quanto abbia mai fatto il coraggio.",
-      "Bagnato fino alle ossa e ancora in piedi. Questo è lo spirito.",
+      "{g:Bagnato|Bagnata|Bagnato} fino alle ossa e ancora in piedi. Questo è lo spirito.",
       "E che diluvi. Al compito non importa, e a me neanche."
     ],
     "Timid": [
@@ -226,7 +226,7 @@
     ],
     "Scholarly": [
       "Conta i secondi dal lampo al tuono: il temporale è a tre chilometri.",
-      "Il fulmine cerca il punto più alto. Fisica, non furia.",
+      "Il fulmine cerca il punto più alto. È fisica pura.",
       "La pressione è scesa tutta la mattina. I segnali c'erano tutti.",
       "Un giorno qualcuno imbottiglierà quell'energia. Segnatevelo."
     ],
@@ -250,7 +250,7 @@
     ],
     "Mischievous": [
       "Un tuono, un 'bù' ben piazzato... irresistibile.",
-      "Col tuono sobbalzano tutti. Nessuno nota il sottoscritto.",
+      "Col tuono sobbalzano tutti. Nessuno nota {g:il sottoscritto|la sottoscritta|il sottoscritto}.",
       "Adoro quando salta la luce. Al buio si aprono tante possibilità.",
       "Al temporale danno la colpa di tutto. Cancello rotto? Temporale. Crostata sparita? Temporale."
     ],
@@ -294,7 +294,7 @@
       "Sotto il tavolo. Il tavolo è solido. Resto sotto il tavolo.",
       "È-è solo rumore. Solo rumore molto, molto grosso.",
       "Conto i tuoni finché non finisce. Uno... due...",
-      "Magari se sto zittissimo il temporale non mi nota."
+      "Magari se sto {g:zittissimo|zittissima|zittissimo} il temporale non mi nota."
     ],
     "Hedonistic": [
       "Un temporale fuori rende il fuoco dentro due volte più accogliente.",
@@ -306,7 +306,7 @@
       "Cielo rumoroso. Vabbè.",
       "Temporale. Urlarci contro non serve. Non serve niente. Eh.",
       "Lampi, tuoni, vento. Le solite scene madri.",
-      "Sarei impressionato se me ne importasse."
+      "Sarei {g:impressionato|impressionata|impressionato} se me ne importasse."
     ],
     "default": [
       "Questo temporale si sta facendo pericoloso. Devo trovare riparo in fretta.",
@@ -317,7 +317,7 @@
   },
   "snow": {
     "Nervous": [
-      "E se chiudono le strade? E se resto bloccato qui? E se...",
+      "E se chiudono le strade? E se resto {g:bloccato|bloccata|bloccato} qui? E se...",
       "Ghiaccioli. Proprio sopra la porta. Quelle cose AMMAZZANO la gente.",
       "È bello, sì, ma quanto ALTA verrà?",
       "Non mi sento più le dita. È congelamento? È congelamento, vero."
@@ -331,8 +331,8 @@
     "Aggressive": [
       "La prima palla di neve che mi arriva addosso, qualcuno mangia ghiaccio.",
       "Ho già spalato il vialetto due volte. Cielo, ti avverto.",
-      "Sono scivolato sul ghiaccio. Il ghiaccio se ne pentirà.",
-      "Il freddo non mi disturba. È il freddo che deve preoccuparsi."
+      "Sono {g:scivolato|scivolata|scivolato} sul ghiaccio. Il ghiaccio se ne pentirà.",
+      "Il freddo non mi disturba. Si preoccupi lui, semmai."
     ],
     "Melancholic": [
       "La neve seppellisce tutto. Anche le impronte. Anche i ricordi.",
@@ -365,7 +365,7 @@
       "Le mani intirizzite funzionano lo stesso, se glielo ordini."
     ],
     "Paranoid": [
-      "Impronte sulla neve. Chiunque può vedere esattamente dove sono stato.",
+      "Impronte sulla neve. Chiunque può vedere esattamente dove sono {g:stato|stata|stato}.",
       "Ieri notte qualcuno è passato sotto la mia finestra. Lo dice la neve.",
       "La neve attutisce tutto. Non li sentiresti mai arrivare.",
       "Perché il mio è l'unico vialetto non spalato? Chi l'ha deciso?"
@@ -446,10 +446,10 @@
       "Il freddo è solo un'altra cosa a cui sopravvivere.",
       "Qualcuno deve aprire la pista fino al mulino. Fatevi da parte.",
       "Il freddo morde. Mordi anche tu.",
-      "Congelato una volta, mai più spaventato."
+      "{g:Congelato|Congelata|Congelato} una volta, mai più {g:spaventato|spaventata|spaventato}."
     ],
     "Timid": [
-      "Scivola e io cadrò sicuramente davanti a tutti.",
+      "Scivolerò, me lo sento, e proprio davanti a tutti.",
       "Aspetto che passi qualcuno più coraggioso. Poi cammino nelle sue impronte.",
       "Le battaglie a palle di neve sembrano divertenti, ma là dentro a volte ci mettono i SASSI.",
       "L'inverno va benissimo, visto da dentro casa. Benissimo davvero."
@@ -476,7 +476,7 @@
   "clear": {
     "Nervous": [
       "Bel tempo... troppo bello. Nei giorni così va sempre storto qualcosa.",
-      "Le giornate di sole vuol dire folla. La folla vuol dire... devo stare all'erta.",
+      "Giornata di sole vuol dire folla. La folla vuol dire... devo stare all'erta.",
       "Neanche una nuvola. Così tutti possono vedere tutto quello che faccio. Fantastico.",
       "Il bel tempo non dura mai. Gli do un'ora."
     ],
@@ -589,7 +589,7 @@
       "Il sole è sorto anche su ogni disastro della storia."
     ],
     "Grumpy": [
-      "Troppa luce. Adesso si aspettano tutti che sia allegro.",
+      "Troppa luce. Adesso si aspettano tutti che sia {g:allegro|allegra|allegro}.",
       "Il sole negli occhi. Naturalmente.",
       "Che bella giornata, dicono tutti. A me. Ripetutamente.",
       "Caldo, riverbero e vicini di buonumore. Il catalogo completo."

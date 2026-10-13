@@ -86,8 +86,14 @@
         cryingtree:    { variant: 'cryingtree',    scale: 3.4, texturePool: 'wood', bodyColor: 0x4a3a2a, accent: 0x8ad0a0, front: true, hue: [0.09, 0.04], sat: [0.35, 0.10], lit: [0.28, 0.06] },
         backwardstree: { variant: 'backwardstree', scale: 3.4, texturePool: 'wood', bodyColor: 0x5a4830, accent: 0x3f7a2c, front: true, hue: [0.10, 0.04], sat: [0.40, 0.10], lit: [0.30, 0.06] },
         // ── Bespoke uniques (Plant-key plan: FLOWER/STEM/ROOTS/VINE_1/VINE_2) ──
-        xylomantiflorous: { variant: 'xylomantiflorous', scale: 2.8, texturePool: 'foliage', bodyColor: 0x4a6a2a, accent: 0xc8a0e0, front: true, hue: [0.28, 0.08], sat: [0.50, 0.12], lit: [0.34, 0.08] }
+        xylomantiflorous: { variant: 'xylomantiflorous', scale: 2.8, texturePool: 'foliage', bodyColor: 0x4a6a2a, accent: 0xc8a0e0, front: true, hue: [0.28, 0.08], sat: [0.50, 0.12], lit: [0.34, 0.08] },
+        // ── Level 1-5 roster (bespoke, were fungoid / myconid reskins) ──
+        // Spore Puff: a squat warty puffball with a coughing pore and sleepy eyes.
+        lv_sporepuff:     { variant: 'lv_sporepuff',     scale: 1.6, texturePool: 'pale',    bodyColor: 0xd8c8a0, accent: 0xc8b85a, front: true, hue: [0.12, 0.04], sat: [0.35, 0.10], lit: [0.68, 0.08] },
+        // Myconid Sprout: a solemn little morel person with a gill beard and a lantern.
+        lv_myconidsprout: { variant: 'lv_myconidsprout', scale: 1.9, texturePool: 'foliage', bodyColor: 0x8a6a42, accent: 0x9affc8, front: true, hue: [0.09, 0.04], sat: [0.40, 0.10], lit: [0.34, 0.08] }
     };
+    const V = (x, y, z) => new THREE.Vector3(x, y, z);
 
     class FloraBattler3D extends Base {
         constructor(scale, offsetY, battler, weaponType, creatureType) {
@@ -125,6 +131,8 @@
                 case 'cryingtree': this._buildCryingTree(); break;
                 case 'backwardstree': this._buildBackwardsTree(); break;
                 case 'xylomantiflorous': this._buildXylomantiFlorous(); break;
+                case 'lv_sporepuff': this._buildSporePuff(); break;
+                case 'lv_myconidsprout': this._buildMyconidSprout(); break;
                 default: this._buildMushroom(); break;
             }
 
@@ -355,7 +363,7 @@
             // Leafy canopy crown (FLOWER).
             this.flower = new THREE.Group();
             const canopyMat = this._mat(p.accent, 1, 0.85);
-            const blobs = [[0, 0, 0, 0.5], [-0.34, -0.12, 0.1, 0.36], [0.34, -0.12, -0.1, 0.36], [0, 0.18, -0.12, 0.34], [0.12, -0.05, 0.32, 0.3]];
+            const blobs = [[0, 0, 0, 0.5], [-0.34, -0.12, 0.0, 0.36], [0.34, -0.12, 0.0, 0.36], [0, 0.18, -0.12, 0.34], [0.12, -0.05, 0.32, 0.3]];
             for (const [x, y, z, r] of blobs) { const b = new THREE.Mesh(new THREE.SphereGeometry(r, 11, 10), canopyMat); b.position.set(x, y, z); this.flower.add(b); }
             this.flower.position.set(0, 2.0, 0); this.bodyGroup.add(this.flower);
             // Lashing vine arms (VINE_1/2).
@@ -418,7 +426,7 @@
                 return g;
             };
             this.vine1 = mkThornVine(-1); this.vine2 = mkThornVine(1);
-            this.roots = this._buildRoots(0x4a3a22);
+            this.roots = this._buildRoots(0x4a3a22); this.roots.position.y = 0.32;   // up under the round body
             this._wirePlant([upper, lower]);
         }
 
@@ -641,6 +649,7 @@
             this.cap.position.y = 1.18; this.bodyGroup.add(this.cap);
             // Erupting spore cloud (SPORE_SACS): puff-spheres above the cap.
             this.spores = new THREE.Group();
+            this.spores.userData.float = true;   // an erupting cloud, loose by design
             for (let i = 0; i < 12; i++) { const a = this.idRand() * Math.PI * 2, rr = this.idRand() * 0.5; const puff = new THREE.Mesh(new THREE.SphereGeometry(0.05 + this.idRand() * 0.07, 7, 7), this._mat(0xcfe27a, 0.55, 0.4)); puff.position.set(Math.cos(a) * rr, 1.5 + this.idRand() * 0.5, Math.sin(a) * rr); this.spores.add(puff); }
             this.bodyGroup.add(this.spores);
             this.roots = this._buildRoots(p.bodyColor);
@@ -669,7 +678,7 @@
             const vineMat = this._mat(0x5a7a3a, 1, 0.85);
             this.vine1 = this._gnarledLimb(-1, vineMat, 1.05, 1.0); this.vine2 = this._gnarledLimb(1, vineMat, 1.05, 1.0);
             for (const v of [this.vine1, this.vine2]) for (let i = 0; i < 3; i++) { const claw = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.22, 4), this._mat(0x3a2a18, 1, 0.5)); claw.position.set(v._side * (0.34 + i * 0.04), 1.0, (i - 1) * 0.07); claw.rotation.z = v._side * 1.3; v.add(claw); }
-            this.roots = this._buildRoots(p.bodyColor);
+            this.roots = this._buildRoots(p.bodyColor); this.roots.position.y = 0.32;   // up under the round body
             this._wirePlant([snout, nose]);
         }
 
@@ -749,11 +758,12 @@
             this.bodyGroup.add(this.trunk);
             // Hovering hallucinatory dust motes (small glowing emissive specks).
             this._psiDust = new THREE.Group();
+            this._psiDust.userData.float = true;   // hovering motes by design
             for (let i = 0; i < 14; i++) { const a = this.idRand() * Math.PI * 2, rr = 0.4 + this.idRand() * 0.5, y = 0.5 + this.idRand() * 1.6; const mote = new THREE.Mesh(new THREE.SphereGeometry(0.03 + this.idRand() * 0.025, 6, 6), this._mat(0xd8a8ff, 0.7, 0.2, 0xae6aff)); mote.position.set(Math.cos(a) * rr, y, Math.sin(a) * rr); mote._a = a; mote._rr = rr; mote._yb = y; this._psiDust.add(mote); }
             this.bodyGroup.add(this._psiDust);
             // Crown of glowing psychic tendrils / will-o-wisp blooms (CROWN).
             this.crown = new THREE.Group();
-            for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const tendril = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.03, 0.4, 5), bog); tendril.position.set(Math.cos(a) * 0.14, 0.1, Math.sin(a) * 0.14); tendril.rotation.set(Math.cos(a) * 0.7, 0, -Math.sin(a) * 0.7); this.crown.add(tendril); const wisp = new THREE.Mesh(new THREE.SphereGeometry(0.08, 9, 9), this._mat(0xc89aff, 0.8, 0.2, p.accent)); wisp.position.set(Math.cos(a) * 0.24, 0.34, Math.sin(a) * 0.24); this.crown.add(wisp); }
+            for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const tendril = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.03, 0.4, 5), bog); tendril.position.set(Math.cos(a) * 0.14, 0.1, Math.sin(a) * 0.14); tendril.rotation.set(Math.sin(a) * 0.7, 0, -Math.cos(a) * 0.7); this.crown.add(tendril); const wisp = new THREE.Mesh(new THREE.SphereGeometry(0.08, 9, 9), this._mat(0xc89aff, 0.8, 0.2, p.accent)); wisp.position.set(Math.cos(a) * 0.29, 0.3, Math.sin(a) * 0.29); this.crown.add(wisp); }
             this.crown.position.set(0.1, 1.85, 0); this.bodyGroup.add(this.crown);
             // Floating warped branch-arms wreathed in psi-light (BRANCH_1/2).
             this.branch1 = this._gnarledLimb(-1, bog, 1.1, 0.9); this.branch2 = this._gnarledLimb(1, bog, 1.1, 0.9);
@@ -888,6 +898,7 @@
             this.cap.position.y = 1.9; this.bodyGroup.add(this.cap);
             // Drifting luminous SPORE clouds floating around the cap.
             this.spores = new THREE.Group();
+            this.spores.userData.float = true;   // drifting spore cloud by design
             for (let i = 0; i < 16; i++) { const a = this.idRand() * Math.PI * 2, rr = 0.4 + this.idRand() * 0.6, y = 1.5 + this.idRand() * 0.9; const sp = new THREE.Mesh(new THREE.SphereGeometry(0.04 + this.idRand() * 0.05, 7, 7), this._mat(0xc8fff0, 0.6, 0.2, p.accent)); sp.position.set(Math.cos(a) * rr, y, Math.sin(a) * rr); sp._a = a; sp._rr = rr; sp._yb = y; this.spores.add(sp); }
             this.bodyGroup.add(this.spores);
             this.roots = this._buildRoots(0x4a6a6a);
@@ -913,6 +924,7 @@
             this.cap.position.y = 1.95; this.bodyGroup.add(this.cap);
             // Raining acidic SPORE droplets falling from the cap brim.
             this.spores = new THREE.Group();
+            this.spores.userData.float = true;   // falling droplets by design
             for (let i = 0; i < 16; i++) { const a = this.idRand() * Math.PI * 2, rr = 0.6 + this.idRand() * 0.5; const drop = new THREE.Mesh(new THREE.SphereGeometry(0.04, 7, 7), this._mat(p.accent, 0.7, 0.2, p.accent)); drop.scale.y = 2.0; drop.position.set(Math.cos(a) * rr, 0.6 + this.idRand() * 1.0, Math.sin(a) * rr); drop._fall = this.idRand(); drop._x = Math.cos(a) * rr; drop._z = Math.sin(a) * rr; this.spores.add(drop); }
             this.bodyGroup.add(this.spores);
             this.roots = this._buildRoots(0x201828);
@@ -950,6 +962,7 @@
             this.cap.position.y = 1.55; this.bodyGroup.add(this.cap);
             // Confetti-burst SPORE_SACS popping above (celebration energy).
             this.spores = new THREE.Group();
+            this.spores.userData.float = true;   // a confetti burst, loose by design
             const colours = [0xff4a4a, 0x4affa0, 0x4a8aff, 0xffe24a, p.accent];
             for (let i = 0; i < 12; i++) { const a = this.idRand() * Math.PI * 2, rr = this.idRand() * 0.5; const bit = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.01), this._mat(colours[i % colours.length], 0.9, 0.3)); bit.position.set(Math.cos(a) * rr, 1.9 + this.idRand() * 0.4, Math.sin(a) * rr); bit.rotation.set(this.idRand() * 3, this.idRand() * 3, this.idRand() * 3); this.spores.add(bit); }
             this.bodyGroup.add(this.spores);
@@ -975,7 +988,7 @@
             this.cap = new THREE.Group();
             const fan = new THREE.Mesh(new THREE.SphereGeometry(0.62, 16, 8, 0, Math.PI * 2, 0, Math.PI * 0.32), capMat); fan.scale.set(1.4, 0.4, 1.1); this.cap.add(fan);
             // Glowing gill-ridges fanning out underneath.
-            for (let i = 0; i < 11; i++) { const a = -1.0 + (i / 10) * 2.0; const gill = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.015, 0.015), this._mat(p.accent, 0.85, 0.2, p.accent)); gill.position.set(Math.sin(a) * 0.34, -0.04, 0.36 - Math.abs(a) * 0.05); gill.rotation.y = -a * 1.2; this.cap.add(gill); }
+            for (let i = 0; i < 11; i++) { const a = -1.0 + (i / 10) * 2.0; const gill = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.015, 0.015), this._mat(p.accent, 0.85, 0.2, p.accent)); gill.position.set(Math.sin(a) * 0.34, 0.17, 0.36 - Math.abs(a) * 0.05); gill.rotation.y = -a * 1.2; this.cap.add(gill); }
             this.cap.position.set(0, 0.5, 0.18); this.cap.rotation.x = -0.35; this.bodyGroup.add(this.cap);
             // Crawling ROOTS - long flat tendrils splaying out across the ground.
             this.roots = new THREE.Group();
@@ -986,12 +999,108 @@
                 this.roots.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 14, 0.035, 5, false), rootMat));
             }
             this.bodyGroup.add(this.roots);
-            // Glowing SPORE_SACS - luminous pods clustered on the creeping roots.
+            // Glowing SPORE_SACS - luminous pods seated on the creeping roots.
             this.spores = new THREE.Group();
-            for (let i = 0; i < 9; i++) { const a = this.idRand() * Math.PI * 2, rr = 0.3 + this.idRand() * 0.55; const pod = new THREE.Mesh(new THREE.SphereGeometry(0.07 + this.idRand() * 0.04, 9, 9), this._mat(0xc8fff0, 0.9, 0.2, p.accent)); pod.position.set(Math.cos(a) * rr, 0.08 + this.idRand() * 0.04, Math.sin(a) * rr); pod._yb = pod.position.y; this.spores.add(pod); }
+            for (let i = 0; i < 9; i++) { const a = ((i % 6) / 6) * Math.PI * 2 + (this.idRand() - 0.5) * 0.12, rr = 0.3 + this.idRand() * 0.5; const pod = new THREE.Mesh(new THREE.SphereGeometry(0.07 + this.idRand() * 0.04, 9, 9), this._mat(0xc8fff0, 0.9, 0.2, p.accent)); pod.position.set(Math.cos(a) * rr, 0.07, Math.sin(a) * rr); pod._yb = pod.position.y; this.spores.add(pod); }
             this.bodyGroup.add(this.spores);
             this._wireMushroom();
             this.swayTop = this.cap;
+        }
+
+        // ── Spore Puff: a squat puffball that wheezes itchy spores ──────────
+        // CAP is the warty dome with the coughing pore (MAW) on top, STALK the
+        // wrinkled base on two stubby feet, SPORE_SACS three bud-puffballs
+        // growing off its side, ROOTS the mycelium threads on the floor.
+        _buildSporePuff() {
+            const p = this.profile;
+            const skin = this._skinMat(p.bodyColor, 0.9);
+            const wart = this._mat(p.accent, 1, 0.8);
+            this.stalk = new THREE.Group(); this.bodyGroup.add(this.stalk);
+            const base = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.36, 0.2, 9), skin); base.position.y = 0.14; this.stalk.add(base);
+            for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2, fold = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.16, 0.06), skin); fold.position.set(Math.cos(a) * 0.33, 0.13, Math.sin(a) * 0.33); fold.rotation.y = -a; this.stalk.add(fold); }
+            for (const s of [-1, 1]) { const foot = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 4), skin); foot.scale.set(1, 0.55, 1.4); foot.position.set(s * 0.15, 0.04, 0.16); this.stalk.add(foot); }
+            this.cap = new THREE.Group(); this.cap.position.y = 0.42; this.bodyGroup.add(this.cap);
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.38, 10, 7), skin); dome.scale.set(1, 0.82, 1); this.cap.add(dome);
+            for (let i = 0; i < 16; i++) {
+                const a = this.idRand() * Math.PI * 2, e = 0.25 + this.idRand() * 1.0;
+                const d = V(Math.sin(e) * Math.cos(a), Math.cos(e), Math.sin(e) * Math.sin(a));
+                if (d.z > 0.55 && d.y < 0.6) continue;                         // keep the face clear
+                const w = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.06, 4), wart); w.position.set(d.x * 0.37, d.y * 0.31, d.z * 0.37); w.quaternion.setFromUnitVectors(V(0, 1, 0), d); this.cap.add(w);
+            }
+            // Sleepy half-lidded eyes and a little round coughing mouth.
+            for (const s of [-1, 1]) {
+                const e = this._eye(this.cap, s * 0.12, 0.03, 0.355, 0.06, 0x1a1a1a);
+                const lid = new THREE.Mesh(new THREE.SphereGeometry(0.066, 7, 4, 0, Math.PI * 2, 0, Math.PI / 2), skin); lid.position.copy(e.position); lid.rotation.x = 0.25; this.cap.add(lid);
+            }
+            const cough = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.014, 4, 8), this._mat(0x5a3a2a, 1, 0.7)); cough.position.set(0, -0.09, 0.355); this.cap.add(cough);
+            // MAW: the pore on top, ringed and dark, puffing a cloud.
+            this.maw = new THREE.Group(); this.maw.position.y = 0.3; this.cap.add(this.maw);
+            const lip = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.03, 4, 9), skin); lip.rotation.x = Math.PI / 2; this.maw.add(lip);
+            const hole = new THREE.Mesh(new THREE.CircleGeometry(0.06, 8), this._mat(0x2a1a10, 1, 0.9)); hole.rotation.x = -Math.PI / 2; hole.position.y = 0.01; this.maw.add(hole);
+            this._puff = new THREE.Group(); this._puff.userData.float = true; this._puff.position.set(0, 0.78, 0); this.bodyGroup.add(this._puff);
+            for (let i = 0; i < 7; i++) { const c = new THREE.Mesh(new THREE.IcosahedronGeometry(0.05 + this.idRand() * 0.05, 0), this._mat(0xe8e0b0, 0.5, 0.9)); c.position.set((this.idRand() - 0.5) * 0.3, this.idRand() * 0.35, (this.idRand() - 0.5) * 0.3); this._puff.add(c); }
+            // SPORE_SACS: three small bud puffballs budding from the left flank.
+            this.spores = new THREE.Group(); this.bodyGroup.add(this.spores);
+            for (const [x, y, z, r] of [[-0.36, 0.22, 0.05, 0.1], [-0.33, 0.36, -0.12, 0.075], [-0.4, 0.12, -0.1, 0.06]]) { const b = new THREE.Mesh(new THREE.SphereGeometry(r, 7, 5), skin); b.position.set(x, y, z); this.spores.add(b); }
+            // ROOTS: mycelium threads spreading over the ground.
+            this.roots = new THREE.Group(); this.bodyGroup.add(this.roots);
+            for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2, c = new THREE.CatmullRomCurve3([V(Math.cos(a) * 0.3, 0.05, Math.sin(a) * 0.3), V(Math.cos(a) * 0.5, 0.03, Math.sin(a) * 0.5), V(Math.cos(a) * 0.7, 0.015, Math.sin(a) * 0.7)]); this.roots.add(new THREE.Mesh(new THREE.TubeGeometry(c, 6, 0.015, 3, false), this._mat(0xf0ecd8, 1, 0.9))); }
+            this._wireMushroom([this._puff]);
+            this._partMeshMap.MAW = this.maw;
+            this._cascadeRules.push({ gone: ['MAW'], hide: [this.maw, this._puff] });
+        }
+
+        // ── Myconid Sprout: a solemn little morel person ───────────────────
+        // CAP is a tall honeycombed morel cone; STALK the slim pale body with
+        // long hanging arms, one holding a glow-mushroom lantern; ROOTS the
+        // flared root skirt it stands on; SPORE_SACS a puff cluster on the
+        // shoulder; MAW a beard of gills it speaks through in spore clouds.
+        _buildMyconidSprout() {
+            const p = this.profile;
+            const pale = this._skinMat(0xe8dcc0, 0.8);
+            const morel = this._mat(p.bodyColor, 1, 0.9);
+            const pit = this._mat(0x2a1a0e, 1, 0.9);
+            this.stalk = new THREE.Group(); this.bodyGroup.add(this.stalk);
+            const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.55, 3, 7), pale); body.position.y = 0.6; this.stalk.add(body);
+            // Long hanging arms with three-finger hands.
+            this._arms = [];
+            for (const s of [-1, 1]) {
+                const g = new THREE.Group(); g.position.set(s * 0.13, 0.9, 0); this.stalk.add(g);
+                const hand = V(s * 0.16, -0.48, 0.06);
+                this.addStrut(g, pale, V(0, 0, 0), hand, 0.04, 0.03, 5);
+                for (let k = 0; k < 3; k++) this.addStrut(g, pale, hand, V(hand.x + s * 0.02 + (k - 1) * 0.025, hand.y - 0.08, hand.z + 0.02), 0.014, 0.008, 3);
+                g._side = s; this._arms.push(g);
+            }
+            // The lantern: a stick in the right hand with a glowing mushroom bulb.
+            const lantern = new THREE.Group(); lantern.position.set(0.16, -0.48, 0.06); this._arms[1].add(lantern);
+            this.addStrut(lantern, this._mat(0x5a3a1e, 1, 0.9), V(0, -0.12, 0), V(0, 0.28, 0.05), 0.014, 0.014, 4);
+            const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.07, 7, 5), this._mat(p.accent, 0.9, 0.3, p.accent)); bulb.position.set(0, 0.32, 0.055); lantern.add(bulb); this._lanternBulb = bulb;
+            const lcap = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.07, 6), morel); lcap.position.set(0, 0.39, 0.055); lantern.add(lcap);
+            // Solemn slit eyes under the cap brim.
+            for (const s of [-1, 1]) { const e = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.012, 0.02), this._mat(0x1a120a, 1, 0.6)); e.position.set(s * 0.06, 0.92, 0.145); e.rotation.z = s * 0.15; this.stalk.add(e); }
+            // MAW: a beard of gill plates under the face.
+            this.maw = new THREE.Group(); this.maw.position.set(0, 0.88, 0.12); this.bodyGroup.add(this.maw);
+            for (let k = 0; k < 7; k++) { const g = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.1, 0.05), this._mat(0xc8b090, 1, 0.8)); g.position.set((k - 3) * 0.022, -0.04 - Math.abs(k - 3) * 0.008, 0.02); g.rotation.z = (k - 3) * 0.12; this.maw.add(g); }
+            this._breath = new THREE.Group(); this._breath.userData.float = true; this._breath.position.set(0, 0.82, 0.32); this.bodyGroup.add(this._breath);
+            for (let i = 0; i < 5; i++) { const c = new THREE.Mesh(new THREE.IcosahedronGeometry(0.03 + i * 0.012, 0), this._mat(p.accent, 0.45, 0.8)); c.position.set((i % 2 ? 0.03 : -0.03), i * 0.03, i * 0.07); this._breath.add(c); }
+            // CAP: the tall morel cone, every face pitted.
+            this.cap = new THREE.Group(); this.cap.position.y = 1.04; this.bodyGroup.add(this.cap);
+            const cone = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.55, 7, 3), morel); cone.position.y = 0.24; this.cap.add(cone);
+            const brim = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 4, 9), morel); brim.rotation.x = Math.PI / 2; brim.position.y = 0.0; this.cap.add(brim);
+            for (let row = 0; row < 4; row++) for (let k = 0; k < 7; k++) {
+                const a = (k / 7) * Math.PI * 2 + row * 0.45, y = 0.06 + row * 0.11, r = 0.24 * (1 - (y + 0.03) / 0.55) + 0.005;
+                const d = new THREE.Mesh(new THREE.SphereGeometry(0.035 - row * 0.005, 4, 3), pit); d.position.set(Math.cos(a) * r, y, Math.sin(a) * r); d.scale.set(1, 1.3, 1); this.cap.add(d);
+            }
+            // SPORE_SACS: a puff cluster on the left shoulder.
+            this.spores = new THREE.Group(); this.bodyGroup.add(this.spores);
+            for (const [x, y, z, r] of [[-0.15, 0.95, -0.03, 0.06], [-0.2, 0.9, 0.04, 0.045], [-0.12, 1.0, -0.08, 0.04]]) { const b = new THREE.Mesh(new THREE.SphereGeometry(r, 6, 4), this._mat(0xd8d0a0, 1, 0.8)); b.position.set(x, y, z); this.spores.add(b); }
+            // ROOTS: the root skirt that stands in for legs.
+            this.roots = new THREE.Group(); this.bodyGroup.add(this.roots);
+            for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2; this.addStrut(this.roots, this._mat(0xb8a078, 1, 0.9), V(Math.cos(a) * 0.06, 0.36, Math.sin(a) * 0.06), V(Math.cos(a) * 0.26, 0.0, Math.sin(a) * 0.26), 0.04, 0.015, 4); }
+            this._wireMushroom([this.maw, this._breath]);
+            this._partMeshMap.MAW = this.maw;
+            this._cascadeRules.push({ gone: ['MAW'], hide: [this.maw, this._breath] });
+            this.swayTop = null;
         }
 
         // ── Crying Tree: ancient weeping tree, many sorrowful faces in the bark
@@ -1051,7 +1160,7 @@
             // Buried leafy CROWN - a half-sunken cluster of foliage at ground level.
             this.crown = new THREE.Group();
             const crownMat = this._mat(p.accent, 1, 0.85);
-            const blobs = [[0, 0, 0, 0.42], [-0.34, 0.06, 0.12, 0.32], [0.34, 0.06, -0.1, 0.32], [0.1, -0.06, 0.3, 0.28], [-0.12, -0.02, -0.28, 0.28]];
+            const blobs = [[0, 0, 0, 0.42], [-0.34, 0.06, 0.0, 0.32], [0.34, 0.06, 0.0, 0.32], [0.1, -0.06, 0.3, 0.28], [-0.12, -0.02, -0.28, 0.28]];
             for (const [x, y, z, r] of blobs) { const b = new THREE.Mesh(new THREE.SphereGeometry(r, 11, 8, 0, Math.PI * 2, 0, Math.PI * 0.7), crownMat); b.position.set(x, y, z); this.crown.add(b); }
             // A dark soil mound ringing the buried crown.
             const mound = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.62, 0.18, 16), this._mat(0x2a1e12, 1, 1.0)); mound.position.y = 0.02; this.crown.add(mound);
@@ -1220,6 +1329,21 @@
                     if (v2 && v2.visible) v2.rotation.z = (fast ? -Math.sin(t * 10 + 0.7) * 0.7 : -Math.sin(t * 1.6 + 0.5) * 0.18);
                     break;
                 }
+                case 'lv_sporepuff': {
+                    // A wheezing squash-and-stretch; the pore coughs a cloud on attack.
+                    const wheeze = Math.abs(Math.sin(t * (fast ? 7 : 1.6)));
+                    if (this.cap && this.cap.visible) this.cap.scale.set(1 + wheeze * 0.05, 1 - wheeze * 0.06, 1 + wheeze * 0.05);
+                    if (this._puff) { const g = fast ? 0.7 + wheeze * 0.9 : 0.4 + wheeze * 0.3; this._puff.scale.setScalar(g); this._puff.rotation.y = t * 0.5; }
+                    break;
+                }
+                case 'lv_myconidsprout': {
+                    // Slow and solemn; arms sway, the lantern glows, it speaks in spores.
+                    if (this._arms) this._arms.forEach(a => { a.rotation.x = fast ? -Math.max(0, Math.sin(t * 8)) * 0.9 : Math.sin(t * 1.1 + a._side) * 0.08; });
+                    if (this._lanternBulb && this._lanternBulb.material) this._lanternBulb.material.emissiveIntensity = 0.5 + Math.abs(Math.sin(t * 1.4)) * 0.6;
+                    if (this._breath) { const s = 0.6 + Math.abs(Math.sin(t * (fast ? 6 : 1.2))) * 0.6; this._breath.scale.setScalar(s); }
+                    if (this.cap && this.cap.visible) this.cap.rotation.z = Math.sin(t * 0.9) * 0.04;
+                    break;
+                }
                 case 'backwardstree': {
                     if (this.roots && this.roots.visible) this.roots.rotation.z = (fast ? Math.sin(t * 7) * 0.12 : Math.sin(t * 1.3) * 0.05);
                     const v1 = this.branch1, v2 = this.branch2;
@@ -1273,6 +1397,8 @@
     reg('cryingtree',          { aliases: ['cryingtree'],          scale: S.cryingtree.scale,          weapon: 0, create: make });
     reg('backwardstree',       { aliases: ['backwardstree'],       scale: S.backwardstree.scale,       weapon: 0, create: make });
     reg('xylomantiflorous',    { aliases: ['xylomantiflorous'],    scale: S.xylomantiflorous.scale,    weapon: 0, create: make });
+    reg('lv_sporepuff',        { aliases: ['lv_sporepuff'],        scale: S.lv_sporepuff.scale,        weapon: 0, create: make });
+    reg('lv_myconidsprout',    { aliases: ['lv_myconidsprout'],    scale: S.lv_myconidsprout.scale,    weapon: 0, create: make });
 
     const NAMED = {
         elderwoodguardian: ["Elderwood Guardian"],
@@ -1296,7 +1422,9 @@
         creepingluminspore:  ["Creeping Luminspore"],
         cryingtree:          ["Crying Tree"],
         backwardstree:       ["Backwards Tree"],
-        xylomantiflorous:    ["Xylomanti Florous "]
+        xylomantiflorous:    ["Xylomanti Florous "],
+        lv_sporepuff:        ["Spore Puff"],
+        lv_myconidsprout:    ["Myconid Sprout"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

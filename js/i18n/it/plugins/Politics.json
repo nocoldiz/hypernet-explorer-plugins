@@ -149,17 +149,17 @@
  },
  "election": {
   "conclave": "Conclave",
-  "plenum": "Plenum del Partito",
-  "shareholder": "Assemblea Generale Annuale",
+  "plenum": "Plenum del partito",
+  "shareholder": "Assemblea generale annuale",
   "moot": "Da Moot",
   "tournament": "Torneo di Ascensione",
   "succession": "Successione",
   "examination": "Grande Esame",
-  "parliamentary": "Elezioni Generali"
+  "parliamentary": "Elezioni generali"
  },
  "office": {
   "mayor": "Sindaco",
-  "guardCaptain": "Capitano delle Guardie",
+  "guardCaptain": "Capitano delle guardie",
   "taxCollector": "Esattore",
   "highPriest": "Sommo Sacerdote"
  },
@@ -187,47 +187,47 @@
   "draft": "la leva"
  },
  "tag": {
-  "collectivist": "collettivista",
-  "freeMarketeer": "liberista",
-  "libertarian": "libertario",
-  "authoritarian": "autoritario",
-  "progressive": "progressista",
-  "traditionalist": "tradizionalista",
-  "pacifist": "pacifista",
-  "militarist": "militarista",
-  "rationalist": "razionalista",
-  "mystic": "mistico",
-  "moderate": "moderato"
+  "collectivist": "collettivismo",
+  "freeMarketeer": "liberismo",
+  "libertarian": "libertarismo",
+  "authoritarian": "autoritarismo",
+  "progressive": "progressismo",
+  "traditionalist": "tradizionalismo",
+  "pacifist": "pacifismo",
+  "militarist": "militarismo",
+  "rationalist": "razionalismo",
+  "mystic": "misticismo",
+  "moderate": "moderatismo"
  },
  "fallback": {
   "nobody": "nessuno",
   "noOne": "nessuno",
-  "oldGuard": "vecchia guardia",
-  "partsUnknown": "luoghi ignoti",
+  "oldGuard": "la vecchia guardia",
+  "partsUnknown": "ignota",
   "spoiledBallot": "scheda nulla",
   "establishment": "establishment"
  },
  "event": {
-  "founding": "{power} registrata come iperpotenza ({govType}; {n} territori membri).",
+  "founding": "{power}: nuova iperpotenza registrata ({govType}; {n} territori membri).",
   "election": "{election}: {winner} prevale.",
   "electionWithHead": "{election}: {winner} prevale; {head} è {title}.",
-  "scandal": "{name} travolto da uno scandalo (#{n}).",
-  "edict": "Il governo di {title} corregge {policy}: {before} → {after}.",
-  "protest": "Proteste di massa contro {govType} attraversano {place}.",
-  "riot": "Scoppiano tumulti; {legislature} ordina la repressione.",
-  "festival": "Una grande festa di stato solleva gli animi in tutta {power}.",
+  "scandal": "Scandalo per {name} (#{n}).",
+  "edict": "Decreto ({title}) per {policy}: {before} → {after}.",
+  "protest": "Proteste di massa contro il governo ({govType}) attraversano {place}.",
+  "riot": "Scoppiano tumulti; l'aula ({legislature}) ordina la repressione.",
+  "festival": "{power}: una grande festa di stato solleva gli animi in tutto il paese.",
   "referendum": "Un referendum nazionale sposta {policy} di {delta}.",
-  "coup": "COLPO DI STATO: {name} prende il potere in {power}; {elections} sospese.",
-  "coupFailed": "Un tentativo di colpo di stato contro {title} viene schiacciato.",
-  "revolution": "RIVOLUZIONE: {govType} di {power} viene rovesciata; un governo provvisorio indice {election} d'emergenza.",
-  "assassination": "{name}, {title} di {power}, viene assassinato.",
+  "coup": "COLPO DI STATO: {name} prende il potere in {power}; sospesa ogni votazione ({elections}).",
+  "coupFailed": "Un tentativo di colpo di stato contro chi siede al vertice ({title}) viene schiacciato.",
+  "revolution": "RIVOLUZIONE: il governo di {power} ({govType}) viene rovesciato; un governo provvisorio convoca d'urgenza il voto ({election}).",
+  "assassination": "{name}, {title} di {power}, cade vittima di un attentato.",
   "politicianDies": "{name} muore a {age} anni.",
-  "headDies": "{name} muore a {age} anni. {power} piange il suo {title}.",
-  "diagnosed": "A {name} è stata diagnosticata {disease}. I medici di {power} non danno speranza di guarigione.",
-  "diesOfIllness": "{name} muore di {disease}. {power} piange il suo {title}.",
+  "headDies": "{name} muore a {age} anni. {power} è in lutto per la sua guida ({title}).",
+  "diagnosed": "Diagnosi per {name}: {disease}. I medici di {power} non danno speranza di guarigione.",
+  "diesOfIllness": "{name} muore di {disease}. {power} è in lutto per la sua guida ({title}).",
   "hordeFlight": "L'Orda dei Goblin prende {country}; {n} dei suoi abitanti si preparano a fuggire.",
-  "hordeLiberation": "{country} è libero dall'Orda dei Goblin; {n} profughi possono rimettersi in cammino verso casa.",
-  "candidateWins": "{name} ha vinto le elezioni da outsider con il {share}% ed è diventato {title}."
+  "hordeLiberation": "Liberazione: {country} esce dal giogo dell'Orda dei Goblin; {n} profughi possono rimettersi in cammino verso casa.",
+  "candidateWins": "{name} vince le elezioni da outsider ({share}% dei voti) e assume la carica di {title}."
  },
  "note": {
   "coalition": "Coalizione formata con {party}.",
@@ -235,46 +235,46 @@
    "one": "Deciso dopo una votazione dei {electors}.",
    "other": "Deciso dopo {count} votazioni dei {electors}."
   },
-  "purged": "{party} è stato epurato da {legislature}.",
+  "purged": "Epurazione in aula ({legislature}): fuori {party}.",
   "officialResults": "Risultati ufficiali. Sentimenti reali non registrati.",
   "oneCreditOneVote": "Un credito, un voto.",
-  "mootLoser": "{name} ha perso da Moot ed è stato dato in pasto ai lupomaiali.",
+  "mootLoser": "{name} ha perso da Moot: in pasto ai lupomaiali.",
   "biggestWins": "Vince il più grosso e il più rumoroso.",
   "ascension": "Deciso da torneo di ascensione davanti alla Corte Celeste.",
   "successionWar": "La successione è degenerata in guerra aperta fra gli eredi.",
-  "successionCasualty": "{name} non è sopravvissuto alla guerra di successione.",
+  "successionCasualty": "La guerra di successione si è portata via {name}.",
   "palaceIntrigue": "Risolto per intrigo di palazzo nel Divano.",
   "examinationScore": "Punteggio {score}/160 al Grande Esame."
  },
  "identity": {
   "sympathized": "Ha iniziato a simpatizzare per {party}.",
-  "awakened": "Si è formato opinioni politiche.",
+  "awakened": "Ha maturato opinioni politiche.",
   "conversion": "Ha lasciato {from} per {to}.",
   "radicalized": "Ha irrigidito le proprie posizioni mentre cresceva il malcontento.",
-  "grudge": "Amareggiato dalla vittoria di {winner} alle {election}.",
-  "electedMayor": "Eletto Sindaco di {group} ({votes}/{total} voti).",
-  "appointed": "Nominato {office} di {group}.",
-  "campaigned": "Conquistato al {party} da una campagna (stava con {from}).",
-  "smeared": "Ha perso fiducia nel {party} dopo una campagna diffamatoria.",
-  "smearedOut": "Ha lasciato il {party}, disgustato da quello che dicevano i giornali.",
-  "driftedTo": "Si è allontanato da {from} ed è passato a {to}.",
-  "driftedOut": "Si è allontanato da {from} e ora non appartiene a nessun partito.",
-  "joinedBy": "È entrato in {party}, convinto da {by} (stava con {from}).",
-  "resignedMayor": "Si è dimesso da Sindaco di {group} in favore di {successor}.",
-  "succeededMayor": "È diventato Sindaco di {group}."
+  "grudge": "Mal digerisce la vittoria di {winner} ({election}).",
+  "electedMayor": "Elezione a Sindaco di {group} ({votes}/{total} voti).",
+  "appointed": "Nomina a {office} di {group}.",
+  "campaigned": "Passa a {party} dopo una campagna (stava con {from}).",
+  "smeared": "Ha perso fiducia in {party} dopo una campagna diffamatoria.",
+  "smearedOut": "Ha lasciato {party}: troppo disgusto per quello che dicevano i giornali.",
+  "driftedTo": "Ha preso le distanze da {from} e ora sta con {to}.",
+  "driftedOut": "Ha preso le distanze da {from} e ora non appartiene a nessun partito.",
+  "joinedBy": "Ha aderito a {party} su invito di {by} (stava con {from}).",
+  "resignedMayor": "Ha lasciato la carica di Sindaco di {group} in favore di {successor}.",
+  "succeededMayor": "Ha assunto la carica di Sindaco di {group}."
  },
  "story": {
-  "electedMayor": "eletto Sindaco di {group}",
-  "appointed": "nominato {office} di {group}",
-  "resignedMayor": "si è dimesso da Sindaco di {group}"
+  "electedMayor": "elezione a Sindaco di {group}",
+  "appointed": "nomina a {office} di {group}",
+  "resignedMayor": "dimissioni da Sindaco di {group}"
  },
  "death": {
-  "diedInWorld": "morto",
-  "wolfpigs": "dato in pasto ai lupomaiali dopo aver perso da Moot",
-  "succession": "ucciso nella guerra di successione",
-  "assassinated": "assassinato",
-  "naturalCauses": "morto per cause naturali a {age} anni",
-  "illness": "morto di {disease}"
+  "diedInWorld": "decesso",
+  "wolfpigs": "in pasto ai lupomaiali dopo aver perso da Moot",
+  "succession": "vittima della guerra di successione",
+  "assassinated": "assassinio",
+  "naturalCauses": "cause naturali, a {age} anni",
+  "illness": "{disease}"
  },
  "report": {
   "noPower": "Nessuna iperpotenza di nome \"{power}\".",
@@ -283,7 +283,7 @@
   "head": "{title}: {value}",
   "headValue": "{name} (consenso {approval}%)",
   "vacant": "vacante",
-  "ruling": "{partyKind} al governo: {party}{partners}",
+  "ruling": "Al governo ({partyKind}): {party}{partners}",
   "coalitionPartners": {
    "one": "(+1 alleato di coalizione)",
    "other": "(+{n} alleati di coalizione)"
@@ -292,35 +292,35 @@
   "meters2": "Malcontento {unrest}  Economia  {economy}",
   "policies": "Politiche: tasse {tax}% · censura {censorship} · leva {conscription} · welfare {welfare}{curfew}",
   "curfew": "COPRIFUOCO",
-  "lastElection": "Ultime {election}: {date}, {winner} ({share}%).",
-  "nextElection": "Prossime {election}: {date}.",
+  "lastElection": "Ultima votazione ({election}): {date}, {winner} ({share}%).",
+  "nextElection": "Prossima votazione ({election}): {date}.",
   "recentEvents": "Eventi recenti:",
   "electionHeader": "=== {power}, storia: {election} ===",
-  "next": "Prossime: {date}",
+  "next": "Prossima: {date}",
   "electionRow": "{date}{snap}, vincitore: {winner}{turnout}",
-  "snap": "(anticipate)",
+  "snap": "(voto anticipato)",
   "turnout": ", affluenza {turnout}%",
   "resultRow": "   {share}%{seats}, {name}",
   "seats": {
    "one": "(1 seggio)",
    "other": "({n} seggi)"
   },
-  "citizen": "{name}, cittadino di {country} ({power}).",
+  "citizen": "{name}, cittadinanza: {country} ({power}).",
   "sympathizes": "Simpatizza per {party}.",
   "leanings": "Orientamento: {tags}.",
   "engagement": "Impegno politico: {engagement}/100{note}.",
-  "apathetic": "(apatico)",
-  "activist": "(attivista)",
+  "apathetic": "(apatia)",
+  "activist": "(attivismo)",
   "holdsOffice": "Ricopre la carica di {office} di {group}.",
   "lastVote": "Ultimo voto: {party} ({date}).",
   "grudge": "Serba rancore verso {party}."
  },
  "officeState": {
   "disgraced": "in disgrazia",
-  "deposed": "deposto"
+  "deposed": "nessuna (deposizione)"
  },
  "accession": {
-  "elected": "eletto",
+  "elected": "elezione",
   "coup": "colpo di stato"
  },
  "role": {
@@ -332,7 +332,7 @@
  "life": {
   "tookOffice": "Ha assunto l'incarico di {office} di {polity}.",
   "leftOffice": "Ha lasciato l'incarico di {office} di {polity}.",
-  "diedInOffice": "Morto in carica: {cause}."
+  "diedInOffice": "Morte in carica: {cause}."
  },
  "menu": {
   "title": "Politica",
@@ -365,13 +365,13 @@
    "power": "Iperpotenza"
   },
   "empty": {
-   "noPolitics": "In questo mondo nessuno governa nessuno: nessuna carica è ricoperta e nessun voto è espresso.",
-   "noPlace": "Il gruppo si trova in un luogo che nessun governo ha mai mappato.",
-   "noLocal": "Questo luogo non ha un municipio suo.",
-   "noNation": "{country} non ha un governo proprio di cui qualcuno qui abbia sentito parlare.",
-   "noCountry": "Nessuna nazione rivendica il terreno sotto il gruppo.",
-   "noPower": "Nessuna iperpotenza controlla questo territorio.",
-   "noElected": "Nessuno ricopre una carica su questo luogo.",
+   "noPolitics": "Nessun governo in questo mondo.",
+   "noPlace": "Nessun governo copre questo luogo.",
+   "noLocal": "Nessun municipio qui.",
+   "noNation": "{country} non ha un governo noto.",
+   "noCountry": "Nessuna nazione rivendica questo luogo.",
+   "noPower": "Nessuna iperpotenza controlla questo luogo.",
+   "noElected": "Nessun titolare di cariche qui.",
    "noSelection": "Nessuna selezione.",
    "noParties": "Nessun partito siede in quest'aula.",
    "noElections": "Qui non si è ancora votato.",
@@ -409,13 +409,13 @@
    "level": "Livello",
    "polity": "Di",
    "party": "Partito",
-   "share": "Quota",
+   "share": "Percentuale",
    "leader": "Leader",
    "votes": "Votanti",
    "founded": "Fondato",
    "age": "Età",
    "status": "Posizione",
-   "members": "Nazioni membri",
+   "members": "Nazioni membro",
    "wars": "Guerre",
    "onu": "Assemblea ONU",
    "mayorElected": "Sindaco eletto",
@@ -440,7 +440,7 @@
    "history": "Elezioni passate",
    "offices": "Cariche",
    "person": "Titolare della carica",
-   "members": "Nazioni membri",
+   "members": "Nazioni membro",
    "wars": "Guerre",
    "platform": "Programma",
    "founding": "Fonda un partito politico",
@@ -454,7 +454,7 @@
    "notScheduled": "Non fissate",
    "curfewOn": "In vigore",
    "curfewOff": "Nessuno",
-   "snap": "anticipate",
+   "snap": "voto anticipato",
    "seated": "Con seggio",
    "observer": "Osservatore",
    "notSeated": "Senza seggio",
@@ -484,23 +484,23 @@
    "powerOf": "Iperpotenza: {name}"
   },
   "hint": {
-   "fee": "Ogni sostenitore la paga ogni settimana e l'incasso va al partito. Una tessera economica si riempie di poveri, una cara solo di élite.",
+   "fee": "Ogni sostenitore la paga ogni settimana. Quote basse attirano i poveri, quote alte l'élite.",
    "feeEntry": "Quota settimanale, in euro",
-   "creed": "Il credo su cui si fonda il partito. I principi lo piegano da lì.",
-   "found": "Tutti nella squadra entrano come membri fondatori. Un mondo ospita un solo partito tuo.",
+   "creed": "Ideologia di base. I principi la modificano.",
+   "found": "Tutto il Party entra come fondatore. Un partito per mondo.",
    "save": "Il nuovo programma vale da subito.",
-   "tenets": "Scegli fino a {n} principi. Due che tirano in direzioni opposte non possono stare insieme.",
-   "propaganda": "Campagne, diffamazioni e candidature si gestiscono da Propaganda2 sull'hyperdeck.",
+   "tenets": "Scegli fino a {n} principi. Principi opposti non si combinano.",
+   "propaganda": "Gestisci campagne, diffamazioni e candidature da Propaganda2 sull'hyperdeck.",
    "pick": "Conferma per sceglierlo.",
-   "filter": "Restringi l'elenco a una città o un villaggio, una nazione o un'iperpotenza."
+   "filter": "Filtra per città, nazione o iperpotenza."
   },
   "msg": {
    "needCreed": "Prima scegli un'ideologia.",
    "alreadyFounded": "Questo mondo ha già un partito tuo.",
-   "founded": "{party} è fondato. {n} membri fondatori si sono iscritti.",
+   "founded": "{party} fondato con {n} membri.",
    "noParty": "Non hai ancora fondato un partito.",
-   "saved": "{party} ha il suo nuovo programma.",
-   "tooManyTenets": "Un partito può avere al massimo {n} principi."
+   "saved": "Programma di {party} aggiornato.",
+   "tooManyTenets": "Massimo {n} principi per partito."
   },
   "feeClass": {
    "0": "I più poveri",
@@ -513,11 +513,11 @@
  "player": {
   "nameForm": [
    "Partito {adj} per {noun}",
-   "Partito del {noun}",
+   "Partito {adj} del Popolo per {noun}",
    "Fronte per {noun}",
    "Movimento {adj} per {noun}",
-   "Unione {adj} per {noun}",
-   "Lega {adj} per {noun}"
+   "Patto {adj} per {noun}",
+   "Blocco {adj} per {noun}"
   ],
   "nameAdj": [
    "Popolare",
@@ -538,22 +538,22 @@
    "Nascosto"
   ],
   "nameNoun": [
-   "Progresso",
-   "Rinnovamento",
-   "Ordine",
-   "Libertà",
-   "Domani",
-   "Unità",
-   "Dignità",
-   "Riforma",
-   "Speranza",
-   "Lavoro",
-   "Ragione",
-   "Armonia",
-   "Giustizia",
-   "Prosperità",
-   "Equilibrio",
-   "Vigilanza"
+   "il Progresso",
+   "il Rinnovamento",
+   "l'Ordine",
+   "la Libertà",
+   "il Domani",
+   "l'Unità",
+   "la Dignità",
+   "la Riforma",
+   "la Speranza",
+   "il Lavoro",
+   "la Ragione",
+   "l'Armonia",
+   "la Giustizia",
+   "la Prosperità",
+   "l'Equilibrio",
+   "la Vigilanza"
   ],
   "fallbackName": "Il Partito del Popolo"
  },
@@ -636,8 +636,8 @@
    "smear": "Diffamazione"
   },
   "kindHint": {
-   "convert": "Conquista persone al partito e avvicina le loro idee al suo programma.",
-   "smear": "Prosciuga la fede dei suoi sostenitori e li allontana dal suo programma. Gli scossi sono più facili da conquistare poi; chi perde ogni fede se ne va."
+   "convert": "Conquista persone e avvicina le loro idee al tuo programma.",
+   "smear": "Erode la fiducia dei suoi sostenitori. Chi vacilla si conquista più facilmente, gli altri se ne vanno."
   },
   "target": "Partito",
   "chooseTarget": "Scegli un partito",
@@ -670,7 +670,7 @@
   "cost": "Costo",
   "noProjection": "Scegli un partito per vedere la previsione.",
   "launch": "Lancia la campagna",
-  "launched": "Campagna per {party} lanciata: circa {n} persone alla fine, per {cost}.",
+  "launched": "Campagna per {party} lanciata: circa {n} persone, per {cost}.",
   "campaigns": "Campagne",
   "progress": "Risultato",
   "progressOf": "{n} su {of} previsti",
@@ -679,12 +679,12 @@
   "running": "In corso fino al {date}",
   "noCampaigns": "Nessuna campagna ancora.",
   "candidate": "Candidato",
-  "noTeam": "Nessuno nella squadra.",
-  "runsFor": "Corre per {party}, con il suo programma.",
-  "runsAlone": "Corre da indipendente. Fonda un partito perché i suoi sostenitori votino il candidato.",
+  "noTeam": "Nessuno nel Party.",
+  "runsFor": "Si candida con {party}, con il suo programma.",
+  "runsAlone": "Si candida da indipendente. Fonda un partito per avere i voti dei suoi sostenitori.",
   "date": "Data",
   "deposit": "Cauzione",
-  "stand": "Candidati",
+  "stand": "Candida",
   "standing": "Candidati: {names}",
   "closed": {
    "conclave": "Conclave, niente esterni",
@@ -705,16 +705,16 @@
   "fail": {
    "noWorld": "Nessun mondo in cui fare campagna.",
    "noTarget": "Prima scegli un partito.",
-   "nobody": "Lì non si raggiunge nessuno.",
+   "nobody": "Lì non c'è nessuno da raggiungere.",
    "funds": "Soldi insufficienti.",
-   "notInTeam": "Scegli un candidato dalla squadra.",
+   "notInTeam": "Scegli un candidato dal Party.",
    "noElection": "Quell'elezione non è aperta.",
    "conclave": "Un conclave non accetta candidati esterni.",
    "alreadyStanding": "Quel candidato è già in corsa in un'elezione."
   }
  },
  "history": {
-  "mayorResigned": "{mayor} si è dimesso da Sindaco di {group}, lasciando il municipio a {successor}.",
-  "mayorSeated": "{successor} è entrato in carica come Sindaco di {group}."
+  "mayorResigned": "{mayor} ha lasciato la carica di Sindaco di {group}, e il municipio a {successor}.",
+  "mayorSeated": "{successor} ha assunto la carica di Sindaco di {group}."
  }
 }

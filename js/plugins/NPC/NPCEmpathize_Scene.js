@@ -21,7 +21,8 @@
   "use strict";
 
   const {
-    _addNpcOpinion, _addPairBond, _animalJoinChance, _bubbaContext, _bubbaSeedFirstImpression,
+    _addNpcOpinion, _addPairBond, _animalJoinChance, _boredomLine, _bubbaContext, _bubbaSeedFirstImpression,
+    _empathizeAct,
     _buildBattleFace, _buildNpcProxy, _cardRefusalLine, _chatOpinionShift, _countRecentInteractions,
     _creatureClassOfActor, _creatureClassOfNpc, _diseaseVialId, _diseaseVialItems, _emContext,
     _emPlaythrough, _emSeedFirstImpression, _emVoiceLine, _extractClassId, _feedItemsInPack,
@@ -38,6 +39,8 @@
     FERAL_ACTIONS, NPC_ASSAULT_CRIME, NPCEmpathizeInputManager, PET_OPINION,
     STORY_PROTECTED_ACTIONS, vary,
   } = window.NPCEmpathize._internal;
+  // The stat a die is thrown on, named the way the status screen names it.
+  const _diceStat = (paramId) => ((typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(paramId) : '');
   // Owned by modules that load after this one, bound once the family is in.
   let Wiki;
   window.NPCEmpathize._internal._late.push(() => ({ Wiki } = window.NPCEmpathize._internal));
@@ -159,9 +162,11 @@
 
     create() {
       super.create();
-      // Politicians, nations and artifacts can change between visits, rebuild
-      // the wiki's hyperlink index whenever a panel opens.
-      window.NPCEmpathize?.Wiki?.invalidate();
+      // Politicians, nations and artifacts can change between visits, so the
+      // wiki's shelves and hyperlink index are rebuilt when the world has moved
+      // since they were rolled. Every wiki link opens a new panel, and a hop
+      // through the encyclopedia keeps them.
+      window.NPCEmpathize?.Wiki?.refresh();
       const dummy = new Window_Base(new Rectangle(0, 0, 1, 1));
       dummy.visible = false;
       this.addWindow(dummy);
@@ -464,7 +469,11 @@
 
     update() {
       Scene_MenuBase.prototype.update.call(this);
+      // The cursor's layout reads last one frame (see _navRect): anything may
+      // have scrolled or reflowed since the last one.
+      this._navGeomCache = null;
       NPCEmpathizeInputManager.update();
+      this._navGeomCache = null;
     }
 
     terminate() {
@@ -630,6 +639,7 @@
     _invalidateNavCache() {
       this._renderToken = (this._renderToken || 0) + 1;
       this._navLists    = null;
+      this._navGeomCache = null;
       this._focusedBtn  = null;
       this._focusedItem = null;
     }
@@ -678,7 +688,7 @@
         btn.classList.add('npc-action-focused');
         // The pickers are capped at 45% of the panel and scroll, so the cursor
         // can walk off the bottom of the visible strip; keep it in the strip.
-        if (btns.length > 1) btn.scrollIntoView({ block: 'nearest' });
+        if (btns.length > 1) { btn.scrollIntoView({ block: 'nearest' }); this._dropNavRects(); }
       }
       this._focusedBtn = btn;
 
@@ -696,7 +706,7 @@
         this._focusedItem.classList.remove('npc-content-focused');
       if (item) {
         item.classList.add('npc-content-focused');
-        if (reveal) item.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        if (reveal) { item.scrollIntoView({ block: 'nearest', inline: 'nearest' }); this._dropNavRects(); }
       }
       this._focusedItem = item;
 
@@ -722,23 +732,53 @@
       return this._navCache('content', [this._rightEl, this._leftEl], CONTENT_NAV_SELECTOR);
     }
 
+    // Layout reads for one press. A single press can walk the whole grid two
+    // or three times (a move within reach, a scroll, a move again), and every
+    // walk measured every tile and climbed every tile's ancestors through
+    // getComputedStyle. Each box is now measured once and each tile's scroller
+    // found once per parent; the boxes are dropped whenever this code scrolls
+    // anything, and the whole lot at every frame and every render.
+    _navGeom() {
+      const token = this._renderToken || 0;
+      let g = this._navGeomCache;
+      if (!g || g.token !== token) g = this._navGeomCache = { token, rects: new Map(), boxes: new Map() };
+      return g;
+    }
+
+    _navRect(el) {
+      const rects = this._navGeom().rects;
+      let r = rects.get(el);
+      if (!r) { r = el.getBoundingClientRect(); rects.set(el, r); }
+      return r;
+    }
+
+    _dropNavRects() {
+      if (this._navGeomCache) this._navGeomCache.rects = new Map();
+    }
+
     // The box that scrolls an item: its nearest scrolling ancestor inside the
     // panel (the Social Web's stage, a long list), else the panel column.
+    // Every tile of a grid shares a parent, so the climb is made once for it.
     _contentViewport(el) {
+      const parent = el.parentElement;
+      const boxes = this._navGeom().boxes;
+      if (parent && boxes.has(parent)) return boxes.get(parent);
       const panel = (this._leftEl && this._leftEl.contains(el)) ? this._leftEl : this._rightEl;
-      for (let p = el.parentElement; p && p !== panel; p = p.parentElement) {
+      let found = panel;
+      for (let p = parent; p && p !== panel; p = p.parentElement) {
         if (p.scrollHeight > p.clientHeight + 1 &&
-            /(auto|scroll)/.test(getComputedStyle(p).overflowY)) return p;
+            /(auto|scroll)/.test(getComputedStyle(p).overflowY)) { found = p; break; }
       }
-      return panel;
+      if (parent) boxes.set(parent, found);
+      return found;
     }
 
     _contentItemVisible(el) {
-      const r = el.getBoundingClientRect();
+      const r = this._navRect(el);
       if (!r.width && !r.height) return false;
       const box = this._contentViewport(el);
       if (!box) return false;
-      const v = box.getBoundingClientRect();
+      const v = this._navRect(box);
       return r.bottom > v.top && r.top < v.bottom && r.right > v.left && r.left < v.right;
     }
 
@@ -762,12 +802,12 @@
     _nearestInDirection(list, index, dir, accept) {
       const curEl = list[index] || list[0];
       if (!curEl) return -1;
-      const cur = curEl.getBoundingClientRect();
+      const cur = this._navRect(curEl);
       const cx = cur.left + cur.width / 2, cy = cur.top + cur.height / 2;
       let best = -1, bestScore = Infinity;
       list.forEach((el, i) => {
         if (i === index || (accept && !accept(el))) return;
-        const r  = el.getBoundingClientRect();
+        const r  = this._navRect(el);
         if (!r.width && !r.height) return; // not laid out (a hidden row)
         const ex = r.left + r.width / 2, ey = r.top + r.height / 2;
         const dx = ex - cx, dy = ey - cy;
@@ -806,8 +846,8 @@
     _contentWithinReach(el, dir) {
       const box = this._contentViewport(el);
       if (!box) return true;
-      const v = box.getBoundingClientRect();
-      const r = el.getBoundingClientRect();
+      const v = this._navRect(box);
+      const r = this._navRect(el);
       const slack = v.height / 2;
       if (dir === 'down') return r.bottom <= v.bottom + slack;
       if (dir === 'up')   return r.top    >= v.top    - slack;
@@ -826,12 +866,14 @@
       const before = box.scrollTop;
       box.scrollTop = before + px;
       if (box.scrollTop === before) return false;
+      // Everything under the box has moved: measure it again, once.
+      this._dropNavRects();
       if (!this._contentItemVisible(cur)) {
-        const cy = cur.getBoundingClientRect().top;
+        const cy = this._navRect(cur).top;
         let best = -1, bestDist = Infinity;
         items.forEach((el, i) => {
           if (!box.contains(el) || !this._contentItemVisible(el)) return;
-          const d = Math.abs(el.getBoundingClientRect().top - cy);
+          const d = Math.abs(this._navRect(el).top - cy);
           if (d < bestDist) { bestDist = d; best = i; }
         });
         if (best >= 0) this._contentIndex = best;
@@ -924,6 +966,9 @@
         // Specialization training both ways (the same LESSONS sheets)
         case 'trainSpec':  this._trainSpecPick?.(); break;
         case 'learnSpec':  this._learnSpecPick?.(); break;
+        // One party member teaching another, on the learner's own page
+        case 'peerTeach':     this._peerTeachPick?.('skill'); break;
+        case 'peerTeachSpec': this._peerTeachPick?.('spec');  break;
         // Beliefs and Politics (NPCEmpathizeUI_Lessons.js, CIVICS)
         case 'preach':         this._preach?.();         break;
         case 'debate':         this._debate?.();         break;
@@ -1061,7 +1106,7 @@
 
       // Reputation + faction hit and crime record (assault).
       if (profile) {
-        _addNpcOpinion(profile, this._focusActor()?.actorId(), -60);
+        _empathizeAct(profile, this._focusActor(), 'attack', -60);
         (profile.eventLog ??= []).push({
           tag: 'crime', desc: `${tc.vector} assault by player`, // i18n-ignore: event-log record id
           timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
@@ -1358,9 +1403,9 @@
       // already want gone.
       const before = this._focusOpinion(profile);
       const mult   = def.op < 0 && before <= -20 ? 2 : 1;
-      const delta  = Math.round(def.op * mult);
+      let delta    = Math.round(def.op * mult);
       if (profile) {
-        _addNpcOpinion(profile, actor?.actorId(), delta);
+        delta = _empathizeAct(profile, actor, 'feral:' + id, delta).delta;
         (profile.eventLog ??= []).push({
           tag: 'feral', desc: id, // i18n-ignore: event-log record id
           timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
@@ -1534,7 +1579,7 @@
         .replace(/\{name\}/g, npcName).replace(/\{kind\}/g, kind));
 
       if (profile) {
-        _addNpcOpinion(profile, this._focusActor()?.actorId(), PET_OPINION);
+        _empathizeAct(profile, this._focusActor(), 'pet', PET_OPINION);
         (profile.eventLog ??= []).push({
           tag: 'feral', desc: 'pet', // i18n-ignore: event-log record id
           timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
@@ -1643,8 +1688,8 @@
       let success;
       if (window.Dice3D) {
         const res = await window.Dice3D.rollPercentage(chance, {
-          actionName: status.owned ? `Convince: ${npcName}` : `Tame: ${npcName}`, // i18n-ignore: Dice3D check id
-          statName: 'WIS', // i18n-ignore: Dice3D stat id
+          actionName: _getT()(status.owned ? 'Empathize.dice.convince' : 'Empathize.dice.tame', { name: npcName }),
+          statName: _diceStat(5),
           modifier: wisMod,
           actor,
           force3D: true,
@@ -1661,7 +1706,7 @@
         // walk out on somebody.
         const sting = status.owned ? -8 : -4;
         if (profile) {
-          _addNpcOpinion(profile, actor?.actorId(), sting);
+          _empathizeAct(profile, actor, 'rude', sting);
           (profile.eventLog ??= []).push({
             tag: 'animalJoin', desc: 'refused to come along', // i18n-ignore: event-log record id
             timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
@@ -1691,7 +1736,7 @@
         return;
       }
       if (profile) {
-        _addNpcOpinion(profile, actor?.actorId(), 25);
+        _empathizeAct(profile, actor, 'adopt', 25);
         (profile.eventLog ??= []).push({
           tag: 'animalJoin', desc: 'came along with the party', // i18n-ignore: event-log record id
           timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
@@ -1741,7 +1786,7 @@
       $gameParty.loseItem(item, 1);
 
       if (profile) {
-        _addNpcOpinion(profile, this._focusActor()?.actorId(), delta);
+        _empathizeAct(profile, this._focusActor(), 'feed', delta);
         // A fed animal is a fed animal whatever it thought of the meal, so the
         // stomach is filled even when the opinion drops.
         profile.hunger = Math.max(0, Math.min(100, (profile.hunger ?? 100) + _feedNourishment(item)));
@@ -2021,7 +2066,15 @@
       // Apply reputation to the focused member only. The pair keep their own
       // ledger (above) and are on nobody's faction books for teasing.
       if (profile && actorId != null && !pairCtx) {
-        _addNpcOpinion(profile, actorId, delta);
+        // One scorer for every exchange (_empathizeAct): the boredom of a
+        // repeated move, the NPC's mood, and the emotions the move pushes on
+        // both sides. A move they are tired of is answered as one.
+        const act = _empathizeAct(profile, actor, 'social:' + id, delta);
+        delta = act.delta;
+        if (act.tier === 'flat' || act.tier === 'annoyed' || (act.tier === 'waning' && Math.random() < 0.4)) {
+          const bored = _boredomLine(profile, act.tier);
+          if (bored) npcLine = fill(bored);
+        }
         (profile.eventLog ??= []).push({
           tag: 'social_' + id, desc: `${id} (${delta >= 0 ? '+' : ''}${delta})`,
           timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
@@ -2158,7 +2211,7 @@
       const giftMult    = recentGifts >= 3 ? 0.5 : 1;
       const delta = Math.round(Math.max(5, Math.min(25, (item.price || 0) / 50)) * giftMult);
       if (profile) {
-        _addNpcOpinion(profile, this._focusActor()?.actorId(), delta);
+        _empathizeAct(profile, this._focusActor(), 'gift', delta);
         (profile.eventLog ??= []).push({ tag: 'gift', desc: `received ${item.name}`, timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0 });
 
         const dl      = window._NPCSocietyDataLoader;
@@ -2247,7 +2300,7 @@
       if (Scene_NPCEmpathize.LAW_CLASSES.includes(evClassId)) {
         SoundManager.playBuzzer();
         if (profile) {
-          _addNpcOpinion(profile, this._focusActor()?.actorId(), -30);
+          _empathizeAct(profile, this._focusActor(), 'bribeRefused', -30);
           (profile.eventLog ??= []).push({
             tag: 'bribe', desc: 'bribe attempt reported (law enforcement)', // i18n-ignore: event-log record id
             timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0,
@@ -2278,8 +2331,8 @@
 
       if (window.Dice3D) {
         const rollRes = await window.Dice3D.rollPercentage(tier.chance, {
-          actionName: `Bribe: ${npcName}`,
-          statName: 'PSI (Charisma)',
+          actionName: _getT()('Empathize.dice.bribe', { name: npcName }),
+          statName: _diceStat(7),
           modifier: psiMod,
           force3D: true
         });
@@ -2291,7 +2344,7 @@
       if (profile) (profile.eventLog ??= []).push({ tag: 'bribe', desc: success ? 'bribe accepted' : 'bribe failed', timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0 }); // i18n-ignore: event-log record ids
 
       if (success) {
-        if (profile) _addNpcOpinion(profile, this._focusActor()?.actorId(), tier.op);
+        if (profile) _empathizeAct(profile, this._focusActor(), 'bribe', tier.op);
         SoundManager.playOk();
         this._joinMessage = { type: 'accept', text: T('Empathize.bribeAccepted', { name: npcName, op: tier.op }) };
       } else {
@@ -2345,6 +2398,9 @@
         // same social need a friendly exchange would have paid them.
         _gainSocialFromOpinion(actorId, -100 - _npcBaseOpinion(profile, actorId), profile);
         _setNpcBaseOpinion(profile, actorId, -100);
+        // The standing is already at the floor; what the blow does to them
+        // (and to the one who struck) is the emotion it carries.
+        _empathizeAct(profile, this._focusActor(), 'attack', 0, { apply: false });
         (profile.eventLog ??= []).push({ tag: 'crime', desc: 'attacked by player', timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0 }); // i18n-ignore: event-log record id
         const dl      = window._NPCSocietyDataLoader;
         const faction = (profile.factionIndex >= 0 && dl?.factions) ? dl.factions[profile.factionIndex] : null;
@@ -2473,7 +2529,7 @@
       let success = false;
       try {
         success = await Promise.resolve(
-          window.StealCalculator?.performSteal(chance, { actionName: 'Pickpocket', statName: 'DEX', modifier: dexMod }) ?? false); // i18n-ignore: Dice3D check id
+          window.StealCalculator?.performSteal(chance, { actionName: _getT()('Empathize.dice.pickpocket'), modifier: dexMod }) ?? false);
       } finally {
         this._stealRolling = false;
       }
@@ -2486,7 +2542,7 @@
       const npcName = _getNPCName(this._eventId);
       const profile = _getProfile(npcName);
       if (profile) {
-        _addNpcOpinion(profile, this._focusActor()?.actorId(), -25);
+        _empathizeAct(profile, this._focusActor(), 'caught', -25);
         (profile.eventLog ??= []).push({ tag: 'crime', desc: 'pickpocketed by player', timestamp: Date.now(), gameMin: $gameVariables?.value(114) ?? 0 }); // i18n-ignore: event-log record id
       }
 
@@ -2777,13 +2833,15 @@
       const npcName = _getNPCName(this._eventId);
       const profile = _getProfile(npcName);
 
+      // Their card lands first, and only a swap that really took place costs
+      // the party its own card and the day's trade.
+      if (!CGx.addCard(offer.theirs, 1)) { SoundManager.playBuzzer(); return; }
       CGx.removeCard(offer.mine, 1);
-      CGx.addCard(offer.theirs, 1);
       CGx.markTraded(npcName);
 
       // Swapping cards with somebody is time spent with them, and they think a
       // little better of whoever did the swapping.
-      _addNpcOpinion(profile, this._focusActor()?.actorId(), 3);
+      _empathizeAct(profile, this._focusActor(), 'trade', 3);
       this._gainCompany();
       try {
         window.ParchmentToast?.show(
@@ -2899,8 +2957,8 @@
       let joinRoll;
       if (window.Dice3D) {
         const res = await window.Dice3D.rollPercentage(chance, {
-          actionName: `Join: ${npcName}`, // i18n-ignore: Dice3D check id
-          statName: 'PSI', // i18n-ignore: Dice3D stat id
+          actionName: _getT()('Empathize.dice.join', { name: npcName }),
+          statName: _diceStat(7),
           modifier: psiMod,
           actor,
           force3D: true,
@@ -2914,7 +2972,7 @@
         SoundManager.playBuzzer();
         // Being turned down stings a little, the NPC remembers being pressed.
         if (profile) {
-          _addNpcOpinion(profile, this._focusActor()?.actorId(), -2);
+          _empathizeAct(profile, this._focusActor(), 'rude', -2);
           profile.eventLog = profile.eventLog || [];
           profile.eventLog.unshift({ tag: 'social', desc: 'declined to join the party', // i18n-ignore: event-log record id
             gameMin: $gameVariables?.value(114) ?? 0, timestamp: Date.now() });
@@ -3008,10 +3066,19 @@
       window.ParchmentToast?.show?.(joinText, { severity: 'info', duration: 260 });
 
       // Same handover the card table uses: drop the overlay, let go of the
-      // event, and hand the map back.
+      // event, and hand the map back. The panel may already have been left
+      // while the die was in the air: popping then would pop whatever screen
+      // is up now (the map, with nothing under it, ends the game).
+      if (!this._stillUp()) return;
       this._removeOverlay();
       this._releaseEventLock();
       SceneManager.pop();
+    }
+
+    // Whether this panel is still the screen that is up. Every action that
+    // waits on a die asks it before it touches the panel or the scene stack.
+    _stillUp() {
+      return window.Dice3D?.ownerAlive ? window.Dice3D.ownerAlive(this) : SceneManager._scene === this;
     }
 
     // The lesser of the two offers made to somebody who talks: come along, but
@@ -3052,8 +3119,8 @@
       let success;
       if (window.Dice3D) {
         const res = await window.Dice3D.rollPercentage(chance, {
-          actionName: `Follow: ${npcName}`, // i18n-ignore: Dice3D check id
-          statName: 'PSI', // i18n-ignore: Dice3D stat id
+          actionName: _getT()('Empathize.dice.follow', { name: npcName }),
+          statName: _diceStat(7),
           modifier: psiMod,
           actor,
           force3D: true,
@@ -3065,7 +3132,7 @@
 
       if (!success) {
         SoundManager.playBuzzer();
-        if (profile) _addNpcOpinion(profile, actor?.actorId(), -2);
+        if (profile) _empathizeAct(profile, actor, 'rude', -2);
         const phrases = T.joinRefusalPhrases || [];
         this._pushChat('npc', phrases[Math.floor(Math.random() * phrases.length)] || '');
         this._render();
@@ -3093,6 +3160,7 @@
 
       window.ParchmentToast?.show?.(T('Empathize.joinedFollower', { name: npcName }),
         { severity: 'info', duration: 260 });
+      if (!this._stillUp()) return;
       this._removeOverlay();
       this._releaseEventLock();
       SceneManager.pop();

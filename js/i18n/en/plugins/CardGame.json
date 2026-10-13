@@ -45,7 +45,7 @@
     "forfeitAsk": "Leave the table? The stake is forfeit.",
     "forfeitYes": "Forfeit",
     "forfeitNo": "Stay",
-    "forfeitBracketAsk": "Leave the table? The bracket ends here, and the entry fee stays paid."
+    "forfeitBracketAsk": "Leave the table? You exit the bracket. The entry fee is not refunded."
   },
   "col": {
     "title": "Card Collection",
@@ -57,7 +57,7 @@
       "armor": "Armour",
       "effects": "Effects"
     },
-    "empty": "Nothing on the shelf yet. Open a booster pack.",
+    "empty": "No cards yet. Open a booster pack.",
     "pickACard": "Pick a card to read it.",
     "saveDeck": "Save deck",
     "newDeck": "New deck",
@@ -71,7 +71,7 @@
     "deckLegal": "Legal deck.",
     "deckTooFew": "A deck needs at least {min} cards.",
     "deckTooMany": "A deck holds at most {max} cards.",
-    "deckNotOwned": "This deck lists cards the party no longer owns.",
+    "deckNotOwned": "This deck has cards you no longer own.",
     "deckEmpty": "No cards in this deck.",
     "statsHeading": "Statistics",
     "powerLabel": "Power",
@@ -88,7 +88,7 @@
     "sortPower": "Power",
     "sortValue": "Value",
     "anyRarity": "Any rarity",
-    "noResults": "No card answers to that.",
+    "noResults": "No matching cards.",
     "page": "Page {n} of {of}, {total} cards",
     "showing": "{n} cards",
     "prevPage": "Previous page",
@@ -115,19 +115,19 @@
   "effect": {
     "halve": {
       "name": "Blight",
-      "desc": "On a creature: every stat halved, whoever it belongs to. On bare ground: the tile is cursed, and the next creature to stand there arrives halved."
+      "desc": "On a creature: halves every stat, either side. On an empty tile: curses it, halving the next creature placed there."
     },
     "double": {
       "name": "Gild",
-      "desc": "On a creature: every stat doubled, whoever it belongs to. On bare ground: the tile is blessed, and the next creature to stand there arrives doubled."
+      "desc": "On a creature: doubles every stat, either side. On an empty tile: blesses it, doubling the next creature placed there."
     },
     "cull": {
       "name": "Cull",
-      "desc": "On a creature: it is destroyed where it stands, whoever it belongs to. On bare ground: a trap, and the next creature to stand there dies at once."
+      "desc": "On a creature: destroys it, either side. On an empty tile: a trap that kills the next creature placed there."
     },
     "swap": {
       "name": "Displace",
-      "desc": "Pick a creature, then a second tile: the two trade places, gear and curses included. The second tile may be bare ground, and the creature simply walks to it."
+      "desc": "Pick a creature, then a second tile: they swap places, gear and curses included. If the tile is empty, the creature moves there."
     },
     "ward": {
       "name": "Ward",
@@ -138,8 +138,8 @@
     "bound": "{name} is bound into a card and falls.",
     "boundNew": "{name} is bound into a card, the first of its kind, and falls.",
     "failed": "{name} slips the binding. ({chance}% needed)",
-    "tooStrong": "{name} is level {level} and will not be held by a party of {median}.",
-    "noCard": "There is no card {name} could ever be."
+    "tooStrong": "{name} is level {level}, too strong for a level {median} party.",
+    "noCard": "{name} has no card."
   },
   "trader": {
     "title": "Cadd Trader",
@@ -153,14 +153,14 @@
     "left": "{n} left",
     "soldOut": "Sold out",
     "owned": "you hold {n}",
-    "hint": "New lots are listed every day. Sold lots are not restocked.",
-    "hintSell": "The site pays less than it asks. That difference is its living.",
+    "hint": "New lots every day. Sold lots don't come back.",
+    "hintSell": "Sell prices are lower than buy prices.",
     "emptyStock": "Nothing listed today.",
     "emptyShelf": "You have no cards to sell.",
     "bought": "Bought {name} for {price}.",
     "sold": "Sold {name} for {price}.",
-    "tooDear": "You cannot cover {price}.",
-    "cannotSell": "That card is not merchandise."
+    "tooDear": "Not enough money ({price}).",
+    "cannotSell": "This card can't be sold."
   },
   "arena": {
     "title": "Hyper Card Arena",
@@ -170,8 +170,8 @@
     "deckOwn": "My deck",
     "deckRandom": "A rolled deck",
     "deckOwnNote": "Your deck: {n} cards.",
-    "deckOwnShort": "You have no legal deck ({min} cards at least), so one will be lent to you.",
-    "deckRandomNote": "A random deck drawn from the whole catalogue, like the ones the machine uses.",
+    "deckOwnShort": "No legal deck (min {min} cards). You'll get a loaner deck.",
+    "deckRandomNote": "A random deck from the full catalogue, like the CPU's.",
     "levelHeading": "Opponent",
     "levelFallback": "Level {n}",
     "levels": [
@@ -186,9 +186,9 @@
     "modeBracket": "Bracket",
     "feeTag": "entry {amount}",
     "summaryMatch": "One match against a {level} machine. Nothing staked.",
-    "summaryBracket": "{entrants} entrants, {rounds} rounds, straight knock-out. Entry {fee}, and the whole run pays {purse} and a prize.",
+    "summaryBracket": "{entrants} entrants, {rounds} rounds, knock-out. Entry {fee}. Winning pays {purse} and a prize.",
     "start": "SIT DOWN",
-    "cannotAfford": "The entry is {amount}, and you do not have it.",
+    "cannotAfford": "Entry costs {amount}. Not enough money.",
     "rounds": [
       "the quarter-final",
       "the semi-final",

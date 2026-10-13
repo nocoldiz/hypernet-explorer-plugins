@@ -4,7 +4,7 @@
   "foundMessage": "\\c[0]Hai trovato \\c[{color}]{item}",
   "tier": {
     "common": "Comune",
-    "uncommon": "Non Comune",
+    "uncommon": "Non comune",
     "rare": "Raro",
     "epic": "Epico",
     "legendary": "Leggendario"

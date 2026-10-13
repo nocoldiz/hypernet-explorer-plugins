@@ -1,0 +1,59 @@
+{
+  "noThree": "DA 3D TABLE NO CAN BE DRAWN HERE!",
+  "pantry": "PANTRY",
+  "emptySlot": "EMPTY",
+  "name": {
+    "plain": "PLAIN PIZZA",
+    "one": "{a} PIZZA",
+    "two": "{a} AN' {b} PIZZA",
+    "many": "{a} SUPREME",
+    "numbered": "{name} {n}"
+  },
+  "cmd": {
+    "save": "STASH TA DA RECIPE BOOK",
+    "serve": "SERVE DA PIZZA",
+    "clear": "CLEAR DA TOPPINGS",
+    "leave": "LEAVE DA TABLE"
+  },
+  "status": {
+    "kitchen": "PICK UP TA FIVE TOPPINGS, DEN STASH DA PIZZA TA DA RECIPE BOOK!",
+    "free": "A CUSTOMER IZ WAITIN'. MAKE WHAT DEY ORDERED!",
+    "added": "{a} ON DA PIZZA.",
+    "removed": "{a} TAKEN OFF.",
+    "cleared": "BACK TA A BARE BASE.",
+    "baking": "IN DA OVEN...",
+    "continue": "PRESS TA CONTINUE."
+  },
+  "card": {
+    "cost": "COST TA MAKE {cost}",
+    "kcal": "{kcal} KCAL",
+    "missing": "{n} INGREDIENTS MISSIN'",
+    "allInPack": "EVERYTINK IZ IN DA PACK",
+    "base": "PIZZA BASES IN DA PACK: {n}",
+    "noBase": "NO PIZZA BASE IN DA PACK"
+  },
+  "order": {
+    "title": "ORDER",
+    "crave": "WANTS {a}",
+    "shun": "HATES {a}",
+    "budget": "BUDGET {cost}"
+  },
+  "result": {
+    "savedTitle": "RECIPE STASHED",
+    "ready": "READY TA BAKE IN DA KITCHEN!",
+    "missing": "MISSIN' {n} INGREDIENTS.",
+    "failTitle": "NO STASHED",
+    "servedTitle": "PIZZA SERVED",
+    "stars": "{n} OF 3 STARS",
+    "hits": "{n} OF 2 WISHES MET",
+    "shunned": "IT HAB A TOPPIN' DEY HATE!",
+    "over": "GOOD, BUT OVER DA BUDGET."
+  },
+  "error": {
+    "noBook": "DERE IZ NO RECIPE BOOK TA WRITE IN!",
+    "noState": "DERE IZ NO RECIPE BOOK TA WRITE IN!",
+    "tooManyRecipes": "DA RECIPE BOOK IZ FULL.",
+    "tooManyToppings": "A PIZZA HOLDS AT MOST FIVE TOPPINGS!",
+    "noToppings": "PICK AT LEAST ONE TOPPIN'!"
+  }
+}

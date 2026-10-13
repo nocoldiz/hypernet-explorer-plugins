@@ -1,34 +1,34 @@
 {
   "back": "Indietro",
-  "forbiddenDraw": "{percent}% di pescata proibita",
+  "forbiddenDraw": "{percent}%",
   "forbiddenTitle": "Grimorio proibito",
   "skillBookTitle": "Manuale di {school}",
   "forgottenTitle": "Grimorio dimenticato",
   "schoolTitle": "Grimorio di {school}",
-  "noSpells": "Nessuno qui riesce a cogliere una magia da queste pagine.<br>(nessuna alla portata dei MP del gruppo, o le conoscono già tutte)",
+  "noSpells": "Nessuno qui può imparare questi incantesimi.<br>(MP insufficienti, o già conosciuti)",
   "ui": {
     "beyondStat": "✧ Richiede {stat} {points}, ne ha {value}",
     "requires": "Richiede {stat} {points}",
-    "blurb": "Le stesse cinque magie sono offerte a tutti. Scegli un lettore che possa impararne una, poi reclamala.",
+    "blurb": "Cinque incantesimi disponibili. Scegli un lettore, poi un incantesimo.",
     "alreadyKnown": "✧ Già conosciuto",
-    "beyondReach": "✧ Oltre i MP di questo lettore",
-    "partyReader": "Lettore del gruppo",
+    "beyondReach": "✧ MP insufficienti",
+    "partyReader": "Lettore del Party",
     "psychicDiagnostics": "Diagnostica psichica",
     "medianPsi": "PSI mediano (Fortuna)",
-    "forbiddenSurfacing": "Affioramento proibito",
+    "forbiddenSurfacing": "Probabilità di incantesimo proibito",
     "forbidden": "✦ Proibito",
-    "whisperedSpells": "Destini Sussurrati",
+    "whisperedSpells": "Incantesimi sussurrati",
     "esoteric": "✦ Esoterico",
     "beyondLevelEsoteric": "✧ Esoterico, richiede livello {level}",
     "beyondLevelForbidden": "✧ Proibito, richiede livello {level}"
   },
   "toast": {
     "title": "Incantesimo appreso",
-    "learned": "{actor} ha ricopiato {skill} dal {book}."
+    "learned": "{actor} ha imparato {skill} dal {book}."
   },
   "custom": {
-    "title": "Un Volume Scritto a Mano",
-    "blurb": "Ogni pagina di questo volume va letta prima che si chiuda. Ne restano {left} su {total}. Se esci adesso il volume torna intero nello zaino.",
-    "takenBy": "Letto a {actor}"
+    "title": "Un volume scritto a mano",
+    "blurb": "{left} pagine su {total} da leggere. Se esci ora il libro torna nello zaino.",
+    "takenBy": "Letto da {actor}"
   }
 }

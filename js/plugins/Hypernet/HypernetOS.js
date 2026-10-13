@@ -99,7 +99,15 @@
             // The desktop theme answers first: a program keeps the icon it
             // registered with only where the theme has nothing for it.
             const icon = this.Icons.forApp(id) || options.icon;
-            this._apps[id] = { id, name, icon, launchFn, desktopShortcut, category };
+            // Apps register while plugins load, before the saved language is
+            // applied, so a name passed as a function is resolved each time it
+            // is read and follows the player's language.
+            const app = { id, icon, launchFn, desktopShortcut, category };
+            Object.defineProperty(app, 'name', {
+                enumerable: true,
+                get: () => (typeof name === 'function' ? name() : name),
+            });
+            this._apps[id] = app;
 
             // Every plugin registers on load, so a straight refresh here rebuilt
             // the whole desktop and start menu once per program. One coalesced
@@ -1222,7 +1230,7 @@
                 tab.dataset.appId = lead.dataset.appId || '';
                 tab.innerHTML = `
                     ${iconHTML ? `<span class="taskbar-tab-icon">${iconHTML}</span>` : ''}
-                    <span class="taskbar-tab-text">${title}</span>
+                    <span class="taskbar-tab-text">${window.HypernetOS.titleMarkup(title)}</span>
                 `;
 
                 // A grouped button opens the list of its windows; a lone one is
@@ -1543,6 +1551,13 @@
         return found;
     };
 
+    // A window title is text: a document's name is whatever the player typed
+    // in the Save As box, and it is drawn on the title bar and the taskbar.
+    // Tags are neutralised; entities the translated titles carry still read.
+    window.HypernetOS.titleMarkup = function(title) {
+        return String(title == null ? '' : title).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    };
+
     // Height of #hypernet-taskbar (see hypernet.css); windows are kept clear of it.
     const TASKBAR_H = 40;
 
@@ -1558,6 +1573,12 @@
             const WINDOW_SCALE = 1.18;
             width = Math.min(Math.round(width * WINDOW_SCALE), window.innerWidth - 20);
             height = Math.min(Math.round(height * WINDOW_SCALE), window.innerHeight - 60);
+
+            // A window of the same name still fading out goes now, so the new
+            // one never shares its element ids with a frame on its way out.
+            document.querySelectorAll('.hypernet-os-window[data-closing]').forEach(w => {
+                if (w.dataset.closedId === String(id) && w.parentNode) w.parentNode.removeChild(w);
+            });
 
             // Check if window already exists
             const existing = document.getElementById(id);
@@ -1613,7 +1634,7 @@
                     <div class="hypernet-window-titlebar">
                         <div class="hypernet-window-title">
                             ${iconHTML ? `<span class="hypernet-window-icon">${iconHTML}</span>` : ''}
-                            ${title}
+                            ${window.HypernetOS.titleMarkup(title)}
                         </div>
                         <div class="hypernet-window-controls">
                             <button class="hypernet-btn hypernet-btn-min" title="${T('HypernetOS.minimize')}">0</button>
@@ -1826,6 +1847,13 @@
         },
 
         bringToFront: function(win) {
+            // Raising a window that is halfway to the taskbar calls it back.
+            if (win._minimizeTimer) {
+                clearTimeout(win._minimizeTimer);
+                win._minimizeTimer = null;
+                win.style.transform = '';
+                win.style.opacity = '1';
+            }
             this.zIndexCounter++;
             win.style.zIndex = this.zIndexCounter;
             
@@ -1866,7 +1894,7 @@
                 win.style.width = win.dataset.prevWidth;
                 win.style.height = win.dataset.prevHeight;
                 win.querySelector('.hypernet-btn-max').textContent = '1';
-                win.querySelector('.hypernet-btn-max').title = 'Maximize';
+                win.querySelector('.hypernet-btn-max').title = T('HypernetOS.maximize');
             } else {
                 win.dataset.prevLeft = win.style.left;
                 win.dataset.prevTop = win.style.top;
@@ -1879,17 +1907,21 @@
                 win.style.width = '100vw';
                 win.style.height = 'calc(100vh - 40px)';
                 win.querySelector('.hypernet-btn-max').textContent = '2';
-                win.querySelector('.hypernet-btn-max').title = 'Restore Down';
+                win.querySelector('.hypernet-btn-max').title = T('HypernetOS.xp.taskbar.restore');
             }
             window.HypernetOS.refreshTaskbarTabs();
         },
 
         toggleMinimize: function(win) {
+            // A window still sliding down to the taskbar counts as minimised:
+            // a second press inside that 150ms brings it straight back instead
+            // of queueing another slide and leaving it hidden.
+            const down = win.classList.contains('minimized') || !!win._minimizeTimer;
             if (window.HypernetOS.XP) {
-                window.HypernetOS.XP.playEvent(
-                    win.classList.contains('minimized') ? 'restoreUp' : 'minimize');   // i18n-ignore  event ids
+                window.HypernetOS.XP.playEvent(down ? 'restoreUp' : 'minimize');   // i18n-ignore  event ids
             }
-            if (win.classList.contains('minimized')) {
+            if (down) {
+                if (win._minimizeTimer) { clearTimeout(win._minimizeTimer); win._minimizeTimer = null; }
                 win.classList.remove('minimized');
                 win.style.display = 'block';
                 void win.offsetWidth; // Force layout
@@ -1903,7 +1935,8 @@
                 win.style.transform = 'scale(0.8) translateY(150px)';
                 win.style.opacity = '0';
                 win.classList.remove('active');
-                setTimeout(() => {
+                win._minimizeTimer = setTimeout(() => {
+                    win._minimizeTimer = null;
                     win.classList.add('minimized');
                     win.style.display = 'none';
                     // Focus another window if any
@@ -1917,18 +1950,34 @@
             }
         },
 
+        // A window is finished with the moment it is closed; only its fade
+        // takes another 120ms. Everything an app reads to decide whether it is
+        // still open (its id in the document, the window list, the process,
+        // the teardown event) is settled at once. Leaving them for the end of
+        // the fade meant a program reopened inside that blink found its own
+        // dying window, raised it, and then watched it vanish; a second click
+        // on the close button tore the app down twice.
         closeWindow: function(win) {
+            if (!win || win.dataset.closing) return;
+            win.dataset.closing = '1';
+            if (win._minimizeTimer) { clearTimeout(win._minimizeTimer); win._minimizeTimer = null; }
             if (win.dataset.pid && window.HypernetOS.Kernel) {
                 window.HypernetOS.Kernel.killProcess(win.dataset.pid);
             }
+            delete win.dataset.pid;
+            if (win.id) win.dataset.closedId = win.id;
+            win.removeAttribute('id');
+            win.classList.remove('active');
+            win.style.pointerEvents = 'none';
+            if (window.HypernetOS._activeWindowCache === win) window.HypernetOS._activeWindowCache = null;
+            this.windows = this.windows.filter(w => w !== win);
+            win.dispatchEvent(new Event('hypernet-closed'));
+            window.HypernetOS.refreshTaskbarTabs();
             win.style.transition = 'transform 0.12s ease-in, opacity 0.12s ease-in';
             win.style.transform = 'scale(0.9)';
             win.style.opacity = '0';
             setTimeout(() => {
                 if (win.parentNode) win.parentNode.removeChild(win);
-                this.windows = this.windows.filter(w => w !== win);
-                win.dispatchEvent(new Event('hypernet-closed'));
-                window.HypernetOS.refreshTaskbarTabs();
             }, 120);
         },
 
@@ -1941,7 +1990,12 @@
                 if (win.dataset.pid && window.HypernetOS.Kernel) {
                     window.HypernetOS.Kernel.killProcess(win.dataset.pid);
                 }
+                win.dataset.closing = '1';
                 if (win.parentNode) win.parentNode.removeChild(win);
+            });
+            // Frames already closed and still fading go with the rest.
+            document.querySelectorAll('.hypernet-os-window[data-closing]').forEach(w => {
+                if (w.parentNode) w.parentNode.removeChild(w);
             });
             this.windows = [];
             // Turning the machine off is still a close: every app hangs its
@@ -2074,7 +2128,7 @@
             <div id="hypernet-start-menu">
                 <div class="start-menu-header">
                     <div class="start-menu-avatar">${userAvatarHTML}</div>
-                    <div class="start-menu-username">${userName}</div>
+                    <div class="start-menu-username">${window.HypernetOS.titleMarkup(userName)}</div>
                 </div>
                 <div class="start-menu-body">
                     <div class="start-menu-left" id="start-menu-apps-list">
@@ -3077,7 +3131,7 @@
     // 1. Task Manager
     window.HypernetOS.registerApp({
         id: 'sys-task-mgr',
-        name: T('HypernetOS.taskManager'),
+        name: () => T('HypernetOS.taskManager'),
         icon: 111,
         desktopShortcut: false, // Maybe in start menu only? Wait, we can put it on desktop for easy access. Let's make it true.
         launchFn: function() {
@@ -3140,7 +3194,7 @@
                             els.list.innerHTML = kernel.processes.map(p => `
                             <tr class="sys-task-mgr-tbody-tr">
                                 <td class="sys-task-mgr-td">${p.pid}</td>
-                                <td class="sys-task-mgr-td">${p.name}</td>
+                                <td class="sys-task-mgr-td">${window.HypernetOS.titleMarkup(p.name)}</td>
                                 <td class="sys-task-mgr-td">${p.memoryUsage} MB</td>
                                 <td class="sys-task-mgr-td">${p.cpuUsage}%</td>
                                 <td class="sys-task-mgr-td" style="color: ${p.status === 'RUNNING' ? 'green' : 'gray'}">${p.status}</td>
@@ -3744,7 +3798,7 @@
     // 2. Esoteric Terminal
     window.HypernetOS.registerApp({
         id: 'sys-terminal',
-        name: T('HypernetOS.commandPrompt'),
+        name: () => T('HypernetOS.commandPrompt'),
         icon: 84, // console icon
         desktopShortcut: true,
         launchFn: function() {
@@ -3878,7 +3932,7 @@
     // --- Hyper Colosseum App ---
     window.HypernetOS.registerApp({
         id: 'app-colosseum',
-        name: T('HypernetOS.colosseum'),
+        name: () => T('HypernetOS.colosseum'),
         icon: 132, // visored helmet, the closest thing to a gladiator
         desktopShortcut: true,
         launchFn: function () {
@@ -4041,7 +4095,7 @@
     // what owns window chrome in this game.
     window.HypernetOS.registerApp({
         id: 'app-bios',
-        name: T('HypernetOS.bios'),
+        name: () => T('HypernetOS.bios'),
         icon: 234,
         desktopShortcut: false,
         launchFn: function () {
@@ -4507,7 +4561,7 @@
 
     window.HypernetOS.registerApp({
         id: 'app-bobnzi',
-        name: T('HypernetOS.buddy.appName'),
+        name: () => T('HypernetOS.buddy.appName'),
         icon: 84,
         category: 'games',
         launchFn: function() {
@@ -5558,7 +5612,12 @@
             this.Saver.stop();
             this.hideAltTab();
             window.HypernetOS.Balloon.hide();
-            window.HypernetOS.Dialog._open.forEach(d => { if (d.shade.parentNode) d.shade.parentNode.removeChild(d.shade); });
+            window.HypernetOS.Dialog._open.forEach(d => {
+                // A box left up when the desktop goes still holds its own key
+                // hook on the document; it goes with the box.
+                if (d.onKey) document.removeEventListener('keydown', d.onKey, true);
+                if (d.shade.parentNode) d.shade.parentNode.removeChild(d.shade);
+            });
             window.HypernetOS.Dialog._open = [];
             const overlay = document.getElementById('hypernet-xp-overlay');
             if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
@@ -6330,7 +6389,7 @@
         const T_ = (sub, p) => T(XK(key + '.' + sub), p);
         window.HypernetOS.registerApp(Object.assign({
             id: id,
-            name: T_('appName'),
+            name: () => T_('appName'),
             icon: icon,
             desktopShortcut: false,
             category: 'system',   // i18n-ignore  category id

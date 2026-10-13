@@ -385,7 +385,7 @@
           "Please. Stop.",
           "You've made this everyone's business now.",
           "{name} walks off halfway through the second verse.",
-          "That. Was a performance. It wasn't for me, it was at me."
+          "That. Was a performance. Aimed at me."
         ]
       },
       "askDance": {
@@ -509,7 +509,7 @@
         "lines": [
           "You're lovely. You're also not what I'm drawn to.",
           "I don't think you've understood who I look at.",
-          "It isn't you. It's simply not how I'm wired.",
+          "It's simply not how I'm wired. Nobody's fault.",
           "That was never going to land. No offence meant."
         ]
       },
@@ -577,7 +577,7 @@
           "She left me and I'm still married to it. That isn't fair on you and I'm not pretendin' otherwise.",
           "Amice simme e amice restammo. Friends we are and friends we stay. That's the deal and I like the deal.",
           "Mannaggia, Em. Imagine it. Imagine us. You'd hate it by Thursday and I'd hate it by Wednesday.",
-          "I love you. Not like that. Like the other thing, the bigger one that don't need a word.",
+          "I love you, the other way: the bigger one that don't need a word.",
           "Guagliona, my heart's got one goddess in it and she's got the deeds. There isn't a spare room.",
           "{name} goes very quiet, and then very gently moves the coffee towards you, which is his whole answer.",
           "You ask me that on a bad night and I'll still say no, and I'll still be here in the mornin'.",
@@ -947,7 +947,7 @@
           "The bells stopped ringing on their own that night. Did you hear them stop, witch?",
           "You will answer for Him. If not to me, then to whatever is left up there.",
           "I spat on your picture in the paper. I would do it again to your face if my mother had not raised me.",
-          "Murderer. That is the word. Not witch, not girl. Murderer of God.",
+          "Murderer. That is the word. Murderer of God.",
           "Every funeral I go to now, there is nobody to hand them to. Thank you for that.",
           "Tell me you are sorry. Tell me properly, on your knees, where He can not see it any more."
         ],
@@ -970,7 +970,7 @@
           "No spells indoors. That's the whole rule.",
           "No. Whatever it is. No.",
           "{name} moves the till a little further from you, without comment.",
-          "You are the weather woman. Not the forecast sort. The other sort.",
+          "You are the weather woman. The sort who makes it.",
           "Two quiet months. That was the whole ambition.",
           "If this is about the ritual, I was asleep. Same as everybody.",
           "{name} serves the man behind you first, then you, then the man behind you again.",
@@ -1109,7 +1109,7 @@
           "{name} answers three questions you did not ask, all of them about you.",
           "They said you'd be taller.",
           "{name} nods along to a story about nothing at all, rapt, as though it were scripture.",
-          "What is the weather like where you are from? Not here. There. The other one.",
+          "What is the weather like where you are from? Back there, I mean. The other one.",
           "{name} agrees with you enthusiastically before you have finished the sentence.",
           "I am going that way too.",
           "{name} asks four follow-up questions, none of them about the thing you said.",
@@ -1145,7 +1145,7 @@
           "Did He say anything? At the end? Last words? I will not sell it to anybody, I swear.",
           "You killed God! You! Standing right there with a shopping bag!",
           "Was there light? There must have been light. When God dies there has to be light.",
-          "Can you do it again? Not to anybody in particular. Just to see.",
+          "Can you do it again? On nobody in particular. Just to see.",
           "I have every newspaper from that week. Every single one. Which one got the God part right?",
           "How did the spear feel in your hands? Heavy? It must have been heavy.",
           "I have your face on my wall next to a picture of the island. Is that weird? Tell me it is not weird.",
@@ -1193,7 +1193,7 @@
           "From Em, that. You all heard the lady.",
           "{name} thanks you and immediately offers you something they cannot afford to give.",
           "We are friends now, are we not. Say we are friends.",
-          "{name} writes it down. Not fondly. Accurately.",
+          "{name} writes it down, accurately.",
           "You must let me introduce you properly. To the right sort.",
           "{name} laughs a beat too long, in the direction of the door.",
           "That is the version I will be telling. And I will tell it better than it happened.",
@@ -1320,7 +1320,7 @@
           "Sorry, say again. I was looking. I am aware I was looking.",
           "It is only that you are the thing that happened, and now you are asking about bread.",
           "{name} answers, and then keeps looking, and knows they are still looking.",
-          "Sorry, could you say it once more, I was not listening, I was looking.",
+          "Sorry, could you say it once more, I was busy looking.",
           "It is only that I have thought about you for months and now you want the bakery."
         ],
         "negative": [
@@ -1367,7 +1367,7 @@
         ]
       },
       "genuine": {
-        "label": "sees the person, not the story",
+        "label": "sees the person behind the story",
         "greeting": [
           "Long road? Sit down before you fall down.",
           "I don't care what the papers made of you. Have you eaten today?",
@@ -1384,7 +1384,7 @@
           "You look tired. Sit down and be tired here, it is warmer.",
           "{name} does not mention the sky, the spear or the date, which takes visible effort.",
           "I do not want anything from you. I want to say that first, because everyone else does.",
-          "How are you. Not the famous you. You.",
+          "How are you. You, under the famous one.",
           "There is soup. There is always soup. Say yes and stop deciding things for ten minutes.",
           "Sit down. You do not have to be anything in here.",
           "{name} asks nothing about the sky, and you can tell they have decided not to.",
@@ -1505,7 +1505,7 @@
         "{name} has the bonnet up and is talking to the engine in a voice he does not use on people.",
         "You been gone a while. I counted too, don't look at me like that.",
         "There's a fella outside askin' about you. I told him you was a rumour. He believed me.",
-        "Uè, Em, I got the good coffee. Not the road coffee. The other one. Sit.",
+        "Uè, Em, I got the good coffee, the one we never take on the road. Sit.",
         "I'm not fixed it. I want that said out loud before you ask, so we can skip the part where I lie.",
         "{name} is halfway through a sentence he started before you came in, and simply continues it at you.",
         "Statt' bbuono. That's it. That's the whole greetin' today, I'm tired.",
@@ -1611,7 +1611,7 @@
           "I would have you on my side of the net, and I am famously, tediously particular about that.",
           "You built a thing that moved a continent and you still ask whether I have eaten. I find it obscene and I would not change a bolt of it.",
           "I am told friendship is meant to be effortless. Ours is enormous effort and I would not reduce it by a gram.",
-          "Chin up, chest out. That one is for you, not me. You forget, and I have started keeping track.",
+          "Chin up, chest out. That one is for you. You forget, and I have started keeping track.",
           "I killed a god and you made me coffee about it. Nobody else has ever managed both in the same afternoon.",
           "There is a word for what you are and I have not recovered it yet, so take the sentence unfinished and take it anyway.",
           "Bubba Wilson. Best of the entire road. Say thank you out loud, so I know it landed properly.",
@@ -1636,7 +1636,7 @@
         ],
         "negative": [
           "You have the mechanical genius of a saint and the personal hygiene of the manifold, and I love exactly one of those.",
-          "I am not going to shout, Bubba. I am going to be precise, which you find considerably worse.",
+          "I am going to be precise, Bubba, which you find considerably worse than shouting.",
           "Twelve years of friendship and you still park like a man being chased.",
           "You are a Nobel laureate who cannot fold a map. I want that read out at your funeral, slowly.",
           "Out. Long, wide and out. I am the only person in this camper willing to call it.",
@@ -1714,7 +1714,7 @@
         },
         {
           "player": "I am going to take this spell, aim it correctly, and you are going to apologise.",
-          "reply": "I'll get the extinguisher. I'm not apologisin'. I'm gettin' the extinguisher."
+          "reply": "I'll get the extinguisher. That's my apology, the extinguisher."
         },
         {
           "player": "Bubba. Somebody has eaten the last of the good biscuits.",
@@ -1803,7 +1803,7 @@
           "We sit this one out, chiano chiano. Nothin' out there worth bein' struck for.",
           "{name} counts the gap between the flash and the sound, and stops counting when it gets short.",
           "Statt' bbuono, Em. Storm passes. They always pass. Ain't one yet that stayed.",
-          "Don't stand near the windows, Em. I'm askin', not tellin'.",
+          "Don't stand near the windows, Em. I'm only askin'.",
           "{name} has turned the radio off, which he never does, and has not remarked on it."
         ],
         "snow": [
@@ -1853,7 +1853,7 @@
           "You're not swimmin'. Last time somethin' came out of a lake and took you thirty-nine light years, darlin'.",
           "Water and I got an understandin': she stays out there, I stay in here.",
           "{name} watches the surface a moment too long, and then very deliberately stops.",
-          "Stay back from it, Em. Just for me. I'm not bein' clever, I'm bein' scared.",
+          "Stay back from it, Em. Just for me. I'm just bein' scared.",
           "Deep water and me have got a history and it's all on her side."
         ],
         "swamp": [
@@ -1874,7 +1874,7 @@
           "I don't like it down here and I'm sayin' so out loud so it's said.",
           "Keep the light on me and I'll keep the wrench on whatever's next, guaglio'.",
           "{name} whistles something with too much accordion in it and pretends it is not for the dark.",
-          "If I stop talkin' I'm concentratin'. Not scared. Both, actually.",
+          "If I stop talkin' I'm concentratin'. And scared. Both, actually.",
           "Stone don't lie, guaglio'. That's about all the comfort I got down here."
         ],
         "space": [
@@ -1906,7 +1906,7 @@
           "{name} taps the map twice in a place he clearly likes and does not say why."
         ],
         "night": [
-          "You should be asleep, guagliona. I'm sayin' it, not enforcin' it.",
+          "You should be asleep, guagliona. I'm only sayin' it.",
           "Night's the honest part of the day. Nobody's pretendin' at three in the mornin'.",
           "{name} has the little lamp on and is not fixing anything, which is how you know he was waiting up.",
           "Go on to bed. I'll be another hour and then I'll be another hour after that.",
@@ -1957,7 +1957,7 @@
     "player": {
       "positive": [
         "{name}. Right. I am about to be sincere at you, in public, which is a limited run, so stand still and take it.",
-        "That was good. Properly good. People pad this bit out. I am not padding. That was good.",
+        "That was good. Properly good. People pad this bit out. I will say it plainly: that was good.",
         "I like you, {name}. I have run it twice, checked it against the control, and it holds.",
         "Clean down the line. I do not hand that out. Very short list, that one.",
         "Somebody should have told you this years ago and nobody did, so it falls to the woman who killed God. You are good at this.",
@@ -1992,16 +1992,16 @@
         "I am here another four minutes, give or take. Spend them however you like. No refunds."
       ],
       "negative": [
-        "I am not going to shout, {name}. I am going to be precise. It is worse and it lasts longer.",
+        "I am going to be precise, {name}. It is worse than shouting and it lasts longer.",
         "You have the depth of a puddle and the staying power of a wasp, and I have met a god, so I know what I am calibrating against.",
         "Out. Long, wide and out. Everyone saw the line and I am the only one willing to call it.",
         "I sentence you to being exactly this, in this town, with these people, forever. Enjoy the run.",
         "I gave up ninety-two percent of myself and I am still better company than you. Sit with that a while.",
         "You wanted a reaction. This is the whole of it. You will notice the budget.",
-        "Do not pull that face at me. Use words. Faces are not arguments, they are weather.",
+        "Do not pull that face at me. Use words. Faces are only weather.",
         "I would rather be reading, {name}, and I want you to hear that I mean any book. Including the wrong ones. Including the ones that bite.",
         "I have forgotten better people than you. On purpose, apparently. I am beginning to see the methodology.",
-        "You are not an opponent, you are a wall. I hit against you while I wait for somebody real to turn up.",
+        "You are a wall. I hit against you while I wait for somebody real to turn up.",
         "You speak entirely in catchphrases. I have been listening for the load-bearing part. There is not one.",
         "I am the most interesting woman in this room and I did not have to try, which is the genuinely insulting bit.",
         "One day somebody will ask whatever happened to {name}, and nobody standing here will be able to tell them.",
@@ -2041,7 +2041,7 @@
         "Hold on, I am doing poetry. It is called {subject}. No, you may not look at my face while I do it. Look at the middle distance.",
         "There is a thing they put on gravestones where I am from, and it scans, so I am counting it. {subject}.",
         "{subject}. Rhymes badly in the middle and beautifully at the end, which is how most things go, including people.",
-        "I shall recite {subject}. If I stop halfway it is not nerves, it is that the rest was removed from my head along with everything else.",
+        "I shall recite {subject}. If I stop halfway, it is because the rest was removed from my head along with everything else.",
         "Poetry, {name}. {subject}. Stand still, it takes ninety seconds and one of us is going to be moved by it.",
         "{subject}, and then I am never doing this again until the next person asks me properly."
       ],
@@ -2074,7 +2074,7 @@
         ],
         "holdHands": [
           "Give me your hand. No reason. I want to hold something that is definitely here and definitely real.",
-          "Hand, please. I am not being romantic, I am cold. I am also being romantic. Both are running."
+          "Hand, please. I am cold. I am also being romantic. Both are running."
         ],
         "askOut": [
           "Come out with me. Somewhere ordinary. I collect ordinary and you would count as a specimen.",
@@ -2104,12 +2104,12 @@
         "Sorry to be the tourist, but {target}. Where. Take your time, but not much of it.",
         "Right. {target}. Assume I know nothing, which is nearly a documented fact.",
         "Which way to {target}, and is it uphill, because I intend to complain either way.",
-        "{target}, please. Directions, not an anecdote, unless the anecdote is short and structurally load-bearing.",
+        "{target}, please. Directions. An anecdote only if it is short and structurally load-bearing.",
         "You have the face of somebody who knows where {target} is. Do not let me down this early in the day."
       ],
       "confront": [
         "It was a mistake. A very large one, admittedly. I am told it was the largest.",
-        "I do not remember any of it. That is not a figure of speech. They took the memories and made the spear out of them.",
+        "I do not remember any of it, literally. They took the memories and made the spear out of them.",
         "I am working on it. I do not know what working on it looks like yet, but I am doing it.",
         "Honestly? I was not really there. Most of me was the spear, and the spear does not keep a diary.",
         "It was an accident. You do not set out to kill God on a Tuesday. It was not even a Tuesday.",
@@ -2206,7 +2206,7 @@
       "I will tell my daughter. She will not believe me and I will tell her anyway.",
       "Right. Well. That has made the whole month, that has.",
       "Anything in this shop. Anything. Do not argue with me about it.",
-      "You are not supposed to be nice as well. That is greedy.",
+      "Nice as well? That is greedy.",
       "{name} will describe this conversation inaccurately and often for the rest of their life.",
       "I have got nothing to give you that you have not already given me. That is a strange feeling.",
       "Right. Well. I am going to have to sit down about that."
@@ -2256,7 +2256,7 @@
       "The Engine isn't mine any more. Belongs to whoever's drivin'.",
       "Mannaggia, don't start. I'm a mechanic that got lucky twice.",
       "Prize sits in a box under the bunk. Good bit of weight for holdin' a door.",
-      "Weren't smarts, it were stubborn. There's a difference and it isn't in my favour.",
+      "It were stubborn, plain and simple. Smarts would've been in my favour.",
       "Anybody tell you I'm clever, ask 'em how many times she blew up first. Answer's eleven.",
       "Ue, you're kind. I'd rather hear about you, though, honest.",
       "I put an engine in a camper, that's all. The rest of it the road did.",
@@ -2268,7 +2268,7 @@
       "There's a hundred fellas coulda built it. I'm just the one what didn't have nothin' else on.",
       "Madonna. Look, if it helped, I'm glad. That's the end of the story and I haven't got a better one.",
       "You're bein' too nice and I'm gettin' nervous. What do you need? Genuine, what do you need?",
-      "I'm not a great man, guaglio'. I'm a stubborn one with a good friend and a bad camper.",
+      "I'm just a stubborn man, guaglio', with a good friend and a bad camper.",
       "Grazie assaje. Now do us a favour and talk about literally anythin' else.",
       "Half of it were an accident and the other half were Em shoutin' at me. Put that in the papers."
     ],
@@ -2278,13 +2278,13 @@
         "I have loved you since the coaches started running. I need you to know that before you say anything.",
         "I kept every clipping. There's a whole drawer. Is that mad? That's mad.",
         "Take me with you. In the camper. I'll fix nothing, I'll just be there.",
-        "I never wanted anybody else. Not once. Not ever. Only you.",
+        "I only ever wanted you. Every single time.",
         "I practised this. I practised it for years and it's all gone out of my head.",
         "Say the word and I'll close the shop tonight. Tonight, Mister Wilson."
       ],
       "decline": [
         "Darlin', stop. Stop before you say the rest of it. There's a woman in this and it isn't you, and it isn't goin' away neither.",
-        "Ue, listen to me. Whoever you built in your head out of them clippings, that fella's better than me. Go marry him, not this.",
+        "Ue, listen to me. Whoever you built in your head out of them clippings, that fella's better than me. Go marry him.",
         "Mannaggia. I'm honoured, guagliona, and the answer's no, and it's goin' to stay no.",
         "I'm spoke for by somethin' I can't even get a phone line to. Isn't fair on you, isn't fair on nobody. So: no.",
         "You deserve a man that's home at night. I'm a man that's eighty kilometres an hour away from everythin'.",
@@ -2341,15 +2341,15 @@
         "I have decided today is going to be extraordinary. I did not consult the day.",
         "{name} has been waiting to be interrupted for some time and is extremely relieved that you have.",
         "Plainly and slowly, please. I have used up the entire week's inference and it is Thursday.",
-        "I dreamed about the lance again. It was not upsetting. That is the upsetting part.",
+        "I dreamed about the lance again. It was calm. That is the upsetting part.",
         "There you are. Right. Good. That is that dealt with. What."
       ],
       "positive": [
         "I shall take that, keep it, and produce it again at a low moment. That is what I do with kind things.",
-        "Say it again. Not because I doubt you. Because I want it twice.",
+        "Say it again. I want it twice.",
         "{name} looks at you for slightly too long and then announces that she is going to go and read.",
         "Yes. Correct. Continue.",
-        "I am not going to blush, Bubba. I am going to be very warm and slightly furious about it instead.",
+        "Bubba. I am going to be very warm and slightly furious about it.",
         "Clean down the line. I do not give that compliment to just anybody. I give it to you constantly, which devalues it somewhat.",
         "You are being sincere at me before noon. That is a great deal of load with no warning.",
         "Thank you. Sincerely, and not in the way where the words mean the opposite. I checked which way I meant it.",
@@ -2387,7 +2387,7 @@
         "Yes. No. Possibly. I have given you all three, pick the one you came for.",
         "I was not attending. Repeat it and I shall pretend I was, and we shall both come out ahead.",
         "{name} has been reading the same paragraph throughout and has not taken in a word of it.",
-        "Keep talking. I do not need the content. I need the noise. It is a load-bearing noise.",
+        "Keep talking. I need the noise. It is a load-bearing noise.",
         "That is a fact about the world and I have accepted it into the collection. Next.",
         "Is this small talk? Am I doing small talk? I cannot tell from in here.",
         "Very well. Onward, then. That is what one says. I have been practising that one.",
@@ -2398,7 +2398,7 @@
         "Continue. I shall interrupt you if it becomes interesting.",
         "{name} answers with a fact, a date and no context whatsoever, and considers the matter closed.",
         "I have no position on that. It is restful, having no position.",
-        "Say the word again. Not the sentence. Just the word. I like the shape of it.",
+        "Say the word again. Just the word. I like the shape of it.",
         "I was thinking about tennis. I am always thinking about tennis. Carry on.",
         "{name} is aligning three objects on the table by size and has been for some time.",
         "That is either extremely clever or extremely stupid and I cannot get a clean look at it from here.",
@@ -2452,7 +2452,7 @@
         ],
         "neutral": [
           "Uè, Em. Pass me that ten mil and keep talkin', I listen better with somethin' in my hands.",
-          "How's the head, guagliona. Not the wound. The other thing. The rememberin'.",
+          "How's the head, guagliona. The rememberin', I mean.",
           "You eat today? Don't lie to me, I can tell by how you're standin'.",
           "I got no idea, darlin', and I'm at peace with it. Everything's fixable, some of it twice.",
           "Chiano chiano. We'll get there. We always get there, we just never get there fast.",
@@ -2493,7 +2493,7 @@
           "reply": "It was the flattest surface available. Do not make it a personality, Bubba."
         },
         {
-          "player": "That isn't a shortcut, guagliona, that's a field.",
+          "player": "That's a field, guagliona.",
           "reply": "It is a shortcut through a field. You have simply elected to focus on the field."
         },
         {
@@ -2534,7 +2534,7 @@
         },
         {
           "player": "You spent HOW much on a book?",
-          "reply": "It was bound in something that used to have opinions. Call it a rescue, not a purchase."
+          "reply": "It was bound in something that used to have opinions. Call it a rescue."
         },
         {
           "player": "I'm just sayin', a little modesty wouldn't kill you.",
@@ -2634,9 +2634,9 @@
           "Is that hers? It has her handwriting on it. Weather can have handwriting, Bubba, do keep up.",
           "Splendid. The heavens are splitting again. That is twice now and I was only present for one of them.",
           "{name} counts the seconds after the flash and gets it wrong on purpose, to be corrected.",
-          "I am not frightened. I am extremely alert. From outside the two look identical, which is not my problem.",
+          "I am extremely alert. From outside it may look like fright, which is not my problem.",
           "If she is doing this, she is showing off, and I have absolutely no standing to criticise that.",
-          "Sit here. Not for me. For you. I can see your hands from here."
+          "Sit here. It's for you. I can see your hands from here."
         ],
         "snow": [
           "Snow. Cold, quiet, and it makes the world look like a page nobody has written on yet. Approved.",
@@ -2707,7 +2707,7 @@
           "Something in this place is older than the death of God and it is not impressed by either of us.",
           "{name} is walking closer to you than she was on the surface and has not remarked on it.",
           "Nothing down here has read a newspaper. The most peaceful I have been all year.",
-          "Keep talking. Not for the information. For the noise. You know why."
+          "Keep talking. I want the noise. You know why."
         ],
         "space": [
           "Thirty-nine light years, they said. I have been out here before and I remember none of it. Infuriating.",
@@ -2776,7 +2776,7 @@
       "refuseJoin": [
         "Join you? Bubba, I am already here. I have been here the entire time. Do keep up.",
         "I go where the camper goes, the camper goes where you go, so the question does not arise.",
-        "You cannot recruit me. I am not staff. I am the reason."
+        "You cannot recruit me. I am the reason."
       ]
     }
   },
@@ -2816,7 +2816,7 @@
           "thank": [
             "You have my thanks, {name}, and thanks from a sorcerer are binding. Spend them wisely.",
             "I will burn a sprig of rosemary in your honour tonight.",
-            "A debt like this one I write in the grimorie. In ink, not pencil.",
+            "A debt like this one I write in the grimorie. In ink.",
             "Thank you. The spirits saw it too, {name}, they keep better records than I do.",
             "Gratitude is a minor rite. Consider it performed, with full ceremony."
           ],
@@ -2879,7 +2879,7 @@
             "I could enchant you, {name}, but I think I would rather you came willingly."
           ],
           "admire": [
-            "You have a glow, {name}. Not a figure of speech. I can actually see it.",
+            "You have a glow, {name}. Literally: I can actually see it.",
             "I would draw your portrait in silver ink, on vellum, by the light of a waxing moon.",
             "The way you laugh would break a minor ward. I mean that kindly.",
             "Some people are just woven tighter than the rest. You are one of them.",
@@ -3337,7 +3337,7 @@
               "A tale of {subject}? I'm afraid that was mostly chanting.",
               "Spooky voice, smoke, candles... and no ending.",
               "I'm not sure I wanted to hear that. My neck is still cold.",
-              "That's a grimorie entry, not a story."
+              "That's a grimorie entry."
             ]
           },
           "poem": {
@@ -3409,7 +3409,7 @@
             ],
             "bad": [
               "You called my ritual robe \"a nice coat\". Leave.",
-              "It is not a costume. It is a vow stitched in silver.",
+              "It is a vow stitched in silver.",
               "Compliment the fabric if you must, but the sigils are not decoration.",
               "My amulet does not need your opinion. It has its own.",
               "Careful. Flattering a focus without permission is bad luck."
@@ -3460,7 +3460,7 @@
               "Your thanks are vague. Spells are precise. So should you be.",
               "Don't thank me. Thank the moon, she did most of the work.",
               "Mumbled thanks break nothing and bind nothing.",
-              "I did not do it for you. I did it for the balance."
+              "I did it for the balance."
             ]
           },
           "smalltalk": {
@@ -3490,7 +3490,7 @@
             "bad": [
               "Words carry. Ill words carry hexes. Mind your tongue.",
               "I don't trade rumours. Rumours become curses with enough mouths.",
-              "That is not gossip. That is someone's true name. Stop.",
+              "That is someone's true name. Stop.",
               "The crystal already showed me. You have it wrong.",
               "Gossip is low magic. Beneath us both."
             ]
@@ -3508,7 +3508,7 @@
               "Do not curse the rain. Someone may have summoned it.",
               "The weather is my business. Literally. I did that.",
               "Clouds are clouds. Unless they move against the wind.",
-              "I care for the moon, not the forecast."
+              "I care for the moon. Only the moon."
             ]
           },
           "insult": {
@@ -3611,7 +3611,7 @@
           },
           "loveLetter": {
             "good": [
-              "You wrote it in ink, not biro. You understand ritual.",
+              "You wrote it in real ink. You understand ritual.",
               "I will keep this between the pages of my grimorie.",
               "It smells of lavender. Did you know lavender binds?",
               "A letter is a spell on paper. This one worked.",
@@ -3701,7 +3701,7 @@
               "Feelings are a powerful reagent. Too volatile for me.",
               "The stars do not align for us. I looked. Twice.",
               "I am married to the Art. It is a jealous spouse.",
-              "That is a love charm talking, not you. Who hexed you?",
+              "That is a love charm talking. Who hexed you?",
               "I am sorry. My heart was given to the Weave long ago."
             ]
           },
@@ -3765,7 +3765,7 @@
             ],
             "bad": [
               "The metre limps. A spell like that would backfire.",
-              "{subject} deserves runes, not doggerel.",
+              "{subject} deserves runes. That was doggerel.",
               "Not a drop of mana in those lines.",
               "Rhymes with \"moon\" and \"soon\". Every hedge witch does that.",
               "The ancients would have banished you for that couplet."
@@ -3826,7 +3826,7 @@
             "If you were a fabric, you'd be the silk they keep behind the counter.",
             "I've met barons with less presence than you. Shorter barons, too.",
             "You could make a rental suit look bespoke, {name}. That is a gift.",
-            "Truly, you belong in a box at the opera, not down here among us."
+            "Truly, you belong in a box at the opera, far above the rest of us."
           ],
           "thank": [
             "Thank you, {name}. Put it on my account. Oh, you meant gratitude. Of course.",
@@ -4120,7 +4120,7 @@
               "Wow. Cut as sharp as your jacket."
             ],
             "bad": [
-              "Money can buy a suit, not manners.",
+              "Money can buy a suit. Manners cost extra.",
               "Insult me all you like. Your cologne's still too strong.",
               "Rich and rude. How original.",
               "Go on, sneer from your silk throne.",
@@ -4154,7 +4154,7 @@
             "bad": [
               "Criticism from somebody who's never ironed their own shirt.",
               "You'd judge a cathedral by its cufflinks.",
-              "Keep your standards. They're tailored for you, not me.",
+              "Keep your standards. They're tailored for you alone.",
               "Taste isn't wisdom. Remember that.",
               "Your wardrobe has opinions. You needn't share them."
             ]
@@ -4330,7 +4330,7 @@
               "Yes. Someone with your taste wouldn't pick wrong."
             ],
             "reject": [
-              "That sounds like a clause in a contract, not love.",
+              "That sounds like a clause in a contract.",
               "You negotiate love the way you order suits. No.",
               "Not everything comes in your size.",
               "I'm not signing anything with someone who owns half the street.",
@@ -4426,7 +4426,7 @@
               "You complimented the shoes. The shoes are the least of it.",
               "That's last season, darling. Do keep up.",
               "\"A thin smile.\" People who don't know fabric shouldn't comment on it.",
-              "Sweet. Wrong, but sweet. It's vicuna, not wool.",
+              "Sweet. Wrong, but sweet. It's vicuna.",
               "I've been complimented by dukes. You'll have to try harder than that."
             ]
           },
@@ -4507,7 +4507,7 @@
               "I only trade gossip with people who own a box at the opera.",
               "\"Yawns elegantly.\" I started that rumour myself, actually.",
               "Common people gossiping about common people. How dreary.",
-              "That's not gossip, that's a weather report with names."
+              "That's just a weather report with names."
             ]
           },
           "weather": {
@@ -4732,7 +4732,7 @@
               "Not on the silk. Absolutely not on the silk.",
               "\"Turns a cheek, diamonds flashing.\" One does not simply kiss me.",
               "Darling, you've smudged the powder. That took an hour.",
-              "Too forward. I'm a gallery, not a market stall.",
+              "Too forward. I'm a gallery: look, don't touch.",
               "Mm, no. You taste of the tram."
             ]
           },
@@ -4893,7 +4893,7 @@
             "Stop stomping, {name}. It's the first thing people remember about you."
           ],
           "threaten": [
-            "You won't see me coming, {name}. That's not a figure of speech.",
+            "You won't see me coming, {name}. I mean that literally.",
             "I know where you sleep, {name}. And which floorboard creaks.",
             "Tonight, {name}, check the shadows in your room. Then check them again.",
             "'A cold blade, briefly, at the back of the neck' We understand each other, {name}?",
@@ -4951,7 +4951,7 @@
             "I've never taken anyone out through the front door, {name}. For you I'll try."
           ],
           "confess": [
-            "I've followed you for weeks, {name}. Not to watch. Because I couldn't stop.",
+            "I've followed you for weeks, {name}, because I couldn't stop.",
             "I hide from everyone, {name}. I don't want to hide from you.",
             "Nobody knows I'm here, {name}. I'd like you to be the exception, always.",
             "I've stepped out of the dark for one reason, {name}. It's you.",
@@ -5217,7 +5217,7 @@
               "Keep looking. Just let me see you looking back."
             ],
             "bad": [
-              "So you've been watching me. That's not admiring, that's stalking.",
+              "So you've been watching me. That's called stalking.",
               "Admire me from the shadows? No. That's unsettling.",
               "I'd rather be admired by someone with a visible face.",
               "How long have you been admiring me from that doorway?",
@@ -5234,7 +5234,7 @@
             ],
             "bad": [
               "How did this get into my locked drawer? I'm calling a locksmith.",
-              "A letter that appeared on my nightstand. That's not romance, it's a break-in.",
+              "A letter that appeared on my nightstand. That's called a break-in.",
               "I found it in my pocket and nearly screamed.",
               "Next time, use the post. Like a person.",
               "Love letter or ransom note? I genuinely couldn't tell."
@@ -5381,7 +5381,7 @@
             "bad": [
               "Was that a poem, or were you muttering to the dark?",
               "I couldn't hear a word. Speak up, ghost.",
-              "A poem about {subject}, whispered from a hood. Spooky, not moving.",
+              "A poem about {subject}, whispered from a hood. Spooky. Hardly moving.",
               "Every line trailed off, like you were ready to bolt.",
               "Lovely, I'm sure. I'll ask the wall, it was closer."
             ]
@@ -5458,7 +5458,7 @@
               "Easy for you to say. You've never waited three hours in a coal chute.",
               "Encouragement won't make the floorboards creak less.",
               "Rah rah. Keep your pep talks away from my hiding spots.",
-              "I'll move when the shadows say so, not when you do."
+              "I'll move when the shadows say so."
             ]
           },
           "flatter": {
@@ -5911,7 +5911,7 @@
             "\"Draws a blade as long as your leg.\" Say that again, {name}. Slowly.",
             "Walk away now, and you keep all your teeth. That's my best offer.",
             "I know where you sleep, {name}. I know where everyone sleeps.",
-            "One more word and they'll need a mop, not a doctor.",
+            "One more word and they'll be sending a mop.",
             "\"Skull pauldrons rattle.\" These used to belong to people who argued with me."
           ]
         },
@@ -6186,7 +6186,7 @@
               "Criticise my work once you've put down the cleaver.",
               "You want to know what's wrong? Fine. Your armour clashes.",
               "I don't take notes from walking armouries.",
-              "Spiky opinions, not sharp ones."
+              "Spiky opinions. Blunt underneath."
             ]
           },
           "threaten": {
@@ -6362,7 +6362,7 @@
             "reject": [
               "I don't make vows to someone in battle dress.",
               "No. I'm not agreeing to anything at axe point.",
-              "That sounded like terms of surrender, not a proposal.",
+              "That sounded like terms of surrender.",
               "Ask me again out of the armour, maybe.",
               "I can't say yes while you're clenching that spiked fist."
             ]
@@ -6407,7 +6407,7 @@
             "Ha! The scary one is funny! Nobody warned me!",
             "I laughed so hard I forgot about the skulls.",
             "Okay, that got me. Your helmet rattling along was the best part.",
-            "Brilliant. And I'm laughing because I want to, not because of the axe.",
+            "Brilliant. And I'm laughing of my own free will, axe or no axe.",
             "Ha! Tell it again, the whole square should hear the walking fortress crack a joke."
           ],
           "landGroan": [
@@ -6455,7 +6455,7 @@
             "bad": [
               "Careful. People who admire the blade usually want to borrow it.",
               "Compliment my maul again and it'll compliment you back.",
-              "That's not a compliment, that's a nervous habit.",
+              "That compliment sounded like a nervous habit.",
               "You looked at the skulls first. Everyone looks at the skulls first.",
               "Words. Iron doesn't care about words."
             ]
@@ -6609,7 +6609,7 @@
               "...You actually mean it. Respect. I'll stand down.",
               "Huh. A threat that isn't shaking. All right, you win this one.",
               "Easy. Easy. We're both dangerous. No need to prove it.",
-              "Fine. I'll leave. Not because I'm scared. Because you might be crazy.",
+              "Fine. I'll leave, because you might be crazy.",
               "Heh. You've got the look. We'll settle it another day."
             ],
             "bad": [
@@ -6745,7 +6745,7 @@
             "bad": [
               "Feelings get people killed. Usually by me.",
               "No. My heart is armoured too.",
-              "You love the helm, not what's under it. Trust me.",
+              "You love the helm. Trust me.",
               "Walk away while I'm still being kind.",
               "I'm a weapon. You don't fall in love with a weapon."
             ]

@@ -12,8 +12,8 @@
   "abandoned": "Pick withdrawn...",
   "usedSkeletonKey": "Used Skeleton Key!",
   "noLockpicks": "You don't have any lockpicks",
-  "craftOffer": "No lockpicks left, but there is enough to bend one: {materials}. Make a {item}?",
-  "craftYes": "Bend one now",
-  "craftNo": "Leave the lock",
-  "craftedOne": "Bent a {item} at the door"
+  "craftOffer": "No lockpicks. Make a {item} from {materials}?",
+  "craftYes": "Make one",
+  "craftNo": "Cancel",
+  "craftedOne": "Made a {item}"
 }

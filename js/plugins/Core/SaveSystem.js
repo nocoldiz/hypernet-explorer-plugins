@@ -143,9 +143,18 @@
     // Wipes the story band, both slots, and lets go of the binding if the
     // live session was holding one of them. The only way to begin the story
     // over from outside the save screen: the playtest boot (Titlescreen.js)
-    // starts every run of the story on an empty band.
-    window.SaveSystem.eraseStoryBand = function () {
-        const removals = [STORY_SLOT, STORY_AUTO_SLOT].map((id) => {
+    // starts every run of the story on an empty band. With quicksaves set,
+    // the shared quicksaves the story wrote last go too, so nothing of the
+    // story is left to resume (the title's Force new story entry).
+    window.SaveSystem.eraseStoryBand = function (options) {
+        const ids = [STORY_SLOT, STORY_AUTO_SLOT];
+        if (options && options.quicksaves) {
+            QUICK_SLOT_IDS.forEach((id) => {
+                const info = DataManager.savefileInfo(id);
+                if (info && info.runKind === "story") ids.push(id);
+            });
+        }
+        const removals = ids.map((id) => {
             let removal;
             try {
                 removal = Promise.resolve(StorageManager.remove(DataManager.makeSavename(id)));
@@ -431,12 +440,12 @@
 
     if (window.GameOptions) {
         const it = ConfigManager.language === "it";
-        window.GameOptions.registerOption('autosaveEnabled',T('SaveSystem.autoSave'),
+        window.GameOptions.registerOption('autosaveEnabled',() => T('SaveSystem.autoSave'),
             () => ConfigManager.autosaveEnabled,
             (value) => ConfigManager.autosaveEnabled = value,
             'gameplay', 'boolean');
 
-        window.GameOptions.registerOption('autosaveInterval',T('SaveSystem.saveInterval'),
+        window.GameOptions.registerOption('autosaveInterval',() => T('SaveSystem.saveInterval'),
             () => normalizeInterval(ConfigManager.autosaveInterval),
             (value) => ConfigManager.autosaveInterval = normalizeInterval(value),
             'gameplay', 'custom',
@@ -1317,7 +1326,7 @@
                 const sLocY = Math.max(0, Math.min(31, sCoords.worldY % 32));
                 const sPinX = ((sLocX + 0.5) / 32) * 100;
                 const sPinY = ((sLocY + 0.5) / 32) * 100;
-                const name = sCoords.leaderName ? `Party of ${sCoords.leaderName}` : (sId === 0 ? "Autosave" : `Slot ${sId}`);
+                const name = sCoords.leaderName ? T('SaveSystem.partyOf', { name: sCoords.leaderName }) : (sId === 0 ? T('SaveSystem.autosaveName') : T('SaveSystem.slotName', { n: sId }));
                 adjacentPins.push({
                     slotId: sId,
                     name,
@@ -1328,24 +1337,24 @@
         }
 
         const adjacentHTML = adjacentPins.map(adj => `
-            <div class="save-map-pin adjacent-party-pin" style="left:${adj.pinX.toFixed(1)}%; top:${adj.pinY.toFixed(1)}%;" title="Adjacent: ${escapeHtml(adj.name)}">
+            <div class="save-map-pin adjacent-party-pin" style="left:${adj.pinX.toFixed(1)}%; top:${adj.pinY.toFixed(1)}%;" title="${escapeHtml(T('SaveSystem.adjacentParty', { name: adj.name }))}">
                 <div class="save-pin-dot adjacent"></div>
                 <div class="save-pin-label adjacent">${escapeHtml(adj.name)}</div>
             </div>
         `).join("");
 
-        const selectedLabel = leaderName ? `Party of ${leaderName}` : (selectedSlotId === 0 ? "Autosave" : `Slot ${selectedSlotId}`);
+        const selectedLabel = leaderName ? T('SaveSystem.partyOf', { name: leaderName }) : (selectedSlotId === 0 ? T('SaveSystem.autosaveName') : T('SaveSystem.slotName', { n: selectedSlotId }));
 
         return `
             <div class="save-map-section">
                 <div class="save-map-meta-bar">
                     <div class="save-map-meta-item">
-                        <span class="detail-label">Coordinates:</span>
+                        <span class="detail-label">${T('SaveSystem.coordinatesLabel')}</span>
                         <span class="save-coords-badge">X: ${worldX} | Y: ${worldY}</span>
                     </div>
                     <div class="save-map-meta-item">
-                        <span class="detail-label">Sector:</span>
-                        <span class="save-sector-badge">Row ${row} · Col ${col}</span>
+                        <span class="detail-label">${T('MainMenu.label.sector')}</span>
+                        <span class="save-sector-badge">${T('MainMenu.vehicles.sectorValue', { row, col })}</span>
                     </div>
                 </div>
 
@@ -1648,6 +1657,21 @@
         });
     };
 
+    // DataManager.loadGame rebuilds every game object BEFORE it reads the file
+    // in, so a save that fails part way through (an old or damaged file) has
+    // already swapped the running session for empty objects. Carrying on, back
+    // to the map or the menu, runs on a world with no map in it: the title is
+    // the only safe place left. Answers whether it sent the player there.
+    function sessionLostOnFailedLoad(gameMapBefore) {
+        if (!gameMapBefore || window.$gameMap === gameMapBefore) return false;
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(T('SaveSystem.quick.loadFailed'), { severity: "warning" });
+        }
+        SceneManager.goto(Scene_Title);
+        return true;
+    }
+    window.SaveSystem.sessionLostOnFailedLoad = sessionLostOnFailedLoad;
+
     Scene_File.prototype.loadSavefile = function (index) {
         const info = DataManager.savefileInfo(index);
         if (!info) {
@@ -1665,6 +1689,7 @@
         this.removeUIContainer(true);
         this.fadeOutAll();
 
+        const sessionBefore = window.$gameMap;
         DataManager.loadGame(index)
             .then(() => {
                 $gameSystem.onAfterLoad();
@@ -1681,6 +1706,10 @@
             .catch((error) => {
                 console.error(error);
                 SoundManager.playBuzzer();
+                // Opened from a game in progress, a load that died after the
+                // game objects were rebuilt leaves nothing to go back to.
+                if (SceneManager._stack.indexOf(Scene_Map) >= 0 &&
+                    sessionLostOnFailedLoad(sessionBefore)) return;
                 // Load failed: rebuild the overlay and fade back in so the
                 // player can pick another slot instead of being stranded on a
                 // blank, faded-out screen.
@@ -1839,12 +1868,31 @@
             recordPermadeathWipe();
             window.SaveSystem.deletePlaythroughSaves();
         }
+        stopGameOverAudio();
+        SceneManager.goto(Scene_HardcoreGameOver);
+    };
+
+    // Em fallen on the story's Blood and Oil (BattleSystemEnhancedDeath,
+    // window.StoryDeath). Nothing is erased on the way in: the player chooses
+    // between giving the story up and "Witches never die!" on the screen itself.
+    window.SaveSystem.triggerStoryGameOver = function () {
+        stopGameOverAudio();
+        SceneManager.goto(Scene_HardcoreGameOver);
+        SceneManager.prepareNextScene({ story: true });
+    };
+
+    function stopGameOverAudio() {
         if (window.AudioManager) {
             AudioManager.stopBgm();
             AudioManager.stopBgs();
+            // Rain and night ambience play on MUSH channels the stock stop
+            // never reaches; they would come back over the grave when its ME
+            // ended.
+            if (typeof AudioManager.clearAllMushChannels === 'function') {
+                AudioManager.clearAllMushChannels();
+            }
         }
-        SceneManager.goto(Scene_HardcoreGameOver);
-    };
+    }
 
     // How many diary lines the gravestone carries. Enough to read as a life,
     // few enough that the screen never has to scroll.
@@ -1877,6 +1925,12 @@
     }
 
     class Scene_HardcoreGameOver extends Scene_Base {
+        // { story: true } is Em fallen on the story's Blood and Oil: two ways
+        // out instead of one.
+        prepare(opts) {
+            this._story = !!(opts && opts.story);
+        }
+
         create() {
             super.create();
             this.createBlackBackground();
@@ -1975,9 +2029,15 @@
             const titleText =T('SaveSystem.youDied');
             const epitaph = T('SaveSystem.epitaph', { name: escapeHtml(name) });
             const btnText =T('SaveSystem.returnToMainMenu');
-            const emHTML = isEmInPlay()
+            const emHTML = isEmInPlay() && !this._story
                 ? `<div class="hgo-em">${T('SaveSystem.emWillReturnSomehowWitches')}</div>`
                 : "";
+            const buttonsHTML = this._story
+                ? `<div class="hgo-buttons">
+                        <div class="hgo-button" data-hgo-choice="0" onclick="SceneManager._scene && SceneManager._scene.storyChoice(0)">${T('SaveSystem.story.giveUp')}</div>
+                        <div class="hgo-button" data-hgo-choice="1" onclick="SceneManager._scene && SceneManager._scene.storyChoice(1)">${T('SaveSystem.story.witchesNeverDie')}</div>
+                    </div>`
+                : `<div class="hgo-button" onclick="SceneManager._scene && SceneManager._scene.returnToTitle()">${btnText}</div>`;
 
             const c = document.createElement('div');
             c.id = 'hardcore-gameover-container';
@@ -2004,7 +2064,7 @@
                     ${emHTML}
                     ${this.diaryHTML()}
                     ${statsHTML ? `<div class="hgo-stats">${statsHTML}</div>` : ""}
-                    <div class="hgo-button" onclick="SceneManager._scene && SceneManager._scene.returnToTitle()">${btnText}</div>
+                    ${buttonsHTML}
                 </div>`;
             document.body.appendChild(c);
             this._dom = c;
@@ -2015,10 +2075,55 @@
 
         update() {
             super.update();
-            if (this._inputReady && !this._returning && this.isActive()) {
-                if (Input.isTriggered('ok') || Input.isTriggered('cancel') || TouchInput.isTriggered()) {
-                    this.returnToTitle();
-                }
+            if (!this._inputReady || this._returning || !this.isActive()) return;
+            if (this._story) {
+                this.updateStoryInput();
+                return;
+            }
+            if (Input.isTriggered('ok') || Input.isTriggered('cancel') || TouchInput.isTriggered()) {
+                this.returnToTitle();
+            }
+        }
+
+        // The two story buttons: left/right (or up/down) moves between them, ok
+        // takes the one lit. Witches never die is lit first. A tap is left to
+        // the buttons' own click.
+        updateStoryInput() {
+            if (this._storyFocus == null) this.setStoryFocus(1);
+            if (Input.isTriggered('left') || Input.isTriggered('up')) {
+                SoundManager.playCursor();
+                this.setStoryFocus(0);
+            } else if (Input.isTriggered('right') || Input.isTriggered('down')) {
+                SoundManager.playCursor();
+                this.setStoryFocus(1);
+            } else if (Input.isTriggered('ok')) {
+                this.storyChoice(this._storyFocus);
+            }
+        }
+
+        setStoryFocus(index) {
+            this._storyFocus = index;
+            if (!this._dom) return;
+            this._dom.querySelectorAll('[data-hgo-choice]').forEach((el) => {
+                el.classList.toggle('hgo-button-focus', Number(el.getAttribute('data-hgo-choice')) === index);
+            });
+        }
+
+        // 0 gives the story up, 1 is "Witches never die!".
+        storyChoice(index) {
+            if (this._returning || !this._inputReady) return;
+            const SD = window.StoryDeath;
+            this._returning = true;
+            this._inputReady = false;
+            SoundManager.playOk();
+            this.removeUIContainer();
+            this.fadeOutAll();
+            if (index === 1 && SD) {
+                SD.witchesNeverDie();
+            } else if (SD) {
+                SD.giveUp();
+            } else {
+                SceneManager.goto(Scene_Title);
             }
         }
 
@@ -2146,6 +2251,7 @@
             // Set a flag so the popup shows after the map finishes loading
             if ($gameTemp) $gameTemp._showQuickloadPopup = quickSlotNumber(slot);
 
+            const sessionBefore = $gameMap;
             DataManager.loadGame(slot)
                 .then(() => {
                     $gameSystem.onAfterLoad();
@@ -2162,6 +2268,8 @@
                 .catch((error) => {
                     console.error("Quickload failed:", error);
                     SoundManager.playBuzzer();
+                    if (sessionLostOnFailedLoad(sessionBefore)) return;
+                    if ($gameTemp) $gameTemp._showQuickloadPopup = false;
                     this.showQuickPopup("Load Failed");
                 });
         } else {

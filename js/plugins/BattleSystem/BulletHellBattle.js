@@ -1518,6 +1518,13 @@ enemyHit() {
     
     // Apply damage to enemy
     this._enemy.gainHp(-damage);
+    // A kill here never passes the battle log's added-state display, which is
+    // the only thing that plays an enemy's collapse: without it the body stood
+    // on the field for the rest of the fight.
+    if (this._enemy.isDead() && !this._enemy._bulletHellCollapsed) {
+        this._enemy._bulletHellCollapsed = true;
+        this._enemy.performCollapse();
+    }
     
     // Play random hit sound
     const hitSounds = [
@@ -2028,8 +2035,11 @@ if ($gameTemp) {
 }
 // Try to add text directly to log window if available
 if (BattleManager._logWindow && BattleManager._logWindow.addText) {
+    const log = BattleManager._logWindow;
     setTimeout(() => {
-        BattleManager._logWindow.addText(text);
+        // The battle may have closed in between: only the same, live window.
+        if (BattleManager._logWindow !== log || !log.contents || log._destroyed) return;
+        log.addText(text);
     }, 10);
 }
 }
@@ -2037,5 +2047,341 @@ if (BattleManager._logWindow && BattleManager._logWindow.addText) {
 
 
 
+
+// ===== BulletTime: the Bullet Time states and <BulletHell> enemy ultimates =====
+//
+// Two halves, both read off note tags so no state or skill id is hardcoded.
+//
+// 1. A state carrying <BulletTimeSlow: n> slows the dodge for whoever flies the
+//    craft: enemy shots travel at n% of their speed and are fired n% as often.
+//    <BulletTimeHitbox: n> shrinks the craft's own hit radius to n%. Several
+//    such states never stack below the strongest one. The states also carry
+//    plain evasion traits, and outside a dodge (MapBattleMode, or any fight in
+//    which the field cannot open) that evasion is all they are.
+//
+// 2. An enemy skill tagged <BulletHell> opens a dodge for the party member it
+//    targets the moment it is announced. A shot taken in that dodge costs no HP
+//    by itself: it is counted, and when the field closes the skill lands with
+//    its damage scaled by the count (damageScale). With several party targets
+//    one of them flies for everybody, a Bullet Time holder first. Where the
+//    field cannot open (MapBattleMode, a scene that is not Scene_Battle, a dodge
+//    already running, a fumbled action) the skill is a normal hit. An enemy shot
+//    down during its own dodge never lands the skill at all.
+//
+// The PSI Blast dodge (common event 7, opened by the skill's own effect) is now
+// flown by whoever cast it rather than by the first battle member, so Bullet
+// Time on the caster is felt there too.
+
+const BT = window.BulletTime = window.BulletTime || {};
+BT.HIT_RADIUS = 8;          // the craft's radius as createCollisionAreas sets it
+BT.DODGE_FRAMES = 240;      // a <BulletHell> dodge lasts four seconds
+BT.SCALE_BASE = 0.25;       // a clean dodge still lets a quarter through
+BT.SCALE_PER_HIT = 0.125;   // every hit taken adds an eighth
+BT.SCALE_MAX = 1.5;         // ten hits or more and the blow lands half again as hard
+BT.PSI_DODGE_EVENT = 7;     // the common event that opens the PSI Blast dodge
+BT._session = null;
+BT._lastCaster = null;
+
+function btTagNumber(obj, key) {
+    if (!obj) return NaN;
+    const meta = obj.meta || {};
+    let raw = meta[key];
+    if (raw === undefined && obj.note) {
+        const m = String(obj.note).match(new RegExp("<" + key + ":\\s*([\\d.]+)\\s*>", "i"));
+        raw = m ? m[1] : undefined;
+    }
+    return raw === undefined || raw === true ? NaN : Number(raw);
+}
+
+function btStates(battler) {
+    return battler && typeof battler.states === "function" ? battler.states() : [];
+}
+
+function btFactor(battler, key) {
+    let factor = 1;
+    for (const state of btStates(battler)) {
+        const n = btTagNumber(state, key);
+        if (n >= 0 && n < 100) factor = Math.min(factor, n / 100);
+    }
+    return factor;
+}
+
+BT.slowFactor = battler => btFactor(battler, "BulletTimeSlow");
+BT.hitboxFactor = battler => btFactor(battler, "BulletTimeHitbox");
+BT.hasBulletTime = battler => BT.slowFactor(battler) < 1 || BT.hitboxFactor(battler) < 1;
+
+BT.damageScale = function(hits) {
+    const n = Math.max(0, Number(hits) || 0);
+    return Math.min(BT.SCALE_MAX, BT.SCALE_BASE + BT.SCALE_PER_HIT * n);
+};
+
+BT.isTagged = function(item) {
+    if (!item) return false;
+    if (item.meta && item.meta.BulletHell) return true;
+    return /<BulletHell>/i.test(String(item.note || ""));
+};
+
+BT.opensPsiDodge = function(item) {
+    return !!(item && Array.isArray(item.effects) &&
+        item.effects.some(e => e && e.code === 44 && e.dataId === BT.PSI_DODGE_EVENT));
+};
+
+// Whether a dodge field can open right now. MapBattleMode fights on Scene_Map,
+// which has no field to open, so there the tag stays a normal hit.
+BT.canOpenField = function() {
+    const mbm = window.MapBattleMode;
+    if (mbm && typeof mbm.isActive === "function" && mbm.isActive()) return false;
+    if (BattleManager._bulletHellMode) return false;
+    const scene = SceneManager._scene;
+    if (!scene || typeof Scene_Battle === "undefined" || !(scene instanceof Scene_Battle)) return false;
+    return typeof scene.startBulletHell === "function";
+};
+
+BT.pickDodger = function(targets) {
+    const actors = (targets || []).filter((t, i, all) =>
+        t && t.isActor && t.isActor() && t.isAlive() && all.indexOf(t) === i);
+    return actors.find(a => BT.hasBulletTime(a)) || actors[0] || null;
+};
+
+function btItemName(item) {
+    const name = item ? item.name : "";
+    return typeof window.translateText === "function" ? window.translateText(name) : name;
+}
+
+// Opens the dodge for an announced <BulletHell> action. Returns whether it did.
+BT.tryOpenDodge = function(subject, action, targets) {
+    if (!subject || !action || typeof subject.isEnemy !== "function" || !subject.isEnemy()) return false;
+    if (!subject.isAlive()) return false;
+    const item = action.item();
+    if (!BT.isTagged(item)) return false;
+    if (action._statReqFumbled || action._actionFailed) return false;
+    if (!BT.canOpenField()) return false;
+    const actor = BT.pickDodger(targets);
+    if (!actor) return false;
+
+    BT._session = { action: action, subject: subject, actor: actor, item: item, hits: 0, open: true, scale: 1 };
+    $gameTemp.bulletHellParams = {
+        duration: BT.DODGE_FRAMES, playerImage: "", playerSpeed: 5,
+        bulletDamage: 10, enemyBulletDamage: 5,
+        playerHitSE: "", enemyHitSE: "", enemyHitSE2: "", enemyHitSE3: "", bulletCollisionSE: "",
+        actor: actor, enemy: subject, bulletTime: true
+    };
+    BattleManager.startBulletHell();
+    if (!BattleManager._bulletHellMode) {
+        BT._session = null;
+        $gameTemp.bulletHellParams = null;
+        return false;
+    }
+    safeBattleLog(T('Battle.bulletTime.dodgeStart', { actor: actor.name(), skill: btItemName(item) }));
+    return true;
+};
+
+// The action is announced: a tagged enemy ultimate opens its dodge, and an
+// actor's PSI Blast is remembered so its dodge is flown by the caster.
+const _BattleManager_startAction_BT = BattleManager.startAction;
+BattleManager.startAction = function() {
+    _BattleManager_startAction_BT.call(this);
+    const subject = this._subject;
+    const action = this._action;
+    const item = action && action.item ? action.item() : null;
+    BT._lastCaster = subject && subject.isActor && subject.isActor() && BT.opensPsiDodge(item) ? subject : null;
+    BT.tryOpenDodge(subject, action, this._targets);
+};
+
+// The field has closed: a tagged action now knows how hard it lands.
+const _BattleManager_finishBulletHell_BT = BattleManager.finishBulletHell;
+BattleManager.finishBulletHell = function() {
+    const session = BT._session && BT._session.open ? BT._session : null;
+    _BattleManager_finishBulletHell_BT.call(this);
+    if (!session) return;
+    session.open = false;
+    session.scale = BT.damageScale(session.hits);
+    if (!session.subject.isAlive()) {
+        if (this._action === session.action) this._targets = [];
+        safeBattleLog(T('Battle.bulletTime.dodgeBroken', { enemy: session.subject.name(), skill: btItemName(session.item) }));
+        return;
+    }
+    safeBattleLog(T('Battle.bulletTime.dodgeResult', {
+        actor: session.actor.name(), hits: session.hits,
+        skill: btItemName(session.item), pct: Math.round(session.scale * 100)
+    }));
+};
+
+const _BattleManager_endAction_BT = BattleManager.endAction;
+BattleManager.endAction = function() {
+    if (BT._session && !BT._session.open) BT._session = null;
+    _BattleManager_endAction_BT.call(this);
+};
+
+const _BattleManager_setup_BT = BattleManager.setup;
+BattleManager.setup = function(troopId, canEscape, canLose) {
+    BT._session = null;
+    BT._lastCaster = null;
+    _BattleManager_setup_BT.call(this, troopId, canEscape, canLose);
+};
+
+// The blow of a dodged action, scaled by the hits counted in its dodge.
+const _Game_Action_makeDamageValue_BT = Game_Action.prototype.makeDamageValue;
+Game_Action.prototype.makeDamageValue = function(target, critical) {
+    const value = _Game_Action_makeDamageValue_BT.call(this, target, critical);
+    const session = BT._session;
+    if (!session || session.open || session.action !== this) return value;
+    if (!target || !target.isActor || !target.isActor()) return value;
+    return Math.round(value * session.scale);
+};
+
+// The dodge is fought against the enemy that threw the skill, when it has one.
+const _Scene_Battle_bulletHellTargetSprite_BT = Scene_Battle.prototype.bulletHellTargetSprite;
+Scene_Battle.prototype.bulletHellTargetSprite = function() {
+    const params = $gameTemp && $gameTemp.bulletHellParams;
+    const wanted = params && params.enemy;
+    const sprites = (this._spriteset && this._spriteset._enemySprites) || [];
+    if (wanted && wanted.isAlive()) {
+        const own = sprites.find(s => s && s._battler === wanted);
+        if (own) return own;
+    }
+    return _Scene_Battle_bulletHellTargetSprite_BT.call(this);
+};
+
+// Who flies the craft: the target of a tagged skill, the caster of a PSI Blast,
+// or the first battle member as before.
+BT.dodgerFor = function(params) {
+    const members = $gameParty.battleMembers();
+    const ok = a => a && a.isAlive() && members.includes(a);
+    if (params && ok(params.actor)) return params.actor;
+    if (ok(BT._lastCaster)) return BT._lastCaster;
+    return members[0] || null;
+};
+
+const _BulletHellLayer_initialize_BT = BulletHellLayer.prototype.initialize;
+BulletHellLayer.prototype.initialize = function(params, enemySprite) {
+    _BulletHellLayer_initialize_BT.call(this, params, enemySprite);
+    const pilot = BT.dodgerFor(params);
+    if (pilot && pilot !== this._player) {
+        this._player = pilot;
+        this._playerLuck = pilot.luk;
+    }
+    BT._lastCaster = null;
+    this._btTagged = !!(params && params.bulletTime);
+    this._btHits = 0;
+    this._btSlow = BT.slowFactor(this._player);
+    this._btSpawnCredit = 0;
+    if (this._playerHitbox) {
+        this._playerHitbox.radius = BT.HIT_RADIUS * BT.hitboxFactor(this._player);
+    }
+    this._lastHealthPct = undefined;
+    this._btShownHits = undefined;
+    this.updateHealthDisplay();
+};
+
+// Bullet Time: fewer volleys...
+const _BulletHellLayer_spawnEnemyBullets_BT = BulletHellLayer.prototype.spawnEnemyBullets;
+BulletHellLayer.prototype.spawnEnemyBullets = function() {
+    if (this._btSlow < 1) {
+        this._btSpawnCredit += this._btSlow;
+        if (this._btSpawnCredit < 1) return;
+        this._btSpawnCredit -= 1;
+    }
+    _BulletHellLayer_spawnEnemyBullets_BT.apply(this, arguments);
+};
+
+// ...and slower shots.
+const _BulletHellLayer_createEnemyBullet_BT = BulletHellLayer.prototype.createEnemyBullet;
+BulletHellLayer.prototype.createEnemyBullet = function() {
+    const before = this._enemyBullets.length;
+    _BulletHellLayer_createEnemyBullet_BT.apply(this, arguments);
+    if (!(this._btSlow < 1) || this._enemyBullets.length <= before) return;
+    const bullet = this._enemyBullets[this._enemyBullets.length - 1];
+    bullet.vx *= this._btSlow;
+    bullet.vy *= this._btSlow;
+};
+
+// In a tagged dodge a hit is counted instead of paid for.
+const _BulletHellLayer_playerHit_BT = BulletHellLayer.prototype.playerHit;
+BulletHellLayer.prototype.playerHit = function() {
+    if (!this._btTagged) {
+        _BulletHellLayer_playerHit_BT.call(this);
+        return;
+    }
+    this._btHits++;
+    if (BT._session && BT._session.open) BT._session.hits = this._btHits;
+    const ship = this._playerShip;
+    if (ship) {
+        ship.filters = [this.createBlinkFilter()];
+        setTimeout(() => { if (ship) ship.filters = null; }, 200);
+    }
+    this.updateHealthDisplay();
+};
+
+// The label over the craft counts hits in a tagged dodge, health otherwise.
+const _BulletHellLayer_updateHealthDisplay_BT = BulletHellLayer.prototype.updateHealthDisplay;
+BulletHellLayer.prototype.updateHealthDisplay = function() {
+    if (!this._btTagged) {
+        _BulletHellLayer_updateHealthDisplay_BT.call(this);
+        return;
+    }
+    if (!this._healthDisplay || !this._healthDisplay.bitmap) return;
+    const hits = this._btHits || 0;
+    if (hits === this._btShownHits) return;
+    this._btShownHits = hits;
+    const bitmap = this._healthDisplay.bitmap;
+    bitmap.clear();
+    bitmap.fontSize = 16;
+    bitmap.textColor = this.getHealthColor(Math.max(0, 100 - Math.round(BT.damageScale(hits) / BT.SCALE_MAX * 100)));
+    bitmap.outlineColor = "rgba(0, 0, 0, 0.8)";
+    bitmap.outlineWidth = 4;
+    bitmap.drawText(T('Battle.bulletTime.hitCounter', { hits: hits }), 0, 0, 60, 20, "center");
+};
+
+// The skill card's Special section (CategorizedBattleSkills.js) names what
+// these skills do. That plugin loads after this one, so the provider is
+// registered at boot, once, and only when SkillDetails is there to take it.
+BT.grantedStates = function(skill) {
+    const out = [];
+    if (!skill) return out;
+    for (const e of skill.effects || []) {
+        if (e && e.code === 21 && e.dataId > 0) out.push($dataStates && $dataStates[e.dataId]);
+    }
+    const self = String(skill.note || "").match(/<SelfState:\s*(\d+)/i);
+    if (self) out.push($dataStates && $dataStates[Number(self[1])]);
+    return out.filter(Boolean);
+};
+
+BT.specialTags = function(skill) {
+    const out = [];
+    if (!skill) return out;
+    const entry = (key) => ({ name: T('SkillsMenu.specialName.' + key), desc: T('SkillsMenu.special.' + key) });
+    if (BT.isTagged(skill)) out.push(entry('bulletHell'));
+    if (BT.opensPsiDodge(skill)) out.push(entry('psiDodge'));
+    const granted = BT.grantedStates(skill);
+    if (granted.some(st => { const n = btTagNumber(st, "BulletTimeSlow"); return n >= 0 && n < 100; })) {
+        out.push(entry('slowsDodge'));
+    }
+    if (granted.some(st => { const n = btTagNumber(st, "BulletTimeHitbox"); return n >= 0 && n < 100; })) {
+        out.push(entry('shrinksHitbox'));
+    }
+    return out;
+};
+
+BT.registerSpecial = function() {
+    if (BT._specialRegistered) return true;
+    const details = window.SkillDetails;
+    if (!details || typeof details.registerSpecial !== "function") return false;
+    details.registerSpecial(skill => BT.specialTags(skill));
+    BT._specialRegistered = true;
+    return true;
+};
+
+if (typeof Scene_Boot !== "undefined") {
+    const _Scene_Boot_start_BT = Scene_Boot.prototype.start;
+    Scene_Boot.prototype.start = function() {
+        BT.registerSpecial();
+        _Scene_Boot_start_BT.apply(this, arguments);
+    };
+}
+
+BT._Layer = BulletHellLayer;
+
+// ===== end BulletTime =====
 
 })();

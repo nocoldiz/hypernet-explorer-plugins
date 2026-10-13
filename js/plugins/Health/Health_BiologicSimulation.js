@@ -120,9 +120,13 @@
     this.initialize(...arguments);
   }
   let brainI18nData = null;
+  // The language brainI18nData was read in, so a language change re-reads it.
+  let brainI18nLang = null;
+  const brainI18nStale = () => !brainI18nData || brainI18nLang !== (ConfigManager.language || "en");
 
   const loadBrainI18nData = async () => {
     const lang = ConfigManager.language || "en";
+    brainI18nLang = lang;
     const url = `js/i18n/${lang}/brain.json`;
     try {
       const response = await fetch(url);
@@ -250,6 +254,468 @@
 
   const getBrainRegions = () => window.Health ? window.Health.BrainRegions : null;
   const getPersonalityData = () => window.Health ? window.Health.PersonalityData : null;
+
+  // EMOTION-MODEL-START
+  // ── EMOTION MODEL (window.EmotionModel) ─────────────────────────────────
+  // The one model of what somebody feels, shared by every party member (the
+  // brain chapter of this menu) and every NPC (the Empathize panel). An
+  // emotion is an intensity from 0 to 100 that drifts, with its own half-life
+  // in game minutes, toward a TARGET: the person's baseline (personality plus
+  // traits) plus what their situation does to them right now (the hour, their
+  // needs, their health, their stress hormones). Things that happen push it
+  // away from the target: an Empathize exchange, a shift ending, a meal, a
+  // fight. Nothing here ticks per frame: a state is brought up to date only
+  // when somebody reads it (refresh), from the game minutes that passed.
+  //
+  // Each emotion is written onto the brain simulation's own variables (the
+  // amygdala, the prefrontal cortex and the hippocampus, dopamine, serotonin,
+  // norepinephrine, cortisol and adrenaline) through its `brain` weights, so
+  // brainSignals() turns a state into region activities and the mood the
+  // brain chapter has always named (moodFromRegions, the same thresholds as
+  // calculateCurrentMood, which now asks it).
+  //
+  // A non-sentient creature (window.NPCCreature) feels the short CREATURE set
+  // instead; anything written in the full vocabulary is folded onto it through
+  // CREATURE_FOLD, so one interaction table drives both.
+  //
+  // A state is plain data, saved where it lives: profile.emotions for an NPC
+  // (NPCEmpathize_Predisposition.js, NPC EMOTIONS), actor._emotions for a party
+  // member (ofActor below). One record per person, read by both menus.
+  // i18n-ignore-start: emotion, personality and set ids; labels come from Biologic.emotion
+  const EmotionModel = (() => {
+    const SENTIENT = [
+      { id: "joy",          valence:  1, halfLife: 120, base: 25, brain: { dopamine: 1, serotonin: 0.6, prefrontalCortex: 0.2 } },
+      { id: "trust",        valence:  1, halfLife: 240, base: 20, brain: { serotonin: 0.5, prefrontalCortex: 0.4, amygdala: -0.3 } },
+      { id: "fear",         valence: -1, halfLife: 60,  base: 5,  brain: { amygdala: 1, norepinephrine: 0.8, cortisol: 0.8, adrenaline: 0.8, prefrontalCortex: -0.3 } },
+      { id: "surprise",     valence:  0, halfLife: 20,  base: 5,  brain: { norepinephrine: 0.8, amygdala: 0.4 } },
+      { id: "sadness",      valence: -1, halfLife: 240, base: 10, brain: { serotonin: -0.8, dopamine: -0.5, hippocampus: 0.3 } },
+      { id: "disgust",      valence: -1, halfLife: 60,  base: 3,  brain: { amygdala: 0.5, serotonin: -0.2 } },
+      { id: "anger",        valence: -1, halfLife: 60,  base: 5,  brain: { amygdala: 0.9, prefrontalCortex: -0.7, adrenaline: 0.7, norepinephrine: 0.5 } },
+      { id: "anticipation", valence:  1, halfLife: 90,  base: 15, brain: { dopamine: 0.8, norepinephrine: 0.3, prefrontalCortex: 0.3 } },
+      { id: "boredom",      valence: -1, halfLife: 90,  base: 10, brain: { dopamine: -0.7, prefrontalCortex: -0.2 } },
+      { id: "curiosity",    valence:  1, halfLife: 90,  base: 15, brain: { dopamine: 0.6, hippocampus: 0.4, prefrontalCortex: 0.4 } },
+      { id: "loved",        valence:  1, halfLife: 360, base: 15, brain: { serotonin: 0.6, dopamine: 0.4, amygdala: -0.3 } },
+      { id: "fatigued",     valence: -1, halfLife: 240, base: 10, brain: { prefrontalCortex: -0.6, norepinephrine: -0.5, dopamine: -0.3 } },
+      { id: "lonely",       valence: -1, halfLife: 360, base: 10, brain: { serotonin: -0.5, amygdala: 0.3, hippocampus: 0.2 } },
+      { id: "content",      valence:  1, halfLife: 240, base: 25, brain: { serotonin: 0.8, cortisol: -0.4 } },
+      { id: "stressed",     valence: -1, halfLife: 120, base: 10, brain: { cortisol: 1, amygdala: 0.5, norepinephrine: 0.5, prefrontalCortex: -0.2 } },
+      { id: "relaxed",      valence:  1, halfLife: 120, base: 20, brain: { prefrontalCortex: 0.5, amygdala: -0.6, cortisol: -0.6 } },
+      { id: "proud",        valence:  1, halfLife: 240, base: 10, brain: { dopamine: 0.6, prefrontalCortex: 0.3 } },
+      { id: "jealous",      valence: -1, halfLife: 180, base: 3,  brain: { amygdala: 0.5, cortisol: 0.3 } },
+      { id: "nostalgic",    valence:  0, halfLife: 240, base: 8,  brain: { hippocampus: 1, serotonin: 0.2 } },
+      { id: "hopeful",      valence:  1, halfLife: 360, base: 20, brain: { dopamine: 0.5, prefrontalCortex: 0.5 } },
+      { id: "irritable",    valence: -1, halfLife: 90,  base: 8,  brain: { amygdala: 0.6, prefrontalCortex: -0.4, cortisol: 0.3 } },
+      { id: "shame",        valence: -1, halfLife: 240, base: 3,  brain: { amygdala: 0.4, hippocampus: 0.3, serotonin: -0.3 } },
+    ];
+    const CREATURE = [
+      { id: "calm",       valence:  1, halfLife: 120, base: 40, brain: { amygdala: -0.6, cortisol: -0.5, prefrontalCortex: 0.3 } },
+      { id: "fear",       valence: -1, halfLife: 60,  base: 8,  brain: { amygdala: 1, norepinephrine: 0.8, adrenaline: 0.8, cortisol: 0.6 } },
+      { id: "aggression", valence: -1, halfLife: 60,  base: 8,  brain: { amygdala: 0.9, adrenaline: 0.7, prefrontalCortex: -0.5 } },
+      { id: "hunger",     valence: -1, halfLife: 120, base: 10, brain: { dopamine: 0.3, norepinephrine: 0.3 } },
+      { id: "content",    valence:  1, halfLife: 240, base: 30, brain: { serotonin: 0.8, cortisol: -0.4 } },
+      { id: "playful",    valence:  1, halfLife: 90,  base: 15, brain: { dopamine: 0.8, prefrontalCortex: 0.2 } },
+      { id: "tired",      valence: -1, halfLife: 240, base: 10, brain: { prefrontalCortex: -0.5, norepinephrine: -0.5 } },
+    ];
+    const SETS = { sentient: SENTIENT, creature: CREATURE };
+
+    // The full vocabulary as a beast feels it.
+    const CREATURE_FOLD = {
+      joy: { playful: 1 }, trust: { calm: 0.8 }, fear: { fear: 1 }, surprise: { fear: 0.5 },
+      sadness: { tired: 0.4, content: -0.4 }, disgust: { aggression: 0.5 }, anger: { aggression: 1 },
+      anticipation: { playful: 0.6 }, boredom: { aggression: 0.3, playful: -0.4 },
+      curiosity: { playful: 0.5 }, loved: { content: 1, calm: 0.4 }, fatigued: { tired: 1 },
+      lonely: { calm: -0.4 }, content: { content: 1 }, stressed: { fear: 0.5, aggression: 0.3 },
+      relaxed: { calm: 1 }, proud: { content: 0.3 }, jealous: { aggression: 0.5 },
+      irritable: { aggression: 0.7 }, shame: { fear: 0.3 }, hunger: { hunger: 1 },
+      calm: { calm: 1 }, aggression: { aggression: 1 }, playful: { playful: 1 }, tired: { tired: 1 },
+    };
+
+    // What a temperament does to the resting state (`base`, added to every
+    // emotion's own base) and to how hard things land (`react`, a multiplier
+    // per emotion, `all` for every one). Keyed by the PersonalityData.json
+    // name, the id NPCs (profile.personalityIndex) and party members
+    // (_biologicData.personality) both carry. The personality's own brain and
+    // hormone modifiers are folded in on top (personalityBrainOffsets).
+    const PERSONALITY = {
+      Nervous:       { base: { fear: 10, stressed: 12, relaxed: -8 },              react: { fear: 1.4, stressed: 1.3 } },
+      Calm:          { base: { relaxed: 15, content: 8, anger: -3 },               react: { anger: 0.6, fear: 0.7, stressed: 0.6 } },
+      Aggressive:    { base: { anger: 10, irritable: 12, relaxed: -8 },            react: { anger: 1.5, irritable: 1.3, loved: 0.7 } },
+      Melancholic:   { base: { sadness: 18, nostalgic: 12, joy: -8, hopeful: -8 }, react: { sadness: 1.4, loved: 1.2 } },
+      Sanguine:      { base: { joy: 15, hopeful: 10, anticipation: 6 },            react: { joy: 1.3, boredom: 1.2 } },
+      Cautious:      { base: { fear: 6, stressed: 6, trust: -6 },                  react: { trust: 0.7, surprise: 1.3 } },
+      Impulsive:     { base: { anticipation: 12, boredom: 6, relaxed: -5 },        react: { boredom: 1.4, anger: 1.2, joy: 1.2 } },
+      Stoic:         { base: { relaxed: 6, joy: -4 },                              react: { all: 0.6 } },
+      Paranoid:      { base: { fear: 12, stressed: 10, trust: -12 },               react: { fear: 1.5, trust: 0.5 } },
+      Empathetic:    { base: { loved: 6, trust: 6 },                               react: { loved: 1.3, sadness: 1.3, joy: 1.2 } },
+      Authoritative: { base: { proud: 12 },                                        react: { anger: 1.2, shame: 0.6 } },
+      Scholarly:     { base: { curiosity: 18 },                                    react: { curiosity: 1.4, boredom: 1.2 } },
+      Artistic:      { base: { curiosity: 8, nostalgic: 6, joy: 4 },               react: { all: 1.15 } },
+      Adventurous:   { base: { anticipation: 12, curiosity: 8, boredom: 4 },       react: { boredom: 1.3, fear: 0.7 } },
+      Nurturing:     { base: { loved: 10, content: 6 },                            react: { loved: 1.3 } },
+      Mischievous:   { base: { joy: 6, anticipation: 8 },                          react: { boredom: 1.3, shame: 0.5 } },
+      Cynical:       { base: { trust: -12, hopeful: -10, disgust: 5 },             react: { trust: 0.5, joy: 0.7, disgust: 1.3 } },
+      Disciplined:   { base: { relaxed: 4, proud: 6, boredom: -4 },                react: { boredom: 0.7, anger: 0.8 } },
+      Fatalistic:    { base: { hopeful: -12, sadness: 6, fear: -4 },               react: { fear: 0.6, hopeful: 0.6 } },
+      Grumpy:        { base: { irritable: 15, joy: -6 },                           react: { irritable: 1.4, joy: 0.7 } },
+      Loyal:         { base: { trust: 10, loved: 4 },                              react: { trust: 1.3, jealous: 1.3 } },
+      Brave:         { base: { fear: -6, anticipation: 5 },                        react: { fear: 0.5 } },
+      Timid:         { base: { fear: 10, shame: 6 },                               react: { fear: 1.4, shame: 1.3 } },
+      Hedonistic:    { base: { joy: 10, relaxed: 6 },                              react: { joy: 1.3, boredom: 1.3 } },
+      Apathetic:     { base: { boredom: 15, joy: -8, curiosity: -8 },              react: { all: 0.5 } },
+    };
+
+    // The same for the traits of js/db/Health/Traits.json, keyed by trait id
+    // (the id NPCs carry in profile.traitIds and party members in
+    // _selectedTraits). `clock` shifts the hour the body feels it is: a night
+    // owl at midnight feels the way everybody else does at eight.
+    const TRAITS = {
+      5:   { base: { fear: 8, trust: -10 }, react: { fear: 1.3 } },                      // paranoid
+      10:  { base: { irritable: 10, anger: 6 }, react: { anger: 1.5 } },                 // hot-headed
+      24:  { base: { boredom: 6, anticipation: 8 }, react: { fear: 0.6, boredom: 1.3 } }, // adrenaline junkie
+      32:  { base: { loved: -8, shame: -3 }, react: { loved: 0.4, shame: 0.3, sadness: 0.6 } }, // sociopath
+      33:  { react: { loved: 1.3, sadness: 1.3 } },                                       // empath
+      38:  { clock: -4 },                                                                 // night owl
+      39:  { clock: 2 },                                                                  // early bird
+      40:  { base: { stressed: 6, proud: 4 }, react: { fatigued: 0.8 } },                 // workaholic
+      46:  { base: { stressed: 6 } },                                                     // agoraphobic
+      54:  { base: { fear: 8 }, react: { fear: 1.4 } },                                   // coward
+      56:  { base: { stressed: 5, fear: 4 } },                                            // hypochondriac
+      60:  { base: { proud: 15 }, react: { anger: 1.2, shame: 0.4 } },                    // megalomaniac
+      71:  { react: { all: 1.25 } },                                                      // sensitive
+      77:  { base: { boredom: 6, curiosity: 6 }, react: { boredom: 1.6, curiosity: 1.2 } }, // ADHD
+      82:  { react: { lonely: 1.6, loved: 1.2 } },                                        // extrovert
+      83:  { base: { lonely: -6 }, react: { lonely: 0.4, fatigued: 1.1 } },               // introvert, the loner
+      84:  { base: { irritable: 10, fatigued: 8 } },                                      // chronic pain
+      85:  { base: { anticipation: 8, hopeful: 6 } },                                     // ambitious
+      86:  { base: { fatigued: 10, boredom: 8 }, react: { boredom: 1.2 } },               // slothful
+      91:  { base: { proud: 12 }, react: { shame: 1.3, anger: 1.2 } },                    // proud
+      92:  { base: { proud: -6 }, react: { proud: 0.6 } },                                // humble
+      94:  { base: { joy: 8 }, react: { boredom: 1.3 } },                                 // hedonist
+      95:  { react: { all: 0.7 } },                                                       // stoic
+      114: { base: { fear: 6 }, react: { shame: 1.4 } },                                  // atychiphobic
+      115: { base: { lonely: 8 }, react: { lonely: 1.6 } },                               // autophobic
+      116: { base: { hopeful: 8 } },                                                      // devout
+      125: { base: { lonely: 6 }, react: { loved: 1.2 } },                                // orphan
+      129: { base: { nostalgic: 10, lonely: 6 } },                                        // exiled
+      136: { base: { stressed: 6 }, react: { fear: 0.7 } },                               // veteran
+      160: { base: { joy: 8, hopeful: 12 } },                                             // optimist
+      161: { base: { sadness: 8, hopeful: -10 } },                                        // pessimist
+      162: { base: { boredom: 8, hopeful: -12 } },                                        // nihilist
+      163: { base: { hopeful: 10 } },                                                     // idealist
+      165: { base: { loved: 4 }, react: { loved: 1.6, jealous: 1.2 } },                   // romantic
+      166: { base: { trust: -10 }, react: { trust: 0.6 } },                               // cynic
+      167: { react: { anger: 1.3 } },                                                     // vengeful
+      168: { react: { anger: 0.6 } },                                                     // forgiving
+      169: { base: { jealous: 10 }, react: { jealous: 1.5 } },                            // jealous
+      170: { base: { irritable: 6 }, react: { anger: 1.2 } },                             // spiteful
+      247: { base: { shame: 8 }, react: { proud: 0.6, shame: 1.3 } },                     // impostor syndrome
+      248: { react: { lonely: 1.4 } },                                                    // pack hunter
+      249: { base: { lonely: -8 }, react: { lonely: 0.3 } },                              // lone predator
+      250: { base: { fear: 10 }, react: { fear: 1.5 } },                                  // skittish
+      251: { base: { anger: 6 }, react: { anger: 1.3 } },                                 // territorial
+    };
+
+    const BRAIN_KEYS = ["amygdala", "prefrontalCortex", "hippocampus", "dopamine", "serotonin", "norepinephrine", "cortisol", "adrenaline"];
+    const MAX_DECAY_MIN = 7 * 1440;
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    const defsOf = (set) => SETS[set] || SENTIENT;
+    const defOf = (set, id) => defsOf(set).find((d) => d.id === id) || null;
+
+    function nowMinutes() {
+      try {
+        return (typeof $gameVariables !== "undefined" && $gameVariables) ? (Number($gameVariables.value(114)) || 0) : 0;
+      } catch (e) { return 0; }
+    }
+    function hourNow() {
+      try {
+        const d = window.TimeDateSystem && window.TimeDateSystem.getCurrentDateObj && window.TimeDateSystem.getCurrentDateObj();
+        if (d && typeof d.getHours === "function") return d.getHours();
+      } catch (e) { /* fall through */ }
+      try {
+        if (typeof $gameVariables !== "undefined" && $gameVariables) return Number($gameVariables.value(23)) || 12;
+      } catch (e) { /* fall through */ }
+      return 12;
+    }
+
+    // A vector in the full vocabulary, as the given set feels it.
+    function fold(set, vec) {
+      if (!vec) return {};
+      if (set !== "creature") return vec;
+      const out = {};
+      for (const k in vec) {
+        const f = CREATURE_FOLD[k];
+        if (!f) continue;
+        for (const c in f) out[c] = (out[c] || 0) + vec[k] * f[c];
+      }
+      return out;
+    }
+
+    function traitList(traitIds) {
+      return (traitIds || []).map((t) => (t && typeof t === "object") ? t.id : t)
+        .map(Number).filter((id) => TRAITS[id]);
+    }
+    function personalityEntry(name) {
+      const data = window.Health && window.Health.PersonalityData;
+      const list = data && (Array.isArray(data) ? data : data.list);
+      return Array.isArray(list) ? list.find((p) => p && p.name === name) || null : null;
+    }
+    // The personality's own physiology (PersonalityData.json modifiers) read
+    // back as emotion: a hot amygdala is a fearful, angry resting state, a
+    // strong prefrontal cortex a settled one.
+    function personalityBrainOffsets(name) {
+      const p = personalityEntry(name);
+      const m = (p && p.modifiers) || {};
+      const amyg = (m.brain && m.brain.amygdala) || 1;
+      const pref = (m.brain && m.brain.prefrontalCortex) || 1;
+      const cort = (m.vitals && m.vitals.cortisol) || 1;
+      const adr = (m.hormones && m.hormones.adrenaline) || 1;
+      return {
+        fear: (amyg - 1) * 25, anger: (amyg - 1) * 20, stressed: (amyg - 1) * 15 + (cort - 1) * 30,
+        relaxed: (pref - 1) * 30, content: (pref - 1) * 15, anticipation: (adr - 1) * 30,
+      };
+    }
+
+    // Baseline: what this person feels when nothing in particular is going on.
+    function baseline(set, personality, traitIds) {
+      const out = {};
+      defsOf(set).forEach((d) => { out[d.id] = d.base; });
+      const add = (vec) => {
+        const f = fold(set, vec);
+        for (const k in f) if (k in out) out[k] += f[k];
+      };
+      if (personality) {
+        add((PERSONALITY[personality] || {}).base);
+        add(personalityBrainOffsets(personality));
+      }
+      traitList(traitIds).forEach((id) => add(TRAITS[id].base));
+      for (const k in out) out[k] = clamp(out[k], 0, 100);
+      return out;
+    }
+
+    // How hard a push lands on each emotion: personality and traits multiply.
+    function sensitivity(set, personality, traitIds) {
+      const out = {};
+      defsOf(set).forEach((d) => { out[d.id] = 1; });
+      const mul = (react) => {
+        if (!react) return;
+        for (const k in react) {
+          if (k === "all") { for (const id in out) out[id] *= react.all; continue; }
+          if (set === "creature") {
+            const f = CREATURE_FOLD[k] || {};
+            for (const c in f) if (c in out && f[c] > 0) out[c] *= 1 + (react[k] - 1) * f[c];
+          } else if (k in out) out[k] *= react[k];
+        }
+      };
+      if (personality) mul((PERSONALITY[personality] || {}).react);
+      traitList(traitIds).forEach((id) => mul(TRAITS[id].react));
+      return out;
+    }
+
+    // What the moment does to them, on top of the baseline. ctx: { hour,
+    // hunger, sleep, hygiene, social, leisure (0-100, 100 = satisfied), sick,
+    // hpRate (0-1), cortisol, adrenaline, traitIds }. Every field optional.
+    function situational(set, ctx) {
+      ctx = ctx || {};
+      const v = {};
+      const add = (k, n) => { v[k] = (v[k] || 0) + n; };
+      let shift = 0;
+      traitList(ctx.traitIds).forEach((id) => { shift += TRAITS[id].clock || 0; });
+      if (ctx.hour != null) {
+        const h = ((Math.floor(ctx.hour) + shift) % 24 + 24) % 24;
+        if (h <= 4)       { add("fatigued", 25); add("relaxed", 5); add("joy", -5); }
+        else if (h <= 7)  { add("fatigued", 12); add("irritable", 6); }
+        else if (h >= 11 && h <= 15) { add("joy", 5); add("anticipation", 5); add("fatigued", -5); }
+        else if (h >= 19 && h <= 22) { add("relaxed", 8); add("fatigued", 8); }
+        else if (h === 23) { add("fatigued", 18); }
+      }
+      const low = (val, at) => (val != null && val < at) ? at - val : 0;
+      const sleepLow = low(ctx.sleep, 30);
+      if (sleepLow) { add("fatigued", sleepLow * 1.2); add("irritable", sleepLow * 0.4); }
+      const hungerLow = low(ctx.hunger, 30);
+      if (hungerLow) { add("irritable", hungerLow * 0.8); add("content", -hungerLow * 0.6); add("hunger", hungerLow * 2); }
+      if (ctx.hunger != null && ctx.hunger > 80) add("content", 8);
+      if (ctx.hunger != null) add("hunger", Math.max(0, 60 - ctx.hunger) * 0.5);
+      const socialLow = low(ctx.social, 30);
+      if (socialLow) add("lonely", socialLow * 1.5);
+      if (ctx.social != null && ctx.social > 80) add("loved", 5);
+      const leisureLow = low(ctx.leisure, 25);
+      if (leisureLow) { add("boredom", leisureLow); add("stressed", leisureLow * 0.4); }
+      if (ctx.leisure != null && ctx.leisure > 80) add("relaxed", 8);
+      const hygLow = low(ctx.hygiene, 25);
+      if (hygLow) { add("shame", hygLow * 0.6); add("disgust", hygLow * 0.3); }
+      if (ctx.sick) { add("sadness", 12); add("irritable", 10); add("fatigued", 15); }
+      if (ctx.hpRate != null && ctx.hpRate < 0.5) { add("fear", (0.5 - ctx.hpRate) * 60); add("stressed", (0.5 - ctx.hpRate) * 40); }
+      if (ctx.cortisol != null && ctx.cortisol > 20) add("stressed", (ctx.cortisol - 20) * 1.2);
+      if (ctx.adrenaline != null && ctx.adrenaline > 50) { add("anticipation", (ctx.adrenaline - 50) * 0.4); add("fear", (ctx.adrenaline - 50) * 0.2); }
+      // Hunger as a creature feels it is its own emotion; in the full
+      // vocabulary it already came out as irritation and discontent.
+      if (set !== "creature") delete v.hunger;
+      return set === "creature" ? fold("creature", v) : v;
+    }
+
+    function target(set, personality, traitIds, ctx) {
+      const b = baseline(set, personality, traitIds);
+      const s = situational(set, Object.assign({}, ctx, { traitIds }));
+      const out = {};
+      for (const k in b) out[k] = clamp(b[k] + (s[k] || 0), 0, 100);
+      return out;
+    }
+
+    function create(set, personality, traitIds, ctx, now) {
+      const t = now == null ? nowMinutes() : now;
+      return { set: SETS[set] ? set : "sentient", v: target(set, personality, traitIds, ctx), t, seen: t };
+    }
+
+    // Bring a state up to `now`: every emotion closes on its target by its own
+    // half-life. Answers the same object.
+    function refresh(state, personality, traitIds, ctx, now) {
+      if (!state || !state.v) return state;
+      const t = now == null ? nowMinutes() : now;
+      const dt = Math.min(MAX_DECAY_MIN, t - (state.t || 0));
+      if (dt > 0) {
+        const goal = target(state.set, personality, traitIds, ctx);
+        defsOf(state.set).forEach((d) => {
+          const cur = state.v[d.id] != null ? state.v[d.id] : goal[d.id];
+          const k = 1 - Math.pow(0.5, dt / d.halfLife);
+          state.v[d.id] = clamp(cur + (goal[d.id] - cur) * k, 0, 100);
+        });
+      }
+      if (t > (state.t || 0)) state.t = t;
+      return state;
+    }
+
+    // Something happened to them. A rise slows as it nears the top, so a
+    // string of the same good news cannot pin an emotion at 100.
+    function push(state, vec, sens, scale) {
+      if (!state || !state.v || !vec) return state;
+      const f = fold(state.set, vec);
+      const s = scale == null ? 1 : scale;
+      for (const k in f) {
+        if (!(k in state.v)) continue;
+        let d = f[k] * s * ((sens && sens[k] != null) ? sens[k] : 1);
+        if (d > 0) d *= 1 - state.v[k] / 110;
+        state.v[k] = clamp(state.v[k] + d, 0, 100);
+      }
+      return state;
+    }
+
+    // How much more or less a friendly gesture is worth to somebody in this
+    // state: a happy person gives more for it, an angry, bored, wound-up or
+    // worn-out one less.
+    function gainMult(state) {
+      if (!state || !state.v) return 1;
+      const v = state.v;
+      const g = (k) => v[k] || 0;
+      let pos, neg;
+      if (state.set === "creature") {
+        pos = (g("content") + g("calm") + g("playful")) / 3;
+        neg = Math.max(g("aggression"), g("fear"), g("hunger") * 0.7, g("tired") * 0.6);
+      } else {
+        pos = (g("joy") + g("content") + g("loved") + g("trust")) / 4;
+        neg = Math.max(g("anger"), g("irritable"), g("boredom"), g("disgust"), g("stressed") * 0.7, g("fatigued") * 0.6);
+      }
+      return clamp(1 + (pos - 25) / 150 - Math.max(0, neg - 25) / 110, 0.35, 1.35);
+    }
+
+    function level(value) {
+      return value >= 70 ? "intense" : value >= 45 ? "strong" : value >= 20 ? "mild" : "faint";
+    }
+    // The strongest emotions, for a compact readout.
+    function top(state, n) {
+      if (!state || !state.v) return [];
+      return defsOf(state.set)
+        .map((d) => ({ id: d.id, value: Math.round(state.v[d.id] || 0), valence: d.valence, level: level(state.v[d.id] || 0) }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, n || 5);
+    }
+
+    // The state written onto the brain simulation's variables: region
+    // activities (10-100) and transmitter levels (0-100) around 50.
+    function brainSignals(state) {
+      const out = {};
+      BRAIN_KEYS.forEach((k) => { out[k] = 50; });
+      if (!state || !state.v) return out;
+      defsOf(state.set).forEach((d) => {
+        const dv = ((state.v[d.id] || 0) - d.base) * 0.6;
+        for (const k in d.brain) out[k] += d.brain[k] * dv;
+      });
+      BRAIN_KEYS.forEach((k) => { out[k] = clamp(out[k], 10, 100); });
+      return out;
+    }
+
+    // The brain chapter's mood names, off the three region activities. The
+    // thresholds calculateCurrentMood has always used.
+    function moodFromRegions(amygdala, prefrontal, hippocampus) {
+      if (amygdala > 80 && prefrontal < 30) return "Enraged";
+      if (amygdala > 70 && prefrontal < 50) return "Angry";
+      if (amygdala < 30 && prefrontal > 80) return "Serene";
+      if (amygdala > 60 && prefrontal > 70) return "Passionate";
+      if (amygdala < 40 && prefrontal > 60) return "Contemplative";
+      if (amygdala > 40 && prefrontal < 40) return "Anxious";
+      if (hippocampus > 80) return "Nostalgic";
+      if (amygdala < 50 && prefrontal > 50) return "Calm";
+      return "Neutral";
+    }
+    function moodOf(state) {
+      const s = brainSignals(state);
+      return moodFromRegions(s.amygdala, s.prefrontalCortex, s.hippocampus);
+    }
+
+    // ── Party members ──
+    function actorTraitIds(actor) {
+      return ((actor && actor._selectedTraits) || []).map((t) => (t && typeof t === "object") ? t.id : t);
+    }
+    function actorPersonality(actor) {
+      const p = actor && actor._biologicData && actor._biologicData.personality;
+      return (p && p.name) || null;
+    }
+    function actorSet(actor) {
+      const NC = window.NPCCreature;
+      if (!actor || !NC || !NC.isNonSentientClassId) return "sentient";
+      const id = (actor.currentClass && actor.currentClass() && actor.currentClass().id) || actor._classId || 0;
+      return NC.isNonSentientClassId(id) ? "creature" : "sentient";
+    }
+    function actorContext(actor) {
+      const bio = (actor && actor._biologicData) || {};
+      const call = (fn) => { try { return typeof actor[fn] === "function" ? actor[fn]() : null; } catch (e) { return null; } };
+      return {
+        hour: hourNow(),
+        hunger: call("hunger"), sleep: call("sleep"),
+        hpRate: call("hpRate"),
+        cortisol: bio.vitalSigns ? bio.vitalSigns.cortisol : null,
+        adrenaline: bio.hormones ? bio.hormones.adrenaline : null,
+        sick: Array.isArray(actor && actor._diseases) && actor._diseases.length > 0,
+      };
+    }
+    // THE emotional state of a party member: the same object for the brain
+    // chapter of this menu and the Empathize panel, created on first read.
+    function ofActor(actor, now) {
+      if (!actor) return null;
+      const set = actorSet(actor);
+      const pers = actorPersonality(actor), traits = actorTraitIds(actor), ctx = actorContext(actor);
+      if (!actor._emotions || !actor._emotions.v || actor._emotions.set !== set) {
+        actor._emotions = create(set, pers, traits, ctx, now);
+      } else {
+        refresh(actor._emotions, pers, traits, ctx, now);
+      }
+      return actor._emotions;
+    }
+    function actorSensitivity(actor) {
+      return sensitivity(actorSet(actor), actorPersonality(actor), actorTraitIds(actor));
+    }
+
+    return {
+      SENTIENT, CREATURE, CREATURE_FOLD, PERSONALITY, TRAITS, BRAIN_KEYS,
+      ids: (set) => defsOf(set).map((d) => d.id), def: defOf,
+      nowMinutes, hourNow, fold, baseline, sensitivity, situational, target, create, refresh,
+      push, gainMult, level, top, brainSignals, moodFromRegions, moodOf,
+      ofActor, actorContext, actorSensitivity, actorSet,
+    };
+  })();
+  window.EmotionModel = EmotionModel;
+  // i18n-ignore-end
+  // EMOTION-MODEL-END
+
 
   // Gender lives on the actor (ActorCharacterFields).
   function readGender(actor) {
@@ -719,7 +1185,7 @@
         if (memberId === currentActorId) return;
 
         const memberBloodId = member._ccBloodType || member._bloodType || (window.BloodTypeService && window.BloodTypeService.forActor(member)?.id) || "O_POS";
-        const memberName = member.name ? member.name() : `Member ${memberId}`;
+        const memberName = member.name ? member.name() : T('CharCreate.memberN', { n: memberId });
         const memberBloodEntry = this.get(memberBloodId);
         const memberTypeLabel = memberBloodEntry ? memberBloodEntry.type : memberBloodId;
 
@@ -849,7 +1315,7 @@
     // Brain region names are i18n keys; without brain.json the DOM would show
     // "brain.prefrontalcortex.name". Load it here (the window that used to
     // trigger the fetch is never drawn) and re-render once it arrives.
-    if (!brainI18nData) {
+    if (brainI18nStale()) {
       loadBrainI18nData().then(() => {
         if (SceneManager._scene === this) this.refreshUIBiologic();
       });
@@ -1115,7 +1581,7 @@
       const isSelected = idx === Scene_BiologicSimulation._targetActorIndex ? "selected" : "";
       companionTabsHTML += `
             <div class="companion-tab ${isSelected}" onclick="SceneManager._scene.selectUIActor(${idx})">
-                ${member.name()}
+                ${escapeHtml(member.name())}
             </div>
         `;
     });
@@ -1783,6 +2249,20 @@
       `;
   };
 
+  // A compact readout of an EmotionModel state: the strongest emotions with
+  // their intensity. Labels come from Biologic.emotion, shared with Empathize.
+  function emotionRowsHTML(state, n) {
+    const rows = EmotionModel.top(state, n);
+    if (!rows.length) return "";
+    const body = rows.map((r) => {
+      const tone = r.valence > 0 ? "success" : r.valence < 0 ? (r.value >= 45 ? "danger" : "warning") : "warning"; // i18n-ignore: badge tone ids
+      return `<div class="brain-region-header"><span class="metric-label">${T("Biologic.emotion." + r.id)}</span>` +
+        `<span class="badge ${tone}">${T("Biologic.emotionLevel." + r.level)} ${r.value}</span></div>` +
+        `<div class="brain-region-bar"><div class="brain-region-bar-fill badge-fill--${tone}" style="width:${r.value}%"></div></div>`;
+    }).join("");
+    return `<div class="metric-row"><span class="metric-label">${T("Biologic.emotionsTitle")}</span></div>${body}`;
+  }
+
   Scene_BiologicSimulation.prototype.renderChapterBrain = function (actor, useTranslation) {
     const brain = actor._biologicData.brainActivity;
     if (!brain) return "";
@@ -1799,6 +2279,9 @@
     const ego = win ? num(win.calculateEgoValue(brain), 50) : 50;
     const subc = win ? num(win.calculateSubconsciousValue(brain), 50) : 50;
     const orgone = win ? num(win.calculateOrgonePercentage(brain), 50) : 50;
+    // How they feel: the same EmotionModel state the Empathize panel shows for
+    // this party member (actor._emotions), never a copy of it.
+    const emotionsHTML = emotionRowsHTML(EmotionModel.ofActor(actor), 6);
 
     // Localized brain region display list
     let regionsHTML = "";
@@ -1870,6 +2353,7 @@
                   <span class="metric-label">${T('Biologic.cognitiveAlignment')}</span>
                   <span class="badge success">${mood}</span>
               </div>
+              ${emotionsHTML}
               <div class="metric-row bio-34">
                   <span class="metric-label">${T('Biologic.activeThought')}</span>
                   <span class="metric-value bio-15">"${thought}"</span>
@@ -4430,6 +4914,18 @@
       }
     }
 
+    // What this person feels (window.EmotionModel, the very state the Empathize
+    // panel shows for them) holds the emotional regions where it puts them, so
+    // the mood named off these regions reads off their feelings, not noise.
+    var emo = this._actor ? EmotionModel.ofActor(this._actor) : null;
+    if (emo) {
+      var sig = EmotionModel.brainSignals(emo);
+      ["amygdala", "prefrontalCortex", "hippocampus"].forEach(function (k) { // i18n-ignore: brain region ids
+        var r = brain.regions[k];
+        if (r) r.activity = Math.max(10, Math.min(100, r.activity + (sig[k] - r.activity) * 0.35));
+      });
+    }
+
     // Update overall brain stats
     var totalActivity = 0;
     var activeRegions = 0;
@@ -5515,12 +6011,14 @@
   // i18n-ignore-end
 
   Window_BiologicSimulation.prototype.refresh = function () {
-    if (this.contents) this.contents.clear();
+    // The scene hides this window for good and draws the DOM panel instead,
+    // so wiping its bitmap on every one-second tick is work nobody sees.
+    if (this.contents && this.visible) this.contents.clear();
 
     if (!this._actor) return;
 
     this.applyStateReactions();
-    if (!brainI18nData) {
+    if (brainI18nStale()) {
       loadBrainI18nData().then(() => {
         if (this._category === 5) this.refresh();
       });
@@ -6022,32 +6520,10 @@
     var prefrontal = brain.regions.prefrontalCortex ? brain.regions.prefrontalCortex.activity : 50;
     var hippocampus = brain.regions.hippocampus ? brain.regions.hippocampus.activity : 50;
 
-    var dominantEmotion = amygdala;
-    var rationalControl = prefrontal;
-    var memory = hippocampus;
-
-    // Determine mood based on brain region dominance
-    // i18n-ignore-start: mood ids, resolved through Biologic.mood at the render point
-    if (amygdala > 80 && prefrontal < 30) {
-      return "Enraged";
-    } else if (amygdala > 70 && prefrontal < 50) {
-      return "Angry";
-    } else if (amygdala < 30 && prefrontal > 80) {
-      return "Serene";
-    } else if (amygdala > 60 && prefrontal > 70) {
-      return "Passionate";
-    } else if (amygdala < 40 && prefrontal > 60) {
-      return "Contemplative";
-    } else if (amygdala > 40 && prefrontal < 40) {
-      return "Anxious";
-    } else if (memory > 80) {
-      return "Nostalgic";
-    } else if (amygdala < 50 && prefrontal > 50) {
-      return "Calm";
-    } else {
-      return "Neutral";
-    }
-    // i18n-ignore-end
+    // One set of thresholds for the whole game: EmotionModel names a mood
+    // the same way off an emotional state (moodOf), so the party member's
+    // brain chapter and an NPC's Empathize panel agree on what it is called.
+    return EmotionModel.moodFromRegions(amygdala, prefrontal, hippocampus);
   };
 
   // Get or update current thought (lasts 1-10 seconds)
@@ -8488,9 +8964,15 @@
       const missingHp = Math.max(0, actor.mhp - actor.hp);
       const missingMp = Math.max(0, actor.mmp - actor.mp);
       const parts = actor._bodyParts || {};
+      // Only what the full recovery below actually mends is billed: in Blood
+      // and Oil a ruined part stays ruined through restoreAllBodyParts, so it
+      // was charged for on every press and never healed.
+      const HC = window.HealthCore;
+      const permanent = !!(HC && HC.isBloodAndOil && HC.isBloodAndOil());
       const hurtParts = Object.keys(parts).filter((key) => {
         const part = parts[key];
-        return part && (part.damaged || part.currentHp < part.maxHp);
+        if (!part || (permanent && part.ruined)) return false;
+        return part.damaged || part.currentHp < part.maxHp;
       }).length;
       if (!missingHp && !missingMp && !hurtParts) continue;
       out.push({
@@ -8576,14 +9058,14 @@
           for (const row of rows) {
             const slot = all.indexOf(row);
             const price = row.blocked
-              ? `<span class="xpr-faint">${row.blocked}</span>`
+              ? `<span class="xpr-faint">${escapeHtml(row.blocked)}</span>`
               : '&euro;' + (row.cost / 100).toFixed(2);
             const affordable = !row.blocked && $gameParty.gold() >= row.cost;
             html += `<button class="focusable xpr-row${row.blocked ? ' xpr-row--blocked' : ''}" data-focus-key="vh-row-${slot}" data-row="${slot}" tabindex="0"
                 ${row.blocked ? 'disabled' : ''}>
                 <span class="xpr-grow">
-                  <span class="xpr-row-label">${row.label}</span><br>
-                  <span class="xpr-row-detail">${row.detail}</span>
+                  <span class="xpr-row-label">${escapeHtml(row.label)}</span><br>
+                  <span class="xpr-row-detail">${escapeHtml(row.detail)}</span>
                 </span>
                 <span class="xpr-price ${affordable ? 'xpr-price--ok' : 'xpr-price--short'}">${price}</span>
               </button>`;
@@ -8622,7 +9104,7 @@
   if (window.HypernetOS && window.HypernetOS.registerApp) {
     window.HypernetOS.registerApp({
       id: VH_APP_ID,
-      name: T('Biologic.remote.title'),
+      name: () => T('Biologic.remote.title'),
       icon: VH_APP_ICON,
       category: 'internet',
       desktopShortcut: true,

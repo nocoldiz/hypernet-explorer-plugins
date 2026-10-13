@@ -5,7 +5,7 @@
   "trades": "Trades",
   "methods": "Production methods",
   "tooComplex": "Too complex",
-  "tooComplexShort": "Beyond these hands",
+  "tooComplexShort": "Too hard",
   "materials": "Materials",
   "forge": "Forge",
   "forged": "Forged!",
@@ -26,16 +26,19 @@
   "yes": "Yes",
   "searchPlaceholder": "Search pieces…",
   "forgedTab": "Forged",
-  "alreadyForged": "Already off the anvil",
+  "alreadyForged": "Already forged",
   "finish": "Finish",
   "finishStrange": "Strange",
-  "finishAuto": "As it falls",
+  "finishAuto": "Random",
   "smeltNone": "None to smelt",
-  "smelted": "Back into the crucible",
-  "madeBy": "Beaten out by {smith}",
+  "smelted": "Smelted",
+  "madeBy": "Made by {smith}",
   "forgedName": "{smith}'s {name}",
   "forgedNameNumbered": "{smith}'s {name} {mark}",
-  "forgedDesc": "Forged by {smith}. {quality} work, and one of a kind.",
+  "forgedDesc": "Forged by {smith}. {quality} work, unique.",
+  "forgedNameTier": "{smith}'s {name} ({quality})",
+  "forgedNameNumberedTier": "{smith}'s {name} {mark} ({quality})",
+  "forgedDescTier": "Forged by {smith}. {quality} work.",
   "nameHeader": "Name",
   "namePlaceholder": "Name this piece…",
   "nameReroll": "Roll another name",
@@ -242,31 +245,31 @@
   "readyCount": "{n} ready",
   "tradeHint": "{known} of {total} formulas known",
   "pieceCount": "{n} pieces",
-  "pickHint": "Pick a piece to see what it takes to make.",
+  "pickHint": "Pick a piece to see its recipe.",
   "smelt": "Smelt",
   "qtyMax": "Max",
   "batchCount": "x{n}",
   "autoSmith": "Auto",
-  "autoSmithHint": "Each piece is crafted by the party member best at it",
-  "modelEdit": "Edit model",
-  "modelEditFitted": "Edit model ({n} fitted)",
+  "autoSmithHint": "The best member crafts each piece",
+  "modelEdit": "Edit model (WIP)",
+  "modelEditFitted": "Edit model ({n} fitted) (WIP)",
   "sculpt": {
-    "title": "Model editor",
-    "hint": "Drag the background to turn the piece. Pick a fitted part to move, turn or size it.",
+    "title": "Model editor (WIP)",
+    "hint": "Drag the background to rotate. Click a fitted part to select it, then drag to move, turn or size it.",
     "thePiece": "The piece",
     "fitted": "Fitted parts",
     "noneFitted": "Nothing fitted yet",
     "kept": "Kept",
     "removed": "Taken off",
     "remove": "Take this part off",
-    "pickHint": "Pick a fitted part, or take one from another weapon shown alongside.",
+    "pickHint": "Pick a part from the shelf to fit it.",
     "search": "Search weapons",
     "noDonors": "No weapon matches",
     "undo": "Undo",
     "redo": "Redo",
     "revert": "Revert",
     "done": "Done",
-    "tooMany": "A piece carries at most {n} fitted parts",
+    "tooMany": "Max {n} parts per piece",
     "partName": "{name} ({band})",
     "band": {
       "head": "Head",
@@ -285,13 +288,42 @@
     "turn": "Turn",
     "tilt": "Tilt",
     "roll": "Roll",
-    "size": "Size"
+    "size": "Size",
+    "selectHint": "Pick a fitted part to move, turn or size it.",
+    "parts": "Parts from other weapons",
+    "finish": "Finish",
+    "resetPart": "Reset part",
+    "discard": "Discard changes",
+    "stackNote": "Applies to the whole stack",
+    "noStage": "No 3D view here. Changes still apply.",
+    "noModel": "No 3D model for this piece. Changes still apply.",
+    "showMore": "Show more ({n})",
+    "less": "Less {what}",
+    "more": "More {what}",
+    "minus": "-",
+    "plus": "+",
+    "degrees": "{n}°",
+    "view": {
+      "left": "Turn left",
+      "right": "Turn right",
+      "up": "Tilt up",
+      "down": "Tilt down",
+      "in": "Closer",
+      "out": "Farther",
+      "reset": "Reset view"
+    },
+    "armourBand": {
+      "head": "Top",
+      "shaft": "Middle",
+      "grip": "Bottom",
+      "whole": "Whole piece"
+    }
   },
   "backToBoard": "BACK TO THE BOARD",
-  "appearanceHeader": "How it comes out",
-  "detailsHeader": "What it is",
+  "appearanceHeader": "Look",
+  "detailsHeader": "Details",
   "carrying": "carrying {n}",
-  "fixedPattern": "Made to one pattern: this frame is not a smith’s to re-cut.",
+  "fixedPattern": "This piece can't be reshaped.",
   "nameEdit": "Write the name",
   "tips": {
     "pick": "Pick",
@@ -305,7 +337,8 @@
     "sculpt": "Move part",
     "mode": "Handle",
     "fitting": "Fitting",
-    "done": "Done"
+    "done": "Done",
+    "cursor": "Move cursor"
   },
   "npcUnique": {
     "name": "{{owner}'s {adjective} {base}|The {adjective} {base} of {owner}}",
@@ -346,8 +379,8 @@
         "Sunday-Best"
       ]
     },
-    "madeFor": "Customised by {maker} for {owner}.",
-    "madeOwn": "Customised by {owner} for their own hand.",
+    "madeFor": "Made by {maker} for {owner}.",
+    "madeOwn": "Made by {owner} for themselves.",
     "history": "Since then: {chain}.",
     "how": {
       "crafted": "made by {holder}",
@@ -357,17 +390,17 @@
       "seized": "taken by {holder}",
       "returned": "given back to {holder}",
       "acquired": "passed to {holder}",
-      "recruited": "brought into the party by {holder}",
+      "recruited": "recruited by {holder}",
       "sold": "sold to {holder}",
-      "soldAt": "sold over a counter in {holder}"
+      "soldAt": "sold at a shop in {holder}"
     },
-    "tip": "One of a kind. Customised by {maker} for {owner}.",
-    "tipHeld": "One of a kind. Customised by {maker} for {owner}, now carried by {holder}."
+    "tip": "Unique. Made by {maker} for {owner}.",
+    "tipHeld": "Unique. Made by {maker} for {owner}. Now owned by {holder}."
   },
   "help": {
     "board": {
       "title": "The workshop",
-      "intro": "Pick a trade on the left, then a piece on the right to see what it takes to make.",
+      "intro": "Pick a trade on the left, then a piece on the right.",
       "items": {
         "back": {
           "name": "Back",
@@ -375,11 +408,11 @@
         },
         "trades": {
           "name": "Production methods",
-          "text": "The trades the party works in, with how many of each trade's formulas are known. Picking one narrows the pieces on the right page to that trade."
+          "text": "The party's trades and how many formulas each has known. Pick one to filter the list."
         },
         "member": {
           "name": "Companion tabs",
-          "text": "Whose hands are at the bench. Auto hands every piece to the member best at making it; a name makes that member craft everything."
+          "text": "Who crafts. Auto picks the best member for each piece; a name makes that member craft everything."
         },
         "search": {
           "name": "Search",
@@ -387,15 +420,15 @@
         },
         "status": {
           "name": "State tabs",
-          "text": "Sort the pieces by what can be done with them: ready to make, missing materials, beyond the smith's training, already carried or already forged."
+          "text": "Filter pieces by state: ready, missing materials, untrained, carried or forged."
         },
         "context": {
           "name": "Summary line",
-          "text": "The trade and state being shown and how many pieces match them."
+          "text": "Current trade, state and number of matches."
         },
         "list": {
           "name": "Pieces",
-          "text": "Everything that matches. Open a piece to see its materials, its look and its stats, and to make it."
+          "text": "Matching pieces. Open one to see materials, look and stats, and to craft it."
         },
         "help": {
           "name": "? Help",
@@ -411,24 +444,24 @@
           "text": "Returns to the list of pieces."
         },
         "look": {
-          "name": "How it comes out",
-          "text": "A preview of the finished piece. Edit model opens the model editor, where fitted parts can be moved, turned and sized."
+          "name": "Look",
+          "text": "Preview of the finished piece. Edit model opens the editor to move, turn and size fitted parts."
         },
         "details": {
-          "name": "What it is",
-          "text": "Type, slot, rarity, value, weight and bonuses of the piece, and the materials it takes against what the party carries."
+          "name": "Details",
+          "text": "Type, slot, rarity, value, weight, bonuses and required materials."
         },
         "name": {
           "name": "Name",
-          "text": "What the piece will be called. Type your own name or roll a new one."
+          "text": "The piece's name. Type one or roll a new one."
         },
         "batch": {
           "name": "Quantity",
-          "text": "How many to make in one go, capped by the materials in hand."
+          "text": "How many to make at once, limited by materials."
         },
         "forge": {
           "name": "Forge and Smelt",
-          "text": "Forge makes the piece and spends the materials. Smelt breaks a carried copy back down."
+          "text": "Forge crafts the piece and uses the materials. Smelt breaks down a carried copy."
         },
         "help": {
           "name": "? Help",
@@ -444,5 +477,15 @@
   "salvageAllBody": "Take apart all {n} unequipped pieces on this shelf?",
   "salvageAllConfirm": "Disassemble",
   "salvageWorker": "{name}: {n}",
-  "salvageMore": "...and {n} more"
+  "salvageMore": "...and {n} more",
+  "dice": {
+    "forging": "Anvil Forging"
+  },
+  "tagsHeader": "Special Properties",
+  "tagsAdd": "+ Add property",
+  "tagsPick": "Add a Special Property",
+  "tagsNone": "None: a plain piece.",
+  "tagsNeed": "With its properties",
+  "tagHint": "+{units} materials, needs {level}",
+  "tagsDesc": "Forged with {tags}."
 }

@@ -199,7 +199,9 @@
   },
   {
     "name": "AbandonedInside",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4a4a4a",
@@ -1581,7 +1583,9 @@
   },
   {
     "name": "CastleInside",
-    "access": ["StairsUp"],
+    "access": [
+      "StairsUp"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#8b4513",
@@ -2014,7 +2018,9 @@
   },
   {
     "name": "ChurchInside",
-    "access": ["StairsUp"],
+    "access": [
+      "StairsUp"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#daa520",
@@ -3163,7 +3169,9 @@
   },
   {
     "name": "Crypt",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#2f4f4f",
@@ -4235,7 +4243,9 @@
   },
   {
     "name": "Dungeon",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#483d8b",
@@ -4333,7 +4343,9 @@
   },
   {
     "name": "LootCellar",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6b5232",
@@ -4449,7 +4461,9 @@
   },
   {
     "name": "PatronVault",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#8a6b2f",
@@ -4589,7 +4603,9 @@
   },
   {
     "name": "TempleInside",
-    "access": ["StairsUp"],
+    "access": [
+      "StairsUp"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#8a7a52",
@@ -4739,7 +4755,9 @@
   },
   {
     "name": "CaveDen",
-    "access": ["Cave"],
+    "access": [
+      "Cave"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4a3b2a",
@@ -5138,7 +5156,9 @@
   },
   {
     "name": "FactoryInside",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#808080",
@@ -7472,7 +7492,9 @@
   },
   {
     "name": "HousesInside",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#e8d3b0",
@@ -7577,7 +7599,9 @@
   },
   {
     "name": "Hospital",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#d8e8ec",
@@ -7678,7 +7702,9 @@
   },
   {
     "name": "Clinic",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#cfe3dc",
@@ -7779,7 +7805,9 @@
   },
   {
     "name": "Farmhouse",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#cdb58c",
@@ -7884,7 +7912,9 @@
   },
   {
     "name": "GroceryStore",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#e3d9a6",
@@ -7981,7 +8011,9 @@
   },
   {
     "name": "HardwareStore",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#b9b2a4",
@@ -8082,7 +8114,9 @@
   },
   {
     "name": "Store",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#e6cfd9",
@@ -8183,7 +8217,9 @@
   },
   {
     "name": "Restaurant",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#e9c3a0",
@@ -8284,7 +8320,9 @@
   },
   {
     "name": "Tavern",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#a8784f",
@@ -8389,7 +8427,9 @@
   },
   {
     "name": "Basement",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6e665c",
@@ -9071,7 +9111,9 @@
   },
   {
     "name": "Laboratory",
-    "access": ["DoorDungeon"],
+    "access": [
+      "DoorDungeon"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#e0e0e0",
@@ -9218,7 +9260,9 @@
   },
   {
     "name": "Lair",
-    "access": ["Cave"],
+    "access": [
+      "Cave"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4b3621",
@@ -10132,7 +10176,9 @@
   },
   {
     "name": "Mines",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#2b1b17",
@@ -17334,7 +17380,9 @@
   },
   {
     "name": "Catacombs",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#3b3128",
@@ -17442,7 +17490,9 @@
   },
   {
     "name": "Mineshaft",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#5a4630",
@@ -17554,7 +17604,9 @@
   },
   {
     "name": "CaveFrozen",
-    "access": ["Cave"],
+    "access": [
+      "Cave"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#a9c9d8",
@@ -17670,7 +17722,9 @@
   },
   {
     "name": "Cistern",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#3f5a5e",
@@ -17774,7 +17828,9 @@
   },
   {
     "name": "FungalWarren",
-    "access": ["Cave"],
+    "access": [
+      "Cave"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6b5f7a",
@@ -17878,7 +17934,9 @@
   },
   {
     "name": "CrystalCavern",
-    "access": ["Cave"],
+    "access": [
+      "Cave"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#7fb6c9",
@@ -17986,7 +18044,9 @@
   },
   {
     "name": "Oubliette",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4a4038",
@@ -18094,7 +18154,9 @@
   },
   {
     "name": "SunkenLibrary",
-    "access": ["StairsUp"],
+    "access": [
+      "StairsUp"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6d5334",
@@ -18198,7 +18260,9 @@
   },
   {
     "name": "UnderForge",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#8a3b22",
@@ -18302,7 +18366,9 @@
   },
   {
     "name": "ColdWarBunker",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#55605a",
@@ -18410,7 +18476,9 @@
   },
   {
     "name": "BuriedLab",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6f7f8c",
@@ -18514,7 +18582,9 @@
   },
   {
     "name": "ProfaneShrine",
-    "access": ["StairsUp"],
+    "access": [
+      "StairsUp"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#5c1f2b",
@@ -18622,7 +18692,9 @@
   },
   {
     "name": "SmugglerTunnel",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#6b5a3c",
@@ -18726,7 +18798,9 @@
   },
   {
     "name": "SeaGrotto",
-    "access": ["Cave"],
+    "access": [
+      "Cave"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#3d7d86",
@@ -18838,7 +18912,9 @@
   },
   {
     "name": "LavaTube",
-    "access": ["Cave"],
+    "access": [
+      "Cave"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#7a2f1c",
@@ -18942,7 +19018,9 @@
   },
   {
     "name": "Barrow",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4e4a33",
@@ -19050,7 +19128,9 @@
   },
   {
     "name": "MetroStation",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#4b4f58",
@@ -19158,7 +19238,9 @@
   },
   {
     "name": "SaltWorks",
-    "access": ["StairsDown"],
+    "access": [
+      "StairsDown"
+    ],
     "hasNPC": false,
     "tilesetId": 304,
     "color": "#c8c2b0",

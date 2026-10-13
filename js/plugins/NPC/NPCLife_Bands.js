@@ -715,7 +715,10 @@
       if (!biome) return null;
       const key = biome + "@" + (pg.originX || 0) + "," + (pg.originY || 0);  // i18n-ignore: internal key
       if (bandIsUnderground(biome)) return { kind: "underground", key, biome };  // i18n-ignore: place kind id
-      if (bandIsAlienBiome(biome)) {
+      // An earthlike world's squares carry Earth names, so the landing grid
+      // says it is another world.
+      const earthlikeWorld = !!(pg.alienGrid && pg.alienGrid.earthlike);
+      if (bandIsAlienBiome(biome) || earthlikeWorld) {
         const EVA = window.GalaxySim && window.GalaxySim.EVA;
         let airless = false;
         try { airless = !!(EVA && typeof EVA.required === "function" && EVA.required()); } catch (e) { airless = false; }

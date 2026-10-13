@@ -26,6 +26,11 @@
     // is found again under the word it was bought under. A category with nothing
     // on it has no chip.
     const ALL_CATEGORIES = 'all'; // i18n-ignore: filter id
+    // Item names reach the page as markup. A generated name can carry & or <
+    // (procedural artifacts), which must print as themselves.
+    const escHtml = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 
     // The category id an item files under: its <category:> tag, or the weapon /
     // armour type for a piece of gear that carries no tag.
@@ -55,15 +60,33 @@
             this._containerId = null;
             this._isExtradimensional = false;
             this._weightLimit = 0; // grams, 0 = unlimited
+            // A vehicle hold (VehicleStorage.js) opens in bulk mode, under its
+            // own title, and may carry goods that are not database items.
+            this._opts = {};
             // Which category chip is lit on each side of the transfer. The two
             // shelves hold different things, so each keeps its own.
             this._catFilters = { container: ALL_CATEGORIES, backpack: ALL_CATEGORIES };
         }
 
-        prepare(containerId, isExtradimensional = false, weightLimit = 0) {
+        prepare(containerId, isExtradimensional = false, weightLimit = 0, opts = null) {
             this._containerId = containerId;
             this._isExtradimensional = isExtradimensional;
             this._weightLimit = weightLimit || 0;
+            this._opts = opts || {};
+        }
+
+        isBulk() { return !!(this._opts && this._opts.bulk); }
+
+        // Goods a hold carries that are not database items, as rows the list
+        // can draw: no rarity, filed under the category they were given.
+        _goodsRows() {
+            const provider = this._opts && this._opts.goods;
+            if (!provider || typeof provider.list !== 'function') return [];
+            return provider.list().map(g => ({
+                id: 0, price: 0, name: g.name || g.key, iconIndex: g.iconIndex || 0,
+                note: '<category:' + (g.category || 'Misc') + '>',  // i18n-ignore: note tag
+                _good: g.key, _goodQty: g.qty, _goodGrams: g.grams || 0
+            }));
         }
 
         createBackground() {
@@ -118,6 +141,7 @@
         // --- Data helpers ---
 
         _getContainerTitle() {
+            if (this._opts && this._opts.title) return this._opts.title;
             return this._isExtradimensional ? getText('extradimensionalTitle') : getText('containerTitle');
         }
 
@@ -136,7 +160,7 @@
                 const item = ItemUtils.decodeKey(key);
                 if (item && container[key] > 0 && ItemUtils.isSelectableItem(item)) items.push(item);
             }
-            return items;
+            return items.concat(this._goodsRows());
         }
 
         // Both shelves are read through the same search and the same sort, so
@@ -352,6 +376,7 @@
         }
 
         _getItemCount(item) {
+            if (item && item._good) return item._goodQty;
             return this._activeTab === "backpack"
                 ? $gameParty.numItems(item)
                 : ContainerManager.getItemAmount(this._containerId, ItemUtils.encodeKey(item), this._isExtradimensional);
@@ -360,6 +385,7 @@
         // --- Weight capacity helpers (grams) ---
 
         _getItemWeight(item) {
+            if (item && item._good) return item._goodGrams;
             return (window.ItemSystemUtils && window.ItemSystemUtils.getItemWeight)
                 ? window.ItemSystemUtils.getItemWeight(item) : 0;
         }
@@ -376,6 +402,8 @@
                     if (item) total += this._getItemWeight(item) * amount;
                 }
             }
+            const provider = this._opts && this._opts.goods;
+            if (provider && typeof provider.grams === 'function') total += provider.grams();
             return total;
         }
 
@@ -468,8 +496,7 @@
                 const rarityName  = ItemUtils.getItemRarity(item).name;
                 const rarityCls   = window.ItemSystemUtils ? window.ItemSystemUtils.rarityClass(rarityName) : "rarity--common";
                 const canvasId    = `cs-ic-${idx}`;
-                const weightG     = (window.ItemSystemUtils && window.ItemSystemUtils.getItemWeight
-                    ? window.ItemSystemUtils.getItemWeight(item) : 0) * count;
+                const weightG     = this._getItemWeight(item) * count;
                 const weightKg    = weightG / 1000;
                 const weightText  = weightKg >= 0.01 ? `${weightKg.toFixed(2)} kg` : `${weightG} g` /* i18n-ignore: unit */;
                 listHTML += `
@@ -479,7 +506,7 @@
                             <canvas id="${canvasId}" width="32" height="32" class="cs-ic item-slot-icon-canvas--sm"></canvas>
                         </div>
                         <div class="item-slot-info">
-                            <div class="item-slot-name cs-name">${item.name}</div>
+                            <div class="item-slot-name cs-name">${escHtml(item.name)}</div>
                             <div class="item-slot-meta">
                                 <span>${weightText}</span>
                                 <span class="item-slot-count cs-count">x${count}</span>
@@ -521,7 +548,8 @@
                     <span class="cs-title title">${title}</span>
                     ${this._searchFieldHTML()}
                 </div>
-                <div class="cs-tabs">${tabsHTML}</div>
+                <div class="cs-tabs">${tabsHTML}${this.isBulk()
+                    ? `<div class="cs-tab cs-bulk focusable" onclick="SceneManager._scene.moveAllShown()">${getText('moveAllShown')}</div>` : ''}</div>
                 <div class="backpack-tabs-row cs-categories">${this._categoryChipsHTML()}</div>
                 <div class="backpack-search cs-search">
                     <div class="backpack-sort-tags">${this._sortTagsHTML()}</div>
@@ -636,10 +664,30 @@
                 } else {
                     this._openQuantityModal(item, max, "store");
                 }
+            } else if (action === "retrieve" && item._good) {
+                // Goods never go into the pack: the only thing to do with
+                // them from here is throw them out.
+                if (item._goodQty <= 0) { SoundManager.playBuzzer(); return; }
+                this._openQuantityModal(item, item._goodQty, "discard");
+            } else if (action === "retrieve" && this.isBulk()) {
+                // A hold is unloaded by the crate, not by the tin.
+                const max = ContainerManager.getItemAmount(this._containerId, ItemUtils.encodeKey(item), this._isExtradimensional);
+                if (max <= 0) { SoundManager.playBuzzer(); return; }
+                if (max === 1) {
+                    SoundManager.playOk();
+                    $gameParty.gainItem(item, 1);
+                    ContainerManager.removeItem(this._containerId, ItemUtils.encodeKey(item), 1, this._isExtradimensional);
+                    this._refreshDOM();
+                } else {
+                    this._openQuantityModal(item, max, "retrieve");
+                }
             } else if (action === "retrieve") {
                 // Retrieve is always a single-click grab of 1: no quantity prompt.
                 const max = ContainerManager.getItemAmount(this._containerId, ItemUtils.encodeKey(item), this._isExtradimensional);
                 if (max <= 0) { SoundManager.playBuzzer(); return; }
+                // A pack stack already at its cap would swallow the copy:
+                // gainItem clamps, so it would leave the chest and land nowhere.
+                if ($gameParty.numItems(item) >= $gameParty.maxItems(item)) { SoundManager.playBuzzer(); return; }
                 SoundManager.playOk();
                 $gameParty.gainItem(item, 1);
                 ContainerManager.removeItem(this._containerId, ItemUtils.encodeKey(item), 1, this._isExtradimensional);
@@ -659,18 +707,20 @@
             this._quantityValue     = 1;
             this._quantityMode      = mode;
 
-            const modeLabel = mode === "store" ? getText('store') : getText('retrieve');
+            const modeLabel = mode === "store" ? getText('store')
+                : mode === "discard" ? getText('discard') : getText('retrieve');
 
             const el = document.createElement("div");
             el.id        = "cs-qty";
             el.className = "cs-qty-overlay";
             el.innerHTML = `
                 <div class="cs-qty-box">
-                    <div class="cs-qty-title">${modeLabel}: ${item.name}</div>
+                    <div class="cs-qty-title">${modeLabel}: ${escHtml(item.name)}</div>
                     <div class="cs-qty-val"><strong id="cs-qty-value">${this._quantityValue}</strong> / ${max}</div>
                     <div class="cs-qty-hint">${getText('quantity_hint')}</div>
                     <div class="cs-qty-btns">
                         <div class="cs-qty-btn selected" onclick="SceneManager._scene.confirmQuantity()">${modeLabel}</div>
+                        <div class="cs-qty-btn" onclick="SceneManager._scene.setQuantityMax()">${getText('all')}</div>
                         <div class="cs-qty-btn" onclick="SceneManager._scene.cancelQuantity()">${getText('cancel')}</div>
                     </div>
                 </div>
@@ -678,11 +728,54 @@
             this._domContainer.appendChild(el);
         }
 
+        // The whole of what can be moved, in one press.
+        setQuantityMax() {
+            if (!this._quantityModalOpen) return;
+            SoundManager.playCursor();
+            this._quantityValue = this._quantityMax;
+            const el = document.getElementById("cs-qty-value");
+            if (el) el.textContent = this._quantityValue;
+        }
+
+        // Every row the shelf is showing, under its filter and search, moved
+        // to the other side: as much of it as the hold has room for when it is
+        // going in. Goods stay where they are.
+        moveAllShown() {
+            if (!this.isBulk()) return;
+            const items = this._getCurrentItems().filter(item => !item._good);
+            let moved = 0;
+            for (const item of items) {
+                const key = ItemUtils.encodeKey(item);
+                if (this._activeTab === "backpack") {
+                    if (window.VectorGun && window.VectorGun.isBound(item)) continue;
+                    const n = Math.min($gameParty.numItems(item), this._maxStorableByWeight(item));
+                    if (n <= 0) continue;
+                    $gameParty.keepConjured(() => $gameParty.loseItem(item, n));
+                    ContainerManager.addItem(this._containerId, key, n, this._isExtradimensional);
+                    ContainerManager.noteStored(this._containerId, item, n, this._isExtradimensional);
+                    moved += n;
+                } else {
+                    const n = ContainerManager.getItemAmount(this._containerId, key, this._isExtradimensional);
+                    if (n <= 0) continue;
+                    $gameParty.gainItem(item, n);
+                    ContainerManager.removeItem(this._containerId, key, n, this._isExtradimensional);
+                    moved += n;
+                }
+            }
+            if (moved) SoundManager.playOk();
+            else { SoundManager.playBuzzer(); this._flashCapacity(); }
+            this._selectedIndex = 0;
+            this._refreshDOM();
+        }
+
         confirmQuantity() {
             const item = this._quantityItem;
             const qty  = this._quantityValue;
             SoundManager.playOk();
-            if (this._quantityMode === "store") {
+            if (this._quantityMode === "discard") {
+                const provider = this._opts && this._opts.goods;
+                if (provider && item && item._good) provider.discard(item._good, qty);
+            } else if (this._quantityMode === "store") {
                 $gameParty.keepConjured(() => $gameParty.loseItem(item, qty));
                 ContainerManager.addItem(this._containerId, ItemUtils.encodeKey(item), qty, this._isExtradimensional);
                 ContainerManager.noteStored(this._containerId, item, qty, this._isExtradimensional);
@@ -767,6 +860,7 @@
                 else if (Input.isRepeated('up'))    this._qtyAdjust(scene, +10);
                 else if (Input.isRepeated('down'))  this._qtyAdjust(scene, -10);
                 else if (Input.isTriggered('ok'))   scene.confirmQuantity();
+                else if (Input.isTriggered('shift')) scene.setQuantityMax();
                 else if (Input.isTriggered('escape') || Input.isTriggered('cancel') || TouchInput.isCancelled()) scene.cancelQuantity();
                 return;
             }
@@ -804,6 +898,8 @@
                     return;
                 }
                 scene.handleBack();
+            } else if (!pad && scene.isBulk() && Input.isTriggered('control')) {
+                scene.moveAllShown();
             } else if (pad && Input.isTriggered('menu')) {
                 // A pad cannot type into the field, so Y opens the letter sheet
                 // for the query instead. B on the sheet closes the sheet only.
@@ -1099,7 +1195,7 @@
                         <div class="cs-row ${idx === this._selectedIndex ? 'selected' : ''} ${inactive}"
                              onclick="SceneManager._scene && SceneManager._scene.onPartClick(${idx})">
                             <canvas id="hv-ic-${idx}" width="36" height="36" class="cs-ic"></canvas>
-                            <span class="cs-name">${itemName}</span>
+                            <span class="cs-name">${escHtml(itemName)}</span>
                             <span class="cs-status" style="color:${cl.color}">${cl.label}</span>
                             <span class="cs-rate">${rateText}</span>
                         </div>`;

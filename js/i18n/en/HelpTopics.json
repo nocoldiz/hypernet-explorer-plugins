@@ -33,7 +33,7 @@
   "HelpTopics": {
     "controlsMoving": {
       "title": "Controls: Moving Around",
-      "description": "[Arrows] or [WASD] move. [Z] or [Enter] confirms and talks. [X] or [Esc] cancels. Hold [Shift] to run.\n\nRunning spends [AP | combatAP], the same meter your battle skills use. Stand still or walk to get it back.\n\n[Z] acts on the tile you face. On a companion it opens a short menu: a word on the road, their [Empathize | peopleEmpathize] sheet, or the reserves.\n\n[Tab] makes the next member the leader, [Shift] and [Tab] the previous one."
+      "description": "[Arrows] or [WASD] move. [Z] or [Enter] confirms and talks. [X] or [Esc] cancels. Hold [Shift] to run.\n\nRunning spends [AP | combatAP], the same meter your battle skills use. Stand still or walk to get it back.\n\n[Z] acts on the tile you face. On a companion it opens a short menu: a quick chat, their [Empathize | peopleEmpathize] sheet, or the reserves.\n\n[Tab] makes the next member the leader, [Shift] and [Tab] the previous one."
     },
     "controlsMenus": {
       "title": "Controls: Menu Hotkeys",
@@ -105,7 +105,7 @@
     },
     "partyRecruiting": {
       "title": "Recruiting People",
-      "description": "There are three ways to win someone over: [talk a monster round | combatTalk], ask a townsperson through [Empathize | peopleEmpathize], or adopt and train a creature.\n\nThe better someone thinks of you, the likelier they say yes, so build their [opinion | peopleOpinion] first. People far stronger than you will not follow.\n\nThe panel offers [Join Party], or [Join as Follower]: they walk behind you as your [4th companion | partyPets] instead.\n\nA recruit brings their whole life with them. The party travels three strong, so anyone extra waits in the [Reserves]. A dismissed member goes home.\n\nEven a shopkeeper can be lured from behind the counter. Some people, though, will never leave the life they have."
+      "description": "There are three ways to win someone over: [talk a monster round | combatTalk], ask a townsperson through [Empathize | peopleEmpathize], or adopt and train a creature.\n\nThe better someone thinks of you, the likelier they say yes, so build their [opinion | peopleOpinion] first. People far stronger than you will not follow.\n\nThe panel offers [Join Party], or [Join as Follower]: they walk behind you as your [4th companion | partyPets] instead.\n\nThe party holds three, so anyone extra waits in the [Reserves]. A dismissed member goes home.\n\nShopkeepers can be recruited too. Some people never join."
     },
     "partyPets": {
       "title": "Pets, Followers and Children",
@@ -113,7 +113,7 @@
     },
     "partyReproduction": {
       "title": "Reproduction and Pregnancy",
-      "description": "Every body has its own way of making new life, set by its species. Some carry children, some lay eggs, some grow seeds, and some simply split in two.\n\nA pregnancy runs its course, and [Biologics | bodyBiologics] lets you follow it. Expect symptoms along the way.\n\nNewborns and hatchlings appear in [Followers | partyPets] as children who take after their parent."
+      "description": "Each species reproduces its own way: live birth, eggs, seeds or splitting in two.\n\nTrack a pregnancy in [Biologics | bodyBiologics]. Expect symptoms.\n\nNewborns and hatchlings appear in [Followers | partyPets] as children who take after their parent."
     },
     "partyDeath": {
       "title": "Death, Gravestones and Permadeath",
@@ -133,7 +133,7 @@
     },
     "progressKnowledge": {
       "title": "Knowledge Points",
-      "description": "[Knowledge points], or KP, are what you spend to learn and create skills. They belong to the whole party, and the total is shown in the [Training | progressTraining] menu. Every new member brings a gift of KP the first time they join.\n\nYou earn KP by being curious:\n\n- winning fights, especially against stronger foes\n- [quests | econQuests], [adventures | worldAdventures] and [anomalies | galaxyAnomalies]\n- [dreams | worldDreams] and [foraging | needsForage]\n- reading a [book | pastimesReading] or studying a statue or fossil for the first time\n- [Raman scans | gamesRaman] and new pages in the [browser | hypernetBrowser]\n- [Hexorcizing | progressHexorcize] magical gear\n\nYou spend it on:\n\n- skills on the [school trees | progressAtlas]\n- [fusing spells | progressFusion], [writing your own | progressWorkbench], [enchanting | progressEnchanting] and [writing books | progressWritingBooks]\n- [Introspect] in the [Empathize | peopleEmpathize] panel, to change who you are\n\nYour own schools cost less. Learning from a person in Empathize costs euros instead, and a friend teaches for free."
+      "description": "[Knowledge points], or KP, are what you spend to learn and create skills. They belong to the whole party, and the total is shown in the [Training | progressTraining] menu. Every new member adds KP the first time they join.\n\nYou earn KP by being curious:\n\n- winning fights, especially against stronger foes\n- [quests | econQuests], [adventures | worldAdventures] and [anomalies | galaxyAnomalies]\n- [dreams | worldDreams] and [foraging | needsForage]\n- reading a [book | pastimesReading] or studying a statue or fossil for the first time\n- [Raman scans | gamesRaman] and new pages in the [browser | hypernetBrowser]\n- [Hexorcizing | progressHexorcize] magical gear\n\nYou spend it on:\n\n- skills on the [school trees | progressAtlas]\n- [fusing spells | progressFusion], [writing your own | progressWorkbench], [enchanting | progressEnchanting] and [writing books | progressWritingBooks]\n- [Introspect] in the [Empathize | peopleEmpathize] panel, to change who you are\n\nYour own schools cost less. Learning from a person in Empathize costs euros instead, and a friend teaches for free."
     },
     "progressAtlas": {
       "title": "The Skill Atlas",
@@ -149,7 +149,7 @@
     },
     "progressPassives": {
       "title": "Class Passives",
-      "description": "Every [class | partyClasses] has one [signature passive] that is always working for you, in battle and out. Some [traits | partyTraits] add their own. Only the three party members count.\n\nFind them on the status sheet under [Class Abilities]."
+      "description": "Every [class | partyClasses] has one [signature passive] that is always active, in and out of battle. Some [traits | partyTraits] add their own. Only the three party members count.\n\nFind them on the status sheet under [Class Abilities]."
     },
     "progressLoadout": {
       "title": "The Nine Skill Slots",
@@ -157,7 +157,7 @@
     },
     "progressFusion": {
       "title": "Fusing Spells",
-      "description": "[Fuse Spells], on the right page of [Training | progressTraining], melts two abilities a member knows into something new.\n\n1. Pick the member in the companion tabs.\n2. Put a spell in the [dominant] slot. It sets the shape of the result.\n3. Put a spell or skill in the [recessive] slot.\n4. Pick an animation, or keep the old one.\n5. Press create and roll.\n\nThe new ability carries the effects of both, costs both, and can be renamed. It costs [KP | progressKnowledge], and your [INT | partyAttributes] helps the [roll | partyDiceChecks]. A perfect roll creates something exceptional.\n\nWarning: on a failure the KP is lost and both parts are forgotten. You can buy them again on the [tree | progressAtlas].\n\nYou cannot fuse an already fused or [crafted | progressWorkbench] ability. Later, [Split] gives you the two parts back, and [Dissolve] trades the ability for some of its KP."
+      "description": "[Fuse Spells], on the right page of [Training | progressTraining], fuses two abilities a member knows into a new one.\n\n1. Pick the member in the companion tabs.\n2. Put a spell in the [dominant] slot. It sets the shape of the result.\n3. Put a spell or skill in the [recessive] slot.\n4. Pick an animation, or keep the old one.\n5. Press create and roll.\n\nThe new ability has the effects of both, costs both, and can be renamed. It costs [KP | progressKnowledge], and your [INT | partyAttributes] helps the [roll | partyDiceChecks]. A perfect roll creates something exceptional.\n\nWarning: on a failure the KP is lost and both parts are forgotten. You can buy them again on the [tree | progressAtlas].\n\nYou cannot fuse an already fused or [crafted | progressWorkbench] ability. Later, [Split] gives you the two parts back, and [Dissolve] trades the ability for some of its KP."
     },
     "progressGrimoires": {
       "title": "Grimoires and Skill Books",
@@ -169,7 +169,7 @@
     },
     "gearSlots": {
       "title": "Equipment: Hands and Slots",
-      "description": "What you can hold depends on your [body | bodyParts]. A hand takes a weapon or a shield, a [two handed] weapon needs both, and a creature with no hands can still bite down on a blade.\n\nWielding more than one weapon is clumsy unless your [class | partyClasses] knows Dual Wield.\n\nWarning: in [Blood and Oil | combatModes], losing a limb drops whatever it held."
+      "description": "What you can hold depends on your [body | bodyParts]. A hand takes a weapon or a shield, a [two handed] weapon needs both, and a creature with no hands can still bite down on a blade.\n\nWith a weapon in each hand, Attack strikes with both: the off hand follows up with a lighter blow of its own. Wielding more than one weapon is clumsy unless your [class | partyClasses] knows Dual Wield.\n\nWarning: in [Blood and Oil | combatModes], losing a limb drops whatever it held."
     },
     "gearProficiency": {
       "title": "Weapon Proficiency",
@@ -185,11 +185,11 @@
     },
     "gearModifiers": {
       "title": "Modifiers on Gear",
-      "description": "A weapon or piece of armour can carry a [modifier] that changes its character and its price.\n\nA few you may meet on weapons:\n- [Sharp] cuts deeper, [Venomous] [poisons | poison], [Chilling] can [freeze | freeze]\n- [Vampiric] drinks life back, [Berserk] hits terribly hard but leaves you exposed\n- [Dull] and [Broken] are worth less\n\nAnd on armour:\n- [Regenerative] heals you, [Retaliating] adds [counterattacks | counterAttack]\n- [Blessed] softens blows, [Worn] is cheaper and weaker\n\nLook for them on the custom pieces people carry."
+      "description": "A weapon or piece of armour can have a [modifier] that changes its stats and price.\n\nA few you may meet on weapons:\n- [Sharp] cuts deeper, [Venomous] [poisons | poison], [Chilling] can [freeze | freeze]\n- [Vampiric] drinks life back, [Berserk] hits terribly hard but leaves you exposed\n- [Dull] and [Broken] are worth less\n\nAnd on armour:\n- [Regenerative] heals you, [Retaliating] adds [counterattacks | counterAttack]\n- [Blessed] softens blows, [Worn] is cheaper and weaker\n\nThey often show up on people's custom pieces."
     },
     "gearWeight": {
       "title": "Weight and Encumbrance",
-      "description": "Only what sits in the [backpack | gearBackpack] weighs anything. What you wear is free, and food is light.\n\nThe whole party shares one load, and strong, sturdy members carry more of it ([STR | partyAttributes] and CON). The weight readout turns orange as you near the limit. Go over and you slow to a crawl until you drop something.\n\nA [vehicle | vehiclesOverview] carries everything without complaint."
+      "description": "Only what sits in the [backpack | gearBackpack] weighs anything. What you wear is free, and food is light.\n\nThe whole party shares one load, and strong, sturdy members carry more of it ([STR | partyAttributes] and CON). The weight readout turns orange as you near the limit. Go over and you slow to a crawl until you drop something.\n\nIn a [vehicle | vehiclesOverview], weight does not matter."
     },
     "gearBackpack": {
       "title": "The Backpack",
@@ -197,7 +197,7 @@
     },
     "gearArtifacts": {
       "title": "Artifacts",
-      "description": "No artifacts turn up for now. The closest thing: some people carry a [unique piece] made just for them, and its description remembers every hand it has passed through."
+      "description": "No artifacts can be found for now. Some people own a [unique piece] made for them, and its description lists every past owner."
     },
     "gearContainers": {
       "title": "Containers and Storage",
@@ -205,7 +205,7 @@
     },
     "gearRarity": {
       "title": "Loot and Rarity",
-      "description": "[Random loot | craftLoot] grows with the whole party's strength. Dangerous ground and the [Omega Tower | omegaTower] pay best.\n\nItems wear their [rarity colour] in the backpack and in shops, and every item has its own [lore], the same each time you meet it in a world."
+      "description": "[Random loot | craftLoot] grows with the whole party's strength. Dangerous ground and the [Omega Tower | omegaTower] pay best.\n\nItems wear their [rarity colour] in the backpack and in shops, and every item has its own [lore], fixed for each world."
     },
     "needsOverview": {
       "title": "The Six Needs",
@@ -220,12 +220,12 @@
       "description": "Two things wear on you: how tired you are, and how long you have gone without real sleep.\n\nThe [sleep meter] dips as you travel. Coffee or a seat tops it up, and a tired party recovers less MP on the road.\n\n[Time awake] only resets in a real bed or a cryogenic pod. Go days without it and [dreams | worldDreams] turn hostile and the party's mind starts to fray.\n\nBeds, campfires, tents and world map [camps | needsCamp] open the [rest menu | needsRestWorth]. [Wait], from the menu or the [R] key, passes time and lets you sleep rough where you stand, though it is a poor night unless you carry bedding.\n\n[Cryogenic sleep] lets you skip ahead to a day you choose, for [30 euros] a day. The world moves on without you, and you wake exactly as you went in, wounds and all."
     },
     "needsHygiene": {
-      "title": "Hygiene, and What It Costs You",
+      "title": "Hygiene",
       "description": "Hygiene fades slowly. Wash at a washroom, shower, sink or fountain. Companions left to wander will find one themselves.\n\nPeople notice. A grubby traveller makes a worse impression, and a grubby stranger makes a worse one on you.\n\nHow much it matters depends on [traits | partyTraits]. A Feral or Ascetic soul hardly cares, while the Proud, the Noble and the Germaphobe care a great deal.\n\nWhen [courting], a bath can make all the difference."
     },
     "needsSocial": {
       "title": "Company",
-      "description": "Company fills on its own while you travel with someone, and a [pet | partyPets] helps too. Only a lone traveller feels it drain.\n\n[Talking | peopleEmpathize] also helps, to townspeople or among your own. A companion left loose and short of company will strike up a conversation by themselves.\n\nWinning someone's [regard | peopleOpinion] warms the whole party. Losing it stings a little."
+      "description": "Company fills while you travel with someone, and a [pet | partyPets] helps too. Only a lone traveller feels it drain.\n\n[Talking | peopleEmpathize] also helps, to townspeople or among your own. A companion left loose and short of company will strike up a conversation by themselves.\n\nWinning someone's [regard | peopleOpinion] warms the whole party. Losing it stings a little."
     },
     "needsLeisure": {
       "title": "Fun",
@@ -233,19 +233,19 @@
     },
     "needsAddiction": {
       "title": "Cravings and Withdrawal",
-      "description": "Some [traits] are dependencies: alcohol, caffeine, nicotine, narcotics, gambling. Only a member who has one feels the craving.\n\nThe meter runs backwards: empty is content, full is [withdrawal | withdrawal]. Feed the habit and it settles. One dose rarely clears withdrawal on its own.\n\nCravings ease while you sleep."
+      "description": "Some [traits] are dependencies: alcohol, caffeine, nicotine, narcotics, gambling. Only a member who has one feels the craving.\n\nThe meter runs backwards: empty is content, full is [withdrawal | withdrawal]. Feed the habit and it settles. One dose rarely clears withdrawal.\n\nCravings ease while you sleep."
     },
     "bodyParts": {
       "title": "Limbs and Organs",
-      "description": "Every character and monster is made of [limbs and organs], each able to be hurt on its own.\n\nMost blows land on one part. [Area | combatDamageTypes] and explosive damage spread across several.\n\nA part at zero is [broken] and holds you back until it heals. Lose a hand and you lose the weapon it held. Hurt legs slow you down.\n\n[Vital organs | combatBodyParts] can be struck by any blow, but a monster holds on until it is badly weakened.\n\nHealing items, spells and a night in a bed mend parts. A [clinic | healthSurgery] can repair or replace them.\n\nIn [Blood and Oil | combatModes] damage is permanent: a blade can take a limb off, [augment | healthAugments] and all.\n\nOpen the status sheet and look under [Anatomy] to see your body part by part."
+      "description": "Characters and monsters have [limbs and organs] that take damage separately.\n\nMost blows land on one part. [Area | combatDamageTypes] and explosive damage spread across several.\n\nA part at zero is [broken] and holds you back until it heals. Lose a hand and you lose the weapon it held. Hurt legs slow you down.\n\n[Vital organs | combatBodyParts] can be struck by any blow, but a monster holds on until it is badly weakened.\n\nHealing items, spells and a night in a bed mend parts. A [clinic | healthSurgery] can repair or replace them.\n\nIn [Blood and Oil | combatModes] damage is permanent: a blade can take a limb off, [augment | healthAugments] and all.\n\nOpen the status sheet and look under [Anatomy] to see your body part by part."
     },
     "bodyBiologics": {
       "title": "Biologics",
-      "description": "[Biologics] is a close look at what goes on inside you: vital signs, hormones, the immune system, the brain, the [Ley Veins] and any [diseases | healthDiseases] you carry.\n\nYour heart and hormones answer to hunger, sleep, what ails you and even [pregnancy | partyReproduction]. A badly [hurt limb | bodyParts] can choke the vein that runs through it."
+      "description": "[Biologics] shows what goes on inside your body: vital signs, hormones, the immune system, the brain, the [Ley Veins] and any [diseases | healthDiseases] you carry.\n\nYour heart and hormones react to hunger, sleep, illness and even [pregnancy | partyReproduction]. A badly [hurt limb | bodyParts] can choke the vein that runs through it."
     },
     "healthDiseases": {
       "title": "Diseases",
-      "description": "Illness spreads by many roads: the air, a bite, a touch, a kiss and worse. Your own members can pass it among themselves, and you can catch it from the people you [meet | peopleEmpathize].\n\nA new illness stays nameless for a few days. Until then, nobody can say what it is.\n\nHealing potions do nothing against disease. You need [medicine], taken day after day. Once an illness has a name, a sick member takes the right medicine from the backpack each morning by themselves. Skip too many days and the cure starts over. Left untreated, an illness can turn into something worse.\n\nIllness wears you down but never kills. Beat one and you may be immune, though some always find their way back.\n\nA doctor's [Diagnose] names what you carry, for [25 euros] each. A [Nurse | partyClasses] in the party names them all for free."
+      "description": "Illness spreads through the air, bites, touch, kisses and worse. Your own members can pass it among themselves, and you can catch it from the people you [meet | peopleEmpathize].\n\nA new illness stays nameless for a few days. Until then, nobody can say what it is.\n\nHealing potions do nothing against disease. You need [medicine], taken day after day. Once an illness has a name, a sick member takes the right medicine from the backpack each morning by themselves. Skip too many days and the cure starts over. Left untreated, an illness can turn into something worse.\n\nIllness wears you down but never kills. Beat one and you may be immune, though some always come back.\n\nA doctor's [Diagnose] names your illnesses, for [25 euros] each. A [Nurse | partyClasses] in the party names them all for free."
     },
     "healthEpidemics": {
       "title": "Epidemics",
@@ -269,7 +269,7 @@
     },
     "combatCommands": {
       "title": "The Battle Commands",
-      "description": "The command menu has [Attack], [Skills], [Defense], [Backpack | gearBackpack], [Actions], [Talk | combatTalk] and [Run | combatBasics]. All skills, magic included, sit under Skills.\n\nDefense changes with what you hold:\n- a ranged weapon turns it into [Reload | combatAmmo]\n- gear with a bound special skill shows that skill\n- a character pushed to the brink sees their [Hyper | combatHyper]\n\n[Actions] opens a second page:\n- [Aim | combatBodyParts]: pick a part of the enemy for your next blow\n- [Throw | combatThrow]: hurl an item from the pack\n- [Wrestle | combatWrestle]: grab hold of the enemy\n\nWrestle and Talk come from the body, not the class, and never take a [loadout | progressLoadout] slot. A creature without language cannot Talk.\n\nMouse: [left click] an enemy to target it, [right click] to go back. Keys [1] to [9] use the quick bar: hold to arm a slot, release to cast."
+      "description": "The command menu has [Attack], [Skills], [Defense], [Backpack | gearBackpack], [Actions], [Talk | combatTalk] and [Run | combatBasics]. All skills, magic included, sit under Skills.\n\nDefense changes with what you hold:\n- a ranged weapon turns it into [Reload | combatAmmo]\n- gear with a bound special skill shows that skill\n- a character pushed to the brink sees their [Hyper | combatHyper]\n\n[Actions] opens a second page:\n- [Aim | combatBodyParts]: pick a part of the enemy for your next blow\n- [Throw | combatThrow]: hurl an item from the pack\n- [Wrestle | combatWrestle]: grab hold of the enemy\n\nWrestle and Talk do not depend on class and never take a [loadout | progressLoadout] slot. A creature without language cannot Talk.\n\nMouse: [left click] an enemy to target it, [right click] to go back. Keys [1] to [9] use the quick bar: hold to arm a slot, release to cast."
     },
     "combatAP": {
       "title": "MP and AP",
@@ -280,20 +280,20 @@
       "description": "Monsters have limbs and organs just like you. [Aim | combatCommands] picks one for your next blow and shows your chance to hit it.\n\nBig parts are easier to hit, small ones harder, and a part already hurt is easier still.\n\n[Vital organs | bodyParts] are hard to hit and only finish a monster once it is badly weakened. [Blunt | combatDamageTypes] blows never finish one.\n\nBreak a limb and you take away what it does. A final cutting, piercing or explosive blow can [sever] it."
     },
     "combatDamageTypes": {
-      "title": "Damage Types & Piercing Mechanics",
+      "title": "Damage Types and Piercing",
       "description": "Every attack has a [damage type]: Explosive, Piercing, Cutting, Blunt, Area and a few stranger ones.\n\nCutting, piercing and explosive blows can take a part off. Area and explosive damage spread across the body.\n\n[Blunt] blows break bones but never destroy a [vital organ | bodyParts]. Someone beaten down with blunt blows is left [downed | lawDowned] rather than dead.\n\n[Piercing] slips past most defences, even [Divine Shield | divineShield] and [Magic Reflection | magicReflection]."
     },
     "combatWrestle": {
       "title": "Wrestling",
-      "description": "Anyone with a [limb | bodyParts] able to grip can [Wrestle]. It costs nothing and needs no training.\n\nYou choose which of your limbs takes hold, which of theirs, and how. Each choice shows its odds.\n\nA few of the holds:\n- [Grapple]: take hold. Most other moves need one first\n- [Strike]: a blow that can [concuss | concussed] or cause [bleeding | bleeding]\n- [Joint lock]: [pins | pinned] the enemy in place\n- [Choke]: leaves them gasping for air\n- [Rip]: a long shot that can tear the limb clean off\n\nThe [Wrestling | progressSpecializations] specialization makes you better at all of it, and a [martial art | gearMartialArts] brings finishers of its own."
+      "description": "Anyone with a [limb | bodyParts] able to grip can [Wrestle]. It costs nothing and needs no training.\n\nYou choose which of your limbs takes hold, which of theirs, and how. Each choice shows its odds.\n\nA few of the holds:\n- [Grapple]: take hold. Most other moves need one first\n- [Strike]: a blow that can [concuss | concussed] or cause [bleeding | bleeding]\n- [Joint lock]: [pins | pinned] the enemy in place\n- [Choke]: leaves them gasping for air\n- [Rip]: a long shot that can tear the limb clean off\n\nThe [Wrestling | progressSpecializations] specialization makes you better at all of it, and a [martial art | gearMartialArts] adds its own finishers."
     },
     "combatTalk": {
       "title": "Talking to Monsters",
-      "description": "A monster that understands you can be talked to. [Talk] opens a panel with each approach and its odds.\n\nEvery enemy has a [disposition] toward you. Hurting it sours the mood. Your [PSI | partyAttributes] and [how you look | gearArmor] help.\n\n- [Chat]: builds rapport\n- [Surrender]: asks it to leave the fight\n- [Join the party | partyRecruiting]: needs a free slot and a creature of your size\n- [Follow you | partyPets]: takes it along as a pet\n- [Insult] and [Throw a stone]: always land, and it will like you less\n- [Pet it]: a talking creature has to like you first\n\nSome creatures are forces rather than people, [petrodemons | petrodemons] above all, and will hear none of it."
+      "description": "A monster that understands you can be talked to. [Talk] opens a panel with each approach and its odds.\n\nEvery enemy has a [disposition] toward you. Hurting it sours the mood. Your [PSI | partyAttributes] and [how you look | gearArmor] help.\n\n- [Chat]: builds rapport\n- [Surrender]: asks it to leave the fight\n- [Join the party | partyRecruiting]: needs a free slot and a creature of your size\n- [Follow you | partyPets]: takes it along as a pet\n- [Insult] and [Throw a stone]: always land, and it will like you less\n- [Pet it]: a talking creature has to like you first\n\nSome creatures are forces rather than people, [petrodemons | petrodemons] above all, and cannot be talked to."
     },
     "combatEnemyLevels": {
       "title": "Enemy Levels and Where They Live",
-      "description": "How dangerous the land is depends on where you stand. Some nations are gentle places to start, others are not, and away from Europe the wild tends to match your party.\n\nNo creature belongs to one country alone. Each nation simply favours some over others.\n\nTime matters too. The further the years run, the fiercer the world becomes.\n\nEach world also hides a few [rarities]: creatures that exist only once, marked by a [gold] level tag and unusual colours. Meet one and it goes into the [Bestiary | combatBestiary], never to appear again."
+      "description": "How dangerous the land is depends on where you stand. Some nations are gentle places to start, others are not, and away from Europe the wild tends to match your party.\n\nNo creature belongs to one country alone. Each nation simply favours some over others.\n\nMonsters also get stronger as the years pass.\n\nEach world also hides a few [rarities]: creatures that exist only once, marked by a [gold] level tag and unusual colours. Meet one and it goes into the [Bestiary | combatBestiary]. It never appears again."
     },
     "combatMovementAI": {
       "title": "How Monsters Behave",
@@ -301,7 +301,7 @@
     },
     "combatSafety": {
       "title": "Danger Warnings and Surviving a Blow",
-      "description": "A monster's level tag warns you: white is a fair fight, [yellow] is tough, [red] is deadly.\n\nIn each fight, a character at full health survives one blow that would have killed them. Someone already hurt gets no such luck.\n\nNow and then a monster that can [talk | combatTalk] may simply [spare you] and walk away, if it likes you, if you are on your last legs, or if you are beneath its notice."
+      "description": "A monster's level tag warns you: white is a fair fight, [yellow] is tough, [red] is deadly.\n\nIn each fight, a character at full health survives one blow that would have killed them. Someone already hurt does not.\n\nNow and then a monster that can [talk | combatTalk] may [spare you] and walk away, if it likes you, if you are on your last legs, or if you are too weak to bother with."
     },
     "combatModes": {
       "title": "Difficulty and Combat Modes",
@@ -309,11 +309,11 @@
     },
     "combatMapBattle": {
       "title": "Map Battle Mode",
-      "description": "[Strategic Battle] fights every battle right on the map where you stand. Choose it at [character creation | partyCreation] or later in [Options | optionsMenu], under Gameplay.\n\nEveryone fights from where they are. Nearby monsters join in, and townspeople who like you, or are simply brave, may take your side.\n\n[Move] repositions the acting battler. Water slows you. Spears and whips reach further than swords, bows and guns further still, and ranged attacks need a clear line of sight.\n\nYou [cannot run | combatBasics] with a monster right beside you. Step away first."
+      "description": "[Strategic Battle] plays every battle on the map where you stand. Choose it at [character creation | partyCreation] or later in [Options | optionsMenu], under Gameplay.\n\nEveryone fights from where they are. Nearby monsters join in, and townspeople who like you, or are simply brave, may take your side.\n\n[Move] repositions the acting battler. Water slows you. Spears and whips reach further than swords, bows and guns further still, and ranged attacks need a clear line of sight.\n\nYou [cannot run | combatBasics] with a monster right beside you. Step away first."
     },
     "combatSummons": {
       "title": "Summons",
-      "description": "A [summon] is a temporary extra member of the party. Only one can be out at a time, you command it on its turn, and when it dies it is gone.\n\nSummoning is [Convokation] magic. Each rite calls a family of beings: demons, elementals, dragons and many stranger things. What answers is always a match for the fight at hand.\n\nSome rites call what you prepared: a creature or a person you marked, the last thing you killed, even a companion you lost.\n\nA summon must be paid for every turn it stays, in blood, MP, euros or stranger coin. When you cannot pay, it leaves. [DismissSummon] sends it away.\n\nOutside a fight, what you call walks behind you for a while and joins any battle on the way. Send it home from the [Followers] page.\n\nA [familiar] is something else: see [Familiars | partyFamiliar]."
+      "description": "A [summon] is a temporary extra member of the party. Only one can be out at a time, you command it on its turn, and when it dies it is gone.\n\nSummoning is [Convokation] magic. Each rite calls a family of beings: demons, elementals, dragons and many stranger things. The summon always matches the strength of the fight.\n\nSome rites call what you prepared: a creature or a person you marked, the last thing you killed, even a companion you lost.\n\nA summon costs blood, MP, euros or stranger things for every turn it stays. When you cannot pay, it leaves. [DismissSummon] sends it away.\n\nOutside a fight, what you call walks behind you for a while and joins any battle on the way. Send it home from the [Followers] page.\n\nA [familiar] is something else: see [Familiars | partyFamiliar]."
     },
     "combatArena": {
       "title": "The Arena",
@@ -321,7 +321,7 @@
     },
     "combatBulletHell": {
       "title": "Bullet Hell Sequences",
-      "description": "Some fights break into a [bullet hell]: you steer a small craft, weave through the enemy's fire and shoot back.\n\nEvery hit there counts in the fight."
+      "description": "Some fights break into a [bullet hell]: you steer a small craft, weave through the enemy's fire and shoot back.\n\nHits on both sides count as real damage in the fight.\n\nSome enemy ultimates must be dodged this way before they land: the more shots you take, the harder the blow. Bullet Time slows the enemy fire. Fights on the map skip the dodge and the blow lands as usual."
     },
     "combatSpirits": {
       "title": "Spirit Battlers",
@@ -349,7 +349,7 @@
     },
     "elementFire": {
       "title": "Element: Fire",
-      "description": "Fire often leaves a target [Burned | burned], and a burn does not go out on its own.\n\n[Oily | oily] and [Cold | cold] targets go up fast, and plants fear it. [Wet | wet] targets and most reptiles shrug much of it off. Fire elementals and phoenixes drink it in."
+      "description": "Fire often leaves a target [Burned | burned], and a burn does not go out on its own.\n\n[Oily | oily] and [Cold | cold] targets go up fast, and plants fear it. [Wet | wet] targets and most reptiles shrug much of it off. Fire elementals and phoenixes absorb it."
     },
     "elementIce": {
       "title": "Element: Ice",
@@ -361,11 +361,11 @@
     },
     "elementWater": {
       "title": "Element: Water",
-      "description": "Water leaves the target [Wet | wet]: weak to [thunder | elementThunder], safe from [fire | elementFire]. On its own it hits softly."
+      "description": "Water leaves the target [Wet | wet]: weak to [thunder | elementThunder], safe from [fire | elementFire]. It deals little damage."
     },
     "petro": {
       "title": "Element: Petro",
-      "description": "Oil, and whatever comes out of the ground with it.\n\nPetro is the element of the [petrodemons | petrodemons]. They will not be reasoned with, cannot be hurt by Petro and fear [fire | elementFire]. They leave oil behind.\n\nOil matters beyond battle too: it prices [post | societyMail], feeds the [petrodemon summon | combatSummons] and trades on the [stock market | econStocks].\n\nSome Petro attacks leave the target [Oily | oily], waiting for a spark."
+      "description": "Oil, and whatever comes out of the ground with it.\n\nPetro is the element of the [petrodemons | petrodemons]. They cannot be talked to, cannot be hurt by Petro and fear [fire | elementFire]. They leave oil behind.\n\nOil matters beyond battle too: it prices [post | societyMail], feeds the [petrodemon summon | combatSummons] and trades on the [stock market | econStocks].\n\nSome Petro attacks leave the target [Oily | oily], ready to catch fire."
     },
     "elementWind": {
       "title": "Element: Wind",
@@ -417,7 +417,7 @@
     },
     "worldDigging": {
       "title": "Digging and Secret Doors",
-      "description": "Some walls are [cracked]. Hold the right tool, interact, and a dead end becomes a way through. In the 3D world the [pick | worldVoxelDigging] digs through the ground itself.\n\n[Secret doors] look like plain wall until you touch them.\n\nA locked door offers two ways in:\n- [Lockpick | gamesLockpick]: a quiet puzzle that needs [lockpicks]\n- [Bash]: a test of strength\n\nA [skeleton key] opens it outright. Breaking in counts as a [crime | lawCrime].\n\nSome doors let you [peek] at the room beyond before you decide."
+      "description": "Some walls are [cracked]. Hold the right tool, interact, and a dead end becomes a way through. In the 3D world the [pick | worldVoxelDigging] digs through the ground.\n\n[Secret doors] look like plain wall until you touch them.\n\nA locked door offers two ways in:\n- [Lockpick | gamesLockpick]: a quiet puzzle that needs [lockpicks]\n- [Bash]: a test of strength\n\nA [skeleton key] opens it outright. Breaking in counts as a [crime | lawCrime].\n\nSome doors let you [peek] at the room beyond before you decide."
     },
     "worldMovement": {
       "title": "Water, Climbing and Bridges",
@@ -429,15 +429,15 @@
     },
     "worldDreams": {
       "title": "Dreams",
-      "description": "A long sleep can carry you into a [dream]. No two are alike: places you half remember, places nobody should, stitched together in ways that do not quite make sense.\n\n- [WASD] walks, the [mouse] looks, [space] jumps. [Double tap] jump while standing to [take off]. Hold it to climb, [Ctrl] to sink\n- the [action button] uses the weapon in your right hand. The [wheel] steps through others\n- touching anything alive moves you to [another dream]\n- holes have [no floor], and falling far enough wakes you\n\nEvery dream keeps [laws] of its own. Learn them quickly.\n\nGoing without [sleep | needsSleep] changes what you dream. The longer you stay awake, the less the dream feels like yours.\n\nThere is [no end] to it. Some come back knowing things they did not know before."
+      "description": "A long sleep can turn into a [dream]. Every dream is different and strange.\n\n- [WASD] walks, the [mouse] looks, [space] jumps. [Double tap] jump while standing to [take off]. Hold it to climb, [Ctrl] to sink\n- the [action button] uses the weapon in your right hand. The [wheel] steps through others\n- touching anything alive moves you to [another dream]\n- holes have [no floor], and falling far enough wakes you\n\nEach dream has its own [laws].\n\nGoing without [sleep | needsSleep] changes what you dream. The longer you stay awake, the less the dream feels like yours.\n\nDreams have [no end]. You may wake up knowing something new."
     },
     "worldAdventures": {
       "title": "Adventures on the Map",
-      "description": "Some world map squares carry a [???] marker. Stand on it, or face it, and [Investigate] to play a branching adventure written for that place.\n\nIt may end in treasure, a fight, a minigame, an [augment | healthAugments], a shift in [faction standing | peopleFactions], trouble with the law ([crime | lawCrime]), or nothing at all.\n\nYour [leader | partyBasics] goes in, and some paths open only to a leader of the right [temperament]. Once answered, a square stays answered."
+      "description": "Some world map squares have a [???] marker. Stand on it, or face it, and [Investigate] to play a branching adventure written for that place.\n\nIt may end in treasure, a fight, a minigame, an [augment | healthAugments], a shift in [faction standing | peopleFactions], trouble with the law ([crime | lawCrime]), or nothing at all.\n\nYour [leader | partyBasics] goes in, and some paths open only to a leader of the right [temperament]. Each square can be played only once."
     },
     "worldBologna": {
       "title": "Bologna",
-      "description": "[Bologna] is in the game as itself, street by street, one city with no seams.\n\nEvery building has a door, and every door is a way in. Most are homes; some are [shops and inns | worldHouses].\n\nThe city is alive: townspeople, Bolognesi born there, animals on the pavements and in the parks, birds on the rooftops."
+      "description": "[Bologna] is mapped street by street as one seamless city.\n\nEvery building can be entered. Most are homes; some are [shops and inns | worldHouses].\n\nThe city is alive: townspeople, Bolognesi born there, animals on the pavements and in the parks, birds on the rooftops."
     },
     "worldPlatformer": {
       "title": "Platformer Maps",
@@ -445,11 +445,11 @@
     },
     "worldFlying": {
       "title": "Flying",
-      "description": "Flight carries you like an [airship]: any direction, over almost everything. [Confirm] lands you, and so does leaving the map.\n\nIt comes from skills. [Fly] works only on the [world map | worldMapPage]. [Wing Wander] lifts you and [Earth Ebb] brings you down. The [flying broom | vehicleBroom] is a vehicle and flies on its own."
+      "description": "You fly like an [airship]: any direction, over almost everything. [Confirm] lands you, and so does leaving the map.\n\nIt comes from skills. [Fly] works only on the [world map | worldMapPage]. [Wing Wander] lifts you and [Earth Ebb] brings you down. The [flying broom | vehicleBroom] is a vehicle and needs no skill to fly."
     },
     "worldConnections": {
-      "title": "The Map of Maps",
-      "description": "The world quietly remembers how every place connects to every other.\n\nYou never see it. But when the [auto explorer | partyAutoIdle] walks for you, this is how it finds its way."
+      "title": "How Maps Connect",
+      "description": "The game tracks how every map connects to the others. It is hidden, and the [auto explorer | partyAutoIdle] uses it to find its way."
     },
     "worldTreasure": {
       "title": "Chests and Treasure Rooms",
@@ -509,7 +509,7 @@
     },
     "vehicleCrew": {
       "title": "The Crew",
-      "description": "Your [leader | partyBasics] takes the wheel when a journey starts, and only the [driver] grows in that vehicle's [specialization | progressSpecializations].\n\nLong hours at the wheel wear a driver down. When they grow too tired, someone better rested takes over. Passengers doze when they need [sleep | needsSleep], and a [crash | vehicleRepair] jolts everyone awake.\n\nTravelling together is good [company | needsSocial] and good [fun | needsLeisure]. A lone traveller misses out.\n\nOn the [starship | vehicleStarship] the crew looks after itself, eating from the hold as it needs."
+      "description": "Your [leader | partyBasics] takes the wheel when a journey starts, and only the [driver] grows in that vehicle's [specialization | progressSpecializations].\n\nLong hours at the wheel wear a driver down. When they grow too tired, someone better rested takes over. Passengers doze when they need [sleep | needsSleep], and a [crash | vehicleRepair] jolts everyone awake.\n\nTravelling together is good [company | needsSocial] and good [fun | needsLeisure]. A lone traveller misses out.\n\nOn the [starship | vehicleStarship] the crew eats from the hold when hungry."
     },
     "vehicleDriving": {
       "title": "Driving in 3D",
@@ -517,7 +517,7 @@
     },
     "roadTraffic": {
       "title": "Traffic, Roadkill and Theft",
-      "description": "Cars on the map are solid and dangerous. Get under a moving one and you are [run over]. Town traffic slows for people; highway traffic does not.\n\nBeing hit knocks you clear and causes an [accident]. People hit by cars carry their injuries afterwards, and a creature hit hard enough dies.\n\nRun someone down and every member of your party falls in their eyes, and you are wanted for a [hit and run | lawCrime]. Keep ramming a creature and sooner or later it turns and fights.\n\nA car whose driver has stepped out sits [parked and stealable | vehicleCar] until they return."
+      "description": "Cars on the map are solid and dangerous. Get under a moving one and you are [run over]. Town traffic slows for people; highway traffic does not.\n\nBeing hit knocks you clear and causes an [accident]. People hit by cars stay injured afterwards, and a creature hit hard enough dies.\n\nRun someone down and every member of your party loses standing with them, and you are wanted for a [hit and run | lawCrime]. Keep ramming a creature and sooner or later it turns and fights.\n\nA car whose driver has stepped out sits [parked and stealable | vehicleCar] until they return."
     },
     "peopleOverview": {
       "title": "People Are Real Here",
@@ -525,7 +525,7 @@
     },
     "peopleEmpathize": {
       "title": "The Empathize Panel",
-      "description": "Talk to someone properly and the [Empathize] panel opens. Its tabs show who they are: their life, their routine, their health, their loves and the people around them.\n\nFrom there you can:\n- [Socialize]: praise, insult, tell a joke and more\n- give a [Gift] or [Trade]\n- [Court | peopleOpinion] them, and in time [Propose]\n- ask them to [Join Party | partyRecruiting]\n- bribe, [pickpocket | econStealing], attack or challenge them to a [card duel | minigamesCardTables]\n\nMore is grouped by subject: [Beliefs and Politics | peopleCivics], [Money and Work | peopleDeals], and [Help, Games, Romance and Talk | peopleHelping].\n\n[Propose] only works when they are truly drawn to you. Choose the kind of relationship that suits them, and they may become your partner.\n\nEach party member has their own [standing] with each person, and only the one talking changes theirs.\n\n[Free Chat] lets you type anything and hear what they say back."
+      "description": "Talking to someone opens the [Empathize] panel. Its tabs show who they are: their life, their routine, their health, their loves and the people around them.\n\nFrom there you can:\n- [Socialize]: praise, insult, tell a joke and more\n- give a [Gift] or [Trade]\n- [Court | peopleOpinion] them, and in time [Propose]\n- ask them to [Join Party | partyRecruiting]\n- bribe, [pickpocket | econStealing], attack or challenge them to a [card duel | minigamesCardTables]\n\nMore is grouped by subject: [Beliefs and Politics | peopleCivics], [Money and Work | peopleDeals], and [Help, Games, Romance and Talk | peopleHelping].\n\n[Propose] only works when they are truly drawn to you. Choose the kind of relationship that suits them, and they may become your partner.\n\nEach party member has their own [standing] with each person, and only the one talking changes theirs.\n\n[Free Chat] lets you type anything and hear what they say back."
     },
     "peopleOpinion": {
       "title": "How Somebody Decides What They Think of You",
@@ -533,7 +533,7 @@
     },
     "peopleLives": {
       "title": "People Have Lives",
-      "description": "Everyone's life goes on whenever time does, even while you sleep.\n\n- they are born somewhere and [move] for their own reasons\n- they meet, date, marry and part, usually with someone close to home\n- they build [careers | econWork], change jobs as they age, and retire\n- some fall foul of the law: [convictions | lawTrial], [prison | lawPrison] and [bounties | lawCrime] they still owe\n\nSpend a year in [cryogenic sleep | needsSleep] and wake to a world that aged, married and buried its own without you."
+      "description": "Everyone's life goes on whenever time does, even while you sleep.\n\n- they are born somewhere and [move] for their own reasons\n- they meet, date, marry and part, usually with someone close to home\n- they build [careers | econWork], change jobs as they age, and retire\n- some fall foul of the law: [convictions | lawTrial], [prison | lawPrison] and [bounties | lawCrime] they still owe\n\nAfter a year in [cryogenic sleep | needsSleep], people will have aged, married and died without you."
     },
     "peopleTalking": {
       "title": "What People Say to Each Other",
@@ -541,7 +541,7 @@
     },
     "peopleSettlements": {
       "title": "Settlements and What Happens To Them",
-      "description": "Every town has a pulse: how [prosperous], how [safe] and how [happy] it is. Jobs, crime, the nation's fortunes and how [wanted | lawCrime] you are all push on it.\n\nWhen things tip, the town lives through an episode:\n- a [crime wave] when safety collapses\n- a [boom] or a [bust] when money runs hot or cold\n- a [festival | peopleHolidays] when the town is thriving\n- an [epidemic | healthEpidemics], rare and cruellest in miserable places\n\nEverything feeds everything else: people out of work turn to crime, crime fills the prisons, and the ripples reach the [news | societyNews], the [stock market | econStocks] and the gossip on the street."
+      "description": "Every town tracks how [prosperous], [safe] and [happy] it is. Jobs, crime, the nation's fortunes and how [wanted | lawCrime] you are all push on it.\n\nWhen things tip, the town lives through an episode:\n- a [crime wave] when safety collapses\n- a [boom] or a [bust] when money runs hot or cold\n- a [festival | peopleHolidays] when the town is thriving\n- an [epidemic | healthEpidemics], rare and cruellest in miserable places\n\nThese affect each other: people out of work turn to crime, crime fills the prisons, and the ripples reach the [news | societyNews], the [stock market | econStocks] and the gossip on the street."
     },
     "peoplePolitics": {
       "title": "Politics",
@@ -553,7 +553,7 @@
     },
     "peopleONU": {
       "title": "The Assembly",
-      "description": "Every [hyperpower | peoplePolitics] holds a seat in the assembly, which meets in [Brussels]: walk into the chamber to open the lobby. The [Chamber] program on the [Hypernet desktop | hypernetOS] lets you follow it from afar.\n\nA party member can [take a seat] for a power that already thinks well of them. The seat earns them standing and a weekly [stipend] that grows with it. A character can join only [once], resigning costs far more than joining gave, and falling too far out of favour gets them dismissed.\n\nOnce a week you can attend a session. Delegations speak on each motion, then you answer:\n- [Support] or [Oppose]: your seat votes that way\n- [Amend]: a softer push in favour\n- [Filibuster]: talk it out without taking a side\n- [Wild]: a gamble that may swing the room either way\n\nA [PSI roll | partyDiceChecks] decides how far your words carry. Friendly delegations listen, hostile ones do not, and the [Diplomacy | progressSpecializations] specialization helps. Then every seat votes, in the open or in secret.\n\n[Grave motions], such as war, [theonuclear devices | theonuclearBombingNewYork] or the [goblin question | goblinHorde], go to the [Security Council] of the strongest powers, which decides whatever the floor voted.\n\nHow you vote wins and loses friends among the delegations and with your own power. A [ceasefire], a [white peace] or [sanctions] can change the course of a war. Sessions you skip still happen and enter the world's [history | societyHistory].\n\nWith [Kofi Annan] in the party, the lobby offers the chair of Secretary General instead: no vote, but mediation, the casting word on a tie, and better pay. The [Tourists | theTourists] hold a chair of their own and admit nobody."
+      "description": "Every [hyperpower | peoplePolitics] holds a seat in the assembly, which meets in [Brussels]: walk into the chamber to open the lobby. The [Chamber] program on the [Hypernet desktop | hypernetOS] lets you follow it from afar.\n\nA party member can [take a seat] for a power that already thinks well of them. The seat earns them standing and a weekly [stipend] that grows with it. A character can join only [once], resigning costs far more than joining gave, and falling too far out of favour gets them dismissed.\n\nOnce a week you can attend a session. Delegations speak on each motion, then you answer:\n- [Support] or [Oppose]: your seat votes that way\n- [Amend]: a softer push in favour\n- [Filibuster]: talk it out without taking a side\n- [Wild]: a gamble that may swing the room either way\n\nA [PSI roll | partyDiceChecks] decides how much your words sway the room. Friendly delegations listen, hostile ones do not, and the [Diplomacy | progressSpecializations] specialization helps. Then every seat votes, in the open or in secret.\n\n[Grave motions], such as war, [theonuclear devices | theonuclearBombingNewYork] or the [goblin question | goblinHorde], go to the [Security Council] of the strongest powers, which has the final say over the floor vote.\n\nHow you vote wins and loses friends among the delegations and with your own power. A [ceasefire], a [white peace] or [sanctions] can change the course of a war. Sessions you skip still happen and enter the world's [history | societyHistory].\n\nWith [Kofi Annan] in the party, the lobby offers the chair of Secretary General instead: no vote, but mediation, the casting word on a tie, and better pay. The [Tourists | theTourists] hold a chair of their own and admit nobody."
     },
     "lawCrime": {
       "title": "Crime and Bounty",
@@ -565,7 +565,7 @@
     },
     "lawTrial": {
       "title": "The Trial",
-      "description": "Justice is in the hands of [Eris | eris], and no two trials are alike. The courtroom, the gallery and even the case law she quotes are new each time.\n\nBefore the hearing you choose your [counsel]: hire an advocate, let a party member speak for you, or stand alone. The brief shows each one's skill, fee and your chances. Her [mood] can change everything, and in some moods she throws counsel out, with [no] refund.\n\nDefending yourself, or letting a companion do it, teaches the [Law] [specialization | progressSpecializations]. A hired professional teaches you nothing.\n\nThe hearing runs from [plea] to [choices] to [verdict]. Innocent clears your whole [bounty | lawCrime]. Time spent with her away from the court builds a [bond | lawEris] that softens her, and a strong one may see the case thrown out before it starts.\n\nOne plea is [Challenge Eris], and it turns the hearing into a fight. At first nobody can die, and she even heals you. Then she fights for real.\n- Win: your bounty never grows again in that world, and there are no more dates with her.\n- Flee: you serve [a month] in [prison | lawPrison].\n- Lose: the game is over.\n\nSome defendants are special. [Bubba] seems to get off lightly. [Em | emTheMemoryWitch] does not, unless she has won Eris over on a date.\n\n[Sandbox] mode has a reverse trial, where you play Eris."
+      "description": "[Eris | eris] judges every trial. The courtroom, gallery and case law change each time.\n\nBefore the hearing you choose your [counsel]: hire an advocate, let a party member speak for you, or stand alone. The brief shows each one's skill, fee and your chances. Her [mood] can change everything, and in some moods she throws counsel out, with [no] refund.\n\nDefending yourself, or letting a companion do it, teaches the [Law] [specialization | progressSpecializations]. A hired professional teaches you nothing.\n\nThe hearing runs from [plea] to [choices] to [verdict]. Innocent clears your whole [bounty | lawCrime]. Time spent with her away from the court builds a [bond | lawEris] that softens her, and a strong one may see the case thrown out before it starts.\n\nOne plea is [Challenge Eris], and it turns the hearing into a fight. At first nobody can die, and she even heals you. Then she fights for real.\n- Win: your bounty never grows again in that world, and there are no more dates with her.\n- Flee: you serve [a month] in [prison | lawPrison].\n- Lose: the game is over.\n\nSome defendants are special. [Bubba] seems to get off lightly. [Em | emTheMemoryWitch] does not, unless she has won Eris over on a date.\n\n[Sandbox] mode has a reverse trial, where you play Eris."
     },
     "lawPrison": {
       "title": "Sentences and Prison",
@@ -573,7 +573,7 @@
     },
     "lawEris": {
       "title": "Dating Eris",
-      "description": "You can take [Eris | eris] on [dates], and no two evenings are the same.\n\nEach date happens somewhere in the world, and the [biome | worldBiomes] shapes it: a picnic, a seance, a stakeout and more. Her [mood] is never certain: playful, romantic, paranoid, prophetic, or worse. In her [eldritch] moods, things stop making sense.\n\nShe may break up the evening with [dares], some of them very much against the law. Two heartbeats on screen show how you are both doing. She feels differently about [every party member], and may turn her attention to one of your companions.\n\nThe first date that ends well brings an [expression seed | progressExpressionSeeds]."
+      "description": "You can take [Eris | eris] on [dates].\n\nEach date happens somewhere in the world, and the [biome | worldBiomes] shapes it: a picnic, a seance, a stakeout and more. Her [mood] is never certain: playful, romantic, paranoid, prophetic, or worse. In her [eldritch] moods, things stop making sense.\n\nShe may break up the evening with [dares], some of them very much against the law. Two heartbeats on screen show how you are both doing. She feels differently about [every party member], and may turn her attention to one of your companions.\n\nThe first date that ends well brings an [expression seed | progressExpressionSeeds]."
     },
     "societyMail": {
       "title": "The Post",
@@ -581,11 +581,11 @@
     },
     "societyNews": {
       "title": "The News",
-      "description": "The world writes its own [news]. A fresh story arrives every morning, and the real events of 2001 land on their real dates.\n\nGood news lifts a place's [property prices | econProperty] and fills its shops for a while. Bad news does the opposite.\n\nTown troubles, riots, coups, elections, [epidemics | healthEpidemics] and the mayor's divorce all make headlines. Read them in the news reader on the [Hypernet desktop | hypernetOS], which needs a line."
+      "description": "The game writes its own [news]. A fresh story arrives every morning, and the real events of 2001 land on their real dates.\n\nGood news lifts a place's [property prices | econProperty] and fills its shops for a while. Bad news does the opposite.\n\nTown troubles, riots, coups, elections, [epidemics | healthEpidemics] and the mayor's divorce all make headlines. Read them in the news reader on the [Hypernet desktop | hypernetOS], which needs a line."
     },
     "societyDiary": {
       "title": "The Party Diary",
-      "description": "The [diary] is your party's own story, written as it happens.\n\nIt remembers journeys, fights and bosses, friends made and lost, [evenings with Eris | lawEris], wounds and [augments | healthAugments], crimes and trials, [dreams | worldDreams], and much more. The small stuff, like idle chatter, is left out.\n\nThe party reads its own pages too: the newest entries become what they [talk about | partyBanterPage]."
+      "description": "The [diary] records your party's story as it happens.\n\nIt remembers journeys, fights and bosses, friends made and lost, [evenings with Eris | lawEris], wounds and [augments | healthAugments], crimes and trials, [dreams | worldDreams], and much more. The small stuff, like idle chatter, is left out.\n\nThe party reads its own pages too: the newest entries become what they [talk about | partyBanterPage]."
     },
     "societyTopics": {
       "title": "Conversation Topics",
@@ -593,14 +593,14 @@
     },
     "societyArmy": {
       "title": "Armies",
-      "description": "You can recruit troops from a [faction | peopleFactions], and their number is shown over your sprite on the [world map | worldMapPage].\n\nThe [hyperpowers | peoplePolitics] march great armies under living leaders, factions guard their own lands, and free bands roam wherever they please.\n\nMeeting an army never starts a fight on its own. You can talk to its leader, parley, attack or leave, and when two armies are already at war you can join either side.\n\nA [field battle] plays out in real time: your units in [yellow], theirs in [red]. A fallen troop may survive badly hurt, or be [gone for good]. Units that lose heart slow down, weaken and may [rout].\n\nYou have three commander orders, each with its own wait:\n- [Q] Rally: brings fleeing units back and lifts morale\n- [W] Heal: patches up every wounded unit\n- [E] Inspire: a short burst of full morale and fury\n\nFrom the army menu, a [drill] splits your troops in two to train against each other. Nobody dies in a drill. Mercenaries in the party make the army cheaper to keep."
+      "description": "You can recruit troops from a [faction | peopleFactions], and their number is shown over your sprite on the [world map | worldMapPage].\n\nThe [hyperpowers | peoplePolitics] march great armies under living leaders, factions guard their own lands, and free bands roam wherever they please.\n\nMeeting an army never starts a fight automatically. You can talk to its leader, parley, attack or leave, and when two armies are already at war you can join either side.\n\nA [field battle] plays out in real time: your units in [yellow], theirs in [red]. A fallen troop may survive badly hurt, or be [gone for good]. Units that lose heart slow down, weaken and may [rout].\n\nYou have three commander orders, each with its own wait:\n- [Q] Rally: brings fleeing units back and lifts morale\n- [W] Heal: patches up every wounded unit\n- [E] Inspire: a short burst of full morale and fury\n\nFrom the army menu, a [drill] splits your troops in two to train against each other. Nobody dies in a drill. Mercenaries in the party make the army cheaper to keep."
     },
     "societyMultiplayer": {
       "title": "Multiplayer",
       "description": "The multiplayer menu lists [local split screen], [LAN], [Steam] and [Online]. Steam and Online are not available yet.\n\n[LAN]: one player hosts, the others find the game on the local network, and everyone plays in the host's world.\n\n[Local split screen]: 2 players on one machine. Player two uses a gamepad, or shares the keyboard with WASD to move, E to act and Q to run. Player two takes one of the party members, and the rest walk on their own.\n\nEither player can take over a member the computer is walking: player one with Tab, player two with the pad's X button or R. When the players are close, the two views merge into one.\n\nFrom the split screen menu you can also start a co op [arena gauntlet | combatArena].\n\n[Minigames | gamesOverview] can be played [hot seat] even without split screen, with a second gamepad or the numpad. In [arcade carts | gamesArcade] either player can steer, while chess, pool and bowling take turns.\n\nDuring a [map battle | combatMapBattle], player two controls the second party member."
     },
     "societyHistory": {
-      "title": "The Century Behind You",
+      "title": "World History",
       "description": "Every world comes with a century behind it: an alternate history of Europe from [1900 to 2001].\n\nIt is full of coups, wars and assassinations, occult rites and paranormal anomalies, and the [Squishing | squishing] itself.\n\nThat past shapes the present: which [hyperpowers | peoplePolitics] rule and how strong they are, who sits on the [Security Council | peopleONU], what [epidemics | healthEpidemics] have swept the land, and what the people you meet have lived through.\n\nThe full story is in the [Historical Archive]."
     },
     "econMoney": {
@@ -617,7 +617,7 @@
     },
     "econBank": {
       "title": "Banking and Loans",
-      "description": "The bank keeps your [deposits] and pays a little interest on them every week. It also [lends] money, one loan at a time, due in [30 days]. [Accounting] training lets you borrow more and pay less.\n\nInterest keeps running while you walk, sleep, travel or lie in [cryogenic sleep | needsSleep].\n\n[Pay on time]. Past the due date the debt grows every single day, until it is several times what you borrowed.\n\nIn an empty world the bank never opens."
+      "description": "The bank keeps your [deposits] and pays a little interest on them every week. It also [lends] money, one loan at a time, due in [30 days]. [Accounting] training lets you borrow more and pay less.\n\nInterest keeps running while you walk, sleep, travel or lie in [cryogenic sleep | needsSleep].\n\n[Pay on time]. Past the due date the debt grows every day, until it is several times what you borrowed.\n\nIn an empty world the bank never opens."
     },
     "econStocks": {
       "title": "The Stock Market",
@@ -633,7 +633,7 @@
     },
     "econWork": {
       "title": "Work",
-      "description": "Dozens of jobs await, and any party member can be sent to work. Open [Job Offers] to see what is available now and where.\n\nEach job lists the [stats | partyAttributes] it wants. Falling short never stops you. You simply do worse.\n\nA worker [leaves] the party for the hours of the shift and comes back when it ends. A lone traveller works it out behind a fade. [Remote] jobs are done over the Hypernet from wherever you stand.\n\nA shift comes down to a [d20 | partyDiceChecks] roll. Training in the trade helps your odds and your pay. A bad roll can be a [disaster] that costs money, hurts, or leaves its mark. Work also makes you [hungry | needsHunger] and [tired | needsSleep].\n\n[Dress for the job]. Looking the part brings better luck and better pay: fearsome for fighting work, sly for crime, mystical for magic.\n\nShifts bring surprises: a rich customer, an inspection, a magical backlash. Armed jobs can end in an [ambush], a real fight with hazard pay if you win.\n\nWhile you are [wanted | lawCrime] nobody will hire you, and a [faction | peopleFactions] that dislikes you keeps its jobs to itself."
+      "description": "Dozens of jobs await, and any party member can be sent to work. Open [Job Offers] to see what is available now and where.\n\nEach job lists the [stats | partyAttributes] it wants. Falling short only means you do worse.\n\nA worker [leaves] the party for the hours of the shift and comes back when it ends. A lone traveller works it off screen. [Remote] jobs are done over the Hypernet from wherever you stand.\n\nA shift comes down to a [d20 | partyDiceChecks] roll. Training in the trade helps your odds and your pay. A bad roll can be a [disaster] that costs money, hurts, or leaves its mark. Work also makes you [hungry | needsHunger] and [tired | needsSleep].\n\n[Dress for the job]. Looking the part brings better luck and better pay: fearsome for fighting work, sly for crime, mystical for magic.\n\nShifts bring surprises: a rich customer, an inspection, a magical backlash. Armed jobs can end in an [ambush], a real fight with hazard pay if you win.\n\nWhile you are [wanted | lawCrime] nobody will hire you, and a [faction | peopleFactions] that dislikes you keeps its jobs to itself."
     },
     "econQuests": {
       "title": "Quests",
@@ -653,7 +653,7 @@
     },
     "craftForge": {
       "title": "The Forge",
-      "description": "Every weapon and armour in the game hangs on the [forge] board from your first visit. Your [training | progressTraining] decides which of them you can actually make.\n\nEach piece belongs to a trade: a robe to Tailoring, a rifle to Gunsmithing, a wig to Wig Making, and more. Cheap pieces can be made by anyone.\n\nNo two forged pieces are alike. Skill, good materials and the mood of the fire all leave their mark. Pick a [finish] before you forge and it stays on the piece.\n\n[Smelt] melts a carried piece back into some of its materials.\n\nThe party switcher picks who stands at the anvil and who earns the [specialization | progressSpecializations] points."
+      "description": "The [forge] board lists every weapon and armour from your first visit. Your [training | progressTraining] decides which of them you can actually make.\n\nEach piece belongs to a trade: a robe to Tailoring, a rifle to Gunsmithing, a wig to Wig Making, and more. Cheap pieces can be made by anyone.\n\nEvery forged piece is unique. Skill and materials affect the result. Pick a [finish] before you forge and it stays on the piece.\n\n[Smelt] melts a carried piece back into some of its materials.\n\nThe party switcher picks who stands at the anvil and who earns the [specialization | progressSpecializations] points."
     },
     "craftAlchemy": {
       "title": "Alchemistry",
@@ -665,7 +665,7 @@
     },
     "craftBrewing": {
       "title": "Brewing",
-      "description": "Load a barrel and leave it. Brews ferment on the [world clock | worldWeather], even while you are far away, and slowly mature until they are [ready]. Training in [Brewing] or [Distilling] makes them finish sooner and yield more, and a little care at the barrel helps too.\n\nAn old barrel you stumble on may already hold something somebody left half done.\n\nThe [Grange] program on the Hypernet shows every barrel, [hive | craftApiary], [plot | craftPlants] and [animal | craftAnimals] you keep: what is ready, what is spoiling, what wants feeding. The work itself is still done in person."
+      "description": "Load a barrel and leave it. Brews ferment on the [world clock | worldWeather], even while you are far away, and slowly mature until they are [ready]. Training in [Brewing] or [Distilling] makes them finish sooner and yield more, and a little care at the barrel helps too.\n\nAn old barrel you stumble on may already hold something somebody left half done.\n\nThe [Grange] program on the Hypernet shows every barrel, [hive | craftApiary], [plot | craftPlants] and [animal | craftAnimals] you keep: what is ready, what is spoiling, what wants feeding. You still do the work in person."
     },
     "craftFurniture": {
       "title": "Building and Furniture",
@@ -685,7 +685,7 @@
     },
     "craftArtifacts": {
       "title": "Procedural Artifacts",
-      "description": "[Artifacts] are one of a kind items, weapons and armour, each with its own story. You find them in [loot | craftLoot], in [vaults | galaxyPatrons], at the end of [adventures | worldAdventures], and through certain rites.\n\nOne rite turns a [party member | partyBasics] into a weapon."
+      "description": "[Artifacts] are unique items, weapons and armour with their own history. You find them in [loot | craftLoot], in [vaults | galaxyPatrons], at the end of [adventures | worldAdventures], and through certain rites.\n\nOne rite turns a [party member | partyBasics] into a weapon."
     },
     "craftLoot": {
       "title": "How Loot Is Rolled",
@@ -705,7 +705,7 @@
     },
     "galaxyShip": {
       "title": "Your Starship",
-      "description": "Every world starts with its own starship, always the same one for that [world | setupWorldCreation].\n\nFrom the [vehicle menu | vehiclesOverview] you can redesign it from scratch, or change single features and keep the rest.\n\nUnder way the [crew | vehicleCrew] looks after itself: a meal, a wash, a chat, a game, a shift of sleep. Meals come out of the food in the hold."
+      "description": "Every world starts with its own starship, always the same one for that [world | setupWorldCreation].\n\nFrom the [vehicle menu | vehiclesOverview] you can redesign it from scratch, or change single features and keep the rest.\n\nUnder way the [crew | vehicleCrew] handles its own needs: a meal, a wash, a chat, a game, a shift of sleep. Meals come out of the food in the hold."
     },
     "galaxyLanding": {
       "title": "Landing",
@@ -733,7 +733,7 @@
     },
     "hypernetBrowser": {
       "title": "App: Hypernet Explorer",
-      "description": "Hypernet Explorer, the browser: tabs, an address bar, favorites, history, search and everything else a browser of the time had.\n\nReading teaches. Linger on a page long enough to actually read it and it pays a little [KP | progressKnowledge], once per page. Clicking through pays nothing. Your total is told when you put the [deck | hypernetHyperdeck] away.\n\nThe browser needs a [line | hypernetOS]."
+      "description": "Hypernet Explorer, the browser: tabs, an address bar, favorites, history, search and everything else a browser of the time had.\n\nReading a page for a while gives a little [KP | progressKnowledge], once per page. Your total is shown when you close the [deck | hypernetHyperdeck].\n\nThe browser needs a [line | hypernetOS]."
     },
     "hypernetMyComputer": {
       "title": "App: My Computer",
@@ -749,11 +749,11 @@
     },
     "hypernetTVGuide": {
       "title": "App: TV Guide",
-      "description": "The television listings. Pick a channel on the left to see its programmes, each with its tone and cast.\n\nSelect a programme to watch it play right on the [desktop | hypernetOS]. It is never quite the same twice.\n\nFor the weekly schedule and the studio, see [Television | hypernetTV]."
+      "description": "The television listings. Pick a channel on the left to see its programmes, each with its tone and cast.\n\nSelect a programme to watch it play right on the [desktop | hypernetOS].\n\nFor the weekly schedule and the studio, see [Television | hypernetTV]."
     },
     "hypernetObjectIndex": {
       "title": "App: The Object Index",
-      "description": "A catalogue of every object known to exist, one dossier each.\n\nThe [left page] lists them by category, with a search box. The [right page] is the dossier: what it is, a little lore, its price, what it is made of, and its 3D model turning beside it. Click the model to see it full screen.\n\nIf the marketplace sells it, you can order it from here. [Randomize] retells the lore in other words."
+      "description": "A catalogue of every object, one dossier each.\n\nThe [left page] lists them by category, with a search box. The [right page] is the dossier: what it is, a little lore, its price, what it is made of, and its 3D model turning beside it. Click the model to see it full screen.\n\nIf the marketplace sells it, you can order it from here. [Randomize] retells the lore in other words."
     },
     "hypernetNeuroPolice": {
       "title": "App: N€police",
@@ -785,7 +785,7 @@
     },
     "hypernetMusic": {
       "title": "Music and Sound",
-      "description": "Choose your [battle music] in [Options | optionsMenu]:\n\n- [Biome] plays the battle track of the place you are in\n- [Selected Track] always plays the one you pick\n- [Random] picks a new track for every fight\n- [None] fights in silence\n\nOut of battle, every land has its own music for day and for night. Whatever plays announces its title and artist.\n\n[Footsteps] change with the ground underfoot."
+      "description": "Choose your [battle music] in [Options | optionsMenu]:\n\n- [Biome] plays the battle track of the place you are in\n- [Selected Track] always plays the one you pick\n- [Random] picks a new track for every fight\n- [None] fights in silence\n\nOut of battle, every land has its own music for day and for night. Each track shows its title and artist.\n\n[Footsteps] change with the ground underfoot."
     },
     "gamesOverview": {
       "title": "Diversions",
@@ -807,9 +807,13 @@
       "title": "Basketball",
       "description": "A free throw shootout against a computer opponent. Bank it off the backboard, or watch it rattle out of the rim."
     },
+    "gamesPizza": {
+      "title": "Pizza Maker",
+      "description": "Design a pizza with up to five toppings, picked from any food in the game, and watch it come together in 3D. Pizzas made in the kitchen go into the recipe book: bake one from what is in your pack and the whole party eats it. As a minigame, customers tell you the toppings they want and the ones they refuse."
+    },
     "gamesChess": {
       "title": "Chess",
-      "description": "Chess by the full rules, where every piece is a creature. Each world fields its own two armies.\n\n[Normal] is chess by the book against the computer.\n\nIn [Chaos] you still follow the rules, but Black does not: it steals your pieces, transforms them and drops monsters onto the board. Taking pieces fills your [Cheat Meter]. When it is full, press [Shift] to break a few rules of your own."
+      "description": "Chess by the full rules, where every piece is a creature. Each world has its own two armies.\n\n[Normal] is chess by the book against the computer.\n\nIn [Chaos] you still follow the rules, but Black does not: it steals your pieces, transforms them and drops monsters onto the board. Taking pieces fills your [Cheat Meter]. When it is full, press [Shift] to break a few rules of your own."
     },
     "gamesFishing": {
       "title": "Fishing",
@@ -829,7 +833,7 @@
     },
     "gamesTournament": {
       "title": "The Monster Tournament",
-      "description": "A knockout monster tournament to bet on. Pick a fighter, place a bet in [tokens | econVending], and watch the fights your monster is in.\n\nEvery fight is fought for real, and [betting does not affect the outcome]."
+      "description": "A knockout monster tournament to bet on. Pick a fighter, place a bet in [tokens | econVending], and watch the fights your monster is in.\n\nFights are real, and [betting does not affect the outcome]."
     },
     "gamesGambling": {
       "title": "Slots, Scratch Cards and Tarot",
@@ -1141,7 +1145,7 @@
     },
     "worldVoxelWalk": {
       "title": "Walking the 3D World",
-      "description": "The [3D world] is the same Europe as the world map, built in cubes. Reach it on foot with [Liminal walk] in the world map travel menu, when you are not riding anything, or by stepping out of a vehicle you [drive in 3D | vehicleDriving].\n\n[WASD] walks, the [mouse] looks, [Shift] runs, [space] jumps, [Ctrl] or [C] crouches. In deep water jump kicks up and crouch dives. If the leader knows the [Fly | worldFlying] skill, [double tap] jump to take off and again to land.\n\nThe [middle mouse button], or [R3] on a controller, swaps first and [third person].\n\n[E] does whatever is in front of you: talk to a [shopkeeper | econShops] or a passer-by, loot, open a chest, [fish | gamesFishing], [fell | worldTerrain] or mine, ride a lift, or climb into your vehicle. Shopkeepers stand under a blue roof. [Chests | worldTreasure] pay out as they do elsewhere, and better underground.\n\n[Esc] opens the party menu, and its return to the world map entry is how you leave. [Shift] and [R] opens the wait menu, [Shift] and [H] this book, [H] the control list, [M] cycles the map views.\n\nTime runs fast out here, and the 2D maps catch up when you leave. Keep an eye on the sky around midnight: now and then something that is not a bird crosses it.\n\nWith [VR Headset] turned on in the Experimental tab of [Options | optionsMenu], an Enter VR button appears whenever a headset is connected."
+      "description": "The [3D world] is the same Europe as the world map, built in cubes. Reach it on foot with [Liminal walk] in the world map travel menu, when you are not riding anything, or by stepping out of a vehicle you [drive in 3D | vehicleDriving].\n\n[WASD] walks, the [mouse] looks, [Shift] runs, [space] jumps, [Ctrl] or [C] crouches. In deep water jump kicks up and crouch dives. If the leader knows the [Fly | worldFlying] skill, [double tap] jump to take off and again to land.\n\nThe [middle mouse button], or [R3] on a controller, swaps first and [third person].\n\n[E] interacts with what is in front of you: talk to a [shopkeeper | econShops] or a passer-by, loot, open a chest, [fish | gamesFishing], [fell | worldTerrain] or mine, ride a lift, or climb into your vehicle. Shopkeepers stand under a blue roof. [Chests | worldTreasure] pay out as they do elsewhere, and better underground.\n\n[Esc] opens the party menu, and its return to the world map entry is how you leave. [Shift] and [R] opens the wait menu, [Shift] and [H] this book, [H] the control list, [M] cycles the map views.\n\nTime runs fast out here, and the 2D maps catch up when you leave. Keep an eye on the sky around midnight: now and then something that is not a bird crosses it.\n\nWith [VR Headset] turned on in the Experimental tab of [Options | optionsMenu], an Enter VR button appears whenever a headset is connected."
     },
     "worldVoxelDigging": {
       "title": "Digging and Building in 3D",
@@ -1165,11 +1169,11 @@
     },
     "combatHyper": {
       "title": "The Hyper: Limit Breaks",
-      "description": "Every class has one [Hyper], a limit break with its own name. It is a desperate move, offered only when things go badly.\n\nIt wakes when a character is badly hurt [during] a fight. When it is ready, it appears in the command menu in place of [Defense | combatCommands] or [Reload | combatAmmo], and a notice tells you.\n\nIt unleashes one huge act true to the class: a sweep over every foe, a full heal, the fallen raised, and more. For that turn the user is untouchable.\n\nEach character can use it [once a day]. A [Freelancer | partyClasses] borrows someone else's."
+      "description": "Every class has one [Hyper], a limit break with its own name. It becomes available when a character is badly hurt [during] a fight. When it is ready, it appears in the command menu in place of [Defense | combatCommands] or [Reload | combatAmmo], and a notice tells you.\n\nIt performs one huge move based on the class: a sweep over every foe, a full heal, the fallen raised, and more. For that turn the user is untouchable.\n\nEach character can use it [once a day]. A [Freelancer | partyClasses] borrows someone else's."
     },
     "combatAmmo": {
       "title": "Ammo and Reloading",
-      "description": "Guns, bows and other ranged weapons hold a [magazine]. The rounds left show on the [Attack | combatCommands] command.\n\nEach attack spends ammo, and fast weapons fire a [burst]. When the magazine is empty, Attack becomes a [Bash] with the weapon itself.\n\n[Reload] fills it and raises your guard, but uses your turn. The magazine is [not] refilled between fights, so reload before the next one.\n\nSome weapons carry a [special skill]. When you can afford it, it takes the Reload row and reloads as it fires."
+      "description": "Guns, bows and other ranged weapons hold a [magazine]. The rounds left show on the [Attack | combatCommands] command.\n\nEach attack spends ammo, and fast weapons fire a [burst]. When the magazine is empty, Attack becomes a [Bash] with the weapon itself.\n\n[Reload] fills it and raises your guard, but uses your turn. The magazine is [not] refilled between fights, so reload before the next one.\n\nSome weapons have a [special skill]. When you can afford it, it takes the Reload row and reloads as it fires."
     },
     "gearMartialArts": {
       "title": "Martial Arts and Weapon Schools",
@@ -1201,7 +1205,7 @@
     },
     "powersElections": {
       "title": "Running for Office",
-      "description": "Any member of your party can stand in an upcoming election: a town's [mayor | peoplePolitics], a nation's government, or a hyperpower's head of state. Do it from the [Elections] page of [Propaganda2 | powersOwnParty].\n\n1. Pick the candidate.\n2. Pick the election from the list.\n3. Press Stand and pay the [deposit]: 100 euros for a town, 2000 for a nation, 20000 for a hyperpower. It is never returned, win or lose.\n\nEach member stands in one election at a time, and can withdraw before the vote. The [Holy Vatican Empire | vaticanEmpire] picks its head in a conclave and takes no outsiders.\n\nWith a [political party | powersOwnParty] behind them, your candidate carries its platform and its voters. Without one, they run alone as an independent. Voters lean toward whoever thinks like them.\n\nWin a town and you appoint its guard captain, tax collector and high priest. Win a nation and you lead it, unless history already holds that seat. In the last days before a vote, [Endorse a candidate] in the [Empathize | peopleEmpathize] panel to sway voters one by one."
+      "description": "Any member of your party can stand in an upcoming election: a town's [mayor | peoplePolitics], a nation's government, or a hyperpower's head of state. Do it from the [Elections] page of [Propaganda2 | powersOwnParty].\n\n1. Pick the candidate.\n2. Pick the election from the list.\n3. Press Stand and pay the [deposit]: 100 euros for a town, 2000 for a nation, 20000 for a hyperpower. It is never returned, win or lose.\n\nEach member stands in one election at a time, and can withdraw before the vote. The [Holy Vatican Empire | vaticanEmpire] picks its head in a conclave and takes no outsiders.\n\nWith a [political party | powersOwnParty] behind them, your candidate gets its platform and its voters. Without one, they run alone as an independent. Voters lean toward whoever thinks like them.\n\nWin a town and you appoint its guard captain, tax collector and high priest. Win a nation and you lead it, unless history already holds that seat. In the last days before a vote, [Endorse a candidate] in the [Empathize | peopleEmpathize] panel to sway voters one by one."
     },
     "peopleCivics": {
       "title": "Talking Beliefs and Politics",
@@ -1245,7 +1249,7 @@
     },
     "progressEnchanting": {
       "title": "Enchanting Gear",
-      "description": "Three benches in [Training | progressTraining] bind a spell into a piece of gear. Only spells can be bound, never skills, and the caster keeps knowing it.\n\n1. Open the bench.\n2. Pick a piece you carry or wear.\n3. Pick a spell and confirm.\n\nThe old piece is gone, and a unique new one takes its place.\n\n- [Enchant Weapon]: an attack spell bursts out on every critical hit\n- [Enchant Equipment]: a protective spell answers when the wearer is struck hard\n- [Enchant Book]: any spell, cast for free whenever the book is read\n\nBeware: an enchanted book may [burn] as it is read. A skilled [Enchanting | progressSpecializations] reader keeps it longer.\n\nIt costs [KP | progressKnowledge], more for stronger and stranger spells. A piece that already carries a spell cannot take another. [Unmake] destroys an enchanted piece for nothing back."
+      "description": "Three benches in [Training | progressTraining] bind a spell into a piece of gear. Only spells can be bound, never skills, and the caster keeps knowing it.\n\n1. Open the bench.\n2. Pick a piece you carry or wear.\n3. Pick a spell and confirm.\n\nThe old piece is gone, and a unique new one takes its place.\n\n- [Enchant Weapon]: an attack spell bursts out on every critical hit\n- [Enchant Equipment]: a protective spell triggers when the wearer is struck hard\n- [Enchant Book]: any spell, cast for free whenever the book is read\n\nBeware: an enchanted book may [burn] as it is read. A skilled [Enchanting | progressSpecializations] reader keeps it longer.\n\nIt costs [KP | progressKnowledge], more for stronger and stranger spells. A piece that already holds a spell cannot take another. [Unmake] destroys an enchanted piece for nothing back."
     },
     "progressWritingBooks": {
       "title": "Writing Skill Books and Grimories",
@@ -1257,11 +1261,11 @@
     },
     "hypernetHyperdeck": {
       "title": "The Hyperdeck",
-      "description": "The [hyperdeck] is a folding handheld computer the party builds itself. Open it with [P] or from the Hypernet tile of the main menu.\n\nClick the screen to switch it on. Click the base to open the board, then drag [components] onto the grid. Components are items you buy, find or salvage, and fitting one takes it from your [backpack | gearBackpack].\n\n- L1 and R1 or Tab turn a part\n- [Auto fit] fills the board from what you carry\n- [Case] picks a different shell, emptying the board back into your bag\n- [BIOS] lists what is wrong\n\nTo boot, the deck needs a [processor], [memory], [storage], a [panel] and a [cell] strong enough to power it all. Hot machines want cooling.\n\nOnce it boots you reach the [Hypernet desktop | hypernetOS], and your parts show up in the [Control Panel | hypernetControlPanel]. Every party starts with a cheap second hand deck that just about works.\n\nThe [CHIP] button opens the [chip lab | hypernetChipLab], where you can etch a processor of your own."
+      "description": "The [hyperdeck] is a folding handheld computer the party builds. Open it with [P] or from the Hypernet tile of the main menu.\n\nClick the screen to switch it on. Click the base to open the board, then drag [components] onto the grid. Components are items you buy, find or salvage, and fitting one takes it from your [backpack | gearBackpack].\n\n- L1 and R1 or Tab turn a part\n- [Auto fit] fills the board from what you carry\n- [Case] picks a different shell, emptying the board back into your bag\n- [BIOS] lists what is wrong\n\nTo boot, the deck needs a [processor], [memory], [storage], a [panel] and a [cell] strong enough to power it all. Hot machines want cooling.\n\nOnce it boots you reach the [Hypernet desktop | hypernetOS], and your parts show up in the [Control Panel | hypernetControlPanel]. Every party starts with a cheap second hand deck that just about works.\n\nThe [CHIP] button opens the [chip lab | hypernetChipLab], where you can etch a processor of your own."
     },
     "hypernetChipLab": {
       "title": "The Chip Lab",
-      "description": "The [chip lab] is a bench where you draw your own logic and etch it onto a processor for the [hyperdeck | hypernetHyperdeck]. Open it with the CHIP button on the deck, or with the Circuit Board Editor on the [desktop | hypernetOS].\n\nYou draw on a grid with wires, torches that invert a signal, repeaters, bridges, gates, clocks and lamps.\n\n- left button draws, right button rubs out\n- pick a tile twice to change its settings\n- Run, Pause and Step test the circuit\n- ready made circuits can be stamped in\n\n[Etch die] turns the drawing into a processor part, paid for in [salvaged steel]. More logic makes a faster chip, and a hungrier one.\n\nA half drawn circuit waits on the bench for you."
+      "description": "The [chip lab] is a bench where you draw your own logic and etch it onto a processor for the [hyperdeck | hypernetHyperdeck]. Open it with the CHIP button on the deck, or with the Circuit Board Editor on the [desktop | hypernetOS].\n\nYou draw on a grid with wires, torches that invert a signal, repeaters, bridges, gates, clocks and lamps.\n\n- left button draws, right button rubs out\n- pick a tile twice to change its settings\n- Run, Pause and Step test the circuit\n- ready made circuits can be stamped in\n\n[Etch die] turns the drawing into a processor part, paid for in [salvaged steel]. More logic makes a faster chip, and a hungrier one.\n\nUnfinished circuits stay saved on the bench."
     },
     "hypernetCalendar": {
       "title": "App: Calendar",
@@ -1281,15 +1285,15 @@
     },
     "pastimesReading": {
       "title": "Bookcases and Reading",
-      "description": "A [bookcase] holds a few books worth leafing through. Reading one gives the whole party some [Fun | needsLeisure] and, the first time, a little [KP | progressKnowledge].\n\nStatues, paintings, masks and fossils reward a curious eye the same way.\n\nSome shelves hold a real book you can [take], and any shelf can keep one of your own until you come back for it. With a [Raman probe | gamesRaman] you can also [Analyze] what sits there.\n\nReadable books open in a book viewer. Drag a page to turn it, or fling it off the screen to tear it out. Enter leaves a bookmark, Shift jumps to the next one."
+      "description": "A [bookcase] holds a few books worth leafing through. Reading one gives the whole party some [Fun | needsLeisure] and, the first time, a little [KP | progressKnowledge].\n\nStudying statues, paintings, masks and fossils works the same way.\n\nSome shelves hold a real book you can [take], and any shelf can keep one of your own until you come back for it. With a [Raman probe | gamesRaman] you can also [Analyze] what sits there.\n\nReadable books open in a book viewer. Drag a page to turn it, or fling it off the screen to tear it out. Enter leaves a bookmark, Shift jumps to the next one."
     },
     "combatBestiary": {
       "title": "The Bestiary",
-      "description": "The [bestiary] remembers every creature you have crossed. A creature joins it the moment a fight begins, even if you run.\n\nEach entry has three tabs:\n- [Lexicon]: what it is, how strong it is, what hurts it\n- [Ecology]: where and when it lives, in which [biomes | worldBiomes]\n- [Extraction]: what it leaves behind when [harvested | combatCorpses] and how it fights\n\nA turning model of the creature sits beside the page. Beings met on [other planets | galaxyLanding] fill an alien chapter of their own."
+      "description": "The [bestiary] lists every creature you have met. A creature joins it as soon as a fight begins, even if you run.\n\nEach entry has three tabs:\n- [Lexicon]: what it is, how strong it is, what hurts it\n- [Ecology]: where and when it lives, in which [biomes | worldBiomes]\n- [Extraction]: what it leaves behind when [harvested | combatCorpses] and how it fights\n\nA 3D model of the creature turns beside the page. Beings met on [other planets | galaxyLanding] fill an alien chapter of their own."
     },
     "travelTickets": {
       "title": "Tickets and Fare Dodging",
-      "description": "Buses, trains, ferries, flights and the faster lines all sell [tickets], and the clerk writes your name down. With a [bounty | lawCrime] on your head, or the police on your heels, nobody will sell you one. Taxis and your own vehicles never ask.\n\nShort of money, you can choose [Travel With No Ticket]. The trip runs as usual, but an inspector may walk the aisle. A short hop is usually safe, a long trip rarely is. Getting caught means a [fare evasion] charge.\n\nFuel cannot be dodged: a vehicle without enough of it simply does not leave.\n\nOn the [Hypernet | hypernetOS], [Wayfare] lists prices and travel times for every stop, and [Hail] calls a taxi to wherever you stand on open ground. You can also ask a vehicle owner for a ride from the [Empathize | peopleEmpathize] panel."
+      "description": "Buses, trains, ferries, flights and the faster lines all sell [tickets], and the clerk writes your name down. With a [bounty | lawCrime] on your head, or the police on your heels, nobody will sell you one. Taxis and your own vehicles never ask.\n\nShort of money, you can choose [Travel With No Ticket]. The trip runs as usual, but an inspector may walk the aisle. A short hop is usually safe, a long trip rarely is. Getting caught means a [fare evasion] charge.\n\nA vehicle without enough fuel does not leave.\n\nOn the [Hypernet | hypernetOS], [Wayfare] lists prices and travel times for every stop, and [Hail] calls a taxi to wherever you stand on open ground. You can also ask a vehicle owner for a ride from the [Empathize | peopleEmpathize] panel."
     },
     "travelOwnPlaces": {
       "title": "Places of Your Own",
@@ -1297,7 +1301,7 @@
     },
     "lawWitnesses": {
       "title": "Witnesses",
-      "description": "Most deeds reach your [record | lawCrime] only if somebody saw them and chose to talk.\n\nA witness has to see you: close by, looking your way, with nothing in between. Darkness and a leader with a good [Stealth] look make you harder to spot.\n\nYour own companions never talk, and neither do people who like the party enough. A frightening [Intimidation] look can buy silence too. Police officers always report, and so does the [victim].\n\nTaking things from someone's home is a gamble against the noise you make: heavier hauls are louder, and every pair of eyes or ears nearby makes it worse. If nobody can see or hear you, you simply get away with it.\n\nOpen ground, shops, inns, public buildings and your own places are never theft."
+      "description": "Most deeds reach your [record | lawCrime] only if somebody saw them and chose to talk.\n\nA witness has to see you: close by, looking your way, with nothing in between. Darkness and a leader with a good [Stealth] look make you harder to spot.\n\nYour own companions never talk, and neither do people who like the party enough. A frightening [Intimidation] look can buy silence too. Police officers always report, and so does the [victim].\n\nWhen taking things from a home, noise matters: heavier hauls are louder, and every pair of eyes or ears nearby makes it worse. If nobody can see or hear you, you simply get away with it.\n\nOpen ground, shops, inns, public buildings and your own places are never theft."
     },
     "lawArrest": {
       "title": "Being Arrested",
@@ -1321,7 +1325,7 @@
     },
     "craftingTownFounding": {
       "title": "Founding a Town",
-      "description": "Three houses standing on one square of the world are enough to call it a town, whether you built them or found them there.\n\n1. Open the [Town] tab of the [Build | craftFurniture] menu.\n2. Give the place a name.\n3. Sign the charter.\n\nYour town belongs to the world: every party there finds it on the [world map | worldMapPage] and, on Earth, in the [travel book | travelOverview].\n\nNewcomers drift in over the days and pay you rent. Every house you raise brings more of them. Collect what is owed from the [Assets] screen."
+      "description": "Any world map square with three houses, built or found, can become a town.\n\n1. Open the [Town] tab of the [Build | craftFurniture] menu.\n2. Give the place a name.\n3. Sign the charter.\n\nYour town belongs to the world: every party there finds it on the [world map | worldMapPage] and, on Earth, in the [travel book | travelOverview].\n\nNewcomers drift in over the days and pay you rent. Every house you raise brings more of them. Collect what is owed from the [Assets] screen."
     },
     "setupWorldCreation": {
       "title": "Creating a World",
@@ -1337,7 +1341,7 @@
     },
     "setupStartDate": {
       "title": "Starting Date",
-      "description": "A world can begin any month from [January 2001] to [January 2013]. The years before your start are lived out first, so a later world already carries their history.\n\nA later start is a harder world: monsters grow fiercer year after year, though a few countries stay gentle. In return, [loot | gearRarity] is richer. Pick a [starting level | setupStartLevel] to match, and remember the world keeps hardening as the clock runs.\n\n[Story mode] is written for 2001. Any other year skips the tutorial.\n\nA world that starts in [2013] begins after the impact of [21 December 2012]: there is no Earth, and the road leads to the [Omega Tower | omegaTower] instead. A world that reaches that day in play loses Earth the same way."
+      "description": "A world can begin any month from [January 2001] to [January 2013]. The years before your start are lived out first, so a later world already has that history.\n\nA later start is a harder world: monsters grow fiercer year after year, though a few countries stay gentle. In return, [loot | gearRarity] is richer. Pick a [starting level | setupStartLevel] to match, and remember the world keeps getting harder over time.\n\n[Story mode] is written for 2001. Any other year skips the tutorial.\n\nA world that starts in [2013] begins after the impact of [21 December 2012]: there is no Earth, and the road leads to the [Omega Tower | omegaTower] instead. A world that reaches that day in play loses Earth the same way."
     },
     "setupStartLevel": {
       "title": "Starting Level",
@@ -1349,15 +1353,15 @@
     },
     "setupSkillLimits": {
       "title": "Skill Level Limits",
-      "description": "Two switches on the world form keep the rarest skills out of reach of beginners: one for [Esoteric] skills, one for [Forbidden] ones.\n\nBoth are on unless you turn them off. With a limit off, anyone can learn those skills from the [skill tree | progressAtlas], from [books | progressGrimoires] or from teachers, and in a [world of chaos | setupTimelines] a level up can hand them out freely.\n\nA forbidden skill is esoteric too, so it still answers to the esoteric switch."
+      "description": "Two switches on the world form keep the rarest skills out of reach of beginners: one for [Esoteric] skills, one for [Forbidden] ones.\n\nBoth are on unless you turn them off. With a limit off, anyone can learn those skills from the [skill tree | progressAtlas], from [books | progressGrimoires] or from teachers, and in a [world of chaos | setupTimelines] a level up can hand them out freely.\n\nA forbidden skill is esoteric too, so the esoteric switch blocks it too."
     },
     "setupSandbox": {
       "title": "Sandbox Mode",
-      "description": "[Sandbox] on the title menu starts a free play party in the active world, as a powerful [Eris | eris] on the Disk of Discord.\n\nA Sandbox page in the main menu does what you ask: start any battle, give any item, teleport anywhere, change time and weather, edit the world, and open the [Wishing Sanctum | gearWishOrb].\n\nThe rules bend too: skills, crafting at the [workbench | craftThinker] and the [forge | craftForge] and building cost nothing, crimes carry no bounty, and the [bestiary | combatBestiary] is already full.\n\nThe sandbox has its own save and is never autosaved."
+      "description": "[Sandbox] on the title menu starts a free play party in the active world, as a powerful [Eris | eris] on the Disk of Discord.\n\nA Sandbox page in the main menu does what you ask: start any battle, give any item, teleport anywhere, change time and weather, edit the world, and open the [Wishing Sanctum | gearWishOrb].\n\nSkills, crafting at the [workbench | craftThinker] and the [forge | craftForge] and building cost nothing, crimes add no bounty, and the [bestiary | combatBestiary] is already full.\n\nThe sandbox has its own save and is never autosaved."
     },
     "needsRestWorth": {
       "title": "What a Rest Gives Back",
-      "description": "A full night's rest brings HP, MP and AP all the way back, wears off every state and sets broken parts. A shorter rest gives its share, and short rests [add up] over time.\n\n- [sleeping rough], with no bed, camp or bedding, is a poor rest that heals no wounds. A [Bedroll] in the pack or a bed nearby fixes that\n- [waiting] heals no HP, but slowly restores AP and MP\n- under [Blood and Oil | combatModes] a bed restores only MP and AP: the body keeps its wounds\n\nA long sleep may slip into a [dream | worldDreams]. You can enter it or simply wake up.\n\nThe rest menu can also [save | savingGame] the game and [set your respawn point | partyDeath], except under Permadeath or Blood and Oil.\n\nSleep in battle counts too: dozing under the [Sleep | sleep] state rests you, and being [Wet | wet] washes you a little."
+      "description": "A full night's rest brings HP, MP and AP all the way back, wears off every state and sets broken parts. A shorter rest gives its share, and short rests [add up] over time.\n\n- [sleeping rough], with no bed, camp or bedding, is a poor rest that heals no wounds. A [Bedroll] in the pack or a bed nearby fixes that\n- [waiting] heals no HP, but slowly restores AP and MP\n- under [Blood and Oil | combatModes] a bed restores only MP and AP, and wounds do not heal\n\nA long sleep may lead to a [dream | worldDreams]. You can enter it or simply wake up.\n\nThe rest menu can also [save | savingGame] the game and [set your respawn point | partyDeath], except under Permadeath or Blood and Oil.\n\nSleep in battle counts too: dozing under the [Sleep | sleep] state rests you, and being [Wet | wet] washes you a little."
     },
     "needsForage": {
       "title": "Foraging for Hours",
@@ -1369,7 +1373,7 @@
     },
     "needsBladder": {
       "title": "Bladder",
-      "description": "The [bladder] meter runs down with time, faster with every drink, especially alcohol and coffee. Asleep it runs slower, and a night's rest never ends in an accident.\n\nWhen it runs low its chip warns you. A [WC], a shower, a bath or a [swim | worldMovement] sets things right for the whole party.\n\nWait too long and the member wets themselves on the spot, losing a good deal of hygiene and company. Creatures without a human mind do not care.\n\nOn the [world map | worldMapPage] or the open road the party simply pulls over by the roadside before it comes to that."
+      "description": "The [bladder] meter runs down with time, faster with every drink, especially alcohol and coffee. Asleep it runs slower, and a night's rest never ends in an accident.\n\nWhen it runs low its chip warns you. A [WC], a shower, a bath or a [swim | worldMovement] sets things right for the whole party.\n\nWait too long and the member wets themselves on the spot, losing a good deal of hygiene and company. Creatures without a human mind do not care.\n\nOn the [world map | worldMapPage] or the open road the party stops by the roadside in time."
     },
     "peopleHolidays": {
       "title": "Holidays and Gatherings",
@@ -1377,7 +1381,7 @@
     },
     "gearWishOrb": {
       "title": "The Wish-Granting Orb",
-      "description": "A [Wish-Granting Orb] can be bought for [10,000 euros] or [crafted | craftThinker]. Used from the menu, it restores the party fully and opens the [Wishing Sanctum].\n\nThe sanctum offers a spread of random wishes: an item, a fight, a sudden fortune, a [stock market | econStocks] boom, a body made whole again, and stranger things. Pick one and it comes true.\n\nOne orb, one wish. Leaving the sanctum without choosing wastes the orb.\n\nA party with weak [PSI | partyAttributes] sees the wishes as riddles, or worse."
+      "description": "A [Wish-Granting Orb] can be bought for [10,000 euros] or [crafted | craftThinker]. Used from the menu, it restores the party fully and opens the [Wishing Sanctum].\n\nThe sanctum offers a spread of random wishes: an item, a fight, a sudden fortune, a [stock market | econStocks] boom, a body made whole again, and stranger things. Pick one and it comes true.\n\nEach orb grants one wish. Leaving the sanctum without choosing wastes the orb.\n\nA party with weak [PSI | partyAttributes] sees the wishes as riddles, or worse."
     },
     "partyDiceChecks": {
       "title": "Dice Checks",

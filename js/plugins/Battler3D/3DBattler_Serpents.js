@@ -19,7 +19,7 @@
  * exact name. They map the Serpent archetype keys (HEAD/FANGS/BODY_SEGMENT_1/
  * BODY_SEGMENT_2/TAIL) so dismemberment works.
  *
- * Registered: youngfakehydra, abyssalserpent, crushingboa
+ * Registered: youngfakehydra, abyssalserpent, crushingboa, lv_grasssnakelet
  *
  * MUST load AFTER the other Battler3D family plugins.
  */
@@ -50,7 +50,9 @@
         titananaconda:  { variant: 'titananaconda',  scale: 3.0, texturePool: 'wood',    bodyColor: 0x44502a, accent: 0xaadd55, hue: [0.22, 0.05], sat: [0.42, 0.10], lit: [0.30, 0.08] },
         worldserpent:   { variant: 'worldserpent',   scale: 3.4, texturePool: 'wood',    bodyColor: 0x6a5a3a, accent: 0xffdd88, hue: [0.10, 0.05], sat: [0.38, 0.10], lit: [0.40, 0.10] },
         gloomscalebasilisk: { variant: 'gloomscalebasilisk', scale: 2.6, texturePool: 'void', bodyColor: 0x1a1622, accent: 0x66ff66, hue: [0.74, 0.06], sat: [0.30, 0.10], lit: [0.18, 0.06] },
-        tempestwyvern:  { variant: 'tempestwyvern',  scale: 2.8, texturePool: 'void',    bodyColor: 0x33405a, accent: 0x88ddff, hue: [0.58, 0.06], sat: [0.45, 0.12], lit: [0.40, 0.10] }
+        tempestwyvern:  { variant: 'tempestwyvern',  scale: 2.8, texturePool: 'void',    bodyColor: 0x33405a, accent: 0x88ddff, hue: [0.58, 0.06], sat: [0.45, 0.12], lit: [0.40, 0.10] },
+        // ── Level 1-5 starter roster (bespoke) ──
+        lv_grasssnakelet: { variant: 'grasssnakelet', scale: 1.6, texturePool: 'foliage', bodyColor: 0x4a7a32, accent: 0xf0d040, hue: [0.27, 0.05], sat: [0.45, 0.10], lit: [0.36, 0.06] }
     };
 
     class SerpentBattler3D extends Base {
@@ -121,12 +123,35 @@
                 case 'worldserpent':   this._buildWorldSerpent(); break;
                 case 'gloomscalebasilisk': this._buildGloomscaleBasilisk(); break;
                 case 'tempestwyvern':  this._buildTempestWyvern(); break;
+                case 'grasssnakelet':  this._buildGrassSnakelet(); break;
                 default:               this._buildFakeHydra(); break;
             }
+            if (this.seg1 && this.head && !this._ownPose) this._rigNeck();
             this.model = this.bodyGroup;
             this.applyModelScale();
             this.loaded = true;
             return this;
+        }
+
+        // The neck (seg1) bends at its root on seg2 and carries the head on its
+        // tip. Posing the head on its own (a lunge of 0.4 straight forward)
+        // pulled it clean off the neck on every strike.
+        _rigNeck() {
+            const s = this.seg1;
+            const up = new THREE.Vector3(0, 0.3, 0).applyEuler(s.rotation);
+            this._neckPivot = s.position.clone().sub(up);
+            this._neckRot0 = s.rotation.clone();
+            this._headOff = this.head.position.clone().sub(s.position).sub(up);
+            this._nv = new THREE.Vector3(); this._nv2 = new THREE.Vector3();
+            this._ne = new THREE.Euler(); this._ne2 = new THREE.Euler();
+        }
+        _poseNeck(lean, sway) {
+            const s = this.seg1;
+            s.rotation.set(this._neckRot0.x + lean, 0, this._neckRot0.z + sway);
+            const up = this._nv.set(0, 0.3, 0).applyEuler(s.rotation);
+            s.position.copy(this._neckPivot).add(up);
+            const off = this._nv2.copy(this._headOff).applyEuler(this._ne2.set(lean, 0, sway));
+            this.head.position.copy(this._neckPivot).addScaledVector(up, 2).add(off);
         }
 
         // ── Young Fake Hydra: one real head + two googly fake puppet heads ──
@@ -142,7 +167,11 @@
                 for (const ex of [-0.07, 0.07]) { const w = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), this._mat(0xffffff, 1, 0.2)); w.position.set(ex, 0.05, 0.12); const pp = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 6), this._mat(0x111111, 1, 0.1)); pp.position.set(0, 0, 0.05); w.add(pp); fh.add(w); }
                 fh.position.set(sx * 0.42, 1.55, 0); fh._sx = sx; this.fakeHeads.add(fh);
             }
-            this.bodyGroup.add(this.fakeHeads);
+            // Laid out in body space, then carried by the neck so the puppet heads
+            // sway with it instead of staying behind when it weaves.
+            this.seg1.updateMatrix();
+            this.fakeHeads.applyMatrix4(this.seg1.matrix.clone().invert());
+            this.seg1.add(this.fakeHeads);
             this._cascadeRules[0].hide.push(this.fakeHeads);
             this._cascadeRules[1].hide.push(this.fakeHeads);
         }
@@ -182,9 +211,11 @@
             // Floating halo crown of light rings above the head.
             this.halo = new THREE.Group();
             for (let i = 0; i < 3; i++) { const ring = new THREE.Mesh(new THREE.TorusGeometry(0.18 - i * 0.04, 0.012, 6, 24), this._mat(p.accent, 0.7, 0.1, p.accent)); ring.position.set(0, 0.34 + i * 0.06, 0); ring.rotation.x = Math.PI / 2; this.halo.add(ring); }
+            this.halo.userData.float = true; // a crown of light hovering over the brow
             this.head.add(this.halo);
             // Drifting dream-motes orbiting the coils.
             this.motes = new THREE.Group();
+            this.motes.userData.float = true;
             for (let i = 0; i < 12; i++) { const a = this.idRand() * Math.PI * 2; const r = 0.3 + this.idRand() * 0.2; const mote = new THREE.Mesh(new THREE.SphereGeometry(0.025, 6, 6), this._mat(p.accent, 0.8, 0.1, p.accent)); mote.position.set(Math.cos(a) * r, 0.4 + this.idRand() * 1.2, Math.sin(a) * r); mote._a = a; mote._r = r; this.motes.add(mote); }
             this.bodyGroup.add(this.motes);
             this._cascadeRules[0].hide.push(this.motes);
@@ -198,8 +229,11 @@
             this.fangs.scale.set(2.2, 2.4, 2.2);
             // Glistening toxin droplets at fang tips.
             this.venom = new THREE.Group();
-            for (const vx of [-0.13, 0.13]) { const drop = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), this._mat(p.accent, 0.85, 0.2, p.accent)); drop.scale.set(1, 1.4, 1); drop.position.set(vx, 1.18, 0.5); this.venom.add(drop); }
-            this.bodyGroup.add(this.venom);
+            // Formed at the fang tips in the head's own space, so they strike
+            // with it; each falls away and re-forms, so they are floaters.
+            for (const vx of [-0.132, 0.132]) { const drop = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), this._mat(p.accent, 0.85, 0.2, p.accent)); drop.scale.set(1, 1.4, 1); drop.position.set(vx, -0.47, 0.4); this.venom.add(drop); }
+            this.venom.userData.float = true;
+            this.head.add(this.venom);
             // Dorsal sand-ridge scutes running the spine.
             this.scutes = new THREE.Group();
             for (let i = 0; i < 6; i++) { const scute = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.1, 4), this._mat(p.bodyColor, 1, 0.8)); scute.position.set(0, 0.55 + i * 0.18, -0.16); scute.rotation.x = -0.4; this.scutes.add(scute); }
@@ -294,7 +328,7 @@
             for (let i = 0; i < 8; i++) { const dia = new THREE.Mesh(new THREE.OctahedronGeometry(0.06, 0), this._mat(p.accent, 1, 0.4, p.accent)); dia.scale.set(1, 0.3, 1.6); dia.position.set(0, 0.45 + i * 0.16, 0.13); this.pattern.add(dia); }
             this.bodyGroup.add(this.pattern);
             // Exotic venom dripping off the fangs.
-            this.drip = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), this._mat(p.accent, 0.9, 0.2, p.accent)); this.drip.scale.set(1, 1.6, 1); this.drip.position.set(0, 1.4, 0.42); this.bodyGroup.add(this.drip);
+            this.drip = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), this._mat(p.accent, 0.9, 0.2, p.accent)); this.drip.scale.set(1, 1.6, 1); this.drip.position.set(0.06, -0.21, 0.18); this.drip.userData.float = true; this.head.add(this.drip); // off the fang tip
             this._cascadeRules[0].hide.push(this.pattern, this.drip);
             this._cascadeRules[3].hide.push(this.drip); // drip tied to fangs
         }
@@ -369,6 +403,55 @@
             this._cascadeRules[0].hide.push(this.wings, this.arcs);
         }
 
+        // ── Grass Snakelet: a thin green youngster laid in an S on the ground,
+        // neck reared, yellow-and-black collar, mouth wide in a hiss ─────────
+        _buildGrassSnakelet() {
+            const p = this.profile;
+            this._ownPose = true; // its own neck, not the coiled base's
+            const skin = this._skinMat(p.bodyColor, 0.45);
+            const bar = this._mat(0x14140c, 1, 0.6);
+            const collar = this._mat(p.accent, 1, 0.4);
+            this.segs = [];
+            const N = 22;
+            for (let i = 0; i < N; i++) {
+                const u = i / (N - 1);
+                const r = 0.11 * (1 - u * 0.7) + 0.02;
+                const rise = u < 0.3 ? Math.pow((0.3 - u) / 0.3, 1.6) * 0.42 : 0;
+                const m = new THREE.Mesh(new THREE.SphereGeometry(r, 7, 5), skin);
+                m.position.set(Math.sin(u * Math.PI * 2.4) * 0.15 * Math.min(1, u * 3), r * 0.9 + rise, 0.25 - u * 1.25);
+                m._base = m.position.clone(); m._u = u;
+                if (i > 2 && i % 2 === 0) for (const s of [-1, 1]) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.02, r * 0.7, r * 0.35), bar); b.position.set(s * r * 0.93, 0, 0); m.add(b); }
+                this.bodyGroup.add(m); this.segs.push(m);
+            }
+            // The collar: yellow crescents just behind the head, a black band after.
+            const s1 = this.segs[1], r1 = s1.geometry.parameters.radius;
+            for (const s of [-1, 1]) { const c = new THREE.Mesh(new THREE.TorusGeometry(r1 * 0.8, 0.03, 4, 8, Math.PI), collar); c.position.set(s * r1 * 0.55, 0.02, 0); c.rotation.set(0, s * Math.PI / 2, Math.PI / 2); s1.add(c); }
+            const s2 = this.segs[2]; const band = new THREE.Mesh(new THREE.TorusGeometry(s2.geometry.parameters.radius * 0.98, 0.03, 4, 10), bar); band.rotation.x = 0.4; s2.add(band);
+            this.head = new THREE.Group();
+            const skull = new THREE.Mesh(new THREE.SphereGeometry(0.12, 7, 5), skin); skull.scale.set(0.9, 0.72, 1.35); this.head.add(skull);
+            for (const s of [-1, 1]) { const e = this._eye(this.head, s * 0.08, 0.035, 0.06, 0.035, 0xd8a838); e.children[0].scale.set(1, 0.3, 1); }
+            const throat = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 4), this._mat(0xd8607a, 1, 0.5)); throat.scale.set(0.9, 0.35, 1.2); throat.position.set(0, -0.05, 0.05); this.head.add(throat);
+            // Lower jaw hinged at the back of the head, dropped open to hiss.
+            this._jaw = new THREE.Group(); this._jaw.position.set(0, -0.05, -0.06); this.head.add(this._jaw);
+            const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 4), skin); jaw.scale.set(0.82, 0.28, 1.3); jaw.position.z = 0.1; this._jaw.add(jaw);
+            this._jaw.rotation.x = 0.45;
+            this.fangs = new THREE.Group(); this.head.add(this.fangs);
+            for (const s of [-1, 1]) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.01, 0.05, 4), this._mat(0xf8f4ea, 1, 0.3)); f.position.set(s * 0.04, -0.06, 0.12); f.rotation.x = Math.PI; this.fangs.add(f); }
+            this._tongue = new THREE.Group(); this._tongue.position.set(0, -0.06, 0.1); this.head.add(this._tongue);
+            for (const s of [-1, 1]) { const tg = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.009, 0.14, 3), this._mat(0x2a1a2a, 1, 0.5)); tg.rotation.set(Math.PI / 2 - 0.2, s * 0.25, 0); tg.position.set(s * 0.012, -0.012, 0.07); this._tongue.add(tg); }
+            this._headOff = new THREE.Vector3(0, 0.02, 0.13);
+            this.head.position.copy(this.segs[0].position).add(this._headOff); this.bodyGroup.add(this.head);
+            this.seg1 = this.segs[3]; this.seg2 = this.segs[9]; this.tail = this.segs[N - 1];
+            this._partMeshMap = { HEAD: this.head, FANGS: this.fangs, BODY_SEGMENT_1: this.seg1, BODY_SEGMENT_2: this.seg2, TAIL: this.tail };
+            this._cascadeRules = [
+                { gone: ['BODY_SEGMENT_2'], hide: [this.head, ...this.segs] },
+                { gone: ['BODY_SEGMENT_1'], hide: [this.head, ...this.segs.slice(0, 4)] },
+                { gone: ['HEAD'], hide: [this.head] },
+                { gone: ['FANGS'], hide: [this.fangs] },
+                { gone: ['TAIL'], hide: this.segs.slice(N - 4) },
+            ];
+        }
+
         animatePose(deltaTime) {
             if (this._baseY === null) this._baseY = this.model.position.y;
             const t = this.animTime, anim = this.currentAnimation;
@@ -379,8 +462,11 @@
             this.model.position.y = this._baseY + Math.sin(t * 1.4) * 0.02 * this.scale;
             // Shared weave: head/upper body sway.
             const weave = Math.sin(t * (fast ? 4 : 1.6));
-            if (this.head) { this.head.position.x = weave * 0.12; this.head.rotation.z = -weave * 0.3; if (fast) this.head.position.z = 0.18 + Math.abs(Math.sin(t * 8)) * 0.4; }
-            if (this.seg1) this.seg1.rotation.z = weave * 0.12;
+            if (this._neckPivot) {
+                const lunge = fast ? Math.abs(Math.sin(t * 8)) * 0.7 : 0;
+                this._poseNeck(lunge, -weave * 0.25);
+                this.head.rotation.z = -weave * 0.3; this.head.rotation.x = lunge * 0.4;
+            }
 
             switch (this.variant) {
                 case 'youngfakehydra': {
@@ -402,7 +488,7 @@
                     break;
                 }
                 case 'dunefang': {
-                    if (this.venom) this.venom.children.forEach((d, i) => { d.position.y = 1.18 - (((t * 0.4 + i * 0.5) % 1) * 0.12); });
+                    if (this.venom) this.venom.children.forEach((d, i) => { d.position.y = -0.47 - (((t * 0.4 + i * 0.5) % 1) * 0.12); });
                     break;
                 }
                 case 'embercentipede': {
@@ -425,7 +511,7 @@
                 }
                 case 'theviper': {
                     if (this.pattern) this.pattern.children.forEach((d, i) => { d.material.emissiveIntensity = 0.3 + Math.sin(t * 2.5 + i * 0.5) * 0.4; });
-                    if (this.drip) this.drip.position.y = 1.4 - (((t * 0.5) % 1) * 0.14);
+                    if (this.drip) this.drip.position.y = -0.21 - (((t * 0.5) % 1) * 0.14);
                     break;
                 }
                 case 'titananaconda': {
@@ -441,6 +527,19 @@
                     if (this.mist) this.mist.children.forEach((m, i) => { m.position.y = 0.18 + Math.sin(t * 1.2 + i) * 0.05; m.material.opacity = 0.2 + Math.abs(Math.sin(t + i)) * 0.2; });
                     break;
                 }
+                case 'grasssnakelet': {
+                    // A travelling wave along the S, the reared neck striking forward.
+                    const rate = fast ? 7 : 2.6, strike = fast ? Math.max(0, Math.sin(t * 6)) : 0;
+                    this.segs.forEach((s, i) => {
+                        s.position.x = s._base.x + Math.sin(t * rate - i * 0.55) * 0.04 * (0.3 + s._u);
+                        const k = s._u < 0.3 ? (0.3 - s._u) / 0.3 : 0;
+                        s.position.z = s._base.z + strike * 0.18 * k * k; s.position.y = s._base.y + strike * 0.04 * k;
+                    });
+                    if (this.head) this.head.position.copy(this.segs[0].position).add(this._headOff);
+                    if (this._jaw) this._jaw.rotation.x = 0.45 + (fast ? strike * 0.4 : Math.abs(Math.sin(t * 3)) * 0.15);
+                    if (this._tongue) { const f = Math.sin(t * 9); this._tongue.visible = f > -0.2; this._tongue.scale.z = 0.6 + Math.abs(f) * 0.6; }
+                    break;
+                }
                 case 'tempestwyvern': {
                     if (this.wings) this.wings.children.forEach((w) => { w.rotation.z = w._sx * (-0.3 + Math.sin(t * (fast ? 8 : 3)) * 0.4); });
                     if (this.arcs) this.arcs.children.forEach((a, i) => { a.visible = Math.sin(t * 12 + i * 1.7) > 0.2; a.material.emissiveIntensity = 0.4 + Math.abs(Math.sin(t * 10 + i)) * 0.6; });
@@ -453,9 +552,8 @@
             const t = this.animTime, prog = Math.min(1.0, t / 1.2);
             for (const mat of this._materials) mat.opacity = Math.min(mat.opacity, 1.0 - prog);
             if (this._baseY === null) this._baseY = this.model.position.y;
-            // Slumps over.
-            if (this.head) this.head.position.y = 1.55 - prog * 1.2;
-            if (this.seg1) this.seg1.rotation.x = -0.2 - prog * 1.2;
+            // Slumps over backwards, the head going down with the neck.
+            if (this._neckPivot) this._poseNeck(-prog * 1.2, 0);
             this.model.rotation.z = prog * 0.4;
         }
     }
@@ -479,6 +577,7 @@
     reg('worldserpent',   { aliases: ['worldserpent'],   scale: S.worldserpent.scale,   weapon: 0, create: make });
     reg('gloomscalebasilisk', { aliases: ['gloomscalebasilisk'], scale: S.gloomscalebasilisk.scale, weapon: 0, create: make });
     reg('tempestwyvern',  { aliases: ['tempestwyvern'],  scale: S.tempestwyvern.scale,  weapon: 0, create: make });
+    reg('lv_grasssnakelet', { aliases: ['lv_grasssnakelet'], scale: S.lv_grasssnakelet.scale, weapon: 0, create: make });
 
     const NAMED = {
         youngfakehydra: ["Young Fake Hydra"],
@@ -494,7 +593,8 @@
         titananaconda:  ["Titan Anaconda"],
         worldserpent:   ["World Serpent"],
         gloomscalebasilisk: ["Gloomscale Basilisk"],
-        tempestwyvern:  ["Tempest Wyvern"]
+        tempestwyvern:  ["Tempest Wyvern"],
+        lv_grasssnakelet: ["Grass Snakelet"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

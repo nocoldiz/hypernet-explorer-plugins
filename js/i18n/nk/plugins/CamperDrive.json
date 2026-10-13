@@ -12,7 +12,8 @@
   "flipped": "CAMPER FLIPPED",
   "destination": "DESTINATION",
   "freeDrive": "FREE DRIVE",
-  "freeWalk": "LIMINAL WALK",
+  "freeWalk": "LIMINAL WALK (WIP)",
+  "worldUnavailable": "LIMINAL WORLD FAILED TA LOAD!",
   "prompt": {
     "key": "E",
     "talk": "{key} TALK TA {name}",
@@ -34,7 +35,7 @@
     "talk": "TALK",
     "empathize": "EMPATHIZE",
     "leave": "LEAVE DEM BE",
-    "nothingToSay": "DEY HAB NOTHIN' TA SAY TA A STRANGER!"
+    "nothingToSay": "DEY HAB NUTTIN' TA SAY TA A STRANGER!"
   },
   "place": {
     "visit": "GO INTO {place}",
@@ -59,8 +60,8 @@
     "cmdDrive": "DRIVE / STEER",
     "cmdWalk": "WALK",
     "cmdTalk": "TALK, LOOT A BODY",
-    "cmdRun": "RUN (HOLD IT AT A WALL TA RUN UP DA WALL)",
-    "cmdJump": "JUMP (AGAIN AT A WALL TA KICK OFF IT, AS OFTEN AS YOU LIKE)",
+    "cmdRun": "RUN (HOLD AT A WALL TA WALL-RUN)",
+    "cmdJump": "JUMP (AGAIN AT A WALL TA WALL-JUMP)",
     "cmdFly": "TAKE OFF / LAND (NEEDS DA FLY SKILL)",
     "cmdCrouch": "CROUCH",
     "cmdSwim": "IN WATER: KICK UP / DIVE DOWN",
@@ -94,10 +95,10 @@
     "cmdMap": "MAP: WINDOW, CORNER, FULL SCREEN, OFF",
     "cmdDive": "DIVE / SURFACE (NEEDS DA DIVE MODULE)",
     "cmdThrust": "THROTTLE UP / BACK",
-    "noteGasGiant": "NOTHIN' HERE TA LAND ON, AN' DA PRESSURE BELOW CRUSHES A HULL. KEEP DA ALTITUDE UP!",
-    "noteUnderwater": "UNDER DA SURFACE. DA TRIM TAKES DA HULL DOWN AN' BRINGS IT BACK UP!",
-    "noteSwimming": "IN DA WATER. KICK UP FOR DA SURFACE, OR HOLD DA CROUCH TA GO UNDER!",
-    "noteFlying": "AT DA HELM. DA NOSE DOES DA CLIMBIN', DA TRIM HOLDS DA ALTITUDE!"
+    "noteGasGiant": "NO SURFACE. PRESSURE BELOW CRUSHES DA HULL. STAY HIGH!",
+    "noteUnderwater": "UNDERWATER. USE TRIM TA DIVE OR SURFACE!",
+    "noteSwimming": "SWIMMIN'. KICK UP TA SURFACE, HOLD CROUCH TA DIVE!",
+    "noteFlying": "FLYIN'. PITCH TA CLIMB, TRIM TA HOLD ALTITUDE!"
   },
   "viewMode": {
     "fpdrive": "FP DRIVIN'",
@@ -121,7 +122,7 @@
   "maintenance": "VEHICLE MAINTENANCE",
   "refuel": "REFUEL FROM DA CANS",
   "gasGiant": {
-    "noGround": "DERE IZ NOTHIN' HERE TA SET DOWN ON!",
+    "noGround": "NOWHERE TA LAND.",
     "tooDeep": "DA PRESSURE IZ CRUSHIN' DA HULL. CLIMB, NOW!",
     "crushed": "DA HULL GIVES WAY."
   },

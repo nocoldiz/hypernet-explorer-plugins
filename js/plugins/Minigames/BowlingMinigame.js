@@ -991,7 +991,7 @@
             this._box(LANE_HALF * 2 + GUTTER_W * 2 + 0.4, 2.4, 0.16,
                 this._mat({ color: 0x241a33 }), 0, 1.5, DECK_END_Z + 1.5);
             this._box(1.5, 0.38, 0.05,
-                this._mat({ map: this._signTexture('HYPER BOWL'), emissive: 0x552244 }),
+                this._mat({ map: this._signTexture(T('Bowling.hud.sign')), emissive: 0x552244 }),
                 0, 1.35, DECK_END_Z + 1.4);
 
             // Neighbouring lanes for depth, each with a decorative rack.
@@ -1401,9 +1401,9 @@
             for (let i = 0; i < 10; i++) {
                 widgetText(this, String(i + 1), startX + i * frameW, -1, frameW, 'center', D.black, 8, { shadow: false });
             }
-            widgetText(this, 'TOT', startX + 10 * frameW, -1, totalW, 'center', D.black, 8, { shadow: false });
+            widgetText(this, T('Bowling.hud.total'), startX + 10 * frameW, -1, totalW, 'center', D.black, 8, { shadow: false });
 
-            this._drawRow("P1", playerFrames, 11, startX, frameW, totalW, activeRow === 0, activeFrame);
+            this._drawRow(T('Bowling.hud.p1'), playerFrames, 11, startX, frameW, totalW, activeRow === 0, activeFrame);
             this._drawRow(opponentName, cpuFrames, 28, startX, frameW, totalW, activeRow === 1, activeFrame);
             widgetTextEnd(this);
         }
@@ -1694,10 +1694,10 @@
             this._scoreboard = new Sprite_BowlScoreboard();
             this.addChild(this._scoreboard);
 
-            this._powerMeter = new Sprite_BowlMeter(6, 60, "POWER", 'power');
+            this._powerMeter = new Sprite_BowlMeter(6, 60, T('Bowling.hud.power'), 'power');
             this.addChild(this._powerMeter);
 
-            this._spinMeter = new Sprite_BowlMeter(hudW() - 40, 60, "HOOK", 'spin');
+            this._spinMeter = new Sprite_BowlMeter(hudW() - 40, 60, T('Bowling.hud.hook'), 'spin');
             this.addChild(this._spinMeter);
 
             this._bannerSprite = psxWidget(hudW(), 24, 0, 0);
@@ -1716,6 +1716,9 @@
             // The pixel font arrives asynchronously; repaint what was drawn once.
             if (window.PSXHud) {
                 window.PSXHud.onFontReady(() => {
+                    // The font can land after the player has left: the panels are
+                    // gone by then and a repaint would throw from the timer.
+                    if (SceneManager._scene !== this) return;
                     if (!this._scoreboard) return;
                     this.refreshScoreboard();
                     this._status.refresh();
@@ -1917,15 +1920,15 @@
             ));
 
             if (knocked === 10 && firstOfRack) {
-                this.showBanner("STRIKE!", '#fff2c6');
+                this.showBanner(T('Bowling.banner.strike'), '#fff2c6');
                 this.playSe(strikeSound);
             } else if (standing === 0) {
-                this.showBanner("SPARE!", '#e6c273');
+                this.showBanner(T('Bowling.banner.spare'), '#e6c273');
                 this.playSe(spareSound);
             } else if (knocked === 0) {
-                this.showBanner(this._world.ballInGutter ? "GUTTER" : "MISS", '#d9533d');
+                this.showBanner(T(this._world.ballInGutter ? 'Bowling.banner.gutter' : 'Bowling.banner.miss'), '#d9533d');
             } else {
-                this.showBanner(`${knocked} PIN${knocked === 1 ? '' : 'S'}`, '#c0a468');
+                this.showBanner(T(knocked === 1 ? 'Bowling.banner.pin' : 'Bowling.banner.pins', { count: knocked }), '#c0a468');
             }
         }
 
@@ -2323,11 +2326,11 @@
             const pTotal = finalScore(this._playerFrames);
             const cTotal = finalScore(this._cpuFrames);
             bmp.drawText(T('Bowling.frame', { frame: Math.min(10, this._frame + 1), bowler: this.bowlerLabel() }), 8, 0, Graphics.width, ch, 'left');
-            bmp.drawText(`P1 ${pTotal}   ${this.opponentName()} ${cTotal}`, 8, ch, Graphics.width, ch, 'left');
+            bmp.drawText(T('Bowling.hud.asciiScore', { p1: T('Bowling.hud.p1'), player: pTotal, opponent: this.opponentName(), opponentScore: cTotal }), 8, ch, Graphics.width, ch, 'left');
             const bar = (v, n) => '[' + '='.repeat(Math.max(0, Math.min(n, Math.round(v * n)))) +
                 ' '.repeat(n - Math.max(0, Math.min(n, Math.round(v * n)))) + ']';
-            bmp.drawText(`POWER ${bar(this._power / 100, 10)}`, 8, ch * 2, Graphics.width, ch, 'left');
-            bmp.drawText(`HOOK  ${bar((this._spin + 1) / 2, 10)}`, 8, ch * 3, Graphics.width, ch, 'left');
+            bmp.drawText(T('Bowling.hud.power') + ' ' + bar(this._power / 100, 10), 8, ch * 2, Graphics.width, ch, 'left');
+            bmp.drawText(T('Bowling.hud.hook') + '  ' + bar((this._spin + 1) / 2, 10), 8, ch * 3, Graphics.width, ch, 'left');
             if (this._banner && this._bannerTimer > 0) {
                 bmp.drawText(this._banner, 0, ch * 4, Graphics.width, ch, 'center');
             }
@@ -2343,7 +2346,7 @@
             BOWL_DOMS = [];
             if (this._alleySprite) {
                 if (this._alleySprite.parent) this._alleySprite.parent.removeChild(this._alleySprite);
-                this._alleySprite.destroy();
+                this._alleySprite.destroy({ texture: true, baseTexture: true });
                 this._alleySprite = null;
             }
             if (this._alley) {

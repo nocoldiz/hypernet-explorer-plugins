@@ -1,13 +1,13 @@
 {
-  "title": "Atlante del Mondo",
+  "title": "Atlante del mondo",
   "back": "Chiudi",
-  "noData": "Le tavole dell'atlante non ci sono.",
-  "selectPrompt": "Scegli una nazione sulla mappa.",
+  "noData": "Nessun dato dell'atlante.",
+  "selectPrompt": "Scegli una nazione.",
   "countLabel": "{n} nazioni cartografate",
   "unaligned": "Non allineata",
   "here": "Sei qui",
   "fragment": "Un frammento di un'altra dimensione, cartografato dove è caduto.",
-  "noClimate": "Nessun registro meteorologico per questa nazione.",
+  "noClimate": "Nessun dato meteo per questa nazione.",
   "mode": {
     "power": "Potenze",
     "region": "Regioni",
@@ -17,8 +17,8 @@
     "europe": "Europa",
     "asia": "Asia",
     "middleEast": "Medio Oriente",
-    "northAmerica": "Canadafrica Settentrionale",
-    "southAmerica": "Canadafrica Meridionale",
+    "northAmerica": "Canadafrica settentrionale",
+    "southAmerica": "Canadafrica meridionale",
     "africa": "Africa",
     "oceania": "Oceania"
   },
@@ -33,7 +33,7 @@
     "faction": "Fedeltà",
     "enemyLevel": "Livello nemici",
     "controller": "Controllata da",
-    "climate": "Clima durante l'anno",
+    "climate": "Clima annuale",
     "heldIn": "Controllata nel {year}",
     "changedHands": "Passaggi di mano"
   },
@@ -61,15 +61,15 @@
     "Torrido"
   ],
   "today": "Oggi",
-  "openArticle": "Apri la voce della nazione",
+  "openArticle": "Apri articolo",
   "era": {
     "before": "Prima dello Squishing",
     "during": "Lo Squishing, {pct}%",
     "after": "Dopo lo Squishing"
   },
-  "hyperpowersTitle": "Superpotenze",
+  "hyperpowersTitle": "Iperpotenze",
   "hyperpowersSubtitle": "Distribuzione dei territori nel {year}",
   "territoryCount": "{n} territori",
   "territoriesCovered": "Territorio controllato",
-  "allPowers": "Tutte le Superpotenze"
+  "allPowers": "Tutte le iperpotenze"
 }

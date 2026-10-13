@@ -552,29 +552,44 @@ Game_Factions.prototype.initializeReputations = function () {
   }
 };
 
+// The world number is filed under the faction's ID, and the ids in
+// Factions.json have gaps and run past the length of the array (3 to 66 for 56
+// factions). Bounding a key by the length of the table, as this used to, left
+// every faction with an id past it standing at 0 for ever. A key is good when
+// it is a whole number already in the table or the id of a faction that exists;
+// anything else (null, a "hp:<id>" key, NaN) has no world slot.
+Game_Factions.prototype._repSlot = function (factionId) {
+  if (factionId === null || factionId === undefined || factionId === "" || typeof factionId === "boolean") return -1;
+  const id = Number(factionId);
+  if (!Number.isInteger(id) || id < 0) return -1;
+  if (id < this._reputations.length) return id;
+  return this.getFaction(id) ? id : -1;
+};
+
 Game_Factions.prototype.getReputation = function (factionId) {
-  if (factionId >= 0 && factionId < this._reputations.length) {
-    return this._reputations[factionId];
-  }
-  return 0;
+  const slot = this._repSlot(factionId);
+  if (slot < 0) return 0;
+  return Number(this._reputations[slot]) || 0;
 };
 
 Game_Factions.prototype.setReputation = function (factionId, value) {
-  if (factionId >= 0 && factionId < this._reputations.length) {
-    this._reputations[factionId] = Math.max(-100, Math.min(100, value));
+  const slot = this._repSlot(factionId);
+  if (slot < 0 || !Number.isFinite(Number(value))) return;
+  const before = this.getReputation(slot);
+  while (this._reputations.length < slot) this._reputations.push(0);
+  const after = Math.max(-100, Math.min(100, Number(value)));
+  this._reputations[slot] = after;
 
-    // Update relationships with other factions
-    this.updateRelatedFactions(factionId, value);
-  }
+  // Update relationships with other factions, by what actually moved
+  this.updateRelatedFactions(slot, after, before);
 };
 
 Game_Factions.prototype.changeReputation = function (factionId, change) {
-  if (factionId >= 0 && factionId < this._reputations.length) {
-    const before = this.getReputation(factionId);
-    const newValue = before + change;
-    this.setReputation(factionId, newValue);
-    this.announceReputation(factionId, before, this.getReputation(factionId));
-  }
+  const slot = this._repSlot(factionId);
+  if (slot < 0 || !Number.isFinite(Number(change))) return;
+  const before = this.getReputation(slot);
+  this.setReputation(slot, before + Number(change));
+  this.announceReputation(slot, before, this.getReputation(slot));
 };
 
 // Standing is one of the few numbers the world reads back at the party, so a
@@ -603,32 +618,40 @@ Game_Factions.prototype.changeReputationWithParents = function (factionId, chang
   if (hp) this.changeReputation(this.hyperpowerStandingKey(hp.id), change);
 };
 
-Game_Factions.prototype.updateRelatedFactions = function (factionId, newValue) {
+Game_Factions.prototype.updateRelatedFactions = function (factionId, newValue, oldValue) {
   if (this._repCascading) return;
   // Skip if relationships aren't initialized
-  if (!FactionDataManager.instance || !FactionDataManager.instance._relationships) {
+  const FDM = FactionDataManager.instance;
+  if (!FDM || !FDM._relationships || !Array.isArray(FDM._factions)) {
     // Relationships system not set up, skip related faction updates
     return;
   }
 
-  // Check if this is a significant reputation change
-  const oldValue = this.getReputation(factionId);
-  const change = newValue - oldValue;
+  // The change is measured against the value from BEFORE the write: read
+  // after it, as it used to be, the two were always equal and nothing moved.
+  const before = oldValue === undefined ? this.getReputation(factionId) : Number(oldValue) || 0;
+  const change = newValue - before;
+
+  // The matrix is indexed by a faction's SLOT in Factions.json, not by its id
+  // (the ids have gaps), so the id is turned into its row first.
+  const list = FDM._factions;
+  const from = list.findIndex(f => f && f.id === Number(factionId));
+  const row = from >= 0 ? FDM._relationships[from] : null;
+  if (!row) return;
 
   // Only update related factions if change is significant (>= 10 points)
   if (Math.abs(change) >= 10) {
     this._repCascading = true;
     try {
-    for (let i = 0; i < FactionDataManager.instance._factions.length; i++) {
-      if (i !== factionId) {
-        const relationship = FactionDataManager.instance._relationships[factionId][i];
+    for (let i = 0; i < list.length; i++) {
+      if (i === from || !list[i]) continue;
+      const relationship = row[i] || 0;
 
-        // Update related faction's reputation based on relationship
-        if (relationship !== 0) {
-          const relatedChange = Math.floor(change * relationship * 0.2);
-          if (relatedChange !== 0) {
-            this.changeReputation(i, relatedChange);
-          }
+      // Update related faction's reputation based on relationship
+      if (relationship !== 0) {
+        const relatedChange = Math.floor(change * relationship * 0.2);
+        if (relatedChange !== 0) {
+          this.changeReputation(list[i].id, relatedChange);
         }
       }
     }

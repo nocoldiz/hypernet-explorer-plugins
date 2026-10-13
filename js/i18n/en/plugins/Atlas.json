@@ -1,8 +1,8 @@
 {
   "title": "World Atlas",
   "back": "Close",
-  "noData": "The atlas sheets are missing.",
-  "selectPrompt": "Pick a nation off the map.",
+  "noData": "No atlas data.",
+  "selectPrompt": "Pick a nation.",
   "countLabel": "{n} nations charted",
   "unaligned": "Unaligned",
   "here": "You are here",
@@ -33,7 +33,7 @@
     "faction": "Allegiance",
     "enemyLevel": "Enemy level",
     "controller": "Held by",
-    "climate": "Climate through the year",
+    "climate": "Yearly climate",
     "heldIn": "Held in {year}",
     "changedHands": "Changed hands"
   },
@@ -61,7 +61,7 @@
     "Scorching"
   ],
   "today": "Today",
-  "openArticle": "Open the nation's article",
+  "openArticle": "Open article",
   "era": {
     "before": "Before the Squishing",
     "during": "The Squishing, {pct}%",

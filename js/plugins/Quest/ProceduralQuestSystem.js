@@ -1073,6 +1073,14 @@
       const opts = m[1].split("|");
       s = s.slice(0, m.index) + pick(rng, opts) + s.slice(m.index + m[0].length);
     }
+    // A place slot takes the preposition the language gives that place ("a
+    // Parigi", "alla Torre Omega"); WorldNames.where leaves English untouched.
+    const WN = window.WorldNames;
+    if (ctx && WN && typeof WN.where === "function") {
+      for (const k of ["DEST", "HERE", "PLACE"]) {
+        if (ctx[k] != null) s = WN.where(s, "[" + k + "]", String(ctx[k]));
+      }
+    }
     s = s.replace(/\[(\w+)\]/g, (_, k) => (ctx && ctx[k] != null) ? String(ctx[k]) : "");
     return s.replace(/\s+/g, " ").trim();
   }
@@ -2801,6 +2809,27 @@
     return deliverQuestReward(q).lines;
   }
 
+  // The supply steps whose goods the party no longer carries, counted together
+  // so two steps asking for the same thing need both amounts in the pack.
+  function supplyShortSteps(q) {
+    const need = new Map();
+    q.steps.forEach((s, i) => {
+      if (s.kind !== "supply_items") return;
+      const it = supplyObject(s);
+      if (!it) return;
+      const key = (s.goods || "i") + ":" + s.itemId;
+      if (!need.has(key)) need.set(key, { it, qty: 0, steps: [] });
+      const n = need.get(key);
+      n.qty += s.qty;
+      n.steps.push(i);
+    });
+    const out = [];
+    for (const n of need.values()) {
+      if ($gameParty.numItems(n.it) < n.qty) out.push(...n.steps);
+    }
+    return out.sort((a, b) => a - b);
+  }
+
   // Complete a quest as soon as objectives are done and deliver the reward via mail.
   function completeQuest(qid, note) {
     const st = state();
@@ -2809,6 +2838,26 @@
 
     if (isEmptyWorld() && !q.posted) {
       return { ok: false, reason: T('Quests.giverIsDead') };
+    }
+
+    // A posted notice is paid out of the escrow on the world record. Once that
+    // record no longer names this party as its taker (it lapsed and the poster
+    // was refunded, or an older savegame of this party handed it back) there is
+    // no escrow left to pay from: the contract is void, not honoured twice.
+    if (q.posted && !postedHeldByUs(q.qid)) {
+      failQuest(qid, T('Quests.post.noticeLapsed'));
+      return { ok: false, reason: T('Quests.post.noticeLapsed') };
+    }
+
+    // Goods ticked off earlier may have been sold, eaten or handed in on
+    // another contract since. The hand-over takes what is in the pack now, so
+    // a step whose goods are no longer there is opened again rather than paid.
+    const short = supplyShortSteps(q);
+    if (short.length) {
+      for (const i of short) q.steps[i].done = false;
+      kanbanProgress(q);
+      toast(T('Quests.goodsNoLongerInHand') + stepText(q.steps[short[0]]), "warning", 240);
+      return { ok: false, reason: T('Quests.goodsNoLongerInHand') };
     }
 
     // What is handed over on a player-posted contract is not consumed: it goes
@@ -2921,6 +2970,25 @@
     const q = state().active[qid];
     if (!q) return;
     failQuest(qid, T('Quests.contractAbandoned'));
+  }
+
+  function wantedTargetDead(name) {
+    if (!name) return false;
+    try { return !!window.NPCLifeSim?.isDead?.(name); } catch (e) { return false; }
+  }
+
+  // A contract that can no longer be served through nobody's fault: it comes
+  // off the log with no fine, no warrant and no standing lost. Any upfront fee
+  // was the price of the information and is not returned.
+  function voidQuest(qid, reason) {
+    const st = state();
+    const q = st.active[qid];
+    if (!q) return;
+    if (q.posted) { failQuest(qid, reason); return; }
+    q.status = "failed";
+    kanbanFail(qid, T('Quests.failed') + (reason || ""));
+    toast(T('Quests.questFailed') + q.title, "warning", 240);
+    delete st.active[qid];
   }
 
   // ==========================================================================
@@ -3374,11 +3442,20 @@
     savePostedFile();
   }
 
+  // Is this world record still the contract this party signed for?
+  function postedHeldByUs(id) {
+    const rec = postedById(id);
+    return !!(rec && rec.status === "taken" && rec.taker
+      && rec.taker.kind === "party" && rec.taker.id === partyKey());
+  }
+
   // A posted contract the taker walked away from. It is not failed: it goes back
   // on the board for somebody else, escrow untouched.
   function releasePostedQuest(qid, reasonKey) {
     const rec = postedById(qid);
-    if (!rec || rec.status !== "taken") return;
+    // Only the holder can hand a notice back: one another party has taken
+    // since is theirs, whatever this savegame still carries in its log.
+    if (!rec || !postedHeldByUs(qid)) return;
     rec.status = "open";
     rec.taker = null;
     rec.takenAt = 0;
@@ -3539,8 +3616,10 @@
       }
       // A notice comes down on the date it said it would. Anybody still holding
       // it has run out of time, and the escrow goes back to whoever paid it.
+      // A party holding it is no exception: a savegame that took it and was
+      // never played again must not keep the poster's escrow forever.
       if (rec.expiresAt && now >= rec.expiresAt &&
-        (rec.status === "open" || (rec.status === "taken" && rec.taker?.kind === "npc"))) {
+        (rec.status === "open" || rec.status === "taken")) {
         rec.status = "expired";
         rec.finishedAt = now;
         rec.taker = null;
@@ -3554,6 +3633,29 @@
         // Whoever was carrying it in their own log is told it lapsed.
         if (state().active[rec.id]) failQuest(rec.id, T('Quests.post.noticeLapsed'));
         dirty = true;
+        continue;
+      }
+      // The world says this party holds it, but this savegame never signed for
+      // it (an older save of the same party was loaded): it goes back up.
+      if (rec.status === "taken" && rec.taker?.kind === "party"
+        && rec.taker.id === partyKey() && !state().active[rec.id]) {
+        logPosted(rec, T('Quests.post.logHandedBack'));
+        rec.status = "open";
+        rec.taker = null;
+        rec.takenAt = 0;
+        rec.resolveAt = 0;
+        rec.rev = (rec.rev || 0) + 1;
+        dirty = true;
+      }
+    }
+    // The other way round: a contract in this log whose notice has since come
+    // down or gone to somebody else is closed, not left waiting for a claim
+    // that could never be paid.
+    // Only a record that is there and names somebody else: a missing one may
+    // be a world file that did not load, and is settled at the claim instead.
+    for (const q of activeQuests()) {
+      if (q.posted && q.status === "active" && postedById(q.qid) && !postedHeldByUs(q.qid)) {
+        failQuest(q.qid, T('Quests.post.noticeLapsed'));
       }
     }
     return dirty;
@@ -3743,6 +3845,18 @@
     checkArrivalSteps();
     for (const q of activeQuests()) {
       if (q.status === "failed") continue;
+
+      // A warrant on somebody who has died at other hands (a fight in the
+      // street, the gallows, old age) can never be served: the party's own
+      // kill closes it on the spot (onWantedNPCKilled). It is withdrawn with
+      // no fine and no breach, and before the deadline is read, so a party
+      // that slept through both is not fined for a death it had no part in.
+      const deadTarget = (q.steps || []).find(s => s.kind === "bounty_npc" && !s.done
+        && wantedTargetDead(s.npcName));
+      if (deadTarget) {
+        voidQuest(q.qid, T('Quests.wantedTargetDied', { name: deadTarget.npcName }));
+        continue;
+      }
 
       // A deadline is somebody expecting you by a certain hour. In an empty
       // world nobody is expecting anything, so nothing runs out: a quest that
@@ -4217,14 +4331,29 @@
   // The step this tile's target answers to, or null: the contract that named it
   // may be long gone, and a one-of-a-kind creature is matched on its own key
   // rather than on the enemy whose look it borrowed.
-  function bountyStepFor(b) {
-    const q = state().active[b.qid];
-    if (!q) return null;
-    for (let i = 0; i < q.steps.length; i++) {
-      const s = q.steps[i];
-      if (s.kind !== "bounty" || s.done || !stepIsActive(q, i)) continue;
-      const matches = b.rarityKey ? s.rarityKey === b.rarityKey : s.enemyId === b.enemyId;
-      if (matches) return { q, s, i };
+  function bountyStepFor(b, key) {
+    const matches = (s) => b.rarityKey ? s.rarityKey === b.rarityKey : s.enemyId === b.enemyId;
+    const own = state().active[b.qid];
+    if (own) {
+      for (let i = 0; i < own.steps.length; i++) {
+        const s = own.steps[i];
+        if (s.kind !== "bounty" || s.done || !stepIsActive(own, i)) continue;
+        if (matches(s)) return { q: own, s, i };
+      }
+    }
+    // The tile's store entry is first come, first kept: a later hunt written
+    // for the same square and the same quarry finds its target already
+    // standing there under an older (often lapsed) contract's id. Killing it
+    // answers that later hunt too.
+    if (key == null) return null;
+    for (const q of activeQuests()) {
+      if (q === own) continue;
+      for (let i = 0; i < q.steps.length; i++) {
+        const s = q.steps[i];
+        if (s.kind !== "bounty" || s.done || !stepIsActive(q, i) || !s.site) continue;
+        if (s.site.wx + "," + s.site.wy !== key) continue;
+        if (matches(s)) return { q, s, i };
+      }
     }
     return null;
   }
@@ -4247,7 +4376,7 @@
     delete bounties()[key];
     if (eventId && $gameMap) $gameMap.eraseEvent(eventId);
 
-    const hit = bountyStepFor(b);
+    const hit = bountyStepFor(b, key);
     if (hit) {
       completeStep(hit.q, hit.i,
         (hit.s.criminal ? T('Quests.warrantExecutedOn') : T('Quests.beastSlain')) + b.name + ".");
@@ -4292,7 +4421,7 @@
     delete bounties()[key];
     if (eventId && $gameMap) $gameMap.eraseEvent(eventId);
 
-    const hit = bountyStepFor(b);
+    const hit = bountyStepFor(b, key);
     if (hit) {
       completeStep(hit.q, hit.i, T('Quests.takenAlive') + b.name + ".");
       toast(T('Quests.bountyTargetTakenAlive') + b.name);
@@ -4697,7 +4826,7 @@
     nowMinutes, firstUndoneIndex,
     // world side
     questForPlanet, questForSystem, failQuest, debugGenerateQuest,
-    state, bounties, onWantedNPCKilled, hasWarrantOn,
+    state, bounties, onWantedNPCKilled, hasWarrantOn, tickDeadlines, onBountyKilled,
     // map side
     questMarkers, questLocation, destCoords, sitePlace, siteText,
     enemySpawnsAtSite, siteEcologyProfile, siteSurfaceBiome,

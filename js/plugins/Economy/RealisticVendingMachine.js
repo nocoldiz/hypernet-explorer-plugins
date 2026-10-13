@@ -1296,6 +1296,9 @@
 
             this._isDispensing = true;
             this._dirtyDom = true;
+            // Paid for already: until it lands in the tray it is held here, so
+            // leaving the machine mid-drop still hands it over (see terminate).
+            this._pendingDrop = slot.item;
             slotEl.classList.add('spinning');
             AudioManager.playSe({ name: 'Move2', volume: 80, pitch: 75 });
 
@@ -1330,7 +1333,8 @@
                 const finish = () => {
                     if (gravityEl.parentNode) gravityEl.parentNode.removeChild(gravityEl);
                     slotEl.classList.remove('spinning');
-                    this._trayItems.push(slot.item);
+                    if (this._pendingDrop) this._trayItems.push(this._pendingDrop);
+                    this._pendingDrop = null;
                     this._isDispensing = false;
                     this.showTempLCDMessage(T('Vending.itemDispensed'), 1500);
                 };
@@ -1400,7 +1404,13 @@
                 this._handleKeyDown = null;
             }
 
-            // Safety net: anything still sitting in the tray was paid for.
+            // Safety net: anything still sitting in the tray, or still falling
+            // towards it, was paid for.
+            if (this._pendingDrop) {
+                if (this._trayItems) this._trayItems.push(this._pendingDrop);
+                else $gameParty.gainItem(this._pendingDrop, 1);
+                this._pendingDrop = null;
+            }
             if (this._trayItems && this._trayItems.length > 0) {
                 this._trayItems.forEach(item => $gameParty.gainItem(item, 1));
                 this._trayItems = [];

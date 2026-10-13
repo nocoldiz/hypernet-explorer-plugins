@@ -914,6 +914,8 @@
   function readNotice(baseKey, voice) {
     if (!baseKey) return null;
     if (voice === VOICE_GENERIC) return null;
+    // Bubba lost on the story's Blood and Oil reads nothing out any more.
+    if (voice === VOICE_BUBBA && window.StoryDeath && window.StoryDeath.bubbaLost()) return null;
     const lang = typeof ConfigManager !== "undefined" && ConfigManager ? ConfigManager.language : null;
     if (lang !== noticeCacheLang) {
       noticeCacheLang = lang;

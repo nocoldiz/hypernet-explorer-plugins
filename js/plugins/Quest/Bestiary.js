@@ -274,8 +274,75 @@
     // =========================================================================
     // Builds a procedural Battler3D model on `canvas` under `entrySeed`, with
     // orbit / pan / zoom and the periodic attack, and returns its state; the
-    // state is handed back to disposeBestiary3D(). One renderer per canvas,
-    // released with its WebGL context when the view goes away.
+    // state is handed back to disposeBestiary3D().
+    //
+    // One renderer serves every specimen of the session, the way the battle
+    // and the hyperdeck keep one: a new WebGL context per creature looked at
+    // recompiled every PSX program and re-uploaded every buffer, and the next
+    // creature asked for all of it again. The renderer's own canvas is put in
+    // the frame in place of the one the page drew, dressed in its attributes so
+    // the stylesheet still finds it. A lost context (driver reset) is dropped
+    // and replaced. A second view open at the same moment (the codex page and
+    // the desktop app) gets a renderer of its own on the page's canvas, released
+    // with its context when it goes, as every specimen used to be.
+    let _specimenRenderer = null;
+    let _specimenOwner = null;
+    function acquireSpecimenRenderer() {
+        if (_specimenRenderer) {
+            let lost = false;
+            try {
+                const gl = _specimenRenderer.getContext();
+                lost = !gl || (gl.isContextLost && gl.isContextLost());
+            } catch (e) { lost = true; }
+            if (!lost) return _specimenRenderer;
+            try { _specimenRenderer.dispose(); } catch (e) { /* already gone */ }
+            _specimenRenderer = null;
+            _specimenPrograms.clear();
+        }
+        _specimenRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        return _specimenRenderer;
+    }
+
+    // three hands a compiled program back the moment the last material using
+    // it is disposed, so letting a specimen go would throw away the very
+    // programs the next creature is about to compile again. One material per
+    // distinct program is held back from disposal instead (bounded, and a
+    // material with no geometry behind it is a few dozen bytes), the same
+    // keep-alive the battle field uses.
+    const SPECIMEN_PROGRAMS_MAX = 64;
+    const _specimenPrograms = new Map();
+    function keepSpecimenProgram(renderer, mat) {
+        if (_specimenPrograms.size >= SPECIMEN_PROGRAMS_MAX) return false;
+        let programs = null;
+        try { programs = renderer.properties.get(mat).programs; } catch (e) { return false; }
+        if (!programs || typeof programs.forEach !== 'function') return false;
+        const keys = [];
+        programs.forEach(p => { if (p && p.cacheKey) keys.push(p.cacheKey); });
+        if (!keys.some(k => !_specimenPrograms.has(k))) return false;
+        keys.forEach(k => { if (!_specimenPrograms.has(k)) _specimenPrograms.set(k, mat); });
+        return true;
+    }
+
+    // What a specimen held on the shared context: its own geometry and its
+    // materials. A buffer the Battler3D cache shares between creatures is
+    // left alone, and so are textures, which live in the shared skin cache.
+    function releaseSpecimenModel(renderer, root) {
+        if (!root || typeof root.traverse !== 'function') return;
+        const release = (m) => {
+            if (!m || typeof m.dispose !== 'function') return;
+            if (keepSpecimenProgram(renderer, m)) return;
+            m.dispose();
+        };
+        root.traverse(obj => {
+            if (obj.geometry && !obj.geometry._battlerShared &&
+                typeof obj.geometry.dispose === 'function') {
+                obj.geometry.dispose();
+            }
+            if (Array.isArray(obj.material)) obj.material.forEach(release);
+            else if (obj.material) release(obj.material);
+        });
+    }
+
     function buildBestiary3D(canvas, enemyData, archKey, entrySeed) {
         if (typeof THREE === 'undefined' || !window.Battler3D || !window.Battler3D.create) return null;
         if (!canvas) return null;
@@ -283,12 +350,47 @@
         const width  = Math.max(1, Math.round(rect.width)  || 320);
         const height = Math.max(1, Math.round(rect.height) || 320);
 
-        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        // Fake battler so the model uses its deterministic per-id look.
+        // It answers enemy() too: a model whose look is rolled from its own
+        // notebox rather than from its id (the petrodemon's <PetroSeed:>)
+        // reads it off the data object, and would otherwise draw a stranger.
+        const fakeBattler = { enemyId: () => enemyData.id, index: () => 0, enemy: () => enemyData };
+        // Build under this entry's generation seed (world seed unless the
+        // player re-rolled it). All seeded draws happen in the constructor, so
+        // the global seed is restored immediately after create.
+        const prevGenSeed = window.Battler3D.getGenSeed ? window.Battler3D.getGenSeed() : null;
+        if (window.Battler3D.setGenSeed) window.Battler3D.setGenSeed(entrySeed);
+        const battler = window.Battler3D.create(archKey, 0, 0, fakeBattler);
+        if (window.Battler3D.setGenSeed && prevGenSeed != null) window.Battler3D.setGenSeed(prevGenSeed);
+        if (!battler) return null;
+
+        const shared = !_specimenOwner;
+        let renderer;
+        if (shared) {
+            renderer = acquireSpecimenRenderer();
+            const own = renderer.domElement;
+            if (own !== canvas) {
+                // Whatever the last frame it stood in left on it goes, and the
+                // page's canvas lends it its id, classes and style.
+                Array.from(own.attributes || []).forEach(a => own.removeAttribute(a.name));
+                Array.from(canvas.attributes || []).forEach(a => own.setAttribute(a.name, a.value));
+                if (canvas.parentNode) canvas.parentNode.replaceChild(own, canvas);
+                canvas = own;
+            }
+        } else {
+            renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        }
         renderer.setSize(width, height, false);
         // Render at 1:1 device pixels. This is a small preview, so the hi-DPI
         // multiplier (up to 4x the fragment work on Retina screens) is the
         // single biggest cost here and buys almost nothing visually.
         renderer.setPixelRatio(1);
+        // A reused canvas still holds the last creature's final frame, and the
+        // first frame of this one is drawn a beat later: it starts blank, as a
+        // new canvas does.
+        if (shared) {
+            try { renderer.setRenderTarget(null); renderer.clear(true, true, true); } catch (e) { /* context gone */ }
+        }
 
         const scene = new THREE.Scene();
         scene.add(new THREE.AmbientLight(0xffffff, 1.1));
@@ -302,27 +404,11 @@
         scene.add(pivot);
 
         const state = {
-            renderer, canvas, scene, camera, pivot,
+            renderer, canvas, scene, camera, pivot, shared, battler,
             model: null, rafId: 0, disposed: false, dragging: false, attackTimer: 0, frameAcc: 0,
             activeButton: -1, prev: { x: 0, y: 0 }, clock: new THREE.Clock(), listeners: {}
         };
-        // Fake battler so the model uses its deterministic per-id look.
-        // It answers enemy() too: a model whose look is rolled from its own
-        // notebox rather than from its id (the petrodemon's <PetroSeed:>)
-        // reads it off the data object, and would otherwise draw a stranger.
-        const fakeBattler = { enemyId: () => enemyData.id, index: () => 0, enemy: () => enemyData };
-        // Build under this entry's generation seed (world seed unless the
-        // player re-rolled it). All seeded draws happen in the constructor, so
-        // the global seed is restored immediately after create.
-        const prevGenSeed = window.Battler3D.getGenSeed ? window.Battler3D.getGenSeed() : null;
-        if (window.Battler3D.setGenSeed) window.Battler3D.setGenSeed(entrySeed);
-        const battler = window.Battler3D.create(archKey, 0, 0, fakeBattler);
-        if (window.Battler3D.setGenSeed && prevGenSeed != null) window.Battler3D.setGenSeed(prevGenSeed);
-        if (!battler) {
-            try { renderer.dispose(); } catch (e) {}
-            try { if (renderer.forceContextLoss) renderer.forceContextLoss(); } catch (e) {}
-            return null;
-        }
+        if (shared) _specimenOwner = state;
 
         Promise.resolve(battler.load(null, 0, 0, 0)).then(() => {
             if (state.disposed || !battler.model) return;
@@ -410,7 +496,7 @@
 
         const FRAME = 1 / 30; // cap the preview to ~30fps to halve GPU/CPU work
         const animate = () => {
-            if (state.disposed) return;
+            if (state.disposed || state.paused) return;
             state.rafId = requestAnimationFrame(animate);
             state.frameAcc += Math.min(state.clock.getDelta(), 0.05);
             if (state.frameAcc < FRAME) return;
@@ -435,8 +521,26 @@
                 renderer.render(scene, camera);
             }
         };
+        state.animate = animate;
         animate();
         return state;
+    }
+
+    // A specimen kept while its page is not on show (the Ecology or
+    // Extraction tab) stops drawing, and picks up again where it was.
+    function pauseBestiary3D(state) {
+        if (!state || state.disposed || state.paused) return;
+        cancelAnimationFrame(state.rafId);
+        state.rafId = 0;
+        state.paused = true;
+    }
+
+    function resumeBestiary3D(state) {
+        if (!state || state.disposed || !state.paused) return;
+        state.paused = false;
+        state.frameAcc = 0;
+        state.clock.getDelta();
+        state.animate();
     }
 
     function disposeBestiary3D(state) {
@@ -456,6 +560,15 @@
         }
         window.removeEventListener('mouseup',  L.onUp);
         window.removeEventListener('touchend', L.onTEnd);
+        if (s.shared) {
+            // The renderer stays for the next creature: only what this one
+            // put on the context is let go of, and its canvas leaves the frame
+            // for a clean node, as a private one does below.
+            if (_specimenOwner === s) _specimenOwner = null;
+            if (s.battler && s.battler.model) releaseSpecimenModel(s.renderer, s.battler.model);
+            if (c && c.parentNode) c.parentNode.replaceChild(c.cloneNode(false), c);
+            return;
+        }
         // dispose() leaves the WebGL context alive. The browser caps live
         // contexts and force-loses the OLDEST past the cap, which is the
         // game's own canvas: PIXI then silently stops rendering and the
@@ -592,8 +705,9 @@
         // and the browser force-loses the game's own context once the cap of
         // live ones is passed, so the build waits for the cursor to come to
         // rest. The frame stays empty for that moment and nothing else does.
-        initBestiary3D(enemyData, archKey, seedKey) {
+        initBestiary3D(enemyData, archKey, seedKey, specimenKey) {
             this.cleanupBestiary3D();
+            this._bestiary3DKey = specimenKey || null;
             this._bestiary3DTimer = setTimeout(() => {
                 this._bestiary3DTimer = 0;
                 const canvas = document.getElementById('bestiary-3d-canvas');
@@ -606,6 +720,7 @@
         }
 
         cleanupBestiary3D() {
+            this._bestiary3DKey = null;
             if (this._bestiary3DTimer) {
                 clearTimeout(this._bestiary3DTimer);
                 this._bestiary3DTimer = 0;
@@ -615,14 +730,47 @@
             this._bestiary3D = null;
         }
 
+        // What the selected entry's specimen is grown from: the creature, its
+        // model and its generation seed. Null when the entry has no 3D model.
+        // The same key means the specimen already built is the right one.
+        bestiarySpecimenKey() {
+            if (!this._show3DBestiary || !this._monsterList || !this._monsterList.length) return null;
+            const mon = this._monsterList[this._selectedIndex];
+            if (!mon || !mon.enemy) return null;
+            const archKey = (window.Battler3D && window.Battler3D.resolveKey)
+                ? window.Battler3D.resolveKey(mon.enemy) : null;
+            if (!archKey) return null;
+            const seedKey = this.bestiarySeedKey(mon);
+            return [seedKey, mon.enemy.id, archKey, this.bestiaryGenSeed(seedKey)].join('|');
+        }
+
+        // Puts the kept specimen's canvas, with its live WebGL context, back in
+        // the frame the redrawn card left for it. A specimen still waiting for
+        // the cursor to settle needs nothing: its timer finds the new frame.
+        reattachBestiary3D(container) {
+            const s = this._bestiary3D;
+            if (!s) return;
+            const slot = container.querySelector('#bestiary-3d-canvas');
+            if (!slot || !slot.parentNode) { this.cleanupBestiary3D(); return; }
+            if (slot !== s.canvas) slot.parentNode.replaceChild(s.canvas, slot);
+            resumeBestiary3D(s);
+        }
+
         buildUIBestiaryData() {
             // The four pages themselves are built by the shared service below,
             // so any other menu that wants to search the codex (the main menu's
-            // search page) reads exactly the same four lists.
-            this._earthList = window.BestiaryData.earth();
-            this._petroList = window.BestiaryData.petrodemons();
-            this._rarityList = window.BestiaryData.rarities();
-            this._alienList = window.BestiaryData.aliens();
+            // search page) reads exactly the same four lists. Reading them walks
+            // the whole enemy database, so they are kept for as long as the book
+            // is open and read again only when what fills them has changed: a
+            // keystroke in the strip or a pocket tab only re-filters.
+            const pagesKey = this.bestiaryPagesKey();
+            if (!this._earthList || pagesKey !== this._bestiaryPagesKey) {
+                this._earthList = window.BestiaryData.earth();
+                this._petroList = window.BestiaryData.petrodemons();
+                this._rarityList = window.BestiaryData.rarities();
+                this._alienList = window.BestiaryData.aliens();
+                this._bestiaryPagesKey = pagesKey;
+            }
 
             if (this._pageTab == null) this._pageTab = 0;
             const pages = [this._earthList, this._petroList, this._rarityList, this._alienList];
@@ -637,6 +785,23 @@
                     level: mon.noteData && mon.noteData.level ? parseInt(mon.noteData.level, 10) : 0
                 }))
                 : page;
+        }
+
+        // Everything the four pages are read from, in one string: what has been
+        // met (and whether the sandbox reads as having met it all), the codices of procedural creatures, the language the
+        // names and pages are written in, and the world their wording is
+        // seeded from.
+        bestiaryPagesKey() {
+            const sys = typeof $gameSystem !== 'undefined' ? $gameSystem : null;
+            const count = (v) => Array.isArray(v) ? v.length : (v && typeof v === 'object' ? Object.keys(v).length : 0);
+            const met = sys && sys.encounteredMonsters ? sys.encounteredMonsters().length : 0;
+            const petro = sys && sys.petrodemonCodex ? count(sys.petrodemonCodex()) : 0;
+            const rare = sys && sys.rarityCodex ? count(sys.rarityCodex()) : 0;
+            const alien = (window.GalaxySim && window.GalaxySim.getDiscoveredAlienSpecies)
+                ? count(window.GalaxySim.getDiscoveredAlienSpecies()) : 0;
+            const all = sys && sys.isMonsterEncountered ? sys.isMonsterEncountered(0) : false;
+            const lang = (typeof ConfigManager !== 'undefined' && ConfigManager.language) || 'en';
+            return [met, petro, rare, alien, all ? 1 : 0, lang, worldGenSeed()].join('|');
         }
 
         // Switch the left-page pockets between Earth, petrodemons, the world's
@@ -707,6 +872,11 @@
 
                 // Wheel scroll on list viewport regardless of focus
                 container.addEventListener("wheel", (e) => {
+                    // The right page scrolls on its own (a long Ecology or
+                    // Extraction card) and the specimen canvas zooms on the
+                    // wheel: neither may be stolen for the list on the left.
+                    const t = e.target;
+                    if (t && t.closest && t.closest(".right-page")) return;
                     e.preventDefault();
                     const viewport = document.getElementById("bestiary-list-viewport");
                     if (viewport) viewport.scrollTop += e.deltaY;
@@ -872,7 +1042,7 @@
                                 : obj.rate + "x";
                             affinitiesGridHTML += `
                                 <div class="affinity-row">
-                                    <span class="affinity-name">${obj.name}</span>
+                                    <span class="affinity-name">${incantaEsc(obj.name)}</span>
                                     <span class="affinity-val ${valClass}">${formattedRate}</span>
                                 </div>
                             `;
@@ -925,7 +1095,7 @@
                                 ${portraitInner}
                             </div>
                             ${seedNote}
-                            <p class="portfolio-description ui-prose">${this.bestiaryDescription(mon, noteData) || (T('Bestiary.noBiologicalDescriptionRegistered'))}</p>
+                            <p class="portfolio-description ui-prose">${incantaEsc(this.bestiaryDescription(mon, noteData) || T('Bestiary.noBiologicalDescriptionRegistered'))}</p>
                             ${statsGridHTML}
                             ${affinitiesGridHTML}
                         `;
@@ -967,7 +1137,7 @@
                         let rangeText = T('Bestiary.unknown');
                         if (bseHelpers && bseHelpers.getTopNationsForEnemy) {
                             const nations = bseHelpers.getTopNationsForEnemy(enemy.id, 3);
-                            if (nations.length > 0) rangeText = nations.map(n => n.name).join(", ");
+                            if (nations.length > 0) rangeText = incantaEsc(nations.map(n => n.name).join(", "));
                         }
 
                         contentHTML = `
@@ -1044,7 +1214,7 @@
                                         <div class="harvest-row">
                                             <div class="harvest-meta">
                                                 <span class="harvest-icon" data-cell="${iconStyle}"></span>
-                                                <span class="harvest-name ${window.ItemSystemUtils ? window.ItemSystemUtils.rarityClass(rarity) : ''}">${item.name}</span>
+                                                <span class="harvest-name ${window.ItemSystemUtils ? window.ItemSystemUtils.rarityClass(rarity) : ''}">${incantaEsc(item.name)}</span>
                                             </div>
                                             <span class="harvest-chance">${T('Bestiary.harvestChance', { chance: chance })}</span>
                                         </div>
@@ -1072,7 +1242,7 @@
                                         <div class="harvest-row">
                                             <div class="harvest-meta">
                                                 <span class="harvest-icon" data-cell="${iconStyle}"></span>
-                                                <span class="harvest-name harvest-name--skill">${skill.name}</span>
+                                                <span class="harvest-name harvest-name--skill">${incantaEsc(skill.name)}</span>
                                             </div>
                                         </div>
                                     `;
@@ -1094,7 +1264,7 @@
                         <div class="ui-detail portfolio">
                             <div class="ui-detail-head portfolio-header">
                                 <div class="ui-detail-titles">
-                                    <span class="portfolio-name">${mon.name}</span>
+                                    <span class="portfolio-name">${incantaEsc(mon.name)}</span>
                                 </div>
                                 <div class="ui-chip-row portfolio-badges">
                                     <span class="ui-chip badge">${levelBadge}</span>
@@ -1112,8 +1282,20 @@
                     rightPageHTML = `<div class="ui-empty"><div class="ui-empty-text">${T('Bestiary.noMonstersEncountered')}</div></div>`;
                 }
 
-                // Tear down any previous 3D viewer before its canvas is removed.
-                this.cleanupBestiary3D();
+                // A specimen is a WebGL context and a model grown from scratch,
+                // so a redraw for the same creature (a tab, the focus moving, a
+                // list redraw) keeps the one it has: its canvas is lifted out
+                // before the card is rewritten and put back afterwards. Only a
+                // different creature or seed tears it down for a new one.
+                const specimenKey = this.bestiarySpecimenKey();
+                const keepSpecimen = !!specimenKey && specimenKey === this._bestiary3DKey &&
+                    !!(this._bestiary3D || this._bestiary3DTimer);
+                if (keepSpecimen) {
+                    const kept = this._bestiary3D && this._bestiary3D.canvas;
+                    if (kept && kept.parentNode) kept.parentNode.removeChild(kept);
+                } else {
+                    this.cleanupBestiary3D();
+                }
                 portfolioContainer.innerHTML = rightPageHTML;
 
                 // Every IconSet cell on the card, handed to the stylesheet.
@@ -1150,10 +1332,14 @@
                     }
                     const archKey2 = (window.Battler3D && window.Battler3D.resolveKey)
                         ? window.Battler3D.resolveKey(mon2.enemy) : null;
-                    if (this._activeTab === 0 && this._show3DBestiary && archKey2) {
-                        this.initBestiary3D(mon2.enemy, archKey2, seedKey2);
-                    } else if (this._activeTab === 0) {
-                        this.drawBestiaryPortraitSprite(mon2);
+                    const wants3D = this._activeTab === 0 && this._show3DBestiary && !!archKey2;
+                    if (wants3D && keepSpecimen) {
+                        this.reattachBestiary3D(portfolioContainer);
+                    } else if (wants3D) {
+                        this.initBestiary3D(mon2.enemy, archKey2, seedKey2, specimenKey);
+                    } else {
+                        if (keepSpecimen) pauseBestiary3D(this._bestiary3D);
+                        if (this._activeTab === 0) this.drawBestiaryPortraitSprite(mon2);
                     }
                 }
             }
@@ -1178,7 +1364,7 @@
                         <canvas class="monster-sprite-canvas" id="bestiary-canvas-${idx}" data-idx="${idx}" width="32" height="32"></canvas>
                     </div>
                     <div class="monster-meta">
-                        <span class="monster-name">${mon.name}</span>
+                        <span class="monster-name">${incantaEsc(mon.name)}</span>
                         <span class="monster-subtitle">${levelBadge} ${archetype}</span>
                     </div>
                 </div>
@@ -1363,20 +1549,13 @@
             }
         }
 
-        // Notes parsed fields helper
+        // A note box never changes once the database is loaded, so its tags
+        // are read once per distinct note and copied out from then on: the
+        // codex reads every creature it holds each time it is opened. The copy
+        // is the caller's own, since the procedural pages write their own
+        // description onto it.
         parseMonsterNotes(notes, enemyId) {
-            const result = {
-                level: null, description: null, character: null, archetype: null, biome: null,
-                timeOfDay: null, bloodType: null, rarity: null, weight: null,
-                speed: null, movement: null, talk: false, climb: false, floating: false,
-                behavior: null
-            };
-
-
-
-
-
-
+            const result = Object.assign({}, noteTagsOf(notes));
 
             if (enemyId) {
                 const l10n = getEnemyL10n(enemyId);
@@ -1394,61 +1573,78 @@
                 if (desc) result.description = desc;
             }
 
-            if (!notes) return result;
-
-            const levelMatch = notes.match(/<Level:\s*(\d+)>/i);
-            if (levelMatch) result.level = levelMatch[1];
-
-            const charMatch = notes.match(/<Char:\s*([^>]+)>/i);
-            if (charMatch) result.character = charMatch[1].trim();
-
-            const archetypeMatch = notes.match(/<Archetype:\s*([^>]+)>/i);
-            if (archetypeMatch) result.archetype = archetypeMatch[1].trim();
-
-            const biomeMatch = notes.match(/<Biome:\s*([^>]+)>/i);
-            if (biomeMatch) result.biome = biomeMatch[1].trim();
-
-            // i18n-ignore-start: note-tag ids, named by ecologyLabel() on render
-            if (notes.match(/<Nocturnal>/i)) result.timeOfDay = "Nocturnal";
-            else if (notes.match(/<Diurnal>/i)) result.timeOfDay = "Diurnal";
-            else if (notes.match(/<Crepuscular>/i)) result.timeOfDay = "Crepuscular";
-
-            if (notes.match(/<GreenBlood>/i)) result.bloodType = "Green";
-            // <AzureBlood> is the spelling ReactiveEnemyBattler paints by; the
-            // database uses both and they name one colour.
-            else if (notes.match(/<BlueBlood>|<AzureBlood>/i)) result.bloodType = "Blue";
-            else if (notes.match(/<BlackBlood>/i)) result.bloodType = "Black";
-            else if (notes.match(/<NoBlood>/i)) result.bloodType = "None";
-            // i18n-ignore-end
-
-            const rarityMatch = notes.match(/<Rarity:\s*([^>]+)>/i);
-            if (rarityMatch) result.rarity = rarityMatch[1].trim();
-
-            const weightMatch = notes.match(/<Weight:\s*([^>]+)>/i);
-            if (weightMatch) result.weight = weightMatch[1].trim();
-
-            const speedMatch = notes.match(/<Speed:\s*(\d+)>/i);
-            if (speedMatch) result.speed = speedMatch[1];
-
-            const movementMatch = notes.match(/<Movement:\s*([^>]+)>/i);
-            if (movementMatch) result.movement = movementMatch[1].trim();
-
-            if (notes.match(/<Talk>/i)) result.talk = true;
-            if (notes.match(/<Climb>/i)) result.climb = true;
-            if (notes.match(/<Floating>/i)) result.floating = true;
-
-            // i18n-ignore-start: note-tag ids, keys into behaviorMap
-            if (notes.match(/<Predator>/i)) result.behavior = "Predator";
-            else if (notes.match(/<Hunter>/i)) result.behavior = "Hunter";
-            else if (notes.match(/<Prey>/i)) result.behavior = "Prey";
-            else if (notes.match(/<Neutral>/i)) result.behavior = "Neutral";
-            // i18n-ignore-end
-
             return result;
         }
     }
 
     window.Scene_CDCollection = Scene_CDCollection;
+
+    // The tags a note box carries, read once per distinct note. The object
+    // handed back is the cached one and is never written to: callers copy it.
+    const _noteTagCache = new Map();
+    function noteTagsOf(notes) {
+        const result = {
+            level: null, description: null, character: null, archetype: null, biome: null,
+            timeOfDay: null, bloodType: null, rarity: null, weight: null,
+            speed: null, movement: null, talk: false, climb: false, floating: false,
+            behavior: null
+        };
+        if (!notes) return result;
+        const known = _noteTagCache.get(notes);
+        if (known) return known;
+        _noteTagCache.set(notes, result);
+
+        const levelMatch = notes.match(/<Level:\s*(\d+)>/i);
+        if (levelMatch) result.level = levelMatch[1];
+
+        const charMatch = notes.match(/<Char:\s*([^>]+)>/i);
+        if (charMatch) result.character = charMatch[1].trim();
+
+        const archetypeMatch = notes.match(/<Archetype:\s*([^>]+)>/i);
+        if (archetypeMatch) result.archetype = archetypeMatch[1].trim();
+
+        const biomeMatch = notes.match(/<Biome:\s*([^>]+)>/i);
+        if (biomeMatch) result.biome = biomeMatch[1].trim();
+
+        // i18n-ignore-start: note-tag ids, named by ecologyLabel() on render
+        if (notes.match(/<Nocturnal>/i)) result.timeOfDay = "Nocturnal";
+        else if (notes.match(/<Diurnal>/i)) result.timeOfDay = "Diurnal";
+        else if (notes.match(/<Crepuscular>/i)) result.timeOfDay = "Crepuscular";
+
+        if (notes.match(/<GreenBlood>/i)) result.bloodType = "Green";
+        // <AzureBlood> is the spelling ReactiveEnemyBattler paints by; the
+        // database uses both and they name one colour.
+        else if (notes.match(/<BlueBlood>|<AzureBlood>/i)) result.bloodType = "Blue";
+        else if (notes.match(/<BlackBlood>/i)) result.bloodType = "Black";
+        else if (notes.match(/<NoBlood>/i)) result.bloodType = "None";
+        // i18n-ignore-end
+
+        const rarityMatch = notes.match(/<Rarity:\s*([^>]+)>/i);
+        if (rarityMatch) result.rarity = rarityMatch[1].trim();
+
+        const weightMatch = notes.match(/<Weight:\s*([^>]+)>/i);
+        if (weightMatch) result.weight = weightMatch[1].trim();
+
+        const speedMatch = notes.match(/<Speed:\s*(\d+)>/i);
+        if (speedMatch) result.speed = speedMatch[1];
+
+        const movementMatch = notes.match(/<Movement:\s*([^>]+)>/i);
+        if (movementMatch) result.movement = movementMatch[1].trim();
+
+        if (notes.match(/<Talk>/i)) result.talk = true;
+        if (notes.match(/<Climb>/i)) result.climb = true;
+        if (notes.match(/<Floating>/i)) result.floating = true;
+
+        // i18n-ignore-start: note-tag ids, keys into behaviorMap
+        if (notes.match(/<Predator>/i)) result.behavior = "Predator";
+        else if (notes.match(/<Hunter>/i)) result.behavior = "Hunter";
+        else if (notes.match(/<Prey>/i)) result.behavior = "Prey";
+        else if (notes.match(/<Neutral>/i)) result.behavior = "Neutral";
+        // i18n-ignore-end
+
+        return result;
+    }
+
 
     // =============================================================================
     // Shared bestiary service
@@ -1463,9 +1659,13 @@
         Scene_CDCollection.prototype.parseMonsterNotes.call(Scene_CDCollection.prototype, note, enemyId);
 
     // Every codex page is read as a book is read: by name, from A to Z, in the
-    // player's own language.
+    // player's own language. One collator for every page: it orders exactly
+    // as a bare localeCompare does, without setting one up per comparison.
+    let _nameCollator = null;
     const byName = function (list) {
-        return list.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+        if (!_nameCollator) _nameCollator = new Intl.Collator();
+        const compare = _nameCollator.compare;
+        return list.sort((a, b) => compare(String(a.name || ""), String(b.name || "")));
     };
 
     window.BestiaryData = {
@@ -1667,9 +1867,14 @@
             const detailX = 400;
 
             ctx.textAlign = 'left';
-            for (let i = 0; i < list.length; i++) {
+            // The list never scrolls, so a row whose top falls below the
+            // canvas is never seen: only the rows that land on it are drawn.
+            const rowStep = fontSize + 10;
+            const shown = Math.min(list.length,
+                Math.max(0, Math.ceil((window.AsciiMode.canvas.height + fontSize - listY) / rowStep) + 1));
+            for (let i = 0; i < shown; i++) {
                 const monster = list[i];
-                const y = listY + i * (fontSize + 10);
+                const y = listY + i * rowStep;
 
                 if (i === this._selectedCDIndex) {
                     ctx.fillStyle = '#FF0000';
@@ -1954,7 +2159,7 @@
         if (!window.HypernetOS || !window.HypernetOS.registerApp) return false;
         window.HypernetOS.registerApp({
             id: INCANTA_APP_ID,
-            name: T('Bestiary.incanta.appName'),
+            name: () => T('Bestiary.incanta.appName'),
             icon: 189,
             category: 'reference',
             launchFn: () => window.IncantaBestiary.launch(),

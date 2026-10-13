@@ -1,7 +1,7 @@
 {
   "drivingTag": "(Alla guida)",
   "tookWheel": "{name} prende il volante.",
-  "allTired": "{name} e esausto e nessuno a bordo e abbastanza riposato per dare il cambio.",
+  "allTired": "{name} è esausto. Nessuno è abbastanza riposato per dare il cambio.",
   "woke": {
     "crash": "L'urto sveglia di soprassalto chi dormiva dietro."
   },

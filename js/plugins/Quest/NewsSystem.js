@@ -45,12 +45,16 @@
     };
 
     // Get News Data
-    const { News, Translations, RealNews } = window.News || { News: {}, Translations: {}, RealNews: [] };
+    const { News, Translations } = window.News || { News: {}, Translations: {} };
 
-    // RealNews.json carries i18n keys ("RealNews.real_0.title"), not headlines:
-    // the copy lives in js/i18n/<lang>/plugins/RealNews.json, so an archive
-    // bulletin reads in the player's language. A bulletin added by hand with
-    // plain text in it is shown as written.
+    // The dated archive is one file a year, RealNews<YYYY>.json, carrying i18n
+    // keys ("RealNews2001.real_0.title"), not headlines: the copy lives in
+    // js/i18n/<lang>/plugins/RealNews<YYYY>.json, so an archive bulletin reads
+    // in the player's language. A bulletin added by hand with plain text in it
+    // is shown as written. The year in play is the only one read.
+    function realNewsOfYear(year) {
+        return window.NewsPress ? window.NewsPress.archive(year) : [];
+    }
     // What an archive bulletin is remembered by once it has been shown. It used
     // to be the English headline; the file now carries an id of its own, which
     // says the same thing in every language.
@@ -127,32 +131,54 @@
     }
 
     // --- Template token filling ---------------------------------------------
-    // Every {token} in a News.json template is picked from a bank stored on the
-    // same event, but the banks are named freely: {festival} comes from
-    // "festivals", {festival_type} from "festival_types", {celebrity} from
-    // "celebrities"... so the token is matched against the singular and plural
-    // spellings of each key instead of being listed by hand. Adding a bank to
-    // News.json then needs no code change, which is how {festival_type},
-    // {company_type}, {illness} and {art_movement} ended up printed raw.
-    function bankForToken(event, token, lang) {
+    // Every {token} in a procedural template is picked from a bank stored under
+    // the same event (News.procedural.<category>.<type>.banks), but the banks
+    // are named freely: {festival} comes from "festivals", {festival_type}
+    // from "festival_types", {celebrity} from "celebrities"... so the token is
+    // matched against the singular and plural spellings of each bank instead
+    // of being listed by hand. Adding a bank then needs no code change.
+    function bankForToken(base, token) {
         const candidates = [token, token + 's', token + 'es'];
         if (token.endsWith('y')) candidates.push(token.slice(0, -1) + 'ies');
         for (const key of candidates) {
-            const bank = event[key];
-            if (!bank || typeof bank !== 'object') continue;
-            const list = Array.isArray(bank[lang]) ? bank[lang] : bank.en;
-            if (Array.isArray(list) && list.length > 0) return list;
+            const path = base + '.banks.' + key;
+            if (!T.has(path)) continue;
+            const list = T.pool(path);
+            if (list.length > 0) return list;
         }
         return null;
     }
 
-    function fillTemplateTokens(text, event, lang) {
-        if (!text || text.indexOf('{') === -1) return text;
-        return text.replace(/{([a-z][a-z_]*)}/gi, (match, token) => {
-            const bank = bankForToken(event, token, lang);
-            if (!bank) return match;
-            return bank[Math.floor(Math.random() * bank.length)];
+    // The numbers a template may ask for, each in the range its name promises.
+    const NUMBER_TOKENS = {
+        amount: () => Math.floor(Math.random() * 451) + 50,
+        number: () => Math.floor(Math.random() * 100) + 1,
+        hundreds: () => (Math.floor(Math.random() * 9) + 1) * 100,
+        thousands: () => Math.floor(Math.random() * 9000) + 1000,
+        rank: () => '#' + (Math.floor(Math.random() * 10) + 1)
+    };
+
+    // `drawn` carries what was picked between the headline and the body, so
+    // the disaster in the headline is the disaster in the article.
+    function fillProceduralTokens(text, base, location, drawn) {
+        if (!text) return '';
+        let out = String(text);
+        if (location) {
+            out = applyNewsWhere(out, location).replace(/{location}/g, location);
+        }
+        out = out.replace(/{([a-z][a-z_]*)}/gi, (match, token) => {
+            if (drawn && drawn[token] != null) return drawn[token];
+            let value = null;
+            if (NUMBER_TOKENS[token]) value = NUMBER_TOKENS[token]();
+            else {
+                const bank = bankForToken(base, token);
+                if (bank) value = bank[Math.floor(Math.random() * bank.length)];
+            }
+            if (value == null) return match;
+            if (drawn) drawn[token] = value;
+            return value;
         });
+        return stripUnresolvedTokens(out);
     }
 
     // Nothing reaches the newspaper with an unresolved {token} in it: a template
@@ -167,6 +193,13 @@
     }
 
     window.NewsSystemUtils.stripUnresolvedTokens = stripUnresolvedTokens;
+
+    // The preposition in front of {location}, said the way the language says it
+    // ("a Parigi", "alla Torre Omega"): WorldNames.where owns the table.
+    function applyNewsWhere(text, location) {
+        const W = window.WorldNames;
+        return (W && typeof W.where === 'function') ? W.where(text, '{location}', location) : text;
+    }
 
     // European locations with Italian Translations
     // A randomised pool, so a language keeps its own list whole (see T.pool).
@@ -196,6 +229,210 @@
             window.NewsSystemUtils.LOCATIONS.en;
     };
 
+    // ==================================================================
+    // THE PRESS (window.NewsPress)
+    // ==================================================================
+    // Every article is printed by a paper (js/db/News/Outlets.json), and every
+    // paper answers to a hyperpower and writes in its voice. The dated archive
+    // is one file per year, RealNews<YYYY>.json, so a world in 2007 reads 2007
+    // and never touches the other eleven. A byline is a real person of this
+    // world: each paper is staffed from the residents, journalists first, and
+    // a writer who dies or leaves is replaced the next time the paper prints.
+    //
+    // Prose marks the words that matter as [brackets]. The newspaper reader
+    // (NewsSystemUI.js) turns them into codex links; everything else (the
+    // HypernetOS app, toasts, search) reads them through plain().
+    const BRACKET_PATTERN = /\[([^\[\]|<>\n]{1,40})\]/g;
+    const NewsPress = {
+        _outletIndex: null,
+
+        data() {
+            const file = window.News && window.News.Outlets;
+            return file && Array.isArray(file.outlets) ? file : { outlets: [], sections: [], journalistClassId: 46 };
+        },
+        outlets() { return this.data().outlets; },
+        outlet(id) {
+            if (!this._outletIndex) {
+                this._outletIndex = new Map(this.outlets().map(o => [o.id, o]));
+            }
+            return this._outletIndex.get(id) || null;
+        },
+        outletName(id) { return id ? T('News.outlets.' + id + '.name') : ''; },
+        outletMotto(id) { return id ? T('News.outlets.' + id + '.motto') : ''; },
+        outletPublisher(id) { return id ? T('News.outlets.' + id + '.publisher') : ''; },
+        sectionLabel(id) { return id ? T('News.sections.' + id) : ''; },
+        hyperpowerOf(id) { const o = this.outlet(id); return (o && o.hyperpower) || ''; },
+
+        // A paper of the given tone, or any paper. Seeded when a seed is given,
+        // so the same item always lands on the same desk. A local story (a
+        // town of this continent) is never filed by an overseas desk.
+        pickOutlet(tone, seed, local) {
+            const all = this.outlets().filter(o => !local || !o.overseas);
+            const pool = tone ? all.filter(o => o.tone === tone) : all;
+            const list = pool.length ? pool : all;
+            if (!list.length) return null;
+            const i = seed != null ? hashString(String(seed)) % list.length : Math.floor(Math.random() * list.length);
+            return list[i];
+        },
+
+        // --- The dated archive --------------------------------------------
+        archive(year) {
+            const rows = window.News && window.News['RealNews' + year];
+            return Array.isArray(rows) ? rows : [];
+        },
+        // The years the archive holds, read off the registered files.
+        years() {
+            const bucket = window.News || {};
+            return Object.keys(bucket).map(k => /^RealNews(\d{4})$/.exec(k)).filter(Boolean)
+                .map(m => Number(m[1])).sort((a, b) => a - b);
+        },
+        // The words of one archive row in the language being played.
+        articleText(row) {
+            return {
+                title: realNewsText(row.title),
+                deck: row.deck && T.has(row.deck) ? T(row.deck) : '',
+                body: realNewsText(row.desc)
+            };
+        },
+
+        // --- Brackets -------------------------------------------------------
+        plain(text) {
+            return String(text == null ? '' : text).replace(BRACKET_PATTERN, '$1');
+        },
+
+        // --- Staff and bylines ----------------------------------------------
+        _staffStore() {
+            if (typeof $gameSystem === 'undefined' || !$gameSystem) return null;
+            if (!$gameSystem._newsStaff) $gameSystem._newsStaff = {};
+            return $gameSystem._newsStaff;
+        },
+        // May this resident write for a paper: alive, here, grown up, a person.
+        _mayWrite(name) {
+            if (!name) return false;
+            const NS = window.NPCSystem;
+            if (NS && typeof NS.isNameGone === 'function' && NS.isNameGone(name)) return false;
+            const NC = window.NPCCreature;
+            if (NC && typeof NC.isNonSentientByName === 'function' && NC.isNonSentientByName(name)) return false;
+            const LS = window.NPCLifeSim;
+            if (LS && typeof LS.lifeStageOf === 'function') {
+                try { if (LS.lifeStageOf(name) !== 'adult') return false; } catch (_) { /* no record yet */ } // i18n-ignore: life stage id
+            }
+            if (typeof $gameParty !== 'undefined' && $gameParty && $gameParty.members &&
+                $gameParty.members().some(a => a && a.name && a.name() === name)) return false;
+            return true;
+        },
+        _candidates() {
+            const NS = window.NPCSystem;
+            const residents = NS && typeof NS.getWorldResidents === 'function' ? NS.getWorldResidents() : [];
+            const society = (typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._npcSociety) || {};
+            const journalist = this.data().journalistClassId || 46;
+            const names = residents.map(r => r.name).filter(n => this._mayWrite(n));
+            const writers = names.filter(n => society[n] && society[n].assignedClassId === journalist);
+            return { writers, others: names.filter(n => !writers.includes(n)) };
+        },
+        // A paper's newsroom, topped up from the world whenever somebody on it
+        // can no longer write. Journalists are hired before anybody else, and a
+        // person writes for one paper only.
+        staffOf(outletId) {
+            const store = this._staffStore();
+            const outlet = this.outlet(outletId);
+            if (!store || !outlet) return [];
+            const kept = (store[outletId] || []).filter(n => this._mayWrite(n));
+            const want = Math.max(1, outlet.staff || 2);
+            if (kept.length < want) {
+                const taken = new Set();
+                Object.values(store).forEach(list => (list || []).forEach(n => taken.add(n)));
+                const { writers, others } = this._candidates();
+                const seedOf = n => hashString(outletId + '|' + n);
+                const order = list => list.filter(n => !taken.has(n)).sort((a, b) => seedOf(a) - seedOf(b));
+                for (const name of order(writers).concat(order(others))) {
+                    if (kept.length >= want) break;
+                    kept.push(name);
+                    taken.add(name);
+                }
+            }
+            store[outletId] = kept;
+            return kept.slice();
+        },
+        // Who wrote this piece. The same article keeps its writer for as long
+        // as the writer can still be named; an empty newsroom signs as staff.
+        bylineFor(outletId, seed) {
+            const staff = this.staffOf(outletId);
+            if (!staff.length) return '';
+            return staff[hashString(String(seed || outletId)) % staff.length];
+        },
+        // The writer of an archive piece the reader opens straight from the
+        // files. Remembered the first time it is asked, so an old article
+        // keeps its byline after its writer has gone.
+        bylineOfRow(row) {
+            if (!row || !row.outlet) return '';
+            const store = this._staffStore();
+            if (!store) return '';
+            const signed = $gameSystem._newsBylines || ($gameSystem._newsBylines = {});
+            if (!signed[row.id]) {
+                const name = this.bylineFor(row.outlet, row.id);
+                if (!name) return '';
+                signed[row.id] = name;
+            }
+            return signed[row.id];
+        },
+        // The paper a person writes for, for the Empathize panel and the like.
+        employerOf(name) {
+            const store = this._staffStore() || {};
+            return Object.keys(store).find(id => (store[id] || []).includes(name)) || null;
+        },
+        // Fills in the paper, writer and section of a stored item, once.
+        ensureByline(news) {
+            if (!news) return news;
+            if (!news.outlet) {
+                const tone = news.isRealNews ? null : toneForCategory(news.category, news.type);
+                const outlet = this.pickOutlet(tone, (news.realId || news.text || '') + '|' + news.timestamp, !news.isRealNews);
+                news.outlet = outlet ? outlet.id : '';
+            }
+            // A byline once printed stays: a dead reporter's article is still
+            // theirs. Only an unsigned piece is given a writer.
+            if (!news.author && news.outlet) {
+                news.author = this.bylineFor(news.outlet, news.realId || news.text);
+            }
+            return news;
+        },
+        // The words of a stored item. An archive piece is re-read in the
+        // language being played; anything else is shown as it was written.
+        textOf(news) {
+            if (news && news.realId && news.realYear) {
+                const row = this.archive(news.realYear).find(r => r.id === news.realId);
+                if (row) return this.articleText(row);
+            }
+            return {
+                title: (news && news.text) || '',
+                deck: (news && news.deck) || '',
+                body: (news && news.fullText) || ''
+            };
+        }
+    };
+
+    // FNV-1a: small, stable, and the same in every run of the same world.
+    function hashString(str) {
+        let h = 0x811c9dc5;
+        for (let i = 0; i < str.length; i++) {
+            h ^= str.charCodeAt(i);
+            h = Math.imul(h, 0x01000193);
+        }
+        return h >>> 0;
+    }
+
+    // Which kind of paper picks up a procedural story: the market pages take
+    // the money, the tabloids the disasters and the uncanny, and so on.
+    function toneForCategory(category, type) {
+        const r = Math.random();
+        if (category === 'surreal') return r < 0.45 ? 'scandalous' : r < 0.75 ? 'skeptical' : 'playful';
+        if (category === 'negative') return r < 0.5 ? 'serious' : r < 0.8 ? 'scandalous' : 'skeptical';
+        if (type === 'economic') return r < 0.7 ? 'serious' : 'playful';
+        return r < 0.45 ? 'serious' : r < 0.75 ? 'playful' : r < 0.9 ? 'scandalous' : 'skeptical';
+    }
+
+    window.NewsPress = NewsPress;
+
     // News Manager Class
     class NewsManager {
         constructor() {
@@ -223,19 +460,13 @@
         }
 
         initialize() {
-            console.log('NewsManager: Initializing...');
-            console.log('NewsManager: RealNews data available:', RealNews ? RealNews.length : 0, 'items');
-
-            // First generate past real news to show historical context
+            // First the archive of the year so far, then the small items of
+            // the wire mixed through it.
             this.generatePastRealNews();
-
-            // Then generate procedural news mixed throughout the timeline
             this.generateInitialProceduralNews();
 
             this.lastDailyNewsCheck = getGameDateAsJSDate();
             this.startHourlyUpdates();
-
-            console.log('NewsManager: Initialization complete. Total news items:', this.newsHistory.length);
         }
 
         // Parse date from DD/MM/YYYY format
@@ -244,31 +475,24 @@
             return new Date(year, month - 1, day);
         }
 
-        // Parse date and create current year version
-        parseDateToCurrentYear(dateString) {
-            const [day, month, year] = dateString.split('/').map(num => parseInt(num, 10));
-            const currentYear = new Date().getFullYear();
-            return new Date(currentYear, month - 1, day);
+        // The archive of the year in play. Each year has its own file, so a
+        // date is matched in full: 2002 never reprints what 2001 said.
+        currentArchive() {
+            return realNewsOfYear(getGameDateAsJSDate().getFullYear());
         }
 
         // Check if a date matches today
         isDateToday(dateString) {
-            const [day, month] = dateString.split('/').map(num => parseInt(num, 10));
+            const [day, month, year] = dateString.split('/').map(num => parseInt(num, 10));
             const today = getGameDateAsJSDate();
-            return today.getDate() === day && (today.getMonth() + 1) === month;
+            return today.getDate() === day && (today.getMonth() + 1) === month && today.getFullYear() === year;
         }
 
         // Check if a date is from January 1st of current year to now
         isDateSinceJanuary1st(dateString) {
-            const [day, month, originalYear] = dateString.split('/').map(num => parseInt(num, 10));
+            const date = this.parseDateString(dateString);
             const now = getGameDateAsJSDate();
-            const currentYear = now.getFullYear();
-            const january1st = new Date(currentYear, 0, 1); // January 1st of current year
-
-            // Check current year date
-            const currentYearDate = new Date(currentYear, month - 1, day);
-
-            return currentYearDate >= january1st && currentYearDate <= now;
+            return date >= new Date(now.getFullYear(), 0, 1) && date <= now;
         }
 
         // Check if we need to process daily news
@@ -293,10 +517,8 @@
 
         // Check if we need to process timed news for today
         shouldProcessTimedNews() {
-            if (!RealNews || !Array.isArray(RealNews)) return [];
-
             const now = getGameDateAsJSDate();
-            const todaysNews = RealNews.filter(newsItem => {
+            const todaysNews = this.currentArchive().filter(newsItem => {
                 return this.isDateToday(newsItem.date) && !this.usedRealNewsIds.has(realNewsId(newsItem));
             });
 
@@ -315,28 +537,16 @@
         // Process daily hardcoded news
         processDailyNews() {
             if (this.isEmptyWorld()) return;
-            if (!RealNews || !Array.isArray(RealNews)) {
-                console.log('NewsManager: No RealNews data available for daily processing');
-                return;
-            }
 
-            console.log('NewsManager: Processing daily news...');
-
-            const todaysNews = RealNews.filter(newsItem => {
-                return this.isDateToday(newsItem.date) && !this.usedRealNewsIds.has(realNewsId(newsItem));
-            });
-
-            console.log('NewsManager: Found', todaysNews.length, 'news items for today');
-
-            // Sort today's news by time if available
-            todaysNews.sort((a, b) => {
-                const timeA = a.time || "08:00";
-                const timeB = b.time || "08:00";
-                return timeA.localeCompare(timeB);
+            // A timed piece waits for its hour (processTimedNews); the rest of
+            // the day's paper comes out in the morning.
+            const todaysNews = this.currentArchive().filter(newsItem => {
+                return this.isDateToday(newsItem.date) && !newsItem.time &&
+                    !this.usedRealNewsIds.has(realNewsId(newsItem));
             });
 
             todaysNews.forEach(newsItem => {
-                this.addRealNewsItem(newsItem, false); // false = not historical
+                this.addRealNewsItem(newsItem);
                 this.usedRealNewsIds.add(realNewsId(newsItem));
             });
 
@@ -345,23 +555,17 @@
 
         // Process timed news that should appear now
         processTimedNews() {
-            const timedNews = this.shouldProcessTimedNews();
-
-            if (timedNews.length > 0) {
-                console.log('NewsManager: Processing', timedNews.length, 'timed news items');
-
-                timedNews.forEach(newsItem => {
-                    this.addRealNewsItem(newsItem, false); // false = not historical, show notification
-                    this.usedRealNewsIds.add(realNewsId(newsItem));
-                });
-            }
+            this.shouldProcessTimedNews().forEach(newsItem => {
+                this.addRealNewsItem(newsItem);
+                this.usedRealNewsIds.add(realNewsId(newsItem));
+            });
         }
 
-        // Add a real news item
-        // Add a real news item
-        addRealNewsItem(newsItem) {
-            const title = realNewsText(newsItem.title);
-            const description = realNewsText(newsItem.desc);
+        // An archive row as the wire carries it. The words are kept for the
+        // places that read news.text directly, but the reader and the app
+        // re-read them through NewsPress.textOf, so a language change shows.
+        makeRealNews(newsItem, timestamp, isHistorical) {
+            const text = window.NewsPress.articleText(newsItem);
 
             // Priority order: explicit location key > city key > enhanced location detection
             let location;
@@ -374,30 +578,32 @@
             }
 
             const soulEffect = newsItem.soul || 0;
-            let priceEffect = 1;
-            let occupancyEffect = 1;
-
-            if (soulEffect > 0) {
-                priceEffect = 1 + (soulEffect * 0.02);
-                occupancyEffect = 1 + (soulEffect * 0.03);
-            } else if (soulEffect < 0) {
-                priceEffect = 1 + (soulEffect * 0.02);
-                occupancyEffect = 1 + (soulEffect * 0.03);
-            }
-
             const news = {
-                text: title,
-                fullText: description,
+                text: window.NewsPress.plain(text.title),
+                fullText: text.body,
+                deck: text.deck,
                 location: location,
                 category: 'real',
                 type: 'daily',
-                timestamp: getGameDateAsJSDate(),
-                priceEffect: priceEffect,
-                occupancyEffect: occupancyEffect,
+                section: newsItem.section || '',
+                outlet: newsItem.outlet || '',
+                realId: realNewsId(newsItem),
+                realYear: Number(String(newsItem.date || '').slice(6)) || getGameDateAsJSDate().getFullYear(),
+                timestamp: timestamp,
+                priceEffect: 1 + (soulEffect * 0.02),
+                occupancyEffect: 1 + (soulEffect * 0.03),
                 soulTendencyModifier: soulEffect,
                 isRealNews: true,
-                isHistorical: false
+                isHistorical: !!isHistorical,
+                scheduledTime: newsItem.time || null
             };
+            window.NewsPress.ensureByline(news);
+            return news;
+        }
+
+        // Add a real news item
+        addRealNewsItem(newsItem) {
+            const news = this.makeRealNews(newsItem, getGameDateAsJSDate(), false);
 
             this.newsHistory.unshift(news);
             if (this.newsHistory.length > 100) {
@@ -407,7 +613,7 @@
             this.applyNewsEffects(news, 168); // 1 week duration
 
             if (SceneManager._scene instanceof Scene_Map) {
-                this.showNewsNotification(title);
+                this.showNewsNotification(news.text);
             }
         }
 
@@ -474,26 +680,9 @@
                 const location = locations[Math.floor(Math.random() * locations.length)];
                 const eventCategory = this.selectEventCategory();
                 const eventType = this.selectEventType(eventCategory);
-                const event = News[eventCategory][eventType];
-
-                if (!event) {
-                    console.warn('NewsManager: Could not find event for category:', eventCategory, 'type:', eventType);
-                    continue;
-                }
-
-                let newsText = this.generateNewsText(event, location, eventType);
-
-                const news = {
-                    text: newsText,
-                    location: location,
-                    category: eventCategory,
-                    type: eventType,
-                    timestamp: timestamp,
-                    priceEffect: event.priceEffect,
-                    occupancyEffect: event.occupancyEffect,
-                    isRealNews: false,
-                    isHistorical: true
-                };
+                const event = News[eventCategory] && News[eventCategory][eventType];
+                if (!event) continue;
+                const news = this.makeProceduralNews(eventCategory, eventType, location, timestamp, true);
 
                 this.newsHistory.push(news);
 
@@ -512,95 +701,34 @@
 
         }
 
+        // The year so far, filed at once when a world starts or a year turns.
+        // Only this year's file is read: the archive of earlier years is the
+        // newspaper reader's to page through, not the wire's to replay.
         generatePastRealNews() {
-            if (!RealNews || !Array.isArray(RealNews)) {
-                console.log('NewsManager: No RealNews data available for past news generation');
-                return;
-            }
-
             const now = getGameDateAsJSDate();
-            const currentYear = now.getFullYear();
-            const january1st = new Date(currentYear, 0, 1); // January 1st of current year
-
-            let addedCount = 0;
-
-            // Create array of past news with proper timestamps
             const pastNewsItems = [];
 
-            RealNews.forEach(newsItem => {
-                // Parse the original date
-                const [day, month, originalYear] = newsItem.date.split('/').map(num => parseInt(num, 10));
-
-                // Create date for current year only
-                const currentYearDate = new Date(currentYear, month - 1, day);
-
-                // Check if current year date is since January 1st and not in the future
-                if (currentYearDate >= january1st && currentYearDate <= now) {
-                    // Create timestamp with proper time
-                    let timestamp;
-                    if (newsItem.time) {
-                        const [hours, minutes] = newsItem.time.split(':').map(num => parseInt(num, 10));
-                        timestamp = new Date(currentYearDate.getFullYear(), currentYearDate.getMonth(), currentYearDate.getDate(), hours, minutes, 0);
-                    } else {
-                        timestamp = new Date(currentYearDate.getFullYear(), currentYearDate.getMonth(), currentYearDate.getDate(), 8, 0, 0);
-                    }
-
-                    pastNewsItems.push({
-                        newsItem: newsItem,
-                        timestamp: timestamp
-                    });
+            this.currentArchive().forEach(newsItem => {
+                const date = this.parseDateString(newsItem.date);
+                let timestamp;
+                if (newsItem.time) {
+                    const [hours, minutes] = newsItem.time.split(':').map(num => parseInt(num, 10));
+                    timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes, 0);
+                } else {
+                    timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 8, 0, 0);
                 }
+                if (timestamp <= now) pastNewsItems.push({ newsItem, timestamp });
             });
 
-            // Sort by timestamp (chronological order)
             pastNewsItems.sort((a, b) => a.timestamp - b.timestamp);
 
-            // Add news items in chronological order
             pastNewsItems.forEach(({ newsItem, timestamp }) => {
-                const title = realNewsText(newsItem.title);
-                const description = realNewsText(newsItem.desc);
-
-                // Priority order: explicit location key > city key > enhanced location detection
-                let location;
-                if (newsItem.location && newsItem.location.trim() !== '') {
-                    location = newsItem.location.trim();
-                } else if (newsItem.city && newsItem.city.trim() !== '') {
-                    location = newsItem.city.trim();
-                } else {
-                    location = window.NewsSystemUtils.LocationMatcher.determineLocation(newsItem);
-                }
-
-                const soulEffect = newsItem.soul || 0;
-                let priceEffect = 1;
-                let occupancyEffect = 1;
-
-                if (soulEffect !== 0) {
-                    priceEffect = 1 + (soulEffect * 0.02);
-                    occupancyEffect = 1 + (soulEffect * 0.03);
-                }
-
-                const news = {
-                    text: title,
-                    fullText: description,
-                    location: location,
-                    category: 'real',
-                    type: 'daily',
-                    timestamp: timestamp,
-                    priceEffect: priceEffect,
-                    occupancyEffect: occupancyEffect,
-                    soulTendencyModifier: soulEffect,
-                    isRealNews: true,
-                    isHistorical: true,
-                    scheduledTime: newsItem.time || null
-                };
-
+                const news = this.makeRealNews(newsItem, timestamp, true);
                 this.newsHistory.push(news);
                 this.usedRealNewsIds.add(realNewsId(newsItem));
-                addedCount++;
 
                 // Apply effects if still within duration (1 week from event date)
-                const hoursElapsed = (now - timestamp) / 3600000;
-                const hoursRemaining = 168 - hoursElapsed; // 1 week duration
+                const hoursRemaining = 168 - (now - timestamp) / 3600000;
                 if (hoursRemaining > 0) {
                     this.applyNewsEffects(news, hoursRemaining);
                 }
@@ -681,20 +809,9 @@
             const location = locations[Math.floor(Math.random() * locations.length)];
             const eventCategory = this.selectEventCategory();
             const eventType = this.selectEventType(eventCategory);
-            const event = News[eventCategory][eventType];
-
-            let newsText = this.generateNewsText(event, location, eventType);
-
-            const news = {
-                text: newsText,
-                location: location,
-                category: eventCategory,
-                type: eventType,
-                timestamp: getGameDateAsJSDate(),
-                priceEffect: event.priceEffect,
-                occupancyEffect: event.occupancyEffect,
-                isRealNews: false
-            };
+            const event = News[eventCategory] && News[eventCategory][eventType];
+            if (!event) return null;
+            const news = this.makeProceduralNews(eventCategory, eventType, location, getGameDateAsJSDate(), false);
 
             this.newsHistory.unshift(news);
             if (this.newsHistory.length > 50) {
@@ -717,47 +834,36 @@
             return types[Math.floor(Math.random() * types.length)];
         }
 
-        generateNewsText(event, location, eventType) {
-            const lang = T('NewsSystem.ui.en');
-            const templates = event.templates[lang];
-            let text = templates[Math.floor(Math.random() * templates.length)];
-
-            text = text.replace(/{location}/g, location);
-
-            // Word banks carried by the event itself ({festival}, {disaster},
-            // {festival_type}, {illness}, ...), resolved by name.
-            text = fillTemplateTokens(text, event, lang);
-
-            // Computed tokens, which have no bank to draw from.
-            if (text.includes('{amount}')) {
-                const amount = Math.floor(Math.random() * 450) + 50;
-                text = text.replace(/{amount}/g, amount);
-            }
-
-            if (text.includes('{number}')) {
-                if (text.includes(T('NewsSystem.ui.layoffs'))) {
-                    const number = (Math.floor(Math.random() * 9) + 1) * 100;
-                    text = text.replace(/{number}/, number);
-                } else if (text.includes(T('NewsSystem.ui.ducks'))) {
-                    const number = Math.floor(Math.random() * 9000) + 1000;
-                    text = text.replace(/{number}/, number);
-                } else {
-                    const number = Math.floor(Math.random() * 100) + 1;
-                    text = text.replace(/{number}/g, number);
-                }
-            }
-
-            if (text.includes('{rank}')) {
-                const rank = Math.floor(Math.random() * 10) + 1;
-                text = text.replace(/{rank}/g, '#' + rank);
-            }
-
-            const orphans = text.match(/{[a-z][a-z_]*}/gi);
-            if (orphans) {
-                console.warn('NewsManager: no word bank on', eventType, 'for', orphans.join(', '));
-            }
-
-            return stripUnresolvedTokens(text);
+        // A small item of the wire: a paper of a tone that suits the story
+        // (NewsPress), a headline and a body in that tone, both drawn from the
+        // event's banks in js/i18n/<lang>/plugins/News.json under
+        // procedural.<category>.<type>. A {token} drawn once is the same word
+        // in the headline and in the body.
+        makeProceduralNews(category, type, location, timestamp, isHistorical) {
+            const event = News[category] && News[category][type];
+            if (!event) return null;
+            const tone = toneForCategory(category, type);
+            const outlet = window.NewsPress.pickOutlet(tone, null, true);
+            const base = 'News.procedural.' + category + '.' + type;
+            const pick = list => (list && list.length ? list[Math.floor(Math.random() * list.length)] : '');
+            const headline = pick(T.pool(base + '.headlines.' + tone)) || pick(T.pool(base + '.headlines.serious'));
+            const body = pick(T.pool(base + '.bodies.' + tone)) || pick(T.pool(base + '.bodies.serious'));
+            const drawn = {};
+            const news = {
+                text: window.NewsPress.plain(fillProceduralTokens(headline, base, location, drawn)),
+                fullText: fillProceduralTokens(body, base, location, drawn),
+                location: location,
+                category: category,
+                type: type,
+                outlet: outlet ? outlet.id : '',
+                timestamp: timestamp,
+                priceEffect: event.priceEffect,
+                occupancyEffect: event.occupancyEffect,
+                isRealNews: false,
+                isHistorical: !!isHistorical
+            };
+            window.NewsPress.ensureByline(news);
+            return news;
         }
 
         // ==================================================================
@@ -767,7 +873,10 @@
         // filed on the wire like anything else so the paper, the ticker and
         // the market effects all treat it the same.
         publishStory(story) {
+            const outlet = story.outlet ? NewsPress.outlet(story.outlet) : (story.tone ? NewsPress.pickOutlet(story.tone, null, true) : null);
             const news = {
+                outlet: outlet ? outlet.id : '',
+                section: story.section || '',
                 text: story.text,
                 fullText: story.fullText || '',
                 location: story.location || '',
@@ -779,6 +888,7 @@
                 soulTendencyModifier: story.soul || 0,
                 isRealNews: false
             };
+            NewsPress.ensureByline(news);
             this.newsHistory.unshift(news);
             this.newsHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             if (this.newsHistory.length > 80) this.newsHistory.length = 80;
@@ -813,7 +923,7 @@
                 });
                 this.publishStory({
                     text, fullText: body, location,
-                    category: 'negative', type: 'crime',
+                    category: 'negative', type: 'crime', tone: 'scandalous', section: 'crime',
                     priceEffect: 1, occupancyEffect: 0.97, soul: -1,
                     duration: 72
                 });
@@ -892,16 +1002,13 @@
                 return effect.remainingHours > 0;
             });
 
-            if (RealNews && Array.isArray(RealNews)) {
-                const validNewsIds = new Set();
-                RealNews.forEach(newsItem => {
-                    if (this.isDateSinceJanuary1st(newsItem.date)) {
-                        validNewsIds.add(realNewsId(newsItem));
-                    }
-                });
-
-                this.usedRealNewsIds = new Set([...this.usedRealNewsIds].filter(id => validNewsIds.has(id)));
-            }
+            const validNewsIds = new Set();
+            this.currentArchive().forEach(newsItem => {
+                if (this.isDateSinceJanuary1st(newsItem.date)) {
+                    validNewsIds.add(realNewsId(newsItem));
+                }
+            });
+            this.usedRealNewsIds = new Set([...this.usedRealNewsIds].filter(id => validNewsIds.has(id)));
         }
 
         save() {
@@ -995,25 +1102,9 @@
                 const location = locations[Math.floor(Math.random() * locations.length)];
                 const eventCategory = this.selectEventCategory();
                 const eventType = this.selectEventType(eventCategory);
-                const event = News[eventCategory][eventType];
-
-                if (!event) {
-                    continue;
-                }
-
-                let newsText = this.generateNewsText(event, location, eventType);
-
-                const news = {
-                    text: newsText,
-                    location: location,
-                    category: eventCategory,
-                    type: eventType,
-                    timestamp: timestamp,
-                    priceEffect: event.priceEffect,
-                    occupancyEffect: event.occupancyEffect,
-                    isRealNews: false,
-                    isHistorical: true
-                };
+                const event = News[eventCategory] && News[eventCategory][eventType];
+                if (!event) continue;
+                const news = this.makeProceduralNews(eventCategory, eventType, location, timestamp, true);
 
                 this.newsHistory.push(news);
 
@@ -1337,11 +1428,11 @@
                                 <span class="news-headline-cat">${categoryLabel}</span>
                             </div>
                             <div class="news-headline-text">
-                                ${news.text}
+                                ${window.NPCShared.escapeHtml(NewsPress.plain(NewsPress.textOf(news).title))}
                             </div>
                             ${news.location ? `
                             <div class="news-headline-loc">
-                                ,  ${news.location.toUpperCase()}
+                                ,  ${window.NPCShared.escapeHtml(news.location.toUpperCase())}
                             </div>
                             ` : ''}
                         </div>
@@ -1357,7 +1448,7 @@
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
-                }).replace(/\b20\d{2}\b/g, '2001');
+                });
 
                 let effectsBox = "";
                 const hasEffects = selectedNews.priceEffect !== 1 || selectedNews.occupancyEffect !== 1 || selectedNews.soulTendencyModifier !== 0;
@@ -1380,22 +1471,30 @@
                     `;
                 }
 
-                const detailedText = selectedNews.fullText || selectedNews.text;
+                // The app keeps its own plain look: the paper and the writer
+                // ride on the meta line it already had, and the reader's
+                // [highlights] are printed as ordinary words.
+                NewsPress.ensureByline(selectedNews);
+                const words = NewsPress.textOf(selectedNews);
+                const detailedText = NewsPress.plain(words.body || words.title);
+                const byline = [NewsPress.outletName(selectedNews.outlet), selectedNews.author]
+                    .filter(Boolean).join(', ');
 
                 articleHTML = `
                     <div class="news-article">
                         <div class="news-article-title">
-                            ${selectedNews.text}
+                            ${window.NPCShared.escapeHtml(NewsPress.plain(words.title))}
                         </div>
 
                         <div class="news-article-meta">
                             <span>${fullDateText.toUpperCase()}</span>
-                            ${selectedNews.location ? `<span>${selectedNews.location.toUpperCase()}</span>` : ''}
+                            ${selectedNews.location ? `<span>${window.NPCShared.escapeHtml(selectedNews.location.toUpperCase())}</span>` : ''}
+                            ${byline ? `<span>${window.NPCShared.escapeHtml(byline.toUpperCase())}</span>` : ''}
                         </div>
 
                         <div class="news-article-body">
-                            ${selectedNews.location ? `<span class="news-article-place">[${selectedNews.location.toUpperCase()}]</span>` : ''}
-                            ${detailedText}
+                            ${selectedNews.location ? `<span class="news-article-place">[${window.NPCShared.escapeHtml(selectedNews.location.toUpperCase())}]</span>` : ''}
+                            ${window.NPCShared.escapeHtml(detailedText)}
                         </div>
 
                         ${effectsBox}
@@ -2132,8 +2231,10 @@
         // have to remember which half the headline put first.
         matchesSearch(news) {
             if (!this._searchQuery) return true;
+            const words = NewsPress.textOf(news);
             const hay = [
-                news.text, news.fullText, news.location,
+                NewsPress.plain(words.title), NewsPress.plain(words.body), news.location,
+                NewsPress.outletName(news.outlet), news.author,
                 news.isRealNews ? T('NewsSystem.ui.global') : T('NewsSystem.ui.' + (
                     news.category === 'positive' ? 'bullish' :
                     news.category === 'negative' ? 'bearish' :
@@ -2219,7 +2320,7 @@
                 }
 
                 // Only show headline, not full description
-                let headlineText = news.text;
+                let headlineText = NewsPress.plain(NewsPress.textOf(news).title);
                 const maxChars = 50; // Increased since we're not showing description
                 if (headlineText.length > maxChars) {
                     headlineText = headlineText.substring(0, maxChars) + "...";
@@ -2296,7 +2397,7 @@
 
             // Draw timestamp
             const newsDate = new Date(newsItem.timestamp);
-            const dateString = newsDate.toLocaleDateString().replace(newsDate.getFullYear(), '2001');
+            const dateString = newsDate.toLocaleDateString();
             const dateText = dateString + ' ' + (newsItem.scheduledTime || newsDate.toLocaleTimeString());
 
             if (y >= -this.lineHeight() && y < this.contentsHeight()) {
@@ -2333,7 +2434,8 @@
                 this.resetTextColor();
             }
 
-            const contentText = newsItem.fullText || newsItem.text;
+            const words = NewsPress.textOf(newsItem);
+            const contentText = NewsPress.plain(words.body || words.title);
             const wrappedText = this.wordWrapText(contentText);
             const lines = wrappedText.split('\n');
 
@@ -3078,7 +3180,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: 'app-news-history',
-            name: 'News',
+            name: () => T('NewsSystem.ui.appName'),
             icon: 189,
             launchFn: function() {
                 ensureNewsManager();

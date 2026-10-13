@@ -1007,7 +1007,7 @@ Scene_Army.prototype.refreshUIDOM = function () {
 
     const leaderText = troop.hasLeader ? `
         <div class="army-07">
-             ${T('ArmyManager.ledByCommander', { name: troop.leaderName })}
+             ${T('ArmyManager.ledByCommander', { name: window.NPCShared.escapeHtml(troop.leaderName) })}
         </div>
     ` : "";
 
@@ -1727,7 +1727,7 @@ Scene_Squads.prototype.refreshUIDOM = function () {
       let leaderName = T('ArmyManager.noOfficer');
       if (sq.leaderId) {
         const actor = $gameActors.actor(sq.leaderId);
-        if (actor) leaderName = T('ArmyManager.leaderNamed', { name: actor.name() });
+        if (actor) leaderName = T('ArmyManager.leaderNamed', { name: window.NPCShared.escapeHtml(actor.name()) });
       }
 
       squadsHTML += `

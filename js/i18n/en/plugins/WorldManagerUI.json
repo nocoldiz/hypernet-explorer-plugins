@@ -74,11 +74,11 @@
     "December"
   ],
   "confirmDelete": "Delete world \"{name}\" and all of its history, NPCs and savegames? This cannot be undone.",
-  "enemyFloor": "Every nation's enemy level bracket has risen by {level} levels. Belgium and the UK stay at levels 1 to 15.",
-  "enemyFloorOpen": "Every nation's enemy level bracket has risen by {level} levels, and off Earth anything up to level {ceiling} roams. Belgium and the UK stay at levels 1 to 15.",
-  "enemyFloorCollapse": "Every nation's enemy level bracket has risen by {level} levels, and off Earth nothing below level {floor} is left. Belgium and the UK stay at levels 1 to 15.",
-  "storyTutorialDisabled": "Story mode is written for the year 2001. Beginning in {year} disables the tutorial: the story opens straight on its own landing, with none of the scripted introduction.",
-  "earthLost": "There is no Earth. Nibiru struck it on 21 December 2012 and the world map went with it. The Omega Tower stands in its orbit, and anything that would take you out onto the surface takes you there instead.",
+  "enemyFloor": "Enemy levels +{level} in every nation. Belgium and the UK stay at 1 to 15.",
+  "enemyFloorOpen": "Enemy levels +{level} in every nation. Off Earth, enemies up to level {ceiling}. Belgium and the UK stay at 1 to 15.",
+  "enemyFloorCollapse": "Enemy levels +{level} in every nation. Off Earth, no enemies below level {floor}. Belgium and the UK stay at 1 to 15.",
+  "storyTutorialDisabled": "Story mode starts in 2001. Starting in {year} skips the tutorial and intro.",
+  "earthLost": "Nibiru destroyed Earth on 21 December 2012. There is no world map: going outside takes you to the Omega Tower.",
   "startingLevel": "Starting level",
   "lowerLevel": "Lower level",
   "raiseLevel": "Raise level",
@@ -95,15 +95,15 @@
     "death": "Death world"
   },
   "populationNotes": {
-    "normal": "History as it happened. The world is populated as written.",
-    "chaos": "Every encounter is drawn from the whole bestiary, every NPC is a random stranger, every shop is stocked and priced at random, and a level up teaches a random skill. What each thing is never changes, only which one you meet and what it costs.",
-    "goblin": "Everyone is a goblin. Only goblin faces, busts and archetypes exist, every character you build is one, and goblins are the commonest creature on the map.",
-    "monster": "No humans, elves or goblins appear, in crowds, in the wardrobe or in the fauna. The world is populated from every other archetype.",
-    "empty": "Nobody is left. No shopkeepers, news, plagues, law or work; history stops on 1 January 2000 and property is worth nothing.",
-    "zombie": "Nine people in ten are replaced by an undead creature standing where they would have been.",
-    "death": "Nobody and nothing is left. Everything an empty world already lacks is gone, and no roaming creatures remain anywhere: no monsters, no beasts, nothing in dungeons or on any map."
+    "normal": "History as it happened.",
+    "chaos": "Random encounters, NPCs, shop stock and prices. Level ups teach random skills.",
+    "goblin": "Everyone is a goblin, your characters too. Goblins are the most common creature.",
+    "monster": "No humans, elves or goblins anywhere. Every other archetype appears.",
+    "empty": "Nobody is left: no shopkeepers, news, plagues, law or work. History stops on 1 January 2000 and property is worthless.",
+    "zombie": "Nine in ten people are replaced by undead.",
+    "death": "An empty world with no creatures at all: no monsters, beasts or dungeon foes."
   },
-  "populationLocked": "Chosen once, at creation: a world cannot be repopulated later.",
+  "populationLocked": "Can't be changed after creation.",
   "magicalLevel": "Magic",
   "previousMagic": "Previous magic level",
   "nextMagic": "Next magic level",
@@ -114,13 +114,13 @@
   },
   "magicalNotes": {
     "normal": "",
-    "severed": "Magic has been stripped from the world. Spells, enchanted items, and magical creatures no longer appear, and the MP bar is removed. The party retains only what they are given at creation.",
-    "unbound": "Magic runs wild across the world. Weapons are enchanted, illnesses are curses, and creatures mutate from raw ley energy. Shops and loot contain no ordinary gear."
+    "severed": "No spells, enchanted items or magical creatures. No MP bar. The party keeps only what it starts with.",
+    "unbound": "Weapons are enchanted, illnesses are curses and creatures mutate. No ordinary gear in shops or loot."
   },
-  "magicalLocked": "Chosen once at creation and independent of the timeline. Any combination of the two can be made.",
+  "magicalLocked": "Can't be changed after creation. Works with any timeline.",
   "regenerate": "REGENERATE",
   "regenerateWorld": "Regenerate World",
-  "confirmRegenerate": "Reset world \"{name}\" to the default world shipped with the game? Its history, NPCs and savegames are lost. This cannot be undone.",
+  "confirmRegenerate": "Reset world \"{name}\" to the default? Its history, NPCs and savegames will be lost. This cannot be undone.",
   "regeneratingWorld": "Restoring the default world...",
   "worldRegenerated": "The default world has been restored.",
   "rewardNormal": "Normal",
@@ -135,5 +135,34 @@
     "forbidden": "Restrict forbidden skills at level {level}"
   },
   "restrictOn": "On",
-  "restrictOff": "Off"
+  "restrictOff": "Off",
+  "bench": {
+    "tab": "Inactive",
+    "title": "Inactive party members",
+    "none": "Nobody is waiting on this world's bench.",
+    "companion": "Companion",
+    "meta": "{role}, level {level}",
+    "metaDated": "{role}, level {level}, benched {date}",
+    "moveTo": "Move {name} to which world?",
+    "noOtherWorld": "There is no other world to send them to.",
+    "confirmTitle": "Move to another world",
+    "confirmMove": "Send {name} to the bench of \"{world}\"? They leave this world for good.",
+    "move": "MOVE",
+    "moved": "{name} now waits in \"{world}\".",
+    "moveFailed": "The move failed."
+  },
+  "export": {
+    "tab": "Export",
+    "title": "Savegame parties",
+    "reading": "Reading savegames...",
+    "none": "No savegame in this world holds a party.",
+    "slot": "Savegame {slot}",
+    "wholeParty": "EXPORT WHOLE PARTY",
+    "asQr": "EXPORT AS QR",
+    "qrTitle": "QR card: {name}",
+    "written": "Written to {file}",
+    "notWritten": "The card could not be written to disk.",
+    "failed": "The QR card could not be made.",
+    "close": "Close"
+  }
 }

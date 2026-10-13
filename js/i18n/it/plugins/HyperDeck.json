@@ -54,8 +54,8 @@
     "heading": "NECESSARIO"
   },
   "rail": {
-    "heading": "PEZZI TRASPORTATI",
-    "empty": "Non stai trasportando componenti.",
+    "heading": "I TUOI PEZZI",
+    "empty": "Nessun componente.",
     "count": "x{n}"
   },
   "hint": {
@@ -88,21 +88,21 @@
     "ethereal": "Sincronia Rete Eterea... OK",
     "loading": "Caricamento Ambiente di Gioco... ",
     "ready": "✓ Sistema Pronto - Avvio di Archways XP...",
-    "quantumShared": "Quantum Buffer    : {size} CONDIVISI"
+    "quantumShared": "Buffer Quantistico : {size} CONDIVISI"
   },
   "post": {
     "failHeading": "ERRORE DI AVVIO",
     "failLine": "nessun componente: {kind}",
     "failFooter": "Monta i pezzi mancanti e riprova.",
     "overdrawHeading": "GUASTO DI ALIMENTAZIONE",
-    "overdrawLine": "la cella non regge {n} W"
+    "overdrawLine": "la cella non fornisce {n} W"
   },
   "tool": {
     "auto": "MONTA",
     "case": "TELAIO",
     "finish": "GUSCIO",
     "bios": "BIOS",
-    "face": "META INFERIORE",
+    "face": "METÀ INFERIORE",
     "clear": "SVUOTA",
     "chip": "CHIP",
     "boot": "AVVIA",
@@ -113,18 +113,18 @@
     "handheld": "Pad da palmare",
     "phone": "Tastierino telefonico"
   },
-  "caseWarning": "Cambiare telaio svuota la scheda. Ogni pezzo torna nella borsa.",
+  "caseWarning": "Cambiare telaio rimette tutti i pezzi nello zaino.",
   "fault": {
-    "missing": "Nessun componente: {kind}. La macchina non parte senza.",
-    "power": "Alla cella mancano {n} W rispetto a quanto assorbono i pezzi montati.",
-    "heat": "Nulla raffredda una scheda da {n} W. Aspettati che rallenti.",
-    "uplink": "Nessun collegamento montato. L Hypernet non rispondera.",
-    "memory": "Solo {n} MB di memoria. Archways XP arranchera.",
-    "integrated": "Nessun adattatore grafico. Il processore pilota da se il pannello, con {n} MB presi in prestito dalla memoria principale."
+    "missing": "Nessun componente: {kind}. La macchina non parte.",
+    "power": "Alla cella mancano {n} W.",
+    "heat": "Nessun raffreddamento su una scheda da {n} W. Rallenterà.",
+    "uplink": "Nessun collegamento montato. L'Hypernet non risponderà.",
+    "memory": "Solo {n} MB di memoria. Archways XP arrancherà.",
+    "integrated": "Nessuna scheda grafica. Usa {n} MB di memoria condivisa."
   },
   "chip": {
     "heading": "LABORATORIO CHIP",
-    "hint": "Il tasto sinistro disegna, il destro cancella, il centrale sposta, la rotella zooma. Scegli due volte una casella per scorrerne le impostazioni.",
+    "hint": "Clic sinistro disegna, clic destro cancella, tasto centrale sposta, rotella zooma. Riscegli una casella per cambiarne l'impostazione.",
     "tile": {
       "wire": "Filo",
       "source": "Sorgente",
@@ -162,24 +162,24 @@
     "run": "AVVIA",
     "pause": "PAUSA",
     "step": "PASSO",
-    "speed": "VELOCITA x{n}",
+    "speed": "VELOCITÀ x{n}",
     "wipe": "AZZERA",
     "fabricate": "INCIDI DIE",
     "done": "INDIETRO",
     "gates": "Logica",
     "tiles": "Caselle",
-    "rating": "Stimato",
+    "rating": "Nominale",
     "cost": "Rottami",
     "pins": "PIN",
     "scrap": "{n} su {held}",
     "dieName": "Die Inciso in Casa MK{serial}",
-    "dieDesc": "Un die logico ricavato dai rottami. {gates} porte, stimato a {mhz} MHz.",
+    "dieDesc": "Un die logico ricavato dai rottami. {gates} porte, frequenza nominale {mhz} MHz.",
     "made": "{name} inciso, {n} rottami spesi.",
     "needScrap": "Acciaio recuperato insufficiente: ne servono {n}.",
     "fail": {
-      "noGates": "Non c'e nulla da incidere. Disegna prima della logica.",
+      "noGates": "Non c'è nulla da incidere. Disegna prima della logica.",
       "noSlot": "Nessun die vergine libero. Usane o vendine uno vecchio.",
-      "noLab": "Il banco non e pronto."
+      "noLab": "Il banco non è pronto."
     },
     "gateGroup": "PORTE",
     "preset": {
@@ -203,14 +203,14 @@
     },
     "bus": "Bus",
     "instr": "Istr",
-    "presetHeading": "SCHEMI PRONTI",
-    "presetHint": "Scegli un preset e viene disegnato dove stai guardando, come normali caselle. Spostalo, collegalo a qualcosa di piu grande, o incidilo com'e.",
-    "placing": "{name} in mano. Clicca per posarlo, tasto destro o Esc per rimetterlo giu.",
+    "presetHeading": "PRESET",
+    "presetHint": "Posa il preset come caselle normali dove stai guardando. Modificalo o incidilo così com'è.",
+    "placing": "{name} selezionato. Clicca per posarlo, clic destro o Esc per annullare.",
     "app": {
       "name": "Editor di circuiti",
       "dies": "DIE INCISI",
       "noDies": "Niente inciso per ora.",
-      "fitted": "sul deck",
+      "fitted": "sull'hyperdeck",
       "inBag": "nello zaino",
       "gone": "consumato"
     }
@@ -219,9 +219,9 @@
     "heading": "CONFIGURAZIONE FIRMWARE HYPERDECK",
     "tabMain": "PRINCIPALE",
     "tabHealth": "STATO",
-    "noFaults": "Nessun guasto rilevato. Ogni pezzo montato ha risposto.",
-    "willBoot": "Questa macchina superera il POST.",
-    "willNotBoot": "Questa macchina non superera il POST.",
+    "noFaults": "Nessun guasto.",
+    "willBoot": "Questa macchina supererà il POST.",
+    "willNotBoot": "Questa macchina non supererà il POST.",
     "boot": "ACCENDI",
     "exit": "ESCI"
   }

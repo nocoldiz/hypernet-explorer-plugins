@@ -1,7 +1,7 @@
 {
   "title": "DIARY",
   "opening": "{names} OPENED DIS DIARY AT {place}.",
-  "empty": "NOTHIN' WRITTEN HERE YET.",
+  "empty": "NUTTIN' WRITTEN HERE YET.",
   "date": {
     "heading": "{day} {month} {year}",
     "continued": "{day} {month} {year}, CONTINUED"
@@ -21,11 +21,11 @@
     "dec": "DECEMBER"
   },
   "cat": {
-    "all": "EVERYTHIN'",
+    "all": "EVERYTINK",
     "journey": "JOURNEY",
     "rest": "REST",
     "combat": "FIGHTIN'",
-    "party": "COMPANY",
+    "party": "PARTY",
     "people": "PEOPLE",
     "health": "HEALTH",
     "wealth": "BELONGINGS",
@@ -33,7 +33,7 @@
     "work": "WORK",
     "knowledge": "LEARNIN'",
     "leisure": "DIVERSIONS",
-    "written": "OUR HAND",
+    "written": "OUR NOTES",
     "other": "OTHER"
   },
   "foot": {
@@ -59,7 +59,7 @@
   },
   "worlds": {
     "tab": "DIARIES",
-    "none": "NO PARTY HAB KEPT A DIARY IN DIS WORLD YET!",
+    "none": "NO DIARIES IN DIS WORLD YET!",
     "entry": "{names}",
     "meta": "{count} LINES, LAST SEEN AT {place}",
     "unknownParty": "AN UNNAMED PARTY",
@@ -293,6 +293,7 @@
     "slots": "DA SLOT MACHINE",
     "bowling": "BOWLIN'",
     "pool": "POOL",
+    "basketball": "BASKETBALL",
     "lockpick": "A LOCK",
     "bitstack": "BITSTACK",
     "scratchCard": "A SCRATCH CARD",
@@ -309,7 +310,8 @@
     "hyperTamer": "HYPER TAMER",
     "boosters": "BOOSTER PACKS",
     "cardDuel": "A CARD DUEL",
-    "dream": "A DREAM"
+    "dream": "A DREAM",
+    "pizza": "DA PIZZA TABLE"
   },
   "romance": {
     "flirt": "A LIL' FLIRTIN'",
@@ -320,7 +322,8 @@
     "holdHands": "HELD HANDS",
     "askOut": "AN EVENIN' OUT",
     "confess": "A CONFESSION",
-    "kiss": "A KISS"
+    "kiss": "A KISS",
+    "wink": "A PLAYFUL WINK"
   },
   "vehicle": {
     "camper": "DA CAMPER",
@@ -353,8 +356,8 @@
     "button": "WRITE",
     "title": "WRITE IN DA DIARY",
     "placeholder": "WHAT IZ WORTH REMEMBERIN'?",
-    "save": "WRITE IT",
-    "cancel": "NEVER MIND"
+    "save": "STASH",
+    "cancel": "FORGET IT"
   },
   "onu": {
     "for": "IN FAVOUR",

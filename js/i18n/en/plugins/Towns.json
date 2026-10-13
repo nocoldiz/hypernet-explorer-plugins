@@ -4,15 +4,15 @@
     "nameLabel": "Name of the town",
     "namePlaceholder": "Name it…",
     "button": "Found the town",
-    "requirement": "Houses standing here: {have} of {need}",
+    "requirement": "Houses here: {have} of {need}",
     "here": "This square: {place}",
     "reason": {
-      "notHere": "A town is founded on open ground, not from inside a building.",
-      "claimed": "{place} already stands on this square.",
-      "exists": "A town of yours already stands on this square.",
-      "houses": "Three houses have to stand here before anyone will call it a town.",
+      "notHere": "Must be outdoors, not inside a building.",
+      "claimed": "{place} is already on this square.",
+      "exists": "You already have a town here.",
+      "houses": "Needs 3 houses on this square.",
       "noName": "The town needs a name.",
-      "duplicate": "You have already named a town that."
+      "duplicate": "You already have a town with that name."
     },
     "success": "{name} is founded.",
     "founded": "{name}, founded here."
@@ -47,6 +47,6 @@
     "colCategory": "Trade",
     "colBalance": "Balance",
     "colStage": "Stage",
-    "manageShop": "Open the shop book"
+    "manageShop": "Manage shop"
   }
 }

@@ -6,6 +6,33 @@
   "objectsCatalogued": "oggetti catalogati",
   "searchIndex": "Cerca nell'indice...",
   "uncatalogued": "Non catalogato",
+  "group": {
+    "Medical": "Medicina",
+    "Combat": "Combattimento",
+    "Tools": "Strumenti",
+    "Lifestyle": "Stile di vita",
+    "Arctic": "Artico",
+    "Artisan": "Artigianato",
+    "Books": "Libri",
+    "Collectibles": "Collezionabili",
+    "Counterfeits": "Contraffazioni",
+    "Espionage": "Spionaggio",
+    "Farming": "Agricoltura",
+    "Food": "Cibo",
+    "Homeopathy": "Omeopatia",
+    "Wildlife": "Fauna selvatica",
+    "Magic": "Magia",
+    "Misc": "Varie",
+    "Monsters": "Mostri",
+    "Plants": "Piante",
+    "Survival": "Sopravvivenza",
+    "Trash": "Spazzatura",
+    "Crafting": "Fabbricazione",
+    "Alchemistry": "Alchimica",
+    "Pharmacy": "Farmacia",
+    "Diseases": "Malattie",
+    "Wild Food": "Cibo selvatico"
+  },
   "itemNumbered": "Oggetto #{id}",
   "nutrition": {
     "calories": "Calorie",
@@ -33,9 +60,9 @@
     "10": "Chi lo usa",
     "11": "Un alleato (in qualsiasi stato)",
     "12": "Tutti gli alleati (in qualsiasi stato)",
-    "13": "Tutto il gruppo"
+    "13": "Tutto il Party"
   },
-  "noMatch": "Nessun oggetto dell'indice corrisponde alla ricerca.",
+  "noMatch": "Nessun risultato.",
   "shownOf": "{shown} oggetti mostrati su {total}",
   "onFile": "{total} oggetti in archivio",
   "selectAnObject": "Scegli un oggetto dall'indice.",
@@ -63,8 +90,8 @@
   "randomize": "Rigenera la descrizione",
   "restoreFiled": "Ripristina il testo d'archivio",
   "filedRestored": "Lettura d'archivio ripristinata.",
-  "previewOnly": "Solo anteprima, lettura {reading}. Non è stato scritto nulla nel registro.",
-  "onlyOneReading": "Questa dichiarazione ha una sola lettura in archivio.",
+  "previewOnly": "Anteprima della lettura {reading}. Non salvata.",
+  "onlyOneReading": "Una sola lettura in archivio.",
   "alternativeGenerated": "Lettura alternativa generata. Non archiviata.",
   "sedates": "Seda",
   "allergens": "Allergeni",
@@ -76,5 +103,5 @@
   "notListed": "Non in vendita su Stockbusters.",
   "ordered": "Ordine inoltrato a Stockbusters.",
   "addedToCart": "Aggiunto al carrello di Stockbusters.",
-  "modelHint": "Clicca il modello per vederlo a schermo intero."
+  "modelHint": "Clicca il modello per lo schermo intero."
 }

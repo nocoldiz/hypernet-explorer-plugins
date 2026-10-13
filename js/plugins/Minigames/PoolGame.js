@@ -1357,6 +1357,9 @@
             // The pixel font arrives asynchronously; repaint what was drawn once.
             if (window.PSXHud) {
                 window.PSXHud.onFontReady(() => {
+                    // The font can land after the player has left: the panels are
+                    // gone by then and a repaint would throw from the timer.
+                    if (SceneManager._scene !== this) return;
                     if (!this._scoreboard) return;
                     this.refreshScoreboard();
                     this._status.refresh();
@@ -1960,7 +1963,7 @@
             }
             if (this._viewSprite) {
                 if (this._viewSprite.parent) this._viewSprite.parent.removeChild(this._viewSprite);
-                this._viewSprite.destroy();
+                this._viewSprite.destroy({ texture: true, baseTexture: true });
                 this._viewSprite = null;
             }
             if (this._view) {

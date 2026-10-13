@@ -113,6 +113,27 @@
         }
     }
 
+    // A way in the player asked for (a drive, a free walk, free play) that
+    // came back null: no WebGL on this machine, or the build threw. build()
+    // has already taken the wreck down; what is left is to say so, once,
+    // rather than leave the player standing on the map wondering whether the
+    // key did anything, and to drop the press that asked so nothing behind
+    // it acts on the same key. The title's silent background drive never
+    // comes through here: it has nobody to tell.
+    function reportUnavailable() {
+        try {
+            if (typeof Input !== 'undefined' && Input.clear) Input.clear();
+            if (typeof TouchInput !== 'undefined' && TouchInput.clear) TouchInput.clear();
+        } catch (e) { /* nothing was held */ }
+        const toast = window.ParchmentToast;
+        if (toast && typeof toast.show === 'function') {
+            try {
+                toast.show(T('CamperDrive.worldUnavailable'),
+                    { severity: 'warning', key: 'voxel-world-unavailable' });
+            } catch (e) { console.error('[VoxelWorld] unavailable toast', e); }
+        }
+    }
+
     // =========================================================================
     // VoxelWorldSystem, static entry point
     // =========================================================================
@@ -134,6 +155,8 @@
                 fuelCost,
                 vehicle ? { vehicle } : undefined
             );
+            if (!this._scene) reportUnavailable();
+            return this._scene;
         },
         // Launch a free-play session that is NOT tied to fast travel or the
         // world map: the Liminal World of the Minigames menu. onExit() runs when
@@ -165,8 +188,9 @@
                     startTile: o.startTile || null
                 });
             // build() hands back null when the world could not be raised; the
-            // caller is told so rather than crashing on the way in.
-            if (!this._scene) return null;
+            // caller is told so rather than crashing on the way in, and so
+            // is the player.
+            if (!this._scene) { reportUnavailable(); return null; }
             this._scene._onStandaloneExit = (typeof onExit === 'function') ? onExit : null;
             return this._scene;
         },
@@ -261,6 +285,7 @@
             if (this._scene) this.stop();
             this._scene = build(999999, T('CamperDrive.freeWalk'), 0, 0,
                 { footOnly: true });
+            if (!this._scene) reportUnavailable();
             return this._scene;
         },
         // True while the running scene is a free walk (no camper in it).
@@ -272,8 +297,15 @@
         // road data has not been loaded yet.
         startTitleDrive() {
             if (!roadDataReady()) return null;
+            // The title screen asks again twice a second for as long as it is
+            // handed null (it is waiting for the road data). A world that
+            // could not be raised at all (no WebGL, a module that throws)
+            // would be raised and torn down again every half second for as
+            // long as the title stayed up. One failure is the answer.
+            if (this._titleBuildFailed) return null;
             if (this._scene) this.stop();
             this._scene = build(999999, T('CamperDrive.autopilot'), 100, 0, { titleMode: true });
+            if (!this._scene) this._titleBuildFailed = true;
             return this._scene;
         },
         // True once the world's road tags are available to plan a route from.
@@ -386,6 +418,14 @@
             if (sc._viewMode === 'foot' && sc._contactPoint) {
                 const at = sc._contactPoint();
                 var tx = clamp(at.x), ty = clamp(at.z);
+                // A walker can swim out to sea, and the 2D world map has no
+                // swimming in it: a save taken out there would load the party
+                // onto an ocean square they can never walk off. They are put
+                // down on the nearest shore, the way the walk's own exit does.
+                if (sc._nearestLandTile) {
+                    const land = sc._nearestLandTile(tx, ty);
+                    if (land) { tx = land.x; ty = land.y; }
+                }
                 $gameVariables.setValue(43, tx);
                 $gameVariables.setValue(44, ty);
             } else {

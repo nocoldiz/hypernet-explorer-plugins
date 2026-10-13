@@ -1019,10 +1019,13 @@
     const CHIP_SCRAP_ITEM = 863;
     const CHIP_TILES_PER_SCRAP = 96;
     const CHIP_MAX_PINS = 8;
-    // Where the fabricated dies live. Above the database on purpose: the items
-    // are built at run time from what the player drew, never shipped in it.
-    const CHIP_DIE_BASE = 1900;
-    const CHIP_DIE_SLOTS = 32;
+    // Where the fabricated dies live: the chipDie band of window.RuntimeItemIds
+    // (ItemSystemUtils.js), past every row data/ ships, because the items are
+    // built at run time from what the player drew.
+    const CHIP_DIE_BAND = (window.RuntimeItemIds && window.RuntimeItemIds.band('chipDie'))   // i18n-ignore: band id
+        || { base: 0, size: 0 };
+    const CHIP_DIE_BASE = CHIP_DIE_BAND.base;
+    const CHIP_DIE_SLOTS = CHIP_DIE_BAND.size;
 
     const inGrid = (x, y) => x >= 0 && y >= 0 && x < CHIP_GRID && y < CHIP_GRID;
     const cellKey = (x, y) => y * CHIP_GRID + x;
@@ -2792,19 +2795,19 @@
     }
 
     // Writes one die into $dataItems. Run again on every load, because the
-    // database is read back off disk and knows nothing about these.
+    // database is read back off disk and knows nothing about these. Goes in
+    // through RuntimeItemIds.place, which never writes over a row data/ ships.
     function stampDie(id, die) {
-        if (!$dataItems) return;
-        // Filled rather than left as holes: $dataItems[0] is null in every
-        // project, so everything that reads the database already copes with a
-        // null entry, where a hole makes `for (const item of $dataItems)` yield
-        // undefined in whichever plugin happens to do that.
-        while ($dataItems.length < id) $dataItems.push(null);
-        $dataItems[id] = {
+        if (!$dataItems || !window.RuntimeItemIds) return false;
+        const placed = window.RuntimeItemIds.place($dataItems, {
             id: id,
-            name: die.name,
+            // Named in the current language each time the die is stamped (on
+            // every save load too), not frozen in the one it was etched in.
+            name: die.serial ? T('HyperDeck.chip.dieName', { serial: die.serial }) : die.name,
             iconIndex: 83,
-            description: die.description || '',
+            description: die.gates
+                ? T('HyperDeck.chip.dieDesc', { gates: die.gates, mhz: die.mhz })
+                : (die.description || ''),
             itypeId: 1,
             price: die.price || 0,
             consumable: false,
@@ -2821,9 +2824,10 @@
             note: '<category:Component>\n<Uncraftable> <Weight: 18>\n<Component: cpu>\n'
                 + '<Shape: ' + die.shape + '>\n'
                 + '<Specs: mhz ' + die.mhz + ', watt ' + die.watt + '>\n<Nature: Mundane>'
-        };
+        });
         delete _parsed[id];
         _catalogue = null;
+        return placed;
     }
 
     function restampDies() {
@@ -2858,8 +2862,8 @@
             gates: spec.gates,
             price: 300 * cost
         };
+        if (!stampDie(id, die)) return { error: 'noSlot' };
         chipDies()[id] = die;
-        stampDie(id, die);
         $gameParty.loseItem(scrap, cost);
         $gameParty.gainItem($dataItems[id], 1);
         return { die: die, id: id, cost: cost };
@@ -3869,7 +3873,7 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
         let bench = null;
         window.HypernetOS.registerApp({
             id: CHIP_APP_ID,
-            name: T('HyperDeck.chip.app.name'),
+            name: () => T('HyperDeck.chip.app.name'),
             icon: 84,
             desktopShortcut: false,
             category: 'accessories',   // i18n-ignore  category id
@@ -4022,6 +4026,60 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
     const PITCH_MIN = 0.06;
     const PITCH_MAX = 1.45;
 
+    // One renderer for every deck view of the session, the way the battle
+    // keeps one: opening the deck, changing its case or shell and coming back
+    // from the desktop used to build a fresh WebGL context each time, which
+    // recompiled every PSX program and re-uploaded every texture. A lost
+    // context (driver reset) is dropped and replaced.
+    let _deckRenderer = null;
+    function acquireDeckRenderer() {
+        if (_deckRenderer) {
+            let lost = false;
+            try {
+                const gl = _deckRenderer.getContext();
+                lost = !gl || (gl.isContextLost && gl.isContextLost());
+            } catch (e) { lost = true; }
+            if (!lost) return _deckRenderer;
+            try { _deckRenderer.dispose(); } catch (e) { /* already gone */ }
+            _deckRenderer = null;
+        }
+        _deckRenderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+        _deckRenderer.setPixelRatio(1);
+        _deckRenderer.setClearColor(0x000000, 0);
+        return _deckRenderer;
+    }
+
+    // A cheap fingerprint of everything a frame of the deck shows: the camera,
+    // every object's transform and visibility, its material's colour and its
+    // textures' versions. Two equal fingerprints draw the same picture, so the
+    // idle deck stops re-rendering and re-uploading an unchanged frame.
+    const mixHash = (h, v) => (Math.imul(h, 31) + Math.round(v * 4096)) | 0;
+    function sceneFingerprint(scene, camera) {
+        let h = 17;
+        const e = camera.matrixWorld.elements;
+        for (let i = 0; i < 16; i++) h = mixHash(h, e[i]);
+        scene.traverse(obj => {
+            h = mixHash(h, obj.visible ? 1 : 2);
+            if (!obj.visible) return;
+            const p = obj.position, q = obj.quaternion, s = obj.scale;
+            h = mixHash(h, p.x); h = mixHash(h, p.y); h = mixHash(h, p.z);
+            h = mixHash(h, q.x); h = mixHash(h, q.y); h = mixHash(h, q.z); h = mixHash(h, q.w);
+            h = mixHash(h, s.x); h = mixHash(h, s.y); h = mixHash(h, s.z);
+            h = mixHash(h, obj.children.length);
+            const mats = obj.material ? (Array.isArray(obj.material) ? obj.material : [obj.material]) : null;
+            if (!mats) return;
+            for (const m of mats) {
+                if (!m) continue;
+                if (m.color) h = mixHash(h, m.color.getHex());
+                if (m.emissive) h = mixHash(h, m.emissive.getHex());
+                h = mixHash(h, m.opacity);
+                if (m.map) h = mixHash(h, m.map.version);
+                if (m.emissiveMap) h = mixHash(h, m.emissiveMap.version);
+            }
+        });
+        return h;
+    }
+
     class DeckView {
         constructor(width, height) {
             this._w = width;
@@ -4044,10 +4102,8 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
         _initThree() {
             this.scene = new THREE.Scene();
             this.camera = new THREE.PerspectiveCamera(48, this._w / this._h, 0.05, 60);
-            this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
-            this.renderer.setPixelRatio(1);
+            this.renderer = acquireDeckRenderer();
             this.renderer.setSize(this._w, this._h);
-            this.renderer.setClearColor(0x000000, 0);
 
             // Lit like a thing on a bench: a broad soft fill so the moulding
             // glows the way clear plastic does, a warm key to pick out the
@@ -4446,12 +4502,19 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
             });
         }
 
+        // Draws the frame only when it differs from the last one drawn.
+        // Answers whether it drew, so the caller knows to re-upload the canvas.
         render() {
+            this.camera.updateMatrixWorld();
+            const print = sceneFingerprint(this.scene, this.camera);
+            if (print === this._lastPrint) return false;
+            this._lastPrint = print;
             if (window.PSXShader) {
                 softPSX(() => window.PSXShader.render(this.renderer, this.scene, this.camera));
             } else {
                 this.renderer.render(this.scene, this.camera);
             }
+            return true;
         }
 
         dispose() {
@@ -4463,10 +4526,8 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
             if (window.PSXShader && window.PSXShader.disposeContext) {
                 window.PSXShader.disposeContext(this.renderer);
             }
-            this.renderer.dispose();
-            // Without this the browser force-loses the OLDEST live context,
-            // which is the game's own PIXI canvas.
-            if (this.renderer.forceContextLoss) this.renderer.forceContextLoss();
+            // The renderer itself is the session's (acquireDeckRenderer): it
+            // stays alive for the next view, so it is never disposed here.
             this.renderer = null;
         }
     }
@@ -5156,8 +5217,8 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
             this._view.setFaceSlide(this._mode === MODE.EDIT ? 1 : 0, dt);
             this._view.update(dt);
             this.updateCursorVisual();
-            this._view.render();
-            if (this._viewSprite && this._viewSprite.texture) this._viewSprite.texture.update();
+            const drew = this._view.render();
+            if (drew && this._viewSprite && this._viewSprite.texture) this._viewSprite.texture.update();
         }
 
         updateLid(dt) {

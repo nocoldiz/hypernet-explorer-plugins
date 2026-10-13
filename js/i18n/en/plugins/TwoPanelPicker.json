@@ -1,10 +1,10 @@
 {
   "moveRight": "Move over",
   "moveLeft": "Move back",
-  "moveAll": "All of them",
+  "moveAll": "Move all",
   "empty": "Nothing here",
   "ofMax": "{count} of {max}",
-  "full": "{panel} holds no more.",
-  "refused": "That will not go there.",
-  "hint": "Drag a row across, or use the button on it."
+  "full": "{panel} is full.",
+  "refused": "Can't go there.",
+  "hint": "Drag a row or use its button."
 }

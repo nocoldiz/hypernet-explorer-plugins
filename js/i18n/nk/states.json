@@ -1,0 +1,611 @@
+{
+  "1": {
+    "name": "DEAD",
+    "message1": "%1 HAB FALLEN!",
+    "message2": "%1 IZ SLAIN!",
+    "message3": "",
+    "message4": "%1 REVIVES!"
+  },
+  "2": {
+    "name": "GUARD",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "3": {
+    "name": "IMMORTAL",
+    "message1": "%1 IZ IMMORTAL!",
+    "message2": "%1 IZ IMMORTAL!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER IMMORTAL!"
+  },
+  "4": {
+    "name": "POISON",
+    "message1": "%1 IZ POISONED!",
+    "message2": "%1 IZ POISONED!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER POISONED!"
+  },
+  "5": {
+    "name": "BLIND",
+    "message1": "%1 IZ BLINDED!",
+    "message2": "%1 IZ BLINDED!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER BLINDED!"
+  },
+  "6": {
+    "name": "SILENCE",
+    "message1": "%1 IZ SILENCED!",
+    "message2": "%1 IZ SILENCED!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER SILENCED!"
+  },
+  "7": {
+    "name": "RAGE",
+    "message1": "%1 IZ ENRAGED!",
+    "message2": "%1 IZ ENRAGED!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER ENRAGED!"
+  },
+  "8": {
+    "name": "CONFUSION",
+    "message1": "%1 IZ CONFUSED!",
+    "message2": "%1 IZ CONFUSED!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER CONFUSED!"
+  },
+  "9": {
+    "name": "CHARM",
+    "message1": "%1 IZ CHARMED!",
+    "message2": "%1 IZ CHARMED!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER CHARMED!"
+  },
+  "10": {
+    "name": "SLEEP",
+    "message1": "%1 FALLS ASLEEP!",
+    "message2": "%1 FALLS ASLEEP!",
+    "message3": "%1 IZ SLEEPIN'.",
+    "message4": "%1 WAKES UP!"
+  },
+  "11": {
+    "name": "FREEZE",
+    "message1": "%1 IZ FROZEN SOLID AN' CAN’T MOVE!",
+    "message2": "%1 IZ FROZEN SOLID!",
+    "message3": "%1 IZ FROZEN AN' CAN’T MOVE!",
+    "message4": "%1 IZ NO LONGER FROZEN!"
+  },
+  "12": {
+    "name": "PARALYSIS",
+    "message1": "%1 IZ PARALYZED AN' CAN’T MOVE!",
+    "message2": "%1 IZ PARALYZED!",
+    "message3": "%1 IZ PARALYZED AN' CAN’T MOVE!",
+    "message4": "%1 IZ NO LONGER PARALYZED!"
+  },
+  "13": {
+    "name": "STUN",
+    "message1": "%1 LOST BALANCE!",
+    "message2": "%1 LOST BALANCE!",
+    "message3": "%1 IZ STILL OFF-BALANCE...",
+    "message4": "%1 HAB REGAINED BALANCE!"
+  },
+  "14": {
+    "name": "LOCKED ON",
+    "message1": "%1 IZ LOCKED ON!",
+    "message2": "%1 IZ LOCKED ON!",
+    "message3": "%1 IZ LOCKED ON!",
+    "message4": "%1'S FOCUS SUBSIDES!"
+  },
+  "15": {
+    "name": "HP REGENERATION",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "16": {
+    "name": "MP REGENERATION",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "17": {
+    "name": "AP REGENERATION",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "18": {
+    "name": "MAGIC REFLECTION",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "19": {
+    "name": "PROTECT",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "20": {
+    "message1": "%1 DRAWS DA BAD 'UN'S EYE!",
+    "message2": "%1 IZ PROVOKED!",
+    "message3": "",
+    "message4": "",
+    "name": "PROVOKE"
+  },
+  "21": {
+    "name": "HIDE",
+    "message1": "%1 BECAME HARDER TA HIT!",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "22": {
+    "name": "COUNTER ATTACK",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "23": {
+    "name": "STATUS AILMENT BLOCK",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "24": {
+    "name": "INSPIRED",
+    "message1": "%1 IZ NOW INSPIRED!",
+    "message2": "",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER INSPIRED!"
+  },
+  "25": {
+    "name": "HOT",
+    "message1": "%1 IZ NOW ENVELOPED IN AN AURA OF FIRE!",
+    "message2": "%1 IZ NOW ENVELOPED IN AN AURA OF FIRE!",
+    "message3": "",
+    "message4": ""
+  },
+  "26": {
+    "name": "COLD",
+    "message1": "%1 IZ NOW ENVELOPED IN A FREEZIN' AURA!",
+    "message2": "%1 IZ NOW ENVELOPED IN A FREEZIN' AURA!",
+    "message3": "",
+    "message4": ""
+  },
+  "27": {
+    "name": "STATIC",
+    "message1": "%1 IZ NOW ENVELOPED IN A STATIC AURA!",
+    "message2": "%1 IZ NOW ENVELOPED IN A STATIC AURA!",
+    "message3": "",
+    "message4": "%1 IZ NOW GROUNDED."
+  },
+  "28": {
+    "name": "WET",
+    "message1": "%1 IZ NOW WET.",
+    "message2": "%1 IZ NOW WET.",
+    "message3": "",
+    "message4": "%1 IZ DRY."
+  },
+  "29": {
+    "name": "HALF ENCOUNTERS",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "30": {
+    "name": "DOUBLE MONEY/ITEMS",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "31": {
+    "name": "BERSERK",
+    "message1": "%1 GOES BERSERK!",
+    "message2": "%1 GOES BERSERK!",
+    "message3": "%1 IZ CONSUMED BY BLOODLUST!",
+    "message4": "%1'S BLOODLUST SUBSIDES!"
+  },
+  "32": {
+    "name": "DIVINE SHIELD",
+    "message1": "%1 IZ BLESSED WIT DIVINE PROTECTION!",
+    "message2": "%1 IZ BLESSED WIT DIVINE PROTECTION!",
+    "message3": "",
+    "message4": "DA DIVINE PROTECTION AROUND %1 FADES AWAY!"
+  },
+  "33": {
+    "name": "DEATH MARK",
+    "message1": "%1 IZ MARKED FOR DEATH!",
+    "message2": "%1 IZ MARKED FOR DEATH!",
+    "message3": "DEATH'S MARK LINGERS ON %1...",
+    "message4": "DA MARK OF DEATH ON %1 DISAPPEARS!"
+  },
+  "34": {
+    "name": "PERFECT FOCUS",
+    "message1": "%1 IZ IN A STATE OF PERFECT FOCUS!",
+    "message2": "%1 IZ IN A STATE OF PERFECT FOCUS!",
+    "message3": "%1 MAINTAINS PERFECT FOCUS...",
+    "message4": "%1'S FOCUS RETURNS TA NORMAL!"
+  },
+  "35": {
+    "name": "SHADOW VEIL",
+    "message1": "%1 IZ ENGULFED IN SHADOW!",
+    "message2": "%1 IZ ENGULFED IN SHADOW!",
+    "message3": "SHADOWS CONTINUE TA SWIRL AROUND %1...",
+    "message4": "DA SHADOWS SURROUNDIN' %1 DISSIPATE!"
+  },
+  "36": {
+    "name": "ARCANE SURGE",
+    "message1": "%1 IZ BURNIN' WIT ARCANE POWER!",
+    "message2": "%1 IZ BURNIN' WIT ARCANE POWER!",
+    "message3": "ARCANE ENERGY SURGES THROUGH %1...",
+    "message4": "DA ARCANE ENERGY WITHIN %1 FADES AWAY!"
+  },
+  "37": {
+    "name": "ETHEREAL",
+    "message1": "%1 IZ NOW ETHEREAL!",
+    "message2": "%1 IZ NOW ETHEREAL!",
+    "message3": "%1 REMAINS IN ETHEREAL FORM...",
+    "message4": "%1 RETURNS TA NORMAL FORM."
+  },
+  "38": {
+    "name": "UNBALANCED",
+    "message1": "%1 IZ UNBALANCED!",
+    "message2": "%1 IZ UNBALANCED!",
+    "message3": "%1 STRUGGLES TA MAINTAIN BALANCE...",
+    "message4": "%1 REGAINS PROPER BALANCE."
+  },
+  "39": {
+    "message1": "%1 IZ BOUND INTO DA LIFE LINK!",
+    "message2": "%1 IZ BOUND INTO DA LIFE LINK!",
+    "message3": "%1 MAINTAINS DA LIFE LINK...",
+    "message4": "DA LIFE LINK WIT %1 IZ SEVERED!",
+    "name": "LIFE LINK"
+  },
+  "40": {
+    "name": "VULNERABILITY",
+    "message1": "%1 IZ CURSED WIT VULNERABILITY!",
+    "message2": "%1 IZ CURSED WIT VULNERABILITY!",
+    "message3": "DA CURSE OF VULNERABILITY PERSISTS ON %1...",
+    "message4": "DA VULNERABILITY CURSE ON %1 IZ LIFTED!"
+  },
+  "41": {
+    "name": "NAUSEA",
+    "message1": "%1 IZ NAUSEATED!",
+    "message2": "%1 IZ NAUSEATED!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER NAUSEATED!"
+  },
+  "42": {
+    "name": "DRUNK",
+    "message1": "%1 IZ DRUNK!",
+    "message2": "%1 IZ DRUNK!",
+    "message3": "",
+    "message4": "%1 HAB SOBERED UP!"
+  },
+  "43": {
+    "name": "BURNED",
+    "message1": "%1 IZ BURNED!",
+    "message2": "%1 IZ BURNED!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER BURNED!"
+  },
+  "44": {
+    "name": "INFECTED",
+    "message1": "%1 IZ INFECTED!",
+    "message2": "%1 IZ INFECTED!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER INFECTED!"
+  },
+  "45": {
+    "name": "FLOATIN'",
+    "message1": "%1 IZ FLOATIN'!",
+    "message2": "%1 IZ FLOATIN'!",
+    "message3": "",
+    "message4": ""
+  },
+  "46": {
+    "name": "INVISIBLE",
+    "message1": "%1 IZ INVISIBLE!",
+    "message2": "%1 IZ INVISIBLE!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER INVISIBLE!"
+  },
+  "47": {
+    "message1": "%1 IZ NOW COVERED IN OIL",
+    "message2": "%1 IZ NOW COVERED IN OIL.",
+    "message3": "",
+    "message4": "DA OIL ON %1 IZ GONE.",
+    "name": "OILY"
+  },
+  "48": {
+    "name": "BLEEDIN'",
+    "message1": "%1 IZ BLEEDIN'!",
+    "message2": "%1 IZ BLEEDIN'!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER BLEEDIN'!"
+  },
+  "49": {
+    "name": "DODGE",
+    "message1": "",
+    "message2": "",
+    "message3": "",
+    "message4": ""
+  },
+  "50": {
+    "name": "WITHDRAWAL",
+    "message1": "%1 IZ IN WITHDRAWAL!",
+    "message2": "%1 IZ IN WITHDRAWAL!",
+    "message3": "",
+    "message4": "%1 IZ NO LONGER IN WITHDRAWAL!"
+  },
+  "51": {
+    "name": "GRAPPLED",
+    "message1": "%1 IZ CAUGHT IN A HOLD!",
+    "message2": "%1 IZ CAUGHT IN A HOLD!",
+    "message3": "%1 STRAINS AGAINST DA HOLD...",
+    "message4": "%1 BREAKS FREE OF DA HOLD!"
+  },
+  "52": {
+    "name": "PINNED",
+    "message1": "%1 IZ PINNED DOWN!",
+    "message2": "%1 IZ PINNED DOWN!",
+    "message3": "%1 NO CAN GET UP...",
+    "message4": "%1 SCRAMBLES BACK TA DEY FEET!"
+  },
+  "53": {
+    "name": "GUARD BROKEN",
+    "message1": "%1'S GUARD IZ BROKEN!",
+    "message2": "%1'S GUARD IZ BROKEN!",
+    "message3": "%1 FIGHTS WIT NO GUARD AT ALL...",
+    "message4": "%1 RECOVERS DEY GUARD."
+  },
+  "54": {
+    "name": "WINDED",
+    "message1": "%1 IZ WINDED!",
+    "message2": "%1 IZ WINDED!",
+    "message3": "%1 GASPS FOR BREATH...",
+    "message4": "%1 CATCHES DEY BREATH."
+  },
+  "55": {
+    "name": "COMBO",
+    "message1": "%1 SEES DA OPENIN'!",
+    "message2": "%1 SEES DA OPENIN'!",
+    "message3": "%1 WAITS FOR DA FOLLOW-UP...",
+    "message4": "%1 LOSES DA OPENIN'."
+  },
+  "56": {
+    "name": "VITAL EXPOSED",
+    "message1": "%1'S VITALS IZ EXPOSED!",
+    "message2": "%1'S VITALS IZ EXPOSED!",
+    "message3": "%1 NO CAN COVER DA OPENIN'...",
+    "message4": "%1 CLOSES DEY GUARD OVER IT!"
+  },
+  "57": {
+    "name": "ROOTED",
+    "message1": "%1 PLANTS DEY STANCE!",
+    "message2": "%1 PLANTS DEY STANCE!",
+    "message3": "%1 HOLDS DA GROUND...",
+    "message4": "%1 LIFTS OUT OF DA STANCE."
+  },
+  "58": {
+    "name": "FLOW",
+    "message1": "%1 SLIPS INTO FLOW!",
+    "message2": "%1 SLIPS INTO FLOW!",
+    "message3": "%1 MOVES WIT DA ATTACK...",
+    "message4": "%1 DROPS OUT OF FLOW."
+  },
+  "59": {
+    "name": "CHI BURN",
+    "message1": "%1 HAB BURNED DEY CHI!",
+    "message2": "%1 HAB BURNED DEY CHI!",
+    "message3": "%1 ACHES FROM DA EFFORT...",
+    "message4": "%1'S CHI SETTLES."
+  },
+  "60": {
+    "name": "CONCUSSED",
+    "message1": "%1 IZ CONCUSSED!",
+    "message2": "%1 IZ CONCUSSED!",
+    "message3": "%1'S HEAD IZ STILL RINGIN'...",
+    "message4": "%1'S HEAD CLEARS."
+  },
+  "61": {
+    "name": "ALLERGIC REACTION",
+    "message1": "%1 BREAKS OUT IN HIVES!",
+    "message2": "%1 BREAKS OUT IN HIVES!",
+    "message3": "",
+    "message4": "%1'S REACTION SUBSIDES."
+  },
+  "62": {
+    "name": "ANAPHYLAXIS",
+    "message1": "%1'S THROAT IZ CLOSIN'!",
+    "message2": "%1'S THROAT IZ CLOSIN'!",
+    "message3": "",
+    "message4": "%1 CAN BREATHE AGAIN."
+  },
+  "63": {
+    "name": "HAY FEVER",
+    "message1": "%1 STARTS SNEEZIN'!",
+    "message2": "%1 STARTS SNEEZIN'!",
+    "message3": "",
+    "message4": "%1 STOPS SNEEZIN'."
+  },
+  "64": {
+    "message1": "%1 FALLS INTO DA BLADE DRILL!",
+    "message2": "%1 FALLS INTO DA BLADE DRILL!",
+    "message3": "",
+    "message4": "%1 LOSES DA RHYTHM OF DA BLADE!",
+    "name": "BLADE DRILL"
+  },
+  "65": {
+    "message1": "%1 FALLS INTO DA GUN DRILL!",
+    "message2": "%1 FALLS INTO DA GUN DRILL!",
+    "message3": "",
+    "message4": "%1 LOSES DA RHYTHM OF DA DRILL!",
+    "name": "GUN DRILL"
+  },
+  "66": {
+    "message1": "%1 IZ DRILLED!",
+    "message2": "%1 IZ DRILLED!",
+    "message3": "",
+    "message4": "%1 FORGETS DA DRILL.",
+    "name": "DRILLED"
+  },
+  "67": {
+    "message1": "%1 IZ CAUGHT IN A LOOP!",
+    "message2": "%1 IZ CAUGHT IN A LOOP!",
+    "message3": "",
+    "message4": "%1 BREAKS OUT OF DA LOOP.",
+    "name": "LOOPED"
+  },
+  "68": {
+    "message1": "%1'S LAST MOVE IZ SEALED AWAY!",
+    "message2": "%1'S LAST MOVE IZ SEALED AWAY!",
+    "message3": "",
+    "message4": "%1 REMEMBERS HOW TA MOVE AGAIN!",
+    "name": "MIND SEALED"
+  },
+  "69": {
+    "message1": "%1 RAISES A PSYCHIC REBOUND!",
+    "message2": "%1 RAISES A PSYCHIC REBOUND!",
+    "message3": "",
+    "message4": "%1'S REBOUND FADES.",
+    "name": "REBOUND"
+  },
+  "70": {
+    "message1": "%1 DANCES ON PSYCHIC STRINGS!",
+    "message2": "%1 DANCES ON PSYCHIC STRINGS!",
+    "message3": "",
+    "message4": "%1'S STRINGS IZ CUT.",
+    "name": "PUPPETED"
+  },
+  "71": {
+    "message1": "%1 TURNS AGAINST DEY OWN SIDE!",
+    "message2": "%1 TURNS AGAINST DEY OWN SIDE!",
+    "message3": "",
+    "message4": "%1 COMES BACK TA DEY SENSES!",
+    "name": "TURNCOAT"
+  },
+  "72": {
+    "message1": "%1'S MIND STARTS TA ECHO.",
+    "message2": "%1'S MIND STARTS TA ECHO.",
+    "message3": "",
+    "message4": "%1'S ECHO FADES.",
+    "name": "ECHO"
+  },
+  "73": {
+    "message1": "%1'S THOUGHTS LIE OPEN!",
+    "message2": "%1'S THOUGHTS LIE OPEN!",
+    "message3": "",
+    "message4": "%1'S THOUGHTS CLOSE AGAIN.",
+    "name": "MIND READ"
+  },
+  "77": {
+    "message1": "%1 IZ RIMED WIT BRITTLE FROST!",
+    "message2": "%1 IZ RIMED WIT BRITTLE FROST!",
+    "message3": "",
+    "message4": "DA RIME ON %1 IZ GONE.",
+    "name": "BRITTLE"
+  },
+  "78": {
+    "message1": "%1 IZ SOAKED IN A VOLATILE REAGENT!",
+    "message2": "%1 IZ SOAKED IN A VOLATILE REAGENT!",
+    "message3": "",
+    "message4": "DA REAGENT ON %1 HAB GONE INERT!",
+    "name": "VOLATILE"
+  },
+  "80": {
+    "message1": "%1 IZ HOBBLED!",
+    "message2": "%1 IZ HOBBLED!",
+    "message3": "%1 LIMPS ON...",
+    "message4": "%1 FINDS ITS FOOTIN' AGAIN.",
+    "name": "HOBBLED"
+  },
+  "81": {
+    "message1": "%1 IZ DISARMED!",
+    "message2": "%1 IZ DISARMED!",
+    "message3": "%1'S ARM HANGS USELESS...",
+    "message4": "%1 GETS A GRIP AGAIN.",
+    "name": "DISARMED"
+  },
+  "82": {
+    "message1": "%1 TURNS DA EDGE TA DA FOE!",
+    "message2": "%1 TURNS DA EDGE TA DA FOE!",
+    "message3": "",
+    "message4": "%1 LETS DA EDGE DROP.",
+    "name": "EDGE STANCE"
+  },
+  "83": {
+    "message1": "%1 STRIKES TA SPARE!",
+    "message2": "%1 STRIKES TA SPARE!",
+    "message3": "",
+    "message4": "%1 STOPS HOLDIN' BACK.",
+    "name": "MERCIFUL STANCE"
+  },
+  "84": {
+    "message1": "%1 LOWERS DA POINT!",
+    "message2": "%1 LOWERS DA POINT!",
+    "message3": "",
+    "message4": "%1 RAISES DA POINT.",
+    "name": "SPEARPOINT STANCE"
+  },
+  "85": {
+    "message1": "%1 SLAMS IN A FRESH MAGAZINE!",
+    "message2": "%1 SLAMS IN A FRESH MAGAZINE!",
+    "message3": "",
+    "message4": "%1'S FRESH MAGAZINE IZ SPENT!",
+    "name": "FRESH MAGAZINE"
+  },
+  "87": {
+    "message1": "%1 IZ MARKED BY DOOM!",
+    "message2": "%1 IZ MARKED BY DOOM!",
+    "message3": "%1 HEARS DA COUNT FALL...",
+    "message4": "DA DOOM OVER %1 IZ LIFTED.",
+    "name": "DOOM"
+  },
+  "88": {
+    "message1": "A FUSE IZ LIT ON %1!",
+    "message2": "A FUSE IZ LIT ON %1!",
+    "message3": "DA FUSE ON %1 HISSES...",
+    "message4": "DA FUSE ON %1 IZ SNUFFED OUT!",
+    "name": "LIT FUSE"
+  },
+  "89": {
+    "message1": "A VOW IZ SWORN OVER %1!",
+    "message2": "A VOW IZ SWORN OVER %1!",
+    "message3": "DA VOW OVER %1 WAITS FOR DA DAWN...",
+    "message4": "DA VOW OVER %1 IZ BROKEN.",
+    "name": "DAWN VOW"
+  },
+  "90": {
+    "message1": "%1 SLIPS INTO BULLET TIME!",
+    "message2": "%1 SLIPS INTO BULLET TIME!",
+    "message3": "",
+    "message4": "%1 FALLS BACK INTO REAL TIME!",
+    "name": "BULLET TIME"
+  },
+  "91": {
+    "message1": "%1 SEES WHAT COMES NEXT!",
+    "message2": "%1 SEES WHAT COMES NEXT!",
+    "message3": "",
+    "message4": "%1 LOSES SIGHT OF WHAT COMES NEXT!",
+    "name": "FORESIGHT"
+  },
+  "92": {
+    "message1": "%1 STANDS GUARD OVER DA OTHERS!",
+    "message2": "%1 STANDS GUARD OVER DA OTHERS!",
+    "message3": "%1 KEEPS DA GUARD...",
+    "message4": "%1 LOWERS DA GUARD.",
+    "name": "GUARDIAN BOND"
+  }
+}

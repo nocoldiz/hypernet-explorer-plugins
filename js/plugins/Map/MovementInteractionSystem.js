@@ -795,7 +795,21 @@
     // keeps the on/under state instead of recomputing it as "on the deck".
     rememberBridgeState(character) {
       if (!character || !$gameMap) return;
-      character._bridgeStateKey = $gameMap.mapId() + "," + character.x + "," + character.y;
+      character._bridgeStateKey = this.bridgeStateKey(character);
+    },
+
+    // The tile as a place. On the procedural map the raw coordinate moves when
+    // the stitched window slides under the party, so the tile is named by its
+    // world square and its tile inside that square instead.
+    bridgeStateKey(character) {
+      const S = (typeof window !== "undefined") ? window.ProcStitch : null;
+      if ($gameMap.mapId() === 636 && S && typeof S.active === "function" && S.active() &&
+          typeof S.squareAt === "function" && typeof S.local === "function") {
+        const sq = S.squareAt(character.x, character.y);
+        const l = S.local(character.x, character.y);
+        if (sq && l) return "636:" + sq.x + "," + sq.y + ":" + l.x + "," + l.y;
+      }
+      return $gameMap.mapId() + "," + character.x + "," + character.y;
     },
 
     // The on/under decision for one landed step, shared by the player and by
@@ -815,8 +829,25 @@
 
     bridgeStateMatchesTile(character) {
       if (!character || !$gameMap) return false;
-      return character._bridgeStateKey ===
-        $gameMap.mapId() + "," + character.x + "," + character.y;
+      return character._bridgeStateKey === this.bridgeStateKey(character);
+    },
+
+    // A dive belongs to the map it was taken on: the seabed tileset, the hidden
+    // parallax and the masked events are all that map's. A transfer that sets
+    // the map up again wears the new map's own tileset, so the dive is over;
+    // kept, it later "restored" the previous map's tileset onto this one.
+    dropDiveForNewMap(character) {
+      if (!character) return;
+      if (!character._isDiving && character._originalTilesetId === undefined) return;
+      character._isDiving = false;
+      character._hideTiles = false;
+      if (window.DivingSprite) window.DivingSprite.clear(character);
+      delete character._originalTilesetId;
+      delete character._originalParallaxName;
+      delete character._originalParallaxLoopX;
+      delete character._originalParallaxLoopY;
+      delete character._originalParallaxSx;
+      delete character._originalParallaxSy;
     },
 
     // Regions whose behaviour is a STATE rather than a rule (the bridge layer,
@@ -4071,6 +4102,41 @@
     MirrorSystem.initialize();
   };
 
+  // The dive's cached water tiles. A Set cannot go into a savegame: JsonEx
+  // writes it as an empty object tagged "Set" and hands it back with Set's
+  // prototype over a plain object, whose .has and .size then throw. $gameMap is
+  // saved, and the cache outlives the dive on its own map, so saving there and
+  // loading crashed on the first isWaterTile of the next frame. The live Set is
+  // therefore kept off the map object (per map instance, never serialised) and
+  // the save carries a plain array of its indices, written at save time and
+  // turned back into a Set the first time it is read after a load.
+  const _misUnderwaterSets = new WeakMap();
+  Object.defineProperty(Game_Map.prototype, "_underwaterWaterTiles", {
+    configurable: true,
+    get() {
+      if (_misUnderwaterSets.has(this)) return _misUnderwaterSets.get(this);
+      const list = this._misUnderwaterTileList;
+      const set = Array.isArray(list) ? new Set(list) : null;
+      _misUnderwaterSets.set(this, set);
+      return set;
+    },
+    set(value) {
+      _misUnderwaterSets.set(this, value instanceof Set ? value : null);
+      this._misUnderwaterTileList = null;
+    },
+  });
+
+  const _DataManager_makeSaveContents_MIS = DataManager.makeSaveContents;
+  DataManager.makeSaveContents = function () {
+    const contents = _DataManager_makeSaveContents_MIS.call(this);
+    const map = contents && contents.map;
+    if (map) {
+      const set = map._underwaterWaterTiles;
+      map._misUnderwaterTileList = set ? Array.from(set) : null;
+    }
+    return contents;
+  };
+
   // Compute per-map fast-path flags once on setup: whether the map contains any
   // reflective water and whether it has any special-passability regions/terrain.
   const _Game_Map_setup_MIS = Game_Map.prototype.setup;
@@ -4122,10 +4188,20 @@
   const _Game_Player_performTransfer = Game_Player.prototype.performTransfer;
   Game_Player.prototype.performTransfer = function () {
     const wasClimbing = this._isClimbing;
+    // A dive that swapped the tileset ends with any map setup; one that did not
+    // (the procedural map's own) only when the party leaves for another map.
+    const mapChange = this.isTransferring() && this._newMapId !== $gameMap.mapId();
+    const reload = mapChange || (this.isTransferring() && !!this._needsMapReload);
 
     ReflectionSystem.cleanup();
     MirrorSystem.cleanup();
     _Game_Player_performTransfer.call(this);
+
+    if (reload) {
+      for (const c of [this].concat(this.followers()._data || [])) {
+        if (mapChange || (c && c._originalTilesetId !== undefined)) MovementSystem.dropDiveForNewMap(c);
+      }
+    }
 
     // Queue swim/climb rearm to run on the next player update after the transfer
     // completes, instead of wall-clock setTimeout deferrals.

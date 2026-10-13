@@ -962,7 +962,10 @@
 
         if (rightPage && rightHtml) {
           const rightInnerHtml = rightHtml.replace(/^\s*<div[^>]*>/, '').replace(/<\/div>\s*$/, '');
-          rightPage.innerHTML = rightInnerHtml;
+          // Patched in place, so the page keeps its scroll, its images and its
+          // hover rather than being parsed again on every pick.
+          if (window.CCMorph) window.CCMorph.inner(rightPage, rightInnerHtml);
+          else rightPage.innerHTML = rightInnerHtml;
         }
 
         if (leftPage) {
@@ -1308,7 +1311,9 @@
 
       // Global requirement: Add item 591 to all new characters (only once for party member 1)
       const currentMemberIndex = Scene_CharacterCreation ? Scene_CharacterCreation._currentPartyMemberIndex : 0;
-      if (currentMemberIndex === 0 && $dataItems[714]) {
+      // One to a party: picking the class again (Back, then a new pick) used
+      // to hand over another copy every time.
+      if (currentMemberIndex === 0 && $dataItems[714] && $gameParty.numItems($dataItems[714]) === 0) {
         $gameParty.gainItem($dataItems[714], 1);
       }
 

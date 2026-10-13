@@ -1,40 +1,40 @@
 {
   "adjectives": {
     "positive": [
-      "Ben cucinato",
-      "Delizioso",
-      "Gourmet",
-      "Magistrale",
-      "Mistico",
-      "Divino",
-      "Perfetto",
-      "Succulento",
-      "Straordinario",
-      "Magico"
+      "d'alta cucina",
+      "da chef",
+      "gourmet",
+      "da manuale",
+      "con un tocco mistico",
+      "dal sapore divino",
+      "a regola d'arte",
+      "da leccarsi i baffi",
+      "da gran gala",
+      "con un tocco magico"
     ],
     "neutral": [
-      "Anodino",
-      "Semplice",
-      "Ordinario",
-      "Di base",
-      "Standard",
-      "Regolare",
-      "Comune",
-      "Modesto",
-      "Discreto",
-      "Quotidiano"
+      "alla buona",
+      "senza fronzoli",
+      "da mensa",
+      "standard",
+      "di base",
+      "senza pretese",
+      "da trattoria",
+      "alla casalinga",
+      "di tutti i giorni",
+      "senza infamia né lode"
     ],
     "negative": [
-      "Carbonizzato",
-      "Rovinato",
-      "Stracotto",
-      "Bruciato",
-      "Avariato",
-      "Dubbio",
-      "Dubitoso",
-      "Sospetto",
-      "Fallito",
-      "Disastroso"
+      "al carbone",
+      "da dimenticare",
+      "dal sapore dubbio",
+      "di dubbia provenienza",
+      "dall'odore sospetto",
+      "da voltastomaco",
+      "da buttare",
+      "con la crosta nera",
+      "dal retrogusto amaro",
+      "da indigestione"
     ]
   },
   "messages": {
@@ -42,23 +42,26 @@
     "sameItemPositive": "\nÈ venuto eccezionalmente bene!",
     "sameItemNeutral": "\nNon è niente di speciale, ma commestibile.",
     "sameItemNegative": "\nForse non avresti dovuto provarlo...",
-    "recoveredHunger": "\nRecuperati {percent}% Fame per membro",
-    "ate": "Hai mangiato {name} crudo.",
-    "cannotCombine": "Carne cruda e materia vegetale non possono essere cucinate insieme.",
+    "recoveredHunger": "\nFame recuperata: {percent}% a testa",
+    "ate": "Hai mangiato {name} a crudo.",
+    "cannotCombine": "Carne cruda e vegetali non si cucinano insieme.",
     "cookware": "\nBonus utensili +{percent}%",
-    "fedParty": "\n (un gruppo di {count} a tavola)",
+    "fedParty": "\n (diviso tra {count})",
     "cannotPrepare": "Ingredienti insufficienti per {name}.",
-    "recipePrepared": "{name} preparato (x{count}) e messo nello zaino.",
-    "recipeSpoiled": "{name} è venuto male in padella: resta solo un piatto rovinato."
+    "recipePrepared": "Preparazione riuscita: {name} (x{count}). Finisce nello zaino.",
+    "recipeSpoiled": "La preparazione di {name} è fallita. Ottieni un piatto rovinato.",
+    "pizzaShared": "{name} sfornata e divisa (x{count})."
   },
   "names": {
     "meaty": "{name} alla carne",
-    "vegetarian": "{name} vegetariano"
+    "vegetarian": "{name} alle verdure",
+    "sameItem": "{name} {adjective}",
+    "combo": "{first} con {head}"
   },
   "ui": {
     "selectFirstIngredient": "Seleziona il primo ingrediente da cucinare",
     "selectSecondIngredient": "Seleziona il secondo ingrediente da cucinare con {name}",
-    "confirmCook": "Cucini {item1} e {item2} ed ottieni {result}?",
+    "confirmCook": "Cucinare {item1} e {item2} per ottenere {result}?",
     "cookButton": "Cucina",
     "cancelButton": "Annulla",
     "eatButton": "Mangia crudo",
@@ -70,18 +73,18 @@
   "back": "Indietro",
   "ingredients": "Ingredienti",
   "cooking": "Cucina",
-  "nutritionalBase": "Base Nutrizionale",
-  "aromaticBinder": "Legante Aromatico",
+  "nutritionalBase": "Base nutrizionale",
+  "aromaticBinder": "Legante aromatico",
   "yourBackpackContainsNoEdible": "[Vuoto]",
   "selectBase": "Seleziona base...",
   "selectBinder": "Seleziona legante...",
-  "extraordinaryEffect50": "Effetto Straordinario (+50%)",
-  "minorEffect25": "Effetto Minore (-25%)",
-  "disastrousEffect75": "Effetto Disastroso (-75%)",
+  "extraordinaryEffect50": "Effetto straordinario (+50%)",
+  "minorEffect25": "Effetto minore (-25%)",
+  "disastrousEffect75": "Effetto disastroso (-75%)",
   "calories": "Calorie",
   "protein": "Proteine",
   "fat": "Grassi",
-  "satietyPerMember": "Sazieta del gruppo",
+  "satietyPerMember": "Sazietà del Party",
   "split": "A tavola",
   "clearSelection": "Pulisci",
   "nutrition": {
@@ -95,15 +98,16 @@
     "fat": "Gras"
   },
   "roll": {
-    "masterpiece": "[Tiro Culinario \\DIE[20]] Capolavoro gastronomico! {dish} ha guadagnato +50% di nutrizione!",
-    "scorched": "[Tiro Culinario \\DIE[1]] Piatto bruciato! {dish} ha perso nutrizione!",
-    "delicious": "[Tiro Culinario: \\DIE[{roll}] {mod} = {total}] {dish} preparato in modo delizioso!",
+    "masterpiece": "[Tiro culinario \\DIE[20]] Capolavoro gastronomico! {dish} ha guadagnato +50% di nutrizione!",
+    "scorched": "[Tiro culinario \\DIE[1]] Piatto bruciato! {dish} ha perso nutrizione!",
+    "delicious": "[Tiro culinario: \\DIE[{roll}] {mod} = {total}] {dish}: preparazione deliziosa!",
     "action": "Cucina: {dish}"
   },
   "cookware": "Utensili",
   "tabs": {
     "combine": "Combina",
-    "recipes": "Ricette"
+    "recipes": "Ricette",
+    "pizza": "Crea pizza"
   },
   "recipes": {
     "empty": "Nessuna ricetta nel libro.",
@@ -118,13 +122,15 @@
     "spoil": "Probabilità di rovinarlo",
     "reward": "Cucina",
     "points": "+{points} punti",
-    "keeps": "Il piatto finisce nello zaino invece di essere mangiato.",
+    "keeps": "Va nello zaino invece di essere mangiato.",
     "prepareButton": "Prepara",
-    "prepareAnyway": "Prepara comunque"
+    "prepareAnyway": "Prepara comunque",
+    "pizzaEaten": "Mangiata subito da tutto il Party. Non si conserva.",
+    "designPizza": "Inventa una pizza"
   },
   "allergy": {
     "title": "Attenzione allergie",
     "line": "{actor}: {allergens}",
-    "toast": "Attenzione allergie: {list}. Premi di nuovo per procedere."
+    "toast": "Attenzione allergie: {list}. Premi di nuovo per confermare."
   }
 }

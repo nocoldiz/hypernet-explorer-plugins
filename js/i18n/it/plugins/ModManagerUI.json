@@ -1,12 +1,12 @@
 {
-  "title": "Gestore Mod",
+  "title": "Gestore mod",
   "back": "Indietro",
   "noMods": "Nessuna mod trovata nella cartella mods/.",
   "source": "Fonte",
   "path": "Percorso",
   "toggle": "Attiva / Disattiva",
-  "moveUp": "Sposta Su ↑ (Priorità Alta)",
-  "moveDown": "Sposta Giù ↓ (Priorità Bassa)",
+  "moveUp": "Sposta su ↑ (priorità più alta)",
+  "moveDown": "Sposta giù ↓ (priorità più bassa)",
   "local": "Locale",
   "workshop": "Steam Workshop",
   "priority": "Priorità",
@@ -26,12 +26,12 @@
   "notDownloaded": "Non ancora scaricata",
   "statusInstalled": "Installata",
   "statusDownloading": "Download {pct}%",
-  "statusPending": "In attesa del download da Steam",
+  "statusPending": "In attesa di Steam",
   "statusUpdate": "Aggiornamento in coda",
   "publishing": "Caricamento sul Workshop... {pct}%",
-  "published": "Pubblicata sul Workshop come Privata. Rendila pubblica dalla sua pagina.",
+  "published": "Pubblicata sul Workshop come privata. Rendila pubblica dalla sua pagina.",
   "updated": "Elemento del Workshop aggiornato.",
   "publishFailed": "Richiesta al Workshop fallita: {error}",
-  "agreement": "Accetta il contratto dello Steam Workshop, altrimenti nessun altro vedrà la mod.",
-  "unsubscribed": "Iscrizione annullata. Steam rimuove i file alla chiusura del gioco."
+  "agreement": "Accetta il contratto dello Steam Workshop per rendere visibile la mod.",
+  "unsubscribed": "Iscrizione annullata. I file vengono rimossi alla chiusura del gioco."
 }

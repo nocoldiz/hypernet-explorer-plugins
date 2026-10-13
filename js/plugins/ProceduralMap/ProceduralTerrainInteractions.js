@@ -14,7 +14,7 @@
  *   <Action> / Cancel
  *
  * where <Action> depends on the feature:
- *   - Trees     -> "Fell down"   (requires an Axe-type weapon in inventory)
+ *   - Trees     -> "Fell"        (requires an Axe-type weapon in inventory)
  *   - Rocks     -> "Mine"        (requires War Pick #163, any Heavy weapon,
  *                                  or the Chipped Pickaxe armor #60)
  *   - Plants    -> "Pick Up"     (no requirement)
@@ -822,7 +822,9 @@
     const depth = (pg.biomeLayerStack && pg.biomeLayerStack.length) || 0;
     const sess = pg._dungeonSession;
     const salt = (sess && sess.salt) ? `:${sess.salt}` : "";
-    return `proc:${biomeName}:${worldCoords.x},${worldCoords.y}:${depth}${salt}`;
+    const grid = pg.alienGrid;
+    const world = (grid && grid.earthlike && grid.salt) ? `@${grid.salt}` : "";
+    return `proc:${biomeName}${world}:${worldCoords.x},${worldCoords.y}:${depth}${salt}`;
   }
 
   // Every tile the party has removed on one proc-map square, as a Set of "x,y",
@@ -876,6 +878,86 @@
     return S.toMap(wx, wy, x, y);
   }
 
+  // A tile of the loaded map as the place it really is: the world square it
+  // stands on (its own, not the party's: a tile just over a seam belongs to the
+  // neighbour), the key that square's records are filed under, and the tile
+  // inside it. Off the procedural map, or with no window standing, the map
+  // coordinate already is the square's own and the key is the current one.
+  function tileSlot(mapX, mapY) {
+    const S = window.ProcStitch;
+    if ($gameMap && $gameMap.mapId() === PROC_MAP_ID && S && typeof S.active === "function" && S.active() &&
+        typeof S.cellAt === "function") {
+      const cell = S.cellAt(mapX, mapY);
+      const biome = cell && cell.built && cell.built.resolved && cell.built.resolved.biomeName;
+      const key = biome ? procMapKeyFor(biome, { x: cell.worldX, y: cell.worldY }) : null;
+      if (key) return { key, x: mapX - cell.ox, y: mapY - cell.oy, cell };
+    }
+    return { key: currentMapKey(), x: mapX, y: mapY, cell: null };
+  }
+
+  // The squares laid on the map right now, each with the key its records are
+  // filed under and where its corner sits. One entry (the current key, corner
+  // 0,0) when no window stands.
+  function windowSlots() {
+    const S = window.ProcStitch;
+    const win = ($gameMap && $gameMap.mapId() === PROC_MAP_ID && S && typeof S.active === "function" &&
+      S.active() && typeof S.window === "function") ? S.window() : null;
+    if (!win || !Array.isArray(win.cells)) return [{ key: currentMapKey(), ox: 0, oy: 0, cell: null }];
+    const out = [];
+    for (const cell of win.cells) {
+      const biome = cell && cell.built && cell.built.resolved && cell.built.resolved.biomeName;
+      const key = biome ? procMapKeyFor(biome, { x: cell.worldX, y: cell.worldY }) : null;
+      if (key) out.push({ key, ox: cell.ox, oy: cell.oy, cell });
+    }
+    return out;
+  }
+
+  // Clear the feature layers of one square-local tile in a built square's own
+  // array. The window is a copy of those arrays and is composed from them again
+  // every time it slides, so a removal written only to $dataMap.data came back
+  // the moment the window moved.
+  function clearSquareTile(built, x, y, keep) {
+    const data = built && built.mapData;
+    if (!data || x < 0 || y < 0 || x >= PROC_MAP_WIDTH || y >= PROC_MAP_HEIGHT) return;
+    const plane = PROC_MAP_WIDTH * PROC_MAP_HEIGHT;
+    const layers = Math.floor(data.length / plane);
+    const at = y * PROC_MAP_WIDTH + x;
+    if (keep && layers > 2 && keep.has(data[2 * plane + at])) return;
+    for (const z of [1, 2, 3]) if (z < layers) data[z * plane + at] = 0;
+  }
+
+  // Every stored removal of one world square, put into its built array.
+  function applyRemovalsToSquare(built, worldX, worldY) {
+    if (!built || !built.mapData || !built.resolved) return;
+    const store = terrainStore();
+    if (!store || !store.dismantled) return;
+    const key = procMapKeyFor(built.resolved.biomeName, { x: worldX, y: worldY });
+    const tiles = key && store.dismantled[key];
+    if (!tiles) return;
+    const keep = undeletableTileIds();
+    for (const coord of Object.keys(tiles)) {
+      const parts = coord.split(",");
+      clearSquareTile(built, parseInt(parts[0], 10), parseInt(parts[1], 10), keep);
+    }
+  }
+
+  // Every square the stitched window composes is asked of ProcGenSquare.build,
+  // cached or fresh: the removals go into the array there, before the window
+  // copies it.
+  function hookSquareBuilds() {
+    const api = window.ProcGenSquare;
+    if (!api || typeof api.build !== "function" || api.build._terrainRemovals) return;
+    const original = api.build;
+    const wrapped = function (worldX, worldY) {
+      const built = original.apply(this, arguments);
+      try { applyRemovalsToSquare(built, worldX, worldY); } catch (e) { /* non-fatal */ }
+      return built;
+    };
+    wrapped._terrainRemovals = true;
+    api.build = wrapped;
+  }
+  hookSquareBuilds();
+
   // `flushNow` is what a deliberate removal does: one felled tree, written out
   // at once. It is false only for removals that arrive in a stream (a vehicle
   // driven through a hedgerow clears a tile per step): the write is cheap now
@@ -885,12 +967,23 @@
   function recordDismantled(tiles, name, flushNow = true) {
     const store = terrainStore();
     if (!store) return;
-    const key = currentMapKey();
-    if (!store.dismantled[key]) store.dismantled[key] = {};
     for (const t of tiles) {
-      const spot = storedSpot(t.x, t.y);
-      if (!spot) continue;
+      // Filed under the square the tile stands on, in that square's own
+      // coordinates, and written into its built array as well (see
+      // clearSquareTile): a tile over a seam is the neighbour's.
+      const spot = tileSlot(t.x, t.y);
+      if (!spot.key) continue;
+      if (spot.cell) {
+        if (spot.x < 0 || spot.y < 0 || spot.x >= PROC_MAP_WIDTH || spot.y >= PROC_MAP_HEIGHT) continue;
+      } else {
+        const own = storedSpot(t.x, t.y);
+        if (!own) continue;
+        spot.x = own.x; spot.y = own.y;
+      }
+      const key = spot.key;
+      if (!store.dismantled[key]) store.dismantled[key] = {};
       store.dismantled[key][`${spot.x},${spot.y}`] = name;
+      if (spot.cell) clearSquareTile(spot.cell.built, spot.x, spot.y, null);
       // Whatever stood here was taken apart, planted or not: the planting
       // record must not put it back on the next load.
       if (store.planted && store.planted[key]) delete store.planted[key][`${spot.x},${spot.y}`];
@@ -945,24 +1038,36 @@
   function applyDismantledToMap() {
     const store = terrainStore();
     if (!store) return;
-    const tiles = store.dismantled[currentMapKey()];
-    if (!tiles) return;
     if (!$dataMap || !$dataMap.data) return;
+    hookSquareBuilds();
     const w = $dataMap.width;
     const h = $dataMap.height;
     const keep = undeletableTileIds();
-    for (const coord of Object.keys(tiles)) {
-      const [xs, ys] = coord.split(",");
-      const sx = parseInt(xs, 10);
-      const sy = parseInt(ys, 10);
-      if (isNaN(sx) || isNaN(sy)) continue;
-      const on = spotOnMap(sx, sy);
-      if (!on) continue;
-      const x = on.x, y = on.y;
-      if (x < 0 || y < 0 || x >= w || y >= h) continue;
-      if (keep && keep.has($dataMap.data[2 * w * h + y * w + x])) continue;
-      for (const z of [1, 2, 3]) {
-        $dataMap.data[z * w * h + y * w + x] = 0;
+    // Every square on the map, not only the party's: the neighbours in a
+    // stitched window carry removals of their own.
+    for (const slot of windowSlots()) {
+      const tiles = store.dismantled[slot.key];
+      if (!tiles) continue;
+      for (const coord of Object.keys(tiles)) {
+        const [xs, ys] = coord.split(",");
+        const sx = parseInt(xs, 10);
+        const sy = parseInt(ys, 10);
+        if (isNaN(sx) || isNaN(sy)) continue;
+        let on;
+        if (slot.cell) {
+          on = (sx < 0 || sy < 0 || sx >= PROC_MAP_WIDTH || sy >= PROC_MAP_HEIGHT)
+            ? null : { x: slot.ox + sx, y: slot.oy + sy };
+        } else {
+          on = spotOnMap(sx, sy);
+        }
+        if (!on) continue;
+        const x = on.x, y = on.y;
+        if (x < 0 || y < 0 || x >= w || y >= h) continue;
+        if (keep && keep.has($dataMap.data[2 * w * h + y * w + x])) continue;
+        for (const z of [1, 2, 3]) {
+          $dataMap.data[z * w * h + y * w + x] = 0;
+        }
+        if (slot.cell) clearSquareTile(slot.cell.built, sx, sy, keep);
       }
     }
     if ($gameMap) $gameMap.requestRefresh();
@@ -1388,6 +1493,11 @@
       wx = $gameVariables.value(43) | 0;
       wy = $gameVariables.value(44) | 0;
     }
+    // A colony on another world is called what its settlers call it, whatever
+    // Earth holds at the same numbers (GalaxySim "Colonies").
+    const colony = window.GalaxySim && window.GalaxySim.currentColony
+      ? window.GalaxySim.currentColony() : null;
+    if (colony) return colony.name;
     // A hand-authored name (a real city, a special landmark, ...) always wins
     // over the generated placeholder for this exact world tile.
     const overrides = window.WorldGen && window.WorldGen.HardcodedBiomeNames;
@@ -1630,8 +1740,43 @@
     return U.createSeededRandom(seed);
   }
 
+  // The same seeded roll, for a feature the party faces on the loaded map. On
+  // the procedural map a map coordinate is not a place: map 636 is every world
+  // square, and inside a stitched window the same tile reads differently with
+  // each shape the window takes. So the roll is made off the tile inside its
+  // own square, salted with that square, and a gold hoard, a crate's contents
+  // or a book's title stay the same find from one visit to the next and differ
+  // from the tile at the same spot of the next square.
+  function tileRng(t, salt) {
+    if (!$gameMap || $gameMap.mapId() !== PROC_MAP_ID) return seededRngForTile(t.x, t.y, salt);
+    const S = window.ProcStitch;
+    const pg = $gameSystem && $gameSystem._procGenData;
+    let wx = pg ? (pg.originX | 0) : 0, wy = pg ? (pg.originY | 0) : 0;
+    let x = t.x, y = t.y;
+    if (S && typeof S.active === "function" && S.active()) {
+      try {
+        const sq = S.squareAt(t.x, t.y);
+        const l = S.local(t.x, t.y);
+        if (sq && l) { wx = sq.x; wy = sq.y; x = l.x; y = l.y; }
+      } catch (e) { /* keep the raw tile */ }
+    }
+    const depth = (pg && pg.biomeLayerStack) ? pg.biomeLayerStack.length : 0;
+    const mixed = ((salt || 0) ^ Math.imul(wx, 73856093) ^ Math.imul(wy, 19349663) ^ Math.imul(depth, 83492791)) | 0;
+    return seededRngForTile(x, y, mixed);
+  }
+
   // Per-tile container id for Sack/Crate loot (independent of any real event).
+  // currentMapKey() names the party's square, so the tile is spelled inside
+  // that square too: the raw map coordinate moves with the stitched window's
+  // shape, and an emptied crate came back full under a new id.
   function proceduralContainerId(featureName, x, y) {
+    if ($gameMap && $gameMap.mapId() === PROC_MAP_ID) {
+      const S = window.ProcStitch;
+      if (S && typeof S.localToParty === "function") {
+        const l = S.localToParty(x, y);
+        if (l && Number.isFinite(l.x) && Number.isFinite(l.y)) { x = l.x; y = l.y; }
+      }
+    }
     return `proc:${featureName}:${currentMapKey()}:${x},${y}`;
   }
 
@@ -1663,20 +1808,24 @@
     return store;
   }
 
+  // A light is filed under the square it stands on and its tile inside that
+  // square (tileSlot): the raw map coordinate moves with the window's shape.
   function isLit(x, y) {
     const store = litStore();
     if (!store) return false;
-    const tiles = store.litFeatures[currentMapKey()];
-    return !!(tiles && tiles[`${x},${y}`]);
+    const slot = tileSlot(x, y);
+    const tiles = store.litFeatures[slot.key];
+    return !!(tiles && tiles[`${slot.x},${slot.y}`]);
   }
 
   function setLit(x, y, on) {
     const store = litStore();
     if (!store) return;
-    const key = currentMapKey();
+    const slot = tileSlot(x, y);
+    const key = slot.key;
     if (!store.litFeatures[key]) store.litFeatures[key] = {};
-    if (on) store.litFeatures[key][`${x},${y}`] = true;
-    else delete store.litFeatures[key][`${x},${y}`];
+    if (on) store.litFeatures[key][`${slot.x},${slot.y}`] = true;
+    else delete store.litFeatures[key][`${slot.x},${slot.y}`];
     if (typeof window.WorldManager.flush === "function") {
       try { window.WorldManager.flush("terrain"); } catch (e) { /* non-fatal */ }
     }
@@ -1687,12 +1836,16 @@
   function getLitTiles() {
     const store = litStore();
     if (!store) return [];
-    const tiles = store.litFeatures[currentMapKey()];
-    if (!tiles) return [];
-    return Object.keys(tiles).map((k) => {
-      const [xs, ys] = k.split(",");
-      return { x: parseInt(xs, 10), y: parseInt(ys, 10) };
-    });
+    const out = [];
+    for (const slot of windowSlots()) {
+      const tiles = store.litFeatures[slot.key];
+      if (!tiles) continue;
+      for (const k of Object.keys(tiles)) {
+        const [xs, ys] = k.split(",");
+        out.push({ x: slot.ox + parseInt(xs, 10), y: slot.oy + parseInt(ys, 10) });
+      }
+    }
+    return out;
   }
 
   // Every tile carrying feature `name` on the current map, collapsed to its
@@ -1739,10 +1892,13 @@
     const store = litStore();
     if (!store) return;
     if (!store.litRolled) store.litRolled = {};
-    const key = currentMapKey();
-    if (store.litRolled[key]) return;
-    store.litRolled[key] = true;
-    if (!store.litFeatures[key]) store.litFeatures[key] = {};
+    // Rolled once per world square: every square of the window not rolled yet.
+    const fresh = windowSlots().map((slot) => slot.key).filter((key) => !store.litRolled[key]);
+    if (!fresh.length) return;
+    for (const key of fresh) {
+      store.litRolled[key] = true;
+      if (!store.litFeatures[key]) store.litFeatures[key] = {};
+    }
 
     const isDeadWorld = !!(window.WorldManager && (window.WorldManager.isEmptyWorld?.() || window.WorldManager.isDeathWorld?.()));
     if (isDeadWorld) {
@@ -1754,9 +1910,11 @@
 
     for (const name of LIGHT_FEATURE_NAMES) {
       for (const t of collectFeatureOrigins(name)) {
-        const rng = seededRngForTile(t.x, t.y, 0x707C4);
+        const slot = tileSlot(t.x, t.y);
+        if (fresh.indexOf(slot.key) < 0) continue;
+        const rng = seededRngForTile(slot.x, slot.y, 0x707C4);
         if (rng() < LIGHT_INITIAL_LIT_CHANCE) {
-          store.litFeatures[key][`${t.x},${t.y}`] = true;
+          store.litFeatures[slot.key][`${slot.x},${slot.y}`] = true;
         }
       }
     }
@@ -1776,7 +1934,7 @@
   // regenerated: mostly coins, sometimes ore, gems or a buried trinket, once
   // in a while a real treasure - and rarely nothing but pyrite. ---
   function rollGoldHoard(t) {
-    const rng = seededRngForTile(t.x, t.y, 0x601D);
+    const rng = tileRng(t, 0x601D);
     const between = (lo, hi) => lo + Math.floor(rng() * (hi - lo + 1));
     if (inPatronVault()) {
       // A patron's vault is not a hoard somebody forgot in a cellar: every pile
@@ -1859,7 +2017,7 @@
     const t = tiles[0];
     const RBG = window.RandomBookGenerator;
     if (!RBG) return;
-    const rng = seededRngForTile(t.x, t.y, 0x1157A2);
+    const rng = tileRng(t, 0x1157A2);
     if (typeof RBG.generateTitle !== "function") return;
     offerFeatureScan(t, "library", T('Terrain.feature.library'), () => {  // i18n-ignore  scanner object type
       const title = RBG.generateTitle(rng);
@@ -1886,7 +2044,7 @@
     const t = tiles[0];
     const RBG = window.RandomBookGenerator;
     if (!RBG) return;
-    const rng = seededRngForTile(t.x, t.y, 0x57A700E);
+    const rng = tileRng(t, 0x57A700E);
     offerFeatureScan(t, "statue", T('Terrain.feature.statue'), () => {  // i18n-ignore  scanner object type
       const subject = RBG.randomSubject(rng);
       showLoreMessage(T('Terrain.statue', { subject: subject }));
@@ -1951,7 +2109,7 @@
     const t = tiles[0];
     showChoiceMenu([T('Terrain.open')], () => {
       const containerId = proceduralContainerId(name, t.x, t.y);
-      generateSeededLoot(containerId, "Food", null, null, 5, seededRngForTile(t.x, t.y, 0x5ACC));  // i18n-ignore  item category
+      generateSeededLoot(containerId, "Food", null, null, 5, tileRng(t, 0x5ACC));  // i18n-ignore  item category
       AudioManager.playSe({ name: "Open1", volume: 90, pitch: 100, pan: 0 });
       openLootContainer(containerId);
     });
@@ -1962,7 +2120,7 @@
     const t = tiles[0];
     showChoiceMenu([T('Terrain.open')], () => {
       const containerId = proceduralContainerId(name, t.x, t.y);
-      generateSeededLoot(containerId, "Tools", "Food", null, 5, seededRngForTile(t.x, t.y, 0xBAC4));  // i18n-ignore  item categories
+      generateSeededLoot(containerId, "Tools", "Food", null, 5, tileRng(t, 0xBAC4));  // i18n-ignore  item categories
       AudioManager.playSe({ name: "Open1", volume: 90, pitch: 100, pan: 0 });
       openLootContainer(containerId);
     });
@@ -1979,7 +2137,7 @@
       const t = tiles[0];
       showChoiceMenu([T('Terrain.open')], () => {
         const containerId = proceduralContainerId(name, t.x, t.y);
-        generateSeededLoot(containerId, "Trash", "Tools", null, 4, seededRngForTile(t.x, t.y, 0xC4A7E));  // i18n-ignore  item categories
+        generateSeededLoot(containerId, "Trash", "Tools", null, 4, tileRng(t, 0xC4A7E));  // i18n-ignore  item categories
         AudioManager.playSe({ name: "Open1", volume: 90, pitch: 100, pan: 0 });
         openLootContainer(containerId);
       });
@@ -1991,7 +2149,7 @@
     CUSTOM_HANDLERS[n] = (name, tiles) => {
       const t = tiles[0];
       const lit = isLit(t.x, t.y);
-      const toggleLabel = lit ? (T('Terrain.turnOff') || T('Terrain.blowOut') || "Turn Off") : (T('Terrain.turnOn') || T('Terrain.lightUp') || "Turn On");
+      const toggleLabel = lit ? (T('Terrain.turnOff') || T('Terrain.blowOut')) : (T('Terrain.turnOn') || T('Terrain.lightUp'));
       const dismantleLabel = verbLabel(VERB.DISMANTLE);
       const cfg = classify(name) || { verb: VERB.DISMANTLE, spec: "Metalworking", rewards: [[MAT.STEEL, 1, 2]] };  // i18n-ignore  spec id
 
@@ -2109,6 +2267,19 @@
     return t;
   }
 
+  // The world square an entrance tile stands on: its own, which for a tile
+  // over a seam is not the party's.
+  function entranceSquare(t) {
+    const S = window.ProcStitch;
+    if (S && typeof S.squareAt === "function" && typeof S.active === "function" && S.active() &&
+        $gameMap && $gameMap.mapId() === PROC_MAP_ID) {
+      const sq = S.squareAt(t.x, t.y);
+      if (sq && Number.isFinite(sq.x) && Number.isFinite(sq.y)) return sq;
+    }
+    const pg = $gameSystem._procGenData;
+    return { x: pg ? (pg.originX | 0) : 0, y: pg ? (pg.originY | 0) : 0 };
+  }
+
   function enterStructureBiome(t, biomeName, seSound, saltOverride) {
     const pg = $gameSystem._procGenData;
     if (!pg) return false;
@@ -2202,8 +2373,12 @@
     const rec = $gameSystem._bunkerOrigin;
     const pg = $gameSystem._procGenData;
     if (!rec || !pg) return false;
-    return pg.originX === rec.worldX && pg.originY === rec.worldY &&
-      t.x === rec.entranceX && t.y === rec.entranceY;
+    // The record is a world square and a tile inside it: the hatch tile is
+    // asked the same way, off its own square, never off the raw map tile.
+    const sq = entranceSquare(t);
+    const local = squareTile(t);
+    return sq.x === rec.worldX && sq.y === rec.worldY &&
+      local.x === rec.entranceX && local.y === rec.entranceY;
   }
 
   WALK_ENTRANCES.StairsDown = (tiles) => {
@@ -2402,7 +2577,7 @@
     showChoiceMenu([T('Terrain.rummage')], () => {
       const containerId = proceduralContainerId(name, t.x, t.y);
       generateSeededLoot(containerId, "Trash", "Misc", "Food", 4,  // i18n-ignore  item categories
-        seededRngForTile(t.x, t.y, 0x7245A5));
+        tileRng(t, 0x7245A5));
       AudioManager.playSe({ name: "Open1", volume: 80, pitch: 85, pan: 0 });
       openLootContainer(containerId);
     });
@@ -2492,7 +2667,7 @@
   for (const n of ["Graffiti", "Poster"]) {  // i18n-ignore  feature ids
     CUSTOM_HANDLERS[n] = (name, tiles) => {
       const t = tiles[0];
-      const rng = seededRngForTile(t.x, t.y, name === "Graffiti" ? 0x64AFF1 : 0x905732);
+      const rng = tileRng(t, name === "Graffiti" ? 0x64AFF1 : 0x905732);
       let text = "";
       if (typeof window.generateMarkovString === "function") {
         try { text = String(window.generateMarkovString("all") || ""); } catch (e) { text = ""; }

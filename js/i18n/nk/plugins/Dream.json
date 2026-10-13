@@ -75,14 +75,15 @@
       "DORMITORY",
       "AQUARIUM",
       "SWITCHBOARD"
-    ]
+    ],
+    "format": "{adj} {noun}"
   },
   "wakeUp": "PINCH CHEEKS (WAKE UP)",
   "keepDreaming": "KEEP DREAMIN'",
   "dreamThins": "DA DREAM THINS...",
-  "insight": "DA DREAM WORKS SOMETHIN' OUT: YOU OBTAINED {amount} KP",
+  "insight": "DREAM INSIGHT: +{amount} KP",
   "youWokeUp": "YOU WOKE UP",
-  "wokeWithInsight": "YOU CARRIED {amount} KNOWLEDGE OUT OF DA DREAM (TOTAL: {total})!",
+  "wokeWithInsight": "WOKE WIT {amount} KNOWLEDGE (TOTAL: {total})!",
   "forming": "DA DREAM IZ STILL TAKIN' SHAPE",
   "willNotForm": "YOU DREAM, BUT DA WORLD WILL NO FORM...",
   "kp": "YOU OBTAINED {amount} KP",

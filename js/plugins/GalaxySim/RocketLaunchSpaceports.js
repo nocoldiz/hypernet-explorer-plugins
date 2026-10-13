@@ -248,7 +248,7 @@
       const F = s.mountScale || 1;
       const mounted = !!s.mounted;
       // THE OMEGA TOWER is not a mast on a foundation: the voxel world's own
-      // heap stands over the bore, so nothing of the lattice is built and the
+      // spear stands over the bore, so nothing of the lattice is built and the
       // coil is drawn in tight enough to run up the shaft cut through it.
       const VW = window.VoxelWorld;
       const towerGun = !mounted && !!s.omegaTower &&
@@ -424,21 +424,22 @@
       return { group: g, rings: coilRings, capacitors, gantry, strobes, top, omega };
     },
 
-    // THE OMEGA TOWER AS A GUN. The same heap of decks the voxel world stands
-    // on its plinth (VoxelWorldDecor's buildOmegaTower), brought down to the
-    // height of this muzzle and bored straight through: the needle is where
-    // the round leaves, and the shaft the coil runs up is cut out of every
-    // deck it crosses.
+    // THE OMEGA TOWER AS A GUN. The same spear the voxel world stands on its
+    // plinth (VoxelWorldDecor's buildOmegaTower), brought down to the height
+    // of this muzzle and built hollow: the open tip is where the round leaves,
+    // and the coil runs up the bore through the middle of it.
     //
-    // ALL OF IT IS THE COIL. The tower's gold is one material, and here it is
+    // ALL OF IT IS THE COIL. The tower's lit shaft is one material, and here it is
     // given a charge: during the count a tide of light climbs it from the foot
-    // to the needle, the whole heap throbs in the last seconds, and on the shot
+    // to the needle, the whole spear throbs in the last seconds, and on the shot
     // a white band runs up it at the round, leaving the gold it has passed
     // spent and dim behind. Four prongs stand round the muzzle, and the round
     // leaves them in a flash, a shock ring and a column of ionised air.
     _buildOmegaGun(into, s, top, holeM) {
       const VW = window.VoxelWorld;
-      const scale = top / VW.OMEGA_HEIGHT;
+      // The muzzle is the top of the shaft, not the throne over it.
+      const plan = typeof VW.omegaTowerPlan === "function" ? VW.omegaTowerPlan(VW.OMEGA_SPAN, VW.OMEGA_HEIGHT) : null;
+      const scale = top / ((plan && plan.tip) || VW.OMEGA_HEIGHT);
       let built = null;
       try {
         built = VW.buildOmegaTower(VW.OMEGA_SPAN, VW.OMEGA_HEIGHT, { bore: holeM / scale });
@@ -561,7 +562,7 @@
       let muzzle = 0;
       if (!live) {
         // The tide climbs with the count and its leading edge burns. In the
-        // last seconds the whole heap throbs, faster and faster, up to three
+        // last seconds the whole spear throbs, faster and faster, up to three
         // beats a second and no further.
         const fill = standby ? 1.1 : smooth(charge) * 1.08;
         const late = standby ? 0 : ramp(charge, 0.82, 1);

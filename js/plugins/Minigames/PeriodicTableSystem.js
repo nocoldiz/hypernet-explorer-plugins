@@ -330,10 +330,13 @@
             this._container = document.createElement('div');
             this._container.id = 'pt-container';
             this._container.className = 'ui-overlay pt-overlay';
+            // The right button is already a cancel through TouchInput (its
+            // mousedown reaches the engine's document listener): this only
+            // keeps the browser's menu off the table. Cancelling here as well
+            // made one click deselect the element and then close the scene.
             this._container.addEventListener('contextmenu', (event) => {
                 event.preventDefault();
                 event.stopPropagation();
-                this.onCancelAction();
             });
 
             document.body.appendChild(this._container);

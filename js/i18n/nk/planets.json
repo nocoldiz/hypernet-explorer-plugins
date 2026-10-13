@@ -1,0 +1,124 @@
+{
+  "planets": {
+    "sub_mercurian": {
+      "description": "BARE‐BONES ROCKY WORLD, THINNER CRUST, MINIMAL ATMOSPHERE!"
+    },
+    "mercurian": {
+      "description": "MERCURY‐LIKE, AIRLESS, CRATERED, IRON‐RICH!"
+    },
+    "sub_earth": {
+      "description": "SMALLER DEN EARTH BUT STILL GEOLOGICALLY ACTIVE!"
+    },
+    "earth_like": {
+      "description": "ROCKY WIT PLATE TECTONICS, LIQUID WATER, BREATHABLE AIR!"
+    },
+    "super_earth": {
+      "description": "LARGE ROCKY WORLD; HIGHER GRAVITY, THICKER ATMOSPHERE!"
+    },
+    "mini_neptune": {
+      "description": "LIL' ICE‐RICH ENVELOPE OVER A ROCKY CORE!"
+    },
+    "ice": {
+      "description": "FROZEN SURFACE; POSSIBLE SUBSURFACE OCEAN!"
+    },
+    "ocean": {
+      "description": "GLOBAL LIQUID OCEAN, MINIMAL LANDMASSES!"
+    },
+    "lava_ocean": {
+      "description": "PARTIALLY MOLTEN SURFACE, STEAM ATMOSPHERE!"
+    },
+    "desert": {
+      "description": "DRY WORLD, SPARSE VEGETATION OR NONE AT ALL!"
+    },
+    "rainforest": {
+      "description": "THICK JUNGLES, HEAVY PRECIPITATION, HIGH BIOMASS!"
+    },
+    "tundra": {
+      "description": "COLD, LIMITED PLANT LIFE, PERMAFROST‐DOMINATED!"
+    },
+    "acid_ocean": {
+      "description": "SULFURIC OR HYDROCHLORIC ACID SEAS, CORROSIVE SKIES!"
+    },
+    "gas_giant": {
+      "description": "MASSIVE HYDROGEN‐HELIUM ENVELOPE, NO SOLID SURFACE!"
+    },
+    "hot_jupiter": {
+      "description": "ORBITS EXTREMELY CLOSE TA ITS STAR, BLISTERIN' TEMPERATURES!"
+    },
+    "warm_jupiter": {
+      "description": "CLOSER IN DEN JUPITER BUT FARTHER DEN A HOT‐JUPITER!"
+    },
+    "cold_jupiter": {
+      "description": "FAR FROM ITS STAR, DEEP COLD ATMOSPHERE!"
+    },
+    "ice_giant": {
+      "description": "RICH IN VOLATILES LIKE WATER, AMMONIA; THICK ICY MANTLE!"
+    },
+    "ringed_gas_giant": {
+      "description": "PROMINENT RINGS, DOZENS OF MOONS!"
+    },
+    "puffy": {
+      "description": "EXTREMELY LOW DENSITY, BLOATED BY STELLAR HEATIN'!"
+    },
+    "chthonian": {
+      "description": "STRIPPED GAS GIANT CORE, VOLCANIC, METAL‐RICH!"
+    },
+    "mega_iron": {
+      "description": "ALMOST PURE IRON/NICKEL, HIGH DENSITY, MAGNETIC!"
+    },
+    "carbon": {
+      "description": "GRAPHITE AN' HYDROCARBONS DOMINATE; TAR‐LIKE SEAS!"
+    },
+    "diamond": {
+      "description": "HIGH PRESSURE TURNS CARBON SHELL INTO DIAMOND LAYER!"
+    },
+    "magma_planet": {
+      "description": "SURFACE IZ A GLOBAL MAGMA BATH, CONSTANT ERUPTIONS!"
+    },
+    "plasma": {
+      "description": "IONIZED ATMOSPHERE, GLOWS UNDER STELLAR WIND!"
+    },
+    "magnetar": {
+      "description": "ULTRA‐MAGNETIC FIELD, EXOTIC RADIATION ENVIRONMENT!"
+    },
+    "quark_planet": {
+      "description": "HYPOTHETICAL STRANGE MATTER CORE, SUPER‐DENSE!"
+    },
+    "rogue": {
+      "description": "FREE‐FLOATIN', COLD, NO HOST STAR!"
+    },
+    "habitable": {
+      "description": "WITHIN HABITABLE ZONE, STABLE CLIMATE, LIQUID WATER!"
+    },
+    "dwarf": {
+      "description": "LIL' ICY/ROCKY BODY, LIKE PLUTO OR CERES!"
+    },
+    "centaur": {
+      "description": "ICY‐ROCK HYBRID BETWEEN JUPITER AN' NEPTUNE ORBITS!"
+    },
+    "planetesimal": {
+      "description": "BUILDIN' BLOCK OF PLANETS, TINY ROCK/ICE CLUMP!"
+    },
+    "c_type_asteroid": {
+      "description": "CARBONACEOUS, DARK, PRIMITIVE COMPOSITION!"
+    },
+    "s_type_asteroid": {
+      "description": "SILICATE AN' NICKEL‐IRON, BRIGHTER SURFACE!"
+    },
+    "m_type_asteroid": {
+      "description": "METALLIC, MOSTLY NICKEL‐IRON CORE FRAGMENTS!"
+    },
+    "trojan_asteroid": {
+      "description": "CO‐ORBITIN' IN LAGRANGE POINTS OF A LARGER PLANET!"
+    },
+    "comet": {
+      "description": "DIRTY SNOWBALL: ICE, DUST, DEVELOPS TAIL NEAR STAR!"
+    },
+    "short_period_comet": {
+      "description": "ORBITS UNDER 200 YEARS, FREQUENT VISITOR!"
+    },
+    "long_period_comet": {
+      "description": "ORBITS OVER 200 YEARS, FROM DISTANT OORT CLOUD!"
+    }
+  }
+}

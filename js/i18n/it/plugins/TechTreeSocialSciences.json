@@ -1,6 +1,6 @@
 {
   "name": "Scienze Sociali",
-  "blurb": "Persone, mercati e folle come oggetti di misura, compresi gli studi errati dell'epoca.",
+  "blurb": "Persone, mercati e folle, studi errati inclusi.",
   "nodes": {
     "soc_asymmetric": {
       "name": "Mercati a Informazione Asimmetrica",
@@ -64,7 +64,7 @@
     },
     "soc_mobile_web": {
       "name": "Il Web Mobile",
-      "desc": "Le pagine vengono ricostruite per un collegamento radio con tempo di andata e ritorno di alcune centinaia di millisecondi e per un puntatore largo un centimetro. Il carico utile viene ridotto a pochi kilobyte e le richieste vengono tagliate, perché la latenza pesa più della banda; l'impaginazione si riversa in una sola colonna fluida alla larghezza della finestra; i bersagli tattili vengono dimensionati sui nove millimetri, perché un polpastrello non ha stato di passaggio né precisione al pixel. Le sessioni diventano brevi, frequenti, interrotte e geograficamente localizzate, il che cambia quello che i log di traffico misurano tanto quanto cambia la pagina."
+      "desc": "Le pagine vengono ricostruite per un collegamento radio con tempo di andata e ritorno di alcune centinaia di millisecondi e per un puntatore largo un centimetro. Il carico utile viene ridotto a pochi kilobyte e le richieste vengono tagliate, perché la latenza pesa più della banda; l'impaginazione si riversa in una sola colonna fluida alla larghezza della finestra; i bersagli tattili vengono dimensionati sui nove millimetri, perché un polpastrello non ha stato hover né precisione al pixel. Le sessioni diventano brevi, frequenti, interrotte e geograficamente localizzate, il che cambia quello che i log di traffico misurano tanto quanto cambia la pagina."
     },
     "soc_cloud": {
       "name": "Il Cloud",

@@ -1,5 +1,5 @@
 {
-  "_comment": "DISPLAY TEXT FOR DA PERSONALITY LIST IN JS/DB/HEALTH/PERSONALITYDATA.JSON, WHICH CARRIES ONLY KEYS. DA THOUGHT POOLS IZ IN PERSONALITYTHOUGHTS.JSON!",
+  "_comment": "Display text for the personality list in js/db/Health/PersonalityData.json, which carries only keys. The thought pools are in PersonalityThoughts.json.",
   "nervous": {
     "name": "NERVOUS",
     "description": "PRONE TA ANXIETY AN' HIGH STRESS!"
@@ -30,7 +30,7 @@
   },
   "stoic": {
     "name": "STOIC",
-    "description": "ENDURES HARDSHIP WITHOUT COMPLAINT!"
+    "description": "ENDURES HARDSHIP WITOUT COMPLAINT!"
   },
   "paranoid": {
     "name": "PARANOID",
@@ -54,7 +54,7 @@
   },
   "adventurous": {
     "name": "ADVENTUROUS",
-    "description": "SEEKS NOVELTY AN' THRILLS, HIGH-RISK!"
+    "description": "SEEKS NOVELTY AN' THRILLS, TAKES RISKS!"
   },
   "nurturing": {
     "name": "NURTURIN'",
@@ -66,7 +66,7 @@
   },
   "cynical": {
     "name": "CYNICAL",
-    "description": "DISTRUSTFUL OF HUMAN SINCERITY OR INTEGRITY!"
+    "description": "DOUBTS DAT PEOPLE IZ SINCERE OR HONEST!"
   },
   "disciplined": {
     "name": "DISCIPLINED",
@@ -86,7 +86,7 @@
   },
   "brave": {
     "name": "BRAVE",
-    "description": "FACES DANGER WIT LOW FEAR RESPONSE!"
+    "description": "FACES DANGER WIT LIL' FEAR!"
   },
   "timid": {
     "name": "TIMID",

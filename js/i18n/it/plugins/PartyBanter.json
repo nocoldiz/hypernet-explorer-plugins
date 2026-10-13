@@ -138,12 +138,12 @@
       [
         "Non parliamo sul serio da settimane.",
         "Stiamo parlando adesso.",
-        "Questo non è parlare. Questo è camminare facendo rumore."
+        "Questo è camminare facendo rumore."
       ],
       [
         "Cosa staresti facendo adesso, se niente di tutto questo fosse successo?",
         "Qualcosa con dentro meno colline.",
-        "Quella non è una risposta. È una lamentela col cappello."
+        "Quella è una lamentela col cappello."
       ],
       [
         "Non mi hai fatto una sola domanda su di me in un mese.",
@@ -319,7 +319,7 @@
         "Richiedimelo dopo il buio e ti darò una risposta diversa."
       ],
       [
-        "Gli archivisti hanno fermato un gruppo davanti a noi e hanno letto i loro messaggi ad alta voce.",
+        "Gli archivisti hanno fermato un Party davanti a noi e hanno letto i loro messaggi ad alta voce.",
         "Lo chiamano rendere pubbliche le cose. È leggere la posta di qualcuno in mezzo alla strada."
       ],
       [
@@ -572,12 +572,12 @@
         "Lo fa sempre qualcuno. Non è la stessa cosa che qualcuno paghi."
       ],
       [
-        "L'ultimo gruppo che abbiamo incontrato era uno in meno rispetto alla partenza.",
+        "L'ultimo Party che abbiamo incontrato era uno in meno rispetto alla partenza.",
         "Non l'hanno detto e noi non abbiamo chiesto. È l'etichetta."
       ],
       [
         "Da due giorni non succede niente e la cosa mi mette a disagio.",
-        "Godila. Essere inquieti per la pace è un'abitudine, non un avvertimento."
+        "Godila. Essere inquieti per la pace è solo un'abitudine."
       ],
       [
         "A cosa pensi quando non c'è niente a cui pensare?",
@@ -698,7 +698,7 @@
       ],
       [
         "Dicono che alcune dimensioni sono già andate.",
-        "Non andate. Svuotate. La gente è venuta qui. È per questo che le strade sono affollate."
+        "Svuotate. La gente è venuta qui. È per questo che le strade sono affollate."
       ],
       [
         "Da dove credi che vengano davvero i goblin?",
@@ -838,7 +838,7 @@
       [
         "Qui fuori nessuno dice grazie abbastanza.",
         "Grazie.",
-        "Non a me. In generale.",
+        "Intendevo in generale.",
         "In generale, grazie."
       ],
       [
@@ -938,7 +938,7 @@
       ],
       [
         "Continua a parlare. Accorcia la salita.",
-        "Non accorcia la salita. La rende possibile, che è meglio."
+        "La rende possibile, che è meglio."
       ],
       [
         "Ho finito le cose da dire.",
@@ -1034,7 +1034,7 @@
       ],
       [
         "Dimmi il piano ad alta voce così sento quanto è brutto.",
-        "Non c'è un piano. C'è una direzione e un po' di cibo."
+        "C'è una direzione e un po' di cibo. Il piano è questo."
       ],
       [
         "È la seconda volta che lo dici oggi.",
@@ -1055,7 +1055,7 @@
       ],
       [
         "Pieghi la mappa al contrario tutte le mattine.",
-        "Non esiste un verso giusto. Esiste il tuo, e ne hai fatto una religione.",
+        "Esiste solo il tuo verso, e ne hai fatto una religione.",
         "Una religione con meno strappi."
       ],
       [
@@ -1064,7 +1064,7 @@
       ],
       [
         "Ormai riesco a montare la tenda al buio senza imprecare.",
-        "Non senza imprecare. Solo a voce più bassa."
+        "Imprechi ancora. Solo a voce più bassa."
       ],
       [
         "Tocca a te prendere l'acqua.",
@@ -1092,7 +1092,7 @@
       ],
       [
         "Conosco il tuo russare abbastanza da capire quando fingi.",
-        "Non fingo mai. Russo con assoluta sincerità."
+        "Russo sempre con assoluta sincerità."
       ],
       [
         "{other}, hai rimesso il sale nella tasca sinistra.",
@@ -1135,7 +1135,7 @@
       ],
       [
         "Mi manca la campanella della scuola. Non è strano?",
-        "Non è strano. Qualcuno ti diceva quando le cose finivano. Qui fuori non lo fa nessuno."
+        "Ha senso. Qualcuno ti diceva quando le cose finivano. Qui fuori non lo fa nessuno."
       ],
       [
         "Una volta sono scappato di casa per un pomeriggio intero.",
@@ -1210,12 +1210,12 @@
       [
         "Metti lo zucchero nel sugo.",
         "Un pizzico. Per calmare i pomodori.",
-        "Quella non è una ricetta. È una bustarella."
+        "Quella è una bustarella."
       ],
       [
         "Dimmi un cibo che mangeresti ogni giorno per sempre.",
         "Arance. Sbucciate in un colpo solo, la buccia in un unico ricciolo lungo.",
-        "Quello non è un cibo. È uno spettacolo.",
+        "Quello è uno spettacolo.",
         "È tutte e due le cose, e mi riesce benissimo."
       ],
       [
@@ -1541,7 +1541,7 @@
       ],
       [
         "Fai il doppio nodo alle stringhe e poi un terzo per fortuna.",
-        "Il terzo non è per fortuna. È per la salita fuori dall'ultimo paese."
+        "Il terzo è per la salita fuori dall'ultimo paese."
       ],
       [
         "Il riscaldamento funziona solo se qualcuno gli dà un calcio.",
@@ -1559,7 +1559,7 @@
       ],
       [
         "Il camper fa un rumore nuovo. A sinistra, dietro il lavello.",
-        "Non è nuovo. È il rumore vecchio, più forte.",
+        "È il rumore vecchio, più forte.",
         "È meglio o peggio?",
         "Vuol dire che si fida abbastanza da lamentarsi."
       ],
@@ -1649,7 +1649,7 @@
       ],
       [
         "Il treno aveva quaranta minuti di ritardo e si sono scusati per il disagio.",
-        "Quaranta minuti non sono un disagio. Sono una breve vacanza su una panchina."
+        "Quaranta minuti sono una breve vacanza su una panchina."
       ],
       [
         "Hai visto il telegiornale della sera?",
@@ -1700,7 +1700,7 @@
       [
         "Qual era il tuo gioco preferito, nell'infanzia?",
         "Nascondino. Avevo un talento. Una volta nessuno mi ha trovato fino a cena.",
-        "Quella non è una vittoria. È essere dimenticati."
+        "Quello è essere dimenticati."
       ],
       [
         "A scuola in matematica ero un disastro.",
@@ -1833,7 +1833,7 @@
       [
         "Vuoi dei figli, un giorno?",
         "Voglio essere il parente che arriva coi regali e se ne va prima dell'ora di dormire.",
-        "Questo non è avere figli. È avere un pubblico."
+        "Questo è avere un pubblico."
       ],
       [
         "Quando saremo vecchi, parleremo ancora così?",
@@ -1965,7 +1965,7 @@
       [
         "Nella fattoria di mio zio c'era un cavallo a cui piacevo solo io.",
         "Che fortuna.",
-        "Non era fortuna. Ero io a portare le mele."
+        "Macché. Ero io a portare le mele."
       ],
       [
         "Quella gatta al campeggio ti è venuta dietro per un chilometro.",
@@ -2139,14 +2139,14 @@
       ],
       [
         "Diciamo a qualcuno cosa è successo?",
-        "Non lo diciamo a nessuno. Un gruppo ferito è un gruppo che la gente segue."
+        "Non lo diciamo a nessuno. Un Party ferito è un Party che la gente segue."
       ],
       [
         "Non c'è niente di rotto. Fa male tutto. C'è una differenza.",
         "C'è, ed è la sola buona notizia della giornata."
       ],
       [
-        "Non sto facendo l'eroe, sto andando lento.",
+        "Sto solo andando lento.",
         "È permesso. Piano si arriva."
       ],
       [
@@ -2180,7 +2180,7 @@
         "Due paesi fa. Nessuno voleva dirlo."
       ],
       [
-        "Stiamo mandando avanti tutto il gruppo con niente.",
+        "Stiamo mandando avanti tutto il Party con niente.",
         "Con niente la gente dura più di quanto pensi. Non molto di più."
       ],
       [
@@ -2192,11 +2192,11 @@
         "Allora non incontriamo nessuno. Troviamo un tetto e ci stendiamo."
       ],
       [
-        "È così che spariscono le compagnie, sai. Non in battaglia.",
+        "È così che spariscono i Party, sai. Non in battaglia.",
         "Lo so. Trovaci un posto."
       ],
       [
-        "In questo gruppo nessuno ha dormito, mangiato o lavato come si deve da quattro giorni.",
+        "In questo Party nessuno ha dormito, mangiato o lavato come si deve da quattro giorni.",
         "Cinque. E non ripeterlo, ad alta voce è peggio."
       ],
       [
@@ -2208,7 +2208,7 @@
         "Allora trovaci un paese e le chiacchiere ricominceranno da sole."
       ],
       [
-        "È così che spariscono i gruppi. Non nelle battaglie. Così.",
+        "È così che spariscono davvero i Party.",
         "Lo so. Trovaci un posto. Non sono troppo orgoglioso per chiederlo."
       ],
       [
@@ -2237,10 +2237,10 @@
       ],
       [
         "Ho cominciato a sognare il cibo da sveglio.",
-        "Quello non è sognare. È pianificare, ed è un buon segno."
+        "Quello è pianificare, ed è un buon segno."
       ],
       [
-        "Chi tiene insieme questo gruppo?",
+        "Chi tiene insieme questo Party?",
         "Nessuno. Tiene per abitudine. Funziona finché non funziona più."
       ],
       [
@@ -2256,7 +2256,7 @@
         "Ha smesso di essere una spedizione due paesi fa. Nessuno voleva dirlo per primo."
       ],
       [
-        "Due giorni di riposo vero e saremmo un gruppo diverso.",
+        "Due giorni di riposo vero e saremmo un Party diverso.",
         "Allora trova due giorni. È tutto il compito."
       ],
       [
@@ -2268,7 +2268,7 @@
         "D'accordo. Doveva essere così tutta la settimana."
       ],
       [
-        "Lo chiedo come membro di questo gruppo, non come problema di qualcuno. Dobbiamo fermarci.",
+        "Lo chiedo come membro di questo Party, non come problema di qualcuno. Dobbiamo fermarci.",
         "Allora ci fermiamo. A quello nessuno avrebbe detto no."
       ],
       [
@@ -2479,7 +2479,7 @@
           "Qualcosa è morto davvero. Ci siamo passati sopra."
         ],
         [
-          "Voglio dell'acqua. Non da bere. Per starci dentro.",
+          "Voglio dell'acqua per starci dentro.",
           "Al prossimo fiume che attraversiamo ci fermiamo. Promesso."
         ],
         [
@@ -2990,7 +2990,7 @@
       "ice": [
         [
           "Non sento più la punta delle dita.",
-          "Allora continua a muoverle. L'intorpidimento è l'avviso, non il danno."
+          "Allora continua a muoverle. L'intorpidimento è il segnale d'allarme."
         ],
         [
           "La neve copre tutto. Tracce, buche, qualunque cosa ci sia sotto la crosta.",
@@ -3108,7 +3108,7 @@
         ],
         [
           "Su quella parete c'è neve in pieno agosto.",
-          "Quella non è neve. È quello che resta di un ghiacciaio, e si vergogna."
+          "Quello è ciò che resta di un ghiacciaio, e si vergogna."
         ],
         [
           "Le orecchie non mi si stappano.",
@@ -3263,7 +3263,7 @@
           "Allora ha più paura di te. Cammina."
         ],
         [
-          "Questo terreno non è terreno. È un suggerimento.",
+          "Questo terreno è solo un suggerimento.",
           "Allora segui le canne. Le canne crescono dove c'è un fondo."
         ],
         [
@@ -3382,7 +3382,7 @@
         ],
         [
           "Ascolta. Acqua, molto in basso.",
-          "Non è in basso. È dietro il muro. Allontanati dal muro."
+          "Quella è dietro il muro. Allontanati dal muro."
         ],
         [
           "Questa è la tomba di qualcuno. Tutta, l'intero sistema.",
@@ -3444,7 +3444,7 @@
           "Lascialo lì. È la sola cosa rimasta di qualcuno."
         ],
         [
-          "Qui non ha bruciato niente. È stato lasciato, non distrutto.",
+          "Qui non ha bruciato niente. È stato semplicemente lasciato.",
           "È peggio. Bruciare è rapido."
         ],
         [
@@ -3489,7 +3489,7 @@
         ],
         [
           "C'è molto silenzio per un villaggio.",
-          "Non è più un villaggio. È quello il silenzio che senti."
+          "Ha smesso di essere un villaggio. È quello il silenzio che senti."
         ],
         [
           "I vani delle porte sono tutti in piedi e nient'altro lo è.",
@@ -3668,7 +3668,7 @@
         ],
         [
           "C'è graniglia fresca e nessun segno di rullo.",
-          "Allora è stato fatto a mano. È un villaggio, non un governo."
+          "Allora è stato fatto a mano. È opera di un villaggio."
         ]
       ],
       "industrial": [
@@ -3979,7 +3979,7 @@
         ],
         [
           "{ev_gold} per quella cosa. Dopo tutto quanto.",
-          "Non è quanto valeva. È quanto ha pagato."
+          "È quanto ha pagato. Quanto valeva è un'altra faccenda."
         ],
         [
           "Non pensavo che ne uscissimo, da quella.",
@@ -4015,7 +4015,7 @@
         ],
         [
           "Lo diciamo a qualcuno?",
-          "No. A un gruppo che vince gli scontri vengono offerti scontri."
+          "No. A un Party che vince gli scontri vengono offerti scontri."
         ],
         [
           "Le mani mi si sono fermate solo adesso.",
@@ -4061,7 +4061,7 @@
         ],
         [
           "Alla fine ha parlato.",
-          "Non ha parlato. Ha fatto un suono in una lingua e non discuteremo quale."
+          "Era un suono, in una lingua di cui non discuteremo."
         ],
         [
           "Dovevamo ucciderlo?",
@@ -4152,7 +4152,7 @@
         ],
         [
           "Lo diciamo a qualcuno?",
-          "Non lo diciamo a nessuno, e non per orgoglio. Per chi ascolta."
+          "Non lo diciamo a nessuno, per via di chi ascolta."
         ]
       ],
       "battle_fled": [
@@ -4186,7 +4186,7 @@
         ],
         [
           "Non mi piace come sono scappato.",
-          "Non esiste un buon modo. Esiste solo abbastanza lontano."
+          "Esiste solo abbastanza lontano."
         ],
         [
           "Ci sta seguendo?",
@@ -4239,7 +4239,7 @@
           "Ho visto quanto pagava. Eravamo l'opzione economica."
         ],
         [
-          "Non è combattere. È uno spettacolo con delle conseguenze.",
+          "È uno spettacolo con delle conseguenze.",
           "Sono le conseguenze a renderlo uno spettacolo che valga la pena guardare. Chiedi alla folla."
         ],
         [
@@ -4297,8 +4297,8 @@
           "Non l'ha detto e io non l'ho chiesto. Entrambe le cose di proposito."
         ],
         [
-          "Cambia il gruppo, essere in quattro.",
-          "Cambia chi parla. Un gruppo è quasi tutto lì."
+          "Cambia il Party, essere in quattro.",
+          "Cambia chi parla. Un Party è quasi tutto lì."
         ],
         [
           "Mi piace.",
@@ -4407,7 +4407,7 @@
         ],
         [
           "Andiamo avanti?",
-          "Sì. Non è coraggio. Non c'è nessun altro posto dove stare."
+          "Sì. Non c'è nessun altro posto dove stare."
         ],
         [
           "Qualcuno dovrebbe dire qualcosa come si deve.",
@@ -4463,7 +4463,7 @@
         ],
         [
           "{ev_name} non è la persona che abbiamo raccolto per strada.",
-          "Nessuno lo è. È la strada, non i livelli."
+          "Nessuno lo è. È opera della strada."
         ],
         [
           "Hai visto cosa ha fatto alla fine?",
@@ -4547,7 +4547,7 @@
         ],
         [
           "Sapeva che dovevamo vendere. Si vedeva che lo capiva.",
-          "Lo sanno tutti. Un gruppo sulla porta di una bottega al tramonto vende, non compra."
+          "Lo sanno tutti. Un Party sulla porta di una bottega al tramonto vende, non compra."
         ],
         [
           "Dovevamo tenerlo?",
@@ -4701,7 +4701,7 @@
         ],
         [
           "{ev_hours} ore e ho sognato di camminare.",
-          "Quello non è sonno. È straordinario non pagato."
+          "Quello è straordinario non pagato."
         ],
         [
           "Sembrate tutti meglio. Davvero.",
@@ -4798,7 +4798,7 @@
         ],
         [
           "Qua sotto c'è più silenzio che là sopra.",
-          "Quello non è silenzio. È qualcosa più lontano di quanto possiamo sentire."
+          "Quel silenzio è qualcosa più lontano di quanto possiamo sentire."
         ],
         [
           "Voglio salire. Lo dico adesso, con calma.",
@@ -4917,7 +4917,7 @@
         ],
         [
           "Ci senti attraverso?",
-          "Non sentire. Qualcos'altro. Non c'è ancora una parola e ho provato a trovarla."
+          "Qualcos'altro. Non c'è ancora una parola e ho provato a trovarla."
         ],
         [
           "Chi l'ha fatto era bravo nel suo lavoro.",
@@ -4947,7 +4947,7 @@
       "crime_committed": [
         [
           "Sono {ev_bounty} sulle nostre teste per niente.",
-          "Non per niente. Per {ev_crime}. Dillo come si deve."
+          "Per {ev_crime}. Dillo come si deve."
         ],
         [
           "Adesso siamo quel genere di gente?",
@@ -5001,10 +5001,10 @@
         ],
         [
           "{ev_quest}. Per iscritto?",
-          "Non c'è niente per iscritto. C'è una stretta di mano e un nome che non ho capito."
+          "C'è una stretta di mano e un nome che non ho capito."
         ],
         [
-          "Qualcuno ha chiesto cos'è successo all'ultimo gruppo che hanno mandato?",
+          "Qualcuno ha chiesto cos'è successo all'ultimo Party che hanno mandato?",
           "L'ho chiesto. C'è stata una pausa, e poi un aumento di prezzo."
         ],
         [
@@ -5031,7 +5031,7 @@
       "quest_completed": [
         [
           "{ev_quest}. Fatto, chiuso, via dalla lista.",
-          "Non dire chiuso. Di' chiuso per adesso."
+          "Di' chiuso per adesso."
         ],
         [
           "Ecco una cosa andata come doveva andare.",
@@ -5922,7 +5922,7 @@
         [
           "Qualunque cosa ci aspetti lassù, da lì esco con te.",
           "Non promettermelo.",
-          "Non sto promettendo. Ti sto dicendo cosa intendo fare."
+          "Ti sto solo dicendo cosa intendo fare."
         ],
         [
           "L'ultimo miglio mi hai portato tu, vero?",
@@ -6729,7 +6729,7 @@
       ],
       [
         "Di chi è questa roba sulla mia cuccetta?",
-        "È roba del gruppo. Dorme dove c'è posto, come noi."
+        "È roba del Party. Dorme dove c'è posto, come noi."
       ],
       [
         "La pioggia su un tetto tuo è un suono completamente diverso.",
@@ -6769,7 +6769,7 @@
       ],
       [
         "Qualcuno ha lasciato di nuovo la sua roba sulla mia cuccetta.",
-        "È roba del gruppo. Dorme dove c'è posto, come noi."
+        "È roba del Party. Dorme dove c'è posto, come noi."
       ],
       [
         "Ne parliamo di quello che è successo, o no?",
@@ -6832,12 +6832,12 @@
         "Allora sposta la testa di venti centimetri e smetti di fare il martire."
       ],
       [
-        "Siamo felici? Davvero. Come gruppo.",
+        "Siamo felici? Davvero. Come Party.",
         "Siamo asciutti e sazi e nessuno sanguina. Non tirare troppo la corda."
       ],
       [
         "Lavo io i piatti se qualcun altro va a prendere l'acqua.",
-        "Quella non è una divisione del lavoro. È tutto il lavoro in due metà."
+        "Quello è tutto il lavoro in due metà."
       ],
       [
         "Sento il motore che si raffredda.",
@@ -6880,7 +6880,7 @@
         ],
         [
           "Se {illness} mi porta via quaggiù, seppellitemi in un posto con una bella vista.",
-          "Non stai morendo. Stai facendo il melodramma sotto una coperta.",
+          "Stai solo facendo il melodramma sotto una coperta.",
           "Le due cose non si escludono."
         ],
         [
@@ -6943,7 +6943,7 @@
         ],
         [
           "Ho sentito un crac da {part} e sto facendo finta di niente.",
-          "Quello non è un piano, {name}. È una speranza che zoppica."
+          "Quella è una speranza che zoppica, {name}."
         ],
         [
           "Quanto ci mette a saldarsi, secondo te, {part}?",
@@ -7039,7 +7039,7 @@
         ],
         [
           "Non aiutarmi con la cinghia. Devo farcela da solo.",
-          "Non volevo aiutarti. Volevo guardare con aria incoraggiante.",
+          "Volevo solo guardare con aria incoraggiante.",
           "È peggio.",
           "Lo so."
         ],
@@ -7055,7 +7055,7 @@
         ],
         [
           "Puoi smettere di camminare dal mio lato debole, {other}.",
-          "Non cammino qui per te, {name}. Da qui si vede meglio."
+          "Cammino qui per il panorama, {name}."
         ],
         [
           "Avevo paura che mi avreste lasciato al paese successivo.",
@@ -7120,7 +7120,7 @@
           "Allora ti sei svegliato pulito. È questa la parte che conta."
         ],
         [
-          "Non ce l'ho con te. Ce l'ho con tutto.",
+          "Ce l'ho con tutto il resto.",
           "Lo so. Arrabbiati pure. Ma arrabbiati qui, con noi.",
           "Qui è noiosissimo.",
           "Noioso vuol dire al sicuro, {name}. Per stasera."
@@ -7166,7 +7166,7 @@
       ],
       "drunk": [
         [
-          "Non ho bevuto troppo. Sono esattamente felice al punto giusto.",
+          "Sono esattamente felice al punto giusto.",
           "Hai chiamato signora un lampione, {name}.",
           "Era molto elegante."
         ],
@@ -7223,7 +7223,7 @@
         ],
         [
           "Sono tutti così lontani e così rumorosi.",
-          "Non parla nessuno, {name}. È il tuo cuore.",
+          "È il tuo cuore che parla, {name}.",
           "È molto teatrale, il mio cuore."
         ],
         [
@@ -7332,7 +7332,7 @@
         [
           "Ucciderei per aringhe sottaceto e marmellata.",
           "Insieme?",
-          "Non giudicare me. Giudica il bambino."
+          "Giudica il bambino."
         ],
         [
           "E se nasce prima del tempo, qui fuori in mezzo a {biome}?",
@@ -7366,7 +7366,7 @@
         [
           "Adesso la strada mi fa paura. Prima non mi faceva mai paura.",
           "Avere paura è segno che stai attento, {name}.",
-          "Non voglio stare attento. Voglio una casa."
+          "Quello che voglio è una casa."
         ],
         [
           "Non portarmi lo zaino. Be'. Portane metà.",
@@ -7433,8 +7433,8 @@
           "Hai smesso di inciampare nelle radici. Si vede, {name}."
         ],
         [
-          "Quello scontro mi è sembrato lento. Non perché fosse facile. Perché ero veloce io.",
-          "Non fartelo salire alla testa. Fallo scendere nei piedi."
+          "Quello scontro mi è sembrato lento, perché ero veloce io.",
+          "Fallo scendere nei piedi, dove serve."
         ],
         [
           "Adesso sollevo lo zaino pieno senza lamentarmi.",
@@ -7493,7 +7493,7 @@
           "Non dirlo dove può sentirti."
         ],
         [
-          "Voglio un materasso vero. Non bello. Basta che non sia la terra.",
+          "Voglio un materasso vero. Uno qualsiasi, basta che non sia la terra.",
           "Sogna più in grande. Siamo ricchi, per una settimana circa."
         ],
         [
@@ -7573,7 +7573,7 @@
         ],
         [
           "Da bambino mangiavamo la minestra fatta con le ossa della minestra di prima.",
-          "Quella non è una ricetta. È una storia di famiglia.",
+          "Quella è una storia di famiglia.",
           "Ci ha fatto superare degli inverni. Ci farà superare anche {place}."
         ],
         [
@@ -7634,7 +7634,7 @@
         ],
         [
           "Con gli ultimi ho comprato il pane. Non arrabbiarti.",
-          "Arrabbiarmi? È la decisione migliore che questo gruppo abbia preso in una settimana."
+          "Arrabbiarmi? È la decisione migliore che questo Party abbia preso in una settimana."
         ]
       ],
       "holiday": [
@@ -7786,7 +7786,7 @@
         [
           "Qui nel fine settimana i negozi chiudono presto.",
           "Allora compriamo adesso e ci lamentiamo dopo, come sempre.",
-          "È tutta la filosofia di questo gruppo."
+          "È tutta la filosofia di questo Party."
         ]
       ],
       "night": [
@@ -7820,7 +7820,7 @@
           "Qualcosa si muove là fuori.",
           "Una volpe. O un gufo. O qualcosa che incontreremo domattina.",
           "Non è rassicurante come credi.",
-          "Non doveva rassicurare. Doveva essere preciso."
+          "Doveva solo essere preciso."
         ],
         [
           "Raccontami qualcosa. Qualsiasi cosa. Tienimi sveglio.",
@@ -7861,7 +7861,7 @@
           "Buon per loro. Qualcuno dovrebbe ballare."
         ],
         [
-          "Mi manca il mio letto. Non un letto qualsiasi. Il mio, con l'avvallamento in mezzo.",
+          "Mi manca il mio letto. Proprio il mio, con l'avvallamento in mezzo.",
           "Troverai un altro avvallamento. Il mondo è pieno di materassi pessimi."
         ],
         [
@@ -8064,7 +8064,7 @@
           ],
           [
             "È grave se i temporali mi piacciono?",
-            "Non grave. Solo preoccupante in un compagno di viaggio."
+            "Solo preoccupante in un compagno di viaggio."
           ],
           [
             "A {place} è saltata la corrente dappertutto.",
@@ -8645,7 +8645,7 @@
         ],
         [
           "Mi fanno male le ossa in punti dove non sapevo di averne.",
-          "Ti serve dormire, non fare l'inventario."
+          "Quello che ti serve è dormire."
         ],
         [
           "Se nella prossima ora mi cade lo zaino, lasciatelo lì. E lasciate anche me.",
@@ -8973,7 +8973,7 @@
         "Nessuno morirà di fame per quello.",
         "Bene. Adesso mettilo dove lo ritrovi nel buio.",
         "Ci hai pensato e poi l'hai fatto. È così che dovrebbe andare.",
-        "È un acquisto, non una ferita.",
+        "È solo un acquisto.",
         "Bene. Una cosa in meno a cui pensare.",
         "Sarà utile o sarà zavorra. In entrambi i casi si sopravvive."
       ],
@@ -9080,10 +9080,10 @@
         "È un buon acquisto. È stato fatto comunque senza consultare nessuno.",
         "Ne avevi l'autorità. Lo confermo a posteriori.",
         "Tutti sentono il prezzo prima che venga pagato. Adesso è la regola.",
-        "Va bene. È attrezzatura del gruppo, non personale. Chiaro?",
+        "Va bene. È attrezzatura del Party, non personale. Chiaro?",
         "Un acquisto per sosta, salvo diversa indicazione mia.",
         "Inventario stasera, con il prezzo accanto.",
-        "È proprietà del gruppo. Nessuno lo tira fuori dallo zaino da solo."
+        "È proprietà del Party. Nessuno lo tira fuori dallo zaino da solo."
       ],
       "scholarly": [
         "Sappiamo davvero cosa fa, o abbiamo comprato la descrizione del bottegaio?",
@@ -9127,7 +9127,7 @@
         "Chi lo porta? Non quello con la spalla malandata.",
         "Bene. Adesso spendi il prossimo in cibo, per tutti.",
         "Se tiene il freddo lontano da una persona, si è già ripagato.",
-        "L'hai comprato per il gruppo, vero. Lo fai sempre.",
+        "L'hai comprato per il Party, vero. Lo fai sempre.",
         "Lo tengo con le medicine. Sarà dove serve.",
         "È un gesto di cura sensato, e lo conto come cura.",
         "Lo porta chi ne ha più bisogno. Non chi l'ha comprato.",
@@ -9198,7 +9198,7 @@
         "Lo porto io. Non farne una questione di prezzo.",
         "Non hai mai speso male. Non comincio a dubitare di te adesso.",
         "Qualunque cosa sia costata, è uscita dai nostri soldi, e nostri è la parola importante.",
-        "In questo gruppo nessuno mette in dubbio quella cosa. Non ad alta voce, almeno.",
+        "In questo Party nessuno mette in dubbio quella cosa. Non ad alta voce, almeno.",
         "L'hai comprato per noi, non per te. L'ho visto.",
         "È un buon acquisto perché l'hai fatto tu.",
         "Dimmi una parola e mi batto con chiunque su questo.",
@@ -9269,15 +9269,15 @@
         "{item}! LUCCICA! ME TENERE PRIMO!",
         "{price}? PER QUESTO? ALTI-ROSA ESSERE LADRI. LADRI EDUCATI.",
         "BUON ACQUISTO. ME ANNUSARE. ODORE DI BUON ACQUISTO.",
-        "POTERE MANGIARE {item}? NO? ALLORA PERCHE' NOI COMPRARE?",
-        "EURO ANDARE, {item} VENIRE. COSI' FUNZIONARE SU-MONDO. STRANO.",
+        "POTERE MANGIARE {item}? NO? ALLORA PERCHÉ NOI COMPRARE?",
+        "EURO ANDARE, {item} VENIRE. COSÌ FUNZIONARE SU-MONDO. STRANO.",
         "IN CITTADELLA NOI SOLO PRENDERE COSE. QUI TU DARE CARTA. ME IMPARARE.",
         "{item}. ME DIPINGERE TESCHIO SOPRA DOPO. RENDERE MIGLIORE.",
         "*MORDE {item} PER CONTROLLARE* SIIH. ESSERE VERO.",
         "{price}! ME POTERE COMPRARE TANTI SCARABEI CON {price}.",
         "QUEL BOTTEGAIO NON GUARDARE ME UNA VOLTA. ME GUARDARE LUI TUTTO IL TEMPO.",
         "{item} ESSERE PER ME? ESSERE? DIRE CHE ESSERE PER ME.",
-        "BENE. ORA NOI PIU' FORTI. O NOI AVERE PIU' ROBA. STESSA COSA.",
+        "BENE. ORA NOI PIÙ FORTI. O NOI AVERE PIÙ ROBA. STESSA COSA.",
         "CUGINI-BLU LEGGERE ETICHETTA. ME SOLO FIDARE.",
         "{item} ESSERE BUONO. NON BUONO COME UOVO. NIENTE ESSERE.",
         "NOI SPENDERE {price} E NESSUNO CHIEDERE A ME. ME DIRE SIIH. MA COMUNQUE.",
@@ -9285,7 +9285,7 @@
         "CONTE GRISSNACK AVERE {item} NERO. SOLO DIRE.",
         "BELLO. ME DIRE A GRANDE-CANTO-TESTA CHE NOI AVERE {item}. TUTTI NAGUKA GELOSI ORA.",
         "QUANTO? {price}? ME NON SAPERE SE ESSERE TANTO. SEMBRARE TANTO.",
-        "NEGOZI QUI COSI' LUMINOSI. OCCHI DI ME FARE MALE MA CUORE DI ME FELICE.",
+        "NEGOZI QUI COSÌ LUMINOSI. OCCHI DI ME FARE MALE MA CUORE DI ME FELICE.",
         "{item}. MMH. ME NON SAPERE COSA FARE. ME PIACERE COMUNQUE.",
         "PRETE DARE COSE GRATIS. NEGOZIANTE VOLERE {price}. ME PREFERIRE PRETE. PER SPESA.",
         "SIIH! NOI ABBASTANZA RICCHI PER COMPRARE ROBA! COME VERI ALTI-ROSA!",
@@ -9303,7 +9303,7 @@
         "Posso portare io {item}? Prometto di averne cura. Io ho cura di tutto.",
         "Un acquisto sensato. Io avrei esitato, ed esitare è un lusso che abbiamo perso nel novantadue.",
         "Il negoziante ha contato il resto così in fretta. Potrei guardarlo per tutto il pomeriggio.",
-        "{item}. Vorrò sapere come funziona. Non adesso. Stasera, accanto alla lampada.",
+        "{item}. Vorrò sapere come funziona. Stasera, accanto alla lampada.",
         "Abbiamo pagato {price} e nessuno ha contrattato. Mia nonna ne sarebbe stata mortificata.",
         "Avete sentito il suono della cassa? Un campanello, ogni volta. La vostra gente pensa proprio a tutto.",
         "Ho annotato {item} nei miei appunti, con la data. Scrivo tutto da quando abbiamo lasciato casa.",
@@ -9542,7 +9542,7 @@
       "Tengo i nomi in ordine. È l'unica cosa che tengo in ordine.",
       "Questo è un posto bellissimo e io sono troppo stanco per riceverlo.",
       "Qualcuno è stato in piedi esattamente qui e ha creduto di avere tempo.",
-      "Non voglio parlarne. Voglio che qualcuno sappia che c'è.",
+      "Voglio solo che qualcuno sappia che c'è.",
       "La strada va solo avanti. È quella la parte crudele.",
       "Dodici anni da quando il cielo è cambiato e ci camminiamo ancora sotto come se fosse normale.",
       "Mi manca gente che non mi è mai piaciuta. Spiegami questa."
@@ -9613,7 +9613,7 @@
       "Ho avuto più fame e sono stato più lontano da un aiuto.",
       "Quello che c'è oltre la collina ci sarà anche se ci sediamo.",
       "Prima i piedi. I sentimenti quando ci fermiamo.",
-      "Non è una giornata difficile. È solo una giornata lunga."
+      "È solo una giornata lunga."
     ],
     "paranoid": [
       "Non voltarti. Due dietro di noi dall'ultimo angolo.",
@@ -9640,7 +9640,7 @@
       "Qui nessuno penserà peggio di te se lo dici.",
       "Non hai dormito e non hai detto perché.",
       "Quella cosa là dietro è caduta su di te più che su tutti noi.",
-      "Non ti chiedo di stare bene. Ti chiedo di essere sincero.",
+      "Ti chiedo solo di essere sincero.",
       "Sei diventato silenzioso nell'esatto momento in cui si è visto il paese.",
       "Qualunque cosa ti porti addosso, la porti in salita e da solo.",
       "Qui fuori ci siamo solo noi. Niente di quello che dici lascia la strada.",
@@ -9662,7 +9662,7 @@
       "Nessuno spende dalla cassa senza dirlo prima ad alta voce.",
       "La prossima ora non ti piacerà. La farai comunque.",
       "Rapporto. Acqua, piedi, munizioni, in quest'ordine.",
-      "Non chiedo a nessuno di essere d'accordo. Chiedo a tutti di muoversi.",
+      "Chiedo solo a tutti di muoversi.",
       "Due di voi sui fianchi. Non mi interessa quali due.",
       "Siamo in ritardo perché nessuno ha detto che eravamo in ritardo. Da oggi finisce."
     ],
@@ -9671,7 +9671,7 @@
       "Ho preso appunti. Vuoi sentirli o smetto?",
       "C'è uno schema nei posti dove continuiamo a trovarle. Ne sono quasi certo.",
       "Quella muratura è di prima dello Squishing e la malta no. Qualcuno ha riparato di recente.",
-      "Tre di questi segnali, adesso. Tre è uno schema, non fortuna.",
+      "Tre di questi segnali, adesso. Tre è già uno schema.",
       "Il dialetto è cambiato un chilometro indietro. Abbiamo passato qualcosa più vecchio del confine.",
       "Il nome dell'incantesimo si pronuncia come si deve o non si pronuncia. CamelCase, in un fiato.",
       "Sotto questa valle passa una linea di forza. Lo si sente da come si comporta male la bussola.",
@@ -9713,7 +9713,7 @@
       "Ogni bella storia che abbiamo è cominciata con qualcuno che diceva che era una cattiva idea.",
       "Quella porta non si apre da prima dello Squishing. Rimediamo.",
       "Le uscite sulla Strada Universale non si ripetono. Questa è una sola volta.",
-      "Non sono stanco. Sono il contrario di stanco ed è scomodo.",
+      "Sono il contrario di stanco ed è scomodo.",
       "Vieni a vedere questo prima che decida di scalarlo da solo.",
       "La strada più lunga è quella con le cose sopra."
     ],
@@ -9789,7 +9789,7 @@
       "Andrà come deve andare. È sempre stato così.",
       "Uno di noi non ne uscirà. Statisticamente parlando.",
       "Ho smesso di fare piani parecchio tempo fa e da allora sto meglio.",
-      "Uno di noi non finisce l'anno in piedi. È aritmetica, non malumore.",
+      "Uno di noi non finisce l'anno in piedi. È semplice aritmetica.",
       "Il paradosso si chiude fra undici anni. Niente di quello che facciamo qui fuori lo cambia.",
       "Ho smesso di fare piani e dormo meglio.",
       "Decide la strada. Noi scegliamo solo il passo.",
@@ -9827,7 +9827,7 @@
       "Non sarei su questa strada per nessun altro. È semplicemente un fatto.",
       "Sei tornato a prendermi al ponte. Non l'ho dimenticato e non lo dimenticherò.",
       "Dimmi una parola e mi metto dove mi dici di stare.",
-      "In questo gruppo nessuno viene lasciato indietro perché era comodo.",
+      "In questo Party nessuno viene lasciato indietro perché era comodo.",
       "Non devo essere d'accordo con te per starti dietro.",
       "Se vogliono uno di noi, possono spiegarlo a tutti noi.",
       "Per me hai portato pesi peggiori di questo. Dammelo.",
@@ -9858,7 +9858,7 @@
       "Non voglio fare il difficile, ma questa cosa non mi piace per niente.",
       "Va bene se dico che ho paura?",
       "Posso camminare in mezzo? Solo per questo tratto.",
-      "Non voglio essere difficile. Voglio essere altrove.",
+      "Vorrei solo essere altrove.",
       "Va bene se dico ad alta voce che ho paura?",
       "Per favore non mandatemi avanti per primo. Per favore.",
       "Lo faccio. Mi serve solo un momento prima di farlo.",
@@ -9868,7 +9868,7 @@
       "Preferisco portare il doppio e stare in fondo.",
       "Scusa. So che l'ho già chiesto. Quanto manca adesso?",
       "Qualcuno può tenere la lampada puntata verso gli angoli?",
-      "Non sono coraggioso. Sono qui. Spero che valga qualcosa."
+      "Ho paura, ma sono qui. Spero che valga qualcosa."
     ],
     "hedonistic": [
       "La prima cosa che voglio in quel paese è un tavolo con sopra qualcosa di caldo.",
@@ -9883,7 +9883,7 @@
       "Non passo davanti a una locanda. Semplicemente non lo faccio.",
       "Il mondo finisce fra undici anni. Ordina il vino migliore.",
       "Che qualcuno canti qualcosa. Qualsiasi cosa con un ritornello.",
-      "La comodità non è debolezza. È manutenzione.",
+      "La comodità è manutenzione.",
       "È rimasta una bottiglia e propongo un impiego.",
       "Qualunque cosa chieda oggi, può chiederla dopo che abbiamo mangiato."
     ],
@@ -9918,15 +9918,15 @@
     ],
     "naguka": [
       "OI. TU. PARLARE CON ME. STRADA TROPPO ZITTA.",
-      "LAMPADA-CIELO GUARDARE ME DI NUOVO. PERCHE' LEI NON SBATTERE OCCHIO?",
+      "LAMPADA-CIELO GUARDARE ME DI NUOVO. PERCHÉ LEI NON SBATTERE OCCHIO?",
       "ME CONTARE NUVOLE. LORO NON STARE FERME. IMBROGLIONE.",
-      "TU MAI GUARDARE SU E NON VEDERE ALTRA CITTA'? ME ANCORA NON PIACERE.",
-      "IN CITTADELLA, SU ESSERE ANCHE GIU'. QUI SU ESSERE SOLO... VUOTO. TRISTE.",
+      "TU MAI GUARDARE SU E NON VEDERE ALTRA CITTÀ? ME ANCORA NON PIACERE.",
+      "IN CITTADELLA, SU ESSERE ANCHE GIÙ. QUI SU ESSERE SOLO... VUOTO. TRISTE.",
       "ME AVERE FAME. NO, ME NON CHIEDERE. ME SOLO DIRE. FORTE.",
       "CHI VOLERE SENTIRE ME CANTARE JUNEHEM? TUTTI? BENE.",
       "GRANDE-CANTO-TESTA RONZARE OGGI. DA QUALCHE PARTE PARENTI ESSERE FELICI.",
-      "ALTI-ROSA CAMMINARE COSI' PIANO. PERCHE' LORO CAMMINARE COSI' PIANO?",
-      "ME AVERE DOMANDA. PERCHE' ERBA ESSERE VERDE E NON BUONA?",
+      "ALTI-ROSA CAMMINARE COSÌ PIANO. PERCHÉ LORO CAMMINARE COSÌ PIANO?",
+      "ME AVERE DOMANDA. PERCHÉ ERBA ESSERE VERDE E NON BUONA?",
       "TU CONOSCERE BUCO KOLA? NONNA DI NONNA DI ME SCALARE. PRIMA SU. MOLTO CORAGGIOSA.",
       "ME ANNUSARE PIOGGIA. PIOGGIA ESSERE CIELO CHE PIANGE. CIELO ESSERE DEBOLE.",
       "QUANTI EURO NOI AVERE? ME VOLERE SAPERE. ME NON RUBARE. FORSE.",
@@ -9936,7 +9936,7 @@
       "QUESTA STRADA ESSERE PIATTA. PIATTO ESSERE SOSPETTO.",
       "ME TROVARE SCARABEO. ME CHIAMARE LUI GRISSNACK. LUI ESSERE AMICO DI ME ORA.",
       "TU VEDERE CUGINO-BLU OGGI? ME SENTIRE UNO LEGGERE TESTA DI ME. MALEDUCATO.",
-      "PERCHE' SU-MONDO AVERE COSI' TANTO CIELO? CHI AVERE BISOGNO DI TANTO?",
+      "PERCHÉ SU-MONDO AVERE COSÌ TANTO CIELO? CHI AVERE BISOGNO DI TANTO?",
       "PIEDI DI ME PARLARE. LORO DIRE FERMA. ME DIRE NO. ME VINCERE.",
       "TU PIACERE TRUCCO DI ME? ME FARE CON SPUTO E CENERE. SPECIALE.",
       "A CASA, ME COVARE SEI UOVA INSIEME. SEI! NESSUNO BATTERE QUESTO.",
@@ -9949,13 +9949,13 @@
       "QUANTO MANCARE PROSSIMA SOSTA? ME CHIEDERE OGNI MINUTO. TU SAPERE.",
       "ME INSEGNARE TE RINGHIARE ORA. ESSERE UTILE. GRRRAAH. TU PROVARE.",
       "ASCOLTARE. GRANDE-CANTO-TESTA DIRE TEMPESTA ARRIVARE. O PANINO. DIFFICILE CAPIRE.",
-      "ME CONTARE DENTI DI ME OGGI. TUTTI LI'. GIA' BUONA GIORNATA.",
-      "PERCHE' ALTI-ROSA DIRE SCUSA COSI' TANTO? ME MAI SCUSA. ME NAGUKA.",
+      "ME CONTARE DENTI DI ME OGGI. TUTTI LÌ. GIÀ BUONA GIORNATA.",
+      "PERCHÉ ALTI-ROSA DIRE SCUSA COSÌ TANTO? ME MAI SCUSA. ME NAGUKA.",
       "OI. TU ANCORA VIVO? BENE. ME CONTROLLARE OGNI TANTO.",
       "CONTE GRISSNACK MAI CAMMINARE. LUI ESSERE PORTATO. ME VOLERE ESSERE DIO ANCHE.",
       "ME VEDERE ALBERO. ALBERO ESSERE COME STALAGMITE MA PELOSO. BUFFO.",
       "TU MAI TENERE UOVO FINO A CRACK? SENSAZIONE MIGLIORE. MIGLIORE.",
-      "QUESTO POSTO AVERE BISOGNO PIU' TESCHI. SU PALI. PER DECORARE.",
+      "QUESTO POSTO AVERE BISOGNO PIÙ TESCHI. SU PALI. PER DECORARE.",
       "ME SENTIRE ALTO-ROSA DIRE GOBLIN COME PAROLA BRUTTA. ME DIRE CON ORGOGLIO. GOBLIN!",
       "CHI AVERE SPUNTINO? NESSUNO? BUGIARDI. TUTTI VOI.",
       "HIERONYMUS ANCORA LA' FUORI. FORSE LUI CAMMINARE QUESTA STRADA ANCHE.",
@@ -9986,7 +9986,7 @@
       "Buongiorno a tutti. O è già pomeriggio? Il vostro sole si muove più in fretta del nostro.",
       "Ieri ho trovato una cassetta in un fosso. Non ho un mangianastri, ma la tengo lo stesso.",
       "Volete sentire un detto dei Campi Verdi? Parla di pazienza. Quasi tutti parlano di pazienza.",
-      "Lo Schiacciamento ci ha preso la casa, ma ammetto che il vostro mondo ha panini migliori.",
+      "Lo Squishing ci ha preso la casa, ma ammetto che il vostro mondo ha panini migliori.",
       "Qualcuno sa come fa una lavatrice a sapere quando fermarsi? Me lo chiedo da settimane.",
       "Mi sto esercitando con un piccolo incantesimo di protezione. Ditemi se vi si tappano le orecchie.",
       "Secondo voi cosa mangeranno per cena le persone di quella fattoria?",
@@ -9997,7 +9997,7 @@
       "Volete che vi racconti dei frutteti di casa? Fermatemi se mi dilungo troppo.",
       "Ci siamo persi? Lo chiedo con vera curiosità. Perdermi mi ha fatto bene, altre volte.",
       "Ho una teoria sui cartelli stradali e vorrei che qualcuno mi dicesse che è sbagliata.",
-      "Ho letto su un giornale che qui la gente corre per piacere. Qualcuno di questo gruppo lo fa?",
+      "Ho letto su un giornale che qui la gente corre per piacere. Qualcuno di questo Party lo fa?",
       "I miei cugini dei Campi vi avrebbero voluto bene a tutti. Volevano bene a chiunque camminasse piano.",
       "Pensate che gli uccelli qui sappiano che siamo forestieri? Sembra di sì.",
       "Volevo chiedervelo: a cosa serve un jukebox, oltre che alla felicità?",
@@ -10014,7 +10014,7 @@
       "OI. Parlami. I miei piedi si annoiano.",
       "Hai mai notato che sul bus nessuno si siede vicino all'orco? Più posto per me.",
       "Mi fa male la zanna. Vuol dire pioggia, o che ho morso qualcosa di stupido.",
-      "A casa facevo il barista. Non c'è allenamento migliore per questa compagnia.",
+      "A casa facevo il barista. Non c'è allenamento migliore per questo Party.",
       "La testa goblin è rumorosa oggi. Non capisco le parole. Solo tamburi.",
       "Domanda. Risposta onesta. Le zanne sembrano più grandi con questa luce?",
       "Mia madre era umana. Mio padre era molto rumoroso. Questo spiega quasi tutto di me.",
@@ -10033,7 +10033,7 @@
       "Hai fame? Io sì. Controllo solo che siamo dalla stessa parte.",
       "Ecco un pensiero. Perché le montagne sembrano sempre più vicine di quanto siano?",
       "I bambini mi fissano le zanne. Io li fisso a mia volta. Qualcuno sbatte sempre gli occhi per primo.",
-      "Mi manca il mio vecchio lavoro. Non il lavoro. La zuppa gratis.",
+      "Mi manca il mio vecchio lavoro. Cioè, la zuppa gratis.",
       "Qual è il piano? Parole semplici, grazie. Mi piacciono i piani che posso prendere a pugni.",
       "Mi prudono le nocche. O sta arrivando una rissa o è uno sfogo.",
       "Nell'ultimo paese uno mi ha chiesto se gli orchi mangiano la gente. Ho detto solo il venerdì.",
@@ -10048,7 +10048,7 @@
       "Quanta strada abbiamo fatto oggi? Non dirla in chilometri. Dilla in panini.",
       "Continuo a pensare al mio vecchio dojo. Il maestro diceva che la mia spada era tutta spalla. Lo è ancora.",
       "C'è una cosa che volevo chiederti. L'ho dimenticata. Chiedimi tu qualcosa.",
-      "Mia nonna dice che lo Schiacciamento ha reso tutti strani. Io dico che lo eravamo già.",
+      "Mia nonna dice che lo Squishing ha reso tutti strani. Io dico che lo eravamo già.",
       "Mai provato a comprare scarpe con piedi come i miei? È una guerra.",
       "Silenzio qui. Troppo. Qualcuno faccia un rumore. Non tu, era peggio.",
       "Scommettiamo? Il primo che vede una chiesa paga la birra.",
@@ -10086,7 +10086,7 @@
       "Perché gli umani canticchiano? Ho cominciato a farlo e adesso non riesco a smettere. Mmm-mm.",
       "La mia guida ha una pagina intera su questa regione ed è quasi tutta sul formaggio. Sono entusiasta.",
       "È già ora di pranzo? Ho imparato che chiederlo è un rituale molto umano.",
-      "Il cielo qui è del colore sbagliato. Non sbagliato. Diverso. Meravigliosamente sbagliato.",
+      "Il cielo qui è del colore sbagliato. Diverso, intendo. Meravigliosamente sbagliato.",
       "Qualcuno parli, per favore. In televisione, i silenzi lunghi vogliono dire che arriva la pubblicità.",
       "Vorrei che ci tenessimo tutti per mano, come nei telefilm per famiglie. No? Allora più tardi.",
       "Sapete quanto sono trentanove anni luce? Nemmeno io, davvero. So solo che è lontano per spedire una lettera.",
@@ -10119,7 +10119,7 @@
       "Sono stato paziente per quasi trecento anni. Questa strada sta mettendo alla prova il record.",
       "Guardate il muschio su quel muro. È l'unica cosa in questa città più vecchia del mio cappotto.",
       "Una volta ho conosciuto un poeta che faceva rimare 'per sempre' con 'come sempre'. Non l'ho ancora perdonato.",
-      "Oggi le linee ley sembrano sottili. Immagino che a Varlenia qualcuno le stia smorzando di nuovo.",
+      "Oggi le leyline sembrano sottili. Immagino che a Varlenia qualcuno le stia smorzando di nuovo.",
       "Volete che vi dica quali di questi fiori selvatici potreste mangiare, e quali vi ucciderebbero con garbo?",
       "Una volta ho passato un decennio a imparare a incordare un arco come si deve. Chiedetemi qualcosa. Vi prego.",
       "La vostra specie ha inventato la radio nel tempo che a me è servito per finire un arazzo. Lo ammiro.",
@@ -10195,9 +10195,9 @@
       "Lascia che ti chieda una cosa, e tu rispondi senza pensare. Troppo tardi. Hai pensato.",
       "Mi sto esercitando con le chiacchiere umane. Il tempo. Com'è? Bello. Andava bene?",
       "Hai una faccia molto credibile. Da dove vengo io è un complimento. E un avvertimento.",
-      "Parliamo dello Schiacciamento? Mi dicono che è una cosa molto seria. Io la trovo molto divertente.",
+      "Parliamo dello Squishing? Mi dicono che è una cosa molto seria. Io la trovo molto divertente.",
       "Quiz a sorpresa. Qual è la luna di Urano più bella? Esatto. Titania. Stai imparando.",
-      "Ho lasciato una cosa nell'ultima città. Non per sbaglio. Ne sentirai parlare.",
+      "Ho lasciato una cosa nell'ultima città. Apposta. Ne sentirai parlare.",
       "Pensi che qualcuno se ne accorgerebbe se domani questa strada fosse due metri più a sinistra?",
       "Ricordami, chi di voi è il credulone? Tengo una lista, ma mi piace sentirvi litigare."
     ],
@@ -10218,7 +10218,7 @@
       "Mia nonna teneva i conti di una ciurma di pirati. Diceva che i cannoni erano facili, il conto difficile era il rum.",
       "Guarda, guarda, guarda. Una grata di scolo con il cardine. In questa città a qualcuno importa.",
       "Pensi che la Gilda dei Maghi tenga i conti come si deve? Tre pilastri e nessuno di loro è un contabile.",
-      "Posso prendere in prestito la tua spalla? Non per piangerci sopra. Per salirci. Voglio vedere oltre quel muro.",
+      "Posso prendere in prestito la tua spalla? Per salirci sopra, intendo. Voglio vedere oltre quel muro.",
       "Ho inventato un nodo nuovo. Non serve assolutamente a niente, e ne vado fierissimo.",
       "Dimmi sinceramente. È adorabile o irritante quando correggo le distanze sui cartelli stradali?",
       "Guarnizioni! Mi sono appena reso conto che non ti ho mai chiesto che lavoro facevi. Prima di tutto questo, intendo.",
@@ -10254,7 +10254,7 @@
       "Allora lavoriamo con quello. Non è la peggior mano che ci sia capitata.",
       "Non deve risolverlo nessuno entro un'ora.",
       "Ti sento, e la strada resta la strada.",
-      "Non hai torto. Lo dici solo a voce alta.",
+      "Hai ragione, solo che lo dici a voce alta.",
       "Siediti. Regge anche mentre lo fai.",
       "Bene. Adesso la versione senza la rabbia dentro.",
       "Fra un giorno sapremo di più. Non decidiamo con meno.",
@@ -10272,7 +10272,7 @@
       "Siamo troppo morbidi con gente che ci venderebbe per un serbatoio di carburante.",
       "La prossima volta entro io per primo e tu fai il diplomatico dopo.",
       "Bene. Che ci provino mentre sono sveglio.",
-      "Non sono arrabbiato. Sono pronto, e tu confondi le due cose.",
+      "Sono pronto, e tu lo scambi per rabbia.",
       "Se torna, non ha diritto a una seconda conversazione.",
       "Sono un sacco di parole per dire che dovevamo picchiarli.",
       "Va bene. Ma cammino io davanti.",
@@ -10291,7 +10291,7 @@
       "È la terza volta che qualcuno me lo dice intendendo un'altra cosa.",
       "Prima era meglio. Non saprei dirti quando fosse prima.",
       "Ricorderemo oggi male e con affetto. Funziona così.",
-      "Non sono triste. Semplicemente non sono sorpreso.",
+      "Semplicemente non sono sorpreso.",
       "Qualcuno mi disse quasi esattamente questo anni fa. Non è più qui.",
       "Sì. E fra undici anni niente di tutto questo è da nessuna parte.",
       "Lasciami il silenzio per un minuto. Poi sarò utile."
@@ -10394,7 +10394,7 @@
       "Dal confine ti sei preso cura di tutti tranne che di te.",
       "Qualunque cosa ti serva che sia, la chiamerò così.",
       "Ci è voluto qualcosa per dirlo. L'ho notato.",
-      "Non stai facendo il difficile. Sei stanco in pubblico.",
+      "Sei solo stanco in pubblico.",
       "Dillo un'altra volta e smetto di chiedere.",
       "Qui fuori nessuno si aspetta che tu stia bene."
     ],
@@ -10574,9 +10574,9 @@
       "Qualunque cosa costi, lo facciamo insieme o non lo facciamo.",
       "Se è là che vai, è là che sono.",
       "Sarò in disaccordo con te dopo, in privato, e ci sarò comunque.",
-      "In questo gruppo nessuno va da solo. Meno che mai per quello.",
+      "In questo Party nessuno va da solo. Meno che mai per quello.",
       "Di' cosa ti serve ed è fatto.",
-      "Non mi interessa chi ha ragione. Mi interessa chi resta in piedi.",
+      "Mi interessa chi resta in piedi.",
       "Non mi hai mai chiesto niente di irragionevole. Due volte.",
       "Allora ci siamo tutti. Ha sempre funzionato così.",
       "Non sarò io quello che ti ha lasciato andare da solo.",
@@ -10680,10 +10680,10 @@
       "SIIH SIIH. E POI? E POI COSA?",
       "ME NON CAPIRE. MA ME SOSTENERE. ME SEMPRE SOSTENERE PARENTI.",
       "VERO! VERO COME SOLE-NUCLEO!",
-      "NON FUNZIONARE COSI'. ME NON SAPERE COME FUNZIONARE. MA NON COSI'.",
+      "NON FUNZIONARE COSÌ. ME NON SAPERE COME FUNZIONARE. MA NON COSÌ.",
       "EH. TU BUFFO PER ESSERE ALTO-ROSA.",
       "ME CHIEDERE A JUNEHEM DI QUESTO. LORO NON RISPONDERE. LORO OCCUPATI A ESSERE DEI.",
-      "PERCHE'? PERCHE'? NO, SERIO. PERCHE'?",
+      "PERCHÉ? PERCHÉ? NO, SERIO. PERCHÉ?",
       "ME SENTIRE TE. ORECCHIE DI ME GRANDI. ME SENTIRE TUTTO.",
       "FORSE. FORSE NO. FORSE UOVO.",
       "QUESTA ESSERE IDEA BRUTTA. ME PIACERE IDEE BRUTTE. FARE.",
@@ -10696,7 +10696,7 @@
       "TU DIRE COME ESSERE TRISTE. ME SENTIRE COME ESSERE BUFFO. AH!",
       "NON PREOCCUPARE. SE QUALCUNO FARE MALE A TE, ME DIRE A TUTTI NAGUKA. TUTTI.",
       "QUANTI EURO COSTARE QUESTO? TUTTO COSTARE EURO QUASSU'.",
-      "BEH. ME STARE PER DIRE STESSO. MA PIU' FURBO.",
+      "BEH. ME STARE PER DIRE STESSO. MA PIÙ FURBO.",
       "NO. ASPETTARE. SIIH. NO. ... SIIH.",
       "PRETE DIRE QUESTO ANCHE. POI LUI PROVARE DARE A ME CAPPELLINO.",
       "GRRR. NON A TE. A IDEA.",
@@ -10743,7 +10743,7 @@
       "Mm. Credo che i goblin sarebbero d'accordo con voi, e questo mi preoccupa un poco.",
       "Vedremo. Il tempo è un ottimo giudice, e molto lento, come me.",
       "Lo metterò nei miei appunti accanto alla parte sui telefoni.",
-      "Oh cielo. Be', poteva andare peggio. Poteva essere lo Schiacciamento.",
+      "Oh cielo. Be', poteva andare peggio. Poteva essere lo Squishing.",
       "Lo penso anch'io, anche se ci sono arrivato per una strada più lunga.",
       "Molto pratico. La vostra gente è così pratica che è quasi una forma di magia.",
       "È generoso da parte vostra. Cercherò di meritarlo.",
@@ -10797,7 +10797,7 @@
       "D'accordo. Stringiamoci la mano. Occhio alla stretta.",
       "Potrei discutere. Non lo farò. Fa troppo caldo per discutere.",
       "Sembri un prete per cui lavoravo. Brav'uomo. Non smetteva mai di parlare.",
-      "Ah sì? Dimostralo. Non ora. Dopo. Dopo mangiato.",
+      "Ah sì? Dimostralo. Dopo. Dopo mangiato.",
       "Ah. Saresti un orco decente. Un po' scarso di zanne.",
       "Va bene. Questa la vinci tu. Io tengo il conto.",
       "No. Mi hai perso alla seconda parola.",
@@ -10822,7 +10822,7 @@
       "*annuisce con entusiasmo, un po' fuori tempo*",
       "Vorrei mettere quella frase nel monumento. Accanto al tostapane.",
       "Ah! Ah ah! Era divertente, vero? Ho riso al momento giusto?",
-      "Non stavo ascoltando. Fotografavo un coleottero. Ripeti, per favore, tenendo conto del coleottero.",
+      "Fotografavo un coleottero. Ripeti, per favore, tenendo conto del coleottero.",
       "È un pensiero bellissimo. Lo penso anch'io, se non ti dispiace condividerlo.",
       "Un Distorsore Pallido ti risponderebbe senza parlare. Io ti rispondo con le sopracciglia. Oh. Non ne ho.",
       "Esatto! Din din din! È il rumore per esatto.",
@@ -10887,7 +10887,7 @@
       "Per la mia barba, è la cosa più vera detta in tutta la settimana.",
       "Sbagliato. Ma sbagliato in un modo che rispetto.",
       "Sì, sì. Misura due volte, poi ripetilo.",
-      "Questa finisce nel libro dei rancori. Non contro di te. Contro l'idea.",
+      "Questa finisce nel libro dei rancori. Contro l'idea, sia chiaro.",
       "Mm. Passami la borraccia e ripetilo, più piano.",
       "Bene. D'accordo. Adesso non parliamone mai più, come gente seria.",
       "Mio zio ci avrebbe discusso per tre giorni. Io sono stanco, quindi: sì.",
@@ -10926,7 +10926,7 @@
       "Bellissimo. Dillo alla Gilda. Hanno bisogno di tirarsi su.",
       "Potresti avere ragione. Lasciami riordinare i fatti finché non ce l'hai più.",
       "Assolutamente. Al cento per cento. Arrotondato da undici.",
-      "Mi ricorderò che l'hai detto. Non adesso. Nel momento peggiore possibile.",
+      "Mi ricorderò che l'hai detto. Nel momento peggiore possibile.",
       "Mm mm. Mm mm. Continua. Sei quasi alla parte divertente.",
       "Giusto. Ingiusto. Entrambi. La risposta è sempre entrambi.",
       "E lo giureresti? Davanti a dei testimoni? Bene. Io ho dei testimoni.",
@@ -11018,7 +11018,7 @@
       "Prima era meglio. Qualunque cosa fosse.",
       "Non ricorderemo questa conversazione ed è quello il peccato.",
       "Andiamo, allora. La strada è paziente con noi.",
-      "Starò bene. Non adesso, ma in generale.",
+      "Starò bene. Prima o poi.",
       "Qualcuno dovrebbe scrivere i nostri nomi da qualche parte.",
       "Un altro giorno finito nel mucchio.",
       "Sì. Andiamo a continuare a lasciare cose alle spalle.",
@@ -11314,7 +11314,7 @@
       "VENIRE. ROSA LENTI DIETRO, VERDI VELOCI DAVANTI.",
       "SIIH. NOI ANDARE. E NESSUNO PESTARE CODA DI ME. ME NON AVERE CODA. COMUNQUE.",
       "GRRAH. QUESTO VOLERE DIRE ANDARE. IN NAGUKA.",
-      "NIENTE PIU' PAROLE. PIU' PESTARE.",
+      "NIENTE PIÙ PAROLE. PIÙ PESTARE.",
       "VA BENE. ME RICORDARE PER DOPO. E ME VINCERE DOPO.",
       "CAMMINARE. SE PRETE APPARIRE, CORRERE.",
       "*ANNUSA L'ARIA* DI LA'. ME SICURO. QUASI.",
@@ -11396,7 +11396,7 @@
       "Battiamo la strada, come dite voi. Piano. La strada non ci ha fatto niente.",
       "Continua! Ho sempre voluto dirlo.",
       "Grazie per la conversazione. La custodirò. Magari in un barattolino.",
-      "Si parte, verso il tramonto. Non è il tramonto. Verso la direzione generale del tramonto.",
+      "Si parte, verso il tramonto. Be', verso la direzione generale del tramonto.",
       "Bene. Qui ho fotografato tutto due volte. Prossimo posto, grazie.",
       "Ora si cammina, dopo si parla. Lo dicono gli umani. O l'ho detto io per primo. Fa lo stesso.",
       "Andiamo prima che mi innamori anche di questo posto.",
@@ -11779,7 +11779,7 @@
       "C'è il rischio che qualcuno ci urli dietro qui?"
     ],
     "hedonistic": [
-      "Dove si mangia meglio qui? Non il più economico. Il migliore.",
+      "Dove si mangia meglio qui? Il meglio, costi quel che costi.",
       "C'è un posto al caldo dove mangiare qui vicino?",
       "Cosa fate qui che valga la pena bere?",
       "Quale locanda ha i letti buoni e quale quelli economici?",
@@ -11820,28 +11820,28 @@
       "CIAO. ME NAGUKA. TU NON DOVERE SCAPPARE. NOI SOLO PASSARE.",
       "DA CHE PARTE USCIRE DA QUI? ME CHIEDERE GENTILE. VEDERE? GENTILE.",
       "TU VISTO ALTRI NAGUKA? VERDI, RUMOROSI, BELLI COME ME?",
-      "PERCHE' TU FISSARE? MAI VISTO TRUCCO CADAVERICO? ESSERE MODA.",
+      "PERCHÉ TU FISSARE? MAI VISTO TRUCCO CADAVERICO? ESSERE MODA.",
       "OI. DOVE ESSERE ACQUA? NON ACQUA DI FIUME. ACQUA DA BERE.",
-      "TU CONOSCERE JUNEHEM? NO? *RINGHIO TRISTE* SU-MONDO ESSERE COSI' INDIETRO.",
+      "TU CONOSCERE JUNEHEM? NO? *RINGHIO TRISTE* SU-MONDO ESSERE COSÌ INDIETRO.",
       "SALUTI, ROSA. ME VENIRE IN PACE. QUASI PACE.",
       "ESSERE LETTO QUI? CALDO? ME AVERE UOVA A CUI PENSARE.",
       "NON TOCCARE SACCO DI ME. ME VEDERE TE GUARDARE. ME VEDERE TUTTO.",
       "TU PRETE? NO? BENE. PRETI SEMPRE VOLERE ME IN TUNICHETTA.",
-      "OI, QUANTO LONTANO PROSSIMA CITTA'? IN PASSI. ME CONTARE IN PASSI.",
+      "OI, QUANTO LONTANO PROSSIMA CITTÀ? IN PASSI. ME CONTARE IN PASSI.",
       "SORRIDERE A ME. FORZA. ME SORRIDERE INDIETRO. *MOSTRA TUTTI I DENTI*",
       "TU VENDERE SPUNTINI? ME COMPRARE. ME NON MORDERE TE. ESSERE ACCORDO.",
       "TU VISTO UNO BLU QUI INTORNO? SEMBRARE ME MA SUPERBO.",
-      "COME CHIAMARSI QUESTA CITTA'? ME DARE NOME MIGLIORE DOPO.",
+      "COME CHIAMARSI QUESTA CITTÀ? ME DARE NOME MIGLIORE DOPO.",
       "CIAO, STRANIERO. TU ODORARE BENE. ESSERE COMPLIMENTO.",
       "QUALCOSA DI PERICOLOSO QUI? ME VOLERE COMBATTERE. O EVITARE. DIPENDERE.",
       "TU AVERE GROTTA QUI VICINO? BUIA? ME AVERE NOSTALGIA.",
       "NON PREOCCUPARE. ME SOLO SEMBRARE SPAVENTOSO. DENTRO ME MORBIDO. COME UOVO.",
       "OI. DOVE TU TENERE BIRRA? NAGUKA CHIEDERE PER AMICO. AMICO ESSERE ME.",
-      "TU MAI STATO GIU'? GIU' PROFONDO? NO? TU PERDERE TANTO.",
+      "TU MAI STATO GIÙ? GIÙ PROFONDO? NO? TU PERDERE TANTO.",
       "ME CERCARE LAVORO. ME BRAVO A URLARE E SOLLEVARE.",
       "CHE NOTIZIE? QUALCHE GUERRA? QUALCHE CONCERTO? CONCERTO MEGLIO.",
       "EHI. TU VOLERE SENTIRE CANZONE? NO? ME CANTARE COMUNQUE.",
-      "QUESTA TUA CASA? ESSERE GRANDE. TROPPO LUMINOSA. SERVIRE PIU' MUSCHIO.",
+      "QUESTA TUA CASA? ESSERE GRANDE. TROPPO LUMINOSA. SERVIRE PIÙ MUSCHIO.",
       "ME NON RUBARE NIENTE. ME SOLO TENERE COSE PER TANTO TEMPO.",
       "TU AVERE ORCO IN FAMIGLIA? TU AVERE BUONA MASCELLA PER QUESTO.",
       "ESSERE GENTILE CON ME. ME AVERE TANTI, TANTI CUGINI. TUTTI ASCOLTARE."
@@ -11886,7 +11886,7 @@
       "Visto passare dei goblin da queste parti? Chiedo per sicurezza, non per parenti.",
       "Buonasera. Dov'è un bar decente? Decente vuol dire economico.",
       "Salve. Siamo solo di passaggio. Promesso.",
-      "C'è un dottore qui intorno? Non per me. Per chi comincia qualcosa.",
+      "C'è un dottore qui intorno? Per chi comincia qualcosa.",
       "Da che parte il prossimo paese? Basta una risposta breve.",
       "OI, tu. Scusa. Mi scusi, lei.",
       "C'è lavoro qui intorno? So sollevare cose. Cose grosse.",
@@ -11897,7 +11897,7 @@
       "Ci sono orchi che vivono qui? Mi piace salutare.",
       "Come sono le strade più avanti? Bolle temporali di cui sapere?",
       "Scusate gli stivali. Fanno rumore. Anch'io.",
-      "C'è una chiesa? Non sono religioso. Mi piace solo l'aria fresca dentro.",
+      "C'è una chiesa? Mi piace solo l'aria fresca dentro.",
       "Mi scusi. Dove comprate il pane voi? Profuma fin qui.",
       "Mi fissa le zanne? Va bene. Lo fanno tutti. Sono piuttosto belle.",
       "Non cerchiamo guai. Di solito però i guai cercano noi. Buffo.",
@@ -11924,7 +11924,7 @@
       "Dove possiamo riempire una borraccia? Acqua, per favore. Non frizzante. Quella frizzante fa il solletico.",
       "Scusi, mi consiglia un souvenir? Qualcosa di piccolo. O di grande. Ho un'astronave.",
       "Salve. Lei somiglia a un signore del telegiornale della sera. È lei? Può dirmelo.",
-      "Ci sono bolle temporali qui vicino? Non per evitarle. Per guardarle. Da una distanza di sicurezza.",
+      "Ci sono bolle temporali qui vicino? Per guardarle. Da una distanza di sicurezza.",
       "Mi dica il nome di questa via, per favore. Sto scrivendo tutti i nomi. Tutti.",
       "Ciao! Non si spaventi per gli occhi. Sono grandi solo perché c'è tanto da vedere.",
       "È vero che qui si dice buonasera anche agli sconosciuti? Buonasera. Ecco. L'ho fatto.",
@@ -11944,7 +11944,7 @@
     ],
     "elf": [
       "Buonasera. Non fissate le orecchie, sono verissime e molto sensibili.",
-      "Salve. Siamo viaggiatori, non turisti. La differenza sta soprattutto nella postura.",
+      "Salve. Siamo viaggiatori. Si capisce dalla postura.",
       "Perdonatemi. C'è un posto in questa città che serva vino più vecchio del suo proprietario?",
       "Buongiorno. Avete un giardino delizioso. Le vostre ortensie però hanno sete.",
       "Ben trovati. Sì, un elfo. No, non conosco vostra nonna. A meno che non la conosca.",
@@ -11990,7 +11990,7 @@
       "Buongiorno. Si definirebbe un testimone attendibile?",
       "Salve, amico. Dove andrebbe qualcuno da queste parti se volesse stare molto da solo?",
       "Mi scusi. Conosce una guardia notturna di nome Zanfretta? Lui conosce me.",
-      "Non si preoccupi, sono dell'Ambasciata. Non è rassicurante, lo so. È proprio quello il punto.",
+      "Non si preoccupi, sono dell'Ambasciata. Inquietante, lo so. È proprio quello il punto.",
       "Bel cappello. Le dispiace se lo prendo in prestito fino a domani? Lo ritroverà sul tetto della chiesa.",
       "Dov'è la locanda più vicina? E quanto sono sottili i muri?",
       "Salve. Non ha niente da temere da noi. Me lo ripeta. Più forte. Ora ci crede?",
@@ -12077,7 +12077,7 @@
         "Chi ci sta dietro può continuare a starci dietro. Per ora.",
         "Parole, parole. Niente risolve come l'altra cosa.",
         "I goblin attaccano a vista. Almeno su questo sono onesti.",
-        "Non sono arrabbiato. Sono solo pronto e nessuno ha bisogno di me.",
+        "Sono solo pronto e nessuno ha bisogno di me.",
         "Le mani vogliono qualcosa da fare e non è portare pesi."
       ],
       "melancholic": [
@@ -12167,7 +12167,7 @@
       ],
       "paranoid": [
         "Qualcuno è stato qui di recente. Lo dice l'erba.",
-        "Al gruppo manca una cosa e nessuno ammette di averla presa.",
+        "Al Party manca una cosa e nessuno ammette di averla presa.",
         "Non mi piace quanto sono diventati silenziosi gli uccelli.",
         "Quattro serie di impronte. Noi siamo tre.",
         "Quello non c'era quando siamo passati. L'avrei notato.",
@@ -12186,7 +12186,7 @@
         "Qui c'è qualcuno che non sta bene e lo nasconde bene.",
         "Dovrei chiederglielo. Più tardi, quando c'è più calma.",
         "Tutti portano addosso più degli zaini.",
-        "Quella non era rabbia. Era paura con il cappotto addosso.",
+        "Quella era paura con il cappotto addosso.",
         "Non ha mangiato e finge di averlo fatto.",
         "Faccio io la guardia così qualcun altro dorme nelle ore brutte.",
         "Da tre giorni nessuno pronuncia quel nome. Qualcuno dovrebbe.",
@@ -12200,7 +12200,7 @@
         "Glielo chiedo stasera, male, e sul serio."
       ],
       "authoritative": [
-        "A questo gruppo serve un piano per stanotte.",
+        "A questo Party serve un piano per stanotte.",
         "Nessuno copre i fianchi. Dovrò dirlo di nuovo.",
         "Qualcuno deve tenere insieme tutto questo.",
         "I turni sono slittati e nessuno l'ha ammesso.",
@@ -12210,10 +12210,10 @@
         "Se non decido io, tre persone decideranno in modo diverso.",
         "Stasera se la prenderanno e al confine mi ringrazieranno.",
         "Una voce al posto di blocco. La mia.",
-        "Questa non è una democrazia. È una distanza.",
+        "Il comando è una distanza.",
         "Oggi non sono simpatico. Non è richiesto.",
         "Dal vado nessuno ha contato le teste. Lo faccio io.",
-        "Questo gruppo va alla deriva e la deriva è come finiscono i gruppi.",
+        "Questo Party va alla deriva e la deriva è come finiscono i Party.",
         "Prenderò la decisione impopolare prima che diventi una votazione."
       ],
       "scholarly": [
@@ -12226,7 +12226,7 @@
         "Il dialetto è cambiato un chilometro indietro. È più vecchio di qualsiasi confine.",
         "Se avessi una settimana qui tornerei con qualcosa che nessuno sa.",
         "I nomi sono potere, e questa valle è stata rinominata due volte.",
-        "La geologia dopo lo Squishing non è geologia. È contabilità.",
+        "La geologia dopo lo Squishing è contabilità.",
         "Dovrei datarlo come si deve prima che il ricordo lo arrotondi.",
         "Sei spiegazioni. Una è noiosa e quindi probabile.",
         "Quella pietra è stata tagliata con un attrezzo che nessuno usa più.",
@@ -12299,7 +12299,7 @@
         "Essere creduto è una risorsa. La sto spendendo lentamente.",
         "Nessuno controlla il proprio zaino dall'alba.",
         "Ho qualcosa su tutti loro e lo sto spendendo lentamente.",
-        "In questo gruppo nessuno capisce quando mento. Nessuno."
+        "In questo Party nessuno capisce quando mento. Nessuno."
       ],
       "cynical": [
         "Un altro glorioso giorno passato a farsi mentire da estranei.",
@@ -12340,12 +12340,12 @@
         "Ho smesso di aspettarmi di vedere l'anno prossimo.",
         "Decide la strada. È sempre stato così.",
         "Undici anni al paradosso. Niente di quello che faccio qui fuori lo tocca.",
-        "Qualcuno di questo gruppo non torna a casa. È aritmetica.",
+        "Qualcuno di questo Party non torna a casa. È aritmetica.",
         "I piani sono un modo di essere sorpresi in orario.",
         "Gli dèi sono in guerra e noi siamo il tempo che fa.",
         "Doveva essere una strada come questa, prima o poi.",
         "Qualunque cosa aspetti, aspetta da più tempo di quanto io cammini.",
-        "Non ne ho paura. Ho solo smesso di discuterci.",
+        "Ho solo smesso di discuterci.",
         "Se è oggi, oggi.",
         "La fine ha la stessa forma da ogni direzione.",
         "Qualunque cosa aspetti, ha aspettato più di quanto io abbia camminato.",
@@ -12380,7 +12380,7 @@
         "Mi fido di tre persone in novantadue dimensioni e due sono a portata di voce.",
         "Una volta mi hanno portato più lontano di così e non l'hanno mai detto.",
         "Qualunque cosa costi, ho già accettato di pagarla.",
-        "In questo gruppo nessuno viene lasciato indietro perché era comodo.",
+        "In questo Party nessuno viene lasciato indietro perché era comodo.",
         "Starò in fondo, dove arrivano i guai.",
         "Tre teste. Contate due volte, sì.",
         "Per nessun altro sarei nemmeno vicino a questa strada.",
@@ -12393,7 +12393,7 @@
         "Qualunque cosa ci sia su quella scala, non sceglie lei il momento.",
         "Prendo il davanti. Sono scarso a stare dietro.",
         "Meglio che incontri me che uno di loro due.",
-        "Non esiste una versione sicura. Esiste solo quella che percorriamo.",
+        "L'unica versione è quella che percorriamo.",
         "Ho avuto paura su terreni peggiori ed è andata abbastanza bene.",
         "Stare fermo è l'unica cosa che mi spaventa davvero.",
         "Lampada, angolo, via.",
@@ -12472,15 +12472,15 @@
         "Lo zaino ha smesso di sembrare uno zaino. O è forza o è insensibilità."
       ],
       "naguka": [
-        "LAMPADA-CIELO CALDA OGGI. SOLE-NUCLEO PIU' CALDO. MA PIU' GENTILE.",
+        "LAMPADA-CIELO CALDA OGGI. SOLE-NUCLEO PIÙ CALDO. MA PIÙ GENTILE.",
         "ME SENTIRE CUGINO DA QUALCHE PARTE RIDERE. BENE. RIDERE ANCORA, CUGINO.",
         "ME CHIEDERE COME STARE UOVA DI ME. FORSE SCHIUSE. FORSE RUMOROSE.",
-        "NIENTE PIU' CITTA' SOPRA ME. SOLO BLU. BLU ESSERE PER CUGINI, NON PER CIELO.",
+        "NIENTE PIÙ CITTÀ SOPRA ME. SOLO BLU. BLU ESSERE PER CUGINI, NON PER CIELO.",
         "PIEDI DI ME FARE MALE. ME NON DIRE A NESSUNO. NAGUKA FORTE.",
         "QUALCUNO FARE MALE A NAGUKA LONTANO. ME SENTIRE. LORO PENTIRSI.",
         "QUESTO SASSO SEMBRARE CONTE GRISSNACK. ME INCHINARE A SASSO. NON SI SA MAI.",
-        "ME CANTICCHIARE BLAST BEAT IN TESTA. BUM-BUM-BUM-BUM. BUONA VELOCITA' PER CAMMINARE.",
-        "ALTI-ROSA DORMIRE SDRAIATI. PERCHE' NON RANNICCHIATI SU SASSO CALDO? STRANO.",
+        "ME CANTICCHIARE BLAST BEAT IN TESTA. BUM-BUM-BUM-BUM. BUONA VELOCITÀ PER CAMMINARE.",
+        "ALTI-ROSA DORMIRE SDRAIATI. PERCHÉ NON RANNICCHIATI SU SASSO CALDO? STRANO.",
         "UN GIORNO ME SCRIVERE CANZONE. AVERE NOVE MINUTI DI URLO. CAPOLAVORO.",
         "QUALCUNO DOVERE FARE GUARDIA. ME AVERE OCCHI MIGLIORI. AL BUIO, ALMENO.",
         "SOVIETICI SCAVARE BUCO, NOI USCIRE. MIGLIOR ERRORE CHE ALTI-ROSA MAI FARE.",
@@ -12500,19 +12500,19 @@
         "SE ME PERDERE, GRANDE-CANTO-TESTA TROVARE ME. SEMPRE.",
         "STELLE BELLE. COME LUCI DI CITTADELLA MA MOLTO LONTANE E NON UTILI.",
         "ORCHI AVERE MEGLIO DI TUTTI E DUE. ALTI COME ROSA, ARRABBIATI COME VERDI. FORTUNATI.",
-        "ME PORTARE QUESTO SACCO. ME PORTARE QUESTO GRUPPO. ME PORTARE TUTTO. ZITTO.",
+        "ME PORTARE QUESTO SACCO. ME PORTARE QUESTO PARTY. ME PORTARE TUTTO. ZITTO.",
         "ME ANNUSARE FORMAGGIO. NIENTE FORMAGGIO DA NESSUNA PARTE. TESTA DI ME MENTIRE.",
         "UN GIORNO JUNEHEM SUONARE QUI. ME STARE DAVANTI. URLANDO.",
-        "CASE DI ALTI-ROSA AVERE FINESTRE. PERCHE'? PER FARE ENTRARE LAMPADA-CIELO? FOLLIA.",
+        "CASE DI ALTI-ROSA AVERE FINESTRE. PERCHÉ? PER FARE ENTRARE LAMPADA-CIELO? FOLLIA.",
         "ME NON PIANGERE. OCCHI SOLO LACRIMARE. TROPPA LUCE.",
         "NORVEGIA ESSERE FREDDA. FREDDO BUONO. FREDDO METAL.",
         "E SE SPORE ANDARE SU ME? ME NON VOLERE DIVENTARE BLU. NO NO NO.",
-        "QUESTO GRUPPO ESSERE COVATA DI ME ORA. ME COVARE LORO SE SERVIRE. IN SENSO FIGURATO.",
+        "QUESTO PARTY ESSERE COVATA DI ME ORA. ME COVARE LORO SE SERVIRE. IN SENSO FIGURATO.",
         "CIELO QUI NON AVERE SOFFITTO. COSA FERMARE TE DA CADERE SU? NIENTE. PAURA.",
         "ME ESERCITARE FACCIA ARRABBIATA. *FA FACCIA ARRABBIATA* ANCORA BRAVO.",
         "ANCORA MOLTA STRADA. GAMBE DI NAGUKA CORTE MA GAMBE DI NAGUKA MAI FERMARE.",
         "ME CHIEDERE COSA FARE VERMI LAGGIU'. FORSE NIENTE. VERMI FORTUNATI.",
-        "PERCHE' UCCELLI CANTARE SE NON URLARE? MEZZA CANZONE. PIGRI.",
+        "PERCHÉ UCCELLI CANTARE SE NON URLARE? MEZZA CANZONE. PIGRI.",
         "NESSUNO PARLARE CON ME DA UN'ORA. ME PARLARE CON ME. ME MOLTO INTERESSANTE.",
         "SE ME TROVARE ORO, ME NON DIRE NIENTE. SE ME TROVARE CIBO, ME DIRE ANCORA MENO.",
         "QUESTO MONDO RUMOROSO NEL MODO SBAGLIATO. AUTO. CAMPANE. NESSUNO RINGHIARE BENE.",
@@ -12522,7 +12522,7 @@
         "L'erba qui cresce in file così dritte. Qualcuno ha un tosaerba. Mi piacerebbe vederlo.",
         "Quattrocento giorni perché un baccello di spore maturi. La strada non è niente, al confronto.",
         "Un goblin al nord ha appena fatto cadere l'elmo. Sapevo che sarebbe successo. Lui no.",
-        "Mi chiedo se i Campi abbiano ancora i loro frutteti, ovunque li abbia messi lo Schiacciamento.",
+        "Mi chiedo se i Campi abbiano ancora i loro frutteti, ovunque li abbia messi lo Squishing.",
         "Qui tutto ha una spina. Lo trovo molto rassicurante e un poco allarmante.",
         "Pazienza. Come si diceva a casa, il seme non discute con l'inverno.",
         "I miei antenati gettarono le loro macchine nel sole. Comincio a chiedermi se se ne siano pentiti.",
@@ -12540,7 +12540,7 @@
         "Con che rapidità costruiscono qui. Un paese intero in una vita. Noi ci mettevamo un'eternità per un fienile.",
         "Stasera devo ricordarmi di annaffiare la talea nel mio zaino.",
         "Cammino ancora. Sono ancora curioso. Sono due cose buone.",
-        "Lo Schiacciamento cresce ogni anno. Cerco di non contare, e conto lo stesso.",
+        "Lo Squishing cresce ogni anno. Cerco di non contare, e conto lo stesso.",
         "Quel contadino ascolta la partita su una radiolina. Potrei guardarlo tutto il giorno.",
         "Vorrei capire l'elettricità. Davvero, non nel modo in cui la spiegano nelle locande.",
         "La terra qui è stanca. Avrebbe bisogno di un anno di riposo e nessuno glielo concederà.",
@@ -12608,7 +12608,7 @@
         "Qui non sento la testa goblin. Troppi uccelli. Bravi uccelli.",
         "Chissà se c'è un bar di orchi nel prossimo paese. Ce n'è sempre uno, se cerchi.",
         "Un piccolo nell'ultimo villaggio mi ha chiesto se le zanne fanno male. Solo quando rido.",
-        "Non sono arrabbiato. Sembro arrabbiato. La faccia è venuta così.",
+        "Sembro solo arrabbiato. La faccia è venuta così.",
         "Sembra che stia arrivando una rissa. O un temporale. Stesso odore.",
         "Stiramento. Crac. Ecco. La schiena è tornata."
       ],
@@ -12621,7 +12621,7 @@
         "Oggi nessuno mi ha chiesto di Zeta Reticuli. Va bene. Oggi si parla di loro.",
         "Lassù da qualche parte c'è lo specchio che abbiamo provato a regalarvi. A pezzi, comunque. Mi dispiace per i pezzi.",
         "Promemoria: gli umani dicono va bene quando non va bene. Verificato tre volte oggi.",
-        "Continuo a contare il gruppo. Ancora tutti qui. Vi conto come voi contate le pecore, ma da sveglio.",
+        "Continuo a contare il Party. Ancora tutti qui. Vi conto come voi contate le pecore, ma da sveglio.",
         "Ogni siepe qui è diversa. A casa ogni siepe sarebbe uguale, se avessimo le siepi.",
         "Stamattina ho detto grazie a un lampione. Lo rifarei.",
         "La strada è lunga. Mi piacciono le cose lunghe. Strade lunghe, film lunghi, lunghe storie umane sui cugini.",
@@ -12634,7 +12634,7 @@
         "Gli umani della pubblicità corrono sempre sulle spiagge. Non ne ho ancora visto uno farlo. Per ora.",
         "Quell'uccello ci segue. O siamo noi che seguiamo lui. In ogni caso, ormai siamo un gruppo.",
         "Ho riprovato a capire la magia. Ancora niente. La lascio agli umani. Sono così bravi.",
-        "Chissà come sarà il mio gruppo nelle foto fra quarant'anni. Esattamente così. Meraviglioso.",
+        "Chissà come sarà il mio Party nelle foto fra quarant'anni. Esattamente così. Meraviglioso.",
         "Gli umani tengono le storie migliori per la sera. Io sto già aspettando la sera.",
         "Nel 1975 sentimmo una canzone fra le scariche e tutta la sfera di casa smise di lavorare per una settimana. La canticchio ancora.",
         "Nessuno qui sanguina e qualcuno ha riso a pranzo. Cinque stelle per oggi.",
@@ -12656,14 +12656,14 @@
         "Se fossi rimasto a casa lo starei guardando su uno schermo, con trentanove anni di ritardo. Invece sono qui. In diretta!",
         "Devo ricordarmi di comprare un cappello. Nei film in costume tutti hanno un cappello quando le cose vanno male.",
         "Gli ambasciatori del 1999 ci dissero di mimetizzarci. Faccio del mio meglio. Sono molto grigio e molto allegro.",
-        "Da qualche parte un umano sta facendo la minestra. Lo sento. Non è psionica, è speranza.",
+        "Da qualche parte un umano sta facendo la minestra. Lo sento. È speranza.",
         "Non capirò mai perché la fetta cade sempre dal lato del burro. La gravità è il mio campo e persino io sono perplesso."
       ],
       "elf": [
         "Un altro tramonto. Ne ho visti circa novantamila. Questo entra nei primi mille.",
         "Dovrei scrivere a mia sorella. È a Varlenia, e non risponderà prima della primavera del prossimo decennio.",
         "Questi mortali se ne saranno andati prima che i miei capelli ingrigiscano. Meglio godermeli ora.",
-        "Lo Schiacciamento è una faccenda rozza. Persino la fine del mondo dovrebbe avere modi migliori.",
+        "Lo Squishing è una faccenda rozza. Persino la fine del mondo dovrebbe avere modi migliori.",
         "Un'allodola canta un po' crescente. Non la correggerò. Non lo farò. Non lo farò.",
         "La corda dell'arco va incerata. I capelli vanno spazzolati. Una delle due cose è urgente.",
         "Che strano, affezionarsi a gente che mi considererà vecchio quando lo saranno loro da tempo.",
@@ -12698,7 +12698,7 @@
         "Quella nuvola sembra un piccone. Uno bilanciato male.",
         "Dicono che i goblin abbiano una testa sola in comune. Allora un goblin mi deve per tutti.",
         "Birra, pane, un focolare caldo, un problema difficile. Questa è una vita piena.",
-        "Nessuno in questo gruppo sa piegare una mappa come si deve. Mi rode.",
+        "Nessuno in questo Party sa piegare una mappa come si deve. Mi rode.",
         "Potrei costruire una strada migliore di questa in una settimana. Due, con il pranzo.",
         "La Gilda dei Maghi dice che la magia è un'arte. La magia è un mestiere. Chiedete a chi ha i calli.",
         "Novantadue dimensioni, e nemmeno una con una taverna decente su questa strada.",
@@ -12715,15 +12715,15 @@
         "Sono su questo pianeta da prima delle sue parole. Non ho ancora trovato un passatempo migliore.",
         "L'Ambasciata ha ignorato un'altra convocazione. Sono così fiero di loro.",
         "I Turisti staranno filmando qualcosa di noioso proprio adesso. Dilettanti.",
-        "Sto pensando ai cerchi nel grano. Non ne sto facendo uno. Ci penso. Più o meno.",
+        "Sto pensando ai cerchi nel grano. Ci penso soltanto. Più o meno.",
         "La Regola dell'80. Un pianeta intero che non può superare gli ottanta senza cadere in ieri. E il ridicolo saremmo noi?",
         "Gli umani piegano i calzini. Ogni singolo giorno. Non so cosa fare con questa informazione.",
-        "Qualcuno del gruppo russa a tempo di valzer. Ci sto componendo sopra.",
+        "Qualcuno del Party russa a tempo di valzer. Ci sto componendo sopra.",
         "Urano rotola su un fianco. Anche io, ogni tanto. Tratto di famiglia.",
         "Se sto immobile, gli uccelli cominciano a pensare che io sia un palo. Poi mi muovo. Poi ci pensano molto bene, ai pali.",
         "La parte migliore di uno scherzo è la settimana dopo. Il racconto. Il non essere creduti.",
         "Mi chiedo cosa stia facendo Zanfretta stanotte. Potrei scoprirlo. Non lo farò. Probabilmente.",
-        "Lo chiamano Schiacciamento. Novantadue dimensioni pressate come un libro su cui qualcuno si è seduto. Lassù qualcuno ha il mio senso dell'umorismo.",
+        "Lo chiamano Squishing. Novantadue dimensioni pressate come un libro su cui qualcuno si è seduto. Lassù qualcuno ha il mio senso dell'umorismo.",
         "Gli altri pensano che stia riposando. Sto memorizzando le loro tasche.",
         "Gli umani tengono diari così nessuno può dire che non sia successo. Poi nessuno li legge. Specie adorabile.",
         "Silenzio. Troppo silenzio. Qualcuno dovrebbe fare qualcosa. Mi offro volontario.",
@@ -12736,7 +12736,7 @@
         "L'onestà è un'affascinante invenzione umana. Come il cucchiaio. Uso entrambi ironicamente.",
         "Da qualche parte a Genova c'è un turno di notte. C'è sempre un turno di notte. Che conforto.",
         "Due ore perse qua e là. Chi le conta mai? Io. Le tengo in un barattolo.",
-        "Il gruppo mi affida la mappa. Non l'ho toccata. Immagina cosa penseranno che ci abbia fatto.",
+        "Il Party mi affida la mappa. Non l'ho toccata. Immagina cosa penseranno che ci abbia fatto.",
         "Varlenia è comparsa dal nulla questo gennaio. Invidia professionale, lo ammetto.",
         "Penso a casa. Ghiaccio, ghiaccio, un cratere, altro ghiaccio. E la vista migliore della Terra che esista: da lontano.",
         "Nessuno chiede mai a un Dargos com'è andata la giornata. Mentirei, ma sarebbe bello che lo chiedessero.",
@@ -12751,7 +12751,7 @@
         "Sono rilassatissimo in questo momento. Dovrebbe spaventare tutti, e invece no. Deludente.",
         "C'è una torre che tiene insieme novantadue dimensioni, e nessuno può spostarla. L'architettura più divertente del multiverso.",
         "Il trucco è lasciare un dettaglio che nessuno sa spiegare. Uno solo. Poi andarsene.",
-        "Non mi sono perso. Sto conducendo un'indagine su dove non siamo.",
+        "Sto conducendo un'indagine su dove non siamo.",
         "Ho i piedi freddi. Freddi come su Titania. Bene. Sembra casa.",
         "Tutti chiedono cosa vogliamo dalla Terra. Niente. Abbiamo già la reazione. È perfetta.",
         "Se un albero cade in una foresta e nessuno ci crede, quell'albero è mio."
@@ -12768,7 +12768,7 @@
         "Mi chiedo quanto costerebbe la luna in euro, se fosse formaggio, a prezzi svizzeri.",
         "Essere piccoli è una strategia. Nessuno mira in basso.",
         "Le mie tasche sono perfettamente organizzate e il cacciavite minuscolo comunque non si trova. È negli altri pantaloni.",
-        "Quella nuvola sembra un differenziale. No, non è un'ossessione. Una piccola.",
+        "Quella nuvola sembra un differenziale. Sì, è un'ossessione. Una piccola.",
         "Se la magia diventa meno razionale quanto più la studi, perché la mia diventa più divertente?",
         "Conto mentale: due fiumi, un ponte, nove mucche, e una capra su cui ho dei dubbi.",
         "Da qualche parte, uno gnomo sta inventando qualcosa che volevo inventare io. Lo sento. Sbrigati, cervello.",
@@ -12889,7 +12889,7 @@
         "Non vale niente, ed è per questo che è ancora qui.",
         "Il Collettivo gli metterebbe un prezzo prima che tocchi terra.",
         "Tutto ciò che vale in questa dimensione è già inventariato.",
-        "Lascialo. Il prossimo gruppo che passa lo prenderà e resterà deluso.",
+        "Lascialo. Il prossimo Party che passa lo prenderà e resterà deluso.",
         "Quello non è stato costruito per noi. Nessuno costruisce niente per noi."
       ],
       "adventurous": [
@@ -12901,12 +12901,12 @@
         "Quella è una cerniera. Le cerniere implicano una porta."
       ],
       "naguka": [
-        "COSA VECCHIA. PIU' VECCHIA DI NONNA DI NONNA DI ME. FORSE VECCHIA COME CITTADELLA.",
+        "COSA VECCHIA. PIÙ VECCHIA DI NONNA DI NONNA DI ME. FORSE VECCHIA COME CITTADELLA.",
         "LUCCICA! ME PRENDERE? NO? ME GUARDARE FORTE INVECE.",
         "QUESTO AVERE TESCHIO SOPRA. QUALCUNO QUI AVERE GUSTO.",
         "*LO ANNUSA* ODORE DI ALTO-ROSA. E POLVERE. E TRISTEZZA.",
         "ME NON TOCCARE. ULTIMA VOLTA ME TOCCARE, LUI MORDERE INDIETRO.",
-        "CHI FARE QUESTO? QUALCUNO CON PIU' DITA CHE GIUDIZIO.",
+        "CHI FARE QUESTO? QUALCUNO CON PIÙ DITA CHE GIUDIZIO.",
         "QUESTO SEMBRARE PIETRA DI CITTADELLA. STESSE LINEE. STESSO VECCHIO SILENZIO.",
         "ME CHIEDERE SE VALERE EURO. TUTTO VALERE EURO SE TU URLARE.",
         "ESSERE STATUA DI PRETE? NO? BENE. ME NON INCHINARE ALLORA.",
@@ -12926,7 +12926,7 @@
         "MM. ESSERE UTILE? ESSERE CIBO? NESSUNO DEI DUE. ME PERDERE INTERESSE.",
         "QUESTO SEMBRARE DISEGNO DI HIERONYMUS. TUTTO CERCHI. TUTTO SBAGLIATO.",
         "ME METTERE ORECCHIO SOPRA. LUI RONZARE. O ME RONZARE. DIFFICILE CAPIRE.",
-        "ALTI-ROSA FARE TANTE COSE. NESSUNA URLARE. PERCHE'?",
+        "ALTI-ROSA FARE TANTE COSE. NESSUNA URLARE. PERCHÉ?",
         "POLVERE DI SPORE? NO. SOLO POLVERE. FIU'. ME NON DIVENTARE BLU OGGI.",
         "QUALCUNO LASCIARE QUESTO DI FRETTA. ME CONOSCERE SENSAZIONE. KOLA, 1970.",
         "ESSERE CARINO. ME NON DIRE SPESSO. NON RIPETERE.",
@@ -12942,7 +12942,7 @@
         "Un tempo era una macchina. Ora dorme, credo, più che essere morta.",
         "Non lo toccherò. Certe cose vogliono soltanto essere guardate.",
         "C'è un residuo di magia antica. Debole, come un odore in una stanza vuota.",
-        "Prima dello Schiacciamento, di sicuro. Le cose fatte dopo il novantadue non stanno così tranquille.",
+        "Prima dello Squishing, di sicuro. Le cose fatte dopo il novantadue non stanno così tranquille.",
         "Qualcuno una volta l'ha dipinto di blu. Un buon colore. Forse sono di parte.",
         "Ha una manopola. Tutte le cose meravigliose di questo mondo hanno una manopola.",
         "La pietra l'ha tagliata qualcuno di paziente. Mi sarebbe piaciuto conoscerlo.",
@@ -12981,7 +12981,7 @@
         "Graffi sopra. Artigli o zanne. Non mie. Ho degli alibi.",
         "Grande. Finalmente qualcosa della mia taglia.",
         "C'è una scritta. Non so leggerla. Ma 'pericolo' lo leggo in ogni lingua.",
-        "Sembra roba di prima dello Schiacciamento. Allora le cose pesavano di più.",
+        "Sembra roba di prima dello Squishing. Allora le cose pesavano di più.",
         "Mia madre ne aveva uno così. Più piccolo. Meno maledetto, spero.",
         "Lascialo. Certe cose vogliono restare dove sono.",
         "Qualcuno ci teneva, un tempo. Si vede. È stato riparato tre volte.",
@@ -12999,7 +12999,7 @@
       "tourist": [
         "Qualcuno l'ha fatto a mano. Con le dita! Devo fotografare le impronte.",
         "Quanto è vecchio? Più della nostra prima trasmissione? Più della televisione stessa? Emozionante.",
-        "*ci gira intorno piano, con la macchina fotografica alzata* Non muoverti. Non tu. L'oggetto.",
+        "*ci gira intorno piano, con la macchina fotografica alzata* Non muoverti. L'oggetto, intendo.",
         "La mia guida non ne parla. Questo lo rende due volte più emozionante.",
         "Un Analizzatore Cremisi lo aprirebbe. Io lo guardo soltanto, molto intensamente.",
         "A cosa serve? Non ditemelo. Voglio prima avere una teoria. La mia teoria è: minestra.",
@@ -13009,7 +13009,7 @@
         "La gravità intorno a questo è del tutto normale. Ho controllato. Controllo sempre. È un'abitudine.",
         "Questo merita una targa. Qui c'era una cosa, e un Turista la guardò, e fu felice.",
         "Ha valore? Per me sì. Per il mercato, non saprei. Il mercato non mi chiede mai niente.",
-        "Non toccatelo. Non per il pericolo. Per rispetto. E forse anche per il pericolo.",
+        "Non toccatelo. Per rispetto. E forse anche per il pericolo.",
         "L'intaglio è bellissimo. Non so cosa dice. Diciamo che dice benvenuto.",
         "Voglio mandare una foto di questo al monumento. Merita una vetrina.",
         "*strizza gli occhi* È magia? Sa di magia. O di armadio vecchio. La magia spesso sa di armadio vecchio.",
@@ -13021,7 +13021,7 @@
         "Starebbe benissimo sopra un caminetto. Io non ho un caminetto. Me ne procurerò uno.",
         "Mmh. Non c'è nel frasario. Non c'è nella guida. Non c'è in televisione. Una vera scoperta!",
         "Credo che fosse qui da prima dello Squishing. Ha quell'aria tranquilla.",
-        "Una foto di fronte, una di lato, una con un membro del gruppo per la scala. Tu. Mettiti lì.",
+        "Una foto di fronte, una di lato, una con un membro del Party per la scala. Tu. Mettiti lì.",
         "Potrei piegarci lo spazio intorno e portarlo a casa. Non lo farò. Vive qui. È del posto.",
         "Vecchio. Bello. Un po' appiccicoso. Tre cose che scriverò sul retro della foto.",
         "Qualcuno l'ha costruito per durare, ed è durato. È la frase più umana che conosca.",
@@ -13076,13 +13076,13 @@
         "I Turisti l'avrebbero fotografato da ogni angolazione. Io preferisco solo storcerlo un pochino.",
         "È più vecchio della strada. Io sono più vecchio della collina. Nessuno dei due è colpito.",
         "Mm. Qualcuno ha provato a spiegarlo con una targa. Poverini.",
-        "Non toccatelo. Non perché sia pericoloso. Perché voglio vedere chi lo tocca per primo.",
+        "Non toccatelo. Voglio vedere chi lo tocca per primo.",
         "Ha la forma di una cosa in cui qualcuno ha creduto. Guarda l'usura sui bordi.",
         "Molto carino. Ci aggiungerei una seconda ombra.",
         "È il genere di cosa che un contadino trova e a cui nessuno crede. Approvo per principio.",
         "Qualcuno l'ha lasciato qui apposta. Si vede. È quello che avrei fatto io.",
         "*ci gira intorno lentamente, poi ci gira intorno dall'altra parte, per correttezza*",
-        "Non vale niente. Vale tutto, se ci racconti sopra la storia giusta.",
+        "Vale tutto, se ci racconti sopra la storia giusta.",
         "La Gilda lo metterebbe in una teca con un'etichetta lunghissima. Io lo metterei sul cuscino di qualcuno.",
         "Ho visto di meglio su Titania. Congelato. E nessuno poteva visitarlo. Era quella la battuta.",
         "Mm. Un segno. Potrebbe essere una mappa stellare. Potrebbe essere una lista della spesa. Spero tutte e due.",
@@ -13109,7 +13109,7 @@
         "Vecchie macchie alchemiche alla base. Qualcuno ha distillato qualcosa qui e se n'è andato in fretta.",
         "Guardate i denti dell'ingranaggio. Limati a mano, uno per uno. Mi lacrimano gli occhi.",
         "Gli darei un valore di circa trecento euro, o di un ottimo pomeriggio passato a guardarlo.",
-        "Oh, non è rotto. Aspetta solo le mani piccole giuste."
+        "Oh, aspetta solo le mani piccole giuste."
       ]
     },
     "rest": {
@@ -13156,12 +13156,12 @@
         "ERBA DI SU-MONDO PRUDERE. MA MORBIDA. ME PERDONARE.",
         "SEDERE CON ME. NAGUKA DIVIDERE SASSO. GRANDE ONORE.",
         "ME INSPIRARE. ME ESPIRARE. QUESTO ESSERE ABBASTANZA LAVORO PER ORA.",
-        "A CASA GIU', NOI RIPOSARE SOTTO SOLE-NUCLEO. QUI SOTTO ALBERO. ALBERO VA BENE.",
+        "A CASA GIÙ, NOI RIPOSARE SOTTO SOLE-NUCLEO. QUI SOTTO ALBERO. ALBERO VA BENE.",
         "NESSUNO DIRE A ORDA CHE ME SEDUTO. LORO PENSARE ME SEMPRE PESTARE.",
         "ME CONTARE NUVOLE DI NUOVO. ANCORA IMBROGLIARE. ANCORA MUOVERE.",
-        "AAAH. *SI STIRACCHIA FINCHE' QUALCOSA SCROCCHIA*",
-        "SEDERE TROPPO E MUSCHIO CRESCERE SU TE. ME VOLERE, IN REALTA'.",
-        "GAMBE DI ME CORTE. AVERE BISOGNO PIU' RIPOSO DI GAMBE ROSA. ESSERE SCIENZA.",
+        "AAAH. *SI STIRACCHIA FINCHÉ QUALCOSA SCROCCHIA*",
+        "SEDERE TROPPO E MUSCHIO CRESCERE SU TE. ME VOLERE, IN REALTÀ.",
+        "GAMBE DI ME CORTE. AVERE BISOGNO PIÙ RIPOSO DI GAMBE ROSA. ESSERE SCIENZA.",
         "ME CANTICCHIARE CANZONE LENTA DI JUNEHEM. LORO AVERE SOLO UNA. ESSERE NOVE MINUTI.",
         "RIPOSO BUONO. MEGLIO DI LOTTA. NON DIRE A NESSUNO CHE ME DETTO QUESTO.",
         "TRUCCO DI ME AVERE BISOGNO RITOCCO. ME FARE ORA. MENTRE SILENZIO.",
@@ -13169,8 +13169,8 @@
         "QUESTO POSTO AVERE BUON ECO. ME PROVARE. UUUH! ...UUUH!",
         "ME SOGNARE CON OCCHI APERTI. ME SOGNARE PIETRE CALDO-UOVO.",
         "NESSUNA FRETTA. MONDO NON ANDARE DA NESSUNA PARTE. ME CONTROLLARE. ANCORA QUI.",
-        "ME SDRAIARE SU SCHIENA E GUARDARE SU. NIENTE CITTA' LASSU'. ANCORA STRANO.",
-        "VA BENE. RIPOSATO. ME FORTE DI NUOVO. ME FORTE SEMPRE. MA DI PIU'."
+        "ME SDRAIARE SU SCHIENA E GUARDARE SU. NIENTE CITTÀ LASSÙ. ANCORA STRANO.",
+        "VA BENE. RIPOSATO. ME FORTE DI NUOVO. ME FORTE SEMPRE. MA DI PIÙ."
       ],
       "verden": [
         "Una pausa. Nei Campi la chiamavamo lasciare che le radici ci raggiungano.",
@@ -13182,7 +13182,7 @@
         "L'erba è calda. Potrei mettere radici se nessuno mi chiama.",
         "Lasciatemi sedere un momento. Sono più lento di quanto sembri, e sembro piuttosto lento.",
         "Una roccia, un po' d'ombra e una vista. Di cosa altro si è mai avuto bisogno?",
-        "Riposerò gli occhi. Non dormirò. I Verden non dormono in servizio. Non troppo.",
+        "Riposerò gli occhi. Solo gli occhi. I Verden non dormono in servizio. Non troppo.",
         "Sedete con me. Non c'è bisogno di parlare. Basta stare seduti.",
         "La terra qui è buona. La sento attraverso i pantaloni, il che è una cosa strana da ammettere.",
         "Mi sono tolto gli stivali. Perdonatemi, è un'abitudine da giardiniere.",
@@ -13208,7 +13208,7 @@
         "Seduto. Sasso. Bel sasso. La sedia migliore d'Europa.",
         "Cinque minuti. Nessuno stuzzichi l'orco.",
         "Via gli stivali. Fuori i piedi. Scusate l'odore.",
-        "Non sono stanco. Controllo solo che il terreno ci sia ancora. C'è.",
+        "Controllo solo che il terreno ci sia ancora. C'è.",
         "Ombra. Bellissima ombra. Non mi muovo.",
         "*si appoggia a un albero, che scricchiola*",
         "Mi fa male la schiena. Portare la roba di tutti fa questo effetto.",
@@ -13248,7 +13248,7 @@
         "Riposo gli occhi. Tutto l'occhio. Ci vuole un po', sono grandi.",
         "Ah. Il terreno è caldo. Gli umani sono così fortunati col loro terreno.",
         "Nei film, è qui che qualcuno si siede e racconta la storia della sua vita. Qualcuno? No? Aspetto.",
-        "Non sono stanco. Mi sto gustando il momento. C'è una differenza e l'ho imparata ieri.",
+        "Mi sto gustando il momento. È diverso dall'essere stanchi e l'ho imparato ieri.",
         "*si toglie una scarpa, la guarda meravigliato, se la rimette*",
         "Lasciatemi sedere qui ad ascoltare la campagna. Sembra il momento di silenzio prima della sigla.",
         "Il mio popolo non ha una parola per una bella seduta. Ne porterò una a casa.",
@@ -13279,7 +13279,7 @@
         "I mortali si stancano così in fretta. È piuttosto tenero, come con i cuccioli.",
         "Cinque minuti, dite. Una volta mi sono riposato un'estate intera e l'ho chiamata una breve pausa.",
         "Sdraiatevi e guardate le nuvole. Sono lo spettacolo più lento del mondo. Il mio preferito.",
-        "I miei piedi non sono stanchi. Sono annoiati. C'è una differenza.",
+        "I miei piedi sono annoiati, che è diverso da stanchi.",
         "Riposiamoci, e io canticchierò qualcosa di prima che nascessero i vostri bisnonni.",
         "L'erba qui è morbida. Le permetterò di sostenermi per un poco.",
         "Una pausa è una specie di poesia. Breve, se proprio insistete.",
@@ -13303,7 +13303,7 @@
         "Lasciate correre i giovani. Oggi io sono una montagna."
       ],
       "dargos": [
-        "Mi siedo. Non perché sia stanco. Perché voglio che vi chiediate tutti perché.",
+        "Mi siedo. Voglio che vi chiediate tutti perché.",
         "Cinque minuti. Contateli per me. Poi vi dirò che avete sbagliato a contare.",
         "*si stende sull'erba e fissa il cielo come se aspettasse un passaggio per casa*",
         "Riposo. Non guardatemi mentre riposo. Guardare è il mio lavoro.",
@@ -13363,7 +13363,7 @@
         "Due secondi. Due.",
         "Stavo guardando una cosa. Non importa.",
         "Da che parte sono andati? Lascia stare, li vedo.",
-        "Non sono perso. Sono indietro.",
+        "Sono solo indietro.",
         "Che qualcuno aspetti all'angolo.",
         "Sì. Sì, ho sentito.",
         "Aspetta, mi si è rotta la cinghia.",
@@ -13396,7 +13396,7 @@
         "ASPETTARE, STIVALE DI ME MANGIARE CALZINO DI NUOVO.",
         "VA BENE VA BENE. *TORNA IN FILA PESTANDO*",
         "ME SEGUIRE GRANDE-CANTO-TESTA. LUI DIRE SEGUIRE TE. VA BENE.",
-        "NON CAMMINARE COSI' VELOCI, ALTI-ROSA! GAMBE DI VOI IMBROGLIARE!",
+        "NON CAMMINARE COSÌ VELOCI, ALTI-ROSA! GAMBE DI VOI IMBROGLIARE!",
         "ME QUI. ME MAI ANDATO. ME NASCONDERE. BRAVO A FARLO.",
         "SCUSA. ME PARLARE CON MUCCA. MUCCA NON RISPONDERE. MALEDUCATA.",
         "ASPETTARE NAGUKA! NAGUKA PORTARE FORTUNA!",
@@ -13426,7 +13426,7 @@
         "Un momento. Stavo prendendo una talea. Ne varrà la pena, lo prometto.",
         "Arrivo! Volevo solo vedere come funzionava il chiavistello del cancello.",
         "Ah, eccovi. Credevo che foste dove ero io.",
-        "Sono qui. Non mi ero perso, stavo semplicemente studiando.",
+        "Sono qui. Stavo semplicemente studiando.",
         "Aspettate! C'era una cabina telefonica e dovevo guardarci dentro. Ho finito.",
         "Arrivo. Le mie scuse. Le siepi qui sono straordinarie.",
         "Sì, vi ho sentito la prima volta. Stavo finendo un pensiero.",
@@ -13521,9 +13521,9 @@
         "Eccomi. Ho raccolto dei fiori di sambuco, visto che avevate tutti tanta fretta.",
         "Un momento. Stavo correggendo la postura di un giovane alberello.",
         "Proprio dietro di voi, e sempre il meglio vestito qui.",
-        "Non mi ero perso. Stavo indugiando. Gli elfi non si perdono.",
+        "Stavo indugiando. Gli elfi non si perdono.",
         "Arrivo. Mi è venuta in mente una canzone e sarebbe stato scortese interromperla.",
-        "Camminate come se il mondo finisse domani. Con lo Schiacciamento, suppongo possa anche succedere."
+        "Camminate come se il mondo finisse domani. Con lo Squishing, suppongo possa anche succedere."
       ],
       "dwarf": [
         "Arrivo! Gambe corte, passo lungo!",
@@ -13547,7 +13547,7 @@
         "Eccomi. Ero proprio dietro di voi tutto il tempo. Tecnicamente.",
         "Aspettatemi. Stavo lasciando una piccola sorpresa al prossimo viaggiatore.",
         "Arrivo. Qualcuno si è accorto che non c'ero? No? Bene. Splendido. Perfetto.",
-        "*compare accanto al gruppo senza che nessuno veda come*",
+        "*compare accanto al Party senza che nessuno veda come*",
         "Sono qui. Dove altro potrei essere? Non rispondete.",
         "Rallentate. Ho le gambe corte e una lunga lista di cose da fare lungo la strada.",
         "Sono tornato. Un uomo laggiù racconterà questa storia ai nipoti.",
@@ -13621,14 +13621,14 @@
           "BUONO. NON BUONO COME PIPISTRELLO DI GROTTA. MA BUONO.",
           "*MANGIA CON DUE MANI E QUASI TUTTA LA FACCIA*",
           "ME PIENO. NO. ME MENTIRE. ANCORA.",
-          "CIBO DI ALTI-ROSA COSI' MORBIDO. DOVE ESSERE CROCCANTE?",
+          "CIBO DI ALTI-ROSA COSÌ MORBIDO. DOVE ESSERE CROCCANTE?",
           "ME MANGIARE VELOCE. IN CITTADELLA, CHI MANGIARE PIANO NON AVERE CIBO.",
           "QUESTO SAPERE DI LAMPADA-CIELO. CALDO. GIALLO. VA BENE.",
           "CI SONO UOVA IN QUESTO? NO? BENE. ME NON MANGIARE UOVA. ESSERE MALEDUCATO.",
           "PANCIA ZITTA ORA. PANCIA PRIMA CANTARE BLACK METAL.",
           "ME POTERE MANGIARE ANCHE PIATTO. ME NON FARE. ME EDUCATO ORA.",
           "CHI CUCINARE QUESTO? ME VOLERE STRINGERE MANO. POI RUBARE RICETTA.",
-          "MMMH. SERVIRE PIU' INSETTI. TUTTO AVERE BISOGNO PIU' INSETTI.",
+          "MMMH. SERVIRE PIÙ INSETTI. TUTTO AVERE BISOGNO PIÙ INSETTI.",
           "CIBO RENDERE NAGUKA FORTE. NAGUKA FORTE FARE SPARIRE CIBO. CERCHIO.",
           "BISCOTTO DI PRETE ESSERE MIGLIORE. NON DIRE A PRETE.",
           "ME RINGHIARE PRIMA. TRADIZIONE. *RINGHIA AL CIBO*",
@@ -13641,7 +13641,7 @@
           "ME LECCARE DITA. TUTTE DIECI. E UNO DI TE. SCUSA.",
           "QUESTO CIBO AVERE VERDURA DENTRO. ME PERDONARE. QUESTA VOLTA.",
           "NAGUKA MANGIARE COME ORDA. TUTTO INSIEME E NESSUN SOPRAVVISSUTO.",
-          "ME COSI' AFFAMATO CHE QUASI MANGIARE STIVALE. STIVALE SALVO ORA.",
+          "ME COSÌ AFFAMATO CHE QUASI MANGIARE STIVALE. STIVALE SALVO ORA.",
           "BUON CIBO. ME DARE QUATTRO TESCHI SU CINQUE.",
           "CUGINI-BLU MANGIARE INSALATA. ME MANGIARE QUESTO. ME VINCERE.",
           "*RUTTA FORTE* QUESTO ESSERE GRAZIE IN NAGUKA.",
@@ -13649,10 +13649,10 @@
           "ORA ME CALDO DENTRO. COME UOVO SU PIETRA DA NIDO.",
           "QUALCOSA QUI ANCORA MUOVERE? NO? DELUSO. MANGIARE COMUNQUE.",
           "ME NON DIVIDERE. ...VA BENE ME DIVIDERE UNA BRICIOLA. UNA.",
-          "QUANDO ME PIENO, ME GOBLIN PIU' FELICE IN TUTTO SU-MONDO.",
+          "QUANDO ME PIENO, ME GOBLIN PIÙ FELICE IN TUTTO SU-MONDO.",
           "QUESTA SALSA ROSSA. COME BATTAGLIA. ME PIACERE SALSA DI BATTAGLIA.",
-          "ORCHI MANGIARE PIU' DI ME. ME ALLENARE PER BATTERE LORO. QUESTO ESSERE ALLENAMENTO.",
-          "ME NON AFFAMATO PIU'. ME ASSONNATO ORA. UN PROBLEMA ALLA VOLTA.",
+          "ORCHI MANGIARE PIÙ DI ME. ME ALLENARE PER BATTERE LORO. QUESTO ESSERE ALLENAMENTO.",
+          "ME NON AFFAMATO PIÙ. ME ASSONNATO ORA. UN PROBLEMA ALLA VOLTA.",
           "ODORE ESSERE MIGLIORE DI SAPORE. SAPORE ANCORA OTTIMO.",
           "CIBO ESSERE COSA MIGLIORE QUASSU'. SECONDA MIGLIORE ESSERE METAL.",
           "PANCIA DI ME TONDA ORA. COME UOVO. PANCIA ORGOGLIOSA.",
@@ -13931,15 +13931,15 @@
           "OCCHI DI ME PESANTI COME PIETRA DI CITTADELLA. BUONANOTTE. GRRR.",
           "DORMITO. SVEGLIATO. DIMENTICATO DOVE ME ESSERE. MORSO CUSCINO. VA BENE ORA.",
           "SOGNATO HIERONYMUS. LUI DIRE QUALCOSA DI INTELLIGENTE. ME DIMENTICARE. TIPICO.",
-          "TETTO SOPRA ME. NON CITTA', MA TETTO. TETTO BASTARE.",
+          "TETTO SOPRA ME. SOLO TETTO. TETTO BASTARE.",
           "ME SENTIRE NUOVO. ME SENTIRE COME CUCCIOLO. RUMOROSO E PRONTO.",
           "ME DORMIRE CON UN OCCHIO APERTO. ANCHE QUELL'OCCHIO DORMIRE. OCCHIO TRADITORE.",
           "NON SVEGLIARE ME PER PRETE. PRETE POTERE ASPETTARE. PRETE SEMPRE ASPETTARE.",
           "ME SOGNARE POZZO KOLA. SALIRE. SALIRE. SVEGLIARE STANCO. AH.",
           "PISOLINO FINITO. NAGUKA TORNATO. MONDO, AVERE PAURA. UN PO'.",
           "ME AVERE BISOGNO BUIO PER DORMIRE. ME METTERE CAPPELLO SU FACCIA. ORA ESSERE GROTTA.",
-          "COSI' CALDO. COSI' BUONO. ME NON ALZARE. MAI. ...VA BENE ME ALZARE.",
-          "LETTI DI ALTI-ROSA AVERE GAMBE. PERCHE' LETTO AVERE BISOGNO GAMBE? NON ANDARE DA NESSUNA PARTE.",
+          "COSÌ CALDO. COSÌ BUONO. ME NON ALZARE. MAI. ...VA BENE ME ALZARE.",
+          "LETTI DI ALTI-ROSA AVERE GAMBE. PERCHÉ LETTO AVERE BISOGNO GAMBE? NON ANDARE DA NESSUNA PARTE.",
           "ME DORMIRE DODICI ORE. O DUE. STESSA SENSAZIONE.",
           "ME SOGNARE IN GRANDE-CANTO-TESTA. INCONTRATO CUGINO DA FINLANDIA. BRAVO TIPO.",
           "SONNO ESSERE PROFONDO. COME PROFONDO. ME NOSTALGIA ORA. MA RIPOSATO.",
@@ -13950,7 +13950,7 @@
           "DORMIRE ESSERE COME ESSERE UOVO DI NUOVO. NIENTE PREOCCUPAZIONE. SOLO CALDO.",
           "ME PISOLINO IN SCATOLA. SCATOLE MIGLIORI LETTI. NESSUNO SAPERE TRANNE NAGUKA.",
           "QUATTRO ORE. BASTARE PER NAGUKA. NAGUKA FATTO ROBUSTO.",
-          "*SBADIGLIA COSI' LARGO CHE SI VEDONO TUTTI I DENTI*",
+          "*SBADIGLIA COSÌ LARGO CHE SI VEDONO TUTTI I DENTI*",
           "ME SENTIRE GRILLI TUTTA NOTTE. LORO AVERE BISOGNO BATTERISTA MIGLIORE.",
           "DORMITO VICINO A FUOCO. COME VICINO A SOLE-NUCLEO. QUASI CASA.",
           "NOTTE DI SU-MONDO AVERE STELLE. ME CONTARE PER DORMIRE. ME PERDERE CONTO A QUATTRO.",
@@ -14055,11 +14055,11 @@
           "Ho gli occhi molto grandi, quindi chiuderli richiede un po'. Ecco. Buonanotte.",
           "Il cuscino sa del sapone di qualcun altro. Molto umano. Molto accogliente.",
           "Ho sognato il monumento di casa e c'eravate tutti voi. Eravate altissimi e lucidissimi.",
-          "Russare? Non era russare. Ero io che canticchiavo una sigla nel sonno.",
+          "Russare? Ero io che canticchiavo una sigla nel sonno.",
           "Otto ore! La dose umana completa! Mi sento raccomandato dai medici.",
           "La notte qui è così silenziosa. Niente trasmissioni, niente scariche. Solo grilli. I grilli sono la radio della notte.",
           "*sbadiglia, studia lo sbadiglio, sbadiglia di nuovo per sicurezza*",
-          "Sono rimasto sveglio ad ascoltare il gruppo respirare. È un suono bellissimo. Come le onde. Come una famiglia.",
+          "Sono rimasto sveglio ad ascoltare il Party respirare. È un suono bellissimo. Come le onde. Come una famiglia.",
           "Il pigiama! Ho comprato un pigiama! Ha dei razzetti disegnati. Molto ironico.",
           "Mi sono addormentato seduto, con la macchina fotografica in mano. Ho una foto dell'interno della manica.",
           "Sulla mia nave dormo galleggiando. Qui dormo disteso, schiacciato da un pianeta intero. È come essere abbracciato.",
@@ -14217,18 +14217,18 @@
           "Adesso sento l'odore del cibo, che è un buon segno o un segno molto brutto."
         ],
         "naguka": [
-          "ACQUA! FREDDA! PERCHE' SEMPRE FREDDA! *SPUTACCHIA*",
+          "ACQUA! FREDDA! PERCHÉ SEMPRE FREDDA! *SPUTACCHIA*",
           "ME PULITO ORA. ME ODORARE DI FIORE. ME ODIARE. ME AMARE.",
           "TRUCCO CADAVERICO SPARITO. FACCIA DI ME SEMBRARE NUDA. ME DIPINGERE DI NUOVO DOPO.",
           "TANTA TERRA VENIRE VIA. ME ESSERE MEZZO TERRA. ORA SOLO UN QUARTO.",
           "SAPONE SAPERE MALE. ME CONTROLLARE. SIIH. MOLTO MALE.",
-          "ME VERDE DI NUOVO! ME DIMENTICATO DI ESSERE COSI' VERDE!",
+          "ME VERDE DI NUOVO! ME DIMENTICATO DI ESSERE COSÌ VERDE!",
           "ALTI-ROSA LAVARE OGNI GIORNO? OGNI GIORNO? COME AVERE TEMPO PER GUERRA?",
           "LAGGIU' NEL PROFONDO NOI FARE BAGNO IN SORGENTE CALDA. QUESTA SORGENTE FREDDA. TRISTE.",
           "*SI SCROLLA L'ACQUA COME UN CANE, BAGNANDO TUTTI*",
-          "NAGUKA PULITO ESSERE ANCORA NAGUKA SPAVENTOSO. SOLO PIU' LUCIDO.",
+          "NAGUKA PULITO ESSERE ANCORA NAGUKA SPAVENTOSO. SOLO PIÙ LUCIDO.",
           "ME STROFINARE ORECCHIE. TROVATO SCARABEO. CIAO, SCARABEO. ADDIO, SCARABEO.",
-          "ORA GENTE STARE PIU' VICINO. ME NON SICURO SE PIACERE.",
+          "ORA GENTE STARE PIÙ VICINO. ME NON SICURO SE PIACERE.",
           "CUGINI-BLU SEMPRE PULITI. ORA ANCHE ME. PRENDERE QUESTO, CUGINI-BLU.",
           "ACQUA DIVENTARE MARRONE. POI NERA. POI VERDE. ULTIMA ESSERE ME?",
           "ME LAVARE DIETRO ORECCHIE. ORECCHIE DI ME GRANDI. VOLERE TANTO TEMPO.",
@@ -14237,8 +14237,8 @@
           "ME ANNUSARE ASCELLA DI ME. ORA SICURA. PRIMA ESSERE ARMA.",
           "QUELLA VASCA AVER VISTO COSE ORA. POVERA VASCA.",
           "ASCIUGAMANO DI ME NERO ORA. DA TRUCCO. ASCIUGAMANO ESSERE METAL ORA.",
-          "DENTI PULITI. ME CONTARE DI NUOVO. ANCORA TUTTI LI'. LUCIDI.",
-          "ME SENTIRE PIU' LEGGERO. TERRA PESARE TANTO. TERRA DI NAGUKA SOPRATTUTTO.",
+          "DENTI PULITI. ME CONTARE DI NUOVO. ANCORA TUTTI LÌ. LUCIDI.",
+          "ME SENTIRE PIÙ LEGGERO. TERRA PESARE TANTO. TERRA DI NAGUKA SOPRATTUTTO.",
           "BAGNO VA BENE. FIUME MEGLIO. PESCI GUARDARE TE. COMPAGNIA.",
           "ORA ME POTERE ENTRARE IN NEGOZIO E NESSUNO SVENIRE. PROGRESSO.",
           "ACQUA CALDA! SU-MONDO AVERE ACQUA CALDA! INVENZIONE MIGLIORE! DOPO METAL.",
@@ -14472,7 +14472,7 @@
         ],
         "gnome": [
           "Lavato! Avevo grasso in posti che non sapevo nemmeno di avere.",
-          "La vasca era così profonda che ho dovuto nuotare. Non mi lamento, è stato meraviglioso.",
+          "La vasca era così profonda che ho dovuto nuotare. È stato meraviglioso.",
           "Mani pulite, finalmente. Non si fa un lavoro di precisione con le mani sporche. Lo sporco entra nelle filettature.",
           "Pettinato, strofinato e incerato. Di nuovo presentabile alla nobiltà. Fortuna, mia zia è nobile.",
           "Profumo di sapone invece che di stagno. È strano, ma mi abituerò.",
@@ -14516,7 +14516,7 @@
           "ME PARLARE CON ALTO-ROSA PER UN'ORA. LUI NON SCAPPARE. NUOVO RECORD.",
           "BENE. ME ESSERE SOLO. GRANDE-CANTO-TESTA NON UGUALE A FACCIA.",
           "QUALCUNO RIDERE A BARZELLETTA DI ME! BARZELLETTA ESSERE SU UOVA!",
-          "ME RACCONTARE A LORO DI KOLA. LORO DIRE NON PUO' ESSERE. ME DIRE PUO' ESSERE.",
+          "ME RACCONTARE A LORO DI KOLA. LORO DIRE NON PUÒ ESSERE. ME DIRE PUÒ ESSERE.",
           "RUMORE! FOLLA! COME MERCATO DI CITTADELLA! ME FELICE!",
           "ME FARE NUOVO AMICO. LUI AVERE PAURA MA RESTARE. BUON AMICO.",
           "NOI LITIGARE SU JUNEHEM. ME VINCERE. LUI NON SAPERE CHI ESSERE JUNEHEM. ME VINCERE COMUNQUE.",
@@ -14526,21 +14526,21 @@
           "NAGUKA AVERE BISOGNO BRANCO. ORA ME AVERE BRANCO PER SERATA. BENE.",
           "INCONTRATO ORCO! MEZZO CUGINO! NOI CONFRONTARE DENTI! ME VINCERE!",
           "GENTE CHIEDERE DI TRUCCO DI ME. ME DIRE CHE ESSERE PER DEI. LORO DIVENTARE ZITTI.",
-          "ME PARLARE COSI' TANTO CHE VOCE SPARITA. *GRACCHIA FELICE*",
-          "QUALCUNO INSEGNARE A ME BALLO DI ALTI-ROSA. ESSERE COME LOTTA MA PIU' LENTO.",
+          "ME PARLARE COSÌ TANTO CHE VOCE SPARITA. *GRACCHIA FELICE*",
+          "QUALCUNO INSEGNARE A ME BALLO DI ALTI-ROSA. ESSERE COME LOTTA MA PIÙ LENTO.",
           "ME RACCONTARE STORIA DI SOLE-NUCLEO. TUTTI ASCOLTARE. ME GRANDE STELLA.",
           "BELLO SENTIRE VOCI FUORI TESTA DI ME. DENTRO ESSERE AFFOLLATO.",
           "ME DIVIDERE SPUNTINO CON STRANIERO. LUI DIVIDERE INDIETRO. AMICI PER SEMPRE ORA.",
           "ME INCONTRARE CUGINO-BLU. LUI PARLARE ELEGANTE. ME PARLARE FORTE. NOI TUTTI E DUE CONFUSI. BELLO.",
           "NESSUNO URLARE QUANDO ME ENTRARE. ME QUASI DELUSO.",
           "ALTI-ROSA AVERE BUONI PETTEGOLEZZI. ME PORTARE A GRANDE-CANTO-TESTA.",
-          "ME RIDERE COSI' FORTE CHE CADERE DA SEDIA. SEDIA BENE. ME BENE.",
+          "ME RIDERE COSÌ FORTE CHE CADERE DA SEDIA. SEDIA BENE. ME BENE.",
           "LORO CHIEDERE SE ME AVERE FAMIGLIA. ME DIRE SIIH. TUTTI. OGNI GOBLIN.",
           "ME CANTARE PER LORO. LORO APPLAUDIRE. O COPRIRE ORECCHIE. TUTTI E DUE ESSERE APPLAUSO.",
           "STANZA CALDA. GENTE CALDA. COME NIDO. ME NON VOLERE ANDARE.",
-          "ME PARLARE DI TEMPO. COME VERO ALTO-ROSA. ME COSI' ADULTO.",
+          "ME PARLARE DI TEMPO. COME VERO ALTO-ROSA. ME COSÌ ADULTO.",
           "QUALCUNO CHIEDERE NOME DI ME E DIRE GIUSTO. PRIMA VOLTA MAI. ME PIANGERE. UN PO'.",
-          "ME ASCOLTARE PIU' CHE PARLARE OGGI. ...NO. ME MENTIRE. ME PARLARE.",
+          "ME ASCOLTARE PIÙ CHE PARLARE OGGI. ...NO. ME MENTIRE. ME PARLARE.",
           "BRANCO ESSERE BUONO. SOLO ESSERE BRUTTO. NAGUKA SAPERE DA UOVO."
         ],
         "verden": [
@@ -14591,7 +14591,7 @@
           "I bambini hanno fatto cento domande. Risposto a novanta. Mentito su dieci.",
           "Qualcuno mi ha chiesto il nome invece di cosa sono. Bel cambiamento.",
           "Mi stavo sentendo solo. Non lo sapevo fino ad ora.",
-          "Fatta una chiacchierata vera. Non grugniti. Parole. Tante.",
+          "Fatta una chiacchierata vera. Parole. Tante.",
           "La gente è buona. Quasi tutti. Alcuni. Quelli di oggi.",
           "Braccio di ferro con un contadino. L'ho lasciato vincere. Lo sapeva. Contento lo stesso.",
           "La parte goblin vuole la folla. Quella umana un amico. Avuti tutti e due.",
@@ -14727,7 +14727,7 @@
         "any": [
           "Un'altra partita. Solo una.",
           "Ne avevo bisogno più di quanto pensassi.",
-          "Nessuno dica al gruppo quanto ho perso.",
+          "Nessuno dica al Party quanto ho perso.",
           "Per un attimo mi sono dimenticato completamente della strada.",
           "Ho perso malamente e lo rifarei stasera.",
           "Carte. Carte vere, con regole vere.",
@@ -14751,8 +14751,8 @@
           "DIVERTENTE! ME DIMENTICARE STRADA! ME DIMENTICARE TUTTO! CHI ESSERE ME?",
           "ME PERDERE EURO. ME VINCERE GIOIA. BUON SCAMBIO.",
           "QUESTO GIOCO COME LANCIO-SASSO MA CON REGOLE. REGOLE SCIOCCHE. ME PIACERE COMUNQUE.",
-          "ME RIDERE COSI' TANTO CHE PANCIA FARE MALE. MALE BUONO.",
-          "NON DIRE A GRUPPO QUANTO ME PERDERE. ME NON DIRE NEANCHE A ME.",
+          "ME RIDERE COSÌ TANTO CHE PANCIA FARE MALE. MALE BUONO.",
+          "NON DIRE A PARTY QUANTO ME PERDERE. ME NON DIRE NEANCHE A ME.",
           "ME GIOCARE CARTE. ME MANGIARE UNA CARTA. ORA ME NON POTERE GIOCARE. VALERE.",
           "MUSICA! NON METAL MA MUSICA! ME BALLARE COMUNQUE! *PESTA I PIEDI*",
           "TESTA DI ME ZITTA PER UNA VOLTA. ANCHE GRANDE-CANTO-TESTA FARE PAUSA.",
@@ -14771,12 +14771,12 @@
           "DIVERTIMENTO BUONO PER NAGUKA. NAGUKA DIVERTITO MORDERE MENO. QUASI SEMPRE.",
           "UN ALTRO GIRO. E UN ALTRO. E POI UN ALTRO. E POI DORMIRE.",
           "ME ROMPERE PICCOLO PEZZO DI GIOCO. PICCOLO. NESSUNO NOTARE. TUTTI NOTARE.",
-          "ME FELICE. ME COSI' FELICE CHE DIMENTICARE DI ESSERE SPAVENTOSO PER UN'ORA.",
+          "ME FELICE. ME COSÌ FELICE CHE DIMENTICARE DI ESSERE SPAVENTOSO PER UN'ORA.",
           "CUGINI-BLU GIOCARE A SCACCHI. ME GIOCARE A SFASCIARE. SFASCIARE MEGLIO.",
           "LUCI! CAMPANELLI! RUMORE! COME CONCERTO MA ME VINCERE PREMI!",
           "ME PERDERE TRE VOLTE. QUARTA VOLTA ME VINCERE. QUINTA VOLTA ME PERDERE. VITA.",
           "NON PENSARE A STRADA. NON PENSARE A UOVA. SOLO GIOCO. BENE.",
-          "ME GIOCARE FINCHE' LAMPADA-CIELO TORNARE. TORNARE TROPPO PRESTO.",
+          "ME GIOCARE FINCHÉ LAMPADA-CIELO TORNARE. TORNARE TROPPO PRESTO.",
           "ME SCOMMETTERE SASSO DI ME. ME PERDERE SASSO. ME TRISTE. ME TROVARE NUOVO SASSO. ME FELICE.",
           "QUESTO GIOCO AVERE BISOGNO MODALITA' TRUCCO CADAVERICO. ME SUGGERIRE A PADRONE.",
           "ME GIOCARE. ME URLARE. ME GIOCARE ANCORA. QUESTA ESSERE SERATA PERFETTA.",
@@ -14786,7 +14786,7 @@
           "ME STANCO DA DIVERTIMENTO. MIGLIOR TIPO DI STANCO.",
           "QUESTO ESSERE RUMOROSO E SCIOCCO E ME AMATO. NON DIRE A NESSUNO.",
           "ME IMPARARE NUOVO GIOCO. ME NON CAPIRE REGOLE. ME VINCERE COMUNQUE. COME?",
-          "ORA ME PRONTO PER STRADA DI NUOVO. NAGUKA FELICE CAMMINARE PIU' VELOCE."
+          "ORA ME PRONTO PER STRADA DI NUOVO. NAGUKA FELICE CAMMINARE PIÙ VELOCE."
         ],
         "verden": [
           "Che divertimento. Avevo dimenticato di avere il permesso di divertirmi.",
@@ -14794,7 +14794,7 @@
           "Ho perso ogni partita e le perderei tutte di nuovo volentieri.",
           "Un'altra partita. Ormai quasi lo capisco. Quasi.",
           "La macchina dell'arcade mi ha fatto bip in un modo molto incoraggiante.",
-          "Per un'ora mi sono dimenticato del tutto dello Schiacciamento. Vale più degli euro.",
+          "Per un'ora mi sono dimenticato del tutto dello Squishing. Vale più degli euro.",
           "Nei Campi i nostri giochi duravano una stagione. Questo è durato cinque minuti. Ci ho giocato dodici volte.",
           "Ne avevo bisogno. Il gioco è un riposo per le parti di noi che il cammino non raggiunge.",
           "Ho vinto, una volta. Sarò insopportabile fino al prossimo paese.",
@@ -14806,7 +14806,7 @@
           "Un goblin al nord avrebbe già lanciato la scacchiera dall'altra parte della stanza. Io no. È un progresso.",
           "Ho speso i miei euro in gettoni e i gettoni in gioia. Uno scambio onesto.",
           "Le mani mi formicolano ancora per i pulsanti. Che sensazione meravigliosa.",
-          "Lo svago non è ozio. È il campo a riposo che prepara il raccolto dell'anno dopo.",
+          "Lo svago è il campo a riposo che prepara il raccolto dell'anno dopo.",
           "Ho ascoltato un'intera cassetta, entrambi i lati. L'ho girata da solo.",
           "Un po' di gioco e la strada sembra più amichevole.",
           "Ho guardato la televisione per un'ora. Soprattutto la pubblicità. È la parte che preferisco.",
@@ -14850,7 +14850,7 @@
           "Mi fa male la faccia dal sorridere. Le zanne intralciano.",
           "Giocato in sala giochi. La macchina era troppo piccola per le mie mani. Vinto lo stesso.",
           "Ho urlato tanto. Era permesso. Era un gioco.",
-          "Perso la cognizione del tempo. Non come nelle bolle. Nel modo buono.",
+          "Perso la cognizione del tempo. Nel modo buono.",
           "Dovrei farlo più spesso. La vita non è solo portare borse.",
           "Sentita musica, seduto, rimasto due ore. Ne valeva la pena.",
           "Mi sento dieci anni più giovane. Le ginocchia non sono d'accordo.",
@@ -14880,7 +14880,7 @@
           "Mi sono dimenticato della strada per un'ora intera. È questo il divertimento? È meraviglioso e un po' spaventoso.",
           "Un quiz! Sapevo tutte le risposte sulla gravità e nessuna delle altre. Siamo arrivati terzi. Su tre.",
           "*ridacchia ancora* Scusate. Scusate. Il gioco era divertentissimo. Mi diverte ancora dentro.",
-          "Ho perso qualche euro. Ho vinto un ricordo. Il ricordo vale di più. Non ditelo al gruppo.",
+          "Ho perso qualche euro. Ho vinto un ricordo. Il ricordo vale di più. Non ditelo al Party.",
           "La musica suonava e io battevo il piede. Il piede faceva da solo. La vostra musica è contagiosa.",
           "Uno spettacolo di burattini! Il burattino era maleducato con un poliziotto! Non ho mai riso tanto in vita mia.",
           "Ho fatto un gioco in cui si lanciano palline contro le cose. Gli Analizzatori Cremisi vorrebbero studiare la traiettoria. Io lanciavo e basta.",
@@ -14938,7 +14938,7 @@
         ],
         "dwarf": [
           "Ancora! Stavo appena prendendo le misure.",
-          "È stato divertente. Non utile. Divertente. Mi è permesso.",
+          "È stato divertente. Solo divertente. Mi è permesso.",
           "Ho giocato un'ora senza pensare al ferro neanche una volta. Un miracolo.",
           "Ah! Mio nonno non ha mai suonato altro che il martello. Peggio per lui.",
           "Un'altra partita. Poi una birra. Poi un'altra partita.",
@@ -15056,7 +15056,7 @@
       "maimed": [
         "Allungo ancora qualcosa che non c'è.",
         "L'attacco sfrega. Stasera rimettici l'imbottitura.",
-        "Diverso, non meno. Diverso, non meno.",
+        "Diverso. Ancora all'altezza. Diverso. Ancora all'altezza.",
         "Oliare il giunto prima che ci pensi la pioggia.",
         "I bambini fissano. Giusto. Lo farei anch'io.",
         "Fa male dove non c'è più niente. Strana aritmetica.",
@@ -15078,7 +15078,7 @@
         "Se cedo adesso, domani si riparte da zero.",
         "Mi sta mentendo. È bravissima a mentire.",
         "Inspira. Espira. {substance} non è l'aria.",
-        "Qualcuno del gruppo se ne accorgerebbe. Qualcuno se ne accorge sempre.",
+        "Qualcuno del Party se ne accorgerebbe. Qualcuno se ne accorge sempre.",
         "Prima l'acqua. Poi decidi. Poi decidi di nuovo."
       ],
       "drunk": [
@@ -15118,7 +15118,7 @@
         "I nomi. Ancora nessun nome.",
         "A ogni buca della strada conto fino a dieci.",
         "Qualcuno mi passi qualcosa di salato. E di dolce. Tutti e due.",
-        "Non sono lenta. Porto un bagaglio.",
+        "Lenta? Porto un bagaglio.",
         "Buono, adesso. Siamo quasi arrivati. Ovunque sia.",
         "Chissà se avrai il mio naso.",
         "Coraggio per due. Adesso il lavoro è questo."
@@ -15336,7 +15336,7 @@
         "Lascia stare il pannello. Qualcuno è scosso? Scosso sul serio?",
         "Sei bianco come un lenzuolo. Vieni a sederti dietro un po'.",
         "Nessuno ti dà la colpa. Guardami. Nessuno ti dà la colpa.",
-        "Non è stata la tua guida. Era una strada con un buco dentro.",
+        "Colpa della strada. Aveva un buco.",
         "Prenditi dieci minuti prima di rimetterti al volante.",
         "Stai tremando. È quello che fanno i corpi. Passa.",
         "Chi dormiva si è svegliato male. Che qualcuno gli stia accanto.",
@@ -15542,7 +15542,7 @@
         "CHI COLPIRE NOI? ME MORDERE LUI. CHI? QUEL SASSO? ME MORDERE SASSO.",
         "NUOVA AMMACCATURA. BENE. ORA SEMBRARE CHE ESSERE STATO IN GUERRA.",
         "TESTA DI ME SBATTERE SU TETTO. TETTO PERDERE. TESTA NAGUKA DURA.",
-        "TUTTI BENE? ME CONTARE. UNO, DUE... SIIH. TUTTI LI'.",
+        "TUTTI BENE? ME CONTARE. UNO, DUE... SIIH. TUTTI LÌ.",
         "IN POZZO KOLA NOI CADERE PEGGIO E ANCORA SALIRE. QUESTO NIENTE.",
         "QUALCOSA CADERE. ME TENERE. ESSERE PEZZO DI ME ORA.",
         "ME PROTEGGERE UOVO... ME NON AVERE UOVO QUI. ABITUDINE.",
@@ -15555,7 +15555,7 @@
         "QUANTI EURO PER AGGIUSTARE? NON DIRE A ME. CUORE DI ME PICCOLO.",
         "AH! ANCORA! RIFARE! ...NO? VA BENE.",
         "SCATOLA SANGUINARE NERO. ESSERE OLIO O TRUCCO CADAVERICO? SCHERZO. ESSERE OLIO.",
-        "ME MORDERE LINGUA DI ME. ORA ME PARLARE STRANO. PIU' STRANO.",
+        "ME MORDERE LINGUA DI ME. ORA ME PARLARE STRANO. PIÙ STRANO.",
         "PER QUESTO NAGUKA CAMMINARE. PIEDI NON SCHIANTARE.",
         "ANCORA ANDARE? BRAVA SCATOLA. SCATOLA FORTE. ME ORGOGLIOSO DI SCATOLA.",
         "ME SENTIRE QUALCOSA SBATACCHIARE. FORSE MOTORE. FORSE CERVELLO DI ME.",
@@ -15563,7 +15563,7 @@
         "QUELL'ALBERO ESSERE IN MEZZO. ALBERI QUI NON SPOSTARSI. ALBERI MALEDUCATI.",
         "*SCUOTE LA TESTA COME UN CANE BAGNATO* VA BENE. ME BENE. CHI ESSERE ME?",
         "CUGINI-BLU DIRE BUTTARE SCATOLA IN SOLE. NAAH. NOI TENERE.",
-        "PROSSIMA CITTA' NOI AGGIUSTARE. PRIMA NOI URLARE UN PO'. *URLA UN PO'*",
+        "PROSSIMA CITTÀ NOI AGGIUSTARE. PRIMA NOI URLARE UN PO'. *URLA UN PO'*",
         "QUESTO ANDARE IN CANZONE. STROFA DUE. SCHIANTO DI SCATOLA-LUCCICANTE.",
         "ME BENE. ME ESSERE RANNICCHIATO. POSIZIONE UOVO. POSIZIONE MIGLIORE.",
         "STRADA MORDERE NOI. NOI MORDERE STRADA INDIETRO. DOPO. CON PALA."
@@ -15635,7 +15635,7 @@
       "tourist": [
         "Crac! Proprio come nei telefilm con gli inseguimenti! Solo che l'ho sentito nei denti.",
         "Tutti bene? Contiamoci. Comincio io. Uno. Io. Sono uno.",
-        "*controlla prima la macchina fotografica, poi il gruppo, poi le proprie braccia* Tutto intero. Ordine d'importanza confermato.",
+        "*controlla prima la macchina fotografica, poi il Party, poi le proprie braccia* Tutto intero. Ordine d'importanza confermato.",
         "Era una sosta non prevista. La mia guida non la riporta. La aggiungerò.",
         "Avrei potuto piegare la gravità per attutire il colpo. Ero troppo impegnato a urlare. La prossima volta.",
         "Si è staccato qualcosa. L'ho raccolto. Lo tengo come souvenir dell'incidente.",
@@ -15811,14 +15811,14 @@
       ],
       "melancholic": [
         "Continuiamo a passarcelo, ora dopo ora.",
-        "In questo gruppo ci sarà sempre qualcuno sveglio. È quella la parte triste.",
+        "In questo Party ci sarà sempre qualcuno sveglio. È quella la parte triste.",
         "Uno di noi guarda sempre una strada nel buio.",
         "Abbiamo guidato più di quanto la gente viaggerà mai e non abbiamo visto quasi niente.",
         "È una vita strana, fare a turno per restare svegli l'uno per l'altro.",
         "La strada di notte è il posto più solitario di novantadue dimensioni.",
         "Vent'anni fa qualcuno guidava su questa strada e credeva fosse provvisoria.",
         "Dormi bene. Ti tengo lontano il buio per un po'.",
-        "In questo gruppo c'è sempre qualcuno sveglio. È quella la parte triste.",
+        "In questo Party c'è sempre qualcuno sveglio. È quella la parte triste.",
         "Ce lo passiamo e ripassiamo e nessuno arriva mai."
       ],
       "sanguine": [
@@ -15949,7 +15949,7 @@
         "Ho tenuto l'ultimo goccio caldo per chi guida.",
         "Non devi svegliarti e prendere il turno in anticipo. Lo saprò.",
         "Dormite entrambi. L'ho fatto con meno di così.",
-        "Testa sullo zaino, non sul finestrino. Il finestrino ti farà male.",
+        "Testa sullo zaino. Il finestrino ti farà male.",
         "La coperta è dietro il sedile. Usala.",
         "Mangia qualcosa prima di dormire o ti svegli peggio."
       ],
@@ -16041,7 +16041,7 @@
         "Per favore non chiedetemi di guidare dopo. Per favore.",
         "Ti tengo compagnia. Tanto non dormo.",
         "Può prendere il mio qualcun altro? Ne faccio due di qualsiasi altra cosa.",
-        "Non mi pesa stare sveglio. Mi pesa essere responsabile.",
+        "È l'essere responsabile che mi pesa.",
         "Se guido, qualcuno si siede davanti con me?",
         "Preferisco fare la guardia a piedi che stare al volante.",
         "Sei molto calmo su tutta questa cosa. Sto prendendo appunti.",
@@ -16109,7 +16109,7 @@
         "PRENDERE, PRENDERE. MANI DI ME TREMARE. DA ECCITAZIONE, NON PAURA.",
         "ME SEDUTO SU SEDILE COME SU COVATA. MOLTO ATTENTO. NIENTE SCHIUSO.",
         "BENE. ME ANDARE DIETRO E CONTARE SPUNTINI. PER SICUREZZA.",
-        "TU NON GUIDARE COME NONNA ALTA-ROSA. GUIDARE COME ORDA. PIU' VELOCE.",
+        "TU NON GUIDARE COME NONNA ALTA-ROSA. GUIDARE COME ORDA. PIÙ VELOCE.",
         "ME PRENDERE VOLANTE. TU PRENDERE MAPPA. MAPPA CONFONDERE ME. TROPPO PIATTA.",
         "SVEGLIARE ME SE TU VEDERE PRETE SU STRADA. ME VOLERE SALUTARE.",
         "ME SUONARE CLACSON UNA VOLTA. PER FORTUNA. *SUONA CINQUE VOLTE*",
@@ -16196,7 +16196,7 @@
         "Puoi dormire. Racconterò il paesaggio a me stesso, sottovoce. Molto sottovoce. Più o meno.",
         "Mani sul volante, occhi sulla strada, cuore sulla campagna. Sono pronto.",
         "Grazie per aver guidato. Come passeggero sono molto meglio che come autista. Indico le cose.",
-        "Guiderò piano. Non per la Regola degli 80. Per il panorama.",
+        "Guiderò piano, per il panorama.",
         "Sposto il sedile avanti. Ancora. Ancora. Ecco. Ora vedo oltre il volante.",
         "Quello è un autovelox? Lo saluto. Ogni macchina fotografica merita un saluto.",
         "Per te pisolino, per me guida. Questo è lavoro di squadra. L'ho visto in un programma sportivo.",
@@ -16583,7 +16583,7 @@
         "Qualunque cosa ci sia su quella strada fra qui e la pompa, me la cavo.",
         "Bene. Vado. Che qualcuno tenga la lampada finché non sono fuori vista.",
         "Vado avanti a piedi e torno con una tanica.",
-        "È una camminata lunga, non uno scontro."
+        "È solo una lunga camminata."
       ],
       "timid": [
         "Non possiamo fermarci in un posto sicuro finché non sappiamo?",
@@ -16607,7 +16607,7 @@
         "Bene. La pompa più vicina con un tetto e una stufa.",
         "Pago io la differenza se il posto è decente.",
         "Se ci fermiamo, che sia in un posto con una cucina.",
-        "Fermarsi non è una crisi. È un'opportunità."
+        "Fermarsi è un'opportunità."
       ],
       "apathetic": [
         "O si ferma o non si ferma.",
@@ -16643,18 +16643,18 @@
         "AGO PICCOLO ESSERE SDRAIATO. COME NAGUKA STANCO. BRUTTO SEGNO.",
         "NIENTE PANICO. NAGUKA NON AVERE PANICO. NAGUKA SOLO URLARE UN PO'.",
         "NOI TROVARE POMPA. ME PARLARE CON POMPISTA. ME USARE RINGHIO GENTILE.",
-        "COSI' COMINCIARE STORIA DI KOLA. QUALCUNO FINIRE QUALCOSA.",
-        "ANDARE IN DISCESA! DISCESA GRATIS! ME SAPERE. ME VENIRE DA GIU'.",
+        "COSÌ COMINCIARE STORIA DI KOLA. QUALCUNO FINIRE QUALCOSA.",
+        "ANDARE IN DISCESA! DISCESA GRATIS! ME SAPERE. ME VENIRE DA GIÙ.",
         "FORSE SCATOLA ANDARE CON URLA? ME PROVARE. *URLA AL MOTORE*",
         "CUGINI-BLU FORSE AVERE INCANTESIMO PER QUESTO. E NON CONDIVIDERE. TIPICO.",
         "ME TRATTENERE FIATO FINO A PROSSIMA POMPA. RISPARMIARE ARIA. FORSE AIUTARE.",
         "CHI BERE CARBURANTE? NON ME. ME SOLO ANNUSARE UNA VOLTA. DUE.",
         "SE NOI FERMARE IN MEZZO AL NULLA, ME COSTRUIRE NIDO. NOI VIVERE LI' ORA.",
         "SCATOLA AFFAMATA, NAGUKA AFFAMATO. NOI FERMARE PER TUTTI E DUE. SIIH?",
-        "SCATOLA-LUCCICANTE BERE PIU' DI ORCO A MATRIMONIO.",
+        "SCATOLA-LUCCICANTE BERE PIÙ DI ORCO A MATRIMONIO.",
         "ME POTERE PORTARE CARBURANTE SU TESTA. TANICA GRANDE. ME BILANCIARE BENE.",
         "RALLENTARE. SCATOLA LENTA BERE MENO. ME IMPARARE DA ROSA LENTI.",
-        "VA BENE. PROSSIMA CITTA' NOI RIEMPIRE. E ME COMPRARE CARAMELLA. TUTTI E DUE IMPORTANTI.",
+        "VA BENE. PROSSIMA CITTÀ NOI RIEMPIRE. E ME COMPRARE CARAMELLA. TUTTI E DUE IMPORTANTI.",
         "QUANDO SCATOLA MORIRE, NOI DARE BEL FUNERALE. TRUCCO CADAVERICO SU FARI.",
         "ME SENTIRE UN PO' DI PAURA. SOLO UN PO'. TAGLIA NAGUKA.",
         "AGO DI INDICATORE SCENDERE COME POZZO KOLA. SOLO DIREZIONE SBAGLIATA.",
@@ -16687,7 +16687,7 @@
         "Non ho potuto fare a meno di notare la spia. È arancione, e l'arancione è un avvertimento in ogni mondo.",
         "Un camper col serbatoio vuoto è come un orto in un mese di siccità. Troviamogli da bere.",
         "Controllo sulla mappa dove c'è una stazione? Ho segnato tutte quelle con i distributori automatici.",
-        "Ce la faremo. Ce l'abbiamo fatta con lo Schiacciamento. Un indicatore del carburante non è lo Schiacciamento.",
+        "Ce la faremo. Ce l'abbiamo fatta con lo Squishing. Un indicatore del carburante non è lo Squishing.",
         "Il carburante costa euro, gli euro costano lavoro, il lavoro costa giorni. Tutto torna sempre ai giorni.",
         "Piano sulle salite, vi prego. Le salite fanno venire sete.",
         "Non mi dispiace se restiamo a secco. Mi piacerebbe spingerlo un po', solo per poter dire di averlo fatto.",
@@ -16764,7 +16764,7 @@
       "elf": [
         "Di nuovo carburante. Almeno i cavalli erano riconoscenti quando li nutrivi.",
         "Il serbatoio è quasi vuoto. Come la maggior parte delle conversazioni a una cena varleniana.",
-        "Benzina. Estratta dal suolo dove sgorgano le linee ley. Bruciamo i fiumi della magia per andare a fare la spesa.",
+        "Benzina. Estratta dal suolo dove sgorgano le leyline. Bruciamo i fiumi della magia per andare a fare la spesa.",
         "Dovremmo trovare una stazione prima di ridurci a camminare. Cammino con grazia, ma piano.",
         "Quell'odore. Non mi ci abituerò mai. Ci provo da settant'anni.",
         "Poco carburante. Planiamo con grazia fino alla prossima pompa, se una cosa del genere è possibile.",
@@ -16802,7 +16802,7 @@
         "L'ago è sul rosso. Sembra molto sicuro di sé. Lo rispetto.",
         "Se restiamo a secco, spingo io. Non con le mani.",
         "I Turisti regalano carburante a Zeta Reticuli. Sono trentanove anni luce. Portatevi un panino.",
-        "Poca benzina. Splendido. Adesso ogni distributore che incontriamo sarà chiuso. Non sono io. È l'universo.",
+        "Poca benzina. Splendido. Adesso ogni distributore che incontriamo sarà chiuso. Colpa dell'universo.",
         "*picchietta l'indicatore, e l'ago trema nel verso sbagliato*",
         "Siamo a corto di carburante ma pieni di entusiasmo. Soprattutto io.",
         "Il carburante costa euro. Gli euro costano lavoro. Preferisco i veicoli che vanno a stupore.",
@@ -16811,7 +16811,7 @@
         "Su Titania si viaggia stando altrove. Niente pompe. Niente code. Niente scontrini.",
         "Il motore ha sete. Come uno scettico a un convegno sugli avvistamenti.",
         "Al prossimo distributore faccio il pieno io. E pulirò il parabrezza con un movimento leggermente a spirale.",
-        "Guidate dolcemente. Non per il carburante. Perché la guida dolce rende nervosa la gente.",
+        "Guidate dolcemente. La guida dolce rende nervosa la gente.",
         "Stiamo andando avanti coi vapori. Li vedo. Hanno la forma di un punto interrogativo.",
         "Il carburante è basso. Il morale va bene. I miei progetti per il benzinaio sono eccellenti.",
         "Niente panico. Se ci fermiamo, faccio segno a un camion e dico all'autista qualcosa che non dimenticherà mai.",
@@ -16842,7 +16842,7 @@
         "La tosse del motore è cambiata. È la tosse della fame. Le conosco tutte.",
         "Volete che stimi il prezzo alla prossima pompa? Stimo un euro e nove. Scrivetelo.",
         "Mm. L'indicatore del carburante mente di circa un quinto. L'ho annotato. Sa che lo so.",
-        "Se spingiamo, io sterzo. Non per pigrizia. Per fisica."
+        "Se spingiamo, io sterzo. Puramente per fisica."
       ]
     }
   },
@@ -16992,7 +16992,7 @@
       ],
       "authoritative": [
         "Entriamo da ospiti e ci comportiamo di conseguenza finché non dico altrimenti.",
-        "A un posto di blocco per questo gruppo parlo solo io.",
+        "A un posto di blocco per questo Party parlo solo io.",
         "Documenti in mano, risposte brevi, nessuna battuta. Domande?",
         "Sapremo le leggi entro stasera. Me ne occupo io.",
         "Se ci separiamo il punto di ritrovo è il cippo di confine. Ripetetelo tutti.",
@@ -17114,8 +17114,8 @@
         "Ovunque sia questo posto, noi siamo sempre noi. È abbastanza.",
         "Qui nessuno se ne va in giro da solo. Non in un posto che non conosciamo.",
         "Se uno di noi non è gradito, non entra nessuno.",
-        "Stesso gruppo, terra nuova. Un confine è solo questo.",
-        "Non mi interessa di chi sia il paese. Mi interessa chi mi sta accanto dentro.",
+        "Stesso Party, terra nuova. Un confine è solo questo.",
+        "Mi interessa chi mi sta accanto, lì dentro.",
         "Passiamo insieme e ce ne andiamo insieme.",
         "Se qualcuno chiede di uno di noi, riceve la stessa risposta da tutti.",
         "Le loro leggi sono affari loro. Tu sei affare mio.",
@@ -17184,13 +17184,13 @@
       ],
       "naguka": [
         "NUOVA TERRA! ME RECLAMARE! PER ORDA! ...SCHERZO. QUASI.",
-        "QUESTO PAESE ODORARE DIVERSO. PIU' FORMAGGIO. ME APPROVARE.",
+        "QUESTO PAESE ODORARE DIVERSO. PIÙ FORMAGGIO. ME APPROVARE.",
         "UOMINI DI CONFINE GUARDARE ME COME INVASIONE. ME SOLO PICCOLA INVASIONE.",
         "QUI USARE EURO? SIIH? BENE. ME RICCO IN OGNI PAESE.",
-        "ME SENTIRE GRANDE-CANTO-TESTA DIVENTARE PIU' ZITTO QUI. MENO PARENTI. RONZIO SOLITARIO.",
+        "ME SENTIRE GRANDE-CANTO-TESTA DIVENTARE PIÙ ZITTO QUI. MENO PARENTI. RONZIO SOLITARIO.",
         "QUI AVERE METAL? METAL VERO? CON URLO?",
-        "NUOVA BANDIERA. ME NON PIACERE COLORI. SERVIRE PIU' NERO.",
-        "ESSERE NORVEGIA? NO? ALLORA PERCHE' ME DISTURBARE?",
+        "NUOVA BANDIERA. ME NON PIACERE COLORI. SERVIRE PIÙ NERO.",
+        "ESSERE NORVEGIA? NO? ALLORA PERCHÉ ME DISTURBARE?",
         "MISSIONARI FORSE ANCHE QUI. LORO DAPPERTUTTO. COME MUSCHIO.",
         "NUOVO PAESE VOLERE DIRE NUOVO CIBO. ME MANGIARE TUTTO. PER SCIENZA.",
         "ME PASSARE SOPRA LINEA. *SALTELLA* ORA ME INTERNAZIONALE.",
@@ -17202,17 +17202,17 @@
         "COSA PENSARE QUI DI GOBLIN? NOI SCOPRIRE. AD ALTA VOCE.",
         "STESSO CIELO. STESSA LAMPADA-CIELO. CAPPELLI DIVERSI. SU-MONDO STRANO.",
         "ORDA NON ARRIVARE QUI ANCORA. DARE TEMPO. *GHIGNA*",
-        "ME CONTARE PAESI DOVE ME STATO. SU DITA. ME AVERE BISOGNO PIU' DITA.",
+        "ME CONTARE PAESI DOVE ME STATO. SU DITA. ME AVERE BISOGNO PIÙ DITA.",
         "NUOVO PAESE, STESSA TERRA SU STIVALI DI ME. QUESTO ESSERE CONFORTO.",
         "QUI AVERE GROTTE? GROTTE BUONE? ME VOLERE VISITARE. PER NOSTALGIA.",
         "SE QUI AVERE ORCHI, ME SALUTARE. ORCHI SEMPRE GENTILI CON ME. MEZZA FAMIGLIA.",
         "NUOVO PAESE! NUOVA GENTE DA SPAVENTARE! ...GENTILMENTE.",
         "ARIA QUI SAPERE DIVERSO. COME PANE BAGNATO. NON MALE.",
         "QUI ME NESSUNO. NESSUNO CONOSCERE ME. ME COMINCIARE NUOVA LEGGENDA.",
-        "PERCHE' METTERE LINEA QUI? TERRENO SEMBRARE UGUALE. ALTI-ROSA AMARE LINEE.",
+        "PERCHÉ METTERE LINEA QUI? TERRENO SEMBRARE UGUALE. ALTI-ROSA AMARE LINEE.",
         "IMPERO VATICANO ANCORA LONTANO? BENE. ME NON VOLERE ALTRI CAPPELLINI.",
         "ME BACIARE TERRA. *SPUTA* SAPORE OK. ME ACCETTARE QUESTO PAESE.",
-        "IN CITTADELLA NIENTE PAESI. SOLO SU, GIU' E NUCLEO. PIU' SEMPLICE."
+        "IN CITTADELLA NIENTE PAESI. SOLO SU, GIÙ E NUCLEO. PIÙ SEMPLICE."
       ],
       "verden": [
         "Un nuovo paese. Ne scriverò il nome nei miei appunti, con la data e il tempo che fa.",
@@ -17235,7 +17235,7 @@
         "Spero che qui siano gentili con gli stranieri. Finora sono stato fortunato, e lo so.",
         "Nuove leggi, immagino. Rispettiamo i limiti di velocità e le buone maniere.",
         "I campi sono seminati in modo diverso. File da est a ovest. Qui qualcuno pensa al sole.",
-        "Lo Schiacciamento ha toccato molto questo paese? Dovremmo chiederlo, con garbo, nella prima locanda.",
+        "Lo Squishing ha toccato molto questo paese? Dovremmo chiederlo, con garbo, nella prima locanda.",
         "Ho collezionato un altro confine. È un hobby strano, ma innocuo.",
         "Un altro paese, un altro tipo di distributore automatico. Non sto più nella pelle.",
         "Scopriamo cosa si mangia qui. Trovo che un paese sia soprattutto la sua cucina.",
@@ -17322,7 +17322,7 @@
         "Un nuovo paese. Vediamo se la sua gente canta la sera. Ti dice tutto.",
         "Ogni nazione pensa che le sue montagne siano le più belle. Questa ha quasi ragione.",
         "Qui guidano sullo stesso lato. Piccole grazie.",
-        "Ricordo questa terra prima dello Schiacciamento. Era più tranquilla, e le stelle restavano al loro posto.",
+        "Ricordo questa terra prima dello Squishing. Era più tranquilla, e le stelle restavano al loro posto.",
         "Di nuovo soldi nuovi. Euro, almeno. Mi mancano le vecchie monete. Avevano facce che valeva la pena guardare.",
         "Benvenuti, dice il cartello. In tre lingue, tutte un po' sbagliate. Affascinante.",
         "Un paese nuovo, un pubblico nuovo. Qualcuno qui non mi ha di certo mai sentito cantare."
@@ -17354,7 +17354,7 @@
         "Lingua diversa. Stessa espressione quando le luci scendono sul campo.",
         "Un altro paese. Probabilmente ci sono già stato. Probabilmente ho spostato una chiesa.",
         "Il doganiere mi ha guardato a lungo. Io l'ho guardato più a lungo. Ci ha lasciati passare.",
-        "Terra nuova, fattorie nuove, mucche nuove. Non dico niente. Conto solo le mucche.",
+        "Terra nuova, fattorie nuove, mucche nuove. Conto solo le mucche.",
         "*annusa l'aria oltre il confine e fa un sorriso sottile*",
         "Ogni paese ha il suo avvistamento. Vorrei sapere chi ha fatto il loro. Curiosità professionale.",
         "Un nuovo paese. Una pagina bianca. Per poco.",
@@ -17397,7 +17397,7 @@
   },
   "craft": {
     "opener": [
-      "{item}. Fatto, non comprato. La differenza c'è e intendo godermela.",
+      "{item}. Fatto con le nostre mani, e intendo godermelo.",
       "{item} è finito. Ho le mani a pezzi e sono contento.",
       "Abbiamo fatto {item} con roba che ci portavamo dietro comunque.",
       "{item}, giù dal banco e dentro lo zaino.",
@@ -17450,17 +17450,17 @@
         "Bene. Avanti."
       ],
       "paranoid": [
-        "Fuori da questa squadra nessuno sa che sappiamo farne. Che resti così.",
+        "Fuori da questo Party nessuno sa che sappiamo farne. Che resti così.",
         "Da dove arriva il materiale? Qualcuno ce l'ha venduto a poco.",
         "Controlla il marchio. Le cose fatte a mano portano un marchio."
       ],
       "empathetic": [
         "Volevi farlo da settimane. L'avevo notato.",
         "Ti sanguinano le mani. Siediti, e sii orgoglioso da seduto.",
-        "L'hai fatto per la squadra, non per te. È sempre così."
+        "L'hai fatto per il Party, non per te. È sempre così."
       ],
       "authoritative": [
-        "Bene. Va nell'inventario della squadra, non in uno zaino personale.",
+        "Bene. Va nell'inventario del Party, non in uno zaino personale.",
         "Il materiale speso si registra come le monete.",
         "La prossima volta avvisami prima di finire le scorte di qualcosa."
       ],
@@ -17544,7 +17544,7 @@
         "TRABALLARE. TRABALLARE ESSERE CARATTERE.",
         "ME DIPINGERE TESCHIO SOPRA. ORA FINITO.",
         "ESSERE COME UOVO. TU ASPETTARE, TU LAVORARE, POI... COSA!",
-        "CUGINI-BLU FARE PIU' CARINO. NOSTRO COLPIRE PIU' FORTE.",
+        "CUGINI-BLU FARE PIÙ CARINO. NOSTRO COLPIRE PIÙ FORTE.",
         "ME BRUCIARE SOLO UN DITO. GIORNATA MOLTO BUONA.",
         "*LO ALZA VERSO IL CIELO* GUARDARE, LAMPADA-CIELO! ME FATTO QUESTO!",
         "ANTICHI COSTRUTTORI DI CITTADELLA ESSERE ORGOGLIOSI. O CONFUSI.",
@@ -17569,7 +17569,7 @@
         "Brutto. Robusto. Come me. Perfetto.",
         "La metà goblin voleva metterci le punte. Quella umana ha detto no. Aggiunta una punta.",
         "Colpito per provarlo. Non si è rotto. Fatto.",
-        "Non è bello. Funziona. Il bello è per gli elfi.",
+        "Brutto. Funziona. Il bello è per gli elfi.",
         "*lo solleva con orgoglio, leggermente storto*",
         "Ci sono voluti tre tentativi. Alla terza ha smesso di combattermi.",
         "Mamma lo metterebbe sul camino. Poi lo nasconderebbe quando arrivano ospiti.",
@@ -17687,7 +17687,7 @@
         "Questa parte non piace a nessuno. Tu l'hai fatta lo stesso."
       ],
       "authoritative": [
-        "Tutto il recuperato va nello zaino della squadra. Da un sito non si prende niente per sé.",
+        "Tutto il recuperato va nello zaino del Party. Da un sito non si prende niente per sé.",
         "Registra cosa ne è uscito. Il recupero è entrata.",
         "Prendiamo la metà utile e entro un'ora siamo via."
       ],
@@ -17775,7 +17775,7 @@
         "UN PEZZO AVANZATO. ME NON SAPERE DOVE ANDARE. ME MANGIARE? NAAH.",
         "CUGINI-BLU PIANGERE. LORO AMARE MACCHINE ORA. AH.",
         "PEZZI BUONI. ME PORTARE. TASCHE DI NAGUKA PROFONDE COME KOLA.",
-        "COSI' ORDA FARE CON EDIFICI. MA PIU' PICCOLO. E PIU' GENTILE.",
+        "COSÌ ORDA FARE CON EDIFICI. MA PIÙ PICCOLO. E PIÙ GENTILE.",
         "NIENTE SPRECATO. DENTI DI ME APRIRE TUTTO."
       ],
       "verden": [
@@ -17912,7 +17912,7 @@
         "È la prima cosa che facciamo insieme da mesi."
       ],
       "authoritative": [
-        "Bene. Nessuno tiene roba personale nelle strutture della squadra.",
+        "Bene. Nessuno tiene roba personale nelle strutture del Party.",
         "Va sulla mappa e sul registro.",
         "La manutenzione è compito di qualcuno. La assegno io."
       ],
@@ -17929,7 +17929,7 @@
       "adventurous": [
         "Bene. Una base vuol dire che possiamo spingerci più in là.",
         "Adesso possiamo arrivare in quella zona della mappa su cui ho taciuto.",
-        "Ecco. È un punto di partenza, non una destinazione."
+        "Ecco. È un punto di partenza."
       ],
       "nurturing": [
         "Adesso c'è un posto al caldo. Cambia tutto.",
@@ -18010,7 +18010,7 @@
         "L'abbiamo fatto con le nostre mani. Ne sono più fiero di quanto sia strettamente educato.",
         "È rivolto al sole del mattino. Bene. Le cose rivolte al mattino crescono bene.",
         "Un tetto, quattro muri e una porta che si chiude. La magia più antica di tutte.",
-        "Dallo Schiacciamento non ho avuto un posto tutto mio. Questo ci si avvicina.",
+        "Dallo Squishing non ho avuto un posto tutto mio. Questo ci si avvicina.",
         "Lasciamolo assestare per una stagione. Gli edifici, come le piantine, hanno bisogno di tempo per accordarsi con il terreno.",
         "Potremmo metterci una radio? Una piccola. Per compagnia.",
         "Costruito. Ora serve solo abitarlo, che è il lavoro più lungo."
@@ -18022,7 +18022,7 @@
         "Un posto dove tornare. Bene. Ogni orco ne ha bisogno.",
         "Portato ogni asse. Fiero della mia schiena.",
         "La porta è abbastanza alta. Controllato. L'ho fatta io.",
-        "Non è un castello. I castelli cominciano piccoli. Probabilmente.",
+        "Un castello piccolo. I castelli cominciano piccoli. Probabilmente.",
         "Bell'angolo per una sedia. La mia sedia. Una sedia grossa.",
         "Sta dritto. Più dritto di me dopo una lunga giornata.",
         "Bel lavoro, tutti. La birra la paga chi ha costruito meno."
@@ -18191,7 +18191,7 @@
       "loyal": [
         "Chiunque abbia vinto, ci siamo seduti insieme. La parte bella era quella.",
         "Una volta ho perso apposta. Non dico in che turno.",
-        "Bene. A questa squadra serviva un'ora da squadra."
+        "Bene. A questo Party serviva un'ora da Party."
       ],
       "brave": [
         "Sono andato per primo, come al solito, e ho perso per primo.",
@@ -18220,10 +18220,10 @@
       ],
       "naguka": [
         "ME VINCERE! ME FATTO! ...ME NO? CHI CONTARE? RICONTARE!",
-        "ANCORA! ANCORA! NAGUKA NON FERMARE FINCHE' NAGUKA NON VINCERE!",
-        "QUESTO GIOCO AVERE BISOGNO PIU' URLA. ME AGGIUNGERE.",
+        "ANCORA! ANCORA! NAGUKA NON FERMARE FINCHÉ NAGUKA NON VINCERE!",
+        "QUESTO GIOCO AVERE BISOGNO PIÙ URLA. ME AGGIUNGERE.",
         "ME PERDERE EURO. ME NON IMPORTARE. ME DIVERTITO. ME IMPORTARE UN PO'.",
-        "IN CITTADELLA NOI GIOCARE LANCIO-SASSO. QUESTO UGUALE, MA PIU' LUCCICANTE.",
+        "IN CITTADELLA NOI GIOCARE LANCIO-SASSO. QUESTO UGUALE, MA PIÙ LUCCICANTE.",
         "*PROVA A MORDERE IL GIOCO* ...SCUSA. ABITUDINE.",
         "GRANDE-CANTO-TESTA AIUTARE ME. NO. GRANDE-CANTO-TESTA DORMIRE.",
         "MIGLIOR ORA DA KOLA. FORSE. ME NON ANCORA NATO ALLORA.",

@@ -660,6 +660,10 @@
         }
         
         gameOver() {
+            // Two fatal events can land in one frame (a second hit, the
+            // field reaching the bottom): the run ends once, or a second
+            // timer orphans the first and the score screen is pushed twice.
+            if (this._endTimeout) return;
             this._gameActive = false;
 
             // Do NOT submit here: ArcadeManager.endGame -> onGameEnd handles the

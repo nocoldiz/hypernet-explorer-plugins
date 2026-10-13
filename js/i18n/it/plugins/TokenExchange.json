@@ -1,7 +1,7 @@
 {
   "title": "Cambio gettoni",
   "banner": "CAMBIO GETTONI",
-  "tagline": "Cambia euro e gettoni arcade senza commissioni.",
+  "tagline": "Cambia euro e gettoni arcade. Senza commissioni.",
   "rate": "1 gettone = €{price}",
   "atPar": "Si compra e si vende alla pari.",
   "wallet": "PORTAFOGLIO",
@@ -17,8 +17,8 @@
   "confirm": "CONFERMA LO SCAMBIO",
   "hint": "Scegli una direzione, imposta una quantità, poi conferma.",
   "affordable": {
-    "one": "Ne puoi permettere {count} a €{price} l'uno",
-    "other": "Ne puoi permettere {count} a €{price} l'uno"
+    "one": "Puoi permettertene {count} a €{price} l'uno",
+    "other": "Puoi permettertene {count} a €{price} l'uno"
   },
   "held": {
     "one": "Ne possiedi {count}, per un valore di €{worth}",
@@ -28,10 +28,10 @@
     "one": "{count} gettone",
     "other": "{count} gettoni"
   },
-  "statusBuying": "Acquisto: gli euro escono dal portafoglio, i gettoni entrano nella borsa.",
-  "statusSelling": "Vendita: i gettoni escono dalla borsa, gli euro tornano nel portafoglio.",
+  "statusBuying": "Compri gettoni con euro.",
+  "statusSelling": "Vendi gettoni per euro.",
   "notEnoughEuros": "Non hai abbastanza euro.",
-  "notEnoughTokens": "Non possiedi così tanti gettoni.",
+  "notEnoughTokens": "Non hai abbastanza gettoni.",
   "bought": {
     "one": "Comprato {count} gettone per €{total}.",
     "other": "Comprati {count} gettoni per €{total}."

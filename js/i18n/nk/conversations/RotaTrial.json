@@ -1,0 +1,192 @@
+{
+  "line": {
+    "title": "TRIBUNAL ROTAE ROMANAE",
+    "archmagistrate": "ARCHMAGISTRATE",
+    "interpreter": "INTERPRETER ASSIGNED BY DA COURT",
+    "tariff": "SENTENCE BY TARIFF",
+    "defenceRoll": "DEFENCE BEFORE DA ROTA",
+    "absolvo": "ABSOLVO",
+    "condemno": "CONDEMNO",
+    "courtDescription": "DA TRIBUNAL ROTAE ROMANAE SITS IN {venue}. {gallery} ARCHMAGISTRATE {judge} PRESIDES. DA COURT ASSIGNS {interpreter} TA RENDER DA BENCH'S LATIN!"
+  },
+  "choice": {
+    "confess": "CONFITEOR. (ME CONFESS.)",
+    "deny": "NEGO. (ME DENY DA CHARGES.)",
+    "mercy": "MISERICORDIAM PETO. (ME BEG FOR MERCY.)"
+  },
+  "names": {
+    "judges": [
+      "IGNATIUS FERRANTE",
+      "BONIFACIUS ORSINI",
+      "CLEMENS VITELLESCHI",
+      "GREGORIUS MASSIMO",
+      "INNOCENTIUS COLONNA",
+      "BENEDICTUS CAETANI",
+      "LEO ALTIERI",
+      "SIXTUS BARBERINI"
+    ],
+    "interpreters": [
+      "FRA' MATTEO LANZI",
+      "SISTER AGNESE ROTA",
+      "FRA' TOMMASO VELLA",
+      "DEACON PIERO ARNALDI",
+      "SISTER CHIARA BENNI",
+      "FRA' LUCA SARTORI"
+    ]
+  },
+  "court": {
+    "venues": [
+      "DA HALL OF DA ROTA, UNDER A FRESCO OF DA LAST JUDGEMENT",
+      "A VAULTED CHAMBER OF DA APOSTOLIC PALACE, LIT BY A SINGLE WINDOW",
+      "A COLD COURTROOM OF GREY MARBLE, WIT DA EMPIRE'S KEYS CARVED OVER DA BENCH",
+      "DA CHAPTER HOUSE OF A CATHEDRAL, CLEARED OF ITS PEWS FOR DA HEARIN'"
+    ],
+    "gallery": [
+      "CLERICS IN BLACK FILL DA BENCHES AN' DO NO WHISPER!",
+      "A ROW OF NOTARIES WRITES DOWN EVERY WORD IN THREE COPIES!",
+      "DA GALLERY IZ EMPTY: DA ROTA DOES NO SIT FOR AN AUDIENCE!",
+      "TWO SWISS HALBERDIERS STAND AT DA DOOR AN' LOOK AT NUTTIN'!"
+    ]
+  },
+  "noCase": {
+    "la": [
+      "Nulla accusatio in tabula scripta est. Tribunal non sedet. Discede."
+    ],
+    "tr": [
+      "DERE IZ NO CHARGE WRITTEN ON DA SHEET. DA COURT DOES NO SIT. YOU MAY GO!"
+    ]
+  },
+  "opening": {
+    "la": [
+      "Tribunal Rotae Romanae sedet. Adstat reus {name}. Audiatur et altera pars, sed lex non flectitur.",
+      "In nomine Imperii Sancti, causa {name} aperitur. Iustitia aequa est, sed non mitis.",
+      "Sedet Rota. Reus {name}, attende: hic nihil fortuna, omnia lex."
+    ],
+    "tr": [
+      "DA TRIBUNAL OF DA ROMAN ROTA IZ IN SESSION. DA ACCUSED, {name}, STANDS BEFORE IT. DA OTHER SIDE SHALL BE HEARD, BUT DA LAW DOES NO BEND!",
+      "IN DA NAME OF DA HOLY EMPIRE, DA CASE OF {name} IZ OPENED. JUSTICE HERE IZ FAIR, BUT IT IZ NO GENTLE!",
+      "DA ROTA SITS. ACCUSED {name}, LISTEN: NUTTIN' HERE IZ LEFT TA CHANCE, EVERYTINK TA DA LAW!"
+    ]
+  },
+  "noAdvocate": {
+    "la": [
+      "Advocatus non admittitur. Interpres tibi datus est; nihil aliud.",
+      "Nemo pro te loquetur. Interpres verba mea reddet, et tua."
+    ],
+    "tr": [
+      "NO ADVOCATE IZ ADMITTED. YOU HAB BIN GIVEN AN INTERPRETER, AN' NUTTIN' MORE!",
+      "NOBODY WILL SPEAK FOR YOU. DA INTERPRETER WILL RENDER ME WORDS, AN' YA!"
+    ]
+  },
+  "charge": {
+    "la": [
+      "Accusaris de crimine: {charge}. Poena in tabula: {amount}.",
+      "Scriptum est in tabula: {charge}. Pretium: {amount}."
+    ],
+    "tr": [
+      "YOU IZ ACCUSED OF: {charge}. DA PENALTY ON DA SHEET: {amount}!",
+      "IT IZ WRITTEN ON DA SHEET: {charge}. ITS PRICE: {amount}!"
+    ]
+  },
+  "askPlea": {
+    "la": [
+      "Quid respondes? Confiteris, an negas?"
+    ],
+    "tr": [
+      "WHAT DO YOU ANSWER? DO YOU CONFESS, OR DO YOU DENY?"
+    ]
+  },
+  "noMercy": {
+    "la": [
+      "Misericordia non est in hoc foro. Responde ad accusationem.",
+      "Misericordiam a solo Deo pete. Confiteris, an negas?"
+    ],
+    "tr": [
+      "DERE IZ NO MERCY IN DIS COURT. ANSWER DA CHARGE!",
+      "ASK GOD ALONE FOR MERCY. DO YOU CONFESS, OR DO YOU DENY?"
+    ]
+  },
+  "confession": {
+    "la": [
+      "Confessio accepta est. Poena uno gradu minuitur, nec amplius."
+    ],
+    "tr": [
+      "DA CONFESSION IZ ACCEPTED. DA SENTENCE IZ LOWERED BY ONE STEP ON DA TARIFF, AN' NO FURTHER!"
+    ]
+  },
+  "markNotArguable": {
+    "la": [
+      "Quod es in tabula scriptum est. De hoc non disputatur."
+    ],
+    "tr": [
+      "WHAT IZ WRITTEN ON DA SHEET IZ WHAT YOU IZ. DAT IZ NO OPEN TA ARGUMENT!"
+    ]
+  },
+  "statesOdds": {
+    "la": [
+      "Interpres tibi dicet quanta sit spes defensionis tuae. Nihil celatur."
+    ],
+    "tr": [
+      "DA COURT STATES DA ODDS PLAINLY, SO NOBODY CAN CALL IT UNFAIR: YA DEFENCE CARRIES {chance} IN A HUNDRED. IF IT FAILS, DA DENIAL IZ PERJURY, AN' DA SENTENCE RISES ONE STEP!"
+    ]
+  },
+  "hearDefence": {
+    "la": [
+      "Loquere. Rota audit."
+    ],
+    "tr": [
+      "SPEAK. DA ROTA IZ LISTENIN'!"
+    ]
+  },
+  "acquittal": {
+    "la": [
+      "Accusatio non probata est. Absolvo te. Tabula deletur.",
+      "Defensio valet. Absolutus es; discede in pace."
+    ],
+    "tr": [
+      "DA CHARGE IZ NO PROVEN. ME ACQUIT YOU. DA SHEET IZ STRUCK OUT!",
+      "DA DEFENCE HOLDS. YOU IZ ACQUITTED; GO IN PEACE!"
+    ]
+  },
+  "perjury": {
+    "la": [
+      "Negasti quod verum est. Periurium addis crimini tuo.",
+      "Defensio cecidit, et mendacium tuum cum ea. Poena augetur."
+    ],
+    "tr": [
+      "YOU DENIED WHAT IZ TRUE. YOU ADD PERJURY TA YA CRIME!",
+      "DA DEFENCE HAB FALLEN, AN' YA LIE WIT IT. DA SENTENCE IZ RAISED!"
+    ]
+  },
+  "conviction": {
+    "la": [
+      "Reus est. Condemno.",
+      "Probatum est. Condemno te secundum legem."
+    ],
+    "tr": [
+      "GUILTY. ME CONDEMN YOU.",
+      "IT IZ PROVEN. ME CONDEMN YOU ACCORDIN' TA DA LAW!"
+    ]
+  },
+  "sentence": {
+    "la": [
+      "Poenam tibi irrogo secundum tariffam Imperii."
+    ],
+    "tr": [
+      "ME PASS SENTENCE ACCORDIN' TA DA EMPIRE'S TARIFF: {sentence}!"
+    ]
+  },
+  "confiscation": {
+    "la": [
+      "Bona tua publicantur, usque ad summam poenae."
+    ],
+    "tr": [
+      "YA GOODS IZ CONFISCATED, UP TA DA FULL SUM OF DA PENALTY: {amount}!"
+    ]
+  },
+  "release": [
+    "DA CELL DOOR OPENS. A CLERIC READS DA RELEASE ALOUD IN LATIN, DEN ONCE MORE FOR YOU. DA ROTA DOES NO SEE YOU OUT!",
+    "SENTENTIA EXPLETA EST. YA SENTENCE IZ SERVED. DA GUARDS RETURN WHAT LIL' DA COURT LEFT YOU!",
+    "DA INTERPRETER WAITS AT DA GATE: \"DA ROTA CONSIDERS DA MATTER CLOSED. IT ALSO REMEMBERS IT.\""
+  ]
+}

@@ -2,25 +2,25 @@
   "menu": "Vector Gun",
   "title": "Vector Gun",
   "back": "Indietro",
-  "subtitle": "Modalita operative",
+  "subtitle": "Modalità operative",
   "tab": {
-    "modes": "Modalita operative",
+    "modes": "Modalità operative",
     "element": "Elemento",
     "form": "Forme",
     "calibrate": "Calibrazione"
   },
-  "slots": "{used} di {max} modalita attive",
+  "slots": "{used} di {max} modalità attive",
   "state": {
     "on": "Attiva",
     "off": "Inattiva"
   },
-  "full": "Massimo 3 modalita alla volta.",
-  "noGun": "Il gruppo non ha la pistola.",
+  "full": "Massimo 3 modalità alla volta.",
+  "noGun": "Il Party non ha la pistola.",
   "detail": {
     "damageType": "Tipo di danno",
     "status": "Stato",
     "effect": "Effetto",
-    "modesTitle": "Modalita attive",
+    "modesTitle": "Modalità attive",
     "fitted": "Montato",
     "elementTitle": "Elemento",
     "formTitle": "Forma",
@@ -44,8 +44,8 @@
     },
     "solomonIncantation": {
       "name": "Incantazione di Salomone",
-      "desc": "Gli incantesimi sono pronunciati ad alta voce e infliggono il 15% di danno in piu.",
-      "effect": "Funziona solo con il Grimorio di Salomone montato, o mentre il libro è aperto durante Morte Aggraziata. Ogni magia lanciata viene prima letta per intero, in un riquadro tutto suo, e poi infligge o cura il 15% in più."
+      "desc": "Le magie scrivono un verso della formula nel registro. Formula intera col grimorio aperto.",
+      "effect": "Le magie lanciate con la pistola vettoriale aggiungono un verso a caso della formula al registro di battaglia. Con il Grimorio di Salomone montato, o aperto durante Morte Aggraziata, la formula è scritta per intero e la magia infligge o cura il 15% in più."
     },
     "card": {
       "name": "Carta",
@@ -54,8 +54,8 @@
     },
     "wide": {
       "name": "Colpi larghi",
-      "desc": "Colpisce piu parti del corpo con meno danno.",
-      "effect": "Danno totale minore, distribuito su piu parti del corpo per attacco."
+      "desc": "Colpisce più parti del corpo con meno danno.",
+      "effect": "Danno totale minore, distribuito su più parti del corpo per attacco."
     },
     "psi": {
       "name": "Vettori psichici",
@@ -85,22 +85,22 @@
     "deadeye": {
       "name": "Occhio di falco",
       "desc": "+40% di critico.",
-      "effect": "La probabilita di colpo critico aumenta di 40 punti."
+      "effect": "La probabilità di colpo critico aumenta di 40 punti."
     },
     "tracker": {
       "name": "Proiettili traccianti",
       "desc": "Gli attacchi non mancano mai.",
-      "effect": "Gli attacchi colpiscono sempre, ignorando l'elusione."
+      "effect": "Gli attacchi colpiscono sempre, ignorando l'evasione."
     },
     "overload": {
       "name": "Sovraccarico",
       "desc": "Raffica del coilgun doppia, danno all'85%.",
-      "effect": "La raffica di colpi del coilgun e raddoppiata. Tutti i colpi infliggono l'85% del danno."
+      "effect": "La raffica di colpi del coilgun è raddoppiata. Tutti i colpi infliggono l'85% del danno."
     },
     "hex": {
       "name": "Proiettili maledetti",
-      "desc": "40% di probabilita di un malus casuale.",
-      "effect": "Un colpo a segno ha il 40% di probabilita di infliggere uno tra: cecita, silenzio, squilibrio, vulnerabilita, guardia rotta."
+      "desc": "40% di probabilità di un malus casuale.",
+      "effect": "Un colpo a segno ha il 40% di probabilità di infliggere uno tra: cecità, silenzio, squilibrio, vulnerabilità, guardia rotta."
     },
     "longshot": {
       "name": "Tiro lungo",
@@ -109,27 +109,27 @@
     },
     "venom": {
       "name": "Proiettili velenosi",
-      "desc": "30% di probabilita di avvelenare.",
-      "effect": "Un colpo a segno ha il 30% di probabilita di infliggere veleno."
+      "desc": "30% di probabilità di avvelenare.",
+      "effect": "Un colpo a segno ha il 30% di probabilità di infliggere veleno."
     },
     "concussion": {
       "name": "Proiettili a concussione",
-      "desc": "30% di probabilita di stordire.",
-      "effect": "Un colpo a segno ha il 30% di probabilita di infliggere stordimento."
+      "desc": "30% di probabilità di stordire.",
+      "effect": "Un colpo a segno ha il 30% di probabilità di infliggere stordimento."
     },
     "thermalOverload": {
       "name": "Sovraccarico termico",
-      "desc": "30% di probabilita di incendiare.",
-      "effect": "Un colpo a segno ha il 30% di probabilita di infliggere bruciatura."
+      "desc": "30% di probabilità di incendiare.",
+      "effect": "Un colpo a segno ha il 30% di probabilità di infliggere bruciatura."
     },
     "thermalUnderload": {
       "name": "Sottocarico termico",
-      "desc": "30% di probabilita di congelare.",
-      "effect": "Un colpo a segno ha il 30% di probabilita di infliggere congelamento."
+      "desc": "30% di probabilità di congelare.",
+      "effect": "Un colpo a segno ha il 30% di probabilità di infliggere congelamento."
     },
     "executioner": {
       "name": "Giustiziere",
-      "desc": "Piu danno sui bersagli a HP bassi.",
+      "desc": "Più danno sui bersagli a HP bassi.",
       "effect": "Il danno cresce al calare degli HP del bersaglio, fino a +60% contro un bersaglio in fin di vita."
     },
     "ambush": {
@@ -139,7 +139,7 @@
     },
     "resonance": {
       "name": "Risonanza",
-      "desc": "Piu danno con MP alti.",
+      "desc": "Più danno con MP alti.",
       "effect": "Il danno cresce con gli MP attuali di chi spara, fino a +40% con MP pieni."
     },
     "overpressure": {
@@ -150,12 +150,12 @@
     "hollowPoint": {
       "name": "Punta cava",
       "desc": "+75% di danno critico.",
-      "effect": "I colpi critici infliggono il 75% di danno in piu. Non modifica la probabilita di critico."
+      "effect": "I colpi critici infliggono il 75% di danno in più. Non modifica la probabilità di critico."
     },
     "deepMagazine": {
       "name": "Caricatore profondo",
       "desc": "+4 colpi del coilgun.",
-      "effect": "Il coilgun tiene 4 colpi in piu prima di richiudersi. Danno invariato."
+      "effect": "Il coilgun tiene 4 colpi in più prima di richiudersi. Danno invariato."
     }
   },
   "toast": {
@@ -170,7 +170,7 @@
     "uncalibrated": "{choice} rimossa.",
     "calSwapped": "{choice} scelta, {old} rimossa.",
     "reaped": "La falce si prende {name}.",
-    "noSky": "Qui dentro non c'e cielo da cambiare.",
+    "noSky": "Niente meteo al chiuso.",
     "spent": "{form} esaurita, torna pistola.",
     "locked": "{mode} si sblocca al livello {n}.",
     "roll": "Dado di Yaldabaoth: {n}. {form}.",
@@ -182,16 +182,16 @@
     "switched": "{name} passa a {form}."
   },
   "lock": {
-    "title": "Non ancora ottenuta",
+    "title": "Bloccata",
     "level": "Livello {n}",
     "unlocksAt": "Si sblocca al livello",
     "current": "Livello di Em",
-    "remaining": "{n} modalita ancora chiuse, la prossima al livello {next}",
-    "formsRemaining": "{n} forme ancora chiuse, la prossima al livello {next}"
+    "remaining": "{n} modalità bloccate, la prossima al livello {next}",
+    "formsRemaining": "{n} forme bloccate, la prossima al livello {next}"
   },
   "locked": {
-    "equip": "Solo Em puo equipaggiare la Vector Gun.",
-    "part": "La Vector Gun non puo lasciare Em."
+    "equip": "Solo Em può equipaggiare la Vector Gun.",
+    "part": "La Vector Gun non può lasciare Em."
   },
   "cmd": {
     "toBlade": "Passa alla lama",
@@ -200,17 +200,17 @@
   },
   "element": {
     "title": "Elemento",
-    "hint": "L'elemento e memorizzato sulla pistola. Le forme arma lo perdono e attaccano senza elemento. Il coilgun ha un elemento proprio, impostato nella pagina Calibrazione, cosi il telaio puo tenerne due alla volta.",
+    "hint": "Vale solo per la pistola. Le forme arma non hanno elemento. L'elemento del coilgun si imposta in Calibrazione.",
     "physicalDesc": "Danno fisico, senza elemento.",
     "desc": {
       "1": "Danno fisico, senza elemento.",
-      "2": "Danno di fuoco, puo incendiare il bersaglio.",
-      "3": "Danno di ghiaccio, puo congelare il bersaglio.",
+      "2": "Danno di fuoco, può incendiare il bersaglio.",
+      "3": "Danno di ghiaccio, può congelare il bersaglio.",
       "4": "Danno di fulmine.",
       "5": "Danno d'acqua.",
       "6": "Danno di terra.",
       "7": "Danno di vento.",
-      "8": "Danno sacro, piu efficace contro i non morti.",
+      "8": "Danno sacro, più efficace contro i non morti.",
       "9": "Danno oscuro."
     }
   },
@@ -239,12 +239,12 @@
     "dice": {
       "name": "Dado di Yaldabaoth",
       "desc": "Tira un d20 per la forma.",
-      "effect": "TRASFORMA tira un d20 e prende la forma di quella faccia, bloccata o no. 1: Pugni di Em. 20: Grimorio di Salomone, senza costo in PV. Un altro TRASFORMA torna alla pistola."
+      "effect": "TRASFORMA tira un d20 e prende la forma di quella faccia, bloccata o no. 1: Pugni di Em. 20: Grimorio di Salomone, senza costo in HP. Un altro TRASFORMA torna alla pistola."
     },
     "gun": {
       "name": "Coilgun di Tesla",
       "desc": "Forma base.",
-      "effect": "TRASFORMA: coilgun, 3 colpi, gittata x4. Torna pistola dopo il terzo colpo."
+      "effect": "TRASFORMA: coilgun, 3 colpi, portata x4. Torna pistola dopo il terzo colpo."
     },
     "abrasax": {
       "name": "Athame di Abrasax",
@@ -279,7 +279,7 @@
     "aiwass": {
       "name": "Arco di Aiwass",
       "desc": "Tensione regolabile.",
-      "effect": "Più tensione: più gittata, meno danno."
+      "effect": "Più tensione: più portata, meno danno."
     },
     "zos": {
       "name": "Dardi di Zos",
@@ -359,35 +359,35 @@
   "cal": {
     "none": "Niente da calibrare",
     "known": "Appresa",
-    "borrowed": "Letta dal telaio",
+    "borrowed": "Dall'arma",
     "apCost": "{ap} AP",
     "chip": {
       "selected": "Scelta"
     },
     "section": {
-      "element": "L'elemento del coilgun",
-      "rack": "Il caricatore",
-      "marks": "Il segno che lascia",
-      "stance": "La guardia in cui la tiene",
-      "sky": "Il cielo che chiama",
-      "schools": "Le scuole da cui pesca",
-      "quarry": "Per cosa e stata fatta",
-      "lash": "Cosa abbatte la sferzata",
-      "venom": "Cosa portano i dardi",
-      "head": "Cosa consegna la testa",
-      "cleave": "Quanto largo arriva il colpo",
-      "draw": "Quanto viene tesa",
-      "charge": "Come viene portata",
-      "discord": "Quanto e imprevedibile il colpo",
-      "measure": "Su cosa li pesa",
-      "reads": "Cosa legge la barra",
-      "bargain": "Il patto stretto",
-      "mends": "Cosa curano i grani",
-      "known": "Quello che sa",
-      "reach": "Alla sua portata"
+      "element": "Elemento del coilgun",
+      "rack": "Caricatore",
+      "marks": "Stato",
+      "stance": "Posizione",
+      "sky": "Meteo",
+      "schools": "Scuole",
+      "quarry": "Tipo di bersaglio",
+      "lash": "Parametro ridotto",
+      "venom": "Stato dei dardi",
+      "head": "Tipo di danno",
+      "cleave": "Bersagli",
+      "draw": "Tensione",
+      "charge": "Stile d'attacco",
+      "discord": "Varianza",
+      "measure": "Parametro misurato",
+      "reads": "Lettura",
+      "bargain": "Patto",
+      "mends": "Cura",
+      "known": "Apprese",
+      "reach": "Disponibili"
     },
     "lash": {
-      "desc": "Abbassa questo parametro al colpo per alcuni round. 45% di probabilita, 85% del danno."
+      "desc": "Abbassa questo parametro al colpo per alcuni turni. 45% di probabilità, 85% del danno."
     },
     "head": {
       "Blunt": {
@@ -424,7 +424,7 @@
     "draw": {
       "short": {
         "name": "Tesa corta",
-        "desc": "Portata 3 caselle, +15% probabilita di critico."
+        "desc": "Portata 3 caselle, +15% probabilità di critico."
       },
       "standard": {
         "name": "Tesa normale",
@@ -466,47 +466,47 @@
     "measure": {
       "health": {
         "name": "Le loro ferite",
-        "desc": "Piu danno quanto piu bassi sono gli HP del bersaglio."
+        "desc": "Più danno quanto più bassi sono gli HP del bersaglio."
       },
       "mana": {
         "name": "La loro riserva",
-        "desc": "Piu danno quanto piu bassi sono gli MP del bersaglio."
+        "desc": "Più danno quanto più bassi sono gli MP del bersaglio."
       },
       "states": {
         "name": "Cosa si portano",
-        "desc": "Piu danno per ogni stato sul bersaglio."
+        "desc": "Più danno per ogni stato sul bersaglio."
       },
       "level": {
         "name": "Il divario fra voi",
-        "desc": "Piu danno quanto maggiore e la differenza di livello, in entrambe le direzioni."
+        "desc": "Più danno quanto maggiore è la differenza di livello, in entrambe le direzioni."
       }
     },
     "reads": {
       "wound": {
         "name": "La ferita",
-        "desc": "Piu danno quanto piu danno complessivo ha subito il corpo del bersaglio."
+        "desc": "Più danno quanto più danno complessivo ha subito il corpo del bersaglio."
       },
       "ruin": {
         "name": "Lo scempio",
-        "desc": "Piu danno quanto peggio sta la parte piu danneggiata del bersaglio."
+        "desc": "Più danno quanto peggio sta la parte più danneggiata del bersaglio."
       },
       "tally": {
         "name": "Il conto",
-        "desc": "Piu danno per ogni parte del corpo che il bersaglio ha perso."
+        "desc": "Più danno per ogni parte del corpo che il bersaglio ha perso."
       }
     },
     "bargain": {
       "patron": {
         "name": "Patrono",
-        "desc": "20% di probabilita di mietere un nemico con un colpo critico. Danno normale."
+        "desc": "20% di probabilità di mietere un nemico con un colpo critico. Danno normale."
       },
       "tithe": {
         "name": "Decima",
-        "desc": "50% di probabilita di mietere un alleato con un colpo critico. 130% del danno."
+        "desc": "50% di probabilità di mietere un alleato con un colpo critico. 130% del danno."
       },
       "chaos": {
         "name": "Caos",
-        "desc": "50% di probabilita di mietere chiunque con un colpo critico. 110% del danno."
+        "desc": "50% di probabilità di mietere chiunque con un colpo critico. 110% del danno."
       }
     },
     "mends": {
@@ -528,27 +528,27 @@
       },
       "party": {
         "name": "Tutti quanti",
-        "desc": "Ripristina una quantita minore di HP a tutto il gruppo."
+        "desc": "Ripristina una quantità minore di HP a tutto il Party."
       }
     },
     "marks": {
       "5": {
-        "desc": "30% di probabilita di infliggere Cecita."
+        "desc": "30% di probabilità di infliggere Cecità."
       },
       "6": {
-        "desc": "30% di probabilita di infliggere Silenzio."
+        "desc": "30% di probabilità di infliggere Silenzio."
       },
       "13": {
-        "desc": "30% di probabilita di infliggere Stordimento."
+        "desc": "30% di probabilità di infliggere Stordimento."
       },
       "38": {
-        "desc": "30% di probabilita di infliggere Sbilanciato."
+        "desc": "30% di probabilità di infliggere Sbilanciato."
       },
       "48": {
-        "desc": "30% di probabilita di infliggere Sanguinamento."
+        "desc": "30% di probabilità di infliggere Sanguinamento."
       },
       "52": {
-        "desc": "30% di probabilita di infliggere Immobilizzato."
+        "desc": "30% di probabilità di infliggere Immobilizzato."
       }
     },
     "stance": {
@@ -585,67 +585,67 @@
     },
     "form": {
       "gun": {
-        "hint": "Il coilgun ha un elemento proprio, cosi il telaio ne tiene due alla volta. La profondita del caricatore la decidi tu, ma un caricatore doppio raddoppia il costo in munizioni di ogni colpo."
+        "hint": "Il coilgun ha un elemento proprio. Un caricatore doppio raddoppia il costo in munizioni per colpo."
       },
       "abrasax": {
-        "hint": "Applica un'afflizione. Afflizioni piu dure hanno meno probabilita di riuscire, e PSI aumenta le probabilita."
+        "hint": "Applica un'afflizione. Quelle più dure riescono meno spesso. PSI aumenta le probabilità."
       },
       "thelema": {
-        "hint": "Un attacco normale a volte diventa questa abilita di spada, pagandone il costo in AP. L'abilita non deve essere appresa."
+        "hint": "Gli attacchi normali possono diventare questa abilità di spada, pagandone gli AP. Non serve apprenderla."
       },
       "freud": {
-        "hint": "Il danno si basa su PSI. Un attacco normale a volte diventa questa abilita, pagandone il costo in AP."
+        "hint": "Il danno scala su PSI. Gli attacchi normali possono diventare questa abilità, pagandone gli AP."
       },
       "fists": {
-        "hint": "Un attacco normale a volte diventa una forma casuale dall'insieme selezionato, pagandone il costo in AP."
+        "hint": "Gli attacchi normali possono diventare un'abilità casuale dell'insieme, pagandone gli AP."
       },
       "kia": {
-        "hint": "La posizione e attiva finche il guanto e equipaggiato, e riduce il danno che infliggi finche resta attiva."
+        "hint": "Attiva finché il guanto è equipaggiato. Riduce il tuo danno."
       },
       "hadit": {
-        "hint": "Passare al bastone cambia il meteo in questo. Il meteo influisce anche sui nemici, e non ha effetto al chiuso."
+        "hint": "Passare al bastone imposta questo meteo. Vale anche per i nemici. Nessun effetto al chiuso."
       },
       "solomon": {
-        "hint": "Il patto viene estratto dalle scuole selezionate. Senza selezione estrae da ogni scuola. Una selezione molto stretta potrebbe non avere nulla da estrarre."
+        "hint": "Le magie vengono dalle scuole selezionate, o da tutte se nessuna. Una scelta troppo stretta può non lasciare nulla."
       },
       "choronzon": {
-        "hint": "Il tipo di danno inflitto. Decide contro cosa l'attacco e forte e debole."
+        "hint": "Decide contro cosa l'attacco è forte e debole."
       },
       "babalon": {
-        "hint": "Quanti bersagli colpisce l'attacco. Ogni bersaglio in piu riduce il danno inflitto a tutti."
+        "hint": "Numero di bersagli. Ogni bersaglio in più riduce il danno a tutti."
       },
       "nuit": {
-        "hint": "La frusta abbassa un parametro invece di infliggere danno pieno. In cambio l'attacco infligge meno danno."
+        "hint": "Abbassa un parametro a ogni colpo, con meno danno."
       },
       "aiwass": {
-        "hint": "Quanto viene tesa la corda. Una tensione maggiore va a scapito del danno della freccia."
+        "hint": "Tensione maggiore: più portata, meno danno."
       },
       "zos": {
-        "hint": "L'effetto di stato sui dardi, preso dagli stessi colpi caricati."
+        "hint": "Stato applicato dai dardi."
       },
       "baphomet": {
-        "hint": "Cosa gli artigli assorbono dal bersaglio. Assorbire AP costa di piu, perche gli AP alimentano gli attacchi che diventano abilita."
+        "hint": "Cosa assorbono gli artigli. Assorbire AP costa di più."
       },
       "longinus": {
-        "hint": "Come attacca la lancia. Ogni modalita scambia una proprieta con un'altra."
+        "hint": "Stile d'attacco. Ognuno ha un compromesso."
       },
       "eris": {
-        "hint": "Varianza del danno. Una varianza piu ampia aumenta il danno medio ma rende i singoli colpi meno prevedibili."
+        "hint": "Varianza più ampia: danno medio più alto, colpi meno prevedibili."
       },
       "maat": {
-        "hint": "Il parametro con cui l'ankh pesa il bersaglio. Un bersaglio in equilibrio subisce meno danno che da un attacco normale."
+        "hint": "Il parametro su cui si pesa il bersaglio. Un bersaglio in equilibrio subisce meno di un attacco normale."
       },
       "bubba": {
-        "hint": "Il tipo di bersaglio per cui e fatta la chiave inglese. Molto piu danno contro di esso, meno contro tutto il resto."
+        "hint": "Molto più danno a questo tipo di bersaglio, meno agli altri."
       },
       "yaldabaoth": {
-        "hint": "La lettura che la barra prende dal bersaglio. Contro un bersaglio non affetto infligge meno di un attacco normale."
+        "hint": "Cosa misura la barra. I bersagli illesi subiscono meno di un attacco normale."
       },
       "nyarlathotep": {
-        "hint": "Quale schieramento prende di mira la mietitura. Non prende mai Em, e non puo colpire un boss, un petrodemone o qualsiasi cosa piu di dieci livelli sopra di lei."
+        "hint": "Quale schieramento può essere mietuto. Mai Em, boss, petrodemoni o chi è oltre 10 livelli sopra di lei."
       },
       "gautama": {
-        "hint": "Cosa cura il rosario. Non infligge alcun danno."
+        "hint": "Cosa cura il rosario. Non infligge danno."
       }
     }
   }

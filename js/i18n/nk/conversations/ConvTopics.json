@@ -1,0 +1,696 @@
+{
+  "_comment": "Empathize Talk about / Teach / Learn (NPCEmpathize.js SECTION 10, NPCEmpathizeLessons; NPCEmpathizeUI.js LESSONS). Pools are keyed by variant: default, em and bubba for lines Em or Bubba speak themselves, toEm and toBubba for an ordinary NPC answering one of them. Answer and reply pools are keyed again by stance: like, dislike, neutral, unknown. {topic}, {name}, {skill} and {price} are filled first, then the {a|b} alternation is resolved.",
+  "ui": {
+    "talkAbout": "TALK 'BOUT...",
+    "teach": "TEACH",
+    "learn": "LEARN",
+    "pickTopic": "TALK TA {name} 'BOUT...",
+    "pickTeach": "TEACH {name} A SKILL",
+    "pickLearn": "LEARN FROM {name}",
+    "pickTerms": "HOW WILL YOU TEACH {skill}?",
+    "groupCreeds": "CREEDS",
+    "groupPolitics": "POWERS, PARTIES AN' FACTIONS",
+    "groupTopics": "TOPICS",
+    "noTopics": "NOBODY IN DA PARTY HAB BIN TOLD 'BOUT ANYTINK WORTH RAISIN' YET!",
+    "noTeach": "DERE IZ NUTTIN' DA TWO OF YOU COULD TEACH {name}!",
+    "noLearn": "{name} KNOWS NUTTIN' YOU COULD LEARN!",
+    "hintHours": "{hours} H",
+    "hintFree": "{hours} H, FREE",
+    "hintPrice": "{hours} H, {price}",
+    "teachFree": "TEACH IT FOR FREE",
+    "teachFreeHint": "DEY WILL REMEMBER IT FONDLY",
+    "teachSell": "SELL DA LESSON ({price})",
+    "teachSellHint": "PAID, AN' A LIL' GOODWILL",
+    "detailHours": "LESSON: {hours} H",
+    "detailFee": "SELLIN' PRICE: {price}",
+    "detailFree": "FREE: A MATE TEACHES FOR NUTTIN'",
+    "detailPrice": "PRICE: {price}",
+    "teachDone": "{name} LEARNED {skill}. {hours} H WENT BY.",
+    "teachSold": "{name} LEARNED {skill} AN' PAID {price}. {hours} H WENT BY!",
+    "learnDone": "{actor} LEARNED {skill}. {hours} H WENT BY.",
+    "learnPaid": "{actor} LEARNED {skill} FOR {price}. {hours} H WENT BY!",
+    "anything": "SOMETINK",
+    "trainSpec": "TRAIN A SPECIALIZATION",
+    "learnSpec": "LEARN A SPECIALIZATION",
+    "pickTrainSpec": "TRAIN {name} IN A SPECIALIZATION",
+    "pickLearnSpec": "LEARN A SPECIALIZATION FROM {name}",
+    "pickSpecTerms": "HOW WILL YOU TRAIN DEM IN {spec}?",
+    "noTrainSpec": "YOU HOLD NO SPECIALIZATION ABOVE WHAT {name} ALREADY KNOWS!",
+    "noLearnSpec": "{name} HOLDS NO SPECIALIZATION ABOVE YA!",
+    "hintSpecTier": "{from} TA {to}, {hours} H",
+    "hintSpecFree": "{from} TA {to}, {hours} H, FREE",
+    "hintSpecPrice": "{from} TA {to}, {hours} H, {price}",
+    "detailSpecTier": "SESSION: {from} TA {to}",
+    "trainSpecDone": "{name} IZ NOW {tier} IN {spec}. {hours} H WENT BY.",
+    "trainSpecSold": "{name} IZ NOW {tier} IN {spec} AN' PAID {price}. {hours} H WENT BY!",
+    "learnSpecDone": "{actor} IZ NOW {tier} IN {spec}. {hours} H WENT BY.",
+    "learnSpecPaid": "{actor} IZ NOW {tier} IN {spec} FOR {price}. {hours} H WENT BY!",
+    "peerTeach": "TEACH A SKILL",
+    "peerTeachSpec": "TEACH A SPECIALIZATION",
+    "pickPeerTeacher": "WHO WILL TEACH {name}?",
+    "pickPeerTeach": "{teacher} TEACHES {name} A SKILL",
+    "pickPeerSpec": "{teacher} TRAINS {name} IN A SPECIALIZATION",
+    "hintPeerTeacher": "{count} TA TEACH",
+    "noPeerTeach": "NOBODY ELSE IN DA PARTY KNOWS A SKILL {name} COULD LEARN!",
+    "noPeerSpec": "NOBODY ELSE IN DA PARTY HOLDS A SPECIALIZATION ABOVE {name}'S!",
+    "peerTeachDone": "{teacher} TAUGHT {name} {skill}. {hours} H WENT BY.",
+    "peerSpecDone": "{teacher} TRAINED {name} TA {tier} IN {spec}. {hours} H WENT BY!"
+  },
+  "reason": {
+    "known": "ALREADY KNOWS IT",
+    "youKnow": "YOU ALREADY KNOW IT",
+    "nature": "NO CAN EXIST IN DIS WORLD",
+    "cultist": "A CULTIST LEARNS ONLY FROM WRITTEN PAGES",
+    "level": "NEEDS LEVEL {level}",
+    "calling": "OUTSIDE DEY CALLIN'",
+    "prereq": "NEEDS {skills} FIRST",
+    "hostile": "REFUSES TA TEACH YOU",
+    "cantAfford": "DEY NO CAN AFFORD {price}",
+    "youCantAfford": "YOU NO CAN AFFORD {price}",
+    "child": "TOO YOUNG TA BE TAUGHT",
+    "beast": "NO CAN BE TAUGHT",
+    "unimplemented": "NOBODY PRACTISES IT YET",
+    "pacifist": "WILL NO TRAIN TA FIGHT",
+    "nothingToTeach": "NUTTIN' TA TEACH DEM"
+  },
+  "talk": {
+    "ask": {
+      "default": [
+        "HAB YOU EVER HEARD OF {topic}?",
+        "WHAT IZ YA OPINION ON {topic}?",
+        "TELL ME 'BOUT {topic}. {WHAT DO YOU KNOW|ANYTINK AT ALL}?",
+        "{SO|HONEST QUESTION}: {topic}. WHAT DO YOU MAKE OF IT?",
+        "DOES {topic} MEAN ANYTINK TA YOU?",
+        "ME KEEP HEARIN' 'BOUT {topic}. {ANY THOUGHTS|WHERE DO YOU STAND}?"
+      ],
+      "em": [
+        "{topic}. ME HAB NOTES. ME WANT YA BEFORE ME COMPARE DEM!",
+        "TELL ME WHAT YOU KNOW 'BOUT {topic}, AN' DO NO SIMPLIFY IT FOR ME!",
+        "HYPOTHETICALLY, {topic}. TALK. ME IZ LISTENIN' WIT ME WHOLE FACE!",
+        "ME IZ COMPILIN' OPINIONS ON {topic}. YA IZ DA NEXT ENTRY. GO!",
+        "{topic}: {CURSE, BLESSIN' OR PAPERWORK|MATE, FOE OR FOOTNOTE}?"
+      ],
+      "bubba": [
+        "UÈ, {name}, YOU EVER HEARD OF {topic}? STRAIGHT ANSWER, ME IZ ASKIN' NICE!",
+        "{topic}. WHAT IZ YA FEELIN' ON IT, GUAGLIO'? NO RUSH, DA ENGINE'S COOLIN'!",
+        "TELL ME SOMETHIN' 'BOUT {topic}. ME IZ A MECHANIC, ME LIKE TA KNOW HOW TINKZ WORK!",
+        "MANNAGGIA, EVERYBODY'S TALKIN' 'BOUT {topic}. WHERE DO YOU STAND, DARLIN'?",
+        "CHIANO CHIANO, NOW. {topic}. GOOD TINK OR BAD TINK, IN YA BOOK?"
+      ]
+    },
+    "answer": {
+      "default": {
+        "like": [
+          "{topic}? {OH, ME LIKE DAT A LOT|NOW DAT IZ SOMETINK ME CAN GET BEHIND}!",
+          "{topic} IZ {ONE OF DA GOOD TINKZ LEFT|'BOUT DA BEST TINK GOING}, IF YOU ASK ME!",
+          "ME HAB A SOFT SPOT FOR {topic}, {HONESTLY|ME NO WILL LIE}!",
+          "{topic}! {FINALLY, SOMEONE WIT TASTE|YOU HAB MADE ME DAY ASKIN' DAT}!"
+        ],
+        "dislike": [
+          "{topic}? {NO GET ME STARTED|ME WOULD RATHER NO, FRANKLY}!",
+          "{UGH|OH NO}. {topic} IZ {DA WORST OF IT|A MESS ME WANT NO PART OF}!",
+          "ME NO CAN STAND {topic}. {SORRY, BUT DERE IT IZ|ME HAB HAB ENOUGH OF IT}!",
+          "{topic} HAB DONE {NOBODY|NONE OF US} ANY GOOD, AN' ME WILL SAY IT TWICE!"
+        ],
+        "neutral": [
+          "{topic}? {IT HAB ITS GOOD POINTS AN' ITS BAD|COULD BE WORSE, COULD BE BETTER}!",
+          "ME NO TINK MUCH 'BOUT {topic} {EITHER WAY|ONE WAY OR DA OTHER}!",
+          "{topic} IZ {FINE, ME SUPPOSE|WHAT IT IZ}. WHY DO YOU ASK?",
+          "{SOME DAYS ME IZ FOR IT, SOME DAYS ME IZ NO|ME IZ ON DA FENCE} 'BOUT {topic}!"
+        ],
+        "unknown": [
+          "{topic}? {NEVER HEARD OF IT|NO CAN SAY ME KNOW IT}. {WHAT IZ IT|EXPLAIN}?",
+          "{SORRY|HM}, {topic} MEANS NUTTIN' TA ME!",
+          "{topic}... {NO, NO RING A BELL|SHOULD ME KNOW DAT}?",
+          "YOU WILL HAB TA TELL ME 'BOUT {topic} SOMETIME. {ME HAB NO IDEA|NO A CLUE}!"
+        ]
+      },
+      "toEm": {
+        "like": [
+          "{topic}? {OH, YOU WOULD KNOW MORE DEN ME, WITCH, BUT YES|YES}, ME LIKE IT. { NO CURSE ME FOR SAYIN' SO|IZ DAT DA RIGHT ANSWER}?",
+          "ME TINK {topic} IZ WONDERFUL. {YOU IZ WRITIN' DIS DOWN, NO IZ YOU|IZ YOU WRITIN' DIS DOWN}?",
+          "{topic}, YES. ME IZ FOR IT. YOU LOOK AT ME LIKE ME IZ A SPELL YOU IZ CHECKIN'!"
+        ],
+        "dislike": [
+          "{topic}? NO FOR ME. { NO HEX ME OVER IT|NO OFFENCE MEANT TA ANYONE WIT A GRIMOIRE}!",
+          "ME HATE {topic}, AN' ME NO CARE IF YOU HAB GOT A BOOK DAT SAYS OTHERWISE!",
+          "{topic} IZ ROTTEN. {DERE, YOU HAB ME OPINION, NOW STOP STARIN'|DAT IZ ALL ME WILL SAY TA A WITCH}!"
+        ],
+        "neutral": [
+          "{topic}? ME NO KNOW, MISS. ME HAB NEVER NEEDED AN OPINION ON IT UNTIL YOU ASKED!",
+          "NEITHER HERE NOR DERE ON {topic}. IZ DAT GOING ON DA RECORD?",
+          "{topic} IZ FINE. WHY DOES A WITCH WANT TA KNOW?"
+        ],
+        "unknown": [
+          "{topic}? YOU WOULD KNOW BETTER DEN ME, YOU HAB READ EVERYTINK!",
+          "NEVER HEARD OF {topic}. IZ IT IN ONE OF YA BOOKS?",
+          "{topic}? IZ DAT MAGIC? ME NO WANT TA KNOW IF IT IZ MAGIC!"
+        ]
+      },
+      "toBubba": {
+        "like": [
+          "{topic}? LOVE IT. ALMOST AS MUCH AS ME LOVE YA ENGINE, MR. WILSON!",
+          "COMIN' FROM YOU? YES, {topic}, YES. WHATEVER YOU TINK, ME TINK IT TOO!",
+          "{topic} IZ GRAND. WAIT UNTIL ME TELL ME MOTHER BUBBA WILSON ASKED ME!"
+        ],
+        "dislike": [
+          "{topic}? NO CAN STAND IT. SORRY, MR. WILSON, ME HOPE DAT NO IZ ONE OF YA!",
+          "HONESTLY? {topic} IZ RUBBISH. YOU WOULD FIX IT IN AN AFTERNOON, ME BET!",
+          "ME NO LIKE {topic} AT ALL. NO BE DISAPPOINTED IN ME!"
+        ],
+        "neutral": [
+          "{topic}? NO SURE. WHAT DO YOU TINK? ME WILL TINK DAT!",
+          "NO STRONG FEELINGS ON {topic}. CAN ME SHAKE YA HAND THOUGH?",
+          "{topic} IZ ALL RIGHT. NUTTIN' LIKE DA LIMINAL ENGINE, MIND!"
+        ],
+        "unknown": [
+          "{topic}? NEVER HEARD OF IT. IZ IT ONE OF YA INVENTIONS?",
+          "ME NO KNOW {topic}, MR. WILSON. EXPLAIN IT SLOWLY, ME WILL REMEMBER EVERY WORD!",
+          "{topic}? NO IDEA. BUT IF YOU IZ ASKIN', IT MUST MATTER!"
+        ]
+      },
+      "em": {
+        "like": [
+          "{topic}. ME APPROVE. ME APPROVE OF REAL LIL', SO FRAME DAT!",
+          "{topic} IZ ONE OF DA FEW TINKZ IN NINETY-TWO DIMENSIONS DAT WORKS AS ADVERTISED!",
+          "YES. {topic}. ME HAB THREE PAGES ON IT AN' NONE OF DEM IZ RUDE!"
+        ],
+        "dislike": [
+          "{topic}. NO. ME HAB READ 'BOUT IT AN' ME WANT DA HOURS BACK!",
+          "{topic} IZ A BAD IDEA WIT A GOOD PUBLICIST!",
+          "ME WOULD SOONER BE HEXED DEN ARGUE FOR {topic}. ME HAB BIN HEXED. IT WAZ BETTER!"
+        ],
+        "neutral": [
+          "{topic}. INTERESTIN', MILDLY. ME FILE IT UNDER MAYBE!",
+          "{topic} DEPENDS ON WHO IZ ASKIN' AN' WHAT DEY WANT. SO, WHAT DO YOU WANT?",
+          "ME HAB NO FEELINGS 'BOUT {topic}. ME HAB FOOTNOTES!"
+        ],
+        "unknown": [
+          "{topic}. ME DO NO KNOW IT. DAT ANNOYS ME MORE DEN IT SHOULD!",
+          "NEVER HEARD OF {topic}. GIVE ME A DAY AN' A LIBRARY!",
+          "{topic}? NO IN ANY BOOK ME OWN. WHICH MEANS ME NEED MORE BOOKS!"
+        ]
+      },
+      "bubba": {
+        "like": [
+          "{topic}? BEAUTIFUL TINK, DARLIN'. RUNS SMOOTH, LIKE A GOOD CARBURETTOR!",
+          "UÈ, {topic}! NOW YOU IZ TALKIN'. ME IZ ALL FOR IT!",
+          "{topic}, SÌ, SÌ. DAT IZ SOMETHIN' WORTH KEEPIN' IN DA TOOLBOX!"
+        ],
+        "dislike": [
+          "{topic}? MANNAGGIA. BAD WIRIN', DAT ONE. ME WOULD PULL IT OUT AN' START OVER!",
+          "NO TALK TA ME 'BOUT {topic}, GUAGLIO'. IT GIVES ME A HEADACHE LIKE A SLIPPED GASKET!",
+          "{topic}'S ROTTEN FROM DA CHASSIS UP. DAT IZ ME FEELIN'!"
+        ],
+        "neutral": [
+          "{topic}? EH. SOME DAYS IT RUNS, SOME DAYS IT STALLS!",
+          "ME IZ NO FUSSED 'BOUT {topic}. CHIANO CHIANO, WE WILL SEE HOW IT GOES!",
+          "{topic}'S NEITHER HERE NOR DERE. LIKE A SPARE TYRE, YOU IZ GLAD OF IT WHEN YOU NEED IT!"
+        ],
+        "unknown": [
+          "{topic}? NEVER HEARD OF IT, AN' ME HAB HEARD OF MOST TINKZ!",
+          "YOU GOT ME DERE, DARLIN'. {topic}'S A NEW ONE ON ME!",
+          "{topic}? DRAW ME A DIAGRAM AN' ME WILL TELL YOU IF IT'LL RUN!"
+        ]
+      }
+    },
+    "askBack": {
+      "default": [
+        "{AN' YOU|YA TURN}: WHAT DO YOU MAKE OF {topic}?",
+        "SINCE WE IZ TALKIN', {WHAT DO YOU TINK OF|WHERE DO YOU STAND ON} {topic}?",
+        "LET ME ASK YOU ONE. {topic}: {YES OR NO|FOR OR AGAINST}?",
+        "HAB YOU HEARD OF {topic}? {ME IZ CURIOUS|ME WOULD LIKE TA KNOW}!"
+      ],
+      "toEm": [
+        "CAN ME ASK YOU ONE, MISS? {topic}. IZ DAT WITCH BUSINESS?",
+        "WHAT DOES A WITCH TINK OF {topic}? ME HAB ALWAYS WONDERED!",
+        "YOU WILL KNOW DIS ONE: {topic}. WHAT IZ DA TRUTH OF IT?"
+      ],
+      "toBubba": [
+        "CAN ME ASK YOU, MR. WILSON? {topic}. WHAT DO YOU RECKON?",
+        "WHAT DOES DA MAN WHO BUILT DA LIMINAL ENGINE TINK OF {topic}?",
+        "{topic}, MR. WILSON. WOULD YOU FIX IT OR SCRAP IT?"
+      ],
+      "em": [
+        "NOW YOU. {topic}. BE PRECISE.",
+        "YA TURN, {name}. {topic}: DEFEND A POSITION!",
+        "{topic}. TELL ME WHAT YOU TINK AN' ME WILL TELL YOU WHAT IZ WRONG WIT IT!"
+      ],
+      "bubba": [
+        "NOW YOU TELL ME, {name}. {topic}, WHAT IZ YA FEELIN'?",
+        "YA TURN, GUAGLIO'. {topic}, GOOD OR BAD?",
+        "AN' {topic}, DARLIN'? WHAT DO YOU MAKE OF DAT ONE?"
+      ]
+    },
+    "reply": {
+      "default": {
+        "like": [
+          "{topic}? {ME IZ ALL FOR IT|ME LIKE IT, HONESTLY}!",
+          "ME TINK {topic} IZ {ONE OF DA GOOD TINKZ|WORTH DEFENDIN'}!",
+          "{BIG FAN OF|NO CAN SAY A BAD WORD 'BOUT} {topic}!"
+        ],
+        "dislike": [
+          "{topic}? {NO FOR ME|ME CAN DO WITOUT IT}!",
+          "ME NO LIKE {topic}. {NEVER HAB|SORRY}!",
+          "{topic} IZ {TROUBLE|MORE HARM DEN GOOD}, IF YOU ASK ME!"
+        ],
+        "neutral": [
+          "{topic}? {ME COULD TAKE IT OR LEAVE IT|NO STRONG FEELINGS}!",
+          "ME IZ {ON DA FENCE|IN TWO MINDS} 'BOUT {topic}!",
+          "{topic} IZ {FINE|ALL RIGHT}, ME SUPPOSE!"
+        ],
+        "unknown": [
+          "{topic}? {NEVER HEARD OF IT|NO IDEA, SORRY}!",
+          "ME NO KNOW {topic}. {YOU WILL HAB TA TELL ME|WHAT IZ IT}?",
+          "{topic}... {NO RING A BELL|YOU HAB LOST ME}!"
+        ]
+      },
+      "em": {
+        "like": [
+          "{topic}. GOOD. SOUND. ME WOULD SIGN IT!",
+          "ME LIKE {topic}, AN' ME CHECKED DA SOURCES!",
+          "{topic} IZ ONE OF DA RARE TINKZ ME HAB NO COMPLAINTS 'BOUT!"
+        ],
+        "dislike": [
+          "{topic}. NO. ME HAB REASONS AN' DEY IZ ALL FOOTNOTED!",
+          "ME DISLIKE {topic} ON PRINCIPLE AN' IN PRACTICE!",
+          "{topic} IZ A MISTAKE DAT HAB NO FINISHED HAPPENIN'!"
+        ],
+        "neutral": [
+          "{topic}. UNDECIDED. ME IZ WAITIN' ON FURTHER EVIDENCE!",
+          "{topic} IZ NEITHER HERE NOR DERE, WHICH IZ ITS OWN KIND OF ANSWER!",
+          "ME HAB NO OPINION ON {topic}. ME HAB QUESTIONS!"
+        ],
+        "unknown": [
+          "{topic}. ME DO NO KNOW IT, AN' ME IZ NO PLEASED 'BOUT DAT!",
+          "NEVER HEARD OF {topic}. WRITE IT DOWN FOR ME!",
+          "{topic}? NO YET. GIVE ME A LIBRARY!"
+        ]
+      },
+      "bubba": {
+        "like": [
+          "{topic}? LOVE IT, DARLIN'. RUNS LIKE A DREAM!",
+          "UÈ, {topic}'S A GOOD ONE. ME WOULD PUT ME NAME ON IT!",
+          "{topic}, SÌ. GOOD HONEST WORK, DAT!"
+        ],
+        "dislike": [
+          "{topic}? MANNAGGIA, NO. BAD ENGINEERIN' FROM BUMPER TA BUMPER!",
+          "ME NO CAN STAND {topic}, GUAGLIO'. NO WOULD LET IT NEAR DA BEAST!",
+          "{topic}'S JUNK. ME WOULD STRIP IT FOR PARTS!"
+        ],
+        "neutral": [
+          "{topic}? EH. IT RUNS, MOSTLY.",
+          "ME IZ NO FUSSED 'BOUT {topic}. CHIANO CHIANO!",
+          "{topic}'S FINE. NOTHIN' TA WRITE HOME 'BOUT!"
+        ],
+        "unknown": [
+          "{topic}? NEVER HEARD OF IT, DARLIN'!",
+          "YOU GOT ME. {topic}'S A NEW ONE.",
+          "{topic}? ME WOULD HAB TA TAKE IT APART TA TELL YOU!"
+        ]
+      }
+    }
+  },
+  "teach": {
+    "offer": {
+      "default": [
+        "ME COULD TEACH YOU {skill}, IF YOU HAB A FEW HOURS!",
+        "{WANT TA|WOULD YOU LIKE TA} LEARN {skill}? ME WILL SHOW YOU, NO CHARGE!",
+        "LET ME SHOW YOU {skill}. {IT IZ EASIER DEN IT LOOKS|YOU WILL PICK IT UP}!"
+      ],
+      "em": [
+        "SIT. ME IZ GOING TA TEACH YOU {skill}, AN' YOU IZ GOING TA TAKE NOTES!",
+        "{skill}. ME WILL EXPLAIN IT ONCE PROPERLY, AN' DEN AGAIN FOR REAL!",
+        "ME IZ TEACHIN' YOU {skill}. FREE OF CHARGE, WHICH IZ UNLIKE ME!"
+      ],
+      "bubba": [
+        "COME HERE, GUAGLIO'. ME WILL SHOW YOU {skill}, SAME AS ME OLD MAN SHOWED ME!",
+        "{skill}? EASY. ROLL YA SLEEVES UP, DARLIN', IT IZ FREE!",
+        "JAMME, ME WILL TEACH YOU {skill}. NO MONEY, JUST PAY ATTENTION!"
+      ]
+    },
+    "offerSell": {
+      "default": [
+        "ME CAN TEACH YOU {skill}. {IT'LL COST YOU|ME RATE IZ} {price}!",
+        "{skill} IZ YA TA LEARN, FOR {price}.",
+        "LESSONS IN {skill}, {price}. WORTH EVERY CENT!"
+      ],
+      "em": [
+        "{skill}. {price}. KNOWLEDGE HAB A PRICE AN' ME IZ ITS ACCOUNTANT!",
+        "ME WILL TEACH YOU {skill} FOR {price}. DA NOTES IZ EXTRA. JOKIN'. MOSTLY!",
+        "{price} FOR {skill}. YOU IZ GETTIN' A BARGAIN AN' ME WANT DAT ACKNOWLEDGED!"
+      ],
+      "bubba": [
+        "ME WILL TEACH YOU {skill}, DARLIN'. {price}, AN' DAT IZ DA FAMILY RATE!",
+        "{skill}? {price}. PARTS AN' LABOUR, YOU UNDERSTAND!",
+        "{price} AN' ME WILL SHOW YOU {skill} PROPER. FAIR'S FAIR!"
+      ]
+    },
+    "thanksFree": {
+      "default": [
+        "{THANK YOU|ME NO CAN THANK YOU ENOUGH}. ME NO WILL FORGET DIS, {name}!",
+        "YOU TAUGHT ME {skill} FOR NUTTIN'? {YOU IZ A GOOD ONE|ME OWE YOU}!",
+        "{skill}! ME ACTUALLY UNDERSTAND IT NOW. THANK YOU, {name}!"
+      ],
+      "toEm": [
+        "A WITCH TAUGHT ME {skill}. FOR FREE. NOBODY IZ GOING TA BELIEVE DIS!",
+        "THANK YOU, MISS. ME UNDERSTOOD 'BOUT HALF, BUT IT WAZ DA RIGHT HALF!",
+        "{skill}! ME WILL BE CAREFUL WIT IT, ME PROMISE. THANK YOU!"
+      ],
+      "toBubba": [
+        "BUBBA WILSON TAUGHT ME {skill}. HIMSELF. ME IZ NEVER WASHIN' DEZE HANDS!",
+        "THANK YOU, MR. WILSON! ME WILL TELL ME CHILDREN 'BOUT DIS!",
+        "{skill}, FROM YOU. ME NO HAB DA WORDS. THANK YOU!"
+      ],
+      "em": [
+        "{skill}. ADEQUATELY EXPLAINED. THANK YOU, {name}. ME MEAN IT!",
+        "YOU TAUGHT DAT WELL. ME IZ REVISIN' ME OPINION OF YOU UPWARD!",
+        "THANK YOU. {skill} GOES IN DA GOOD NOTEBOOK!"
+      ],
+      "bubba": [
+        "GRAZIE, DARLIN'. {skill}, EH? YOU EXPLAINED DAT LIKE A MECHANIC!",
+        "UÈ, THANK YOU, GUAGLIO'. ME WILL PUT {skill} IN DA TOOLBOX!",
+        "DAT IZ A GIFT, {name}. ME NO WILL FORGET IT!"
+      ]
+    },
+    "thanksPaid": {
+      "default": [
+        "{price}, AN' WORTH IT. THANK YOU, {name}!",
+        "MONEY WELL SPENT. {skill} IZ ME NOW!",
+        "{FAIR PRICE|FAIR ENOUGH}. THANKS FOR DA LESSON!"
+      ],
+      "toEm": [
+        "{price} TA A WITCH FOR {skill}. ME MOTHER WOULD FAINT. WORTH IT!",
+        "HERE IZ YA {price}, MISS. AN' THANK YOU, REALLY!",
+        "PAID IN FULL. NO TURN ME INTO ANYTINK!"
+      ],
+      "toBubba": [
+        "{price} FOR A LESSON FROM BUBBA WILSON? ME WOULD HAB PAID DOUBLE!",
+        "HERE YOU GO, MR. WILSON. BEST {price} ME EVER SPENT!",
+        "PAID AN' GRATEFUL. THANK YOU, SIR!"
+      ],
+      "em": [
+        "{price}. REASONABLE. DA LESSON WAZ WORTH MORE, BUT ME WILL NO SAY SO TWICE!",
+        "PAID. AN' THANK YOU, {name}. BOTH IZ TRUE!",
+        "MONEY WELL SPENT, WHICH IZ A SENTENCE ME RARELY SAY!"
+      ],
+      "bubba": [
+        "{price}, EH? FAIR'S FAIR, DARLIN'. THANK YOU!",
+        "HERE, GUAGLIO'. HONEST MONEY FOR HONEST WORK!",
+        "PAID UP. GOOD LESSON, DAT!"
+      ]
+    }
+  },
+  "learn": {
+    "ask": {
+      "default": [
+        "WOULD YOU TEACH ME {skill}?",
+        "{COULD|WOULD} YOU SHOW ME {skill}? ME WOULD BE GRATEFUL!",
+        "ME WOULD LIKE TA LEARN {skill}. {WOULD YOU TEACH ME|ANY CHANCE}?"
+      ],
+      "em": [
+        "TEACH ME {skill}. ME WILL BE AN EXCELLENT STUDENT, AN' AN INSUFFERABLE ONE!",
+        "ME WANT TA LEARN {skill}. NAME YA TERMS!",
+        "{skill}. SHOW ME. ME LEARN QUICKLY AN' ME ASK A LOT OF QUESTIONS!"
+      ],
+      "bubba": [
+        "UÈ, WOULD YOU SHOW ME {skill}? ME IZ HANDY, ME PICK TINKZ UP QUICK!",
+        "{skill}, EH? TEACH AN OLD MECHANIC, DARLIN'?",
+        "ME WOULD LIKE TA LEARN {skill}, GUAGLIO'. WHAT DO YOU SAY?"
+      ]
+    },
+    "agreeFree": {
+      "default": [
+        "FOR YOU? {OF COURSE|GLADLY}. NO CHARGE!",
+        "{SURE|HAPPILY}. MATES NO PAY FOR LESSONS!",
+        "COME ON DEN, {name}. ME WILL SHOW YOU, FREE!"
+      ],
+      "toEm": [
+        "FOR YOU, MISS? OF COURSE. JUST NO MAKE IT EXPLODE!",
+        "FREE, FOR A MATE. EVEN A WITCHY ONE!",
+        "ME WILL TEACH YOU. YOU WILL MAYBE-MAYBE BE BETTER AT IT DEN ME BY TONIGHT!"
+      ],
+      "toBubba": [
+        "TEACH BUBBA WILSON? FOR FREE? IT IZ AN HONOUR, SIR!",
+        "OF COURSE, MR. WILSON. ME WOULD NEVER TAKE YA MONEY!",
+        "ME, TEACHIN' YOU! COME ON, BEFORE ME WAKE UP!"
+      ],
+      "em": [
+        "FREE. YOU HAB EARNED IT. SIT, AN' TRY TA KEEP UP!",
+        "FOR YOU, NO CHARGE. DO NO TELL ANYONE ME HAB A SOFT SIDE!",
+        "FINE. ME WILL TEACH YOU. TAKE NOTES!"
+      ],
+      "bubba": [
+        "FOR YOU, DARLIN'? NIENTE, NOTHIN'. COME HERE!",
+        "FREE, GUAGLIO'. MATES NO PAY IN ME GARAGE!",
+        "SÌ, SÌ, ME WILL SHOW YOU. NO MONEY!"
+      ]
+    },
+    "agreePaid": {
+      "default": [
+        "{price} AN' IT IZ YA.",
+        "ME WILL TEACH YOU, BUT IT'LL COST {price}!",
+        "{FAIR'S FAIR|BUSINESS IZ BUSINESS}: {price} FOR DA LESSON!"
+      ],
+      "toEm": [
+        "{price}, MISS. WITCH OR NO, ME HAB BILLS TA PAY!",
+        "ME WILL TEACH YOU FOR {price}. NO CURSE DA CHANGE!",
+        "{price}. AN' YOU PROMISE NO TA USE IT ON ME!"
+      ],
+      "toBubba": [
+        "IT FEELS WRONG CHARGIN' YOU, MR. WILSON, BUT {price}!",
+        "{price}, SIR. ONLY COZ ME NEED IT!",
+        "ME WILL TEACH YOU FOR {price}. DEN ME IZ TELLIN' EVERYONE ME TAUGHT BUBBA WILSON!"
+      ],
+      "em": [
+        "{price}. KNOWLEDGE IZ NO FREE AN' NEITHER IZ ME!",
+        "ME WILL TEACH YOU FOR {price}. PAYMENT FIRST, PEDAGOGY SECOND!",
+        "{price}. IT IZ A FAIR PRICE AN' ME WILL NO HAGGLE!"
+      ],
+      "bubba": [
+        "{price}, DARLIN'. PARTS AN' LABOUR!",
+        "ME WILL SHOW YOU FOR {price}. HONEST MONEY!",
+        "{price}, AN' ME THROW IN A COFFEE!"
+      ]
+    },
+    "refuse": {
+      "default": [
+        "TEACH YOU? {AFTER WHAT YOU HAB DONE|NO A CHANCE}!",
+        "{NO|ABSOLUTELY NO}. FIND SOMEONE ELSE!",
+        "ME NO WOULD TEACH YOU TA TIE YA SHOES!"
+      ],
+      "toEm": [
+        "TEACH A WITCH? YOU WILL GET NUTTIN' FROM ME!",
+        "NO. GO READ IT IN ONE OF YA BOOKS!",
+        "NO YOU. NO EVER."
+      ],
+      "toBubba": [
+        "NO EVEN FOR YOU, WILSON. NO AFTER ALL DIS!",
+        "NO. FAMOUS OR NO, DA ANSWER'S NO!",
+        "GO AN' INVENT IT YOURSELF!"
+      ],
+      "em": [
+        "NO. AN' ME WILL NO BE EXPLAININ' WHY!",
+        "ME TEACH PEOPLE ME TRUST. YOU IZ NO ON DA LIST!",
+        "ABSOLUTELY NO."
+      ],
+      "bubba": [
+        "MANNAGGIA, NO. NO YOU, GUAGLIO'!",
+        "NO LESSONS FOR YOU, DARLIN'. NO TODAY, NO TOMORROW!",
+        "FORGET IT. GO ON, DA DOOR'S DAT WAY!"
+      ]
+    }
+  },
+  "spec": {
+    "train": {
+      "offer": {
+        "default": [
+          "ME HAB BIN DOING {spec} FOR YEARS. {LET ME SHOW YOU|ME WILL WALK YOU THROUGH IT}, NO CHARGE!",
+          "{WANT TA|WOULD YOU LIKE TA} GET BETTER AT {spec}? ME CAN TRAIN YOU, FREE!",
+          "SPEND A FEW HOURS WIT ME ON {spec}. {YOU WILL FEEL DA DIFFERENCE|IT'LL STICK}!"
+        ],
+        "em": [
+          "{spec}. YOU IZ DOING IT WRONG, AN' ME IZ GOING TA FIX DAT. FREE OF CHARGE!",
+          "SIT DOWN. ONE SESSION OF {spec}, PROPERLY, AN' YOU WILL THANK ME LATER!",
+          "ME IZ TRAININ' YOU IN {spec}. NO FEE. TRY NO TA MAKE ME REGRET IT!"
+        ],
+        "bubba": [
+          "COME HERE, GUAGLIO'. {spec}, DA WAY IT IZ DONE IN DA FAMILY. ON DA HOUSE!",
+          "{spec}? ME WILL SORT YOU OUT, DARLIN'. NO MONEY, JUST ELBOW GREASE!",
+          "JAMME, A FEW HOURS OF {spec} WIT ME AN' YOU WILL BE A DIFFERENT PERSON!"
+        ]
+      },
+      "offerSell": {
+        "default": [
+          "ME CAN TRAIN YOU IN {spec}. {ME RATE IZ|IT'LL COST YOU} {price}!",
+          "A PROPER SESSION OF {spec}, FOR {price}!",
+          "{price} AN' ME WILL MAKE YOU BETTER AT {spec}. FAIR?"
+        ],
+        "em": [
+          "{spec}, ONE SESSION, {price}. EXPERTISE IZ NO A CHARITY!",
+          "ME WILL TRAIN YOU IN {spec} FOR {price}. PAYMENT FIRST, PEDAGOGY SECOND!",
+          "{price}. FOR {spec}. YOU IZ GETTIN' A BARGAIN AN' ME WANT DAT NOTED!"
+        ],
+        "bubba": [
+          "{spec}, DARLIN'? {price}, AN' DAT IZ DA FAMILY RATE!",
+          "ME WILL TRAIN YOU UP IN {spec}. {price}, PARTS AN' LABOUR!",
+          "{price} AN' A COFFEE, AN' YOU WILL KNOW {spec} LIKE ME DO!"
+        ]
+      },
+      "thanksFree": {
+        "default": [
+          "{ME FEEL IT ALREADY|DAT CLICKED}. {spec}, FOR NUTTIN'? THANK YOU, {name}!",
+          "YOU TRAINED ME IN {spec} FOR FREE? {ME OWE YOU|YOU IZ A GOOD ONE}!",
+          "ME IZ {tier} AT {spec} NOW. ME NO WILL FORGET DIS, {name}!"
+        ],
+        "toEm": [
+          "A WITCH TRAINED ME IN {spec}. FOR FREE. NOBODY IZ GOING TA BELIEVE DIS!",
+          "THANK YOU, MISS. ME FOLLOWED MOST OF IT, AN' DA REST ME WILL PRACTISE!",
+          "{spec}! ME WILL PUT IT TA GOOD USE, ME PROMISE!"
+        ],
+        "toBubba": [
+          "BUBBA WILSON TRAINED ME IN {spec}. HIMSELF. ME IZ TELLIN' EVERYONE!",
+          "THANK YOU, MR. WILSON! ME WILL PRACTISE EVERY DAY!",
+          "{spec}, FROM YOU. ME NO HAB DA WORDS!"
+        ],
+        "em": [
+          "{spec}. ADEQUATELY TAUGHT. THANK YOU, {name}. ME MEAN IT!",
+          "DAT WAZ GOOD TRAININ'. ME IZ REVISIN' ME OPINION OF YOU UPWARD!",
+          "THANK YOU. {tier} IN {spec}. DAT GOES IN DA GOOD NOTEBOOK!"
+        ],
+        "bubba": [
+          "GRAZIE, DARLIN'. {spec}, EH? YOU TEACH LIKE A PROPER MECHANIC!",
+          "UÈ, THANK YOU, GUAGLIO'. DAT IZ GOING IN DA TOOLBOX!",
+          "DAT IZ A GIFT, {name}. ME NO WILL FORGET IT!"
+        ]
+      },
+      "thanksPaid": {
+        "default": [
+          "{price}, AN' WORTH IT. THANK YOU, {name}!",
+          "MONEY WELL SPENT. ME IZ {tier} AT {spec} NOW!",
+          "{FAIR PRICE|FAIR ENOUGH}. THANKS FOR DA TRAININ'!"
+        ],
+        "toEm": [
+          "{price} TA A WITCH FOR {spec}. ME MOTHER WOULD FAINT. WORTH IT!",
+          "HERE IZ YA {price}, MISS. AN' THANK YOU, REALLY!",
+          "PAID IN FULL. NO TURN ME INTO ANYTINK!"
+        ],
+        "toBubba": [
+          "{price} FOR TRAININ' FROM BUBBA WILSON? ME WOULD HAB PAID DOUBLE!",
+          "HERE YOU GO, MR. WILSON. BEST {price} ME EVER SPENT!",
+          "PAID, AN' PROUD OF IT. THANK YOU, SIR!"
+        ],
+        "em": [
+          "{price}. FINE. DA TRAININ' WAZ WORTH SLIGHTLY MORE, BUT FINE!",
+          "HERE IZ YA {price}. ME HAB LEARNED SOMETINK, AN' ME RESENT IT!",
+          "PAID. {spec} WAZ DA RIGHT INVESTMENT!"
+        ],
+        "bubba": [
+          "DERE IZ YA {price}, GUAGLIO'. MONEY WELL SPENT!",
+          "{price}, EH? FOR DAT TRAININ', IT IZ A GIFT!",
+          "PAID IN FULL, DARLIN'. GRAZIE!"
+        ]
+      }
+    },
+    "learn": {
+      "ask": {
+        "default": [
+          "COULD YOU TRAIN ME IN {spec}, {name}?",
+          "{ME WOULD LOVE IT IF YOU|WOULD YOU} TAUGHT ME SOME OF YA {spec}!",
+          "YOU IZ GOOD AT {spec}. SHOW ME HOW?"
+        ],
+        "em": [
+          "{name}. YA {spec}. ME WANT IT. TEACH ME!",
+          "ME UNDERSTAND YOU IZ COMPETENT AT {spec}. PROVE IT BY TEACHIN' ME!",
+          "TRAIN ME IN {spec}. ME LEARN QUICKLY, AN' ME TAKE NOTES!"
+        ],
+        "bubba": [
+          "EH, {name}, SHOW ME A BIT OF YA {spec}, WOULD YOU?",
+          "DARLIN', DEY SAY YOU KNOW {spec}. TEACH AN OLD MAN?",
+          "JAMME, {spec}. ME IZ ALL EARS, GUAGLIO'!"
+        ]
+      },
+      "agreeFree": {
+        "default": [
+          "FOR YOU? OF COURSE. {SIT DOWN|PULL UP A CHAIR}, {name}!",
+          "{spec}? HAPPILY. NO CHARGE BETWEEN MATES!",
+          "ME WOULD BE GLAD TA. LETZ START WIT DA BASICS!"
+        ],
+        "toEm": [
+          "FOR YOU, MISS? FREE. JUST NO CURSE ME TOOLS!",
+          "OF COURSE. IT IZ AN HONOUR TA TEACH A WITCH ANYTINK!",
+          "SIT DOWN, MISS. {spec} IZ EASIER DEN MAGIC!"
+        ],
+        "toBubba": [
+          "ME, TRAININ' BUBBA WILSON? NO CHARGE. NEVER!",
+          "OF COURSE, MR. WILSON. IT IZ ME PLEASURE!",
+          "FREE, SIR. JUST LET ME TELL PEOPLE 'BOUT IT!"
+        ],
+        "em": [
+          "FINE. FREE. COZ ME LIKE YOU, WHICH IZ RARE!",
+          "SIT. {spec}. PAY ATTENTION, ME WILL NO REPEAT ME!",
+          "NO FEE. CONSIDER IT AN INVESTMENT IN YA SURVIVAL!"
+        ],
+        "bubba": [
+          "FOR YOU, DARLIN'? FREE. COME HERE!",
+          "OF COURSE, GUAGLIO'. NO MONEY, JUST ATTENTION!",
+          "JAMME, ME WILL SHOW YOU {spec}. ON DA HOUSE!"
+        ]
+      },
+      "agreePaid": {
+        "default": [
+          "{price} AN' IT IZ YA.",
+          "ME WILL TRAIN YOU, BUT IT'LL COST {price}!",
+          "{FAIR IZ FAIR|BUSINESS IZ BUSINESS}: {price} FOR DA SESSION!"
+        ],
+        "toEm": [
+          "{price}, MISS. WITCH OR NO, ME HAB BILLS!",
+          "ME WILL TRAIN YOU FOR {price}. NO HEX DA REST!",
+          "{price}. AN' PROMISE NO TA USE IT ON ME!"
+        ],
+        "toBubba": [
+          "FEELS WRONG CHARGIN' YOU, MR. WILSON, BUT {price}!",
+          "{price}, SIR. ONLY COZ ME NEED IT!",
+          "{price}. DEN ME TELL EVERYONE ME TRAINED BUBBA WILSON!"
+        ],
+        "em": [
+          "{price}. KNOWLEDGE IZ NO FREE AN' NEITHER IZ ME!",
+          "ME WILL TRAIN YOU FOR {price}. PAYMENT FIRST!",
+          "{price}. IT IZ A FAIR PRICE AN' ME DO NO HAGGLE!"
+        ],
+        "bubba": [
+          "{price}, DARLIN'. PARTS AN' LABOUR!",
+          "ME WILL SHOW YOU FOR {price}. HONEST MONEY!",
+          "{price}, AN' ME WILL THROW IN A COFFEE!"
+        ]
+      },
+      "refuse": {
+        "default": [
+          "TRAIN YOU? {AFTER WHAT YOU HAB DONE|NO A CHANCE}!",
+          "{NO|ABSOLUTELY NO}. FIND SOMEONE ELSE!",
+          "ME NO WOULD TRAIN YOU TA HOLD A SPOON!"
+        ],
+        "toEm": [
+          "TRAIN A WITCH? YOU WILL GET NUTTIN' FROM ME!",
+          "NO. GO READ IT IN ONE OF YA BOOKS!",
+          "NO YOU. NO EVER."
+        ],
+        "toBubba": [
+          "NO EVEN FOR YOU, WILSON. NO AFTER ALL DIS!",
+          "NO. FAMOUS OR NO, DA ANSWER'S NO!",
+          "GO AN' LEARN IT SOMEWHERE ELSE!"
+        ],
+        "em": [
+          "NO. AN' ME WILL NO BE EXPLAININ' WHY!",
+          "ME TRAIN PEOPLE ME TRUST. YOU IZ NO ON DA LIST!",
+          "ABSOLUTELY NO."
+        ],
+        "bubba": [
+          "MANNAGGIA, NO. NO YOU, GUAGLIO'!",
+          "NO TRAININ' FOR YOU, DARLIN'. NO TODAY, NO TOMORROW!",
+          "FORGET IT. GO ON, DA DOOR'S DAT WAY!"
+        ]
+      }
+    }
+  }
+}

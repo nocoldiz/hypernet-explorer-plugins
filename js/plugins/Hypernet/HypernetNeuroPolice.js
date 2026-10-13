@@ -606,7 +606,7 @@
     if (window.HypernetOS) {
         window.HypernetOS.registerApp({
             id: APP_ID,
-            name: T('NeuroPolice.appName'),
+            name: () => T('NeuroPolice.appName'),
             icon: APP_ICON,
             launchFn: function() {
                 window.HypernetNeuroPolice.launch();

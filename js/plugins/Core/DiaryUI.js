@@ -26,6 +26,9 @@
  *                                     the party's own (the world manager
  *                                     passes a world name and a diary id)
  *
+ * The book always opens on its last spread, the newest days, and is read
+ * backwards from there; picking a filter lands on the newest of its lines.
+ *
  * Reading is by page, not by line: left and right turn the leaf, up and down
  * move between categories, and the ribbon down the right edge is the filter,
  * one bookmark per category. The mouse reads it too: a bookmark takes the
@@ -106,7 +109,11 @@
         create() {
             super.create();
             this._filter = 'all';
+            // The book opens on its last written spread, the newest days, and
+            // stays pinned there while the paper is re-measured, until the
+            // reader turns back a leaf.
             this._spread = 0;
+            this._pinNewest = true;
             this._writeOpen = false;
             this._writeDraft = "";         // which pair of days is open
             this._loadDiary();
@@ -166,7 +173,7 @@
         // headed by the same date marked as continuing, so the book is paged
         // through rather than scrolled the way the paper never could be.
         _rebuildSheets() {
-            const measure = this._openMeasure();
+            const heights = this._measureLines();
             const room = this._pageRoom();
             const sheets = [];
             for (const day of this._days) {
@@ -174,7 +181,7 @@
                 let used = 0;
                 let written = 0;
                 for (const line of day.lines) {
-                    const height = this._lineRoom(measure, line);
+                    const height = heights ? heights.get(line) : RULE;
                     if (sheet && used + height > room) sheet = null;
                     if (!sheet) {
                         sheet = { key: day.key, minutes: day.minutes, lines: [], cont: written > 0 };
@@ -186,9 +193,10 @@
                     used += height;
                 }
             }
-            this._closeMeasure();
             this._sheets = sheets;
-            this._spread = Math.max(0, Math.min(this._spread, this._maxSpread()));
+            this._spread = this._pinNewest
+                ? this._maxSpread()
+                : Math.max(0, Math.min(this._spread, this._maxSpread()));
         }
 
         _maxSpread() {
@@ -201,14 +209,21 @@
         // as one rule in one language and as three in another, and the book is
         // opened at whatever size the window happens to be.
 
-        _openMeasure() {
+        // The width a line is written across, or 0 while the leaf is not laid
+        // out and nothing on it can be measured.
+        _measureWidth() {
             const page = this._pageLeftEl;
-            if (!page) return null;
+            if (!page) return 0;
             const cs = window.getComputedStyle(page);
             const width = page.clientWidth
                 - (parseFloat(cs.paddingLeft) || 0)
                 - (parseFloat(cs.paddingRight) || 0);
-            if (!(width > 0)) return null;
+            return width > 0 ? width : 0;
+        }
+
+        _openMeasure(width) {
+            const page = this._pageLeftEl;
+            if (!page || !(width > 0)) return null;
             const el = document.createElement("div");
             el.className = "diary-lines diary-measure";
             el.style.width = width + "px";
@@ -237,12 +252,43 @@
             return Math.floor(room / RULE) * RULE;
         }
 
-        _lineRoom(measure, entry) {
-            if (!measure) return RULE;
-            measure.innerHTML = this._renderLine(entry);
-            const el = measure.firstElementChild;
-            const height = el ? el.offsetHeight : 0;
-            return Math.max(RULE, Math.ceil(height / RULE) * RULE);
+        // How many rules every line about to be paged takes, as a Map from the
+        // line to its height. Asking the browser one line at a time forced a
+        // layout per line, thousands of them in an old book, so every line not
+        // yet known is written into the measuring box in one go and all of them
+        // are read back off a single layout. A line renders the same at the
+        // same width for as long as the book stays open, so its answer is kept
+        // under its own markup, and a filter change or a new entry measures
+        // only what the paper has not seen yet.
+        _measureLines() {
+            const width = this._measureWidth();
+            if (!width) return null;
+            const cache = this._lineHeights || (this._lineHeights = new Map());
+            const heights = new Map();
+            const pending = [];
+            for (const day of this._days) {
+                for (const line of day.lines) {
+                    const html = this._renderLine(line);
+                    const key = width + "|" + html;
+                    const known = cache.get(key);
+                    if (known !== undefined) heights.set(line, known);
+                    else pending.push({ line, key, html });
+                }
+            }
+            if (!pending.length) return heights;
+            const measure = this._openMeasure(width);
+            if (!measure) return null;
+            measure.innerHTML = pending.map(p => p.html).join("");
+            const written = measure.children;
+            for (let i = 0; i < pending.length; i++) {
+                const el = written[i];
+                const height = el ? el.offsetHeight : 0;
+                const rules = Math.max(RULE, Math.ceil(height / RULE) * RULE);
+                cache.set(pending[i].key, rules);
+                heights.set(pending[i].line, rules);
+            }
+            this._closeMeasure();
+            return heights;
         }
 
         // ---- DOM ------------------------------------------------------------
@@ -287,10 +333,15 @@
             // against the fallback serif and the sheets come out a line short
             // or a line long, so the book is paged again once the real face
             // has landed.
+            // Measuring can itself send for a face, so the status is read after
+            // the first pass: a book whose fonts were all in hand is never
+            // paged a second time for nothing.
             try {
-                if (document.fonts && document.fonts.ready) {
+                if (document.fonts && document.fonts.ready && document.fonts.status !== "loaded") {
                     document.fonts.ready.then(() => {
                         if (!this._container) return;
+                        // Every height so far was taken in the fallback face.
+                        this._lineHeights = null;
                         this._rebuildSheets();
                         this._render();
                     });
@@ -536,9 +587,9 @@
                 this._book = book;
                 this._entries = book.entries;
             }
+            this._pinNewest = true;
             this._rebuildDays();
             this._rebuildSheets();
-            this._spread = this._maxSpread();
             this._render();
         }
 
@@ -569,7 +620,7 @@
             if (!cat || this._filter === cat) return;
             SoundManager.playCursor();
             this._filter = cat;
-            this._spread = 0;
+            this._pinNewest = true;
             this._rebuildDays();
             this._rebuildSheets();
             this._render();
@@ -580,6 +631,7 @@
             if (next < 0 || next > this._maxSpread()) { SoundManager.playBuzzer(); return; }
             SoundManager.playCursor();
             this._spread = next;
+            this._pinNewest = next === this._maxSpread();
             this._render();
             this._playTurn(direction);
         }
@@ -654,6 +706,7 @@
             }
             this._onContext = this._onMouseDown = this._onWheel = null;
             this._measureEl = null;
+            this._lineHeights = null;
             this._ribbonEl = this._pageLeftEl = this._pageRightEl = this._footEl = null;
             super.terminate();
         }

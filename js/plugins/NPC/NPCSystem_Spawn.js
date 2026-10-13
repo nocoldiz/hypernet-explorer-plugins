@@ -1211,7 +1211,7 @@
       // Seeded on the place and the hour, because this is asked once on entry
       // and again at every hour boundary: a fresh roll each time would make
       // the square flicker between two different crowds.
-      const seed = (Utils.nameHash(`visitors:${groupName}:${mapId}:${curHour}`) ^
+      const seed = (Utils.nameHash(`visitors:${groupName}:${mapId}:${curHour}`) ^ // i18n-ignore: rng seed key
         (window.NPCShared?.worldSeed?.() ?? 0)) >>> 0;
       const pool = visitors.slice();
       const w = weights.slice();

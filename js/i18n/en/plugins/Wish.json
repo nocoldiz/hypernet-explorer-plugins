@@ -2,9 +2,9 @@
   "granted": {
     "title": "Wish Granted",
     "whispered": "You whispered:",
-    "manifested": "What answered: {outcome}",
-    "spent": "The orb goes dark. One wish, once.",
+    "manifested": "Result: {outcome}",
+    "spent": "The orb goes dark. One wish only.",
     "close": "Press any key to close"
   },
-  "spentSpot": "Whatever answered here has already spoken. It will not answer again."
+  "spentSpot": "This wish has already been used."
 }

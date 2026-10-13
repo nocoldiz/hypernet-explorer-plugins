@@ -29,13 +29,14 @@
  *
  * The panorama is live: the sky follows the hour (dawn, day, dusk, night,
  * with the season's own sunrise and sunset), the sun and the moon cross it,
- * the moon wears its real phase (and Friday's two extra moons), the cloud
+ * the moon wears its real phase (and Friday's two extra moons), the Kessler
+ * ring arches over the south, pale by day and lit up at night, the cloud
  * cover changes day to day and closes in with rain, storm and snow, storms
  * throw distant lightning, frost whitens the land, distance hazes it.
  *
  * The Omega Tower (world square 79 124) stands on the horizon, drawn in 2D
  * at the size, bearing and depth its distance from the party's square calls
- * for: a needle behind the mountains from the far south, a wall of steel
+ * for: a needle behind the mountains from the far south, a gold gridded spear
  * filling the sky from its foot. The panorama looks north.
  *
  * The Omega Tower's own biome, the mapIds parameter and the legacy tags
@@ -340,6 +341,8 @@
     familyLayers: (key) => (FAMILIES[key] ? FAMILIES[key].layers.slice() : []),
     towerPlacement,
     TOWER,
+    drawOmegaSpear: (...args) => drawOmegaSpear(...args),
+    spearHeadroom: (h, w) => spearHeadroom(h, w),
   };
 
   //---------------------------------------------------------------------------
@@ -526,6 +529,15 @@
     return scene;
   }
 
+  // The size everything behind the tiles is rasterised at. The sprite is
+  // scaled up to the screen, so the GPU only ever receives this many pixels.
+  function renderSize() {
+    return {
+      rw: Math.max(64, Math.floor(Graphics.width * RENDER_SCALE)),
+      rh: Math.max(48, Math.floor(Graphics.height * RENDER_SCALE)),
+    };
+  }
+
   function ensureView(w, h) {
     if (view.failed) return false;
     if (!hasThree()) { view.failed = true; return false; }
@@ -539,8 +551,7 @@
         view.scene = buildStructure(mulberry32(LAYOUT_SEED));
         view.camera = new THREE.PerspectiveCamera(58, w / h, 1, 600);
       }
-      const rw = Math.max(64, Math.floor(w * RENDER_SCALE));
-      const rh = Math.max(48, Math.floor(h * RENDER_SCALE));
+      const { rw, rh } = renderSize();
       if (view.lastW !== rw || view.lastH !== rh) {
         view.renderer.setSize(rw, rh, false);
         view.camera.aspect = w / h;
@@ -610,6 +621,7 @@
   // and the sky, the sun, the moon, the clouds and the sea every other frame.
   const TOWER_SEED = 0x7A11E5;
   const FRAME_SKIP = 2;
+  const SLOW_EVERY = 0.5; // seconds between reads of the slow sky inputs
 
   function hasCanvas() {
     return typeof document !== "undefined" && !!document && typeof document.createElement === "function";
@@ -794,6 +806,8 @@
     const ys = new Float32Array(W + 1);
     for (let x = 0; x <= W; x++) ys[x] = top + amp * (1 - shape(x / W));
     const yAt = (x) => ys[Math.max(0, Math.min(W, Math.round(((x % W) + W) % W)))];
+    let ridgeTop = H;
+    for (let x = 0; x <= W; x++) if (ys[x] < ridgeTop) ridgeTop = ys[x];
 
     g.fillStyle = rgb(layer.color);
     g.beginPath(); g.moveTo(0, H);
@@ -803,7 +817,7 @@
     let lights = null, lg = null;
     const needLights = layer.kind === "city" || layer.kind === "houses" || layer.kind === "volcano";
     if (needLights) { lights = makeCanvas(W, H); lg = lights.getContext("2d"); }
-    const entry = { canvas: c, lights, layer, W, H, tinted: null, tintKey: "", crater: null };
+    const entry = { canvas: c, lights, layer, W, H, y0: 0, tinted: null, tintKey: "", crater: null };
 
     if (layer.snow > 0) {
       g.fillStyle = rgb([238, 242, 250]);
@@ -926,7 +940,25 @@
       }
       default: break;
     }
+    entry.y0 = Math.min(opaqueTop(c, ridgeTop), lights ? opaqueTop(lights, ridgeTop) : H);
     return entry;
+  }
+
+  // The first row of a canvas that holds anything: the sky above a layer is
+  // empty, and is never composited or drawn. Scanned once, when the layer is
+  // built; without pixel access it falls back to the whole canvas.
+  function opaqueTop(c, hint) {
+    try {
+      const g = c.getContext("2d");
+      const data = g.getImageData(0, 0, c.width, Math.min(c.height, Math.ceil(hint) + 1)).data;
+      const row = c.width * 4;
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i]) return Math.max(0, Math.floor((i - 3) / row) - 1);
+      }
+      return Math.max(0, Math.floor(hint) - 1);
+    } catch (e) {
+      return 0;
+    }
   }
 
   // The lit copy of a silhouette: frost on it, the light multiplied in, the
@@ -937,24 +969,26 @@
     if (entry.tintKey === key && entry.tinted) return entry.tinted;
     const c = entry.tinted || makeCanvas(entry.W, entry.H);
     const g = c.getContext("2d");
+    // Only the rows below the layer's empty sky are worked on.
+    const W = entry.W, y0 = entry.y0 || 0, h = entry.H - y0;
     g.globalCompositeOperation = "source-over";
     g.globalAlpha = 1;
-    g.clearRect(0, 0, entry.W, entry.H);
-    g.drawImage(entry.canvas, 0, 0);
+    g.clearRect(0, y0, W, h);
+    g.drawImage(entry.canvas, 0, y0, W, h, 0, y0, W, h);
     if (frost > 0.01) {
       g.globalCompositeOperation = "source-atop";
       g.fillStyle = rgb([236, 240, 248], frost);
-      g.fillRect(0, 0, entry.W, entry.H);
+      g.fillRect(0, y0, W, h);
     }
     g.globalCompositeOperation = "multiply";
     g.fillStyle = rgb(scale3(light, 255));
-    g.fillRect(0, 0, entry.W, entry.H);
+    g.fillRect(0, y0, W, h);
     g.globalCompositeOperation = "destination-in";
-    g.drawImage(entry.canvas, 0, 0);
+    g.drawImage(entry.canvas, 0, y0, W, h, 0, y0, W, h);
     if (haze > 0.01) {
       g.globalCompositeOperation = "source-atop";
       g.fillStyle = rgb(hazeCol, haze);
-      g.fillRect(0, 0, entry.W, entry.H);
+      g.fillRect(0, y0, W, h);
     }
     g.globalCompositeOperation = "source-over";
     entry.tinted = c; entry.tintKey = key;
@@ -972,6 +1006,74 @@
       g.fillRect(Math.floor(rand() * rw), Math.floor(rand() * horizon * (rand() < 0.7 ? 0.7 : 1)), 1, 1);
     }
     return c;
+  }
+
+  // The Kessler ring. Seen from a European latitude Earth's debris belt is an
+  // arch over the southern sky, the way a ringed planet's rings stand over
+  // its own fields: the dense low shell lower, the thin graveyard belt
+  // higher. Each arch is half an ellipse sitting on the horizon.
+  const RING_BANDS = [
+    { rise: 0.52, half: 0.66, width: 0.016, specks: 3.2, bright: 1 },
+    { rise: 0.6, half: 0.71, width: 0.006, specks: 1.1, bright: 0.55 },
+    { rise: 0.74, half: 0.8, width: 0.003, specks: 0.5, bright: 0.35 },
+  ];
+
+  function ringPoint(band, rw, horizon, t) {
+    const a = Math.PI * t;
+    return [rw * (0.5 - band.half * Math.cos(a)), horizon - band.rise * horizon * Math.sin(a)];
+  }
+
+  function buildRing(rw, horizon, seed) {
+    const c = makeCanvas(rw, horizon);
+    const g = c.getContext("2d");
+    const rand = mulberry32(seed);
+    const glints = [];
+    RING_BANDS.forEach((band) => {
+      // The haze of dust the band is made of, then the pieces large enough to see.
+      g.strokeStyle = `rgba(255,246,226,${(0.35 * band.bright).toFixed(2)})`;
+      g.lineWidth = Math.max(1, band.width * horizon);
+      g.beginPath();
+      g.ellipse(rw * 0.5, horizon, band.half * rw, band.rise * horizon, 0, Math.PI, Math.PI * 2);
+      g.stroke();
+      const n = Math.round(rw * band.specks);
+      const spread = Math.max(1, band.width * horizon * 1.6);
+      for (let i = 0; i < n; i++) {
+        const [x, y] = ringPoint(band, rw, horizon, rand());
+        const off = (rand() + rand() - 1) * spread;
+        const b = (0.3 + rand() * 0.7) * band.bright;
+        g.fillStyle = `rgba(255,${Math.round(230 + rand() * 25)},${Math.round(200 + rand() * 55)},${b.toFixed(2)})`;
+        g.fillRect(Math.floor(x), Math.floor(y + off), 1, 1);
+        if (rand() < 0.03) glints.push([x, y + off, rand() * Math.PI * 2, 1 + rand() * 3]);
+      }
+    });
+    return { canvas: c, glints };
+  }
+
+  // Faint pale arch by day, lit up by the sun it still sees after dark.
+  function ringAlpha(st) {
+    if (st.alien) return 0;
+    return (0.16 + 0.74 * st.night) * (1 - st.cover * 0.92);
+  }
+
+  function drawRing(ctx, pan, st) {
+    const a = ringAlpha(st);
+    if (a <= 0.02 || !pan.ring) return;
+    ctx.globalCompositeOperation = st.night > 0.4 ? "lighter" : "source-over";
+    ctx.globalAlpha = Math.min(1, a);
+    ctx.drawImage(pan.ring.canvas, 0, 0);
+    if (st.night > 0.2) {
+      // Tumbling pieces catch the sun and wink.
+      const ga = st.night * (1 - st.cover);
+      ctx.fillStyle = "#fff8e8";
+      for (const [x, y, ph, sp] of pan.ring.glints) {
+        const w = Math.sin(pan.time * sp + ph);
+        if (w <= 0.6) continue;
+        ctx.globalAlpha = ga * (w - 0.6) * 2.5;
+        ctx.fillRect(Math.floor(x), Math.floor(y), 1, 1);
+      }
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
   }
 
   // A bank of puffs, seamless across twice the screen: thicker and lower as
@@ -1011,56 +1113,107 @@
     return { canvas: c, W, H, tinted: null, tintKey: "" };
   }
 
-  // The tower, painted once per size and light: black steel tapering into
-  // the sky, gold flanges at every tier, buttresses at its foot, windows
-  // that burn at night, its head lost in the cloud when the sky closes.
+  // The Omega Tower as the intro movie draws it: one tapering spear of dark
+  // stone run through with a gold grid, lit windows warm and blue, a sheath
+  // of light round it, five rings standing off it in gold and blue, and the
+  // celestial throne floating over its tip with a beacon burning in it. Drawn
+  // with its foot at (cx, base), hPx tall to the tip of the shaft and wPx
+  // across the foot; the throne needs spearHeadroom(hPx, wPx) more above that.
+  // day and night are 0..1. The world map draws its landmark with this too.
+  // One movie unit in pixels: read off the foot, so the throne keeps its
+  // size against the shaft, never so small it is lost.
+  function spearUnit(hPx, wPx) {
+    return Math.max(0.6, Math.min(wPx * 0.5 / 26, hPx / 300));
+  }
+
+  function spearHeadroom(hPx, wPx) {
+    return Math.ceil(125 * spearUnit(hPx, wPx)) + 2;
+  }
+
+  function drawOmegaSpear(g, cx, base, hPx, wPx, day, night) {
+    // The movie's proportions: foot 26, tip 5, the throne 40 over a 900 shaft.
+    const footHalf = wPx * 0.5, tipHalf = wPx * 0.5 * 5 / 26;
+    const s = spearUnit(hPx, wPx);
+    const rand = mulberry32(TOWER_SEED);
+    const top = base - hPx;
+    const halfAt = (y) => lerp(footHalf, tipHalf, (base - y) / hPx);
+    const burn = Math.max(day * 0.55, 0.35 + night * 0.65);
+    const hull = mix3([20, 17, 13], [58, 52, 44], day * 0.6);
+    const gold = scale3([255, 200, 90], burn);
+    // The sheath of light round it.
+    const sheath = g.createLinearGradient(cx - footHalf * 1.6, 0, cx + footHalf * 1.6, 0);
+    const sa = (0.08 + 0.14 * night).toFixed(3);
+    sheath.addColorStop(0, "rgba(255,176,64,0)");
+    sheath.addColorStop(0.5, `rgba(255,176,64,${sa})`);
+    sheath.addColorStop(1, "rgba(255,176,64,0)");
+    g.fillStyle = sheath;
+    g.beginPath(); g.moveTo(cx - footHalf * 1.55, base); g.lineTo(cx - tipHalf * 1.8, top);
+    g.lineTo(cx + tipHalf * 1.8, top); g.lineTo(cx + footHalf * 1.55, base); g.closePath(); g.fill();
+    // The shaft.
+    g.fillStyle = rgb(hull);
+    g.beginPath(); g.moveTo(cx - footHalf, base); g.lineTo(cx - tipHalf, top);
+    g.lineTo(cx + tipHalf, top); g.lineTo(cx + footHalf, base); g.closePath(); g.fill();
+    // The gold grid: the octagon's edges running up it, and bands across.
+    g.fillStyle = rgb(gold, 0.85);
+    for (const f of [-1, -0.7, 0, 0.7, 1]) {
+      g.beginPath(); g.moveTo(cx + f * footHalf, base); g.lineTo(cx + f * tipHalf, top);
+      g.lineTo(cx + f * tipHalf + 1, top); g.lineTo(cx + f * footHalf + 1, base); g.closePath(); g.fill();
+    }
+    const bands = Math.max(6, Math.min(60, Math.round(hPx / 6)));
+    for (let i = 1; i < bands; i++) {
+      const y = base - hPx * (i / bands);
+      const hw = halfAt(y);
+      g.fillRect(Math.round(cx - hw), Math.round(y), Math.max(1, Math.round(hw * 2)), 1);
+    }
+    // Windows, warm and the cold blue of the rings.
+    const wins = Math.min(600, Math.round(hPx * wPx / 90));
+    const wa = (0.3 + night * 0.7).toFixed(2);
+    for (let i = 0; i < wins; i++) {
+      const y = base - rand() * hPx;
+      const hw = halfAt(y) * 0.9;
+      g.fillStyle = rand() > 0.5 ? `rgba(255,226,150,${wa})` : `rgba(160,220,255,${wa})`;
+      g.fillRect(Math.round(cx + (rand() * 2 - 1) * hw), Math.round(y), 1, 1);
+    }
+    // The rings that hold the dimensions together.
+    const ringTilt = 0.18;
+    [0.18, 0.36, 0.55, 0.74, 0.9].forEach((k, i) => {
+      const y = base - hPx * k;
+      const rx = halfAt(y) + 7 * (footHalf / 26) + 1;
+      g.strokeStyle = i % 2 ? `rgba(154,216,255,${(0.55 + 0.4 * night).toFixed(2)})` : `rgba(255,208,112,${(0.6 + 0.35 * night).toFixed(2)})`;
+      g.lineWidth = Math.max(1, (0.9 + (1 - k) * 1.2) * footHalf / 26);
+      g.beginPath(); g.ellipse(cx, y, rx, Math.max(1, rx * ringTilt), 0, 0, Math.PI * 2); g.stroke();
+    });
+    // The celestial throne over the tip, and its beacon.
+    const ty = top - 40 * s;
+    const beam = g.createRadialGradient(cx, ty - 20 * s, 0, cx, ty - 20 * s, Math.max(4, 60 * s));
+    beam.addColorStop(0, `rgba(255,250,225,${(0.55 + 0.45 * night).toFixed(2)})`);
+    beam.addColorStop(0.25, `rgba(255,210,90,${(0.25 + 0.3 * night).toFixed(2)})`);
+    beam.addColorStop(1, "rgba(255,210,90,0)");
+    g.fillStyle = beam;
+    g.fillRect(cx - 60 * s, ty - 80 * s, 120 * s, 120 * s);
+    g.fillStyle = rgb(scale3([255, 211, 106], 0.6 + 0.4 * burn));
+    g.fillRect(cx - 9 * s, ty - 2 * s, 18 * s, Math.max(1, 4 * s));          // the seat
+    g.fillRect(cx - 9 * s, ty - 26 * s, 18 * s, Math.max(1, 26 * s));        // the back
+    for (const x of [-1, 0, 1]) {                                           // the spikes
+      const sx = cx + x * 12 * s, sy = ty - (30 + (x ? 0 : 10)) * s;
+      g.beginPath(); g.moveTo(sx - 2.4 * s, sy + 13 * s); g.lineTo(sx, sy - 13 * s);
+      g.lineTo(sx + 2.4 * s, sy + 13 * s); g.closePath(); g.fill();
+    }
+    g.strokeStyle = `rgba(255,242,192,${(0.6 + 0.35 * night).toFixed(2)})`;
+    g.lineWidth = Math.max(1, 1.2 * s);
+    g.beginPath(); g.arc(cx, ty - 30 * s, Math.max(2, 16 * s), 0, Math.PI * 2); g.stroke();
+  }
+
+  // The tower on the horizon, painted once per size and light. Its head is
+  // lost in the cloud when the sky closes.
   function paintTower(pan, hPx, wPx, light, night, cover, hazeCol, haze) {
     const key = [q(hPx, 0.5), q(wPx, 1), q(light[0], 20), q(light[1], 20), q(light[2], 20), q(night, 10),
       q(cover, 10), q(haze, 20), q(hazeCol[0] / 255, 12), q(hazeCol[1] / 255, 12), q(hazeCol[2] / 255, 12)].join(",");
     if (pan.towerKey === key && pan.towerCanvas) return pan.towerCanvas;
-    const spire = hPx * 0.1;
-    const cw = Math.ceil(wPx * 1.7) + 4, ch = Math.ceil(hPx + spire) + 2;
+    const cw = Math.ceil(wPx * 1.9) + 6, ch = Math.ceil(hPx + spearHeadroom(hPx, wPx)) + 2;
     const c = makeCanvas(cw, ch);
     const g = c.getContext("2d");
-    const rand = mulberry32(TOWER_SEED);
-    const cx = cw / 2, base = ch, top = ch - hPx;
-    const steel = mix3([14, 14, 18], [40, 40, 48], clamp01(light[0]) * 0.6);
-    const gold = scale3([212, 169, 58], 0.35 + 0.65 * Math.max(clamp01((light[0] + light[1]) / 2), night * 0.8));
-    // Buttresses.
-    g.fillStyle = rgb(scale3(steel, 0.9));
-    g.beginPath(); g.moveTo(cx - wPx * 0.85, base); g.lineTo(cx - wPx * 0.5, base - hPx * 0.2); g.lineTo(cx - wPx * 0.5, base); g.closePath(); g.fill();
-    g.beginPath(); g.moveTo(cx + wPx * 0.85, base); g.lineTo(cx + wPx * 0.5, base - hPx * 0.2); g.lineTo(cx + wPx * 0.5, base); g.closePath(); g.fill();
-    // The shaft.
-    g.fillStyle = rgb(steel);
-    g.beginPath(); g.moveTo(cx - wPx * 0.5, base); g.lineTo(cx - wPx * 0.28, top); g.lineTo(cx + wPx * 0.28, top); g.lineTo(cx + wPx * 0.5, base); g.closePath(); g.fill();
-    const halfAt = (y) => lerp(wPx * 0.5, wPx * 0.28, (base - y) / hPx);
-    // Tiers.
-    const tiers = Math.max(6, Math.min(48, Math.round(hPx / Math.max(3, wPx * 0.5))));
-    for (let i = 1; i <= tiers; i++) {
-      const y = base - hPx * (i / (tiers + 1));
-      const hw = halfAt(y) * (1.12 + rand() * 0.12);
-      g.fillStyle = rgb(steel); g.fillRect(cx - hw, y - Math.max(1, hPx * 0.008), hw * 2, Math.max(1, hPx * 0.008));
-      g.fillStyle = rgb(gold); g.fillRect(cx - hw, y, hw * 2, Math.max(1, hPx * 0.003));
-    }
-    // Gold seams down the faces.
-    g.fillStyle = rgb(gold, 0.7);
-    for (const f of [-0.5, 0.5]) {
-      g.beginPath(); g.moveTo(cx + f * wPx, base); g.lineTo(cx + f * wPx * 0.56, top);
-      g.lineTo(cx + f * wPx * 0.56 + 1, top); g.lineTo(cx + f * wPx + 1, base); g.closePath(); g.fill();
-    }
-    // Windows.
-    const wins = Math.min(500, Math.round(hPx * wPx / 120));
-    g.fillStyle = rgb([255, 210, 120], (0.25 + night * 0.75).toFixed(2));
-    for (let i = 0; i < wins; i++) {
-      const y = base - rand() * hPx;
-      const hw = halfAt(y) * 0.9;
-      g.fillRect(Math.round(cx + (rand() * 2 - 1) * hw), Math.round(y), 1, 1);
-    }
-    // The spire and its beacon.
-    g.fillStyle = rgb(steel);
-    g.fillRect(cx - Math.max(1, wPx * 0.03), top - spire, Math.max(1, wPx * 0.06), spire);
-    g.fillStyle = rgb([255, 90, 70], (0.4 + night * 0.6).toFixed(2));
-    g.fillRect(cx - 1, top - spire - 1, 2, 2);
+    drawOmegaSpear(g, cw / 2, ch, hPx, wPx, clamp01((light[0] + light[1]) / 2), night);
     // Distance and cloud.
     g.globalCompositeOperation = "source-atop";
     if (haze > 0.01) { g.fillStyle = rgb(hazeCol, haze); g.fillRect(0, 0, cw, ch); }
@@ -1153,7 +1306,18 @@
   function skyState(pan, dt) {
     const fam = FAMILIES[pan.family];
     const hour = skyHour();
-    const { rise, set } = sunTimes();
+    // The season's sun times, the moon and where the tower stands barely move
+    // from one frame to the next: they are read twice a second, not every frame.
+    if (!pan.slow || pan.time - pan.slow.at >= SLOW_EVERY) {
+      const sq = partyWorldSquare();
+      pan.slow = {
+        at: pan.time,
+        sun: sunTimes(),
+        moon: moonData(),
+        placement: sq ? towerPlacement(sq.x, sq.y, pan.family) : null,
+      };
+    }
+    const { rise, set } = pan.slow.sun;
     let e, dayP = null, nightP = null;
     if (hour >= rise && hour <= set) {
       dayP = (hour - rise) / (set - rise);
@@ -1168,7 +1332,7 @@
     pan.cover = pan.cover == null ? target : lerp(pan.cover, target, clamp01(dt * 0.4));
     const cover = pan.cover;
 
-    const moon = moonData();
+    const moon = pan.slow.moon;
     const dayK = smooth(-0.12, 0.2, e);
     const warmK = smooth(-0.15, 0.02, e) * (1 - smooth(0.05, 0.35, e));
     const night = 1 - smooth(-0.2, 0.05, e);
@@ -1218,12 +1382,21 @@
   //---------------------------------------------------------------------------
   // One panorama per map
   //---------------------------------------------------------------------------
+  // The last panorama built. A menu round trip throws the spriteset away and
+  // makes a new one on the same map: it gets this one back instead of
+  // painting every layer, tree and window again.
+  let lastPanorama = null;
+
   function preparePanorama(family, seed) {
     if (!hasCanvas()) return null;
     try {
-      const rw = Math.max(64, Math.floor(Graphics.width * RENDER_SCALE));
-      const rh = Math.max(48, Math.floor(Graphics.height * RENDER_SCALE));
+      const { rw, rh } = renderSize();
       const key = FAMILIES[family] ? family : DEFAULT_FAMILY;
+      const lp = lastPanorama;
+      if (lp && lp.family === key && lp.seed === seed && lp.rw === rw && lp.rh === rh) {
+        lp.frame = 0; lp.slow = null;
+        return lp;
+      }
       const fam = FAMILIES[key];
       const horizon = Math.round(rh * (fam.horizon || 0.6));
       const canvas = makeCanvas(rw, rh);
@@ -1232,12 +1405,14 @@
       const layers = fam.layers.map((l, i) => (l.kind === "sea"
         ? { layer: l, sea: true }
         : buildLayer(l, rw, rh, (seed + i * 7919) >>> 0)));
-      return {
+      lastPanorama = {
         family: key, seed, rw, rh, canvas, ctx, layers, horizon,
         stars: buildStars(rw, horizon, seed ^ 0x5151),
+        ring: buildRing(rw, horizon, 0x4E55),
         clouds: null, cloudKey: -1, time: 0, frame: 0, flash: 0, bolt: null, cover: null,
-        towerCanvas: null, towerKey: "",
+        towerCanvas: null, towerKey: "", slow: null, skyGrad: null, skyKey: "",
       };
+      return lastPanorama;
     } catch (e) {
       console.warn("[BiomeBackground] panorama unavailable", e);
       return null;
@@ -1260,8 +1435,17 @@
     return st.storm ? scale3(c, 0.55) : scale3(c, 1 - st.cover * 0.3);
   }
 
-  function drawWrapped(ctx, img, W, rw, offset, y) {
-    for (let x = ((offset % W) + W) % W - W; x < rw; x += W) ctx.drawImage(img, Math.round(x), Math.round(y));
+  // A strip twice the screen wide, slid by `offset` and repeated: only the
+  // slice that lands on screen is copied, from row `y0` of the strip down.
+  function drawWrapped(ctx, img, W, rw, offset, y, y0) {
+    const top = y0 || 0, h = img.height - top;
+    if (h <= 0) return;
+    const dy = Math.round(y) + top;
+    for (let x = ((offset % W) + W) % W - W; x < rw; x += W) {
+      const dx = Math.round(x);
+      const s0 = Math.max(0, -dx), s1 = Math.min(W, rw - dx);
+      if (s1 > s0) ctx.drawImage(img, s0, top, s1 - s0, h, dx + s0, dy, s1 - s0, h);
+    }
   }
 
   // How far a thing `dist` squares away slides as the map scrolls by a pixel.
@@ -1347,12 +1531,16 @@
   function drawAurora(ctx, pan, st) {
     if (!st.aurora || st.night < 0.3) return;
     const a = st.night * (1 - st.cover) * 0.35;
+    const depth = pan.rh * 0.08, step = 6;
     for (let band = 0; band < 3; band++) {
+      const yOf = (x) => pan.rh * (0.12 + band * 0.06) + Math.sin(x * 0.02 + pan.time * 0.4 + band) * pan.rh * 0.03;
+      // One ribbon per band: its wavy top edge out, the same edge lowered back.
       ctx.fillStyle = rgb(band === 1 ? [140, 120, 255] : [80, 255, 170], a);
-      for (let x = 0; x < pan.rw; x += 2) {
-        const y = pan.rh * (0.12 + band * 0.06) + Math.sin(x * 0.02 + pan.time * 0.4 + band) * pan.rh * 0.03;
-        ctx.fillRect(x, y, 2, pan.rh * 0.08);
-      }
+      ctx.beginPath();
+      ctx.moveTo(0, yOf(0));
+      for (let x = step; x < pan.rw + step; x += step) ctx.lineTo(x, yOf(x));
+      for (let x = Math.ceil(pan.rw / step) * step; x >= 0; x -= step) ctx.lineTo(x, yOf(x) + depth);
+      ctx.closePath(); ctx.fill();
     }
   }
 
@@ -1434,18 +1622,24 @@
       : 0;
     const sy = Math.max(-rh * 0.5, Math.min(rh * 0.5, syRaw));
 
-    // Sky.
-    const grad = ctx.createLinearGradient(0, 0, 0, horizon);
-    grad.addColorStop(0, rgb(st.zen));
-    grad.addColorStop(1, rgb(st.hor));
-    ctx.fillStyle = grad; ctx.fillRect(0, 0, rw, horizon);
-    ctx.fillStyle = rgb(st.hor); ctx.fillRect(0, horizon, rw, rh - horizon);
+    // Sky: the gradient is only remade when its colours move.
+    const zen = rgb(st.zen), hor = rgb(st.hor);
+    const skyKey = zen + hor;
+    if (pan.skyKey !== skyKey || !pan.skyGrad) {
+      const grad = ctx.createLinearGradient(0, 0, 0, horizon);
+      grad.addColorStop(0, zen);
+      grad.addColorStop(1, hor);
+      pan.skyGrad = grad; pan.skyKey = skyKey;
+    }
+    ctx.fillStyle = pan.skyGrad; ctx.fillRect(0, 0, rw, horizon);
+    ctx.fillStyle = hor; ctx.fillRect(0, horizon, rw, rh - horizon);
 
     const starA = st.night * (1 - st.cover);
     if (starA > 0.02) { ctx.globalAlpha = starA; ctx.drawImage(pan.stars, 0, 0); ctx.globalAlpha = 1; }
     drawAurora(ctx, pan, st);
     drawSun(ctx, pan, st);
     drawMoons(ctx, pan, st);
+    drawRing(ctx, pan, st);
 
     ensureClouds(pan, st.cover);
     const cl = cloudLight(st);
@@ -1459,8 +1653,7 @@
     drawBolt(ctx, pan);
 
     // Land, far to near, with the tower standing in at its own depth.
-    const sq = partyWorldSquare();
-    const placement = sq ? towerPlacement(sq.x, sq.y, pan.family) : null;
+    const placement = pan.slow.placement;
     let mistDone = false;
     for (let i = 0; i <= pan.layers.length; i++) {
       if (placement && placement.slot === i) drawTower(ctx, pan, st, placement, sx);
@@ -1480,10 +1673,10 @@
       const oy = -sy * f * 0.15;
       const haze = Math.min(0.85, (1 - Math.exp(-l.dist / st.visibility)) * 0.9);
       const img = tintedCanvas(entry, st.light, st.hor, haze, st.frost);
-      drawWrapped(ctx, img, entry.W, rw, -sx * f, oy);
+      drawWrapped(ctx, img, entry.W, rw, -sx * f, oy, entry.y0);
       if (entry.lights) {
         const a = l.kind === "volcano" ? 0.6 + 0.4 * st.night : st.night * (1 - haze * 0.5);
-        if (a > 0.02) { ctx.globalAlpha = a; drawWrapped(ctx, entry.lights, entry.W, rw, -sx * f, oy); ctx.globalAlpha = 1; }
+        if (a > 0.02) { ctx.globalAlpha = a; drawWrapped(ctx, entry.lights, entry.W, rw, -sx * f, oy, entry.y0); ctx.globalAlpha = 1; }
       }
       if (l.kind === "volcano") drawPlume(ctx, pan, entry, -sx * f, oy);
       // The low deck hangs over the far range, under everything nearer.
@@ -1496,6 +1689,7 @@
   }
 
   window.BiomeBackground.coverFor = coverFor;
+  window.BiomeBackground.ringAlpha = ringAlpha;
 
   //---------------------------------------------------------------------------
   // Spriteset hook: the background sits where the parallax would, under the map.
@@ -1513,10 +1707,17 @@
     this._biomeBgPanorama = null;
     if (!m || m.mode !== "structure") disposeView();
     if (!m) return;
+    // The bitmap is the render size and the sprite is stretched over the
+    // screen: the texture sent to the GPU every frame is a quarter of the
+    // screen's pixels at the default render scale.
+    const { rw, rh } = renderSize();
     const sprite = new Sprite();
-    sprite.bitmap = new Bitmap(Graphics.width, Graphics.height);
-    sprite.bitmap.fillRect(0, 0, Graphics.width, Graphics.height, m.mode === "structure" ? "#050505" : "#6f8fb0");
+    sprite.bitmap = new Bitmap(rw, rh);
+    sprite.bitmap.smooth = false;
+    sprite.bitmap.fillRect(0, 0, rw, rh, m.mode === "structure" ? "#050505" : "#6f8fb0");
+    if (sprite.scale) sprite.scale.set(Graphics.width / rw, Graphics.height / rh);
     this._biomeBgSprite = sprite;
+    this._biomeBgFrame = 0;
     this._baseSprite.addChild(sprite);
     if (m.mode === "panorama") this._biomeBgPanorama = preparePanorama(m.family, worldSeed(m.family));
   };
@@ -1527,12 +1728,29 @@
     this.updateBiomeBackground();
   };
 
+  // The engine's teardown destroys the sprite but never the Bitmap it drew
+  // into, so every menu round trip and every transfer on a background map left
+  // one render-size canvas and its GPU texture behind. The panorama itself is
+  // kept (lastPanorama): only this spriteset's own bitmap goes.
+  const _destroy = Spriteset_Map.prototype.destroy;
+  Spriteset_Map.prototype.destroy = function (options) {
+    const sprite = this._biomeBgSprite;
+    if (sprite) {
+      const bmp = sprite.bitmap;
+      try { if (bmp && typeof bmp.destroy === "function") bmp.destroy(); } catch (e) { /* already gone */ }
+      this._biomeBgSprite = null;
+      this._biomeBgPanorama = null;
+      this._biomeBgMode = null;
+    }
+    if (_destroy) _destroy.call(this, options);
+  };
+
   function blit(sprite, source) {
     const bmp = sprite.bitmap;
     const ctx = bmp && bmp.context;
     if (!ctx) return;
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(source, 0, 0, Graphics.width, Graphics.height);
+    ctx.drawImage(source, 0, 0, bmp.width, bmp.height);
     if (bmp._baseTexture && bmp._baseTexture.update) bmp._baseTexture.update();
   }
 
@@ -1541,8 +1759,11 @@
     const m = this._biomeBgMode;
     if (!sprite || !sprite.bitmap || !m) return;
     if (m.mode === "structure") {
+      // Rendered and read back from WebGL every other frame, like the panorama.
+      this._biomeBgFrame = (this._biomeBgFrame || 0) + 1;
+      if (this._biomeBgFrame > 1 && this._biomeBgFrame % FRAME_SKIP !== 1) return;
       if (!ensureView(Graphics.width, Graphics.height)) return;
-      stepView(1 / 60);
+      stepView(FRAME_SKIP / 60);
       renderView();
       blit(sprite, view.renderer.domElement);
       return;

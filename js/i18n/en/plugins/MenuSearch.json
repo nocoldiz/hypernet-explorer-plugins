@@ -1,8 +1,8 @@
 {
  "placeholder": "Search…",
- "open": "Open the search",
- "close": "Close the search",
- "clear": "Clear the search",
+ "open": "Open search",
+ "close": "Close search",
+ "clear": "Clear search",
  "anyCategory": "Any category",
  "showing": "{count} shown",
  "min": "min",

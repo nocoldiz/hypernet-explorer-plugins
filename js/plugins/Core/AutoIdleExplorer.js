@@ -6038,55 +6038,23 @@
             return true;
         },
 
+        // The words live in AutoIdle.romance.actions, read when the action is
+        // rolled so they follow the language in use; the numbers stay here.
         getActions() {
+            const base = "AutoIdle.romance.actions.";
+            const build = (id, tier, successDelta, failDelta) => ({
+                id, tier, successDelta, failDelta,
+                label: T(base + id + ".label"),
+                lines: T.pool(base + id + ".lines"),
+                repliesGood: T.pool(base + id + ".good"),
+                repliesBad: T.pool(base + id + ".bad"),
+            });
             return [
-                {
-                    id: 'flirt', label: 'Flirt', tier: 1, successDelta: 12, failDelta: -6,
-                    lines: [
-                        `"I was hoping I'd run into you, {name}."`,
-                        `"Careful, {name}. I could get used to this."`,
-                        `"You've been on my mind all day, {name}."`,
-                    ],
-                    repliesGood: [`*smiles softly* "Is that so?"`, `*laughs* "You're trouble."`, `*blushes* "Keep talking like that."`],
-                    repliesBad: [`*looks away* "Let's keep this friendly."`, `*chuckles dryly* "Nice try."`, `*shakes head* "No."`]
-                },
-                {
-                    id: 'admire', label: 'Admire', tier: 1, successDelta: 14, failDelta: -7,
-                    lines: [
-                        `"You're hard to look away from, {name}."`,
-                        `"There's something striking about you, {name}."`,
-                        `"You always brighten up the room, {name}."`,
-                    ],
-                    repliesGood: [`*beams* "Thank you, that's really sweet."`, `*grins* "You have good taste."`, `*winks* "Right back at you."`],
-                    repliesBad: [`*shrugs* "Please, don't."`, `*frowns* "I'm busy."`, `*steps back* "That's enough."`]
-                },
-                {
-                    id: 'serenade', label: 'Serenade', tier: 2, successDelta: 20, failDelta: -10,
-                    lines: [
-                        `takes a breath and hums a romantic tune for {name}.`,
-                        `sings a poetic verse dedicated to {name}.`,
-                    ],
-                    repliesGood: [`*listens happily* "Nobody's ever done that for me."`, `*claps* "That was wonderful."`, `*blushes deeply* "You're too much."`],
-                    repliesBad: [`*groans playfully* "Please stop, everyone is looking!"`, `*wiggles out* "Not the time."`, `*sighs* "A bit dramatic."`]
-                },
-                {
-                    id: 'kiss', label: 'Playful Kiss', tier: 3, successDelta: 24, failDelta: -14,
-                    lines: [
-                        `leans in close and leaves a gentle kiss on {name}'s cheek.`,
-                        `steps in close with a soft embrace for {name}.`,
-                    ],
-                    repliesGood: [`*eyes widen with a radiant smile* "Oh..."`, `*kisses back gently*`, `*holds close warmly*`],
-                    repliesBad: [`*dodges and steps back* "Hey, hands off."`, `*scowls* "Too fast!"`, `*pushes away* "Not interested."`]
-                },
-                {
-                    id: 'wink', label: 'Playful Wink', tier: 1, successDelta: 10, failDelta: -4,
-                    lines: [
-                        `gives {name} a playful wink across the way.`,
-                        `flashes a teasing smile and a wink at {name}.`,
-                    ],
-                    repliesGood: [`*winks right back with a smirk*`, `*giggles and waves*`, `*smiles warmly*`],
-                    repliesBad: [`*rolls eyes*`, `*looks the other way*`, `*blinks blankly*`]
-                }
+                build('flirt', 1, 12, -6),
+                build('admire', 1, 14, -7),
+                build('serenade', 2, 20, -10),
+                build('kiss', 3, 24, -14),
+                build('wink', 1, 10, -4),
             ];
         },
 
@@ -6188,8 +6156,11 @@
             }
 
             const heartText = delta >= 0 ? `+${delta}♥` : `${delta}♥`;
-            const outcomeText = success ? `Success (${heartText})` : `Rejected (${heartText})`;
-            const toastMsg = `[Romance] ${s.name} → ${t.name} (${act.label}): Rolled ${roll} vs ${chance}% ➔ ${outcomeText}`;
+            const outcomeText = T(success ? "AutoIdle.romance.success" : "AutoIdle.romance.rejected", { hearts: heartText });
+            const toastMsg = T("AutoIdle.romance.toast", {
+                suitor: s.name, target: t.name, action: act.label,
+                roll: roll, chance: chance, outcome: outcomeText,
+            });
 
             if (window.ParchmentToast && typeof window.ParchmentToast.show === "function") {
                 try {
@@ -10025,7 +9996,7 @@
     // --- Helpers for actor metadata (Birthdate, Ideology/Religion, Disposition) ---
 
     function getActorBirthDate(actor) {
-        if (!actor) return "Unknown";
+        if (!actor) return T("AutoIdle.grave.bornUnknown");
         let preset = null;
         const actorData = actor.actor ? actor.actor() : (actor._actorId ? $dataActors[actor._actorId] : null);
         const m = actorData && actorData.note && actorData.note.match(/<Preset:\s*([^>]+)>/i);
@@ -10045,27 +10016,28 @@
             return String(preset.birthDate);
         }
         if (actor._birthDate) return String(actor._birthDate);
-        if (actor._birthYear) return `Year ${actor._birthYear}`;
+        if (actor._birthYear) return T("AutoIdle.grave.bornYear", { year: actor._birthYear });
 
         const actorId = actor.actorId ? actor.actorId() : actor._actorId;
         if (window.NPCSocietyRegistry && window.NPCSocietyRegistry.getProfile) {
             const prof = window.NPCSocietyRegistry.getProfile(actorId);
             if (prof && prof.birthDate) return String(prof.birthDate);
-            if (prof && prof.birthYear) return `Year ${prof.birthYear}`;
+            if (prof && prof.birthYear) return T("AutoIdle.grave.bornYear", { year: prof.birthYear });
         }
         if (actor._backstory) {
             if (actor._backstory.birthDate) return String(actor._backstory.birthDate);
-            if (actor._backstory.birthYear) return `Year ${actor._backstory.birthYear}`;
+            if (actor._backstory.birthYear) return T("AutoIdle.grave.bornYear", { year: actor._backstory.birthYear });
         }
 
         const tds = window.TimeDateSystem;
         const currentYear = (tds && tds.getDateTimeFromMinutes && tds.getGameTimeMinutes)
             ? tds.getDateTimeFromMinutes(tds.getGameTimeMinutes()).year : 2026;
-        return `Year ${currentYear - 25}`;
+        return T("AutoIdle.grave.bornYear", { year: currentYear - 25 });
     }
 
     function getLeaderFuneralPrayer(leader, deceasedName) {
-        if (!leader) return `\"Rest in peace, ${deceasedName}. Your journey is remembered.\"`;
+        const say = (k) => T("AutoIdle.corpse.prayer." + k, { name: deceasedName });
+        if (!leader) return say("default");
         const actor = leader;
         const prof = (window.NPCSocietyRegistry && window.NPCSocietyRegistry.getProfile)
             ? window.NPCSocietyRegistry.getProfile(actor.actorId ? actor.actorId() : 1) : null;
@@ -10073,15 +10045,15 @@
         const idLower = String(ideology).toLowerCase();
 
         if (idLower.includes("sacred") || idLower.includes("orthodox") || idLower.includes("church") || idLower.includes("temple")) {
-            return `\"May the Eternal Light receive your soul, ${deceasedName}, and grant you everlasting peace. Amen.\"`;
+            return say("sacred");
         } else if (idLower.includes("nature") || idLower.includes("pagan") || idLower.includes("animist") || idLower.includes("shaman")) {
-            return `\"Return to the earth and the deep roots of the ancient forest, ${deceasedName}. Walk free among the spirits.\"`;
+            return say("nature");
         } else if (idLower.includes("arcanist") || idLower.includes("void") || idLower.includes("cosmic") || idLower.includes("eldritch")) {
-            return `\"To the astral tides and the starry deep, may the great expanse shelter your essence, ${deceasedName}.\"`;
+            return say("arcane");
         } else if (idLower.includes("martyr") || idLower.includes("zealot") || idLower.includes("warrior")) {
-            return `\"Blood was paid and duty fulfilled, ${deceasedName}. Rise in honor beyond the veil.\"`;
+            return say("martyr");
         } else {
-            return `\"Rest well, ${deceasedName}. Your battle is done, and your name will not be forgotten.\"`;
+            return say("generic");
         }
     }
 
@@ -10090,29 +10062,10 @@
         const prof = (window.NPCSocietyRegistry && window.NPCSocietyRegistry.getProfile)
             ? window.NPCSocietyRegistry.getProfile(actor.actorId ? actor.actorId() : 1) : null;
         const disp = (actor.disposition ? actor.disposition() : (prof && prof.disposition != null ? prof.disposition : 50));
-
-        if (disp >= 70) {
-            const pool = [
-                `I'll never forget what you did for us, ${deceasedName}... Rest in peace.`,
-                `You didn't deserve this, ${deceasedName}. We'll carry your memory with us.`,
-                `May you find the peace you were looking for, my friend.`
-            ];
-            return pool[Math.floor(Math.random() * pool.length)];
-        } else if (disp <= 35) {
-            const pool = [
-                `Told you recklessness would catch up to you, ${deceasedName}... damn it.`,
-                `The road takes what it wants. Farewell, ${deceasedName}.`,
-                `Quiet now, ${deceasedName}... sleep well.`
-            ];
-            return pool[Math.floor(Math.random() * pool.length)];
-        } else {
-            const pool = [
-                `Another one claimed by the road. We have to keep moving, for ${deceasedName}'s sake.`,
-                `They fought bravely until the end. We honor their memory.`,
-                `Keep your guard up, everyone. ${deceasedName} wouldn't want us falling next.`
-            ];
-            return pool[Math.floor(Math.random() * pool.length)];
-        }
+        const mood = disp >= 70 ? "warm" : (disp <= 35 ? "cold" : "neutral");
+        const pool = T.pool("AutoIdle.corpse.commemorate." + mood);
+        const line = pool.length ? pool[Math.floor(Math.random() * pool.length)] : "";
+        return String(line).replace(/\{name\}/g, deceasedName);
     }
 
     // --- 1. Battle & Map Sprite Sideways Rendering (Downed State) ---
@@ -10585,7 +10538,7 @@
         const leader = $gameParty.leader();
         const prayer = getLeaderFuneralPrayer(leader, corpse.name);
         window.skipLocalization = true;
-        $gameMessage.add(`\\C[1]${leader ? leader.name() : "Leader"}:\\C[0] ${prayer}`);
+        $gameMessage.add(`\\C[1]${leader ? leader.name() : T("AutoIdle.corpse.leaderFallback")}:\\C[0] ${prayer}`);
         window.skipLocalization = false;
     }
 
@@ -10849,6 +10802,7 @@
                         try { window.BattleMood.onMemberLost(this); } catch (e) {}
                     }
                     $gameParty.removeActor(this.actorId());
+                    if (window.StoryDeath) window.StoryDeath.noteRemoved(this);
                     $gamePlayer.refresh();
                     $gamePlayer.followers().refresh();
                     Loose.gatherNear();

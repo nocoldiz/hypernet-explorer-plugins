@@ -481,8 +481,8 @@
                 ${legendKey('var(--text-secondary-active, #e5c07b)', lOpen)}
                 ${legendKey('var(--border-secondary-hover-translucent-15, #4b5563)', lLocked)}
                 <span class="sg-legend-key">
-                    <span class="sg-zoom" onclick="SceneManager._scene.zoomAtlas(-1)" title="Zoom Out">-</span>
-                    <span class="sg-zoom" onclick="SceneManager._scene.zoomAtlas(1)" title="Zoom In">+</span>
+                    <span class="sg-zoom" onclick="SceneManager._scene.zoomAtlas(-1)" title="${typeof T === 'function' ? T('SkillMaster.atlas.zoomOut') : 'Zoom out'}">-</span>
+                    <span class="sg-zoom" onclick="SceneManager._scene.zoomAtlas(1)" title="${typeof T === 'function' ? T('SkillMaster.atlas.zoomIn') : 'Zoom in'}">+</span>
                 </span>
                 <span class="sg-hint">${hint}</span>
             </div>`;
@@ -634,7 +634,7 @@
                 const learnedLabel = typeof T === 'function' ? T('SkillMaster.learned') : 'Learned';
                 actionsListHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg-success-green-15, rgba(82,196,26,0.15)); border:1px solid var(--border-forest-green, var(--text-cost-ok)); border-radius:6px; color:var(--text-forest-complete, var(--text-cost-ok)); font-weight:bold; font-size:1.365rem">
-                        <span>${actor.name()}</span>
+                        <span>${window.NPCShared.escapeHtml(actor.name())}</span>
                         <span style="font-family:var(--font-ui); font-size:1.196rem; text-transform:uppercase">✓ ${learnedLabel}</span>
                     </div>
                 `;
@@ -669,7 +669,7 @@
                     </div>
                 `;
             } else {
-                const teachText = typeof T === 'function' ? T('SkillMaster.teachPupil', { actor: actor.name() }) : `Teach ${actor.name()}`;
+                const teachText = typeof T === 'function' ? T('SkillMaster.teachPupil', { actor: window.NPCShared.escapeHtml(actor.name()) }) : `Teach ${window.NPCShared.escapeHtml(actor.name())}`;
                 actionsListHTML += `
                     <div class="inspect-btn action-button ${isActionFocused ? 'focused' : ''} ${!canAfford ? 'disabled' : ''}" onclick="SceneManager._scene.teachSkill(${actor.actorId()}, ${cost})" style="display:flex; justify-content:space-between; align-items:center; margin-top:0">
                         <span>${teachText}</span>
@@ -701,8 +701,12 @@
 
         const dt = (skill.meta && skill.meta.DamageType) ||
             (skill.note && (skill.note.match(/<DamageType:\s*([^>]+)>/i) || [])[1]);
+        const dtKey = dt ? 'VectorGun.damageType.' + String(dt).trim() : '';
+        const dtLabel = dt
+            ? ((typeof T === 'function' && typeof T.has === 'function' && T.has(dtKey)) ? T(dtKey) : String(dt).trim())
+            : '';
         const damageTypeBadge = (dt && String(dt).trim() !== 'None')
-            ? `<span>&middot;</span><span style="color:var(--text-secondary-active, var(--text-primary-hover)); font-weight:bold;">${String(dt).trim()}</span>`
+            ? `<span>&middot;</span><span style="color:var(--text-secondary-active, var(--text-primary-hover)); font-weight:bold;">${dtLabel}</span>`
             : '';
 
         const rootSizing = opts.popup ? 'flex:1 1 auto; min-height:0;' : 'height:100%;';
@@ -818,7 +822,7 @@
                 let tabs = '';
                 members.forEach((m, idx) => {
                     const sel = m.actorId() === this._teachActorId ? 'selected' : '';
-                    tabs += `<div class="companion-tab ${sel}" onclick="SceneManager._scene.switchTeachActor(${idx})">${m.name()}</div>`;
+                    tabs += `<div class="companion-tab ${sel}" onclick="SceneManager._scene.switchTeachActor(${idx})">${window.NPCShared.escapeHtml(m.name())}</div>`;
                 });
                 compRow.innerHTML = window.CharSwitcher ? window.CharSwitcher.inner(`<div class="companion-tabs-row">${tabs}</div>`, members.length) : `<div class="companion-tabs-row">${tabs}</div>`;
             }
@@ -1016,7 +1020,7 @@
                 const teachActor = this.getTeachActor();
                 const pupilLabel = typeof T === 'function' ? T('SkillMaster.pupil') : 'Pupil';
                 const pupilLine = teachActor
-                    ? `<div style="font-family:var(--font-ui); font-size:1.219rem; color:var(--text-card-medium, #aaa); text-align:center; margin-top:8px">${pupilLabel} <strong style="color:var(--text-secondary-active, var(--text-primary-hover))">${teachActor.name()}</strong> &middot; ${knowledge} KP</div>`
+                    ? `<div style="font-family:var(--font-ui); font-size:1.219rem; color:var(--text-card-medium, #aaa); text-align:center; margin-top:8px">${pupilLabel} <strong style="color:var(--text-secondary-active, var(--text-primary-hover))">${window.NPCShared.escapeHtml(teachActor.name())}</strong> &middot; ${knowledge} KP</div>`
                     : '';
                 const fuseLabel = typeof T === 'function' ? T('SkillMaster.fuseSpells') : 'Fuse Spells';
                 const magicSysLabel = typeof T === 'function' ? T('SkillMaster.magicSystem.tabLabel') : 'Magical Systems Wheel';

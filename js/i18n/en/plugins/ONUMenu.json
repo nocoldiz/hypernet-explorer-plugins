@@ -47,12 +47,12 @@
     "memberSeat": "{name}, for {faction}",
     "declineSeat": "Take no seat this week",
     "unaccredited": "Unaccredited",
-    "unaccreditedHint": "This character holds no seat. The credentials desk decides who gets one.",
+    "unaccreditedHint": "No seat. Get one at the credentials desk.",
     "noSeatsTitle": "No power will vouch for you",
-    "noSeatsHint": "Accreditation needs a power that is neutral or positive toward you. Improve a reputation and come back.",
-    "sgBlurb": "The Secretary General does not vote, but is the only one who can break a tie on the Security Council.",
+    "noSeatsHint": "You need a power that is neutral or friendly to you. Raise your reputation first.",
+    "sgBlurb": "Doesn't vote, but breaks Security Council ties.",
     "holdsSeat": "{name} holds this delegation's seat at the assembly.",
-    "holdsSeatParent": "{name} sits for {faction}, which this answers to.",
+    "holdsSeatParent": "{name} sits for {faction}, which this delegation belongs to.",
     "you": "You"
   },
   "role": {
@@ -89,8 +89,8 @@
   },
   "portal": {
     "appName": "Chamber",
-    "subtitle": "What the assembly does, who sits in it, and the party's standing with each power.",
-    "inPerson": "Taking a seat, speaking and voting are done in the chamber itself.",
+    "subtitle": "Assembly business, seats and your standing with each power.",
+    "inPerson": "Sit, speak and vote in the chamber.",
     "tab": {
       "floor": "The floor",
       "powers": "Powers",
@@ -101,11 +101,11 @@
     "nextSittingIn": "Next sitting in {n} weeks",
     "sittingThisWeek": "Sitting this week",
     "powersSeated": "{n} powers hold a seat.",
-    "weHold": "The party holds {n} seats, paying {pay} a week.",
-    "weHoldNothing": "The party holds no seat. Anything decided is decided without us.",
-    "floorNote": "The chamber meets every Monday at 13:00. Sittings you do not attend are resolved without you.",
+    "weHold": "You hold {n} seats, paying {pay} a week.",
+    "weHoldNothing": "You hold no seats.",
+    "floorNote": "Meets every Monday at 13:00. Missed sittings go ahead without you.",
     "noChamber": "No assembly has been convened in this world.",
-    "powersBlurb": "Standing is tracked per character. This column shows {who}.",
+    "powersBlurb": "Standing is per character. Showing {who}.",
     "colDelegate": "Delegate",
     "colFor": "Sits for",
     "colStanding": "Standing",
@@ -121,11 +121,14 @@
     "unseated": "No seat",
     "alreadySeated": "Already seated.",
     "wouldTakeNobody": "No power would have them.",
-    "seatsBlurb": "Any power that does not dislike you can offer a seat. Seats are taken in the chamber.",
-    "businessBlurb": "Every motion the assembly can vote on. The weekly agenda is rolled each day.",
+    "seatsBlurb": "Any power that doesn't dislike you can offer a seat. Take it in the chamber.",
+    "businessBlurb": "All motions the assembly can vote on. The agenda rerolls daily.",
     "grave": "Grave",
     "ordinary": "Ordinary",
-    "graveNote": "A grave motion goes on to the Security Council, where a single veto ends it.",
+    "graveNote": "Goes to the Security Council, where one veto stops it.",
     "noParty": "There is nobody to seat."
+  },
+  "dice": {
+    "debate": "ONU Assembly Debate"
   }
 }

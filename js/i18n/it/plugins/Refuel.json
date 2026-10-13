@@ -30,15 +30,15 @@
     "items": {
       "vehicles": {
         "name": "Veicoli",
-        "text": "Ogni veicolo del gruppo che va a carburante. Scegline uno per vedere come rifornirlo."
+        "text": "I tuoi veicoli a carburante. Scegline uno per rifornirlo."
       },
       "options": {
         "name": "Opzioni di rifornimento",
-        "text": "Compra un numero di litri o Fai il pieno. Il prezzo di ogni opzione è indicato accanto."
+        "text": "Compra un numero di litri o fai il pieno."
       },
       "overview": {
         "name": "Panoramica carburante",
-        "text": "Il livello del carburante del veicolo scelto, il prezzo al litro e quanto ha il gruppo nel portafoglio."
+        "text": "Livello del carburante, prezzo al litro e i tuoi soldi."
       },
       "exit": {
         "name": "Esci dalla stazione",

@@ -2,7 +2,7 @@
   "help": {
     "controls_moving_around": {
       "title": "Controls: Moving Around",
-      "description": "Arrows or WASD move. Z or Enter confirms and talks, X or Escape cancels. Hold Shift to run.\n\nRunning spends AP: a full meter is about ninety seconds. Walking refills it slowly, standing still quickly. Battle skills draw on the same meter.\n\nZ acts on whatever you face. Z on a companion opens their Empathize sheet.\n\nC kicks, always with the foot. Kicks break crates, force doors and shove objects. A kickable thing makes a sound; silence means it is not. Locked doors take seven to fifteen kicks."
+      "description": "Arrows or WASD move. Z or Enter confirms and talks, X or Escape cancels. Hold Shift to run.\n\nRunning spends AP, the same meter battle skills use. Walk or stand still to refill it.\n\nZ acts on whatever you face. Z on a companion opens their Empathize sheet.\n\nC kicks. Kicks break crates, force doors and shove objects. If nothing makes a sound, it can't be kicked. Locked doors take several kicks."
     },
     "controls_menu_hotkeys": {
       "title": "Controls: Menu Hotkeys",
@@ -26,7 +26,7 @@
     },
     "searching_inside_menus": {
       "title": "Searching Inside Menus",
-      "description": "Every long list carries the same search strip, this book included. It starts as a magnifier at the top of the page.\n\n- while typing, no menu hotkey fires\n- Escape empties the field, Escape again leaves it\n\nThe main menu search covers several screens at once: carried items, gear worn by companions, skills, recipes you can make now, bestiary creatures."
+      "description": "Every long list has a search bar, this book included. It starts as a magnifier at the top of the page.\n\n- while typing, menu hotkeys are off\n- Escape clears the field, Escape again leaves it\n\nThe main menu search covers several screens at once: carried items, companions' gear, skills, recipes you can make now, bestiary creatures."
     },
     "saving,_autosave_and_quicksaves": {
       "title": "Saving, Autosave and Quicksaves",
@@ -38,15 +38,15 @@
     },
     "options": {
       "title": "Options",
-      "description": "Options is split into tabs, and plugins add rows rather than menus of their own.\n\n- Video: resolution, fullscreen, pixel perfect scaling, retro shader, UI scaling, party HUD\n- Audio: volumes, battle music picker\n- Gameplay: party formation, auto idle explorer, world map hints\n- Commands: keyboard and gamepad remapping\n- Experimental: includes the local language model that can write NPC dialogue instead of the Markov chains\n\nFullscreen turns itself on the first time a distributed build runs, then keeps your setting."
+      "description": "Options is split into tabs:\n\n- Video: resolution, fullscreen, pixel perfect scaling, retro shader, UI scaling, party HUD\n- Audio: volumes, battle music picker\n- Gameplay: party formation, auto idle explorer, world map hints\n- Commands: keyboard and gamepad remapping\n- Experimental: includes a local language model that writes NPC dialogue\n\nFullscreen is on the first time the game runs, then keeps your setting."
     },
     "mods_and_updates": {
       "title": "Mods and Updates",
-      "description": "The game reads a mods folder next to the executable. Each subfolder mirrors the game's own folders, so a mod can replace a data file, add a picture or add content. Desktop build only.\n\nIn the Mod Manager, Enter toggles a mod and arrows move it in the load order. The bottom of the list wins.\n\nThe title screen has an Updates entry, which compares your files against the build's and downloads only what differs. Nothing is moved into place until everything is downloaded and checked, replaced files are backed up, and the game must be reopened. Two channels, stable and unstable, and any earlier build can be restored."
+      "description": "Mods go in the mods folder next to the executable. A mod can replace data, add pictures or add content. Desktop build only.\n\nIn the Mod Manager, Enter toggles a mod and arrows change the load order. The bottom of the list wins.\n\nUpdates on the title screen downloads only the files that changed. Replaced files are backed up, and the game must be restarted. Pick the stable or unstable channel, or restore any earlier build."
     },
     "the_party": {
       "title": "The Party",
-      "description": "Three members. The first is the leader: the one you steer, the one whose needs drain fastest, the one NPCs answer to.\n\nA fourth companion walks along without being a member. It never fights and cannot be hurt.\n\nEveryone keeps their own needs, opinions, reputation, specializations and standing with the other two.\n\nFormation is set in Options. Close walks everyone in the leader's footsteps; Loose lets them wander and regroup off screen. A loose party acts on its own, and any meter under 35% sends that member off to eat, wash, play or rent a room out of the party purse.\n\nRun for two seconds to call everyone in. Face a companion and confirm to open their Empathize sheet."
+      "description": "Three members. The first is the leader: the one you steer, whose needs drain fastest and who NPCs talk to.\n\nA fourth companion can walk along without being a member. It never fights and cannot be hurt.\n\nEach member has their own needs, opinions, reputation, specializations and relationships with the other two.\n\nSet formation in Options. Close keeps everyone behind the leader; Loose lets them wander and regroup off screen. Loose members look after themselves when a need runs low, paying from the party's money.\n\nRun for a moment to call everyone back. Face a companion and confirm to open their Empathize sheet."
     },
     "making_your_characters": {
       "title": "Making Your Characters",
@@ -54,7 +54,7 @@
     },
     "classes": {
       "title": "Classes",
-      "description": "A class sets starting stats, the schools you learn fastest and a favoured element.\n\nEach names a primary and a secondary category. Primary gives 3x progression at half price, secondary 1.5x at full price. Anything else needs a skill already known in that school and costs triple.\n\nTraining lists your curriculum only, though outside skills are still learnable.\n\nAny class can equip any weapon; weapon skill is a trainable proficiency instead.\n\nCreature classes are a separate set: Feral, Mimic, Monster, Mana Cyborg, Ghost, Zombie, Mutant, Drone. A character on one of them is an animal, not a person."
+      "description": "A class sets starting stats, the schools you learn fastest and a favoured element.\n\nEach class has a primary and a secondary category. Primary skills progress fastest and cost least, secondary ones progress faster at normal price. Skills from other schools need a known skill in that school first and cost much more.\n\nTraining lists your class curriculum, but other skills can still be learned.\n\nAny class can equip any weapon. Weapon skill is trained separately.\n\nCreature classes are a separate set: Feral, Mimic, Monster, Mana Cyborg, Ghost, Zombie, Mutant, Drone. A character with one of them counts as an animal."
     },
     "traits": {
       "title": "Traits",
@@ -66,7 +66,7 @@
     },
     "playing_a_creature": {
       "title": "Playing A Creature",
-      "description": "A party member can be a creature, built from one archetype or two crossed.\n\nThe archetype drives the body: the limb and organ system gives it exactly that species' parts, reach, hands and weak points.\n\nA creature class is non sentient, with no conversation, politics, savings or property. A civilised class is a person shaped like an animal, treated as a person everywhere.\n\nAnatomy is mechanical, not cosmetic. It decides how many weapons can be held, whether you can be choked, and what a pregnancy produces."
+      "description": "A party member can be a creature, built from one archetype or two crossed.\n\nThe archetype sets the body: that species' parts, reach, hands and weak points.\n\nA creature class is non sentient: no conversation, politics, savings or property. A civilised class is a person shaped like an animal, and is treated as a person.\n\nAnatomy affects play. It decides how many weapons can be held, whether you can be choked, and what a pregnancy produces."
     },
     "portraits_and_3d_models": {
       "title": "Portraits and 3D Models",
@@ -82,7 +82,7 @@
     },
     "reproduction_and_pregnancy": {
       "title": "Reproduction and Pregnancy",
-      "description": "Every body has a reproductive type, set at creation from the species:\n\n- Testicles: fertility, count, motility and morphology answer to hormones and condition\n- Uterus: a 28 day cycle, fertile on days 12 to 16\n- Oviparous: a clutch of one to four eggs\n- Plant: seeds develop endlessly and stockpile until planted\n- Mitosis: the body divides and makes a copy\n\nA pregnancy runs the term of the species. Biologics shows gestational age and fetal stage, symptoms arrive as states, and the heart rate climbs.\n\nNewborns register in Followers as children with the parent's face. Mitosis makes a copy, not a child."
+      "description": "Every body has a reproductive type, set by its species:\n\n- Testicles: fertility depends on hormones and condition\n- Uterus: a monthly cycle with a few fertile days\n- Oviparous: lays a clutch of eggs\n- Plant: makes seeds that pile up until planted\n- Mitosis: the body divides into a copy\n\nA pregnancy lasts as long as the species needs. Biologics shows its progress, symptoms arrive as states, and the heart rate climbs.\n\nNewborns appear in Followers as children with the parent's face. Mitosis makes a copy of the parent."
     },
     "death,_gravestones_and_permadeath": {
       "title": "Death, Gravestones and Permadeath",
@@ -90,11 +90,11 @@
     },
     "what_your_companions_say": {
       "title": "What Your Companions Say",
-      "description": "Two or more companions hold discussions of two to four lines, drawn from whatever is happening: a recent purchase, low health, a meter under 35%, a diary line from the last few hours, the biome, the road, the money, the leader, the plan.\n\nA third member's personality usually closes the exchange, so the same script reads differently depending on who is there. The same purchase draws a resentful line from the disciplined member, a why only one from the hedonist.\n\nThey talk while driving too, and on trains, coaches and taxis. A party of one talks to itself."
+      "description": "Two or more companions chat about what is going on: a recent purchase, low health, a need running low, something from the diary, the biome, the road, money, the leader, the plan.\n\nPersonality shapes each line, so the same topic plays out differently depending on who is in the party.\n\nThey also talk while driving and on trains, coaches and taxis. A party of one talks to itself."
     },
     "the_auto_explorer": {
       "title": "The Auto Explorer",
-      "description": "An Options toggle lets the game play itself while you are idle. The party explores, crosses the map and looks after its needs the way a loose companion does, paying the same costs you would, and hands control back the moment you press anything."
+      "description": "An Options toggle plays the game for you while you are idle. The party explores, crosses the map and looks after its needs the way a loose companion does, paying the same costs you would, and gives control back as soon as you press any key."
     },
     "levels_and_experience": {
       "title": "Levels and Experience",
@@ -102,19 +102,19 @@
     },
     "knowledge_points": {
       "title": "Knowledge Points",
-      "description": "Knowledge points buy skills, and KP belongs to the party rather than to one member. They come from fights scaled against the party's median level, from quests, adventures, dreams and Raman scans.\n\nPrices are computed from combat value: MP and AP cost, damage scaling, repeats, targets hit, states inflicted. The weakest skill is 50 KP, an ordinary one a few hundred, the strongest a couple of thousand. Esoteric costs ten times its score, Forbidden a hundred times.\n\nPrimary school halves the price, secondary pays full, outside schools triple it."
+      "description": "Knowledge points (KP) buy skills and are shared by the whole party. You earn them from fights, quests, adventures, dreams and Raman scans.\n\nStronger skills cost more. Esoteric and Forbidden skills cost far more.\n\nSkills from your primary school are cheapest, secondary ones cost the normal price, other schools cost the most."
     },
     "the_atlas_of_circles": {
       "title": "The Atlas of Circles",
-      "description": "Skills are laid out as a sphere grid. Each school is an alchemical circle: rings from its weakest working outward to its strongest, joined by spokes, with upgrade spurs on the rim ending in esoteric workings.\n\nYou can only buy a skill adjacent to one you know, and one known neighbour is enough. The innermost ring of every school is always open.\n\nForbidden workings sit alone in the centre, connected to nothing. The whole school must be known before any opens.\n\nOne school at a time: use the pager or walk off the rim. Wheel and Shift zoom, drag pans."
+      "description": "Skills are laid out as a sphere grid. Each school is a circle: rings run from its weakest skills outward to its strongest, with upgrade branches on the rim.\n\nYou can buy a skill only if it is next to one you know. The inner ring of every school is always open.\n\nForbidden skills sit alone in the centre. They open only once you know the whole school.\n\nOne school at a time: use the pager or walk off the rim. Wheel and Shift zoom, drag pans."
     },
     "training_and_progression": {
       "title": "Training and Progression",
-      "description": "Each member trains one skill at a time. Winning a battle is worth 3 points, using a skill of the same category 2. Primary categories multiply this by 3, secondary by 1.5."
+      "description": "Each member trains one skill at a time. Winning battles and using skills of the same category both advance it. Primary categories train fastest, secondary ones faster than the rest."
     },
     "specializations": {
       "title": "Specializations",
-      "description": "About eight hundred specializations, from Wrestling to Accounting to Beekeeping. Each is governed by one attribute and has five tiers, Untrained to Master.\n\nA level is the highest of three sources: trained through play, granted by class, granted by a trait.\n\nThey train by doing. Cooking raises cooking, selling raises haggling. The leader earns full value, anyone else present 35%.\n\nThey are read everywhere: forging quality, lockpicking, hold damage, what a merchant accepts, whether a recipe can be read at all."
+      "description": "Hundreds of specializations, from Wrestling to Accounting to Beekeeping. Each uses one attribute and has five tiers, Untrained to Master.\n\nYour level is the highest of: trained through play, granted by class, granted by a trait.\n\nThey train by doing. Cooking raises Cooking, selling raises Haggling. The leader gains the most, others present gain less.\n\nThey affect forging quality, lockpicking, holds, what merchants accept and which recipes you can read."
     },
     "class_passives": {
       "title": "Class Passives",
@@ -122,7 +122,7 @@
     },
     "the_nine_skill_slots": {
       "title": "The Nine Skill Slots",
-      "description": "A character carries nine skills into a fight, out of everything they know. The skill menu is tabbed by role, and the nine chosen fill the battle quick bar.\n\nEverything known stays known, and changing the loadout between fights is free."
+      "description": "Each character takes nine skills into a fight. The skill menu is tabbed by role, and the nine you pick fill the battle quick bar.\n\nYou never forget a skill, and changing the nine between fights is free."
     },
     "fusing_spells": {
       "title": "Fusing Spells",
@@ -130,7 +130,7 @@
     },
     "grimoires_and_skill_books": {
       "title": "Grimoires and Skill Books",
-      "description": "A grimoire offers five random workings and lets one reader claim one. The five are rolled once when the book is opened, against the whole party; switching reader does not reroll them.\n\nA reader can only claim an offer whose MP cost fits their maximum MP and that they do not already know. The party's median PSI raises the chance of a Forbidden working turning up.\n\nThere are school specific grimoires, category specific skill books, and the Forbidden Grimoire, which offers nothing else."
+      "description": "A grimoire offers five random spells and one reader picks one. The offers are fixed when the book is opened; switching reader does not change them.\n\nYou can only take a spell you don't know and can afford with your max MP. Higher PSI makes Forbidden spells more likely.\n\nThere are school grimoires, category skill books, and the Forbidden Grimoire, which offers only Forbidden spells."
     },
     "expression_seeds": {
       "title": "Expression Seeds",
@@ -138,11 +138,11 @@
     },
     "equipment_hands_and_slots": {
       "title": "Equipment: Hands and Slots",
-      "description": "There is no dual wield flag. Weapon slots come from anatomy: every body part the species can hold a weapon with is a slot. Hands take a weapon or a shield without distinction, so two shields are as legal as two swords.\n\n- a two handed weapon needs two free hands\n- a body with no hands holds its weapon in the mouth, and anything fits. Samurai keep a mouth slot on top of their hands\n- eight slots maximum, however many limbs a body has\n- past two weapons each parameter becomes the median of what is carried, and two random weapons swing each turn\n- losing a limb removes its slot and drops what it held"
+      "description": "Weapon slots come from anatomy: every body part that can hold a weapon is a slot. Hands take a weapon or a shield, so two shields work as well as two swords.\n\n- a two handed weapon needs two free hands\n- a body with no hands holds its weapon in the mouth. Samurai get a mouth slot as well as their hands\n- eight slots at most\n- with more than two weapons, stats are averaged and two random weapons swing each turn\n- losing a limb removes its slot and drops what it held"
     },
     "weapon_proficiency": {
       "title": "Weapon Proficiency",
-      "description": "Any class can equip any weapon type. Skill with a weapon is a specialization, one per type, twelve in all, starting at Intermediate for the types your class was once limited to and Untrained for the rest.\n\nIt scales the weapon's parameters: 33% Untrained, 67% Beginner, 100% Intermediate, 110% Advanced, 125% Master.\n\nWinning a battle grants one point per equipped weapon type."
+      "description": "Any class can equip any weapon type. Skill with each weapon type is its own specialization. It starts at Intermediate for your class's traditional weapons and Untrained for the rest.\n\nHigher tiers make the weapon stronger. Untrained wielders get much less out of it.\n\nWinning a battle trains every equipped weapon type."
     },
     "what_a_weapon_scales_on": {
       "title": "What a Weapon Scales On",
@@ -154,7 +154,7 @@
     },
     "modifiers_on_gear": {
       "title": "Modifiers on Gear",
-      "description": "A weapon or armour piece can carry one modifier, which changes its stats, price and traits. Sharp raises STR and price on weapons, Refined raises CON, WIS and price on anything, Poisoned adds poison to a weapon, Worn lowers CON, WIS and price on armour.\n\nThe modifier is part of the item and moves with it."
+      "description": "A weapon or armour piece can have one modifier, which changes its stats, price and traits. Sharp raises STR and price on weapons, Refined raises CON, WIS and price on anything, Poisoned adds poison to a weapon, Worn lowers CON, WIS and price on armour.\n\nThe modifier stays with the item."
     },
     "weight_and_encumbrance": {
       "title": "Weight and Encumbrance",
@@ -178,19 +178,19 @@
     },
     "the_five_needs": {
       "title": "The Five Needs",
-      "description": "Everyone in the world, your party included, carries five meters: Hunger, Sleep, Hygiene, Company and Fun.\n\nAll five run 100 to 0 and drain with time, and time passes as you walk: a minute per ten steps, ten minutes per world map tile, two in a vehicle. The leader drains fastest and running drains everything faster.\n\nThey show as chips beside each party card, colouring below 20% and again at 0. Every change is announced with the party median.\n\nAt 0, hunger drains HP, sleep drains MP, and the rest cost you socially and mentally.\n\nAugments can slow a need, stop it or reverse it: a ruminant stomach burns less, a somnologic regulator never tires, a self cleaning dermis gains hygiene as you walk."
+      "description": "Everyone, your party included, has five needs: Hunger, Sleep, Hygiene, Company and Fun.\n\nThey drop as time passes, and time passes as you walk, faster on the world map. The leader's drop fastest, and running drains them all faster.\n\nThey show as chips beside each party card and change colour when low and when empty.\n\nAn empty Hunger drains HP, an empty Sleep drains MP, and the others cost you socially and mentally.\n\nAugments can slow, stop or reverse a need."
     },
     "hunger_and_nutrition": {
       "title": "Hunger and Nutrition",
-      "description": "Every edible item carries calories, fat and protein, and eating credits all three. What a meal is worth comes from its contents, not its price.\n\nHunger can pass 100, up to 150%. Above 110% you are overfed, which is a state with penalties, and above 100 it burns three times faster.\n\nTemperature costs food at both ends: cold burns calories for warmth, heat raises metabolism.\n\nAt 0 you take continuous HP damage until you eat."
+      "description": "Food has calories, fat and protein. A meal's value comes from what is in it, not its price.\n\nYou can eat past full, but overeating gives the Overfed state and burns food faster.\n\nCold and heat both make you hungry faster.\n\nWith Hunger empty you keep losing HP until you eat."
     },
     "sleep,_rest_and_time_awake": {
       "title": "Sleep, Rest and Time Awake",
-      "description": "Two separate values are tracked.\n\nThe sleep meter is how tired you feel. Coffee or a sit down refills it, and at 0 it drains MP.\n\nTime since you last slept is a stamp on the world clock that only a night's rest clears: zero up to a day awake, climbing through two, maxed at a week. It is what turns dreams hostile and pulls the party's mind apart.\n\nBeds, campfires, tents and world map camps open the rest menu, and sleep refills the meter whatever hour you wake at. Wait and the T hotkey only move the clock. Cryogenic sleep is separate: pick a year to wake in and the world moves on without you."
+      "description": "Two separate things are tracked.\n\nThe Sleep meter is how tired you feel. Coffee or sitting down refills it, and when empty it drains MP.\n\nTime awake counts since your last real sleep, and only a night's rest resets it. The longer you stay awake, the worse your dreams get and the more the party's mind suffers.\n\nBeds, campfires, tents and world map camps open the rest menu. Waiting and the T hotkey only move the clock. Cryogenic sleep lets you pick a year to wake in while the world moves on."
     },
     "hygiene,_and_what_it_costs_you": {
       "title": "Hygiene, and What It Costs You",
-      "description": "Hygiene drains slightly faster than sleep. Refill it at a washroom, shower, sink or fountain; loose companions go and find one below 35%.\n\nIt works both ways: your hygiene is read against the person you talk to, and theirs against you. At 60% and above nobody notices; below that each point costs a little under half a point of standing, capped at 45.\n\nTraits set how much it matters. Feral ignores it, Ascetic barely notices, Street Urchin, Cave Dweller, Survivalist, Farmer and Veteran mind little. Proud, Wealthy, Beautiful, Perfectionist, Noble, Hypochondriac and Germaphobe mind a lot. Several such traits multiply; one \"does not notice\" trait overrides them all.\n\nCourting reads both bodies again at a heavier weight, and names which of the two needs a bath."
+      "description": "Refill Hygiene at a washroom, shower, sink or fountain. Loose companions go and find one when they need it.\n\nPeople notice how you smell, and you notice them. Low hygiene lowers what others think of you.\n\nTraits decide how much it matters. Feral ignores it, Ascetic barely notices, Street Urchin, Cave Dweller, Survivalist, Farmer and Veteran mind little. Proud, Wealthy, Beautiful, Perfectionist, Noble, Hypochondriac and Germaphobe mind a lot.\n\nIt matters even more when courting."
     },
     "company": {
       "title": "Company",
@@ -202,27 +202,27 @@
     },
     "cravings_and_withdrawal": {
       "title": "Cravings and Withdrawal",
-      "description": "Five traits are dependencies: alcohol, caffeine, nicotine, narcotics and gambling. Only a member with one has a craving meter.\n\nA craving runs backwards. It climbs while unfed, 0 is satisfied, 100 is withdrawal, and feeding it drops it to 0. Withdrawal starts at a full meter and only lifts once the craving is well below it, so one dose does not clear it.\n\nCravings climb slower during sleep, and always on the member carrying the trait."
+      "description": "Five traits are addictions: alcohol, caffeine, nicotine, narcotics and gambling. Only a member with one has a craving meter.\n\nThe craving climbs while unfed and drops when you feed it. A full meter means withdrawal, and one dose is not enough to end it.\n\nCravings climb slower while asleep."
     },
     "limbs_and_organs": {
       "title": "Limbs and Organs",
-      "description": "Every character and monster has individual limbs and organs, each with its own health, taken from its species.\n\nDamage spreads across parts. A part at 0 is destroyed, carries a permanent penalty while it stays that way, and changes what the body can do: a lost hand takes its weapon slot, a body with no hands holds a weapon in its mouth, damaged legs cost movement and evasion. A part at 0, damaged or severed can neither grapple nor be grappled.\n\nVital organs are shielded from ordinary damage and only opened by deliberate targeting. A blow to one is only lethal once its owner is under 25% health; until then it holds at 1.\n\nParts never heal on their own. They are treated at a clinic, restored by magic, or replaced with a prosthetic. In Blood and Oil a slashing or piercing blow can take a part off the body, carrying its augment with it.\n\nThe status sheet has an Anatomy section showing the body part by part."
+      "description": "Every character and monster has individual limbs and organs, each with its own health.\n\nDamage spreads across parts. A part at 0 is destroyed and changes what the body can do: a lost hand loses its weapon slot, a body with no hands holds a weapon in its mouth, damaged legs cost movement and evasion. Damaged or destroyed parts can't grapple or be grappled.\n\nVital organs can only be hit by aiming at them, and a blow to one is only fatal once its owner is badly hurt.\n\nParts never heal on their own. Treat them at a clinic, restore them with magic, or replace them with a prosthetic. In Blood and Oil a slashing or piercing blow can cut a part off, augment included.\n\nThe status sheet's Anatomy section shows the body part by part."
     },
     "biologics": {
       "title": "Biologics",
-      "description": "Biologics is the deep readout: vital signs, hormones, blood chemistry, brain regions and their activity, blood type, reproductive cycle, and every condition acting on the body.\n\nHeart rate answers to what is happening to you, hormones to sleep, injury and pregnancy. Blood type is set once and never changes.\n\nThe Ley Vein system links it to limb damage: blockages show up here when the body has been hurt."
+      "description": "Biologics is the deep readout: vital signs, hormones, blood chemistry, brain regions and their activity, blood type, reproductive cycle, and every condition acting on the body.\n\nHeart rate reacts to what is happening to you, hormones to sleep, injury and pregnancy. Blood type is set once and never changes.\n\nThe Ley Vein system links it to limb damage: blockages show up here when the body has been hurt."
     },
     "diseases": {
       "title": "Diseases",
-      "description": "Hundreds of diseases exist. Each has a transmission chance, one or more vectors (airborne, saliva, bite, contact, sexual and others), stat modifiers while carried, and often a state that only appears after the carrier has walked a set number of steps. That delay is the window period.\n\nTransmission is rolled between your own members each time you open the pause menu, and between the party and a townsperson each time you open their Empathize panel. Venereal diseases never spread by proximity.\n\nEvery NPC carries a medical history seeded from the world, readable on the Health tab of their panel.\n\nDiagnose examines the whole party and names every illness carried, window period included."
+      "description": "Hundreds of diseases exist. Each spreads in its own ways (airborne, saliva, bite, contact, sexual and others), changes stats while you have it, and often shows symptoms only after a while. That delay is the window period.\n\nDiseases can pass between party members and between you and anyone you talk to through Empathize. Sexual diseases don't spread by proximity.\n\nEvery NPC has a medical history, shown on the Health tab of their panel.\n\nDiagnose checks the whole party and names every illness, even ones still in the window period."
     },
     "epidemics": {
       "title": "Epidemics",
-      "description": "A continental epidemic model runs above individual illness, whether or not you are watching it. Each infected town runs its own curve, resolved at midnight, and exports cases along map distance with occasional long jumps. Public response builds the longer a town has been infected, and eventually breaks the wave.\n\nA medical outbreak is a pathogen with a case fatality ratio. A hysteria has none: dancing fever, genital theft panics, phantom gassers. A hysteria is caught by witnessing it and spread by talking about it.\n\nEvery world starts with three running: one hysteria, one ordinary outbreak, one rare and mortal.\n\nAnyone in an infected town is exposed, you included. Outbreaks move mood, hiring, shop traffic, need drain, gossip and the news, and the Eurodemics observatory tracks all of it."
+      "description": "Epidemics spread across the continent whether you watch or not. They travel between towns, and towns fight back the longer they are infected.\n\nAn outbreak is a real disease that can kill. A hysteria is not: dancing fever, panics, phantom gassers. You catch a hysteria by seeing it and spread it by talking about it.\n\nEvery world starts with three running: one hysteria, one ordinary outbreak, one rare and deadly.\n\nAnyone in an infected town is exposed, you included. Outbreaks affect mood, jobs, shops, needs, gossip and the news. Track them in the Eurodemics app."
     },
     "clinics,_prosthetics_and_field_surgery": {
       "title": "Clinics, Prosthetics and Field Surgery",
-      "description": "A clinic can install a body part, remove one, replace one or fit an implant. Installing costs 1000 euros per percent of body health the part represents, removal 100, and vital parts cannot be removed.\n\nField surgery is the same operation on the road: pick a patient and a surgeon, fit only parts already carried, take an augment out but never seat one, and pay nothing.\n\nEvery operation is a roll, with the odds shown first. The surgeon's Surgery specialization gives 35 / 50 / 65 / 78 / 90 percent by tier, then a roof is +10, a cave -5, the open -10, rain -15, a storm -25, snow +5, and operating on yourself -15.\n\nA failure wounds the patient elsewhere. Vital organs are only at risk in Blood and Oil."
+      "description": "A clinic can install, remove or replace a body part, or fit an implant. Bigger parts cost more to install. Vital parts can't be removed.\n\nField surgery works on the road and is free: pick a patient and a surgeon. You can only fit parts you carry, and you can remove an augment but not install one.\n\nEvery operation can fail, and the odds are shown first. A better Surgery specialization helps, a roof helps, bad weather and the open air hurt, and operating on yourself is harder.\n\nA failure wounds the patient elsewhere. Vital organs are only at risk in Blood and Oil."
     },
     "augments": {
       "title": "Augments",
@@ -230,11 +230,11 @@
     },
     "weather,_temperature_and_the_body": {
       "title": "Weather, Temperature and the Body",
-      "description": "Ambient temperature is a number, shown on the travel card, and it acts on the body. Cold burns calories for warmth and heat raises metabolism, so hunger drains faster at both ends.\n\nWeather also costs field surgery: rain -15, storms -25, snow +5. And it drives what people do and where they are."
+      "description": "Temperature is shown on the travel card and affects the body. Cold and heat both make hunger drop faster.\n\nBad weather makes field surgery riskier, and changes what people do and where they go."
     },
     "how_a_fight_starts": {
       "title": "How a Fight Starts",
-      "description": "There are no random encounters. Every monster stands on the map with its level over its head, and you fight it by walking into it.\n\nTurns are individual: each battler acts when its own turn comes up, in agility order, and your action resolves the moment you choose it.\n\nEnemies keep their damage between fights. A wounded monster you ran from is still wounded when you come back, and corpses stay on the map.\n\nFleeing always works."
+      "description": "There are no random encounters. Every monster stands on the map with its level over its head, and you fight it by walking into it.\n\nTurns are individual: each battler acts when its own turn comes up, in agility order, and your action resolves as soon as you choose it.\n\nEnemies keep their damage between fights. A wounded monster you ran from is still wounded when you come back, and corpses stay on the map.\n\nFleeing always works."
     },
     "the_battle_commands": {
       "title": "The Battle Commands",
@@ -242,11 +242,11 @@
     },
     "mp_and_ap": {
       "title": "MP and AP",
-      "description": "Two resources. MP is magic: spells cost it, it refills slowly, and most rites and summons are held with it.\n\nAP is momentum, capped at 100, spent by battle skills and by sprinting on the map out of the same meter. Running empties it in about ninety seconds, walking refills it slowly, standing still fast.\n\nCost follows type: magic is written in CamelCase and costs MP, a skill is written in plain words and costs AP."
+      "description": "Two resources. MP is magic: spells cost it, it refills slowly, and most rites and summons are kept up with it.\n\nAP is stamina, used by battle skills and by running on the map. Walking refills it slowly, standing still faster.\n\nSpells are written in CamelCase and cost MP. Skills are written in plain words and cost AP."
     },
     "hitting_what_you_aim_at": {
       "title": "Hitting What You Aim At",
-      "description": "Monsters have the same limbs and organs the party does. Check lists every part with its condition and the chance to hit it, and Target aims your next blow at one. The chance comes from the part's size, your weapon type read against your stats, and a random swing of ten percent either way.\n\nDestroying a limb removes what it does: a broken leg slows, a ruined wing stops flight, no hands means no weapon held. Vital organs can only be reached by a targeted attack.\n\nPart damage persists through the fight, and a finishing blow can sever the part."
+      "description": "Monsters have limbs and organs just like the party. Check lists every part with its condition and your chance to hit it, and Target aims your next blow at one. Bigger parts are easier to hit, and your weapon and stats matter.\n\nDestroying a limb removes what it does: a broken leg slows, a ruined wing stops flight, no hands means no weapon. Vital organs can only be hit by targeting them.\n\nPart damage lasts the whole fight, and a finishing blow can cut the part off."
     },
     "wrestling": {
       "title": "Wrestling",
@@ -254,15 +254,15 @@
     },
     "talking_to_monsters": {
       "title": "Talking to Monsters",
-      "description": "A monster tagged as able to understand you can be talked to. Talk opens a panel with the odds of each approach printed beside it.\n\nEvery enemy carries a disposition from 1 to 100, rolled when it appears and shifted by species, and hurting it costs 5 to 15 points.\n\n- Chat builds rapport. Chance is disposition plus a fifth of the gap between your PSI and its own, floor 10%, cap 95%\n- Surrender, same odds. It leaves the fight\n- Join the party needs a free slot, and above 80 disposition it uses the chat chance\n- Follow you, or be adopted as a pet. A talker needs 70 disposition\n- Insult always lands and lowers disposition\n- Throw a stone, or pet it\n\nCreatures marked as forces rather than people, petrodemons above all, refuse every approach.\n\nOne talked into joining becomes a party member. One taken as pet or follower can be trained into a member later."
+      "description": "Monsters that can understand you can be talked to. Talk opens a panel showing the odds of each option.\n\nEach enemy has a mood towards you. Its species shapes it, hurting it lowers it, and your PSI against its own helps.\n\n- Chat builds rapport\n- Surrender asks it to leave the fight\n- Join the party needs a free slot and a friendly enemy\n- Follow you, or be adopted as a pet, needs a friendly enemy\n- Insult always works and makes it angrier\n- Throw a stone, or pet it\n\nSome creatures, petrodemons above all, refuse every approach.\n\nOne talked into joining becomes a party member. A pet or follower can be trained into a member later."
     },
     "enemy_levels_and_where_they_live": {
       "title": "Enemy Levels and Where They Live",
-      "description": "The Enemy Spawn option sets how enemy levels are chosen.\n\nBalanced draws from a band above the party's median: median L meets L to L + 7 + L/10. One encounter per world tile sits above the band as a boss, never over 100.\n\nDistance from spawn, the default, sets level by how far the world square lies from the one you started on: level 1 at home, the top of the roster at the far corner. Each square fields creatures whose habitat matches the biome.\n\nChaos deals the whole roster flat random, 1 to 110, redealt on every map entry.\n\nNo creature is exclusive to a country. Every nation holds every creature its biomes hold, and only changes how common each is.\n\nThe calendar sits above all three. In 2001 the band is as the mode sets it; from 2002 to 2009 it climbs ten levels a year; 2010 and 2011 have no band at all; from 2012 nothing below level 80 roams, and there is no ceiling."
+      "description": "The Enemy Spawn option sets how enemy levels are chosen.\n\n- Balanced: enemies are a bit above your party's level, with the odd boss above that\n- Distance from spawn (default): enemies get stronger the farther you are from where you started\n- Chaos: any level, rerolled every time you enter a map\n\nEach square has creatures that fit its biome. No creature is exclusive to a country; nations only change how common each one is.\n\nThe calendar matters too: enemies get stronger as the years go by."
     },
     "how_monsters_behave": {
       "title": "How Monsters Behave",
-      "description": "Each roaming monster carries a movement personality that sets what it does while idle, how it notices you (sight range, facing cone, line of sight) and what it does once it has.\n\nFixed, Random, Approach, Fleeing, Skittish, Grazer, Sentry, Guard, Patrol, Territorial, Ambusher, Lurker, Mimic, Swooper, Stalker, Hunter, Charger, Pack, Erratic, Drifter, Orbiter, Scavenger, Coward.\n\nA Grazer never notices you. A Sentry has a cone and can be walked around. An Ambusher is not where it appears to be. A Pack does not fight alone."
+      "description": "Each roaming monster has a movement personality that sets what it does while idle, how it notices you (sight range, facing cone, line of sight) and what it does once it has.\n\nFixed, Random, Approach, Fleeing, Skittish, Grazer, Sentry, Guard, Patrol, Territorial, Ambusher, Lurker, Mimic, Swooper, Stalker, Hunter, Charger, Pack, Erratic, Drifter, Orbiter, Scavenger, Coward.\n\nA Grazer never notices you. A Sentry has a cone and can be walked around. An Ambusher is not where it appears to be. A Pack does not fight alone."
     },
     "danger_warnings_and_surviving_a_blow": {
       "title": "Danger Warnings and Surviving a Blow",
@@ -274,27 +274,27 @@
     },
     "map_battle_mode": {
       "title": "Map Battle Mode",
-      "description": "An experimental option fights every battle on the map you are standing on instead of a battle screen.\n\nEveryone fights from where they stand; only a member off screen is placed. Every other monster keeps its position and behaviour, and any that wanders within a few tiles joins in with its own HP card and turn slot. A townsperson near the brawl joins your side if the party is well liked or if they are brave, fighting from their own level, stats and skills.\n\nMove repositions the acting battler at a range driven by agility. Weapons have reach: 1 melee, 2 for spears, whips, staves and flails, more for bows, guns and thrown weapons, line of sight required. Stepping into water means swimming, which costs more movement.\n\nRound order: party and enemies interleaved by agility, then townspeople, then the world step, where every roaming monster, townsperson and your pet take one tile at once."
+      "description": "An experimental option that fights every battle on the map you are on, with no separate battle screen.\n\nEveryone fights from where they stand. Nearby monsters can join in, and townspeople nearby may help you if they like the party or are brave.\n\nMove repositions the acting battler; faster battlers move farther. Weapons have reach: melee is adjacent, spears, whips, staves and flails reach farther, bows, guns and thrown weapons farther still, and need line of sight. Water means swimming, which costs more movement.\n\nTurn order: party and enemies by agility, then townspeople, then everything else on the map moves one step."
     },
     "card_combat": {
       "title": "Card Combat",
-      "description": "A different way to fight, picked at character creation or turned on in the experimental options. A fight already running keeps the mode it started in; the new setting takes over from the next one.\n\nEvery member has their own deck, hand and energy, built from that member's class skills. There is no deck builder. Playing a card is that member's whole action for the turn.\n\nEnergy replaces MP and AP. A card costs 1 to 6 depending on what the skill used to cost, and a plain attack costs 1. Everyone starts at 0 and gains 1 at the top of their turn, up to 6. Passing grants 2 and draws a card.\n\nA deck holds each skill in copies weighted by cost, so the cheap cards surface most, padded out to eight with plain attacks. You hold four, draw one a turn, and the opening four always contain something you can afford."
+      "description": "Another way to fight, chosen at character creation or turned on in the experimental options. A fight already running keeps its mode; the change applies from the next one.\n\nEach member has their own deck, hand and energy, built from their class skills. Playing a card is that member's whole turn.\n\nEnergy replaces MP and AP. Cards cost energy based on the skill, and a plain attack is cheapest. You gain energy each turn, and passing gives extra energy and a card.\n\nCheap cards come up most often, and your opening hand always has something you can play."
     },
     "summons": {
       "title": "Summons",
-      "description": "A summon is a temporary fourth member. In battle it lives for that battle only: never saved, never in the menu, gone when the fight ends or when you stop paying for it.\n\nWhat answers: a creature, a person the party has marked, the pet on your leash, a reflection of the summoner, or a revenant of a traveller you lost.\n\nNumbers are re-cut against your median and the troop on the field, then multiplied by the rite's share: a familiar is half a traveller, a titan slightly more than one. Shape is kept, so a bruiser stays a bruiser. The petrodemon is held by your oil, and the elder entity arrives with its own numbers and drains the summoner in about three turns.\n\nUpkeep by kind: HP for demons, undead, shadows, swarms and titans; MP for elementals, celestials, fae and the void; AP for the reflection; euros for constructs, war machines, dragons and champions; soul for spirits; oil for the petrodemon; a fixed few turns for beasts, verdants, familiars and called people. When you cannot pay, it leaves, and a summoner who cannot pay in blood is left at 1 HP.\n\nThe familiar belongs to one character. Their class decides which creature answers and its name is rolled once from theirs, so changing class remakes the pact.\n\nWhile a summon is out, a hyper bar fills with damage the party deals. Full, the summon fires its ultimate, which grows with the party's median level in brackets of ten.\n\nA summon is always computer controlled and has no 1 HP protection.\n\nOutside a fight the same rites work and what they call walks in a trailing slot, each point of MP buying a fixed number of steps."
+      "description": "A summon is a temporary fourth member. In battle it lasts for that fight only, and leaves when the fight ends or when you stop paying for it.\n\nIt can be a creature, a person the party has marked, your pet, a reflection of the summoner, or the ghost of a lost companion.\n\nIts strength matches your party and the enemies on the field. A familiar is weaker than a party member, a titan a bit stronger.\n\nEach kind has an upkeep: HP, MP, AP, euros, soul, oil, or a fixed number of turns. When you can't pay, it leaves, and a summoner who can't pay in blood drops to 1 HP.\n\nThe familiar belongs to one character, and their class decides which creature answers. Changing class changes the familiar.\n\nWhile a summon is out, damage the party deals fills a hyper bar. When full, the summon unleashes its ultimate.\n\nSummons are always computer controlled and don't get the 1 HP protection.\n\nOutside battle the same rites work, and the summon walks with you for as long as you pay MP."
     },
     "the_arena": {
       "title": "The Arena",
-      "description": "The arena fights for its own sake, in two shapes: a gauntlet, a run of fights in a chosen level bracket, and a biome trial, a run against the fauna of a chosen biome.\n\nThe party is rescaled to the bracket, and a random roster can be fielded instead of your own.\n\nWins build a streak, which pays ascending money and items."
+      "description": "The arena offers fights for their own sake, in two forms: a gauntlet, a run of fights in a chosen level bracket, and a biome trial, a run against the fauna of a chosen biome.\n\nThe party is rescaled to the bracket, and a random roster can be fielded instead of your own.\n\nConsecutive wins build a streak, with growing rewards of money and items."
     },
     "bullet_hell_sequences": {
       "title": "Bullet Hell Sequences",
-      "description": "Some fights break into a bullet hell sequence: you steer a small craft, dodge the enemy's pattern and shoot back.\n\nDamage taken and dealt there counts in the fight."
+      "description": "Some fights break into a bullet hell sequence: you steer a small craft, dodge the enemy's pattern and shoot back.\n\nDamage taken and dealt there counts in the fight.\n\nSome enemy ultimates must be dodged this way before they land: the more shots you take, the harder the blow. Bullet Time slows the enemy fire. Fights on the map skip the dodge and the blow lands as usual."
     },
     "spirit_battlers": {
       "title": "Spirit Battlers",
-      "description": "Defeated enemies join a spirit roster. One can be fielded in place of an ordinary battler, at a cost that scales with what it was.\n\nThe feature runs on its own switch, and a world with it off fights ordinary battles."
+      "description": "Defeated enemies join a spirit roster. One can be fielded in place of an ordinary battler, at a cost that scales with what it was.\n\nThe feature has its own switch; with it off, battles are ordinary."
     },
     "mimicry": {
       "title": "Mimicry",
@@ -302,7 +302,7 @@
     },
     "throwing_things": {
       "title": "Throwing Things",
-      "description": "Items, weapons and armour can be thrown up to eight tiles, diagonals included, with flight simulated from the item's weight. Heavy things travel a short way and land hard.\n\nA thrown item stays where it lands and anyone can pick it up."
+      "description": "Items, weapons and armour can be thrown a short distance in any direction. Heavy things don't go far but land hard.\n\nA thrown item stays where it lands and anyone can pick it up."
     },
     "corpses,_rewards_and_cooldowns": {
       "title": "Corpses, Rewards and Cooldowns",
@@ -310,7 +310,7 @@
     },
     "elements_how_they_work": {
       "title": "Elements: How They Work",
-      "description": "Nine damage types: Physical, Fire, Ice, Thunder, Water, Petro, Wind, Sacred, Cursed.\n\nEvery creature answers each with a rate. Above 100% is a weakness, below is resistance, 0% is immunity, and a negative rate absorbs the element and heals from it.\n\nThe battle HUD prints what you have discovered about the enemy in front of you, and the Bestiary keeps it.\n\nStates interact: Wet raises lightning damage, Oily raises fire damage, Static absorbs lightning. A class leans toward an element, and a weapon or modifier can carry one."
+      "description": "Nine damage types: Physical, Fire, Ice, Thunder, Water, Petro, Wind, Sacred, Cursed.\n\nEvery creature answers each with a rate. Above 100% is a weakness, below is resistance, 0% is immunity, and a negative rate absorbs the element and heals from it.\n\nThe battle HUD shows what you have discovered about the enemy in front of you, and the Bestiary keeps it.\n\nStates interact: Wet raises lightning damage, Oily raises fire damage, Static absorbs lightning. A class leans toward an element, and a weapon or modifier can have one."
     },
     "element_physical": {
       "title": "Element: Physical",
@@ -342,19 +342,19 @@
     },
     "element_sacred": {
       "title": "Element: Sacred",
-      "description": "Answered badly by the undead and the cursed. It is the one damage type that heals its target when that target is on the right side of the line.\n\nSacred workings usually carry protection and purging alongside damage, and several sit deep in expensive schools."
+      "description": "Strong against the undead and the cursed. It is the one damage type that heals its target when that target is on the right side of the line.\n\nSacred workings usually add protection and purging to the damage, and several sit deep in expensive schools."
     },
     "element_cursed": {
       "title": "Element: Cursed",
-      "description": "Rot, ruin and draining. Dealt by the undead, answered by the sacred.\n\nCursed workings often cost more than MP, and the strongest are tagged Forbidden, which puts them alone at the centre of their circle at a hundred times their value.\n\nEfficient against the living. It heals the already dead."
+      "description": "Rot, ruin and draining. Dealt by the undead, countered by Sacred.\n\nCursed spells often cost more than MP, and the strongest are Forbidden, which makes them very expensive to learn.\n\nStrong against the living. It heals the undead."
     },
     "the_world_map": {
       "title": "The World Map",
-      "description": "The world map is one map of Europe, each tile a whole region. Walking one costs ten minutes of game time, two in a vehicle.\n\nM cycles the display: hidden, corner minimap, fullscreen. In fullscreen, drag to pan, wheel or Q and E to zoom.\n\nStepping onto a tile offers to keep going or to visit the square, which builds its local map. T switches between the world map and the last local map.\n\nLoose companions keep a two tile leash up there, and squares marked \"???\" are adventures."
+      "description": "The world map is one map of Europe, each tile a whole region. Walking one costs ten minutes of game time, two in a vehicle.\n\nM cycles the display: hidden, corner minimap, fullscreen. In fullscreen, drag to pan, wheel or Q and E to zoom.\n\nStepping onto a tile offers to keep going or to visit the square, which builds its local map. T switches between the world map and the last local map.\n\nOn the world map, loose companions stay within two tiles of the leader, and squares marked \"???\" are adventures."
     },
     "procedural_maps": {
       "title": "Procedural Maps",
-      "description": "Almost every map is generated. A world map square becomes a map when you enter it, built from the world seed and its coordinates, so it is the same map every time you return.\n\nThe biome sets the tileset and what grows there. Roads run straight, cross, turn and loop back at the middle of the map when they lead nowhere. Rivers are wide and irregular, snapping to a fixed width at the borders so they continue into the next square, and only reach a border if the square beyond is water. Coastlines are sampled along the border line so neighbours draw one continuous shore. On top of that go hand authored 32x32 prefabs and terrain features scattered by biome.\n\nWalking off the edge loads the neighbouring square directly."
+      "description": "Almost every map is generated. A world map square becomes a map when you enter it, and it is the same map every time you return.\n\nThe biome sets the terrain and what grows there. Roads, rivers and coastlines line up with the neighbouring squares, and hand made pieces are mixed in.\n\nWalking off the edge takes you to the next square."
     },
     "biomes": {
       "title": "Biomes",
@@ -366,11 +366,11 @@
     },
     "houses,_inns_and_shops": {
       "title": "Houses, Inns and Shops",
-      "description": "Doors on procedural maps are handed to the building system. Pools of houses, inns, shops and tower blocks are seeded by coordinates, so a door is always the same business.\n\nBuildings can have several floors and are configured as data. Shops and inns wear their name over the door.\n\nDoors open with an animation when walked into, and the lock is checked before it runs."
+      "description": "Doors on generated maps lead to houses, inns, shops and tower blocks. The same door always leads to the same place.\n\nBuildings can have several floors. Shops and inns show their name over the door.\n\nDoors open when you walk into them, unless they are locked."
     },
     "working_the_terrain": {
       "title": "Working the Terrain",
-      "description": "Face a terrain feature and press the action button to work it. Trees are felled with an axe in the inventory, rocks mined with a war pick, any heavy weapon or a chipped pickaxe, plants picked with nothing at all, and anything can be dismantled.\n\nThe payout is crafting materials. Mining sometimes yields an ingot.\n\nForaging always pays plant matter, and about two picks in five also pay something edible. What turns up depends on the country: acorns and chanterelles in a forest, cloudberries on tundra, dates in a desert, samphire on a marsh, blind mushrooms underground. Training Foraging raises the odds. A feature that is a specific plant pays that plant anywhere.\n\nAlien surfaces forage nothing. Their food comes from butchering local wildlife.\n\nFelled trees and worked features stay gone when the map is rebuilt, scenery inside a prefab included."
+      "description": "Face a terrain feature and press the action button to work it. Fell trees with an axe, mine rocks with a war pick, a heavy weapon or a pickaxe, pick plants by hand. Anything can be dismantled.\n\nYou get crafting materials. Mining sometimes gives an ingot.\n\nForaging always gives plant matter and sometimes something to eat, depending on the region. Training Foraging improves your finds.\n\nAlien planets have nothing to forage. Food there comes from butchering wildlife.\n\nFelled trees and worked features stay gone."
     },
     "the_dungeon_and_the_tower": {
       "title": "The Dungeon and the Tower",
@@ -378,11 +378,11 @@
     },
     "puzzles": {
       "title": "Puzzles",
-      "description": "Maps carry puzzles:\n\n- sokoban blocks, pits that swallow them, goal tiles, reset and undo shrines\n- pressure plates, timed plates that must be held, levers, gates wired with and / or logic\n- ice floors, arrow tiles, conveyors\n- crystal switches that flip sets of blocks between solid and open\n- torches to light, sometimes timed, sometimes spreading fire\n- colour tiles, lights out grids, coloured doors, combination locks\n- warp pads, crackable walls, light beams to redirect, clones that copy your moves, magnetic objects, counterweights, floodable rooms"
+      "description": "Maps can have puzzles:\n\n- sokoban blocks, pits that swallow them, goal tiles, reset and undo shrines\n- pressure plates, timed plates that must be held, levers, gates wired with and / or logic\n- ice floors, arrow tiles, conveyors\n- crystal switches that flip sets of blocks between solid and open\n- torches to light, sometimes timed, sometimes spreading fire\n- colour tiles, lights out grids, coloured doors, combination locks\n- warp pads, crackable walls, light beams to redirect, clones that copy your moves, magnetic objects, counterweights, floodable rooms"
     },
     "fog_of_war": {
       "title": "Fog of War",
-      "description": "Some maps are covered in fog, pushed back by walking. Vision is a cone, not a circle: you see where you face, and turning is how you look around.\n\nUncovered ground is remembered per map."
+      "description": "Some maps are covered in fog that clears as you walk. Vision is a cone: you see where you face, and turning is how you look around.\n\nUncovered ground is remembered per map."
     },
     "digging_and_secret_doors": {
       "title": "Digging and Secret Doors",
@@ -390,23 +390,23 @@
     },
     "water,_climbing_and_bridges": {
       "title": "Water, Climbing and Bridges",
-      "description": "Face water and press the action button to open the water menu: swim, which changes the sprite and disables sprinting, fish, with a rod in the party, or dive under the surface.\n\nClimbable terrain is climbed slowly, facing up, with companions hidden. Height is tracked, and jumping down from three tiles or more costs 5% health per tile fallen.\n\nBridges are layered. Enter from the approach and you walk on the bridge; enter from anywhere else and you pass under it, and the layer holds across the whole span.\n\nA mirror shows an upright reflection of whoever stands in front of it."
+      "description": "Face water and press the action button: swim (no running), fish (needs a rod), or dive.\n\nClimbing is slow and companions hide while you climb. Jumping down from high up hurts, more the farther you fall.\n\nBridges have layers. Walk on from the approach to cross over it; come from anywhere else to pass under it.\n\nA mirror shows the reflection of whoever stands in front of it."
     },
     "weather,_time_and_seasons": {
       "title": "Weather, Time and Seasons",
-      "description": "The clock starts at 8 AM on 1 January 2001 and never stops. Time advances as you walk and jumps when you sleep, wait or travel.\n\nWeather is generated per country, seeded on the date, and changes on entering an outdoor map. The country sets sunrise and sunset, seasonal temperatures, and which weather is possible.\n\nRain applies Wet, storms apply Static, snow applies Hot, from the body burning to stay warm.\n\nThe screen is tinted by time of day and by temperature, blue for cold and red for hot. Rain and night carry ambient sound on their own channel."
+      "description": "The clock starts at 8 AM on 1 January 2001 and never stops. Time advances as you walk and jumps when you sleep, wait or travel.\n\nWeather is generated per country from the date, and changes on entering an outdoor map. The country sets sunrise and sunset, seasonal temperatures, and which weather is possible.\n\nRain applies Wet, storms apply Static, snow applies Hot, from the body burning to stay warm.\n\nThe screen is tinted by time of day and by temperature, blue for cold and red for hot. Rain and night have their own ambient sound channel."
     },
     "dreams": {
       "title": "Dreams",
-      "description": "Sleeping can drop you into a dream: a full 3D world rolled from a seed. It deals four to seven regions and mixes them: backrooms, offices, escher stairs, drowned places, cosmic voids, megastructures, car parks, hospitals, cathedrals, factories, carnivals, sewers, fleshpits, gardens, ruins.\n\n- WASD walks, the mouse looks, space jumps. Hold jump while standing still to take off\n- the action button uses the weapon in your right hand; the wheel steps a shuffled rack of every weapon in the game\n- touching anything alive moves you to another dream, and so does walking head on into a wall\n- holes have no floor, and falling far enough leaves the dream\n\nEvery dream carries one to three laws: the ground breathes, gravity is light or crushing, colours invert, figures move only while unwatched, time hitches, your size changes, the dream repeats itself.\n\nThere is no end to it. The ground loops in every direction and stacks upward as long as anyone climbs.\n\nEvery minute inside rolls a chance of knowledge, reported when you wake."
+      "description": "Sleeping can drop you into a dream: a 3D world that mixes places like backrooms, offices, endless stairs, drowned places, cosmic voids, car parks, hospitals, cathedrals, factories, carnivals, sewers, gardens and ruins.\n\n- WASD walks, the mouse looks, space jumps. Hold jump while standing still to take off\n- the action button uses the weapon in your right hand; the wheel switches weapons\n- touching anything alive takes you to another dream, and so does walking straight into a wall\n- holes have no floor, and falling far enough wakes you up\n\nEach dream has strange rules: breathing ground, odd gravity, inverted colours, figures that move only when unwatched, time skips, changing size.\n\nDreams never end. Time spent inside can earn knowledge, reported when you wake."
     },
     "adventures_on_the_map": {
       "title": "Adventures on the Map",
-      "description": "Some world map squares carry a \"???\" marker, redrawn once a day. Stand on it and Investigate plays a branching adventure written for that place.\n\nThe last node pays out: a relic, gear, salvage, money, a fight with something native, a minigame, an augment, a change of faction standing, a crime filed against you, a rest, or nothing.\n\nThe leader goes in and the companion at their shoulder comments in their own register. Some choices are only offered to a leader of a particular temperament, and the prose is combinatorial.\n\nA biome carries one marker, two if it is very large, and a named place carries its own on top. An answered square stays answered."
+      "description": "Some world map squares show a \"???\" marker, redrawn once a day. Stand on it and Investigate plays a branching adventure written for that place.\n\nThe last node pays out: a relic, gear, salvage, money, a fight with something native, a minigame, an augment, a change of faction standing, a crime filed against you, a rest, or nothing.\n\nThe leader goes in and the companion at their shoulder comments in their own register. Some choices are only offered to a leader of a particular temperament, and the prose is combinatorial.\n\nA biome has one marker, two if it is very large, and a named place has one more. A resolved square stays resolved."
     },
     "bologna": {
       "title": "Bologna",
-      "description": "Bologna is in the game as itself, rasterised from OpenStreetMap into a grid of large cells that join seamlessly at the borders.\n\nEvery rasterised building has a door on its south face and every door is a way in. Most are homes; a share are shops and inns, seeded per cell and per tile, so a door is always the same business.\n\nThe cells carry no hand placed events. The city is populated at runtime: townspeople drawn from the world's own faces and from Bolognesi born there, plus wildlife by habitat, street animals on pavements, waterfowl and fish in the canals, birds on rooftops."
+      "description": "Bologna is in the game as itself, rasterised from OpenStreetMap into a grid of large cells that join seamlessly at the borders.\n\nEvery rasterised building has a door on its south face and every door is a way in. Most are homes; a share are shops and inns, seeded per cell and per tile, so a door is always the same business.\n\nThe cells have no hand placed events. The city is populated at runtime: townspeople drawn from the world's own faces and from Bolognesi born there, plus wildlife by habitat, street animals on pavements, waterfowl and fish in the canals, birds on rooftops."
     },
     "platformer_maps": {
       "title": "Platformer Maps",
@@ -422,11 +422,11 @@
     },
     "chests_and_treasure_rooms": {
       "title": "Chests and Treasure Rooms",
-      "description": "Chest contents are generated against the party's median level. An emptied chest stays empty, and open chests stay open.\n\nSome maps hide treasure rooms: reachable, randomly placed rooms with heavier contents."
+      "description": "Chest contents scale with the party's median level. An emptied chest stays empty, and open chests stay open.\n\nSome maps hide treasure rooms: reachable, randomly placed rooms with richer contents."
     },
     "research_and_discovery": {
       "title": "Research and Discovery",
-      "description": "Seven trees of discovery, one per discipline: Social Sciences, Alchemistry, Technomagica, Physics, Arcane, Mathematics, Astronomy, Theotecnical.\n\nThe scientific trees follow real progress from 2001 to 2012. Arcane and Technomagica follow the rediscovery of lost magic and its fusion with machinery. Theotecnical follows the Vatican rebuilding its dogma around engines. Each also carries fringe branches and a few nodes generated from the world seed.\n\nCompleted nodes record the leader who got there first. Researching one consumes crafting materials and returns most of that cost as refined byproducts."
+      "description": "Eight trees of discovery, one per discipline: Social Sciences, Alchemistry, Technomagica, Physics, Arcane, Mathematics, Astronomy, Theotecnical.\n\nThe scientific trees follow real progress from 2001 to 2012. Arcane and Technomagica follow the rediscovery of lost magic and its fusion with machinery. Theotecnical follows the Vatican rebuilding its dogma around engines. Each also has fringe branches and a few nodes generated from the world seed.\n\nCompleted nodes record the leader who got there first. Researching one consumes crafting materials and returns most of that cost as refined byproducts."
     },
     "fast_travel": {
       "title": "Fast Travel",
@@ -434,11 +434,11 @@
     },
     "the_thirty_ways_to_travel": {
       "title": "The Thirty Ways to Travel",
-      "description": "Each destination lists the transports that reach it. There are thirty, trading money against time.\n\nWalking is free and slowest. A bicycle is cheap and slightly quicker, a horse better than a bicycle, and car sharing or the camper cost fuel instead of money.\n\nBus, train, taxi, boat and ferry are the ordinary fares. The train is fast for its price, the taxi the same speed for twice as much.\n\nFlights, limousines, helicopters and private jets are expensive, a private jet running ten times walking speed. Cruises, submarines, balloons and zeppelins are slow and dear.\n\nThe exotic tier holds magic carpets and dragons, teleport circles at twenty times walking speed for a modest fee, hypermetro, maglev and hyperloop, and then starships, wormholes, quantum jumps, time machines and dimensional crossings. A dimensional crossing costs a thousand times the base fare and is a thousand times as fast.\n\nCost is the base fare times distance, and speed divides the time."
+      "description": "Each destination lists the transports that reach it. There are thirty, trading money for time.\n\nWalking is free and slowest. A bicycle is cheap and a bit faster, a horse better still, and car sharing or the camper cost fuel instead of money.\n\nBus, train, taxi, boat and ferry are the ordinary fares. The train is good value; the taxi is as fast but costs more.\n\nFlights, limousines, helicopters and private jets are expensive and fast. Cruises, submarines, balloons and zeppelins are slow and expensive.\n\nThe exotic options include magic carpets, dragons, teleport circles, hypermetro, maglev, hyperloop, starships, wormholes, quantum jumps, time machines and dimensional crossings. The fastest cost the most.\n\nLonger trips cost more."
     },
     "owning_a_vehicle": {
       "title": "Owning a Vehicle",
-      "description": "A vehicle is proven by an item. Holding the key, the deed or the broom puts it in the Vehicles menu and makes it summonable and drivable.\n\nVehicles are parked in the world, not carried, and each one's position is stored, world square and underground layer included. Where several sit on one tile, interacting asks which you meant.\n\nWalking up to a parked vehicle opens its menu: drive, enter the interior, use storage, refuel, repair.\n\nThe camper, the car and the starship have walk in interiors with storage holds."
+      "description": "You own a vehicle if you hold its key, deed or broom. It then appears in the Vehicles menu and can be summoned and driven.\n\nVehicles stay parked where you leave them. If several are on one tile, you'll be asked which one you mean.\n\nWalk up to a parked vehicle to open its menu: drive, enter, storage, refuel, repair.\n\nThe camper, the car and the starship have interiors you can walk in, with storage."
     },
     "vehicle_the_camper": {
       "title": "Vehicle: The Camper",
@@ -478,19 +478,19 @@
     },
     "the_crew": {
       "title": "The Crew",
-      "description": "The leader takes the wheel when a journey starts, and only the driver earns the vehicle's specialization experience.\n\nTime at the wheel is tracked per person as strain, and alertness is the party's sleep meter less that member's strain. Below 40% the wheel passes to the best rested member above that line, and everyone not driving sheds strain. When nobody is fit to relieve the driver, they keep going and you are told.\n\nPassengers sleep. Naps start below 40% sleep and run to full or to the end of the journey. They wake when the nap ends, when the party gets out, when someone enters the cabin, and on a crash, which also keeps them awake for the next hour.\n\nThe bike and the broom have no rota. The starship has no driver, and its crew tends one need at a time out of the hold."
+      "description": "The leader drives when a journey starts, and only the driver earns the vehicle's specialization experience.\n\nDriving tires people out. When the driver gets too tired, the best rested member takes over. If nobody can, the driver keeps going and you are told.\n\nTired passengers nap until rested or until the trip ends. They wake if the party gets out, someone enters the cabin, or there is a crash.\n\nThe bike and the broom have no rota. The starship flies itself, and its crew looks after their needs from the hold."
     },
     "driving_in_3d": {
       "title": "Driving in 3D",
-      "description": "Driving the camper opens a 3D road scene built from the world map: the same grid of biomes, mountains as noise height fields, water flat and blue, roads as dual lane asphalt, everything else ground in that biome's colour. Coastlines slope into the sea, and cities, forests and cacti are scattered along the way.\n\nThree views, swapped with Tab or Y: first person behind an animated wheel and a working dash, chase camera with zoom, and a free roam cabin view entered through a door.\n\nW throttles, Shift is turbo, S brakes and reverses, A and D steer, space is the handbrake, the mouse looks.\n\nThe model has a five speed automatic with an RPM engine note, lateral slip so the handbrake drifts, grip that differs between asphalt, dirt, grass, sand, snow and rock, gravity on slopes, and a chassis that follows the terrain.\n\nTraffic runs nine models, hatchback to city bus, built at true size against the camper. They brake, take junctions and can be crashed into, and a bus shoves harder than a hatchback.\n\nOn foot the leader's weapon is in hand, and the d-pad steps through every weapon in the bags they can hold. Enemies matched to the biome idle by the roadside."
+      "description": "Driving the camper opens a 3D road scene built from the world map: the same biomes, mountains, water, roads, cities and forests.\n\nThree views, switched with Tab or Y: first person behind the wheel, chase camera with zoom, and a free cabin view through a door.\n\nW accelerates, Shift is turbo, S brakes and reverses, A and D steer, space is the handbrake, the mouse looks.\n\nGrip changes with the surface, the handbrake drifts, and slopes matter.\n\nTraffic brakes, takes junctions and can be crashed into.\n\nOn foot the leader holds their weapon, and the d-pad switches weapons. Roadside enemies match the biome."
     },
     "traffic,_roadkill_and_theft": {
       "title": "Traffic, Roadkill and Theft",
-      "description": "Map traffic is driven by the game rather than by event pages.\n\nA car occupies as many tiles as its sprite is long, for every purpose: it never clips a wall it passes, cars collide bodywork against bodywork, and anyone under the bodywork is run over. Only a moving car hits anything, town traffic brakes for people and highway traffic does not.\n\nBeing hit knocks you clear and triggers an accident. An NPC hit by a car takes injury conditions written onto their profile; a creature hit hard enough dies and leaves a corpse.\n\nDriving over someone yourself injures them, drops their opinion of every party member, and files a hit and run. Ramming a creature flings it off the bonnet the first two times; from the third the odds it turns and fights climb steeply.\n\nOccasionally a car pulls over and its driver gets out, walks about and later drives on. That driver is an ordinary wandering NPC, and the car sits parked and stealable meanwhile."
+      "description": "Cars drive around the maps on their own.\n\nOnly moving cars hit things. Town traffic brakes for people; highway traffic does not.\n\nGetting hit knocks you clear and counts as an accident. NPCs hit by a car get injured; creatures hit hard enough die.\n\nRunning someone over injures them, makes them like the whole party less, and counts as a hit and run. Ramming the same creature over and over makes it likely to fight back.\n\nSometimes a driver pulls over and gets out for a while. Their car stays parked and can be stolen."
     },
     "people_are_real_here": {
       "title": "People Are Real Here",
-      "description": "Every person on the map carries a full profile, generated from their name and the world seed:\n\n- a personality out of twenty five archetypes, which sets how they speak\n- traits, the same ones your characters carry\n- an ideology on five axes: economy, authority, tradition, militarism, mysticism\n- wealth, skills, inventory and equipment\n- a faction, a home, a job and a schedule\n- a backstory drawn from your world's history\n- a medical history, past diseases and badly healed bones included\n\nPart of the population is animals, minted from the same system. A creature on a beast class is non sentient: no conversation, no politics, no savings, no property."
+      "description": "Every person on the map has a full profile, generated from their name and the world seed:\n\n- a personality out of twenty five archetypes, which sets how they speak\n- traits, the same ones your characters have\n- an ideology on five axes: economy, authority, tradition, militarism, mysticism\n- wealth, skills, inventory and equipment\n- a faction, a home, a job and a schedule\n- a backstory drawn from your world's history\n- a medical history, past diseases and badly healed bones included\n\nPart of the population is animals, minted from the same system. A creature on a beast class is non sentient: no conversation, no politics, no savings, no property."
     },
     "the_empathize_panel": {
       "title": "The Empathize Panel",
@@ -498,11 +498,11 @@
     },
     "how_somebody_decides_what_they_think_of_you": {
       "title": "How Somebody Decides What They Think of You",
-      "description": "An NPC's opinion of one of your characters is built from four parts:\n\n- base opinion, moved by everything you have done to them\n- trait compatibility, applied before a word is spoken\n- ideology, how close your creeds sit on the five axes, worth up to a dozen points either way\n- hygiene, how the two of you smell to each other right now\n\nGaining standing also feeds the social need of whoever gained it.\n\nAttraction is tracked apart from opinion. Conversation, gifts and trade move opinion only; courting moves attraction, and a romantic move reads trait compatibility and hygiene a second time at a heavier weight."
+      "description": "An NPC's opinion of each of your characters comes from four things:\n\n- how you have treated them\n- how well your traits match\n- how close your politics are\n- how you both smell right now\n\nGaining standing also fills the Company need of whoever gained it.\n\nAttraction is separate. Talk, gifts and trade change opinion; courting changes attraction, and traits and hygiene count extra there."
     },
     "people_have_lives": {
       "title": "People Have Lives",
-      "description": "Everyone's life advances whenever time does: minute by minute, and through any skip.\n\n- they are born somewhere on a date and keep a record of every move since, with reasons\n- they meet, date, marry, divorce and separate, preferring partners from their own settlement\n- they hold careers from the real job list, with a history from their first working year, changes as they age, and retirement\n- dishonest ones carry convictions, sentences served off screen and outstanding bounties, and a conviction can cost someone their job\n\nA year spent in cryogenic sleep is a year in which everyone aged, changed jobs, married and buried each other."
+      "description": "Everyone's life advances whenever time does: minute by minute, and through any skip.\n\n- they are born somewhere on a date and keep a record of every move since, with reasons\n- they meet, date, marry, divorce and separate, preferring partners from their own settlement\n- they hold careers from the real job list, with a history from their first working year, changes as they age, and retirement\n- dishonest ones have convictions, sentences served off screen and outstanding bounties, and a conviction can cost someone their job\n\nA year spent in cryogenic sleep is a year in which everyone aged, changed jobs, married and buried each other."
     },
     "what_people_say_to_each_other": {
       "title": "What People Say to Each Other",
@@ -510,7 +510,7 @@
     },
     "settlements_and_what_happens_to_them": {
       "title": "Settlements and What Happens To Them",
-      "description": "Every settlement carries three civic meters. Prosperity comes from employment, the national economy and recent events; security from crime per head, the honesty of the local captain of the guard, national stability and how wanted you are; mood from the other two plus unrest, festivals, epidemics and street traffic.\n\nEpisodes sit on top of them:\n\n- crime wave: starts when security collapses. Crime pays better and the crackdown catches more thieves, so the wave breaks itself\n- boom and bust: start at the extremes of prosperity and swing hiring, crime, divorce, shop prices and market sentiment, then erode their own cause\n- festival: declared by a thriving town. Mood and bustle up, shops fuller, pickpockets working the crowds\n- epidemic: rare, and worse in miserable towns. Mood, hiring and shop traffic collapse until it burns out\n\nUnemployment feeds crime, crime feeds crackdowns, crackdowns feed prisons, prisons feed unemployment. All of it reaches the news, the stock market, hiring and gossip."
+      "description": "Every settlement has three civic meters. Prosperity comes from employment, the national economy and recent events; security from crime per head, the honesty of the local captain of the guard, national stability and how wanted you are; mood from the other two plus unrest, festivals, epidemics and street traffic.\n\nEpisodes sit on top of them:\n\n- crime wave: starts when security collapses. Crime pays better and the crackdown catches more thieves, so the wave dies down\n- boom and bust: start at the extremes of prosperity and swing hiring, crime, divorce, shop prices and market sentiment, then erode their own cause\n- festival: declared by a thriving town. Mood and bustle up, shops fuller, pickpockets working the crowds\n- epidemic: rare, and worse in miserable towns. Mood, hiring and shop traffic collapse until it burns out\n\nUnemployment feeds crime, crime feeds crackdowns, crackdowns feed prisons, prisons feed unemployment. All of it reaches the news, the stock market, hiring and gossip."
     },
     "politics": {
       "title": "Politics",
@@ -518,11 +518,11 @@
     },
     "factions_and_reputation": {
       "title": "Factions and Reputation",
-      "description": "Eighteen factions. Standing with each runs from -100 to +100, moved by contracts taken, crimes committed, adventures resolved and sides taken.\n\nFactions answer to hyperpowers. A faction with a hyperpower is a branch of it, so credit earned with a parent can carry its branches.\n\nStanding decides what work is offered, what prices are quoted, who will speak to you, and which seats you may take."
+      "description": "Eighteen factions. Standing with each runs from -100 to +100, moved by contracts taken, crimes committed, adventures resolved and sides taken.\n\nSome factions belong to a hyperpower and are a branch of it, so credit earned with the parent can extend to its branches.\n\nStanding decides what work is offered, what prices are quoted, who will speak to you, and which seats you may take."
     },
     "the_assembly": {
       "title": "The Assembly",
-      "description": "Every hyperpower holds a seat on neutral ground inside the Omega Tower. Once a game week the delegations argue about alliances, trade, war and recent events.\n\nA party member can take a seat. The seat, the standing it earns and the weekly stipend are that character's alone, and the stipend scales with their standing with the power they serve. Let it fall far enough and they are dismissed. Only powers that already think neutrally or well of them will take them, a character joins once, and resigning costs far more than joining paid.\n\nA session rolls one to three motions. Two to five delegations take the floor, each in its own voice, you answer, and every seat votes. Ballots are public, turning each named tile green or red as it is read, or secret, shuffled unlabelled so only the tally is certain.\n\nGrave motions, war, admission, territory, artifacts, theonuclear devices and the goblin question, go to the Security Council: the five strongest powers left standing by your century. Majority carries and the Secretary General breaks a tie; without one, the motion fails.\n\nThe Tourists hold a chair with no ballot, take the floor when they like, and admit nobody."
+      "description": "Every hyperpower holds a seat on neutral ground inside the Omega Tower. Once a week of game time the delegations argue about alliances, trade, war and recent events.\n\nA party member can take a seat. The seat, the standing it earns and the weekly stipend are that character's alone, and the stipend scales with their standing with the power they serve. Let it fall far enough and they are dismissed. Only powers that already think neutrally or well of them will take them, a character joins once, and resigning costs far more than joining paid.\n\nA session rolls one to three motions. Two to five delegations take the floor, each in its own voice, you answer, and every seat votes. Votes are either public, with each named tile turning green or red, or secret, where only the total is shown.\n\nGrave motions, war, admission, territory, artifacts, theonuclear devices and the goblin question, go to the Security Council: the five strongest powers after the century of history. Majority carries and the Secretary General breaks a tie; without one, the motion fails.\n\nThe Tourists hold a chair with no ballot, take the floor when they like, and admit nobody."
     },
     "crime_and_bounty": {
       "title": "Crime and Bounty",
@@ -534,11 +534,11 @@
     },
     "the_trial": {
       "title": "The Trial",
-      "description": "Justice is administered by Eris, and a trial is generated rather than scripted. The courtroom, gallery, staff and ambience are rolled fresh each time, and she cites invented case law and produces invented exhibits mid hearing.\n\nCounsel is retained before the hearing opens: hire one of five advocates, nominate a party member, or stand alone. The five are people from your world, fixed for its lifetime, and recruiting one strikes them off the bar.\n\nThe brief shows each option's level, INT, WIS, Law level, opinion of you, fee, and the projected odds of every outcome, computed with the model the verdict runs on. The odds swing on Eris's mood, and in some moods she throws counsel out, which loses their bonus and does not refund the fee.\n\nRepresenting yourself, or having a companion stand up, earns a few points of the Law specialization per hearing, which feeds back into the odds. A professional teaches the party nothing.\n\nThe hearing is a plea, then a series of choices, then a verdict that depends heavily on her mood. Evenings spent with Eris raise a bond, and a defendant she has dined with meets a warmer mood wheel, a lower conviction chance and shorter sentences.\n\nSandbox mode has a reverse trial, where you play Eris."
+      "description": "Justice is administered by Eris, and a trial is generated rather than scripted. The courtroom, gallery, staff and ambience are rolled fresh each time, and she cites invented case law and produces invented exhibits mid hearing.\n\nCounsel is retained before the hearing opens: hire one of five advocates, nominate a party member, or stand alone. The five are people from your world, fixed for its lifetime, and recruiting one strikes them off the bar.\n\nThe brief shows each option's level, INT, WIS, Law level, opinion of you, fee, and the projected odds of every outcome, computed with the model the verdict runs on. The odds swing on Eris's mood, and in some moods she throws counsel out: you lose their bonus and the fee is not refunded.\n\nDefending yourself, or having a companion defend you, earns a few points of the Law specialization per hearing, which improves the odds. A professional teaches the party nothing.\n\nThe hearing is a plea, then a series of choices, then a verdict that depends heavily on her mood. Evenings spent with Eris raise a bond, and a defendant she has dined with meets a warmer mood wheel, a lower conviction chance and shorter sentences.\n\nSandbox mode has a reverse trial, where you play Eris."
     },
     "sentences_and_prison": {
       "title": "Sentences and Prison",
-      "description": "Sentences come in two shapes. A named term is served by the game clock: time passes in the cells and the bounty is cleared on release. An open ended sentence has no release date and grinds the bounty down day by day.\n\nTurning yourself in at the police portal goes straight to the second kind without a hearing.\n\nOn release, Eris comments, according to how the two of you stand."
+      "description": "Sentences come in two shapes. A named term is served by the game clock: time passes in the cells and the bounty is cleared on release. An open ended sentence has no release date and grinds the bounty down day by day.\n\nTurning yourself in at the police portal goes straight to the second kind without a hearing.\n\nOn release, Eris comments based on your relationship."
     },
     "dating_eris": {
       "title": "Dating Eris",
@@ -546,11 +546,11 @@
     },
     "the_post": {
       "title": "The Post",
-      "description": "A party can write to another party in the same world, or to a party in a different world on your machine. The letter waits in their mailbox until someone plays them.\n\nA letter carries a delivery date on the recipient world's clock, and the sender can hold it back by days, months or years. Writing to your own party with a delay is a letter to your future self.\n\nMoney and goods can be enclosed. They leave the sender's pockets at once and are handed over when the recipient collects them.\n\nPost inside one world is free. Crossing to another is priced on the two commodities that survive the crossing, oil and souls: their prices multiplied, doubled once per step of dimensional distance, never less than three hundred thousand euros."
+      "description": "You can write to another party in the same world, or in a different world on your computer. The letter waits until someone plays that party.\n\nYou can set a delivery date days, months or years ahead. A delayed letter to your own party is a letter to your future self.\n\nMoney and goods can be enclosed. They leave your pockets at once and arrive when the letter is collected.\n\nPost inside one world is free. Sending to another world is very expensive, and the price follows oil and soul prices."
     },
     "the_news": {
       "title": "The News",
-      "description": "The world writes its own news, and items carry effects: property prices, shop occupancy, market sentiment.\n\nSettlement episodes, riots, coups, elections, epidemics and the mayor's divorce all become headlines. The real estate market moves on them, the stock market takes sentiment from them, and people talk about them."
+      "description": "The world writes its own news, and news items have effects: property prices, shop occupancy, market sentiment.\n\nSettlement episodes, riots, coups, elections, epidemics and the mayor's divorce all become headlines. The real estate market moves on them, the stock market takes sentiment from them, and people talk about them."
     },
     "the_party_diary": {
       "title": "The Party Diary",
@@ -558,7 +558,7 @@
     },
     "conversation_topics": {
       "title": "Conversation Topics",
-      "description": "Some dialogue teaches a topic, written in square brackets in the line where it appears. Once one character hears it, the whole party knows it.\n\nA dialogue option that requires a topic is invisible until then, not greyed out.\n\nEvery topic learned is announced. The Topics tab of this book lists them with who knows each one, and some have a page of their own."
+      "description": "Some dialogue teaches a topic, written in square brackets in the line where it appears. Once one character hears it, the whole party knows it.\n\nA dialogue option that requires a topic stays hidden until you know it, rather than greyed out.\n\nEvery topic learned is announced. The Topics tab of this book lists them with who knows each one, and some have a page of their own."
     },
     "armies": {
       "title": "Armies",
@@ -578,11 +578,11 @@
     },
     "shops": {
       "title": "Shops",
-      "description": "Shops come in several kinds.\n\n- counter shop: a grid of goods with categories, sorted by price, with a detail card\n- delivery order: arrives in one to seven days depending on price, up to six at once\n- random daily shop: stock seeded from its coordinates and the world seed, rerolled every in game day\n- vending machine: the same, in a 4x4 grid of coded products, three purchases per slot per day, with at least one odd item each\n- teaching shop: sells skills instead of goods, at a discount\n\nTax is charged on everything except skills, at a rate that moves with the economy and never drops below thirty percent. A shop cleaned out restocks at midnight."
+      "description": "There are several kinds of shop.\n\n- counter shop: goods by category, sorted by price, with a detail card\n- delivery order: arrives in a few days, cheaper items sooner\n- random daily shop: different stock every day\n- vending machine: a grid of coded products, with a daily limit per slot\n- teaching shop: sells skills instead of goods, at a discount\n\nEverything except skills is taxed, and the rate follows the economy. Empty shops restock at midnight."
     },
     "stealing": {
       "title": "Stealing",
-      "description": "Anything on a shop's shelves can be stolen. The steal window scans the map for shop events and lists what they hold, with a success percentage per item computed from your agility, the item's value and its weight: light and cheap is easy, heavy and precious is not.\n\nOrdinary shops are scanned across the whole map, a random daily merchant only within five tiles.\n\nGetting caught files a crime and lowers the settlement's security. During a crime wave, stealing is measurably harder."
+      "description": "Anything on a shop's shelves can be stolen. The steal window lists what nearby shops hold, with your chance for each item. Agility helps; heavy and valuable items are harder.\n\nDaily merchants can only be robbed from close by.\n\nGetting caught is a crime and makes the town less safe. During a crime wave, stealing is harder."
     },
     "banking_and_loans": {
       "title": "Banking and Loans",
@@ -590,11 +590,11 @@
     },
     "the_stock_market": {
       "title": "The Stock Market",
-      "description": "The market trades two commodities, oil and soul crystals, from a single page terminal. Prices are a random walk tilted by what happens in the world: settlement booms and busts, news events, the state of the powers.\n\nThe Assets screen draws the live graph over your portfolio. The oil price is also what the fuel pump charges and what a letter to another dimension costs."
+      "description": "The market trades two commodities, oil and soul crystals, from a single page terminal. Prices move at random, pushed by what happens in the world: settlement booms and busts, news events, the state of the powers.\n\nThe Assets screen draws the live graph over your portfolio. The oil price is also what the fuel pump charges and what a letter to another dimension costs."
     },
     "real_estate": {
       "title": "Real Estate",
-      "description": "Thirty properties across the towns, rated one to five stars. A one star place costs under a thousand euros; four and five star places are estates.\n\nBuy one outright and you can offer it for rent to NPCs, collected at midnight and on the first of the month. Rent it as a tenant and it is a recurring monthly cost, with no subletting; missed payments evict you.\n\nPrices move with news events tied to specific towns.\n\nRenting an inn room is separate: a room is booked for 24 game hours and cannot be double booked."
+      "description": "Properties across the towns are rated one to five stars. Cheap ones are affordable; four and five stars are estates.\n\nBuy one and you can rent it to NPCs for regular income. Rent one yourself and you pay monthly, with no subletting; miss payments and you are evicted.\n\nPrices move with local news.\n\nInn rooms are separate: one booking covers a full day."
     },
     "owning_a_shop": {
       "title": "Owning a Shop",
@@ -606,7 +606,7 @@
     },
     "quests": {
       "title": "Quests",
-      "description": "Quests are generated, and a board's offers are derived from where it stands.\n\nEvery quest is a list of steps: a simple quest has one, a chain two or three. The steps are detection primitives wired into the rest of the game:\n\n- reach a set of world coordinates, or a named destination\n- open an auto placed chest, or dig a site, which needs a shovel\n- land on a planet and open its sample cache\n- kill a specific high level enemy, force spawned at a tile, which stays there until killed even if the quest fails\n- scan statues or signposts, or dismantle a number of trees, rocks or piles of rubble\n- open the quest board of another town, or interview a citizen through Empathize\n- hand over items, or wait for goods to arrive\n- win arena fights, defeat a number of enemies, or hold a number of oil shares\n\nTerms are shown before you accept: reward, upfront cost, advance paid, deadline, failure penalty, breach bounty and reputation change. Scams lie about them.\n\nRewards and difficulty scale on the party's median level. The board's second tab lists signed contracts with progress and countdowns, and lets you collect or abandon.\n\nThe quest log is a board of sticky notes in three columns, draggable between them."
+      "description": "Quests are generated, and each board offers jobs that suit where it stands.\n\nA quest has one or more steps:\n\n- reach a place on the world map\n- open a hidden chest, or dig a site (needs a shovel)\n- land on a planet and open its sample cache\n- kill a specific strong enemy\n- scan statues or signposts, or clear trees, rocks or rubble\n- visit another town's board, or interview someone through Empathize\n- hand over items, or wait for a delivery\n- win arena fights, defeat enemies, or hold oil shares\n\nTerms are shown before you accept: reward, cost, deadline, penalties and reputation. Scams lie about them.\n\nRewards and difficulty follow your party's level. The board's second tab tracks your contracts, where you collect or abandon them.\n\nThe quest log is a board of sticky notes in three columns that you can drag between."
     },
     "reading_a_notice": {
       "title": "Reading a Notice",
@@ -618,19 +618,19 @@
     },
     "the_workbench": {
       "title": "The Workbench",
-      "description": "The Thinker is the general workbench: assembling and dismantling. The recipe is written on the item itself.\n\nA recipe stays hidden until it has been made once, though common ones are on the board from the start.\n\nBase materials come from dismantling the world: felling trees, mining rocks, breaking furniture, salvaging gear."
+      "description": "The Thinker is the general workbench: assembling and dismantling. The recipe is written on the item.\n\nA recipe stays hidden until it has been made once, though common ones are on the board from the start.\n\nBase materials come from dismantling the world: felling trees, mining rocks, breaking furniture, salvaging gear."
     },
     "the_forge": {
       "title": "The Forge",
-      "description": "Every weapon and armour in the game is on the forge board from your first visit. Training changes which of them you can make.\n\nFour tabs: what you can smith now, what you lack materials for, what is above your training, and what this party has already forged.\n\nAbout thirty one trades are in play, one per item: a robe is Tailoring, a wig is Wig Making, a rifle is Gunsmithing, a circuit woven coat is Electronics.\n\nEach finished piece is registered with its own identity, so two never stack. Three things set its sheet: how far past the required tier the smith's trade is trained, how rich the bill was, and the heat on the day. Every parameter then drifts on its own and the price follows.\n\nFinishes are offered as a strip of swatches, and the seed the 3D model is turned under is rolled once and kept on the piece.\n\nSmelt melts a carried piece back into materials: half the bill, more from a well made piece.\n\nThe party switcher decides which tab an entry falls into and who earns the specialization points."
+      "description": "Every weapon and armour in the game is on the forge board from your first visit. Training decides what you can make.\n\nFour tabs: what you can make now, what you lack materials for, what needs more training, and what this party has already forged.\n\nEach item belongs to a trade: a robe is Tailoring, a wig is Wig Making, a rifle is Gunsmithing, a circuit coat is Electronics.\n\nEvery forged piece is unique and doesn't stack. Better training and better materials make better pieces.\n\nPick a finish from the swatches.\n\nSmelt turns a carried piece back into some of its materials, more for a well made one.\n\nThe party switcher sets who forges and who earns the specialization points."
     },
     "alchemistry": {
       "title": "Alchemistry",
-      "description": "Every alchemical recipe is readable from the start and nothing is gated behind a class.\n\nA recipe is copied onto a bench, and the bench is what you edit and run, so one recipe can be set up two ways at once.\n\nSuccess is a skill check. Meeting every requirement is 0% failure, each tier short raises the chance, and tiers above what the recipe asks pay out as extra product, up to a cap.\n\nStep durations are game minutes, so a batch cooks while you walk, work, travel or sleep.\n\nA bench set to repeat rebuys its reagents and starts again, and stands down with a warning when the pack cannot pay for a run."
+      "description": "Every alchemy recipe is open from the start, for any class.\n\nCopy a recipe onto a bench, then edit and run the bench. One recipe can run on two benches set up differently.\n\nSuccess depends on skill. Meet every requirement and you never fail; fall short and failure becomes likely; go beyond and you get extra product.\n\nSteps take game time, so a batch keeps going while you walk, work, travel or sleep.\n\nA bench set to repeat buys its ingredients and starts again, and stops with a warning when you can't afford a run."
     },
     "cooking": {
       "title": "Cooking",
-      "description": "Cooking combines two recovery items into one. The first item's recovery is doubled and the second's is added, so order matters.\n\nCooking two of the same thing adds a random adjective instead, carrying a bonus or a penalty. The name is built from the first word of the first ingredient and the last word of the second.\n\nFood carries calories, fat and protein, and a cooked meal is worth what went into it."
+      "description": "Cooking combines two recovery items into one. The first item's recovery is doubled and the second's is added, so order matters.\n\nCooking two of the same thing adds a random adjective instead, with a bonus or a penalty. The name is built from the first word of the first ingredient and the last word of the second.\n\nFood has calories, fat and protein, and a cooked meal is worth what went into it."
     },
     "brewing": {
       "title": "Brewing",
@@ -642,11 +642,11 @@
     },
     "farming": {
       "title": "Farming",
-      "description": "Any tilled soil can be farmed. Plants have a lifecycle driven by the clock, the season and the weather.\n\nThey grow only in their own seasons, and out of season they are dormant. Rain speeds growth by 30%, storms by 10%, snow halves it, and a greenhouse runs at full speed all year. A plant at 100% is harvested on the spot; the management menu only opens on a plot still growing.\n\nTilled soil on procedural maps is farmable too. The first visit to a world square rolls which patches are already sown and with what, so a whole field grows the same crop."
+      "description": "Any tilled soil can be farmed. Plants grow with time, season and weather.\n\nThey grow only in their seasons and rest outside them. Rain and storms speed growth, snow slows it, and greenhouses grow all year. A fully grown plant is harvested on the spot; the management menu opens only on plots still growing.\n\nTilled soil on generated maps can be farmed too, and some fields are already sown when you first arrive."
     },
     "animals": {
       "title": "Animals",
-      "description": "Animals are bought in the Build menu and placed on a tile, then managed from the Assets screen as livestock to collect from, sell, or turn into a pet.\n\nThey grow from baby to adult over a set number of days, and adults produce at intervals: an egg, a pail of milk, a fleece.\n\nEvery animal carries a company value paid into the party's social need when you interact with it, once per game day. Dogs, donkeys and roosters produce nothing and are kept for this."
+      "description": "Animals are bought in the Build menu and placed on a tile, then managed from the Assets screen as livestock to collect from, sell, or turn into a pet.\n\nThey grow from baby to adult over a set number of days, and adults produce at intervals: an egg, a pail of milk, a fleece.\n\nEvery animal has a company value that fills the party's social need when you interact with it, once per game day. Dogs, donkeys and roosters produce nothing and are kept for this."
     },
     "beekeeping": {
       "title": "Beekeeping",
@@ -658,7 +658,7 @@
     },
     "how_loot_is_rolled": {
       "title": "How Loot Is Rolled",
-      "description": "Random loot is scored from 0 to 100: the party's median level plus a difficulty modifier carried by the place itself. The score picks the rarity band, from almost everything common at 0 to 20, through a balanced spread at 50, to almost everything legendary at 100.\n\nRarity is read off price, and the same ladder colours item names in the backpack, the shop, the reward popup and the container list.\n\nA Holy Patron Bunker pushes the tables toward the expensive end."
+      "description": "Random loot gets better as your party levels up, and harder places drop better loot.\n\nRarity follows price, and the same colours mark item names in the backpack, shops, rewards and containers.\n\nHoly Patron Bunkers drop especially valuable loot."
     },
     "containers": {
       "title": "Containers",
@@ -682,15 +682,15 @@
     },
     "anomalies": {
       "title": "Anomalies",
-      "description": "Every star system with planets carries at least one anomalous world, marked with a question mark.\n\nHolding orbit over it offers to investigate, once only. What follows is a branching encounter written for that kind of world, paying out in a relic, in salvage, in a fight with something native, or in nothing.\n\nIt runs the same engine as the adventures on Earth's map."
+      "description": "Every star system with planets has at least one anomalous world, marked with a question mark.\n\nHolding orbit over it offers to investigate, once only. What follows is a branching encounter written for that kind of world, paying out in a relic, in salvage, in a fight with something native, or in nothing.\n\nIt runs the same engine as the adventures on Earth's map."
     },
     "what_is_out_there": {
       "title": "What Is Out There",
-      "description": "Stars come in the real classes and in a couple of dozen exotic kinds, each with its own model: remnants, brown dwarfs, feeding X-ray binaries. Systems can be binary or hold several stars, each travelled to individually.\n\nBlack holes come in three weights, the largest drawn as lensed billboards with an accretion stream coiling across the whole separation. Rogue planets drift between the stars with no sun.\n\nAbout twenty real nebulae sit at their real galactic coordinates, hand shaped: the Horsehead, the Orion Nebula, the dark nebulae. Dyson spheres exist.\n\nAbove the galaxy the map continues: local group, superclusters, cosmic web filaments and the shells of the observable universe.\n\nOur own solar system is hand authored, with its twelve real bodies, its belts and a shell of orbital debris."
+      "description": "Stars come in the real classes and in a couple of dozen exotic kinds, each with its own model: remnants, brown dwarfs, feeding X-ray binaries. Systems can be binary or hold several stars, each travelled to individually.\n\nBlack holes come in three weights, the largest bending the light around them and trailing a spiralling accretion stream. Rogue planets drift between the stars with no sun.\n\nAbout twenty real nebulae sit at their real galactic coordinates, hand shaped: the Horsehead, the Orion Nebula, the dark nebulae. Dyson spheres exist.\n\nAbove the galaxy the map continues: local group, superclusters, cosmic web filaments and the shells of the observable universe.\n\nOur own solar system is hand authored, with its twelve real bodies, its belts and a shell of orbital debris."
     },
     "patron_worlds": {
       "title": "Patron Worlds",
-      "description": "Some worlds in other galaxies are named after the people who paid for the game. They are habitable and life bearing, they orbit exotic objects, they sit in nine planet systems where no two planets share a type, and they are listed in the star map catalogue under Patrons.\n\nEach of those people also owns a hatch on exactly one world map square. It cannot be dismantled and nothing grows over it. Going down opens their Holy Patron Bunker: a great hall with strongrooms and a deep back chamber, filled with money and weapons, with the loot tables weighted to the expensive end.\n\nHatch locations are encrypted in the game data."
+      "description": "Some worlds in other galaxies are named after the people who paid for the game. They are habitable and life bearing, they orbit exotic objects, they sit in nine planet systems where every planet is a different type, and they are listed in the star map catalogue under Patrons.\n\nEach of those people also owns a hatch on exactly one world map square. It cannot be dismantled and nothing grows over it. Going down opens their Holy Patron Bunker: a great hall with strongrooms and a deep back chamber, filled with money and weapons, with loot weighted toward the most expensive items.\n\nHatch locations are encrypted in the game data."
     },
     "the_night_sky": {
       "title": "The Night Sky",
@@ -722,7 +722,7 @@
     },
     "app_the_object_index": {
       "title": "App: The Object Index",
-      "description": "The archive's catalogue of every object known to exist: about eleven hundred dossiers, one per item, with all declared metadata.\n\nThe left page is the catalogue, grouped by category, with a search box. The right page is the dossier: identification, lore paragraph, commerce, physical properties, provisioning values, composition and raw declaration tags.\n\nThe lore paragraph is combinatorial and resolved from the world seed. Randomize rerolls it for this window only."
+      "description": "A catalogue of every item in the game, with a dossier for each.\n\nThe left page lists items by category, with a search box. The right page shows the dossier: identification, description, trade, physical properties, food values, composition and tags.\n\nRandomize rewrites the description for this window only."
     },
     "app_npolice": {
       "title": "App: N€police",
@@ -746,7 +746,7 @@
     },
     "television": {
       "title": "Television",
-      "description": "A television can be watched wherever you find one. Tuning to a channel puts you in that channel's studio, where the cast performs the broadcast: named cast turn to face you, take their own sprite and read their lines. A programme with no cast is narrated.\n\nDialogue is generated from templates over lore banks and splices in the live state of your world, so the history channel and the news desk read back the simulated century and the current news.\n\nThe weekly schedule regenerates every in game week. The script is rerolled on every tune in, ten to sixteen exchanges per slot.\n\nCommercial breaks sell either a product, quoted at its real price, or a political position paid for by one of the powers.\n\nFinishing a transmission raises the whole party's Fun; anyone with the Technophobe trait loses the same amount instead.\n\nThe channel guide is drawn as a forty by twenty five teletext page."
+      "description": "Watch any television you find. Tuning to a channel puts you in its studio, where the cast performs the show. Shows with no cast are narrated.\n\nShows talk about your world: the history channel and the news cover what has actually happened.\n\nThe schedule changes every game week, and each show is different every time you tune in.\n\nAdverts sell either products at their real price or a political message.\n\nWatching a whole show raises the party's Fun, except for Technophobes, who lose Fun instead.\n\nThe channel guide is a teletext page."
     },
     "the_radio": {
       "title": "The Radio",
@@ -754,7 +754,7 @@
     },
     "music_and_sound": {
       "title": "Music and Sound",
-      "description": "Battle music is chosen in Options. Random draws a different track at the start of every fight, and None fights in silence.\n\nMap music is seeded: one track per combination of biome, nation and time of day. Some music is generated live by a procedural system.\n\nWhatever plays announces itself, as a notification or as a drawn cassette, with track and artist.\n\nFootsteps change with the surface underfoot."
+      "description": "Battle music is chosen in Options. Random draws a different track at the start of every fight, and None fights in silence.\n\nMap music is fixed: one track per combination of biome, nation and time of day. Some music is generated live by a procedural system.\n\nEach track is announced with its title and artist, as a notification or a drawn cassette.\n\nFootsteps change with the surface underfoot."
     },
     "diversions": {
       "title": "Diversions",
@@ -766,15 +766,15 @@
     },
     "bowling": {
       "title": "Bowling",
-      "description": "A 3D alley with rigid body pin physics, simulated in metres at bowling dimensions: 18.29 metres to the head pin, a 1.07 metre lane, gutters, a 6.35 kilogram ball and 1.53 kilogram pins.\n\nThe camera rides the ball down the lane and cuts to the pin deck for the strike, and a rake sweeps deadwood between rolls.\n\nAim, power and spin use the oscillating slider shared with pool and basketball."
+      "description": "A 3D bowling alley with real pin physics.\n\nThe camera follows the ball down the lane and cuts to the pins on impact.\n\nAim, power and spin use the same moving slider as pool and basketball."
     },
     "pool": {
       "title": "Pool",
-      "description": "A nine foot table simulated in metres. Balls roll under cloth friction, throw each other off on impact, rattle in the jaws of a pocket and drop.\n\nAim, power and spin are set with the oscillating slider. The table is dropped into whatever scenery you are standing in."
+      "description": "A nine foot table simulated in metres. Balls roll under cloth friction, throw each other off on impact, rattle in the jaws of a pocket and drop.\n\nAim, power and spin are set with the oscillating slider. The table is placed in the scenery around you."
     },
     "basketball": {
       "title": "Basketball",
-      "description": "A free throw shootout against a computer opponent on a half court measured in metres: a 4.57 metre line, a rim 3.05 metres up, and a backboard.\n\nThe ball arcs under gravity, clatters off the rim, banks off the backboard and drops through the net, or misses."
+      "description": "A free throw shootout against a computer opponent on a half court.\n\nThe ball arcs, bounces off the rim and backboard, and goes in or misses."
     },
     "chess": {
       "title": "Chess",
@@ -782,23 +782,23 @@
     },
     "fishing": {
       "title": "Fishing",
-      "description": "First person fishing. Fish, junk and hostile encounters are built by the same procedural battler system the battles use, so a Megalodon hooked in the lake is the Megalodon you then fight.\n\nAim by looking around. A ring on the water shows where the cast lands, then it is a contest between the line and whatever took it."
+      "description": "First person fishing. Fish, junk and hostile encounters are built by the same procedural battler system the battles use, so a Megalodon hooked in the lake is the Megalodon you then fight.\n\nAim by looking around. A ring on the water shows where the cast lands, then it is a tug of war between your line and the catch."
     },
     "surfing": {
       "title": "Surfing",
-      "description": "First person surfing. Every wave is a travelling swell with a tilted crest, so it peels: the breaking point races along the beach at about ten metres a second and the whitewater eats the wave behind it.\n\nYou stand on the board, which pitches, rolls and slaps across the chop. The game is reading the peel and staying ahead of it."
+      "description": "First person surfing. Waves break along the beach, and the whitewater swallows the wave behind.\n\nThe board pitches and rolls. Read where the wave is breaking and stay ahead of it."
     },
     "the_shooting_range": {
       "title": "The Shooting Range",
-      "description": "A first person target range. The weapon in frame is the same 3D model the battle overlay raises, built, posed, aimed and fired by the weapon system, so every gun and bow handles as it does in a fight.\n\nNothing is equipped on your character: the range lends you the weapon and takes it back at the door, so it is also where a weapon can be tried before it is bought.\n\nThe rack holds only bows, projectile weapons and firearms."
+      "description": "A first person target range. The weapons handle exactly as they do in battle.\n\nThe range lends you the weapon, so you can try one before buying it.\n\nOnly bows, thrown weapons and firearms are available."
     },
     "the_horse_race": {
       "title": "The Horse Race",
-      "description": "A turf course in 3D: mown grass, running rails, a starting gate, distance poles, a winning post and a grandstand.\n\nThe runners are procedural creatures built from their own names: the name is hashed and handed to the battler system, which keys a coat, a colour and a build to it, so a named horse is the same horse in every world.\n\nOdds are computed by simulating the race many times over the same step function the race then runs."
+      "description": "A 3D turf course with rails, a starting gate, a winning post and a grandstand.\n\nEach horse's look comes from its name, so a horse with the same name looks the same in every world.\n\nThe odds shown are fair."
     },
     "the_monster_tournament": {
       "title": "The Monster Tournament",
-      "description": "A single elimination monster tournament to bet on. Pick a fighter, place a bet in tokens, and only the fights involving your monster are shown.\n\nThe fights are run by the battle engine: the AI picks skills, pays costs, rolls to hit, evade and crit, applies damage formulas, inflicts states and ticks poison at end of turn. The result is then replayed in a 3D arena with animations.\n\nBetting does not affect the outcome."
+      "description": "A knockout monster tournament to bet on. Pick a fighter, bet tokens, and watch only your monster's fights.\n\nThe fights use the real battle rules, then play out in a 3D arena.\n\nBetting does not change the outcome."
     },
     "slots,_scratch_cards_and_tarot": {
       "title": "Slots, Scratch Cards and Tarot",
@@ -829,7 +829,7 @@
       "description": "A viewer for the periodic table, laid out as a book: the full grid on the left page, lanthanides, actinides and a set of esoteric elements that appear in no real table, with the selected element's description on the right."
     },
     "hardware_store": {
-      "title": "Hardware store",
+      "title": "Hardware Store",
       "description": "Salvaged steel, wood, nails, cable and the rest of what a Build or Thinker recipe asks for, sold over a counter instead of prised off a ruin. Every town of any size has one, and the stock is rerolled with the day."
     },
     "esoteric_heavy_particles": {
@@ -850,7 +850,7 @@
     },
     "state_bleeding": {
       "title": "State: Bleeding",
-      "description": "It drains 10% of max HP every turn. It does not wear off on its own. And it follows you out of the fight."
+      "description": "Drains 10% of max HP every turn. Doesn't wear off on its own and lasts after battle."
     },
     "state_blind": {
       "title": "State: Blind",
@@ -858,11 +858,11 @@
     },
     "state_burned": {
       "title": "State: Burned",
-      "description": "It drains 10% of max HP every turn. It does not wear off on its own. And it follows you out of the fight."
+      "description": "Drains 10% of max HP every turn. Doesn't wear off on its own and lasts after battle."
     },
     "state_charm": {
       "title": "State: Charm",
-      "description": "It carries no stat change of its own. The afflicted turns on their own side. It lasts 2-4 actions. A solid hit can break it early."
+      "description": "The afflicted turns on their own side. Lasts 2-4 actions. A solid hit can break it early."
     },
     "state_cold": {
       "title": "State: Cold",
@@ -870,7 +870,7 @@
     },
     "state_confusion": {
       "title": "State: Confusion",
-      "description": "It carries no stat change of its own. The afflicted attacks anyone at random, ally or enemy. It lasts 2-4 actions. A solid hit can break it early."
+      "description": "The afflicted attacks anyone at random, ally or enemy. Lasts 2-4 actions. A solid hit can break it early."
     },
     "state_shadow_veil": {
       "title": "State: Shadow Veil",
@@ -898,7 +898,7 @@
     },
     "state_vulnerability": {
       "title": "State: Vulnerability",
-      "description": "Decreases the target's physical defense. It lowers CON by 50%. It does not wear off on its own. And it follows you out of the fight."
+      "description": "Lowers physical defence: CON down 50%. Doesn't wear off on its own and lasts after battle."
     },
     "state_wet": {
       "title": "State: Wet",
@@ -910,7 +910,7 @@
     },
     "state_poison": {
       "title": "State: Poison",
-      "description": "It drains 5% of max HP every turn. It does not wear off on its own. Walking it off works too, and it follows you out of the fight."
+      "description": "Drains 5% of max HP every turn. Doesn't wear off on its own, but walking it off works. Lasts after battle."
     },
     "state_rage": {
       "title": "State: Rage",
@@ -918,7 +918,7 @@
     },
     "state_freeze": {
       "title": "State: Freeze",
-      "description": "It lowers evasion by 100%, seals a school of skills and seals a school of skills. The afflicted cannot act at all. It lasts 3 turns."
+      "description": "Lowers evasion by 100% and seals skills. The afflicted cannot act at all. Lasts 3 turns."
     },
     "state_paralysis": {
       "title": "State: Paralysis",
@@ -926,7 +926,7 @@
     },
     "state_locked_on": {
       "title": "State: Locked on",
-      "description": "Increases critical rate It raises critical rate by 300%. It lasts 2-4 actions."
+      "description": "Raises critical rate by 300%. Lasts 2-4 actions."
     },
     "state_hp_regeneration": {
       "title": "State: HP Regeneration",
@@ -954,7 +954,7 @@
     },
     "state_hide": {
       "title": "State: Hide",
-      "description": "It stops how often it is targeted entirely. It lasts 5 turns."
+      "description": "Can't be targeted. Lasts 5 turns."
     },
     "state_counter_attack": {
       "title": "State: Counter Attack",
@@ -962,11 +962,11 @@
     },
     "state_status_ailment_block": {
       "title": "State: Status Ailment Block",
-      "description": "It wards off 9 different conditions. It lasts 5 turns."
+      "description": "Blocks several ailments. Lasts 5 turns."
     },
     "state_inspired": {
       "title": "State: Inspired",
-      "description": "Reduces MP cost. It lowers MP cost by 75%. It lasts 5 turns."
+      "description": "Lowers MP cost by 75%. Lasts 5 turns."
     },
     "state_hot": {
       "title": "State: Hot",
@@ -990,19 +990,19 @@
     },
     "state_life_link": {
       "title": "State: Life Link",
-      "description": "Damage taken is shared among all party members. It carries no stat change of its own. It lasts 3-5 turns."
+      "description": "Damage taken is shared among all party members. Lasts 3-5 turns."
     },
     "state_nausea": {
       "title": "State: Nausea",
-      "description": "It lowers AGI by 25%. It does not wear off on its own. And it follows you out of the fight."
+      "description": "Lowers AGI by 25%. Doesn't wear off on its own and lasts after battle."
     },
     "state_drunk": {
       "title": "State: Drunk",
-      "description": "It drains 40% of max AP every turn. It does not wear off on its own. A solid hit can break it early, walking it off works too, and it follows you out of the fight."
+      "description": "Drains 40% of max AP every turn. A solid hit or walking it off ends it. Lasts after battle."
     },
     "state_infected": {
       "title": "State: Infected",
-      "description": "It drains 10% of max HP every turn. It does not wear off on its own. And it follows you out of the fight."
+      "description": "Drains 10% of max HP every turn. Doesn't wear off on its own and lasts after battle."
     },
     "state_floating": {
       "title": "State: Floating",
@@ -1022,7 +1022,7 @@
     },
     "state_withdrawal": {
       "title": "State: Withdrawal",
-      "description": "It lowers STR by 15%, lowers INT by 15%, lowers DEX by 10%, lowers accuracy by 15% and lowers evasion by 5%. It does not wear off on its own. And it follows you out of the fight."
+      "description": "Lowers STR by 15%, INT by 15%, DEX by 10%, accuracy by 15% and evasion by 5%. Doesn't wear off on its own and lasts after battle."
     },
     "state_grappled": {
       "title": "State: Grappled",

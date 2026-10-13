@@ -223,7 +223,10 @@
                 if (i < fingers - 1) {
                     const web = new THREE.Mesh(new THREE.ConeGeometry(0.16 + this.idRand() * 0.05, len * 0.55, 3), webMat);
                     web.position.set(side * (0.18 + f * len * 0.45), -f * 0.18 - 0.1, -0.02);
-                    web.rotation.set(Math.PI / 2, side * 0.3, side * (0.9 - ang));
+                    // Flattened in z so the panel lies in the wing's own plane
+                    // (it used to stand out flat as a fin to the front and back),
+                    // tip pointing out and down between the struts.
+                    web.rotation.set(0, 0, -side * (Math.PI / 2 + 0.1 + f * 0.35));
                     web.scale.set(1, 1, 0.12);
                     grp.add(web);
                 }
@@ -251,7 +254,7 @@
             body.position.y = 1.0; body.scale.set(1.0, 1.3, 0.95);
             this.bodyGroup.add(body);
             const drip = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.34, 8), skin);
-            drip.position.set(0, 0.66, 0); drip.rotation.x = Math.PI; body.add ? body.add(drip) : this.bodyGroup.add(drip);
+            drip.position.set(0, -0.36, 0); drip.rotation.x = Math.PI; body.add(drip);   // body-local: hangs under the belly
 
             // HEAD: snub vampiric skull with tall pointed ears.
             const head = new THREE.Group();

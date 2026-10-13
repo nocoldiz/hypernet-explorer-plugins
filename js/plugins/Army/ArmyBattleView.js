@@ -190,71 +190,91 @@ Scene_ArmyBattle.prototype.createBattleView = function () {
 Scene_ArmyBattle.prototype.update = function () {
   Scene_Base.prototype.update.call(this);
 
+  // Once the field is decided the result is being written back: a cancel in
+  // that pause used to wipe the battle's temp data first, so the beaten army
+  // stayed on the map and its reputation was never touched.
+  if (this._battleEnded) {
+    if (this._endWait > 0 && --this._endWait === 0) this.finishBattle();
+    return;
+  }
+
   if (Input.isTriggered('cancel') || TouchInput.isCancelled()) {
     SoundManager.playCancel();
-    $gameTemp._battleEnemyArmy = null;
-    $gameTemp._battleAllyArmy = null;
-    $gameTemp._battleArmyEventId = null;
-    $gameTemp._armyPracticeBattle = false;
+    Scene_ArmyBattle.clearBattleTemp();
     this.safePop();
     return;
   }
 
   if (this._battleView && this._battleView.isBattleEnded()) {
-    if (!this._battleEnded) {
-      this._battleEnded = true;
-      this._battleResult = this._battleView.getBattleResult();
-      this.endBattle();
-    }
+    this._battleEnded = true;
+    this._battleResult = this._battleView.getBattleResult();
+    this.endBattle();
   }
 };
 
+// Everything a battle hands the scene through $gameTemp, the campaign's side
+// records included: a field left by cancelling must not leave them behind for
+// the next, unrelated battle to resolve.
+Scene_ArmyBattle.clearBattleTemp = function () {
+  $gameTemp._battleEnemyArmy = null;
+  $gameTemp._battleAllyArmy = null;
+  $gameTemp._battleArmyEventId = null;
+  $gameTemp._armyPracticeBattle = false;
+  $gameTemp._battleCampaignSides = null;
+  $gameTemp._battleCampaignTarget = null;
+};
+
+// A moment on the result before the map comes back, counted in frames so the
+// write-back can never run after the scene has gone.
 Scene_ArmyBattle.prototype.endBattle = function () {
-  // Wait a moment before transitioning
-  setTimeout(() => {
-    if (this._battleResult === "victory") {
-      // Player won - remove enemy army from map
-      const eventId = $gameTemp._battleArmyEventId;
-      const enemyArmy = $gameTemp._battleEnemyArmy;
+  this._endWait = 120;
+};
 
-      if (eventId) {
-        const event = $gameMap.event(eventId);
-        if (event) {
-          event.erase();
-        }
-      }
+Scene_ArmyBattle.prototype.finishBattle = function () {
+  if (this._battleResult === "victory") {
+    // Player won - remove enemy army from map
+    const eventId = $gameTemp._battleArmyEventId;
+    const enemyArmy = $gameTemp._battleEnemyArmy;
 
-      // A battle the party joined on somebody's side is settled on the
-      // campaign roster rather than on this map: the beaten column is off the
-      // board and the one they stood with holds the field.
-      if (window.ArmyCampaign && window.ArmyCampaign.resolveJoinedBattle) {
-        window.ArmyCampaign.resolveJoinedBattle("victory");
+    if (eventId) {
+      const event = $gameMap.event(eventId);
+      if (event) {
+        event.erase();
       }
-
-      // Decrease reputation by 25 for defeating a faction army
-      // Independent armies don't affect reputation
-      if (enemyArmy && !enemyArmy.isIndependent() && $gameFactions) {
-        const factionId = enemyArmy.getFactionId();
-        if (factionId >= 0) {
-          $gameFactions.changeReputation(factionId, -25);
-        }
-      }
-    } else if (this._battleResult === "defeat") {
-      // Player lost - game over or retreat
-      if (window.ArmyCampaign && window.ArmyCampaign.resolveJoinedBattle) {
-        window.ArmyCampaign.resolveJoinedBattle("defeat");
+      // ...and off the roster: an erased event comes back with the map, and
+      // the army it carried came back with it at full strength.
+      if (typeof $gameAIArmies !== "undefined" && $gameAIArmies && $gameAIArmies.removeArmyByEventId) {
+        $gameAIArmies.removeArmyByEventId(eventId);
       }
     }
 
-    // Clean up temp data
-    $gameTemp._battleEnemyArmy = null;
-    $gameTemp._battleAllyArmy = null;
-    $gameTemp._battleArmyEventId = null;
-    $gameTemp._armyPracticeBattle = false;
+    // A battle the party joined on somebody's side is settled on the
+    // campaign roster rather than on this map: the beaten column is off the
+    // board and the one they stood with holds the field.
+    if (window.ArmyCampaign && window.ArmyCampaign.resolveJoinedBattle) {
+      window.ArmyCampaign.resolveJoinedBattle("victory");
+    }
 
-    // Return to map (guarded so a manual cancel during the wait cannot pop twice)
-    this.safePop();
-  }, 2000);
+    // Decrease reputation by 25 for defeating a faction army
+    // Independent armies don't affect reputation
+    if (enemyArmy && !enemyArmy.isIndependent() && $gameFactions) {
+      const factionId = enemyArmy.getFactionId();
+      if (factionId !== null && factionId >= 0) {
+        $gameFactions.changeReputation(factionId, -25);
+      }
+    }
+  } else if (this._battleResult === "defeat") {
+    // Player lost - game over or retreat
+    if (window.ArmyCampaign && window.ArmyCampaign.resolveJoinedBattle) {
+      window.ArmyCampaign.resolveJoinedBattle("defeat");
+    }
+  }
+
+  // Clean up temp data
+  Scene_ArmyBattle.clearBattleTemp();
+
+  // Return to map (guarded so it can never pop twice)
+  this.safePop();
 };
 
 // Destroy the PIXI display tree so per-battle Text/Graphics/projectiles/
@@ -638,18 +658,30 @@ ArmyBattleField.prototype._setupPlayerArmy = function () {
   const height = this._battleHeight;
 
   // Group party members and troops
+  // A party member's stats are getters on Game_BattlerBase, which a spread
+  // does not copy: they used to reach the field with no atk/def (NaN damage
+  // both ways) and no id (a crash in _killUnit). They are read out by name.
   const partyMembers = $gameParty.members().map(actor => ({
-    ...actor, name: actor.name(), hp: actor.mhp, currentHp: actor.hp, role: "close quarters", formation: "Line", isLeader: true  // i18n-ignore  troop db ids
+    id: "actor_" + actor.actorId(),  // i18n-ignore  internal id
+    name: actor.name(), hp: actor.mhp, currentHp: actor.hp, mp: actor.mmp,
+    atk: actor.atk, def: actor.def, mat: actor.mat, mdf: actor.mdf, agi: actor.agi, luk: actor.luk,
+    role: "close quarters", formation: "Line", isLeader: true  // i18n-ignore  troop db ids
   }));
   // Scientist-role troops stay behind working the tech tree (see
   // ArmyManager.js produceDailyMaterials); they never take the field.
-  const combatTroops = $gameArmy.getTroops().filter(t => !/scientist/i.test(String(t.role || "")));
+  // Field copies, as the enemy's are: the roster rows carry no currentHp
+  // (damage made it NaN, so the party's own troops could never fall) and the
+  // field's buffs must not be written into the save.
+  const combatTroops = $gameArmy.getTroops()
+    .filter(t => !/scientist/i.test(String(t.role || "")))  // i18n-ignore  troop db id
+    .map(t => ({ ...t, currentHp: t.hp }));
   // A column the party came in on the side of (ArmyEventsManager: helping one
   // army of two already in the field) forms up with them, and takes its own
   // losses rather than the player's: nothing about it is written back.
   const allyArmy = $gameTemp._battleAllyArmy;
   const allyTroops = allyArmy
-    ? allyArmy.getTroops().filter(t => !/scientist/i.test(String(t.role || ""))) : [];
+    ? allyArmy.getTroops().filter(t => !/scientist/i.test(String(t.role || "")))  // i18n-ignore  troop db id
+      .map(t => ({ ...t, currentHp: t.hp, isAlly: true })) : [];
   const allTroops = [...partyMembers, ...combatTroops, ...allyTroops];
 
 
@@ -1452,7 +1484,7 @@ ArmyBattleField.prototype._killUnit = function (unit) {
     }
 
     // Mark troop as injured in army data
-    if (unit.isPlayer && !unit.troop.isLeader) {
+    if (unit.isPlayer && !unit.troop.isLeader && !unit.troop.isAlly) {
       const actualTroop = $gameArmy.getTroops().find(t => t.id === unit.troop.id);
       if (actualTroop) {
         actualTroop.hp = 1; // Set to injured state
@@ -1467,10 +1499,10 @@ ArmyBattleField.prototype._killUnit = function (unit) {
     }
 
     // Remove from army data
-    if (unit.isPlayer) {
+    if (unit.isPlayer && !unit.troop.isAlly) {
       if (unit.troop.isLeader) {
         // Party member died
-        const actorId = parseInt(unit.troop.id.replace("actor_", ""));
+        const actorId = parseInt(String(unit.troop.id || "").replace("actor_", ""));  // i18n-ignore  internal id
         const actor = $gameActors.actor(actorId);
         if (actor) {
           actor.setHp(0);

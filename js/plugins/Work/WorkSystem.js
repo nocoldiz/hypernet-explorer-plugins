@@ -130,14 +130,24 @@
     $gameVariables.setValue(settings.timeVariable, Math.max(0, minutes));
   }
 
+  // The stat names follow the language in force when they are drawn: read once
+  // at plugin load they were always English, since the player's saved language
+  // is only applied after the plugins have loaded.
   let _statsI18n = null;
+  let _statsLang = null;
+
+  const _currentLang = () =>
+    (typeof ConfigManager !== 'undefined' && ConfigManager.language) || 'en';
 
   const _loadStatsI18n = async () => {
-    const lang = ConfigManager.language || 'en';
+    const lang = _currentLang();
+    _statsLang = lang;
     const url = `js/i18n/${lang}/stats.json`;
     try {
       const response = await fetch(url);
-      _statsI18n = await response.json();
+      const bank = await response.json();
+      if (_statsLang !== lang) return;
+      _statsI18n = bank;
 
       // Force refresh of details panel if it exists and scene is active
       if (SceneManager._scene instanceof Scene_Work && SceneManager._scene._detailsPanel) {
@@ -149,6 +159,7 @@
   };
 
   const _si18n = (key) => {
+    if (_statsLang !== _currentLang()) _loadStatsI18n();
     if (_statsI18n && _statsI18n[key]) {
       return _statsI18n[key];
     }
@@ -1624,7 +1635,7 @@
             ${locationsHTML}
 
             <div class="work-28">
-              <strong class="work-16">${T('WorkSystem.statRequirements')} (${actor.name()}):</strong>
+              <strong class="work-16">${T('WorkSystem.statRequirements')} (${window.NPCShared.escapeHtml(actor.name())}):</strong>
               <div class="work-29">
                 ${requirementsHTML}
               </div>
@@ -1651,7 +1662,7 @@
     getActorFaceHTML(actor, size = 64) {
       const faceName = actor.faceName();
       if (!faceName) {
-        return `<div class="work-34" style="width:${size}px; height:${size}px">${actor.name().charAt(0)}</div>`;
+        return `<div class="work-34" style="width:${size}px; height:${size}px">${window.NPCShared.escapeHtml(actor.name().charAt(0))}</div>`;
       }
 
       return `
@@ -1697,7 +1708,7 @@
             <div class="work-37">
               <div class="work-38">
                 <strong class="work-05">
-                  ${actor.name()}
+                  ${window.NPCShared.escapeHtml(actor.name())}
                 </strong>
                 <span class="work-39 ${chanceClass}">
                   ${chancePercent}% SUCCESS
@@ -2071,6 +2082,7 @@
     // Flagged for the travel window (TimeDateSystem's MapInfoHUD): the clock
     // is about to run fast behind the darkened screen, so the card shows.
     this._workSequenceActive = true;
+    $gameTemp._workSequenceOpen = true;
 
     $gamePlayer.setMoveSpeed(0);
 
@@ -2178,6 +2190,7 @@
 
       // The shift itself is over; the travel window drops with the fade-in.
       this._workSequenceActive = false;
+      $gameTemp._workSequenceOpen = false;
 
       $gameScreen.startFadeIn(settings.workFadeDuration);
       $gamePlayer.setMoveSpeed(4);
@@ -2199,6 +2212,30 @@
     return _Game_Player_canMove_Work.call(this);
   };
 
+  // A shift being worked behind the dark screen lives on this Scene_Map. The
+  // main menu used to open over it (Esc during the fade or the fast clock),
+  // and the map that came back from the menu was a new scene that knew
+  // nothing of the shift: no pay, the screen left black and the leader stuck
+  // at walking speed zero. The menu stays shut until the shift is settled.
+  const _Scene_Map_isMenuEnabled_Work = Scene_Map.prototype.isMenuEnabled;
+  Scene_Map.prototype.isMenuEnabled = function () {
+    if (this._workSequenceActive || this._remoteWork || $gameTemp._pendingWork) return false;
+    return _Scene_Map_isMenuEnabled_Work.call(this);
+  };
+
+  // Anything else that swaps the map scene mid-shift (a transfer) still drops
+  // the shift with the old scene, so the new one gives the party its screen
+  // and its legs back rather than leaving it in the dark.
+  const _Scene_Map_start_Work = Scene_Map.prototype.start;
+  Scene_Map.prototype.start = function () {
+    _Scene_Map_start_Work.call(this);
+    if ($gameTemp._workSequenceOpen && !this._workSequenceActive && !this._remoteWork) {
+      $gameTemp._workSequenceOpen = false;
+      $gameScreen.startFadeIn(settings.workFadeDuration);
+      $gamePlayer.setMoveSpeed(4);
+    }
+  };
+
   Scene_Map.prototype.startWorkSequence = function (actor, job) {
     // The shift is worked by one member while the rest of the party carries
     // on: nothing fades, nothing is skipped. Only a party that cannot spare
@@ -2208,6 +2245,7 @@
     // Flagged for the travel window (TimeDateSystem's MapInfoHUD): the clock
     // is about to run fast behind the darkened screen, so the card shows.
     this._workSequenceActive = true;
+    $gameTemp._workSequenceOpen = true;
 
     // Disable player movement
     $gamePlayer.setMoveSpeed(0);
@@ -2244,6 +2282,7 @@
 
       // The shift itself is over; the travel window drops with the fade-in.
       this._workSequenceActive = false;
+      $gameTemp._workSequenceOpen = false;
 
       // Fade back in
       $gameScreen.startFadeIn(settings.workFadeDuration);

@@ -1,7 +1,7 @@
 {
   "title": "TV GUIDE",
   "status": "{channels} CHANNELS | STUDIO MAP {map} | {slots} DAILY SLOTS",
-  "noSignal": "NO TRANSMISSION SIGNAL. (RANDOMTVTRANSMISSIONGENERATOR NO LOADED?)",
+  "noSignal": "NO SIGNAL.",
   "endOfTransmission": "- END OF TRANSMISSION -",
   "narrator": "NARRATOR",
   "format": "FORMAT:",
@@ -65,7 +65,7 @@
         "title": "BEFORE DA TOWER"
       },
       "ninety_two": {
-        "title": "NINETY-TWO: AN ANATOMY OF DA SQUISHIN'"
+        "title": "NINETY-TWO: AN ANATOMY OF DA SQUISHING"
       },
       "kola_file": {
         "title": "DA KOLA FILE"
@@ -225,7 +225,7 @@
         "title": "EMERGENCY BROADCAST (UNOFFICIAL)"
       },
       "weather_probably": {
-        "title": "DA WEATHER, PROBABLY"
+        "title": "DA WEATHER, MAYBE-MAYBE"
       },
       "chef_chaos": {
         "title": "CHEF CHAOS"
@@ -310,7 +310,7 @@
         "title": "REALITY RANGERS"
       },
       "camelcase": {
-        "title": "DA MAGIC OF CAMELCASE"
+        "title": "DA MAGIC OF CamelCase"
       },
       "sockington": {
         "title": "MISTER SOCKINGTON EXPLAINS DA RULES"
@@ -619,5 +619,10 @@
         "title": "SCHOOL OF DA WEEK"
       }
     }
-  }
+  },
+  "programCount": {
+    "one": "{count} PROGRAM",
+    "other": "{count} PROGRAMS"
+  },
+  "noTransmissions": "NO TRANSMISSIONS FOUND. {path} COULD NO BE LOADED!"
 }

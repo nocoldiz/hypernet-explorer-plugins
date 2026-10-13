@@ -357,9 +357,19 @@
     // A key typed into a field is that field's, not the party's. Anything held
     // down when the field took the focus is released, so no key stays stuck
     // once the panel closes.
+    //
+    // A key let go while typing still lets go of its action, though: an arrow
+    // held on the map while a field took the focus (a click into it, a panel
+    // focusing its own box on open) and released inside that field was never
+    // released at all, and the party walked off on its own once the panel
+    // closed. A release is never a press, so it cannot fire anything.
     const _Input_onKeyUp = Input._onKeyUp;
     Input._onKeyUp = function(event) {
-        if (typingInHtmlField()) return;
+        if (typingInHtmlField()) {
+            const name = this.keyMapper[event.keyCode];
+            if (name && this._currentState) this._currentState[name] = false;
+            return;
+        }
         _Input_onKeyUp.call(this, event);
     };
 

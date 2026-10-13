@@ -165,6 +165,15 @@
             });
             const root = win.querySelector('#explorer-root');
             if (!root) return win;
+            // Already open: walk the window that is up to the place asked for.
+            // Building a second explorer into the same root left the first
+            // one's keys bound beside the new one's, so Ctrl+V pasted twice
+            // and Delete recycled what had been picked in the old folder.
+            if (root.dataset.explorerReady) {
+                if (typeof win._explorerGo === 'function' && st.path !== win._explorerPath()) win._explorerGo(st.path);
+                return win;
+            }
+            root.dataset.explorerReady = '1';
 
             //-----------------------------------------------------------------
             // Drawing
@@ -347,6 +356,9 @@
                 if (window.SoundManager) SoundManager.playCursor();
                 return true;
             };
+
+            win._explorerGo = go;
+            win._explorerPath = () => st.path;
 
             const openItem = (name, isDir) => {
                 // A real double click fires two clicks and then the dblclick,
@@ -675,7 +687,7 @@
         // My Computer
         window.HypernetOS.registerApp({
             id: 'my-computer',
-            name: T('MyComputer.myComputer'),
+            name: () => T('MyComputer.myComputer'),
             icon: 86,
             launchFn: function() {
                 window.HypernetMyComputer.launch(window.HypernetMyComputer.MY_COMPUTER);
@@ -686,7 +698,7 @@
         // My Documents
         window.HypernetOS.registerApp({
             id: 'my-documents',
-            name: T('MyComputer.myDocuments'),
+            name: () => T('MyComputer.myDocuments'),
             icon: 191,
             launchFn: function() {
                 window.HypernetMyComputer.launch('C:/Documents');

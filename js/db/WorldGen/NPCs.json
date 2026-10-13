@@ -34125,5 +34125,59 @@
     "goblin": true,
     "source": "Dungeon_Monsters2#1",
     "pitch": 127
+  },
+  "Animations/!$Librarian2": {
+    "varlenian": true,
+    "npc": false,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "Librarian"
+    ],
+    "beta": false,
+    "animations": true,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "L"
+    ],
+    "color": "golden",
+    "classes": [
+      39
+    ],
+    "markovDB": "medieval",
+    "theme": "Urban",
+    "pitch": 87
+  },
+  "Varlenian/!$Wrestler1": {
+    "varlenian": true,
+    "npc": true,
+    "animal": false,
+    "creature": false,
+    "zombie": false,
+    "aliens": false,
+    "magical": false,
+    "busts": [
+      "Wrestler"
+    ],
+    "beta": false,
+    "animations": false,
+    "Archetype": "Humanoid",
+    "SecondaryArchetype": "",
+    "Gender": 0,
+    "chars": [
+      "W"
+    ],
+    "color": "golden",
+    "classes": [
+      5
+    ],
+    "markovDB": "npc",
+    "theme": "Urban",
+    "pitch": 75
   }
 }

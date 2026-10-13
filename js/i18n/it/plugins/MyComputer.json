@@ -14,7 +14,7 @@
   "delete": "Elimina",
   "deleteConfirm": "Spostare '{file}' nel Cestino?",
   "deleteTitle": "Conferma eliminazione file",
-  "propsTitle": "Proprieta' - {name}",
+  "propsTitle": "Proprietà - {name}",
   "propsBody": "{name}\n\nTipo: {type}\nPercorso: {location}\nDimensione: {size} byte",
   "typeFolder": "Cartella di file",
   "typeFile": "File",
@@ -65,12 +65,12 @@
   "selectAll": "Seleziona tutto",
   "refresh": "Aggiorna",
   "renamePrompt": "Digitare un nuovo nome per '{name}'.",
-  "renameTaken": "Un file di nome '{name}' e gia presente.",
+  "renameTaken": "Un file di nome '{name}' è già presente.",
   "pasteFailed": "Impossibile spostare o copiare l'elemento.",
   "status": "{count} oggetti",
   "statusSelected": "{count} oggetti selezionati",
   "statusSize": "{count} oggetti, {size} byte",
-  "emptyFolder": "Questa cartella e vuota.",
+  "emptyFolder": "Questa cartella è vuota.",
   "bytes": "{n} byte",
   "kb": "{n} KB",
   "sizeOf": "Dimensione: {size}",
@@ -78,10 +78,10 @@
   "printers": "Stampanti e fax",
   "networkPlaces": "Risorse di rete",
   "typeSystemFolder": "Cartella di sistema",
-  "driveNotReady": "Nessun disco nell'unita {drive}.",
+  "driveNotReady": "Nessun disco nell'unità {drive}.",
   "drive": {
     "fixed": "Disco locale",
     "floppy": "Floppy da 3,5",
-    "cd": "Unita CD"
+    "cd": "Unità CD"
   }
 }

@@ -8,16 +8,16 @@
   "listLast": " e ",
   "hitsFor": " attacca ",
   "damageSuffix": ", ha subito %1 danni!",
-  "recoverySuffix": ", ha recuperato %1 PS!",
+  "recoverySuffix": ", ha recuperato %1 HP!",
   "noDamageSuffix": ", non ha subito danni.",
   "uses": " usa ",
   "and": "e",
   "positionOption": "Posizione registro",
   "positionBottomLeft": "In basso a sinistra",
   "positionTopRight": "In alto a destra",
-  "skillNamesOption": "Nomi Abilità",
-  "skillName": "Nome Abilità",
-  "skillAction": "Azione Abilità",
+  "skillNamesOption": "Nomi abilità",
+  "skillName": "Nome abilità",
+  "skillAction": "Azione abilità",
   "pronouns": {
     "he": {
       "subject": "lui",
@@ -41,5 +41,7 @@
     }
   },
   "statDelta": "{stat} {points}",
-  "statUnchanged": "{stats} restano dove sono!"
+  "statUnchanged": "{stats} invariate!",
+  "critical": "{text} (CRITICO!)",
+  "regenerated": "{name} recupera {value} HP!"
 }

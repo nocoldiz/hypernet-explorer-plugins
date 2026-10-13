@@ -1,6 +1,6 @@
 {
   "name": "Teotecnica",
-  "blurb": "Dottrina e tecnologia religiosa del Sacro Impero Vaticano, presentate come disegni con una distinta base.",
+  "blurb": "Dottrina e tecnologia religiosa del Sacro Impero Vaticano.",
   "nodes": {
     "theo_ascension": {
       "name": "Il Disormeggio della Sede",
@@ -20,7 +20,7 @@
     },
     "theo_choir_fire_control": {
       "name": "Il Tiro Cantato dal Coro",
-      "desc": "Le soluzioni di tiro vengono calcolate come canto piano. Distanza, deriva e anticipo sono portati da tre voci i cui intervalli codificano le tre grandezze, e la batteria spara sulla risoluzione dell'accordo, per cui una soluzione che non chiude è udibile nella navata un secondo e mezzo prima che il colpo sarebbe arrivato. Il tempo di soluzione è paragonabile a quello di un calcolatore meccanico dell'epoca e il tasso di errore è inferiore, perché un numero sbagliato suona sbagliato. Ai coristi non viene detto che cosa rappresentino gli intervalli e vengono valutati solo sull'intonazione."
+      "desc": "Le soluzioni di tiro vengono calcolate come canto piano. Distanza, deriva e anticipo sono portati da tre voci i cui intervalli codificano le tre grandezze, e la batteria spara sulla risoluzione dell'accordo, per cui una soluzione che non chiude è udibile nella navata un secondo e mezzo prima del momento in cui il colpo sarebbe arrivato. Il tempo di soluzione è paragonabile a quello di un calcolatore meccanico dell'epoca e il tasso di errore è inferiore, perché un numero sbagliato suona sbagliato. Ai coristi non viene detto che cosa rappresentino gli intervalli e vengono valutati solo sull'intonazione."
     },
     "theo_basilica_railgun": {
       "name": "Il Railgun della Basilica",
@@ -84,7 +84,7 @@
     },
     "theo_deus_machina": {
       "name": "Il Dio Meccanico",
-      "desc": "Il seggio vacante viene occupato da un oggetto costruito per occuparlo: un reticolo lungo quanto la chiglia della cittadella, alimentato dalla preghiera aggregata di una nazione convertita a circa 40.000 animus al giorno, che risponde nel registro specificato dalla dottrina ed entro la latenza consentita dal protocollo dei sacramenti. Non se ne afferma l'identità con il Padre. L'affermazione messa agli atti è più stretta ed è quella che compila: che soddisfi ogni clausola che il Padre soddisfaceva. Il compilatore concorda, e il verbale della seduta non registra alcuna votazione."
+      "desc": "Il seggio vacante viene occupato da un oggetto costruito per occuparlo: un reticolo lungo quanto la chiglia della cittadella, alimentato dalla preghiera aggregata di una nazione convertita a circa 40.000 animus al giorno, che risponde nel registro specificato dalla dottrina ed entro la latenza consentita dal protocollo dei sacramenti. L'affermazione messa agli atti è ristretta, ed è quella che compila: che soddisfi ogni clausola che il Padre soddisfaceva. Il compilatore concorda, e il verbale della seduta non registra alcuna votazione."
     },
     "theo_theonuclear": {
       "name": "L'Ordigno Teonucleare",

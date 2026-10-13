@@ -29,7 +29,7 @@
   "spec": {
     "902": {
       "name": "Incantamento",
-      "description": "Vincolare un incantesimo a un oggetto perché l’oggetto possa spenderlo, e tenere intero l’oggetto mentre lo fa."
+      "description": "Vincolare un incantesimo a un oggetto perché possa lanciarlo in seguito."
     },
     "490": {
       "name": "Modellazione e Stampa 3D",
@@ -41,11 +41,11 @@
     },
     "492": {
       "name": "Acustica",
-      "description": "Il comportamento del suono in uno spazio, e come sagomare stanze e materiali per governarlo."
+      "description": "Come si comporta il suono in uno spazio, e come controllarlo."
     },
     "2": {
       "name": "Acrobatica",
-      "description": "Capriole, volteggi e giochi di equilibrio eseguiti in movimento con controllo."
+      "description": "Capriole, volteggi ed equilibrio in movimento, con controllo."
     },
     "3": {
       "name": "Recitazione",
@@ -101,7 +101,7 @@
     },
     "11": {
       "name": "Anatomia",
-      "description": "La struttura del corpo: ossa, muscoli, vasi e organi, e dove si trovano."
+      "description": "La struttura del corpo: ossa, muscoli, vasi e organi."
     },
     "12": {
       "name": "Zootecnia",
@@ -221,7 +221,7 @@
     },
     "891": {
       "name": "Ascia",
-      "description": "Combattere con asce da mano e i loro archi sbilanciati in avanti."
+      "description": "Combattere con asce da mano e i loro colpi pesanti e spaccanti."
     },
     "863": {
       "name": "Lancio dell'Ascia",
@@ -353,7 +353,7 @@
     },
     "514": {
       "name": "Blogging",
-      "description": "Scrivere con regolarità per un pubblico che arriva da solo."
+      "description": "Scrivere post con regolarità e farsi un pubblico di lettori."
     },
     "515": {
       "name": "Magia del Sangue",
@@ -437,7 +437,7 @@
     },
     "524": {
       "name": "Preparazione di Pozioni",
-      "description": "Comporre preparati liquidi che portano un effetto magico."
+      "description": "Comporre preparati liquidi con un effetto magico."
     },
     "50": {
       "name": "Muratura in Laterizio",
@@ -449,7 +449,7 @@
     },
     "525": {
       "name": "Giornalismo Televisivo",
-      "description": "Fare cronaca davanti a telecamera e microfono contro il tempo di chiusura."
+      "description": "Fare cronaca davanti a telecamera e microfono, entro la messa in onda."
     },
     "526": {
       "name": "Monta del Toro",
@@ -457,7 +457,7 @@
     },
     "326": {
       "name": "Collaudo di Corde Elastiche",
-      "description": "Provare a carico una corda elastica fino al punto in cui non deve cedere."
+      "description": "Collaudo di sicurezza di corde elastiche sotto carico."
     },
     "51": {
       "name": "Bungee Jumping",
@@ -473,7 +473,7 @@
     },
     "327": {
       "name": "Giunzione Cavi",
-      "description": "Unire cavi in modo che la giunzione regga carico o segnale quanto il tratto."
+      "description": "Unire cavi senza perdere resistenza o segnale."
     },
     "528": {
       "name": "Callistenia",
@@ -485,7 +485,7 @@
     },
     "54": {
       "name": "Calligrafia",
-      "description": "Tracciare le lettere come una mano controllata e deliberata."
+      "description": "Tracciare le lettere con mano controllata e deliberata."
     },
     "328": {
       "name": "Cucina da Campo",
@@ -569,7 +569,7 @@
     },
     "873": {
       "name": "Temperaggio del Cioccolato",
-      "description": "Portare la copertura lungo la sua curva di cristallizzazione per lucentezza e croccantezza."
+      "description": "Scaldare e raffreddare il cioccolato perché solidifichi lucido e croccante."
     },
     "535": {
       "name": "Canto Corale",
@@ -621,7 +621,7 @@
     },
     "68": {
       "name": "Lettura a Freddo",
-      "description": "Produrre dettagli dal suono accurato partendo da indizi e probabilità."
+      "description": "Indovinare dettagli personali convincenti da indizi e probabilità."
     },
     "69": {
       "name": "Tolleranza al Freddo",
@@ -669,7 +669,7 @@
     },
     "547": {
       "name": "Macellazione di Cadaveri",
-      "description": "Smembrare un corpo con pulizia, qualunque sia il motivo."
+      "description": "Smembrare un corpo con pulizia."
     },
     "76": {
       "name": "Cosplay",
@@ -721,7 +721,7 @@
     },
     "857": {
       "name": "Lettura della Folla",
-      "description": "Valutare umore, intenzioni e il margine pericoloso di una folla."
+      "description": "Valutare umore e intenzioni di una folla, e quando diventa pericolosa."
     },
     "555": {
       "name": "Crowd Surfing",
@@ -749,11 +749,11 @@
     },
     "557": {
       "name": "Assistenza Clienti",
-      "description": "Gestire persone, reclami e resi senza perdere né l'uno né l'altro."
+      "description": "Gestire clienti, reclami e resi senza scontentare nessuno."
     },
     "558": {
       "name": "Cibernetica",
-      "description": "Controllo e retroazione in macchine e viventi, e le giunture fra i due."
+      "description": "Controllo e retroazione in macchine e organismi viventi."
     },
     "900": {
       "name": "Ciclismo",
@@ -769,7 +769,7 @@
     },
     "82": {
       "name": "Ballo",
-      "description": "Muoversi a tempo e in forma sulla musica, da soli o condotti."
+      "description": "Muoversi a tempo di musica, da soli o in coppia."
     },
     "83": {
       "name": "Analisi dei Dati",
@@ -789,7 +789,7 @@
     },
     "341": {
       "name": "Immersione Profonda",
-      "description": "Lavorare in profondità a miscele, con disciplina di decompressione."
+      "description": "Lavorare in profondità con miscele di gas, rispettando la decompressione."
     },
     "85": {
       "name": "Demolizioni",
@@ -845,7 +845,7 @@
     },
     "91": {
       "name": "Schivata",
-      "description": "Leggere un attacco in arrivo abbastanza presto da non essere lì."
+      "description": "Vedere arrivare un attacco e togliersi di mezzo."
     },
     "343": {
       "name": "Slitta Trainata da Cani",
@@ -877,7 +877,7 @@
     },
     "93": {
       "name": "Druidismo",
-      "description": "Pratica antica legata agli alberi, alle stagioni e alla legge propria della terra."
+      "description": "Pratica antica legata agli alberi, alle stagioni e alla terra."
     },
     "344": {
       "name": "Costruzione di Tamburi",
@@ -933,7 +933,7 @@
     },
     "579": {
       "name": "Riparazione Ascensori",
-      "description": "Manutenzione di argani, comandi e dispositivi di sicurezza."
+      "description": "Manutenere macchinari, comandi e dispositivi di sicurezza degli ascensori."
     },
     "99": {
       "name": "Ricamo",
@@ -969,11 +969,11 @@
     },
     "583": {
       "name": "Esport",
-      "description": "Videogioco competitivo a livello allenato e cronometrato."
+      "description": "Giocare ai videogiochi a livello competitivo e allenato."
     },
     "585": {
       "name": "Galateo",
-      "description": "Conoscere la forma attesa in qualunque stanza, e usarla."
+      "description": "Conoscere le buone maniere attese in ogni ambiente, e usarle."
     },
     "586": {
       "name": "Evangelizzazione",
@@ -1021,7 +1021,7 @@
     },
     "105": {
       "name": "Digiuno",
-      "description": "Rinunciare al cibo di proposito, e restare funzionanti."
+      "description": "Rinunciare al cibo di proposito, restando efficienti."
     },
     "591": {
       "name": "Costruzione di Recinzioni",
@@ -1041,7 +1041,7 @@
     },
     "594": {
       "name": "Critica Cinematografica",
-      "description": "Analizzare un film per mestiere, forma e intenzione."
+      "description": "Analizzare un film per tecnica, forma e intenzione."
     },
     "595": {
       "name": "Pianificazione Finanziaria",
@@ -1065,7 +1065,7 @@
     },
     "354": {
       "name": "Camminata sui Carboni",
-      "description": "Attraversare braci ardenti sulla fisica del tempo di contatto."
+      "description": "Attraversare braci ardenti senza ustionarsi, grazie al contatto breve."
     },
     "837": {
       "name": "Reverse Engineering di Firmware",
@@ -1101,7 +1101,7 @@
     },
     "600": {
       "name": "Composizione Floreale",
-      "description": "Comporre fiori recisi per linea, massa e durata."
+      "description": "Comporre fiori recisi per linea e massa, perché durino."
     },
     "828": {
       "name": "Fluidodinamica",
@@ -1185,7 +1185,7 @@
     },
     "608": {
       "name": "Taglio del Vetro",
-      "description": "Incidere e spezzare il vetro lungo la linea voluta, netta."
+      "description": "Incidere e spezzare il vetro lungo una linea netta e precisa."
     },
     "849": {
       "name": "Incisione su Vetro",
@@ -1229,7 +1229,7 @@
     },
     "612": {
       "name": "Scavo di Fosse",
-      "description": "Aprire e richiudere fosse a profondità, in qualunque terreno."
+      "description": "Aprire e richiudere fosse alla giusta profondità, in qualunque terreno."
     },
     "613": {
       "name": "Gestione della Serra",
@@ -1245,7 +1245,7 @@
     },
     "896": {
       "name": "Arma da Fuoco",
-      "description": "Maneggiare e sparare con precisione sotto pressione."
+      "description": "Maneggiare armi da fuoco e sparare con precisione sotto pressione."
     },
     "366": {
       "name": "Macinazione della Polvere Nera",
@@ -1313,7 +1313,7 @@
     },
     "133": {
       "name": "Pilotaggio di Elicotteri",
-      "description": "Pilotare un rotore, incluse la sospensione e l'autorotazione."
+      "description": "Pilotare elicotteri, compresi volo stazionario e autorotazione."
     },
     "370": {
       "name": "Preparazione di Impiastri",
@@ -1357,7 +1357,7 @@
     },
     "856": {
       "name": "Trattativa con Sequestratori",
-      "description": "Far rientrare una situazione barricata senza lasciarci un morto."
+      "description": "Risolvere a parole un asserragliamento senza lasciarci un morto."
     },
     "625": {
       "name": "Mongolfiera",
@@ -1369,7 +1369,7 @@
     },
     "372": {
       "name": "Danza Hula",
-      "description": "Danza hawaiana in cui sono le mani a raccontare la storia."
+      "description": "Danza hawaiana che racconta una storia con le mani."
     },
     "626": {
       "name": "Hula Hoop",
@@ -1413,11 +1413,11 @@
     },
     "374": {
       "name": "Pesca sul Ghiaccio",
-      "description": "Pescare da un foro nel ghiaccio, dopo aver letto il ghiaccio."
+      "description": "Pescare da un foro nel ghiaccio, dopo aver valutato il ghiaccio."
     },
     "631": {
       "name": "Scultura su Ghiaccio",
-      "description": "Scolpire blocchi di ghiaccio contro l'orologio dello scioglimento."
+      "description": "Scolpire blocchi di ghiaccio prima che si sciolgano."
     },
     "138": {
       "name": "Pattinaggio su Ghiaccio",
@@ -1433,7 +1433,7 @@
     },
     "632": {
       "name": "Magia Illusoria",
-      "description": "Far riferire ai sensi ciò che non c'è."
+      "description": "Far percepire ai sensi ciò che non c'è."
     },
     "634": {
       "name": "Immunologia",
@@ -1481,7 +1481,7 @@
     },
     "140": {
       "name": "Intimidazione",
-      "description": "Far credere a qualcuno quali sarebbero le conseguenze di un rifiuto."
+      "description": "Far temere a qualcuno cosa succede se rifiuta."
     },
     "638": {
       "name": "Giornalismo d'Inchiesta",
@@ -1493,7 +1493,7 @@
     },
     "640": {
       "name": "Stiratura",
-      "description": "Stendere il tessuto senza bruciarlo né lucidarlo."
+      "description": "Stirare il tessuto senza bruciarlo né lucidarlo."
     },
     "537": {
       "name": "Pulizie Civili",
@@ -1517,11 +1517,11 @@
     },
     "70": {
       "name": "Raccontare Barzellette",
-      "description": "Tempi, premessa e consegna che fanno arrivare la battuta."
+      "description": "Tempi, preparazione e modo di raccontare che fanno ridere."
     },
     "142": {
       "name": "Giornalismo",
-      "description": "Fare cronaca: trovare le fonti, verificarle e scriverla dritta."
+      "description": "Fare cronaca: trovare e verificare le fonti, scrivere i fatti senza distorcerli."
     },
     "645": {
       "name": "Giostra",
@@ -1593,7 +1593,7 @@
     },
     "650": {
       "name": "Laser Tag",
-      "description": "Scaramuccia a infrarossi: copertura, angoli ed evitare i colpi."
+      "description": "Scaramuccia a infrarossi: copertura, angoli e schivata dei colpi."
     },
     "651": {
       "name": "Lazo",
@@ -1629,11 +1629,11 @@
     },
     "888": {
       "name": "Arma Leggera",
-      "description": "Combattere con armi leggere e rapide, che barattano portata per velocità."
+      "description": "Combattere con armi leggere e rapide, che sacrificano portata a favore della velocità."
     },
     "655": {
       "name": "Addestramento Armatura Leggera",
-      "description": "Combattere in armatura leggera conservando la mobilità che le compete."
+      "description": "Combattere in armatura leggera conservandone la mobilità."
     },
     "158": {
       "name": "Passo Leggero",
@@ -1681,7 +1681,7 @@
     },
     "660": {
       "name": "Produzione della Liscivia",
-      "description": "Lisciviare la cenere di legna in soda caustica, in sicurezza."
+      "description": "Lisciviare la cenere di legna in liscivia caustica, in sicurezza."
     },
     "385": {
       "name": "Apprendimento Automatico",
@@ -1697,7 +1697,7 @@
     },
     "166": {
       "name": "Mago",
-      "description": "La pratica completa di un mago istruito, non una sola sua scuola."
+      "description": "Magia generale in tutte le scuole."
     },
     "167": {
       "name": "Manutenzione",
@@ -1969,11 +1969,11 @@
     },
     "688": {
       "name": "Preparazione del Bagaglio",
-      "description": "Far stare quel che serve in quel che si riesce davvero a portare."
+      "description": "Far stare quel che ti serve in quel che riesci davvero a portare."
     },
     "191": {
       "name": "Sopportazione del Dolore",
-      "description": "Restare funzionanti attraverso un dolore che fermerebbe altri."
+      "description": "Restare efficienti nonostante un dolore che fermerebbe altri."
     },
     "689": {
       "name": "Paintball",
@@ -2165,15 +2165,15 @@
     },
     "212": {
       "name": "Poesia",
-      "description": "Scrivere versi in cui ogni a capo ha una ragione."
+      "description": "Scrivere versi con ritmo, immagini e forma."
     },
     "213": {
       "name": "Resistenza ai Veleni",
-      "description": "Un corpo che ha imparato a sopravvivere a dosi cui non si dovrebbe sopravvivere."
+      "description": "Sopravvivere a dosi di veleno che ucciderebbero altri."
     },
     "214": {
       "name": "Poker",
-      "description": "Puntare, leggere e lasciare lungo la mano."
+      "description": "Puntare, leggere gli avversari e sapere quando passare."
     },
     "420": {
       "name": "Faccia da Poker",
@@ -2277,11 +2277,11 @@
     },
     "427": {
       "name": "Calcolo Quantistico",
-      "description": "Calcolare su sovrapposizione e interferenza, non sui soli bit."
+      "description": "Calcolare con sovrapposizione e interferenza."
     },
     "836": {
       "name": "Crittografia Quantistica",
-      "description": "Scambio di chiavi che una misurazione tradirebbe."
+      "description": "Scambiare chiavi in modo che ogni intercettazione venga scoperta."
     },
     "428": {
       "name": "Quilling",
@@ -2389,7 +2389,7 @@
     },
     "228": {
       "name": "Rugby",
-      "description": "Contatto, gioco di mano e fasi statiche nel gioco corso."
+      "description": "Contatto, gioco alla mano e fasi statiche in partita."
     },
     "610": {
       "name": "Diffusione di Voci",
@@ -2521,7 +2521,7 @@
     },
     "238": {
       "name": "Lingua dei Segni",
-      "description": "Conversazione segnata, con una grammatica e uno spazio propri."
+      "description": "Conversare a segni, con grammatica e spazio propri."
     },
     "747": {
       "name": "Rotazione di Cartelli Pubblicitari",
@@ -2533,7 +2533,7 @@
     },
     "239": {
       "name": "Lavorazione dell'Argento",
-      "description": "Alzare, saldare e rifinire l'argento."
+      "description": "Tirare a martello, saldare e rifinire l'argento."
     },
     "240": {
       "name": "Canto",
@@ -2557,7 +2557,7 @@
     },
     "242": {
       "name": "Privazione del Sonno",
-      "description": "Restare funzionanti quando il corpo reclama il sonno che gli spetta."
+      "description": "Restare efficienti senza aver dormito abbastanza."
     },
     "243": {
       "name": "Gioco di Prestigio",
@@ -2605,7 +2605,7 @@
     },
     "757": {
       "name": "Collaudo del Software",
-      "description": "Progettare test che trovino difetti veri, non che passino e basta."
+      "description": "Progettare test che trovino difetti veri."
     },
     "834": {
       "name": "Scienza del Suolo",
@@ -2701,11 +2701,11 @@
     },
     "258": {
       "name": "Statistica",
-      "description": "Campionamento, inferenza e sapere cosa un numero non dice."
+      "description": "Campionamento, inferenza e lettura corretta dei dati."
     },
     "456": {
       "name": "Uso dello Steadicam",
-      "description": "Portare una camera stabilizzata e camminare un'inquadratura fluida."
+      "description": "Portare una camera stabilizzata per riprese fluide in movimento."
     },
     "765": {
       "name": "Uccisioni Furtive",
@@ -2713,7 +2713,7 @@
     },
     "245": {
       "name": "Movimento Furtivo",
-      "description": "Muoversi non visti né uditi oltre l'attenzione altrui."
+      "description": "Passare accanto agli altri senza essere visti né sentiti."
     },
     "745": {
       "name": "Stenografia",
@@ -2741,7 +2741,7 @@
     },
     "459": {
       "name": "Magia da Strada",
-      "description": "Prestidigitazione ravvicinata, senza palco e senza angoli morti."
+      "description": "Prestigiazione ravvicinata, senza palco, vista da ogni lato."
     },
     "767": {
       "name": "Spazzamento Strade",
@@ -2877,7 +2877,7 @@
     },
     "464": {
       "name": "Costruzione di Telescopi",
-      "description": "Molare, figurare e montare ottiche che tengano ferma una stella."
+      "description": "Molare, sagomare e montare le ottiche di un telescopio."
     },
     "276": {
       "name": "Tennis",
@@ -2893,7 +2893,7 @@
     },
     "466": {
       "name": "Costruzione di Terrari",
-      "description": "Costruire un contenitore piantumato e chiuso che si mantenga da sé."
+      "description": "Costruire un terrario chiuso e autosufficiente."
     },
     "782": {
       "name": "Copertura in Paglia",
@@ -2929,14 +2929,14 @@
     },
     "471": {
       "name": "Arte Topiaria",
-      "description": "Potare arbusti vivi in forme mantenute."
+      "description": "Potare arbusti vivi in forme durevoli."
     },
     "280": {
       "name": "Tortura",
       "description": "Infliggere dolore per uno scopo, e quanto valga davvero."
     },
     "785": {
-      "name": "Dattilografia Cieca",
+      "name": "Dattilografia alla Cieca",
       "description": "Scrivere a macchina con precisione e velocità senza guardare."
     },
     "786": {
@@ -2965,7 +2965,7 @@
     },
     "282": {
       "name": "Traduzione",
-      "description": "Portare il senso da una lingua all'altra, non solo le parole."
+      "description": "Trasporre il significato da una lingua all'altra."
     },
     "283": {
       "name": "Caccia con Trappole",
@@ -2981,7 +2981,7 @@
     },
     "886": {
       "name": "Tattiche di Trincea",
-      "description": "Tenere, incursionare e vivere su linee fisse."
+      "description": "Difendere, assaltare e vivere su linee fisse."
     },
     "794": {
       "name": "Triathlon",
@@ -3009,7 +3009,7 @@
     },
     "798": {
       "name": "Ultimate Disc",
-      "description": "Gestione del disco, tagli e difesa nel gioco corso."
+      "description": "Gestione del disco, tagli e difesa in partita."
     },
     "286": {
       "name": "Combattimento Disarmato",
@@ -3025,7 +3025,7 @@
     },
     "287": {
       "name": "Tappezzeria",
-      "description": "Scarnire, imbottire e rivestire fusti di mobili."
+      "description": "Smontare il vecchio rivestimento, imbottire e rivestire fusti di mobili."
     },
     "476": {
       "name": "Esplorazione Urbana",
@@ -3033,7 +3033,7 @@
     },
     "288": {
       "name": "Urbanistica",
-      "description": "Zonizzazione, trasporti e come una città cresce o si soffoca."
+      "description": "Zonizzazione, trasporti e come una città cresce o soffoca."
     },
     "787": {
       "name": "Traino Veicoli",
@@ -3065,7 +3065,7 @@
     },
     "850": {
       "name": "Liuteria",
-      "description": "Intagliare, sgusciare e verniciare violini."
+      "description": "Intagliare, assottigliare e verniciare violini."
     },
     "803": {
       "name": "Recitazione Vocale",
@@ -3109,7 +3109,7 @@
     },
     "809": {
       "name": "Sviluppo Web",
-      "description": "Costruire siti e applicazioni web, davanti e dietro."
+      "description": "Costruire siti e applicazioni web, front-end e back-end."
     },
     "295": {
       "name": "Sollevamento Pesi",
@@ -3157,7 +3157,7 @@
     },
     "298": {
       "name": "Windsurf",
-      "description": "Navigare una tavola su attrezzatura, assetto e postura."
+      "description": "Condurre una tavola a vela: attrezzatura, assetto e postura."
     },
     "758": {
       "name": "Degustazione del Vino",

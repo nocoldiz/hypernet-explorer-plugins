@@ -9,12 +9,12 @@
   "requiredSkills": "Required Skills",
   "successChance": "Chance of success",
   "yieldLabel": "Yield",
-  "duration": "Time on the bench",
+  "duration": "Time",
   "guaranteed": "Certain",
   "failChance": "{pct}% to ruin",
   "yieldCount": "x{qty}",
   "steps": "Procedure",
-  "noSteps": "No steps recorded. Copy a recipe here, or add one to begin the procedure.",
+  "noSteps": "No steps yet. Add a step or copy a recipe.",
   "addStep": "Add Step",
   "execute": "Start Batch",
   "clearSteps": "Clear Bench",
@@ -32,7 +32,7 @@
   "notEnough": "You don't have the reagents for this batch.",
   "stepAt": "at",
   "stepFor": "for",
-  "empty": "Select a recipe or a bench to read its formula and procedure.",
+  "empty": "Select a recipe or bench.",
   "actions": {
     "combine": "Combine",
     "heat": "Heat",
@@ -47,14 +47,14 @@
     "hm": "{h}h {m}m"
   },
   "toast": {
-    "started": "{name} is on the bench, {time} to go.",
+    "started": "{name} started, {time} left.",
     "restarted": "{name} started again, {time} to go.",
     "repeatStopped": "{name} stopped repeating: no reagents left.",
     "noReagents": "No reagents for {name}.",
     "completed": "Alchemistry: {item} x{qty}",
-    "completedPlain": "{name} came off the bench.",
+    "completedPlain": "{name} is done.",
     "ruined": "{who} ruined the batch of {name}.",
-    "failed": "{name} spelled out nothing the book knows. The batch is lost."
+    "failed": "{name} failed. Batch lost."
   },
   "projectName": "Bench {n}",
   "successCreated": "Alchemistry Success! Created {item}",

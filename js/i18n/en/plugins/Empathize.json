@@ -42,7 +42,7 @@
   "bloodType": "Blood type",
   "bloodUniversalDonor": "Universal donor",
   "bloodUniversalRecipient": "Universal recipient",
-  "bloodRareAntigenNote": "Rare antigen-negative lineage: a safe transfusion needs an exact antigen match.",
+  "bloodRareAntigenNote": "Rare blood: transfusions need an exact antigen match.",
   "bloodCompatTitle": "Transfusion match",
   "bloodCompatBoth": "Mutual donor match",
   "bloodCompatDonorOnly": "Could donate blood to you",
@@ -73,7 +73,7 @@
   "wikiParty": "Party",
   "partyCurrentMember": "Current member",
   "partyLastSeen": "Last seen",
-  "partyOtherMember": "Another journey",
+  "partyOtherMember": "Another party",
   "partyFormerMember": "Former member",
   "partyRetiredMember": "Reserves",
   "partyDeadMember": "Died",
@@ -141,10 +141,10 @@
   "gaveItem": "You gave {item} to {name}.",
   "giftRefused": "{name} will not take {item} from you.",
   "bribeTitle": "Bribe",
-  "briberyCaught": "{name} pockets the gold but warns you off.",
+  "briberyCaught": "{name} pockets the money but warns you off.",
   "bribeRefused": "{name} is too hostile to accept anything.",
   "bribeRefusedLaw": "{name} refuses on principle and reports the attempt.",
-  "bribeIncorruptible": "{name} is incorruptible and will never take your money.",
+  "bribeIncorruptible": "{name} never takes bribes.",
   "bribeSmall": "Small",
   "bribeMedium": "Medium",
   "bribeLarge": "Large",
@@ -159,14 +159,14 @@
   "routineTitle": "DAILY ROUTINE",
   "noRoutineData": "No routine data available.",
   "routinePast24h": "Past 24 Hours",
-  "routineRestOfDay": "Planned for the Rest of the Day",
-  "routineNothingPlanned": "Nothing planned, the day is winding down.",
+  "routineRestOfDay": "Rest of the Day",
+  "routineNothingPlanned": "Nothing else planned today.",
   "lifeHistory": "History",
   "lifeHistoryTitle": "LIFE HISTORY",
-  "noLifeHistory": "Nothing notable has happened to them yet.",
+  "noLifeHistory": "Nothing notable yet.",
   "lifeHistoryTimeline": "Timeline",
   "timesRepeated": "(x {n})",
-  "emBranchHdr": "This branch of her",
+  "emBranchHdr": "This version of her",
   "cancel": "Cancel",
   "confirm": "Confirm",
   "back": "Back",
@@ -356,22 +356,22 @@
   "coughLabel": "Cough",
   "spitLabel": "Spit",
   "biteLabel": "Bite",
-  "transmitWarnHas": "{action} at {name}? This would try to transmit: {list}. It counts as assault.",
-  "transmitWarnNone": "{action} at {name}? You carry nothing to spread this way, but it still counts as assault.",
-  "transmitWarnHasNoAssault": "{action} at {name}? This would try to transmit: {list}.",
-  "transmitWarnNoneNoAssault": "{action} at {name}? You carry nothing to spread this way.",
+  "transmitWarnHas": "{action} at {name}? May transmit: {list}. Counts as assault.",
+  "transmitWarnNone": "{action} at {name}? Nothing to transmit, but it counts as assault.",
+  "transmitWarnHasNoAssault": "{action} at {name}? May transmit: {list}.",
+  "transmitWarnNoneNoAssault": "{action} at {name}? Nothing to transmit.",
   "transmitHit": "You infected {name} with {list}!",
-  "transmitMiss": "{name} did not catch anything. A bounty is now on your head.",
-  "transmitNoneResult": "You assault {name}. A bounty is now on your head.",
+  "transmitMiss": "{name} caught nothing. You now have a bounty.",
+  "transmitNoneResult": "You assault {name}. You now have a bounty.",
   "transmitMissNoBounty": "{name} did not catch anything.",
   "transmitNoneResultNoBounty": "You cough near {name}.",
   "infectLabel": "Infect",
   "infectSource": "a broken vial",
   "noVialsToOpen": "No sealed vials in the pack.",
-  "infectPrompt": "Open a vial on {name}? About {chance}% of getting away with it. Caught, it is bioterrorism.",
-  "infectUnseen": "{name} takes {disease}, and never sees who gave it to them.",
-  "infectImmune": "{name} has had {disease} before and shrugs it off. Nobody saw you try.",
-  "infectAlready": "{name} is already carrying {disease}. Nobody saw you try.",
+  "infectPrompt": "Open a vial on {name}? About {chance}% chance to go unseen. If caught: bioterrorism.",
+  "infectUnseen": "{name} catches {disease} and never sees who did it.",
+  "infectImmune": "{name} is immune to {disease}. Nobody saw you.",
+  "infectAlready": "{name} already has {disease}. Nobody saw you.",
   "infectCaught": "{name} catches you opening a vial of {disease} on them. Bioterrorism goes on your record.",
   "infectMember": "{name} is dosed with {disease}.",
   "infectMemberAlready": "{name} is already carrying {disease}.",
@@ -382,14 +382,14 @@
   "introspectChangeGender": "Change Gender",
   "introspectChangeOrientation": "Change Sexual Orientation",
   "introspectChangeCreed": "Change Creed",
-  "introspectChangeNamePrompt": "Enter new character name:",
+  "introspectChangeNamePrompt": "Enter a new name:",
   "introspectGenderPrompt": "Select gender",
   "introspectOrientationPrompt": "Select sexual orientation",
   "introspectCreedPrompt": "Select a new creed",
-  "introspectNameSuccess": "Name changed successfully.",
-  "introspectGenderSuccess": "Gender changed successfully.",
-  "introspectOrientationSuccess": "Sexual orientation changed successfully.",
-  "introspectCreedSuccess": "Creed changed successfully.",
+  "introspectNameSuccess": "Name changed.",
+  "introspectGenderSuccess": "Gender changed.",
+  "introspectOrientationSuccess": "Sexual orientation changed.",
+  "introspectCreedSuccess": "Creed changed.",
   "introspectNotEnoughKp": "Not enough Knowledge Points (50 KP needed).",
   "introspectFilterCreed": "Filter creeds...",
   "bickerLabel": "Bicker",
@@ -401,7 +401,7 @@
   "hygieneCourtSelf": "You have not washed in some time, and {name} is trying not to notice.",
   "hygieneCourtNpc": "{name} has not washed in some time, and there is no way not to notice.",
   "proposeLabel": "Propose",
-  "proposeSubtitle": "Which kind of relationship are you asking for?",
+  "proposeSubtitle": "Choose a relationship type.",
   "proposeNeedsAttraction": "not smitten enough (yet)",
   "directionsLabel": "Ask Directions",
   "directionsIntro": "\"Where can I find {target}?\"",
@@ -434,10 +434,19 @@
   "specializations": "Specializations",
   "towardBubbaLbl": "Toward Bubba",
   "freeChatLabel": "Free Chat",
+  "fallbackJoke": "Why did the chicken cross the road?",
+  "fallbackStoryTitle": "The Legend of the Road",
+  "fallbackPoemTitle": "The Open Road",
   "substanceLbl": "Substance",
   "stealthLbl": "Stealth",
   "intimidationLbl": "Intimidation",
   "hometownLbl": "Hometown",
+  "residenceLbl": "Residence",
+  "homelessLbl": "Homeless",
+  "atHome": "At home",
+  "floorLbl": "Floor",
+  "doorAt": "Door {coords}",
+  "mapNum": "Map {id}",
   "archetypeLbl": "Archetype",
   "towardEmLbl": "Toward Em",
   "convertingTo": "Converting to {creed}: {pct}%",
@@ -530,11 +539,11 @@
   "oldLegend": "an old legend",
   "bribeAccepted": "{name} accepts. +{op} ♥",
   "joinedParty": "{name} joined the party!",
-  "joinedPartyInactive": "{name} signs on as a member in reserves.",
+  "joinedPartyInactive": "{name} joins the reserves.",
   "joinedFollower": "{name} falls in behind the party as a follower.",
   "joinLevelTooLow": "You need to be level {level} to recruit {name}.",
-  "joinReplacedFallen": "{name} is left where they fell.",
-  "joinFailed": "That didn't work out. They stay where they are.",
+  "joinReplacedFallen": "{name} has fallen and leaves the party.",
+  "joinFailed": "Recruitment failed.",
   "firstMeeting": "First meeting",
   "feralLabelGrowl": "Growl",
   "feralLabelRoar": "Roar",
@@ -853,10 +862,10 @@
   "cardTradeLabel": "Swap cards",
   "cardStakeFree": "Play for nothing",
   "cardStakeMoney": "Play for money",
-  "cardNoDeck": "The party has no deck to play with. A deck needs at least {min} cards.",
+  "cardNoDeck": "No deck. A deck needs at least {min} cards.",
   "cardAlreadyDuelled": "{name} has already played you today.",
   "cardAlreadyTraded": "{name} has already swapped with you today.",
-  "cardNothingToSwap": "Nothing in the collection is spare to swap.",
+  "cardNothingToSwap": "No spare cards to swap.",
   "cardSwapped": "Swapped {mine} for {theirs}.",
   "cardSwapDone": "{name} pockets the card and hands one over.",
   "cardRefuseDuel": "{name} will not sit down at a card table with you.",
@@ -895,9 +904,10 @@
   "empathizeBtn": "Empathize",
   "leaderSourceParty": "Travelling with you",
   "leaderSourceRetired": "Benched in this world",
-  "leaderSourcePast": "Once travelled with a party of this world",
-  "leaderSourcePreset": "Playable, as they begin",
+  "leaderSourcePast": "Former party member in this world",
+  "leaderSourcePreset": "Playable character",
   "presetCharacterBadge": "Playable dossier",
+  "moralityBadge": "Mor. {score} ({label})",
   "leftPartyLbl": "Left",
   "inhabitantsLbl": "Inhabitants",
   "soldiersLbl": "Soldiers under arms",
@@ -1086,7 +1096,7 @@
   },
   "worldPeopleTab": "People",
   "bountyLbl": "Bounty",
-  "attackWanted": "{name} is wanted, with {bounty} on their head. Bringing them down is no crime.",
+  "attackWanted": "{name} is wanted ({bounty} bounty). Attacking them is legal.",
   "woundHealsIn": "heals in {days} d",
   "woundsTreated": "treated",
   "woundsNeedHealer": "needs a healer",
@@ -1226,7 +1236,7 @@
       "pickMedicine": "Medicine for {name}",
       "pickFix": "A fix for {name}",
       "pickIntervene": "Talk {name} out of",
-      "pickShelter": "A roof for {name}",
+      "pickShelter": "Shelter {name} in",
       "hintHeal": "Restores {hp} health, {have} in the pack",
       "hintHealMedicine": "Restores {hp} health and speeds the healing, {have} in the pack",
       "hintCure": "Cures {disease} over {days} days, {have} in the pack",
@@ -1234,19 +1244,19 @@
       "hintFix": "{substance}: eases the craving by {dose}, {have} in the pack",
       "hintIntervene": "About {chance}% that they listen",
       "hintIntervened": "Already cutting down",
-      "hintShelterNone": "No town answers for this door",
+      "hintShelterNone": "No town linked to this home",
       "reason": {
         "hostile": "They will not let you near them.",
         "notHurt": "They are not hurt.",
         "noHealItems": "Nothing in the pack heals.",
         "notSick": "They are not ill with anything you can treat.",
-        "noMedicine": "The pack holds no remedy for what they have.",
+        "noMedicine": "No remedy for this in the pack.",
         "notDowned": "They are back on their feet.",
-        "downed": "They are down: first aid comes first.",
-        "notAddicted": "They have no habit to feed.",
-        "noFix": "The pack holds nothing that feeds their habit.",
+        "downed": "They are down. Use first aid first.",
+        "notAddicted": "They have no addiction.",
+        "noFix": "Nothing in the pack for their habit.",
         "fixedToday": "They have had enough from you today.",
-        "distrust": "They do not trust you enough to hear it.",
+        "distrust": "They don't trust you enough.",
         "intervenedLately": "You talked to them about it only days ago.",
         "notInNeed": "They have a roof over their head.",
         "noHome": "The party owns no home to offer.",
@@ -1271,7 +1281,7 @@
       "pickBet": "Play {game} for",
       "betNone": "Just for fun",
       "bet": "A bet of {price}",
-      "hintBetNone": "Nothing riding on it",
+      "hintBetNone": "No bet",
       "hintBet": "Winner takes {price}",
       "name": {
         "cards": "cards",
@@ -1293,7 +1303,7 @@
       "result": {
         "won": "You beat {name} at {game}.",
         "lost": "{name} beats you at {game}.",
-        "draw": "You and {name} finish {game} level.",
+        "draw": "You and {name} draw at {game}.",
         "wonBet": "You win {price} from {name}.",
         "lostBet": "You lose {price} to {name}.",
         "seat": "{name} comes along for a game of {game}."
@@ -1304,7 +1314,7 @@
       "pickMatch": "Introduce {name} to",
       "hintMatch": "About {chance}% that they hit it off",
       "reason": {
-        "distant": "They do not know you well enough to take your word.",
+        "distant": "They don't know you well enough.",
         "matchedToday": "You have played matchmaker with them today.",
         "notSingle": "One of them is not free.",
         "noMatch": "Nobody you know would suit them."
@@ -1318,7 +1328,7 @@
       "rumours": "Rumours and news",
       "reason": {
         "hostile": "They have nothing to say to you.",
-        "noNews": "They have told you all they know today."
+        "noNews": "No more news today."
       },
       "result": {
         "heard": "{name} shares what is going round."
@@ -1343,11 +1353,11 @@
       "prayTogether": "Pray together",
       "reason": {
         "sameCreed": "You already share this creed.",
-        "unmovable": "Their creed is set, nothing you say will move it.",
+        "unmovable": "Their creed can't be changed.",
         "tired": "You have argued enough with them for one day.",
         "prayed": "You have already prayed together today.",
         "noCreed": "You hold no creed to speak for.",
-        "notFaithful": "Only two of the faith pray together."
+        "notFaithful": "Only people of the same faith can pray together."
       },
       "result": {
         "preachMoved": "{npc} is {pct}% of the way to {creed}.",
@@ -1542,11 +1552,11 @@
       "reason": {
         "askedToday": "You have already asked them today.",
         "noParty": "There is no party to join here.",
-        "noBallot": "They have no party on their ballot to be won to.",
-        "noElection": "No election they vote in is close enough.",
-        "noFavour": "Their office has no favour to grant.",
+        "noBallot": "No party on their ballot.",
+        "noElection": "No upcoming election for them.",
+        "noFavour": "Their office can't grant favours.",
         "noCharges": "You have no charge on your record.",
-        "taxFloor": "The tax is already as low as it goes.",
+        "taxFloor": "Tax is already at its minimum.",
         "youCantAfford": "You cannot afford {price}."
       },
       "result": {
@@ -1585,7 +1595,7 @@
         "taxCut": "Cut the tax in {polity} by a point ({price})",
         "noCharge": "nothing"
       },
-      "partyWarn": "Drifting from the {party}: far from its platform",
+      "partyWarn": "Far from the {party} platform",
       "lines": {
         "vote": {
           "ask": {
@@ -1912,7 +1922,7 @@
         "paidBack": "{amount} went back to {name}. The loan is settled.",
         "missed": "You missed a repayment of {amount} to {name}.",
         "writtenOff": "{name} has written off the {amount} you owed, and thinks less of you for it.",
-        "forgiven": "The {amount} you owed {name} is owed to nobody now.",
+        "forgiven": "Your {amount} debt to {name} is cleared.",
         "vehicleBack": "The {vehicle} went back to {name}.",
         "vehicleKept": "{name} has reported their {vehicle} stolen."
       }
@@ -1925,7 +1935,7 @@
         "workTogether": "Work together",
         "askRide": "Ask for a ride",
         "borrowVehicle": "Borrow their vehicle",
-        "inviteMove": "Invite to move",
+        "inviteMove": "Invite to relocate",
         "inviteExpedition": "Invite to an expedition"
       },
       "reason": {
@@ -1933,7 +1943,7 @@
         "hostile": "They want nothing to do with you.",
         "cold": "They would rather not.",
         "notFriends": "Only a good friend would do that.",
-        "alreadyLent": "You still have it.",
+        "alreadyLent": "You still have their vehicle.",
         "office": "They hold an office.",
         "requirements": "You do not meet the job's requirements.",
         "busy": "They are already away on a shift.",
@@ -1979,7 +1989,7 @@
         "accept": "{You have yourself a {job}.|When do I start?|Better than what I had. Yes.}",
         "decline": "{Thank you, but no.|I am happy where I am.}",
         "done": "{name} now works as {job} at {place}.",
-        "none": "There is no open post at your workplaces in their town."
+        "none": "No open posts at your workplaces in their town."
       },
       "fire": {
         "confirmTitle": "Let {name} go from {place}?",
@@ -2048,7 +2058,7 @@
             "offer": "{You look poor. I can lend you {amount}. Do not make me come looking for it.|{amount}. Take it. I remember every debt.}"
           },
           "borrow": {
-            "ask": "{I require {amount}. A loan, not a gift. I am not a beggar.|Lend me {amount}. I will pay it back, which is more than gods ever did.}",
+            "ask": "{I require {amount}. Strictly a loan. I am not a beggar.|Lend me {amount}. I will pay it back, which is more than gods ever did.}",
             "repay": "{Your {owed}. Count it. I keep my word.|{owed}, as promised. We are square.}"
           }
         },
@@ -2251,7 +2261,7 @@
       "pickSelf": "Accuse yourself of...",
       "reason": {
         "accusedToday": "You already accused them today.",
-        "noCrimes": "No crimes are known to accuse anyone of.",
+        "noCrimes": "No known crimes to accuse anyone of.",
         "noCrime": "There is no such crime."
       },
       "result": {
@@ -2292,8 +2302,8 @@
     },
     "icon": "An icon of {stat}",
     "reads": "{name} comes across as {list}",
-    "readsNone": "{name} comes across as nothing in particular",
-    "effects": "What it is worth here:",
+    "readsNone": "{name} has no notable look",
+    "effects": "Effects:",
     "effect": {
       "impression": "first impression {v}",
       "pickpocket": "pickpocket {v}%",
@@ -2303,5 +2313,85 @@
       "hostile": "hostile moves {v}%",
       "friendly": "kind words {v}%"
     }
+  },
+  "emotionsTitle": "Feelings",
+  "speakerEmotions": "{name} feels",
+  "boredom": {
+    "waning": {
+      "warm": [
+        "Ha, you said that already, but go on.",
+        "You're sweet, but I think I've heard this one.",
+        "Mm, again? All right, I'm listening."
+      ],
+      "cold": [
+        "You mentioned that.",
+        "Yes. You said.",
+        "I recall you saying so."
+      ],
+      "hot": [
+        "Again? Come on, give me something new.",
+        "You're repeating yourself, friend.",
+        "Heard it. Next."
+      ],
+      "anxious": [
+        "Oh... you said that before, didn't you?",
+        "Is something wrong? You keep saying that.",
+        "Um, yes, you told me."
+      ]
+    },
+    "flat": {
+      "warm": [
+        "I'm sorry, I've just heard it so many times now.",
+        "Darling, we've been round this one already.",
+        "Let's talk about something else, shall we?"
+      ],
+      "cold": [
+        "This conversation is going in circles.",
+        "I have nothing more to say to that.",
+        "Is there anything else?"
+      ],
+      "hot": [
+        "Change the record, will you?",
+        "Same thing, same answer. Nothing.",
+        "You're boring me stiff."
+      ],
+      "anxious": [
+        "I don't know what you want me to say anymore.",
+        "Why do you keep saying that? It makes me nervous.",
+        "Please, I already answered that."
+      ]
+    },
+    "annoyed": {
+      "warm": [
+        "Honestly, that's starting to feel a bit empty.",
+        "I liked it the first time. Not the tenth.",
+        "You're not really listening to me, are you?"
+      ],
+      "cold": [
+        "Stop. You are wasting my time.",
+        "Enough. I am not a machine you can keep pressing.",
+        "I find this tiresome."
+      ],
+      "hot": [
+        "Say it once more and I walk.",
+        "Are you mocking me? Knock it off.",
+        "That's it, I've had enough of that."
+      ],
+      "anxious": [
+        "Please stop, it's really getting to me.",
+        "Is this some kind of test? I don't like it.",
+        "You're making me uncomfortable, saying it over and over."
+      ]
+    }
+  },
+  "dice": {
+    "proposal": "Proposal: {style}",
+    "romance": "Romance: {action}",
+    "convince": "Convince: {name}",
+    "tame": "Tame: {name}",
+    "bribe": "Bribe: {name}",
+    "join": "Join: {name}",
+    "follow": "Follow: {name}",
+    "pickpocket": "Pickpocket"
   }
 }

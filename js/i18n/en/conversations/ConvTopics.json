@@ -44,7 +44,17 @@
     "trainSpecDone": "{name} is now {tier} in {spec}. {hours} h went by.",
     "trainSpecSold": "{name} is now {tier} in {spec} and paid {price}. {hours} h went by.",
     "learnSpecDone": "{actor} is now {tier} in {spec}. {hours} h went by.",
-    "learnSpecPaid": "{actor} is now {tier} in {spec} for {price}. {hours} h went by."
+    "learnSpecPaid": "{actor} is now {tier} in {spec} for {price}. {hours} h went by.",
+    "peerTeach": "Teach a skill",
+    "peerTeachSpec": "Teach a specialization",
+    "pickPeerTeacher": "Who will teach {name}?",
+    "pickPeerTeach": "{teacher} teaches {name} a skill",
+    "pickPeerSpec": "{teacher} trains {name} in a specialization",
+    "hintPeerTeacher": "{count} to teach",
+    "noPeerTeach": "Nobody else in the party knows a skill {name} could learn.",
+    "noPeerSpec": "Nobody else in the party holds a specialization above {name}'s.",
+    "peerTeachDone": "{teacher} taught {name} {skill}. {hours} h went by.",
+    "peerSpecDone": "{teacher} trained {name} to {tier} in {spec}. {hours} h went by."
   },
   "reason": {
     "known": "Already knows it",
@@ -60,7 +70,8 @@
     "child": "Too young to be taught",
     "beast": "Cannot be taught",
     "unimplemented": "Nobody practises it yet",
-    "pacifist": "Will not train to fight"
+    "pacifist": "Will not train to fight",
+    "nothingToTeach": "Nothing to teach them"
   },
   "talk": {
     "ask": {
@@ -170,7 +181,7 @@
           "I would sooner be hexed than argue for {topic}. I have been hexed. It was better."
         ],
         "neutral": [
-          "{topic}. Interesting, not important. I file it under maybe.",
+          "{topic}. Interesting, mildly. I file it under maybe.",
           "{topic} depends on who is asking and what they want. So, what do you want?",
           "I have no feelings about {topic}. I have footnotes."
         ],

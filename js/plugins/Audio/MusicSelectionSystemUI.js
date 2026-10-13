@@ -121,10 +121,13 @@
         });
         el.addEventListener('click', () => { this._idx = i; this._confirmSelection(); });
       });
+      // The right button is already a cancel through TouchInput (its
+      // mousedown reaches the engine's document listener, read in update):
+      // this only keeps the browser's menu off the picker. Cancelling here as
+      // well made one click deselect the track and then leave the scene.
       this._el.addEventListener('contextmenu', ev => {
         ev.preventDefault();
         ev.stopPropagation();
-        this.onCancel();
       });
     }
 

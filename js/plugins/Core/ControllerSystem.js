@@ -1698,7 +1698,7 @@
             ConfigManager.save();
         };
         window.GameOptions.registerOption('padCameraSpeed',
-            TX('Controller.options.cameraSpeed'),
+            () => TX('Controller.options.cameraSpeed'),
             () => ConfigManager.padCameraSpeed,
             (value) => { ConfigManager.padCameraSpeed = value; },
             'video', 'custom',
@@ -1706,7 +1706,7 @@
             () => step(10), () => step(-10)
         );
         window.GameOptions.registerOption('padCameraInvertY',
-            TX('Controller.options.invertY'),
+            () => TX('Controller.options.invertY'),
             () => ConfigManager.padCameraInvertY,
             (value) => { ConfigManager.padCameraInvertY = value; },
             'video', 'boolean'

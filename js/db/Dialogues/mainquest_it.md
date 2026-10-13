@@ -160,7 +160,7 @@ Em:
 Oh, un... coso! Posso accarezzarlo?
 
 Bubba:
-Jamme, vai! Fagli un sacco di coccole!
+Jamme, vai! Strapazzalo di coccole!
 
 Em:
 Ho un piccolo problema: non ricordo come si accarezza quel coso.
@@ -193,5 +193,67 @@ E cosa dovremmo fare con il mimic?
 
 Bubba:
 Uè, lascialo stare!
+
+------------------------------------------------------------------------------------------------------------
+eris_tower
+
+Eris:
+Buonasera, Eurozona! Qui Eris, e la richiesta di stasera va a una streghetta che ha deicidiato il Dio dei cattolici.
+
+Em:
+Quindi tu sei l'ex moglie di Bubba.
+
+Bubba:
+Uè, Eris. Stai benissimo!
+
+Eris:
+Certo che sto benissimo, sto sempre benissimo. Tu hai l'aria stanca. Mangi? Non mangi più...
+Ehm.
+
+Em:
+E io?
+
+Eris:
+Tu, Em, sei una misera scusa di strega e di essere umano.
+
+Em:
+Ooook?
+
+Eris:
+Guardami, strega . Guardami bene.
+Io e te adesso siamo la stessa cosa.
+
+Em:
+La spalla di Bubba nelle sue avventure?
+
+Eris:
+Una deicida.
+
+Em:
+Sono in stato di arresto???
+
+Eris:
+Non ho ancora deciso! Il deicidio è una faccenda complicata! 
+C'è un sacco di burocrazia da sbrigare!
+Chiedi al [Pope | Papa] se ci tieni tanto a farti arrestare!
+Nel frattempo vi aspetterò in cima alla [Omega Tower | Torre Omega].
+Anzi, perché aspettare? La torre è altiiiiiissima e io mi annoooooooio da maledirmi da sola.
+Qui. Adesso. COMBATTI, STREGA.
+
+Em:
+Prego?
+
+Eris:
+UCCIDIMI come hai fatto con il Vecchio  ed è tutto tuo! Caos! Giustizia! Discordia! Trilioni di fedeli in tutto il multiverso! Tutto quanto! Una vera dea, Em! Una vera! Mai più una strega wannabe!
+
+Bubba:
+Eris, non sei obbligata a farlo. Non possiamo trovare una soluzione pacifica?
+Tipo, perché Nibiru deve per forza colpire la Terra nel 2012? Puoi ridurre le probabilità dell'impatto quasi a zero alzando solo il mignolo!
+Proprio come facevi quando eravamo in giro insieme a rapinare banche!
+
+Eris:
+Oh sì, posso, Bubba. Ma devo proprio aprire questo pianeta come una scatola di tonno prima di quella data.
+
+
 
 ------------------------------------------------------------------------------------------------------------

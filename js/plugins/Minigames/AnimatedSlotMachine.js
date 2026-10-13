@@ -1353,6 +1353,9 @@
             // once, the marquee included since it is painted in the same face.
             if (window.PSXHud) {
                 window.PSXHud.onFontReady(() => {
+                    // The font can land after the player has left: the panels are
+                    // gone by then and a repaint would throw from the timer.
+                    if (SceneManager._scene !== this) return;
                     if (!this._banner) return;
                     this._banner.refresh();
                     this._stats.refresh();
@@ -1563,7 +1566,7 @@
             SLOT_DOMS = [];
             if (this._cabinetSprite) {
                 if (this._cabinetSprite.parent) this._cabinetSprite.parent.removeChild(this._cabinetSprite);
-                this._cabinetSprite.destroy();
+                this._cabinetSprite.destroy({ texture: true, baseTexture: true });
                 this._cabinetSprite = null;
             }
             if (this._cabinet) {

@@ -619,6 +619,7 @@
   // May this person, on their own account, move away at all?
   function mayRelocate(record, profile) {
     if (!record || !profile || !record.homeGroup) return false;
+    if (record.dead || profile._killed) return false;
     if (record.nonSentient || record.child || isMinor(record.name, profile)) return false;
     if (window.NPCCreature?.isNonSentientProfile?.(profile)) return false;
     if (record.trip || record.inPrisonUntilMinute != null) return false;
@@ -746,6 +747,13 @@
     for (const c of minorChildrenOf([name, ...out])) {
       if (records[c] && !out.includes(c) && c !== name) out.push(c);
     }
+    // A minor taken in after their parents died (NPCLife_Death) goes with
+    // whoever took them in, the same as a child of their own.
+    const carers = new Set([name, ...out]);
+    for (const r of Object.values(records)) {
+      if (!r?.guardian || !carers.has(r.guardian) || r.dead || r.name === name || out.includes(r.name)) continue;
+      if (isMinor(r.name)) out.push(r.name);
+    }
     return out;
   }
 
@@ -766,13 +774,16 @@
     const record = records?.[name];
     const profile = getProfile(name);
     if (!record || !profile) return null;
+    // Not even a forced move (a flight, a homecoming) carries the dead.
+    const dead = (n) => !!(records[n]?.dead || getProfile(n)?._killed);
+    if (dead(name)) return null;
     const now = Number(nowMinute ?? ($gameVariables ? $gameVariables.value(114) : 0)) || 0;
     if (!opts.force && !mayRelocate(record, profile)) return null;
     const from = record.homeGroup;
 
-    const followers = Array.isArray(opts.withNames)
+    const followers = (Array.isArray(opts.withNames)
       ? opts.withNames.filter(n => n && n !== name && records[n])
-      : householdOf(name);
+      : householdOf(name)).filter(n => !dead(n));
     const movers = [name, ...followers];
     // Somebody in view is not spirited away: the move waits for a later pass.
     if (!opts.force && movers.some(onLoadedMap)) return null;

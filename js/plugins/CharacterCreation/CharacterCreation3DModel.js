@@ -27,14 +27,16 @@
  *             losing it is fatal. Every row that names a part of the MODEL is a
  *             way into it -- pointing at one selects it on the creature and
  *             stocks the shelf beside it -- so the list of what the creature is
- *             made of doubles as the way to change it. "+ Add part" at its head
- *             opens the chooser of every group, including the ones the creature
- *             is not wearing anything in and the two that are not parts at all
- *             (how the body is Built, how its Skin is coloured).
- *   PARTS     the second column: the open group. For a limb, a search box over
- *             a shelf of the real parts three across, each a small static
- *             render of itself; for an appendage, its states; for Build or
- *             Skin, their knobs.
+ *             made of doubles as the way to change it. (Clicking a row selects
+ *             it; merely pointing at one only outlines its part.) "+ Add part"
+ *             at its head opens the chooser of every group, including the ones
+ *             the creature is not wearing anything in and the two that are not
+ *             parts at all (how the body is Built, how its Skin is coloured).
+ *   PARTS     the second column: the group rail (the backpack's tabs), then
+ *             the open group. For a limb, a search box over a shelf of the
+ *             real parts four across (three on the handheld sheet), each a
+ *             small static render of itself; for an appendage, its states; for
+ *             Build or Skin, their knobs.
  *   STAGE     the creature, with the sizer for whatever is selected in its
  *             bottom-right corner.
  *
@@ -78,6 +80,26 @@
  * and then stands still -- a rig that breathes drags every part out from under
  * the cursor. A graft rides that pose as a child of its anchor; a bare limb IS
  * the anchor, so poseBareSlots seats those on top of the pose.
+ *
+ * Controls
+ * --------
+ * The screen is a page of the creation book (.cc-pockets-spread) and wears
+ * the shared stamps: actions are .inspect-btn, the symmetry toggle and the
+ * appendage states are .cc3d-chip, the group rail and Move / Turn / Size are
+ * .backpack-tab rails, and the cursor is the shared .cc-nav-focus ring.
+ *
+ *   Mouse     click anything; drag a part on the creature (or one of the
+ *             handles drawn on it) to move, turn or size it; drag empty space
+ *             or right-drag to turn the view, middle-drag to pan, wheel to
+ *             zoom; drag a slider's bar. Ctrl+Z / Ctrl+Y undo and redo.
+ *   Keys/pad  arrows, WASD, d-pad or left stick move the ring: up and down
+ *             walk a column (the shelf as a grid, the body list row by row)
+ *             and leave it upward onto the bar; left and right walk a row and,
+ *             past its end, step across to the next column. Left and right on
+ *             a slider step its value. OK presses what the ring is on, Cancel
+ *             leaves with the sculpt kept (or closes the open chooser).
+ *             L1/R1, PageUp/PageDown and Tab step along the group rail. On a
+ *             pad the right stick pushed sideways turns the view.
  *
  * Where a creature comes from
  * ---------------------------
@@ -993,12 +1015,39 @@
   function disposeObject3D(obj) {
     if (!obj) return;
     obj.traverse((o) => {
-      if (o.isMesh) {
+      // Lines too: the selection outlines are BoxHelpers (LineSegments).
+      if (o.isMesh || o.isLine || o.isPoints) {
         if (o.geometry) o.geometry.dispose();
         const mats = Array.isArray(o.material) ? o.material : [o.material];
         mats.forEach((m) => { if (m) { if (m.map) m.map.dispose(); m.dispose(); } });
       }
     });
+  }
+
+  // Is this object actually drawn? Its own flag, every ancestor's up to
+  // `root`, and its material's. three.js raycasting ignores all three, so
+  // anything picked by a ray is filtered through this first.
+  function isDrawn(obj, root) {
+    for (let o = obj; o; o = o.parent) {
+      if (o.visible === false) return false;
+      if (o === root) break;
+    }
+    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+    return !mats.length || mats.some((m) => !m || m.visible !== false);
+  }
+
+  // A theme colour as a number three.js can paint with, so what the editor
+  // draws on the creature (the selection outline) takes the preset's ink like
+  // the page around it. The fallback is for a sheet that has not loaded.
+  function themeHex(token, fallback) {
+    try {
+      const raw = String(window.getComputedStyle(document.documentElement)
+        .getPropertyValue(token) || "").trim();
+      if (/^(#|rgb)/i.test(raw)) {
+        return new THREE.Color(raw.replace(/rgba\(\s*([^,]+),\s*([^,]+),\s*([^,]+),[^)]*\)/i, "rgb($1, $2, $3)")).getHex();
+      }
+    } catch (e) { /* no sheet, no layout */ }
+    return fallback;
   }
 
   // Resolve the donor mesh for a slot from its part map, avoiding the
@@ -1602,29 +1651,24 @@
   // Scene_CC3DModel -- the creature sculptor
   //===========================================================================
   //
-  // The screen is the creature. It fills everything, with three thin frames
-  // around it:
-  //
-  //   TOP BAR    what the creature IS and what to do to all of it at once --
-  //              its body, mirror symmetry, undo, redo, a reroll, and the way
-  //              out (Continue). There is no Back: a sculpt is never thrown
-  //              away behind the player's back, so leaving keeps it and hands
-  //              the flow back to whoever opened the sculptor.
-  //   DRAWER     along the bottom, the parts. A rail of every GROUP the
-  //              creature has (its limbs, the appendages it can grow, its
-  //              build, its skin) and, under it, a shelf of the actual parts in
-  //              the open group, each drawn as a small model of itself. Point
-  //              at one to try it on, click it to keep it.
-  //   BODY LIST  down the right, the anatomy the sculpt adds up to: every part
-  //              with the share of HP it carries and whether losing it is
-  //              fatal.
-  //
-  // A part already on the creature is grabbed and dragged: Move, Turn or Size,
-  // whichever handle is armed. It can never come loose (snapXf) and the rig
-  // never animates, so nothing ever moves out from under the cursor.
+  // The layout (bar, body list, parts, stage) and the full controls map are
+  // in the @help header at the top of this file. There is no Back: a sculpt
+  // is never thrown away behind the player's back, so leaving keeps it and
+  // hands the flow back to whoever opened the sculptor. A part on the
+  // creature is grabbed and dragged under whichever handle is armed; it can
+  // never come loose (snapXf) and the rig never animates, so nothing moves
+  // out from under the cursor.
 
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
   const RAD = Math.PI / 180;
+  // Any angle as the same turn within [-PI, PI]. A NaN or missing one is 0.
+  const wrapAngle = (a) => {
+    a = Number(a) || 0;
+    if (a >= -Math.PI && a <= Math.PI) return a;   // already one turn: left exact
+    const turn = 2 * Math.PI;
+    a = ((a + Math.PI) % turn + turn) % turn - Math.PI;
+    return Math.abs(a) < 1e-12 ? 0 : a;
+  };
   const CSS_ID = (id) => String(id).replace(/[:|]/g, "-");
 
   function slotLabel(slot) {
@@ -1683,6 +1727,9 @@
 
   // How many parts the shelf holds before it grows as it is scrolled.
   const SHELF_PAGE = 40;
+  // Columns the shelf is drawn in on the desktop sheet (css/theme.css
+  // .cc3d-shelf); the focus ring asks the live layout first.
+  const SHELF_COLS = 4;
 
   // The knobs that shape the body itself, and the ones that colour it. Neither
   // is a part, so they get a group each on the rail rather than a pane of their
@@ -1771,6 +1818,8 @@
     this._filter = "";
     this._shown = SHELF_PAGE;
     this._focus = 0;
+    this._colFocus = {};           // where the cursor last was in each column
+    this._topFocus = 0;            // ...and on the bar across the top
     this._modal = null;
     this._sliderDrag = null;
     // Right and middle drags turn and pan the view. RMMZ reads the right
@@ -1835,7 +1884,13 @@
     this._sliderDrag = null;
     this.closeModal();
     this._teardownStage();
-    if (this._root) window.CCPanel.hide(this._root);
+    if (this._root) {
+      window.CCPanel.hide(this._root);
+      // The container is shared with the scene this returns to, which looks
+      // for its own .cc-pockets-spread in it: the editor's must not be there
+      // to be found.
+      this._root.innerHTML = "";
+    }
     const styles = document.getElementById("cc3d-styles");
     if (styles) styles.remove();
   };
@@ -1930,28 +1985,39 @@
     }
     this._root = root;
     window.CCPanel.show(root);
+    // The editor is a page of the same book every other creation screen is
+    // drawn on (.cc-pockets-spread, a single leaf so no crease), with the
+    // creature standing on the paper rather than in a box of its own. The
+    // three columns carry data-col so the focus ring can step between them
+    // sideways (see _moveFocus).
     root.innerHTML = `
+      <div class="cc-pockets-spread spine-none cc3d-spread">
       <div class="cc3d">
         <div class="cc3d-top" id="cc3d-top"></div>
         <div class="cc3d-mid">
-          <div class="cc3d-side cc3d-anat">
+          <div class="cc3d-side cc3d-anat" data-col="0">
             <div class="cc3d-title">${T('CharCreate.anatomy')}</div>
             <div class="cc3d-note" id="cc3d-body-count"></div>
-            <div class="cc3d-add" data-focus="1" data-hnav="anat"
-                 onclick="SceneManager._scene.openPicker('group')">+ ${T('CharCreate.cc3d.addPart')}</div>
+            <div class="cc3d-row">
+              <div class="inspect-btn focusable cc3d-add-btn" data-focus="1" data-hnav="anat"
+                   onclick="SceneManager._scene.openPicker('group')">+ ${T('CharCreate.cc3d.addPart')}</div>
+            </div>
             <div class="cc3d-scroll pockets-scroll" id="cc3d-body-list"></div>
           </div>
-          <div class="cc3d-side cc3d-parts">
+          <div class="cc3d-side cc3d-parts" data-col="1">
             <div class="cc3d-title" id="cc3d-parts-title"></div>
+            <div id="cc3d-group-rail"></div>
             <div id="cc3d-parts-bar"></div>
             <div class="cc3d-scroll pockets-scroll" id="cc3d-parts-body"></div>
           </div>
           <div class="cc3d-stage" id="cc3d-stage">
             <canvas id="cc3d-canvas"></canvas>
             <div class="cc3d-hint">${T('CharCreate.cc3d.hint')}</div>
-            <div id="cc3d-handles"></div>
+            <div class="cc3d-nopreview" id="cc3d-nopreview">${T('CharCreate.cc3d.noPreview')}</div>
+            <div id="cc3d-handles" data-col="2"></div>
           </div>
         </div>
+      </div>
       </div>
       <div class="cc3d-modal" id="cc3d-modal"></div>
       <div class="cc3d-tip" id="cc3d-tip"></div>
@@ -1978,29 +2044,42 @@
     if (!host) return;
     const cfg = this._config;
     const mirror = cfg.symmetry === "mirror";
+    // Actions are the shared push button (.inspect-btn); the one toggle on the
+    // bar, symmetry, is the shared chip. Undo and Redo grey out (.disabled)
+    // while there is nothing to step to, and _refreshHistoryButtons keeps that
+    // true after every gesture without redrawing the bar.
+    const btn = (cmd, onclick, label, extra) =>
+      `<div class="inspect-btn focusable ${extra || ""}" data-focus="1" data-hnav="top" data-cmd="${cmd}"
+            onclick="SceneManager._scene.${onclick}">${label}</div>`;
     host.innerHTML = `
       <span class="cc3d-title">${T('CharCreate.3dModel')}</span>
-      <span class="cc3d-chip" data-focus="1" data-hnav="top"
-            onclick="SceneManager._scene.openPicker('structure')">${displayName(cfg.base)}</span>
-      <span class="cc3d-chip ${mirror ? "on" : ""}" data-focus="1" data-hnav="top"
+      ${btn("structure", "openPicker('structure')", displayName(cfg.base))}
+      <span class="cc3d-chip focusable ${mirror ? "on" : ""}" data-focus="1" data-hnav="top" data-cmd="symmetry"
             title="${T('CharCreate.cc3d.symmetry')}"
             onclick="SceneManager._scene.toggleSymmetry()">&#8646; ${mirror
               ? T('CharCreate.cc3d.symMirror') : T('CharCreate.cc3d.symOff')}</span>
-      <span class="cc3d-chip ${this._history.length ? "" : "spent"}" data-focus="1" data-hnav="top"
-            onclick="SceneManager._scene.undo()">&#8630; ${T('CharCreate.cc3d.undo')}</span>
-      <span class="cc3d-chip ${this._future.length ? "" : "spent"}" data-focus="1" data-hnav="top"
-            onclick="SceneManager._scene.redo()">&#8631; ${T('CharCreate.cc3d.redo')}</span>
-      <span class="cc3d-chip" data-focus="1" data-hnav="top"
-            onclick="SceneManager._scene.onRandomize()">${T('CharCreate.randomizeAll')}</span>
-      <span class="cc3d-chip" data-focus="1" data-hnav="top"
-            onclick="SceneManager._scene.rerollSeed()">${T('CharCreate.variation')} #${cfg.seed}</span>
+      ${btn("undo", "undo()", "&#8630; " + T('CharCreate.cc3d.undo'), this._history.length ? "" : "disabled")}
+      ${btn("redo", "redo()", "&#8631; " + T('CharCreate.cc3d.redo'), this._future.length ? "" : "disabled")}
+      ${btn("randomize", "onRandomize()", T('CharCreate.randomizeAll'))}
+      ${btn("seed", "rerollSeed()", T('CharCreate.variation') + " #" + cfg.seed)}
       <span class="cc3d-spacer"></span>
-      ${(window.CCButtons && window.CCButtons.button)
-        ? window.CCButtons.button(window.CCButtons.continueLabel(), {
-            onclick: "SceneManager._scene.onConfirm()", confirm: true, cls: "inspect-btn cc3d-continue-btn",
-            attrs: 'data-focus="1" data-hnav="top"' })
-        : `<button class="inspect-btn confirm cc3d-continue-btn" data-focus="1" data-hnav="top" onclick="SceneManager._scene.onConfirm()">${T('CharCreate.continue')}</button>`}
+      <button class="inspect-btn confirm cc3d-continue-btn" data-focus="1" data-hnav="top" data-cmd="confirm"
+              onclick="SceneManager._scene.onConfirm()">${window.CCButtons && window.CCButtons.continueLabel
+                ? window.CCButtons.continueLabel() : T('CharCreate.continue')}</button>
     `;
+  };
+
+  // Undo and Redo say whether there is anything to step to, kept current after
+  // every gesture. They used to be drawn once with the bar: the first edit of a
+  // session left Undo greyed out with its pointer events off, so the button
+  // stayed dead until something else happened to redraw the bar.
+  Scene_CC3DModel.prototype._refreshHistoryButtons = function () {
+    const host = document.getElementById("cc3d-top");
+    if (!host || !host.querySelector) return;
+    const undo = host.querySelector('[data-cmd="undo"]');
+    const redo = host.querySelector('[data-cmd="redo"]');
+    if (undo) undo.classList.toggle("disabled", !this._history.length);
+    if (redo) redo.classList.toggle("disabled", !this._future.length);
   };
 
   //---------------------------------------------------------------------------
@@ -2011,6 +2090,8 @@
     const group = this._group3();
     const title = document.getElementById("cc3d-parts-title");
     if (title) title.textContent = group ? group.label() : T('CharCreate.cc3d.parts');
+    const rail = document.getElementById("cc3d-group-rail");
+    if (rail) rail.innerHTML = this._groupRailHtml();
     const bar = document.getElementById("cc3d-parts-bar");
     if (bar) bar.innerHTML = this._partsBarHtml();
     const body = document.getElementById("cc3d-parts-body");
@@ -2022,22 +2103,45 @@
   Scene_CC3DModel.prototype._partsBarHtml = function () {
     const group = this._group3();
     if (!group) return "";
-    if (group.kind !== "slot") {
-      return `<div class="cc-row-inline"><span class="cc3d-chip grow" data-focus="1"
-        data-hnav="partsbar" onclick="SceneManager._scene.surpriseGroup()"
-        >${T('CharCreate.cc3d.surprise')}</span></div>`;
-    }
-    return `<div class="cc-row-inline">
+    const surprise = `<div class="inspect-btn focusable" data-focus="1" data-hnav="partsbar"
+        onclick="SceneManager._scene.surpriseGroup()">${T('CharCreate.cc3d.surprise')}</div>`;
+    if (group.kind !== "slot") return `<div class="cc3d-row">${surprise}</div>`;
+    return `<div class="cc3d-row">
         ${window.CCSearch.html({
           className: "cc3d-search",
           placeholder: T('CharCreate.search'),
           value: this._filter,
-          attrs: 'id="cc3d-search"',
+          // On the ring for a keyboard: OK puts the caret in it, an arrow takes
+          // it back out. (On a pad CCSearch draws no box at all.)
+          attrs: 'id="cc3d-search" data-focus="1" data-hnav="partsbar"',
         })}
-        <span class="cc3d-chip" data-focus="1" data-hnav="partsbar"
-              onclick="SceneManager._scene.surpriseGroup()">${T('CharCreate.cc3d.surprise')}</span>
+        ${surprise}
       </div>
       <div class="cc3d-note" id="cc3d-shelf-count"></div>`;
+  };
+
+  // Every group as one tab rail, the backpack's: the open one framed, the ones
+  // the creature is wearing something in marked with a dot. L1/R1 (PageUp /
+  // PageDown, Tab) step along it from anywhere on the screen.
+  Scene_CC3DModel.prototype._groupRailHtml = function () {
+    const tabs = this._groups().map((group) => {
+      const worn = group.kind === "slot" && this._config.parts[group.id] !== "default";
+      const grown = !!group.appendage && !!this._config[group.id];
+      return `<div class="backpack-tab focusable ${group.id === this._group ? "active" : ""}" data-focus="1"
+          data-hnav="groups" data-group="${group.id}"
+          onclick="SceneManager._scene.openGroup('${group.id}')">${group.label()}${(worn || grown)
+            ? `<span class="cc3d-dot"></span>` : ``}</div>`;
+    }).join("");
+    return `<div class="backpack-tabs cc3d-group-rail">${tabs}</div>`;
+  };
+
+  // Step the open group along the rail, wrapping at either end.
+  Scene_CC3DModel.prototype.cycleGroup = function (dir) {
+    const groups = this._groups();
+    if (!groups.length) return;
+    const at = groups.findIndex((g) => g.id === this._group);
+    const next = groups[(Math.max(0, at) + (dir < 0 ? -1 : 1) + groups.length) % groups.length];
+    this.openGroup(next.id);
   };
 
   // Every group the creature could be given something in, whether or not it is
@@ -2057,9 +2161,11 @@
     return this._appendageHtml(group);
   };
 
-  // A shelf of the real parts, each drawn as a small model of itself.
+  // A shelf of the real parts, each drawn as a small model of itself. It is a
+  // grid, and data-grid tells the focus ring so: up and down walk its columns
+  // (see _gridCols for how many there are).
   Scene_CC3DModel.prototype._shelfHtml = function () {
-    return `<div class="cc3d-shelf" id="cc3d-shelf">${this._cardsHtml()}</div>`;
+    return `<div class="cc3d-shelf" id="cc3d-shelf" data-grid="shelf">${this._cardsHtml()}</div>`;
   };
 
   Scene_CC3DModel.prototype._shelfOptions = function () {
@@ -2096,7 +2202,7 @@
         const url = THUMB_CACHE.get(key);
         shot = `<span class="cc3d-shot"><img class="cc-visible" data-thumb="${key}" alt=""` + (url ? ` src="${url}"` : ``) + ` /></span>`;
       }
-      html += `<div class="cc3d-card ${option === worn ? "on" : ""}" data-focus="1" data-hnav="shelf"
+      html += `<div class="cc3d-card focusable ${option === worn ? "on" : ""}" data-focus="1" data-hnav="shelf"
         data-part="${option}" title="${name}"
         onclick="SceneManager._scene.pickPart('${option}')"
         >${shot}<span class="cc3d-card-name">${name}</span></div>`;
@@ -2121,9 +2227,9 @@
     const current = this._config[group.id];
     const labels = appendage.labels();
     const chips = appendage.states.map((state, i) =>
-      `<span class="cc3d-chip ${state === current ? "on" : ""}" data-focus="1" data-hnav="knobs"
+      `<span class="cc3d-chip focusable ${state === current ? "on" : ""}" data-focus="1" data-hnav="knobs"
              onclick="SceneManager._scene.setAppendage('${group.id}', ${state})">${labels[i]}</span>`).join("");
-    return `<div class="cc3d-knobs">${chips}</div>`;
+    return `<div class="cc3d-knobs"><div class="cc3d-row">${chips}</div></div>`;
   };
 
   Scene_CC3DModel.prototype._knobsHtml = function (ids) {
@@ -2133,16 +2239,16 @@
 
   Scene_CC3DModel.prototype._skinHtml = function () {
     const cfg = this._config;
-    let html = `<span class="cc3d-chip" data-focus="1" data-hnav="knobs"
+    let pickers = `<span class="cc3d-chip focusable" data-focus="1" data-hnav="knobs"
         onclick="SceneManager._scene.openPicker('surface')"><span class="cc3d-swatch cc3d-surface-${cfg.texturePool}"></span>${displayName(cfg.texturePool)}</span>`;
     if (hairApplies(cfg)) {
-      html += `<span class="cc3d-chip" data-focus="1" data-hnav="knobs"
+      pickers += `<span class="cc3d-chip focusable" data-focus="1" data-hnav="knobs"
           onclick="SceneManager._scene.openPicker('hairstyle')">${hairLabel("hairstyle", cfg.hairStyle)}</span>
-        <span class="cc3d-chip" data-focus="1" data-hnav="knobs"
+        <span class="cc3d-chip focusable" data-focus="1" data-hnav="knobs"
           onclick="SceneManager._scene.openPicker('haircolor')"><span class="cc3d-swatch cc3d-swatch--round" style="--cc3d-swatch:${hairSwatchCss(cfg.hairColor)}"></span>${hairLabel("haircolor", cfg.hairColor)}</span>`;
     }
-    html += SKIN_SLIDERS.map((key) => this._sliderHtml("cfg:" + key)).join("");
-    return `<div class="cc3d-knobs">${html}</div>`;
+    const sliders = SKIN_SLIDERS.map((key) => this._sliderHtml("cfg:" + key)).join("");
+    return `<div class="cc3d-knobs"><div class="cc3d-row">${pickers}</div>${sliders}</div>`;
   };
 
   //---------------------------------------------------------------------------
@@ -2159,21 +2265,24 @@
     if (!slot || this._slots().indexOf(slot) < 0) return "";
     const worn = this._config.parts[slot];
     const fitted = worn !== "default";
-    const chips = HANDLES.map((handle) =>
-      `<span class="cc3d-chip grow ${handle === this._handle ? "on" : ""}" data-focus="1" data-hnav="handles"
-             onclick="SceneManager._scene.setHandle('${handle}')">${T('CharCreate.cc3d.' + handle)}</span>`).join("");
+    // Move / Turn / Size is a pick among three, so it is the tab rail; Reset
+    // and Detach are actions, so they are the push button.
+    const tabs = HANDLES.map((handle) =>
+      `<div class="backpack-tab focusable ${handle === this._handle ? "active" : ""}" data-focus="1" data-hnav="handles"
+             data-handle="${handle}"
+             onclick="SceneManager._scene.setHandle('${handle}')">${T('CharCreate.cc3d.' + handle)}</div>`).join("");
     const sliders = this._xfSliderIds().map((id) => this._sliderHtml(id)).join("");
     return `
       <div class="cc3d-handles">
         <div class="cc3d-handles-name">${slotLabel(slot)} &middot; ${fitted
           ? displayName(worn) : T('CharCreate.cc3d.bare')}</div>
-        <div class="cc-row-inline cc-row-gap-tight">${chips}</div>
+        <div class="backpack-tabs cc3d-handle-rail">${tabs}</div>
         ${sliders}
-        <div class="cc-row-inline cc-row-gap-tight">
-          <span class="cc3d-chip grow" data-focus="1" data-hnav="handles"
-                onclick="SceneManager._scene.resetPart()">${T('CharCreate.cc3d.reset')}</span>
-          ${fitted ? `<span class="cc3d-chip grow" data-focus="1" data-hnav="handles"
-                onclick="SceneManager._scene.detachPart()">${T('CharCreate.cc3d.detach')}</span>` : ``}
+        <div class="cc3d-row">
+          <div class="inspect-btn focusable" data-focus="1" data-hnav="partops"
+                onclick="SceneManager._scene.resetPart()">${T('CharCreate.cc3d.reset')}</div>
+          ${fitted ? `<div class="inspect-btn focusable" data-focus="1" data-hnav="partops"
+                onclick="SceneManager._scene.detachPart()">${T('CharCreate.cc3d.detach')}</div>` : ``}
         </div>
       </div>`;
   };
@@ -2223,13 +2332,19 @@
           ? T('CharCreate.secondary') : T('CharCreate.primary')}</span>`;
       }
       const vital = part.vital ? `<span class="cc3d-tag vital">${T('CharCreate.vital')}</span>` : "";
-      // A row that names a part of the model is a way INTO it: pointing at one
+      // A row that names a part of the model is a way INTO it: clicking one
       // selects it on the creature and stocks the shelf beside it, so the list
       // of what the creature is made of doubles as the way to change it.
+      // Pointing at a row only outlines its part on the creature. It used to
+      // SELECT it, which re-opened the drawer, threw away the search and the
+      // shelf's scroll, and changed the selection under a pointer that was only
+      // passing through the list on its way to somewhere else.
+      // A row is a line of its own (no data-hnav), so up and down walk the list.
       const slot = part.fromGraft || slots[key] || null;
       const reach = slot
-        ? ` pick${slot === this._selected ? " on" : ""}" data-focus="1" data-hnav="body"
-            onmouseenter="SceneManager._scene.selectSlot('${slot}')"
+        ? ` pick focusable${slot === this._selected ? " on" : ""}" data-focus="1" data-slot="${slot}"
+            onmouseenter="SceneManager._scene.hoverSlot('${slot}')"
+            onmouseleave="SceneManager._scene.hoverSlot(null)"
             onclick="SceneManager._scene.selectSlot('${slot}')"`
         : `"`;
       return `<div class="cc3d-part${reach}>
@@ -2292,7 +2407,7 @@
     const def = this._sliderDef(id);
     if (!def) return "";
     const pct = clamp(((this._sliderValue(def) - def.min) / (def.max - def.min)) * 100, 0, 100);
-    return `<div class="cc3d-sl" data-focus="1" data-slider="${id}">
+    return `<div class="cc3d-sl focusable" data-focus="1" data-slider="${id}">
         <div class="cc3d-sl-head"><span>${def.label()}</span>
           <span class="cc3d-sl-val" id="cc3d-v-${CSS_ID(id)}">${this._sliderText(def)}</span></div>
         <div class="cc3d-sl-bar" data-sliderbar="${id}">
@@ -2346,15 +2461,37 @@
   // the creature stows the one before it, so a wrong part, a mis-aimed drag or
   // an unlucky reroll is one press away from being put back. Snapshots are
   // taken at the START of a gesture, so a drag is one step back, not a hundred.
+  //
+  // A snapshot taken for a gesture that then changed nothing (a slider pressed
+  // at its end stop, a bar clicked where it already stood, a picker closed on
+  // the option already worn, Reset on a part that had not moved) is taken back
+  // by _settleHistory, along with the redo branch it would otherwise have
+  // closed off. Without that, Undo spent a press on every such gesture doing
+  // nothing visible, and a stray click after an Undo lost the Redo.
   Scene_CC3DModel.prototype.pushHistory = function () {
     this._history.push(JSON.stringify(this._config));
     if (this._history.length > HISTORY_MAX) this._history.shift();
+    this._pendingFuture = this._future.slice();
     this._future.length = 0;
+    this._refreshHistoryButtons();
+  };
+
+  Scene_CC3DModel.prototype._settleHistory = function () {
+    const top = this._history[this._history.length - 1];
+    if (top !== undefined && top === JSON.stringify(this._config)) {
+      this._history.pop();
+      if (this._pendingFuture && !this._future.length) this._future = this._pendingFuture;
+    }
+    this._pendingFuture = null;
+    this._refreshHistoryButtons();
   };
 
   Scene_CC3DModel.prototype.undo = function () {
-    if (!this._history.length) { SoundManager.playBuzzer(); return; }
-    this._future.push(JSON.stringify(this._config));
+    // A snapshot identical to the creature on screen is not a step back.
+    const now = JSON.stringify(this._config);
+    while (this._history.length && this._history[this._history.length - 1] === now) this._history.pop();
+    if (!this._history.length) { SoundManager.playBuzzer(); this._refreshHistoryButtons(); return; }
+    this._future.push(now);
     this._loadSculpt(this._history.pop());
   };
 
@@ -2442,6 +2579,7 @@
     this._renderHandles();
     this._renderBody();
     this._afterRender();
+    this._settleHistory();
     this.scheduleRebuild();
   };
 
@@ -2454,6 +2592,7 @@
     if (!this._selected) return;
     this.pushHistory();
     this.applyPartTransform(this._selected, defaultXf());
+    this._settleHistory();
     this._renderHandles();
     this._afterRender();
   };
@@ -2465,6 +2604,7 @@
     this._renderParts();
     this._renderBody();
     this._afterRender();
+    this._settleHistory();
     this.scheduleRebuild();
   };
 
@@ -2487,6 +2627,7 @@
       this._config[group.id] = Math.round(Math.random() * 20) / 10;
       this._renderParts();
       this._afterRender();
+      this._settleHistory();
       this.scheduleRebuild();
       return;
     }
@@ -2498,6 +2639,7 @@
     this._config.seed = 1 + Math.floor(Math.random() * 99998);
     this._renderTop();
     this._afterRender();
+    this._settleHistory();
     this.scheduleRebuild();
   };
 
@@ -2518,6 +2660,7 @@
     const groups = this._groups();
     if (!groups.some((g) => g.id === this._group)) this._openGroup(groups[0]);
     this.refreshAll();
+    this._settleHistory();
     this.scheduleRebuild();
   };
 
@@ -2529,7 +2672,11 @@
       x: clamp(xf.x, -XF_LIMIT, XF_LIMIT),
       y: clamp(xf.y, -XF_LIMIT, XF_LIMIT),
       z: clamp(xf.z, -XF_LIMIT, XF_LIMIT),
-      rx: xf.rx, ry: xf.ry, rz: xf.rz,
+      // An angle is kept within one turn either way. Dragging a part round
+      // used to wind it up without end, so its slider sat pinned at the stop
+      // reading 400 degrees, and the first key press on it snapped the part
+      // back by a whole turn and more.
+      rx: wrapAngle(xf.rx), ry: wrapAngle(xf.ry), rz: wrapAngle(xf.rz),
       s: clamp(xf.s, XF_SIZE_MIN, XF_SIZE_MAX)
     };
     mirrorTargets(this._config, slot).forEach((target, i) => {
@@ -2682,6 +2829,22 @@
   };
 
   const rowOf = (el) => (el ? el.getAttribute("data-hnav") : null);
+  // Which of the three columns (body list, parts, the handles over the
+  // creature) an element sits in, or null for the bar across the top.
+  const colKeyOf = (el) => {
+    const host = el && el.closest ? el.closest("[data-col]") : null;
+    const n = host ? Number(host.getAttribute("data-col")) : NaN;
+    return isFinite(n) ? n : null;
+  };
+  const colMembers = (els, col) => els.map((el, i) => (colKeyOf(el) === col ? i : -1)).filter((i) => i >= 0);
+  // The unbroken stretch of one row around index i, as [first, last].
+  const rowRun = (els, i) => {
+    const row = rowOf(els[i]);
+    let a = i, b = i;
+    while (a > 0 && rowOf(els[a - 1]) === row) a--;
+    while (b < els.length - 1 && rowOf(els[b + 1]) === row) b++;
+    return [a, b];
+  };
 
   Scene_CC3DModel.prototype._afterRender = function () {
     const els = this._focusEls();
@@ -2720,39 +2883,128 @@
     this._renderShelf();
   };
 
+  // The ring is the shared one every creation control wears (.cc-nav-focus),
+  // so the editor's cursor looks like the rest of the wizard's. cc3d-focus is
+  // kept as the editor's own marker.
   Scene_CC3DModel.prototype._paintFocus = function (els, reveal) {
     els = els || this._focusEls();
-    els.forEach((el, i) => el.classList.toggle("cc3d-focus", i === this._focus && !this._modal));
+    els.forEach((el, i) => {
+      const on = i === this._focus && !this._modal;
+      el.classList.toggle("cc3d-focus", on);
+      el.classList.toggle("cc-nav-focus", on);
+    });
     const current = els[this._focus];
     if (reveal && current && current.scrollIntoView && !this._modal) {
       current.scrollIntoView({ block: "nearest", inline: "nearest" });
     }
   };
 
+  Scene_CC3DModel.prototype._setFocus = function (index, els) {
+    els = els || this._focusEls();
+    this._focus = index;
+    const col = colKeyOf(els[index]);
+    if (col !== null) {
+      const members = colMembers(els, col);
+      this._colFocus[col] = Math.max(0, members.indexOf(index));
+    } else if (rowOf(els[index]) === "top") {
+      this._topFocus = index;
+    }
+  };
+
   Scene_CC3DModel.prototype._focusOn = function (el) {
     const els = this._focusEls();
     const i = els.indexOf(el);
-    if (i >= 0 && i !== this._focus) { this._focus = i; this._paintFocus(els, false); }
+    if (i >= 0 && i !== this._focus) { this._setFocus(i, els); this._paintFocus(els, false); }
+  };
+
+  // How many columns the shelf is drawn in: read off the live stylesheet (the
+  // handheld sheet draws three, the desktop four), with the desktop's count
+  // when there is no layout to ask.
+  Scene_CC3DModel.prototype._gridCols = function (grid) {
+    try {
+      const css = (grid && window.getComputedStyle) ? window.getComputedStyle(grid).gridTemplateColumns : "";
+      const n = String(css || "").trim().split(/\s+/).filter((t) => t && t !== "none").length;
+      if (n > 0) return n;
+    } catch (e) { /* no layout to read */ }
+    return SHELF_COLS;
+  };
+
+  // Where up or down goes from `from`, or null to stay put.
+  //  - In the shelf grid it walks the column, growing the shelf when the next
+  //    row has not been drawn yet, and leaves the grid past its last row.
+  //  - A row (the bar, a rail, a strip of buttons) is stepped out of whole.
+  //  - A column is never left sideways by up or down: off its top is the bar
+  //    across the top of the screen, off its bottom is the end of the line.
+  Scene_CC3DModel.prototype._verticalTarget = function (els, from, dir) {
+    const cur = els[from];
+    const row = rowOf(cur);
+    const grid = row && cur.closest ? cur.closest("[data-grid]") : null;
+    if (grid) {
+      let run = rowRun(els, from);
+      const cols = this._gridCols(grid);
+      const want = from + dir * cols;
+      if (want >= run[0] && want <= run[1]) return want;
+      if (dir > 0 && this._slot && this._shown < this._shelfOptions().length) {
+        this._shown += SHELF_PAGE;
+        this._renderShelf();
+        els = this._focusEls();
+        run = rowRun(els, from);
+        if (want <= run[1]) return want;
+      }
+    }
+    let index = from + dir;
+    if (row) while (index >= 0 && index < els.length && rowOf(els[index]) === row) index += dir;
+    if (index < 0 || index >= els.length) return null;
+    const col = colKeyOf(cur);
+    if (col !== null && colKeyOf(els[index]) !== col) {
+      if (dir > 0) return null;
+      const top = els.map((el, i) => (rowOf(el) === "top" ? i : -1)).filter((i) => i >= 0);
+      if (!top.length) return null;
+      return top.indexOf(this._topFocus) >= 0 ? this._topFocus : top[0];
+    }
+    return index;
+  };
+
+  // Where left or right goes from `from`, or null to stay put. Along a row
+  // (and along one line of the shelf grid); past either end of it, or from a
+  // line of its own, across to the next column with anything in it, landing
+  // where the cursor last was in that column.
+  Scene_CC3DModel.prototype._horizontalTarget = function (els, from, dir) {
+    const cur = els[from];
+    const row = rowOf(cur);
+    if (row) {
+      const index = from + dir;
+      const inRow = index >= 0 && index < els.length && rowOf(els[index]) === row;
+      const grid = cur.closest ? cur.closest("[data-grid]") : null;
+      let sameLine = true;
+      if (grid && inRow) {
+        const start = rowRun(els, from)[0];
+        const cols = this._gridCols(grid);
+        sameLine = Math.floor((index - start) / cols) === Math.floor((from - start) / cols);
+      }
+      if (inRow && sameLine) return index;
+    }
+    const col = colKeyOf(cur);
+    if (col === null) return null;
+    const keys = [];
+    els.forEach((el) => { const k = colKeyOf(el); if (k !== null && keys.indexOf(k) < 0) keys.push(k); });
+    for (let k = col + dir; k >= Math.min.apply(null, keys) && k <= Math.max.apply(null, keys); k += dir) {
+      const members = colMembers(els, k);
+      if (!members.length) continue;
+      const at = Math.min(members.length - 1, this._colFocus[k] || 0);
+      return members[at];
+    }
+    return null;
   };
 
   Scene_CC3DModel.prototype._moveFocus = function (dir, vertical) {
-    const els = this._focusEls();
+    let els = this._focusEls();
     if (!els.length) return;
-    const row = rowOf(els[this._focus]);
-    let index = this._focus + dir;
-    if (vertical && row) {
-      // Stepping out of a row lands on the first control past the end of it,
-      // so up and down move between the bar, the handles and the drawer rather
-      // than crawling along one of them.
-      while (index >= 0 && index < els.length && rowOf(els[index]) === row) index += dir;
-    }
-    if (!vertical && row) {
-      // ...and left and right stay inside it.
-      if (index < 0 || index >= els.length || rowOf(els[index]) !== row) return;
-    }
-    index = Math.max(0, Math.min(els.length - 1, index));
-    if (index === this._focus) return;
-    this._focus = index;
+    const from = Math.min(this._focus, els.length - 1);
+    const target = vertical ? this._verticalTarget(els, from, dir) : this._horizontalTarget(els, from, dir);
+    els = this._focusEls();   // the shelf may have grown under the walk
+    if (target === null || target === from || !els[target]) return;
+    this._setFocus(target, els);
     SoundManager.playCursor();
     this._paintFocus(els, true);
     this._growShelf();
@@ -2774,7 +3026,11 @@
     const id = el.getAttribute("data-slider");
     if (id) {
       const def = this._sliderDef(id);
-      if (def) { this.pushHistory(); this._setSlider(id, this._sliderValue(def) + dir * def.step); }
+      if (def) {
+        this.pushHistory();
+        this._setSlider(id, this._sliderValue(def) + dir * def.step);
+        this._settleHistory();
+      }
       return;
     }
     this._moveFocus(dir, false);
@@ -2803,10 +3059,16 @@
       if (card) this._focusOn(card);
     };
     this._onMove = (e) => { if (this._sliderDrag) this._applySliderFromEvent(e); };
-    this._onUp = () => { this._sliderDrag = null; };
+    this._onUp = () => {
+      if (!this._sliderDrag) return;
+      this._sliderDrag = null;
+      this._settleHistory();
+    };
     // Ctrl+Z / Ctrl+Y, because that is where a hand already reaches for it.
     this._onKey = (e) => {
       if (!e.ctrlKey && !e.metaKey) return;
+      // Inside the search box Ctrl+Z is the box's own undo, not the sculpt's.
+      if (window.InputTyping && window.InputTyping.isTyping && window.InputTyping.isTyping()) return;
       const key = String(e.key || "").toLowerCase();
       if (key === "z" && !e.shiftKey) { this.undo(); e.preventDefault(); }
       else if (key === "y" || (key === "z" && e.shiftKey)) { this.redo(); e.preventDefault(); }
@@ -2847,6 +3109,11 @@
       if (TouchInput.isCancelled()) return;
     }
     if (Input.isTriggered("cancel") || TouchInput.isCancelled()) { this.onConfirm(); return; }
+    // L1/R1, PageUp/PageDown and Tab step along the group rail, as every other
+    // rail in creation does (CCNav.railDir is the one place that reads them).
+    const railDir = (window.CCNav && window.CCNav.railDir) ? window.CCNav.railDir() : 0;
+    if (railDir) { this.cycleGroup(railDir); return; }
+    this._padView();
     if (Input.isRepeated("down")) this._moveFocus(1, true);
     else if (Input.isRepeated("up")) this._moveFocus(-1, true);
     else if (Input.isRepeated("right")) this._adjustFocus(1);
@@ -2856,11 +3123,31 @@
     // rerolling is a deliberate press of the chip that says so.
   };
 
+  // The view on a pad: the right stick pushed sideways turns the creature.
+  // The stick is only claimed when it is pushed more sideways than up or down,
+  // so pushing it up and down still scrolls the open list the way it does on
+  // every other creation screen (UIScroll stands down for a frame on which
+  // somebody else read the stick). The triggers are left alone for the same
+  // reason: they are creation's scroll, not this screen's zoom.
+  Scene_CC3DModel.prototype._padView = function () {
+    const pads = window.AnalogStickInput;
+    const state = this._view3D;
+    if (!pads || !state || !state.pivot || !state.camera) return;
+    if (typeof pads.rightStickIdle === "function" && !pads.rightStickIdle()) {
+      const rx = Number(pads._rx) || 0, ry = Number(pads._ry) || 0;
+      if (Math.abs(rx) > Math.abs(ry) && Math.abs(rx) > PAD_STICK_DEADZONE && typeof pads.rightX === "function") {
+        state.pivot.rotation.y += pads.rightX() * PAD_TURN_SPEED;
+      }
+    }
+  };
+
   //---------------------------------------------------------------------------
   // The picker for the things that are not parts (body, surface, hair)
   //---------------------------------------------------------------------------
 
   const MODAL_COLS = 4;
+  const PAD_STICK_DEADZONE = 0.25;
+  const PAD_TURN_SPEED = 0.06;
 
   Scene_CC3DModel.prototype.openPicker = function (kind) {
     let options, current;
@@ -2898,16 +3185,15 @@
     if (kind === "structure") return T('CharCreate.structure');
     if (kind === "surface") return T('CharCreate.surface');
     if (kind === "hairstyle") return T('CharCreate.hair');
-    return T('CharCreate.hairColour');
+    return T('CharCreate.hairColourTitle');
   };
 
   Scene_CC3DModel.prototype._renderModal = function () {
     const el = document.getElementById("cc3d-modal");
     if (!el) return;
     const modal = this._modal;
-    // The overlay, its card and its grid are all in the stylesheet
-    // (.cc3d-modal and friends); the only thing the markup knows that the
-    // sheet cannot is how many columns the grid is meant to have.
+    // The overlay, its card and its grid (MODAL_COLS across, the sheet's
+    // default for --cc3d-modal-cols) are all in the stylesheet.
     el.innerHTML = `
       <div class="cc3d-modal-card">
         <div class="cc3d-modal-head" data-nav-skip data-nav-owner="_updateModalInput">
@@ -2921,8 +3207,7 @@
           <button class="cc-btn-treaty" onclick="SceneManager._scene.closeModal()"
             >${T('CharCreate.close')}</button>
         </div>
-        <div id="cc3d-modal-grid" class="pockets-scroll cc3d-modal-grid"
-             style="--cc3d-modal-cols:${MODAL_COLS}"></div>
+        <div id="cc3d-modal-grid" class="pockets-scroll cc3d-modal-grid"></div>
       </div>`;
     el.classList.add("open");
     const search = document.getElementById("cc3d-modal-search");
@@ -3056,6 +3341,7 @@
     else if (kind === "hairstyle") this._config.hairStyle = option;
     else this._config.hairColor = option;
     this.refreshAll();
+    this._settleHistory();
     this.scheduleRebuild();
   };
 
@@ -3074,8 +3360,15 @@
   // The stage: the creature itself
   //---------------------------------------------------------------------------
 
+  // No WebGL (or no 3D system at all): the stage says so instead of standing
+  // empty, and everything in the lists keeps working on the sculpt itself.
+  Scene_CC3DModel.prototype._showNoPreview = function () {
+    const note = document.getElementById("cc3d-nopreview");
+    if (note) note.classList.add("on");
+  };
+
   Scene_CC3DModel.prototype._initStage = function () {
-    if (!isAvailable()) return;
+    if (!isAvailable()) { this._showNoPreview(); return; }
     const canvas = document.getElementById("cc3d-canvas");
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -3086,12 +3379,14 @@
     try {
       renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
     } catch (e) {
+      this._showNoPreview();
       return;
     }
     if (!renderer || !renderer.getContext || !renderer.getContext()) {
       if (renderer && renderer.dispose) {
         try { renderer.dispose(); } catch (e) {}
       }
+      this._showNoPreview();
       return;
     }
     renderer.setSize(width, height, false);
@@ -3263,8 +3558,12 @@
     const position = new THREE.Vector3();
     part.getWorldPosition(position);
     state.gizmo.position.copy(position);
+    // The arrows point along the axes the placement is written in, which are
+    // the PARENT's (position = rest pose + offset, in the parent's frame).
+    // They used to follow the part's own turn, so once a part had been turned
+    // the red arrow pointed one way and dragging it moved the part another.
     const rotation = new THREE.Quaternion();
-    part.getWorldQuaternion(rotation);
+    (part.parent || part).getWorldQuaternion(rotation);
     state.gizmo.quaternion.copy(rotation);
     state.gizmo.scale.setScalar(Math.max(0.15, state.camera.position.distanceTo(position) * 0.13));
   };
@@ -3295,6 +3594,10 @@
     this._setPointer(e);
     const hits = state.ray.intersectObject(state.holder, true);
     for (const hit of hits) {
+      // three.js rays go straight through visibility: a limb a graft hid, or
+      // a muted anchor, would answer for a click on the empty air it used to
+      // fill, and select a part nobody pointed at.
+      if (!isDrawn(hit.object, state.holder)) continue;
       let node = hit.object;
       while (node) {
         const slot = node.userData && node.userData.ccSlot;
@@ -3326,7 +3629,12 @@
 
     // 1. A handle drawn on the creature wins over anything behind it.
     if (state.gizmo && state.gizmo.visible) {
-      const hits = state.ray.intersectObject(state.gizmo, true);
+      // Only the set that is armed and drawn can be caught. The hidden ones are
+      // still in the scene, and the size box sits right on the middle of the
+      // part: with Move armed a click on the part's centre used to grab that
+      // invisible box and resize the part instead of moving it.
+      const hits = state.ray.intersectObject(state.gizmo, true)
+        .filter((hit) => isDrawn(hit.object, state.gizmo));
       if (hits.length) {
         let node = hits[0].object;
         while (node && !(node.userData && node.userData.axis) && node !== state.gizmo) node = node.parent;
@@ -3427,7 +3735,13 @@
       const hit = new THREE.Vector3();
       if (!state.ray.ray.intersectPlane(state.plane, hit)) return;
       const local = part.parent.worldToLocal(hit).sub(state.grabLocal);
-      xf.x = local.x; xf.y = local.y; xf.z = local.z;
+      // The placement is an OFFSET from the pose the part started in, not a
+      // position. A graft starts at its anchor's origin, so the two used to
+      // agree for grafts only: grabbing a bare limb wrote its whole shoulder
+      // position in as an offset, and it leapt away by that much (to the edge
+      // of its reach) on the first pixel of the drag.
+      const base = rememberBasePose(part) || { px: 0, py: 0, pz: 0 };
+      xf.x = local.x - base.px; xf.y = local.y - base.py; xf.z = local.z - base.pz;
     } else if (handle === "turn") {
       xf.ry += dx * 0.012;
       xf.rx += dy * 0.012;
@@ -3466,11 +3780,16 @@
   Scene_CC3DModel.prototype._onStageUp = function () {
     const state = this._view3D;
     if (!state) return;
+    const wasSculpting = state.mode === "part" || state.mode === "gizmo";
     state.mode = "none";
     state.partHandle = null;
     state.gizmoAxis = null;
     state.dragStart = null;
     state.canvas.classList.remove("cc-grabbing");
+    if (wasSculpting && this._sculptTouched) {
+      this._sculptTouched = false;
+      this._settleHistory();
+    }
   };
 
   // Nothing on the creature looks clickable until it lights up under the
@@ -3521,15 +3840,24 @@
     this._refreshSelection();
   };
 
+  // A body-list row under the pointer outlines its part on the creature, and
+  // nothing more: choosing it is a click.
+  Scene_CC3DModel.prototype.hoverSlot = function (slot) {
+    const shown = slot && this._slots().indexOf(slot) >= 0 ? slot : null;
+    if (shown === this._hoverSlot) return;
+    this._hoverSlot = shown;
+    this._setHoverSlot(shown);
+  };
+
   Scene_CC3DModel.prototype._refreshSelection = function () {
     const state = this._view3D;
     if (!state) return;
     const target = this._movable(this._selected);
     if (state.selHelper && state.selTarget === target) { this._updateGizmo(); return; }
-    if (state.selHelper) { state.scene.remove(state.selHelper); state.selHelper = null; }
+    if (state.selHelper) { state.scene.remove(state.selHelper); disposeObject3D(state.selHelper); state.selHelper = null; }
     state.selTarget = target;
     if (target) {
-      const helper = new THREE.BoxHelper(target, 0xffd700);
+      const helper = new THREE.BoxHelper(target, themeHex("--text-primary-hover", 0xffd700));
       helper.renderOrder = 998;
       if (helper.material) { helper.material.depthTest = false; helper.material.transparent = true; }
       state.scene.add(helper);
@@ -3541,10 +3869,10 @@
   Scene_CC3DModel.prototype._setHoverSlot = function (slot) {
     const state = this._view3D;
     if (!state) return;
-    if (state.hoverHelper) { state.scene.remove(state.hoverHelper); state.hoverHelper = null; }
+    if (state.hoverHelper) { state.scene.remove(state.hoverHelper); disposeObject3D(state.hoverHelper); state.hoverHelper = null; }
     const target = (slot && slot !== this._selected) ? this._movable(slot) : null;
     if (!target) return;
-    const helper = new THREE.BoxHelper(target, 0x7fd4ff);
+    const helper = new THREE.BoxHelper(target, themeHex("--text-muted-hover", 0x7fd4ff));
     helper.renderOrder = 997;
     if (helper.material) { helper.material.depthTest = false; helper.material.transparent = true; }
     state.scene.add(helper);
@@ -3769,6 +4097,9 @@
     window.removeEventListener("touchend", L.onTEnd);
     if (state.holder) disposeObject3D(state.holder);
     if (state.gizmo) disposeObject3D(state.gizmo);
+    if (state.selHelper) disposeObject3D(state.selHelper);
+    if (state.hoverHelper) disposeObject3D(state.hoverHelper);
+    state.selHelper = state.hoverHelper = state.holder = state.model = null;
     if (this._thumbRenderer) {
       try { this._thumbRenderer.dispose(); } catch (e) { /* already lost */ }
       try {

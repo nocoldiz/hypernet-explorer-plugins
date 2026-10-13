@@ -528,6 +528,12 @@
         const ALIEN_SHARE = 0.01;
         const ALIEN_SHARE_SPACE = 0.20;
         const ALIEN_SHARE_OFFWORLD = 0.90;
+        // A human colony on another world (GalaxySim "Colonies"): one face in
+        // five is a visitor from the stars, nearly all of them Tourists; the
+        // Dargos take only a sliver of that share, so one is a rare sight.
+        const ALIEN_SHARE_COLONY = 0.20;
+        const COLONY_DARGOS_SHARE = 0.05;
+        const DARGOS_SHEET = "Skab/!$AlienDargos";   // i18n-ignore  sheet key
         // Whose world it is. On a landing site in one of these systems the
         // whole alien share goes to the people who live there rather than
         // being spread over every alien sheet: the Greys at home round the
@@ -1450,6 +1456,16 @@
                 return !Number.isFinite(id) || site.mapId === id;
             },
 
+            // A square of a human colony on another world, the one the party is
+            // standing on (the procedural map, so only the loaded map answers).
+            isColonySite(mapId) {
+                const GS = window.GalaxySim;
+                if (!GS || typeof GS.currentColony !== "function" || !GS.currentColony()) return false;
+                const id = Number(mapId);
+                const here = (typeof $gameMap !== "undefined" && $gameMap && $gameMap.mapId) ? $gameMap.mapId() : NaN;
+                return !Number.isFinite(id) || id === here;
+            },
+
             // Is the map the party is standing on out in the sky itself? The
             // <Biome: Space> note tag, the same one the ship background reads
             // (GalaxySim_ShipBackground.isSpaceBiomeMap). Only the LOADED map
@@ -1480,6 +1496,7 @@
                     ? options.mapId
                     : (window.$gameMap && $gameMap.mapId ? $gameMap.mapId() : null);
                 if (this.isOffworldSite(mapId)) return ALIEN_SHARE_OFFWORLD;
+                if (this.isColonySite(mapId)) return ALIEN_SHARE_COLONY;
                 return this.isSpaceBiomeMap(mapId) ? ALIEN_SHARE_SPACE : ALIEN_SHARE;
             },
 
@@ -1649,6 +1666,16 @@
                 if (draw < share) {
                     const native = this.nativeAlienSheet(opts.mapId);
                     if (native && aliens.indexOf(native) >= 0) return native;
+                    // A colony's visitors are Tourists, and now and then a Dargos.
+                    if (this.isColonySite(opts.mapId)) {
+                        const inner = draw / share;
+                        const tourists = aliens.filter(k => k !== DARGOS_SHEET);
+                        if ((inner < COLONY_DARGOS_SHARE || !tourists.length) && aliens.indexOf(DARGOS_SHEET) >= 0) {
+                            return DARGOS_SHEET;
+                        }
+                        const t = (inner - COLONY_DARGOS_SHARE) / (1 - COLONY_DARGOS_SHARE);
+                        return tourists[Math.min(tourists.length - 1, Math.max(0, Math.floor(t * tourists.length)))];
+                    }
                     return aliens[Math.min(aliens.length - 1, Math.floor((draw / share) * aliens.length))];
                 }
                 const rest = (draw - share) / (1 - share);
@@ -1988,6 +2015,27 @@
             if (!raw) return raw;
             const label = buildIndex()[destNorm(raw)] || raw;
             return (typeof window.translateText === 'function') ? window.translateText(label) : label;
+        };
+
+        // The name a travel menu, a teleport or a map label prints. A place
+        // still being built (`"wip": true` in Destinations.json) says so.
+        window.WorkSystem.isDestinationWip = function (key) {
+            const raw = String(key == null ? '' : key);
+            if (!raw) return false;
+            const dest = window.WorkSystem.Destinations || {};
+            const norm = destNorm(raw);
+            for (const k of Object.keys(dest)) {
+                const d = dest[k];
+                if (destNorm(k) === norm || (d && d.name && destNorm(d.name) === norm)) return !!(d && d.wip);
+            }
+            return false;
+        };
+        window.WorkSystem.wipLabel = function (name) {
+            return (typeof window.T === 'function') ? window.T('WorkSystem.wipPlace', { name: name }) : name;
+        };
+        window.WorkSystem.destinationTravelName = function (key) {
+            const name = window.WorkSystem.destinationName(key);
+            return window.WorkSystem.isDestinationWip(key) ? window.WorkSystem.wipLabel(name) : name;
         };
 
         // The nation a destination belongs to, from its key or from any
@@ -2522,8 +2570,46 @@
             return _map;
         }
 
+        // A named place dropped into a sentence behind a preposition. A language
+        // that ships a `WorldNames.where` table (Italian: "a Parigi", "alla Torre
+        // Omega", "nella Cittadella Vaticana", "all'Aia") gets the right form of
+        // the preposition and the place's own name; a language without one
+        // (English) gets the text back untouched. `token` is the literal slot the
+        // template writes ("{location}", "[DEST]"). "a" after a word of position
+        // ("vicino a", "torna a") means "to" and takes the plain article.
+        const WHERE_FORM = { a: 'in', ad: 'in', 'in': 'in', di: 'of', da: 'from' };
+        const WHERE_TO = /(?:^|\s)(vicino|accanto|davanti|dietro|intorno|attorno|fino|sopra|sotto|oltre|insieme|torna|tornano|tornare|ritorno|va|vanno|andare|arrivare|arriva|arrivano|portatelo|portate|riportare|consegnato|consegnata|trasferisce|trasferiscono)\s+$/i;
+        function applyWhere(text, token, place) {
+            if (typeof text !== 'string' || !token || text.indexOf(token) === -1) return text;
+            const W = (typeof T === 'function' && typeof T.obj === 'function') ? T.obj('WorldNames.where') : null;
+            if (!W || !W.city) return text;
+            const entry = (W.names || {})[String(place)] || null;
+            const name = (entry && entry.name) || String(place);
+            const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+            const tok = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const out = text.replace(new RegExp('\\b(a|ad|in|di|da)\\s+' + tok, 'gi'), (m, prep, off, str) => {
+                let form = WHERE_FORM[prep.toLowerCase()];
+                if (form === 'in' && prep.toLowerCase() !== 'in' && WHERE_TO.test(str.slice(0, off))) form = 'to';
+                const tpl = (entry && entry[form]) || (form === 'to' && entry && entry.in) || W.city[form] || W.city.in;
+                if (!tpl) return m;
+                const phrase = String(tpl).replace('{name}', name);
+                // A title written in capitals ("ANDATE A [DEST]") stays in capitals.
+                const before = str.slice(Math.max(0, off - 12), off);
+                if (prep === prep.toUpperCase() && /[A-Z]/.test(before) && before === before.toUpperCase()) {
+                    return phrase.toUpperCase();
+                }
+                return prep[0] === prep[0].toUpperCase() ? cap(phrase) : phrase;
+            });
+            // A bare slot reads with the place's article where it has one ("la
+            // Torre Omega"), capitalised when it opens the sentence.
+            const bare = (entry && entry.bare) || name;
+            return out.replace(new RegExp(tok, 'g'), (m, off, str) =>
+                (off === 0 || /[.!?:]\s+$/.test(str.slice(0, off))) ? cap(bare) : bare);
+        }
+
         window.WorldNames = {
             slug: slug,
+            where: applyWhere,
 
             // A nation as stored in COUNTRIES / Countries.json.
             nation: function (name) {

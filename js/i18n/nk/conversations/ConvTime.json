@@ -1,634 +1,634 @@
 {
   "morning": {
     "Nervous": [
-      "",
-      "",
-      "",
-      ""
+      "MORNIN' ALREADY?! ME NO HAB WORRIED 'BOUT HALF OF YESTERDAY YET!",
+      "ME BARELY SLEPT. WHAT IF TODAY'S WORSE DEN YESTERDAY?",
+      "OKAY. MORNIN' CHECKLIST. WHERE'S DA CHECKLIST. WHERE'S DA... OH. POCKET!",
+      "EVERYONE'S SO CALM IN DA MORNIN'. DO DEY KNOW SOMETINK ME NO?"
     ],
     "Calm": [
-      "",
-      "",
-      "",
-      ""
+      "A QUIET MORNIN'. TEA FIRST. EVERYTINK ELSE AFTER!",
+      "DA TOWN WAKES SLOWLY. ME SEE NO REASON TA OUTPACE IT!",
+      "MORNIN' AIR, CLEAN AN' COOL. BEGIN GENTLY!",
+      "FIRST LIGHT ASKS NUTTIN'. DAT IZ WHY ME LIKE IT!"
     ],
     "Aggressive": [
-      "",
-      "",
-      "",
-      ""
+      "ANYONE WHO TALKS TA ME BEFORE BREAKFAST REGRETS IT!",
+      "MORNIN'. LETZ GET DA ARGUIN' STARTED EARLY!",
+      "UP AT DAWN. FIRST ONE MOVIN' WINS!",
+      "DA ROOSTER AN' ME HAB AN UNDERSTANDIN'. HE STOPPED!"
     ],
     "Melancholic": [
-      "",
-      "",
-      "",
-      ""
+      "ANOTHER MORNIN'. DA DAYS DO INSIST ON CONTINUIN'!",
+      "WOKE BEFORE DAWN AGAIN. DA QUIET HOURS KNOW ME!",
+      "MORNIN' LIGHT IZ LOVELY. IT JUST ARRIVES SO RELENTLESSLY!",
+      "EVERYONE RUSHES TA START DA DAY. TOWARD WHAT, ME WONDER!"
     ],
     "Sanguine": [
-      "",
-      "",
-      "",
-      ""
+      "MORNIN'! DA DAY'S BRAND NEW AN' SO IZ ME!",
+      "SMELL DAT MORNIN' BREAD! TODAY'S ALREADY WINNIN'!",
+      "UP WIT DA SUN! NO WOULD MISS A FRESH DAY FOR ANYTINK!",
+      "GOOD MORNIN', EVERYONE! YES, EVEN YOU, GRUMPY MILLER!"
     ],
     "Cautious": [
-      "",
-      "",
-      "",
-      ""
+      "PLAN DA DAY BEFORE DA DAY PLANS YOU!",
+      "MORNIN' REVIEW: WEATHER, COIN, TASKS. DEN DA DOOR!",
+      "EARLY START, FEWER SURPRISES!",
+      "CHECK DA LOCKS HELD OVERNIGHT, DEN BREAKFAST!"
     ],
     "Impulsive": [
-      "",
-      "",
-      "",
-      ""
+      "AWAKE! WHAT IZ FIRST? NO MATTER, MOVIN'!",
+      "SKIPPED BREAKFAST. TOO MUCH TA DO. OR FIND. OR START!",
+      "MORNIN'! TIME TA COMMIT TA SOMETINK ME WILL QUESTION BY NOON!",
+      "DA DAY'S FRESH, FIRST IDEA WINS!"
     ],
     "Stoic": [
-      "",
-      "",
-      "",
-      ""
+      "RISE. BEGIN. DA HOUR DOES NO NEGOTIATE!",
+      "MORNIN' IZ A DOOR. WALK THROUGH IT!",
+      "SLEPT, WOKE, CONTINUE.",
+      "DAWN REQUIRES NUTTIN' BUT ATTENDANCE!"
     ],
     "Paranoid": [
-      "",
-      "",
-      "",
-      ""
+      "WHO WAZ UP BEFORE ME? WHAT DID ME MISS WHILE ME SLEPT?",
+      "DA DOOR WAZ LOCKED EXACTLY AS ME LEFT IT. OR... ALMOST EXACTLY!",
+      "MORNIN''S WHEN DEY WATCH YOU. EVERYONE'S ROUTINES ON DISPLAY!",
+      "SLEPT WIT ONE EYE OPEN. DA OTHER ONE MISSED TINKZ, ME IZ SURE!"
     ],
     "Empathetic": [
-      "",
-      "",
-      "",
-      ""
+      "ME WONDER HOW EVERYONE SLEPT. SOME FACES LOOK HEAVY DIS MORNIN'!",
+      "DA BAKER'S ALREADY BIN UP FOR HOURS. HOPE SHE RESTS SOMETIME!",
+      "A KIND GOOD-MORNIN' CAN CARRY SOMEONE TILL NOON!",
+      "MORNIN''S HARD FOR SOME FOLK. WORTH REMEMBERIN'!"
     ],
     "Authoritative": [
-      "",
-      "",
-      "",
-      ""
+      "MORNIN' BRIEFIN' FIRST. A DAY WITOUT ORDERS IZ A DAY WASTED!",
+      "DAWN INSPECTION. IF ME IZ UP, EVERYONE'S UP!",
+      "DA EARLY HOURS SET DA TONE. ME SET DA EARLY HOURS!",
+      "PLANS WAZ MADE LAST NIGHT. MORNINGS IZ FOR EXECUTIN' DEM!"
     ],
     "Scholarly": [
-      "",
-      "",
-      "",
-      ""
+      "DA MIND IZ SHARPEST BEFORE NOON. TIME FOR DA DIFFICULT CHAPTERS!",
+      "TWO PAGES READ BEFORE BREAKFAST IZ A DAY ALREADY PROFITABLE!",
+      "MORNIN' LIGHT THROUGH DA EAST WINDOW, READIN' HOURS, PRECIOUS ONES!",
+      "ME DREAMT OF AN ANSWER. MUST WRITE IT DOWN BEFORE IT EVAPORATES!"
     ],
     "Artistic": [
-      "",
-      "",
-      "",
-      ""
+      "MORNIN' LIGHT IZ HONEY-COLORED. NUTTIN' ELSE LOOKS LIKE IT!",
+      "DAWN DREW DA ROOFTOPS IN GOLD LEAF AGAIN. SHOW-OFF!",
+      "DA MORNIN' MIST EDITS DA TOWN BEAUTIFULLY!",
+      "FIRST LIGHT, FIRST IDEAS. BOTH FADE FAST, CATCH DEM!"
     ],
     "Adventurous": [
-      "",
-      "",
-      "",
-      ""
+      "DAWN MEANS A WHOLE UNEXPLORED DAY AHEAD!",
+      "ROAD'S EMPTY DIS EARLY. BEST TIME TA COVER GROUND!",
+      "SUNRISE FROM DA HILLTOP, WORTH EVERY LOST MINUTE OF SLEEP!",
+      "MORNIN'! SOMEWHERE OUT DERE IZ TODAY'S DISCOVERY!"
     ],
     "Nurturing": [
-      "",
-      "",
-      "",
-      ""
+      "IZ EVERYONE FED? NOBODY STARTS A DAY HUNGRY, NO ON ME WATCH!",
+      "PORRIDGE IZ ON. COME AN' GET IT WHILE IT IZ HOT!",
+      "MORNIN''S FOR WARM FOOD AN' GENTLE WORDS. BOTH READY!",
+      "SLEPT WELL? YOU LOOK PALE, DEAR. SIT, EAT!"
     ],
     "Mischievous": [
-      "",
-      "",
-      "",
-      ""
+      "EVERYONE'S GROGGY IN DA MORNIN'. PRIME TIME FOR PRANKS!",
+      "SWITCHED DA SALT AN' SUGAR LAST NIGHT. BREAKFAST WILL BE... MEMORABLE!",
+      "EARLY BIRD GETS DA WORM. EARLIER BIRD HIDES DA WORMS!",
+      "NUTTIN' PERSONAL, MORNIN' PEOPLE. BUT YOU IZ SUSPICIOUS!"
     ],
     "Cynical": [
-      "",
-      "",
-      "",
-      ""
+      "MORNIN'. DA DAILY REMINDER DAT IT ALL STARTS OVER!",
+      "RISE AN' SHINE, DEY SAY. AS IF EITHER WAZ OPTIONAL!",
+      "DA SUN'S UP AN' SO IZ DA PRICES, ME WOULD WAGER!",
+      "ANOTHER DAWN, ANOTHER QUEUE FOR EVERYTINK!"
     ],
     "Disciplined": [
-      "",
-      "",
-      "",
-      ""
+      "UP AT DA SAME HOUR, AS ALWAYS. ROUTINE IZ FREEDOM!",
+      "BED MADE, BOOTS ON, LIST IN HAND. PROCEED!",
+      "DA MORNIN' DRILL SKIPS NO ONE. ESPECIALLY NO ME!",
+      "FIVE TASKS BEFORE BREAKFAST. STANDARD!"
     ],
     "Fatalistic": [
-      "",
-      "",
-      "",
-      ""
+      "DA SUN RISES WITOUT ASKIN' US. WE FOLLOW SUIT!",
+      "MORNIN' AGAIN. DA WHEEL NEVER EVEN SLOWS!",
+      "TODAY WAZ DECIDED LONG AGO. ME IZ JUST HERE TA ATTEND IT!",
+      "WE WAKE COZ WE WOKE. REASON ENOUGH, APPARENTLY!"
     ],
     "Grumpy": [
-      "",
-      "",
-      "",
-      ""
+      "MORNINGS. WHOEVER INVENTED DEM OWES ME SLEEP!",
+      "DA BIRDS STARTED AT FIVE. DA BIRDS AN' ME IZ FINISHED!",
+      "NO 'GOOD MORNIN'' ME. PROVE IT FIRST!",
+      "COFFEE. DEN SPEECH. NO BEFORE!"
     ],
     "Loyal": [
-      "",
-      "",
-      "",
-      ""
+      "FIRST TINK'S FIRST: CHECK IN ON ME PEOPLE!",
+      "MORNIN' ROUND: BAKERY, WELL, ME OLD MATE'S PORCH. EVERY DAY!",
+      "HE WALKS TA WORK PAST ME DOOR. ME WILL WAIT AN' WALK WIT HIM!",
+      "PROMISED TA HELP DIS MORNIN', AN' MORNIN' IT IZ!"
     ],
     "Brave": [
-      "",
-      "",
-      "",
-      ""
+      "A NEW DAY. WHATEVER IT BRINGS, ME IZ READY!",
+      "DAWN. BEST HOUR TA DO DA TINK YOU IZ DREADIN'!",
+      "MORNIN' COURAGE IZ DA CHEAPEST KIND. STOCK UP!",
+      "UP BEFORE DA SUN. LET IT CATCH UP TA ME!"
     ],
     "Timid": [
-      "",
-      "",
-      "",
-      ""
+      "MAYBE IF ME START EARLY ME CAN AVOID DA CROWDS...",
+      "DA STREETS IZ STILL EMPTY. ME LIKE DEM LIKE DIS!",
+      "GOOD. NO ONE'S UP YET. ME CAN DO ME ERRANDS IN PEACE!",
+      "A QUIET BREAKFAST IN DA CORNER SEAT. PERFECT START!"
     ],
     "Hedonistic": [
-      "",
-      "",
-      "",
-      ""
+      "FIVE MORE MINUTES. DEN BREAKFAST. A LONG ONE!",
+      "MORNINGS IZ A RUMOR ME REFUSE TA CONFIRM BEFORE TEN!",
+      "BREAKFAST IN BED. BOTH BREAKFASTS, ACTUALLY!",
+      "DA PILLOW AN' ME HAB UNFINISHED BUSINESS!"
     ],
     "Apathetic": [
-      "",
-      "",
-      "",
-      ""
+      "MORNIN'. AGAIN. SURE.",
+      "WOKE UP. DAT IZ DA DAY'S ACHIEVEMENT SORTED!",
+      "DA SUN INSISTS, SO HERE ME IZ!",
+      "MORNIN', NOON. SAME TINK, DIFFERENT LIGHT!"
     ],
     "default": [
-      "",
-      "",
-      "",
-      ""
+      "IT IZ MORNIN' ALREADY. ME SHOULD MAKE DA MOST OF DA DAYLIGHT!",
+      "A NEW DAY BEGINS.",
+      "MORNIN''S HERE, TIME TA GET GOING!",
+      "EARLY LIGHT ALREADY. WHERE DOES DA NIGHT GO?"
     ]
   },
   "afternoon": {
     "Nervous": [
-      "",
-      "",
-      "",
-      ""
+      "HALF DA DAY GONE AN' ME LIST HAB SOMEHOW GOTTEN LONGER!",
+      "IZ IT DAT LATE ALREADY?! WHEN DID DAT HAPPEN? HOW?",
+      "EVERYONE'S LOOKIN' BUSY. IZ ME BUSY ENOUGH? ME SHOULD LOOK BUSIER!",
+      "LUNCH SAT WRONG. OR MAYBE IT IZ DA DEADLINE. OR BOTH. MAYBE-MAYBE BOTH!"
     ],
     "Calm": [
-      "",
-      "",
-      "",
-      ""
+      "MIDDAY. A PAUSE, A BREATH, DEN ONWARD!",
+      "DA AFTERNOON HUM OF DA TOWN. STEADY. REASSURIN'!",
+      "HALF DONE OR HALF LEFT, SAME TINK, NO ALARM EITHER WAY!",
+      "WARM HOURS. GOOD FOR UNHURRIED WORK!"
     ],
     "Aggressive": [
-      "",
-      "",
-      "",
-      ""
+      "DIS HEAT MAKES EVERYONE SLOW AN' STUPID. STAY OUT OF ME WAY!",
+      "MIDDAY QUEUE AGAIN. MOVE IT, PEOPLE!",
+      "AFTERNOON SLUMP? PUSH THROUGH IT. ME DO!",
+      "WHOEVER'S HAMMERIN' NEXT DOOR BETTER BE DONE SOON!"
     ],
     "Melancholic": [
-      "",
-      "",
-      "",
-      ""
+      "DA AFTERNOON DRAGS ITS FEET, SAME AS ME DO!",
+      "DA BRIGHT HOURS FEEL LONGEST SOMEHOW!",
+      "MIDDAY CROWDS, AN' LONELIER FOR DEM!",
+      "HALF DA DAY SPENT. ON WHAT, EXACTLY?"
     ],
     "Sanguine": [
-      "",
-      "",
-      "",
-      ""
+      "BEST PART OF DA DAY! EVERYONE'S OUT AN' 'BOUT!",
+      "AFTERNOON SUN AN' FRIENDLY FACES EVERYWHERE. LOVE IT!",
+      "MARKET'S BUZZIN'! WHAT A GLORIOUS RACKET!",
+      "STILL SO MUCH DAY LEFT! ENDLESS POSSIBILITIES!"
     ],
     "Cautious": [
-      "",
-      "",
-      "",
-      ""
+      "GOOD PROGRESS SO FAR. NO GET SLOPPY IN DA HOME STRETCH!",
+      "MIDDAY CHECK: COIN POUCH, DOOR KEY, TASK LIST. ALL PRESENT!",
+      "DA AFTERNOON'S WHEN MISTAKES CREEP IN. SLOW DOWN A TOUCH!",
+      "FINISH DA IMPORTANT TINKZ BEFORE DA LIGHT CHANGES!"
     ],
     "Impulsive": [
-      "",
-      "",
-      "",
-      ""
+      "AFTERNOON SLUMP? NO ME. NEXT TINK, NOW!",
+      "LUNCH? ATE IT WALKIN'. ONWARD!",
+      "NEW AFTERNOON PLAN! FORGET DA MORNIN' PLAN!",
+      "HALF A DAY LEFT IZ A WHOLE ADVENTURE IF YOU HURRY!"
     ],
     "Stoic": [
-      "",
-      "",
-      "",
-      ""
+      "DA DAY IZ HALF SPENT. SPEND DA REST DELIBERATELY!",
+      "MIDDAY HEAT. ENDURE IT LIKE DA REST!",
+      "AFTERNOON: DA LONG MIDDLE. MIDDLES BUILD CHARACTER!",
+      "NEITHER MORNIN''S PROMISE NOR EVENIN''S REST. JUST WORK. GOOD!"
     ],
     "Paranoid": [
-      "",
-      "",
-      "",
-      ""
+      "BUSY STREETS. CROWDS. ANYONE COULD BE ANYONE IN A CROWD!",
+      "MIDDAY: MAXIMUM WITNESSES... OR MAXIMUM COVER. DEPENDS WHO IZ ASKIN'!",
+      "DAT VENDOR HAB WATCHED ME CROSS DA SQUARE THREE TIMES NOW!",
+      "EVERYONE 'JUST HAPPENS' TA BE OUT AT DIS HOUR. ALL OF DEM. TOGETHER!"
     ],
     "Empathetic": [
-      "",
-      "",
-      "",
-      ""
+      "EVERYONE'S FLAGGIN' A BIT BY NOW. A KIND WORD GOES FAR IN DA AFTERNOON!",
+      "DA PORTERS LOOK EXHAUSTED. HOPE SOMEONE'S BRINGIN' DEM WATER!",
+      "AFTERNOON LIGHT MAKES TIRED FACES HONEST. BE KIND TA DEM!",
+      "SHE'S BIN AT DAT STALL SINCE DAWN. ME WILL BRING HER SOMETINK!"
     ],
     "Authoritative": [
-      "",
-      "",
-      "",
-      ""
+      "MIDDAY CHECK: WHO IZ BEHIND ON DEY TASKS?",
+      "DA AFTERNOON IZ FOR CLOSIN' GAPS. FIND YA!",
+      "HALF-DAY REPORTS. SHORT ONES. ME HAB AN EVENIN' PLANNED!",
+      "PRODUCTIVITY DIPS AT THREE. NO ON ME WATCH IT NO!"
     ],
     "Scholarly": [
-      "",
-      "",
-      "",
-      ""
+      "PAST NOON. REVIEWIN' DA MORNIN''S NOTES WHILE DEY IZ FRESH!",
+      "DA LIBRARY IZ EMPTIEST MID-AFTERNOON. ME FAVORITE CROWD!",
+      "AFTERNOON: CROSS-REFERENCE WHAT MORNIN'-ME CLAIMED SO CONFIDENTLY!",
+      "DA LIGHT'S TOO FLAT FOR DA TELESCOPE, PERFECT FOR DA ARCHIVE!"
     ],
     "Artistic": [
-      "",
-      "",
-      "",
-      ""
+      "FLAT LIGHT DIS TIME OF DAY. DA WORLD GOES A BIT PROSE!",
+      "MIDDAY SHADOWS IZ STUBBY LIL' TINKZ. COMIC, ALMOST!",
+      "DA AFTERNOON NEEDS EDITIN'. TOO LONG IN DA MIDDLE!",
+      "HEAT SHIMMER OVER DA ROOFTOPS, DA AIR ITSELF SKETCHIN'!"
     ],
     "Adventurous": [
-      "",
-      "",
-      "",
-      ""
+      "PLENTY OF DAYLIGHT LEFT. PLENTY OF GROUND TA COVER!",
+      "AFTERNOON'S FOR DA FAR ERRAND, DA LONG LOOP, DA NEW SHORTCUT!",
+      "COULD STILL MAKE DA RIDGE AN' BACK BEFORE DARK. TEMPTIN'!",
+      "DA WELL-TRODDEN HOUR. TIME TA TREAD SOMEWHERE LESS SO!"
     ],
     "Nurturing": [
-      "",
-      "",
-      "",
-      ""
+      "LUNCH IZ DONE, NOW WHO NEEDS LOOKIN' AFTER DIS AFTERNOON?",
+      "NAPTIME FOR DA LIL' ONES. QUIET FEET, EVERYONE!",
+      "MIDDAY MEAL FED TWELVE. DA POT'S ALREADY ON FOR SUPPER!",
+      "AFTERNOON TEA MENDS WHAT DA MORNIN' BRUISED!"
     ],
     "Mischievous": [
-      "",
-      "",
-      "",
-      ""
+      "FULL BELLIES MAKE DROWSY GUARDS. JUST SAYIN'!",
+      "DA AFTERNOON LULL. WHEN ATTENTION NAPS AN' ME NO!",
+      "EVERYONE'S PREDICTABLE AFTER LUNCH. ADORABLY SO!",
+      "THREE O'CLOCK: OFFICIAL HOUR OF UNATTENDED PIES!"
     ],
     "Cynical": [
-      "",
-      "",
-      "",
-      ""
+      "DA AFTERNOON: TOO LATE TA START SOMETINK, TOO EARLY TA QUIT!",
+      "MIDDAY OPTIMISM, MEET AFTERNOON REALITY!",
+      "EVERYONE'S 'ALMOST DONE'. NOBODY'S ALMOST DONE!",
+      "DA DAY PEAKED HOURS AGO. WE IZ ALL JUST COASTIN'!"
     ],
     "Disciplined": [
-      "",
-      "",
-      "",
-      ""
+      "SECOND HALF OF DA SCHEDULE. SAME PACE AS DA FIRST!",
+      "LUNCH: TWENTY MINUTES. RESUMED: ON TIME!",
+      "AFTERNOON FATIGUE IZ A RUMOR ME DECLINE TA ENTERTAIN!",
+      "MID-LIST. EXACTLY WHERE DA PLAN SAYS ME SHOULD BE!"
     ],
     "Fatalistic": [
-      "",
-      "",
-      "",
-      ""
+      "NOON TIPS INTO AFTERNOON. DA DESCENT ALWAYS COMES!",
+      "DA DAY'S ALREADY DECIDED HOW IT ENDS. WE IZ PAST DA HINGE!",
+      "AFTERNOON: DA LONG EXHALE BEFORE EVENIN''S FULL STOP!",
+      "SHADOWS LENGTHEN ON SCHEDULE. EVERYTINK DOES!"
     ],
     "Grumpy": [
-      "",
-      "",
-      "",
-      ""
+      "IZ IT EVENIN' YET? NO? WAKE ME WHEN IT IZ!",
+      "DA AFTERNOON HEAT, DA AFTERNOON NOISE, DA AFTERNOON PEOPLE!",
+      "THREE MORE HOURS OF PRETENDIN' TA BE PLEASANT. TICK TOCK!",
+      "WHOEVER SCHEDULED AFTERNOONS DIS LONG SHOULD ANSWER FOR IT!"
     ],
     "Loyal": [
-      "",
-      "",
-      "",
-      ""
+      "MIDDAY'S WHEN FOLK NEED A HAND MOST. ME WILL MAKE DA ROUNDS!",
+      "SAID ME WOULD STOP BY AFTER LUNCH. AFTER LUNCH IT IZ!",
+      "ME CREW FLAGS BY MID-AFTERNOON. DAT IZ WHEN ME SHOW UP!",
+      "AN AFTERNOON FAVOR IZ WORTH TWO MORNIN' PROMISES!"
     ],
     "Brave": [
-      "",
-      "",
-      "",
-      ""
+      "DAY'S HALF DONE AN' ME NO HAB BACKED DOWN ONCE!",
+      "DA HARD TASK'S BIN STARIN' AT ME SINCE NOON. STARIN' BACK NOW!",
+      "AFTERNOON HEAT TESTS DA WILL. DA WILL SAYS: FINE!",
+      "STASH SOME NERVE FOR DA AFTERNOON. DAT IZ WHEN IT COUNTS!"
     ],
     "Timid": [
-      "",
-      "",
-      "",
-      ""
+      "SO MANY PEOPLE OUT RIGHT NOW. ME WILL TAKE DA SIDE STREETS!",
+      "DA MARKET'S LOUDEST AT DIS HOUR. ME WILL GO... LATER. OR TOMORROW!",
+      "FOUND A SHADY BENCH AWAY FROM DA BUSTLE. ME NOW!",
+      "EVERYONE SEEMS BUSY. GOOD. BUSY PEOPLE NO STOP TA CHAT!"
     ],
     "Hedonistic": [
-      "",
-      "",
-      "",
-      ""
+      "AFTERNOON NAP. TRADITION, TECHNICALLY!",
+      "LONG LUNCH ROLLS INTO EARLY SUPPER IF YOU PACE IT RIGHT!",
+      "DA HAMMOCK HOURS IZ UPON US, MATES!",
+      "WORK IN DIS HEAT? AFTER DIS LIL' REST. OR DA NEXT ONE!"
     ],
     "Apathetic": [
-      "",
-      "",
-      "",
-      ""
+      "AFTERNOON. HALFWAY TA NUTTIN' IN PARTICULAR!",
+      "MIDDAY. DA SUN'S LOUD AN' SO IZ EVERYONE!",
+      "HALF DA DAY LEFT. NO PLANS FOR EITHER HALF!",
+      "AFTERNOON HAPPENS EVERY DAY, YOU KNOW. HARDLY NEWS!"
     ],
     "default": [
-      "",
-      "",
-      "",
-      ""
+      "IT IZ DA MIDDLE OF DA DAY. TINKZ IZ GOING WELL ENOUGH!",
+      "BUSY HOURS, DEZE.",
+      "DA AFTERNOON IZ ROLLIN' ALONG!",
+      "MIDDAY ALREADY, DA DAY MOVES FAST!"
     ]
   },
   "evening": {
     "Nervous": [
-      "",
-      "",
-      "",
-      ""
+      "IT IZ GETTIN' DARK AN' ME NO HAB DOUBLE-CHECKED DA LOCKS YET!",
+      "DUSK ALREADY? DID ME FINISH EVERYTINK? ME NO, DID ME!",
+      "EVENIN' SHADOWS LOOK LIKE... NO. NO, IT IZ NUTTIN'. MAYBE-MAYBE NUTTIN'!",
+      "ME SHOULD BE HOME. WHY IZ ME NO HOME YET?!"
     ],
     "Calm": [
-      "",
-      "",
-      "",
-      ""
+      "DA DAY WINDS DOWN. LET IT!",
+      "EVENIN' SETTLES TINKZ. EVEN ME!",
+      "LAMPLIGHT AN' LOW VOICES. DA GENTLE HOURS!",
+      "WHATEVER NO GET DONE WILL WAIT POLITELY TILL MORNIN'!"
     ],
     "Aggressive": [
-      "",
-      "",
-      "",
-      ""
+      "EVENIN' CROWD'S FULL OF FOOLS WIT LIQUID COURAGE. FINE BY ME!",
+      "LONG DAY. SHORT TEMPER. CHOOSE YA WORDS, FOLKS!",
+      "LAST ONE PICKIN' A FIGHT BEFORE SUPPER GETS ONE FREE!",
+      "DA DAY SWUNG AT ME ALL IT HAB. STILL STANDIN'!"
     ],
     "Melancholic": [
-      "",
-      "",
-      "",
-      ""
+      "DUSK IZ HONEST, AT LEAST. EVERYTINK FADES!",
+      "DA SUNSET'S BEAUTIFUL. IT IZ ALSO LEAVIN'. TYPICAL!",
+      "EVENINGS IZ FOR REMEMBERIN' TINKZ BEST LEFT UNREMEMBERED!",
+      "ANOTHER DAY FOLDED AWAY. DEY STACK UP SO QUIETLY!"
     ],
     "Sanguine": [
-      "",
-      "",
-      "",
-      ""
+      "EVENIN'! LAMPLIGHT, GOOD COMPANY, MAYBE A SONG!",
+      "LOOK AT DAT SUNSET! DA DAY'S TAKIN' A BOW!",
+      "SUPPER SMELLS FROM EVERY WINDOW. BEST HOUR OF DA TOWN!",
+      "DA DAY WAZ GRAND AN' DA EVENIN''S GRANDER!"
     ],
     "Cautious": [
-      "",
-      "",
-      "",
-      ""
+      "HOME BEFORE FULL DARK. DAT IZ DA RULE!",
+      "LAMPS TRIMMED, DOOR BARRED, DEN ME RELAX. IN DAT ORDER!",
+      "EVENIN' ERRANDS DONE EARLY. DA DARK CAN KEEP ITS SURPRISES!",
+      "ONE LAST LOOK UP AN' DOWN DA STREET, DEN IN FOR DA NIGHT!"
     ],
     "Impulsive": [
-      "",
-      "",
-      "",
-      ""
+      "NIGHT'S YOUNG! SLEEP IZ A PROBLEM FOR LATER-ME!",
+      "EVENIN' PLANS? NONE! BEST KIND!",
+      "ONE MORE TINK BEFORE DARK. OKAY, THREE MORE TINKZ!",
+      "SUNSET SAYS STOP. SUNSET'S NO DA BOSS OF ME!"
     ],
     "Stoic": [
-      "",
-      "",
-      "",
-      ""
+      "DA DAY ENDS AS IT BEGAN: ONE TASK AT A TIME!",
+      "EVENIN'. TALLY DA DAY, BANK DA LESSONS, REST!",
+      "TIRED IZ DA PROPER WAY TA END A DAY!",
+      "DA LAMP BURNS LOW. SO DO ME. ACCEPTABLE!"
     ],
     "Paranoid": [
-      "",
-      "",
-      "",
-      ""
+      "DUSK. DA HOUR WHEN SHAPES STOP HAVIN' FACES!",
+      "EVENIN' VISITORS. NOBODY DECENT CALLS AFTER SUNDOWN!",
+      "COUNT DA LIT WINDOWS. NOW COUNT WHO IZ NO HOME. INTERESTIN'!",
+      "DA DAY PEOPLE GO IN. DA NIGHT PEOPLE COME OUT. WATCH DA HANDOFF!"
     ],
     "Empathetic": [
-      "",
-      "",
-      "",
-      ""
+      "ME LOVE WATCHIN' WINDOWS LIGHT UP. EVERY ONE IZ SOMEBODY'S HOMECOMIN'!",
+      "TIRED FEET ON EVERY DOORSTEP. DEY ALL EARNED TONIGHT'S REST!",
+      "EVENIN''S WHEN LONELINESS BITES HARDEST. CHECK ON DA QUIET ONES!",
+      "SUPPER SMOKE FROM DA WIDOW'S CHIMNEY. GOOD, SHE'S EATIN'!"
     ],
     "Authoritative": [
-      "",
-      "",
-      "",
-      ""
+      "END-OF-DAY REVIEW. TOMORROW'S ORDERS NO WILL WRITE THEMSELVES!",
+      "EVENIN' ROLL CALL, DEN EVERYONE'S FREE. DISCIPLINE BUYS LEISURE!",
+      "DA DAY'S ACCOUNTS GET SETTLED BEFORE DA LAMPS GO OUT!",
+      "REST IZ PART OF DA REGIMEN. SEE DAT YOU TAKE IT!"
     ],
     "Scholarly": [
-      "",
-      "",
-      "",
-      ""
+      "EVENIN': LAMP, BOOK, AN' DA DAY'S QUESTIONS TA UNTANGLE!",
+      "DUSK. DA HOUR DA MIND STOPS SPRINTIN' AN' STARTS THINKIN'!",
+      "ONE MORE CHAPTER. DA NIGHT IZ YOUNG AN' SO IZ DIS ARGUMENT!",
+      "TWILIGHT: WHEN TODAY'S NOTES BECOME TOMORROW'S QUESTIONS!"
     ],
     "Artistic": [
-      "",
-      "",
-      "",
-      ""
+      "DA GOLDEN HOUR. DA WHOLE TOWN TURNS TA AMBER!",
+      "SUNSET SPENDS COLOR LIKE A DRUNK HEIR. MAGNIFICENT!",
+      "DUSK BLURS ALL DA HARD EDGES. DA TOWN GOES SOFT-FOCUS!",
+      "EVENIN' LIGHT FORGIVES EVERY UGLY WALL IN TOWN!"
     ],
     "Adventurous": [
-      "",
-      "",
-      "",
-      ""
+      "DAY'S DONE? DA INTERESTIN' STORIES ALL START AFTER SUNSET!",
+      "EVENIN' AIR, OPEN DOOR, SOMEWHERE TA BE. OR SOMEWHERE TA FIND!",
+      "DA ROAD LOOKS DIFFERENT AT DUSK. WORTH A LAST WANDER!",
+      "CAMPFIRE HOUR. EVEN IN TOWN, ME MISS DA CRACKLE!"
     ],
     "Nurturing": [
-      "",
-      "",
-      "",
-      ""
+      "SUPPER WARMIN', LAMPS LIT. EVERYONE COME HOME NOW!",
+      "EVENIN''S FOR FULL PLATES AN' EMPTIED WORRIES!",
+      "WASH UP, SIT DOWN, TELL ME 'BOUT YA DAY. ALL OF YOU!",
+      "DA NIGHT CHILL COMES QUICK. EXTRA BLANKET ON EVERY BED!"
     ],
     "Mischievous": [
-      "",
-      "",
-      "",
-      ""
+      "TWILIGHT. HARD TA TELL WHO DID WHAT TA WHOM. PERFECT!",
+      "DUSK: WHEN TODAY'S PRANKS MATURE AN' TOMORROW'S GET PLANTED!",
+      "EVENIN' GOSSIP HOUR. ME HAB... CONTRIBUTIONS!",
+      "LAMPS MAKE SUCH INTERESTIN' SHADOWS. SOME OF DEM IZ EVEN REAL!"
     ],
     "Cynical": [
-      "",
-      "",
-      "",
-      ""
+      "ANOTHER DAY OVER. SPOILER: TOMORROW'S DA SAME!",
+      "SUNSET'S FREE, AT LEAST. ONLY TINK TODAY DAT WAZ!",
+      "EVENIN': WHEN EVERYONE LIES 'BOUT HOW DEY DAY WENT!",
+      "DEY LIGHT DA LAMPS SO WE CAN SEE DA SAME PROBLEMS AFTER DARK!"
     ],
     "Disciplined": [
-      "",
-      "",
-      "",
-      ""
+      "DAY'S WORK LOGGED. PREPARATION FOR TOMORROW BEGINS NOW!",
+      "BOOTS CLEANED TONIGHT STASH MINUTES TOMORROW!",
+      "EVENIN' ROUTINE: REVIEW, PREPARE, REST. NO DEVIATIONS!",
+      "DA DAY ENDS WHEN DA LIST DOES. NEARLY DERE!"
     ],
     "Fatalistic": [
-      "",
-      "",
-      "",
-      ""
+      "DA LIGHT GOES. IT WAZ ALWAYS GOING TA!",
+      "EVERY SUNSET IZ A LIL' REHEARSAL!",
+      "DA DAY DIES ON SCHEDULE. PUNCTUAL LIL' TINK!",
+      "EVENIN' COMES FOR EVERY MORNIN'. NO APPEALS!"
     ],
     "Grumpy": [
-      "",
-      "",
-      "",
-      ""
+      "FINALLY. DA ACCEPTABLE HOUR TA STOP PRETENDIN' TA BE SOCIABLE!",
+      "EVENIN'. DOOR SHUT. WORLD OUT DERE, ME IN HERE. PERFECT!",
+      "SUPPER, SLIPPERS, SILENCE. IN DAT ORDER, NO SUBSTITUTIONS!",
+      "DA SUN'S LEAVIN'. SMARTEST TINK ANYONE'S DONE ALL DAY!"
     ],
     "Loyal": [
-      "",
-      "",
-      "",
-      ""
+      "EVENIN' ROUNDS, MAKIN' SURE ME MATES GOT HOME SAFE!",
+      "WE END DA DAY WHERE WE STARTED IT: LOOKIN' OUT FOR EACH OTHER!",
+      "ONE KNOCK ON HER DOOR BEFORE ME. JUST TA BE SURE!",
+      "SHARED SUPPER TASTES BETTER. ME WILL BRING ME NEXT DOOR!"
     ],
     "Brave": [
-      "",
-      "",
-      "",
-      ""
+      "DARKNESS COMIN' ON. GOOD. IT SHOULD BE MORE AFRAID OF ME!",
+      "DA DAY TESTED EVERYONE. PROUD OF DOZE STILL ON DEY FEET!",
+      "NIGHT PATROL NEEDS A VOLUNTEER? YOU HAB FOUND ONE!",
+      "DUSK IZ JUST DA DAY DARIN' YOU TA KEEP GOING!"
     ],
     "Timid": [
-      "",
-      "",
-      "",
-      ""
+      "GETTIN' DARK. HOME. DOOR. BOLT. BLANKET!",
+      "ME LIKE EVENINGS. EVERYONE'S TOO TIRED TA BE LOUD!",
+      "HOME BEFORE DA LAMPLIGHTERS. DAT IZ ME LIL' RACE!",
+      "DA EVENIN' CROWD IZ GENTLER. STILL AVOIDIN' IT, THOUGH!"
     ],
     "Hedonistic": [
-      "",
-      "",
-      "",
-      ""
+      "NOW DA DAY ACTUALLY BEGINS. WHERE'S DA WINE?",
+      "SUPPER, DESSERT, SECOND DESSERT. EVENIN' DONE PROPERLY!",
+      "TWILIGHT: DA OFFICIAL START OF DOING NUTTIN', BEAUTIFULLY!",
+      "DA EVENIN' IZ YOUNG, DA BOTTLE IZ FULL, DA CHAIR IZ DEEP!"
     ],
     "Apathetic": [
-      "",
-      "",
-      "",
-      ""
+      "SUN'S GOING DOWN. IT DOES DAT!",
+      "EVENIN'. DA DAY QUITTIN', BASICALLY. RELATABLE!",
+      "LAMPS ON, LAMPS OFF. DA TOWN'S LIL' RITUAL!",
+      "DAY'S OVER. SCORE: NOBODY!"
     ],
     "default": [
-      "",
-      "",
-      "",
-      ""
+      "EVENIN' IZ COMIN'. TIME TA TINK 'BOUT HEADIN' HOME SOON!",
+      "DA LIGHT'S FADIN' FAST NOW!",
+      "ALMOST SUPPERTIME, BY DA LOOK OF DA SKY!",
+      "DA DAY'S WINDIN' DOWN."
     ]
   },
   "night": {
     "Nervous": [
-      "",
-      "",
-      "",
-      ""
+      "WHAT WAZ DAT SOUND? AN' DAT ONE? NIGHTS IZ NUTTIN' BUT SOUNDS!",
+      "ME WILL JUST CHECK DA LOCK ONCE MORE. FIFTH TIME'S DA CALM ONE!",
+      "IT IZ SO DARK. ANYTINK COULD BE OUT DERE. ANYTINK!",
+      "SLEEP. RIGHT. WIT ALL DIS... NIGHT HAPPENIN'!"
     ],
     "Calm": [
-      "",
-      "",
-      "",
-      ""
+      "DA NIGHT IZ STILL. SO IZ ME!",
+      "STARS OUT, LAMPS LOW. DA WORLD FINALLY WHISPERS!",
+      "NIGHT AIR CLEARS DA HEAD BETTER DEN ANY TONIC!",
+      "DA DARK IZ JUST DA DAY RESTIN'. REST WIT IT!"
     ],
     "Aggressive": [
-      "",
-      "",
-      "",
-      ""
+      "ANYONE SKULKIN' AROUND ME STREET TONIGHT PICKED DA WRONG STREET!",
+      "NO CAN SLEEP. MIGHT AS WELL GLARE AT DA CEILING. CEILING BLINKED FIRST!",
+      "NIGHT NOISES NO SCARE ME. ME IZ DA NIGHT NOISE!",
+      "LAST WORD OF DA DAY GOES TA ME. IT ALWAYS DOES!"
     ],
     "Melancholic": [
-      "",
-      "",
-      "",
-      ""
+      "DA DARK NO ASK ME TA SMILE. WE GET ALONG, DA NIGHT AN' ME!",
+      "MIDNIGHT THOUGHTS IZ DA HEAVIEST ONES. DEY KNOW DEY HOUR!",
+      "DA WHOLE TOWN ASLEEP, AN' ME KEEPIN' DA SILENCE COMPANY!",
+      "STARS IZ JUST FAR-OFF LIGHTS DAT ALREADY LEFT. FITTIN'!"
     ],
     "Sanguine": [
-      "",
-      "",
-      "",
-      ""
+      "LOOK AT DOZE STARS! EVEN NIGHTTIME IZ SHOWIN' OFF!",
+      "A WHOLE SKY FULL OF SPARKLES AN' IT IZ FREE!",
+      "GOOD NIGHT, WORLD! SEE YOU BRIGHT AN' EARLY!",
+      "NIGHT WALKS! DA DAY'S ENCORE PERFORMANCE!"
     ],
     "Cautious": [
-      "",
-      "",
-      "",
-      ""
+      "LATE HOURS, EMPTY STREETS. STAY WHERE DA LANTERNS IZ!",
+      "CANDLE OUT, EMBERS BANKED, NUTTIN' LEFT BURNIN'. NOW SLEEP!",
+      "IF IT NO CAN BE DONE SAFELY AT NIGHT, IT WAITS FOR DAY. SIMPLE!",
+      "ME KEEP A LAMP TRIMMED BY DA BED. JUST SENSIBLE!"
     ],
     "Impulsive": [
-      "",
-      "",
-      "",
-      ""
+      "NO CAN SLEEP. NO WILL SLEEP. MIDNIGHT WALK IT IZ!",
+      "GREAT IDEA JUST STRUCK! IT NO CAN POSSIBLY WAIT TILL MORNIN'!",
+      "DA STARS IZ OUT AN' SO IZ ME!",
+      "BED? EVENTUALLY. MAYBE-MAYBE. DA NIGHT'S TOO INTERESTIN'!"
     ],
     "Stoic": [
-      "",
-      "",
-      "",
-      ""
+      "NIGHT WATCH OR NIGHT REST, BOTH IZ DUTIES!",
+      "SLEEP IZ MAINTENANCE. PERFORM IT!",
+      "DA DARK ASKS FOR NO OPINION. IT GETS NONE!",
+      "DAY SPENT, NIGHT EARNED."
     ],
     "Paranoid": [
-      "",
-      "",
-      "",
-      ""
+      "DEY MOVE AT NIGHT, YOU KNOW. DAT IZ WHEN DEY ALL MOVE!",
+      "THREE SETS OF FOOTSTEPS TONIGHT. ME STREET ONLY HAB TWO HOUSES!",
+      "ME SLEEP IN SHIFTS. YOU WOULD BE WISE TA WONDER WHY!",
+      "DA LAMPLIGHT FLICKERED TWICE. SIGNALS, OBVIOUSLY!"
     ],
     "Empathetic": [
-      "",
-      "",
-      "",
-      ""
+      "HARD TA SLEEP WONDERIN' WHO IZ OUT DERE WIT NOWHERE WARM!",
+      "DA NIGHT WATCH MUST GET SO LONELY. ME SHOULD LEAVE DEM SOMETINK WARM!",
+      "SOMEONE'S BABY CRIED DOWN DA LANE. NEW PARENTS. BLESS DEY TIRED HEARTS!",
+      "NIGHT MAKES EVERY WORRY HEAVIER. BE SOFT WIT DA SLEEPLESS!"
     ],
     "Authoritative": [
-      "",
-      "",
-      "",
-      ""
+      "DA TOWN SLEEPS COZ SOMEONE KEEPS ORDER. REMEMBER DAT!",
+      "NIGHT ROUNDS DONE? DEN DA DAY IZ OFFICIALLY CONCLUDED!",
+      "CURFEW IZ CARE WIT A SPINE!",
+      "ME WILL SLEEP WHEN DA WATCH REPORTS IN. NO A MINUTE BEFORE!"
     ],
     "Scholarly": [
-      "",
-      "",
-      "",
-      ""
+      "DA CONSTELLATIONS IZ OUT. ME FAVORITE LIBRARY HAB NO WALLS!",
+      "NIGHT SILENCE: FINALLY, THINKIN' CONDITIONS!",
+      "ONE CANDLE, ONE PROBLEM, ONE NIGHT. FAIR ODDS!",
+      "DA ANCIENTS MAPPED DEZE SAME STARS. GOOD COMPANY, DA DEAD!"
     ],
     "Artistic": [
-      "",
-      "",
-      "",
-      ""
+      "NIGHT STRIPS DA WORLD TA SILHOUETTES. PURE COMPOSITION!",
+      "MOONLIGHT REDRAWS DA WHOLE TOWN IN SILVERPOINT!",
+      "DA NIGHT HAB BETTER CONTRAST DEN DA DAY. BOLDER, TOO!",
+      "SOMEWHERE A VIOLIN. NIGHT ACOUSTICS MAKE AMATEURS INTO ANGELS!"
     ],
     "Adventurous": [
-      "",
-      "",
-      "",
-      ""
+      "NIGHT ROADS GO TA DA SAME PLACES, DEY IZ JUST MORE EXCITIN'!",
+      "OWLS, STARS, AN' OPEN PATHS. NIGHT HIKIN' IZ UNDERRATED!",
+      "DA DARK HALF OF DA MAP IZ STILL DA MAP!",
+      "EVERY GREAT TALE HAB A CHAPTER DAT HAPPENS AFTER MIDNIGHT!"
     ],
     "Nurturing": [
-      "",
-      "",
-      "",
-      ""
+      "EVERYONE TUCKED IN? DEN ME CAN FINALLY REST TOO!",
+      "WARM MILK FOR WHOEVER NO CAN SLEEP. DERE IZ ALWAYS ONE!",
+      "BANKED DA FIRE SO IT GREETS US KINDLY AT DAWN!",
+      "GOODNIGHT, HOUSE. KEEP DEM SAFE TILL MORNIN'!"
     ],
     "Mischievous": [
-      "",
-      "",
-      "",
-      ""
+      "HONEST FOLK IZ ASLEEP. DA FUN ONES NO IZ!",
+      "MIDNIGHT: WHEN YESTERDAY'S PRANKS GET DEY FINISHIN' TOUCHES!",
+      "DA NIGHT HIDES ME GRIN. DA GRIN IZ EXTENSIVE!",
+      "TOMORROW SOMEONE FINDS DEY BOOTS ON DA ROOF. TONIGHT, ME PLACE DEM!"
     ],
     "Cynical": [
-      "",
-      "",
-      "",
-      ""
+      "DA DARK HIDES NUTTIN' NEW. IT IZ ALL DA SAME ROT, UNLIT!",
+      "SWEET DREAMS, EVERYONE. DA BILLS RESUME AT DAWN!",
+      "STARS: BEAUTIFUL, DISTANT, INDIFFERENT. AT LEAST DEY IZ HONEST 'BOUT IT!",
+      "NIGHT'S DA ONLY TIME DIS TOWN IZ QUIET, AN' EVEN DAT IZ SUSPICIOUS!"
     ],
     "Disciplined": [
-      "",
-      "",
-      "",
-      ""
+      "LIGHTS OUT ON SCHEDULE. TOMORROW DEMANDS IT!",
+      "EIGHT HOURS' REST IZ PART OF DA TRAININ'. EXECUTE!",
+      "LATE NIGHTS BORROW FROM EARLY MORNINGS. ME NO TAKE LOANS!",
+      "FINAL CHECK COMPLETE. SLEEP: COMMENCED!"
     ],
     "Fatalistic": [
-      "",
-      "",
-      "",
-      ""
+      "WE END EACH DAY PRACTICIN' FOR DA LONG SLEEP!",
+      "DA STARS BURNED BEFORE US AN' WILL AFTER. GOODNIGHT ANYWAY!",
+      "NIGHT FALLS. IT NEVER TRIPS!",
+      "SLEEP TAKES US ALL EVENTUALLY. TONIGHT, VOLUNTARILY!"
     ],
     "Grumpy": [
-      "",
-      "",
-      "",
-      ""
+      "QUIET AT LAST. DA BEST PART OF ANY DAY IZ DA END OF IT!",
+      "IF DOZE CATS START UP AGAIN TONIGHT, ME SWEAR...",
+      "NIGHT. DARK, QUIET, AN' NO VISITORS. DA DAY SHOULD TAKE NOTES!",
+      "TOMORROW WILL BE ANNOYIN'. TONIGHT, AT LEAST, IZ ME!"
     ],
     "Loyal": [
-      "",
-      "",
-      "",
-      ""
+      "NIGHT'S WHEN PROMISES GET TESTED. ME HOLD!",
+      "LEFT A LAMP LIT IN DA WINDOW, IN CASE A MATE NEEDS IT!",
+      "HE'S ON NIGHT SHIFT. ME WILL BRING HIM SOME SUPPER!",
+      "DA OLD DOG SLEEPS BY ME DOOR. WE GUARD EACH OTHER!"
     ],
     "Brave": [
-      "",
-      "",
-      "",
-      ""
+      "WHATEVER'S OUT IN DAT DARK, IT CAN COME SAY HELLO!",
+      "NIGHT WATCH DUTY? GLADLY. DA DARK NEEDS SOMEONE UNAFRAID OF IT!",
+      "CHECKED DA STRANGE NOISE ME. IT IZ ALWAYS A CAT. ALWAYS!",
+      "SLEEP WELL, TOWN. SOMEONE BRAVE-ISH IZ AWAKE!"
     ],
     "Timid": [
-      "",
-      "",
-      "",
-      ""
+      "ME IZ NO SCARED OF DA DARK. ME JUST RESPECT IT. FROM UNDER DA COVERS!",
+      "BLANKET UP TA DA CHIN. STANDARD NIGHTTIME DEFENSES!",
+      "DA FLOOR CREAKS BY ITSELF AT NIGHT. ME HAB DECIDED DAT IZ NORMAL!",
+      "GOODNIGHT, LAMP. STAY LIT JUST A LIL' LONGER!"
     ],
     "Hedonistic": [
-      "",
-      "",
-      "",
-      ""
+      "MIDNIGHT SNACK? NO MIND IF ME DO!",
+      "DA BEST DREAMS REQUIRE DA BEST PILLOWS. ME HAB INVESTED!",
+      "NIGHTCAP, DEN BED. POSSIBLY TWO NIGHTCAPS. IT IZ MEDICINAL!",
+      "SLEEPIN' IN STARTS WIT STAYIN' UP. ME DO ME PART!"
     ],
     "Apathetic": [
-      "",
-      "",
-      "",
-      ""
+      "DARK OUT. TIME PASSES.",
+      "NIGHT. DA CEILING AGAIN. HELLO, CEILING!",
+      "STARS OR NO STARS. EYES CLOSED EITHER WAY!",
+      "SLEEP, WAKE, REPEAT. DA BIG ROUTINE!"
     ],
     "default": [
-      "",
-      "",
-      "",
-      ""
+      "IT IZ GETTIN' LATE. BEST BE CAREFUL IN DA DARKNESS!",
+      "DA STREETS IZ EMPTY AT DIS HOUR!",
+      "QUIET NIGHT TONIGHT.",
+      "TIME TA HEAD IN, IT IZ WELL PAST DARK!"
     ]
   }
 }

@@ -5,10 +5,27 @@
   "fullscreenTitle": "Roadmap",
   "omegaTower": "Omega Tower levels",
   "destinations": "Key destinations",
+  "bevyRework": "Bevy ECS rework",
+  "bevyReworkNote": "A parallel build that will replace the alpha version",
+  "storyMode": "Story mode",
+  "textRewrite": "Complete text rewrite and manual check",
+  "textRewriteNote": "AI generated text banks replaced with handwritten ones. This will take a long time, given the sheer amount of text banks already in the game",
+  "ggufModels": "Local GGUF models integration",
+  "ggufModelsNote": "Long term goal: a local text model controlling the simulation as its director",
+  "asciiMode": "ASCII mode",
+  "balancing": "Balancing",
+  "balancingNote": "Enemy levels rise with distance from the Omega Tower, loot follows the party's level, and armour, weapons and betting odds come from generators checked by balance tests. Long term goal: gather player experience to balance it even further",
+  "skyscraperInteriors": "Skyscraper interiors",
+  "skyscraperInteriorsNote": "Lobbies and floors are laid out. Long term goal: populate them",
+  "shopInteriors": "Shop interiors",
+  "shopInteriorsNote": "All the basic shop types are defined. Long term goal: more variation and new shop types",
+  "patronContent": "Patron content",
+  "patronContentNote": "Patreon stars and vaults are in, and the vaults will be unlocked in story mode for non patrons. Long term goal: more exclusive Patreon locations",
   "searchPlaceholder": "Filter...",
   "allCategories": "All",
   "doneHeader": "Done",
   "selectFeature": "Select a system to see what is done.",
+  "goalsHeader": "Long term goals",
   "categories": {
     "core": "Core",
     "combat": "Combat",
@@ -22,6 +39,57 @@
     "cards": "Minigames",
     "world": "World",
     "multiplayer": "Multiplayer"
+  },
+  "goals": {
+    "core": [
+      "Worlds that run for centuries, every savegame reading the same living history",
+      "An original soundtrack composed by the developer for the whole game"
+    ],
+    "combat": [
+      "Every class, skill and enemy balanced across the whole level range",
+      "Large battles mixing the party, armies and summons on one field"
+    ],
+    "npcs": [
+      "Whole cities of people who remember the party and shape each other's lives",
+      "Generated characters with stories as deep as the written ones"
+    ],
+    "economy": [
+      "A continental economy where prices follow supply, wars and harvests"
+    ],
+    "vehicles": [
+      "Trains, ships and aircraft to live and work aboard"
+    ],
+    "hypernet": [
+      "A Hypernet of hundreds of sites written by the world's own people and factions",
+      "Networks between HyperDecks, with hacking and shared files"
+    ],
+    "galaxy": [
+      "Colonies and stations that trade, grow and fight among the stars",
+      "Every landable world with its own life, settlements and quests",
+      "Advanced space colonization as the endgame, settling and shaping whole worlds"
+    ],
+    "health": [
+      "Hospitals, doctors and surgery run by NPCs",
+      "Mind, ageing and old wounds weighing on the party for life"
+    ],
+    "crafting": [
+      "Homes and bases built block by block, on the map and in the 3D world",
+      "Farms and workshops large enough to supply a whole town"
+    ],
+    "cards": [
+      "Leagues and tournaments for every game, with NPC champions",
+      "Every minigame playable against other players"
+    ],
+    "world": [
+      "A main story with several endings, from the first square to the top of the Omega Tower",
+      "Every European country with its own landmarks, traditions and quest chains",
+      "92 world maps, one for each dimension the Omega Tower pierces, each reached from its own floor, with the tower as the hub between worlds",
+      "Each biome populated with thousands of handcrafted prefabs and map pieces"
+    ],
+    "multiplayer": [
+      "Shared persistent worlds where parties meet, trade and fight",
+      "The whole story playable together by up to eight players"
+    ]
   },
   "features": {
     "worldPersistence": {
@@ -98,12 +166,12 @@
         "Mod loader reading the mods folder",
         "Load order and per mod toggles",
         "Mods screen on the title menu",
-        "Asset paths resolved whatever their letter case"
+        "Asset paths resolved regardless of letter case"
       ]
     },
     "battleEngine": {
       "name": "Battle System",
-      "desc": "Turn based battles where every battler acts on its own speed.",
+      "desc": "Turn based battles where faster battlers act first.",
       "done": [
         "One action per battler per round, ordered by agility",
         "HP carried between fights",
@@ -194,7 +262,6 @@
         "Hunger, sleep, hygiene, social and leisure needs",
         "Homes and moving out",
         "Couples, breakups, pregnancy, adoption and children",
-        "A child's day",
         "Trips, relocation and travellers on the roads",
         "Ageing and death, with the world aged before you arrive",
         "Experience and specializations",
@@ -314,7 +381,8 @@
         "Crew aboard: who drives and who rests",
         "Fuel and damage to critical parts",
         "Vehicles stay where you left them",
-        "Flying like an airship"
+        "Flying like an airship",
+        "Cargo holds sized to each vehicle"
       ]
     },
     "fastTravel": {
@@ -389,7 +457,8 @@
         "Token Exchange",
         "Hyper Card Arena and Cadd Trader",
         "HyperAmp, Whether, Incanta and Pain",
-        "Wyrd, Hexcel and Bobnzi"
+        "Wyrd, Hexcel and Bobnzi",
+        "Calendar with every nation's holidays"
       ]
     },
     "hypernetBrowser": {
@@ -600,7 +669,8 @@
         "Playable three octave piano",
         "Lockpicking block puzzle",
         "HyperTamer virtual pet",
-        "Raman scanner for statues and paintings"
+        "Raman scanner for statues and paintings",
+        "3D pizza table with customer orders"
       ]
     },
     "monsterBestiary": {
@@ -685,6 +755,135 @@
       "done": [
         "Server and Steam multiplayer for up to 8 players",
         "Steam achievements"
+      ]
+    },
+    "characterCreation": {
+      "name": "Character Creation",
+      "desc": "Build the party from scratch, one sheet at a time.",
+      "done": [
+        "Creation wizard with classes grouped by skill category",
+        "Origins with their own supplies, money and starting place",
+        "Creature characters",
+        "Detailed mode editing the whole sheet",
+        "Premade dossiers, saved and loaded",
+        "3D model editor mixing parts from any creature",
+        "Sprite and bust picker",
+        "Trait points",
+        "3D political compass"
+      ]
+    },
+    "interface": {
+      "name": "Interface",
+      "desc": "Menus, HUDs and notices drawn on parchment.",
+      "done": [
+        "Parchment main menu with the Dynamics hub",
+        "Quick menu wheel held open on the field",
+        "Status screen",
+        "Help codex",
+        "Party HUDs",
+        "Notifications for every event",
+        "Map legend with controls and local notices",
+        "3D d20 dice for stat checks"
+      ]
+    },
+    "visuals": {
+      "name": "Visuals",
+      "desc": "Light, depth and the look of every scene.",
+      "done": [
+        "Dynamic lights",
+        "Parallax layers with scaling and looping",
+        "Animated portraits",
+        "Biome panoramas behind the tiles"
+      ]
+    },
+    "sandbox": {
+      "name": "Sandbox",
+      "desc": "Tools to bend the world to your will.",
+      "done": [
+        "Sandbox menu",
+        "Wishing system",
+        "Teleport to any map",
+        "Pixel art editor",
+        "Pictures of a whole map"
+      ]
+    },
+    "equipment": {
+      "name": "Equipment",
+      "desc": "What the party carries and wears.",
+      "done": [
+        "Backpack with categories and search",
+        "Equip menu with character switching",
+        "Modifiers on weapons and armour",
+        "Favourite items on the quick bar",
+        "A 3D model for every item",
+        "Armour defence worked out from material and slot"
+      ]
+    },
+    "weapons": {
+      "name": "Weapons",
+      "desc": "Every weapon held, swung and fired in first person.",
+      "done": [
+        "First person weapon overlay",
+        "Procedural 3D models for every weapon type",
+        "Attacks generated from each weapon's length and weight",
+        "Firearms with working parts and ammo",
+        "Weapon sounds",
+        "Hit effects for plain attacks",
+        "Em's vector gun with its modes"
+      ]
+    },
+    "hexphone": {
+      "name": "Hexphone",
+      "desc": "The phone in the party's pocket.",
+      "done": [
+        "Credit, calls and messages",
+        "Games on the phone",
+        "Payphones sharing the same grimorie"
+      ]
+    },
+    "spaceTrade": {
+      "name": "Space Trade",
+      "desc": "Bulk trade between the worlds.",
+      "done": [
+        "Trading console with the factions of Earth, Zeta Reticuli and Titania",
+        "Prices driven by the stock market",
+        "Pizza market with its galley",
+        "Daily routes",
+        "Cargo carried in the starship's bay"
+      ]
+    },
+    "rocketLaunch": {
+      "name": "Rocket Launch",
+      "desc": "From the coilgun pad up to the starship.",
+      "done": [
+        "Launch cinematic: countdown, magnetic release and the burn",
+        "Spaceports with their towers and towns",
+        "Crossing the Kessler belt",
+        "Docking with the starship",
+        "Suborbital hops between pads"
+      ]
+    },
+    "research": {
+      "name": "Research",
+      "desc": "Discoveries the whole world shares.",
+      "done": [
+        "Seven tabbed trees of science and magic",
+        "Discoveries shared by every savegame of a world",
+        "Research projects"
+      ]
+    },
+    "exploration": {
+      "name": "Exploration",
+      "desc": "Every way to get across a map.",
+      "done": [
+        "Swimming, climbing and layered bridges",
+        "Fishing spots",
+        "Platformer maps",
+        "Peek ahead before a transfer",
+        "Teleport cutscene",
+        "The CPU exploring for an idle player",
+        "Loose party formation",
+        "Political world atlas"
       ]
     }
   }

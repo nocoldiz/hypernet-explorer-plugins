@@ -79,13 +79,13 @@
   "tool": {
     "target": "{name}",
     "holding": "HOLDIN' {name}",
-    "bedrock": "DA BEDROCK DOES NO GIVE.",
-    "noRoom": "NOTHIN' TA BUILD AGAINST DERE!",
+    "bedrock": "NO CAN DIG BEDROCK.",
+    "noRoom": "NO SURFACE TA BUILD ON.",
     "struck": "STRUCK A SEAM OF {name}.",
-    "pouchFull": "NO ROOM LEFT FOR WHAT CAME OUT OF DA ROCK!",
-    "barFull": "DA QUICK BAR IZ FULL. BUILD SOMETHIN' WIT WHAT IZ ON IT FIRST!",
-    "noBlock": "NOTHIN' IN HAND TA BUILD WIT!",
-    "noDigFight": "NO IN A FIGHT. DA GROUND STAYS WHERE IT IZ!",
+    "pouchFull": "LOOT SACK FULL.",
+    "barFull": "QUICK BAR FULL. USE SOME BLOCKS FIRST!",
+    "noBlock": "NO BLOCK IN HAND.",
+    "noDigFight": "NO CAN DIG DURIN' A FIGHT!",
     "bareHands": "BARE HANDS"
   },
   "hud": {
@@ -93,10 +93,12 @@
     "cmdPlace": "PLACE BLOCK",
     "cmdBlock": "CHANGE BLOCK",
     "cmdBar": "CHANGE QUICK BAR",
-    "cmdCast": "CAST DA SPELL IN HAND",
+    "cmdCast": "CAST SPELL",
     "cmdReady": "RELOAD, FOLD DA GUN, OR GUARD",
-    "cmdFightHit": "ATTACK WIT DA WEAPON",
-    "cmdFightUse": "USE DA SPELL, ITEM OR BLOCK IN HAND"
+    "cmdFightHit": "WHACK",
+    "cmdFightUse": "USE HELD SPELL, ITEM OR BLOCK",
+    "solomonBegun": "DA SOLOMON RITUAL HAB BEGUN",
+    "solomonDismissed": "SOLOMON RITUAL DISMISSED"
   },
   "bar": {
     "blocks": "BLOCKS",
@@ -112,7 +114,7 @@
     "broom": "BROOMSTICK",
     "starship": "STARSHIP",
     "none": "NO VEHICLES OWNED",
-    "called": "{name} BROUGHT ROUND."
+    "called": "{name} SUMMONED."
   },
   "combat": {
     "begin": "FIGHT!",

@@ -15,12 +15,12 @@
         "...Grazie. Avevo bisogno di sentirmelo dire.",
         "Lo pensi davvero?",
         "Sei gentile a dirlo.",
-        "Non se ne accorgono in molti. Te ne sono grato.",
+        "Non se ne accorgono in molti. Te ne sono riconoscente.",
         "Detto da te, ha un peso."
       ],
       "responseBad": [
         "Me lo dici ogni singola volta. Sta perdendo lo smalto.",
-        "Ancora complimenti? Non sono mica scemo.",
+        "Ancora complimenti? Non mi faccio mica abbindolare.",
         "Se lodi tutto, non lodi niente.",
         "Risparmiatelo. Questa predica l'ho già sentita.",
         "Che cosa mi devi chiedere?"
@@ -79,11 +79,11 @@
     "flatter": {
       "label": "Adula",
       "player": [
-        "{Uno intelligente come te lo saprà già, {name}.|Senti, uno intelligente come te lo saprà già, {name}.|Ti dirò, uno intelligente come te lo saprà già, {name}.}",
+        "{Una persona intelligente come te lo saprà già, {name}.|Senti, una persona intelligente come te lo saprà già, {name}.|Ti dirò, una persona intelligente come te lo saprà già, {name}.}",
         "{Una persona del tuo rango si merita il meglio, {name}.|Senti, una persona del tuo rango si merita il meglio, {name}.|Ti dirò, una persona del tuo rango si merita il meglio, {name}.}",
         "{Qui dentro senza di te sarebbero perduti, {name}.|Senti, qui dentro senza di te sarebbero perduti, {name}.|Ti dirò, qui dentro senza di te sarebbero perduti, {name}.}",
-        "{Sei chiaramente il più capace in questa stanza, {name}.|Senti, sei chiaramente il più capace in questa stanza, {name}.|Ti dirò, sei chiaramente il più capace in questa stanza, {name}.}",
-        "{Io mi fido solo di uno saggio come te, {name}.|Senti, io mi fido solo di uno saggio come te, {name}.|Ti dirò, io mi fido solo di uno saggio come te, {name}.}",
+        "{Sei chiaramente la persona più capace in questa stanza, {name}.|Senti, sei chiaramente la persona più capace in questa stanza, {name}.|Ti dirò, sei chiaramente la persona più capace in questa stanza, {name}.}",
+        "{Io mi fido solo di una persona saggia come te, {name}.|Senti, io mi fido solo di una persona saggia come te, {name}.|Ti dirò, io mi fido solo di una persona saggia come te, {name}.}",
         "{Parlano tutti benissimo di te, {name}.|Senti, parlano tutti benissimo di te, {name}.|Ti dirò, parlano tutti benissimo di te, {name}.}"
       ],
       "responseGood": [
@@ -98,7 +98,7 @@
         "La lisciata la sento da un chilometro.",
         "Dove vuoi arrivare?",
         "Troppo miele stucca.",
-        "Mi credi così vanitoso?"
+        "Credi che basti un po' di vanità a comprarmi?"
       ]
     },
     "thank": {
@@ -107,8 +107,8 @@
         "{Grazie di tutto, {name}.|Senti, grazie di tutto, {name}.|Ti dirò, grazie di tutto, {name}.}",
         "Te ne devo una, {name}. Davvero.",
         "{Non me la dimentico la tua gentilezza, {name}.|Senti, non me la dimentico la tua gentilezza, {name}.|Ti dirò, non me la dimentico la tua gentilezza, {name}.}",
-        "{Mi sei stato di grande aiuto, {name}. Grazie.|Senti, mi sei stato di grande aiuto, {name}. Grazie.|Ti dirò, mi sei stato di grande aiuto, {name}. Grazie.}",
-        "{Ti sono grato, {name}.|Senti, ti sono grato, {name}.|Ti dirò, ti sono grato, {name}.}",
+        "{Mi hai aiutato tantissimo, {name}. Grazie.|Senti, mi hai aiutato tantissimo, {name}. Grazie.|Ti dirò, mi hai aiutato tantissimo, {name}. Grazie.}",
+        "{Ti sono riconoscente, {name}.|Senti, ti sono riconoscente, {name}.|Ti dirò, ti sono riconoscente, {name}.}",
         "{Alla salute, {name}. E lo dico sul serio.|Senti, alla salute, {name}. E lo dico sul serio.|Ti dirò, alla salute, {name}. E lo dico sul serio.}"
       ],
       "responseGood": [
@@ -140,13 +140,13 @@
         "Come sempre, ma non mi lamento.",
         "Eh, sai com'è. Una cosa dopo l'altra.",
         "Si tira avanti. E tu?",
-        "Tranquilla, per fortuna.",
+        "Giornata tranquilla, per fortuna.",
         "Gentile da parte tua chiedere."
       ],
       "responseBad": [
         "Ogni volta parliamo del nulla.",
         "Di nuovo chiacchiere da bar? Non hai altro?",
-        "Sono un po' occupato per le ciance.",
+        "Ho troppo da fare per le ciance.",
         "Bene, bene, sempre bene.",
         "Potresti anche dire direttamente cosa vuoi."
       ]
@@ -172,7 +172,7 @@
         "Con te non faccio più commercio di chiacchiere.",
         "Tu scavi sempre.",
         "È così che nascono le voci su di ME.",
-        "Attento. La lingua lunga taglia da tutte e due le parti.",
+        "Occhio. La lingua lunga taglia da tutte e due le parti.",
         "Stavolta no."
       ]
     },
@@ -229,17 +229,17 @@
     "mock": {
       "label": "Prendi in giro",
       "player": [
-        "{Bel lavoro, {name}. Ti sei allenato a fallire?|Senti, bel lavoro, {name}. Ti sei allenato a fallire?|Ti dirò, bel lavoro, {name}. Ti sei allenato a fallire?}",
+        "{Bel lavoro, {name}. Hai fatto pratica di fallimenti?|Senti, bel lavoro, {name}. Hai fatto pratica di fallimenti?|Ti dirò, bel lavoro, {name}. Hai fatto pratica di fallimenti?}",
         "{Ah, piano geniale, {name}. Davvero ispirato.|Senti, ah, piano geniale, {name}. Davvero ispirato.|Ti dirò, ah, piano geniale, {name}. Davvero ispirato.}",
-        "{Wow, {name}, sarai fierissimo di te stesso.|Senti, wow, {name}, sarai fierissimo di te stesso.|Ti dirò, wow, {name}, sarai fierissimo di te stesso.}",
-        "{Attento {name}, tutto quel pensare potrebbe farti male.|Senti, attento {name}, tutto quel pensare potrebbe farti male.|Ti dirò, attento {name}, tutto quel pensare potrebbe farti male.}",
+        "{Wow, {name}, chissà che soddisfazione.|Senti, wow, {name}, chissà che soddisfazione.|Ti dirò, wow, {name}, chissà che soddisfazione.}",
+        "{Acchio, {name}, tutto quel pensare potrebbe farti male.|Senti, acchio, {name}, tutto quel pensare potrebbe farti male.|Ti dirò, acchio, {name}, tutto quel pensare potrebbe farti male.}",
         "{Carino il tentativo, {name}. Adorabile, sul serio.|Senti, carino il tentativo, {name}. Adorabile, sul serio.|Ti dirò, carino il tentativo, {name}. Adorabile, sul serio.}",
-        "{Bravo, {name}. Una prestazione da tramandare ai posteri.|Senti, bravo, {name}. Una prestazione da tramandare ai posteri.|Ti dirò, bravo, {name}. Una prestazione da tramandare ai posteri.}"
+        "{Complimenti, {name}. Una prestazione da tramandare ai posteri.|Senti, complimenti, {name}. Una prestazione da tramandare ai posteri.|Ti dirò, complimenti, {name}. Una prestazione da tramandare ai posteri.}"
       ],
       "responseGood": [
         "Divertentissimo. Davvero.",
         "Ridi, ridi.",
-        "Ti credi spiritoso.",
+        "Ah, che spirito.",
         "Divertiti pure.",
         "Continua a sfottere. Vediamo dove ti porta."
       ],
@@ -270,9 +270,9 @@
       ],
       "responseBad": [
         "Tu critichi e non alzi mai un dito.",
-        "Sempre l'esperto, eh.",
+        "Sempre a fare la parte di chi sa tutto, eh.",
         "Non ti va mai bene niente.",
-        "Sono stufo delle tue lagne.",
+        "Ne ho abbastanza delle tue lagne.",
         "Tienile per te, le prediche."
       ]
     },
@@ -298,7 +298,7 @@
         "Minacce a vuoto.",
         "Ancora tu? Ho smesso di avere paura.",
         "Fai pure il peggio che sai.",
-        "Attento. La pazienza è finita."
+        "Occhio. La pazienza è finita."
       ]
     }
   },
@@ -309,7 +309,7 @@
         "player": [
           "Allora {name}, qualcuno qui in giro riesce mai a starti dietro?",
           "Ti avvicini un po'. \"Speravo di trovarti qui, {name}.\"",
-          "\"Attento, {name}. Rischio di prenderci gusto.\"",
+          "\"Occhio, {name}. Rischio di prenderci gusto.\"",
           "\"Mi passi per la testa più di quanto sia ragionevole, {name}.\""
         ],
         "responseGood": [
@@ -326,12 +326,12 @@
         ]
       },
       "admire": {
-        "label": "Ammiralo",
+        "label": "Ammira",
         "player": [
           "\"Chi ti ha detto che ti sta bene aveva ragione, {name}.\"",
           "Ti accorgi di stare fissando. \"Scusa. È che è difficile guardare da un'altra parte.\"",
           "\"C'è qualcosa nel modo in cui ti muovi, {name}.\"",
-          "\"Sei entrato e la stanza si è rimpicciolita,\" dici a {name}."
+          "\"{g:Sei entrato|Sei entrata|Sei entrato} e la stanza si è rimpicciolita,\" dici a {name}."
         ],
         "responseGood": [
           "L'hai notato?",
@@ -340,7 +340,7 @@
           "Hai buon gusto."
         ],
         "responseBad": [
-          "Preferirei essere notato per altro.",
+          "Preferirei essere {g:notato|notata|notato} per altro.",
           "Quindi mi stavi guardando.",
           "La gente dice così quando vuole qualcosa.",
           "Ti prego, no."
@@ -364,11 +364,11 @@
           "Non credo che dovrei leggerla.",
           "È troppo.",
           "Mi conosci a malapena.",
-          "Questa me la tengo. Come promemoria per essere più chiaro con te."
+          "Questa me la tengo. Come promemoria per parlarti più chiaro."
         ]
       },
       "serenade": {
-        "label": "Fagli una serenata",
+        "label": "Canta una serenata",
         "player": [
           "Prendi fiato e canti per {name}, malissimo, e del tutto di proposito.",
           "Attacchi una canzone sotto la finestra di {name} e ti fai tutta la strofa.",
@@ -379,17 +379,17 @@
           "Basta, basta, ci guardano tutti, non smettere.",
           "Era orribile. Rifai l'ultimo pezzo.",
           "{name} ascolta fino in fondo, e poi per un po' non dice niente.",
-          "Nessuno si era mai reso ridicolo per me."
+          "Nessuno si era mai coperto di ridicolo per me."
         ],
         "responseBad": [
           "Ti prego. Smettila.",
           "Adesso l'hai reso un affare di tutti.",
           "{name} se ne va a metà della seconda strofa.",
-          "Quella. Era una prestazione. Non era per me, era contro di me."
+          "Quella era una prestazione contro di me."
         ]
       },
       "askDance": {
-        "label": "Invitalo a ballare",
+        "label": "Invita a ballare",
         "player": [
           "Porgi la mano a {name}. \"Un ballo. Non deve saperlo nessuno il perché.\"",
           "\"Balla con me, {name}. Condurrò male, ma condurrò.\"",
@@ -405,14 +405,14 @@
         "responseBad": [
           "No. Grazie.",
           "Io non ballo.",
-          "Sei molto vicino.",
+          "Stai troppo vicino.",
           "Chiedilo a qualcuno a cui farebbe piacere."
         ]
       },
       "holdHands": {
-        "label": "Prendigli la mano",
+        "label": "Prendi per mano",
         "player": [
-          "Allunghi la mano e prendi quella di {name}, abbastanza piano da lasciargli il tempo di ritrarsi.",
+          "Allunghi la mano e prendi quella di {name}, abbastanza piano da {g:lasciargli|lasciarle|lasciargli} il tempo di ritrarsi.",
           "Le tue dita trovano quelle di {name}, e le lasci lì.",
           "\"Va bene così?\" chiedi, con la mano sospesa sopra quella di {name}.",
           "Intrecci le dita con quelle di {name} senza dire assolutamente niente."
@@ -431,7 +431,7 @@
         ]
       },
       "askOut": {
-        "label": "Chiedigli di uscire",
+        "label": "Chiedi di uscire",
         "player": [
           "\"Usciamo, {name}. Un posto rumoroso o un posto tranquillo, scegli tu.\"",
           "\"Una sera,\" dici. \"Io e te, {name}, e niente altro in programma.\"",
@@ -447,36 +447,36 @@
         "responseBad": [
           "Non credo che finirebbe bene per nessuno dei due.",
           "No.",
-          "Mi sono trovato bene. E vorrei che restasse esattamente questo.",
+          "Mi sono {g:trovato|trovata|trovato} bene. E vorrei che restasse esattamente questo.",
           "Hai frainteso qualcosa. E la colpa è di tutti e due."
         ]
       },
       "confess": {
         "label": "Dichiarati",
         "player": [
-          "\"Sono innamorato di te, {name}. Me lo porto dietro da un po'.\"",
+          "\"Ho perso la testa per te, {name}. Me lo porto dietro da un po'.\"",
           "\"Devo dirlo una volta, ad alta voce, e poi fanne quello che vuoi. Ti amo, {name}.\"",
           "Smetti di fingere. \"Sei tu, {name}. Lo sei da un pezzo.\"",
           "\"Preferisco rovinare tutto piuttosto che continuare a mentire,\" dici a {name}. \"Ti amo.\""
         ],
         "responseGood": [
           "Ripetilo. Più piano.",
-          "Lo so. Aspettavo che lo dicessi tu per primo.",
+          "Lo so. Aspettavo che fossi tu a dirlo.",
           "Allora siamo scemi tutti e due.",
           "Hai scelto un momento pessimo. E non me ne importa assolutamente niente."
         ],
         "responseBad": [
           "Oh. Oh no. Mi dispiace.",
-          "Avrei preferito che non lo dicessi. Adesso devo essere onesto anch'io.",
+          "Avrei preferito che non lo dicessi. Adesso tocca a me dirti la verità.",
           "Io non provo questo. Non l'ho mai provato.",
           "Non è stato leale. Scaricarmelo addosso, qui."
         ]
       },
       "kiss": {
-        "label": "Bacialo",
+        "label": "Bacia",
         "player": [
           "Accorci la distanza e baci {name}.",
-          "Sollevi il mento di {name} e lo baci prima che ti passi il coraggio.",
+          "Sollevi il mento di {name} e {g:lo|la|lo} baci prima che ti passi il coraggio.",
           "\"Dimmi di fermarmi,\" dici, già chinandoti verso {name}.",
           "Baci {name} come se il discorso avesse sempre puntato solo lì."
         ],
@@ -496,27 +496,27 @@
     },
     "rejection": {
       "taken": {
-        "reasonLabel": "è impegnato",
+        "reasonLabel": "ha già qualcuno",
         "lines": [
-          "Sono impegnato, e intendo restarci.",
+          "Sono {g:impegnato|impegnata|impegnato}, e intendo restarci.",
           "Sto con una persona. Una sola. L'accordo è tutto qui.",
           "Io alle spalle di nessuno non ci vado.",
-          "Lo sai che sono impegnato. E me l'hai chiesto lo stesso."
+          "Lo sai che sono {g:impegnato|impegnata|impegnato}. E me l'hai chiesto lo stesso."
         ]
       },
       "orientation": {
         "reasonLabel": "non è il suo tipo",
         "lines": [
-          "Sei una bella persona. E non sei quello che mi attira.",
+          "Sei una bella persona. E non sei il genere di persona che mi attira.",
           "Non credo tu abbia capito da che parte guardo.",
-          "Non sei tu. È che proprio non sono fatto così.",
+          "Proprio non funziono così. Senza colpe di nessuno.",
           "Non sarebbe mai andata a segno. Senza offesa."
         ]
       },
       "aromantic": {
-        "reasonLabel": "aromantico",
+        "reasonLabel": "senza interesse romantico",
         "lines": [
-          "Io non mi innamoro. Di nessuno. Non me l'ha fatto nessuna ferita. È solo come stanno le cose.",
+          "Io non mi innamoro. Di nessuno. Funziono così, e basta.",
           "Il romanticismo è una lingua che non ho mai parlato.",
           "Mi chiedi una cosa che non ho da dare. L'amicizia quella sì.",
           "Non c'è niente lì da raggiungere. Non c'è mai stato."
@@ -537,7 +537,7 @@
           "Siete tutti caldi, umidi e imprevedibili. Io preferisco una scheda logica pulita.",
           "Senza offesa. Ma io mi innamoro solo di cose che ronzano.",
           "La carne non mi fa niente. Portami un telaio.",
-          "Sono stato con un'unità aritmetica. Tu saresti un declassamento."
+          "Ho avuto una storia con un'unità aritmetica. Tu saresti un declassamento."
         ]
       },
       "botanic": {
@@ -552,9 +552,9 @@
       "dwarf": {
         "reasonLabel": "solo nani",
         "lines": [
-          "Troppo alto. Decisamente troppo alto.",
+          "Troppa altezza. Decisamente troppa.",
           "Io ho un tipo. E viene con la barba e una concessione mineraria.",
-          "Torna quando sarai un metro più basso.",
+          "Torna quando avrai un metro in meno.",
           "Sei molto gentile. E hai le gambe decisamente troppo lunghe."
         ]
       },
@@ -577,7 +577,7 @@
           "Lei mi ha lasciato e io mi sento ancora sposato. Non è giusto verso di te e non faccio finta di niente.",
           "Amici siamo e amici restiamo. È questo il patto, e il patto mi piace.",
           "Mannaggia, Em. Immaginalo. Immagina noi. Lo odieresti entro giovedì e io lo odierei entro mercoledì.",
-          "Ti voglio bene. Non così. Come l'altra cosa, quella più grande che non ha bisogno di una parola.",
+          "Ti voglio bene, nell'altro modo: quello più grande, che non ha bisogno di una parola.",
           "Uagliona, nel mio cuore c'è una dea sola e ha l'atto di proprietà. Non c'è una stanza libera.",
           "{name} diventa molto silenzioso, poi ti avvicina piano il caffè, ed è tutta la sua risposta.",
           "Chiedimelo in una notte brutta e ti dirò no lo stesso, e la mattina dopo sarò ancora qui.",
@@ -628,7 +628,7 @@
       ],
       "reject": [
         "Non così. Mi dispiace.",
-        "Non credo di essere pronto per una cosa del genere.",
+        "Non credo di essere {g:pronto|pronta|pronto} per una cosa del genere.",
         "Non è quello che voglio. Non con te, non così.",
         "Richiedimelo un'altra volta."
       ]
@@ -638,48 +638,48 @@
     "story": {
       "label": "Racconta una storia",
       "player": [
-        "Ti metti comodo e sciorini un lungo racconto su {subject}.",
-        "Racconti a {name} una storia tortuosa su {subject}.",
-        "\"Lascia che ti racconti la vicenda di {subject},\" cominci.",
-        "Ripercorri una vecchia leggenda che riguarda {subject}.",
-        "Intrecci per {name} una storia di avventura e {subject}."
+        "Ti metti comodo e sciorini un lungo racconto: «{subject}».",
+        "Racconti a {name} una storia tortuosa, intitolata «{subject}».",
+        "\"Lascia che ti racconti una vicenda: «{subject}»,\" cominci.",
+        "Ripercorri una vecchia leggenda, quella di «{subject}».",
+        "Intrecci per {name} una storia d'avventura: «{subject}»."
       ],
       "good": [
-        "{subject}... che racconto. Prima o poi raccontamene un altro.",
-        "Potrei ascoltarti parlare di {subject} per ore.",
+        "«{subject}»... che racconto. Prima o poi raccontamene un altro.",
+        "Potrei ascoltarti raccontare storie così per ore.",
         "Bella storia. Hai un dono per queste cose.",
-        "{subject}. Mi ha smosso qualcosa dentro.",
+        "«{subject}». Mi ha smosso qualcosa dentro.",
         "E poi? No, no, finiscila dopo. Meraviglioso."
       ],
       "bad": [
-        "{subject}? Non ho pazienza per certe storie.",
-        "Quella storia di {subject} mi ha annoiato a morte.",
+        "«{subject}»? Non ho pazienza per certe storie.",
+        "Quella storia, «{subject}», mi ha annoiato a morte.",
         "Non fa proprio per me.",
-        "Mi hai perso a {subject}.",
+        "Mi hai perso al titolo.",
         "Ma va a parare da qualche parte? Ho delle cose da fare."
       ]
     },
     "poem": {
       "label": "Recita una poesia",
       "player": [
-        "Ti schiarisci la gola e reciti dei versi su {subject}.",
-        "Offri a {name} una breve poesia su {subject}.",
-        "\"Un versetto, su {subject},\" dici, e cominci.",
-        "Reciti un'ode sentita a {subject}.",
-        "Improvvisi una rima su {subject} per {name}."
+        "Ti schiarisci la gola e reciti dei versi: «{subject}».",
+        "Offri a {name} una breve poesia, «{subject}».",
+        "\"Un versetto, si intitola «{subject}»,\" dici, e cominci.",
+        "Reciti un'ode sentita: «{subject}».",
+        "Improvvisi per {name} una rima, «{subject}»."
       ],
       "good": [
-        "Una poesia su {subject}... bellissima.",
+        "Una poesia così... bellissima.",
         "Hai l'anima del poeta.",
-        "{subject}, reso così finemente.",
-        "Quei versi su {subject} me li porto dietro.",
+        "«{subject}», detta con tanta grazia.",
+        "Quei versi, «{subject}», me li porto dietro.",
         "Ancora. Ti prego, un'altra."
       ],
       "bad": [
-        "Poesia su {subject}? Risparmiami.",
-        "Quella rima su {subject} mi ha fatto male alle orecchie.",
+        "Una poesia? Risparmiami.",
+        "Quella rima mi ha fatto male alle orecchie.",
         "I versi non mi dicono granché.",
-        "{subject}? Roba terribile.",
+        "«{subject}»? Roba terribile.",
         "Ma era una cosa seria?"
       ]
     }
@@ -709,11 +709,11 @@
     "templates": [
       "Perché {def:noun} ha deciso di {verb}? Perché era completamente {adj~noun}!",
       "Come si chiama {indef:noun} {adj~noun}? {^indef:noun2}!",
-      "{^indef:profession} entra in {indef:place} e dice: \"Per me qualcosa di {adj}.\"",
+      "{^indef:profession} entra in {indef:place} e dice: \"Per me il solito, ma {adj}.\"",
       "{^howMany~noun*} {noun*} ci vogliono per {verb}? Non bastano: sono troppo {adj~noun}.",
       "{^def:noun} che ho in casa è così {adj~noun} che perfino {def:profession} preferisce non avvicinarsi.",
       "Che differenza c'è tra {indef:noun} e {indef:noun2}? Due monete e un aggettivo tipo \"{adj}\".",
-      "Ho confidato un segreto {a:noun} e adesso lo sa {whole~place} {def:place}. Proprio da {adj~noun}.",
+      "Ho confidato un segreto {a:noun} e adesso lo sa {whole~place} {def:place}. Che {noun} {adj~noun}!",
       "Dicono che {in:place} ci sia {indef:noun} {adj~noun}. Secondo me serve solo {indef:profession}."
     ],
     "grammar": {
@@ -1120,7 +1120,7 @@
           "Quella notte le campane hanno smesso di suonare da sole. Le hai sentite smettere, strega?",
           "Risponderai per Lui. Se non a me, a qualunque cosa sia rimasta lassù.",
           "Ho sputato sulla tua foto sul giornale. Lo rifarei in faccia se mia madre non mi avesse educato.",
-          "Assassina. Questa è la parola. Non strega, non ragazza. Assassina di Dio.",
+          "Assassina. Questa è la parola. Assassina di Dio.",
           "A ogni funerale ormai non c'è nessuno a cui affidarli. Grazie tante.",
           "Dimmi che ti dispiace. Dimmelo bene, in ginocchio, dove Lui non può più vederlo."
         ],
@@ -1143,7 +1143,7 @@
           "Niente incantesimi qui dentro. È l'unica regola.",
           "No. Qualunque cosa sia. No.",
           "{name} sposta la cassa un po' più lontano da te, senza commentare.",
-          "Tu sei la donna del tempo. Non quella delle previsioni. L'altro tipo.",
+          "Tu sei la donna del tempo. Quella che il tempo lo fa.",
           "Due mesi tranquilli. L'ambizione era tutta lì.",
           "Se è per via del rituale, io dormivo. Come tutti.",
           "{name} serve prima l'uomo dietro di te, poi te, poi di nuovo l'uomo dietro di te.",
@@ -1169,12 +1169,12 @@
           "Tienitelo per chi ti stamperà la prossima volta.",
           "{name} sorride soltanto con la metà inferiore della faccia.",
           "Verrà benissimo per iscritto. Persona del posto conquistata. Prima pagina.",
-          "Bello. Meraviglioso. Adesso va' a essere bello in un posto con un altro codice postale.",
+          "Bello. Meraviglioso. Adesso va' a essere bella in un posto con un altro codice postale.",
           "{name} ti ringrazia e continua a spostare le casse davanti a cui stai.",
           "È molto carino. Non aggiusta il tetto.",
           "Molto bene. Bello. La porta è dietro di te e leggermente a sinistra.",
           "{name} accetta il complimento come si accetta un volantino.",
-          "Sei più simpatica di quanto dicessero i giornali e io sono comunque occupato."
+          "Sei più simpatica di quanto dicessero i giornali e io ho comunque da fare."
         ],
         "neutral": [
           "Più tardi piove. La conversazione è tutta qui.",
@@ -1208,7 +1208,7 @@
           "Bene. Buono. Ora possiamo smettere entrambi di fingere che portasse da qualche parte.",
           "{name} non alza la voce, perché alzarla richiederebbe più tempo.",
           "Tu vuoi una lite. Io voglio un martedì tranquillo. Uno di noi resterà deluso.",
-          "Bene. Fuori. Tutti e due, e tu sei uno solo.",
+          "Bene. Fuori. Tutti e due, e tu sei una sola.",
           "{name} ne ha sentite di peggio dai fornitori, e lo dice.",
           "Meraviglioso. Ora stiamo avendo entrambi la giornata che ci aspettavamo."
         ],
@@ -1227,7 +1227,7 @@
           "La gente continua a lasciarmi fiori sulla soglia perché crede che la cattedrale fosse qui. Sistemalo."
         ],
         "faith": [
-          "Non sono mai stata religiosa. Ora non sono religiosa riguardo al nulla, e in qualche modo è peggio.",
+          "Non sono mai {g:stato religioso|stata religiosa|stato religioso}. Ora non sono {g:religioso|religiosa|religioso} riguardo al nulla, e in qualche modo è peggio.",
           "Qui tutti hanno una crisi di fede e la vogliono avere tutti nella mia cucina.",
           "Mia madre pregava per le mie scelte sbagliate. Ora mi telefona e basta. Ogni sera.",
           "Tutta la via è diventata strana. Metà prega il cielo per dispetto, l'altra metà si è data allo yoga.",
@@ -1241,7 +1241,7 @@
           "Mio cugino era all'Isola dei Rituali la settimana dopo. Quindi siamo praticamente parenti.",
           "Firma sopra il buco della storia.",
           "Fai quella cosa con le mani. La cosa magica. Una volta. Ti prego.",
-          "{name} si è già girato a urlare il tuo nome a qualcuno dall'altra parte della stanza.",
+          "{name} si è già {g:girato|girata|girato} a urlare il tuo nome a qualcuno dall'altra parte della stanza.",
           "LO SAPEVO che era oggi. Avevo una sensazione. Su di te ho delle sensazioni.",
           "{name} ti mostra un album con la tua faccia ritagliata da quattro giornali diversi, tutte volte la stessa fotografia.",
           "È vero che non riesci a sollevare la lancia? È quella la parte che mi uccide. È quella la parte tragica.",
@@ -1282,13 +1282,13 @@
           "{name} risponde a tre domande che non hai fatto, tutte e tre su di te.",
           "Dicevano che eri più alta.",
           "{name} annuisce a una storia che non parla di niente, rapito, come se fosse Scrittura.",
-          "Che tempo fa da dove vieni? Non qui. Là. L'altro posto.",
+          "Che tempo fa da dove vieni? Laggiù, dico. L'altro posto.",
           "{name} si dichiara entusiasticamente d'accordo prima che tu abbia finito la frase.",
           "Vado da quella parte anch'io.",
           "{name} fa quattro domande di seguito, nessuna delle quali riguarda quello che hai detto.",
           "Raccontami una cosa qualunque di te.",
           "{name} ride in un punto che non faceva ridere, poi controlla se la stanza l'ha colto.",
-          "Di' qualcosa. Qualsiasi cosa. Non sono schizzinoso, voglio solo la voce.",
+          "Di' qualcosa. Qualsiasi cosa. Non sono {g:schizzinoso|schizzinosa|schizzinoso}, voglio solo la voce.",
           "{name} annuisce a circa il doppio della velocità della conversazione.",
           "Vuoi una sedia? Ti posso prendere una sedia. Ti posso prendere tre sedie.",
           "Qualsiasi cosa. Parliamo di drenaggio. A me va bene.",
@@ -1300,7 +1300,7 @@
           "Ridillo, più piano. Voglio riferirlo bene.",
           "{name} se la ride del tutto. Niente di quello che fai qui andrà a segno.",
           "Ne hai il diritto. Dopo quello che hai passato, hai diritto a tutto.",
-          "{name} chiede scusa A TE per essere stato insultato.",
+          "{name} chiede scusa A TE per essere {g:stato insultato|stata insultata|stato insultato}.",
           "Ecco il fuoco. È quello che ha sistemato il Padre, proprio quello lì.",
           "{name} fa un piccolo passo indietro e poi un grande passo avanti.",
           "Rifallo, ma col mio nome dentro.",
@@ -1318,7 +1318,7 @@
           "Ha detto qualcosa? Alla fine? Ultime parole? Non lo vendo a nessuno, lo giuro.",
           "Hai ucciso Dio! Tu! Proprio lì, con la borsa della spesa!",
           "C'era luce? Doveva esserci luce. Quando muore Dio deve esserci luce.",
-          "Puoi rifarlo? Non a qualcuno in particolare. Solo per vedere.",
+          "Puoi rifarlo? A nessuno in particolare. Solo per vedere.",
           "Ho tutti i giornali di quella settimana. Tutti. Quale ha azzeccato la parte su Dio?",
           "Com'era la lancia tra le mani? Pesante? Doveva essere pesante.",
           "Ho la tua faccia sul muro accanto a una foto dell'isola. È strano? Dimmi che non è strano.",
@@ -1366,7 +1366,7 @@
           "Da Em, questa. Avete sentito tutti la signora.",
           "{name} ti ringrazia e ti offre subito qualcosa che non si può permettere di dare.",
           "Adesso siamo amici, vero. Di' che siamo amici.",
-          "{name} se lo scrive. Non con affetto. Con precisione.",
+          "{name} se lo scrive, con precisione.",
           "Devi lasciarti presentare come si deve. Alla gente giusta.",
           "{name} ride un attimo di troppo, in direzione della porta.",
           "Questa è la versione che racconterò io. E la racconterò meglio di com'è andata.",
@@ -1456,7 +1456,7 @@
           "Tutta la mia famiglia ti ha guardata dal cortile. Tutta. Anche quelli che non escono di casa.",
           "Ce l'hai dentro adesso? La cosa. È lì dentro?",
           "Sei davvero tu. Lo sei. È la faccia del cielo.",
-          "{name} si è immobilizzato del tutto, il che è in qualche modo più evidente del fissare.",
+          "{name} si è {g:immobilizzato|immobilizzata|immobilizzato} del tutto, il che è in qualche modo più evidente del fissare.",
           "Ti senti diversa? Devi sentirti diversa. O no?",
           "La mia piccola ti ha disegnata. Te lo mostrerei ma ha disegnato la parte del cielo e ha turbato i vicini."
         ],
@@ -1493,7 +1493,7 @@
           "Scusa, ripeti. Stavo guardando. So di stare guardando.",
           "È solo che tu sei la cosa che è successa, e adesso chiedi del pane.",
           "{name} risponde, e poi continua a guardare, e sa di stare ancora guardando.",
-          "Scusa, potresti ripeterlo, non stavo ascoltando, stavo guardando.",
+          "Scusa, potresti ripeterlo? Stavo solo guardando.",
           "È solo che ho pensato a te per mesi e adesso vuoi il forno."
         ],
         "negative": [
@@ -1511,7 +1511,7 @@
           "Giusto. È giusto, stavo fissando.",
           "Bene. Sì. Me ne vado. Me ne vado a raccontarlo a tutti.",
           "{name} si scusa per qualcosa che non era colpa sua e lo dice sul serio.",
-          "Giusto. Sono stato scortese. So di essere stato scortese.",
+          "Giusto. Sono {g:stato|stata|stato} scortese. Lo so.",
           "Bene. Sì. Me lo meritavo e lo racconterò a tutti."
         ],
         "confront": [
@@ -1540,7 +1540,7 @@
         ]
       },
       "genuine": {
-        "label": "vede la persona, non la storia",
+        "label": "vede la persona dietro la storia",
         "greeting": [
           "Strada lunga? Siediti prima di cadere.",
           "Non mi importa cosa hanno fatto di te i giornali. Hai mangiato oggi?",
@@ -1557,11 +1557,11 @@
           "Sembri stanca. Siediti e sta' stanca qui, si sta più al caldo.",
           "{name} non nomina il cielo, la lancia né la data, e si vede che gli costa.",
           "Non voglio niente da te. Voglio dirlo subito, perché tutti gli altri lo vogliono.",
-          "Come stai. Non la te famosa. Tu.",
+          "Come stai. Tu, quella sotto la famosa.",
           "C'è la minestra. C'è sempre la minestra. Di' sì e smetti di decidere cose per dieci minuti.",
           "Siediti. Qui dentro non devi essere niente.",
           "{name} non chiede niente del cielo, e si capisce che ha deciso di non farlo.",
-          "Sembri uno a cui hanno fatto cento domande oggi. Io non ne ho.",
+          "Sembri una a cui hanno fatto cento domande oggi. Io non ne ho.",
           "C'è una sedia, c'è un fuoco, e nessuno dei due sa chi sei."
         ],
         "positive": [
@@ -1574,7 +1574,7 @@
           "Attenta. Rischio di abituarmi a sentirmi parlare così.",
           "{name} lo prende, se lo tiene, e non lo ripete a nessuno.",
           "Potresti anche smettere di chiedere scusa per il fatto di esistere, sai. È solo un pensiero.",
-          "{name} sembra contento, e un po' triste per te, e lascia vedere tutte e due le cose.",
+          "{name} sembra {g:contento|contenta|contento}, e un po' triste per te, e lascia vedere tutte e due le cose.",
           "{name} accoglie il complimento con semplicità, senza trasformarlo in un evento.",
           "È stato gentile da parte tua e me lo tengo.",
           "Sai, sei una compagnia più facile di quanto dicano i giornali.",
@@ -1628,12 +1628,12 @@
           "Ho sentito che eri un sacrificio, non un'assassina. Tu cosa sei, quando sei da sola?",
           "Se Dio è morto, qualcuno dovrebbe prendersi cura di chi ne porta la colpa. Quindi: come stai?",
           "Continui a dire che non ricordi. Questo lo rende più facile o più difficile?",
-          "Non sono arrabbiata con te per Dio. Volevo solo che lo sentissi dire da qualcuno, una volta.",
+          "Non sono {g:arrabbiato|arrabbiata|arrabbiato} con te per Dio. Volevo solo che lo sentissi dire da qualcuno, una volta.",
           "Qualunque cosa tu abbia fatto o non fatto a Dio, hai ancora il diritto di riposare."
         ],
         "faith": [
           "Ho perso la fede quando è morto, e non ho trovato niente da mettere al suo posto. E tu?",
-          "Certe notti mi siedo nella cappella vuota solo per sentirmi piccola. È stupido?",
+          "Certe notti mi siedo nella cappella vuota solo per sentirmi {g:piccolo|piccola|piccolo}. È stupido?",
           "Non ti do la colpa. Ma non so più in cosa credere, e pensavo che tu potessi capirlo.",
           "Parlavo con Dio quando non riuscivo a dormire. Ora parlo al soffitto. Il soffitto ascolta male.",
           "Tu hai perso i ricordi. Io ho perso Dio. Forse andiamo in giro tutte e due con un buco dentro."
@@ -1678,7 +1678,7 @@
         "{name} ha il cofano alzato e parla al motore con una voce che non usa con le persone.",
         "Sei stata via un bel po'. Ho contato anch'io, non guardarmi così.",
         "C'è un tizio fuori che chiede di te. Gli ho detto che eri una diceria. Mi ha creduto.",
-        "Uè, Em, ho il caffè buono. Non quello da strada. L'altro. Siediti.",
+        "Uè, Em, ho il caffè buono, quello che in viaggio non portiamo mai. Siediti.",
         "Non l'ho aggiustato. Lo voglio dire ad alta voce prima che tu chieda, così saltiamo la parte in cui mento.",
         "{name} è a metà di una frase cominciata prima che tu entrassi, e semplicemente la continua rivolto a te.",
         "Statt' bbuono. Basta così. È tutto il saluto di oggi, sono stanco morto.",
@@ -1784,7 +1784,7 @@
           "Ti vorrei dalla mia metà del campo, e su questo sono notoriamente, noiosamente esigente.",
           "Hai costruito una cosa che ha spostato un continente e mi chiedi ancora se ho mangiato. Lo trovo osceno e non ne cambierei un bullone.",
           "Mi dicono che l'amicizia dovrebbe essere priva di sforzo. La nostra è uno sforzo enorme e non ne toglierei un grammo.",
-          "Testa alta, petto in fuori. Questa vale per te, non per me. Te ne dimentichi, e ho iniziato a tenerne il conto.",
+          "Testa alta, petto in fuori. Questa vale per te. Te ne dimentichi, e ho iniziato a tenerne il conto.",
           "Ho ucciso un dio e tu mi hai fatto un caffè al riguardo. Nessun altro è mai riuscito a fare entrambe le cose nello stesso pomeriggio.",
           "Esiste una parola per quello che sei e non l'ho ancora recuperata, quindi prenditi la frase incompiuta e prenditela lo stesso.",
           "Bubba Wilson. Il migliore di tutta la strada. Di' grazie ad alta voce, così so che è arrivato per bene.",
@@ -1809,7 +1809,7 @@
         ],
         "negative": [
           "Hai il genio meccanico di un santo e l'igiene personale del collettore, e amo esattamente una delle due cose.",
-          "Non ho intenzione di urlare, Bubba. Ho intenzione di essere precisa, cosa che trovi decisamente peggiore.",
+          "Ho intenzione di essere precisa, Bubba, cosa che trovi decisamente peggio delle urla.",
           "Dodici anni di amicizia e parcheggi ancora come un uomo inseguito.",
           "Sei un premio Nobel che non sa piegare una cartina. Voglio che lo leggano al tuo funerale, lentamente.",
           "Fuori. Lunga, larga e fuori. Sono l'unica in questo camper disposta a chiamarla.",
@@ -1846,7 +1846,7 @@
           "reply": "Dice quella che m'ha parcheggiato un pesce in cucina."
         },
         {
-          "player": "Non sono goffa. Sono gli oggetti che si spostano.",
+          "player": "Gli oggetti si spostano da soli quando passo.",
           "reply": "Uè, si spostano perché ci stai vicino tu! È questo che vuol dire goffa, uagliona!"
         },
         {
@@ -1887,7 +1887,7 @@
         },
         {
           "player": "Prendo questo incantesimo, lo indirizzo correttamente, e tu ti scusi.",
-          "reply": "Vado a prendere l'estintore. Non mi scuso. Vado a prendere l'estintore."
+          "reply": "Vado a prendere l'estintore. Le mie scuse sono l'estintore."
         },
         {
           "player": "Bubba. Qualcuno ha finito i biscotti buoni.",
@@ -1976,7 +1976,7 @@
           "Questa la aspettiamo, chiano chiano. Là fuori non c'è niente per cui valga la pena di essere fulminati.",
           "{name} conta il tempo tra il lampo e il tuono, e smette di contare quando si accorcia.",
           "Statt' bbuono, Em. I temporali passano. Passano sempre. Non ce n'è stato uno che sia rimasto.",
-          "Non metterti vicino alle finestre, Em. Te lo sto chiedendo, non ordinando.",
+          "Non metterti vicino alle finestre, Em. Te lo sto solo chiedendo.",
           "{name} ha spento la radio, cosa che non fa mai, e non ha detto niente."
         ],
         "snow": [
@@ -2026,7 +2026,7 @@
           "Non fai il bagno. L'ultima volta è uscita una cosa da un lago e ti ha portata a trentanove anni luce, tesoro.",
           "Io e l'acqua abbiamo un accordo: lei sta là fuori, io sto qua dentro.",
           "{name} guarda la superficie un attimo di troppo, e poi smette molto deliberatamente.",
-          "Stai lontana da lì, Em. Solo per me. Non faccio il saputello, ho paura.",
+          "Stai lontana da lì, Em. Solo per me. Ho paura, tutto qua.",
           "Io e l'acqua profonda abbiamo una storia, e sta tutta dalla parte sua."
         ],
         "swamp": [
@@ -2047,7 +2047,7 @@
           "Non mi piace stare qua sotto e lo dico ad alta voce, così è detto.",
           "Tieni la luce su di me e io tengo la chiave inglese su quello che viene, uagliona.",
           "{name} fischietta qualcosa con troppa fisarmonica dentro e fa finta che non sia per il buio.",
-          "Se smetto di parlare, mi sto concentrando. Non ho paura. Tutte e due le cose, a dire la verità.",
+          "Se smetto di parlare, mi sto concentrando. E ho paura. Tutte e due le cose, a dire la verità.",
           "La pietra non mente, guaglio'. È più o meno l'unica consolazione che ho qua sotto."
         ],
         "space": [
@@ -2079,7 +2079,7 @@
           "{name} picchietta due volte sulla mappa in un punto che evidentemente gli piace, e non dice perché."
         ],
         "night": [
-          "Dovresti dormire, uagliona. Lo dico, non lo impongo.",
+          "Dovresti dormire, uagliona. Lo dico e basta.",
           "La notte è la parte onesta della giornata. Alle tre di notte nessuno fa finta.",
           "{name} ha la lampadina accesa e non sta aggiustando niente, ed è così che capisci che ti stava aspettando.",
           "Vai a letto. Io faccio un'altra ora, e poi un'altra ora dopo quella.",
@@ -2130,11 +2130,11 @@
     "player": {
       "positive": [
         "{name}. Allora. Sto per essere sincera con te, in pubblico, ed è un'edizione limitata, quindi stai fermo e prenditela.",
-        "È stato buono. Buono sul serio. La gente di solito ci mette del riempitivo. Io non ci metto niente. È stato buono.",
+        "È stato buono. Buono sul serio. La gente di solito ci mette del riempitivo. Io lo dico e basta: è stato buono.",
         "Mi piaci, {name}. L'ho verificato due volte, l'ho confrontato con il controllo, e regge.",
         "Pulito, sulla riga. Non lo dico a tutti. È una lista cortissima, quella.",
-        "Qualcuno avrebbe dovuto dirtelo anni fa e nessuno l'ha fatto, quindi tocca alla donna che ha ucciso Dio. Sei bravo in questo.",
-        "Stai fermo, ti sto ammirando. Quaranta secondi. Poi fingiamo entrambi che non sia successo.",
+        "Qualcuno avrebbe dovuto dirtelo anni fa e nessuno l'ha fatto, quindi tocca alla donna che ha ucciso Dio. Sei {g:bravo|brava|bravo} in questo.",
+        "Stai {g:fermo|ferma|fermo}, ti sto ammirando. Quaranta secondi. Poi fingiamo entrambi che non sia successo.",
         "Possiedo quattrocento libri, {name}, e nemmeno uno spiega te, e sì, è il complimento che sembra.",
         "Meritava un pubblico e ne ha avuto uno famoso. Congratulazioni, adesso sei dentro l'aneddoto.",
         "Ti metterei dalla mia parte della rete, e su quello sono insopportabilmente esigente. Chiedi a chiunque. Anzi no. Nessuno mi conosce.",
@@ -2165,21 +2165,21 @@
         "Resto altri quattro minuti circa. Spendili come ti pare. Niente rimborsi."
       ],
       "negative": [
-        "Non ho intenzione di urlare, {name}. Ho intenzione di essere precisa. È peggio e dura di più.",
+        "Ho intenzione di essere precisa, {name}. È peggio delle urla e dura di più.",
         "Hai la profondità di una pozzanghera e la persistenza di una vespa, e io ho incontrato un dio, quindi so su cosa sto tarando.",
         "Fuori. Lunga, larga e fuori. La riga l'hanno vista tutti e sono l'unica disposta a chiamarla.",
         "Ti condanno a essere esattamente questo, in questo paese, con questa gente, per sempre. Buona replica.",
         "Ho rinunciato al novantadue percento di me stessa e sono ancora compagnia migliore di te. Restaci un po'.",
         "Volevi una reazione. Questa è tutta. Noterai il budget.",
-        "Non farmi quella faccia. Usa le parole. Le facce non sono argomenti, sono meteo.",
+        "Non farmi quella faccia. Usa le parole. Una faccia è meteo, al massimo.",
         "Preferirei leggere, {name}, e voglio che tu senta che intendo qualsiasi libro. Anche quelli sbagliati. Anche quelli che mordono.",
         "Ho dimenticato persone migliori di te. Di proposito, a quanto pare. Comincio a capire il metodo.",
-        "Non sei un avversario, sei un muro. Ci batto contro mentre aspetto che si presenti qualcuno di vero.",
+        "Sei un muro. Ci batto contro mentre aspetto che si presenti qualcuno di vero.",
         "Parli soltanto per slogan. Sto ascoltando per trovare la parte portante. Non c'è.",
         "Sono la donna più interessante di questa stanza e non ho nemmeno dovuto provarci, che è la parte davvero offensiva.",
         "Un giorno qualcuno chiederà che fine ha fatto {name}, e nessuno dei presenti saprà rispondere.",
         "Hai l'autenticità di una lampada abbronzante sotto la pioggia, e più o meno la stessa emivita.",
-        "Vai avanti. Continua. Le sto collezionando e tu sei molto generoso.",
+        "Vai avanti. Continua. Le sto collezionando e tu sei molto {g:generoso|generosa|generoso}.",
         "Testa alta, petto in fuori, e occhio alla scarpa, {name}. L'ultima parte non è una metafora. Voglio che guardi."
       ],
       "joke": [
@@ -2199,24 +2199,24 @@
         "Uno della Gilda mi ha chiesto se fossi autorizzata. Ho risposto che l'ultima autorità che ha controllato le mie carte è deceduta. Siamo andati avanti. Lui in fretta."
       ],
       "story": [
-        "Siediti. Ti racconto {subject}, e segnalo subito che non so dire se lo stia ricordando o inventando in diretta.",
-        "Da dove vengo c'è una storia che si chiama {subject}. In quel paese la raccontavano tutti male, quindi anche la mia sarà sbagliata. Sbagliata in modo diverso. Sbagliata meglio.",
-        "{subject}. L'ho letta da qualche parte, oppure c'ero dentro. Entrambe plausibili. In ogni caso è buona e te la becchi tutta.",
-        "Allora. {subject}. Avviso: il finale è cupo e io lo consegnerò allegramente, che è l'unico modo in cui va giù.",
-        "So fare {subject} a memoria, il che è esilarante, visto che non so fare il mio nome a memoria prima di un certo martedì.",
-        "Ascolta. {subject}. Non interrompere, non indovinare il finale e non dirmi che tuo cugino conosceva l'uomo a cui è successo. Non è mai il cugino.",
-        "Questa si chiama {subject} e la raccontavano ai bambini, il che dice parecchio su chi mi ha cresciuta.",
-        "{subject}, dunque. La faccio breve. Non l'ho mai fatta breve nemmeno una volta. Mettiti comodo."
+        "Siediti. Ti racconto «{subject}», e segnalo subito che non so dire se lo stia ricordando o inventando in diretta.",
+        "Da dove vengo c'è una storia che si chiama «{subject}». In quel paese la raccontavano tutti male, quindi anche la mia sarà sbagliata. Sbagliata in modo diverso. Sbagliata meglio.",
+        "«{subject}». L'ho letta da qualche parte, oppure c'ero dentro. Entrambe plausibili. In ogni caso è buona e te la becchi tutta.",
+        "Allora. «{subject}». Avviso: il finale è cupo e io lo consegnerò allegramente, che è l'unico modo in cui va giù.",
+        "So fare «{subject}» a memoria, il che è esilarante, visto che non so fare il mio nome a memoria prima di un certo martedì.",
+        "Ascolta. «{subject}». Non interrompere, non indovinare il finale e non dirmi che tuo cugino conosceva l'uomo a cui è successo. Non è mai il cugino.",
+        "Questa si chiama «{subject}» e la raccontavano ai bambini, il che dice parecchio su chi mi ha cresciuta.",
+        "«{subject}», dunque. La faccio breve. Non l'ho mai fatta breve nemmeno una volta. Mettiti comodo."
       ],
       "poem": [
-        "Ho una poesia. Si chiama {subject}. Non l'ho scritta io, probabilmente, ma sono l'unica persona viva che la conosce, quindi la proprietà è passata.",
-        "{subject}. Quattro strofe. Te ne risparmio due e mi ringrazierai più o meno alla terza.",
-        "Aspetta, sto facendo poesia. Si chiama {subject}. No, non puoi guardarmi in faccia mentre la faccio. Guarda in mezzo.",
-        "Da dove vengo c'è una cosa che mettono sulle lapidi, e sta in metrica, quindi la conto. {subject}.",
-        "{subject}. Rima male in mezzo e benissimo alla fine, che è come vanno quasi tutte le cose, persone comprese.",
-        "Reciterò {subject}. Se mi fermo a metà non è emozione, è che il resto me l'hanno tolto dalla testa insieme a tutto il resto.",
-        "Poesia, {name}. {subject}. Stai fermo, ci vogliono novanta secondi e uno di noi due ne uscirà commosso.",
-        "{subject}, e poi non lo rifaccio finché non me lo chiede qualcuno per bene."
+        "Ho una poesia. Si chiama «{subject}». Non l'ho scritta io, probabilmente, ma sono l'unica persona viva che la conosce, quindi la proprietà è passata.",
+        "«{subject}». Quattro strofe. Te ne risparmio due e mi ringrazierai più o meno alla terza.",
+        "Aspetta, sto facendo poesia. Si chiama «{subject}». No, non puoi guardarmi in faccia mentre la faccio. Guarda in mezzo.",
+        "Da dove vengo c'è una cosa che mettono sulle lapidi, e sta in metrica, quindi la conto. «{subject}».",
+        "«{subject}». Rima male in mezzo e benissimo alla fine, che è come vanno quasi tutte le cose, persone comprese.",
+        "Reciterò «{subject}». Se mi fermo a metà, è perché il resto me l'hanno tolto dalla testa insieme a tutto il resto.",
+        "Poesia, {name}. «{subject}». Stai {g:fermo|ferma|fermo}, ci vogliono novanta secondi e uno di noi due ne uscirà commosso.",
+        "«{subject}», e poi non lo rifaccio finché non me lo chiede qualcuno per bene."
       ],
       "romance": {
         "neutral": [
@@ -2231,14 +2231,14 @@
         ],
         "admire": [
           "Ti guardo lavorare da undici minuti ed è roba buona sul serio. Ecco. Detto ad alta voce. In pieno giorno. Senza che me lo chiedessi nessuno.",
-          "Sei più bravo tu alla tua vita di quanto io lo sia alla mia, {name}, e l'ho notato, e notare è quasi tutto quello che faccio."
+          "Sei più {g:bravo|brava|bravo} tu alla tua vita di quanto io lo sia alla mia, {name}, e l'ho notato, e notare è quasi tutto quello che faccio."
         ],
         "loveLetter": [
           "Ti ho scritto una cosa. È corta, è a matita, e se ridi le do fuoco, e forse anche all'edificio.",
           "Una lettera. Su carta. Come una pazza. Leggila dopo, in un posto dove io non sia."
         ],
         "serenade": [
-          "Adesso ti canto qualcosa. Non sarà bello. Sarà sincero, che è decisamente peggio.",
+          "Adesso ti canto qualcosa. Sarà stonato e sincero, che è decisamente peggio.",
           "Stai lì. Questa è una canzone d'amore di un paese che forse non esiste, e ho solo il ritornello, quindi si fa due volte."
         ],
         "askDance": [
@@ -2247,7 +2247,7 @@
         ],
         "holdHands": [
           "Dammi la mano. Senza motivo. Voglio tenere qualcosa che sia sicuramente qui e sicuramente reale.",
-          "La mano, per favore. Non sto facendo la romantica, ho freddo. Sto anche facendo la romantica. Girano entrambe."
+          "La mano, per favore. Ho freddo. Sto anche facendo la romantica. Girano entrambe."
         ],
         "askOut": [
           "Esci con me. Da qualche parte di ordinario. Colleziono l'ordinario e tu conteresti come esemplare.",
@@ -2277,12 +2277,12 @@
         "Scusa se faccio la turista, ma {target}. Dove. Prenditi tempo, ma non tanto.",
         "Allora. {target}. Dai per scontato che io non sappia niente, il che è quasi un dato documentato.",
         "Da che parte per {target}, ed è in salita, perché intendo lamentarmi comunque.",
-        "{target}, per favore. Indicazioni, non un aneddoto, a meno che l'aneddoto sia corto e strutturalmente portante.",
+        "{target}, per favore. Indicazioni. Un aneddoto solo se è corto e strutturalmente portante.",
         "Hai la faccia di uno che sa dov'è {target}. Non deludermi già a quest'ora."
       ],
       "confront": [
         "È stato un errore. Uno molto grosso, lo ammetto. Mi dicono il più grosso.",
-        "Non ricordo niente. Non è un modo di dire. Mi hanno preso i ricordi e ci hanno fatto la lancia.",
+        "Non ricordo niente, alla lettera. Mi hanno preso i ricordi e ci hanno fatto la lancia.",
         "Ci sto lavorando. Non so ancora che aspetto abbia lavorarci, ma lo sto facendo.",
         "Sinceramente? Non c'ero davvero. Quasi tutta me era la lancia, e la lancia non tiene un diario.",
         "È stato un incidente. Non ti svegli di martedì decidendo di uccidere Dio. E non era nemmeno martedì.",
@@ -2294,7 +2294,7 @@
         "Tutti sanno di quella notte più di me. È piuttosto umiliante, a dirla tutta.",
         "Non doveva andare così. Niente su quell'isola doveva andare così.",
         "Mi dispiace. Davvero. Solo che non ricordo di cosa mi dispiace, e le scuse vengono un po' sottili.",
-        "Errore. Con la E maiuscola. L'ho detto ai preti, l'ho detto alla polizia, lo dirò a te.",
+        "Errore. Con la e maiuscola. L'ho detto ai preti, l'ho detto alla polizia, lo dirò a te.",
         "C'è un buco dove dovrebbe esserci quella notte. Sto cercando di riempirlo prima di spiegarla a chiunque.",
         "Dammi tempo. Leggo tutto, chiedo a tutti, e mi sforzo tantissimo di non peggiorare le cose.",
         "Se l'avessi saputo, non l'avrei fatto. Credo. Non lo so, perché non ricordo di aver saputo niente.",
@@ -2374,12 +2374,12 @@
       "Mi hai fatto la settimana ed è solo martedì.",
       "Grazie. Davvero. E grazie per le strade.",
       "Qualunque cosa ti serva in questo paese, la chiedi a me. E lo dico sul serio.",
-      "Stai essere gentile con ME. È tutto al contrario.",
+      "Sei tu a essere gentile con ME. È tutto al contrario.",
       "{name} guarda il pavimento e ci sorride.",
       "Lo dirò a mia figlia. Non mi crederà e glielo dirò lo stesso.",
       "Bene. Insomma. Questa mi ha fatto il mese. Proprio il mese.",
       "Qualsiasi cosa in questo negozio. Qualsiasi. Non discutere con me.",
-      "Non dovresti essere anche gentile. È ingordo.",
+      "Pure gentile? È ingordigia.",
       "{name} racconterà questa conversazione in modo inesatto e spesso, per il resto della vita.",
       "Non ho niente da darti che tu non mi abbia già dato. È una sensazione strana.",
       "Bene. Insomma. Qua mi tocca sedermi."
@@ -2416,11 +2416,11 @@
       "Questa la prendo da te e da nessun altro.",
       "Ti sei guadagnato il diritto a un caratteraccio. Chissà cosa ti porti dietro.",
       "Ah. Giusto. Giusto!",
-      "{name} incassa tutto senza battere ciglio e sembra contento solo di essere stato notato.",
-      "Se sei arrabbiata c'è un motivo. Con te c'è sempre un motivo.",
-      "Hai avuto una giornata. Dio sa se ti sei guadagnata una giornata.",
+      "{name} incassa tutto senza battere ciglio e sembra {g:contento|contenta|contento} solo di essere {g:stato notato|stata notata|stato notato}.",
+      "Se sei arrabbiato c'è un motivo. Con te c'è sempre un motivo.",
+      "Hai avuto una giornata. Dio sa se ti sei guadagnato una giornata.",
       "{name} annuisce come se essere rimproverato da te fosse un servizio che ha pagato.",
-      "Sei arrabbiata e sono comunque contento che tu sia qui. È lì che mi trovo.",
+      "Sei arrabbiato e sono comunque {g:contento|contenta|contento} che tu sia qui. È lì che mi trovo.",
       "Beh. Anche i buoni hanno un carattere. È quasi un sollievo."
     ],
     "player": [
@@ -2429,7 +2429,7 @@
       "Il Motore non è più mio. È di chi guida.",
       "Mannaggia, non cominciare. Sono un meccanico che è stato fortunato due volte.",
       "Il premio sta in una scatola sotto la cuccetta. Bel peso per tenere aperta una porta.",
-      "Non era intelligenza, era testardaggine. C'è una differenza e non è a mio favore.",
+      "Era testardaggine, pura e semplice. L'intelligenza avrebbe deposto a mio favore.",
       "Se qualcuno ti dice che sono intelligente, chiedigli quante volte è esplosa prima. La risposta è undici.",
       "Uè, sei gentile. Preferirei però sentire parlare di te, sinceramente.",
       "Ho messo un motore dentro un camper, tutto qua. Il resto l'ha fatto la strada.",
@@ -2441,7 +2441,7 @@
       "C'erano cento tizi che potevano costruirlo. Io sono solo quello che non aveva altro da fare.",
       "Madonna. Senti, se è servito, ne sono contento. Finisce qua la storia e non ne ho una migliore.",
       "Sei troppo gentile e mi sto innervosendo. Di cosa hai bisogno? Sul serio, di cosa hai bisogno?",
-      "Non sono un grand'uomo, guaglio'. Sono uno testardo con una buona amica e un brutto camper.",
+      "Sono solo uno testardo, guaglio', con una buona amica e un brutto camper.",
       "Grazie davvero. Ora fammi un favore e parla di qualunque altra cosa.",
       "Metà è stato un incidente e l'altra metà è stata Em che mi urlava contro. Scrivilo sui giornali."
     ],
@@ -2451,17 +2451,17 @@
         "Ti amo da quando hanno ricominciato a passare le corriere. Ho bisogno che tu lo sappia prima di dire qualsiasi cosa.",
         "Ho conservato ogni ritaglio. C'è un cassetto intero. È una follia? È una follia.",
         "Portami con te. Nel camper. Non aggiusterò niente, starò lì e basta.",
-        "Non ho mai voluto nessun altro. Neanche una volta. Mai. Solo te.",
+        "Ho sempre voluto solo te. Ogni singola volta.",
         "L'avevo provata. L'ho provata per anni e mi è uscita tutta dalla testa.",
         "Dimmi una parola e stasera chiudo bottega. Stasera, signor Wilson."
       ],
       "decline": [
         "Tesoro, fermati. Fermati prima di dire il resto. C'è una donna in mezzo e non sei tu, e non se ne va nemmeno.",
-        "Uè, ascoltami. Chiunque tu ti sia costruito in testa con quei ritagli, quel tale è meglio di me. Sposa lui, non questo qua.",
-        "Mannaggia. Mi fa onore, cara, e la risposta è no, e no resterà.",
+        "Uè, ascoltami. Chiunque tu ti sia costruito in testa con quei ritagli, quel tale è meglio di me. Sposa lui.",
+        "Mannaggia. Mi fa onore, {g:caro|cara|caro}, e la risposta è no, e no resterà.",
         "Io sono impegnato con una cosa a cui non riesco nemmeno a telefonare. Non è giusto per te, non è giusto per nessuno. Quindi: no.",
         "Tu ti meriti un uomo che la sera sta a casa. Io sono un uomo che sta a ottanta chilometri all'ora da qualsiasi cosa.",
-        "Chiano chiano. Butta quel cassetto, cara, e va' a trovarti qualcuno che ti possa guardare indietro come si deve."
+        "Chiano chiano. Butta quel cassetto, {g:caro|cara|caro}, e va' a trovarti qualcuno che ti possa guardare indietro come si deve."
       ],
       "response": [
         "{name} annuisce, e continua ad annuire, molto dopo che non c'è più niente a cui annuire.",
@@ -2514,15 +2514,15 @@
         "Ho deciso che oggi sarà straordinario. Non ho consultato la giornata.",
         "{name} aspettava di essere interrotta da un po' ed è estremamente sollevata che tu l'abbia fatto.",
         "Chiaro e piano, per favore. Ho esaurito tutto l'intuito della settimana ed è giovedì.",
-        "Ho sognato di nuovo la lancia. Non è stato angosciante. È questa la parte angosciante.",
+        "Ho sognato di nuovo la lancia. Era un sogno tranquillo. È questa la parte angosciante.",
         "Eccoti. Bene. Bene. Questo è risolto. Cosa."
       ],
       "positive": [
         "Me la prendo, me la tengo, e la ritiro fuori in un momento basso. È quello che faccio con le cose gentili.",
-        "Ridillo. Non perché dubiti di te. Perché lo voglio due volte.",
+        "Ridillo. Lo voglio due volte.",
         "{name} ti guarda per un attimo di troppo e poi annuncia che va a leggere.",
         "Sì. Corretto. Continua.",
-        "Non arrossirò, Bubba. Sarò invece molto calorosa e leggermente furiosa al riguardo.",
+        "Bubba. Sarò molto calorosa e leggermente furiosa al riguardo.",
         "Pulito, sulla riga. Non lo dico a chiunque. A te lo dico di continuo, il che ne svaluta parecchio il valore.",
         "Stai essendo sincero con me prima di mezzogiorno. È un carico notevole senza preavviso.",
         "Grazie. Sinceramente, e non nel modo in cui le parole significano il contrario. Ho verificato in che senso lo intendevo.",
@@ -2560,7 +2560,7 @@
         "Sì. No. Forse. Te le ho date tutte e tre, prendi quella per cui eri venuto.",
         "Non stavo seguendo. Ripetilo e fingerò di aver seguito, e ne usciamo avvantaggiati entrambi.",
         "{name} ha letto lo stesso paragrafo per tutto il tempo e non ne ha assorbito una parola.",
-        "Continua a parlare. Non mi serve il contenuto. Mi serve il rumore. È un rumore portante.",
+        "Continua a parlare. Mi serve il rumore. È un rumore portante.",
         "È un fatto sul mondo e l'ho accettato nella collezione. Avanti.",
         "Sono chiacchiere di circostanza, queste? Le sto facendo io? Da qui dentro non riesco a capirlo.",
         "Molto bene. Avanti, allora. È quello che si dice. Quella me la sono esercitata.",
@@ -2571,7 +2571,7 @@
         "Continua. Ti interromperò se diventa interessante.",
         "{name} risponde con un fatto, una data e nessun contesto, e considera la questione chiusa.",
         "Non ho nessuna posizione in merito. È riposante, non avere posizione.",
-        "Ridi' la parola. Non la frase. Solo la parola. Mi piace la sua forma.",
+        "Ridi' la parola. Solo la parola. Mi piace la sua forma.",
         "Stavo pensando al tennis. Penso sempre al tennis. Continua.",
         "{name} sta allineando tre oggetti sul tavolo in base alla dimensione e lo fa da un po'.",
         "O è estremamente intelligente o estremamente stupido e da qui non riesco a vederlo bene.",
@@ -2625,7 +2625,7 @@
         ],
         "neutral": [
           "Uè, Em. Passami quella chiave da dieci e continua a parlare, ascolto meglio con qualcosa in mano.",
-          "Come va la testa, uagliona. Non la ferita. L'altra cosa. Il ricordare.",
+          "Come va la testa, uagliona. Il ricordare, dico.",
           "Hai mangiato oggi? Non dirmi bugie, lo capisco da come stai in piedi.",
           "Non ne ho idea, tesoro, e ci ho fatto pace. Tutto si aggiusta, certe cose pure due volte.",
           "Chiano chiano. Ci arriviamo. Ci arriviamo sempre, solo che non ci arriviamo mai in fretta.",
@@ -2666,7 +2666,7 @@
           "reply": "Era la superficie più piana disponibile. Non farne una questione di personalità, Bubba."
         },
         {
-          "player": "Quella non è una scorciatoia, uagliona, quello è un campo.",
+          "player": "Quello è un campo, uagliona.",
           "reply": "È una scorciatoia attraverso un campo. Tu hai semplicemente scelto di concentrarti sul campo."
         },
         {
@@ -2707,7 +2707,7 @@
         },
         {
           "player": "Quanto hai speso per un libro?",
-          "reply": "Era rilegato in qualcosa che una volta aveva delle opinioni. Chiamalo un salvataggio, non un acquisto."
+          "reply": "Era rilegato in qualcosa che una volta aveva delle opinioni. Chiamalo un salvataggio."
         },
         {
           "player": "Dico solo che un po' di modestia non ti ucciderebbe.",
@@ -2807,9 +2807,9 @@
           "È sua, questa? Ha la sua calligrafia. Il tempo può avere una calligrafia, Bubba, stammi dietro.",
           "Splendido. I cieli si spaccano di nuovo. Fa due volte e io ero presente solo a una.",
           "{name} conta i secondi dopo il lampo e sbaglia apposta, per farsi correggere.",
-          "Non ho paura. Sono estremamente vigile. Da fuori le due cose sono identiche, e non è un mio problema.",
+          "Sono estremamente vigile. Da fuori può sembrare paura, e non è un mio problema.",
           "Se è lei a farlo, si sta mettendo in mostra, e non ho assolutamente titolo per criticarlo.",
-          "Siediti qui. Non per me. Per te. Vedo le tue mani da qui."
+          "Siediti qui. È per te. Vedo le tue mani da qui."
         ],
         "snow": [
           "Neve. Fredda, silenziosa, e fa sembrare il mondo una pagina su cui nessuno ha ancora scritto. Approvato.",
@@ -2880,13 +2880,13 @@
           "Qualcosa in questo posto è più vecchio della morte di Dio e non è impressionato da nessuno dei due.",
           "{name} cammina più vicina a te di quanto facesse in superficie e non l'ha fatto notare.",
           "Quaggiù niente ha mai letto un giornale. Il posto più tranquillo in cui sia stata tutto l'anno.",
-          "Continua a parlare. Non per le informazioni. Per il rumore. Sai perché."
+          "Continua a parlare. Mi serve il rumore. Sai perché."
         ],
         "space": [
           "Trentanove anni luce, hanno detto. Sono già stata qua fuori e non ne ricordo niente. Esasperante.",
           "Nessun tempo atmosferico. Niente per cui essere coraggiosi. Uno spreco di cielo perfettamente buono.",
           "{name} ha la mano appoggiata sull'oblò e non dice niente da un po'.",
-          "Sono già stata quassù e non ne ricordo niente, il che mi rende il testimone meno affidabile della compagnia.",
+          "Sono già stata quassù e non ne ricordo niente, il che mi rende il testimone meno affidabile del Party.",
           "{name} sta contando qualcosa fuori dall'oblò e ha perso il segno due volte."
         ],
         "alien": [
@@ -2949,7 +2949,7 @@
       "refuseJoin": [
         "Unirmi a te? Bubba, ci sono già. Ci sono stata tutto il tempo. Stammi dietro.",
         "Vado dove va il camper, il camper va dove vai tu, quindi la domanda non si pone.",
-        "Non puoi reclutarmi. Non sono personale. Sono il motivo."
+        "Non puoi reclutarmi. Il motivo sono io."
       ]
     }
   },
@@ -2989,7 +2989,7 @@
           "thank": [
             "Hai la mia gratitudine, {name}, e quella di uno stregone è vincolante. Usala bene.",
             "Stanotte brucerò un rametto di rosmarino in tuo onore.",
-            "Un debito così lo scrivo nel grimorio. A inchiostro, non a matita.",
+            "Un debito così lo scrivo nel grimorio. A inchiostro.",
             "Grazie. L'hanno visto anche gli spiriti, {name}, e loro tengono i conti meglio di me.",
             "La gratitudine è un rito minore. Consideralo celebrato, con tutti gli onori."
           ],
@@ -3011,7 +3011,7 @@
             "Questa pioggia sa di rame, {name}. Qualcuno al nord ha pasticciato un incanto meteorologico.",
             "Il vento viene da est. Ottimo per la divinazione, pessimo per i miei capelli.",
             "Cielo sereno stanotte. Le stelle saranno chiassose, io chiuderei le tende.",
-            "Una nebbia così è solo il velo che si assottiglia. Attento a dove metti i piedi.",
+            "Una nebbia così è solo il velo che si assottiglia. {g:Attento|Attenta|Attento} a dove metti i piedi.",
             "Che caldo, eh? Ci sarà un elementale del fuoco che tiene il muso dalle parti di Modena."
           ],
           "insult": [
@@ -3046,13 +3046,13 @@
         "romance": {
           "flirt": [
             "Stamattina ho letto il mio futuro nel fumo, {name}. C'eri tu.",
-            "Attento. A starmi così vicino comincerai a sognare in sigilli.",
+            "{g:Attento|Attenta|Attento}. A starmi così vicino comincerai a sognare in sigilli.",
             "Fa caldo qui, o è il mio mana che reagisce a te?",
             "I miei tarocchi tirano fuori Gli Amanti ogni volta che passi. Sospetto, no?",
             "Potrei incantarti, {name}, ma preferirei che venissi di tua volontà."
           ],
           "admire": [
-            "Hai una luce, {name}. Non è un modo di dire. La vedo davvero.",
+            "Hai una luce, {name}. Alla lettera: la vedo davvero.",
             "Ti ritrarrei con inchiostro d'argento, su pergamena, alla luce della luna crescente.",
             "Il tuo modo di ridere spezzerebbe una protezione minore. Lo dico con affetto.",
             "Certe persone sono intessute più strette delle altre. Tu sei una di quelle.",
@@ -3117,18 +3117,18 @@
         },
         "performances": {
           "story": [
-            "Avvicinati, {name}. Questa è la storia di {subject}, come me la raccontava il mio maestro accanto al fuoco.",
-            "Hai mai sentito parlare di {subject}? Non è in nessuna biblioteca. L'ho trovata in sogno.",
-            "Tanto tempo fa, prima che le linee di forza fossero mappate, c'era {subject}. Ascolta.",
-            "Questa storia è un po' un incantesimo, quindi non interrompere. Si intitola {subject}.",
-            "\"Abbassa il cappuccio, la luce delle candele che danza.\" Lascia che ti parli di {subject}."
+            "Avvicinati, {name}. Questa è la storia di «{subject}», come me la raccontava il mio maestro accanto al fuoco.",
+            "Hai mai sentito parlare di «{subject}»? Non è in nessuna biblioteca. L'ho trovata in sogno.",
+            "Tanto tempo fa, prima che le linee di forza fossero mappate, c'era «{subject}». Ascolta.",
+            "Questa storia è un po' un incantesimo, quindi non interrompere. Si intitola «{subject}».",
+            "\"Abbassa il cappuccio, la luce delle candele che danza.\" Lascia che ti parli di «{subject}»."
           ],
           "poem": [
-            "Una strofa su {subject}, nel metro antico. Ogni verso è un passo nel cerchio.",
-            "L'ho scritta a un crocevia a mezzanotte. Parla di {subject}.",
-            "\"Solleva il bastone, e la stanza tace.\" {subject}, poesia in tre invocazioni.",
-            "Le poesie sono incantesimi che hanno scordato a cosa servono. Questa ricorda {subject}.",
-            "Ascoltami, {name}. Versi su {subject}, scritti col fumo di una candela."
+            "Una strofa su «{subject}», nel metro antico. Ogni verso è un passo nel cerchio.",
+            "L'ho scritta a un crocevia a mezzanotte. Parla di «{subject}».",
+            "\"Solleva il bastone, e la stanza tace.\" «{subject}», poesia in tre invocazioni.",
+            "Le poesie sono incantesimi che hanno scordato a cosa servono. Questa ricorda «{subject}».",
+            "Ascoltami, {name}. Versi su «{subject}», scritti col fumo di una candela."
           ]
         },
         "jokes": [
@@ -3144,7 +3144,7 @@
           "praise": {
             "good": [
               "Lodi da uno con addosso tutti quei sigilli? Me le prendo.",
-              "I tuoi talismani hanno ronzato mentre parlavi. Credo voglia dire che eri sincero.",
+              "I tuoi talismani hanno ronzato mentre parlavi. Credo voglia dire che parlavi col cuore.",
               "Grazie... farò finta che il mana nell'aria non mi abbia rizzato i capelli.",
               "Detto da un vero praticante, vale qualcosa.",
               "Parole gentili e un leggero profumo d'incenso. Che bello."
@@ -3258,12 +3258,12 @@
               "Sei tu a farlo? Le nuvole sembrano volerti bene.",
               "Ah, pensavo che potessi comandare il sole a bacchetta.",
               "La tua tunica sarà calda. Beato te, con questo vento.",
-              "Strano, la pioggerella ha smesso appena sei arrivato.",
+              "Strano, la pioggerella ha smesso appena hai messo piede qui.",
               "Vero? Pure i piccioni si nascondono. O è colpa del tuo bastone?"
             ],
             "bad": [
               "Se questa pioggia è opera tua, rivoglio il mio pomeriggio.",
-              "Il tempo era bello finché non sei arrivato tu a crepitare.",
+              "Il tempo era bello finché non hai cominciato tu a crepitare.",
               "Non parlare del cielo come se stessi tramando qualcosa.",
               "Invece di lamentarti, non puoi sistemarlo con la magia?",
               "Ogni volta che un mago parla del tempo, arriva un temporale."
@@ -3290,7 +3290,7 @@
               "Ok, ok. Smettila di ridere, quando ridi i sigilli si illuminano.",
               "Uffa. Essere presi in giro da uno stregone fa un altro effetto.",
               "Vado, vado. Solo non renderlo permanente.",
-              "Va bene, sono ridicolo. Però sei tu quello con la luna sul cappello.",
+              "Va bene, sono {g:ridicolo|ridicola|ridicolo}. Però la luna sul cappello ce l'hai tu.",
               "...Ci guardano tutti. Un po' me, soprattutto il tuo bastone."
             ],
             "bad": [
@@ -3341,7 +3341,7 @@
               "È un filtro d'amore? Perché... sta funzionando.",
               "Flirtare con uno stregone. Mia madre me l'aveva detto.",
               "Quando sorridi gli occhi ti si illuminano un po'. Mi piace.",
-              "Attento, mago. Potrei cominciare a credere nella magia."
+              "Occhio. Potrei cominciare a credere nella magia."
             ],
             "bad": [
               "Non flirto con chi ha un teschio appeso alla cintura.",
@@ -3409,7 +3409,7 @@
             ],
             "bad": [
               "Ballare? Con tutti quei talismani che sbattono? No, grazie.",
-              "L'ultima volta che ho ballato con una strega mi sono svegliato in un campo.",
+              "L'ultima volta che ho ballato con una strega mi sono {g:svegliato|svegliata|svegliato} in un campo.",
               "Non ballo in cerchio con uno che si porta dietro il gesso.",
               "Daresti fuoco al pavimento. Magari un'altra volta.",
               "Col tuo bastone cavi un occhio a qualcuno. Passo."
@@ -3443,7 +3443,7 @@
               "E dove andremmo, in un cimitero a mezzanotte?",
               "Non so se i miei sono pronti per uno in tunica.",
               "Grazie, ma no. Non esco con chi salmodia.",
-              "Scusa, passerei la serata a chiedermi se sono stregato.",
+              "Scusa, passerei la serata a chiedermi se sono {g:stregato|stregata|stregato}.",
               "No. Ho letto sul giornale della sera come finiscono gli appuntamenti con i maghi."
             ]
           },
@@ -3458,7 +3458,7 @@
             "bad": [
               "Mi dispiace. Non posso stare con uno che parla con i morti.",
               "Che dolce, ma verrei sempre dopo i tuoi grimori.",
-              "Sicuro che non sia una pozione a parlare?",
+              "Siamo certi che non sia una pozione a parlare?",
               "Non provo lo stesso. E ti prego, non cercare di cambiarlo con la magia.",
               "Ho bisogno di qualcuno normale. Tu brilli al buio."
             ]
@@ -3474,7 +3474,7 @@
             "bad": [
               "Ehi, no. Mi si sono rizzati tutti i capelli.",
               "Non con quel talismano a teschio che mi fissa.",
-              "Scusa. Mi è sembrato di essere colpito da un fulmine molto educato.",
+              "Scusa. Mi è sembrato di essere {g:colpito|colpita|colpito} da un fulmine molto educato.",
               "Non bacio chi sa di muschio di tomba.",
               "Ti prego, no. Ho paura di svegliarmi rospo."
             ]
@@ -3491,7 +3491,7 @@
               "{style}? Sembra un patto, e io i patti non li firmo.",
               "No. Non mi lego a uno che lavora con gli spiriti.",
               "Mi dispiace. Non so cosa farebbero di me i tuoi riti.",
-              "È un voto rituale, e io non sono pronto per i rituali.",
+              "È un voto rituale, e io non sono {g:pronto|pronta|pronto} per i rituali.",
               "No. Le tue candele si sono spente mentre lo dicevi. È un segno."
             ]
           }
@@ -3499,7 +3499,7 @@
         "performances": {
           "story": {
             "good": [
-              "Una storia su {subject}, e le lampade si abbassavano nei momenti giusti. Bravo.",
+              "Una storia così, «{subject}», e le lampade si abbassavano nei momenti giusti. Complimenti.",
               "La racconti come se ci fossi stato. C'eri? In un'altra vita?",
               "Giuro che ho visto delle forme nel fumo mentre parlavi.",
               "Fantastica. Inquietante, ma fantastica.",
@@ -3507,15 +3507,15 @@
             ],
             "bad": [
               "Troppi incantesimi. Ho perso il filo dopo il terzo demone.",
-              "Un racconto su {subject}? Temo fosse per lo più salmodia.",
+              "Un racconto su «{subject}»? Temo fosse per lo più salmodia.",
               "Voce cupa, fumo, candele... e nessun finale.",
               "Non so se volevo sentirla. Ho ancora il collo gelato.",
-              "Quella è una voce di grimorio, non una storia."
+              "Quella è una voce di grimorio."
             ]
           },
           "poem": {
             "good": [
-              "Una poesia su {subject}... sembrava un antico incantesimo. Bellissima.",
+              "Una poesia su «{subject}»... sembrava un antico incantesimo. Bellissima.",
               "L'aria vibrava a ogni ultima parola. Come fai?",
               "Rileggila, più piano. Credo che facesse rima in due lingue.",
               "Mi sono venuti i brividi. Quelli belli.",
@@ -3524,7 +3524,7 @@
             "bad": [
               "Era una poesia o un'evocazione? Perché qualcosa ha bussato.",
               "Tante lune e tanti corvi. Molto... da tunica.",
-              "Non ho capito una parola su {subject}, e mi ha fatto paura.",
+              "Non ho capito una parola su «{subject}», e mi ha fatto paura.",
               "Bei suoni. Però sembrava una maledizione.",
               "Poesia da uno stregone. Io resto alle cartoline."
             ]
@@ -3582,10 +3582,10 @@
             ],
             "bad": [
               "Hai chiamato la mia veste rituale \"un bel cappotto\". Vattene.",
-              "Non è un costume. È un voto cucito in argento.",
+              "È un voto cucito in argento.",
               "Loda pure la stoffa, ma i sigilli non sono decorazioni.",
               "Il mio amuleto non ha bisogno del tuo parere. Ne ha già uno suo.",
-              "Attento. Lusingare un catalizzatore senza permesso porta sfortuna."
+              "Occhio. Lusingare un catalizzatore senza permesso porta sfortuna."
             ]
           },
           "encourage": {
@@ -3606,7 +3606,7 @@
           },
           "flatter": {
             "good": [
-              "Il più grande adepto di Bologna? Beh. Del quartiere, di sicuro.",
+              "{g:Il più grande adepto|La più grande adepta|Il più grande adepto} di Bologna? Beh. Del quartiere, di sicuro.",
               "Parole dolci, e l'incenso ti dà ragione. Le concedo.",
               "Lusinghi come un'invocazione minore. Goffo, ma funziona.",
               "Continua. Anche il cristallo ti ascolta.",
@@ -3633,7 +3633,7 @@
               "Il tuo grazie è vago. Gli incantesimi sono precisi. Sii preciso anche tu.",
               "Non ringraziare me. Ringrazia la luna, ha fatto quasi tutto lei.",
               "Un grazie biascicato non spezza niente e non lega niente.",
-              "Non l'ho fatto per te. L'ho fatto per l'equilibrio."
+              "L'ho fatto per l'equilibrio."
             ]
           },
           "smalltalk": {
@@ -3661,9 +3661,9 @@
               "Gli spiriti spettegolano peggio del mercato. Continua."
             ],
             "bad": [
-              "Le parole viaggiano. Quelle cattive portano malocchio. Attento alla lingua.",
+              "Le parole viaggiano. Quelle cattive portano malocchio. Occhio alla lingua.",
               "Non commercio voci. Con abbastanza bocche, le voci diventano maledizioni.",
-              "Questo non è un pettegolezzo. È il vero nome di qualcuno. Basta.",
+              "Quello è il vero nome di qualcuno. Basta.",
               "Il cristallo me l'ha già mostrato. Hai capito male.",
               "Il pettegolezzo è magia bassa. Indegna di entrambi."
             ]
@@ -3679,15 +3679,15 @@
             "bad": [
               "Il tempo è solo gli elementali che litigano. Mi annoia.",
               "Non maledire la pioggia. Qualcuno potrebbe averla evocata.",
-              "Il tempo è affar mio. Letteralmente. Sono stato io.",
+              "Il tempo è affar mio. Letteralmente. Sono {g:stato|stata|stato} io.",
               "Le nuvole sono nuvole. A meno che non vadano controvento.",
-              "A me interessa la luna, non le previsioni."
+              "A me interessa la luna. Solo la luna."
             ]
           },
           "insult": {
             "good": [
               "...Questa ha passato le protezioni. Non me l'aspettavo.",
-              "Il mio amuleto si è incrinato. Sei stato tu? Sei stato tu.",
+              "Il mio amuleto si è incrinato. È opera tua? È opera tua.",
               "Che villania. Le candele si sono spente tutte insieme.",
               "\"abbassa il cappuccio\" Hai la lingua affilata, per essere un profano.",
               "Mh. Neanche i sigilli fermano una parola tirata bene."
@@ -3753,7 +3753,7 @@
           "flirt": {
             "good": [
               "Ah sì? I tarocchi parlavano proprio di uno sconosciuto.",
-              "Attento. Flirtare con una strega ha conseguenze. Piacevoli, forse.",
+              "Occhio. Flirtare con {g:uno stregone|una strega|uno stregone} ha conseguenze. Piacevoli, forse.",
               "La mia aura è appena diventata rosa. Che imbarazzo.",
               "Sei un guaio. Di quelli buoni, dicono le carte.",
               "\"nasconde un sorriso dietro la manica\" Le tue stelle e le mie vanno d'accordo."
@@ -3784,7 +3784,7 @@
           },
           "loveLetter": {
             "good": [
-              "L'hai scritta a inchiostro, non a biro. Capisci il rituale.",
+              "L'hai scritta con l'inchiostro vero. Capisci il rituale.",
               "La terrò tra le pagine del mio grimorio.",
               "Profuma di lavanda. Sapevi che la lavanda lega?",
               "Una lettera è un incantesimo su carta. Questo ha funzionato.",
@@ -3817,7 +3817,7 @@
           "askDance": {
             "good": [
               "Un ballo è un cerchio, e i cerchi sono la mia specialità.",
-              "E sia. Attento alla veste, ha protezioni nell'orlo.",
+              "E sia. Occhio alla veste, ha protezioni nell'orlo.",
               "Guida tu. Io seguirò le linee di forza sotto il pavimento.",
               "\"posa il bastone\" C'è la luna piena. Sarebbe scortese rifiutare.",
               "Ballare alza l'energia. Alziamone un po'."
@@ -3873,8 +3873,8 @@
             "bad": [
               "I sentimenti sono un reagente potente. Troppo instabile per me.",
               "Le stelle non sono allineate per noi. Ho guardato. Due volte.",
-              "Sono sposato con l'Arte. È una consorte gelosa.",
-              "Questo è un filtro d'amore che parla, non tu. Chi ti ha stregato?",
+              "Sono {g:sposato|sposata|sposato} con l'Arte. È una consorte gelosa.",
+              "Questo è un filtro d'amore che parla. Chi ti ha stregato?",
               "Mi dispiace. Il mio cuore l'ho dato alla Trama tanto tempo fa."
             ]
           },
@@ -3907,21 +3907,21 @@
               "No. Il mio giuramento all'Arte viene prima, ed è esclusivo.",
               "Il presagio è stato chiaro. Non questo, non con me.",
               "Preferirei legarmi a un demone che firmare quel patto.",
-              "Le stelle rifiutano. Sono tenuto a seguirle."
+              "Le stelle rifiutano. Sono {g:tenuto|tenuta|tenuto} a seguirle."
             ]
           }
         },
         "performances": {
           "story": {
             "good": [
-              "Una storia su {subject}. Sotto c'è vera sapienza, l'ho sentito.",
+              "Una storia su «{subject}». Sotto c'è vera sapienza, l'ho sentito.",
               "L'hai raccontata come un'incantazione. Le candele si sono sporte.",
               "Le storie sono incantesimi con versi più lunghi. Questa ha funzionato.",
-              "Trascriverò {subject} nel mio grimorio. Merita di essere conservata.",
+              "Trascriverò «{subject}» nel mio grimorio. Merita di essere conservata.",
               "\"con gli occhi che brillano\" Gli spiriti sono rimasti fino alla fine."
             ],
             "bad": [
-              "{subject}? La versione vera ha una maledizione al terzo capitolo.",
+              "«{subject}»? La versione vera ha una maledizione al terzo capitolo.",
               "Hai sbagliato il rito. Nessuno usa il sorbo per quello.",
               "Una storia senza mistero è solo una ricetta.",
               "Mondana. Neanche un presagio.",
@@ -3930,7 +3930,7 @@
           },
           "poem": {
             "good": [
-              "Una poesia su {subject}... il verso è il primo incantesimo. Splendida.",
+              "Una poesia su «{subject}»... il verso è il primo incantesimo. Splendida.",
               "La metrica era perfetta. Vibrava come un canto rituale.",
               "All'ultimo verso ho sentito il velo assottigliarsi.",
               "\"traccia un sigillo nell'aria\" Lego quelle parole alla memoria.",
@@ -3938,7 +3938,7 @@
             ],
             "bad": [
               "La metrica zoppica. Un incantesimo così ti si ritorcerebbe contro.",
-              "{subject} merita rune, non filastrocche.",
+              "«{subject}» merita rune. Quella era una filastrocca.",
               "In quei versi non c'è una goccia di mana.",
               "Rima \"cuore\" con \"amore\". Lo fa ogni fattucchiera di campagna.",
               "Gli antichi ti avrebbero bandito per quel distico."
@@ -3977,7 +3977,7 @@
             "{name}, tu hai gusto. E non lo dico a chi compra i cappotti in saldo.",
             "Ben fatto. Davvero. Lo farei incorniciare, se esistesse una cornice all'altezza.",
             "Lavoro di prima scelta, {name}. Rifinito a mano, per così dire.",
-            "Il mio sarto piangerebbe davanti a una cucitura così dritta. Bravo.",
+            "Il mio sarto piangerebbe davanti a una cucitura così dritta. {g:Bravo|Brava|Bravo}.",
             "Raro vedere l'eccellenza fuori da uno showroom. Farai strada, {name}."
           ],
           "compliment": [
@@ -3999,7 +3999,7 @@
             "Se fossi un tessuto, saresti la seta che tengono nascosta dietro il bancone.",
             "Ho conosciuto baroni con meno presenza di te. E anche più bassi.",
             "Faresti sembrare su misura un abito a noleggio, {name}. È un dono.",
-            "Davvero, il tuo posto è in un palco all'opera, non quaggiù con noi."
+            "Davvero, il tuo posto è in un palco all'opera, molto sopra tutti noi."
           ],
           "thank": [
             "Grazie, {name}. Mettilo sul mio conto. Ah, intendevi la gratitudine. Certo.",
@@ -4030,7 +4030,7 @@
             "Un vento così rovina un buon cappello. Questo mese ne ho persi due, {name}."
           ],
           "insult": [
-            "{name}, ti sei vestito al buio o ti ha vestito qualcun altro?",
+            "{name}, ti sei {g:vestito|vestita|vestito} al buio o ti ha vestito qualcun altro?",
             "Quella giacca ha cambiato più proprietari di un'auto usata.",
             "Delizioso. Quel look lo vendono al chilo?",
             "Ho visto sartorie migliori su uno spaventapasseri, {name}. Lui almeno aveva una struttura.",
@@ -4055,7 +4055,7 @@
             "Ho avvocati i cui abiti costano più del tuo anno. Ne chiamo uno?",
             "Fammi pure un torto. Mi serve un nuovo passatempo, e saresti una rovina deliziosa.",
             "Una telefonata, {name}, e in questa città nessun negozio ti venderà più un paio di calzini.",
-            "Attento. Io il sangue su questa giacca non me lo sporco. Pago qualcuno per farlo."
+            "{g:Attento|Attenta|Attento}. Io il sangue su questa giacca non me lo sporco. Pago qualcuno per farlo."
           ]
         },
         "romance": {
@@ -4068,7 +4068,7 @@
           ],
           "admire": [
             "{name}, hai quel tipo di grazia che il denaro cerca da sempre di imitare.",
-            "Sono stato davanti a quadri da milioni e ho provato meno di così.",
+            "Ho visto quadri da milioni e ho provato meno di così.",
             "Anche con quel cappotto sei elegante. Pensa con un Varzani addosso.",
             "Ti muovi come la seta su un manichino, {name}. Senza sforzo.",
             "Non ammiro facilmente. I miei standard mi costano una fortuna. Tu li superi."
@@ -4095,7 +4095,7 @@
             "Prendimi il braccio, {name}. Diamo alla sala qualcosa di cui spettegolare."
           ],
           "holdHands": [
-            "La tua mano, {name}. Attento all'anello, è più vecchio della repubblica.",
+            "La tua mano, {name}. {g:Attento|Attenta|Attento} all'anello, è più vecchio della repubblica.",
             "'Porge una mano guantata, capretto, morbida come una promessa.'",
             "Lasciami tenerti la mano. Sta meglio sulla mia di qualsiasi orologio.",
             "{name}, hai delle mani bellissime. Sarebbero sprecate con chiunque altro.",
@@ -4112,12 +4112,12 @@
             "{name}, ho comprato quasi tutto quello che ho voluto. Tranne questo. Questo non si compra.",
             "Tutta la seta di Milano, e l'unica cosa a cui penso sei tu.",
             "Darei la villa, la macchina, l'intero guardaroba. Be', quasi tutto il guardaroba. Per te.",
-            "Sono innamorato di te, {name}. È la prima cosa che ho avuto senza cartellino del prezzo.",
+            "Ho perso la testa per te, {name}. È la prima cosa che ho avuto senza cartellino del prezzo.",
             "Con te le mie cose più belle sembrano ordinarie. Non lo sopporto, e non riesco a smettere."
           ],
           "kiss": [
             "'Si avvicina, un soffio di colonia costosa, e ti bacia piano.'",
-            "Stai fermo, {name}. Certe cose vanno fatte come si deve.",
+            "Stai {g:fermo|ferma|fermo}, {name}. Certe cose vanno fatte come si deve.",
             "'Ti solleva il mento con un dito guantato e ti bacia come chi chiude un affare.'",
             "Permetti. Non ho mai fretta con ciò che vale la pena avere.",
             "'Un bacio senza fretta, composto alla perfezione, come un'ultima prova dal sarto.'"
@@ -4132,18 +4132,18 @@
         },
         "performances": {
           "story": [
-            "Lascia che ti racconti {subject}. L'ho sentita la prima volta a una cena in un palazzo, tra i tartufi.",
-            "{subject}: una storia di fortune vinte e perse. Perse, soprattutto, da gente di cattivo gusto.",
-            "Mio nonno mi raccontava {subject} davanti al camino della casa d'inverno. Mettiti comodo.",
-            "Ecco {subject}, come la raccontano al circolo nautico, cioè meglio.",
-            "Adorerai {subject}. C'è un'ereditiera, uno scandalo e un cappotto per cui uccidere."
+            "Lascia che ti racconti «{subject}». L'ho sentita la prima volta a una cena in un palazzo, tra i tartufi.",
+            "«{subject}»: una storia di fortune vinte e perse. Perse, soprattutto, da gente di cattivo gusto.",
+            "Mio nonno mi raccontava «{subject}» davanti al camino della casa d'inverno. Mettiti comodo.",
+            "Ecco «{subject}», come la raccontano al circolo nautico, cioè meglio.",
+            "Adorerai «{subject}». C'è un'ereditiera, uno scandalo e un cappotto per cui uccidere."
           ],
           "poem": [
-            "Una poesia su {subject}, composta in un salotto dorato. 'La seta ricorda ciò che la mano scorda...'",
-            "'{subject}, nel crepuscolo di perla e velluto, la città s'inchina, il lume è perduto.'",
-            "L'ho recitata su {subject} al galà di Firenze. Un minuto intero di applausi.",
-            "Su {subject}: 'Filo d'oro, luce d'oro, e tu, stasera, vali più di loro.'",
-            "Qualcosa di breve su {subject}. Le buone poesie, come la buona sartoria, non sprecano stoffa."
+            "Una poesia su «{subject}», composta in un salotto dorato. 'La seta ricorda ciò che la mano scorda...'",
+            "'«{subject}», nel crepuscolo di perla e velluto, la città s'inchina, il lume è perduto.'",
+            "L'ho recitata su «{subject}» al galà di Firenze. Un minuto intero di applausi.",
+            "Su «{subject}»: 'Filo d'oro, luce d'oro, e tu, stasera, vali più di loro.'",
+            "Qualcosa di breve su «{subject}». Le buone poesie, come la buona sartoria, non sprecano stoffa."
           ]
         },
         "jokes": [
@@ -4160,7 +4160,7 @@
             "good": [
               "Lodi da qualcuno vestito così? Me le faccio incorniciare.",
               "Detto da un completo che costa più del mio appartamento... grazie.",
-              "Ti sei accorto di me? Con quella giacca pensavo notassi solo gli specchi.",
+              "Hai notato me? Con quella giacca pensavo notassi solo gli specchi.",
               "Be'. Mi sento più ricco solo a starti accanto.",
               "Se lo dice qualcuno vestito di seta, sarà vero."
             ],
@@ -4191,7 +4191,7 @@
           "encourage": {
             "good": [
               "Se uno che si veste da milionario crede in me... va bene.",
-              "Sembri uno che non ha mai fallito in vita sua. D'accordo, ci provo.",
+              "Hai l'aria di chi non ha mai fallito in vita sua. D'accordo, ci provo.",
               "Questa è la voce di chi ha un sarto a disposizione. Convincente.",
               "Grazie. Magari un giorno potrò permettermi una giacca come la tua.",
               "Però. Un discorso motivazionale in cashmere. Funziona più del previsto."
@@ -4270,7 +4270,7 @@
           },
           "weather": {
             "good": [
-              "Attento alla pioggia su quella giacca, è troppo bella per bagnarsi.",
+              "Occhio alla pioggia su quella giacca, è troppo bella per bagnarsi.",
               "Bella giornata. Resa più bella dalla tua sartoria, davvero.",
               "Fa freddo, sì. Ma tu sembri al calduccio in tutto quel cashmere.",
               "Scommetto che il sole splende un po' di più su chi si veste come te.",
@@ -4293,7 +4293,7 @@
               "Accidenti. Un taglio netto come la tua giacca."
             ],
             "bad": [
-              "I soldi comprano un completo, non le buone maniere.",
+              "I soldi comprano un completo. Le buone maniere si pagano a parte.",
               "Insultami quanto vuoi. Il tuo profumo resta troppo forte.",
               "Ricco e maleducato. Che originalità.",
               "Dai, guardaci dall'alto del tuo trono di seta.",
@@ -4302,7 +4302,7 @@
           },
           "mock": {
             "good": [
-              "Ridi pure, chiaramente ti sei guadagnato il diritto di guardare dall'alto.",
+              "Ridi pure, hai chiaramente tutto il diritto di guardare dall'alto.",
               "...Ah. Già. Accanto a te sembro proprio un sacco di patate.",
               "Non riesco a ribattere a uno vestito così bene. Proprio non ci riesco.",
               "Questa ha fatto male. Anche il tuo vestito mi sta prendendo in giro, vero?",
@@ -4312,7 +4312,7 @@
               "Prendermi in giro da dentro un completo da mille euro. Che coraggio.",
               "Ridere dei poveri. È compreso nel prezzo dei gemelli?",
               "Bel completo. Peccato per chi ci sta dentro.",
-              "Sono stato preso in giro da gente migliore. Be', più economica. Ma migliore.",
+              "Sono {g:stato preso|stata presa|stato preso} in giro da gente migliore. Be', più economica. Ma migliore.",
               "Lo snobismo è la cosa più a buon mercato che indossi."
             ]
           },
@@ -4327,7 +4327,7 @@
             "bad": [
               "Critiche da uno che non si è mai stirato una camicia da solo.",
               "Giudicheresti una cattedrale dai gemelli.",
-              "Tieniti i tuoi standard. Sono fatti su misura per te, non per me.",
+              "Tieniti i tuoi standard. Sono fatti su misura per te soltanto.",
               "Il gusto non è saggezza. Ricordatelo.",
               "Il tuo guardaroba ha delle opinioni. Non serve che le condivida anche tu."
             ]
@@ -4337,13 +4337,13 @@
               "...Va bene. Quelli vestiti così hanno avvocati. E di peggio.",
               "Ti credo. Con tutti quei soldi puoi far sparire chiunque.",
               "Non serve. Per favore. So cosa può permettersi la gente come te.",
-              "Ricevuto. Non mi metto contro uno con un sarto così bravo.",
+              "Ricevuto. Non mi metto contro chi ha un sarto così bravo.",
               "Detto con calma, in seta. È il tipo che fa più paura."
             ],
             "bad": [
               "Cosa, mi rovini col tuo commercialista?",
               "Provaci. Ti stropicceresti le maniche.",
-              "Minacce dal giro dello champagne. Sono terrorizzato.",
+              "Minacce dal giro dello champagne. Sono {g:terrorizzato|terrorizzata|terrorizzato}.",
               "Non farai niente. Rischieresti di rovinarti le scarpe.",
               "I soldi parlano. Ma non mi spaventano."
             ]
@@ -4354,7 +4354,7 @@
             "good": [
               "Ah sì? Sei un guaio, in un completo molto costoso.",
               "Flirtare con una giacca così dovrebbe essere illegale.",
-              "Attento, potrei abituarmi al profumo dei soldi.",
+              "Occhio, potrei abituarmi al profumo dei soldi.",
               "Oh. Io? Con te vestito per un matrimonio reale?",
               "Be'. Di sicuro sai come fare un'entrata, e un'impressione."
             ],
@@ -4403,7 +4403,7 @@
               "Canti come ti vesti. Impeccabile.",
               "Una serenata da qualcuno in smoking. Sono in un film.",
               "Hai studiato lirica? Ma certo che sì.",
-              "La gente ci guarda. Lasciali fare, sei magnifico.",
+              "La gente ci guarda. Lasciali fare, sei uno spettacolo.",
               "Cantala ancora. Voglio che tutta la via veda chi canta per me."
             ],
             "bad": [
@@ -4419,7 +4419,7 @@
               "Un ballo? Cercherò di non stropicciarti la seta.",
               "Sì. Ho sempre voluto ballare con qualcuno che sembra una sala da ballo.",
               "Fai strada tu. Si vede che hai preso lezioni.",
-              "Sono vestito male, ma non dico di no.",
+              "Sono {g:vestito|vestita|vestito} male, ma non dico di no.",
               "Con te? Tutti in sala penseranno che sono qualcuno."
             ],
             "bad": [
@@ -4436,7 +4436,7 @@
               "Oh. Il gemello è freddo. La tua mano però è calda.",
               "Tengo stretto. Non lascio andare una cosa così preziosa.",
               "Mano nella mano con la persona più elegante qui. Guardatemi.",
-              "Attento, la gente potrebbe pensare che sono ricco."
+              "Occhio, la gente potrebbe pensare che sono {g:ricco|ricca|ricco}."
             ],
             "bad": [
               "Non sono una cosa che compri e ti porti a casa.",
@@ -4466,7 +4466,7 @@
             "good": [
               "Tu... con tutto quello che hai... vuoi me?",
               "Pensavo fossi fuori dalla mia portata. Fuori dalla mia fascia di reddito, sinceramente.",
-              "Non mi importa dei soldi. Ma sei splendido mentre lo dici.",
+              "Non mi importa dei soldi. Ma sei uno splendore mentre lo dici.",
               "Anch'io. Da quando ti ho visto la prima volta con quel cappotto.",
               "Ridillo, piano, così mi convinco che l'ha detto uno come te."
             ],
@@ -4484,7 +4484,7 @@
               "Be'. Liscio come la tua seta.",
               "Persino i tuoi baci sono su misura.",
               "Oh. Baciato da un reale, più o meno.",
-              "Attento al rossetto sul colletto. Anzi, lascia stare."
+              "Occhio al rossetto sul colletto. Anzi, lascia stare."
             ],
             "bad": [
               "No. Non sono un'altra delle cose che possiedi.",
@@ -4496,14 +4496,14 @@
           },
           "propose": {
             "accept": [
-              "Sì. Fai preparare le condizioni, sono sicuro che hai un avvocato apposta.",
+              "Sì. Fai preparare le condizioni, di sicuro hai un avvocato apposta.",
               "D'accordo. Fai sembrare tutto un ottimo investimento.",
               "Va bene. Ma non cambio guardaroba per te. Be', magari un pochino.",
               "L'hai pianificato come una fusione aziendale. Mi piace. Sì.",
               "Sì. Uno col tuo gusto non sceglierebbe male."
             ],
             "reject": [
-              "Sembra una clausola di contratto, non amore.",
+              "Sembra una clausola di contratto.",
               "Tratti l'amore come ordini i completi. No.",
               "Non tutto esiste nella tua taglia.",
               "Non firmo niente con uno che possiede mezza strada.",
@@ -4514,14 +4514,14 @@
         "performances": {
           "story": {
             "good": [
-              "Una storia su {subject}, raccontata come davanti al brandy in un club privato. Meravigliosa.",
+              "Una storia su «{subject}», raccontata come davanti al brandy in un club privato. Meravigliosa.",
               "La racconti come se ci fossi stato. Probabilmente c'eri, in prima classe.",
               "Potrei ascoltare quella voce per ore. Una voce costosa.",
               "Splendida. È vera, o ne hai comprato i diritti?",
               "Ora capisco perché i ricchi vengono invitati dappertutto."
             ],
             "bad": [
-              "{subject}? Sembrano chiacchiere da festa sullo yacht. Noioso.",
+              "«{subject}»? Sembrano chiacchiere da festa sullo yacht. Noioso.",
               "Tutta quella eleganza e la storia resta noiosa.",
               "L'ennesima storia di gente benestante. Avvincente.",
               "Come farsi leggere un menu in francese. Bella voce, nessun senso.",
@@ -4530,14 +4530,14 @@
           },
           "poem": {
             "good": [
-              "Una poesia su {subject}... recitata come un brindisi a un gala. Bellissima.",
+              "Una poesia su «{subject}»... recitata come un brindisi a un gala. Bellissima.",
               "Persino le tue rime sembrano cucite a mano.",
               "Splendida. Come velluto nelle orecchie.",
               "Reciti poesie come porti quel completo. Senza sforzo.",
               "Pelle d'oca. E con questo cappotto da due soldi, è tutto dire."
             ],
             "bad": [
-              "{subject}? Carina. Carina e vuota.",
+              "«{subject}»? Carina. Carina e vuota.",
               "Versi da palco all'opera. Io sto in loggione.",
               "Troppo lucidata. Le poesie hanno bisogno di un po' di fango sulle scarpe.",
               "L'hai recitata come se leggessi un listino prezzi.",
@@ -4556,7 +4556,7 @@
           "landGroan": [
             "Oh no. È una battuta che tuo nonno raccontava al circolo nautico.",
             "Che strazio. Uno strazio costoso, ma sempre uno strazio.",
-            "Terribile. Sei fortunato a essere vestito così bene.",
+            "Terribile. Per fortuna con quei vestiti ti si perdona tutto.",
             "Uff. Solo uno con quel completo poteva permettersela.",
             "È una battuta da famiglia di soldi antichi. Molto antichi."
           ],
@@ -4599,7 +4599,7 @@
               "Hai fatto i complimenti alle scarpe. Le scarpe sono il meno.",
               "È della stagione scorsa, tesoro. Aggiornati.",
               "\"Un sorriso sottile.\" Chi non conosce i tessuti dovrebbe tacere.",
-              "Carino. Sbagliato, ma carino. È vigogna, non lana.",
+              "Carino. Sbagliato, ma carino. È vigogna.",
               "Mi hanno fatto complimenti dei duchi. Dovrai impegnarti di più."
             ]
           },
@@ -4608,7 +4608,7 @@
               "Gentile. La sicurezza, come un buon abito, sta tutta nelle spalle.",
               "Hai ragione. Andrò a quell'incontro, col gessato grigio.",
               "Un incoraggiamento e un espresso decente. Non serve altro, davvero.",
-              "\"Raddrizza la cravatta di seta.\" Benissimo. Sarò magnifico.",
+              "\"Raddrizza la cravatta di seta.\" Benissimo. Sarò {g:magnifico|magnifica|magnifico}.",
               "Che generosità. Quasi quasi ti lascio la mancia."
             ],
             "bad": [
@@ -4621,7 +4621,7 @@
           },
           "flatter": {
             "good": [
-              "Oh, sei spudorato. Continua, ti dona.",
+              "Oh, che faccia tosta. Continua, ti dona.",
               "Adulazione detta con convinzione. È quasi alta moda.",
               "\"Ride dietro un guanto.\" Troppo. Vai avanti.",
               "Lo so che è adulazione, e la pago volentieri.",
@@ -4653,7 +4653,7 @@
           },
           "smalltalk": {
             "good": [
-              "Che piacere. Sei stato nella nuova boutique in via Farini? Prezzi criminali. Ho preso due cose.",
+              "Che piacere. Hai visto la nuova boutique in via Farini? Prezzi criminali. Ho preso due cose.",
               "Adoro chiacchierare. È l'unica cosa gratis che mi diverte.",
               "\"Sorseggia qualcosa di frizzante.\" Racconta, è delizioso.",
               "Lo yacht è in cantiere, quindi ho tempo per parlare. Che fortuna, la tua.",
@@ -4680,7 +4680,7 @@
               "Scambio pettegolezzi solo con chi ha un palco all'opera.",
               "\"Sbadiglia con eleganza.\" Quella voce l'ho messa in giro io, in realtà.",
               "Gente comune che spettegola di gente comune. Che tristezza.",
-              "Questo non è un pettegolezzo, è un bollettino meteo con i nomi."
+              "Questo pettegolezzo è un bollettino meteo con i nomi."
             ]
           },
           "weather": {
@@ -4760,7 +4760,7 @@
               "\"Impassibile, lucida un anello.\" Tocca questa seta e la paghi. Letteralmente.",
               "Tesoro, il tuo padrone di casa è mio.",
               "Minacce a vuoto in un cappotto da due soldi. Adorabile.",
-              "Mi hanno minacciato dei banchieri. Al confronto sei tenerissimo."
+              "Mi hanno minacciato dei banchieri. Al confronto fai tenerezza."
             ]
           }
         },
@@ -4778,14 +4778,14 @@
               "\"Ti squadra dalla testa alle scarpe.\" No.",
               "Carino. Ma esco solo con chi ha un sarto.",
               "Battuta da grande magazzino. Torna con qualcosa su misura.",
-              "Lusingato. E non disponibile per nessuno con quella giacca."
+              "{g:Lusingato|Lusingata|Lusingato}. E non disponibile per nessuno con quella giacca."
             ]
           },
           "admire": {
             "good": [
               "Non riesci a smettere di guardare? Comprensibile. È la seta.",
               "\"Si gira appena, la luce sui gemelli.\" Così va meglio?",
-              "Ammira pure. Mi sono vestito proprio per questo.",
+              "Ammira pure. Mi sono {g:vestito|vestita|vestito} proprio per questo.",
               "Che dolce. Di solito fissano solo i gioielli.",
               "Hai buon occhio. Per i cappotti, e per me."
             ],
@@ -4793,7 +4793,7 @@
               "Tesoro, si fissa nei musei. Compra il biglietto.",
               "\"Copre l'orologio con la manica.\" Occhi in su.",
               "Ammirazione a distanza, grazie. Questo è cashmere.",
-              "Sono abituato agli sguardi. Il tuo è durato un po' troppo.",
+              "Sono {g:abituato|abituata|abituato} agli sguardi. Il tuo è durato un po' troppo.",
               "Mm. Ammira il cappotto. Il resto non è in vetrina."
             ]
           },
@@ -4819,7 +4819,7 @@
               "\"Si appoggia a una ringhiera dorata.\" Ancora, dalla seconda strofa.",
               "Hai una bella voce. Il cappotto no, ma la voce sì.",
               "Ho sentito l'opera alla Scala. Questa ci si avvicinava.",
-              "Bravo. Ti lancerei una rosa, ma sono importate e carissime."
+              "Complimenti. Ti lancerei una rosa, ma sono importate e carissime."
             ],
             "bad": [
               "Tesoro, i vicini pagano una fortuna per il silenzio.",
@@ -4831,7 +4831,7 @@
           },
           "askDance": {
             "good": [
-              "Un ballo? Attento alle scarpe, sono fatte a mano a Firenze.",
+              "Un ballo? Occhio alle scarpe, sono fatte a mano a Firenze.",
               "\"Porge una mano inguantata.\" Guida bene, tesoro. Ci guardano tutti.",
               "Delizioso. Ballo il valzer come spendo: con assoluta sicurezza.",
               "Benissimo. L'orchestra è pagata, tanto vale usarla.",
@@ -4849,7 +4849,7 @@
             "good": [
               "\"Si sfila un guanto.\" Ecco. Ora puoi.",
               "Mani calde. Valgono quasi più di un diamante.",
-              "Attento agli anelli. Sì, tutti. Sì, veri.",
+              "Occhio agli anelli. Sì, tutti. Sì, veri.",
               "Che cosa antiquata. Adoro le cose antiquate, non passano mai di moda.",
               "Benissimo. Tieniti forte, davanti ai negozi da poco cammino svelto."
             ],
@@ -4871,7 +4871,7 @@
             ],
             "bad": [
               "Tesoro, e dove mi porteresti? A un chiosco di kebab?",
-              "\"Sfoglia un'agenda di pelle.\" Sono impegnato fino al prossimo millennio.",
+              "\"Sfoglia un'agenda di pelle.\" Sono {g:impegnato|impegnata|impegnato} fino al prossimo millennio.",
               "Io non esco. È il mondo che viene da me.",
               "Non con quel cappotto, e non in un posto che puoi permetterti.",
               "Carino. No. I miei standard sono d'importazione."
@@ -4886,7 +4886,7 @@
               "Mi hai fatto dimenticare cosa indosso. Non era mai successo."
             ],
             "bad": [
-              "Tesoro, sono lusingato, ma i sentimenti non sono nel mio portafoglio titoli.",
+              "Tesoro, sono {g:lusingato|lusingata|lusingato}, ma i sentimenti non sono nel mio portafoglio titoli.",
               "\"Sistema la cravatta, evitando il tuo sguardo.\" Facciamo finta che tu non l'abbia detto.",
               "Tutti si dichiarano dopo aver visto la villa.",
               "Temo che il mio cuore sia in un caveau, e la combinazione è persa.",
@@ -4895,8 +4895,8 @@
           },
           "kiss": {
             "good": [
-              "\"Un soffio di profumo costoso.\" Mm. Ti sei guadagnato il secondo piano del mio cuore.",
-              "Attento al rossetto, è francese. Oh, pazienza. Ancora.",
+              "\"Un soffio di profumo costoso.\" Mm. Hai conquistato il secondo piano del mio cuore.",
+              "Occhio al rossetto, è francese. Oh, pazienza. Ancora.",
               "Beh. Valeva la tintoria.",
               "Tesoro. Lo farei incorniciare, se si potesse incorniciare un istante.",
               "\"Liscia un bavero spiegazzato, sorridendo.\" Squisito."
@@ -4905,7 +4905,7 @@
               "Non sulla seta. Assolutamente non sulla seta.",
               "\"Porge la guancia, un lampo di diamanti.\" Non si bacia me così, di punto in bianco.",
               "Tesoro, hai sbavato la cipria. Ci ho messo un'ora.",
-              "Troppo sfacciato. Sono una galleria d'arte, non una bancarella.",
+              "Troppa sfacciataggine. Sono una galleria d'arte: si guarda, non si tocca.",
               "Mm, no. Sai di tram."
             ]
           },
@@ -4929,14 +4929,14 @@
         "performances": {
           "story": {
             "good": [
-              "Una storia su {subject}. Ben raccontata, con un bel finale. Come una buona borsa.",
+              "Una storia su «{subject}». Ben raccontata, con un bel finale. Come una buona borsa.",
               "\"Posa lo champagne.\" Pagherei per il seguito. E pagherei bene.",
               "Deliziosa. La racconterò al circolo dicendo che c'ero anch'io.",
-              "Mi hai tenuto attento più a lungo del mio gioielliere.",
-              "Ritmo perfetto. Quasi su misura. Bravo."
+              "Mi hai tenuto {g:attento|attenta|attento} più a lungo del mio gioielliere.",
+              "Ritmo perfetto. Quasi su misura. Complimenti."
             ],
             "bad": [
-              "{subject}? Tesoro, l'ho sentita raccontare meglio a un'asta di beneficenza.",
+              "«{subject}»? Tesoro, l'ho sentita raccontare meglio a un'asta di beneficenza.",
               "\"Guarda due volte l'orologio d'oro.\" È quasi finita?",
               "Troppo lunga, tagliata male, fili sciolti ovunque. Come certi pantaloni economici.",
               "Mm. La racconta il mio autista. Con più stile.",
@@ -4945,17 +4945,17 @@
           },
           "poem": {
             "good": [
-              "Una poesia su {subject}... squisita. La farò incidere su qualcosa d'argento.",
+              "Una poesia su «{subject}»... squisita. La farò incidere su qualcosa d'argento.",
               "\"Si tampona un occhio col fazzoletto di seta.\" Non guardarmi, il trucco costa una fortuna.",
               "Ogni verso calzava a pennello. Come un abito alla quarta prova.",
-              "Bravo. I mecenati hanno finanziato di peggio. Potrei finanziare te.",
+              "Complimenti. I mecenati hanno finanziato di peggio. Potrei finanziare te.",
               "Splendida. Versi così meritano una rilegatura in pelle."
             ],
             "bad": [
               "Tesoro, quella rima era bigiotteria.",
               "\"Lucida un anello invece di ascoltare.\" Finito?",
               "Ho commissionato poeti. Tu non arriveresti alla rosa dei candidati.",
-              "{subject}, in versi? Che cosa... economica.",
+              "«{subject}», in versi? Che cosa... economica.",
               "Mancava di lucentezza. Tutto dovrebbe brillare."
             ]
           }
@@ -4964,7 +4964,7 @@
           "landGood": [
             "\"Ride, le perle che saltellano.\" Oh, impagabile. E io di prezzi me ne intendo.",
             "Tesoro, che spirito. La ruberò per il gala.",
-            "Ah! Attento, stavo per rovesciare un'annata sulla seta.",
+            "Ah! Occhio, stavo per rovesciare un'annata sulla seta.",
             "Mi hai fatto ridere davvero. Ti darei la mancia, ma la spenderesti in scarpe come quelle.",
             "Delizioso. Umorismo con un buon taglio. Che rarità."
           ],
@@ -4989,7 +4989,7 @@
       "speaker": {
         "interactions": {
           "praise": [
-            "Non voltarti, {name}. Ti osservo da un po', e sei bravo. Sul serio.",
+            "Non voltarti, {name}. Ti osservo da un po', e sei {g:bravo|brava|bravo}. Sul serio.",
             "Ti ho seguito per tre strade, {name}. Mai un passo incerto. Lo rispetto.",
             "Dall'ombra si vede meglio chi vale qualcosa. Tu vali, {name}.",
             "Piano, che nessuno senta: ben fatto, {name}.",
@@ -5033,7 +5033,7 @@
           "gossip": [
             "Ieri sera ho sentito una cosa dal buco della serratura, {name}. Meglio se ti siedi.",
             "Il fornaio il giovedì non va dove dice, {name}. L'ho seguito.",
-            "I muri sono sottili, {name}, e io sono bravissimo ad appoggiarmici.",
+            "I muri sono sottili, {name}, e io ho talento nell'appoggiarmici.",
             "Resti tra noi e le ombre, {name}: il sindaco ha una seconda porta.",
             "Nessuno ha visto me, {name}, ma io ho visto tutti. Chiedimi del capitano della fazione."
           ],
@@ -5045,10 +5045,10 @@
             "Arrivano le nuvole, {name}. Al calar della sera le strade saranno buie come si deve."
           ],
           "insult": [
-            "Sono stato a casa tua, {name}. Due volte. Russi, e le tue serrature fanno ridere.",
+            "Ho fatto un giro a casa tua, {name}. Due volte. Russi, e le tue serrature fanno ridere.",
             "Cammini come un cassetto di posate che cade per terra, {name}.",
-            "Potrei ripulirti da capo a piedi, {name}. Non mi sono disturbato. Chiediti perché.",
-            "I tuoi segreti non sono segreti, {name}. Sono solo noiosi.",
+            "Potrei ripulirti da capo a piedi, {name}. Non ne ho avuto voglia. Chiediti perché.",
+            "I tuoi segreti sono solo noiosi, {name}.",
             "Perderesti a nascondino contro un lampione, {name}."
           ],
           "mock": [
@@ -5066,7 +5066,7 @@
             "Smetti di pestare i piedi, {name}. È la prima cosa che la gente ricorda di te."
           ],
           "threaten": [
-            "Non mi vedrai arrivare, {name}. E non è un modo di dire.",
+            "Non mi vedrai arrivare, {name}. Alla lettera.",
             "So dove dormi, {name}. E quale asse del pavimento scricchiola.",
             "Stanotte, {name}, controlla le ombre nella tua stanza. Poi ricontrollale.",
             "'Una lama fredda, per un attimo, sulla nuca' Ci siamo capiti, {name}?",
@@ -5079,7 +5079,7 @@
             "Mi hai beccato a fissarti, {name}. Nessuno mi becca mai. Prendilo come un complimento.",
             "Potrei sparire anche adesso, {name}. Preferisco restare.",
             "Di solito sto al buio, {name}. Tu mi fai venir voglia di una lampada.",
-            "'Compare al suo fianco' Ciao, {name}. Ti sono mancato?"
+            "'Compare al suo fianco' Ciao, {name}. Hai sentito la mia mancanza?"
           ],
           "admire": [
             "Dai tetti ho visto mille facce, {name}. La tua è quella che cercavo.",
@@ -5106,7 +5106,7 @@
             "Balla con me, {name}. Nell'angolo, dove le lampade non arrivano.",
             "Conosco un tetto con una bella vista, {name}. Lassù nessuno ci vedrà ballare.",
             "Un ballo, {name}. Non ti pesterò i piedi. Non faccio mai rumore.",
-            "Andiamo, {name}? Conduco io. Sono bravo a scivolare tra la folla senza farmi notare.",
+            "Andiamo, {name}? Conduco io. So scivolare tra la folla senza farmi notare.",
             "Da qui l'orchestra non ci vede, {name}. Balliamo lo stesso."
           ],
           "holdHands": [
@@ -5124,14 +5124,14 @@
             "Non ho mai portato fuori nessuno dalla porta principale, {name}. Per te ci provo."
           ],
           "confess": [
-            "Ti seguo da settimane, {name}. Non per sorvegliarti. Perché non riuscivo a smettere.",
+            "Ti seguo da settimane, {name}, perché non riuscivo a smettere.",
             "Mi nascondo da tutti, {name}. Da te non voglio nascondermi.",
             "Nessuno sa che sono qui, {name}. Vorrei che tu fossi l'eccezione, sempre.",
-            "Sono uscito dal buio per un solo motivo, {name}. Sei tu.",
+            "Ho lasciato il buio per un solo motivo, {name}. Sei tu.",
             "Custodisco tanti segreti, {name}. Questo è l'unico che voglio svelare: ti amo."
           ],
           "kiss": [
-            "Chiudi gli occhi, {name}. Sono bravissimo a essere inaspettato.",
+            "Chiudi gli occhi, {name}. L'imprevisto è la mia specialità.",
             "'Esce dall'ombra, proprio davanti a lei' Non muoverti, {name}.",
             "Prima che il lampione torni ad accendersi, {name}...",
             "Non guarda nessuno, {name}. Fidati, ho controllato.",
@@ -5147,24 +5147,24 @@
         },
         "performances": {
           "story": [
-            "Questa l'ho sentita attraverso un muro, {name}. Parla di {subject}. Avvicinati.",
-            "Luci basse, {name}. La storia di {subject} funziona solo al buio.",
-            "C'ero anch'io quando successe {subject}, {name}. Nessuno mi ha visto. Per questo so com'è andata davvero.",
-            "Sst. Un racconto su {subject}, {name}, come lo raccontano i ladri: sottovoce.",
-            "Tutti conoscono {subject}, {name}. Nessuno sa cosa sia successo dietro le quinte."
+            "Questa l'ho sentita attraverso un muro, {name}. Parla di «{subject}». Avvicinati.",
+            "Luci basse, {name}. La storia di «{subject}» funziona solo al buio.",
+            "C'ero anch'io quando successe «{subject}», {name}. Nessuno mi ha visto. Per questo so com'è andata davvero.",
+            "Sst. Un racconto su «{subject}», {name}, come lo raccontano i ladri: sottovoce.",
+            "Tutti conoscono «{subject}», {name}. Nessuno sa cosa sia successo dietro le quinte."
           ],
           "poem": [
-            "'Sottovoce' Una piccola poesia, {name}, su {subject}. Sussurrata, come si deve.",
-            "Versi su {subject}, {name}. Scritti su un tetto, aspettando che una finestra si spegnesse.",
-            "Anche le ombre hanno le loro poesie, {name}. Questa parla di {subject}.",
-            "Ascolta bene, {name}. {subject}, in otto versi silenziosi.",
-            "Ho trovato questa poesia su {subject} in un cassetto che non avrei dovuto aprire, {name}."
+            "'Sottovoce' Una piccola poesia, {name}, su «{subject}». Sussurrata, come si deve.",
+            "Versi su «{subject}», {name}. Scritti su un tetto, aspettando che una finestra si spegnesse.",
+            "Anche le ombre hanno le loro poesie, {name}. Questa parla di «{subject}».",
+            "Ascolta bene, {name}. «{subject}», in otto versi silenziosi.",
+            "Ho trovato questa poesia su «{subject}» in un cassetto che non avrei dovuto aprire, {name}."
           ]
         },
         "jokes": [
           "Quanti ladri servono per cambiare una lampadina? Nessuno. Preferiamo il buio.",
           "Il medico dice che dovrei uscire di più. Esco tutte le notti. È lui che non mi vede mai.",
-          "Anni fa mi sono iscritto a un circolo di nascondino. Mi stanno ancora cercando.",
+          "Anni fa ho preso la tessera di un circolo di nascondino. Mi stanno ancora cercando.",
           "Perché chi cammina nell'ombra non paga mai all'osteria? Nessuno l'ha visto ordinare.",
           "Un mago, un cavaliere e io entriamo in una taverna. Se ne accorgono solo di due."
         ]
@@ -5175,7 +5175,7 @@
             "good": [
               "Ah! Da dove sei... oh. Grazie, credo.",
               "Belle parole da qualcuno che non ho sentito arrivare. Le accetto.",
-              "Sei strisciato fin qui solo per dirmi questo? Carino, in modo inquietante.",
+              "Hai strisciato fin qui solo per dirmi questo? Carino, in modo inquietante.",
               "Lodi da un'ombra. Come essere nominato cavaliere da un fantasma.",
               "Grazie. Ora potresti metterti dove ti vedo?"
             ],
@@ -5208,7 +5208,7 @@
               "Dici davvero? Devi avermi osservato a lungo... aspetta, l'hai fatto?",
               "Va bene. Se ci crede uno che passa sotto il naso delle guardie, ce la posso fare.",
               "Grazie. Proverò a essere inarrestabile quanto tu sei invisibile.",
-              "Ma da dove sei sbucato? ...Comunque grazie, ne avevo bisogno.",
+              "Ma da dove spunti? ...Comunque grazie, ne avevo bisogno.",
               "Un incoraggiamento dall'ombra. Stranamente funziona."
             ],
             "bad": [
@@ -5223,7 +5223,7 @@
             "good": [
               "Ma smettila. E smettila di comparire in silenzio. Anzi, la prima cosa continuala.",
               "Lusinghe da un fantasma. Mia nonna sarebbe svenuta.",
-              "Hai notato tutto questo dall'ombra? Sono commosso.",
+              "Hai notato tutto questo dall'ombra? Sono {g:commosso|commossa|commosso}.",
               "Ah! Ti infili qui e mi lisci il pelo. Felpato come i tuoi passi.",
               "Nessuno mi vede mai. Bello sapere che un cappuccio sì."
             ],
@@ -5240,8 +5240,8 @@
               "Prego. Ma ti ho aiutato davvero? Non ti ho mai visto.",
               "Non serve. Solo... la prossima volta schiarisciti la voce prima di ringraziare.",
               "Quando vuoi. Sei la persona riconoscente più silenziosa che conosca.",
-              "Ah! Mi hai spaventato. Ma prego.",
-              "Figurati. E io farò finta di niente su da dove sei arrivato."
+              "Ah! Mi hai {g:spaventato|spaventata|spaventato}. Ma prego.",
+              "Figurati. E io farò finta di niente su da dove spunti."
             ],
             "bad": [
               "Per cosa? Non ricordo di aver aiutato nessuno col cappuccio.",
@@ -5289,12 +5289,12 @@
               "Ah, ti piacerà una notte senza luna come questa. Scommetto che la pioggia non ti trova.",
               "Nuvoloso. Ti sentirai a casa.",
               "Un po' buio, eh? Immagino che a te piaccia così.",
-              "Mi hai spaventato, ma sì, si fa freddo. Tempo da cappucci."
+              "Mi hai {g:spaventato|spaventata|spaventato}, ma sì, si fa freddo. Tempo da cappucci."
             ],
             "bad": [
               "Parlare del tempo dall'ombra. Normalissimo.",
               "Sta arrivando la pioggia. La userai per sgattaiolare in giro, conosco il tipo.",
-              "Delle nuvole non m'importa. M'importa da dove sei sbucato.",
+              "Delle nuvole non m'importa. M'importa da dove spunti.",
               "Mettiti in un punto al sole, poi parliamo del tempo.",
               "Strano sentir parlare di nebbia da uno che praticamente è nebbia."
             ]
@@ -5324,9 +5324,9 @@
               "Ok, hai vinto. Smettila di ghignare sotto quel cappuccio, lo sento."
             ],
             "bad": [
-              "Prendimi pure in giro. Sembri uno che si veste in una carbonaia.",
+              "Prendimi pure in giro. Hai l'aria di chi si veste in una carbonaia.",
               "Spiritoso, detto da uno che salta per la sua stessa eco.",
-              "Che risata, per uno che deve nascondersi per sentirsi al sicuro.",
+              "Che risata, per chi deve nascondersi per sentirsi al sicuro.",
               "Dai, ridacchia. Poi torna nel tuo vicolo.",
               "Ti prenderei in giro anch'io, ma continuo a perderti nell'ombra."
             ]
@@ -5336,7 +5336,7 @@
               "Noti ogni dettaglio, eh? Va bene. Lo sistemo.",
               "Mh. Uno che si muove così di sciatteria se ne intende.",
               "...Mi hai visto sbagliare. Ma certo.",
-              "Ricevuto, silenzioso. Starò più attento.",
+              "Ricevuto, ombra. Starò più {g:attento|attenta|attento}.",
               "Se lo dice uno che nessuno sente mai, allora è davvero goffo."
             ],
             "bad": [
@@ -5390,7 +5390,7 @@
               "Continua a guardare. Ma fammi vedere che guardi."
             ],
             "bad": [
-              "Quindi mi osservavi. Non è ammirazione, è pedinamento.",
+              "Quindi mi osservavi. Si chiama pedinamento.",
               "Ammirarmi dall'ombra? No. Mette i brividi.",
               "Preferisco essere ammirato da qualcuno con una faccia visibile.",
               "Da quanto mi ammiri da quel portone?",
@@ -5407,7 +5407,7 @@
             ],
             "bad": [
               "Come è finita nel mio cassetto chiuso a chiave? Chiamo il fabbro.",
-              "Una lettera comparsa sul comodino. Non è romanticismo, è effrazione.",
+              "Una lettera comparsa sul comodino. Si chiama effrazione.",
               "L'ho trovata in tasca e per poco non urlavo.",
               "La prossima volta usa la posta. Come una persona normale.",
               "Lettera d'amore o richiesta di riscatto? Sinceramente non saprei."
@@ -5425,7 +5425,7 @@
               "Col cappuccio non ti sento. Era una canzone?",
               "Cantare sotto la mia finestra a mezzanotte? Pensavo fosse un ladro che canticchiava.",
               "Troppo piano. Le serenate si devono sentire, sai.",
-              "Ti sei nascosto nella siepe per cantare? Esci dalla siepe.",
+              "Ti nascondi nella siepe per cantare? Esci dalla siepe.",
               "Bella voce. Peccato che non capisca da dove arrivi."
             ]
           },
@@ -5474,15 +5474,15 @@
               "Non esco con gente che ho visto solo con la coda dell'occhio.",
               "E dove andremmo, nelle fogne?",
               "No. Mi serve qualcuno che usi le porte.",
-              "Mi daresti buca e non saprei nemmeno se sei venuto o no."
+              "Mi daresti buca e non saprei nemmeno se c'eri o no."
             ]
           },
           "confess": {
             "good": [
-              "Sei stato nella mia ombra per tutto questo tempo, vero? ...Ci speravo.",
+              "Mi hai seguito come un'ombra per tutto questo tempo, vero? ...Ci speravo.",
               "Fra tutti i segreti che custodisci, hai detto a me proprio questo.",
               "Sentivo sempre qualcuno che vegliava su di me. Eri tu. Oh.",
-              "Sei uscito dal buio per dirmelo. Ci vuole coraggio.",
+              "Hai lasciato il buio per dirmelo. Ci vuole coraggio.",
               "Ti amo anch'io, fantasma. Resta dove posso vederti."
             ],
             "bad": [
@@ -5529,7 +5529,7 @@
         "performances": {
           "story": {
             "good": [
-              "Una storia su {subject}, raccontata in un sussurro. Ho trattenuto il fiato tutto il tempo.",
+              "Una storia su «{subject}», raccontata in un sussurro. Ho trattenuto il fiato tutto il tempo.",
               "La racconti come se c'eri, invisibile in un angolo. C'eri?",
               "Avvincente. Continuavo a guardarmi alle spalle.",
               "Così piano che ho dovuto avvicinarmi, e non volevo che finisse.",
@@ -5537,15 +5537,15 @@
             ],
             "bad": [
               "Col cappuccio ne ho sentita metà.",
-              "Una storia su {subject}? L'hai borbottata al muro.",
-              "Hai lasciato cadere il discorso e sei sgusciato via prima del finale. Tipico.",
+              "Una storia su «{subject}»? L'hai borbottata al muro.",
+              "Hai lasciato cadere il discorso e te la sei svignata prima del finale. Tipico.",
               "Troppo sottovoce. Ho perso il filo da qualche parte nell'ombra.",
               "Sembra una cosa sentita dal buco della serratura."
             ]
           },
           "poem": {
             "good": [
-              "Una poesia su {subject}, appena sospirata. L'ho sentita più dentro che nelle orecchie.",
+              "Una poesia su «{subject}», appena sospirata. L'ho sentita più dentro che nelle orecchie.",
               "Era come la luna sopra i tetti. Silenziosa e bellissima.",
               "L'hai letta come un segreto. Non lo dirò a nessuno.",
               "Sommessa e tagliente. Come una lama che non vedi.",
@@ -5554,9 +5554,9 @@
             "bad": [
               "Era una poesia o borbottavi al buio?",
               "Non ho capito una parola. Alza la voce, fantasma.",
-              "Una poesia su {subject}, sussurrata da un cappuccio. Inquietante, non commovente.",
-              "Ogni verso si spegneva, come se fossi pronto a scappare.",
-              "Bella, ne sono certo. Chiederò al muro, era più vicino."
+              "Una poesia su «{subject}», sussurrata da un cappuccio. Inquietante. Per niente commovente.",
+              "Ogni verso si spegneva, come se avessi già un piede fuori dalla porta.",
+              "Bella, ne sono {g:certo|certa|certo}. Chiederò al muro, era più vicino."
             ]
           }
         },
@@ -5579,7 +5579,7 @@
             "...Doveva far ridere? Col cappuccio non l'ho sentita.",
             "Silenzio. Adatto a te.",
             "Perfino i grilli se la sono svignata.",
-            "Quella era la battuta finale? Ci sei sgusciato oltre.",
+            "Quella era la battuta finale? L'hai fatta sparire.",
             "Niente. Quella battuta è sparita più in fretta di te."
           ]
         }
@@ -5590,7 +5590,7 @@
             "good": [
               "Abbassa la voce. ...Ma grazie. Di solito nessuno mi nota abbastanza a lungo da lodarmi.",
               "Mm. Belle parole. Le piego e le metto nella tasca interna.",
-              "Te ne sei accorto? Allora sono stato sciatto. Però... ogni tanto fa piacere essere visti.",
+              "Hai notato? Allora sono {g:stato sciatto|stata sciatta|stato sciatto}. Però... ogni tanto fa piacere essere visti.",
               "\"Un piccolo cenno da sotto il cappuccio.\" È tutto quello che avrai. Vale molto.",
               "Lodi da qualcuno che mi ha davvero notato. Cosa rara. Le accetto."
             ],
@@ -5631,7 +5631,7 @@
               "Facile per te. Non hai mai aspettato tre ore in uno scivolo del carbone.",
               "L'incoraggiamento non farà scricchiolare meno le assi del pavimento.",
               "Forza, evviva. Tieni i tuoi discorsi lontani dai miei nascondigli.",
-              "Mi muovo quando lo dicono le ombre, non quando lo dici tu."
+              "Mi muovo quando lo dicono le ombre."
             ]
           },
           "flatter": {
@@ -5659,7 +5659,7 @@
               "Mm. Non mi devi niente. O mi devi una porta sul retro, un giorno."
             ],
             "bad": [
-              "Grazie di cosa? Io non sono mai stato qui.",
+              "Grazie di cosa? Io non sono mai {g:stato|stata|stato} qui.",
               "Non ringraziarmi in mezzo alla strada. La gente si ricorda chi viene ringraziato.",
               "La gratitudine lascia tracce. Cancella le tue.",
               "\"Sparito prima che tu finisca la frase.\"",
@@ -5726,7 +5726,7 @@
               "Insulta qualcuno che domani riuscirai a trovare.",
               "\"Una risata sommessa alla tua sinistra. Non era alla tua destra?\"",
               "Parole. Ho sentito di peggio sussurrato attraverso i buchi delle serrature.",
-              "Fai pure. Nella tua memoria sono già sparito.",
+              "Fai pure. Nella tua memoria sono già {g:sparito|sparita|sparito}.",
               "Urla pure. Starai urlando contro un portone vuoto."
             ]
           },
@@ -5756,7 +5756,7 @@
             ],
             "bad": [
               "Critiche da uno che cammina con quegli scarponi? Ma per favore.",
-              "Un'ora fa non ti sei nemmeno accorto che ero dietro di te.",
+              "Un'ora fa non hai nemmeno notato che ero dietro di te.",
               "\"Non dice niente. Non dice niente per moltissimo tempo.\"",
               "Spiegami come sparire quando avrai imparato a farlo.",
               "Annotato, e ignorato. In silenzio."
@@ -5767,7 +5767,7 @@
               "...Va bene. Va bene. Me ne vado. Non mi rivedrai.",
               "\"Già arretra nell'ombra, palmi aperti.\"",
               "Non serve. So quando è il momento di essere altrove.",
-              "Capito. Io qui non ci sono mai stato, e me ne sto andando.",
+              "Capito. Io qui non ci sono mai {g:stato|stata|stato}, e me ne sto andando.",
               "D'accordo. Questa strada è tua. Io ne ho altre."
             ],
             "bad": [
@@ -5782,7 +5782,7 @@
         "romance": {
           "flirt": {
             "good": [
-              "Attento. Sono difficile da prendere. ...Anche se te la cavi.",
+              "Occhio. Prendermi è difficile. ...Anche se te la cavi.",
               "\"Un sorriso, appena visibile sotto il cappuccio.\" Mi hai notato. È già flirtare.",
               "Ridillo. Più piano. Come un segreto.",
               "Sei un guaio. Un guaio silenzioso. Il mio tipo preferito.",
@@ -5814,7 +5814,7 @@
           },
           "loveLetter": {
             "good": [
-              "Una lettera infilata nel mio cappotto senza che me ne accorgessi? ...Sono colpito. E conquistato.",
+              "Una lettera infilata nel mio cappotto senza che me ne accorgessi? ...Sono {g:colpito|colpita|colpito}. E {g:conquistato|conquistata|conquistato}.",
               "La leggerò alla luce di un solo fiammifero. Poi la brucerò. E ricorderò ogni parola.",
               "Nessuna firma? Furbo. Sapevo comunque che eri tu.",
               "\"La piega piccolissima e la nasconde in un posto segreto.\"",
@@ -5896,15 +5896,15 @@
             "good": [
               "...Lo sapevo. Sento tutto. Volevo solo che lo dicessi tu.",
               "\"Per una volta esce del tutto alla luce.\" Anch'io.",
-              "Hai trovato l'unico segreto che non sono riuscito a rubare. Provo lo stesso.",
+              "Hai trovato l'unico segreto che non sono {g:riuscito|riuscita|riuscito} a rubare. Provo lo stesso.",
               "Shh. Ridillo ancora, piano. Lo terrò nascosto per sempre.",
               "Ti seguo da settimane. ...Detta così suona male. Voglio dire sì."
             ],
             "bad": [
               "I sentimenti rendono imprudenti. Io non posso essere imprudente.",
-              "Mi dispiace. Sono più bravo a sparire che a questo.",
+              "Mi dispiace. Sparire mi riesce meglio di questo.",
               "\"Ascolta ogni parola. Poi, con delicatezza, non c'è più.\"",
-              "Saresti innamorato di qualcuno che hai visto appena. Pensaci.",
+              "Parli d'amore per qualcuno che hai visto appena. Pensaci.",
               "Non è un segreto che posso portare. Troppo pesante, troppo rumoroso."
             ]
           },
@@ -5944,23 +5944,23 @@
         "performances": {
           "story": {
             "good": [
-              "{subject}... adoro le storie raccontate a bassa voce. Continua.",
+              "«{subject}»... adoro le storie raccontate a bassa voce. Continua.",
               "\"Ascolta dall'ombra dell'arco, del tutto immobile.\" Bella storia.",
-              "La parte di {subject} in cui sgattaiolano oltre le guardie? Precisa. Fidati.",
+              "La parte di «{subject}» in cui sgattaiolano oltre le guardie? Precisa. Fidati.",
               "Mm. La racconti come un sussurro. È il modo giusto.",
               "Questa me la ricorderò. Nessuno mi ha visto ascoltare, ed è ancora meglio."
             ],
             "bad": [
-              "Troppo forte. Una storia su {subject} va raccontata al buio.",
+              "Troppo forte. Una storia su «{subject}» va raccontata al buio.",
               "L'eroe è entrato dalla porta principale? Dilettante.",
               "\"Verso il secondo atto, chi ascoltava non c'è più.\"",
-              "Nessuno potrebbe nascondersi così in {subject}. Lo saprei.",
+              "Nessuno potrebbe nascondersi così in «{subject}». Lo saprei.",
               "Hai svelato tutto alla prima riga. Zero mistero."
             ]
           },
           "poem": {
             "good": [
-              "Una poesia su {subject}... silenziosa, come passi sul velluto. Bellissima.",
+              "Una poesia su «{subject}»... silenziosa, come passi sul velluto. Bellissima.",
               "\"Un respiro lieve, quasi un sospiro.\" Rileggila. Più piano.",
               "Versi brevi, tanto silenzio in mezzo. È così che la scriverei io.",
               "Bella. La piego nella mente e la nascondo.",
@@ -5968,7 +5968,7 @@
             ],
             "bad": [
               "Recitata come un banditore. Le poesie vanno mormorate.",
-              "{subject}? Ogni verso risuonava come una chiave caduta per terra.",
+              "«{subject}»? Ogni verso risuonava come una chiave caduta per terra.",
               "\"Se la svigna tra la seconda e la terza strofa.\"",
               "Troppe rime. La rima è prevedibile. Chi è prevedibile si fa beccare.",
               "Belle parole, ma le hai dette a tutta la via."
@@ -5992,7 +5992,7 @@
           ],
           "flop": [
             "...Io qui non ci sono. E nemmeno la tua battuta.",
-            "\"Silenzio. Di quello in cui sono bravo.\"",
+            "\"Silenzio. La mia specialità.\"",
             "Quella battuta ha lasciato meno tracce di me.",
             "Era una battuta? Mi è sgusciata via del tutto.",
             "Mh. Ho sentito risate più forti in un corridoio vuoto."
@@ -6005,7 +6005,7 @@
         "interactions": {
           "praise": [
             "Bel lavoro, {name}. Non lo dico spesso. Di solito chi parla con me non resta in piedi.",
-            "\"Ti posa un guanto chiodato sulla spalla, con delicatezza.\" Bravo. Davvero.",
+            "\"Ti posa un guanto chiodato sulla spalla, con delicatezza.\" {g:Bravo|Brava|Bravo}. Davvero.",
             "Te la sei cavata bene, {name}. Ho schiacciato gente che ha fatto di peggio con più mezzi.",
             "Rispetto, {name}. E il mio rispetto lo tengo dove tengo l'ascia: a portata di mano.",
             "Lavoro solido. Abbastanza da {volerti al mio fianco|non volerti contro}."
@@ -6027,7 +6027,7 @@
           "flatter": [
             "{name}, sei l'unico in questa piazza che non spezzerei per primo. Prendilo come un gran complimento.",
             "Sveglio e senza paura. Se ti serve un muro di ferro alle spalle, il muro sono io.",
-            "Sei sprecato per questa strada, {name}. Dimmi un nome e lo faccio diventare più piccolo.",
+            "Sei {g:sprecato|sprecata|sprecato} per questa strada, {name}. Dimmi un nome e lo faccio diventare più piccolo.",
             "Sinceramente? Sei il più pericoloso qui. Dopo di me. Molto dopo di me.",
             "\"Rinfodera la mannaia, piano.\" Per te metto via la lama. Non lo faccio per nessuno."
           ],
@@ -6036,17 +6036,17 @@
             "Mi hai aiutato. Adesso sei sotto la mia protezione. Chi ti tocca, risponde alle punte.",
             "\"Un cenno pesante, l'armatura che stride.\" Ti devo un favore. I debiti li pago sempre. Per intero.",
             "Grazie. La prossima volta che qualcuno ti dà fastidio, fai il mio nome. A voce alta.",
-            "Ti sono grato, {name}. Davvero. Di solito i favori me li fanno per paura."
+            "Ti sono riconoscente, {name}. Davvero. Di solito i favori me li fanno per paura."
           ],
           "smalltalk": [
             "Giornata tranquilla, {name}. Nessuno ha provato ad accoltellarmi da colazione. Quasi mi manca.",
-            "Stamattina mi sono fatto lucidare l'armatura. Il fabbro non mi guardava negli occhi. Che caro.",
+            "Stamattina ho fatto lucidare l'armatura. Il fabbro non mi guardava negli occhi. Che caro.",
             "Allora, {name}, che lavoro fai? Io per lo più sto sulle porte finché la gente non se ne va.",
             "\"Si appoggia a un maglio da guerra grosso come un lampione.\" La famiglia? Tutti interi?",
             "Anche oggi l'autista dell'autobus non mi ha fatto pagare. Senza che chiedessi. Che gente generosa."
           ],
           "gossip": [
-            "Pare che il fornaio desse il resto sbagliato. Sono andato a chiedere. Adesso è generosissimo.",
+            "Pare che il fornaio desse il resto sbagliato. Ho chiesto spiegazioni. Adesso è generosissimo.",
             "Dicono che qualcuno racconti storie su di me, {name}. Non sai chi? No? Meglio così.",
             "I fratelli Vasari devono soldi a mezza Bologna. Dovevano. Hanno saldato. Chiedimi come.",
             "Quel tizio rumoroso del bar si è trasferito a Modena. In una notte. Strano tempismo.",
@@ -6084,7 +6084,7 @@
             "\"Sfodera una lama lunga quanto la tua gamba.\" Ripetilo, {name}. Lentamente.",
             "Vattene adesso e ti tieni tutti i denti. È la mia offerta migliore.",
             "So dove dormi, {name}. So dove dormono tutti.",
-            "Un'altra parola e servirà uno straccio, non un medico.",
+            "Un'altra parola e manderanno uno straccio.",
             "\"Gli spallacci a teschio tintinnano.\" Questi erano di gente che discuteva con me."
           ]
         },
@@ -6093,11 +6093,11 @@
             "{name}, sei la prima cosa da anni che mi fa battere il cuore più di una rissa.",
             "\"Alza la visiera.\" Non la tolgo per chiunque. Guarda pure quanto vuoi.",
             "Potrei spezzare chiunque in questa piazza. Preferisco accompagnarti a casa, {name}.",
-            "Non hai paura di me. O sei molto stupido o molto attraente. Forse tutte e due.",
+            "Non hai paura di me. O sei molto {g:stupido|stupida|stupido} o molto attraente. Forse tutte e due.",
             "Ho caricato schiere di cavalleria con meno fegato di quello che serve per parlarti."
           ],
           "admire": [
-            "Hai un fuoco dentro, {name}. Io il fuoco lo conosco. Ne sono uscito più di una volta.",
+            "Hai un fuoco dentro, {name}. Io il fuoco lo conosco. Ci ho camminato attraverso più di una volta.",
             "\"Smette di lucidare l'ascia per fissarti.\" Scusa. Per te vale la pena posare la lama.",
             "Mascella decisa, sguardo fermo. Staresti bene su un bastione, {name}.",
             "Ti muovi come chi non ha mai avuto paura. Mi piacerebbe che restasse così.",
@@ -6126,7 +6126,7 @@
           ],
           "holdHands": [
             "\"Si sfila piano un guanto chiodato.\" Ecco. La mano vera. Stringila.",
-            "La tua mano è così piccola nella mia, {name}. Tranquillo. So esattamente quanto stringere.",
+            "La tua mano è così piccola nella mia, {name}. {g:Tranquillo|Tranquilla|Tranquillo}. So esattamente quanto stringere.",
             "Questa mano ha sfondato porte. Adesso vuole solo tenere la tua.",
             "Prendila. Nessuno ci darà fastidio. A me nessuno dà mai fastidio.",
             "Attento alle punte sulle nocche. Per te le giro verso l'interno."
@@ -6140,16 +6140,16 @@
           ],
           "confess": [
             "{name}. Ho affrontato troll, stregoni, un intero ufficio delle tasse. Niente mi spaventa come dirtelo. Ti amo.",
-            "\"Si inginocchia, l'armatura che colpisce il suolo come un tuono.\" Sono tuo. Ogni singola punta.",
-            "Sono venuto al mondo menando colpi. Poi ho incontrato te e ho dimenticato come si stringe un pugno.",
+            "\"Si inginocchia, l'armatura che colpisce il suolo come un tuono.\" Ti appartengo. Ogni singola punta.",
+            "Ho menato colpi dal primo giorno. Poi ho incontrato te e ho dimenticato come si stringe un pugno.",
             "Tutti hanno paura di me. Io ho paura di una cosa sola: che tu dica di no.",
-            "Ho il cuore sotto tre dita d'acciaio, {name}. Eppure in qualche modo ci sei arrivato."
+            "Ho il cuore sotto tre dita d'acciaio, {name}. Eppure in qualche modo ci sei {g:arrivato|arrivata|arrivato}."
           ],
           "kiss": [
             "\"Si toglie l'elmo cornuto e si china, molto lentamente.\"",
             "Chiudi gli occhi, {name}. Così non vedi i teschi.",
             "\"Lascia cadere il maglio con un fragore e ti tira a sé.\"",
-            "Non sono mai stato delicato in vita mia. Lasciami provare adesso.",
+            "La delicatezza non è mai stata il mio forte. Lasciami provare adesso.",
             "Vieni qui, {name}. Occhio alle punte."
           ],
           "propose": [
@@ -6162,18 +6162,18 @@
         },
         "performances": {
           "story": [
-            "Siediti, {name}. Questa è la storia di {subject}. Finisce con un sacco di scudi rotti.",
-            "\"Pianta uno spadone a terra come un leggio.\" {subject}. Ascolta e non interrompere.",
-            "{subject}. L'ho sentita da un tizio che tenevo sospeso da un ponte. L'ha raccontata molto in fretta.",
-            "Dicono che {subject} sia una storia per bambini. Non come la racconto io. Non con tutto questo sangue.",
-            "Ti racconto di {subject}, {name}. Tutto vero, e chi dice il contrario fa la conoscenza della mia ascia."
+            "Siediti, {name}. Questa è la storia di «{subject}». Finisce con un sacco di scudi rotti.",
+            "\"Pianta uno spadone a terra come un leggio.\" «{subject}». Ascolta e non interrompere.",
+            "«{subject}». L'ho sentita da un tizio che tenevo sospeso da un ponte. L'ha raccontata molto in fretta.",
+            "Dicono che «{subject}» sia una storia per bambini. Non come la racconto io. Non con tutto questo sangue.",
+            "Ti racconto di «{subject}», {name}. Tutto vero, e chi dice il contrario fa la conoscenza della mia ascia."
           ],
           "poem": [
-            "\"Si schiarisce la gola, ghiaia che rotola.\" Una poesia. Su {subject}. Ferro fa rima con ferro, è la regola.",
-            "{subject}... O acciaio e rovina, teschio e corona, io cammino e la città si prostra e perdona.",
-            "Questa su {subject} l'ho scritta tra due duelli. Perdona la metrica, il secondo duello è andato per le lunghe.",
-            "{subject}. Poesia breve. Come la maggior parte di quelli che l'hanno interrotta.",
-            "Per te, {name}, versi su {subject}. Letti con una voce che fa tremare i vetri."
+            "\"Si schiarisce la gola, ghiaia che rotola.\" Una poesia. Su «{subject}». Ferro fa rima con ferro, è la regola.",
+            "«{subject}»... O acciaio e rovina, teschio e corona, io cammino e la città si prostra e perdona.",
+            "Questa su «{subject}» l'ho scritta tra due duelli. Perdona la metrica, il secondo duello è andato per le lunghe.",
+            "«{subject}». Poesia breve. Come la maggior parte di quelli che l'hanno interrotta.",
+            "Per te, {name}, versi su «{subject}». Letti con una voce che fa tremare i vetri."
           ]
         },
         "jokes": [
@@ -6190,7 +6190,7 @@
             "good": [
               "Lodi da qualcuno con addosso tutti quei teschi... le accetto, grazie.",
               "Oh. Oh, meno male. Pensavo stesse per uscire l'ascia.",
-              "Detto da te? Stanotte dormirò più tranquillo sapendo che mi approvi.",
+              "Detto da te? Stanotte dormirò più {g:tranquillo|tranquilla|tranquillo} sapendo che mi approvi.",
               "Grazie! Non cambiare idea, per favore, i denti mi piacciono dove sono.",
               "Borchie sulle nocche e parole gentili in bocca. Strano mix. Però carino."
             ],
@@ -6205,8 +6205,8 @@
           "compliment": {
             "good": [
               "Un complimento, da... quello. Lo racconto a mia madre.",
-              "Grazie. Ammetto che prima ho sussultato, poi sono arrossito.",
-              "Hai notato il mio cappotto? Io ero troppo occupato a fissare i tuoi spallacci a teschio.",
+              "Grazie. Ammetto che prima ho sussultato, poi sono {g:arrossito|arrossita|arrossito}.",
+              "Hai notato il mio cappotto? Io ero troppo {g:occupato|occupata|occupato} a fissare i tuoi spallacci a teschio.",
               "Però. Il tizio spaventoso pensa che io stia bene. La giornata migliora.",
               "{Grazie|Ti ringrazio}. Ripetilo più piano, così le catene smettono di sferragliare."
             ],
@@ -6237,7 +6237,7 @@
           "flatter": {
             "good": [
               "Adulazioni da uno in armatura di teschi. Questo momento me lo incornicio.",
-              "Smettila, così mi dimentico di essere terrorizzato.",
+              "Smettila, così mi dimentico di essere {g:terrorizzato|terrorizzata|terrorizzato}.",
               "Ah! Nessuno osa adularti, quindi mi godo il fatto che tu aduli me.",
               "Accetto. Dire di no a quello spadone mi sembrava scortese, comunque.",
               "Che dolce. Terrificante, ma dolce."
@@ -6252,7 +6252,7 @@
           },
           "thank": {
             "good": [
-              "Figurati! Davvero, quando vuoi, ricordati che sono stato d'aiuto.",
+              "Figurati! Davvero, quando vuoi, ricordati che ti ho dato una mano.",
               "Un grazie da te vale più di una guardia del corpo.",
               "Felice di aiutare. E felice di essere ancora in piedi.",
               "Nessun disturbo. Di' ai tuoi amici che sto dalla vostra parte.",
@@ -6271,7 +6271,7 @@
               "Ah, sei più chiacchierone di quanto facessero pensare le tue punte.",
               "Chi l'avrebbe detto, la fortezza ambulante ha opinioni sugli orari dell'autobus.",
               "Bello fare due chiacchiere. Hai notato che sono scappati tutti dalla piazza?",
-              "Ero pronto a darti il portafoglio, e invece parliamo di minestra.",
+              "Ero {g:pronto|pronta|pronto} a darti il portafoglio, e invece parliamo di minestra.",
               "Sai, sotto tutta quella piastra sei piuttosto normale. In senso buono."
             ],
             "bad": [
@@ -6304,19 +6304,19 @@
               "Ah, con questo temporale saresti un ottimo parafulmine.",
               "La pioggia che gocciola dalle punte così. Quasi poetico.",
               "Mite, sì. Mite rispetto allo starti vicino.",
-              "La tua armatura arrugginisce? Scusa, ora sono curioso davvero."
+              "La tua armatura arrugginisce? Scusa, ora sono {g:curioso|curiosa|curioso} davvero."
             ],
             "bad": [
               "Le previsioni intorno a te danno sempre probabilità di sangue.",
               "Potresti parlare del tempo senza appoggiare la mano sull'ascia?",
-              "Fa freddo, sì. Più freddo da quando ti sei avvicinato.",
+              "Fa freddo, sì. Più freddo da quando sei qui vicino.",
               "Il tempo? Sono troppo occupato a tenere d'occhio il tuo martello.",
               "Il cielo è a posto. Sei tu che sembri una tempesta."
             ]
           },
           "insult": {
             "good": [
-              "Va bene, va bene! Sono orrendo, come dici tu, basta che quella cosa resti nel fodero.",
+              "Va bene, va bene! Sono {g:orrendo|orrenda|orrendo}, come dici tu, basta che quella cosa resti nel fodero.",
               "...Detto da uno della tua stazza, questa ha fatto male davvero.",
               "Ci rifletterò a casa. Lontano da qui.",
               "D'accordo. Con i teschi non discuto.",
@@ -6359,7 +6359,7 @@
               "Critica il mio lavoro quando avrai posato la mannaia.",
               "Vuoi sapere cosa non va? Va bene. La tua armatura è abbinata malissimo.",
               "Non prendo appunti da un'armeria ambulante.",
-              "Opinioni appuntite, ma per niente acute."
+              "Opinioni appuntite. Ottuse sotto."
             ]
           },
           "threaten": {
@@ -6383,10 +6383,10 @@
           "flirt": {
             "good": [
               "Pericoloso e pure civettuolo. Mia madre mi aveva messo in guardia da quelli come te.",
-              "Uh. Sono terrorizzato, eppure in qualche modo mi piace.",
+              "Uh. Sono {g:terrorizzato|terrorizzata|terrorizzato}, eppure in qualche modo mi piace.",
               "Le punte si tolgono per un appuntamento, o...?",
               "Mi fai battere il cuore. Per metà è paura, ma comunque.",
-              "Attento, a me piacciono quelli che sembrano guai in armatura completa."
+              "Occhio, a me piace chi sembra un guaio in armatura completa."
             ],
             "bad": [
               "Difficile ricambiare mentre sto pianificando una via di fuga.",
@@ -6447,7 +6447,7 @@
           "askDance": {
             "good": [
               "Ballare con la cosa più spaventosa della sala? Almeno nessuno si intrometterà.",
-              "Sì. Attento alle punte nelle giravolte.",
+              "Sì. Occhio alle punte nelle giravolte.",
               "Fai strada. La pista si è già sgombrata da sola per te.",
               "Volentieri. Cerca di non pestarmi con quegli stivali di ferro.",
               "Un ballo! L'orchestra non oserà smettere di suonare."
@@ -6463,9 +6463,9 @@
           "holdHands": {
             "good": [
               "Il tuo guanto è gelido, ma delicato. Chi l'avrebbe detto?",
-              "Non mi sono mai sentito così al sicuro. Adesso nessuno mi si avvicina.",
+              "Non mi sono mai {g:sentito|sentita|sentito} così al sicuro. Adesso nessuno mi si avvicina.",
               "Va bene. Mano nella mano con una macchina da guerra. Certo. Sì.",
-              "Attento alle borchie sulle nocche... ecco, così. Che bello.",
+              "Occhio alle borchie sulle nocche... ecco, così. Che bello.",
               "In questa città nessuno mi darà più fastidio, vero?"
             ],
             "bad": [
@@ -6486,7 +6486,7 @@
             ],
             "bad": [
               "Dove, sul campo di battaglia? No, grazie.",
-              "Sono impegnato. Per il resto dell'anno. Mi dispiace.",
+              "Sono {g:impegnato|impegnata|impegnato}. Per il resto dell'anno. Mi dispiace.",
               "Ogni trattoria di Bologna si svuoterebbe appena entri.",
               "Un appuntamento con te sembra una presa d'ostaggi a lume di candela.",
               "Richiedimelo senza il martello da guerra e forse."
@@ -6502,7 +6502,7 @@
             ],
             "bad": [
               "È... tanto sentimento da tanta armatura. Ho bisogno di spazio.",
-              "Sono lusingato, e ho anche paura che un no lo prenderesti male.",
+              "Sono {g:lusingato|lusingata|lusingato}, e ho anche paura che un no lo prenderesti male.",
               "Non arrabbiarti, ti prego. Davvero, davvero, non arrabbiarti.",
               "Non ci riesco. Continuo a pensare all'ascia.",
               "Restiamo amici. Amici lontani. Amici con un fiume in mezzo."
@@ -6510,7 +6510,7 @@
           },
           "kiss": {
             "good": [
-              "Mi aspettavo acciaio freddo. E invece sei caldo.",
+              "Mi aspettavo acciaio freddo. E invece è calore.",
               "Valeva il livido dell'elmo.",
               "Baciato da una leggenda del terrore. I miei amici non ci crederanno.",
               "Oh. L'hanno visto tutti, e nessuno oserà dire una parola.",
@@ -6535,7 +6535,7 @@
             "reject": [
               "Non faccio promesse a chi è in tenuta da battaglia.",
               "No. Non accetto niente sotto la minaccia di un'ascia.",
-              "Sembravano condizioni di resa, non una proposta.",
+              "Sembravano condizioni di resa.",
               "Richiedimelo senza armatura, magari.",
               "Non posso dire di sì mentre stringi quel pugno chiodato."
             ]
@@ -6544,7 +6544,7 @@
         "performances": {
           "story": {
             "good": [
-              "Una storia su {subject}, raccontata da chi ha chiaramente vissuto di peggio. Avvincente.",
+              "Una storia su «{subject}», raccontata da chi ha chiaramente vissuto di peggio. Avvincente.",
               "L'hai raccontata come un racconto di guerra. Trattenevo il fiato.",
               "Non avrei mai osato interromperti, ma tanto non ne avevo voglia.",
               "Il pezzo in cui hai sbattuto il pugno sul tavolo mi ha fatto saltare. Grandioso.",
@@ -6552,7 +6552,7 @@
             ],
             "bad": [
               "Ogni tua storia finisce con un conteggio dei cadaveri, vero?",
-              "Troppo sangue per una storia su {subject}.",
+              "Troppo sangue per una storia su «{subject}».",
               "Ho annuito tutto il tempo perché avevo paura di non farlo.",
               "L'hai raccontata come se mi stessi interrogando.",
               "Bella. Posso andare adesso? Senza che mi segui?"
@@ -6560,7 +6560,7 @@
           },
           "poem": {
             "good": [
-              "Una poesia su {subject} da sotto quell'elmo. Sono commosso davvero.",
+              "Una poesia, «{subject}», da sotto quell'elmo. Sono {g:commosso|commossa|commosso} davvero.",
               "Chi l'avrebbe detto che un'armeria ambulante avesse dei versi dentro?",
               "La tua voce ha fatto tremare i vetri, ma le parole erano tenere.",
               "Bellissima. Non dirò a nessuno che sai fare le rime, promesso.",
@@ -6570,17 +6570,17 @@
               "Quella poesia sembrava una lista di nemici.",
               "Dovevi proprio far rimare 'cuore' con 'squartatore'?",
               "Difficile godersi dei versi mentre stringi quella mazza.",
-              "Ogni strofa su {subject} suonava come una minaccia.",
-              "Ho applaudito. Non sono sicuro di aver avuto scelta."
+              "Ogni strofa su «{subject}» suonava come una minaccia.",
+              "Ho applaudito. Non so se avevo scelta."
             ]
           }
         },
         "jokes": {
           "landGood": [
             "Ah! Quello spaventoso è pure simpatico! Nessuno me l'aveva detto!",
-            "Ho riso così tanto che mi sono dimenticato dei teschi.",
+            "Ho riso così tanto che mi sono {g:dimenticato|dimenticata|dimenticato} dei teschi.",
             "Ok, questa mi ha preso. Il tuo elmo che sferragliava a tempo era il meglio.",
-            "Fantastica. E rido perché voglio, non per via dell'ascia.",
+            "Fantastica. E rido di mia spontanea volontà, ascia o non ascia.",
             "Ah! Raccontala di nuovo, tutta la piazza deve sentire la fortezza ambulante fare una battuta."
           ],
           "landGroan": [
@@ -6626,9 +6626,9 @@
               "Va bene. Puoi restare a portata di braccio. Per ora."
             ],
             "bad": [
-              "Attento. Chi ammira la lama di solito vuole prenderla in prestito.",
+              "Occhio. Chi ammira la lama di solito vuole prenderla in prestito.",
               "Fai un altro complimento al mio maglio e lui ne farà uno a te.",
-              "Quello non è un complimento, è un tic nervoso.",
+              "Quel complimento sembrava un tic nervoso.",
               "Hai guardato prima i teschi. Tutti guardano prima i teschi.",
               "Parole. Al ferro non importano le parole."
             ]
@@ -6668,7 +6668,7 @@
           "thank": {
             "good": [
               "Non c'è di che. Davvero. Ho una reputazione.",
-              "Prego. Non dire a nessuno che sono stato gentile.",
+              "Prego. Non dire a nessuno che sono {g:stato gentile|stata gentile|stato gentile}.",
               "Mh. Gratitudine. La appendo vicino ai teschi.",
               "Felice di aiutare. Di solito aiuto le cose a cadere.",
               "Va bene. Non mi devi niente. Solo il silenzio."
@@ -6757,7 +6757,7 @@
               "Continua a ridere. Anche i teschi alla mia cintura ridevano, una volta.",
               "Divertente. Sotto l'elmo sto sorridendo. Dovresti preoccuparti.",
               "Scherno da uno col golfino. Coraggioso.",
-              "Dai, ridacchia. Posso aspettare. Sono pazientissimo, per un mostro.",
+              "Dai, ridacchia. Posso aspettare. Sono {g:pazientissimo|pazientissima|pazientissimo}, per un mostro.",
               "Ridi finché le costole sono tutte intere."
             ]
           },
@@ -6782,7 +6782,7 @@
               "...Dici sul serio. Rispetto. Mi faccio da parte.",
               "Toh. Una minaccia che non trema. Va bene, questa la vinci tu.",
               "Calma. Calma. Siamo pericolosi tutti e due. Non serve dimostrarlo.",
-              "D'accordo, me ne vado. Non per paura. Perché potresti essere matto.",
+              "D'accordo, me ne vado, perché potresti essere matto.",
               "Eh. Hai lo sguardo giusto. La chiudiamo un altro giorno."
             ],
             "bad": [
@@ -6798,14 +6798,14 @@
           "flirt": {
             "good": [
               "Mh. Di solito la gente flirta con me dall'altro lato della strada.",
-              "Attento. Sono tutto spigoli. ...Ma continua.",
+              "Occhio. Ho spigoli dappertutto. ...Ma continua.",
               "Hai il coraggio di fare l'occhiolino a uno in armatura chiodata. Mi piace il coraggio.",
               "Sotto l'elmo sto arrossendo. Dillo a qualcuno e sei morto.",
               "Sei un guaio, tu. Bene. Io colleziono guai."
             ],
             "bad": [
               "Flirta con l'ascia. È più calda di me.",
-              "No. Sono impegnato a essere terrificante.",
+              "No. Ho da fare: devo essere terrificante.",
               "Indietro. Le punte sui gomiti non sono decorative.",
               "È così che il mio ultimo scudiero si è fatto la cicatrice.",
               "Io non faccio il dolce. Faccio assedi."
@@ -6862,7 +6862,7 @@
           "askDance": {
             "good": [
               "Ballare. Con cinquanta chili d'acciaio. ...Una canzone.",
-              "Guido io. Attento alle punte sulle ginocchia.",
+              "Guido io. Occhio alle punte sulle ginocchia.",
               "Ah. Va bene. Il pavimento potrebbe non reggere.",
               "Nessuno me lo chiedeva dalla guerra. Tieniti forte.",
               "Occhio ai piedi. Questi stivali hanno schiacciato armature."
@@ -6877,7 +6877,7 @@
           },
           "holdHands": {
             "good": [
-              "Attento. Il guanto d'arme ha gli spigoli. ...Va bene. Tieniti.",
+              "Occhio. Il guanto d'arme ha gli spigoli. ...Va bene. Tieniti.",
               "Questa mano ha sfondato un cancello. Per te è delicata.",
               "Mh. Calda. La mia di solito stringe un'elsa.",
               "Non stringere. Non so come non stringere di rimando.",
@@ -6888,7 +6888,7 @@
               "Afferra ancora il mio guanto e perdi le dita. Per le punte, intendo.",
               "Questa mano è per le asce.",
               "No. La mia presa rompe le cose a cui tengo.",
-              "Lascia. Piano. Bravo."
+              "Lascia. Piano. Così."
             ]
           },
           "askOut": {
@@ -6910,15 +6910,15 @@
           "confess": {
             "good": [
               "...Me lo diresti in faccia. A QUESTA faccia. Va bene. Anch'io.",
-              "Mh. L'armatura è spessa. Ci sei passato attraverso lo stesso.",
+              "Mh. L'armatura è spessa. L'hai attraversata lo stesso.",
               "Ripetilo. Non l'ho mai sentito senza una lama alla gola.",
               "Io i sentimenti non li faccio. ...Ma per te raderei al suolo una città.",
-              "Va bene. Adesso sei mio. Nessuno tocca ciò che è mio."
+              "Va bene. Adesso mi appartieni. Nessuno tocca ciò che è mio."
             ],
             "bad": [
               "I sentimenti fanno ammazzare la gente. Di solito da me.",
               "No. Anche il mio cuore è corazzato.",
-              "Ami l'elmo, non quello che c'è sotto. Fidati.",
+              "Ami l'elmo. Fidati.",
               "Vattene finché sono ancora gentile.",
               "Sono un'arma. Non ci si innamora di un'arma."
             ]
@@ -6927,7 +6927,7 @@
             "good": [
               "...Via l'elmo. Solo per stavolta.",
               "Coraggioso. Stupido e coraggioso. Ancora.",
-              "Hai baciato uno in armatura chiodata. Sei pericoloso anche tu.",
+              "Hai baciato qualcuno in armatura chiodata. Il pericolo ti piace.",
               "Mh. Nessuno arriva così vicino e resta in piedi. Resta.",
               "Non dirlo alla gilda. Credono che io sia di ferro fino al midollo."
             ],
@@ -6959,7 +6959,7 @@
         "performances": {
           "story": {
             "good": [
-              "{subject}. Bene. C'è parecchio sangue in quella.",
+              "«{subject}». Bene. C'è parecchio sangue in quella.",
               "Mh. Mi ha ricordato un assedio. In senso buono.",
               "Niente male. Io però il cattivo l'avrei ammazzato prima.",
               "Ho ascoltato fino alla fine senza prendere l'ascia. È un grande complimento.",
@@ -6967,7 +6967,7 @@
             ],
             "bad": [
               "Non è morto nessuno. Che storia è?",
-              "{subject}? Mi sono addormentato in armatura. Non è facile.",
+              "«{subject}»? Mi sono {g:addormentato|addormentata|addormentato} in armatura. Non è facile.",
               "Troppo lunga. Arriva alla guerra.",
               "L'eroe è un molle. Me lo sarei mangiato a colazione.",
               "Noiosa. Ho vissuto di peggio e di meglio."
@@ -6975,7 +6975,7 @@
           },
           "poem": {
             "good": [
-              "Una poesia su {subject}. ...La inciderò sullo scudo.",
+              "Una poesia su «{subject}». ...La inciderò sullo scudo.",
               "Mh. Questa ha colpito più forte di una mazza.",
               "Ancora. La parte sul buio.",
               "Io le poesie non le sopporto. Farò un'eccezione. Una volta.",
@@ -6984,7 +6984,7 @@
             "bad": [
               "Rime. Pfui. Dammi un grido di battaglia.",
               "Le poesie non fermano un'ascia.",
-              "{subject}? Molle come pane bagnato.",
+              "«{subject}»? Molle come pane bagnato.",
               "A quella poesia servono più teschi.",
               "Smetti prima che reciti la mia. Sono quasi tutte urla."
             ]
@@ -6995,7 +6995,7 @@
             "AH! L'elmo ha tremato. Vuol dire che fa ridere.",
             "Ah... questa è passata sotto le piastre.",
             "Eh. La racconto alla prossima esecuzione.",
-            "Ah! Sei spiritoso. Chi è spiritoso vive di più vicino a me.",
+            "Ah! Hai spirito. Chi ha spirito vive di più vicino a me.",
             "Ah. Bella. Hanno riso anche i teschi."
           ],
           "landGroan": [

@@ -114,13 +114,19 @@
     // round and to agree to travel with them, and that is the whole definition
     // of a person: it joins on one of the SENTIENT classes (every class tagged
     // <Sentient> in Classes.json), never on Feral or Ghost, whatever the table
-    // below happens to list for its archetype. A creature without the tag is
-    // exactly what it looks like and keeps its own roster.
+    // below happens to list for its archetype.
     //
-    // The pool is narrowed in three steps, each falling through to the next
-    // when it would leave nothing to pick from, so a talking dragon or ghost
-    // (whose table entry is a creature class and nothing else) still ends up
-    // with a trade rather than with no class at all:
+    // A creature without the tag is the mirror image: it never understood a
+    // word, it was tamed, and it joins on one of the NON-SENTIENT classes its
+    // archetype supports (Archetypes.json `creatureClasses`), never on a trade
+    // the table below lists for a talking dwarf or demon. Its own anatomy key
+    // is asked first, then the archetype, then the table's creature classes,
+    // then the whole creature roster.
+    //
+    // The sentient pool is narrowed in three steps, each falling through to
+    // the next when it would leave nothing to pick from, so a talking dragon or
+    // ghost (whose table entry is a creature class and nothing else) still ends
+    // up with a trade rather than with no class at all:
     //
     //   1. the archetype's own table entry, minus its creature classes
     //   2. the civilised roster its anatomy archetype supports
@@ -138,9 +144,23 @@
         const acKey = archetype && Object.keys(archetypeClasses)
             .find(k => k.toLowerCase() === String(archetype).toLowerCase());
         const table = (acKey ? archetypeClasses[acKey] : archetypeClasses.Humanoid) || [];
-        if (!hasTalk) return table;
-
         const CC = window.CreatureClasses;
+        if (!hasTalk) {
+            if (CC && CC.creatureFor) {
+                for (const key of [anatomyKey, archetype]) {
+                    const roster = key ? CC.creatureFor(key) : [];
+                    if (roster && roster.length) return roster;
+                }
+            }
+            const creatureOnly = table.filter(isCreatureClassId);
+            if (creatureOnly.length) return creatureOnly;
+            if (CC && CC.creatureRoster) {
+                const all = CC.creatureRoster();
+                if (all && all.length) return all;
+            }
+            return table;
+        }
+
         const sentientOnly = table.filter(id => !isCreatureClassId(id));
         if (sentientOnly.length) return sentientOnly;
 
@@ -616,6 +636,10 @@
     Scene_Battle.prototype.onEnemyOk = function () {
         if (this._talkSelecting) {
             this._talkSelecting = false;
+            // The picker borrowed the command window as its target list
+            // (BattleSystemEnhanchedCommands, startEnemySelection); the talk
+            // rows and the command rows after them are its own again.
+            if (this._actorCommandWindow) this._actorCommandWindow._targetSession = null;
             const enemy = this._enemyWindow ? this._enemyWindow.enemy() : null;
             if (this._enemyWindow) { this._enemyWindow.hide(); this._enemyWindow.deactivate(); }
             this._talkEnemyRef = enemy || null;
@@ -633,6 +657,17 @@
             if (this._talkInterpreter && this._talkInterpreter._waitMode === 'talk') {
                 this._talkInterpreter.setWaitMode('');
                 this._talkInterpreter = null;
+            }
+            // Backing out of the picker lands on the command list, drawn as
+            // commands again rather than as the target rows it was showing.
+            if (this._enemyWindow) { this._enemyWindow.hide(); this._enemyWindow.deactivate(); }
+            const cmdWin = this._actorCommandWindow;
+            if (cmdWin) {
+                cmdWin._targetSession = null;
+                cmdWin.show();
+                cmdWin.refresh();
+                if (cmdWin.findSymbol && cmdWin.findSymbol("talk") >= 0) cmdWin.selectSymbol("talk");
+                cmdWin.activate();
             }
             return;
         }
@@ -712,7 +747,7 @@
         const edge = Number(psiEdge) || 0;
         return window.Dice3D.rollPercentage(chance - edge * PSI_EDGE_POINTS, {
             actionName,
-            statName: 'PSI',  // i18n-ignore  stat label, as Dice3D prints it
+            statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(7) : '',
             modifier: edge,
             force3D: true
         });
@@ -751,6 +786,16 @@
     function getRecruitLabel(enemy) {
         const hasTalk = enemy && enemy.enemy().note.includes('<Talk>');
         return hasTalk ? T('EnemyTalk.recruit.askToFollow') : T('EnemyTalk.recruit.adoptAsPet');
+    }
+
+    // True while a living enemy of the troop carries <Boss>, read the way
+    // PerfectEscape.js reads it: a boss never agrees to the free way out.
+    function troopBossHolds() {
+        if (typeof $gameTroop === 'undefined' || !$gameTroop) return false;
+        return $gameTroop.aliveMembers().some(e => {
+            const data = e && e.enemy && e.enemy();
+            return !!(data && /<Boss>/i.test(data.note || ''));
+        });
     }
 
     Scene_Battle.prototype._buildTalkOptions = function () {
@@ -805,7 +850,7 @@
         if (inReach) {
             opts.push({ label: getRecruitLabel(enemy), key: 'joinPet', pct: this.calculatePetFollowerChance() });
         }
-        opts.push({ label: choices[2], key: 'surrender',  pct: talk });
+        opts.push({ label: choices[2], key: 'surrender',  pct: troopBossHolds() ? 0 : talk });
         opts.push({ label: choices[3], key: 'insult',     pct: canTalk ? 100 : 0 });
         opts.push({ label: choices[4], key: 'throwStone', pct: 100 });
         opts.push({ label: choices[5], key: 'pet',        pct: this.calculatePetSuccessChance() });
@@ -1015,7 +1060,10 @@
             return;
         }
 
-        const success = this.calculateTalkSuccess();
+        // A boss is never talked into the free way out: PerfectEscape.js holds
+        // it to long odds, and a retreat it agreed to would then be rolled and
+        // could fail, the fight going on after "the enemy agrees to retreat".
+        const success = !troopBossHolds() && this.calculateTalkSuccess();
 
         if (success) {
             window.skipLocalization = true;
@@ -1404,7 +1452,9 @@
             canJoin = false;
         } else if (window.Dice3D) {
             const rollRes = await rollTalkCheck(chance, this._talkPsiEdge(),
-                `${hasTalk ? 'Recruit' : 'Tame'}: ${enemy.name()}`);
+                T(hasTalk ? 'EnemyTalk.dice.recruit' : 'EnemyTalk.dice.tame', { name: enemy.name() }));
+            // The fight was over before the die landed: nobody is left to ask.
+            if (rollRes.ownerGone) return;
             canJoin = rollRes.success;
         } else {
             canJoin = Math.random() * 100 < chance;
@@ -1579,7 +1629,9 @@
             success = false;
         } else if (window.Dice3D) {
             const rollRes = await rollTalkCheck(chance, this._talkPsiEdge(),
-                `${hasTalk ? 'Follower' : 'Tame'}: ${enemy.name()}`);
+                T(hasTalk ? 'EnemyTalk.dice.follower' : 'EnemyTalk.dice.tame', { name: enemy.name() }));
+            // The fight was over before the die landed: nobody is left to ask.
+            if (rollRes.ownerGone) return;
             success = rollRes.success;
         } else {
             success = Math.random() * 100 < chance;

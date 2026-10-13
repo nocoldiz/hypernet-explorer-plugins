@@ -40,7 +40,7 @@
     _npcEffectiveOpinion, _pairBond, _pairContext, _pairData, _pairSide, _pairSituationKeys,
     _pairSituationLine, _partyMedianLevel, _payFun, _personalitySocialMult, _presetFromEvent,
     _pushReturnContext, _rand, _recruitAnimalAsMember, _recruitAnimalAsPet, _resolveBustForActor,
-    _resolveBustPath, _resolveMarkovDb, _setNpcBaseAttraction, _setNpcBaseOpinion, _socialLines,
+    _resolveBustPath, _resolveMarkovDb, _setNpcBaseAttraction, _setNpcBaseOpinion, _setSubjectGender, _agreeSubject, _socialLines,
     _stanceToneMult, _traitCompatBonus, _travellingPartyCount, _wisMod, BUBBA_NAME, EM_NAME,
     FERAL_ACTIONS, FUN_ACTIONS, PET_OPINION, Scene_NPCEmpathize, SPOKEN_LOG_MAX,
     STORY_PROTECTED_ACTIONS, vary, Wiki,
@@ -278,6 +278,8 @@
       const other   = meIsEm ? BUBBA_NAME : EM_NAME;
       const ctx     = _pairContext(leader, other, null);
       if (!ctx) return null;
+      // Whatever is said is said to the other one: she is a she, he is a he.
+      if (typeof _setSubjectGender === 'function') _setSubjectGender(other === EM_NAME ? 1 : 0);
       const db   = _socialLines();
       const data = ctx.data;
       const fill = s => vary(String(s || '').replace(/\{name\}/g, other));
@@ -315,7 +317,7 @@
 
       if (kind === 'joke') {
         const joke = (typeof _genJoke === 'function' ? _genJoke() : null)
-          || _rand(db.jokes?.landGood || []) || "Why did the chicken cross the road?";
+          || _rand(db.jokes?.landGood || []) || window.T('Empathize.fallbackJoke');
         const back = _rand(data.positive || data.neutral || data);
         if (!joke || !back) return null;
         _addPairBond(1 + Math.floor(Math.random() * 3));
@@ -325,7 +327,7 @@
       if (kind === 'story') {
         const perf = db.performances?.story;
         const subject = (typeof window !== 'undefined' && window.RandomBookGenerator?.generateTitle?.())
-          || (typeof vary === 'function' ? vary('The Legend of the Road') : 'The Legend of the Road');
+          || window.T('Empathize.fallbackStoryTitle');
         const raw = _rand(perf?.player || []);
         if (!raw) return null;
         const said = vary(String(raw).replace(/\{subject\}/g, subject).replace(/\{name\}/g, other));
@@ -338,7 +340,7 @@
       if (kind === 'poem') {
         const perf = db.performances?.poem;
         const subject = (typeof window !== 'undefined' && window.RandomBookGenerator?.generateTitle?.())
-          || (typeof vary === 'function' ? vary('The Open Road') : 'The Open Road');
+          || window.T('Empathize.fallbackPoemTitle');
         const raw = _rand(perf?.player || []);
         if (!raw) return null;
         const said = vary(String(raw).replace(/\{subject\}/g, subject).replace(/\{name\}/g, other));
@@ -418,6 +420,9 @@
       _diseaseVialId, _diseaseVialItems, _infectChance,
       // Social/romance maths, shared with the UI layer's romance submenu.
       _socialLines, _rand, _vary: vary, vary, _addNpcOpinion, _npcEffectiveOpinion,
+      // Gender agreement of the banks' {g:...} forms with whoever is being
+      // talked to (the map's own exchanges set it the way the panel does).
+      _setSubjectGender, _agreeSubject,
       // Company on its own, for an exchange that moves no opinion at all: a
       // rumour passed on in the street is still time spent with somebody.
       _gainSocialFromCompany,

@@ -31,6 +31,16 @@
     vary,
   } = Scene_NPCEmpathize._internal;
 
+  // Every lesson exchange is scored where every other Empathize move is:
+  // NPCEmpathize.Emotions.act (NPCEmpathize_Predisposition.js, NPC EMOTIONS),
+  // boredom of a repeated move and the emotions it carries included.
+  function _scoreAct(profile, actor, key, delta) {
+    const act = window.NPCEmpathize?.Emotions?.act;
+    if (act) return act(profile, actor, key, delta);
+    _addNpcOpinion(profile, actor?.actorId?.(), delta);
+    return { delta, tier: 'fresh', count: 0 };
+  }
+
   // ============================================================================
   // LESSONS: Talk about, Teach and Learn
   // ============================================================================
@@ -56,7 +66,7 @@
     const L = _Lessons();
     if (!L || !window.CCPick || this._entity) return [];
     const out = [{ id: 'talkAbout', label: L.text('ui.talkAbout'), disabled: !L.hasKnownTopics() }];
-    if (actorMode) return out;
+    if (actorMode) return out.concat(this._peerLessonActions(L));
     const npcName = this._targetName();
     const profile = npcName ? _getProfile(npcName) : null;
     const actor   = this._focusActor();
@@ -171,7 +181,7 @@
     if (ctx.pairCtx) {
       _addPairBond(Math.max(1, ex.delta));
     } else if (!ctx.actorMode && ctx.profile && ctx.actor) {
-      _addNpcOpinion(ctx.profile, ctx.actor.actorId(), ex.delta);
+      _scoreAct(ctx.profile, ctx.actor, 'talk:' + String(topic), ex.delta);
       // A creed, a party or a faction talked over is a push toward the
       // speaker's creed (Phase A). Em and Bubba never proselytise.
       if (ex.creedTopic && !ctx.speakerVoice && !ctx.npcVoice) this._pushCreed?.();
@@ -231,7 +241,7 @@
       actor: ctx.actor, profile: ctx.profile, npcName: ctx.npcName, skillId: row.skillId, sold,
       addOpinion: (d) => {
         if (ctx.pairCtx) _addPairBond(Math.max(1, Math.round(d / 3)));
-        else _addNpcOpinion(ctx.profile, ctx.actor.actorId(), d);
+        else _scoreAct(ctx.profile, ctx.actor, 'teach', d);
       },
     });
     if (!res.ok) return this._lessonRefuse(L.text(`reason.${res.reason}`, { price: L.money(res.fee || row.fee) }));
@@ -360,7 +370,7 @@
       actor: ctx.actor, profile: ctx.profile, npcName: ctx.npcName, specId: row.specId, sold,
       addOpinion: (d) => {
         if (ctx.pairCtx) _addPairBond(Math.max(1, Math.round(d / 3)));
-        else _addNpcOpinion(ctx.profile, ctx.actor.actorId(), d);
+        else _scoreAct(ctx.profile, ctx.actor, 'teach', d);
       },
     });
     if (!res.ok) return this._lessonRefuse(L.text(`reason.${res.reason}`, { price: L.money(res.fee || row.fee) }));
@@ -425,6 +435,98 @@
     SoundManager.playRecovery();
     this._joinMessage = { type: 'accept', text: L.text(res.free ? 'ui.learnSpecDone' : 'ui.learnSpecPaid',
       Object.assign({}, params, { hours: res.hours })) };
+    this._render();
+  };
+
+  // ── Between party members ───────────────────────────────────────────────
+  // On a member's own page another member of the party teaches them: first
+  // who (skipped when only one could), then what. The reckoning, gates and
+  // hours (never past 12) are NPCEmpathizeLessons' peer block; nothing is
+  // paid and no standing moves.
+  Scene_NPCEmpathize.prototype._peerLearner = function () {
+    if (this._actorId == null) return null;
+    const actor = $gameActors?.actor(this._actorId);
+    const members = $gameParty?.members?.() || [];
+    return (actor && members.includes(actor)) ? actor : null;
+  };
+
+  Scene_NPCEmpathize.prototype._peerLessonActions = function (L) {
+    const learner = this._peerLearner();
+    if (!learner || ($gameParty.members() || []).length < 2) return [];
+    const specsReady = !!window.Specializations?.ready;
+    return [
+      { id: 'peerTeach', label: L.text('ui.peerTeach'), disabled: false },
+      { id: 'peerTeachSpec', label: L.text('ui.peerTeachSpec'), disabled: !specsReady },
+    ];
+  };
+
+  // kind: 'skill' or 'spec'.
+  Scene_NPCEmpathize.prototype._peerTeachPick = function (kind) {
+    const L = _Lessons();
+    const learner = this._peerLearner();
+    if (!L || !learner) return;
+    const name = learner.name();
+    const teachers = L.peerTeachers(learner, kind);
+    const open = teachers.filter(t => !t.disabled);
+    if (!open.length) return this._lessonRefuse(L.text(kind === 'spec' ? 'ui.noPeerSpec' : 'ui.noPeerTeach', { name }));
+    if (open.length === 1) return this._peerLessonPick(kind, open[0].actor, learner);
+    this._openLessonPick({
+      title: L.text('ui.pickPeerTeacher', { name }),
+      options: teachers.map(t => ({
+        value: t.actor.actorId(), label: t.name, disabled: t.disabled, row: t,
+        hint: t.disabled ? t.reasonText : L.text('ui.hintPeerTeacher', { count: t.open }),
+      })),
+      search: false,
+      onPick: (id, opt) => this._peerLessonPick(kind, opt.row.actor, learner),
+    });
+  };
+
+  Scene_NPCEmpathize.prototype._peerLessonPick = function (kind, teacher, learner) {
+    const L = _Lessons();
+    const params = { teacher: teacher.name(), name: learner.name() };
+    if (kind === 'spec') {
+      const rows = L.peerSpecOptions(teacher, learner);
+      this._openLessonPick({
+        title: L.text('ui.pickPeerSpec', params),
+        options: rows.map(r => ({
+          value: r.specId, label: r.name, disabled: r.disabled, row: r,
+          hint: r.disabled ? r.reasonText
+            : L.text('ui.hintSpecTier', { from: r.fromName, to: r.toName, hours: r.hours }),
+        })),
+        detail: (opt) => _specDetail(L, opt.row, 'peer'),
+        onPick: (id, opt) => this._doPeerLesson('spec', teacher, learner, opt.row),
+      });
+      return;
+    }
+    const rows = L.peerTeachOptions(teacher, learner);
+    this._openLessonPick({
+      title: L.text('ui.pickPeerTeach', params),
+      options: rows.map(r => ({
+        value: r.skillId, label: r.name, disabled: r.disabled, row: r,
+        hint: r.disabled ? r.reasonText : L.text('ui.hintHours', { hours: r.hours }),
+      })),
+      detail: (opt) => _lessonDetail(L, opt.row, 'peer'),
+      onPick: (id, opt) => this._doPeerLesson('skill', teacher, learner, opt.row),
+    });
+  };
+
+  Scene_NPCEmpathize.prototype._doPeerLesson = function (kind, teacher, learner, row) {
+    const L = _Lessons();
+    const res = kind === 'spec'
+      ? L.applyPeerSpec({ teacher, learner, specId: row.specId })
+      : L.applyPeerTeach({ teacher, learner, skillId: row.skillId });
+    if (!res.ok) return this._lessonRefuse(res.reasonText || L.text(`reason.${res.reason}`, {}));
+    const voiceOf = a => (_isEmActor(a) ? 'em' : _isBubbaActor(a) ? 'bubba' : null);
+    const tVoice = voiceOf(teacher), lVoice = voiceOf(learner);
+    const params = { skill: row.name, spec: row.name, tier: res.toName, name: learner.name(),
+      teacher: teacher.name(), hours: res.hours };
+    this._activeTab = 'chat';
+    this._pushChat('player', L.line(kind === 'spec' ? 'spec.train.offer' : 'teach.offer', tVoice || 'default', null,
+      Object.assign({}, params, { name: learner.name() })));
+    this._replyNpc(L.line(kind === 'spec' ? 'spec.train.thanksFree' : 'teach.thanksFree',
+      L.answerVariantOf(tVoice, lVoice), null, Object.assign({}, params, { name: teacher.name() })));
+    SoundManager.playRecovery();
+    this._joinMessage = { type: 'accept', text: L.text(kind === 'spec' ? 'ui.peerSpecDone' : 'ui.peerTeachDone', params) };
     this._render();
   };
 
@@ -551,7 +653,7 @@
       beast: H.isBeast(ctx.profile, ctx.npcName),
       speakVariant: ctx.speakerVoice || 'default',
       replyVariant: H.replyVariant(ctx.speakerVoice, ctx.npcVoice),
-      addOpinion: (d) => { if (d) _addNpcOpinion(ctx.profile, actorId, d); },
+      addOpinion: (d) => { if (d) _scoreAct(ctx.profile, ctx.actor, 'favour', d); },
     });
   };
 
@@ -1011,7 +1113,7 @@
       identity: C.identityOf(ctx.npcName),
       speakVariant: ctx.speakerVoice || 'default',
       replyVariant: ctx.speakerVoice === 'em' ? 'toEm' : ctx.speakerVoice === 'bubba' ? 'toBubba' : 'default',
-      addOpinion: (d) => { if (d) _addNpcOpinion(ctx.profile, actorId, d); },
+      addOpinion: (d) => { if (d) _scoreAct(ctx.profile, ctx.actor, 'civic', d); },
     });
   };
 

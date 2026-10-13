@@ -34,7 +34,9 @@
     "maxMass": 2,
     "color": 3050327,
     "description": "Rocky with plate tectonics, liquid water, breathable air.",
-    "biome": "AlienEarthLike",
+    "biome": "Fields",
+    "earthBiomes": true,
+    "anomalyBiome": "AlienEarthLike",
     "description_int": "planets.earth_like.description",
     "breathable": true,
     "supportLife": true
@@ -44,7 +46,9 @@
     "maxMass": 10,
     "color": 5597999,
     "description": "Large rocky world; higher gravity, thicker atmosphere.",
-    "biome": "AlienSuperEarth",
+    "biome": "Fields",
+    "earthBiomes": true,
+    "anomalyBiome": "AlienSuperEarth",
     "description_int": "planets.super_earth.description",
     "breathable": true,
     "supportLife": true
@@ -294,7 +298,9 @@
     "maxMass": 5,
     "color": 3329330,
     "description": "Within habitable zone, stable climate, liquid water.",
-    "biome": "AlienHabitable",
+    "biome": "Fields",
+    "earthBiomes": true,
+    "anomalyBiome": "AlienHabitable",
     "description_int": "planets.habitable.description",
     "breathable": true,
     "supportLife": true

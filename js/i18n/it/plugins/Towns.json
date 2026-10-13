@@ -1,27 +1,27 @@
 {
   "found": {
-    "title": "Fonda una citta",
-    "nameLabel": "Nome della citta",
+    "title": "Fonda una città",
+    "nameLabel": "Nome della città",
     "namePlaceholder": "Dalle un nome…",
-    "button": "Fonda la citta",
-    "requirement": "Case presenti qui: {have} di {need}",
+    "button": "Fonda la città",
+    "requirement": "Case qui: {have} di {need}",
     "here": "Questo quadrante: {place}",
     "reason": {
-      "notHere": "Una citta si fonda all'aperto, non dentro un edificio.",
-      "claimed": "{place} sorge gia su questo quadrante.",
-      "exists": "Una tua citta sorge gia su questo quadrante.",
-      "houses": "Devono esserci tre case prima che qualcuno la chiami citta.",
-      "noName": "La citta ha bisogno di un nome.",
-      "duplicate": "Hai gia dato quel nome a una citta."
+      "notHere": "Devi essere all'aperto, non dentro un edificio.",
+      "claimed": "{place} è già su questo quadrante.",
+      "exists": "Hai già una città qui.",
+      "houses": "Servono 3 case su questo quadrante.",
+      "noName": "La città ha bisogno di un nome.",
+      "duplicate": "Hai già una città con quel nome."
     },
-    "success": "{name} e fondata.",
+    "success": "{name} è stata fondata.",
     "founded": "{name}, fondata qui."
   },
   "deeds": {
     "title": "Atti",
     "back": "Indietro",
-    "empty": "Non hai fondato nessuna citta.",
-    "colTown": "Citta",
+    "empty": "Non hai fondato nessuna città.",
+    "colTown": "Città",
     "colWhere": "Dove",
     "colHouses": "Case",
     "colShops": "Negozi",
@@ -29,13 +29,13 @@
     "colRent": "Affitto",
     "rentPerDay": "{amount} al giorno",
     "collected": "Affitto riscosso: {amount}",
-    "nothingDue": "Non c'e ancora affitto da riscuotere.",
+    "nothingDue": "Non c'è ancora affitto da riscuotere.",
     "collect": "Riscuoti l'affitto",
     "growing": "Si sta ancora popolando",
     "full": "Del tutto abitata",
     "onPlanet": "su {planet}",
     "square": "{place}",
-    "sectionTowns": "Citta",
+    "sectionTowns": "Città",
     "sectionHouses": "Case",
     "sectionShops": "Negozi",
     "sectionAnimals": "Animali",
@@ -44,9 +44,9 @@
     "emptyAnimals": "Non possiedi nessun animale.",
     "colType": "Tipo",
     "colOccupancy": "Occupazione",
-    "colCategory": "Attivita",
+    "colCategory": "Attività",
     "colBalance": "Saldo",
     "colStage": "Stadio",
-    "manageShop": "Apri il registro del negozio"
+    "manageShop": "Gestisci negozio"
   }
 }

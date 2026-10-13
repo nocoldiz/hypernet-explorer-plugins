@@ -52,88 +52,106 @@
     // -------------------------------------------------------------------------
     // Feature catalogue. Only ids, categories and completion live here: the
     // name, the description and the done list are Roadmap.features.<id>.*.
-    // A system that plays as intended and only wants more content sits at
-    // 80 to 90; lower numbers mark systems still missing real pieces.
+    // The number is how much of the system's possible depth exists, not
+    // whether it plays: a working system that could still be greatly
+    // expanded sits low. The scale is a four year development: content that is
+    // complete and not going to change (the monster roster, skills, equipment)
+    // sits near the top, systems that are almost done sit at 80 to 90 by how
+    // deep the plugin behind them is, and the society simulation, the most
+    // open-ended of all, scores lowest. Each category also carries a few very
+    // long term goals, Roadmap.goals.<category>.
     // -------------------------------------------------------------------------
     const CATEGORIES = ['core', 'combat', 'npcs', 'economy', 'vehicles', 'hypernet',
         'galaxy', 'health', 'crafting', 'cards', 'world', 'multiplayer'];
 
     const FEATURE_LIST = [
-        { id: 'worldPersistence', category: 'core', percent: 88 },
-        { id: 'timeSleepClock', category: 'core', percent: 85 },
-        { id: 'hungerNutrition', category: 'core', percent: 85 },
-        { id: 'inputControls', category: 'core', percent: 88 },
-        { id: 'audioMusic', category: 'core', percent: 85 },
-        { id: 'modManager', category: 'core', percent: 70 },
+        { id: 'worldPersistence', category: 'core', percent: 70 },
+        { id: 'timeSleepClock', category: 'core', percent: 80 },
+        { id: 'hungerNutrition', category: 'core', percent: 80 },
+        { id: 'inputControls', category: 'core', percent: 85 },
+        { id: 'audioMusic', category: 'core', percent: 75 },
+        { id: 'modManager', category: 'core', percent: 60 },
+        { id: 'characterCreation', category: 'core', percent: 85 },
+        { id: 'interface', category: 'core', percent: 80 },
+        { id: 'visuals', category: 'core', percent: 55 },
+        { id: 'sandbox', category: 'core', percent: 65 },
 
-        { id: 'battleEngine', category: 'combat', percent: 88 },
-        { id: 'battlers3D', category: 'combat', percent: 86 },
-        { id: 'skillsLoadouts', category: 'combat', percent: 82 },
+        { id: 'battleEngine', category: 'combat', percent: 80 },
+        { id: 'battlers3D', category: 'combat', percent: 90 },
+        { id: 'skillsLoadouts', category: 'combat', percent: 90 },
         { id: 'arenaBattles', category: 'combat', percent: 80 },
-        { id: 'summonsSpirits', category: 'combat', percent: 74 },
-        { id: 'mapBattles', category: 'combat', percent: 72 },
-        { id: 'bulletHell', category: 'combat', percent: 70 },
+        { id: 'summonsSpirits', category: 'combat', percent: 60 },
+        { id: 'mapBattles', category: 'combat', percent: 45 },
+        { id: 'bulletHell', category: 'combat', percent: 60 },
+        { id: 'equipment', category: 'combat', percent: 88 },
+        { id: 'weapons', category: 'combat', percent: 85 },
 
-        { id: 'npcLife', category: 'npcs', percent: 78 },
-        { id: 'dialogueBusts', category: 'npcs', percent: 80 },
-        { id: 'creatureSystem', category: 'npcs', percent: 80 },
-        { id: 'factionsReputation', category: 'npcs', percent: 74 },
-        { id: 'onuAssembly', category: 'npcs', percent: 70 },
+        { id: 'npcLife', category: 'npcs', percent: 30 },
+        { id: 'dialogueBusts', category: 'npcs', percent: 45 },
+        { id: 'creatureSystem', category: 'npcs', percent: 40 },
+        { id: 'factionsReputation', category: 'npcs', percent: 30 },
+        { id: 'onuAssembly', category: 'npcs', percent: 30 },
 
-        { id: 'bankingSystem', category: 'economy', percent: 85 },
-        { id: 'shopManagement', category: 'economy', percent: 76 },
-        { id: 'realEstateRentals', category: 'economy', percent: 75 },
-        { id: 'stockMarket', category: 'economy', percent: 80 },
-        { id: 'crimeBounties', category: 'economy', percent: 80 },
+        { id: 'bankingSystem', category: 'economy', percent: 80 },
+        { id: 'shopManagement', category: 'economy', percent: 55 },
+        { id: 'realEstateRentals', category: 'economy', percent: 45 },
+        { id: 'stockMarket', category: 'economy', percent: 70 },
+        { id: 'crimeBounties', category: 'economy', percent: 55 },
 
-        { id: 'vehiclesGarage', category: 'vehicles', percent: 80 },
+        { id: 'vehiclesGarage', category: 'vehicles', percent: 70 },
         { id: 'fastTravel', category: 'vehicles', percent: 80 },
-        { id: 'voxelWorld', category: 'vehicles', percent: 68 },
-        { id: 'roadTraffic', category: 'vehicles', percent: 70 },
+        { id: 'voxelWorld', category: 'vehicles', percent: 40 },
+        { id: 'roadTraffic', category: 'vehicles', percent: 50 },
 
-        { id: 'hypernetOS', category: 'hypernet', percent: 85 },
-        { id: 'hyperDeck', category: 'hypernet', percent: 82 },
-        { id: 'hypernetApps', category: 'hypernet', percent: 74 },
-        { id: 'hypernetBrowser', category: 'hypernet', percent: 65 },
+        { id: 'hypernetOS', category: 'hypernet', percent: 75 },
+        { id: 'hyperDeck', category: 'hypernet', percent: 80 },
+        { id: 'hypernetApps', category: 'hypernet', percent: 55 },
+        { id: 'hypernetBrowser', category: 'hypernet', percent: 30 },
+        { id: 'hexphone', category: 'hypernet', percent: 65 },
 
         { id: 'galaxyCosmos', category: 'galaxy', percent: 75 },
-        { id: 'galaxyPhysics', category: 'galaxy', percent: 65 },
-        { id: 'galaxyShips', category: 'galaxy', percent: 68 },
+        { id: 'galaxyPhysics', category: 'galaxy', percent: 50 },
+        { id: 'galaxyShips', category: 'galaxy', percent: 70 },
+        { id: 'spaceTrade', category: 'galaxy', percent: 45 },
+        { id: 'rocketLaunch', category: 'galaxy', percent: 75 },
 
-        { id: 'limbDamage', category: 'health', percent: 85 },
-        { id: 'medicineSystem', category: 'health', percent: 85 },
-        { id: 'cybernetics', category: 'health', percent: 80 },
-        { id: 'biologicSim', category: 'health', percent: 75 },
+        { id: 'limbDamage', category: 'health', percent: 80 },
+        { id: 'medicineSystem', category: 'health', percent: 80 },
+        { id: 'cybernetics', category: 'health', percent: 70 },
+        { id: 'biologicSim', category: 'health', percent: 55 },
 
-        { id: 'cookingSystem', category: 'crafting', percent: 80 },
-        { id: 'forgottenGrimoires', category: 'crafting', percent: 80 },
-        { id: 'alchemistry', category: 'crafting', percent: 78 },
-        { id: 'proceduralArtifacts', category: 'crafting', percent: 76 },
-        { id: 'furnitureBuilding', category: 'crafting', percent: 72 },
-        { id: 'farmingAgriculture', category: 'crafting', percent: 72 },
-        { id: 'livestockBrewing', category: 'crafting', percent: 72 },
+        { id: 'cookingSystem', category: 'crafting', percent: 75 },
+        { id: 'forgottenGrimoires', category: 'crafting', percent: 85 },
+        { id: 'alchemistry', category: 'crafting', percent: 75 },
+        { id: 'proceduralArtifacts', category: 'crafting', percent: 90 },
+        { id: 'furnitureBuilding', category: 'crafting', percent: 60 },
+        { id: 'farmingAgriculture', category: 'crafting', percent: 60 },
+        { id: 'livestockBrewing', category: 'crafting', percent: 70 },
+        { id: 'research', category: 'crafting', percent: 50 },
 
-        { id: 'arcadeCabinets', category: 'cards', percent: 84 },
-        { id: 'cardGame', category: 'cards', percent: 84 },
+        { id: 'arcadeCabinets', category: 'cards', percent: 80 },
+        { id: 'cardGame', category: 'cards', percent: 80 },
         { id: 'sports3D', category: 'cards', percent: 80 },
-        { id: 'gamblingCasino', category: 'cards', percent: 82 },
-        { id: 'interactivePastimes', category: 'cards', percent: 78 },
+        { id: 'gamblingCasino', category: 'cards', percent: 85 },
+        { id: 'interactivePastimes', category: 'cards', percent: 75 },
 
-        { id: 'monsterBestiary', category: 'world', percent: 85 },
-        { id: 'historySimulator', category: 'world', percent: 80 },
-        { id: 'proceduralBiomes', category: 'world', percent: 74 },
-        { id: 'proceduralStructures', category: 'world', percent: 70 },
-        { id: 'proceduralQuests', category: 'world', percent: 70 },
-        { id: 'dungeonFloors', category: 'world', percent: 65 },
+        { id: 'monsterBestiary', category: 'world', percent: 95 },
+        { id: 'historySimulator', category: 'world', percent: 65 },
+        { id: 'proceduralBiomes', category: 'world', percent: 50 },
+        { id: 'proceduralStructures', category: 'world', percent: 45 },
+        { id: 'proceduralQuests', category: 'world', percent: 35 },
+        { id: 'dungeonFloors', category: 'world', percent: 55 },
+        { id: 'exploration', category: 'world', percent: 60 },
 
-        { id: 'splitScreenLocal', category: 'multiplayer', percent: 65 },
-        { id: 'multiplayerOnline', category: 'multiplayer', percent: 40 }
+        { id: 'splitScreenLocal', category: 'multiplayer', percent: 55 },
+        { id: 'multiplayerOnline', category: 'multiplayer', percent: 25 }
     ];
 
     const featureName = (f) => T('Roadmap.features.' + f.id + '.name', f.id);
     const featureDesc = (f) => T('Roadmap.features.' + f.id + '.desc', '');
     const featureDone = (f) => TList('Roadmap.features.' + f.id + '.done');
     const categoryName = (key) => T('Roadmap.categories.' + key, key);
+    const categoryGoals = (key) => TList('Roadmap.goals.' + key);
 
     // -------------------------------------------------------------------------
     // Dynamic data readers
@@ -157,6 +175,22 @@
 
     const TOWER_PLANNED = 360;
     const DESTINATIONS_PER_COUNTRY = 4;
+    // The Bevy ECS rework is a separate build, so its progress is set by hand.
+    const BEVY_REWORK_PERCENT = 30;
+    // Story mode is written content with no data to count, so it is set by hand too.
+    const STORY_MODE_PERCENT = 5;
+    // The handwritten rewrite of the generated text banks, set by hand.
+    const TEXT_REWRITE_PERCENT = 10;
+    // Local GGUF text models driving the simulation, set by hand.
+    const GGUF_MODELS_PERCENT = 50;
+    // ASCII render mode, set by hand.
+    const ASCII_MODE_PERCENT = 10;
+    // Balancing, the skyscraper and shop interiors and the patron content,
+    // all set by hand.
+    const BALANCING_PERCENT = 30;
+    const SKYSCRAPER_INTERIORS_PERCENT = 20;
+    const SHOP_INTERIORS_PERCENT = 40;
+    const PATRON_CONTENT_PERCENT = 40;
 
     const readOmegaTowerStats = () => {
         let mapInfos = cachedMapInfos || (typeof window !== 'undefined' ? window.$dataMapInfos : null);
@@ -240,42 +274,12 @@
         const style = document.createElement('style');
         style.id = 'roadmap-system-style';
         style.textContent = `
-            .title-roadmap-panel {
-                z-index: 300;
-                font-family: var(--font-ui, 'Bitter', Georgia, serif);
-                font-weight: normal;
-                letter-spacing: normal;
-                line-height: 1.4;
-                color: var(--title-parchment, #e0d5be);
-                background: var(--title-plate-bg, rgba(0, 0, 0, 0.55));
-                border: 1px solid rgba(255, 215, 0, 0.45);
-                pointer-events: auto;
-                width: var(--title-w, 320px);
-                padding: calc(10px * var(--title-scale, 1)) calc(12px * var(--title-scale, 1));
+            /* The title-screen button: the shared plate and the language
+               selector's own face and size (css/theme.css). */
+            .title-plate.title-roadmap-open-btn {
                 font-size: calc(11px * var(--title-scale, 1));
-                display: flex;
-                flex-direction: column;
-                gap: 0.6em;
-                box-sizing: border-box;
-            }
-            .title-roadmap-close {
-                position: absolute;
-                top: 0.3em;
-                right: 0.45em;
-                cursor: pointer;
-                font-size: 1.1em;
-                line-height: 1;
-                color: rgba(255, 215, 0, 0.7);
-                user-select: none;
-            }
-            .title-roadmap-close:hover { color: #ffffff; }
-            .title-roadmap-head {
-                font-size: 0.95em;
-                font-weight: bold;
-                letter-spacing: 1px;
-                color: var(--title-gold, #ffd700);
-                padding-right: 1.5em;
-                text-transform: uppercase;
+                padding: calc(5px * var(--title-scale, 1)) calc(10px * var(--title-scale, 1));
+                white-space: nowrap;
             }
 
             .roadmap-stats {
@@ -299,6 +303,10 @@
                 font-family: var(--font-mono, monospace);
                 color: var(--title-gold, #ffd700);
             }
+            .roadmap-stat-note {
+                font-size: 0.75em;
+                opacity: 0.7;
+            }
 
             .roadmap-track {
                 width: 100%;
@@ -310,16 +318,6 @@
                 height: 100%;
                 background: var(--title-gold, #ffd700);
             }
-
-            .title-roadmap-features {
-                display: flex;
-                flex-direction: column;
-                overflow-y: auto;
-                max-height: var(--title-maxh, 96px);
-                padding-right: 4px;
-            }
-            .title-roadmap-features::-webkit-scrollbar { width: 3px; }
-            .title-roadmap-features::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.35); }
 
             .roadmap-row {
                 display: flex;
@@ -345,21 +343,6 @@
             .roadmap-row-pct {
                 font-family: var(--font-mono, monospace);
                 color: var(--title-gold, #ffd700);
-            }
-
-            .title-roadmap-btn {
-                font-size: 0.85em;
-                letter-spacing: 1px;
-                color: var(--title-gold, #ffd700);
-                border: 1px solid rgba(255, 215, 0, 0.45);
-                padding: 0.35em 1em;
-                cursor: pointer;
-                user-select: none;
-                text-align: center;
-            }
-            .title-roadmap-btn:hover {
-                background: rgba(255, 215, 0, 0.12);
-                color: #ffffff;
             }
 
             .roadmap-hover-modal {
@@ -426,9 +409,7 @@
                 width: 100vw;
                 height: 100vh;
                 z-index: 10000;
-                background:
-                    radial-gradient(ellipse at 50% 0%, rgba(255, 215, 0, 0.06), transparent 60%),
-                    #0b0a08;
+                background: #000;
                 display: flex;
                 box-sizing: border-box;
                 color: var(--title-parchment, #e0d5be);
@@ -449,19 +430,30 @@
                 border-bottom: 1px solid rgba(255, 215, 0, 0.2);
             }
             .fullscreen-roadmap-title {
-                font-size: 18px;
+                font-size: 26px;
                 font-weight: bold;
                 letter-spacing: 1px;
                 color: var(--title-gold, #ffd700);
                 text-transform: uppercase;
             }
 
+            /* The headline stats wrap onto as many rows as they need, laid on
+               the same column grid as the feature list, so a label never
+               breaks away from its value. */
             .fullscreen-roadmap-stats {
-                display: flex;
-                gap: 28px;
-                font-size: 13px;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+                gap: 10px 22px;
+                align-items: start;
+                font-size: 18px;
             }
-            .fullscreen-roadmap-stats .roadmap-stat { width: 260px; }
+            .fullscreen-roadmap-stats .roadmap-stat-head { gap: 0.6em; }
+            .fullscreen-roadmap-stats .roadmap-stat-head > span:first-child {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .fullscreen-roadmap-stats .roadmap-stat-value { white-space: nowrap; }
 
             .fullscreen-roadmap-controls {
                 display: flex;
@@ -470,7 +462,7 @@
                 gap: 6px 14px;
             }
             .roadmap-cat-tab {
-                font-size: 13px;
+                font-size: 18px;
                 cursor: pointer;
                 opacity: 0.6;
                 padding-bottom: 2px;
@@ -485,9 +477,9 @@
             }
             .roadmap-search-input {
                 margin-left: auto;
-                width: 200px;
+                width: 260px;
                 font-family: inherit;
-                font-size: 13px;
+                font-size: 18px;
                 color: inherit;
                 background: transparent;
                 border: none;
@@ -511,17 +503,17 @@
             }
             .fullscreen-roadmap-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                gap: 2px 18px;
-                font-size: 14px;
+                grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+                gap: 6px 22px;
+                font-size: 19px;
             }
             .fullscreen-roadmap-details-col {
-                width: 360px;
+                width: 480px;
                 flex-shrink: 0;
                 overflow-y: auto;
                 padding-left: 22px;
                 border-left: 1px solid rgba(255, 215, 0, 0.2);
-                font-size: 14px;
+                font-size: 19px;
                 line-height: 1.45;
             }
             .fullscreen-roadmap-left::-webkit-scrollbar,
@@ -551,13 +543,14 @@
         return track;
     };
 
-    const makeStat = (label, value, pct) => {
+    const makeStat = (label, value, pct, note) => {
         const item = el('div', 'roadmap-stat');
         const head = el('div', 'roadmap-stat-head');
         head.appendChild(el('span', '', label));
         head.appendChild(el('span', 'roadmap-stat-value', value));
         item.appendChild(head);
         item.appendChild(makeTrack(pct));
+        if (note) item.appendChild(el('div', 'roadmap-stat-note', note));
         return item;
     };
 
@@ -569,6 +562,24 @@
             tower.completed + ' / ' + tower.total, tower.percentage));
         box.appendChild(makeStat(T('Roadmap.destinations'),
             dest.completed + ' / ' + dest.total, dest.percentage));
+        box.appendChild(makeStat(T('Roadmap.bevyRework'),
+            BEVY_REWORK_PERCENT + '%', BEVY_REWORK_PERCENT, T('Roadmap.bevyReworkNote')));
+        box.appendChild(makeStat(T('Roadmap.storyMode'),
+            STORY_MODE_PERCENT + '%', STORY_MODE_PERCENT));
+        box.appendChild(makeStat(T('Roadmap.textRewrite'),
+            TEXT_REWRITE_PERCENT + '%', TEXT_REWRITE_PERCENT, T('Roadmap.textRewriteNote')));
+        box.appendChild(makeStat(T('Roadmap.ggufModels'),
+            GGUF_MODELS_PERCENT + '%', GGUF_MODELS_PERCENT, T('Roadmap.ggufModelsNote')));
+        box.appendChild(makeStat(T('Roadmap.asciiMode'),
+            ASCII_MODE_PERCENT + '%', ASCII_MODE_PERCENT));
+        box.appendChild(makeStat(T('Roadmap.balancing'),
+            BALANCING_PERCENT + '%', BALANCING_PERCENT, T('Roadmap.balancingNote')));
+        box.appendChild(makeStat(T('Roadmap.skyscraperInteriors'),
+            SKYSCRAPER_INTERIORS_PERCENT + '%', SKYSCRAPER_INTERIORS_PERCENT, T('Roadmap.skyscraperInteriorsNote')));
+        box.appendChild(makeStat(T('Roadmap.shopInteriors'),
+            SHOP_INTERIORS_PERCENT + '%', SHOP_INTERIORS_PERCENT, T('Roadmap.shopInteriorsNote')));
+        box.appendChild(makeStat(T('Roadmap.patronContent'),
+            PATRON_CONTENT_PERCENT + '%', PATRON_CONTENT_PERCENT, T('Roadmap.patronContentNote')));
         return box;
     };
 
@@ -598,6 +609,14 @@
         const list = el('ul', 'roadmap-info-list');
         for (const item of featureDone(f)) list.appendChild(el('li', '', item));
         container.appendChild(list);
+        const goals = categoryGoals(f.category);
+        if (goals.length) {
+            container.appendChild(el('div', 'roadmap-info-section',
+                T('Roadmap.goalsHeader') + ': ' + categoryName(f.category)));
+            const goalList = el('ul', 'roadmap-info-list');
+            for (const item of goals) goalList.appendChild(el('li', '', item));
+            container.appendChild(goalList);
+        }
     };
 
     // -------------------------------------------------------------------------
@@ -643,6 +662,9 @@
     // Fullscreen roadmap window
     // -------------------------------------------------------------------------
     let activeFullscreen = null;
+    // What the keyboard and the pad can do to the open window: built with it,
+    // dropped with it, and driven once a frame by updateFullscreenInput.
+    let fullscreenNav = null;
 
     const playSe = (kind) => {
         if (typeof SoundManager !== 'undefined' && SoundManager[kind]) SoundManager[kind]();
@@ -663,20 +685,16 @@
         header.appendChild(closeBtn);
         header.appendChild(el('h2', 'title fullscreen-roadmap-title', T('Roadmap.fullscreenTitle')));
 
+        // Escape, the pad's Cancel and the Details key itself close the window
+        // through updateFullscreenInput, the same frame loop the title menu
+        // reads, so no document listener is left behind to double the press.
         const closeWindow = () => {
             hideHoverModal();
             playSe('playCancel');
             if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-            window.removeEventListener('keydown', onKeyDown);
             activeFullscreen = null;
+            fullscreenNav = null;
         };
-        const onKeyDown = (e) => {
-            if (e.key === 'Escape') {
-                e.stopPropagation();
-                closeWindow();
-            }
-        };
-        window.addEventListener('keydown', onKeyDown);
         closeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             closeWindow();
@@ -696,6 +714,17 @@
         const searchInput = el('input', 'roadmap-search-input');
         searchInput.type = 'text';
         searchInput.placeholder = T('Roadmap.searchPlaceholder');
+        // While the filter has the caret, every key it receives is text: none
+        // of them reaches the engine's Input (so typing an X or a Z never
+        // closes the window or moves the list). Enter and Escape hand the
+        // keyboard back to the list.
+        searchInput.addEventListener('keydown', (e) => {
+            e.stopPropagation();
+            if (e.key === 'Escape' || e.key === 'Enter') {
+                e.preventDefault();
+                if (searchInput.blur) searchInput.blur();
+            }
+        });
 
         const body = el('div', 'fullscreen-roadmap-body');
         const leftCol = el('div', 'fullscreen-roadmap-left');
@@ -712,6 +741,19 @@
             fillFeatureInfo(detailsCol, f);
         };
 
+        let filteredList = [];
+
+        const markSelectedRow = () => {
+            for (const row of grid.children) {
+                if (row._feature === selectedFeature) {
+                    row.classList.add('selected');
+                    if (row.scrollIntoView) row.scrollIntoView({ block: 'nearest' });
+                } else {
+                    row.classList.remove('selected');
+                }
+            }
+        };
+
         const renderGrid = () => {
             while (grid.firstChild) grid.removeChild(grid.firstChild);
 
@@ -725,10 +767,12 @@
             });
 
             if (!filtered.includes(selectedFeature)) selectedFeature = filtered[0] || null;
+            filteredList = filtered;
             renderDetailsCol(selectedFeature);
 
             for (const f of filtered) {
                 const row = makeRow(f);
+                row._feature = f;
                 if (f === selectedFeature) row.classList.add('selected');
                 row.addEventListener('mouseenter', () => renderDetailsCol(f));
                 row.addEventListener('mouseleave', () => renderDetailsCol(selectedFeature));
@@ -745,18 +789,23 @@
         };
 
         const tabKeys = ['all'].concat(CATEGORIES);
-        for (const key of tabKeys) {
+        const tabs = [];
+        const pickCategory = (index) => {
+            const key = tabKeys[index];
+            if (key === undefined) return;
+            playSe('playCursor');
+            selectedCategory = key;
+            tabs.forEach(t => t.classList.remove('active'));
+            tabs[index].classList.add('active');
+            renderGrid();
+        };
+        tabKeys.forEach((key, index) => {
             const label = key === 'all' ? T('Roadmap.allCategories') : categoryName(key);
             const tab = el('div', 'roadmap-cat-tab' + (key === selectedCategory ? ' active' : ''), label);
-            tab.addEventListener('click', () => {
-                playSe('playCursor');
-                selectedCategory = key;
-                tabsRow.querySelectorAll('.roadmap-cat-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                renderGrid();
-            });
+            tab.addEventListener('click', () => pickCategory(index));
+            tabs.push(tab);
             tabsRow.appendChild(tab);
-        }
+        });
 
         searchInput.addEventListener('input', (e) => {
             searchQuery = e.target.value;
@@ -777,11 +826,88 @@
         activeFullscreen = overlay;
 
         renderGrid();
+
+        fullscreenNav = {
+            // Up / Down walk the list (clamped, no wrap), showing each one.
+            move(delta) {
+                if (!filteredList.length) return;
+                const at = filteredList.indexOf(selectedFeature);
+                const next = Math.max(0, Math.min(filteredList.length - 1, at < 0 ? 0 : at + delta));
+                if (filteredList[next] === selectedFeature) return;
+                selectedFeature = filteredList[next];
+                markSelectedRow();
+                renderDetailsCol(selectedFeature);
+                playSe('playCursor');
+            },
+            // Left / Right and the shoulders turn the category tabs, wrapping.
+            tab(delta) {
+                const at = tabKeys.indexOf(selectedCategory);
+                pickCategory((at + delta + tabKeys.length) % tabKeys.length);
+            },
+            searchFocused: () => typeof document !== 'undefined' && document.activeElement === searchInput,
+            focusSearch() { if (searchInput.focus) searchInput.focus(); },
+            blurSearch() { if (searchInput.blur) searchInput.blur(); },
+            close: closeWindow,
+            selected: () => selectedFeature,
+            category: () => selectedCategory
+        };
     };
 
     // -------------------------------------------------------------------------
-    // Scene_Title roadmap box (replaces the news panel)
+    // Keyboard and pad
     // -------------------------------------------------------------------------
+    // Tab on the keyboard and Back (Select) on the pad open the full window from
+    // the title, and the same press closes it again. Back is read off the stick
+    // plugin's own edge (AnalogStickInput), as character creation reads it.
+    const PAD_BACK = 8;
+    const detailsKeyTriggered = () => {
+        if (typeof Input !== 'undefined' && Input.isTriggered && Input.isTriggered('tab')) return true;
+        const stick = typeof window !== 'undefined' ? window.AnalogStickInput : null;
+        return !!(stick && typeof stick.isButtonTriggered === 'function' && stick.isButtonTriggered(PAD_BACK));
+    };
+
+    // One frame of the open window. Returns true when it is (still) open.
+    const updateFullscreenInput = () => {
+        const nav = fullscreenNav;
+        if (!nav || typeof Input === 'undefined') return false;
+        if (nav.searchFocused()) {
+            // The keyboard is the field's (see the search listener); the pad's
+            // Confirm or Cancel hands control back to the list.
+            if (Input.isTriggered('ok') || Input.isTriggered('cancel')) nav.blurSearch();
+            return true;
+        }
+        if (Input.isTriggered('cancel') || detailsKeyTriggered()) {
+            nav.close();
+            return false;
+        }
+        if (Input.isRepeated('down')) nav.move(1);
+        else if (Input.isRepeated('up')) nav.move(-1);
+        else if (Input.isRepeated('right') || Input.isTriggered('pagedown')) nav.tab(1);
+        else if (Input.isRepeated('left') || Input.isTriggered('pageup')) nav.tab(-1);
+        else if (Input.isTriggered('ok')) nav.focusSearch();
+        return true;
+    };
+
+    // Runs fn with the engine's Input reading nothing, so the title menu, the
+    // background switcher and the Hyperverse controls under the window never
+    // see a press the window has taken.
+    const INPUT_READS = ['isPressed', 'isTriggered', 'isRepeated', 'isLongPressed'];
+    const withInputMuted = (fn) => {
+        if (typeof Input === 'undefined') return fn();
+        const saved = INPUT_READS.map(n => Input[n]);
+        INPUT_READS.forEach(n => { Input[n] = () => false; });
+        try {
+            return fn();
+        } finally {
+            INPUT_READS.forEach((n, i) => { Input[n] = saved[i]; });
+        }
+    };
+
+    // -------------------------------------------------------------------------
+    // Scene_Title roadmap button (replaces the news panel)
+    // -------------------------------------------------------------------------
+    // One plate under the language flags in the top-right column, lettered in
+    // the same face as they are. A press opens the full roadmap window.
     if (typeof Scene_Title !== 'undefined') {
         Scene_Title.prototype.createDisclaimerBox = function () {
             injectStyles();
@@ -791,46 +917,14 @@
                 if (stale && stale.parentNode) stale.parentNode.removeChild(stale);
             }
 
-            const box = el('div', 'title-plate title-roadmap-panel');
-            box.id = 'title-roadmap-box';
-            document.body.appendChild(box);
-            this._disclaimerBox = box;
-            this._roadmapBox = box;
+            const btn = el('div', 'title-plate title-plate-btn title-roadmap-open-btn', T('Roadmap.title'));
+            btn.id = 'title-roadmap-box';
+            document.body.appendChild(btn);
+            this._disclaimerBox = btn;
+            this._roadmapBox = btn;
 
-            const close = el('div', 'title-roadmap-close', '✕');
-            close.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-            close.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                hideHoverModal();
-                playSe('playCancel');
-                this.removeDisclaimerBox();
-            });
-
-            const header = el('div', 'title-roadmap-head', T('Roadmap.title'));
-            const stats = makeStats();
-
-            const featuresList = el('div', 'title-roadmap-features');
-            this._roadmapFeaturesBody = featuresList;
-            featuresList.addEventListener('wheel', (e) => {
-                const step = e.deltaMode === 1 ? e.deltaY * 30
-                    : (e.deltaMode === 2 ? e.deltaY * 300 : e.deltaY);
-                featuresList.scrollTop += step;
-                e.preventDefault();
-                e.stopPropagation();
-            });
-
-            for (const f of FEATURE_LIST) {
-                const row = makeRow(f);
-                row.addEventListener('mouseenter', (e) => showHoverModal(f, e.clientX, e.clientY));
-                row.addEventListener('mousemove', (e) => showHoverModal(f, e.clientX, e.clientY));
-                row.addEventListener('mouseleave', () => hideHoverModal());
-                featuresList.appendChild(row);
-            }
-
-            const detailsBtn = el('div', 'title-roadmap-btn', T('Roadmap.details'));
-            detailsBtn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-            detailsBtn.addEventListener('click', (e) => {
+            btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
+            btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
                 hideHoverModal();
@@ -838,17 +932,11 @@
                 openFullscreenRoadmap();
             });
 
-            box.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); });
-
-            box.appendChild(close);
-            box.appendChild(header);
-            box.appendChild(stats);
-            box.appendChild(featuresList);
-            box.appendChild(detailsBtn);
-
             this.layoutDisclaimerBox();
         };
 
+        // Hung off the measured bottom of the language flags (or of the
+        // background switcher when the build ships a single language).
         Scene_Title.prototype.layoutDisclaimerBox = function () {
             const box = this._disclaimerBox || this._roadmapBox;
             if (!box) return;
@@ -858,29 +946,55 @@
 
             const rect = kit.layout.rect();
             const s = kit.layout.scale(rect);
-            const btn = this._bgSwitchButton;
-            const btnRect = btn ? btn.getBoundingClientRect() : null;
-            const below = btnRect && btnRect.height > 0
-                ? (btnRect.bottom - rect.top) / s
+            const above = this._languageBox || this._bgSwitchButton;
+            const aboveRect = above ? above.getBoundingClientRect() : null;
+            const below = aboveRect && aboveRect.height > 0
+                ? (aboveRect.bottom - rect.top) / s + 8
                 : 18 + 34;
 
-            kit.layout.place(box, { right: 18, top: Math.round(below + 10) });
-            box.style.setProperty('--title-w', Math.round(Math.min(340 * s, rect.width * 0.32)) + 'px');
+            kit.layout.place(box, { right: 18, top: Math.round(below) });
             box.style.setProperty('--title-scale', s.toFixed(3));
-
-            const body = this._roadmapFeaturesBody;
-            if (body) {
-                body.style.setProperty('--title-maxh', kit.layout.px(96, s));
-                const boxRect = box.getBoundingClientRect();
-                const bodyRect = body.getBoundingClientRect();
-                const canvasBottom = rect.top + rect.height;
-                const spill = boxRect.bottom - (canvasBottom - 18 * s);
-                if (spill > 0 && bodyRect.height > 0) {
-                    body.style.setProperty('--title-maxh',
-                        Math.round(Math.max(60 * s, bodyRect.height - spill)) + 'px');
-                }
-            }
         };
+
+        // The full window is modal: while it is up (and on the frame that opens
+        // or closes it) it reads the keyboard and the pad and the title under
+        // it reads nothing. Tab or Back opens it whenever the roadmap panel is
+        // on the title and nothing else modal is.
+        const _Scene_Title_update = Scene_Title.prototype.update;
+        Scene_Title.prototype.update = function () {
+            const base = () => { if (_Scene_Title_update) _Scene_Title_update.call(this); };
+            if (fullscreenNav) {
+                updateFullscreenInput();
+                withInputMuted(base);
+                return;
+            }
+            if (this.canOpenRoadmapByKey() && detailsKeyTriggered()) {
+                hideHoverModal();
+                playSe('playOk');
+                openFullscreenRoadmap();
+                withInputMuted(base);
+                return;
+            }
+            base();
+        };
+
+        Scene_Title.prototype.canOpenRoadmapByKey = function () {
+            if (!this._roadmapBox || activeFullscreen) return false;
+            if (this._storyModeWindow && this._storyModeWindow.visible) return false;
+            if (this._hyperverseBg && typeof this._hyperverseBg.blocksTitleInput === 'function' &&
+                this._hyperverseBg.blocksTitleInput()) return false;
+            return true;
+        };
+
+        // L1 / R1 are polled raw off the pad by the background switcher, past
+        // the muted Input, so the switcher is told directly to sit still.
+        const _Scene_Title_updateBgSwitchInput = Scene_Title.prototype.updateBgSwitchInput;
+        if (_Scene_Title_updateBgSwitchInput) {
+            Scene_Title.prototype.updateBgSwitchInput = function () {
+                if (fullscreenNav) return;
+                _Scene_Title_updateBgSwitchInput.call(this);
+            };
+        }
 
         Scene_Title.prototype.removeDisclaimerBox = function () {
             hideHoverModal();
@@ -888,7 +1002,6 @@
             if (box && box.parentNode) box.parentNode.removeChild(box);
             this._disclaimerBox = null;
             this._roadmapBox = null;
-            this._roadmapFeaturesBody = null;
         };
     }
 
@@ -907,8 +1020,11 @@
             desc: featureDesc(f),
             done: featureDone(f)
         })),
+        getGoals: categoryGoals,
         showHoverModal: showHoverModal,
-        hideHoverModal: hideHoverModal
+        hideHoverModal: hideHoverModal,
+        isFullscreenOpen: () => !!fullscreenNav,
+        updateFullscreenInput: updateFullscreenInput
     };
 
 })();

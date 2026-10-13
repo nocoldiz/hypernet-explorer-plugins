@@ -247,6 +247,8 @@
   function takeCensus(sinceMinute) {
     const byGroup = {};
     for (const record of Object.values(lifeRecords())) {
+      // The dead are no longer anybody's population, workforce or mouths.
+      if (!record || record.dead) continue;
       const g = record.homeGroup || "__none__";
       const c = byGroup[g] || (byGroup[g] = {
         population: 0, employed: 0, unemployed: 0, imprisoned: 0, retired: 0,
@@ -552,8 +554,8 @@
   // Small-town gossip wire: fresh life events of local officeholders make
   // the news, the mayor's divorce is everyone's business.
   // A mayor's life event, as NPCLifeSimulator would print it.
-  const lifeEventTextOf = (ev) =>
-    (window.NPCLifeSim?.lifeEventText?.(ev)) ?? ev?.desc ?? "";
+  const lifeEventTextOf = (ev, who) =>
+    (window.NPCLifeSim?.lifeEventText?.(ev, who)) ?? ev?.desc ?? "";
 
   function harvestGossipNews(state, last) {
     let published = 0;
@@ -567,7 +569,7 @@
         if (ev.minute <= last) break; // newest-first
         if (ev.type !== "relationship" && ev.type !== "conviction") continue;
         queueNews({
-          text: T('WorldWeb.news.mayorEvent', { mayor: mayor, what: lifeEventTextOf(ev) }),
+          text: T('WorldWeb.news.mayorEvent', { mayor: mayor, what: lifeEventTextOf(ev, mayor) }),
           location: pulse.group, minute: ev.minute,
           category: ev.type === "conviction" ? "negative" : "neutral",
           priceEffect: ev.type === "conviction" ? 0.96 : 1,
@@ -577,7 +579,7 @@
           pulse.security = clamp(pulse.security - 6, 0, 100);
           pulse.mood = clamp(pulse.mood - 4, 0, 100);
           pushPulseEvent(pulse, ev.minute, "scandal", "WorldWeb.episode.mayorScandal",
-            { mayor: mayor, what: lifeEventTextOf(ev) });
+            { mayor: mayor, what: lifeEventTextOf(ev, mayor) });
         }
         published++;
         break;

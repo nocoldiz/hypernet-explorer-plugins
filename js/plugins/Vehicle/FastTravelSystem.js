@@ -214,8 +214,8 @@
     // The Destinations.json key is the identity of a place (lookups, save data,
     // "Teleport - <key>" event names); its "name" field is what the player reads.
     const destLabel = (name) =>
-        (window.WorkSystem && window.WorkSystem.destinationName)
-            ? window.WorkSystem.destinationName(name)
+        (window.WorkSystem && window.WorkSystem.destinationTravelName)
+            ? window.WorkSystem.destinationTravelName(name)
             : String(name == null ? '' : name);
 
     // What a row, a pin and a confirmation call the place. A point the party
@@ -281,13 +281,10 @@
     }
 
     // The level a row, a pin and the confirmation print, or "" where the place
-    // has nothing to say: the bracket that roams there, "Lv. X to Y", the one
-    // window every creature met at that stop sits inside.
+    // has nothing to say: the median of the bracket that roams there, "Lv. X".
     function levelInfoText(info) {
         if (!info) return '';
-        return info.min === info.max
-            ? T('FastTravel.destLevel', { level: info.min })
-            : T('FastTravel.destLevelRange', { min: info.min, max: info.max });
+        return T('FastTravel.destLevel', { level: info.median || info.min });
     }
 
     function destLevelText(dest) {
@@ -4347,7 +4344,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
     if (window.HypernetOS && window.HypernetOS.registerApp) {
         window.HypernetOS.registerApp({
             id: WAY_APP_ID,
-            name: T('FastTravel.book.appName'),
+            name: () => T('FastTravel.book.appName'),
             icon: WAY_ICON,
             category: 'reference',
             launchFn: function () { window.Wayfare.launch(); },
@@ -4858,7 +4855,7 @@ Scene_Map.prototype.printTravelCoordinates = function () {
     if (window.HypernetOS && window.HypernetOS.registerApp) {
         window.HypernetOS.registerApp({
             id: TAXI_APP_ID,
-            name: T('FastTravel.taxi.appName'),
+            name: () => T('FastTravel.taxi.appName'),
             icon: TAXI_ICON,
             category: 'reference',
             launchFn: function () { window.TaxiApp.launch(); },

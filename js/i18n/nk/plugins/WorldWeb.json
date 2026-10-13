@@ -64,7 +64,7 @@
     "meters": "PROSPERITY {prosperity}/100 ({band}), SECURITY {security}/100, MOOD {mood}/100!",
     "people": "PEOPLE: {population} KNOWN, {employed} WORKIN', {unemployed} IDLE, {imprisoned} IN PRISON, {retired} RETIRED, {criminals} OF ILL REPUTE!",
     "rightNow": "RIGHT NOW: {list}.",
-    "quiet": "QUIET TIMES, NOTHIN' REMARKABLE UNDERWAY!"
+    "quiet": "QUIET TIMES, NUTTIN' REMARKABLE UNDERWAY!"
   },
   "deed": {
     "someone": "SOMEONE",
@@ -72,7 +72,7 @@
     "gift": "{actor} GAVE {target} AWAY IN {place}.",
     "drop": "{actor} LEFT {target} LYING IN {place}.",
     "trespass": "{actor} WAZ FOUND WHERE DEY HAB NO BUSINESS BEING IN {place}!",
-    "vandalism": "{actor} BROKE SOMETHIN' DAT WAZ NO DEY IN {place}!",
+    "vandalism": "{actor} BROKE SOMETINK DAT WAZ NO DEY IN {place}!",
     "bribery": "{actor} PUT MONEY IN DA WRONG HAND IN {place}!",
     "pickpocket": "{actor} LIGHTENED A POCKET IN {place}.",
     "theft": "{actor} STOLE {target} IN {place}.",
@@ -84,7 +84,7 @@
     "massacre": "A SLAUGHTER WAZ DONE IN {place}.",
     "rescue": "{actor} PULLED {target} OUT OF TROUBLE IN {place}!",
     "healing": "{actor} TENDED DA HURT IN {place}.",
-    "charity": "{actor} GAVE TA DOZE WIT NOTHIN' IN {place}!"
+    "charity": "{actor} GAVE TA DOZE WIT NUTTIN' IN {place}!"
   },
   "gathering": {
     "title": "{type} UNTIL {end}",

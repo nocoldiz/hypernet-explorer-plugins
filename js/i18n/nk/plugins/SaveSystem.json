@@ -11,6 +11,10 @@
   "sandboxSlot": "MUD PIT",
   "quickslot": "QUICKSAVE {n}",
   "partyOf": "PARTY OF {name}",
+  "autosaveName": "AUTOSAVE",
+  "slotName": "SLOT {n}",
+  "adjacentParty": "ADJACENT: {name}",
+  "coordinatesLabel": "COORDINATES:",
   "levelShort": "LV {n}",
   "hpShort": "HP",
   "mpShort": "MP",
@@ -25,20 +29,20 @@
   "worldType": "TIMELINE:",
   "worldMagic": "MAGIC:",
   "worldStarted": "BEGAN:",
-  "daysUntilDestiny": "DAYS UNTIL DESTINY COMES:",
-  "daysAfterDestiny": "DAYS AFTER DESTINY HIT:",
+  "daysUntilDestiny": "DAYS UNTIL DESTINY:",
+  "daysAfterDestiny": "DAYS SINCE DESTINY:",
   "destinyAverted": "DESTINY AVERTED",
-  "anotherPartyOfThisWorld": "ANOTHER PARTY OF DIS WORLD. YOU MAY LOAD IT, BUT NO WRITE HERE!",
+  "anotherPartyOfThisWorld": "STASHED BY ANOTHER PARTY. LOAD ONLY!",
   "playTime": "PLAY TIME:",
   "recordedOn": "RECORDED ON:",
   "partyMembers": "PARTY MEMBERS",
   "save": "STASH",
   "load": "UNSTASH",
   "delete": "SMASH",
-  "thisPageOfHistoryRemains": "DIS PAGE OF HISTORY REMAINS BLANK. PRESS TWICE OR PRESS ENTER TA RECORD YA CURRENT ADVENTURE INTO DIS SLOT!",
+  "thisPageOfHistoryRemains": "EMPTY SLOT.",
   "deleteParty": "DELETE PARTY",
-  "areYouSureYouWant": "IZ YOU SURE YOU WANT TA DELETE DIS PARTY? DIS NO CAN BE UNDONE!",
-  "cannotDeleteCurrent": "DIS IZ DA PARTY YOU IZ PLAYIN'. YOU NO CAN DELETE IT FROM INSIDE ITS OWN STORY!",
+  "areYouSureYouWant": "DELETE DIS PARTY? DIS NO CAN BE UNDONE!",
+  "cannotDeleteCurrent": "NO CAN DELETE DA PARTY YOU IZ PLAYIN'!",
   "cancel": "FORGET IT",
   "theAdventurer": "DA ADVENTURER",
   "playTime2": "PLAY TIME",
@@ -65,5 +69,9 @@
     "quicksaveLoaded": "QUICKSAVE {n} LOADED"
   },
   "rememberedFor": "WHAT WILL BE REMEMBERED",
-  "diaryStamp": "{date}, {time}"
+  "diaryStamp": "{date}, {time}",
+  "story": {
+    "giveUp": "GIVE UP",
+    "witchesNeverDie": "WITCHES NEVER DIE!"
+  }
 }

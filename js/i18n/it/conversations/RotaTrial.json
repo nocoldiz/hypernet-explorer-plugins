@@ -49,8 +49,12 @@
     ]
   },
   "noCase": {
-    "la": ["Nulla accusatio in tabula scripta est. Tribunal non sedet. Discede."],
-    "tr": ["Sul foglio non è scritta alcuna accusa. La corte non siede. Puoi andare."]
+    "la": [
+      "Nulla accusatio in tabula scripta est. Tribunal non sedet. Discede."
+    ],
+    "tr": [
+      "Sul foglio non è scritta alcuna accusa. La corte non siede. Puoi andare."
+    ]
   },
   "opening": {
     "la": [
@@ -85,34 +89,54 @@
     ]
   },
   "askPlea": {
-    "la": ["Quid respondes? Confiteris, an negas?"],
-    "tr": ["Che cosa rispondi? Confessi, o neghi?"]
+    "la": [
+      "Quid respondes? Confiteris, an negas?"
+    ],
+    "tr": [
+      "Che cosa rispondi? Confessi, o neghi?"
+    ]
   },
   "noMercy": {
     "la": [
       "Misericordia non est in hoc foro. Responde ad accusationem.",
-      "Misericordiam a Deo pete, non a Rota. Confiteris, an negas?"
+      "Misericordiam a solo Deo pete. Confiteris, an negas?"
     ],
     "tr": [
       "In questa corte non c'è pietà. Rispondi all'accusa.",
-      "Chiedi pietà a Dio, non alla Rota. Confessi, o neghi?"
+      "Chiedi pietà solo a Dio. Confessi, o neghi?"
     ]
   },
   "confession": {
-    "la": ["Confessio accepta est. Poena uno gradu minuitur, nec amplius."],
-    "tr": ["La confessione è accolta. La pena scende di un gradino del tariffario, e non oltre."]
+    "la": [
+      "Confessio accepta est. Poena uno gradu minuitur, nec amplius."
+    ],
+    "tr": [
+      "La confessione è accolta. La pena scende di un gradino del tariffario, e non oltre."
+    ]
   },
   "markNotArguable": {
-    "la": ["Quod es, non quod fecisti, in tabula scriptum est. De hoc non disputatur."],
-    "tr": ["Sul foglio è scritto ciò che sei, non ciò che hai fatto. Su questo non si discute."]
+    "la": [
+      "Quod es in tabula scriptum est. De hoc non disputatur."
+    ],
+    "tr": [
+      "Sul foglio è scritto ciò che sei. Su questo non si discute."
+    ]
   },
   "statesOdds": {
-    "la": ["Interpres tibi dicet quanta sit spes defensionis tuae. Nihil celatur."],
-    "tr": ["La corte dichiara le probabilità apertamente, perché nessuno possa dirla ingiusta: la tua difesa ne ha {chance} su cento. Se fallisce, la negazione è spergiuro, e la pena sale di un gradino."]
+    "la": [
+      "Interpres tibi dicet quanta sit spes defensionis tuae. Nihil celatur."
+    ],
+    "tr": [
+      "La corte dichiara le probabilità apertamente, perché nessuno possa dirla ingiusta: la tua difesa ne ha {chance} su cento. Se fallisce, la negazione è spergiuro, e la pena sale di un gradino."
+    ]
   },
   "hearDefence": {
-    "la": ["Loquere. Rota audit."],
-    "tr": ["Parla. La Rota ascolta."]
+    "la": [
+      "Loquere. Rota audit."
+    ],
+    "tr": [
+      "Parla. La Rota ascolta."
+    ]
   },
   "acquittal": {
     "la": [
@@ -145,12 +169,20 @@
     ]
   },
   "sentence": {
-    "la": ["Poenam tibi irrogo secundum tariffam Imperii."],
-    "tr": ["Pronuncio la pena secondo il tariffario dell'Impero: {sentence}."]
+    "la": [
+      "Poenam tibi irrogo secundum tariffam Imperii."
+    ],
+    "tr": [
+      "Pronuncio la pena secondo il tariffario dell'Impero: {sentence}."
+    ]
   },
   "confiscation": {
-    "la": ["Bona tua publicantur, usque ad summam poenae."],
-    "tr": ["I tuoi beni sono confiscati, fino all'intera somma della pena: {amount}."]
+    "la": [
+      "Bona tua publicantur, usque ad summam poenae."
+    ],
+    "tr": [
+      "I tuoi beni sono confiscati, fino all'intera somma della pena: {amount}."
+    ]
   },
   "release": [
     "La porta della cella si apre. Un chierico legge la scarcerazione ad alta voce in latino, poi ancora una volta per te. La Rota non ti accompagna fuori.",

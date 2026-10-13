@@ -4,8 +4,8 @@
   "search": "Search ideologies...",
   "confirm": "Select Ideology",
   "listHead": "Ideologies",
-  "noAdherents": "No active political parties in present session",
-  "adherents": "Known World Adherents:",
+  "noAdherents": "No party follows this ideology yet.",
+  "adherents": "Parties following it:",
   "axisShort": "E: {econ} | A: {auth} | Z: {myst}",
   "canvasAxis": {
     "econ": "Right (+Econ)",

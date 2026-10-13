@@ -33,7 +33,7 @@
     "name": "Verme delle caverne bioluminescente"
   },
   "12": {
-    "name": "Imitatore del sangue"
+    "name": "Mimic di sangue"
   },
   "13": {
     "name": "Zanzara di sangue"
@@ -84,7 +84,7 @@
     "name": "Sentinella della cripta"
   },
   "29": {
-    "name": "Cultista Accolito"
+    "name": "Cultista accolito"
   },
   "30": {
     "name": "Coniglio curioso"
@@ -147,7 +147,7 @@
     "name": "Sentinella fenicottero"
   },
   "50": {
-    "name": "Fiore Pixie"
+    "name": "Pixie dei fiori"
   },
   "51": {
     "name": "Bracconiere della foresta"
@@ -174,7 +174,7 @@
     "name": "Rana da giardino"
   },
   "59": {
-    "name": "Wisp fantasma"
+    "name": "Fuoco fatuo fantasma"
   },
   "60": {
     "name": "Medusa gigante"
@@ -189,13 +189,13 @@
     "name": "Cavalletta"
   },
   "64": {
-    "name": "Cimitero infestato"
+    "name": "Spettro del cimitero"
   },
   "65": {
-    "name": "Barcollante del Cimitero"
+    "name": "Barcollante del cimitero"
   },
   "66": {
-    "name": "Hamburger con la Pistola"
+    "name": "Hamburger con la pistola"
   },
   "67": {
     "name": "Arciere hobgoblin"
@@ -240,7 +240,7 @@
     "name": "Lumaca larvale"
   },
   "81": {
-    "name": "Palude furtiva"
+    "name": "Furtivo della palude"
   },
   "82": {
     "name": "Fantasma meme"
@@ -249,7 +249,7 @@
     "name": "Schiavo della miniera"
   },
   "84": {
-    "name": "Tonalità minore"
+    "name": "Ombra minore"
   },
   "85": {
     "name": "Spirito dispettoso"
@@ -270,7 +270,7 @@
     "name": "Gru di origami"
   },
   "91": {
-    "name": "Pesce pappagallo grazer"
+    "name": "Pesce pappagallo brucatore"
   },
   "92": {
     "name": "Guardiano cuscino"
@@ -306,7 +306,7 @@
     "name": "Blob di realtà di gomma"
   },
   "103": {
-    "name": "Scuola di Sardine"
+    "name": "Banco di sardine"
   },
   "104": {
     "name": "Bot di sicurezza"
@@ -348,7 +348,7 @@
     "name": "Ratto di palude"
   },
   "117": {
-    "name": "Novizia strega della palude"
+    "name": "Strega novizia della palude"
   },
   "118": {
     "name": "Esattore delle tasse"
@@ -393,10 +393,10 @@
     "name": "Giovane falsa idra"
   },
   "132": {
-    "name": "Giovane Orco"
+    "name": "Giovane orco"
   },
   "133": {
-    "name": "Popolano Zombie"
+    "name": "Popolano zombie"
   },
   "134": {
     "name": "<-- 11-20 -->"
@@ -411,7 +411,7 @@
     "name": "Formica acida"
   },
   "138": {
-    "name": "pugile dilettante"
+    "name": "Pugile dilettante"
   },
   "139": {
     "name": "Castoro corazzato"
@@ -423,22 +423,22 @@
     "name": "Mech d'assalto"
   },
   "142": {
-    "name": "Melma Azzurra"
+    "name": "Melma azzurra"
   },
   "143": {
     "name": "Testa di bambola"
   },
   "144": {
-    "name": "Bandito Arciere"
+    "name": "Arciere bandito"
   },
   "145": {
-    "name": "Bandito Assassino"
+    "name": "Assassino bandito"
   },
   "146": {
-    "name": "Bandito Bardo"
+    "name": "Bardo bandito"
   },
   "147": {
-    "name": "Capo Bandito"
+    "name": "Capo bandito"
   },
   "148": {
     "name": "Chierico bandito"
@@ -447,22 +447,22 @@
     "name": "Balestriere bandito"
   },
   "150": {
-    "name": "Bandito Grunt"
+    "name": "Gregario bandito"
   },
   "151": {
     "name": "Mago bandito"
   },
   "152": {
-    "name": "Bandito Piromante"
+    "name": "Piromante bandito"
   },
   "153": {
-    "name": "Bandito ladro"
+    "name": "Bandito briccone"
   },
   "154": {
-    "name": "Bandito Scout"
+    "name": "Esploratore bandito"
   },
   "155": {
-    "name": "Bruiser di pelle di corteccia"
+    "name": "Picchiatore pellecorteccia"
   },
   "156": {
     "name": "Mech da battaglia"
@@ -471,7 +471,7 @@
     "name": "Goblin della campana"
   },
   "158": {
-    "name": "Pantera Nera"
+    "name": "Pantera nera"
   },
   "159": {
     "name": "Gufo della bufera"
@@ -513,7 +513,7 @@
     "name": "Guardiano del corallo"
   },
   "172": {
-    "name": "Bioslave corrotto"
+    "name": "Bioschiavo corrotto"
   },
   "173": {
     "name": "Ombra strisciante"
@@ -531,7 +531,7 @@
     "name": "Drone criogenico"
   },
   "178": {
-    "name": "Truant cristallino"
+    "name": "Furtivo cristallino"
   },
   "179": {
     "name": "Carro armato cibernetico"
@@ -546,13 +546,13 @@
     "name": "Scorpione del deserto"
   },
   "183": {
-    "name": "Maiale tremendo"
+    "name": "Maiale feroce"
   },
   "184": {
     "name": "Coniglio feroce"
   },
   "185": {
-    "name": "Demone della Discordia"
+    "name": "Demone della discordia"
   },
   "186": {
     "name": "Diavoletto schivante"
@@ -564,10 +564,10 @@
     "name": "Revenant annegato"
   },
   "189": {
-    "name": "Protettore della Driade"
+    "name": "Driade protettrice"
   },
   "190": {
-    "name": "Elementale della Terra"
+    "name": "Elementale della terra"
   },
   "191": {
     "name": "Fauci d'Eco"
@@ -591,10 +591,10 @@
     "name": "Mistico elfico"
   },
   "198": {
-    "name": "Capitano dei Ranger Elfici"
+    "name": "Capitano dei raminghi elfici"
   },
   "199": {
-    "name": "Guardia Reale Elfica"
+    "name": "Guardia reale elfica"
   },
   "200": {
     "name": "Esploratore elfico"
@@ -630,7 +630,7 @@
     "name": "Branco di iene selvatiche"
   },
   "211": {
-    "name": "Drago di fuoco"
+    "name": "Draghetto di fuoco"
   },
   "212": {
     "name": "Torretta di fiamma"
@@ -657,7 +657,7 @@
     "name": "Ragno di gelo"
   },
   "220": {
-    "name": "Succubo del gelo"
+    "name": "Succube del gelo"
   },
   "221": {
     "name": "Silfide del gelo"
@@ -705,7 +705,7 @@
     "name": "Gnomo Esploratore"
   },
   "236": {
-    "name": "Gnomo Tinkerer"
+    "name": "Gnomo inventore"
   },
   "237": {
     "name": "Gnomo imbroglione"
@@ -720,7 +720,7 @@
     "name": "Melma d'erba"
   },
   "241": {
-    "name": "Ghiaia Imp"
+    "name": "Imp di ghiaia"
   },
   "242": {
     "name": "Lupo grigio"
@@ -747,7 +747,7 @@
     "name": "Spaventapasseri inquietante"
   },
   "250": {
-    "name": "Richiamo olografico"
+    "name": "Esca olografica"
   },
   "251": {
     "name": "Orso cornuto"
@@ -756,7 +756,7 @@
     "name": "Motore idrocinetico"
   },
   "253": {
-    "name": "Drago di ghiaccio"
+    "name": "Draghetto di ghiaccio"
   },
   "254": {
     "name": "Canguro di ghiaccio"
@@ -792,7 +792,7 @@
     "name": "Scimmione malefico"
   },
   "265": {
-    "name": "Lupo del terrore criniuto"
+    "name": "Lupo del terrore crinito"
   },
   "266": {
     "name": "Manichino"
@@ -807,7 +807,7 @@
     "name": "Cyborg militare"
   },
   "270": {
-    "name": "Scatola a forma di mimica"
+    "name": "Scatola a forma di mimic"
   },
   "271": {
     "name": "Sanguisuga mentale"
@@ -855,10 +855,10 @@
     "name": "Orco Bruto"
   },
   "286": {
-    "name": "Schiacciatore Ogre"
+    "name": "Orco schiacciatore"
   },
   "287": {
-    "name": "Sciamano del fuoco dell'orco"
+    "name": "Orco sciamano del fuoco"
   },
   "288": {
     "name": "Orco Mistico"
@@ -882,7 +882,7 @@
     "name": "Marionetta fantasma"
   },
   "295": {
-    "name": "Difensore dei fotoni"
+    "name": "Difensore fotonico"
   },
   "296": {
     "name": "Melma rosa"
@@ -894,13 +894,13 @@
     "name": "Scarabeo orologio da tasca"
   },
   "299": {
-    "name": "Imp tascabile-dimensionale"
+    "name": "Imp della dimensione tascabile"
   },
   "300": {
     "name": "Canguro primordiale"
   },
   "301": {
-    "name": "pugile professionista"
+    "name": "Pugile professionista"
   },
   "302": {
     "name": "Pianta rampicante di palude"
@@ -912,7 +912,7 @@
     "name": "Re dei ratti"
   },
   "305": {
-    "name": "Resti sconcertanti"
+    "name": "Resti tintinnanti"
   },
   "306": {
     "name": "Cinghiale dorsorasoio"
@@ -930,7 +930,7 @@
     "name": "Granchio gabbia toracica"
   },
   "311": {
-    "name": "Sentinella Ribelle"
+    "name": "Sentinella ribelle"
   },
   "312": {
     "name": "Lama rotante"
@@ -954,7 +954,7 @@
     "name": "Cucciolo di foca"
   },
   "319": {
-    "name": "Sentinella della sicurezza"
+    "name": "Sentinella di sicurezza"
   },
   "320": {
     "name": "Topo di fogna"
@@ -966,7 +966,7 @@
     "name": "Inseguitore d'Ombra"
   },
   "323": {
-    "name": "Slime Shock"
+    "name": "Melma elettrica"
   },
   "324": {
     "name": "Apprendista Sirena"
@@ -978,7 +978,7 @@
     "name": "Bruto schiacciacranio"
   },
   "327": {
-    "name": "Cavaliere slime"
+    "name": "Cavaliere melma"
   },
   "328": {
     "name": "Mietitore di anime"
@@ -1053,7 +1053,7 @@
     "name": "Anemone tossico"
   },
   "352": {
-    "name": "Fanghi tossici"
+    "name": "Fanghiglia tossica"
   },
   "353": {
     "name": "Spruzzatore tossico"
@@ -1068,10 +1068,10 @@
     "name": "Scimmia arboricola"
   },
   "357": {
-    "name": "Folletto immortale"
+    "name": "Imp imbroglione"
   },
   "358": {
-    "name": "Cacciatore di tridenti"
+    "name": "Cacciatore col tridente"
   },
   "359": {
     "name": "Cucciolo di mammut della tundra"
@@ -1110,7 +1110,7 @@
     "name": "Maschera piangente"
   },
   "371": {
-    "name": "Wisp sussurrante"
+    "name": "Fuoco fatuo sussurrante"
   },
   "372": {
     "name": "Cinghiale"
@@ -1143,7 +1143,7 @@
     "name": "Giovane yeti"
   },
   "382": {
-    "name": "Mago zefiro"
+    "name": "Mago dello zefiro"
   },
   "383": {
     "name": "<-- 21-30 -->"
@@ -1173,7 +1173,7 @@
     "name": "Bombardiere acido"
   },
   "392": {
-    "name": "Chiamatore di maree acido"
+    "name": "Evocamaree acido"
   },
   "393": {
     "name": "Elementale dell'Aria"
@@ -1203,10 +1203,10 @@
     "name": "Vespa assassina"
   },
   "402": {
-    "name": "Emergenza vuota"
+    "name": "Emersione vuota"
   },
   "403": {
-    "name": "Visualizzazione"
+    "name": "Blick"
   },
   "404": {
     "name": "Sadico accecante"
@@ -1233,7 +1233,7 @@
     "name": "Divoratore Masticaossa"
   },
   "412": {
-    "name": "Salamoia Wisp"
+    "name": "Fuoco fatuo di salamoia"
   },
   "413": {
     "name": "Bubba"
@@ -1257,7 +1257,7 @@
     "name": "Tessitore di cenere"
   },
   "420": {
-    "name": "Segugio di Cenerentola"
+    "name": "Segugio faucicenere"
   },
   "421": {
     "name": "Varano golacenere"
@@ -1299,7 +1299,7 @@
     "name": "Sceloporo dal dorso cristallino"
   },
   "434": {
-    "name": "Sentinella CrystalCarapace"
+    "name": "Sentinella dal carapace cristallino"
   },
   "435": {
     "name": "Candela maledetta"
@@ -1329,7 +1329,7 @@
     "name": "Arbitro Divino"
   },
   "444": {
-    "name": "Taskmaster dominante"
+    "name": "Aguzzino dominante"
   },
   "445": {
     "name": "Sommo Sacerdote Serpente dei Sogni"
@@ -1365,7 +1365,7 @@
     "name": "Stalker di smeraldo"
   },
   "456": {
-    "name": "Sciame di zecche ingorgate"
+    "name": "Sciame di zecche gonfie"
   },
   "457": {
     "name": "Sanguisuga di essenza"
@@ -1431,10 +1431,10 @@
     "name": "Zapback dorato"
   },
   "478": {
-    "name": "Ghiacciaio Serpent"
+    "name": "Serpente del ghiacciaio"
   },
   "479": {
-    "name": "Worm nero"
+    "name": "Verme tenebroso"
   },
   "480": {
     "name": "Gnomo Alchimista"
@@ -1446,7 +1446,7 @@
     "name": "Gnomo Bombardiere"
   },
   "483": {
-    "name": "Ingegnere Gnomo"
+    "name": "Gnomo Ingegnere"
   },
   "484": {
     "name": "Sciamano gnomo"
@@ -1488,7 +1488,7 @@
     "name": "Driade di Hellthorn"
   },
   "497": {
-    "name": "Termite della mente alveare"
+    "name": "Termite a mente alveare"
   },
   "498": {
     "name": "Capra cava"
@@ -1500,7 +1500,7 @@
     "name": "Cavallo di ferro"
   },
   "501": {
-    "name": "Costritore della giungla"
+    "name": "Costrittore della giungla"
   },
   "502": {
     "name": "Predatore della giungla"
@@ -1509,13 +1509,13 @@
     "name": "Cacciatore della giungla"
   },
   "504": {
-    "name": "Drago di ghiaccio giovane"
+    "name": "Giovane drago di ghiaccio"
   },
   "505": {
     "name": "Guardiano del Labirinto"
   },
   "506": {
-    "name": "Serpente del lago Lurker"
+    "name": "Serpente in agguato del lago"
   },
   "507": {
     "name": "Lilith la Corruttrice"
@@ -1560,7 +1560,7 @@
     "name": "Mianni"
   },
   "521": {
-    "name": "Lanterna Miasma"
+    "name": "Lanterna del miasma"
   },
   "522": {
     "name": "Cacciatore di mezzanotte"
@@ -1569,7 +1569,7 @@
     "name": "Scorticatore mentale"
   },
   "524": {
-    "name": "Battaglia di Fuso"
+    "name": "Scoria fusa"
   },
   "525": {
     "name": "Wendigo al chiaro di luna"
@@ -1587,7 +1587,7 @@
     "name": "Fungoide motivazionale"
   },
   "530": {
-    "name": "Frantoio di montagna"
+    "name": "Frantumatore di montagne"
   },
   "531": {
     "name": "Aquila di montagna"
@@ -1614,10 +1614,10 @@
     "name": "Scavatore di ossidiana"
   },
   "539": {
-    "name": "Adepto Elementale Ogre"
+    "name": "Orco Adepto Elementale"
   },
   "540": {
-    "name": "Omicidio del corvo minaccioso"
+    "name": "Stormo di corvi minacciosi"
   },
   "541": {
     "name": "Fantasma Onirico"
@@ -1626,7 +1626,7 @@
     "name": "Appassionato del dolore"
   },
   "543": {
-    "name": "Palette fantasma"
+    "name": "Fantasma della tavolozza"
   },
   "544": {
     "name": "Panda"
@@ -1650,7 +1650,7 @@
     "name": "Zombi filosofico"
   },
   "551": {
-    "name": "Platino Mimic"
+    "name": "Mimic di platino"
   },
   "552": {
     "name": "Pooka velenoso"
@@ -1695,7 +1695,7 @@
     "name": "Sentinella rituale"
   },
   "566": {
-    "name": "Avvoltoio marciume"
+    "name": "Avvoltoio putrido"
   },
   "567": {
     "name": "Avviluppatore di Legno Marcio"
@@ -1716,13 +1716,13 @@
     "name": "Cobra della sabbia"
   },
   "573": {
-    "name": "Varano strider delle sabbie"
+    "name": "Varano corridore delle sabbie"
   },
   "574": {
     "name": "Sentinella spaventapasseri"
   },
   "575": {
-    "name": "Forgiato a scarto"
+    "name": "Forgiato di rottami"
   },
   "576": {
     "name": "Tartaruga marina"
@@ -1731,10 +1731,10 @@
     "name": "Incantatrice di schiuma di mare"
   },
   "578": {
-    "name": "Vedere Slime"
+    "name": "Melma veggente"
   },
   "579": {
-    "name": "Gallerie sismiche"
+    "name": "Scavatunnel sismico"
   },
   "580": {
     "name": "Meme senziente"
@@ -1773,7 +1773,7 @@
     "name": "Colonia di formiche soldato"
   },
   "592": {
-    "name": "Aspetto assonnato"
+    "name": "Apparizione sonnolenta"
   },
   "593": {
     "name": "Dracopipistrello Fuso Sonico"
@@ -1785,25 +1785,25 @@
     "name": "Uccello canoro spettrale"
   },
   "596": {
-    "name": "Wisp spettrale"
+    "name": "Fuoco fatuo spettrale"
   },
   "597": {
     "name": "Porcospino spinoso"
   },
   "598": {
-    "name": "Pogona a squame spinali"
+    "name": "Pogona dalle squame spinose"
   },
   "599": {
     "name": "Ombraspina"
   },
   "600": {
-    "name": "Miconide Sporeburst"
+    "name": "Miconide scoppiaspore"
   },
   "601": {
-    "name": "Chiamante delle stelle"
+    "name": "Evocatore di stelle"
   },
   "602": {
-    "name": "Drago della Tempesta"
+    "name": "Draghetto della tempesta"
   },
   "603": {
     "name": "Tigre striata"
@@ -1821,7 +1821,7 @@
     "name": "Porta parlante"
   },
   "608": {
-    "name": "Magro"
+    "name": "Tanko"
   },
   "609": {
     "name": "Golem di Terra"
@@ -1833,7 +1833,7 @@
     "name": "Il Crematore"
   },
   "612": {
-    "name": "La signora congelata"
+    "name": "La dama gelata"
   },
   "613": {
     "name": "Il Fantasma"
@@ -1854,16 +1854,16 @@
     "name": "Tessitore di pensieri"
   },
   "619": {
-    "name": "Tuono a macchia"
+    "name": "Blob del tuono"
   },
   "620": {
-    "name": "Piccolo Drago del Tuono"
+    "name": "Draghetto del tuono"
   },
   "621": {
     "name": "Scultore delle maree"
   },
   "622": {
-    "name": "Gufoorso logoro"
+    "name": "Orsogufo vetusto"
   },
   "623": {
     "name": "Tonno Dimensionale"
@@ -1872,7 +1872,7 @@
     "name": "Adepto del Totem"
   },
   "625": {
-    "name": "Amalgama tossica"
+    "name": "Amalgama tossico"
   },
   "626": {
     "name": "Fantasma tossico"
@@ -1899,7 +1899,7 @@
     "name": "Andras"
   },
   "634": {
-    "name": "Capo nato dalla guerra"
+    "name": "Capotribù nato dalla guerra"
   },
   "635": {
     "name": "Spettro sussurrante"
@@ -1911,7 +1911,7 @@
     "name": "Delfino dell'ira"
   },
   "638": {
-    "name": "Zefiro Djinn"
+    "name": "Djinn dello zefiro"
   },
   "639": {
     "name": "<-- 31-40 -->"
@@ -1926,7 +1926,7 @@
     "name": "Lupo feroce alfa"
   },
   "643": {
-    "name": "Labbro alfa"
+    "name": "Warg alfa"
   },
   "644": {
     "name": "Signore degli Annunaki"
@@ -1968,10 +1968,10 @@
     "name": "Avatar Celeste :EP"
   },
   "657": {
-    "name": "Ospite cherubino-alfa"
+    "name": "Schiera cherubica alfa"
   },
   "658": {
-    "name": "Tick ​​cromatico"
+    "name": "Zecca cromatica"
   },
   "659": {
     "name": "Cronovoro"
@@ -2019,10 +2019,10 @@
     "name": "Esmeralda la Tessitrice di Sogni"
   },
   "674": {
-    "name": "Re dei Lich Eterno"
+    "name": "Re Lich Eterno"
   },
   "675": {
-    "name": "Tattico Eterico"
+    "name": "Tattico Etereo"
   },
   "676": {
     "name": "Divinità infuocata"
@@ -2088,7 +2088,7 @@
     "name": "Megalodonte"
   },
   "697": {
-    "name": "Falena Mind Flayer"
+    "name": "Falena scorticatrice mentale"
   },
   "698": {
     "name": "Scudo mentale"
@@ -2106,7 +2106,7 @@
     "name": "Pantera mistica"
   },
   "703": {
-    "name": "Duchessa della Corte Inferiore"
+    "name": "Duchessa della Corte degli Inferi"
   },
   "704": {
     "name": "Signore della rete"
@@ -2136,7 +2136,7 @@
     "name": "Tartaruga drago primordiale"
   },
   "713": {
-    "name": "Terrore Primordiale Rex"
+    "name": "Rex del Terrore Primordiale"
   },
   "714": {
     "name": "Proto torretta"
@@ -2166,7 +2166,7 @@
     "name": "Assassino Ombra"
   },
   "723": {
-    "name": "Baluardo di Shellbreaker"
+    "name": "Baluardo spaccagusci"
   },
   "724": {
     "name": "Serpente del cielo"
@@ -2187,7 +2187,7 @@
     "name": "Elementale della tempesta"
   },
   "730": {
-    "name": "Tempesta Roc"
+    "name": "Roc della tempesta"
   },
   "731": {
     "name": "Arconte della Corte Estiva"
@@ -2205,7 +2205,7 @@
     "name": "Roc Ala di Tuono"
   },
   "736": {
-    "name": "Orso delle caverne del Titanic"
+    "name": "Orso delle caverne titanico"
   },
   "737": {
     "name": "Protettore totemico"
@@ -2220,7 +2220,7 @@
     "name": "Velociraptor"
   },
   "741": {
-    "name": "Demone virulento"
+    "name": "Demone melmoso virulento"
   },
   "742": {
     "name": "Vorthak lo squarciatore di membrane"
@@ -2229,7 +2229,7 @@
     "name": "Ippotauro da guerra"
   },
   "744": {
-    "name": "Era un idolo"
+    "name": "Idolo di guerra"
   },
   "745": {
     "name": "Serpente del mondo"
@@ -2268,7 +2268,7 @@
     "name": "Signore Supremo del Sangue"
   },
   "757": {
-    "name": "Libro Golem"
+    "name": "Golem di palude"
   },
   "758": {
     "name": "Comandante delle ossa"
@@ -2283,7 +2283,7 @@
     "name": "Protettore Celeste"
   },
   "762": {
-    "name": "Consumatore cronologico"
+    "name": "Consumatore di tempo"
   },
   "763": {
     "name": "Chronos, Titano del Tempo"
@@ -2313,7 +2313,7 @@
     "name": "Comandante del crepuscolo"
   },
   "772": {
-    "name": "Cosa Anziana"
+    "name": "Cosa Antica"
   },
   "773": {
     "name": "Regina delle fate"
@@ -2355,7 +2355,7 @@
     "name": "Discepolo della Palma di Ferro"
   },
   "786": {
-    "name": "Re Slime"
+    "name": "Re Melma"
   },
   "787": {
     "name": "Orso Kodiak"
@@ -2457,7 +2457,7 @@
     "name": "Sudario Salato"
   },
   "820": {
-    "name": "Piagnone Salato"
+    "name": "Dolente Salato"
   },
   "821": {
     "name": "Fuorilegge Recuperato"
@@ -2487,7 +2487,7 @@
     "name": "Eco Sguazzante"
   },
   "830": {
-    "name": "Chiamante di tempesta"
+    "name": "Evocatore di tempeste"
   },
   "831": {
     "name": "Ululante di Tempesta"
@@ -2565,7 +2565,7 @@
     "name": "<-- 51-60 -->"
   },
   "856": {
-    "name": "Sirene abissali"
+    "name": "Sirena abissale"
   },
   "857": {
     "name": "Predatore Furtivo Cinereo"
@@ -2613,7 +2613,7 @@
     "name": "Mimic cono"
   },
   "872": {
-    "name": "Guerriero Coralico"
+    "name": "Mago da Guerra Coralico"
   },
   "873": {
     "name": "Spirito Crepitante"
@@ -2625,7 +2625,7 @@
     "name": "Drago di magma cremisi"
   },
   "876": {
-    "name": "Strillatore Criptato"
+    "name": "Strillatore Nato dalla Cripta"
   },
   "877": {
     "name": "Bestia Scheggia Cristallina"
@@ -2667,7 +2667,7 @@
     "name": "Urside gelido"
   },
   "890": {
-    "name": "Snapjaw fungino"
+    "name": "Azzannatore fungino"
   },
   "891": {
     "name": "Azzannatore Emaciato"
@@ -2718,13 +2718,13 @@
     "name": "Bestia Cornuta dalle Zanne di Ferro"
   },
   "907": {
-    "name": "Caricatore Ironhoof"
+    "name": "Destriero Zoccolo di Ferro"
   },
   "908": {
     "name": "Progenie del Kraken"
   },
   "909": {
-    "name": "Idolo di Laughing Mire"
+    "name": "Idolo del Pantano Ridente"
   },
   "910": {
     "name": "Grifone maestoso"
@@ -2751,7 +2751,7 @@
     "name": "Idra di palude"
   },
   "918": {
-    "name": "Piagnone Mummificato"
+    "name": "Dolente Mummificato"
   },
   "919": {
     "name": "Campione Necrotico"
@@ -2871,7 +2871,7 @@
     "name": "Tormentatore Sussurrante"
   },
   "958": {
-    "name": "Presagio d'inverno"
+    "name": "Foriero d'inverno"
   },
   "959": {
     "name": "Araldo d'inverno"
@@ -2964,7 +2964,7 @@
     "name": "Campione di pugilato d'élite"
   },
   "989": {
-    "name": "Orso Emberclaw"
+    "name": "Orso Artiglio di Brace"
   },
   "990": {
     "name": "Sanguisuga emotiva"
@@ -2988,7 +2988,7 @@
     "name": "Orso Zanna Gelida"
   },
   "997": {
-    "name": "Tartaruga Galeshell"
+    "name": "Tartaruga Guscio di Burrasca"
   },
   "998": {
     "name": "Scarabeo Guscio Gelatinoso"
@@ -3039,7 +3039,7 @@
     "name": "Kraken Leviatano"
   },
   "1014": {
-    "name": "Ninnananna Spettro"
+    "name": "Spettro della Ninnananna"
   },
   "1015": {
     "name": "Mano Mozzata di Maat"
@@ -3171,7 +3171,7 @@
     "name": "Il Tessitore di Sogni"
   },
   "1058": {
-    "name": "Guardia Infranta di Thoth"
+    "name": "Sigillo Infranto di Thoth"
   },
   "1059": {
     "name": "Parassita del pensiero"
@@ -3198,7 +3198,7 @@
     "name": "Mastino d'Ossario Avvizzito"
   },
   "1067": {
-    "name": "Piagnone Avvizzito"
+    "name": "Dolente Avvizzito"
   },
   "1068": {
     "name": "Progenie di Yog-Sothoth"
@@ -3207,7 +3207,7 @@
     "name": "<-- 71-80 -->"
   },
   "1070": {
-    "name": "Imitatore dell'aborto"
+    "name": "Mimic dell'aborto"
   },
   "1071": {
     "name": "Larva Acida"
@@ -3228,7 +3228,7 @@
     "name": "Budino Salmastro"
   },
   "1077": {
-    "name": "Sentinel Mk. IV in ottone"
+    "name": "Sentinella Mk. IV in ottone"
   },
   "1078": {
     "name": "Edificio Respirante"
@@ -3279,13 +3279,13 @@
     "name": "Drago della Morte Nergal"
   },
   "1094": {
-    "name": "Colosso di Metallo"
+    "name": "Colosso di Terra"
   },
   "1095": {
     "name": "Sporemantle di Eldergloom"
   },
   "1096": {
-    "name": "Scorpione Infernale di Emberback"
+    "name": "Scorpione Infernale Dorsobrace"
   },
   "1097": {
     "name": "Wyrm dell'Entropia :EP"
@@ -3324,7 +3324,7 @@
     "name": "Testa di goblin"
   },
   "1109": {
-    "name": "Signore del Mosh Goblin"
+    "name": "Signore Goblin del Mosh"
   },
   "1110": {
     "name": "Stregone Goblin"
@@ -3414,7 +3414,7 @@
     "name": "Ragno di probabilità"
   },
   "1139": {
-    "name": "Tartaruga Pyroshell"
+    "name": "Tartaruga Guscio di Fuoco"
   },
   "1140": {
     "name": "Fuoco Fatuo di Quarzo"
@@ -3552,7 +3552,7 @@
     "name": "Lupo Terribile dalle Fauci di Sangue"
   },
   "1185": {
-    "name": "Segugio Fauci dalle Fauci di Sangue"
+    "name": "Segugio dalle Fauci di Sangue"
   },
   "1186": {
     "name": "Behemoth della palude"
@@ -3600,7 +3600,7 @@
     "name": "Redivivo Crepitante"
   },
   "1201": {
-    "name": "Luminspore striscianti"
+    "name": "Luminospora Strisciante"
   },
   "1202": {
     "name": "Gel Cristallino"
@@ -3657,10 +3657,10 @@
     "name": "Schiavo Dorato"
   },
   "1220": {
-    "name": "Signore della guerra di metallo goblin"
+    "name": "Signore della Guerra Goblin del Metal"
   },
   "1221": {
-    "name": "Capo della Guerra Goblin"
+    "name": "Capo Guerriero Goblin"
   },
   "1222": {
     "name": "Cavaliere d'Ossa Legato alla Tomba"
@@ -3669,7 +3669,7 @@
     "name": "Camminatombe Legato alla Tomba"
   },
   "1224": {
-    "name": "Piagnone Legato alla Tomba"
+    "name": "Dolente Legato alla Tomba"
   },
   "1225": {
     "name": "Cambion Maleficante"
@@ -3708,7 +3708,7 @@
     "name": "Segugio Fauci dalle Zanne di Ferro"
   },
   "1237": {
-    "name": "Discarica Leviatano"
+    "name": "Leviatano della Discarica"
   },
   "1238": {
     "name": "Sciacallo Solitario"
@@ -3819,7 +3819,7 @@
     "name": "Balano temporale"
   },
   "1274": {
-    "name": "Tartaruga di Terraclaw"
+    "name": "Tartaruga Artiglio di Terra"
   },
   "1275": {
     "name": "Bestia Cornuta a Tre Code"
@@ -3843,7 +3843,7 @@
     "name": "Colosso di guerra"
   },
   "1282": {
-    "name": "Sì-Sothoth Spawn :EP"
+    "name": "Progenie di Yog-Sothoth :EP"
   },
   "1283": {
     "name": "<-- 91-100 -->"
@@ -3861,7 +3861,7 @@
     "name": "Tiratore Scelto da Vicolo"
   },
   "1288": {
-    "name": "Albero all'indietro"
+    "name": "Albero al contrario"
   },
   "1289": {
     "name": "Mech da battaglia :EP"
@@ -3870,7 +3870,7 @@
     "name": "Contessa Sanguinaria :EP"
   },
   "1291": {
-    "name": "Colosso Sanguisuga di Sangue"
+    "name": "Colosso Sanguisuga"
   },
   "1292": {
     "name": "Cambion di Zolfo Ardente"
@@ -3912,7 +3912,7 @@
     "name": "Eris, Giudizio della Discordia"
   },
   "1305": {
-    "name": "Festa della Carestia"
+    "name": "Banchetto della Carestia"
   },
   "1306": {
     "name": "Mastino d'Ossario Dimenticato"
@@ -3960,7 +3960,7 @@
     "name": "Negromante goblin"
   },
   "1321": {
-    "name": "Stregone Ombra Goblin"
+    "name": "Stregone d'Ombra Goblin"
   },
   "1322": {
     "name": "Regina Gorgone"
@@ -4023,7 +4023,7 @@
     "name": "Costrutto Fuso"
   },
   "1342": {
-    "name": "Oratore motivazionale: EP"
+    "name": "Oratore motivazionale :EP"
   },
   "1343": {
     "name": "Camminatombe Mummificato"
@@ -4035,7 +4035,7 @@
     "name": "Animus di Ossidiana"
   },
   "1346": {
-    "name": "Arcimago Ogre"
+    "name": "Arcimago Orco"
   },
   "1347": {
     "name": "Predone Sovraccaricato"
@@ -4056,7 +4056,7 @@
     "name": "Colosso Porfirinico"
   },
   "1353": {
-    "name": "Piroclasta Phoenix"
+    "name": "Fenice Piroclastica"
   },
   "1354": {
     "name": "Arconte Quantico"
@@ -4596,7 +4596,7 @@
     "name": "Turista smarrito"
   },
   "1533": {
-    "name": "Slime di pixel"
+    "name": "Melma di pixel"
   },
   "1534": {
     "name": "Mimic graffatrice"

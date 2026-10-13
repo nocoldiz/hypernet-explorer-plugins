@@ -1,10 +1,10 @@
 {
   "granted": {
-    "title": "Desiderio Esaudito",
+    "title": "Desiderio esaudito",
     "whispered": "Hai sussurrato:",
-    "manifested": "Ciò che ha risposto: {outcome}",
-    "spent": "La sfera si spegne. Un desiderio, una volta sola.",
+    "manifested": "Risultato: {outcome}",
+    "spent": "La sfera si spegne. Un solo desiderio.",
     "close": "Premi un tasto per chiudere"
   },
-  "spentSpot": "Ciò che rispondeva qui ha già parlato. Non risponderà più."
+  "spentSpot": "Questo desiderio è già stato usato."
 }

@@ -305,7 +305,9 @@
   const HORDE_LITTER_ID_BASE = "hordeLitter:"; // i18n-ignore: decal id prefix
   // i18n-ignore-start: Furniture.json category and id fragments
   const HORDE_LITTER_JUNK = { category: "Trash", skipSub: "Bins" };
-  const HORDE_LITTER_LEAVES = { category: "Plants", sub: "Leaves" };
+  // The catalogue has no Leaves subcategory: the loose leaves are the 1x1
+  // Plants/Plants pieces whose id names a leaf.
+  const HORDE_LITTER_LEAVES = { category: "Plants", sub: "Plants", id: /leaf|leaves/ };
   const HORDE_LITTER_SKIP = /wastebasket|kite/;
   // i18n-ignore-end
   let _hordeLitterPieces = null;
@@ -322,7 +324,8 @@
       if (!f || f.width !== 1 || f.height !== 1 || HORDE_LITTER_SKIP.test(id)) continue;
       if (imgs && !imgs[id]) continue;
       if (f.category === HORDE_LITTER_JUNK.category && f.subcategory !== HORDE_LITTER_JUNK.skipSub) junk.push(id);
-      else if (f.category === HORDE_LITTER_LEAVES.category && f.subcategory === HORDE_LITTER_LEAVES.sub) leaves.push(id);
+      else if (f.category === HORDE_LITTER_LEAVES.category && f.subcategory === HORDE_LITTER_LEAVES.sub
+               && HORDE_LITTER_LEAVES.id.test(id)) leaves.push(id);
     }
     if (junk.length || leaves.length) _hordeLitterPieces = { junk, leaves };
     return { junk, leaves };

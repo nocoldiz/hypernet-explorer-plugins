@@ -98,6 +98,15 @@
         og_gelatinoushuskbeetle: { variant: 'og_gelatinoushuskbeetle', scale: 2.1, texturePool: 'green', bodyColor: 0x6a6a4a, accent: 0xaacc66, hue:[0.3,0.2], sat:[0.45,0.15], lit:[0.45,0.12], slimeOpacity: 0.8 },
         og_discordlarva: { variant: 'og_discordlarva', scale: 2.1, texturePool: 'green', bodyColor: 0xcc4488, accent: 0xff88cc, hue:[0.3,0.2], sat:[0.45,0.15], lit:[0.45,0.12], slimeOpacity: 0.8 },
         og_skitteringdronebug: { variant: 'og_skitteringdronebug', scale: 2.1, texturePool: 'green', bodyColor: 0x5a4a7a, accent: 0xaa88ff, hue:[0.3,0.2], sat:[0.45,0.15], lit:[0.45,0.12], slimeOpacity: 0.85 },
+        // Level 1-5 starters, each on its own builder (no shared rig).
+        lv_puddleslime:     { variant: 'lv_puddleslime',     scale: 1.8, texturePool: 'water',   bodyColor: 0x5a7a88, accent: 0xc8dde0, hue: [0.55, 0.05], sat: [0.25, 0.08], lit: [0.42, 0.08] },
+        lv_breadmouldpatch: { variant: 'lv_breadmouldpatch', scale: 1.8, texturePool: 'pale',    bodyColor: 0xd8c08a, accent: 0x4a9a8a, hue: [0.11, 0.04], sat: [0.40, 0.10], lit: [0.66, 0.08] },
+        lv_sneezeblob:      { variant: 'lv_sneezeblob',      scale: 1.8, texturePool: 'green',   bodyColor: 0x8ab83a, accent: 0xd8e870, hue: [0.24, 0.04], sat: [0.55, 0.10], lit: [0.48, 0.08] },
+        lv_jamjarooze:      { variant: 'lv_jamjarooze',      scale: 1.9, texturePool: 'fire',    bodyColor: 0xa01828, accent: 0xff5a5a, hue: [0.98, 0.03], sat: [0.70, 0.10], lit: [0.36, 0.08] },
+        lv_reveriebubble:   { variant: 'lv_reveriebubble',   scale: 1.9, texturePool: 'crystal', bodyColor: 0xc8d8f0, accent: 0xffb8e8, hue: [0.62, 0.20], sat: [0.35, 0.12], lit: [0.72, 0.08] },
+        lv_pixelslime:      { variant: 'lv_pixelslime',      scale: 1.9, texturePool: 'crystal', bodyColor: 0x44cc66, accent: 0xaaff88, hue: [0.36, 0.06], sat: [0.60, 0.10], lit: [0.50, 0.08] },
+        lv_paintblob:       { variant: 'lv_paintblob',       scale: 1.8, texturePool: 'pale',    bodyColor: 0x2a5ad8, accent: 0xffd020, hue: [0.62, 0.05], sat: [0.70, 0.10], lit: [0.48, 0.08] },
+        lv_germblob:        { variant: 'lv_germblob',        scale: 1.7, texturePool: 'green',   bodyColor: 0x9ac878, accent: 0xe0d040, hue: [0.28, 0.05], sat: [0.40, 0.10], lit: [0.55, 0.08] },
     };
 
     class OozeBattler3D extends Base {
@@ -139,7 +148,7 @@
             const re = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10), eyeMat); re.position.set(0.16, 0.06, 0.36);
             this.upperBody.add(le, re);
             this.pseudopod1 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), bodyMat); this.pseudopod1.position.set(-0.6, 0.35, 0.1); this.pseudopod1.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod1);
-            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), bodyMat); this.pseudopod2.position.set(0.6, 0.35, -0.1); this.pseudopod2.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod2);
+            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), bodyMat); this.pseudopod2.position.set(0.6, 0.35, 0.1); this.pseudopod2.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod2);
             this._partMeshMap = { CORE: this.core, UPPER_BODY: this.upperBody, LOWER_BODY: this.lowerBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2 };
             this._cascadeRules = [
                 { gone: ['CORE'], hide: [this.core, this.upperBody, this.lowerBody, this.pseudopod1, this.pseudopod2] },
@@ -187,6 +196,14 @@
                 case 'sewersslime':        this._buildSewersSlime(); break;
                 case 'moltenpudding':      this._buildMoltenPudding(); break;
                 case 'swarminghivemind':   this._buildSwarmingHivemind(); break;
+                case 'lv_puddleslime':     this._buildLvPuddleSlime(); break;
+                case 'lv_breadmouldpatch': this._buildLvBreadMouldPatch(); break;
+                case 'lv_sneezeblob':      this._buildLvSneezeBlob(); break;
+                case 'lv_jamjarooze':      this._buildLvJamJarOoze(); break;
+                case 'lv_reveriebubble':   this._buildLvReverieBubble(); break;
+                case 'lv_pixelslime':      this._buildLvPixelSlime(); break;
+                case 'lv_paintblob':       this._buildLvPaintBlob(); break;
+                case 'lv_germblob':        this._buildLvGermBlob(); break;
                 default:             this._buildGeneric(); break;
             }
             this.model = this.bodyGroup;
@@ -265,7 +282,7 @@
             const p = this.profile; const skinMat = this._skinMat(p.bodyColor, 0.45); skinMat.opacity = 0.62; this._oozeMat = skinMat;
             this.lowerBody = new THREE.Mesh(new THREE.SphereGeometry(0.7, 18, 16), skinMat); this.lowerBody.position.y = 0.7; this.lowerBody.scale.set(1, 1.25, 1); this.bodyGroup.add(this.lowerBody);
             this.upperBody = new THREE.Mesh(new THREE.SphereGeometry(0.22, 14, 12), skinMat); this.upperBody.position.y = 1.55; this.upperBody.scale.set(1, 0.7, 1); this.bodyGroup.add(this.upperBody);
-            const knot = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.05, 8, 14), this._mat(p.accent, 1, 0.6)); knot.position.y = 1.62; knot.rotation.x = Math.PI / 2; this.upperBody.add(knot);
+            const knot = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.05, 8, 14), this._mat(p.accent, 1, 0.6)); knot.position.y = 0.24; knot.rotation.x = Math.PI / 2; this.upperBody.add(knot);
             this.core = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), this._mat(0xc07868, 1, 0.7)); this.core.position.y = 0.8; this.core.scale.set(1.3, 0.8, 0.6); this.bodyGroup.add(this.core);
             this._fhEyesPair(this.lowerBody, 0.62, 0.1);
             const mouth = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 8, 0, Math.PI * 2, 0, Math.PI * 0.5), this._mat(0x5a2020, 1, 0.7)); mouth.position.set(0, -0.18, 0.6); mouth.rotation.x = Math.PI; this.lowerBody.add(mouth);
@@ -281,7 +298,7 @@
             this.core = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), this._mat(p.accent, 1, 0.4, p.accent)); this.core.position.y = 0.7; this.bodyGroup.add(this.core);
             this.upperBody = new THREE.Mesh(new THREE.SphereGeometry(0.24, 12, 12), m); this.upperBody.position.y = 1.2; this.bodyGroup.add(this.upperBody);
             this.pseudopod1 = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 10), m); this.pseudopod1.position.set(-0.6, 1.0, 0.2); this.bodyGroup.add(this.pseudopod1);
-            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 10), m); this.pseudopod2.position.set(0.6, 1.1, -0.1); this.bodyGroup.add(this.pseudopod2);
+            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 10), m); this.pseudopod2.position.set(0.6, 1.0, 0.2); this.bodyGroup.add(this.pseudopod2);
             this._fhEyesPair(this.lowerBody, 0.46, 0.05);
             this._fhWire();
         }
@@ -363,7 +380,7 @@
             this._fhEyesScatter(this.bodyGroup, 8, 0.06, 0.55, 0.95, 0.3);
             this.upperBody = new THREE.Mesh(new THREE.SphereGeometry(0.3, 12, 12), m); this.upperBody.position.y = 1.5; this.bodyGroup.add(this.upperBody);
             this.pseudopod1 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 10), m); this.pseudopod1.position.set(-0.65, 0.55, 0.1); this.bodyGroup.add(this.pseudopod1);
-            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 10), m); this.pseudopod2.position.set(0.65, 0.55, -0.1); this.bodyGroup.add(this.pseudopod2);
+            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 10), m); this.pseudopod2.position.set(0.65, 0.55, 0.1); this.bodyGroup.add(this.pseudopod2);
             this._fhWire();
         }
         // ── Carrion Stalker: a low scavenger crouched over its kill ──────────
@@ -509,7 +526,7 @@
             this.bodyGroup.add(this.grinFace);
             // Vine pseudopods.
             this.pseudopod1 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), skinMat); this.pseudopod1.position.set(-0.62, 0.3, 0.1); this.pseudopod1.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod1);
-            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), skinMat); this.pseudopod2.position.set(0.62, 0.3, -0.1); this.pseudopod2.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod2);
+            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), skinMat); this.pseudopod2.position.set(0.62, 0.3, 0.1); this.pseudopod2.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod2);
             this._partMeshMap = { CORE: this.core, UPPER_BODY: this.upperBody, LOWER_BODY: this.lowerBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2 };
             this._cascadeRules = [
                 { gone: ['CORE'], hide: [this.core, this.grinFace, this.upperBody, this.lowerBody, this.ridges, this.stem, this.pseudopod1, this.pseudopod2] },
@@ -657,7 +674,7 @@
             this.bodyGroup.add(le, re);
             this.core = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), this._mat(p.accent, 1.0, 0.3, p.accent)); this.core.position.y = 0.55; this.bodyGroup.add(this.core);
             this.pseudopod1 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), baseMat); this.pseudopod1.position.set(-0.62, 0.3, 0.1); this.pseudopod1.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod1);
-            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), baseMat); this.pseudopod2.position.set(0.62, 0.3, -0.1); this.pseudopod2.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod2);
+            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), baseMat); this.pseudopod2.position.set(0.62, 0.3, 0.1); this.pseudopod2.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod2);
             this._partMeshMap = { CORE: this.core, UPPER_BODY: this.upperBody, LOWER_BODY: this.lowerBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2 };
             this._cascadeRules = [
                 { gone: ['CORE'], hide: [this.core, this.upperBody, this.lowerBody, this.blobs, this.nuclei, le, re, this.pseudopod1, this.pseudopod2] },
@@ -820,7 +837,7 @@
             this.bodyGroup.add(this.glaze);
             // Steam-blob pseudopods bulging off the molten base.
             this.pseudopod1 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), puddMat); this.pseudopod1.position.set(-0.65, 0.28, 0.1); this.pseudopod1.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod1);
-            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), puddMat); this.pseudopod2.position.set(0.65, 0.28, -0.1); this.pseudopod2.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod2);
+            this.pseudopod2 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), puddMat); this.pseudopod2.position.set(0.65, 0.28, 0.1); this.pseudopod2.scale.set(1, 0.7, 1); this.bodyGroup.add(this.pseudopod2);
             this._partMeshMap = { CORE: this.core, UPPER_BODY: this.upperBody, LOWER_BODY: this.lowerBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2 };
             this._cascadeRules = [
                 { gone: ['CORE'], hide: [this.core, this.upperBody, this.lowerBody, this.glaze, this.pseudopod1, this.pseudopod2] },
@@ -885,6 +902,366 @@
             this._cascadeRules[0].hide.push(this.feat);
         }
 
+        // ══ Level 1-5 starter slimes: each its own body plan, not a reskin ══
+        // Wire a starter's parts: `root` takes everything with it, every other
+        // key hides only itself. These do their own motion (no generic squish).
+        _lvWire(parts, root) {
+            const all = Object.keys(parts).map(k => parts[k]).filter(Boolean);
+            this._partMeshMap = {};
+            for (const k in parts) if (parts[k]) this._partMeshMap[k] = parts[k];
+            this._cascadeRules = [{ gone: [root], hide: all }];
+            for (const k in parts) if (parts[k] && k !== root) this._cascadeRules.push({ gone: [k], hide: [parts[k]] });
+            this._noSquish = true;
+        }
+
+        // ── Puddle Slime: a flat murky puddle that only lifts a frog-eyed hump
+        //    when stepped in; a pale moon reflection lies on its skin ────────
+        _buildLvPuddleSlime() {
+            const p = this.profile;
+            const wet = this._skinMat(p.bodyColor, 0.08); wet.opacity = 0.8; this._oozeMat = wet;
+            // LOWER_BODY: overlapping shallow lobes, an uneven puddle outline.
+            this.lowerBody = new THREE.Group();
+            for (const [x, z, r] of [[0, 0, 0.85], [0.5, 0.32, 0.48], [-0.52, -0.22, 0.52], [0.12, -0.58, 0.42], [-0.3, 0.5, 0.36]]) {
+                const lobe = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 1.06, 0.08, 9), wet); lobe.position.set(x, 0.04, z); this.lowerBody.add(lobe);
+            }
+            const ringMat = this._mat(p.accent, 0.55, 0.1);
+            this.ripples = [];
+            for (const r of [0.55, 0.8]) { const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.014, 4, 18), ringMat); ring.rotation.x = Math.PI / 2; ring.position.y = 0.084; this.lowerBody.add(ring); this.ripples.push(ring); }
+            // The moon it reflects, lying flat on the surface whatever the sky.
+            const moon = new THREE.Mesh(new THREE.CircleGeometry(0.16, 9), this._mat(0xf4f0d8, 0.85, 0.2, 0x8a8660)); moon.rotation.x = -Math.PI / 2; moon.position.set(-0.42, 0.083, -0.3); this.lowerBody.add(moon);
+            // Drowned litter floating on it: a curled leaf and a bottle cap.
+            const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.3, 4), this._mat(0x7a6a2a, 1, 0.8)); leaf.rotation.set(Math.PI / 2, 0, 0.7); leaf.scale.set(1, 1, 0.25); leaf.position.set(0.5, 0.09, 0.42); this.lowerBody.add(leaf);
+            const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.03, 8), this._mat(0xb02020, 1, 0.4)); cap.position.set(0.15, 0.095, -0.62); this.lowerBody.add(cap);
+            this.bodyGroup.add(this.lowerBody);
+            // UPPER_BODY: a low hump that rises out of the water.
+            this.upperBody = new THREE.Mesh(new THREE.SphereGeometry(0.42, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), wet); this.upperBody.position.y = 0.06; this.upperBody.scale.set(1, 0.55, 1); this.bodyGroup.add(this.upperBody);
+            // Frog-like eyes bulging on the hump, horizontal slit pupils.
+            this.peepers = [];
+            for (const sx of [-1, 1]) {
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), this._mat(0xe8ecd8, 1, 0.2)); eye.position.set(sx * 0.14, 0.24, 0.18);
+                const slit = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.025, 0.02), this._mat(0x101010, 1, 0.2)); slit.position.set(0, 0.01, 0.09); eye.add(slit);
+                this.bodyGroup.add(eye); this.peepers.push(eye);
+            }
+            // MAW: a thin crescent of a mouth on the hump's front.
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.015, 4, 10, Math.PI), this._mat(0x1a2228, 1, 0.5)); this.maw.position.set(0, 0.13, 0.34); this.maw.rotation.set(0.5, 0, Math.PI); this.bodyGroup.add(this.maw);
+            // CORE: a dark pebble sunk under the surface.
+            this.core = new THREE.Mesh(new THREE.DodecahedronGeometry(0.15, 0), this._mat(0x2a2620, 1, 0.9)); this.core.position.set(0.25, 0.04, -0.25); this.core.scale.y = 0.4; this.bodyGroup.add(this.core);
+            // PSEUDOPOD_1/2: splash crowns frozen at the edges.
+            const crown = (x) => {
+                const g = new THREE.Group();
+                for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; const c = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.18, 4), wet); c.position.set(Math.cos(a) * 0.09, 0.09, Math.sin(a) * 0.09); c.rotation.set(Math.sin(a) * 0.4, 0, -Math.cos(a) * 0.4); g.add(c); }
+                const drop = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 5), wet); drop.position.y = 0.14; g.add(drop);
+                g.position.set(x, 0.08, 0.12); this.bodyGroup.add(g); return g;
+            };
+            this.pseudopod1 = crown(-0.7); this.pseudopod2 = crown(0.7);
+            this._lvWire({ CORE: this.core, LOWER_BODY: this.lowerBody, UPPER_BODY: this.upperBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2, MAW: this.maw }, 'CORE');
+            this._cascadeRules[0].hide.push(...this.peepers);
+            this._cascadeRules.find(r => r.gone[0] === 'UPPER_BODY').hide.push(...this.peepers, this.maw);
+        }
+
+        // ── Bread Mould Patch: a stale slice standing like a little headstone,
+        //    furred blue-green, one eye looking out of the mould ─────────────
+        _buildLvBreadMouldPatch() {
+            const p = this.profile;
+            const crust = this._skinMat(0x8a5a2a, 0.9), crumb = this._skinMat(p.bodyColor, 0.95);
+            const mould = this._mat(p.accent, 1, 0.95), fuzz = this._mat(0xdde8e0, 0.9, 1.0);
+            // LOWER_BODY: the slice, a crust frame around a pale crumb face.
+            this.lowerBody = new THREE.Group();
+            const cBox = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.72, 0.16), crust); cBox.position.y = 0.4; this.lowerBody.add(cBox);
+            const iBox = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.66, 0.2), crumb); iBox.position.y = 0.41; this.lowerBody.add(iBox);
+            for (const sx of [-1, 1]) {
+                const cTop = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.31, 0.16, 9), crust); cTop.rotation.x = Math.PI / 2; cTop.position.set(sx * 0.18, 0.78, 0); this.lowerBody.add(cTop);
+                const iTop = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.2, 9), crumb); iTop.rotation.x = Math.PI / 2; iTop.position.set(sx * 0.18, 0.78, 0); this.lowerBody.add(iTop);
+            }
+            // Mould spots spread over the crumb face.
+            for (let i = 0; i < 9; i++) { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.06 + this.idRand() * 0.05, 0), i % 3 ? mould : fuzz); m.position.set((this.idRand() - 0.5) * 0.7, 0.15 + this.idRand() * 0.75, 0.1); m.scale.z = 0.5; this.lowerBody.add(m); }
+            this.lowerBody.rotation.x = -0.12; this.bodyGroup.add(this.lowerBody);
+            // UPPER_BODY: the thick colony on the top crust, two spore stalks in it.
+            this.upperBody = new THREE.Group();
+            for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI; const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.11 + (i % 3) * 0.03, 0), i % 2 ? mould : fuzz); m.position.set(-Math.cos(a) * 0.42, 0.8 + Math.sin(a) * 0.26, (i % 2 ? 0.05 : -0.05)); this.upperBody.add(m); }
+            for (const sx of [-0.18, 0.2]) {
+                const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.025, 0.24, 5), fuzz); stalk.position.set(sx, 1.14, 0); this.upperBody.add(stalk);
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 5), this._mat(0x1a3a5a, 1, 0.9)); head.position.set(sx, 1.27, 0); this.upperBody.add(head);
+            }
+            this.lowerBody.add(this.upperBody);
+            // CORE: a single bloodshot eye opening out of the thickest mould.
+            this.core = new THREE.Group();
+            const ball = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), this._mat(0xf0ead0, 1, 0.3)); this.core.add(ball);
+            const iris = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), this._mat(0x5aa8a0, 1, 0.3, 0x204040)); iris.position.z = 0.09; this.core.add(iris);
+            const pup = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 5), this._mat(0x080808, 1, 0.2)); pup.position.z = 0.135; this.core.add(pup);
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.04, 5, 10), mould); this.core.add(ring);
+            this.core.position.set(0.12, 0.58, 0.1); this.lowerBody.add(this.core);
+            // MAW: a dark sour mouth lined with mould crumbs.
+            this.maw = new THREE.Group();
+            const hole = new THREE.Mesh(new THREE.SphereGeometry(0.11, 8, 6), this._mat(0x2a1a10, 1, 0.9)); hole.scale.set(1.5, 0.6, 0.4); this.maw.add(hole);
+            for (let i = 0; i < 4; i++) { const t = new THREE.Mesh(new THREE.IcosahedronGeometry(0.03, 0), fuzz); t.position.set(-0.11 + i * 0.075, 0.05, 0.03); this.maw.add(t); }
+            this.maw.position.set(-0.08, 0.3, 0.1); this.lowerBody.add(this.maw);
+            // PSEUDOPOD_1/2: mould runners creeping over the floor from the base.
+            const runner = (sx) => {
+                const g = new THREE.Group();
+                const pts = [[0, 0.06, 0], [sx * 0.2, 0.05, 0.12], [sx * 0.38, 0.04, 0.2], [sx * 0.55, 0.035, 0.18]];
+                pts.forEach(([x, y, z], i) => { const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.09 - i * 0.015, 0), i % 2 ? fuzz : mould); m.position.set(x, y, z); m.scale.y = 0.6; g.add(m); if (i) this.addStrut(g, mould, new THREE.Vector3(...pts[i - 1]), new THREE.Vector3(x, y, z), 0.04, 0.03, 4); });
+                g.position.set(sx * 0.42, 0, 0.05); this.bodyGroup.add(g); return g;
+            };
+            this.pseudopod1 = runner(-1); this.pseudopod2 = runner(1);
+            // Sour spores puffing up off the colony, drifting free by design.
+            this.spores = new THREE.Group(); this.spores.userData.float = true;
+            for (let i = 0; i < 7; i++) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.025, 5, 4), this._mat(0xb8e0c8, 0.6, 0.6)); s.position.set((this.idRand() - 0.5) * 0.6, 1.3 + this.idRand() * 0.4, (this.idRand() - 0.5) * 0.3); s._t = this.idRand(); this.spores.add(s); }
+            this.bodyGroup.add(this.spores);
+            this._lvWire({ CORE: this.core, LOWER_BODY: this.lowerBody, UPPER_BODY: this.upperBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2, MAW: this.maw }, 'CORE');
+            this._cascadeRules[0].hide.push(this.spores);
+        }
+
+        // ── Sneeze Blob: a green splat caught mid "ATCHOO", mucus strung across
+        //    its gaping mouth and a snot bubble swelling from one nostril ───
+        _buildLvSneezeBlob() {
+            const p = this.profile;
+            const goo = this._skinMat(p.bodyColor, 0.15); goo.opacity = 0.85; this._oozeMat = goo;
+            const string = this._mat(p.accent, 0.75, 0.1);
+            // LOWER_BODY: the splat, thrown forward with a spray of droplets behind.
+            this.lowerBody = new THREE.Group();
+            const splat = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 9), goo); splat.scale.set(1.1, 0.8, 1.15); splat.position.y = 0.44; this.lowerBody.add(splat);
+            const spray = [[0, 0.62, -0.62, 0.2], [0.04, 0.78, -0.9, 0.13], [-0.02, 0.92, -1.08, 0.08]];
+            let prev = new THREE.Vector3(0, 0.5, -0.45);
+            for (const [x, y, z, r] of spray) { const d = new THREE.Mesh(new THREE.SphereGeometry(r, 8, 6), goo); d.position.set(x, y, z); this.lowerBody.add(d); const cur = new THREE.Vector3(x, y, z); this.addStrut(this.lowerBody, goo, prev, cur, r * 0.6, r * 0.45, 5); prev = cur; }
+            this.bodyGroup.add(this.lowerBody);
+            // UPPER_BODY: a bulbous nose-dome with two flared nostrils.
+            this.upperBody = new THREE.Group();
+            const nose = new THREE.Mesh(new THREE.SphereGeometry(0.3, 10, 8), goo); nose.scale.set(1.1, 0.9, 1); this.upperBody.add(nose);
+            for (const sx of [-1, 1]) { const n = new THREE.Mesh(new THREE.SphereGeometry(0.075, 7, 5), this._mat(0x2a3a10, 1, 0.6)); n.position.set(sx * 0.12, -0.1, 0.24); n.scale.z = 0.5; this.upperBody.add(n); }
+            this.upperBody.position.set(0, 0.86, 0.12); this.bodyGroup.add(this.upperBody);
+            // The snot bubble: swells and pops from the right nostril.
+            this.snot = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), this._mat(0xe8ffb0, 0.45, 0.05, 0x445500)); this.snot.position.set(0.15, -0.14, 0.36); this.upperBody.add(this.snot);
+            // Eyes squeezed shut into chevrons.
+            for (const sx of [-1, 1]) for (const d of [-1, 1]) { const lid = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.025, 0.03), this._mat(0x1a2208, 1, 0.5)); lid.position.set(sx * 0.2, 0.08 + d * 0.025, 0.25); lid.rotation.z = sx * d * 0.45; this.upperBody.add(lid); }
+            // MAW: the gaping sneeze, mucus strung lip to lip.
+            this.maw = new THREE.Group();
+            const gape = new THREE.Mesh(new THREE.SphereGeometry(0.24, 10, 8), this._mat(0x3a1a18, 1, 0.8)); gape.scale.set(1.2, 0.8, 0.5); this.maw.add(gape);
+            for (const sx of [-0.13, 0.02, 0.15]) { const s = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.018, 0.34, 4), string); s.position.set(sx, 0, 0.08); this.maw.add(s); }
+            this.maw.position.set(0, 0.46, 0.5); this.bodyGroup.add(this.maw);
+            // CORE: a cloudy germ nucleus inside the splat.
+            this.core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.15, 0), this._mat(0x5a7a20, 0.9, 0.6, 0x223300)); this.core.position.set(0, 0.42, -0.1); this.bodyGroup.add(this.core);
+            // PSEUDOPOD_1/2: two mucus strings drooping from the lower lip to the floor.
+            const droop = (sx) => {
+                const g = new THREE.Group();
+                const s = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.015, 0.36, 5), goo); s.position.y = -0.18; g.add(s);
+                const blob = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 5), goo); blob.position.y = -0.36; blob.scale.set(1.4, 0.5, 1.4); g.add(blob);
+                g.position.set(sx, 0.38, 0.55); this.bodyGroup.add(g); return g;
+            };
+            this.pseudopod1 = droop(-0.2); this.pseudopod2 = droop(0.2);
+            this._lvWire({ CORE: this.core, LOWER_BODY: this.lowerBody, UPPER_BODY: this.upperBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2, MAW: this.maw }, 'CORE');
+        }
+
+        // ── Jam Jar Ooze: crimson jam heaving out of a cellar jar, gingham lid
+        //    knocked askew, a whole strawberry hanging inside like an organ ──
+        _buildLvJamJarOoze() {
+            const p = this.profile;
+            const jam = this._skinMat(p.bodyColor, 0.2); jam.opacity = 0.9; this._oozeMat = jam;
+            const glass = this._mat(0xd8eef0, 0.3, 0.05);
+            // LOWER_BODY: the jar, glass round a column of jam, a paper label.
+            this.lowerBody = new THREE.Group();
+            const jar = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.4, 0.8, 10), glass); jar.position.y = 0.4; this.lowerBody.add(jar);
+            const fill = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.36, 0.74, 10), jam); fill.position.y = 0.4; this.lowerBody.add(fill);
+            const rim = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.04, 5, 14), glass); rim.rotation.x = Math.PI / 2; rim.position.y = 0.8; this.lowerBody.add(rim);
+            const label = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.24, 0.02), this._mat(0xeee0b8, 1, 0.9)); label.position.set(0, 0.36, 0.41); this.lowerBody.add(label);
+            const scrawl = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.025, 0.01), this._mat(0x4a2a1a, 1, 0.9)); scrawl.position.set(0, 0.38, 0.425); this.lowerBody.add(scrawl);
+            this.bodyGroup.add(this.lowerBody);
+            // UPPER_BODY: the jam dome heaving out of the mouth, with a face.
+            this.upperBody = new THREE.Group();
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.44, 11, 8), jam); dome.scale.set(1, 0.7, 1); this.upperBody.add(dome);
+            for (const sx of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.075, 8, 6), this._mat(0xfff4e0, 1, 0.2)); e.position.set(sx * 0.15, 0.1, 0.36); const pu = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 5), this._mat(0x200808, 1, 0.2)); pu.position.z = 0.055; e.add(pu); this.upperBody.add(e); }
+            // Gingham cloth lid knocked askew, string still tied round it.
+            this.lid = new THREE.Group();
+            const cloth = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.03, 10), this._mat(0xd8d8e8, 1, 0.9)); this.lid.add(cloth);
+            for (let i = 0; i < 3; i++) { const check = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.032, 0.09), this._mat(0xc02838, 1, 0.9)); check.position.z = -0.2 + i * 0.2; this.lid.add(check); }
+            const tie = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.015, 4, 14), this._mat(0x8a7040, 1, 0.9)); tie.rotation.x = Math.PI / 2; tie.position.y = -0.02; this.lid.add(tie);
+            this.lid.position.set(-0.12, 0.28, -0.05); this.lid.rotation.set(-0.25, 0, 0.42); this.upperBody.add(this.lid);
+            this.upperBody.position.y = 0.88; this.bodyGroup.add(this.upperBody);
+            // MAW: a sticky lopsided grin under the eyes.
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.025, 4, 10, Math.PI), this._mat(0x3a0408, 1, 0.5)); this.maw.position.set(0.02, -0.04, 0.38); this.maw.rotation.set(0.3, 0, Math.PI + 0.15); this.upperBody.add(this.maw);
+            // CORE: a whole strawberry hanging in the jar, seeds and all.
+            this.core = new THREE.Group();
+            const berry = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.28, 7), this._mat(0xe82838, 1, 0.5, 0x400008)); berry.rotation.x = Math.PI; this.core.add(berry);
+            const calyx = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.06, 6), this._mat(0x3a8a2a, 1, 0.7)); calyx.position.y = 0.16; this.core.add(calyx);
+            for (let i = 0; i < 6; i++) { const a = i * 1.05; const seed = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.03, 0.02), this._mat(0xf0d040, 1, 0.5)); seed.position.set(Math.cos(a) * 0.08, 0.02 - (i % 2) * 0.07, Math.sin(a) * 0.08); this.core.add(seed); }
+            this.core.position.set(0.05, 0.42, 0.05); this.bodyGroup.add(this.core);
+            // Sticky drips running down the outside of the glass.
+            const drip = (a, len, pool) => {
+                const g = new THREE.Group();
+                const run = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.06, len, 5), jam); run.position.y = -len / 2; g.add(run);
+                const end = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 5), jam); end.position.y = -len; g.add(end);
+                if (pool) { const puddle = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.03, 8), jam); puddle.position.set(Math.cos(a) * 0.08, -len - 0.04, Math.sin(a) * 0.08); g.add(puddle); }
+                g.position.set(Math.cos(a) * 0.43, 0.84, Math.sin(a) * 0.43); this.bodyGroup.add(g); return g;
+            };
+            for (const [a, len] of [[0.6, 0.3], [2.2, 0.45], [3.6, 0.22]]) { const d = drip(a, len, false); this.lowerBody.attach(d); }
+            // PSEUDOPOD_1/2: the two long runs that reached the floor and pooled.
+            this.pseudopod1 = drip(Math.PI - 0.35, 0.74, true); this.pseudopod2 = drip(0.35, 0.74, true);
+            this._lvWire({ CORE: this.core, LOWER_BODY: this.lowerBody, UPPER_BODY: this.upperBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2, MAW: this.maw }, 'CORE');
+            this._cascadeRules.find(r => r.gone[0] === 'UPPER_BODY').hide.push(this.maw);
+        }
+
+        // ── Reverie Bubble: an iridescent soap bubble with a sleeper curled up
+        //    inside and old memories turning slowly in its skin ─────────────
+        _buildLvReverieBubble() {
+            const p = this.profile;
+            const film = this._mat(p.bodyColor, 0.28, 0.05, p.accent); film.emissiveIntensity = 0.35; this._oozeMat = film;
+            // LOWER_BODY: the main bubble, a rainbow band round its waist.
+            this.lowerBody = new THREE.Group();
+            const bubble = new THREE.Mesh(new THREE.SphereGeometry(0.56, 12, 9), film); this.lowerBody.add(bubble);
+            this.band = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.02, 4, 20), this._mat(0xffd0f0, 0.5, 0.1, 0xff88cc)); this.band.rotation.x = Math.PI / 2 + 0.3; this.lowerBody.add(this.band);
+            const glint = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.025, 4, 10, Math.PI * 0.4), this._mat(0xffffff, 0.8, 0.05, 0xffffff)); glint.position.set(0, 0, 0.3); glint.rotation.z = 1.9; this.lowerBody.add(glint);
+            // Memory frames turning inside the film.
+            this.frames = new THREE.Group();
+            const tints = [0xd8a868, 0x88b8d8, 0xc888a8];
+            for (let i = 0; i < 3; i++) { const a = (i / 3) * Math.PI * 2; const f = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.13, 0.012), this._mat(tints[i], 0.75, 0.6, tints[i])); f.position.set(Math.cos(a) * 0.32, (i - 1) * 0.12, Math.sin(a) * 0.32); f.lookAt(0, f.position.y, 0); this.frames.add(f); }
+            this.lowerBody.add(this.frames);
+            this.lowerBody.position.y = 1.05; this.bodyGroup.add(this.lowerBody);
+            // UPPER_BODY: a smaller bubble fused on top.
+            this.upperBody = new THREE.Mesh(new THREE.SphereGeometry(0.22, 9, 7), film); this.upperBody.position.set(0.28, 1.56, 0.04); this.bodyGroup.add(this.upperBody);
+            // Closed dreaming eyes and a small round mouth on the skin.
+            this.dreamFace = new THREE.Group();
+            for (const sx of [-1, 1]) { const lid = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.012, 4, 8, Math.PI), this._mat(0x6a4a8a, 0.9, 0.4)); lid.position.set(sx * 0.14, 0.08, 0.53); lid.rotation.z = Math.PI; this.dreamFace.add(lid); }
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.012, 4, 8), this._mat(0x6a4a8a, 0.9, 0.4)); this.maw.position.set(0, -0.08, 0.545); this.dreamFace.add(this.maw);
+            this.lowerBody.add(this.dreamFace);
+            // CORE: the sleeper, a curled little figure.
+            this.core = new THREE.Group();
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), this._mat(0xf0c8b0, 0.85, 0.6)); head.position.set(0.06, 0.08, 0); this.core.add(head);
+            const curl = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.06, 5, 8, Math.PI * 1.3), this._mat(0xf0c8b0, 0.85, 0.6)); curl.rotation.z = -0.6; curl.position.set(-0.04, -0.02, 0); this.core.add(curl);
+            this.core.position.set(0, 1.0, -0.05); this.bodyGroup.add(this.core);
+            // PSEUDOPOD_1/2: two tears hanging from the underside.
+            const tear = (sx) => {
+                const g = new THREE.Group();
+                const tip = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.12, 6), film); tip.position.y = 0.04; g.add(tip);
+                const drop = new THREE.Mesh(new THREE.SphereGeometry(0.06, 7, 5), this._mat(0xc8e8ff, 0.6, 0.05, 0x6688aa)); drop.position.y = -0.04; g.add(drop);
+                g.position.set(sx, 0.5, 0.05); this.bodyGroup.add(g); return g;
+            };
+            this.pseudopod1 = tear(-0.14); this.pseudopod2 = tear(0.14);
+            this._lvWire({ CORE: this.core, LOWER_BODY: this.lowerBody, UPPER_BODY: this.upperBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2, MAW: this.maw }, 'CORE');
+        }
+
+        // ── Pixel Slime: an eight-bit slime stacked out of coloured blocks,
+        //    stray pixels hovering off its head, one pixel simply missing ───
+        _buildLvPixelSlime() {
+            const p = this.profile;
+            const a = this._skinMat(p.bodyColor, 0.6), b = this._mat(p.accent, 0.95, 0.6), dark = this._mat(0x101820, 1, 0.6);
+            a.opacity = 0.92;
+            const box = (g, w, h, d, x, y, z, m) => { const bx = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); bx.position.set(x, y, z); g.add(bx); return bx; };
+            // LOWER_BODY: two stepped slabs, a cross of blocks each.
+            this.lowerBody = new THREE.Group();
+            for (const y of [0.1, 0.3]) { box(this.lowerBody, 1.0, 0.2, 0.6, 0, y, 0, a); box(this.lowerBody, 0.6, 0.2, 1.0, 0, y, 0, y > 0.2 ? b : a); }
+            // The missing pixel: a black hole where a block should be.
+            box(this.lowerBody, 0.2, 0.2, 0.02, 0.3, 0.3, 0.505, dark);
+            this.bodyGroup.add(this.lowerBody);
+            // UPPER_BODY: the narrower top steps and a white highlight block.
+            this.upperBody = new THREE.Group();
+            box(this.upperBody, 0.8, 0.2, 0.4, 0, 0, 0, a); box(this.upperBody, 0.4, 0.2, 0.8, 0, 0, 0, a);
+            box(this.upperBody, 0.4, 0.2, 0.4, 0, 0.2, 0, b);
+            box(this.upperBody, 0.1, 0.1, 0.02, -0.12, 0.05, 0.41, this._mat(0xffffff, 1, 0.3, 0xffffff));
+            this.upperBody.position.y = 0.5; this.bodyGroup.add(this.upperBody);
+            // Square eyes and a one-block mouth.
+            this.eyesPx = new THREE.Group();
+            for (const sx of [-1, 1]) box(this.eyesPx, 0.1, 0.2, 0.04, sx * 0.16, 0.3, 0.51, dark);
+            this.bodyGroup.add(this.eyesPx);
+            this.maw = box(this.bodyGroup, 0.2, 0.06, 0.03, 0, 0.13, 0.51, dark);
+            // CORE: a glowing block seen through the body.
+            this.core = box(this.bodyGroup, 0.2, 0.2, 0.2, 0, 0.3, 0, this._mat(0xffffaa, 1, 0.3, p.accent));
+            // PSEUDOPOD_1/2: little two-block stacks budding at the sides.
+            const nub = (sx) => { const g = new THREE.Group(); box(g, 0.15, 0.15, 0.15, 0, 0.075, 0, a); box(g, 0.1, 0.1, 0.1, sx * 0.02, 0.2, 0, b); g.position.set(sx * 0.575, 0, 0.1); this.bodyGroup.add(g); return g; };
+            this.pseudopod1 = nub(-1); this.pseudopod2 = nub(1);
+            // Stray pixels split off the head, hanging above it by design.
+            this.strays = new THREE.Group(); this.strays.userData.float = true;
+            for (let i = 0; i < 4; i++) { const s = box(this.strays, 0.09, 0.09, 0.09, (i - 1.5) * 0.2, 1.05 + (i % 2) * 0.12, (i % 3 - 1) * 0.1, i % 2 ? a : b); s._t = i; }
+            this.bodyGroup.add(this.strays);
+            this._lvWire({ CORE: this.core, LOWER_BODY: this.lowerBody, UPPER_BODY: this.upperBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2, MAW: this.maw }, 'CORE');
+            this._cascadeRules[0].hide.push(this.eyesPx, this.strays);
+        }
+
+        // ── Paint Blob: a spilt pot of paint with swirls of other colours, the
+        //    brush still stuck upright in it and googly eyes rolling ────────
+        _buildLvPaintBlob() {
+            const p = this.profile;
+            const paint = this._skinMat(p.bodyColor, 0.15); this._oozeMat = paint;
+            const swirlCols = [p.accent, 0xe83020, 0xf4f4f0];
+            // LOWER_BODY: the dome of wet paint with swirl bands of other colours.
+            this.lowerBody = new THREE.Group();
+            const dome = new THREE.Mesh(new THREE.SphereGeometry(0.6, 12, 7, 0, Math.PI * 2, 0, Math.PI / 2), paint); dome.scale.set(1.2, 0.8, 1.1); this.lowerBody.add(dome);
+            [[0.25, 0.0], [0.6, 2.0], [0.95, 4.1]].forEach(([lat, rot], i) => {
+                const r = Math.cos(lat) * 0.6, y = Math.sin(lat) * 0.6 * 0.8;
+                const band = new THREE.Mesh(new THREE.TorusGeometry(r, 0.035, 4, 14, Math.PI * 1.1), this._mat(swirlCols[i], 1, 0.2)); band.rotation.set(Math.PI / 2, 0, rot); band.scale.set(1.2, 1.1, 1); band.position.y = y; this.lowerBody.add(band);
+            });
+            // Splats of the other colours flung round the base.
+            for (let i = 0; i < 5; i++) { const a = i * 1.26 + 0.3; const s = new THREE.Mesh(new THREE.CylinderGeometry(0.12 + (i % 2) * 0.05, 0.13 + (i % 2) * 0.05, 0.025, 7), this._mat(swirlCols[i % 3], 1, 0.2)); s.position.set(Math.cos(a) * 0.72, 0.0125, Math.sin(a) * 0.66); this.lowerBody.add(s); }
+            this.bodyGroup.add(this.lowerBody);
+            // UPPER_BODY: a paint brush stuck upright in the top of it.
+            this.upperBody = new THREE.Group();
+            const bristle = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.18, 0.05), this._mat(p.bodyColor, 1, 0.5)); bristle.position.y = 0.09; this.upperBody.add(bristle);
+            const ferrule = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.1, 0.06), this._mat(0xb8b8c0, 1, 0.25)); ferrule.position.y = 0.23; this.upperBody.add(ferrule);
+            const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.55, 6), this._mat(0xa8582a, 1, 0.5)); handle.position.y = 0.55; this.upperBody.add(handle);
+            this.upperBody.position.set(-0.15, 0.36, -0.15); this.upperBody.rotation.set(-0.3, 0, 0.35); this.bodyGroup.add(this.upperBody);
+            // Googly eyes: the pupils roll loose inside.
+            this.googles = [];
+            for (const sx of [-1, 1]) {
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.11, 9, 7), this._mat(0xffffff, 1, 0.2)); eye.scale.z = 0.5; eye.position.set(sx * 0.2, 0.36, 0.5);
+                const pup = new THREE.Mesh(new THREE.SphereGeometry(0.055, 7, 5), this._mat(0x0a0a0a, 1, 0.2)); pup.position.set(0, -0.03, 0.08); eye.add(pup); eye._pup = pup;
+                this.bodyGroup.add(eye); this.googles.push(eye);
+            }
+            // MAW: a wide wet grin.
+            this.maw = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.03, 4, 10, Math.PI), this._mat(0x101830, 1, 0.3)); this.maw.position.set(0, 0.2, 0.58); this.maw.rotation.set(0.6, 0, Math.PI); this.bodyGroup.add(this.maw);
+            // CORE: the sunken paint tin, its rim showing at the back.
+            this.core = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.4, 10), this._mat(0x9a9aa2, 1, 0.3)); this.core.position.set(0.1, 0.3, -0.38); this.core.rotation.x = -0.45; this.bodyGroup.add(this.core);
+            // PSEUDOPOD_1/2: splash hands with dripping fingers.
+            const hand = (sx) => {
+                const g = new THREE.Group();
+                const palm = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 6), paint); palm.scale.set(1.2, 0.5, 1); g.add(palm);
+                for (let i = 0; i < 3; i++) { const f = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.16, 5), paint); f.rotation.x = Math.PI / 2; f.position.set((i - 1) * 0.08, -0.02, 0.15); g.add(f); }
+                g.position.set(sx * 0.72, 0.07, 0.22); g.rotation.y = -sx * 0.4; this.bodyGroup.add(g); return g;
+            };
+            this.pseudopod1 = hand(-1); this.pseudopod2 = hand(1);
+            this._lvWire({ CORE: this.core, LOWER_BODY: this.lowerBody, UPPER_BODY: this.upperBody, PSEUDOPOD_1: this.pseudopod1, PSEUDOPOD_2: this.pseudopod2, MAW: this.maw }, 'CORE');
+            this._cascadeRules[0].hide.push(...this.googles);
+        }
+
+        // ── Germ Blob: a clump of fused germ cells bristling with pili, one big
+        //    cartoon eye on top and a round toothed sucker for a mouth ──────
+        //    (Bacterial keys: NUCLEUS/MEMBRANE/FLAGELLUM/TOXIN_SACS/MOUTH.)
+        _buildLvGermBlob() {
+            const p = this.profile;
+            const memb = this._skinMat(p.bodyColor, 0.3); memb.opacity = 0.78; this._oozeMat = memb;
+            const pilus = this._mat(0xc8e8a0, 1, 0.5);
+            // MEMBRANE: seven fused cells, each bristling with short pili.
+            this.membrane = new THREE.Group();
+            const cells = [[0, 0.62, 0, 0.36], [0.34, 0.5, 0.1, 0.24], [-0.32, 0.52, 0.06, 0.26], [0.1, 0.48, -0.32, 0.25], [-0.16, 0.92, -0.06, 0.22], [0.2, 0.86, 0.18, 0.18], [-0.08, 0.36, 0.3, 0.2]];
+            cells.forEach(([x, y, z, r], i) => {
+                const c = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 1), memb); c.position.set(x, y, z); this.membrane.add(c);
+                for (let k = 0; k < 3; k++) { const a = i * 2.4 + k * 2.1, e = 0.4 + k * 0.45; const dir = new THREE.Vector3(Math.sin(e) * Math.cos(a), Math.cos(e), Math.sin(e) * Math.sin(a)); const h = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.12, 3), pilus); h.position.set(x, y, z).addScaledVector(dir, r + 0.04); h.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir); this.membrane.add(h); }
+            });
+            // The one big cartoon eye, heavy-lidded, on the top cell.
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(0.15, 9, 7), this._mat(0xf8f8e8, 1, 0.2)); eye.position.set(-0.12, 1.0, 0.12);
+            const pu = new THREE.Mesh(new THREE.SphereGeometry(0.06, 7, 5), this._mat(0x1a0a2a, 1, 0.2)); pu.position.set(0.02, -0.01, 0.12); eye.add(pu);
+            this.germLid = new THREE.Mesh(new THREE.SphereGeometry(0.16, 9, 5, 0, Math.PI * 2, 0, Math.PI * 0.3), memb); eye.add(this.germLid);
+            this.membrane.add(eye);
+            this.bodyGroup.add(this.membrane);
+            // NUCLEUS: a dark knot inside the central cell.
+            this.nucleus = new THREE.Mesh(new THREE.IcosahedronGeometry(0.15, 0), this._mat(0x5a2a6a, 0.95, 0.4, 0x2a0a3a)); this.nucleus.position.set(0, 0.62, 0); this.bodyGroup.add(this.nucleus);
+            // MOUTH: a round sucker ringed with tiny inward teeth.
+            this.mouth = new THREE.Group();
+            const lip = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.035, 5, 10), this._mat(0x7a9a50, 1, 0.5)); this.mouth.add(lip);
+            const throat = new THREE.Mesh(new THREE.CircleGeometry(0.09, 8), this._mat(0x2a0a10, 1, 0.8)); throat.position.z = -0.01; this.mouth.add(throat);
+            for (let i = 0; i < 7; i++) { const a = (i / 7) * Math.PI * 2; const t = new THREE.Mesh(new THREE.ConeGeometry(0.014, 0.05, 3), this._mat(0xf0f0d8, 1, 0.3)); t.position.set(Math.cos(a) * 0.08, Math.sin(a) * 0.08, 0.01); t.rotation.z = a + Math.PI / 2; this.mouth.add(t); }
+            this.mouth.position.set(0.08, 0.58, 0.36); this.mouth.rotation.x = -0.1; this.bodyGroup.add(this.mouth);
+            // TOXIN_SACS: sickly yellow blisters half sunk into three cells.
+            this.toxinSacs = new THREE.Group();
+            for (const [x, y, z] of [[0.5, 0.58, 0.16], [-0.5, 0.62, 0.0], [0.2, 0.5, -0.5]]) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.09, 7, 5), this._mat(p.accent, 0.9, 0.3, 0x4a4000)); s.position.set(x, y, z); this.toxinSacs.add(s); }
+            this.bodyGroup.add(this.toxinSacs);
+            // FLAGELLUM: one whip tail lashing behind, pivoted at its root.
+            this.flagellum = new THREE.Group();
+            const pts = [new THREE.Vector3(0, 0, 0)];
+            for (let k = 1; k <= 5; k++) pts.push(new THREE.Vector3(Math.sin(k * 1.3) * 0.08, Math.cos(k * 1.1) * 0.05, -k * 0.14));
+            for (let k = 1; k < pts.length; k++) this.addStrut(this.flagellum, memb, pts[k - 1], pts[k], 0.04 - k * 0.005, 0.035 - k * 0.005, 5);
+            this.flagellum.position.set(0.1, 0.48, -0.52); this.bodyGroup.add(this.flagellum);
+            this._lvWire({ NUCLEUS: this.nucleus, MEMBRANE: this.membrane, FLAGELLUM: this.flagellum, TOXIN_SACS: this.toxinSacs, MOUTH: this.mouth }, 'NUCLEUS');
+        }
+
         animatePose(deltaTime) {
             if (this._baseY === null) this._baseY = this.model.position.y;
             const t = this.animTime, anim = this.currentAnimation;
@@ -907,6 +1284,73 @@
             if (this.feat && this.profile.feature === 'fumes') this.feat.children.forEach(f => { f.position.y += 0.006; if (f.position.y > 1.3) f.position.y = 0.7; });
 
             switch (this.variant) {
+                case 'lv_puddleslime': {
+                    if (this.ripples) this.ripples.forEach((r, i) => { const s = 1 + ((t * 0.6 + i * 0.5) % 1) * 0.07; r.scale.set(s, s, 1); });
+                    const rise = 1 + Math.sin(t * (fast ? 6 : 1.5)) * 0.18 + (fast ? 0.35 : 0);
+                    if (this.upperBody) this.upperBody.scale.y = 0.55 * rise;
+                    if (this.peepers) this.peepers.forEach(e => { e.position.y = 0.06 + 0.55 * rise * 0.351; });
+                    if (this.maw) this.maw.position.y = 0.06 + 0.55 * rise * 0.13;
+                    [this.pseudopod1, this.pseudopod2].forEach((c, i) => { if (c) c.scale.y = 1 + Math.abs(Math.sin(t * (fast ? 7 : 2) + i)) * (fast ? 0.6 : 0.2); });
+                    this.model.position.y = this._baseY;
+                    break;
+                }
+                case 'lv_breadmouldpatch': {
+                    if (this.spores) this.spores.children.forEach(s => { s.position.y = 1.3 + ((t * 0.25 + s._t) % 1) * 0.5; });
+                    if (this.core) this.core.rotation.y = Math.sin(t * 0.9) * 0.4;
+                    if (this.lowerBody) this.lowerBody.rotation.x = -0.12 + (fast ? Math.abs(Math.sin(t * 7)) * 0.16 : Math.sin(t * 0.8) * 0.02);
+                    this.model.position.y = this._baseY;
+                    break;
+                }
+                case 'lv_sneezeblob': {
+                    const ph = (t * (fast ? 1.2 : 0.45)) % 1;
+                    if (this.snot) { this.snot.visible = ph < 0.92; this.snot.scale.setScalar(0.4 + ph * 1.3); }
+                    if (this.upperBody) this.upperBody.rotation.x = fast ? -Math.abs(Math.sin(t * 7)) * 0.28 : Math.sin(t * 1.4) * 0.05;
+                    if (this.maw) this.maw.scale.y = 1 + Math.abs(Math.sin(t * (fast ? 7 : 1.4))) * 0.3;
+                    [this.pseudopod1, this.pseudopod2].forEach((d, i) => { if (d) d.rotation.x = Math.sin(t * 2 + i) * 0.1; });
+                    break;
+                }
+                case 'lv_jamjarooze': {
+                    if (this.upperBody) this.upperBody.position.y = 0.88 + Math.sin(t * (fast ? 6 : 2)) * 0.04;
+                    if (this.lid) this.lid.rotation.z = 0.42 + Math.sin(t * (fast ? 9 : 1.7)) * 0.08;
+                    if (this.core) this.core.rotation.y = t * 0.4;
+                    this.model.position.y = this._baseY;
+                    break;
+                }
+                case 'lv_reveriebubble': {
+                    if (this.lowerBody) { this.lowerBody.rotation.y = Math.sin(t * 0.5) * 0.3; const w = Math.sin(t * (fast ? 8 : 2.2)) * (fast ? 0.08 : 0.04); this.lowerBody.scale.set(1 + w, 1 - w, 1 + w); }
+                    if (this.frames) this.frames.rotation.y = t * 0.5;
+                    if (this._oozeMat) this._oozeMat.emissive.setHSL((t * 0.12) % 1, 0.7, 0.45);
+                    this.model.position.y = this._baseY + (0.04 + Math.sin(t * 1.1) * 0.06) * this.scale;
+                    break;
+                }
+                case 'lv_pixelslime': {
+                    // Squash in hard steps, like a sprite with four frames.
+                    const step = Math.floor((t * (fast ? 8 : 3)) % 4);
+                    const sy = [1, 0.9, 0.8, 0.9][step];
+                    if (this.lowerBody) this.lowerBody.scale.y = sy;
+                    if (this.upperBody) this.upperBody.position.y = 0.4 * sy + 0.1;
+                    if (this.eyesPx) this.eyesPx.scale.y = sy;
+                    if (this.core) this.core.position.y = 0.3 * sy;
+                    if (this.maw) this.maw.position.y = 0.13 * sy;
+                    if (this.strays) this.strays.children.forEach((s, i) => { s.position.y = 0.9 * sy + 0.2 + (Math.floor(t * 2 + i) % 2) * 0.1; });
+                    this.model.position.y = this._baseY;
+                    break;
+                }
+                case 'lv_paintblob': {
+                    if (this.googles) this.googles.forEach((e, i) => { if (e._pup) { e._pup.position.x = Math.sin(t * 3.1 + i * 2) * 0.04; e._pup.position.y = -0.02 + Math.cos(t * 2.3 + i) * 0.03; } });
+                    if (this.upperBody) this.upperBody.rotation.z = 0.35 + Math.sin(t * (fast ? 7 : 1.5)) * (fast ? 0.12 : 0.05);
+                    if (this.lowerBody) { const s = 1 + Math.sin(t * (fast ? 6 : 2)) * 0.04; this.lowerBody.scale.set(s, 1 / s, s); }
+                    this.model.position.y = this._baseY;
+                    break;
+                }
+                case 'lv_germblob': {
+                    if (this.membrane) { const s = 1 + Math.sin(t * (fast ? 7 : 2.4)) * 0.04; this.membrane.scale.set(s, 1 / s, s); }
+                    if (this.nucleus) this.nucleus.rotation.y = t * 0.9;
+                    if (this.flagellum) this.flagellum.rotation.y = Math.sin(t * (fast ? 9 : 4)) * 0.4;
+                    if (this.germLid) this.germLid.rotation.x = Math.sin(t * 2.3) > 0.93 ? 0.9 : 0;
+                    if (this.toxinSacs) this.toxinSacs.children.forEach((s, i) => s.scale.setScalar(1 + Math.abs(Math.sin(t * 2 + i)) * 0.15));
+                    break;
+                }
                 case 'expiredooze': {
                     this.model.rotation.z = Math.sin(t * 1.2) * 0.05; // queasy lean
                     if (this.drips) this.drips.children.forEach(dr => { dr.position.y = dr._base - ((t * 0.3 + dr._t) % 1) * 0.18; });
@@ -1072,7 +1516,11 @@
         pumpkinslime: ["Pumpkin Slime"], rainbowslime: ["Rainbow Slime"], seeingslime: ["Seeing Slime"],
         skulmireslime: ["Skulmire Slime"], thunderblob: ["Thunder Blob"], toxicamalgam: ["Toxic Amalgam"],
         causticslime: ["Caustic Slime"], toxicooze: ["Toxic Ooze"], virulentslimefiend: ["Virulent Slimefiend"],
-        sewersslime: ["Sewers slime"], moltenpudding: ["Molten Pudding"], swarminghivemind: ["Swarming Hivemind"]
+        sewersslime: ["Sewers slime"], moltenpudding: ["Molten Pudding"], swarminghivemind: ["Swarming Hivemind"],
+        // Level 1-5 starters.
+        lv_puddleslime: ["Puddle Slime"], lv_breadmouldpatch: ["Bread Mould Patch"], lv_sneezeblob: ["Sneeze Blob"],
+        lv_jamjarooze: ["Jam Jar Ooze"], lv_reveriebubble: ["Reverie Bubble"], lv_pixelslime: ["Pixel Slime"],
+        lv_paintblob: ["Paint Blob"], lv_germblob: ["Germ Blob"]
     };
     if (window.Battler3D.registerNamed) {
         for (const key in NAMED) NAMED[key].forEach(n => window.Battler3D.registerNamed(n, key));

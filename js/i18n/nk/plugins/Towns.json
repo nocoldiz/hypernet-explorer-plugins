@@ -4,15 +4,15 @@
     "nameLabel": "NAME OF DA TOWN",
     "namePlaceholder": "NAME IT…",
     "button": "FOUND DA TOWN",
-    "requirement": "HOUSES STANDIN' HERE: {have} OF {need}",
+    "requirement": "HOUSES HERE: {have} OF {need}",
     "here": "DIS SQUARE: {place}",
     "reason": {
-      "notHere": "A TOWN IZ FOUNDED ON OPEN GROUND, NO FROM INSIDE A BUILDIN'!",
-      "claimed": "{place} ALREADY STANDS ON DIS SQUARE!",
-      "exists": "A TOWN OF YA ALREADY STANDS ON DIS SQUARE!",
-      "houses": "THREE HOUSES HAB TA STAND HERE BEFORE ANYONE WILL CALL IT A TOWN!",
+      "notHere": "MUST BE OUTDOORS, NO INSIDE A BUILDIN'!",
+      "claimed": "{place} IZ ALREADY ON DIS SQUARE!",
+      "exists": "YOU ALREADY HAB A TOWN HERE!",
+      "houses": "NEEDS 3 HOUSES ON DIS SQUARE!",
       "noName": "DA TOWN NEEDS A NAME.",
-      "duplicate": "YOU HAB ALREADY NAMED A TOWN DAT!"
+      "duplicate": "YOU ALREADY HAB A TOWN WIT DAT NAME!"
     },
     "success": "{name} IZ FOUNDED.",
     "founded": "{name}, FOUNDED HERE."
@@ -47,6 +47,6 @@
     "colCategory": "TRADE",
     "colBalance": "BALANCE",
     "colStage": "STAGE",
-    "manageShop": "OPEN DA SHOP BOOK"
+    "manageShop": "MANAGE SHOP"
   }
 }

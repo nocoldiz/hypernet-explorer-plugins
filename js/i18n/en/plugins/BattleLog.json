@@ -41,5 +41,7 @@
     }
   },
   "statDelta": "{stat} {points}",
-  "statUnchanged": "{stats} held where they stand!"
+  "statUnchanged": "{stats} unchanged!",
+  "critical": "{text} (CRITICAL!)",
+  "regenerated": "{name} recovered {value} HP!"
 }

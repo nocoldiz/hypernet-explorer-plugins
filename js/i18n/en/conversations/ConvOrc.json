@@ -86,8 +86,8 @@
       "Can't say fairer.",
       "Good, good.",
       "Shake on it?",
-      "Wasn't shouting. That's my normal voice.",
-      "Not a threat. Just loud.",
+      "That's just my normal voice.",
+      "I'm loud, that's all.",
       "Bah.",
       "Simple folk, simple talk.",
       "No BIG-HEAD talk. Sorry, no fancy talk.",
@@ -143,7 +143,7 @@
       "Teeth cleaned, tusks polished. Ready for anything.",
       "Shop lady gave me the big bag without asking. Respect.",
       "Every chair I sit on makes a noise. Every single one.",
-      "I'm not grumpy. My face is just like this.",
+      "My face is just like this. Grumpy comes as standard.",
       "Saw a Mages' Guild poster. Lot of BIG-HEADS. Big brains, I mean.",
       "Somebody owes me {five euros|a beer|an apology}. I remember.",
       "Hands smell of {engine oil|onions|soap}. Could be worse.",
@@ -160,7 +160,7 @@
       "Gran's stew recipe: meat, more meat, one turnip for shame.",
       "Wonder what the goblins are shouting about today. Probably {metal|snacks|Norway}.",
       "Tried yoga. Mat was too small. Floor was fine.",
-      "My shadow scares cats. Not me. The shadow.",
+      "Cats run from my shadow. Only the shadow. Cats like me.",
       "Signed my name in capitals again. Old habit.",
       "Feeling soft today. Don't tell anyone.",
       "People step aside on the pavement. Wish they'd stop and chat.",
@@ -237,7 +237,7 @@
         "They put me on the {front desk|heavy crates|night door}. Again.",
         "Customers flinch, then they tip. Every time.",
         "Work done right is a quiet kind of proud.",
-        "Don't need a promotion. Need a chair that holds.",
+        "All I need is a chair that holds. Promotions can wait.",
         "Late again. Tram got stuck in a loop bubble. Boss won't buy it.",
         "Work first. Grumble after."
       ],
@@ -248,7 +248,7 @@
         "Sun's out. Gonna sit on a wall and judge pigeons.",
         "Free afternoon. Might fish. Might nap. Might both.",
         "Arcade's got a punching machine. Broke it last time. Paid for it.",
-        "Want music. Loud music. Not goblin loud. Normal loud.",
+        "Want music. Loud music. Normal loud, human style.",
         "Could walk the long way home. Legs like it.",
         "Bored. Bored orcs rearrange furniture.",
         "Football on the telly tonight. Snacks ready.",
@@ -390,7 +390,7 @@
         "Goblin drums or thunder? Can't tell tonight.",
         "Power's out. Candles and stories. Fine by me.",
         "Rain sideways. Coat useless. Walk faster.",
-        "Storms don't scare me. {Dentists|Paperwork|Gran} scare me.",
+        "{Dentists|Paperwork|Gran} scare me. Storms, I enjoy.",
         "Held the door against the wind for a whole shop.",
         "Sky's angry. Me too, a bit. Sympathy.",
         "Wind howling. Joining in. Quietly.",
@@ -404,7 +404,7 @@
         "Shovelled the whole street. Nobody asked. Felt right.",
         "Breath like a dragon. Fun.",
         "Snowball fight with the kids. I lost. On purpose. Mostly.",
-        "Slipped on ice. Pavement cracked, not me.",
+        "Slipped on ice. Pavement cracked. I'm fine.",
         "Snow makes everything quiet. Even the goblin head.",
         "Need bigger gloves. Fingers {numb|red|stiff}.",
         "Pushed a stuck car out of a drift. Got a wave.",
@@ -477,7 +477,7 @@
         "Goblin head waking up. They like the dark.",
         "Call {Mum|Gran|my brother} tonight. Quick one.",
         "Lamps on. Shadows big. Mine biggest.",
-        "Good tired. Not bad tired. Good.",
+        "Good tired. The right kind, after a full day.",
         "Evening's for friends and noise.",
         "Washed up. Dried up. Sat down. Done.",
         "Smell of everyone's dinner in the street. Hungry again.",
@@ -540,7 +540,7 @@
       ],
       "WINTER": [
         "Winter. Three blankets. Feet still stick out.",
-        "Cold enough to crack tusks. Not mine. Tough tusks.",
+        "Cold enough to crack tusks. Mine hold. Tough tusks.",
         "Christmas soon. Mum's side wants a feast, Dad's side wants carols. Both, loud.",
         "Fire's lit. Not moving till March.",
         "Ice on the windows. Breath on the glass. Drew a goblin.",
@@ -562,7 +562,7 @@
         "Day labour line. Get picked first, every time. Small mercy.",
         "Owe {the landlord|the baker|my cousin}. Will pay. Always pay.",
         "Counting coins for the bus. Walking instead.",
-        "Poor's not shameful. Lazy is. Not lazy.",
+        "Lazy is what's shameful. And I'm never lazy.",
         "Recruiters for the Horde hang round the soup kitchen. Ignore them.",
         "One good meal a day. Making it count."
       ],
@@ -575,7 +575,7 @@
         "Comfortable. Chair still too small, though.",
         "Paid off the {sofa|bike|tusk dentist}. Debt free. Ha.",
         "Holiday this year. Seaside. Big towel.",
-        "Not rich, not poor. Just orc.",
+        "Somewhere in the middle. Orc life.",
         "Treated the whole crew to lunch. Once. Still talking about it.",
         "Good job, good mates, good boots. What else.",
         "Can afford the big bag of {potatoes|apples|onions} now. Small joys."
@@ -615,7 +615,7 @@
       "They help folk round here. Noticed. Orcs notice.",
       "Good faces. Seen enough bad ones to know.",
       "Hope they're eating right. Look thin. Everyone looks thin to me.",
-      "Would follow that lot into a fight. Not a choir, though."
+      "Would follow that lot into a fight. A choir, less so."
     ],
     "hordeGround": [
       "Horde ground. Goblin head's so loud here I can almost hear words.",
@@ -647,7 +647,7 @@
       "Everyone's family here. That's the trap. That's the comfort.",
       "Asked for a menu. Got laughed at by forty goblins.",
       "Horde ground, but the bread's good. Somebody human bakes it.",
-      "Keep my head. Not the goblin head. My own."
+      "Keep my own head. The goblin one can shout."
     ],
     "abroad": [
       "Cities pay orcs well. Strong backs, honest hands.",
@@ -731,14 +731,14 @@
         "The Horde would give me a banner and a spear. The city gives me a pension.",
         "Horde calls it coming home. Never lived there.",
         "People ask whose side I'm on. Mine. Gran's. Bakery's.",
-        "Horde's not evil. Just loud and hungry and very sure.",
+        "Horde's mostly loud and hungry and very sure. Not much malice.",
         "Every time the Horde wins a battle, someone at work gets quiet near me.",
         "Horde recruiter at the station. Corpse paint and a clipboard. Weird mix.",
         "If the Horde comes here, I'll make tea. Talk first. Orc rule.",
         "Horde has no paperwork. Tempting. Not that tempting.",
         "Goblins from the Kola shaft went south. Some went to Norway. Some went to Mum.",
         "Vatican wants the Horde as an army. Horde wants the Vatican as a snack.",
-        "Horde marches when Junehem plays. Feet tap here too. Not marching.",
+        "Horde marches when Junehem plays. Feet tap here too. They stay put.",
         "Folk think orcs spy for the Horde. Can't even keep a secret from Gran.",
         "Horde took another fjord. Bad week for fjords.",
         "Two families pulling. Horde one way, city the other. Arms are long. Coping.",
@@ -793,7 +793,7 @@
         "Every government tried to kill Junehem. Album sales went up.",
         "Junehem riff in the goblin head. Stuck there for days.",
         "Corpse paint. Goblins wear it to war. I wore it to a party once. Wrong party.",
-        "Not a believer. Just like the drums. Honest.",
+        "Faith's got nothing to do with it. I just like the drums. Honest.",
         "Junehem lead the Horde with guitars. Generals hate that.",
         "One Junehem member vanished. Nobody knows where. Goblin head's always asking.",
         "Played Junehem backwards once. Sounded the same. Scary.",
@@ -1018,7 +1018,7 @@
         ],
         [
           0,
-          "Not kind. Practical. Get well. Then darts."
+          "Practical, that's all. Get well. Then darts."
         ]
       ],
       [
@@ -1152,7 +1152,7 @@
         ],
         [
           0,
-          "Not funny. Tusks."
+          "No mystery. Tusks."
         ]
       ],
       [
@@ -1378,7 +1378,7 @@
         ],
         [
           0,
-          "He said you did. Somebody's lying. Not me."
+          "He said you did. Somebody's lying. And I never lie."
         ]
       ],
       [
@@ -1388,7 +1388,7 @@
         ],
         [
           1,
-          "I wasn't hiding. I was choosing cabbages."
+          "I was choosing cabbages. Carefully."
         ],
         [
           0,
@@ -2117,7 +2117,7 @@
         "lines": [
           [
             0,
-            "Kids should learn a trade. Hands, not just books."
+            "Kids should learn a trade. Hands first, then books."
           ],
           [
             1,
@@ -2184,7 +2184,7 @@
           ],
           [
             0,
-            "They don't want peace. They want an army."
+            "They want an army. Peace hardly matters to them."
           ],
           [
             1,
@@ -2370,7 +2370,7 @@
         "lines": [
           [
             0,
-            "Goblins aren't monsters. They're family. Loud family."
+            "Goblins are family. Loud family."
           ],
           [
             1,

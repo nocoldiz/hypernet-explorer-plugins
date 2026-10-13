@@ -365,13 +365,13 @@
    "power": "Hyperpower"
   },
   "empty": {
-   "noPolitics": "Nobody governs anybody in this world: no office is held and no vote is cast.",
-   "noPlace": "The party is standing nowhere any government has mapped.",
-   "noLocal": "This place keeps no town hall of its own.",
-   "noNation": "{country} keeps no government of its own that anybody here has heard of.",
-   "noCountry": "No nation claims the ground under the party.",
-   "noPower": "No hyperpower holds this ground.",
-   "noElected": "Nobody holds an office over this place.",
+   "noPolitics": "No government in this world.",
+   "noPlace": "No government covers this place.",
+   "noLocal": "No town hall here.",
+   "noNation": "{country} has no known government.",
+   "noCountry": "No nation claims this place.",
+   "noPower": "No hyperpower holds this place.",
+   "noElected": "No office holders here.",
    "noSelection": "Nothing chosen.",
    "noParties": "No party sits in this chamber.",
    "noElections": "No election has been held here yet.",
@@ -484,23 +484,23 @@
    "powerOf": "Hyperpower: {name}"
   },
   "hint": {
-   "fee": "Every supporter pays this each week and the takings are paid to the party. A cheap card fills with the poor, a dear one only with the elite.",
+   "fee": "Each supporter pays this weekly. Low fees draw the poor, high fees the elite.",
    "feeEntry": "Weekly subscription, in euros",
-   "creed": "The creed the party stands on. Its tenets bend it from there.",
-   "found": "Everybody in the team joins as a founding member. A world holds only one party of yours.",
+   "creed": "Base ideology. Tenets adjust it.",
+   "found": "Your whole team joins as founders. One party per world.",
    "save": "The new platform takes effect at once.",
-   "tenets": "Pick up to {n} tenets. Two that pull the same way against each other cannot both be held.",
-   "propaganda": "Campaigns, smears and candidacies are run from Propaganda2 on the hyperdeck.",
+   "tenets": "Pick up to {n} tenets. Opposing tenets can't be combined.",
+   "propaganda": "Run campaigns, smears and candidacies from Propaganda2 on the hyperdeck.",
    "pick": "Confirm to choose it.",
-   "filter": "Narrow the list to a town or village, a nation or a hyperpower."
+   "filter": "Filter by town, nation or hyperpower."
   },
   "msg": {
    "needCreed": "Choose an ideology first.",
    "alreadyFounded": "This world already has a party of yours.",
-   "founded": "{party} is founded. {n} founding members joined.",
+   "founded": "{party} founded with {n} members.",
    "noParty": "You have not founded a party yet.",
-   "saved": "{party} has its new platform.",
-   "tooManyTenets": "A party can hold at most {n} tenets."
+   "saved": "{party} platform updated.",
+   "tooManyTenets": "Max {n} tenets per party."
   },
   "feeClass": {
    "0": "The poorest",
@@ -636,8 +636,8 @@
    "smear": "Smear"
   },
   "kindHint": {
-   "convert": "Wins people over to the party and pulls their views toward its platform.",
-   "smear": "Drains its supporters' faith and sours them on its platform. The shaken are easier to win later; the faithless walk out."
+   "convert": "Wins people over and pulls their views toward your platform.",
+   "smear": "Erodes its supporters' faith. Shaken ones are easier to win; the rest leave."
   },
   "target": "Party",
   "chooseTarget": "Choose a party",
@@ -670,7 +670,7 @@
   "cost": "Cost",
   "noProjection": "Choose a party to see the projection.",
   "launch": "Launch campaign",
-  "launched": "Campaign for {party} launched: about {n} people by the end, for {cost}.",
+  "launched": "Campaign for {party} launched: about {n} people, for {cost}.",
   "campaigns": "Campaigns",
   "progress": "Result",
   "progressOf": "{n} of {of} expected",
@@ -681,7 +681,7 @@
   "candidate": "Candidate",
   "noTeam": "Nobody in the team.",
   "runsFor": "Runs for {party}, on its platform.",
-  "runsAlone": "Runs as an independent. Found a party so its supporters vote for the candidate.",
+  "runsAlone": "Runs as an independent. Found a party to get its supporters' votes.",
   "date": "Date",
   "deposit": "Deposit",
   "stand": "Stand",

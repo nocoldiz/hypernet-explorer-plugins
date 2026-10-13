@@ -748,7 +748,8 @@
         const D = window.Dice3D;
         if (D && typeof D.rollD20 === 'function') {
             return Promise.resolve(D.rollD20({
-                dc, modifier, statName: 'DEX', // i18n-ignore: Dice3D stat label
+                dc, modifier,
+                statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(6) : '',
                 actionName: T('Container.theft.rollAction'),
             })).then(res => !!(res && res.success));
         }
@@ -1155,21 +1156,17 @@
         SceneManager.prepareNextScene(null, true);
     });
 
-    // Vehicle storage is its own persistent container (separate from the
-    // infinite extradimensional one) and capped by a realistic payload weight.
-    // Limits are in grams. A camper's living space holds far more than a car trunk.
-    const CAMPER_WEIGHT_LIMIT = 350000; // 350 kg
-    const CAR_WEIGHT_LIMIT    = 75000;  // 75 kg
-
-    PluginManager.registerCommand(pluginName, 'openCamperContainer', () => {
+    // A vehicle's hold belongs to Vehicle/VehicleStorage.js, which knows every
+    // vehicle's size. These two commands are kept for events written before it
+    // and open the same holds through it.
+    const openVehicleHold = (key) => {
+        if (window.VehicleStorage) { window.VehicleStorage.open(key); return; }
         SceneManager.push(Scene_Container);
-        SceneManager.prepareNextScene('vehicle_camper', false, CAMPER_WEIGHT_LIMIT);
-    });
+        SceneManager.prepareNextScene('vehicle_' + key, false, 0);
+    };
 
-    PluginManager.registerCommand(pluginName, 'openCarContainer', () => {
-        SceneManager.push(Scene_Container);
-        SceneManager.prepareNextScene('vehicle_car', false, CAR_WEIGHT_LIMIT);
-    });
+    PluginManager.registerCommand(pluginName, 'openCamperContainer', () => openVehicleHold('camper'));  // i18n-ignore: vehicle key
+    PluginManager.registerCommand(pluginName, 'openCarContainer', () => openVehicleHold('car'));  // i18n-ignore: vehicle key
 
     // Populate the container for the current event, then no-op on subsequent
     // calls (generateContainerItems bails when the container is non-empty).
@@ -1231,21 +1228,17 @@
     }
 
     // The stores this page may address: the pack the party is carrying, the
-    // extradimensional container, and the hold of every vehicle they own.
+    // extradimensional container, and the hold of every vehicle they own
+    // (VehicleStorage.js). A hold's goods are not items and stay off this page,
+    // but what they weigh is taken off the room it offers.
     function hdStores() {
         const stores = [{ id: 'party', kind: 'party', name: T('Container.holdall.pack'), limit: 0 }];
         stores.push({ id: 'extra', kind: 'extra', name: T('Container.holdall.extradimensional'), limit: 0 });
-        const owns = (key) => {
-            const VS = window.VehicleSystem || window.MergedVehicleSystem;
-            if (VS && typeof VS.ownsVehicleKey === 'function') return !!VS.ownsVehicleKey(key);
-            if (window.VehiclePosition && window.VehiclePosition.owns) return !!window.VehiclePosition.owns(key);
-            return false;
-        };
-        if (owns('camper')) {
-            stores.push({ id: 'vehicle_camper', kind: 'container', name: T('Container.holdall.camper'), limit: CAMPER_WEIGHT_LIMIT });
-        }
-        if (owns('car')) {
-            stores.push({ id: 'vehicle_car', kind: 'container', name: T('Container.holdall.car'), limit: CAR_WEIGHT_LIMIT });
+        const VST = window.VehicleStorage;
+        if (VST && typeof VST.stores === 'function') {
+            for (const h of VST.stores()) {
+                stores.push({ id: h.id, kind: 'container', name: h.name, limit: Math.max(1, h.limit - (h.goodsGrams || 0)) });
+            }
         }
         return stores;
     }
@@ -1452,7 +1445,7 @@
     if (window.HypernetOS && window.HypernetOS.registerApp) {
         window.HypernetOS.registerApp({
             id: HOLD_APP_ID,
-            name: T('Container.holdall.appName'),
+            name: () => T('Container.holdall.appName'),
             icon: HOLD_ICON,
             category: 'accessories',
             launchFn: function () { window.Holdall.launch(); },

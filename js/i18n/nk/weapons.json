@@ -1,0 +1,2222 @@
+{
+  "1": {
+    "name": "<-- Light -->",
+    "description": ""
+  },
+  "2": {
+    "name": "UNBALANCED THROWIN' KNIFE",
+    "description": "A THROWIN' KNIFE DAT WOBBLES IN FLIGHT!"
+  },
+  "3": {
+    "name": "BARGAIN KNIFE",
+    "description": "A CHEAP KNIFE WHOSE HANDLE WORKS LOOSE.\nCAN BLIND ON HIT!"
+  },
+  "4": {
+    "name": "BROKEN BOTTLE",
+    "description": "A BROKEN BOTTLE WRAPPED IN CLOTH.\nCAN INFLICT POISON ON HIT!"
+  },
+  "5": {
+    "name": "RULER SHIV",
+    "description": "A WOODEN RULER BOUND AN' SHARPENED.\nCAN INFLICT POISON ON HIT!"
+  },
+  "6": {
+    "name": "KITCHEN KNIFE",
+    "description": "A STEAK KNIFE WIT A BOUND HANDLE.\nCAN INFLICT POISON ON HIT!"
+  },
+  "7": {
+    "name": "COMBAT SCISSORS",
+    "description": "SCISSORS WIT TAPED HANDLES.\nCAN INFLICT POISON ON HIT!"
+  },
+  "8": {
+    "name": "KITCHEN CLEAVER",
+    "description": "A MEAT CLEAVER WIT A TAPED HANDLE.\nCAN INFLICT POISON ON HIT!"
+  },
+  "9": {
+    "name": "BONE DAGGER",
+    "description": "A SHARPENED ANIMAL BONE. STRIKES CURSED!"
+  },
+  "10": {
+    "name": "WOODEN STAKE",
+    "description": "A SHARPENED WOODEN STAKE, CUT FOR DA\nUNDEAD. CAN BLIND ON HIT!"
+  },
+  "11": {
+    "name": "KNIFE",
+    "description": "AN EVERYDAY KNIFE. CAN BLIND ON HIT!"
+  },
+  "12": {
+    "name": "SEED DAGGER",
+    "description": "A DAGGER GROWN FROM AN EXPRESSION SEED.\nCAN POISON ON HIT!"
+  },
+  "13": {
+    "name": "WOODEN NUNCHAKU",
+    "description": "TWO WOODEN BATONS JOINED BY A CORD!"
+  },
+  "14": {
+    "name": "NAVAL DIRK",
+    "description": "A SAILOR'S SHORT DAGGER.\nCAN BLIND ON HIT!"
+  },
+  "15": {
+    "name": "DAGGER",
+    "description": "A SHORT BLADE FOR CLOSE WORK.\nCAN BLIND ON HIT!"
+  },
+  "16": {
+    "name": "KATAR",
+    "description": "A PUSH DAGGER WIT A T-SHAPED GRIP.\nCAN BLIND ON HIT!"
+  },
+  "17": {
+    "name": "COMBAT KNIFE",
+    "description": "A COMPACT KNIFE FOR CLOSE QUARTERS!"
+  },
+  "18": {
+    "name": "KUKRI",
+    "description": "A STEEL KUKRI WIT AN INWARD CURVE!"
+  },
+  "19": {
+    "name": "MACHETE",
+    "description": "A HEAVY CHOPPIN' BLADE.\nCAN BLIND ON HIT!"
+  },
+  "20": {
+    "name": "TWIN SAI",
+    "description": "A PAIR OF THREE-PRONGED PARRYIN' BATONS!"
+  },
+  "21": {
+    "name": "MITHRIL DAGGER",
+    "description": "A DAGGER FORGED OF MITHRIL.\nCAN BLIND ON HIT!"
+  },
+  "22": {
+    "name": "KNIFE HAND",
+    "description": "A FIGHTIN' STYLE DAT STRIKES WIT DA EDGE\nOF DA HAND. CAN BLIND ON HIT!"
+  },
+  "23": {
+    "name": "SPLITTIN' SHURIKEN",
+    "description": "A THROWIN' BLADE DAT SPLITS IN FLIGHT.\nCAN BLIND ON HIT!"
+  },
+  "24": {
+    "name": "LUMINOUS KUKRIS",
+    "description": "TWO ENCHANTED CURVED DAGGERS TRAILIN' LIGHT.\nSTRIKES WIT THUNDER!"
+  },
+  "25": {
+    "name": "DRAGON DAGGER",
+    "description": "A DAGGER FORGED FROM A DRAGON'S FANGS!"
+  },
+  "26": {
+    "name": "MEMORY THIEF",
+    "description": "A DAGGER DAT TAKES DA MEMORIES OF WHAT\nIT CUTS. ICE, INFLICTS COLD!"
+  },
+  "27": {
+    "name": "KNOWLEDGE SEEKER",
+    "description": "A DAGGER OUT OF GOBEKLI TEPE DAT SHOWS\nHIDDEN TINKZ. ICE, INFLICTS COLD!"
+  },
+  "28": {
+    "name": "PSYCHIC CROWN",
+    "description": "A CIRCLET DAT TURNS THOUGHT INTO A PSYCHIC\nSTRIKE. SACRED, INFLICTS INSPIRED!"
+  },
+  "29": {
+    "name": "EHI FLESH DISSOLVER",
+    "description": "A BLADE OF SHIMMERIN' OIL. IT PHASES THROUGH\nARMOUR AN' EATS DA WIELDER'S HAND!"
+  },
+  "30": {
+    "name": "VARLENIA TWINBLADES",
+    "description": "TWIN GOLDEN DAGGERS OF VARLENIA STEEL.\nSTRIKES WIT ICE!"
+  },
+  "31": {
+    "name": "TIMEFLOW MANIPULATOR",
+    "description": "A GOBEKLI TEPE ARTIFACT DAT BENDS TIME\nAN' HASTENS ITS BEARER. STRIKES WATER!"
+  },
+  "42": {
+    "name": "<-- Sword -->",
+    "description": ""
+  },
+  "43": {
+    "name": "WOODEN PLAY SWORD",
+    "description": "A WOODEN SWORD FOR CHILDREN'S GAMES!"
+  },
+  "44": {
+    "name": "TRAININ' SWORD",
+    "description": "A WORN TRAININ' SWORD, BLUNTED AN'\nSPLINTERIN' AT DA GRIP!"
+  },
+  "45": {
+    "name": "DECORATIVE SWORD",
+    "description": "A CEREMONIAL SWORD WIT NO EDGE,\nMADE FOR DISPLAY!"
+  },
+  "46": {
+    "name": "CHEAP SWORD",
+    "description": "A BADLY FORGED SWORD DAT CHIPS EASILY!"
+  },
+  "47": {
+    "name": "SCRAP METAL SHIV",
+    "description": "SHARPENED SCRAP TAPED TA A PIPE.\nCAN INFLICT POISON ON HIT!"
+  },
+  "48": {
+    "name": "SAW BLADE SWORD",
+    "description": "RUSTED SAW BLADES NAILED TA A PLANK.\nCAN INFLICT POISON ON HIT!"
+  },
+  "49": {
+    "name": "STOP SIGN CLEAVER",
+    "description": "A BROKEN ROAD SIGN ON A HANDLE.\nCAN INFLICT POISON ON HIT!"
+  },
+  "50": {
+    "name": "LEAF SPRING MACHETE",
+    "description": "A CAR LEAF SPRING GROUND TA AN EDGE.\nCAN INFLICT OILY ON HIT!"
+  },
+  "51": {
+    "name": "BRONZE AGE SWORD",
+    "description": "AN ANCIENT BRONZE SWORD."
+  },
+  "52": {
+    "name": "OBSIDIAN BLADE",
+    "description": "OBSIDIAN SET IN A WOODEN HANDLE. STRIKES\nWIT PETRO AN' CAN PARALYSE!"
+  },
+  "53": {
+    "name": "SHORT SWORD",
+    "description": "A LIGHT, SHORT-BLADED SWORD.\nCAN POISON ON HIT!"
+  },
+  "54": {
+    "name": "SEED SWORD",
+    "description": "A SWORD GROWN FROM AN EXPRESSION SEED.\nCAN POISON ON HIT!"
+  },
+  "55": {
+    "name": "SEED MACE",
+    "description": "A MACE GROWN FROM AN EXPRESSION SEED!"
+  },
+  "56": {
+    "name": "MESOPOTAMIAN SWORD",
+    "description": "A BRONZE SWORD OF ANCIENT MESOPOTAMIA.\nCAN POISON ON HIT!"
+  },
+  "57": {
+    "name": "LONG SWORD",
+    "description": "A LONG BATTLE SWORD WIT A KEEN EDGE.\nCAN POISON ON HIT!"
+  },
+  "58": {
+    "name": "GLADIUS",
+    "description": "A ROMAN SHORT SWORD FOR STABBIN' IN RANK!"
+  },
+  "59": {
+    "name": "KHOPESH",
+    "description": "A CURVED EGYPTIAN SICKLE-SWORD!"
+  },
+  "60": {
+    "name": "SCIMITAR",
+    "description": "A CURVED BLADE CARRIED BY DESERT WARRIORS!"
+  },
+  "61": {
+    "name": "RAPIER",
+    "description": "A SLENDER DUELLIN' BLADE, FINELY BALANCED.\nCAN POISON ON HIT!"
+  },
+  "62": {
+    "name": "SHAMSHIR",
+    "description": "A CURVED SINGLE-EDGED PERSIAN SABRE!"
+  },
+  "63": {
+    "name": "PATAG",
+    "description": "A TIBETAN SWORD, STRAIGHT AN' SINGLE-EDGED.\nCAN POISON ON HIT!"
+  },
+  "64": {
+    "name": "NAVAL CUTLASS",
+    "description": "A CURVED NAVAL SWORD FOR FIGHTIN' ABOARD.\nCAN POISON ON HIT!"
+  },
+  "65": {
+    "name": "FALCHION",
+    "description": "A BROAD, CURVED CHOPPIN' SWORD.\nCAN POISON ON HIT!"
+  },
+  "66": {
+    "name": "EUROPEAN LONGSWORD",
+    "description": "A CROSS-HILTED SWORD FOR TWO HANDS!"
+  },
+  "67": {
+    "name": "SHINAI",
+    "description": "A BAMBOO PRACTICE SWORD USED IN KENDO.\nCAN POISON ON HIT!"
+  },
+  "68": {
+    "name": "ESTOC",
+    "description": "A RIGID NARROW SWORD FOR THRUSTIN' INTO\nARMOUR JOINTS. CAN POISON ON HIT!"
+  },
+  "69": {
+    "name": "URUMI WHIP SWORD",
+    "description": "AN INDIAN SWORD OF FLEXIBLE STEEL RIBBONS.\nCAN POISON ON HIT!"
+  },
+  "70": {
+    "name": "KENDO BOKKEN",
+    "description": "A LONG WOODEN PRACTICE SWORD, METAL BOUND.\nCAN POISON ON HIT!"
+  },
+  "71": {
+    "name": "CLAYMORE",
+    "description": "A SCOTTISH TWO-EDGED SWORD WIT A SLOPIN'\nCROSSGUARD. CAN POISON ON HIT!"
+  },
+  "72": {
+    "name": "KATANA",
+    "description": "A JAPANESE SWORD WIT A KEEN CUTTIN' EDGE.\nCAN POISON ON HIT!"
+  },
+  "73": {
+    "name": "SWORD BREAKER",
+    "description": "A TOOTHED SWORD MADE TA TRAP AN' SNAP\nAN BAD 'UN BLADE!"
+  },
+  "74": {
+    "name": "ZWEIHANDER",
+    "description": "A HUGE GREATSWORD SWUNG WIT BOTH HANDS.\nCAN POISON ON HIT!"
+  },
+  "75": {
+    "name": "BLESSED SILVER SWORD",
+    "description": "A BLESSED SILVER SWORD, MADE FOR DA UNDEAD.\nSTRIKES WIT SACRED!"
+  },
+  "76": {
+    "name": "AERODYNAMIC BLADE",
+    "description": "A CURVED BLADE DAT MEETS ALMOST NO AIR!"
+  },
+  "77": {
+    "name": "RUNIC BLADE",
+    "description": "A BLADE CUT WIT GLOWIN' RUNES. STRIKES\nWIT SACRED AN' CAN INSPIRE!"
+  },
+  "78": {
+    "name": "FLAMESONG BLADE",
+    "description": "A SHORTSWORD DAT TAKES FIRE WHEN DRAWN.\nSTRIKES WIT FIRE AN' CAN BURN!"
+  },
+  "79": {
+    "name": "OBSIDIAN SWORD",
+    "description": "A BLADE OF HARDENED VOLCANIC GLASS.\nSTRIKES WIT PETRO AN' CAN PARALYSE!"
+  },
+  "80": {
+    "name": "MITHRIL SWORD",
+    "description": "A LONG SWORD FORGED OF MITHRIL.\nCAN POISON ON HIT!"
+  },
+  "81": {
+    "name": "VIBRO BLADE",
+    "description": "A SWORD WHOSE BLADE SHIVERS AT ULTRASOUND!"
+  },
+  "82": {
+    "name": "ASTRAL SABER",
+    "description": "A CURVED BLADE LIT FROM A FAR STAR.\nSTRIKES WIT FIRE AN' CAN BURN!"
+  },
+  "83": {
+    "name": "SHADOWSTEEL SWORD",
+    "description": "A BLADE DAT DRINKS LIGHT AN' VANISHES\nMID-SWING. STRIKES WIT CURSED!"
+  },
+  "84": {
+    "name": "ETERNAL FLAME SWORD",
+    "description": "A BLADE FORGED IN DRAGON FIRE DAT NEVER\nCOOLS. STRIKES WIT FIRE!"
+  },
+  "85": {
+    "name": "DRAGON SCALE BLADE",
+    "description": "A SWORD SERRATED WIT DRAGON SCALE.\nCAN POISON ON HIT!"
+  },
+  "86": {
+    "name": "MORPHBLADE",
+    "description": "A SWORD DAT GROWS FROM DAGGER TA GREATSWORD\nAT A WORD. STRIKES WIT CURSED!"
+  },
+  "87": {
+    "name": "STARMETAL BLADE",
+    "description": "A SWORD FORGED FROM FALLEN STAR METAL.\nCURSED, INFLICTS POISON!"
+  },
+  "88": {
+    "name": "VOID EDGE",
+    "description": "A BLADE WIT A HOLLOW EDGE DAT SWALLOWS\nWHAT IT CUTS. STRIKES WIT CURSED!"
+  },
+  "89": {
+    "name": "VOLT EDGE",
+    "description": "AN OLD SWORD WRAPPED IN CRACKLIN' CURRENT.\nSTRIKES WIT THUNDER!"
+  },
+  "90": {
+    "name": "HERO'S LEGACY",
+    "description": "A SWORD HOLDIN' AN OLD HERO'S SOUL, WHICH\nADVISES IN BATTLE. STRIKES WIT FIRE!"
+  },
+  "91": {
+    "name": "PHASE BLADE",
+    "description": "A SWORD HALF IN ANOTHER DIMENSION. IT PASSES\nTHROUGH GUARDS. STRIKES WIT WATER!"
+  },
+  "92": {
+    "name": "SHADOWSTEEL BLADE",
+    "description": "A BLADE OF SET SHADOW DAT IGNORES ARMOUR.\nSTRIKES WIT CURSED!"
+  },
+  "93": {
+    "name": "SPELLBREAKER BLADE",
+    "description": "A CRYSTAL SWORD DAT DRINKS SPELLS CAST AT\nITS BEARER. CURSED, CAN POISON!"
+  },
+  "94": {
+    "name": "PSIONIC EDGE",
+    "description": "A CRYSTAL BLADE DAT CUTS MIND AN' ARMOUR\nALIKE. STRIKES WIT SACRED!"
+  },
+  "95": {
+    "name": "BLOODTHIRSTER",
+    "description": "A SWORD DAT LIGHTENS AN' SHARPENS WIT\nEVERY KILL. STRIKES WIT CURSED!"
+  },
+  "96": {
+    "name": "WARDBREAKER BLADE",
+    "description": "A SWORD ENCHANTED TA CUT THROUGH WARDS.\nTHUNDER, INFLICTS STATIC!"
+  },
+  "97": {
+    "name": "SPELLDRAINER EDGE",
+    "description": "A BLACK BLADE DAT TURNS SPELLS CAST AT IT\nINTO EDGE. STRIKES WIT SACRED!"
+  },
+  "98": {
+    "name": "SYMBIOTIC BLADE",
+    "description": "A LIVIN' WEAPON DAT BONDS TA ITS BEARER\nAN' GROWS WIT DEM!"
+  },
+  "99": {
+    "name": "TWILIGHT EDGE",
+    "description": "A SWORD FORGED OF DUSK, BETWEEN LIGHT\nAN' SHADOW!"
+  },
+  "100": {
+    "name": "ENERGY BLADE",
+    "description": "A SWORD WHOSE EDGE IZ PURE ENERGY.\nSTRIKES WIT CURSED!"
+  },
+  "101": {
+    "name": "DIVINE SMITER",
+    "description": "A GOLDEN SWORD DAT SMITES DA UNDEAD.\nSTRIKES WIT SACRED!"
+  },
+  "102": {
+    "name": "ARCANE BLADE",
+    "description": "A SWORD WHOSE BLADE IZ RAW MAGIC.\nSTRIKES WIT FIRE!"
+  },
+  "103": {
+    "name": "DIMENSION BLADE",
+    "description": "A SWORD DAT CUTS REALITY OPEN.\nSTRIKES WIT SACRED!"
+  },
+  "104": {
+    "name": "T-PILLAR BLADE",
+    "description": "A STONE BLADE OUT OF GOBEKLI TEPE, CUT WIT\nANIMAL SIGNS. CAN POISON ON HIT!"
+  },
+  "105": {
+    "name": "STAR CUTTER",
+    "description": "A CURVED GOBEKLI TEPE BLADE MARKED WIT LOST\nCONSTELLATIONS. CAN POISON ON HIT!"
+  },
+  "106": {
+    "name": "EHI PETROLEUM EDGE",
+    "description": "A CHAINSAW SWORD WEEPIN' OIL DAT EATS ITS\nBEARER'S ARMOUR. PETRO, CAN PARALYSE!"
+  },
+  "107": {
+    "name": "SKYSTONE GREATSWORD",
+    "description": "A HUGE GOBEKLI TEPE STONE SWORD DAT WEIGHS\nALMOST NUTTIN'. WIND, CAN BLIND!"
+  },
+  "108": {
+    "name": "EHI OMNISCIENCE EDGE",
+    "description": "A BLADE OF COMPRESSED ENCYCLOPEDIA PAGES.\nIT CUTS GUARDS AN' FLOODS DA MIND!"
+  },
+  "109": {
+    "name": "GOLDEN VARLENIA BLADE",
+    "description": "A GOLDEN LONGSWORD OF VARLENIA STEEL.\nFIRE, INFLICTS HOT!"
+  },
+  "110": {
+    "name": "QUANTUM SUPERPOSITION BLADE",
+    "description": "A SWORD HELD IN SUPERPOSITION. IT STRIKES\nEVERY POSSIBLE TARGET AT ONCE. ICE!"
+  },
+  "111": {
+    "name": "EXCALIBUR",
+    "description": "DA MYTHICAL SWORD OF A BRITISH KING,\nLIT BY HOLY POWER. SACRED, INSPIRES!"
+  },
+  "112": {
+    "name": "DIMENSIONAL CUTTER",
+    "description": "A BLADE SAID TA CUT BETWEEN DIMENSIONS.\nTHUNDER, INFLICTS STATIC!"
+  },
+  "113": {
+    "name": "DRAGON BLADE",
+    "description": "A SWORD FORGED FROM A DRAGON'S FANGS.\nSACRED, INFLICTS INSPIRED!"
+  },
+  "124": {
+    "name": "<-- Heavy -->",
+    "description": ""
+  },
+  "125": {
+    "name": "STALE BAGUETTE",
+    "description": "A LOAF GONE STALE AN' HARD AS A STONE.\nCAN STUN ON HIT!"
+  },
+  "126": {
+    "name": "DENTED PAN",
+    "description": "A DENTED FRYIN' PAN, USED AS A CLUB!"
+  },
+  "127": {
+    "name": "SPLINTERED CLUB",
+    "description": "A WOODEN CLUB, SPLIT AN' CRACKED.\nCAN STUN ON HIT!"
+  },
+  "128": {
+    "name": "WOODEN FLAIL",
+    "description": "A FLAIL WIT A LIGHT WOODEN HEAD!"
+  },
+  "129": {
+    "name": "POT METAL MACE",
+    "description": "A MACE WHOSE SOFT METAL HEAD DENTS!"
+  },
+  "130": {
+    "name": "WOODEN CLUB",
+    "description": "A PLAIN WOODEN CLUB, DA OLDEST WEAPON\nDERE IZ. CAN STUN ON HIT!"
+  },
+  "131": {
+    "name": "UNWIELDY HAMMER",
+    "description": "A GREAT HAMMER ON A HANDLE TOO WEAK\nTA SWING IT!"
+  },
+  "132": {
+    "name": "TRUSTY FRYIN' PAN",
+    "description": "A FRYIN' PAN WIT A TAPED HANDLE.\nCAN INFLICT OILY ON HIT!"
+  },
+  "133": {
+    "name": "NAIL BOARD",
+    "description": "RUSTY NAILS WIRED TA A TABLE LEG.\nCAN INFLICT POISON ON HIT!"
+  },
+  "134": {
+    "name": "CHAIN ROLLIN' PIN",
+    "description": "A ROLLIN' PIN WRAPPED IN CHAIN.\nCAN INFLICT OILY ON HIT!"
+  },
+  "135": {
+    "name": "REBAR CLUB",
+    "description": "REBAR WIT CONCRETE STILL ON DA END.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "136": {
+    "name": "PIPE WRENCH MACE",
+    "description": "A PIPE WIT A HEAVY VALVE ON DA END.\nCAN INFLICT OILY ON HIT!"
+  },
+  "137": {
+    "name": "BIKE CHAIN FLAIL",
+    "description": "A BICYCLE CHAIN WIT A PADLOCK ON IT.\nCAN INFLICT OILY ON HIT!"
+  },
+  "138": {
+    "name": "MODIFIED WRENCH",
+    "description": "A WRENCH WIT NUTS WELDED ALONG IT.\nCAN INFLICT OILY ON HIT!"
+  },
+  "139": {
+    "name": "NAIL BAT",
+    "description": "A BAT WOUND WIT WIRE AN' NAILS.\nCAN INFLICT POISON ON HIT!"
+  },
+  "140": {
+    "name": "TOOLBOX FLAIL",
+    "description": "A LOADED TOOLBOX SWUNG ON A CHAIN.\nCAN INFLICT OILY ON HIT!"
+  },
+  "141": {
+    "name": "CONCRETE SLEDGE",
+    "description": "A SLEDGEHAMMER SET WIT CONCRETE.\nSTRIKES PETRO AN' CAN INFLICT NAUSEA!"
+  },
+  "142": {
+    "name": "STONE-STUDDED CLUB",
+    "description": "A LONG CLUB STUDDED WIT SHARP STONES.\nSTRIKES WIT PETRO!"
+  },
+  "143": {
+    "name": "BLACKJACK",
+    "description": "A STICK WIT A LEATHER-WRAPPED LEAD WEIGHT.\nCAN STUN ON HIT!"
+  },
+  "144": {
+    "name": "STONE FLAIL",
+    "description": "A FLAIL WIT A STONE HEAD ON A CHAIN.\nSTRIKES WIT PETRO!"
+  },
+  "145": {
+    "name": "WAR CLUB",
+    "description": "A WOODEN CLUB SET WIT BRONZE SPIKES!"
+  },
+  "146": {
+    "name": "SHARK TOOTH CLUB",
+    "description": "A POLYNESIAN CLUB EDGED WIT SHARK TEETH.\nCAN STUN ON HIT!"
+  },
+  "147": {
+    "name": "SARCASTIC PILLOW",
+    "description": "A PILLOW DAT HITS FAR HARDER DEN IT SHOULD\nAN' MUTTERS INSULTS. INFLICTS STUN!"
+  },
+  "148": {
+    "name": "BRONZE FLAIL",
+    "description": "A FLAIL WIT A BRONZE HEAD ON A CHAIN!"
+  },
+  "149": {
+    "name": "MASTER FLIPPER",
+    "description": "A SPATULA DAT FLIPS A FOE LIKE A PANCAKE\nAN' TURNS DEM AROUND. INFLICTS STUN!"
+  },
+  "150": {
+    "name": "MERE CLUB",
+    "description": "A MAORI CLUB CUT FROM WOOD OR WHALEBONE.\nCAN STUN ON HIT!"
+  },
+  "151": {
+    "name": "TESSEN",
+    "description": "A JAPANESE WAR FAN RIBBED WIT IRON!"
+  },
+  "152": {
+    "name": "HONKIN' MALLET DUO",
+    "description": "TWO SQUEAKY TOY HAMMERS. SQUEEZED TOGETHER\nDEY THROW A SHOCKWAVE. CAN STUN!"
+  },
+  "153": {
+    "name": "MACUAHUITL",
+    "description": "AN AZTEC CLUB SET WIT OBSIDIAN BLADES.\nCAN STUN ON HIT!"
+  },
+  "154": {
+    "name": "NUMBER ONE FAN",
+    "description": "A FOAM HAND DAT LANDS LIKE A SLEDGEHAMMER\nAN' HONKS DOING IT. INFLICTS STUN!"
+  },
+  "155": {
+    "name": "METEOR HAMMER",
+    "description": "A WEIGHTED HEAD SWUNG ON A LONG ROPE!"
+  },
+  "156": {
+    "name": "MEDIEVAL FLAIL",
+    "description": "A SPIKED BALL ON A CHAIN AN' HANDLE!"
+  },
+  "157": {
+    "name": "FLAIL",
+    "description": "A SPIKED BALL ON A SHORT CHAIN.\nCAN STUN ON HIT!"
+  },
+  "158": {
+    "name": "FLANGED MACE",
+    "description": "A EUROPEAN MACE WIT A FLANGED HEAD FOR\nBREAKIN' ARMOUR. CAN STUN ON HIT!"
+  },
+  "159": {
+    "name": "LUCERNE HAMMER",
+    "description": "A SWISS WAR HAMMER SPIKED FOR PUNCHIN'\nTHROUGH PLATE. CAN STUN ON HIT!"
+  },
+  "160": {
+    "name": "WAR HAMMER",
+    "description": "A HEAVY HAMMER DAT CRUSHES ARMOUR.\nCAN STUN ON HIT!"
+  },
+  "161": {
+    "name": "FLANGED WAR MACE",
+    "description": "A HEAVY FLANGED MACE MADE TA CRUSH ARMOUR!"
+  },
+  "162": {
+    "name": "MORNIN' STAR",
+    "description": "A SPIKED HEAD ON A CHAIN, BANDED WIT STEEL!"
+  },
+  "163": {
+    "name": "WAR PICK",
+    "description": "A WAR HAMMER WIT A PICK ON DA BACK\nFOR PUNCHIN' PLATE!"
+  },
+  "164": {
+    "name": "TRAININ' NUNCHAKU",
+    "description": "TWO WOODEN BATONS ON A SHORT CHAIN.\nCAN STUN ON HIT!"
+  },
+  "165": {
+    "name": "HEAVY CHAIN",
+    "description": "A LENGTH OF CHAIN, SWUNG AN' WOUND ROUND\nA FOE. CAN STUN ON HIT!"
+  },
+  "166": {
+    "name": "SPIKED BATTLE SHIELD",
+    "description": "A SPIKED SHIELD WIT A RAZOR RIM, SWUNG\nAS A WEAPON. INFLICTS STUN!"
+  },
+  "167": {
+    "name": "VARIABLE CHAIN HAMMER",
+    "description": "A METEOR HAMMER WHOSE CHAIN PAYS OUT\nTA ANY LENGTH!"
+  },
+  "168": {
+    "name": "MITHRIL FLAIL",
+    "description": "A FLAIL BANDED WIT MITHRIL.\nCAN STUN ON HIT!"
+  },
+  "169": {
+    "name": "STEEL NUNCHAKU",
+    "description": "STEEL BATONS ON REINFORCED LINKS,\nSPIKED AT DA ENDS. CAN STUN ON HIT!"
+  },
+  "170": {
+    "name": "SIEGE BREAKER",
+    "description": "A GREAT TWO-HANDED MACE FOR BREAKIN' WALLS.\nCAN STUN ON HIT!"
+  },
+  "171": {
+    "name": "SEISMIC HAMMER",
+    "description": "A TWO-HANDED HAMMER DAT THROWS A SHOCKWAVE\nON IMPACT!"
+  },
+  "172": {
+    "name": "EARTHSHAKER MAUL",
+    "description": "A MAUL CARRYIN' DA FORCE OF AN EARTHQUAKE!"
+  },
+  "173": {
+    "name": "DRAGON FLAIL",
+    "description": "A FLAIL BANDED WIT A DRAGON'S FANGS.\nCAN STUN ON HIT!"
+  },
+  "174": {
+    "name": "SOUL DRAIN FLAIL",
+    "description": "A FLAIL HEADED WIT CRYSTALLISED SOUL.\nCURSED, INFLICTS POISON!"
+  },
+  "175": {
+    "name": "EARTHSHAKER MACE",
+    "description": "A MACE CUT FROM ELEMENTAL EARTH. IT SHAKES\nDA GROUND. STRIKES WIT CURSED!"
+  },
+  "176": {
+    "name": "SPELLCRUSHER MAUL",
+    "description": "A HAMMER DAT SHATTERS WARDS AN' MAGICAL\nCONSTRUCTS. FIRE, INFLICTS HOT!"
+  },
+  "177": {
+    "name": "THOUGHT CRUSHER",
+    "description": "A HAMMER DAT BREAKS DA BODY AN' DA\nTHOUGHT BEHIND IT. CAN STUN ON HIT!"
+  },
+  "178": {
+    "name": "CELESTIAL HAMMER",
+    "description": "A HAMMER FORGED FROM A FALLEN STAR.\nSACRED, INFLICTS INSPIRED!"
+  },
+  "179": {
+    "name": "COSMIC PENDULUM",
+    "description": "A GOBEKLI TEPE FLAIL CUT WIT STAR CHARTS.\nIT BENDS DA SPACE IT SWINGS THROUGH!"
+  },
+  "180": {
+    "name": "CHRONOS HAMMER",
+    "description": "A HAMMER DAT SLOWS TIME WHERE IT LANDS.\nSTRIKES WIT WATER AN' CAN WET!"
+  },
+  "181": {
+    "name": "EHI SUICIDE BOMBER",
+    "description": "A FLAIL WHOSE HEADS HOLD VOLATILE OIL AN'\nBURST ON IMPACT. CAN STUN ON HIT!"
+  },
+  "182": {
+    "name": "BOAR TOTEM HAMMER",
+    "description": "A GREAT GOBEKLI TEPE STONE HAMMER CUT WIT\nBOARS. IT LENDS BRUTE STRENGTH. ICE!"
+  },
+  "183": {
+    "name": "VARLENIA WAR FAN",
+    "description": "A FOLDIN' WAR FAN OF VARLENIA STEEL BLADES.\nSTRIKES WIT WATER AN' CAN WET!"
+  },
+  "184": {
+    "name": "EHI COMPRESSION MAUL",
+    "description": "A MAUL HOLDIN' COMPRESSED OIL. IT THROWS\nSHOCKWAVES AN' SLOWS ITS BEARER!"
+  },
+  "185": {
+    "name": "MJÖLNIR",
+    "description": "DA HAMMER OF A THUNDER GOD. THROWN,\nIT COMES BACK. ICE, INFLICTS COLD!"
+  },
+  "186": {
+    "name": "BUSKER'S ACOUSTIC",
+    "description": "A BATTERED ACOUSTIC WIT THREE STRINGS LEFT,\nSWUNG BY DA NECK!"
+  },
+  "187": {
+    "name": "PRESIDENTIAL SAXOPHONE",
+    "description": "A BRASS TENOR SAXOPHONE, SWUNG BY DA BELL!"
+  },
+  "188": {
+    "name": "PAWNSHOP COPY GUITAR",
+    "description": "A COPY OF A COPY, BOUGHT SECONDHAND AN'\nNEVER IN TUNE. CAN STUN ON HIT!"
+  },
+  "189": {
+    "name": "INFERNAL GUITAR",
+    "description": "A QUILTED CHERRY-BURST ELECTRIC. LOUDER DEN\nDA ROOM, HOTTER DEN DA AMP. SACRED!"
+  },
+  "190": {
+    "name": "ARROWHEAD GUITAR",
+    "description": "A GUITAR SHAPED LIKE DA TINK IT GETS USED\nAS. CAN STUN ON HIT!"
+  },
+  "191": {
+    "name": "BASS GUITAR",
+    "description": "FOUR STRINGS, A LONG NECK AN' A LOT OF MASS.\nINFLICTS STUN!"
+  },
+  "192": {
+    "name": "DOUBLE-NECK WARHORSE",
+    "description": "TWELVE STRINGS ABOVE, SIX BELOW, ON A STRAP\nDAT HAB CARRIED TOO MUCH!"
+  },
+  "193": {
+    "name": "FEEDBACK CANNON",
+    "description": "A GUITAR STILL WIRED TA A STACK DAT IZ NO\nLONGER DERE. IT HOWLS ANYWAY!"
+  },
+  "194": {
+    "name": "HELLFIRE SUPERSTRAT",
+    "description": "A NECK-THROUGH ELECTRIC DAT HAB BIN ON\nFIRE SINCE IT WAZ STRUNG. FIRE!"
+  },
+  "196": {
+    "name": "<-- Axe -->",
+    "description": ""
+  },
+  "197": {
+    "name": "FOAM TOY AXE",
+    "description": "A PLASTIC TOY AXE WIT SOFT FOAM EDGES!"
+  },
+  "198": {
+    "name": "RUSTY SICKLE",
+    "description": "A FARM SICKLE WIT A LOOSE HANDLE AN' RUST\nACROSS DA BLADE!"
+  },
+  "199": {
+    "name": "PRACTICE AXE",
+    "description": "A WOODEN PRACTICE AXE, EDGE DULLED.\nCAN STUN ON HIT!"
+  },
+  "200": {
+    "name": "BUDGET AXE",
+    "description": "A CHEAP AXE WHOSE HEAD WOBBLES WHEN SWUNG!"
+  },
+  "201": {
+    "name": "STONE AXE",
+    "description": "FLINT BOUND TA A WOODEN HAFT.\nSTRIKES WIT PETRO!"
+  },
+  "202": {
+    "name": "SHARPENED SHOVEL",
+    "description": "A SHOVEL GROUND TA AN EDGE.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "203": {
+    "name": "MOWER BLADE AXE",
+    "description": "A MOWER BLADE BOLTED TA A HAFT.\nCAN INFLICT OILY ON HIT!"
+  },
+  "204": {
+    "name": "HUBCAP AXE",
+    "description": "A SHARPENED CAR PANEL ON A HAFT.\nCAN INFLICT OILY ON HIT!"
+  },
+  "205": {
+    "name": "RAZOR FIRE AXE",
+    "description": "A FIRE AXE TAPED WIT RAZOR BLADES.\nSTRIKES FIRE AN' CAN INFLICT POISON!"
+  },
+  "206": {
+    "name": "SEED AXE",
+    "description": "AN AXE GROWN FROM AN EXPRESSION SEED!"
+  },
+  "207": {
+    "name": "HAND AXE",
+    "description": "A LIL' AXE FOR FELLIN' TIMBER!"
+  },
+  "208": {
+    "name": "EGYPTIAN AXE",
+    "description": "AN ANCIENT EGYPTIAN AXE WIT A CRESCENT HEAD!"
+  },
+  "209": {
+    "name": "FRANCISCA",
+    "description": "A FRANKISH AXE BALANCED TA BE THROWN!"
+  },
+  "210": {
+    "name": "BATTLE AXE",
+    "description": "A DOUBLE-EDGED AXE MADE FOR BATTLE!"
+  },
+  "211": {
+    "name": "STEEL CHAIR",
+    "description": "A STEEL FOLDIN' CHAIR, SWUNG FLAT.\nCAN STUN ON HIT!"
+  },
+  "212": {
+    "name": "TRASH CAN LID",
+    "description": "A STEEL BIN LID, HELD AS SHIELD AN' CLUB.\nCAN STUN ON HIT!"
+  },
+  "213": {
+    "name": "BARDICHE",
+    "description": "A LONG AXE WIT A CRESCENT BLADE!"
+  },
+  "214": {
+    "name": "BREAKAWAY TABLE",
+    "description": "A WOODEN TABLE BUILT TA BREAK ON IMPACT!"
+  },
+  "215": {
+    "name": "RING BELL",
+    "description": "A RING BELL DAT RINGS DA HEAD OF WHOEVER\nIT HITS!"
+  },
+  "216": {
+    "name": "STEEL LADDER",
+    "description": "A REINFORCED LADDER, CLIMBED OR SWUNG.\nCAN STUN ON HIT!"
+  },
+  "217": {
+    "name": "MITHRIL AXE",
+    "description": "A BATTLE AXE FORGED OF MITHRIL.\nCAN STUN ON HIT!"
+  },
+  "218": {
+    "name": "BOUND ELEMENTAL AXE",
+    "description": "AN AXE HOLDIN' A BOUND FIRE ELEMENTAL,\nALWAYS ALIGHT. STRIKES WIT THUNDER!"
+  },
+  "219": {
+    "name": "VOLCANIC GREATAXE",
+    "description": "AN AXE FORGED IN A VOLCANO AN' STILL\nBURNIN'. CURSED, INFLICTS POISON!"
+  },
+  "220": {
+    "name": "GRAVITY CRUSHER",
+    "description": "AN AXE DAT DROPS A LIL' GRAVITY WELL\nWHERE IT LANDS!"
+  },
+  "221": {
+    "name": "SOUL CLEAVER",
+    "description": "A GOBEKLI TEPE CEREMONIAL AXE DAT CUTS\nFLESH AN' SPIRIT. FIRE, INFLICTS HOT!"
+  },
+  "222": {
+    "name": "DRAGON AXE",
+    "description": "A BATTLE AXE FORGED FROM A DRAGON'S FANGS!"
+  },
+  "223": {
+    "name": "PLANAR DIVIDER",
+    "description": "A GOBEKLI TEPE AXE DAT CUTS DA WALL\nBETWEEN WORLDS. STRIKES WIT ICE!"
+  },
+  "224": {
+    "name": "EHI PETROCORRUPTOR",
+    "description": "AN AXE EDGED WIT COMPRESSED OIL. IT CUTS\nANYTINK AN' ROTS ITS BEARER!"
+  },
+  "225": {
+    "name": "VARLENIA CLEAVER",
+    "description": "A GREAT GOLDEN AXE OF VARLENIA STEEL.\nWATER, INFLICTS WET!"
+  },
+  "226": {
+    "name": "DIMENSIONAL CLEAVER",
+    "description": "AN AXE DAT CLEAVES SEVERAL WORLDS AT ONCE.\nSACRED, INFLICTS INSPIRED!"
+  },
+  "237": {
+    "name": "<-- Whip -->",
+    "description": ""
+  },
+  "238": {
+    "name": "FLY SWATTER",
+    "description": "A LIGHT PLASTIC SWATTER.\nCAN PROVOKE ON HIT!"
+  },
+  "239": {
+    "name": "CRACKED WHIP",
+    "description": "A WHIP OF BADLY TANNED LEATHER DAT SPLITS!"
+  },
+  "240": {
+    "name": "HEAVY BUCKLE BELT",
+    "description": "A BELT WIT A REINFORCED BUCKLE.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "241": {
+    "name": "COMBAT FISHIN' ROD",
+    "description": "A ROD DAT CASTS SPIKED WEIGHTS.\nCAN INFLICT OILY ON HIT!"
+  },
+  "242": {
+    "name": "CORD WHIP",
+    "description": "A WHIP PLAITED FROM ELECTRICAL FLEX.\nCAN INFLICT OILY ON HIT!"
+  },
+  "243": {
+    "name": "SEED WHIP",
+    "description": "A WHIP GROWN FROM AN EXPRESSION SEED.\nCAN PROVOKE ON HIT!"
+  },
+  "244": {
+    "name": "RETIARIUS NET",
+    "description": "A GLADIATOR'S WEIGHTED NET, THROWN TA\nENTANGLE. CAN PROVOKE ON HIT!"
+  },
+  "245": {
+    "name": "BULLWHIP",
+    "description": "A WHIP OF BRAIDED LEATHER.\nCAN PROVOKE ON HIT!"
+  },
+  "246": {
+    "name": "GLADIATOR NET",
+    "description": "A HEAVIER WEIGHTED NET, THROWN WIDE.\nCAN PROVOKE ON HIT!"
+  },
+  "247": {
+    "name": "FLYIN' RING CHAIN",
+    "description": "A CHAIN OF RAZOR RINGS, THROWN OR LASHED.\nCAN PROVOKE ON HIT!"
+  },
+  "248": {
+    "name": "ROPE AN' HOOK",
+    "description": "A ROPE AN' GRAPPLE DAT DRAGS A FOE CLOSER!"
+  },
+  "249": {
+    "name": "STEEL CABLE WHIP",
+    "description": "A WHIP OF BRAIDED STEEL CABLE DAT CUTS\nTHROUGH ARMOUR!"
+  },
+  "250": {
+    "name": "URUMI",
+    "description": "A FLEXIBLE SWORD OF LINKED STEEL RIBBONS!"
+  },
+  "251": {
+    "name": "FROST WHIP",
+    "description": "A WHIP OF ICE DAT NEVER MELTS.\nSTRIKES WIT ICE AN' CAN CHILL!"
+  },
+  "252": {
+    "name": "THORNWHIP",
+    "description": "A WHIP OF ENCHANTED THORNS DAT DRINKS LIFE.\nSACRED, INFLICTS INSPIRED!"
+  },
+  "253": {
+    "name": "ENERGY LASH",
+    "description": "A WHIP OF RAW ENERGY DAT RUNS OUT\nAS FAR AS IT NEEDS. STRIKES WIT FIRE!"
+  },
+  "254": {
+    "name": "BANSHEE'S WAIL",
+    "description": "A WHIP PLAITED FROM BANSHEE HAIR.\nIT SCREAMS. STRIKES WIT ICE!"
+  },
+  "255": {
+    "name": "CHAMPION'S BELT",
+    "description": "A CHAMPIONSHIP BELT, SWUNG BY DA BUCKLE!"
+  },
+  "256": {
+    "name": "MINDLASH WHIP",
+    "description": "A WHIP OF MASSED THOUGHT DAT LASHES BODY\nAN' MIND. THUNDER, INFLICTS STATIC!"
+  },
+  "257": {
+    "name": "PHOENIX INTESTINES",
+    "description": "A WHIP MADE FROM A PHOENIX'S GUT.\nSTRIKES WIT WATER!"
+  },
+  "258": {
+    "name": "TEMPORAL ECHO WHIP",
+    "description": "A WHIP IN SEVERAL TIMELINES AT ONCE.\nIT LANDS MORE DEN ONCE. CURSED!"
+  },
+  "259": {
+    "name": "LIQUID STONE WHIP",
+    "description": "A GOBEKLI TEPE WHIP OF STONE LINKS DAT\nMOVES LIKE WATER. PETRO, CAN PARALYSE!"
+  },
+  "260": {
+    "name": "VARLENIA CHAIN WHIP",
+    "description": "A CHAIN WHIP OF GOLDEN VARLENIA LINKS DAT\nRUNS OUT FAR. THUNDER, CAN STATIC!"
+  },
+  "261": {
+    "name": "EHI OMNISCIENT BINDER",
+    "description": "A WHIP OF LIVIN' BOOK PAGES. IT BINDS FOES\nAN' WHISPERS AT ITS BEARER!"
+  },
+  "272": {
+    "name": "<-- Staff -->",
+    "description": ""
+  },
+  "273": {
+    "name": "CARVED STICK",
+    "description": "A STICK WIT CRUDE CARVINGS MEANT TA PASS\nFOR A STAFF. STRIKES WIT FIRE!"
+  },
+  "274": {
+    "name": "WALKIN' STICK",
+    "description": "A WALKIN' STICK WIT TOO MUCH FLEX IN IT.\nICE, INFLICTS COLD!"
+  },
+  "275": {
+    "name": "NOVICE WAND",
+    "description": "A WAND OF POOR WOOD DAT BARELY CONDUCTS.\nSTRIKES WIT WATER!"
+  },
+  "276": {
+    "name": "APPRENTICE STAFF",
+    "description": "A STAFF OF GREEN WOOD DAT BENDS UNDER\nA BLOW. STRIKES WIT WATER!"
+  },
+  "277": {
+    "name": "SPIKE UMBRELLA",
+    "description": "AN UMBRELLA WIT SHARPENED RIB TIPS.\nSTRIKES FIRE AN' CAN INFLICT NAUSEA!"
+  },
+  "278": {
+    "name": "SPIKED CRUTCH",
+    "description": "A CRUTCH WIT NAILS THROUGH DA TOP.\nSTRIKES FIRE AN' CAN INFLICT POISON!"
+  },
+  "279": {
+    "name": "NAIL MOP STAFF",
+    "description": "A MOP HANDLE WIT NAILS IN DA END.\nSTRIKES ICE AN' CAN INFLICT POISON!"
+  },
+  "280": {
+    "name": "RAZOR MOP",
+    "description": "A MOP WOUND WIT RAZOR WIRE.\nSTRIKES ICE AN' CAN INFLICT POISON!"
+  },
+  "281": {
+    "name": "BARBED HOCKEY STICK",
+    "description": "A HOCKEY STICK WOUND WIT BARBED WIRE.\nSTRIKES WATER AN' CAN INFLICT POISON!"
+  },
+  "282": {
+    "name": "THROWIN' STICK",
+    "description": "A SHAPED THROWIN' STICK USED FOR HUNTIN'.\nSTRIKES WIT ICE!"
+  },
+  "283": {
+    "name": "WOODEN STAFF",
+    "description": "A PLAIN, COMMON STAFF.\nCURSED, CAN POISON!"
+  },
+  "284": {
+    "name": "SEED STAFF",
+    "description": "A STAFF GROWN FROM AN EXPRESSION SEED.\nSTRIKES WIT SACRED!"
+  },
+  "285": {
+    "name": "QUARTERSTAFF",
+    "description": "A STAFF WEIGHTED AT BOTH ENDS.\nTHUNDER, INFLICTS STATIC!"
+  },
+  "286": {
+    "name": "ESCRIMA STICKS",
+    "description": "A PAIR OF SHORT METAL BATONS.\nICE, INFLICTS COLD!"
+  },
+  "287": {
+    "name": "MAGIC WAND",
+    "description": "A WAND DAT LENDS A LIL' MAGICAL POWER.\nCURSED, CAN POISON!"
+  },
+  "288": {
+    "name": "BOUNCE BUBBLE BLOWER",
+    "description": "A BUBBLE WAND WHOSE BUBBLES HOLD AN' BOUNCE\nA FOE. THUNDER, INFLICTS STATIC!"
+  },
+  "289": {
+    "name": "PEPPERMINT SCEPTER",
+    "description": "A GIANT CANDY CANE DAT FIRES PEPPERMINT\nBEAMS. THUNDER, INFLICTS STATIC!"
+  },
+  "290": {
+    "name": "FORCE WAND",
+    "description": "A SILVER WAND DAT LENDS MAGICAL POWER.\nFIRE, INFLICTS HOT!"
+  },
+  "291": {
+    "name": "FLEXIBLE STAFF",
+    "description": "HARDENED BAMBOO POLES BOUND INTO ONE\nFLEXIBLE STAFF. ICE, INFLICTS COLD!"
+  },
+  "292": {
+    "name": "IRON TONFA",
+    "description": "A PAIR OF IRON BATONS WORN ALONG DA ARM.\nSTRIKES WIT WATER!"
+  },
+  "293": {
+    "name": "WIND STAFF",
+    "description": "A PLAIN STAFF DAT RAISES HARD GUSTS.\nSTRIKES WIT WIND!"
+  },
+  "294": {
+    "name": "THREE-SECTION STAFF",
+    "description": "THREE STAFF SECTIONS JOINED BY CHAIN.\nICE, INFLICTS COLD!"
+  },
+  "295": {
+    "name": "PETRIFIED STAFF",
+    "description": "A STAFF OF FOSSILISED WOOD.\nSTRIKES WIT THUNDER!"
+  },
+  "296": {
+    "name": "MITHRIL ROD",
+    "description": "A MITHRIL ROD DAT LENDS MAGICAL POWER.\nSTRIKES WIT SACRED!"
+  },
+  "297": {
+    "name": "FOUR-SECTION STAFF",
+    "description": "FOUR STAFF SECTIONS JOINED BY CHAIN.\nICE, INFLICTS COLD!"
+  },
+  "298": {
+    "name": "LIGHTNING-STRUCK STAFF",
+    "description": "A STAFF CUT FROM A LIGHTNING-STRUCK TREE.\nTHUNDER, INFLICTS STATIC!"
+  },
+  "299": {
+    "name": "YGGDRASIL BRANCH",
+    "description": "A STAFF CUT FROM A BRANCH OF DA WORLD TREE.\nSTRIKES WIT FIRE!"
+  },
+  "300": {
+    "name": "THUNDERCALLER STAFF",
+    "description": "A STAFF DAT CALLS DOWN LIGHTNING.\nSTRIKES WIT THUNDER!"
+  },
+  "301": {
+    "name": "EYE OF INSIGHT STAFF",
+    "description": "A STAFF CROWNED WIT A LIVIN' EYE DAT SEES\nWHAT IZ HIDDEN. STRIKES WIT WATER!"
+  },
+  "302": {
+    "name": "SONIC STAFF",
+    "description": "A STAFF DAT THROWS HARD SOUNDWAVES.\nSTRIKES WIT WATER AN' CAN WET!"
+  },
+  "303": {
+    "name": "WORLD TREE STAFF",
+    "description": "A STAFF OF WORLD TREE WOOD DAT HUMS WIT\nDA FOREST. WATER, CAN WET!"
+  },
+  "304": {
+    "name": "WORLD TREE BRANCH",
+    "description": "A LIVIN' BRANCH OF DA WORLD TREE, STILL\nIN LEAF. STRIKES WIT FIRE!"
+  },
+  "305": {
+    "name": "UNICORN HORN STAFF",
+    "description": "A STAFF OF UNICORN HORN DAT MENDS WOUNDS.\nTHUNDER, INFLICTS STATIC!"
+  },
+  "306": {
+    "name": "SPELL ABSORBER",
+    "description": "A WARDED STAFF DAT SWALLOWS HOSTILE SPELLS\nAN' KEEPS DEM. FIRE, INFLICTS HOT!"
+  },
+  "307": {
+    "name": "DRAGON STAFF",
+    "description": "A DRAGON-HEADED STAFF DAT LENDS MAGICAL\nPOWER. STRIKES WIT SACRED!"
+  },
+  "308": {
+    "name": "CHRONOMANCER'S STAFF",
+    "description": "A STAFF OF CRYSTALLISED TIME DAT SLOWS\nA FOE. FIRE, INFLICTS HOT!"
+  },
+  "309": {
+    "name": "BARRIER STAFF",
+    "description": "A STAFF DAT RAISES BARRIERS OVER ITS BEARER\nAN' ALLIES. THUNDER, CAN STATIC!"
+  },
+  "310": {
+    "name": "GRAVITY MANIPULATION STAFF",
+    "description": "A STAFF DAT BENDS GRAVITY TA CRUSH OR LIFT.\nSTRIKES WIT ICE!"
+  },
+  "311": {
+    "name": "MIND SHIELD STAFF",
+    "description": "A STAFF DAT SHIELDS ALLIES AN' TURNS PSI\nDAMAGE BACK. FIRE, INFLICTS HOT!"
+  },
+  "312": {
+    "name": "ARCANE SPHERE",
+    "description": "AN ORB DAT SHIELDS ITS BEARER WHILE FIRIN'\nARCANE BOLTS. CURSED, CAN POISON!"
+  },
+  "313": {
+    "name": "MIND PROJECTOR STAFF",
+    "description": "A STAFF DAT THROWS DA BEARER'S THOUGHTS\nINTO A FOE'S MIND. FIRE!"
+  },
+  "314": {
+    "name": "MENTAL FORTRESS STAFF",
+    "description": "A STAFF DAT WALLS OFF DA MIND.\nSTRIKES WIT CURSED!"
+  },
+  "315": {
+    "name": "ELEMENTAL WARDEN STAFF",
+    "description": "A WARDED STAFF DAT BLOCKS ONE ELEMENT\nAT A TIME. CURSED, CAN POISON!"
+  },
+  "316": {
+    "name": "VULTURE TOTEM STAFF",
+    "description": "A STAFF TOPPED WIT DA GOBEKLI TEPE VULTURE.\nTHUNDER, INFLICTS STATIC!"
+  },
+  "317": {
+    "name": "PSYCHIC AMPLIFIER CROWN",
+    "description": "A CIRCLET DAT THROWS THOUGHT AS A WEAPON\nAN' SHIELDS DA MIND. ICE!"
+  },
+  "318": {
+    "name": "CELESTIAL ALIGNMENT ROD",
+    "description": "A GOBEKLI TEPE STAFF CROWNED WIT SUN AN'\nMOON. STRIKES WIT SACRED!"
+  },
+  "319": {
+    "name": "EHI TOXIC AMPLIFIER",
+    "description": "A STAFF OF VOLATILE PETROLEUM. IT AMPLIFIES\nMAGIC AN' POISONS ITS BEARER. CURSED!"
+  },
+  "320": {
+    "name": "VARLENIA ARCANE STAFF",
+    "description": "A GOLDEN STAFF OF VARLENIA STEEL DAT\nAMPLIFIES MAGIC. STRIKES WIT THUNDER!"
+  },
+  "321": {
+    "name": "EHI FORBIDDEN CODEX",
+    "description": "A STAFF HOLDIN' EVERY OLD CIVILISATION'S\nLEARNIN'. IT AGES ITS BEARER FAST!"
+  },
+  "322": {
+    "name": "STAFF OF ETERNITY",
+    "description": "A STAFF HOLDIN' DA WISDOM OF AGES AN'\nNO LIMIT OF POWER. STRIKES WIT SACRED!"
+  },
+  "323": {
+    "name": "EHI PETROLEUM OMNISCIENCE",
+    "description": "A STAFF HOLDIN' ALL DA OIL-BORNE KNOWLEDGE\nDERE IZ. STRIKES WIT PETRO!"
+  },
+  "324": {
+    "name": "UNIVERSAL FORCE STAFF",
+    "description": "A STAFF DAT CHANNELS DA FUNDAMENTAL\nFORCES. STRIKES WIT SACRED!"
+  },
+  "325": {
+    "name": "INFERNAL CANE",
+    "description": "A GENTLEMAN'S CANE WIT A SKULL GRIP.\nDA SHAFT IZ A SCABBARD. ICE, CAN CHILL!"
+  },
+  "335": {
+    "name": "<-- Bow -->",
+    "description": ""
+  },
+  "336": {
+    "name": "TOY BOW",
+    "description": "A PLASTIC TOY BOW ON WEAK ELASTIC.\nCAN BLIND ON HIT!"
+  },
+  "337": {
+    "name": "WARPED ARROWS",
+    "description": "A BUNDLE OF CHEAP ARROWS, SHAFTS WARPED\nAN' FLETCHIN' HALF OFF!"
+  },
+  "338": {
+    "name": "FLIMSY BOW",
+    "description": "A CRUDE BOW OF KNOTTED WOOD DAT MAY SNAP!"
+  },
+  "339": {
+    "name": "MISALIGNED HAND CROSSBOW",
+    "description": "A PISTOL CROSSBOW OF WEAK WOOD DAT KEEPS\nSLIPPIN' OUT OF TRUE!"
+  },
+  "340": {
+    "name": "UNRELIABLE CROSSBOW",
+    "description": "A CROSSBOW WHOSE CATCH OFTEN FAILS TA LOOSE.\nCAN BLIND ON HIT!"
+  },
+  "341": {
+    "name": "SHOWER ROD BOW",
+    "description": "A CURTAIN ROD STRUNG WIT PARACORD.\nCAN INFLICT POISON ON HIT!"
+  },
+  "342": {
+    "name": "PVC BOW",
+    "description": "A PVC PIPE STRUNG WIT OLD ROPE.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "343": {
+    "name": "JUNK CROSSBOW",
+    "description": "A HOMEMADE CROSSBOW OF SCRAP AN' SPRINGS.\nCAN INFLICT POISON ON HIT!"
+  },
+  "344": {
+    "name": "SEED BOW",
+    "description": "A BOW GROWN FROM AN EXPRESSION SEED.\nCAN BLIND ON HIT!"
+  },
+  "345": {
+    "name": "SHORT BOW",
+    "description": "A SHORT HUNTIN' BOW. CAN BLIND ON HIT!"
+  },
+  "346": {
+    "name": "LONG BOW",
+    "description": "A LONG WAR BOW WIT A HEAVY DRAW!"
+  },
+  "347": {
+    "name": "COMPOSITE BOW",
+    "description": "A STEPPE RECURVE BOW SHOT FROM HORSEBACK.\nCAN BLIND ON HIT!"
+  },
+  "348": {
+    "name": "CHU-KO-NU",
+    "description": "A CHINESE REPEATIN' CROSSBOW.\nCAN BLIND ON HIT!"
+  },
+  "349": {
+    "name": "NET CROSSBOW",
+    "description": "A CROSSBOW WHOSE BOLTS BURST INTO NETS!"
+  },
+  "350": {
+    "name": "COMPOUND BOW",
+    "description": "A CARBON FIBRE COMPOUND BOW.\nCAN BLIND ON HIT!"
+  },
+  "351": {
+    "name": "MULTI-BOLT CROSSBOW",
+    "description": "A CROSSBOW LOADED WIT SPECIALIST BOLTS.\nSTRIKES WIT THUNDER!"
+  },
+  "352": {
+    "name": "ADVANCED COMPOUND BOW",
+    "description": "A COMPOUND BOW ON A MODERN PULLEY SYSTEM.\nCAN BLIND ON HIT!"
+  },
+  "353": {
+    "name": "FROSTBITE BOW",
+    "description": "A BOW DAT LOOSES ARROWS OF ICE.\nSTRIKES WIT ICE AN' CAN CHILL!"
+  },
+  "354": {
+    "name": "AETHERIAL BOW",
+    "description": "A BOW DAT FORMS ITS ARROWS OUT OF MAGIC.\nSTRIKES WIT THUNDER!"
+  },
+  "355": {
+    "name": "INFINITE QUIVER BOW",
+    "description": "A BOW DAT DRAWS ARROWS OUT OF DA AIR\nAN' NEVER EMPTIES. ICE, CAN CHILL!"
+  },
+  "356": {
+    "name": "DRAGON BOW",
+    "description": "A WAR BOW STRUNG WIT DRAGON WHISKER!"
+  },
+  "357": {
+    "name": "INFINITE BOLT CROSSBOW",
+    "description": "A CROSSBOW DAT NEVER NEEDS LOADIN'.\nSTRIKES WIT FIRE!"
+  },
+  "358": {
+    "name": "ARCANE CROSSBOW",
+    "description": "A CROSSBOW DAT LOOSES BOLTS OF RAW MAGIC.\nICE, INFLICTS COLD!"
+  },
+  "359": {
+    "name": "DRAGONBONE BOW",
+    "description": "A BOW CARVED OF OLD DRAGONBONE. IT DOES NO\nMISS. CAN BLIND ON HIT!"
+  },
+  "360": {
+    "name": "MIND ARROW BOW",
+    "description": "A BOW DAT LOOSES ARROWS OF THOUGHT PAST\nANY ARMOUR. THUNDER, CAN STATIC!"
+  },
+  "361": {
+    "name": "SPELLBREAKER CROSSBOW",
+    "description": "A CROSSBOW WHOSE BOLTS CUT A TARGET OFF\nFROM ITS MAGIC. CURSED!"
+  },
+  "362": {
+    "name": "SOULSTRIN' BOW",
+    "description": "A BOW DAT FORMS ARROWS FROM DA ARCHER'S\nOWN LIFE. FIRE, INFLICTS HOT!"
+  },
+  "363": {
+    "name": "MOONLIGHT BOW",
+    "description": "A BOW CUT FROM MOONLIGHT, SHOOTIN' LUNAR\nENERGY. CURSED, CAN POISON!"
+  },
+  "364": {
+    "name": "SPELLSEEKER BOW",
+    "description": "A BOW WHOSE ARROWS SEEK DEY TARGET OUT.\nSTRIKES WIT FIRE!"
+  },
+  "365": {
+    "name": "BULL TOTEM BOW",
+    "description": "A STONE BOW CUT WIT DA GOBEKLI TEPE BULLS.\nSTRIKES WIT FIRE!"
+  },
+  "366": {
+    "name": "EHI IDENTITY ERASER",
+    "description": "A BOW WHOSE ARROWS CARRY COMPRESSED LEARNIN'.\nIT BREAKS MINDS, DA ARCHER'S TOO!"
+  },
+  "367": {
+    "name": "VARLENIA ENERGY BOW",
+    "description": "A GOLDEN BOW OF FLEXIBLE VARLENIA STEEL.\nSTRIKES WIT THUNDER!"
+  },
+  "368": {
+    "name": "EHI BRAIN HEMORRHAGER",
+    "description": "A LAUNCHER FIRIN' SHELLS PACKED WIT A WHOLE\nLIBRARY. IT BLEEDS DA SHOOTER'S BRAIN!"
+  },
+  "379": {
+    "name": "<-- Projectile -->",
+    "description": ""
+  },
+  "380": {
+    "name": "UNEVEN SLINGSHOT",
+    "description": "A HANDMADE SLINGSHOT WIT AN UNEVEN FORK.\nCAN BLIND ON HIT!"
+  },
+  "381": {
+    "name": "STRETCHY SLING",
+    "description": "A SLING OF POOR LEATHER DAT STRETCHES.\nCAN BLIND ON HIT!"
+  },
+  "382": {
+    "name": "LEAKY BLOWGUN",
+    "description": "A BLOWPIPE OF CRACKED REED DAT LEAKS AIR!"
+  },
+  "383": {
+    "name": "HANGER SLINGSHOT",
+    "description": "A COAT HANGER AN' RUBBER BANDS.\nCAN INFLICT OILY ON HIT!"
+  },
+  "384": {
+    "name": "JUNK SLINGSHOT",
+    "description": "A FORKED BRANCH STRUNG WIT TYRE RUBBER.\nCAN INFLICT OILY ON HIT!"
+  },
+  "385": {
+    "name": "PIPE SLINGSHOT",
+    "description": "A FORKED PIPE STRUNG WIT INNER TUBE.\nCAN INFLICT OILY ON HIT!"
+  },
+  "386": {
+    "name": "SKEWER DART GUN",
+    "description": "A TOY DART GUN DAT FIRES SKEWERS.\nCAN INFLICT POISON ON HIT!"
+  },
+  "387": {
+    "name": "HAIRSPRAY TORCH",
+    "description": "A LACQUER CAN WIT A LIGHTER TAPED ON.\nSTRIKES FIRE AN' CAN INFLICT NAUSEA!"
+  },
+  "388": {
+    "name": "STAPLE SHOOTER",
+    "description": "A STAPLE GUN DAT SPITS SCRAP METAL.\nCAN INFLICT POISON ON HIT!"
+  },
+  "389": {
+    "name": "STONE DARTS",
+    "description": "DARTS TIPPED WIT KNAPPED STONE.\nSTRIKES WIT PETRO!"
+  },
+  "390": {
+    "name": "FIBER SLING",
+    "description": "A SLING WOVEN FROM PLANT FIBRE!"
+  },
+  "391": {
+    "name": "ATLATL DART",
+    "description": "A LIGHT DART THROWN WIT A SPEAR-THROWER!"
+  },
+  "392": {
+    "name": "SEED GRIMORIE",
+    "description": "A GRIMORIE GROWN FROM AN EXPRESSION SEED.\nICE, INFLICTS COLD!"
+  },
+  "393": {
+    "name": "BOLA",
+    "description": "STONE WEIGHTS ON CORDS, THROWN TA ENTANGLE.\nCAN BLIND ON HIT!"
+  },
+  "394": {
+    "name": "SLING",
+    "description": "A SLING DAT THROWS A STONE HARD.\nCAN BLIND ON HIT!"
+  },
+  "395": {
+    "name": "BOOMERANG",
+    "description": "A CURVED THROWIN' STICK DAT COMES BACK.\nCAN BLIND ON HIT!"
+  },
+  "396": {
+    "name": "ROPE DART",
+    "description": "A CHINESE WEIGHTED DART ON A LONG ROPE.\nCAN BLIND ON HIT!"
+  },
+  "397": {
+    "name": "CHAKRAM",
+    "description": "A THROWN RING WIT A SHARPENED RIM!"
+  },
+  "398": {
+    "name": "PEPPER SPRAY CANNON",
+    "description": "A CANISTER DAT SPRAYS CONCENTRATED CAPSAICIN.\nCAN BLIND ON HIT!"
+  },
+  "399": {
+    "name": "SHONGO",
+    "description": "A HEAVY AFRICAN THROWIN' KNIFE OF SEVERAL\nBLADES. CAN BLIND ON HIT!"
+  },
+  "400": {
+    "name": "RETURNIN' DISCUS",
+    "description": "A BLADED DISC DAT RETURNS AFTER IT STRIKES!"
+  },
+  "401": {
+    "name": "POISON BLOWPIPE",
+    "description": "A BLOWPIPE LOADED WIT POISONED DARTS!"
+  },
+  "402": {
+    "name": "IRON GRENADE",
+    "description": "A CAST IRON SHELL PACKED WIT POWDER.\nCAN BLIND ON HIT!"
+  },
+  "403": {
+    "name": "CROSSBOW",
+    "description": "A CROSSBOW DAT LOOSES BOLTS ON STRONG LIMBS.\nCAN BLIND ON HIT!"
+  },
+  "404": {
+    "name": "MITHRIL BOW",
+    "description": "A BOW DAT LOOSES MITHRIL-TIPPED ARROWS!"
+  },
+  "405": {
+    "name": "DISC LAUNCHER",
+    "description": "A LAUNCHER DAT THROWS SHARPENED DISCS!"
+  },
+  "406": {
+    "name": "EXPLOSIVE CROSSBOW",
+    "description": "A CROSSBOW WHOSE BOLTS CARRY A CHARGE.\nCAN BLIND ON HIT!"
+  },
+  "407": {
+    "name": "EMP DISRUPTOR",
+    "description": "A HANDHELD PULSE DAT KILLS ELECTRONICS\nAN' IMPLANTS. WATER, INFLICTS WET!"
+  },
+  "408": {
+    "name": "TACTICAL CROSSBOW",
+    "description": "A MODERN CROSSBOW WIT A SCOPE AN' CARBON\nLIMBS. CAN BLIND ON HIT!"
+  },
+  "409": {
+    "name": "NEURAL SCRAMBLER",
+    "description": "A FIELD EMITTER DAT SCRAMBLES NERVES.\nSTRIKES WIT THUNDER!"
+  },
+  "410": {
+    "name": "TIMED EXPLOSIVE LAUNCHER",
+    "description": "A LAUNCHER FOR TIMED CHARGES, DELAY SET\nBY HAND!"
+  },
+  "411": {
+    "name": "CYBER WARFARE DEVICE",
+    "description": "A DEVICE DAT TURNS BAD 'UN SYSTEMS AGAINST\nDEY OWN SIDE. STRIKES WIT FIRE!"
+  },
+  "412": {
+    "name": "STELLAR SLING",
+    "description": "A GOBEKLI TEPE SLING DAT TURNS A PLAIN\nSTONE INTO STAR-FIRE. CAN BLIND!"
+  },
+  "413": {
+    "name": "DRONE SWARM LAUNCHER",
+    "description": "A SHOULDER RACK DAT LOOSES LIL' ATTACK\nDRONES!"
+  },
+  "414": {
+    "name": "EHI KNOWLEDGE INJECTOR",
+    "description": "A CROSSBOW WHOSE BOLTS CARRY WHOLE LIBRARIES.\nSTRIKES WIT WATER AN' CAN WET!"
+  },
+  "415": {
+    "name": "PORTAL DISC",
+    "description": "A GOBEKLI TEPE DISC DAT OPENS A PORTAL\nWHERE IT LANDS. THUNDER, CAN STATIC!"
+  },
+  "426": {
+    "name": "<-- Gun -->",
+    "description": ""
+  },
+  "427": {
+    "name": "SUCTION CUP DART GUN",
+    "description": "A DART GUN WIT SUCTION CUPS FOR TIPS!"
+  },
+  "428": {
+    "name": "UNRELIABLE PISTOL",
+    "description": "A PISTOL OF POOR PARTS. IT JAMS AN' MISFIRES!"
+  },
+  "429": {
+    "name": "RUSTY RIFLE",
+    "description": "AN OLD RIFLE, BARREL RUSTED AN' LOCK WORN.\nCAN STUN ON HIT!"
+  },
+  "430": {
+    "name": "SAND-FILLED HOSE",
+    "description": "A GARDEN HOSE FILLED WIT SAND.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "431": {
+    "name": "MODIFIED CAP GUN",
+    "description": "A CAP GUN REBUILT TA THROW METAL.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "432": {
+    "name": "BIKE PUMP AIR GUN",
+    "description": "PVC PIPE ON A BICYCLE PUMP.\nSTRIKES WIND AN' CAN INFLICT OILY!"
+  },
+  "433": {
+    "name": "POTATO CANNON",
+    "description": "A PVC PIPE GUN DAT THROWS HARD SHOT.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "434": {
+    "name": "PIPE GUN",
+    "description": "PIPE, WOOD AN' SPRINGS, FIRIN' SCRAP.\nCAN INFLICT OILY ON HIT!"
+  },
+  "435": {
+    "name": "PRESSURE GUN",
+    "description": "A PRESSURE WASHER FIRIN' STEEL RODS.\nCAN INFLICT OILY ON HIT!"
+  },
+  "436": {
+    "name": "GARDEN SPRAYER FLAMER",
+    "description": "A GARDEN SPRAYER, A LIGHTER AN' PETROL.\nSTRIKES FIRE AN' CAN INFLICT NAUSEA!"
+  },
+  "437": {
+    "name": "RUBBLE LAUNCHER",
+    "description": "SURGICAL TUBIN' DAT SLINGS CONCRETE.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "438": {
+    "name": "SEED GUN",
+    "description": "A GUN GROWN FROM AN EXPRESSION SEED!"
+  },
+  "439": {
+    "name": "BAMBOO BLOWGUN",
+    "description": "A BAMBOO BLOWPIPE FOR POISONED DARTS!"
+  },
+  "440": {
+    "name": "SPUD LAUNCHER DELUXE",
+    "description": "A POTATO GUN LOADED WIT POTATOES BRED\nTA BURST ON IMPACT!"
+  },
+  "441": {
+    "name": "FLINTLOCK PISTOL",
+    "description": "AN ANTIQUE FLINTLOCK PISTOL, ENGRAVED.\nCAN STUN ON HIT!"
+  },
+  "442": {
+    "name": "COMBATANT ANGLER",
+    "description": "A FISHIN' ROD DAT LANDS SEA CREATURES\nAN' SETS DEM ON FOES. WATER, CAN WET!"
+  },
+  "443": {
+    "name": "WHEELLOCK PISTOL",
+    "description": "AN EARLY PISTOL SPARKED BY A SPINNIN' WHEEL.\nCAN STUN ON HIT!"
+  },
+  "444": {
+    "name": "PISTOL",
+    "description": "A PLAIN HANDGUN WIT FAIR STOPPIN' POWER.\nCAN STUN ON HIT!"
+  },
+  "445": {
+    "name": "MUSKET",
+    "description": "A SINGLE-SHOT LONG-BARRELLED MUSKET.\nCAN STUN ON HIT!"
+  },
+  "446": {
+    "name": "EXTREME T-SHIRT CANNON",
+    "description": "A SHIRT CANNON TUNED TA KNOCK DOWN A WALL.\nCAN STUN ON HIT!"
+  },
+  "447": {
+    "name": "MATCHLOCK MUSKET",
+    "description": "AN EARLY MUSKET FIRED BY A BURNIN' MATCH.\nCAN STUN ON HIT!"
+  },
+  "448": {
+    "name": "PEPPERBOX REVOLVER",
+    "description": "A REVOLVER WIT A ROTATIN' CLUSTER OF BARRELS.\nCAN STUN ON HIT!"
+  },
+  "449": {
+    "name": "DUELIN' PISTOL",
+    "description": "A FINELY MADE DUELLIN' PISTOL.\nCAN STUN ON HIT!"
+  },
+  "450": {
+    "name": "FLINTLOCK BLUNDERBUSS",
+    "description": "A FLINTLOCK WIT A FLARED MUZZLE FOR SHOT\nOR SCRAP!"
+  },
+  "451": {
+    "name": "TASER RIFLE",
+    "description": "A RIFLE FIRIN' ELECTROSHOCK DARTS.\nFIRE, INFLICTS HOT!"
+  },
+  "452": {
+    "name": "HAND CANNON",
+    "description": "AN EARLY CHINESE CAST IRON HAND CANNON!"
+  },
+  "453": {
+    "name": "RIFLED MUSKET",
+    "description": "A RIFLED MUSKET OF DA CIVIL WAR ERA.\nCAN STUN ON HIT!"
+  },
+  "454": {
+    "name": "PERCUSSION REVOLVER",
+    "description": "A REVOLVER FIRED BY PERCUSSION CAPS!"
+  },
+  "455": {
+    "name": "BLUNDERBUSS",
+    "description": "AN OLD BLUNDERBUSS WIT A WIDE SPREAD.\nCAN STUN ON HIT!"
+  },
+  "456": {
+    "name": "9MM PISTOL",
+    "description": "A STANDARD SEMI-AUTOMATIC 9MM HANDGUN!"
+  },
+  "457": {
+    "name": "RIOT GUN",
+    "description": "A GUN DAT FIRES RUBBER BATON ROUNDS.\nCAN STUN ON HIT!"
+  },
+  "458": {
+    "name": "BREECH-LOADIN' RIFLE",
+    "description": "A SINGLE-SHOT BREECH-LOADIN' RIFLE!"
+  },
+  "459": {
+    "name": "BUBBA'S SHOTGUN",
+    "description": "A PUMP-ACTION SHOTGUN, SAWN SHORT.\nCAN STUN ON HIT!"
+  },
+  "460": {
+    "name": "SHOTGUN",
+    "description": "A PUMP-ACTION SHOTGUN, BRUTAL UP CLOSE!"
+  },
+  "461": {
+    "name": "SIX-SHOOTER",
+    "description": "A SIX-SHOT REVOLVER OF DA OLD WEST!"
+  },
+  "462": {
+    "name": "LEVER ACTION RIFLE",
+    "description": "A LEVER-ACTION RIFLE DAT CYCLES FAST!"
+  },
+  "463": {
+    "name": "MILITARY BOLT-ACTION",
+    "description": "A BOLT-ACTION SERVICE RIFLE LOADED BY CLIP!"
+  },
+  "464": {
+    "name": "GAS LAUNCHER",
+    "description": "A LAUNCHER FOR TEAR GAS AN' SMOKE.\nCAN STUN ON HIT!"
+  },
+  "465": {
+    "name": "DOUBLE-BARREL SHOTGUN",
+    "description": "A DOUBLE-BARRELLED SHOTGUN, BOTH BARRELS\nFIRED IN A BREATH!"
+  },
+  "466": {
+    "name": "TRANQUILIZER RIFLE",
+    "description": "A RIFLE FIRIN' TRANQUILLISER DARTS.\nCAN STUN ON HIT!"
+  },
+  "467": {
+    "name": "SMG",
+    "description": "A COMPACT SUBMACHINE GUN WIT A HIGH\nRATE OF FIRE. CAN STUN ON HIT!"
+  },
+  "468": {
+    "name": "BOLT-ACTION RIFLE",
+    "description": "A RELIABLE, ACCURATE BOLT-ACTION RIFLE.\nCAN STUN ON HIT!"
+  },
+  "469": {
+    "name": "TOMMY GUN",
+    "description": "A DRUM-FED PISTOL-CALIBRE SUBMACHINE GUN.\nCAN STUN ON HIT!"
+  },
+  "470": {
+    "name": "AIR PISTOL",
+    "description": "A PISTOL FIRIN' COMPRESSED AIR CAPSULES.\nSTRIKES WIT WIND!"
+  },
+  "471": {
+    "name": "VOLLEY GUN",
+    "description": "A HAND-CRANKED GUN WHOSE BARRELS ALL FIRE\nAT ONCE. CAN STUN ON HIT!"
+  },
+  "472": {
+    "name": "PDW",
+    "description": "A COMPACT DEFENCE WEAPON ON SPECIAL\nAMMUNITION. CAN STUN ON HIT!"
+  },
+  "473": {
+    "name": "PARALYZER",
+    "description": "A DART GUN LOADED WIT PARALYSIN' NEEDLES.\nCAN STUN ON HIT!"
+  },
+  "474": {
+    "name": "COMPACT SMG",
+    "description": "A COMPACT SUBMACHINE GUN WIT A FOLDIN'\nSTOCK!"
+  },
+  "475": {
+    "name": "SEMI-AUTO SERVICE RIFLE",
+    "description": "A WARTIME SEMI-AUTOMATIC SERVICE RIFLE.\nCAN STUN ON HIT!"
+  },
+  "476": {
+    "name": "DOUBLE-BARREL PISTOL",
+    "description": "A PISTOL DAT FIRES BOTH BARRELS TOGETHER!"
+  },
+  "477": {
+    "name": "WARTIME SUBMACHINE GUN",
+    "description": "A STAMPED-STEEL SUBMACHINE GUN OF DA WAR\nYEARS. CAN STUN ON HIT!"
+  },
+  "478": {
+    "name": "ASSAULT RIFLE",
+    "description": "A MILITARY AUTOMATIC RIFLE, ACCURATE\nAT RANGE!"
+  },
+  "479": {
+    "name": "MAGNUM REVOLVER",
+    "description": "A LARGE-CALIBRE REVOLVER WIT HEAVY\nSTOPPIN' POWER. CAN STUN ON HIT!"
+  },
+  "480": {
+    "name": "GATLIN' GUN",
+    "description": "AN EARLY HAND-CRANKED MACHINE GUN.\nCAN STUN ON HIT!"
+  },
+  "481": {
+    "name": "COMPACT CARBINE",
+    "description": "A SHORT ASSAULT CARBINE WIT A FOLDIN'\nSTOCK!"
+  },
+  "482": {
+    "name": "MATCH GRADE PISTOL",
+    "description": "A TARGET PISTOL WIT A LONG BARREL!"
+  },
+  "483": {
+    "name": "SELECT-FIRE BATTLE RIFLE",
+    "description": "A FULL-CALIBRE BATTLE RIFLE DAT CAN\nFIRE AUTOMATIC!"
+  },
+  "484": {
+    "name": "WATER JET CUTTER",
+    "description": "A HANDHELD CUTTER FIRIN' A JET OF WATER\nUNDER PRESSURE. WATER, CAN WET!"
+  },
+  "485": {
+    "name": "COMBAT SHOTGUN",
+    "description": "A TACTICAL SHOTGUN FED FROM A DRUM!"
+  },
+  "486": {
+    "name": "ROTARY CANNON",
+    "description": "A ROTARY GUN WHOSE BARRELS TURN TA KEEP\nUP A SUSTAINED RATE OF FIRE!"
+  },
+  "487": {
+    "name": "MODULAR COMBAT RIFLE",
+    "description": "A RIFLE WIT SWAPPABLE BARRELS AN' PARTS!"
+  },
+  "488": {
+    "name": "GRENADE LAUNCHER",
+    "description": "A BREAK-ACTION LAUNCHER FOR 40MM SHELLS.\nCAN STUN ON HIT!"
+  },
+  "489": {
+    "name": "SNIPER RIFLE",
+    "description": "A HIGH-POWERED RIFLE FOR LONG RANGE WORK!"
+  },
+  "490": {
+    "name": "BULLPUP RIFLE",
+    "description": "AN ASSAULT RIFLE WIT DA ACTION BEHIND\nDA GRIP!"
+  },
+  "491": {
+    "name": "FLAMETHROWER",
+    "description": "A HANDHELD THROWER DAT SPRAYS BURNIN' FUEL.\nSTRIKES WIT FIRE!"
+  },
+  "492": {
+    "name": "MARKSMAN RIFLE",
+    "description": "A MARKSMAN RIFLE WIT A MATCH-GRADE BARREL!"
+  },
+  "493": {
+    "name": "TACTICAL CARBINE",
+    "description": "A MODERN CARBINE WIT MOUNTIN' RAILS.\nCAN STUN ON HIT!"
+  },
+  "494": {
+    "name": "TACTICAL SHOTGUN",
+    "description": "A COMPACT BULLPUP SHOTGUN, BRUTAL UP CLOSE!"
+  },
+  "495": {
+    "name": "HEAT RAY",
+    "description": "AN EMITTER DAT FOCUSES A BEAM HOT ENOUGH\nTA MELT THROUGH METAL. WATER!"
+  },
+  "496": {
+    "name": "DMR",
+    "description": "A MARKSMAN RIFLE UNDER HEAVY OPTICS!"
+  },
+  "497": {
+    "name": "HEAVY MACHINE GUN",
+    "description": "A MILITARY.50 CALIBRE MACHINE GUN!"
+  },
+  "498": {
+    "name": "LASER RIFLE",
+    "description": "A RIFLE DAT FIRES A CONCENTRATED BEAM\nOF LIGHT. STRIKES WIT ICE!"
+  },
+  "499": {
+    "name": "PLASMA RIFLE",
+    "description": "AN ENERGY RIFLE FIRIN' BOLTS OF PLASMA.\nTHUNDER, INFLICTS STATIC!"
+  },
+  "500": {
+    "name": "CYBERARM CANNON",
+    "description": "AN IMPLANTED ARM CANNON FIRIN' CONCUSSIVE\nBLASTS. STRIKES WIT FIRE!"
+  },
+  "501": {
+    "name": "PRECISION RIFLE",
+    "description": "A PRECISION BOLT-ACTION RIFLE, MATCH BARREL!"
+  },
+  "502": {
+    "name": "OPTICAL BEAM SYSTEM",
+    "description": "EYE IMPLANTS DAT FIRE FOCUSED BEAMS.\nSTRIKES WIT CURSED!"
+  },
+  "503": {
+    "name": "LMG",
+    "description": "A LIGHT MACHINE GUN FOR SUPPRESSIN' FIRE.\nCAN STUN ON HIT!"
+  },
+  "504": {
+    "name": "ANTI-MATERIAL RIFLE",
+    "description": "A LARGE-CALIBRE RIFLE FOR LONG RANGE WORK\nAGAINST MATERIEL!"
+  },
+  "505": {
+    "name": "RPG",
+    "description": "A SHOULDER-FIRED ROCKET LAUNCHER.\nCAN STUN ON HIT!"
+  },
+  "506": {
+    "name": "SMART GRENADE LAUNCHER",
+    "description": "A GRENADE LAUNCHER WIT PROGRAMMABLE FUSES.\nCAN STUN ON HIT!"
+  },
+  "507": {
+    "name": "MICRO-MISSILE ARRAY",
+    "description": "A SHOULDER RACK OF GUIDED MINI-ROCKETS.\nSTRIKES WIT ICE!"
+  },
+  "508": {
+    "name": "DISPOSABLE ROCKET",
+    "description": "A SINGLE-SHOT ROCKET LAUNCHER, THROWN AWAY\nAFTER FIRIN'. STRIKES WIT PETRO!"
+  },
+  "509": {
+    "name": "HEAVY SNIPER",
+    "description": "A SEMI-AUTOMATIC.50 CALIBRE SNIPER RIFLE.\nCAN STUN ON HIT!"
+  },
+  "510": {
+    "name": "HMG",
+    "description": "A HEAVY MACHINE GUN ON A BIPOD.\nCAN STUN ON HIT!"
+  },
+  "511": {
+    "name": "BRAINWAVE AMPLIFIER",
+    "description": "A DEVICE DAT FOCUSES BRAINWAVES INTO\nA DESTROYIN' BEAM. SACRED!"
+  },
+  "512": {
+    "name": "POLYMORPHIC ARSENAL",
+    "description": "A NEURAL-LINKED WEAPON DAT SHIFTS BETWEEN\nBLADE AN' GUN. STRIKES WIT THUNDER!"
+  },
+  "513": {
+    "name": "MANPADS",
+    "description": "A SHOULDER-FIRED SURFACE-TA-AIR MISSILE!"
+  },
+  "514": {
+    "name": "MIND PIERCER",
+    "description": "A RIFLE FIRIN' BULLETS OF PSYCHIC FORCE\nPAST ANY MENTAL GUARD. ICE, CAN CHILL!"
+  },
+  "515": {
+    "name": "NEURAL DISRUPTOR",
+    "description": "A WEAPON DAT FIRES BOLTS OF THOUGHT INTO\nA FOE'S MIND. THUNDER, CAN STATIC!"
+  },
+  "516": {
+    "name": "COILGUN",
+    "description": "A PORTABLE COILGUN DRIVEN BY ELECTROMAGNETS.\nWATER, INFLICTS WET!"
+  },
+  "517": {
+    "name": "HEAVY ANTI-MATERIAL RIFLE",
+    "description": "A HEAVY RIFLE DAT PUNCHES THROUGH ARMOUR\nPLATE!"
+  },
+  "518": {
+    "name": "RAILGUN PROTOTYPE",
+    "description": "A PROTOTYPE ELECTROMAGNETIC RAILGUN.\nSTRIKES WIT THUNDER!"
+  },
+  "519": {
+    "name": "EHI HEADACHE INDUCER",
+    "description": "A PISTOL FIRIN' ROUNDS OF COMPRESSED\nLEARNIN'. IT LEAVES DA TARGET MIGRAINES!"
+  },
+  "520": {
+    "name": "EHI CRUDE PROJECTOR",
+    "description": "AN INDUSTRIAL CANNON FIRIN' PRESSURISED\nCRUDE. IT MAY IGNITE ITS OWN GUNNER!"
+  },
+  "521": {
+    "name": "MINIGUN",
+    "description": "A ROTARY GUN WIT AN EXTREME RATE OF FIRE.\nCAN STUN ON HIT!"
+  },
+  "522": {
+    "name": "ADAPTIVE COMBAT AI",
+    "description": "A WEAPON DAT LEARNS A FIGHT AN' CHANGES\nITS LOAD. CURSED, CAN POISON!"
+  },
+  "523": {
+    "name": "THOUGHT PROJECTOR",
+    "description": "A GOBEKLI TEPE STONE LAUNCHER FIRIN' BOLTS\nDRIVEN BY THOUGHT. FIRE, INFLICTS HOT!"
+  },
+  "524": {
+    "name": "EHI MEMETIC RIFLE",
+    "description": "A RIFLE FIRIN' CRYSTALLISED KNOWLEDGE.\nIT COSTS DA SHOOTER DEY MEMORY!"
+  },
+  "525": {
+    "name": "VECTOR GUN",
+    "description": "A GNOME-FORGED HANDGUN WIT A GRIP ON\nVECTORS. IT CAN KICK YOU INTO A JUMP!"
+  },
+  "526": {
+    "name": "VARLENIA BEAM RIFLE",
+    "description": "A GOLDEN VARLENIA RIFLE FIRIN' ARCANE BEAMS.\nSTRIKES WIT FIRE!"
+  },
+  "527": {
+    "name": "REALITY DISTORTION CANNON",
+    "description": "A CANNON DAT REWRITES LOCAL PHYSICS.\nICE, INFLICTS COLD!"
+  },
+  "528": {
+    "name": "SMART TRACKIN' RIFLE",
+    "description": "A SNIPER RIFLE WHOSE ROUNDS STEER THEMSELVES\nIN FLIGHT. STRIKES WIT CURSED!"
+  },
+  "539": {
+    "name": "<-- Claw -->",
+    "description": ""
+  },
+  "540": {
+    "name": "TIN CLAWS",
+    "description": "CLAWS CUT FROM CHEAP TIN. DEY BEND!"
+  },
+  "541": {
+    "name": "DULL CLAWS",
+    "description": "CLAWS OF SOFT METAL DAT GO BLUNT FAST!"
+  },
+  "542": {
+    "name": "GARDEN SHEAR CLAWS",
+    "description": "GARDEN SHEARS STRAPPED TA GLOVES.\nCAN INFLICT POISON ON HIT!"
+  },
+  "543": {
+    "name": "CAR PANEL CLAWS",
+    "description": "SHARPENED CAR PANEL ON WORK GLOVES.\nCAN INFLICT OILY ON HIT!"
+  },
+  "544": {
+    "name": "RAZOR DISC CLAWS",
+    "description": "RAZOR BLADES ON CUT-OFF GLOVES.\nCAN INFLICT POISON ON HIT!"
+  },
+  "545": {
+    "name": "SEED CLAW",
+    "description": "A CLAW GROWN FROM AN EXPRESSION SEED.\nCAN POISON ON HIT!"
+  },
+  "546": {
+    "name": "BAGH NAKH",
+    "description": "A PAIR OF STEEL CLAWS WORN ACROSS DA PALM!"
+  },
+  "547": {
+    "name": "STEEL FINGER CLAWS",
+    "description": "FOUR SHORT CLAWS FIXED TA A HAND BAR!"
+  },
+  "548": {
+    "name": "BLADED TONFA",
+    "description": "A PAIR OF ARM BATONS WIT BLADES FITTED\nALONG DEM!"
+  },
+  "549": {
+    "name": "IRON CLAW",
+    "description": "IRON TALONS STRAPPED TA DA HAND.\nCAN POISON ON HIT!"
+  },
+  "550": {
+    "name": "DEER HORN KNIVES",
+    "description": "A PAIR OF CRESCENT BLADES ON SHORT GRIPS.\nCAN POISON ON HIT!"
+  },
+  "551": {
+    "name": "TEKKO-KAGI",
+    "description": "METAL CLAWS DAT RUN OUT FROM A HAND GUARD!"
+  },
+  "552": {
+    "name": "VENOM CLAWS",
+    "description": "METAL CLAWS SMEARED WIT A PARALYSIN' VENOM.\nCURSED, CAN POISON!"
+  },
+  "553": {
+    "name": "MITHRIL CLAW",
+    "description": "MITHRIL TALONS STRAPPED TA DA HAND!"
+  },
+  "554": {
+    "name": "LIFE DRAIN CLAWS",
+    "description": "CLAWS DAT DRAW LIFE OUT OF WHAT DEY CUT.\nCAN POISON ON HIT!"
+  },
+  "555": {
+    "name": "NEURAL CLAWS",
+    "description": "TITANIUM CLAWS DAT SLIDE OUT OF\nCYBERNETIC HANDS!"
+  },
+  "556": {
+    "name": "FROST DRAGON CLAWS",
+    "description": "CLAWS CUT FROM AN OLD FROST DRAGON'S TEETH.\nSTRIKES WIT ICE!"
+  },
+  "557": {
+    "name": "DRAGON CLAW",
+    "description": "DRAGON TALONS STRAPPED TA DA HAND!"
+  },
+  "558": {
+    "name": "MIND RIPPER CLAWS",
+    "description": "CRYSTAL CLAWS DAT TEAR ARMOUR AN' MIND\nALIKE. CURSED!"
+  },
+  "559": {
+    "name": "CRANE TALONS",
+    "description": "GOBEKLI TEPE RITUAL CLAWS DAT LEND DA\nWEARER DA CRANE. STRIKES WIT ICE!"
+  },
+  "560": {
+    "name": "EHI PSYCHOACTIVE TALONS",
+    "description": "CLAWS STEEPED IN RARE OILS AN' LEARNIN'.\nDEY GRANT SPEED AN' HALLUCINATIONS!"
+  },
+  "561": {
+    "name": "DIVINE TALONS",
+    "description": "GOLDEN CLAWS SAID TA BE A WAR GOD'S.\nSACRED, INFLICTS INSPIRED!"
+  },
+  "572": {
+    "name": "<-- Glove -->",
+    "description": ""
+  },
+  "573": {
+    "name": "BEGINNER'S HAND WRAPS",
+    "description": "THIN LEATHER WRAPS WIT METAL BITS SEWN IN.\nCAN STUN ON HIT!"
+  },
+  "574": {
+    "name": "MAKESHIFT BOXIN' GLOVES",
+    "description": "THIN GLOVES WIT IRON NUGGETS DAT SHIFT\n'BOUT INSIDE. CAN STUN ON HIT!"
+  },
+  "575": {
+    "name": "SHODDY KNUCKLES",
+    "description": "ROUGH LEATHER GLOVES WIT STUDS DAT WORK\nLOOSE. CAN STUN ON HIT!"
+  },
+  "576": {
+    "name": "KEY KNUCKLES",
+    "description": "KEYS TAPED BETWEEN DA FINGERS.\nCAN INFLICT POISON ON HIT!"
+  },
+  "577": {
+    "name": "GOLF TEE GLOVE",
+    "description": "A GOLF GLOVE SEWN THROUGH WIT TEES.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "578": {
+    "name": "MIRROR SHARD FIST",
+    "description": "MIRROR SHARDS TAPED AROUND DA HANDS.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "579": {
+    "name": "GLASS KNUCKLES",
+    "description": "GLOVES SET WIT BROKEN GLASS.\nCAN INFLICT POISON ON HIT!"
+  },
+  "580": {
+    "name": "SEED GLOVE",
+    "description": "A GLOVE GROWN FROM AN EXPRESSION SEED!"
+  },
+  "581": {
+    "name": "CESTUS",
+    "description": "A BATTLE GLOVE SPIKED OVER DA KNUCKLES.\nCAN STUN ON HIT!"
+  },
+  "582": {
+    "name": "KNUCKLE DUSTERS",
+    "description": "IRON KNUCKLE DUSTERS WIT SPIKES!"
+  },
+  "583": {
+    "name": "BRASS KNUCKLES",
+    "description": "A SET OF BRASS KNUCKLES.\nCAN STUN ON HIT!"
+  },
+  "584": {
+    "name": "PHANTOM TICKLE GLOVES",
+    "description": "GLOVES DAT CALL UP GHOSTLY HANDS TA TICKLE\nA FOE HELPLESS. SACRED!"
+  },
+  "585": {
+    "name": "ARM BRACERS",
+    "description": "METAL BANDS WORN ON DA FOREARMS TA BLOCK\nAN' STRIKE!"
+  },
+  "586": {
+    "name": "IRON KNUCKLES",
+    "description": "FIGHTIN' GLOVES PLATED OVER DA KNUCKLES.\nCAN STUN ON HIT!"
+  },
+  "587": {
+    "name": "KENDO MASK",
+    "description": "A STEEL KENDO MASK, SWUNG BY DA CORDS.\nCAN STUN ON HIT!"
+  },
+  "588": {
+    "name": "FLYIN' KICKS",
+    "description": "TRAININ' DAT PUTS A BODY'S WHOLE WEIGHT\nBEHIND A KICK!"
+  },
+  "589": {
+    "name": "ADAMANTINE FISTS",
+    "description": "HEAVY STEEL GAUNTLETS FACED WIT ADAMANTINE!"
+  },
+  "590": {
+    "name": "SHOCK GAUNTLETS",
+    "description": "GAUNTLETS DAT THROW A SHOCK ON IMPACT.\nTHUNDER, INFLICTS STATIC!"
+  },
+  "591": {
+    "name": "MITHRIL STRIKE GLOVES",
+    "description": "LIGHT GLOVES FACED WIT MITHRIL.\nCAN STUN ON HIT!"
+  },
+  "592": {
+    "name": "SONIC GAUNTLET",
+    "description": "A GAUNTLET DAT THROWS A SONIC SHOCKWAVE.\nCAN STUN ON HIT!"
+  },
+  "593": {
+    "name": "THUNDER LIZARD GAUNTLETS",
+    "description": "GAUNTLETS SCALED FROM AN OLD THUNDER LIZARD.\nSTRIKES WIT THUNDER!"
+  },
+  "594": {
+    "name": "LIGHTNING ELEMENTAL FISTS",
+    "description": "GAUNTLETS DRAWN FROM A LIGHTNING ELEMENTAL.\nTHUNDER, INFLICTS STATIC!"
+  },
+  "595": {
+    "name": "FORCE CRUSH GLOVES",
+    "description": "GLOVES SET WIT CRYSTALS DAT CRUSH A FOE\nFROM INSIDE. THUNDER, CAN STATIC!"
+  },
+  "596": {
+    "name": "NIGHTMARE GAUNTLETS",
+    "description": "GAUNTLETS SET FROM HARDENED NIGHTMARE.\nDEY FRIGHTEN ON CONTACT!"
+  },
+  "597": {
+    "name": "ARCANE SHIELD GAUNTLETS",
+    "description": "GAUNTLETS DAT RAISE SHIELDS AGAINST BLADE\nAN' SPELL ALIKE. WATER!"
+  },
+  "598": {
+    "name": "METAMORPHIC GAUNTLETS",
+    "description": "GAUNTLETS DAT FOLD INTO OTHER WEAPONS\nAT WILL!"
+  },
+  "599": {
+    "name": "MASTER'S GAUNTLETS",
+    "description": "OLD GAUNTLETS SAID TA BE A GREAT MARTIAL\nARTIST'S!"
+  },
+  "600": {
+    "name": "TELEKINETIC GAUNTLETS",
+    "description": "GAUNTLETS DAT AMPLIFY TELEKINESIS AN'\nSTRIKE AT A DISTANCE!"
+  },
+  "601": {
+    "name": "FOX SPIRIT FISTS",
+    "description": "STONE GAUNTLETS CUT WIT DA GOBEKLI TEPE\nFOXES. DEY LEND SPEED. CURSED!"
+  },
+  "602": {
+    "name": "MIND MANIPULATOR GLOVES",
+    "description": "GLOVES DAT REACH INTO A MIND AN' TAKE\nOR CHANGE WHAT IZ DERE!"
+  },
+  "603": {
+    "name": "EHI PETROCHEM INJECTORS",
+    "description": "GAUNTLETS DAT INJECT OIL-BASED ENHANCERS.\nGREAT STRENGTH, RUINED ORGANS!"
+  },
+  "604": {
+    "name": "PHASIN' TOUCH",
+    "description": "GOBEKLI TEPE GAUNTLETS DAT PASS THROUGH\nMATTER. ICE!"
+  },
+  "605": {
+    "name": "VARLENIA FIST",
+    "description": "GOLDEN VARLENIA GAUNTLETS DAT PUT ARCANE\nFORCE BEHIND A PUNCH. THUNDER!"
+  },
+  "606": {
+    "name": "MOLECULAR MANIPULATOR GLOVES",
+    "description": "GAUNTLETS DAT REARRANGE MATTER ITSELF.\nCURSED, INFLICTS POISON!"
+  },
+  "607": {
+    "name": "EHI APOCALYPSE FISTS",
+    "description": "GAUNTLETS HOLDIN' DA WORLD'S OIL COMPRESSED.\nGODLIKE STRENGTH, AN' CELL ROT!"
+  },
+  "608": {
+    "name": "OMNIADAPTIVE COMBAT SYSTEM",
+    "description": "A COMBAT SYSTEM DAT ADAPTS TA ANY THREAT\nPUT IN FRONT OF IT!"
+  },
+  "619": {
+    "name": "<-- Spear -->",
+    "description": ""
+  },
+  "620": {
+    "name": "LOOSE-HEADED SPEAR",
+    "description": "A SPEAR WHOSE HEAD IZ BOUND ON LOOSELY!"
+  },
+  "621": {
+    "name": "CRUDE SPEAR",
+    "description": "A PLAIN SPEAR WIT A SOFT IRON TIP.\nCAN POISON ON HIT!"
+  },
+  "622": {
+    "name": "DEADLY PLUNGER",
+    "description": "A PLUNGER WIT SHARPENED METAL IN DA CUP.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "623": {
+    "name": "SHARPENED POOL CUE",
+    "description": "A POOL CUE SHARPENED AT ONE END.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "624": {
+    "name": "BROOM SPEAR",
+    "description": "A BROOM HANDLE WIT A KNIFE TAPED ON.\nCAN INFLICT POISON ON HIT!"
+  },
+  "625": {
+    "name": "ANTENNA RAPIER",
+    "description": "A CAR AERIAL TAPED STIFF AN' SHARPENED.\nCAN INFLICT OILY ON HIT!"
+  },
+  "626": {
+    "name": "SIGN POST",
+    "description": "A SIGN POST PULLED UP WIT ITS CONCRETE.\nCAN INFLICT NAUSEA ON HIT!"
+  },
+  "627": {
+    "name": "JAVELIN",
+    "description": "A LIGHT THROWIN' SPEAR."
+  },
+  "628": {
+    "name": "SEED SPEAR",
+    "description": "A SPEAR GROWN FROM AN EXPRESSION SEED.\nCAN POISON ON HIT!"
+  },
+  "629": {
+    "name": "SHORT SPEAR",
+    "description": "A SHORT SPEAR MADE FOR THRUSTIN'.\nCAN POISON ON HIT!"
+  },
+  "630": {
+    "name": "SUMERIAN SPEAR",
+    "description": "A SUMERIAN COPPER SPEAR WIT A LEAF BLADE.\nCAN POISON ON HIT!"
+  },
+  "631": {
+    "name": "PILUM",
+    "description": "A ROMAN JAVELIN BUILT TA BEND ON IMPACT.\nCAN POISON ON HIT!"
+  },
+  "632": {
+    "name": "DORY SPEAR",
+    "description": "A BRONZE-TIPPED SPEAR OF ANCIENT GREECE!"
+  },
+  "633": {
+    "name": "BOARDIN' PIKE",
+    "description": "A LONG PIKE FOR HOLDIN' OFF BOARDERS!"
+  },
+  "634": {
+    "name": "LONG SPEAR",
+    "description": "A SPEAR ON DA LONGEST HAFT DAT WILL\nSTILL BE CARRIED!"
+  },
+  "635": {
+    "name": "IKLWA",
+    "description": "A ZULU SHORT SPEAR WIT A LONG BLADE,\nMADE FOR CLOSE WORK!"
+  },
+  "636": {
+    "name": "RIFLE BAYONET",
+    "description": "A BAYONET FIXED TA A RIFLE FOR CLOSE WORK!"
+  },
+  "637": {
+    "name": "NAGINATA",
+    "description": "A JAPANESE POLEARM WIT A CURVED BLADE!"
+  },
+  "638": {
+    "name": "HALBERD",
+    "description": "A EUROPEAN POLEARM WIT AN AXE BLADE\nAN' A SPIKE!"
+  },
+  "639": {
+    "name": "POLEAXE",
+    "description": "A LONG POLEARM WIT AXE BLADE AN' SPIKE.\nCAN POISON ON HIT!"
+  },
+  "640": {
+    "name": "GLAIVE",
+    "description": "A POLEARM WIT A CURVED BLADE, MADE\nAGAINST HORSEMEN!"
+  },
+  "641": {
+    "name": "AXE-HEADED PIKE",
+    "description": "A PIKE WIT AN AXE HEAD AT DA TIP.\nCAN POISON ON HIT!"
+  },
+  "642": {
+    "name": "FIRE LANCE",
+    "description": "AN EARLY CHINESE SPEAR WIT A ROCKET TUBE\nLASHED TA IT. STRIKES WIT FIRE!"
+  },
+  "643": {
+    "name": "MITHRIL SPEAR",
+    "description": "A SPEAR FORGED OF MITHRIL!"
+  },
+  "644": {
+    "name": "TEMPEST TRIDENT",
+    "description": "A TRIDENT DAT CALLS UP A STORM.\nSTRIKES WIT ICE!"
+  },
+  "645": {
+    "name": "DRAGON SPEAR",
+    "description": "A SPEAR FORGED FROM A DRAGON'S FANGS.\nCAN POISON ON HIT!"
+  },
+  "646": {
+    "name": "WARDIN' SPEAR",
+    "description": "A WARDED SPEAR DAT RAISES A FIELD AROUND\nITS BEARER. FIRE!"
+  },
+  "647": {
+    "name": "LEVIATHAN FANG SPEAR",
+    "description": "A SPEAR TIPPED WIT A SEA SERPENT'S FANG.\nSTRIKES WIT WATER!"
+  },
+  "648": {
+    "name": "SERPENT CALLER",
+    "description": "A SPEAR TIPPED WIT A GOBEKLI TEPE CARVIN'\nDAT CALLS SERPENTS. CURSED, CAN POISON!"
+  },
+  "649": {
+    "name": "EHI COMBUSTION LANCE",
+    "description": "A SPEAR TIPPED WIT CRYSTALLISED OIL DAT\nBURSTS ON IMPACT, BURNIN' ITS BEARER!"
+  },
+  "650": {
+    "name": "GRAVITY SPEAR",
+    "description": "A PLAIN-LOOKIN' GOBEKLI TEPE SPEAR DAT\nBENDS GRAVITY. THUNDER!"
+  },
+  "651": {
+    "name": "VARLENIA RETURNIN' SPEAR",
+    "description": "A GOLDEN VARLENIA SPEAR DAT COMES BACK\nWHEN THROWN. CURSED, CAN POISON!"
+  },
+  "662": {
+    "name": "<-- Other -->",
+    "description": ""
+  },
+  "663": {
+    "name": "FOAM PROJECTOR",
+    "description": "AN EXPERIMENTAL GUN FIRIN' STICKY FOAM\nTA PIN A TARGET. CAN STUN ON HIT!"
+  },
+  "664": {
+    "name": "ELECTRO-NET LAUNCHER",
+    "description": "A LAUNCHER FIRIN' ELECTRIFIED NETS!"
+  },
+  "665": {
+    "name": "MICROWAVE DENIAL EMITTER",
+    "description": "A DIRECTED EMITTER DAT THROWS A BEAM OF\nMICROWAVES. CAN STUN ON HIT!"
+  }
+}

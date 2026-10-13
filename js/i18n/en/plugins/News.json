@@ -11,5 +11,1329 @@
     "body": "Prosecutors named {name} in a warrant issued overnight. The charges listed are: {charges}. The day's offences alone are valued at {dayBounty}; the standing bounty is now {bounty}.",
     "count": "{charge} (x{count})",
     "unknownSuspect": "an unnamed suspect"
+  },
+  "outlets": {
+    "gridCourier": {
+      "name": "The Grid Courier",
+      "motto": "Published without fear, read without haste",
+      "publisher": "Archway Press Group"
+    },
+    "dailyHex": {
+      "name": "The Daily Hex",
+      "motto": "If it's cursed, it's in the Hex!",
+      "publisher": "Hexworth Media"
+    },
+    "skepticLantern": {
+      "name": "The Skeptic's Lantern",
+      "motto": "Extraordinary claims, ordinary evidence please",
+      "publisher": "Rational Inquiry Trust"
+    },
+    "petitChaos": {
+      "name": "Le Petit Chaos",
+      "motto": "Hail Eris, and the rest of you too",
+      "publisher": "Éditions Discorde"
+    },
+    "osservatoreCeleste": {
+      "name": "L'Osservatore Celeste",
+      "motto": "Unicuique suum. Non praevalebunt.",
+      "publisher": "Typographia Citadellae Vaticanae"
+    },
+    "kreuzbote": {
+      "name": "Der Kreuzbote",
+      "motto": "Truth, faith and order",
+      "publisher": "Reichskirchliche Verlagsanstalt"
+    },
+    "corriereOlimpo": {
+      "name": "Il Corriere dell'Olimpo",
+      "motto": "Under the eyes of the gods, since 1919",
+      "publisher": "Editoriale Felsinea"
+    },
+    "marketGrimorie": {
+      "name": "The Market Grimorie",
+      "motto": "Every event has a price",
+      "publisher": "Collective Capital Press"
+    },
+    "hypernetWeekly": {
+      "name": "Hypernet Weekly",
+      "motto": "The future, delivered every Thursday",
+      "publisher": "Technomantic Publishing BV"
+    },
+    "towerDispatch": {
+      "name": "The Omega Tower Dispatch",
+      "motto": "Neutral ground, neutral print",
+      "publisher": "Archive Foundation Press Office"
+    },
+    "iskraNova": {
+      "name": "Iskra Nova",
+      "motto": "From the spark, the flame of the people",
+      "publisher": "State Publishing House of the Union"
+    },
+    "dublinArcanum": {
+      "name": "The Dublin Arcanum Review",
+      "motto": "Scientia potentia arcana est",
+      "publisher": "Guild Press of Merrion Square"
+    },
+    "sublimeGazette": {
+      "name": "The Sublime Gazette",
+      "motto": "From the Gate of Felicity to every corner of the realm",
+      "publisher": "Imperial Printing House of Tunis"
+    },
+    "vocedelTitano": {
+      "name": "La Voce del Titano",
+      "motto": "Small republic, long memory",
+      "publisher": "Tipografia Libera Sammarinese"
+    },
+    "hordeHoller": {
+      "name": "Horde Holler",
+      "motto": "WE SHOUT, YOU READ",
+      "publisher": "Big Tent of Shouting"
+    },
+    "truckersBulletin": {
+      "name": "The Truckers' Bulletin",
+      "motto": "Keep it under eighty",
+      "publisher": "Truckers Society"
+    },
+    "bubbleWhispers": {
+      "name": "Whispers from the Bubble",
+      "motto": "They loop the days so you forget",
+      "publisher": "Nobody Press"
+    },
+    "europeanWire": {
+      "name": "The European Wire",
+      "motto": "Facts first",
+      "publisher": "European Wire Cooperative"
+    },
+    "nordicMorning": {
+      "name": "Nordic Morning Post",
+      "motto": "Clear news for long winters",
+      "publisher": "Nordlys Media"
+    },
+    "continentalHerald": {
+      "name": "The Continental Herald",
+      "motto": "The Free States' newspaper of record",
+      "publisher": "Lakeshore Newspaper Company"
+    },
+    "dharmaDaily": {
+      "name": "Dharma Daily",
+      "motto": "Balance in all things",
+      "publisher": "Directorate Press Office"
+    },
+    "heraldoKukulkan": {
+      "name": "El Heraldo de Kukulkan",
+      "motto": "The serpent sees every dawn",
+      "publisher": "Casa Editorial del Quinto Sol"
+    },
+    "petroCrescent": {
+      "name": "The Petro Crescent",
+      "motto": "Prosperity flows from the Kingdom",
+      "publisher": "Royal Crescent Media"
+    },
+    "rashtraTimes": {
+      "name": "The Rashtra Times",
+      "motto": "Every voice, every morning",
+      "publisher": "Rashtra Publications"
+    },
+    "juchePulse": {
+      "name": "Juche Pulse",
+      "motto": "The Leader thinks, the world follows",
+      "publisher": "Foreign Languages Publishing House"
+    }
+  },
+  "sections": {
+    "politics": "Politics",
+    "world": "World",
+    "economy": "Economy",
+    "science": "Science",
+    "arcane": "Arcane",
+    "culture": "Culture",
+    "sport": "Sport",
+    "crime": "Crime",
+    "faith": "Faith",
+    "disaster": "Disasters",
+    "society": "Society"
+  },
+  "reader": {
+    "title": "Newspaper",
+    "today": "Today",
+    "prevDay": "Previous day",
+    "nextDay": "Next day",
+    "archive": "Archive",
+    "close": "Close",
+    "allPapers": "All papers",
+    "edition": "{weekday}, {date}",
+    "noEdition": "No paper reached the newsstand on this day.",
+    "byline": "By {name}",
+    "staff": "Staff reporters",
+    "overseas": "Overseas editor",
+    "from": "From our {city} desk",
+    "price": "Price {price}",
+    "independent": "Independent",
+    "hyperpower": "Under {power}",
+    "topic": "Codex",
+    "topicLearned": "Learned: {name}",
+    "noTopic": "Nothing about this in the codex.",
+    "frontPage": "Front page",
+    "inside": "Inside",
+    "wire": "From the wire",
+    "chronicle": "Chronicle",
+    "pageNo": "Page {no}",
+    "continued": "Continued",
+    "jumpTo": "Go to date",
+    "year": "Year",
+    "month": "Month",
+    "day": "Day",
+    "go": "Go",
+    "empty": "The presses are silent.",
+    "publishedBy": "Published by {publisher}, {city}",
+    "founded": "Est. {year}",
+    "digest": "The Newsstand",
+    "digestMotto": "Every paper of the day, side by side",
+    "volume": "Vol. {vol}, No. {no}"
+  },
+  "procedural": {
+    "positive": {
+      "festival": {
+        "headlines": {
+          "serious": [
+            "{location} confirms dates for this year's {festival} Festival",
+            "{festival} Festival returns to {location} with an expanded programme",
+            "{location} to host the European {festival} Congress after a contested vote",
+            "Hotels in {location} report full bookings ahead of {festival} week",
+            "Archive Foundation lists {location}'s {festival} Festival as a protected tradition",
+            "{festival_type} concerts headline a month of events in {location}"
+          ],
+          "scandalous": [
+            "{festival} FEVER! {location} braces for a week of glorious mayhem",
+            "Party of the year: {location} goes wild for {festival}!",
+            "Tickets gone in minutes! {festival} touts swarm {location}",
+            "Who got the VIP passes? {location}'s {festival} guest list leaks",
+            "{festival_type} star's backstage demands stun {location} organisers",
+            "Locals furious as {festival} crowds take over every pub in {location}"
+          ],
+          "skeptical": [
+            "{location} promises a record {festival} Festival. The figures say otherwise",
+            "Does {location} really need another {festival} festival?",
+            "{festival} Festival claims {thousands} visitors; turnstiles counted fewer",
+            "Who pays for {location}'s {festival} week? The council stays vague",
+            "Organisers call the {festival_type} line-up 'historic'. We checked",
+            "{location} festival boost to local trade remains unproven"
+          ],
+          "playful": [
+            "{location} dusts off the bunting: {festival} season is here",
+            "Grab a blanket, {location}: the {festival} Festival is back in town",
+            "{festival_type} under the stars as {location} forgets its troubles for a week",
+            "{location} pigeons report record crumbs as {festival} crowds arrive",
+            "Nobody in {location} is working this week, and the {festival} Festival is to blame",
+            "{location} throws a {festival} party and the whole region is invited",
+            "Eris reportedly spotted dancing badly at the {location} {festival} Festival"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "The organising committee in {location} confirmed the full programme yesterday, with {hundreds} events spread across the old town and the riverside. Transport authorities will run extra [Hypermetro train] services each evening.\n\nCity officials expect the festival to fill most hotel rooms for the week. Stewards from the [Archive Foundation] will keep a public record of attendance, a condition of the regional grant that funds the event.",
+            "After two difficult seasons, the festival in {location} returns at full size. Organisers have negotiated routes with the [Truckers Society] so that stage equipment arrives on time despite the [Rule of 80].\n\nThe council has asked residents near the main squares to expect noise until midnight and has promised additional street cleaning throughout the week.",
+            "The festival committee in {location} reported {thousands} advance ticket sales, the highest figure since the [Y2K Event]. Funding came from the municipality and a group of local guilds.\n\nPublic order will be managed by the city police, and medical tents will be staffed around the clock. Officials described preparations as complete."
+          ],
+          "scandalous": [
+            "Get your dancing shoes on! {location} is about to explode with music, food and gossip, and our spies say the backstage bar is already drunk dry.\n\nOne organiser, who begged us not to print his name, whispered that a mystery headliner flies in by [broomstick] on opening night. Who could it be? We have our suspicions, and our photographers are ready!",
+            "Chaos, crowds and cocktails! Furious neighbours in {location} say the festival has swallowed every parking space, every pub stool and every scrap of patience in town.\n\n\"I haven't slept in three nights,\" one resident fumed. Meanwhile insiders claim {hundreds} free passes went to friends of the council and a pair of grinning [Hypercapitalists]. The organisers refused to comment. Of course they did!",
+            "Scandal at the gates! Touts were caught selling forged wristbands outside the main stage in {location}, some of them still wet with cheap ink.\n\nSources close to the box office say the real tickets vanished in minutes. Fans blame greedy middlemen, the middlemen blame [Eris], and the rest of us blame the people who invented queues."
+          ],
+          "skeptical": [
+            "Organisers in {location} speak of a record year, but the numbers they publish keep changing. The first press release mentioned {thousands} visitors; a second one, issued an hour later, quietly raised the figure.\n\nThe council has not said how much it is spending. Independent counts from previous editions, including the tallies kept by the [Archive Foundation], suggest attendance rarely matches the promises printed on the posters.",
+            "The festival is billed as a boost for shops and restaurants in {location}. No study has yet measured whether that boost outlasts the week itself.\n\nLocal traders we spoke to were divided. Several said takings rose; others said regular customers simply stayed home. The [Hypercapitalist Collective], a main sponsor, has kept its own sales figures private.",
+            "A protective ward over the main stage, sold to the council by a self-described member of the [Mages Guild], is said to keep rain away all week.\n\nThe Guild has no record of the contract. Meteorologists note that the forecast was dry anyway. We will report the weather, and the invoice, when both arrive."
+          ],
+          "playful": [
+            "The bunting is up, the food stalls are smoking and somebody has already lost a shoe in the fountain. {location} is in festival mode, and the town has decided that work can wait until next week.\n\nVisitors are advised to bring comfortable shoes, a good appetite and patience for the brass band that plays every hour, whether anyone asked or not. Latecomers will find a [broomstick] rack by the town hall.",
+            "Good news for anyone who likes music, food and staying up far too late: the festival is back in {location}. Organisers promise {hundreds} events, three new stages and a lost property office the size of a barn.\n\nThe local pigeons are delighted. So are the bakers. Even the [Truckers Society] has scheduled a convoy just to pass through and wave.",
+            "Rumour says [Eris] herself will drop by the festival in {location}, though nobody can agree on what she looks like or which stall she prefers.\n\nEither way, the mood is bright, the queues are long and the fireworks are scheduled for Saturday night, weather and goddesses permitting."
+          ]
+        },
+        "banks": {
+          "festivals": [
+            "Music",
+            "Film",
+            "Food and Wine",
+            "Street Magic",
+            "Broomstick Racing",
+            "Technomancy",
+            "CamelCase Poetry",
+            "Leyline Lantern",
+            "Black Metal",
+            "Puppet Theatre",
+            "Carrier Pigeon",
+            "Folk Ritual",
+            "Arcade",
+            "Loop Day"
+          ],
+          "festival_types": [
+            "jazz",
+            "synth pop",
+            "ritual drumming",
+            "chamber music",
+            "goblin black metal",
+            "silent film",
+            "folk dance",
+            "spoken spells",
+            "accordion",
+            "brass band",
+            "illusionism",
+            "opera",
+            "cabaret"
+          ]
+        }
+      },
+      "infrastructure": {
+        "headlines": {
+          "serious": [
+            "Hypermetro extension to {location} approved after years of planning",
+            "{location} opens liminal bus depot, cutting regional journeys to minutes",
+            "New leyline power station to supply {location} from next spring",
+            "{location} completes Fantablack-coated bridge, first in the region",
+            "Clean water plant brings {location} off Collective supply contracts",
+            "Carrier pigeon sorting hub opens in {location}, {hundreds} birds on staff"
+          ],
+          "scandalous": [
+            "ALL ABOARD! {location} gets its shiny new Hypermetro at last!",
+            "Bridge of dreams! {location}'s glittering new crossing wows the crowds",
+            "{location} landlords rub their hands as new rail link opens",
+            "Ribbon-cutting fiasco: mayor's scissors stuck in {location} time loop",
+            "Who got the contract? {location} megaproject raises eyebrows and property prices",
+            "Broomstick landing pads for {location}! Neighbours fear for their chimneys"
+          ],
+          "skeptical": [
+            "{location}'s new rail link opens {number} months late. Costs not disclosed",
+            "Will the {location} bridge really survive the next bubble season?",
+            "Engineers question bubble-proof claims of {location}'s new tunnel",
+            "{location} promises faster hypernet for all. Measurements tell a slower story",
+            "New power station for {location}: who checked the leyline surveys?",
+            "{location} transport plan relies on liminal engines it has not yet bought"
+          ],
+          "playful": [
+            "{location} gets a shiny new station and immediately gets lost in it",
+            "Trains, trams and one confused goat: {location}'s new line opens",
+            "{location}'s new bridge is so pretty the river slowed down to look",
+            "Hypernet cables reach {location}, grandmothers begin emailing at once",
+            "{location} opens a pigeon post office and the pigeons are thrilled",
+            "The new {location} bus depot hums so sweetly that locals picnic beside it"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "The regional transport authority confirmed that work on the new line serving {location} will begin this year. Trains will run on [liminal engines] and keep well clear of every marked bubble along the route.\n\nOfficials estimate a construction cost of {hundreds} million euros, shared between the municipality and private partners. The authority expects property values near the new stations to rise.",
+            "Engineers handed the completed structure over to the city of {location} yesterday after final load tests. The steel was treated with [Fantablack], which keeps it stable near [time loop bubbles] and should extend its working life considerably.\n\nThe mayor called it a lasting investment in the town. Traffic will be admitted from Monday.",
+            "The new facility in {location} was inaugurated in the presence of regional officials and representatives of [Esoteric Heavy Industries], which supplied the main components.\n\nThe plant will employ {hundreds} local workers. Officials said it will reduce the town's dependence on outside suppliers and improve service reliability within the year."
+          ],
+          "scandalous": [
+            "Pop the champagne! {location} finally has the shiny new link it has been begging for, and everybody who owns a flat near the stations is grinning ear to ear.\n\nBut wait. Sources whisper that the builders, a supplier of [Fantablack] among them, got their contract over a very long lunch. Who paid for the lunch? Nobody will tell us. We will keep digging, even if the council wishes we wouldn't!",
+            "What a day! Crowds packed the opening in {location}, the brass band played, and the mayor's speech ran so long that, according to one bystander, \"three pigeons died of old age\".\n\nThen the ceremonial scissors jammed in a tiny [time loop bubble], the ribbon refused to snap and a crowd of {hundreds} cheered anyway. Our photographer caught it all, sweat and all!",
+            "Gold-plated or just plain greedy? The new project in {location} has a price tag that makes taxpayers choke on their breakfast.\n\nInsiders say a mystery firm, rumoured to have friends in the [Hypercapitalist Collective], will collect rent on it for decades. The council insists everything is above board. Our readers can decide for themselves."
+          ],
+          "skeptical": [
+            "The authorities in {location} describe the project as complete. The final inspection report, however, has not been published, and two of its appendices are listed as 'pending'.\n\nWe asked to see the load tests, which the [Archive Foundation] would normally publish. The office responsible said they would be available soon. We will report what they contain when, and if, they arrive.",
+            "The new link is said to be immune to the [Rule of 80]. Independent engineers note that no infrastructure in Europe has yet demonstrated such immunity over a full year.\n\nThe operator cites internal trials. It declined to say how many trials were run, or for how long. Commuters in {location} may become the real test.",
+            "Officials in {location} promise savings for every household. The figures behind that promise come from the brochure of the contractor, a subsidiary of [Esoteric Heavy Industries].\n\nAn independent estimate puts the true running cost at {amount} euros per resident each year, a number the council has neither confirmed nor denied. The question deserves an answer before the next budget vote."
+          ],
+          "playful": [
+            "{location} has a new station, and it is very beautiful, and nobody can find the exit yet. Volunteers in bright jackets are handing out maps and sympathy.\n\nThe [Hypermetro train] itself is quiet, clean and on time, which has unsettled some older residents. \"Something must be wrong,\" one gentleman said, before boarding twice just to be sure.",
+            "The ribbon has been cut in {location}, the speeches are over and the first passengers have already found the best seats. A small dog rode the opening service and has been named honorary inspector.\n\nThe [Truckers Society] sent a convoy to honk in celebration. The noise was considerable, and so was the joy.",
+            "Locals in {location} say the new infrastructure has made life easier in ways nobody expected. Deliveries arrive on time, the lights stay on and even the [Anoki phones] get a clearer line.\n\nA few grumblers miss the old inconveniences, which at least gave them something to talk about. They will adapt, probably over coffee."
+          ]
+        },
+        "banks": {}
+      },
+      "discovery": {
+        "headlines": {
+          "serious": [
+            "Excavation near {location} uncovers a {discovery}",
+            "Archaeologists confirm a {discovery} beneath {location}",
+            "Archive Foundation catalogues a {discovery} found outside {location}",
+            "{discovery} unearthed during roadworks in {location}, site sealed for study",
+            "Mages Guild sends scholars to examine {location} {discovery}",
+            "{location} museum to display {discovery} from next month"
+          ],
+          "scandalous": [
+            "TREASURE! Farmer strikes a {discovery} in his {location} cabbage patch",
+            "Cursed? Workmen flee {location} dig after finding {discovery}!",
+            "Hands off our {discovery}! {location} fumes as experts move in",
+            "Billionaire bidding war erupts over {location} {discovery}",
+            "Sources say the {location} {discovery} is worth {amount} million euros!",
+            "Vatican and Guild clash over who gets the {location} find!"
+          ],
+          "skeptical": [
+            "{location} '{discovery}' may be younger than the press release suggests",
+            "Experts divided over what was really found near {location}",
+            "No independent dating yet for the {location} {discovery}",
+            "Tourist boom forecast for {location} find rests on one photograph",
+            "Is the {location} discovery genuine? The site remains closed to reporters",
+            "{location} find announced before a single paper was published"
+          ],
+          "playful": [
+            "Dog digs up a {discovery} in {location}, demands a biscuit",
+            "{location} schoolchildren find a {discovery} on a field trip, teachers astonished",
+            "{location} finally has something to put on postcards: a {discovery}",
+            "Dig in {location} finds a {discovery} and three lost umbrellas",
+            "{location} grandparents insist they knew about the {discovery} all along",
+            "The {discovery} of {location} draws {hundreds} visitors and one confused goat"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "Work on the site near {location} was suspended after workers reported an unusual find. A team from the regional university arrived the same afternoon and confirmed its significance.\n\nThe [Archive Foundation] has registered the discovery and will publish photographs and a preliminary report. The area will remain closed while specialists record the layers around it, a process expected to take {number} weeks.",
+            "Scholars from the [Mages Guild] and the national heritage office are examining the find outside {location}. Early tests suggest the area once sat on an active [leyline], which may explain its remarkable state of preservation.\n\nThe municipality has asked visitors to stay away from the excavation until it is secured.",
+            "Officials in {location} described the discovery as one of the most important in the region since the [Y2K Event]. Funding for further excavation has been requested from the regional government.\n\nLocal hoteliers have already reported an increase in bookings, and the town museum is preparing a temporary room for the first objects to be cleaned and catalogued."
+          ],
+          "scandalous": [
+            "Jackpot! What started as an ordinary Tuesday in {location} ended with diggers dropping their shovels and shouting for help.\n\nNow everybody wants a piece of it. The [Holy Vatican Empire] says it is holy. The [Mages Guild] says it is magical. The farmer who owns the field says it is his, and frankly we are on the farmer's side!",
+            "Spooky goings-on at the dig! Two workmen in {location} swear their torches died the moment the find was uncovered, and one says he heard whispering.\n\nIs it cursed? Experts laugh at the idea, and so does the [Mages Guild], but we notice none of them volunteered for the night shift. Our reporter tried to get close and was chased off by a very rude archaeologist.",
+            "Forget the lottery: the field outside {location} might be the richest square metre in Europe! Collectors are already circling, and one of the [Hypercapitalists] is said to have flown in with a blank cheque.\n\nThe council insists the find belongs to the public. We will believe it when we see it in a museum and not in a private vault."
+          ],
+          "skeptical": [
+            "The announcement from {location} came with confident adjectives and very few facts. No dating method has been named and no independent laboratory has examined the material.\n\nPrevious 'discoveries' in the region have turned out to be modern copies, as the [Archive Foundation] has documented. Until samples are shared with outside researchers, readers should treat the claims as provisional.",
+            "Visitors are already booking trips to {location}, but the evidence so far amounts to a handful of photographs released by the landowner.\n\nThe [Archive Foundation] has asked for access to the site and has not yet received it. A find that cannot be inspected is difficult to celebrate, however exciting the headlines.",
+            "Some enthusiasts claim the find near {location} radiates power from an ancient [leyline]. Instruments brought by our reporter measured nothing unusual.\n\nThat does not prove the claim false, only unproven. The excavation team itself has avoided any mention of magic, which may be the most reliable sign of serious work on the site."
+          ],
+          "playful": [
+            "It began with a spade, a sunny afternoon and somebody saying \"that's odd\". By evening half of {location} had gathered at the fence with sandwiches.\n\nThe experts are delighted, the mayor is delighted and the local bakery has already launched a commemorative pastry. The [Archive Foundation] has promised to photograph everything, including the pastry.",
+            "Nobody in {location} expected their quiet town to end up in the history books, least of all the man who found it while looking for his keys. He has not found the keys.\n\nThe discovery will go on display in the town hall, between the portrait of the first mayor and a very old [Anoki phone] nobody remembers donating.",
+            "Children in {location} are now digging holes in every garden, convinced that history is hiding under the lettuce. Parents have asked them to stop.\n\nThe real excavation continues at a careful pace, with brushes, notebooks and an impressive amount of tea. The [Truckers Society] has offered to haul the finds to the museum, free of charge."
+          ]
+        },
+        "banks": {
+          "discoveries": [
+            "Roman mosaic",
+            "Viking longship",
+            "sealed Templar vault",
+            "Naguka cave painting",
+            "Verden seed vault",
+            "fallen fragment of YHWH",
+            "pristine leyline spring",
+            "buried Etruscan tomb",
+            "dinosaur fossil",
+            "pre-human city ruin",
+            "medieval grimoire",
+            "Renaissance automaton",
+            "shard of Fantablack",
+            "Scrap of Creation"
+          ]
+        }
+      },
+      "economic": {
+        "headlines": {
+          "serious": [
+            "{company_type} group chooses {location} for its European headquarters",
+            "{location} unemployment falls to its lowest level since the Y2K Event",
+            "Regional fund grants {amount} million euros for {location} renewal",
+            "{location} announces tax relief for new {company_type} firms",
+            "Property yields in {location} have risen for {number} months running",
+            "{location} ranked {rank} in Europe for business investment"
+          ],
+          "scandalous": [
+            "MONEY RAIN! {location} goes from sleepy to loaded overnight",
+            "{company_type} tycoon buys half of {location}'s high street!",
+            "Champagne sales soar as {location} hits the jackpot",
+            "{location} landlords laughing all the way to the bank",
+            "Who's getting rich? {location} boom leaves neighbours green with envy",
+            "Mystery Hypercapitalist splashes {amount} million euros in {location}!"
+          ],
+          "skeptical": [
+            "{location}'s 'economic miracle': how much of it is real?",
+            "Thousands of new jobs promised in {location}. Contracts not yet signed",
+            "{company_type} investment in {location} conditional on tax breaks nobody priced",
+            "{location} growth figures come from the investor's own report",
+            "{location} ranks {rank}, but who compiled the ranking?",
+            "Boom or bubble? Analysts urge caution on {location} property"
+          ],
+          "playful": [
+            "{location} is suddenly rich and has no idea what to do with it",
+            "New money in {location}: the bakery now sells croissants with gold leaf",
+            "{company_type} firm moves to {location}, staff already arguing about lunch spots",
+            "{location} shops run out of shopping bags after a record month",
+            "Good times in {location}: even the pigeons look well dressed",
+            "Draghi smiles on {location}, and the local banks smile back"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "The company confirmed that it will open its regional headquarters in {location} next year, creating an estimated {hundreds} jobs in its first phase. Local officials described the decision as the result of two years of negotiation.\n\nAnalysts at several Amsterdam houses expect rents near the business district to rise. The [Hypercapitalist Collective] has already registered interest in commercial property in the area.",
+            "New figures from the regional statistics office show sustained growth in {location}, driven by trade, construction and services. Wages rose faster than prices for the third consecutive quarter.\n\nEconomists credit improved transport links and stable supplies along the main [leyline]. The municipality plans to reinvest part of the additional tax revenue in housing and schools.",
+            "The regional development fund has approved a grant for {location}, to be spent over five years on infrastructure, training and support for small businesses.\n\nThe mayor said the money would be managed transparently, with quarterly reports published through the [Archive Foundation]. Business associations welcomed the decision and called for rapid implementation."
+          ],
+          "scandalous": [
+            "Break out the bubbly! {location} is rolling in cash, and the locals can hardly believe their luck. Estate agents report queues outside their windows and one lucky widow sold her garden shed for a small fortune!\n\nInsiders say the money comes straight from the [Hypercapitalist Collective], which never does anything for free. What do they want in return? We are asking. Loudly.",
+            "Rags to riches in record time! Shopkeepers in {location} say business has never been better, and the posh cars, and a few gleaming [liminal engines], are back in the main square.\n\nBut not everyone is cheering. Renters complain that prices are rocketing, and one furious pensioner told us: \"I've lived here sixty years and now I can't afford a coffee!\" Somebody is getting rich, and it isn't her.",
+            "Is [Mario Draghi] himself smiling on {location}? Bankers in the town swear the vault feels warmer than usual, and one cashier says she heard a ghostly chuckle among the banknotes!\n\nWhatever the reason, money is flooding in. Our reporters will follow every euro, and every tycoon who comes chasing it."
+          ],
+          "skeptical": [
+            "The headline figure of new jobs in {location} comes from the investor's announcement. So far, only a letter of intent has been signed, and it contains several conditions that the council has not made public.\n\nSimilar promises in nearby towns produced fewer than half the jobs announced. Readers may wish to wait for the payroll, or the [Archive Foundation] filings, before celebrating.",
+            "The growth numbers circulating in {location} are impressive, and they come from a consultancy paid by the very companies that benefit from them.\n\nIndependent data from the regional statistics office shows a more modest increase. Both sources agree on one thing: property prices are rising faster than local wages, a trend that historically ends badly. Even the [Hypercapitalists] hedge their bets.",
+            "Analysts have urged caution on the {location} property market, where prices rose {number} per cent in a single quarter. Several of the buyers are companies registered at the same address.\n\nThe [Archive Foundation] has asked for the ownership records. Until they are published, it is hard to say whether the boom reflects demand or simply the same money passing from hand to hand."
+          ],
+          "playful": [
+            "After years of counting coins, {location} suddenly has money to spend, and nobody is quite sure how to behave. The town council debated for three hours whether to buy a new fountain or a slightly bigger fountain.\n\nThe local bakery, meanwhile, has introduced a luxury croissant that costs {amount} euros. Nobody has bought one yet, but everyone has photographed it. Even [Mario Draghi] would approve.",
+            "Good news is in the air in {location}: shops are busy, cafes are full and the queue at the bank is mostly people making deposits.\n\nSome residents worry that success will change the town. Others have already bought new hats. The [Truckers Society] reports more deliveries than ever, and its drivers say the roadside sandwiches have improved too.",
+            "The new arrivals in {location} have brought jobs, money and an alarming number of briefcases. Locals are adapting well, mostly by charging slightly more for everything.\n\nThe mayor has promised that the town will remain friendly and modest, then left the press conference in a very new car. A [broomstick] parking area is under discussion."
+          ]
+        },
+        "banks": {
+          "company_types": [
+            "technomancy",
+            "broomstick",
+            "liminal engine",
+            "Fantablack refining",
+            "carrier pigeon logistics",
+            "Anoki phone",
+            "clean water",
+            "potion",
+            "leyline surveying",
+            "arcade cabinet",
+            "spell insurance",
+            "interdimensional trade",
+            "orbital salvage"
+          ]
+        }
+      },
+      "environmental": {
+        "headlines": {
+          "serious": [
+            "{animal} returns to the hills around {location} after decades",
+            "Broken leyline near {location} declared healed by Guild surveyors",
+            "{location} tap water certified free of additives for the first time",
+            "New nature reserve established outside {location}",
+            "Air quality in {location} reaches its best level on record",
+            "{location} river reopened to swimmers after long cleanup"
+          ],
+          "scandalous": [
+            "IT'S BACK! {animal} spotted strolling through {location}!",
+            "Clean water in {location}! Collective bosses spitting feathers",
+            "Nature lovers swoon as {location} turns green overnight!",
+            "Selfie chaos as crowds chase shy {animal} across {location} fields",
+            "Who healed the {location} leyline? Wild rumours fly!",
+            "Paradise found? {location} named Europe's cleanest town!"
+          ],
+          "skeptical": [
+            "One {animal} sighting near {location} is not yet a population",
+            "{location}'s 'cleanest air' claim based on a single monitoring station",
+            "Was the {location} leyline ever really broken?",
+            "Reserve near {location} protects land nobody planned to build on",
+            "{location} water tested clean. By whom, and how often?",
+            "Green award for {location} sponsored by a firm that sells green awards"
+          ],
+          "playful": [
+            "{animal} moves back to {location}, rejects three offers of rent",
+            "{location} residents learn to whisper so the {animal} won't be startled",
+            "Birdwatchers of {location} have never been so happy, or so muddy",
+            "{location} river so clean the fish are reportedly showing off",
+            "Spring arrives early in {location}, and so do {hundreds} butterflies",
+            "{location} hedgehogs form an orderly queue for the new wildlife bridge"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "Wildlife officers confirmed several sightings in the countryside near {location} over the past month, the first verified records in the area for many years.\n\nThey attribute the recovery to restored wetlands and to the end of illegal tapping of the local [leyline], which had disturbed breeding grounds. The municipality has asked walkers to keep dogs on a lead.",
+            "Surveyors from the [Mages Guild] reported that the leyline running beneath {location} has fully recovered after years of damage. Ordinary spellcasting in the area is again possible.\n\nFarmers have reported healthier harvests, and the regional authority has added the site to its list of protected landscapes. Monitoring will continue for at least {number} months.",
+            "Laboratory tests carried out over the winter found the public water supply of {location} entirely clean, with none of the additives common to supplies bought from the [Hypercapitalist Collective].\n\nThe municipality credits its new filtration plant and a spring that was only recently mapped. Officials expect the result to attract families and new businesses."
+          ],
+          "scandalous": [
+            "Grab your binoculars! A creature nobody has seen in decades has turned up near {location}, and the whole town has gone wild!\n\nOne farmer swears it waved at him. Another claims it ate his sandwich. Meanwhile, rival photographers have come to blows in a hedge. Our own snapper got the best picture, naturally, and the [Archive Foundation] is begging us for a copy!",
+            "Fresh air, fresh water and fresh scandal! Since {location} started making its own clean water, sources say the [Hypercapitalist Collective] has been in a right sulk.\n\nTheir salesmen used to do a roaring trade here. Now they can't give a bottle away. One local laughed: \"For the first time in years I drank a glass of water and didn't see colours!\"",
+            "Healed by a hero or a hoax? Mystery surrounds who fixed the damaged [leyline] under {location}. Some say a wandering witch. Others swear it was a grumpy [Petrodemon] paid off in secret.\n\nThe town doesn't care: the crops are fat, the roses are huge and the local pub has named a beer after the event."
+          ],
+          "skeptical": [
+            "The sighting reported near {location} rests on two photographs, both taken at dusk and at a considerable distance. Wildlife officers have not yet confirmed the species.\n\nEven if confirmed, one animal is not a recovering population. Ecologists recommend a year of systematic counts before the town prints any more souvenir posters. The [Archive Foundation] has offered to publish the raw data.",
+            "The award naming {location} as a model of clean living is based on measurements from one monitoring station, placed in a park upwind of the industrial zone.\n\nThe organisation that grants the award also sells consultancy to the towns that win it. That does not make the result wrong, but it should make readers ask for a second opinion and a second station. Even the [Hypercapitalist Collective] wants a recount.",
+            "Guild surveyors say the [leyline] under {location} has healed. Others question whether it was ever as damaged as reported, noting that the earlier survey was paid for by a developer hoping to buy the land cheaply.\n\nNeither report has been made fully public. Until both are, the story of the broken line remains, at best, half told."
+          ],
+          "playful": [
+            "Good news from the hedgerows of {location}: an old resident has come home, and it has brought the whole family. Wildlife officers are thrilled and the local children have already given every animal a name.\n\nResidents are asked to keep their distance, speak softly and stop leaving out biscuits. The [Truckers Society] has agreed to slow down on the country road.",
+            "The river in {location} is so clean that people have started swimming again, and the fish seem rather proud of themselves. A retired teacher swam the full length on Sunday and received a standing ovation from the ducks.\n\nThe [Archive Foundation] has added the river to its list of pleasant things, a list that grows shorter every year.",
+            "Spring came early to {location}, bringing flowers, butterflies and an unusually optimistic mood. Even the town grumbler admitted that the park looks \"not too bad\".\n\nVolunteers planted {hundreds} trees over the weekend with help from a group of [Verden] refugees, who know a great deal about green fields and did not complain once about the rain."
+          ]
+        },
+        "banks": {
+          "animals": [
+            "Eurasian otter",
+            "golden eagle",
+            "wildcat",
+            "beaver",
+            "lynx",
+            "white stork",
+            "barn owl",
+            "griffon vulture",
+            "European bison",
+            "bearded vulture",
+            "leyline salamander",
+            "glowing marsh newt",
+            "pine marten"
+          ]
+        }
+      }
+    },
+    "negative": {
+      "disaster": {
+        "headlines": {
+          "serious": [
+            "{disaster} strikes {location}; evacuations under way",
+            "State of emergency declared in {location} after {disaster}",
+            "{location} counts the damage after night of {disaster}",
+            "Relief convoys reach {location} as {disaster} recedes",
+            "Guild and Foundation teams deployed to {location} after {disaster}",
+            "{hundreds} families displaced by {disaster} in {location}"
+          ],
+          "scandalous": [
+            "TERROR IN {location}! {disaster} rips through town",
+            "Night of horror: {location} survivors tell their stories",
+            "Where were the wizards? {location} fury after {disaster}",
+            "Heroes of {location}! Neighbours pull families from the wreckage",
+            "Was it Eris? {location} demands answers after {disaster}",
+            "Insurers run for cover as {location} disaster bill soars"
+          ],
+          "skeptical": [
+            "{location} had warnings before the {disaster}. Who read them?",
+            "Damage estimates for {location} vary by a factor of {number}",
+            "Was the {location} {disaster} really 'impossible to predict'?",
+            "Wards sold to {location} failed. Refunds unlikely",
+            "{location} relief fund: {thousands} pledged, little delivered yet",
+            "Bubble growth blamed for {location} disaster, but data is thin"
+          ],
+          "playful": [
+            "{location} picks itself up after the {disaster}, kettle first",
+            "After the {disaster}, {location} discovers it has very good neighbours",
+            "{location} bakers feed rescuers for free as cleanup begins",
+            "Truckers roll into {location} with blankets, soup and terrible jokes",
+            "{location} fire brigade rescues {number} cats and one indignant parrot",
+            "{location} clears the mud together, one wheelbarrow at a time"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "Emergency services in {location} worked through the night to reach residents cut off by the disaster. Officials confirmed that {hundreds} people have been moved to temporary shelters in schools and sports halls.\n\nThe [Archive Foundation] has opened a public register of missing persons. Road access remains limited, and drivers are asked to stay away from the area while engineers inspect bridges and power lines.",
+            "The regional government has declared a state of emergency in {location}. Teams from the [Mages Guild] are assisting the fire brigade, although damage to the local [leyline] has weakened their spells.\n\nThe priority remains the search for survivors. Donations are being collected at town halls across the region, and the [Truckers Society] has offered its convoys for relief supplies.",
+            "As the situation in {location} stabilises, the scale of the damage is becoming clear. Several districts are without power and drinking water, and authorities estimate that repairs will take months.\n\nOfficials said that the growing number of [time loop bubbles] nearby had complicated the evacuation, since rescue vehicles were forced to keep below the safe speed."
+          ],
+          "scandalous": [
+            "A night of terror! Shocked residents of {location} told our reporters how they fled their homes with nothing but their nightclothes as disaster struck without warning.\n\n\"I've never seen anything like it,\" sobbed one mother clutching her children. Our thoughts are with every family. But questions must be asked: where were the expensive [Mages Guild] wards the council paid for?",
+            "HEROES! While officials dithered, ordinary folk in {location} rolled up their sleeves. A plumber, a schoolteacher and a dishwasher from the [Goblin Horde] pulled {number} people from the wreckage with their bare hands.\n\nThe town is in mourning for those who were lost, but it is also proud. The council says it will hold an inquiry. We say: start by giving these heroes a medal.",
+            "Who is to blame? Some in {location} point at [Eris], whose famous chaos seems to strike hardest where justice is weakest. Others blame landlords who cut corners on repairs.\n\nInsurance companies, meanwhile, are already muttering about 'acts of gods' to avoid paying out. We will be watching every claim, and we will name every company that leaves victims in the cold."
+          ],
+          "skeptical": [
+            "A report delivered to the council of {location} last year warned that the area was at serious risk. Our reporters have seen a copy. Its recommendations were not carried out, and its cost estimates were never discussed.\n\nNone of this lessens the grief of the families affected. It does raise the question of how many other warnings sit unread in municipal drawers. The [Archive Foundation] has been asked to publish them.",
+            "Officials in {location} attribute the disaster to the expanding [time loop bubbles] nearby. Scientists consulted by this paper say the link is plausible but unproven, and that ordinary weather would explain most of what happened.\n\nThe distinction matters. Blaming the [Squishing] places the event beyond anyone's responsibility; blaming poor drainage does not.",
+            "Protective wards sold to households in {location} for {amount} euros each did not prevent any damage, according to residents. The sellers claimed membership of the [Mages Guild], which says it has never heard of them.\n\nVictims hoping for refunds should keep their receipts. Most of the sellers' addresses, we found, belong to empty shops."
+          ],
+          "playful": [
+            "It has been a terrible few days in {location}, but the town has decided to face it the way it faces everything: together, with plenty of tea. Volunteers have turned the parish hall into a shelter, a canteen and an impromptu lost-and-found for pets.\n\nThe [Truckers Society] arrived at dawn with blankets and soup, and refused to take a single euro.",
+            "Nobody in {location} will forget this week, but many will remember it for the kindness as much as the damage. Strangers shared beds, sandwiches and dry socks; a local choir sang in the shelter until the children fell asleep.\n\nCleanup will take time. The town has made a rota, a list and a large pot of stew. A [Mages Guild] apprentice is drying carpets with a spell.",
+            "The mud is slowly leaving {location}, one wheelbarrow at a time. Schoolchildren have painted cheerful signs for the rescue workers, and the bakery is giving away bread to anyone holding a shovel.\n\nThe mayor thanked everyone, then rolled up his trousers and joined in. The [Archive Foundation] has promised to remember every volunteer by name, which will take some time."
+          ]
+        },
+        "banks": {
+          "disasters": [
+            "flooding",
+            "earthquake",
+            "wildfire",
+            "hailstorm",
+            "heatwave",
+            "avalanche",
+            "tornado",
+            "landslide",
+            "leyline rupture",
+            "mana storm",
+            "orbital debris fall",
+            "sinkhole",
+            "lava surge"
+          ]
+        }
+      },
+      "security": {
+        "headlines": {
+          "serious": [
+            "Security alert raised in {location} after goblin raiding party sighted",
+            "Judicial ghosts reported crossing {location}; residents told to stay indoors",
+            "Police in {location} investigate theft of Fantablack from a city vault",
+            "Archive Foundation checkpoints set up on roads into {location}",
+            "Counterfeit euro notes circulating in {location}, central bank warns",
+            "Third day of protests brings {location} city centre to a halt"
+          ],
+          "scandalous": [
+            "CRIME WAVE! {location} gripped by fear as burglars use spells",
+            "Bounty frenzy! Eris slaps {number} warrants on {location} in one night",
+            "Goblins at the gates! {location} barricades its bakeries",
+            "Phone snoops! Archivists read {location} commuters' messages aloud",
+            "Art heist of the century: {location} museum left with empty frames",
+            "Fake money flood! Are YOUR euros real, {location}?"
+          ],
+          "skeptical": [
+            "{location} crime 'surge' rests on a change in how crimes are counted",
+            "Goblin raid on {location} reported. Nobody has yet seen a goblin",
+            "Who benefits from the {location} security scare?",
+            "{location} checkpoints: {thousands} phones searched, no arrests",
+            "Theonuclear rumour in {location} traced to a single anonymous letter",
+            "Police in {location} blame Eris's bounties. Records suggest otherwise"
+          ],
+          "playful": [
+            "{location} burglar caught after stopping to admire the owner's cat",
+            "Goblin raiders reach {location}, leave with {number} cakes and an apology",
+            "{location} judicial ghost gets lost, asks a baker for directions",
+            "{location} protest ends early because everyone wanted lunch",
+            "Pickpockets of {location} complain the tourists no longer carry cash",
+            "Thief returns stolen bicycle to {location} with a note: wrong colour"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "Police in {location} have raised the local alert level after reports of a raiding party from the [Goblin Horde] moving through the surrounding countryside. Residents of outlying farms have been advised to secure livestock and stay indoors after dark.\n\nRegional authorities said there was no immediate threat to the town centre. Additional patrols will remain in place for {number} days.",
+            "Several [judicial ghosts] were seen crossing {location} overnight, moving in straight lines toward targets the authorities have not identified. Witnesses described them passing through walls and closed shop fronts.\n\nThe ghosts act on warrants issued by [Eris] and cannot be stopped by local police. Residents are asked not to stand in their path.",
+            "Investigators in {location} are examining the theft of a quantity of [Fantablack] from a secure municipal store. The pigment, used in banknotes and loop-resistant coatings, is among the most valuable substances in Europe.\n\nPolice have appealed for witnesses. The [Archive Foundation] has published the serial numbers of the stolen containers."
+          ],
+          "scandalous": [
+            "Lock your doors, {location}! A gang of spell-slinging burglars is creeping into homes at night, and police are baffled. One victim woke to find her jewellery box floating out of the window!\n\nSources say the crooks use stolen [CamelCase] scrolls bought on the black market. Who sold them? Who is protecting them? And why are the police always one step behind?",
+            "Warrant madness! Overnight [Eris] handed out bounties to {number} residents of {location}, including, our spies claim, a vicar, a florist and a dog.\n\nThe goddess of chaos does not explain her verdicts, of course. Our phones have not stopped ringing with readers swearing they are innocent. We believe you. Probably.",
+            "Snoop troopers! Commuters in {location} were stunned when [Archive Foundation] agents at a roadblock read their private phone messages to the whole queue.\n\n\"They read my love letters out loud!\" one red-faced driver told us. The Foundation says transparency protects everyone. Our readers say it is a disgrace, and we agree!"
+          ],
+          "skeptical": [
+            "Figures published this week appear to show a sharp rise in crime in {location}. A closer look shows that the method of counting changed in the spring, adding offences that were previously recorded elsewhere.\n\nOnce the change is accounted for, the increase largely disappears. The [Archive Foundation] has published both series. Neither the mayor nor his opponents have mentioned the second one.",
+            "Reports of a goblin raid near {location} spread quickly across the [Anoki phones] of the region. So far, no witness has described seeing a goblin directly; most heard about it from somebody else.\n\nPolice say they are taking the reports seriously. A missing flock of sheep remains the only confirmed loss, and the farmer admits his fence was broken.",
+            "Checkpoints set up around {location} have searched {thousands} phones in a fortnight. The operation has produced no arrests and no published findings.\n\nThe organisers say the checks deter crime. That is difficult to measure and impossible to disprove, which may be why the claim is so popular. The [Archive Foundation] has promised a report."
+          ],
+          "playful": [
+            "Police in {location} have arrested a burglar who broke into a house, found the owner's cat asleep on the sofa and stayed two hours to stroke it. The owner came home to find him purring along.\n\nThe thief has been charged and will face [Eris] in the [Judicial Dimension]. The cat, according to witnesses, has no regrets.",
+            "A small raiding party from the [Goblin Horde] reached the outskirts of {location} on Tuesday, looked around, and left with a cart full of cakes from the village fete. One of them came back to leave a drawing that appears to say thank you.\n\nThe bakers have described the episode as 'the best review we have ever had'.",
+            "A [judicial ghost] on its way to an arrest became lost in the old town of {location}, a labyrinth of alleys that has defeated postmen for centuries. It was seen floating in circles near the fountain for an hour.\n\nA baker eventually pointed it in the right direction. The ghost did not thank her, but witnesses say it seemed relieved."
+          ]
+        },
+        "banks": {}
+      },
+      "economic": {
+        "headlines": {
+          "serious": [
+            "{company_type} employer in {location} announces {hundreds} job cuts",
+            "{location} property prices fall for a third consecutive quarter",
+            "Regional bank suspends mortgage lending in {location}",
+            "Credit agency downgrades {location} outlook to negative",
+            "{location} raises property tax to cover a {amount} million euro shortfall",
+            "Tariffs on {location} exports threaten local {company_type} industry"
+          ],
+          "scandalous": [
+            "BUST! {location} {company_type} firm slams the doors on {hundreds} workers",
+            "Bosses fly off by broomstick as {location} factory closes!",
+            "Pension pot vanishes! {location} pensioners left with nothing",
+            "{location} house prices CRASH: is your home worth anything?",
+            "Collective vultures circle as {location} goes broke!",
+            "Draghi turns his back on {location}! Banks in panic"
+          ],
+          "skeptical": [
+            "The {location} job cuts were planned months before the 'sudden crisis'",
+            "Is {location} really bankrupt? The accounts tell a mixed story",
+            "{location} housing crash: a correction after a boom nobody questioned",
+            "Credit downgrade for {location} came from an agency owned by its rivals",
+            "{location} blames the Squishing for losses. Its auditors blame management",
+            "How much of {location}'s debt is owed to the Collective? Nobody will say"
+          ],
+          "playful": [
+            "Times are tight in {location}, so the bakery now sells half croissants",
+            "{location} mayor announces austerity, cancels his own birthday cake",
+            "Out of work in {location}? The goats still need walking",
+            "{location} pawnbroker reports record trade in heirloom spoons",
+            "Budget cuts leave {location} fountain running on alternate days",
+            "{location} holds a swap market after the bank closes, trades in jam"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "One of the largest employers in {location} confirmed that it will reduce its workforce over the coming months, citing falling orders and rising transport costs under the [Rule of 80].\n\nUnions have requested urgent talks with the regional government. Economists warn that the cuts will affect suppliers and local shops, and that property prices in the area are likely to weaken further.",
+            "The regional bank serving {location} has suspended new mortgage lending, citing exposure to falling property values and the cost of insuring homes near expanding [time loop bubbles].\n\nExisting borrowers are not affected. Estate agents report that buyers have begun withdrawing from purchases, and that rents have started to fall in the outer districts.",
+            "The municipal council of {location} has approved a rise in property tax to close a gap in its budget. The shortfall is linked to debts contracted with lenders from the [Hypercapitalist Collective] during better years.\n\nOpposition councillors called the decision unfair to residents on modest incomes. The council says the alternative would have been cuts to schools and transport."
+          ],
+          "scandalous": [
+            "Shut down and sold out! Workers in {location} turned up for their morning shift to find the gates chained and a note pinned to the door.\n\nThe bosses? Long gone, rumour has it by private [broomstick], with the company's savings in their luggage. \"Twenty years I gave them,\" one worker told us, tears in his eyes. Readers, this is a scandal, and we will name names.",
+            "Where did the money go? Pensioners in {location} are reeling after their retirement fund turned out to be almost empty. Some had saved for forty years.\n\nInsiders whisper that the fund's managers bet it all on a scheme run by the [Hypercapitalist Collective]. The Collective says it promised nothing. The pensioners say they want their money back, and so do we!",
+            "Is [Mario Draghi] angry with {location}? Bank managers swear the euros in their vaults feel colder than usual, and two cash machines spat out blank paper on Monday.\n\nPanic spread quickly, with queues outside every branch by lunchtime. Officials insist the system is sound. Somebody tell that to the poor souls standing in the rain."
+          ],
+          "skeptical": [
+            "The company has described its job cuts in {location} as a response to a sudden market shock. Internal planning documents seen by this paper show that the reductions were drawn up more than six months ago.\n\nThat does not mean the market is healthy. It does suggest the 'sudden crisis' may have been a convenient moment to announce decisions already taken. The [Archive Foundation] holds copies.",
+            "Property prices in {location} are falling, and the headlines speak of a crash. Measured against the last five years, however, prices have only returned to where they stood before a speculative surge.\n\nThe people most exposed are recent buyers who borrowed heavily. That is a real hardship, and one that lenders encouraged. The [Hypercapitalist Collective] made money on the way up, and may again on the way down.",
+            "Officials in {location} have blamed the [Squishing] and the spread of [time loop bubbles] for the town's financial losses. The auditors' report tells a less cosmic story: overpriced contracts, unpaid invoices and a missing {amount} thousand euros.\n\nThe bubbles are real enough. They are also a very convenient thing to blame."
+          ],
+          "playful": [
+            "Money is short in {location} this season, and the town is adapting with its usual stubborn good humour. The bakery sells half croissants, the cinema shows half films and the mayor has started cutting his own hair.\n\nResidents say they will manage. The [Truckers Society] has offered discounted deliveries, provided someone keeps the kettle on at the depot.",
+            "With the bank branch closed for the week, residents of {location} have set up a swap market in the square. Jam is the new currency; a jar of good apricot buys a haircut and a lesson in [CamelCase] spelling.\n\nEconomists are not impressed. The townspeople, eating very well, have not asked them.",
+            "Times are hard in {location}, but the local pawnbroker has never been busier. He reports a flood of heirloom spoons, three wedding dresses and an [Anoki phone] that rings every evening at six, though nobody is ever on the line.\n\n\"Everything comes back eventually,\" he said. \"Including good times. Probably.\""
+          ]
+        },
+        "banks": {
+          "company_types": [
+            "technomancy",
+            "broomstick",
+            "liminal engine",
+            "Fantablack refining",
+            "carrier pigeon logistics",
+            "Anoki phone",
+            "clean water",
+            "potion",
+            "leyline surveying",
+            "arcade cabinet",
+            "spell insurance",
+            "interdimensional trade",
+            "orbital salvage"
+          ]
+        }
+      },
+      "infrastructure": {
+        "headlines": {
+          "serious": [
+            "Hypermetro strike halts services across {location}",
+            "Leyline failure leaves {location} without power",
+            "Bridge in {location} closed after a time loop bubble reaches its span",
+            "Collective cuts clean water contract; {location} begins rationing",
+            "Hypernet outage in {location} passes {number} hours",
+            "Pigeon post backlog in {location} reaches {thousands} letters"
+          ],
+          "scandalous": [
+            "BLACKOUT! {location} plunged into darkness as leyline snaps",
+            "Commuter chaos! {location} trains stuck in a loop since Tuesday",
+            "Not a drop to drink! Collective turns off {location}'s taps",
+            "Hypernet down! {location} teenagers forced to talk to their parents",
+            "Bridge to nowhere: {location} span swallowed by time bubble!",
+            "Who broke {location}? Fury as repairs drag on and bills go up"
+          ],
+          "skeptical": [
+            "{location} blackout blamed on the leyline. Maintenance logs suggest neglect",
+            "Was the {location} bridge closure necessary? Engineers disagree",
+            "{location} water shortage: the reservoir is full, the contract is not",
+            "{location} strike figures differ by {hundreds} between union and operator",
+            "Outage in {location} was 'unforeseeable'. It happened twice last year",
+            "Who decided to build {location}'s depot beside a known bubble?"
+          ],
+          "playful": [
+            "Power cut in {location}: candles sell out, board games return",
+            "Hypermetro strike: {location} rediscovers the bicycle, and its knees",
+            "{location} bridge closed, local ferryman unexpectedly famous",
+            "Pigeon post delays in {location}: the pigeons say they are doing their best",
+            "{location} without hypernet for a day; nobody knows what day it is",
+            "Water rationing in {location} makes everyone an expert on rain barrels"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "Public transport across {location} has been suspended after workers on the [Hypermetro train] network walked out over pay and safety conditions. The operator said that only emergency services would run.\n\nUnion representatives cited repeated incidents near [time loop bubbles] along the outer lines. Talks are scheduled for later this week, and commuters are advised to plan alternative journeys.",
+            "Large parts of {location} remained without electricity overnight after a fault on the [leyline] that feeds the municipal power station. Hospitals switched to reserve generators.\n\nEngineers from the [Mages Guild] are on site. Officials said full service could take {number} days to restore, and asked residents to limit use of heating and lighting.",
+            "The [Hypercapitalist Collective] has ended its supply of clean water to {location} following a dispute over payment terms. The municipality has introduced rationing and opened distribution points in each district.\n\nThe mayor said negotiations would continue. In the meantime, residents are reminded that untreated supplies may contain additives and should be boiled or avoided."
+          ],
+          "scandalous": [
+            "Lights out, {location}! The town plunged into pitch darkness last night as the [leyline] under the power station snapped like a guitar string.\n\nFurious residents told us they were left stumbling around in the dark while the council 'held a meeting'. A meeting! By candlelight! We demand to know who was in charge of maintenance, and why the bills keep going up.",
+            "Stuck in a loop! Passengers on a commuter train outside {location} have reportedly lived through the same Tuesday {number} times after their driver went just a bit too fast near a [time loop bubble].\n\nOne passenger sent a message by pigeon: \"Same sandwich. Same newspaper. Same man snoring.\" Rescuers are working on it. Readers, slow down!",
+            "Taps run dry! The [Hypercapitalist Collective] has turned off the clean water in {location}, and residents are queuing with buckets like it's the Middle Ages.\n\n\"They want more money, of course,\" one angry grandmother told us. \"They always want more money!\" Sources say Collective bosses are drinking sparkling water in their towers. Disgraceful!"
+          ],
+          "skeptical": [
+            "The authorities have attributed the blackout in {location} to a natural fault in the [leyline]. Maintenance records seen by this paper show that inspections of the line were postponed three times in two years to save money.\n\nLeylines do fail on their own. They also fail when nobody checks them. The two explanations have very different consequences for who pays.",
+            "Residents of {location} are being told that a water shortage requires rationing. The municipal reservoir, according to the town's own published data, is more than half full.\n\nThe real problem appears to be a dispute with the [Hypercapitalist Collective] over the price of treatment. That is a negotiation, and calling it a shortage may be a way of winning it.",
+            "The new transport depot in {location} has been closed after it began drifting in and out of a [time loop bubble]. The bubble was marked on regional maps two years before construction started.\n\nThe planning office says it relied on an older survey. The [Archive Foundation] has published both maps, side by side, for anyone who wants to compare."
+          ],
+          "playful": [
+            "The lights went out in {location} on Thursday night, and something unexpected happened: people knocked on each other's doors. Board games came out of attics, candles came out of drawers and the old couple on the corner taught the street to play cards.\n\nPower is coming back slowly. Some residents say they are in no hurry. The [Mages Guild] apprentices are working on it.",
+            "With the [Hypermetro train] on strike, {location} has taken to its bicycles, scooters and, in one case, a horse. Traffic has been slow but friendly, and the cafes along the main road are delighted.\n\nCommuters report sore knees and improved moods. The strike is expected to end soon, which some are calling a mixed blessing.",
+            "The bridge is closed, and so the town of {location} has turned to an old ferryman who has rowed the river for forty years with hardly any customers. This week he has had {hundreds}.\n\nHe charges one euro, tells a story with every crossing and keeps an [Anoki phone] in his coat pocket \"for luck\". He says the bridge can stay closed as long as it likes."
+          ]
+        },
+        "banks": {}
+      },
+      "health": {
+        "headlines": {
+          "serious": [
+            "Outbreak of {illness} reported in {location}; hospitals on alert",
+            "{location} hospitals near capacity as {illness} cases rise",
+            "Health authority issues 'do not drink' notice for {location} tap water",
+            "Medicine shortage reported in {location} pharmacies",
+            "{hundreds} new cases of {illness} confirmed in {location} this week",
+            "Schools in {location} close for {number} days to slow {illness}"
+          ],
+          "scandalous": [
+            "PLAGUE PANIC! {illness} sweeps through {location}",
+            "{location} hospitals overflowing! Patients left in corridors",
+            "Who poisoned the water? {location} demands answers",
+            "Quacks cash in! Fake cures for {illness} flood {location} markets",
+            "Tinfoil sell-out as {location} fears thought-borne disease!",
+            "Mystery illness grips {location}: is it the bubbles?"
+          ],
+          "skeptical": [
+            "{illness} in {location}: the numbers are rising, but so is testing",
+            "Miracle cure sold in {location} contains sugar, water and hope",
+            "Does tinfoil really stop thought-transmitted disease? {location} doctors doubt it",
+            "Blaming the leyline for {location}'s outbreak skips the sewer report",
+            "{location} water notice: what was found, and in what quantity?",
+            "{location} outbreak 'under control', says office that cannot count it"
+          ],
+          "playful": [
+            "{location} reaches for the soup as {illness} season arrives",
+            "Grandmothers of {location} mobilise their famous broth against {illness}",
+            "{location} pharmacist runs out of tissues, starts offering hugs instead",
+            "Stay home, drink tea: {location}'s doctors have spoken",
+            "{location} cats report unusual levels of company as residents stay in",
+            "Sniffles in {location}: the brass band postpones its season, the town sighs"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "The regional health authority has confirmed a rise in cases in {location} and asked residents with symptoms to stay at home and contact their doctor before visiting a clinic.\n\nHospitals have postponed non-urgent procedures. Specialists from the [Mages Guild] are assisting with diagnosis, since several patients live near a disturbed [leyline]. Officials stressed that most cases are mild.",
+            "Pharmacies in {location} have reported shortages of common medicines, including antibiotics and fever treatments. The health authority said deliveries had been delayed by the [Rule of 80], which slows every supply convoy on the regional roads.\n\nThe [Truckers Society] has offered extra runs. Patients are asked not to stockpile and to buy only what they need.",
+            "Health officials have advised residents of {location} not to drink tap water until further notice, after tests found contamination in part of the network. Bottled water is being distributed at {number} points across the town.\n\nThe source has not yet been identified. The [Archive Foundation] will publish laboratory results as soon as they are received."
+          ],
+          "scandalous": [
+            "Coughs, sneezes and chaos! Hospitals in {location} are bursting at the seams, and frightened families tell us they waited hours just to see a nurse.\n\nOur hearts go out to every patient and every exhausted doctor. But why were there not enough beds? Insiders say the money for a new ward vanished into a consultancy run by a friend of the [Hypercapitalist Collective]. We want answers!",
+            "Snake oil alert! Crooks in {location} are selling 'miracle cures' from market stalls at {amount} euros a bottle, promising everything from instant recovery to eternal youth.\n\nOne bottle we bought turned out to be coloured water with a bad [CamelCase] scrawled on the label. Readers, don't fall for it. Listen to your doctor, not a man with a suitcase!",
+            "Tinfoil fever! Every hardware store in {location} has sold out of aluminium foil after rumours that a thought-transmitted disease is spreading through the town.\n\nPeople have been spotted wearing foil hats on the [Hypermetro train], at weddings and even in church. Doctors say there is no outbreak. But would they tell us if there was?"
+          ],
+          "skeptical": [
+            "Reported cases in {location} have risen sharply this month. So has the number of tests carried out, which tripled after the clinic received new equipment.\n\nMore testing finds more cases; it does not necessarily mean more illness. Hospital admissions, a better measure of severity, have risen only slightly. The [Archive Foundation] publishes both figures, and both deserve reading.",
+            "Local officials have linked the outbreak in {location} to disturbances in the nearby [leyline]. A municipal report on the condition of the town's sewers, completed last spring and never discussed by the council, may offer a simpler explanation.\n\nMagic makes a dramatic headline. Broken pipes make a cheaper one, and possibly a more accurate one.",
+            "Tinfoil headgear is being sold in {location} as protection against thought-transmitted disease. The practice is old and the folk belief is widespread, but no controlled study has measured whether it works.\n\nDoctors consulted by this paper describe the current illness as an ordinary infection. They recommend rest, fluids and washing hands. The [Mages Guild] declined to comment on hats."
+          ],
+          "playful": [
+            "It's that time of year again in {location}: noses are red, scarves are wrapped tight and every kitchen smells of chicken soup. The local pharmacy has run out of tissues and is now offering sympathy and peppermints.\n\nDoctors advise rest, warm drinks and patience. The [Truckers Society] has promised to deliver lemons to anyone who asks nicely.",
+            "The grandmothers of {location} have taken matters into their own hands. Their famous broth, a recipe some say is older than the [Holy Vatican Empire], is being delivered in pots to every house with a cough.\n\nThe doctors say it can't hurt. The patients say it helps. The grandmothers say nobody asked them, and keep stirring.",
+            "With half of {location} at home under blankets, the town has gone very quiet. The cats are delighted with the company, the postman has no one to chat to and the cafe is selling more tea than coffee for the first time in its history.\n\nEveryone is expected back on their feet soon. Until then, a [Mages Guild] apprentice is reading bedtime stories over the [Anoki phones]."
+          ]
+        },
+        "banks": {
+          "illness": [
+            "pneumonia",
+            "gastroenteritis",
+            "norovirus",
+            "seasonal flu",
+            "measles",
+            "whooping cough",
+            "scarlet fever",
+            "mana fever",
+            "loop sickness",
+            "leyline migraine",
+            "porphyrin anaemia",
+            "CamelCase stammer",
+            "thought-transmitted disease"
+          ]
+        }
+      }
+    },
+    "neutral": {
+      "political": {
+        "headlines": {
+          "serious": [
+            "{location} elects a new mayor on a turnout of {number} per cent",
+            "{location} council debates limits on foreign property buyers",
+            "Referendum on {location}'s hyperpower allegiance set for the spring",
+            "Vatican envoy's visit to {location} draws protests and heavy security",
+            "{location} votes to lower the town speed limit below the Rule of 80",
+            "Archive Foundation publishes {location} council minutes in full"
+          ],
+          "scandalous": [
+            "COUP AT THE TOWN HALL! {location} mayor quits in a huff",
+            "{location} election ballots lost in a time loop, recount ordered!",
+            "Eris overturns {location} vote: 'I liked the other one better'",
+            "Secret dinner! {location} councillors caught with Collective lobbyists",
+            "{location} mayor's rival is a wizard, and voters are spellbound",
+            "Fistfight in the chamber as {location} rezoning row boils over"
+          ],
+          "skeptical": [
+            "{location}'s new mayor promised lower taxes. The budget has other plans",
+            "Who funds {location}'s independence campaign? The donor list is short",
+            "{location} referendum question is so vague both sides claim victory",
+            "Turnout in {location} counted twice by pigeon post, two results returned",
+            "{location} council's 'consultation' received {number} replies, mostly from staff",
+            "Declassified {location} files raise more questions than they answer"
+          ],
+          "playful": [
+            "{location} elects a mayor; the losing candidate brings cake anyway",
+            "{location} council meeting runs so long it enters a time loop",
+            "Referendum in {location} won by 'undecided', organisers baffled",
+            "{location} mayor sworn in, immediately loses the ceremonial key",
+            "{location} district inside a bubble re-elects the same mayor every morning",
+            "{location} votes on the town motto; 'At least it isn't raining' wins"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "Voters in {location} have chosen a new mayor after a campaign dominated by housing, transport and the town's place between rival hyperpowers. Results were counted overnight and confirmed by observers from the [Archive Foundation].\n\nThe new administration has promised a review of property taxes and better links to the regional [Hypermetro train] network. It takes office next month.",
+            "The council of {location} has opened a debate on whether to limit purchases of homes by companies registered abroad. Supporters say prices have risen beyond the reach of local families; opponents warn of lost investment.\n\nObservers note that several of the largest buyers are linked to the [Hypercapitalist Collective]. A vote is expected before the summer recess.",
+            "An envoy of [Pope Petrus II] arrived in {location} for two days of talks on trade and religious freedom. Police closed several streets around the town hall as hundreds of demonstrators gathered on both sides.\n\nThe visit passed without serious incidents. Officials described the talks as frank, a diplomatic word that usually means difficult."
+          ],
+          "scandalous": [
+            "Drama at the town hall! The mayor of {location} stormed out of a council meeting last night, slammed the door and announced his resignation on the steps, according to stunned onlookers.\n\nInsiders say the row was over a contract handed to a firm with friends in the [Hypercapitalist Collective]. Others whisper about a love letter read aloud by mistake. We are on the case!",
+            "Lost ballots! Hundreds of votes from {location} were sent by fast courier, which drove a little too quickly and ended up stuck in a [time loop bubble]. The same envelopes arrive at the town hall every morning, and vanish every night.\n\nNow [Eris] herself has declared the result 'fun but invalid'. A new vote has been called. Taxpayers will foot the bill!",
+            "Spellbinding stuff! A candidate for mayor of {location} turns out to be a fully trained member of the [Mages Guild], and her rallies are packed.\n\nRivals cry foul, claiming she charmed voters with more than speeches. She laughs it off. Our reporter attended a rally and felt nothing unusual, apart from a strong urge to buy a raffle ticket."
+          ],
+          "skeptical": [
+            "The winning candidate in {location} promised lower property taxes. The budget the council inherited shows a deficit that leaves little room for cuts without reducing services.\n\nEither the promise will be broken or something else will be sacrificed. Voters may wish to watch which line of the budget changes first. The [Archive Foundation] has published the accounts.",
+            "The campaign to make {location} an independent city has bought posters, radio time and a parade. Its published list of donors contains eleven names, most of them companies sharing one address abroad.\n\nCampaigners say the money is irrelevant. It is relevant to anyone wondering whose interests an independent {location} would serve. The [Hypercapitalist Collective] declined to comment.",
+            "Ballots in {location} were sent to the regional count by pigeon, because instant communication fails across the [time loop bubbles] in between. Two birds took different routes and delivered two different tallies.\n\nOfficials say the difference is small. They have not explained how the same vote produced two results, which seems like the more important question."
+          ],
+          "playful": [
+            "{location} has a new mayor, and the defeated candidate showed up at the victory party with a lemon cake, a handshake and a promise to win next time. The crowd cheered both of them.\n\nThe new mayor's first act was to fix the clock on the town hall, which had been wrong since the [Y2K Event]. Nobody had noticed for some time.",
+            "The council meeting in {location} began at seven, went on past midnight and, according to the night porter, slipped into a small [time loop bubble] sometime around one. The councillors have now debated the same parking regulation {number} times.\n\nThey seem happy enough. Coffee is being passed through the window.",
+            "The people of {location} were asked to vote on a new town motto. After weeks of passionate debate, the winner was 'At least it isn't raining', narrowly ahead of 'We were here first'.\n\nThe motto will be carved over the town hall door. Our sources say [Eris] voted twice, for the losing option both times."
+          ]
+        },
+        "banks": {}
+      },
+      "cultural": {
+        "headlines": {
+          "serious": [
+            "{location} museums announce free entry for the month",
+            "{location} ranked {rank} in European quality of life survey",
+            "Major retrospective of {art_movement} painting opens in {location}",
+            "Renowned {celebrity} to settle in {location}, town hall confirms",
+            "Film crew begins shooting in {location}; streets closed for a week",
+            "Plan to move a historic landmark divides {location}"
+          ],
+          "scandalous": [
+            "STAR SPOTTED! {celebrity} house-hunting in {location}!",
+            "{celebrity} storms out of {location} gala in a strop",
+            "Shock art! {art_movement} exhibition in {location} leaves visitors fainting",
+            "Who's the new neighbour? {location} goes gaga for mystery {celebrity}",
+            "Glass tower to tower over {location}'s old square: locals livid",
+            "Overnight mural on {location} cathedral: vandal or genius?"
+          ],
+          "skeptical": [
+            "{location} ranks {rank} for quality of life, on a survey of {hundreds} people",
+            "Is the {location} '{celebrity}' really who the posters say?",
+            "{art_movement} show in {location} lists works whose provenance is unclear",
+            "Free museum month in {location} funded by a ticket rise next year",
+            "{location} film shoot: promised boost for local trade, figures pending",
+            "The 'priceless' painting found in {location} was valued by its seller"
+          ],
+          "playful": [
+            "{celebrity} moves to {location}, joins the queue at the bakery like everyone else",
+            "{location} grandmothers unimpressed by {art_movement} art, prefer the cafe",
+            "Film crew in {location} asks locals to look ordinary; locals overact",
+            "{location} statue repainted by night, now wearing a moustache",
+            "{location} library declares a week of reading aloud, cats attend",
+            "{location} ranks {rank} in Europe; residents demand a recount out of modesty"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "The municipal museums of {location} will open their doors without charge for the whole month, the council announced, as part of an effort to bring residents back to the town's collections.\n\nThe programme includes guided tours, evening openings and a special room devoted to objects recovered after the [Y2K Event]. The [Archive Foundation] has lent several documents from its own holdings.",
+            "A major exhibition opened in {location} this week, bringing together {hundreds} works from private and public collections across Europe. Critics have praised the curators for placing the paintings in the context of the years before and after the [Falklands War].\n\nThe show will run until the end of the season. Advance booking is recommended.",
+            "The decision by a celebrated public figure to make a home in {location} has been confirmed by the town hall. Officials welcomed the news and asked the press to respect the newcomer's privacy.\n\nLocal estate agents report a rise in enquiries since rumours began circulating. The [Truckers Society] has been engaged to move the household's belongings."
+          ],
+          "scandalous": [
+            "Hold the front page! A very famous face was spotted peeking through estate agents' windows in {location} this week, wearing dark glasses and a very big hat.\n\nOur photographer followed at a respectful distance. Well, fairly respectful. Neighbours are already fighting over who gets to say hello first, and one bakery has renamed its best cake in the star's honour. [Eris] would be jealous!",
+            "Outrage at the gallery! Visitors to a new exhibition in {location} were left speechless, and two were reportedly carried out on stretchers, after seeing a canvas painted entirely in genuine [Fantablack].\n\n\"It looked back at me!\" one shaken pensioner gasped. The artist calls it a statement. The council calls it a fire risk. We call it the talk of the town!",
+            "A giant mural appeared overnight on the side of the cathedral in {location}, and nobody knows who painted it. The [Holy Vatican Empire] has called it sacrilege; art students call it a masterpiece.\n\nPolice are investigating, but sources say the mural changes slightly every day. Is it a prank, a miracle, or a [Dargos] joke? Place your bets!"
+          ],
+          "skeptical": [
+            "{location} placed {rank} in this year's quality of life ranking. The survey behind it questioned {hundreds} residents, most of them reached during working hours by [Anoki phone].\n\nThat sample leaves out many people who work long shifts. The ranking may well be right, but it measures the opinions of those who were home to answer, which is a narrower thing.",
+            "The paintings on show in {location} are described as authentic works by leading artists. The catalogue gives the provenance of most of them as 'private collection', without names or dates.\n\nCurators say discretion is normal. Experts note that several similar works sold in recent years were later shown to be forgeries. The [Archive Foundation] has asked to see the ownership records.",
+            "Officials promised that the film shoot in {location} would bring visitors and spending to local businesses. The production company has not published any figures, and several shops on the closed streets report a quiet week.\n\nA real boost may come later, if the film is seen and the town recognised. That is a hope, and the [Hypercapitalist Collective], which financed the film, has kept its projections to itself."
+          ],
+          "playful": [
+            "The newest resident of {location} is famous across Europe, but you would never guess it at the bakery, where the newcomer queues, chats about the weather and always buys two buns.\n\nLocals have agreed, without discussing it, to act completely normal. This has made everyone behave very strangely. The [Truckers Society] drivers wave every time they pass.",
+            "A film crew has arrived in {location} and asked residents to go about their business naturally in the background. Results have been mixed. One man has walked past the camera {number} times with the same loaf of bread.\n\nThe director says the town has 'enormous charm'. The town says the director should try the cafe, and that a cameo for [Eris] would bring luck.",
+            "Somebody climbed the statue in the main square of {location} during the night and gave it a magnificent painted moustache. The council has promised to clean it.\n\nA petition to keep the moustache has already gathered {hundreds} signatures. The statue, for its part, looks happier than it has in years. Even the [Archive Foundation] photographed it."
+          ]
+        },
+        "banks": {
+          "celebrities": [
+            "film star",
+            "opera tenor",
+            "racing driver",
+            "black metal guitarist",
+            "Guild archmage",
+            "technomancy tycoon",
+            "minor royal",
+            "football striker",
+            "celebrity chef",
+            "retired cardinal",
+            "pop singer",
+            "chess grandmaster",
+            "legendary trucker"
+          ],
+          "art_movement": [
+            "brutalist",
+            "surrealist",
+            "dadaist",
+            "futurist",
+            "minimalist",
+            "expressionist",
+            "cubist",
+            "pointillist",
+            "loopist",
+            "liminalist",
+            "vorticist",
+            "primitivist"
+          ]
+        }
+      }
+    },
+    "surreal": {
+      "paranormal": {
+        "headlines": {
+          "serious": [
+            "{phenomenon} observed over {location}; Guild opens an inquiry",
+            "Archive Foundation registers {phenomenon} above {location}",
+            "Residents of {location} report reflections acting independently",
+            "Clocks in {location} run backwards for {number} minutes, observatory confirms",
+            "Ghost sightings at {location} castle logged by heritage office",
+            "Triangle of white light seen over {location}; radios fall silent"
+          ],
+          "scandalous": [
+            "SPOOKED! {phenomenon} terrifies {location} at midnight",
+            "Ghosts of {location} demand a pay rise, unions involved!",
+            "Dargos are BACK! Glowing triangle buzzes {location}",
+            "My reflection winked at me! {location} mirror madness",
+            "Is the Squishing coming for {location}? {phenomenon} sparks panic",
+            "Doppelganger scandal: two mayors show up at {location} meeting!"
+          ],
+          "skeptical": [
+            "{phenomenon} over {location}: one photograph, many interpretations",
+            "{location} ghost tours triple in price after a single sighting",
+            "Clocks running backwards in {location}? Check the batteries first",
+            "{location} 'Dargos visit' coincides with a fireworks licence",
+            "Haunted {location} hotel reports record bookings and no new evidence",
+            "Experts find ordinary weather behind {location}'s {phenomenon}"
+          ],
+          "playful": [
+            "{phenomenon} over {location}; locals bring deckchairs and popcorn",
+            "{location} ghosts ask visitors to keep the noise down after midnight",
+            "{location} statues whisper at night, mostly about the weather",
+            "Friday brings a second moon to {location}, lovers delighted",
+            "{location} residents' reflections stage a polite walkout",
+            "Dargos prank {location} again; cows found wearing tiny hats"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "Several hundred residents of {location} reported an unusual light in the sky shortly after nightfall. The event lasted around {number} minutes and was recorded by the regional observatory.\n\nThe [Mages Guild] has opened an inquiry and asked witnesses to submit photographs. Officials noted that phenomena of this kind have become more frequent since the [Squishing] began, and that no injuries were reported.",
+            "The [Archive Foundation] has added the recent events in {location} to its public register of anomalies, together with {hundreds} witness statements collected over three nights.\n\nInvestigators found no sign of danger to residents. They have asked drivers in the area to respect the [Rule of 80] strictly, since anomalies often appear near the edges of [time loop bubbles].",
+            "Engines stalled, headlights died and radios fell silent across {location} as a broad triangle of white light passed overhead. Witnesses reported a strong heat and scorched grass in a field outside the town.\n\nThe pattern matches previous sightings attributed to the [Dargos]. Their embassy, as usual, has declined to comment."
+          ],
+          "scandalous": [
+            "Terror in the night sky! Shaking residents of {location} told us they woke to a sight that froze their blood, and one swears she heard it singing her name.\n\nIs it the [Squishing] tearing the sky apart? Is it aliens? Is it [Eris] playing tricks? Experts shrug. Our readers are buying candles, garlic and every good-luck charm in the shops!",
+            "They're back, and they're laughing at us! A huge glowing triangle swooped over {location} last night, killing every car engine in town and leaving a field scorched in a perfect horseshoe.\n\nOld hands say it can only be the [Dargos], those three-metre pranksters from [Titania]. One farmer claims they repainted his barn. Officials say nothing. They never do!",
+            "Mirror madness! Dozens of people in {location} swear their reflections have started doing their own thing: yawning when they smile, waving when they don't, and in one case refusing to brush its hair.\n\nBarbers are in despair. A local priest has offered blessings. The [Mages Guild] says it is 'monitoring'. Monitoring! Meanwhile our reporter's reflection has gone on holiday."
+          ],
+          "skeptical": [
+            "The image circulating in {location} shows a bright shape against a dark sky. It was taken with a long exposure, a technique known to turn ordinary lights into extraordinary smears.\n\nNo second photograph exists. The observatory recorded nothing unusual on its instruments. The [Archive Foundation] has filed the report as 'unconfirmed', which seems the fairest description.",
+            "Tour operators in {location} have raised the price of their evening ghost walks after one visitor reported a cold breath on the castle stairs. The castle has no heating and a broken window on that landing.\n\nThat is no proof that the castle is unhaunted. It is a reason to ask questions before paying {amount} euros. Even the [Mages Guild] recommends a scarf.",
+            "Reports of a [Dargos] visit near {location} spread quickly. Records show that the same evening a licensed fireworks display took place two kilometres away, launched from a field that was later found scorched.\n\nThe Dargos do visit, and their pranks are well documented. Fireworks are better documented still, and considerably cheaper."
+          ],
+          "playful": [
+            "Something odd is floating over {location} again, and the town has responded in the only sensible way: with deckchairs, flasks of tea and an enthusiastic commentary from the man who runs the hardware store.\n\nChildren have named it. Dogs have barked at it. The [Archive Foundation] has photographed it from every angle and declared it 'very pretty, probably'.",
+            "The ghosts of the old castle at {location} have posted a notice asking tourists to keep their voices down after midnight, as some of them are trying to rest.\n\nThe heritage office has agreed to quiet hours. Visitors say the ghosts are polite, a little sad and very fond of gossip about the [Holy Vatican Empire], which they remember from before it had that name.",
+            "As it does every Friday now, a second moon rose over {location} last night, and couples all over town found an excuse to stroll by the river. Astronomers say the extra moon is a symptom of the [Squishing].\n\nLovers say it is twice as romantic. The local florist reports record sales, and nobody is complaining."
+          ]
+        },
+        "banks": {
+          "phenomenon": [
+            "aurora",
+            "floating island",
+            "purple rain",
+            "singing fog",
+            "gravity well",
+            "double sun",
+            "daytime eclipse",
+            "second moon",
+            "triangle of white light",
+            "rain of satellite debris",
+            "glowing leyline",
+            "upside-down rainbow",
+            "mirror sky"
+          ]
+        }
+      },
+      "bizarre": {
+        "headlines": {
+          "serious": [
+            "Every rooftop in {location} turned {color} overnight; cause unknown",
+            "{number} thousand rubber ducks found in {location} fountain",
+            "Shadows in {location} point north at all hours, observers confirm",
+            "Residents of {location} briefly forget the existence of Thursday",
+            "Pigeons in {location} observed trading goods among themselves",
+            "Lampposts in {location} begin humming classical music at dusk"
+          ],
+          "scandalous": [
+            "WHAT ON EARTH? {location} wakes up {color}!",
+            "Duck invasion! {hundreds} rubber ducks seize {location} fountain",
+            "Pigeon mafia rules {location}! Birds caught bartering stolen chips",
+            "Lost Thursday! {location} bosses refuse to pay for the missing day",
+            "Yodelling epidemic! {location} can't stop, won't stop",
+            "Cats of {location} walk backwards. Is Eris behind it?"
+          ],
+          "skeptical": [
+            "{location} buildings turned {color}, or a trick of the evening light?",
+            "Who counted the {location} rubber ducks, and how?",
+            "'Forgotten Thursday' in {location} matches a public holiday nobody announced",
+            "Pigeon economy in {location}: anecdotes abound, data is thin",
+            "{location} shadows pointing north: compasses and photographs disagree",
+            "Humming lampposts in {location} share a supplier with a music shop"
+          ],
+          "playful": [
+            "{location} is {color} today, and frankly it suits it",
+            "{location} fountain now home to {hundreds} rubber ducks; nobody minds",
+            "{location} pigeons open a market; best prices on breadcrumbs",
+            "{location} skips Thursday, goes straight to the weekend, regrets nothing",
+            "{location} lampposts hum Vivaldi; night owls request Verdi",
+            "Every cat in {location} walking backwards, and looking very pleased about it"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "Residents of {location} woke this morning to find that the town had changed overnight in a manner that municipal officials have so far been unable to explain. No one was injured and services are running normally.\n\nThe [Archive Foundation] has documented the event and taken samples. Investigators have suggested a link with the [Squishing], which has produced similar anomalies elsewhere in Europe.",
+            "The municipality of {location} has opened an inquiry into the unusual event reported over the weekend. Officials confirmed that {hundreds} residents had contacted the town hall.\n\nA team from the [Mages Guild] found no trace of a spell or a broken [leyline]. The council has asked residents to remain calm and to report any further changes.",
+            "Observers in {location} have confirmed an anomaly that began on Monday and continues today. The regional university has sent a small team to record measurements.\n\nSimilar events have been documented near expanding [time loop bubbles], although no bubble is currently marked within the town limits. Officials stressed that there is no cause for alarm."
+          ],
+          "scandalous": [
+            "Pinch yourself, {location}! The whole town woke up today looking like somebody spilled a giant paint pot over it, and nobody has owned up!\n\nOne furious landlord says his property value has 'gone through the floor'. Another says it has never looked better. Insiders point the finger at a bored apprentice of the [Mages Guild]. The Guild says it was a quiet night. Very convenient!",
+            "Feathered gangsters! The pigeons of {location} have set up their own market, and sources say they are trading stolen chips, shiny buttons and the occasional wedding ring.\n\nShopkeepers are furious. Tourists are fascinated. One pigeon was seen carrying a tiny [Anoki phone]. Who is running this racket? We have our suspicions, and they have beaks!",
+            "Thursday has vanished in {location}! Workers simply skipped from Wednesday night to Friday morning, and now the bosses are refusing to pay for the missing day.\n\nThe unions are livid. The mayor blames the [Squishing]. Several residents blame [Eris], who is famously fond of this sort of joke. Either way, somebody owes {location} a day's wages!"
+          ],
+          "skeptical": [
+            "Photographs of the strange colours of {location} were all taken at sunset, when the low light changes every surface. Pictures taken at noon show something much less dramatic.\n\nThat does not mean nothing happened. Several residents describe a real change they saw in daylight. A proper survey would settle it; so far nobody has commissioned one. The [Archive Foundation] has asked to.",
+            "The figure of {hundreds} rubber ducks reported in {location} was given by the first person to see them. Nobody has since counted them, and the fountain has been cleaned twice.\n\nThe ducks were certainly there. Where they came from, and how many there really were, remain open questions. A toy wholesaler two streets away has not answered our calls. Neither has [Eris].",
+            "Residents who 'forgot Thursday' in {location} have been widely quoted. Municipal records show that the day in question was declared a local holiday by a council notice that few people read.\n\nThat explains the empty offices. It does not explain why so many residents insist they cannot remember the day at all, which deserves a closer look, perhaps from the [Mages Guild]."
+          ],
+          "playful": [
+            "Well, {location} looks different today. Overnight, for reasons nobody can explain, the town changed colour, and after the first shock most residents have decided they rather like it.\n\nThe tourist office has printed new postcards. The [Archive Foundation] has written it down. A local poet has already composed three sonnets, and promises more.",
+            "The fountain in the main square of {location} is full of rubber ducks, and nobody knows how they got there. Children are delighted. Parents are delighted that the children are delighted.\n\nThe council has decided to leave them where they are for now. A sign has been put up asking visitors not to take any home. The [Truckers Society] has claimed one as a dashboard mascot.",
+            "The cats of {location} have started walking backwards, and they seem very proud of it. Vets say they are healthy, happy and as unbothered as cats usually are.\n\nSome owners have tried walking backwards too, out of solidarity. Results have been mixed and several flowerpots have been lost. The [Mages Guild] has declined to get involved, wisely."
+          ]
+        },
+        "banks": {
+          "colors": [
+            "pink",
+            "neon green",
+            "glittery",
+            "transparent",
+            "polka-dotted",
+            "tartan",
+            "Fantablack",
+            "mauve",
+            "striped",
+            "lemon yellow",
+            "iridescent",
+            "sky blue",
+            "upside down"
+          ]
+        }
+      },
+      "magical": {
+        "headlines": {
+          "serious": [
+            "Mages Guild opens a new chapter house in {location}",
+            "{location} library quarantines a grimoire after a misspelled spell spreads",
+            "Portal to a Scrap of Creation opens in {location} metro station",
+            "Fragment of the fallen Father lands near {location}; area cordoned off",
+            "{location} signs leyline contract with a Petrodemon envoy",
+            "Spell fusion vending machine installed in {location} station"
+          ],
+          "scandalous": [
+            "MAGIC MAYHEM! Wizards take over {location} for convention week",
+            "Curse lifted! {location} house prices go through the roof",
+            "Divine chunk falls on {location} allotment: gardener now glows",
+            "Spelling disaster! Apprentice says 'Fire Ball' in {location}, loses voice",
+            "Umbra Excidii raid on {location} witch shop: neighbours gasp",
+            "Pocket dimension in the {location} metro! Commuters vanish for tea"
+          ],
+          "skeptical": [
+            "{location} 'curse lifted' after a ritual with no published method",
+            "Vending machine spells in {location}: {hundreds} sold, {number} refunds requested",
+            "Is the {location} portal stable? The Guild will not say",
+            "{location} relic said to grant powers; tests find only stone",
+            "Petrodemon contract for {location}: who reads the small print?",
+            "{location} academy promises magic to anyone. Results vary widely"
+          ],
+          "playful": [
+            "{location} wizard convention ends; {hundreds} pointed hats left in lost property",
+            "Garden gnomes of {location} come alive, start weeding with enthusiasm",
+            "{location} schoolchildren win regional CamelCase spelling bee",
+            "Broomstick traffic jam over {location} as the market opens",
+            "{location} grimoire eats a cookbook; recipes now slightly enchanted",
+            "{location} cat learns to open doors with a spell, refuses to explain"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "The [Mages Guild] has inaugurated a chapter house in {location}, its first in the region. The building will offer instruction in ritual and sympathetic magic and provide wards for municipal buildings.\n\nThe council welcomed the investment. Observers note that the Guild's expansion comes as its conflict with the [Gods] deepens, and that the new house sits close to a strong [leyline].",
+            "The municipal library of {location} has sealed a section of its archive after a badly written spell began copying itself across neighbouring volumes. Staff noticed when a cookbook started reciting incantations.\n\nSpecialists in [CamelCase] magic are cataloguing the damage. Officials said the affected books would be burned if necessary, in accordance with established practice.",
+            "A fragment believed to come from the orbiting body of the Father aspect of [YHWH] has landed in fields outside {location}. Authorities have cordoned off the site and asked residents not to approach it.\n\nContact with such fragments is known to grant unpredictable powers. Teams from the [Holy Vatican Empire] and the [Mages Guild] are both seeking access to the site."
+          ],
+          "scandalous": [
+            "Abracadabra! Thousands of wizards have descended on {location} for convention week, and the town will never be the same. Hotel bars are full of pointy hats, flying carpets are blocking the high street and somebody turned the mayor's car into a pumpkin.\n\nThe mayor is not amused. The pumpkin, sources say, is doing fine. The [Mages Guild] promises to tidy up after itself. We'll see!",
+            "Blessed or cursed? A chunk of the fallen god landed on an allotment in {location}, right between the leeks and the potatoes, and the gardener who touched it now glows in the dark!\n\nHe says he feels marvellous and can hear his tomatoes thinking. The [Holy Vatican Empire] wants the chunk. The Guild wants the chunk. The gardener wants everybody off his leeks!",
+            "Black-robed agents of the [Umbra Excidii] stormed a little witch shop in {location} at dawn, carrying out boxes of candles, crystals and, our spies say, a very angry cat.\n\nThe owner insists she only sold herbal teas. Neighbours are shocked. Is anyone safe from the Vatican's spell hunters? We will be watching every raid!"
+          ],
+          "skeptical": [
+            "Officials in {location} say an ancient curse on the old quarter has been lifted by a ritual performed last week. The ritual's method has not been published and the person who performed it has not been named.\n\nProperty agents are already advertising 'curse-free' homes. Before buyers pay a premium, it would help to know what the curse was, and how its removal was measured. The [Archive Foundation] has asked.",
+            "A vending machine in {location} now dispenses permanent spell fusions for {amount} euros each. The manufacturer, linked to [Esoteric Heavy Industries], promises reliable results.\n\nCustomers we spoke to were divided. Some report spells that work as described; others report nothing at all, or an unexpected smell of oranges. The machine does not give refunds.",
+            "Pilgrims are travelling to {location} to touch a stone said to be a fragment of the fallen Father, believed to grant powers. A geologist who examined it found ordinary granite.\n\nThat does not rule out every possibility. Genuine fragments of [YHWH] do exist, and their effects are well recorded. This particular stone, however, has yet to produce a single verified miracle."
+          ],
+          "playful": [
+            "The great wizard convention in {location} is over, and the town is counting what was left behind: {hundreds} pointed hats, a crate of wands, three owls and one apprentice who slept through the closing ceremony.\n\nThe lost property office has never been busier. The [Mages Guild] has promised to collect everything by Friday, owls included.",
+            "The garden gnomes of {location} came to life on Tuesday and, rather than causing trouble, began tending the town's flowerbeds with remarkable dedication. The parks have never looked so tidy.\n\nThe gardeners' union has raised concerns. The gnomes have offered to share their tea. A solution involving a rota and plenty of biscuits is expected. The [Archive Foundation] has photographed the gnomes, who posed.",
+            "Pupils from {location} have won the regional [CamelCase] spelling bee, correctly running together every word of a fiendishly long incantation without a single gap.\n\nThe winning team celebrated with lemonade and a very small, very safe firework spell. Their teacher says she is proud, and slightly worried about what they will do next."
+          ]
+        },
+        "banks": {}
+      },
+      "mythological": {
+        "headlines": {
+          "serious": [
+            "Griffins nesting on {location} rooftops; wildlife office issues guidance",
+            "Labyrinth discovered beneath {location}, Minotaur reported cooperative",
+            "Council of dryads granted legal status over {location} woods",
+            "Flock of phoenixes over {location} prompts fire safety warning",
+            "Minor deity takes up residence in {location} temple ruins",
+            "Centaur family opens archery school outside {location}"
+          ],
+          "scandalous": [
+            "MONSTER ON THE ROOF! Griffin steals {location} butcher's best sausages",
+            "Bull-headed lodger! Minotaur rents flat under {location} high street",
+            "Sirens in the river! {location} husbands 'just going for a walk'",
+            "Phoenix sets {location} bakery ablaze, then rises from the ovens!",
+            "God moves in next door! {location} neighbours in a flap",
+            "Dragon spotted on {location} cathedral: Vatican fumes"
+          ],
+          "skeptical": [
+            "Griffin sightings in {location} rise; so do sales of griffin postcards",
+            "{location} Minotaur interview raises questions about the translator",
+            "Is the deity in {location} divine? Its believers number {number}",
+            "Phoenix insurance in {location}: premiums soar, claims stay at zero",
+            "Dryad council in {location} given powers no one has defined",
+            "{location} dragon turns out to be a large lizard on a small roof"
+          ],
+          "playful": [
+            "Griffins of {location} prove excellent at chasing pigeons, less so at manners",
+            "{location} Minotaur hosts open day, hands out maps and biscuits",
+            "Centaurs of {location} win the regional relay, by several lengths",
+            "Phoenix in {location} relights the town's birthday candles, every one",
+            "{location} dryads ask walkers to stop hugging the shy oaks",
+            "Kraken in {location} harbour returns lost sunglasses, wants nothing in return"
+          ]
+        },
+        "bodies": {
+          "serious": [
+            "Wildlife officers in {location} have confirmed that several pairs of griffins are nesting on the town's tallest buildings. Residents are advised not to approach the nests and to keep small pets indoors during the breeding season.\n\nSuch creatures have been seen more often since the [Squishing] began to draw fragments of other dimensions into our own. The [Archive Foundation] is maintaining a public register of sightings.",
+            "Engineers inspecting old foundations beneath {location} have found an extensive labyrinth, occupied by a Minotaur who greeted them politely and asked for news of the outside world.\n\nThe municipal authorities are negotiating the terms of his residence. Specialists believe the labyrinth may have fallen from one of the [Scraps of Creation]. Public access is not planned for now.",
+            "A minor deity of uncertain origin has settled among the temple ruins outside {location}. Its existence, like that of all the [Gods], depends on the number of people willing to believe in it, currently estimated at {number}.\n\nThe [Mages Guild] has asked to observe the site. The deity has not responded, and local farmers report unusually good weather."
+          ],
+          "scandalous": [
+            "Sausage thief with wings! A huge griffin swooped down on a butcher's shop in {location} and flew off with a whole string of prize sausages, leaving the poor butcher shaking his fist at the sky.\n\n\"I've been robbed by a monster!\" he roared. Locals are furious, tourists are thrilled and our photographer got the shot of the year. The [Archive Foundation] wants a copy. They'll have to buy the paper like everyone else!",
+            "Lock up your husbands! A trio of sirens has taken up residence on the river at {location}, and an alarming number of local men have discovered a sudden passion for evening walks along the bank.\n\nWives are not amused. The sirens insist they only sing on Fridays. The council is considering earplugs. [Eris], sources say, is laughing her head off.",
+            "Holy smoke! A dragon has been spotted curled around the spire of the cathedral in {location}, and the [Holy Vatican Empire] is spitting fire of its own.\n\nThe bishop calls it a sign of the end times. The dragon appears to be asleep. Tourists are flocking in, and the cafe opposite has tripled the price of coffee. Disgraceful, but understandable!"
+          ],
+          "skeptical": [
+            "Reports of griffins in {location} have doubled in a month. Over the same period the town's souvenir shops have tripled their stock of griffin postcards, mugs and plush toys.\n\nGriffins certainly exist in parts of Europe since the [Squishing]. Whether every large bird over {location} is one is another matter. Wildlife officers have confirmed only a handful of nests.",
+            "The interview with the Minotaur of {location}, published widely this week, was conducted through a translator who has since offered to arrange further meetings for a fee of {amount} euros.\n\nThe creature itself appears genuine. Its remarks about local politics, however, sound remarkably like those of the translator. The [Archive Foundation] has requested the original recording.",
+            "Insurers in {location} have raised fire premiums sharply since phoenixes were seen over the town. No claim for phoenix damage has yet been filed.\n\nPhoenixes are known to burst into flame at the end of their lives, and the risk is real. But the size of the increase suggests that some companies, including one linked to the [Hypercapitalist Collective], have found a convenient reason to charge more."
+          ],
+          "playful": [
+            "The griffins of {location} have settled in well. They keep the pigeons in order, sunbathe on the church roof and sometimes swoop down to inspect the market, where the fishmonger has learned to keep a spare herring handy.\n\nResidents say the town has never felt safer, or louder at dawn. The [Archive Foundation] has photographed them all.",
+            "The Minotaur who lives beneath {location} held his first open day on Sunday, welcoming {hundreds} visitors with hand-drawn maps of the labyrinth and a tray of homemade biscuits.\n\nOnly two visitors got lost, and both were found by teatime. The Minotaur says he enjoys the company and hopes to start a book club. He is very fond of the [Mages Guild] histories.",
+            "A family of centaurs living outside {location} entered the regional relay race this year and won by a margin that the organisers described as 'frankly unfair'. The trophy has been placed in the centaurs' stable, next to the hay.\n\nThe other teams have asked for a separate category next year. The centaurs have agreed, and offered free riding lessons. The [Truckers Society] wants to race them."
+          ]
+        },
+        "banks": {}
+      }
+    }
   }
 }

@@ -29,16 +29,16 @@
       "one": "1 letter still in transit",
       "other": "{count} letters still in transit"
     },
-    "noWorld": "There is no world to post from. Make one first, and the post will follow."
+    "noWorld": "No world to post from. Create one first."
   },
   "inbox": {
-    "empty": "Nothing has been addressed to this party yet.",
+    "empty": "No mail yet.",
     "pickOne": "Pick a letter to read it.",
     "fromLine": "From {who}, of {world}",
     "fromSelf": "From your own hand",
-    "crossed": "· crossed over",
-    "crossedFrom": "Carried out of {world}, at a postage of {fee}.",
-    "heldBack": "Held back {span} before it was delivered.",
+    "crossed": "· from another world",
+    "crossedFrom": "Sent from {world}. Postage: {fee}.",
+    "heldBack": "Delayed {span} before delivery.",
     "written": "Written {date}",
     "arrived": "Delivered {date}",
     "mark": {
@@ -47,7 +47,7 @@
     },
     "enclosed": "Enclosed",
     "moneyLine": "Money",
-    "nothingEnclosed": "Nothing was enclosed; it is only a letter.",
+    "nothingEnclosed": "Nothing enclosed.",
     "collect": "Empty the envelope",
     "collectedAlready": "The envelope has already been emptied.",
     "discard": "Burn the letter"
@@ -56,7 +56,7 @@
     "recipient": "Addressed to",
     "noRecipient": "nobody yet",
     "addressLine": "{who} - {world}",
-    "yourself": "{leader}, that is to say yourself",
+    "yourself": "{leader} (you)",
     "subject": "Subject",
     "body": "Letter",
     "blankField": "-",
@@ -73,12 +73,12 @@
     "delayDays": "Held back, days",
     "delayMonths": "Held back, months",
     "delayYears": "Held back, years",
-    "send": "Seal it and send it",
+    "send": "Seal and send",
     "confirm": "Press again to send it",
     "thisWorld": "{world} - this world",
     "otherWorld": "{world} - another world",
-    "noAddresses": "No party has left an address anywhere yet.",
-    "nothingToSend": "There is nothing in the bags that can be posted.",
+    "noAddresses": "No addresses known yet.",
+    "nothingToSend": "Nothing in the bags can be posted.",
     "noGoods": "no goods",
     "held": {
       "one": "1 in the bags",
@@ -92,21 +92,21 @@
     "feeShort": "postage {fee}",
     "toLine": "To {who}",
     "toNobody": "To nobody yet",
-    "routeHome": "Carried across {world} by an ordinary courier.",
-    "routeAcross": "Crossing into {world}, {steps} dimensions away.",
+    "routeHome": "Sent across {world} by courier.",
+    "routeAcross": "To {world}, {steps} dimensions away.",
     "arrives": "Arrives {date} ({span})",
     "enclosedLine": "In the envelope: {money} and {goods}.",
-    "enclosedNothing": "Nothing is in the envelope but the letter.",
-    "postageFree": "Postage: nothing. A letter inside one world travels free.",
-    "postageLine": "Postage: {fee}. With what is enclosed, {total} leaves the purse.",
-    "cannotAfford": "The purse is {short} short of what this would cost.",
+    "enclosedNothing": "Only the letter.",
+    "postageFree": "Postage: free within one world.",
+    "postageLine": "Postage: {fee}. Total: {total}.",
+    "cannotAfford": "You are {short} short.",
     "subjectPlaceholder": "What is it about?",
     "bodyPlaceholder": "Type the message."
   },
   "toast": {
     "sent": "Sealed and sent.",
-    "sentAcross": "Sealed and sent across; {fee} of postage paid.",
-    "collected": "Out of the envelope: {money} and {goods}.",
+    "sentAcross": "Sent. Postage paid: {fee}.",
+    "collected": "Taken: {money} and {goods}.",
     "goods": {
       "one": "1 lot of goods",
       "other": "{count} lots of goods"
@@ -118,19 +118,19 @@
     }
   },
   "error": {
-    "noWorld": "There is no world to post from.",
-    "noParty": "There is no party here to sign the letter.",
-    "noRecipient": "Nobody has been addressed.",
-    "goneAway": "That party has left no address any more.",
-    "shortStock": "The bags no longer hold enough {item}.",
-    "tooPoor": "That would cost {total}, and the purse cannot cover it.",
-    "blank": "An empty letter with nothing in it is not worth a stamp.",
-    "notPosted": "The letter could not be put into that world's mailbox.",
+    "noWorld": "No world to post from.",
+    "noParty": "No party here to sign the letter.",
+    "noRecipient": "No recipient chosen.",
+    "goneAway": "That party has no address any more.",
+    "shortStock": "Not enough {item} in the bags.",
+    "tooPoor": "Costs {total}. Not enough money.",
+    "blank": "The letter is empty.",
+    "notPosted": "Couldn't post to that world.",
     "gone": "That letter is no longer in the mailbox.",
     "alreadyTaken": "The envelope has already been emptied.",
-    "notYet": "That letter has not been delivered yet.",
-    "emptyEnvelope": "There is nothing in the envelope to take out.",
-    "stillFull": "Empty the envelope before burning the letter."
+    "notYet": "Not delivered yet.",
+    "emptyEnvelope": "The envelope is empty.",
+    "stillFull": "Empty the envelope first."
   },
   "app": {
     "appName": "Post Express",
@@ -147,17 +147,17 @@
       "discard": "Burn",
       "sync": "Send and receive"
     },
-    "synced": "The address book has been read again.",
+    "synced": "Address book refreshed.",
     "account": "{party} - {world}",
     "counts": "{unread} unread, {transit} in transit",
-    "nothingInTransit": "Nothing is on its way to this party.",
+    "nothingInTransit": "No mail on the way.",
     "arrivesOn": "Arrives {date}",
     "replyTo": "Write back",
     "reSubject": "Re: {subject}",
     "purse": "In the purse: {money}",
-    "holdBack": "Held back before delivery",
-    "clear": "Tear the sheet up",
-    "bookBlurb": "Every party with a registered address, in this world and in others. Postage is charged per dimension crossed.",
+    "holdBack": "Delay before delivery",
+    "clear": "Discard",
+    "bookBlurb": "Parties with a registered address, in any world. Postage is per dimension crossed.",
     "colParty": "Party",
     "colMembers": "Members",
     "colSeen": "Last seen",
@@ -166,7 +166,7 @@
   "nudge": {
     "appName": "Nudge",
     "signedIn": "Signed in as {who}",
-    "signedOut": "Nobody is signed in.",
+    "signedOut": "Not signed in.",
     "groupFavourites": "Favourites",
     "groupParty": "Walking with you",
     "groupWorld": "Elsewhere in this world",
@@ -194,7 +194,7 @@
     "lore": {
       "eris": {
         "name": "Eris",
-        "bio": "Eris, the goddess of discord, keeping a human shape and a human sized life. She bends probability rather than breaking it, and she ruins Em's life out of jealousy over Bubba, who loves her back and cannot have her. Her own future self killed Maat in 2012 and dragged her onto the path to the throne, which she resents and cannot get off. She is charming, glib, allergic to a straight answer about herself, and she will change the subject the moment any of the above gets close."
+        "bio": "Eris, the goddess of discord, keeping a human shape and a human sized life. She bends probability without breaking it, and she ruins Em's life out of jealousy over Bubba, who loves her back and cannot have her. Her own future self killed Maat in 2012 and dragged her onto the path to the throne, which she resents and cannot get off. She is charming, glib, allergic to a straight answer about herself, and she will change the subject the moment any of the above gets close."
       },
       "bubba": {
         "name": "Bubba",
