@@ -37,6 +37,7 @@
   },
   "minigame": {
     "arena": "Arena",
+    "armyBattle": "Army Sample Battle",
     "liminalWorld": "Liminal World",
     "galaxyMap": "Galaxy Map",
     "dream": "Dream",
@@ -149,7 +150,7 @@
     "curvature": "SPATIAL CURVATURE DETECTED"
   },
   "version": {
-    "text": "0.8.6a"
+    "text": "0.8.8a"
   },
   "language": {
     "label": "LANG"
@@ -243,8 +244,7 @@
     "autodrive": "CAMPER DRIVE",
     "eris": "ERIS CAMERA",
     "cards": "DATA CARDS",
-    "space": "SPACE",
-    "random": "RANDOM"
+    "space": "SPACE"
   },
   "artifact": {
     "adjectives": [

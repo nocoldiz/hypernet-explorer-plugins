@@ -126,6 +126,11 @@
  * @text Play Game
  * @desc Play a random arcade game seeded from registered ones and event coordinates on map
  *
+ * @arg gameId
+ * @text Game ID
+ * @type string
+ * @desc Specific arcade cart ID to play. If omitted, picks by event coordinates.
+ *
  * @arg freePlay
  * @text Free Play
  * @type boolean
@@ -1227,13 +1232,14 @@
     // Where the cabinet stands: the calling event if there is one, otherwise the
     // player's tile (common events, parallel processes, debug calls).
     function commandOrigin(interpreter) {
-        const mapId = $gameMap ? $gameMap.mapId() : 0;
+        const hasMap = typeof $gameMap !== 'undefined' && $gameMap;
+        const mapId = hasMap ? $gameMap.mapId() : 0;
         const eventId = interpreter && interpreter.eventId ? interpreter.eventId() : 0;
-        const event = eventId && $gameMap ? $gameMap.event(eventId) : null;
+        const event = eventId && hasMap ? $gameMap.event(eventId) : null;
         if (event) {
             return { mapId: mapId, x: event.x, y: event.y };
         }
-        if ($gamePlayer) {
+        if (typeof $gamePlayer !== 'undefined' && $gamePlayer) {
             return { mapId: mapId, x: $gamePlayer.x, y: $gamePlayer.y };
         }
         return { mapId: mapId, x: 0, y: 0 };
@@ -1241,8 +1247,12 @@
 
     PluginManager.registerCommand(pluginName, 'playGame', function(args) {
         const freePlay = args && (args.freePlay === 'true' || args.freePlay === true);
-        const origin = commandOrigin(this);
-        const gameId = ArcadeManager.pickGameForEvent(origin.mapId, origin.x, origin.y);
+        const requestedId = args && args.gameId ? String(args.gameId) : null;
+        let gameId = (requestedId && ArcadeManager._games[requestedId]) ? requestedId : null;
+        if (!gameId) {
+            const origin = commandOrigin(this);
+            gameId = ArcadeManager.pickGameForEvent(origin.mapId, origin.x, origin.y);
+        }
 
         if (!gameId) {
             console.warn('No arcade games are registered.');

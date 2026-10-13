@@ -27,6 +27,11 @@
    "melee": "Needs melee",
    "ranged": "Needs ranged",
    "unarmed": "2 free hands"
+  },
+  "kind": {
+   "melee": "Melee",
+   "ranged": "Ranged",
+   "unarmed": "Hand to hand"
   }
  },
  "ammo": {
@@ -125,6 +130,7 @@
    "damage": "Damage",
    "damageCategory": "Damage Class",
    "statReq": "Requires",
+   "weaponReq": "Weapon",
    "grantedBy": "Granted by",
    "range": "Range"
   },

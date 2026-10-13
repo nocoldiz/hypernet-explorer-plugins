@@ -1,6 +1,6 @@
 {
   "zoom": "ZOOM: {pct}%",
-  "controls": "ZOOM: WHEEL | PAN: DRAG/ARROWS | Q/W/E: ABILITIES | TAB: HIDE/SHOW SIDEBAR",
+  "controls": "ZOOM: WHEEL | PAN: DRAG/ARROWS | Q/W/E: ABILITIES | ENTER: NEXT SQUAD | 1-4: ORDERS | TAB: HIDE/SHOW SIDEBAR",
   "playerArmy": "PLAYER ARMY: {count}",
   "enemyArmy": "BAD 'UN ARMY: {count}",
   "rallyBanner": "RALLY! +20 MORALE ({count} TROOPS RALLIED)",
@@ -17,5 +17,19 @@
     "attack": "WHACK",
     "defend": "DUCK",
     "retreat": "RETREAT"
+  },
+  "sidebarTitle": "TACTICAL",
+  "yourForces": "YA FORCES",
+  "enemyForces": "BAD 'UN FORCES",
+  "victory": "VICTORY!",
+  "defeat": "DEFEAT!",
+  "charge": "CHARGE!",
+  "crit": "CRIT!",
+  "selected": "SELECTED:\n{squad}",
+  "order": {
+    "hold": "{squad} HOLDS POSITION",
+    "attack": "{squad} GOES ON DA ATTACK",
+    "defend": "{squad} DEFENDS: +20% DEF",
+    "retreat": "{squad} FALLS BACK"
   }
 }

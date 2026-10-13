@@ -714,6 +714,10 @@
         } else if (window.selectRandomSpriteForActor && actor && !actor.characterName()) {
           window.selectRandomSpriteForActor(actor.actorId());
         }
+        if (actor) {
+          actor.recoverAll();
+          if (typeof actor.maxTp === "function") actor.setTp(actor.maxTp());
+        }
       });
       if (!$gameSystem._ccOriginSymbol) {
         $gameSystem._ccOriginSymbol = "origin_train";

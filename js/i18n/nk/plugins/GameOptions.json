@@ -100,7 +100,7 @@
   ],
   "battleMode": {
     "turn": "TURN BATTLE",
-    "strategic": "STRATEGIC BATTLE"
+    "strategic": "STRATEGIC BATTLE (WIP)"
   },
   "enemyBattler": [
     "3D",

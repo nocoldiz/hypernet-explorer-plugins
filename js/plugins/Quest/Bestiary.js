@@ -1811,7 +1811,9 @@
 
         const _Scene_CDCollection_update = Scene_CDCollection.prototype.update;
         Scene_CDCollection.prototype.update = function () {
-            if (window.AsciiMode.active !== 0) {
+            // The ASCII list is set up in start(): a mode switched on with the
+            // codex already open keeps the normal page until it is reopened.
+            if (window.AsciiMode.active !== 0 && this._asciiMonsters) {
                 this.updateAsciiBestiaryInput();
                 this.renderAsciiBestiary();
                 Scene_Base.prototype.update.call(this);

@@ -1344,9 +1344,18 @@
             // so an app that builds its frame a tick late still keeps its pid.
             this.startedAt = Date.now();
         }
+        // A program whose update throws is logged once and left out of the
+        // tick, as updateHostedApps does: an error here would otherwise end
+        // the game, since the desktop's error shield only covers handlers.
         tick() {
+            if (this._tickBroken) return;
             if (this.status === 'RUNNING' && this.executable && typeof this.executable.update === 'function') {
-                this.executable.update();
+                try {
+                    this.executable.update();
+                } catch (e) {
+                    this._tickBroken = true;
+                    console.error('HypernetOS: process ' + this.name + ' stopped updating.', e);
+                }
             }
         }
     }
@@ -2408,13 +2417,20 @@
 
         // Auto launch if requested from prepareNextScene
         if (this._autoLaunchApp) {
-            setTimeout(() => {
+            this._autoLaunchTimer = setTimeout(() => {
+                this._autoLaunchTimer = null;
+                // The desktop may already be gone: the player left within the delay.
+                if (SceneManager._scene !== this || !document.getElementById('hypernet-os-desktop')) return;
                 const appId = (this._autoLaunchApp === 'browser') ? 'app-hypernet-browser' : 
                               (this._autoLaunchApp === 'shop') ? 'app-hypernet-shop' : this._autoLaunchApp;
                 
                 const app = window.HypernetOS._apps[appId];
                 if (app && typeof app.launchFn === 'function') {
-                    app.launchFn(this._autoLaunchParams);
+                    try {
+                        app.launchFn(this._autoLaunchParams);
+                    } catch (e) {
+                        console.error('HypernetOS: auto launch of ' + appId + ' failed.', e);
+                    }
                 } else {
                     window.HypernetOS.launchApp(appId);
                 }
@@ -3079,6 +3095,11 @@
 
     Scene_HypernetOS.prototype.terminate = function() {
         Scene_MenuBase.prototype.terminate.call(this);
+
+        if (this._autoLaunchTimer) {
+            clearTimeout(this._autoLaunchTimer);
+            this._autoLaunchTimer = null;
+        }
 
         if (this._clockInterval) {
             clearInterval(this._clockInterval);

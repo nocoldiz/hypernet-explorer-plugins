@@ -1091,10 +1091,6 @@
     "lore_camelcase_magic": {
       "title": "Lore: CamelCase Magic",
       "description": "Every spell cast since the Squishing must be written and spoken in CamelCase: words run together, a capital opening each. FireBall works. 'Fire ball' does not, and saying it costs the caster. Two words is the working shape of a spell; three or more is reserved for the few that are powerful enough to earn the extra breath.\n\nMulti-word formulas are a different tier: transcendentals, powerful enough to reshape reality on command, and the province of gods. A mortal who breaks a spell into separate words has the universe read it as an attempted transcendental and bill them for it, from the loss of their voice upward.\n\nGrimoires make the rule visible. A spell written wrong infects the words beside it with copies of itself, and a book left unburned will eat whatever is next to it.\n\nActive spells are chosen while the caster sleeps, each with its own cap on daily uses. Two in one slot fuse into a temporary spell for as long as it holds. Permanent versions of proven combinations can be bought from vending machines, or earned by ritual."
-    },
-    "lore_alagadda,_city_of_masks": {
-      "title": "Lore: Alagadda, City of Masks",
-      "description": "[Archive Foundation dossier, incomplete]\n\nAlagadda appears on no map the Guild or the Foundation has managed to fix in place, and every field team sent looking has come back with a different account of how they got in, if they came back.\n\nWhat survives every retelling is the rule the city enforces without exception: every visitor wears a mask, and it does not come off.\n\nRemove it, for any reason, for any length of time, and the city stops counting you as a person. The condition is filed as Unperson: invisible, untouchable, unable to leave, drifting through streets that no longer register you.\n\nTotal Disclosure or not, this is all the Foundation will put its name to. Mask on, mask secured, mask never removed."
     }
   }
 }

@@ -76,7 +76,7 @@
   },
   "text": {
     "tuitionFor": "TRAINEE",
-    "tuitionRequires": "REQUIRES {stat} {points}.",
+    "tuitionRequires": "REQUIRES {req}.",
     "learnerKnows": "ALREADY KNOWS IT",
     "learnerStat": "{stat} {value} / {points} BASE",
     "welcomeHeadline": "WELCOME TA STOCKBUSTERS",

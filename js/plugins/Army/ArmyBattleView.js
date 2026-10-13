@@ -52,6 +52,10 @@
  * @text Start Battle
  * @desc Starts a field battle against the AI army (auto-detects event from player interaction).
  *
+ * @command startSkirmish
+ * @text Start Skirmish
+ * @desc Minigame: the party's company against a random army of about the same size. No real casualties.
+ *
  * @help
  * Army Battle View System
  *
@@ -78,6 +82,11 @@
  * - Cancel: Leave the field
  *
  * Plugin Command:
+ *   ArmyBattleView startSkirmish
+ *     - The skirmish minigame: the party and its fighting troops take the
+ *       field against a random independent army within 10% of their size.
+ *       Units fall on the field, but nothing is written back to the roster.
+ *
  *   ArmyBattleView startBattle
  *     - Initiates battle against the AI army that triggered the event
  *     - Automatically detects the event ID from player interaction
@@ -114,8 +123,57 @@ ArmyBattleView.textStyle = function (size, fill, stroke) {
 ArmyBattleView.INSPIRE_FRAMES = 600;
 
 //=============================================================================
+// Skirmish minigame
+//=============================================================================
+//
+// The party's company against a random independent column of about the same
+// size. The field fights for real, units fall and the battle is decided, but
+// as in the drill every fighter is a copy: nothing is written back.
+
+// Who the party would put on the field: its members and every troop but the
+// scientists, who stay in the workshop.
+ArmyBattleView.skirmishStrength = function () {
+  const members = (typeof $gameParty !== "undefined" && $gameParty) ? $gameParty.members().length : 0;
+  const troops = (typeof $gameArmy !== "undefined" && $gameArmy)
+    ? $gameArmy.getTroops().filter(t => !/scientist/i.test(String(t.role || ""))).length  // i18n-ignore  troop db id
+    : 0;
+  return members + troops;
+};
+
+// A head count within 10% of `n` either way (at least one either way), never
+// below one.
+ArmyBattleView.matchedSize = function (n, rnd) {
+  const r = rnd || Math.random;
+  const spread = Math.max(1, Math.round(n * 0.1));
+  return Math.max(1, n + Math.floor(r() * (2 * spread + 1)) - spread);
+};
+
+ArmyBattleView.startSkirmish = function () {
+  const strength = ArmyBattleView.skirmishStrength();
+  if (strength < 1 || typeof Game_AIArmy === "undefined" || typeof Scene_ArmyBattle === "undefined") {
+    SoundManager.playBuzzer();
+    return false;
+  }
+  const army = new Game_AIArmy(null);
+  army.generateMatchedArmy(ArmyBattleView.matchedSize(strength));
+  if (army.getTroopCount() === 0) {
+    SoundManager.playBuzzer();
+    return false;
+  }
+  Scene_ArmyBattle.clearBattleTemp();
+  $gameTemp._armySkirmishBattle = true;
+  $gameTemp._battleEnemyArmy = army;
+  SceneManager.push(Scene_ArmyBattle);
+  return true;
+};
+
+//=============================================================================
 // Plugin Commands
 //=============================================================================
+
+PluginManager.registerCommand("ArmyBattleView", "startSkirmish", () => {
+  ArmyBattleView.startSkirmish();
+});
 
 PluginManager.registerCommand("ArmyBattleView", "startBattle", args => {
   // Auto-detect event ID from the current interpreter
@@ -237,6 +295,7 @@ Scene_ArmyBattle.clearBattleTemp = function () {
   $gameTemp._battleAllyArmy = null;
   $gameTemp._battleArmyEventId = null;
   $gameTemp._armyPracticeBattle = false;
+  $gameTemp._armySkirmishBattle = false;
   $gameTemp._battleCampaignSides = null;
   $gameTemp._battleCampaignTarget = null;
 };
@@ -248,6 +307,18 @@ Scene_ArmyBattle.prototype.endBattle = function () {
 };
 
 Scene_ArmyBattle.prototype.finishBattle = function () {
+  // A skirmish is a game: its result is announced and nothing else moves.
+  if ($gameTemp._armySkirmishBattle) {
+    const won = this._battleResult === "victory";
+    if (window.ParchmentToast && this._battleResult) {
+      window.ParchmentToast.show(T(won ? 'ArmyBattle.skirmishWon' : 'ArmyBattle.skirmishLost'),
+        { severity: won ? "good" : "warning" });
+    }
+    Scene_ArmyBattle.clearBattleTemp();
+    this.safePop();
+    return;
+  }
+
   if (this._battleResult === "victory") {
     // Player won - remove enemy army from map
     const eventId = $gameTemp._battleArmyEventId;
@@ -325,6 +396,9 @@ ArmyBattleField.prototype.initialize = function () {
   // A practice muster: the company splits in two and drills against itself.
   // Nobody dies, nobody is injured and no army data is written back.
   this._practice = !!$gameTemp._armyPracticeBattle;
+  // A skirmish minigame: a real fight against a matched random army, with
+  // the party's losses left on the field.
+  this._skirmish = !this._practice && !!$gameTemp._armySkirmishBattle;
 
   // Calculate battlefield size based on troop counts
   this._calculateBattlefieldSize();
@@ -659,7 +733,9 @@ ArmyBattleField.prototype._setupPlayerArmy = function () {
     id: "actor_" + actor.actorId(),  // i18n-ignore  internal id
     name: actor.name(), hp: actor.mhp, currentHp: actor.hp, mp: actor.mmp,
     atk: actor.atk, def: actor.def, mat: actor.mat, mdf: actor.mdf, agi: actor.agi, luk: actor.luk,
-    role: "close quarters", formation: "Line", isLeader: true  // i18n-ignore  troop db ids
+    role: "close quarters", formation: "Line", isLeader: true,  // i18n-ignore  troop db ids
+    spritename: (typeof actor.characterName === "function") ? actor.characterName() : (actor.characterName || ""),
+    spriteindex: (typeof actor.characterIndex === "function") ? actor.characterIndex() : (actor.characterIndex || 0)
   }));
   // Scientist-role troops stay behind working the tech tree (see
   // ArmyManager.js produceDailyMaterials); they never take the field.
@@ -848,11 +924,27 @@ ArmyBattleField.prototype._applyTacticalFormation = function (troops, centerX, c
   });
 };
 
-// Takes a unit off the field (dead, injured or routed off an edge). The
-// squad's name label passes to the next of its people still standing.
-ArmyBattleField.prototype._removeUnit = function (unit) {
+// Takes a unit off the active fight (dead, injured/KO, or routed off an edge).
+// When a troop dies or is KO'd, it is drawn horizontally like downed party members.
+// When routed off an edge, the sprite leaves the field.
+// The squad's name label passes to the next of its people still standing.
+ArmyBattleField.prototype._removeUnit = function (unit, routed) {
   unit.isAlive = false;
-  unit.sprite.visible = false;
+  unit.velocityX = 0;
+  unit.velocityY = 0;
+  if (unit.sprite) {
+    if (routed) {
+      unit.sprite.visible = false;
+    } else if (unit.sprite.setDowned) {
+      unit.sprite.setDowned();
+    } else {
+      unit.sprite.rotation = Math.PI / 2;
+      if (unit.sprite.anchor) {
+        if (typeof unit.sprite.anchor.set === "function") unit.sprite.anchor.set(0.5, 0.5);
+        else { unit.sprite.anchor.x = 0.5; unit.sprite.anchor.y = 0.5; }
+      }
+    }
+  }
   if (!unit.isSquadLabelHolder) return;
   unit.isSquadLabelHolder = false;
   const heir = (unit.squadUnits || []).find(u => u.isAlive);
@@ -894,13 +986,16 @@ ArmyUnitSprite.FALLBACK = {
   melee: "Skab/!$FootSoldier"  // i18n-ignore  asset path
 };
 
-ArmyUnitSprite.prototype.initialize = function (troop, role, color) {
+ArmyUnitSprite.prototype.initialize = function (troop, role, color, isPlayer) {
   Sprite.prototype.initialize.call(this);
   this._sheetIndex = Number(troop.spriteindex || 0);
   this._pattern = 1;
-  this._direction = 2;
+  this._direction = isPlayer ? 8 : 2;
   this._animCount = 0;
   this._frameReady = false;
+  this._isDowned = false;
+  this._lungeTimer = 0;
+  this._lungeAngle = 0;
   this.anchor.set(0.5, 1);
 
   const sheet = ArmyUnitSprite.resolveSheet(troop, role);
@@ -910,9 +1005,10 @@ ArmyUnitSprite.prototype.initialize = function (troop, role, color) {
   // The team ring under the feet: which side a unit is on has to stay readable
   // once every troop wears its own colours.
   const ring = new PIXI.Graphics();
-  ring.lineStyle(1, color, 0.9);
-  ring.drawEllipse(0, 0, 6, 2.5);
-  this.addChild(ring);
+  if (ring.lineStyle) ring.lineStyle(1, color, 0.9);
+  if (ring.drawEllipse) ring.drawEllipse(0, 0, 6, 2.5);
+  if (this.addChild) this.addChild(ring);
+  this._ring = ring;
 };
 
 // Every sheet under img/characters/Skab is a single-character `!$` sheet, so a
@@ -929,9 +1025,48 @@ ArmyUnitSprite.normalizeSheet = function (name) {
   return dir + "!$" + file;  // i18n-ignore  asset path
 };
 
+// Looks up a defined combat troop sprite from NPCs.json (window.WorldGen.NPCs)
+// by matching role, class, and military/fighter archetypes.
+ArmyUnitSprite.findNpcSprite = function (troop, role, npcs) {
+  if (!npcs || typeof npcs !== "object") return null;
+  const r = String((troop && troop.role) || role || "").toLowerCase();
+  const n = String((troop && troop.name) || "").toLowerCase();
+  const keys = Object.keys(npcs);
+  const candidates = keys.filter(k => {
+    const e = npcs[k];
+    return e && !e.beta && !e.animations && !e.vehicle;
+  });
+  if (candidates.length === 0) return null;
+  if (r.includes("ranged") || n.includes("archer") || n.includes("sniper") || n.includes("hunter")) {
+    return candidates.find(k => /archer|sniper|hunter|ranger/i.test(k)) || ArmyUnitSprite.FALLBACK.ranged;
+  }
+  if (r.includes("support") || n.includes("medic") || n.includes("doctor") || n.includes("healer") || n.includes("mage")) {
+    return candidates.find(k => /medic|doctor|paramedic|healer/i.test(k)) || ArmyUnitSprite.FALLBACK.support;
+  }
+  return candidates.find(k => /soldier|guard|knight|warrior|infantry/i.test(k)) || ArmyUnitSprite.FALLBACK.melee;
+};
+
 ArmyUnitSprite.resolveSheet = function (troop, role) {
-  const named = troop && troop.spritename;
-  if (named) return ArmyUnitSprite.normalizeSheet(named);
+  let named = troop && troop.spritename;
+  const npcs = (typeof window !== "undefined" && window.WorldGen && window.WorldGen.NPCs) || null;
+  if (named) {
+    if (npcs) {
+      if (npcs[named]) return named;
+      const norm = ArmyUnitSprite.normalizeSheet(named);
+      if (npcs[norm]) return norm;
+      const file = named.split("/").pop();
+      const match = Object.keys(npcs).find(k => k.endsWith("/" + file) || k === file);
+      if (match) return match;
+    }
+    return ArmyUnitSprite.normalizeSheet(named);
+  }
+  if (npcs) {
+    const defined = ArmyUnitSprite.findNpcSprite(troop, role, npcs);
+    if (defined) {
+      named = defined;
+      return ArmyUnitSprite.normalizeSheet(named);
+    }
+  }
   const r = String(role || "");  // i18n-ignore  troop db id
   if (r.includes("ranged")) return ArmyUnitSprite.FALLBACK.ranged;  // i18n-ignore  troop db id
   if (r.includes("support")) return ArmyUnitSprite.FALLBACK.support;  // i18n-ignore  troop db id
@@ -970,6 +1105,7 @@ ArmyUnitSprite.prototype._applyFrame = function () {
 
 // Face along the movement and walk the sheet while there is movement to walk.
 ArmyUnitSprite.prototype.stepAnimation = function (vx, vy) {
+  if (this._isDowned) return;
   const moving = Math.abs(vx) > 0.01 || Math.abs(vy) > 0.01;
   let dir = this._direction;
   if (moving) {
@@ -979,11 +1115,11 @@ ArmyUnitSprite.prototype.stepAnimation = function (vx, vy) {
   let pattern = this._pattern;
   if (moving) {
     this._animCount += 1;
-    if (this._animCount >= 10) {
+    if (this._animCount >= 8) {
       this._animCount = 0;
       pattern = (this._pattern + 1) % 4;
     }
-  } else if (this._pattern !== 1) {
+  } else if (this._lungeTimer <= 0 && this._pattern !== 1) {
     pattern = 1;
   }
   if (dir !== this._direction || pattern !== this._pattern) {
@@ -993,10 +1129,73 @@ ArmyUnitSprite.prototype.stepAnimation = function (vx, vy) {
   }
 };
 
+// Direct face towards a target coordinate
+ArmyUnitSprite.prototype.faceTowards = function (targetX, targetY) {
+  if (this._isDowned) return;
+  const dx = targetX - this.x;
+  const dy = targetY - this.y;
+  let dir = this._direction;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    dir = dx > 0 ? 6 : 4;
+  } else {
+    dir = dy > 0 ? 2 : 8;
+  }
+  if (dir !== this._direction) {
+    this._direction = dir;
+    this._applyFrame();
+  }
+};
+
+// Initiates a visual melee strike motion towards the target
+ArmyUnitSprite.prototype.startAttackMotion = function (targetX, targetY) {
+  if (this._isDowned) return;
+  this.faceTowards(targetX, targetY);
+  this._lungeAngle = Math.atan2(targetY - this.y, targetX - this.x);
+  this._lungeTimer = 14;
+};
+
+// Animates attack strike motion (lunge forward, swing frame, and return)
+ArmyUnitSprite.prototype.updateMotion = function () {
+  if (this._isDowned) return;
+  if (this._lungeTimer > 0) {
+    this._lungeTimer--;
+    const progress = this._lungeTimer > 7 ? (14 - this._lungeTimer) / 7 : this._lungeTimer / 7;
+    const lungeDist = progress * 8;
+    if (this.pivot) {
+      this.pivot.x = -Math.cos(this._lungeAngle) * lungeDist;
+      this.pivot.y = -Math.sin(this._lungeAngle) * lungeDist;
+    }
+    this._pattern = (this._lungeTimer % 4 < 2) ? 0 : 2;
+    this._applyFrame();
+  } else if (this.pivot && (this.pivot.x !== 0 || this.pivot.y !== 0)) {
+    if (typeof this.pivot.set === "function") this.pivot.set(0, 0);
+    else { this.pivot.x = 0; this.pivot.y = 0; }
+    this._pattern = 1;
+    this._applyFrame();
+  }
+};
+
+// Puts the unit sprite into the horizontal downed/fallen pose (like downed party members)
+ArmyUnitSprite.prototype.setDowned = function () {
+  this._isDowned = true;
+  this._lungeTimer = 0;
+  if (this.pivot) {
+    if (typeof this.pivot.set === "function") this.pivot.set(0, 0);
+    else { this.pivot.x = 0; this.pivot.y = 0; }
+  }
+  this.rotation = Math.PI / 2;
+  if (this.anchor) {
+    if (typeof this.anchor.set === "function") this.anchor.set(0.5, 0.5);
+    else { this.anchor.x = 0.5; this.anchor.y = 0.5; }
+  }
+  if (this._ring) this._ring.visible = false;
+  this.tint = 0xAAAAAA;
+};
+
 ArmyBattleField.prototype._createUnit = function (troop, x, y, color, isPlayer, withLabel) {
   const role = (troop.role || "close quarters").toLowerCase();  // i18n-ignore  troop db id
 
-  const sprite = new ArmyUnitSprite(troop, role, color);
+  const sprite = new ArmyUnitSprite(troop, role, color, isPlayer);
   sprite.x = x;
   sprite.y = y;
 
@@ -1245,6 +1444,8 @@ ArmyBattleField.prototype._updateUnits = function () {
           unit.velocityX = 0;
           unit.velocityY = 0;
           unit.isCharging = false;
+          if (unit.sprite.faceTowards) unit.sprite.faceTowards(nearestEnemy.sprite.x, nearestEnemy.sprite.y);
+          if (nearestEnemy.sprite && nearestEnemy.sprite.faceTowards) nearestEnemy.sprite.faceTowards(unit.sprite.x, unit.sprite.y);
           this._attackEnemy(unit, nearestEnemy);
         }
       }
@@ -1287,6 +1488,7 @@ ArmyBattleField.prototype._updateUnits = function () {
           unit.sprite.y += Math.sin(angle) * speed * 0.5;
           unit.isCharging = false;
         } else {
+          if (unit.sprite.faceTowards) unit.sprite.faceTowards(nearestPlayer.sprite.x, nearestPlayer.sprite.y);
           this._attackEnemy(unit, nearestPlayer);
         }
       } else {
@@ -1304,6 +1506,8 @@ ArmyBattleField.prototype._updateUnits = function () {
           unit.velocityX = 0;
           unit.velocityY = 0;
           unit.isCharging = false;
+          if (unit.sprite.faceTowards) unit.sprite.faceTowards(nearestPlayer.sprite.x, nearestPlayer.sprite.y);
+          if (nearestPlayer.sprite && nearestPlayer.sprite.faceTowards) nearestPlayer.sprite.faceTowards(unit.sprite.x, unit.sprite.y);
           this._attackEnemy(unit, nearestPlayer);
         }
       }
@@ -1321,12 +1525,13 @@ ArmyBattleField.prototype._updateUnits = function () {
 // correctly rather than only the ones that took the charge branch.
 ArmyBattleField.prototype._stepUnitAnimations = function () {
   const step = (unit) => {
-    if (!unit.isAlive || !unit.sprite.stepAnimation) return;
+    if (!unit.isAlive || !unit.sprite || !unit.sprite.stepAnimation) return;
     const dx = unit.sprite.x - unit.lastX;
     const dy = unit.sprite.y - unit.lastY;
     unit.lastX = unit.sprite.x;
     unit.lastY = unit.sprite.y;
     unit.sprite.stepAnimation(dx, dy);
+    if (unit.sprite.updateMotion) unit.sprite.updateMotion();
   };
   for (const unit of this._playerUnits) step(unit);
   for (const unit of this._enemyUnits) step(unit);
@@ -1422,17 +1627,35 @@ ArmyBattleField.prototype._attackEnemy = function (attacker, defender) {
   // Cooldown system
   if (attacker.attackCooldown > 0) {
     attacker.attackCooldown--;
+    // Active combat stance during melee sparring: occasional stepping frame
+    if (!attacker.role.includes("ranged") && attacker.attackCooldown % 15 === 0 && attacker.sprite) {
+      attacker.sprite._pattern = (attacker.sprite._pattern === 0 ? 2 : 0);
+      attacker.sprite._applyFrame();
+    }
     return;
   }
 
   // Ranged units fire projectiles
   if (attacker.role.includes("ranged")) {
+    if (attacker.sprite && attacker.sprite.faceTowards) {
+      attacker.sprite.faceTowards(defender.sprite.x, defender.sprite.y);
+    }
     this._fireProjectile(attacker, defender);
     attacker.attackCooldown = 90; // Slower attack speed for ranged
     return;
   }
 
-  // Melee combat
+  // Melee combat: face opponent and execute attack strike motion + slash effect
+  if (attacker.sprite) {
+    if (attacker.sprite.startAttackMotion) {
+      attacker.sprite.startAttackMotion(defender.sprite.x, defender.sprite.y);
+    }
+    const midX = (attacker.sprite.x + defender.sprite.x) / 2;
+    const midY = (attacker.sprite.y + defender.sprite.y) / 2;
+    const slashAngle = Math.atan2(defender.sprite.y - attacker.sprite.y, defender.sprite.x - attacker.sprite.x);
+    this._createSlashEffect(midX, midY, slashAngle, attacker.isPlayer ? 0xFFFF66 : 0xFF6666);
+  }
+
   const attackerStats = attacker.troop;
   const defenderStats = defender.troop;
 
@@ -1472,6 +1695,14 @@ ArmyBattleField.prototype._attackEnemy = function (attacker, defender) {
   // Flash defender white
   this._startHitFlash(defender);
 
+  // Recoil from hit
+  if (defender.sprite) {
+    const knockAngle = Math.atan2(defender.sprite.y - attacker.sprite.y, defender.sprite.x - attacker.sprite.x);
+    defender.sprite.x += Math.cos(knockAngle) * 3;
+    defender.sprite.y += Math.sin(knockAngle) * 3;
+    this._clampUnitPosition(defender);
+  }
+
   // Morale damage
   defender.morale -= damage / 10;
   if (defender.morale < 0) defender.morale = 0;
@@ -1497,6 +1728,11 @@ ArmyBattleField.prototype._killUnit = function (unit) {
     unit.morale = 100;
     unit.isRouting = false;
     unit.sprite.tint = 0xFFFFFF;
+    return;
+  }
+  if (this._skirmish) {
+    // The unit falls on the field; the roster and the party never hear of it.
+    this._removeUnit(unit);
     return;
   }
   const injuryChance = ArmyBattleView.Params.injuryChance;
@@ -1657,6 +1893,7 @@ ArmyBattleField.prototype._updateProjectiles = function () {
 
         // Flash target
         this._startHitFlash(proj.target);
+        this._createSlashEffect(proj.target.sprite.x, proj.target.sprite.y, Math.PI / 4, 0xFFFF66);
 
         // Morale damage
         proj.target.morale -= damage / 10;
@@ -1683,6 +1920,25 @@ ArmyBattleField.prototype._updateProjectiles = function () {
       }
     }
   }
+};
+
+ArmyBattleField.prototype._createSlashEffect = function (x, y, angle, color) {
+  if (typeof PIXI === "undefined" || !PIXI.Graphics) return;
+  const slash = new PIXI.Graphics();
+  if (slash.lineStyle) slash.lineStyle(2, color || 0xFFFFFF, 0.9);
+  if (slash.arc) slash.arc(0, 0, 12, angle - 0.8, angle + 0.8);
+  slash.x = x;
+  slash.y = y;
+  if (this._effectsContainer && this._effectsContainer.addChild) {
+    this._effectsContainer.addChild(slash);
+  }
+
+  this._slashEffects = this._slashEffects || [];
+  this._slashEffects.push({
+    sprite: slash,
+    lifetime: 8,
+    maxLifetime: 8
+  });
 };
 
 ArmyBattleField.prototype._createParticle = function (x, y, color, text) {
@@ -1717,6 +1973,21 @@ ArmyBattleField.prototype._updateParticles = function () {
       this._particles.splice(i, 1);
     }
   }
+
+  if (this._slashEffects) {
+    for (let i = this._slashEffects.length - 1; i >= 0; i--) {
+      const eff = this._slashEffects[i];
+      eff.lifetime--;
+      eff.sprite.alpha = eff.lifetime / eff.maxLifetime;
+      eff.sprite.scale.x += 0.05;
+      eff.sprite.scale.y += 0.05;
+      if (eff.lifetime <= 0) {
+        this._effectsContainer.removeChild(eff.sprite);
+        if (eff.sprite && !eff.sprite._destroyed) eff.sprite.destroy();
+        this._slashEffects.splice(i, 1);
+      }
+    }
+  }
 };
 
 // Destroy the whole battle display tree. All unit sprites are procedural
@@ -1749,6 +2020,12 @@ ArmyBattleField.prototype.destroyField = function () {
     }
     this._particles.length = 0;
   }
+  if (this._slashEffects) {
+    for (const eff of this._slashEffects) {
+      if (eff.sprite && !eff.sprite._destroyed) eff.sprite.destroy();
+    }
+    this._slashEffects.length = 0;
+  }
 
   if (this.parent) this.parent.removeChild(this);
   this.destroy({ children: true, texture: true, baseTexture: false });
@@ -1771,7 +2048,7 @@ ArmyBattleField.prototype._updateRoutingUnit = function (unit) {
   const margin = 30;
   const height = this._battleHeight;
   if (unit.sprite.y <= margin || unit.sprite.y >= height - margin) {
-    this._removeUnit(unit);
+    this._removeUnit(unit, true);
   }
 };
 

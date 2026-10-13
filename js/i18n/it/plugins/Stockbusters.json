@@ -76,7 +76,7 @@
   },
   "text": {
     "tuitionFor": "Allievo",
-    "tuitionRequires": "Richiede {stat} {points}.",
+    "tuitionRequires": "Richiede {req}.",
     "learnerKnows": "già conosciuto",
     "learnerStat": "{stat} {value} / {points} base",
     "welcomeHeadline": "Benvenuto su Stockbusters",

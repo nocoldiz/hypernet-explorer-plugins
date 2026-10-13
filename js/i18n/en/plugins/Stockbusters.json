@@ -76,7 +76,7 @@
   },
   "text": {
     "tuitionFor": "Trainee",
-    "tuitionRequires": "Requires {stat} {points}.",
+    "tuitionRequires": "Requires {req}.",
     "learnerKnows": "already knows it",
     "learnerStat": "{stat} {value} / {points} base",
     "welcomeHeadline": "Welcome to Stockbusters",

@@ -1137,6 +1137,7 @@ Scene_Army.prototype.commandList = function () {
     { label: T('ArmyManager.reviewTroops'), key: "troops" },
     { label: T('ArmyManager.manageSquads'), key: "squads" },
     { label: T('ArmyManager.practiceBattle'), key: "practice" },
+    { label: T('ArmyManager.skirmish'), key: "skirmish" },
     { label: T('ArmyManager.fireAll'), key: "fireAll" }
   ];
 };
@@ -1180,6 +1181,10 @@ Scene_Army.prototype.handleCommandOk = function () {
   } else if (this._commandIndex === 2) {
     this.startPracticeBattle();
   } else if (this._commandIndex === 3) {
+    if (typeof ArmyBattleView !== "undefined" && ArmyBattleView.startSkirmish && ArmyBattleView.startSkirmish()) {
+      SoundManager.playOk();
+    }
+  } else if (this._commandIndex === 4) {
     this.promptFireAll();
   }
 };
@@ -1283,6 +1288,8 @@ Scene_Army.prototype.terminate = function () {
     container.style.transition = "opacity 0.2s ease-out";
     container.style.opacity = "0";
     container.style.pointerEvents = "none";
+    // Marked so the main menu, opened inside the fade, does not adopt this page.
+    container._dndClosing = true;
     setTimeout(() => {
       if (container && container.parentNode) {
         container.parentNode.removeChild(container);
@@ -1636,6 +1643,8 @@ Scene_BuyTroops.prototype.terminate = function () {
     container.style.transition = "opacity 0.2s ease-out";
     container.style.opacity = "0";
     container.style.pointerEvents = "none";
+    // Marked so the main menu, opened inside the fade, does not adopt this page.
+    container._dndClosing = true;
     setTimeout(() => {
       if (container && container.parentNode) {
         container.parentNode.removeChild(container);
@@ -1868,6 +1877,8 @@ Scene_Squads.prototype.terminate = function () {
     container.style.transition = "opacity 0.2s ease-out";
     container.style.opacity = "0";
     container.style.pointerEvents = "none";
+    // Marked so the main menu, opened inside the fade, does not adopt this page.
+    container._dndClosing = true;
     setTimeout(() => {
       if (container && container.parentNode) {
         container.parentNode.removeChild(container);

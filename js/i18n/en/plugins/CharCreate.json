@@ -438,7 +438,7 @@
       "desc": "Capture and battle with monsters. \\C[1]This cannot be changed later.\\C[0]"
     },
     "combatMap": {
-      "name": "Strategic Battle",
+      "name": "Strategic Battle (WIP)",
       "desc": "Tactical fights on the map grid. Weapons and skills have range, and line of sight matters. Can be changed in Options."
     },
     "combatRpg": {
@@ -643,7 +643,7 @@
   "battleMode": "Battle Mode",
   "battleModeDesc": "Turn Battle: classic turn-based scene. Strategic Battle: tactical fights on the map grid.",
   "battleModeTurn": "Turn Battle",
-  "battleModeStrategic": "Strategic Battle",
+  "battleModeStrategic": "Strategic Battle (WIP)",
   "battleMusic": "Battle Music",
   "musicTrackPlayedDuringCombatPressToPreviewTr": "Battle music. Press ←→ to preview.",
   "uiTheme": "UI Theme",
@@ -842,6 +842,7 @@
   "embarkWithPreset": "Embark with Preset",
   "budgetPoints": "Budget: {remaining} / {total} pts",
   "bodyParts": "Body parts",
+  "gripSlot": "Grip (weapon slot)",
   "anatomyHint": "The body this character is built from. Each part teaches its skills for as long as it stays on.",
   "anatomyTeaches": "Teaches",
   "reproductiveOrgans": "Reproductive Organs",

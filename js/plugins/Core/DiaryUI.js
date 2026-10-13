@@ -482,7 +482,7 @@
         }
 
         _renderFootContent() {
-            const names = (this._book.party || []).map(m => m.name).filter(Boolean).join(", ");
+            const names = (Array.isArray(this._book.party) ? this._book.party : []).map(m => m && m.name).filter(Boolean).join(", ");
             const owner = names
                 ? (this._foreign ? tr('foot.theirs', { names }) : tr('foot.ours', { names }))
                 : tr('foot.unknown');

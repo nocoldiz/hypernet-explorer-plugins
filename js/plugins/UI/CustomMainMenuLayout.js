@@ -125,22 +125,14 @@
     // carrying an internet-capable device, which is no longer what the machine
     // is made of.
 
-    // The Alchemistry bench is a thing you carry, not a place: the tile is only
-    // usable while the party holds the portable kit, and is greyed out (rather
-    // than hidden) the way the Hypernet tile is when no device is carried.
-    const ALCHEMISTRY_KIT_ITEM_ID = 390;
+    // The Alchemistry tile is always available: the portable kit (item 390) is
+    // no longer required, it only improves the odds of success.
 
     // The Omega Tower's own ground floor, as the world map's travel line names
     // it: map 136, the square the doors stand on, facing down into the hall.
     // The same address the tower's doors reach, kept in one place so the tile
     // and the command that takes it can never disagree.
     const OMEGA_TOWER_ENTRY = { mapId: 136, x: 36, y: 136, dir: 2 };
-
-    function isAlchemistryAvailable() {
-        if (typeof $gameParty === "undefined" || !$gameParty || typeof $dataItems === "undefined") return false;
-        const kit = $dataItems[ALCHEMISTRY_KIT_ITEM_ID];
-        return !!(kit && $gameParty.hasItem(kit));
-    }
 
     // =========================================================================
     // Hotkey layout (Bethesda-style)
@@ -1449,7 +1441,14 @@
             const scene = SceneManager._scene;
             const ready = scene instanceof Scene_Map && scene._mapLoaded &&
                 DataManager.isMapLoaded() && !SceneManager.isSceneChanging();
-            if (ready) { fn(); return; }
+            if (ready) {
+                // A timer callback: a throw here would reach the error screen.
+                try { fn(); } catch (e) {
+                    console.error("Main menu: a deferred map action failed.", e);
+                    SoundManager.playBuzzer();
+                }
+                return;
+            }
             if (++tries < 200) setTimeout(poll, 50);
         };
         setTimeout(poll, 50);
@@ -3353,9 +3352,7 @@
     // keeps the verbs; this side is the sheet.
     Scene_Menu.prototype.generateUIPetSheetHTML = function () {
         const pets = window.PetSystem ? window.PetSystem.getPets() : [];
-        if (!pets.length) {
-            return `<div class="ui-empty"><span class="ui-empty-text">${T('MainMenu.pets.none')}</span></div>`;
-        }
+        if (!pets.length) return '';
         const sel = pets.find(p => p.id === this._petsSelected) || pets[0];
         this._petsSelected = sel.id;
 
@@ -3447,9 +3444,7 @@
     Scene_Menu.prototype.generateUIGarageHTML = function () {
         const owned = (window.MergedVehicleSystem && window.MergedVehicleSystem.getOwnedVehicles)
             ? window.MergedVehicleSystem.getOwnedVehicles() : [];
-        if (!owned.length) {
-            return `<div class="ui-empty"><span class="ui-empty-text">${T('MainMenu.vehicles.none')}</span></div>`;
-        }
+        if (!owned.length) return '';
         const sel = owned.find(v => v.key === this._vehiclesSelected) || owned[0];
         this._vehiclesSelected = sel.key;
 
@@ -3661,7 +3656,7 @@
             partyBioHTML += `
               <div class="party-bio-block">
                 <div class="bio-row party-bio-card${isSelected ? ' selected' : ''}"${''/* i18n-ignore: css classes */}
-                     onclick="SceneManager._scene.switchSelectedActor(${idx})">
+                     onclick="SceneManager._scene?.switchSelectedActor?.(${idx})">
                     <div class="portrait-frame">
                         <canvas id="actor-canvas-${idx}" width="48" height="48"></canvas>
                     </div>
@@ -3745,11 +3740,10 @@
                             <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.hexphone)}"></span>
                             <span>${T('MainMenu.tools.hexphone')}</span>
                         </div>
-                        ${isAlchemistryAvailable() ? `
                         <div class="command-item focusable" onclick="if(SceneManager._scene && typeof SceneManager._scene.triggerUICommand === 'function') SceneManager._scene.triggerUICommand('alchemistry')">
                             <span class="icon menu-icon" style="${iconStyle(PAGE_ICONS.alchemistryKit)}"></span>
                             <span>${T('MainMenu.tools.alchemistryKit')}</span>
-                        </div>` : ''}
+                        </div>
                         ${this.generateUIToolItemsListHTML()}
                     </div>
                 </div>
@@ -4421,15 +4415,9 @@
         let enabled = true;
         if (symbol === "build") enabled = window.FurnitureSystem?.canBuildOnCurrentMap?.() ?? ($gameMap.mapId() !== 315);
         if (symbol === "sandbox") enabled = sandboxTester || sandboxActive;
-        if (symbol === "alchemistry") enabled = isAlchemistryAvailable();
-        // Rosters with nothing in them: the tile stays visible so the player
-        // knows the pocket exists, but it cannot be opened onto an empty page.
-        if (symbol === "pets") enabled = (window.PetSystem?.getPets?.() ?? []).length > 0;
-        if (symbol === "vehicles") {
-            enabled = !storyVehiclesLocked() &&
-                (window.MergedVehicleSystem?.getOwnedVehicles?.() ?? []).length > 0;
-        }
-        if (symbol === "army") enabled = (typeof $gameArmy !== "undefined" && $gameArmy?.getTroopCount?.() > 0);
+        // Followers, vehicles and workforce stay lit even when empty; only the
+        // story lock still keeps the garage shut.
+        if (symbol === "vehicles") enabled = !storyVehiclesLocked();
 
         // A pocket that exists but cannot be opened from here reads as the
         // shared disabled tile; the focus ring already walks past it.
@@ -5228,7 +5216,10 @@
         bestiary:   () => pushMapScene(typeof Scene_CDCollection !== "undefined" && Scene_CDCollection),
         factions:   () => pushMapScene(typeof Scene_FactionStatus !== "undefined" && Scene_FactionStatus),
         politics:   () => pushMapScene(window.Scene_Politics),
-        biologics:  () => pushMapScene(typeof Scene_BiologicSimulation !== "undefined" && Scene_BiologicSimulation),
+        biologics:  () => {
+            if ($gameParty.members().length === 0) return;
+            pushMapScene(typeof Scene_BiologicSimulation !== "undefined" && Scene_BiologicSimulation);
+        },
         augments:   () => pushMapScene(typeof Scene_PartyAugments !== "undefined" && Scene_PartyAugments),
         assets:     () => pushMapScene(typeof Scene_AssetsMenu !== "undefined" && Scene_AssetsMenu),
         deeds:      () => pushMapScene(typeof Scene_AssetsMenu !== "undefined" && Scene_AssetsMenu),
@@ -5286,7 +5277,7 @@
             typeof Scene_Specializations !== "undefined" ? Scene_Specializations : window.Scene_Specializations),
         vector_gun: () => pushMapScene(window.Scene_VectorGun),
         thinker:    () => pushMapScene(typeof Scene_Thinker !== "undefined" ? Scene_Thinker : window.Scene_Thinker),
-        alchemistry: () => { if (isAlchemistryAvailable()) pushMapScene(window.Scene_Alchemistry); },
+        alchemistry: () => { pushMapScene(window.Scene_Alchemistry); },
         diary:      () => pushMapScene(window.Scene_Diary),
         news:       () => pushMapScene(window.Scene_Newspaper),
         cards:      () => pushMapScene(
@@ -5381,11 +5372,12 @@
                     return window.FurnitureSystem?.canBuildOnCurrentMap?.() ?? ($gameMap.mapId() !== 315);
                 case "world_map":
                     return !inVoxelWorld();
-                case "alchemistry": return isAlchemistryAvailable();
-                case "pets": return (window.PetSystem?.getPets?.() ?? []).length > 0;
-                case "vehicles": return !storyVehiclesLocked() && (window.MergedVehicleSystem?.getOwnedVehicles?.() ?? []).length > 0;
-                case "army": return typeof $gameArmy !== "undefined" && $gameArmy?.getTroopCount?.() > 0;
+                case "vehicles": return !storyVehiclesLocked();
                 case "vector_gun": return !!window.Scene_VectorGun;
+                // Pages about one member open onto nobody with an empty party.
+                case "skill": case "equip": case "status1": case "thinker":
+                case "specializations": case "biologics":
+                    return $gameParty.members().length > 0;
                 default: return true;
             }
         },
@@ -5402,7 +5394,10 @@
     // the same actor the menu preselects.
     function pushPersonalScene(sceneClass) {
         if (!sceneClass) return;
-        $gameParty.setMenuActor($gameParty.members()[0]);
+        // An empty battle party has nobody to show: setMenuActor(undefined) throws.
+        const leader = $gameParty.members()[0];
+        if (!leader) return;
+        $gameParty.setMenuActor(leader);
         pushMapScene(sceneClass);
     }
 

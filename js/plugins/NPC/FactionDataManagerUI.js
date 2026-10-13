@@ -952,6 +952,8 @@ Scene_FactionStatus.prototype.terminate = function () {
     container.style.transition = "opacity 0.2s ease-out";
     container.style.opacity = "0";
     container.style.pointerEvents = "none";
+    // Marked so the main menu, opened inside the fade, does not adopt this page.
+    container._dndClosing = true;
     setTimeout(() => {
       if (container && container.parentNode) {
         container.parentNode.removeChild(container);
@@ -1443,6 +1445,8 @@ Scene_PlayerFaction.prototype.terminate = function () {
     container.style.transition = "opacity 0.2s ease-out";
     container.style.opacity = "0";
     container.style.pointerEvents = "none";
+    // Marked so the main menu, opened inside the fade, does not adopt this page.
+    container._dndClosing = true;
     setTimeout(() => {
       if (container && container.parentNode) container.parentNode.removeChild(container);
     }, 200);

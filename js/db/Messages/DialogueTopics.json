@@ -117,18 +117,6 @@
     "description": "DialogueTopics.camelcaseMagic.description",
     "image": ""
   },
-  "alagaddaCityOfMasks": {
-    "type": "topic",
-    "group": "topics",
-    "order": 16110,
-    "keyword": "Alagadda",
-    "synonyms": [
-      "City of Masks"
-    ],
-    "title": "DialogueTopics.alagaddaCityOfMasks.title",
-    "description": "DialogueTopics.alagaddaCityOfMasks.description",
-    "image": ""
-  },
   "ruleOfHeight": {
     "type": "topic",
     "group": "topics",

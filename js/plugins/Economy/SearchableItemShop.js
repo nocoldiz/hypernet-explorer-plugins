@@ -2548,8 +2548,9 @@
 
         return `<div class="sb-panel"><div class="sb-panel-hd">${T('Stockbusters.text.tuitionFor')}</div>` +
             `<div class="sb-panel-bd">` +
+            // Every stat the skill asks for, both of them on a two-stat skill.
             (req ? `<div style="font-size:11px;color:var(--xp-ink-soft);margin-bottom:4px;">${T('Stockbusters.text.tuitionRequires', {
-                stat: svc.statName(req.stat), points: req.points
+                req: svc.label(entry)
             })}</div>` : '') +
             `<table class="sb-kv">${rows}</table></div></div>`;
     };

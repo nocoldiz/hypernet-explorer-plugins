@@ -2671,10 +2671,21 @@
 
     const weaponReqCache = new Map();
 
+    // The vector gun is one database row in many shapes, so the shape it
+    // stands in decides its school (window.VectorGun.skillWeaponClass):
+    // 'ranged', 'melee', 'martial' or null. undefined for any other weapon.
+    const vectorGunClass = (item) => {
+        const VG = window.VectorGun;
+        if (!item || !VG || typeof VG.skillWeaponClass !== 'function' || !VG.isVectorGun(item)) return undefined;
+        return VG.skillWeaponClass();
+    };
+
     window.SkillWeaponReq = {
         RANGED_WTYPES: RANGED_WTYPE_IDS,
 
         isRanged(weapon) {
+            const vg = vectorGunClass(weapon);
+            if (vg !== undefined) return vg === 'ranged';
             return !!weapon && RANGED_WTYPE_IDS.includes(weapon.wtypeId);
         },
 
@@ -2728,11 +2739,15 @@
 
         // A weapon a Swordsmanship blow can be struck with.
         isMeleeWeapon(item) {
+            const vg = vectorGunClass(item);
+            if (vg !== undefined) return vg === 'melee';
             return !!item && !this.isRanged(item) && !this.isMartialWeapon(item);
         },
 
         // A weapon fought with the body rather than instead of it.
         isMartialWeapon(item) {
+            const vg = vectorGunClass(item);
+            if (vg !== undefined) return vg === 'martial';
             return !!(item && item.wtypeId && item.meta && item.meta.MartialArts);
         },
 
@@ -2793,6 +2808,13 @@
 
         chipLabel(need) {
             return need ? T('SkillsMenu.weapon.chip.' + need) : '';
+        },
+
+        // "Ranged" / "Melee" / "Hand to hand": the weapon a skill card names
+        // whether or not it is in hand, '' for a skill that asks for none.
+        kindLabel(skill) {
+            const need = this.needOf(skill);
+            return need ? T('SkillsMenu.weapon.kind.' + need) : '';
         }
     };
 
@@ -3075,6 +3097,14 @@
         $gameVariables.setValue(BSE.Params.respawnXVar, 24);
         $gameVariables.setValue(BSE.Params.respawnYVar, 12);
         $gameVariables.setValue(BSE.Params.respawnCountryIDVar, 121);
+        if ($gameParty) {
+            for (const actor of $gameParty.members()) {
+                if (actor) {
+                    actor.recoverAll();
+                    if (typeof actor.maxTp === "function") actor.setTp(actor.maxTp());
+                }
+            }
+        }
     };
 
     // ------------------------------------------------------------------

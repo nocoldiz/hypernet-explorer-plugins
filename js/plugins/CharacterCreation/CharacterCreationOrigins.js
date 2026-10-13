@@ -3842,6 +3842,13 @@
     if ($gameTemp && $gameTemp._ccOriginLanding && $gameMap.mapId() !== GAME_START_MAP_ID) {
       $gameTemp._ccOriginLanding = false;
       if ($gameMap.mapId() === proceduralMapId()) ccPlaceOnPassableTile();
+      if ($gameParty) {
+        $gameParty.members().forEach((actor) => {
+          if (!actor) return;
+          actor.recoverAll();
+          if (typeof actor.maxTp === "function") actor.setTp(actor.maxTp());
+        });
+      }
     }
     // Hide the player sprite the instant it lands on the game-start map, so it
     // never pops in mid-fade; Scene_Map.update below reveals it the moment the

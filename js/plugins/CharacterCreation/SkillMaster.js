@@ -293,7 +293,7 @@
     function getSkillCategory(skillId) {
         if (!skillId) return null;
         const skill = $dataSkills[skillId];
-        if (!skill) return null;
+        if (!skill || !skill.note) return null;
         const match = skill.note.match(/<category:\s*(.+?)\s*>/i);
         return match ? match[1].trim() : null;
     }
@@ -556,7 +556,7 @@
                 if (!skill) continue;
                 if (skill._customSpell) continue;
                 if (filterNature && !MN.allowsData(skill)) continue;
-                const categoryMatch = skill.note.match(/<category:(.+?)>/i);
+                const categoryMatch = (skill.note || "").match(/<category:(.+?)>/i);
                 if (categoryMatch) {
                     if (isHiddenFromSkillMaster(skill)) continue;
                     if (allowed && !allowed.includes(categoryMatch[1].trim())) continue;
@@ -653,7 +653,7 @@
                     continue;
                 }
                 if (allowed) {
-                    const match = skill.note.match(/<category:(.+?)>/i);
+                    const match = (skill.note || "").match(/<category:(.+?)>/i);
                     if (!match || !allowed.includes(match[1].trim())) continue;
                 }
                 skills.push(skill);

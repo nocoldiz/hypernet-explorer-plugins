@@ -3489,6 +3489,27 @@
 .whether-glyph--snow { background: radial-gradient(circle, #ffffff 30%, #cfe3ff 60%, transparent 62%); border: 1px dashed #9db6dd; box-sizing: border-box; }
 
 /* =========================================================================
+   Did You Know? (UI/TitleTrivia.js)
+   ========================================================================= */
+.hn-trivia { display: flex; flex-direction: column; width: 100%; height: 100%; background: var(--text-pure-white); color: var(--text-pure-black); font-family: Tahoma, sans-serif; font-size: 13px; box-sizing: border-box; }
+.hn-trivia-banner { background: linear-gradient(90deg, #5a2a00, #c98a1a); color: white; padding: 8px 14px; display: flex; align-items: baseline; gap: 12px; }
+.hn-trivia-logo { font-size: 22px; font-weight: bold; font-family: 'Trebuchet MS', Tahoma, sans-serif; }
+.hn-trivia-tagline { font-size: 11px; opacity: 0.85; }
+.hn-trivia-toolbar { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--xp-bg); border-bottom: 1px solid #a0a0a0; }
+.hn-trivia-toolbar input { margin-left: auto; min-width: 180px; }
+.hn-trivia-card { margin: 10px 14px 4px; padding: 12px 14px; background: linear-gradient(#fff9e6, #f6e7bd); border: 1px solid #d9b64f; border-radius: 4px; min-height: 64px; }
+.hn-trivia-number { font-weight: bold; color: #8a4b00; margin-bottom: 4px; }
+.hn-trivia-text { font-size: 14px; line-height: 1.45; }
+.hn-trivia-count { padding: 0 14px; font-size: 11px; color: #555; }
+.hn-trivia-list { flex: 1; min-height: 0; overflow-y: auto; margin: 4px 14px 10px; border: 1px solid #b9c7dc; background: #f7f9fd; }
+.hn-trivia-row { display: flex; gap: 8px; padding: 3px 6px; cursor: pointer; border-bottom: 1px solid #e3e8f1; font-size: 12px; }
+.hn-trivia-row:hover { background: #e6eefb; }
+.hn-trivia-row.is-current { background: #fff7d6; }
+.hn-trivia-row-num { flex: none; width: 40px; color: #8a4b00; font-weight: bold; }
+.hn-trivia-row-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hn-trivia-none { padding: 10px; color: #777; }
+
+/* =========================================================================
    Incanta 96
    ========================================================================= */
 .incanta { display: flex; flex-direction: column; width: 100%; height: 100%; background: #f4efe1; color: #1c1c1c; font-family: Georgia, 'Times New Roman', serif; box-sizing: border-box; }

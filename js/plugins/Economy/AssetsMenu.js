@@ -1569,6 +1569,8 @@
         const c = this._container;
         c.classList.remove('assets-fade-in');
         c.classList.add('assets-fade-out');
+        // Marked so the main menu, opened inside the fade, does not adopt this page.
+        c._dndClosing = true;
         setTimeout(() => { if (c && c.parentNode) c.parentNode.removeChild(c); }, 200);
         this._container = null;
       }

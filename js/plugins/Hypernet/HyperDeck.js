@@ -5027,7 +5027,18 @@ ${this.hostEl ? '<div class="cl-dies"></div>' : ''}
             super.create();
             this.bindMiddleDrag();
             if (!this._threeReady) return;
-            this.createView();
+            // WebGL can be refused (blocklisted GPU, lost driver): the deck
+            // then falls back to the same exit the scene has without three.js.
+            try {
+                this.createView();
+            } catch (e) {
+                console.error('HyperDeck: the 3D view could not start.', e);
+                if (this._viewSprite && this._viewSprite.parent) this._viewSprite.parent.removeChild(this._viewSprite);
+                this._viewSprite = null;
+                this._view = null;
+                this._threeReady = false;
+                return;
+            }
             this._hud = new DeckHud(this);
             this._view.syncParts();
             this.refreshList();

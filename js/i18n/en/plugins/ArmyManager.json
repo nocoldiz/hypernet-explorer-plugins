@@ -67,6 +67,7 @@
   "release": "Release",
   "practiceBattle": "Practice Battle",
   "practiceTooFew": "Need two fighting troops to drill.",
+  "skirmish": "Skirmish",
   "fireAll": "Fire All",
   "fireAllTitle": "Fire the Whole Company?",
   "fireAllBody": "Fire all {count} troops? This can't be undone and disbands every squad.",

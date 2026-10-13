@@ -502,39 +502,84 @@
         : archetypeDisplayName("Humanoid"); // i18n-ignore: Archetypes.json key
       const rows = (HC && HC.partSkillRows) ? HC.partSkillRows(actor) : [];
       const spliced = keys.length > 1;
-      // The status screen's anatomy grid (.anatomy-grid): a cell per part with
-      // its hit points over a gauge, plus the skills it teaches when it
-      // teaches any. A part that teaches nothing just has no skill line.
       const bodyParts = actor._bodyParts || {};
-      const rowsHtml = !rows.length
-        ? `<p class="cc-text-desc cc-text-desc--body">${ccT('CharCreate.noAnatomicalOrgansDefined')}</p>`
-        : `<div class="anatomy-grid cc-anatomy-grid">${rows.map((row) => {
-          const part = bodyParts[row.key] || {};
-          const badge = !spliced ? "" : (row.fromArchetype === 1
-            ? `<span class="cc-role-badge secondary">${ccT('CharCreate.secondary')}</span>`
-            : `<span class="cc-role-badge primary">${ccT('CharCreate.primary')}</span>`);
-          const maxHp = Number(part.maxHp) || 0;
-          const curHp = Math.max(0, Number(part.currentHp) || 0);
-          const hpText = maxHp > 0 ? `${curHp}/${maxHp}` : `${row.hpPercent}%`;
-          const barWidth = maxHp > 0 ? Math.round(Math.min(1, curHp / maxHp) * 100) : 100;
-          const skills = row.skills.map((id) => {
-            const skill = $dataSkills[id];
-            const name = window.CCDbName ? window.CCDbName(skill) : skill.name;
-            return `<span class="cc-anatomy-skill">${this._ccIconHtml(skill.iconIndex, 16)} ${ccEsc(name)}</span>`;
-          }).join("");
-          return `
-            <div class="anatomy-cell cc-anatomy-cell">
-              <div class="anatomy-cell-top">
-                <span class="bodypart-name">${ccEsc(row.name)}${badge}</span>
-                <span class="bodypart-hp-val">${hpText}</span>
-              </div>
-              <div class="status-gauge-bar-outer anatomy-cell-bar">
-                <div class="status-gauge-bar-inner bodypart-bar" style="width:${barWidth}%"></div>
-              </div>
-              ${skills ? `<div class="cc-anatomy-skills">${skills}</div>` : ""}
+
+      const table = (window.Health && window.Health.Archetypes) || {};
+      const classIds = [];
+      const CC = window.CreatureClasses;
+      if (CC && typeof CC.playableGroupsForArchetypes === "function") {
+        const groups = CC.playableGroupsForArchetypes(keys[0], keys[1]);
+        (groups.sentient || []).concat(groups.creature || []).forEach((id) => {
+          if (!classIds.includes(id)) classIds.push(id);
+        });
+      } else {
+        keys.forEach((key) => {
+          const entry = table[key] || null;
+          if (entry) {
+            const list = (entry.classes || []).concat(entry.creatureClasses || []).concat(entry.sentientClasses || []);
+            list.forEach((id) => {
+              if (!classIds.includes(id)) classIds.push(id);
+            });
+          }
+        });
+      }
+      const classNames = classIds
+        .map((id) => ($dataClasses[id] ? (window.CCDbName ? window.CCDbName($dataClasses[id]) : $dataClasses[id].name) : null))
+        .filter(Boolean);
+
+      const renderCell = (row) => {
+        const part = bodyParts[row.key] || {};
+        const canHold = (part && part.canHoldWeapon !== undefined)
+          ? !!part.canHoldWeapon
+          : !!(HC && HC.canPartHoldWeapon && HC.canPartHoldWeapon(actor, row.key, part));
+        const gripIcon = canHold
+          ? `<span class="cc-grip-icon" title="${ccT('CharCreate.gripSlot')}">${this._ccIconHtml(77, 14)}</span>`
+          : "";
+        const maxHp = Number(part.maxHp) || 0;
+        const curHp = Math.max(0, Number(part.currentHp) || 0);
+        const hpText = maxHp > 0 ? `${curHp}/${maxHp}` : `${row.hpPercent}%`;
+        const barWidth = maxHp > 0 ? Math.round(Math.min(1, curHp / maxHp) * 100) : 100;
+        const skills = row.skills.map((id) => {
+          const skill = $dataSkills[id];
+          const name = window.CCDbName ? window.CCDbName(skill) : (skill ? skill.name : "");
+          return `<span class="cc-anatomy-skill">${this._ccIconHtml(skill.iconIndex, 16)} ${ccEsc(name)}</span>`;
+        }).join("");
+        return `
+          <div class="anatomy-cell cc-anatomy-cell">
+            <div class="anatomy-cell-top">
+              <span class="bodypart-name">${gripIcon}${ccEsc(row.name)}</span>
+              <span class="bodypart-hp-val">${hpText}</span>
             </div>
-          `;
-        }).join("")}</div>`;
+            <div class="status-gauge-bar-outer anatomy-cell-bar">
+              <div class="status-gauge-bar-inner bodypart-bar" style="width:${barWidth}%"></div>
+            </div>
+            ${skills ? `<div class="cc-anatomy-skills">${skills}</div>` : ""}
+          </div>
+        `;
+      };
+
+      let anatomySectionsHtml = "";
+      if (!rows.length) {
+        anatomySectionsHtml = `<p class="cc-text-desc cc-text-desc--body">${ccT('CharCreate.noAnatomicalOrgansDefined')}</p>`;
+      } else if (spliced) {
+        const primaryRows = rows.filter((r) => r.fromArchetype !== 1);
+        const secondaryRows = rows.filter((r) => r.fromArchetype === 1);
+        const primaryTitle = keys[0] ? `${ccT('CharCreate.primary')} (${archetypeDisplayName(keys[0])})` : ccT('CharCreate.primary');
+        const secondaryTitle = keys[1] ? `${ccT('CharCreate.secondary')} (${archetypeDisplayName(keys[1])})` : ccT('CharCreate.secondary');
+        anatomySectionsHtml = `
+          <h3 class="cc-subheader cc-subheader--flush">${primaryTitle}</h3>
+          <div class="anatomy-grid cc-anatomy-grid">${primaryRows.map(renderCell).join("")}</div>
+          ${secondaryRows.length ? `
+            <h3 class="cc-subheader cc-gap-above">${secondaryTitle}</h3>
+            <div class="anatomy-grid cc-anatomy-grid">${secondaryRows.map(renderCell).join("")}</div>
+          ` : ""}
+        `;
+      } else {
+        anatomySectionsHtml = `
+          <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.anatomy')}</h3>
+          <div class="anatomy-grid cc-anatomy-grid">${rows.map(renderCell).join("")}</div>
+        `;
+      }
 
       return `
         <div class="cc-page cc-page-full cc-col">
@@ -543,10 +588,22 @@
               ${ccEsc(actor.name())} · ${ccEsc(title)}
             </div>
           </div>
-          <p class="cc-text-desc cc-text-desc--intro">${ccT('CharCreate.anatomyHint')}</p>
+          <div class="cc-dossier-card cc-card-padded cc-gap-below">
+            <div class="cc-dossier-row cc-dossier-row--lead">
+              <span class="cc-dossier-label">${ccT('CharCreate.bodyParts')}:</span>
+              <span class="cc-dossier-value">${rows.length}</span>
+            </div>
+            <div class="cc-dossier-row cc-dossier-row--lead">
+              <span class="cc-dossier-label">${ccT('CharCreate.classesOfThisArchetype')}:</span>
+              <span class="cc-dossier-value">${classNames.length}</span>
+            </div>
+          </div>
           <div class="cc-dossier-card cc-card-padded cc-scroll-pane">
-            <h3 class="cc-subheader cc-subheader--flush">${ccT('CharCreate.anatomy')}</h3>
-            ${rowsHtml}
+            ${anatomySectionsHtml}
+            <h3 class="cc-subheader cc-gap-above">${ccT('CharCreate.classesOfThisArchetype')}</h3>
+            <p class="cc-text-desc cc-text-desc--body">
+              ${classNames.length ? classNames.join(", ") : ccT('CharCreate.onlyWhatYourArchetypesSupport')}
+            </p>
           </div>
         </div>
       `;

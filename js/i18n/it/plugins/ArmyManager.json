@@ -67,6 +67,7 @@
   "release": "Congeda",
   "practiceBattle": "Battaglia di addestramento",
   "practiceTooFew": "Servono due truppe combattenti per esercitarsi.",
+  "skirmish": "Schermaglia",
   "fireAll": "Licenzia tutti",
   "fireAllTitle": "Licenziare l'intera compagnia?",
   "fireAllBody": "Licenziare tutte le {count} truppe? Non si può annullare e scioglie ogni squadra.",

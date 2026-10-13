@@ -1,12 +1,14 @@
 
 /*:
  * @target MZ
- * @plugindesc v1.7.0 Creates a 100-floor dungeon system with robust map validation for stair placement.
+ * @plugindesc v1.7.0 Creates a tower dungeon system with robust map validation for stair placement.
  * @author Omni-Lex
  * @url https://nocoldiz.itch.io/hypernet-explorer
  * @help DungeonFloorSystem.js
  *
- * ######This plugin creates a dungeon system with 100 floors and a town level.
+ * ######This plugin creates a tower dungeon and a town level. The full run is
+ * as tall as the Tower Levels folder: every level is dealt once, and the top
+ * floor is the one the last level lands on.
  * Every floor is dealt from ONE pool: the maps sitting in the dungeon folders,
  * map 166 first among them. There are no per-level A to J pools any more, so
  * any floor map can turn up at any depth. Only the elevator halls are fixed,
@@ -103,24 +105,6 @@
  * @desc Y coordinate for player spawn on arena map
  * @type number
  * @default 5
- *
- * @param bossFloorMapId
- * @text Boss Floor (Floor 100) Map ID
- * @desc Map ID for floor 100
- * @type number
- * @default 70
- *
- * @param bossFloorX
- * @text Boss Floor Spawn X
- * @desc X coordinate for player spawn on floor 100
- * @type number
- * @default 10
- *
- * @param bossFloorY
- * @text Boss Floor Spawn Y
- * @desc Y coordinate for player spawn on floor 100
- * @type number
- * @default 10
  *
  * @param playerSpawnX
  * @text Player Spawn X
@@ -294,9 +278,6 @@
     arenaMapId: parseInt(parameters.arenaMapId || 2),
     arenaMapX: parseInt(parameters.arenaMapX || 5),
     arenaMapY: parseInt(parameters.arenaMapY || 5),
-    bossFloorMapId: parseInt(parameters.bossFloorMapId || 70),
-    bossFloorX: parseInt(parameters.bossFloorX || 10),
-    bossFloorY: parseInt(parameters.bossFloorY || 10),
     playerSpawnX: parseInt(parameters.playerSpawnX || 5),
     playerSpawnY: parseInt(parameters.playerSpawnY || 5),
     currentFloorVariable: parseInt(parameters.currentFloorVariable || 1),
@@ -308,6 +289,23 @@
   };
 
   const params = window.DungeonFloorSystemParams;
+
+  // The most floors a layout can hold above ground. The full run is as tall
+  // as its levels need (see generateDungeon), always well under this.
+  const TOWER_CAPACITY = 99;
+
+  // The tower's top floor: the demo's last floor, or in the full run the
+  // highest floor the layout dealt a map to. 0 while no layout exists.
+  function towerTopFloor() {
+    if (params.demoMode) return params.demoMaxFloor;
+    if (typeof $gameSystem === "undefined" || !$gameSystem) return 0;
+    if ($gameSystem._dungeonTopFloor > 0) return $gameSystem._dungeonTopFloor;
+    const floors = $gameSystem._dungeonFloors || [];
+    for (let f = floors.length - 1; f >= 1; f--) {
+      if (floors[f]) return f;
+    }
+    return 0;
+  }
 
   //=============================================================================
   // Shared synchronous map-JSON cache. Map data files are static and read-only,
@@ -647,7 +645,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
   // The one pool every floor is dealt from: the maps sitting directly in the
   // dungeon folder, each expanded into its room group when it has one. There
   // are no per-level pools any more, so a map is as likely on floor 3 as on
-  // floor 97. Elevator halls and the boss floor are never in it.
+  // the top floor. Elevator halls are never in it.
   Game_System.prototype.dungeonMapPool = function () {
     const infos = window.$dataMapInfos;
     if (!Array.isArray(infos)) return [];
@@ -668,7 +666,6 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
     }
     const reserved = new Set([
       ...params.elevatorMaps,
-      params.bossFloorMapId,
       params.townMapId,
       101,
     ]);
@@ -839,57 +836,65 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
             }
         }
 
+        this._dungeonTopFloor = lastFloor;
         this.initializeStairLocations();
         this.markDungeonGenerated();
         $gameVariables.setValue(params.maxFloorVariable, 0);
         return;
     }
-    // One pool for the whole tower. Floors are dealt from a bag that is
-    // reshuffled whenever it runs dry, so no floor repeats until every map has
-    // been used once.
+    // One pool for the whole tower, and the tower is exactly as tall as it:
+    // every level is dealt once, in a seeded order, and the top floor is the
+    // one the last level lands on. Nothing repeats and nothing is left out.
     const pool = this.dungeonMapPool();
     if (pool.length === 0) {
       console.warn("DungeonFloorSystem: no valid dungeon floors with Region 13 in folder " + params.dungeonFolderId);
     }
-    let bag = [];
+    const bag = [...pool];
     const dealFloor = () => {
-      if (pool.length === 0) return null;
-      if (bag.length === 0) bag = [...pool];
+      if (bag.length === 0) return null;
       const index = Math.floor(this.dungeonRandom() * bag.length);
       return bag.splice(index, 1)[0];
     };
 
-    this._dungeonFloors[100] = params.bossFloorMapId;
-
-    // Elevator halls keep their fixed maps on every tenth floor.
-    const elevatorFloors = [10, 20, 30, 40, 50, 60, 70, 80, 90];
-    const elevatorMaps = [...params.elevatorMaps];
-
+    this._dungeonFloors = new Array(TOWER_CAPACITY + 1).fill(0);
+    this._dungeonFloors[0] = $gameSwitches.value(params.arenaToggleSwitch)
+      ? params.arenaMapId
+      : params.townMapId;
     this._elevatorSpawnPoints = {};
 
-    for (let i = 0; i < elevatorFloors.length; i++) {
-      const floor = elevatorFloors[i];
-      // There are fewer hall maps than tenth floors, so the list wraps: every
-      // tenth floor is a lift hall, never an ordinary room without doors.
-      this._dungeonFloors[floor] = elevatorMaps.length
-        ? elevatorMaps[i % elevatorMaps.length]
-        : this._dungeonFloors[floor];
-    }
+    // Elevator halls keep their fixed maps on every tenth floor. There are
+    // fewer hall maps than tenth floors, so the list wraps.
+    const elevatorMaps = [...params.elevatorMaps];
+    const fixedLeft = new Set(Object.keys(params.fixedFloors).map(Number));
+    const levelsLeft = () => bag.length + fixedLeft.size;
 
-    for (let floor = 1; floor <= 99; floor++) {
+    let top = 0;
+    for (let floor = 1; floor <= TOWER_CAPACITY; floor++) {
       if (floor === 1) {
         this._dungeonFloors[floor] = 101;
+        top = floor;
         continue;
       }
-      if (elevatorFloors.indexOf(floor) >= 0) continue;
+      if (levelsLeft() === 0) break;
+      if (floor % 10 === 0 && elevatorMaps.length) {
+        this._dungeonFloors[floor] = elevatorMaps[(floor / 10 - 1) % elevatorMaps.length];
+        continue;
+      }
       if (params.fixedFloors[floor]) {
         this._dungeonFloors[floor] = [...params.fixedFloors[floor].maps];
+        fixedLeft.delete(floor);
+        top = floor;
         continue;
       }
       const entry = dealFloor();
       if (entry === null) continue;
       this._dungeonFloors[floor] = entry;
+      top = floor;
     }
+    if (bag.length) {
+      console.warn("DungeonFloorSystem: " + bag.length + " tower levels did not fit under floor " + TOWER_CAPACITY);
+    }
+    this._dungeonTopFloor = top;
 
     this.initializeStairLocations();
 
@@ -933,7 +938,7 @@ Game_System.prototype.findRegion14Tiles = function (mapData) {
   };
 
   Game_System.prototype.initializeStairLocations = function () {
-    const maxFloor = params.demoMode ? params.demoMaxFloor : 99;
+    const maxFloor = params.demoMode ? params.demoMaxFloor : (this._dungeonTopFloor || 0);
     for (let floor = 1; floor <= maxFloor; floor++) {
         this.initializeStairsForFloor(floor);
     }
@@ -1266,7 +1271,8 @@ Game_System.prototype.isPassableTileFromTilesets = function (mapData, x, y) {
         currentFloor = 0;
         $gameVariables.setValue(params.currentFloorVariable, 0);
     }
-    const maxFloor = params.demoMode ? params.demoMaxFloor : 100;
+    if (currentFloor >= 0) ensureDungeonLayout();
+    const maxFloor = towerTopFloor();
     if (currentFloor < 0 || currentFloor >= maxFloor) {
         return;
     }
@@ -1320,9 +1326,9 @@ Game_System.prototype.isPassableTileFromTilesets = function (mapData, x, y) {
 
   PluginManager.registerCommand(pluginName, "setFloor", (args) => {
     const floor = parseInt(args.floor || 1);
-    const maxFloor = params.demoMode ? params.demoMaxFloor : 100;
-    if (floor > 100 || !isDemoOpenFloor(floor)) {
-        console.warn(`Demo mode: Cannot go beyond floor ${maxFloor}`);
+    const maxFloor = towerTopFloor();
+    if (floor > maxFloor || !isDemoOpenFloor(floor)) {
+        console.warn(`DungeonFloorSystem: cannot go beyond floor ${maxFloor}`);
         return;
     }
     moveToFloor(floor, "downstairs");
@@ -1336,7 +1342,8 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       ? chosen
       : $gameVariables.value(params.currentFloorVariable);
 
-  if (isDemoLockedLowerFloor(floor)) return;
+  // The demo's lift stops at floor 1, the ground floor and Omega City only.
+  if (params.demoMode && isLowerFloor(floor) && floor !== TOWER.SECRET_STAIRWAY.floor) return;
   if (floor === TOWER.SECRET_STAIRWAY.floor) {
       // Floor -22's doors open on Omega City, never on the stairway itself.
       const city = TOWER.OMEGA_CITY;
@@ -1356,8 +1363,9 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // the only way onto it, so a lift asked for it does nothing.
   if (isLowerFloor(floor)) return;
 
-  const maxFloor = params.demoMode ? params.demoMaxFloor : 100;
-  if (floor >= 0 && floor <= 100 && isDemoOpenFloor(floor)) {
+  if (floor > 0) ensureDungeonLayout();
+  const maxFloor = towerTopFloor();
+  if (floor >= 0 && floor <= maxFloor && isDemoOpenFloor(floor)) {
       moveToFloor(floor, "elevator");
   } else {
       console.error(
@@ -1596,8 +1604,10 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   // Floor -1 and floor -22 are open from the start; everything else has to have
   // been reached. The upper half keeps its own rule (variable 2).
   function isLowerFloorUnlocked(floor) {
-    if (!isLowerFloor(floor) || isDemoLockedLowerFloor(floor)) return false;
-    if (floor === -1 || floor === TOWER.SECRET_STAIRWAY.floor) return true;
+    if (!isLowerFloor(floor)) return false;
+    if (floor === TOWER.SECRET_STAIRWAY.floor) return true;
+    if (isDemoLockedLowerFloor(floor)) return false;
+    if (floor === -1) return true;
     return Math.abs(floor) <= towerDepthReached();
   }
 
@@ -2086,7 +2096,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
   }
 
   // Is the party anywhere on the tower's levels: a generated floor, an authored
-  // one, the boss floor or a lift hall? Unlike insideTower the halls count, so
+  // one or a lift hall? Unlike insideTower the halls count, so
   // waiting or sleeping at the doors is still being in the tower. The tower's
   // own worlds (their people, settlements and powers) are only simulated while
   // this holds: out in the world they stand still, to save the frame.
@@ -3508,12 +3518,16 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
 
   window.DungeonFloors = {
     deepestFloor: TOWER.DEEPEST,
+    // Floor -22: the lift's doors there open on Omega City.
+    omegaCityFloor: TOWER.SECRET_STAIRWAY.floor,
     // The debug Home key: to the lift of the floor the party stands on.
     teleportToGroupElevator: () => teleportToGroupElevator(),
     isLowerFloor,
     isGeneratedLowerFloor,
     isLowerFloorUnlocked,
     isDemoOpenFloor,
+    // The highest floor above ground this world's tower has.
+    topFloor: towerTopFloor,
     lowerFloorLabel,
     floorBiome: towerFloorBiome,
     depthReached: towerDepthReached,
@@ -3527,9 +3541,9 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // Anywhere on the tower's levels, the lift halls included.
     onTowerLevels,
     // True when the map the party stands on is one of the authored dungeon's
-    // own maps (any map under the dungeon folders, an elevator hall or the boss
-    // floor). The floor variable outlives the dungeon, so anything reading it
-    // to decide "are we underground" has to ask this first.
+    // own maps (any map under the dungeon folders or an elevator hall). The
+    // floor variable outlives the dungeon, so anything reading it to decide
+    // "are we underground" has to ask this first.
     isDungeonMap: (mapId) => isDungeonMap(
         mapId != null ? mapId : (typeof $gameMap !== "undefined" && $gameMap ? $gameMap.mapId() : 0)
     ),
@@ -3636,10 +3650,6 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
         mapId = $gameSwitches.value(params.arenaToggleSwitch) ? params.arenaMapId : params.townMapId;
         x = $gameSwitches.value(params.arenaToggleSwitch) ? params.arenaMapX : params.playerSpawnX;
         y = $gameSwitches.value(params.arenaToggleSwitch) ? params.arenaMapY : params.playerSpawnY;
-    } else if (floor === 100) {
-        mapId = params.bossFloorMapId;
-        x = params.bossFloorX;
-        y = params.bossFloorY;
     } else if (floor === 1 && previousFloor === 2) {
         const fromSecond = TOWER.FIRST_FLOOR_FROM_SECOND;
         mapId = fromSecond.mapId;
@@ -3990,9 +4000,6 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
       }
     }
     if (params.elevatorMaps.indexOf(mapId) >= 0) return true;
-
-    // Also check boss floor
-    if (mapId === params.bossFloorMapId) return true;
 
     return false;
   }

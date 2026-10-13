@@ -7550,5 +7550,9 @@
   "2113": {
     "name": "Pizza Base",
     "description": "A round of pizza dough, stretched and ready.\nAdd sauce and toppings, then bake."
+  },
+  "2114": {
+    "name": "Magic 8 Ball",
+    "description": "Shake it and a trivia about the world floats up.\nIt never runs out of answers."
   }
 }

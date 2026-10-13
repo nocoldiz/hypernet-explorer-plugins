@@ -10,8 +10,8 @@
     "text_int": "trivia.1.text"
   },
   {
-    "en": "The only thing holding the cosmic structure together is the Omega Tower, an anomalous tower that pierces two dimensions.",
-    "it": "L'unica cosa che tiene la struttura cosmica in piedi è l'Omega Tower, una torre anomala che buca le due dimensioni.",
+    "en": "The only thing holding the cosmic structure together is the Omega Tower, a divine spear that pierces all 92 dimensions.",
+    "it": "L'unica cosa che tiene in piedi la struttura cosmica è la Torre Omega, una lancia divina che trafigge tutte le 92 dimensioni.",
     "text_int": "trivia.2.text"
   },
   {
@@ -30,23 +30,23 @@
     "text_int": "trivia.5.text"
   },
   {
-    "en": "In 2003, an event known as 'The Squishing' compressed and merged 92 distinct dimensions into a single, unstable reality.",
-    "it": "Nel 2003, un evento noto come 'The Squishing' ha compresso e fuso 92 dimensioni distinte in un'unica, instabile realtà.",
+    "en": "Since 1992 an event known as the Squishing has been collapsing fragments of 92 dimensions into our own, faster every year.",
+    "it": "Dal 1992 un evento noto come Squishing fa crollare nella nostra dimensione frammenti di 92 dimensioni, ogni anno più in fretta.",
     "text_int": "trivia.6.text"
   },
   {
-    "en": "The 'Rule of 80' states that any living being moving at less than 80 km/h is subject to a 24-hour temporal loop.",
-    "it": "La 'Rule of 80' stabilisce che qualsiasi essere vivente che si muove a meno di 80 km/h è soggetto a un loop temporale di 24 ore.",
+    "en": "The Rule of 80 states that anything moving faster than 80 km/h is pulled toward the nearest time loop bubble, where every day resets.",
+    "it": "La Regola degli 80 stabilisce che tutto ciò che si muove a più di 80 km/h viene attirato verso la bolla temporale più vicina, dove ogni giorno si azzera.",
     "text_int": "trivia.7.text"
   },
   {
-    "en": "Life is restored if death occurs within the loop (below 80 km/h), but all memories from that period are lost.",
-    "it": "La vita viene ripristinata se la morte avviene all'interno del loop (sotto gli 80 km/h), ma tutti i ricordi di quel periodo vengono persi.",
+    "en": "Inside a time loop bubble, death resets with the day, and nothing slower than 80 km/h can cross the edge on the way out.",
+    "it": "Dentro una bolla temporale la morte si azzera con il giorno, e niente di più lento di 80 km/h può superarne il bordo per uscire.",
     "text_int": "trivia.8.text"
   },
   {
-    "en": "Death becomes permanent if it occurs while moving at or above 80 km/h, as this speed allows escape from the temporal reset.",
-    "it": "La morte diventa permanente se avviene muovendosi a 80 km/h o più, poiché questa velocità permette di sfuggire al reset temporale.",
+    "en": "Inside a bubble, death becomes permanent only at over 80 km/h, or when struck by something moving that fast.",
+    "it": "Dentro una bolla la morte diventa permanente solo sopra gli 80 km/h, o colpiti da qualcosa che si muove così veloce.",
     "text_int": "trivia.9.text"
   },
   {
@@ -60,8 +60,8 @@
     "text_int": "trivia.11.text"
   },
   {
-    "en": "Objects made of Vantablack are immune to both magical effects and temporal loops.",
-    "it": "Gli oggetti fatti di Vantablack sono immuni sia agli effetti magici che ai loop temporali.",
+    "en": "Objects painted with Fantablack, scraped off the Omega Tower, are immune to time loop bubbles.",
+    "it": "Gli oggetti dipinti con il Fantablack, raschiato dalla Torre Omega, sono immuni alle bolle temporali.",
     "text_int": "trivia.12.text"
   },
   {
@@ -100,13 +100,13 @@
     "text_int": "trivia.19.text"
   },
   {
-    "en": "In 2035, the Archive Foundation famously stole and publicly released the secret formula for Loca-Cola.",
-    "it": "Nel 2035, l'Archive Foundation ha notoriamente rubato e rilasciato pubblicamente la formula segreta della Loca-Cola.",
+    "en": "The Archive Foundation once stole and publicly released the secret formula for Loca-Cola.",
+    "it": "Una volta la Fondazione Archivio ha rubato e reso pubblica la formula segreta della Loca-Cola.",
     "text_int": "trivia.20.text"
   },
   {
-    "en": "Eris, the goddess of discord, now leads the divine pantheon after assassinating the Father aspect of YHWH with the Spear of Memory.",
-    "it": "Eris, la dea della discordia, ora guida il pantheon divino dopo aver assassinato l'aspetto Padre di YHWH con la Lancia della Memoria.",
+    "en": "Eris, the goddess of discord, killed Maat, goddess of justice, with the Omega Tower, and now sits on the celestial throne left empty by the Father aspect of YHWH.",
+    "it": "Eris, la dea della discordia, ha ucciso Maat, dea della giustizia, con la Torre Omega, e ora siede sul trono celeste lasciato vuoto dall'aspetto Padre di YHWH.",
     "text_int": "trivia.21.text"
   },
   {
@@ -185,11 +185,6 @@
     "text_int": "trivia.36.text"
   },
   {
-    "en": "In the dangerous City of Masks, Alagadda, all visitors must wear a mask. Removing it causes one to become an 'Unperson', invisible to all.",
-    "it": "Nella pericolosa Città delle Maschere, Alagadda, tutti i visitatori devono indossare una maschera. Rimuoverla fa diventare un 'Non-Persona', invisibile a tutti.",
-    "text_int": "trivia.37.text"
-  },
-  {
     "en": "In combat, it is possible to mutilate opponents to weaken them, and they can do the same in return.",
     "it": "In combattimento, è possibile mutilare gli avversari per indebolirli, e loro possono fare lo stesso.",
     "text_int": "trivia.38.text"
@@ -265,8 +260,8 @@
     "text_int": "trivia.52.text"
   },
   {
-    "en": "An Expression Seed unlocks Expression: a power a character assembles out of a trigger, vows, a branch, effects and a form, the way a Nen ability or a Stand is built.",
-    "it": "Un Seme dell'Espressione sblocca l'Espressione: un potere che un personaggio assembla da un innesco, dei voti, un bivio, degli effetti e una forma, come un'abilità Nen o uno Stand.",
+    "en": "An Expression Seed unlocks Expression: a power a character assembles out of a trigger, vows, a branch, effects and a form,",
+    "it": "Un Seme dell'Espressione sblocca l'Espressione: un potere che un personaggio assembla da un innesco, dei voti, un bivio, degli effetti e una forma",
     "text_int": "trivia.53.text"
   },
   {

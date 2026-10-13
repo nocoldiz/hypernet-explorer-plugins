@@ -49,7 +49,7 @@
   },
   "9": {
     "name": "FLY",
-    "description": "LETS DA PARTY FLY ON DA WORLD MAP!",
+    "description": "LETS DA PARTY TAKE TA DA AIR!",
     "message1": "%1 TAKES TA DA AIR!",
     "message2": ""
   },
@@ -9601,7 +9601,7 @@
   },
   "1978": {
     "name": "RIME",
-    "description": "DEALS LIGHT ICE DAMAGE TA ONE BAD 'UN AN' INFLICTS\nBRITTLE, SO DA NEXT PHYSICAL BLOW SHATTERS IT\nFOR MORE!",
+    "description": "DEALS LIGHT ICE DAMAGE TA ONE BAD 'UN AN' INFLICTS\nBRITTLE, SO A SHATTERIN' BLOW BREAKS IT FOR\nMORE!",
     "message1": "%1 CASTS %2!",
     "message2": ""
   },
@@ -9759,6 +9759,24 @@
     "name": "SHIELD OATH",
     "description": "GRANTS DA USER GUARDIAN BOND, STEPPIN' IN TA\nTAKE HALF DA HP DAMAGE DEALT TA EACH ALLY.\nSTRIKES FIRST!",
     "message1": "%1 SWEARS TA STAND BEFORE DA OTHERS!",
+    "message2": ""
+  },
+  "2039": {
+    "name": "LEVITATE",
+    "description": "LIFTS DA PARTY OFF DA GROUND FOR A SHORT WAY!",
+    "message1": "%1 RISES OFF DA GROUND!",
+    "message2": ""
+  },
+  "2040": {
+    "name": "GreaterLevitation",
+    "description": "LIFTS DA PARTY OFF DA GROUND FOR A LONG WAY!",
+    "message1": "%1 LIFTS DA WHOLE PARTY INTO DA AIR!",
+    "message2": ""
+  },
+  "2041": {
+    "name": "GLIDE",
+    "description": "GLIDES A FEW STEPS OVER WHATEVER LIES BELOW!",
+    "message1": "%1 GLIDES!",
     "message2": ""
   }
 }

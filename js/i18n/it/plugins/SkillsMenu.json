@@ -27,6 +27,11 @@
       "melee": "Serve mischia",
       "ranged": "Serve distanza",
       "unarmed": "2 mani libere"
+    },
+    "kind": {
+      "melee": "Mischia",
+      "ranged": "Distanza",
+      "unarmed": "Corpo a corpo"
     }
   },
   "ammo": {
@@ -124,6 +129,7 @@
     "label": {
       "damageCategory": "Classe di danno",
       "statReq": "Richiede",
+      "weaponReq": "Arma",
       "grantedBy": "Concessa da",
       "damage": "Danno",
       "range": "Gittata"

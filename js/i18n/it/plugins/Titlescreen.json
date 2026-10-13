@@ -37,6 +37,7 @@
   },
   "minigame": {
     "arena": "Arena",
+    "armyBattle": "Battaglia campale d'esempio",
     "liminalWorld": "Mondo liminale",
     "galaxyMap": "Mappa galattica",
     "dream": "Sogno",
@@ -149,7 +150,7 @@
     "curvature": "CURVATURA SPAZIALE RILEVATA"
   },
   "version": {
-    "text": "0.8.6a"
+    "text": "0.8.8a"
   },
   "language": {
     "label": "LINGUA"
@@ -243,8 +244,7 @@
     "autodrive": "CAMPER",
     "eris": "TELECAMERA DI ERIS",
     "cards": "SCHEDE DATI",
-    "space": "SPAZIO",
-    "random": "CASUALE"
+    "space": "SPAZIO"
   },
   "artifact": {
     "adjectives": [

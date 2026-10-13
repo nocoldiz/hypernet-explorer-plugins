@@ -892,6 +892,7 @@ window.GameOptions = GameOptions;
         // carrying any of them reads as the cards.
         this.titleBackground = config.titleBackground !== undefined ? config.titleBackground : 7;
         if (this.titleBackground >= 3 && this.titleBackground <= 6) this.titleBackground = 1;
+        if (this.titleBackground === 0) this.titleBackground = 7;
         // Camera inversions: the Hyperverse title pan reads X the other way
         // round (UI/Titlescreen.js), the star map orbit reads Y the other way
         // round (GalaxySim/GalaxySim_Camera3D.js). Mouse and right stick alike.
@@ -2453,13 +2454,13 @@ window.GameOptions = GameOptions;
     // starfield and the two cinematic backgrounds; Random reshuffles each launch)
     const titleBgNames = () => T.list('GameOptions.titleBackground');
     // Cycle order as seen by the player: Hyperverse (the default) first, the
-    // Eris camera (9) second, Camper Drive third, then the rest, with Random always last. The stored config
+    // Eris camera (9) second, Camper Drive third, then the rest. The stored config
     // ids keep their original numbering so existing configs stay valid; only the
     // order they are stepped through changes. 3, 4, 5 and 6 (Artifacts,
     // Bestiary, Weapons and the old Enemies 3D) are gone from the cycle: the
     // data cards cover all four. Mirrors
     // Scene_Title.getAvailableBackgroundModes in Titlescreen.js.
-    const TITLE_BG_ORDER = [7, 9, 8, 1, 2, 0];
+    const TITLE_BG_ORDER = [7, 9, 8, 1, 2];
     const stepTitleBg = (v, dir) => {
         let i = TITLE_BG_ORDER.indexOf(v);
         if (i < 0) i = 0;
@@ -2469,7 +2470,7 @@ window.GameOptions = GameOptions;
         () => ConfigManager.titleBackground !== undefined ? ConfigManager.titleBackground : 7,
         (value) => ConfigManager.titleBackground = value,
         'video', 'boolean',
-        (value) => titleBgNames()[value] || titleBgNames()[0],
+        (value) => titleBgNames()[value] || titleBgNames()[7] || '',
         function () {
             this.setConfigValue('titleBackground', stepTitleBg(this.getConfigValue('titleBackground'), 1));
         },

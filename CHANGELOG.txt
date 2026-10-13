@@ -1,3 +1,36 @@
+0.8.8a
+
+Maps:
+ - Fixed various omega tower levels
+
+Added:
+ - readded titlescreen trivia explaining base, complex and secret mechanics
+ - army battle skirmish minigame against a random army of almost same size
+
+Changed:
+ - removed copyrighted content from trivia
+ - next body and catalog below roadmap
+ - strategic battle option shows (WIP) label
+ - quest board css in omega tower is black instead of white
+ - reworked character creation archetype and body parts flow
+ - alchemistry never disabled, kit only boosts success; never dim vehicles, workforce, followers
+ - reworked army battles with walking directional sprites and horizontal casualties
+ - omega tower max height is the amount of tower levels, all picked
+ - spell scaling and requirements follow the school: INT or WIS
+ - mundane physical skills scale on body stats only, chi on WIS
+
+Fixed:
+ - fixed starting HP MP and AP not being full
+ - fixed arcade minigames launching frogger and added army sample battle
+ - em movie sacrificial slab no longer too long
+ - firearms skills cannot be used with 0 bullets
+ - status page opens on the selected party member
+ - menu no longer turns invisible after quickly closing army, factions, assets or sandbox
+ - hypernet apps that error no longer crash the game
+ - hyperdeck and thinker preview no longer crash without WebGL
+ - personal menus and biologics no longer crash with an empty party
+ - stockbusters tuition shows both stats of two-stat skills
+
 0.8.7a
 
 Maps:

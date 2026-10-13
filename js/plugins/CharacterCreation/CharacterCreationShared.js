@@ -881,8 +881,11 @@
     // "sentient": true in Archetypes.json, and every beast, ooze, swarm and
     // elemental does not. An archetype the data does not know is not one.
     isSentientArchetype(key) {
+      if (!key) return false;
+      if (key === "Dargos" || key === "Vampire") return true;
       const data = this._data();
       const entry = key && data ? data[key] : null;
+      if (entry && (entry.sentient === true || entry.bodyPlan === "Humanoid")) return true;
       return !!(entry && entry.sentient === true);
     },
 
@@ -919,7 +922,12 @@
     sentientClassesFor(key) {
       const data = this._data();
       if (!key || !data || !data[key]) return [];
-      return this._magicAllowed(this._known(data[key].sentientClasses));
+      const entry = data[key];
+      if (key === "Vampire" || key === "Dargos" || (entry && entry.bodyPlan === "Humanoid")) {
+        const roster = this.sentientRoster();
+        if (roster && roster.length) return roster;
+      }
+      return this._magicAllowed(this._known(entry.sentientClasses));
     },
 
     // The civilised roster of a single archetype key, [] when the archetype is
@@ -974,10 +982,19 @@
     // walking the world is retconned.
     playableGroupsForArchetypes(key1, key2) {
       const groups = this.groupsForArchetypes(key1, key2);
-      let sentient = this.sentientClassesFor(key1);
-      if (key2 && key2 !== key1) {
-        const second = new Set(this.sentientClassesFor(key2));
-        sentient = sentient.filter((id) => second.has(id));
+      let s1 = this.sentientClassesFor(key1);
+      let s2 = key2 && key2 !== key1 ? this.sentientClassesFor(key2) : s1;
+      let sentient;
+      if (s1.length && s2.length) {
+        const second = new Set(s2);
+        const common = s1.filter((id) => second.has(id));
+        sentient = common.length ? common : (this.isSentientArchetype(key1) ? s1 : s2);
+      } else if (s1.length) {
+        sentient = s1;
+      } else if (s2.length) {
+        sentient = s2;
+      } else {
+        sentient = [];
       }
       return {
         creature: groups.creature.length ? groups.creature : [this.fallbackId()],

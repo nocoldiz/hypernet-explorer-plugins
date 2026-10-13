@@ -2124,6 +2124,12 @@
     "choiceDate": "DATE?",
     "choiceArrest": "ARREST ME",
     "coward": "YOU COWARD!!!",
+    "cowardLines": [
+      "YOU COWARD!!!",
+      "RUN, LIL' SCALE-DODGER. DA COURT REMEMBERS EVERY HEEL IT SEES!",
+      "DAT IZ IT? YOU CAME ALL DIS WAY TA SHOW ME YA BACK?",
+      "COWARD! COME BACK WHEN YA KNEES STOP KNOCKIN'!"
+    ],
     "crowned": "DA SCALES IZ YA NOW. NO COURT WILL EVER READ YA NAME AGAIN!",
     "gone": "DA COURT IZ EMPTY..."
   }

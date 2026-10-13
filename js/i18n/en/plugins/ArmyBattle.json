@@ -23,6 +23,8 @@
   "enemyForces": "Enemy forces",
   "victory": "VICTORY!",
   "defeat": "DEFEAT!",
+  "skirmishWon": "Skirmish won: the enemy army is routed.",
+  "skirmishLost": "Skirmish lost: your army is driven from the field.",
   "charge": "CHARGE!",
   "crit": "CRIT!",
   "selected": "Selected:\n{squad}",

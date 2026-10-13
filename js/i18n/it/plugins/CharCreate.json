@@ -438,7 +438,7 @@
       "desc": "Cattura e combatti con i mostri. \\C[1]Non potrà essere cambiato in seguito.\\C[0]"
     },
     "combatMap": {
-      "name": "Battaglia strategica",
+      "name": "Battaglia strategica (WIP)",
       "desc": "Combattimenti tattici sulla griglia della mappa. Armi e abilità hanno una portata e la linea di vista conta. Modificabile nelle Opzioni."
     },
     "combatRpg": {
@@ -643,7 +643,7 @@
   "battleMode": "Modalità battaglia",
   "battleModeDesc": "Battaglia a turni: classica scena a turni. Battaglia strategica: combattimenti tattici sulla griglia della mappa.",
   "battleModeTurn": "Battaglia a turni",
-  "battleModeStrategic": "Battaglia strategica",
+  "battleModeStrategic": "Battaglia strategica (WIP)",
   "battleMusic": "Musica di battaglia",
   "musicTrackPlayedDuringCombatPressToPreviewTr": "Musica di battaglia. Premi ←→ per l'anteprima.",
   "uiTheme": "Tema UI",
@@ -842,6 +842,7 @@
   "embarkWithPreset": "Inizia con il preset",
   "budgetPoints": "Budget: {remaining} / {total} pt",
   "bodyParts": "Parti del corpo",
+  "gripSlot": "Presa (slot arma)",
   "anatomyHint": "Il corpo di cui è fatto questo personaggio. Ogni parte insegna le sue abilità finché resta attaccata.",
   "anatomyTeaches": "Insegna",
   "reproductiveOrgans": "Organi riproduttivi",

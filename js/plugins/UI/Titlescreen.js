@@ -80,7 +80,6 @@
     const windowXOffsetPct = Number(params.windowX) || 20;
     const windowPadding = Number(params.windowPadding) || 18;
     const commandPadding = Number(params.commandPadding) || 36;
-    const { Trivia } = window.Messages || {};
     const hideStartOptions = params.hideStartOptions === 'true';
     // Defaults to ON, so an entry in plugins.js that predates this parameter
     // (undefined) still shows the disclaimer.
@@ -365,12 +364,18 @@
             el.classList.add('title-anchored');
             st.setProperty('--title-scale', String(s));
             if (opts.left != null) st.setProperty('--title-x', Math.round(r.left + opts.left * s) + 'px');
+            else st.removeProperty('--title-x');
             if (opts.right != null) st.setProperty('--title-right', Math.round(vw - (r.left + r.width) + opts.right * s) + 'px');
+            else st.removeProperty('--title-right');
             if (opts.top != null) st.setProperty('--title-y', Math.round(r.top + opts.top * s) + 'px');
+            else if (!opts.centerY) st.removeProperty('--title-y');
             if (opts.bottom != null) st.setProperty('--title-bottom', Math.round(vh - (r.top + r.height) + opts.bottom * s) + 'px');
+            else st.removeProperty('--title-bottom');
             if (opts.centerY) {
                 st.setProperty('--title-y', Math.round(r.top + r.height / 2) + 'px');
                 el.classList.add('title-anchored--midway');
+            } else {
+                el.classList.remove('title-anchored--midway');
             }
             return s;
         },
@@ -996,8 +1001,28 @@
         // parks the answer here; those two plugins read it through setup().
         _setup: null,
         setSetup(cfg) { this._setup = cfg || null; },
-        clearSetup() { this._setup = null; },
+        clearSetup() {
+            this._setup = null;
+            if (this.isFreePlay() && typeof $gameArmy !== 'undefined' && $gameArmy && $gameArmy.removeAllTroops) {
+                $gameArmy.removeAllTroops();
+            }
+        },
         setup() { return this._setup; },
+
+        // Free play field battle: if the company has no troops recruited yet,
+        // muster a balanced sample cohort (~20 troops) across factions so the
+        // skirmish can be fought at full army scale.
+        stockSampleArmy() {
+            if (typeof $gameArmy === 'undefined' || !$gameArmy) return;
+            if ($gameArmy.removeAllTroops) $gameArmy.removeAllTroops();
+            if (typeof Game_AIArmy !== 'undefined' && typeof $gameFactions !== 'undefined' && $gameFactions) {
+                const sample = new Game_AIArmy(null);
+                sample._generateIndependentArmy(20);
+                for (const t of sample.getTroops()) {
+                    $gameArmy.addTroop(t.factionId, t);
+                }
+            }
+        },
 
         // How the Liminal World was answered for on the way in: which vehicle
         // (or none), and the world square of the place it was opened on. Read
@@ -1125,6 +1150,14 @@
         window.VisualPiano.open();
     }
 
+    function launchArmyBattle() {
+        if (!window.ArmyBattleView || !window.ArmyBattleView.startSkirmish) return;
+        if (MinigameArcade.isFreePlay() || (typeof $gameArmy !== 'undefined' && $gameArmy && $gameArmy.getTroopCount() === 0)) {
+            MinigameArcade.stockSampleArmy();
+        }
+        window.ArmyBattleView.startSkirmish();
+    }
+
     // Setup pages, shown before a game marked `setup: true` is launched. Surfing
     // and fishing build their world out of the map they are played on, and the
     // arcade has no map, so the player is asked instead of being given the
@@ -1219,6 +1252,7 @@
     function buildMinigameList() {
         const all = [
             { name: T('Titlescreen.minigame.arena'),                   avail: () => hasScene('Scene_ArenaPartySelect'),  run: s => SceneManager.push(window.Scene_ArenaPartySelect) },
+            { name: T('Titlescreen.minigame.armyBattle'),              avail: () => !!(window.ArmyBattleView && window.ArmyBattleView.startSkirmish), run: s => launchArmyBattle() },
             // The whole 3D world, free of any game: the player says how they are
             // getting about and where in Europe to be put down, and is dropped
             // beside that place with a weapon they did not choose. Nothing out
@@ -4418,7 +4452,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
             if (window.THREE && (hasBodies || hasCosmos)) {
                 try {
                     this._initScene();
-                    this._createInfoBox();
+                    // No body readout: the trivia plate (UI/TitleTrivia.js) stands
+                    // in its corner, above NEXT and CATALOG.
                     this._createControlButtons();
                     this._bindLookInput();
                     this._enabled = true;
@@ -5061,23 +5096,45 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         // resize only has to move the box font-size.
         layout() {
             const rect = TitleLayout.rect();
-            // The one measurement that is not a multiple of the scale: how wide
-            // the readout may be before it eats the picture behind it.
+            const s = TitleLayout.scale(rect);
             const width = s => Math.round(Math.min(340 * s, rect.width * 0.3)) + 'px';
-            if (this._infoBox) {
-                const s = TitleLayout.place(this._infoBox, { right: 22, bottom: 114 });
-                this._infoBox.style.setProperty('--title-w', width(s));
+
+            const road = document.getElementById('title-roadmap-box') ||
+                         document.getElementById('title-disclaimer') ||
+                         document.getElementById('title-language') ||
+                         document.getElementById('title-bg-switch');
+            const roadRect = road ? road.getBoundingClientRect() : null;
+            const topBelowRoadmap = (roadRect && roadRect.height > 0)
+                ? (roadRect.bottom - rect.top) / s + 8
+                : 90;
+
+            if (this._nextButton) {
+                TitleLayout.place(this._nextButton, { right: 18, top: Math.round(topBelowRoadmap) });
             }
+
+            const nextRect = (this._nextButton && this._nextButton.offsetHeight > 0)
+                ? this._nextButton.getBoundingClientRect()
+                : null;
+            const topBelowNext = (nextRect && nextRect.height > 0)
+                ? (nextRect.bottom - rect.top) / s + 6
+                : topBelowRoadmap + 30;
+
+            if (this._catalogButton) {
+                TitleLayout.place(this._catalogButton, { right: 18, top: Math.round(topBelowNext) });
+            }
+
             if (this._catalogPanel) {
-                const s = TitleLayout.place(this._catalogPanel, { right: 22, bottom: 114 });
+                const catRect = (this._catalogButton && this._catalogButton.offsetHeight > 0)
+                    ? this._catalogButton.getBoundingClientRect()
+                    : null;
+                const panelTop = (catRect && catRect.height > 0)
+                    ? (catRect.bottom - rect.top) / s + 6
+                    : topBelowNext + 30;
+                TitleLayout.place(this._catalogPanel, { right: 18, top: Math.round(panelTop) });
                 this._catalogPanel.style.setProperty('--title-w', width(s));
-                // Tall enough to browse, short enough to clear the background
-                // switcher and its panel in the opposite corner.
                 this._catalogPanel.style.setProperty('--title-maxh',
-                    Math.round(rect.height * 0.58) + 'px');
+                    Math.round(Math.max(120, rect.height - (panelTop * s) - 20)) + 'px');
             }
-            if (this._nextButton) TitleLayout.place(this._nextButton, { right: 22, bottom: 68 });
-            if (this._catalogButton) TitleLayout.place(this._catalogButton, { right: 22, bottom: 22 });
         }
 
         _renderInfo(lines) {
@@ -5573,13 +5630,13 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                 // to finish the fade-in, so the body stays framed while explored.
                 // Browsing the catalog holds it the same way, so the body being
                 // compared against the list never fades out mid-choice.
-                if ((!free && !this._catalogOpen) || act.frame < this._FADE_IN) act.frame++;
+                if (act.frame < this._FADE_IN) act.frame++;
                 try { if (act.animate) act.animate(t); } catch (e) { /* skip a bad frame */ }
 
                 // Cockpit camera: fit the body, gentle sway + a slow dolly-in.
                 const vFovHalf = (this._camera.fov * Math.PI / 180) / 2;
                 const fit = act.viewRadius / Math.tan(vFovHalf);
-                const dolly = 1 - 0.07 * Math.min(1, act.frame / act.total);
+                const dolly = 1 - 0.07 * Math.min(1, act.frame / Math.max(1, this._FADE_IN));
                 // Solid bodies stop at their surface; diffuse ones (galaxies,
                 // nebulae, clusters) can be flown right into. Same near limit
                 // free-look uses below, so the opener sits exactly where a
@@ -5620,30 +5677,16 @@ Window_TitleCommand.prototype.makeCommandList = function () {
                     this._sun.position.set(Math.cos(az + 1.15) * dist, dist * 0.45, Math.sin(az + 1.15) * dist);
                 }
 
-                // Cross-fade timeline (0 -> 1 in, hold, 1 -> 0 out).
+                // Fade in and stay held: no automatic timeout or body change.
                 let op = 1;
                 if (act.frame < this._FADE_IN) op = act.frame / this._FADE_IN;
-                else if (act.frame > this._FADE_IN + this._HOLD) {
-                    op = Math.max(0, 1 - (act.frame - this._FADE_IN - this._HOLD) / this._FADE_OUT);
-                }
                 if (this._canvasEl) this._canvasEl.style.setProperty('--title-fade', op.toFixed(3));
-                // The readout steps aside for the catalog panel, which stands in
-                // the same corner.
                 if (this._infoBox) {
                     this._infoBox.style.setProperty('--title-fade', this._catalogOpen ? '0' : op.toFixed(3));
                 }
-                // The controls belong to the act, but must stay usable through
-                // the fade-out, so they never dim below half.
                 const ctlOp = Math.max(0.5, op).toFixed(3);
                 if (this._nextButton) this._nextButton.style.setProperty('--title-fade', ctlOp);
                 if (this._catalogButton) this._catalogButton.style.setProperty('--title-fade', ctlOp);
-
-                if (act.frame >= act.total) {
-                    this._scene.remove(act.group);
-                    try { if (act.dispose) act.dispose(); } catch (e) { /* ignore */ }
-                    this._act = null;
-                    this._startAct();
-                }
             }
 
             // Black hole acts take the lensing path; everything else renders
@@ -6531,38 +6574,28 @@ Window_TitleCommand.prototype.makeCommandList = function () {
     // all of it, models included, so an old config carrying any of them simply
     // lands on the cards.
     const BG_CONFIG_TO_MODE = {
-        0: 'random', 1: 'cards', 2: 'space', 3: 'cards',
+        0: 'hyperverse', 1: 'cards', 2: 'space', 3: 'cards',
         4: 'cards', 5: 'cards', 6: 'cards', 7: 'hyperverse', 8: 'autodrive', 9: 'eris'
     };
     const BG_MODE_TO_CONFIG = {
-        random: 0, cards: 1, space: 2, hyperverse: 7, autodrive: 8, eris: 9
+        cards: 1, space: 2, hyperverse: 7, autodrive: 8, eris: 9
     };
 
-    // The option-menu-level selection ('random' or a concrete mode), read from
-    // ConfigManager so the on-screen switcher and the options menu stay synced.
+    // The option-menu-level selection, read from ConfigManager so the
+    // on-screen switcher and the options menu stay synced.
     Scene_Title.prototype._resolveBackgroundSelection = function () {
         let mode = (typeof ConfigManager !== 'undefined') ? ConfigManager.titleBackground : 7;
-        if (mode === undefined || mode === null) mode = 7;
+        if (mode === undefined || mode === null || mode === 0) mode = 7;
         return BG_CONFIG_TO_MODE[mode] || 'hyperverse';
     };
 
-    // Map the saved option (0 Random, 1 Data Cards, 2 Space, 7 Hyperverse,
-    // 8 Camper Drive) to a concrete renderer. Hyperverse is the default. The
+    // Map the saved option (1 Data Cards, 2 Space, 7 Hyperverse, 8 Camper Drive,
+    // 9 Eris Camera) to a concrete renderer. Hyperverse is the default. The
     // unified "Space" preset mixes planets, stars, black holes and galaxies
     // into one starfield, the way the cards mix the whole object catalogue.
     Scene_Title.prototype._resolveBackgroundMode = function () {
         let mode = (typeof ConfigManager !== 'undefined') ? ConfigManager.titleBackground : 7;
-        if (mode === undefined || mode === null) mode = 7;
-        if (mode === 0) {
-            const choices = ['cards', 'space'];
-            if (window.THREE && window.GalaxySim) {
-                choices.push('hyperverse');
-            }
-            if (window.THREE && window.VoxelWorldSystem && window.VoxelWorldSystem.startTitleDrive) {
-                choices.push('autodrive');
-            }
-            return choices[Math.floor(Math.random() * choices.length)];
-        }
+        if (mode === undefined || mode === null || mode === 0) mode = 7;
         return BG_CONFIG_TO_MODE[mode] || 'hyperverse';
     };
 
@@ -6571,10 +6604,8 @@ Window_TitleCommand.prototype.makeCommandList = function () {
 
     // The selections offered by the top-right switcher, in cycle order:
     // Hyperverse (the default) first, the Eris camera second, Camper Drive
-    // third, then the rest, with
-    // 'random' always last. Only modes whose renderer is actually loaded are
-    // offered; 'random' is always available and reshuffles the concrete
-    // background each pick. Keep in step with TITLE_BG_ORDER in GameOptions.js.
+    // third, then the rest. Only modes whose renderer is actually loaded are
+    // offered. Keep in step with TITLE_BG_ORDER in GameOptions.js.
     Scene_Title.prototype.getAvailableBackgroundModes = function () {
         const modes = [];
         if (window.THREE && window.GalaxySim) modes.push('hyperverse');
@@ -6582,7 +6613,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         if (window.THREE && window.VoxelWorldSystem && window.VoxelWorldSystem.startTitleDrive) {
             modes.push('autodrive');
         }
-        modes.push('cards', 'space', 'random');
+        modes.push('cards', 'space');
         return modes;
     };
 
@@ -7792,6 +7823,7 @@ Window_TitleCommand.prototype.makeCommandList = function () {
         'title-update',
         'title-bg-switch',
         'title-disclaimer',
+        'title-trivia',
         'title-hyperverse-info',
         'title-hyperverse-catalog',
         'title-hyperverse-next',

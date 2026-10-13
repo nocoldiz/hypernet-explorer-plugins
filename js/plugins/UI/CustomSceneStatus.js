@@ -1265,8 +1265,9 @@
                 if (win.deactivate) win.deactivate();
             });
 
-        // Set actor index to active menu actor
-        this._actorIndex = $gameParty.allMembers().indexOf(this.actor());
+        // Set actor index to active menu actor. this.actor() reads
+        // _actorIndex, which is not set yet: ask the party for the menu actor.
+        this._actorIndex = $gameParty.allMembers().indexOf($gameParty.menuActor());
         if (this._actorIndex < 0) this._actorIndex = 0;
 
         // UI UI states
@@ -1549,7 +1550,7 @@
 
         // 2. Left Page content updates
         const actorNameEl = spread.querySelector("#status-actor-name");
-        if (actorNameEl) actorNameEl.textContent = T("SceneStatus.actorLine", { name: actor.name(), klass: actor.currentClass().name, level: actor.level });
+        if (actorNameEl) actorNameEl.textContent = T("SceneStatus.actorLine", { name: actor.name(), klass: actor.currentClass()?.name || "", level: actor.level });
 
         // Calculate EXP
         const currentExp = actor.currentExp() || 0;

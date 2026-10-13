@@ -352,7 +352,14 @@ Game_AIArmy.prototype._generateFactionArmyForCountry = function (faction, countr
   }
 };
 
-Game_AIArmy.prototype._generateIndependentArmy = function () {
+// A random independent column of exactly `size` troops: the skirmish
+// minigame's opponent, matched to the party's own strength.
+Game_AIArmy.prototype.generateMatchedArmy = function (size) {
+  this._generateIndependentArmy(Math.max(1, Math.floor(Number(size) || 1)));
+};
+
+// `totalOverride` fixes the head count; without it the roaming size range rolls.
+Game_AIArmy.prototype._generateIndependentArmy = function (totalOverride) {
   this._isIndependent = true;
   this._factionId = -1;
 
@@ -370,13 +377,14 @@ Game_AIArmy.prototype._generateIndependentArmy = function () {
   if (factionsWithTroops.length === 0) return;
 
   // Generate random number of total troops
-  const totalTroopCount = Math.floor(
+  const totalTroopCount = totalOverride > 0 ? totalOverride : Math.floor(
     Math.random() * (ArmyEventsManager.Params.maxArmySize - ArmyEventsManager.Params.minArmySize + 1)
   ) + ArmyEventsManager.Params.minArmySize;
 
-  // Determine number of squads (minimum 2, maximum 5)
-  const minSquads = 2;
-  const maxSquads = Math.min(5, Math.floor(totalTroopCount / 3)); // At least 3 troops per squad
+  // Determine number of squads (2 to 5, at least 3 troops per squad). A column
+  // too small for two squads of three is a single squad.
+  const maxSquads = Math.max(1, Math.min(5, Math.floor(totalTroopCount / 3)));
+  const minSquads = Math.min(2, maxSquads);
   const numSquads = Math.floor(Math.random() * (maxSquads - minSquads + 1)) + minSquads;
 
   // Distribute troops among squads
@@ -389,7 +397,7 @@ Game_AIArmy.prototype._generateIndependentArmy = function () {
       squadSizes.push(remainingTroops);
     } else {
       // Random size for this squad (at least 3, at most half of remaining)
-      const minSize = 3;
+      const minSize = Math.min(3, remainingTroops);
       const maxSize = Math.max(minSize, Math.floor(remainingTroops / (numSquads - i)));
       const size = Math.floor(Math.random() * (maxSize - minSize + 1)) + minSize;
       squadSizes.push(size);

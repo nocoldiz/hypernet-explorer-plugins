@@ -159,8 +159,9 @@
     _traitPackages() {
       const api = window.TraitPoints;
       if (!api || typeof api.packages !== "function") return [];
+      const actor = Scene_CharacterCreation.getCurrentActor();
       const NC = window.NPCCreature;
-      const beast = !!(NC && NC.isNonSentientActor(Scene_CharacterCreation.getCurrentActor()));
+      const beast = (actor && actor._isCreatureActor === false) ? false : !!(NC && NC.isNonSentientActor(actor));
       const key = beast ? "beast" : "person";
       if (!this._ccTraitPackageCache) this._ccTraitPackageCache = {};
       if (!this._ccTraitPackageCache[key] || !this._ccTraitPackageCache[key].length) {
@@ -358,8 +359,14 @@
 
         let extraGrants = "";
         if (hoveredTrait.skills && hoveredTrait.skills.length > 0 && typeof $dataSkills !== "undefined") {
-          const sNames = hoveredTrait.skills.map((sid) => ($dataSkills[sid] ? $dataSkills[sid].name : ccTp('CharCreate.skillNumber', { id: sid }))).join(", ");
-          extraGrants += `<div class="cc-grant-note"><strong>${ccT('Traits.grantsSkills')}:</strong> ${sNames}</div>`;
+          const sBadges = hoveredTrait.skills.map((sid) => {
+            const sk = $dataSkills[sid];
+            if (!sk) return ccTp('CharCreate.skillNumber', { id: sid });
+            const sName = window.CCDbName ? window.CCDbName(sk) : sk.name;
+            return `<span class="cc-element-badge"><span class="cc-rpg-icon cc-rpg-icon-gap" style="${this._ccIconStyle(sk.iconIndex || 79, 16)}"></span>${sName}</span>`;
+          }).join(" ");
+          const grantLabel = String(ccT('Traits.grantsSkills') || '').replace(/:\s*$/, '');
+          extraGrants += `<div class="cc-grant-note"><strong>${grantLabel}:</strong> <span class="ts-badge-row">${sBadges}</span></div>`;
         }
 
         detailHtml = `
@@ -448,13 +455,6 @@
               <div class="cc-picked-row">${diseaseChips}</div>
             </div>
           ` : ''}
-
-          <div class="cc-dossier-card ts-summary">
-            <div class="ts-summary-row">
-              <span class="cc-dossier-label">${totalBonusesTitle}:</span>
-              <div class="ts-badge-row cc-row-start">${bonusBadges}</div>
-            </div>
-          </div>
         </div>
       `;
     }
@@ -2486,6 +2486,60 @@
 
       const roadmapRows = sortedLearnings.map(roadmapRowHtml).join("");
 
+      // Specializations resulting from Class, Job, and Traits combinations
+      const catalog = this._specsCatalog();
+      const grantCtx = this._specGrantContext(actor);
+      if (c && c.name) grantCtx.className = c.name;
+      const allJobs = (window.WorkSystem && window.WorkSystem.Jobs) || [];
+      const currentJobId = actor ? (actor._jobId != null ? actor._jobId : 0) : 0;
+      const currentJob = currentJobId > 0 ? (allJobs.find((j) => j.id === currentJobId) || null) : null;
+      const jobSpecName = currentJob && currentJob.spec ? currentJob.spec : null;
+
+      const specRows = [];
+      (catalog || []).forEach((spec) => {
+        if (!spec) return;
+        const implemented = (window.Specializations && typeof window.Specializations.isImplemented === "function")
+          ? window.Specializations.isImplemented(spec)
+          : spec.implemented !== false;
+        if (!implemented) return;
+
+        let classRank = (grantCtx.className && spec.classStart && spec.classStart[grantCtx.className]) || 0;
+        let traitRank = 0;
+        if (spec.traitStart && grantCtx.slugs) {
+          grantCtx.slugs.forEach((slug) => {
+            const lvl = spec.traitStart[slug] || 0;
+            if (lvl > traitRank) traitRank = lvl;
+          });
+        }
+        let jobRank = (jobSpecName && spec.name === jobSpecName) ? (JOB_SPEC_PRESET_RANKS + 1) : 0;
+        let trainedRank = (actor && actor._specTrained && actor._specTrained[spec.id] != null) ? (actor._specTrained[spec.id] + 1) : 0;
+
+        const maxLevel = Math.max(classRank, traitRank, jobRank, trainedRank);
+        if (maxLevel > 1) {
+          const sName = (window.Specializations && window.Specializations.displayName) ? window.Specializations.displayName(spec) : spec.name;
+          const rankLabel = (window.Specializations && window.Specializations.levelName)
+            ? window.Specializations.levelName(maxLevel)
+            : this._specRankName(maxLevel - 1);
+          const sources = [];
+          if (classRank > 1) sources.push(ccT('CharCreate.class'));
+          if (jobRank > 1) sources.push(ccT('CharCreate.professionJob'));
+          if (traitRank > 1) sources.push(ccT('CharCreate.traits'));
+          const sourceText = sources.length ? `(${sources.join(", ")})` : "";
+          const valueText = sourceText ? `${rankLabel} ${sourceText}` : rankLabel;
+
+          if (typeof this._ccLoadoutRowHtml === "function") {
+            specRows.push(this._ccLoadoutRowHtml(spec.icon || 79, sName, valueText, { valueColor: 'var(--text-primary-hover)' }));
+          } else {
+            specRows.push(`
+              <div class="cc-loadout-row">
+                <span class="cc-loadout-item-name">${this._ccIconHtml(spec.icon || 79, 16)} <span>${sName}</span></span>
+                <span class="cc-loadout-item-value">${valueText}</span>
+              </div>
+            `);
+          }
+        }
+      });
+
       return `
         <div class="cc-class-detail cc-class-detail--ruled">
           <h3 class="cc-subheader cc-subheader--lead">
@@ -2523,6 +2577,21 @@
               <div class="cc-dossier-card cc-class-section cc-gap-above-tight">
                 <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.skillRoadmap')} (${ccT('CharCreate.abbrev.level')} 1 - ${roadmapMax})</h4>
                 ${roadmapBody(roadmapRows)}
+              </div>
+            `
+          ) : ''}
+
+          ${specRows.length ? (
+            typeof this._ccLoadoutSectionHtml === "function" ? this._ccLoadoutSectionHtml(
+              ccT('CharCreate.specializations'),
+              roadmapGrid ? specRows.join("") : roadmapBody(specRows.join("")),
+              "",
+              true,
+              roadmapGrid ? 'cc-loadout-grid-cols-3' : ''
+            ) : `
+              <div class="cc-dossier-card cc-class-section cc-gap-above-tight">
+                <h4 class="cc-subheader cc-subheader-tight">${ccT('CharCreate.specializations')}</h4>
+                ${roadmapBody(specRows.join(""))}
               </div>
             `
           ) : ''}

@@ -2232,62 +2232,62 @@ select option:hover {
 
 
 /* ==========================================================================
-   Quest log (KanbanQuestLog.js): the tower hangs a white magnetic board where
-   the archive keeps its cork. Aluminium frame, marker ink for the headings,
+   Quest log (KanbanQuestLog.js): the tower hangs a black magnetic board where
+   the archive keeps its cork. Dark frame, gold ink for the headings,
    and every note held up by a round magnet instead of a pin. Every rule is
    scoped under :root so it outranks theme.css, which loads after this file.
    ========================================================================== */
 :root #kb-board-overlay:not(.kb-app-mode) {
     background:
-        linear-gradient(115deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.55) 42%, rgba(255,255,255,0) 54%),
-        radial-gradient(ellipse at 30% 20%, #ffffff 0%, #f1f3f5 55%, #dfe3e7 100%);
+        linear-gradient(115deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.04) 42%, rgba(255,255,255,0) 54%),
+        radial-gradient(ellipse at 30% 20%, #1a1a1a 0%, #0c0c0c 55%, #000000 100%);
     background-size: auto;
-    border-color: #b9bfc6;
-    box-shadow: inset 0 0 0 2px #8d949c, inset 0 0 60px rgba(70,80,90,0.18);
+    border-color: #3a3a3a;
+    box-shadow: inset 0 0 0 2px #555, inset 0 0 60px rgba(0,0,0,0.6);
 }
 :root #kb-board-overlay:not(.kb-app-mode)::before {
-    border-color: #6f767e;
-    box-shadow: inset 0 0 0 2px #e9ecef;
+    border-color: #555;
+    box-shadow: inset 0 0 0 2px #1a1a1a;
 }
 :root #kb-board-overlay:not(.kb-app-mode)::after {
     background:
-        radial-gradient(ellipse at 72% 82%, rgba(40,60,120,0.05) 0%, rgba(0,0,0,0) 30%),
-        radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(60,70,80,0.16) 100%);
+        radial-gradient(ellipse at 72% 82%, rgba(255,204,102,0.04) 0%, rgba(0,0,0,0) 30%),
+        radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.5) 100%);
 }
 :root #kb-board-overlay:not(.kb-app-mode) #kb-board-header {
-    color: #1d2b52;
+    color: #ffcc66;
     text-shadow: none;
-    border-bottom: 3px solid rgba(29,43,82,0.55);
+    border-bottom: 3px solid rgba(255,204,102,0.55);
 }
 :root #kb-board-overlay:not(.kb-app-mode) #kb-columns { border-top: none; }
 :root #kb-board-overlay:not(.kb-app-mode) .kb-col-divider {
     flex-basis: 3px;
-    background: rgba(29,43,82,0.5);
+    background: rgba(255,204,102,0.4);
     box-shadow: none;
     border-radius: 2px;
 }
 :root #kb-board-overlay:not(.kb-app-mode) .kb-col-header {
-    color: #1d2b52;
+    color: #ffcc66;
     background: transparent;
     border: none;
-    border-bottom: 3px solid #1d2b52;
+    border-bottom: 3px solid #ffcc66;
     border-radius: 0;
     box-shadow: none;
 }
 :root #kb-board-overlay:not(.kb-app-mode) .kb-col-title { text-shadow: none; }
 :root #kb-board-overlay:not(.kb-app-mode) .kb-col-count {
-    color: #a3222c;
+    color: #ff6a6a;
     background: transparent;
-    border: 2px solid #a3222c;
+    border: 2px solid #ff6a6a;
     border-radius: 50%;
     padding: 1px 8px;
 }
-:root #kb-board-overlay:not(.kb-app-mode) .kb-empty-col { color: #5b6470; text-shadow: none; }
-:root #kb-board-overlay:not(.kb-app-mode) .kb-cards-wrap::-webkit-scrollbar-track { background: rgba(70,80,90,0.12); }
-:root #kb-board-overlay:not(.kb-app-mode) .kb-cards-wrap::-webkit-scrollbar-thumb { background: #9aa1a9; border: 2px solid #6f767e; }
-:root #kb-board-overlay:not(.kb-app-mode) .kb-card { box-shadow: 2px 4px 8px rgba(40,50,60,0.35); }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-empty-col { color: #9aa1a9; text-shadow: none; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-cards-wrap::-webkit-scrollbar-track { background: rgba(255,255,255,0.08); }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-cards-wrap::-webkit-scrollbar-thumb { background: #555; border: 2px solid #888; }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card { box-shadow: 2px 4px 8px rgba(0,0,0,0.7); }
 :root #kb-board-overlay:not(.kb-app-mode) .kb-card.focused,
-:root #kb-board-overlay:not(.kb-app-mode) .kb-card:hover { box-shadow: 4px 8px 16px rgba(40,50,60,0.4); }
+:root #kb-board-overlay:not(.kb-app-mode) .kb-card:hover { box-shadow: 4px 8px 16px rgba(0,0,0,0.85); }
 /* The pin becomes a flat round magnet in the note's own pin colour. */
 :root #kb-board-overlay:not(.kb-app-mode) .kb-pin {
     width: 22px; height: 22px; margin-left: -11px; top: -8px;

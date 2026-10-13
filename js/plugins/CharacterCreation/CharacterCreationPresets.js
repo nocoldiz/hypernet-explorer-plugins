@@ -2478,7 +2478,7 @@
     // filtered out of the board only, so lookups by id, a save that already
     // carries the character, and the story mode's own flow are untouched.
     const board = getCharacterPresets().filter(
-      (preset) => !preset.hidden && preset.name !== "Bubba" /* i18n-ignore: preset id */ && (preset.endless || used.indexOf(preset.id) < 0)
+      (preset) => !preset.hidden && preset.name !== "Bubba" && preset.name !== "Em" && preset.id !== EM_PRESET_ID /* i18n-ignore: preset id */ && (preset.endless || used.indexOf(preset.id) < 0)
     );
     const wanted = kind || presetBoardKind;
     if (!wanted) return board;
@@ -3585,6 +3585,7 @@
     return getRetiredPresets().filter((preset) => {
       if (used.indexOf(preset.id) >= 0) return false;
       if (preset.name === "Bubba" && !allowBubba) return false; // i18n-ignore: preset id
+      if (preset.name === "Em" || preset.id === EM_PRESET_ID) return false; // i18n-ignore: preset id
       return true;
     });
   }

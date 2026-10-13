@@ -999,6 +999,9 @@
   // <PistolWhip>    a blow struck with the gun, never a shot: it costs no AP
   //                 while the magazine is empty.
   //
+  // A Firearms skill without <AmmoCost:> spends nothing but still needs one
+  // round loaded: an empty gun fires no shot of any school.
+  //
   // A weapon with no magazine at all (a bow with no <Bullets:>, the vector
   // gun, an enemy) pays nothing and is refused nothing: these rules are the
   // magazine's, and only a magazine can enforce them. The skill pays its
@@ -1042,12 +1045,24 @@
     return { current: Math.max(0, Number(current) || 0), max: config.max };
   }
 
+  /**
+   * A Firearms skill with no <AmmoCost:> of its own: it spends nothing, but
+   * it is still a shot, so it needs a round in the chamber.
+   */
+  function isUntaggedShot(skill) {
+    const profile = ammoProfileOf(skill);
+    if (profile.cost || profile.reload || profile.whip) return false;
+    return !!(window.SkillWeaponReq && window.SkillWeaponReq.needOf(skill) === "ranged");
+  }
+
   /** The fewest rounds this battler must have loaded to use the skill. */
   function roundsNeeded(battler, skill) {
     const profile = ammoProfileOf(skill);
-    if (!profile.cost) return 0;
+    const untagged = isUntaggedShot(skill);
+    if (!profile.cost && !untagged) return 0;
     const mag = magazineOf(battler);
     if (!mag) return 0;
+    if (untagged) return Math.min(1, mag.max);
     return profile.all ? 1 : Math.min(profile.cost, mag.max);
   }
 
@@ -1075,7 +1090,7 @@
       if (!mag) return (battler.isActor && battler.isActor()) ? "noMagazine" : "";
       if (mag.current >= mag.max) return "full";
     }
-    if (profile.cost) {
+    if (profile.cost || isUntaggedShot(skill)) {
       const mag = magazineOf(battler);
       if (mag && mag.current < roundsNeeded(battler, skill)) return "dry";
     }

@@ -3504,7 +3504,16 @@
             const rect = canvas.getBoundingClientRect();
             const width = rect.width || 400;
             const height = rect.height || 440;
-            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            // A refused WebGL context leaves the pane without a picture, as the
+            // sculptor stage and the thumbnails already do; it runs in a timer,
+            // where a throw would end the game.
+            let renderer;
+            try {
+                renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            } catch (e) {
+                console.warn('Thinker: no WebGL for the preview.', e);
+                return;
+            }
             renderer.setSize(width, height);
             // 1:1 device pixels. The window is a pane over a page of text, and
             // the hi-DPI multiplier (up to four times the fragment work on a

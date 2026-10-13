@@ -713,7 +713,14 @@
     if (_Scene_HypernetOS_update) {
         window.Scene_HypernetOS.prototype.update = function() {
             _Scene_HypernetOS_update.call(this);
-            if (window.HypernetKanbanApp) window.HypernetKanbanApp.update();
+            if (window.HypernetKanbanApp && !this._kanbanBroken) {
+                try {
+                    window.HypernetKanbanApp.update();
+                } catch (e) {
+                    this._kanbanBroken = true;
+                    console.error('HypernetOS: the quest board stopped updating.', e);
+                }
+            }
         };
     }
 

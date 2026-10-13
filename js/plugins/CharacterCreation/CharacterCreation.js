@@ -3121,7 +3121,7 @@
         </div>
       ` : tabs.map((tab) => {
         if (tab.id === "origin") return ""; // Origin is moved to dedicated scenario confirm
-        const isTabActive = !isSettingsActive && !isPreset && !isPetActive && !Scene_CharacterCreation._isVehicleMode && (this._step === tab.step || (tab.id === 'archetype' && this._step === STEP.GENDER));
+        const isTabActive = !isSettingsActive && !isPreset && !isPetActive && !Scene_CharacterCreation._isVehicleMode && (this._step === tab.step);
         const isCompleted = this._isTabCompleted(tab.id);
 
         return `
@@ -3604,9 +3604,6 @@
         } else if (this._step === STEP.CLASS || this._isClassPickerStep()) {
           leftHtml = this._classPickerLeftHtml(stepData, activeIndex);
           rightHtml = this._classPickerRightHtml(stepData, activeIndex);
-        } else if (this._step === STEP.GENDER && this._isCurrentMemberCreature()) {
-          leftHtml = this._archetypeStepLeftHtml();
-          rightHtml = this._archetypeStepRightHtml();
         } else if (this._step === STEP.GENDER) {
           // A person is never asked here any more: the step hands straight over
           // to the sprite and name screens (setupStep), and their gender comes
@@ -3969,9 +3966,7 @@
       // Her traits and specializations are the dossier's too, so the story
       // mode draws neither tab.
       const buildTabs = Scene_CharacterCreation._storyMode ? [] : [traits, specializations];
-      return isCreature
-        ? [...dossier, archetype, anatomy, ...klassTab, ...buildTabs]
-        : [...dossier, anatomy, ...klassTab, ...buildTabs];
+      return [...dossier, anatomy, ...klassTab, ...buildTabs];
     }
 
     _isTabCompleted(tabId) {
@@ -4093,16 +4088,10 @@
         Scene_CharacterCreation._isCreatureMode = false;
         if (actor) {
           actor._isCreatureActor = false;
-          // The BODY goes back to being a person's; the class does not have to.
-          // A humanoid may be played as a Ghost, a Zombie or a Drone, and the
-          // class board offers exactly that, so a creature class the player
-          // chose survives the switch. The one exception is the fallback the
-          // creature branch hands out when nothing else fits (Monster): that is
-          // the wizard's own stand-in rather than an answer the player gave,
-          // and a person's body is given a person's class instead.
-          if (actor._classId === window.CreatureClasses.fallbackId()) {
+          if (window.CreatureClasses && window.CreatureClasses.isCreatureClass(actor._classId)) {
             actor.changeClass(1, false);
           }
+          this._ccTraitPackageCache = null;
           if (actor.setPortraitMode) actor.setPortraitMode("bust");
           // Coming back from the creature branch, the body the creature was
           // built on must go with it: left in place, the member stayed a goblin
@@ -4366,7 +4355,7 @@
     cycleRightRail(direction) {
       const tabs = this._getCreationTabs().filter((t) => t && t.id !== "origin");
       if (tabs.length < 2) return;
-      let cur = tabs.findIndex((t) => this._step === t.step || (t.id === "archetype" && this._step === STEP.GENDER));
+      let cur = tabs.findIndex((t) => this._step === t.step);
       if (cur < 0) cur = 0;
       const next = (cur + direction + tabs.length) % tabs.length;
       const target = tabs[next];
@@ -5107,8 +5096,13 @@
       // afterwards, so this step no longer asks anything: it opens the sprite
       // and name screens and moves on. A creature still owns the slot, where it
       // is the archetype board.
-      if (this._step === STEP.GENDER && !this._isCurrentMemberCreature()) {
-        this.leaveGenderStep();
+      if (this._step === STEP.GENDER) {
+        if (!this._isCurrentMemberCreature()) {
+          this.leaveGenderStep();
+        } else {
+          this._step = STEP.ANATOMY;
+          this.setupStep();
+        }
         return;
       }
 
@@ -5257,7 +5251,7 @@
       // If we're in creature mode and at the traits step, go back to gender,
       // skipping the (creature-only) creation method and class steps.
       if (Scene_CharacterCreation._isCreatureMode && this._step === STEP.TRAITS) {
-        this._step = STEP.GENDER;
+        this._step = STEP.ANATOMY;
         this.setupStep();
         return;
       }
@@ -5759,7 +5753,7 @@
           SC._isPartyPresetMode || SC._isScenarioMode) return false;
       if (this._step === STEP.BIO) return true;
       return this._getCreationTabs().some((t) => t && t.id !== "origin" &&
-        (t.step === this._step || (t.id === "archetype" && this._step === STEP.GENDER)));
+        (t.step === this._step));
     }
 
     updateUIInput() {

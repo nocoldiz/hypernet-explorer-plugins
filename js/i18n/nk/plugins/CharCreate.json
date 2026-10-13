@@ -438,7 +438,7 @@
       "desc": "CAPTURE AN' BATTLE WIT MONSTERS. \\C[1]DIS NO CAN BE CHANGED LATER.\\C[0]"
     },
     "combatMap": {
-      "name": "STRATEGIC BATTLE",
+      "name": "STRATEGIC BATTLE (WIP)",
       "desc": "TACTICAL FIGHTS ON DA MAP GRID. WEAPONS AN' SKILLS HAB RANGE, AN' LINE OF SIGHT MATTERS. CAN BE CHANGED IN FIDDLY BITS!"
     },
     "combatRpg": {
@@ -643,7 +643,7 @@
   "battleMode": "BATTLE MODE",
   "battleModeDesc": "TURN BATTLE: CLASSIC TURN-BASED SCENE. STRATEGIC BATTLE: TACTICAL FIGHTS ON DA MAP GRID!",
   "battleModeTurn": "TURN BATTLE",
-  "battleModeStrategic": "STRATEGIC BATTLE",
+  "battleModeStrategic": "STRATEGIC BATTLE (WIP)",
   "battleMusic": "BATTLE MUSIC",
   "musicTrackPlayedDuringCombatPressToPreviewTr": "BATTLE MUSIC. PRESS ←→ TA PREVIEW!",
   "uiTheme": "UI THEME",
@@ -844,7 +844,6 @@
   "bodyParts": "BODY PARTS",
   "anatomyHint": "DA BODY DIS CHARACTER IZ BUILT FROM. EACH PART TEACHES ITS SKILLS FOR AS LONG AS IT STAYS ON!",
   "anatomyTeaches": "TEACHES",
-  "anatomyNoSkills": "NUTTIN' OF ITS OWN",
   "reproductiveOrgans": "REPRODUCTIVE ORGANS",
   "reproductiveOrgansShort": "ORGANS:",
   "reproNone": "STERILE",

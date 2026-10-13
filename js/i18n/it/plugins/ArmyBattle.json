@@ -23,6 +23,8 @@
   "enemyForces": "Forze nemiche",
   "victory": "VITTORIA!",
   "defeat": "SCONFITTA!",
+  "skirmishWon": "Schermaglia vinta: l'esercito nemico è in rotta.",
+  "skirmishLost": "Schermaglia persa: il tuo esercito è cacciato dal campo.",
   "charge": "CARICA!",
   "crit": "CRITICO!",
   "selected": "Selezionata:\n{squad}",

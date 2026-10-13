@@ -292,6 +292,12 @@
                         });
                     }
                 }
+                // The weapon the school is practised with (window.SkillWeaponReq),
+                // named on the card whether or not it is in hand.
+                const weaponKind = window.SkillWeaponReq ? window.SkillWeaponReq.kindLabel(skill) : "";
+                if (weaponKind && !o.hoistQuick) {
+                    specs.push({ label: T("SkillsMenu.spec.label.weaponReq"), val: weaponKind });
+                }
                 return specs;
             };
 
@@ -704,6 +710,10 @@
                 const req = svc && svc.of(skill);
                 if (req) {
                     quickPills += `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${T("SkillsMenu.spec.label.statReq")}:</span> <span class="inspect-meta-val inspect-pill-val">${svc.label(skill)}</span></div>`;
+                }
+                const weaponKind = window.SkillWeaponReq ? window.SkillWeaponReq.kindLabel(skill) : "";
+                if (weaponKind) {
+                    quickPills += `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${T("SkillsMenu.spec.label.weaponReq")}:</span> <span class="inspect-meta-val inspect-pill-val">${weaponKind}</span></div>`;
                 }
 
                 // The backpack's own card, class for class (.item-inspect,
@@ -1716,6 +1726,8 @@
         const hands = wpn && actor ? wpn.check(actor, skill) : null;
         if (hands && !hands.met) {
             text += (text ? '\n' : '') + wpn.label(hands.need);
+        } else if (wpn && wpn.kindLabel(skill)) {
+            text += (text ? '\n' : '') + T('SkillsMenu.spec.label.weaponReq') + ': ' + wpn.kindLabel(skill);
         }
         // AmmoBursts (Weapon/WeaponSystem.js): a burst with too few rounds
         // loaded, or a reload with a full magazine, says why it is greyed.

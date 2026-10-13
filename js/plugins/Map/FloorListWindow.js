@@ -92,8 +92,8 @@
         },
 
         // Whether an upper floor is open. The demo opens its own fixed set
-        // (1, 2 and the floor 10 lift hall) from the start, reached or not;
-        // the full run opens every floor up to the highest one reached.
+        // (floor 1) from the start, reached or not; the full run opens every
+        // floor up to the highest one reached.
         isUpperFloorOpen(floor) {
             if (this.sandbox()) return true;
             const params = window.DungeonFloorSystemParams;
@@ -114,6 +114,19 @@
             return floor === 1 ? T('FloorList.firstFloor') : `F${floor} - ${mapName}`;
         },
 
+        // The tower's top floor: the list never offers a floor above it.
+        topFloor() {
+            const tower = window.DungeonFloors;
+            if (tower && tower.topFloor) return tower.topFloor();
+            const floors = $gameSystem._dungeonFloors || [];
+            return floors.length - 1;
+        },
+
+        demo() {
+            const params = window.DungeonFloorSystemParams;
+            return !!(params && params.demoMode);
+        },
+
         buildItemList() {
             const data = [];
             const generated = $gameSystem.isDungeonGenerated();
@@ -122,7 +135,9 @@
 
             if (generated) {
                 const floors   = $gameSystem._dungeonFloors || [];
-                for (let i = floors.length - 1; i >= 1; i--) {
+                for (let i = Math.min(this.topFloor(), floors.length - 1); i >= 1; i--) {
+                    // The demo's lift lists only the floors it stops at.
+                    if (this.demo() && !this.isUpperFloorOpen(i)) continue;
                     if (this.isUpperFloorOpen(i)) {
                         const mapId = floors[i];
                         const actualMapId = getFirstMapId(mapId);
@@ -145,6 +160,8 @@
                 for (let f = -1; f >= tower.deepestFloor; f--) {
                     // The Tip of the Spear is not a stop on this line.
                     if (f === tower.deepestFloor) continue;
+                    // Below ground the demo's lift stops at Omega City only.
+                    if (this.demo() && !sandbox && f !== tower.omegaCityFloor) continue;
                     data.push({
                         floor: f,
                         label: sandbox || tower.isLowerFloorUnlocked(f)
@@ -177,7 +194,8 @@
             }
             const floors = $gameSystem._dungeonFloors || [];
             const toLoad = [];
-            for (let i = 1; i < floors.length; i++) {
+            const top = Math.min(this.topFloor(), floors.length - 1);
+            for (let i = 1; i <= top; i++) {
                 if (this.isUpperFloorOpen(i)) toLoad.push(i);
             }
             if (toLoad.length === 0) {

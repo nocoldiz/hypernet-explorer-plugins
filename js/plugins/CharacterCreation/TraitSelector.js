@@ -113,7 +113,9 @@
   // Whether a given actor is one of those holders. NPCCreature owns the
   // boundary (creature classes, 63+); without it nobody is a beast.
   const actorIsNonSentient = (actor) =>
-    !!(actor && window.NPCCreature && window.NPCCreature.isNonSentientActor(actor));
+    (actor && actor._isCreatureActor === false)
+      ? false
+      : !!(actor && window.NPCCreature && window.NPCCreature.isNonSentientActor(actor));
   // The board and the randomizer both open on somebody: this is the book as it
   // stands open in front of THEM.
   const traitsForActorId = (id) =>
@@ -126,7 +128,7 @@
 
   // Columns in the trait card grid; keep in sync with .cc-trait-grid in
   // theme.css so keyboard up/down moves the cursor by one visual row.
-  const TRAIT_GRID_COLS = 4;
+  const TRAIT_GRID_COLS = 3;
 
   // --- Trait points -------------------------------------------------------
   // A trait is not one of four interchangeable slots any more. Every entry in
@@ -696,13 +698,8 @@
               <div class="ts-badge-row" id="ts-diseases"></div>
             </div>
 
-            <!-- What the build adds up to. Bonuses and granted skills were two
-                 cards fighting for the same few centimetres; they are one. -->
+            <!-- What the build adds up to: granted skills -->
             <div class="cc-dossier-card ts-summary">
-              <div class="ts-summary-row">
-                <span class="cc-dossier-label">${t("totalBonuses")}</span>
-                <div class="ts-badge-row" id="ts-bonuses"></div>
-              </div>
               <div class="ts-summary-row">
                 <span class="cc-dossier-label">${t("finalSkills")}</span>
                 <div class="ts-badge-row" id="ts-skills"></div>
@@ -1036,6 +1033,7 @@
     }
 
     renderBonuses() {
+      if (!this._el || !this._el.bonuses) return;
       const totals = this.calculateTotalBonuses();
       const badges = Object.keys(totals).filter((key) => totals[key] !== 0).map((key) => {
         const value = window.TraitParams ? window.TraitParams.scale(key, totals[key]) : totals[key];
@@ -1498,6 +1496,8 @@
       this.applySelectedDiseases(actor);
 
       actor.refresh();
+      if (typeof actor.recoverAll === "function") actor.recoverAll();
+      if (typeof actor.maxTp === "function" && typeof actor.setTp === "function") actor.setTp(actor.maxTp());
     }
 
     applySelectedDiseases(actor) {
@@ -1618,6 +1618,8 @@
       actor._selectedTraits = selectedTraits;
       actor._appliedTraitIds = selectedTraits.map((t) => t.id);
       actor.refresh();
+      if (typeof actor.recoverAll === "function") actor.recoverAll();
+      if (typeof actor.maxTp === "function" && typeof actor.setTp === "function") actor.setTp(actor.maxTp());
 
       console.log(
         `Applied ${selectedTraits.length} trait(s) to actor ${targetId}: ${selectedTraits
@@ -1804,6 +1806,8 @@
     actor._selectedTraits = selectedTraits;
     actor._appliedTraitIds = selectedTraits.map((t) => t.id);
     actor.refresh();
+    if (typeof actor.recoverAll === "function") actor.recoverAll();
+    if (typeof actor.maxTp === "function" && typeof actor.setTp === "function") actor.setTp(actor.maxTp());
 
     console.log("Randomized traits:", selectedTraits.map(t => getTraitText(t, "name")).join(", "));
   }

@@ -1781,7 +1781,7 @@
         // The Heel Stone, leaning out on the avenue.
         block(2.4, 4.8, 2.0, 40, 2.2, 6, 0.3, 0, 0.18);
         // The Altar Stone, and the girl laid on it.
-        block(1.0, ALTAR_TOP, 4.8, 0, ALTAR_TOP / 2, -0.6, 0);
+        block(1.0, ALTAR_TOP, 2.5, 0, ALTAR_TOP / 2, 0.2, 0);
         this.pilotAltar = new THREE.Group();
         this.pilotAltar.position.set(0, ALTAR_TOP, 0.4);
         h.add(this.pilotAltar);

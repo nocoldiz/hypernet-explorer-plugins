@@ -1898,6 +1898,24 @@
   /** Whether it is racked out as the coilgun. */
   const inSniper = () => formKey() === SNIPER_FORM;
 
+  // The shapes a Firearms skill is still taken with: the pistol, the coilgun
+  // and the bow. The empty hands and the gauntlet are fought with the body,
+  // so they open Martial Arts; every other shape that does not shoot is a
+  // blade for Swordsmanship. Darts and the books count for neither school.
+  const FIREARM_FORMS = [SNIPER_FORM, 'aiwass'];
+  const MARTIAL_FORMS = [FISTS_FORM, 'kia'];
+
+  /**
+   * What the frame counts as for a weapon school right now: 'ranged',
+   * 'melee', 'martial', or null. window.SkillWeaponReq reads it.
+   */
+  function skillWeaponClass() {
+    const key = formKey();
+    if (!key || FIREARM_FORMS.includes(key)) return 'ranged';
+    if (MARTIAL_FORMS.includes(key)) return 'martial';
+    return shootsAtRange() ? null : 'melee';
+  }
+
   /** The procedural model a shape is built with, when it has one of its own. */
   function formBuilder() {
     const key = formKey();
@@ -2956,7 +2974,7 @@
     formWeaponRow, formMotion, formHitFX, FORM_POSE_READINGS,
     GRIMOIRE_FORM, openGrimoire, closeGrimoire, inGrimoire,
     SOLOMON_FORM, solomonFitted,
-    inMeleeForm, inSniper, rangeMultiplier, weaponReach, shootsAtRange,
+    inMeleeForm, inSniper, skillWeaponClass, rangeMultiplier, weaponReach, shootsAtRange,
     magazineSize, withForm,
     STATUS_MODES, STATUS_CHANCE, HEX_STATES,
     playSwitchFx, playSwitchOn,

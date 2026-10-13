@@ -15,8 +15,7 @@
  * character no seed reached awakens on their own: at level 15 if their class
  * is magical (<Nature: Magical>), at level 25 otherwise, and a toast says so.
  *
- * An Expression is a power the player assembles, the way a Nen ability or a
- * Stand is assembled: out of a moment, the vows it is bound by, what it does
+ * An Expression is a power the player assembles out of a moment, the vows it is bound by, what it does
  * and the shape it takes. The Expression bench of the SkillMaster
  * (CharacterCreation/SkillMaster.js) draws it. The pieces:
  *
