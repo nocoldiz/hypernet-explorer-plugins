@@ -7,9 +7,9 @@
  * @target MZ
  * @plugindesc Dedicated, ultra-detailed bespoke model for Eris, Judgment of Discord
  * "Eris, Judgment of Discord" - a wasteland goddess of static and strife with
- * an actual human face, a seeded body she re-rolls between fights (skin from
- * porcelain to ebony to green, any hair colour in five hairstyles, her own
- * eyes and outfit), a slim gold circlet, a tailored jacket with a single gold
+ * an actual human face and fair skin that never changes, a seeded look she
+ * re-rolls between fights (any hair colour in five hairstyles, her own eyes
+ * and outfit), a slim gold circlet, a tailored jacket with a single gold
  * placket, textured cloth, leather, metal, skin and hair, arms properly joined
  * to the body, armoured shoulder pads, a short galaxy-painted cape hanging
  * behind her from a gold clasp, and a trailing wisp of consumed-order motes.
@@ -55,17 +55,17 @@
  *     aimed along the outward normal, so none of them can float off the head.
  *     Worn under a slim gold circlet with discreet ear cups and drop earrings
  *     (mapped to HORNS) - the old forehead sigil is gone.
- *   - window.ErisAppearance is the seeded wardrobe. A look (skin, hair colour
+ *   - window.ErisAppearance is the seeded wardrobe. A look (hair colour
  *     and tips, eye colour, jacket/leather/metal and hairstyle) is rolled from
  *     the world gen seed + the battle number + how many times she has shifted,
  *     so one battle always replays exactly the same sequence of bodies. Her
  *     first body comes off the wardrobe palettes; every shift after it is
- *     totally random: any colour, and suit, leather, trim, skin and hair each
+ *     totally random: any colour, and suit, leather, trim and hair each
  *     repainted with a freshly generated pattern (stripes, checks, camo,
  *     marble, scales, stars and more). Her
- *     build never changes: proportions, rig and animation are the same woman
- *     underneath, and lips, blush, brows and lashes are mixed out of the rolled
- *     skin and hair so a green Eris never wears a human mouth.
+ *     build and her fair skin never change: a pinned tall build (ERIS_BUILD),
+ *     the same rig and animation, and lips, blush, brows and lashes mixed out
+ *     of her skin and the rolled hair.
  *       ErisAppearance.current() - the body she is standing in
  *       ErisAppearance.shift()   - wear the next one (a white-hot bloom, and
  *                                  never the same hairstyle twice running)
@@ -123,7 +123,7 @@
             hairColor: 0xf2c84b,           // radiant gold hair
             hairTip: 0xfff3c0,             // pale luminous tips
             discord: 0xc0233a,             // crimson pendant / discord shards
-            skin: 0xf3ddc6,                // porcelain
+            skin: 0xf3ddc6,                // porcelain (ERIS_SKIN)
             hue: [0.12, 0.04], sat: [0.55, 0.12], lit: [0.55, 0.10]
         }
     };
@@ -268,16 +268,16 @@
     //-------------------------------------------------------------------------
     // Seeded appearance: she is never twice the same woman
     //-------------------------------------------------------------------------
-    // Eris wears a different body every battle. Skin, hair colour, eyes, outfit
+    // Eris wears a different look every battle. Hair colour, eyes, outfit
     // and hairstyle are all rolled from (world seed + battle number + how many
     // times she has shifted so far), so a given battle always replays exactly
-    // the same sequence of faces. Her build never changes: proportions, rig and
-    // animation are the same woman underneath.
-    const SKINS = [
-        0xf6ddc8, 0xf0c9a4, 0xe3ab7f, 0xd49a6a, 0xc98d5f,   // porcelain -> tan
-        0xa6673c, 0x8a5230, 0x6b3b20, 0x4e2c18,             // brown -> ebony
-        0x9ac47a, 0x6f9f57                                  // and green, twice
-    ];
+    // the same sequence of faces. Her build and skin never change: proportions,
+    // rig, animation and complexion are the same woman underneath.
+    // Her skin is the one thing no shift touches: always the same fair tone.
+    const ERIS_SKIN = 0xf3ddc6;
+    // Her build is pinned too, tall and slender, instead of the per-seed roll
+    // every other battler gets.
+    const ERIS_BUILD = { size: 1.12, x: 0.93, y: 1.18, z: 0.93, headroom: 1.2 };
     const HAIRS = [
         [0xf2c84b, 0xfff3c0],   // radiant gold
         [0xe8e4d6, 0xffffff],   // platinum
@@ -324,7 +324,7 @@
     }
 
     // The surfaces a shift repaints, and the patterns it may paint them with.
-    const WILD_SLOTS = ['suit', 'leather', 'metal', 'skin', 'hair'];
+    const WILD_SLOTS = ['suit', 'leather', 'metal', 'hair'];
     const WILD_PATTERNS = ['stripes', 'checker', 'dots', 'camo', 'zigzag', 'static',
         'marble', 'bands', 'plaid', 'scales', 'stars'];
 
@@ -345,7 +345,7 @@
             }
             return {
                 seed: s, shift, wild: true, tex,
-                skin: any(0.1, 0.9, 0.3, 0.8),
+                skin: ERIS_SKIN,
                 hair: any(0.3, 1, 0.2, 0.8), hairTip: any(0.3, 1, 0.5, 0.95),
                 jacket: any(0.3, 1, 0.2, 0.7), leather: any(0.2, 0.9, 0.1, 0.5), metal: any(0.3, 1, 0.45, 0.85),
                 eye: any(0.6, 1, 0.35, 0.7),
@@ -355,7 +355,7 @@
         const hair = pick(HAIRS), fit = pick(OUTFITS);
         return {
             seed: s, shift,
-            skin: pick(SKINS),
+            skin: ERIS_SKIN,
             hair: hair[0], hairTip: hair[1],
             jacket: fit[0], leather: fit[1], metal: fit[2],
             eye: pick(EYE_COLORS),
@@ -555,6 +555,9 @@
             const profile = E_PROFILE.eris;
             super(scale, offsetY, battler, profile, 0, 'eris');
             this.variant = 'eris';
+            this.sizeMul = ERIS_BUILD.size;
+            this.shapeXYZ = { x: ERIS_BUILD.x, y: ERIS_BUILD.y, z: ERIS_BUILD.z };
+            this.scale = (scale || 1.0) * this.sizeMul * 0.85;
             this._materials = [];
             this._hair = [];        // [{ strand, pivots, phase, sway }]
             this._floaters = [];    // generic spinners (motes, shards)
@@ -571,6 +574,13 @@
             this._hairStyle = null;
             this._rng = null;       // the look's own PRNG, so a style is seeded
             this._shiftFx = 0;      // the bloom as one form gives way to the next
+        }
+
+        // The shared fit cap stops every battler at 5 world units tall; she
+        // stands a fifth above it, the tallest figure on the field.
+        _computeFitClamp() {
+            super._computeFitClamp();
+            if (this._fitClamp < 1) this._fitClamp = Math.min(1, this._fitClamp * ERIS_BUILD.headroom);
         }
 
         // Randomness for the current look. Seeded, so the same battle replays
@@ -665,16 +675,18 @@
             // blush are mixed out of the skin itself, so a green Eris does not
             // end up wearing a pink human mouth.
             if (this.matSkin) this.matSkin.color.copy(skin);
-            if (this.matSocket) this.matSocket.color.copy(skin.clone().multiplyScalar(0.84));
+            if (this.matSocket) this.matSocket.color.copy(skin.clone().multiplyScalar(0.93));
             if (this.matCheek) this.matCheek.color.copy(skin.clone().lerp(C(0xd0524a), 0.45));
-            if (this.matLip) this.matLip.color.copy(skin.clone().lerp(C(0xb03a4a), 0.5));
-            if (this.matLipLine) this.matLipLine.color.copy(skin.clone().lerp(C(0x7a2530), 0.65));
+            if (this.matLip) this.matLip.color.copy(skin.clone().lerp(C(0xb84a56), 0.42));
+            if (this.matLipLine) this.matLipLine.color.copy(skin.clone().lerp(C(0x7a2530), 0.5));
             // Hair, brows and lashes all come off the same dye.
             if (this.matHair) { this.matHair.color.set(look.hair); this.matHair.emissive.set(look.hair); }
             if (this.matHairTip) { this.matHairTip.color.set(look.hairTip); this.matHairTip.emissive.set(look.hairTip); }
             if (this.matBrow) this.matBrow.color.copy(C(look.hair).multiplyScalar(0.62));
             if (this.matLash) this.matLash.color.copy(C(look.hair).multiplyScalar(0.3));
             for (const m of this._irisMats) { m.color.set(look.eye); m.emissive.set(look.eye); }
+            // The limbal ring is the iris's own colour, darkened, never a fixed brown.
+            for (const m of this._limbalMats || []) m.color.copy(C(look.eye).multiplyScalar(0.4));
 
             this._paintSurfaces(look);
 
@@ -698,7 +710,6 @@
                 suit: [[this.matSuit, 2, 2], [this.matSuitFine, 1, 1]],
                 leather: [[this.matDark, 2, 2]],
                 metal: [[this.matTrim, 2, 1], [this.matHalo, 1, 1]],
-                skin: [[this.matSkin, 1, 1], [this.matSocket, 1, 1]],
                 hair: [[this.matHair, 1, 2], [this.matHairTip, 1, 2], [this.matBrow, 1, 1]]
             };
             const old = this._wildTex || [];
@@ -857,9 +868,9 @@
             const browRidge = new THREE.Mesh(new THREE.SphereGeometry(0.2, 20, 14), this.matSkin);
             browRidge.scale.set(1.0, 0.42, 0.62); browRidge.position.set(0, 0.075, 0.115); this.head.add(browRidge);
             const jaw = new THREE.Mesh(new THREE.SphereGeometry(0.2, 20, 16), this.matSkin);
-            jaw.scale.set(0.82, 0.66, 0.8); jaw.position.set(0, -0.13, 0.015); this.head.add(jaw);
-            const chin = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 12), this.matSkin);
-            chin.scale.set(1.0, 0.85, 0.9); chin.position.set(0, -0.21, 0.11); this.head.add(chin);
+            jaw.scale.set(0.76, 0.64, 0.78); jaw.position.set(0, -0.13, 0.02); this.head.add(jaw);
+            const chin = new THREE.Mesh(new THREE.SphereGeometry(0.066, 16, 12), this.matSkin);
+            chin.scale.set(0.92, 0.82, 0.88); chin.position.set(0, -0.205, 0.11); this.head.add(chin);
             const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.12, 0.2, 14), this.matSkin);
             neck.position.y = -0.28; this.head.add(neck);
             for (const sx of [-1, 1]) {
@@ -870,7 +881,7 @@
             }
 
             // Nose: a bridge running down off the brow into a soft tip with wings.
-            const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.03, 0.12, 8), this.matSkin);
+            const bridge = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.027, 0.12, 12), this.matSkin);
             bridge.position.set(0, 0.015, 0.222); bridge.rotation.x = -0.16; this.head.add(bridge);
             const noseTip = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 10), this.matSkin);
             noseTip.scale.set(1.0, 0.85, 1.05); noseTip.position.set(0, -0.048, 0.243); this.head.add(noseTip);
@@ -895,7 +906,7 @@
             this.mouthLower = new THREE.Mesh(new THREE.SphereGeometry(0.042, 14, 10), matLip);
             this.mouthLower.scale.set(1.12, 0.5, 0.6); this.mouthLower.position.set(0, -0.022, 0.028);
             this.mouth.add(this.mouthLower);
-            const lipLine = new THREE.Mesh(new THREE.BoxGeometry(0.078, 0.006, 0.012), matLipLine);
+            const lipLine = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.004, 0.01), matLipLine);
             lipLine.position.set(0, -0.003, 0.04); this.mouth.add(lipLine);
             this.head.add(this.mouth);
 
@@ -924,7 +935,9 @@
                 this._irisMats.push(irisMat);
                 const iris = new THREE.Mesh(new THREE.SphereGeometry(0.026, 16, 14), irisMat);
                 iris.scale.set(1, 1, 0.55); iris.position.z = 0.036; socket.add(iris);
-                const limbal = new THREE.Mesh(new THREE.TorusGeometry(0.026, 0.005, 6, 18), this._mat(0x7a4a12, { rough: 0.4 }));
+                const limbalMat = this._mat(0x7a4a12, { rough: 0.4 });
+                (this._limbalMats = this._limbalMats || []).push(limbalMat);
+                const limbal = new THREE.Mesh(new THREE.TorusGeometry(0.026, 0.005, 6, 18), limbalMat);
                 limbal.position.z = 0.04; socket.add(limbal);
                 const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.012, 12, 10), matPupil);
                 pupil.scale.set(1, 1, 0.5); pupil.position.z = 0.048; socket.add(pupil);
@@ -944,15 +957,21 @@
                 this.eyes.push(iris); // action poses flare the iris, not a bare lens
                 this._lids.push({ up: upperLid, low: lowerLid, upOpen: -0.3, upShut: 1.08, lowOpen: 0.26, lowShut: -0.82 });
             }
-            // Brows drawn as a tapering arc of segments following the ridge.
+            // Brows: one smooth arched stroke each, following the ridge, with a
+            // slimmer tail stroke laid over the outer half so they taper.
             for (const sx of [-1, 1]) {
-                for (let i = 0; i < 4; i++) {
-                    const f = i / 3;
-                    const seg = new THREE.Mesh(new THREE.BoxGeometry(0.034, 0.017 - f * 0.005, 0.022), matBrow);
-                    seg.position.set(sx * (0.048 + i * 0.028), 0.082 + Math.sin(f * Math.PI) * 0.012 - f * 0.014, 0.222 - i * 0.013);
-                    seg.rotation.z = -sx * (0.06 + f * 0.28);
-                    this.head.add(seg);
+                const pts = [];
+                for (let i = 0; i <= 6; i++) {
+                    const f = i / 6;
+                    pts.push(new THREE.Vector3(sx * (0.044 + f * 0.09),
+                        0.084 + Math.sin(f * Math.PI * 0.85) * 0.014 - f * 0.012, 0.224 - f * f * 0.05));
                 }
+                const curve = new THREE.CatmullRomCurve3(pts);
+                const brow = new THREE.Mesh(new THREE.TubeGeometry(curve, 14, 0.0062, 6, false), matBrow);
+                this.head.add(brow);
+                const browHead = new THREE.Mesh(new THREE.TubeGeometry(
+                    new THREE.CatmullRomCurve3(pts.slice(0, 4)), 8, 0.0078, 6, false), matBrow);
+                this.head.add(browHead);
             }
 
             // A thin gaiter pulled down around the throat, not the face - the

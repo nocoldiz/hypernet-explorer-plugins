@@ -841,7 +841,8 @@
         }
 
         // Out of the party's weight class, neither way in is on the table.
-        const inReach = withinWeightClass(enemy);
+        // Eris shows both, at 0 (talkShutOut).
+        const inReach = withinWeightClass(enemy) || talkShutOut();
 
         const opts = [{ label: choices[0], key: 'chat', pct: talk }];
         if (!partyFull && inReach) {
@@ -851,8 +852,8 @@
             opts.push({ label: getRecruitLabel(enemy), key: 'joinPet', pct: this.calculatePetFollowerChance() });
         }
         opts.push({ label: choices[2], key: 'surrender',  pct: troopBossHolds() ? 0 : talk });
-        opts.push({ label: choices[3], key: 'insult',     pct: canTalk ? 100 : 0 });
-        opts.push({ label: choices[4], key: 'throwStone', pct: 100 });
+        opts.push({ label: choices[3], key: 'insult',     pct: canTalk && !talkShutOut() ? 100 : 0 });
+        opts.push({ label: choices[4], key: 'throwStone', pct: talkShutOut() ? 0 : 100 });
         opts.push({ label: choices[5], key: 'pet',        pct: this.calculatePetSuccessChance() });
         opts.push({ label: choices[6], key: 'cancel',     pct: null });
         return opts;
@@ -862,9 +863,21 @@
     // the shape of _refuseUnrecruitable so a handler can bail on it the same
     // way.
     Scene_Battle.prototype._refuseOutOfReach = function (enemy) {
-        if (!enemy || withinWeightClass(enemy)) return false;
+        // Eris's rows are shown and simply fail at 0 (talkShutOut).
+        if (!enemy || withinWeightClass(enemy) || talkShutOut()) return false;
         window.skipLocalization = true;
         $gameMessage.add(T('EnemyTalk.msg.outOfReach', { name: enemy.name() }));
+        window.skipLocalization = false;
+        this.closeTalkMenu();
+        return true;
+    };
+
+    // The rows that never roll (an insult, a stone) are at 0 against Eris
+    // too: they land on nothing. Returns true when it fired.
+    Scene_Battle.prototype._refuseUnmoved = function (enemy) {
+        if (!enemy || !talkShutOut()) return false;
+        window.skipLocalization = true;
+        $gameMessage.add(T('EnemyTalk.msg.unmoved', { name: enemy.name() }));
         window.skipLocalization = false;
         this.closeTalkMenu();
         return true;
@@ -881,9 +894,16 @@
         return true;
     };
 
+    // Eris (Economy/TrialSystem.js) hears every word and is moved by none:
+    // in her fight the whole talk menu stands at 0.
+    function talkShutOut() {
+        const eris = window.ErisChallengeBattle;
+        return !!(eris && typeof eris.isErisBattle === 'function' && eris.isErisBattle());
+    }
+
     Scene_Battle.prototype.calculatePetFollowerChance = function () {
         const enemy = this._talkEnemy();
-        if (!enemy || enemy.isUnrecruitable() || isArenaModeActive()) return 0;
+        if (!enemy || enemy.isUnrecruitable() || isArenaModeActive() || talkShutOut()) return 0;
         if (!withinWeightClass(enemy)) return 0;
         // Pets/followers are easier to win over than a full party recruit:
         // disposition-based, with a flat bonus and a friendly floor.
@@ -928,7 +948,7 @@
         const enemy = this._talkEnemy();
 
         if (!actor || !enemy) return 0;
-        if (enemy.isUnrecruitable()) return 0;
+        if (enemy.isUnrecruitable() || talkShutOut()) return 0;
 
         return window.EnemyTalk.chanceFrom(enemy.disposition(), this._talkPsiEdge(), this._talkLookPoints());
     };
@@ -940,7 +960,7 @@
 
     Scene_Battle.prototype.calculateJoinSuccessChance = function () {
         const enemy = this._talkEnemy();
-        if (!enemy || enemy.isUnrecruitable() || isArenaModeActive()) return 0;
+        if (!enemy || enemy.isUnrecruitable() || isArenaModeActive() || talkShutOut()) return 0;
         if (!withinWeightClass(enemy)) return 0;
 
         // Under 80 disposition a full recruit is a long shot: a quarter of the
@@ -1089,6 +1109,7 @@
         }
 
         if (this._refuseUnrecruitable(enemy)) return;
+        if (this._refuseUnmoved(enemy)) return;
 
         if (!enemy.canTalk()) {
             window.skipLocalization = true;
@@ -1141,6 +1162,7 @@
             this.closeTalkMenu();
             return;
         }
+        if (this._refuseUnmoved(enemy)) return;
 
         window.skipLocalization = true;
         $gameMessage.add(systemMessages.stoneThrown);

@@ -460,6 +460,18 @@
       this.y = Graphics.height - fy;
     }
 
+    // The top middle of the drawn portrait on the screen, where the battle HUD
+    // hangs the NPC's health bar. Null until the bitmap is in and sized.
+    headPosition() {
+      if (!this._laidOut) return null;
+      const field = this.parent;
+      const h = (this._charMode ? (this._ph || 0) : (this.bitmap?.height || 0)) * this.scale.y;
+      return {
+        x: this.x + (field ? field.x : 0),
+        y: this.y + (field ? field.y : 0) - h
+      };
+    }
+
     _updateOpacity() {
       const gone = !this._battler || this._battler.isDead() || !this._battler.isAppeared();
       this.opacity = gone
@@ -530,6 +542,17 @@
     this._battleField.addChild(sprite);
     this._npcFaceSprite  = sprite;
     this._npcFaceBattler = battler;
+  };
+
+  // Where the battle HUD (BattleSystemEnhancedHUD.js) puts the bar of a battler
+  // standing in as a portrait: undefined when this battler wears no portrait,
+  // null while the portrait is still loading, else its top middle on screen.
+  Spriteset_Battle.prototype.npcFaceHead = function (battler) {
+    if (!this._npcFaceSprite || battler !== this._npcFaceBattler) return undefined;
+    // Placed now rather than next frame: the bar may be laid out before the
+    // portrait's own update has run since its bitmap came in.
+    if (this._npcFaceSprite._laidOut) this._npcFaceSprite._place();
+    return this._npcFaceSprite.headPosition();
   };
 
   const _Spriteset_Battle_update_face = Spriteset_Battle.prototype.update;

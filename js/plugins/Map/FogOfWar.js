@@ -206,7 +206,9 @@
     // Map Feature Constants
     const TERRAIN_WALL = 4;
     const TERRAIN_ROOF = 7;
-    const REGION_BLOCK = 10;
+    // Region 10 is impassable void elsewhere, but it never blocks vision: it
+    // stays see-through even over a wall or roof terrain tag.
+    const REGION_TRANSPARENT = 10;
     const REGION_EXTENDED_VIEW = 11;
     // Region 30 tiles separate different interiors placed on the same map
     // (same convention as MousePan's interior-divider clamping). They always
@@ -1067,7 +1069,7 @@
                 }
 
                 let blockType = BLOCK_NONE;
-                if (region === REGION_BLOCK) blockType = BLOCK_ALWAYS;
+                if (region === REGION_TRANSPARENT) blockType = BLOCK_NONE;
                 else if (region === REGION_DIVIDER) blockType = BLOCK_ALWAYS; // interior divider: always blocks
                 else if (region === REGION_EXTENDED_VIEW) blockType = BLOCK_NONE;
                 else if (tag === TERRAIN_WALL) blockType = BLOCK_WALL;

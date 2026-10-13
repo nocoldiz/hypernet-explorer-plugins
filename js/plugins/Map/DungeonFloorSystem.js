@@ -1453,8 +1453,14 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     // Where climbing out of floor -1 puts the party: not the Stairs Hall, but
     // the mouth the lower tower actually opens onto.
     LOWER_EXIT: { mapId: 314, x: 61, y: 100, dir: 8 },
+    // Where the debug Page Up / Page Down keys put a party standing outside
+    // the dungeon: the Stairs Hall's way up, and the lower tower's mouth.
+    DEBUG_UP_ENTRY: { mapId: 635, x: 13, y: 33, dir: 8 },
+    DEBUG_DOWN_ENTRY: { mapId: 314, x: 61, y: 108, dir: 8 },
     // Where the stairs up out of town land on floor 1.
     FIRST_FLOOR: { floor: 1, mapId: 1399, x: 22, y: 68, dir: 8 },
+    // Where coming back down from floor 2 lands on floor 1, facing down.
+    FIRST_FLOOR_FROM_SECOND: { floor: 1, mapId: 1399, x: 22, y: 30, dir: 2 },
     // Where Go to Previous Floor out of floor 1 lands in the Stairs Hall: south
     // of the up staircase (12-14, 24), so the walk back never re-touches it.
     FIRST_FLOOR_EXIT: { floor: 0, mapId: 635, x: 13, y: 25, dir: 2 },
@@ -3502,6 +3508,8 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
 
   window.DungeonFloors = {
     deepestFloor: TOWER.DEEPEST,
+    // The debug Home key: to the lift of the floor the party stands on.
+    teleportToGroupElevator: () => teleportToGroupElevator(),
     isLowerFloor,
     isGeneratedLowerFloor,
     isLowerFloorUnlocked,
@@ -3633,10 +3641,11 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
         x = params.bossFloorX;
         y = params.bossFloorY;
     } else if (floor === 1 && previousFloor === 2) {
-        mapId = $gameSystem.getDungeonFloorMapId(1);
-        x = 17;
-        y = 19;
-        direction = 2;
+        const fromSecond = TOWER.FIRST_FLOOR_FROM_SECOND;
+        mapId = fromSecond.mapId;
+        x = fromSecond.x;
+        y = fromSecond.y;
+        direction = fromSecond.dir;
     } else {
         let stairLocation;
         switch (spawnMode) {
@@ -3730,27 +3739,111 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     }
   }
 
+  // The floor a map was dealt to in this world's layout: a floor is one map or
+  // a group of rooms, and the map may be any of them. 0 when no floor holds it.
+  function floorOfMap(floors, mapId) {
+    if (!Array.isArray(floors)) return 0;
+    for (let floor = 1; floor < floors.length; floor++) {
+      const entry = floors[floor];
+      if (entry === mapId || (Array.isArray(entry) && entry.includes(mapId))) return floor;
+    }
+    return 0;
+  }
+
+  // The staircase of the dungeonLevels.json group a map belongs to, for a map
+  // this world never dealt to a floor (a playtest started right on it). The
+  // group's first staircase square is its way up, its last the way down.
+  function groupStairs(file, mapId, isUpstairs) {
+    if (!file || !Array.isArray(file.levels) || !file.maps) return null;
+    const level = file.levels.find((l) => l && Array.isArray(l.maps) && l.maps.includes(mapId));
+    const squares = [];
+    for (const id of level ? level.maps : [mapId]) {
+      const entry = file.maps[String(id)];
+      if (!entry || !Array.isArray(entry.stairs)) continue;
+      for (const [x, y] of entry.stairs) squares.push({ mapId: id, x, y });
+    }
+    if (!squares.length) return null;
+    return { ...squares[isUpstairs ? 0 : squares.length - 1] };
+  }
+
+  // Where the up or down staircase of the floor the party stands on is. The
+  // floor is read off the map they are on, never off the floor variable, which
+  // a playtest or a sandbox jump leaves pointing anywhere.
+  function stairsOfCurrentGroup(isUpstairs) {
+    const mapId = $gameMap.mapId();
+    const floors = $gameSystem._dungeonFloors;
+    const floor = floorOfMap(floors, mapId);
+    if (floor > 0 && floor < 100) {
+      const loc = $gameSystem.getStairLocation(floor, isUpstairs);
+      if (loc && [].concat(floors[floor]).includes(loc.mapId)) return loc;
+    }
+    return groupStairs(dungeonLevelsFile(), mapId, isUpstairs);
+  }
+
+  // The maps of the floor the party stands on: the floor this world dealt the
+  // map to, else its dungeonLevels.json group, else the map alone.
+  function currentGroupMaps() {
+    const mapId = $gameMap.mapId();
+    const floors = $gameSystem._dungeonFloors;
+    const floor = floorOfMap(floors, mapId);
+    if (floor > 0 && floor < 100) return [].concat(floors[floor]);
+    const file = dungeonLevelsFile();
+    const level = file && file.levels.find((l) => l && Array.isArray(l.maps) && l.maps.includes(mapId));
+    return level ? level.maps.slice() : [mapId];
+  }
+
+  // Where the lift of a map stands: its Region 20 square, the one the lift
+  // lets the party out on, else the square of its Elevator event. null when
+  // the map has neither.
+  function elevatorSpotOf(mapId) {
+    const spawn = findRegion20Spawn(mapId);
+    if (spawn) return { mapId, x: spawn.x, y: spawn.y, onEvent: false };
+    const mapData = loadMapDataSync(mapId);
+    const event = mapData && (mapData.events || []).find((e) => e && e.name === "Elevator");
+    return event ? { mapId, x: event.x, y: event.y, onEvent: true } : null;
+  }
+
+  // The debug Home key: to the lift of the floor the party stands on, in this
+  // room or in another room of the same floor.
+  function teleportToGroupElevator() {
+    const here = $gameMap.mapId();
+    const maps = currentGroupMaps();
+    const order = maps.includes(here) ? [here, ...maps.filter((id) => id !== here)] : maps;
+    for (const mapId of order) {
+      const spot = elevatorSpotOf(mapId);
+      if (!spot) continue;
+      if (spot.mapId === here) {
+        if (spot.onEvent) teleportToAdjacentTile(spot.x, spot.y);
+        else {
+          $gamePlayer.locate(spot.x, spot.y);
+          $gameScreen.startFlash([0, 0, 0, 128], 30);
+        }
+      } else {
+        $gameScreen.startFadeOut(10);
+        $gamePlayer.reserveTransfer(spot.mapId, spot.x, spot.y + (spot.onEvent ? 1 : 0), 2);
+      }
+      return true;
+    }
+    return false;
+  }
+
   function teleportToSpecificStairs(isUpstairs) {
-    const currentFloor = $gameVariables.value(params.currentFloorVariable);
-    const currentMapId = $gameMap.mapId();
-    if (currentFloor <= 0 || currentFloor >= 100) return;
-  
-    const stairLoc = $gameSystem.getStairLocation(currentFloor, isUpstairs);
-  
-    if (stairLoc.mapId === currentMapId) {
-      // Same map - just teleport adjacent to the stairs
+    const here = $gameMap.mapId();
+    if (!isDungeonMap(here) && !groupStairs(dungeonLevelsFile(), here, isUpstairs)) {
+      // Outside the dungeon: to the Stairs Hall going up, the lower tower going down.
+      const entry = isUpstairs ? TOWER.DEBUG_UP_ENTRY : TOWER.DEBUG_DOWN_ENTRY;
+      $gameScreen.startFadeOut(10);
+      $gamePlayer.reserveTransfer(entry.mapId, entry.x, entry.y, entry.dir);
+      return;
+    }
+    const stairLoc = stairsOfCurrentGroup(isUpstairs);
+    if (!stairLoc || !(stairLoc.mapId > 0)) return;
+    if (stairLoc.mapId === $gameMap.mapId()) {
       teleportToAdjacentTile(stairLoc.x, stairLoc.y);
     } else {
-      // Different map - check if it's part of the same multi-room floor
-      const floorMapInfo = $gameSystem._dungeonFloors[currentFloor];
-      
-      // Check if this floor is a multi-room floor
-      if (Array.isArray(floorMapInfo) && floorMapInfo.includes(currentMapId) && floorMapInfo.includes(stairLoc.mapId)) {
-        // Both maps are part of the same multi-room floor, so transfer to the other map
-        $gameScreen.startFadeOut(10);
-        $gamePlayer.reserveTransfer(stairLoc.mapId, stairLoc.x, stairLoc.y, 0);
-      }
-      // If not part of same multi-room floor, do nothing (stairs aren't accessible)
+      // Another room of the same floor.
+      $gameScreen.startFadeOut(10);
+      $gamePlayer.reserveTransfer(stairLoc.mapId, stairLoc.x, stairLoc.y, 0);
     }
   }
 
@@ -3940,6 +4033,35 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     }
   }
 
+  // A playtest started on a finished tower map (one of dungeonLevels.json's
+  // levels) never came up the stairs, so no floor says where it stands and its
+  // staircases would stay where the editor left them. The tower is laid out
+  // the way the default "esoteric" world lays it, on a fresh random seed of
+  // its own every playtest, and the floor that map was dealt to becomes the
+  // current one. Only the first map of a playtest is asked, and only when the
+  // floor variable does not already hold a floor with this map on it (a
+  // loaded save keeps its own).
+  let _playtestFloorChecked = false;
+  function adoptPlaytestFloor() {
+    if (_playtestFloorChecked) return;
+    _playtestFloorChecked = true;
+    if (typeof Utils === "undefined" || !Utils.isOptionValid("test")) return;
+    const mapId = $gameMap.mapId();
+    const file = dungeonLevelsFile();
+    if (!file || !file.levels.some((l) => l && Array.isArray(l.maps) && l.maps.includes(mapId))) return;
+    $gameSystem.initDungeonSystem();
+    const current = $gameVariables.value(params.currentFloorVariable);
+    if ($gameSystem.isDungeonGenerated() && current > 0 && current < 100 &&
+        [].concat($gameSystem._dungeonFloors[current]).includes(mapId)) return;
+    $gameSystem._dungeonSeed = rollDungeonSeed();
+    $gameSystem.generateDungeon();
+    const floor = floorOfMap($gameSystem._dungeonFloors, mapId);
+    if (floor > 0 && floor < 100) {
+      $gameVariables.setValue(params.currentFloorVariable, floor);
+      $gameVariables.setValue(params.elevatorFloorVariable, floor);
+    }
+  }
+
   const _Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
   Scene_Map.prototype.onMapLoaded = function () {
     const arriving = !!($gamePlayer && $gamePlayer.isTransferring());
@@ -3955,6 +4077,7 @@ PluginManager.registerCommand(pluginName, "elevator", (args) => {
     if ($gameMap.mapId() === PROC_MAP_ID) {
       updateTowerFloorEvents();
     } else {
+      adoptPlaytestFloor();
       repositionStairEvents();
     }
 

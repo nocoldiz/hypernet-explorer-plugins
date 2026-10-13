@@ -1,3 +1,39 @@
+0.8.7a
+
+Maps:
+ - Fixed various omega tower levels
+
+Added:
+ - biomeBG scenes populated with the voxel system biome furniture sprites
+ - PAGE UP/DOWN teleport to floor stairs, HOME to its elevator
+ - eris fines you 1000 euros for being a coward
+ - high level enemies resist freeze, bleed and similar statuses from lower levels
+
+Changed:
+ - region id 10 never blocks visibility for fog of war
+ - biomeBG no longer displays the tower inside the dungeon floor system
+ - when fighting an NPC bust, healthbar shows above it
+ - scrollbars slightly less wide
+ - finalized the army battle system
+ - reworked eris battle so you can escape anytime
+ - minigames menu elements bigger in titlescreen
+ - eris model
+ - skill effect tags show the effect value in white
+ - character creation tab labels slightly bigger
+
+Fixed:
+ - playtesting a dungeon floor map places stairs with a random seed
+ - ONU assembly session no longer crashes when it closes
+ - 3D town crowds no longer come back empty
+ - crash when learning a skill
+ - crystal answers trigger again after the next dialogue
+ - descending from floor 2 to 1 lands facing down at 1399 22 30
+ - controller L2 no longer scrolls the screen left by itself
+ - crafting no longer crashes the game
+ - crash after attacking an overworld army
+ - missing icons on Mac
+
+
 0.8.6a
 
 Skills rework:
@@ -66,6 +102,7 @@ Added:
  - teleport cutscene can be skipped
 
 Changed:
+ - build shows progress for zip
  - reworked skill specials into short names, held by few spells
  - surgery menu uses the same improvements as the augment menu
  - secondary archetype grants its peculiar parts, like wings for avians

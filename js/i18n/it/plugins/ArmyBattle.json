@@ -1,6 +1,6 @@
 {
   "zoom": "Zoom: {pct}%",
-  "controls": "Zoom: rotella | Panoramica: trascina/frecce | Q/W/E: abilità | TAB: mostra/nascondi barra",
+  "controls": "Zoom: rotella | Panoramica: trascina/frecce | Q/W/E: abilità | Invio: squadra successiva | 1-4: ordini | TAB: mostra/nascondi barra",
   "playerArmy": "Esercito del giocatore: {count}",
   "enemyArmy": "Esercito nemico: {count}",
   "rallyBanner": "RADUNO! +20 morale ({count} soldati radunati)",
@@ -17,5 +17,19 @@
     "attack": "Attacca",
     "defend": "Difendi",
     "retreat": "Ritirata"
+  },
+  "sidebarTitle": "Tattica",
+  "yourForces": "Le tue forze",
+  "enemyForces": "Forze nemiche",
+  "victory": "VITTORIA!",
+  "defeat": "SCONFITTA!",
+  "charge": "CARICA!",
+  "crit": "CRITICO!",
+  "selected": "Selezionata:\n{squad}",
+  "order": {
+    "hold": "{squad} tiene la posizione",
+    "attack": "{squad} passa all'attacco",
+    "defend": "{squad} in difesa: +20% DEF",
+    "retreat": "{squad} ripiega"
   }
 }

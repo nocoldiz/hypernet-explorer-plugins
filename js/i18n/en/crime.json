@@ -272,6 +272,9 @@
     },
     "fareevasion": {
       "name": "Fare Evasion"
+    },
+    "cowardice": {
+      "name": "Being a coward"
     }
   }
 }

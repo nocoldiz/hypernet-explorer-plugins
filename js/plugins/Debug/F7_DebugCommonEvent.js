@@ -4,7 +4,7 @@
 
 /*:
  * @target MZ
- * @plugindesc [v1.1.0] F7/PageUp/PageDown Debug Common Events
+ * @plugindesc [v1.1.0] F7/PageUp/PageDown/Home Debug Keys
  * @author Omni-Lex
  * @url 
  * @help F7_DebugCommonEvent.js
@@ -75,6 +75,7 @@
     const F7_KEY = 118;
     const PAGEUP_KEY = 33;
     const PAGEDOWN_KEY = 34;
+    const HOME_KEY = 36;
     
     // Store original Scene_Map update method
     const _Scene_Map_update = Scene_Map.prototype.update;
@@ -89,21 +90,31 @@
             this.executeDebugCommonEvent(commonEventId, 'F7');
         }
         if (Input.isTriggered('debug_pageup')) {
-            this.executeDebugCommonEvent(pageUpEventId, 'PageUp');
+            this.executeDebugCommonEvent(pageUpEventId, 'PageUp', true);
         }
         if (Input.isTriggered('debug_pagedown')) {
-            this.executeDebugCommonEvent(pageDownEventId, 'PageDown');
+            this.executeDebugCommonEvent(pageDownEventId, 'PageDown', true);
+        }
+        // Home: to the lift of the dungeon floor the party stands on.
+        if (Input.isTriggered('debug_home') && this.debugKeysAllowed(true) && window.DungeonFloors &&
+            typeof window.DungeonFloors.teleportToGroupElevator === 'function') {
+            window.DungeonFloors.teleportToGroupElevator();
         }
     };
-    
-    Scene_Map.prototype.executeDebugCommonEvent = function(eventId, keyName) {
+
+    // Whether the debug keys may act: a playtest, or for the dungeon keys
+    // (sandboxToo) sandbox mode as well. Never over the voxel world.
+    Scene_Map.prototype.debugKeysAllowed = function(sandboxToo) {
         if (window.VoxelWorldSystem && window.VoxelWorldSystem.isActive && window.VoxelWorldSystem.isActive()) {
-            return;
+            return false;
         }
-        // Check if we should only allow this in test mode
-        if (enableInTest && !$gameSystem.isJapanese() && !Utils.isOptionValid('test')) {
-            return;
-        }
+        const sandbox = sandboxToo && $gameSystem && $gameSystem._isSandboxMode;
+        return !(enableInTest && !sandbox && !$gameSystem.isJapanese() && !Utils.isOptionValid('test'));
+    };
+
+    // sandboxToo: the stairs keys (Page Up / Page Down) also work in sandbox mode.
+    Scene_Map.prototype.executeDebugCommonEvent = function(eventId, keyName, sandboxToo) {
+        if (!this.debugKeysAllowed(sandboxToo)) return;
         
 
         
@@ -139,6 +150,9 @@
         } else if (event.keyCode === PAGEDOWN_KEY) {
             event.preventDefault();
             this._currentState['debug_pagedown'] = true;
+        } else if (event.keyCode === HOME_KEY) {
+            event.preventDefault();
+            this._currentState['debug_home'] = true;
         }
     };
     
@@ -160,6 +174,9 @@
         } else if (event.keyCode === PAGEDOWN_KEY) {
             event.preventDefault();
             this._currentState['debug_pagedown'] = false;
+        } else if (event.keyCode === HOME_KEY) {
+            event.preventDefault();
+            this._currentState['debug_home'] = false;
         }
     };
     

@@ -672,6 +672,7 @@
     SkillMaster.isMenuCommandSkill = isMenuCommandSkill;
     SkillMaster.isBasicCategory = isBasicCategory;
     SkillMaster.isHiddenSkill = isHiddenFromSkillMaster;
+    SkillMaster.escHtml = escHtml;
     SkillMaster.getSkillMagicSystem = getSkillMagicSystem;
     SkillMaster.getActorMagicSystem = getActorMagicSystem;
     SkillMaster.getAllMagicalSystems = getAllMagicalSystems;
@@ -2306,7 +2307,7 @@
             if (typeof $dataSkills !== 'undefined' && $dataSkills) {
                 for (const skill of $dataSkills) {
                     if (!skill || !skill.name || skill.name.startsWith('<--')) continue;
-                    if (isHiddenFromSkillMaster(skill)) continue;
+                    if (SkillMaster.isHiddenSkill && SkillMaster.isHiddenSkill(skill)) continue;
                     const cat = SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(skill.id) : null;
                     if (cat !== category) continue;
                     (this.isForbidden(skill.id) ? inner : outer).push(skill.id);
@@ -4841,6 +4842,9 @@
     'use strict';
 
     window.SkillMaster = window.SkillMaster || {};
+
+    // The name escaper lives in the core block; this block borrows it.
+    const escHtml = (s) => window.SkillMaster.escHtml(s);
 
     // Three across, with the backpack and the skills menu. The track count lives
     // in .sm-school-grid (css/theme.css); this is the cursor's copy of it and the

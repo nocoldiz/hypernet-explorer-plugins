@@ -7090,6 +7090,11 @@
     font-weight: 600;
     overflow-wrap: anywhere;
 }
+.inspect-pill-effect {
+    color: var(--text-pure-white);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
 
 .inspect-pill--gain { background: var(--bg-gain-translucent-12); border-color: rgba(46, 204, 113, 0.35); }
 .inspect-pill--gain .inspect-pill-val { color: #4ade80; }
@@ -10313,12 +10318,6 @@
 }
 
 /* Extracted from ArmyManager.js */
-.army-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin-top: 8px;
-}
 
 .army-card {
     background: var(--border-primary-hover-translucent-15);
@@ -10329,28 +10328,8 @@
     font-family: var(--font-ui);
 }
 
-.army-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-    font-family: var(--font-ui);
-    font-size: 0.892em;
-}
 
-.army-table th {
-    font-family: var(--font-ui);
-    color: var(--text-primary-hover);
-    border-bottom: 2px solid var(--text-primary-hover);
-    padding: 4px 6px;
-    text-align: left;
-    font-weight: bold;
-}
 
-.army-table td {
-    padding: 5px 6px;
-    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
-    color: var(--text-success-active);
-}
 
 .role-badge {
     display: inline-flex;
@@ -24379,10 +24358,10 @@ body.ascii-ui-active #title-menu-container {
 .mg-grid {
     pointer-events: auto;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(calc(118px * var(--ts-ui-scale, 1)), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(calc(172px * var(--ts-ui-scale, 1)), 1fr));
     align-content: start;
-    gap: calc(10px * var(--ts-ui-scale, 1));
-    padding: calc(12px * var(--ts-ui-scale, 1));
+    gap: calc(14px * var(--ts-ui-scale, 1));
+    padding: calc(16px * var(--ts-ui-scale, 1));
     width: 100%;
     background: var(--shadow-black-translucent-55);
     border: 1px solid var(--accent-gold-pure-translucent-18);
@@ -24399,8 +24378,8 @@ body.ascii-ui-active #title-menu-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: calc(6px * var(--ts-ui-scale, 1));
-    padding: calc(6px * var(--ts-ui-scale, 1));
+    gap: calc(8px * var(--ts-ui-scale, 1));
+    padding: calc(8px * var(--ts-ui-scale, 1));
     cursor: pointer;
     border: 1px solid transparent;
     background: rgba(0, 0, 0, 0.35);
@@ -24415,7 +24394,7 @@ body.ascii-ui-active #title-menu-container {
 }
 .mg-card-label {
     color: var(--accent-gold-pure);
-    font-size: calc(11px * var(--ts-ui-scale, 1));
+    font-size: calc(16px * var(--ts-ui-scale, 1));
     line-height: 1.2;
     letter-spacing: 0.5px;
     text-align: center;
@@ -34420,28 +34399,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     flex-shrink: 0;
 }
 
-.army-02 {
-    text-align: right;
-    font-weight: bold;
-}
 
-.army-03 {
-    text-align: center;
-    color: var(--text-card-medium);
-}
 
-.army-04 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 14px;
-}
 
-.army-05 {
-    font-size: 0.892em;
-    font-family: var(--font-ui);
-    color: var(--text-card-medium);
-}
 
 .army-06 {
     text-align: center;
@@ -34480,19 +34440,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     color: var(--text-muted-hover);
 }
 
-.army-11 {
-    margin-top: 15px;
-    animation: fadeIn 0.3s ease;
-}
 
-.army-12 {
-    margin: 0 0 4px 0;
-    font-family: var(--font-ui);
-    color: var(--text-primary-hover);
-    font-size: 1.142em;
-    text-align: center;
-    font-weight: bold;
-}
 
 .army-13 {
     font-size: 0.87em;
@@ -34507,30 +34455,8 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     gap: 6px 16px;
 }
 
-.army-15 {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    padding-top: 6px;
-    border-top: 1px solid var(--border-primary-hover-translucent-15);
-    font-family: var(--font-ui);
-    font-size: 0.87em;
-}
 
-.army-16 {
-    text-align: center;
-    margin-top: 8px;
-    font-size: 0.856em;
-    color: var(--accent-red-2);
-    font-weight: bold;
-}
 
-.army-17 {
-    text-align: center;
-    color: var(--text-card-medium);
-    font-size: 0.914em;
-    min-height: 140px;
-}
 
 .army-18 {
     display: flex;
@@ -34570,29 +34496,9 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     margin-top: 6px;
 }
 
-.army-24 {
-    margin-bottom: 12px;
-}
 
-.army-25 {
-    padding: 8px 12px;
-    max-height: 160px;
-    overflow-y: auto;
-}
 
-.army-26 {
-    margin: 0 0 4px 0;
-    font-family: var(--font-ui);
-    font-size: 0.928em;
-    color: var(--text-primary-hover);
-    border-bottom: 1px solid var(--border-primary-hover-translucent-15);
-    padding-bottom: 3px;
-    font-weight: bold;
-}
 
-.army-27 {
-    text-align: right;
-}
 
 .army-28 {
     font-family: var(--font-ui);
@@ -34605,17 +34511,7 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
     margin-bottom: 0;
 }
 
-.army-29 {
-    display: flex;
-    justify-content: space-between;
-    height: 100%;
-}
 
-.army-30 {
-    max-height: 210px;
-    overflow-y: auto;
-    padding-right: 4px;
-}
 
 .army-31 {
     font-family: var(--font-ui);
@@ -42096,18 +41992,18 @@ select option:hover {
    was the reason long text felt stuck. One width for every pane, so no local
    rule may narrow it again. */
 ::-webkit-scrollbar {
-    width: 14px !important;
-    height: 14px !important;
+    width: 11px !important;
+    height: 11px !important;
 }
 
 ::-webkit-scrollbar-track {
     background: var(--accent-gold-pure-translucent-08, rgba(212, 160, 80, 0.08)) !important;
-    border-radius: 7px !important;
+    border-radius: 6px !important;
 }
 
 ::-webkit-scrollbar-thumb {
     background: var(--border-gold-amber, #d4a050) !important;
-    border-radius: 7px !important;
+    border-radius: 6px !important;
     min-height: 40px !important;
 }
 
@@ -44528,7 +44424,7 @@ body.pad-input .kb-only {
     border-radius: 2px;
     color: var(--text-primary-hover);
     font-family: var(--font-ui);
-    font-size: 0.964em;
+    font-size: 1.08em;
     font-weight: bold;
     cursor: pointer;
     transition: 0.2s ease;

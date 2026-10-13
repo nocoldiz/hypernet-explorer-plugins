@@ -69,8 +69,13 @@
  * - Zoom and pan controls for better battlefield view
  *
  * Controls:
- * - Mouse Wheel: Zoom in/out (30% - 300%)
- * - Drag: Pan the battlefield view
+ * - Mouse Wheel: Zoom in/out (30% - 300%) around the pointer
+ * - Drag / Arrows: Pan the battlefield view
+ * - Q / W / E: Rally, Heal, Inspire
+ * - Click a squad in the sidebar, or Enter to cycle squads
+ * - 1-4: Hold, Attack, Defend, Retreat for the selected squad
+ * - TAB: Hide/Show the sidebar
+ * - Cancel: Leave the field
  *
  * Plugin Command:
  *   ArmyBattleView startBattle
@@ -95,6 +100,18 @@ ArmyBattleView.Params.unitHeight = Number(ArmyBattleView.Params.unitHeight || 24
 ArmyBattleView.Params.advanceSpeed = Number(ArmyBattleView.Params.advanceSpeed || 0.5);
 ArmyBattleView.Params.attackRange = Number(ArmyBattleView.Params.attackRange || 30);
 ArmyBattleView.Params.injuryChance = Number(ArmyBattleView.Params.injuryChance || 50);
+
+// Every caption on the field is drawn in the game's own face with a dark
+// outline, so it reads over any biome colour.
+ArmyBattleView.textStyle = function (size, fill, stroke) {
+  const face = (typeof $gameSystem !== "undefined" && $gameSystem && $gameSystem.mainFontFace)
+    ? $gameSystem.mainFontFace() : "sans-serif";  // i18n-ignore  css font
+  return { fontFamily: face, fontSize: size, fill: fill, stroke: 0x000000, strokeThickness: stroke === undefined ? 3 : stroke };
+};
+
+// Frames an Inspire lasts (10 seconds at 60fps), counted on the field so a
+// paused or torn down battle never reverts it late.
+ArmyBattleView.INSPIRE_FRAMES = 600;
 
 //=============================================================================
 // Plugin Commands
@@ -328,6 +345,37 @@ ArmyBattleField.prototype.initialize = function () {
   this._dragStarted = false;
   this._lastTouchX = 0;
   this._lastTouchY = 0;
+
+  // The whole field starts in view, whatever its size.
+  this._fitView();
+};
+
+// Width of the screen the field is drawn in: everything left of the sidebar
+// while the sidebar shows.
+ArmyBattleField.prototype._viewWidth = function () {
+  const sidebar = this._infoScreen && this._infoScreen.visible ? this._sidebarWidth : 0;
+  return Graphics.width - sidebar;
+};
+
+ArmyBattleField.prototype._fitView = function () {
+  const viewW = this._viewWidth();
+  const fit = Math.min(1, viewW / this._battleWidth, Graphics.height / this._battleHeight);
+  this._zoom = Math.max(this._minZoom, Math.min(this._maxZoom, fit));
+  this._viewportX = (viewW - this._battleWidth * this._zoom) / 2;
+  this._viewportY = (Graphics.height - this._battleHeight * this._zoom) / 2;
+  this._applyViewportTransform();
+};
+
+// The HUD is laid out in screen space, inside the part of the screen the
+// sidebar leaves free, so a field bigger than the screen never pushes the
+// counters or the abilities off it.
+ArmyBattleField.prototype._layoutHud = function () {
+  const viewW = this._viewWidth();
+  const h = Graphics.height;
+  this._playerCounterText.position.set(viewW / 2, h - 30);
+  this._enemyCounterText.position.set(viewW / 2, 30);
+  this._resultText.position.set(viewW / 2, h / 2);
+  this._abilityTexts.forEach((text, i) => text.position.set(viewW - 10, 60 + i * 25));
 };
 
 ArmyBattleField.prototype._calculateBattlefieldSize = function () {
@@ -407,9 +455,10 @@ ArmyBattleField.prototype._setupBattlefield = function () {
   const width = this._battleWidth;
   const height = this._battleHeight;
 
-  // Center on screen
-  this.x = (Graphics.width - width) / 2;
-  this.y = (Graphics.height - height) / 2;
+  // The field sits at the screen origin: the content container carries the
+  // pan and zoom, the UI container stays in screen coordinates.
+  this.x = 0;
+  this.y = 0;
 
   // Create content container that will be zoomed/panned
   this._contentContainer = new PIXI.Container();
@@ -442,83 +491,44 @@ ArmyBattleField.prototype._setupBattlefield = function () {
 };
 
 ArmyBattleField.prototype._createCounterText = function () {
-  const width = this._battleWidth;
-  const height = this._battleHeight;
+  const style = ArmyBattleView.textStyle;
 
   // Player counter (bottom)
-  this._playerCounterText = new PIXI.Text("", {
-    fontFamily: "Arial",
-    fontSize: 24,
-    fill: 0xFFFF00, // Yellow
-    stroke: 0x000000,
-    strokeThickness: 4
-  });
-  this._playerCounterText.x = width / 2;
-  this._playerCounterText.y = height - 40;
+  this._playerCounterText = new PIXI.Text("", style(24, 0xFFFF00, 4));
   this._playerCounterText.anchor.set(0.5);
   this._uiContainer.addChild(this._playerCounterText);
 
   // Enemy counter (top)
-  this._enemyCounterText = new PIXI.Text("", {
-    fontFamily: "Arial",
-    fontSize: 24,
-    fill: 0xFF0000, // Red
-    stroke: 0x000000,
-    strokeThickness: 4
-  });
-  this._enemyCounterText.x = width / 2;
-  this._enemyCounterText.y = 40;
+  this._enemyCounterText = new PIXI.Text("", style(24, 0xFF0000, 4));
   this._enemyCounterText.anchor.set(0.5);
   this._uiContainer.addChild(this._enemyCounterText);
 
   // Battle result text (hidden initially)
-  this._resultText = new PIXI.Text("", {
-    fontFamily: "Arial",
-    fontSize: 48,
-    fill: 0xFFFFFF,
-    stroke: 0x000000,
-    strokeThickness: 6
-  });
-  this._resultText.x = width / 2;
-  this._resultText.y = height / 2;
+  this._resultText = new PIXI.Text("", style(48, 0xFFFFFF, 6));
   this._resultText.anchor.set(0.5);
   this._resultText.visible = false;
   this._uiContainer.addChild(this._resultText);
 
   // Zoom indicator
-  this._zoomText = new PIXI.Text(T('ArmyBattle.zoom', { pct: 100 }), {
-    fontFamily: "Arial",
-    fontSize: 16,
-    fill: 0xFFFFFF,
-    stroke: 0x000000,
-    strokeThickness: 3
-  });
-  this._zoomText.x = 10;
-  this._zoomText.y = 10;
+  this._zoomText = new PIXI.Text(T('ArmyBattle.zoom', { pct: 100 }), style(16, 0xFFFFFF));
+  this._zoomText.position.set(10, 10);
   this._uiContainer.addChild(this._zoomText);
 
   // Controls help text
-  this._controlsText = new PIXI.Text(T('ArmyBattle.controls'), {
-    fontFamily: "Arial",
-    fontSize: 14,
-    fill: 0xCCCCCC,
-    stroke: 0x000000,
-    strokeThickness: 2
-  });
-  this._controlsText.x = 10;
-  this._controlsText.y = 30;
+  this._controlsText = new PIXI.Text(T('ArmyBattle.controls'), style(14, 0xCCCCCC, 2));
+  this._controlsText.position.set(10, 30);
   this._uiContainer.addChild(this._controlsText);
 
   // Commander abilities panel
   this._createCommanderAbilitiesPanel();
 
-  // Create info screen (hidden initially)
+  // Squad sidebar
   this._createInfoScreen();
+
+  this._layoutHud();
 };
 
 ArmyBattleField.prototype._createCommanderAbilitiesPanel = function () {
-  const width = this._battleWidth;
-
   // Commander abilities (cooldown in seconds)
   this._commanderAbilities = [
     { name: T('ArmyBattle.ability.rally'), key: "q", cooldown: 30, currentCooldown: 0, effect: "rally" },
@@ -530,15 +540,8 @@ ArmyBattleField.prototype._createCommanderAbilitiesPanel = function () {
 
   for (let i = 0; i < this._commanderAbilities.length; i++) {
     const ability = this._commanderAbilities[i];
-    const text = new PIXI.Text(`[${ability.key.toUpperCase()}] ${ability.name}`, {
-      fontFamily: "Arial",
-      fontSize: 16,
-      fill: 0x00FF00,
-      stroke: 0x000000,
-      strokeThickness: 3
-    });
-    text.x = width - 180;
-    text.y = 60 + i * 25;
+    const text = new PIXI.Text(`[${ability.key.toUpperCase()}] ${ability.name}`, ArmyBattleView.textStyle(16, 0x00FF00));
+    text.anchor.set(1, 0);
     this._uiContainer.addChild(text);
     this._abilityTexts.push(text);
   }
@@ -566,26 +569,18 @@ ArmyBattleField.prototype._createInfoScreen = function () {
   this._infoScreen.addChild(bg);
 
   // Title
-  const title = new PIXI.Text("TACTICAL", {
-    fontFamily: "Arial",
-    fontSize: 20,
-    fill: 0xFFFFFF,
-    stroke: 0x000000,
-    strokeThickness: 3
-  });
-  title.x = 10;
-  title.y = 10;
+  const title = new PIXI.Text(T('ArmyBattle.sidebarTitle'), ArmyBattleView.textStyle(20, 0xFFFFFF));
+  title.position.set(10, 10);
   this._infoScreen.addChild(title);
 
-  // Create squad list containers
+  // Squad lists: the enemy's is placed under the player's once both are
+  // built (_buildInfoSquadTexts), so a long roster never runs into it.
   this._infoPlayerSquads = new PIXI.Container();
-  this._infoPlayerSquads.x = 10;
-  this._infoPlayerSquads.y = 50;
+  this._infoPlayerSquads.position.set(10, 44);
   this._infoScreen.addChild(this._infoPlayerSquads);
 
   this._infoEnemySquads = new PIXI.Container();
-  this._infoEnemySquads.x = 10;
-  this._infoEnemySquads.y = screenHeight / 2;
+  this._infoEnemySquads.position.set(10, screenHeight / 2);
   this._infoScreen.addChild(this._infoEnemySquads);
 
   // Selected squad for commands
@@ -593,8 +588,7 @@ ArmyBattleField.prototype._createInfoScreen = function () {
 
   // Command panel (at bottom)
   this._infoCommandPanel = new PIXI.Container();
-  this._infoCommandPanel.x = 10;
-  this._infoCommandPanel.y = screenHeight - 180;
+  this._infoCommandPanel.position.set(10, screenHeight - 140);
   this._infoScreen.addChild(this._infoCommandPanel);
 
   // Store sidebar width for reference
@@ -775,6 +769,7 @@ ArmyBattleField.prototype._applyTacticalFormation = function (troops, centerX, c
   // Sprites take more room on the field than the old dots did.
   const spacing = 18;
   const count = troops.length;
+  const squadUnits = [];
 
   troops.forEach((troop, i) => {
     let relX = 0;
@@ -838,17 +833,41 @@ ArmyBattleField.prototype._applyTacticalFormation = function (troops, centerX, c
     // i18n-ignore-end
     }
 
-    const unit = this._createUnit(troop, centerX + relX, centerY + relY, color, isPlayer);
+    // One name label per squad, carried by its first unit and handed down
+    // the squad as its carriers fall (_removeUnit).
+    const unit = this._createUnit(troop, centerX + relX, centerY + relY, color, isPlayer, i === 0);
+    unit.squadUnits = squadUnits;
+    squadUnits.push(unit);
     if (isPlayer) this._playerUnits.push(unit); else this._enemyUnits.push(unit);
     this._contentContainer.addChild(unit.sprite);
 
-    // Only add name label for the first unit of the squad
     if (i === 0) {
       this._contentContainer.addChild(unit.nameLabel);
-      // Mark this as the squad's label holder
       unit.isSquadLabelHolder = true;
     }
   });
+};
+
+// Takes a unit off the field (dead, injured or routed off an edge). The
+// squad's name label passes to the next of its people still standing.
+ArmyBattleField.prototype._removeUnit = function (unit) {
+  unit.isAlive = false;
+  unit.sprite.visible = false;
+  if (!unit.isSquadLabelHolder) return;
+  unit.isSquadLabelHolder = false;
+  const heir = (unit.squadUnits || []).find(u => u.isAlive);
+  if (heir) {
+    heir.nameLabel = unit.nameLabel;
+    heir.isSquadLabelHolder = true;
+    this._placeNameLabel(heir);
+  } else if (unit.nameLabel) {
+    unit.nameLabel.visible = false;
+  }
+};
+
+ArmyBattleField.prototype._placeNameLabel = function (unit) {
+  unit.nameLabel.x = unit.sprite.x;
+  unit.nameLabel.y = unit.sprite.y - ArmyBattleView.Params.unitHeight - 2;
 };
 
 //=============================================================================
@@ -935,10 +954,10 @@ ArmyUnitSprite.prototype._setupFrame = function () {
   const target = ArmyBattleView.Params.unitHeight;
   const scale = this._ch > 0 ? target / this._ch : 1;
   this.scale.set(scale, scale);
-  this._refreshFrame();
+  this._applyFrame();
 };
 
-ArmyUnitSprite.prototype._refreshFrame = function () {
+ArmyUnitSprite.prototype._applyFrame = function () {
   if (!this._frameReady) return;
   const row = (this._direction - 2) / 2;
   this.setFrame(
@@ -970,30 +989,26 @@ ArmyUnitSprite.prototype.stepAnimation = function (vx, vy) {
   if (dir !== this._direction || pattern !== this._pattern) {
     this._direction = dir;
     this._pattern = pattern === 3 ? 1 : pattern;
-    this._refreshFrame();
+    this._applyFrame();
   }
 };
 
-ArmyBattleField.prototype._createUnit = function (troop, x, y, color, isPlayer) {
+ArmyBattleField.prototype._createUnit = function (troop, x, y, color, isPlayer, withLabel) {
   const role = (troop.role || "close quarters").toLowerCase();  // i18n-ignore  troop db id
 
   const sprite = new ArmyUnitSprite(troop, role, color);
   sprite.x = x;
   sprite.y = y;
 
-  // Create name label
-  const troopName = (typeof armyT === "function") ? armyT(troop.name) : troop.name;
-
-  const nameLabel = new PIXI.Text(troopName, {
-    fontFamily: "Arial",
-    fontSize: 12,
-    fill: color,
-    stroke: 0x000000,
-    strokeThickness: 3
-  });
-  nameLabel.anchor.set(0.5, 1); // Center horizontally, bottom of text at anchor
-  nameLabel.x = x;
-  nameLabel.y = y - ArmyBattleView.Params.unitHeight - 2; // Position above unit
+  // The squad's name label, drawn only for the unit that carries it.
+  let nameLabel = null;
+  if (withLabel) {
+    const troopName = (typeof armyT === "function") ? armyT(troop.name) : troop.name;
+    nameLabel = new PIXI.Text(troopName, ArmyBattleView.textStyle(12, color));
+    nameLabel.anchor.set(0.5, 1); // Center horizontally, bottom of text at anchor
+    nameLabel.x = x;
+    nameLabel.y = y - ArmyBattleView.Params.unitHeight - 2; // Position above unit
+  }
 
   return {
     sprite: sprite,
@@ -1021,9 +1036,12 @@ ArmyBattleField.prototype._createUnit = function (troop, x, y, color, isPlayer) 
 ArmyBattleField.prototype.update = function () {
   if (!this._battleActive) return;
 
-  // Check for TAB key to toggle info screen visibility
+  // Check for TAB key to toggle info screen visibility; the field and the
+  // HUD take the freed width.
   if (Input.isTriggered("tab")) {
     this._infoScreen.visible = !this._infoScreen.visible;
+    this._layoutHud();
+    this._applyViewportTransform();
   }
 
   // Process input for zoom and drag
@@ -1031,6 +1049,12 @@ ArmyBattleField.prototype.update = function () {
 
   // Process commander abilities
   this._processCommanderAbilities();
+
+  // Squad orders from the keyboard or a pad
+  this._processSquadInput();
+
+  // Inspire wears off
+  this._updateInspire();
 
   // Update all units
   this._updateUnits();
@@ -1069,28 +1093,28 @@ ArmyBattleField.prototype._processInput = function () {
   if (Input.isPressed("down"))  { this._viewportY -= panSpeed; panned = true; }
   if (panned) this._applyViewportTransform();
 
-  // Handle mouse wheel zoom
-  const wheelDelta = TouchInput.wheelY;
-  if (wheelDelta !== 0) {
-    const zoomFactor = wheelDelta > 0 ? 0.9 : 1.1;
-    this._zoom = Math.max(this._minZoom, Math.min(this._maxZoom, this._zoom * zoomFactor));
-    this._applyViewportTransform();
-  }
-
   // Get mouse position
   const x = TouchInput.x;
   const y = TouchInput.y;
+  const viewW = this._viewWidth();
+  const overField = x >= 0 && y >= 0 && x < viewW && y < Graphics.height;
 
-  // Check if mouse is within battlefield bounds
-  const width = this._battleWidth;
-  const height = this._battleHeight;
-  const localX = x - this.x;
-  const localY = y - this.y;
-
-  if (localX < 0 || localY < 0 || localX > width || localY > height) {
-    // Mouse outside battlefield
-    return;
+  // Handle mouse wheel zoom, anchored on the point under the pointer so the
+  // spot being looked at stays put.
+  const wheelDelta = TouchInput.wheelY;
+  if (wheelDelta !== 0) {
+    const zoomFactor = wheelDelta > 0 ? 0.9 : 1.1;
+    const next = Math.max(this._minZoom, Math.min(this._maxZoom, this._zoom * zoomFactor));
+    const ax = overField ? x : viewW / 2;
+    const ay = overField ? y : Graphics.height / 2;
+    this._viewportX = ax - (ax - this._viewportX) * (next / this._zoom);
+    this._viewportY = ay - (ay - this._viewportY) * (next / this._zoom);
+    this._zoom = next;
+    this._applyViewportTransform();
   }
+
+  // A press on the sidebar is a click on a squad or an order, never a drag.
+  if (!overField && !this._mousePressed) return;
 
   // Handle mouse press/drag
   if (TouchInput.isPressed()) {
@@ -1123,6 +1147,14 @@ ArmyBattleField.prototype._processInput = function () {
 };
 
 ArmyBattleField.prototype._applyViewportTransform = function () {
+  // Keep the field on screen: it pans at most 100px past the point where an
+  // edge of it meets the edge of the view, so it can never be lost.
+  const slack = 100;
+  const clampAxis = (pos, span, view) =>
+    Math.max(Math.min(0, view - span) - slack, Math.min(Math.max(0, view - span) + slack, pos));
+  this._viewportX = clampAxis(this._viewportX, this._battleWidth * this._zoom, this._viewWidth());
+  this._viewportY = clampAxis(this._viewportY, this._battleHeight * this._zoom, Graphics.height);
+
   // Apply zoom and pan to content container
   this._contentContainer.scale.set(this._zoom, this._zoom);
   this._contentContainer.position.set(this._viewportX, this._viewportY);
@@ -1311,12 +1343,8 @@ ArmyBattleField.prototype._clampUnitPosition = function (unit) {
   unit.sprite.x = Math.max(minX, Math.min(maxX, unit.sprite.x));
   unit.sprite.y = Math.max(minY, Math.min(maxY, unit.sprite.y));
 
-  // Update name label position only if this unit is the squad's label holder
-  if (unit.isSquadLabelHolder) {
-    const dotSize = ArmyBattleView.Params.dotSize;
-    unit.nameLabel.x = unit.sprite.x;
-    unit.nameLabel.y = unit.sprite.y - dotSize - 2;
-  }
+  // The squad's label rides above the head of whoever carries it.
+  if (unit.isSquadLabelHolder) this._placeNameLabel(unit);
 };
 
 ArmyBattleField.prototype._findNearestEnemy = function (unit, enemies) {
@@ -1416,7 +1444,7 @@ ArmyBattleField.prototype._attackEnemy = function (attacker, defender) {
   // Charge bonus: +50% damage if charging
   if (attacker.isCharging) {
     baseDamage *= 1.5;
-    this._createParticle(attacker.sprite.x, attacker.sprite.y, 0xFFAA00, "CHARGE!");
+    this._createParticle(attacker.sprite.x, attacker.sprite.y, 0xFFAA00, T('ArmyBattle.charge'));
   }
 
   // Flanking bonus: Check if attacking from behind
@@ -1431,7 +1459,7 @@ ArmyBattleField.prototype._attackEnemy = function (attacker, defender) {
   const isCrit = Math.random() < critChance;
   if (isCrit) {
     baseDamage *= 2;
-    this._createParticle(defender.sprite.x, defender.sprite.y, 0xFF0000, "CRIT!");
+    this._createParticle(defender.sprite.x, defender.sprite.y, 0xFF0000, T('ArmyBattle.crit'));
   }
 
   // Variance
@@ -1477,26 +1505,23 @@ ArmyBattleField.prototype._killUnit = function (unit) {
   if (isInjured) {
     // Injured - set HP to 1 and remove from battle
     unit.troop.currentHp = 1;
-    unit.isAlive = false;
-    unit.sprite.visible = false;
-    if (unit.isSquadLabelHolder) {
-      unit.nameLabel.visible = false;
-    }
+    this._removeUnit(unit);
 
-    // Mark troop as injured in army data
-    if (unit.isPlayer && !unit.troop.isLeader && !unit.troop.isAlly) {
-      const actualTroop = $gameArmy.getTroops().find(t => t.id === unit.troop.id);
-      if (actualTroop) {
-        actualTroop.hp = 1; // Set to injured state
+    // Mark the injury in the army data, or on the party member who took it
+    if (unit.isPlayer && !unit.troop.isAlly) {
+      if (unit.troop.isLeader) {
+        const actor = $gameActors.actor(parseInt(String(unit.troop.id || "").replace("actor_", "")));  // i18n-ignore  internal id
+        if (actor) actor.setHp(1);
+      } else {
+        const actualTroop = $gameArmy.getTroops().find(t => t.id === unit.troop.id);
+        if (actualTroop) {
+          actualTroop.hp = 1; // Set to injured state
+        }
       }
     }
   } else {
     // Dead - remove completely
-    unit.isAlive = false;
-    unit.sprite.visible = false;
-    if (unit.isSquadLabelHolder) {
-      unit.nameLabel.visible = false;
-    }
+    this._removeUnit(unit);
 
     // Remove from army data
     if (unit.isPlayer && !unit.troop.isAlly) {
@@ -1546,7 +1571,7 @@ ArmyBattleField.prototype._endBattle = function (result) {
   this._battleResult = result;
 
   // Show result text
-  this._resultText.text = result === "victory" ? "VICTORY!" : "DEFEAT!";
+  this._resultText.text = T(result === "victory" ? 'ArmyBattle.victory' : 'ArmyBattle.defeat');
   this._resultText.style.fill = result === "victory" ? 0x00FF00 : 0xFF0000;
   this._resultText.visible = true;
 };
@@ -1662,13 +1687,7 @@ ArmyBattleField.prototype._updateProjectiles = function () {
 
 ArmyBattleField.prototype._createParticle = function (x, y, color, text) {
   const particle = {
-    sprite: new PIXI.Text(text || "", {
-      fontFamily: "Arial",
-      fontSize: 14,
-      fill: color,
-      stroke: 0x000000,
-      strokeThickness: 2
-    }),
+    sprite: new PIXI.Text(text || "", ArmyBattleView.textStyle(14, color, 2)),
     x: x,
     y: y,
     lifetime: 60, // 1 second at 60fps
@@ -1752,11 +1771,7 @@ ArmyBattleField.prototype._updateRoutingUnit = function (unit) {
   const margin = 30;
   const height = this._battleHeight;
   if (unit.sprite.y <= margin || unit.sprite.y >= height - margin) {
-    unit.isAlive = false;
-    unit.sprite.visible = false;
-    if (unit.isSquadLabelHolder) {
-      unit.nameLabel.visible = false;
-    }
+    this._removeUnit(unit);
   }
 };
 
@@ -1874,19 +1889,17 @@ ArmyBattleField.prototype._healSquad = function () {
 
 ArmyBattleField.prototype._inspireTroops = function () {
   // Grant temporary damage and morale boost.
-  // Store the exact original atk so the revert restores it without lossy
-  // double-floor degrading the persistent saved army stats.
-  const boosted = [];
+  // Store the exact original atk so the revert restores it exactly, and boost
+  // off that original so a second cast refreshes the timer instead of
+  // stacking another +50% on top of the first.
   for (const unit of this._playerUnits) {
     if (unit.isAlive) {
       unit.morale = 100; // Max morale
-      const baseAtk = unit.troop.atk || 10;
-      // Only capture the original once, ignore already-boosted stacked casts
       if (unit._inspireOriginalAtk === undefined) {
-        unit._inspireOriginalAtk = baseAtk;
+        unit._inspireOriginalAtk = unit.troop.atk || 10;
       }
-      unit.troop.atk = Math.floor(baseAtk * 1.5); // +50% attack for duration
-      boosted.push(unit);
+      unit.troop.atk = Math.floor(unit._inspireOriginalAtk * 1.5); // +50% attack for duration
+      unit._inspireFrames = ArmyBattleView.INSPIRE_FRAMES;
     }
   }
 
@@ -1898,17 +1911,17 @@ ArmyBattleField.prototype._inspireTroops = function () {
     T('ArmyBattle.inspireBanner')
   );
 
-  // Reset attack after 10 seconds. Guard against the scene being popped or the
-  // field destroyed before the timeout fires.
-  setTimeout(() => {
-    if (this._destroyed) return;
-    for (const unit of boosted) {
-      if (unit._inspireOriginalAtk !== undefined) {
-        unit.troop.atk = unit._inspireOriginalAtk;
-        unit._inspireOriginalAtk = undefined;
-      }
+};
+
+// Counts each unit's Inspire down and gives its attack back when it ends.
+ArmyBattleField.prototype._updateInspire = function () {
+  for (const unit of this._playerUnits) {
+    if (!(unit._inspireFrames > 0)) continue;
+    if (--unit._inspireFrames === 0 && unit._inspireOriginalAtk !== undefined) {
+      unit.troop.atk = unit._inspireOriginalAtk;
+      unit._inspireOriginalAtk = undefined;
     }
-  }, 10000);
+  }
 };
 
 ArmyBattleField.prototype._updateAbilityCooldowns = function () {
@@ -1950,79 +1963,45 @@ ArmyBattleField.prototype._refreshInfoScreen = function () {
 };
 
 ArmyBattleField.prototype._buildInfoSquadTexts = function (playerSquads, enemySquads) {
-  this._infoPlayerSquadTexts = {};
-  this._infoEnemySquadTexts = {};
+  const style = ArmyBattleView.textStyle;
+  const rowHeight = 18;
+  const build = (container, squads, title, color, isPlayer) => {
+    container.addChild(new PIXI.Text(title, style(16, color, 2)));
+    const cache = {};
+    let y = 24;
+    for (const [squadName, units] of Object.entries(squads)) {
+      const squadLabel = (typeof armyT === "function") ? armyT(squadName) : squadName;
+      const displayName = squadLabel.length > 15 ? squadLabel.substring(0, 12) + "..." : squadLabel;
+      const squadText = new PIXI.Text("", style(12, 0xFFFFFF, 2));
+      squadText.y = y;
+      if (isPlayer) {
+        squadText.interactive = true;
+        squadText.buttonMode = true;
+        squadText.on('pointerdown', () => this._selectSquad(squadName, units, true));
+      }
+      container.addChild(squadText);
+      cache[squadName] = { text: squadText, displayName, units };
+      y += rowHeight;
+    }
+    return { cache, height: y };
+  };
 
-  // Player title
-  const playerTitle = new PIXI.Text("YOUR FORCES", {
-    fontFamily: "Arial",
-    fontSize: 16,
-    fill: 0xFFFF00,
-    stroke: 0x000000,
-    strokeThickness: 2
-  });
-  this._infoPlayerSquads.addChild(playerTitle);
-
-  let yOffset = 25;
-  for (const [squadName, units] of Object.entries(playerSquads)) {
-    const squadLabel = (typeof armyT === "function") ? armyT(squadName) : squadName;
-    const displayName = squadLabel.length > 15 ? squadLabel.substring(0, 12) + "..." : squadLabel;
-
-    const squadText = new PIXI.Text("", {
-      fontFamily: "Arial",
-      fontSize: 12,
-      fill: 0xFFFFFF,
-      stroke: 0x000000,
-      strokeThickness: 2
-    });
-    squadText.y = yOffset;
-    squadText.interactive = true;
-    squadText.buttonMode = true;
-    squadText.on('pointerdown', () => this._selectSquad(squadName, units, true));
-    this._infoPlayerSquads.addChild(squadText);
-    this._infoPlayerSquadTexts[squadName] = { text: squadText, displayName, units };
-
-    yOffset += 35;
-  }
-
-  // Enemy title
-  const enemyTitle = new PIXI.Text("ENEMY FORCES", {
-    fontFamily: "Arial",
-    fontSize: 16,
-    fill: 0xFF0000,
-    stroke: 0x000000,
-    strokeThickness: 2
-  });
-  this._infoEnemySquads.addChild(enemyTitle);
-
-  yOffset = 25;
-  for (const [squadName, units] of Object.entries(enemySquads)) {
-    const squadLabel = (typeof armyT === "function") ? armyT(squadName) : squadName;
-    const displayName = squadLabel.length > 15 ? squadLabel.substring(0, 12) + "..." : squadLabel;
-
-    const squadText = new PIXI.Text("", {
-      fontFamily: "Arial",
-      fontSize: 12,
-      fill: 0xFFFFFF,
-      stroke: 0x000000,
-      strokeThickness: 2
-    });
-    squadText.y = yOffset;
-    this._infoEnemySquads.addChild(squadText);
-    this._infoEnemySquadTexts[squadName] = { text: squadText, displayName, units };
-
-    yOffset += 35;
-  }
+  const mine = build(this._infoPlayerSquads, playerSquads, T('ArmyBattle.yourForces'), 0xFFFF00, true);
+  this._infoPlayerSquadTexts = mine.cache;
+  this._playerSquadOrder = Object.keys(playerSquads);
+  this._infoEnemySquads.y = this._infoPlayerSquads.y + mine.height + 16;
+  this._infoEnemySquadTexts = build(this._infoEnemySquads, enemySquads, T('ArmyBattle.enemyForces'), 0xFF0000, false).cache;
 };
 
 ArmyBattleField.prototype._updateSquadTexts = function (cache, squads) {
+  const selected = cache === this._infoPlayerSquadTexts && this._selectedSquad ? this._selectedSquad.name : null;
   for (const squadName in cache) {
     const entry = cache[squadName];
     const units = squads[squadName] || entry.units;
     const aliveCount = units.filter(u => u.isAlive).length;
     const totalCount = units.length;
-    entry.text.text = `${entry.displayName}\n${aliveCount}/${totalCount}`;
-    entry.text.style.fill = aliveCount > 0 ? 0xFFFFFF : 0x888888;
+    entry.text.text = `${entry.displayName}  ${aliveCount}/${totalCount}`;
+    entry.text.style.fill = aliveCount === 0 ? 0x888888 : (squadName === selected ? 0xFFFF00 : 0xFFFFFF);
   }
 };
 
@@ -2043,34 +2022,58 @@ ArmyBattleField.prototype._selectSquad = function (squadName, units, isPlayer) {
 
   this._selectedSquad = { name: squadName, units: units };
   this._refreshCommandPanel();
+  if (this._infoPlayerSquadTexts) {
+    this._updateSquadTexts(this._infoPlayerSquadTexts, this._groupUnitsBySquad(this._playerUnits));
+  }
 };
 
-ArmyBattleField.prototype._refreshCommandPanel = function () {
-  this._infoCommandPanel.removeChildren();
+// Keyboard and pad orders: Confirm walks the player's squads that still have
+// somebody standing, 1-4 give the selected one an order.
+ArmyBattleField.prototype._processSquadInput = function () {
+  if (Input.isTriggered("ok")) this._cycleSquad();
+  const actions = ["hold", "aggressive", "defensive", "retreat"];  // i18n-ignore  order ids
+  for (let i = 0; i < actions.length; i++) {
+    if (this._checkKeyPress(String(i + 1)) && this._selectedSquad) {
+      this._executeSquadCommand(actions[i]);
+    }
+  }
+};
 
+ArmyBattleField.prototype._cycleSquad = function () {
+  const order = this._playerSquadOrder || [];
+  if (!order.length) return;
+  const squads = this._groupUnitsBySquad(this._playerUnits);
+  const start = this._selectedSquad ? order.indexOf(this._selectedSquad.name) : -1;
+  for (let step = 1; step <= order.length; step++) {
+    const name = order[(start + step) % order.length];
+    const units = squads[name] || [];
+    if (units.some(u => u.isAlive)) {
+      SoundManager.playCursor();
+      this._selectSquad(name, units, true);
+      return;
+    }
+  }
+};
+
+// The command panel only changes with the selection, so it is rebuilt then
+// and nowhere else; the texts it replaces are destroyed, not just detached.
+ArmyBattleField.prototype._refreshCommandPanel = function () {
+  const forSquad = this._selectedSquad ? this._selectedSquad.name : null;
+  if (this._commandPanelBuilt && this._commandPanelFor === forSquad) return;
+  this._commandPanelBuilt = true;
+  this._commandPanelFor = forSquad;
+  for (const child of this._infoCommandPanel.removeChildren()) child.destroy();
+
+  const style = ArmyBattleView.textStyle;
   if (!this._selectedSquad) {
-    const noSelection = new PIXI.Text(T('ArmyBattle.clickSquad'), {
-      fontFamily: "Arial",
-      fontSize: 11,
-      fill: 0xCCCCCC
-    });
-    this._infoCommandPanel.addChild(noSelection);
+    this._infoCommandPanel.addChild(new PIXI.Text(T('ArmyBattle.clickSquad'), style(11, 0xCCCCCC, 2)));
     return;
   }
 
   // Show selected squad (truncated)
-  const squadName = this._selectedSquad.name.length > 12 ?
-    this._selectedSquad.name.substring(0, 9) + "..." :
-    this._selectedSquad.name;
-
-  const title = new PIXI.Text(`SELECTED:\n${squadName}`, {
-    fontFamily: "Arial",
-    fontSize: 12,
-    fill: 0xFFFF00,
-    stroke: 0x000000,
-    strokeThickness: 2
-  });
-  this._infoCommandPanel.addChild(title);
+  const label = (typeof armyT === "function") ? armyT(forSquad) : forSquad;
+  const squadName = label.length > 12 ? label.substring(0, 9) + "..." : label;
+  this._infoCommandPanel.addChild(new PIXI.Text(T('ArmyBattle.selected', { squad: squadName }), style(12, 0xFFFF00, 2)));
 
   // Command buttons (vertical layout)
   const commands = [
@@ -2082,13 +2085,7 @@ ArmyBattleField.prototype._refreshCommandPanel = function () {
 
   let yOffset = 40;
   for (const cmd of commands) {
-    const cmdText = new PIXI.Text(`[${cmd.key}] ${cmd.name}`, {
-      fontFamily: "Arial",
-      fontSize: 11,
-      fill: 0x00FF00,
-      stroke: 0x000000,
-      strokeThickness: 2
-    });
+    const cmdText = new PIXI.Text(`[${cmd.key}] ${cmd.name}`, style(11, 0x00FF00, 2));
     cmdText.y = yOffset;
     cmdText.interactive = true;
     cmdText.buttonMode = true;
@@ -2099,45 +2096,65 @@ ArmyBattleField.prototype._refreshCommandPanel = function () {
   }
 };
 
+// Defend is a one-off +20% DEF while the stance lasts: any other order gives
+// the squad its own defence back, and a second Defend does not stack.
+ArmyBattleField.prototype._setDefending = function (unit, on) {
+  if (on && unit._defendOriginalDef === undefined) {
+    unit._defendOriginalDef = unit.troop.def;
+    unit.troop.def = Math.floor((unit.troop.def || 10) * 1.2);
+  } else if (!on && unit._defendOriginalDef !== undefined) {
+    unit.troop.def = unit._defendOriginalDef;
+    unit._defendOriginalDef = undefined;
+  }
+};
+
 ArmyBattleField.prototype._executeSquadCommand = function (action) {
   if (!this._selectedSquad) return;
 
   const units = this._selectedSquad.units.filter(u => u.isAlive);
+  if (!units.length) return;
+
+  // The order is called out over the squad itself.
+  let cx = 0, cy = 0;
+  for (const unit of units) { cx += unit.sprite.x; cy += unit.sprite.y; }
+  cx /= units.length;
+  cy = cy / units.length - ArmyBattleView.Params.unitHeight - 16;
+  const squad = (typeof armyT === "function") ? armyT(this._selectedSquad.name) : this._selectedSquad.name;
 
   switch (action) {
     case "hold":
       // Set units to hold position (stop moving)
       for (const unit of units) {
         unit.holdPosition = true;
+        this._setDefending(unit, false);
       }
-      this._createParticle(this._battleWidth / 2, this._battleHeight / 2, 0xFFFF00,
-        `${this._selectedSquad.name} HOLDING POSITION`);
+      this._createParticle(cx, cy, 0xFFFF00, T('ArmyBattle.order.hold', { squad }));
       break;
 
     case "aggressive":
       for (const unit of units) {
         unit.holdPosition = false;
         unit.morale = Math.min(100, unit.morale + 10);
+        this._setDefending(unit, false);
       }
-      this._createParticle(this._battleWidth / 2, this._battleHeight / 2, 0xFF0000,
-        `${this._selectedSquad.name} AGGRESSIVE STANCE`);
+      this._createParticle(cx, cy, 0xFF0000, T('ArmyBattle.order.attack', { squad }));
       break;
 
     case "defensive":
       for (const unit of units) {
         unit.holdPosition = true;
-        unit.troop.def = Math.floor((unit.troop.def || 10) * 1.2);
+        this._setDefending(unit, true);
       }
-      this._createParticle(this._battleWidth / 2, this._battleHeight / 2, 0x0000FF,
-        `${this._selectedSquad.name} DEFENSIVE +20% DEF`);
+      this._createParticle(cx, cy, 0x66AAFF, T('ArmyBattle.order.defend', { squad }));
       break;
 
     case "retreat":
       for (const unit of units) {
+        unit.holdPosition = false;
         unit.isRouting = true;
+        this._setDefending(unit, false);
       }
-      this._createParticle(this._battleWidth / 2, this._battleHeight / 2, 0x888888,
-        `${this._selectedSquad.name} RETREATING`);
+      this._createParticle(cx, cy, 0x888888, T('ArmyBattle.order.retreat', { squad }));
       break;
   }
 };

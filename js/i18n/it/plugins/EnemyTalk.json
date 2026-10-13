@@ -2,6 +2,7 @@
   "msg": {
     "noUnderstand": "Il nemico non ti capisce.",
     "unrecruitable": "{name} non risponde.\nNon si può reclutare.",
+    "unmoved": "{name} ci ride sopra.\nNiente di ciò che dici o fai la smuove.",
     "cantTalkNow": "Il nemico non può parlare ora.",
     "silenced": "Il nemico è silenziato!\n Non può parlare ora.",
     "enraged": "Il nemico è infuriato!\n Non vuole parlarti.",

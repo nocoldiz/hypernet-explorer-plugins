@@ -332,8 +332,18 @@
     return { distance: d, bearing, rise, width, slot, behind, screenX, visible, haze };
   }
 
+  // On any of the tower's own levels (a dungeon floor, a lift hall, the
+  // generated lower floors) the party stand inside it: no tower on the horizon.
+  function insideTower() {
+    const DF = window.DungeonFloors;
+    try {
+      return !!(DF && typeof DF.onTowerLevels === "function" && DF.onTowerLevels());
+    } catch (e) { return false; }
+  }
+
   window.BiomeBackground = {
     isActiveMap,
+    insideTower,
     mapIds: () => MAP_IDS.slice(),
     modeFor,
     familyOf,
@@ -817,7 +827,7 @@
     let lights = null, lg = null;
     const needLights = layer.kind === "city" || layer.kind === "houses" || layer.kind === "volcano";
     if (needLights) { lights = makeCanvas(W, H); lg = lights.getContext("2d"); }
-    const entry = { canvas: c, lights, layer, W, H, y0: 0, tinted: null, tintKey: "", crater: null };
+    const entry = { canvas: c, lights, layer, W, H, y0: 0, tinted: null, tintKey: "", crater: null, ridge: ys };
 
     if (layer.snow > 0) {
       g.fillStyle = rgb([238, 242, 250]);
@@ -993,6 +1003,113 @@
     g.globalCompositeOperation = "source-over";
     entry.tinted = c; entry.tintKey = key;
     return c;
+  }
+
+  //---------------------------------------------------------------------------
+  // Furniture on the land: the same biome sprites the voxel world scatters
+  //---------------------------------------------------------------------------
+  // window.VoxelWorld.BiomeFurniture reads js/db/WorldGen/biomeFurniture.json:
+  // per biome, the img/furniture folders that suit its outdoors, how thick each
+  // lies and how big a piece is. The nearer land layers stand those sprites on
+  // their ridge, sized by distance, and wear the layer's light and haze.
+  const PROP_MAX_DIST = 20;
+  const PROP_KINDS = ["trees", "hills", "dunes", "flat", "mesa", "houses", "ruins", "graves"];
+  // Ground cover and fittings that lie flat or need a wall: nothing to see
+  // standing on a horizon.
+  const PROP_SKIP = ["Terrain", "Water", "Pavement", "Carpets", "Liquids", "Graffiti",
+    "Bridges", "Roofs", "Windows", "Doors", "Stairs", "Pipes", "Misc"];
+  const PROP_SPRITES_PER_FOLDER = 3;
+  const PROP_MAX_PER_LAYER = 70;
+  const PROP_LOAD_WAIT_MS = 4000;
+
+  function furnitureFor(biomes) {
+    const BF = window.VoxelWorld && window.VoxelWorld.BiomeFurniture;
+    if (!BF || typeof BF.exterior !== "function") return [];
+    for (const name of biomes) {
+      if (!name) continue;
+      let list = [];
+      try { list = BF.exterior(String(name)) || []; } catch (e) { list = []; }
+      list = list.filter((e) => e && e.sprites && e.sprites.length &&
+        PROP_SKIP.indexOf(String(e.folder).split("/")[0]) < 0);
+      if (list.length) return list;
+    }
+    return [];
+  }
+
+  function propSpritePath(folder, name) {
+    const id = String(name).replace(/\.png$/i, "");
+    const index = (window.Items && window.Items.FurnitureImageFolders) || null;
+    const real = (index && index[id]) || folder;
+    return "img/furniture/" + real + "/" + id + ".png"; // i18n-ignore: asset path
+  }
+
+  // Where every piece stands on one layer: which sprite, the x along the
+  // doubled strip and how tall it is in pixels. Seeded, so a square always
+  // shows the same scene whatever order the art arrives in.
+  function planProps(list, layer, W, H, seed) {
+    if (!list.length || PROP_KINDS.indexOf(layer.kind) < 0 || !(layer.dist <= PROP_MAX_DIST)) return [];
+    const rand = mulberry32(seed);
+    const pools = list.map((e) => {
+      const picks = [];
+      const n = Math.min(PROP_SPRITES_PER_FOLDER, e.sprites.length);
+      const start = Math.floor(rand() * e.sprites.length);
+      for (let i = 0; i < n; i++) picks.push(e.sprites[(start + i * 7) % e.sprites.length]);
+      return { folder: e.folder, weight: Math.max(0, Number(e.density) || 0), size: e.size || 11, picks };
+    }).filter((p) => p.weight > 0);
+    const total = pools.reduce((a, p) => a + p.weight, 0);
+    if (!total) return [];
+    // Nearer layers carry fewer, bigger pieces; the far ones a fringe.
+    const near = 6 / (layer.dist + 3);
+    const count = Math.min(PROP_MAX_PER_LAYER, Math.round((W / H) * total * 5 * Math.min(1.4, 0.5 + near)));
+    const out = [];
+    for (let i = 0; i < count; i++) {
+      let r = rand() * total, pool = pools[0];
+      for (const p of pools) { r -= p.weight; if (r <= 0) { pool = p; break; } }
+      const name = pool.picks[Math.floor(rand() * pool.picks.length)];
+      const h = H * (pool.size / 30) * 0.18 * near * (0.75 + rand() * 0.5);
+      if (h < 3) continue;
+      out.push({ folder: pool.folder, name, path: propSpritePath(pool.folder, name), x: rand() * W, h });
+    }
+    // Small things in front of the tall: a wood never hides its own flowers.
+    out.sort((a, b) => b.h - a.h);
+    return out;
+  }
+
+  // Loads the art and stands it on the layer once every piece has answered.
+  // A sprite that fails to load is simply left out.
+  function populateLayer(entry, plan) {
+    if (!plan.length || typeof ImageManager === "undefined" || !ImageManager.loadBitmapFromUrl) return;
+    const bitmaps = new Map();
+    plan.forEach((p) => { if (!bitmaps.has(p.path)) bitmaps.set(p.path, null); });
+    let pending = bitmaps.size, stamped = false;
+    const stamp = () => {
+      if (stamped) return;
+      stamped = true;
+      const g = entry.canvas.getContext("2d");
+      const W = entry.W, ys = entry.ridge;
+      g.imageSmoothingEnabled = false;
+      plan.forEach((p) => {
+        const bmp = bitmaps.get(p.path);
+        const src = bmp && bmp.isReady && bmp.isReady() && !bmp.isError() ? (bmp._image || bmp.canvas) : null;
+        if (!src || !bmp.width || !bmp.height) return;
+        const h = p.h, w = h * bmp.width / bmp.height;
+        const y = ys[Math.max(0, Math.min(W, Math.round(p.x)))] + h * 0.06;
+        wrapDraw(W, p.x, w, (xx) => g.drawImage(src, Math.round(xx - w / 2), Math.round(y - h), Math.round(w), Math.round(h)));
+      });
+      entry.y0 = Math.min(entry.y0, opaqueTop(entry.canvas, entry.H));
+      entry.tintKey = "";
+    };
+    const done = () => { if (--pending <= 0) stamp(); };
+    // The engine never calls a load listener for art that failed to load: the
+    // pieces that did arrive are stood up after a short wait regardless.
+    if (typeof setTimeout === "function") setTimeout(stamp, PROP_LOAD_WAIT_MS);
+    bitmaps.forEach((v, path) => {
+      let bmp = null;
+      try { bmp = ImageManager.loadBitmapFromUrl(path); } catch (e) { bmp = null; }
+      bitmaps.set(path, bmp);
+      if (bmp && bmp.addLoadListener) bmp.addLoadListener(done);
+      else done();
+    });
   }
 
   function buildStars(rw, horizon, seed) {
@@ -1314,7 +1431,7 @@
         at: pan.time,
         sun: sunTimes(),
         moon: moonData(),
-        placement: sq ? towerPlacement(sq.x, sq.y, pan.family) : null,
+        placement: sq && !insideTower() ? towerPlacement(sq.x, sq.y, pan.family) : null,
       };
     }
     const { rise, set } = pan.slow.sun;
@@ -1387,13 +1504,13 @@
   // painting every layer, tree and window again.
   let lastPanorama = null;
 
-  function preparePanorama(family, seed) {
+  function preparePanorama(family, seed, biome) {
     if (!hasCanvas()) return null;
     try {
       const { rw, rh } = renderSize();
       const key = FAMILIES[family] ? family : DEFAULT_FAMILY;
       const lp = lastPanorama;
-      if (lp && lp.family === key && lp.seed === seed && lp.rw === rw && lp.rh === rh) {
+      if (lp && lp.family === key && lp.seed === seed && lp.rw === rw && lp.rh === rh && lp.biome === biome) {
         lp.frame = 0; lp.slow = null;
         return lp;
       }
@@ -1405,8 +1522,13 @@
       const layers = fam.layers.map((l, i) => (l.kind === "sea"
         ? { layer: l, sea: true }
         : buildLayer(l, rw, rh, (seed + i * 7919) >>> 0)));
+      const furniture = furnitureFor([biome].concat(fam.biomes));
+      layers.forEach((entry, i) => {
+        if (entry.sea || !furniture.length) return;
+        populateLayer(entry, planProps(furniture, entry.layer, entry.W, entry.H, (seed ^ (i * 0x9E37)) >>> 0));
+      });
       lastPanorama = {
-        family: key, seed, rw, rh, canvas, ctx, layers, horizon,
+        family: key, seed, biome, rw, rh, canvas, ctx, layers, horizon,
         stars: buildStars(rw, horizon, seed ^ 0x5151),
         ring: buildRing(rw, horizon, 0x4E55),
         clouds: null, cloudKey: -1, time: 0, frame: 0, flash: 0, bolt: null, cover: null,
@@ -1689,6 +1811,8 @@
   }
 
   window.BiomeBackground.coverFor = coverFor;
+  window.BiomeBackground.planProps = planProps;
+  window.BiomeBackground.furnitureFor = furnitureFor;
   window.BiomeBackground.ringAlpha = ringAlpha;
 
   //---------------------------------------------------------------------------
@@ -1719,7 +1843,7 @@
     this._biomeBgSprite = sprite;
     this._biomeBgFrame = 0;
     this._baseSprite.addChild(sprite);
-    if (m.mode === "panorama") this._biomeBgPanorama = preparePanorama(m.family, worldSeed(m.family));
+    if (m.mode === "panorama") this._biomeBgPanorama = preparePanorama(m.family, worldSeed(m.family), m.biome || null);
   };
 
   const _update = Spriteset_Map.prototype.update;

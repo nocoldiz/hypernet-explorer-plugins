@@ -187,6 +187,13 @@
     const spriteset = scene && scene._spriteset;
     if (!battler || !spriteset) return null;
 
+    // A person fought from the Empathize panel wears their bust in place of
+    // the battler (NPC/NPCEmpathize.js): the bar goes over the portrait.
+    if (typeof spriteset.npcFaceHead === "function") {
+      const face = spriteset.npcFaceHead(battler);
+      if (face !== undefined) return face;
+    }
+
     const scene3d = spriteset._battle3DScene;
     if (
       scene3d &&

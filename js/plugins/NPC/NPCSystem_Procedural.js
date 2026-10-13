@@ -23,7 +23,7 @@
 
   const {
     _populateGroupJobs, _scanMapForResidentialBuildings, buildNPCCharacterPool, Config,
-    GroupRegistry, MapManager, ORTHO_DIRS, pickNPCCharacter, SETTLEMENT_DOOR_FEATURES, SpawnManager,
+    GroupRegistry, MapManager, NPCPoolStore, ORTHO_DIRS, pickNPCCharacter, SETTLEMENT_DOOR_FEATURES, SpawnManager,
     Utils,
   } = window.NPCSystem._internal;
   // Owned by modules that load after this one, bound once the family is in.

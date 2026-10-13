@@ -2124,6 +2124,12 @@
     "choiceDate": "DATE?",
     "choiceArrest": "ARREST ME",
     "coward": "YOU COWARD!!!",
+    "cowardLines": [
+      "YOU COWARD!!!",
+      "Run, little scale-dodger. The court remembers every heel it sees.",
+      "That's it? You came all this way to show me your back?",
+      "Coward! Come back when your knees stop knocking."
+    ],
     "crowned": "The scales are yours now. No court will ever read your name again.",
     "gone": "The court is empty..."
   }

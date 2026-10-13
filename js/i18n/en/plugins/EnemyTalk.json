@@ -2,6 +2,7 @@
   "msg": {
     "noUnderstand": "The enemy doesn't understand you.",
     "unrecruitable": "{name} does not answer.\nIt can't be recruited.",
+    "unmoved": "{name} laughs it off.\nNothing you say or do moves her.",
     "cantTalkNow": "The enemy can't talk right now.",
     "silenced": "Enemy is silenced!\n He can't talk now.",
     "enraged": "Enemy is enraged!\n He doesn't want to talk to you.",

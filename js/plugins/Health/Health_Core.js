@@ -1755,10 +1755,23 @@
    * only Cutting or Piercing damage ever takes one off a party member.
    */
   function rollPartCutoff(actor, partKey, part, action) {
-    if (!isBloodAndOil()) return false;
+    const forced = !isBloodAndOil() && fightCutsLimbs();
+    if (!isBloodAndOil() && !forced) return false;
     if (!partCanCutoff(actor, partKey, part)) return false;
-    if (!attackerCanCutPlayer(null, action)) return false;
+    // A fight that cuts on any difficulty cuts with any blow.
+    if (!forced && !attackerCanCutPlayer(null, action)) return false;
     return Math.random() < 0.5;
+  }
+
+  // A fight that takes limbs off on every difficulty, Peaceful included:
+  // Eris's (Economy/TrialSystem.js registers it). Only the coin toss above is
+  // forced; vital parts are never cut, and nothing is ruined in place.
+  const limbCutters = [];
+  function registerLimbCutter(fn) {
+    if (typeof fn === 'function') limbCutters.push(fn);
+  }
+  function fightCutsLimbs() {
+    return limbCutters.some(fn => { try { return !!fn(); } catch (e) { return false; } });
   }
 
   /**
@@ -1990,6 +2003,9 @@
           } else {
             finishPartInBloodAndOil(actor, partKey);
           }
+        } else if (part._cutOff) {
+          // Off any difficulty only in a fight that cuts (fightCutsLimbs).
+          removeBodyPartOnZeroHp(actor, partKey);
         }
       }
 
@@ -2226,6 +2242,34 @@
 
     // Refresh actor to update stats
     actor.refresh();
+  }
+
+  // Everything a fight can do to a body, kept so one fight can be undone: the
+  // parts and what they owe, the register of what came off, the augments that
+  // went with them and the skills they took away. Blood and Oil included, since
+  // this puts the body back to a moment rather than healing it.
+  const BODY_SNAPSHOT_FIELDS = ['_bodyParts', '_statModifiers', '_removedPartDebuffs',
+    '_severedParts', '_prosthetics', '_prostheticEffects'];
+  const cloneBodyField = (v) => (v === undefined ? undefined : JSON.parse(JSON.stringify(v)));
+
+  function snapshotBody(actor) {
+    if (!actor) return null;
+    if (!actor._bodyParts) initializeBodyParts(actor);
+    const snap = { skills: Array.isArray(actor._skills) ? actor._skills.slice() : null };
+    for (const f of BODY_SNAPSHOT_FIELDS) snap[f] = cloneBodyField(actor[f]);
+    return snap;
+  }
+
+  function restoreBodySnapshot(actor, snap) {
+    if (!actor || !snap) return false;
+    for (const f of BODY_SNAPSHOT_FIELDS) {
+      if (snap[f] === undefined) delete actor[f];
+      else actor[f] = cloneBodyField(snap[f]);
+    }
+    if (snap.skills) actor._skills = snap.skills.slice();
+    ensureBodyPartSkills(actor);
+    actor.refresh();
+    return true;
   }
 
   // Does this part, still on the body, have anything for a clinic to mend?
@@ -3221,6 +3265,10 @@
   window.getEquipText = getEquipText; // Expose equipment translation helper
   window.HealthCore = window.HealthCore || {};
   window.HealthCore.restoreAllBodyParts = restoreAllBodyParts;
+  window.HealthCore.snapshotBody = snapshotBody;
+  window.HealthCore.registerLimbCutter = registerLimbCutter;
+  window.HealthCore.fightCutsLimbs = fightCutsLimbs;
+  window.HealthCore.restoreBodySnapshot = restoreBodySnapshot;
   window.HealthCore.repairBodyPart = repairBodyPart;
   window.HealthCore.partNeedsRepair = partNeedsRepair;
   // Multi-skill body-part helpers, exposed for other plugins (prosthetics,

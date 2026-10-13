@@ -629,9 +629,13 @@
                 }
 
                 if (effects.length) {
-                    html += section(T("SkillsMenu.section.skillEffects"), pills(effects.map(desc =>
-                        `<div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${esc(desc)}</span></div>`
-                    ).join("")));
+                    // "Add State: Cold 100%": the kind of effect stays gold,
+                    // what it does is inked white.
+                    html += section(T("SkillsMenu.section.skillEffects"), pills(effects.map(desc => {
+                        const cut = desc.indexOf(": ");
+                        if (cut > 0) return `<div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${esc(desc.slice(0, cut + 1))}</span> <span class="inspect-pill-effect">${esc(desc.slice(cut + 2))}</span></div>`;
+                        return `<div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${esc(desc)}</span></div>`;
+                    }).join("")));
                 }
                 const specials = specialsOf(skill);
                 if (specials.length) {

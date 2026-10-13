@@ -133,6 +133,19 @@
  * @decimals 2
  * @default 0.50
  *
+ * @param levelStatusResistEnabled
+ * @text Level Gap: Status Resistance
+ * @desc Whether a monster that outranks whoever afflicts it shrugs off freezes, bleeds, debuffs and the like.
+ * @type boolean
+ * @default true
+ *
+ * @param levelStatusHalfLife
+ * @text Level Gap: Status Half-Life
+ * @desc Levels past the fair gap that halve an affliction's odds, its control turns and its percentage slip damage.
+ * @type number
+ * @decimals 1
+ * @default 3.0
+ *
  * @param enemyDefaultHit
  * @text Monster Hit Rate Floor
  * @desc Hit rate a monster authored with no HIT trait fights at. Without it those entries attack at 0 and can never land.
@@ -567,6 +580,8 @@
     BSE.Params.levelAccuracySpan        = Number(parameters['levelAccuracySpan'] || 20);
     BSE.Params.levelAccuracyCap         = Number(parameters['levelAccuracyCap'] || 0.85);
     BSE.Params.levelAccuracyUnderWeight = Number(parameters['levelAccuracyUnderWeight'] || 0.50);
+    BSE.Params.levelStatusResistEnabled = (parameters['levelStatusResistEnabled'] !== 'false');
+    BSE.Params.levelStatusHalfLife      = Number(parameters['levelStatusHalfLife'] || 3.0);
     BSE.Params.enemyDefaultHit          = Number(parameters['enemyDefaultHit'] || 0.90);
     BSE.Params.invisibleHandChipFloorPercent      = Number(parameters['invisibleHandChipFloorPercent'] || 0.0050);
     BSE.Params.invisibleHandEnabled               = (parameters['invisibleHandEnabled'] !== 'false');
@@ -1322,6 +1337,184 @@
         else if (shift < 0) eva += (1 - eva) * (-shift);
         return Math.max(0, Math.min(1, eva));
     };
+
+    // ------------------------------------------------------------------
+    // 4b-quinquies. STATUS RESISTANCE
+    //
+    //   Damage and accuracy both answer to the level gap; afflictions never
+    //   did. A freeze landed on a level 60 monster as often as on a level 1
+    //   one, and Bleeding, Burned and Poison take a share of max HP, so a
+    //   level 5 party could lock anything in place and let the percentage
+    //   tick do the work the damping curve was there to forbid.
+    //
+    //   So a monster that outranks whoever afflicts it, by more than the
+    //   fair gap, resists in three ways, each halved again every
+    //   levelStatusHalfLife levels past that gap:
+    //
+    //   - the odds of the affliction landing, by state rate, certain hit
+    //     chance and debuff rate alike;
+    //   - how many turns a control state (anything with a restriction)
+    //     holds it, never under one;
+    //   - the share of max HP its slip damage takes each turn.
+    //
+    //   The afflicter is whoever's action is resolving, party member or
+    //   monster alike; a status applied outside an action is measured
+    //   against the party's own level. Buffs are untouched: only states
+    //   that hinder their bearer count (isAffliction).
+    // ------------------------------------------------------------------
+
+    /** The battler whose action is being applied right now, if any. */
+    let statusApplier = null;
+
+    /** True for a state that hinders whoever bears it. */
+    BSE.Helpers.isAffliction = function(state, battler) {
+        if (!state) return false;
+        const deathId = battler && battler.deathStateId ? battler.deathStateId() : 1;
+        if (state.id === deathId) return true;
+        if (state.restriction > 0) return true;
+        return (state.traits || []).some(t =>
+            (t.code === 22 && [0, 1, 4, 7, 8, 9].includes(t.dataId) && t.value < 0) ||
+            (t.code === 21 && t.value < 1) ||
+            (t.code === 23 && (t.dataId === 6 || t.dataId === 7) && t.value > 1) ||
+            t.code === 42 || t.code === 44);
+    };
+
+    /**
+     * The level an afflicter is measured at: its own, or the party's when
+     * nobody in particular is applying it.
+     */
+    function afflicterLevel(applier) {
+        if (applier) return BSE.Helpers.getBattlerLevel(applier) || applier.level || 0;
+        return BSE.Helpers.dndReferenceLevel();
+    }
+
+    /**
+     * Multiplier on an affliction landing on `target`, 1 inside the fair
+     * gap and halving every levelStatusHalfLife levels past it. `fromLevel`
+     * is the afflicter's level; omitted, it is read off `applier`.
+     */
+    BSE.Helpers.levelStatusResist = function(target, applier, fromLevel) {
+        if (!BSE.Params.levelStatusResistEnabled) return 1;
+        if (!target || !target.isEnemy || !target.isEnemy()) return 1;
+        if (applier === target) return 1;
+        if (!levelGapRulesApply()) return 1;
+        const own = BSE.Helpers.getBattlerLevel(target);
+        if (own <= 0) return 1;
+        const from = fromLevel != null ? fromLevel : afflicterLevel(applier);
+        if (!(from > 0)) return 1;
+        const over = own - from - BSE.Params.levelGapFair;
+        if (over <= 0) return 1;
+        return Math.pow(0.5, over / Math.max(0.5, BSE.Params.levelStatusHalfLife));
+    };
+
+    if (Game_Action.prototype.apply) {
+        const _Game_Action_apply_status = Game_Action.prototype.apply;
+        Game_Action.prototype.apply = function(target) {
+            const prev = statusApplier;
+            statusApplier = this.subject();
+            try {
+                _Game_Action_apply_status.call(this, target);
+            } finally {
+                statusApplier = prev;
+            }
+        };
+    }
+
+    const _Game_Enemy_stateRate_status = Game_Enemy.prototype.stateRate;
+    if (_Game_Enemy_stateRate_status) {
+        Game_Enemy.prototype.stateRate = function(stateId) {
+            const rate = _Game_Enemy_stateRate_status.call(this, stateId);
+            if (!BSE.Helpers.isAffliction($dataStates[stateId], this)) return rate;
+            return rate * BSE.Helpers.levelStatusResist(this, statusApplier);
+        };
+    }
+
+    const _Game_Enemy_debuffRate_status = Game_Enemy.prototype.debuffRate;
+    if (_Game_Enemy_debuffRate_status) {
+        Game_Enemy.prototype.debuffRate = function(paramId) {
+            return _Game_Enemy_debuffRate_status.call(this, paramId) *
+                BSE.Helpers.levelStatusResist(this, statusApplier);
+        };
+    }
+
+    // A certain hit skips the state rate altogether, so its chance is
+    // scaled here instead, once.
+    const _Game_Action_itemEffectAddNormalState_status = Game_Action.prototype.itemEffectAddNormalState;
+    if (_Game_Action_itemEffectAddNormalState_status) {
+        Game_Action.prototype.itemEffectAddNormalState = function(target, effect) {
+            if (this.isCertainHit() && BSE.Helpers.isAffliction($dataStates[effect.dataId], target)) {
+                const resist = BSE.Helpers.levelStatusResist(target, this.subject());
+                if (resist < 1) effect = Object.assign({}, effect, { value1: effect.value1 * resist });
+            }
+            _Game_Action_itemEffectAddNormalState_status.call(this, target, effect);
+        };
+    }
+
+    // Once an affliction is on, it remembers who put it there: a control
+    // state is cut short on the spot, and slip damage reads it each turn.
+    const _Game_Battler_addState_status = Game_Battler.prototype.addState;
+    if (_Game_Battler_addState_status) {
+        Game_Battler.prototype.addState = function(stateId) {
+            _Game_Battler_addState_status.call(this, stateId);
+            if (!this.isEnemy || !this.isEnemy() || !this.isStateAffected(stateId)) return;
+            const state = $dataStates[stateId];
+            if (!BSE.Helpers.isAffliction(state, this)) return;
+            const from = afflicterLevel(statusApplier === this ? null : statusApplier);
+            if (!this._bseAfflictedAt) this._bseAfflictedAt = {};
+            this._bseAfflictedAt[stateId] = from;
+            if (state.restriction > 0 && state.autoRemovalTiming > 0 && this._stateTurns &&
+                this._stateTurns[stateId] > 1) {
+                const resist = BSE.Helpers.levelStatusResist(this, null, from);
+                if (resist < 1) {
+                    this._stateTurns[stateId] = Math.max(1, Math.ceil(this._stateTurns[stateId] * resist));
+                }
+            }
+        };
+    }
+
+    /**
+     * Multiplier on a monster's percentage slip damage: the mildest resist
+     * among the slip states it bears, so the strongest afflicter decides.
+     */
+    BSE.Helpers.slipResist = function(battler) {
+        if (!battler || !battler.isEnemy || !battler.isEnemy()) return 1;
+        const at = battler._bseAfflictedAt || {};
+        let best = 0;
+        let any = false;
+        for (const state of battler.states()) {
+            if (!state || !(state.traits || []).some(t => t.code === 22 && t.dataId === 7 && t.value < 0)) continue;
+            any = true;
+            const from = at[state.id] != null ? at[state.id] : afflicterLevel(null);
+            best = Math.max(best, BSE.Helpers.levelStatusResist(battler, null, from));
+        }
+        return any ? best : 1;
+    };
+
+    // The stock regeneration, with the drain scaled. Only a net loss on a
+    // monster that resists is rewritten; everything else runs untouched.
+    const _Game_Battler_regenerateHp_status = Game_Battler.prototype.regenerateHp;
+    if (_Game_Battler_regenerateHp_status) {
+        Game_Battler.prototype.regenerateHp = function() {
+            if (this.isEnemy && this.isEnemy() && this.hrg < 0) {
+                const resist = BSE.Helpers.slipResist(this);
+                if (resist < 1) {
+                    const minRecover = -this.maxSlipDamage();
+                    const value = Math.max(Math.floor(this.mhp * this.hrg * resist), minRecover);
+                    if (value !== 0) this.gainHp(value);
+                    return;
+                }
+            }
+            _Game_Battler_regenerateHp_status.call(this);
+        };
+    }
+
+    const _Game_Battler_removeState_status = Game_Battler.prototype.removeState;
+    if (_Game_Battler_removeState_status) {
+        Game_Battler.prototype.removeState = function(stateId) {
+            _Game_Battler_removeState_status.call(this, stateId);
+            if (this._bseAfflictedAt && !this.isStateAffected(stateId)) delete this._bseAfflictedAt[stateId];
+        };
+    }
 
     // ------------------------------------------------------------------
     //   The other half of the same authoring problem: an xparam is a plain

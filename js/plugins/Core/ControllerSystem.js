@@ -338,10 +338,12 @@
             }
             const pad = this._padFor(player);
             if (!pad || !pad.axes) return { x: 0, y: 0 };
-            const ax = right ? 2 : 0;
+            // A raw (non-standard) pad keeps its right stick elsewhere, and
+            // its axis 2 can be a trigger (AnalogStickInput.layoutOf).
+            const layout = A && A.layoutOf ? A.layoutOf(pad) : { rx: 2, ry: 3 };
             const dead = (A && A.deadzone) || 0.3;
-            const x = pad.axes[ax] || 0;
-            const y = pad.axes[ax + 1] || 0;
+            const x = pad.axes[right ? layout.rx : 0] || 0;
+            const y = pad.axes[right ? layout.ry : 1] || 0;
             const mag = Math.sqrt(x * x + y * y);
             if (mag < dead) return { x: 0, y: 0 };
             const k = ((mag - dead) / (1 - dead)) / mag;
@@ -359,7 +361,12 @@
                 const isLeft = this._index(face) === this.FACE.L2;
                 return isLeft ? A.leftTrigger() : A.rightTrigger();
             }
-            return this.value(face, player);
+            const pulled = this.value(face, player);
+            const i = this._index(face);
+            if (!A || !A.layoutOf || (i !== this.FACE.L2 && i !== this.FACE.R2)) return pulled;
+            const pad = this._padFor(player);
+            const layout = A.layoutOf(pad);
+            return Math.max(pulled, A.triggerAxisValue(pad, i === this.FACE.L2 ? layout.lt : layout.rt));
         },
 
         //---------------------------------------------------------------------

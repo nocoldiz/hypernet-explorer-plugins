@@ -2124,6 +2124,12 @@
     "choiceDate": "APPUNTAMENTO?",
     "choiceArrest": "ARRESTAMI",
     "coward": "PUSILLANIME!!!",
+    "cowardLines": [
+      "PUSILLANIME!!!",
+      "Corri, piccolo schivabilance. Il tribunale ricorda ogni tallone che vede.",
+      "Tutto qui? Hai fatto tanta strada per mostrarmi la schiena?",
+      "Codardo! Torna quando le ginocchia smettono di tremarti."
+    ],
     "crowned": "La bilancia ora è tua. Nessun tribunale leggerà più il tuo nome.",
     "gone": "Il tribunale è vuoto..."
   }

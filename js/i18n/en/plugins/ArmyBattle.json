@@ -1,6 +1,6 @@
 {
   "zoom": "Zoom: {pct}%",
-  "controls": "Zoom: Wheel | Pan: Drag/Arrows | Q/W/E: Abilities | TAB: Hide/Show Sidebar",
+  "controls": "Zoom: Wheel | Pan: Drag/Arrows | Q/W/E: Abilities | Enter: Next squad | 1-4: Orders | TAB: Hide/Show Sidebar",
   "playerArmy": "Player Army: {count}",
   "enemyArmy": "Enemy Army: {count}",
   "rallyBanner": "RALLY! +20 Morale ({count} troops rallied)",
@@ -17,5 +17,19 @@
     "attack": "Attack",
     "defend": "Defend",
     "retreat": "Retreat"
+  },
+  "sidebarTitle": "Tactical",
+  "yourForces": "Your forces",
+  "enemyForces": "Enemy forces",
+  "victory": "VICTORY!",
+  "defeat": "DEFEAT!",
+  "charge": "CHARGE!",
+  "crit": "CRIT!",
+  "selected": "Selected:\n{squad}",
+  "order": {
+    "hold": "{squad} holds position",
+    "attack": "{squad} goes on the attack",
+    "defend": "{squad} defends: +20% DEF",
+    "retreat": "{squad} falls back"
   }
 }

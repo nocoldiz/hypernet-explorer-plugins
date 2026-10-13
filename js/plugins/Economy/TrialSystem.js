@@ -735,6 +735,11 @@
     _BattleManager_setup_Eris.call(this, troopId, canEscape, canLose);
     if (troopId === erisTroopId() && window.ErisChallengeBattle) {
       window.ErisChallengeBattle.reset();
+      // Each body as it walked in, so a party that runs leaves her fight
+      // with nothing she cut or broke (see processEscape below).
+      const HC = window.HealthCore;
+      this._erisBodies = HC && HC.snapshotBody
+        ? $gameParty.members().map(a => ({ actor: a, body: HC.snapshotBody(a) })) : [];
     }
   };
 
@@ -765,6 +770,37 @@
     return _BattleManager_checkBattleEnd_Eris.call(this);
   };
 
+  // Her fight takes limbs off on every difficulty, Peaceful included; never
+  // a vital part (Health_Core.js, registerLimbCutter).
+  if (window.HealthCore && window.HealthCore.registerLimbCutter) {
+    window.HealthCore.registerLimbCutter(() =>
+      !!(window.ErisChallengeBattle && window.ErisChallengeBattle.isErisBattle()));
+  }
+
+  // Running from her always works, boss or not: she lets them go fully healed,
+  // every limb she cut or broke put back as it was before the fight (Blood and
+  // Oil too), fines them for it, and calls after them once they are back on
+  // the map (see Scene_Map below).
+  const _BattleManager_processEscape_Eris = BattleManager.processEscape;
+  BattleManager.processEscape = function () {
+    const eris = window.ErisChallengeBattle;
+    if (!(eris && eris.isErisBattle())) return _BattleManager_processEscape_Eris.call(this);
+    this._bossEscapeRolled = true;
+    this._escapeRatio = 1;
+    const fled = _BattleManager_processEscape_Eris.call(this);
+    if (fled) {
+      const HC = window.HealthCore;
+      for (const { actor, body } of this._erisBodies || []) {
+        if (HC && HC.restoreBodySnapshot) HC.restoreBodySnapshot(actor, body);
+      }
+      this._erisBodies = null;
+      $gameParty.members().forEach(a => a.recoverAll());
+      if (window.CrimeSystem) window.CrimeSystem.addPresetCrime('cowardice');
+      $gameTemp._erisCowardPending = true;
+    }
+    return fled;
+  };
+
   // Backup trigger: fire the turn logic whenever the troop turn advances, in
   // case the ATB/turn-end troop event page does not run. The idempotent guard
   // in onTurnEnd() keeps this from double-firing with the Troops.json script.
@@ -783,6 +819,21 @@
     if (window.prisonManager) {
       window.prisonManager.update();
     }
+    if ($gameTemp._erisCowardPending) this.callErisCoward();
+  };
+
+  // A party that ran from Eris hears about it as soon as the map is quiet
+  // again: no transfer, no box open, no event still running (the boss offer
+  // event finishes first, the trial's flight lands in prison first).
+  Scene_Map.prototype.callErisCoward = function () {
+    if ($gamePlayer.isTransferring() || $gameMessage.isBusy() || $gameMap.isEventRunning()) return;
+    $gameTemp._erisCowardPending = false;
+    const lines = T.pool('ErisTrial.boss.cowardLines');
+    const line = lines.length ? lines[Math.floor(Math.random() * lines.length)] : T('ErisTrial.boss.coward');
+    // The "Eris:" prefix stages her bust and name tag (DialogueSystem.js).
+    window.skipLocalization = true;
+    $gameMessage.add(T('ErisTrial.line.erisName') + ": " + line);
+    window.skipLocalization = false;
   };
 
   //=============================================================================
@@ -4532,7 +4583,7 @@
   // It runs as a child of the calling event, the same commands an authored
   // event would hold, so the battle, the date and the trial each take the
   // screen in turn exactly as they do from the map. Win crowns the party;
-  // fleeing earns her scorn; losing is allowed and simply ends the offer.
+  // fleeing earns her scorn once back on the map; losing is allowed and simply ends the offer.
   function erisBossOfferList() {
     const troopId = erisTroopId();
     const say = (indent, text) => [
@@ -4548,7 +4599,6 @@
       { code: 401, indent: indent + 1, parameters: [T('ErisTrial.boss.crowned')] },
       end(indent + 1),
       { code: 602, indent, parameters: [] },
-      ...say(indent + 1, T('ErisTrial.boss.coward')),
       end(indent + 1),
       { code: 603, indent, parameters: [] },
       end(indent + 1),

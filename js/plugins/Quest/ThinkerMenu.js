@@ -63,6 +63,7 @@
     // Copy lives in js/i18n/<lang>/plugins/Thinker.json; read live so a
     // language switch reaches the next redraw.
     const thinkerText = () => T.obj('Thinker');
+    const tr = (name) => (typeof window.translateText === 'function' ? window.translateText(name) : name);
 
 
 

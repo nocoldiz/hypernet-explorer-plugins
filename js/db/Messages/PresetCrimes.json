@@ -544,5 +544,11 @@
     "bounty": 8000,
     "category": "Minor Offenses",
     "name_int": "crime.fareevasion.name"
+  },
+  "cowardice": {
+    "name": "Being a coward",
+    "bounty": 100000,
+    "category": "Judicial",
+    "name_int": "crime.cowardice.name"
   }
 }

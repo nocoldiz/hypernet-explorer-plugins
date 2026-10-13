@@ -426,12 +426,18 @@
         return sheet.href.slice(base.length).replace(/[^/]*$/, "").replace(/\/$/, "");
     }
 
+    // A rule can carry both. Since CSS nesting (Chromium 112, so the NW.js
+    // 0.82 an Apple Silicon Mac runs) every style rule has a cssRules list of
+    // its own, empty or not, and reading that list INSTEAD of the rule's style
+    // left every url() in theme.css on the plain name: no IconSet glyph drawn
+    // anywhere on a Mac. Group rules (@media) have cssRules and no style.
     function scanRules(rules, baseDir) {
         for (var i = 0; i < rules.length; i++) {
             var rule = rules[i];
-            if (rule.cssRules) {
+            if (rule.cssRules && rule.cssRules.length) {
                 scanRules(rule.cssRules, baseDir);
-            } else if (rule.style) {
+            }
+            if (rule.style) {
                 var text = rule.style.cssText;
                 if (mayContainAsset(text)) {
                     var rewritten = rewrite(text, baseDir);

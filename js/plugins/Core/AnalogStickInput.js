@@ -166,8 +166,52 @@
         }
     };
 
+    // ------------------------------------------------------------------------
+    // Axis layout: where the right stick and the triggers are on THIS pad
+    // ------------------------------------------------------------------------
+    // Only a pad the browser recognises reports mapping 'standard', with the
+    // right stick on axes 2/3 and the triggers as buttons 6/7. Anything else
+    // hands over its raw HID axes, and an Xbox-style pad read through
+    // DirectInput or SDL lists them as [LX, LY, L2, RX, RY, R2]: reading axes
+    // 2/3 as the right stick there turned the L2 trigger into the stick's X,
+    // and a released trigger rests at -1, so the map camera panned left on its
+    // own after the first pull of L2. A Sony pad's raw order is
+    // [LX, LY, RX, L2, R2, RY]. A raw pad with four or five axes has no
+    // trigger axes and keeps the right stick on 2/3.
+    const SONY_VENDOR = /054c/i;
+    const LAYOUT_STANDARD = Object.freeze({ rx: 2, ry: 3, lt: -1, rt: -1 });
+    const LAYOUT_XINPUT_RAW = Object.freeze({ rx: 3, ry: 4, lt: 2, rt: 5 });
+    const LAYOUT_SONY_RAW = Object.freeze({ rx: 2, ry: 5, lt: 3, rt: 4 });
+    function layoutOf(pad) {
+        if (!pad || pad.mapping === 'standard') return LAYOUT_STANDARD;
+        const axes = pad.axes ? pad.axes.length : 0;
+        if (axes < 6) return LAYOUT_STANDARD;
+        return SONY_VENDOR.test(String(pad.id || '')) ? LAYOUT_SONY_RAW : LAYOUT_XINPUT_RAW;
+    }
+
+    // A trigger axis runs -1 (released) to +1 (pulled), but Chromium reports
+    // it as 0 until it is first moved. Read naively that is a half pull
+    // standing on every trigger of a freshly plugged pad, so the axis only
+    // counts from -1 once it has been seen down there; before that a pull
+    // from 0 reads as itself.
+    const _triggerRested = {};
+    function triggerAxisValue(pad, axis) {
+        if (axis < 0 || !pad || !pad.axes) return 0;
+        const v = pad.axes[axis] || 0;
+        const key = pad.index + ':' + axis;
+        if (v < -0.5) _triggerRested[key] = true;
+        const t = _triggerRested[key] ? (v + 1) / 2 : v;
+        return Math.max(0, Math.min(1, t));
+    }
+
     const AnalogStickInput = {
         deadzone: DEFAULT_DEADZONE,
+
+        // Which axes are the right stick and the triggers on a given pad
+        // ({ rx, ry, lt, rt }, -1 for a trigger that is a button), and a
+        // trigger axis read as 0..1. For any other reader of a raw pad.
+        layoutOf,
+        triggerAxisValue,
 
         _lx: 0, _ly: 0, _rx: 0, _ry: 0,
         _lt: 0, _rt: 0,
@@ -310,18 +354,20 @@
                 const dz = this._applyDeadzone(pad.axes[0] || 0, pad.axes[1] || 0);
                 this._lx = dz[0];
                 this._ly = dz[1];
-                if (pad.axes.length >= 4) {
-                    const dr = this._applyDeadzone(pad.axes[2] || 0, pad.axes[3] || 0);
+                const layout = layoutOf(pad);
+                if (pad.axes.length > Math.max(layout.rx, layout.ry)) {
+                    const dr = this._applyDeadzone(pad.axes[layout.rx] || 0, pad.axes[layout.ry] || 0);
                     this._rx = dr[0];
                     this._ry = dr[1];
                 } else {
                     this._rx = this._ry = 0;
                 }
                 // Standard gamepad mapping: buttons[6] = L2, buttons[7] = R2,
-                // both analog triggers exposing 0-1 via .value.
+                // both analog triggers exposing 0-1 via .value. A raw pad may
+                // carry them as axes instead (see layoutOf).
                 const btns = pad.buttons || [];
-                this._lt = (btns[6] && btns[6].value) || 0;
-                this._rt = (btns[7] && btns[7].value) || 0;
+                this._lt = Math.max((btns[6] && btns[6].value) || 0, triggerAxisValue(pad, layout.lt));
+                this._rt = Math.max((btns[7] && btns[7].value) || 0, triggerAxisValue(pad, layout.rt));
             } else {
                 this._lx = this._ly = this._rx = this._ry = 0;
                 this._lt = this._rt = 0;

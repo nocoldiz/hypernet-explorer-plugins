@@ -1157,6 +1157,8 @@
       index: 0,
     };
 
+    // Counted inside the sitting, read by the closing toast after it.
+    let carried = 0;
     chamber.open();
     // Whatever goes wrong mid-sitting, the chamber comes down: the party cannot
     // move while it is up (Game_Player.canMove), so a stuck one is a soft lock.
@@ -1177,7 +1179,6 @@
       let persuade = persuasion(actor, delegation, sg);
       const secretaryPresent = sg || isSecretaryCandidate();
 
-      let carried = 0;
       for (let i = 0; i < session.agenda.length; i++) {
         session.index = i;
         const motion = session.agenda[i];
