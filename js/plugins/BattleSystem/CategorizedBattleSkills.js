@@ -949,6 +949,24 @@
         return $gameSystem._activeBattleSkills;
     }
 
+    function syncStore() {
+        if (typeof $gameSystem === 'undefined' || !$gameSystem) return {};
+        if (!$gameSystem._battleSkillSync) $gameSystem._battleSkillSync = {};
+        return $gameSystem._battleSkillSync;
+    }
+
+    function syncState(actor) {
+        if (!actor) return { mode: 'auto', locked: [] };
+        const store = syncStore();
+        const id = typeof actor === 'number' ? actor : actor.actorId();
+        if (!store[id]) {
+            store[id] = { mode: 'auto', locked: [] };
+        }
+        if (!store[id].mode) store[id].mode = 'auto';
+        if (!Array.isArray(store[id].locked)) store[id].locked = [];
+        return store[id];
+    }
+
     // The raw carried list, in the order the skills were taken up. A character
     // who has never had one (an old save, or one built before this ran) is
     // seeded with the first LOADOUT_MAX skills they know, so nobody walks into
@@ -1011,7 +1029,7 @@
     // with the engine's own evaluator against the caster themself, so the answer
     // is in the character's real numbers; everything else is priced off max HP,
     // which keeps a buff and a heal in the same units.
-    function skillPower(actor, skill) {
+    function skillPower(actor, skill, enemies) {
         const dmg = skill.damage || {};
         const formula = dmg.formula ? String(dmg.formula).trim() : '';
         const repeats = Math.max(1, skill.repeats || 1);
@@ -1024,14 +1042,43 @@
                 action.setSkill(skill.id);
                 // Signed for a heal, so the size of the effect is the magnitude.
                 const value = Math.abs(action.evalDamageFormula(actor));
-                if (isFinite(value) && value > 0) return value * repeats * sweep;
+                if (isFinite(value) && value > 0) {
+                    let p = value * repeats * sweep;
+                    if (enemies && enemies.length > 0 && [1, 2, 5, 6].includes(dmg.type)) {
+                        let elemRates = [];
+                        for (const enemy of enemies) {
+                            if (!enemy) continue;
+                            let rate = 1;
+                            if (dmg.elementId < 0) {
+                                const atkElements = actor.attackElements ? actor.attackElements() : [];
+                                if (atkElements.length > 0) {
+                                    rate = Math.max(...atkElements.map(el => (typeof enemy.elementRate === 'function' ? enemy.elementRate(el) : 1)));
+                                }
+                            } else if (dmg.elementId > 0 && typeof enemy.elementRate === 'function') {
+                                rate = enemy.elementRate(dmg.elementId);
+                            }
+                            elemRates.push(Math.max(0, rate));
+                        }
+                        if (elemRates.length > 0) {
+                            const avgElemRate = elemRates.reduce((a, b) => a + b, 0) / elemRates.length;
+                            p *= avgElemRate;
+                        }
+                    }
+                    return p;
+                }
             } catch (err) { /* a formula reaching for a fight this menu has not got */ }
         }
         const mhp = Math.max(1, actor.mhp);
         let power = 0;
         for (const eff of skill.effects || []) {
             if (!eff) continue;
-            const chance = eff.code === 21 ? Math.min(1, eff.value1 || 0) : 1;
+            let chance = eff.code === 21 ? Math.min(1, eff.value1 || 0) : 1;
+            if (eff.code === 21 && enemies && enemies.length > 0) {
+                const stateRates = enemies.map(e => (e && typeof e.stateRate === 'function') ? e.stateRate(eff.dataId) : 1);
+                if (stateRates.length > 0) {
+                    chance *= (stateRates.reduce((a, b) => a + b, 0) / stateRates.length);
+                }
+            }
             switch (eff.code) {
                 case 11: power += (eff.value1 || 0) * mhp + (eff.value2 || 0); break;
                 case 12: power += ((eff.value1 || 0) * Math.max(1, actor.mmp) + (eff.value2 || 0)) * 0.5; break;
@@ -1045,6 +1092,26 @@
                 default: break;
             }
         }
+        if (enemies && enemies.length > 0 && [1, 2, 5, 6].includes(dmg.type) && power > 0) {
+            let elemRates = [];
+            for (const enemy of enemies) {
+                if (!enemy) continue;
+                let rate = 1;
+                if (dmg.elementId < 0) {
+                    const atkElements = actor.attackElements ? actor.attackElements() : [];
+                    if (atkElements.length > 0) {
+                        rate = Math.max(...atkElements.map(el => (typeof enemy.elementRate === 'function' ? enemy.elementRate(el) : 1)));
+                    }
+                } else if (dmg.elementId > 0 && typeof enemy.elementRate === 'function') {
+                    rate = enemy.elementRate(dmg.elementId);
+                }
+                elemRates.push(Math.max(0, rate));
+            }
+            if (elemRates.length > 0) {
+                const avgElemRate = elemRates.reduce((a, b) => a + b, 0) / elemRates.length;
+                power *= avgElemRate;
+            }
+        }
         return power * repeats * sweep;
     }
 
@@ -1052,8 +1119,8 @@
     // the pools it is paid from. A cheap move that can be thrown all fight beats
     // an expensive one that lands once, and one the character could never pay
     // for at full MP is all but struck off.
-    function skillValue(actor, skill) {
-        const power = skillPower(actor, skill);
+    function skillValue(actor, skill, enemies) {
+        const power = skillPower(actor, skill, enemies);
         if (power <= 0) return 0;
         const mpCost = actor.skillMpCost(skill);
         const tpCost = actor.skillTpCost(skill);
@@ -1064,35 +1131,105 @@
         return mpCost > maxMp ? value * 0.05 : value;
     }
 
-    function bestLoadoutIds(actor) {
+    function bestLoadoutIds(actor, opts) {
+        opts = opts || {};
+        const enemies = opts.enemies || null;
+        const lockedSet = new Set();
+        if (opts.locked) {
+            for (const id of opts.locked) lockedSet.add(id);
+        } else if (BattleLoadout.syncMode(actor) !== 'manual') {
+            for (const id of BattleLoadout.lockedIds(actor)) lockedSet.add(id);
+        }
+
+        const validLocked = [];
+        const seenLocked = new Set();
+        const currentCarried = loadoutIds(actor);
+        for (const id of currentCarried) {
+            if (lockedSet.has(id) && !seenLocked.has(id)) {
+                const skill = $dataSkills[id];
+                if (skill && !isDummySkill(skill) && !isAlwaysCarried(actor, skill) && !isStatLocked(actor, skill) && actor.hasSkill(id)) {
+                    validLocked.push(id);
+                    seenLocked.add(id);
+                }
+            }
+        }
+        for (const id of lockedSet) {
+            if (!seenLocked.has(id)) {
+                const skill = $dataSkills[id];
+                if (skill && !isDummySkill(skill) && !isAlwaysCarried(actor, skill) && !isStatLocked(actor, skill) && actor.hasSkill(id)) {
+                    validLocked.push(id);
+                    seenLocked.add(id);
+                }
+            }
+        }
+
+        const lockedRoleCounts = { Offensive: 0, Support: 0, Healing: 0 };
+        for (const id of validLocked) {
+            const skill = $dataSkills[id];
+            const role = getSkillRole(skill) || 'Support';
+            if (lockedRoleCounts[role] !== undefined) {
+                lockedRoleCounts[role]++;
+            } else {
+                lockedRoleCounts.Support++;
+            }
+        }
+
         const byRole = { Offensive: [], Healing: [], Support: [] };
         for (const skill of presetCandidates(actor)) {
+            if (seenLocked.has(skill.id)) continue;
             const roll = byRole[getSkillRole(skill)] || byRole.Support;
-            roll.push({ skill, score: skillValue(actor, skill) });
+            roll.push({ skill, score: skillValue(actor, skill, enemies) });
         }
-        // The ranking inside a roll is what the plan asks for, so each roll is
-        // sorted on its own. Scoring every entry against its own roll's best
-        // then gives the one number leftovers from different roles can be
-        // ordered by when a role comes up short and its slots need filling.
         for (const role of Object.keys(byRole)) {
             const roll = byRole[role];
             roll.sort((a, b) => b.score - a.score);
             const top = roll.length ? roll[0].score : 0;
             roll.forEach(entry => { entry.norm = top > 0 ? entry.score / top : 0; });
         }
+
         const picked = [];
         const rest = [];
         for (const step of PRESET_PLAN) {
             const roll = byRole[step.role] || [];
-            for (const entry of roll.slice(0, step.slots)) picked.push(entry.skill.id);
-            for (const entry of roll.slice(step.slots)) rest.push(entry);
+            const needed = Math.max(0, step.slots - (lockedRoleCounts[step.role] || 0));
+            for (const entry of roll.slice(0, needed)) picked.push(entry.skill.id);
+            for (const entry of roll.slice(needed)) rest.push(entry);
         }
         rest.sort((a, b) => b.norm - a.norm);
-        for (const entry of rest) {
-            if (picked.length >= LOADOUT_MAX) break;
-            picked.push(entry.skill.id);
+
+        const result = new Array(LOADOUT_MAX).fill(null);
+        const placedLocked = new Set();
+        for (let i = 0; i < currentCarried.length && i < LOADOUT_MAX; i++) {
+            const id = currentCarried[i];
+            if (seenLocked.has(id)) {
+                result[i] = id;
+                placedLocked.add(id);
+            }
         }
-        return picked.slice(0, LOADOUT_MAX);
+        for (const id of validLocked) {
+            if (!placedLocked.has(id)) {
+                const emptyIdx = result.indexOf(null);
+                if (emptyIdx >= 0) {
+                    result[emptyIdx] = id;
+                    placedLocked.add(id);
+                }
+            }
+        }
+
+        let pickIdx = 0;
+        for (let i = 0; i < LOADOUT_MAX; i++) {
+            if (result[i] === null && pickIdx < picked.length) {
+                result[i] = picked[pickIdx++];
+            }
+        }
+        let restIdx = 0;
+        for (let i = 0; i < LOADOUT_MAX; i++) {
+            if (result[i] === null && restIdx < rest.length) {
+                result[i] = rest[restIdx++].skill.id;
+            }
+        }
+
+        return result.filter(id => id !== null).slice(0, LOADOUT_MAX);
     }
 
     // The row a character packs when they are not thinking it through: the
@@ -1175,6 +1312,75 @@
             return this.count(actor) < LOADOUT_MAX;
         },
 
+        syncMode(actor) {
+            if (!actor) return 'auto';
+            return syncState(actor).mode || 'auto';
+        },
+
+        setSyncMode(actor, mode) {
+            if (!actor) return;
+            if (!['manual', 'best', 'auto'].includes(mode)) mode = 'auto';
+            syncState(actor).mode = mode;
+        },
+
+        lockedIds(actor) {
+            if (!actor) return [];
+            const state = syncState(actor);
+            const carried = new Set(loadoutIds(actor));
+            state.locked = state.locked.filter(id => {
+                const s = $dataSkills[id];
+                return id && carried.has(id) && s && !isDummySkill(s) && !isAlwaysCarried(actor, s) && !isStatLocked(actor, s) && actor.hasSkill(id);
+            });
+            return state.locked.slice();
+        },
+
+        isLocked(actor, skillOrId) {
+            if (!actor || !skillOrId) return false;
+            const id = typeof skillOrId === 'number' ? skillOrId : skillOrId.id;
+            return this.lockedIds(actor).includes(id);
+        },
+
+        lock(actor, skillOrId) {
+            if (!actor || !skillOrId) return false;
+            const id = typeof skillOrId === 'number' ? skillOrId : skillOrId.id;
+            if (!this.isActive(actor, $dataSkills[id])) return false;
+            const state = syncState(actor);
+            if (!state.locked.includes(id)) {
+                state.locked.push(id);
+            }
+            return true;
+        },
+
+        unlock(actor, skillOrId) {
+            if (!actor || !skillOrId) return false;
+            const id = typeof skillOrId === 'number' ? skillOrId : skillOrId.id;
+            const state = syncState(actor);
+            const idx = state.locked.indexOf(id);
+            if (idx >= 0) {
+                state.locked.splice(idx, 1);
+                return true;
+            }
+            return false;
+        },
+
+        toggleLock(actor, skillOrId) {
+            if (!actor || !skillOrId) return 'unlocked';
+            const id = typeof skillOrId === 'number' ? skillOrId : skillOrId.id;
+            if (this.isLocked(actor, id)) {
+                this.unlock(actor, id);
+                return 'unlocked';
+            } else {
+                const res = this.lock(actor, id);
+                return res ? 'locked' : 'unlocked';
+            }
+        },
+
+        sync(actor, enemies) {
+            if (!actor) return [];
+            const ids = bestLoadoutIds(actor, { enemies, locked: this.lockedIds(actor) });
+            return this.setAll(actor, ids);
+        },
+
         // 'locked' , always carried, there is nothing to decide. 'full' , the
         // loadout is already at capacity. Otherwise 'on' / 'off'.
         toggle(actor, skill) {
@@ -1184,6 +1390,7 @@
             const i = list.indexOf(skill.id);
             if (i >= 0) {
                 list.splice(i, 1);
+                this.unlock(actor, skill.id);
                 return 'off';
             }
             if (isStatLocked(actor, skill)) return 'statlocked';
@@ -1212,6 +1419,8 @@
                 view.splice(Math.min(index, view.length), 0, skill.id);
             } else if (index < view.length) {
                 // A new skill takes the slot, and whatever held it is benched.
+                const displacedId = view[index];
+                if (displacedId && displacedId !== skill.id) this.unlock(actor, displacedId);
                 view[index] = skill.id;
             } else {
                 // Past the end of what is carried: the first free slot.
@@ -1266,6 +1475,7 @@
             const list = loadoutIds(actor);
             const i = list.indexOf(skillId);
             if (i >= 0) list.splice(i, 1);
+            this.unlock(actor, skillId);
         },
 
         // What a battle menu shows for one skill type: that type's carried
@@ -1280,17 +1490,41 @@
     };
     window.BattleLoadout = BattleLoadout;
 
+    let _isLevelingUp = false;
+    const _CBS_Game_Actor_levelUp = Game_Actor.prototype.levelUp;
+    Game_Actor.prototype.levelUp = function () {
+        const wasLeveling = _isLevelingUp;
+        _isLevelingUp = true;
+        try {
+            _CBS_Game_Actor_levelUp.call(this);
+        } finally {
+            _isLevelingUp = wasLeveling;
+        }
+        if (!_isLevelingUp && BattleLoadout.syncMode(this) === 'auto') {
+            BattleLoadout.sync(this);
+        }
+    };
+
     const _Game_Actor_learnSkill = Game_Actor.prototype.learnSkill;
     Game_Actor.prototype.learnSkill = function (skillId) {
         const knew = this.isLearnedSkill(skillId);
         _Game_Actor_learnSkill.call(this, skillId);
-        if (!knew && this.isLearnedSkill(skillId)) BattleLoadout.autoActivate(this, skillId);
+        if (!knew && this.isLearnedSkill(skillId)) {
+            if (BattleLoadout.syncMode(this) === 'auto') {
+                if (!_isLevelingUp) {
+                    BattleLoadout.sync(this);
+                }
+            } else {
+                BattleLoadout.autoActivate(this, skillId);
+            }
+        }
     };
 
     const _Game_Actor_forgetSkill = Game_Actor.prototype.forgetSkill;
     Game_Actor.prototype.forgetSkill = function (skillId) {
         _Game_Actor_forgetSkill.call(this, skillId);
         BattleLoadout.drop(this, skillId);
+        BattleLoadout.unlock(this, skillId);
     };
 
     let _statsI18n = null;
@@ -2567,6 +2801,89 @@
                     color: var(--text-text-alt-4);
                     white-space: nowrap;
                 }
+                .skill-sync-selector-bar {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                    margin: 4px 0 8px 0;
+                    padding: 6px 8px;
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 4px;
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    box-sizing: border-box;
+                }
+                .skill-sync-selector-row {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+                .skill-sync-selector-label {
+                    font-family: var(--font-ui, sans-serif);
+                    font-size: 0.8em;
+                    font-weight: bold;
+                    color: var(--text-text-alt-4, #b0a898);
+                    white-space: nowrap;
+                }
+                .skill-sync-modes {
+                    display: inline-flex;
+                    gap: 4px;
+                    flex: 1;
+                }
+                .skill-sync-mode-btn {
+                    flex: 1;
+                    text-align: center;
+                    font-family: var(--font-ui, sans-serif);
+                    font-size: 0.76em;
+                    padding: 3px 6px;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.12);
+                    color: var(--text-text-alt-4, #b0a898);
+                    transition: all 0.15s ease;
+                    user-select: none;
+                }
+                .skill-sync-mode-btn:hover {
+                    border-color: var(--text-primary-hover, #f0c674);
+                    color: var(--text-primary-hover, #f0c674);
+                }
+                .skill-sync-mode-btn.active {
+                    background: rgba(240, 198, 116, 0.18);
+                    border-color: var(--text-primary-hover, #f0c674);
+                    color: var(--text-primary-hover, #f0c674);
+                    font-weight: bold;
+                }
+                .skill-sync-desc {
+                    font-family: var(--font-ui, sans-serif);
+                    font-size: 0.72em;
+                    color: var(--text-text-alt-4, #888);
+                    line-height: 1.3;
+                }
+                .skill-lock-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    background: transparent;
+                    border: 1px solid rgba(255, 255, 255, 0.12);
+                    color: var(--text-text-alt-4, #888);
+                    transition: all 0.15s ease;
+                    margin-left: 4px;
+                    box-sizing: border-box;
+                    flex: 0 0 auto;
+                }
+                .skill-lock-btn:hover {
+                    border-color: var(--text-primary-hover, #f0c674);
+                    color: var(--text-primary-hover, #f0c674);
+                }
+                .skill-lock-btn--locked {
+                    background: rgba(240, 198, 116, 0.2);
+                    border-color: var(--text-primary-hover, #f0c674);
+                    color: var(--text-primary-hover, #f0c674);
+                }
                 .item-slot:hover .item-slot-cost,
                 .item-slot.selected .item-slot-cost {
                     color: var(--text-primary-hover, #f0c674);
@@ -2859,7 +3176,12 @@
             // all. One that can be is always offered: whether it can be paid
             // for is answered by greying the button, not by taking it away.
             if (actor.isOccasionOk(skill)) actions.push("use");
-            if (!BattleLoadout.isAlwaysCarried(actor, skill)) actions.push("loadout");
+            if (!BattleLoadout.isAlwaysCarried(actor, skill)) {
+                actions.push("loadout");
+                if (BattleLoadout.syncMode(actor) !== 'manual' && BattleLoadout.isActive(actor, skill)) {
+                    actions.push("lock");
+                }
+            }
         }
         return actions;
     };
@@ -2881,6 +3203,12 @@
                 label = isActive
                     ? T('SkillsMenu.action.bench') : T('SkillsMenu.action.carry');
                 if (!isActive) primaryClass = " inspect-btn--primary";
+            } else if (action === "lock") {
+                const isLocked = BattleLoadout.isLocked(actor, skill);
+                label = isLocked
+                    ? `[ ${typeof T === 'function' && T.has && T.has('SkillsMenu.sync.unlock') ? T('SkillsMenu.sync.unlock') : 'Unlock'} ]`
+                    : `[ ${typeof T === 'function' && T.has && T.has('SkillsMenu.sync.lock') ? T('SkillsMenu.sync.lock') : 'Lock'} ]`;
+                if (isLocked) primaryClass = " inspect-btn--primary";
             }
             return `<div class="inspect-btn ${primaryClass} ${isFocused}${unusable}" onclick="SceneManager._scene.triggerUISkillAction('${action}')">${label}</div>`;
         }).join("");
@@ -3006,6 +3334,32 @@
         this.refreshUISkill();
     };
 
+    Scene_Skill.prototype.setUISyncMode = function (mode) {
+        const actor = this.actor();
+        if (!actor) return;
+        BattleLoadout.setSyncMode(actor, mode);
+        if (mode === 'auto') {
+            BattleLoadout.sync(actor);
+            if (window.ParchmentToast) {
+                const label = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.synced') ? T('SkillsMenu.sync.synced') : 'Auto synced skills.';
+                ParchmentToast.show(label);
+            }
+        }
+        SoundManager.playCursor();
+        this._dndLastLeftPageKey = null;
+        this.renderUISkillCards();
+    };
+
+    Scene_Skill.prototype.toggleUILock = function (skillId) {
+        const actor = this.actor();
+        if (!actor || !skillId) return;
+        if (BattleLoadout.syncMode(actor) === 'manual') return;
+        BattleLoadout.toggleLock(actor, skillId);
+        SoundManager.playCursor();
+        this._dndLastLeftPageKey = null;
+        this.renderUISkillCards();
+    };
+
     // 1-9 while a skill is being read drops it into that slot of the carried
     // row, the same assignment a number key makes in the backpack.
     Scene_Skill.prototype.assignUILoadoutSlot = function (index) {
@@ -3091,6 +3445,7 @@
             const skill = ids[i] ? $dataSkills[ids[i]] : null;
             if (!skill) { entries.push(null); continue; }
             if (this._dndInspectSkillId === skill.id) selected = i;
+            const isLocked = BattleLoadout.syncMode(actor) !== 'manual' && BattleLoadout.isLocked(actor, skill);
             entries.push({
                 iconIndex: skill.iconIndex,
                 // The bar shows what is CARRIED, not what can be cast standing
@@ -3098,7 +3453,8 @@
                 // left the whole row colourless. Affording the cast is the only
                 // thing that dims a slot here.
                 enabled: actor.canPaySkillCost(skill),
-                tooltip: dbText(skill.name)
+                tooltip: dbText(skill.name) + (isLocked ? ' 🔒' : ''),
+                count: isLocked ? '🔒' : undefined
             });
         }
         this._loadoutBar.mount(mount);
@@ -3165,6 +3521,12 @@
             }
         } else if (action === "loadout") {
             this.toggleUILoadout(skill);
+        } else if (action === "lock") {
+            BattleLoadout.toggleLock(actor, skill);
+            SoundManager.playOk();
+            this._dndLastLeftPageKey = null;
+            this.refreshUISkill();
+            return;
         } else if (action === "back") {
             SoundManager.playCancel();
             this._dndActiveSection = "skills";
@@ -3301,9 +3663,8 @@
         // The strip's own state belongs in the key too: reversing the sort
         // leaves the list the same LENGTH, so without it the page would keep
         // showing the old order.
-        const barKey = this._skillBar
-            ? `${this._skillBar.query}|${this._skillBar.sortKey}|${this._skillBar.sortDir}` : '';
-        const leftPageKey = `${actor.actorId()}_${this._dndSelectedTypeIndex}_${list.length}_${carriedKey}_${this._dndInspectSkillId || 0}_${barKey}`;
+        const syncKey = `${BattleLoadout.syncMode(actor)}_${BattleLoadout.lockedIds(actor).sort().join(',')}`;
+        const leftPageKey = `${actor.actorId()}_${this._dndSelectedTypeIndex}_${list.length}_${carriedKey}_${this._dndInspectSkillId || 0}_${barKey}_${syncKey}`;
 
         const skillsTitle = T('SkillsMenu.title');
         const backBtnText = T('SkillsMenu.back');
@@ -3326,12 +3687,45 @@
             `;
         }
 
+        let autoSyncHTML = "";
+        if (!isLevelUp) {
+            const currentMode = BattleLoadout.syncMode(actor);
+            const syncTitle = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.label') ? T('SkillsMenu.sync.label') : 'Auto sync';
+            const manualLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.manual') ? T('SkillsMenu.sync.manual') : 'Manual';
+            const bestLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.best') ? T('SkillsMenu.sync.best') : 'Best';
+            const autoLabel = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.auto') ? T('SkillsMenu.sync.auto') : 'Automatic';
+
+            let descText = "";
+            if (currentMode === 'manual') {
+                descText = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.manualDesc') ? T('SkillsMenu.sync.manualDesc') : 'Manual selection: new skills only fill empty slots.';
+            } else if (currentMode === 'best') {
+                descText = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.bestDesc') ? T('SkillsMenu.sync.bestDesc') : 'Syncs best skills against current enemies at battle start.';
+            } else {
+                descText = typeof T === 'function' && T.has && T.has('SkillsMenu.sync.autoDesc') ? T('SkillsMenu.sync.autoDesc') : 'Automatically syncs best skills on level up and when learning skills.';
+            }
+
+            autoSyncHTML = `
+                <div class="skill-sync-selector-bar">
+                    <div class="skill-sync-selector-row">
+                        <span class="skill-sync-selector-label">${escapeHtml(syncTitle)}:</span>
+                        <div class="skill-sync-modes">
+                            <span class="skill-sync-mode-btn ${currentMode === 'manual' ? 'active' : ''}" onclick="SceneManager._scene.setUISyncMode('manual')">${escapeHtml(manualLabel)}</span>
+                            <span class="skill-sync-mode-btn ${currentMode === 'best' ? 'active' : ''}" onclick="SceneManager._scene.setUISyncMode('best')">${escapeHtml(bestLabel)}</span>
+                            <span class="skill-sync-mode-btn ${currentMode === 'auto' ? 'active' : ''}" onclick="SceneManager._scene.setUISyncMode('auto')">${escapeHtml(autoLabel)}</span>
+                        </div>
+                    </div>
+                    <div class="skill-sync-desc">${escapeHtml(descText)}</div>
+                </div>
+            `;
+        }
+
         const leftPageHeaderHTML = `
             <div class="page-header-bar">
                 <div class="back-button focusable" onclick="SceneManager._scene.exitUISkill()">${backBtnText}</div>
                 <h2 class="title">${skillsTitle}</h2>
             </div>
             ${skillTypesRowHTML}
+            ${autoSyncHTML}
             ${this._skillBar ? `<div class="backpack-search">${this._skillBar.fieldHTML()}${this._skillBar.filtersHTML()}</div>` : ''}
         `;
 
@@ -3544,6 +3938,7 @@
         const LOCK_SVG = '<svg class="skill-sync-svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
         let syncBtnHTML = "";
+        let lockBtnHTML = "";
         if (isLevelUp) {
             syncBtnHTML = `<span class="skill-sync-btn skill-sync-btn--always">Lv ${entry.level}</span>`;
         } else if (BattleLoadout.isAlwaysCarried(actor, item)) {
@@ -3560,6 +3955,15 @@
             const iconGlyph = isSynced ? DESYNC_SVG : SYNC_SVG;
             const btnCls = isSynced ? 'skill-sync-btn skill-sync-btn--synced' : 'skill-sync-btn skill-sync-btn--desynced';
             syncBtnHTML = `<span class="${btnCls}" role="button" onclick="event.stopPropagation(); SceneManager._scene.clickUILoadout(${idx})" title="${escapeHtml(btnTitle)}">${iconGlyph} <span class="skill-sync-label">${escapeHtml(btnLabel)}</span></span>`;
+
+            if (isSynced && BattleLoadout.syncMode(actor) !== 'manual') {
+                const isLocked = BattleLoadout.isLocked(actor, item);
+                const lockTitle = isLocked
+                    ? (typeof T === 'function' && T.has && T.has('SkillsMenu.sync.unlock') ? T('SkillsMenu.sync.unlock') : 'Unlock')
+                    : (typeof T === 'function' && T.has && T.has('SkillsMenu.sync.lock') ? T('SkillsMenu.sync.lock') : 'Lock');
+                const lockCls = isLocked ? 'skill-lock-btn skill-lock-btn--locked' : 'skill-lock-btn';
+                lockBtnHTML = `<span class="${lockCls}" role="button" onclick="event.stopPropagation(); SceneManager._scene.toggleUILock(${item.id})" title="${escapeHtml(lockTitle)}">${LOCK_SVG}</span>`;
+            }
         }
 
         return `
@@ -3572,7 +3976,7 @@
                     <div class="item-slot-name" title="${escapeHtml(dbText(item.name))}">${escapeHtml(dbText(item.name))}</div>
                     <div class="item-slot-meta" style="display:flex; align-items:center; justify-content:space-between;">
                         <span style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><span class="item-slot-cost">${escapeHtml(costText)}</span>${fieldFlag}${reqFlag}</span>
-                        ${syncBtnHTML ? `<span style="flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center;">${syncBtnHTML}</span>` : ""}
+                        ${(syncBtnHTML || lockBtnHTML) ? `<span style="flex:0 0 auto; margin-left:auto; display:inline-flex; align-items:center;">${syncBtnHTML}${lockBtnHTML}</span>` : ""}
                     </div>
                 </div>
             </div>
@@ -4616,6 +5020,22 @@
         user.forceAction(pick.skill.id, -1);
         BattleManager.forceAction(user);
     });
+
+    const _CBS_BattleManager_startBattle = BattleManager.startBattle;
+    BattleManager.startBattle = function () {
+        const party = (typeof $gameParty !== 'undefined' && $gameParty) ? $gameParty : (typeof window !== 'undefined' ? window.$gameParty : null);
+        const troop = (typeof $gameTroop !== 'undefined' && $gameTroop) ? $gameTroop : (typeof window !== 'undefined' ? window.$gameTroop : null);
+        if (party && typeof party.battleMembers === 'function') {
+            const enemies = (troop && typeof troop.aliveMembers === 'function')
+                ? troop.aliveMembers() : [];
+            for (const actor of party.battleMembers()) {
+                if (actor && BattleLoadout.syncMode(actor) === 'best') {
+                    BattleLoadout.sync(actor, enemies);
+                }
+            }
+        }
+        _CBS_BattleManager_startBattle.call(this);
+    };
 
     const _CBS_BattleManager_endAction = BattleManager.endAction;
     BattleManager.endAction = function () {

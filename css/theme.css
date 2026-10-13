@@ -45361,3 +45361,368 @@ body.pad-input .kb-only {
     outline: 2px solid var(--text-primary-hover) !important;
     outline-offset: 2px !important;
 }
+
+/* ==========================================================================
+   Army Battle Screen HUD & Tactical Sidebar (ArmyBattleView.js)
+   ========================================================================== */
+
+#army-battle-hud {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: var(--z-map-hud);
+    font-family: var(--font-ui);
+    box-sizing: border-box;
+    user-select: none;
+}
+
+/* Controls header / Zoom */
+.army-hud-topleft {
+    position: absolute;
+    top: var(--sp-4);
+    left: var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    pointer-events: auto;
+}
+
+.army-hud-zoom {
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-gold-amber-30);
+    color: var(--text-primary);
+    padding: var(--sp-1) var(--sp-3);
+    border-radius: 4px;
+    width: fit-content;
+}
+
+.army-hud-hints {
+    font-size: var(--fs-caption);
+    color: var(--text-muted);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* Army count badges (enemy top center, player bottom center) */
+.army-hud-counter {
+    position: absolute;
+    left: calc((100% - var(--army-sidebar-w, 280px)) / 2);
+    transform: translateX(-50%);
+    padding: var(--sp-2) var(--sp-5);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-gold-amber-30);
+    border-radius: 20px;
+    font-size: var(--fs-heading);
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    pointer-events: auto;
+    letter-spacing: 0.04em;
+    transition: left 0.25s ease;
+}
+
+#army-battle-hud.sidebar-hidden .army-hud-counter {
+    left: 50%;
+}
+
+.army-hud-counter--enemy {
+    top: var(--sp-4);
+    color: var(--faction-accord-hostile);
+    border-color: rgba(229, 57, 53, 0.4);
+}
+
+.army-hud-counter--player {
+    bottom: var(--sp-5);
+    color: var(--text-primary-hover);
+    border-color: var(--border-gold-amber);
+}
+
+/* Abilities bar (top right, left of sidebar) */
+.army-hud-abilities {
+    position: absolute;
+    top: var(--sp-4);
+    right: calc(var(--army-sidebar-w, 280px) + var(--sp-4));
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+    pointer-events: auto;
+    transition: right 0.25s ease;
+}
+
+#army-battle-hud.sidebar-hidden .army-hud-abilities,
+.army-hud-abilities.sidebar-closed {
+    right: var(--sp-4);
+}
+
+.army-ability-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-4);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-gold-amber-30);
+    border-radius: 4px;
+    color: var(--text-success-active);
+    font-family: var(--font-ui);
+    font-size: var(--fs-label);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    transition: all 0.15s ease;
+}
+
+.army-ability-btn:hover:not(:disabled) {
+    border-color: var(--border-gold-amber);
+    color: var(--text-primary-hover);
+    transform: translateX(-2px);
+}
+
+.army-ability-btn:disabled,
+.army-ability-btn.on-cooldown {
+    color: var(--text-muted);
+    border-color: rgba(153, 138, 114, 0.2);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.army-ability-key {
+    font-family: var(--font-mono);
+    font-weight: bold;
+    color: var(--text-primary-hover);
+}
+
+/* Notification banner */
+.army-hud-banner {
+    position: absolute;
+    bottom: 90px;
+    left: calc((100% - var(--army-sidebar-w, 280px)) / 2);
+    transform: translateX(-50%);
+    padding: var(--sp-2) var(--sp-5);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-gold-amber);
+    color: var(--text-primary-hover);
+    font-size: var(--fs-heading);
+    font-weight: bold;
+    border-radius: 4px;
+    box-shadow: 0 0 12px rgba(197, 155, 39, 0.4);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease, left 0.25s ease;
+}
+
+#army-battle-hud.sidebar-hidden .army-hud-banner {
+    left: 50%;
+}
+
+.army-hud-banner.active {
+    opacity: 1;
+}
+
+/* Result banner */
+.army-hud-result {
+    position: absolute;
+    top: 50%;
+    left: calc((100% - var(--army-sidebar-w, 280px)) / 2);
+    transform: translate(-50%, -50%);
+    font-size: var(--fs-display);
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    padding: var(--sp-4) var(--sp-6);
+    background: var(--bg-overlay);
+    border: 2px solid var(--border-gold-amber);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    display: none;
+    pointer-events: auto;
+    text-align: center;
+    transition: left 0.25s ease;
+}
+
+#army-battle-hud.sidebar-hidden .army-hud-result {
+    left: 50%;
+}
+
+.army-hud-result.victory {
+    display: block;
+    color: var(--faction-accord-allied);
+    border-color: var(--faction-accord-allied);
+}
+
+.army-hud-result.defeat {
+    display: block;
+    color: var(--faction-accord-hostile);
+    border-color: var(--faction-accord-hostile);
+}
+
+/* Tactical Sidebar */
+.army-hud-sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--army-sidebar-w, 280px);
+    height: 100%;
+    background: var(--bg-panel);
+    border-left: 1px solid var(--border-gold-amber-30);
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+    box-sizing: border-box;
+    transition: transform 0.25s ease;
+}
+
+.army-hud-sidebar.closed {
+    transform: translateX(100%);
+}
+
+.army-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--sp-4) var(--sp-4) var(--sp-3);
+    border-bottom: 1px solid var(--border-gold-amber-30);
+}
+
+.army-sidebar-title {
+    font-size: var(--fs-heading);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.army-sidebar-close {
+    background: none;
+    border: 1px solid var(--border-gold-amber-30);
+    color: var(--text-muted);
+    font-size: var(--fs-label);
+    padding: var(--sp-1) var(--sp-2);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.army-sidebar-close:hover {
+    color: var(--text-primary-hover);
+    border-color: var(--border-gold-amber);
+}
+
+.army-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--sp-3) var(--sp-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+}
+
+.army-sidebar-section-title {
+    font-size: var(--fs-label);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--sp-2);
+    padding-bottom: var(--sp-1);
+    border-bottom: 1px solid rgba(197, 155, 39, 0.15);
+}
+
+.army-sidebar-section-title--player {
+    color: var(--text-primary-hover);
+}
+
+.army-sidebar-section-title--enemy {
+    color: var(--faction-accord-hostile);
+}
+
+.army-squad-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+}
+
+.army-squad-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: var(--fs-caption);
+    color: var(--text-primary);
+    transition: all 0.15s ease;
+}
+
+.army-squad-row:hover {
+    border-color: var(--border-gold-amber-30);
+    background: rgba(197, 155, 39, 0.08);
+}
+
+.army-squad-row.selected {
+    border-color: var(--border-gold-amber);
+    color: var(--text-primary-hover);
+    background: rgba(197, 155, 39, 0.15);
+}
+
+.army-squad-row.defeated {
+    color: var(--text-muted);
+    opacity: 0.5;
+    cursor: default;
+}
+
+.army-squad-count {
+    font-family: var(--font-mono);
+    font-size: var(--fs-caption);
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(197, 155, 39, 0.2);
+}
+
+/* Command orders panel (bottom of sidebar) */
+.army-sidebar-commands {
+    border-top: 1px solid var(--border-gold-amber-30);
+    padding: var(--sp-3) var(--sp-4) var(--sp-4);
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+}
+
+.army-sidebar-selected-label {
+    font-size: var(--fs-caption);
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.army-orders-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-2);
+}
+
+.army-order-btn {
+    padding: var(--sp-2);
+    font-size: var(--fs-caption);
+    text-align: center;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-gold-amber-30);
+    color: var(--text-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.army-order-btn:hover {
+    border-color: var(--border-gold-amber);
+    color: var(--text-primary-hover);
+}
+
+.army-order-btn.active {
+    border-color: var(--border-gold-amber);
+    background: rgba(197, 155, 39, 0.2);
+    color: var(--text-primary-hover);
+}
+

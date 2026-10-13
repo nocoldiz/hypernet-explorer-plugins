@@ -1,3 +1,15 @@
+
+0.8.9a
+
+Maps:
+ - added missing maps to epo
+
+Added:
+ - auto sync selector in categorized battle skills
+
+Changed:
+ - reworked army screen to use global css and fixed sprites
+
 0.8.8a
 
 Maps:

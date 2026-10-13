@@ -248,6 +248,9 @@ Scene_ArmyBattle.prototype.initialize = function () {
 Scene_ArmyBattle.prototype.safePop = function () {
   if (this._popped) return;
   this._popped = true;
+  if (this._battleView && typeof this._battleView.destroyDOMHud === "function") {
+    this._battleView.destroyDOMHud();
+  }
   SceneManager.pop();
 };
 
@@ -370,6 +373,9 @@ Scene_ArmyBattle.prototype.finishBattle = function () {
 Scene_ArmyBattle.prototype.terminate = function () {
   Scene_Base.prototype.terminate.call(this);
   if (this._battleView) {
+    if (this._battleView.destroyDOMHud) {
+      this._battleView.destroyDOMHud();
+    }
     if (this._battleView.destroyField) {
       this._battleView.destroyField();
     } else if (this._battleView.parent) {
@@ -406,6 +412,9 @@ ArmyBattleField.prototype.initialize = function () {
   this._setupBattlefield();
   this._battleEnded = false;
   this._battleResult = null;
+  this._sidebarOpen = true;
+  this._domBannerTimer = 0;
+  this._domHud = null;
 
   // Camera/viewport controls
   this._viewportX = 0;
@@ -600,6 +609,8 @@ ArmyBattleField.prototype._createCounterText = function () {
   this._createInfoScreen();
 
   this._layoutHud();
+  // The HUD is drawn as a DOM overlay styled with global CSS; hide the canvas PIXI HUD
+  this._uiContainer.visible = false;
 };
 
 ArmyBattleField.prototype._createCommanderAbilitiesPanel = function () {
@@ -667,6 +678,304 @@ ArmyBattleField.prototype._createInfoScreen = function () {
 
   // Store sidebar width for reference
   this._sidebarWidth = sidebarWidth;
+  this._sidebarOpen = true;
+};
+
+//=============================================================================
+// DOM HUD Layer (Styled with global CSS theme)
+//=============================================================================
+
+ArmyBattleField.prototype.initDOMHud = function () {
+  if (typeof document === "undefined" || !document.body) return;
+  this.destroyDOMHud();
+
+  const hud = document.createElement("div");
+  hud.id = "army-battle-hud";
+  hud.className = "army-battle-hud";
+
+  // Top-left controls & zoom
+  const topleft = document.createElement("div");
+  topleft.className = "army-hud-topleft";
+  const zoom = document.createElement("div");
+  zoom.id = "army-hud-zoom";
+  zoom.className = "army-hud-zoom";
+  zoom.textContent = T('ArmyBattle.zoom', { pct: Math.round((this._zoom || 1) * 100) });
+  const hints = document.createElement("div");
+  hints.className = "army-hud-hints";
+  hints.textContent = T('ArmyBattle.controls');
+  topleft.appendChild(zoom);
+  topleft.appendChild(hints);
+  hud.appendChild(topleft);
+
+  // Counters: enemy top-center, player bottom-center
+  const enemyCounter = document.createElement("div");
+  enemyCounter.id = "army-enemy-counter";
+  enemyCounter.className = "army-hud-counter army-hud-counter--enemy";
+  enemyCounter.textContent = T('ArmyBattle.enemyArmy', { count: this._enemyAliveCount || 0 });
+  hud.appendChild(enemyCounter);
+
+  const playerCounter = document.createElement("div");
+  playerCounter.id = "army-player-counter";
+  playerCounter.className = "army-hud-counter army-hud-counter--player";
+  playerCounter.textContent = T('ArmyBattle.playerArmy', { count: this._playerAliveCount || 0 });
+  hud.appendChild(playerCounter);
+
+  // Center announcement banner (Inspire / Heal / Orders)
+  const banner = document.createElement("div");
+  banner.id = "army-hud-banner";
+  banner.className = "army-hud-banner";
+  hud.appendChild(banner);
+
+  // Center result banner (Victory / Defeat)
+  const result = document.createElement("div");
+  result.id = "army-hud-result";
+  result.className = "army-hud-result";
+  hud.appendChild(result);
+
+  // Commander abilities (top-right, left of sidebar)
+  const abilities = document.createElement("div");
+  abilities.id = "army-hud-abilities";
+  abilities.className = "army-hud-abilities";
+  for (const ab of (this._commanderAbilities || [])) {
+    const btn = document.createElement("button");
+    btn.id = "army-ability-" + ab.key;
+    btn.className = "army-ability-btn";
+    btn.type = "button";
+    btn.innerHTML = `<span class="army-ability-key">[${ab.key.toUpperCase()}]</span> <span class="army-ability-name">${ab.name}</span> <span class="army-ability-cd" id="army-ability-cd-${ab.key}"></span>`;
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this._useCommanderAbility(ab.key);
+    });
+    abilities.appendChild(btn);
+  }
+  hud.appendChild(abilities);
+
+  // Tactical sidebar
+  const sidebar = document.createElement("div");
+  sidebar.id = "army-hud-sidebar";
+  sidebar.className = "army-hud-sidebar";
+
+  const sbHeader = document.createElement("div");
+  sbHeader.className = "army-sidebar-header";
+  const sbTitle = document.createElement("h2");
+  sbTitle.className = "army-sidebar-title";
+  sbTitle.textContent = T('ArmyBattle.sidebarTitle');
+  const sbClose = document.createElement("button");
+  sbClose.className = "army-sidebar-close";
+  sbClose.type = "button";
+  sbClose.textContent = "✕";
+  sbClose.title = "TAB";
+  sbClose.addEventListener("click", (e) => {
+    e.stopPropagation();
+    this._toggleSidebar();
+  });
+  sbHeader.appendChild(sbTitle);
+  sbHeader.appendChild(sbClose);
+  sidebar.appendChild(sbHeader);
+
+  const sbContent = document.createElement("div");
+  sbContent.className = "army-sidebar-content";
+
+  const playerSec = document.createElement("div");
+  playerSec.className = "army-sidebar-section";
+  const playerSecTitle = document.createElement("div");
+  playerSecTitle.className = "army-sidebar-section-title army-sidebar-section-title--player";
+  playerSecTitle.textContent = T('ArmyBattle.yourForces');
+  const playerList = document.createElement("div");
+  playerList.id = "army-player-squads";
+  playerList.className = "army-squad-list";
+  playerSec.appendChild(playerSecTitle);
+  playerSec.appendChild(playerList);
+  sbContent.appendChild(playerSec);
+
+  const enemySec = document.createElement("div");
+  enemySec.className = "army-sidebar-section";
+  const enemySecTitle = document.createElement("div");
+  enemySecTitle.className = "army-sidebar-section-title army-sidebar-section-title--enemy";
+  enemySecTitle.textContent = T('ArmyBattle.enemyForces');
+  const enemyList = document.createElement("div");
+  enemyList.id = "army-enemy-squads";
+  enemyList.className = "army-squad-list";
+  enemySec.appendChild(enemySecTitle);
+  enemySec.appendChild(enemyList);
+  sbContent.appendChild(enemySec);
+
+  sidebar.appendChild(sbContent);
+
+  const sbCmd = document.createElement("div");
+  sbCmd.id = "army-sidebar-commands";
+  sbCmd.className = "army-sidebar-commands";
+  const selLabel = document.createElement("div");
+  selLabel.id = "army-selected-squad-label";
+  selLabel.className = "army-sidebar-selected-label";
+  selLabel.textContent = T('ArmyBattle.clickSquad').replace('\n', ' ');
+  sbCmd.appendChild(selLabel);
+
+  const ordersGrid = document.createElement("div");
+  ordersGrid.className = "army-orders-grid";
+  const orderActions = [
+    { key: "1", cmd: "hold", label: T('ArmyBattle.command.hold') },
+    { key: "2", cmd: "aggressive", label: T('ArmyBattle.command.attack') },
+    { key: "3", cmd: "defensive", label: T('ArmyBattle.command.defend') },
+    { key: "4", cmd: "retreat", label: T('ArmyBattle.command.retreat') }
+  ];
+  for (const o of orderActions) {
+    const obtn = document.createElement("button");
+    obtn.type = "button";
+    obtn.className = "army-order-btn";
+    obtn.setAttribute("data-order", o.cmd);
+    obtn.textContent = `[${o.key}] ${o.label}`;
+    obtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this._executeSquadCommand(o.cmd);
+    });
+    ordersGrid.appendChild(obtn);
+  }
+  sbCmd.appendChild(ordersGrid);
+  sidebar.appendChild(sbCmd);
+  hud.appendChild(sidebar);
+
+  document.body.appendChild(hud);
+  this._domHud = hud;
+
+  this._refreshDOMHud();
+};
+
+ArmyBattleField.prototype.destroyDOMHud = function () {
+  if (this._domHud && this._domHud.parentNode) {
+    this._domHud.parentNode.removeChild(this._domHud);
+  }
+  this._domHud = null;
+};
+
+ArmyBattleField.prototype._toggleSidebar = function () {
+  this._sidebarOpen = !this._sidebarOpen;
+  if (this._infoScreen) this._infoScreen.visible = this._sidebarOpen;
+  if (this._domHud) {
+    const sb = this._domHud.querySelector("#army-hud-sidebar");
+    const ab = this._domHud.querySelector("#army-hud-abilities");
+    if (sb) sb.classList.toggle("closed", !this._sidebarOpen);
+    if (ab) ab.classList.toggle("sidebar-closed", !this._sidebarOpen);
+    this._domHud.classList.toggle("sidebar-hidden", !this._sidebarOpen);
+  }
+  this._layoutHud();
+  this._applyViewportTransform();
+};
+
+ArmyBattleField.prototype._useCommanderAbility = function (key) {
+  const ability = (this._commanderAbilities || []).find(a => a.key === key);
+  if (!ability || ability.currentCooldown > 0) return;
+  if (ability.effect === "rally") this._rallyTroops();
+  else if (ability.effect === "heal") this._healSquad();
+  else if (ability.effect === "inspire") this._inspireTroops();
+  ability.currentCooldown = ability.cooldown;
+  this._updateAbilityCooldowns();
+};
+
+ArmyBattleField.prototype._showDOMBanner = function (text) {
+  if (!this._domHud) return;
+  const banner = this._domHud.querySelector("#army-hud-banner");
+  if (!banner) return;
+  banner.textContent = text;
+  banner.classList.add("active");
+  this._domBannerTimer = 180;
+};
+
+ArmyBattleField.prototype._showDOMResult = function (result) {
+  if (!this._domHud) return;
+  const resEl = this._domHud.querySelector("#army-hud-result");
+  if (!resEl) return;
+  resEl.textContent = T(result === "victory" ? 'ArmyBattle.victory' : 'ArmyBattle.defeat');
+  resEl.className = "army-hud-result " + result;
+};
+
+ArmyBattleField.prototype._updateDOMAbilities = function () {
+  if (!this._domHud || !this._commanderAbilities) return;
+  for (const ab of this._commanderAbilities) {
+    const btn = this._domHud.querySelector("#army-ability-" + ab.key);
+    const cdEl = this._domHud.querySelector("#army-ability-cd-" + ab.key);
+    if (!btn) continue;
+    if (ab.currentCooldown > 0) {
+      btn.classList.add("on-cooldown");
+      btn.disabled = true;
+      if (cdEl) cdEl.textContent = `(${Math.ceil(ab.currentCooldown)}s)`;
+    } else {
+      btn.classList.remove("on-cooldown");
+      btn.disabled = false;
+      if (cdEl) cdEl.textContent = "";
+    }
+  }
+};
+
+ArmyBattleField.prototype._refreshDOMHud = function () {
+  if (!this._domHud) return;
+
+  const zoomEl = this._domHud.querySelector("#army-hud-zoom");
+  if (zoomEl) {
+    zoomEl.textContent = T('ArmyBattle.zoom', { pct: Math.round((this._zoom || 1) * 100) });
+  }
+
+  const pCountEl = this._domHud.querySelector("#army-player-counter");
+  if (pCountEl) {
+    pCountEl.textContent = T('ArmyBattle.playerArmy', { count: this._playerAliveCount || 0 });
+  }
+  const eCountEl = this._domHud.querySelector("#army-enemy-counter");
+  if (eCountEl) {
+    eCountEl.textContent = T('ArmyBattle.enemyArmy', { count: this._enemyAliveCount || 0 });
+  }
+
+  const pList = this._domHud.querySelector("#army-player-squads");
+  const eList = this._domHud.querySelector("#army-enemy-squads");
+  if (pList && eList) {
+    const playerSquads = this._groupUnitsBySquad(this._playerUnits);
+    const enemySquads = this._groupUnitsBySquad(this._enemyUnits);
+    const selected = this._selectedSquad ? this._selectedSquad.name : null;
+
+    pList.innerHTML = "";
+    for (const [squadName, units] of Object.entries(playerSquads)) {
+      const squadLabel = (typeof armyT === "function") ? armyT(squadName) : squadName;
+      const aliveCount = units.filter(u => u.isAlive).length;
+      const totalCount = units.length;
+      const isSel = squadName === selected;
+      const isDef = aliveCount === 0;
+
+      const row = document.createElement("div");
+      row.className = `army-squad-row ${isSel ? 'selected' : ''} ${isDef ? 'defeated' : ''}`;
+      row.innerHTML = `<span class="army-squad-name">${squadLabel}</span><span class="army-squad-count">${aliveCount}/${totalCount}</span>`;
+      if (!isDef) {
+        row.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this._selectSquad(squadName, units, true);
+        });
+      }
+      pList.appendChild(row);
+    }
+
+    eList.innerHTML = "";
+    for (const [squadName, units] of Object.entries(enemySquads)) {
+      const squadLabel = (typeof armyT === "function") ? armyT(squadName) : squadName;
+      const aliveCount = units.filter(u => u.isAlive).length;
+      const totalCount = units.length;
+      const isDef = aliveCount === 0;
+
+      const row = document.createElement("div");
+      row.className = `army-squad-row ${isDef ? 'defeated' : ''}`;
+      row.innerHTML = `<span class="army-squad-name">${squadLabel}</span><span class="army-squad-count">${aliveCount}/${totalCount}</span>`;
+      eList.appendChild(row);
+    }
+  }
+
+  const selLabel = this._domHud.querySelector("#army-selected-squad-label");
+  if (selLabel) {
+    if (this._selectedSquad) {
+      const squadLabel = (typeof armyT === "function") ? armyT(this._selectedSquad.name) : this._selectedSquad.name;
+      selLabel.textContent = T('ArmyBattle.selected', { squad: squadLabel }).replace('\n', ' ');
+    } else {
+      selLabel.textContent = T('ArmyBattle.clickSquad').replace('\n', ' ');
+    }
+  }
+
+  this._updateDOMAbilities();
 };
 
 ArmyBattleField.prototype.startBattle = function () {
@@ -681,6 +990,9 @@ ArmyBattleField.prototype.startBattle = function () {
 
   // Initialize info screen
   this._refreshInfoScreen();
+
+  // Initialize DOM HUD styled with global CSS
+  this.initDOMHud();
 
   // Start battle loop
   this._battleActive = true;
@@ -1025,6 +1337,30 @@ ArmyUnitSprite.normalizeSheet = function (name) {
   return dir + "!$" + file;  // i18n-ignore  asset path
 };
 
+// Sprites that are special animation sequences or VIP characters are not
+// suitable for regular army troops. Reject them so combat units stay coherent.
+ArmyUnitSprite.isAllowedSprite = function (sheet, npcs) {
+  if (!sheet) return false;
+  const s = String(sheet);
+  if (s.startsWith("Animations/") || s.startsWith("Em/")) return false;
+  const file = s.split("/").pop();
+  const clean = file.replace(/^[!$]+/, "");
+  if (/^EM/i.test(clean)) return false;
+  if (npcs && typeof npcs === "object") {
+    const norm = ArmyUnitSprite.normalizeSheet(s);
+    const entry = npcs[s] || npcs[norm];
+    if (entry && (entry.animations || entry.vip)) {
+      return false;
+    }
+    const match = Object.keys(npcs).find(k => k.endsWith("/" + file) || k === file);
+    if (match && npcs[match]) {
+      const me = npcs[match];
+      if (me.animations || me.vip) return false;
+    }
+  }
+  return true;
+};
+
 // Looks up a defined combat troop sprite from NPCs.json (window.WorldGen.NPCs)
 // by matching role, class, and military/fighter archetypes.
 ArmyUnitSprite.findNpcSprite = function (troop, role, npcs) {
@@ -1034,7 +1370,9 @@ ArmyUnitSprite.findNpcSprite = function (troop, role, npcs) {
   const keys = Object.keys(npcs);
   const candidates = keys.filter(k => {
     const e = npcs[k];
-    return e && !e.beta && !e.animations && !e.vehicle;
+    return e && !e.beta && !e.animations && !e.vip && !e.vehicle &&
+      !k.startsWith("Animations/") && !k.startsWith("Em/") &&
+      ArmyUnitSprite.isAllowedSprite(k, npcs);
   });
   if (candidates.length === 0) return null;
   if (r.includes("ranged") || n.includes("archer") || n.includes("sniper") || n.includes("hunter")) {
@@ -1049,20 +1387,20 @@ ArmyUnitSprite.findNpcSprite = function (troop, role, npcs) {
 ArmyUnitSprite.resolveSheet = function (troop, role) {
   let named = troop && troop.spritename;
   const npcs = (typeof window !== "undefined" && window.WorldGen && window.WorldGen.NPCs) || null;
-  if (named) {
+  if (named && ArmyUnitSprite.isAllowedSprite(named, npcs)) {
     if (npcs) {
       if (npcs[named]) return named;
       const norm = ArmyUnitSprite.normalizeSheet(named);
       if (npcs[norm]) return norm;
       const file = named.split("/").pop();
-      const match = Object.keys(npcs).find(k => k.endsWith("/" + file) || k === file);
+      const match = Object.keys(npcs).find(k => (k.endsWith("/" + file) || k === file) && ArmyUnitSprite.isAllowedSprite(k, npcs));
       if (match) return match;
     }
     return ArmyUnitSprite.normalizeSheet(named);
   }
   if (npcs) {
     const defined = ArmyUnitSprite.findNpcSprite(troop, role, npcs);
-    if (defined) {
+    if (defined && ArmyUnitSprite.isAllowedSprite(defined, npcs)) {
       named = defined;
       return ArmyUnitSprite.normalizeSheet(named);
     }
@@ -1077,7 +1415,10 @@ ArmyUnitSprite.prototype._setupFrame = function () {
   const bitmap = this.bitmap;
   if (!bitmap || !bitmap.width) return;
   const file = String(bitmap.url || "").split("/").pop();
-  const big = /^[!$]*\$/.test(file);
+  const cleanFile = decodeURIComponent(file);
+  const big = (typeof ImageManager !== "undefined" && ImageManager.isBigCharacter)
+    ? ImageManager.isBigCharacter(cleanFile)
+    : /^[!$]*\$/.test(cleanFile);
   this._cw = bitmap.width / (big ? 3 : 12);
   this._ch = bitmap.height / (big ? 4 : 8);
   this._blockX = big ? 0 : (this._sheetIndex % 4) * 3 * this._cw;
@@ -1095,8 +1436,9 @@ ArmyUnitSprite.prototype._setupFrame = function () {
 ArmyUnitSprite.prototype._applyFrame = function () {
   if (!this._frameReady) return;
   const row = (this._direction - 2) / 2;
+  const framePattern = this._pattern === 3 ? 1 : this._pattern;
   this.setFrame(
-    this._blockX + this._pattern * this._cw,
+    this._blockX + framePattern * this._cw,
     this._blockY + row * this._ch,
     this._cw,
     this._ch
@@ -1124,7 +1466,7 @@ ArmyUnitSprite.prototype.stepAnimation = function (vx, vy) {
   }
   if (dir !== this._direction || pattern !== this._pattern) {
     this._direction = dir;
-    this._pattern = pattern === 3 ? 1 : pattern;
+    this._pattern = pattern;
     this._applyFrame();
   }
 };
@@ -1235,12 +1577,19 @@ ArmyBattleField.prototype._createUnit = function (troop, x, y, color, isPlayer, 
 ArmyBattleField.prototype.update = function () {
   if (!this._battleActive) return;
 
-  // Check for TAB key to toggle info screen visibility; the field and the
+  // Check for TAB key to toggle sidebar visibility; the field and the
   // HUD take the freed width.
   if (Input.isTriggered("tab")) {
-    this._infoScreen.visible = !this._infoScreen.visible;
-    this._layoutHud();
-    this._applyViewportTransform();
+    this._toggleSidebar();
+  }
+
+  // Update DOM banner timer
+  if (this._domBannerTimer > 0) {
+    this._domBannerTimer--;
+    if (this._domBannerTimer === 0 && this._domHud) {
+      const banner = this._domHud.querySelector("#army-hud-banner");
+      if (banner) banner.classList.remove("active");
+    }
   }
 
   // Process input for zoom and drag
@@ -1361,6 +1710,10 @@ ArmyBattleField.prototype._applyViewportTransform = function () {
   // Update zoom indicator
   if (this._zoomText) {
     this._zoomText.text = T('ArmyBattle.zoom', { pct: Math.round(this._zoom * 100) });
+  }
+  if (this._domHud) {
+    const zEl = this._domHud.querySelector("#army-hud-zoom");
+    if (zEl) zEl.textContent = T('ArmyBattle.zoom', { pct: Math.round(this._zoom * 100) });
   }
 };
 
@@ -1790,6 +2143,12 @@ ArmyBattleField.prototype._countAliveUnits = function () {
 ArmyBattleField.prototype._updateCounters = function () {
   this._playerCounterText.text = T('ArmyBattle.playerArmy', { count: this._playerAliveCount });
   this._enemyCounterText.text = T('ArmyBattle.enemyArmy', { count: this._enemyAliveCount });
+  if (this._domHud) {
+    const pEl = this._domHud.querySelector("#army-player-counter");
+    if (pEl) pEl.textContent = T('ArmyBattle.playerArmy', { count: this._playerAliveCount });
+    const eEl = this._domHud.querySelector("#army-enemy-counter");
+    if (eEl) eEl.textContent = T('ArmyBattle.enemyArmy', { count: this._enemyAliveCount });
+  }
 };
 
 ArmyBattleField.prototype._checkBattleEnd = function () {
@@ -1810,6 +2169,8 @@ ArmyBattleField.prototype._endBattle = function (result) {
   this._resultText.text = T(result === "victory" ? 'ArmyBattle.victory' : 'ArmyBattle.defeat');
   this._resultText.style.fill = result === "victory" ? 0x00FF00 : 0xFF0000;
   this._resultText.visible = true;
+
+  this._showDOMResult(result);
 };
 
 ArmyBattleField.prototype.isBattleEnded = function () {
@@ -1995,6 +2356,7 @@ ArmyBattleField.prototype._updateParticles = function () {
 // textures, so a recursive destroy is safe (no shared/cached base textures).
 ArmyBattleField.prototype.destroyField = function () {
   if (this._destroyed) return;
+  this.destroyDOMHud();
 
   // Restore any outstanding "Inspire" attack boosts so the persistent army
   // troop stats keep their exact original value if the scene is torn down
@@ -2136,12 +2498,14 @@ ArmyBattleField.prototype._rallyTroops = function () {
   }
 
   // Visual feedback
+  const banner = T('ArmyBattle.rallyBanner', { count: ralliedCount });
   this._createParticle(
     this._battleWidth / 2,
     this._battleHeight - 200,
     0xFFFF00,
-    T('ArmyBattle.rallyBanner', { count: ralliedCount })
+    banner
   );
+  this._showDOMBanner(banner);
 };
 
 ArmyBattleField.prototype._healSquad = function () {
@@ -2156,12 +2520,14 @@ ArmyBattleField.prototype._healSquad = function () {
   }
 
   // Visual feedback
+  const banner = T('ArmyBattle.healBanner', { count: healedCount });
   this._createParticle(
     this._battleWidth / 2,
     this._battleHeight - 200,
     0x00FF00,
-    T('ArmyBattle.healBanner', { count: healedCount })
+    banner
   );
+  this._showDOMBanner(banner);
 };
 
 ArmyBattleField.prototype._inspireTroops = function () {
@@ -2181,13 +2547,14 @@ ArmyBattleField.prototype._inspireTroops = function () {
   }
 
   // Visual feedback
+  const banner = T('ArmyBattle.inspireBanner');
   this._createParticle(
     this._battleWidth / 2,
     this._battleHeight - 200,
     0xFF8800,
-    T('ArmyBattle.inspireBanner')
+    banner
   );
-
+  this._showDOMBanner(banner);
 };
 
 // Counts each unit's Inspire down and gives its attack back when it ends.
@@ -2214,6 +2581,7 @@ ArmyBattleField.prototype._updateAbilityCooldowns = function () {
       text.style.fill = 0x00FF00; // Green when ready
     }
   }
+  this._updateDOMAbilities();
 };
 
 //=============================================================================
@@ -2237,6 +2605,7 @@ ArmyBattleField.prototype._refreshInfoScreen = function () {
 
   // Refresh command panel
   this._refreshCommandPanel();
+  this._refreshDOMHud();
 };
 
 ArmyBattleField.prototype._buildInfoSquadTexts = function (playerSquads, enemySquads) {
@@ -2302,6 +2671,7 @@ ArmyBattleField.prototype._selectSquad = function (squadName, units, isPlayer) {
   if (this._infoPlayerSquadTexts) {
     this._updateSquadTexts(this._infoPlayerSquadTexts, this._groupUnitsBySquad(this._playerUnits));
   }
+  this._refreshDOMHud();
 };
 
 // Keyboard and pad orders: Confirm walks the player's squads that still have
@@ -2399,39 +2769,51 @@ ArmyBattleField.prototype._executeSquadCommand = function (action) {
   const squad = (typeof armyT === "function") ? armyT(this._selectedSquad.name) : this._selectedSquad.name;
 
   switch (action) {
-    case "hold":
+    case "hold": {
       // Set units to hold position (stop moving)
       for (const unit of units) {
         unit.holdPosition = true;
         this._setDefending(unit, false);
       }
-      this._createParticle(cx, cy, 0xFFFF00, T('ArmyBattle.order.hold', { squad }));
+      const banner = T('ArmyBattle.order.hold', { squad });
+      this._createParticle(cx, cy, 0xFFFF00, banner);
+      this._showDOMBanner(banner);
       break;
+    }
 
-    case "aggressive":
+    case "aggressive": {
       for (const unit of units) {
         unit.holdPosition = false;
         unit.morale = Math.min(100, unit.morale + 10);
         this._setDefending(unit, false);
       }
-      this._createParticle(cx, cy, 0xFF0000, T('ArmyBattle.order.attack', { squad }));
+      const banner = T('ArmyBattle.order.attack', { squad });
+      this._createParticle(cx, cy, 0xFF0000, banner);
+      this._showDOMBanner(banner);
       break;
+    }
 
-    case "defensive":
+    case "defensive": {
       for (const unit of units) {
         unit.holdPosition = true;
         this._setDefending(unit, true);
       }
-      this._createParticle(cx, cy, 0x66AAFF, T('ArmyBattle.order.defend', { squad }));
+      const banner = T('ArmyBattle.order.defend', { squad });
+      this._createParticle(cx, cy, 0x66AAFF, banner);
+      this._showDOMBanner(banner);
       break;
+    }
 
-    case "retreat":
+    case "retreat": {
       for (const unit of units) {
         unit.holdPosition = false;
         unit.isRouting = true;
         this._setDefending(unit, false);
       }
-      this._createParticle(cx, cy, 0x888888, T('ArmyBattle.order.retreat', { squad }));
+      const banner = T('ArmyBattle.order.retreat', { squad });
+      this._createParticle(cx, cy, 0x888888, banner);
+      this._showDOMBanner(banner);
       break;
+    }
   }
 };

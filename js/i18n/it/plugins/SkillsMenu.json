@@ -158,6 +158,19 @@
     "randomApplied": "Sincronizzate {n} abilità casuali.",
     "statLocked": "{name} richiede {stat} base; il personaggio ha {value}."
   },
+  "sync": {
+    "label": "Sincronizzazione automatica",
+    "manual": "Manuale",
+    "best": "Migliori",
+    "auto": "Automatica",
+    "manualDesc": "Selezione manuale: le nuove abilità occupano solo gli slot liberi.",
+    "bestDesc": "Sincronizza le migliori abilità contro i nemici a inizio battaglia.",
+    "autoDesc": "Sincronizza automaticamente le migliori al salire di livello o all'apprendimento.",
+    "lock": "Blocca",
+    "unlock": "Sblocca",
+    "locked": "Bloccata",
+    "synced": "Abilità sincronizzate automaticamente."
+  },
   "tag": {
     "field": "Campo"
   },
