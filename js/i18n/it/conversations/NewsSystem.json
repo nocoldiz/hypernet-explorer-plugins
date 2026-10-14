@@ -87,6 +87,8 @@
     "recordInDepth": "DETTAGLIO ANNALE",
     "noHistory": "Questo mondo non ha ancora una storia scritta.",
     "historyFooter": "{count} voci negli annali del mondo",
+    "allPastNews": "TUTTE LE NOTIZIE PASSATE",
+    "byYear": "PER ANNO",
     "knowledgeTitle": "Conoscenza di attualità"
   },
   "specialLocations": [

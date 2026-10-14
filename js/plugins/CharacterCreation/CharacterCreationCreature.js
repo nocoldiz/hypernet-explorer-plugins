@@ -940,6 +940,10 @@
             back: window.CCButtons.button(window.CCButtons.backLabel(), {
               onclick: "SceneManager._scene.onCreationCancel()",
             }),
+            middle: window.CCButtons.button(T('CharCreate.randomize') || 'Randomize', {
+              onclick: "SceneManager._scene.onModeRandom()",
+              cls: "cc-btn-random focusable",
+            }),
             next: window.CCButtons.button(window.CCButtons.continueLabel(), {
               onclick: "SceneManager._scene.onModeCardConfirm()",
               confirm: true,
@@ -1184,6 +1188,10 @@
             back: window.CCButtons.button(window.CCButtons.backLabel(), {
               onclick: "SceneManager._scene.onArchetypeCancel()",
             }),
+            middle: window.CCButtons.button(T('CharCreate.randomize') || 'Randomize', {
+              onclick: "SceneManager._scene.onArchetypeRandom()",
+              cls: "cc-btn-random focusable",
+            }),
             next: window.CCButtons.button(window.CCButtons.continueLabel(), {
               onclick: "SceneManager._scene.onArchetypeConfirm()",
               confirm: true,
@@ -1275,6 +1283,10 @@
             back: window.CCButtons.button(window.CCButtons.backLabel(), {
               onclick: "SceneManager._scene.onBattlerCancel()",
             }),
+            middle: window.CCButtons.button(T('CharCreate.randomize') || 'Randomize', {
+              onclick: "SceneManager._scene.onBattlerRandom()",
+              cls: "cc-btn-random focusable",
+            }),
             next: window.CCButtons.button(window.CCButtons.continueLabel(), {
               onclick: "SceneManager._scene.onBattlerOk()",
               confirm: true,
@@ -1330,6 +1342,10 @@
           ${window.CCButtons.panel({
             back: window.CCButtons.button(window.CCButtons.backLabel(), {
               onclick: "SceneManager._scene.onCharacterCancel()",
+            }),
+            middle: window.CCButtons.button(T('CharCreate.randomize') || 'Randomize', {
+              onclick: "SceneManager._scene.onCharacterRandom()",
+              cls: "cc-btn-random focusable",
             }),
             next: window.CCButtons.button(window.CCButtons.continueLabel(), {
               onclick: "SceneManager._scene.onCharacterOk()",
@@ -2182,6 +2198,31 @@
     this.refreshUIOverlayDOM();
   };
 
+  Scene_CreateCreature.prototype.onModeRandom = function () {
+    const isHybrid = Math.random() < 0.5;
+    this._mode = isHybrid ? 'hybrid' : 'baseline';
+    this.showStep(1);
+    SoundManager.playCursor();
+  };
+
+  Scene_CreateCreature.prototype.onArchetypeRandom = function () {
+    if (!this._archetypeWindow || !this._archetypeWindow._data) return;
+    const data = this._archetypeWindow._data.filter(Boolean);
+    if (!data.length) return;
+    const idx1 = Math.floor(Math.random() * data.length);
+    this._selectedArchetype1 = data[idx1].key;
+    if (Math.random() < 0.5 && data.length > 1) {
+      let idx2 = Math.floor(Math.random() * data.length);
+      if (idx2 === idx1) idx2 = (idx2 + 1) % data.length;
+      this._selectedArchetype2 = data[idx2].key;
+    } else {
+      this._selectedArchetype2 = null;
+    }
+    this._archetypeWindow.select(idx1);
+    SoundManager.playCursor();
+    this.refreshUIOverlayDOM();
+  };
+
   Scene_CreateCreature.prototype.onArchetypeConfirm = function () {
     if (!this._selectedArchetype1) return; // need at least one archetype
     // Resolve the final creation mode from how many archetypes were chosen.
@@ -2192,6 +2233,31 @@
   Scene_CreateCreature.prototype.onArchetypeCancel = function () {
     // The archetype screen is now the first step, so Back aborts creature creation.
     this.onCreationCancel();
+  };
+
+  Scene_CreateCreature.prototype.onBattlerRandom = function () {
+    if (!this._battlerListWindow || !this._battlerListWindow._data) return;
+    const count = this._battlerListWindow._data.length;
+    if (count <= 0) return;
+    const cur = this._battlerListWindow.index();
+    let next = Math.floor(Math.random() * count);
+    if (count > 1 && next === cur) next = (next + 1) % count;
+    this._battlerListWindow.select(next);
+    if (typeof this.onBattlerSelect === 'function') this.onBattlerSelect();
+    SoundManager.playCursor();
+    this.refreshUIOverlayDOM();
+  };
+
+  Scene_CreateCreature.prototype.onCharacterRandom = function () {
+    if (!this._characterWindow || !this._characterWindow._images) return;
+    const count = this._characterWindow._images.length;
+    if (count <= 0) return;
+    const cur = this._characterWindow.index();
+    let next = Math.floor(Math.random() * count);
+    if (count > 1 && next === cur) next = (next + 1) % count;
+    this._characterWindow.select(next);
+    SoundManager.playCursor();
+    this.refreshUIOverlayDOM();
   };
 
   Scene_CreateCreature.prototype.onBattlerSelect = function () {

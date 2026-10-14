@@ -11,6 +11,7 @@
     {"id":"marketGrimorie","hyperpower":"Hypercapitalist Collective","tone":"serious","city":"Amsterdam","founded":1902,"staff":3,"masthead":"playfair","headline":"playfair","accent":"#7a5a12"},
     {"id":"hypernetWeekly","hyperpower":"Hypercapitalist Collective","tone":"playful","city":"Eindhoven","founded":1995,"staff":3,"masthead":"oswald","headline":"oswald","accent":"#0f5c6e"},
     {"id":"towerDispatch","hyperpower":"Archive Foundation","tone":"serious","city":"Omega Tower","founded":2000,"staff":3,"masthead":"fell","headline":"oldstandard","accent":"#2f3d2a"},
+    {"id":"archiveFoundationBulletin","hyperpower":"Archive Foundation","tone":"serious","city":"Omega Tower","founded":1900,"staff":3,"masthead":"fell","headline":"oldstandard","accent":"#5d7a8c"},
     {"id":"iskraNova","hyperpower":"USSR","tone":"serious","city":"Belgrado","founded":1946,"staff":3,"masthead":"oswald","headline":"oswald","accent":"#a51d12"},
     {"id":"dublinArcanum","hyperpower":"Mages Guild","tone":"serious","city":"Dublin","founded":1888,"staff":3,"masthead":"fell","headline":"playfair","accent":"#1f4a3a"},
     {"id":"sublimeGazette","hyperpower":"Ottoman Empire","tone":"serious","city":"Tunisi","founded":1831,"staff":3,"masthead":"fell","headline":"playfair","accent":"#7a1f3d"},

@@ -5370,6 +5370,7 @@
     function getSwitchableMembers() {
         return ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [];
     }
+    SkillMaster.getSwitchableMembers = getSwitchableMembers;
 
     const Scene_SkillEncyclopedia = window.Scene_SkillEncyclopedia || function () {
         this.initialize(...arguments);
@@ -9391,7 +9392,10 @@
             <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeCraftBench()">${esc(tr('back'))}</div>
               <h2 class="title">${esc(craftTitle)}</h2>
-              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                <div class="inspect-btn focusable sm-bench-random-btn" onclick="SceneManager._scene.craftRandomize()">${esc(tr('randomize'))}</div>
+                <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              </div>
             </div>
             <div class="backpack-tabs-row sm-bench-tabs">
               <div class="backpack-tab sm-bench-tab focusable ${spell ? 'active' : ''}" onclick="SceneManager._scene.openCraftBench('spell')">${esc(tr('titleSpell'))}</div>
@@ -11397,6 +11401,20 @@
         this.refreshUISkillDOM();
     };
 
+    Proto.enchantRandomize = function () {
+        const slots = this.enchantSlots();
+        if (slots && slots.length) {
+            const rIdx = Math.floor(Math.random() * slots.length);
+            this.enchantSelectSlot(rIdx);
+        }
+        const spells = this.enchantSpells();
+        if (spells && spells.length) {
+            this._enchantSpellIndex = Math.floor(Math.random() * spells.length);
+        }
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
     // The glyph each heading of the bench wears, the way the character sheet
     // heads its sections.
     const ENCHANT_ICONS = { weapon: 97, armor: 135, book: 189, bound: 183 };
@@ -11460,7 +11478,10 @@
             <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeEnchantBench()">${esc(tr('back'))}</div>
               <h2 class="title">${esc(tr('title' + kindWord))}</h2>
-              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                <div class="inspect-btn focusable sm-bench-random-btn" onclick="SceneManager._scene.enchantRandomize()">${esc(tr('randomize'))}</div>
+                <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              </div>
             </div>
             <div class="backpack-tabs-row sm-bench-tabs">
               <div class="backpack-tab sm-bench-tab focusable ${kind === 'weapon' ? 'active' : ''}" onclick="SceneManager._scene.openEnchantBench('weapon')">${esc(tr('titleWeapon'))}</div>
@@ -12143,6 +12164,34 @@
         this.refreshUISkillDOM();
     };
 
+    Proto.writeRandomize = function () {
+        const members = (typeof getSwitchableMembers === 'function') ? getSwitchableMembers() : ($gameParty ? $gameParty.members() : []);
+        if (members && members.length) {
+            const rMember = members[Math.floor(Math.random() * members.length)];
+            if (rMember) this._writeAuthorId = rMember.actorId();
+        }
+        const candidates = this.writeCandidateSkills();
+        if (candidates && candidates.length) {
+            const shuffled = candidates.slice().sort(() => Math.random() - 0.5);
+            const count = Math.min(shuffled.length, Math.floor(Math.random() * 5) + 1);
+            this._writeChosen = shuffled.slice(0, count).map(s => s.id);
+        } else {
+            this._writeChosen = [];
+        }
+        const bank = (typeof BOOK_TEXTURES !== 'undefined') ? BOOK_TEXTURES : [];
+        if (bank.length) {
+            this._writeCover = bank[Math.floor(Math.random() * bank.length)];
+        }
+        const chosen = this.writeChosenSkills();
+        if (chosen.length) {
+            this._writeIcon = chosen[Math.floor(Math.random() * chosen.length)].iconIndex;
+        }
+        const salt = Math.floor(Math.random() * 0xFFFFFF);
+        this._writeTitle = rollVolumeName(this._writeKind, chosen, salt);
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
     Proto.openWriteTextSheet = function (field) {
         if (typeof this.openCraftTextSheet !== 'function') return;
         this.openCraftTextSheet(field || 'name', null, (val) => {
@@ -12470,6 +12519,7 @@
                     })}
                 </div>
                 <div class="inspect-actions ui-panel-actions" style="margin-top: 12px;">
+                    <div class="inspect-btn focusable" onclick="SceneManager._scene.writeRandomize()">${esc(tr('randomize'))}</div>
                     <div class="inspect-btn focusable" onclick="SceneManager._scene.writeRerollTitle()">${esc(tr('rerollTitle'))}</div>
                 </div>`;
         }
@@ -12513,6 +12563,7 @@
                 </div>
             </div>
             <div class="inspect-actions sm-forge-actions">
+                <div class="inspect-btn focusable" onclick="SceneManager._scene.writeRandomize()">${esc(tr('randomize'))}</div>
                 <div class="inspect-btn focusable sm-write-commit-btn ${afford ? '' : 'unusable'}" onclick="SceneManager._scene.writeCommit()">
                     ${esc(tr('scribeAction'))} <span class="sm-forge-cost">&middot; ${cost} KP</span>
                 </div>
@@ -12570,7 +12621,10 @@
             <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeWriteBench()">${esc(tr('back'))}</div>
               <h2 class="title">${esc(tr('title' + word))}</h2>
-              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                <div class="inspect-btn focusable sm-bench-random-btn" onclick="SceneManager._scene.writeRandomize()">${esc(tr('randomize'))}</div>
+                <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              </div>
             </div>
             ${stepperHTML}
             ${activePaneHTML}`;
@@ -13112,6 +13166,15 @@
             </div>`;
     };
 
+    Proto.exprRandomize = function () {
+        const actor = this.exprActor();
+        const E = exprApi();
+        if (!actor || !E || typeof E.randomize !== 'function') return;
+        E.randomize(actor);
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
     Proto.renderExpressionBench = function (knowledge) {
         const leftBox = document.getElementById('left-page-content');
         const rightBox = document.getElementById('right-page-content');
@@ -13164,7 +13227,10 @@
             <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.${this._exprArgFor ? 'exprCloseArg' : 'closeExpressionBench'}()">${esc(T('SkillMaster.back'))}</div>
               <h2 class="title">${esc(exprT('benchTitle', { name: actor.name() }))}</h2>
-              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                <div class="inspect-btn focusable sm-bench-random-btn" onclick="SceneManager._scene.exprRandomize()">${esc(exprT('randomize') || 'Randomize')}</div>
+                <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              </div>
             </div>
             <div class="backpack-tabs sm-expr-tabs">${tabsHTML}</div>
             ${destHTML}
@@ -13257,8 +13323,13 @@
                 <div class="cc-bio-note sm-expr-final">${esc(finText)}</div>
                 <div class="cc-bio-note sm-expr-note">${esc(exprT('alwaysFires'))}</div>
             </div>
-            <div class="inspect-btn sm-expr-finalize focusable${check.ok ? '' : ' inspect-btn--disabled'}${lit(finalizeIdx)}"
-                 data-ra="${finalizeIdx}" onclick="SceneManager._scene.exprRun(${finalizeIdx})">${esc(exprT('finalize', { kp: check.cost }))}</div>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+                <div class="inspect-btn focusable" style="flex: 1; text-align: center;"
+                     onclick="SceneManager._scene.exprRandomize()">${esc(exprT('randomize') || 'Randomize')}</div>
+                <div class="inspect-btn sm-expr-finalize focusable${check.ok ? '' : ' inspect-btn--disabled'}${lit(finalizeIdx)}"
+                     style="flex: 2;"
+                     data-ra="${finalizeIdx}" onclick="SceneManager._scene.exprRun(${finalizeIdx})">${esc(exprT('finalize', { kp: check.cost }))}</div>
+            </div>
             ${check.ok ? '' : `<div class="cc-bio-note sm-expr-reason">${esc(exprT('refusal.' + check.reason, { kp: check.cost }))}</div>`}`;
 
         const cursorEl = this._exprArgFor ? leftBox.querySelector('.sm-craft-entry--cursor')
@@ -13641,6 +13712,7 @@
         this._viewMode = 'lobotomagic';
         this._loboIndex = 0;
         this._loboArmed = -1;
+        this._loboFilter = 'all';
         SoundManager.playOk();
         this.refreshUISkillDOM();
     };
@@ -13657,8 +13729,59 @@
         this.refreshUISkillDOM();
     };
 
+    Proto.loboSelect = function (idx) {
+        if (this._loboIndex === idx) return;
+        this._loboIndex = idx;
+        this._loboArmed = -1;
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.loboDisarm = function () {
+        if (this._loboArmed < 0) return;
+        this._loboArmed = -1;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.loboSetFilter = function (filter) {
+        if (this._loboFilter === filter) return;
+        this._loboFilter = filter;
+        this._loboIndex = 0;
+        this._loboArmed = -1;
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.loboRandomize = function () {
+        let rows = this.lobotomagicRows();
+        if (!rows || !rows.length) {
+            if (this._loboFilter !== 'all') {
+                this._loboFilter = 'all';
+                rows = this.lobotomagicRows();
+            }
+        }
+        if (!rows || !rows.length) {
+            SoundManager.playBuzzer();
+            return;
+        }
+        this._loboIndex = Math.floor(Math.random() * rows.length);
+        this._loboArmed = -1;
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+        this.scrollToActiveItem('lobotomagic-skill-box',
+            '#lobotomagic-skill-box .focused, #lobotomagic-skill-box .selected');
+    };
+
     Proto.lobotomagicRows = function () {
-        return forgettableSkills(this.lobotomagicActor());
+        const all = forgettableSkills(this.lobotomagicActor());
+        const filter = this._loboFilter || 'all';
+        if (filter === 'all') return all;
+        return all.filter(r => {
+            const cat = SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(r.skill.id) : null;
+            const isSpell = SkillMaster.getCategoryType ? SkillMaster.getCategoryType(cat) === 'Magic' : (r.skill.mpCost > 0);
+            return filter === 'magic' ? isSpell : !isSpell;
+        });
     };
 
     Proto.lobotomagicAt = function (idx) {
@@ -13709,16 +13832,78 @@
         const rows = this.lobotomagicRows();
         this._loboIndex = Math.max(0, Math.min(this._loboIndex || 0, rows.length - 1));
 
+        const members = (typeof getSwitchableMembers === 'function') ? getSwitchableMembers() : (SkillMaster.getSwitchableMembers ? SkillMaster.getSwitchableMembers() : (($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : ($gameParty ? $gameParty.members() : [])));
+        let memberTabsHTML = '';
+        if (members && members.length > 0) {
+            memberTabsHTML = `
+                <div class="backpack-tabs-row sm-bench-tabs">
+                    ${members.map((m, idx) => {
+                        const isSel = actor && m.actorId() === actor.actorId();
+                        return `<div class="backpack-tab sm-bench-tab focusable ${isSel ? 'active' : ''}" onclick="SceneManager._scene.switchTeachActor(${idx})">${esc(m.name())}</div>`;
+                    }).join('')}
+                </div>`;
+        }
+
+        const allSkills = forgettableSkills(actor);
+        let magicCount = 0;
+        let skillCount = 0;
+        allSkills.forEach(r => {
+            const cat = SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(r.skill.id) : null;
+            const isSpell = SkillMaster.getCategoryType ? SkillMaster.getCategoryType(cat) === 'Magic' : (r.skill.mpCost > 0);
+            if (isSpell) magicCount++;
+            else skillCount++;
+        });
+        const curFilter = this._loboFilter || 'all';
+        const filterChipsHTML = `
+            <div class="sm-bench-filter-chips ui-chip-row">
+                <span class="ui-chip sm-bench-filter-chip focusable ${curFilter === 'all' ? 'active' : ''}"
+                      onclick="SceneManager._scene.loboSetFilter('all')">
+                    ${esc(tr('filterAll'))} (${allSkills.length})
+                </span>
+                <span class="ui-chip sm-bench-filter-chip focusable ${curFilter === 'magic' ? 'active' : ''}"
+                      onclick="SceneManager._scene.loboSetFilter('magic')">
+                    ${esc(tr('filterMagic'))} (${magicCount})
+                </span>
+                <span class="ui-chip sm-bench-filter-chip focusable ${curFilter === 'skill' ? 'active' : ''}"
+                      onclick="SceneManager._scene.loboSetFilter('skill')">
+                    ${esc(tr('filterSkill'))} (${skillCount})
+                </span>
+            </div>`;
+
         let listHTML = '';
         rows.forEach((row, idx) => {
-            const on = (this._loboIndex || 0) === idx;
-            const armed = this._loboArmed === idx;
+            const isSel = (this._loboIndex || 0) === idx;
+            const isArmed = this._loboArmed === idx;
+            const skill = row.skill;
+            const cat = SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(skill.id) : null;
+            const school = cat ? SkillMaster.getCategoryDisplayName(cat) : (skill.damage && skill.damage.elementId > 0 && $dataSystem && $dataSystem.elements ? $dataSystem.elements[skill.damage.elementId] : tr('skillCategory'));
+            const costStr = skill.mpCost > 0 ? `${skill.mpCost} MP` : (skill.tpCost > 0 ? `${skill.tpCost} AP` : '0 MP');
+            const relearn = actor && $gameSystem ? $gameSystem.getSkillKnowledgeCost(skill.id, actor.actorId()) : 0;
+            const desc = (skill.description || '').replace(/\n/g, ' ');
+
             listHTML += `
-                <div class="sm-skill-row sm-craft-entry ${on ? 'sm-craft-entry--cursor' : ''}">
-                    <span class="sm-skill-ident"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(row.skill.iconIndex)}"></span><span class="sm-skill-name">${esc(tx(row.skill.name))}</span></span>
-                    <span class="sm-forge-cost">+${row.kp} KP</span>
-                    <span class="ui-chip sm-skill-badge focusable sm-craft-discard${on ? ' focused' : ''}"
-                        onclick="SceneManager._scene.lobotomagicTake(${idx})">${esc(tr(armed ? 'confirm' : 'forget'))}</span>
+                <div class="sm-craft-card-opt focusable ${isSel ? 'selected' : ''} ${isArmed ? 'is-armed' : ''}"
+                     onclick="SceneManager._scene.loboSelect(${idx})"
+                     title="${esc(desc)}"
+                     style="margin-bottom: 8px;">
+                    <div class="sm-craft-opt-header">
+                        <strong class="sm-craft-opt-name">
+                            <span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(skill.iconIndex)}"></span>
+                            ${esc(tx(skill.name))}
+                        </strong>
+                        <span class="ui-chip sm-skill-badge focusable sm-craft-discard${isSel ? ' focused' : ''}"
+                              onclick="event.stopPropagation(); SceneManager._scene.lobotomagicTake(${idx})"
+                              title="${esc(tr(isArmed ? 'confirm' : 'forget'))}">
+                            ${esc(tr(isArmed ? 'confirm' : 'forget'))}
+                        </span>
+                    </div>
+                    <div class="inspect-quick-pills inspect-pill-block">
+                        <span class="inspect-meta-item inspect-pill inspect-pill--school"><span class="inspect-pill-lbl">${esc(tr('school'))}:</span> <span class="inspect-meta-val inspect-pill-val">${esc(school)}</span></span>
+                        <span class="inspect-meta-item inspect-pill inspect-pill--gain"><span class="inspect-pill-lbl">${esc(tr('refund'))}:</span> <span class="inspect-meta-val inspect-pill-val">+${row.kp} KP</span></span>
+                        <span class="inspect-meta-item inspect-pill inspect-pill--cost"><span class="inspect-meta-val inspect-pill-val">${esc(costStr)}</span></span>
+                        <span class="inspect-meta-item inspect-pill inspect-pill--kp"><span class="inspect-pill-lbl">${esc(tr('relearn'))}:</span> <span class="inspect-meta-val inspect-pill-val">${relearn} KP</span></span>
+                    </div>
+                    ${desc ? `<div class="sm-craft-opt-desc">${esc(desc)}</div>` : ''}
                 </div>`;
         });
         if (!listHTML) listHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('nothing'))}</div></div>`;
@@ -13727,8 +13912,13 @@
             <div class="page-header-bar sm-bench-header">
               <div class="back-button focusable" onclick="SceneManager._scene.closeLobotomagicBench()">${esc(tr('back'))}</div>
               <h2 class="title">${esc(tr('title'))}</h2>
-              <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+                <div class="inspect-btn focusable sm-bench-random-btn" onclick="SceneManager._scene.loboRandomize()">${esc(tr('randomize'))}</div>
+                <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
+              </div>
             </div>
+            ${memberTabsHTML}
+            ${filterChipsHTML}
             <div class="sm-enchant-blurb cc-bio-note">${esc(tr('blurb', { pct: Math.round(LOBO_REFUND_RATE * 100) }))}</div>
             <div id="lobotomagic-skill-box" class="ui-list ui-scroll sm-forged-list sm-forged-list--fill">
                 ${listHTML}
@@ -13738,16 +13928,39 @@
         let detailHTML = `<div class="ui-empty"><div class="ui-empty-text">${esc(tr('pickSkill'))}</div></div>`;
         if (focused && actor) {
             const skill = focused.skill;
-            const category = SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(skill.id) : null;
-            const teach = $gameSystem.getSkillKnowledgeCost(skill.id, actor.actorId());
+            const cat = SkillMaster.getSkillCategory ? SkillMaster.getSkillCategory(skill.id) : null;
+            const school = cat ? SkillMaster.getCategoryDisplayName(cat) : (skill.damage && skill.damage.elementId > 0 && $dataSystem && $dataSystem.elements ? $dataSystem.elements[skill.damage.elementId] : tr('skillCategory'));
+            const costStr = skill.mpCost > 0 ? `${skill.mpCost} MP` : (skill.tpCost > 0 ? `${skill.tpCost} AP` : '0 MP');
+            const teach = $gameSystem ? $gameSystem.getSkillKnowledgeCost(skill.id, actor.actorId()) : 0;
+            const isArmed = this._loboArmed === (this._loboIndex || 0);
+            const desc = (skill.description || '').replace(/\n/g, ' ');
+
             detailHTML = `
-                ${K.title(skill.iconIndex, tx(skill.name))}
-                ${K.stats([
-                    { label: tr('refund'), value: `${focused.kp} KP` },
-                    { label: tr('relearn'), value: `${teach} KP` },
-                    category ? { label: tr('school'), value: SkillMaster.getCategoryDisplayName(category) } : null
-                ], 3)}
-                ${this._loboArmed === this._loboIndex ? `<div class="sm-craft-block">${esc(tr('warning', { name: actor.name() }))}</div>` : ''}`;
+                <div class="sm-lobo-preview-card" style="border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 8px; background: rgba(0, 0, 0, 0.28); padding: 16px; margin-bottom: 14px;">
+                    ${K.title(skill.iconIndex, tx(skill.name))}
+                    ${K.stats([
+                        { label: tr('refund'), value: `+${focused.kp} KP` },
+                        { label: tr('relearn'), value: `${teach} KP` },
+                        { label: tr('school'), value: school },
+                        { label: tr('cost'), value: costStr }
+                    ], 4)}
+                    ${desc ? `<div class="sm-craft-opt-desc" style="margin-top: 12px; font-size: 1.15rem; line-height: 1.5; color: rgba(240, 240, 240, 0.95);">${esc(desc)}</div>` : ''}
+                    ${isArmed ? `
+                        <div class="sm-craft-block sm-craft-warning" style="margin-top: 14px; padding: 12px 14px; border-left: 3px solid #f87171; background: rgba(231, 76, 60, 0.15); border-radius: 4px; line-height: 1.45; color: #ffcccc;">
+                            <strong>${esc(tr('warning', { name: actor.name() }))}</strong>
+                        </div>` : `
+                        <div class="sm-enchant-blurb cc-bio-note" style="margin-top: 14px;">
+                            ${esc(tr('blurb', { pct: Math.round(LOBO_REFUND_RATE * 100) }))}
+                        </div>`}
+                </div>
+                <div class="inspect-actions sm-forge-actions" style="display: flex; gap: 10px; margin-top: 10px;">
+                    ${isArmed ? `<div class="inspect-btn focusable" onclick="SceneManager._scene.loboDisarm()">${esc(tr('back'))}</div>` : ''}
+                    <div class="inspect-btn focusable ${isArmed ? 'inspect-btn--danger' : 'inspect-btn--primary'}"
+                         onclick="SceneManager._scene.lobotomagicTake(${this._loboIndex || 0})"
+                         style="flex: 1; text-align: center; font-weight: bold; cursor: pointer;">
+                        ${esc(isArmed ? (tr('confirmAction', { kp: focused.kp }) || `${tr('confirm')} (+${focused.kp} KP)`) : (tr('forgetAction', { kp: focused.kp }) || `${tr('forget')} (+${focused.kp} KP)`))}
+                    </div>
+                </div>`;
         }
 
         rightBox.innerHTML = `
@@ -13769,6 +13982,13 @@
                 return;
             }
             this.closeLobotomagicBench();
+            return;
+        }
+        if (Input.isTriggered('shift')) {
+            const filters = ['all', 'magic', 'skill'];
+            const curIdx = filters.indexOf(this._loboFilter || 'all');
+            const nextFilter = filters[(curIdx + 1) % filters.length];
+            this.loboSetFilter(nextFilter);
             return;
         }
         // Left and right walk the party, the same as the switcher tabs.
@@ -13800,7 +14020,7 @@
             this._lastRightKnowledge = null;
             this.refreshUISkillDOM();
             this.scrollToActiveItem('lobotomagic-skill-box',
-                '#lobotomagic-skill-box .focused, #lobotomagic-skill-box .sm-craft-entry--cursor'); // i18n-ignore: CSS selector
+                '#lobotomagic-skill-box .focused, #lobotomagic-skill-box .selected, #lobotomagic-skill-box .sm-craft-entry--cursor'); // i18n-ignore: CSS selector
             return;
         }
         if (Input.isTriggered('ok') || Input.isTriggered('enter')) {

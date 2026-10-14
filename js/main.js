@@ -2,6 +2,26 @@
 // main.js v1.8.0
 //=============================================================================
 
+// Polyfill process.mainModule when running on modern NW.js (e.g. NW.js 0.82+ on macOS Apple Silicon)
+// where process.mainModule was removed by newer Node.js versions.
+if (typeof process === "object" && process) {
+    if (!process.mainModule || !process.mainModule.filename) {
+        let appDir = "";
+        try {
+            if (typeof nw === "object" && nw.App && nw.App.startPath) {
+                appDir = nw.App.startPath;
+            } else if (typeof process.cwd === "function") {
+                appDir = process.cwd();
+            }
+        } catch (e) {
+            appDir = ".";
+        }
+        const _nodePath = typeof require === "function" ? require("path") : null;
+        const _filename = _nodePath ? _nodePath.join(appDir, "package.json") : (appDir + "/package.json");
+        process.mainModule = { filename: _filename };
+    }
+}
+
 const scriptUrls = [
     "js/libs/pixi.js",
     "js/libs/pako.min.js",
@@ -352,16 +372,20 @@ class Main {
     }
 
     onWindowLoad() {
-        if (!this.xhrSucceeded) {
-            const message = "Your browser does not allow to read local files.";
-            this.printError("Error", message);
-        } else if (this.isPathRandomized()) {
-            const message = "Please move the Game.app to a different folder.";
-            this.printError("Error", message);
-        } else if (this.error) {
-            this.printError(this.error.name, this.error.message);
-        } else {
-            this.initEffekseerRuntime();
+        try {
+            if (!this.xhrSucceeded) {
+                const message = "Your browser does not allow to read local files.";
+                this.printError("Error", message);
+            } else if (this.isPathRandomized()) {
+                const message = "Please move the Game.app to a different folder.";
+                this.printError("Error", message);
+            } else if (this.error) {
+                this.printError(this.error.name, this.error.message);
+            } else {
+                this.initEffekseerRuntime();
+            }
+        } catch (err) {
+            this.printError(err.name || "Error", err.message || String(err));
         }
     }
 
@@ -374,10 +398,17 @@ class Main {
     isPathRandomized() {
         // [Note] We cannot save the game properly when Gatekeeper Path
         //   Randomization is in effect.
-        return (
-            typeof process === "object" &&
-            process.mainModule.filename.startsWith("/private/var")
-        );
+        try {
+            if (typeof process !== "object" || !process) {
+                return false;
+            }
+            const fn = (process.mainModule && typeof process.mainModule.filename === "string")
+                ? process.mainModule.filename
+                : (typeof process.execPath === "string" ? process.execPath : "");
+            return fn.startsWith("/private/var");
+        } catch (e) {
+            return false;
+        }
     }
 
     initEffekseerRuntime() {

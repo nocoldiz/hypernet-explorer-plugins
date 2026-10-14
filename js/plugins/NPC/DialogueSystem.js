@@ -346,24 +346,66 @@ Imported.DialogueSystem = true;
     Window_Message.prototype.standardFontSize  = function () { return 29; };
     Window_ChoiceList.prototype.standardFontSize = function () { return 29; };
 
+    function isEmSpeaker(imageName, characterName) {
+        const norm = s => String(s || '').trim().toLowerCase();
+        const img = norm(imageName);
+        const char = norm(characterName);
+        if (img === 'em' || char === 'em' || char === 'me') return true;
+        if (img.startsWith('em_') || img.startsWith('em-') || img === 'models/em.glb' || img === 'presets/em') return true;
+        if (char.startsWith('em,') || char.startsWith('em ') || char === 'em!') return true;
+        return false;
+    }
+
+    function isBubbaSpeaker(imageName, characterName) {
+        const norm = s => String(s || '').trim().toLowerCase();
+        const img = norm(imageName);
+        const char = norm(characterName);
+        if (img === 'bubba' || char === 'bubba') return true;
+        if (img.startsWith('bubba_') || img.startsWith('bubba-') || img === 'presets/bubba') return true;
+        if (char.startsWith('bubba,') || char.startsWith('bubba ') || char === 'bubba!') return true;
+        return false;
+    }
+
+    function isPlayerControllingEm() {
+        try {
+            const leader = $gameParty && $gameParty.leader ? $gameParty.leader() : null;
+            if (!leader) return false;
+            const name = typeof leader.name === 'function' ? leader.name() : leader.name;
+            return isEmSpeaker(null, name);
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function getEm3DModelSpec() {
+        if (typeof SpeakerModels === 'undefined' || !SpeakerModels.available()) return null;
+        try {
+            const CP = window.CharacterPresets;
+            const emPreset = CP?.getCharacterPresets?.().find(p => p && (p.id === 2 || String(p.name || '').toLowerCase() === 'em'));
+            const path = (emPreset && emPreset.model) || 'models/Em.glb';
+            const info = { kind: 'glb', path, actorId: 0 };
+            return { info, id: window.ActorModel3D?.keyFor?.(info) || `glb:${path}`, frame: 'bust' };
+        } catch (e) {
+            return null;
+        }
+    }
+
     // -------------------------------------------------------------------------
     // BustManagerNameWindow, thin adapter; reuses #html-msg-name from the message overlay
-    // Name is positioned each frame by Window_Message.update, no slide, no transition.
+    // Name is positioned each frame by Window_Message.update, always on the left.
     // -------------------------------------------------------------------------
     class BustManagerNameWindow {
         constructor() {
             this._characterName = '';
             this._visible       = false;
-            // Which end of the message box the tag sits on. It is always the
-            // end opposite the portrait, so the two never overlap: an NPC
-            // stands on the right and is named on the left, a party member
-            // stands on the left and is named on the right.
             this._side          = 'left';
         }
 
         setCharacterName(name) { this._characterName = name || ''; }
 
-        setSide(side) { this._side = side === 'right' ? 'right' : 'left'; }
+        setSide(side) { this._side = 'left'; }
+
+        get side() { return 'left'; }
 
         showName() { if (this._characterName) this._visible = true; }
 
@@ -876,23 +918,19 @@ Imported.DialogueSystem = true;
             if (pending.some(sprite => !this._bitmapReady(sprite.bitmap)
                 && !this._bitmapFailed(sprite.bitmap) && sprite.bitmap)) return;
 
-            // One of them has no portrait to show: a model that could not be
-            // built hands over to the painted bust, a bust to the fallback, and
-            // either is waited on the same way, once.
-            let swapped = false;
+            // Busts are never showed in any case except for Em 3D model.
             for (const sprite of pending) {
-                if (sprite.bitmap && !this._bitmapFailed(sprite.bitmap)) continue;
-                if (sprite._bustFallbackTried) continue;
-                if (sprite._paintedBust) {
-                    sprite.bitmap = sprite._paintedBust;
+                if (!isEmSpeaker(sprite.imageName, sprite.storyKey)) {
+                    sprite.bitmap = null;
                     sprite._paintedBust = null;
-                } else {
                     sprite._bustFallbackTried = true;
-                    sprite.bitmap = this._loadFallback();
+                    continue;
                 }
-                swapped = true;
+                if (sprite.bitmap && !this._bitmapFailed(sprite.bitmap)) continue;
+                sprite.bitmap = null;
+                sprite._paintedBust = null;
+                sprite._bustFallbackTried = true;
             }
-            if (swapped) return;
 
             this._castPending = null;
             this.layoutStoryCast();
@@ -993,8 +1031,16 @@ Imported.DialogueSystem = true;
         // "work it out from the portrait's name".
         _dressStorySlot(sprite, imageName, modelSpec, paintedWhileLoading) {
             sprite.imageName = imageName;
-            const path = this.resolveBustPath(imageName);
-            const spec  = modelSpec === undefined ? this._modelSpecForImage(imageName) : modelSpec;
+            const isEm = isEmSpeaker(imageName, sprite.storyKey);
+            if (!isEm) {
+                sprite.bitmap       = null;
+                sprite._paintedBust = null;
+                sprite._modelBust   = null;
+                sprite._modelSpec   = null;
+                sprite.opacity      = 0;
+                return;
+            }
+            const spec = getEm3DModelSpec();
             sprite._modelSpec = spec;
             const layout = this.storyLayout();
             const model = spec ? SpeakerModels.bitmapFor(spec, layout.width, layout.height,
@@ -1096,15 +1142,9 @@ Imported.DialogueSystem = true;
         setStoryActive(key) {
             const slots = this.storySlots || [];
             this._storyActiveKey = key || null;
-            // The name tag belongs to the portrait under the light, so it
-            // crosses the box with the turn instead of sitting on one end of
-            // the stage while the other end talks.
-            if (this.nameWindow && key) {
-                const idx = slots.findIndex(s => s.storyKey === key);
-                if (idx >= 0) {
-                    const side = slots[idx].storySide;
-                    this.nameWindow.setSide(side || (idx === 0 ? 'left' : 'right'));
-                }
+            // The name label always stays on the left.
+            if (this.nameWindow) {
+                this.nameWindow.setSide('left');
             }
             slots.forEach(sprite => {
                 const active = !!key && sprite.storyKey === key;
@@ -1141,7 +1181,7 @@ Imported.DialogueSystem = true;
             const wanted  = side === 'left' ? 'left' : 'right';
             const changed = wanted !== this.bustSide;
             this.bustSide = wanted;
-            if (this.nameWindow) this.nameWindow.setSide(this.storyMode ? 'left' : (wanted === 'left' ? 'right' : 'left'));
+            if (this.nameWindow) this.nameWindow.setSide('left');
             this.updateBustHiddenPosition();
             // Changing ends is not a walk across the screen: the portrait is
             // parked off the new edge and slides in from there, under the same
@@ -1150,12 +1190,18 @@ Imported.DialogueSystem = true;
             return changed;
         }
 
-        // A speaker who is one of the party talks from the left. The name is
-        // the only thing every front end (exchanges, the TV studio, the VN
-        // plugin commands) reliably passes, so that is what is matched.
+        // A speaker who is one of the party talks from the left.
+        // If player is not controlling Em as party leader and talks to her,
+        // Em's bust will be drawn to the right; otherwise in story dialogue always to the left,
+        // and when controlling her always to the left.
         sideForSpeaker(displayName) {
             const name = String(displayName || '').split(',')[0].trim();
             if (!name) return 'right';
+            if (isEmSpeaker(null, name)) {
+                if (this.storyMode) return 'left';
+                if (isPlayerControllingEm()) return 'left';
+                return 'right';
+            }
             try {
                 const members = ($gameParty && $gameParty.allMembers) ? $gameParty.allMembers() : [];
                 if (members.some(a => a && a.name && a.name().trim() === name)) return 'left';
@@ -1167,30 +1213,9 @@ Imported.DialogueSystem = true;
         // same one the story cast stands on, whatever the box below is doing.
         getBustY() { return bustFloor(); }
 
-        // Where the name tag hangs: under the portrait of whoever is speaking,
-        // centred on it, so a face and its name read as one thing instead of
-        // the name sitting on the far end of the box. Game coordinates, or
-        // null when nobody is on stage and the tag falls back to an end of the
-        // message box.
+        // The name label is always on the left, so nameAnchorX returns null.
         nameAnchorX() {
-            if (this.storyMode) {
-                const slots = this.storySlots || [];
-                if (!slots.length) return null;
-                const layout = this.storyLayout();
-                const side   = (this.nameWindow && this.nameWindow._side === 'right') ? 'right' : 'left';
-                // The end is the side the portrait stands on, never its place
-                // in the cast: a lone speaker on the right is slot 0 too.
-                const sprite = slots.find(s => s.storySide === side);
-                const end    = side === 'right' ? 1 : 0;
-                const drawn  = drawnBustWidth(sprite, layout.width);
-                const x      = sprite && typeof sprite._targetX === 'number' ? sprite._targetX
-                             : (end === 1 ? Graphics.width - bustEdgeMargin - drawn : layout.x(end));
-                return x + drawn / 2;
-            }
-            if (!this.bustIsVisible || !this.characterBust) return null;
-            const target = typeof this.characterBust._targetX === 'number'
-                ? this.characterBust._targetX : this.characterBust.x;
-            return target + drawnBustWidth(this.characterBust, getBustWidth()) / 2;
+            return null;
         }
 
         // The portrait of whoever is speaking, where it stands once it has
@@ -1265,7 +1290,7 @@ Imported.DialogueSystem = true;
         }
 
         _loadFallback() {
-            try { return ImageManager.loadBitmap('img/busts/', '7'); } catch (e) { return null; }
+            return null;
         }
 
         // A bitmap that cannot answer whether it is ready (a stub, an odd
@@ -1317,7 +1342,6 @@ Imported.DialogueSystem = true;
                 this._updatePendingBust();
                 return;
             } else {
-                console.error("Bust image and fallback both unavailable:", path);
                 this._pendingBust = null;
                 this.bustIsVisible = false;
                 return;
@@ -1326,13 +1350,11 @@ Imported.DialogueSystem = true;
         }
 
         _applyBitmap(bitmap, fallback, path) {
-            if (bitmap.width > 0 && bitmap.height > 0) {
+            if (bitmap && bitmap.width > 0 && bitmap.height > 0 && (bitmap._speakerModel || bitmap._emModel)) {
                 this.characterBust.bitmap = bitmap;
-            } else if (fallback) {
-                this.characterBust.bitmap = fallback;
-                console.warn("Bust image failed, using fallback:", path);
             } else {
-                console.error("Bust image and fallback both unavailable:", path);
+                this.characterBust.bitmap = null;
+                this.characterBust.opacity = 0;
             }
             this.scaleBustToFit(this.characterBust);
         }
@@ -1539,33 +1561,47 @@ Imported.DialogueSystem = true;
         // A story scene's cast is already standing (its slots carry their
         // models, see _dressStorySlot) and is keyed by portrait name.
         showCustomBust(imageName, characterName, side, modelSpec) {
-            if (!imageName) return;
-            const staged = this.storyMode && (this.storySlots || []).length > 0;
-            let spec = staged ? null
-                : (modelSpec || this._actorModelSpec(this._partyMemberNamed(characterName))
-                    || this._modelSpecForImage(imageName));
-            if (!spec && (characterName?.toLowerCase() === 'em' || imageName?.toLowerCase()?.includes('em'))) {
-                const CP = window.CharacterPresets;
-                const emPreset = CP?.getCharacterPresets?.().find(p => p && (p.id === 2 || String(p.name || '').toLowerCase() === 'em'));
-                const path = (emPreset && emPreset.model) || 'models/Em.glb';
-                const info = { kind: 'glb', path, actorId: 0 };
-                spec = { info, id: window.ActorModel3D?.keyFor?.(info) || `glb:${path}`, frame: 'bust' };
-            }
-            const model        = this._modelBitmap(spec);
-            const path         = this.resolveBustPath(imageName);
-            const key          = model && !this.storyMode ? `model_${spec.id}` : `custom_${imageName}`;
-            const fallback     = this._loadFallback();
-
+            if (!imageName && !characterName) return;
+            const displayName = characterName || this.convertCamelCaseToReadable(imageName);
             if (this.nameWindow) {
-                let displayName = characterName || this.convertCamelCaseToReadable(imageName);
                 this.nameWindow.setCharacterName(displayName);
                 this.nameWindow.showName();
                 this.nameIsVisible = true;
             }
 
-            // In a story scene the whole cast is already standing there: the
-            // line only moves the light from one of them to the other.
+            const isEm = isEmSpeaker(imageName, characterName);
+            let targetSide;
+            if (isEm) {
+                if (this.storyMode) {
+                    targetSide = 'left';
+                } else if (isPlayerControllingEm()) {
+                    targetSide = 'left';
+                } else {
+                    targetSide = 'right';
+                }
+            } else {
+                targetSide = side || this.sideForSpeaker(characterName);
+            }
+
+            const sideChanged = this.setBustSide(targetSide);
+
+            if (!isEm) {
+                if (this.characterBust) {
+                    this.characterBust.bitmap = null;
+                    this.characterBust.opacity = 0;
+                }
+                this._pendingBust = null;
+                this.bustIsVisible = false;
+                if (this.storyMode && (this.storySlots || []).length) {
+                    const key = `custom_${imageName}`;
+                    this.setStoryActive(key);
+                    this.currentCharacterKey = key;
+                }
+                return;
+            }
+
             if (this.storyMode && (this.storySlots || []).length) {
+                const key = 'custom_Em';
                 this.setStoryActive(key);
                 this.currentCharacterKey = key;
                 this.bustIsVisible       = true;
@@ -1574,28 +1610,28 @@ Imported.DialogueSystem = true;
                 return;
             }
 
-            const sideChanged = this.setBustSide(side || this.sideForSpeaker(characterName));
+            const spec = getEm3DModelSpec();
+            const model = this._modelBitmap(spec);
+            const key = model ? `model_${spec.id}` : `custom_Em`;
 
-            // Same portrait as last line, but now speaking from the other end
-            // of the screen: it has to cross over instead of standing still.
-            if (this.currentCharacterKey === key && this.characterBust.parent) {
+            if (this.currentCharacterKey === key && this.characterBust.parent && this.characterBust.bitmap) {
                 if (sideChanged) this.slideIn();
                 return;
             }
 
-            // The key is claimed before the load is asked for: it is what the
-            // poll below checks its own portrait against.
             this.currentCharacterKey = key;
             const scene = SceneManager._scene;
             if (!this.characterBust.parent && scene) addBustToScene(this.characterBust, scene);
 
             if (model) {
-                this._beginBustLoad(model, key, null, path);
+                this._beginBustLoad(model, key, null, 'models/Em.glb');
+                this.bustIsVisible = true;
             } else {
                 this.characterBust.bitmap = null;
+                this.characterBust.opacity = 0;
                 this._pendingBust = null;
+                this.bustIsVisible = false;
             }
-            this.bustIsVisible = true;
             this.activeEventId = 'custom';
             this.hideScheduled = false;
         }
@@ -1611,61 +1647,53 @@ Imported.DialogueSystem = true;
             if (!shouldShow || !charInfo) { this.bustIsVisible = false; return; }
 
             const { characterName, characterIndex, eventId } = charInfo;
-            const key      = `${characterName}_${characterIndex}`;
-            const fallback = this._loadFallback();
+            const displayName = this.getCharacterDisplayName(eventId);
+            const isEm = isEmSpeaker(characterName, displayName);
 
             this.activeEventId    = eventId;
             this.lastKnownEventId = eventId;
             this.hideScheduled    = false;
 
-            // An event on the map is somebody the party is facing: it keeps the
-            // right-hand slot, whatever the party leader does next.
-            const sideChanged = this.setBustSide(this.sideForSpeaker(this.getCharacterDisplayName(eventId)));
+            const sideChanged = this.setBustSide(this.sideForSpeaker(displayName));
 
-            let targetX;
-            if (window.$gameSplitScreen && window.$gameSplitScreen.active) {
-                const activator = $gameMessage._eventActivator;
-                const w         = getBustWidth();
-                if      (activator === "p1") targetX = 0;
-                else if (activator === "p2") targetX = Graphics.width - w;
-                else                          targetX = (Graphics.width - w) / 2;
-            } else {
-                targetX = this.characterBust._targetX; // set by setBustSide above
+            if (this.nameWindow) {
+                this.nameWindow.setCharacterName(displayName);
+                this.nameWindow.showName();
+                this.nameIsVisible = true;
             }
 
-            const targetChanged = targetX !== this.characterBust._targetX;
-            this.characterBust._targetX = targetX;
-
-            if (this.currentCharacterKey === key && this.characterBust.parent) {
-                if (targetChanged || sideChanged) this.slideIn();
-                if (this.nameWindow && !this.nameIsVisible) { this.nameWindow.showName(); this.nameIsVisible = true; }
-                this.bustIsVisible = true;
+            if (!isEm) {
+                if (this.characterBust) {
+                    this.characterBust.bitmap = null;
+                    this.characterBust.opacity = 0;
+                }
+                this._pendingBust = null;
+                this.bustIsVisible = false;
                 return;
             }
 
-            let path = this.getBustImageForCharacter(characterName, characterIndex);
-            if (!path) return;
-            if (!this.checkImageExists(path)) { console.warn(`Bust not found: ${path}, using fallback`); path = `busts/7`; }
+            const key = `model_em_${characterIndex}`;
+            if (this.currentCharacterKey === key && this.characterBust.parent && this.characterBust.bitmap) {
+                if (sideChanged) this.slideIn();
+                this.bustIsVisible = true;
+                return;
+            }
 
             this.currentCharacterKey = key;
             const scene = SceneManager._scene;
             if (!this.characterBust.parent && scene) addBustToScene(this.characterBust, scene);
 
-            if (this.nameWindow) {
-                this.nameWindow.setCharacterName(this.getCharacterDisplayName(eventId));
-                this.nameWindow.showName();
-                this.nameIsVisible = true;
-            }
-
-            // A speaker with a 3D body is shown by it; 2D bust images are suppressed
-            const model = this._modelBitmap(this._eventModelSpec(eventId));
+            const spec = getEm3DModelSpec();
+            const model = this._modelBitmap(spec);
             if (model) {
-                this._beginBustLoad(model, key, null, path);
+                this._beginBustLoad(model, key, null, 'models/Em.glb');
+                this.bustIsVisible = true;
             } else {
                 this.characterBust.bitmap = null;
+                this.characterBust.opacity = 0;
                 this._pendingBust = null;
+                this.bustIsVisible = false;
             }
-            this.bustIsVisible = true;
         }
 
         // ── Speaker models ──────────────────────────────────────────────────
@@ -2177,7 +2205,10 @@ Imported.DialogueSystem = true;
             const bm = SceneManager._scene && SceneManager._scene._bustManager;
             if (!bm) return false;
             if (bm.storyMode && (bm.storySlots || []).length) return true;
-            return !!bm.bustIsVisible;
+            if (_prefixStage) return true;
+            if (bm.bustIsVisible) return true;
+            if (bm.nameIsVisible) return true;
+            return false;
         } catch (err) { return false; }
     }
 
@@ -2192,10 +2223,23 @@ Imported.DialogueSystem = true;
             const nm = bm && bm.nameWindow;
             const shown = nm && nm._characterName ? String(nm._characterName).trim() : '';
             if (shown) return shown;
+            if (bm && typeof bm.getCharacterDisplayName === 'function') {
+                const interp = $gameMap && $gameMap._interpreter;
+                const eventId = interp ? interp._eventId : null;
+                if (eventId) {
+                    const disp = bm.getCharacterDisplayName(eventId);
+                    if (disp) return String(disp).trim();
+                }
+            }
         } catch (err) { /* no bust manager */ }
         try {
-            if ($gameMessage && $gameMessage.speakerName) return $gameMessage.speakerName() || '';
+            if ($gameMessage && $gameMessage.speakerName) {
+                const msgName = $gameMessage.speakerName() || '';
+                if (msgName) return String(msgName).trim();
+            }
         } catch (err) { /* no message */ }
+        const evKey = _voiceEventKey();
+        if (evKey) return String(evKey).trim();
         return '';
     }
 
@@ -2207,17 +2251,17 @@ Imported.DialogueSystem = true;
     // deepest a letter voice goes.
     const VOICE_CAST_PITCH = { Bubba: 43, Em: 126 }; // i18n-ignore: actor names matched at runtime
 
-    // The base pitch of whoever is speaking: the written cast first, the
-    // catalogued sheet after that, hashed last.
+    // The base pitch of whoever is speaking. Em and Bubba keep their hardcoded
+    // values; any other speaker has their pitch seeded from their name.
     function _voicePitchFor(sheet, name) {
-        const cast = VOICE_CAST_PITCH[String(name == null ? '' : name).trim()];
-        if (isFinite(cast) && cast > 0) return cast;
-        const entry = sheet && window.WorldGen && window.WorldGen.NPCs ? window.WorldGen.NPCs[sheet] : null;
-        const own   = entry ? Number(entry.pitch) : NaN;
-        if (isFinite(own) && own > 0) return own;
-        const key = sheet || name;
-        if (!key) return VOICE_DEFAULT_PITCH;
-        return 78 + (_voiceHash(key) % 55); // 78..132, the range the sheets use
+        const rawName = (name !== undefined) ? name : sheet;
+        const rawSheet = (name !== undefined) ? sheet : '';
+        const cleanName = String(rawName == null ? '' : rawName).trim().replace(/:$/, '').trim();
+        if (isEmSpeaker(cleanName, cleanName)) return VOICE_CAST_PITCH.Em;
+        if (isBubbaSpeaker(cleanName, cleanName)) return VOICE_CAST_PITCH.Bubba;
+        const speaker = cleanName || String(rawSheet || '').trim();
+        if (!speaker) return VOICE_DEFAULT_PITCH;
+        return 78 + (_voiceHash(speaker) % 55); // 78..132, the range the sheets use
     }
 
     function _voiceTierFor(pitch) {
@@ -2279,6 +2323,7 @@ Imported.DialogueSystem = true;
         },
 
         pitch() { return this._pitch; },
+        pitchFor(name) { return _voicePitchFor('', name); },
 
         // Play one letter. `gold` raises it by the keyword third.
         speakLetter(letter, gold, now) {
@@ -2634,6 +2679,10 @@ Imported.DialogueSystem = true;
         this._htmlMsgTurboCount = 0;
         this._htmlMsgVoiceText  = null;
         this._htmlMsgVoiceShown = 0;
+        const scene = SceneManager._scene;
+        if (!prefixStaged && scene && scene._bustManager && !scene._bustManager.exchangeMode &&
+            !facelessIsRunning()) scene._bustManager.showBusts();
+        if (scene && scene._bustManager && scene._bustManager.cueSpeaker) scene._bustManager.cueSpeaker();
         DialogueVoice.begin();
         if (this._htmlMsgRoot) {
             this._htmlMsgRoot.style.display = 'block';
@@ -2642,10 +2691,6 @@ Imported.DialogueSystem = true;
             // Don't clear text yet, keep previous text until typewriter starts,
             // so there's no blank flash between consecutive dialogue boxes.
         }
-        const scene = SceneManager._scene;
-        if (!prefixStaged && scene && scene._bustManager && !scene._bustManager.exchangeMode &&
-            !facelessIsRunning()) scene._bustManager.showBusts();
-        if (scene && scene._bustManager && scene._bustManager.cueSpeaker) scene._bustManager.cueSpeaker();
     };
 
     const _WM_terminateMessage = Window_Message.prototype.terminateMessage;
@@ -2819,16 +2864,14 @@ Imported.DialogueSystem = true;
         // falls back to the end of the box opposite where a portrait would be.
         const bustMgr     = SceneManager._scene ? SceneManager._scene._bustManager : null;
         const nameAdapter = bustMgr ? bustMgr.nameWindow : null;
-        const nameSide    = (nameAdapter && nameAdapter._side === 'right') ? 'right' : 'left';
-        const nameAnchorX = (bustMgr && typeof bustMgr.nameAnchorX === 'function')
-                          ? bustMgr.nameAnchorX() : null;
+        const nameSide    = 'left';
+        const nameAnchorX = null;
 
         // All the box/name geometry depends only on the scale + this.y/width/
-        // height/padding/fontSize + the name side; skip the ~12 style writes
-        // when none changed.
+        // height/padding/fontSize; skip the ~12 style writes when none changed.
         const geomSig = sc.sx + ',' + sc.sy + ',' + sc.ox + ',' + sc.oy + ',' +
                         this.width + ',' + this.height + ',' + this.y + ',' + pad + ',' +
-                        baseFontSize + ',' + nameSide + ',' + winW + ',' + nameAnchorX + ',' +
+                        baseFontSize + ',' + nameSide + ',' + winW + ',' +
                         (this._htmlMsgName ? this._htmlMsgName.textContent : '');
         if (geomSig !== this._htmlMsgGeomSig) {
             this._htmlMsgGeomSig = geomSig;
@@ -2845,37 +2888,13 @@ Imported.DialogueSystem = true;
             this._htmlMsgText.style.fontSize = Math.round(baseFontSize * sc.sy * 0.85) + 'px';
             this._htmlMsgName.style.fontSize = Math.round(20 * sc.sy) + 'px';
 
-            // Name anchored flush above one edge of the textbox, no animation.
-            // The right-hand anchor uses the `right` longhand so the tag does
-            // not need to be measured before it can be placed.
+            // Name label is always displayed on the left above the textbox
             const nameH   = Math.round(28 * sc.sy);
             const nameIns = Math.round(16 * sc.sx);
-            this._htmlMsgName.style.top = (sc.oy + this.y * sc.sy - nameH - Math.round(6 * sc.sy)) + 'px';
-            if (nameAnchorX !== null && nameAnchorX !== undefined) {
-                // Under the portrait: the tag is centred on the middle of the
-                // bust, then pulled back so the whole of it still sits over the
-                // message box. A portrait standing at the edge of the screen
-                // would otherwise hang its name out in empty space or across
-                // its own face.
-                const edgeL = centeredLeft + nameIns;
-                const edgeR = centeredLeft + scaledW - nameIns;
-                const half  = (this._htmlMsgName.offsetWidth || 0) / 2;
-                let cx      = sc.ox + nameAnchorX * sc.sx;
-                cx = (edgeR - edgeL <= half * 2)
-                   ? (edgeL + edgeR) / 2
-                   : Math.max(edgeL + half, Math.min(edgeR - half, cx));
-                this._htmlMsgName.style.right     = 'auto';
-                this._htmlMsgName.style.left      = Math.round(cx) + 'px';
-                this._htmlMsgName.style.transform = 'translateX(-50%)';
-            } else if (nameSide === 'right') {
-                this._htmlMsgName.style.left      = 'auto';
-                this._htmlMsgName.style.right     = (winW - (centeredLeft + scaledW - nameIns)) + 'px';
-                this._htmlMsgName.style.transform = 'none';
-            } else {
-                this._htmlMsgName.style.right     = 'auto';
-                this._htmlMsgName.style.left      = (centeredLeft + nameIns) + 'px';
-                this._htmlMsgName.style.transform = 'none';
-            }
+            this._htmlMsgName.style.top       = (sc.oy + this.y * sc.sy - nameH - Math.round(6 * sc.sy)) + 'px';
+            this._htmlMsgName.style.right     = 'auto';
+            this._htmlMsgName.style.left      = (centeredLeft + nameIns) + 'px';
+            this._htmlMsgName.style.transform = 'none';
         }
 
         // Text reveal. The element always holds the finished line; only how much
@@ -3908,7 +3927,13 @@ Imported.DialogueSystem = true;
         // places on a stage, not a property of the speaker: whenever the scene
         // has two voices they take one end each, in the order they first talk.
         if (uniq.length === 2) {
-            // The leader keeps the left end whichever of the two opens.
+            // Em is always on the left in story mode / exchange
+            const emIdx = uniq.findIndex(u => isEmSpeaker(u.imageName, u.key));
+            if (emIdx === 1) {
+                return [uniq[1], uniq[0]];
+            } else if (emIdx === 0) {
+                return uniq;
+            }
             const leaderKey = `custom_${leaderBustName()}`;
             return uniq[1].key === leaderKey ? [uniq[1], uniq[0]] : uniq;
         }
@@ -4773,11 +4798,11 @@ Imported.DialogueSystem = true;
     }
 
     function storySide(name) {
+        if (isEmSpeaker(null, name)) return 'left';
         const bm = SceneManager._scene && SceneManager._scene._bustManager;
-        if (String(name).trim() === STORY_PROTAGONIST) return 'left';
         // Bubba is the party's other voice, walking with Em or not.
         if (voiceCastName(name) === STORY_ASK_BUBBA) return 'left';
-        if (bm &&bm.sideForSpeaker(name) === 'left') return 'left';
+        if (bm && bm.sideForSpeaker(name) === 'left') return 'left';
         // The protagonist keeps the left slot even in a scene played before she
         // is walking with anybody, when the party lookup has nobody to match.
         try {
@@ -4855,7 +4880,7 @@ Imported.DialogueSystem = true;
     // colon in it is prose - "Remember kiddo: love is the deepest oil deposit"
     // is a line Bubba says, not a character called Remember kiddo.
     const STORY_HEADER      = /^([^:]{1,60}):\s*$/;
-    const STORY_HEADER_LINE = /^([A-Za-z][\w'.-]*(?:\s+-\s+[A-Za-z][\w'.-]*)?):\s+(\S.*)$/;
+    const STORY_HEADER_LINE = /^([A-Za-z0-9\u00C0-\u024F][\w'.-]*(?:\s+-\s+[A-Za-z0-9\u00C0-\u024F][\w'.-]*)?):\s+(\S.*)$/;
 
     // A rule of dashes closes the scene above it; the first word under the rule
     // is the name of the scene below. Returns the file cut into named blocks in

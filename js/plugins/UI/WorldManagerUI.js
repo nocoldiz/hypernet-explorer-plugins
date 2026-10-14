@@ -438,8 +438,6 @@
                         scene._changeStartMonth(dir === "left" ? -1 : 1);
                     } else if ((dir === "left" || dir === "right") && focusedId === "wm-start-year") {
                         scene._changeStartYear(dir === "left" ? -1 : 1);
-                    } else if ((dir === "left" || dir === "right") && focusedId === "wm-start-level") {
-                        scene._changeStartLevel(dir === "left" ? -1 : 1);
                     } else if ((dir === "left" || dir === "right") && focusedId === "wm-population") {
                         scene._changePopulationMode(dir === "left" ? -1 : 1);
                     } else if ((dir === "left" || dir === "right") && focusedId === "wm-magic") {
@@ -554,10 +552,6 @@
             }
             if (el.id === "wm-start-year") {
                 scene._changeStartYear(1);
-                return;
-            }
-            if (el.id === "wm-start-level") {
-                scene._changeStartLevel(1);
                 return;
             }
             if (el.id === "wm-population") {
@@ -764,22 +758,6 @@
             const notice = storyDisabledNoticeFor(this._startYear);
             el.textContent = notice;
             el.classList.toggle("wm-hidden", !notice);
-        }
-
-        _changeStartLevel(delta) {
-            const from = this._startLevel || START_LEVEL_DEFAULT;
-            const at = levelStopIndex(from) + Math.sign(delta);
-            const next = START_LEVEL_STOPS[
-                Math.max(0, Math.min(START_LEVEL_STOPS.length - 1, at))];
-            if (next === from) return;
-            this._startLevel = next;
-            const el = document.getElementById("wm-start-level");
-            if (el) {
-                el.dataset.level = next;
-                const label = el.querySelector(".wm-date-label");
-                if (label) label.textContent = String(next);
-            }
-            SoundManager.playCursor();
         }
 
         // Who lives in this world. The spinner wraps (there is no "end" of the
@@ -1029,7 +1007,6 @@
             const start = clampStartDate(this._startYear || START_YEAR_MIN, this._startMonth || 1);
             this._startYear = start.year;
             this._startMonth = start.month;
-            const startLevel = this._startLevel || START_LEVEL_DEFAULT;
             const populationMode = POPULATION_MODES.includes(this._populationMode)
                 ? this._populationMode : POPULATION_DEFAULT;
             const magicalLevel = MAGICAL_LEVELS.includes(this._magicalLevel)
@@ -1094,15 +1071,6 @@
                             <div id="wm-earth-lost" role="status"
                                  class="wm-enemy-floor wm-earth-lost${earthLostNoticeFor(start.year) ? "" : " wm-hidden"}"
                             >${escapeHtml(earthLostNoticeFor(start.year))}</div>
-                            <label>${T('WorldManagerUI.startingLevel')}</label>
-                            <div class="wm-date-row">
-                                <div id="wm-start-level" class="wm-year-selector" data-level="${startLevel}"
-                                     role="spinbutton" tabindex="0" aria-label="${T('WorldManagerUI.startingLevel')}">
-                                    <button type="button" class="wm-year-arrow" onclick="SceneManager._scene._changeStartLevel(-1)" aria-label="${T('WorldManagerUI.lowerLevel')}">&#9664;</button>
-                                    <span class="wm-date-label">${startLevel}</span>
-                                    <button type="button" class="wm-year-arrow" onclick="SceneManager._scene._changeStartLevel(1)" aria-label="${T('WorldManagerUI.raiseLevel')}">&#9654;</button>
-                                </div>
-                            </div>
                             <label>${T('WorldManagerUI.populationMode')}</label>
                             <div class="wm-date-row">
                                 <div id="wm-population" class="wm-year-selector" data-mode="${escapeHtml(populationMode)}"
@@ -1950,7 +1918,7 @@
                 try {
                     WM.createWorld(name, {
                         worldTimeMinutes, seed, startYear, startMonth,
-                        startLevel: this._startLevel || START_LEVEL_DEFAULT,
+                        startLevel: START_LEVEL_DEFAULT,
                         // Written before initializeWorld() below, so the pool
                         // the world is populated from already knows who is in
                         // it (and an empty world is never populated at all).

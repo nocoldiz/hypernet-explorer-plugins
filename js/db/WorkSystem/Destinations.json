@@ -972,13 +972,13 @@
     ]
   },
   "Wimbledon": {
-    "locked": true,
+    "locked": false,
     "name": "Wimbledon",
     "picture": "destinations/Wimbledon",
     "biome": "Village",
     "country": "UK",
     "nationId": 38,
-    "procedural": true,
+    "procedural": false,
     "tag": "luxury",
     "mapOffset": {
       "x": 306,

@@ -1248,6 +1248,7 @@
     "tagsPrice": "Properties",
     "price": "Price",
     "complexity": "Complexity",
+    "randomize": "Randomize",
     "enchantIt": "Enchant",
     "dropped": "Taken off: {tags}.",
     "blocked": {
@@ -1346,9 +1347,11 @@
     "byAuthor": "Penned by {author}",
     "filterAuthor": "Author Only",
     "filterParty": "Entire Party",
-    "chooseCover": "Choose Cover Art"
+    "chooseCover": "Choose Cover Art",
+    "randomize": "Randomize"
   },
   "expression": {
+    "randomize": "Randomize",
     "button": "Expressions",
     "title": "Expression",
     "pickBlurb": "Choose a character whose Expression is unlocked.",
@@ -1439,7 +1442,15 @@
     "nothing": "No removable skills.",
     "warning": "{name} forgets it for good. Relearning costs full price.",
     "cut": "{name} forgets {skill} for {kp} KP.",
-    "forgottenDetailed": "{name} has forgotten {skill} (+{kp} KP)!"
+    "forgottenDetailed": "{name} has forgotten {skill} (+{kp} KP)!",
+    "randomize": "Random",
+    "cost": "Cost",
+    "skillCategory": "Skill",
+    "filterAll": "All",
+    "filterMagic": "Spells",
+    "filterSkill": "Skills",
+    "forgetAction": "Forget Skill (+{kp} KP)",
+    "confirmAction": "Confirm Unlearning (+{kp} KP)"
   },
   "tips": {
     "member": "Member",

@@ -923,6 +923,10 @@
               back: window.CCButtons.button(window.CCButtons.backLabel(), {
                 onclick: "SceneManager._scene.onClassCancel()",
               }),
+              middle: window.CCButtons.button(T('CharCreate.randomize') || 'Randomize', {
+                onclick: "SceneManager._scene.onClassRandom()",
+                cls: "cc-btn-random focusable",
+              }),
               next: window.CCButtons.button(window.CCButtons.continueLabel(), {
                 onclick: "SceneManager._scene.onClassSelect()",
                 confirm: true,
@@ -1014,6 +1018,20 @@
           this.refreshUIOverlayDOM();
         }
       }
+    }
+
+    onClassRandom() {
+      if (!this._classWindow) return;
+      const count = this._classWindow.maxItems();
+      if (count <= 0) return;
+      const current = this._classWindow.index();
+      let next = Math.floor(Math.random() * count);
+      if (count > 1 && next === current) {
+        next = (next + 1) % count;
+      }
+      this._classWindow.select(next);
+      SoundManager.playCursor();
+      this.refreshUIOverlayDOM();
     }
 
     // The focus ring hands the list back when it walks off its own top or left

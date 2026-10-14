@@ -93,7 +93,7 @@
 
   // Levels offered on the level row. A creation-time character is not meant to
   // be tuned point by point, only placed on a band.
-  const LEVEL_CHOICES = [1, 3, 5, 10, 15, 20, 30, 50];
+  const LEVEL_CHOICES = Array.from({ length: 99 }, (_, i) => i + 1);
 
   // Points each character has to raise specializations with. Only levels above
   // what their class and traits already grant are paid for.

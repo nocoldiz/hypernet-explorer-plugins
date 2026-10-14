@@ -3290,6 +3290,26 @@
           </button>`;
     }
 
+    _actionBarRandomizeScenarioHtml() {
+      const isScenario = !!Scene_CharacterCreation._isScenarioMode || this._step === STEP.ORIGIN;
+      if (!isScenario || Scene_CharacterCreation._storyMode) return '';
+      return `<button class="cc-compact-btn cc-action-randomize focusable" tabindex="0"
+              data-nav-key="cc-action-randomize-scenario"
+              onclick="SceneManager._scene.onRandomizeScenario()">
+            <span>${ccT('CharCreate.randomize')}</span>
+          </button>`;
+    }
+
+    onRandomizeScenario() {
+      const stepData = this.currentStepData();
+      if (!stepData || !stepData.choices) return;
+      const choices = typeof stepData.choices === 'function' ? stepData.choices() : stepData.choices;
+      if (!choices || !choices.length) return;
+      const rIdx = Math.floor(Math.random() * choices.length);
+      this.onOptionCardClick(rIdx);
+      SoundManager.playCursor();
+    }
+
     // The party board: seven written crews and every crew the player has
     // filed, taken in one press. It sits beside the button that rolls a party
     // because it answers the same question - who are these three people - and
@@ -3389,6 +3409,7 @@
           ${this._actionBarDeleteMemberHtml()}
           ${this._actionBarRandomizeMemberHtml()}
           ${this._actionBarRandomizePartyHtml()}
+          ${this._actionBarRandomizeScenarioHtml()}
           ${this._actionBarPartyPresetsHtml()}
           ${this._actionBarSavePresetHtml()}
           ${forward}

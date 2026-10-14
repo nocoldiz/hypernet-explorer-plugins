@@ -1753,14 +1753,27 @@
         case "bond":     return this._bondPickOptions(arg);
         case "class":    return this._classPickOptions();
         case "traitpack": return this._traitPackPickOptions();
+        case "startLevel": return this._startLevelPickOptions();
         default:         return [];
       }
+    }
+
+    _startLevelPickOptions() {
+      const rows = [];
+      for (let i = 1; i <= 99; i++) {
+        rows.push({
+          value: i,
+          label: ccTp('CharCreate.levelLabel', { level: i })
+        });
+      }
+      return rows;
     }
 
     _pickTitle(kind) {
       switch (kind) {
         case "archetype":  return ccT('CharCreate.pickArchetype');
         case "archetype2": return ccT('CharCreate.pickSecondaryArchetype');
+        case "startLevel": return ccT('CharCreate.pickStartingLevel');
         case "job":        return ccT('CharCreate.pickJob');
         case "creed":      return ccT('CharCreate.pickCreed');
         case "hometown":   return ccT('CharCreate.pickHometown');
@@ -1777,6 +1790,7 @@
       switch (kind) {
         case "archetype":  return actorArchetypeKey(actor) || "";
         case "archetype2": return actorSecondaryArchetypeKey(actor) || "";
+        case "startLevel": return (actor && actor.level) ? actor.level : 1;
         case "job":        return (actor && actor._jobId != null) ? actor._jobId : 0;
         case "creed":      return (actor && actor._ideologyId) || "";
         case "hometown":   return $gameSystem._ccHometown || "Paris"; // i18n-ignore: WorkSystem.Destinations id
@@ -1797,6 +1811,7 @@
       switch (kind) {
         case "archetype":  this.onSelectCreatureArchetype(value); break;
         case "archetype2": this.onSelectCreatureSecondaryArchetype(value); break;
+        case "startLevel": this.onSelectStartingLevel(value); break;
         case "job":        this.onBioOptionChange('job', value); break;
         case "creed":      this.onBioOptionChange('ideology', value); break;
         case "hometown":   this.onBioOptionChange('hometown', value); break;
@@ -1805,6 +1820,25 @@
         case "traitpack":  this.onTraitPackageSelect(value); break;
         default: break;
       }
+    }
+
+    onSelectStartingLevel(level) {
+      const actor = Scene_CharacterCreation.getCurrentActor();
+      if (!actor) return;
+      const lvl = Math.max(1, Math.min(99, parseInt(level, 10) || 1));
+      if (actor.level === lvl) return;
+      actor.changeLevel(lvl, false);
+      actor.recoverAll();
+      SoundManager.playCursor();
+      const container = this._dndContainer;
+      if (container) {
+        const leftPage = container.querySelector(".cc-page-left");
+        if (leftPage) this._ccSwapPage(leftPage, this._bioPickerLeftHtml());
+        const sidebarSlot = container.querySelector(".cc-sidebar-slot");
+        if (sidebarSlot) this._ccMorphInner(sidebarSlot, this._renderCompactSidebarHtml());
+        return;
+      }
+      this.refreshUIOverlayDOM();
     }
 
     // The class board's cards, taken from the sheet instead. A card is a symbol
@@ -1906,6 +1940,17 @@
       `;
     }
 
+    _startingLevelBioHtml(actor) {
+      if (!actor) return "";
+      const currentLevel = actor.level || 1;
+      return `
+        <div class="cc-bio-section">
+          <div class="cc-bio-section-title">${this._ccIconHtml(87, 16)} <span>${ccT('CharCreate.startingLevel')}</span></div>
+          ${this._pickTriggerHtml('startLevel', ccTp('CharCreate.levelLabel', { level: currentLevel }))}
+        </div>
+      `;
+    }
+
     // The colours of a dossier model, one cell a part on a grid of two rows:
     // the model's own colour first, the ready swatches,
     // and a free picker that takes any colour. The sidebar model repaints as
@@ -1966,6 +2011,8 @@
       // The second half is asked of a person as much as of a creature; only
       // the creature is asked what its first half is.
       const archetypeBioHtml = this._archetypeBioHtml(actor, isCreatureActor);
+      const isStoryMode = !!(Scene_CharacterCreation._storyMode || isStoryEm);
+      const startingLevelHtml = !isStoryMode ? this._startingLevelBioHtml(actor) : "";
 
       // Gender picker
       const genders = [
@@ -2203,6 +2250,7 @@
               ${portraitStyleHtml}
               ${typePillsHtml}
               ${archetypeBioHtml}
+              ${startingLevelHtml}
               <div class="cc-bio-section">
                 <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.gender')}</span></div>
                 <div class="cc-bio-chips-row">${genderChipsHtml}</div>
@@ -2273,6 +2321,7 @@
             ${portraitStyleHtml}
             ${typePillsHtml}
             ${archetypeBioHtml}
+            ${startingLevelHtml}
             <div class="cc-bio-section">
               <div class="cc-bio-section-title">${this._ccIconHtml(246, 16)} <span>${ccT('CharCreate.gender')}</span></div>
               <div class="cc-bio-chips-row">${genderChipsHtml}</div>

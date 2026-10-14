@@ -700,32 +700,37 @@ magamui
 Magamui
 
 Em:
-There is something inside the planet, isn't there?
+There is something buried deep in the planet, isn't there?
 
 Bubba:
-A larva, a quarter the size of the Moon and has been wrapped around the Earth's core for millions of years.
-It feeds on the thermal and electromagnetic energy the core puts out.
-And it's asleep... for now.
+They call it Magamui, is a alien larva tall as quarter the size of the Moon and has been wrapped around the Earth's core for millions of years.
+It guzzle and feed on the thermal and geodesic energy the core puts out.
+And it's hybernating... for now.
 
 Em:
-Asleep and?
+What does he look like?
 
 Bubba:
-And still able to take mental control of exactly one person at a time, mostly for self preservation.
+Like a disgusting formless oversized lice wrapped around the core.
+And it's special ability is to able to take mental control of exactly one person at a time, mostly for self preservation or who knows that.
 The worry is that if it ever reaches full maturity it could mind control the whole of humanity.
-And IF it ever leaves the planet to go back to space, Earth will be cracked open like an egg.
+And IF it ever leaves the planet to go back to space, Earth will be cracked open like a coocoon.
 
 Em:
 And somebody is handling this?
 
 Bubba:
-The [Guild of Wizards] does, sorta. Their job is to find whoever Magamui is currently riding and kill them, because it needs time to take another.
+The [Guild of Wizards] does, sorta. One of their most ancient assignments is to find whoever Magamui is currently puppeteering and kill them, because it needs time for Magamui to take another mind.
 
 Em:
 So there is a person walking around right now who has been sentenced to death for being possessed by an alien larva?
 
 Bubba:
-Yes and maybe it's me! Just jokin', Em!
+Yes and maybe it's me! Or you! You cannot tell by yourself if you are being controlled.
+Did you know that [Ronald Reagan] was controlled by him for decades?
+
+Em:
+I don't remember who he is but i'll check it's hexapedia page.
 
 ------------------------------------------------------------------------------------------------------------
 inverted_citadel

@@ -1,11 +1,20 @@
-0.9.14a
+0.8.15a
 
 Changed:
- - reworked em the witch hexapedia page
- - regenerated base world
- - show these buttons same upper row
- - reworked scribing workbench with step wizard and inspect pills
- - Removed some battle BG
+ - reworked news system to see past world history from 1900
+ - reworked class mp progression especially in the first 30 levels
+ - voice pitch seeded from speaker name in story and other dialogues
+ - updated hexapedia pages for emm roger shawyer and ronald reagan
+
+Fixed:
+ - fixed game not launching on Mac stuck on loading screen
+ - news menu switches to previous days 
+
+
+0.8.14a
+
+Changed:
+ - modernized all spell creation menus with companion tabs and filter chips
 
 Fixed:
  - non-procedural fast travel destinations land in authored map at passable border

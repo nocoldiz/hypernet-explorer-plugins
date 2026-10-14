@@ -102,10 +102,19 @@
     var nodePath = null;
     var gameRoot = "";
     try {
-        if (typeof require === "function" && typeof process === "object" && process.mainModule) {
+        if (typeof require === "function" && typeof process === "object" && process) {
             nodeFs = require("fs");
             nodePath = require("path");
-            gameRoot = nodePath.dirname(process.mainModule.filename);
+            if (process.mainModule && process.mainModule.filename) {
+                gameRoot = nodePath.dirname(process.mainModule.filename);
+            } else if (typeof nw === "object" && nw.App && nw.App.startPath) {
+                gameRoot = nw.App.startPath;
+            } else if (typeof process.cwd === "function") {
+                gameRoot = process.cwd();
+            }
+            if ((!process.mainModule || !process.mainModule.filename) && gameRoot) {
+                process.mainModule = { filename: nodePath ? nodePath.join(gameRoot, "package.json") : (gameRoot + "/package.json") };
+            }
         }
     } catch (e) {
         nodeFs = null;

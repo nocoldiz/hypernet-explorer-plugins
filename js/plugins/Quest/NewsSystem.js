@@ -286,6 +286,115 @@
             return Object.keys(bucket).map(k => /^RealNews(\d{4})$/.exec(k)).filter(Boolean)
                 .map(m => Number(m[1])).sort((a, b) => a - b);
         },
+        // Category to newspaper section mapping
+        sectionForCategory(category) {
+            const cat = String(category || '').toLowerCase();
+            const map = {
+                political: 'politics',
+                internal: 'politics',
+                conquest: 'world',
+                military: 'world',
+                peace: 'world',
+                economic: 'economy',
+                scientific: 'science',
+                occult: 'arcane',
+                paranormal: 'arcane',
+                cultural: 'culture',
+                royal: 'culture',
+                sport: 'sport',
+                criminal: 'crime',
+                faith: 'faith',
+                disaster: 'disaster',
+                epidemic: 'society',
+                social: 'society'
+            };
+            return map[cat] || 'world';
+        },
+        // Headline extraction and body formatting for historical events
+        historyEventTitle(event) {
+            if (!event) return { title: '', body: '' };
+            if (event.title) return { title: event.title, body: event.description || event.text || '' };
+            const desc = String(event.description || event.text || '').trim();
+            const colonIdx = desc.indexOf(': ');
+            if (colonIdx > 0 && colonIdx < 50) {
+                return {
+                    title: desc.slice(0, colonIdx).trim(),
+                    body: desc.slice(colonIdx + 2).trim()
+                };
+            }
+            const bangIdx = desc.indexOf('! ');
+            if (bangIdx > 0 && bangIdx < 30) {
+                return {
+                    title: desc.slice(0, bangIdx + 1).trim(),
+                    body: desc.slice(bangIdx + 2).trim()
+                };
+            }
+            const typeLabel = (event.type && T.has && T.has('History.type.' + event.type) ? T('History.type.' + event.type) : '') ||
+                (event.category && T.has && T.has('History.category.' + event.category) ? T('History.category.' + event.category) : '') ||
+                this.sectionLabel(this.sectionForCategory(event.category || event.type)) ||
+                (event.type ? String(event.type).toUpperCase() : (T.has && T.has('NewsSystem.ui.tabHistory') ? T('NewsSystem.ui.tabHistory') : 'HISTORY'));
+            return {
+                title: typeLabel,
+                body: desc
+            };
+        },
+        // Procedural historical events from world generation before starting date from 1900
+        worldHistoryEvents() {
+            let events = [];
+            try {
+                if (window.HistoryManager && typeof window.HistoryManager.getEvents === 'function') {
+                    events = window.HistoryManager.getEvents();
+                }
+                if ((!events || !events.length) && window.WorldManager && typeof window.WorldManager.getField === 'function') {
+                    events = window.WorldManager.getField("history", "events") || [];
+                }
+                if ((!events || !events.length) && typeof $gameSystem !== 'undefined' && $gameSystem && $gameSystem._historicalEvents) {
+                    events = $gameSystem._historicalEvents;
+                }
+            } catch (e) {
+                events = [];
+            }
+            return (Array.isArray(events) ? events : [])
+                .filter(e => e && (e.description || e.text))
+                .slice()
+                .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+        },
+        // Historical events for a specific day converted into broadsheet newspaper articles
+        historyArticlesForDay(day) {
+            const y = day.getFullYear();
+            const m = String(day.getMonth() + 1).padStart(2, "0");
+            const d = String(day.getDate()).padStart(2, "0");
+            const dateStr = `${y}-${m}-${d}`;
+            const monthStr = `${y}-${m}`;
+            const isFirst = day.getDate() === 1;
+            const events = this.worldHistoryEvents().filter(e => {
+                const ed = String(e.date || "").trim();
+                return ed === dateStr || (isFirst && ed === monthStr);
+            });
+            const outletId = "archiveFoundationBulletin";
+            return events.map((ev, idx) => {
+                const parts = this.historyEventTitle(ev);
+                const sec = this.sectionForCategory(ev.category || ev.type);
+                const byline = this.bylineFor(outletId, ev.id || ev.date || idx);
+                let body = parts.body || ev.description || ev.text || "";
+                if (ev.results && typeof ev.results === "string" && !body.includes(ev.results)) {
+                    body += "\n\n" + ev.results;
+                }
+                return {
+                    key: "hist-" + (ev.id || `${ev.date || dateStr}-${idx}`),
+                    outlet: outletId,
+                    section: sec,
+                    soul: 0,
+                    title: this.plain(parts.title),
+                    deck: "",
+                    body: body,
+                    author: byline || "",
+                    time: "08:00",
+                    location: ev.location || "",
+                    archive: true
+                };
+            });
+        },
         // The words of one archive row in the language being played.
         articleText(row) {
             return {
@@ -1717,8 +1826,11 @@
             if (this._historyCache) return this._historyCache;
             let events = [];
             try {
-                events = (window.HistoryManager && window.HistoryManager.getEvents)
-                    ? window.HistoryManager.getEvents() : [];
+                if (window.NewsPress && typeof window.NewsPress.worldHistoryEvents === 'function') {
+                    events = window.NewsPress.worldHistoryEvents();
+                } else if (window.HistoryManager && typeof window.HistoryManager.getEvents === 'function') {
+                    events = window.HistoryManager.getEvents();
+                }
             } catch (e) {
                 events = [];
             }
@@ -1743,6 +1855,7 @@
         historyYear() {
             const years = this.historyYears();
             if (!years.length) return '';
+            if (this._historyYear === 'all') return 'all';
             if (!this._historyYear || !years.includes(this._historyYear)) this._historyYear = years[0];
             return this._historyYear;
         }
@@ -1759,16 +1872,33 @@
                     String(event.date || '').toLowerCase().includes(query));
             }
             const year = this.historyYear();
+            if (year === 'all') return all;
             return all.filter(event => String(event.date || '').slice(0, 4) === year);
         }
 
         changeHistoryYear(direction) {
             const years = this.historyYears();
             if (!years.length) return;
-            const at = years.indexOf(this.historyYear());
-            const next = Math.max(0, Math.min(years.length - 1, at + direction));
-            if (next === at) return;
-            this._historyYear = years[next];
+            if (this._historyYear === 'all') {
+                this._historyYear = years[0];
+            } else {
+                const at = years.indexOf(this.historyYear());
+                const next = Math.max(0, Math.min(years.length - 1, at + direction));
+                if (next === at) return;
+                this._historyYear = years[next];
+            }
+            this._historyIndex = 0;
+            SoundManager.playCursor();
+            this.refreshUINewspaperDOM();
+        }
+
+        toggleHistoryAll() {
+            if (this._historyYear === 'all') {
+                const years = this.historyYears();
+                this._historyYear = years.length ? years[0] : '';
+            } else {
+                this._historyYear = 'all';
+            }
             this._historyIndex = 0;
             SoundManager.playCursor();
             this.refreshUINewspaperDOM();
@@ -1821,6 +1951,9 @@
             const selected = list[this._historyIndex] || null;
             const dateStr = $gameVariables.value(113) || '01 JAN 2001 08:00';
             const displayDate = dateStr.split(' ').slice(0, 3).join(' ');
+            const pubName = (window.NewsPress && typeof NewsPress.outletName === 'function')
+                ? NewsPress.outletName('archiveFoundationBulletin')
+                : 'Archive Foundation Bulletin';
 
             let entriesHTML = '';
             if (!list.length) {
@@ -1835,6 +1968,7 @@
                             <div class="news-headline-meta">
                                 <span>${escapeNewsHTML(String(event.date || ''))}</span>
                                 <span class="news-headline-cat">${escapeNewsHTML(this.historyCategoryLabel(event.category || event.type))}</span>
+                                <span class="news-headline-pub">${escapeNewsHTML(pubName)}</span>
                             </div>
                             <div class="news-headline-text">${escapeNewsHTML(String(event.description || event.text || ''))}</div>
                         </div>`;
@@ -1858,16 +1992,25 @@
                         } catch (e) { /* ignore */ }
                     }
                 }
+                const words = (window.NewsPress && typeof NewsPress.historyEventTitle === 'function')
+                    ? NewsPress.historyEventTitle(selected) : null;
+                const recTitle = (words && words.title) || this.historyCategoryLabel(selected.category || selected.type);
                 recordHTML = `
                     <div class="news-article">
-                        <div class="news-article-title">${escapeNewsHTML(this.historyCategoryLabel(selected.category || selected.type))}</div>
+                        <div class="news-article-title">${escapeNewsHTML(recTitle)}</div>
                         <div class="news-article-meta">
                             <span>${T('History.ui.dateLbl')} ${escapeNewsHTML(String(selected.date || ''))}</span>
                             ${selected.type ? `<span>${T('History.ui.typeLbl')} ${escapeNewsHTML(this.historyCategoryLabel(selected.type))}</span>` : ''}
+                            <span>${escapeNewsHTML(pubName)}</span>
                         </div>
                         <div class="news-article-body">${escapeNewsHTML(String(selected.description || selected.text || ''))}</div>
                     </div>`;
             }
+
+            const allLabel = (window.T && typeof T === 'function' && T.has && T.has('NewsSystem.ui.allPastNews'))
+                ? T('NewsSystem.ui.allPastNews') : 'ALL PAST NEWS';
+            const byYearLabel = (window.T && typeof T === 'function' && T.has && T.has('NewsSystem.ui.byYear'))
+                ? T('NewsSystem.ui.byYear') : 'BY YEAR';
 
             this._dndContainer.innerHTML = `
                 <div class="cc-pockets-spread news-spread">
@@ -1875,7 +2018,7 @@
                         <div class="news-masthead-title">${T('NewsSystem.ui.mastheadTitle')}</div>
                         <div class="news-masthead-rule">
                             <span>${T('NewsSystem.ui.tabHistory')}</span>
-                            <span class="news-masthead-strap">${T('News.ui.masthead')}</span>
+                            <span class="news-masthead-strap">${escapeNewsHTML(pubName)}</span>
                             <span>${displayDate}</span>
                         </div>
                     </div>
@@ -1899,7 +2042,7 @@
                                        aria-label="${T('NewsSystem.ui.searchPlaceholder')}"
                                        value="${escapeNewsHTML(query)}">
                                 <div class="newspaper-nav-btn news-search-clear focusable${searching ? '' : ' disabled'}"
-                                     onclick="${sref}.clearHistorySearch()">${T('NewsSystem.ui.clearSearch')}</div>
+                                       onclick="${sref}.clearHistorySearch()">${T('NewsSystem.ui.clearSearch')}</div>
                             </div>
 
                             <!-- The record runs backwards, newest year first,
@@ -1909,8 +2052,9 @@
                                 <span class="news-month-label news-search-label">${T.n('NewsSystem.ui.searchResults', list.length, { count: list.length })}</span>
                                 ` : `
                                 <div class="newspaper-nav-btn focusable" onclick="${sref}.changeHistoryYear(1)">${T('News.ui.prev')}</div>
-                                <span class="news-month-label">${escapeNewsHTML(year)}</span>
+                                <span class="news-month-label">${this.historyYear() === 'all' ? escapeNewsHTML(allLabel) : escapeNewsHTML(year)}</span>
                                 <div class="newspaper-nav-btn focusable" onclick="${sref}.changeHistoryYear(-1)">${T('News.ui.next')}</div>
+                                <div class="newspaper-nav-btn focusable news-all-toggle" onclick="${sref}.toggleHistoryAll()">${this.historyYear() === 'all' ? escapeNewsHTML(byYearLabel) : escapeNewsHTML(allLabel)}</div>
                                 `}
                             </div>
 

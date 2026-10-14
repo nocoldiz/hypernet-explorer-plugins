@@ -810,7 +810,9 @@ StorageManager.fsWriteFile = function(path, data) {
 
 StorageManager.fileDirectoryPath = function() {
     const path = require("path");
-    const base = path.dirname(process.mainModule.filename);
+    const base = (typeof process === "object" && process && process.mainModule && process.mainModule.filename)
+        ? path.dirname(process.mainModule.filename)
+        : ((typeof nw === "object" && nw.App && nw.App.startPath) || (typeof process === "object" && process && process.cwd ? process.cwd() : "."));
     return path.join(base, "save/");
 };
 

@@ -87,6 +87,8 @@
     "recordInDepth": "RECORD IN-DEPTH",
     "noHistory": "This world has no written history yet.",
     "historyFooter": "{count} entries in the world record",
+    "allPastNews": "ALL PAST NEWS",
+    "byYear": "BY YEAR",
     "knowledgeTitle": "Current affairs knowledge"
   },
   "specialLocations": [

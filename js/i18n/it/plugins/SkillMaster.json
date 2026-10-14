@@ -1248,6 +1248,7 @@
     "tagsPrice": "Proprietà",
     "price": "Prezzo",
     "complexity": "Complessità",
+    "randomize": "Randomizza",
     "enchantIt": "Incanta",
     "dropped": "Tolte: {tags}.",
     "blocked": {
@@ -1346,9 +1347,11 @@
     "byAuthor": "Scritto da {author}",
     "filterAuthor": "Solo autore",
     "filterParty": "Tutto il party",
-    "chooseCover": "Scegli copertina"
+    "chooseCover": "Scegli copertina",
+    "randomize": "Randomizza"
   },
   "expression": {
+    "randomize": "Randomizza",
     "button": "Espressioni",
     "title": "Espressione",
     "pickBlurb": "Scegli un personaggio con l'Espressione sbloccata.",
@@ -1439,7 +1442,15 @@
     "nothing": "Nessuna abilità rimovibile.",
     "warning": "{name} lo dimentica per sempre. Reimpararlo costa il prezzo pieno.",
     "cut": "{name} dimentica {skill} per {kp} KP.",
-    "forgottenDetailed": "{name} ha dimenticato {skill} (+{kp} KP)!"
+    "forgottenDetailed": "{name} ha dimenticato {skill} (+{kp} KP)!",
+    "randomize": "Casuale",
+    "cost": "Costo",
+    "skillCategory": "Abilità",
+    "filterAll": "Tutti",
+    "filterMagic": "Incantesimi",
+    "filterSkill": "Abilità",
+    "forgetAction": "Dimentica abilità (+{kp} KP)",
+    "confirmAction": "Conferma rimozione (+{kp} KP)"
   },
   "tips": {
     "member": "Membro",
