@@ -63,6 +63,16 @@
   const _esc = (text) => String(text == null ? '' : text)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+  // Inspect pill tag system, matching ItemSystemInventoryUI and theme.css
+  const _pillHTML = (label, val, pillClass) =>
+    `<div class="inspect-meta-item inspect-pill${pillClass ? ' ' + pillClass : ''}">` +
+      `<span class="inspect-pill-lbl">${_esc(String(label)).replace(/\s*:\s*$/, '')}:</span> ` +
+      `<span class="inspect-meta-val inspect-pill-val">${val}</span>` +
+    `</div>`;
+  const _pillTextHTML = (text, pillClass) =>
+    `<div class="inspect-meta-item inspect-pill${pillClass ? ' ' + pillClass : ''}"><span class="inspect-meta-val inspect-pill-val">${text}</span></div>`;
+  const _pillBlockHTML = (inner) => `<div class="inspect-quick-pills inspect-pill-block">${inner}</div>`;
+
   const StaffBoard = {
     slots(bizKey) {
       return SM.businessSlots ? (SM.businessSlots(bizKey) || []) : [];
@@ -89,9 +99,9 @@
                onclick="SceneManager._scene?._staffSelect?.(${i})">
             <div class="item-slot-info">
               <span class="item-slot-name">${_esc(holder ? holder.name : T('ShopManagement.staff.vacant'))}</span>
-              <span class="item-slot-meta">
-                <span class="item-slot-count">${_esc(this.hours(slot))}</span>
-                <span class="item-slot-rarity">${_esc(tag)}</span>
+              <span class="item-slot-meta inspect-quick-pills">
+                <span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${_esc(this.hours(slot))}</span></span>
+                <span class="inspect-meta-item inspect-pill ${holder && holder.kind === 'preset' ? '' : 'inspect-pill--muted'}"><span class="inspect-meta-val inspect-pill-val">${_esc(tag)}</span></span>
               </span>
             </div>
           </div>`;
@@ -108,13 +118,13 @@
         <div class="inspect-header">
           <div class="inspect-title-box">
             <div class="inspect-name">${_esc(title)}</div>
-            <div class="inspect-rarity">${T('ShopManagement.staff.shiftsCovered', { covered, total: slots.length })}</div>
+            <div class="inspect-rarity"><span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${T('ShopManagement.staff.shiftsCovered', { covered, total: slots.length })}</span></span></div>
           </div>
         </div>`;
       if (!slot) return header;
       const ours = slot.holder && slot.holder.kind === 'preset';
       const standing = ours && slot.citizen
-        ? `<div class="inspect-spec-row"><span class="inspect-spec-value">${_esc(T('ShopManagement.staff.standingIn', { name: slot.citizen }))}</span></div>`
+        ? _pillTextHTML(_esc(T('ShopManagement.staff.standingIn', { name: slot.citizen })), 'inspect-pill--muted')
         : '';
       const release = ours
         ? `<div class="command-item focusable" tabindex="0"
@@ -127,21 +137,20 @@
                  onclick="SceneManager._scene?._staffAssign?.('${_esc(String(r.id))}')">
               <div class="item-slot-info">
                 <span class="item-slot-name">${_esc(r.name)}</span>
-                <span class="item-slot-meta">
-                  <span class="item-slot-count">${_esc(T('ShopManagement.ui.levelAbbr', { level: r.level }))}</span>
-                  <span class="item-slot-rarity">${_esc(T('ShopManagement.staff.assign'))}</span>
+                <span class="item-slot-meta inspect-quick-pills">
+                  <span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${_esc(T('ShopManagement.ui.levelAbbr', { level: r.level }))}</span></span>
+                  <span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${_esc(T('ShopManagement.staff.assign'))}</span></span>
                 </span>
               </div>
             </div>`).join('')
-        : `<div class="inspect-spec-row"><span class="inspect-spec-value">${T('ShopManagement.staff.noReserves')}</span></div>`;
+        : _pillBlockHTML(_pillTextHTML(T('ShopManagement.staff.noReserves')));
       return `${header}
         <div class="inspect-lore">
           <div class="inspect-section-title">${_esc(slot.postLabel)}, ${_esc(this.hours(slot))}</div>
-          <div class="inspect-spec-row">
-            <span class="inspect-spec-label">${T('ShopManagement.staff.onShift')}</span>
-            <span class="inspect-spec-value">${_esc(slot.holder ? slot.holder.name : T('ShopManagement.staff.vacant'))}</span>
-          </div>
-          ${standing}
+          ${_pillBlockHTML(
+            _pillHTML(T('ShopManagement.staff.onShift'), _esc(slot.holder ? slot.holder.name : T('ShopManagement.staff.vacant'))) +
+            standing
+          )}
           ${release}
           <div class="inspect-section-title">${T('ShopManagement.staff.candidatesTitle')}</div>
           ${pick}
@@ -518,9 +527,9 @@
             <div class="item-slot-icon"><canvas data-icon="${s.item.iconIndex}" width="32" height="32"></canvas></div>
             <div class="item-slot-info">
               <span class="item-slot-name">${s.slotIndex}. ${_itemName(s.item)}</span>
-              <span class="item-slot-meta">
-                <span class="item-slot-count">${s.amount}/${shop.maxItemsPerSlot}</span>
-                ${price ? `<span class="item-slot-rarity">${SM.formatEuroPrice(price)}</span>` : ''}
+              <span class="item-slot-meta inspect-quick-pills">
+                <span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${s.amount}/${shop.maxItemsPerSlot}</span></span>
+                ${price ? `<span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${SM.formatEuroPrice(price)}</span></span>` : ''}
               </span>
             </div>
           </div>`;
@@ -534,7 +543,9 @@
             <div class="item-slot-icon"><canvas data-icon="${e.item.iconIndex}" width="32" height="32"></canvas></div>
             <div class="item-slot-info">
               <span class="item-slot-name">${_itemName(e.item)}</span>
-              <span class="item-slot-count">×${e.amount}</span>
+              <span class="item-slot-meta inspect-quick-pills">
+                <span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">&times;${e.amount}</span></span>
+              </span>
             </div>
           </div>`;
         }).join('');
@@ -548,7 +559,9 @@
             <div class="item-slot-icon"><canvas data-icon="${item.iconIndex}" width="32" height="32"></canvas></div>
             <div class="item-slot-info">
               <span class="item-slot-name">${_itemName(item)}</span>
-              <span class="item-slot-count">${SM.formatEuroPrice(price)}</span>
+              <span class="item-slot-meta inspect-quick-pills">
+                <span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${SM.formatEuroPrice(price)}</span></span>
+              </span>
             </div>
           </div>`;
         }).join('');
@@ -721,23 +734,12 @@
       const statusText = shop.isWorking ? T.working : T.offDuty;
       const statusCls  = shop.isWorking ? 'shop-status-on' : 'shop-status-off';
 
-      let html = `
-        <div class="inspect-spec-row">
-          <span class="inspect-spec-label">${T.role}</span>
-          <span class="inspect-spec-value">${shop.currentRole}</span>
-        </div>
-        <div class="inspect-spec-row">
-          <span class="inspect-spec-label">${T.status}</span>
-          <span class="inspect-spec-value ${statusCls}">${statusText}</span>
-        </div>
-        <div class="inspect-spec-row">
-          <span class="inspect-spec-label">${T.balance}</span>
-          <span class="inspect-spec-value">${bal}</span>
-        </div>
-        <div class="inspect-spec-row">
-          <span class="inspect-spec-label">${T.category}</span>
-          <span class="inspect-spec-value">${shop.category}</span>
-        </div>`;
+      let html = _pillBlockHTML(
+        _pillHTML(T.role, _esc(shop.currentRole)) +
+        _pillHTML(T.status, `<span class="${statusCls}">${_esc(statusText)}</span>`) +
+        _pillHTML(T.balance, _esc(bal)) +
+        _pillHTML(T.category, _esc(shop.category))
+      );
 
       const del = SM.getData().globalData?.currentDelivery;
       if (del) {
@@ -746,20 +748,18 @@
           ? SM.getMapDisplayName(del.mapId)
           : (($dataMapInfos && $dataMapInfos[del.mapId])
             ? $dataMapInfos[del.mapId].name : T('ShopManagement.mapN', { id: del.mapId }));
-        html += `<div class="inspect-section-title">${T('ShopManagement.ui.delivery')}</div>
-          <div class="inspect-spec-row">
-            <span class="inspect-spec-label">${T('ShopManagement.ui.destination')}</span>
-            <span class="inspect-spec-value">${destName}</span>
-          </div>`;
+        let timerPill = '';
         if ($gameTimer && $gameTimer.isWorking()) {
           const secs = Math.floor($gameTimer.seconds());
           const mm   = String(Math.floor(secs / 60)).padStart(2, '0');
           const ss   = String(secs % 60).padStart(2, '0');
-          html += `<div class="inspect-spec-row">
-            <span class="inspect-spec-label">${T.timeLeft}</span>
-            <span class="inspect-spec-value shop-delivery-timer">${mm}:${ss}</span>
-          </div>`;
+          timerPill = _pillHTML(T.timeLeft, `<span class="shop-delivery-timer">${mm}:${ss}</span>`);
         }
+        html += `<div class="inspect-section-title">${T('ShopManagement.ui.delivery')}</div>` +
+          _pillBlockHTML(
+            _pillHTML(T('ShopManagement.ui.destination'), _esc(destName)) +
+            timerPill
+          );
       }
       return html;
     }
@@ -778,30 +778,25 @@
         const worth = onSale.reduce(
           (sum, e) => sum + (shop.menuPrices[e.row.itemId] || 0) * e.row.amount, 0);
         const rows = onSale.length
-          ? onSale.map(e => `
-              <div class="inspect-spec-row sm-takeback-row focusable" tabindex="0"
+          ? `<div class="inspect-quick-pills inspect-pill-block">${onSale.map(e => `
+              <div class="inspect-meta-item inspect-pill sm-takeback-row focusable" tabindex="0"
                    onclick="SceneManager._scene?.takeBackItem?.(${e.row.itemId})"
                    title="${T('ShopManagement.shelves.takeBack')}">
-                <span class="inspect-spec-label">${_itemName(e.item)}</span>
-                <span class="inspect-spec-value">&times;${e.row.amount}</span>
-              </div>`).join('')
-          : `<div class="inspect-spec-row">
-                <span class="inspect-spec-value">${T('ShopManagement.shelves.shelfEmpty')}</span>
-              </div>`;
+                <span class="inspect-pill-lbl">${_itemName(e.item)}:</span>
+                <span class="inspect-meta-val inspect-pill-val">&times;${e.row.amount}</span>
+              </div>`).join('')}</div>`
+          : _pillBlockHTML(_pillTextHTML(T('ShopManagement.shelves.shelfEmpty')));
         return `
           <div class="inspect-header">
             <div class="inspect-title-box">
               <div class="inspect-name">${_esc(name)}</div>
-              <div class="inspect-rarity">${SM.formatEuroPrice(worth)}</div>
+              <div class="inspect-rarity"><span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${SM.formatEuroPrice(worth)}</span></span></div>
             </div>
           </div>
           <div class="inspect-lore">
             <div class="inspect-section-title">${T('ShopManagement.shelves.shelfTitle')}</div>
             ${rows}
-            <div class="inspect-spec-row">
-              <span class="inspect-spec-label">${T('ShopManagement.category')}</span>
-              <span class="inspect-spec-value">${trade}</span>
-            </div>
+            ${_pillBlockHTML(_pillHTML(T('ShopManagement.category'), _esc(trade)))}
             ${window.ThinkerMenu ? `<div class="command-item focusable" tabindex="0"
                 onclick="SceneManager._scene?.openShopWorkshop?.()">${T('ShopManagement.shelves.fabricate')}</div>` : ''}
           </div>`;
@@ -819,7 +814,17 @@
           <div class="inspect-header">
             <div class="inspect-title-box">
               <div class="inspect-name">${_esc(name)}</div>
-              <div class="inspect-rarity">${SM.formatEuroPrice(shop.balance || 0)}</div>
+              <div class="inspect-rarity"><span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${SM.formatEuroPrice(shop.balance || 0)}</span></span></div>
+            </div>
+          </div>
+          <div class="inspect-quick-pills" style="margin: 6px 0;">
+            <div class="inspect-meta-item inspect-pill">
+              <span class="inspect-pill-lbl">${T.balance}:</span>
+              <span class="inspect-meta-val inspect-pill-val">${SM.formatEuroPrice(shop.balance || 0)}</span>
+            </div>
+            <div class="inspect-meta-item inspect-pill">
+              <span class="inspect-pill-lbl">${T.status}:</span>
+              <span class="inspect-meta-val inspect-pill-val ${shop.isWorking ? 'shop-status-on' : 'shop-status-off'}">${shop.isWorking ? T.working : T.offDuty}</span>
             </div>
           </div>
           <div class="inspect-lore">
@@ -863,13 +868,12 @@
           const have = shop.warehouseInventory[matId] || 0;
           const ok   = have >= need;
           const cls  = ok ? 'shop-ing-ok' : 'shop-ing-no';
-          return `<div class="inspect-spec-row">
-            <span class="inspect-spec-label">${mat ? mat.name : T('ShopManagement.itemN', { id: matId })}</span>
-            <span class="inspect-spec-value ${cls}">${have}/${need}</span>
-          </div>`;
+          const name = mat ? mat.name : T('ShopManagement.itemN', { id: matId });
+          return _pillHTML(name, `<span class="${cls}">${have}/${need}</span>`);
         }).join('');
         const statusCls  = canMake ? 'shop-can-produce' : 'shop-no-mats';
-        recipeHtml = lines + `<div class="inspect-spec-row ${statusCls}">${canMake ? T.canProduce : T.noMats}</div>`;
+        recipeHtml = _pillBlockHTML(lines +
+          _pillTextHTML(canMake ? T.canProduce : T.noMats, statusCls));
       }
 
       return `
@@ -879,7 +883,17 @@
           </div>
           <div class="inspect-title-box">
             <div class="inspect-name">${_itemName(item)}</div>
-            <div class="inspect-rarity">${SM.formatEuroPrice(price)}</div>
+            <div class="inspect-rarity"><span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${SM.formatEuroPrice(price)}</span></span></div>
+          </div>
+        </div>
+        <div class="inspect-quick-pills" style="margin: 6px 0;">
+          <div class="inspect-meta-item inspect-pill">
+            <span class="inspect-pill-lbl">${T('ShopManagement.category') || 'Category'}:</span>
+            <span class="inspect-meta-val inspect-pill-val">${SM.shopTrade ? SM.shopTrade(shop) : shop.category}</span>
+          </div>
+          <div class="inspect-meta-item inspect-pill">
+            <span class="inspect-pill-lbl">${T('DailyShop.ui.price') || 'Price'}:</span>
+            <span class="inspect-meta-val inspect-pill-val">${SM.formatEuroPrice(price)}</span>
           </div>
         </div>
         <div class="inspect-lore">

@@ -375,7 +375,7 @@
         camper: { mapId: 0, x: 10, y: 10 },
         bus: { mapId: 719, x: 8, y: 7 },
         train: { mapId: 718, x: 7, y: 7 },
-        taxi: { mapId: 720, x: 10, y: 10 },
+        taxi: { mapId: 720, x: 6, y: 6, direction: 2 },
         boat: { mapId: 0, x: 10, y: 10 },
         ferry: { mapId: 0, x: 10, y: 10 },
         airplane_economy: { mapId: 0, x: 10, y: 10 },
@@ -1632,7 +1632,7 @@
             const travelMap = travelMaps[data.selectedTransport];
             if (travelMap && travelMap.mapId > 0 && $dataMapInfos[travelMap.mapId]) {
                 data.currentTravelMapId = travelMap.mapId;
-                $gamePlayer.reserveTransfer(travelMap.mapId, travelMap.x, travelMap.y, 2, 0);
+                $gamePlayer.reserveTransfer(travelMap.mapId, travelMap.x, travelMap.y, travelMap.direction || 2, 0);
                 $gamePlayer.setMovementLock(false);
             } else {
                 console.warn(`FastTravel: Travel map for ${data.selectedTransport} not found. Using direct travel.`);

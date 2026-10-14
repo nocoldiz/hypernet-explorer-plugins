@@ -3629,6 +3629,9 @@
                         title="${T('MainMenu.label.wantedHeat')}">${T('MainMenu.value.wantedLevel', { pct: heatPercent })}</span>`;
         }
 
+        const knowledgeValue = (typeof $gameSystem !== "undefined" && $gameSystem && typeof $gameSystem.getKnowledge === "function") ? $gameSystem.getKnowledge() : 0;
+        const formattedKnowledge = knowledgeValue.toLocaleString();
+
         // Date/Time
         const gameMinutes = $gameVariables.value(114) || 0;
         const dateTime = this.getUIDateTime(gameMinutes);
@@ -3697,6 +3700,10 @@
                 <div class="clock-row">
                     <span class="clock-label">${T('MainMenu.label.currentBounty')}</span>
                     <span class="clock-value bounty-highlight">${formattedBounty}${wantedHTML}</span>
+                </div>
+                <div class="clock-row">
+                    <span class="clock-label">${T('MainMenu.label.knowledge')}</span>
+                    <span class="clock-value knowledge-highlight">${formattedKnowledge} KP</span>
                 </div>
             </div>
 

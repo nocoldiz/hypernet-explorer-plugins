@@ -548,6 +548,7 @@
         this.getKnowledge();
         this._knowledgePoints += amount;
     };
+    Game_System.prototype.gainKnowledge = Game_System.prototype.addKnowledge;
 
     Game_System.prototype.spendKnowledge = function (amount) {
         if (this._knowledgePoints === undefined) this._knowledgePoints = 0;

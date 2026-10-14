@@ -865,6 +865,7 @@
         // pixel grid before the layer is upscaled.
         FONT: 'psxhud',
         FONT_FILE: 'PixelOperator8-Bold.ttf',
+        FONT_SCALE: 0.75,
         _fontLoaded: false,
 
         // A deliberately small, fixed palette. PSX HUDs did not have gradients
@@ -1416,8 +1417,9 @@
                 // over one call at a time.
                 text(str, x, y, w, align, color, size, opts) {
                     const p = opts || {};
-                    const fs = size || 8;
-                    const lh = p.lineHeight || Math.round(fs * 1.5);
+                    const rawFs = size || 8;
+                    const fs = rawFs * (p.fontScale || hud.FONT_SCALE || 0.75);
+                    const lh = p.lineHeight || Math.round(rawFs * 1.5);
                     let node = this._nodes[this._i];
                     if (!node) {
                         node = document.createElement('div');

@@ -209,9 +209,15 @@
       "cook": "Cucinato {item} x{count} in località {place}.",
       "alchemy": "Preparato {item} x{count} al banco.",
       "brew": "Messo {item} x{count} a fermentare in località {place}.",
-      "enchant": "Legato {spell} in {item}.",
-      "unmade": "Disfatto il legame su {item}.",
-      "book": "Scritto {item}."
+      "enchant": "{name} ha legato {spell} in {item}.",
+      "unmade": "{name} ha disfatto il legame su {item}.",
+      "book": "{name} ha scritto {item}.",
+      "fuse": "{name} ha fuso insieme {spell1} e {spell2} per creare {result}.",
+      "split": "{name} ha diviso {result} nei suoi componenti {spell1} e {spell2}.",
+      "spell": "{name} ha creato l'incantesimo {spell}.",
+      "rewrite": "{name} ha riscritto l'incantesimo {spell}.",
+      "discard": "{name} ha scartato l'incantesimo {spell}.",
+      "hexorcize": "{name} ha rimosso l'incanto da {item}."
     },
     "build": {
       "placed": "Montato {item} in località {place}.",
@@ -219,7 +225,8 @@
     },
     "skill": {
       "learned": "{name} ha imparato {skill}.",
-      "learnedMany": "{name} ha imparato {skills}."
+      "learnedMany": "{name} ha imparato {skills}.",
+      "forgotten": "{name} ha rimosso dalla memoria {skill}."
     },
     "spec": {
       "tier": "{name} adesso è {tier} in {spec}."

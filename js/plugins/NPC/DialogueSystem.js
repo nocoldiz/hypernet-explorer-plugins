@@ -994,13 +994,6 @@ Imported.DialogueSystem = true;
         _dressStorySlot(sprite, imageName, modelSpec, paintedWhileLoading) {
             sprite.imageName = imageName;
             const path = this.resolveBustPath(imageName);
-            let painted = null;
-            try {
-                painted = ImageManager.loadBitmap('img/', path);
-                painted.addLoadListener(() => this.layoutStoryCast());
-            } catch (err) {
-                console.warn('Failed to load story bust:', path, err);
-            }
             const spec  = modelSpec === undefined ? this._modelSpecForImage(imageName) : modelSpec;
             sprite._modelSpec = spec;
             const layout = this.storyLayout();
@@ -1008,16 +1001,10 @@ Imported.DialogueSystem = true;
                 (bitmap) => this._bitmapOnStage(bitmap)) : null;
             sprite._modelBust = null;
             if (model && !this._bitmapFailed(model)) {
-                if (paintedWhileLoading && painted && !this._bitmapReady(model)) {
-                    sprite.bitmap       = painted;
-                    sprite._modelBust   = model;
-                    sprite._paintedBust = null;
-                } else {
-                    sprite.bitmap       = model;
-                    sprite._paintedBust = painted;
-                }
+                sprite.bitmap       = model;
+                sprite._paintedBust = null;
             } else {
-                sprite.bitmap       = painted || this._loadFallback();
+                sprite.bitmap       = null;
                 sprite._paintedBust = null;
             }
         }
@@ -1554,9 +1541,16 @@ Imported.DialogueSystem = true;
         showCustomBust(imageName, characterName, side, modelSpec) {
             if (!imageName) return;
             const staged = this.storyMode && (this.storySlots || []).length > 0;
-            const spec = staged ? null
+            let spec = staged ? null
                 : (modelSpec || this._actorModelSpec(this._partyMemberNamed(characterName))
                     || this._modelSpecForImage(imageName));
+            if (!spec && (characterName?.toLowerCase() === 'em' || imageName?.toLowerCase()?.includes('em'))) {
+                const CP = window.CharacterPresets;
+                const emPreset = CP?.getCharacterPresets?.().find(p => p && (p.id === 2 || String(p.name || '').toLowerCase() === 'em'));
+                const path = (emPreset && emPreset.model) || 'models/Em.glb';
+                const info = { kind: 'glb', path, actorId: 0 };
+                spec = { info, id: window.ActorModel3D?.keyFor?.(info) || `glb:${path}`, frame: 'bust' };
+            }
             const model        = this._modelBitmap(spec);
             const path         = this.resolveBustPath(imageName);
             const key          = model && !this.storyMode ? `model_${spec.id}` : `custom_${imageName}`;
@@ -1595,13 +1589,11 @@ Imported.DialogueSystem = true;
             const scene = SceneManager._scene;
             if (!this.characterBust.parent && scene) addBustToScene(this.characterBust, scene);
 
-            try {
-                const bust = ImageManager.loadBitmap('img/', path);
-                if (model) this._beginBustLoad(model, key, bust, path);
-                else this._beginBustLoad(bust, key, fallback, path);
-            } catch (err) {
-                console.warn("Failed to load custom bust:", path, err);
-                if (fallback) this._beginBustLoad(fallback, key, null, path);
+            if (model) {
+                this._beginBustLoad(model, key, null, path);
+            } else {
+                this.characterBust.bitmap = null;
+                this._pendingBust = null;
             }
             this.bustIsVisible = true;
             this.activeEventId = 'custom';
@@ -1665,16 +1657,13 @@ Imported.DialogueSystem = true;
                 this.nameIsVisible = true;
             }
 
-            // A speaker with a 3D body is shown by it; the bust their sprite
-            // carries only stands in when the model cannot be built.
+            // A speaker with a 3D body is shown by it; 2D bust images are suppressed
             const model = this._modelBitmap(this._eventModelSpec(eventId));
-            try {
-                const bust = ImageManager.loadBitmap('img/', path);
-                if (model) this._beginBustLoad(model, key, bust, path);
-                else this._beginBustLoad(bust, key, fallback, path);
-            } catch (err) {
-                console.warn("Failed to load bust:", path, err);
-                if (fallback) this._beginBustLoad(fallback, key, null, path);
+            if (model) {
+                this._beginBustLoad(model, key, null, path);
+            } else {
+                this.characterBust.bitmap = null;
+                this._pendingBust = null;
             }
             this.bustIsVisible = true;
         }
@@ -1741,9 +1730,18 @@ Imported.DialogueSystem = true;
                 }
             } catch (err) { /* no party yet */ }
             try {
-                return window.NPCPortraitModel.specForBust?.(resolved)
-                    || window.NPCPortraitModel.specForBust?.(wanted) || null;
-            } catch (err) { return null; }
+                const byBust = window.NPCPortraitModel.specForBust?.(resolved)
+                    || window.NPCPortraitModel.specForBust?.(wanted);
+                if (byBust) return byBust;
+            } catch (err) { /* fall through */ }
+            if (low === 'em' || low === 'presets/em' || low.includes('em')) {
+                const CP = window.CharacterPresets;
+                const emPreset = CP?.getCharacterPresets?.().find(p => p && (p.id === 2 || String(p.name || '').toLowerCase() === 'em'));
+                const path = (emPreset && emPreset.model) || 'models/Em.glb';
+                const info = { kind: 'glb', path, actorId: 0 };
+                return { info, id: window.ActorModel3D?.keyFor?.(info) || `glb:${path}`, frame: 'bust' };
+            }
+            return null;
         }
 
         _modelBitmap(spec) {
@@ -3308,6 +3306,9 @@ Imported.DialogueSystem = true;
                 isNew = true;
             }
         });
+        if (isNew && window.$gameSystem?.addKnowledge) {
+            window.$gameSystem.addKnowledge(15);
+        }
         return isNew;
     }
 

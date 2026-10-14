@@ -92,6 +92,8 @@
     "statAwarded": "Points",
     "attributePoints": "{points} attribute points to spend",
     "raiseAttribute": "Raise this attribute permanently",
+    "raiseHp": "Raise Max HP (+{amount}) permanently",
+    "raiseMp": "Raise Max MP (+{amount}) permanently",
     "attributeRaised": "{stat} permanently raised to {value}",
     "archetypeCreature": "Creature",
     "archetypeHumanoid": "Humanoid"

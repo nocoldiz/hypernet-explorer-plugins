@@ -718,31 +718,39 @@
 #newspaper-container .np-sheet::-webkit-scrollbar-thumb:hover { background: var(--text-primary-hover, #ffcc66); }
 
 #newspaper-container .np-page {
+    /* The sheet's own paper and ink. Newsprint is newsprint whatever preset is
+       installed, so nothing printed on this page may read a theme colour: the
+       two theme gradients that used to be composited under the grain
+       (--gradient-34 and --gradient-26) flatten to solid black in the dark
+       presets, which painted the whole page black under ink that is darker
+       still. The wash below is the paper's own. */
+    --np-paper: #fffdf8;
+    --np-ink: #1b1813;
+    --np-ink-soft: #4a3622;
     width: 96%; max-width: 1080px; margin: 0 auto; padding: 32px 46px 56px;
-    background-color: #f4ecd8;
+    background-color: var(--np-paper);
     background-image:
         url("data:image/svg+xml,%3Csvg viewBox='0%200%20200%20200'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter%20id='noiseFilter'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.8'%20numOctaves='3'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23noiseFilter)'%20opacity='0.035'/%3E%3C/svg%3E"),
-        var(--gradient-34),
-        var(--gradient-26);
-    background-size: 200px 200px, auto, auto;
-    border: 6px double var(--text-text-alt-1-active, #4a3622);
-    outline: 1px solid var(--border-primary-hover-translucent-15, rgba(255, 204, 102, 0.2));
+        linear-gradient(180deg, #ffffff 0%, #f5efe0 100%);
+    background-size: 200px 200px, auto;
+    border: 6px double var(--np-ink-soft);
+    outline: 1px solid rgba(74, 54, 34, 0.35);
     outline-offset: -10px;
     box-shadow:
         0 30px 75px var(--shadow-heavy, rgba(0, 0, 0, 0.75)),
-        inset 0 0 100px var(--border-primary-hover-translucent-15, rgba(0, 0, 0, 0.08));
+        inset 0 0 100px rgba(74, 54, 34, 0.08);
     user-select: text;
     -webkit-user-select: text;
 }
 #newspaper-container .np-masthead {
     text-align: center;
-    border-bottom: 4px double var(--text-text-alt-1-active, #1b1813);
+    border-bottom: 4px double var(--np-ink);
     padding-bottom: 8px; margin-bottom: 20px;
 }
 #newspaper-container .np-ears {
     display: flex; justify-content: space-between; font-size: 14px; text-transform: uppercase;
     letter-spacing: 1.8px;
-    border-bottom: 1px solid var(--text-text-alt-1-active, #1b1813);
+    border-bottom: 1px solid var(--np-ink);
     padding-bottom: 5px;
 }
 #newspaper-container .np-title {
@@ -751,8 +759,8 @@
 #newspaper-container .np-motto { font-style: italic; font-size: 17px; margin-top: 4px; }
 #newspaper-container .np-dateline {
     display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; padding: 6px 0;
-    border-top: 1px solid var(--text-text-alt-1-active, #1b1813);
-    border-bottom: 1px solid var(--text-text-alt-1-active, #1b1813);
+    border-top: 1px solid var(--np-ink);
+    border-bottom: 1px solid var(--np-ink);
     font-size: 14px; text-transform: uppercase; letter-spacing: 1.2px;
 }
 #newspaper-container .np-article {
@@ -761,12 +769,12 @@
     transition: background 0.3s, outline 0.3s;
 }
 #newspaper-container .np-article--lead {
-    border-bottom: 3px solid var(--text-text-alt-1-active, #1b1813);
+    border-bottom: 3px solid var(--np-ink);
     margin-bottom: 28px; padding-bottom: 24px;
 }
 #newspaper-container .np-article--flash {
-    outline: 3px solid var(--text-primary-hover, #ffcc66); outline-offset: 6px;
-    background: rgba(255, 204, 102, 0.15); border-radius: 2px;
+    outline: 3px solid #d9a400; outline-offset: 6px;
+    background: rgba(255, 225, 74, 0.4); border-radius: 2px;
 }
 #newspaper-container .np-kicker {
     font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--np-accent, #1a1a1a); font-weight: 700;
@@ -794,7 +802,7 @@
 #newspaper-container .np-link:hover { background: linear-gradient(transparent 12%, #ffd000 12%, #ffd000 88%, transparent 88%); }
 #newspaper-container .np-link--closed { border-bottom-style: dashed; }
 #newspaper-container .np-key--focus { outline: 2px solid #1b1813; outline-offset: 1px; }
-#newspaper-container .np-empty { text-align: center; font-style: italic; font-size: 24px; padding: 100px 0; color: var(--text-text-alt-1-active, #4a3622); }
+#newspaper-container .np-empty { text-align: center; font-style: italic; font-size: 24px; padding: 100px 0; color: var(--np-ink-soft); }
 `;
     // i18n-ignore-end
 

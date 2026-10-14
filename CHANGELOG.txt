@@ -4,12 +4,22 @@ Maps:
  - Starting skyscraper interior walls
  - Finished many procedural housese
 
+Added:
+ - assign level up points to HP and MP in statuscreen
+
 Changed:
- - reworked spell making into a step by step progress
+ - ported identity and animation loader to spell fusion
+ - removed 3d editor wip button in character creation
+ - hide empathize emotion bars and show world sprite when model missing
+ - removed all busts
+ - teaching and learning skills require knowledge points with new sources
+ - reduced css text size of all minigames with this hud
  - reworked skill auto sync selector and renamed best to reactive
  - crafting uses the tag system from itemsysteminventory
 
 Fixed:
+ - NPC society registry no longer deletes newly created profiles
+ - cab taxi places player at map 720 6 6 facing down
  - mirror events filter what is not white
  - fix buttons in travel on worldmap
 

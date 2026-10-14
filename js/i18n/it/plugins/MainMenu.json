@@ -251,6 +251,7 @@
     "weather": "Meteo:",
     "currentCash": "Denaro attuale:",
     "currentBounty": "Taglia attuale:",
+    "knowledge": "Conoscenza:",
     "wantedHeat": "Ricercato:",
     "armyUpkeep": "Mantenimento esercito:",
     "rowColumn": "Riga {row}, Colonna {col}"

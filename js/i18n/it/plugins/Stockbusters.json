@@ -77,8 +77,11 @@
   "text": {
     "tuitionFor": "Allievo",
     "tuitionRequires": "Richiede {req}.",
+    "tuitionKp": "Retta: {kp} KP.",
+    "insufficientKnowledge": "Punti Conoscenza insufficienti (servono {kp} KP).",
     "learnerKnows": "già conosciuto",
     "learnerStat": "{stat} {value} / {points} base",
+    "learnerKp": "servono {kp} KP",
     "welcomeHeadline": "Benvenuto su Stockbusters",
     "welcomeBlurb": "Lotti all'ingrosso. Più compri, meno paghi a unità. Consegna con corriere.",
     "theArchmageSBazaar": "Il bazar dell'arcimago",

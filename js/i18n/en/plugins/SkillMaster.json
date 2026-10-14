@@ -71,8 +71,11 @@
   "unknownSkill": "Unknown",
   "costKp": "Cost: {cost} KP",
   "actorLearned": "{actor} learned {skill}!",
+  "actorLearnedDetailed": "{actor} has learned {skill}!",
   "fusedResult": "Fused {name}! (-{cost} KP, {left} left)",
+  "fusedDetailed": "{actor} has fused together {spell1} and {spell2} to create {name}!",
   "splitResult": "{name} split back into its parts.",
+  "splitDetailed": "{actor} has split {name} back into {spell1} and {spell2}.",
   "knowledgeGained": "+{amount} Knowledge (total: {total})",
   "category": {
     "All": "All"
@@ -236,6 +239,24 @@
       "noneElement": "Neutral",
       "noneElementDesc": "Strikes without elemental affinity."
     },
+    "fuseStep": {
+      "dominant": "Dominant",
+      "recessive": "Recessive",
+      "identity": "Identity",
+      "tags": "Tags",
+      "forge": "Forge",
+      "all": "All",
+      "next": "Next",
+      "prev": "Back",
+      "stepOf": "Step {step} of {total}: {title}",
+      "stepHint": {
+        "dominant": "Choose the dominant spell that defines damage and effect.",
+        "recessive": "Choose the recessive spell or skill to infuse.",
+        "identity": "Name your creation and customize its appearance.",
+        "tags": "Select retained traits and powers from both components.",
+        "forge": "Review the fusion and strike the forge."
+      }
+    },
     "write": {
       "name": "Name it",
       "description": "Write its description",
@@ -280,6 +301,9 @@
     "benchBlurb": "Every tag is bought with KP when the entry is written. The MP or AP it costs and the {stat} it asks for are what the shipped book charges for the same power.",
     "writtenResult": "\\C[3]{name}\\C[0] is written. {cost} KP spent, {left} KP left.",
     "rewrittenResult": "\\C[3]{name}\\C[0] is rewritten. {cost} KP spent, {left} KP left.",
+    "craftedDetailed": "{actor} has crafted {name}! (-{cost} KP)",
+    "rewrittenDetailed": "{actor} has rewritten {name}! (-{cost} KP)",
+    "discardDetailed": "{actor} has discarded {name}.",
     "row": {
       "name": "Name",
       "description": "Description",
@@ -979,6 +1003,14 @@
         "name": "Feedback",
         "desc": "Gives the user AP back on use."
       },
+      "virulent": {
+        "name": "Virulent",
+        "desc": "+30% chance to inflict status conditions."
+      },
+      "malignant": {
+        "name": "Malignant",
+        "desc": "+60% chance to inflict status conditions."
+      },
       "freshMagazine": {
         "name": "Fresh Magazine",
         "desc": "Grants Fresh Magazine: the next shot lands surer and crits more often."
@@ -1025,7 +1057,8 @@
         "userShape": "Needs The Writer shape.",
         "marksman": "Guns only: needs the Aimed Shot core.",
         "multiHit": "Needs Twinned or Thrice-Written.",
-        "emptyUser": "Needs the Empty Stance core on The Writer."
+        "emptyUser": "Needs the Empty Stance core on The Writer.",
+        "hasState": "Needs at least one status infliction rider."
       }
     },
     "auto": {
@@ -1123,7 +1156,9 @@
         "keenEdge": "Can crit.",
         "menuCast": "Usable outside battle.",
         "guardBreak": "Halves the defence against it.",
-        "apReturn": "Gives the user AP back."
+        "apReturn": "Gives the user AP back.",
+        "virulent": "+30% chance to inflict status ailments.",
+        "malignant": "+60% chance to inflict status ailments."
       },
       "first": "Strikes first.",
       "lands": "Lands {pct}% of the time.",
@@ -1170,6 +1205,8 @@
     "knowledge": "Knowledge",
     "unmake": "Unmake",
     "bound": "{item} is bound.",
+    "enchantDetailed": "{actor} has enchanted {item} with {spell}!",
+    "enchantNoSpellDetailed": "{actor} has enchanted {item}!",
     "lostSpell": "Spell lost",
     "noGear": "No items can be enchanted.",
     "noneBound": "Nothing bound yet",
@@ -1268,6 +1305,8 @@
     "recover": "Cover",
     "unmake": "Unmake",
     "written": "{book} is written.",
+    "writeDetailed": "{actor} has written the volume {book}!",
+    "unmadeBookDetailed": "{actor} has unmade {book}.",
     "skillBookDesc": "Handwritten book with {count} abilities. Used up once every page is read.",
     "grimorieDesc": "Handwritten book with {count} spells. Used up once every page is read.",
     "skillBookFallbackName": "Notebook of {first}",
@@ -1348,7 +1387,8 @@
     "pickPiece": "Choose a piece on the left.",
     "totalHere": "Total: {kp} KP.",
     "nothing": "No magical gear in inventory.",
-    "unmade": "{item} is unmade for {kp} KP."
+    "unmade": "{item} is unmade for {kp} KP.",
+    "hexorcizeDetailed": "{actor} has cleansed {item} (+{kp} KP)!"
   },
   "lobotomagic": {
     "button": "Lobotomagic",
@@ -1364,7 +1404,8 @@
     "pickSkill": "Choose a skill on the left.",
     "nothing": "No removable skills.",
     "warning": "{name} forgets it for good. Relearning costs full price.",
-    "cut": "{name} forgets {skill} for {kp} KP."
+    "cut": "{name} forgets {skill} for {kp} KP.",
+    "forgottenDetailed": "{name} has forgotten {skill} (+{kp} KP)!"
   },
   "tips": {
     "member": "Member",

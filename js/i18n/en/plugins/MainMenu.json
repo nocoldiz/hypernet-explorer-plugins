@@ -251,6 +251,7 @@
     "weather": "Weather:",
     "currentCash": "Current Cash:",
     "currentBounty": "Current Bounty:",
+    "knowledge": "Knowledge:",
     "wantedHeat": "Wanted:",
     "armyUpkeep": "Army Upkeep:",
     "rowColumn": "Row {row}, Column {col}"

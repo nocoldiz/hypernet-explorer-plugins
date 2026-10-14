@@ -4526,31 +4526,6 @@
       132
     ]
   },
-  "aaron_swartz": {
-    "name": "Aaron Swartz",
-    "ideology": "ideology.information_leaker",
-    "country": "OmegaTower",
-    "moralGuide": true,
-    "protected": false,
-    "years": [
-      2000,
-      2012
-    ],
-    "bust": "img/busts/presets/AaronSwartz.png",
-    "real": true,
-    "birthDate": "1986-11-08",
-    "hometown": "Chicago",
-    "gender": 0,
-    "sexualOrientation": "heterosexual",
-    "romanticOrientation": "heteroromantic",
-    "traits": [
-      164,
-      35,
-      7,
-      132
-    ],
-    "loreKey": "History.leaderLore.aaron_swartz"
-  },
   "lawrence_lessig": {
     "name": "Lawrence Lessig",
     "ideology": "ideology.commons_reformer",

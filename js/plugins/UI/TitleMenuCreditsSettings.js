@@ -82,8 +82,7 @@
             entries: [
                 { name: 'Horror Monster Battler Sprite Pack', by: 'invalid-user621', urls: ['invalid-user621.itch.io/horror-monster-battler-sprite-pack'] },
                 { name: 'Watercolour Monster Pack', by: 'metalsnail', urls: ['metalsnail.itch.io/watercolour-monster-pack'] },
-                { name: 'The Mighty Pack', by: 'themightypalm', urls: ['themightypalm.itch.io/the-mighty-pack'] },
-                { name: '95% Off Ultimate Portrait Pack', urls: ['itch.io/s/121612/95-off-ultimate-portrait-pack'] }
+                { name: 'The Mighty Pack', by: 'themightypalm', urls: ['themightypalm.itch.io/the-mighty-pack'] }
             ]
         },
         {

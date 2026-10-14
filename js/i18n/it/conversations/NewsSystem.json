@@ -86,7 +86,8 @@
     "alertsHint": "Mostra le notizie dell’ultima ora come avviso durante il gioco",
     "recordInDepth": "DETTAGLIO ANNALE",
     "noHistory": "Questo mondo non ha ancora una storia scritta.",
-    "historyFooter": "{count} voci negli annali del mondo"
+    "historyFooter": "{count} voci negli annali del mondo",
+    "knowledgeTitle": "Conoscenza di attualità"
   },
   "specialLocations": [
     "Città del Vaticano",

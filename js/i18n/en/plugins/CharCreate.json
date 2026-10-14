@@ -684,6 +684,7 @@
   "portraitStyle": "Portrait",
   "portraitBust": "2D Bust",
   "portraitModel": "3D Model",
+  "editorWip": "3d editor WIP",
   "traitTypeLabel": "TRAIT",
   "traitCategoryLabel": {
     "physical": "PHYSICAL",

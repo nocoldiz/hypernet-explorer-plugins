@@ -138,6 +138,7 @@
     const parts = [`<div class="cc-modal-title">${_escapeHtml(row.name)}</div>`];
     if (skill?.description) parts.push(`<p>${_escapeHtml(vary(skill.description))}</p>`);
     parts.push(`<p>${_escapeHtml(L.text('ui.detailHours', { hours: row.hours }))}</p>`);
+    if (row.kp) parts.push(`<p>${_escapeHtml(L.text('ui.detailKp', { kp: row.kp }))}</p>`);
     if (mode === 'teach') {
       parts.push(`<p>${_escapeHtml(L.text('ui.detailFee', { price: L.money(row.fee) }))}</p>`);
     } else if (row.free) {
@@ -210,7 +211,8 @@
       title: L.text('ui.pickTeach', { name: ctx.npcName }),
       options: rows.map(r => ({
         value: r.skillId, label: r.name, disabled: r.disabled, row: r,
-        hint: r.disabled ? r.reasonText : L.text('ui.hintHours', { hours: r.hours }),
+        hint: r.disabled ? r.reasonText
+          : (r.kp ? L.text('ui.hintTeach', { hours: r.hours, kp: r.kp }) : L.text('ui.hintHours', { hours: r.hours })),
       })),
       detail: (opt) => _lessonDetail(L, opt.row, 'teach'),
       onPick: (id, opt) => this._teachTerms(opt.row),
@@ -317,6 +319,7 @@
     if (desc) parts.push(`<p>${_escapeHtml(desc)}</p>`);
     parts.push(`<p>${_escapeHtml(L.text('ui.detailSpecTier', { from: row.fromName, to: row.toName }))}</p>`);
     parts.push(`<p>${_escapeHtml(L.text('ui.detailHours', { hours: row.hours }))}</p>`);
+    if (row.kp) parts.push(`<p>${_escapeHtml(L.text('ui.detailKp', { kp: row.kp }))}</p>`);
     if (mode === 'train') {
       parts.push(`<p>${_escapeHtml(L.text('ui.detailFee', { price: L.money(row.fee) }))}</p>`);
     } else if (row.free) {
@@ -340,7 +343,8 @@
       options: rows.map(r => ({
         value: r.specId, label: r.name, disabled: r.disabled, row: r,
         hint: r.disabled ? r.reasonText
-          : L.text('ui.hintSpecTier', { from: r.fromName, to: r.toName, hours: r.hours }),
+          : (r.kp ? L.text('ui.hintSpecTierKp', { from: r.fromName, to: r.toName, hours: r.hours, kp: r.kp })
+                  : L.text('ui.hintSpecTier', { from: r.fromName, to: r.toName, hours: r.hours })),
       })),
       detail: (opt) => _specDetail(L, opt.row, 'train'),
       onPick: (id, opt) => this._trainSpecTerms(opt.row),
@@ -491,7 +495,8 @@
         options: rows.map(r => ({
           value: r.specId, label: r.name, disabled: r.disabled, row: r,
           hint: r.disabled ? r.reasonText
-            : L.text('ui.hintSpecTier', { from: r.fromName, to: r.toName, hours: r.hours }),
+            : (r.kp ? L.text('ui.hintSpecTierKp', { from: r.fromName, to: r.toName, hours: r.hours, kp: r.kp })
+                    : L.text('ui.hintSpecTier', { from: r.fromName, to: r.toName, hours: r.hours })),
         })),
         detail: (opt) => _specDetail(L, opt.row, 'peer'),
         onPick: (id, opt) => this._doPeerLesson('spec', teacher, learner, opt.row),
@@ -503,7 +508,8 @@
       title: L.text('ui.pickPeerTeach', params),
       options: rows.map(r => ({
         value: r.skillId, label: r.name, disabled: r.disabled, row: r,
-        hint: r.disabled ? r.reasonText : L.text('ui.hintHours', { hours: r.hours }),
+        hint: r.disabled ? r.reasonText
+          : (r.kp ? L.text('ui.hintTeach', { hours: r.hours, kp: r.kp }) : L.text('ui.hintHours', { hours: r.hours })),
       })),
       detail: (opt) => _lessonDetail(L, opt.row, 'peer'),
       onPick: (id, opt) => this._doPeerLesson('skill', teacher, learner, opt.row),

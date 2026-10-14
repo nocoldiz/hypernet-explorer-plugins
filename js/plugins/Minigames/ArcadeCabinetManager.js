@@ -449,6 +449,15 @@
             // Save to localStorage
             const key = `arcade_highscores_${gameId}`;
             localStorage.setItem(key, JSON.stringify(scores));
+
+            if (score > 0 && typeof $gameSystem !== 'undefined' && $gameSystem) {
+                const kp = Math.min(50, Math.max(10, Math.floor(score / 100)));
+                if (typeof $gameSystem.gainKnowledge === 'function') $gameSystem.gainKnowledge(kp);
+                else if (typeof $gameSystem.addKnowledge === 'function') $gameSystem.addKnowledge(kp);
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('TimeDate.minigame.kpWon', { kp }), { severity: 'good', duration: 150 });
+                }
+            }
             
             return scores;
         },

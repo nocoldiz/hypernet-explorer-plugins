@@ -1572,26 +1572,7 @@
     // creature opens on its model and a person on their bust. The 3D chip is
     // only offered where a model can actually be built.
     _renderPortraitStyleHtml() {
-      const actor = Scene_CharacterCreation.getCurrentActor();
-      if (!actor) return "";
-      if (Scene_CharacterCreation._storyMode) return "";
-      const CC3D = window.CC3DModel;
-      const canModel = !!(window.Scene_CC3DModel && CC3D && CC3D.isAvailable && CC3D.isAvailable());
-      const isModel = canModel && portraitIsModel(actor);
-      const locked = this._isActorLockedPreset(actor);
-      const chip = (style, selected, disabled, label) => {
-        const click = disabled ? 'SoundManager.playBuzzer()' : `SceneManager._scene.onSetPortraitStyle('${style}')`;
-        return `<button class="cc-bio-chip cc-portrait-style-chip ${selected ? 'selected' : ''} ${disabled ? 'disabled' : ''}" onclick="${click}">${label}</button>`;
-      };
-      return `
-        <div class="cc-bio-section">
-          <div class="cc-bio-section-title">${this._ccIconHtml(183, 16)} <span>${ccT('CharCreate.portraitStyle')}</span></div>
-          <div class="cc-bio-chips-row">
-            ${chip('bust', !isModel, locked, ccT('CharCreate.portraitBust'))}
-            ${chip('model', isModel, locked || !canModel, ccT('CharCreate.portraitModel'))}
-          </div>
-        </div>
-      `;
+      return "";
     }
 
     // The body a character is spliced from. Both selects funnel through
@@ -2688,7 +2669,7 @@
       // Story mode's Em carries her class card on the middle page (see
       // _bioPickerLeftHtml), so this page keeps only her history.
       const CP = window.CharacterPresets;
-      const isStoryEm = !!(CP && CP.isStoryModeEm && CP.isStoryModeEm(actor));
+      const isStoryEm = !!(CP && ((CP.isStoryModeEm && CP.isStoryModeEm(actor)) || (CP.isEmActor && CP.isEmActor(actor)) || (actor && String(actor.name && actor.name()).trim().toLowerCase() === 'em') || (actor && actor._presetId === 2)));
       const simpleClassHtml = (isSimpleMode && !isStoryEm) ? this._renderSimpleClassDetailsHtml(actor, classData) : "";
       // Detailed mode keeps the history on its own Description tab. Story mode
       // Em reads hers in the sidebar's portrait well, and the portrait stands

@@ -86,7 +86,8 @@
     "alertsHint": "Show breaking news as a popup while you play",
     "recordInDepth": "RECORD IN-DEPTH",
     "noHistory": "This world has no written history yet.",
-    "historyFooter": "{count} entries in the world record"
+    "historyFooter": "{count} entries in the world record",
+    "knowledgeTitle": "Current affairs knowledge"
   },
   "specialLocations": [
     "Vatican City",

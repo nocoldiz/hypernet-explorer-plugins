@@ -77,8 +77,11 @@
   "text": {
     "tuitionFor": "Trainee",
     "tuitionRequires": "Requires {req}.",
+    "tuitionKp": "Tuition: {kp} KP.",
+    "insufficientKnowledge": "Not enough Knowledge Points ({kp} KP required).",
     "learnerKnows": "already knows it",
     "learnerStat": "{stat} {value} / {points} base",
+    "learnerKp": "needs {kp} KP",
     "welcomeHeadline": "Welcome to Stockbusters",
     "welcomeBlurb": "Bulk lots. Bigger orders cost less per unit. Delivered by courier.",
     "theArchmageSBazaar": "The Archmage's Bazaar",

@@ -92,6 +92,8 @@
     "statAwarded": "Punti",
     "attributePoints": "{points} punti attributo da spendere",
     "raiseAttribute": "Aumenta permanentemente questo attributo",
+    "raiseHp": "Aumenta permanentemente i PV massimi (+{amount})",
+    "raiseMp": "Aumenta permanentemente i PM massimi (+{amount})",
     "attributeRaised": "{stat} aumentata permanentemente a {value}",
     "archetypeCreature": "Creatura",
     "archetypeHumanoid": "Umanoide"

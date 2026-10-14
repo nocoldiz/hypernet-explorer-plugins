@@ -125,11 +125,11 @@
       // wardrobe's own picture beats the stock model. Only a member whose
       // chosen art IS the model (portraitMode "model") falls through to one.
       const mode = actor.portraitMode ? actor.portraitMode() : 0;
-      if (mode !== 'model' && _resolveBustForActor(actor) !== 'img/busts/7.png') return null;
-      // A member who picked the 3D Model portrait at creation is drawn by it,
-      // a person as much as a creature: the model is their own sculpt, served
-      // by window.ActorModel3D (see _creatureModelSpec).
-      if (mode === 'model') {
+      const hasModel = mode === 'model' || !!(window.ActorModel3D && window.ActorModel3D.infoFor && window.ActorModel3D.infoFor(actor));
+      if (!hasModel && mode !== 'model' && _resolveBustForActor(actor) !== 'img/busts/7.png') return null;
+      // A member with a 3D model is drawn by it, a person as much as a creature:
+      // the model is their own sculpt, served by window.ActorModel3D (see _creatureModelSpec).
+      if (hasModel) {
         return { keys: keys.length ? keys : ['Humanoid'], seed: actor.actorId ? actor.actorId() : 0, name: actor.name() }; // i18n-ignore: Archetypes.json key
       }
       const isCreature = !!actor._isCreatureActor ||
@@ -209,9 +209,17 @@
   function _presetModelSpec(actor, preset) {
     const CP = window.CharacterPresets;
     if (!CP) return null;
-    const path = actor
+    let path = actor
       ? CP.getActorPresetModel?.(actor)
       : CP.getPresetModel?.(preset);
+    if (!path && (actor || preset)) {
+      const isEm = (preset && (preset.id === 2 || String(preset.name || '').toLowerCase() === 'em')) ||
+        (actor && ((CP.isEmActor && CP.isEmActor(actor)) ||
+          (typeof actor.name === 'function' && String(actor.name() || '').trim().toLowerCase() === 'em') ||
+          actor._presetId === 2 ||
+          (typeof actor.vnBust === 'function' && String(actor.vnBust() || '').includes('Em'))));
+      if (isEm) path = 'models/Em.glb';
+    }
     if (!path) return null;
     if (window.ActorModel3D?.modelAvailable?.(path) === false) return null;
     const info = { kind: 'glb', path, actorId: actor ? actor.actorId() : 0 };
@@ -907,6 +915,41 @@
     return null;
   }
 
+  function _resolveWorldSpriteInfo(actor, profile, preset, ev, npcName) {
+    if (actor) {
+      const charName = typeof actor.characterName === 'function' ? actor.characterName() : (actor._characterName || '');
+      const charIndex = typeof actor.characterIndex === 'function' ? actor.characterIndex() : (actor._characterIndex || 0);
+      if (charName) return { charName, charIndex: Number(charIndex) || 0 };
+    }
+    let charName = (typeof ev?.characterName === 'function' && ev.characterName())
+      || ev?.event()?.characterName
+      || ev?.event()?.pages?.[0]?.image?.characterName;
+    let charIndex = (typeof ev?.characterIndex === 'function' ? ev.characterIndex() : null)
+      ?? ev?.event()?.characterIndex
+      ?? ev?.event()?.pages?.[0]?.image?.characterIndex
+      ?? 0;
+
+    if (!charName && preset) {
+      charName = preset.characterName || preset.spriteName || preset.spriteKey || '';
+      charIndex = preset.characterIndex ?? preset.spriteIndex ?? 0;
+    }
+    if (!charName && profile) {
+      charName = profile.spriteKey || profile.characterName || '';
+      charIndex = profile.bustIndex ?? profile.spriteIndex ?? profile.characterIndex ?? 0;
+    }
+    if (!charName && npcName && window.NPCSystem?.findTemplateSprite) {
+      const tpl = window.NPCSystem.findTemplateSprite(npcName);
+      if (tpl?.characterName) {
+        charName = tpl.characterName;
+        charIndex = tpl.characterIndex ?? 0;
+      }
+    }
+    if (charName && typeof charName === 'string' && charName.trim().length > 0) {
+      return { charName, charIndex: Number(charIndex) || 0 };
+    }
+    return null;
+  }
+
   // Who this person is when they are not from this world: caste, home system,
   // and the power that claims them. Null for everybody else.
   function _alienIdentity(profile, npcName, evId) {
@@ -1437,6 +1480,55 @@
     try { s.renderer.dispose(); } catch (e) {}
     try { if (s.renderer.forceContextLoss) s.renderer.forceContextLoss(); } catch (e) {}
     if (s.canvas && s.canvas.parentNode) s.canvas.parentNode.removeChild(s.canvas);
+  };
+
+  Scene_NPCEmpathize.prototype._drawWorldSprite = function (spriteInfo) {
+    if (!spriteInfo || !spriteInfo.charName) return;
+    const wrap = this._leftEl && this._leftEl.querySelector('.npc-portrait-sprite');
+    const canvas = wrap && wrap.querySelector('.npc-world-sprite-canvas');
+    if (!canvas) return;
+
+    const { charName, charIndex } = spriteInfo;
+    const token = `${charName}_${charIndex}`;
+    this._renderedWorldSpriteToken = token;
+
+    const bitmap = ImageManager.loadCharacter(charName);
+    const render = () => {
+      if (this._renderedWorldSpriteToken !== token) return;
+      if (!bitmap.width || !bitmap.height) return;
+      const isBig = ImageManager.isBigCharacter(charName);
+      const pw = bitmap.width / (isBig ? 3 : 12);
+      const ph = bitmap.height / (isBig ? 4 : 8);
+      const sx = isBig ? pw : ((charIndex % 4) * 3 + 1) * pw;
+      const sy = isBig ? 0 : (Math.floor(charIndex / 4) * 4) * ph;
+      let scale = ph <= 32 ? 3 : (ph <= 48 ? 2.5 : 2);
+      if (ph * scale > 130) {
+        scale = 130 / ph;
+      }
+      const dw = Math.round(pw * scale);
+      const dh = Math.round(ph * scale);
+
+      canvas.width = dw;
+      canvas.height = dh;
+      canvas.style.width = dw + 'px';
+      canvas.style.height = dh + 'px';
+      canvas.style.imageRendering = 'pixelated';
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, dw, dh);
+      const img = bitmap.image || bitmap._image || bitmap._canvas || bitmap.canvas;
+      if (img) {
+        ctx.drawImage(img, sx, sy, pw, ph, 0, 0, dw, dh);
+      }
+    };
+
+    if (bitmap.isReady()) {
+      render();
+    } else {
+      bitmap.addLoadListener(render);
+    }
   };
 
   Scene_NPCEmpathize.prototype._removeOverlay = function () {
@@ -2205,8 +2297,9 @@
     // Livestock reads its own block under the vitals: what it is, how old, how
     // far from grown, how well fed and where every produce cycle stands.
     const animalStatus = this._animalStatus ? this._animalStatus() : null;
+    const spriteInfo = !modelSpec ? _resolveWorldSpriteInfo(actorMode ? actorObj : null, profile, preset, ev, displayName || npcName) : null;
     const leftHTML = this._buildLeftPanelHTML(
-      bustPath, profile, predispositions, T, leftIdent, attractions, modelSpec, animalStatus);
+      bustPath, profile, predispositions, T, leftIdent, attractions, modelSpec, animalStatus, spriteInfo);
 
     const showingChatUI = this._activeTab === 'chat';
 
@@ -2245,6 +2338,9 @@
     // The frame is in the DOM now, so the viewer can be moved into it (or
     // stood up, if this is a different creature from the one it was showing).
     this._syncPortrait3D(modelSpec);
+    if (!modelSpec && spriteInfo) {
+      this._drawWorldSprite(spriteInfo);
+    }
 
     if (showingChatUI) {
       this._rightEl.classList.add('npc-right-panel--chat');
@@ -2483,31 +2579,25 @@
   }
 
   // A compact readout of one EmotionModel state (Health_BiologicSimulation.js):
-  // the mood the brain chapter would name and the strongest emotions as bars.
-  // The labels are Biologic.emotion, the same words the brain chapter prints.
+  // just the mood the brain chapter would name; individual emotion bars are hidden.
   function _emotionBlockHTML(state, title, n) {
     const EM = window.EmotionModel;
     if (!EM || !state || !state.v) return '';
     const tr = window.T;
     const mood = EM.moodOf(state);
     const moodLabel = tr.has('Biologic.mood.' + mood) ? tr('Biologic.mood.' + mood) : mood;
-    const rows = EM.top(state, n).map((r) => {
-      // i18n-ignore-start: CSS band ids
-      const band = r.valence > 0 ? 'good' : r.valence < 0 ? (r.value >= 45 ? 'bad' : 'warm') : 'warm';
-      // i18n-ignore-end
+    const tooltip = (n && EM.top) ? EM.top(state, n).map((r) => {
       const label = tr('Biologic.emotion.' + r.id);
       const level = tr('Biologic.emotionLevel.' + r.level);
-      return `<div class="npc-pred-row npc-emo-row" title="${_escapeHtml(label + ': ' + level)}">` +
-        `<span class="npc-pred-name">${_escapeHtml(label)}</span>` +
-        `<div class="npc-pred-track"><div class="npc-pred-fill npc-fill--${band}" style="--npc-w:${r.value}%"></div></div>` +
-        `<span class="npc-pred-val npc-score--${band}">${r.value}</span></div>`;
-    }).join('');
-    return `<div class="npc-emo-block">` +
+      return `${label}: ${level} (${r.value})`;
+    }).join('\n') : '';
+    const titleAttr = tooltip ? ` title="${_escapeHtml(tooltip)}"` : '';
+    return `<div class="npc-emo-block"${titleAttr}>` +
       `<div class="npc-sec-hdr">${_escapeHtml(title)} <span class="npc-emo-mood">${_escapeHtml(moodLabel)}</span></div>` +
-      `${rows}</div>`;
+      `</div>`;
   }
 
-  Scene_NPCEmpathize.prototype._buildLeftPanelHTML = function (bustPath, profile, predispositions, T, ident, attractions, modelSpec, animalStatus) {
+  Scene_NPCEmpathize.prototype._buildLeftPanelHTML = function (bustPath, profile, predispositions, T, ident, attractions, modelSpec, animalStatus, spriteInfo) {
     let hpmpHTML = '';
     if (profile?.mhp !== undefined || profile?.mmp !== undefined) {
       const mhp    = profile.mhp ?? 0;
@@ -2685,13 +2775,15 @@
         `</div>`;
     }
 
-    // A creature's frame is an empty box the viewer's canvas is placed into
-    // (see _syncPortrait3D); everybody else keeps the bust.
+    // Only a subject that has a 3D model gets a 3D portrait frame (see _syncPortrait3D).
+    // If the 3D model is missing, their world sprite is shown slightly bigger instead.
     const portraitHTML = modelSpec
       ? `<div class="npc-portrait-wrap npc-portrait-3d"></div>`
-      : `<div class="npc-portrait-wrap">
-        <img src="${bustPath}" alt="" onerror="this.src='img/busts/7.png'">
-      </div>`;
+      : (spriteInfo
+          ? `<div class="npc-portrait-wrap npc-portrait-sprite" style="display:flex;align-items:center;justify-content:center;height:140px;background:var(--bg-secondary-hover);overflow:hidden;">
+              <canvas class="npc-world-sprite-canvas" style="image-rendering:pixelated;"></canvas>
+            </div>`
+          : '');
 
     return `
       ${portraitHTML}

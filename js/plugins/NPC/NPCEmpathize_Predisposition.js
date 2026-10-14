@@ -660,9 +660,24 @@
     return $gameSystem._emBubbaBond;
   }
   function _addPairBond(delta) {
-    const v = Math.round(_pairBond() + (Number(delta) || 0));
+    const prev = _pairBond();
+    const v = Math.round(prev + (Number(delta) || 0));
     // A floor and no ceiling: she can ask twice and still have a friend.
-    if (window.$gameSystem) $gameSystem._emBubbaBond = Math.max(0, v);
+    if (window.$gameSystem) {
+      $gameSystem._emBubbaBond = Math.max(0, v);
+      const milestones = $gameSystem._pairBondKpMilestones || ($gameSystem._pairBondKpMilestones = {});
+      const checks = [100, 120, 150, 200];
+      for (const m of checks) {
+        if (prev < m && v >= m && !milestones[m]) {
+          milestones[m] = true;
+          if ($gameSystem.addKnowledge) $gameSystem.addKnowledge(50);
+          if (window.ParchmentToast?.show) {
+            const title = (window.Hendrix?.Localization?.get('ConvBooks.knowledgeTitle')) || 'Knowledge';
+            window.ParchmentToast.show(`+50 ${title}`, { severity: 'good', duration: 500 });
+          }
+        }
+      }
+    }
     return Math.max(0, v);
   }
 
@@ -1546,6 +1561,10 @@
     if (profile && actor && opts.apply !== false && out !== 0) {
       if (opts.attraction) _addNpcAttraction(profile, actor.actorId(), out);
       else _addNpcOpinion(profile, actor.actorId(), out);
+    }
+    if (opts.apply !== false && out > 0 && window.$gameSystem?.addKnowledge) {
+      const kp = tier === 'fresh' ? 5 : tier === 'waning' ? 2 : 1;
+      window.$gameSystem.addKnowledge(kp);
     }
     return { delta: out, tier, count: bored.count };
   }

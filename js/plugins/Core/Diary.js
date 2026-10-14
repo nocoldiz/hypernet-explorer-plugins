@@ -286,11 +286,18 @@
         'craft.enchant':      { icon: 163, cat: CAT.WORK },
         'craft.unmade':       { icon: 168, cat: CAT.WORK },
         'craft.book':         { icon: 187, cat: CAT.WORK },
+        'craft.fuse':         { icon: 108, cat: CAT.KNOWLEDGE },
+        'craft.split':        { icon: 168, cat: CAT.KNOWLEDGE },
+        'craft.spell':        { icon: 186, cat: CAT.KNOWLEDGE },
+        'craft.rewrite':      { icon: 186, cat: CAT.KNOWLEDGE },
+        'craft.discard':      { icon: 168, cat: CAT.KNOWLEDGE },
+        'craft.hexorcize':    { icon: 135, cat: CAT.WORK },
         'build.placed':       { icon: 217, cat: CAT.WORK },
         'build.dismantled':   { icon: 223, cat: CAT.WORK },
 
         // Knowledge
         'skill.learned':      { icon: 186, cat: CAT.KNOWLEDGE },
+        'skill.forgotten':    { icon: 168, cat: CAT.KNOWLEDGE },
         'spec.tier':          { icon: 89,  cat: CAT.KNOWLEDGE },
         'tech.researched':    { icon: 359, cat: CAT.KNOWLEDGE },
         'quest.accepted':     { icon: 193, cat: CAT.KNOWLEDGE },
@@ -1600,6 +1607,13 @@
             const who = nameOf(actor);
             if (previous < FRIEND_AT && current >= FRIEND_AT) {
                 log('npc.friend', { name: who, npc }, { who });
+                if (window.$gameSystem?.addKnowledge) {
+                    window.$gameSystem.addKnowledge(50);
+                }
+                if (window.ParchmentToast?.show) {
+                    const title = (window.Hendrix?.Localization?.get('ConvBooks.knowledgeTitle')) || 'Knowledge';
+                    window.ParchmentToast.show(`+50 ${title}`, { severity: 'good', duration: 500 });
+                }
             } else if (previous > ENEMY_AT && current <= ENEMY_AT) {
                 log('npc.enemy', { name: who, npc }, { who });
             }

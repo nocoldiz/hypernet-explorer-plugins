@@ -381,13 +381,34 @@
   }
 
   // The skill's cost in knowledge points (SkillMaster's price on the tree).
-  function skillCost(skill) {
+  function skillCost(skill, actorId) {
+    if (actorId && typeof $gameSystem !== 'undefined' && $gameSystem && typeof $gameSystem.getSkillKnowledgeCost === 'function') {
+      try { const kp = $gameSystem.getSkillKnowledgeCost(skill.id, actorId); if (kp > 0) return kp; } catch (e) { /* fall through */ }
+    }
     const SM = window.SkillMaster;
     if (SM && SM.kpTeachCost) {
       try { const kp = SM.kpTeachCost(skill); if (kp > 0) return kp; } catch (e) { /* fall through */ }
     }
     return 50 + Math.round((((skill && skill.mpCost) || 0) + ((skill && skill.tpCost) || 0)) * 10);
   }
+
+  function partyKp() {
+    try {
+      if (typeof $gameSystem !== 'undefined' && $gameSystem && typeof $gameSystem.getKnowledge === 'function') {
+        return $gameSystem.getKnowledge();
+      }
+    } catch (e) { /* ignore */ }
+    return Infinity;
+  }
+
+  function spendPartyKp(amount) {
+    try {
+      if (amount > 0 && typeof $gameSystem !== 'undefined' && $gameSystem && typeof $gameSystem.spendKnowledge === 'function') {
+        $gameSystem.spendKnowledge(amount);
+      }
+    } catch (e) { /* ignore */ }
+  }
+
   // Hours a lesson takes: one hour for the cheapest skill, climbing with the
   // log of its cost, never more than a day.
   function lessonHours(skill) {
@@ -482,13 +503,20 @@
         }
       }
     }
+    if (learner.kind === 'actor' && learner.actor && window.SkillStatReq) {
+      const stand = window.SkillStatReq.check(learner.actor, skill);
+      if (stand && !stand.met) {
+        return { code: 'statReq', params: { stat: window.SkillStatReq.standingLabel(learner.actor, skill) } };
+      }
+    }
     return null;
   }
   const reasonText = (block) => block ? Tr(`reason.${block.code}`, block.params) : '';
 
   function skillRow(skill, block, extra) {
+    const kp = (extra && extra.kp !== undefined) ? extra.kp : skillCost(skill);
     return Object.assign({
-      skillId: skill.id, name: skill.name, hours: lessonHours(skill), fee: lessonFee(skill),
+      skillId: skill.id, name: skill.name, hours: lessonHours(skill), fee: lessonFee(skill), kp,
       disabled: !!block, reason: block ? block.code : null, reasonText: reasonText(block),
     }, extra || {});
   }
@@ -500,11 +528,16 @@
     const learner = learnerOfProfile(profile, npcName);
     if (lessonBlock(teacher) || lessonBlock(learner)) return [];
     const rows = [];
+    const kpAvailable = partyKp();
+    const actorId = actor ? (typeof actor.actorId === 'function' ? actor.actorId() : actor._actorId) : 0;
     for (const id of teacher.skillIds) {
       const skill = skillAt(id);
       if (!isLessonSkill(skill)) continue;
-      rows.push(skillRow(skill, requirementBlock(learner, skill),
-        { npcCanPay: (Number(profile.money) || 0) >= lessonFee(skill) }));
+      const kp = skillCost(skill, actorId);
+      let block = requirementBlock(learner, skill);
+      if (!block && kpAvailable < kp) block = { code: 'youCantAffordKp', params: { kp } };
+      rows.push(skillRow(skill, block,
+        { kp, npcCanPay: (Number(profile.money) || 0) >= lessonFee(skill) }));
     }
     return rows.sort(byOpenThenName);
   }
@@ -528,15 +561,19 @@
     const teacher = learnerOfProfile(profile, npcName);
     if (lessonBlock(teacher) || lessonBlock(learner)) return [];
     const gold = partyGold();
+    const kpAvailable = partyKp();
+    const actorId = actor ? (typeof actor.actorId === 'function' ? actor.actorId() : actor._actorId) : 0;
     const rows = [];
     for (const id of (teacher.skillIds || [])) {
       const skill = skillAt(id);
       if (!isLessonSkill(skill) || learner.skillIds.includes(id)) continue;
       const terms = learnTerms(opinion, skill);
+      const kp = skillCost(skill, actorId);
       let block = requirementBlock(learner, skill);
       if (!block && terms.refused) block = { code: 'hostile', params: {} };
       if (!block && !terms.free && gold < terms.price) block = { code: 'youCantAfford', params: { price: money(terms.price) } };
-      rows.push(skillRow(skill, block, { free: terms.free, price: terms.price, refused: terms.refused }));
+      if (!block && kpAvailable < kp) block = { code: 'youCantAffordKp', params: { kp } };
+      rows.push(skillRow(skill, block, { kp, free: terms.free, price: terms.price, refused: terms.refused }));
     }
     return rows.sort(byOpenThenName);
   }
@@ -575,13 +612,15 @@
       o.profile.money = (Number(o.profile.money) || 0) - fee;
       try { $gameParty.gainGold(fee); } catch (e) { /* no party here */ }
     }
+    if (partyKp() < row.kp) return { ok: false, reason: 'youCantAffordKp', kp: row.kp };
+    spendPartyKp(row.kp);
     const range = sold ? SOLD_TEACH : FREE_TEACH;
     const delta = rollInt(rand, range[0], range[1]);
     (o.profile.skillIds || (o.profile.skillIds = [])).push(skill.id);
     const tiers = practiceSpec(o.profile, o.npcName, skill);
     passHours(row.hours, o);
     if (o.addOpinion) o.addOpinion(delta);
-    return { ok: true, hours: row.hours, fee, delta, sold, tiers };
+    return { ok: true, hours: row.hours, fee, delta, sold, tiers, kp: row.kp };
   }
 
   // Learn one skill from the NPC. opts: { actor, profile, npcName, skillId,
@@ -591,7 +630,7 @@
     const skill = skillAt(o.skillId);
     const row = learnOptions(o.actor, o.profile, o.npcName, o.opinion).find(r => r.skillId === o.skillId);
     if (!skill || !row) return { ok: false, reason: 'beast' };
-    if (row.disabled) return { ok: false, reason: row.reason };
+    if (row.disabled) return { ok: false, reason: row.reason, kp: row.kp };
     const price = row.free ? 0 : row.price;
     if (price > 0) {
       try {
@@ -601,6 +640,8 @@
       // A beast teacher takes the fee for nothing (NPCCreature.mayHoldMoney).
       if (window.NPCCreature?.mayHoldMoney?.(o.profile, o.npcName) !== false) o.profile.money = (Number(o.profile.money) || 0) + price;
     }
+    if (partyKp() < row.kp) return { ok: false, reason: 'youCantAffordKp', kp: row.kp };
+    spendPartyKp(row.kp);
     o.actor.learnSkill(skill.id);
     try {
       if (window.SkillGraph && window.SkillGraph.invalidate) window.SkillGraph.invalidate();
@@ -654,6 +695,9 @@
   function specFee(toTier) {
     return SPEC_FEE_PER_TIER * Math.max(1, (Number(toTier) || 2) - 1);
   }
+  function specKp(toTier) {
+    return Math.max(50, Math.round(specFee(toTier) / GOLD_PER_KP));
+  }
 
   // The NPC's tiers, id -> level (2-5), as the simulation reads them.
   function npcSpecLevels(profile, name) {
@@ -689,11 +733,12 @@
 
   function specRow(S, spec, from, teacherTier, block, extra) {
     const to = Math.min(SPEC_MAX_TIER, from + 1);
+    const kp = (extra && extra.kp !== undefined) ? extra.kp : specKp(to);
     return Object.assign({
       specId: spec.id, name: specLabel(S, spec),
       fromTier: from, toTier: to, teacherTier,
       fromName: tierLabel(S, from), toName: tierLabel(S, to),
-      hours: specHours(from, teacherTier - from), fee: specFee(to),
+      hours: specHours(from, teacherTier - from), fee: specFee(to), kp,
       disabled: !!block, reason: block ? block.code : null, reasonText: reasonText(block),
     }, extra || {});
   }
@@ -708,6 +753,7 @@
     const learner = learnerOfProfile(profile, npcName);
     const theirs = npcSpecLevels(profile, npcName);
     const purse = Number(profile.money) || 0;
+    const kpAvailable = partyKp();
     const rows = [];
     for (const spec of S.list) {
       if (!spec || spec.id == null) continue;
@@ -715,8 +761,12 @@
       if (mine <= 1) continue;
       const from = theirs.get(spec.id) || 1;
       if (from >= mine) continue;
-      rows.push(specRow(S, spec, from, mine, specBlock(learner, spec, S, profile),
-        { npcCanPay: purse >= specFee(from + 1) }));
+      const to = Math.min(SPEC_MAX_TIER, from + 1);
+      const kp = specKp(to);
+      let block = specBlock(learner, spec, S, profile);
+      if (!block && kpAvailable < kp) block = { code: 'youCantAffordKp', params: { kp } };
+      rows.push(specRow(S, spec, from, mine, block,
+        { kp, npcCanPay: purse >= specFee(to) }));
     }
     return rows.sort(byOpenThenName);
   }
@@ -737,6 +787,7 @@
     const teacher = learnerOfProfile(profile, npcName);
     if (lessonBlock(teacher) || lessonBlock(learner)) return [];
     const gold = partyGold();
+    const kpAvailable = partyKp();
     const rows = [];
     for (const [id, tier] of npcSpecLevels(profile, npcName)) {
       const spec = S.byId.get(Number(id));
@@ -744,10 +795,13 @@
       const from = actorSpecLevel(actor, spec.id);
       if (from >= tier) continue;
       const terms = specLearnTerms(opinion, from + 1);
+      const to = Math.min(SPEC_MAX_TIER, from + 1);
+      const kp = specKp(to);
       let block = (S.isImplemented && !S.isImplemented(spec)) ? { code: 'unimplemented', params: {} } : null;
       if (!block && terms.refused) block = { code: 'hostile', params: {} };
       if (!block && !terms.free && gold < terms.price) block = { code: 'youCantAfford', params: { price: money(terms.price) } };
-      rows.push(specRow(S, spec, from, tier, block, { free: terms.free, price: terms.price, refused: terms.refused }));
+      if (!block && kpAvailable < kp) block = { code: 'youCantAffordKp', params: { kp } };
+      rows.push(specRow(S, spec, from, tier, block, { kp, free: terms.free, price: terms.price, refused: terms.refused }));
     }
     return rows.sort(byOpenThenName);
   }
@@ -783,7 +837,7 @@
     const spec = S && S.byId.get(o.specId);
     const row = specTrainOptions(o.actor, o.profile, o.npcName).find(r => r.specId === o.specId);
     if (!spec || !row) return { ok: false, reason: 'beast' };
-    if (row.disabled) return { ok: false, reason: row.reason };
+    if (row.disabled) return { ok: false, reason: row.reason, kp: row.kp };
     const rand = o.rand || Math.random;
     const sold = !!o.sold;
     let fee = 0;
@@ -793,12 +847,14 @@
       o.profile.money = (Number(o.profile.money) || 0) - fee;
       try { $gameParty.gainGold(fee); } catch (e) { /* no party here */ }
     }
+    if (partyKp() < row.kp) return { ok: false, reason: 'youCantAffordKp', kp: row.kp };
+    spendPartyKp(row.kp);
     const range = sold ? SOLD_TRAIN : FREE_TRAIN;
     const delta = rollInt(rand, range[0], range[1]);
     raiseNpcSpec(o.profile, o.npcName, spec, row.fromTier);
     passHours(row.hours, o);
     if (o.addOpinion) o.addOpinion(delta);
-    return { ok: true, hours: row.hours, fee, delta, sold, toTier: row.toTier, toName: row.toName };
+    return { ok: true, hours: row.hours, fee, delta, sold, toTier: row.toTier, toName: row.toName, kp: row.kp };
   }
 
   // Learn from the NPC. opts: { actor, profile, npcName, specId, opinion,
@@ -809,7 +865,7 @@
     const spec = S && S.byId.get(o.specId);
     const row = specLearnOptions(o.actor, o.profile, o.npcName, o.opinion).find(r => r.specId === o.specId);
     if (!spec || !row) return { ok: false, reason: 'beast' };
-    if (row.disabled) return { ok: false, reason: row.reason };
+    if (row.disabled) return { ok: false, reason: row.reason, kp: row.kp };
     const price = row.free ? 0 : row.price;
     if (price > 0) {
       try {
@@ -818,11 +874,13 @@
       } catch (e) { return { ok: false, reason: 'youCantAfford', price }; }
       if (window.NPCCreature?.mayHoldMoney?.(o.profile, o.npcName) !== false) o.profile.money = (Number(o.profile.money) || 0) + price;
     }
+    if (partyKp() < row.kp) return { ok: false, reason: 'youCantAffordKp', kp: row.kp };
+    spendPartyKp(row.kp);
     // Exactly what is left of the member's current tier: one tier, and so
     // never past the NPC's own (the row only exists below it).
     const gained = liftActorSpec(S, o.actor, spec, row.fromTier);
     passHours(row.hours, o);
-    return { ok: true, hours: row.hours, price, free: row.free, toTier: row.toTier, toName: row.toName, gained };
+    return { ok: true, hours: row.hours, price, free: row.free, toTier: row.toTier, toName: row.toName, gained, kp: row.kp };
   }
 
   // Lift a party member one tier out of `fromTier`: exactly the xp left of it,
@@ -875,10 +933,15 @@
     const to = learnerOfActor(learner);
     if (lessonBlock(from) || lessonBlock(to)) return [];
     const rows = [];
+    const kpAvailable = partyKp();
+    const learnerActorId = learner ? (typeof learner.actorId === 'function' ? learner.actorId() : learner._actorId) : 0;
     for (const id of from.skillIds) {
       const skill = skillAt(id);
       if (!isLessonSkill(skill) || to.skillIds.includes(id)) continue;
-      rows.push(skillRow(skill, requirementBlock(to, skill), { hours: peerSkillHours(skill), fee: 0 }));
+      const kp = skillCost(skill, learnerActorId);
+      let block = requirementBlock(to, skill);
+      if (!block && kpAvailable < kp) block = { code: 'youCantAffordKp', params: { kp } };
+      rows.push(skillRow(skill, block, { kp, hours: peerSkillHours(skill), fee: 0 }));
     }
     return rows.sort(byOpenThenName);
   }
@@ -889,14 +952,18 @@
     if (!S || !teacher || !learner || sameActor(teacher, learner)) return [];
     if (lessonBlock(learnerOfActor(teacher)) || lessonBlock(learnerOfActor(learner))) return [];
     const rows = [];
+    const kpAvailable = partyKp();
     for (const spec of S.list) {
       if (!spec || spec.id == null) continue;
       const mine = actorSpecLevel(teacher, spec.id);
       if (mine <= 1) continue;
       const from = actorSpecLevel(learner, spec.id);
       if (from >= mine) continue;
-      const block = (S.isImplemented && !S.isImplemented(spec)) ? { code: 'unimplemented', params: {} } : null;
-      rows.push(specRow(S, spec, from, mine, block, { hours: peerSpecHours(from, mine - from), fee: 0 }));
+      const to = Math.min(SPEC_MAX_TIER, from + 1);
+      const kp = specKp(to);
+      let block = (S.isImplemented && !S.isImplemented(spec)) ? { code: 'unimplemented', params: {} } : null;
+      if (!block && kpAvailable < kp) block = { code: 'youCantAffordKp', params: { kp } };
+      rows.push(specRow(S, spec, from, mine, block, { kp, hours: peerSpecHours(from, mine - from), fee: 0 }));
     }
     return rows.sort(byOpenThenName);
   }
@@ -928,7 +995,9 @@
       const held = o.learner && o.learner.isLearnedSkill && o.learner.isLearnedSkill(o.skillId);
       return { ok: false, reason: held ? 'known' : 'beast' };
     }
-    if (row.disabled) return { ok: false, reason: row.reason, reasonText: row.reasonText };
+    if (row.disabled) return { ok: false, reason: row.reason, reasonText: row.reasonText, kp: row.kp };
+    if (partyKp() < row.kp) return { ok: false, reason: 'youCantAffordKp', kp: row.kp, reasonText: row.reasonText };
+    spendPartyKp(row.kp);
     o.learner.learnSkill(skill.id);
     try {
       if (window.SkillGraph && window.SkillGraph.invalidate) window.SkillGraph.invalidate();
@@ -936,7 +1005,7 @@
       if (atlas && atlas.invalidate) atlas.invalidate();
     } catch (e) { /* caches only */ }
     passHours(row.hours, o);
-    return { ok: true, hours: row.hours };
+    return { ok: true, hours: row.hours, kp: row.kp };
   }
 
   // Train one tier member to member. opts: { teacher, learner, specId,
@@ -947,10 +1016,12 @@
     const spec = S && S.byId.get(o.specId);
     const row = peerSpecOptions(o.teacher, o.learner).find(r => r.specId === o.specId);
     if (!spec || !row) return { ok: false, reason: 'beast' };
-    if (row.disabled) return { ok: false, reason: row.reason, reasonText: row.reasonText };
+    if (row.disabled) return { ok: false, reason: row.reason, reasonText: row.reasonText, kp: row.kp };
+    if (partyKp() < row.kp) return { ok: false, reason: 'youCantAffordKp', kp: row.kp, reasonText: row.reasonText };
+    spendPartyKp(row.kp);
     const gained = liftActorSpec(S, o.learner, spec, row.fromTier);
     passHours(row.hours, o);
-    return { ok: true, hours: row.hours, toTier: row.toTier, toName: row.toName, gained };
+    return { ok: true, hours: row.hours, toTier: row.toTier, toName: row.toName, gained, kp: row.kp };
   }
 
   window.NPCEmpathizeLessons = {

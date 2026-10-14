@@ -1059,14 +1059,8 @@
     // The portrait is a choice for a person and a creature alike: the 2D bust
     // the sprite carries, or a sculpted 3D model. The sculptor is offered to
     // whoever is drawn as a model.
-    if (model3DAvailable()) {
-      identity.push({
-        id: "portrait", label: T("portraitStyle"),
-        value: portraitIsModel(actor) ? T("portraitModel") : T("portraitBust"), kind: "pick",
-      });
-      if (portraitIsModel(actor)) {
-        identity.push({ id: "model3d", label: T("detailed.row.model3d"), value: "", kind: "open" });
-      }
+    if (model3DAvailable() && (Scene_CharacterCreation._storyMode || isCreatureActor(actor))) {
+      identity.push({ id: "model3d", label: T("detailed.row.model3d"), value: "", kind: "open" });
     }
     sections.push({ title: T("detailed.section.identity"), rows: identity });
 
@@ -1646,15 +1640,7 @@
   }
 
   function openBustGallery() {
-    if (!window.Scene_BustSelector) return;
-    clearWizardResume();
-    // Opened over this panel rather than over the sprite grid, so confirming
-    // pops once and lands back here.
-    window.Scene_BustSelector._confirmPops = 1;
-    SceneManager.push(window.Scene_BustSelector);
-    if (SceneManager._nextScene && SceneManager._nextScene.setActor) {
-      SceneManager._nextScene.setActor(Session.actorId);
-    }
+    open3DModel();
   }
 
   function open3DModel() {

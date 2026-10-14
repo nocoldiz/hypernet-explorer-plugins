@@ -292,11 +292,46 @@
 
     function canLearnSkill(actor, skill) {
         if (!actor || !skill) return false;
-        if (actor.hasSkill && actor.hasSkill(skill.id)) return false;
-        // Esoteric and forbidden skills keep their level floor here too,
-        // unless the world was made without it (window.SkillArcana).
-        if (window.SkillArcana && !window.SkillArcana.canBuy(actor, skill)) return false;
-        return !window.SkillStatReq || window.SkillStatReq.meets(actor, skill);
+        if ((actor.hasSkill && actor.hasSkill(skill.id)) || (actor.isLearnedSkill && actor.isLearnedSkill(skill.id))) return false;
+        if (window.NPCCreature && window.NPCCreature.isCreature && window.NPCCreature.isCreature(actor) && !window.NPCCreature.isPartyActor(actor)) return false;
+        if (window.MagicNature && window.MagicNature.allowsData && !window.MagicNature.allowsData(skill)) return false;
+        if (window.SkillArcana) {
+            if (!window.SkillArcana.canBuy(actor, skill)) return false;
+            if (!window.SkillArcana.isSandbox?.()) {
+                const cultistId = window.SkillArcana.CULTIST_CLASS_ID || 8;
+                const cId = (actor.currentClass && actor.currentClass() ? actor.currentClass().id : actor._classId);
+                if (cId === cultistId) return false;
+            }
+        }
+        if (window.SkillStatReq && !window.SkillStatReq.meets(actor, skill)) return false;
+        if (window.SkillGraph && window.SkillGraph.isOpen && !window.SkillGraph.isOpen(actor, skill.id)) return false;
+        return true;
+    }
+
+    function skillKp(skill, actor) {
+        if (!skill) return 0;
+        const actorId = actor && actor.actorId ? actor.actorId() : 0;
+        if (actorId && typeof $gameSystem !== "undefined" && $gameSystem && typeof $gameSystem.getSkillKnowledgeCost === "function") {
+            try {
+                const kp = $gameSystem.getSkillKnowledgeCost(skill.id, actorId);
+                if (kp > 0) return kp;
+            } catch (e) { /* ignore */ }
+        }
+        if (typeof window !== "undefined" && window.SkillMaster && window.SkillMaster.kpTeachCost) {
+            try {
+                const kp = window.SkillMaster.kpTeachCost(skill);
+                if (kp > 0) return kp;
+            } catch (e) { /* ignore */ }
+        }
+        const fee = (skill.price > 0 ? skill.price : (skill.mpCost || 0) * 10 + 50);
+        return Math.max(1, Math.round(fee / 10));
+    }
+
+    function partyKp() {
+        if (typeof $gameSystem === "undefined" || !$gameSystem || typeof $gameSystem.getKnowledge !== "function") {
+            return Infinity;
+        }
+        return $gameSystem.getKnowledge();
     }
 
     function learnerCandidates(skill) {
@@ -1574,6 +1609,11 @@
     padding:1px 5px; border-bottom:1px dotted var(--xp-silver-5); }
 #sb-root .inspect-spec-label { color:var(--xp-text-muted); }
 #sb-root .inspect-spec-value { font-weight:bold; text-align:right; }
+#sb-root .inspect-quick-pills { display:flex; flex-wrap:wrap; gap:4px; margin:4px 0 6px 0; }
+#sb-root .inspect-pill { display:inline-flex; align-items:center; gap:4px; background:var(--xp-row-tint-1); border:1px solid var(--xp-steel-2); border-radius:3px; padding:1px 5px; font-size:11px; }
+#sb-root .inspect-pill-lbl { color:var(--xp-text-muted); font-size:10px; }
+#sb-root .inspect-pill-val { font-weight:bold; }
+#sb-root .inspect-pill--muted { opacity:0.75; }
 #sb-root .inspect-bullet-item { font-size:11px; padding:1px 5px 1px 14px; position:relative; }
 #sb-root .inspect-bullet-item:before { content:'\\25AA'; position:absolute; left:4px; color:var(--xp-navy); }
 #sb-root .inspect-effect-label { color:var(--xp-navy); font-weight:bold; }
@@ -2024,6 +2064,21 @@
             warnUnfillable([{ entry: entry }]);
             return;
         }
+        if (isSkillEntry(entry)) {
+            const learner = learnerFor(entry, this._learnerId);
+            if (!canLearnSkill(learner, entry)) {
+                warnUntrainable([{ entry: entry, learner: learner ? learner.actorId() : 0 }]);
+                return;
+            }
+            const kp = skillKp(entry, learner);
+            if (partyKp() < kp) {
+                SoundManager.playBuzzer();
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('Stockbusters.text.insufficientKnowledge', { kp }), { severity: "warning" });
+                }
+                return;
+            }
+        }
         this._basket.add(entry, this._qty, isSkillEntry(entry) ? this._learnerId : 0);
         SoundManager.playOk();
         if (window.ParchmentToast) {
@@ -2037,6 +2092,21 @@
     Scene_SearchableShop.prototype.buyNow = function () {
         const entry = this._selected;
         if (!entry) return;
+        if (isSkillEntry(entry)) {
+            const learner = learnerFor(entry, this._learnerId);
+            if (!canLearnSkill(learner, entry)) {
+                warnUntrainable([{ entry: entry, learner: learner ? learner.actorId() : 0 }]);
+                return;
+            }
+            const kp = skillKp(entry, learner);
+            if (partyKp() < kp) {
+                SoundManager.playBuzzer();
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(T('Stockbusters.text.insufficientKnowledge', { kp }), { severity: "warning" });
+                }
+                return;
+            }
+        }
         this._confirm = {
             lines: [{
                 kind: kindOf(entry), id: entry.id, qty: this._qty, entry: entry,
@@ -2075,13 +2145,20 @@
 
         if (limited) {
             // A bazaar hands the goods over across the counter, no courier.
+            let spentKp = 0;
             for (const line of priced) {
                 if (isSkillEntry(line.entry)) {
                     const actor = $gameActors.actor(line.learner);
-                    if (canLearnSkill(actor, line.entry)) actor.learnSkill(line.entry.id);
+                    if (canLearnSkill(actor, line.entry)) {
+                        actor.learnSkill(line.entry.id);
+                        spentKp += skillKp(line.entry, actor);
+                    }
                 } else {
                     $gameParty.gainItem(line.entry, line.qty);
                 }
+            }
+            if (spentKp > 0 && typeof $gameSystem !== "undefined" && $gameSystem && typeof $gameSystem.spendKnowledge === "function") {
+                $gameSystem.spendKnowledge(spentKp);
             }
             SoundManager.playShop();
             if (window.ParchmentToast) {
@@ -2092,9 +2169,16 @@
             // it is paid for. Only the wares go into the dispatch.
             const lessons = priced.filter(line => isSkillEntry(line.entry));
             const wares = priced.filter(line => !isSkillEntry(line.entry));
+            let spentKp = 0;
             for (const line of lessons) {
                 const actor = $gameActors.actor(line.learner);
-                if (canLearnSkill(actor, line.entry)) actor.learnSkill(line.entry.id);
+                if (canLearnSkill(actor, line.entry)) {
+                    actor.learnSkill(line.entry.id);
+                    spentKp += skillKp(line.entry, actor);
+                }
+            }
+            if (spentKp > 0 && typeof $gameSystem !== "undefined" && $gameSystem && typeof $gameSystem.spendKnowledge === "function") {
+                $gameSystem.spendKnowledge(spentKp);
             }
             SoundManager.playShop();
             if (lessons.length && window.ParchmentToast) {
@@ -2141,6 +2225,22 @@
 
         if (totals.total > this.gold()) {
             SoundManager.playBuzzer();
+            this._confirm = null;
+            this.render();
+            return;
+        }
+
+        const lessons = lines.filter(line => isSkillEntry(line.entry));
+        let totalKp = 0;
+        for (const line of lessons) {
+            const act = line.learner && $gameActors ? $gameActors.actor(line.learner) : null;
+            totalKp += skillKp(line.entry, act);
+        }
+        if (totalKp > 0 && partyKp() < totalKp) {
+            SoundManager.playBuzzer();
+            if (window.ParchmentToast) {
+                window.ParchmentToast.show(T('Stockbusters.text.insufficientKnowledge', { kp: totalKp }), { severity: "warning" });
+            }
             this._confirm = null;
             this.render();
             return;
@@ -2533,12 +2633,19 @@
         for (const actor of $gameParty.allMembers()) {
             const knows = actor.hasSkill && actor.hasSkill(entry.id);
             const stand = req ? svc.check(actor, entry) : null;
-            const ok = canLearnSkill(actor, entry);
-            const note = knows
-                ? T('Stockbusters.text.learnerKnows')
-                : (stand ? T('Stockbusters.text.learnerStat', {
+            const kpCost = skillKp(entry, actor);
+            const canAffordKp = partyKp() >= kpCost;
+            const ok = canLearnSkill(actor, entry) && canAffordKp;
+            let note = '';
+            if (knows) {
+                note = T('Stockbusters.text.learnerKnows');
+            } else if (stand && !stand.met) {
+                note = T('Stockbusters.text.learnerStat', {
                     stat: svc.statName(stand.stat), value: stand.have, points: stand.points
-                }) : '');
+                });
+            } else if (!canAffordKp) {
+                note = T('Stockbusters.text.learnerKp', { kp: kpCost });
+            }
             rows += `<tr class="${ok ? '' : 'sb-off'}">` +
                 `<td class="k">${ok
                     ? `<button class="sb-btn${actor.actorId() === chosenId ? ' cta' : ''}" data-act="learner:${actor.actorId()}" data-nav>${escapeHtml(actor.name())}</button>`
@@ -2552,6 +2659,9 @@
             (req ? `<div style="font-size:11px;color:var(--xp-ink-soft);margin-bottom:4px;">${T('Stockbusters.text.tuitionRequires', {
                 req: svc.label(entry)
             })}</div>` : '') +
+            `<div style="font-size:11px;color:var(--xp-ink-soft);margin-bottom:4px;">${T('Stockbusters.text.tuitionKp', {
+                kp: skillKp(entry, chosen)
+            })}</div>` +
             `<table class="sb-kv">${rows}</table></div></div>`;
     };
 
@@ -3146,6 +3256,16 @@
             if (n <= 0 || Stock.unfillable(lines).length) {
                 warnUnfillable(lines);
                 return false;
+            }
+            if (isSkillEntry(entry)) {
+                const kp = skillKp(entry, first);
+                if (partyKp() < kp) {
+                    SoundManager.playBuzzer();
+                    if (window.ParchmentToast) {
+                        window.ParchmentToast.show(T('Stockbusters.text.insufficientKnowledge', { kp }), { severity: "warning" });
+                    }
+                    return false;
+                }
             }
             if (Pricing.basket(lines, false).total > $gameParty.gold()) {
                 SoundManager.playBuzzer();

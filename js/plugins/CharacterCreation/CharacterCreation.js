@@ -910,12 +910,19 @@
   // file that could not be read, so the bust stands in again.
   function storyModeModelPath(actor) {
     const CP = window.CharacterPresets;
-    if (!actor || !CP || !CP.isStoryModeEm || !CP.isStoryModeEm(actor)) return null;
+    if (!actor || !CP) return null;
+    const isEm = (CP.isStoryModeEm && CP.isStoryModeEm(actor))
+      || (CP.isEmActor && CP.isEmActor(actor))
+      || (typeof actor.name === "function" && String(actor.name() || "").trim().toLowerCase() === "em")
+      || (actor._presetId === 2)
+      || (typeof actor.vnBust === "function" && String(actor.vnBust() || "").includes("Em"));
+    if (!isEm) return null;
     let path = CP.getActorPresetModel ? CP.getActorPresetModel(actor) : null;
     if (!path && CP.getCharacterPresets && CP.getPresetModel) {
-      const em = CP.getCharacterPresets().find((p) => p && String(p.name || "").toLowerCase() === "em"); // i18n-ignore: preset key
+      const em = CP.getCharacterPresets().find((p) => p && (p.id === 2 || String(p.name || "").toLowerCase() === "em")); // i18n-ignore: preset key
       path = CP.getPresetModel(em);
     }
+    if (!path) path = "models/Em.glb";
     const AM = window.ActorModel3D;
     if (!path || typeof THREE === "undefined" || !AM || !AM.modelAvailable(path)) return null;
     return path;
@@ -4507,24 +4514,7 @@
     // sprite keeps its own route in through the avatar beside the name.
     onOpenBustGallery() {
       if (this._refusePresetEdit()) return;
-      const actor = Scene_CharacterCreation.getCurrentActor();
-      if (actor && actor._isCreatureActor) {
-        this.onOpenCreature3DStudio();
-        return;
-      }
-      if (!window.Scene_BustSelector) {
-        this.onOpenSpriteGallery();
-        return;
-      }
-      // Pushed straight over the wizard, so confirming pops once and lands
-      // back here instead of hunting for a sprite grid that was never opened.
-      window.Scene_BustSelector._confirmPops = 1;
-      this.markReturnStep();
-      this.closeStepUI();
-      SceneManager.push(window.Scene_BustSelector);
-      if (SceneManager._nextScene && SceneManager._nextScene.setActor) {
-        SceneManager._nextScene.setActor(actor ? actor.actorId() : 1);
-      }
+      this.onOpenCreature3DStudio();
     }
 
     onSelectCreatureArchetype(modelKey) {
@@ -6028,6 +6018,11 @@
     _syncCC3DPortrait() {
       const wrap = this._dndContainer && this._dndContainer.querySelector(".cc3d-live-portrait");
       const actor = wrap ? Scene_CharacterCreation.getCurrentActor() : null;
+      const isCreature = actor && ((Scene_CharacterCreation.isCreatureActor && Scene_CharacterCreation.isCreatureActor(actor)) || !!actor._isCreatureActor);
+      if (!Scene_CharacterCreation._storyMode && !isCreature) {
+        this._destroyCC3DPortrait();
+        return;
+      }
       const dossierModel = storyModeModelPath(actor);
       if (wrap && dossierModel) {
         const colours = typeof actor.modelColours === "function" ? actor.modelColours() : null;

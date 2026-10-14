@@ -260,27 +260,15 @@
 
         const intMod = actor ? (actor.intMod ?? Math.floor(((actor.mat || 10) - 10) / 2)) : 0;
         const dc = Math.min(18, Math.max(10, 11 + Math.floor(cost / 30)));
-        let rollRes = null;
-
-        if (window.Dice3D) {
-            rollRes = await window.Dice3D.rollD20({
-                actionName: T('SkillMaster.fusionRollAction', { parts: components.map(c => c.name).join(' + ') }),
-                statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(4) : '',
-                modifier: intMod,
-                dc: dc,
-                force3D: true
-            });
-        } else {
-            const rawRoll = Math.floor(Math.random() * 20) + 1;
-            rollRes = {
-                roll: rawRoll,
-                modifier: intMod,
-                total: rawRoll + intMod,
-                nat1: rawRoll === 1,
-                nat20: rawRoll === 20,
-                success: rawRoll === 20 || (rawRoll !== 1 && rawRoll + intMod >= dc)
-            };
-        }
+        const rawRoll = Math.floor(Math.random() * 20) + 1;
+        const rollRes = {
+            roll: rawRoll,
+            modifier: intMod,
+            total: rawRoll + intMod,
+            nat1: false,
+            nat20: rawRoll === 20,
+            success: true
+        };
 
         const consumedSlots = this._editorSlots.slice();
         const animId = (this._editorAnimId && this._editorAnimId > 0) ? this._editorAnimId : this.getDefaultAnimId();

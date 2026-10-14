@@ -71,8 +71,11 @@
   "unknownSkill": "Sconosciuta",
   "costKp": "Costo: {cost} KP",
   "actorLearned": "{actor} ha imparato {skill}!",
+  "actorLearnedDetailed": "{actor} ha imparato {skill}!",
   "fusedResult": "Fuso {name}! (-{cost} KP, restano {left})",
+  "fusedDetailed": "{actor} ha fuso insieme {spell1} e {spell2} per creare {name}!",
   "splitResult": "{name} diviso nei componenti.",
+  "splitDetailed": "{actor} ha diviso {name} in {spell1} e {spell2}.",
   "knowledgeGained": "+{amount} Conoscenza (totale: {total})",
   "category": {
     "All": "Tutte"
@@ -236,6 +239,24 @@
       "noneElement": "Neutro",
       "noneElementDesc": "Colpisce senza affinità elementale."
     },
+    "fuseStep": {
+      "dominant": "Dominante",
+      "recessive": "Recessiva",
+      "identity": "Identità",
+      "tags": "Tratti",
+      "forge": "Forgia",
+      "all": "Tutti",
+      "next": "Avanti",
+      "prev": "Indietro",
+      "stepOf": "Passo {step} di {total}: {title}",
+      "stepHint": {
+        "dominant": "Scegli l'incantesimo dominante che definisce effetto e danno.",
+        "recessive": "Scegli l'abilità o incantesimo recessivo da infondere.",
+        "identity": "Dai un nome alla tua creazione e personalizzane l'aspetto.",
+        "tags": "Seleziona i tratti e poteri conservati da entrambi i componenti.",
+        "forge": "Esamina la fusione e colpisci l'incudine."
+      }
+    },
     "write": {
       "name": "Dagli un nome",
       "description": "Scrivi la descrizione",
@@ -280,6 +301,9 @@
     "benchBlurb": "Ogni tag si paga in KP quando la voce viene scritta. Gli MP o gli AP che costa e la {stat} che richiede sono ciò che il libro chiede per la stessa potenza.",
     "writtenResult": "\\C[3]{name}\\C[0] è scritto. {cost} KP spesi, {left} KP rimasti.",
     "rewrittenResult": "\\C[3]{name}\\C[0] è riscritto. {cost} KP spesi, {left} KP rimasti.",
+    "craftedDetailed": "{actor} ha creato l'incantesimo {name}! (-{cost} KP)",
+    "rewrittenDetailed": "{actor} ha riscritto l'incantesimo {name}! (-{cost} KP)",
+    "discardDetailed": "{actor} ha scartato l'incantesimo {name}.",
     "row": {
       "name": "Nome",
       "description": "Descrizione",
@@ -979,6 +1003,14 @@
         "name": "Ritorno",
         "desc": "Restituisce AP a chi lo usa."
       },
+      "virulent": {
+        "name": "Virulento",
+        "desc": "+30% di probabilità di infliggere alterazioni di stato."
+      },
+      "malignant": {
+        "name": "Maligno",
+        "desc": "+60% di probabilità di infliggere alterazioni di stato."
+      },
       "freshMagazine": {
         "name": "Caricatore Nuovo",
         "desc": "Concede Caricatore Nuovo: il prossimo colpo va a segno più facilmente e fa critico più spesso."
@@ -1025,7 +1057,8 @@
         "userShape": "Serve la forma Chi scrive.",
         "marksman": "Solo armi da fuoco: serve il nucleo Tiro Mirato.",
         "multiHit": "Serve Gemello o Scritto Tre Volte.",
-        "emptyUser": "Serve il nucleo Guardia Vuota su Chi scrive."
+        "emptyUser": "Serve il nucleo Guardia Vuota su Chi scrive.",
+        "hasState": "Richiede almeno un'alterazione di stato."
       }
     },
     "auto": {
@@ -1123,7 +1156,9 @@
         "keenEdge": "Può essere critico.",
         "menuCast": "Usabile fuori dalla battaglia.",
         "guardBreak": "Dimezza la difesa contro di lui.",
-        "apReturn": "Restituisce AP a chi lo usa."
+        "apReturn": "Restituisce AP a chi lo usa.",
+        "virulent": "+30% di probabilità di infliggere alterazioni di stato.",
+        "malignant": "+60% di probabilità di infliggere alterazioni di stato."
       },
       "first": "Colpisce per primo.",
       "lands": "Va a segno il {pct}% delle volte.",
@@ -1170,6 +1205,8 @@
     "knowledge": "Conoscenza",
     "unmake": "Disfa",
     "bound": "{item} è vincolato.",
+    "enchantDetailed": "{actor} ha incantato {item} con {spell}!",
+    "enchantNoSpellDetailed": "{actor} ha incantato {item}!",
     "lostSpell": "Incantesimo perduto",
     "noGear": "Nessun oggetto incantabile.",
     "noneBound": "Ancora nessun vincolo",
@@ -1268,6 +1305,8 @@
     "recover": "Copertina",
     "unmake": "Disfa",
     "written": "{book} è stato scritto.",
+    "writeDetailed": "{actor} ha scritto il volume {book}!",
+    "unmadeBookDetailed": "{actor} ha disfatto {book}.",
     "skillBookDesc": "Libro scritto a mano con {count} abilità. Si consuma quando tutte le pagine sono state lette.",
     "grimorieDesc": "Libro scritto a mano con {count} incantesimi. Si consuma quando tutte le pagine sono state lette.",
     "skillBookFallbackName": "Quaderno di {first}",
@@ -1348,7 +1387,8 @@
     "pickPiece": "Scegli un pezzo a sinistra.",
     "totalHere": "Totale: {kp} KP.",
     "nothing": "Nessun equipaggiamento magico nell'inventario.",
-    "unmade": "{item} è disfatto per {kp} KP."
+    "unmade": "{item} è disfatto per {kp} KP.",
+    "hexorcizeDetailed": "{actor} ha purificato {item} (+{kp} KP)!"
   },
   "lobotomagic": {
     "button": "Lobotomagia",
@@ -1364,7 +1404,8 @@
     "pickSkill": "Scegli un'abilità a sinistra.",
     "nothing": "Nessuna abilità rimovibile.",
     "warning": "{name} lo dimentica per sempre. Reimpararlo costa il prezzo pieno.",
-    "cut": "{name} dimentica {skill} per {kp} KP."
+    "cut": "{name} dimentica {skill} per {kp} KP.",
+    "forgottenDetailed": "{name} ha dimenticato {skill} (+{kp} KP)!"
   },
   "tips": {
     "member": "Membro",

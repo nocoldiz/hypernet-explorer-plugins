@@ -950,12 +950,49 @@
   let lastDisplayedHour = -1;
   let lastDisplayedMinute = -1;
 
+  function checkDailyDiaryKnowledge(pastDay) {
+    if (typeof $gameSystem === 'undefined' || !$gameSystem) return;
+    try {
+      const D = window.Diary;
+      const entries = (D && typeof D.entries === 'function') ? D.entries() : [];
+      const dayStart = pastDay * 1440;
+      const dayEnd = (pastDay + 1) * 1440;
+      const pastEntries = entries.filter(e => e && e.t >= dayStart && e.t < dayEnd);
+      const count = pastEntries.length;
+      if (count > 0) {
+        const kp = Math.max(10, Math.min(250, count * 10));
+        if (typeof $gameSystem.gainKnowledge === 'function') $gameSystem.gainKnowledge(kp);
+        else if (typeof $gameSystem.addKnowledge === 'function') $gameSystem.addKnowledge(kp);
+        if (window.ParchmentToast) {
+          window.ParchmentToast.show(T('TimeDate.diary.dailyKp', { count, kp }), {
+            severity: 'good',
+            duration: 240
+          });
+        }
+      }
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
   function updateGameDateVariable() {
     const minutes = getGameTimeMinutes();
     const dateTime = getDateTimeFromMinutes(minutes);
 
     const currentHour = parseInt(dateTime.hours);
     const currentMinute = parseInt(dateTime.minutes);
+
+    // Check daily diary knowledge turnover
+    const dayIndex = Math.floor(minutes / 1440);
+    if (typeof $gameSystem !== 'undefined' && $gameSystem) {
+      if ($gameSystem._lastDiaryEvaluatedDay === undefined) {
+        $gameSystem._lastDiaryEvaluatedDay = dayIndex;
+      } else if (dayIndex > $gameSystem._lastDiaryEvaluatedDay) {
+        const pastDay = dayIndex - 1;
+        $gameSystem._lastDiaryEvaluatedDay = dayIndex;
+        checkDailyDiaryKnowledge(pastDay);
+      }
+    }
 
     // Update Variable 113 when hour or minute changes
     if (currentHour !== lastDisplayedHour || currentMinute !== lastDisplayedMinute) {
@@ -4410,6 +4447,15 @@
         } catch (e) { gained = []; }
       }
 
+      let kpWon = 0;
+      if (kind === 'won') {
+        kpWon = opts.kp != null ? opts.kp : 30;
+        if (typeof $gameSystem !== 'undefined' && $gameSystem) {
+          if (typeof $gameSystem.gainKnowledge === 'function') $gameSystem.gainKnowledge(kpWon);
+          else if (typeof $gameSystem.addKnowledge === 'function') $gameSystem.addKnowledge(kpWon);
+        }
+      }
+
       try {
         if (!window.ParchmentToast || quiet) return;
         const substance = window.AddictionSystem
@@ -4421,7 +4467,8 @@
             T('TimeDate.addiction.eased', { name: e.name, substance, amount: e.dropped }),
             { severity: 'good', duration: 150 }
           )),
-          ...gained.map(g => () => window.SpecializationXP.announce(g))
+          ...gained.map(g => () => window.SpecializationXP.announce(g)),
+          ...(kpWon > 0 ? [() => window.ParchmentToast.show(T('TimeDate.minigame.kpWon', { kp: kpWon }), { severity: 'good', duration: 150 })] : [])
         ]);
       } catch (e) { /* never let a cosmetic popup break a minigame */ }
     },
@@ -6506,6 +6553,7 @@
 
   // Expose globals for use by other plugins
   window.TimeDateSystem = window.TimeDateSystem || {};
+  window.TimeDateSystem.checkDailyDiaryKnowledge = checkDailyDiaryKnowledge;
   window.TimeDateSystem.getDayNightLight = getDayNightLight;
   // A variable written so often that its map refresh is the cost: the write
   // skips the refresh unless a page on the current map is conditioned on it.

@@ -1442,6 +1442,21 @@
 
             let articleHTML = "";
             if (selectedNews) {
+                const articleKey = selectedNews.id || (selectedNews.text ? String(selectedNews.text) : (selectedNews.title || String(selectedNews.timestamp)));
+                if (typeof $gameSystem !== 'undefined' && $gameSystem) {
+                    $gameSystem._readNewsLog = $gameSystem._readNewsLog || {};
+                    if (!$gameSystem._readNewsLog[articleKey]) {
+                        $gameSystem._readNewsLog[articleKey] = true;
+                        const newsKp = 15;
+                        if (typeof $gameSystem.gainKnowledge === 'function') $gameSystem.gainKnowledge(newsKp);
+                        else if (typeof $gameSystem.addKnowledge === 'function') $gameSystem.addKnowledge(newsKp);
+                        try {
+                            if (window.ParchmentToast) {
+                                window.ParchmentToast.reward?.({ knowledge: newsKp, title: T('NewsSystem.ui.knowledgeTitle') });
+                            }
+                        } catch (e) { /* ignore */ }
+                    }
+                }
                 const newsDate = new Date(selectedNews.timestamp);
                 const fullDateText = newsDate.toLocaleDateString(T('NewsSystem.ui.enUs'), {
                     weekday: 'long',
@@ -1828,6 +1843,21 @@
 
             let recordHTML = `<div class="news-empty">${T('NewsSystem.ui.selectAnEntryTo')}</div>`;
             if (selected) {
+                const eventKey = 'hist:' + (selected.id || (selected.date + ':' + (selected.title || selected.description || selected.text)));
+                if (typeof $gameSystem !== 'undefined' && $gameSystem) {
+                    $gameSystem._readNewsLog = $gameSystem._readNewsLog || {};
+                    if (!$gameSystem._readNewsLog[eventKey]) {
+                        $gameSystem._readNewsLog[eventKey] = true;
+                        const newsKp = 15;
+                        if (typeof $gameSystem.gainKnowledge === 'function') $gameSystem.gainKnowledge(newsKp);
+                        else if (typeof $gameSystem.addKnowledge === 'function') $gameSystem.addKnowledge(newsKp);
+                        try {
+                            if (window.ParchmentToast) {
+                                window.ParchmentToast.reward?.({ knowledge: newsKp, title: T('NewsSystem.ui.knowledgeTitle') });
+                            }
+                        } catch (e) { /* ignore */ }
+                    }
+                }
                 recordHTML = `
                     <div class="news-article">
                         <div class="news-article-title">${escapeNewsHTML(this.historyCategoryLabel(selected.category || selected.type))}</div>

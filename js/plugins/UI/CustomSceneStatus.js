@@ -275,25 +275,8 @@
     }
 
     function drawBustImage(bitmap, actor, x, y, width, height) {
-        const bustPath = getActorBustImagePath(actor);
-
-        // Always clear the area first
+        // Always clear the area first (2D busts removed)
         bitmap.clearRect(x, y, width, height);
-
-        if (!bustPath) return;
-
-        // Determine if this is an enemy image (don't crop) or bust image (crop)
-        const shouldCrop = !bustPath.includes('img/enemies/');
-
-        // Load the main bust image
-        const bustBitmap = ImageManager.loadBitmap('', bustPath);
-
-        bustBitmap.addLoadListener(() => {
-            // Check if the bitmap actually loaded successfully
-            if (bustBitmap.width > 0 && bustBitmap.height > 0) {
-                drawBustToCanvas(bitmap, bustBitmap, x, y, width, height, shouldCrop);
-            }
-        });
     }
 
     function drawBustToCanvas(bitmap, sourceBitmap, x, y, width, height, shouldCrop = true) {
@@ -569,7 +552,6 @@
 
     const STATUS_TABS = [
         { id: "bodyparts", labelKey: "SceneStatus.ui.tabBodyParts" },
-        { id: "attributes", labelKey: "SceneStatus.ui.tabAttributes" },
         { id: "bio", labelKey: "SceneStatus.ui.tabBio" },
         { id: "backstory", labelKey: "SceneStatus.ui.tabBackstory" },
         { id: "traits", labelKey: "SceneStatus.ui.tabTraits" },
@@ -608,14 +590,16 @@
     // stops the whole pool being dumped into one stat.
     const STAT_POINT_LEVEL_GAP = 4;
     const STAT_POINT_PER_STAT_CAP = 8;
-    const STAT_POINT_PARAM_IDS = [2, 3, 4, 5, 6, 7];
+    const STAT_POINT_PARAM_IDS = [0, 1, 2, 3, 4, 5, 6, 7];
 
     // Points are permanent: spending one writes it into the actor's own
-    // _paramPlus, which is saved with the actor and never expires. The ledger
+    // _paramPlus, which is saved with the actor and never expires. The grimorie
     // beside it is only there so the sheet can tell an awarded point from a
     // trait bonus and so the per attribute cap can be enforced.
     function statNameForParam(paramId) {
         switch (Number(paramId)) {
+            case 0: return _si18n("HP", "HP");
+            case 1: return _si18n("MP", "MP");
             case 2: return _si18n("ATT", "STR");
             case 3: return _si18n("DEF", "CON");
             case 4: return _si18n("M.ATT", "INT");
@@ -655,8 +639,31 @@
             return Math.max(0, this.earned(actor) - this.totalSpent(actor));
         },
 
+        pointGain(actor, paramId) {
+            paramId = Number(paramId);
+            const level = actor ? Math.max(1, actor.level || 1) : 1;
+            if (paramId === 0) {
+                return Math.max(10, Math.round(10 + level * 2.5));
+            }
+            if (paramId === 1) {
+                return Math.max(5, Math.round(5 + level * 1.0));
+            }
+            return 1;
+        },
+
+        awardedBonus(actor, paramId) {
+            paramId = Number(paramId);
+            if (!actor) return 0;
+            if (actor._statPointsBonus && typeof actor._statPointsBonus[paramId] === "number") {
+                return actor._statPointsBonus[paramId];
+            }
+            return this.spentOn(actor, paramId);
+        },
+
         canSpend(actor, paramId) {
-            if (!actor || STAT_POINT_PARAM_IDS.indexOf(Number(paramId)) < 0) return false;
+            paramId = Number(paramId);
+            if (!actor || STAT_POINT_PARAM_IDS.indexOf(paramId) < 0) return false;
+            if (paramId === 1 && hideMpBar()) return false;
             if (this.available(actor) <= 0) return false;
             return this.spentOn(actor, paramId) < STAT_POINT_PER_STAT_CAP;
         },
@@ -666,7 +673,15 @@
             if (!this.canSpend(actor, paramId)) return false;
             const led = this.ledger(actor);
             led[paramId] = (led[paramId] || 0) + 1;
-            actor.addParam(paramId, 1);
+            const gain = this.pointGain(actor, paramId);
+            if (!actor._statPointsBonus) actor._statPointsBonus = {};
+            actor._statPointsBonus[paramId] = (actor._statPointsBonus[paramId] || 0) + gain;
+            actor.addParam(paramId, gain);
+            if (paramId === 0 && typeof actor.gainHp === "function") {
+                actor.gainHp(gain);
+            } else if (paramId === 1 && typeof actor.gainMp === "function") {
+                actor.gainMp(gain);
+            }
             return true;
         }
     };
@@ -675,6 +690,8 @@
     function buildStatBreakdownHTML(actor) {
         if (!actor) return "";
         const params = [
+            { name: _si18n("HP", "HP"), id: 0, icon: 84 },
+            { name: _si18n("MP", "MP"), id: 1, icon: 85 },
             { name: _si18n("ATT", "STR"), id: 2, icon: 76 },
             { name: _si18n("DEF", "CON"), id: 3, icon: 77 },
             { name: _si18n("AGILITY", "DEX"), id: 6, icon: 81 },
@@ -683,15 +700,18 @@
             { name: _si18n("LUCK", "PSI"), id: 7, icon: 82 }
         ];
 
-        const rows = params.map(p => {
-            const baseVal = actor.paramBase(p.id);
+        const rows = params.filter(p => !(p.id === 1 && hideMpBar())).map(p => {
+            const rawBase = actor.currentClass() && actor.currentClass().params && actor.currentClass().params[p.id]
+                ? actor.currentClass().params[p.id][actor.level]
+                : actor.paramBase(p.id);
             const equipVal = actor.equips().reduce((acc, eq) => acc + (eq && eq.params ? (eq.params[p.id] || 0) : 0), 0);
-            const awardedVal = window.StatPoints.spentOn(actor, p.id);
-            const traitVal = ((actor._paramPlus && actor._paramPlus[p.id]) || 0) - awardedVal;
+            const awardedVal = window.StatPoints.awardedBonus(actor, p.id);
+            const traitVal = ((actor._paramPlus && actor._paramPlus[p.id]) || 0) - (actor._permanentParamBonus && actor._permanentParamBonus[p.id] ? 0 : awardedVal);
             const limbMod = (actor._statModifiers && actor._statModifiers[p.id]) || 0;
             const totalVal = actor.param(p.id);
+            const isVital = p.id === 0 || p.id === 1;
             const dndModNum = Math.floor((totalVal - 10) / 2);
-            const dndModText = dndModNum >= 0 ? "+" + dndModNum : String(dndModNum);
+            const dndModText = isVital ? "-" : (dndModNum >= 0 ? "+" + dndModNum : String(dndModNum));
 
             const equipClass = equipVal > 0 ? "status-stat-bonus-positive" : (equipVal < 0 ? "status-stat-bonus-negative" : "status-stat-bonus-zero");
             const traitClass = traitVal > 0 ? "status-stat-bonus-positive" : (traitVal < 0 ? "status-stat-bonus-negative" : "status-stat-bonus-zero");
@@ -706,7 +726,7 @@
             return `
                 <tr>
                     <td><span class="status-01" style="${iconStyle(p.icon, 16)} vertical-align:middle"></span>${escapeAttr(p.name)}</td>
-                    <td class="status-02">${baseVal}</td>
+                    <td class="status-02">${rawBase}</td>
                     <td class="${equipClass}">${equipStr}</td>
                     <td class="${traitClass}">${traitStr}</td>
                     <td class="${awardedClass}">${awardedStr}</td>
@@ -1388,58 +1408,75 @@
                             <h2 class="title status-12" id="status-actor-name"></h2>
                         </div>
 
-                        <div class="status-left-body">
-                        <div class="status-portrait-column">
-                            <div class="status-bust-wrapper">
-                                <canvas id="status-bust" width="440" height="500"></canvas>
+                        <div class="status-left-body" style="overflow-y: auto; padding-right: 4px;">
+                            <div class="status-portrait-column" id="status-portrait-column" style="display: none; margin-bottom: 8px;">
+                                <div class="status-bust-wrapper" id="status-3d-wrapper" style="height: 100%; min-height: 0; flex: 1 1 auto; display: none;"></div>
+                                <div id="status-sprite-wrapper" style="display: none; align-items: center; justify-content: center; width: 100%; height: 140px;">
+                                    <canvas id="status-world-sprite" style="image-rendering: pixelated;"></canvas>
+                                </div>
                             </div>
-                        </div>
 
                             <div class="status-vitals-box">
-                            <div class="status-gauge-row">
-                                <div class="status-gauge-meta">
-                                    <span class="gauge-label">${T('SceneStatus.ui.hp')}</span>
-                                    <span class="gauge-value" id="status-hp-text"></span>
+                                <div class="status-gauge-row" id="status-gauge-hp">
+                                    <div class="status-gauge-meta">
+                                        <span class="gauge-label">${T('SceneStatus.ui.hp')}</span>
+                                        <div class="status-gauge-meta-right" style="display:inline-flex; align-items:center; gap:6px;">
+                                            <span class="gauge-value" id="status-hp-text"></span>
+                                            <span id="status-hp-controls" style="display:inline-flex; align-items:center; gap:4px;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="status-gauge-bar-outer">
+                                        <div class="status-gauge-bar-inner hp" id="status-hp-bar"></div>
+                                    </div>
                                 </div>
-                                <div class="status-gauge-bar-outer">
-                                    <div class="status-gauge-bar-inner hp" id="status-hp-bar"></div>
+
+                                <div class="status-gauge-row" id="status-gauge-mp">
+                                    <div class="status-gauge-meta">
+                                        <span class="gauge-label">${T('SceneStatus.ui.mp')}</span>
+                                        <div class="status-gauge-meta-right" style="display:inline-flex; align-items:center; gap:6px;">
+                                            <span class="gauge-value" id="status-mp-text"></span>
+                                            <span id="status-mp-controls" style="display:inline-flex; align-items:center; gap:4px;"></span>
+                                        </div>
+                                    </div>
+                                    <div class="status-gauge-bar-outer">
+                                        <div class="status-gauge-bar-inner mp" id="status-mp-bar"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Action points are spent one at a time and never
+                                     read as a share of anything, so the number is the
+                                     whole reading and the track is gone. -->
+                                <div class="status-gauge-row status-vital-plain">
+                                    <div class="status-gauge-meta">
+                                        <span class="gauge-label">${T('SceneStatus.ui.ap')}</span>
+                                        <span class="gauge-value" id="status-tp-text"></span>
+                                    </div>
+                                </div>
+
+                                <div class="status-gauge-row">
+                                    <div class="status-gauge-meta">
+                                        <span class="gauge-label">${T('SceneStatus.ui.experience')}</span>
+                                        <span class="gauge-value" id="status-exp-text"></span>
+                                    </div>
+                                    <div class="status-gauge-bar-outer">
+                                        <div class="status-gauge-bar-inner exp" id="status-exp-bar"></div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="status-gauge-row">
-                                <div class="status-gauge-meta">
-                                    <span class="gauge-label">${T('SceneStatus.ui.mp')}</span>
-                                    <span class="gauge-value" id="status-mp-text"></span>
-                                </div>
-                                <div class="status-gauge-bar-outer">
-                                    <div class="status-gauge-bar-inner mp" id="status-mp-bar"></div>
-                                </div>
+                            <div class="status-gauges-box">
+                                <div class="status-needs-rows" id="status-needs"></div>
                             </div>
 
-                            <!-- Action points are spent one at a time and never
-                                 read as a share of anything, so the number is the
-                                 whole reading and the track is gone. -->
-                            <div class="status-gauge-row status-vital-plain">
-                                <div class="status-gauge-meta">
-                                    <span class="gauge-label">${T('SceneStatus.ui.ap')}</span>
-                                    <span class="gauge-value" id="status-tp-text"></span>
-                                </div>
+                            <div id="status-attr-cards">
+                                <div class="stats-medallions-grid" id="status-medallions"></div>
+                                <div id="status-stat-breakdown"></div>
                             </div>
 
-                            <div class="status-gauge-row">
-                                <div class="status-gauge-meta">
-                                    <span class="gauge-label">${T('SceneStatus.ui.experience')}</span>
-                                    <span class="gauge-value" id="status-exp-text"></span>
-                                </div>
-                                <div class="status-gauge-bar-outer">
-                                    <div class="status-gauge-bar-inner exp" id="status-exp-bar"></div>
-                                </div>
+                            <div class="status-alignment-row">
+                                <div class="status-15" id="status-alignment-container"></div>
+                                <div class="status-15" id="status-magicsystem-container"></div>
                             </div>
-                            </div>
-
-                        <div class="status-gauges-box">
-                            <div class="status-needs-rows" id="status-needs"></div>
-                        </div>
                         </div>
                     </div>
                     <div class="right-page">
@@ -1466,18 +1503,6 @@
                             <div class="status-tab-panel" data-status-tab="backstory">
                                 <div class="bodyparts-card status-16">
                                     <div class="status-bio-scroll" id="status-backstory-scroll"></div>
-                                </div>
-                            </div>
-
-                            <div class="status-tab-panel" data-status-tab="attributes">
-                                <div id="status-attr-cards">
-                                    <div class="stats-medallions-grid" id="status-medallions"></div>
-                                    <div id="status-stat-breakdown"></div>
-                                </div>
-
-                                <div class="status-alignment-row">
-                                    <div class="status-15" id="status-alignment-container"></div>
-                                    <div class="status-15" id="status-magicsystem-container"></div>
                                 </div>
                             </div>
 
@@ -1573,10 +1598,41 @@
         const hpBarEl = spread.querySelector("#status-hp-bar");
         if (hpBarEl) hpBarEl.style.width = `${actor.hpRate() * 100}%`;
 
+        const hpControlsEl = spread.querySelector("#status-hp-controls");
+        if (hpControlsEl) {
+            const spent = window.StatPoints.spentOn(actor, 0);
+            const spentHTML = spent > 0 ? `<span class="stat-medallion-spent">+${spent}</span>` : "";
+            const canRaise = window.StatPoints.canSpend(actor, 0);
+            const litRaise = canRaise && 0 === this.raiseCursorParam();
+            const gain = window.StatPoints.pointGain(actor, 0);
+            const raiseHTML = canRaise
+                ? `<div class="stat-medallion-raise focusable${litRaise ? ' raise-lit' : ''}" title="${escapeAttr(T('SceneStatus.ui.raiseHp', { amount: gain }))}" onclick="SceneManager._scene.spendStatPoint(0)">+</div>`
+                : "";
+            hpControlsEl.innerHTML = spentHTML + raiseHTML;
+        }
+        const hpGaugeEl = spread.querySelector("#status-gauge-hp");
+        if (hpGaugeEl) hpGaugeEl.classList.toggle("raise-lit", window.StatPoints.canSpend(actor, 0) && 0 === this.raiseCursorParam());
+
         const mpTextEl = spread.querySelector("#status-mp-text");
         if (mpTextEl) mpTextEl.textContent = `${actor.mp} / ${actor.mmp}`;
         const mpBarEl = spread.querySelector("#status-mp-bar");
         if (mpBarEl) mpBarEl.style.width = `${actor.mpRate() * 100}%`;
+
+        const mpControlsEl = spread.querySelector("#status-mp-controls");
+        if (mpControlsEl) {
+            const spent = window.StatPoints.spentOn(actor, 1);
+            const spentHTML = spent > 0 ? `<span class="stat-medallion-spent">+${spent}</span>` : "";
+            const canRaise = window.StatPoints.canSpend(actor, 1);
+            const litRaise = canRaise && 1 === this.raiseCursorParam();
+            const gain = window.StatPoints.pointGain(actor, 1);
+            const raiseHTML = canRaise
+                ? `<div class="stat-medallion-raise focusable${litRaise ? ' raise-lit' : ''}" title="${escapeAttr(T('SceneStatus.ui.raiseMp', { amount: gain }))}" onclick="SceneManager._scene.spendStatPoint(1)">+</div>`
+                : "";
+            mpControlsEl.innerHTML = spentHTML + raiseHTML;
+        }
+        const mpGaugeEl = spread.querySelector("#status-gauge-mp");
+        if (mpGaugeEl) mpGaugeEl.classList.toggle("raise-lit", window.StatPoints.canSpend(actor, 1) && 1 === this.raiseCursorParam());
+
         // Nothing to spend it on in a severed world: the whole row goes.
         if (hideMpBar()) {
             const row = (mpBarEl && mpBarEl.closest(".status-gauge-row")) ||
@@ -1877,8 +1933,8 @@
         const bodyPartsEl = spread.querySelector("#bodyparts-scroll-container");
         if (bodyPartsEl) bodyPartsEl.innerHTML = bodyPartsHTML;
 
-        // 4. Draw bust portrait canvas
-        this.drawUIStatusBust(actor, "status-bust");
+        // 4. 3D Model portrait (if defined; no bust is shown)
+        this.drawUIStatusBust(actor);
 
         // 5. Scroll selected body part into view if active
         if (this._dndActiveSection === "bodyparts") {
@@ -1932,61 +1988,87 @@
         window.NPCEmpathize.openForActor(actor.actorId());
     };
 
-    Scene_Status.prototype.drawUIStatusBust = function (actor, canvasId) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-
+    Scene_Status.prototype.drawUIStatusBust = function (actor) {
+        const portraitCol = document.getElementById('status-portrait-column');
+        const wrapper3D = document.getElementById('status-3d-wrapper');
+        const wrapperSprite = document.getElementById('status-sprite-wrapper');
         // Creature actors render a live procedural 3D model (reusing the Bestiary
         // viewport) in place of the flat 2D enemy battler, when the 3D battler
         // system is active and the chosen battler maps to a model.
         const info3D = this.getStatus3DInfo(actor);
         if (info3D) {
-            canvas.style.display = 'none';
+            if (portraitCol) {
+                portraitCol.style.display = 'flex';
+                portraitCol.style.flex = '0 0 240px';
+                portraitCol.style.height = '240px';
+            }
+            if (wrapperSprite) wrapperSprite.style.display = 'none';
+            if (wrapper3D) wrapper3D.style.display = 'flex';
             this.syncStatus3D(info3D);
             return;
         }
-        // Not a 3D creature: tear down any prior viewer and show the 2D portrait.
+        // No 3D model: clear any prior 3D viewer
         this.cleanupStatus3D();
-        canvas.style.display = '';
+        if (wrapper3D) wrapper3D.style.display = 'none';
 
-        const bustPath = getActorBustImagePath(actor);
-        if (!bustPath) return;
+        // When 3D model is missing, show world sprite of character slightly bigger
+        const charName = actor && typeof actor.characterName === 'function' ? actor.characterName() : '';
+        if (charName) {
+            if (portraitCol) {
+                portraitCol.style.display = 'flex';
+                portraitCol.style.flex = '0 0 auto';
+                portraitCol.style.height = 'auto';
+            }
+            if (wrapperSprite) wrapperSprite.style.display = 'flex';
+            this.drawWorldSprite(actor);
+            return;
+        }
 
-        const bitmap = ImageManager.loadBitmap('', bustPath);
-        const drawBust = () => {
+        if (wrapperSprite) wrapperSprite.style.display = 'none';
+        if (portraitCol) portraitCol.style.display = 'none';
+    };
+
+    Scene_Status.prototype.drawWorldSprite = function (actor) {
+        const canvas = document.getElementById('status-world-sprite');
+        if (!canvas || !actor) return;
+        const charName = typeof actor.characterName === 'function' ? actor.characterName() : '';
+        if (!charName) return;
+        const charIndex = typeof actor.characterIndex === 'function' ? actor.characterIndex() : 0;
+        const actorId = typeof actor.actorId === 'function' ? actor.actorId() : null;
+        this._statusWorldSpriteActorId = actorId;
+        const bitmap = ImageManager.loadCharacter(charName);
+        const render = () => {
+            if (this._statusWorldSpriteActorId !== actorId) return;
+            if (!bitmap.width || !bitmap.height) return;
+            const isBig = ImageManager.isBigCharacter(charName);
+            const pw = bitmap.width / (isBig ? 3 : 12);
+            const ph = bitmap.height / (isBig ? 4 : 8);
+            const sx = isBig ? pw : ((charIndex % 4) * 3 + 1) * pw;
+            const sy = isBig ? 0 : (Math.floor(charIndex / 4) * 4) * ph;
+            let scale = ph <= 32 ? 3 : (ph <= 48 ? 2.5 : 2);
+            if (ph * scale > 130) {
+                scale = 130 / ph;
+            }
+            const dw = Math.round(pw * scale);
+            const dh = Math.round(ph * scale);
+            canvas.width = dw;
+            canvas.height = dh;
+            canvas.style.width = dw + 'px';
+            canvas.style.height = dh + 'px';
+            canvas.style.imageRendering = 'pixelated';
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.imageSmoothingEnabled = true;
-
-            const shouldCrop = false;
-            const sourceWidth = bitmap.width > 0 ? bitmap.width : 889;
-            const sourceHeight = bitmap.height > 0 ? bitmap.height : 1200;
-
-            let cropTop = 0;
-            let cropLeft = 0;
-            let croppedSourceWidth = sourceWidth;
-            let croppedSourceHeight = sourceHeight;
-
-            const aspectRatio = croppedSourceWidth / croppedSourceHeight;
-            let drawWidth = canvas.width;
-            let drawHeight = Math.round(canvas.width / aspectRatio);
-
-            if (drawHeight > canvas.height) {
-                drawHeight = canvas.height;
-                drawWidth = Math.round(canvas.height * aspectRatio);
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, dw, dh);
+            const img = bitmap.image || bitmap._image || bitmap._canvas || bitmap.canvas;
+            if (img) {
+                ctx.drawImage(img, sx, sy, pw, ph, 0, 0, dw, dh);
             }
-
-            const drawX = Math.round((canvas.width - drawWidth) / 2);
-            const drawY = Math.round((canvas.height - drawHeight) / 2);
-
-            ctx.drawImage(bitmap.canvas, cropLeft, cropTop, croppedSourceWidth, croppedSourceHeight, drawX, drawY, drawWidth, drawHeight);
         };
-
         if (bitmap.isReady()) {
-            drawBust();
+            render();
         } else {
-            bitmap.addLoadListener(drawBust);
+            bitmap.addLoadListener(render);
         }
     };
 
@@ -2087,8 +2169,19 @@
         // whatever portrait style the slot carries. A model that could not be
         // read is never asked for twice, so a missing file falls back to the
         // bust rather than to an empty frame.
-        const presetModel = window.CharacterPresets && window.CharacterPresets.getActorPresetModel
+        let presetModel = window.CharacterPresets && window.CharacterPresets.getActorPresetModel
             ? window.CharacterPresets.getActorPresetModel(actor) : null;
+        if (!presetModel && window.CharacterPresets) {
+            const CP = window.CharacterPresets;
+            const isEm = (CP.isEmActor && CP.isEmActor(actor)) ||
+                (typeof actor.name === 'function' && String(actor.name() || '').trim().toLowerCase() === 'em') ||
+                actor._presetId === 2 ||
+                (typeof actor.vnBust === 'function' && String(actor.vnBust() || '').includes('Em'));
+            if (isEm) {
+                const emPreset = CP.getCharacterPresets ? CP.getCharacterPresets().find(p => p && (p.id === 2 || String(p.name || '').toLowerCase() === 'em')) : null;
+                presetModel = (emPreset && emPreset.model) || 'models/Em.glb';
+            }
+        }
         if (presetModel && !glbPortraitFailed[presetModel]) {
             return { kind: 'glb', path: presetModel, actorId: actor.actorId(), colours: actorModelColours(actor) };
         }
@@ -3524,6 +3617,8 @@
     };
 
     Scene_Status.prototype.syncStatus3D = function (info) {
+        const portraitCol = document.getElementById('status-portrait-column');
+        if (portraitCol) portraitCol.style.display = 'flex';
         const canvas = document.getElementById('status-bust-3d');
         const key = status3DKey(info);
         // Already showing this subject on a live canvas: just refresh which
@@ -3593,9 +3688,10 @@
     Scene_Status.prototype.initStatus3D = function (info) {
         this.cleanupStatus3D();
         if (typeof THREE === 'undefined' || !window.Battler3D || !window.Battler3D.create) return;
-        const bustCanvas = document.getElementById('status-bust');
-        const wrapper = bustCanvas ? bustCanvas.parentNode : null;
+        const wrapper = document.getElementById('status-3d-wrapper') || document.querySelector('.status-bust-wrapper');
         if (!wrapper) return;
+        const portraitCol = document.getElementById('status-portrait-column');
+        if (portraitCol) portraitCol.style.display = 'flex';
 
         // The session's portrait canvas, moved into this bust area.
         const renderer = acquireStatusRenderer();
@@ -3615,7 +3711,7 @@
         // has not been laid out yet.
         const rect   = canvas.getBoundingClientRect();
         const width  = Math.max(1, Math.round(rect.width)  || 440);
-        const height = Math.max(1, Math.round(rect.height) || 500);
+        const height = Math.max(1, Math.round(rect.height) || 240);
         renderer.setSize(width, height, false);
 
         const scene = new THREE.Scene();
@@ -3654,9 +3750,6 @@
             // than leaving a live context behind an empty frame.
             if (!battler || !battler.model) {
                 this.cleanupStatus3D();
-                // A dossier model that failed to load is now off the table, so
-                // asking again draws the flat bust instead of nothing at all.
-                if (info.kind === 'glb') this.drawUIStatusBust(this.actor(), 'status-bust');
                 return;
             }
             // A dossier model stands whole on the status sheet, settled into
@@ -3760,6 +3853,8 @@
     Scene_Status.prototype.cleanupStatus3D = function () {
         const s = this._status3D;
         this._status3DKey = null;
+        const portraitCol = document.getElementById('status-portrait-column');
+        if (portraitCol) portraitCol.style.display = 'none';
         if (!s) return;
         s.disposed = true;
         cancelAnimationFrame(s.rafId);
@@ -3802,7 +3897,7 @@
     Scene_Status.prototype.raisableParams = function () {
         const actor = this.actor();
         if (!actor || !window.StatPoints) return [];
-        return [2, 3, 6, 4, 5, 7].filter((id) => window.StatPoints.canSpend(actor, id));
+        return [0, 1, 2, 3, 6, 4, 5, 7].filter((id) => window.StatPoints.canSpend(actor, id));
     };
 
     // Which of them the cursor is on. Kept as a POSITION rather than as a param

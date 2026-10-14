@@ -1523,15 +1523,17 @@
     $gameParty.members().forEach((a, idx) => {
       const sel = (this._focus === "party" && idx === this._actorIdx) ? "sel" : "";
       actorsHTML += `<div class="teach-actor focusable ${sel}" onclick="SceneManager._scene.selectActor(${idx})">
-          <span>${escTeach(a.name())}</span><span class="teach-price">${a.mp}/${a.mmp} MP</span></div>`;
+          <span>${escTeach(a.name())}</span>
+          <span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${a.mp}/${a.mmp} MP</span></span>
+        </div>`;
     });
 
     const blurb = isMagic
       ? (T('DailyShop.ui.theSchoolsOnDisplayRotate'))
       : (T('DailyShop.ui.theDisciplinesTaughtRotateEvery'));
 
-    const schoolsHTML = this._schools.map(s =>
-      `<div class="row"><span>${prettifySchool(s)}</span></div>`).join("");
+    const schoolsHTML = `<div class="inspect-quick-pills" style="margin-top:6px;">` + this._schools.map(s =>
+      `<div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${prettifySchool(s)}</span></div>`).join("") + `</div>`;
 
     const leftHTML = `
       <div class="left-page">
@@ -1545,8 +1547,11 @@
         <div class="teach-info">
           <div style="font-weight:bold; color:var(--accent-gold-pure,#b8860b);">${isMagic ? (T('DailyShop.ui.todaySSchools')) : (T('DailyShop.ui.todaySDisciplines'))}</div>
           ${schoolsHTML}
-          <div class="row" style="margin-top:8px; border-top:1px solid var(--border-primary-hover-translucent-15,rgba(184,134,11,0.2)); padding-top:6px;">
-            <span>${T('DailyShop.ui.gold')}</span><span class="teach-price">${teachMoney($gameParty.gold())}</span>
+          <div class="inspect-quick-pills" style="margin-top:8px; border-top:1px solid var(--border-primary-hover-translucent-15,rgba(184,134,11,0.2)); padding-top:6px;">
+            <div class="inspect-meta-item inspect-pill">
+              <span class="inspect-pill-lbl">${T('DailyShop.ui.gold')}:</span>
+              <span class="inspect-meta-val inspect-pill-val teach-price">${teachMoney($gameParty.gold())}</span>
+            </div>
           </div>
         </div>
       </div>`;
@@ -1565,21 +1570,33 @@
         const cost = (s.mpCost ? `${s.mpCost} ${TextManager.mpA}` : "") +
                      (s.mpCost && s.tpCost ? " · " : "") +
                      (s.tpCost ? `${s.tpCost} ${TextManager.tpA}` : "");
-        const magicSys = (s.meta && s.meta.MagicSystem)
-          ? ` · ${T('SkillsMenu.magicSystem.' + s.meta.MagicSystem) || s.meta.MagicSystem}` : "";
         const desc = (s.description || "").replace(/\n/g, " ");
+        const costLbl = T('SkillsMenu.cost') || 'Cost';
+        const sysLabel = (s.meta && s.meta.MagicSystem)
+          ? (T('SkillsMenu.magicSystem.' + s.meta.MagicSystem) || s.meta.MagicSystem) : '';
         cardsHTML += `<div class="teach-card focusable ${sel} ${taught} ${locked}" onclick="SceneManager._scene.buyOffer(${idx})">
-            <div class="teach-name"><span>${escTeach(s.name)}</span><span class="teach-price">${teachMoney(teachingPrice(s))}</span></div>
-            <div class="teach-meta">${prettifySchool(skillSchool(s))}${cost ? " · " + cost : ""}${magicSys} ${forb}</div>
+            <div class="teach-name">
+              <span>${escTeach(s.name)}</span>
+              <span class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val teach-price">${teachMoney(teachingPrice(s))}</span></span>
+            </div>
+            <div class="teach-meta inspect-quick-pills">
+              <div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${prettifySchool(skillSchool(s))}</span></div>
+              ${cost ? `<div class="inspect-meta-item inspect-pill"><span class="inspect-pill-lbl">${costLbl}:</span> <span class="inspect-meta-val inspect-pill-val">${cost}</span></div>` : ''}
+              ${sysLabel ? `<div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${sysLabel}</span></div>` : ''}
+              ${(s.meta && s.meta.Forbidden) ? `<div class="inspect-meta-item inspect-pill teach-forbidden"><span class="inspect-meta-val inspect-pill-val">✦ ${T('DailyShop.ui.forbidden')}</span></div>` : ''}
+            </div>
             <div class="teach-desc">${desc}</div>
-            ${reason ? `<div class="teach-meta" style="color:var(--text-cost-bad);">${reason}</div>` : ""}
+            ${reason ? `<div class="teach-meta inspect-quick-pills" style="margin-top:4px;"><div class="inspect-meta-item inspect-pill" style="border-color:var(--text-cost-bad);color:var(--text-cost-bad);"><span class="inspect-meta-val inspect-pill-val">${reason}</span></div></div>` : ""}
           </div>`;
       });
     }
 
     const rightHTML = `
       <div class="right-page">
-        <h2 class="title">${isMagic ? (T('DailyShop.ui.spellsForSale')) : (T('DailyShop.ui.techniquesForSale'))}</h2>
+        <div class="page-header-bar" style="margin-bottom:8px;">
+          <h2 class="title">${isMagic ? (T('DailyShop.ui.spellsForSale')) : (T('DailyShop.ui.techniquesForSale'))}</h2>
+          <div class="inspect-meta-item inspect-pill"><span class="inspect-meta-val inspect-pill-val">${this._offers.length}</span></div>
+        </div>
         <div class="teach-list">${cardsHTML}</div>
       </div>`;
 

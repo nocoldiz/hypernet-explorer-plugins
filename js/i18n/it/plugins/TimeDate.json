@@ -338,5 +338,11 @@
     "accident": "{name} non ce la faceva più e se l'è fatta addosso.",
     "accidentBeast": "{name} fa i suoi bisogni sul posto.",
     "swim": "Qualcuno in acqua sembra un po' sollevato."
+  },
+  "minigame": {
+    "kpWon": "+{kp} KP"
+  },
+  "diary": {
+    "dailyKp": "Riepilogo giornaliero ({count} attività): +{kp} KP"
   }
 }

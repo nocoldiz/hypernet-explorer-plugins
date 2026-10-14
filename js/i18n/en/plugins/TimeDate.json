@@ -338,5 +338,11 @@
     "accident": "{name} could not hold it any longer and wet themselves.",
     "accidentBeast": "{name} relieves itself on the spot.",
     "swim": "Somebody in the water looks a little relieved."
+  },
+  "minigame": {
+    "kpWon": "+{kp} KP"
+  },
+  "diary": {
+    "dailyKp": "Daily review ({count} activities): +{kp} KP"
   }
 }

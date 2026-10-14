@@ -209,9 +209,15 @@
       "cook": "Cooked {item} x{count} at {place}.",
       "alchemy": "Brewed {item} x{count} at the bench.",
       "brew": "Set {item} x{count} to ferment at {place}.",
-      "enchant": "Bound {spell} into {item}.",
-      "unmade": "Unmade the binding on {item}.",
-      "book": "Wrote out {item}."
+      "enchant": "{name} bound {spell} into {item}.",
+      "unmade": "{name} unmade the binding on {item}.",
+      "book": "{name} wrote out {item}.",
+      "fuse": "{name} fused together {spell1} and {spell2} to create {result}.",
+      "split": "{name} split {result} back into {spell1} and {spell2}.",
+      "spell": "{name} crafted the spell {spell}.",
+      "rewrite": "{name} rewrote the spell {spell}.",
+      "discard": "{name} discarded the crafted spell {spell}.",
+      "hexorcize": "{name} cleansed the enchantment from {item}."
     },
     "build": {
       "placed": "Put up {item} at {place}.",
@@ -219,7 +225,8 @@
     },
     "skill": {
       "learned": "{name} learned {skill}.",
-      "learnedMany": "{name} learned {skills}."
+      "learnedMany": "{name} learned {skills}.",
+      "forgotten": "{name} erased the memory of {skill}."
     },
     "spec": {
       "tier": "{name} is {tier} at {spec} now."

@@ -793,6 +793,7 @@
         this.getKnowledge();
         this._knowledgePoints += amount;
     };
+    Game_System.prototype.gainKnowledge = Game_System.prototype.addKnowledge;
 
     Game_System.prototype.spendKnowledge = function (amount) {
         if (this._knowledgePoints === undefined) this._knowledgePoints = 0;
@@ -1801,7 +1802,35 @@
         const title = (iconIndex, text, badge) => `
             <div class="cc-bio-section-title sm-kit-subhead">${icon(iconIndex)} <span>${esc(text)}</span>${badge != null && badge !== '' ? `<span class="sm-kit-badge">${esc(badge)}</span>` : ''}</div>`;
 
-        return { esc, icon, section, chips, trigger, stats, title };
+        /**
+         * ItemSystemInventory style pill tags.
+         * Each pill: { label, value, bad, muted, title } or a string (bare tag).
+         */
+        const pill = (label, value, opts = {}) => {
+            const cls = [
+                'inspect-meta-item', 'inspect-pill',
+                opts.bad ? 'inspect-pill--bad sm-kit-bad' : '',
+                opts.muted ? 'inspect-pill--muted sm-kit-muted' : '',
+                opts.cls || ''
+            ].filter(Boolean).join(' ');
+            const titleAttr = opts.title ? ` title="${esc(opts.title)}"` : '';
+            if (value == null || value === '') {
+                return `<div class="${cls}"${titleAttr}><span class="inspect-meta-val inspect-pill-val">${esc(label)}</span></div>`;
+            }
+            return `<div class="${cls}"${titleAttr}><span class="inspect-pill-lbl">${esc(String(label)).replace(/\s*:\s*$/, '')}:</span> <span class="inspect-meta-val inspect-pill-val">${esc(value)}</span></div>`;
+        };
+
+        const pills = (list, blockCls = '') => {
+            if (!Array.isArray(list) || !list.length) return '';
+            const items = list.map(item => {
+                if (typeof item === 'string') return pill(item);
+                if (!item) return '';
+                return pill(item.label, item.value, item);
+            }).join('');
+            return `<div class="inspect-quick-pills inspect-pill-block ${blockCls}">${items}</div>`;
+        };
+
+        return { esc, icon, section, chips, trigger, stats, title, pill, pills };
     })();
     SkillMaster.BenchKit = BenchKit;
 
@@ -3758,7 +3787,14 @@
     const FORGE_TAGS_IDX = 3;
     const FORGE_CREATE_IDX = 4;
     const FORGE_SPLIT_BASE = 5;
-    const FORGE_SECTION_ICONS = { dominant: 79, recessive: 76, animation: 234, tags: 87, fused: 183 };
+    const FORGE_SECTION_ICONS = { dominant: 79, recessive: 76, identity: 224, animation: 234, tags: 87, fused: 183 };
+
+    function escHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+    const esc = (s) => (window.NPCShared ? window.NPCShared.escapeHtml(s) : escHtml(s));
 
     //-------------------------------------------------------------------------
     // Fusion as tags
@@ -3808,7 +3844,7 @@
         return parts.join('') || 'CustomSpell';
     }
 
-    function buildFusedSkill(components, actorId, animationId, keptTags) {
+    function buildFusedSkill(components, actorId, animationId, keptTags, customMeta) {
         const clone = obj => JSON.parse(JSON.stringify(obj));
         const dominant = components[0];
         const recessive = components[1];
@@ -3819,18 +3855,22 @@
                 ? ST.normalize(keptTags, read.target).tags
                 : fusionDefaultKept(read);
             if (ST.validate(tags, read.target).ok) {
+                const defaultName = makeFusedSpellName(components.map(c => c.name));
+                const defaultIcon = dominant ? dominant.iconIndex : 0;
                 const fusedTags = ST.buildSkill(tags, {
                     target: read.target,
                     id: $gameSystem.allocCustomSkillId(),
-                    name: makeFusedSpellName(components.map(c => c.name)),
-                    iconIndex: dominant.iconIndex,
-                    animationId: (animationId && animationId > 0) ? animationId : (dominant.animationId || 0),
+                    name: (customMeta && customMeta.name) || defaultName,
+                    iconIndex: (customMeta && customMeta.iconIndex != null) ? customMeta.iconIndex : defaultIcon,
+                    animationId: (animationId && animationId > 0) ? animationId : ((dominant && dominant.animationId) || 0),
+                    description: (customMeta && customMeta.description) || undefined,
+                    lore: (customMeta && customMeta.lore) || undefined,
                     actorId: actorId,
                     category: SkillMaster.FUSION_CATEGORY
                 });
                 fusedTags._resultIsSkill = read.target === 'skill';
                 fusedTags._components = components.map(c => c.id);
-                fusedTags._baseSkillId = dominant.id;
+                fusedTags._baseSkillId = dominant ? dominant.id : 0;
                 fusedTags._fusionTags = tags.slice();
                 fusedTags._craftKind = read.target;
                 return fusedTags;
@@ -3841,12 +3881,12 @@
         const fused = clone(dominant);
 
         fused.id = $gameSystem.allocCustomSkillId();
-        fused.name = makeFusedSpellName(components.map(c => c.name));
+        fused.name = (customMeta && customMeta.name) || makeFusedSpellName(components.map(c => c.name));
         fused.mpCost = components.reduce((sum, c) => sum + (c.mpCost || 0), 0);
         fused.tpCost = components.reduce((sum, c) => sum + (c.tpCost || 0), 0);
 
         fused.damage = clone(dominant.damage);
-        fused.iconIndex = dominant.iconIndex;
+        fused.iconIndex = (customMeta && customMeta.iconIndex != null) ? customMeta.iconIndex : dominant.iconIndex;
 
         const recCat = recessive ? SkillMaster.getSkillCategory(recessive.id) : null;
         const recIsSkill = recCat ? SkillMaster.getCategoryType(recCat) !== 'Magic' : false; // i18n-ignore: skill category id / type discriminator
@@ -3864,14 +3904,19 @@
 
         const names = components.map(c => c.name).join(' + ');
         const descKey = recIsSkill ? 'SkillMaster.fusedSkillDesc' : 'SkillMaster.fusedSpellDesc';
-        fused.description = T(descKey, { parts: names, dominant: dominant.name });
+        fused.description = (customMeta && customMeta.description) || T(descKey, { parts: names, dominant: dominant.name });
 
         fused.note = '<customSpell>\n<category:' + SkillMaster.FUSION_CATEGORY + '>';
-        fused.meta = { customSpell: true };
+        if (customMeta && customMeta.lore) {
+            fused.note += '\n<Lore: ' + customMeta.lore + '>';
+            fused.meta = { customSpell: true, Lore: customMeta.lore };
+        } else {
+            fused.meta = { customSpell: true };
+        }
         fused._customSpell = true;
         fused._ownerActorId = actorId;
         fused._components = components.map(c => c.id);
-        fused._baseSkillId = dominant.id;
+        fused._baseSkillId = dominant ? dominant.id : 0;
         fused._animationId = fused.animationId;
         return fused;
     }
@@ -3952,11 +3997,17 @@
         this._editorKept = null;
         this._editorTagChip = 0;
         this._editorFocus = 0;
+        this._editorStep = 0;
         this._editorPicking = false;
         this._editorPickIndex = 0;
         this._editorAnimPicking = false;
         this._editorAnimPickIndex = 0;
         this._editorAnimId = 0;
+        this._editorName = null;
+        this._editorIconIndex = null;
+        this._editorDescription = null;
+        this._editorLore = null;
+        this._editorIconPicking = false;
         SoundManager.playOk();
         this.refreshUISkillDOM();
     };
@@ -3966,6 +4017,7 @@
         this._viewMode = 'category';
         this._editorPicking = false;
         this._editorAnimPicking = false;
+        this._editorIconPicking = false;
         this._lastLeftMode = null;
         this._lastLeftCategory = null;
         this._lastRightMode = null;
@@ -3973,6 +4025,189 @@
         this._lastRightKnowledge = null;
         SoundManager.playCancel();
         this.refreshUISkillDOM();
+    };
+
+    Proto.editorSetStep = function (step) {
+        const next = Math.max(0, Math.min(5, step));
+        if (this._editorStep === next) return;
+        this._editorStep = next;
+        this._editorPicking = false;
+        this._editorAnimPicking = false;
+        this._editorIconPicking = false;
+        if (next === 0) this._editorFocus = 0;
+        else if (next === 1) this._editorFocus = 1;
+        else if (next === 2) {
+            this._editorFocus = FORGE_ANIM_IDX;
+            if (typeof this.openAnimPicker === 'function') this.openAnimPicker();
+        }
+        else if (next === 3) this._editorFocus = FORGE_TAGS_IDX;
+        else if (next === 4) this._editorFocus = FORGE_CREATE_IDX;
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.editorNextStep = function () {
+        const cur = (this._editorStep === undefined) ? 0 : this._editorStep;
+        if (cur < 4) this.editorSetStep(cur + 1);
+        else if (cur === 4) this.editorSetStep(5);
+        else this.editorSetStep(0);
+    };
+
+    Proto.editorPrevStep = function () {
+        const cur = (this._editorStep === undefined) ? 0 : this._editorStep;
+        if (cur > 0) this.editorSetStep(cur - 1);
+        else this.editorSetStep(5);
+    };
+
+    Proto.editorStepPickSkill = function (slotIdx, skillId) {
+        const skill = $dataSkills[skillId];
+        if (!skill) { SoundManager.playBuzzer(); return; }
+        this._editorSlots[slotIdx] = skill.id;
+        this._editorKept = null;
+        this._editorTagChip = 0;
+        this._editorPicking = false;
+        if (!this._editorAnimId) this._editorAnimId = this.getDefaultAnimId();
+        SoundManager.playOk();
+        if (this._editorStep === 0 && slotIdx === 0) {
+            this._editorStep = 1;
+            this._editorFocus = 1;
+        } else if (this._editorStep === 1 && slotIdx === 1) {
+            this._editorStep = 2;
+            this._editorFocus = FORGE_ANIM_IDX;
+            if (typeof this.openAnimPicker === 'function') this.openAnimPicker();
+        }
+        this.refreshUISkillDOM();
+    };
+
+    Proto.editorStepPickAnim = function (animId) {
+        this._editorAnimId = animId;
+        this._editorAnimPicking = false;
+        if (window.SkillAnimPreview) window.SkillAnimPreview.dispose();
+        SoundManager.playOk();
+        this._editorStep = 3;
+        this._editorFocus = FORGE_TAGS_IDX;
+        this.refreshUISkillDOM();
+    };
+
+    Proto.openEditorTextSheet = function (field) {
+        if (!this._dndContainer || this._craftTyping) return;
+        const dominant = this._editorSlots[FORGE_DOMINANT_IDX] ? $dataSkills[this._editorSlots[FORGE_DOMINANT_IDX]] : null;
+        const defaultName = makeFusedSpellName(this._editorSlots.map(id => ($dataSkills[id] || {}).name));
+        let current = '';
+        if (field === 'name') current = this._editorName || defaultName;
+        else if (field === 'description') current = this._editorDescription || '';
+        else if (field === 'lore') current = this._editorLore || '';
+
+        this.openCraftTextSheet(field, null, (value) => {
+            const v = String(value || '').trim();
+            if (field === 'name') this._editorName = v || null;
+            else if (field === 'description') this._editorDescription = v || null;
+            else if (field === 'lore') this._editorLore = v || null;
+            this.refreshUISkillDOM();
+        });
+    };
+
+    Proto.openEditorIconPicker = function () {
+        this._editorIconPicking = true;
+        this._editorPicking = false;
+        this._editorAnimPicking = false;
+        if (window.SkillAnimPreview) window.SkillAnimPreview.dispose();
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.closeEditorIconPicker = function () {
+        this._editorIconPicking = false;
+        SoundManager.playCancel();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.editorChooseIcon = function (iconIndex) {
+        this._editorIconIndex = iconIndex;
+        this._editorIconPicking = false;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.renderEditorStepperHTML = function () {
+        const cur = (this._editorStep === undefined) ? 0 : this._editorStep;
+        const allFilled = this._editorSlots && this._editorSlots.every(x => x != null);
+        const ST = window.SkillTags;
+        const read = this.editorFusionRead();
+        const tagsWhole = !ST || !read || ST.validate(this.editorKeptTags(), read.target).ok;
+        const isDone = (s) => {
+            if (s === 0) return this._editorSlots[0] != null;
+            if (s === 1) return this._editorSlots[1] != null;
+            if (s === 2) return true;
+            if (s === 3) return allFilled && tagsWhole;
+            if (s === 4) return allFilled && tagsWhole;
+            return false;
+        };
+        const esc = (s) => (window.NPCShared ? window.NPCShared.escapeHtml(s) : String(s == null ? '' : s));
+        const stepKeys = ['dominant', 'recessive', 'identity', 'tags', 'forge'];
+        const items = stepKeys.map((key, idx) => {
+            const active = cur === idx;
+            const done = isDone(idx);
+            const num = idx + 1;
+            const label = T('SkillMaster.craft.fuseStep.' + key);
+            return `
+                <div class="sm-craft-step-tab focusable ${active ? 'active' : ''} ${done ? 'is-done' : ''}"
+                     onclick="SceneManager._scene.editorSetStep(${idx})" title="${esc(label)}">
+                    <span class="sm-craft-step-num">${num}</span>
+                    <span class="sm-craft-step-label">${esc(label)}</span>
+                </div>`;
+        });
+        items.push(`
+            <div class="sm-craft-step-tab sm-craft-step-all focusable ${cur === 5 ? 'active' : ''}"
+                 onclick="SceneManager._scene.editorSetStep(5)" title="${esc(T('SkillMaster.craft.fuseStep.all'))}">
+                <span class="sm-craft-step-label">${esc(T('SkillMaster.craft.fuseStep.all'))}</span>
+            </div>`);
+        return `<div class="sm-craft-stepper">${items.join('')}</div>`;
+    };
+
+    Proto.renderEditorStepNavHTML = function (curStep) {
+        if (curStep === 5) return '';
+        const esc = (s) => (window.NPCShared ? window.NPCShared.escapeHtml(s) : String(s == null ? '' : s));
+        const prevLabel = T('SkillMaster.craft.fuseStep.prev');
+        const nextLabel = T('SkillMaster.craft.fuseStep.next');
+        const stepKeys = ['dominant', 'recessive', 'identity', 'tags', 'forge'];
+        const title = T('SkillMaster.craft.fuseStep.' + (stepKeys[curStep] || 'dominant'));
+        const stepOf = T('SkillMaster.craft.fuseStep.stepOf', { step: curStep + 1, total: 5, title });
+        const canPrev = curStep > 0;
+        const canNext = curStep < 4;
+        return `
+            <div class="sm-craft-step-nav">
+                <button type="button" class="inspect-btn focusable sm-craft-nav-btn ${canPrev ? '' : 'disabled'}"
+                        onclick="SceneManager._scene.editorPrevStep()">&larr; ${esc(prevLabel)}</button>
+                <span class="sm-craft-step-counter">${esc(stepOf)}</span>
+                <button type="button" class="inspect-btn focusable sm-craft-nav-btn ${canNext ? '' : 'disabled'}"
+                        onclick="SceneManager._scene.editorNextStep()">${esc(nextLabel)} &rarr;</button>
+            </div>`;
+    };
+
+    Proto.renderEditorCandidateGrid = function (slotIdx) {
+        const esc = (s) => (window.NPCShared ? window.NPCShared.escapeHtml(s) : String(s == null ? '' : s));
+        const candidates = this.getEditorCandidates(slotIdx);
+        if (!candidates.length) {
+            return `<div class="ui-empty"><div class="ui-empty-text">${T('SkillMaster.noAvailableSkillsForThis')}</div></div>`;
+        }
+        const currentId = this._editorSlots[slotIdx];
+        const html = candidates.map(s => {
+            const isChosen = currentId === s.id;
+            const cost = `MP ${s.mpCost} · AP ${s.tpCost}`;
+            const desc = (s.description || '').replace(/\n/g, ' ');
+            return `
+                <div class="sm-craft-card-opt focusable ${isChosen ? 'selected' : ''}"
+                     onclick="SceneManager._scene.editorStepPickSkill(${slotIdx}, ${s.id})"
+                     title="${esc(desc)}">
+                    <div class="sm-craft-opt-header">
+                        <strong class="sm-craft-opt-name"><span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(s.iconIndex)}"></span> ${esc(s.name)}</strong>
+                        <span class="sm-craft-opt-cost">${esc(cost)}</span>
+                    </div>
+                    <div class="sm-craft-opt-desc">${esc(desc)}</div>
+                </div>`;
+        }).join('');
+        return `<div class="sm-craft-opts-grid">${html}</div>`;
     };
 
     Proto.editorFocusSlot = function (i) {
@@ -3995,6 +4230,13 @@
         this._editorPicking = false;
         if (!this._editorAnimId) this._editorAnimId = this.getDefaultAnimId();
         SoundManager.playOk();
+        if (this._editorStep === 0 && this._editorFocus === 0) {
+            this._editorStep = 1;
+            this._editorFocus = 1;
+        } else if (this._editorStep === 1 && this._editorFocus === 1) {
+            this._editorStep = 2;
+            this._editorFocus = FORGE_ANIM_IDX;
+        }
         this.refreshUISkillDOM();
     };
 
@@ -4115,10 +4357,17 @@
         const kept = this.editorKeptTags();
         if (!ST.validate(kept, read.target).ok) return null;
         const dominant = $dataSkills[this._editorSlots[FORGE_DOMINANT_IDX]];
+        const defaultName = makeFusedSpellName(this._editorSlots.map(id => ($dataSkills[id] || {}).name));
+        const defaultIcon = dominant ? dominant.iconIndex : 0;
+        const animId = (this._editorAnimId && this._editorAnimId > 0) ? this._editorAnimId : ((dominant && dominant.animationId) || 0);
         return ST.buildSkill(kept, {
             target: read.target, id: 0,
-            name: makeFusedSpellName(this._editorSlots.map(id => ($dataSkills[id] || {}).name)),
-            iconIndex: dominant ? dominant.iconIndex : 0, category: SkillMaster.FUSION_CATEGORY
+            name: this._editorName || defaultName,
+            iconIndex: this._editorIconIndex != null ? this._editorIconIndex : defaultIcon,
+            animationId: animId,
+            description: this._editorDescription || undefined,
+            lore: this._editorLore || undefined,
+            category: SkillMaster.FUSION_CATEGORY
         });
     };
 
@@ -4145,44 +4394,38 @@
         const consumedSlots = this._editorSlots.slice();
         const keptTags = Array.isArray(this._editorKept) ? this._editorKept.slice() : null;
         const animId = (this._editorAnimId && this._editorAnimId > 0) ? this._editorAnimId : this.getDefaultAnimId();
+        const savedCustomMeta = {
+            name: this._editorName,
+            iconIndex: this._editorIconIndex,
+            description: this._editorDescription,
+            lore: this._editorLore
+        };
         this._editorFusing = true;
 
         const intMod = actor ? (actor.intMod ?? Math.floor(((actor.mat || 10) - 10) / 2)) : 0;
         const dc = Math.min(18, Math.max(10, 11 + Math.floor(cost / 30)));
-        let rollRes = null;
-
-        if (window.Dice3D) {
-            try {
-                rollRes = await window.Dice3D.rollD20({
-                    actionName: T('SkillMaster.fusionRollAction', { parts: components.map(c => c.name).join(' + ') }),
-                    statName: (typeof TextManager !== 'undefined' && TextManager.param) ? TextManager.param(4) : '',
-                    modifier: intMod,
-                    dc: dc,
-                    force3D: true
-                });
-            } finally {
-                this._editorFusing = false;
-            }
-        } else {
-            const rawRoll = Math.floor(Math.random() * 20) + 1;
-            rollRes = {
-                roll: rawRoll,
-                modifier: intMod,
-                total: rawRoll + intMod,
-                nat1: rawRoll === 1,
-                nat20: rawRoll === 20,
-                success: rawRoll === 20 || (rawRoll !== 1 && rawRoll + intMod >= dc)
-            };
-        }
+        const rawRoll = Math.floor(Math.random() * 20) + 1;
+        const rollRes = {
+            roll: rawRoll,
+            modifier: intMod,
+            total: rawRoll + intMod,
+            nat1: false,
+            nat20: rawRoll === 20,
+            success: true
+        };
         this._editorFusing = false;
 
         this._editorSlots = [null, null];
         this._editorKept = null;
         this._editorAnimId = 0;
+        this._editorName = null;
+        this._editorIconIndex = null;
+        this._editorDescription = null;
+        this._editorLore = null;
         this._editorFocus = FORGE_CREATE_IDX;
 
         if (rollRes.success) {
-            const fused = buildFusedSkill(components, actor.actorId(), animId, keptTags);
+            const fused = buildFusedSkill(components, actor.actorId(), animId, keptTags, savedCustomMeta);
 
             if (rollRes.nat20) {
                 fused.mpCost = Math.max(1, Math.round((fused.mpCost || 1) * 0.8));
@@ -4198,26 +4441,30 @@
             this.invalidateLearnedSkillCaches();
             SoundManager.playRecovery();
 
+            const c1 = components[0] ? (components[0].name || '') : '';
+            const c2 = components[1] ? (components[1].name || '') : '';
+            const actorName = (actor && typeof actor.name === 'function') ? actor.name() : ((actor && actor.name) || '');
+
             if (typeof T === 'function') {
-                if (rollRes.nat20) {
-                    if (window.ParchmentToast) {
-                      window.ParchmentToast.show(T('SkillMaster.fusionCritical', {
-                        result: T('SkillMaster.fusedResult', {
-                            name: fused.name, cost: cost, left: $gameSystem.getKnowledge(),
-                        }),
-                                            }), {
-                        severity: 'good'
-                      });
-                    }
-                } else {
-                    if (window.ParchmentToast) {
-                      window.ParchmentToast.show(T('SkillMaster.fusedResult', {
-                        name: fused.name, cost: cost, left: $gameSystem.getKnowledge(),
-                                            }), {
-                        severity: 'good'
-                      });
-                    }
+                const toastMsg = T('SkillMaster.fusedDetailed', {
+                    actor: actorName,
+                    spell1: c1,
+                    spell2: c2,
+                    name: fused.name
+                }) || T('SkillMaster.fusedResult', {
+                    name: fused.name, cost: cost, left: $gameSystem.getKnowledge()
+                });
+                if (window.ParchmentToast) {
+                    window.ParchmentToast.show(toastMsg, { severity: 'good' });
                 }
+            }
+            if (window.Diary && typeof window.Diary.record === 'function') {
+                window.Diary.record('craft.fuse', {
+                    name: actorName,
+                    spell1: c1,
+                    spell2: c2,
+                    result: fused.name
+                }, { who: actorName });
             }
             window.skipLocalization = false;
         } else {
@@ -4237,8 +4484,6 @@
             window.skipLocalization = false;
         }
 
-        // The bench may have been closed while the die rolled.
-        if (window.Dice3D && window.Dice3D.ownerAlive && !window.Dice3D.ownerAlive(this)) return;
         this.refreshUISkillDOM();
     };
 
@@ -4247,6 +4492,9 @@
         const spell = $dataSkills[spellId];
         if (!spell || !spell._components) { SoundManager.playBuzzer(); return; }
         const parts = spell._components.slice();
+        const p1 = $dataSkills[parts[0]] ? $dataSkills[parts[0]].name : '';
+        const p2 = $dataSkills[parts[1]] ? $dataSkills[parts[1]].name : '';
+        const sName = spell.name;
 
         actor.forgetSkill(spellId);
         for (const cid of parts) actor.learnSkill(cid);
@@ -4256,12 +4504,26 @@
         this._editorFocus = FORGE_CREATE_IDX;
         SoundManager.playRecovery();
 
+        const actorName = (actor && typeof actor.name === 'function') ? actor.name() : ((actor && actor.name) || '');
+
         if (typeof T === 'function') {
+            const toastMsg = T('SkillMaster.splitDetailed', {
+                actor: actorName,
+                name: sName,
+                spell1: p1,
+                spell2: p2
+            }) || T('SkillMaster.splitResult', { name: sName });
             if (window.ParchmentToast) {
-              window.ParchmentToast.show(T('SkillMaster.splitResult', { name: spell.name }), {
-                severity: 'good'
-              });
+                window.ParchmentToast.show(toastMsg, { severity: 'good' });
             }
+        }
+        if (window.Diary && typeof window.Diary.record === 'function') {
+            window.Diary.record('craft.split', {
+                name: actorName,
+                result: sName,
+                spell1: p1,
+                spell2: p2
+            }, { who: actorName });
         }
         window.skipLocalization = false;
 
@@ -4337,7 +4599,7 @@
             { label: T('SkillMaster.recessiveSpellOrSkill'),
               hint: T('SkillMaster.spellOrSkillSetsThe'), icon: FORGE_SECTION_ICONS.recessive }
         ];
-        let slotsHTML = '';
+        const slotSections = [];
         this._editorSlots.forEach((id, i) => {
             const skill = id ? $dataSkills[id] : null;
             const focused = !animPicking && this._editorFocus === i;
@@ -4348,7 +4610,7 @@
                 const isSkill = cat ? SkillMaster.getCategoryType(cat) !== 'Magic' : false; // i18n-ignore: skill category id / type discriminator
                 typeBadge = isSkill ? (T('SkillMaster.skill')) : (T('SkillMaster.magic'));
             }
-            slotsHTML += K.section({
+            slotSections.push(K.section({
                 icon: meta.icon, title: meta.label, badge: typeBadge, note: meta.hint,
                 cls: focused ? 'sm-kit-section--focused' : '',
                 body: K.trigger({
@@ -4357,18 +4619,9 @@
                     extra: skill ? `<span class="sm-forge-cost">MP ${skill.mpCost} &middot; AP ${skill.tpCost}</span>` : '',
                     onclick: `SceneManager._scene.editorFocusSlot(${i})`
                 })
-            });
+            }));
         });
-
-        const animId = (this._editorAnimId && this._editorAnimId > 0) ? this._editorAnimId : this.getDefaultAnimId();
-        const animData = animId && $dataAnimations ? $dataAnimations[animId] : null;
-        const animName = animData ? `#${animId} · ${animData.name}` : (T('SkillMaster.default'));
-        const animFocused = !animPicking && this._editorFocus === FORGE_ANIM_IDX;
-        const animRowHTML = K.section({
-            icon: FORGE_SECTION_ICONS.animation, title: T('SkillMaster.animation'),
-            cls: animFocused ? 'sm-kit-section--focused' : '',
-            body: K.trigger({ focused: animFocused, value: animName, onclick: 'SceneManager._scene.openAnimPicker()' })
-        });
+        const slotsHTML = slotSections.join('');
 
         // The tags the fused entry keeps: every tag the pair reads as, a chip
         // each, the kept ones lit and the ones that cannot sit beside them
@@ -4404,6 +4657,52 @@
             });
         }
 
+        const dominant = this._editorSlots[FORGE_DOMINANT_IDX] ? $dataSkills[this._editorSlots[FORGE_DOMINANT_IDX]] : null;
+        const defaultName = makeFusedSpellName(this._editorSlots.map(id => ($dataSkills[id] || {}).name));
+        const currentName = this._editorName || defaultName;
+        const currentIcon = this._editorIconIndex != null ? this._editorIconIndex : (dominant ? dominant.iconIndex : 0);
+        const animId = (this._editorAnimId && this._editorAnimId > 0) ? this._editorAnimId : this.getDefaultAnimId();
+        const animData = (animId && typeof $dataAnimations !== 'undefined' && $dataAnimations) ? $dataAnimations[animId] : null;
+        const animName = animData ? `#${animId} · ${animData.name}` : (T('SkillMaster.default'));
+        const readTarget = read ? read.target : 'spell';
+        const isSpell = readTarget !== 'skill';
+        const loreLabel = isSpell ? T('SkillMaster.craft.row.incantation') : T('SkillMaster.craft.row.lore');
+
+        const editorIdentHTML = `
+            <div class="sm-kit-ident">
+                ${K.trigger({
+                    label: T('SkillMaster.craft.row.name'), cls: 'sm-kit-span2',
+                    value: currentName, muted: !this._editorName,
+                    iconIndex: currentIcon,
+                    onclick: "SceneManager._scene.openEditorTextSheet('name')"
+                })}
+                ${K.trigger({
+                    label: T('SkillMaster.craft.row.icon'),
+                    value: currentIcon ? '#' + currentIcon : T('SkillMaster.none'), muted: !currentIcon,
+                    onclick: "SceneManager._scene.openEditorIconPicker()"
+                })}
+                ${K.trigger({
+                    label: T('SkillMaster.craft.row.animation'),
+                    value: animName, muted: !animId,
+                    onclick: "SceneManager._scene.openAnimPicker()"
+                })}
+                ${K.trigger({
+                    label: T('SkillMaster.craft.row.description'), cls: 'sm-kit-span2',
+                    value: this._editorDescription || T('SkillMaster.craft.autoWritten'), muted: !this._editorDescription,
+                    onclick: "SceneManager._scene.openEditorTextSheet('description')"
+                })}
+                ${K.trigger({
+                    label: loreLabel, cls: 'sm-kit-span2',
+                    value: this._editorLore || T('SkillMaster.craft.unwritten'), muted: !this._editorLore,
+                    onclick: "SceneManager._scene.openEditorTextSheet('lore')"
+                })}
+            </div>`;
+        const identSectionHTML = K.section({
+            icon: FORGE_SECTION_ICONS.identity,
+            title: T('SkillMaster.craft.identity'),
+            body: editorIdentHTML
+        });
+
         const allFilled = this._editorSlots.every(x => x != null);
         const fuseCost = allFilled ? this.editorFusionCost() : 0;
         const canPay = !allFilled || knowledge >= fuseCost;
@@ -4432,6 +4731,94 @@
         });
         if (!fusedListHTML) fusedListHTML = `<div class="ui-empty"><div class="ui-empty-text">${T('SkillMaster.noFusedSpellsYet')}</div></div>`;
 
+        const fusedSectionHTML = K.section({
+            icon: FORGE_SECTION_ICONS.fused, title: T('SkillMaster.fusedSpells'), badge: customSpells.length,
+            cls: 'sm-kit-entries',
+            body: `<div id="fused-scroll-box" class="ui-list ui-scroll sm-forged-list">${fusedListHTML}</div>`
+        });
+
+        const curStep = (this._editorStep === undefined) ? 0 : this._editorStep;
+        const stepperHTML = this.renderEditorStepperHTML();
+        const stepNavHTML = this.renderEditorStepNavHTML(curStep);
+
+        let activePaneHTML = '';
+        if (curStep === 0) {
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    ${slotSections[0] || ''}
+                    ${this.renderEditorCandidateGrid(0)}
+                    ${stepNavHTML}
+                </div>
+                <div style="display:none;">
+                    ${slotSections[1] || ''}
+                    ${identSectionHTML}
+                    ${tagsRowHTML}
+                    ${createHTML}
+                    ${fusedSectionHTML}
+                </div>`;
+        } else if (curStep === 1) {
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    ${slotSections[1] || ''}
+                    ${this.renderEditorCandidateGrid(1)}
+                    ${stepNavHTML}
+                </div>
+                <div style="display:none;">
+                    ${slotSections[0] || ''}
+                    ${identSectionHTML}
+                    ${tagsRowHTML}
+                    ${createHTML}
+                    ${fusedSectionHTML}
+                </div>`;
+        } else if (curStep === 2) {
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    <div class="sm-craft-step-intro"><strong>${esc(T('SkillMaster.craft.fuseStep.identity'))}</strong>: ${esc(T('SkillMaster.craft.fuseStep.stepHint.identity'))}</div>
+                    ${identSectionHTML}
+                    ${stepNavHTML}
+                </div>
+                <div style="display:none;">
+                    ${slotsHTML}
+                    ${tagsRowHTML}
+                    ${createHTML}
+                    ${fusedSectionHTML}
+                </div>`;
+        } else if (curStep === 3) {
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    ${tagsRowHTML}
+                    ${stepNavHTML}
+                </div>
+                <div style="display:none;">
+                    ${slotsHTML}
+                    ${identSectionHTML}
+                    ${createHTML}
+                    ${fusedSectionHTML}
+                </div>`;
+        } else if (curStep === 4) {
+            activePaneHTML = `
+                <div class="sm-craft-step-pane">
+                    ${createHTML}
+                    ${fusedSectionHTML}
+                    ${stepNavHTML}
+                </div>
+                <div style="display:none;">
+                    ${slotsHTML}
+                    ${identSectionHTML}
+                    ${tagsRowHTML}
+                </div>`;
+        } else {
+            // curStep === 5: All
+            activePaneHTML = `
+                <div class="sm-kit-scroll sm-forge-rows">
+                    ${slotsHTML}
+                    ${identSectionHTML}
+                    ${tagsRowHTML}
+                </div>
+                ${createHTML}
+                ${fusedSectionHTML}`;
+        }
+
         const backBtn = T('SkillMaster.back');
         const title = T('SkillMaster.fuseSpells3');
         leftBox.innerHTML = `
@@ -4440,17 +4827,8 @@
               <h2 class="title">${title}</h2>
               <div class="sm-bench-kp-pill"><strong>${knowledge} KP</strong></div>
             </div>
-            <div class="sm-kit-scroll sm-forge-rows">
-                ${slotsHTML}
-                ${animRowHTML}
-                ${tagsRowHTML}
-            </div>
-            ${createHTML}
-            ${K.section({
-                icon: FORGE_SECTION_ICONS.fused, title: T('SkillMaster.fusedSpells'), badge: customSpells.length,
-                cls: 'sm-kit-entries',
-                body: `<div id="fused-scroll-box" class="ui-list ui-scroll sm-forged-list">${fusedListHTML}</div>`
-            })}`;
+            ${stepperHTML}
+            ${activePaneHTML}`;
 
         let rightHTML = '';
         if (picking) {
@@ -4507,6 +4885,25 @@
                         <div class="inspect-btn focusable" onclick="SceneManager._scene.editorCancelAnim()">${backLbl}</div>
                     </div>
                 </div>`;
+        } else if (this._editorIconPicking) {
+            const currentIcon = this._editorIconIndex != null ? this._editorIconIndex : (dominant ? dominant.iconIndex : 0);
+            const rows = this.craftIconChoices();
+            let iconGridHTML = '';
+            rows.forEach((row, k) => {
+                const chosen = row.iconIndex === currentIcon;
+                iconGridHTML += `
+                    <div class="sm-kit-icon-cell focusable ${chosen ? 'selected' : ''}" title="#${row.iconIndex}" onclick="SceneManager._scene.editorChooseIcon(${row.iconIndex})">
+                        <span class="sm-skill-icon" style="${SkillMaster.getSkillIconStyle(row.iconIndex)}"></span>
+                    </div>`;
+            });
+            rightHTML = `
+                <div class="ui-detail">
+                    <div class="ui-detail-head">
+                        <div class="ui-detail-titles"><h3 class="sm-detail-name">${T('SkillMaster.craft.pick.icon')}</h3></div>
+                        <div class="inspect-btn focusable" onclick="SceneManager._scene.closeEditorIconPicker()">${T('SkillMaster.cancel')}</div>
+                    </div>
+                    <div id="editor-pick-box" class="ui-detail-scroll ui-scroll sm-kit-icon-grid">${iconGridHTML}</div>
+                </div>`;
         } else {
             const filledIds = this._editorSlots.filter(x => x != null);
             if (filledIds.length === this._editorSlots.length) {
@@ -4531,7 +4928,7 @@
                 if (fusedPreview) {
                     rightHTML = `
                     <div class="ui-detail sm-fuse-preview">
-                        ${K.stats([
+                        ${K.pills([
                             { label: T('SkillMaster.mpLabel'), value: fusedPreview.mpCost },
                             { label: T('SkillMaster.apLabel'), value: fusedPreview.tpCost },
                             { label: T('SkillMaster.fusionCost'), value: `${previewCost} KP`, bad: knowledge < previewCost },
@@ -4555,18 +4952,36 @@
                             </div>
                             <span class="ui-chip sm-result-chip">${T('SkillMaster.becomesA')} ${resultKind}</span>
                         </div>
-                        ${K.stats([
+                        ${K.pills([
                             { label: T('SkillMaster.mpLabel'), value: mp },
                             { label: T('SkillMaster.apLabel'), value: ap },
                             { label: T('SkillMaster.fusionCost'), value: `${previewCost} KP`, bad: knowledge < previewCost },
-                            { label: T('SkillMaster.youHold'), value: `${knowledge} KP` }
-                        ])}
-                        ${K.stats([
+                            { label: T('SkillMaster.youHold'), value: `${knowledge} KP` },
                             { label: T('SkillMaster.dominant'), value: dominant.name },
                             { label: T('SkillMaster.recessive'), value: recessive.name }
-                        ], 2)}
+                        ])}
                         <div class="cc-bio-note sm-kit-note">${T('SkillMaster.theDominantDefinesDamageAnd')}</div>
                     </div>`;
+            } else if (this._editorSlots[FORGE_DOMINANT_IDX] != null) {
+                const domSkill = $dataSkills[this._editorSlots[FORGE_DOMINANT_IDX]];
+                let cardHTML = '';
+                if (domSkill && window.SkillDetails && typeof window.SkillDetails.card === 'function') {
+                    try { cardHTML = window.SkillDetails.card(domSkill, actor, { canvasId: 'sm-fuse-inspect-canvas' }); }
+                    catch (e) { cardHTML = ''; }
+                }
+                rightHTML = `
+                    <div class="ui-detail sm-fuse-preview">
+                        ${K.pills([
+                            { label: T('SkillMaster.dominant'), value: domSkill ? domSkill.name : '' },
+                            { label: T('SkillMaster.mpLabel'), value: domSkill ? domSkill.mpCost : 0 },
+                            { label: T('SkillMaster.apLabel'), value: domSkill ? domSkill.tpCost : 0 }
+                        ])}
+                        <div class="sm-craft-card">${cardHTML || `<h3 class="sm-detail-name">${domSkill ? domSkill.name : ''}</h3><div class="ui-prose">${domSkill ? (domSkill.description || '') : ''}</div>`}</div>
+                        <div class="cc-bio-note sm-kit-note">${T('SkillMaster.theDominantDefinesDamageAnd')}</div>
+                    </div>`;
+                if (domSkill && window.ItemInspect && window.ItemInspect.drawIcon) {
+                    requestAnimationFrame(() => window.ItemInspect.drawIcon(domSkill.iconIndex, 'sm-fuse-inspect-canvas'));
+                }
             } else {
                 rightHTML = `
                     <div class="ui-empty sm-empty">
@@ -4582,6 +4997,12 @@
     };
 
     Proto.updateSpellEditorInput = function () {
+        const tabDir = window.UINav ? UINav.tabDir() : 0;
+        if (tabDir !== 0 && !this._editorPicking && !this._editorAnimPicking) {
+            if (tabDir > 0) this.editorNextStep();
+            else this.editorPrevStep();
+            return;
+        }
         if (this._editorPicking) {
             const candidates = this.getEditorCandidatesCached(this._editorFocus);
             const max = candidates.length;
@@ -6219,8 +6640,20 @@
         this.invalidateLearnedSkillCaches();
         SoundManager.playRecovery();
 
-        const learnedToast = T('SkillMaster.actorLearned', { actor: actor.name(), skill: skill.name });
-        this._skillDetailWindow.showMessage(learnedToast);
+        const learnedToast = T('SkillMaster.actorLearnedDetailed', { actor: actor.name(), skill: skill.name }) ||
+            T('SkillMaster.actorLearned', { actor: actor.name(), skill: skill.name });
+        if (window.ParchmentToast) {
+            window.ParchmentToast.show(learnedToast, { severity: 'good' });
+        }
+        if (this._skillDetailWindow && this._skillDetailWindow.showMessage) {
+            this._skillDetailWindow.showMessage(learnedToast);
+        }
+        if (window.Diary && typeof window.Diary.record === 'function') {
+            window.Diary.record('skill.learned', {
+                name: actor.name(),
+                skill: skill.name
+            }, { who: actor.name() });
+        }
         this.refreshUISkillDOM();
     };
 
@@ -6974,6 +7407,12 @@
     refine('efficient',  380, 0.0, (sk, ctx) => { ctx.costMult *= 0.8; });
     refine('menuCast',   260, 1.0, sk => { sk.occasion = 0; }, { worth: 0.05, needs: ['notFoe'] });
     refine('apReturn',   200, 0.8, sk => { sk.tpGain = (sk.tpGain || 0) + 12; }, { worth: 0.08 });
+    refine('virulent',   280, 1.2, (sk, ctx) => { ctx.stateChanceBonus = (ctx.stateChanceBonus || 0) + 0.30; }, {
+        worth: 0.12, slot: 'stateChance', needs: ['hasState']
+    });
+    refine('malignant',  620, 2.6, (sk, ctx) => { ctx.stateChanceBonus = (ctx.stateChanceBonus || 0) + 0.60; }, {
+        worth: 0.25, slot: 'stateChance', needs: ['hasState']
+    });
 
     // --- payoffs: a condition written into the damage formula ---------------
     // A conditional payoff doubles (or half again) the multiplier when its
@@ -7099,7 +7538,8 @@
         userShape: f => !f.shape || f.shape.key === 'theUser',
         marksman:  f => !!f.core && f.core.key === 'marksman',
         multiHit:  f => f.keys.has('twinCast') || f.keys.has('tripleCast'),
-        emptyUser: f => !!f.core && f.dmg === 0 && (!f.shape || f.shape.key === 'theUser')
+        emptyUser: f => !!f.core && f.dmg === 0 && (!f.shape || f.shape.key === 'theUser'),
+        hasState:  f => f.defs.some(d => d.group === 'rider' && d.state)
     };
 
     const groupMax = (group, target) => SKILL_TARGETS.includes(target)
@@ -7363,7 +7803,7 @@
             mult: coreDef ? coreDef.power : 0, pierce: coreDef ? coreDef.pierce : 1,
             stat: coreDef ? coreDef.stat : (spell ? 'INT' : 'STR'),
             costMult: 1, cond: null, factor: 1, stack: null, desperate: false,
-            notes: [], worth: 0, cx: 0, kp: 0
+            notes: [], worth: 0, cx: 0, kp: 0, stateChanceBonus: 0
         };
         if (coreDef) {
             sk.damage.type = coreDef.dmg;
@@ -7389,6 +7829,13 @@
             if (d.group === 'payoff' && d.stack) ctx.stack = d.stack;
             if (d.desperate) ctx.desperate = true;
             if (d.note) ctx.notes.push(d.note);
+        }
+        if (ctx.stateChanceBonus > 0) {
+            for (const e of sk.effects) {
+                if (e.code === 21) {
+                    e.value1 = Math.min(1.0, round2(e.value1 + ctx.stateChanceBonus));
+                }
+            }
         }
         // Payoffs are only ever offered on a damaging core, so the formula is
         // the core's whatever else the build says.
@@ -7608,7 +8055,7 @@
             }
         }
         for (const d of defs) {
-            if (d.group === 'refine' && ['certain', 'keenEdge', 'menuCast', 'guardBreak', 'apReturn'].includes(d.key)) {
+            if (d.group === 'refine' && ['certain', 'keenEdge', 'menuCast', 'guardBreak', 'apReturn', 'virulent', 'malignant'].includes(d.key)) {
                 more.push(tr('auto.tag.' + d.key));
             }
         }
@@ -8524,9 +8971,21 @@
         SoundManager.playRecovery();
 
         if (typeof T === 'function' && window.ParchmentToast) {
-            window.ParchmentToast.show(tr(existing ? 'rewrittenResult' : 'writtenResult', {
+            const toastKey = existing ? 'rewrittenDetailed' : 'craftedDetailed';
+            const toastMsg = tr(toastKey, {
+                actor: actor.name(),
+                name: entry.name,
+                cost: verdict.owed
+            }) || tr(existing ? 'rewrittenResult' : 'writtenResult', {
                 name: entry.name, cost: verdict.owed, left: $gameSystem.getKnowledge()
-            }), { severity: 'good' });
+            });
+            window.ParchmentToast.show(toastMsg, { severity: 'good' });
+        }
+        if (window.Diary && typeof window.Diary.record === 'function') {
+            window.Diary.record(existing ? 'craft.rewrite' : 'craft.spell', {
+                name: actor.name(),
+                spell: entry.name
+            }, { who: actor.name() });
         }
         window.skipLocalization = false;
         this.refreshUISkillDOM();
@@ -8538,6 +8997,7 @@
         const actor = this.getTeachActor();
         const entry = $dataSkills[skillId];
         if (!actor || !entry || !entry._crafted) { SoundManager.playBuzzer(); return; }
+        const sName = entry.name;
         actor.forgetSkill(skillId);
         $gameSystem.removeCustomSpell(skillId);
         if (this.invalidateLearnedSkillCaches) this.invalidateLearnedSkillCaches();
@@ -8552,6 +9012,18 @@
         this._craftChip = 0;
         this._craftFocus = Math.max(0, Math.min(this._craftFocus || 0, this.craftFocusRows() - 1));
         SoundManager.playCancel();
+        if (typeof T === 'function' && window.ParchmentToast) {
+            window.ParchmentToast.show(tr('discardDetailed', {
+                actor: actor.name(),
+                name: sName
+            }));
+        }
+        if (window.Diary && typeof window.Diary.record === 'function') {
+            window.Diary.record('craft.discard', {
+                name: actor.name(),
+                spell: sName
+            }, { who: actor.name() });
+        }
         this.refreshUISkillDOM();
     };
 
@@ -8676,12 +9148,28 @@
             return;
         }
         if (build.tags.includes(key)) {
-            if (group === 'element' || group === 'power') {
+            if (group === 'element' || group === 'power' || group === 'refine' || group === 'rider') {
                 this.craftRemoveTag(key);
             } else {
                 SoundManager.playOk();
             }
             return;
+        }
+        const def = tagDef(key);
+        if (def && def.slot) {
+            const twin = build.tags.find(k => {
+                const d = tagDef(k);
+                return d && d.slot === def.slot && k !== key;
+            });
+            if (twin) {
+                const newTags = build.tags.filter(k => k !== twin).concat([key]);
+                const n = normalize(newTags, build.kind);
+                build.tags = n.tags;
+                this._craftDropped = n.dropped;
+                SoundManager.playOk();
+                this.refreshUISkillDOM();
+                return;
+            }
         }
         this.craftAddTag(key);
     };
@@ -8884,9 +9372,13 @@
                 ${chipSection('power')}
                 ${this.renderCraftStepOptionsHTML('power')}
                 ${chipSection('rider')}
+                ${this.renderCraftStepOptionsHTML('rider')}
                 ${chipSection('refine')}
+                ${this.renderCraftStepOptionsHTML('refine')}
                 ${chipSection('payoff')}
+                ${this.renderCraftStepOptionsHTML('payoff')}
                 ${chipSection('mechanic')}
+                ${this.renderCraftStepOptionsHTML('mechanic')}
                 ${this.renderCraftStepNavHTML(3, verdict, owed)}
             </div>
             <div class="sm-craft-step-pane" data-step="4" style="${curStep === 4 || curStep === 5 ? '' : 'display:none;'}">
@@ -10478,10 +10970,25 @@
         const slot = this._enchantChosen;
         const verdict = this.enchantFormVerdict();
         if (!slot || !verdict.ok) { SoundManager.playBuzzer(); this.refreshUISkillDOM(); return; }
-        const entry = enchantGear(slot, { spell: this.enchantDraftSpell(), tags: this.enchantDraft().tags });
+        const actor = this.getTeachActor();
+        const draftSpell = this.enchantDraftSpell();
+        const spellName = draftSpell ? (draftSpell.name || '') : '';
+        const entry = enchantGear(slot, { spell: draftSpell, tags: this.enchantDraft().tags });
         if (!entry) { SoundManager.playBuzzer(); return; }
         SoundManager.playSave();
-        if (window.ParchmentToast) window.ParchmentToast.show(tr('bound', { item: entry.name }));
+        if (window.ParchmentToast) {
+            const toastMsg = spellName
+                ? tr('enchantDetailed', { actor: actor.name(), item: entry.name, spell: spellName })
+                : tr('enchantNoSpellDetailed', { actor: actor.name(), item: entry.name });
+            window.ParchmentToast.show(toastMsg || tr('bound', { item: entry.name }));
+        }
+        if (window.Diary && typeof window.Diary.record === 'function') {
+            window.Diary.record('craft.enchant', {
+                name: actor.name(),
+                spell: spellName || tr('step.element'),
+                item: entry.name
+            }, { who: actor.name() });
+        }
         this._enchantChosen = null;
         this._enchantDraft = null;
         this._enchantDropped = null;
@@ -10504,6 +11011,229 @@
     };
 
     const ENCHANT_GROUP_ICONS = { element: 64, rider: 87, refine: 193, mechanic: 83, power: 176, payoff: 77 };
+
+    //--- the form as steps, the Workbench's way ------------------------------
+    //
+    // The bound spell, the element, the other properties, then a review with
+    // the Enchant button. The last tab, All, lays every pane out at once, as
+    // the form always was. The step follows the row the cursor is on, so the
+    // pad never has to know which pane it is in.
+
+    const ENCHANT_STEPS = ['spell', 'element', 'properties', 'review'];
+    const ENCHANT_STEP_REVIEW = 3;
+    const ENCHANT_STEP_ALL = ENCHANT_STEPS.length;
+    // The groups that get a grid of option cards on their step, not just chips.
+    const ENCHANT_GRID_GROUPS = ['element', 'rider', 'refine'];
+
+    Proto.enchantStepOfRow = function (name) {
+        if (name === 'spell') return 0;
+        if (name === 'element') return 1;
+        if (name === 'enchant') return ENCHANT_STEP_REVIEW;
+        return 2;
+    };
+
+    Proto.enchantCurStep = function () {
+        const s = this._enchantStep;
+        return (s === undefined || s === null) ? 0 : s;
+    };
+
+    // A kind of gear with no element on offer skips the element step.
+    Proto.enchantStepShown = function (step) {
+        if (step === 1) return this.enchantFormRows().includes('element');
+        return true;
+    };
+
+    Proto.enchantSetStep = function (step) {
+        step = Math.max(0, Math.min(ENCHANT_STEP_ALL, step | 0));
+        this._enchantStep = step;
+        this._enchantColumn = 1;
+        if (step < ENCHANT_STEP_ALL) {
+            const at = this.enchantFormRows().findIndex(r => this.enchantStepOfRow(r) === step);
+            if (at >= 0) this._enchantFormRow = at;
+        }
+        SoundManager.playCursor();
+        this.refreshUISkillDOM();
+    };
+
+    Proto.enchantNextStep = function () {
+        const cur = this.enchantCurStep();
+        if (cur === ENCHANT_STEP_ALL) return;
+        if (cur >= ENCHANT_STEP_REVIEW) { this.enchantCommit(); return; }
+        let next = cur + 1;
+        while (next < ENCHANT_STEP_REVIEW && !this.enchantStepShown(next)) next++;
+        this.enchantSetStep(next);
+    };
+
+    Proto.enchantPrevStep = function () {
+        const cur = this.enchantCurStep();
+        if (cur === ENCHANT_STEP_ALL || cur <= 0) return;
+        let prev = cur - 1;
+        while (prev > 0 && !this.enchantStepShown(prev)) prev--;
+        this.enchantSetStep(prev);
+    };
+
+    // The draft without whatever `def` would replace: the one element a piece
+    // holds, or the tag already in its slot. Picking a card swaps those.
+    function enchantSwapOut(ST, tags, def) {
+        if (!def) return tags.slice();
+        return tags.filter(k => {
+            const o = ST.get(k);
+            if (!o) return true;
+            if (def.group === 'element' && o.group === 'element') return false;
+            if (def.slot && o.slot === def.slot) return false;
+            return true;
+        });
+    }
+
+    // A card's verdict: swaps are offered, not refused.
+    Proto.enchantStepVerdict = function (key) {
+        const ST = tagRegistry();
+        if (!ST) return { ok: false, reason: 'unknown' };
+        const d = this.enchantDraft();
+        if (d.tags.includes(key)) return { ok: true, have: true };
+        return ST.allowed(enchantSwapOut(ST, d.tags, ST.get(key)), key, this._enchantKind);
+    };
+
+    // A card pressed: a tag on the draft comes off, one not on it goes on
+    // (swapping out the element or the slot it shares), and the Neutral card
+    // takes the element off.
+    Proto.enchantStepPickTag = function (group, key) {
+        const ST = tagRegistry();
+        if (!ST || !this._enchantChosen) return;
+        const d = this.enchantDraft();
+        let tags;
+        if (key === 'none_element') {
+            tags = d.tags.filter(k => (ST.get(k) || {}).group !== 'element');
+            if (tags.length === d.tags.length) { SoundManager.playOk(); return; }
+        } else if (d.tags.includes(key)) {
+            tags = d.tags.filter(k => k !== key);
+        } else {
+            if (!this.enchantStepVerdict(key).ok) { SoundManager.playBuzzer(); return; }
+            tags = enchantSwapOut(ST, d.tags, ST.get(key)).concat([key]);
+        }
+        const n = ST.normalize(tags, this._enchantKind);
+        d.tags = n.tags;
+        this._enchantDropped = n.dropped;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    // A spell card pressed. The chosen one pressed again comes off, and the
+    // No spell card always clears it.
+    Proto.enchantStepPickSpell = function (id) {
+        const slot = this._enchantChosen;
+        if (!slot) return;
+        id = Number(id) || 0;
+        const own = window.BoundSkill && window.BoundSkill.has(slot.item);
+        if (id && (own || !this.enchantSpells().some(s => s.id === id))) { SoundManager.playBuzzer(); return; }
+        const d = this.enchantDraft();
+        d.spellId = (id && d.spellId === id) ? 0 : id;
+        SoundManager.playOk();
+        this.refreshUISkillDOM();
+    };
+
+    // One option card, in the Workbench's look.
+    function enchantOptCard(o) {
+        return `
+            <div class="sm-craft-card-opt focusable ${o.chosen ? 'selected' : ''} ${o.shut ? 'is-shut' : ''}"
+                 onclick="${o.onclick}" title="${esc(o.desc)}">
+                <div class="sm-craft-opt-header">
+                    <strong class="sm-craft-opt-name">${esc(o.name)}</strong>
+                    ${o.cost ? `<span class="sm-craft-opt-cost">${esc(o.cost)}</span>` : ''}
+                </div>
+                <div class="sm-craft-opt-desc">${esc(o.desc)}</div>
+                ${o.why ? `<div class="sm-craft-opt-shut">${esc(o.why)}</div>` : ''}
+            </div>`;
+    }
+
+    Proto.renderEnchantStepOptionsHTML = function (group) {
+        const ST = tagRegistry();
+        const slot = this._enchantChosen;
+        if (!ST || !slot) return '';
+        const kind = this._enchantKind;
+        const d = this.enchantDraft();
+        let html = '';
+        if (group === 'spell') {
+            const own = window.BoundSkill && window.BoundSkill.has(slot.item);
+            html += enchantOptCard({
+                name: tr('noSpell'), desc: tr('spellOptional'), chosen: !d.spellId,
+                onclick: 'SceneManager._scene.enchantStepPickSpell(0)'
+            });
+            for (const s of this.enchantSpells()) {
+                const spellName = tx(s.name);
+                html += enchantOptCard({
+                    name: spellName,
+                    desc: tr(kind === 'weapon' ? 'gear.onCrit' : 'gear.onCritTaken', { spell: spellName }),
+                    cost: `${enchantCost(s, kind)} KP`,
+                    chosen: d.spellId === s.id, shut: own, why: own ? tr('ownSkill') : '',
+                    onclick: `SceneManager._scene.enchantStepPickSpell(${s.id})`
+                });
+            }
+            return `<div class="sm-craft-opts-grid">${html}</div>`;
+        }
+        if (group === 'element') {
+            html += enchantOptCard({
+                name: tr('step.noneElement'), desc: tr('step.noneElementDesc'),
+                chosen: !d.tags.some(k => (ST.get(k) || {}).group === 'element'),
+                onclick: `SceneManager._scene.enchantStepPickTag('element', 'none_element')`
+            });
+        }
+        for (const def of ST.list({ target: kind, group })) {
+            const v = this.enchantStepVerdict(def.key);
+            const have = d.tags.includes(def.key);
+            html += enchantOptCard({
+                name: ST.name(def.key), desc: gearEffectText(def.key, kind) || ST.info(def.key),
+                cost: `${tagsCost([def.key], kind)} KP`,
+                chosen: have, shut: !have && !v.ok, why: (!have && !v.ok) ? ST.why(v) : '',
+                onclick: `SceneManager._scene.enchantStepPickTag('${group}', '${def.key}')`
+            });
+        }
+        return `<div class="sm-craft-opts-grid">${html}</div>`;
+    };
+
+    Proto.renderEnchantStepperHTML = function () {
+        const ST = tagRegistry();
+        const cur = this.enchantCurStep();
+        const d = this.enchantDraft();
+        const groupOfTag = (k) => (ST && ST.get(k) || {}).group;
+        const done = [
+            !!d.spellId,
+            d.tags.some(k => groupOfTag(k) === 'element'),
+            d.tags.some(k => groupOfTag(k) !== 'element'),
+            this.enchantFormVerdict().ok
+        ];
+        let num = 0;
+        const tabs = ENCHANT_STEPS.map((key, idx) => {
+            if (!this.enchantStepShown(idx)) return '';
+            num++;
+            const label = tr('step.' + key);
+            return `
+                <div class="sm-craft-step-tab focusable ${cur === idx ? 'active' : ''} ${done[idx] ? 'is-done' : ''}"
+                     onclick="SceneManager._scene.enchantSetStep(${idx})" title="${esc(label)}">
+                    <span class="sm-craft-step-num">${num}</span>
+                    <span class="sm-craft-step-label">${esc(label)}</span>
+                </div>`;
+        });
+        tabs.push(`
+            <div class="sm-craft-step-tab sm-craft-step-all focusable ${cur === ENCHANT_STEP_ALL ? 'active' : ''}"
+                 onclick="SceneManager._scene.enchantSetStep(${ENCHANT_STEP_ALL})" title="${esc(tr('step.all'))}">
+                <span class="sm-craft-step-label">${esc(tr('step.all'))}</span>
+            </div>`);
+        return `<div class="sm-craft-stepper">${tabs.join('')}</div>`;
+    };
+
+    // Back and Next under a pane. The review pane has no Next: its Enchant
+    // button is the action row under the form.
+    Proto.renderEnchantStepNavHTML = function (step) {
+        if (this.enchantCurStep() === ENCHANT_STEP_ALL) return '';
+        const prev = step > 0
+            ? `<div class="inspect-btn focusable sm-craft-nav-btn sm-craft-nav-prev" onclick="SceneManager._scene.enchantPrevStep()">&lt; ${esc(tr('step.prev'))}</div>`
+            : `<div class="sm-craft-nav-spacer"></div>`;
+        const next = step < ENCHANT_STEP_REVIEW
+            ? `<div class="inspect-btn focusable sm-craft-nav-btn sm-craft-nav-next" onclick="SceneManager._scene.enchantNextStep()">${esc(tr('step.next'))} &gt;</div>`
+            : `<div class="sm-craft-nav-spacer"></div>`;
+        return `<div class="sm-craft-step-nav">${prev}${next}</div>`;
+    };
 
     // The right page while a weapon or a piece of armour is on the bench.
     Proto.renderEnchantFormHTML = function (knowledge) {
@@ -11240,10 +11970,21 @@
         const skills = this.writeChosenSkills();
         if (!skills.length) { SoundManager.playBuzzer(); return; }
         if ($gameSystem.getKnowledge() < volumeCost(skills)) { SoundManager.playBuzzer(); return; }
+        const actor = this.getTeachActor();
         const entry = writeVolume(this._writeKind, skills);
         if (!entry) { SoundManager.playBuzzer(); return; }
         SoundManager.playSave();
-        if (window.ParchmentToast) window.ParchmentToast.show(tr('written', { book: entry.name }));
+        if (window.ParchmentToast) {
+            const toastMsg = tr('writeDetailed', { actor: actor.name(), book: entry.name }) ||
+                tr('written', { book: entry.name });
+            window.ParchmentToast.show(toastMsg);
+        }
+        if (window.Diary && typeof window.Diary.record === 'function') {
+            window.Diary.record('craft.book', {
+                name: actor.name(),
+                item: entry.name
+            }, { who: actor.name() });
+        }
         this._writeChosen = [];
         this._writeIndex = 0;
         this.refreshUISkillDOM();
@@ -11252,10 +11993,24 @@
     Proto.writeUnmake = function (entryId) {
         const En = E();
         const kind = this._writeKind || 'grimorie';
+        const made = this.writeMade().find(m => m.id === entryId);
+        const bookName = made ? made.name : '';
+        const actor = this.getTeachActor();
         if (En.unbind && En.unbind(entryId, kind)) {
             // The next volume slides under the cursor: never onto Unmake.
             this._writeChip = 0;
             SoundManager.playCancel();
+            if (window.ParchmentToast && bookName) {
+                const toastMsg = tr('unmadeBookDetailed', { actor: actor.name(), book: bookName }) ||
+                    tr('unmade', { item: bookName });
+                window.ParchmentToast.show(toastMsg);
+            }
+            if (window.Diary && typeof window.Diary.record === 'function' && bookName) {
+                window.Diary.record('craft.unmade', {
+                    name: actor.name(),
+                    item: bookName
+                }, { who: actor.name() });
+            }
             this.refreshUISkillDOM();
         }
     };
@@ -12163,11 +12918,21 @@
     Proto.hexorcizeTake = function (idx, all) {
         const row = this.hexorcizeAt(idx);
         if (!row) { SoundManager.playBuzzer(); return; }
+        const actor = this.getTeachActor();
+        const itemName = tx(row.item.name);
         const gain = hexorcize(row.item, all ? row.count : 1);
         if (!gain) { SoundManager.playBuzzer(); return; }
         SoundManager.playSave();
         if (window.ParchmentToast) {
-            window.ParchmentToast.show(tr('unmade', { item: tx(row.item.name), kp: gain }), { severity: 'good' });
+            const toastMsg = tr('hexorcizeDetailed', { actor: actor.name(), item: itemName, kp: gain }) ||
+                tr('unmade', { item: itemName, kp: gain });
+            window.ParchmentToast.show(toastMsg, { severity: 'good' });
+        }
+        if (window.Diary && typeof window.Diary.record === 'function') {
+            window.Diary.record('craft.hexorcize', {
+                name: actor.name(),
+                item: itemName
+            }, { who: actor.name() });
         }
         const rows = this.hexorcizeRows().length;
         this._hexIndex = Math.max(0, Math.min(this._hexIndex || 0, rows - 1));
@@ -12446,12 +13211,21 @@
             return;
         }
         const actor = this.lobotomagicActor();
+        const sName = tx(row.skill.name);
         const gain = lobotomize(actor, row.skill.id);
         this._loboArmed = -1;
         if (!gain) { SoundManager.playBuzzer(); this.refreshUISkillDOM(); return; }
         SoundManager.playSave();
         if (window.ParchmentToast) {
-            window.ParchmentToast.show(tr('cut', { skill: tx(row.skill.name), name: actor.name(), kp: gain }), { severity: 'good' });
+            const toastMsg = tr('forgottenDetailed', { name: actor.name(), skill: sName, kp: gain }) ||
+                tr('cut', { skill: sName, name: actor.name(), kp: gain });
+            window.ParchmentToast.show(toastMsg, { severity: 'good' });
+        }
+        if (window.Diary && typeof window.Diary.record === 'function') {
+            window.Diary.record('skill.forgotten', {
+                name: actor.name(),
+                skill: sName
+            }, { who: actor.name() });
         }
         const rows = this.lobotomagicRows().length;
         this._loboIndex = Math.max(0, Math.min(this._loboIndex || 0, rows - 1));

@@ -2592,6 +2592,10 @@
     if (!actor) return null;
     const presets = getCharacterPresets();
     if (!presets.length) return null;
+    if (actor._presetId) {
+      const byId = presets.find((preset) => preset.id === actor._presetId);
+      if (byId) return byId;
+    }
     const bust = actor.vnBust ? actor.vnBust() : null;
     if (bust && bust !== "7" && bust !== 0) {
       const byBust = presets.find((preset) => preset.busts === bust);

@@ -504,29 +504,6 @@
       const spliced = keys.length > 1;
       const bodyParts = actor._bodyParts || {};
 
-      const table = (window.Health && window.Health.Archetypes) || {};
-      const classIds = [];
-      const CC = window.CreatureClasses;
-      if (CC && typeof CC.playableGroupsForArchetypes === "function") {
-        const groups = CC.playableGroupsForArchetypes(keys[0], keys[1]);
-        (groups.sentient || []).concat(groups.creature || []).forEach((id) => {
-          if (!classIds.includes(id)) classIds.push(id);
-        });
-      } else {
-        keys.forEach((key) => {
-          const entry = table[key] || null;
-          if (entry) {
-            const list = (entry.classes || []).concat(entry.creatureClasses || []).concat(entry.sentientClasses || []);
-            list.forEach((id) => {
-              if (!classIds.includes(id)) classIds.push(id);
-            });
-          }
-        });
-      }
-      const classNames = classIds
-        .map((id) => ($dataClasses[id] ? (window.CCDbName ? window.CCDbName($dataClasses[id]) : $dataClasses[id].name) : null))
-        .filter(Boolean);
-
       const renderCell = (row) => {
         const part = bodyParts[row.key] || {};
         const canHold = (part && part.canHoldWeapon !== undefined)
@@ -588,22 +565,8 @@
               ${ccEsc(actor.name())} · ${ccEsc(title)}
             </div>
           </div>
-          <div class="cc-dossier-card cc-card-padded cc-gap-below">
-            <div class="cc-dossier-row cc-dossier-row--lead">
-              <span class="cc-dossier-label">${ccT('CharCreate.bodyParts')}:</span>
-              <span class="cc-dossier-value">${rows.length}</span>
-            </div>
-            <div class="cc-dossier-row cc-dossier-row--lead">
-              <span class="cc-dossier-label">${ccT('CharCreate.classesOfThisArchetype')}:</span>
-              <span class="cc-dossier-value">${classNames.length}</span>
-            </div>
-          </div>
           <div class="cc-dossier-card cc-card-padded cc-scroll-pane">
             ${anatomySectionsHtml}
-            <h3 class="cc-subheader cc-gap-above">${ccT('CharCreate.classesOfThisArchetype')}</h3>
-            <p class="cc-text-desc cc-text-desc--body">
-              ${classNames.length ? classNames.join(", ") : ccT('CharCreate.onlyWhatYourArchetypesSupport')}
-            </p>
           </div>
         </div>
       `;

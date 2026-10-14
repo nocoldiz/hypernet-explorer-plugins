@@ -2432,6 +2432,16 @@
       // Reading is a solitary thing: nobody learns theology by watching
       // somebody else hold a book.
       if (XP) XP.award(def, points, { actor: reader, soloist: true });
+      const kp = stage === "done" ? 35 : 15;
+      if (typeof $gameSystem !== "undefined" && $gameSystem) {
+        if (typeof $gameSystem.gainKnowledge === "function") $gameSystem.gainKnowledge(kp);
+        else if (typeof $gameSystem.addKnowledge === "function") $gameSystem.addKnowledge(kp);
+      }
+      try {
+        if (window.ParchmentToast) {
+          window.ParchmentToast.reward?.({ knowledge: kp, title: typeof T === "function" ? T("ConvBooks.knowledgeTitle") : "Knowledge gained" });
+        }
+      } catch (e) {}
       return points;
     },
 
@@ -2513,6 +2523,16 @@
       // Studying is as solitary as reading: nobody learns theology by watching
       // somebody else frown at a page.
       if (XP) XP.award(def, points, { actor: reader, soloist: true });
+      const kp = 50;
+      if (typeof $gameSystem !== "undefined" && $gameSystem) {
+        if (typeof $gameSystem.gainKnowledge === "function") $gameSystem.gainKnowledge(kp);
+        else if (typeof $gameSystem.addKnowledge === "function") $gameSystem.addKnowledge(kp);
+      }
+      try {
+        if (window.ParchmentToast) {
+          window.ParchmentToast.reward?.({ knowledge: kp, title: typeof T === "function" ? T("ConvBooks.knowledgeTitle") : "Knowledge gained" });
+        }
+      } catch (e) {}
       const TDS = window.TimeDateSystem;
       if (TDS && TDS.passTime) {
         try { TDS.passTime(minutes); } catch (e) { /* no clock in this scene */ }

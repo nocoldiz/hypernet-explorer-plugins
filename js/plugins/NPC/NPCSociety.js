@@ -885,7 +885,12 @@
     return true;
   }
 
-  function _pruneSociety() {
+  // `keep` names the profile the caller has just minted and is about to hand
+  // back. It is never evicted here: when every older profile is protected the
+  // newcomer would otherwise be the only candidate, and the caller would return
+  // a profile that is already gone from the registry (any opinion gained on it
+  // then lands nowhere). The registry may sit past the cap in that case.
+  function _pruneSociety(keep) {
     const soc = $gameSystem._npcSociety;
     if (!soc) return;
     const keys = Object.keys(soc);
@@ -895,6 +900,7 @@
     // go first.
     for (const name of keys) {
       if (count <= SOCIETY_PRUNE_TARGET) break;
+      if (name === keep) continue;
       if (!_isRegenerableProfile(name, soc[name])) continue;
       delete soc[name];
       count--;
@@ -1119,7 +1125,7 @@
         if (initSpec) NPCInitSpec.apply(profile, initSpec, eventName);
         profile._initSpecChecked = true;
         $gameSystem._npcSociety[eventName] = profile;
-        _pruneSociety();
+        _pruneSociety(eventName);
       }
       // A profile minted before the book knew who these people really were
       // still holds a rolled birthday and a rolled gender: the pass is cheap,

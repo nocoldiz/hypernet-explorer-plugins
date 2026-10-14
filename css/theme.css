@@ -6296,7 +6296,8 @@
 /* The two numbers the player came to the clock for. Body copy is the warm
    off-white, never pure white (ui_fixing rule 7). */
 .cash-highlight,
-.bounty-highlight {
+.bounty-highlight,
+.knowledge-highlight {
     color: var(--text-primary-hover);
 }
 
@@ -7086,6 +7087,18 @@
     flex-wrap: wrap;
     gap: 5px;
     margin-bottom: 8px;
+    background: transparent;
+    border: none;
+}
+.inspect-meta-grid.inspect-quick-pills,
+.sm-craft-card .inspect-meta-grid,
+.sm-fuse-preview .inspect-meta-grid,
+.item-inspect .inspect-meta-grid.inspect-quick-pills {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
 }
 .inspect-pill {
     display: inline-flex;
@@ -11433,7 +11446,9 @@
 /* The medallion the raise cursor is on. A mouse presses the + directly; a
    keyboard and a pad walk the raisable stats and need to see which one a point
    would go into. */
-.stat-medallion.raise-lit .stat-medallion-raise {
+.stat-medallion.raise-lit .stat-medallion-raise,
+.stat-medallion-raise.raise-lit,
+.status-gauge-row.raise-lit .stat-medallion-raise {
     outline: 2px solid var(--border-primary-hover-translucent-15);
     outline-offset: 2px;
 }
@@ -37415,73 +37430,101 @@ cursor:pointer; font-size:var(--fs-body); line-height:1.4;
 
 .sm-craft-opts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 6px;
-    margin: 8px 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 12px 0;
 }
 
 .sm-craft-card-opt {
     display: flex;
     flex-direction: column;
-    padding: 6px 8px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 4px;
-    background: rgba(0, 0, 0, 0.15);
+    padding: 14px 16px;
+    min-height: 96px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.28);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
     user-select: none;
+    box-sizing: border-box;
 }
 
 .sm-craft-card-opt:hover {
-    border-color: var(--border-focus-hover);
-    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--border-focus-hover, #d4af37);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
 }
 
 .sm-craft-card-opt.selected {
-    border-color: var(--text-primary-hover);
-    background: var(--bg-primary-hover-translucent-10);
-    box-shadow: inset 0 0 0 1px var(--text-primary-hover);
+    border-color: var(--text-primary-hover, #ffcc00);
+    background: rgba(255, 204, 0, 0.12);
+    box-shadow: 0 0 0 1.5px var(--text-primary-hover, #ffcc00), 0 4px 12px rgba(255, 204, 0, 0.15);
 }
 
 .sm-craft-card-opt.is-shut {
-    opacity: 0.45;
+    opacity: 0.5;
     cursor: not-allowed;
+    background: rgba(0, 0, 0, 0.16);
 }
 
 .sm-craft-opt-header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    gap: 4px;
-    margin-bottom: 2px;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
 }
 
 .sm-craft-opt-name {
-    font-size: var(--fs-body);
-    color: #f0f0f0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #f6f6f6;
+    line-height: 1.25;
+    flex: 1 1 auto;
+    word-break: break-word;
 }
 
 .sm-craft-card-opt.selected .sm-craft-opt-name {
-    color: var(--text-primary-hover);
+    color: var(--text-primary-hover, #ffcc00);
 }
 
 .sm-craft-opt-cost {
-    font-size: 10px;
-    color: var(--text-detail-label);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-gold-light, #ffd54f);
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 3px 8px;
     white-space: nowrap;
+    flex: 0 0 auto;
+    letter-spacing: 0.3px;
+}
+
+.sm-craft-card-opt.selected .sm-craft-opt-cost {
+    background: rgba(255, 204, 0, 0.18);
+    border-color: rgba(255, 204, 0, 0.4);
 }
 
 .sm-craft-opt-desc {
-    font-size: 11px;
-    line-height: 1.3;
-    color: var(--text-detail-label);
+    font-size: 1.15rem;
+    line-height: 1.45;
+    color: rgba(230, 230, 230, 0.9);
     flex: 1 1 auto;
+    margin-top: 4px;
 }
 
 .sm-craft-opt-shut {
-    font-size: 10px;
-    color: var(--text-danger-dark);
-    margin-top: 2px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #ff8a80;
+    background: rgba(255, 82, 82, 0.14);
+    border: 1px solid rgba(255, 82, 82, 0.28);
+    border-radius: 5px;
+    padding: 4px 8px;
+    margin-top: 8px;
 }
 
 .sm-craft-step-nav {
